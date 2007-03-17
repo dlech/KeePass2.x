@@ -1,0 +1,2978 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>KeePassLib</name>
+    </assembly>
+    <members>
+        <member name="T:KeePassLib.Serialization.Kdb4File">
+            <summary>
+            Serialization to KeePass KDB files.
+            </summary>
+            <summary>
+            Serialization to KeePass KDB files.
+            </summary>
+            <summary>
+            Serialization to KeePass KDB files.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4File.FileSignature1">
+            <summary>
+            File identifier, first 32-bit value.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4File.FileSignature2">
+            <summary>
+            File identifier, second 32-bit value.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4File.FileVersion32">
+            <summary>
+            File version of files saved by the current <c>Kdb4File</c> class.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.Serialization.Kdb4File.KdbFormat,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Save the contents of the current <c>PwDatabase</c> to a KDB file.
+            </summary>
+            <param name="sSaveTo">Stream to write the KDB file into.</param>
+            <param name="format">Format of the file to create.</param>
+            <param name="slLogger">Logger that recieves status information.</param>
+            <returns>Returns a <c>FileSaveResult</c> error code.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.WriteEntries(System.IO.Stream,KeePassLib.PwDatabase,KeePassLib.PwEntry[])">
+            <summary>
+            Write entries to a stream.
+            </summary>
+            <param name="msOutput">Output stream to which the entries will be written.</param>
+            <param name="m_pwDatabase">Source database.</param>
+            <param name="vEntries">Entries to serialize.</param>
+            <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.IO.Stream,KeePassLib.Serialization.Kdb4File.KdbFormat,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Load a KDB file.
+            </summary>
+            <param name="sSource">Stream to read the data from. Must contain
+            a KDB4 stream.</param>
+            <param name="kdbFormat">Format specifier.</param>
+            <param name="slLogger">Status logger (optional).</param>
+            <returns>Error code.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.ReadEntries(KeePassLib.PwDatabase,System.IO.Stream)">
+            <summary>
+            Read entries from a stream.
+            </summary>
+            <param name="pwDatabase">Source database.</param>
+            <param name="msData">Input stream to read the entries from.</param>
+            <returns>Extracted entries.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.#ctor(KeePassLib.PwDatabase)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="pwDataStore">The PwDatabase instance that the class will
+            load file data into or use to create a KDB file.</param>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.DetermineLanguageID">
+            <summary>
+            Call this once to determine the current localization settings.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Serialization.Kdb4File.KdbFormat">
+            <summary>
+            The <c>Kdb4File</c> class supports saving the data to various
+            formats.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4File.KdbFormat.Default">
+            <summary>
+            The default, encrypted file format.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4File.KdbFormat.PlainXml">
+            <summary>
+            Use this flag when exporting data to a plain-text XML file.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Keys.IUserKey">
+            <summary>
+            Interface to a user key, like a password, key file data, etc.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.IUserKey.Clear">
+            <summary>
+            Clear the key and securely erase all security-critical information.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.IUserKey.KeyData">
+            <summary>
+            Get key data. Querying this property is fast (it returns a
+            reference to a cached <c>ProtectedBinary</c> object).
+            If no key data is available, <c>null</c> is returned.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Delegates.GroupHandler">
+            <summary>
+            Function definition of a method that performs an action on a group.
+            When traversing the internal tree, this function will be invoked
+            for all visited groups.
+            </summary>
+            <param name="pg">Currently visited group.</param>
+            <returns>You must return <c>true</c> if you want to continue the
+            traversal. If you want to immediately stop the whole traversal,
+            return <c>false</c>.</returns>
+        </member>
+        <member name="T:KeePassLib.Delegates.EntryHandler">
+            <summary>
+            Function definition of a method that performs an action on an entry.
+            When traversing the internal tree, this function will be invoked
+            for all visited entries.
+            </summary>
+            <param name="pe">Currently visited entry.</param>
+            <returns>You must return <c>true</c> if you want to continue the
+            traversal. If you want to immediately stop the whole traversal,
+            return <c>false</c>.</returns>
+        </member>
+        <member name="T:KeePassLib.Keys.KcpUserAccount">
+            <summary>
+            A user key depending on the currently logged on Windows user account.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.KcpUserAccount.#ctor">
+            <summary>
+            Construct a machine user key.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.KcpUserAccount.Clear">
+            <summary>
+            Clear the key and securely erase all security-critical information.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KcpUserAccount.KeyData">
+            <summary>
+            Get key data. Querying this property is fast (it returns a
+            reference to a cached <c>ProtectedBinary</c> object).
+            If no key data is available, <c>null</c> is returned.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.SelfTestResult">
+            <summary>
+            Return values of the <c>SelfTest.Perform</c> method.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.SelfTest">
+            <summary>
+            Class containing self-test methods.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.SelfTest.Perform">
+            <summary>
+            Perform a self-test.
+            </summary>
+            <returns>A <c>SelfTestResult</c> error code.</returns>
+        </member>
+        <member name="T:KeePassLib.Keys.CompositeKey">
+            <summary>
+            Represents a key. A key can be build up using several user key data sources
+            like a password, a key file, the currently logged on user credentials,
+            the current computer ID, etc.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.#ctor">
+            <summary>
+            Construct a new, empty key object.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.Finalize">
+            <summary>
+            Deconstructor, clears up the key.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.Clear">
+            <summary>
+            Clears the key. This function also erases all previously stored
+            user key data objects.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.AddUserKey(KeePassLib.Keys.IUserKey)">
+            <summary>
+            Add a user key.
+            </summary>
+            <param name="pKey">User key to add.</param>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.RemoveUserKey(KeePassLib.Keys.IUserKey)">
+            <summary>
+            Remove a user key.
+            </summary>
+            <param name="pKey">User key to remove.</param>
+            <returns>Returns <c>true</c> if the key was removed successfully.</returns>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.ContainsType(System.Type)">
+            <summary>
+            Test whether the composite key contains a specific type of
+            user keys (password, key file, ...). If at least one user
+            key of that type is present, the function returns <c>true</c>.
+            </summary>
+            <param name="tUserKeyType">User key type.</param>
+            <returns>Returns <c>true</c>, if the composite key contains
+            a user key of the specified type.</returns>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.GetUserKey(System.Type)">
+            <summary>
+            Get the first user key of a specified type.
+            </summary>
+            <param name="tUserKeyType">Type of the user key to get.</param>
+            <returns>Returns the first user key of the specified type
+            or <c>null</c> if no key of that type is found.</returns>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.CreateRawCompositeKey32">
+            <summary>
+            Creates the composite key from the supplied user key sources (password,
+            key-file, user account, computer ID, etc.).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.GenerateKey32(System.Byte[],System.UInt64)">
+            <summary>
+            Generate a 32-bit wide key out of the composite key.
+            </summary>
+            <param name="pbKeySeed32">Seed used in the key transformation
+            rounds. Must be a byte array containing exactly 32 bytes; must
+            not be null.</param>
+            <param name="uNumRounds">Number of key transformation rounds.</param>
+            <returns>Returns a protected binary object that contains the
+            resulting 32-bit wide key.</returns>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.TransformKey(System.Byte[],System.Byte[],System.UInt64)">
+            <summary>
+            Transform the current key <c>uNumRounds</c> times.
+            </summary>
+            <param name="pbOriginalKey32">The original key which will be transformed.
+            This parameter won't be modified.</param>
+            <param name="pbKeySeed32">Seed used for key transformations. Must not
+            be <c>null</c>. This parameter won't be modified.</param>
+            <param name="uNumRounds">Transformation count.</param>
+            <returns>256-bit transformed key.</returns>
+        </member>
+        <member name="M:KeePassLib.Keys.CompositeKey.TransformKeyBenchmark(System.UInt32,System.UInt64)">
+            <summary>
+            Benchmark the <c>TransformKey</c> method. Within
+            <paramref name="uMilliseconds"/> ms, random keys will be transformed
+            and the number of performed transformations are returned.
+            </summary>
+            <param name="uMilliseconds">Test duration in ms.</param>
+            <param name="uStep">Stepping. The returned number of transformations
+            will be a multiple of this parameter or <c>uint.MaxValue</c>.
+            <paramref name="uStep" /> should be a prime number. For fast processors
+            (PCs) a value of <c>3001</c> is recommended, for slower processors (PocketPC)
+            a value of <c>401</c> is recommended.</param>
+            <returns>Number of transformations performed in the specified
+            amount of time. Maximum value is <c>uint.MaxValue</c>.</returns>
+        </member>
+        <member name="P:KeePassLib.Keys.CompositeKey.UserKeys">
+            <summary>
+            List of all user keys contained in the current composite key.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Security.ProtectedString">
+            <summary>
+            Represents an in-memory encrypted string.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor">
+            <summary>
+            Construct a new protected string object. Protection is
+            disabled by default! You need to call the
+            <c>EnableProtection</c> member function in order to
+            enable the protection, if you wish the string to be protected.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean)">
+            <summary>
+            Construct a new in-memory encrypted string object.
+            </summary>
+            <param name="bEnableProtection">If this parameter is <c>true</c>,
+            the string will be protected in-memory (encrypted). If it
+            is <c>false</c>, the string will be stored as plain-text.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,System.String)">
+            <summary>
+            Construct a new protected string. The string is initialized
+            to the value supplied in the parameters.
+            </summary>
+            <param name="bEnableProtection">If this parameter is <c>true</c>,
+            the string will be protected in-memory (encrypted). If it
+            is <c>false</c>, the string will be stored as plain-text.</param>
+            <param name="strValue">The initial string value. This
+            parameter won't be modified.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,System.Byte[])">
+            <summary>
+            Construct a new protected string. The string is initialized
+            to the value supplied in the parameters (UTF-8 encoded string).
+            </summary>
+            <param name="bEnableProtection">If this parameter is <c>true</c>,
+            the string will be protected in-memory (encrypted). If it
+            is <c>false</c>, the string will be stored as plain-text.</param>
+            <param name="vUTF8Value">The initial string value, encoded as
+            UTF-8 byte array. This parameter won't be modified.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor(KeePassLib.Security.ProtectedString)">
+            <summary>
+            Construct a new protected string. The string is initialized
+            to the value passed in the <c>pbTemplate</c> protected string.
+            </summary>
+            <param name="psTemplate">The initial string value. This
+            parameter won't be modified. Must not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
+            <summary>
+            Construct a new protected string. The string is initialized
+            to the value passed in the <c>XorredBuffer</c> object.
+            </summary>
+            <param name="bEnableProtection">Enable protection or not.</param>
+            <param name="xbProtected"><c>XorredBuffer</c> object containing the
+            string in UTF-8 representation. The UTF-8 string must not
+            be <c>null</c>-terminated.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.Clear">
+            <summary>
+            Clear the string. Doesn't change the protection level.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.EnableProtection(System.Boolean)">
+            <summary>
+            Change the protection level (protect or don't protect). Note: you
+            only need to call this function if you really want to change the
+            protection. If you specified the protection flag in the constructor,
+            and don't want to change it, you don't need to call this function.
+            </summary>
+            <param name="bProtect">If <c>true</c>, the string will be protected
+            (encrypted in-memory). Otherwise the string will be stored in
+            plain-text in the process memory.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.SetString(System.String)">
+            <summary>
+            Assign a new string value to the object.
+            </summary>
+            <param name="strNewValue">New string. The string must not contain
+            a <c>null</c> terminator.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the new string
+            contains a <c>null</c> terminator.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.ReadString">
+            <summary>
+            Convert the protected string to a normal string object.
+            Be careful with this function, the returned string object
+            isn't protected any more and stored in plain-text in the
+            process memory.
+            </summary>
+            <returns>Plain-text string. Is never <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.ReadUTF8">
+            <summary>
+            Read out the string and return a byte array that contains the
+            string encoded using UTF-8. The returned string is not protected
+            anymore!
+            </summary>
+            <returns>Plain-text UTF-8 byte array.</returns>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedString.ReadXorredString(KeePassLib.Cryptography.CryptoRandomStream)">
+            <summary>
+            Read the protected string and return it protected with a sequence
+            of bytes generated by a random stream. The object's data will be
+            invisible in process memory only if the object has been initialized
+            using a <c>XorredBuffer</c>. If no <c>XorredBuffer</c> has been used
+            or the string has been read once already (in plain-text), the
+            operation won't be secure and the protected string will be visible
+            in process memory.
+            </summary>
+            <param name="crsRandomSource">Random number source.</param>
+            <returns>Protected string.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedString.IsProtected">
+            <summary>
+            A flag specifying whether the <c>ProtectedString</c> object has turned on
+            in-memory protection or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedString.IsViewable">
+            <summary>
+            A value specifying whether the <c>ProtectedString</c> object is currently
+            in-memory protected or not. This flag can be different than
+            <c>IsProtected</c>: if a <c>XorredBuffer</c> is used, the <c>IsProtected</c>
+            flag represents the memory protection flag, but not the actual protection.
+            In this case use <c>IsViewable</c>, which returns <c>true</c> if a
+            <c>XorredBuffer</c> is currently in use.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Security.ProtectedBinary">
+            <summary>
+            Represents a protected binary, i.e. a byte array that is encrypted
+            in-memory.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor">
+            <summary>
+            Construct a new, empty protected binary data object. Protection
+            is disabled by default! You need to call the
+            <c>EnableProtection</c> member function to enable the protection
+            manually, if you wish the data to be protected.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean)">
+            <summary>
+            Construct a new, empty protected binary data object.
+            </summary>
+            <param name="bEnableProtection">If this parameter is <c>true</c>,
+            the data will be encrypted in-memory. If it is <c>false</c>, the
+            data is stored in plain-text in the process memory.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,System.Byte[])">
+            <summary>
+            Construct a new protected binary data object.
+            </summary>
+            <param name="bEnableProtection">If this paremeter is <c>true</c>,
+            the data will be encrypted in-memory. If it is <c>false</c>, the
+            data is stored in plain-text in the process memory.</param>
+            <param name="pbInitialValue">Initial value of the protected
+            object. The input parameter is not modified.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(KeePassLib.Security.ProtectedBinary)">
+            <summary>
+            Construct a new protected binary data object. Copy the data from
+            an existing object.
+            </summary>
+            <param name="pbTemplate">Existing <c>ProtectedBinary</c> object,
+            which is used to initialize the new object. This parameter must
+            not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
+            <summary>
+            Construct a new protected binary data object. Copy the data from
+            a <c>XorredBuffer</c> object.
+            </summary>
+            <param name="bEnableProtection">Enable protection or not.</param>
+            <param name="xbProtected"><c>XorredBuffer</c> object used to
+            initialize the <c>ProtectedBinary</c> object.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.Clear">
+            <summary>
+            Clear the protected data object. Doesn't change the protection level.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.EnableProtection(System.Boolean)">
+            <summary>
+            Change the protection level (protect or don't protect). Note: you
+            only need to call this function if you really want to change the
+            protection. If you specified the protection flag in the constructor,
+            and don't want to change it, you don't need to call this function.
+            </summary>
+            <param name="bEnableProtection">If <c>true</c>, the data will be protected
+            (encrypted in-memory). Otherwise the data will be stored in
+            plain-text in the process memory.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.SetData(System.Byte[])">
+            <summary>
+            Set protected data. This function also clears the internal
+            <c>XorredBuffer</c> object.
+            </summary>
+            <param name="pbNew">Data to store in the protected object. The input
+            byte array will not be modified, the data is copied to an internal
+            buffer of the protected object. This parameter must not be <c>null</c>;
+            if you want to clear the object, call the <c>Clear</c> member
+            function.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.ReadData">
+            <summary>
+            Get the protected data as a byte array. Please note that the returned
+            byte array is not protected and can therefore been read by any other
+            applications. Make sure that your clear it properly after usage.
+            </summary>
+            <returns>Unprotected byte array. This is always a copy of the internal
+            protected data and can therefore be cleared safely.</returns>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.ReadXorredData(KeePassLib.Cryptography.CryptoRandomStream)">
+            <summary>
+            Read the protected data and return it protected with a sequence
+            of bytes generated by a random stream. The object's data will be
+            invisible in process memory only if the object has been initialized
+            using a <c>XorredBuffer</c>. If no <c>XorredBuffer</c> has been used
+            or the binary has been read once already (in plain-text), the
+            operation won't be secure and the protected string will be visible
+            in process memory.
+            </summary>
+            <param name="crsRandomSource">Random number source.</param>
+            <returns>Protected data.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedBinary.IsProtected">
+            <summary>
+            A flag specifying whether the <c>ProtectedBinary</c> object has turned on
+            in-memory protection or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedBinary.IsViewable">
+            <summary>
+            A value specifying whether the <c>ProtectedString</c> object is currently
+            in-memory protected or not. This flag can be different than
+            <c>IsProtected</c>: if a <c>XorredBuffer</c> is used, the <c>IsProtected</c>
+            flag represents the memory protection flag, but not the actual protection.
+            In this case use <c>IsViewable</c>, which returns <c>true</c> if a
+            <c>XorredBuffer</c> is currently in use.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedBinary.Length">
+            <summary>
+            Length of the stored data.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.CrsAlgorithm">
+            <summary>
+            Algorithms supported by <c>CryptoRandomStream</c>.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ArcFour">
+            <summary>
+            The ARCFour algorithm (RC4 compatible).
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.CryptoRandomStream">
+            <summary>
+            A random stream class. The class is initialized using random
+            bytes provided by the caller. The produced stream has random
+            properties, but for the same seed always the same stream
+            is produced, i.e. this class can be used as stream cipher.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CryptoRandomStream.#ctor(KeePassLib.Cryptography.CrsAlgorithm,System.Byte[])">
+            <summary>
+            Construct a new cryptographically secure random stream object.
+            </summary>
+            <param name="genAlgorithm">Algorithm to use.</param>
+            <param name="pbKey">Initialization key. Must not be <c>null</c> and
+            must contain at least 1 byte.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the
+            <paramref name="pbKey"/> parameter is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the
+            <paramref name="pbKey"/> parameter contains no bytes or the
+            algorithm is unknown.</exception>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CryptoRandomStream.GetRandomBytes(System.UInt32)">
+            <summary>
+            Get <paramref name="uRequestedCount" /> random bytes.
+            </summary>
+            <param name="uRequestedCount">Number of random bytes to retrieve.</param>
+            <returns>Returns <paramref name="uRequestedCount" /> random bytes.</returns>
+        </member>
+        <member name="T:KeePassLib.Utility.NativeLib">
+            <summary>
+            Interface to native library (library containing fast versions of
+            several cryptographic functions).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.NativeLib.IsLibraryInstalled">
+            <summary>
+            Determine if the native library is installed.
+            </summary>
+            <returns>Returns <c>true</c>, if the native library is installed.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.NativeLib.TransformKey256(System.Byte[],System.Byte[],System.UInt64)">
+            <summary>
+            Transform a key.
+            </summary>
+            <param name="pBuf256">Source and destination buffer.</param>
+            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="uRounds">Number of transformation rounds.</param>
+            <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.NativeLib.TransformKey256Timed(System.Byte[],System.Byte[],System.UInt64@,System.UInt32)">
+            <summary>
+            Benchmark key transformation.
+            </summary>
+            <param name="pBuf256">Source and destination buffer.</param>
+            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="puRounds">Number of transformations done.</param>
+            <param name="uSeconds">Number of seconds to perform the benchmark.</param>
+            <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
+        </member>
+        <member name="P:KeePassLib.Utility.NativeLib.AllowNative">
+            <summary>
+            If this property is set to <c>true</c>, the native library is used.
+            If it is <c>false</c>, all calls to functions in this class will fail.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.Cipher.CipherPool">
+            <summary>
+            Pool of encryption/decryption algorithms (ciphers).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.Clear">
+            <summary>
+            Remove all cipher engines from the current pool.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.AddCipher(KeePassLib.Cryptography.Cipher.ICipherEngine)">
+            <summary>
+            Add a cipher engine to the pool.
+            </summary>
+            <param name="csEngine">Cipher engine to add. Must not be <c>null</c>.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.GetCipher(KeePassLib.PwUuid)">
+            <summary>
+            Get a cipher identified by its UUID.
+            </summary>
+            <param name="uuidCipher">UUID of the cipher to return.</param>
+            <returns>Reference to the requested cipher. If the cipher is
+            not found, <c>null</c> is returned.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.GetCipherIndex(KeePassLib.PwUuid)">
+            <summary>
+            Get the index of a cipher. This index is temporary and should
+            not be stored or used to identify a cipher.
+            </summary>
+            <param name="uuidCipher">UUID of the cipher.</param>
+            <returns>Index of the requested cipher. Returns <c>-1</c> if
+            the specified cipher is not found.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.GetCipherIndex(System.String)">
+            <summary>
+            Get the index of a cipher. This index is temporary and should
+            not be stored or used to identify a cipher.
+            </summary>
+            <param name="strDisplayName">Name of the cipher. Note that
+            multiple ciphers can have the same name. In this case, the
+            first matching cipher is returned.</param>
+            <returns>Cipher with the specified name or <c>-1</c> if
+            no cipher with that name is found.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.CipherPool.GlobalPool">
+            <summary>
+            Reference to the global cipher pool.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.CipherPool.EngineCount">
+            <summary>
+            Get the number of cipher engines in this pool.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.CipherPool.Item(System.Int32)">
+            <summary>
+            Get the cipher engine at the specified position. Throws
+            an exception if the index is invalid. You can use this
+            to iterate over all ciphers, but do not use it to
+            identify ciphers.
+            </summary>
+            <param name="nIndex">Index of the requested cipher engine.</param>
+            <returns>Reference to the cipher engine at the specified
+            position.</returns>
+        </member>
+        <member name="T:KeePassLib.Utility.MemUtil">
+            <summary>
+            Contains static buffer manipulation and string conversion routines.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.HexStringToByteArray(System.String)">
+            <summary>
+            Convert a hexadecimal string to a byte array. The input string must be
+            even (i.e. its length is a multiple of 2).
+            </summary>
+            <param name="strHexString">String containing hexadecimal characters.</param>
+            <returns>Returns a byte array. Returns <c>null</c> if the string parameter
+            was <c>null</c> or is an uneven string (i.e. if its length isn't a
+            multiple of 2).</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strHexString"/>
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.ByteArrayToHexString(System.Byte[])">
+            <summary>
+            Convert a byte array to a hexadecimal string.
+            </summary>
+            <param name="pbArray">Input byte array.</param>
+            <returns>Returns the hexadecimal string representing the byte
+            array. Returns <c>null</c> if the input byte array was <c>null</c>. Returns
+            an empty string ("") if the input byte array has length 0.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.ZeroByteArray(System.Byte[])">
+            <summary>
+            Set all bytes in a byte array to zero.
+            </summary>
+            <param name="pbArray">Input array. All bytes of this array will be set
+            to zero.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt16(System.Byte[])">
+            <summary>
+            Convert 2 bytes to a 16-bit unsigned integer using Little-Endian
+            encoding.
+            </summary>
+            <param name="pb">Input bytes. Array must contain at least 2 bytes.</param>
+            <returns>16-bit unsigned integer.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt32(System.Byte[])">
+            <summary>
+            Convert 4 bytes to a 32-bit unsigned integer using Little-Endian
+            encoding.
+            </summary>
+            <param name="pb">Input bytes.</param>
+            <returns>32-bit unsigned integer.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt64(System.Byte[])">
+            <summary>
+            Convert 8 bytes to a 64-bit unsigned integer using Little-Endian
+            encoding.
+            </summary>
+            <param name="pb">Input bytes.</param>
+            <returns>64-bit unsigned integer.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.UInt16ToBytes(System.UInt16)">
+            <summary>
+            Convert a 16-bit unsigned integer to 2 bytes using Little-Endian
+            encoding.
+            </summary>
+            <param name="uValue">16-bit input word.</param>
+            <returns>Two bytes representing the 16-bit value.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.UInt32ToBytes(System.UInt32)">
+            <summary>
+            Convert a 32-bit unsigned integer to 4 bytes using Little-Endian
+            encoding.
+            </summary>
+            <param name="uValue">32-bit input word.</param>
+            <returns>Four bytes representing the 32-bit value.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.UInt64ToBytes(System.UInt64)">
+            <summary>
+            Convert a 64-bit unsigned integer to 8 bytes using Little-Endian
+            encoding.
+            </summary>
+            <param name="uValue">64-bit input word.</param>
+            <returns>Eight bytes representing the 64-bit value.</returns>
+        </member>
+        <member name="T:KeePassLib.PwGroup">
+            <summary>
+            A group containing several password entries.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Interfaces.ITimeLogger">
+            <summary>
+            Interface for objects that support various times (creation time, last
+            access time, last modification time and expiration time). Offers
+            several helper functions (for example a function to touch the current
+            object).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Interfaces.ITimeLogger.Touch(System.Boolean)">
+            <summary>
+            Touch the object. This function updates the internal last access
+            time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+            the last modification time gets updated, too. Each time you call
+            <c>Touch</c>, the usage count of the object is increased by one.
+            </summary>
+            <param name="bModified">Update last modification time.</param>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.CreationTime">
+            <summary>
+            The date/time when the object was created.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.LastAccessTime">
+            <summary>
+            The date/time when the object was last accessed.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.LastModificationTime">
+            <summary>
+            The date/time when the object was last modified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.ExpiryTime">
+            <summary>
+            The date/time when the object expires.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.Expires">
+            <summary>
+            Flag that determines if the object does expire.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.UsageCount">
+            <summary>
+            Get or set the usage count of the object. To increase the usage
+            count by one, use the <c>Touch</c> function.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Interfaces.IDeepClonable`1">
+            <summary>
+            Interface for objects that are deeply clonable.
+            </summary>
+            <typeparam name="T">Reference type.</typeparam>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IDeepClonable`1.CloneDeep">
+            <summary>
+            Deeply clone the object.
+            </summary>
+            <returns>Cloned object.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.#ctor">
+            <summary>
+            Construct a new, empty group.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwGroup.#ctor(System.Boolean,System.Boolean)">
+            <summary>
+            Construct a new, empty group.
+            </summary>
+            <param name="bCreateNewUUID">Create a new UUID for this group.</param>
+            <param name="bSetTimes">Set creation, last access and last modification times to the current time.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.#ctor(System.Boolean,System.Boolean,System.String,KeePassLib.PwIcon)">
+            <summary>
+            Construct a new group.
+            </summary>
+            <param name="bCreateNewUUID">Create a new UUID for this group.</param>
+            <param name="bSetTimes">Set creation, last access and last modification times to the current time.</param>
+            <param name="strName">Name of the new group.</param>
+            <param name="pwIcon">Icon of the new group.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.CloneDeep">
+            <summary>
+            Deeply clone the current group. The returned group will be an exact
+            value copy of the current object (including UUID, etc.).
+            </summary>
+            <returns>Exact value copy of the current <c>PwGroup</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.Touch(System.Boolean)">
+            <summary>
+            Touch the group. This function updates the internal last access
+            time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+            the last modification time gets updated, too.
+            </summary>
+            <param name="bModified"></param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetCounts(System.Boolean,System.UInt32@,System.UInt32@)">
+            <summary>
+            Get number of groups and entries in the current group. This function
+            can also traverse through all subgroups and accumulate their counts
+            (recursive mode).
+            </summary>
+            <param name="bRecursive">If this parameter is <c>true</c>, all
+            subgroups and entries in subgroups will be counted and added to
+            the returned value. If it is <c>false</c>, only the number of
+            subgroups and entries of the current group is returned.</param>
+            <param name="uNumGroups">Number of subgroups.</param>
+            <param name="uNumEntries">Number of entries.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.TraverseTree(KeePassLib.TraversalMethod,KeePassLib.Delegates.GroupHandler,KeePassLib.Delegates.EntryHandler)">
+            <summary>
+            Traverse the group/entry tree in the current group. Various traversal
+            methods are available.
+            </summary>
+            <param name="tm">Specifies the traversal method.</param>
+            <param name="groupHandler">Function that performs an action on
+            the currently visited group (see <c>GroupHandler</c> for more).
+            This parameter may be <c>null</c>, in this case the tree is traversed but
+            you don't get notifications for each visited group.</param>
+            <param name="entryHandler">Function that performs an action on
+            the currently visited entry (see <c>EntryHandler</c> for more).
+            This parameter may be <c>null</c>.</param>
+            <returns>Returns <c>true</c> if all entries and groups have been
+            traversed. If the traversal has been canceled by one of the two
+            handlers, the return value is <c>false</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetFlatGroupList">
+            <summary>
+            Pack all groups into one flat linked list of references (recursively).
+            Temporary IDs (<c>TemporaryID</c> field) and levels (<c>TemporaryLevel</c>)
+            are assigned automatically.
+            </summary>
+            <returns>Flat list of all groups.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetFlatEntryList(System.Collections.Generic.LinkedList{KeePassLib.PwGroup})">
+            <summary>
+            Pack all entries into one flat linked list of references. Temporary
+            group IDs are assigned automatically.
+            </summary>
+            <param name="flatGroupList">A flat group list created by
+            <c>GetFlatGroupList</c>.</param>
+            <returns>Flat list of all entries.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.EnableStringFieldProtection(System.String,System.Boolean)">
+            <summary>
+            Enable protection of a specific string field type.
+            </summary>
+            <param name="strFieldName">Name of the string field to protect or unprotect.</param>
+            <param name="bEnable">Enable protection or not.</param>
+            <returns>Returns <c>true</c>, if the operation completed successfully,
+            otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry})">
+            <summary>
+            Search this group and all groups in the current one for entries.
+            </summary>
+            <param name="searchParams">Specifies the search method.</param>
+            <param name="listStorage">Entry list in which the search results will
+            be stored.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.FindGroup(KeePassLib.PwUuid,System.Boolean)">
+            <summary>
+            Find a group.
+            </summary>
+            <param name="uuid">UUID identifying the group the caller is looking for.</param>
+            <param name="bSearchRecursive">If <c>true</c>, the search is recursive.</param>
+            <returns>Returns reference to found group, otherwise <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.FindCreateGroup(System.String,System.Boolean)">
+            <summary>
+            Try to find a subgroup and create it, if it doesn't exist yet.
+            </summary>
+            <param name="strName">Name of the subgroup.</param>
+            <param name="bCreateIfNotFound">If the group isn't found: create it.</param>
+            <returns>Returns a reference to the requested group or <c>null</c> if
+            it doesn't exist and shouldn't be created.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.FindEntry(KeePassLib.PwUuid,System.Boolean)">
+            <summary>
+            Find an entry.
+            </summary>
+            <param name="uuid">UUID identifying the entry the caller is looking for.</param>
+            <param name="bSearchRecursive">If <c>true</c>, the search is recursive.</param>
+            <returns>Returns reference to found entry, otherwise <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean)">
+            <summary>
+            Assign properties to the current group based on a template group.
+            </summary>
+            <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
+            <param name="bOnlyIfNewer">Only set the properties of the template group
+            if it is newer than the current one.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.CreateNewItemUuids(System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Assign new UUIDs to groups and entries.
+            </summary>
+            <param name="bNewGroups">Create new UUIDs for subgroups.</param>
+            <param name="bNewEntries">Create new UUIDs for entries.</param>
+            <param name="bRecursive">Recursive tree traversal.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.FindCreateSubTree(System.String,System.Char[])">
+            <summary>
+            Find/create a subtree of groups.
+            </summary>
+            <param name="strTree">Tree string.</param>
+            <param name="vSeparators">Separators that delimit groups in the
+            <c>strTree</c> parameter.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetLevel">
+            <summary>
+            Get the level of the group (i.e. the number of parent groups).
+            </summary>
+            <returns>Number of parent groups.</returns>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Uuid">
+            <summary>
+            UUID of this group.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Name">
+            <summary>
+            The name of this group. Cannot be <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Icon">
+            <summary>
+            Icon of the group.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.ParentGroup">
+            <summary>
+            Reference to the group to which this group belongs. May be <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.IsExpanded">
+            <summary>
+            A flag that specifies if the group is shown as expanded or
+            collapsed in the user interface.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.CreationTime">
+            <summary>
+            The date/time when this group was created.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.LastModificationTime">
+            <summary>
+            The date/time when this group was last modified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.LastAccessTime">
+            <summary>
+            The date/time when this group was last accessed (read).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.ExpiryTime">
+            <summary>
+            The date/time when this group expires. A value of <c>DtInfinity</c>
+            means that the entry never expires.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Expires">
+            <summary>
+            Flag that determines if the group expires.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.UsageCount">
+            <summary>
+            Get or set the usage count of the group. To increase the usage
+            count by one, use the <c>Touch</c> function.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Groups">
+            <summary>
+            Get a list of subgroups in this group.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.Entries">
+            <summary>
+            Get a list of entries in this group.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.IsVirtual">
+            <summary>
+            A flag specifying whether this group is virtual or not. Virtual
+            groups can contain links to entries stored in other groups.
+            Note that this flag has to be interpreted and set by the calling
+            code; it won't prevent you from accessing and modifying the list
+            of entries in this group in any way.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.DefaultAutoTypeSequence">
+            <summary>
+            Default auto-type keystroke sequence for all entries in
+            this group.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Security.XorredBuffer">
+            <summary>
+            Represents an object that is encrypted using a XOR pad until
+            it is read. The key XOR pad can be changed without revealing the
+            protected data in process memory.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Security.XorredBuffer.#ctor(System.Byte[],System.Byte[])">
+            <summary>
+            Construct a new XOR-protected object using a protected byte array
+            and a XOR pad that decrypts the protected data. The
+            <paramref name="pbProtectedData"/> byte array must have the same size
+            as the <paramref name="pbXorPad"/> byte array.
+            </summary>
+            <param name="pbProtectedData">Protected data (XOR pad applied).</param>
+            <param name="pbXorPad">XOR pad that is used to decrypt the
+            <paramref name="pbData"/> parameter.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            parameters is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the byte arrays are
+            of different size.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.XorredBuffer.ReadPlainText">
+            <summary>
+            Decrypt the buffer. The <c>XorredBuffer</c> protection is useless
+            after you used this method. The object cannot be re-encrypted.
+            </summary>
+            <returns>Unprotected plain-text byte array.</returns>
+        </member>
+        <member name="M:KeePassLib.Security.XorredBuffer.ChangeKey(System.Byte[])">
+            <summary>
+            Change the protection key for this <c>XorredBuffer</c> object.
+            The data will first be decrypted using the old key and then
+            re-encrypted using the new key. This operation doesn't reveal
+            the plain-text in the process memory.
+            </summary>
+            <param name="pbNewXorPad">New protection pad. Must contain exactly
+            the same number of bytes as the length of the currently protected data.
+            Use the <c>Length</c> property of the <c>XorredBuffer</c> to query
+            the data length and pass a correct number of bytes to <c>ChangeKey</c>.</param>
+            <returns>New protected data (encrypted using the new XOR pad).</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the input
+            byte array doesn't have the correct size.</exception>
+        </member>
+        <member name="M:KeePassLib.Security.XorredBuffer.XorArrays(System.Byte[],System.Byte[])">
+            <summary>
+            XOR all bytes in a data buffer with a pad. Both byte arrays must
+            be of the same size.
+            </summary>
+            <param name="pbData">Data to be protected.</param>
+            <param name="pbPad">XOR pad.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the
+            parameters is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the length of
+            the data array and the pad aren't equal.</exception>
+        </member>
+        <member name="P:KeePassLib.Security.XorredBuffer.Length">
+            <summary>
+            Length of the protected data in bytes.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.QualityEstimation">
+            <summary>
+            A class that offers static functions to estimate the quality of
+            passwords.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.QualityEstimation.EstimatePasswordBits(System.Char[])">
+            <summary>
+            Estimate the quality of a password.
+            </summary>
+            <param name="vPasswordChars">Password to check.</param>
+            <returns>Estimated bit-strength of the password.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Cryptography.QualityEstimation.EstimatePasswordBits(System.Byte[])">
+            <summary>
+            Estimate the quality of a password.
+            </summary>
+            <param name="pbUnprotectedUTF8">Password to check, UTF-8 encoded.</param>
+            <returns>Estimated bit-strength of the password.</returns>
+        </member>
+        <member name="T:KeePassLib.Collections.ProtectedBinaryDictionary">
+            <summary>
+            A list of <c>ProtectedBinary</c> objects (dictionary).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.#ctor">
+            <summary>
+            Construct a new list of protected binaries.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.CloneDeep">
+            <summary>
+            Clone the current <c>ProtectedBinaryList</c> object, including all
+            stored protected strings.
+            </summary>
+            <returns>New <c>ProtectedBinaryList</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Get(System.String)">
+            <summary>
+            Get one of the stored binaries.
+            </summary>
+            <param name="strName">Binary identifier.</param>
+            <returns>Protected binary. If the binary identified by
+            <paramref name="strName"/> cannot be found, the function
+            returns <c>null</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Set(System.String,KeePassLib.Security.ProtectedBinary)">
+            <summary>
+            Set a binary object.
+            </summary>
+            <param name="strField">Identifier of the binary field to modify.</param>
+            <param name="pbNewValue">New value. This parameter must not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if any of the input
+            parameters is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Remove(System.String)">
+            <summary>
+            Remove a binary object.
+            </summary>
+            <param name="strField">Identifier of the binary field to remove.</param>
+            <returns>Returns <c>true</c> if the object has been successfully
+            removed, otherwise <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input parameter
+            is <c>null</c>.</exception>
+        </member>
+        <member name="P:KeePassLib.Collections.ProtectedBinaryDictionary.UCount">
+            <summary>
+            Get the number of binaries in this entry.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.AppLogEx">
+            <summary>
+            Application-wide logging services.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwCompressionAlgorithm">
+            <summary>
+            Compression algorithm specifiers.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwCompressionAlgorithm.None">
+            <summary>
+            No compression.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwCompressionAlgorithm.GZip">
+            <summary>
+            GZip compression.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwCompressionAlgorithm.Count">
+            <summary>
+            Virtual field: currently known number of algorithms. Should not be used
+            by plugins or libraries -- it's used internally only.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.FileOpenResultCode">
+            <summary>
+            Return values for a load-file operation.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.Success">
+            <summary>
+            File has been loaded successfully.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.UnknownError">
+            <summary>
+            An unknown error occured.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.FileNotFound">
+            <summary>
+            File not found. The file does not exist or the resource is currently unavailable.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.NoFileAccess">
+            <summary>
+            Windows doesn't give our program permission to access the file.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.IOError">
+            <summary>
+            Input-output error (for example stream closed before completely reading the file).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileStructure">
+            <summary>
+            Invalid file structure, the file isn't a valid KDB file.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileSignature">
+            <summary>
+            File signature is incorrect, the selected file isn't a KDB file.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.UnknownFileVersion">
+            <summary>
+            File version is unknown, the KDB file cannot be loaded.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.UnknownEncryptionAlgorithm">
+            <summary>
+            An unknown encryption algorithm has been used to encrypt the KDB file.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.SecurityException">
+            <summary>
+            A security exception occured. This is an internal error.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.InvalidHeader">
+            <summary>
+            Invalid header.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileFormat">
+            <summary>
+            Invalid file format. The inner XML file is corrupted.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.FileSaveResultCode">
+            <summary>
+            Return values for a file-save operation.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileSaveResultCode.Success">
+            <summary>
+            File has successfully been saved. No data loss possible.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileSaveResultCode.UnknownError">
+            <summary>
+            An unknown error occured.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileSaveResultCode.FileCreationFailed">
+            <summary>
+            Unable to create the specified file. Make sure you have write access
+            to the specified file/path.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileSaveResultCode.IOException">
+            <summary>
+            An input-output error occured. Possibly the medium has been removed
+            before the file was written completely.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.FileSaveResultCode.SecurityException">
+            <summary>
+            A security exception occured. This exception occurs when a cryptographic
+            service (for example random number generator) fails.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.TraversalMethod">
+            <summary>
+            Tree traversal methods.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.TraversalMethod.None">
+            <summary>
+            Don't traverse the tree.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.TraversalMethod.PreOrder">
+            <summary>
+            Traverse the tree in pre-order mode, i.e. first visit all items
+            in the current node, then visit all subnodes.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwMergeMethod">
+            <summary>
+            Methods for merging password databases/entries.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwIcon">
+            <summary>
+            Icon identifiers for groups and password entries.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwIcon.Count">
+            <summary>
+            Virtual identifier -- represents the number of icons.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwEntry">
+            <summary>
+            A class representing a password entry. A password entry consists of several
+            fields like title, user name, password, etc. Each password entry has a
+            unique ID (UUID).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwEntry.#ctor(KeePassLib.PwGroup,System.Boolean,System.Boolean)">
+            <summary>
+            Construct a new, empty password entry. Member variables will be initialized
+            to their default values.
+            </summary>
+            <param name="pwParentGroup">Reference to the containing group, this
+            parameter may be <c>null</c> and set later manually.</param>
+            <param name="bCreateNewUUID">If <c>true</c>, a new UUID will be created
+            for this entry. If <c>false</c>, the UUID is zero and you must set it
+            manually later.</param>
+            <param name="bSetTimes">If <c>true</c>, the creation, last modification
+            and last access times will be set to the current system time. The expire
+            time is set to never (<c>DtInfinity</c>).</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.CloneDeep">
+            <summary>
+            Clone the current entry. The returned entry is an exact value copy
+            of the current entry (including UUID and parent group reference).
+            All mutable members are cloned.
+            </summary>
+            <returns>Exact value clone. All references to mutable values changed.</returns>
+        </member>
+        <member name="M:KeePassLib.PwEntry.Touch(System.Boolean)">
+            <summary>
+            Touch the entry. This function updates the internal last access
+            time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+            the last modification time gets updated, too.
+            </summary>
+            <param name="bModified">Modify last modification time.</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.CreateBackup">
+            <summary>
+            Create a backup of this entry. The backup item doesn't contain any
+            history items.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwEntry.RestoreFromBackup(System.UInt32)">
+            <summary>
+            Restore an entry snapshot from backups.
+            </summary>
+            <param name="uBackupIndex">Index of the backup item, to which
+            should be reverted.</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.AssignProperties(KeePassLib.PwEntry,System.Boolean,System.Boolean)">
+            <summary>
+            Assign properties to the current entry based on a template entry.
+            </summary>
+            <param name="peTemplate">Template entry. Must not be <c>null</c>.</param>
+            <param name="bOnlyIfNewer">Only set the properties of the template entry
+            if it is newer than the current one.</param>
+            <param name="bIncludeHistory">If <c>true</c>, the history will be
+            copied, too.</param>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Uuid">
+            <summary>
+            UUID of this entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.ParentGroup">
+            <summary>
+            Reference to a group which contains the current entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Strings">
+            <summary>
+            Get or set all entry strings.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Binaries">
+            <summary>
+            Get or set all entry binaries.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.AutoType">
+            <summary>
+            Get or set all auto-type window/keystroke sequence associations.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.History">
+            <summary>
+            Get all previous versions of this entry (backups).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Icon">
+            <summary>
+            Image ID specifying the icon that will be used for this entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.ForegroundColor">
+            <summary>
+            Get or set the foreground color of this entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.BackgroundColor">
+            <summary>
+            Get or set the background color of this entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.CreationTime">
+            <summary>
+            The date/time when this entry was created.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.LastAccessTime">
+            <summary>
+            The date/time when this entry was last accessed (read).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.LastModificationTime">
+            <summary>
+            The date/time when this entry was last modified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.ExpiryTime">
+            <summary>
+            The date/time when this entry expires. Use the <c>Expires</c> property
+            to specify if the entry does actually expire or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Expires">
+            <summary>
+            Specifies whether the entry expires or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.UsageCount">
+            <summary>
+            Get or set the usage count of the entry. To increase the usage
+            count by one, use the <c>Touch</c> function.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.OverrideUrl">
+            <summary>
+            Entry-specific override URL. If this string is non-empty,
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Keys.KcpPassword">
+            <summary>
+            Master password / passphrase as provided by the user.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.KcpPassword.Clear">
+            <summary>
+            Clear the key and securely erase all security-critical information.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KcpPassword.Password">
+            <summary>
+            Get the password as protected string.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KcpPassword.KeyData">
+            <summary>
+            Get key data. Querying this property is fast (it returns a
+            reference to a cached <c>ProtectedBinary</c> object).
+            If no key data is available, <c>null</c> is returned.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Interfaces.LogStatusType">
+            <summary>
+            Status message types.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Interfaces.LogStatusType.Info">
+            <summary>
+            Default type: simple information type.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Interfaces.LogStatusType.Warning">
+            <summary>
+            Warning message.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Interfaces.LogStatusType.Error">
+            <summary>
+            Error message.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Interfaces.LogStatusType.AdditionalInfo">
+            <summary>
+            Additional information. Depends on lines above.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Interfaces.IStatusLogger">
+            <summary>
+            Status logging interface.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.StartLogging(System.String)">
+            <summary>
+            Function which needs to be called when logging is started.
+            </summary>
+            <param name="strOperation">This string should roughly describe
+            the operation, of which the status is logged.</param>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.EndLogging">
+            <summary>
+            Function which needs to be called when logging is ended
+            (i.e. when no more messages will be logged and when the
+            percent value won't change any more).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.SetProgress(System.UInt32)">
+            <summary>
+            Set the current progress in percent.
+            </summary>
+            <param name="uPercent">Percent of work finished.</param>
+            <returns>Returns <c>true</c> if the caller should continue
+            the current work.</returns>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.SetText(System.String,KeePassLib.Interfaces.LogStatusType)">
+            <summary>
+            Set the current status text.
+            </summary>
+            <param name="strNewText">Status text.</param>
+            <param name="lsType">Type of the message.</param>
+            <returns>Returns <c>true</c> if the caller should continue
+            the current work.</returns>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.ContinueWork">
+            <summary>
+            Check if the user cancelled the current work.
+            </summary>
+            <returns>Returns <c>true</c> if the caller should continue
+            the current work.</returns>
+        </member>
+        <member name="T:KeePassLib.Collections.ProtectedStringDictionary">
+            <summary>
+            A list of <c>ProtectedString</c> objects (dictionary).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.#ctor">
+            <summary>
+            Construct a new list of protected strings.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.CloneDeep">
+            <summary>
+            Clone the current <c>ProtectedStringList</c> object, including all
+            stored protected strings.
+            </summary>
+            <returns>New <c>ProtectedStringList</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Get(System.String)">
+            <summary>
+            Get one of the protected strings.
+            </summary>
+            <param name="strName">String identifier.</param>
+            <returns>Protected string. If the string identified by
+            <paramref name="strName"/> cannot be found, the function
+            returns <c>null</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input parameter
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.GetSafe(System.String)">
+            <summary>
+            Get one of the protected strings. The return value is never <c>null</c>.
+            If the requested string cannot be found, an empty protected string
+            object is returned.
+            </summary>
+            <param name="strName">String identifier.</param>
+            <returns>Returns a protected string object. If the standard string
+            has not been set yet, the return value is an empty string (<c>""</c>).</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Exists(System.String)">
+            <summary>
+            Test if a named string exists.
+            </summary>
+            <param name="strName">Name of the string to try.</param>
+            <returns>Returns <c>true</c> if the string exists, otherwise <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if
+            <paramref name="strName"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.ReadSafe(System.String)">
+            <summary>
+            Get one of the protected strings. If the string doesn't exist, the
+            return value is an empty string (<c>""</c>).
+            </summary>
+            <param name="strName">Name of the requested string.</param>
+            <returns>Requested string value or an empty string, if the named
+            string doesn't exist.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.ReadSafeEx(System.String)">
+            <summary>
+            Get one of the entry strings. If the string doesn't exist, the
+            return value is an empty string (<c>""</c>). If the string is
+            in-memory protected, the return value is <c>PwDefs.HiddenPassword</c>.
+            </summary>
+            <param name="strName">Name of the requested string.</param>
+            <returns>Returns the requested string in plain-text or
+            <c>PwDefs.HiddenPassword</c> if the string cannot be found.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Set(System.String,KeePassLib.Security.ProtectedString)">
+            <summary>
+            Set a string.
+            </summary>
+            <param name="strField">Identifier of the string field to modify.</param>
+            <param name="psNewValue">New value. This parameter must not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            parameters is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Remove(System.String)">
+            <summary>
+            Delete a string.
+            </summary>
+            <param name="strField">Name of the string field to delete.</param>
+            <returns>Returns <c>true</c> if the field has been successfully
+            removed, otherwise the return value is <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            parameters is <c>null</c>.</exception>
+        </member>
+        <member name="P:KeePassLib.Collections.ProtectedStringDictionary.UCount">
+            <summary>
+            Get the number of strings in this entry.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwUuid">
+            <summary>
+            Represents an UUID of a password entry or group. Once created, <c>PwUUID</c>
+            objects aren't modifyable any more (immutable).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwUuid.UuidSize">
+            <summary>
+            Standard size in bytes of a UUID.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwUuid.Zero">
+            <summary>
+            Zero UUID (all bytes are zero).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwUuid.#ctor">
+            <summary>
+            Construct a new UUID object. Its value is initialized to zero.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwUuid.#ctor(System.Boolean)">
+            <summary>
+            Construct a new UUID object.
+            </summary>
+            <param name="bCreateNew">If this parameter is <c>true</c>, a new
+            UUID is generated. If it is <c>false</c>, the UUID is initialized
+            to zero.</param>
+        </member>
+        <member name="M:KeePassLib.PwUuid.#ctor(System.Byte[])">
+            <summary>
+            Construct a new UUID object.
+            </summary>
+            <param name="uuidBytes">Initial value of the <c>PwUUID</c> object.</param>
+        </member>
+        <member name="M:KeePassLib.PwUuid.CreateNew">
+            <summary>
+            Create a new, random UUID.
+            </summary>
+            <returns>Returns <c>true</c> if a random UUID has been generated,
+            otherwise it returns <c>false</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwUuid.EqualsValue(KeePassLib.PwUuid)">
+            <summary>
+            Compare this UUID with another.
+            </summary>
+            <param name="uuid">Second UUID object.</param>
+            <returns>Returns <c>true</c> if both PwUuid object contain the same
+            value, otherwise <c>false</c> is returned.</returns>
+        </member>
+        <member name="M:KeePassLib.PwUuid.ToHexString">
+            <summary>
+            Convert the UUID to its string representation.
+            </summary>
+            <returns>String containing the UUID value.</returns>
+        </member>
+        <member name="M:KeePassLib.PwUuid.Set(System.Byte[])">
+            <summary>
+            Set the UUID value. The input parameter will not be modified.
+            </summary>
+            <param name="uuidBytes">UUID bytes. The byte array must contain
+            exactly <c>UUIDSize</c> bytes, otherwise the function will fail.</param>
+        </member>
+        <member name="M:KeePassLib.PwUuid.SetZero">
+            <summary>
+            Set the UUID value to zero.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwUuid.UuidBytes">
+            <summary>
+            Get the 16 UUID bytes.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwDeletedObject">
+            <summary>
+            Represents an object that has been deleted.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDeletedObject.#ctor">
+            <summary>
+            Construct a new <c>PwDeletedObject</c> object.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDeletedObject.CloneDeep">
+            <summary>
+            Clone the object.
+            </summary>
+            <returns>Value copy of the current object.</returns>
+        </member>
+        <member name="P:KeePassLib.PwDeletedObject.Uuid">
+            <summary>
+            UUID of the entry that has been deleted.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDeletedObject.DeletionTime">
+            <summary>
+            The date/time when the entry has been deleted.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Keys.KcpKeyFile">
+            <summary>
+            Key files as provided by the user.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.KcpKeyFile.Clear">
+            <summary>
+            Clear the key and securely erase all security-critical information.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.KcpKeyFile.Create(System.String,System.Byte[])">
+            <summary>
+            Create a new, random key-file.
+            </summary>
+            <param name="strFilePath">Path where the key-file should be saved to.
+            If the file exists already, it will be overwritten.</param>
+            <param name="pbAdditionalEntropy">Additional entropy used to generate
+            the random key. May be <c>null</c> (in this case only the KeePass-internal
+            random number generator is used).</param>
+            <returns>Returns a <c>FileSaveResult</c> error code.</returns>
+        </member>
+        <member name="P:KeePassLib.Keys.KcpKeyFile.Path">
+            <summary>
+            Path to the key file.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KcpKeyFile.KeyData">
+            <summary>
+            Get key data. Querying this property is fast (it returns a
+            reference to a cached <c>ProtectedBinary</c> object).
+            If no key data is available, <c>null</c> is returned.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.UrlUtil">
+            <summary>
+            A class containing various static path utility helper methods (like
+            stripping extension from a file, etc.).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.GetFileDirectory(System.String,System.Boolean)">
+            <summary>
+            Get the directory (path) of a file name. The returned string is
+            terminated by a directory separator character. Example:
+            passing <c>C:\\My Documents\\My File.kdb</c> in <paramref name="strFile" />
+            would produce this string: <c>C:\\My Documents\\</c>.
+            </summary>
+            <param name="strFile">Full path of a file.</param>
+            <param name="bAppendTerminatingChar">Append a terminating directory separator
+            character to the returned path.</param>
+            <returns>Directory of the file. The return value is an empty string
+            (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.GetFileName(System.String)">
+            <summary>
+            Gets the file name of the specified file (full path). Example:
+            if <paramref name="strPath" /> is <c>C:\\My Documents\\My File.kdb</c>
+            the returned string is <c>My File.kdb</c>.
+            </summary>
+            <param name="strPath">Full path of a file.</param>
+            <returns>File name of the specified file. The return value is
+            an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.StripExtension(System.String)">
+            <summary>
+            Strip the extension of a file.
+            </summary>
+            <param name="strPath">Full path of a file with extension.</param>
+            <returns>File name without extension. The return value is
+            an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.GetExtension(System.String)">
+            <summary>
+            Get the extension of a file.
+            </summary>
+            <param name="strPath">Full path of a file with extension.</param>
+            <returns>Extension without prepending dot.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.EnsureTerminatingSeparator(System.String,System.Boolean)">
+            <summary>
+            Ensure that a path is terminated with a directory separator character.
+            </summary>
+            <param name="strPath">Input path.</param>
+            <param name="bURL">If <c>true</c>, a slash (<c>/</c>) is appended to
+            the string if it's not terminated already. If <c>false</c>, the
+            default system directory separator character is used.</param>
+            <returns>Path having a directory separator as last character.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.CompactPath(System.String,System.UInt32)">
+            <summary>
+            Shorten a path.
+            </summary>
+            <param name="strPath">Path to make shorter.</param>
+            <param name="uMaxChars">Maximum number of characters in the returned string.</param>
+            <returns>Shortened path.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.FileAccessible(System.String,KeePassLib.Utility.UrlUtil.FileAccessMode)">
+            <summary>
+            Test if a specified path is accessible, either in read or write mode.
+            </summary>
+            <param name="strFilePath">Path to test.</param>
+            <param name="fMode">Requested file access mode.</param>
+            <returns>Returns <c>true</c> if the specified path is accessible in
+            the requested mode, otherwise the return value is <c>false</c>.</returns>
+        </member>
+        <member name="T:KeePassLib.Utility.UrlUtil.FileAccessMode">
+            <summary>
+            File access mode enumeration. Used by the <c>FileAccessible</c>
+            method.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Utility.UrlUtil.FileAccessMode.Read">
+            <summary>
+            Opening a file in read mode. The specified file must exist.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Utility.UrlUtil.FileAccessMode.Create">
+            <summary>
+            Opening a file in create mode. If the file exists already, it
+            will be overwritten. If it doesn't exist, it will be created.
+            The return value is <c>true</c>, if data can be written to the
+            file.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.PasswordGeneratorType">
+            <summary>
+            Type of the password generator. Different types like generators
+            based on given patterns, based on character sets, etc. are
+            available.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.CharSpaces">
+            <summary>
+            Generator based on character spaces/sets, i.e. groups
+            of characters like lower-case, upper-case or numeric characters.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.CustomCharSet">
+            <summary>
+            Custom character set. The user has provided a list of
+            characters which may be used in the final generated password.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.Pattern">
+            <summary>
+            Password generation based on a pattern. The user has provided
+            a pattern, which describes how the generated password has to
+            look like.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.PasswordGenerationOptions">
+            <summary>
+            Random password generation options / layout.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerationOptions.SerializeToString(KeePassLib.Cryptography.PasswordGenerationOptions)">
+            <summary>
+            Convert the options of a <c>GenerationOptions</c> object to a string.
+            </summary>
+            <returns>String representing the current options.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerationOptions.UnserializeFromString(System.String)">
+            <summary>
+            Convert a serialized <c>GenerationOptions</c> string to an object.
+            </summary>
+            <param name="strSource">String to unserialize.</param>
+            <returns>Unserialized object representing the string.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.ProfileName">
+            <summary>
+            Name of the current generation options profile.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.GeneratorType">
+            <summary>
+            Get or set the generator type.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CollectUserEntropy">
+            <summary>
+            Specify if the user should generate additional entropy (by moving
+            mouse and typing random keys, ...).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.PasswordLength">
+            <summary>
+            Length of the password to be generated.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CharSpaces">
+            <summary>
+            Character spaces from which characters will be selected to build
+            the generated password.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CustomCharSet">
+            <summary>
+            A custom char set overriding the character spaces definition.
+            This set contains all characters that will be used to build the generated
+            password.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.Pattern">
+            <summary>
+            Password pattern.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.CustomCharSet">
+            <summary>
+            A custom char set overriding the character spaces definition.
+            This set contains all characters that will be used to build the generated
+            password.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CustomCharSet.Clear">
+            <summary>
+            Remove all characters from this set.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CustomCharSet.Add(System.Char)">
+            <summary>
+            Add characters to the set.
+            </summary>
+            <param name="ch">Character to add.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CustomCharSet.Add(System.String)">
+            <summary>
+            Add characters to the set.
+            </summary>
+            <param name="strCharSet">String containing characters to add.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CustomCharSet.Set(System.String)">
+            <summary>
+            Set the character set to use.
+            </summary>
+            <param name="strCharSet">String containing all characters to use.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CustomCharSet.GetAsString">
+            <summary>
+            Convert the character set to a string containing all its characters.
+            </summary>
+            <returns>String containing all character set characters.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.CustomCharSet.UCount">
+            <summary>
+            Number of characters in this set.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.CustomCharSet.Item(System.UInt32)">
+            <summary>
+            Get a character of the set using an index.
+            </summary>
+            <param name="uPos">Index of the character to get.</param>
+            <returns>Character at the specified position. If the index is invalid,
+            an <c>IndexOutOfRangeException</c> is thrown.</returns>
+        </member>
+        <member name="T:KeePassLib.Cryptography.CharSpaces">
+            <summary>
+            Character spaces from which characters will be selected to build
+            the generated password.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CharSpaces.Clear">
+            <summary>
+            Disable all character spaces.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CharSpaces.SerializeToString(KeePassLib.Cryptography.CharSpaces)">
+            <summary>
+            Convert the current settings to a string.
+            </summary>
+            <returns>String representing the options.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CharSpaces.UnserializeFromString(System.String)">
+            <summary>
+            Extract settings from a compiled string (created by the <c>Compile</c>
+            member function).
+            </summary>
+            <param name="strCompiled">Compiled string generated by <c>Compile</c>.</param>
+        </member>
+        <member name="T:KeePassLib.Cryptography.PasswordGenerator">
+            <summary>
+            Utility functions for generating random passwords.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.AppConfigEx">
+            <summary>
+            Implements a cascading configuration class (singleton). Application settings
+            are first tried to be loaded from the global configuration file. If the
+            requested configuration key isn't found, it is loaded from the user
+            configuration file (stored in the user directory).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.Load">
+            <summary>
+            Load configuration. This method will load configuration information
+            from several different files (global configuration file in application
+            directory, configuration file in user directory, etc.) and mix them
+            into one in-memory configuration pool.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.String)">
+            <summary>
+            Get a configuration string.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <returns>Configuration item value. Returns an empty string (<c>""</c>) if
+            the named item could not be found.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.String,System.String)">
+            <summary>
+            Get a configuration string.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="strDefault">Default string to return if the named item
+            doesn't exist. May be <c>null</c>.</param>
+            <returns>Configuration item value. Returns <paramref name="strDefault" />
+            if the configuration item doesn't exist.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.Collections.Generic.KeyValuePair{System.String,System.String})">
+            <summary>
+            Get a configuration string.
+            </summary>
+            <param name="kvp">Key/value pair. Key = field name, value = default
+            value to return if the key isn't found.</param>
+            <returns>Configuration item value or the default value.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.String)">
+            <summary>
+            Set a configuration item's value. The item is created if it doesn't
+            exist yet. It is overwritten if it exists already.
+            </summary>
+            <param name="strField">Name of the configuration entry.</param>
+            <param name="strValue">Value of the configuration entry.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of
+            the parameters is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetBool(System.String,System.Boolean)">
+            <summary>
+            Get a boolean value from the current configuration.
+            </summary>
+            <param name="strField">Name of the field to get.</param>
+            <param name="bDefaultIfNotFound">Default value that is returned
+            if the specified field doesn't exist.</param>
+            <returns>Returns boolean value.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.Boolean)">
+            <summary>
+            Set a configuration item's value.
+            </summary>
+            <param name="strField">Name of the item.</param>
+            <param name="bValue">Value of the item.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetInt(System.String,System.Int32)">
+            <summary>
+            Get an integer value from the current configuration.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="nDefaultIfNotFound">Default value that is returned if
+            the specified item cannot be found.</param>
+            <returns>An integer.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetUInt(System.String,System.UInt32)">
+            <summary>
+            Get an unsigned integer value from the current configuration.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="uDefaultIfNotFound">Default value that is returned if
+            the specified item cannot be found.</param>
+            <returns>An unsigned integer.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.GetULong(System.String,System.UInt64)">
+            <summary>
+            Get an unsigned long integer value from the current configuration.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="uDefaultIfNotFound">Default value that is returned if
+            the specified item cannot be found.</param>
+            <returns>An unsigned long integer.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
+            is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.Int32)">
+            <summary>
+            Set a configuration item's value.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="nValue">Value of the configuration item.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.UInt32)">
+            <summary>
+            Set a configuration item's value.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="uValue">Value of the configuration item.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.UInt64)">
+            <summary>
+            Set a configuration item's value.
+            </summary>
+            <param name="strField">Name of the configuration item.</param>
+            <param name="uValue">Value of the configuration item.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.Save">
+            <summary>
+            Save the current configuration to files. File cascading is
+            handled by this function. This function first tries to write
+            to the global configuration file, if this fails it tries the
+            configuration file in the user's application directory.
+            </summary>
+            <returns>Returns <c>true</c>, if the configuration was saved
+            successfully, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.RemoveIndexedItems(System.String,System.UInt32)">
+            <summary>
+            Remove all fields indexed by a prefix and consecutive numbers.
+            All fields starting with the prefix will be removed. Index
+            is zero-based.
+            </summary>
+            <param name="strFieldPrefix">Field prefix.</param>
+            <param name="uStartIndex">First index.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.HasWriteAccessToGlobal">
+            <summary>
+            Get the status of the global configuration file.
+            </summary>
+            <returns>Returns <c>true</c> if you can write to the
+            global configuration file.</returns>
+        </member>
+        <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
+            <summary>
+            Standard AES cipher implementation.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.Cipher.ICipherEngine">
+            <summary>
+            Interface of an encryption/decryption class.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.ICipherEngine.EncryptStream(System.IO.Stream,System.Byte[],System.Byte[])">
+            <summary>
+            Encrypt a stream.
+            </summary>
+            <param name="sPlainText">Stream to read the plain text from.</param>
+            <param name="pbKey">Key to use.</param>
+            <param name="pbIV">Initialization vector.</param>
+            <returns>Stream, from which the encrypted data can be read.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.ICipherEngine.DecryptStream(System.IO.Stream,System.Byte[],System.Byte[])">
+            <summary>
+            Decrypt a stream.
+            </summary>
+            <param name="sEncrypted">Stream to read the encrypted data from.</param>
+            <param name="pbKey">Key to use.</param>
+            <param name="pbIV">Initialization vector.</param>
+            <returns>Stream, from which the decrypted data can be read.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine.CipherUuid">
+            <summary>
+            UUID of the engine. If you want to write an engine/plugin,
+            please contact the KeePass team to obtain a new UUID.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine.DisplayName">
+            <summary>
+            String displayed in the list of available encryption/decryption
+            engines in the GUI.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.Cipher.StandardAesEngine.AesUuidBytes">
+            <summary>
+            UUID of the cipher engine. This ID uniquely identifies the
+            AES engine. Must not be used by other ciphers.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.CipherUuid">
+            <summary>
+            Get the UUID of this cipher engine as <c>PwUuid</c> object.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.DisplayName">
+            <summary>
+            Get a displayable name describing this cipher engine.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.CharStream">
+            <summary>
+            Character stream class.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.StrUtil">
+            <summary>
+            A class containing various string helper methods.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.SetLocalizedString(KeePassLib.Utility.StrUtil.LocalizedStringID,System.String)">
+            <summary>
+            Set a localized version of a string.
+            </summary>
+            <param name="id">ID of the string to set.</param>
+            <param name="strText">New, localized text.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.MakeRtfString(System.String)">
+            <summary>
+            Convert a string into a valid RTF string.
+            </summary>
+            <param name="str">Any string.</param>
+            <returns>RTF-encoded string.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.StringToHtml(System.String)">
+            <summary>
+            Convert a string into a valid HTML sequence representing that string.
+            </summary>
+            <param name="str">String to convert.</param>
+            <returns>String, HTML-encoded.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.ReplaceCaseInsensitive(System.String,System.String,KeePassLib.Security.ProtectedString,System.Boolean)">
+            <summary>
+            Search for a substring case-insensitively and replace it by some new string.
+            </summary>
+            <param name="strString">Base string, which will be searched.</param>
+            <param name="strToReplace">The string to search for (and to replace).</param>
+            <param name="psNew">New replacement string. Must not be <c>null</c>.</param>
+            <param name="bCmdQuotes">If <c>true</c>, quotes will be replaced by
+            command-line friendly escape sequences.</param>
+            <returns>Modified string object.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.SplitCommandLine(System.String,System.String@,System.String@)">
+            <summary>
+            Split up a command-line into application and argument.
+            </summary>
+            <param name="strCmdLine">Command-line to split.</param>
+            <param name="strApp">Application path.</param>
+            <param name="strArgs">Arguments.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.FillPlaceholders(System.String,KeePassLib.PwEntry,System.String,KeePassLib.PwDatabase,System.Boolean)">
+            <summary>
+            Fill in all placeholders in a string using entry information.
+            </summary>
+            <param name="strSeq">String containing placeholders.</param>
+            <param name="pe">Entry to retrieve the data from.</param>
+            <param name="strAppPath">Path of the current executable file.</param>
+            <param name="pwDatabase">Current database.</param>
+            <param name="bCmdQuotes">If <c>true</c>, quotes will be replaced by
+            command-line friendly escape sequences.</param>
+            <returns>Returns the new string.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.InitRtf(System.Text.StringBuilder,System.String,System.Single)">
+            <summary>
+            Initialize an RTF document based on given font face and size.
+            </summary>
+            <param name="sb"><c>StringBuilder</c> to put the generated RTF into.</param>
+            <param name="strFontFace">Face name of the font to use.</param>
+            <param name="fFontSize">Size of the font to use.</param>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.SimpleHtmlToRtf(System.String)">
+            <summary>
+            Convert a simple HTML string to an RTF string.
+            </summary>
+            <param name="strHtmlString">Input HTML string.</param>
+            <returns>RTF string representing the HTML input string.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.ColorToUnnamedHtml(System.Drawing.Color,System.Boolean)">
+            <summary>
+            Convert a <c>Color</c> to a HTML color identifier string.
+            </summary>
+            <param name="color">Color to convert.</param>
+            <param name="bEmptyIfTransparent">If this is <c>true</c>, an empty string
+            is returned if the color is transparent.</param>
+            <returns>HTML color identifier string.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.FormatException(System.Exception,System.Boolean)">
+            <summary>
+            Format an exception and convert it to a string.
+            </summary>
+            <param name="excp"><c>Exception</c> to convert/format.</param>
+            <param name="bHeaderText">If this is <c>true</c>, a header text is prepended
+            to the result string. This text is a generic, localized error message.</param>
+            <returns>String representing the exception.</returns>
+        </member>
+        <member name="T:KeePassLib.Utility.StrUtil.LocalizedStringID">
+            <summary>
+            IDs of localizable strings.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Utility.StrUtil.LocalizedStringID.ExceptionOccured">
+            <summary>
+            ID of a string representing a message that an exception has occured.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwDatabase">
+            <summary>
+            The core password manager class. It contains a number of groups, which
+            contain the actual entries.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.#ctor">
+            <summary>
+            Constructs an empty password manager object.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.NewDatabase(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey)">
+            <summary>
+            Initialize the class for managing a new database. Previously loaded
+            data is deleted.
+            </summary>
+            <param name="ioConnection">IO connection of the new database.</param>
+            <param name="pwKey">Key to open the database.</param>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.OpenDatabase(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Open a database. The URL may point to any supported data source.
+            </summary>
+            <param name="ioSource">IO connection to load the database from.</param>
+            <param name="pwKey">Key used to open the specified database.</param>
+            <param name="slLogger">Logger, which gets all status messages.</param>
+            <returns>Returns a <c>FileOpenResult</c> error code.</returns>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.SaveDatabase(KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Save the currently opened database. The file is written to the location
+            it has been opened from.
+            </summary>
+            <param name="slLogger">Logger that recieves status information.</param>
+            <returns>Returns a <c>FileSaveResult</c> error code.</returns>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.SaveDatabaseTo(KeePassLib.Serialization.IOConnectionInfo,System.Boolean,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Save the currently opened database to a different location. If
+            <paramref name="bIsPrimaryNow" /> is <c>true</c>, the specified
+            location is made the default location for future saves
+            using <c>SaveDatabase</c>.
+            </summary>
+            <param name="ioConnection">New location to serialize the database to.</param>
+            <param name="bIsPrimaryNow">If <c>true</c>, the new location is made the
+            standard location for the database. If <c>false</c>, a copy of the currently
+            opened database is saved to the specified location, but it isn't
+            made the default location (i.e. no lockfiles will be moved for
+            example).</param>
+            <param name="slLogger">Logger that recieves status information.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.CloseDatabase">
+            <summary>
+            Closes the currently opened database. No confirmation message is shown
+            before closing. Unsaved changes will be lost.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.MergeIn(KeePassLib.PwDatabase,KeePassLib.PwMergeMethod)">
+            <summary>
+            Synchronize the current database with another one.
+            </summary>
+            <param name="pwSource">Input database to synchronize with. This input
+            database is used to update the current one, but is not modified! You
+            must copy the current object if you want a second instance of the
+            synchronized database. The input database must not be seen as valid
+            database any more after calling <c>Synchronize</c>.</param>
+            <param name="mm">Merge method.</param>
+            <returns>Returns <c>true</c>, if the synchronization was successful.</returns>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject})">
+            <summary>
+            Apply a list of deleted objects.
+            </summary>
+            <param name="listDelObjects">List of deleted objects.</param>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.Synchronize(System.String)">
+            <summary>
+            Synchronize current database with another one.
+            </summary>
+            <param name="strFile">Source file.</param>
+            <returns><c>FileOpenResult</c> error code.</returns>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.RootGroup">
+            <summary>
+            Get the root group that contains all groups and entries stored in the
+            database.
+            </summary>
+            <returns>Root group. The return value is <c>null</c>, if no database
+            has been opened.</returns>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.IOConnectionInfo">
+            <summary>
+            <c>IOConnection</c> of the currently opened database file.
+            Must not be <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.IsOpen">
+            <summary>
+            If this is <c>true</c>, a database is currently open.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.Modified">
+            <summary>
+            Modification flag. If true, the class has been modified and the
+            user interface should prompt the user to save the changes before
+            closing the database for example.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.MasterKey">
+            <summary>
+            The user key used for database encryption. This key must be created
+            and set before using any of the database load/save functions.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.Name">
+            <summary>
+            Name of the database.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.Description">
+            <summary>
+            Database description.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.DefaultUserName">
+            <summary>
+            Default user name used for new entries.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.DataCipherUuid">
+            <summary>
+            The encryption algorithm used to encrypt the data part of the database.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.Compression">
+            <summary>
+            Compression algorithm used to encrypt the data part of the database.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.KeyEncryptionRounds">
+            <summary>
+            Number of key transformation rounds (in order to make dictionary
+            attacks harder).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.MemoryProtection">
+            <summary>
+            Memory protection configuration (for default fields).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.DeletedObjects">
+            <summary>
+            Get a list of all deleted objects.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.LocalizedAppName">
+            <summary>
+            Localized application name.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.CryptoRandom">
+            <summary>
+            Cryptographically strong random number generator. The returned values
+            are unpredictable and cannot be reproduced.
+            <c>CryptoRandom</c> is a singleton class.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CryptoRandom.Initialize">
+            <summary>
+            Initialize the random number generator. This function needs to be
+            called before any of the <c>GetRandom*</c> member functions
+            can be used. It must be called only once.
+            </summary>
+            <returns>Returns <c>true</c> if the generator was initialized
+            successfully, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:KeePassLib.Cryptography.CryptoRandom.GetRandomBytes(System.UInt32)">
+            <summary>
+            Get a number of cryptographically strong random bytes.
+            </summary>
+            <param name="uRequestedBytes">Number of requested random bytes.</param>
+            <returns>A byte array consisting of <paramref name="nRequestedBytes"/>
+            random bytes.</returns>
+            <exception cref="T:System.Security.SecurityException">Thrown if the
+            random number generator hasn't been initialized.</exception>
+        </member>
+        <member name="T:KeePassLib.Collections.PwObjectList`1">
+            <summary>
+            List of objects that implement <c>IDeepClonable</c> and cannot be <c>null</c>.
+            </summary>
+            <typeparam name="T">Type specifier.</typeparam>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.#ctor">
+            <summary>
+            Construct a new list of objects.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.CloneDeep">
+            <summary>
+            Clone the current <c>PwObjectList</c>, including all
+            stored objects (deep copy).
+            </summary>
+            <returns>New <c>PwObjectList</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.Add(`0)">
+            <summary>
+            Add an object to this list.
+            </summary>
+            <param name="pwObject">Object to be added.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.GetAt(System.UInt32)">
+            <summary>
+            Get an object of the list.
+            </summary>
+            <param name="uIndex">Index of the object to get. Must be valid, otherwise an
+            exception is thrown.</param>
+            <returns>Reference to an existing <c>T</c> object. Is never <c>null</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.Remove(`0)">
+            <summary>
+            Delete an object of this list. The object to be deleted is identified
+            by a reference handle.
+            </summary>
+            <param name="pwReference">Reference of the object to be deleted.</param>
+            <returns>Returns <c>true</c> if the object was deleted, <c>false</c> if
+            the object wasn't found in this list.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.MoveOne(`0,System.Boolean)">
+            <summary>
+            Move an object up or down.
+            </summary>
+            <param name="tObject">The object to be moved.</param>
+            <param name="bUp">Move one up. If <c>false</c>, move one down.</param>
+        </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.MoveTopBottom(`0[],System.Boolean)">
+            <summary>
+            Move some of the objects in this list to the top/bottom.
+            </summary>
+            <param name="vObjects">List of objects to be moved.</param>
+            <param name="bTop">Move to top. If <c>false</c>, move to bottom.</param>
+        </member>
+        <member name="P:KeePassLib.Collections.PwObjectList`1.UCount">
+            <summary>
+            Get number of objects in this list.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwDefs">
+            <summary>
+            Contains KeePassLib-global definitions and enums.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.ProductName">
+            <summary>
+            The product name.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.ShortProductName">
+            <summary>
+            A short, simple string representing the product name. The string
+            should contain no spaces, directory separator characters, etc.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.Version32">
+            <summary>
+            Version, encoded as 32-bit unsigned integer.
+            2.00 = 0x02000000. 2.01 = 0x02000100.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.VersionString">
+            <summary>
+            Version, encoded as string.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.HomepageUrl">
+            <summary>
+            Product homepage URL. Terminated by a forward slash.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.DonationsUrl">
+            <summary>
+            Product donations URL.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.PluginsUrl">
+            <summary>
+            URL to the online plugins page.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.VersionUrl">
+            <summary>
+            URL to an XML file that contains information about the latest KeePass
+            available on the homepage.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.HelpUrl">
+            <summary>
+            URL to the root path of the online KeePass help. Terminated by
+            a forward slash.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.DefaultKeyEncryptionRounds">
+            <summary>
+            Default number of master key encryption/transformation rounds (making dictionary attacks harder).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.TitleField">
+            <summary>
+            Default identifier string for the title field. Should not contain
+            spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.UserNameField">
+            <summary>
+            Default identifier string for the user name field. Should not contain
+            spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.PasswordField">
+            <summary>
+            Default identifier string for the password field. Should not contain
+            spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.UrlField">
+            <summary>
+            Default identifier string for the URL field. Should not contain
+            spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.NotesField">
+            <summary>
+            Default identifier string for the notes field. Should not contain
+            spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.TanIndexField">
+            <summary>
+            Default identifier string for the field which will contain TAN indices.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.TanTitle">
+            <summary>
+            Default title of an entry that is really a TAN entry.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.AutoTypeStringPrefix">
+            <summary>
+            Prefix of a custom auto-type string field.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.HiddenPassword">
+            <summary>
+            Default string representing a hidden password.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.DefaultAutoTypeSequence">
+            <summary>
+            Default auto-type keystroke sequence. If no custom sequence is
+            specified, this sequence is used.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.DefaultAutoTypeSequenceTan">
+            <summary>
+            Default auto-type keystroke sequence for TAN entries. If no custom
+            sequence is specified, this sequence is used.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.ProtectedUserRegKey">
+            <summary>
+            Name of the registration key that holds the user's account key.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.DtDefaultNow">
+            <summary>
+            A DateTime object that represents infinity.
+            Example: setting the expire time of an entry to DtInfinity would mean
+            that the entry never expires.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwDefs.IsStandardField(System.String)">
+            <summary>
+            Check if a name is a standard field name.
+            </summary>
+            <param name="strFieldName">Input field name.</param>
+            <returns>Returns <c>true</c>, if the field name is a standard
+            field name (title, user name, password, ...), otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:KeePassLib.PwDefs.IsTanEntry(KeePassLib.PwEntry)">
+            <summary>
+            Check if an entry is a TAN.
+            </summary>
+            <param name="pe">Password entry.</param>
+            <returns>Returns <c>true</c> if the entry is a TAN.</returns>
+        </member>
+        <member name="T:KeePassLib.SearchParameters">
+            <summary>
+            Search parameters for group and entry searches.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.SearchParameters.SearchText">
+            <summary>
+            The text to be searched.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.SearchParameters.SearchInAllStrings">
+            <summary>
+            If this flag is <c>true</c>, all string fields of entries will
+            be searched. This parameter overrides all other <c>SearchIn*</c>
+            flags (only if set to <c>true</c>).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.SearchParameters.StringCompare">
+            <summary>
+            String comparison type. Specifies the condition when the specified
+            text matches a group/entry string.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.SearchParameters.#ctor">
+            <summary>
+            Construct a new search parameters object.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.MemoryProtectionConfig">
+            <summary>
+            Memory protection configuration structure (for default fields).
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Utility.TimeUtil">
+            <summary>
+            Contains various static time structure manipulation and conversion
+            routines.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Utility.TimeUtil.PwTimeLength">
+            <summary>
+            Length of a compressed <c>PW_TIME</c> structure in bytes.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.PackTime(System.DateTime)">
+            <summary>
+            Pack a <c>DateTime</c> object into 5 bytes. Layout: 2 zero bits,
+            year 12 bits, month 4 bits, day 5 bits, hour 5 bits, minute 6
+            bits, second 6 bits.
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.UnpackTime(System.Byte[])">
+            <summary>
+            Unpack a packed time (5 bytes, packed by the <c>PackTime</c>
+            member function) to a <c>DateTime</c> object.
+            </summary>
+            <param name="pb">Packed time, 5 bytes.</param>
+            <returns>Unpacked <c>DateTime</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.PackPwTime(System.DateTime)">
+            <summary>
+            Pack a <c>DateTime</c> object into 7 bytes (<c>PW_TIME</c>).
+            </summary>
+            <param name="dt">Object to be encoded.</param>
+            <returns>Packed time, 7 bytes (<c>PW_TIME</c>).</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.UnpackPwTime(System.Byte[])">
+            <summary>
+            Unpack a packed time (7 bytes, <c>PW_TIME</c>) to a <c>DateTime</c> object.
+            </summary>
+            <param name="pb">Packed time, 7 bytes.</param>
+            <returns>Unpacked <c>DateTime</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.ToDisplayString(System.DateTime)">
+            <summary>
+            Convert a <c>DateTime</c> object to a displayable string.
+            </summary>
+            <param name="dt"><c>DateTime</c> object to convert to a string.</param>
+            <returns>String representing the specified <c>DateTime</c> object.</returns>
+        </member>
+        <member name="F:KeePassLib.Serialization.IOCredSaveMode.NoSave">
+            <summary>
+            Do not remember user name or password.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.IOCredSaveMode.UserNameOnly">
+            <summary>
+            Remember the user name only, not the password.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.IOCredSaveMode.SaveCred">
+            <summary>
+            Save both user name and password.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Serialization.IOConnectionInfo.SerializeToString(KeePassLib.Serialization.IOConnectionInfo)">
+            <summary>
+            Serialize the current connection info to a string. Credentials
+            are only serialized if the <c>SaveCredentials</c> property
+            is <c>true</c>.
+            </summary>
+            <param name="iocToCompile">Input object to be serialized.</param>
+            <returns>Serialized object as string.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.IOConnectionInfo.TransformUnreadable(System.String,System.Boolean)">
+            <summary>
+            Very simple string protection. Doesn't really encrypt the input
+            string, only encodes it that it's not readable on the first glance.
+            </summary>
+            <param name="strToEncode">The string to encode/decode.</param>
+            <param name="bEncode">If <c>true</c>, the string will be encoded,
+            otherwise it'll be decoded.</param>
+            <returns>Encoded/decoded string.</returns>
+        </member>
+        <member name="T:KeePassLib.Collections.AutoTypeConfig">
+            <summary>
+            A dictionary of auto-type window/keystroke sequence pairs.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.#ctor">
+            <summary>
+            Construct a new auto-type dictionary.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.Clear">
+            <summary>
+            Remove all window/keystroke sequence associations.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.CloneDeep">
+            <summary>
+            Clone the auto-type dictionary.
+            </summary>
+            <returns>New, cloned object.</returns>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.Set(System.String,System.String)">
+            <summary>
+            Set a window/keystroke sequence pair.
+            </summary>
+            <param name="strWindow">Name of the window. Must not be <c>null</c>.</param>
+            <param name="strKeystrokeSequence">Keystroke sequence for the specified
+            window. Must not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            parameters is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.Get(System.String)">
+            <summary>
+            Get a keystroke sequence associated with the specified window.
+            Returns <c>null</c>, if no sequence can be found.
+            </summary>
+            <param name="strWindow">Window identifier.</param>
+            <returns>Keystroke sequence associated with the specified window.
+            The return value is <c>null</c>, if no keystroke sequence has been
+            defined for this window yet.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.GetSafe(System.String)">
+            <summary>
+            Get a keystroke sequence associated with the specified window.
+            Returns an empty string (<c>""</c>), if no sequence can be found.
+            </summary>
+            <param name="strWindow">Window identifier.</param>
+            <returns>Keystroke sequence associated with the specified window.
+            The return value is an empty string (<c>""</c>), if no keystroke
+            sequence has been defined for this window yet.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.AutoTypeConfig.Remove(System.String)">
+            <summary>
+            Remove an auto-type entry.
+            </summary>
+            <param name="strWindow">Window identifier. Must not be <c>null</c>.</param>
+            <returns>Returns <c>true</c> if the entry has been removed.</returns>
+        </member>
+        <member name="P:KeePassLib.Collections.AutoTypeConfig.Enabled">
+            <summary>
+            Specify whether auto-type is enabled or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Collections.AutoTypeConfig.DefaultSequence">
+            <summary>
+            The default keystroke sequence that is auto-typed if
+            no matching window is found in the <c>Items</c>
+            container.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Collections.AutoTypeConfig.WindowSequencePairs">
+            <summary>
+            Get all auto-type window/keystroke sequence pairs.
+            </summary>
+        </member>
+    </members>
+</doc>

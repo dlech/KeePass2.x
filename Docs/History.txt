@@ -1,0 +1,99 @@
+07/03/17 - 2.00 Alpha
+- Strings containing quotes are now passed correctly over the
+  command-line
+- Created small help file with links to online resources
+- Rewrote cipher engines pool
+- Restructured KeePassLib
+- Added dialog for browser selection
+- Added option to disable searching for key files on removable
+  media
+- Improved KDB3 support (especially added support for empty
+  times as created by the KeePass Toolbar for example)
+- Added confirmations for deleting entries and groups
+- Fixed a lot of bugs and inconsistencies; added features
+- Fixed a bug in the 'Start KeePass at Windows startup'
+  registration method
+- Added custom split container control to avoid focus problems
+- Clipboard is only cleared if it contains KeePass data
+- New system for configuration defaults
+- A LOT of other features, bugfixes, ...
+
+... (a lot of versions here) ...
+
+06/10/07 - 2.00 Pre-Alpha 29
+- Various small additions and bugfixes
+
+06/10/06 - 2.00 Pre-Alpha 28
+- Implemented entry data drag-n-drop for main entry list
+- Implemented URL overriding
+- Added {} repeat operator in password generator
+- Added database maintenance dialog (deleting history entries)
+- Custom entry strings are now shown in the entry preview
+- Added alternative window layout: side by side
+- A lot of other features and bugfixes
+
+... (some versions here) ...
+
+06/09/17 - 2.00 Pre-Alpha 25
+- Fixed exception that occured when WTS notifications are
+  unavailable
+
+06/09/16 - 2.00 Pre-Alpha 24
+- Implemented quality progress bars (gradient bars)
+- Added special key codes into placeholder insertion field in
+  the 'Edit AutoType' dialog
+- Currently opened windows are listed in the 'Edit AutoType'
+  dialog
+- Entries can be copied/pasted to/from Windows clipboard
+- Added {APPDIR}, {DOCDIR} and {GROUP} codes
+- Foreground and background colors can be assigned to entries
+- Expired entries are displayed using a striked-out font
+- Password generator supports profiles now
+- Password generator supports patterns now
+- VariousImport: Added support for Password Exporter XML files
+- A _lot_ of other features and bugfixes
+
+06/09/07 - 2.00 Pre-Alpha 23
+- Internal release
+
+06/09/07 - 2.00 Pre-Alpha 22
+- Improved password quality estimation
+- Implemented secure edit controls (in key creation dialog, key
+  prompt dialog and entry editing dialog)
+
+06/09/05 - 2.00 Pre-Alpha 21
+- Removed BZip2 compression
+- Added font selection for main window lists
+- Added file association creation/removal buttons in the
+  options dialog
+- Installer supports associating KDB files with KeePass
+- Added option to run KeePass at Windows startup (for current
+  user; see Options dialog, Integration page)
+- Added default tray action (sending/restoring to/from tray)
+- Added single-click option for default tray action
+- Added option to automatically open last used database on
+  KeePass startup (see Options dialog, Advanced page)
+- Added option to automatically save the current database on
+  exit and workspace locking (Options dialog, Advanced page)
+- Implemented system-wide KeePass application messages
+- Added 'Limit to single instance' option
+- Added option to check for update at KeePass startup
+- Added options to show expired entries and entries that will
+  expire soon after opening a database
+- Added option to generate random passwords for new entries
+- Links in the entry view are clickable now
+- Links in the notes field of the entry dialog are clickable
+  now
+- Fixed context menu auto-type command (inheriting defaults)
+- Improved entry list state updating performance
+- Classic databases are listed in the main MRU list, prefixed
+  with '[Classic]'
+- Other features and bugfixes
+
+06/09/03 - 2.00 Pre-Alpha 20
+- First testing release
+
+... (a lot of versions here) ...
+
+06/03/21 - 2.00 Pre-Alpha 0
+- Project started

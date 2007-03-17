@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_lblIntro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 72</value>
+  </data>
+  <data name="m_lblIntro.Size" type="System.Drawing.Size, System.Drawing">
+    <value>457, 29</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblIntro.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="m_lblIntro.Text" xml:space="preserve">
+    <value>You are creating a new password database.  Specify the composite master key, which will be used to encrypt the database.</value>
+  </data>
+  <data name="&gt;&gt;m_lblIntro.Name" xml:space="preserve">
+    <value>m_lblIntro</value>
+  </data>
+  <data name="&gt;&gt;m_lblIntro.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblIntro.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblIntro.ZOrder" xml:space="preserve">
+    <value>21</value>
+  </data>
+  <data name="m_lblMultiInfo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 110</value>
+  </data>
+  <data name="m_lblMultiInfo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>457, 42</value>
+  </data>
+  <data name="m_lblMultiInfo.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="m_lblMultiInfo.Text" xml:space="preserve">
+    <value>A composite master key consists of one or more of the following key sources. All sources you specify will be required to open the database.  If you lose one source, you will not be able to open the database.</value>
+  </data>
+  <data name="&gt;&gt;m_lblMultiInfo.Name" xml:space="preserve">
+    <value>m_lblMultiInfo</value>
+  </data>
+  <data name="&gt;&gt;m_lblMultiInfo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblMultiInfo.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblMultiInfo.ZOrder" xml:space="preserve">
+    <value>20</value>
+  </data>
+  <data name="m_cbPassword.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_cbPassword.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="m_cbPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 164</value>
+  </data>
+  <data name="m_cbPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 17</value>
+  </data>
+  <data name="m_cbPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="m_cbPassword.Text" xml:space="preserve">
+    <value>Master Password:</value>
+  </data>
+  <data name="&gt;&gt;m_cbPassword.Name" xml:space="preserve">
+    <value>m_cbPassword</value>
+  </data>
+  <data name="&gt;&gt;m_cbPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbPassword.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="m_tbPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>144, 162</value>
+  </data>
+  <data name="m_tbPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>322, 20</value>
+  </data>
+  <data name="m_tbPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tbPassword.Name" xml:space="preserve">
+    <value>m_tbPassword</value>
+  </data>
+  <data name="&gt;&gt;m_tbPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbPassword.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="m_lblRepeatPassword.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblRepeatPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 191</value>
+  </data>
+  <data name="m_lblRepeatPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>93, 13</value>
+  </data>
+  <data name="m_lblRepeatPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_lblRepeatPassword.Text" xml:space="preserve">
+    <value>Repeat password:</value>
+  </data>
+  <data name="&gt;&gt;m_lblRepeatPassword.Name" xml:space="preserve">
+    <value>m_lblRepeatPassword</value>
+  </data>
+  <data name="&gt;&gt;m_lblRepeatPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblRepeatPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblRepeatPassword.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="m_tbRepeatPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>144, 188</value>
+  </data>
+  <data name="m_tbRepeatPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>322, 20</value>
+  </data>
+  <data name="m_tbRepeatPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;m_tbRepeatPassword.Name" xml:space="preserve">
+    <value>m_tbRepeatPassword</value>
+  </data>
+  <data name="&gt;&gt;m_tbRepeatPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbRepeatPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbRepeatPassword.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="m_cbKeyFile.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_cbKeyFile.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="m_cbKeyFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 240</value>
+  </data>
+  <data name="m_cbKeyFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 17</value>
+  </data>
+  <data name="m_cbKeyFile.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="m_cbKeyFile.Text" xml:space="preserve">
+    <value>Key File:</value>
+  </data>
+  <data name="&gt;&gt;m_cbKeyFile.Name" xml:space="preserve">
+    <value>m_cbKeyFile</value>
+  </data>
+  <data name="&gt;&gt;m_cbKeyFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbKeyFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbKeyFile.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="m_cbUserAccount.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_cbUserAccount.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="m_cbUserAccount.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 288</value>
+  </data>
+  <data name="m_cbUserAccount.Size" type="System.Drawing.Size, System.Drawing">
+    <value>158, 17</value>
+  </data>
+  <data name="m_cbUserAccount.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="m_cbUserAccount.Text" xml:space="preserve">
+    <value>Windows User Account</value>
+  </data>
+  <data name="&gt;&gt;m_cbUserAccount.Name" xml:space="preserve">
+    <value>m_cbUserAccount</value>
+  </data>
+  <data name="&gt;&gt;m_cbUserAccount.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbUserAccount.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbUserAccount.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="m_lblWindowsAccDesc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 308</value>
+  </data>
+  <data name="m_lblWindowsAccDesc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>479, 29</value>
+  </data>
+  <data name="m_lblWindowsAccDesc.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="m_lblWindowsAccDesc.Text" xml:space="preserve">
+    <value>This source uses the logon credentials of the current Windows user. These credentials don't change if the Windows logon password changes.</value>
+  </data>
+  <data name="&gt;&gt;m_lblWindowsAccDesc.Name" xml:space="preserve">
+    <value>m_lblWindowsAccDesc</value>
+  </data>
+  <data name="&gt;&gt;m_lblWindowsAccDesc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblWindowsAccDesc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblWindowsAccDesc.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="m_lblKeyFileInfo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 265</value>
+  </data>
+  <data name="m_lblKeyFileInfo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>438, 16</value>
+  </data>
+  <data name="m_lblKeyFileInfo.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="m_lblKeyFileInfo.Text" xml:space="preserve">
+    <value>Create a new key file or browse your disks for an existing one.</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyFileInfo.Name" xml:space="preserve">
+    <value>m_lblKeyFileInfo</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyFileInfo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyFileInfo.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyFileInfo.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 357</value>
+  </data>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+    <value>&amp;Cancel</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnCancel.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+    <value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="m_btnCreate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>351, 357</value>
+  </data>
+  <data name="m_btnCreate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_btnCreate.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="m_btnCreate.Text" xml:space="preserve">
+    <value>&amp;OK</value>
+  </data>
+  <data name="m_btnCreate.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
+  <data name="&gt;&gt;m_btnCreate.Name" xml:space="preserve">
+    <value>m_btnCreate</value>
+  </data>
+  <data name="&gt;&gt;m_btnCreate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCreate.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCreate.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="m_btnSaveKeyFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>351, 236</value>
+  </data>
+  <data name="m_btnSaveKeyFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_btnSaveKeyFile.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="m_btnSaveKeyFile.Text" xml:space="preserve">
+    <value> C&amp;reate</value>
+  </data>
+  <data name="m_btnSaveKeyFile.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
+  <data name="m_btnSaveKeyFile.ToolTip" xml:space="preserve">
+    <value>Create a new key file.</value>
+  </data>
+  <data name="&gt;&gt;m_btnSaveKeyFile.Name" xml:space="preserve">
+    <value>m_btnSaveKeyFile</value>
+  </data>
+  <data name="&gt;&gt;m_btnSaveKeyFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnSaveKeyFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnSaveKeyFile.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="m_cbHidePassword.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
+    <value>Button</value>
+  </data>
+  <data name="m_cbHidePassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>475, 160</value>
+  </data>
+  <data name="m_cbHidePassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 23</value>
+  </data>
+  <data name="m_cbHidePassword.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_cbHidePassword.ToolTip" xml:space="preserve">
+    <value>Show/hide password using asterisks.</value>
+  </data>
+  <data name="&gt;&gt;m_cbHidePassword.Name" xml:space="preserve">
+    <value>m_cbHidePassword</value>
+  </data>
+  <data name="&gt;&gt;m_cbHidePassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbHidePassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbHidePassword.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="m_btnOpenKeyFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 236</value>
+  </data>
+  <data name="m_btnOpenKeyFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_btnOpenKeyFile.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="m_btnOpenKeyFile.Text" xml:space="preserve">
+    <value> &amp;Browse</value>
+  </data>
+  <data name="m_btnOpenKeyFile.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
+  <data name="m_btnOpenKeyFile.ToolTip" xml:space="preserve">
+    <value>Use an existing file as key file.</value>
+  </data>
+  <data name="&gt;&gt;m_btnOpenKeyFile.Name" xml:space="preserve">
+    <value>m_btnOpenKeyFile</value>
+  </data>
+  <data name="&gt;&gt;m_btnOpenKeyFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnOpenKeyFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnOpenKeyFile.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 357</value>
+  </data>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="m_btnHelp.Text" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+    <value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="m_lblSeparator.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 346</value>
+  </data>
+  <data name="m_lblSeparator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>519, 2</value>
+  </data>
+  <data name="m_lblSeparator.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;m_lblSeparator.Name" xml:space="preserve">
+    <value>m_lblSeparator</value>
+  </data>
+  <data name="&gt;&gt;m_lblSeparator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblSeparator.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblSeparator.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="m_pbPasswordQuality.Location" type="System.Drawing.Point, System.Drawing">
+    <value>144, 214</value>
+  </data>
+  <data name="m_pbPasswordQuality.Size" type="System.Drawing.Size, System.Drawing">
+    <value>266, 14</value>
+  </data>
+  <data name="m_pbPasswordQuality.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;m_pbPasswordQuality.Name" xml:space="preserve">
+    <value>m_pbPasswordQuality</value>
+  </data>
+  <data name="&gt;&gt;m_pbPasswordQuality.Type" xml:space="preserve">
+    <value>KeePass.UI.QualityProgressBar, KeePass, Version=1.0.2628.27942, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_pbPasswordQuality.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pbPasswordQuality.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_lblEstimatedQuality.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblEstimatedQuality.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 215</value>
+  </data>
+  <data name="m_lblEstimatedQuality.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 13</value>
+  </data>
+  <data name="m_lblEstimatedQuality.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="m_lblEstimatedQuality.Text" xml:space="preserve">
+    <value>Estimated quality:</value>
+  </data>
+  <data name="&gt;&gt;m_lblEstimatedQuality.Name" xml:space="preserve">
+    <value>m_lblEstimatedQuality</value>
+  </data>
+  <data name="&gt;&gt;m_lblEstimatedQuality.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblEstimatedQuality.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblEstimatedQuality.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_lblQualityBits.Location" type="System.Drawing.Point, System.Drawing">
+    <value>413, 214</value>
+  </data>
+  <data name="m_lblQualityBits.Size" type="System.Drawing.Size, System.Drawing">
+    <value>53, 13</value>
+  </data>
+  <data name="m_lblQualityBits.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="m_lblQualityBits.Text" xml:space="preserve">
+    <value>9999 bits</value>
+  </data>
+  <data name="m_lblQualityBits.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;m_lblQualityBits.Name" xml:space="preserve">
+    <value>m_lblQualityBits</value>
+  </data>
+  <data name="&gt;&gt;m_lblQualityBits.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblQualityBits.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblQualityBits.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_tbKeyFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>144, 237</value>
+  </data>
+  <data name="m_tbKeyFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>201, 20</value>
+  </data>
+  <data name="m_tbKeyFile.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;m_tbKeyFile.Name" xml:space="preserve">
+    <value>m_tbKeyFile</value>
+  </data>
+  <data name="&gt;&gt;m_tbKeyFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbKeyFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbKeyFile.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_bannerImage.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="m_bannerImage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_bannerImage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>519, 60</value>
+  </data>
+  <data name="m_bannerImage.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;m_bannerImage.Name" xml:space="preserve">
+    <value>m_bannerImage</value>
+  </data>
+  <data name="&gt;&gt;m_bannerImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_bannerImage.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_bannerImage.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <metadata name="m_saveKeyFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>113, 17</value>
+  </metadata>
+  <data name="m_saveKeyFileDialog.Filter" xml:space="preserve">
+    <value>Key Files (*.key)|*.key|All Files (*.*)|*.*</value>
+  </data>
+  <data name="m_saveKeyFileDialog.Title" xml:space="preserve">
+    <value>Create Key File</value>
+  </data>
+  <metadata name="m_openKeyFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>269, 17</value>
+  </metadata>
+  <data name="m_openKeyFileDialog.Filter" xml:space="preserve">
+    <value>Key Files (*.key)|*.key|All Files (*.*)|*.*</value>
+  </data>
+  <data name="m_openKeyFileDialog.Title" xml:space="preserve">
+    <value>Use existing file as key file</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>519, 392</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Create New Password Database - Step 1</value>
+  </data>
+  <data name="&gt;&gt;m_ttRect.Name" xml:space="preserve">
+    <value>m_ttRect</value>
+  </data>
+  <data name="&gt;&gt;m_ttRect.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_saveKeyFileDialog.Name" xml:space="preserve">
+    <value>m_saveKeyFileDialog</value>
+  </data>
+  <data name="&gt;&gt;m_saveKeyFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_openKeyFileDialog.Name" xml:space="preserve">
+    <value>m_openKeyFileDialog</value>
+  </data>
+  <data name="&gt;&gt;m_openKeyFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>KeyCreationForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

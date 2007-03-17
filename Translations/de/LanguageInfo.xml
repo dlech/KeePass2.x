@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Translation>
+	<Language>
+		<EnglishName>German (Standard)</EnglishName>
+		<NativeName>Deutsch (Standard)</NativeName>
+		<ID>de</ID> <!-- See RFC 1766: ISO 639-1, ISO 3166 -->
+	</Language>
+	<Version>
+		<ForApplicationVersion>2.00</ForApplicationVersion>
+	</Version>
+	<Author>
+		<Name>Dominik Reichl</Name>
+		<Contact>dominik.reichl@t-online.de</Contact>
+	</Author>
+</Translation>

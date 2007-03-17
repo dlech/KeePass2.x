@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+	<Item Name="PasswordGenerator.Profile0">Random MAC Address/:/2/:/0/:/16/:/111110000/://:/HH\-HH\-HH\-HH\-HH\-HH</Item>
+	<Item Name="PasswordGenerator.Profile1">40-bit Hex Key/:/2/:/0/:/16/:/111110000/://:/hhhhhhhhhh</Item>
+	<Item Name="PasswordGenerator.Profile2">128-bit Hex Key/:/2/:/0/:/16/:/111110000/://:/hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</Item>
+	<Item Name="PasswordGenerator.Profile3">256-bit Hex Key/:/2/:/0/:/16/:/111110000/://:/hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</Item>
+</Configuration>
