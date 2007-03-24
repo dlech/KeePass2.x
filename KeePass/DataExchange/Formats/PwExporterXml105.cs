@@ -40,6 +40,8 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string AppGroup { get { return KPRes.Browser; } }
 
+		public override bool AppendsToRootGroupOnly { get { return true; } }
+
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_HTML; }

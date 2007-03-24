@@ -66,6 +66,7 @@
 			this.m_lvPlugins.HideSelection = false;
 			resources.ApplyResources(this.m_lvPlugins, "m_lvPlugins");
 			this.m_lvPlugins.Name = "m_lvPlugins";
+			this.m_lvPlugins.ShowItemToolTips = true;
 			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
 			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
 			this.m_lvPlugins.SelectedIndexChanged += new System.EventHandler(this.OnPluginListSelectedIndexChanged);
@@ -138,6 +139,7 @@
 			this.MinimizeBox = false;
 			this.Name = "PluginsForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpPluginDesc.ResumeLayout(false);

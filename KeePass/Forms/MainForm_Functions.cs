@@ -53,7 +53,6 @@ namespace KeePass.Forms
 		private Point m_ptLastEntriesMouseClick = new Point(0, 0);
 		private RichTextBoxContextMenu m_ctxEntryPreviewContextMenu = new RichTextBoxContextMenu();
 		private DynamicMenu m_dynCustomStrings;
-		private bool m_bShowClassicSaveWarning = false;
 
 		private string m_strLockedIoc = string.Empty;
 		private LockedStateInfo m_lockedState = new LockedStateInfo();
@@ -65,11 +64,12 @@ namespace KeePass.Forms
 
 		private SessionLockNotifier m_sessionLockNotifier = new SessionLockNotifier();
 
-		private PluginDefaultHost m_pluginDefaultHost = new PluginDefaultHost();
+		private DefaultPluginHost m_pluginDefaultHost = new DefaultPluginHost();
 		private PluginManager m_pluginManager = new PluginManager();
 
 		private int m_nLockTimerMax = 0;
 		private int m_nLockTimerCur = 0;
+		private bool m_bAllowLockTimerMod = true;
 
 		private int m_nClipClearMax = 0;
 		private int m_nClipClearCur = -1;
@@ -125,7 +125,7 @@ namespace KeePass.Forms
 		/// Plugins should directly use the reference they get in the initialization
 		/// function.
 		/// </summary>
-		public PluginDefaultHost PluginHost
+		public IPluginHost PluginHost
 		{
 			get { return m_pluginDefaultHost; }
 		}
@@ -382,7 +382,7 @@ namespace KeePass.Forms
 
 			m_ctxEntryCopyUserName.Enabled = m_ctxEntryCopyPassword.Enabled =
 				m_tbCopyUserName.Enabled = m_tbCopyPassword.Enabled =
-				m_ctxEntryCopyUrl.Enabled = m_ctxEntryPerformAutoType.Enabled =
+				m_ctxEntryCopyUrl.Enabled =
 				(nEntriesSelected == 1);
 
 			m_ctxEntryOpenUrl.Enabled = m_ctxEntrySaveAttachedFiles.Enabled =
@@ -410,7 +410,11 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(true);
 			ShowEntryDetails(pe);
 
-			if(pe != null) m_ctxEntryPerformAutoType.Enabled = pe.AutoType.Enabled;
+			if(pe != null)
+				m_ctxEntryPerformAutoType.Enabled = pe.AutoType.Enabled &&
+					(nEntriesSelected == 1);
+			else
+				m_ctxEntryPerformAutoType.Enabled = false;
 
 			string strLockUnlock = IsFileLocked() ? KPRes.LockMenuUnlock :
 				KPRes.LockMenuLock;
@@ -453,7 +457,7 @@ namespace KeePass.Forms
 				UpdateClipboardStatus();
 
 				string strText = KPRes.ClipboardClearInSeconds;
-				strText = strText.Replace("[PARAM]", m_nClipClearMax.ToString());
+				strText = strText.Replace(@"[PARAM]", m_nClipClearMax.ToString());
 
 				if(m_ntfTray.Visible)
 					m_ntfTray.ShowBalloonTip(0, KPRes.ClipboardAutoClear,
@@ -542,7 +546,8 @@ namespace KeePass.Forms
 				{
 					if(pgContainer != pgLast)
 					{
-						m_lvgLastEntryGroup = new ListViewGroup(pgContainer.Name);
+						m_lvgLastEntryGroup = new ListViewGroup(
+							pgContainer.GetFullPath());
 						m_lvgLastEntryGroup.Tag = pgContainer;
 
 						m_lvEntries.Groups.Add(m_lvgLastEntryGroup);
@@ -937,77 +942,37 @@ namespace KeePass.Forms
 			PwGroup pg = pe.ParentGroup;
 			if(pg != null) sb.Append(StrUtil.MakeRtfString(pg.Name));
 
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.Title);
-			sb.Append(":\\b0  ");
-
-			sb.Append(StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.TitleField)));
-
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.UserName);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UserNameField)));
-
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.Password);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.PasswordField)));
-
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.URL);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UrlField)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.Title,
+				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.TitleField)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.UserName,
+				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UserNameField)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.Password,
+				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.PasswordField)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.URL,
+				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UrlField)));
 
 			foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 			{
 				if(PwDefs.IsStandardField(kvp.Key)) continue;
 
-				sb.Append(strItemSeparator);
-				sb.Append("\\b ");
-				sb.Append(kvp.Key);
-				sb.Append(":\\b0  ");
-				sb.Append(StrUtil.MakeRtfString(kvp.Value.ReadString()));
+				EvAppendEntryField(sb, strItemSeparator, kvp.Key,
+					StrUtil.MakeRtfString(kvp.Value.ReadString()));
 			}
 
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.CreationTime);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.CreationTime)));
-
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.LastAccessTime);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.LastAccessTime)));
-
-			sb.Append(strItemSeparator);
-			sb.Append("\\b ");
-			sb.Append(KPRes.LastModificationTime);
-			sb.Append(":\\b0  ");
-			sb.Append(StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.LastModificationTime)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.CreationTime,
+				StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.CreationTime)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.LastAccessTime,
+				StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.LastAccessTime)));
+			EvAppendEntryField(sb, strItemSeparator, KPRes.LastModificationTime,
+				StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.LastModificationTime)));
 
 			if(pe.Expires)
-			{
-				sb.Append(strItemSeparator);
-				sb.Append("\\b ");
-				sb.Append(KPRes.ExpiryTime);
-				sb.Append(":\\b0  ");
-				sb.Append(StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.ExpiryTime)));
-			}
+				EvAppendEntryField(sb, strItemSeparator, KPRes.ExpiryTime,
+					StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.ExpiryTime)));
 
 			if(pe.Binaries.UCount > 0)
-			{
-				sb.Append(strItemSeparator);
-				sb.Append("\\b ");
-				sb.Append(KPRes.Attachments);
-				sb.Append(":\\b0  ");
-				sb.Append(pe.Binaries.UCount.ToString());
-			}
+				EvAppendEntryField(sb, strItemSeparator, KPRes.Attachments,
+					pe.Binaries.UCount.ToString());
 
 			string strNotes = pe.Strings.ReadSafeEx(PwDefs.NotesField);
 			if(strNotes.Length != 0)
@@ -1028,6 +993,18 @@ namespace KeePass.Forms
 
 			sb.Append("\\pard }");
 			m_richEntryView.Rtf = sb.ToString();
+		}
+
+		private static void EvAppendEntryField(StringBuilder sb,
+			string strItemSeparator, string strName, string strValue)
+		{
+			if(strValue.Length == 0) return;
+
+			sb.Append(strItemSeparator);
+			sb.Append("\\b ");
+			sb.Append(strName);
+			sb.Append(":\\b0  ");
+			sb.Append(strValue);
 		}
 
 		private void PerformDefaultAction(object sender, EventArgs e, PwEntry pe, AppDefs.ColumnID colID)
@@ -1052,7 +1029,7 @@ namespace KeePass.Forms
 					OnEntryCopyPassword(sender, e);
 					break;
 				case AppDefs.ColumnID.Url:
-					OnEntryOpenURL(sender, e);
+					OnEntryOpenUrl(sender, e);
 					break;
 				case AppDefs.ColumnID.Notes:
 					ClipboardUtil.CopyAndMinimize(pe.Strings.ReadSafe(PwDefs.NotesField),
@@ -1190,18 +1167,19 @@ namespace KeePass.Forms
 			System.Xml.Xsl.XslCompiledTransform xsl = null;
 			if(fmt == KeeExportFormat.UseXsl)
 			{
-				if(m_openXslFile.ShowDialog() != DialogResult.OK) return;
-				string strXSLFile = m_openXslFile.FileName;
+				GlobalWindowManager.AddDialog(m_openXslFile);
+				DialogResult drXsl = m_openXslFile.ShowDialog();
+				GlobalWindowManager.RemoveDialog(m_openXslFile);
+				if(drXsl != DialogResult.OK) return;
+
+				string strXslFile = m_openXslFile.FileName;
 
 				xsl = new System.Xml.Xsl.XslCompiledTransform();
 
-				try { xsl.Load(strXSLFile); }
-				catch(Exception e)
+				try { xsl.Load(strXslFile); }
+				catch(Exception exXsl)
 				{
-					string strMsg = strXSLFile + "\r\n\r\n" + KPRes.NoXSLFile;
-					strMsg += "\r\n\r\n" + e.Message;
-					MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.OK,
-						MessageBoxIcon.Warning);
+					MessageService.ShowWarning(strXslFile, KPRes.NoXSLFile, exXsl);
 					return;
 				}
 			}
@@ -1223,6 +1201,7 @@ namespace KeePass.Forms
 			m_saveExportTo.Filter = strExt.ToUpper() + " (*." + strExt + ")|*." +
 				strExt + "|" + strPrevFilter;
 
+			GlobalWindowManager.AddDialog(m_saveExportTo);
 			m_saveExportTo.FileName = strSuggestion;
 			if((strToFile != null) || (m_saveExportTo.ShowDialog() == DialogResult.OK))
 			{
@@ -1237,13 +1216,14 @@ namespace KeePass.Forms
 
 				if(fmt == KeeExportFormat.PlainXml)
 				{
-					Kdb4File kdb = new Kdb4File(m_pwDatabase);
-					FileSaveResult fsr = kdb.Save(strTargetFile, Kdb4File.KdbFormat.PlainXml, swLogger);
-
-					if(fsr.Code != FileSaveResultCode.Success)
+					try
 					{
-						MessageBox.Show(ResUtil.FileSaveResultToString(fsr),
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						Kdb4File kdb = new Kdb4File(m_pwDatabase);
+						kdb.Save(strTargetFile, Kdb4Format.PlainXml, swLogger);
+					}
+					catch(Exception exPlain)
+					{
+						MessageService.ShowSaveWarning(strTargetFile, exPlain);
 					}
 				}
 				else if(fmt == KeeExportFormat.Html)
@@ -1261,21 +1241,20 @@ namespace KeePass.Forms
 						}
 						catch(Exception twEx)
 						{
-							MessageBox.Show(ResUtil.FileSaveResultToString(new FileSaveResult(
-								FileSaveResultCode.FileCreationFailed, twEx)),
-								PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+							MessageService.ShowSaveWarning(strTargetFile, twEx);
 						}
 					}
 				}
 				else if(fmt == KeeExportFormat.Kdb3)
 				{
-					Kdb3File kdb = new Kdb3File(m_pwDatabase, swLogger);
-					FileSaveResult fsr = kdb.Save(strTargetFile);
-
-					if(fsr.Code != FileSaveResultCode.Success)
+					try
 					{
-						MessageBox.Show(ResUtil.FileSaveResultToString(fsr),
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						Kdb3File kdb = new Kdb3File(m_pwDatabase, swLogger);
+						kdb.Save(strTargetFile);
+					}
+					catch(Exception excpKdb3)
+					{
+						MessageService.ShowSaveWarning(strTargetFile, excpKdb3);
 					}
 				}
 				else if(fmt == KeeExportFormat.UseXsl)
@@ -1283,22 +1262,15 @@ namespace KeePass.Forms
 					string strTempFile = strTargetFile + ".";
 					strTempFile += Guid.NewGuid().ToString() + ".xml";
 
-					Kdb4File kdb = new Kdb4File(m_pwDatabase);
-					FileSaveResult fsr = kdb.Save(strTempFile, Kdb4File.KdbFormat.PlainXml, swLogger);
-
-					if(fsr.Code != FileSaveResultCode.Success)
+					try
 					{
-						MessageBox.Show(strTempFile + "\r\n\r\n" + ResUtil.FileSaveResultToString(fsr),
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						Kdb4File kdb = new Kdb4File(m_pwDatabase);
+						kdb.Save(strTempFile, Kdb4Format.PlainXml, swLogger);
+						xsl.Transform(strTempFile, strTargetFile);
 					}
-					else
+					catch(Exception exKdbXsl)
 					{
-						try { xsl.Transform(strTempFile, strTargetFile); }
-						catch(Exception e)
-						{
-							MessageBox.Show(e.Message, PwDefs.ShortProductName, MessageBoxButtons.OK,
-								MessageBoxIcon.Warning);
-						}
+						MessageService.ShowSaveWarning(strTempFile, exKdbXsl);
 					}
 
 					try { File.Delete(strTempFile); }
@@ -1308,6 +1280,8 @@ namespace KeePass.Forms
 
 				swLogger.EndLogging();
 			}
+
+			GlobalWindowManager.RemoveDialog(m_saveExportTo);
 
 			m_saveExportTo.Filter = strPrevFilter;
 			UpdateUIState(false);
@@ -1328,7 +1302,9 @@ namespace KeePass.Forms
 			{
 				if(bOpenLocal)
 				{
+					GlobalWindowManager.AddDialog(m_openDatabaseFile);
 					DialogResult dr = m_openDatabaseFile.ShowDialog();
+					GlobalWindowManager.RemoveDialog(m_openDatabaseFile);
 					if(dr != DialogResult.OK) return;
 
 					ioc = IOConnectionInfo.FromPath(m_openDatabaseFile.FileName);
@@ -1359,9 +1335,7 @@ namespace KeePass.Forms
 
 			if((ioc == null) || !ioc.CanProbablyAccess())
 			{
-				MessageBox.Show(KPRes.FileNotFoundError + "\r\n\r\n" +
-					ioc.GetDisplayName(), PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(ioc.GetDisplayName(), KPRes.FileNotFoundError);
 				return;
 			}
 
@@ -1374,9 +1348,8 @@ namespace KeePass.Forms
 					DialogResult dr = kpf.ShowDialog();
 					if((dr == DialogResult.Cancel) || (dr == DialogResult.Abort)) break;
 
-					FileOpenResult fr = OpenDatabaseInternal(ioc, kpf.CompositeKey);
-
-					if(fr.Code != FileOpenResultCode.InvalidFileStructure) break;
+					if(OpenDatabaseInternal(ioc, kpf.CompositeKey))
+						break;
 				}
 			}
 			else // cmpKey != null
@@ -1413,23 +1386,21 @@ namespace KeePass.Forms
 			}
 		}
 
-		private FileOpenResult OpenDatabaseInternal(IOConnectionInfo ioc,
-			CompositeKey cmpKey)
+		private bool OpenDatabaseInternal(IOConnectionInfo ioc, CompositeKey cmpKey)
 		{
 			ShowWarningsLogger swLogger = CreateShowWarningsLogger();
 			swLogger.StartLogging(KPRes.OpeningDatabase);
 
-			FileOpenResult fr = m_pwDatabase.OpenDatabase(ioc, cmpKey, swLogger);
-
-			if(fr.Code != FileOpenResultCode.Success)
+			bool bResult = true;
+			try { m_pwDatabase.Open(ioc, cmpKey, swLogger); }
+			catch(Exception ex)
 			{
-				MessageBox.Show(ResUtil.FileOpenResultToString(fr) + "\r\n\r\n" +
-					KPRes.WrongKeyDesc, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowLoadWarning(ioc.GetDisplayName(), ex);
+				bResult = false;
 			}
 
 			swLogger.EndLogging();
-			return fr;
+			return bResult;
 		}
 
 		private void AutoEnableVisualHiding()
@@ -1598,7 +1569,7 @@ namespace KeePass.Forms
 		/// </summary>
 		public void NotifyUserActivity()
 		{
-			m_nLockTimerCur = m_nLockTimerMax;
+			if(m_bAllowLockTimerMod) m_nLockTimerCur = m_nLockTimerMax;
 		}
 
 		/// <summary>
@@ -1617,8 +1588,7 @@ namespace KeePass.Forms
 			{
 				if(pe.ParentGroup != pg)
 				{
-					MessageBox.Show(KPRes.CannotMoveEntriesBcsGroup, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(KPRes.CannotMoveEntriesBcsGroup);
 					return;
 				}
 			}
@@ -1798,20 +1768,6 @@ namespace KeePass.Forms
 			if(!m_pwDatabase.IsOpen) return;
 			if(!AppPolicy.Try(AppPolicyFlag.SaveDatabase)) return;
 
-			if(m_bShowClassicSaveWarning)
-			{
-				string strMessage = KPRes.Save1xAs2x + "\r\n\r\n" +
-					KPRes.Save1xAs2xCompat + "\r\n\r\n" + KPRes.AskContinue;
-
-				if(MessageBox.Show(strMessage, PwDefs.ShortProductName, MessageBoxButtons.YesNo,
-					MessageBoxIcon.Question) == DialogResult.No)
-				{
-					return;
-				}
-
-				m_bShowClassicSaveWarning = false;
-			}
-
 			if(FileSaving != null)
 			{
 				FileSavingEventArgs args = new FileSavingEventArgs(true);
@@ -1832,7 +1788,10 @@ namespace KeePass.Forms
 			}
 			else
 			{
+				GlobalWindowManager.AddDialog(m_saveDatabaseFile);
 				dr = m_saveDatabaseFile.ShowDialog();
+				GlobalWindowManager.RemoveDialog(m_saveDatabaseFile);
+
 				if(dr == DialogResult.OK)
 					ioc = IOConnectionInfo.FromPath(m_saveDatabaseFile.FileName);
 			}
@@ -1842,28 +1801,28 @@ namespace KeePass.Forms
 				ShowWarningsLogger swLogger = CreateShowWarningsLogger();
 				swLogger.StartLogging(KPRes.SavingDatabase);
 
-				FileSaveResult fsr = m_pwDatabase.SaveDatabaseTo(ioc, true, swLogger);
+				bool bSuccess = true;
+				try
+				{
+					m_pwDatabase.SaveAs(ioc, true, swLogger);
 
-				if(fsr.Code != FileSaveResultCode.Success)
-				{
-					MessageBox.Show(ResUtil.FileSaveResultToString(fsr),
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
-				else
-				{
-					string strName = m_pwDatabase.IOConnectionInfo.GetDisplayName();
-					string strPath = IOConnectionInfo.SerializeToString(
-						m_pwDatabase.IOConnectionInfo);
+					string strName = ioc.GetDisplayName();
+					string strPath = IOConnectionInfo.SerializeToString(ioc);
 					m_mruList.AddItem(strName, strPath);
 
 					AppConfigEx.SetValue(AppDefs.ConfigKeys.LastDatabase, strPath);
+				}
+				catch(Exception exSaveAs)
+				{
+					MessageService.ShowSaveWarning(ioc, exSaveAs);
+					bSuccess = false;
 				}
 
 				swLogger.EndLogging();
 
 				if(FileSaved != null)
 				{
-					FileSavedEventArgs args = new FileSavedEventArgs(fsr);
+					FileSavedEventArgs args = new FileSavedEventArgs(bSuccess);
 					FileSaved(sender, args);
 				}
 			}
@@ -1876,6 +1835,37 @@ namespace KeePass.Forms
 			m_pwDatabase.Modified = true;
 			OnFileSave(null, null);
 			return !m_pwDatabase.Modified;
+		}
+
+		private void ResetDefaultFocus()
+		{
+			Control c = null;
+			if(m_lvEntries.Visible && m_lvEntries.Enabled)
+				c = m_lvEntries;
+			else if(m_tvGroups.Visible && m_tvGroups.Enabled)
+				c = m_tvGroups;
+			else if(m_richEntryView.Visible && m_richEntryView.Enabled)
+				c = m_richEntryView;
+
+			try
+			{
+				this.ActiveControl = c;
+				c.Focus();
+			}
+			catch(Exception) { }
+		}
+
+		private bool PrepareLock()
+		{
+			if(GlobalWindowManager.WindowCount == 0) return true;
+
+			if(GlobalWindowManager.CanCloseAllWindows)
+			{
+				GlobalWindowManager.CloseAllWindows();
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

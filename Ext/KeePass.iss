@@ -2,12 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "KeePass Password Safe"
-#define MyAppVerName "KeePass Password Safe 2.00 Alpha"
+#define MyAppVerName "KeePass Password Safe 2.01 Alpha"
 #define MyAppPublisher "Dominik Reichl"
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
-#define MyAppBaseSetupExe "KeePass-2.00-Alpha-Setup"
+#define MyAppBaseSetupExe "KeePass-2.01-Alpha-Setup"
 
 [Setup]
 AppName={#MyAppName}
@@ -83,11 +83,11 @@ Type: files; Name: {app}\{#MyAppUrlName}
 [Components]
 Name: Core; Description: Core KeePass Application Files; Flags: fixed; Types: custom compact full; Languages: 
 Name: UserDoc; Description: Help Manual; Types: custom full
-Name: KDB3Support; Description: KDB3 Files Support (KeePass Classic); Types: custom full
+Name: KDB3Support; Description: KDB3 Files Support (KeePass 1.x); Types: custom full
 Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: custom full
 Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: custom full
 Name: NGen; Description: Generate Native Executable; Types: custom full; ExtraDiskSpaceRequired: 1048576
-Name: FileAssoc; Description: Associate .KDB Files with KeePass; Types: custom full
+Name: FileAssoc; Description: Associate .KDBX Files with KeePass; Types: custom full
 
 [UninstallRun]
 Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; Languages: ; Components: NGen; WorkingDir: {app}; Flags: skipifdoesntexist

@@ -826,7 +826,7 @@
     <value>m_pbQuality</value>
   </data>
   <data name="&gt;&gt;m_pbQuality.Type" xml:space="preserve">
-    <value>KeePass.UI.QualityProgressBar, KeePass, Version=1.0.2628.27942, Culture=neutral, PublicKeyToken=null</value>
+    <value>KeePass.UI.QualityProgressBar, KeePass, Version=2.0.0.32459, Culture=neutral, PublicKeyToken=7952fc8ece49a093</value>
   </data>
   <data name="&gt;&gt;m_pbQuality.Parent" xml:space="preserve">
     <value>m_tabEntry</value>

@@ -43,6 +43,8 @@ namespace KeePass.DataExchange
 			m_vImporters.Add(new PVaultTxt14());
 			m_vImporters.Add(new PinsTxt450());
 			m_vImporters.Add(new SecurityTxt12());
+			m_vImporters.Add(new SteganosPwManager2007());
+			m_vImporters.Add(new Whisper32Csv116());
 
 			m_vImporters.Add(new MozillaBookmarksHtml100());
 			m_vImporters.Add(new PwExporterXml105());

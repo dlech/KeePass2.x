@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Threading;
 
 using KeePass.App;
 using KeePass.Forms;
@@ -112,11 +113,11 @@ namespace KeePass.Util
 			strSend = AutoType.StringToSequence(strSend, false);
 
 			Application.DoEvents();
-			try { SendKeys.SendWait(strSend); }
+
+			try { SendInputEx.SendKeysWait(strSend); }
 			catch(Exception excpAT)
 			{
-				MessageBox.Show(excpAT.Message, PwDefs.ShortProductName + " " +
-					KPRes.AutoType, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(excpAT);
 			}
 
 			return true;
@@ -226,7 +227,9 @@ namespace KeePass.Util
 
 			string strWindow = WinUtil.GetWindowText(WinUtil.GetForegroundWindow());
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
-			
+
+			Thread.Sleep(100);
+
 			return AutoType.Perform(pe, strWindow);
 		}
 	}

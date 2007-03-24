@@ -26,9 +26,10 @@ using System.Drawing;
 namespace KeePass.Plugins
 {
 	/// <summary>
-	/// KeePass plugin base class.
+	/// KeePass plugin base class. All KeePass plugins must derive from
+	/// this class.
 	/// </summary>
-	public class KeePassPlugin
+	public abstract class Plugin
 	{
 		/// <summary>
 		/// The <c>Initialize</c> function is called by KeePass when
@@ -41,9 +42,9 @@ namespace KeePass.Plugins
 		/// successful initialization. If you return <c>false</c>,
 		/// KeePass unloads your plugin (without calling the
 		/// <c>Terminate</c> function of your plugin).</returns>
-		public virtual bool Initialize(IKeePassPluginHost host)
+		public virtual bool Initialize(IPluginHost host)
 		{
-			return host != null;
+			return (host != null);
 		}
 
 		/// <summary>
@@ -58,6 +59,8 @@ namespace KeePass.Plugins
 
 		/// <summary>
 		/// Get a handle to a 16x16 icon representing the plugin.
+		/// This icon is shown in the plugin management window of
+		/// KeePass for example.
 		/// </summary>
 		public virtual Image SmallIcon
 		{

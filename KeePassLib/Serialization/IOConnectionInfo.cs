@@ -110,7 +110,7 @@ namespace KeePassLib.Serialization
 		public static string SerializeToString(IOConnectionInfo iocToCompile)
 		{
 			Debug.Assert(iocToCompile != null);
-			if(iocToCompile == null) throw new ArgumentNullException("sToCompile");
+			if(iocToCompile == null) throw new ArgumentNullException("iocToCompile");
 
 			string strUrl = iocToCompile.Url;
 			string strUser = TransformUnreadable(iocToCompile.UserName, true);

@@ -38,6 +38,8 @@ namespace KeePass.DataExchange.Formats
 		public override string FormatName { get { return "Any Password CSV 1.44"; } }
 		public override string DefaultExtension { get { return "csv"; } }
 		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		
+		public override bool AppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -55,17 +57,11 @@ namespace KeePass.DataExchange.Formats
 
 			foreach(string strLine in vLines)
 			{
-				if(strLine.Length > 5)
-				{
-					FileOpenResultCode fr = ProcessCsvLine(strLine, pwStorage);
-					if(fr != FileOpenResultCode.Success)
-						throw new FormatException("Line:\r\n" + strLine);
-				}
+				if(strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
 			}
 		}
 
-		private static FileOpenResultCode ProcessCsvLine(string strLine,
-			PwDatabase pwStorage)
+		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
 		{
 			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
 			Debug.Assert(list.Count == 6);
@@ -98,9 +94,7 @@ namespace KeePass.DataExchange.Formats
 				}
 				else { Debug.Assert(false); }
 			}
-			else return FileOpenResultCode.InvalidFileStructure;
-
-			return FileOpenResultCode.Success;
+			else throw new FormatException("Invalid field count!");
 		}
 
 		private static string ParseCsvWord(string strWord, bool bFixCodes)

@@ -192,6 +192,54 @@
   <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="&gt;&gt;m_lblEncAlgoDesc.Name" xml:space="preserve">
+    <value>m_lblEncAlgoDesc</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncAlgoDesc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncAlgoDesc.Parent" xml:space="preserve">
+    <value>m_grpEncAlgo</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncAlgoDesc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_cmbEncAlgo.Name" xml:space="preserve">
+    <value>m_cmbEncAlgo</value>
+  </data>
+  <data name="&gt;&gt;m_cmbEncAlgo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cmbEncAlgo.Parent" xml:space="preserve">
+    <value>m_grpEncAlgo</value>
+  </data>
+  <data name="&gt;&gt;m_cmbEncAlgo.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_grpEncAlgo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 37</value>
+  </data>
+  <data name="m_grpEncAlgo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>436, 48</value>
+  </data>
+  <data name="m_grpEncAlgo.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_grpEncAlgo.Text" xml:space="preserve">
+    <value>Encryption</value>
+  </data>
+  <data name="&gt;&gt;m_grpEncAlgo.Name" xml:space="preserve">
+    <value>m_grpEncAlgo</value>
+  </data>
+  <data name="&gt;&gt;m_grpEncAlgo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_grpEncAlgo.Parent" xml:space="preserve">
+    <value>m_tabSecurity</value>
+  </data>
+  <data name="&gt;&gt;m_grpEncAlgo.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="m_lblEncAlgoDesc.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -238,30 +286,6 @@
     <value>m_grpEncAlgo</value>
   </data>
   <data name="&gt;&gt;m_cmbEncAlgo.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_grpEncAlgo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 37</value>
-  </data>
-  <data name="m_grpEncAlgo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>436, 48</value>
-  </data>
-  <data name="m_grpEncAlgo.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_grpEncAlgo.Text" xml:space="preserve">
-    <value>Encryption</value>
-  </data>
-  <data name="&gt;&gt;m_grpEncAlgo.Name" xml:space="preserve">
-    <value>m_grpEncAlgo</value>
-  </data>
-  <data name="&gt;&gt;m_grpEncAlgo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_grpEncAlgo.Parent" xml:space="preserve">
-    <value>m_tabSecurity</value>
-  </data>
-  <data name="&gt;&gt;m_grpEncAlgo.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="m_lblTransIntro.Location" type="System.Drawing.Point, System.Drawing">
@@ -339,6 +363,57 @@
   <data name="&gt;&gt;m_lblTransInfo.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="&gt;&gt;m_lnkCompute1SecDelay.Name" xml:space="preserve">
+    <value>m_lnkCompute1SecDelay</value>
+  </data>
+  <data name="&gt;&gt;m_lnkCompute1SecDelay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lnkCompute1SecDelay.Parent" xml:space="preserve">
+    <value>m_grpKeyTrans</value>
+  </data>
+  <data name="&gt;&gt;m_lnkCompute1SecDelay.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_numEncRounds.Name" xml:space="preserve">
+    <value>m_numEncRounds</value>
+  </data>
+  <data name="&gt;&gt;m_numEncRounds.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_numEncRounds.Parent" xml:space="preserve">
+    <value>m_grpKeyTrans</value>
+  </data>
+  <data name="&gt;&gt;m_numEncRounds.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_grpKeyTrans.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 91</value>
+  </data>
+  <data name="m_grpKeyTrans.Size" type="System.Drawing.Size, System.Drawing">
+    <value>441, 137</value>
+  </data>
+  <data name="m_grpKeyTrans.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_grpKeyTrans.Text" xml:space="preserve">
+    <value>Key Transformation</value>
+  </data>
+  <data name="&gt;&gt;m_grpKeyTrans.Name" xml:space="preserve">
+    <value>m_grpKeyTrans</value>
+  </data>
+  <data name="&gt;&gt;m_grpKeyTrans.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_grpKeyTrans.Parent" xml:space="preserve">
+    <value>m_tabSecurity</value>
+  </data>
+  <data name="&gt;&gt;m_grpKeyTrans.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="m_lnkCompute1SecDelay.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -353,21 +428,6 @@
   </data>
   <data name="m_lnkCompute1SecDelay.Text" xml:space="preserve">
     <value>1 second delay</value>
-  </data>
-  <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="m_ttRect.AutomaticDelay" type="System.Int32, mscorlib">
-    <value>250</value>
-  </data>
-  <data name="m_ttRect.AutoPopDelay" type="System.Int32, mscorlib">
-    <value>2500</value>
-  </data>
-  <data name="m_ttRect.InitialDelay" type="System.Int32, mscorlib">
-    <value>250</value>
-  </data>
-  <data name="m_ttRect.ReshowDelay" type="System.Int32, mscorlib">
-    <value>50</value>
   </data>
   <data name="m_lnkCompute1SecDelay.ToolTip" xml:space="preserve">
     <value>Compute the number of rounds that lead to a delay of 1 second on this computer.</value>
@@ -408,30 +468,6 @@
   <data name="&gt;&gt;m_numEncRounds.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="m_grpKeyTrans.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 91</value>
-  </data>
-  <data name="m_grpKeyTrans.Size" type="System.Drawing.Size, System.Drawing">
-    <value>441, 137</value>
-  </data>
-  <data name="m_grpKeyTrans.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_grpKeyTrans.Text" xml:space="preserve">
-    <value>Key Transformation</value>
-  </data>
-  <data name="&gt;&gt;m_grpKeyTrans.Name" xml:space="preserve">
-    <value>m_grpKeyTrans</value>
-  </data>
-  <data name="&gt;&gt;m_grpKeyTrans.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_grpKeyTrans.Parent" xml:space="preserve">
-    <value>m_tabSecurity</value>
-  </data>
-  <data name="&gt;&gt;m_grpKeyTrans.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 399</value>
   </data>
@@ -456,6 +492,21 @@
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="m_ttRect.AutomaticDelay" type="System.Int32, mscorlib">
+    <value>250</value>
+  </data>
+  <data name="m_ttRect.AutoPopDelay" type="System.Int32, mscorlib">
+    <value>2500</value>
+  </data>
+  <data name="m_ttRect.InitialDelay" type="System.Int32, mscorlib">
+    <value>250</value>
+  </data>
+  <data name="m_ttRect.ReshowDelay" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
   <data name="m_lblCompressionIntro.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 10</value>
   </data>
@@ -479,6 +530,174 @@
   </data>
   <data name="&gt;&gt;m_lblCompressionIntro.ZOrder" xml:space="preserve">
     <value>9</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Name" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tabSecurity.Name" xml:space="preserve">
+    <value>m_tabSecurity</value>
+  </data>
+  <data name="&gt;&gt;m_tabSecurity.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabSecurity.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabSecurity.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Name" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.Name" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_tabMain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 66</value>
+  </data>
+  <data name="m_tabMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>462, 320</value>
+  </data>
+  <data name="m_tabMain.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tabMain.Name" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabMain.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tabMain.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultUser.Name" xml:space="preserve">
+    <value>m_tbDefaultUser</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultUser.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultUser.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultUser.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefaultUser.Name" xml:space="preserve">
+    <value>m_lblDefaultUser</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefaultUser.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefaultUser.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefaultUser.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbDesc.Name" xml:space="preserve">
+    <value>m_tbDbDesc</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbDesc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbDesc.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbDesc.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbDesc.Name" xml:space="preserve">
+    <value>m_lblDbDesc</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbDesc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbDesc.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbDesc.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbName.Name" xml:space="preserve">
+    <value>m_tbDbName</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbName.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_tbDbName.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbName.Name" xml:space="preserve">
+    <value>m_lblDbName</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbName.Parent" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_lblDbName.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="m_tabGeneral.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabGeneral.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tabGeneral.Size" type="System.Drawing.Size, System.Drawing">
+    <value>454, 294</value>
+  </data>
+  <data name="m_tabGeneral.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_tabGeneral.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Name" xml:space="preserve">
+    <value>m_tabGeneral</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabGeneral.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="m_tbDefaultUser.Location" type="System.Drawing.Point, System.Drawing">
     <value>190, 253</value>
@@ -630,48 +849,6 @@
   <data name="&gt;&gt;m_lblDbName.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="m_tabGeneral.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="m_tabGeneral.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="m_tabGeneral.Size" type="System.Drawing.Size, System.Drawing">
-    <value>454, 294</value>
-  </data>
-  <data name="m_tabGeneral.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_tabGeneral.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="&gt;&gt;m_tabGeneral.Name" xml:space="preserve">
-    <value>m_tabGeneral</value>
-  </data>
-  <data name="&gt;&gt;m_tabGeneral.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tabGeneral.Parent" xml:space="preserve">
-    <value>m_tabMain</value>
-  </data>
-  <data name="&gt;&gt;m_tabGeneral.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_lblSecIntro.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_lblSecIntro.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 12</value>
-  </data>
-  <data name="m_lblSecIntro.Size" type="System.Drawing.Size, System.Drawing">
-    <value>277, 13</value>
-  </data>
-  <data name="m_lblSecIntro.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_lblSecIntro.Text" xml:space="preserve">
-    <value>On this page you can configure file-level security settings.</value>
-  </data>
   <data name="&gt;&gt;m_lblSecIntro.Name" xml:space="preserve">
     <value>m_lblSecIntro</value>
   </data>
@@ -710,6 +887,141 @@
   </data>
   <data name="&gt;&gt;m_tabSecurity.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="m_lblSecIntro.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblSecIntro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 12</value>
+  </data>
+  <data name="m_lblSecIntro.Size" type="System.Drawing.Size, System.Drawing">
+    <value>277, 13</value>
+  </data>
+  <data name="m_lblSecIntro.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_lblSecIntro.Text" xml:space="preserve">
+    <value>On this page you can configure file-level security settings.</value>
+  </data>
+  <data name="&gt;&gt;m_lblSecIntro.Name" xml:space="preserve">
+    <value>m_lblSecIntro</value>
+  </data>
+  <data name="&gt;&gt;m_lblSecIntro.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblSecIntro.Parent" xml:space="preserve">
+    <value>m_tabSecurity</value>
+  </data>
+  <data name="&gt;&gt;m_lblSecIntro.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_cbAutoEnableHiding.Name" xml:space="preserve">
+    <value>m_cbAutoEnableHiding</value>
+  </data>
+  <data name="&gt;&gt;m_cbAutoEnableHiding.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbAutoEnableHiding.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_cbAutoEnableHiding.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewHint.Name" xml:space="preserve">
+    <value>m_lblViewHint</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewHint.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewHint.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewHint.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtEnable.Name" xml:space="preserve">
+    <value>m_lblMemProtEnable</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtEnable.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtEnable.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtEnable.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtHint.Name" xml:space="preserve">
+    <value>m_lblMemProtHint</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtHint.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtHint.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtHint.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtDesc.Name" xml:space="preserve">
+    <value>m_lblMemProtDesc</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtDesc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtDesc.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lblMemProtDesc.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;m_lbMemProt.Name" xml:space="preserve">
+    <value>m_lbMemProt</value>
+  </data>
+  <data name="&gt;&gt;m_lbMemProt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lbMemProt.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lbMemProt.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;m_lblProtIntro.Name" xml:space="preserve">
+    <value>m_lblProtIntro</value>
+  </data>
+  <data name="&gt;&gt;m_lblProtIntro.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblProtIntro.Parent" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_lblProtIntro.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="m_tabProtection.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabProtection.Size" type="System.Drawing.Size, System.Drawing">
+    <value>454, 294</value>
+  </data>
+  <data name="m_tabProtection.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="m_tabProtection.Text" xml:space="preserve">
+    <value>Protection</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Name" xml:space="preserve">
+    <value>m_tabProtection</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.Parent" xml:space="preserve">
+    <value>m_tabMain</value>
+  </data>
+  <data name="&gt;&gt;m_tabProtection.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="m_cbAutoEnableHiding.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -891,29 +1203,137 @@
   <data name="&gt;&gt;m_lblProtIntro.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="m_tabProtection.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
+  <data name="&gt;&gt;m_lblHeaderCpAlgo.Name" xml:space="preserve">
+    <value>m_lblHeaderCpAlgo</value>
   </data>
-  <data name="m_tabProtection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>454, 294</value>
+  <data name="&gt;&gt;m_lblHeaderCpAlgo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="m_tabProtection.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;m_lblHeaderCpAlgo.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderCpAlgo.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipPerf.Name" xml:space="preserve">
+    <value>m_lblCpGZipPerf</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipPerf.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipPerf.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipPerf.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipCp.Name" xml:space="preserve">
+    <value>m_lblCpGZipCp</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipCp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipCp.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpGZipCp.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpNonePerf.Name" xml:space="preserve">
+    <value>m_lblCpNonePerf</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpNonePerf.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpNonePerf.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpNonePerf.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="m_tabProtection.Text" xml:space="preserve">
-    <value>Protection</value>
+  <data name="&gt;&gt;m_lblCpNoneCp.Name" xml:space="preserve">
+    <value>m_lblCpNoneCp</value>
   </data>
-  <data name="&gt;&gt;m_tabProtection.Name" xml:space="preserve">
-    <value>m_tabProtection</value>
+  <data name="&gt;&gt;m_lblCpNoneCp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_tabProtection.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_lblCpNoneCp.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblCpNoneCp.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderPerf.Name" xml:space="preserve">
+    <value>m_lblHeaderPerf</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderPerf.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderPerf.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderPerf.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderCp.Name" xml:space="preserve">
+    <value>m_lblHeaderCp</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderCp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderCp.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_lblHeaderCp.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;m_rbGZip.Name" xml:space="preserve">
+    <value>m_rbGZip</value>
+  </data>
+  <data name="&gt;&gt;m_rbGZip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbGZip.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_rbGZip.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;m_rbNone.Name" xml:space="preserve">
+    <value>m_rbNone</value>
+  </data>
+  <data name="&gt;&gt;m_rbNone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbNone.Parent" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_rbNone.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="m_tabCompression.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabCompression.Size" type="System.Drawing.Size, System.Drawing">
+    <value>454, 294</value>
+  </data>
+  <data name="m_tabCompression.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tabCompression.Text" xml:space="preserve">
+    <value>Compression</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.Name" xml:space="preserve">
+    <value>m_tabCompression</value>
+  </data>
+  <data name="&gt;&gt;m_tabCompression.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_tabProtection.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_tabCompression.Parent" xml:space="preserve">
     <value>m_tabMain</value>
   </data>
-  <data name="&gt;&gt;m_tabProtection.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;m_tabCompression.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="m_lblHeaderCpAlgo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1172,51 +1592,6 @@
   </data>
   <data name="&gt;&gt;m_rbNone.ZOrder" xml:space="preserve">
     <value>8</value>
-  </data>
-  <data name="m_tabCompression.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="m_tabCompression.Size" type="System.Drawing.Size, System.Drawing">
-    <value>454, 294</value>
-  </data>
-  <data name="m_tabCompression.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_tabCompression.Text" xml:space="preserve">
-    <value>Compression</value>
-  </data>
-  <data name="&gt;&gt;m_tabCompression.Name" xml:space="preserve">
-    <value>m_tabCompression</value>
-  </data>
-  <data name="&gt;&gt;m_tabCompression.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tabCompression.Parent" xml:space="preserve">
-    <value>m_tabMain</value>
-  </data>
-  <data name="&gt;&gt;m_tabCompression.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="m_tabMain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 66</value>
-  </data>
-  <data name="m_tabMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>462, 320</value>
-  </data>
-  <data name="m_tabMain.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_tabMain.Name" xml:space="preserve">
-    <value>m_tabMain</value>
-  </data>
-  <data name="&gt;&gt;m_tabMain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tabMain.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_tabMain.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

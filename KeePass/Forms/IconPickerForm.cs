@@ -26,6 +26,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.UI;
+
 namespace KeePass.Forms
 {
 	public partial class IconPickerForm : Form
@@ -55,6 +57,8 @@ namespace KeePass.Forms
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new ArgumentNullException();
+
+			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
 
@@ -91,6 +95,11 @@ namespace KeePass.Forms
 		private void OnIconsItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

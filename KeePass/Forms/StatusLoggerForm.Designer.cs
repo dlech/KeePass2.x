@@ -92,6 +92,7 @@
 			this.MinimizeBox = false;
 			this.Name = "StatusLoggerForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.ResumeLayout(false);
 			this.PerformLayout();

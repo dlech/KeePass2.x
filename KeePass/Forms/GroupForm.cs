@@ -57,6 +57,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwGroup != null); if(m_pwGroup == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_Folder_Txt, KPRes.EditGroup,
@@ -152,6 +154,11 @@ namespace KeePass.Forms
 				m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;
 
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

@@ -35,11 +35,13 @@ using KeePassLib.Utility;
 
 namespace KPScript
 {
-	public static class ScriptingUtil
+	public static class KpsRunner
 	{
 		private const string CsUsing = "using System;\r\nusing System.IO;\r\n" +
 			"using System.Collections;\r\nusing System.Collections.Generic;\r\n" +
 			"using System.Text;\r\nusing System.Windows.Forms;\r\n" +
+			"using KeePass.App;\r\nusing KeePass.Forms;\r\n" +
+			"using KeePass.UI;\r\nusing KeePass.Util;\r\n" +
 			"using KeePassLib;\r\nusing KeePassLib.Collections;\r\n" +
 			"using KeePassLib.Cryptography;\r\nusing KeePassLib.Cryptography.Cipher;\r\n" +
 			"using KeePassLib.Delegates;\r\nusing KeePassLib.Interfaces;\r\n" +
@@ -51,37 +53,20 @@ namespace KPScript
 
 		public static void RunScriptFile(string strFile)
 		{
-			try
-			{
-				string strScript = File.ReadAllText(strFile);
-				RunScript(strScript);
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.Message, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+			string strScript = File.ReadAllText(strFile);
+			RunScript(strScript);
 		}
 
 		public static void RunScript(string strScript)
 		{
-			Exception ex = null;
-
-			try { RunCSharpScript(strScript); return; }
-			catch(Exception exCS) { ex = exCS; }
-
-			if(ex != null)
-			{
-				MessageBox.Show(ex.Message, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+			RunCSharpScript(strScript);
 		}
 
 		private static void RunCSharpScript(string strScript)
 		{
-			string[] vUsing = CsUsing.Split(new string[]{ "\r\n" },
+			string[] vUsing = CsUsing.Split(new string[] { "\r\n" },
 				StringSplitOptions.None);
-			string[] vClass = CsClass.Split(new string[]{ "\r\n" },
+			string[] vClass = CsClass.Split(new string[] { "\r\n" },
 				StringSplitOptions.None);
 			int nLineOffset = vUsing.Length + vClass.Length;
 

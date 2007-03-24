@@ -22,10 +22,12 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
@@ -38,7 +40,7 @@ namespace KeePass
 {
 	public static class Program
 	{
-		private static CommandLineArgs m_cmdLineArgs = new CommandLineArgs();
+		private static CommandLineArgs m_cmdLineArgs = new CommandLineArgs(null);
 		private static Random m_rndGlobal = null;
 		private static uint m_uAppMessage = 0;
 		private static MainForm m_formMain = null;
@@ -86,11 +88,8 @@ namespace KeePass
 			// Set global localized strings
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
 			Kdb4File.DetermineLanguageID();
-			StrUtil.SetLocalizedString(StrUtil.LocalizedStringID.ExceptionOccured,
-				KPRes.ExceptionOccured);
 
-			m_cmdLineArgs.Parse(args);
-			m_cmdLineArgs.Lock();
+			m_cmdLineArgs = new CommandLineArgs(args);
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
 			{
@@ -126,16 +125,14 @@ namespace KeePass
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
 			}
-			catch(Exception ex)
+			catch(Exception exPrg)
 			{
-				string str = KPRes.ExceptionOccured + " ";
-				str += KPRes.ProgramTerminates + "\r\n\r\n";
-				str += StrUtil.FormatException(ex, false);
-
-				MessageBox.Show(str, PwDefs.ShortProductName, MessageBoxButtons.OK,
-					MessageBoxIcon.Stop);
+				MessageService.ShowFatal(exPrg);
 			}
 #endif
+
+			Debug.Assert(GlobalWindowManager.WindowCount == 0);
+			Debug.Assert(MessageService.CurrentMessageCount == 0);
 
 			AppLogEx.Close();
 			if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }

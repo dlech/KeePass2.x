@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.IO;
 
 using KeePass.DataExchange;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -57,6 +58,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 			Debug.Assert(m_pbInData != null); if(m_pbInData == null) throw new ArgumentNullException();
+
+			GlobalWindowManager.AddWindow(this);
 
 			m_bBlockChangedEvent = true;
 
@@ -221,6 +224,11 @@ namespace KeePass.Forms
 		private void OnBtnPreviewRefresh(object sender, EventArgs e)
 		{
 			UpdatePreview();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

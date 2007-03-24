@@ -23,11 +23,32 @@ using System.Xml;
 using System.Text;
 using System.Diagnostics;
 
+#if !KeePassLibSD
+using System.IO.Compression;
+#endif
+
 using KeePassLib.Cryptography;
 using KeePassLib.Interfaces;
 
 namespace KeePassLib.Serialization
 {
+	/// <summary>
+	/// The <c>Kdb4File</c> class supports saving the data to various
+	/// formats.
+	/// </summary>
+	public enum Kdb4Format
+	{
+		/// <summary>
+		/// The default, encrypted file format.
+		/// </summary>
+		Default = 0,
+
+		/// <summary>
+		/// Use this flag when exporting data to a plain-text XML file.
+		/// </summary>
+		PlainXml
+	}
+
 	/// <summary>
 	/// Serialization to KeePass KDB files.
 	/// </summary>
@@ -48,6 +69,9 @@ namespace KeePassLib.Serialization
 		/// </summary>
 		private const uint FileVersion32 = 0x00010000; // 1.00
 
+		private const uint FileSignatureOld1 = 0x9AA2D903;
+		private const uint FileSignatureOld2 = 0xB54BFB65;
+
 		private const string ElemDocNode = "KeePassFile";
 		private const string ElemMeta = "Meta";
 		private const string ElemRoot = "Root";
@@ -58,6 +82,7 @@ namespace KeePassLib.Serialization
 		private const string ElemDbName = "DatabaseName";
 		private const string ElemDbDesc = "DatabaseDescription";
 		private const string ElemDbDefaultUser = "DefaultUserName";
+		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
 
 		private const string ElemMemoryProt = "MemoryProtection";
 		private const string ElemProtTitle = "ProtectTitle";
@@ -114,7 +139,7 @@ namespace KeePassLib.Serialization
 
 		private XmlTextWriter m_xmlWriter = null;
 		private CryptoRandomStream m_randomStream = null;
-		private KdbFormat m_format = KdbFormat.Default;
+		private Kdb4Format m_format = Kdb4Format.Default;
 		private IStatusLogger m_slLogger = null;
 
 		private byte[] m_pbMasterSeed = null;
@@ -129,23 +154,6 @@ namespace KeePassLib.Serialization
 		private const uint NeutralLanguageID = NeutralLanguageOffset + NeutralLanguageIDSec;
 		private static bool m_bLocalizedNames = false;
 
-		/// <summary>
-		/// The <c>Kdb4File</c> class supports saving the data to various
-		/// formats.
-		/// </summary>
-		public enum KdbFormat
-		{
-			/// <summary>
-			/// The default, encrypted file format.
-			/// </summary>
-			Default = 0,
-
-			/// <summary>
-			/// Use this flag when exporting data to a plain-text XML file.
-			/// </summary>
-			PlainXml
-		}
-
 		private enum Kdb4HeaderFieldID : byte
 		{
 			EndOfHeader = 0,
@@ -156,8 +164,7 @@ namespace KeePassLib.Serialization
 			TransformSeed,
 			TransformRounds,
 			EncryptionIV,
-			ProtectedStreamKey,
-			KnownFieldCount
+			ProtectedStreamKey
 		}
 
 		/// <summary>

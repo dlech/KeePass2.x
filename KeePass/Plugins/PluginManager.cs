@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -27,60 +28,37 @@ using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Resources;
+using KeePass.Plugins;
 
 using KeePassLib;
 using KeePassLib.Utility;
 
 namespace KeePass.Plugins
 {
-	public sealed class PluginInfo
-	{
-		public string FileName = string.Empty;
-		public KeePassPlugin Interface = null;
-
-		public string FileVersion = string.Empty;
-
-		public string Name = string.Empty;
-		public string Description = string.Empty;
-		public string Author = string.Empty;
-	}
-
-	public sealed class PluginManager
+	internal sealed class PluginManager : IEnumerable<PluginInfo>
 	{
 		private List<PluginInfo> m_vPlugins = new List<PluginInfo>();
-		private IKeePassPluginHost m_host = null;
-
-		public IEnumerable<PluginInfo> Plugins
-		{
-			get { return m_vPlugins; }
-		}
+		private IPluginHost m_host = null;
 
 		public uint PluginCount
 		{
 			get { return (uint)m_vPlugins.Count; }
 		}
 
-		public void Init(IKeePassPluginHost host)
+		public void Initialize(IPluginHost host)
 		{
 			Debug.Assert(host != null);
 			m_host = host;
 		}
 
-		private static KeePassPlugin CreatePluginInstance(string strFilePath)
+		IEnumerator IEnumerable.GetEnumerator()
 		{
-			KeePassPlugin iPlugin = null;
+			return m_vPlugins.GetEnumerator();
+		}
 
-			string strType = UrlUtil.GetFileName(strFilePath);
-			strType = UrlUtil.StripExtension(strType) + "." + UrlUtil.StripExtension(strType);
-
-			try
-			{
-				ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
-				iPlugin = oh.Unwrap() as KeePassPlugin;
-			}
-			catch(Exception) { iPlugin = null; }
-
-			return iPlugin;
+		public IEnumerator<PluginInfo> GetEnumerator()
+		{
+			return m_vPlugins.GetEnumerator();
 		}
 
 		public void LoadAllPlugins(string strDirectory)
@@ -95,42 +73,48 @@ namespace KeePass.Plugins
 			}
 
 			DirectoryInfo di = new DirectoryInfo(strPath);
-
+			
 			FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
+			LoadPlugins(vFiles);
 
+			vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
+			LoadPlugins(vFiles);
+		}
+
+		private void LoadPlugins(FileInfo[] vFiles)
+		{
 			foreach(FileInfo fi in vFiles)
 			{
-				PluginInfo pi = new PluginInfo();
-				pi.FileName = fi.FullName;
+				FileVersionInfo fvi = null;
 
 				try
 				{
-					FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(pi.FileName);
-					if(fvi == null) throw new ArgumentNullException();
+					fvi = FileVersionInfo.GetVersionInfo(fi.FullName);
 
-					if((fvi.ProductName == null) || (fvi.ProductName != AppDefs.PluginProductName))
+					if((fvi == null) || (fvi.ProductName == null) ||
+						(fvi.ProductName != AppDefs.PluginProductName))
+					{
 						continue;
-
-					pi.FileVersion = fvi.FileVersion;
-
-					pi.Name = fvi.FileDescription;
-					pi.Description = fvi.Comments;
-					pi.Author = fvi.CompanyName;
+					}
 				}
 				catch(Exception) { continue; }
 
-				pi.Interface = CreatePluginInstance(pi.FileName);
-
-				if(pi.Interface != null)
+				try
 				{
-					try
-					{
-						if(pi.Interface.Initialize(m_host))
-							m_vPlugins.Add(pi); // Add the plugin to the list
-					}
-					catch(Exception) { ShowLoadWarning(pi.FileName, false); }
+					PluginInfo pi = new PluginInfo(fi.FullName, fvi);
+
+					pi.Interface = CreatePluginInstance(pi.FilePath);
+
+					if(pi.Interface.Initialize(m_host) == false)
+						continue; // Fail without error
+
+					m_vPlugins.Add(pi);
 				}
-				else ShowLoadWarning(pi.FileName, true);
+				catch(Exception excp)
+				{
+					MessageService.ShowWarning(KPRes.PluginFailedToLoad,
+						fi.FullName, excp);
+				}
 			}
 		}
 
@@ -143,24 +127,26 @@ namespace KeePass.Plugins
 				{
 					try { plugin.Interface.Terminate(); }
 					catch(Exception) { }
-
-					plugin.Interface = null;
 				}
 			}
 
 			m_vPlugins.Clear();
 		}
 
-		private void ShowLoadWarning(string strFile, bool bVersionIncompatible)
+		private static Plugin CreatePluginInstance(string strFilePath)
 		{
-			string strMsg = KPRes.PluginFailedToLoad + "\r\n";
-			strMsg += strFile;
+			Debug.Assert(strFilePath != null);
+			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			if(bVersionIncompatible)
-				strMsg += "\r\n\r\n" + KPRes.PluginVersionIncompatible;
+			string strType = UrlUtil.GetFileName(strFilePath);
+			strType = UrlUtil.StripExtension(strType) + "." +
+				UrlUtil.StripExtension(strType);
 
-			MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.OK,
-				MessageBoxIcon.Warning);
+			ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
+			
+			Plugin plugin = oh.Unwrap() as Plugin;
+			if(plugin == null) throw new FileLoadException();
+			return plugin;
 		}
 	}
 }

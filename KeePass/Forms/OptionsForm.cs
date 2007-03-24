@@ -92,6 +92,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			this.Icon = Properties.Resources.KeePass;
 
 			Debug.Assert(m_ilIcons != null);
@@ -305,6 +307,8 @@ namespace KeePass.Forms
 				lvg, KPRes.GenRandomPwForNewEntry);
 			m_cdxAdvanced.CreateItem(AppDefs.ConfigKeys.SearchKeyFilesOnRemovable, m_lvAdvanced,
 				lvg, KPRes.SearchKeyFilesOnRemovable);
+			m_cdxAdvanced.CreateItem(AppDefs.ConfigKeys.RememberHidingInDialogs, m_lvAdvanced,
+				lvg, KPRes.RememberHidingSettings);
 
 			m_cdxAdvanced.UpdateData(false);
 			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width - 36;
@@ -317,8 +321,7 @@ namespace KeePass.Forms
 			{
 				if(NativeLib.IsLibraryInstalled() == false)
 				{
-					MessageBox.Show(KPRes.NoNativeLib + "\r\n\r\n" + KPRes.NoNativeLibHint,
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(KPRes.NoNativeLib, KPRes.NoNativeLibHint);
 					bNewNative = false;
 				}
 			}
@@ -481,6 +484,11 @@ namespace KeePass.Forms
 		private void OnOverrideURLsCheckedChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

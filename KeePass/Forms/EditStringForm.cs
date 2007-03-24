@@ -68,6 +68,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_ctxValue.Attach(m_richStringValue);
 
 			string strTitle, strDesc;
@@ -202,6 +204,11 @@ namespace KeePass.Forms
 		private void OnTextChangedName(object sender, EventArgs e)
 		{
 			ValidateStringName();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

@@ -30,6 +30,7 @@ using System.Threading;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -38,7 +39,7 @@ namespace KeePass.Util
 		private const string ElemRoot = "KeePass";
 
 		private const string ElemVersionU = "Version32";
-		private const string ElemVersionStr = "VersionStr";
+		private const string ElemVersionStr = "VersionDisplayString";
 
 		private static string m_strVersionURL = string.Empty;
 		private static ToolStripStatusLabel m_tsResultsViewer = null;
@@ -68,22 +69,21 @@ namespace KeePass.Util
 
 		private static void OnDownloadCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			string strXmlFile = NetUtil.GZipUTF8ResultToString(e);
+			string strXmlFile = NetUtil.GZipUtf8ResultToString(e);
 			if(strXmlFile == null)
 			{
 				if(e.Error != null)
 				{
 					if(m_tsResultsViewer == null)
-						MessageBox.Show(KPRes.DownloadFailed + "\r\n\r\n" + e.Error.ToString(),
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					else
-						m_tsResultsViewer.Text = KPRes.DownloadFailed + " " + e.Error.ToString();
+						MessageService.ShowWarning(KPRes.DownloadFailed, e);
+					else if(e.Error.Message != null)
+						m_tsResultsViewer.Text = KPRes.DownloadFailed + " " +
+							e.Error.Message;
 				}
 				else
 				{
 					if(m_tsResultsViewer == null)
-						MessageBox.Show(KPRes.DownloadFailed, PwDefs.ShortProductName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(KPRes.DownloadFailed);
 					else
 						m_tsResultsViewer.Text = KPRes.DownloadFailed;
 				}
@@ -119,8 +119,8 @@ namespace KeePass.Util
 			{
 				if(m_tsResultsViewer == null)
 				{
-					if(MessageBox.Show(KPRes.ChkForUpdNewVersion + "\r\n\r\n" + KPRes.HomepageVisitQuestion,
-						PwDefs.ShortProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+					if(MessageService.AskYesNo(KPRes.ChkForUpdNewVersion +
+						MessageService.NewParagraph + KPRes.HomepageVisitQuestion))
 					{
 						WinUtil.OpenUrlInNewBrowser(PwDefs.HomepageUrl, null);
 					}
@@ -130,16 +130,14 @@ namespace KeePass.Util
 			else if(uVersion == PwDefs.Version32)
 			{
 				if(m_tsResultsViewer == null)
-					MessageBox.Show(KPRes.ChkForUpdGotLatest, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageService.ShowInfo(KPRes.ChkForUpdGotLatest);
 				else
 					m_tsResultsViewer.Text = KPRes.ChkForUpdGotLatest;
 			}
 			else
 			{
 				if(m_tsResultsViewer == null)
-					MessageBox.Show(KPRes.UnknownFileVersion, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(KPRes.UnknownFileVersion);
 				else
 					m_tsResultsViewer.Text = KPRes.UnknownFileVersion;
 			}
@@ -150,8 +148,7 @@ namespace KeePass.Util
 			Debug.Assert(false);
 
 			if(m_tsResultsViewer == null)
-				MessageBox.Show(KPRes.InvalidFileStructure, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(KPRes.InvalidFileStructure);
 			else
 				m_tsResultsViewer.Text = KPRes.ChkForUpdGotLatest + " " +
 					KPRes.InvalidFileStructure;

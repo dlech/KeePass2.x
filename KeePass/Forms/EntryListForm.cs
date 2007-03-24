@@ -77,6 +77,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_strTitle.Length > 0);
 			Debug.Assert(m_imgIcon != null);
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				m_imgIcon, m_strTitle, m_strDescShort);
@@ -88,8 +90,7 @@ namespace KeePass.Forms
 
 			m_lvEntries.Columns.Add(KPRes.Title);
 			m_lvEntries.Columns.Add(KPRes.UserName);
-			m_lvEntries.Columns.Add(KPRes.Password);
-			m_lvEntries.Columns.Add(KPRes.ExpiryTime);
+			m_lvEntries.Columns.Add(KPRes.URL);
 
 			FillEntriesList();
 			ProcessResize();
@@ -127,9 +128,11 @@ namespace KeePass.Forms
 			{
 				if(pe.ParentGroup != null)
 				{
-					if(pe.ParentGroup.Name != lvg.Header)
+					string strGroup = pe.ParentGroup.GetFullPath();
+
+					if(strGroup != lvg.Header)
 					{
-						lvg = new ListViewGroup(pe.ParentGroup.Name, HorizontalAlignment.Left);
+						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
 						m_lvEntries.Groups.Add(lvg);
 					}
 				}
@@ -141,10 +144,7 @@ namespace KeePass.Forms
 				else lvi.ImageIndex = (int)pe.Icon;
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
-
-				if(!pe.Expires) lvi.SubItems.Add(KPRes.NeverExpires);
-				else lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.ExpiryTime));
+				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
 
 				lvi.Tag = pe;
 
@@ -189,6 +189,11 @@ namespace KeePass.Forms
 		private void OnEntriesSelectedIndexChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

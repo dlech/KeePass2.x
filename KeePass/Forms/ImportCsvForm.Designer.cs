@@ -117,6 +117,7 @@
 			this.m_lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			resources.ApplyResources(this.m_lvPreview, "m_lvPreview");
 			this.m_lvPreview.Name = "m_lvPreview";
+			this.m_lvPreview.ShowItemToolTips = true;
 			this.m_lvPreview.UseCompatibleStateImageBehavior = false;
 			this.m_lvPreview.View = System.Windows.Forms.View.Details;
 			// 
@@ -303,6 +304,7 @@
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.ResumeLayout(false);
 			this.PerformLayout();

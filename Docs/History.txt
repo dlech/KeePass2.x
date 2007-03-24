@@ -1,3 +1,54 @@
+07/03/23 - 2.01 Alpha
+- Improved auto-type engine (releases and restores modifier
+  keys, improved focusing, etc.)
+- Implemented update-checking functionality
+- Added KPScript plugin (see source code package) for scripting
+  (details about it can be found in the online help center)
+- Added Whisper 32 1.16 import support
+- Added Steganos Password Manager 2007 import support
+- Search results now show the full path of the container group
+- Entry windows (main password list, auto-type entry selection
+  dialog, etc.) now show item tooltips when hovering over them
+- Added window box drop-down hint in the auto-type item dialog
+- Database maintenance history days setting is now remembered
+- Improved main window update after importing a file
+- Improved command line handling
+- If opening/starting external files fails, helpful messages
+  are displayed now
+- Completely new exception handling mechanism in the Kdb4File
+  class (allows to show more detailed messages)
+- New message service class (KeePassLib.Utility.MessageService)
+- Added option to disable remembering the password hiding
+  setting in the 'Edit Entry' window
+- Added menu shortcuts for opening the current entry URL
+  (Ctrl+U) and performing current entry auto-type (Ctrl+V)
+- Changed file extension to KDBX
+- Password generation profiles are now saved when the dialog is
+  closed with 'Close'/'Cancel'
+- Entry URL overrides now precede the global URL override
+- Standard password generation profiles are now included in the
+  executable file
+- Restructured plugin architecture, it's much clearer now
+  (abstract base class, assembly-internal manager class, ...)
+- Only non-empty strings are now displayed in the entry view
+- Current working directory is set to the KeePass application
+  directory before executing external files/URLs
+- Changed fields shown in the auto-type entry selection dialog:
+  title, user name and URL are displayed instead of title, user
+  name and password
+- Clearified clipboard commands in context menus
+- Help buttons now open the correct topics in the CHM
+- Fixed name in the installer script
+- Workspace is not locked any more if a window is open (this
+  prevents data loss)
+- The 'Find' toolbar button works now
+- The OK button in the Import dialog is now enabled when you
+  manually enter a path into the file text box
+- Fixed entry list focus bug
+- Fixed menu focus bug
+- The 'Copy Custom String' menu item doesn't disappear any more
+- Fixed enabled/disabled state of auto-type menu command
+
 07/03/17 - 2.00 Alpha
 - Strings containing quotes are now passed correctly over the
   command-line

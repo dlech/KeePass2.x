@@ -102,43 +102,32 @@ namespace KeePass.DataExchange
 		/// PwDatabase instance.
 		/// </summary>
 		/// <param name="strFilePath">Relative or absolute path to the file to open.</param>
-		/// <returns>Error code (<c>FileOpenResult.Success</c> if successful).</returns>
-		public FileOpenResult Load(string strFilePath)
+		public void Load(string strFilePath)
 		{
-			Debug.Assert(strFilePath != null); if(strFilePath == null) throw new ArgumentNullException("strFilePath");
+			Debug.Assert(strFilePath != null);
+			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			try
+			Kdb3Manager mgr = new Kdb3Manager();
+			Kdb3ErrorCode e;
+
+			e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+			if(e != Kdb3ErrorCode.Success) throw new InvalidOperationException("SetDatabaseKey failed!");
+
+			e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
+			if(e != Kdb3ErrorCode.Success)
 			{
-				Kdb3Manager mgr = new Kdb3Manager();
-				Kdb3ErrorCode e;
-
-				e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-				if(e != Kdb3ErrorCode.Success) throw new InvalidOperationException("SetDatabaseKey failed!");
-
-				e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
-				if(e != Kdb3ErrorCode.Success)
-				{
-					mgr.Unload();
-					throw new InvalidOperationException("OpenDatabase failed!");
-				}
-
-				// Copy properties
-				m_pwDatabase.KeyEncryptionRounds = mgr.KeyTransformationRounds;
-
-				// Read groups and entries
-				Dictionary<UInt32, PwGroup> dictGroups = ReadGroups(mgr);
-				ReadEntries(mgr, dictGroups);
-
 				mgr.Unload();
-			}
-			catch(Exception excp)
-			{
-				if(m_slLogger != null)
-					m_slLogger.SetText(StrUtil.FormatException(excp, true), LogStatusType.Error);
-				else return new FileOpenResult(FileOpenResultCode.UnknownError, excp);
+				throw new InvalidOperationException("OpenDatabase failed!");
 			}
 
-			return FileOpenResult.Success;
+			// Copy properties
+			m_pwDatabase.KeyEncryptionRounds = mgr.KeyTransformationRounds;
+
+			// Read groups and entries
+			Dictionary<UInt32, PwGroup> dictGroups = ReadGroups(mgr);
+			ReadEntries(mgr, dictGroups);
+
+			mgr.Unload();
 		}
 
 		private Dictionary<UInt32, PwGroup> ReadGroups(Kdb3Manager mgr)
@@ -251,54 +240,42 @@ namespace KeePass.DataExchange
 		/// Save the contents of the current <c>PwDatabase</c> to a KDB file.
 		/// </summary>
 		/// <param name="strSaveToFile">Location to save the KDB file to.</param>
-		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
-		public FileSaveResult Save(string strSaveToFile)
+		public void Save(string strSaveToFile)
 		{
-			Debug.Assert(strSaveToFile != null); if(strSaveToFile == null) throw new ArgumentNullException();
+			Debug.Assert(strSaveToFile != null);
+			if(strSaveToFile == null) throw new ArgumentNullException("strSaveToFile");
 
-			try
+			Kdb3Manager mgr = new Kdb3Manager();
+
+			Kdb3ErrorCode e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+			if(e != Kdb3ErrorCode.Success)
 			{
-				Kdb3Manager mgr = new Kdb3Manager();
-
-				Kdb3ErrorCode e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-				if(e != Kdb3ErrorCode.Success)
-				{
-					Debug.Assert(false);
-					throw new InvalidOperationException();
-				}
-
-				if(m_slLogger != null)
-				{
-					if(m_pwDatabase.Name.Length != 0)
-						m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbName, LogStatusType.Warning);
-					if(m_pwDatabase.Description.Length != 0)
-						m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbDesc, LogStatusType.Warning);
-				}
-
-				// Set properties
-				if(m_pwDatabase.KeyEncryptionRounds >= (ulong)UInt32.MaxValue)
-					mgr.KeyTransformationRounds = UInt32.MaxValue - 1;
-				else mgr.KeyTransformationRounds = (uint)m_pwDatabase.KeyEncryptionRounds;
-
-				// Write groups and entries
-				Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr);
-				WriteEntries(mgr, dictGroups);
-
-				e = mgr.SaveDatabase(strSaveToFile);
-				if(e != Kdb3ErrorCode.Success)
-					throw new InvalidOperationException();
-
-				mgr.Unload();
-			}
-			catch(Exception excp)
-			{
-				if(m_slLogger != null)
-					m_slLogger.SetText(KPRes.ExceptionOccured + "\r\n\r\n" +
-						excp.Message + "\r\n" + excp.StackTrace, LogStatusType.Error);
-				else return new FileSaveResult(FileSaveResultCode.UnknownError, excp);
+				Debug.Assert(false);
+				throw new InvalidOperationException();
 			}
 
-			return FileSaveResult.Success;
+			if(m_slLogger != null)
+			{
+				if(m_pwDatabase.Name.Length != 0)
+					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbName, LogStatusType.Warning);
+				if(m_pwDatabase.Description.Length != 0)
+					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbDesc, LogStatusType.Warning);
+			}
+
+			// Set properties
+			if(m_pwDatabase.KeyEncryptionRounds >= (ulong)UInt32.MaxValue)
+				mgr.KeyTransformationRounds = UInt32.MaxValue - 1;
+			else mgr.KeyTransformationRounds = (uint)m_pwDatabase.KeyEncryptionRounds;
+
+			// Write groups and entries
+			Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr);
+			WriteEntries(mgr, dictGroups);
+
+			e = mgr.SaveDatabase(strSaveToFile);
+			if(e != Kdb3ErrorCode.Success)
+				throw new InvalidOperationException();
+
+			mgr.Unload();
 		}
 
 		private Dictionary<PwGroup, UInt32> WriteGroups(Kdb3Manager mgr)

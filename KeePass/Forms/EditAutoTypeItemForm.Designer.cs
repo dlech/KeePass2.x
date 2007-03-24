@@ -41,6 +41,7 @@
 			this.m_rbKeySeq = new System.Windows.Forms.RichTextBox();
 			this.m_rtbPlaceholders = new System.Windows.Forms.RichTextBox();
 			this.m_cmbWindow = new System.Windows.Forms.ComboBox();
+			this.m_lblOpenHint = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -123,12 +124,18 @@
 			this.m_cmbWindow.SelectedIndexChanged += new System.EventHandler(this.OnWindowSelectedIndexChanged);
 			this.m_cmbWindow.TextUpdate += new System.EventHandler(this.OnWindowTextUpdate);
 			// 
+			// m_lblOpenHint
+			// 
+			resources.ApplyResources(this.m_lblOpenHint, "m_lblOpenHint");
+			this.m_lblOpenHint.Name = "m_lblOpenHint";
+			// 
 			// EditAutoTypeItemForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.Controls.Add(this.m_lblOpenHint);
 			this.Controls.Add(this.m_cmbWindow);
 			this.Controls.Add(this.m_rtbPlaceholders);
 			this.Controls.Add(this.m_rbKeySeq);
@@ -147,6 +154,7 @@
 			this.Name = "EditAutoTypeItemForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
@@ -168,5 +176,6 @@
 		private System.Windows.Forms.RichTextBox m_rbKeySeq;
 		private System.Windows.Forms.RichTextBox m_rtbPlaceholders;
 		private System.Windows.Forms.ComboBox m_cmbWindow;
+		private System.Windows.Forms.Label m_lblOpenHint;
 	}
 }

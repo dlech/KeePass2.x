@@ -132,6 +132,9 @@
     <Compile Include="..\KeePassLib\PwUuid.cs">
       <Link>KeePassLib\PwUuid.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Resources\KLRes.cs">
+      <Link>KeePassLib\Resources\KLRes.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>KeePassLib\Security\ProtectedBinary.cs</Link>
     </Compile>
@@ -162,6 +165,9 @@
     <Compile Include="..\KeePassLib\Serialization\Kdb4File.Write.cs">
       <Link>KeePassLib\Serialization\Kdb4File.Write.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
+      <Link>KeePassLib\Serialization\OldFormatException.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Utility\AppConfigEx.cs">
       <Link>KeePassLib\Utility\AppConfigEx.cs</Link>
     </Compile>
@@ -170,6 +176,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MemUtil.cs">
       <Link>KeePassLib\Utility\MemUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\MessageService.cs">
+      <Link>KeePassLib\Utility\MessageService.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\NativeLib.cs">
       <Link>KeePassLib\Utility\NativeLib.cs</Link>
@@ -203,6 +212,8 @@
     <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
+    <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
+    <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\ImporterPool.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
     <Compile Include="DataExchange\Kdb3File.cs" />
@@ -375,7 +386,10 @@
     <Compile Include="Forms\IOConnectionForm.Designer.cs">
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Plugins\CancellableOperationEventArgs.cs" />
+    <Compile Include="UI\GlobalWindowManager.cs" />
+    <Compile Include="UI\IGwmWindow.cs" />
+    <Compile Include="Util\CancellableOperationEventArgs.cs" />
+    <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="UI\CheckedLVItemDXList.cs" />
     <Compile Include="UI\CustomSplitContainerEx.cs">
       <SubType>Component</SubType>
@@ -391,9 +405,9 @@
     <Compile Include="UI\RichTextBoxContextMenu.cs" />
     <Compile Include="UI\SecureEdit.cs">
     </Compile>
-    <Compile Include="Plugins\KeePassPlugin.cs" />
-    <Compile Include="Plugins\IKeePassPluginHost.cs" />
-    <Compile Include="Plugins\PluginDefaultHost.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\IPluginHost.cs" />
+    <Compile Include="Plugins\DefaultPluginHost.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -534,7 +548,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>KPRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\ResUtil.cs" />
     <Compile Include="UI\BannerFactory.cs" />
     <Compile Include="UI\MruList.cs" />
     <Compile Include="UI\ShowWarningsLogger.cs" />
@@ -549,6 +562,8 @@
     <Compile Include="Util\EntryUtil.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
+    <Compile Include="Util\PwGeneratorUtil.cs" />
+    <Compile Include="Util\SendInputEx.cs" />
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
@@ -680,6 +695,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Steganos.png" />
+    <None Include="Resources\Images\B16x16_Imp_Whisper32.png" />
     <None Include="KeePass.pfx" />
     <None Include="Resources\Nuvola\B16x16_Folder_Inbox.png" />
     <None Include="Resources\Images\B16x16_Imp_Security.png" />

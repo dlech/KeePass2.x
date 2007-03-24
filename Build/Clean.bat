@@ -25,16 +25,20 @@ DEL ..\KeePass.ncb
 
 DEL ..\KeePassNtv\KeePassNtv.vcproj.REDDYX.Dominik.user
 
-RMDIR /S /Q ..\Plugins\ArcFourCipher\bin
+RMDIR /S /Q ArcFourCipher\Debug
 RMDIR /S /Q ..\Plugins\ArcFourCipher\obj
 DEL ..\Plugins\ArcFourCipher\ArcFourCipher.csproj.user
+DEL ArcFourCipher\Release\ArcFourCipher.pdb
 
-RMDIR /S /Q ..\Plugins\KPScript\bin
+RMDIR /S /Q KPScript\Debug
 RMDIR /S /Q ..\Plugins\KPScript\obj
 DEL ..\Plugins\KPScript\KPScript.csproj.user
+DEL KPScript\Release\KPScript.pdb
+DEL KPScript\Release\KeePass.exe
 
-RMDIR /S /Q ..\Plugins\SamplePlugin\bin
+RMDIR /S /Q SamplePlugin\Debug
 RMDIR /S /Q ..\Plugins\SamplePlugin\obj
 DEL ..\Plugins\SamplePlugin\SamplePlugin.csproj.user
+DEL SamplePlugin\Release\SamplePlugin.pdb
 
 CLS

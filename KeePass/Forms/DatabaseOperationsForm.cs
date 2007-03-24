@@ -52,6 +52,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_Package_Settings, KPRes.DatabaseMaintenance,
@@ -59,11 +61,14 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.DatabaseMaintenance;
 
+			m_numHistoryDays.Value = m_pwDatabase.MaintenanceHistoryDays;
+
 			m_pbStatus.Visible = false;
 		}
 
 		private void OnBtnClose(object sender, EventArgs e)
 		{
+			m_pwDatabase.MaintenanceHistoryDays = (uint)m_numHistoryDays.Value;
 		}
 
 		private void OnBtnDelete(object sender, EventArgs e)
@@ -79,7 +84,7 @@ namespace KeePass.Forms
 
 			m_pbStatus.Value = 0;
 
-			uint uCurEntry = 0;
+			uint uCurEntryNumber = 1;
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				for(uint u = 0; u < pe.History.UCount; ++u)
@@ -93,8 +98,8 @@ namespace KeePass.Forms
 					}
 				}
 
-				m_pbStatus.Value = (int)((uCurEntry * 100) / uNumEntries);
-				++uCurEntry;
+				m_pbStatus.Value = (int)((uCurEntryNumber * 100) / uNumEntries);
+				++uCurEntryNumber;
 				return true;
 			};
 
@@ -103,6 +108,11 @@ namespace KeePass.Forms
 			m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled = true;
 
 			// Database is set modified by parent
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

@@ -39,6 +39,7 @@ using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -49,15 +50,10 @@ namespace KeePassLib.Serialization
 	/// </summary>
 	public sealed partial class Kdb4File
 	{
-		public FileSaveResult Save(string strFile, KdbFormat format, IStatusLogger slLogger)
+		public void Save(string strFile, Kdb4Format format, IStatusLogger slLogger)
 		{
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			Stream s;
-			FileSaveResult fsr = IOConnection.OpenWrite(ioc, out s);
-			if(fsr.Code == FileSaveResultCode.Success)
-				return this.Save(s, format, slLogger);
-
-			return fsr;
+			this.Save(IOConnection.OpenWrite(ioc), format, slLogger);
 		}
 
 		/// <summary>
@@ -66,8 +62,7 @@ namespace KeePassLib.Serialization
 		/// <param name="sSaveTo">Stream to write the KDB file into.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
-		public FileSaveResult Save(Stream sSaveTo, KdbFormat format, IStatusLogger slLogger)
+		public void Save(Stream sSaveTo, Kdb4Format format, IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
 			if(sSaveTo == null) throw new ArgumentNullException("sSaveTo");
@@ -83,62 +78,48 @@ namespace KeePassLib.Serialization
 
 				m_pbProtectedStreamKey = CryptoRandom.GetRandomBytes(32);
 				m_randomStream = new CryptoRandomStream(CrsAlgorithm.ArcFour, m_pbProtectedStreamKey);
+
+				Stream writerStream;
+				BinaryWriter bw = null;
+				if(m_format == Kdb4Format.Default)
+				{
+					bw = new BinaryWriter(sSaveTo);
+					WriteHeader(bw);
+
+					Stream sEncrypted = AttachStreamEncryptor(sSaveTo);
+					if((sEncrypted == null) || (sEncrypted == sSaveTo))
+						throw new SecurityException(KLRes.CryptoStreamFailed);
+
+					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
+						writerStream = new GZipStream(sEncrypted, CompressionMode.Compress);
+					else
+						writerStream = sEncrypted;
+				}
+				else if(m_format == Kdb4Format.PlainXml)
+					writerStream = sSaveTo;
+				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
+
+				m_xmlWriter = new XmlTextWriter(writerStream, Encoding.UTF8);
+				WriteDocument();
+
+				m_xmlWriter.Flush();
+				m_xmlWriter.Close();
+				writerStream.Close();
+
+				GC.KeepAlive(bw);
+				sSaveTo.Close();
 			}
-			catch(Exception secEx)
+			catch(Exception excp)
 			{
-				return new FileSaveResult(FileSaveResultCode.SecurityException, secEx);
+				sSaveTo.Close();
+				throw excp;
 			}
-
-			Stream writerStream;
-			BinaryWriter bw = null;
-			if(m_format == KdbFormat.Default)
-			{
-				bw = new BinaryWriter(sSaveTo);
-				WriteHeader(bw);
-
-				Stream sEncrypted = AttachStreamEncryptor(sSaveTo);
-				if((sEncrypted == null) || (sEncrypted == sSaveTo))
-					return new FileSaveResult(FileSaveResultCode.SecurityException,
-						new SecurityException("Failed to create encryptor!"));
-
-				if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-					writerStream = new GZipStream(sEncrypted, CompressionMode.Compress);
-				else
-					writerStream = sEncrypted;
-			}
-			else if(m_format == KdbFormat.PlainXml)
-				writerStream = sSaveTo;
-			else { Debug.Assert(false); throw new ArgumentException(); }
-
-			XmlTextWriter xtw = null;
-			try { xtw = new XmlTextWriter(writerStream, Encoding.UTF8); }
-			catch(Exception xmlEx)
-			{
-				return new FileSaveResult(FileSaveResultCode.IOException, xmlEx);
-			}
-			if(xtw == null) return new FileSaveResult(FileSaveResultCode.IOException, null);
-
-			m_xmlWriter = xtw;
-			try { WriteDocument(); }
-			catch(Exception wEx)
-			{
-				return new FileSaveResult(FileSaveResultCode.IOException, wEx);
-			}
-
-			m_xmlWriter.Flush();
-			m_xmlWriter.Close();
-			writerStream.Close();
-
-			GC.KeepAlive(bw);
-
-			// xtw.Flush(); writerStream.Flush(); fs.Flush();
-			sSaveTo.Close();
-			return FileSaveResult.Success;
 		}
 
 		private void WriteHeader(BinaryWriter bw)
 		{
-			Debug.Assert(bw != null); if(bw == null) throw new ArgumentNullException("br");
+			Debug.Assert(bw != null);
+			if(bw == null) throw new ArgumentNullException("br");
 
 			bw.Write(MemUtil.UInt32ToBytes(FileSignature1));
 			bw.Write(MemUtil.UInt32ToBytes(FileSignature2));
@@ -163,7 +144,8 @@ namespace KeePassLib.Serialization
 
 		private void WriteHeaderField(BinaryWriter bwOut, Kdb4HeaderFieldID kdbID, byte[] pbData)
 		{
-			Debug.Assert(bwOut != null); if(bwOut == null) throw new ArgumentNullException();
+			Debug.Assert(bwOut != null);
+			if(bwOut == null) throw new ArgumentNullException("bwOut");
 
 			bwOut.Write((byte)kdbID);
 
@@ -187,7 +169,7 @@ namespace KeePassLib.Serialization
 			byte[] pKey32 = m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
 				m_pwDatabase.KeyEncryptionRounds).ReadData();
 			if((pKey32 == null) || (pKey32.Length != 32))
-				throw new SecurityException("Invalid composite key!");
+				throw new SecurityException(KLRes.InvalidCompositeKey);
 			ms.Write(pKey32, 0, 32);
 
 			SHA256Managed sha256 = new SHA256Managed();
@@ -197,13 +179,14 @@ namespace KeePassLib.Serialization
 			Array.Clear(pKey32, 0, 32);
 
 			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
-			if(iEngine == null) throw new SecurityException("Selected encryption algorithm is unknown. A plugin is required to support this algorithm.");
+			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
 			return iEngine.EncryptStream(s, aesKey, this.m_pbEncryptionIV);
 		}
 
 		private void WriteDocument()
 		{
-			Debug.Assert(m_xmlWriter != null); if(m_xmlWriter == null) throw new ArgumentNullException();
+			Debug.Assert(m_xmlWriter != null);
+			if(m_xmlWriter == null) throw new InvalidOperationException();
 
 			uint uNumGroups, uNumEntries, uCurEntry = 0;
 			m_pwDatabase.RootGroup.GetCounts(true, out uNumGroups, out uNumEntries);
@@ -225,7 +208,8 @@ namespace KeePassLib.Serialization
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				Debug.Assert(pg != null); if(pg == null) throw new ArgumentNullException();
+				Debug.Assert(pg != null);
+				if(pg == null) throw new ArgumentNullException("pg");
 
 				while(true)
 				{
@@ -286,6 +270,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemDbName, m_pwDatabase.Name);
 			WriteObject(ElemDbDesc, m_pwDatabase.Description);
 			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName);
+			WriteObject(ElemDbMntncHistoryDays, m_pwDatabase.MaintenanceHistoryDays);
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
 
@@ -345,7 +330,8 @@ namespace KeePassLib.Serialization
 
 		private void WriteList(ProtectedStringDictionary dictStrings, bool bEntryStrings)
 		{
-			Debug.Assert(dictStrings != null); if(dictStrings == null) throw new ArgumentNullException();
+			Debug.Assert(dictStrings != null);
+			if(dictStrings == null) throw new ArgumentNullException("dictStrings");
 
 			foreach(KeyValuePair<string, ProtectedString> kvp in dictStrings)
 				WriteObject(kvp.Key, kvp.Value, bEntryStrings);
@@ -353,7 +339,8 @@ namespace KeePassLib.Serialization
 
 		private void WriteList(ProtectedBinaryDictionary dictBinaries)
 		{
-			Debug.Assert(dictBinaries != null); if(dictBinaries == null) throw new ArgumentNullException();
+			Debug.Assert(dictBinaries != null);
+			if(dictBinaries == null) throw new ArgumentNullException("dictBinaries");
 
 			foreach(KeyValuePair<string, ProtectedBinary> kvp in dictBinaries)
 				WriteObject(kvp.Key, kvp.Value);
@@ -362,7 +349,8 @@ namespace KeePassLib.Serialization
 		private void WriteList(string name, AutoTypeConfig dictAutoType)
 		{
 			Debug.Assert(name != null);
-			Debug.Assert(dictAutoType != null); if(dictAutoType == null) throw new ArgumentNullException();
+			Debug.Assert(dictAutoType != null);
+			if(dictAutoType == null) throw new ArgumentNullException("dictAutoType");
 
 			m_xmlWriter.WriteStartElement(name);
 
@@ -523,7 +511,7 @@ namespace KeePassLib.Serialization
 			else if(name == PwDefs.UrlField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUrl);
 			else if(name == PwDefs.NotesField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectNotes);
 
-			if(value.IsProtected && (m_format != KdbFormat.PlainXml))
+			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -590,7 +578,7 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
-			if((value.IsProtected) && (m_format != KdbFormat.PlainXml))
+			if((value.IsProtected) && (m_format != Kdb4Format.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -629,7 +617,7 @@ namespace KeePassLib.Serialization
 		public static bool WriteEntries(Stream msOutput, PwDatabase m_pwDatabase, PwEntry[] vEntries)
 		{
 			Kdb4File f = new Kdb4File(m_pwDatabase);
-			f.m_format = KdbFormat.PlainXml;
+			f.m_format = Kdb4Format.PlainXml;
 
 			XmlTextWriter xtw = null;
 			try { xtw = new XmlTextWriter(msOutput, Encoding.UTF8); }

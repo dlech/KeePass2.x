@@ -438,6 +438,20 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_Steganos {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Steganos", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_Whisper32 {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Whisper32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_KeePass {
             get {
                 object obj = ResourceManager.GetObject("B16x16_KeePass", resourceCulture);

@@ -44,113 +44,43 @@ namespace KeePassLib.Serialization
 			return wc;
 		}
 
-		public static FileOpenResult OpenRead(IOConnectionInfo ioc, out Stream s)
+		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
-			s = null;
+			if(ioc.IsLocalFile()) return OpenReadLocal(ioc);
 
-			if(ioc.IsLocalFile()) return OpenReadLocal(ioc, out s);
-
-			try
-			{
-				Stream sIn = CreateWebClient(ioc).OpenRead(new Uri(ioc.Url));
-				if(sIn != null)
-				{
-					s = sIn;
-					return FileOpenResult.Success;
-				}
-			}
-			catch(Exception excp)
-			{
-				return new FileOpenResult(FileOpenResultCode.NoFileAccess,
-					excp);
-			}
-
-			return new FileOpenResult(FileOpenResultCode.NoFileAccess, null);
+			return CreateWebClient(ioc).OpenRead(new Uri(ioc.Url));
 		}
 #else
-		public static FileOpenResult OpenRead(IOConnectionInfo ioc, out Stream s)
+		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
-			return OpenReadLocal(ioc, out s);
+			return OpenReadLocal(ioc);
 		}
 #endif
 
-		private static FileOpenResult OpenReadLocal(IOConnectionInfo ioc, out Stream s)
+		private static Stream OpenReadLocal(IOConnectionInfo ioc)
 		{
-			s = null;
-
-			FileStream fs = null;
-			try
-			{
-				fs = new FileStream(ioc.Url, FileMode.Open, FileAccess.Read,
-					FileShare.Read);
-			}
-			catch(FileNotFoundException fnfEx)
-			{
-				return new FileOpenResult(FileOpenResultCode.FileNotFound, fnfEx);
-			}
-			catch(IOException ioEx)
-			{
-				return new FileOpenResult(FileOpenResultCode.IOError, ioEx);
-			}
-			catch(Exception otherEx)
-			{
-				return new FileOpenResult(FileOpenResultCode.NoFileAccess, otherEx);
-			}
-
-			if(fs == null) return new FileOpenResult(FileOpenResultCode.NoFileAccess, null);
-
-			s = fs;
-			return FileOpenResult.Success;
+			return new FileStream(ioc.Url, FileMode.Open, FileAccess.Read,
+				FileShare.Read);
 		}
 
 #if !KeePassLibSD
-		public static FileSaveResult OpenWrite(IOConnectionInfo ioc, out Stream s)
+		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
-			s = null;
+			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
-			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc, out s);
-
-			try
-			{
-				Stream sOut = CreateWebClient(ioc).OpenWrite(new Uri(ioc.Url));
-				if(sOut != null)
-				{
-					s = sOut;
-					return FileSaveResult.Success;
-				}
-			}
-			catch(Exception excp)
-			{
-				return new FileSaveResult(FileSaveResultCode.FileCreationFailed,
-					excp);
-			}
-
-			return new FileSaveResult(FileSaveResultCode.FileCreationFailed, null);
+			return CreateWebClient(ioc).OpenWrite(new Uri(ioc.Url));
 		}
 #else
-		public static FileSaveResult OpenWrite(IOConnectionInfo ioc, out Stream s)
+		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
-			return OpenWriteLocal(ioc, out s);
+			return OpenWriteLocal(ioc);
 		}
 #endif
 
-		private static FileSaveResult OpenWriteLocal(IOConnectionInfo ioc, out Stream sSaveTo)
+		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
-			sSaveTo = null;
-
-			FileStream fs = null;
-			try
-			{
-				fs = new FileStream(ioc.Url, FileMode.Create,
-					FileAccess.Write, FileShare.None);
-			}
-			catch(Exception fsEx)
-			{
-				return new FileSaveResult(FileSaveResultCode.FileCreationFailed, fsEx);
-			}
-
-			sSaveTo = fs;
-			return FileSaveResult.Success;
+			return new FileStream(ioc.Url, FileMode.Create, FileAccess.Write,
+				FileShare.None);
 		}
 	}
 }

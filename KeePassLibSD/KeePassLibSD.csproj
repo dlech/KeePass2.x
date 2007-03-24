@@ -50,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +141,9 @@
     <Compile Include="..\KeePassLib\PwUuid.cs">
       <Link>PwUuid.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Resources\KLRes.cs">
+      <Link>Resources\KLRes.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>Security\ProtectedBinary.cs</Link>
     </Compile>
@@ -170,6 +174,9 @@
     <Compile Include="..\KeePassLib\Serialization\Kdb4File.Write.cs">
       <Link>Serialization\Kdb4File.Write.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
+      <Link>Serialization\OldFormatException.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Utility\AppConfigEx.cs">
       <Link>Utility\AppConfigEx.cs</Link>
     </Compile>
@@ -178,6 +185,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MemUtil.cs">
       <Link>Utility\MemUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\MessageService.cs">
+      <Link>Utility\MessageService.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\NativeLib.cs">
       <Link>Utility\NativeLib.cs</Link>

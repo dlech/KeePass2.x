@@ -662,6 +662,42 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// Get the full path of a group.
+		/// </summary>
+		/// <returns>Full path of the group.</returns>
+		public string GetFullPath()
+		{
+			return this.GetFullPath(".", false);
+		}
+
+		/// <summary>
+		/// Get the full path of a group.
+		/// </summary>
+		/// <param name="strSeparator">String that separates the group
+		/// names.</param>
+		/// <returns>Full path of the group.</returns>
+		public string GetFullPath(string strSeparator, bool bIncludeTopMostGroup)
+		{
+			Debug.Assert(strSeparator != null);
+			if(strSeparator == null) throw new ArgumentNullException("strSeparator");
+
+			string strPath = m_strName;
+
+			PwGroup pg = m_pParentGroup;
+			while(pg != null)
+			{
+				if((!bIncludeTopMostGroup) && (pg.m_pParentGroup == null))
+					break;
+
+				strPath = pg.Name + strSeparator + strPath;
+
+				pg = pg.m_pParentGroup;
+			}
+
+			return strPath;
+		}
+
+		/// <summary>
 		/// Assign properties to the current group based on a template group.
 		/// </summary>
 		/// <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>

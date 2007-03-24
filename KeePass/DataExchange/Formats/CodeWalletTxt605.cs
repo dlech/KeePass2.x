@@ -30,6 +30,7 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -40,6 +41,8 @@ namespace KeePass.DataExchange.Formats
 		public override string FormatName { get { return "CodeWallet TXT 6.05"; } }
 		public override string DefaultExtension { get { return "txt"; } }
 		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+
+		public override bool AppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -100,8 +103,8 @@ namespace KeePass.DataExchange.Formats
 					else if(!bEmptyEntry)
 					{
 						pe.Strings.Set(strLastIndexedItem, new ProtectedString(
-							false, pe.Strings.ReadSafe(strLastIndexedItem) + "\r\n\r\n" +
-							strLine));
+							false, pe.Strings.ReadSafe(strLastIndexedItem) +
+							MessageService.NewParagraph + strLine));
 					}
 
 					bEmptyEntry = false;

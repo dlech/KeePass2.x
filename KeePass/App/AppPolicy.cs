@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.App
 {
@@ -84,7 +85,7 @@ namespace KeePass.App
 					break;
 			}
 
-			str += "\r\n" + KPRes.Description + @": ";
+			str += MessageService.NewLine + KPRes.Description + @": ";
 
 			switch(flag)
 			{
@@ -123,8 +124,8 @@ namespace KeePass.App
 
 		public static string RequiredPolicyMessage(AppPolicyFlag flag)
 		{
-			string str = KPRes.PolicyDisallowed + "\r\n\r\n";
-			str += KPRes.PolicyRequiredFlag + ":\r\n";
+			string str = KPRes.PolicyDisallowed + MessageService.NewParagraph;
+			str += KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine;
 			str += PolicyToString(flag);
 
 			return str;
@@ -160,10 +161,10 @@ namespace KeePass.App
 		{
 			bool bAllowed = m_vCurPolicyFlags[(int)flag];
 
-			if(!bAllowed)
+			if(bAllowed == false)
 			{
-				string str = RequiredPolicyMessage(flag);
-				MessageBox.Show(str, PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				string strMsg = RequiredPolicyMessage(flag);
+				MessageService.ShowWarning(strMsg);
 			}
 
 			return bAllowed;

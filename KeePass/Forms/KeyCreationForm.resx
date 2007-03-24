@@ -577,7 +577,7 @@
     <value>m_pbPasswordQuality</value>
   </data>
   <data name="&gt;&gt;m_pbPasswordQuality.Type" xml:space="preserve">
-    <value>KeePass.UI.QualityProgressBar, KeePass, Version=1.0.2628.27942, Culture=neutral, PublicKeyToken=null</value>
+    <value>KeePass.UI.QualityProgressBar, KeePass, Version=2.0.0.19594, Culture=neutral, PublicKeyToken=7952fc8ece49a093</value>
   </data>
   <data name="&gt;&gt;m_pbPasswordQuality.Parent" xml:space="preserve">
     <value>$this</value>

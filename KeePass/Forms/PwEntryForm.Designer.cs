@@ -469,6 +469,7 @@
 			this.m_lvBinaries.HideSelection = false;
 			resources.ApplyResources(this.m_lvBinaries, "m_lvBinaries");
 			this.m_lvBinaries.Name = "m_lvBinaries";
+			this.m_lvBinaries.ShowItemToolTips = true;
 			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
 			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
 			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
@@ -534,6 +535,7 @@
 			this.m_lvStrings.HideSelection = false;
 			resources.ApplyResources(this.m_lvStrings, "m_lvStrings");
 			this.m_lvStrings.Name = "m_lvStrings";
+			this.m_lvStrings.ShowItemToolTips = true;
 			this.m_lvStrings.UseCompatibleStateImageBehavior = false;
 			this.m_lvStrings.View = System.Windows.Forms.View.Details;
 			this.m_lvStrings.ItemActivate += new System.EventHandler(this.OnStringsItemActivate);
@@ -657,6 +659,7 @@
 			this.m_lvAutoType.HideSelection = false;
 			resources.ApplyResources(this.m_lvAutoType, "m_lvAutoType");
 			this.m_lvAutoType.Name = "m_lvAutoType";
+			this.m_lvAutoType.ShowItemToolTips = true;
 			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
 			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
 			this.m_lvAutoType.ItemActivate += new System.EventHandler(this.OnAutoTypeItemActivate);
@@ -700,6 +703,7 @@
 			this.m_lvHistory.HideSelection = false;
 			resources.ApplyResources(this.m_lvHistory, "m_lvHistory");
 			this.m_lvHistory.Name = "m_lvHistory";
+			this.m_lvHistory.ShowItemToolTips = true;
 			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
 			this.m_lvHistory.View = System.Windows.Forms.View.Details;
 			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
@@ -822,6 +826,7 @@
 			this.MinimizeBox = false;
 			this.Name = "PwEntryForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.m_ctxDefaultTimes.ResumeLayout(false);
 			this.m_tabMain.ResumeLayout(false);

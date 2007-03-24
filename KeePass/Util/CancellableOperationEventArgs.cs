@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace KeePass.Plugins
+namespace KeePass.Util
 {
 	public class CancellableOperationEventArgs : EventArgs
 	{

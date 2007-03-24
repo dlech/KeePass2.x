@@ -36,6 +36,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +52,7 @@
     <Compile Include="Cryptography\QualityEstimation.cs" />
     <Compile Include="Cryptography\SelfTest.cs" />
     <Compile Include="Interfaces\IUIOperations.cs" />
+    <Compile Include="Resources\KLRes.cs" />
     <Compile Include="Security\XorredBuffer.cs" />
     <Compile Include="Delegates\Handlers.cs" />
     <Compile Include="Interfaces\IDeepClonable.cs" />
@@ -78,9 +80,11 @@
     <Compile Include="Serialization\Kdb4File.Read.Streamed.cs" />
     <Compile Include="Serialization\Kdb4File.Write.cs" />
     <Compile Include="Serialization\IOConnectionInfo.cs" />
+    <Compile Include="Serialization\OldFormatException.cs" />
     <Compile Include="Utility\AppConfigEx.cs" />
     <Compile Include="Utility\AppLogEx.cs" />
     <Compile Include="Utility\MemUtil.cs" />
+    <Compile Include="Utility\MessageService.cs" />
     <Compile Include="Utility\NativeLib.cs" />
     <Compile Include="Cryptography\PasswordGenerator.cs" />
     <Compile Include="Utility\StrUtil.cs" />

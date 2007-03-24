@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 
 using KeePass.App;
 
@@ -39,6 +40,13 @@ namespace KeePass.Util
 			// If URL is null, return false, do not throw exception.
 			Debug.Assert(strUrlToOpen != null); if(strUrlToOpen == null) return;
 
+			string strPrevWorkDir = Directory.GetCurrentDirectory();
+			string strThisExe = WinUtil.GetExecutable();
+			
+			string strExeDir = UrlUtil.GetFileDirectory(strThisExe, false);
+			try { Directory.SetCurrentDirectory(strExeDir); }
+			catch(Exception) { Debug.Assert(false); }
+
 			string strUrl = strUrlToOpen;
 			bool bCmdQuotes = strUrl.StartsWith("cmd://");
 
@@ -46,31 +54,53 @@ namespace KeePass.Util
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
 			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
 
-			strUrl = StrUtil.FillPlaceholders(strUrl, peDataSource, WinUtil.GetExecutable(),
+			strUrl = StrUtil.FillPlaceholders(strUrl, peDataSource, strThisExe,
 				pwDatabase, bCmdQuotes);
 
 			strUrl = AppLocator.FillPlaceholders(strUrl);
 
-			Process p = null;
 			if(strUrl.StartsWith("cmd://"))
 			{
 				string strApp, strArgs;
 				StrUtil.SplitCommandLine(strUrl.Remove(0, 6), out strApp, out strArgs);
 
-				try { p = Process.Start(strApp, strArgs); }
-				catch(Exception) { p = null; }
+				try
+				{
+					if((strArgs != null) && (strArgs.Length > 0))
+						Process.Start(strApp, strArgs);
+					else
+						Process.Start(strApp);
+				}
+				catch(Exception exCmd)
+				{
+					string strInf = strApp;
+					if((strArgs != null) && (strArgs.Length > 0))
+						strInf += MessageService.NewLine + strArgs;
+					
+					MessageService.ShowWarning(strInf, exCmd);
+				}
 			}
 			else
 			{
-				try { p = Process.Start(strUrl); }
-				catch(Exception) { p = null; }
+				try { Process.Start(strUrl); }
+				catch(Exception exUrl)
+				{
+					MessageService.ShowWarning(strUrl, exUrl);
+				}
 			}
+
+			// Restore previous working directory
+			try { Directory.SetCurrentDirectory(strPrevWorkDir); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void Restart()
 		{
 			try { Process.Start(WinUtil.GetExecutable()); }
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception exRestart)
+			{
+				MessageService.ShowWarning(exRestart);
+			}
 		}
 
 		public static string GetExecutable()

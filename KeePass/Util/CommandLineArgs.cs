@@ -26,10 +26,9 @@ namespace KeePass.Util
 {
 	public sealed class CommandLineArgs
 	{
-		private bool m_bLocked = false;
-
 		private List<string> m_vFileNames = new List<string>();
-		private SortedDictionary<string, string> m_vParams = new SortedDictionary<string, string>();
+		private SortedDictionary<string, string> m_vParams =
+			new SortedDictionary<string, string>();
 
 		/// <summary>
 		/// Get the primary file name.
@@ -56,14 +55,9 @@ namespace KeePass.Util
 			get { return m_vParams; }
 		}
 
-		public CommandLineArgs()
+		public CommandLineArgs(string[] vArgs)
 		{
-		}
-
-		public void Parse(string[] vArgs)
-		{
-			Debug.Assert(vArgs != null); if(vArgs == null) return;
-			if(m_bLocked) return;
+			if(vArgs == null) return;
 
 			foreach(string str in vArgs)
 			{
@@ -74,11 +68,6 @@ namespace KeePass.Util
 				if(kvp.Key.Length == 0) m_vFileNames.Add(kvp.Value);
 				else m_vParams[kvp.Key] = kvp.Value;
 			}
-		}
-
-		public void Lock()
-		{
-			m_bLocked = true;
 		}
 
 		/// <summary>

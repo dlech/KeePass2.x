@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 using KeePass.App;
 using KeePass.UI;
@@ -358,6 +359,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_clrNormalBackColor = m_tbPassword.BackColor;
 			m_dynGenProfiles = new DynamicMenu(m_ctxPwGenProfiles);
 			m_dynGenProfiles.MenuClick += this.OnProfilesDynamicMenuClick;
@@ -395,9 +398,13 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
-			m_cbHidePassword.Checked = AppConfigEx.GetBool(
-				AppDefs.ConfigKeys.HidePasswordInEntryForm.Key,
-				AppConfigEx.GetBool(AppDefs.ConfigKeys.HidePasswords));
+			if(AppConfigEx.GetBool(AppDefs.ConfigKeys.RememberHidingInDialogs))
+				m_cbHidePassword.Checked = AppConfigEx.GetBool(
+					AppDefs.ConfigKeys.HidePasswordInEntryForm.Key,
+					AppConfigEx.GetBool(AppDefs.ConfigKeys.HidePasswords));
+			else
+				m_cbHidePassword.Checked = AppConfigEx.GetBool(
+					AppDefs.ConfigKeys.HidePasswords);
 
 			InitEntryTab();
 			InitAdvancedTab();
@@ -532,7 +539,7 @@ namespace KeePass.Forms
 				m_bRepeatPasswordFailed = true;
 
 				m_tbRepeatPassword.BackColor = AppDefs.ColorEditError;
-				m_ttValidationError.Show(KPRes.RepeatIsntSame, m_tbRepeatPassword);
+				m_ttValidationError.Show(KPRes.PasswordRepeatFailed, m_tbRepeatPassword);
 
 				this.DialogResult = DialogResult.None;
 				return;
@@ -649,11 +656,14 @@ namespace KeePass.Forms
 
 					if(m_vBinaries.Get(strItem) != null)
 					{
-						strMsg = KPRes.AttachedExistsAlready + "\r\n" + strItem + "\r\n\r\n" +
-							KPRes.AttachNewRename + "\r\n\r\n" + KPRes.AttachNewRenameRemarks0 + "\r\n" +
-							KPRes.AttachNewRenameRemarks1 + "\r\n" + KPRes.AttachNewRenameRemarks2;
+						strMsg = KPRes.AttachedExistsAlready + MessageService.NewLine +
+							strItem + MessageService.NewParagraph + KPRes.AttachNewRename +
+							MessageService.NewParagraph + KPRes.AttachNewRenameRemarks0 +
+							MessageService.NewLine + KPRes.AttachNewRenameRemarks1 +
+							MessageService.NewLine + KPRes.AttachNewRenameRemarks2;
 
-						DialogResult dr = MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+						DialogResult dr = MessageService.Ask(strMsg, null, MessageBoxButtons.YesNoCancel);
+
 						if(dr == DialogResult.Cancel) continue;
 						else if(dr == DialogResult.Yes)
 						{
@@ -677,17 +687,14 @@ namespace KeePass.Forms
 
 					try
 					{
-						vBytes = System.IO.File.ReadAllBytes(strFile);
+						vBytes = File.ReadAllBytes(strFile);
 
 						ProtectedBinary pb = new ProtectedBinary(false, vBytes);
 						m_vBinaries.Set(strItem, pb);
 					}
-					catch(UnauthorizedAccessException uae)
+					catch(Exception exAttach)
 					{
-						strMsg = KPRes.AttachFailed + "\r\n" + strFile + "\r\n\r\n" +
-							uae.Message;
-
-						MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(KPRes.AttachFailed, strFile, exAttach);
 					}
 				}
 
@@ -749,25 +756,23 @@ namespace KeePass.Forms
 			Debug.Assert(lvi != null); if(lvi == null) throw new ArgumentNullException();
 			Debug.Assert(strFileName != null); if(strFileName == null) throw new ArgumentNullException();
 
-			if(System.IO.File.Exists(strFileName))
+			if(File.Exists(strFileName))
 			{
-				string strMsg = KPRes.FileExistsAlready + "\r\n" + strFileName + "\r\n\r\n" +
+				string strMsg = KPRes.FileExistsAlready + MessageService.NewLine +
+					strFileName + MessageService.NewParagraph +
 					KPRes.OverwriteExistingFileQuestion;
 
-				if(MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-					DialogResult.No)
-				{
+				if(MessageService.AskYesNo(strMsg) == false)
 					return;
-				}
 			}
 
 			ProtectedBinary pb = m_vBinaries.Get(lvi.Text);
 			Debug.Assert(pb != null); if(pb == null) throw new ArgumentException();
 
-			try { System.IO.File.WriteAllBytes(strFileName, pb.ReadData()); }
-			catch(Exception)
+			try { File.WriteAllBytes(strFileName, pb.ReadData()); }
+			catch(Exception exWrite)
 			{
-				MessageBox.Show(KPRes.FileCreationError, PwDefs.ShortProductName + "\r\n\r\n" + strFileName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(strFileName, exWrite);
 			}
 		}
 
@@ -1126,6 +1131,8 @@ namespace KeePass.Forms
 			pwgoDerive.ProfileName = DeriveFromPrevious;
 			m_vPwGenOptions.Add(pwgoDerive);
 
+			PwGeneratorUtil.AddStandardProfilesIfNoneAvailable();
+
 			uint uProfileIndex = 0;
 			while(true)
 			{
@@ -1170,6 +1177,11 @@ namespace KeePass.Forms
 		private void OnCustomBackgroundColorCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

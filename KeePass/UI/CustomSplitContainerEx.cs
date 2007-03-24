@@ -33,11 +33,6 @@ namespace KeePass.UI
 		private Control m_cFocused = null;
 		private Control m_cLastKnown = null;
 
-		public CustomSplitContainerEx()
-		{
-			this.SetStyle(ControlStyles.Selectable, false);
-		}
-
 		public void InitEx(ControlCollection cc, Control cDefault)
 		{
 			m_ccControls = cc;
@@ -85,7 +80,7 @@ namespace KeePass.UI
 		{
 			base.OnEnter(e);
 
-			if(m_cFocused == null)
+			if(this.Focused && (m_cFocused == null))
 			{
 				if(m_cLastKnown != null) m_cLastKnown.Focus();
 				else if(m_cDefault != null) m_cDefault.Focus();

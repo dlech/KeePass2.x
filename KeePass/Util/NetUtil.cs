@@ -28,7 +28,7 @@ namespace KeePass.Util
 {
 	public static class NetUtil
 	{
-		public static string GZipUTF8ResultToString(DownloadDataCompletedEventArgs e)
+		public static string GZipUtf8ResultToString(DownloadDataCompletedEventArgs e)
 		{
 			if(e.Cancelled || (e.Error != null) || (e.Result == null))
 				return null;
@@ -54,8 +54,7 @@ namespace KeePass.Util
 			gz.Close();
 			msZipped.Close();
 
-			UTF8Encoding utf8 = new UTF8Encoding();
-			return utf8.GetString(msUTF8.ToArray());
+			return Encoding.UTF8.GetString(msUTF8.ToArray());
 		}
 	}
 }

@@ -366,6 +366,7 @@
 			this.MinimizeBox = false;
 			this.Name = "PrintForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabPreview.ResumeLayout(false);

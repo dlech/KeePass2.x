@@ -59,6 +59,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
@@ -181,6 +183,11 @@ namespace KeePass.Forms
 		{
 			if(e.Button == MouseButtons.Left)
 				m_numEncRounds.Value = CompositeKey.TransformKeyBenchmark(1000, 3001);
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

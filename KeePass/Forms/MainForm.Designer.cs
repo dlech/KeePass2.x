@@ -30,9 +30,6 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
-			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
-			this.m_tvGroups = new System.Windows.Forms.TreeView();
 			this.m_ctxGroupList = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxGroupAdd = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -43,7 +40,6 @@
 			this.m_ctxGroupSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupPrint = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ilClientIcons = new System.Windows.Forms.ImageList(this.components);
-			this.m_lvEntries = new System.Windows.Forms.ListView();
 			this.m_ctxPwList = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyPassword = new System.Windows.Forms.ToolStripMenuItem();
@@ -93,7 +89,6 @@
 			this.m_ctxEntrySortListByLastModTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByLastAccessTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByExpirationTime = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
 			this.m_menuMain = new System.Windows.Forms.MenuStrip();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -219,68 +214,24 @@
 			this.m_folderSaveAttachments = new System.Windows.Forms.FolderBrowserDialog();
 			this.m_openXslFile = new System.Windows.Forms.OpenFileDialog();
 			this.m_colorDlg = new System.Windows.Forms.ColorDialog();
-			this.m_splitHorizontal.Panel1.SuspendLayout();
-			this.m_splitHorizontal.Panel2.SuspendLayout();
-			this.m_splitHorizontal.SuspendLayout();
-			this.m_splitVertical.Panel1.SuspendLayout();
-			this.m_splitVertical.Panel2.SuspendLayout();
-			this.m_splitVertical.SuspendLayout();
+			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
+			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
+			this.m_tvGroups = new System.Windows.Forms.TreeView();
+			this.m_lvEntries = new System.Windows.Forms.ListView();
+			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
 			this.m_toolMain.SuspendLayout();
 			this.m_statusMain.SuspendLayout();
 			this.m_ctxTray.SuspendLayout();
+			this.m_splitHorizontal.Panel1.SuspendLayout();
+			this.m_splitHorizontal.Panel2.SuspendLayout();
+			this.m_splitHorizontal.SuspendLayout();
+			this.m_splitVertical.Panel1.SuspendLayout();
+			this.m_splitVertical.Panel2.SuspendLayout();
+			this.m_splitVertical.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// m_splitHorizontal
-			// 
-			resources.ApplyResources(this.m_splitHorizontal, "m_splitHorizontal");
-			this.m_splitHorizontal.Name = "m_splitHorizontal";
-			// 
-			// m_splitHorizontal.Panel1
-			// 
-			this.m_splitHorizontal.Panel1.Controls.Add(this.m_splitVertical);
-			// 
-			// m_splitHorizontal.Panel2
-			// 
-			this.m_splitHorizontal.Panel2.Controls.Add(this.m_richEntryView);
-			this.m_splitHorizontal.TabStop = false;
-			// 
-			// m_splitVertical
-			// 
-			resources.ApplyResources(this.m_splitVertical, "m_splitVertical");
-			this.m_splitVertical.Name = "m_splitVertical";
-			// 
-			// m_splitVertical.Panel1
-			// 
-			this.m_splitVertical.Panel1.Controls.Add(this.m_tvGroups);
-			// 
-			// m_splitVertical.Panel2
-			// 
-			this.m_splitVertical.Panel2.Controls.Add(this.m_lvEntries);
-			this.m_splitVertical.TabStop = false;
-			// 
-			// m_tvGroups
-			// 
-			this.m_tvGroups.AllowDrop = true;
-			this.m_tvGroups.ContextMenuStrip = this.m_ctxGroupList;
-			resources.ApplyResources(this.m_tvGroups, "m_tvGroups");
-			this.m_tvGroups.HideSelection = false;
-			this.m_tvGroups.HotTracking = true;
-			this.m_tvGroups.ImageList = this.m_ilClientIcons;
-			this.m_tvGroups.LabelEdit = true;
-			this.m_tvGroups.Name = "m_tvGroups";
-			this.m_tvGroups.ShowNodeToolTips = true;
-			this.m_tvGroups.ShowRootLines = false;
-			this.m_tvGroups.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterCollapse);
-			this.m_tvGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragDrop);
-			this.m_tvGroups.DragOver += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragOver);
-			this.m_tvGroups.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.OnGroupsAfterLabelEdit);
-			this.m_tvGroups.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnGroupListClickNode);
-			this.m_tvGroups.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragEnter);
-			this.m_tvGroups.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterExpand);
-			this.m_tvGroups.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnGroupsListItemDrag);
 			// 
 			// m_ctxGroupList
 			// 
@@ -416,27 +367,6 @@
 			this.m_ilClientIcons.Images.SetKeyName(63, "C63_SortUp.png");
 			this.m_ilClientIcons.Images.SetKeyName(64, "C64_SortDown.png");
 			// 
-			// m_lvEntries
-			// 
-			this.m_lvEntries.AllowColumnReorder = true;
-			this.m_lvEntries.ContextMenuStrip = this.m_ctxPwList;
-			resources.ApplyResources(this.m_lvEntries, "m_lvEntries");
-			this.m_lvEntries.FullRowSelect = true;
-			this.m_lvEntries.GridLines = true;
-			this.m_lvEntries.HideSelection = false;
-			this.m_lvEntries.Name = "m_lvEntries";
-			this.m_lvEntries.SmallImageList = this.m_ilClientIcons;
-			this.m_lvEntries.UseCompatibleStateImageBehavior = false;
-			this.m_lvEntries.View = System.Windows.Forms.View.Details;
-			this.m_lvEntries.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.OnPwListColumnWidthChanged);
-			this.m_lvEntries.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnPwListMouseDoubleClick);
-			this.m_lvEntries.SelectedIndexChanged += new System.EventHandler(this.OnPwListSelectedIndexChanged);
-			this.m_lvEntries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnPwListKeyDown);
-			this.m_lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnPwListColumnClick);
-			this.m_lvEntries.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnPwListItemDrag);
-			this.m_lvEntries.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.OnPwListColumnWidthChanging);
-			this.m_lvEntries.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnPwListMouseDown);
-			// 
 			// m_ctxPwList
 			// 
 			this.m_ctxPwList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -488,10 +418,11 @@
 			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
 			resources.ApplyResources(this.m_ctxEntryOpenUrl, "m_ctxEntryOpenUrl");
-			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenURL);
+			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
 			// 
 			// m_ctxEntryCopyUrl
 			// 
+			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxEntryCopyUrl.Name = "m_ctxEntryCopyUrl";
 			resources.ApplyResources(this.m_ctxEntryCopyUrl, "m_ctxEntryCopyUrl");
 			this.m_ctxEntryCopyUrl.Click += new System.EventHandler(this.OnEntryCopyURL);
@@ -795,13 +726,6 @@
 			this.m_ctxEntrySortListByExpirationTime.Name = "m_ctxEntrySortListByExpirationTime";
 			resources.ApplyResources(this.m_ctxEntrySortListByExpirationTime, "m_ctxEntrySortListByExpirationTime");
 			this.m_ctxEntrySortListByExpirationTime.Click += new System.EventHandler(this.OnEntrySortExpiration);
-			// 
-			// m_richEntryView
-			// 
-			resources.ApplyResources(this.m_richEntryView, "m_richEntryView");
-			this.m_richEntryView.Name = "m_richEntryView";
-			this.m_richEntryView.ReadOnly = true;
-			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			// 
 			// m_menuMain
 			// 
@@ -1567,6 +1491,7 @@
 			this.m_tbFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			resources.ApplyResources(this.m_tbFind, "m_tbFind");
 			this.m_tbFind.Name = "m_tbFind";
+			this.m_tbFind.Click += new System.EventHandler(this.OnPwListFind);
 			// 
 			// m_tbEntryViewsDropDown
 			// 
@@ -1655,7 +1580,7 @@
 			// 
 			// m_openDatabaseFile
 			// 
-			this.m_openDatabaseFile.FileName = "*.kdb";
+			this.m_openDatabaseFile.FileName = "*.kdbx";
 			resources.ApplyResources(this.m_openDatabaseFile, "m_openDatabaseFile");
 			this.m_openDatabaseFile.SupportMultiDottedExtensions = true;
 			// 
@@ -1716,6 +1641,84 @@
 			this.m_colorDlg.AnyColor = true;
 			this.m_colorDlg.FullOpen = true;
 			// 
+			// m_splitHorizontal
+			// 
+			resources.ApplyResources(this.m_splitHorizontal, "m_splitHorizontal");
+			this.m_splitHorizontal.Name = "m_splitHorizontal";
+			// 
+			// m_splitHorizontal.Panel1
+			// 
+			this.m_splitHorizontal.Panel1.Controls.Add(this.m_splitVertical);
+			// 
+			// m_splitHorizontal.Panel2
+			// 
+			this.m_splitHorizontal.Panel2.Controls.Add(this.m_richEntryView);
+			this.m_splitHorizontal.TabStop = false;
+			// 
+			// m_splitVertical
+			// 
+			resources.ApplyResources(this.m_splitVertical, "m_splitVertical");
+			this.m_splitVertical.Name = "m_splitVertical";
+			// 
+			// m_splitVertical.Panel1
+			// 
+			this.m_splitVertical.Panel1.Controls.Add(this.m_tvGroups);
+			// 
+			// m_splitVertical.Panel2
+			// 
+			this.m_splitVertical.Panel2.Controls.Add(this.m_lvEntries);
+			this.m_splitVertical.TabStop = false;
+			// 
+			// m_tvGroups
+			// 
+			this.m_tvGroups.AllowDrop = true;
+			this.m_tvGroups.ContextMenuStrip = this.m_ctxGroupList;
+			resources.ApplyResources(this.m_tvGroups, "m_tvGroups");
+			this.m_tvGroups.HideSelection = false;
+			this.m_tvGroups.HotTracking = true;
+			this.m_tvGroups.ImageList = this.m_ilClientIcons;
+			this.m_tvGroups.LabelEdit = true;
+			this.m_tvGroups.Name = "m_tvGroups";
+			this.m_tvGroups.ShowNodeToolTips = true;
+			this.m_tvGroups.ShowRootLines = false;
+			this.m_tvGroups.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterCollapse);
+			this.m_tvGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragDrop);
+			this.m_tvGroups.DragOver += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragOver);
+			this.m_tvGroups.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.OnGroupsAfterLabelEdit);
+			this.m_tvGroups.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnGroupListClickNode);
+			this.m_tvGroups.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragEnter);
+			this.m_tvGroups.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterExpand);
+			this.m_tvGroups.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnGroupsListItemDrag);
+			// 
+			// m_lvEntries
+			// 
+			this.m_lvEntries.AllowColumnReorder = true;
+			this.m_lvEntries.ContextMenuStrip = this.m_ctxPwList;
+			resources.ApplyResources(this.m_lvEntries, "m_lvEntries");
+			this.m_lvEntries.FullRowSelect = true;
+			this.m_lvEntries.GridLines = true;
+			this.m_lvEntries.HideSelection = false;
+			this.m_lvEntries.Name = "m_lvEntries";
+			this.m_lvEntries.ShowItemToolTips = true;
+			this.m_lvEntries.SmallImageList = this.m_ilClientIcons;
+			this.m_lvEntries.UseCompatibleStateImageBehavior = false;
+			this.m_lvEntries.View = System.Windows.Forms.View.Details;
+			this.m_lvEntries.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.OnPwListColumnWidthChanged);
+			this.m_lvEntries.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnPwListMouseDoubleClick);
+			this.m_lvEntries.SelectedIndexChanged += new System.EventHandler(this.OnPwListSelectedIndexChanged);
+			this.m_lvEntries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnPwListKeyDown);
+			this.m_lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnPwListColumnClick);
+			this.m_lvEntries.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnPwListItemDrag);
+			this.m_lvEntries.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.OnPwListColumnWidthChanging);
+			this.m_lvEntries.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnPwListMouseDown);
+			// 
+			// m_richEntryView
+			// 
+			resources.ApplyResources(this.m_richEntryView, "m_richEntryView");
+			this.m_richEntryView.Name = "m_richEntryView";
+			this.m_richEntryView.ReadOnly = true;
+			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
+			// 
 			// MainForm
 			// 
 			resources.ApplyResources(this, "$this");
@@ -1729,12 +1732,6 @@
 			this.Resize += new System.EventHandler(this.OnFormResize);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.Load += new System.EventHandler(this.OnFormLoad);
-			this.m_splitHorizontal.Panel1.ResumeLayout(false);
-			this.m_splitHorizontal.Panel2.ResumeLayout(false);
-			this.m_splitHorizontal.ResumeLayout(false);
-			this.m_splitVertical.Panel1.ResumeLayout(false);
-			this.m_splitVertical.Panel2.ResumeLayout(false);
-			this.m_splitVertical.ResumeLayout(false);
 			this.m_ctxGroupList.ResumeLayout(false);
 			this.m_ctxPwList.ResumeLayout(false);
 			this.m_menuMain.ResumeLayout(false);
@@ -1744,6 +1741,12 @@
 			this.m_statusMain.ResumeLayout(false);
 			this.m_statusMain.PerformLayout();
 			this.m_ctxTray.ResumeLayout(false);
+			this.m_splitHorizontal.Panel1.ResumeLayout(false);
+			this.m_splitHorizontal.Panel2.ResumeLayout(false);
+			this.m_splitHorizontal.ResumeLayout(false);
+			this.m_splitVertical.Panel1.ResumeLayout(false);
+			this.m_splitVertical.Panel2.ResumeLayout(false);
+			this.m_splitVertical.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

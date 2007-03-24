@@ -56,6 +56,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			string strTitle = (m_bSave ? KPRes.UrlSaveTitle : KPRes.UrlOpenTitle);
 			string strDesc = (m_bSave ? KPRes.UrlSaveDesc : KPRes.UrlOpenDesc);
 
@@ -117,6 +119,11 @@ namespace KeePass.Forms
 		private void OnBtnHelp(object sender, EventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.IOConnections, null);
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

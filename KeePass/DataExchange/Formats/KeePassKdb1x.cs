@@ -1,3 +1,22 @@
+/*
+  KeePass Password Safe - The Open-Source Password Manager
+  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,12 +28,13 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
 	public sealed class KeePassKdb1x : FormatImporter
 	{
-		public override string FormatName { get { return "KeePass KDB 1.x"; } }
+		public override string FormatName { get { return "KeePass KDB (1.x)"; } }
 		public override string DefaultExtension { get { return "kdb"; } }
 		public override string AppGroup { get { return PwDefs.ShortProductName; } }
 
@@ -26,15 +46,12 @@ namespace KeePass.DataExchange.Formats
 			get { return KeePass.Properties.Resources.B16x16_KeePass; }
 		}
 
-		public override bool TryBeginImports()
+		public override bool TryBeginImport()
 		{
 			if(!Kdb3File.IsLibraryInstalled())
 			{
-				string strKPLibC = KPRes.KeePassLibCNotFound + "\r\n\r\n";
-				strKPLibC += KPRes.KDB3KeePassLibC;
-
-				MessageBox.Show(strKPLibC, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
+					KPRes.KDB3KeePassLibC);
 
 				return false;
 			}

@@ -115,7 +115,7 @@ namespace KeePass.App
 			string strCmd = @"ms-its:" + m_strLocalHelpFile;
 
 			if(strTopic != null)
-				strCmd += @"::/" + strTopic + @".html";
+				strCmd += @"::/help/" + strTopic + @".html";
 
 			if(strSection != null)
 			{
@@ -124,7 +124,10 @@ namespace KeePass.App
 			}
 
 			try { Process.Start(@"hh.exe", strCmd); }
-			catch(Exception) { }
+			catch(Exception exStart)
+			{
+				MessageService.ShowWarning(@"hh.exe " + strCmd, exStart);
+			}
 		}
 
 		private static void ShowHelpOnline(string strTopic, string strSection)
@@ -139,7 +142,10 @@ namespace KeePass.App
 			}
 
 			try { Process.Start(strCmd); }
-			catch(Exception) { }
+			catch(Exception exStart)
+			{
+				MessageService.ShowWarning(strCmd, exStart);
+			}
 		}
 	}
 }

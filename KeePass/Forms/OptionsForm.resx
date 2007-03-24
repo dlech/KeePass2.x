@@ -910,7 +910,7 @@
     <value>0</value>
   </data>
   <data name="m_lblFileExtHint.Text" xml:space="preserve">
-    <value>KDB files can be associated with KeePass. When you double-click a KDB file in Windows Explorer, they will automatically be opened by KeePass.</value>
+    <value>KDBX files can be associated with KeePass. When you double-click a KDBX file in Windows Explorer, they will automatically be opened by KeePass.</value>
   </data>
   <data name="&gt;&gt;m_lblFileExtHint.Name" xml:space="preserve">
     <value>m_lblFileExtHint</value>
@@ -934,7 +934,7 @@
     <value>1</value>
   </data>
   <data name="m_grpFileExt.Text" xml:space="preserve">
-    <value>KDB File Association</value>
+    <value>KDBX File Association</value>
   </data>
   <data name="&gt;&gt;m_grpFileExt.Name" xml:space="preserve">
     <value>m_grpFileExt</value>

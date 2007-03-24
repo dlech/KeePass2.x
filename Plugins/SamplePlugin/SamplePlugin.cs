@@ -41,10 +41,10 @@ namespace SamplePlugin
 	/// like the namespace and must be derived from
 	/// <c>KeePassPlugin</c>.
 	/// </summary>
-	public sealed class SamplePlugin : KeePassPlugin
+	public sealed class SamplePlugin : Plugin
 	{
 		// The sample plugin remembers its host in this variable.
-		private IKeePassPluginHost m_host = null;
+		private IPluginHost m_host = null;
 
 		private ToolStripSeparator m_tsSeparator = null;
 		private ToolStripMenuItem m_tsmiPopup = null;
@@ -62,7 +62,7 @@ namespace SamplePlugin
 		/// successful initialization. If you return <c>false</c>,
 		/// KeePass unloads your plugin (without calling the
 		/// <c>Terminate</c> function of your plugin).</returns>
-		public override bool Initialize(IKeePassPluginHost host)
+		public override bool Initialize(IPluginHost host)
 		{
 			Debug.Assert(host != null);
 			if(host == null) return false;
@@ -194,8 +194,8 @@ namespace SamplePlugin
 		{
 			MessageBox.Show("Notification received: the user has tried to save the current database to:\r\n" +
 				m_host.Database.IOConnectionInfo.Url + "\r\n\r\nResult:\r\n" +
-				ResUtil.FileSaveResultToString(e.FileSaveResult),
-				"Sample Plugin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				(e.Success ? "Success" : "Failed"), "Sample Plugin",
+				MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }

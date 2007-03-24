@@ -56,6 +56,7 @@ namespace KeePassLib
 		private string m_strName = string.Empty;
 		private string m_strDesc = string.Empty;
 		private string m_strDefaultUserName = string.Empty;
+		private uint m_uMntncHistoryDays = 365;
 
 		private IOConnectionInfo m_ioSource = new IOConnectionInfo();
 		private bool m_bDatabaseOpened = false;
@@ -171,6 +172,16 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// Number of days until history entries are being deleted
+		/// in a database maintenance operation.
+		/// </summary>
+		public uint MaintenanceHistoryDays
+		{
+			get { return m_uMntncHistoryDays; }
+			set { m_uMntncHistoryDays = value; }
+		}
+
+		/// <summary>
 		/// The encryption algorithm used to encrypt the data part of the database.
 		/// </summary>
 		public PwUuid DataCipherUuid
@@ -274,12 +285,14 @@ namespace KeePassLib
 		/// </summary>
 		/// <param name="ioConnection">IO connection of the new database.</param>
 		/// <param name="pwKey">Key to open the database.</param>
-		public void NewDatabase(IOConnectionInfo ioConnection, CompositeKey pwKey)
+		public void New(IOConnectionInfo ioConnection, CompositeKey pwKey)
 		{
-			Debug.Assert(ioConnection != null); if(ioConnection == null) throw new ArgumentNullException();
-			Debug.Assert(pwKey != null); if(pwKey == null) throw new ArgumentNullException();
+			Debug.Assert(ioConnection != null);
+			if(ioConnection == null) throw new ArgumentNullException("ioConnection");
+			Debug.Assert(pwKey != null);
+			if(pwKey == null) throw new ArgumentNullException("pwKey");
 
-			CloseDatabase();
+			Close();
 
 			m_ioSource = ioConnection;
 			m_pwUserKey = pwKey;
@@ -300,8 +313,7 @@ namespace KeePassLib
 		/// <param name="ioSource">IO connection to load the database from.</param>
 		/// <param name="pwKey">Key used to open the specified database.</param>
 		/// <param name="slLogger">Logger, which gets all status messages.</param>
-		/// <returns>Returns a <c>FileOpenResult</c> error code.</returns>
-		public FileOpenResult OpenDatabase(IOConnectionInfo ioSource, CompositeKey pwKey,
+		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(ioSource != null);
@@ -309,31 +321,31 @@ namespace KeePassLib
 			Debug.Assert(pwKey != null);
 			if(pwKey == null) throw new ArgumentNullException("pwKey");
 
-			CloseDatabase();
+			Close();
 
-			m_pgRootGroup = new PwGroup(true, true, UrlUtil.StripExtension(
-				UrlUtil.GetFileName(ioSource.Url)), PwIcon.FolderOpen);
-			m_pgRootGroup.IsExpanded = true;
-
-			m_pwUserKey = pwKey;
-
-			m_bModified = false;
-			// m_bLocked = false;
-
-			Kdb4File kdb4 = new Kdb4File(this);
-			Stream s;
-			FileOpenResult res = IOConnection.OpenRead(ioSource, out s);
-			if(res.Code == FileOpenResultCode.Success)
-				res = kdb4.Load(s, Kdb4File.KdbFormat.Default, slLogger);
-
-			if(res.Code == FileOpenResultCode.Success)
+			try
 			{
+				m_pgRootGroup = new PwGroup(true, true, UrlUtil.StripExtension(
+					UrlUtil.GetFileName(ioSource.Url)), PwIcon.FolderOpen);
+				m_pgRootGroup.IsExpanded = true;
+
+				m_pwUserKey = pwKey;
+
+				m_bModified = false;
+
+				Kdb4File kdb4 = new Kdb4File(this);
+				Stream s = IOConnection.OpenRead(ioSource);
+				kdb4.Load(s, Kdb4Format.Default, slLogger);
+				s.Close();
+
 				m_bDatabaseOpened = true;
 				m_ioSource = ioSource;
 			}
-			else Clear();
-
-			return res;
+			catch(Exception ex)
+			{
+				this.Clear();
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -341,20 +353,14 @@ namespace KeePassLib
 		/// it has been opened from.
 		/// </summary>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
-		public FileSaveResult SaveDatabase(IStatusLogger slLogger)
+		public void Save(IStatusLogger slLogger)
 		{
 			Kdb4File kdb = new Kdb4File(this);
 
-			Stream s;
-			FileSaveResult fsr = IOConnection.OpenWrite(m_ioSource, out s);
-			if(fsr.Code == FileSaveResultCode.Success)
-				fsr = kdb.Save(s, Kdb4File.KdbFormat.Default, slLogger);
+			Stream s = IOConnection.OpenWrite(m_ioSource);
+			kdb.Save(s, Kdb4Format.Default, slLogger);
 
-			if(fsr.Code == FileSaveResultCode.Success)
-				m_bModified = false;
-
-			return fsr;
+			m_bModified = false;
 		}
 
 		/// <summary>
@@ -370,25 +376,30 @@ namespace KeePassLib
 		/// made the default location (i.e. no lockfiles will be moved for
 		/// example).</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		/// <returns></returns>
-		public FileSaveResult SaveDatabaseTo(IOConnectionInfo ioConnection, bool bIsPrimaryNow, IStatusLogger slLogger)
+		public void SaveAs(IOConnectionInfo ioConnection, bool bIsPrimaryNow,
+			IStatusLogger slLogger)
 		{
-			Debug.Assert(ioConnection != null); if(ioConnection == null) throw new ArgumentNullException();
+			Debug.Assert(ioConnection != null);
+			if(ioConnection == null) throw new ArgumentNullException("ioConnection");
 
-			IOConnectionInfo ioCurrent = m_ioSource;
+			IOConnectionInfo ioCurrent = m_ioSource; // Remember current
 			m_ioSource = ioConnection;
-			FileSaveResult fsr = this.SaveDatabase(slLogger);
+
+			try { this.Save(slLogger); }
+			catch(Exception ex)
+			{
+				m_ioSource = ioCurrent;
+				throw ex;
+			}
 
 			if(!bIsPrimaryNow) m_ioSource = ioCurrent;
-
-			return fsr;
 		}
 
 		/// <summary>
 		/// Closes the currently opened database. No confirmation message is shown
 		/// before closing. Unsaved changes will be lost.
 		/// </summary>
-		public void CloseDatabase()
+		public void Close()
 		{
 			Clear();
 		}
@@ -402,8 +413,7 @@ namespace KeePassLib
 		/// synchronized database. The input database must not be seen as valid
 		/// database any more after calling <c>Synchronize</c>.</param>
 		/// <param name="mm">Merge method.</param>
-		/// <returns>Returns <c>true</c>, if the synchronization was successful.</returns>
-		public bool MergeIn(PwDatabase pwSource, PwMergeMethod mm)
+		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm)
 		{
 			if(mm == PwMergeMethod.CreateNewUuids)
 			{
@@ -484,22 +494,21 @@ namespace KeePassLib
 				return true;
 			};
 
-			bool bRes = pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+			if(!pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
+				throw new InvalidOperationException();
 
-			if(bRes && (mm == PwMergeMethod.Synchronize))
+			if(mm == PwMergeMethod.Synchronize)
 			{
 				ApplyDeletions(pwSource.m_vDeletedObjects);
 				ApplyDeletions(m_vDeletedObjects);
 			}
-
-			return bRes;
 		}
 
 		/// <summary>
 		/// Apply a list of deleted objects.
 		/// </summary>
 		/// <param name="listDelObjects">List of deleted objects.</param>
-		public void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects)
+		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects)
 		{
 			Debug.Assert(listDelObjects != null); if(listDelObjects == null) throw new ArgumentNullException();
 
@@ -544,19 +553,14 @@ namespace KeePassLib
 		/// Synchronize current database with another one.
 		/// </summary>
 		/// <param name="strFile">Source file.</param>
-		/// <returns><c>FileOpenResult</c> error code.</returns>
-		public FileOpenResult Synchronize(string strFile)
+		public void Synchronize(string strFile)
 		{
 			PwDatabase pwSource = new PwDatabase();
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			FileOpenResult fr = pwSource.OpenDatabase(ioc, this.m_pwUserKey, null);
-			if(fr.Code != FileOpenResultCode.Success) return fr;
+			pwSource.Open(ioc, this.m_pwUserKey, null);
 
-			if(MergeIn(pwSource, PwMergeMethod.Synchronize) == false)
-				return new FileOpenResult(FileOpenResultCode.UnknownError, null);
-
-			return FileOpenResult.Success;
+			MergeIn(pwSource, PwMergeMethod.Synchronize);
 		}
 	}
 }

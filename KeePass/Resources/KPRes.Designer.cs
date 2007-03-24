@@ -853,7 +853,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete all selected entries? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to permanently delete all selected entries? ähnelt.
         /// </summary>
         internal static string DeleteEntriesQuestion {
             get {
@@ -880,7 +880,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete this group? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to permanently delete this group? ähnelt.
         /// </summary>
         internal static string DeleteGroupQuestion {
             get {
@@ -1096,15 +1096,6 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die An exception occured and cannot be handled. ähnelt.
-        /// </summary>
-        internal static string ExceptionOccured {
-            get {
-                return ResourceManager.GetString("ExceptionOccured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Expired Entries ähnelt.
         /// </summary>
         internal static string ExpiredEntries {
@@ -1204,15 +1195,6 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die An error occured while trying to create the specified file. Make sure you have write access to the path and that there&apos;s enough free space left. ähnelt.
-        /// </summary>
-        internal static string FileCreationError {
-            get {
-                return ResourceManager.GetString("FileCreationError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The following file exists already: ähnelt.
         /// </summary>
         internal static string FileExistsAlready {
@@ -1231,7 +1213,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Successfully associated KDB files with KeePass! KDB files will now be opened by KeePass when you double-click on them. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Successfully associated KDBX files with KeePass! KDBX files will now be opened by KeePass when you double-click on them. ähnelt.
         /// </summary>
         internal static string FileExtInstallSuccess {
             get {
@@ -1573,6 +1555,15 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The import process has finished! ähnelt.
+        /// </summary>
+        internal static string ImportFinished {
+            get {
+                return ResourceManager.GetString("ImportFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Importing... ähnelt.
         /// </summary>
         internal static string ImportingStatusMsg {
@@ -1582,11 +1573,20 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die A security exception occured. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die It is indispensable that you read the documentation about this import method before continuing. ähnelt.
         /// </summary>
-        internal static string InternalSecurityException {
+        internal static string ImportMustRead {
             get {
-                return ResourceManager.GetString("InternalSecurityException", resourceCulture);
+                return ResourceManager.GetString("ImportMustRead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Have you understood how the import process works and want to start it now? ähnelt.
+        /// </summary>
+        internal static string ImportMustReadQuestion {
+            get {
+                return ResourceManager.GetString("ImportMustReadQuestion", resourceCulture);
             }
         }
         
@@ -1600,38 +1600,11 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file format. ähnelt.
-        /// </summary>
-        internal static string InvalidFileFormat {
-            get {
-                return ResourceManager.GetString("InvalidFileFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file signature is invalid. This means that the specified file isn&apos;t of the expected type / file format. ähnelt.
-        /// </summary>
-        internal static string InvalidFileSignature {
-            get {
-                return ResourceManager.GetString("InvalidFileSignature", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file structure. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file structure! ähnelt.
         /// </summary>
         internal static string InvalidFileStructure {
             get {
                 return ResourceManager.GetString("InvalidFileStructure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file header. The file cannot be decrypted, because the header data is corrupted. ähnelt.
-        /// </summary>
-        internal static string InvalidHeader {
-            get {
-                return ResourceManager.GetString("InvalidHeader", resourceCulture);
             }
         }
         
@@ -1654,15 +1627,6 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die An input-output error occured. ähnelt.
-        /// </summary>
-        internal static string IOError {
-            get {
-                return ResourceManager.GetString("IOError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Job Title ähnelt.
         /// </summary>
         internal static string JobTitle {
@@ -1672,7 +1636,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The KeePassLibC library is required to open and save KDB3 files. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The KeePassLibC library is required to open and save KDB files created by KeePass 1.x. ähnelt.
         /// </summary>
         internal static string KDB3KeePassLibC {
             get {
@@ -1681,7 +1645,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die KeePassLibC (Classic Support) ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die KeePassLibC (1.x File Support) ähnelt.
         /// </summary>
         internal static string KeePassLibCLong {
             get {
@@ -1906,7 +1870,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die NewDatabase.kdb ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die NewDatabase.kdbx ähnelt.
         /// </summary>
         internal static string NewDatabaseKDBFileName {
             get {
@@ -2095,6 +2059,15 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Password and repeated password aren&apos;t identical! ähnelt.
+        /// </summary>
+        internal static string PasswordRepeatFailed {
+            get {
+                return ResourceManager.GetString("PasswordRepeatFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Paste ähnelt.
         /// </summary>
         internal static string Paste {
@@ -2122,20 +2095,11 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Here you can configure all installed KeePass plugins. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Here you can configure all loaded KeePass plugins. ähnelt.
         /// </summary>
         internal static string PluginsDesc {
             get {
                 return ResourceManager.GetString("PluginsDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The plugin is incompatible with your KeePass version. Get the appropriate build of the plugin for your KeePass version. ähnelt.
-        /// </summary>
-        internal static string PluginVersionIncompatible {
-            get {
-                return ResourceManager.GetString("PluginVersionIncompatible", resourceCulture);
             }
         }
         
@@ -2248,15 +2212,6 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The program will be terminated now. ähnelt.
-        /// </summary>
-        internal static string ProgramTerminates {
-            get {
-                return ResourceManager.GetString("ProgramTerminates", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Ready. ähnelt.
         /// </summary>
         internal static string Ready {
@@ -2266,11 +2221,11 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Password and repeated password aren&apos;t identical! ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Remember password hiding setting in &apos;Edit Entry&apos; window ähnelt.
         /// </summary>
-        internal static string RepeatIsntSame {
+        internal static string RememberHidingSettings {
             get {
-                return ResourceManager.GetString("RepeatIsntSame", resourceCulture);
+                return ResourceManager.GetString("RememberHidingSettings", resourceCulture);
             }
         }
         
@@ -2298,24 +2253,6 @@ namespace KeePass.Resources {
         internal static string SampleEntry {
             get {
                 return ResourceManager.GetString("SampleEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You are saving the current database (which has been loaded from a KeePass 1.x file) in the KeePass 2.x file format. ähnelt.
-        /// </summary>
-        internal static string Save1xAs2x {
-            get {
-                return ResourceManager.GetString("Save1xAs2x", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die KeePass 1.x won&apos;t be able to open this database. ähnelt.
-        /// </summary>
-        internal static string Save1xAs2xCompat {
-            get {
-                return ResourceManager.GetString("Save1xAs2xCompat", resourceCulture);
             }
         }
         
@@ -2725,15 +2662,6 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The specified file has been encrypted using an unknown algorithm. Upgrade to the latest version of KeePass. ähnelt.
-        /// </summary>
-        internal static string UnknownEncryptionAlgorithm {
-            get {
-                return ResourceManager.GetString("UnknownEncryptionAlgorithm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die An unknown error occured. ähnelt.
         /// </summary>
         internal static string UnknownError {
@@ -2743,7 +2671,7 @@ namespace KeePass.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file version of the specified file is unknown. Upgrade to the latest version of KeePass. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unknown file version! ähnelt.
         /// </summary>
         internal static string UnknownFileVersion {
             get {
@@ -2937,15 +2865,6 @@ namespace KeePass.Resources {
         internal static string WorkTel {
             get {
                 return ResourceManager.GetString("WorkTel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Make sure you entered the correct composite master key for this database. ähnelt.
-        /// </summary>
-        internal static string WrongKeyDesc {
-            get {
-                return ResourceManager.GetString("WrongKeyDesc", resourceCulture);
             }
         }
         

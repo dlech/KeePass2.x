@@ -46,6 +46,8 @@ namespace KeePass.App
 
 		public static class ConfigKeys
 		{
+			public static readonly KeyValuePair<string, string> Language = new
+				KeyValuePair<string, string>("Application.Language", string.Empty);
 			public static readonly KeyValuePair<string, string> EnableLogging = new
 				KeyValuePair<string, string>("Application.Logging.Enable", "False");
 
@@ -123,6 +125,8 @@ namespace KeePass.App
 			public static readonly KeyValuePair<string, string> HideNotes = new
 				KeyValuePair<string, string>("UI.Hiding.HideNotes", "False");
 
+			public static readonly KeyValuePair<string, string> RememberHidingInDialogs = new
+				KeyValuePair<string, string>("UI.Hiding.InDialogs.RememberSeparately", "True");
 			public static readonly KeyValuePair<string, string> HidePasswordInEntryForm = new
 				KeyValuePair<string, string>("UI.Hiding.InDialogs.EntryForm.HidePassword", "True");
 
@@ -249,10 +253,10 @@ namespace KeePass.App
 
 		public static class HelpTopics
 		{
-			public const string Acknowledgements = "html/credits";
-			public const string License = "html/license";
+			public const string Acknowledgements = "base/credits";
+			public const string License = "v2/license";
 
-			public const string DatabaseSettings = "pro/dbsettings";
+			public const string DatabaseSettings = "v2/dbsettings";
 			public const string DbSettingsGeneral = "general";
 			public const string DbSettingsSecurity = "security";
 			public const string DbSettingsProtection = "protection";
@@ -260,16 +264,18 @@ namespace KeePass.App
 
 			public const string AutoType = "base/autotype";
 
-			public const string Entry = "pro/entry";
+			public const string Entry = "v2/entry";
 			public const string EntryGeneral = "general";
 			public const string EntryStrings = "advanced";
 			public const string EntryAutoType = "autotype";
 			public const string EntryHistory = "history";
 
 			public const string KeySources = "base/keys";
-			public const string PwGenerator = "pro/pwgenerator";
-			public const string IOConnections = "pro/ioconnect";
+			public const string PwGenerator = "v2/pwgenerator";
+			public const string IOConnections = "v2/ioconnect";
+
 			public const string ImportExport = "base/importexport";
+			public const string ImportExportSteganos = "imp_steganos";
 		}
 
 		public static class CommandLineOptions
@@ -286,7 +292,7 @@ namespace KeePass.App
 
 		public static class FileExtension
 		{
-			public const string FileExt = "kdb";
+			public const string FileExt = "kdbx";
 			public const string ExtID = "kdbfile";
 
 			public const string KeyFile = "key";

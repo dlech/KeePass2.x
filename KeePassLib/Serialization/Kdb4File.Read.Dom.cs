@@ -39,30 +39,20 @@ namespace KeePassLib.Serialization
 {
 	public sealed partial class Kdb4File
 	{
-		private FileOpenResult ReadXmlDom(Stream readerStream)
+		private void ReadXmlDom(Stream readerStream)
 		{
 			XmlDocument doc = new XmlDocument();
-			try { doc.Load(readerStream); }
-			catch(Exception xmlEx)
-			{
-				return new FileOpenResult(FileOpenResultCode.InvalidFileStructure, xmlEx);
-			}
+			doc.Load(readerStream);
 
 			XmlElement el = doc.DocumentElement;
-			try { ReadDocument(el); }
-			catch(Exception docEx)
-			{
-				Debug.Assert(false);
-				return new FileOpenResult(FileOpenResultCode.InvalidFileFormat, docEx);
-			}
-
-			return FileOpenResult.Success;
+			ReadDocument(el);
 		}
 
 		private void ReadDocument(XmlNode xmlRootNode)
 		{
-			Debug.Assert(xmlRootNode != null); if(xmlRootNode == null) throw new ArgumentNullException("xmlRootNode");
-			if(xmlRootNode.Name != ElemDocNode) throw new XmlException("Invalid root element name!");
+			Debug.Assert(xmlRootNode != null);
+			if(xmlRootNode == null) throw new ArgumentNullException("xmlRootNode");
+			if(xmlRootNode.Name != ElemDocNode) throw new XmlException("xmlRootNode");
 
 			foreach(XmlNode xmlChild in xmlRootNode.ChildNodes)
 			{
@@ -87,7 +77,8 @@ namespace KeePassLib.Serialization
 
 		private XorredBuffer ProcessNode(XmlNode xmlNode)
 		{
-			Debug.Assert(xmlNode != null); if(xmlNode == null) throw new ArgumentNullException("xmlNode");
+			Debug.Assert(xmlNode != null);
+			if(xmlNode == null) throw new ArgumentNullException("xmlNode");
 
 			XmlAttributeCollection xac = xmlNode.Attributes;
 			if(xac == null) return null;
@@ -97,7 +88,13 @@ namespace KeePassLib.Serialization
 			{
 				if(xmlProtected.Value == ValTrue)
 				{
-					byte[] pbEncrypted = Convert.FromBase64String(xmlNode.InnerText);
+					string strInner = xmlNode.InnerText;
+
+					byte[] pbEncrypted;
+					if(strInner.Length > 0)
+						pbEncrypted = Convert.FromBase64String(strInner);
+					else pbEncrypted = new byte[0];
+
 					byte[] pbPad = m_randomStream.GetRandomBytes((uint)pbEncrypted.Length);
 
 					return new XorredBuffer(pbEncrypted, pbPad);
@@ -122,6 +119,8 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.Description = ReadString(xmlChild);
 				else if(strName == ElemDbDefaultUser)
 					m_pwDatabase.DefaultUserName = ReadString(xmlChild);
+				else if(strName == ElemDbMntncHistoryDays)
+					m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xmlChild, 365);
 				else if(strName == ElemMemoryProt)
 					ReadMemoryProtection(xmlChild);
 				else ReadUnknown(xmlChild);
@@ -396,7 +395,7 @@ namespace KeePassLib.Serialization
 			}
 
 #if DEBUG
-			if(m_format == KdbFormat.Default)
+			if(m_format == Kdb4Format.Default)
 			{
 				if(strKey == PwDefs.TitleField)
 				{
@@ -448,7 +447,11 @@ namespace KeePassLib.Serialization
 
 					if(xbValue == null)
 					{
-						pbValue = Convert.FromBase64String(xmlChild.InnerText);
+						string strInner = xmlChild.InnerText;
+
+						if(strInner.Length > 0)
+							pbValue = Convert.FromBase64String(strInner);
+						else pbValue = new byte[0];
 					}
 				}
 				else ReadUnknown(xmlChild);

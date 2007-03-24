@@ -61,13 +61,12 @@ namespace KeePass.Util
 
 					if(File.Exists(strFile))
 					{
-						string strMsg = KPRes.FileExistsAlready + "\r\n";
-						strMsg += strFile;
-						strMsg += "\r\n\r\n";
+						string strMsg = KPRes.FileExistsAlready + MessageService.NewLine;
+						strMsg += strFile + MessageService.NewParagraph;
 						strMsg += KPRes.OverwriteExistingFileQuestion;
 
-						DialogResult dr = MessageBox.Show(strMsg, PwDefs.ShortProductName, MessageBoxButtons.YesNoCancel,
-							MessageBoxIcon.Question);
+						DialogResult dr = MessageService.Ask(strMsg, null,
+							MessageBoxButtons.YesNoCancel);
 
 						if(dr == DialogResult.Cancel)
 						{
@@ -77,10 +76,9 @@ namespace KeePass.Util
 						else if(dr == DialogResult.Yes)
 						{
 							try { File.Delete(strFile); }
-							catch(Exception)
+							catch(Exception exDel)
 							{
-								MessageBox.Show(strFile + "\r\n\r\n" + KPRes.FileCreationError,
-									PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+								MessageService.ShowWarning(strFile, exDel);
 								continue;
 							}
 						}
@@ -88,10 +86,9 @@ namespace KeePass.Util
 					}
 
 					try { File.WriteAllBytes(strFile, kvp.Value.ReadData()); }
-					catch(Exception)
+					catch(Exception exWrite)
 					{
-						MessageBox.Show(strFile + "\r\n\r\n" + KPRes.FileCreationError,
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(strFile, exWrite);
 					}
 				}
 				if(bCancel) break;
@@ -116,41 +113,37 @@ namespace KeePass.Util
 
 		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase, PwGroup pgStorage)
 		{
-			try
+			if(Clipboard.ContainsData(ClipFormatEntries) == false) return;
+
+			byte[] pbEnc = (byte[])Clipboard.GetData(ClipFormatEntries);
+
+			byte[] pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy, DataProtectionScope.CurrentUser);
+			MemoryStream ms = new MemoryStream(pbPlain, false);
+			GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
+
+			List<PwEntry> vEntries = Kdb4File.ReadEntries(pwDatabase, gz);
+
+			foreach(PwEntry pe in vEntries)
 			{
-				if(Clipboard.ContainsData(ClipFormatEntries) == false) return;
+				ProtectedString ps = pe.Strings.Get(PwDefs.TitleField);
+				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectTitle);
 
-				byte[] pbEnc = (byte[])Clipboard.GetData(ClipFormatEntries);
+				ps = pe.Strings.Get(PwDefs.UserNameField);
+				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectUserName);
 
-				byte[] pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy, DataProtectionScope.CurrentUser);
-				MemoryStream ms = new MemoryStream(pbPlain, false);
-				GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
+				ps = pe.Strings.Get(PwDefs.PasswordField);
+				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectPassword);
 
-				List<PwEntry> vEntries = Kdb4File.ReadEntries(pwDatabase, gz);
+				ps = pe.Strings.Get(PwDefs.UrlField);
+				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectUrl);
 
-				foreach(PwEntry pe in vEntries)
-				{
-					ProtectedString ps = pe.Strings.Get(PwDefs.TitleField);
-					if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectTitle);
+				ps = pe.Strings.Get(PwDefs.NotesField);
+				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectNotes);
 
-					ps = pe.Strings.Get(PwDefs.UserNameField);
-					if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectUserName);
-
-					ps = pe.Strings.Get(PwDefs.PasswordField);
-					if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectPassword);
-
-					ps = pe.Strings.Get(PwDefs.UrlField);
-					if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectUrl);
-
-					ps = pe.Strings.Get(PwDefs.NotesField);
-					if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectNotes);
-
-					pgStorage.Entries.Add(pe);
-				}
-
-				gz.Close(); ms.Close();
+				pgStorage.Entries.Add(pe);
 			}
-			catch(Exception) { Debug.Assert(false); }
+
+			gz.Close(); ms.Close();
 		}
 	}
 }

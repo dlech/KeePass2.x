@@ -70,6 +70,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
@@ -107,8 +109,7 @@ namespace KeePass.Forms
 				{
 					if(m_secPassword.ContentsEqualTo(m_secRepeat) == false)
 					{
-						MessageBox.Show(KPRes.RepeatIsntSame, PwDefs.ShortProductName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
 						m_pKey = null;
 						return false;
 					}
@@ -124,8 +125,7 @@ namespace KeePass.Forms
 				try { m_pKey.AddUserKey(new KcpKeyFile(m_tbKeyFile.Text)); }
 				catch(Exception)
 				{
-					MessageBox.Show(m_tbKeyFile.Text + "\r\n\r\n" + KPRes.KeyFileError,
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(m_tbKeyFile.Text, KPRes.KeyFileError);
 					return false;
 				}
 			}
@@ -217,12 +217,18 @@ namespace KeePass.Forms
 				if(dlg.ShowDialog() == DialogResult.OK)
 				{
 					byte[] pbAdditionalEntropy = dlg.GeneratedEntropy;
-					FileSaveResult fsr = KcpKeyFile.Create(m_saveKeyFileDialog.FileName, pbAdditionalEntropy);
 
-					if(fsr.Code != FileSaveResultCode.Success)
-						MessageBox.Show(KPRes.FileCreationError, PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					else
+					try
+					{
+						KcpKeyFile.Create(m_saveKeyFileDialog.FileName,
+							pbAdditionalEntropy);
+						
 						m_tbKeyFile.Text = m_saveKeyFileDialog.FileName;
+					}
+					catch(Exception exKC)
+					{
+						MessageService.ShowWarning(exKC);
+					}
 				}
 			}
 
@@ -243,6 +249,11 @@ namespace KeePass.Forms
 		private void OnWinUserCheckedChanged(object sender, EventArgs e)
 		{
 			EnableUserControls();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

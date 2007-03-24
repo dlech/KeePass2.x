@@ -34,13 +34,16 @@ using KeePass.UI;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange
 {
 	public static class ImportUtil
 	{
-		public static void ImportInto(PwDatabase pwStorage)
+		public static void ImportInto(PwDatabase pwStorage, out bool bAppendedToRootOnly)
 		{
+			bAppendedToRootOnly = false;
+
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
 			if(!pwStorage.IsOpen) return;
 			if(!AppPolicy.Try(AppPolicyFlag.Import)) return;
@@ -48,8 +51,19 @@ namespace KeePass.DataExchange
 			ImportDataForm dlgFmt = new ImportDataForm();
 			dlgFmt.InitEx(pwStorage);
 			if(dlgFmt.ShowDialog() == DialogResult.OK)
+			{
+				Debug.Assert(dlgFmt.ResultFormat != null);
+				if(dlgFmt.ResultFormat == null)
+				{
+					MessageService.ShowWarning(KPRes.ImportFailed);
+					return;
+				}
+
+				bAppendedToRootOnly = dlgFmt.ResultFormat.AppendsToRootGroupOnly;
+
 				PerformImport(pwStorage, dlgFmt.ResultFormat,
 					dlgFmt.ResultFiles, false, null);
+			}
 		}
 
 		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps)
@@ -77,12 +91,23 @@ namespace KeePass.DataExchange
 		private static bool PerformImport(PwDatabase pwDatabase, FormatImporter fmtImp,
 			string[] vFiles, bool bSynchronize, IUIOperations uiOps)
 		{
-			if(fmtImp.TryBeginImports() == false) return false;
+			if(fmtImp.TryBeginImport() == false) return false;
 
 			bool bUseTempDb = (fmtImp.SupportsUuids || fmtImp.RequiresKey);
 			bool bAllSuccess = true;
 
 			if(bSynchronize) { Debug.Assert(vFiles.Length == 1); }
+
+			if(vFiles.Length == 0)
+			{
+				try { fmtImp.Import(pwDatabase, null, null); }
+				catch(Exception exSingular)
+				{
+					MessageService.ShowWarning(StrUtil.FormatException(exSingular));
+				}
+
+				return true;
+			}
 
 			foreach(string strFile in vFiles)
 			{
@@ -95,9 +120,7 @@ namespace KeePass.DataExchange
 				}
 				catch(Exception exFile)
 				{
-					MessageBox.Show(strFile + "\r\n\r\n" + exFile.Message,
-						PwDefs.ShortProductName, MessageBoxButtons.OK,
-						MessageBoxIcon.Warning);
+					MessageService.ShowWarning(strFile, exFile);
 					bAllSuccess = false;
 					continue;
 				}
@@ -108,7 +131,7 @@ namespace KeePass.DataExchange
 				if(bUseTempDb)
 				{
 					pwImp = new PwDatabase();
-					pwImp.NewDatabase(new IOConnectionInfo(), pwDatabase.MasterKey);
+					pwImp.New(new IOConnectionInfo(), pwDatabase.MasterKey);
 					pwImp.MemoryProtection = pwDatabase.MemoryProtection.CloneDeep();
 				}
 				else pwImp = pwDatabase;
@@ -134,10 +157,15 @@ namespace KeePass.DataExchange
 				try { fmtImp.Import(pwImp, fs, slf); }
 				catch(Exception excpFmt)
 				{
-					string strMsg = excpFmt.Message;
-					if(bSynchronize) strMsg += "\r\n\r\n" + KPRes.SynchronizingHint;
-					MessageBox.Show(strMsg, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					string strMsgEx = excpFmt.Message;
+					if(bSynchronize)
+					{
+						strMsgEx += MessageService.NewParagraph +
+							KPRes.SynchronizingHint;
+					}
+
+					MessageService.ShowWarning(strMsgEx);
+
 					fs.Close(); slf.EndLogging(); slf.Close();
 					bAllSuccess = false;
 					continue;
@@ -163,11 +191,12 @@ namespace KeePass.DataExchange
 
 					slf.SetText(KPRes.MergingData, LogStatusType.Info);
 
-					if(!pwDatabase.MergeIn(pwImp, mm))
+					try { pwDatabase.MergeIn(pwImp, mm); }
+					catch(Exception exMerge)
 					{
-						MessageBox.Show(strFile + "\r\n\r\n" + KPRes.ImportFailed +
-							"\r\n\r\n" + KPRes.InvalidFileFormat, PwDefs.ShortProductName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(strFile, KPRes.ImportFailed,
+							exMerge);
+
 						bAllSuccess = false;
 						slf.EndLogging(); slf.Close();
 						continue;
@@ -183,8 +212,6 @@ namespace KeePass.DataExchange
 
 					if(!uiOps.UIFileSave())
 					{
-						MessageBox.Show(KPRes.SyncFailed, PwDefs.ShortProductName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						bAllSuccess = false;
 						continue;
 					}
@@ -197,18 +224,14 @@ namespace KeePass.DataExchange
 								strFile, true);
 						}
 						else
-						{
-							FileSaveResult fsr = pwDatabase.SaveDatabaseTo(
-								IOConnectionInfo.FromPath(strFile), false, null);
-
-							if(fsr.Code != FileSaveResultCode.Success)
-								throw new Exception(ResUtil.FileSaveResultToString(fsr));
-						}
+							pwDatabase.SaveAs(IOConnectionInfo.FromPath(strFile), false, null);
 					}
 					catch(Exception exSync)
 					{
-						MessageBox.Show(exSync.Message + "\r\n\r\n" + KPRes.SyncFailed,
-							PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(KPRes.SyncFailed,
+							pwDatabase.IOConnectionInfo.GetDisplayName() +
+							MessageService.NewLine + strFile, exSync);
+
 						bAllSuccess = false;
 						continue;
 					}
@@ -301,7 +324,8 @@ namespace KeePass.DataExchange
 		{
 			string str = strToDecode;
 
-			Debug.Assert((m_vNonStandardEntitiesTable.Length % 2) == 0);
+			Debug.Assert((m_vNonStandardEntitiesTable.Length % 2) == 0); // Static
+
 			for(int i = 0; i < m_vNonStandardEntitiesTable.Length; i += 2)
 				str = str.Replace(m_vNonStandardEntitiesTable[i],
 					m_vNonStandardEntitiesTable[i + 1]);

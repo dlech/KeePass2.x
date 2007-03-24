@@ -68,23 +68,17 @@ namespace KeePass.DataExchange.Formats
 
 					bFirst = false;
 				}
-				else if(strLine.Length > 5)
-				{
-					FileOpenResult fr = ImportLine(strLine, pwStorage);
-					if(fr.Code != FileOpenResultCode.Success)
-						throw new FormatException(ResUtil.FileOpenResultToString(fr));
-				}
+				else if(strLine.Length > 5) ImportLine(strLine, pwStorage);
 			}
 		}
 
-		private static FileOpenResult ImportLine(string strLine, PwDatabase pwStorage)
+		private static void ImportLine(string strLine, PwDatabase pwStorage)
 		{
 			string[] vParts = strLine.Split(new string[] { FieldSeparator },
 				StringSplitOptions.None);
 			Debug.Assert(vParts.Length == 9);
 			if(vParts.Length != 9)
-				return new FileOpenResult(FileOpenResultCode.InvalidFileStructure,
-					new FormatException("Line:\r\n" + strLine));
+				throw new FormatException("Line:\r\n" + strLine);
 
 			vParts[0] = vParts[0].Remove(0, 1);
 			vParts[8] = vParts[8].Substring(0, vParts[8].Length - 1);
@@ -116,8 +110,6 @@ namespace KeePass.DataExchange.Formats
 
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectNotes, vParts[8]));
-
-			return FileOpenResult.Success;
 		}
 	}
 }

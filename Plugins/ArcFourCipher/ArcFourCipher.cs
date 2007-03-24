@@ -26,12 +26,12 @@ using KeePass.Plugins;
 
 namespace ArcFourCipher
 {
-	public sealed class ArcFourCipher : KeePassPlugin
+	public sealed class ArcFourCipher : Plugin
 	{
-		private IKeePassPluginHost m_host = null;
+		private IPluginHost m_host = null;
 		private static ArcFourEngine m_arcFourEngine = new ArcFourEngine();
 
-		public override bool Initialize(IKeePassPluginHost host)
+		public override bool Initialize(IPluginHost host)
 		{
 			if(host == null) return false;
 			m_host = host;

@@ -38,6 +38,8 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return @"*"; } }
 		public override string AppGroup { get { return KPRes.General; } }
 
+		public override bool AppendsToRootGroupOnly { get { return true; } }
+
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_ASCII; }

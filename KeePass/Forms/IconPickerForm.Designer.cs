@@ -73,6 +73,7 @@
 			this.MinimizeBox = false;
 			this.Name = "IconPickerForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.ResumeLayout(false);
 

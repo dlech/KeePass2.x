@@ -74,6 +74,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_strDisplayName != null);
 			if(m_strDisplayName == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bInitializing = true;
 
 			string strBannerDesc = UrlUtil.CompactPath(m_strDisplayName, 45);
@@ -170,8 +172,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception)
 				{
-					MessageBox.Show(strKeyFile + "\r\n\r\n" + KPRes.KeyFileError,
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError);
 					m_pKey = null;
 					return false;
 				}
@@ -192,8 +193,7 @@ namespace KeePass.Forms
 
 			if(File.Exists(strKeyFile) == false)
 			{
-				MessageBox.Show(strKeyFile + "\r\n\r\n" + KPRes.FileNotFoundError,
-					PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(strKeyFile, KPRes.FileNotFoundError);
 				bSuccess = false;
 			}
 
@@ -330,6 +330,11 @@ namespace KeePass.Forms
 
 				m_vSuggestions.Clear();
 			}
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

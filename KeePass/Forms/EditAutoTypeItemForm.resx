@@ -142,7 +142,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_bannerImage.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
     <value>343, 343</value>
@@ -166,7 +166,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
     <value>424, 343</value>
@@ -190,7 +190,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 343</value>
@@ -214,7 +214,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="m_lblTargetWindow.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -241,13 +241,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblTargetWindow.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="m_lblTargetWindowInfo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_lblTargetWindowInfo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>125, 98</value>
+    <value>125, 115</value>
   </data>
   <data name="m_lblTargetWindowInfo.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 13</value>
@@ -268,13 +268,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblTargetWindowInfo.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="m_lblKeystrokeSeq.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_lblKeystrokeSeq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 120</value>
+    <value>10, 143</value>
   </data>
   <data name="m_lblKeystrokeSeq.Size" type="System.Drawing.Size, System.Drawing">
     <value>109, 13</value>
@@ -295,13 +295,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblKeystrokeSeq.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="m_lblKeySeqInsertInfo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_lblKeySeqInsertInfo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>126, 140</value>
+    <value>126, 163</value>
   </data>
   <data name="m_lblKeySeqInsertInfo.Size" type="System.Drawing.Size, System.Drawing">
     <value>94, 13</value>
@@ -322,7 +322,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblKeySeqInsertInfo.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="m_lblSeparator.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 333</value>
@@ -343,13 +343,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblSeparator.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="m_rbKeySeq.Font" type="System.Drawing.Font, System.Drawing">
     <value>Courier New, 8.25pt</value>
   </data>
   <data name="m_rbKeySeq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>128, 117</value>
+    <value>129, 140</value>
   </data>
   <data name="m_rbKeySeq.Multiline" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -373,16 +373,16 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_rbKeySeq.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="m_rtbPlaceholders.Location" type="System.Drawing.Point, System.Drawing">
-    <value>128, 156</value>
+    <value>129, 182</value>
   </data>
   <data name="m_rtbPlaceholders.ScrollBars" type="System.Windows.Forms.RichTextBoxScrollBars, System.Windows.Forms">
     <value>ForcedVertical</value>
   </data>
   <data name="m_rtbPlaceholders.Size" type="System.Drawing.Size, System.Drawing">
-    <value>371, 166</value>
+    <value>371, 136</value>
   </data>
   <data name="m_rtbPlaceholders.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -400,7 +400,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_rtbPlaceholders.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="m_cmbWindow.Location" type="System.Drawing.Point, System.Drawing">
     <value>129, 72</value>
@@ -421,6 +421,33 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_cmbWindow.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_lblOpenHint.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblOpenHint.Location" type="System.Drawing.Point, System.Drawing">
+    <value>125, 98</value>
+  </data>
+  <data name="m_lblOpenHint.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 13</value>
+  </data>
+  <data name="m_lblOpenHint.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="m_lblOpenHint.Text" xml:space="preserve">
+    <value>Click the drop-down button on the right to see currently opened windows.</value>
+  </data>
+  <data name="&gt;&gt;m_lblOpenHint.Name" xml:space="preserve">
+    <value>m_lblOpenHint</value>
+  </data>
+  <data name="&gt;&gt;m_lblOpenHint.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblOpenHint.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblOpenHint.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

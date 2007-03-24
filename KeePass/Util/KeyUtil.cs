@@ -27,6 +27,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Keys;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -48,10 +49,9 @@ namespace KeePass.Util
 			if(strKeyFile != null)
 			{
 				try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
-				catch(Exception)
+				catch(Exception exKey)
 				{
-					MessageBox.Show(strKeyFile + "\r\n\r\n" + KPRes.KeyFileError,
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(strKeyFile, exKey);
 					return null;
 				}
 			}

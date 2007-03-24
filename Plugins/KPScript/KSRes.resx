@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="KeyFilePrompt" xml:space="preserve">
+    <value>Key File:</value>
+  </data>
+  <data name="KeyPrompt" xml:space="preserve">
+    <value>Enter the composite key for the specified database:</value>
+  </data>
+  <data name="NoCommand" xml:space="preserve">
+    <value>No command specified!</value>
+  </data>
+  <data name="NoKeyPartHint" xml:space="preserve">
+    <value>To ignore a key component, simply press [Enter] without entering any string.</value>
+  </data>
+  <data name="OperationSuccessful" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="PasswordPrompt" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>The specified command is unknown!</value>
+  </data>
+  <data name="UnknownException" xml:space="preserve">
+    <value>An unknown exception occured.</value>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+  <data name="UserAccountPrompt" xml:space="preserve">
+    <value>User Account (Y/N):</value>
+  </data>
 </root>

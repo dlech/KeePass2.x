@@ -114,6 +114,7 @@
 			// 
 			resources.ApplyResources(this.m_tbFile, "m_tbFile");
 			this.m_tbFile.Name = "m_tbFile";
+			this.m_tbFile.TextChanged += new System.EventHandler(this.OnImportFileTextChanged);
 			// 
 			// m_lblFile
 			// 
@@ -135,6 +136,7 @@
 			this.Name = "ImportDataForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpFormat.ResumeLayout(false);

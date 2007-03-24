@@ -117,26 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_splitHorizontal.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_splitHorizontal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 49</value>
-  </data>
-  <data name="m_splitHorizontal.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
-    <value>Horizontal</value>
-  </data>
-  <data name="m_splitVertical.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="m_splitVertical.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
   <metadata name="m_ctxGroupList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>485, 37</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_ctxGroupAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
@@ -184,13 +168,6 @@
   </data>
   <data name="&gt;&gt;m_ctxGroupList.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="m_tvGroups.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_tvGroups.ImageIndex" type="System.Int32, mscorlib">
-    <value>0</value>
   </data>
   <metadata name="m_ilClientIcons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>255, 37</value>
@@ -1549,42 +1526,6 @@
         AfwBAws=
 </value>
   </data>
-  <data name="m_tvGroups.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="m_tvGroups.SelectedImageIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_tvGroups.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 328</value>
-  </data>
-  <data name="m_tvGroups.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_tvGroups.Name" xml:space="preserve">
-    <value>m_tvGroups</value>
-  </data>
-  <data name="&gt;&gt;m_tvGroups.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tvGroups.Parent" xml:space="preserve">
-    <value>m_splitVertical.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_tvGroups.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel1.Name" xml:space="preserve">
-    <value>m_splitVertical.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel1.Parent" xml:space="preserve">
-    <value>m_splitVertical</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <metadata name="m_ctxPwList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>242, 0</value>
   </metadata>
@@ -1592,82 +1533,88 @@
     <value>Ctrl+B</value>
   </data>
   <data name="m_ctxEntryCopyUserName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryCopyUserName.Text" xml:space="preserve">
-    <value>Copy User &amp;Name To Clipboard</value>
+    <value>Copy User &amp;Name</value>
   </data>
   <data name="m_ctxEntryCopyPassword.ShortcutKeyDisplayString" xml:space="preserve">
     <value>Ctrl+C</value>
   </data>
   <data name="m_ctxEntryCopyPassword.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryCopyPassword.Text" xml:space="preserve">
-    <value>Copy &amp;Password To Clipboard</value>
+    <value>Copy &amp;Password</value>
+  </data>
+  <data name="m_ctxEntryOpenUrl.ShortcutKeyDisplayString" xml:space="preserve">
+    <value>Ctrl+U</value>
   </data>
   <data name="m_ctxEntryOpenUrl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 22</value>
+    <value>205, 22</value>
   </data>
   <data name="m_ctxEntryOpenUrl.Text" xml:space="preserve">
     <value>&amp;Open In Browser</value>
   </data>
   <data name="m_ctxEntryCopyUrl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 22</value>
+    <value>205, 22</value>
   </data>
   <data name="m_ctxEntryCopyUrl.Text" xml:space="preserve">
     <value>&amp;Copy To Clipboard</value>
   </data>
   <data name="m_ctxEntryUrl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryUrl.Text" xml:space="preserve">
     <value>&amp;URL(s)</value>
   </data>
   <data name="m_ctxEntryCopyCustomString.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryCopyCustomString.Text" xml:space="preserve">
-    <value>Copy &amp;String To Clipboard</value>
+    <value>Copy Custom &amp;String</value>
   </data>
   <data name="m_ctxEntrySaveAttachedFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntrySaveAttachedFiles.Text" xml:space="preserve">
     <value>Save Attached &amp;File(s) To...</value>
   </data>
   <data name="m_ctxEntrySep0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>263, 6</value>
+    <value>212, 6</value>
+  </data>
+  <data name="m_ctxEntryPerformAutoType.ShortcutKeyDisplayString" xml:space="preserve">
+    <value>Ctrl+V</value>
   </data>
   <data name="m_ctxEntryPerformAutoType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryPerformAutoType.Text" xml:space="preserve">
     <value>Perform Auto-&amp;Type</value>
   </data>
   <data name="m_ctxEntrySep1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>263, 6</value>
+    <value>212, 6</value>
   </data>
   <data name="m_ctxEntryAdd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryAdd.Text" xml:space="preserve">
     <value>&amp;Add Entry...</value>
   </data>
   <data name="m_ctxEntryEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryEdit.Text" xml:space="preserve">
     <value>&amp;Edit/View Entry...</value>
   </data>
   <data name="m_ctxEntryDuplicate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryDuplicate.Text" xml:space="preserve">
     <value>Dupli&amp;cate Entry</value>
   </data>
   <data name="m_ctxEntryDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryDelete.Text" xml:space="preserve">
     <value>&amp;Delete Entry</value>
@@ -1730,7 +1677,7 @@
     <value>Set &amp;Icons...</value>
   </data>
   <data name="m_ctxEntryMassModify.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryMassModify.Text" xml:space="preserve">
     <value>&amp;Selected Entries</value>
@@ -1739,13 +1686,13 @@
     <value>Ctrl+A</value>
   </data>
   <data name="m_ctxEntrySelectAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntrySelectAll.Text" xml:space="preserve">
     <value>Se&amp;lect All</value>
   </data>
   <data name="m_ctxEntrySep2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>263, 6</value>
+    <value>212, 6</value>
   </data>
   <data name="m_ctxEntryClipCopy.Size" type="System.Drawing.Size, System.Drawing">
     <value>223, 22</value>
@@ -1760,7 +1707,7 @@
     <value>&amp;Paste Entries From Clipboard</value>
   </data>
   <data name="m_ctxEntryClipboard.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryClipboard.Text" xml:space="preserve">
     <value>&amp;Clipboard</value>
@@ -1868,148 +1815,19 @@
     <value>Sort List By &amp;Expiration Time</value>
   </data>
   <data name="m_ctxEntryRearrangePopup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 22</value>
+    <value>215, 22</value>
   </data>
   <data name="m_ctxEntryRearrangePopup.Text" xml:space="preserve">
     <value>&amp;Rearrange</value>
   </data>
   <data name="m_ctxPwList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>267, 330</value>
+    <value>216, 352</value>
   </data>
   <data name="&gt;&gt;m_ctxPwList.Name" xml:space="preserve">
     <value>m_ctxPwList</value>
   </data>
   <data name="&gt;&gt;m_ctxPwList.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="m_lvEntries.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="m_lvEntries.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="m_lvEntries.Size" type="System.Drawing.Size, System.Drawing">
-    <value>473, 328</value>
-  </data>
-  <data name="m_lvEntries.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_lvEntries.Name" xml:space="preserve">
-    <value>m_lvEntries</value>
-  </data>
-  <data name="&gt;&gt;m_lvEntries.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lvEntries.Parent" xml:space="preserve">
-    <value>m_splitVertical.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_lvEntries.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel2.Name" xml:space="preserve">
-    <value>m_splitVertical.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel2.Parent" xml:space="preserve">
-    <value>m_splitVertical</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Panel2.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_splitVertical.Size" type="System.Drawing.Size, System.Drawing">
-    <value>654, 328</value>
-  </data>
-  <data name="m_splitVertical.SplitterDistance" type="System.Int32, mscorlib">
-    <value>177</value>
-  </data>
-  <data name="m_splitVertical.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Name" xml:space="preserve">
-    <value>m_splitVertical</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Type" xml:space="preserve">
-    <value>KeePass.UI.CustomSplitContainerEx, KeePass, Version=1.0.2631.21365, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.Parent" xml:space="preserve">
-    <value>m_splitHorizontal.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_splitVertical.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel1.Name" xml:space="preserve">
-    <value>m_splitHorizontal.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel1.Parent" xml:space="preserve">
-    <value>m_splitHorizontal</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_richEntryView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="m_richEntryView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="m_richEntryView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>654, 83</value>
-  </data>
-  <data name="m_richEntryView.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_richEntryView.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;m_richEntryView.Name" xml:space="preserve">
-    <value>m_richEntryView</value>
-  </data>
-  <data name="&gt;&gt;m_richEntryView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_richEntryView.Parent" xml:space="preserve">
-    <value>m_splitHorizontal.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_richEntryView.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel2.Name" xml:space="preserve">
-    <value>m_splitHorizontal.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel2.Parent" xml:space="preserve">
-    <value>m_splitHorizontal</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Panel2.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_splitHorizontal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>654, 415</value>
-  </data>
-  <data name="m_splitHorizontal.SplitterDistance" type="System.Int32, mscorlib">
-    <value>328</value>
-  </data>
-  <data name="m_splitHorizontal.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Name" xml:space="preserve">
-    <value>m_splitHorizontal</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Type" xml:space="preserve">
-    <value>KeePass.UI.CustomSplitContainerEx, KeePass, Version=1.0.2631.21365, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_splitHorizontal.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <metadata name="m_menuMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>0, 0</value>
@@ -2497,6 +2315,7 @@
   <data name="m_menuMain.Size" type="System.Drawing.Size, System.Drawing">
     <value>654, 24</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_menuMain.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -2711,7 +2530,7 @@
     <value>464, 0</value>
   </metadata>
   <data name="m_openDatabaseFile.Filter" xml:space="preserve">
-    <value>KDB Files (*.kdb)|*.kdb|All Files (*.*)|*.*</value>
+    <value>KeePass KDBX Files (*.kdbx)|*.kdbx|All Files (*.*)|*.*</value>
   </data>
   <data name="m_openDatabaseFile.Title" xml:space="preserve">
     <value>Open Password Database File</value>
@@ -2720,7 +2539,7 @@
     <value>315, 74</value>
   </metadata>
   <data name="m_saveDatabaseFile.Filter" xml:space="preserve">
-    <value>KDB Files (*.kdb)|*.kdb|All Files (*.*)|*.*</value>
+    <value>KeePass KDBX Files (*.kdbx)|*.kdbx|All Files (*.*)|*.*</value>
   </data>
   <data name="m_saveDatabaseFile.Title" xml:space="preserve">
     <value>Save Password Database</value>
@@ -3216,6 +3035,193 @@
   <metadata name="m_colorDlg.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>614, 37</value>
   </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_splitHorizontal.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_splitHorizontal.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 49</value>
+  </data>
+  <data name="m_splitHorizontal.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="m_splitVertical.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_splitVertical.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_tvGroups.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_tvGroups.ImageIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_tvGroups.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_tvGroups.SelectedImageIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_tvGroups.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 328</value>
+  </data>
+  <data name="m_tvGroups.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tvGroups.Name" xml:space="preserve">
+    <value>m_tvGroups</value>
+  </data>
+  <data name="&gt;&gt;m_tvGroups.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tvGroups.Parent" xml:space="preserve">
+    <value>m_splitVertical.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_tvGroups.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel1.Name" xml:space="preserve">
+    <value>m_splitVertical.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel1.Parent" xml:space="preserve">
+    <value>m_splitVertical</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_lvEntries.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_lvEntries.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_lvEntries.Size" type="System.Drawing.Size, System.Drawing">
+    <value>473, 328</value>
+  </data>
+  <data name="m_lvEntries.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lvEntries.Name" xml:space="preserve">
+    <value>m_lvEntries</value>
+  </data>
+  <data name="&gt;&gt;m_lvEntries.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lvEntries.Parent" xml:space="preserve">
+    <value>m_splitVertical.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_lvEntries.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel2.Name" xml:space="preserve">
+    <value>m_splitVertical.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel2.Parent" xml:space="preserve">
+    <value>m_splitVertical</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_splitVertical.Size" type="System.Drawing.Size, System.Drawing">
+    <value>654, 328</value>
+  </data>
+  <data name="m_splitVertical.SplitterDistance" type="System.Int32, mscorlib">
+    <value>177</value>
+  </data>
+  <data name="m_splitVertical.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Name" xml:space="preserve">
+    <value>m_splitVertical</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Type" xml:space="preserve">
+    <value>KeePass.UI.CustomSplitContainerEx, KeePass, Version=2.0.0.30073, Culture=neutral, PublicKeyToken=7952fc8ece49a093</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.Parent" xml:space="preserve">
+    <value>m_splitHorizontal.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_splitVertical.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel1.Name" xml:space="preserve">
+    <value>m_splitHorizontal.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel1.Parent" xml:space="preserve">
+    <value>m_splitHorizontal</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_richEntryView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_richEntryView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_richEntryView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>654, 83</value>
+  </data>
+  <data name="m_richEntryView.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_richEntryView.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;m_richEntryView.Name" xml:space="preserve">
+    <value>m_richEntryView</value>
+  </data>
+  <data name="&gt;&gt;m_richEntryView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_richEntryView.Parent" xml:space="preserve">
+    <value>m_splitHorizontal.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_richEntryView.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel2.Name" xml:space="preserve">
+    <value>m_splitHorizontal.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel2.Parent" xml:space="preserve">
+    <value>m_splitHorizontal</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_splitHorizontal.Size" type="System.Drawing.Size, System.Drawing">
+    <value>654, 415</value>
+  </data>
+  <data name="m_splitHorizontal.SplitterDistance" type="System.Int32, mscorlib">
+    <value>328</value>
+  </data>
+  <data name="m_splitHorizontal.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Name" xml:space="preserve">
+    <value>m_splitHorizontal</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Type" xml:space="preserve">
+    <value>KeePass.UI.CustomSplitContainerEx, KeePass, Version=2.0.0.30073, Culture=neutral, PublicKeyToken=7952fc8ece49a093</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_splitHorizontal.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

@@ -30,14 +30,13 @@
             File version of files saved by the current <c>Kdb4File</c> class.
             </summary>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.Serialization.Kdb4File.KdbFormat,KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Save the contents of the current <c>PwDatabase</c> to a KDB file.
             </summary>
             <param name="sSaveTo">Stream to write the KDB file into.</param>
             <param name="format">Format of the file to create.</param>
             <param name="slLogger">Logger that recieves status information.</param>
-            <returns>Returns a <c>FileSaveResult</c> error code.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.WriteEntries(System.IO.Stream,KeePassLib.PwDatabase,KeePassLib.PwEntry[])">
             <summary>
@@ -48,15 +47,22 @@
             <param name="vEntries">Entries to serialize.</param>
             <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.IO.Stream,KeePassLib.Serialization.Kdb4File.KdbFormat,KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.String,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Load a KDB file.
+            Load a KDB file from a file.
+            </summary>
+            <param name="strFilePath">File to load.</param>
+            <param name="kdbFormat">Format specifier.</param>
+            <param name="slLogger">Status logger (optional).</param>
+        </member>
+        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.IO.Stream,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Load a KDB file from a stream.
             </summary>
             <param name="sSource">Stream to read the data from. Must contain
             a KDB4 stream.</param>
             <param name="kdbFormat">Format specifier.</param>
             <param name="slLogger">Status logger (optional).</param>
-            <returns>Error code.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.ReadEntries(KeePassLib.PwDatabase,System.IO.Stream)">
             <summary>
@@ -76,22 +82,6 @@
         <member name="M:KeePassLib.Serialization.Kdb4File.DetermineLanguageID">
             <summary>
             Call this once to determine the current localization settings.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Serialization.Kdb4File.KdbFormat">
-            <summary>
-            The <c>Kdb4File</c> class supports saving the data to various
-            formats.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Serialization.Kdb4File.KdbFormat.Default">
-            <summary>
-            The default, encrypted file format.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Serialization.Kdb4File.KdbFormat.PlainXml">
-            <summary>
-            Use this flag when exporting data to a plain-text XML file.
             </summary>
         </member>
         <member name="T:KeePassLib.Keys.IUserKey">
@@ -952,6 +942,20 @@
             <param name="bSearchRecursive">If <c>true</c>, the search is recursive.</param>
             <returns>Returns reference to found entry, otherwise <c>null</c>.</returns>
         </member>
+        <member name="M:KeePassLib.PwGroup.GetFullPath">
+            <summary>
+            Get the full path of a group.
+            </summary>
+            <returns>Full path of the group.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetFullPath(System.String,System.Boolean)">
+            <summary>
+            Get the full path of a group.
+            </summary>
+            <param name="strSeparator">String that separates the group
+            names.</param>
+            <returns>Full path of the group.</returns>
+        </member>
         <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean)">
             <summary>
             Assign properties to the current group based on a template group.
@@ -1227,104 +1231,6 @@
             <summary>
             Virtual field: currently known number of algorithms. Should not be used
             by plugins or libraries -- it's used internally only.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.FileOpenResultCode">
-            <summary>
-            Return values for a load-file operation.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.Success">
-            <summary>
-            File has been loaded successfully.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.UnknownError">
-            <summary>
-            An unknown error occured.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.FileNotFound">
-            <summary>
-            File not found. The file does not exist or the resource is currently unavailable.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.NoFileAccess">
-            <summary>
-            Windows doesn't give our program permission to access the file.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.IOError">
-            <summary>
-            Input-output error (for example stream closed before completely reading the file).
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileStructure">
-            <summary>
-            Invalid file structure, the file isn't a valid KDB file.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileSignature">
-            <summary>
-            File signature is incorrect, the selected file isn't a KDB file.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.UnknownFileVersion">
-            <summary>
-            File version is unknown, the KDB file cannot be loaded.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.UnknownEncryptionAlgorithm">
-            <summary>
-            An unknown encryption algorithm has been used to encrypt the KDB file.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.SecurityException">
-            <summary>
-            A security exception occured. This is an internal error.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.InvalidHeader">
-            <summary>
-            Invalid header.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileOpenResultCode.InvalidFileFormat">
-            <summary>
-            Invalid file format. The inner XML file is corrupted.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.FileSaveResultCode">
-            <summary>
-            Return values for a file-save operation.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileSaveResultCode.Success">
-            <summary>
-            File has successfully been saved. No data loss possible.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileSaveResultCode.UnknownError">
-            <summary>
-            An unknown error occured.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileSaveResultCode.FileCreationFailed">
-            <summary>
-            Unable to create the specified file. Make sure you have write access
-            to the specified file/path.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileSaveResultCode.IOException">
-            <summary>
-            An input-output error occured. Possibly the medium has been removed
-            before the file was written completely.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.FileSaveResultCode.SecurityException">
-            <summary>
-            A security exception occured. This exception occurs when a cryptographic
-            service (for example random number generator) fails.
             </summary>
         </member>
         <member name="T:KeePassLib.TraversalMethod">
@@ -2285,13 +2191,6 @@
             A class containing various string helper methods.
             </summary>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.SetLocalizedString(KeePassLib.Utility.StrUtil.LocalizedStringID,System.String)">
-            <summary>
-            Set a localized version of a string.
-            </summary>
-            <param name="id">ID of the string to set.</param>
-            <param name="strText">New, localized text.</param>
-        </member>
         <member name="M:KeePassLib.Utility.StrUtil.MakeRtfString(System.String)">
             <summary>
             Convert a string into a valid RTF string.
@@ -2361,7 +2260,7 @@
             is returned if the color is transparent.</param>
             <returns>HTML color identifier string.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.FormatException(System.Exception,System.Boolean)">
+        <member name="M:KeePassLib.Utility.StrUtil.FormatException(System.Exception)">
             <summary>
             Format an exception and convert it to a string.
             </summary>
@@ -2370,14 +2269,20 @@
             to the result string. This text is a generic, localized error message.</param>
             <returns>String representing the exception.</returns>
         </member>
-        <member name="T:KeePassLib.Utility.StrUtil.LocalizedStringID">
+        <member name="T:KeePassLib.Serialization.Kdb4Format">
             <summary>
-            IDs of localizable strings.
+            The <c>Kdb4File</c> class supports saving the data to various
+            formats.
             </summary>
         </member>
-        <member name="F:KeePassLib.Utility.StrUtil.LocalizedStringID.ExceptionOccured">
+        <member name="F:KeePassLib.Serialization.Kdb4Format.Default">
             <summary>
-            ID of a string representing a message that an exception has occured.
+            The default, encrypted file format.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.Kdb4Format.PlainXml">
+            <summary>
+            Use this flag when exporting data to a plain-text XML file.
             </summary>
         </member>
         <member name="T:KeePassLib.PwDatabase">
@@ -2391,7 +2296,7 @@
             Constructs an empty password manager object.
             </summary>
         </member>
-        <member name="M:KeePassLib.PwDatabase.NewDatabase(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey)">
+        <member name="M:KeePassLib.PwDatabase.New(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey)">
             <summary>
             Initialize the class for managing a new database. Previously loaded
             data is deleted.
@@ -2399,24 +2304,22 @@
             <param name="ioConnection">IO connection of the new database.</param>
             <param name="pwKey">Key to open the database.</param>
         </member>
-        <member name="M:KeePassLib.PwDatabase.OpenDatabase(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey,KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.PwDatabase.Open(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Keys.CompositeKey,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Open a database. The URL may point to any supported data source.
             </summary>
             <param name="ioSource">IO connection to load the database from.</param>
             <param name="pwKey">Key used to open the specified database.</param>
             <param name="slLogger">Logger, which gets all status messages.</param>
-            <returns>Returns a <c>FileOpenResult</c> error code.</returns>
         </member>
-        <member name="M:KeePassLib.PwDatabase.SaveDatabase(KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.PwDatabase.Save(KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Save the currently opened database. The file is written to the location
             it has been opened from.
             </summary>
             <param name="slLogger">Logger that recieves status information.</param>
-            <returns>Returns a <c>FileSaveResult</c> error code.</returns>
         </member>
-        <member name="M:KeePassLib.PwDatabase.SaveDatabaseTo(KeePassLib.Serialization.IOConnectionInfo,System.Boolean,KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.PwDatabase.SaveAs(KeePassLib.Serialization.IOConnectionInfo,System.Boolean,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Save the currently opened database to a different location. If
             <paramref name="bIsPrimaryNow" /> is <c>true</c>, the specified
@@ -2430,9 +2333,8 @@
             made the default location (i.e. no lockfiles will be moved for
             example).</param>
             <param name="slLogger">Logger that recieves status information.</param>
-            <returns></returns>
         </member>
-        <member name="M:KeePassLib.PwDatabase.CloseDatabase">
+        <member name="M:KeePassLib.PwDatabase.Close">
             <summary>
             Closes the currently opened database. No confirmation message is shown
             before closing. Unsaved changes will be lost.
@@ -2448,7 +2350,6 @@
             synchronized database. The input database must not be seen as valid
             database any more after calling <c>Synchronize</c>.</param>
             <param name="mm">Merge method.</param>
-            <returns>Returns <c>true</c>, if the synchronization was successful.</returns>
         </member>
         <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject})">
             <summary>
@@ -2461,7 +2362,6 @@
             Synchronize current database with another one.
             </summary>
             <param name="strFile">Source file.</param>
-            <returns><c>FileOpenResult</c> error code.</returns>
         </member>
         <member name="P:KeePassLib.PwDatabase.RootGroup">
             <summary>
@@ -2508,6 +2408,12 @@
         <member name="P:KeePassLib.PwDatabase.DefaultUserName">
             <summary>
             Default user name used for new entries.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.MaintenanceHistoryDays">
+            <summary>
+            Number of days until history entries are being deleted
+            in a database maintenance operation.
             </summary>
         </member>
         <member name="P:KeePassLib.PwDatabase.DataCipherUuid">
@@ -2650,7 +2556,7 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000. 2.01 = 0x02000100.
+            2.00 = 0x02000000, 2.01 = 0x02000100, ...
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">

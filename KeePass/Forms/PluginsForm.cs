@@ -42,7 +42,7 @@ namespace KeePass.Forms
 		private bool m_bBlockListUpdate = false;
 		private ImageList m_ilIcons = new ImageList();
 
-		public void InitEx(PluginManager mgr)
+		internal void InitEx(PluginManager mgr)
 		{
 			Debug.Assert(mgr != null);
 			m_mgr = mgr;
@@ -56,6 +56,8 @@ namespace KeePass.Forms
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			Debug.Assert(m_mgr != null); if(m_mgr == null) throw new ArgumentException();
+
+			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
@@ -88,9 +90,9 @@ namespace KeePass.Forms
 
 			m_ilIcons.Images.Add(Properties.Resources.B16x16_BlockDevice);
 
-			foreach(PluginInfo plugin in m_mgr.Plugins)
+			foreach(PluginInfo plugin in m_mgr)
 			{
-				string strName = UrlUtil.GetFileName(plugin.FileName);
+				string strName = UrlUtil.GetFileName(plugin.FilePath);
 				ListViewItem lvi = new ListViewItem(strName);
 				ListViewItem lviNew = m_lvPlugins.Items.Add(lvi);
 
@@ -98,8 +100,7 @@ namespace KeePass.Forms
 				lviNew.SubItems.Add(plugin.FileVersion);
 				lviNew.SubItems.Add(plugin.Author);
 				lviNew.SubItems.Add(plugin.Description);
-
-				lviNew.SubItems.Add(plugin.FileName);
+				lviNew.SubItems.Add(plugin.FilePath);
 
 				int nImageIndex = 0;
 				Debug.Assert(plugin.Interface != null);
@@ -143,6 +144,11 @@ namespace KeePass.Forms
 		private void OnPluginsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			WinUtil.OpenUrlInNewBrowser(PwDefs.PluginsUrl, null);
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

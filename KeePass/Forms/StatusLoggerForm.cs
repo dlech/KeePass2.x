@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -119,6 +120,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = PwDefs.ShortProductName;
 			
@@ -164,6 +167,11 @@ namespace KeePass.Forms
 			}
 
 			m_tbDetails.Text = slvic[0].Text;
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

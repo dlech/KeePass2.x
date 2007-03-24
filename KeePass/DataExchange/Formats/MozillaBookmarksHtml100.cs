@@ -39,6 +39,8 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return "html"; } }
 		public override string AppGroup { get { return KPRes.Browser; } }
 
+		public override bool AppendsToRootGroupOnly { get { return true; } }
+
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_ASCII; }
@@ -96,8 +98,7 @@ namespace KeePass.DataExchange.Formats
 			}
 		}
 
-		private static FileOpenResult ImportLinksFlat(XmlNode xmlNode,
-			PwDatabase pwStorage)
+		private static void ImportLinksFlat(XmlNode xmlNode, PwDatabase pwStorage)
 		{
 			foreach(XmlNode xmlChild in xmlNode)
 			{
@@ -122,8 +123,6 @@ namespace KeePass.DataExchange.Formats
 					catch(Exception) { Debug.Assert(false); }
 				}
 			}
-
-			return FileOpenResult.Success;
 		}
 	}
 }

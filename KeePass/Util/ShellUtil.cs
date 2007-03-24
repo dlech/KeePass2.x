@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 using Microsoft.Win32;
 
@@ -78,13 +79,11 @@ namespace KeePass.Util
 				kShellCommand.SetValue(string.Empty, "\"" + strAppPath + "\" \"%1\"", RegistryValueKind.String);
 
 				if(bShowSuccessMessage)
-					MessageBox.Show(KPRes.FileExtInstallSuccess, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageService.ShowInfo(KPRes.FileExtInstallSuccess);
 			}
-			catch(Exception)
+			catch(Exception exReg)
 			{
-				MessageBox.Show(KPRes.FileExtInstallFailed, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageService.ShowWarning(KPRes.FileExtInstallFailed, exReg);
 			}
 		}
 

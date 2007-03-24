@@ -23,7 +23,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-using KeePass.Plugins;
+using KeePass.Util;
 
 using KeePassLib;
 
@@ -59,7 +59,7 @@ namespace KeePass.Forms
 		/// </summary>
 		public sealed class FileSavingEventArgs : CancellableOperationEventArgs
 		{
-			private readonly bool m_bSaveAs;
+			private bool m_bSaveAs;
 
 			/// <summary>
 			/// Flag that determines if the user is performing a 'Save As' operation.
@@ -94,22 +94,22 @@ namespace KeePass.Forms
 		/// </summary>
 		public sealed class FileSavedEventArgs : EventArgs
 		{
-			private readonly FileSaveResult m_fsr;
+			private bool m_bResult;
 
 			/// <summary>
 			/// Specifies the result of the attempt to save the database. If
-			/// this property is <c>FileSaveResult.Success</c>, the database
-			/// has been saved successfully.
+			/// this property is <c>true</c>, the database has been saved
+			/// successfully.
 			/// </summary>
-			public FileSaveResult FileSaveResult { get { return m_fsr; } }
+			public bool Success { get { return m_bResult; } }
 
 			/// <summary>
 			/// Default constructor.
 			/// </summary>
-			/// <param name="fsr">See <c>FileSaveResult</c> property.</param>
-			public FileSavedEventArgs(FileSaveResult fsr)
+			/// <param name="bResult">See <c>Result</c> property.</param>
+			public FileSavedEventArgs(bool bSuccess)
 			{
-				m_fsr = fsr;
+				m_bResult = bSuccess;
 			}
 		}
 	}

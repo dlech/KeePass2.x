@@ -37,8 +37,10 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class AboutForm : Form
+	public partial class AboutForm : Form, IGwmWindow
 	{
+		public bool CanCloseWithoutDataLoss { get { return true; } }
+
 		public AboutForm()
 		{
 			InitializeComponent();
@@ -46,6 +48,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this, this);
+
 			string strTitle = PwDefs.ProductName;
 			string strDesc = KPRes.Version + " " + PwDefs.VersionString;
 
@@ -63,6 +67,11 @@ namespace KeePass.Forms
 			int nMod = m_lvComponents.ClientRectangle.Width % 2;
 			m_lvComponents.Columns[0].Width = nWidth;
 			m_lvComponents.Columns[1].Width = nWidth + nMod;
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void GetAppComponents()

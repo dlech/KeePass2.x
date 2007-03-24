@@ -32,19 +32,28 @@ namespace KeePass.DataExchange
 	/// Structure containing information about a password group. This structure
 	/// doesn't contain any information about the entries stored in this group.
 	/// </summary>
-#if PocketPC || WindowsCE
+#if PocketPC || Smartphone || WindowsCE
 	[StructLayout(LayoutKind.Sequential)]
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
 	public struct Kdb3Group
 	{
+		/// <summary>
+		/// The GroupID of the group.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 GroupID;
 
+		/// <summary>
+		/// The ImageID of the group.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 ImageID;
 
+		/// <summary>
+		/// The Name of the group.
+		/// </summary>
 #if KDB3_ANSI
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Name;
@@ -53,9 +62,24 @@ namespace KeePass.DataExchange
 		public string Name;
 #endif
 
+		/// <summary>
+		/// The CreationTime of the group.
+		/// </summary>
 		public Kdb3Time CreationTime;
+
+		/// <summary>
+		/// The KastModificationTime of the group.
+		/// </summary>
 		public Kdb3Time LastModificationTime;
+
+		/// <summary>
+		/// The LastAccessTime of the group.
+		/// </summary>
 		public Kdb3Time LastAccessTime;
+
+		/// <summary>
+		/// The ExpirationTime of the group.
+		/// </summary>
 		public Kdb3Time ExpirationTime;
 
 		/// <summary>
@@ -65,6 +89,9 @@ namespace KeePass.DataExchange
 		public UInt16 Level;
 
 #if VPF_ALIGN
+		/// <summary>
+		/// Dummy entry for alignment purposes.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U2)]
 		public UInt16 Dummy;
 #endif
@@ -81,70 +108,152 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public enum Kdb3GroupFlags
 	{
+		/// <summary>
+		/// The group is expanded.
+		/// </summary>
 		Expanded = 1
 	}
 
 	/// <summary>
 	/// Structure containing information about a password entry.
 	/// </summary>
-#if PocketPC || WindowsCE
+#if PocketPC || Smartphone || WindowsCE
 	[StructLayout(LayoutKind.Sequential)]
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
 	public struct Kdb3Entry
 	{
+		/// <summary>
+		/// The UUID of the entry.
+		/// </summary>
 		public Kdb3Uuid UUID;
 
+		/// <summary>
+		/// The GroupID of the enty.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 GroupID;
 
+		/// <summary>
+		/// The ImageID of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 ImageID;
 
 #if KDB3_ANSI
+		/// <summary>
+		/// The Title of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Title;
+
+		/// <summary>
+		/// The URL of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string URL;
+
+		/// <summary>
+		/// The UserName of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string UserName;
+
+		/// <summary>
+		/// The PasswordLen of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 PasswordLen;
+
+		/// <summary>
+		/// The Password of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Password;
+
+		/// <summary>
+		/// The Note field of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Additional;
 #else
+		/// <summary>
+		/// The Title of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Title;
+
+		/// <summary>
+		/// The URL of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string URL;
+
+		/// <summary>
+		/// The UserName of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string UserName;
+
+		/// <summary>
+		/// The PasswordLen of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 PasswordLen;
+
+		/// <summary>
+		/// The Password of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Password;
+
+		/// <summary>
+		/// The Note field of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Additional;
 #endif
 
+		/// <summary>
+		/// The CreationTime of the entry.
+		/// </summary>
 		public Kdb3Time CreationTime;
+
+		/// <summary>
+		/// The LastModificationTime of the entry.
+		/// </summary>
 		public Kdb3Time LastModificationTime;
+
+		/// <summary>
+		/// The LastAccessTime of the entry.
+		/// </summary>
 		public Kdb3Time LastAccessTime;
+
+		/// <summary>
+		/// The ExpirationTime of the entry.
+		/// </summary>
 		public Kdb3Time ExpirationTime;
 
+		/// <summary>
+		/// The BinaryDescription of the entry.
+		/// </summary>
 #if KDB3_ANSI
 		[MarshalAs(UnmanagedType.LPStr)]
-		public string BinaryDescription; // A string describing what is in BinaryData
+		public string BinaryDescription;
 #else
 		[MarshalAs(UnmanagedType.LPWStr)]
-		public string BinaryDescription; // A string describing what is in BinaryData
+		public string BinaryDescription;
 #endif
 
+		/// <summary>
+		/// The BinaryData of the entry.
+		/// </summary>
 		public IntPtr BinaryData;
 
+		/// <summary>
+		/// The BinaryDataLen of the entry.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 BinaryDataLen;
 	}
@@ -152,7 +261,7 @@ namespace KeePass.DataExchange
 	/// <summary>
 	/// Structure containing UUID bytes (16 bytes).
 	/// </summary>
-#if PocketPC || WindowsCE
+#if PocketPC || Smartphone || WindowsCE
 	[StructLayout(LayoutKind.Sequential)]
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -195,7 +304,7 @@ namespace KeePass.DataExchange
 	/// Structure containing time information in a compact, but still easily
 	/// accessible form.
 	/// </summary>
-#if PocketPC || WindowsCE
+#if PocketPC || Smartphone || WindowsCE
 	[StructLayout(LayoutKind.Sequential)]
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -219,6 +328,26 @@ namespace KeePass.DataExchange
 		[MarshalAs(UnmanagedType.U1)]
 		public Byte Dummy;
 #endif
+
+		/// <summary>
+		/// Construct a <c>Kdb3Time</c> with initial values.
+		/// </summary>
+		/// <param name="uYear">Year.</param>
+		/// <param name="uMonth">Month.</param>
+		/// <param name="uDay">Day.</param>
+		/// <param name="uHour">Hour.</param>
+		/// <param name="uMinute">Minute.</param>
+		/// <param name="uSecond">Second.</param>
+		public Kdb3Time(UInt16 uYear, Byte uMonth, Byte uDay, Byte uHour,
+			Byte uMinute, Byte uSecond)
+		{
+			this.Year = uYear;
+			this.Month = uMonth;
+			this.Day = uDay;
+			this.Hour = uHour;
+			this.Minute = uMinute;
+			this.Second = uSecond;
+		}
 
 		/// <summary>
 		/// Convert the current <c>Kdb3Time</c> object to a <c>DateTime</c> object.
@@ -246,6 +375,12 @@ namespace KeePass.DataExchange
 			this.Minute = (Byte)dt.Minute;
 			this.Second = (Byte)dt.Second;
 		}
+
+		/// <summary>
+		/// A Kdb3Time element that is used to indicate the never expire time.
+		/// </summary>
+		public static readonly Kdb3Time NeverExpireTime =
+			new Kdb3Time(2999, 12, 28, 23, 59, 59);
 	}
 
 	/// <summary>
@@ -253,21 +388,84 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public enum Kdb3ErrorCode
 	{
+		/// <summary>
+		/// Unknown error occured.
+		/// </summary>
 		Unknown = 0,
+
+		/// <summary>
+		/// Successfull function call.
+		/// </summary>
 		Success,
+
+		/// <summary>
+		/// Invalid parameters were given.
+		/// </summary>
 		InvalidParam,
+
+		/// <summary>
+		/// Not enough memory to perform requested operation.
+		/// </summary>
 		NotEnoughMemory,
+
+		/// <summary>
+		/// Invalid key was supplied.
+		/// </summary>
 		InvalidKey,
+
+		/// <summary>
+		/// The file could not be read.
+		/// </summary>
 		NoFileAccessRead,
+
+		/// <summary>
+		/// The file could not be written.
+		/// </summary>
 		NoFileAccessWrite,
+
+		/// <summary>
+		/// A file read error occured.
+		/// </summary>
 		FileErrorRead,
+
+		/// <summary>
+		/// A file write error occured.
+		/// </summary>
 		FileErrorWrite,
+
+		/// <summary>
+		/// Invalid random source was given.
+		/// </summary>
 		InvalidRandomSource,
+
+		/// <summary>
+		/// Invalid file structure was detected.
+		/// </summary>
 		InvalidFileStructure,
+
+		/// <summary>
+		/// Cryptographic error occured.
+		/// </summary>
 		CryptoError,
+
+		/// <summary>
+		/// Invalid file size was given/detected.
+		/// </summary>
 		InvalidFileSize,
+
+		/// <summary>
+		/// Invalid file signature was detected.
+		/// </summary>
 		InvalidFileSignature,
+
+		/// <summary>
+		/// Invalid file header was detected.
+		/// </summary>
 		InvalidFileHeader,
+
+		/// <summary>
+		/// The keyfile could not be read.
+		/// </summary>
 		NoFileAccessReadKey
 	}
 
@@ -390,7 +588,7 @@ namespace KeePass.DataExchange
 			Debug.Assert(Marshal.SizeOf(e) == nExpectedSize);
 			if(Marshal.SizeOf(e) != nExpectedSize)
 				throw new FormatException("SizeOf(Kdb3Entry) invalid!");
-			
+
 			Kdb3Uuid u = new Kdb3Uuid();
 			Debug.Assert(Marshal.SizeOf(u) == 16);
 			if(Marshal.SizeOf(u) != 16)
@@ -411,6 +609,9 @@ namespace KeePass.DataExchange
 			Kdb3Manager.NewDatabase(m_pManager);
 		}
 
+		/// <summary>
+		/// Destructor for Kdb3Manager instance.
+		/// </summary>
 		~Kdb3Manager()
 		{
 			Unload();
@@ -444,7 +645,7 @@ namespace KeePass.DataExchange
 		/// and key file are used.</param>
 		/// <param name="pARI">Random source interface. Set this to <c>IntPtr.Zero</c>
 		/// if you want to open a KDB file normally. If you want to create a key file,
-		/// <c>pARI</c> must point to a <c>CNewRandomInterface</c> (see KeePass Classic
+		/// <c>pARI</c> must point to a <c>CNewRandomInterface</c> (see KeePass 1.x
 		/// source code).</param>
 		/// <param name="bOverwrite">Indicates if the target file should be overwritten when
 		/// creating a new key file.</param>
@@ -564,6 +765,31 @@ namespace KeePass.DataExchange
 			return kdbEntry;
 		}
 
+		/// <summary>
+		/// Get an entry in a specific group, without returning the password.
+		/// </summary>
+		/// <param name="uIndex">Index of the entry in the group. This index must
+		/// be valid, otherwise an <c>IndexOutOfRangeException</c> is thrown.</param>
+		/// <param name="uGroupID">ID of the group containing the entry.</param>
+		/// <returns>The requested entry. Note that any modifications to this
+		/// structure won't affect the internal data structures of the manager.</returns>
+		public Kdb3Entry GetEntryByGroupWithoutPassword(UInt32 uGroupID, UInt32 uIndex)
+		{
+			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
+			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+				throw new ArgumentException("Invalid group ID!");
+
+			Debug.Assert(uIndex < this.EntryCount);
+
+			IntPtr p = Kdb3Manager.GetEntryByGroup(m_pManager, uGroupID, uIndex);
+			if(p == IntPtr.Zero) throw new IndexOutOfRangeException();
+
+			Kdb3Entry kdbEntry = (Kdb3Entry)Marshal.PtrToStructure(p, typeof(Kdb3Entry));
+			kdbEntry.Password = string.Empty;
+			kdbEntry.PasswordLen = 0;
+			return kdbEntry;
+		}
+
 		[DllImport(DllFile)]
 		private static extern IntPtr GetGroup(IntPtr pMgr, UInt32 dwIndex);
 		/// <summary>
@@ -580,6 +806,41 @@ namespace KeePass.DataExchange
 			if(p == IntPtr.Zero) throw new IndexOutOfRangeException();
 
 			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
+		}
+
+		[DllImport(DllFile)]
+		private static extern IntPtr GetGroupById(IntPtr pMgr, UInt32 idGroup);
+		/// <summary>
+		/// Get a group via the GroupID.
+		/// </summary>
+		/// <param name="uGroupID">ID of the group.</param>
+		/// <returns>Group structure.</returns>
+		public Kdb3Group GetGroupById(UInt32 uGroupID)
+		{
+			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
+			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+				throw new ArgumentException("Invalid group ID!");
+
+			IntPtr p = Kdb3Manager.GetGroupById(m_pManager, uGroupID);
+			if(p == IntPtr.Zero) throw new IndexOutOfRangeException();
+
+			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
+		}
+
+		[DllImport(DllFile)]
+		private static extern UInt32 GetGroupByIdN(IntPtr pMgr, UInt32 idGroup);
+		/// <summary>
+		/// Get the group index via the GroupID.
+		/// </summary>
+		/// <param name="uGroupID">ID of the group.</param>
+		/// <returns>Group index.</returns>
+		public UInt32 GetGroupByIdN(UInt32 uGroupID)
+		{
+			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
+			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+				throw new ArgumentException("Invalid group ID!");
+
+			return Kdb3Manager.GetGroupByIdN(m_pManager, uGroupID);
 		}
 
 		[DllImport(DllFile, CharSet = DllCharSet)]
@@ -615,6 +876,14 @@ namespace KeePass.DataExchange
 			return (Kdb3ErrorCode)Kdb3Manager.SaveDatabase(m_pManager, strFile);
 		}
 
+		/// <summary>
+		/// Close current database and create a new and empty one.
+		/// </summary>
+		public void NewDatabase()
+		{
+			Kdb3Manager.NewDatabase(m_pManager);
+		}
+
 		[DllImport(DllFile)]
 		private static extern void GetNeverExpireTime(ref Kdb3Time pPwTime);
 		/// <summary>
@@ -623,10 +892,7 @@ namespace KeePass.DataExchange
 		/// <returns><c>DateTime</c> object.</returns>
 		public DateTime GetNeverExpireTime()
 		{
-			Kdb3Time t = new Kdb3Time();
-			Kdb3Manager.GetNeverExpireTime(ref t);
-
-			return t.ToDateTime();
+			return Kdb3Time.NeverExpireTime.ToDateTime();
 		}
 
 		[DllImport(DllFile, CharSet = DllCharSet)]

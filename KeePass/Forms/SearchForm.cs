@@ -75,6 +75,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pgRoot != null); if(m_pgRoot == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_XMag, KPRes.SearchTitle,
@@ -148,6 +150,11 @@ namespace KeePass.Forms
 		private void OnCheckedAllFields(object sender, EventArgs e)
 		{
 			EnableUserControls();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

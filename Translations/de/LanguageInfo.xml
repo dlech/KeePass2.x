@@ -6,7 +6,7 @@
 		<ID>de</ID> <!-- See RFC 1766: ISO 639-1, ISO 3166 -->
 	</Language>
 	<Version>
-		<ForApplicationVersion>2.00</ForApplicationVersion>
+		<ForApplicationVersion>2.01</ForApplicationVersion>
 	</Version>
 	<Author>
 		<Name>Dominik Reichl</Name>

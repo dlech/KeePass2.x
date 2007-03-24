@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -330,6 +331,25 @@ namespace KeePassLib.Keys
 			}
 
 			return uRounds;
+		}
+	}
+
+	public sealed class InvalidCompositeKeyException : Exception
+	{
+		private Exception m_exInner = null;
+
+		public override string Message
+		{
+			get
+			{
+				return KLRes.InvalidCompositeKey + MessageService.NewParagraph +
+					KLRes.InvalidCompositeKeyHint;
+			}
+		}
+
+		public InvalidCompositeKeyException(Exception excpInner)
+		{
+			m_exInner = excpInner;
 		}
 	}
 }

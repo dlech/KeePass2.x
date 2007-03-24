@@ -73,26 +73,12 @@ namespace KeePassLib.Serialization
 		private PwEntry m_ctxHistoryBase = null;
 		private PwDeletedObject m_ctxDeletedObject = null;
 
-		private FileOpenResult ReadXmlStreamed(Stream readerStream, Stream sParentStream)
+		private void ReadXmlStreamed(Stream readerStream, Stream sParentStream)
 		{
-			XmlReader xr;
-			try { xr = CreateXmlReader(readerStream); }
-			catch(Exception xmlEx)
-			{
-				return new FileOpenResult(FileOpenResultCode.InvalidFileStructure, xmlEx);
-			}
-
-			try { ReadDocumentStreamed(xr, sParentStream); }
-			catch(Exception docEx)
-			{
-				Debug.Assert(false);
-				return new FileOpenResult(FileOpenResultCode.InvalidFileFormat, docEx);
-			}
-
-			return FileOpenResult.Success;
+			ReadDocumentStreamed(CreateXmlReader(readerStream), sParentStream);
 		}
 
-		private XmlReader CreateXmlReader(Stream readerStream)
+		private static XmlReader CreateXmlReader(Stream readerStream)
 		{
 			XmlReaderSettings xmlSettings = new XmlReaderSettings();
 			xmlSettings.CloseInput = true;
@@ -113,8 +99,8 @@ namespace KeePassLib.Serialization
 			KdbContext ctx = KdbContext.Null;
 
 			uint uTagCounter = 0;
-			
-			bool bSupportsStatus = true;
+
+			bool bSupportsStatus = (m_slLogger != null);
 			try
 			{
 				sParentStream.Position.ToString();
@@ -192,6 +178,8 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.Description = ReadString(xr);
 					else if(xr.Name == ElemDbDefaultUser)
 						m_pwDatabase.DefaultUserName = ReadString(xr);
+					else if(xr.Name == ElemDbMntncHistoryDays)
+						m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xr, 365);
 					else if(xr.Name == ElemMemoryProt)
 						return SwitchContext(ctx, KdbContext.MemoryProtection, xr);
 					else ReadUnknown(xr);
@@ -585,9 +573,10 @@ namespace KeePassLib.Serialization
 
 			if(xb != null) return new ProtectedBinary(true, xb);
 
-			ProtectedBinary pb = new ProtectedBinary(false,
-				Convert.FromBase64String(ReadString(xr)));
-			return pb;
+			string strValue = ReadString(xr);
+			if(strValue.Length == 0) return new ProtectedBinary(false);
+
+			return new ProtectedBinary(false, Convert.FromBase64String(strValue));
 		}
 
 		private void ReadUnknown(XmlReader xr)
@@ -625,7 +614,11 @@ namespace KeePassLib.Serialization
 						xr.MoveToElement();
 						string strEncrypted = ReadStringRaw(xr);
 
-						byte[] pbEncrypted = Convert.FromBase64String(strEncrypted);
+						byte[] pbEncrypted;
+						if(strEncrypted.Length > 0)
+							pbEncrypted = Convert.FromBase64String(strEncrypted);
+						else pbEncrypted = new byte[0];
+
 						byte[] pbPad = m_randomStream.GetRandomBytes((uint)pbEncrypted.Length);
 
 						xb = new XorredBuffer(pbEncrypted, pbPad);

@@ -21,6 +21,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Xml;
+using System.Security;
 using System.Security.Cryptography;
 using System.Diagnostics;
 
@@ -140,11 +141,10 @@ namespace KeePassLib.Keys
 		/// the random key. May be <c>null</c> (in this case only the KeePass-internal
 		/// random number generator is used).</param>
 		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
-		public static FileSaveResult Create(string strFilePath, byte[] pbAdditionalEntropy)
+		public static void Create(string strFilePath, byte[] pbAdditionalEntropy)
 		{
 			byte[] pbKey32 = CryptoRandom.GetRandomBytes(32);
-			if(pbKey32 == null)
-				return new FileSaveResult(FileSaveResultCode.SecurityException, null);
+			if(pbKey32 == null) throw new SecurityException();
 
 			byte[] pbFinalKey32;
 			if((pbAdditionalEntropy == null) || (pbAdditionalEntropy.Length == 0))
@@ -159,10 +159,7 @@ namespace KeePassLib.Keys
 				pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
 			}
 
-			if(CreateXmlKeyFile(strFilePath, pbFinalKey32))
-				return FileSaveResult.Success;
-
-			return new FileSaveResult(FileSaveResultCode.FileCreationFailed, null);
+			CreateXmlKeyFile(strFilePath, pbFinalKey32);
 		}
 
 		// ================================================================
@@ -222,18 +219,14 @@ namespace KeePassLib.Keys
 			return pbKeyData;
 		}
 
-		private static bool CreateXmlKeyFile(string strFile, byte[] pbKeyData)
+		private static void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 			Debug.Assert(pbKeyData != null);
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
-			XmlTextWriter xtw;
-
-			try { xtw = new XmlTextWriter(strFile, Encoding.UTF8); }
-			catch(Exception) { return false; }
-			if(xtw == null) return false;
+			XmlTextWriter xtw = new XmlTextWriter(strFile, Encoding.UTF8);
 
 			xtw.WriteStartDocument();
 			xtw.WriteWhitespace("\r\n");
@@ -264,8 +257,6 @@ namespace KeePassLib.Keys
 			xtw.WriteWhitespace("\r\n");
 			xtw.WriteEndDocument(); // End KeyFile
 			xtw.Close();
-
-			return true;
 		}
 	}
 }

@@ -62,7 +62,17 @@ namespace KeePass.DataExchange
 			get { return false; }
 		}
 
-		public virtual bool TryBeginImports()
+		/// <summary>
+		/// This property specifies if entries are only appended to the
+		/// end of the root group. This is true for example if the
+		/// file format doesn't support groups (i.e. no hierarchy).
+		/// </summary>
+		public virtual bool AppendsToRootGroupOnly
+		{
+			get { return false; }
+		}
+
+		public virtual bool TryBeginImport()
 		{
 			return true;
 		}

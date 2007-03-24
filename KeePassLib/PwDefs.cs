@@ -42,14 +42,14 @@ namespace KeePassLib
 
 		/// <summary>
 		/// Version, encoded as 32-bit unsigned integer.
-		/// 2.00 = 0x02000000. 2.01 = 0x02000100.
+		/// 2.00 = 0x02000000, 2.01 = 0x02000100, ...
 		/// </summary>
-		public const uint Version32 = 0x02000000;
+		public const uint Version32 = 0x02000100;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.00 ALPHA TESTING";
+		public const string VersionString = "2.01 Alpha";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.
@@ -70,7 +70,7 @@ namespace KeePassLib
 		/// URL to an XML file that contains information about the latest KeePass
 		/// available on the homepage.
 		/// </summary>
-		public const string VersionUrl = "http://keepass.info/version.xml.gz";
+		public const string VersionUrl = "http://keepass.info/update/version2.xml.gz";
 
 		/// <summary>
 		/// URL to the root path of the online KeePass help. Terminated by
@@ -246,58 +246,4 @@ namespace KeePassLib
 		}
 	}
 	#pragma warning restore 1591 // Missing XML comments warning
-
-	public struct FileOpenResult
-	{
-		private FileOpenResultCode m_code;
-		private string m_strMessage;
-
-		public static readonly FileOpenResult Success = new FileOpenResult(
-			FileOpenResultCode.Success, null);
-
-		public FileOpenResultCode Code
-		{
-			get { return m_code; }
-		}
-
-		public string Message
-		{
-			get { return m_strMessage; }
-		}
-
-		public FileOpenResult(FileOpenResultCode resultCode, Exception excp)
-		{
-			m_code = resultCode;
-
-			if(excp != null) m_strMessage = excp.Message;
-			else m_strMessage = string.Empty;
-		}
-	}
-
-	public struct FileSaveResult
-	{
-		private FileSaveResultCode m_code;
-		private string m_strMessage;
-
-		public static readonly FileSaveResult Success = new FileSaveResult(
-			FileSaveResultCode.Success, null);
-
-		public FileSaveResultCode Code
-		{
-			get { return m_code; }
-		}
-
-		public string Message
-		{
-			get { return m_strMessage; }
-		}
-
-		public FileSaveResult(FileSaveResultCode resultCode, Exception excp)
-		{
-			m_code = resultCode;
-
-			if(excp != null) m_strMessage = excp.Message;
-			else m_strMessage = string.Empty;
-		}
-	}
 }

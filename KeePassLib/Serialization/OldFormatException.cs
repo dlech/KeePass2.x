@@ -20,37 +20,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
-using System.Diagnostics;
 
-using KeePass.Forms;
-using KeePass.Util;
+using KeePassLib.Resources;
 
-using KeePassLib;
-using KeePassLib.Cryptography.Cipher;
-
-namespace KeePass.Plugins
+namespace KeePassLib.Serialization
 {
-	public interface IKeePassPluginHost
+	public sealed class OldFormatException : Exception
 	{
-		MainForm MainWindow
+		private string m_strFormat = string.Empty;
+
+		public override string Message
 		{
-			get;
+			get
+			{
+				return KLRes.OldFormat + ((m_strFormat.Length > 0) ?
+					(@" (" + m_strFormat + @")") : string.Empty) + ".";
+			}
 		}
 
-		PwDatabase Database
+		public OldFormatException(string strFormatName)
 		{
-			get;
-		}
-
-		CommandLineArgs CommandLineArgs
-		{
-			get;
-		}
-
-		CipherPool CipherPool
-		{
-			get;
+			if(strFormatName != null) m_strFormat = strFormatName;
 		}
 	}
 }

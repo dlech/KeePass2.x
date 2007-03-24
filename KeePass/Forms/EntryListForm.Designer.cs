@@ -53,6 +53,7 @@
 			resources.ApplyResources(this.m_lvEntries, "m_lvEntries");
 			this.m_lvEntries.MultiSelect = false;
 			this.m_lvEntries.Name = "m_lvEntries";
+			this.m_lvEntries.ShowItemToolTips = true;
 			this.m_lvEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvEntries.View = System.Windows.Forms.View.Details;
 			this.m_lvEntries.ItemActivate += new System.EventHandler(this.OnEntriesItemActivate);
@@ -93,6 +94,7 @@
 			this.MinimizeBox = false;
 			this.Name = "EntryListForm";
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);

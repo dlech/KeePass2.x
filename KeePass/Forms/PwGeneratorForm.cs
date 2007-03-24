@@ -30,6 +30,7 @@ using System.Threading;
 using KeePass.App;
 using KeePass.UI;
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography;
@@ -77,6 +78,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Gen, KPRes.PasswordOptions,
@@ -97,6 +100,8 @@ namespace KeePass.Forms
 			}
 
 			m_cmbProfiles.SelectedIndex = (m_optInitial == null) ? 0 : PreviousOptionsIndex;
+
+			PwGeneratorUtil.AddStandardProfilesIfNoneAvailable();
 
 			uint uProfileIndex = 0;
 			while(true)
@@ -145,13 +150,13 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			this.SaveProfiles();
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			m_optSelected = GetGenerationOptions();
 
-			this.SaveProfiles();
 			CleanUpEx();
 		}
 
@@ -297,8 +302,7 @@ namespace KeePass.Forms
 				if(strProfile.Equals(CustomMeta) || strProfile.Equals(DeriveFromPrevious) ||
 					(strProfile.Length == 0))
 				{
-					MessageBox.Show(KPRes.FieldNameInvalid, PwDefs.ShortProductName,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageService.ShowWarning(KPRes.FieldNameInvalid);
 				}
 				else
 				{
@@ -308,8 +312,7 @@ namespace KeePass.Forms
 							bExists = true;
 
 					if(bExists)
-						MessageBox.Show(KPRes.FieldNameExistsAlready, PwDefs.ShortProductName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageService.ShowWarning(KPRes.FieldNameExistsAlready);
 					else
 					{
 						PasswordGenerationOptions pwgo = GetGenerationOptions();
@@ -392,6 +395,11 @@ namespace KeePass.Forms
 			m_tbPreview.Text = sbList.ToString();
 
 			this.Cursor = cNormalCursor;
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

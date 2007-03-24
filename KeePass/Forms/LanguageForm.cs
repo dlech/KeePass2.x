@@ -46,6 +46,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_Keyboard_Layout,
@@ -86,13 +88,18 @@ namespace KeePass.Forms
 			if((lvic == null) || (lvic.Count != 1)) return;
 
 			if(lvic[0].Index == 0)
-				AppConfigEx.SetValue("Language", "en");
+				AppConfigEx.SetValue(AppDefs.ConfigKeys.Language, "en");
 			else
-				AppConfigEx.SetValue("Language",
+				AppConfigEx.SetValue(AppDefs.ConfigKeys.Language,
 					m_lTranslations[lvic[0].Index - 1].LanguageID);
 
 			this.DialogResult = DialogResult.OK;
 			Close();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

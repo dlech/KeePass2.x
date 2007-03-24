@@ -1,3 +1,22 @@
+/*
+  KeePass Password Safe - The Open-Source Password Manager
+  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +33,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -49,6 +69,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null);
 			if(m_pwDatabase == null) throw new InvalidOperationException();
+
+			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
@@ -121,10 +143,7 @@ namespace KeePass.Forms
 				if(sb.Length > 0) sb.Append(';');
 
 				if(str.IndexOf(';') >= 0)
-				{
-					MessageBox.Show(str + "\r\n\r\n" + KPRes.FileNameContainsSemicolonError,
-						PwDefs.ShortProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
+					MessageService.ShowWarning(str, KPRes.FileNameContainsSemicolonError);
 				else sb.Append(str);
 			}
 
@@ -132,10 +151,7 @@ namespace KeePass.Forms
 			if(strFiles.Length < m_tbFile.MaxLength)
 				m_tbFile.Text = strFiles;
 			else
-			{
-				MessageBox.Show(KPRes.TooManyFilesError, PwDefs.ShortProductName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+				MessageService.ShowWarning(KPRes.TooManyFilesError);
 
 			UpdateUIState();
 		}
@@ -181,6 +197,16 @@ namespace KeePass.Forms
 		}
 
 		private void OnFormatsSelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateUIState();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnImportFileTextChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
 		}

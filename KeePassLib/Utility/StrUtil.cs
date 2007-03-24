@@ -39,7 +39,9 @@ namespace KeePassLib.Utility
 
 		public CharStream(string str)
 		{
-			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException();
+			Debug.Assert(str != null);
+			if(str == null) throw new ArgumentNullException("str");
+
 			m_strString = str;
 		}
 
@@ -69,31 +71,6 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class StrUtil
 	{
-		private static string m_localizedExceptionOccured = "An exception occured.";
-
-		/// <summary>
-		/// IDs of localizable strings.
-		/// </summary>
-		public enum LocalizedStringID
-		{
-			/// <summary>
-			/// ID of a string representing a message that an exception has occured.
-			/// </summary>
-			ExceptionOccured = 0
-		}
-
-		/// <summary>
-		/// Set a localized version of a string.
-		/// </summary>
-		/// <param name="id">ID of the string to set.</param>
-		/// <param name="strText">New, localized text.</param>
-		public static void SetLocalizedString(LocalizedStringID id, string strText)
-		{
-			if(id == LocalizedStringID.ExceptionOccured)
-				m_localizedExceptionOccured = strText;
-			else { Debug.Assert(false); }
-		}
-
 		/// <summary>
 		/// Convert a string into a valid RTF string.
 		/// </summary>
@@ -357,53 +334,52 @@ namespace KeePassLib.Utility
 		/// <param name="bHeaderText">If this is <c>true</c>, a header text is prepended
 		/// to the result string. This text is a generic, localized error message.</param>
 		/// <returns>String representing the exception.</returns>
-		public static string FormatException(Exception excp, bool bHeaderText)
+		public static string FormatException(Exception excp)
 		{
 			string strText = string.Empty;
 			
-			if(bHeaderText)
-				strText += m_localizedExceptionOccured + "\r\n\r\n";
-
 			if(excp.Message != null)
-				strText += excp.Message + "\r\n";
+				strText += excp.Message + MessageService.NewLine;
 #if !KeePassLibSD
 			if(excp.Source != null)
-				strText += excp.Source + "\r\n";
+				strText += excp.Source + MessageService.NewLine;
 #endif
 			if(excp.StackTrace != null)
-				strText += excp.StackTrace + "\r\n";
+				strText += excp.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
 			if(excp.TargetSite != null)
-				strText += excp.TargetSite.ToString() + "\r\n";
+				strText += excp.TargetSite.ToString() + MessageService.NewLine;
 
 			if(excp.Data != null)
 			{
-				strText += "\r\n";
+				strText += MessageService.NewLine;
 				foreach(DictionaryEntry de in excp.Data)
-					strText += @"'" + de.Key + @"' -> '" + de.Value + "'\r\n";
+					strText += @"'" + de.Key + @"' -> '" + de.Value + @"'" +
+						MessageService.NewLine;
 			}
 #endif
 
 			if(excp.InnerException != null)
 			{
-				strText += "\r\nInner:\r\n";
+				strText += MessageService.NewLine + "Inner:" + MessageService.NewLine;
 				if(excp.InnerException.Message != null)
-					strText += excp.InnerException.Message + "\r\n";
+					strText += excp.InnerException.Message + MessageService.NewLine;
 #if !KeePassLibSD
 				if(excp.InnerException.Source != null)
-					strText += excp.InnerException.Source + "\r\n";
+					strText += excp.InnerException.Source + MessageService.NewLine;
 #endif
 				if(excp.InnerException.StackTrace != null)
-					strText += excp.InnerException.StackTrace + "\r\n";
+					strText += excp.InnerException.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
 				if(excp.InnerException.TargetSite != null)
 					strText += excp.InnerException.TargetSite.ToString();
 
 				if(excp.InnerException.Data != null)
 				{
-					strText += "\r\n";
+					strText += MessageService.NewLine;
 					foreach(DictionaryEntry de in excp.InnerException.Data)
-						strText += @"'" + de.Key + @"' -> '" + de.Value + "'\r\n";
+						strText += @"'" + de.Key + @"' -> '" + de.Value + @"'" +
+							MessageService.NewLine;
 				}
 #endif
 			}

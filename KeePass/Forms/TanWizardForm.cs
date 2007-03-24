@@ -55,6 +55,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 			Debug.Assert(m_pgStorage != null); if(m_pgStorage == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TANWizard,
@@ -132,6 +134,11 @@ namespace KeePass.Forms
 		private void OnNumberTANsCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

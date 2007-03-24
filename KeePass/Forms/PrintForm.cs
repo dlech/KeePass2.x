@@ -89,6 +89,8 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pgDataSource != null); if(m_pgDataSource == null) throw new ArgumentException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			this.Icon = Properties.Resources.KeePass;
 			CreateDialogBanner();
 
@@ -391,6 +393,11 @@ namespace KeePass.Forms
 				m_cbCreation.Checked = m_cbLastAccess.Checked = m_cbLastMod.Checked =
 				m_cbExpire.Checked = m_cbAutoType.Checked = m_cbGroups.Checked = false;
 			UpdateUIState();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }

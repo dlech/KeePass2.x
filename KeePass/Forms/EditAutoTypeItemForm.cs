@@ -89,6 +89,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new ArgumentNullException();
 			Debug.Assert(m_atConfig != null); if(m_atConfig == null) throw new ArgumentNullException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			m_ctxKeySeq.Attach(m_rbKeySeq);
 			m_ctxKeyCodes.Attach(m_rtbPlaceholders);
 
@@ -340,6 +342,11 @@ namespace KeePass.Forms
 		private void OnWindowSelectedIndexChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
 		}
 	}
 }
