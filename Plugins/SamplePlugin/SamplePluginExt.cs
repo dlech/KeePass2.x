@@ -41,7 +41,7 @@ namespace SamplePlugin
 	/// like the namespace and must be derived from
 	/// <c>KeePassPlugin</c>.
 	/// </summary>
-	public sealed class SamplePlugin : Plugin
+	public sealed class SamplePluginExt : Plugin
 	{
 		// The sample plugin remembers its host in this variable.
 		private IPluginHost m_host = null;
@@ -126,7 +126,7 @@ namespace SamplePlugin
 				return;
 			}
 
-			Random r = new Random((int)DateTime.Now.Ticks);
+			Random r = new Random();
 
 			// Create 10 groups
 			for(int i = 0; i < 10; ++i)

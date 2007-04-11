@@ -33,18 +33,12 @@ namespace KeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-		private PwUuid m_uuidCipher;
-
 		/// <summary>
 		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
 		/// </summary>
 		public PwUuid CipherUuid
 		{
-			get
-			{
-				Debug.Assert(m_uuidCipher != null);
-				return m_uuidCipher;
-			}
+			get { return AesUuid; }
 		}
 
 		/// <summary>
@@ -52,17 +46,25 @@ namespace KeePassLib.Cryptography.Cipher
 		/// </summary>
 		public string DisplayName { get { return @"AES/Rijndael (256-Bit Key)"; } }
 
+		private static PwUuid m_uuidAes = null;
+
 		/// <summary>
 		/// UUID of the cipher engine. This ID uniquely identifies the
 		/// AES engine. Must not be used by other ciphers.
 		/// </summary>
-		public static readonly byte[] AesUuidBytes = new byte[]{
-			0x31, 0xC1, 0xF2, 0xE6, 0xBF, 0x71, 0x43, 0x50,
-			0xBE, 0x58, 0x05, 0x21, 0x6A, 0xFC, 0x5A, 0xFF };
-
-		public StandardAesEngine()
+		public static PwUuid AesUuid
 		{
-			m_uuidCipher = new PwUuid(AesUuidBytes);
+			get
+			{
+				if(m_uuidAes == null)
+				{
+					m_uuidAes = new PwUuid(new byte[]{
+						0x31, 0xC1, 0xF2, 0xE6, 0xBF, 0x71, 0x43, 0x50,
+						0xBE, 0x58, 0x05, 0x21, 0x6A, 0xFC, 0x5A, 0xFF });
+				}
+
+				return m_uuidAes;
+			}
 		}
 
 		private static void AssertArguments(Stream stream, bool bEncrypt, byte[] pbKey, byte[] pbIV)

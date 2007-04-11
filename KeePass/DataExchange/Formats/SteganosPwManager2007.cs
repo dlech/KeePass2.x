@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Threading;
 
 using KeePass.App;
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util;
 
@@ -175,7 +176,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static void SendWaitWindowChange(string strSend)
 		{
-			IntPtr ptrCur = WinUtil.GetForegroundWindow();
+			IntPtr ptrCur = NativeMethods.GetForegroundWindow();
 
 			SendKeysPrc(strSend);
 
@@ -184,7 +185,7 @@ namespace KeePass.DataExchange.Formats
 			{
 				Application.DoEvents();
 
-				IntPtr ptr = WinUtil.GetForegroundWindow();
+				IntPtr ptr = NativeMethods.GetForegroundWindow();
 				if(ptr != ptrCur) break;
 
 				++nRound;
@@ -211,7 +212,7 @@ namespace KeePass.DataExchange.Formats
 			Clipboard.Clear();
 			Application.DoEvents();
 
-			SendKeysPrc(@"^C");
+			SendKeysPrc(@"^c");
 
 			if(Clipboard.ContainsText())
 				return Clipboard.GetText();
@@ -222,7 +223,7 @@ namespace KeePass.DataExchange.Formats
 		private static void SendKeysPrc(string strSend)
 		{
 			if(strSend.Length > 0)
-				SendInputEx.SendKeysWait(strSend);
+				SendInputEx.SendKeysWait(strSend, false);
 
 			Application.DoEvents();
 			Thread.Sleep(100);

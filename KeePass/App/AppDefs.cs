@@ -148,7 +148,7 @@ namespace KeePass.App
 				((uint)BannerFactory.BannerStyle.WinVistaBlack).ToString());
 
 			public static readonly KeyValuePair<string, string> LockOnMinimize = new
-				KeyValuePair<string, string>("Security.Locking.OnWindowMinimize", "True");
+				KeyValuePair<string, string>("Security.Locking.OnWindowMinimize", "False");
 			public static readonly KeyValuePair<string, string> LockOnSessionLock = new
 				KeyValuePair<string, string>("Security.Locking.OnSessionLock", "False");
 			public static readonly KeyValuePair<string, string> LockAfterTime = new
@@ -245,10 +245,10 @@ namespace KeePass.App
 		/// <summary>
 		/// Hot key IDs (used in WM_HOTKEY window messages).
 		/// </summary>
-		public enum GlobalHotKeyID : int
+		public static class GlobalHotKeyID
 		{
-			AutoType = 195,
-			ShowWindow = 226
+			public const int AutoType = 195;
+			public const int ShowWindow = 226;
 		}
 
 		public static class HelpTopics
@@ -263,6 +263,7 @@ namespace KeePass.App
 			public const string DbSettingsCompression = "compression";
 
 			public const string AutoType = "base/autotype";
+			public const string AutoTypeObfuscation = "v2/autotype_obfuscation";
 
 			public const string Entry = "v2/entry";
 			public const string EntryGeneral = "general";

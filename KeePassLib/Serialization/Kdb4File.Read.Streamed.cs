@@ -46,6 +46,8 @@ namespace KeePassLib.Serialization
 			Meta,
 			Root,
 			MemoryProtection,
+			CustomIcons,
+			CustomIcon,
 			RootDeletedObjects,
 			DeletedObject,
 			Group,
@@ -72,6 +74,8 @@ namespace KeePassLib.Serialization
 		private bool m_bEntryInHistory = false;
 		private PwEntry m_ctxHistoryBase = null;
 		private PwDeletedObject m_ctxDeletedObject = null;
+		private PwUuid m_uuidCustomIconID = PwUuid.Zero;
+		private byte[] m_pbCustomIconData = null;
 
 		private void ReadXmlStreamed(Stream readerStream, Stream sParentStream)
 		{
@@ -182,6 +186,8 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xr, 365);
 					else if(xr.Name == ElemMemoryProt)
 						return SwitchContext(ctx, KdbContext.MemoryProtection, xr);
+					else if(xr.Name == ElemCustomIcons)
+						return SwitchContext(ctx, KdbContext.CustomIcons, xr);
 					else ReadUnknown(xr);
 					break;
 
@@ -198,6 +204,25 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.MemoryProtection.ProtectNotes = ReadBool(xr, false);
 					else if(xr.Name == ElemProtAutoHide)
 						m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xr, true);
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.CustomIcons:
+					if(xr.Name == ElemCustomIconItem)
+						return SwitchContext(ctx, KdbContext.CustomIcon, xr);
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.CustomIcon:
+					if(xr.Name == ElemCustomIconItemID)
+						m_uuidCustomIconID = ReadUuid(xr);
+					else if(xr.Name == ElemCustomIconItemData)
+					{
+						string strData = ReadString(xr);
+						if((strData != null) && (strData.Length > 0))
+							m_pbCustomIconData = Convert.FromBase64String(strData);
+						else { Debug.Assert(false); }
+					}
 					else ReadUnknown(xr);
 					break;
 
@@ -224,7 +249,9 @@ namespace KeePassLib.Serialization
 					else if(xr.Name == ElemName)
 						m_ctxGroup.Name = ReadString(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxGroup.Icon = (PwIcon)ReadUInt(xr, (uint)PwIcon.Folder);
+						m_ctxGroup.IconID = (PwIcon)ReadUInt(xr, (uint)PwIcon.Folder);
+					else if(xr.Name == ElemCustomIconID)
+						m_ctxGroup.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemTimes)
 						return SwitchContext(ctx, KdbContext.GroupTimes, xr);
 					else if(xr.Name == ElemIsExpanded)
@@ -259,7 +286,9 @@ namespace KeePassLib.Serialization
 					if(xr.Name == ElemUuid)
 						m_ctxEntry.Uuid = ReadUuid(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxEntry.Icon = (PwIcon)ReadUInt(xr, (uint)PwIcon.Key);
+						m_ctxEntry.IconID = (PwIcon)ReadUInt(xr, (uint)PwIcon.Key);
+					else if(xr.Name == ElemCustomIconID)
+						m_ctxEntry.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemFgColor)
 					{
 						string strColor = ReadString(xr);
@@ -336,6 +365,9 @@ namespace KeePassLib.Serialization
 				case KdbContext.EntryAutoType:
 					if(xr.Name == ElemAutoTypeEnabled)
 						m_ctxEntry.AutoType.Enabled = ReadBool(xr, true);
+					else if(xr.Name == ElemAutoTypeObfuscation)
+						m_ctxEntry.AutoType.ObfuscationOptions =
+							(AutoTypeObfuscationOptions)ReadUInt(xr, 0);
 					else if(xr.Name == ElemAutoTypeDefaultSeq)
 						m_ctxEntry.AutoType.DefaultSequence = ReadString(xr);
 					else if(xr.Name == ElemAutoTypeItem)
@@ -402,6 +434,22 @@ namespace KeePassLib.Serialization
 				return KdbContext.KeePassFile;
 			else if((ctx == KdbContext.MemoryProtection) && (xr.Name == ElemMemoryProt))
 				return KdbContext.Meta;
+			else if((ctx == KdbContext.CustomIcons) && (xr.Name == ElemCustomIcons))
+				return KdbContext.Meta;
+			else if((ctx == KdbContext.CustomIcon) && (xr.Name == ElemCustomIconItem))
+			{
+				if((m_uuidCustomIconID != PwUuid.Zero) && (m_pbCustomIconData != null))
+				{
+					m_pwDatabase.CustomIcons.Add(new PwCustomIcon(
+						m_uuidCustomIconID, m_pbCustomIconData));
+
+					m_uuidCustomIconID = PwUuid.Zero;
+					m_pbCustomIconData = null;
+				}
+				else { Debug.Assert(false); }
+
+				return KdbContext.CustomIcons;
+			}
 			else if((ctx == KdbContext.Group) && (xr.Name == ElemGroup))
 			{
 				if(PwUuid.Zero.EqualsValue(m_ctxGroup.Uuid))
@@ -557,7 +605,6 @@ namespace KeePassLib.Serialization
 
 		private ProtectedString ReadProtectedString(XmlReader xr)
 		{
-			string strName = xr.Name;
 			XorredBuffer xb = ProcessNode(xr);
 
 			if(xb != null) return new ProtectedString(true, xb);
@@ -568,7 +615,6 @@ namespace KeePassLib.Serialization
 
 		private ProtectedBinary ReadProtectedBinary(XmlReader xr)
 		{
-			string strName = xr.Name;
 			XorredBuffer xb = ProcessNode(xr);
 
 			if(xb != null) return new ProtectedBinary(true, xb);

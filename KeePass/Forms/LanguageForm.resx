@@ -117,39 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_bannerImage.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_bannerImage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="m_bannerImage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>532, 60</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_bannerImage.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_bannerImage.Name" xml:space="preserve">
-    <value>m_bannerImage</value>
-  </data>
-  <data name="&gt;&gt;m_bannerImage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_bannerImage.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_bannerImage.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="m_lvLanguages.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 67</value>
-  </data>
-  <data name="m_lvLanguages.Size" type="System.Drawing.Size, System.Drawing">
-    <value>507, 248</value>
-  </data>
   <metadata name="m_ilLanguages.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -157,103 +124,37 @@
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADk
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADi
         BgAAAk1TRnQBSQFMAwEBAAEEAQABBAEAARABAAEQAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
         ARADAAEBAQABIAYAARAiAAESAgEBFwFFAgEBeQFXAgIBswFcAgMBxgFcAgMBxQFWAgIBrwE/AgEBagEP
-        AgEBEtwAAUQCAQF3AWwBDwEOAesBgAF/AU0B/gGBAakBXwH/AYYBuwFtAf8BiQG2AW4B/wGzAagBgQH/
-        AaIBVAFFAf0BYQIEAd4BOgIBAV/UAAFTAgIBpAG4An8B/gH/Ae8B5QH/Ad0B+AHPAf8B3wH1Ac4B/wHm
-        AfUB1gH/AekB+gHfA/8B+gP/AfkB/wHrAcgBuQH/AWsBLgEWAfkBRQIBAXrMAAFNAgIBkAHGAZoBgQL/
+        AgEBEtwAAUQCAQF3AWwBDQEMAesBgAF/AU0B/gGBAakBYQH/AYYBuwFvAf8BiQG2AXAB/wGzAagBgQH/
+        AaIBUAFBAf0BYQIEAd4BOgIBAV/UAAFTAgIBpAG2An8B/gH/Ae8B5QH/Ad0B+AHPAf8B3wH1Ac4B/wHm
+        AfUB1gH/AekB+gHfA/8B+gP/AfkB/wHrAcgBuQH/AWsBLAEVAfkBRQIBAXrMAAFNAgIBkAHGAZoBgQL/
         Af0B4wL/AeoBzgL/AeABwgL/AdwBuwL/AdwBuQL/Ad0BvQL/AeABwwL/AeoB0QP/AfYB/wH9AeQB1AH/
-        AWsBLwEWAfkBOQIBAV3EAAEnAgEBOAF/ATQBKgH4Ab8B0wGOAv8B2wGyAv8BzwGcAv8BygGTAv8ByAGP
+        AWsBLQEVAfkBOQIBAV3EAAEnAgEBOAF/ATABKAH4Ab8B0wGOAv8B2wGyAv8BzwGcAv8BygGTAv8ByAGP
         Av8ByQGOAv8BywGUAv8B0gGfAv8B1gGpAf8B7gHVAasC/wH4AeEB/wHyAcgBrQH/AV8CBAHdAQ8CAQES
-        wAABWAICAbIBgQGPAU4B/wGBAaMBVwH/AfgByQGNAv8BwAGBAv8BugGAAv8BuQF8Av8BuwF/Af8B1AGv
-        AW0B/wGBAZgBTQH/AeEBvQGBAf8B7QHHAY4B/wGoAbIBewH/AYEBqQFiAf8BlgFPAT8B/QE/AgEBasAA
-        AW0BDwENAeoBVgGCATQB/wEtAXUBFQH/AYEBiQFAAf8B9QGzAW8C/wGxAWoC/wGuAWYC/wGzAWwB/wGG
-        AYoBPgH/AR0BbwEQAf8BgQGGATwB/wH9AcUBgwH/AZ0BnAFaAf8BbQGRAUYB/wHGAZwBegH/AVYCAgGw
-        wAABigE2ASsB+QFEAXgBIwH/AS4BYwESAf8BKwFiAREB/wGxAZEBSQL/AbMBaQL/AbQBawL/AbgBbgH/
-        AXUBgQEwAf8BMAFmARUB/wE1AWcBFQH/AaoBkwFQAf8B5QGwAXMB/wHJAbIBfgH/AewBugGKAf8BXAID
-        AcXAAAGTAUoBJAH7ATwBYwEbAf8BLQFPAQ0B/wF7AXkBLwH/AeMBqQFiAv8BtwFxAf8B2wGjAWAB/wG2
-        AY4BTQH/AUwBXgEWAf8BMQFRAQ0B/wE0AVUBDwH/AU0BYwEaAf8BngGDAUYB/wGjAY8BUwH/AbsBlwFp
-        Af8BWgIDAcfAAAF/ASgBIAH2AYUBgQE7Af8BtwGKAUcB/wH1Aa4BZwL/Ab4BfgH/AdsBrAF3Af8BZQFq
-        ATYB/wFSAWEBLgH/AVgBYgEwAf8BTwFYAScB/wFAAUoBFAH/AUoBSwENAf8CUgEUAf8BUQFXAR4B/wGS
-        AXsBRAH/AVcCAgG0wAABYgIEAdkBsQGLAU0B/wHtAaoBYAL/AcoBjAL/Ad4BtwH/AeAB0gG5Af8BnwGm
-        AY8B/wGgAacBjwH/AagBqwGTAf8BpgGpAZAB/wGVAZkBgQH/AXgBfAFWAf8BMwFDARQB/wE7AUsBFgH/
-        AaoBfAFLAf8BRAIBAXfAAAFIAgIBgQGdAYABSAH/AaUBtQGBAf8B+QHuAdoC/wHwAeEC/wH2AeoB/wHx
-        Ae4B4AH/AcIBzwG4Af8BxgHRAboB/wHNAdUBvAH/AcQB0AG3Af8BugHNAbUB/wGFAagBhgH/AoEBRAH/
-        AXEBEQENAewBFAIBARnAAAEPAgEBEgFjAQUBBAHfAb0BxwGVAf8BzAHpAdEB/wHlAekB2AH/AfgB9AHp
-        Av8B/QH4Af8B2QHoAdYB/wG+AdgBvgH/AcAB2AG/Af8BwwHZAcEB/wHAAd8BygH/AbcB2AGrAf8BogF8
-        AUUB/gFFAgEBecgAASYCAQE3AXYBFQESAe8B4AHdAboB/wHbAfgB5wH/Ad4B8AHlAf8B7AH1Ae0B/wHj
-        Ae8B4wH/AdUB5wHWAf8B1QHqAdwB/wHbAfYB6QH/AesB8AHPAf8ByQGTAWoB/wFTAgIBpNAAASYCAQE3
-        AWUCBAHdAeIBtwGeAf8B+AH3AewJ/wH7A/8B+gH+AfIB/wH2AdkBvQH/AZcBPgEuAfgBTwICAZTYAAEK
-        AgEBDAFIAgIBgAFiAgQB2QGKATQBLQH1Aa0BZwFaAfsBogFUAUcB+QFvAREBDwHqAVgCAgGyASgCAQE6
-        0AABQgFNAT4HAAE+AwABKAMAAUADAAEQAwABAQEAAQEFAAGAFwAD/wEAAfABDwYAAeABBwYAAcABAwYA
-        AYABAUcAAQEGAAGAAQMGAAHAAQcGAAHgAQ8GAAs=
+        wAABWAICAbIBgQGPAVAB/wGBAaMBWQH/AfgByQGNAv8BwAGBAv8BugGBAv8BuQF+Av8BuwGBAf8B1AGv
+        AW8B/wGBAZgBTwH/AeEBvQGBAf8B7QHHAY4B/wGoAbIBfQH/AYEBqQFkAf8BlgFLAT8B/QE/AgEBasAA
+        AWkBDQEKAeoBWAGCATYB/wEvAXcBFwH/AYEBiQFCAf8B9QGzAXEC/wGxAWwC/wGuAWgC/wGzAW4B/wGG
+        AYoBQAH/AR8BcQESAf8BgQGGAT4B/wH9AcUBgwH/AZ0BnAFcAf8BbwGRAUgB/wHGAZwBfAH/AVYCAgGw
+        wAABiAE0ASgB+QFGAXoBJQH/ATABZQEUAf8BLQFkARMB/wGxAZEBSwL/AbMBawL/AbQBbQL/AbgBcAH/
+        AXcBgQEyAf8BMgFoARcB/wE3AWkBFwH/AaoBkwFSAf8B5QGwAXUB/wHJAbIBgAH/AewBugGKAf8BXAID
+        AcXAAAGRAUgBIAH7AT4BZQEdAf8BLwFRAQ8B/wF9AXsBMQH/AeMBqQFkAv8BtwFzAf8B2wGjAWIB/wG2
+        AY4BTwH/AU4BYAEYAf8BMwFTAQ8B/wE2AVcBEQH/AU8BZQEcAf8BngGDAUgB/wGjAY8BVQH/AbsBlwFr
+        Af8BWgIDAcfAAAF9ASUBHgH2AYUBgQE9Af8BtwGKAUkB/wH1Aa4BaQL/Ab4BgAH/AdsBrAF5Af8BZwFs
+        ATgB/wFUAWMBMAH/AVoBZAEyAf8BUQFaASkB/wFCAUwBFgH/AUwBTQEPAf8CVAEWAf8BUwFZASAB/wGS
+        AX0BRgH/AVcCAgG0wAABYgIEAdkBsQGLAU8B/wHtAaoBYgL/AcoBjAL/Ad4BtwH/AeAB0gG5Af8BnwGm
+        AY8B/wGgAacBjwH/AagBqwGTAf8BpgGpAZAB/wGVAZkBgQH/AXoBfgFYAf8BNQFFARYB/wE9AU0BGAH/
+        AaoBfgFNAf8BRAIBAXfAAAFIAgIBgQGdAYEBSgH/AaUBtQGBAf8B+QHuAdoC/wHwAeEC/wH2AeoB/wHx
+        Ae4B4AH/AcIBzwG4Af8BxgHRAboB/wHNAdUBvAH/AcQB0AG3Af8BugHNAbUB/wGFAagBhgH/AoEBRgH/
+        AXEBDwEJAewBFAIBARnAAAEPAgEBEgFjAgQB3wG9AccBlQH/AcwB6QHRAf8B5QHpAdgB/wH4AfQB6QL/
+        Af0B+AH/AdkB6AHWAf8BvgHYAb4B/wHAAdgBvwH/AcMB2QHBAf8BwAHfAcoB/wG3AdgBqwH/AaABfAFF
+        Af4BRQIBAXnIAAEmAgEBNwF0ARMBEAHvAeAB3QG6Af8B2wH4AecB/wHeAfAB5QH/AewB9QHtAf8B4wHv
+        AeMB/wHVAecB1gH/AdUB6gHcAf8B2wH2AekB/wHrAfABzwH/AckBkwFsAf8BUwICAaTQAAEmAgEBNwFl
+        AgQB3QHiAbcBngH/AfgB9wHsCf8B+wP/AfoB/gHyAf8B9gHZAb0B/wGTATYBLAH4AU8CAgGU2AABCgIB
+        AQwBSAICAYABYgIEAdkBhgEtASUB9QGnAV8BVgH7AZwBTAE/AfkBbQEPAQ0B6gFYAgIBsgEoAgEBOtAA
+        AUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAHwAQ8GAAHgAQcGAAHAAQMGAAGA
+        AQFHAAEBBgABgAEDBgABwAEHBgAB4AEPBgAL
 </value>
-  </data>
-  <data name="m_lvLanguages.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;m_lvLanguages.Name" xml:space="preserve">
-    <value>m_lvLanguages</value>
-  </data>
-  <data name="&gt;&gt;m_lvLanguages.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lvLanguages.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_lvLanguages.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_btnClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>445, 321</value>
-  </data>
-  <data name="m_btnClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="m_btnClose.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_btnClose.Text" xml:space="preserve">
-    <value>&amp;Close</value>
-  </data>
-  <data name="&gt;&gt;m_btnClose.Name" xml:space="preserve">
-    <value>m_btnClose</value>
-  </data>
-  <data name="&gt;&gt;m_btnClose.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnClose.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_btnClose.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>532, 356</value>
-  </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>LanguageForm</value>
-  </data>
-  <data name="&gt;&gt;m_ilLanguages.Name" xml:space="preserve">
-    <value>m_ilLanguages</value>
-  </data>
-  <data name="&gt;&gt;m_ilLanguages.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>LanguageForm</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

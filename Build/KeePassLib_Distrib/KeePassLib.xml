@@ -43,7 +43,7 @@
             Write entries to a stream.
             </summary>
             <param name="msOutput">Output stream to which the entries will be written.</param>
-            <param name="m_pwDatabase">Source database.</param>
+            <param name="pwDatabase">Source database.</param>
             <param name="vEntries">Entries to serialize.</param>
             <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
         </member>
@@ -161,6 +161,43 @@
             </summary>
             <returns>A <c>SelfTestResult</c> error code.</returns>
         </member>
+        <member name="T:KeePassLib.Native.NativeLib">
+            <summary>
+            Interface to native library (library containing fast versions of
+            several cryptographic functions).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Native.NativeLib.IsLibraryInstalled">
+            <summary>
+            Determine if the native library is installed.
+            </summary>
+            <returns>Returns <c>true</c>, if the native library is installed.</returns>
+        </member>
+        <member name="M:KeePassLib.Native.NativeLib.TransformKey256(System.Byte[],System.Byte[],System.UInt64)">
+            <summary>
+            Transform a key.
+            </summary>
+            <param name="pBuf256">Source and destination buffer.</param>
+            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="uRounds">Number of transformation rounds.</param>
+            <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
+        </member>
+        <member name="M:KeePassLib.Native.NativeLib.TransformKey256Timed(System.Byte[],System.Byte[],System.UInt64@,System.UInt32)">
+            <summary>
+            Benchmark key transformation.
+            </summary>
+            <param name="pBuf256">Source and destination buffer.</param>
+            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="puRounds">Number of transformations done.</param>
+            <param name="uSeconds">Number of seconds to perform the benchmark.</param>
+            <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
+        </member>
+        <member name="P:KeePassLib.Native.NativeLib.AllowNative">
+            <summary>
+            If this property is set to <c>true</c>, the native library is used.
+            If it is <c>false</c>, all calls to functions in this class will fail.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Keys.CompositeKey">
             <summary>
             Represents a key. A key can be build up using several user key data sources
@@ -262,6 +299,13 @@
             <summary>
             List of all user keys contained in the current composite key.
             </summary>
+        </member>
+        <member name="M:KeePassLib.Keys.InvalidCompositeKeyException.#ctor(System.Exception)">
+            <summary>
+            Construct a new invalid composite key exception.
+            </summary>
+            <param name="excpInner">Optional inner exception. May be
+            <c>null</c>.</param>
         </member>
         <member name="T:KeePassLib.Security.ProtectedString">
             <summary>
@@ -569,41 +613,117 @@
             <param name="uRequestedCount">Number of random bytes to retrieve.</param>
             <returns>Returns <paramref name="uRequestedCount" /> random bytes.</returns>
         </member>
-        <member name="T:KeePassLib.Utility.NativeLib">
+        <member name="T:KeePassLib.Resources.KLRes">
             <summary>
-            Interface to native library (library containing fast versions of
-            several cryptographic functions).
+            A strongly-typed resource class, for looking up localized strings, etc.
             </summary>
         </member>
-        <member name="M:KeePassLib.Utility.NativeLib.IsLibraryInstalled">
+        <member name="P:KeePassLib.Resources.KLRes.CryptoStreamFailed">
             <summary>
-            Determine if the native library is installed.
+            Look up a localized string similar to
+            'Failed to initialize encryption/decryption stream!'.
             </summary>
-            <returns>Returns <c>true</c>, if the native library is installed.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.NativeLib.TransformKey256(System.Byte[],System.Byte[],System.UInt64)">
+        <member name="P:KeePassLib.Resources.KLRes.InvalidCompositeKey">
             <summary>
-            Transform a key.
+            Look up a localized string similar to
+            'The composite key is invalid!'.
             </summary>
-            <param name="pBuf256">Source and destination buffer.</param>
-            <param name="pKey256">Key to use in the transformation.</param>
-            <param name="uRounds">Number of transformation rounds.</param>
-            <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.NativeLib.TransformKey256Timed(System.Byte[],System.Byte[],System.UInt64@,System.UInt32)">
+        <member name="P:KeePassLib.Resources.KLRes.InvalidCompositeKeyHint">
             <summary>
-            Benchmark key transformation.
+            Look up a localized string similar to
+            'Make sure the composite key is correct and try again.'.
             </summary>
-            <param name="pBuf256">Source and destination buffer.</param>
-            <param name="pKey256">Key to use in the transformation.</param>
-            <param name="puRounds">Number of transformations done.</param>
-            <param name="uSeconds">Number of seconds to perform the benchmark.</param>
-            <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
         </member>
-        <member name="P:KeePassLib.Utility.NativeLib.AllowNative">
+        <member name="P:KeePassLib.Resources.KLRes.InvalidDataWhileDecoding">
             <summary>
-            If this property is set to <c>true</c>, the native library is used.
-            If it is <c>false</c>, all calls to functions in this class will fail.
+            Look up a localized string similar to
+            'Found invalid data while decoding.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileUnknownCipher">
+            <summary>
+            Look up a localized string similar to
+            'The file encrypted using an unknown encryption algorithm!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileSigInvalid">
+            <summary>
+            Look up a localized string similar to
+            'The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileVersionUnknown">
+            <summary>
+            Look up a localized string similar to
+            'Unknown file version!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileHeaderEndEarly">
+            <summary>
+            Look up a localized string similar to
+            'The file header is corrupted! Some header data was declared but is not present.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.UnknownHeaderID">
+            <summary>
+            Look up a localized string similar to
+            'Unknown header ID!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileUnknownCompression">
+            <summary>
+            Look up a localized string similar to
+            'The file is compressed using an unknown compression algorithm!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.MasterSeedLengthInvalid">
+            <summary>
+            Look up a localized string similar to
+            'The length of the master key seed is invalid!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FinalKeyCreationFailed">
+            <summary>
+            Look up a localized string similar to
+            'Failed to create the final encryption/decryption key!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.OldFormat">
+            <summary>
+            Look up a localized string similar to
+            'The selected file appears to be an old format'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FatalError">
+            <summary>
+            Look up a localized string similar to
+            'Fatal Error'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FatalErrorText">
+            <summary>
+            Look up a localized string similar to
+            'A fatal error has occured!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileLoadFailed">
+            <summary>
+            Look up a localized string similar to
+            'Failed to load the specified file!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileSaveFailed">
+            <summary>
+            Look up a localized string similar to
+            'Failed to save the current database to the specified location!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.ErrorFeedbackRequest">
+            <summary>
+            Look up a localized string similar to
+            'An extended error report has been copied to the clipboard. Please send it to the KeePass developers.'.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.Cipher.CipherPool">
@@ -997,9 +1117,16 @@
             The name of this group. Cannot be <c>null</c>.
             </summary>
         </member>
-        <member name="P:KeePassLib.PwGroup.Icon">
+        <member name="P:KeePassLib.PwGroup.IconID">
             <summary>
             Icon of the group.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.CustomIconUuid">
+            <summary>
+            Get the custom icon ID. This value is 0, if no custom icon is
+            being used (i.e. the icon specified by the <c>IconID</c> property
+            should be displayed).
             </summary>
         </member>
         <member name="P:KeePassLib.PwGroup.ParentGroup">
@@ -1354,9 +1481,16 @@
             Get all previous versions of this entry (backups).
             </summary>
         </member>
-        <member name="P:KeePassLib.PwEntry.Icon">
+        <member name="P:KeePassLib.PwEntry.IconID">
             <summary>
             Image ID specifying the icon that will be used for this entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.CustomIconUuid">
+            <summary>
+            Get the custom icon ID. This value is 0, if no custom icon is
+            being used (i.e. the icon specified by the <c>IconID</c> property
+            should be displayed).
             </summary>
         </member>
         <member name="P:KeePassLib.PwEntry.ForegroundColor">
@@ -1778,14 +1912,6 @@
             default system directory separator character is used.</param>
             <returns>Path having a directory separator as last character.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.UrlUtil.CompactPath(System.String,System.UInt32)">
-            <summary>
-            Shorten a path.
-            </summary>
-            <param name="strPath">Path to make shorter.</param>
-            <param name="uMaxChars">Maximum number of characters in the returned string.</param>
-            <returns>Shortened path.</returns>
-        </member>
         <member name="M:KeePassLib.Utility.UrlUtil.FileAccessible(System.String,KeePassLib.Utility.UrlUtil.FileAccessMode)">
             <summary>
             Test if a specified path is accessible, either in read or write mode.
@@ -1813,6 +1939,14 @@
             The return value is <c>true</c>, if data can be written to the
             file.
             </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.TranslationUtil.GetAndRemoveDictionary(System.String)">
+            <summary>
+            Get and remove a loaded dictionary. Returns an empty dictionary
+            if there is no matching dictionary.
+            </summary>
+            <param name="strName">Name of the dictionary.</param>
+            <returns>Dictionary. Is never <c>null</c>.</returns>
         </member>
         <member name="T:KeePassLib.Cryptography.PasswordGeneratorType">
             <summary>
@@ -1944,7 +2078,7 @@
             </summary>
             <param name="uPos">Index of the character to get.</param>
             <returns>Character at the specified position. If the index is invalid,
-            an <c>IndexOutOfRangeException</c> is thrown.</returns>
+            an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
         </member>
         <member name="T:KeePassLib.Cryptography.CharSpaces">
             <summary>
@@ -1989,7 +2123,26 @@
             from several different files (global configuration file in application
             directory, configuration file in user directory, etc.) and mix them
             into one in-memory configuration pool.
+            <param name="strBaseName">Base name for the configuration files and
+            directories. For example, this could be "KeePass".</param>
             </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.Save">
+            <summary>
+            Save the current configuration to files. File cascading is
+            handled by this function. This function first tries to write
+            to the global configuration file, if this fails it tries the
+            configuration file in the user's application directory.
+            </summary>
+            <returns>Returns <c>true</c>, if the configuration was saved
+            successfully, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.AppConfigEx.HasWriteAccessToGlobal">
+            <summary>
+            Get the status of the global configuration file.
+            </summary>
+            <returns>Returns <c>true</c> if you can write to the
+            global configuration file.</returns>
         </member>
         <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.String)">
             <summary>
@@ -2099,16 +2252,6 @@
             <param name="strField">Name of the configuration item.</param>
             <param name="uValue">Value of the configuration item.</param>
         </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.Save">
-            <summary>
-            Save the current configuration to files. File cascading is
-            handled by this function. This function first tries to write
-            to the global configuration file, if this fails it tries the
-            configuration file in the user's application directory.
-            </summary>
-            <returns>Returns <c>true</c>, if the configuration was saved
-            successfully, <c>false</c> otherwise.</returns>
-        </member>
         <member name="M:KeePassLib.Utility.AppConfigEx.RemoveIndexedItems(System.String,System.UInt32)">
             <summary>
             Remove all fields indexed by a prefix and consecutive numbers.
@@ -2118,12 +2261,12 @@
             <param name="strFieldPrefix">Field prefix.</param>
             <param name="uStartIndex">First index.</param>
         </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.HasWriteAccessToGlobal">
+        <member name="P:KeePassLib.Utility.AppConfigEx.BaseName">
             <summary>
-            Get the status of the global configuration file.
+            Get/set the base name for the configuration. If this property is
+            <c>null</c>, the class constructs names based on the current
+            assembly and the product name.
             </summary>
-            <returns>Returns <c>true</c> if you can write to the
-            global configuration file.</returns>
         </member>
         <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
             <summary>
@@ -2165,12 +2308,6 @@
             engines in the GUI.
             </summary>
         </member>
-        <member name="F:KeePassLib.Cryptography.Cipher.StandardAesEngine.AesUuidBytes">
-            <summary>
-            UUID of the cipher engine. This ID uniquely identifies the
-            AES engine. Must not be used by other ciphers.
-            </summary>
-        </member>
         <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.CipherUuid">
             <summary>
             Get the UUID of this cipher engine as <c>PwUuid</c> object.
@@ -2179,6 +2316,12 @@
         <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.DisplayName">
             <summary>
             Get a displayable name describing this cipher engine.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.AesUuid">
+            <summary>
+            UUID of the cipher engine. This ID uniquely identifies the
+            AES engine. Must not be used by other ciphers.
             </summary>
         </member>
         <member name="T:KeePassLib.Utility.CharStream">
@@ -2205,7 +2348,7 @@
             <param name="str">String to convert.</param>
             <returns>String, HTML-encoded.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.ReplaceCaseInsensitive(System.String,System.String,KeePassLib.Security.ProtectedString,System.Boolean)">
+        <member name="M:KeePassLib.Utility.StrUtil.ReplaceCaseInsensitive(System.String,System.String,KeePassLib.Security.ProtectedString,System.Boolean,System.Boolean)">
             <summary>
             Search for a substring case-insensitively and replace it by some new string.
             </summary>
@@ -2224,7 +2367,7 @@
             <param name="strApp">Application path.</param>
             <param name="strArgs">Arguments.</param>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.FillPlaceholders(System.String,KeePassLib.PwEntry,System.String,KeePassLib.PwDatabase,System.Boolean)">
+        <member name="M:KeePassLib.Utility.StrUtil.FillPlaceholders(System.String,KeePassLib.PwEntry,System.String,KeePassLib.PwDatabase,System.Boolean,System.Boolean)">
             <summary>
             Fill in all placeholders in a string using entry information.
             </summary>
@@ -2234,6 +2377,8 @@
             <param name="pwDatabase">Current database.</param>
             <param name="bCmdQuotes">If <c>true</c>, quotes will be replaced by
             command-line friendly escape sequences.</param>
+            <param name="bDataToKeySequence">If <c>true</c>, data will be
+            inserted as auto-type key sequence.</param>
             <returns>Returns the new string.</returns>
         </member>
         <member name="M:KeePassLib.Utility.StrUtil.InitRtf(System.Text.StringBuilder,System.String,System.Single)">
@@ -2330,7 +2475,7 @@
             <param name="bIsPrimaryNow">If <c>true</c>, the new location is made the
             standard location for the database. If <c>false</c>, a copy of the currently
             opened database is saved to the specified location, but it isn't
-            made the default location (i.e. no lockfiles will be moved for
+            made the default location (i.e. no lock files will be moved for
             example).</param>
             <param name="slLogger">Logger that recieves status information.</param>
         </member>
@@ -2363,6 +2508,21 @@
             </summary>
             <param name="strFile">Source file.</param>
         </member>
+        <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">
+            <summary>
+            Get the index of a custom icon.
+            </summary>
+            <param name="pwIconID">ID of the icon.</param>
+            <returns>Index of the icon.</returns>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.GetCustomIcon(KeePassLib.PwUuid)">
+            <summary>
+            Get a custom icon. This function can return <c>null</c>, if
+            no cached image of the icon is available.
+            </summary>
+            <param name="pwIconID">ID of the icon.</param>
+            <returns>Image data.</returns>
+        </member>
         <member name="P:KeePassLib.PwDatabase.RootGroup">
             <summary>
             Get the root group that contains all groups and entries stored in the
@@ -2374,7 +2534,7 @@
         <member name="P:KeePassLib.PwDatabase.IOConnectionInfo">
             <summary>
             <c>IOConnection</c> of the currently opened database file.
-            Must not be <c>null</c>.
+            Is never <c>null</c>.
             </summary>
         </member>
         <member name="P:KeePassLib.PwDatabase.IsOpen">
@@ -2440,6 +2600,17 @@
         <member name="P:KeePassLib.PwDatabase.DeletedObjects">
             <summary>
             Get a list of all deleted objects.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.CustomIcons">
+            <summary>
+            Get all custom icons stored in this database.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.UINeedsIconUpdate">
+            <summary>
+            This is a dirty-flag for the UI. It is used to indicate when an
+            icon list update is required.
             </summary>
         </member>
         <member name="P:KeePassLib.PwDatabase.LocalizedAppName">
@@ -2866,6 +3037,11 @@
         <member name="P:KeePassLib.Collections.AutoTypeConfig.Enabled">
             <summary>
             Specify whether auto-type is enabled or not.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Collections.AutoTypeConfig.ObfuscationOptions">
+            <summary>
+            Specify whether the typing should be obfuscated.
             </summary>
         </member>
         <member name="P:KeePassLib.Collections.AutoTypeConfig.DefaultSequence">

@@ -103,7 +103,8 @@ namespace KeePass.DataExchange
 				try { fmtImp.Import(pwDatabase, null, null); }
 				catch(Exception exSingular)
 				{
-					MessageService.ShowWarning(StrUtil.FormatException(exSingular));
+					if((exSingular.Message != null) && (exSingular.Message.Length > 0))
+						MessageService.ShowWarning(exSingular);
 				}
 
 				return true;
@@ -139,7 +140,7 @@ namespace KeePass.DataExchange
 				if(fmtImp.RequiresKey && !bSynchronize)
 				{
 					KeyPromptForm kpf = new KeyPromptForm();
-					kpf.InitEx(strFile);
+					kpf.InitEx(strFile, false);
 
 					if(kpf.ShowDialog() != DialogResult.OK) { fs.Close(); continue; }
 

@@ -26,6 +26,7 @@ using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Forms;
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -40,9 +41,11 @@ namespace KeePass
 {
 	public static class Program
 	{
+		private const string m_strWndMsgID = "EB2FE38E1A6A4A138CF561442F1CF25A";
+
 		private static CommandLineArgs m_cmdLineArgs = new CommandLineArgs(null);
 		private static Random m_rndGlobal = null;
-		private static uint m_uAppMessage = 0;
+		private static int m_nAppMessage = 0;
 		private static MainForm m_formMain = null;
 
 		public enum AppMessage
@@ -60,9 +63,9 @@ namespace KeePass
 			get { return m_rndGlobal; }
 		}
 
-		public static uint ApplicationMessage
+		public static int ApplicationMessage
 		{
-			get { return m_uAppMessage; }
+			get { return m_nAppMessage; }
 		}
 
 		public static MainForm MainForm
@@ -78,16 +81,24 @@ namespace KeePass
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			Application.DoEvents();
 
-			m_rndGlobal = new Random((int)DateTime.Now.Ticks);
-
-			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) +
-				".chm";
-			AppHelp.LocalHelpFile = strHelpFile;
+			int nRandomSeed = (int)DateTime.Now.Ticks;
+			// Prevent overflow (see Random class constructor)
+			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
+			m_rndGlobal = new Random(nRandomSeed);
 
 			// Set global localized strings
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
 			Kdb4File.DetermineLanguageID();
+
+			AppConfigEx.Load();
+			if(AppConfigEx.GetBool(AppDefs.ConfigKeys.EnableLogging))
+				AppLogEx.Open(PwDefs.ShortProductName);
+
+			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) +
+				".chm";
+			AppHelp.LocalHelpFile = strHelpFile;
 
 			m_cmdLineArgs = new CommandLineArgs(args);
 
@@ -103,11 +114,8 @@ namespace KeePass
 				return;
 			}
 
-			AppConfigEx.Load();
-			if(AppConfigEx.GetBool(AppDefs.ConfigKeys.EnableLogging))
-				AppLogEx.Open(PwDefs.ShortProductName);
-
-			m_uAppMessage = WinUtil.RegisterMessage("EB2FE38E1A6A4A138CF561442F1CF25A");
+			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
+			catch(Exception exAppMsg) { MessageService.ShowWarning(exAppMsg); }
 
 			Mutex mSingleLock = TrySingleInstanceLock();
 			if((mSingleLock == null) && AppConfigEx.GetBool(AppDefs.ConfigKeys.LimitSingleInstance))
@@ -157,8 +165,17 @@ namespace KeePass
 
 		private static void ActivatePreviousInstance()
 		{
-			WinUtil.SendMessage((IntPtr)WinUtil.HWND_BROADCAST, m_uAppMessage,
-				(IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+			if(m_nAppMessage == 0) { Debug.Assert(false); return; }
+
+			try
+			{
+				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+					m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+			}
+			catch(Exception exActivation)
+			{
+				MessageService.ShowWarning(exActivation);
+			}
 		}
 	}
 }

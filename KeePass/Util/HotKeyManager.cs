@@ -24,14 +24,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.Native;
+
 namespace KeePass.Util
 {
 	public static class HotKeyManager
 	{
 		private static IntPtr m_hRecvWnd = IntPtr.Zero;
 		private static List<int> m_vRegisteredIDs = new List<int>();
-
-		public const int WM_HOTKEY = 0x0312;
 
 		private const uint MOD_ALT = 1;
 		private const uint MOD_CONTROL = 2;
@@ -44,11 +44,6 @@ namespace KeePass.Util
 			set { m_hRecvWnd = value; }
 		}
 
-		[DllImport("User32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers,
-			uint vk);
-
 		public static bool RegisterHotKey(int nID, Keys kKey, Keys kModifiers)
 		{
 			if(kKey == Keys.None) return false;
@@ -59,19 +54,20 @@ namespace KeePass.Util
 			if((kModifiers & Keys.Alt) != Keys.None) uMod |= MOD_ALT;
 			if((kModifiers & Keys.Control) != Keys.None) uMod |= MOD_CONTROL;
 
-			HotKeyManager.UnregisterHotKey(nID);
-			if(HotKeyManager.RegisterHotKey(m_hRecvWnd, nID, uMod, (uint)kKey))
+			UnregisterHotKey(nID);
+
+			try
 			{
-				m_vRegisteredIDs.Add(nID);
-				return true;
+				if(NativeMethods.RegisterHotKey(m_hRecvWnd, nID, uMod, (uint)kKey))
+				{
+					m_vRegisteredIDs.Add(nID);
+					return true;
+				}
 			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}
-
-		[DllImport("User32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
 		public static bool UnregisterHotKey(int nID)
 		{
@@ -79,9 +75,13 @@ namespace KeePass.Util
 			{
 				m_vRegisteredIDs.Remove(nID);
 
-				bool bResult = HotKeyManager.UnregisterHotKey(m_hRecvWnd, nID);
-				Debug.Assert(bResult);
-				return bResult;
+				try
+				{
+					bool bResult = NativeMethods.UnregisterHotKey(m_hRecvWnd, nID);
+					Debug.Assert(bResult);
+					return bResult;
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
 
 			return false;
@@ -89,11 +89,19 @@ namespace KeePass.Util
 
 		public static void UnregisterAll()
 		{
-			foreach(int nID in m_vRegisteredIDs)
+			try
 			{
-				bool bResult = HotKeyManager.UnregisterHotKey(m_hRecvWnd, nID);
-				Debug.Assert(bResult);
+				foreach(int nID in m_vRegisteredIDs)
+				{
+#if DEBUG
+					bool bResult = NativeMethods.UnregisterHotKey(m_hRecvWnd, nID);
+					Debug.Assert(bResult);
+#else
+					NativeMethods.UnregisterHotKey(m_hRecvWnd, nID);
+#endif
+				}
 			}
+			catch(Exception) { Debug.Assert(false); }
 
 			m_vRegisteredIDs.Clear();
 		}

@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GroupForm));
 			this.m_lblName = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -54,45 +53,66 @@
 			// 
 			// m_lblName
 			// 
-			resources.ApplyResources(this.m_lblName, "m_lblName");
+			this.m_lblName.AutoSize = true;
+			this.m_lblName.Location = new System.Drawing.Point(6, 14);
 			this.m_lblName.Name = "m_lblName";
+			this.m_lblName.Size = new System.Drawing.Size(38, 13);
+			this.m_lblName.TabIndex = 1;
+			this.m_lblName.Text = "Name:";
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(388, 60);
+			this.m_bannerImage.TabIndex = 1;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(220, 238);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(301, 238);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_tbName
 			// 
-			resources.ApplyResources(this.m_tbName, "m_tbName");
+			this.m_tbName.Location = new System.Drawing.Point(60, 11);
 			this.m_tbName.Name = "m_tbName";
+			this.m_tbName.Size = new System.Drawing.Size(286, 20);
+			this.m_tbName.TabIndex = 0;
 			// 
 			// m_lblIcon
 			// 
-			resources.ApplyResources(this.m_lblIcon, "m_lblIcon");
+			this.m_lblIcon.AutoSize = true;
+			this.m_lblIcon.Location = new System.Drawing.Point(6, 42);
 			this.m_lblIcon.Name = "m_lblIcon";
+			this.m_lblIcon.Size = new System.Drawing.Size(31, 13);
+			this.m_lblIcon.TabIndex = 2;
+			this.m_lblIcon.Text = "Icon:";
 			// 
 			// m_btnIcon
 			// 
-			resources.ApplyResources(this.m_btnIcon, "m_btnIcon");
+			this.m_btnIcon.Location = new System.Drawing.Point(60, 37);
 			this.m_btnIcon.Name = "m_btnIcon";
+			this.m_btnIcon.Size = new System.Drawing.Size(33, 23);
+			this.m_btnIcon.TabIndex = 3;
 			this.m_btnIcon.UseVisualStyleBackColor = true;
 			this.m_btnIcon.Click += new System.EventHandler(this.OnBtnIcon);
 			// 
@@ -100,9 +120,11 @@
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabGeneral);
 			this.m_tabMain.Controls.Add(this.m_tabAutoType);
-			resources.ApplyResources(this.m_tabMain, "m_tabMain");
+			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
+			this.m_tabMain.Size = new System.Drawing.Size(364, 166);
+			this.m_tabMain.TabIndex = 0;
 			// 
 			// m_tabGeneral
 			// 
@@ -112,21 +134,31 @@
 			this.m_tabGeneral.Controls.Add(this.m_btnIcon);
 			this.m_tabGeneral.Controls.Add(this.m_tbName);
 			this.m_tabGeneral.Controls.Add(this.m_lblIcon);
-			resources.ApplyResources(this.m_tabGeneral, "m_tabGeneral");
+			this.m_tabGeneral.Location = new System.Drawing.Point(4, 22);
 			this.m_tabGeneral.Name = "m_tabGeneral";
+			this.m_tabGeneral.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabGeneral.Size = new System.Drawing.Size(356, 140);
+			this.m_tabGeneral.TabIndex = 0;
+			this.m_tabGeneral.Text = "General";
 			this.m_tabGeneral.UseVisualStyleBackColor = true;
 			// 
 			// m_dtExpires
 			// 
 			this.m_dtExpires.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			resources.ApplyResources(this.m_dtExpires, "m_dtExpires");
+			this.m_dtExpires.Location = new System.Drawing.Point(87, 105);
 			this.m_dtExpires.Name = "m_dtExpires";
+			this.m_dtExpires.Size = new System.Drawing.Size(259, 20);
+			this.m_dtExpires.TabIndex = 5;
 			this.m_dtExpires.ValueChanged += new System.EventHandler(this.OnExpiresValueChanged);
 			// 
 			// m_cbExpires
 			// 
-			resources.ApplyResources(this.m_cbExpires, "m_cbExpires");
+			this.m_cbExpires.AutoSize = true;
+			this.m_cbExpires.Location = new System.Drawing.Point(9, 108);
 			this.m_cbExpires.Name = "m_cbExpires";
+			this.m_cbExpires.Size = new System.Drawing.Size(63, 17);
+			this.m_cbExpires.TabIndex = 4;
+			this.m_cbExpires.Text = "Expires:";
 			this.m_cbExpires.UseVisualStyleBackColor = true;
 			// 
 			// m_tabAutoType
@@ -136,49 +168,70 @@
 			this.m_tabAutoType.Controls.Add(this.m_rbAutoTypeInherit);
 			this.m_tabAutoType.Controls.Add(this.m_lblAutoTypeDesc);
 			this.m_tabAutoType.Controls.Add(this.m_tbDefaultAutoTypeSeq);
-			resources.ApplyResources(this.m_tabAutoType, "m_tabAutoType");
+			this.m_tabAutoType.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAutoType.Name = "m_tabAutoType";
+			this.m_tabAutoType.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabAutoType.Size = new System.Drawing.Size(356, 140);
+			this.m_tabAutoType.TabIndex = 1;
+			this.m_tabAutoType.Text = "Auto-Type";
 			this.m_tabAutoType.UseVisualStyleBackColor = true;
 			// 
 			// m_btnAutoTypeEdit
 			// 
 			this.m_btnAutoTypeEdit.Image = global::KeePass.Properties.Resources.B16x16_Wizard;
-			resources.ApplyResources(this.m_btnAutoTypeEdit, "m_btnAutoTypeEdit");
+			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(318, 57);
 			this.m_btnAutoTypeEdit.Name = "m_btnAutoTypeEdit";
+			this.m_btnAutoTypeEdit.Size = new System.Drawing.Size(32, 23);
+			this.m_btnAutoTypeEdit.TabIndex = 3;
 			this.m_btnAutoTypeEdit.UseVisualStyleBackColor = true;
 			this.m_btnAutoTypeEdit.Click += new System.EventHandler(this.OnBtnAutoTypeEdit);
 			// 
 			// m_rbAutoTypeOverride
 			// 
-			resources.ApplyResources(this.m_rbAutoTypeOverride, "m_rbAutoTypeOverride");
+			this.m_rbAutoTypeOverride.AutoSize = true;
+			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(12, 36);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
+			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(157, 17);
+			this.m_rbAutoTypeOverride.TabIndex = 1;
 			this.m_rbAutoTypeOverride.TabStop = true;
+			this.m_rbAutoTypeOverride.Text = "Override Default Sequence:";
 			this.m_rbAutoTypeOverride.UseVisualStyleBackColor = true;
 			// 
 			// m_rbAutoTypeInherit
 			// 
-			resources.ApplyResources(this.m_rbAutoTypeInherit, "m_rbAutoTypeInherit");
+			this.m_rbAutoTypeInherit.AutoSize = true;
+			this.m_rbAutoTypeInherit.Location = new System.Drawing.Point(12, 13);
 			this.m_rbAutoTypeInherit.Name = "m_rbAutoTypeInherit";
+			this.m_rbAutoTypeInherit.Size = new System.Drawing.Size(287, 17);
+			this.m_rbAutoTypeInherit.TabIndex = 0;
 			this.m_rbAutoTypeInherit.TabStop = true;
+			this.m_rbAutoTypeInherit.Text = "Inherit Default Auto-Type Sequence From Parent Group";
 			this.m_rbAutoTypeInherit.UseVisualStyleBackColor = true;
 			this.m_rbAutoTypeInherit.CheckedChanged += new System.EventHandler(this.OnAutoTypeInheritCheckedChanged);
 			// 
 			// m_lblAutoTypeDesc
 			// 
-			resources.ApplyResources(this.m_lblAutoTypeDesc, "m_lblAutoTypeDesc");
+			this.m_lblAutoTypeDesc.Location = new System.Drawing.Point(29, 82);
 			this.m_lblAutoTypeDesc.Name = "m_lblAutoTypeDesc";
+			this.m_lblAutoTypeDesc.Size = new System.Drawing.Size(321, 27);
+			this.m_lblAutoTypeDesc.TabIndex = 4;
+			this.m_lblAutoTypeDesc.Text = "All subgroups and entries in the current group that inherit the group\'s auto-type" +
+				" sequence will use the one entered above.";
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			resources.ApplyResources(this.m_tbDefaultAutoTypeSeq, "m_tbDefaultAutoTypeSeq");
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(32, 59);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
+			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(280, 20);
+			this.m_tbDefaultAutoTypeSeq.TabIndex = 2;
 			// 
 			// GroupForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(388, 273);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
@@ -188,6 +241,8 @@
 			this.MinimizeBox = false;
 			this.Name = "GroupForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Edit Group";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

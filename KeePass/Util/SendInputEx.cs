@@ -24,122 +24,62 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using KeePass.Native;
+
+using KeePassLib.Utility;
+
 namespace KeePass.Util
 {
 	public static class SendInputEx
 	{
-		[StructLayout(LayoutKind.Sequential)]
-		private struct MOUSEINPUT
+		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
-			public int X;
-			public int Y;
-			public uint MouseData;
-			public uint Flags;
-			public uint Time;
-			public IntPtr ExtraInfo;
+			InitSendKeys();
+
+			try
+			{
+				if(bObfuscate)
+				{
+					try { SendObfuscated(strKeys); }
+					catch(Exception) { SendKeys.SendWait(strKeys); }
+				}
+				else SendKeys.SendWait(strKeys);
+			}
+			catch
+			{
+				FinishSendKeys();
+				throw;
+			}
+
+			FinishSendKeys();
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
-		private struct KEYBDINPUT
-		{
-			public ushort VirtualKeyCode;
-			public ushort ScanCode;
-			public uint Flags;
-			public uint Time;
-			public IntPtr ExtraInfo;
-		}
-
-		[StructLayout(LayoutKind.Sequential)]
-		private struct HARDWAREINPUT
-		{
-			public uint Message;
-			public ushort ParamL;
-			public ushort ParamH;
-		}
-
-		[StructLayout(LayoutKind.Explicit)]
-		private struct INPUT
-		{
-			[FieldOffset(0)]
-			public uint Type;
-			[FieldOffset(4)]
-			MOUSEINPUT MouseInput;
-			[FieldOffset(4)]
-			public KEYBDINPUT KeyboardInput;
-			[FieldOffset(4)]
-			HARDWAREINPUT HardwareInput;
-		}
-
-		[DllImport("User32.dll", SetLastError = true)]
-		private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
-
-		[DllImport("User32.dll")]
-		private static extern IntPtr GetMessageExtraInfo();
-
-		[DllImport("User32.dll")]
-		private static extern uint MapVirtualKey(uint uCode, uint uMapType);
-
-		[DllImport("User32.dll")]
-		private static extern ushort GetKeyState(int vKey);
-
-		[DllImport("User32.dll")]
-		private static extern bool BlockInput(bool fBlockIt);
-
-		private const uint INPUT_MOUSE = 0;
-		private const uint INPUT_KEYBOARD = 1;
-		private const uint INPUT_HARDWARE = 2;
-
-		private const int VK_SHIFT = 0x10;
-		private const int VK_CONTROL = 0x11;
-		private const int VK_MENU = 0x12;
-		private const int VK_CAPITAL = 0x14;
-		private const int VK_LSHIFT = 0xA0;
-		private const int VK_RSHIFT = 0xA1;
-		private const int VK_LCONTROL = 0xA2;
-		private const int VK_RCONTROL = 0xA3;
-		private const int VK_LMENU = 0xA4;
-		private const int VK_RMENU = 0xA5;
-		private const int VK_LWIN = 0x5B;
-		private const int VK_RWIN = 0x5C;
-
-		private const uint KEYEVENTF_EXTENDEDKEY = 1;
-		private const uint KEYEVENTF_KEYUP = 2;
-
-		public static void SendKeysWait(string strKeys)
-		{
-			List<int> lRestore = InitSendKeys();
-			SendKeys.SendWait(strKeys);
-			FinishSendKeys(lRestore);
-		}
-
-		private static List<int> InitSendKeys()
+		private static void InitSendKeys()
 		{
 			try
 			{
-				BlockInput(true);
+				NativeMethods.BlockInput(true);
 
 				SendKeys.Flush();
 				Application.DoEvents();
 
 				List<int> lMod = GetActiveKeyModifiers();
 				ActivateKeyModifiers(lMod, false);
-
-				return lMod;
 			}
 			catch(Exception) { Debug.Assert(false); }
-
-			return new List<int>();
 		}
 
-		private static void FinishSendKeys(List<int> lRestore)
+		private static void FinishSendKeys()
 		{
 			try
 			{
-				ActivateKeyModifiers(lRestore, true);
+				// Do not restore original modifier keys here, otherwise
+				// modifier keys are restored even when the user released
+				// them while KeePass is auto-typing!
+				// ActivateKeyModifiers(lRestore, true);
 
-				BlockInput(false);
+				NativeMethods.BlockInput(false);
 
-				SendKeys.Flush();
 				Application.DoEvents();
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -147,24 +87,26 @@ namespace KeePass.Util
 
 		private static bool SendModifierVKey(int vKey, bool bDown)
 		{
-			Debug.Assert((Marshal.SizeOf(typeof(INPUT)) == 28) ||
-				(Marshal.SizeOf(typeof(INPUT)) == 32));
+			Debug.Assert((Marshal.SizeOf(typeof(NativeMethods.INPUT)) == 28) ||
+				(Marshal.SizeOf(typeof(NativeMethods.INPUT)) == 32));
 
 			if(bDown || IsKeyModifierActive(vKey))
 			{
-				INPUT[] pInput = new INPUT[1];
+				NativeMethods.INPUT[] pInput = new NativeMethods.INPUT[1];
 
-				pInput[0].Type = INPUT_KEYBOARD;
+				pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
 				pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
 				pInput[0].KeyboardInput.ScanCode =
-					(ushort)(MapVirtualKey((uint)vKey, 0) & 0xFF);
-				pInput[0].KeyboardInput.Flags = (bDown ? 0 : KEYEVENTF_KEYUP) |
-					((((vKey >= 0x21) && (vKey <= 0x2E)) ||
-					((vKey >= 0x6A) && (vKey <= 0x6F))) ? KEYEVENTF_EXTENDEDKEY : 0);
+					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
+				pInput[0].KeyboardInput.Flags = (bDown ? 0 :
+					NativeMethods.KEYEVENTF_KEYUP) | ((((vKey >= 0x21) &&
+					(vKey <= 0x2E)) || ((vKey >= 0x6A) && (vKey <= 0x6F))) ?
+					NativeMethods.KEYEVENTF_EXTENDEDKEY : 0);
 				pInput[0].KeyboardInput.Time = 0;
-				pInput[0].KeyboardInput.ExtraInfo = GetMessageExtraInfo();
+				pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
 
-				if(SendInput(1, pInput, Marshal.SizeOf(typeof(INPUT))) != 1)
+				if(NativeMethods.SendInput(1, pInput,
+					Marshal.SizeOf(typeof(NativeMethods.INPUT))) != 1)
 				{
 					Debug.Assert(false);
 					return false;
@@ -180,22 +122,22 @@ namespace KeePass.Util
 		{
 			List<int> lSet = new List<int>();
 
-			AddKeyModifierIfSet(lSet, VK_LSHIFT);
-			AddKeyModifierIfSet(lSet, VK_RSHIFT);
-			AddKeyModifierIfSet(lSet, VK_SHIFT);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_LSHIFT);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_RSHIFT);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_SHIFT);
 
-			AddKeyModifierIfSet(lSet, VK_LCONTROL);
-			AddKeyModifierIfSet(lSet, VK_RCONTROL);
-			AddKeyModifierIfSet(lSet, VK_CONTROL);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_LCONTROL);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_RCONTROL);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_CONTROL);
 
-			AddKeyModifierIfSet(lSet, VK_LMENU);
-			AddKeyModifierIfSet(lSet, VK_RMENU);
-			AddKeyModifierIfSet(lSet, VK_MENU);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_LMENU);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_RMENU);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_MENU);
 
-			AddKeyModifierIfSet(lSet, VK_LWIN);
-			AddKeyModifierIfSet(lSet, VK_RWIN);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_LWIN);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_RWIN);
 
-			AddKeyModifierIfSet(lSet, VK_CAPITAL);
+			AddKeyModifierIfSet(lSet, NativeMethods.VK_CAPITAL);
 
 			return lSet;
 		}
@@ -208,9 +150,9 @@ namespace KeePass.Util
 
 		private static bool IsKeyModifierActive(int vKey)
 		{
-			ushort usState = GetKeyState(vKey);
+			ushort usState = NativeMethods.GetKeyState(vKey);
 
-			if(vKey == VK_CAPITAL)
+			if(vKey == NativeMethods.VK_CAPITAL)
 				return ((usState & 1) != 0);
 			else
 				return ((usState & 0x8000) != 0);
@@ -225,6 +167,239 @@ namespace KeePass.Util
 			{
 				SendModifierVKey(vKey, bDown);
 			}
+		}
+
+		private static void SendObfuscated(string strKeys)
+		{
+			Debug.Assert(strKeys != null);
+			if(strKeys == null) throw new ArgumentNullException("strKeys");
+
+			if(strKeys.Length == 0) return;
+
+			ClipboardEventChainBlocker cev = new ClipboardEventChainBlocker();
+			ClipboardContents cnt = new ClipboardContents(true);
+			Exception excpInner = null;
+
+			char[] vSpecial = new char[]{ '{', '}', '(', ')', '+', '^', '%',
+				' ', '\t', '\r', '\n' };
+
+			try
+			{
+				List<string> vParts = SplitKeySequence(strKeys);
+				foreach(string strPart in vParts)
+				{
+					if(strPart.Length == 0) continue;
+
+					if(strPart.IndexOfAny(vSpecial) >= 0)
+						SendKeys.SendWait(strPart);
+					else
+						MixedTransfer(strPart);
+				}
+			}
+			catch(Exception ex) { excpInner = ex; }
+
+			cnt.SetData();
+			cev.Dispose();
+
+			if(excpInner != null) throw excpInner;
+		}
+
+		private static List<string> SplitKeySequence(string strKeys)
+		{
+			List<string> vParts = new List<string>();
+
+			if(strKeys.Length == 0) return vParts;
+
+			CharStream cs = new CharStream(strKeys);
+			StringBuilder sbRawText = new StringBuilder();
+
+			while(true)
+			{
+				char ch = cs.ReadChar();
+				if(ch == char.MinValue) break;
+
+				switch(ch)
+				{
+					case ')':
+					case '}':
+						throw new FormatException();
+
+					case '(':
+					case '{':
+					case '+':
+					case '^':
+					case '%':
+					case ' ':
+					case '\t':
+						string strBuf = sbRawText.ToString();
+						if(strBuf.IndexOfAny(new char[]{ '+', '^', '%',
+							' ', '\t' }) < 0)
+						{
+							if(strBuf.Length > 0) vParts.Add(strBuf);
+							sbRawText.Remove(0, sbRawText.Length);
+						}
+
+						if(ch == '(')
+						{
+							ReadParenthesized(cs, sbRawText);
+							if(sbRawText.Length > 0)
+								vParts.Add(sbRawText.ToString());
+							sbRawText.Remove(0, sbRawText.Length);
+						}
+						else if(ch == '{')
+						{
+							ReadBraced(cs, sbRawText);
+							if(sbRawText.Length > 0)
+								vParts.Add(sbRawText.ToString());
+							sbRawText.Remove(0, sbRawText.Length);
+						}
+						else if(ch == ' ')
+						{
+							vParts.Add(" ");
+							sbRawText.Remove(0, sbRawText.Length);
+						}
+						else if(ch == '\t')
+						{
+							vParts.Add("\t");
+							sbRawText.Remove(0, sbRawText.Length);
+						}
+						else sbRawText.Append(ch);
+						break;
+
+					default:
+						sbRawText.Append(ch);
+						break;
+				}
+			}
+
+			if(sbRawText.Length > 0) vParts.Add(sbRawText.ToString());
+			return vParts;
+		}
+
+		private static void ReadParenthesized(CharStream csIn, StringBuilder sbBuffer)
+		{
+			sbBuffer.Append('(');
+
+			while(true)
+			{
+				char ch = csIn.ReadChar();
+
+				if((ch == char.MinValue) || (ch == '}'))
+					throw new FormatException();
+				else if(ch == ')')
+				{
+					sbBuffer.Append(ch);
+					break;
+				}
+				else if(ch == '(')
+					ReadParenthesized(csIn, sbBuffer);
+				else if(ch == '{')
+					ReadBraced(csIn, sbBuffer);
+				else sbBuffer.Append(ch);
+			}
+		}
+
+		private static void ReadBraced(CharStream csIn, StringBuilder sbBuffer)
+		{
+			sbBuffer.Append('{');
+
+			char chFirst = csIn.ReadChar();
+			if(chFirst == char.MinValue)
+				throw new FormatException();
+
+			char chSecond = csIn.ReadChar();
+			if(chSecond == char.MinValue)
+				throw new FormatException();
+
+			if((chFirst == '{') && (chSecond == '}'))
+			{
+				sbBuffer.Append(@"{}");
+				return;
+			}
+			else if((chFirst == '}') && (chSecond == '}'))
+			{
+				sbBuffer.Append(@"}}");
+				return;
+			}
+			else if(chSecond == '}')
+			{
+				sbBuffer.Append(chFirst);
+				sbBuffer.Append(chSecond);
+				return;
+			}
+
+			sbBuffer.Append(chFirst);
+			sbBuffer.Append(chSecond);
+
+			while(true)
+			{
+				char ch = csIn.ReadChar();
+
+				if((ch == char.MinValue) || (ch == ')'))
+					throw new FormatException();
+				else if(ch == '(')
+					ReadParenthesized(csIn, sbBuffer);
+				else if(ch == '{')
+					ReadBraced(csIn, sbBuffer);
+				else if(ch == '}')
+				{
+					sbBuffer.Append(ch);
+					break;
+				}
+				else sbBuffer.Append(ch);
+			}
+		}
+
+		private static void MixedTransfer(string strText)
+		{
+			StringBuilder sbKeys = new StringBuilder();
+			StringBuilder sbClip = new StringBuilder();
+			
+			// The string should be split randomly, but the same each
+			// time this function is called. Otherwise an attacker could
+			// get information by observing different splittings each
+			// time auto-type is performed. Therefore, compute the random
+			// seed based on the string to be auto-typed.
+			Random r = new Random(GetRandomSeed(strText));
+
+			foreach(char ch in strText)
+			{
+				if(r.Next(0, 2) == 0)
+				{
+					sbClip.Append(ch);
+					sbKeys.Append(@"{RIGHT}");
+				}
+				else sbKeys.Append(ch);
+			}
+
+			string strClip = sbClip.ToString();
+			string strKeys = sbKeys.ToString();
+
+			if(strClip.Length > 0)
+				strKeys = @"^v{LEFT " + strClip.Length.ToString() +
+					@"}" + strKeys;
+
+			if(strClip.Length > 0) Clipboard.SetText(strClip);
+			else Clipboard.Clear();
+
+			if(strKeys.Length > 0) SendKeys.SendWait(strKeys);
+
+			Clipboard.Clear();
+		}
+
+		private static int GetRandomSeed(string strText)
+		{
+			int nSeed = 3;
+
+			unchecked
+			{
+				foreach(char ch in strText)
+					nSeed = nSeed * 13 + ch;
+			}
+
+			// Prevent overflow (see Random class constructor)
+			if(nSeed == int.MinValue) nSeed = 13;
+			return nSeed;
 		}
 	}
 }

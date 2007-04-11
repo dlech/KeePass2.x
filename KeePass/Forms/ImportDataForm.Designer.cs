@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportDataForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -46,41 +45,55 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(378, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(210, 452);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(291, 452);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_grpFormat
 			// 
 			this.m_grpFormat.Controls.Add(this.m_lvFormats);
-			resources.ApplyResources(this.m_grpFormat, "m_grpFormat");
+			this.m_grpFormat.Location = new System.Drawing.Point(12, 75);
 			this.m_grpFormat.Name = "m_grpFormat";
+			this.m_grpFormat.Size = new System.Drawing.Size(354, 297);
+			this.m_grpFormat.TabIndex = 3;
 			this.m_grpFormat.TabStop = false;
+			this.m_grpFormat.Text = "Format";
 			// 
 			// m_lvFormats
 			// 
 			this.m_lvFormats.FullRowSelect = true;
 			this.m_lvFormats.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.m_lvFormats.HideSelection = false;
-			resources.ApplyResources(this.m_lvFormats, "m_lvFormats");
+			this.m_lvFormats.Location = new System.Drawing.Point(9, 19);
 			this.m_lvFormats.MultiSelect = false;
 			this.m_lvFormats.Name = "m_lvFormats";
+			this.m_lvFormats.Size = new System.Drawing.Size(337, 270);
+			this.m_lvFormats.TabIndex = 1;
 			this.m_lvFormats.UseCompatibleStateImageBehavior = false;
 			this.m_lvFormats.View = System.Windows.Forms.View.Details;
 			this.m_lvFormats.SelectedIndexChanged += new System.EventHandler(this.OnFormatsSelectedIndexChanged);
@@ -91,40 +104,56 @@
 			this.m_grpFile.Controls.Add(this.m_btnSelFile);
 			this.m_grpFile.Controls.Add(this.m_tbFile);
 			this.m_grpFile.Controls.Add(this.m_lblFile);
-			resources.ApplyResources(this.m_grpFile, "m_grpFile");
+			this.m_grpFile.Location = new System.Drawing.Point(12, 378);
 			this.m_grpFile.Name = "m_grpFile";
+			this.m_grpFile.Size = new System.Drawing.Size(354, 68);
+			this.m_grpFile.TabIndex = 4;
 			this.m_grpFile.TabStop = false;
+			this.m_grpFile.Text = "File";
 			// 
 			// m_lnkFileFormats
 			// 
-			resources.ApplyResources(this.m_lnkFileFormats, "m_lnkFileFormats");
+			this.m_lnkFileFormats.AutoSize = true;
+			this.m_lnkFileFormats.Location = new System.Drawing.Point(110, 45);
 			this.m_lnkFileFormats.Name = "m_lnkFileFormats";
+			this.m_lnkFileFormats.Size = new System.Drawing.Size(182, 13);
+			this.m_lnkFileFormats.TabIndex = 4;
 			this.m_lnkFileFormats.TabStop = true;
+			this.m_lnkFileFormats.Text = "Help: Configuring source applications";
 			this.m_lnkFileFormats.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkFileFormats);
 			// 
 			// m_btnSelFile
 			// 
 			this.m_btnSelFile.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
-			resources.ApplyResources(this.m_btnSelFile, "m_btnSelFile");
+			this.m_btnSelFile.Location = new System.Drawing.Point(316, 17);
 			this.m_btnSelFile.Name = "m_btnSelFile";
+			this.m_btnSelFile.Size = new System.Drawing.Size(32, 23);
+			this.m_btnSelFile.TabIndex = 2;
 			this.m_btnSelFile.UseVisualStyleBackColor = true;
 			this.m_btnSelFile.Click += new System.EventHandler(this.OnBtnSelFile);
 			// 
 			// m_tbFile
 			// 
-			resources.ApplyResources(this.m_tbFile, "m_tbFile");
+			this.m_tbFile.Location = new System.Drawing.Point(113, 19);
 			this.m_tbFile.Name = "m_tbFile";
+			this.m_tbFile.Size = new System.Drawing.Size(197, 20);
+			this.m_tbFile.TabIndex = 1;
 			this.m_tbFile.TextChanged += new System.EventHandler(this.OnImportFileTextChanged);
 			// 
 			// m_lblFile
 			// 
-			resources.ApplyResources(this.m_lblFile, "m_lblFile");
+			this.m_lblFile.AutoSize = true;
+			this.m_lblFile.Location = new System.Drawing.Point(6, 22);
 			this.m_lblFile.Name = "m_lblFile";
+			this.m_lblFile.Size = new System.Drawing.Size(101, 13);
+			this.m_lblFile.TabIndex = 0;
+			this.m_lblFile.Text = "Files to be imported:";
 			// 
 			// ImportDataForm
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(378, 487);
 			this.Controls.Add(this.m_grpFile);
 			this.Controls.Add(this.m_grpFormat);
 			this.Controls.Add(this.m_btnCancel);
@@ -136,6 +165,8 @@
 			this.Name = "ImportDataForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "<DYN>";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

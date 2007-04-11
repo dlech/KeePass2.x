@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 
+using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -235,6 +236,7 @@ namespace KeePassLib.Keys
 			for(i = 0; i < 16; i++) pbIV[i] = 0;
 			for(i = 0; i < 32; i++) pbNewKey[i] = pbOriginalKey32[i];
 
+			// Try to use the native library first
 			if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
 				return (new SHA256Managed()).ComputeHash(pbNewKey);
 
@@ -290,7 +292,7 @@ namespace KeePassLib.Keys
 				pbNewKey[i] = (byte)i;
 			}
 
-			// Try native method.
+			// Try native method
 			if(NativeLib.TransformKey256Timed(pbNewKey, pbKey, ref uRounds, uMilliseconds / 1000))
 				return uRounds;
 
@@ -320,7 +322,7 @@ namespace KeePassLib.Keys
 				}
 
 				uRounds += uStep;
-				if(uRounds < uStep) // Overflow check.
+				if(uRounds < uStep) // Overflow check
 				{
 					uRounds = ulong.MaxValue;
 					break;
@@ -347,6 +349,11 @@ namespace KeePassLib.Keys
 			}
 		}
 
+		/// <summary>
+		/// Construct a new invalid composite key exception.
+		/// </summary>
+		/// <param name="excpInner">Optional inner exception. May be
+		/// <c>null</c>.</param>
 		public InvalidCompositeKeyException(Exception excpInner)
 		{
 			m_exInner = excpInner;

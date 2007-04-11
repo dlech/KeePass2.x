@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace KeePassLib.Utility
+namespace KeePassLib.Native
 {
 	/// <summary>
 	/// Interface to native library (library containing fast versions of
@@ -42,16 +42,6 @@ namespace KeePassLib.Utility
 			set { m_bAllowNative = value; }
 		}
 
-		[DllImport("KeePassNtv.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
-			UInt64 uRounds);
-
-		[DllImport("KeePassNtv.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKeyTimed(IntPtr pBuf256, IntPtr pKey256,
-			ref UInt64 puRounds, UInt32 uSeconds);
-
 		/// <summary>
 		/// Determine if the native library is installed.
 		/// </summary>
@@ -66,7 +56,7 @@ namespace KeePassLib.Utility
 
 			// Temporarily allow native functions and try to load the library
 			m_bAllowNative = true;
-			bool bResult = NativeLib.TransformKey256(pDummy0, pDummy1, 16);
+			bool bResult = TransformKey256(pDummy0, pDummy1, 16);
 
 			// Pop native state and return result
 			m_bAllowNative = bCachedNativeState;
@@ -80,20 +70,21 @@ namespace KeePassLib.Utility
 		/// <param name="pKey256">Key to use in the transformation.</param>
 		/// <param name="uRounds">Number of transformation rounds.</param>
 		/// <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
-		public static bool TransformKey256(byte[] pBuf256, byte[] pKey256, UInt64 uRounds)
+		public static bool TransformKey256(byte[] pBuf256, byte[] pKey256,
+			ulong uRounds)
 		{
 			if(m_bAllowNative == false) return false;
 
-			KeyValuePair<IntPtr, IntPtr> kvp = NativeLib.PrepareArrays(pBuf256, pKey256);
+			KeyValuePair<IntPtr, IntPtr> kvp = PrepareArrays256(pBuf256, pKey256);
 			bool bResult = false;
 
 			try
 			{
-				bResult = NativeLib.TransformKey(kvp.Key, kvp.Value, uRounds);
+				bResult = NativeMethods.TransformKey(kvp.Key, kvp.Value, uRounds);
 			}
 			catch(Exception) { bResult = false; }
 
-			if(bResult) NativeLib.GetBuffers256(kvp, pBuf256, pKey256);
+			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
 			NativeLib.FreeArrays(kvp);
 			return bResult;
@@ -107,27 +98,29 @@ namespace KeePassLib.Utility
 		/// <param name="puRounds">Number of transformations done.</param>
 		/// <param name="uSeconds">Number of seconds to perform the benchmark.</param>
 		/// <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
-		public static bool TransformKey256Timed(byte[] pBuf256, byte[] pKey256, ref UInt64 puRounds, uint uSeconds)
+		public static bool TransformKey256Timed(byte[] pBuf256, byte[] pKey256,
+			ref ulong puRounds, uint uSeconds)
 		{
 			if(m_bAllowNative == false) return false;
 
-			KeyValuePair<IntPtr, IntPtr> kvp = NativeLib.PrepareArrays(pBuf256, pKey256);
+			KeyValuePair<IntPtr, IntPtr> kvp = PrepareArrays256(pBuf256, pKey256);
 			bool bResult = false;
 
 			try
 			{
-				bResult = NativeLib.TransformKeyTimed(kvp.Key, kvp.Value, ref puRounds, uSeconds);
+				bResult = NativeMethods.TransformKeyTimed(kvp.Key, kvp.Value, ref puRounds, uSeconds);
 			}
 			catch(Exception) { Debug.Assert(false); bResult = false; }
 
 			Debug.Assert(bResult);
-			if(bResult) NativeLib.GetBuffers256(kvp, pBuf256, pKey256);
+			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
 			NativeLib.FreeArrays(kvp);
 			return bResult;
 		}
 
-		private static KeyValuePair<IntPtr, IntPtr> PrepareArrays(byte[] pBuf256, byte[] pKey256)
+		private static KeyValuePair<IntPtr, IntPtr> PrepareArrays256(byte[] pBuf256,
+			byte[] pKey256)
 		{
 			Debug.Assert((pBuf256 != null) && (pBuf256.Length == 32));
 			if((pBuf256 == null) || (pBuf256.Length != 32)) throw new ArgumentNullException();
@@ -144,7 +137,8 @@ namespace KeePassLib.Utility
 			return new KeyValuePair<IntPtr, IntPtr>(hBuf, hKey);
 		}
 
-		private static void GetBuffers256(KeyValuePair<IntPtr, IntPtr> kvpSource, byte[] pbDestBuf, byte[] pbDestKey)
+		private static void GetBuffers256(KeyValuePair<IntPtr, IntPtr> kvpSource,
+			byte[] pbDestBuf, byte[] pbDestKey)
 		{
 			if(kvpSource.Key != IntPtr.Zero)
 				Marshal.Copy(kvpSource.Key, pbDestBuf, 0, pbDestBuf.Length);

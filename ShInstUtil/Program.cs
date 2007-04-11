@@ -35,7 +35,9 @@ namespace ShInstUtil
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			
+
+			if((args == null) || (args.Length == 0)) return;
+
 			string strCmd = args[0];
 			if((strCmd == null) || (strCmd.Length == 0)) return;
 			strCmd = strCmd.ToLower();

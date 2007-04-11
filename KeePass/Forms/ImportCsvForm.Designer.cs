@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportCsvForm));
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_lblFileEncoding = new System.Windows.Forms.Label();
@@ -69,38 +68,50 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(702, 421);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "&Import";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(702, 450);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_lblFileEncoding
 			// 
-			resources.ApplyResources(this.m_lblFileEncoding, "m_lblFileEncoding");
+			this.m_lblFileEncoding.AutoSize = true;
+			this.m_lblFileEncoding.Location = new System.Drawing.Point(9, 15);
 			this.m_lblFileEncoding.Name = "m_lblFileEncoding";
+			this.m_lblFileEncoding.Size = new System.Drawing.Size(74, 13);
+			this.m_lblFileEncoding.TabIndex = 2;
+			this.m_lblFileEncoding.Text = "File Encoding:";
 			// 
 			// m_cmbEncoding
 			// 
 			this.m_cmbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbEncoding.FormattingEnabled = true;
 			this.m_cmbEncoding.Items.AddRange(new object[] {
-            resources.GetString("m_cmbEncoding.Items"),
-            resources.GetString("m_cmbEncoding.Items1"),
-            resources.GetString("m_cmbEncoding.Items2"),
-            resources.GetString("m_cmbEncoding.Items3"),
-            resources.GetString("m_cmbEncoding.Items4"),
-            resources.GetString("m_cmbEncoding.Items5"),
-            resources.GetString("m_cmbEncoding.Items6")});
-			resources.ApplyResources(this.m_cmbEncoding, "m_cmbEncoding");
+            "Default ANSI (System)",
+            "ASCII",
+            "UTF-7",
+            "UTF-8",
+            "UTF-32",
+            "Unicode",
+            "Big Endian Unicode"});
+			this.m_cmbEncoding.Location = new System.Drawing.Point(113, 12);
 			this.m_cmbEncoding.Name = "m_cmbEncoding";
+			this.m_cmbEncoding.Size = new System.Drawing.Size(220, 21);
+			this.m_cmbEncoding.TabIndex = 3;
 			this.m_cmbEncoding.SelectedIndexChanged += new System.EventHandler(this.OnCmbEncodingSelectedIndexChanged);
 			// 
 			// m_lvPreview
@@ -115,54 +126,71 @@
             this.m_chCustom2,
             this.m_chCustom3});
 			this.m_lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			resources.ApplyResources(this.m_lvPreview, "m_lvPreview");
+			this.m_lvPreview.Location = new System.Drawing.Point(12, 233);
 			this.m_lvPreview.Name = "m_lvPreview";
 			this.m_lvPreview.ShowItemToolTips = true;
+			this.m_lvPreview.Size = new System.Drawing.Size(684, 240);
+			this.m_lvPreview.TabIndex = 14;
 			this.m_lvPreview.UseCompatibleStateImageBehavior = false;
 			this.m_lvPreview.View = System.Windows.Forms.View.Details;
 			// 
 			// m_chTitle
 			// 
-			resources.ApplyResources(this.m_chTitle, "m_chTitle");
+			this.m_chTitle.Text = "Title";
+			this.m_chTitle.Width = 120;
 			// 
 			// m_chUser
 			// 
-			resources.ApplyResources(this.m_chUser, "m_chUser");
+			this.m_chUser.Text = "User Name";
+			this.m_chUser.Width = 120;
 			// 
 			// m_chPassword
 			// 
-			resources.ApplyResources(this.m_chPassword, "m_chPassword");
+			this.m_chPassword.Text = "Password";
+			this.m_chPassword.Width = 120;
 			// 
 			// m_chURL
 			// 
-			resources.ApplyResources(this.m_chURL, "m_chURL");
+			this.m_chURL.Text = "URL";
+			this.m_chURL.Width = 120;
 			// 
 			// m_chNotes
 			// 
-			resources.ApplyResources(this.m_chNotes, "m_chNotes");
+			this.m_chNotes.Text = "Notes";
+			this.m_chNotes.Width = 120;
 			// 
 			// m_chCustom1
 			// 
-			resources.ApplyResources(this.m_chCustom1, "m_chCustom1");
+			this.m_chCustom1.Text = "Custom 1";
+			this.m_chCustom1.Width = 120;
 			// 
 			// m_chCustom2
 			// 
-			resources.ApplyResources(this.m_chCustom2, "m_chCustom2");
+			this.m_chCustom2.Text = "Custom 2";
+			this.m_chCustom2.Width = 120;
 			// 
 			// m_chCustom3
 			// 
-			resources.ApplyResources(this.m_chCustom3, "m_chCustom3");
+			this.m_chCustom3.Text = "Custom 3";
+			this.m_chCustom3.Width = 120;
 			// 
 			// m_tbSourcePreview
 			// 
-			resources.ApplyResources(this.m_tbSourcePreview, "m_tbSourcePreview");
+			this.m_tbSourcePreview.Location = new System.Drawing.Point(113, 39);
+			this.m_tbSourcePreview.Multiline = true;
 			this.m_tbSourcePreview.Name = "m_tbSourcePreview";
 			this.m_tbSourcePreview.ReadOnly = true;
+			this.m_tbSourcePreview.Size = new System.Drawing.Size(664, 90);
+			this.m_tbSourcePreview.TabIndex = 5;
 			// 
 			// m_lblSourcePreview
 			// 
-			resources.ApplyResources(this.m_lblSourcePreview, "m_lblSourcePreview");
+			this.m_lblSourcePreview.AutoSize = true;
+			this.m_lblSourcePreview.Location = new System.Drawing.Point(9, 42);
 			this.m_lblSourcePreview.Name = "m_lblSourcePreview";
+			this.m_lblSourcePreview.Size = new System.Drawing.Size(70, 13);
+			this.m_lblSourcePreview.TabIndex = 4;
+			this.m_lblSourcePreview.Text = "Source Data:";
 			// 
 			// m_lvHeaderOrder
 			// 
@@ -180,107 +208,143 @@
             this.m_chOrderIgnore1,
             this.m_chOrderIgnore2});
 			this.m_lvHeaderOrder.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			resources.ApplyResources(this.m_lvHeaderOrder, "m_lvHeaderOrder");
+			this.m_lvHeaderOrder.Location = new System.Drawing.Point(113, 135);
 			this.m_lvHeaderOrder.Name = "m_lvHeaderOrder";
+			this.m_lvHeaderOrder.Size = new System.Drawing.Size(664, 24);
+			this.m_lvHeaderOrder.TabIndex = 7;
 			this.m_lvHeaderOrder.UseCompatibleStateImageBehavior = false;
 			this.m_lvHeaderOrder.View = System.Windows.Forms.View.Details;
 			// 
 			// m_chOrderTitle
 			// 
-			resources.ApplyResources(this.m_chOrderTitle, "m_chOrderTitle");
+			this.m_chOrderTitle.Text = "Title";
+			this.m_chOrderTitle.Width = 40;
 			// 
 			// m_chOrderUser
 			// 
-			resources.ApplyResources(this.m_chOrderUser, "m_chOrderUser");
+			this.m_chOrderUser.Text = "User Name";
+			this.m_chOrderUser.Width = 70;
 			// 
 			// m_chOrderPassword
 			// 
-			resources.ApplyResources(this.m_chOrderPassword, "m_chOrderPassword");
+			this.m_chOrderPassword.Text = "Password";
+			this.m_chOrderPassword.Width = 65;
 			// 
 			// m_chOrderURL
 			// 
-			resources.ApplyResources(this.m_chOrderURL, "m_chOrderURL");
+			this.m_chOrderURL.Text = "URL";
+			this.m_chOrderURL.Width = 42;
 			// 
 			// m_chOrderNotes
 			// 
-			resources.ApplyResources(this.m_chOrderNotes, "m_chOrderNotes");
+			this.m_chOrderNotes.Text = "Notes";
+			this.m_chOrderNotes.Width = 48;
 			// 
 			// m_chOrderCustom1
 			// 
-			resources.ApplyResources(this.m_chOrderCustom1, "m_chOrderCustom1");
+			this.m_chOrderCustom1.Text = "Custom 1";
 			// 
 			// m_chOrderCustom2
 			// 
-			resources.ApplyResources(this.m_chOrderCustom2, "m_chOrderCustom2");
+			this.m_chOrderCustom2.Text = "Custom 2";
 			// 
 			// m_chOrderCustom3
 			// 
-			resources.ApplyResources(this.m_chOrderCustom3, "m_chOrderCustom3");
+			this.m_chOrderCustom3.Text = "Custom 3";
 			// 
 			// m_chOrderIgnore0
 			// 
-			resources.ApplyResources(this.m_chOrderIgnore0, "m_chOrderIgnore0");
+			this.m_chOrderIgnore0.Text = "(Ignore)";
 			// 
 			// m_chOrderIgnore1
 			// 
-			resources.ApplyResources(this.m_chOrderIgnore1, "m_chOrderIgnore1");
+			this.m_chOrderIgnore1.Text = "(Ignore)";
 			// 
 			// m_chOrderIgnore2
 			// 
-			resources.ApplyResources(this.m_chOrderIgnore2, "m_chOrderIgnore2");
+			this.m_chOrderIgnore2.Text = "(Ignore)";
 			// 
 			// m_lblOrder
 			// 
-			resources.ApplyResources(this.m_lblOrder, "m_lblOrder");
+			this.m_lblOrder.AutoSize = true;
+			this.m_lblOrder.Location = new System.Drawing.Point(9, 141);
 			this.m_lblOrder.Name = "m_lblOrder";
+			this.m_lblOrder.Size = new System.Drawing.Size(95, 13);
+			this.m_lblOrder.TabIndex = 6;
+			this.m_lblOrder.Text = "Define Field Order:";
 			// 
 			// m_lblOrderHint
 			// 
-			resources.ApplyResources(this.m_lblOrderHint, "m_lblOrderHint");
+			this.m_lblOrderHint.AutoSize = true;
+			this.m_lblOrderHint.Location = new System.Drawing.Point(110, 162);
 			this.m_lblOrderHint.Name = "m_lblOrderHint";
+			this.m_lblOrderHint.Size = new System.Drawing.Size(489, 13);
+			this.m_lblOrderHint.TabIndex = 8;
+			this.m_lblOrderHint.Text = "Drag&&drop the columns to define the order of the fields in the CSV file. (Ignore" +
+				") columns will be ignored.";
 			// 
 			// m_lblPreview
 			// 
-			resources.ApplyResources(this.m_lblPreview, "m_lblPreview");
+			this.m_lblPreview.AutoSize = true;
+			this.m_lblPreview.Location = new System.Drawing.Point(9, 217);
 			this.m_lblPreview.Name = "m_lblPreview";
+			this.m_lblPreview.Size = new System.Drawing.Size(127, 13);
+			this.m_lblPreview.TabIndex = 12;
+			this.m_lblPreview.Text = "Imported Entries Preview:";
 			// 
 			// m_lblDelimiter
 			// 
-			resources.ApplyResources(this.m_lblDelimiter, "m_lblDelimiter");
+			this.m_lblDelimiter.AutoSize = true;
+			this.m_lblDelimiter.Location = new System.Drawing.Point(9, 187);
 			this.m_lblDelimiter.Name = "m_lblDelimiter";
+			this.m_lblDelimiter.Size = new System.Drawing.Size(75, 13);
+			this.m_lblDelimiter.TabIndex = 9;
+			this.m_lblDelimiter.Text = "Field Delimiter:";
 			// 
 			// m_tbSepChar
 			// 
-			resources.ApplyResources(this.m_tbSepChar, "m_tbSepChar");
+			this.m_tbSepChar.Location = new System.Drawing.Point(113, 184);
 			this.m_tbSepChar.Name = "m_tbSepChar";
+			this.m_tbSepChar.Size = new System.Drawing.Size(35, 20);
+			this.m_tbSepChar.TabIndex = 10;
 			this.m_tbSepChar.TextChanged += new System.EventHandler(this.OnDelimiterTextChanged);
 			// 
 			// m_cbDoubleQuoteToSingle
 			// 
-			resources.ApplyResources(this.m_cbDoubleQuoteToSingle, "m_cbDoubleQuoteToSingle");
+			this.m_cbDoubleQuoteToSingle.AutoSize = true;
+			this.m_cbDoubleQuoteToSingle.Location = new System.Drawing.Point(296, 186);
 			this.m_cbDoubleQuoteToSingle.Name = "m_cbDoubleQuoteToSingle";
+			this.m_cbDoubleQuoteToSingle.Size = new System.Drawing.Size(247, 17);
+			this.m_cbDoubleQuoteToSingle.TabIndex = 11;
+			this.m_cbDoubleQuoteToSingle.Text = "Replace Double Quote (\"\") By Single Quote (\")";
 			this.m_cbDoubleQuoteToSingle.UseVisualStyleBackColor = true;
 			this.m_cbDoubleQuoteToSingle.CheckedChanged += new System.EventHandler(this.OnDoubleQuoteCheckedChanged);
 			// 
 			// m_pbRender
 			// 
-			resources.ApplyResources(this.m_pbRender, "m_pbRender");
+			this.m_pbRender.Location = new System.Drawing.Point(142, 217);
 			this.m_pbRender.Name = "m_pbRender";
+			this.m_pbRender.Size = new System.Drawing.Size(554, 13);
 			this.m_pbRender.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbRender.TabIndex = 13;
 			// 
 			// m_btnPreviewRefresh
 			// 
-			resources.ApplyResources(this.m_btnPreviewRefresh, "m_btnPreviewRefresh");
+			this.m_btnPreviewRefresh.Location = new System.Drawing.Point(702, 233);
 			this.m_btnPreviewRefresh.Name = "m_btnPreviewRefresh";
+			this.m_btnPreviewRefresh.Size = new System.Drawing.Size(75, 23);
+			this.m_btnPreviewRefresh.TabIndex = 15;
+			this.m_btnPreviewRefresh.Text = "&Refresh";
 			this.m_btnPreviewRefresh.UseVisualStyleBackColor = true;
 			this.m_btnPreviewRefresh.Click += new System.EventHandler(this.OnBtnPreviewRefresh);
 			// 
 			// ImportCsvForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(789, 485);
 			this.Controls.Add(this.m_btnPreviewRefresh);
 			this.Controls.Add(this.m_pbRender);
 			this.Controls.Add(this.m_cbDoubleQuoteToSingle);
@@ -304,6 +368,8 @@
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Generic CSV Importer";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.ResumeLayout(false);

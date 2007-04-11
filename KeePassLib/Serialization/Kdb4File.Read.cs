@@ -73,23 +73,43 @@ namespace KeePassLib.Serialization
 			m_format = kdbFormat;
 			m_slLogger = slLogger;
 
+			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
+
 			try
 			{
 				BinaryReader br = null;
+				BinaryReader brDecrypted = null;
 				Stream readerStream = null;
 
 				if(kdbFormat == Kdb4Format.Default)
 				{
-					br = new BinaryReader(sSource);
+					br = new BinaryReader(sSource, encNoBom);
 					ReadHeader(br);
 
 					Stream sDecrypted = AttachStreamDecryptor(sSource);
 					if((sDecrypted == null) || (sDecrypted == sSource))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
+					brDecrypted = new BinaryReader(sDecrypted, encNoBom);
+					byte[] pbStoredStartBytes = brDecrypted.ReadBytes(32);
+
+					if((pbStoredStartBytes == null) || (pbStoredStartBytes.Length != 32) ||
+						(m_pbStreamStartBytes == null) || (m_pbStreamStartBytes.Length != 32))
+					{
+						throw new InvalidDataException();
+					}
+
+					for(int iStart = 0; iStart < 32; ++iStart)
+					{
+						if(pbStoredStartBytes[iStart] != m_pbStreamStartBytes[iStart])
+							throw new InvalidCompositeKeyException(null);
+					}
+
+					Stream sHashed = new HashedBlockStream(sDecrypted, false);
+
 					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-						readerStream = new GZipStream(sDecrypted, CompressionMode.Decompress);
-					else readerStream = sDecrypted;
+						readerStream = new GZipStream(sHashed, CompressionMode.Decompress);
+					else readerStream = sHashed;
 				}
 				else if(kdbFormat == Kdb4Format.PlainXml)
 					readerStream = sSource;
@@ -107,23 +127,18 @@ namespace KeePassLib.Serialization
 				}
 				else m_randomStream = null; // No random stream for plain text files
 
-				try
-				{
-					ReadXmlStreamed(readerStream, sSource);
-					// ReadXmlDom(readerStream);
-				}
-				catch(Exception exRead)
-				{
-					throw new InvalidCompositeKeyException(exRead);
-				}
+				ReadXmlStreamed(readerStream, sSource);
+				// ReadXmlDom(readerStream);
 
+				GC.KeepAlive(brDecrypted);
 				GC.KeepAlive(br);
+				
 				sSource.Close();
 			}
-			catch(Exception excp)
+			catch(Exception)
 			{
 				sSource.Close();
-				throw excp; // Rethrow to parent
+				throw;
 			}
 		}
 
@@ -205,6 +220,10 @@ namespace KeePassLib.Serialization
 
 				case Kdb4HeaderFieldID.ProtectedStreamKey:
 					m_pbProtectedStreamKey = pbData;
+					break;
+
+				case Kdb4HeaderFieldID.StreamStartBytes:
+					m_pbStreamStartBytes = pbData;
 					break;
 
 				default:

@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArcFourCipher.cs" />
+    <Compile Include="ArcFourCipherExt.cs" />
     <Compile Include="ArcFourEngine.cs" />
     <Compile Include="ArcFourStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

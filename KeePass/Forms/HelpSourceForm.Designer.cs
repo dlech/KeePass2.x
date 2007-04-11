@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpSourceForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -43,67 +42,101 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(418, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(250, 240);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(331, 240);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_radioLocal
 			// 
-			resources.ApplyResources(this.m_radioLocal, "m_radioLocal");
+			this.m_radioLocal.AutoSize = true;
+			this.m_radioLocal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioLocal.Location = new System.Drawing.Point(12, 101);
 			this.m_radioLocal.Name = "m_radioLocal";
+			this.m_radioLocal.Size = new System.Drawing.Size(110, 17);
+			this.m_radioLocal.TabIndex = 3;
 			this.m_radioLocal.TabStop = true;
+			this.m_radioLocal.Text = "Local Help File";
 			this.m_radioLocal.UseVisualStyleBackColor = true;
 			// 
 			// m_radioOnline
 			// 
-			resources.ApplyResources(this.m_radioOnline, "m_radioOnline");
+			this.m_radioOnline.AutoSize = true;
+			this.m_radioOnline.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioOnline.Location = new System.Drawing.Point(12, 162);
 			this.m_radioOnline.Name = "m_radioOnline";
+			this.m_radioOnline.Size = new System.Drawing.Size(132, 17);
+			this.m_radioOnline.TabIndex = 5;
 			this.m_radioOnline.TabStop = true;
+			this.m_radioOnline.Text = "Online Help Center";
 			this.m_radioOnline.UseVisualStyleBackColor = true;
 			// 
 			// m_lblLocal
 			// 
-			resources.ApplyResources(this.m_lblLocal, "m_lblLocal");
+			this.m_lblLocal.Location = new System.Drawing.Point(28, 121);
 			this.m_lblLocal.Name = "m_lblLocal";
+			this.m_lblLocal.Size = new System.Drawing.Size(378, 28);
+			this.m_lblLocal.TabIndex = 4;
+			this.m_lblLocal.Text = "The local help file is a snapshot of the product documentation at the point when " +
+				"this product version was published. It is not updated automatically.";
 			// 
 			// m_lblOnline
 			// 
-			resources.ApplyResources(this.m_lblOnline, "m_lblOnline");
+			this.m_lblOnline.Location = new System.Drawing.Point(28, 182);
 			this.m_lblOnline.Name = "m_lblOnline";
+			this.m_lblOnline.Size = new System.Drawing.Size(378, 29);
+			this.m_lblOnline.TabIndex = 6;
+			this.m_lblOnline.Text = "The online help center always contains the latest version of the product document" +
+				"ation. Internet connection is required.";
 			// 
 			// m_lblIntro
 			// 
-			resources.ApplyResources(this.m_lblIntro, "m_lblIntro");
+			this.m_lblIntro.AutoSize = true;
+			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
+			this.m_lblIntro.Size = new System.Drawing.Size(367, 13);
+			this.m_lblIntro.TabIndex = 2;
+			this.m_lblIntro.Text = "Use the following help source when a Help button within KeePass is clicked:";
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			resources.ApplyResources(this.m_lblSeparator, "m_lblSeparator");
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 230);
 			this.m_lblSeparator.Name = "m_lblSeparator";
+			this.m_lblSeparator.Size = new System.Drawing.Size(418, 2);
+			this.m_lblSeparator.TabIndex = 7;
 			// 
 			// HelpSourceForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(418, 275);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lblIntro);
 			this.Controls.Add(this.m_lblOnline);
@@ -119,6 +152,8 @@
 			this.Name = "HelpSourceForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "<DYN>";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

@@ -39,6 +39,12 @@
 			this.m_ctxGroupFind = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupPrint = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupSep3 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxGroupRearrange = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupMoveToTop = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupMoveOneUp = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupMoveOneDown = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ilClientIcons = new System.Windows.Forms.ImageList(this.components);
 			this.m_ctxPwList = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +53,7 @@
 			this.m_ctxEntryOpenUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyCustomString = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntryBinaries = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySaveAttachedFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryPerformAutoType = new System.Windows.Forms.ToolStripMenuItem();
@@ -170,11 +177,11 @@
 			this.m_menuToolsOptions = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelp = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuHelpHomepage = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuHelpDonate = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuHelpSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuHelpContents = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSelectSource = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuHelpSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuHelpHomepage = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuHelpDonate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuHelpCheckForUpdate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep2 = new System.Windows.Forms.ToolStripSeparator();
@@ -243,59 +250,119 @@
             this.m_ctxGroupSep1,
             this.m_ctxGroupFind,
             this.m_ctxGroupSep2,
-            this.m_ctxGroupPrint});
+            this.m_ctxGroupPrint,
+            this.m_ctxGroupSep3,
+            this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			resources.ApplyResources(this.m_ctxGroupList, "m_ctxGroupList");
+			this.m_ctxGroupList.Size = new System.Drawing.Size(185, 160);
 			// 
 			// m_ctxGroupAdd
 			// 
 			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_Sent_Mail;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
-			resources.ApplyResources(this.m_ctxGroupAdd, "m_ctxGroupAdd");
+			this.m_ctxGroupAdd.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupAdd.Text = "&Add Group";
 			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
 			// 
 			// m_ctxGroupSep0
 			// 
 			this.m_ctxGroupSep0.Name = "m_ctxGroupSep0";
-			resources.ApplyResources(this.m_ctxGroupSep0, "m_ctxGroupSep0");
+			this.m_ctxGroupSep0.Size = new System.Drawing.Size(181, 6);
 			// 
 			// m_ctxGroupEdit
 			// 
 			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
 			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
-			resources.ApplyResources(this.m_ctxGroupEdit, "m_ctxGroupEdit");
+			this.m_ctxGroupEdit.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupEdit.Text = "&Edit Group";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
 			// 
 			// m_ctxGroupDelete
 			// 
 			this.m_ctxGroupDelete.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
-			resources.ApplyResources(this.m_ctxGroupDelete, "m_ctxGroupDelete");
+			this.m_ctxGroupDelete.ShortcutKeyDisplayString = "Del";
+			this.m_ctxGroupDelete.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupDelete.Text = "&Delete Group";
 			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
 			// 
 			// m_ctxGroupSep1
 			// 
 			this.m_ctxGroupSep1.Name = "m_ctxGroupSep1";
-			resources.ApplyResources(this.m_ctxGroupSep1, "m_ctxGroupSep1");
+			this.m_ctxGroupSep1.Size = new System.Drawing.Size(181, 6);
 			// 
 			// m_ctxGroupFind
 			// 
 			this.m_ctxGroupFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_ctxGroupFind.Name = "m_ctxGroupFind";
-			resources.ApplyResources(this.m_ctxGroupFind, "m_ctxGroupFind");
+			this.m_ctxGroupFind.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupFind.Text = "Find In This Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnGroupsFind);
 			// 
 			// m_ctxGroupSep2
 			// 
 			this.m_ctxGroupSep2.Name = "m_ctxGroupSep2";
-			resources.ApplyResources(this.m_ctxGroupSep2, "m_ctxGroupSep2");
+			this.m_ctxGroupSep2.Size = new System.Drawing.Size(181, 6);
 			// 
 			// m_ctxGroupPrint
 			// 
 			this.m_ctxGroupPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxGroupPrint.Name = "m_ctxGroupPrint";
-			resources.ApplyResources(this.m_ctxGroupPrint, "m_ctxGroupPrint");
+			this.m_ctxGroupPrint.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupPrint.Text = "&Print Group";
 			this.m_ctxGroupPrint.Click += new System.EventHandler(this.OnGroupsPrint);
+			// 
+			// m_ctxGroupSep3
+			// 
+			this.m_ctxGroupSep3.Name = "m_ctxGroupSep3";
+			this.m_ctxGroupSep3.Size = new System.Drawing.Size(181, 6);
+			// 
+			// m_ctxGroupRearrange
+			// 
+			this.m_ctxGroupRearrange.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_ctxGroupMoveToTop,
+            this.m_ctxGroupMoveOneUp,
+            this.m_ctxGroupMoveOneDown,
+            this.m_ctxGroupMoveToBottom});
+			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
+			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(184, 22);
+			this.m_ctxGroupRearrange.Text = "&Rearrange";
+			// 
+			// m_ctxGroupMoveToTop
+			// 
+			this.m_ctxGroupMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
+			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
+			this.m_ctxGroupMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
+			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(251, 22);
+			this.m_ctxGroupMoveToTop.Text = "Move Group To &Top";
+			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
+			// 
+			// m_ctxGroupMoveOneUp
+			// 
+			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
+			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
+			this.m_ctxGroupMoveOneUp.ShortcutKeyDisplayString = "Alt+Up";
+			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(251, 22);
+			this.m_ctxGroupMoveOneUp.Text = "Move Group &One Up";
+			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
+			// 
+			// m_ctxGroupMoveOneDown
+			// 
+			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
+			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
+			this.m_ctxGroupMoveOneDown.ShortcutKeyDisplayString = "Alt+Down";
+			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(251, 22);
+			this.m_ctxGroupMoveOneDown.Text = "Mo&ve Group One Down";
+			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
+			// 
+			// m_ctxGroupMoveToBottom
+			// 
+			this.m_ctxGroupMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
+			this.m_ctxGroupMoveToBottom.Name = "m_ctxGroupMoveToBottom";
+			this.m_ctxGroupMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
+			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(251, 22);
+			this.m_ctxGroupMoveToBottom.Text = "Move Group To &Bottom";
+			this.m_ctxGroupMoveToBottom.Click += new System.EventHandler(this.OnGroupsMoveToBottom);
 			// 
 			// m_ilClientIcons
 			// 
@@ -374,6 +441,7 @@
             this.m_ctxEntryCopyPassword,
             this.m_ctxEntryUrl,
             this.m_ctxEntryCopyCustomString,
+            this.m_ctxEntryBinaries,
             this.m_ctxEntrySaveAttachedFiles,
             this.m_ctxEntrySep0,
             this.m_ctxEntryPerformAutoType,
@@ -388,21 +456,25 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			resources.ApplyResources(this.m_ctxPwList, "m_ctxPwList");
+			this.m_ctxPwList.Size = new System.Drawing.Size(216, 352);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
 			// 
 			this.m_ctxEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
 			this.m_ctxEntryCopyUserName.Name = "m_ctxEntryCopyUserName";
-			resources.ApplyResources(this.m_ctxEntryCopyUserName, "m_ctxEntryCopyUserName");
+			this.m_ctxEntryCopyUserName.ShortcutKeyDisplayString = "Ctrl+B";
+			this.m_ctxEntryCopyUserName.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryCopyUserName.Text = "Copy User &Name";
 			this.m_ctxEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
 			// 
 			// m_ctxEntryCopyPassword
 			// 
 			this.m_ctxEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
 			this.m_ctxEntryCopyPassword.Name = "m_ctxEntryCopyPassword";
-			resources.ApplyResources(this.m_ctxEntryCopyPassword, "m_ctxEntryCopyPassword");
+			this.m_ctxEntryCopyPassword.ShortcutKeyDisplayString = "Ctrl+C";
+			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryCopyPassword.Text = "Copy &Password";
 			this.m_ctxEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
 			// m_ctxEntryUrl
@@ -411,77 +483,97 @@
             this.m_ctxEntryOpenUrl,
             this.m_ctxEntryCopyUrl});
 			this.m_ctxEntryUrl.Name = "m_ctxEntryUrl";
-			resources.ApplyResources(this.m_ctxEntryUrl, "m_ctxEntryUrl");
+			this.m_ctxEntryUrl.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryUrl.Text = "&URL(s)";
 			// 
 			// m_ctxEntryOpenUrl
 			// 
 			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
-			resources.ApplyResources(this.m_ctxEntryOpenUrl, "m_ctxEntryOpenUrl");
+			this.m_ctxEntryOpenUrl.ShortcutKeyDisplayString = "Ctrl+U";
+			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(205, 22);
+			this.m_ctxEntryOpenUrl.Text = "&Open In Browser";
 			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
 			// 
 			// m_ctxEntryCopyUrl
 			// 
 			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxEntryCopyUrl.Name = "m_ctxEntryCopyUrl";
-			resources.ApplyResources(this.m_ctxEntryCopyUrl, "m_ctxEntryCopyUrl");
+			this.m_ctxEntryCopyUrl.Size = new System.Drawing.Size(205, 22);
+			this.m_ctxEntryCopyUrl.Text = "&Copy To Clipboard";
 			this.m_ctxEntryCopyUrl.Click += new System.EventHandler(this.OnEntryCopyURL);
 			// 
 			// m_ctxEntryCopyCustomString
 			// 
 			this.m_ctxEntryCopyCustomString.Name = "m_ctxEntryCopyCustomString";
-			resources.ApplyResources(this.m_ctxEntryCopyCustomString, "m_ctxEntryCopyCustomString");
+			this.m_ctxEntryCopyCustomString.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryCopyCustomString.Text = "Copy Custom &String";
+			// 
+			// m_ctxEntryBinaries
+			// 
+			this.m_ctxEntryBinaries.Name = "m_ctxEntryBinaries";
+			this.m_ctxEntryBinaries.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryBinaries.Text = "Show In Internal Viewer";
 			// 
 			// m_ctxEntrySaveAttachedFiles
 			// 
 			this.m_ctxEntrySaveAttachedFiles.Image = global::KeePass.Properties.Resources.B16x16_Attach;
 			this.m_ctxEntrySaveAttachedFiles.Name = "m_ctxEntrySaveAttachedFiles";
-			resources.ApplyResources(this.m_ctxEntrySaveAttachedFiles, "m_ctxEntrySaveAttachedFiles");
+			this.m_ctxEntrySaveAttachedFiles.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntrySaveAttachedFiles.Text = "Save Attached &File(s) To...";
 			this.m_ctxEntrySaveAttachedFiles.Click += new System.EventHandler(this.OnEntrySaveAttachments);
 			// 
 			// m_ctxEntrySep0
 			// 
 			this.m_ctxEntrySep0.Name = "m_ctxEntrySep0";
-			resources.ApplyResources(this.m_ctxEntrySep0, "m_ctxEntrySep0");
+			this.m_ctxEntrySep0.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_ctxEntryPerformAutoType
 			// 
 			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KRec_Record;
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
-			resources.ApplyResources(this.m_ctxEntryPerformAutoType, "m_ctxEntryPerformAutoType");
+			this.m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = "Ctrl+V";
+			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_ctxEntrySep1
 			// 
 			this.m_ctxEntrySep1.Name = "m_ctxEntrySep1";
-			resources.ApplyResources(this.m_ctxEntrySep1, "m_ctxEntrySep1");
+			this.m_ctxEntrySep1.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_ctxEntryAdd
 			// 
 			this.m_ctxEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_ctxEntryAdd.Name = "m_ctxEntryAdd";
-			resources.ApplyResources(this.m_ctxEntryAdd, "m_ctxEntryAdd");
+			this.m_ctxEntryAdd.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryAdd.Text = "&Add Entry...";
 			this.m_ctxEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
 			// m_ctxEntryEdit
 			// 
 			this.m_ctxEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_ctxEntryEdit.Name = "m_ctxEntryEdit";
-			resources.ApplyResources(this.m_ctxEntryEdit, "m_ctxEntryEdit");
+			this.m_ctxEntryEdit.ShortcutKeyDisplayString = "Ctrl+E";
+			this.m_ctxEntryEdit.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryEdit.Text = "&Edit/View Entry...";
 			this.m_ctxEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
 			// 
 			// m_ctxEntryDuplicate
 			// 
 			this.m_ctxEntryDuplicate.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
 			this.m_ctxEntryDuplicate.Name = "m_ctxEntryDuplicate";
-			resources.ApplyResources(this.m_ctxEntryDuplicate, "m_ctxEntryDuplicate");
+			this.m_ctxEntryDuplicate.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryDuplicate.Text = "Dupli&cate Entry";
 			this.m_ctxEntryDuplicate.Click += new System.EventHandler(this.OnEntryDuplicate);
 			// 
 			// m_ctxEntryDelete
 			// 
 			this.m_ctxEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_ctxEntryDelete.Name = "m_ctxEntryDelete";
-			resources.ApplyResources(this.m_ctxEntryDelete, "m_ctxEntryDelete");
+			this.m_ctxEntryDelete.ShortcutKeyDisplayString = "Del";
+			this.m_ctxEntryDelete.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryDelete.Text = "&Delete Entry";
 			this.m_ctxEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
 			// 
 			// m_ctxEntryMassModify
@@ -491,7 +583,8 @@
             this.m_ctxEntryMMSep0,
             this.m_ctxEntryMassSetIcon});
 			this.m_ctxEntryMassModify.Name = "m_ctxEntryMassModify";
-			resources.ApplyResources(this.m_ctxEntryMassModify, "m_ctxEntryMassModify");
+			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryMassModify.Text = "&Selected Entries";
 			// 
 			// m_ctxEntrySetColor
 			// 
@@ -505,77 +598,86 @@
             this.m_ctxEntryColorSep1,
             this.m_ctxEntryColorCustom});
 			this.m_ctxEntrySetColor.Name = "m_ctxEntrySetColor";
-			resources.ApplyResources(this.m_ctxEntrySetColor, "m_ctxEntrySetColor");
+			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(142, 22);
+			this.m_ctxEntrySetColor.Text = "Set &Color";
 			// 
 			// m_ctxEntryColorStandard
 			// 
 			this.m_ctxEntryColorStandard.Name = "m_ctxEntryColorStandard";
-			resources.ApplyResources(this.m_ctxEntryColorStandard, "m_ctxEntryColorStandard");
+			this.m_ctxEntryColorStandard.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorStandard.Text = "&Standard";
 			this.m_ctxEntryColorStandard.Click += new System.EventHandler(this.OnEntryColorStandard);
 			// 
 			// m_ctxEntryColorSep0
 			// 
 			this.m_ctxEntryColorSep0.Name = "m_ctxEntryColorSep0";
-			resources.ApplyResources(this.m_ctxEntryColorSep0, "m_ctxEntryColorSep0");
+			this.m_ctxEntryColorSep0.Size = new System.Drawing.Size(197, 6);
 			// 
 			// m_ctxEntryColorLightRed
 			// 
 			this.m_ctxEntryColorLightRed.Name = "m_ctxEntryColorLightRed";
-			resources.ApplyResources(this.m_ctxEntryColorLightRed, "m_ctxEntryColorLightRed");
+			this.m_ctxEntryColorLightRed.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorLightRed.Text = "Light &Red";
 			this.m_ctxEntryColorLightRed.Click += new System.EventHandler(this.OnEntryColorLightRed);
 			// 
 			// m_ctxEntryColorLightGreen
 			// 
 			this.m_ctxEntryColorLightGreen.Name = "m_ctxEntryColorLightGreen";
-			resources.ApplyResources(this.m_ctxEntryColorLightGreen, "m_ctxEntryColorLightGreen");
+			this.m_ctxEntryColorLightGreen.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorLightGreen.Text = "Light &Green";
 			this.m_ctxEntryColorLightGreen.Click += new System.EventHandler(this.OnEntryColorLightGreen);
 			// 
 			// m_ctxEntryColorLightBlue
 			// 
 			this.m_ctxEntryColorLightBlue.Name = "m_ctxEntryColorLightBlue";
-			resources.ApplyResources(this.m_ctxEntryColorLightBlue, "m_ctxEntryColorLightBlue");
+			this.m_ctxEntryColorLightBlue.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorLightBlue.Text = "Light &Blue";
 			this.m_ctxEntryColorLightBlue.Click += new System.EventHandler(this.OnEntryColorLightBlue);
 			// 
 			// m_ctxEntryColorLightYellow
 			// 
 			this.m_ctxEntryColorLightYellow.Name = "m_ctxEntryColorLightYellow";
-			resources.ApplyResources(this.m_ctxEntryColorLightYellow, "m_ctxEntryColorLightYellow");
+			this.m_ctxEntryColorLightYellow.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorLightYellow.Text = "Light &Yellow";
 			this.m_ctxEntryColorLightYellow.Click += new System.EventHandler(this.OnEntryColorLightYellow);
 			// 
 			// m_ctxEntryColorSep1
 			// 
 			this.m_ctxEntryColorSep1.Name = "m_ctxEntryColorSep1";
-			resources.ApplyResources(this.m_ctxEntryColorSep1, "m_ctxEntryColorSep1");
+			this.m_ctxEntryColorSep1.Size = new System.Drawing.Size(197, 6);
 			// 
 			// m_ctxEntryColorCustom
 			// 
 			this.m_ctxEntryColorCustom.Name = "m_ctxEntryColorCustom";
-			resources.ApplyResources(this.m_ctxEntryColorCustom, "m_ctxEntryColorCustom");
+			this.m_ctxEntryColorCustom.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryColorCustom.Text = "&Choose Custom Color...";
 			this.m_ctxEntryColorCustom.Click += new System.EventHandler(this.OnEntryColorCustom);
 			// 
 			// m_ctxEntryMMSep0
 			// 
 			this.m_ctxEntryMMSep0.Name = "m_ctxEntryMMSep0";
-			resources.ApplyResources(this.m_ctxEntryMMSep0, "m_ctxEntryMMSep0");
+			this.m_ctxEntryMMSep0.Size = new System.Drawing.Size(139, 6);
 			// 
 			// m_ctxEntryMassSetIcon
 			// 
 			this.m_ctxEntryMassSetIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_ctxEntryMassSetIcon.Name = "m_ctxEntryMassSetIcon";
-			resources.ApplyResources(this.m_ctxEntryMassSetIcon, "m_ctxEntryMassSetIcon");
+			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(142, 22);
+			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
 			// m_ctxEntrySelectAll
 			// 
-			this.m_ctxEntrySelectAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_ctxEntrySelectAll.Name = "m_ctxEntrySelectAll";
-			resources.ApplyResources(this.m_ctxEntrySelectAll, "m_ctxEntrySelectAll");
+			this.m_ctxEntrySelectAll.ShortcutKeyDisplayString = "Ctrl+A";
+			this.m_ctxEntrySelectAll.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntrySelectAll.Text = "Se&lect All";
 			this.m_ctxEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
 			// 
 			// m_ctxEntrySep2
 			// 
 			this.m_ctxEntrySep2.Name = "m_ctxEntrySep2";
-			resources.ApplyResources(this.m_ctxEntrySep2, "m_ctxEntrySep2");
+			this.m_ctxEntrySep2.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_ctxEntryClipboard
 			// 
@@ -583,18 +685,21 @@
             this.m_ctxEntryClipCopy,
             this.m_ctxEntryClipPaste});
 			this.m_ctxEntryClipboard.Name = "m_ctxEntryClipboard";
-			resources.ApplyResources(this.m_ctxEntryClipboard, "m_ctxEntryClipboard");
+			this.m_ctxEntryClipboard.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryClipboard.Text = "&Clipboard";
 			// 
 			// m_ctxEntryClipCopy
 			// 
 			this.m_ctxEntryClipCopy.Name = "m_ctxEntryClipCopy";
-			resources.ApplyResources(this.m_ctxEntryClipCopy, "m_ctxEntryClipCopy");
+			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(223, 22);
+			this.m_ctxEntryClipCopy.Text = "&Copy Entries To Clipboard";
 			this.m_ctxEntryClipCopy.Click += new System.EventHandler(this.OnEntryClipCopy);
 			// 
 			// m_ctxEntryClipPaste
 			// 
 			this.m_ctxEntryClipPaste.Name = "m_ctxEntryClipPaste";
-			resources.ApplyResources(this.m_ctxEntryClipPaste, "m_ctxEntryClipPaste");
+			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(223, 22);
+			this.m_ctxEntryClipPaste.Text = "&Paste Entries From Clipboard";
 			this.m_ctxEntryClipPaste.Click += new System.EventHandler(this.OnEntryClipPaste);
 			// 
 			// m_ctxEntryRearrangePopup
@@ -617,114 +722,133 @@
             this.m_ctxEntrySortListByLastAccessTime,
             this.m_ctxEntrySortListByExpirationTime});
 			this.m_ctxEntryRearrangePopup.Name = "m_ctxEntryRearrangePopup";
-			resources.ApplyResources(this.m_ctxEntryRearrangePopup, "m_ctxEntryRearrangePopup");
+			this.m_ctxEntryRearrangePopup.Size = new System.Drawing.Size(215, 22);
+			this.m_ctxEntryRearrangePopup.Text = "&Rearrange";
 			// 
 			// m_ctxEntryMoveToTop
 			// 
 			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
-			resources.ApplyResources(this.m_ctxEntryMoveToTop, "m_ctxEntryMoveToTop");
+			this.m_ctxEntryMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
+			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntryMoveToTop.Text = "Move Entry To &Top";
 			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
 			// 
 			// m_ctxEntryMoveOneUp
 			// 
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
-			resources.ApplyResources(this.m_ctxEntryMoveOneUp, "m_ctxEntryMoveOneUp");
+			this.m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = "Alt+Up";
+			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
 			// 
 			// m_ctxEntryMoveOneDown
 			// 
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
-			resources.ApplyResources(this.m_ctxEntryMoveOneDown, "m_ctxEntryMoveOneDown");
+			this.m_ctxEntryMoveOneDown.ShortcutKeyDisplayString = "Alt+Down";
+			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
 			// m_ctxEntryMoveToBottom
 			// 
 			this.m_ctxEntryMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxEntryMoveToBottom.Name = "m_ctxEntryMoveToBottom";
-			resources.ApplyResources(this.m_ctxEntryMoveToBottom, "m_ctxEntryMoveToBottom");
+			this.m_ctxEntryMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
+			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntryMoveToBottom.Text = "Move Entry To &Bottom";
 			this.m_ctxEntryMoveToBottom.Click += new System.EventHandler(this.OnEntryMoveToBottom);
 			// 
 			// m_ctxEntryRearrangeSep0
 			// 
 			this.m_ctxEntryRearrangeSep0.Name = "m_ctxEntryRearrangeSep0";
-			resources.ApplyResources(this.m_ctxEntryRearrangeSep0, "m_ctxEntryRearrangeSep0");
+			this.m_ctxEntryRearrangeSep0.Size = new System.Drawing.Size(245, 6);
 			// 
 			// m_ctxEntrySortUnsorted
 			// 
 			this.m_ctxEntrySortUnsorted.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortUnsorted.Name = "m_ctxEntrySortUnsorted";
-			resources.ApplyResources(this.m_ctxEntrySortUnsorted, "m_ctxEntrySortUnsorted");
+			this.m_ctxEntrySortUnsorted.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortUnsorted.Text = "Original Order (Unsorted)";
 			this.m_ctxEntrySortUnsorted.Click += new System.EventHandler(this.OnEntrySortUnsorted);
 			// 
 			// m_ctxEntryRearrangeSep1
 			// 
 			this.m_ctxEntryRearrangeSep1.Name = "m_ctxEntryRearrangeSep1";
-			resources.ApplyResources(this.m_ctxEntryRearrangeSep1, "m_ctxEntryRearrangeSep1");
+			this.m_ctxEntryRearrangeSep1.Size = new System.Drawing.Size(245, 6);
 			// 
 			// m_ctxEntrySortListByTitle
 			// 
 			this.m_ctxEntrySortListByTitle.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByTitle.Name = "m_ctxEntrySortListByTitle";
-			resources.ApplyResources(this.m_ctxEntrySortListByTitle, "m_ctxEntrySortListByTitle");
+			this.m_ctxEntrySortListByTitle.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByTitle.Text = "Sort List By &Title";
 			this.m_ctxEntrySortListByTitle.Click += new System.EventHandler(this.OnEntrySortTitle);
 			// 
 			// m_ctxEntrySortListByUserName
 			// 
 			this.m_ctxEntrySortListByUserName.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByUserName.Name = "m_ctxEntrySortListByUserName";
-			resources.ApplyResources(this.m_ctxEntrySortListByUserName, "m_ctxEntrySortListByUserName");
+			this.m_ctxEntrySortListByUserName.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByUserName.Text = "Sort List By User &Name";
 			this.m_ctxEntrySortListByUserName.Click += new System.EventHandler(this.OnEntrySortUserName);
 			// 
 			// m_ctxEntrySortListByPassword
 			// 
 			this.m_ctxEntrySortListByPassword.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByPassword.Name = "m_ctxEntrySortListByPassword";
-			resources.ApplyResources(this.m_ctxEntrySortListByPassword, "m_ctxEntrySortListByPassword");
+			this.m_ctxEntrySortListByPassword.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByPassword.Text = "Sort List By &Password";
 			this.m_ctxEntrySortListByPassword.Click += new System.EventHandler(this.OnEntrySortPassword);
 			// 
 			// m_ctxEntrySortListByURL
 			// 
 			this.m_ctxEntrySortListByURL.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByURL.Name = "m_ctxEntrySortListByURL";
-			resources.ApplyResources(this.m_ctxEntrySortListByURL, "m_ctxEntrySortListByURL");
+			this.m_ctxEntrySortListByURL.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByURL.Text = "Sort List By &URL";
 			this.m_ctxEntrySortListByURL.Click += new System.EventHandler(this.OnEntrySortURL);
 			// 
 			// m_ctxEntrySortListByNotes
 			// 
 			this.m_ctxEntrySortListByNotes.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByNotes.Name = "m_ctxEntrySortListByNotes";
-			resources.ApplyResources(this.m_ctxEntrySortListByNotes, "m_ctxEntrySortListByNotes");
+			this.m_ctxEntrySortListByNotes.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByNotes.Text = "Sort List By Note&s";
 			this.m_ctxEntrySortListByNotes.Click += new System.EventHandler(this.OnEntrySortNotes);
 			// 
 			// m_ctxEntrySortListByCreationTime
 			// 
 			this.m_ctxEntrySortListByCreationTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByCreationTime.Name = "m_ctxEntrySortListByCreationTime";
-			resources.ApplyResources(this.m_ctxEntrySortListByCreationTime, "m_ctxEntrySortListByCreationTime");
+			this.m_ctxEntrySortListByCreationTime.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByCreationTime.Text = "Sort List By &Creation Time";
 			this.m_ctxEntrySortListByCreationTime.Click += new System.EventHandler(this.OnEntrySortCreationTime);
 			// 
 			// m_ctxEntrySortListByLastModTime
 			// 
 			this.m_ctxEntrySortListByLastModTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByLastModTime.Name = "m_ctxEntrySortListByLastModTime";
-			resources.ApplyResources(this.m_ctxEntrySortListByLastModTime, "m_ctxEntrySortListByLastModTime");
+			this.m_ctxEntrySortListByLastModTime.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByLastModTime.Text = "Sort List By Last &Modification Time";
 			this.m_ctxEntrySortListByLastModTime.Click += new System.EventHandler(this.OnEntrySortLastMod);
 			// 
 			// m_ctxEntrySortListByLastAccessTime
 			// 
 			this.m_ctxEntrySortListByLastAccessTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByLastAccessTime.Name = "m_ctxEntrySortListByLastAccessTime";
-			resources.ApplyResources(this.m_ctxEntrySortListByLastAccessTime, "m_ctxEntrySortListByLastAccessTime");
+			this.m_ctxEntrySortListByLastAccessTime.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByLastAccessTime.Text = "Sort List By Last &Access Time";
 			this.m_ctxEntrySortListByLastAccessTime.Click += new System.EventHandler(this.OnEntrySortLastAccess);
 			// 
 			// m_ctxEntrySortListByExpirationTime
 			// 
 			this.m_ctxEntrySortListByExpirationTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByExpirationTime.Name = "m_ctxEntrySortListByExpirationTime";
-			resources.ApplyResources(this.m_ctxEntrySortListByExpirationTime, "m_ctxEntrySortListByExpirationTime");
+			this.m_ctxEntrySortListByExpirationTime.Size = new System.Drawing.Size(248, 22);
+			this.m_ctxEntrySortListByExpirationTime.Text = "Sort List By &Expiration Time";
 			this.m_ctxEntrySortListByExpirationTime.Click += new System.EventHandler(this.OnEntrySortExpiration);
 			// 
 			// m_menuMain
@@ -735,8 +859,11 @@
             this.m_menuView,
             this.m_menuTools,
             this.m_menuHelp});
-			resources.ApplyResources(this.m_menuMain, "m_menuMain");
+			this.m_menuMain.Location = new System.Drawing.Point(0, 0);
 			this.m_menuMain.Name = "m_menuMain";
+			this.m_menuMain.Size = new System.Drawing.Size(654, 24);
+			this.m_menuMain.TabIndex = 0;
+			this.m_menuMain.Text = "Main Menu";
 			// 
 			// m_menuFile
 			// 
@@ -761,13 +888,15 @@
             this.m_menuFileLock,
             this.m_menuFileExit});
 			this.m_menuFile.Name = "m_menuFile";
-			resources.ApplyResources(this.m_menuFile, "m_menuFile");
+			this.m_menuFile.Size = new System.Drawing.Size(35, 20);
+			this.m_menuFile.Text = "&File";
 			// 
 			// m_menuFileNew
 			// 
 			this.m_menuFileNew.Image = global::KeePass.Properties.Resources.B16x16_FileNew;
 			this.m_menuFileNew.Name = "m_menuFileNew";
-			resources.ApplyResources(this.m_menuFileNew, "m_menuFileNew");
+			this.m_menuFileNew.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileNew.Text = "&New...";
 			this.m_menuFileNew.Click += new System.EventHandler(this.OnFileNew);
 			// 
 			// m_menuFileOpen
@@ -776,44 +905,50 @@
             this.m_menuFileOpenLocal,
             this.m_menuFileOpenUrl});
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
-			resources.ApplyResources(this.m_menuFileOpen, "m_menuFileOpen");
+			this.m_menuFileOpen.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileOpen.Text = "&Open";
 			// 
 			// m_menuFileOpenLocal
 			// 
 			this.m_menuFileOpenLocal.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpenLocal.Name = "m_menuFileOpenLocal";
-			resources.ApplyResources(this.m_menuFileOpenLocal, "m_menuFileOpenLocal");
+			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(145, 22);
+			this.m_menuFileOpenLocal.Text = "Open File...";
 			this.m_menuFileOpenLocal.Click += new System.EventHandler(this.OnFileOpen);
 			// 
 			// m_menuFileOpenUrl
 			// 
 			this.m_menuFileOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileOpenUrl.Name = "m_menuFileOpenUrl";
-			resources.ApplyResources(this.m_menuFileOpenUrl, "m_menuFileOpenUrl");
+			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(145, 22);
+			this.m_menuFileOpenUrl.Text = "Open URL...";
 			this.m_menuFileOpenUrl.Click += new System.EventHandler(this.OnFileOpenUrl);
 			// 
 			// m_menuFileRecent
 			// 
 			this.m_menuFileRecent.Name = "m_menuFileRecent";
-			resources.ApplyResources(this.m_menuFileRecent, "m_menuFileRecent");
+			this.m_menuFileRecent.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileRecent.Text = "Open &Recent";
 			// 
 			// m_menuFileClose
 			// 
 			this.m_menuFileClose.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_menuFileClose.Name = "m_menuFileClose";
-			resources.ApplyResources(this.m_menuFileClose, "m_menuFileClose");
+			this.m_menuFileClose.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileClose.Text = "&Close";
 			this.m_menuFileClose.Click += new System.EventHandler(this.OnFileClose);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			resources.ApplyResources(this.m_menuFileSep0, "m_menuFileSep0");
+			this.m_menuFileSep0.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_menuFileSave
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			resources.ApplyResources(this.m_menuFileSave, "m_menuFileSave");
+			this.m_menuFileSave.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSaveAs
@@ -822,63 +957,70 @@
             this.m_menuFileSaveAsLocal,
             this.m_menuFileSaveAsUrl});
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			resources.ApplyResources(this.m_menuFileSaveAs, "m_menuFileSaveAs");
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileSaveAs.Text = "Save &As";
 			// 
 			// m_menuFileSaveAsLocal
 			// 
 			this.m_menuFileSaveAsLocal.Image = global::KeePass.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAsLocal.Name = "m_menuFileSaveAsLocal";
-			resources.ApplyResources(this.m_menuFileSaveAsLocal, "m_menuFileSaveAsLocal");
+			this.m_menuFileSaveAsLocal.Size = new System.Drawing.Size(158, 22);
+			this.m_menuFileSaveAsLocal.Text = "Save To &File...";
 			this.m_menuFileSaveAsLocal.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
 			// m_menuFileSaveAsUrl
 			// 
 			this.m_menuFileSaveAsUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileSaveAsUrl.Name = "m_menuFileSaveAsUrl";
-			resources.ApplyResources(this.m_menuFileSaveAsUrl, "m_menuFileSaveAsUrl");
+			this.m_menuFileSaveAsUrl.Size = new System.Drawing.Size(158, 22);
+			this.m_menuFileSaveAsUrl.Text = "Save To &URL...";
 			this.m_menuFileSaveAsUrl.Click += new System.EventHandler(this.OnFileSaveAsUrl);
 			// 
 			// m_menuFileSep1
 			// 
 			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			resources.ApplyResources(this.m_menuFileSep1, "m_menuFileSep1");
+			this.m_menuFileSep1.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_menuFileDbSettings
 			// 
 			this.m_menuFileDbSettings.Image = global::KeePass.Properties.Resources.B16x16_Package_Development;
 			this.m_menuFileDbSettings.Name = "m_menuFileDbSettings";
-			resources.ApplyResources(this.m_menuFileDbSettings, "m_menuFileDbSettings");
+			this.m_menuFileDbSettings.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileDbSettings.Text = "&Database Settings...";
 			this.m_menuFileDbSettings.Click += new System.EventHandler(this.OnFileDbSettings);
 			// 
 			// m_menuFileChangeMasterKey
 			// 
 			this.m_menuFileChangeMasterKey.Image = global::KeePass.Properties.Resources.B16x16_File_Locked;
 			this.m_menuFileChangeMasterKey.Name = "m_menuFileChangeMasterKey";
-			resources.ApplyResources(this.m_menuFileChangeMasterKey, "m_menuFileChangeMasterKey");
+			this.m_menuFileChangeMasterKey.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileChangeMasterKey.Text = "Change &Master Key...";
 			this.m_menuFileChangeMasterKey.Click += new System.EventHandler(this.OnFileChangeMasterKey);
 			// 
 			// m_menuFileSep2
 			// 
 			this.m_menuFileSep2.Name = "m_menuFileSep2";
-			resources.ApplyResources(this.m_menuFileSep2, "m_menuFileSep2");
+			this.m_menuFileSep2.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_menuFilePrint
 			// 
 			this.m_menuFilePrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_menuFilePrint.Name = "m_menuFilePrint";
-			resources.ApplyResources(this.m_menuFilePrint, "m_menuFilePrint");
+			this.m_menuFilePrint.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFilePrint.Text = "&Print...";
 			this.m_menuFilePrint.Click += new System.EventHandler(this.OnFilePrint);
 			// 
 			// m_menuFileSep3
 			// 
 			this.m_menuFileSep3.Name = "m_menuFileSep3";
-			resources.ApplyResources(this.m_menuFileSep3, "m_menuFileSep3");
+			this.m_menuFileSep3.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_menuFileImport
 			// 
 			this.m_menuFileImport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Inbox;
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			resources.ApplyResources(this.m_menuFileImport, "m_menuFileImport");
+			this.m_menuFileImport.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileImport.Text = "&Import...";
 			this.m_menuFileImport.Click += new System.EventHandler(this.OnFileImport);
 			// 
 			// m_menuFileExport
@@ -891,69 +1033,77 @@
             this.m_menuFileExportSep1,
             this.m_menuFileExportKdb3});
 			this.m_menuFileExport.Name = "m_menuFileExport";
-			resources.ApplyResources(this.m_menuFileExport, "m_menuFileExport");
+			this.m_menuFileExport.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileExport.Text = "&Export";
 			// 
 			// m_menuFileExportUseXsl
 			// 
 			this.m_menuFileExportUseXsl.Image = global::KeePass.Properties.Resources.B16x16_CompFile;
 			this.m_menuFileExportUseXsl.Name = "m_menuFileExportUseXsl";
-			resources.ApplyResources(this.m_menuFileExportUseXsl, "m_menuFileExportUseXsl");
+			this.m_menuFileExportUseXsl.Size = new System.Drawing.Size(249, 22);
+			this.m_menuFileExportUseXsl.Text = "Transform Using XSL Stylesheet...";
 			this.m_menuFileExportUseXsl.Click += new System.EventHandler(this.OnMenuFileExportUseXsl);
 			// 
 			// m_menuFileExportSep0
 			// 
 			this.m_menuFileExportSep0.Name = "m_menuFileExportSep0";
-			resources.ApplyResources(this.m_menuFileExportSep0, "m_menuFileExportSep0");
+			this.m_menuFileExportSep0.Size = new System.Drawing.Size(246, 6);
 			// 
 			// m_menuFileExportXML
 			// 
 			this.m_menuFileExportXML.Image = global::KeePass.Properties.Resources.B16x16_Binary;
 			this.m_menuFileExportXML.Name = "m_menuFileExportXML";
-			resources.ApplyResources(this.m_menuFileExportXML, "m_menuFileExportXML");
+			this.m_menuFileExportXML.Size = new System.Drawing.Size(249, 22);
+			this.m_menuFileExportXML.Text = "&XML File";
 			this.m_menuFileExportXML.Click += new System.EventHandler(this.OnMenuFileExportXml);
 			// 
 			// m_menuFileExportHtml
 			// 
 			this.m_menuFileExportHtml.Image = global::KeePass.Properties.Resources.B16x16_HTML;
 			this.m_menuFileExportHtml.Name = "m_menuFileExportHtml";
-			resources.ApplyResources(this.m_menuFileExportHtml, "m_menuFileExportHtml");
+			this.m_menuFileExportHtml.Size = new System.Drawing.Size(249, 22);
+			this.m_menuFileExportHtml.Text = "&HTML File";
 			this.m_menuFileExportHtml.Click += new System.EventHandler(this.OnMenuFileExportHTML);
 			// 
 			// m_menuFileExportSep1
 			// 
 			this.m_menuFileExportSep1.Name = "m_menuFileExportSep1";
-			resources.ApplyResources(this.m_menuFileExportSep1, "m_menuFileExportSep1");
+			this.m_menuFileExportSep1.Size = new System.Drawing.Size(246, 6);
 			// 
 			// m_menuFileExportKdb3
 			// 
 			this.m_menuFileExportKdb3.Name = "m_menuFileExportKdb3";
-			resources.ApplyResources(this.m_menuFileExportKdb3, "m_menuFileExportKdb3");
+			this.m_menuFileExportKdb3.Size = new System.Drawing.Size(249, 22);
+			this.m_menuFileExportKdb3.Text = "&KeePass KDB (1.x)";
 			this.m_menuFileExportKdb3.Click += new System.EventHandler(this.OnMenuFileExportKdb3);
 			// 
 			// m_menuFileSynchronize
 			// 
 			this.m_menuFileSynchronize.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSynchronize.Name = "m_menuFileSynchronize";
-			resources.ApplyResources(this.m_menuFileSynchronize, "m_menuFileSynchronize");
+			this.m_menuFileSynchronize.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileSynchronize.Text = "S&ynchronize...";
 			this.m_menuFileSynchronize.Click += new System.EventHandler(this.OnFileSynchronize);
 			// 
 			// m_menuFileSep4
 			// 
 			this.m_menuFileSep4.Name = "m_menuFileSep4";
-			resources.ApplyResources(this.m_menuFileSep4, "m_menuFileSep4");
+			this.m_menuFileSep4.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_menuFileLock
 			// 
 			this.m_menuFileLock.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
 			this.m_menuFileLock.Name = "m_menuFileLock";
-			resources.ApplyResources(this.m_menuFileLock, "m_menuFileLock");
+			this.m_menuFileLock.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileLock.Text = "&Lock Workspace";
 			this.m_menuFileLock.Click += new System.EventHandler(this.OnFileLock);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			resources.ApplyResources(this.m_menuFileExit, "m_menuFileExit");
+			this.m_menuFileExit.Size = new System.Drawing.Size(191, 22);
+			this.m_menuFileExit.Text = "E&xit";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
 			// m_menuEdit
@@ -964,32 +1114,36 @@
             this.m_menuEditSep0,
             this.m_menuEditFind});
 			this.m_menuEdit.Name = "m_menuEdit";
-			resources.ApplyResources(this.m_menuEdit, "m_menuEdit");
+			this.m_menuEdit.Size = new System.Drawing.Size(37, 20);
+			this.m_menuEdit.Text = "&Edit";
 			// 
 			// m_menuEditShowAllEntries
 			// 
 			this.m_menuEditShowAllEntries.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_menuEditShowAllEntries.Name = "m_menuEditShowAllEntries";
-			resources.ApplyResources(this.m_menuEditShowAllEntries, "m_menuEditShowAllEntries");
+			this.m_menuEditShowAllEntries.Size = new System.Drawing.Size(200, 22);
+			this.m_menuEditShowAllEntries.Text = "&Show All Entries";
 			this.m_menuEditShowAllEntries.Click += new System.EventHandler(this.OnShowAllEntries);
 			// 
 			// m_menuEditShowExpired
 			// 
 			this.m_menuEditShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExpired.Name = "m_menuEditShowExpired";
-			resources.ApplyResources(this.m_menuEditShowExpired, "m_menuEditShowExpired");
+			this.m_menuEditShowExpired.Size = new System.Drawing.Size(200, 22);
+			this.m_menuEditShowExpired.Text = "Show All &Expired Entries";
 			this.m_menuEditShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
 			// 
 			// m_menuEditSep0
 			// 
 			this.m_menuEditSep0.Name = "m_menuEditSep0";
-			resources.ApplyResources(this.m_menuEditSep0, "m_menuEditSep0");
+			this.m_menuEditSep0.Size = new System.Drawing.Size(197, 6);
 			// 
 			// m_menuEditFind
 			// 
 			this.m_menuEditFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_menuEditFind.Name = "m_menuEditFind";
-			resources.ApplyResources(this.m_menuEditFind, "m_menuEditFind");
+			this.m_menuEditFind.Size = new System.Drawing.Size(200, 22);
+			this.m_menuEditFind.Text = "&Find";
 			this.m_menuEditFind.Click += new System.EventHandler(this.OnPwListFind);
 			// 
 			// m_menuView
@@ -1008,32 +1162,36 @@
             this.m_menuViewTanOptions,
             this.m_menuViewColumns});
 			this.m_menuView.Name = "m_menuView";
-			resources.ApplyResources(this.m_menuView, "m_menuView");
+			this.m_menuView.Size = new System.Drawing.Size(41, 20);
+			this.m_menuView.Text = "&View";
 			// 
 			// m_menuChangeLanguage
 			// 
 			this.m_menuChangeLanguage.Image = global::KeePass.Properties.Resources.B16x16_Keyboard_Layout;
 			this.m_menuChangeLanguage.Name = "m_menuChangeLanguage";
-			resources.ApplyResources(this.m_menuChangeLanguage, "m_menuChangeLanguage");
+			this.m_menuChangeLanguage.Size = new System.Drawing.Size(190, 22);
+			this.m_menuChangeLanguage.Text = "Change &Language...";
 			this.m_menuChangeLanguage.Click += new System.EventHandler(this.OnMenuChangeLanguage);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			resources.ApplyResources(this.m_menuViewSep0, "m_menuViewSep0");
+			this.m_menuViewSep0.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewShowToolBar
 			// 
 			this.m_menuViewShowToolBar.CheckOnClick = true;
 			this.m_menuViewShowToolBar.Name = "m_menuViewShowToolBar";
-			resources.ApplyResources(this.m_menuViewShowToolBar, "m_menuViewShowToolBar");
+			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
 			this.m_menuViewShowToolBar.Click += new System.EventHandler(this.OnViewShowToolBar);
 			// 
 			// m_menuViewShowEntryView
 			// 
 			this.m_menuViewShowEntryView.CheckOnClick = true;
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
-			resources.ApplyResources(this.m_menuViewShowEntryView, "m_menuViewShowEntryView");
+			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewShowEntryView.Text = "&Show Entry View";
 			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
 			// 
 			// m_menuViewWindowLayout
@@ -1042,38 +1200,42 @@
             this.m_menuViewWindowsStacked,
             this.m_menuViewWindowsSideBySide});
 			this.m_menuViewWindowLayout.Name = "m_menuViewWindowLayout";
-			resources.ApplyResources(this.m_menuViewWindowLayout, "m_menuViewWindowLayout");
+			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewWindowLayout.Text = "&Window Layout";
 			// 
 			// m_menuViewWindowsStacked
 			// 
 			this.m_menuViewWindowsStacked.Image = global::KeePass.Properties.Resources.B16x16_Window_2Horz1Vert;
 			this.m_menuViewWindowsStacked.Name = "m_menuViewWindowsStacked";
-			resources.ApplyResources(this.m_menuViewWindowsStacked, "m_menuViewWindowsStacked");
+			this.m_menuViewWindowsStacked.Size = new System.Drawing.Size(143, 22);
+			this.m_menuViewWindowsStacked.Text = "Stacked";
 			this.m_menuViewWindowsStacked.Click += new System.EventHandler(this.OnViewWindowsStacked);
 			// 
 			// m_menuViewWindowsSideBySide
 			// 
 			this.m_menuViewWindowsSideBySide.Image = global::KeePass.Properties.Resources.B16x16_Window_3Horz;
 			this.m_menuViewWindowsSideBySide.Name = "m_menuViewWindowsSideBySide";
-			resources.ApplyResources(this.m_menuViewWindowsSideBySide, "m_menuViewWindowsSideBySide");
+			this.m_menuViewWindowsSideBySide.Size = new System.Drawing.Size(143, 22);
+			this.m_menuViewWindowsSideBySide.Text = "Side By Side";
 			this.m_menuViewWindowsSideBySide.Click += new System.EventHandler(this.OnViewWindowsSideBySide);
 			// 
 			// m_menuViewSep1
 			// 
 			this.m_menuViewSep1.Name = "m_menuViewSep1";
-			resources.ApplyResources(this.m_menuViewSep1, "m_menuViewSep1");
+			this.m_menuViewSep1.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewAlwaysOnTop
 			// 
 			this.m_menuViewAlwaysOnTop.CheckOnClick = true;
 			this.m_menuViewAlwaysOnTop.Name = "m_menuViewAlwaysOnTop";
-			resources.ApplyResources(this.m_menuViewAlwaysOnTop, "m_menuViewAlwaysOnTop");
+			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewAlwaysOnTop.Text = "&Always On Top";
 			this.m_menuViewAlwaysOnTop.Click += new System.EventHandler(this.OnViewAlwaysOnTop);
 			// 
 			// m_menuViewSep2
 			// 
 			this.m_menuViewSep2.Name = "m_menuViewSep2";
-			resources.ApplyResources(this.m_menuViewSep2, "m_menuViewSep2");
+			this.m_menuViewSep2.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewHiding
 			// 
@@ -1084,47 +1246,53 @@
             this.m_menuViewHideURLs,
             this.m_menuViewHideNotes});
 			this.m_menuViewHiding.Name = "m_menuViewHiding";
-			resources.ApplyResources(this.m_menuViewHiding, "m_menuViewHiding");
+			this.m_menuViewHiding.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewHiding.Text = "&Hide Fields (Asterisks)";
 			// 
 			// m_menuViewHideTitles
 			// 
 			this.m_menuViewHideTitles.CheckOnClick = true;
 			this.m_menuViewHideTitles.Name = "m_menuViewHideTitles";
-			resources.ApplyResources(this.m_menuViewHideTitles, "m_menuViewHideTitles");
+			this.m_menuViewHideTitles.Size = new System.Drawing.Size(166, 22);
+			this.m_menuViewHideTitles.Text = "Hide &Titles";
 			this.m_menuViewHideTitles.Click += new System.EventHandler(this.OnClickHideTitles);
 			// 
 			// m_menuViewHideUserNames
 			// 
 			this.m_menuViewHideUserNames.CheckOnClick = true;
 			this.m_menuViewHideUserNames.Name = "m_menuViewHideUserNames";
-			resources.ApplyResources(this.m_menuViewHideUserNames, "m_menuViewHideUserNames");
+			this.m_menuViewHideUserNames.Size = new System.Drawing.Size(166, 22);
+			this.m_menuViewHideUserNames.Text = "Hide &User Names";
 			this.m_menuViewHideUserNames.Click += new System.EventHandler(this.OnClickHideUserNames);
 			// 
 			// m_menuViewHidePasswords
 			// 
 			this.m_menuViewHidePasswords.CheckOnClick = true;
 			this.m_menuViewHidePasswords.Name = "m_menuViewHidePasswords";
-			resources.ApplyResources(this.m_menuViewHidePasswords, "m_menuViewHidePasswords");
+			this.m_menuViewHidePasswords.Size = new System.Drawing.Size(166, 22);
+			this.m_menuViewHidePasswords.Text = "Hide &Passwords";
 			this.m_menuViewHidePasswords.Click += new System.EventHandler(this.OnClickHidePasswords);
 			// 
 			// m_menuViewHideURLs
 			// 
 			this.m_menuViewHideURLs.CheckOnClick = true;
 			this.m_menuViewHideURLs.Name = "m_menuViewHideURLs";
-			resources.ApplyResources(this.m_menuViewHideURLs, "m_menuViewHideURLs");
+			this.m_menuViewHideURLs.Size = new System.Drawing.Size(166, 22);
+			this.m_menuViewHideURLs.Text = "Hide UR&Ls";
 			this.m_menuViewHideURLs.Click += new System.EventHandler(this.OnClickHideURLs);
 			// 
 			// m_menuViewHideNotes
 			// 
 			this.m_menuViewHideNotes.CheckOnClick = true;
 			this.m_menuViewHideNotes.Name = "m_menuViewHideNotes";
-			resources.ApplyResources(this.m_menuViewHideNotes, "m_menuViewHideNotes");
+			this.m_menuViewHideNotes.Size = new System.Drawing.Size(166, 22);
+			this.m_menuViewHideNotes.Text = "Hide &Notes";
 			this.m_menuViewHideNotes.Click += new System.EventHandler(this.OnClickHideNotes);
 			// 
 			// m_menuViewSep3
 			// 
 			this.m_menuViewSep3.Name = "m_menuViewSep3";
-			resources.ApplyResources(this.m_menuViewSep3, "m_menuViewSep3");
+			this.m_menuViewSep3.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewTanOptions
 			// 
@@ -1132,20 +1300,23 @@
             this.m_menuViewTanSimpleList,
             this.m_menuViewTanIndices});
 			this.m_menuViewTanOptions.Name = "m_menuViewTanOptions";
-			resources.ApplyResources(this.m_menuViewTanOptions, "m_menuViewTanOptions");
+			this.m_menuViewTanOptions.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewTanOptions.Text = "TAN &View Options";
 			// 
 			// m_menuViewTanSimpleList
 			// 
 			this.m_menuViewTanSimpleList.CheckOnClick = true;
 			this.m_menuViewTanSimpleList.Name = "m_menuViewTanSimpleList";
-			resources.ApplyResources(this.m_menuViewTanSimpleList, "m_menuViewTanSimpleList");
+			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(285, 22);
+			this.m_menuViewTanSimpleList.Text = "Use &Simple List View For TAN-Only Groups";
 			this.m_menuViewTanSimpleList.Click += new System.EventHandler(this.OnViewTanSimpleListClick);
 			// 
 			// m_menuViewTanIndices
 			// 
 			this.m_menuViewTanIndices.CheckOnClick = true;
 			this.m_menuViewTanIndices.Name = "m_menuViewTanIndices";
-			resources.ApplyResources(this.m_menuViewTanIndices, "m_menuViewTanIndices");
+			this.m_menuViewTanIndices.Size = new System.Drawing.Size(285, 22);
+			this.m_menuViewTanIndices.Text = "Show TAN &Indices In Entry Titles";
 			this.m_menuViewTanIndices.Click += new System.EventHandler(this.OnViewTanIndicesClick);
 			// 
 			// m_menuViewColumns
@@ -1165,93 +1336,105 @@
             this.m_menuViewColumnsShowUuid,
             this.m_menuViewColumnsShowAttachs});
 			this.m_menuViewColumns.Name = "m_menuViewColumns";
-			resources.ApplyResources(this.m_menuViewColumns, "m_menuViewColumns");
+			this.m_menuViewColumns.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumns.Text = "Show &Columns";
 			// 
 			// m_menuViewColumnsShowTitle
 			// 
 			this.m_menuViewColumnsShowTitle.CheckOnClick = true;
 			this.m_menuViewColumnsShowTitle.Name = "m_menuViewColumnsShowTitle";
-			resources.ApplyResources(this.m_menuViewColumnsShowTitle, "m_menuViewColumnsShowTitle");
+			this.m_menuViewColumnsShowTitle.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowTitle.Text = "&Title";
 			this.m_menuViewColumnsShowTitle.Click += new System.EventHandler(this.OnViewShowColTitle);
 			// 
 			// m_menuViewColumnsShowUserName
 			// 
 			this.m_menuViewColumnsShowUserName.CheckOnClick = true;
 			this.m_menuViewColumnsShowUserName.Name = "m_menuViewColumnsShowUserName";
-			resources.ApplyResources(this.m_menuViewColumnsShowUserName, "m_menuViewColumnsShowUserName");
+			this.m_menuViewColumnsShowUserName.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowUserName.Text = "User &Name";
 			this.m_menuViewColumnsShowUserName.Click += new System.EventHandler(this.OnViewShowColUser);
 			// 
 			// m_menuViewColumnsShowPassword
 			// 
 			this.m_menuViewColumnsShowPassword.CheckOnClick = true;
 			this.m_menuViewColumnsShowPassword.Name = "m_menuViewColumnsShowPassword";
-			resources.ApplyResources(this.m_menuViewColumnsShowPassword, "m_menuViewColumnsShowPassword");
+			this.m_menuViewColumnsShowPassword.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowPassword.Text = "&Password";
 			this.m_menuViewColumnsShowPassword.Click += new System.EventHandler(this.OnViewShowColPassword);
 			// 
 			// m_menuViewColumnsShowUrl
 			// 
 			this.m_menuViewColumnsShowUrl.CheckOnClick = true;
 			this.m_menuViewColumnsShowUrl.Name = "m_menuViewColumnsShowUrl";
-			resources.ApplyResources(this.m_menuViewColumnsShowUrl, "m_menuViewColumnsShowUrl");
+			this.m_menuViewColumnsShowUrl.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowUrl.Text = "&URL";
 			this.m_menuViewColumnsShowUrl.Click += new System.EventHandler(this.OnViewShowColURL);
 			// 
 			// m_menuViewColumnsShowNotes
 			// 
 			this.m_menuViewColumnsShowNotes.CheckOnClick = true;
 			this.m_menuViewColumnsShowNotes.Name = "m_menuViewColumnsShowNotes";
-			resources.ApplyResources(this.m_menuViewColumnsShowNotes, "m_menuViewColumnsShowNotes");
+			this.m_menuViewColumnsShowNotes.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowNotes.Text = "Note&s";
 			this.m_menuViewColumnsShowNotes.Click += new System.EventHandler(this.OnViewShowColNotes);
 			// 
 			// m_menuViewColumnsShowSep0
 			// 
 			this.m_menuViewColumnsShowSep0.Name = "m_menuViewColumnsShowSep0";
-			resources.ApplyResources(this.m_menuViewColumnsShowSep0, "m_menuViewColumnsShowSep0");
+			this.m_menuViewColumnsShowSep0.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewColumnsShowCreation
 			// 
 			this.m_menuViewColumnsShowCreation.CheckOnClick = true;
 			this.m_menuViewColumnsShowCreation.Name = "m_menuViewColumnsShowCreation";
-			resources.ApplyResources(this.m_menuViewColumnsShowCreation, "m_menuViewColumnsShowCreation");
+			this.m_menuViewColumnsShowCreation.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowCreation.Text = "&Creation Time";
 			this.m_menuViewColumnsShowCreation.Click += new System.EventHandler(this.OnViewShowColCreation);
 			// 
 			// m_menuViewColumnsShowLastAccess
 			// 
 			this.m_menuViewColumnsShowLastAccess.CheckOnClick = true;
 			this.m_menuViewColumnsShowLastAccess.Name = "m_menuViewColumnsShowLastAccess";
-			resources.ApplyResources(this.m_menuViewColumnsShowLastAccess, "m_menuViewColumnsShowLastAccess");
+			this.m_menuViewColumnsShowLastAccess.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowLastAccess.Text = "&Last Access Time";
 			this.m_menuViewColumnsShowLastAccess.Click += new System.EventHandler(this.OnViewShowColLastAccess);
 			// 
 			// m_menuViewColumnsShowLastMod
 			// 
 			this.m_menuViewColumnsShowLastMod.CheckOnClick = true;
 			this.m_menuViewColumnsShowLastMod.Name = "m_menuViewColumnsShowLastMod";
-			resources.ApplyResources(this.m_menuViewColumnsShowLastMod, "m_menuViewColumnsShowLastMod");
+			this.m_menuViewColumnsShowLastMod.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowLastMod.Text = "Last &Modification Time";
 			this.m_menuViewColumnsShowLastMod.Click += new System.EventHandler(this.OnViewShowColLastMod);
 			// 
 			// m_menuViewColumnsShowExpire
 			// 
 			this.m_menuViewColumnsShowExpire.CheckOnClick = true;
 			this.m_menuViewColumnsShowExpire.Name = "m_menuViewColumnsShowExpire";
-			resources.ApplyResources(this.m_menuViewColumnsShowExpire, "m_menuViewColumnsShowExpire");
+			this.m_menuViewColumnsShowExpire.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowExpire.Text = "&Expiration Time";
 			this.m_menuViewColumnsShowExpire.Click += new System.EventHandler(this.OnViewShowColExpire);
 			// 
 			// m_menuViewColumnsShowSep1
 			// 
 			this.m_menuViewColumnsShowSep1.Name = "m_menuViewColumnsShowSep1";
-			resources.ApplyResources(this.m_menuViewColumnsShowSep1, "m_menuViewColumnsShowSep1");
+			this.m_menuViewColumnsShowSep1.Size = new System.Drawing.Size(187, 6);
 			// 
 			// m_menuViewColumnsShowUuid
 			// 
 			this.m_menuViewColumnsShowUuid.CheckOnClick = true;
 			this.m_menuViewColumnsShowUuid.Name = "m_menuViewColumnsShowUuid";
-			resources.ApplyResources(this.m_menuViewColumnsShowUuid, "m_menuViewColumnsShowUuid");
+			this.m_menuViewColumnsShowUuid.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowUuid.Text = "UU&ID";
 			this.m_menuViewColumnsShowUuid.Click += new System.EventHandler(this.OnViewShowColUUID);
 			// 
 			// m_menuViewColumnsShowAttachs
 			// 
 			this.m_menuViewColumnsShowAttachs.CheckOnClick = true;
 			this.m_menuViewColumnsShowAttachs.Name = "m_menuViewColumnsShowAttachs";
-			resources.ApplyResources(this.m_menuViewColumnsShowAttachs, "m_menuViewColumnsShowAttachs");
+			this.m_menuViewColumnsShowAttachs.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumnsShowAttachs.Text = "&Attachments";
 			this.m_menuViewColumnsShowAttachs.Click += new System.EventHandler(this.OnViewShowColAttachs);
 			// 
 			// m_menuTools
@@ -1266,130 +1449,144 @@
             this.m_menuToolsOptions,
             this.m_menuToolsPlugins});
 			this.m_menuTools.Name = "m_menuTools";
-			resources.ApplyResources(this.m_menuTools, "m_menuTools");
+			this.m_menuTools.Size = new System.Drawing.Size(44, 20);
+			this.m_menuTools.Text = "&Tools";
 			// 
 			// m_menuToolsPwGenerator
 			// 
 			this.m_menuToolsPwGenerator.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
 			this.m_menuToolsPwGenerator.Name = "m_menuToolsPwGenerator";
-			resources.ApplyResources(this.m_menuToolsPwGenerator, "m_menuToolsPwGenerator");
+			this.m_menuToolsPwGenerator.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsPwGenerator.Text = "&Generate Password...";
 			this.m_menuToolsPwGenerator.Click += new System.EventHandler(this.OnToolsPwGenerator);
 			// 
 			// m_menuToolsGeneratePwList
 			// 
 			this.m_menuToolsGeneratePwList.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
 			this.m_menuToolsGeneratePwList.Name = "m_menuToolsGeneratePwList";
-			resources.ApplyResources(this.m_menuToolsGeneratePwList, "m_menuToolsGeneratePwList");
+			this.m_menuToolsGeneratePwList.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsGeneratePwList.Text = "Generate Password &List...";
 			this.m_menuToolsGeneratePwList.Click += new System.EventHandler(this.OnToolsGeneratePasswordList);
 			// 
 			// m_menuToolsSep0
 			// 
 			this.m_menuToolsSep0.Name = "m_menuToolsSep0";
-			resources.ApplyResources(this.m_menuToolsSep0, "m_menuToolsSep0");
+			this.m_menuToolsSep0.Size = new System.Drawing.Size(207, 6);
 			// 
 			// m_menuToolsTanWizard
 			// 
 			this.m_menuToolsTanWizard.Image = global::KeePass.Properties.Resources.B16x16_Wizard;
 			this.m_menuToolsTanWizard.Name = "m_menuToolsTanWizard";
-			resources.ApplyResources(this.m_menuToolsTanWizard, "m_menuToolsTanWizard");
-			this.m_menuToolsTanWizard.Click += new System.EventHandler(this.OnToolsTANWizard);
+			this.m_menuToolsTanWizard.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsTanWizard.Text = "&TAN Wizard...";
+			this.m_menuToolsTanWizard.Click += new System.EventHandler(this.OnToolsTanWizard);
 			// 
 			// m_menuToolsDbMaintenance
 			// 
 			this.m_menuToolsDbMaintenance.Image = global::KeePass.Properties.Resources.B16x16_Package_Settings;
 			this.m_menuToolsDbMaintenance.Name = "m_menuToolsDbMaintenance";
-			resources.ApplyResources(this.m_menuToolsDbMaintenance, "m_menuToolsDbMaintenance");
+			this.m_menuToolsDbMaintenance.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsDbMaintenance.Text = "Database &Maintenance...";
 			this.m_menuToolsDbMaintenance.Click += new System.EventHandler(this.OnToolsDbMaintenance);
 			// 
 			// m_menuToolsSep1
 			// 
 			this.m_menuToolsSep1.Name = "m_menuToolsSep1";
-			resources.ApplyResources(this.m_menuToolsSep1, "m_menuToolsSep1");
+			this.m_menuToolsSep1.Size = new System.Drawing.Size(207, 6);
 			// 
 			// m_menuToolsOptions
 			// 
 			this.m_menuToolsOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
 			this.m_menuToolsOptions.Name = "m_menuToolsOptions";
-			resources.ApplyResources(this.m_menuToolsOptions, "m_menuToolsOptions");
+			this.m_menuToolsOptions.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsOptions.Text = "&Options...";
 			this.m_menuToolsOptions.Click += new System.EventHandler(this.OnToolsOptions);
 			// 
 			// m_menuToolsPlugins
 			// 
 			this.m_menuToolsPlugins.Image = global::KeePass.Properties.Resources.B16x16_BlockDevice;
 			this.m_menuToolsPlugins.Name = "m_menuToolsPlugins";
-			resources.ApplyResources(this.m_menuToolsPlugins, "m_menuToolsPlugins");
+			this.m_menuToolsPlugins.Size = new System.Drawing.Size(210, 22);
+			this.m_menuToolsPlugins.Text = "&Plugins...";
 			this.m_menuToolsPlugins.Click += new System.EventHandler(this.OnToolsPlugins);
 			// 
 			// m_menuHelp
 			// 
 			this.m_menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuHelpHomepage,
-            this.m_menuHelpDonate,
-            this.m_menuHelpSep0,
             this.m_menuHelpContents,
             this.m_menuHelpSelectSource,
+            this.m_menuHelpSep0,
+            this.m_menuHelpHomepage,
+            this.m_menuHelpDonate,
             this.m_menuHelpSep1,
             this.m_menuHelpCheckForUpdate,
             this.m_menuHelpSep2,
             this.m_menuHelpAbout});
 			this.m_menuHelp.Name = "m_menuHelp";
-			resources.ApplyResources(this.m_menuHelp, "m_menuHelp");
-			// 
-			// m_menuHelpHomepage
-			// 
-			this.m_menuHelpHomepage.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
-			this.m_menuHelpHomepage.Name = "m_menuHelpHomepage";
-			resources.ApplyResources(this.m_menuHelpHomepage, "m_menuHelpHomepage");
-			this.m_menuHelpHomepage.Click += new System.EventHandler(this.OnHelpHomepage);
-			// 
-			// m_menuHelpDonate
-			// 
-			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
-			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
-			resources.ApplyResources(this.m_menuHelpDonate, "m_menuHelpDonate");
-			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
-			// 
-			// m_menuHelpSep0
-			// 
-			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
-			resources.ApplyResources(this.m_menuHelpSep0, "m_menuHelpSep0");
+			this.m_menuHelp.Size = new System.Drawing.Size(40, 20);
+			this.m_menuHelp.Text = "&Help";
 			// 
 			// m_menuHelpContents
 			// 
 			this.m_menuHelpContents.Image = global::KeePass.Properties.Resources.B16x16_Toggle_Log;
 			this.m_menuHelpContents.Name = "m_menuHelpContents";
-			resources.ApplyResources(this.m_menuHelpContents, "m_menuHelpContents");
+			this.m_menuHelpContents.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpContents.Text = "&Help Contents";
 			this.m_menuHelpContents.Click += new System.EventHandler(this.OnHelpContents);
 			// 
 			// m_menuHelpSelectSource
 			// 
 			this.m_menuHelpSelectSource.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
 			this.m_menuHelpSelectSource.Name = "m_menuHelpSelectSource";
-			resources.ApplyResources(this.m_menuHelpSelectSource, "m_menuHelpSelectSource");
+			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpSelectSource.Text = "Choose Help Source...";
 			this.m_menuHelpSelectSource.Click += new System.EventHandler(this.OnHelpSelectSource);
+			// 
+			// m_menuHelpSep0
+			// 
+			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
+			this.m_menuHelpSep0.Size = new System.Drawing.Size(190, 6);
+			// 
+			// m_menuHelpHomepage
+			// 
+			this.m_menuHelpHomepage.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
+			this.m_menuHelpHomepage.Name = "m_menuHelpHomepage";
+			this.m_menuHelpHomepage.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpHomepage.Text = "KeePass &Homepage";
+			this.m_menuHelpHomepage.Click += new System.EventHandler(this.OnHelpHomepage);
+			// 
+			// m_menuHelpDonate
+			// 
+			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
+			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
+			this.m_menuHelpDonate.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpDonate.Text = "&Donate...";
+			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
 			// 
 			// m_menuHelpSep1
 			// 
 			this.m_menuHelpSep1.Name = "m_menuHelpSep1";
-			resources.ApplyResources(this.m_menuHelpSep1, "m_menuHelpSep1");
+			this.m_menuHelpSep1.Size = new System.Drawing.Size(190, 6);
 			// 
 			// m_menuHelpCheckForUpdate
 			// 
 			this.m_menuHelpCheckForUpdate.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_menuHelpCheckForUpdate.Name = "m_menuHelpCheckForUpdate";
-			resources.ApplyResources(this.m_menuHelpCheckForUpdate, "m_menuHelpCheckForUpdate");
+			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpCheckForUpdate.Text = "&Check For Update";
 			this.m_menuHelpCheckForUpdate.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
 			// 
 			// m_menuHelpSep2
 			// 
 			this.m_menuHelpSep2.Name = "m_menuHelpSep2";
-			resources.ApplyResources(this.m_menuHelpSep2, "m_menuHelpSep2");
+			this.m_menuHelpSep2.Size = new System.Drawing.Size(190, 6);
 			// 
 			// m_menuHelpAbout
 			// 
 			this.m_menuHelpAbout.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_menuHelpAbout.Name = "m_menuHelpAbout";
-			resources.ApplyResources(this.m_menuHelpAbout, "m_menuHelpAbout");
+			this.m_menuHelpAbout.Size = new System.Drawing.Size(193, 22);
+			this.m_menuHelpAbout.Text = "&About KeePass...";
 			this.m_menuHelpAbout.Click += new System.EventHandler(this.OnHelpAbout);
 			// 
 			// m_toolMain
@@ -1410,37 +1607,45 @@
             this.m_tbLockWorkspace,
             this.m_tbSep3,
             this.m_tbQuickFind});
-			resources.ApplyResources(this.m_toolMain, "m_toolMain");
+			this.m_toolMain.Location = new System.Drawing.Point(0, 24);
 			this.m_toolMain.Name = "m_toolMain";
+			this.m_toolMain.Size = new System.Drawing.Size(654, 25);
+			this.m_toolMain.TabIndex = 1;
 			// 
 			// m_tbNewDatabase
 			// 
 			this.m_tbNewDatabase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbNewDatabase.Image = global::KeePass.Properties.Resources.B16x16_FileNew;
-			resources.ApplyResources(this.m_tbNewDatabase, "m_tbNewDatabase");
+			this.m_tbNewDatabase.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbNewDatabase.Name = "m_tbNewDatabase";
+			this.m_tbNewDatabase.Size = new System.Drawing.Size(23, 22);
+			this.m_tbNewDatabase.Text = "New Database...";
 			this.m_tbNewDatabase.Click += new System.EventHandler(this.OnFileNew);
 			// 
 			// m_tbOpenDatabase
 			// 
 			this.m_tbOpenDatabase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbOpenDatabase.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
-			resources.ApplyResources(this.m_tbOpenDatabase, "m_tbOpenDatabase");
+			this.m_tbOpenDatabase.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbOpenDatabase.Name = "m_tbOpenDatabase";
+			this.m_tbOpenDatabase.Size = new System.Drawing.Size(23, 22);
+			this.m_tbOpenDatabase.Text = "Open Database...";
 			this.m_tbOpenDatabase.Click += new System.EventHandler(this.OnFileOpen);
 			// 
 			// m_tbSaveDatabase
 			// 
 			this.m_tbSaveDatabase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbSaveDatabase.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
-			resources.ApplyResources(this.m_tbSaveDatabase, "m_tbSaveDatabase");
+			this.m_tbSaveDatabase.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbSaveDatabase.Name = "m_tbSaveDatabase";
+			this.m_tbSaveDatabase.Size = new System.Drawing.Size(23, 22);
+			this.m_tbSaveDatabase.Text = "Save Database";
 			this.m_tbSaveDatabase.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_tbSep0
 			// 
 			this.m_tbSep0.Name = "m_tbSep0";
-			resources.ApplyResources(this.m_tbSep0, "m_tbSep0");
+			this.m_tbSep0.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tbAddEntry
 			// 
@@ -1448,49 +1653,57 @@
 			this.m_tbAddEntry.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_tbAddEntryDefault});
 			this.m_tbAddEntry.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
-			resources.ApplyResources(this.m_tbAddEntry, "m_tbAddEntry");
+			this.m_tbAddEntry.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbAddEntry.Name = "m_tbAddEntry";
+			this.m_tbAddEntry.Size = new System.Drawing.Size(32, 22);
 			this.m_tbAddEntry.ButtonClick += new System.EventHandler(this.OnEntryAdd);
 			// 
 			// m_tbAddEntryDefault
 			// 
 			this.m_tbAddEntryDefault.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_tbAddEntryDefault.Name = "m_tbAddEntryDefault";
-			resources.ApplyResources(this.m_tbAddEntryDefault, "m_tbAddEntryDefault");
+			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(145, 22);
+			this.m_tbAddEntryDefault.Text = "&Add Entry...";
 			this.m_tbAddEntryDefault.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
 			// m_tbSep1
 			// 
 			this.m_tbSep1.Name = "m_tbSep1";
-			resources.ApplyResources(this.m_tbSep1, "m_tbSep1");
+			this.m_tbSep1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tbCopyUserName
 			// 
 			this.m_tbCopyUserName.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
-			resources.ApplyResources(this.m_tbCopyUserName, "m_tbCopyUserName");
+			this.m_tbCopyUserName.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbCopyUserName.Name = "m_tbCopyUserName";
+			this.m_tbCopyUserName.Size = new System.Drawing.Size(23, 22);
+			this.m_tbCopyUserName.Text = "Copy User Name";
 			this.m_tbCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
 			// 
 			// m_tbCopyPassword
 			// 
 			this.m_tbCopyPassword.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
-			resources.ApplyResources(this.m_tbCopyPassword, "m_tbCopyPassword");
+			this.m_tbCopyPassword.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbCopyPassword.Name = "m_tbCopyPassword";
+			this.m_tbCopyPassword.Size = new System.Drawing.Size(23, 22);
+			this.m_tbCopyPassword.Text = "Copy Password";
 			this.m_tbCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
 			// m_tbSep4
 			// 
 			this.m_tbSep4.Name = "m_tbSep4";
-			resources.ApplyResources(this.m_tbSep4, "m_tbSep4");
+			this.m_tbSep4.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tbFind
 			// 
 			this.m_tbFind.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
-			resources.ApplyResources(this.m_tbFind, "m_tbFind");
+			this.m_tbFind.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbFind.Name = "m_tbFind";
+			this.m_tbFind.Size = new System.Drawing.Size(23, 22);
+			this.m_tbFind.Text = "Find";
 			this.m_tbFind.Click += new System.EventHandler(this.OnPwListFind);
 			// 
 			// m_tbEntryViewsDropDown
@@ -1500,45 +1713,51 @@
             this.m_tbViewsShowAll,
             this.m_tbViewsShowExpired});
 			this.m_tbEntryViewsDropDown.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
-			resources.ApplyResources(this.m_tbEntryViewsDropDown, "m_tbEntryViewsDropDown");
+			this.m_tbEntryViewsDropDown.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbEntryViewsDropDown.Name = "m_tbEntryViewsDropDown";
+			this.m_tbEntryViewsDropDown.Size = new System.Drawing.Size(29, 22);
 			// 
 			// m_tbViewsShowAll
 			// 
 			this.m_tbViewsShowAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_tbViewsShowAll.Name = "m_tbViewsShowAll";
-			resources.ApplyResources(this.m_tbViewsShowAll, "m_tbViewsShowAll");
+			this.m_tbViewsShowAll.Size = new System.Drawing.Size(186, 22);
+			this.m_tbViewsShowAll.Text = "&Show All Entries";
 			this.m_tbViewsShowAll.Click += new System.EventHandler(this.OnShowAllEntries);
 			// 
 			// m_tbViewsShowExpired
 			// 
 			this.m_tbViewsShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_tbViewsShowExpired.Name = "m_tbViewsShowExpired";
-			resources.ApplyResources(this.m_tbViewsShowExpired, "m_tbViewsShowExpired");
+			this.m_tbViewsShowExpired.Size = new System.Drawing.Size(186, 22);
+			this.m_tbViewsShowExpired.Text = "Show Expired Entries";
 			this.m_tbViewsShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
 			// 
 			// m_tbSep2
 			// 
 			this.m_tbSep2.Name = "m_tbSep2";
-			resources.ApplyResources(this.m_tbSep2, "m_tbSep2");
+			this.m_tbSep2.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tbLockWorkspace
 			// 
 			this.m_tbLockWorkspace.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.m_tbLockWorkspace.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
-			resources.ApplyResources(this.m_tbLockWorkspace, "m_tbLockWorkspace");
+			this.m_tbLockWorkspace.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbLockWorkspace.Name = "m_tbLockWorkspace";
+			this.m_tbLockWorkspace.Size = new System.Drawing.Size(23, 22);
+			this.m_tbLockWorkspace.Text = "Lock Workspace";
 			this.m_tbLockWorkspace.Click += new System.EventHandler(this.OnFileLock);
 			// 
 			// m_tbSep3
 			// 
 			this.m_tbSep3.Name = "m_tbSep3";
-			resources.ApplyResources(this.m_tbSep3, "m_tbSep3");
+			this.m_tbSep3.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tbQuickFind
 			// 
 			this.m_tbQuickFind.Name = "m_tbQuickFind";
-			resources.ApplyResources(this.m_tbQuickFind, "m_tbQuickFind");
+			this.m_tbQuickFind.Size = new System.Drawing.Size(121, 25);
+			this.m_tbQuickFind.ToolTipText = "Search for entries";
 			this.m_tbQuickFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyDown);
 			this.m_tbQuickFind.SelectedIndexChanged += new System.EventHandler(this.OnQuickFindSelectedIndexChanged);
 			this.m_tbQuickFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyUp);
@@ -1551,59 +1770,72 @@
             this.m_statusPartInfo,
             this.m_statusPartProgress,
             this.m_statusClipboard});
-			resources.ApplyResources(this.m_statusMain, "m_statusMain");
+			this.m_statusMain.Location = new System.Drawing.Point(0, 464);
 			this.m_statusMain.Name = "m_statusMain";
+			this.m_statusMain.Size = new System.Drawing.Size(654, 22);
+			this.m_statusMain.TabIndex = 3;
 			// 
 			// m_statusPartSelected
 			// 
-			resources.ApplyResources(this.m_statusPartSelected, "m_statusPartSelected");
+			this.m_statusPartSelected.AutoSize = false;
 			this.m_statusPartSelected.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
 			this.m_statusPartSelected.Name = "m_statusPartSelected";
+			this.m_statusPartSelected.Size = new System.Drawing.Size(140, 17);
+			this.m_statusPartSelected.Text = "<SelectedInfo>";
+			this.m_statusPartSelected.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_statusPartInfo
 			// 
 			this.m_statusPartInfo.Name = "m_statusPartInfo";
-			resources.ApplyResources(this.m_statusPartInfo, "m_statusPartInfo");
+			this.m_statusPartInfo.Size = new System.Drawing.Size(245, 17);
 			this.m_statusPartInfo.Spring = true;
+			this.m_statusPartInfo.Text = "<StatusInfo>";
+			this.m_statusPartInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_statusPartProgress
 			// 
-			resources.ApplyResources(this.m_statusPartProgress, "m_statusPartProgress");
+			this.m_statusPartProgress.AutoSize = false;
 			this.m_statusPartProgress.Name = "m_statusPartProgress";
+			this.m_statusPartProgress.Size = new System.Drawing.Size(150, 16);
 			this.m_statusPartProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			// 
 			// m_statusClipboard
 			// 
 			this.m_statusClipboard.Name = "m_statusClipboard";
-			resources.ApplyResources(this.m_statusClipboard, "m_statusClipboard");
+			this.m_statusClipboard.Size = new System.Drawing.Size(100, 16);
 			this.m_statusClipboard.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			// 
 			// m_openDatabaseFile
 			// 
 			this.m_openDatabaseFile.FileName = "*.kdbx";
-			resources.ApplyResources(this.m_openDatabaseFile, "m_openDatabaseFile");
+			this.m_openDatabaseFile.Filter = "KeePass KDBX Files (*.kdbx)|*.kdbx|All Files (*.*)|*.*";
 			this.m_openDatabaseFile.SupportMultiDottedExtensions = true;
+			this.m_openDatabaseFile.Title = "Open Password Database File";
 			// 
 			// m_saveDatabaseFile
 			// 
-			resources.ApplyResources(this.m_saveDatabaseFile, "m_saveDatabaseFile");
+			this.m_saveDatabaseFile.Filter = "KeePass KDBX Files (*.kdbx)|*.kdbx|All Files (*.*)|*.*";
 			this.m_saveDatabaseFile.SupportMultiDottedExtensions = true;
+			this.m_saveDatabaseFile.Title = "Save Password Database";
 			// 
 			// m_saveExportTo
 			// 
-			resources.ApplyResources(this.m_saveExportTo, "m_saveExportTo");
+			this.m_saveExportTo.Filter = "All Files (*.*)|*.*";
 			this.m_saveExportTo.SupportMultiDottedExtensions = true;
+			this.m_saveExportTo.Title = "Export To File";
 			// 
 			// m_openImportFile
 			// 
 			this.m_openImportFile.FileName = "*.*";
-			resources.ApplyResources(this.m_openImportFile, "m_openImportFile");
+			this.m_openImportFile.Filter = "All Files (*.*)|*.*";
 			this.m_openImportFile.SupportMultiDottedExtensions = true;
+			this.m_openImportFile.Title = "Import File";
 			// 
 			// m_ntfTray
 			// 
 			this.m_ntfTray.ContextMenuStrip = this.m_ctxTray;
-			resources.ApplyResources(this.m_ntfTray, "m_ntfTray");
+			this.m_ntfTray.Text = "DYN";
+			this.m_ntfTray.Visible = true;
 			this.m_ntfTray.Click += new System.EventHandler(this.OnSystemTrayClick);
 			this.m_ntfTray.DoubleClick += new System.EventHandler(this.OnSystemTrayDoubleClick);
 			// 
@@ -1612,12 +1844,13 @@
 			this.m_ctxTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxTrayTray});
 			this.m_ctxTray.Name = "m_ctxTray";
-			resources.ApplyResources(this.m_ctxTray, "m_ctxTray");
+			this.m_ctxTray.Size = new System.Drawing.Size(151, 26);
 			// 
 			// m_ctxTrayTray
 			// 
 			this.m_ctxTrayTray.Name = "m_ctxTrayTray";
-			resources.ApplyResources(this.m_ctxTrayTray, "m_ctxTrayTray");
+			this.m_ctxTrayTray.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxTrayTray.Text = "&Tray / Untray";
 			this.m_ctxTrayTray.Click += new System.EventHandler(this.OnTrayTray);
 			// 
 			// m_timerMain
@@ -1628,13 +1861,14 @@
 			// 
 			// m_folderSaveAttachments
 			// 
-			resources.ApplyResources(this.m_folderSaveAttachments, "m_folderSaveAttachments");
+			this.m_folderSaveAttachments.Description = "Save attached files to:";
 			// 
 			// m_openXslFile
 			// 
 			this.m_openXslFile.DefaultExt = "xsl";
-			resources.ApplyResources(this.m_openXslFile, "m_openXslFile");
+			this.m_openXslFile.Filter = "XSL Stylesheets (*.xsl)|*.xsl|All Files (*.*)|*.*";
 			this.m_openXslFile.RestoreDirectory = true;
+			this.m_openXslFile.Title = "Select XSL Transformation";
 			// 
 			// m_colorDlg
 			// 
@@ -1643,8 +1877,10 @@
 			// 
 			// m_splitHorizontal
 			// 
-			resources.ApplyResources(this.m_splitHorizontal, "m_splitHorizontal");
+			this.m_splitHorizontal.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_splitHorizontal.Location = new System.Drawing.Point(0, 49);
 			this.m_splitHorizontal.Name = "m_splitHorizontal";
+			this.m_splitHorizontal.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// m_splitHorizontal.Panel1
 			// 
@@ -1653,11 +1889,15 @@
 			// m_splitHorizontal.Panel2
 			// 
 			this.m_splitHorizontal.Panel2.Controls.Add(this.m_richEntryView);
+			this.m_splitHorizontal.Size = new System.Drawing.Size(654, 415);
+			this.m_splitHorizontal.SplitterDistance = 328;
+			this.m_splitHorizontal.TabIndex = 2;
 			this.m_splitHorizontal.TabStop = false;
 			// 
 			// m_splitVertical
 			// 
-			resources.ApplyResources(this.m_splitVertical, "m_splitVertical");
+			this.m_splitVertical.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_splitVertical.Location = new System.Drawing.Point(0, 0);
 			this.m_splitVertical.Name = "m_splitVertical";
 			// 
 			// m_splitVertical.Panel1
@@ -1667,26 +1907,32 @@
 			// m_splitVertical.Panel2
 			// 
 			this.m_splitVertical.Panel2.Controls.Add(this.m_lvEntries);
+			this.m_splitVertical.Size = new System.Drawing.Size(654, 328);
+			this.m_splitVertical.SplitterDistance = 177;
+			this.m_splitVertical.TabIndex = 0;
 			this.m_splitVertical.TabStop = false;
 			// 
 			// m_tvGroups
 			// 
 			this.m_tvGroups.AllowDrop = true;
 			this.m_tvGroups.ContextMenuStrip = this.m_ctxGroupList;
-			resources.ApplyResources(this.m_tvGroups, "m_tvGroups");
+			this.m_tvGroups.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_tvGroups.HideSelection = false;
 			this.m_tvGroups.HotTracking = true;
-			this.m_tvGroups.ImageList = this.m_ilClientIcons;
 			this.m_tvGroups.LabelEdit = true;
+			this.m_tvGroups.Location = new System.Drawing.Point(0, 0);
 			this.m_tvGroups.Name = "m_tvGroups";
 			this.m_tvGroups.ShowNodeToolTips = true;
 			this.m_tvGroups.ShowRootLines = false;
+			this.m_tvGroups.Size = new System.Drawing.Size(177, 328);
+			this.m_tvGroups.TabIndex = 0;
 			this.m_tvGroups.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterCollapse);
 			this.m_tvGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragDrop);
 			this.m_tvGroups.DragOver += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragOver);
 			this.m_tvGroups.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.OnGroupsAfterLabelEdit);
-			this.m_tvGroups.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnGroupListClickNode);
+			this.m_tvGroups.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnGroupsListClickNode);
 			this.m_tvGroups.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragEnter);
+			this.m_tvGroups.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnGroupsKeyDown);
 			this.m_tvGroups.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterExpand);
 			this.m_tvGroups.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnGroupsListItemDrag);
 			// 
@@ -1694,13 +1940,15 @@
 			// 
 			this.m_lvEntries.AllowColumnReorder = true;
 			this.m_lvEntries.ContextMenuStrip = this.m_ctxPwList;
-			resources.ApplyResources(this.m_lvEntries, "m_lvEntries");
+			this.m_lvEntries.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_lvEntries.FullRowSelect = true;
 			this.m_lvEntries.GridLines = true;
 			this.m_lvEntries.HideSelection = false;
+			this.m_lvEntries.Location = new System.Drawing.Point(0, 0);
 			this.m_lvEntries.Name = "m_lvEntries";
 			this.m_lvEntries.ShowItemToolTips = true;
-			this.m_lvEntries.SmallImageList = this.m_ilClientIcons;
+			this.m_lvEntries.Size = new System.Drawing.Size(473, 328);
+			this.m_lvEntries.TabIndex = 0;
 			this.m_lvEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvEntries.View = System.Windows.Forms.View.Details;
 			this.m_lvEntries.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.OnPwListColumnWidthChanged);
@@ -1714,21 +1962,28 @@
 			// 
 			// m_richEntryView
 			// 
-			resources.ApplyResources(this.m_richEntryView, "m_richEntryView");
+			this.m_richEntryView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_richEntryView.Location = new System.Drawing.Point(0, 0);
 			this.m_richEntryView.Name = "m_richEntryView";
 			this.m_richEntryView.ReadOnly = true;
+			this.m_richEntryView.Size = new System.Drawing.Size(654, 83);
+			this.m_richEntryView.TabIndex = 0;
+			this.m_richEntryView.Text = "";
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			// 
 			// MainForm
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(654, 486);
 			this.Controls.Add(this.m_splitHorizontal);
 			this.Controls.Add(this.m_statusMain);
 			this.Controls.Add(this.m_toolMain);
 			this.Controls.Add(this.m_menuMain);
 			this.MainMenuStrip = this.m_menuMain;
 			this.Name = "MainForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.Text = "<DYN>";
 			this.Resize += new System.EventHandler(this.OnFormResize);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.Load += new System.EventHandler(this.OnFormLoad);
@@ -1943,6 +2198,13 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsLocal;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileImport;
+		private System.Windows.Forms.ToolStripSeparator m_ctxGroupSep3;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupRearrange;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveToTop;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneUp;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneDown;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveToBottom;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryBinaries;
 	}
 }
 

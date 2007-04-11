@@ -67,6 +67,9 @@ namespace KeePass.Forms
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
+			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;
+
 			if(m_bCreatingNew) this.Text = KPRes.ConfigureOnNewDatabase;
 			else this.Text = KPRes.DatabaseSettings;
 
@@ -113,7 +116,7 @@ namespace KeePass.Forms
 			if(nCipher >= 0)
 				m_pwDatabase.DataCipherUuid = CipherPool.GlobalPool[nCipher].CipherUuid;
 			else
-				m_pwDatabase.DataCipherUuid = new PwUuid(StandardAesEngine.AesUuidBytes);
+				m_pwDatabase.DataCipherUuid = StandardAesEngine.AesUuid;
 
 			m_pwDatabase.KeyEncryptionRounds = (ulong)m_numEncRounds.Value;
 

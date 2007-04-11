@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KPScript.cs" />
+    <Compile Include="KPScriptExt.cs" />
     <Compile Include="KpsRunner.cs" />
     <Compile Include="KSRes.Designer.cs">
       <AutoGen>True</AutoGen>

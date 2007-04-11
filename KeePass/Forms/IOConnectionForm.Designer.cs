@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IOConnectionForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -50,72 +49,111 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(421, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(253, 234);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 9;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(334, 234);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 10;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_lblUrl
 			// 
-			resources.ApplyResources(this.m_lblUrl, "m_lblUrl");
+			this.m_lblUrl.AutoSize = true;
+			this.m_lblUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_lblUrl.Location = new System.Drawing.Point(12, 82);
 			this.m_lblUrl.Name = "m_lblUrl";
+			this.m_lblUrl.Size = new System.Drawing.Size(36, 13);
+			this.m_lblUrl.TabIndex = 1;
+			this.m_lblUrl.Text = "URL:";
 			// 
 			// m_tbUrl
 			// 
-			resources.ApplyResources(this.m_tbUrl, "m_tbUrl");
+			this.m_tbUrl.Location = new System.Drawing.Point(91, 79);
 			this.m_tbUrl.Name = "m_tbUrl";
+			this.m_tbUrl.Size = new System.Drawing.Size(318, 20);
+			this.m_tbUrl.TabIndex = 0;
 			// 
 			// m_lblUserName
 			// 
-			resources.ApplyResources(this.m_lblUserName, "m_lblUserName");
+			this.m_lblUserName.AutoSize = true;
+			this.m_lblUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_lblUserName.Location = new System.Drawing.Point(12, 114);
 			this.m_lblUserName.Name = "m_lblUserName";
+			this.m_lblUserName.Size = new System.Drawing.Size(73, 13);
+			this.m_lblUserName.TabIndex = 2;
+			this.m_lblUserName.Text = "User Name:";
 			// 
 			// m_tbUserName
 			// 
-			resources.ApplyResources(this.m_tbUserName, "m_tbUserName");
+			this.m_tbUserName.Location = new System.Drawing.Point(91, 111);
 			this.m_tbUserName.Name = "m_tbUserName";
+			this.m_tbUserName.Size = new System.Drawing.Size(119, 20);
+			this.m_tbUserName.TabIndex = 3;
 			// 
 			// m_lblPassword
 			// 
-			resources.ApplyResources(this.m_lblPassword, "m_lblPassword");
+			this.m_lblPassword.AutoSize = true;
+			this.m_lblPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_lblPassword.Location = new System.Drawing.Point(216, 114);
 			this.m_lblPassword.Name = "m_lblPassword";
+			this.m_lblPassword.Size = new System.Drawing.Size(65, 13);
+			this.m_lblPassword.TabIndex = 4;
+			this.m_lblPassword.Text = "Password:";
 			// 
 			// m_tbPassword
 			// 
-			resources.ApplyResources(this.m_tbPassword, "m_tbPassword");
+			this.m_tbPassword.Location = new System.Drawing.Point(287, 111);
 			this.m_tbPassword.Name = "m_tbPassword";
+			this.m_tbPassword.Size = new System.Drawing.Size(122, 20);
+			this.m_tbPassword.TabIndex = 5;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			resources.ApplyResources(this.m_lblSeparator, "m_lblSeparator");
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 223);
 			this.m_lblSeparator.Name = "m_lblSeparator";
+			this.m_lblSeparator.Size = new System.Drawing.Size(421, 2);
+			this.m_lblSeparator.TabIndex = 12;
 			// 
 			// m_lblCredNote
 			// 
-			resources.ApplyResources(this.m_lblCredNote, "m_lblCredNote");
+			this.m_lblCredNote.Location = new System.Drawing.Point(12, 143);
 			this.m_lblCredNote.Name = "m_lblCredNote";
+			this.m_lblCredNote.Size = new System.Drawing.Size(397, 26);
+			this.m_lblCredNote.TabIndex = 6;
+			this.m_lblCredNote.Text = "The credentials you enter here are used to authenticate you against the server. D" +
+				"o not enter your KeePass database master password.";
 			// 
 			// m_btnHelp
 			// 
-			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 234);
 			this.m_btnHelp.Name = "m_btnHelp";
+			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
+			this.m_btnHelp.TabIndex = 11;
+			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
@@ -130,20 +168,28 @@
 			// 
 			this.m_cmbCredSaveMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbCredSaveMode.FormattingEnabled = true;
-			resources.ApplyResources(this.m_cmbCredSaveMode, "m_cmbCredSaveMode");
+			this.m_cmbCredSaveMode.Location = new System.Drawing.Point(91, 181);
 			this.m_cmbCredSaveMode.Name = "m_cmbCredSaveMode";
+			this.m_cmbCredSaveMode.Size = new System.Drawing.Size(318, 21);
+			this.m_cmbCredSaveMode.TabIndex = 8;
 			// 
 			// m_lblRemember
 			// 
-			resources.ApplyResources(this.m_lblRemember, "m_lblRemember");
+			this.m_lblRemember.AutoSize = true;
+			this.m_lblRemember.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_lblRemember.Location = new System.Drawing.Point(12, 184);
 			this.m_lblRemember.Name = "m_lblRemember";
+			this.m_lblRemember.Size = new System.Drawing.Size(70, 13);
+			this.m_lblRemember.TabIndex = 7;
+			this.m_lblRemember.Text = "Remember:";
 			// 
 			// IOConnectionForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(421, 269);
 			this.Controls.Add(this.m_lblRemember);
 			this.Controls.Add(this.m_cmbCredSaveMode);
 			this.Controls.Add(this.m_btnHelp);
@@ -164,6 +210,8 @@
 			this.Name = "IOConnectionForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "<DYN>";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

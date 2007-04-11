@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Drawing;
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography;
@@ -40,18 +41,21 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class PwDatabase
 	{
+		private static bool m_bPrimaryCreated = false;
+
 		// Initializations see Clear()
 		private PwGroup m_pgRootGroup = null;
 		private PwObjectList<PwDeletedObject> m_vDeletedObjects = new PwObjectList<PwDeletedObject>();
 
-		private PwUuid m_uuidDataCipher = new PwUuid(StandardAesEngine.AesUuidBytes);
+		private PwUuid m_uuidDataCipher = StandardAesEngine.AesUuid;
 		private PwCompressionAlgorithm m_caCompression = PwCompressionAlgorithm.GZip;
 		private ulong m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
 
-		private static bool m_bPrimaryCreated = false;
-
 		private CompositeKey m_pwUserKey = null;
 		private MemoryProtectionConfig m_memProtConfig = new MemoryProtectionConfig();
+
+		private List<PwCustomIcon> m_vCustomIcons = new List<PwCustomIcon>();
+		private bool m_bUINeedsIconUpdate = true;
 
 		private string m_strName = string.Empty;
 		private string m_strDesc = string.Empty;
@@ -84,18 +88,11 @@ namespace KeePassLib
 
 		/// <summary>
 		/// <c>IOConnection</c> of the currently opened database file.
-		/// Must not be <c>null</c>.
+		/// Is never <c>null</c>.
 		/// </summary>
 		public IOConnectionInfo IOConnectionInfo
 		{
 			get { return m_ioSource; }
-			set
-			{
-				Debug.Assert(value != null);
-				if(value == null) throw new ArgumentNullException("value");
-
-				m_ioSource = value;
-			}
 		}
 
 		/// <summary>
@@ -236,6 +233,24 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// Get all custom icons stored in this database.
+		/// </summary>
+		public List<PwCustomIcon> CustomIcons
+		{
+			get { return m_vCustomIcons; }
+		}
+
+		/// <summary>
+		/// This is a dirty-flag for the UI. It is used to indicate when an
+		/// icon list update is required.
+		/// </summary>
+		public bool UINeedsIconUpdate
+		{
+			get { return m_bUINeedsIconUpdate; }
+			set { m_bUINeedsIconUpdate = value; }
+		}
+
+		/// <summary>
 		/// Localized application name.
 		/// </summary>
 		public static string LocalizedAppName
@@ -262,7 +277,7 @@ namespace KeePassLib
 			m_pgRootGroup = null;
 			m_vDeletedObjects = new PwObjectList<PwDeletedObject>();
 
-			m_uuidDataCipher = new PwUuid(StandardAesEngine.AesUuidBytes);
+			m_uuidDataCipher = StandardAesEngine.AesUuid;
 			m_caCompression = PwCompressionAlgorithm.GZip;
 
 			m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
@@ -270,9 +285,13 @@ namespace KeePassLib
 			m_pwUserKey = null;
 			m_memProtConfig = new MemoryProtectionConfig();
 
+			m_vCustomIcons = new List<PwCustomIcon>();
+
 			m_strName = string.Empty;
 			m_strDesc = string.Empty;
 			m_strDefaultUserName = string.Empty;
+
+			m_bUINeedsIconUpdate = true;
 
 			m_ioSource = new IOConnectionInfo();
 			m_bDatabaseOpened = false;
@@ -292,14 +311,13 @@ namespace KeePassLib
 			Debug.Assert(pwKey != null);
 			if(pwKey == null) throw new ArgumentNullException("pwKey");
 
-			Close();
+			this.Close();
 
 			m_ioSource = ioConnection;
 			m_pwUserKey = pwKey;
 
 			m_bDatabaseOpened = true;
 			m_bModified = true;
-			// m_bLocked = false;
 
 			m_pgRootGroup = new PwGroup(true, true,
 				UrlUtil.StripExtension(UrlUtil.GetFileName(ioConnection.Url)),
@@ -321,7 +339,7 @@ namespace KeePassLib
 			Debug.Assert(pwKey != null);
 			if(pwKey == null) throw new ArgumentNullException("pwKey");
 
-			Close();
+			this.Close();
 
 			try
 			{
@@ -341,10 +359,10 @@ namespace KeePassLib
 				m_bDatabaseOpened = true;
 				m_ioSource = ioSource;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				this.Clear();
-				throw ex;
+				throw;
 			}
 		}
 
@@ -373,7 +391,7 @@ namespace KeePassLib
 		/// <param name="bIsPrimaryNow">If <c>true</c>, the new location is made the
 		/// standard location for the database. If <c>false</c>, a copy of the currently
 		/// opened database is saved to the specified location, but it isn't
-		/// made the default location (i.e. no lockfiles will be moved for
+		/// made the default location (i.e. no lock files will be moved for
 		/// example).</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void SaveAs(IOConnectionInfo ioConnection, bool bIsPrimaryNow,
@@ -386,10 +404,10 @@ namespace KeePassLib
 			m_ioSource = ioConnection;
 
 			try { this.Save(slLogger); }
-			catch(Exception ex)
+			catch(Exception)
 			{
 				m_ioSource = ioCurrent;
-				throw ex;
+				throw;
 			}
 
 			if(!bIsPrimaryNow) m_ioSource = ioCurrent;
@@ -401,7 +419,7 @@ namespace KeePassLib
 		/// </summary>
 		public void Close()
 		{
-			Clear();
+			this.Clear();
 		}
 
 		/// <summary>
@@ -561,6 +579,41 @@ namespace KeePassLib
 			pwSource.Open(ioc, this.m_pwUserKey, null);
 
 			MergeIn(pwSource, PwMergeMethod.Synchronize);
+		}
+
+		/// <summary>
+		/// Get the index of a custom icon.
+		/// </summary>
+		/// <param name="pwIconID">ID of the icon.</param>
+		/// <returns>Index of the icon.</returns>
+		public int GetCustomIconIndex(PwUuid pwIconID)
+		{
+			int nIndex = 0;
+
+			foreach(PwCustomIcon pwci in m_vCustomIcons)
+			{
+				if(pwci.Uuid.EqualsValue(pwIconID))
+					return nIndex;
+
+				++nIndex;
+			}
+
+			Debug.Assert(false);
+			return -1;
+		}
+
+		/// <summary>
+		/// Get a custom icon. This function can return <c>null</c>, if
+		/// no cached image of the icon is available.
+		/// </summary>
+		/// <param name="pwIconID">ID of the icon.</param>
+		/// <returns>Image data.</returns>
+		public Image GetCustomIcon(PwUuid pwIconID)
+		{
+			int nIndex = GetCustomIconIndex(pwIconID);
+
+			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
+			else { Debug.Assert(false); return null; }
 		}
 	}
 }

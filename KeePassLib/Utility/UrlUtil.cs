@@ -137,34 +137,6 @@ namespace KeePassLib.Utility
 			return strPath + Path.DirectorySeparatorChar;
 		}
 
-		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool PathCompactPathEx(StringBuilder pszOut, string szPath, uint cchMax, uint dwFlags);
-
-		/// <summary>
-		/// Shorten a path.
-		/// </summary>
-		/// <param name="strPath">Path to make shorter.</param>
-		/// <param name="uMaxChars">Maximum number of characters in the returned string.</param>
-		/// <returns>Shortened path.</returns>
-		public static string CompactPath(string strPath, uint uMaxChars)
-		{
-			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
-
-			if(strPath.Length <= (int)uMaxChars) return strPath;
-			try
-			{
-				StringBuilder sb = new StringBuilder(strPath.Length * 2 + 2);
-
-				if(UrlUtil.PathCompactPathEx(sb, strPath, uMaxChars, 0) == false)
-					return strPath;
-
-				Debug.Assert(sb.Length <= uMaxChars);
-				return sb.ToString();
-			}
-			catch(Exception) { return strPath; }
-		}
-
 		/// <summary>
 		/// File access mode enumeration. Used by the <c>FileAccessible</c>
 		/// method.
@@ -194,7 +166,8 @@ namespace KeePassLib.Utility
 		/// the requested mode, otherwise the return value is <c>false</c>.</returns>
 		public static bool FileAccessible(string strFilePath, FileAccessMode fMode)
 		{
-			Debug.Assert(strFilePath != null); if(strFilePath == null) throw new ArgumentNullException();
+			Debug.Assert(strFilePath != null);
+			if(strFilePath == null) throw new ArgumentNullException();
 
 			if(fMode == FileAccessMode.Read)
 			{

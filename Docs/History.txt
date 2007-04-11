@@ -1,3 +1,86 @@
+07/04/11 - 2.02 Alpha
+- Added "Two-Channel Auto-Type Obfuscation" feature, which
+  makes auto-type resistant against keyloggers; this is an opt-
+  in feature, see the documentation
+- Added KDBX data integrity verification (partial content
+  hashes); note: this is a breaking change to the KDBX format
+- Added internal data viewer to display attachments (text
+  files, images, and web documents); see the new 'View' button
+  in the 'Edit Entry' window and the new dynamic entry context
+  menu popup 'Show In Internal Viewer'
+- External images can now be imported and used as entry icons
+- Added KeePassLibC and KeePassNtv 64-bit compatibility
+- Added Spamex.com import support
+- Added KeePass CSV 1.x import support
+- When adding a group, users are immediately prompted for a
+  name (like Windows Explorer does when creating new folders)
+- Added prompts for various text boxes
+- The installer's version is now set to the KeePass version
+- The key prompt dialog now shows an 'Exit' button when
+  unlocking a database
+- Added F1 menu shortcut for opening the help file/page
+- URL override is now displayed in the entry view
+- Added ability to check if the composite key is valid
+  immdiately after starting to decrypt the file
+- Added ability to move groups on the same level (up / down),
+  use either the context menu or the Alt+... shortcuts
+- The database isn't marked as modified any more when closing
+  the 'Edit Entry' dialog with OK but without modifying
+  anything
+- Added version information for native transformations library
+
+- Local file name isn't displayed any more in URL dialog
+- Improved path clipping (tray text, ...)
+- Improved data field retrieval in SPM 2007 import module
+- Improved attachments display/handling in 'Edit Entry' dialog
+- Improved entry context menu (added some keyboard shortcut
+  indicators, updated icons, ...)
+- Improved performance of secure password edit controls
+- Clearified auto-type documentation
+- Installer uses best compression now
+- Improved auto-type state handling
+- In-memory protected custom strings are hidden by asterisks
+  in the entry details window now
+- Improved entropy collection dialog
+- Updated import/export documentation
+- Added delete shortcut key for deleting groups
+- Instead of showing the number of attachments in the entry
+  view, the actual attachment names are shown now
+- Improved asterisks hiding behavior in entry view
+- New entries now by default inherit the icon of their parent
+  groups, except if it's a folder-like icon
+- Updated AES code in native library
+- Improved native library detection and configuration
+- Improved entry/group dragging behavior (window updates, ...)
+- A more useful error message is shown when you try to export
+  to a KDB3 file without having KeePassLibC installed
+- Configuration class supports DLL assemblies
+- KeePass doesn't create an empty directory in the application
+  data path any more, if the global config file is writable
+- Clipboard isn't cleared any more at exit if it doesn't
+  contain data copied by KeePass
+- Empty auto-type sequences in custom window-sequence pairs now
+  map to the inherited ones or default overrides, if specified
+- Cleaned up notify tray resources
+- Improved help menu
+- A *lot* code quality improvements
+
+- ShInstUtil doesn't crash any more when called without any
+  parameter
+- Auto-type now sends modifier keys (+ for Shift, % for Alt,
+  ...) and character groups correctly
+- Fixed alpha transparency multi-shadow bug in groups list
+- Overwrite confirmation now isn't displayed twice any more
+  when saving an attachment from the 'Edit Entry' window
+- User interface state is updated after 'Select All' command
+- Auto-Type warnings are now shown correctly
+- Fixed auto-type definition in sample entry (when creating a
+  new database)
+- The global auto-type hot key now also works when KeePass is
+  locked and minimized to tray
+- Fixed bug in initialization of Random class (KeePass could
+  have crashed 1 time in 2^32 starts)
+
 07/03/23 - 2.01 Alpha
 - Improved auto-type engine (releases and restores modifier
   keys, improved focusing, etc.)

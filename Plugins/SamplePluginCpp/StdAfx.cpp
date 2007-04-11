@@ -17,31 +17,4 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-
-using KeePass.Plugins;
-
-namespace ArcFourCipher
-{
-	public sealed class ArcFourCipher : Plugin
-	{
-		private IPluginHost m_host = null;
-		private static ArcFourEngine m_arcFourEngine = new ArcFourEngine();
-
-		public override bool Initialize(IPluginHost host)
-		{
-			if(host == null) return false;
-			m_host = host;
-
-			Debug.Assert(m_arcFourEngine != null);
-			if(m_arcFourEngine == null) return false;
-
-			m_host.CipherPool.AddCipher(m_arcFourEngine);
-
-			return true;
-		}
-	}
-}
+#include "StdAfx.h"

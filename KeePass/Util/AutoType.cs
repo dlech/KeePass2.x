@@ -26,6 +26,7 @@ using System.Threading;
 
 using KeePass.App;
 using KeePass.Forms;
+using KeePass.Native;
 using KeePass.Resources;
 
 using KeePassLib;
@@ -38,42 +39,9 @@ namespace KeePass.Util
 {
 	public static class AutoType
 	{
-		private const StringComparison StrCaseCmpMethod = StringComparison.OrdinalIgnoreCase;
+		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
-		private static string StringToSequence(string str, bool bReplaceEscBrackets)
-		{
-			Debug.Assert(str != null); if(str == null) return string.Empty;
-
-			if(bReplaceEscBrackets && ((str.IndexOf('{') >= 0) || (str.IndexOf('}') >= 0)))
-			{
-				char chOpen = '\u25A1';
-				while(str.IndexOf(chOpen) >= 0) ++chOpen;
-
-				char chClose = chOpen;
-				++chClose;
-				while(str.IndexOf(chClose) >= 0) ++chClose;
-
-				str = str.Replace('{', chOpen);
-				str = str.Replace('}', chClose);
-
-				str = str.Replace(new string(chOpen, 1), @"{{}");
-				str = str.Replace(new string(chClose, 1), @"{}}");
-			}
-
-			str = str.Replace(@"[", @"{[}");
-			str = str.Replace(@"]", @"{]}");
-
-			str = str.Replace(@"+", @"{+}");
-			str = str.Replace(@"^", @"{^}");
-			str = str.Replace(@"%", @"{%}");
-			str = str.Replace(@"~", @"{~}");
-			str = str.Replace(@"(", @"{(}");
-			str = str.Replace(@")", @"{)}");
-
-			return str;
-		}
-
-		public static bool MatchWindows(string strFilter, string strWindow)
+		private static bool MatchWindows(string strFilter, string strWindow)
 		{
 			Debug.Assert(strFilter != null); if(strFilter == null) return false;
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
@@ -85,16 +53,16 @@ namespace KeePass.Util
 			if(bArbEnd) strF = strF.Substring(0, strF.Length - 1);
 
 			if(bArbStart && bArbEnd)
-				return (strWindow.IndexOf(strF, StrCaseCmpMethod) >= 0);
+				return (strWindow.IndexOf(strF, StrCaseIgnoreCmp) >= 0);
 			else if(bArbStart)
-				return strWindow.EndsWith(strF, StrCaseCmpMethod);
+				return strWindow.EndsWith(strF, StrCaseIgnoreCmp);
 			else if(bArbEnd)
-				return strWindow.StartsWith(strF, StrCaseCmpMethod);
+				return strWindow.StartsWith(strF, StrCaseIgnoreCmp);
 
-			return strWindow.Equals(strF, StrCaseCmpMethod);
+			return strWindow.Equals(strF, StrCaseIgnoreCmp);
 		}
 
-		public static bool Execute(string strSeq, PwEntry pweData)
+		private static bool Execute(string strSeq, PwEntry pweData)
 		{
 			Debug.Assert(strSeq != null); if(strSeq == null) return false;
 			Debug.Assert(pweData != null); if(pweData == null) return false;
@@ -107,14 +75,16 @@ namespace KeePass.Util
 			catch(Exception) { pwDatabase = null; }
 
 			string strSend = strSeq;
-			strSend = StrUtil.FillPlaceholders(strSend, pweData, WinUtil.GetExecutable(),
-				pwDatabase, false);
-			strSend = AppLocator.FillPlaceholders(strSend);
-			strSend = AutoType.StringToSequence(strSend, false);
+			strSend = StrUtil.FillPlaceholders(strSend, pweData,
+				WinUtil.GetExecutable(), pwDatabase, false, true);
+			strSend = AppLocator.FillPlaceholders(strSend, true);
+
+			bool bObfuscate = !(pweData.AutoType.ObfuscationOptions ==
+				AutoTypeObfuscationOptions.None);
 
 			Application.DoEvents();
 
-			try { SendInputEx.SendKeysWait(strSend); }
+			try { SendInputEx.SendKeysWait(strSend, bObfuscate); }
 			catch(Exception excpAT)
 			{
 				MessageService.ShowWarning(excpAT);
@@ -123,7 +93,7 @@ namespace KeePass.Util
 			return true;
 		}
 
-		public static bool Perform(PwEntry pwe, string strWindow)
+		private static bool PerformInternal(PwEntry pwe, string strWindow)
 		{
 			Debug.Assert(pwe != null); if(pwe == null) return false;
 
@@ -134,7 +104,7 @@ namespace KeePass.Util
 			return true;
 		}
 
-		public static string GetSequenceForWindow(PwEntry pwe, string strWindow, bool bRequireDefinedWindow)
+		private static string GetSequenceForWindow(PwEntry pwe, string strWindow, bool bRequireDefinedWindow)
 		{
 			Debug.Assert(strWindow != null); if(strWindow == null) return null;
 			Debug.Assert(pwe != null); if(pwe == null) return null;
@@ -152,8 +122,9 @@ namespace KeePass.Util
 				}
 			}
 
-			if((strSeq == null) && (strWindow.IndexOf(pwe.Strings.ReadSafe(PwDefs.TitleField),
-				StrCaseCmpMethod) >= 0))
+			if(((strSeq == null) || (strSeq.Length == 0)) &&
+				(strWindow.IndexOf(pwe.Strings.ReadSafe(PwDefs.TitleField),
+				StrCaseIgnoreCmp) >= 0))
 			{
 				strSeq = pwe.AutoType.DefaultSequence;
 				Debug.Assert(strSeq != null);
@@ -161,7 +132,8 @@ namespace KeePass.Util
 
 			if((strSeq == null) && bRequireDefinedWindow) return null;
 
-			if(strSeq == null) // Assume default sequence now
+			// Assume default sequence now
+			if((strSeq == null) || (strSeq.Length == 0))
 				strSeq = pwe.AutoType.DefaultSequence;
 
 			PwGroup pg = pwe.ParentGroup;
@@ -184,8 +156,8 @@ namespace KeePass.Util
 			Debug.Assert(pwDatabase != null); if(pwDatabase == null) return false;
 			Debug.Assert(pwDatabase.IsOpen); if(!pwDatabase.IsOpen) return false;
 
-			IntPtr hWnd = WinUtil.GetForegroundWindow();
-			string strWindow = WinUtil.GetWindowText(hWnd);
+			IntPtr hWnd = NativeMethods.GetForegroundWindow();
+			string strWindow = NativeMethods.GetWindowText(hWnd);
 			if((strWindow == null) || (strWindow.Length == 0)) return false;
 
 			PwObjectList<PwEntry> m_vList = new PwObjectList<PwEntry>();
@@ -200,7 +172,8 @@ namespace KeePass.Util
 
 			pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
-			if(m_vList.UCount == 1) AutoType.Perform(m_vList.GetAt(0), strWindow);
+			if(m_vList.UCount == 1)
+				AutoType.PerformInternal(m_vList.GetAt(0), strWindow);
 			else if(m_vList.UCount > 1)
 			{
 				EntryListForm elf = new EntryListForm();
@@ -211,10 +184,10 @@ namespace KeePass.Util
 
 				if(elf.ShowDialog() == DialogResult.OK)
 				{
-					WinUtil.EnsureForegroundWindow(hWnd);
+					NativeMethods.EnsureForegroundWindow(hWnd);
 
 					if(elf.SelectedEntry != null)
-						AutoType.Perform(elf.SelectedEntry, strWindow);
+						AutoType.PerformInternal(elf.SelectedEntry, strWindow);
 				}
 			}
 
@@ -223,14 +196,15 @@ namespace KeePass.Util
 
 		public static bool PerformIntoPreviousWindow(IntPtr hWndCurrent, PwEntry pe)
 		{
-			WinUtil.LoseFocus(hWndCurrent);
+			NativeMethods.LoseFocus(hWndCurrent);
 
-			string strWindow = WinUtil.GetWindowText(WinUtil.GetForegroundWindow());
+			string strWindow = NativeMethods.GetWindowText(
+				NativeMethods.GetForegroundWindow());
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
 
 			Thread.Sleep(100);
 
-			return AutoType.Perform(pe, strWindow);
+			return AutoType.PerformInternal(pe, strWindow);
 		}
 	}
 }

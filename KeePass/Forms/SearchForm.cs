@@ -131,7 +131,7 @@ namespace KeePass.Forms
 			pgResults.IsVirtual = true;
 
 			PwEntry peDesc = new PwEntry(pgResults, true, true);
-			peDesc.Icon = PwIcon.EMailSearch;
+			peDesc.IconID = PwIcon.EMailSearch;
 			pgResults.Entries.Add(peDesc);
 			PwObjectList<PwEntry> listResults = pgResults.Entries;
 

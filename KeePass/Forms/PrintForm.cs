@@ -301,7 +301,8 @@ namespace KeePass.Forms
 			m_bBlockPreviewRefresh = false;
 		}
 
-		private void WriteTabularIf(bool bCondition, StringBuilder sb, PwEntry pe, string strIndex, string strCellPre, string strCellPost)
+		private static void WriteTabularIf(bool bCondition, StringBuilder sb,
+			PwEntry pe, string strIndex, string strCellPre, string strCellPost)
 		{
 			if(!bCondition) return;
 
@@ -314,7 +315,8 @@ namespace KeePass.Forms
 			sb.AppendLine(strCellPost);
 		}
 
-		private void WriteTabularIf(bool bCondition, StringBuilder sb, string strValue, string strCellPre, string strCellPost)
+		private static void WriteTabularIf(bool bCondition, StringBuilder sb,
+			string strValue, string strCellPre, string strCellPost)
 		{
 			if(!bCondition) return;
 
@@ -326,7 +328,9 @@ namespace KeePass.Forms
 			sb.AppendLine(strCellPost);
 		}
 
-		private void WriteDetailsLine(StringBuilder sb, KeyValuePair<string, ProtectedString> kvp, bool bSmallMono, bool bMonoPasswords, string strFontInit, string strFontExit)
+		private static void WriteDetailsLine(StringBuilder sb,
+			KeyValuePair<string, ProtectedString> kvp, bool bSmallMono,
+			bool bMonoPasswords, string strFontInit, string strFontExit)
 		{
 			sb.Append("<tr><td align=\"left\" valign=\"top\"><i><small>");
 			sb.Append(StrUtil.StringToHtml(kvp.Key));
@@ -347,7 +351,9 @@ namespace KeePass.Forms
 			sb.AppendLine("</td></tr>");
 		}
 
-		private void WriteDetailsLine(StringBuilder sb, string strIndex, string strValue, bool bSmallMono, bool bMonoPasswords, string strFontInit, string strFontExit)
+		private static void WriteDetailsLine(StringBuilder sb, string strIndex,
+			string strValue, bool bSmallMono, bool bMonoPasswords, string strFontInit,
+			string strFontExit)
 		{
 			KeyValuePair<string, ProtectedString> kvp = new KeyValuePair<string, ProtectedString>(strIndex,
 				new ProtectedString(false, strValue));

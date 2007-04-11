@@ -62,7 +62,7 @@ namespace KeePassLib.Keys
 			byte[] pbKey = LoadXmlKeyFile(strKeyFile);
 			if(pbKey == null) pbKey = LoadKeyFile(strKeyFile);
 
-			if(pbKey == null) throw new Exception();
+			if(pbKey == null) throw new InvalidOperationException();
 
 			m_strPath = strKeyFile;
 			m_pbKeyData = new ProtectedBinary(true, pbKey);

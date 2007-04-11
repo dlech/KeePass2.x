@@ -85,18 +85,18 @@ namespace KeePassLib
 		/// </summary>
 		/// <returns>Returns <c>true</c> if a random UUID has been generated,
 		/// otherwise it returns <c>false</c>.</returns>
-		private bool CreateNew()
+		private void CreateNew()
 		{
-			m_pbUuid = Guid.NewGuid().ToByteArray();
-
-			if((m_pbUuid == null) || (m_pbUuid.Length != UuidSize))
+			while(true)
 			{
-				m_pbUuid = new byte[UuidSize];
-				SetZero();
-				return false;
-			}
+				m_pbUuid = Guid.NewGuid().ToByteArray();
 
-			return true;
+				if((m_pbUuid == null) || (m_pbUuid.Length != UuidSize))
+					throw new InvalidOperationException();
+
+				if(this.EqualsValue(PwUuid.Zero) == false)
+					break;
+			}
 		}
 
 		/// <summary>
@@ -107,7 +107,8 @@ namespace KeePassLib
 		/// value, otherwise <c>false</c> is returned.</returns>
 		public bool EqualsValue(PwUuid uuid)
 		{
-			Debug.Assert(uuid != null); if(uuid == null) throw new ArgumentNullException();
+			Debug.Assert(uuid != null);
+			if(uuid == null) throw new ArgumentNullException("uuid");
 
 			for(int i = 0; i < UuidSize; i++)
 				if(m_pbUuid[i] != uuid.m_pbUuid[i]) return false;

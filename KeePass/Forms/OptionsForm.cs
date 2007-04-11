@@ -34,6 +34,8 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Forms
 {
 	/// <summary>
@@ -188,11 +190,6 @@ namespace KeePass.Forms
 			}
 			else m_cbClipClearTime.Checked = false;
 
-			if(NativeLib.AllowNative && !NativeLib.IsLibraryInstalled())
-				NativeLib.AllowNative = false;
-			AppConfigEx.SetValue(AppDefs.ConfigKeys.UseNativeForKeyEnc,
-				NativeLib.AllowNative);
-
 			m_lvSecurityOptions.Columns.Add(string.Empty, 200); // Resize below
 
 			ListViewGroup lvg = new ListViewGroup(KPRes.Options);
@@ -205,8 +202,10 @@ namespace KeePass.Forms
 				m_lvSecurityOptions, lvg, KPRes.LockOnSessionLock);
 			m_cdxSecurityOptions.CreateItem(AppDefs.ConfigKeys.ClipboardAutoClearOnExit,
 				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
-			m_cdxSecurityOptions.CreateItem(AppDefs.ConfigKeys.UseNativeForKeyEnc,
-				m_lvSecurityOptions, lvg, KPRes.NativeLibUse);
+
+			if(NativeLib.IsLibraryInstalled())
+				m_cdxSecurityOptions.CreateItem(AppDefs.ConfigKeys.UseNativeForKeyEnc,
+					m_lvSecurityOptions, lvg, KPRes.NativeLibUse);
 
 			m_cdxSecurityOptions.UpdateData(false);
 			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width - 36;
@@ -316,17 +315,6 @@ namespace KeePass.Forms
 
 		private void SaveOptions()
 		{
-			bool bNewNative = AppConfigEx.GetBool(AppDefs.ConfigKeys.UseNativeForKeyEnc);
-			if(bNewNative && !NativeLib.AllowNative)
-			{
-				if(NativeLib.IsLibraryInstalled() == false)
-				{
-					MessageService.ShowWarning(KPRes.NoNativeLib, KPRes.NoNativeLibHint);
-					bNewNative = false;
-				}
-			}
-			NativeLib.AllowNative = bNewNative;
-
 			if(!m_cbLockAfterTime.Checked)
 				AppConfigEx.SetValue(AppDefs.ConfigKeys.LockAfterTime, 0);
 			else
@@ -343,6 +331,8 @@ namespace KeePass.Forms
 			else AppConfigEx.SetValue(AppDefs.ConfigKeys.ClipboardAutoClearTime, -1);
 
 			m_cdxSecurityOptions.UpdateData(true);
+
+			NativeLib.AllowNative = AppConfigEx.GetBool(AppDefs.ConfigKeys.UseNativeForKeyEnc);
 
 			AppPolicy.NewAllow(AppPolicyFlag.Plugins, m_lvPolicy.Items[(int)AppPolicyFlag.Plugins].Checked);
 			AppPolicy.NewAllow(AppPolicyFlag.Export, m_lvPolicy.Items[(int)AppPolicyFlag.Export].Checked);
@@ -361,11 +351,11 @@ namespace KeePass.Forms
 			ChangeHotKey(ref m_kPrevATHKKey, ref m_kPrevATHKMod, m_hkGlobalAutoType,
 				AppDefs.ConfigKeys.GlobalAutoTypeHotKey.Key,
 				AppDefs.ConfigKeys.GlobalAutoTypeModifiers.Key,
-				(int)AppDefs.GlobalHotKeyID.AutoType);
+				AppDefs.GlobalHotKeyID.AutoType);
 			ChangeHotKey(ref m_kPrevSWHKKey, ref m_kPrevSWHKMod, m_hkShowWindow,
 				AppDefs.ConfigKeys.ShowWindowHotKey.Key,
 				AppDefs.ConfigKeys.ShowWindowHotKeyModifiers.Key,
-				(int)AppDefs.GlobalHotKeyID.ShowWindow);
+				AppDefs.GlobalHotKeyID.ShowWindow);
 
 			AppConfigEx.SetValue(AppDefs.ConfigKeys.SingleClickForTrayAction, m_cbSingleClickTrayAction.Checked);
 

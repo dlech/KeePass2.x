@@ -36,10 +36,12 @@ namespace KeePass.Util
 		{
 		}
 
+#if DEBUG
 		~SessionLockNotifier()
 		{
-			Debug.Assert(!m_bEventsRegistered);
+			Debug.Assert(m_bEventsRegistered == false);
 		}
+#endif
 
 		public void Install(EventHandler ev)
 		{
@@ -50,7 +52,7 @@ namespace KeePass.Util
 				SystemEvents.SessionEnded += OnSessionEnded;
 				SystemEvents.SessionSwitch += OnSessionSwitch;
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			m_bEventsRegistered = true;
 
@@ -66,7 +68,7 @@ namespace KeePass.Util
 					SystemEvents.SessionEnded -= OnSessionEnded;
 					SystemEvents.SessionSwitch -= OnSessionSwitch;
 				}
-				catch(Exception) { }
+				catch(Exception) { Debug.Assert(false); }
 
 				m_bEventsRegistered = false;
 			}

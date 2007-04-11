@@ -106,7 +106,7 @@ namespace KeePass.DataExchange.Formats
 						pwStorage.MemoryProtection.ProtectTitle,
 						ImportUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryType)
-					pe.Icon = (ImportUtil.SafeInnerText(xmlChild) != "1") ?
+					pe.IconID = (ImportUtil.SafeInnerText(xmlChild) != "1") ?
 						PwIcon.Key : PwIcon.PaperNew;
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(

@@ -92,13 +92,18 @@ namespace KeePassLib.Serialization
 		private const string ElemProtNotes = "ProtectNotes";
 		private const string ElemProtAutoHide = "AutoEnableVisualHiding";
 
+		private const string ElemCustomIcons = "CustomIcons";
+		private const string ElemCustomIconItem = "Icon";
+		private const string ElemCustomIconItemID = "UUID";
+		private const string ElemCustomIconItemData = "Data";
+
 		private const string ElemAutoType = "AutoType";
 		private const string ElemHistory = "History";
 
 		private const string ElemName = "Name";
 		private const string ElemUuid = "UUID";
-		private const string ElemIcon = "Icon";
-		// private const string ElemCustomSmallIcon = "CustomSmallIcon";
+		private const string ElemIcon = "IconID";
+		private const string ElemCustomIconID = "CustomIconUUID";
 		private const string ElemFgColor = "ForegroundColor";
 		private const string ElemBgColor = "BackgroundColor";
 		private const string ElemOverrideUrl = "OverrideURL";
@@ -119,6 +124,7 @@ namespace KeePassLib.Serialization
 		private const string ElemValue = "Value";
 
 		private const string ElemAutoTypeEnabled = "Enabled";
+		private const string ElemAutoTypeObfuscation = "DataTransferObfuscation";
 		private const string ElemAutoTypeDefaultSeq = "DefaultSequence";
 		private const string ElemAutoTypeItem = "Association";
 		private const string ElemWindow = "Window";
@@ -146,6 +152,7 @@ namespace KeePassLib.Serialization
 		private byte[] m_pbTransformSeed = null;
 		private byte[] m_pbEncryptionIV = null;
 		private byte[] m_pbProtectedStreamKey = null;
+		private byte[] m_pbStreamStartBytes = null;
 
 		private readonly DateTime m_dtNow = DateTime.Now; // Cache current time
 
@@ -164,7 +171,8 @@ namespace KeePassLib.Serialization
 			TransformSeed,
 			TransformRounds,
 			EncryptionIV,
-			ProtectedStreamKey
+			ProtectedStreamKey,
+			StreamStartBytes
 		}
 
 		/// <summary>

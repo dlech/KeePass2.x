@@ -53,6 +53,7 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Keyboard_Layout,
 				KPRes.SelectLanguage, KPRes.SelectLanguageDesc);
 			this.Icon = Properties.Resources.KeePass;
+			this.Text = KPRes.SelectLanguage;
 
 			int nWidth = m_lvLanguages.ClientRectangle.Width / 4;
 			m_lvLanguages.Columns.Add(KPRes.AvailableLanguages, nWidth);

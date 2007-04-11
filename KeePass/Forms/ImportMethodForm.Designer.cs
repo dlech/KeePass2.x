@@ -50,102 +50,163 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(345, 431);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 11;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(426, 431);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 12;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_lblIntro
 			// 
-			resources.ApplyResources(this.m_lblIntro, "m_lblIntro");
+			this.m_lblIntro.Location = new System.Drawing.Point(12, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
+			this.m_lblIntro.Size = new System.Drawing.Size(489, 28);
+			this.m_lblIntro.TabIndex = 1;
+			this.m_lblIntro.Text = "The file format that you have selected to import supports group and/or entry IDs." +
+				" Please choose an import behavior.";
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(513, 60);
+			this.m_bannerImage.TabIndex = 3;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_radioCreateNew
 			// 
-			resources.ApplyResources(this.m_radioCreateNew, "m_radioCreateNew");
+			this.m_radioCreateNew.AutoSize = true;
+			this.m_radioCreateNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioCreateNew.Location = new System.Drawing.Point(15, 114);
 			this.m_radioCreateNew.Name = "m_radioCreateNew";
+			this.m_radioCreateNew.Size = new System.Drawing.Size(114, 17);
+			this.m_radioCreateNew.TabIndex = 0;
 			this.m_radioCreateNew.TabStop = true;
+			this.m_radioCreateNew.Text = "Create New &IDs";
 			this.m_radioCreateNew.UseVisualStyleBackColor = true;
 			// 
 			// m_lblCreateNewHint
 			// 
-			resources.ApplyResources(this.m_lblCreateNewHint, "m_lblCreateNewHint");
+			this.m_lblCreateNewHint.Location = new System.Drawing.Point(32, 134);
 			this.m_lblCreateNewHint.Name = "m_lblCreateNewHint";
+			this.m_lblCreateNewHint.Size = new System.Drawing.Size(469, 28);
+			this.m_lblCreateNewHint.TabIndex = 2;
+			this.m_lblCreateNewHint.Text = "If you select this option, KeePass will create new IDs for all groups and entries" +
+				". Consequently no existing groups and entries of the currently opened database w" +
+				"ill be modified or overwritten.";
 			// 
 			// m_radioKeepExisting
 			// 
-			resources.ApplyResources(this.m_radioKeepExisting, "m_radioKeepExisting");
+			this.m_radioKeepExisting.AutoSize = true;
+			this.m_radioKeepExisting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioKeepExisting.Location = new System.Drawing.Point(15, 174);
 			this.m_radioKeepExisting.Name = "m_radioKeepExisting";
+			this.m_radioKeepExisting.Size = new System.Drawing.Size(102, 17);
+			this.m_radioKeepExisting.TabIndex = 3;
 			this.m_radioKeepExisting.TabStop = true;
+			this.m_radioKeepExisting.Text = "&Keep Existing";
 			this.m_radioKeepExisting.UseVisualStyleBackColor = true;
 			// 
 			// m_lblExistingHint
 			// 
-			resources.ApplyResources(this.m_lblExistingHint, "m_lblExistingHint");
+			this.m_lblExistingHint.Location = new System.Drawing.Point(32, 194);
 			this.m_lblExistingHint.Name = "m_lblExistingHint";
+			this.m_lblExistingHint.Size = new System.Drawing.Size(469, 27);
+			this.m_lblExistingHint.TabIndex = 4;
+			this.m_lblExistingHint.Text = "Existing entries of the currently opened database will not be modified. Only new " +
+				"entries will be added.";
 			// 
 			// m_radioOverwrite
 			// 
-			resources.ApplyResources(this.m_radioOverwrite, "m_radioOverwrite");
+			this.m_radioOverwrite.AutoSize = true;
+			this.m_radioOverwrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioOverwrite.Location = new System.Drawing.Point(15, 233);
 			this.m_radioOverwrite.Name = "m_radioOverwrite";
+			this.m_radioOverwrite.Size = new System.Drawing.Size(127, 17);
+			this.m_radioOverwrite.TabIndex = 5;
 			this.m_radioOverwrite.TabStop = true;
+			this.m_radioOverwrite.Text = "Overwrite &Existing";
 			this.m_radioOverwrite.UseVisualStyleBackColor = true;
 			// 
 			// m_lblOverwriteHint
 			// 
-			resources.ApplyResources(this.m_lblOverwriteHint, "m_lblOverwriteHint");
+			this.m_lblOverwriteHint.Location = new System.Drawing.Point(32, 253);
 			this.m_lblOverwriteHint.Name = "m_lblOverwriteHint";
+			this.m_lblOverwriteHint.Size = new System.Drawing.Size(469, 28);
+			this.m_lblOverwriteHint.TabIndex = 6;
+			this.m_lblOverwriteHint.Text = "KeePass will replace all existing groups and entries by the ones in the file to i" +
+				"mport, if they have the same ID.";
 			// 
 			// m_radioOverwriteIfNewer
 			// 
-			resources.ApplyResources(this.m_radioOverwriteIfNewer, "m_radioOverwriteIfNewer");
+			this.m_radioOverwriteIfNewer.AutoSize = true;
+			this.m_radioOverwriteIfNewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioOverwriteIfNewer.Location = new System.Drawing.Point(15, 293);
 			this.m_radioOverwriteIfNewer.Name = "m_radioOverwriteIfNewer";
+			this.m_radioOverwriteIfNewer.Size = new System.Drawing.Size(131, 17);
+			this.m_radioOverwriteIfNewer.TabIndex = 7;
 			this.m_radioOverwriteIfNewer.TabStop = true;
+			this.m_radioOverwriteIfNewer.Text = "Overwrite If &Newer";
 			this.m_radioOverwriteIfNewer.UseVisualStyleBackColor = true;
 			// 
 			// m_lblOverwriteIfNewerHint
 			// 
-			resources.ApplyResources(this.m_lblOverwriteIfNewerHint, "m_lblOverwriteIfNewerHint");
+			this.m_lblOverwriteIfNewerHint.Location = new System.Drawing.Point(32, 313);
 			this.m_lblOverwriteIfNewerHint.Name = "m_lblOverwriteIfNewerHint";
+			this.m_lblOverwriteIfNewerHint.Size = new System.Drawing.Size(469, 27);
+			this.m_lblOverwriteIfNewerHint.TabIndex = 8;
+			this.m_lblOverwriteIfNewerHint.Text = "KeePass will compare the last-modified times of the groups/entries and replace th" +
+				"e existing ones only if the ones to import are newer.";
 			// 
 			// m_radioSynchronize
 			// 
-			resources.ApplyResources(this.m_radioSynchronize, "m_radioSynchronize");
+			this.m_radioSynchronize.AutoSize = true;
+			this.m_radioSynchronize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_radioSynchronize.Location = new System.Drawing.Point(15, 352);
 			this.m_radioSynchronize.Name = "m_radioSynchronize";
+			this.m_radioSynchronize.Size = new System.Drawing.Size(227, 17);
+			this.m_radioSynchronize.TabIndex = 9;
 			this.m_radioSynchronize.TabStop = true;
+			this.m_radioSynchronize.Text = "Overwrite If Newer, Apply Deletions";
 			this.m_radioSynchronize.UseVisualStyleBackColor = true;
 			// 
 			// m_lblSynchronizeHint
 			// 
-			resources.ApplyResources(this.m_lblSynchronizeHint, "m_lblSynchronizeHint");
+			this.m_lblSynchronizeHint.Location = new System.Drawing.Point(32, 372);
 			this.m_lblSynchronizeHint.Name = "m_lblSynchronizeHint";
+			this.m_lblSynchronizeHint.Size = new System.Drawing.Size(469, 40);
+			this.m_lblSynchronizeHint.TabIndex = 10;
+			this.m_lblSynchronizeHint.Text = resources.GetString("m_lblSynchronizeHint.Text");
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			resources.ApplyResources(this.m_lblSeparator, "m_lblSeparator");
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 425);
 			this.m_lblSeparator.Name = "m_lblSeparator";
+			this.m_lblSeparator.Size = new System.Drawing.Size(513, 2);
+			this.m_lblSeparator.TabIndex = 13;
 			// 
 			// ImportMethodForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(513, 466);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lblSynchronizeHint);
 			this.Controls.Add(this.m_radioSynchronize);
@@ -166,6 +227,8 @@
 			this.MinimizeBox = false;
 			this.Name = "ImportMethodForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "<DYN>";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

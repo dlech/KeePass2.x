@@ -25,12 +25,49 @@ using KeePassLib.Interfaces;
 
 namespace KeePassLib.Collections
 {
+	[Flags]
+	public enum AutoTypeObfuscationOptions : uint
+	{
+		None = 0,
+		UseClipboard = 1
+	}
+
+	/* public sealed class AutoTypeAssociation
+	{
+		private string m_strWindow = string.Empty;
+		private string m_strSequence = string.Empty;
+
+		public string WindowName
+		{
+			get { return m_strWindow; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+
+				m_strWindow = value;
+			}
+		}
+
+		public string KeySequence
+		{
+			get { return m_strSequence; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+
+				m_strSequence = value;
+			}
+		}
+	} */
+
 	/// <summary>
 	/// A dictionary of auto-type window/keystroke sequence pairs.
 	/// </summary>
 	public sealed class AutoTypeConfig : IDeepClonable<AutoTypeConfig>
 	{
 		private bool m_bEnabled = true;
+		private AutoTypeObfuscationOptions m_atooObfuscation =
+			AutoTypeObfuscationOptions.None;
 		private string m_strDefaultSequence = string.Empty;
 		private Dictionary<string, string> m_vWindowSeqPairs =
 			new Dictionary<string, string>();
@@ -42,6 +79,15 @@ namespace KeePassLib.Collections
 		{
 			get { return m_bEnabled; }
 			set { m_bEnabled = value; }
+		}
+
+		/// <summary>
+		/// Specify whether the typing should be obfuscated.
+		/// </summary>
+		public AutoTypeObfuscationOptions ObfuscationOptions
+		{
+			get { return m_atooObfuscation; }
+			set { m_atooObfuscation = value; }
 		}
 
 		/// <summary>
@@ -91,6 +137,7 @@ namespace KeePassLib.Collections
 			AutoTypeConfig newDic = new AutoTypeConfig();
 
 			newDic.m_bEnabled = this.m_bEnabled;
+			newDic.m_atooObfuscation = this.m_atooObfuscation;
 			newDic.m_strDefaultSequence = this.m_strDefaultSequence;
 
 			foreach(KeyValuePair<string, string> kvp in m_vWindowSeqPairs)

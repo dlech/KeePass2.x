@@ -22,23 +22,38 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
+using KeePass.Resources;
 using KeePass.UI;
+
+using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
 	public partial class IconPickerForm : Form
 	{
 		private ImageList m_ilIcons = null;
+		private PwDatabase m_pwDatabase = null;
 		private uint m_uDefaultIcon = 0;
-		private uint m_uChosenImage = 0;
+		private PwUuid m_pwDefaultCustomIcon = PwUuid.Zero;
 
-		public uint ChosenImageIndex
+		private uint m_uChosenImageID = 0;
+		private PwUuid m_pwChosenCustomImageUuid = PwUuid.Zero;
+
+		public uint ChosenIconID
 		{
-			get { return m_uChosenImage; }
+			get { return m_uChosenImageID; }
+		}
+
+		public PwUuid ChosenCustomIconUuid
+		{
+			get { return m_pwChosenCustomImageUuid; }
 		}
 
 		public IconPickerForm()
@@ -46,46 +61,111 @@ namespace KeePass.Forms
 			InitializeComponent();
 		}
 
-		public void InitEx(ImageList ilIcons, uint uDefaultIcon)
+		public void InitEx(ImageList ilIcons, PwDatabase pwDatabase,
+			uint uDefaultIcon, PwUuid pwCustomIconUuid)
 		{
-			Debug.Assert(ilIcons != null); if(ilIcons == null) throw new ArgumentNullException();
-
 			m_ilIcons = ilIcons;
+			m_pwDatabase = pwDatabase;
 			m_uDefaultIcon = uDefaultIcon;
+			m_pwDefaultCustomIcon = pwCustomIconUuid;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new ArgumentNullException();
+			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new InvalidOperationException();
+			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
 
 			m_lvIcons.SmallImageList = m_ilIcons;
-
 			for(int i = 0; i < m_ilIcons.Images.Count; i++)
 				m_lvIcons.Items.Add(i.ToString(), i);
 
-			if(m_lvIcons.Items.Count > m_uDefaultIcon)
+			int iFoundCustom = RecreateCustomIconList();
+
+			if((m_pwDefaultCustomIcon != PwUuid.Zero) && (iFoundCustom >= 0))
+			{
+				m_radioCustom.Checked = true;
+				m_lvCustomIcons.Items[iFoundCustom].Selected = true;
+			}
+			else if(m_uDefaultIcon < (uint)PwIcon.Count)
+			{
+				m_radioStandard.Checked = true;
 				m_lvIcons.Items[(int)m_uDefaultIcon].Selected = true;
+			}
+			else
+			{
+				Debug.Assert(false);
+				m_radioStandard.Checked = true;
+			}
 
 			EnableControlsEx();
 		}
 
 		private void EnableControlsEx()
 		{
-			m_btnOK.Enabled = (m_lvIcons.SelectedItems.Count == 1);
+			ListView.SelectedIndexCollection lvsic = m_lvCustomIcons.SelectedIndices;
+
+			if(m_radioStandard.Checked && (m_lvIcons.SelectedIndices.Count == 1))
+				m_btnOK.Enabled = true;
+			else if(m_radioCustom.Checked && (lvsic.Count == 1))
+				m_btnOK.Enabled = true;
+			else
+				m_btnOK.Enabled = false;
+
+			m_btnCustomRemove.Enabled = (lvsic.Count >= 1);
+		}
+
+		private int RecreateCustomIconList()
+		{
+			m_lvCustomIcons.Items.Clear();
+
+			ImageList ilCustom = UIUtil.BuildImageList(m_pwDatabase.CustomIcons, 16, 16);
+			m_lvCustomIcons.SmallImageList = ilCustom;
+
+			int j = 0, iFoundCustom = -1;
+			foreach(PwCustomIcon pwci in m_pwDatabase.CustomIcons)
+			{
+				ListViewItem lvi = m_lvCustomIcons.Items.Add(j.ToString(), j);
+				lvi.Tag = pwci.Uuid;
+
+				if(pwci.Uuid.EqualsValue(m_pwDefaultCustomIcon))
+					iFoundCustom = j;
+
+				++j;
+			}
+
+			return iFoundCustom;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			ListView.SelectedIndexCollection lvsi = m_lvIcons.SelectedIndices;
+			if(m_radioStandard.Checked)
+			{
+				ListView.SelectedIndexCollection lvsi = m_lvIcons.SelectedIndices;
 
-			Debug.Assert(lvsi.Count == 1);
-			if(lvsi.Count != 1) return;
+				if(lvsi.Count != 1)
+				{
+					this.DialogResult = DialogResult.None;
+					return;
+				}
 
-			m_uChosenImage = (uint)lvsi[0];
+				m_uChosenImageID = (uint)lvsi[0];
+			}
+			else
+			{
+				ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
+
+				if(lvsic.Count != 1)
+				{
+					this.DialogResult = DialogResult.None;
+					return;
+				}
+
+				m_pwChosenCustomImageUuid = (PwUuid)lvsic[0].Tag;
+			}
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -94,12 +174,101 @@ namespace KeePass.Forms
 
 		private void OnIconsItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
+			m_radioCustom.Checked = false;
+			m_radioStandard.Checked = true;
+			EnableControlsEx();
+		}
+
+		private void OnCustomIconsItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+		{
+			m_radioStandard.Checked = false;
+			m_radioCustom.Checked = true;
 			EnableControlsEx();
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnStandardRadioCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnBtnCustomAdd(object sender, EventArgs e)
+		{
+			string strAllSupportedFilter = KPRes.AllSupportedFiles +
+				@" (*.bmp; *.emf; *.gif; *.ico; *.jpg; *.jpe; *.jpeg; *.png; *.tif; *.tiff; *.wmf)" +
+				@"|*.bmp;*.emf;*.gif;*.ico;*.jpg;*.jpe;*.jpeg;*.png;*.tif;*.tiff;*.wmf";
+			StringBuilder sbFilter = new StringBuilder();
+			sbFilter.Append(strAllSupportedFilter);
+			AddFileType(sbFilter, "*.bmp", "Windows Bitmap (*.bmp)");
+			AddFileType(sbFilter, "*.emf", "Windows Enhanced Metafile (*.emf)");
+			AddFileType(sbFilter, "*.gif", "Graphics Interchange Format (*.gif)");
+			AddFileType(sbFilter, "*.ico", "Windows Icon (*.ico)");
+			AddFileType(sbFilter, "*.jpg;*.jpe;*.jpeg", "JPEG (*.jpg; *.jpe; *.jpeg)");
+			AddFileType(sbFilter, "*.png", "Portable Network Graphics (*.png)");
+			AddFileType(sbFilter, "*.tif;*.tiff", "Tagged Image File Format (*.tif; *.tiff)");
+			AddFileType(sbFilter, "*.wmf", "Windows Metafile (*.wmf)");
+			sbFilter.Append(@"|" + KPRes.AllFiles + @" (*.*)|*.*");
+
+			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.AddExtension = false;
+			ofd.CheckFileExists = true;
+			ofd.CheckPathExists = true;
+			ofd.Filter = sbFilter.ToString();
+			ofd.FilterIndex = 1;
+			ofd.Multiselect = true;
+			ofd.RestoreDirectory = true;
+			ofd.SupportMultiDottedExtensions = true;
+			ofd.Title = KPRes.ImportFileTitle;
+
+			if(ofd.ShowDialog() == DialogResult.OK)
+			{
+				foreach(string strFile in ofd.FileNames)
+				{
+					try
+					{
+						Image img = Image.FromFile(strFile);
+						Image imgNew = img;
+
+						if((img.Width != 16) || (img.Height != 16))
+							imgNew = new Bitmap(img, new Size(16, 16));
+
+						MemoryStream ms = new MemoryStream();
+						imgNew.Save(ms, ImageFormat.Png);
+
+						PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true),
+							ms.ToArray());
+						m_pwDatabase.CustomIcons.Add(pwci);
+
+						m_pwDatabase.UINeedsIconUpdate = true;
+					}
+					catch(Exception exImg)
+					{
+						MessageService.ShowWarning(strFile, exImg);
+					}
+				}
+
+				RecreateCustomIconList();
+			}
+
+			EnableControlsEx();
+		}
+
+		private static void AddFileType(StringBuilder sbBuffer, string strEnding,
+			string strName)
+		{
+			sbBuffer.Append('|');
+			sbBuffer.Append(strName);
+			sbBuffer.Append('|');
+			sbBuffer.Append(strEnding);
+		}
+
+		private void OnBtnCustomRemove(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

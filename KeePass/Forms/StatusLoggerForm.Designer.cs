@@ -40,8 +40,11 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(392, 276);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 0;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -49,10 +52,12 @@
 			// 
 			this.m_lvMessages.FullRowSelect = true;
 			this.m_lvMessages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			resources.ApplyResources(this.m_lvMessages, "m_lvMessages");
+			this.m_lvMessages.Location = new System.Drawing.Point(12, 12);
 			this.m_lvMessages.MultiSelect = false;
 			this.m_lvMessages.Name = "m_lvMessages";
+			this.m_lvMessages.Size = new System.Drawing.Size(455, 134);
 			this.m_lvMessages.SmallImageList = this.m_ilLogTypes;
+			this.m_lvMessages.TabIndex = 1;
 			this.m_lvMessages.UseCompatibleStateImageBehavior = false;
 			this.m_lvMessages.View = System.Windows.Forms.View.Details;
 			this.m_lvMessages.SelectedIndexChanged += new System.EventHandler(this.OnMessagesSelectedIndexChanged);
@@ -68,21 +73,28 @@
 			// 
 			// m_pbProgress
 			// 
-			resources.ApplyResources(this.m_pbProgress, "m_pbProgress");
+			this.m_pbProgress.Location = new System.Drawing.Point(12, 152);
 			this.m_pbProgress.Name = "m_pbProgress";
+			this.m_pbProgress.Size = new System.Drawing.Size(455, 17);
+			this.m_pbProgress.TabIndex = 2;
 			// 
 			// m_tbDetails
 			// 
-			resources.ApplyResources(this.m_tbDetails, "m_tbDetails");
+			this.m_tbDetails.Location = new System.Drawing.Point(12, 175);
+			this.m_tbDetails.Multiline = true;
 			this.m_tbDetails.Name = "m_tbDetails";
 			this.m_tbDetails.ReadOnly = true;
+			this.m_tbDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.m_tbDetails.Size = new System.Drawing.Size(455, 95);
+			this.m_tbDetails.TabIndex = 3;
 			// 
 			// StatusLoggerForm
 			// 
 			this.AcceptButton = this.m_btnCancel;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(479, 311);
 			this.Controls.Add(this.m_tbDetails);
 			this.Controls.Add(this.m_pbProgress);
 			this.Controls.Add(this.m_lvMessages);
@@ -92,6 +104,8 @@
 			this.MinimizeBox = false;
 			this.Name = "StatusLoggerForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "<>";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.ResumeLayout(false);

@@ -80,19 +80,22 @@ namespace KeePass.Util
 			}
 		}
 
-		public static string FillPlaceholders(string strText)
+		public static string FillPlaceholders(string strText, bool bDataAsKeySequence)
 		{
 			string str = strText;
 
 			if(AppLocator.InternetExplorerPath != null)
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{INTERNETEXPLORER}",
-					new ProtectedString(false, "\"" + m_strIE + "\""), false);
+					new ProtectedString(false, "\"" + m_strIE + "\""), false,
+					bDataAsKeySequence);
 			if(AppLocator.FirefoxPath != null)
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{FIREFOX}",
-					new ProtectedString(false, "\"" + m_strFirefox + "\""), false);
+					new ProtectedString(false, "\"" + m_strFirefox + "\""), false,
+					bDataAsKeySequence);
 			if(AppLocator.OperaPath != null)
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{OPERA}",
-					new ProtectedString(false, "\"" + m_strOpera + "\""), false);
+					new ProtectedString(false, "\"" + m_strOpera + "\""), false,
+					bDataAsKeySequence);
 
 			return str;
 		}

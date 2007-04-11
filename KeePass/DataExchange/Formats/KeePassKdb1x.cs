@@ -48,10 +48,11 @@ namespace KeePass.DataExchange.Formats
 
 		public override bool TryBeginImport()
 		{
-			if(!Kdb3File.IsLibraryInstalled())
+			Exception exLib;
+			if(!Kdb3File.IsLibraryInstalled(out exLib))
 			{
 				MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
-					KPRes.KDB3KeePassLibC);
+					KPRes.KDB3KeePassLibC, exLib);
 
 				return false;
 			}

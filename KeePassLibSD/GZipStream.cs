@@ -35,14 +35,16 @@ namespace KeePassLibSD
 	public sealed class GZipStream : Stream
 	{
 		private Stream m_gzStream = null;
+		private CompressionMode m_cprMode;
 
 		public GZipStream(Stream sBase, CompressionMode cm)
 		{
-			// This probably doesn't work yet!
 			if(cm == CompressionMode.Compress)
 				m_gzStream = new GZipOutputStream(sBase);
 			else
 				m_gzStream = new GZipInputStream(sBase);
+
+			m_cprMode = cm;
 		}
 
 		public override bool CanRead
@@ -80,6 +82,20 @@ namespace KeePassLibSD
 		public override void Flush()
 		{
 			m_gzStream.Flush();
+		}
+
+		public override void Close()
+		{
+			if(m_gzStream == null) return;
+
+			if(m_cprMode == CompressionMode.Compress)
+			{
+				m_gzStream.Flush();
+				((GZipOutputStream)m_gzStream).Finish();
+			}
+
+			m_gzStream.Close();
+			m_gzStream = null;
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)

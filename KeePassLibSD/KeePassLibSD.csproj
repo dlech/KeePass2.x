@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Build\KeePassLibSD\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;PocketPC;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -37,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\Build\KeePassLibSD\Release\</OutputPath>
-    <DefineConstants>TRACE;PocketPC;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
+    <DefineConstants>TRACE;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -120,6 +120,18 @@
     <Compile Include="..\KeePassLib\Keys\KcpUserAccount.cs">
       <Link>Keys\KcpUserAccount.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
+      <Link>Keys\UserKeyType.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeLib.cs">
+      <Link>Native\NativeLib.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeMethods.cs">
+      <Link>Native\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\PwCustomIcon.cs">
+      <Link>PwCustomIcon.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\PwDatabase.cs">
       <Link>PwDatabase.cs</Link>
     </Compile>
@@ -141,8 +153,8 @@
     <Compile Include="..\KeePassLib\PwUuid.cs">
       <Link>PwUuid.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Resources\KLRes.cs">
-      <Link>Resources\KLRes.cs</Link>
+    <Compile Include="..\KeePassLib\Resources\KLRes.Generated.cs">
+      <Link>Resources\KLRes.Generated.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>Security\ProtectedBinary.cs</Link>
@@ -152,6 +164,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Security\XorredBuffer.cs">
       <Link>Security\XorredBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
+      <Link>Serialization\HashedBlockStream.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\IOConnection.cs">
       <Link>Serialization\IOConnection.cs</Link>
@@ -189,19 +204,20 @@
     <Compile Include="..\KeePassLib\Utility\MessageService.cs">
       <Link>Utility\MessageService.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Utility\NativeLib.cs">
-      <Link>Utility\NativeLib.cs</Link>
-    </Compile>
     <Compile Include="..\KeePassLib\Utility\StrUtil.cs">
       <Link>Utility\StrUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>Utility\TimeUtil.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Utility\TranslationUtil.cs">
+      <Link>Utility\TranslationUtil.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>Utility\UrlUtil.cs</Link>
     </Compile>
     <Compile Include="ColorTranslator.cs" />
+    <Compile Include="InvalidDataException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GZipStream.cs" />
     <Compile Include="ProtectedData.cs" />

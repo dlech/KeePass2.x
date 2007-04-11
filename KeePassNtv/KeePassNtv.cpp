@@ -17,7 +17,12 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifdef _WIN32_WCE
+#include "../KeePassNtvSD/StdAfx.h"
+#else
 #include "StdAfx.h"
+#endif
+
 #include <assert.h>
 #include "KeePassNtv.h"
 
@@ -27,7 +32,11 @@
 #pragma managed(push, off)
 #endif
 
+#ifdef _WIN32_WCE
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD dwReason, LPVOID lpReserved)
+#else
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
+#endif
 {
 	UNREFERENCED_PARAMETER(hModule);
 	UNREFERENCED_PARAMETER(dwReason);

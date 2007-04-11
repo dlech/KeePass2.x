@@ -1,4 +1,4 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -120,7 +120,7 @@ namespace KeePassLib.Utility
 		/// command-line friendly escape sequences.</param>
 		/// <returns>Modified string object.</returns>
 		public static string ReplaceCaseInsensitive(string strString, string strToReplace,
-			ProtectedString psNew, bool bCmdQuotes)
+			ProtectedString psNew, bool bCmdQuotes, bool bDataAsKeySequence)
 		{
 			Debug.Assert(strString != null); if(strString == null) return null;
 			Debug.Assert(strToReplace != null); if(strToReplace == null) return strString;
@@ -129,7 +129,11 @@ namespace KeePassLib.Utility
 			string str = strString, strNew = psNew.ReadString();
 			int nPos = 0;
 
-			if(bCmdQuotes) strNew = strNew.Replace("\"", "\"\"\"");
+			if(bCmdQuotes)
+				strNew = strNew.Replace("\"", "\"\"\"");
+
+			if(bDataAsKeySequence)
+				strNew = StringToKeySequence(strNew, true);
 
 			while(true)
 			{
@@ -194,9 +198,12 @@ namespace KeePassLib.Utility
 		/// <param name="pwDatabase">Current database.</param>
 		/// <param name="bCmdQuotes">If <c>true</c>, quotes will be replaced by
 		/// command-line friendly escape sequences.</param>
+		/// <param name="bDataToKeySequence">If <c>true</c>, data will be
+		/// inserted as auto-type key sequence.</param>
 		/// <returns>Returns the new string.</returns>
 		public static string FillPlaceholders(string strSeq, PwEntry pe,
-			string strAppPath, PwDatabase pwDatabase, bool bCmdQuotes)
+			string strAppPath, PwDatabase pwDatabase, bool bCmdQuotes,
+			bool bDataAsKeySequence)
 		{
 			string str = strSeq;
 
@@ -210,21 +217,26 @@ namespace KeePassLib.Utility
 							(@"{" + kvp.Key + @"}") :
 							(@"{" + PwDefs.AutoTypeStringPrefix + kvp.Key + @"}");
 
-						str = StrUtil.ReplaceCaseInsensitive(str, strKey, kvp.Value, bCmdQuotes);
+						str = StrUtil.ReplaceCaseInsensitive(str, strKey, kvp.Value,
+							bCmdQuotes, bDataAsKeySequence);
 					}
 
 					if(pe.ParentGroup != null)
-						str = StrUtil.ReplaceCaseInsensitive(str, @"{GROUP}", new ProtectedString(
-							false, pe.ParentGroup.Name), bCmdQuotes);
+						str = StrUtil.ReplaceCaseInsensitive(str, @"{GROUP}",
+							new ProtectedString(false, pe.ParentGroup.Name),
+							bCmdQuotes, bDataAsKeySequence);
 				}
 
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{APPDIR}", new ProtectedString(
-					false, UrlUtil.GetFileDirectory(strAppPath, false)), bCmdQuotes);
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{APPDIR}",
+					new ProtectedString(false, UrlUtil.GetFileDirectory(strAppPath,
+					false)), bCmdQuotes, bDataAsKeySequence);
 
 				if(pwDatabase != null)
 				{
-					str = StrUtil.ReplaceCaseInsensitive(str, @"{DOCDIR}", new ProtectedString(
-						false, UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Url, false)), bCmdQuotes);
+					str = StrUtil.ReplaceCaseInsensitive(str, @"{DOCDIR}",
+						new ProtectedString(false,
+						UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Url,
+						false)), bCmdQuotes, bDataAsKeySequence);
 				}
 			}
 
@@ -237,7 +249,8 @@ namespace KeePassLib.Utility
 
 				if((strKey != null) && (strValue != null))
 					str = StrUtil.ReplaceCaseInsensitive(str, @"%" + strKey +
-						@"%", new ProtectedString(false, strValue), false);
+						@"%", new ProtectedString(false, strValue), false,
+						bDataAsKeySequence);
 				else { Debug.Assert(false); }
 			}
 #endif
@@ -425,6 +438,82 @@ namespace KeePassLib.Utility
 			try { dt = DateTime.Parse(str); return true; }
 			catch(Exception) { dt = DateTime.MinValue; return false; }
 #endif
+		}
+
+		public static string CompactString3Dots(string strText, int nMaxChars)
+		{
+			Debug.Assert(strText != null);
+			if(strText == null) throw new ArgumentNullException("strText");
+			Debug.Assert(nMaxChars >= 0);
+			if(nMaxChars < 0) throw new ArgumentOutOfRangeException("nMaxChars");
+
+			if(nMaxChars == 0) return string.Empty;
+			if(strText.Length <= nMaxChars) return strText;
+
+			if(nMaxChars <= 3) return strText.Substring(0, nMaxChars);
+
+			return strText.Substring(0, nMaxChars - 3) + "...";
+		}
+
+		public static string StringToKeySequence(string str, bool bReplaceEscBrackets)
+		{
+			Debug.Assert(str != null); if(str == null) return string.Empty;
+
+			if(bReplaceEscBrackets && ((str.IndexOf('{') >= 0) || (str.IndexOf('}') >= 0)))
+			{
+				char chOpen = '\u25A1';
+				while(str.IndexOf(chOpen) >= 0) ++chOpen;
+
+				char chClose = chOpen;
+				++chClose;
+				while(str.IndexOf(chClose) >= 0) ++chClose;
+
+				str = str.Replace('{', chOpen);
+				str = str.Replace('}', chClose);
+
+				str = str.Replace(new string(chOpen, 1), @"{{}");
+				str = str.Replace(new string(chClose, 1), @"{}}");
+			}
+
+			str = str.Replace(@"[", @"{[}");
+			str = str.Replace(@"]", @"{]}");
+
+			str = str.Replace(@"+", @"{+}");
+			str = str.Replace(@"^", @"{^}");
+			str = str.Replace(@"%", @"{%}");
+			str = str.Replace(@"~", @"{~}");
+			str = str.Replace(@"(", @"{(}");
+			str = str.Replace(@")", @"{)}");
+
+			return str;
+		}
+
+		public static string GetStringBetween(string strText, int nStartIndex,
+			string strStart, string strEnd)
+		{
+			int nTemp;
+			return GetStringBetween(strText, nStartIndex, strStart, strEnd, out nTemp);
+		}
+
+		public static string GetStringBetween(string strText, int nStartIndex,
+			string strStart, string strEnd, out int nInnerStartIndex)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+			if(strStart == null) throw new ArgumentNullException("strStart");
+			if(strEnd == null) throw new ArgumentNullException("strEnd");
+
+			nInnerStartIndex = -1;
+
+			int nIndex = strText.IndexOf(strStart, nStartIndex);
+			if(nIndex < 0) return string.Empty;
+
+			nIndex += strStart.Length;
+
+			int nEndIndex = strText.IndexOf(strEnd, nIndex);
+			if(nEndIndex < 0) return string.Empty;
+
+			nInnerStartIndex = nIndex;
+			return strText.Substring(nIndex, nEndIndex - nIndex);
 		}
 	}
 }

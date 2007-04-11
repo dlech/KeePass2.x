@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Translation>
+	<Meta>
+		<Language>
+			<EnglishName>English (US)</EnglishName>
+			<NativeName>English (Standard)</NativeName>
+			<ID>en</ID> <!-- See RFC 1766: ISO 639-1, ISO 3166 -->
+		</Language>
+		<Version>
+			<ForApplicationVersion>2.02</ForApplicationVersion>
+		</Version>
+		<Author>
+			<Name>Dominik Reichl</Name>
+			<Contact>dominik.reichl@t-online.de</Contact>
+		</Author>
+	</Meta>
+
+	<Form Name="AboutForm">
+		<Control Name="m_btnOK">
+			<Text>&amp;OK</Text>
+		</Control>
+	</Form>
+
+	<StringTable Name="KPRes" Namespace="KeePass.Resources">
+		<Data Name="AddEntry">
+			<Value>Add Entry</Value>
+		</Data>
+		<Data Name="AddEntryDesc">
+			<Value>Add a new password entry to the database.</Value>
+		</Data>
+		<Data Name="AddStringField">
+			<Value>Add Entry String Field</Value>
+		</Data>
+		<Data Name="AddStringFieldDesc">
+			<Value>Add a new string field to the current entry.</Value>
+		</Data>
+		<Data Name="Advanced">
+			<Value>Advanced</Value>
+		</Data>
+		<Data Name="AdvancedEntryProperties">
+			<Value>Entry Properties</Value>
+		</Data>
+		<Data Name="AdvancedEntryPropertiesDesc">
+			<Value>Here you can configure advanced properties of the entry.</Value>
+		</Data>
+		<Data Name="AfterDatabaseOpen">
+			<Value>After opening a database</Value>
+		</Data>
+		<Data Name="AllEntriesTitle">
+			<Value>All Entries</Value>
+		</Data>
+		<Data Name="AllFiles">
+			<Value>All Files</Value>
+		</Data>
+		<Data Name="AllSupportedFiles">
+			<Value>All Supported Files</Value>
+		</Data>
+		<Data Name="AskContinue">
+			<Value>Do you want to continue?</Value>
+		</Data>
+		<Data Name="Assistant">
+			<Value>Assistant</Value>
+		</Data>
+		<Data Name="AssistantTel">
+			<Value>AssistantTel</Value>
+		</Data>
+		<Data Name="AttachedExistsAlready">
+			<Value>The following file has already been attached to the current entry:</Value>
+		</Data>
+		<Data Name="AttachFailed">
+			<Value>Failed to attach file:</Value>
+		</Data>
+		<Data Name="Attachments">
+			<Value>Attachments</Value>
+		</Data>
+		<Data Name="AttachNewRename">
+			<Value>Do you wish to rename the new file or overwrite the existing attached file?</Value>
+		</Data>
+		<Data Name="AttachNewRenameRemarks0">
+			<Value>Click [Yes] to rename the new file.</Value>
+		</Data>
+		<Data Name="AttachNewRenameRemarks1">
+			<Value>Click [No] to overwrite the existing attached file.</Value>
+		</Data>
+		<Data Name="AttachNewRenameRemarks2">
+			<Value>Click [Cancel] to skip this file.</Value>
+		</Data>
+		<Data Name="Author">
+			<Value>Author</Value>
+		</Data>
+		<Data Name="AutoOpenLastFile">
+			<Value>Automatically open last used database on startup</Value>
+		</Data>
+		<Data Name="AutoSaveAtExit">
+			<Value>Automatically save database on exit and workspace locking</Value>
+		</Data>
+		<Data Name="AutoShowExpiredEntries">
+			<Value>Show expired entries (if any)</Value>
+		</Data>
+		<Data Name="AutoShowSoonToExpireEntries">
+			<Value>Show entries that will expire soon (if any)</Value>
+		</Data>
+		<Data Name="AutoType">
+			<Value>Auto-Type</Value>
+		</Data>
+		<Data Name="AutoTypeEntrySelection">
+			<Value>Auto-Type Entry Selection</Value>
+		</Data>
+		<Data Name="AutoTypeEntrySelectionDescLong">
+			<Value>Multiple entries have been found for the currently active window. Please select the entry, which you want to auto-type into the active window.</Value>
+		</Data>
+		<Data Name="AutoTypeEntrySelectionDescShort">
+			<Value>Multiple entries exist for the current window.</Value>
+		</Data>
+		<Data Name="AutoTypeObfuscationHint">
+			<Value>Auto-type obfuscation may not work with all windows.</Value>
+		</Data>
+		<Data Name="AvailableLanguages">
+			<Value>Available Languages</Value>
+		</Data>
+		<Data Name="BankAccount">
+			<Value>Bank Account</Value>
+		</Data>
+		<Data Name="Bits">
+			<Value>Bits</Value>
+		</Data>
+		<Data Name="BranchCode">
+			<Value>Branch Code</Value>
+		</Data>
+		<Data Name="BranchHours">
+			<Value>Branch Hours</Value>
+		</Data>
+		<Data Name="BranchTel">
+			<Value>Branch Tel.</Value>
+		</Data>
+		<Data Name="Browser">
+			<Value>Browser</Value>
+		</Data>
+		<Data Name="ButtonBack">
+			<Value>&lt; &amp;Back</Value>
+		</Data>
+		<Data Name="ButtonFinish">
+			<Value>&amp;Finish</Value>
+		</Data>
+		<Data Name="ButtonNext">
+			<Value>&amp;Next &gt;</Value>
+		</Data>
+		<Data Name="CannotMoveEntriesBcsGroup">
+			<Value>Cannot move entries because they aren't stored in the same group.</Value>
+		</Data>
+		<Data Name="CarTel">
+			<Value>Car Tel.</Value>
+		</Data>
+		<Data Name="ChangeMasterKeyIntro">
+			<Value>You are changing the composite master key for the currently-open database. After you do this, only the new composite master key will open the database; the old composite master key will no longer work. You need to save the database in order to apply the new composite master key.</Value>
+		</Data>
+		<Data Name="CheckForUpdAtStart">
+			<Value>Check for update at KeePass startup</Value>
+		</Data>
+		<Data Name="ChkForUpdGotLatest">
+			<Value>You have the latest version.</Value>
+		</Data>
+		<Data Name="ChkForUpdNewVersion">
+			<Value>New KeePass version available!</Value>
+		</Data>
+		<Data Name="ClearMRU">
+			<Value>&amp;Clear List</Value>
+		</Data>
+		<Data Name="Clipboard">
+			<Value>Clipboard</Value>
+		</Data>
+		<Data Name="ClipboardAutoClear">
+			<Value>Clipboard Auto-Clear</Value>
+		</Data>
+		<Data Name="ClipboardClearInSeconds">
+			<Value>Clipboard is automatically cleared in [PARAM] seconds</Value>
+		</Data>
+		<Data Name="ClipboardClearOnExit">
+			<Value>Clear clipboard when KeePass is closed</Value>
+		</Data>
+		<Data Name="CloseButton">
+			<Value>&amp;Close</Value>
+		</Data>
+		<Data Name="CloseButtonMinimizes">
+			<Value>Close button [X] minimizes main window instead of terminating the application</Value>
+		</Data>
+		<Data Name="Company">
+			<Value>Company</Value>
+		</Data>
+		<Data Name="Components">
+			<Value>Components</Value>
+		</Data>
+		<Data Name="ConfigAffectAdmin">
+			<Value>Changes to the configuration/policy will affect you and all users of this KeePass installation.</Value>
+		</Data>
+		<Data Name="ConfigAffectUser">
+			<Value>Changes to the configuration/policy will only affect you. Policy flags that are enforced by the administrator are reset after restarting KeePass.</Value>
+		</Data>
+		<Data Name="ConfigureAutoType">
+			<Value>Configure Auto-Type</Value>
+		</Data>
+		<Data Name="ConfigureAutoTypeDesc">
+			<Value>Configure auto-type behaviour for this entry.</Value>
+		</Data>
+		<Data Name="ConfigureAutoTypeItem">
+			<Value>Configure Auto-Type Item</Value>
+		</Data>
+		<Data Name="ConfigureAutoTypeItemDesc">
+			<Value>Associate a window title with a keystroke sequence.</Value>
+		</Data>
+		<Data Name="ConfigureKeystrokeSeq">
+			<Value>Configure Keystroke Sequence</Value>
+		</Data>
+		<Data Name="ConfigureKeystrokeSeqDesc">
+			<Value>Define a default keystroke sequence.</Value>
+		</Data>
+		<Data Name="ConfigureOnNewDatabase">
+			<Value>Create New Password Database - Step 2</Value>
+		</Data>
+		<Data Name="ConfigWriteGlobal">
+			<Value>Write to Global Configuration</Value>
+		</Data>
+		<Data Name="ConfigWriteLocal">
+			<Value>Write to Local Configuration</Value>
+		</Data>
+		<Data Name="Contact">
+			<Value>Contact</Value>
+		</Data>
+		<Data Name="Copy">
+			<Value>Copy</Value>
+		</Data>
+		<Data Name="CopyAll">
+			<Value>Copy All</Value>
+		</Data>
+		<Data Name="CreateMasterKey">
+			<Value>Create Composite Master Key</Value>
+		</Data>
+		<Data Name="CreateNewDatabase">
+			<Value>Create New Password Database</Value>
+		</Data>
+		<Data Name="CreationTime">
+			<Value>Creation Time</Value>
+		</Data>
+		<Data Name="CredSaveAll">
+			<Value>Remember user name and password</Value>
+		</Data>
+		<Data Name="CredSaveNone">
+			<Value>Do not remember user name and password</Value>
+		</Data>
+		<Data Name="CredSaveUserOnly">
+			<Value>Remember user name only</Value>
+		</Data>
+		<Data Name="Custom">
+			<Value>Custom</Value>
+		</Data>
+		<Data Name="CustomFields">
+			<Value>Custom Fields</Value>
+		</Data>
+		<Data Name="Cut">
+			<Value>Cut</Value>
+		</Data>
+		<Data Name="Database">
+			<Value>Datenbank</Value>
+		</Data>
+		<Data Name="DatabaseDescPrompt">
+			<Value>Enter a short description of the database or leave it empty.</Value>
+		</Data>
+		<Data Name="DatabaseMaintenance">
+			<Value>Database Maintenance</Value>
+		</Data>
+		<Data Name="DatabaseMaintenanceDesc">
+			<Value>Here you can maintain the currently opened database.</Value>
+		</Data>
+		<Data Name="DatabaseModified">
+			<Value>The currently opened database has been modified.</Value>
+		</Data>
+		<Data Name="DatabaseNamePrompt">
+			<Value>Enter a name for the database or leave it empty.</Value>
+		</Data>
+		<Data Name="DatabaseSettings">
+			<Value>Database Settings</Value>
+		</Data>
+		<Data Name="DatabaseSettingsDesc">
+			<Value>Here you can configure various database settings.</Value>
+		</Data>
+		<Data Name="Decompressing">
+			<Value>Decompressing</Value>
+		</Data>
+		<Data Name="Default">
+			<Value>Default</Value>
+		</Data>
+		<Data Name="Delete">
+			<Value>Delete</Value>
+		</Data>
+		<Data Name="DeleteEntriesCaption">
+			<Value>Delete Entries Confirmation</Value>
+		</Data>
+		<Data Name="DeleteEntriesInfo">
+			<Value>This will remove all selected entries unrecoverably!</Value>
+		</Data>
+		<Data Name="DeleteEntriesQuestion">
+			<Value>Are you sure you want to permanently delete all selected entries?</Value>
+		</Data>
+		<Data Name="DeleteGroupCaption">
+			<Value>Delete Group Confirmation</Value>
+		</Data>
+		<Data Name="DeleteGroupInfo">
+			<Value>Deleting a group will delete all entries and subgroups in that group.</Value>
+		</Data>
+		<Data Name="DeleteGroupQuestion">
+			<Value>Are you sure you want to permanently delete this group?</Value>
+		</Data>
+		<Data Name="Department">
+			<Value>Department</Value>
+		</Data>
+		<Data Name="Description">
+			<Value>Description</Value>
+		</Data>
+		<Data Name="Details">
+			<Value>Details</Value>
+		</Data>
+		<Data Name="DocumentationHint">
+			<Value>Please see the documentation for more details.</Value>
+		</Data>
+		<Data Name="DownloadAndInstall">
+			<Value>Download &amp; Install</Value>
+		</Data>
+		<Data Name="DownloadFailed">
+			<Value>Download failed.</Value>
+		</Data>
+		<Data Name="Downloading">
+			<Value>Downloading</Value>
+		</Data>
+		<Data Name="DragDrop">
+			<Value>Drag&amp;Drop</Value>
+		</Data>
+		<Data Name="DuplicateStringFieldName">
+			<Value>The string field name you specified already exists. String field names must be unique for each entry.</Value>
+		</Data>
+		<Data Name="EditEntry">
+			<Value>Edit Entry</Value>
+		</Data>
+		<Data Name="EditEntryDesc">
+			<Value>You're editing an existing password entry.</Value>
+		</Data>
+		<Data Name="EditGroup">
+			<Value>Edit Group</Value>
+		</Data>
+		<Data Name="EditGroupDesc">
+			<Value>Edit properties of the currently selected group.</Value>
+		</Data>
+		<Data Name="EditStringField">
+			<Value>Edit Entry String Field</Value>
+		</Data>
+		<Data Name="EditStringFieldDesc">
+			<Value>Edit one of the entry's string fields.</Value>
+		</Data>
+		<Data Name="EMail">
+			<Value>eMail</Value>
+		</Data>
+		<Data Name="Empty">
+			<Value>Empty</Value>
+		</Data>
+		<Data Name="EnterCompositeKey">
+			<Value>Enter Composite Master Key</Value>
+		</Data>
+		<Data Name="EntropyDesc">
+			<Value>Generate additional random bits.</Value>
+		</Data>
+		<Data Name="EntropyTitle">
+			<Value>Entropy Collection</Value>
+		</Data>
+		<Data Name="Entry">
+			<Value>Entry</Value>
+		</Data>
+		<Data Name="EntryList">
+			<Value>Entry List</Value>
+		</Data>
+		<Data Name="ErrorCode">
+			<Value>Error Code</Value>
+		</Data>
+		<Data Name="Errors">
+			<Value>Errors</Value>
+		</Data>
+		<Data Name="ExpiredEntries">
+			<Value>Expired Entries</Value>
+		</Data>
+		<Data Name="ExpiryTime">
+			<Value>Expiry Time</Value>
+		</Data>
+		<Data Name="Export">
+			<Value>Export</Value>
+		</Data>
+		<Data Name="ExportHTML">
+			<Value>Export To HTML</Value>
+		</Data>
+		<Data Name="ExportHTMLDesc">
+			<Value>Export entries to a HTML file.</Value>
+		</Data>
+		<Data Name="ExportingStatusMsg">
+			<Value>Exporting...</Value>
+		</Data>
+		<Data Name="FatalError">
+			<Value>Fatal Error</Value>
+		</Data>
+		<Data Name="FieldName">
+			<Value>Field Name</Value>
+		</Data>
+		<Data Name="FieldNameExistsAlready">
+			<Value>The entered name exists already and cannot be used.</Value>
+		</Data>
+		<Data Name="FieldNameInvalid">
+			<Value>The entered name is invalid and cannot be used.</Value>
+		</Data>
+		<Data Name="FieldValue">
+			<Value>Field Value</Value>
+		</Data>
+		<Data Name="FileExistsAlready">
+			<Value>The following file exists already:</Value>
+		</Data>
+		<Data Name="FileExtInstallFailed">
+			<Value>Failed to create the file association. Make sure you have write access to the file associations list.</Value>
+		</Data>
+		<Data Name="FileExtInstallSuccess">
+			<Value>Successfully associated KDBX files with KeePass! KDBX files will now be opened by KeePass when you double-click on them.</Value>
+		</Data>
+		<Data Name="FileExtName">
+			<Value>KeePass Password Database</Value>
+		</Data>
+		<Data Name="FileLockedBy">
+			<Value>The specified file is currently locked by the following user:</Value>
+		</Data>
+		<Data Name="FileLockedWarning">
+			<Value>KeePass will open the file, but note that you might overwrite changes each other when saving.</Value>
+		</Data>
+		<Data Name="FileNameContainsSemicolonError">
+			<Value>This file path contains a semicolon (;) and therefore cannot be processed. Replace the semicolon and repeat the procedure.</Value>
+		</Data>
+		<Data Name="FileNotFoundError">
+			<Value>The specified file could not be found.</Value>
+		</Data>
+		<Data Name="Files">
+			<Value>Files</Value>
+		</Data>
+		<Data Name="Flag">
+			<Value>Flag</Value>
+		</Data>
+		<Data Name="FormatNoDbDesc">
+			<Value>This file format doesn't support database descriptions.</Value>
+		</Data>
+		<Data Name="FormatNoDbName">
+			<Value>This file format doesn't support database names.</Value>
+		</Data>
+		<Data Name="FormatNoRootEntries">
+			<Value>This file format doesn't support root groups. All entries in the root group are moved to the first subgroup.</Value>
+		</Data>
+		<Data Name="FormatNoSubGroupsInRoot">
+			<Value>To export to this file format, the root group must have at least one subgroup.</Value>
+		</Data>
+		<Data Name="FormatOnlyOneAttachment">
+			<Value>This file format only supports one attachment per entry. Only the first attachment is saved, the others are ignored.</Value>
+		</Data>
+		<Data Name="Frequency">
+			<Value>Frequency</Value>
+		</Data>
+		<Data Name="General">
+			<Value>General</Value>
+		</Data>
+		<Data Name="GenerateCount">
+			<Value>Generated Passwords Count</Value>
+		</Data>
+		<Data Name="GenerateCountDesc">
+			<Value>Enter number of passwords to generate.</Value>
+		</Data>
+		<Data Name="GenerateCountLongDesc">
+			<Value>Please enter the number of passwords to generate:</Value>
+		</Data>
+		<Data Name="GeneratedPasswordSamples">
+			<Value>Generated Passwords Samples</Value>
+		</Data>
+		<Data Name="GenProfileAdd">
+			<Value>Add Profile</Value>
+		</Data>
+		<Data Name="GenProfileAddDesc">
+			<Value>Add new password generation options profile</Value>
+		</Data>
+		<Data Name="GenProfileAddDescLong">
+			<Value>You are about to save the currently selected options as a profile. Each profile must have a unique name. Please enter a name for the new profile:</Value>
+		</Data>
+		<Data Name="GenPwBasedOnPrevious">
+			<Value>Derive from previous password</Value>
+		</Data>
+		<Data Name="GenRandomPwForNewEntry">
+			<Value>Automatically generate random passwords for new entries</Value>
+		</Data>
+		<Data Name="Group">
+			<Value>Group</Value>
+		</Data>
+		<Data Name="GroupCannotStoreEntries">
+			<Value>The selected group cannot store any entries.</Value>
+		</Data>
+		<Data Name="HelpSourceNoLocalOption">
+			<Value>This option is grayed out because local help is not installed.</Value>
+		</Data>
+		<Data Name="HelpSourceSelection">
+			<Value>Help Source Selection</Value>
+		</Data>
+		<Data Name="HelpSourceSelectionDesc">
+			<Value>Choose between local help and online help center.</Value>
+		</Data>
+		<Data Name="HomeAddress">
+			<Value>Home Address</Value>
+		</Data>
+		<Data Name="Homebanking">
+			<Value>Homebanking</Value>
+		</Data>
+		<Data Name="HomeFax">
+			<Value>Home Fax</Value>
+		</Data>
+		<Data Name="HomepageVisitQuestion">
+			<Value>Do you want to visit the KeePass homepage now?</Value>
+		</Data>
+		<Data Name="HomeTel">
+			<Value>Home Tel.</Value>
+		</Data>
+		<Data Name="IBAN">
+			<Value>IBAN</Value>
+		</Data>
+		<Data Name="ImageViewer">
+			<Value>Image Viewer</Value>
+		</Data>
+		<Data Name="Import">
+			<Value>Import</Value>
+		</Data>
+		<Data Name="ImportBehavior">
+			<Value>Import Behavior</Value>
+		</Data>
+		<Data Name="ImportBehaviorDesc">
+			<Value>Select an import method.</Value>
+		</Data>
+		<Data Name="ImportFailed">
+			<Value>Import failed.</Value>
+		</Data>
+		<Data Name="ImportFileDesc">
+			<Value>Import an external file.</Value>
+		</Data>
+		<Data Name="ImportFileTitle">
+			<Value>Import File/Data</Value>
+		</Data>
+		<Data Name="ImportFinished">
+			<Value>The import process has finished!</Value>
+		</Data>
+		<Data Name="ImportingStatusMsg">
+			<Value>Importing...</Value>
+		</Data>
+		<Data Name="ImportMustRead">
+			<Value>It is indispensable that you read the documentation about this import method before continuing.</Value>
+		</Data>
+		<Data Name="ImportMustReadQuestion">
+			<Value>Have you understood how the import process works and want to start it now?</Value>
+		</Data>
+		<Data Name="Internet">
+			<Value>Internet</Value>
+		</Data>
+		<Data Name="InvalidFileStructure">
+			<Value>Invalid file structure!</Value>
+		</Data>
+		<Data Name="InvalidKey">
+			<Value>Invalid Key</Value>
+		</Data>
+		<Data Name="InvalidUrl">
+			<Value>The specified URL is invalid.</Value>
+		</Data>
+		<Data Name="InvalidUserPassword">
+			<Value>The specified user name / password combination is invalid.</Value>
+		</Data>
+		<Data Name="JobTitle">
+			<Value>Job Title</Value>
+		</Data>
+		<Data Name="KDB3KeePassLibC">
+			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
+		</Data>
+		<Data Name="KeePassLibCLong">
+			<Value>KeePassLibC (1.x File Support)</Value>
+		</Data>
+		<Data Name="KeePassLibCNotFound">
+			<Value>KeePassLibC could not be found.</Value>
+		</Data>
+		<Data Name="KeyFileError">
+			<Value>The specified key file could not be found or its format is unknown.</Value>
+		</Data>
+		<Data Name="KeystrokeSequence">
+			<Value>Keystroke Sequence</Value>
+		</Data>
+		<Data Name="LanguageSelected">
+			<Value>The selected language has been activated. KeePass must be restarted in order to load the language.</Value>
+		</Data>
+		<Data Name="LastAccessTime">
+			<Value>Last Access Time</Value>
+		</Data>
+		<Data Name="LastModificationTime">
+			<Value>Last Modification Time</Value>
+		</Data>
+		<Data Name="LimitSingleInstance">
+			<Value>Limit to single instance</Value>
+		</Data>
+		<Data Name="LockMenuLock">
+			<Value>&amp;Lock Workspace</Value>
+		</Data>
+		<Data Name="LockMenuUnlock">
+			<Value>Un&amp;lock Workspace</Value>
+		</Data>
+		<Data Name="LockOnMinimize">
+			<Value>Lock workspace when minimizing main window</Value>
+		</Data>
+		<Data Name="LockOnSessionLock">
+			<Value>Lock workspace when locking Windows or switching user</Value>
+		</Data>
+		<Data Name="MainWindow">
+			<Value>Main Window</Value>
+		</Data>
+		<Data Name="MasterKeyChanged">
+			<Value>Composite master key has been changed!</Value>
+		</Data>
+		<Data Name="MasterKeyChangedSavePrompt">
+			<Value>Save the database now in order to get the new key applied.</Value>
+		</Data>
+		<Data Name="Menus">
+			<Value>Menus</Value>
+		</Data>
+		<Data Name="MergingData">
+			<Value>Merging data...</Value>
+		</Data>
+		<Data Name="MinBalance">
+			<Value>Min. Balance</Value>
+		</Data>
+		<Data Name="MinimizeAfterCopy">
+			<Value>Minimize main window after copying data to the clipboard</Value>
+		</Data>
+		<Data Name="MinimizeToTray">
+			<Value>Minimize to tray instead of taskbar</Value>
+		</Data>
+		<Data Name="MobileTel">
+			<Value>Mobile Tel.</Value>
+		</Data>
+		<Data Name="NativeLibUse">
+			<Value>Use native library for faster key transformations</Value>
+		</Data>
+		<Data Name="Navigation">
+			<Value>Navigation</Value>
+		</Data>
+		<Data Name="Network">
+			<Value>Network</Value>
+		</Data>
+		<Data Name="NeverExpires">
+			<Value>Never expires</Value>
+		</Data>
+		<Data Name="NewDatabaseKDBFileName">
+			<Value>NewDatabase.kdbx</Value>
+		</Data>
+		<Data Name="NewGroup">
+			<Value>New Group</Value>
+		</Data>
+		<Data Name="NoFileAccessRead">
+			<Value>The operating system didn't KeePass grant read access to the specified file.</Value>
+		</Data>
+		<Data Name="NoKeyFileSpecifiedMeta">
+			<Value>(None)</Value>
+		</Data>
+		<Data Name="None">
+			<Value>None</Value>
+		</Data>
+		<Data Name="Notes">
+			<Value>Notes</Value>
+		</Data>
+		<Data Name="NotInstalled">
+			<Value>Not installed</Value>
+		</Data>
+		<Data Name="NoXSLFile">
+			<Value>The selected file isn't a valid XSL stylesheet.</Value>
+		</Data>
+		<Data Name="OfLower">
+			<Value>of</Value>
+		</Data>
+		<Data Name="OpeningDatabase">
+			<Value>Opening password database...</Value>
+		</Data>
+		<Data Name="Options">
+			<Value>Options</Value>
+		</Data>
+		<Data Name="OptionsDesc">
+			<Value>Here you can configure the global KeePass program options.</Value>
+		</Data>
+		<Data Name="OtherPlaceholders">
+			<Value>Other Placeholders</Value>
+		</Data>
+		<Data Name="OverwriteExistingFileQuestion">
+			<Value>Overwrite the existing file?</Value>
+		</Data>
+		<Data Name="Pager">
+			<Value>Pager</Value>
+		</Data>
+		<Data Name="Password">
+			<Value>Password</Value>
+		</Data>
+		<Data Name="PasswordManagers">
+			<Value>Password Managers</Value>
+		</Data>
+		<Data Name="PasswordOptions">
+			<Value>Password Generation Options</Value>
+		</Data>
+		<Data Name="PasswordOptionsDesc">
+			<Value>Here you can define how the generated password should look like.</Value>
+		</Data>
+		<Data Name="PasswordPrompt">
+			<Value>Enter the password:</Value>
+		</Data>
+		<Data Name="PasswordRepeatFailed">
+			<Value>Password and repeated password aren't identical!</Value>
+		</Data>
+		<Data Name="Paste">
+			<Value>Paste</Value>
+		</Data>
+		<Data Name="PluginFailedToLoad">
+			<Value>The following plugin cannot be loaded:</Value>
+		</Data>
+		<Data Name="Plugins">
+			<Value>Plugins</Value>
+		</Data>
+		<Data Name="PluginsDesc">
+			<Value>Here you can configure all loaded KeePass plugins.</Value>
+		</Data>
+		<Data Name="PolicyAutoTypeDesc">
+			<Value>Allow auto-typing entries to other windows.</Value>
+		</Data>
+		<Data Name="PolicyClipboardDesc">
+			<Value>Allow copying entry information to clipboard (main window only).</Value>
+		</Data>
+		<Data Name="PolicyDisallowed">
+			<Value>This operation is disallowed by the application policy. Ask your administrator to allow this operation.</Value>
+		</Data>
+		<Data Name="PolicyDragDropDesc">
+			<Value>Allow sending information to other windows using drag&amp;drop.</Value>
+		</Data>
+		<Data Name="PolicyExportDesc">
+			<Value>Allow exporting entries to (non-encrypted) file formats.</Value>
+		</Data>
+		<Data Name="PolicyImportDesc">
+			<Value>Allow importing entries from external files.</Value>
+		</Data>
+		<Data Name="PolicyPluginsDesc">
+			<Value>Allow loading plugins to extend KeePass functionality.</Value>
+		</Data>
+		<Data Name="PolicyPrintDesc">
+			<Value>Allow printing password entry lists.</Value>
+		</Data>
+		<Data Name="PolicyRequiredFlag">
+			<Value>The following policy flag is required</Value>
+		</Data>
+		<Data Name="PolicySaveDatabaseDesc">
+			<Value>Allow saving databases to disk/drive.</Value>
+		</Data>
+		<Data Name="Print">
+			<Value>Print</Value>
+		</Data>
+		<Data Name="PrintDesc">
+			<Value>Print password entries.</Value>
+		</Data>
+		<Data Name="QuickSearch">
+			<Value>Quick Search</Value>
+		</Data>
+		<Data Name="Ready">
+			<Value>Ready.</Value>
+		</Data>
+		<Data Name="RememberHidingSettings">
+			<Value>Remember password hiding setting in 'Edit Entry' window</Value>
+		</Data>
+		<Data Name="RestartKeePassQuestion">
+			<Value>Do you wish to restart KeePass now?</Value>
+		</Data>
+		<Data Name="RoutingCode">
+			<Value>Routing Code</Value>
+		</Data>
+		<Data Name="SampleEntry">
+			<Value>Sample Entry</Value>
+		</Data>
+		<Data Name="SaveBeforeCloseQuestion">
+			<Value>Do you want to save the changes before closing?</Value>
+		</Data>
+		<Data Name="SaveBeforeCloseTitle">
+			<Value>KeePass - Save Before Close/Lock?</Value>
+		</Data>
+		<Data Name="SaveDatabase">
+			<Value>Save Database</Value>
+		</Data>
+		<Data Name="SavingDatabase">
+			<Value>Saving database...</Value>
+		</Data>
+		<Data Name="SearchDesc">
+			<Value>Search the password database for entries.</Value>
+		</Data>
+		<Data Name="SearchGroupName">
+			<Value>Search Results</Value>
+		</Data>
+		<Data Name="SearchItemsFoundSmall">
+			<Value>entries found.</Value>
+		</Data>
+		<Data Name="SearchKeyFilesOnRemovable">
+			<Value>Automatically search key files on removable media</Value>
+		</Data>
+		<Data Name="SearchResultsInSeparator">
+			<Value>in</Value>
+		</Data>
+		<Data Name="SearchTitle">
+			<Value>Search</Value>
+		</Data>
+		<Data Name="SelectAll">
+			<Value>Select All</Value>
+		</Data>
+		<Data Name="SelectDifferentGroup">
+			<Value>Please select a different group.</Value>
+		</Data>
+		<Data Name="SelectedLower">
+			<Value>selected</Value>
+		</Data>
+		<Data Name="SelectLanguage">
+			<Value>Select Language</Value>
+		</Data>
+		<Data Name="SelectLanguageDesc">
+			<Value>Here you can select a different user interface language.</Value>
+		</Data>
+		<Data Name="SelfTestFailed">
+			<Value>One or more of the KeePass self-tests failed.</Value>
+		</Data>
+		<Data Name="ShowFullPathInTitleBar">
+			<Value>Show full path in title bar (instead of file name only)</Value>
+		</Data>
+		<Data Name="ShowGridLines">
+			<Value>Show grid lines in password entry list</Value>
+		</Data>
+		<Data Name="ShowTrayOnlyIfTrayed">
+			<Value>Show tray icon only if main window has been sent to tray</Value>
+		</Data>
+		<Data Name="SoonToExpireEntries">
+			<Value>Expired Entries and Entries That Will Expire Soon</Value>
+		</Data>
+		<Data Name="SortCode">
+			<Value>Sort Code</Value>
+		</Data>
+		<Data Name="SpecialKeys">
+			<Value>Special Keys</Value>
+		</Data>
+		<Data Name="SpecifyApplication">
+			<Value>Specify Application</Value>
+		</Data>
+		<Data Name="SpecifyApplicationDesc">
+			<Value>Customize used application for the current URL.</Value>
+		</Data>
+		<Data Name="StandardFields">
+			<Value>Standard Fields</Value>
+		</Data>
+		<Data Name="StartAndExit">
+			<Value>Start and Exit</Value>
+		</Data>
+		<Data Name="Success">
+			<Value>Success.</Value>
+		</Data>
+		<Data Name="SWIFTCode">
+			<Value>SWIFT Code</Value>
+		</Data>
+		<Data Name="SyncFailed">
+			<Value>Synchronization failed.</Value>
+		</Data>
+		<Data Name="Synchronize">
+			<Value>Synchronize</Value>
+		</Data>
+		<Data Name="SynchronizingHint">
+			<Value>Make sure that the two databases use the same composite master key. This is required for synchronization.</Value>
+		</Data>
+		<Data Name="SyncSuccess">
+			<Value>Synchronization completed successfully.</Value>
+		</Data>
+		<Data Name="System">
+			<Value>System</Value>
+		</Data>
+		<Data Name="SystemCodepage">
+			<Value>System Codepage</Value>
+		</Data>
+		<Data Name="TAccountInfoTel">
+			<Value>Account Info Tel.</Value>
+		</Data>
+		<Data Name="TAccountNames">
+			<Value>Account names</Value>
+		</Data>
+		<Data Name="TAccountNumber">
+			<Value>Account Number</Value>
+		</Data>
+		<Data Name="TAccountType">
+			<Value>Account Type</Value>
+		</Data>
+		<Data Name="TANWizard">
+			<Value>TAN Wizard</Value>
+		</Data>
+		<Data Name="TANWizardDesc">
+			<Value>With this TAN wizard you can easily add TAN entries.</Value>
+		</Data>
+		<Data Name="TargetWindow">
+			<Value>Target Window</Value>
+		</Data>
+		<Data Name="TextViewer">
+			<Value>Text Viewer</Value>
+		</Data>
+		<Data Name="Title">
+			<Value>Title</Value>
+		</Data>
+		<Data Name="TooManyFilesError">
+			<Value>Too many files have been selected. Select smaller groups and repeat the current procedure a few times.</Value>
+		</Data>
+		<Data Name="TransfersOf">
+			<Value>Transfers Of</Value>
+		</Data>
+		<Data Name="Undo">
+			<Value>Undo</Value>
+		</Data>
+		<Data Name="Unknown">
+			<Value>Unknown</Value>
+		</Data>
+		<Data Name="UnknownError">
+			<Value>An unknown error occured.</Value>
+		</Data>
+		<Data Name="UnknownFileVersion">
+			<Value>Unknown file version!</Value>
+		</Data>
+		<Data Name="URL">
+			<Value>URL</Value>
+		</Data>
+		<Data Name="UrlOpenDesc">
+			<Value>Open a database stored on a server.</Value>
+		</Data>
+		<Data Name="UrlOpenTitle">
+			<Value>Open From URL</Value>
+		</Data>
+		<Data Name="UrlOverride">
+			<Value>URL Override</Value>
+		</Data>
+		<Data Name="UrlSaveDesc">
+			<Value>Save current database on a server.</Value>
+		</Data>
+		<Data Name="UrlSaveTitle">
+			<Value>Save To URL</Value>
+		</Data>
+		<Data Name="UrlStarterCustomText">
+			<Value>Custom (Specify Path)</Value>
+		</Data>
+		<Data Name="UrlStarterFailCaption">
+			<Value>Plugin/program not found</Value>
+		</Data>
+		<Data Name="UrlStarterNotFoundPost">
+			<Value>However, this program/plugin is not installed on this system.</Value>
+		</Data>
+		<Data Name="UrlStarterNotFoundPre">
+			<Value>You have specified the following program/plugin to be used to open the URL of the current entry:</Value>
+		</Data>
+		<Data Name="UrlStarterUsesDefault">
+			<Value>The default system shell will be used to start the URL.</Value>
+		</Data>
+		<Data Name="UserName">
+			<Value>User Name</Value>
+		</Data>
+		<Data Name="UserNamePrompt">
+			<Value>Enter the user name:</Value>
+		</Data>
+		<Data Name="UUID">
+			<Value>UUID</Value>
+		</Data>
+		<Data Name="Version">
+			<Value>Version</Value>
+		</Data>
+		<Data Name="ViewEntry">
+			<Value>View Entry</Value>
+		</Data>
+		<Data Name="ViewEntryDesc">
+			<Value>You're viewing a password entry.</Value>
+		</Data>
+		<Data Name="Warnings">
+			<Value>Warnings</Value>
+		</Data>
+		<Data Name="WebBrowser">
+			<Value>Web Browser</Value>
+		</Data>
+		<Data Name="WebPage">
+			<Value>Web Page</Value>
+		</Data>
+		<Data Name="WebSiteLogin">
+			<Value>Web Site Login</Value>
+		</Data>
+		<Data Name="WebSites">
+			<Value>Web Sites</Value>
+		</Data>
+		<Data Name="WindowsOS">
+			<Value>Windows</Value>
+		</Data>
+		<Data Name="WorkFax">
+			<Value>Work Fax</Value>
+		</Data>
+		<Data Name="WorkspaceLocked">
+			<Value>Workspace Locked</Value>
+		</Data>
+		<Data Name="WorkTel">
+			<Value>Work Tel.</Value>
+		</Data>
+		<Data Name="XSLStylesheets">
+			<Value>XSL Stylesheets for KDB4 XML</Value>
+		</Data>
+	</StringTable>
+
+	<StringTable Name="KLRes" Namespace="KeePassLib.Resources">
+
+		<Data Name="CryptoStreamFailed">
+			<Value>Failed to initialize encryption/decryption stream!</Value>
+		</Data>
+		<Data Name="InvalidCompositeKey">
+			<Value>The composite key is invalid!</Value>
+		</Data>
+		<Data Name="InvalidCompositeKeyHint">
+			<Value>Make sure the composite key is correct and try again.</Value>
+		</Data>
+		<Data Name="InvalidDataWhileDecoding">
+			<Value>Found invalid data while decoding.</Value>
+		</Data>
+		<Data Name="FileUnknownCipher">
+			<Value>The file encrypted using an unknown encryption algorithm!</Value>
+		</Data>
+		<Data Name="FileSigInvalid">
+			<Value>The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.</Value>
+		</Data>
+		<Data Name="FileVersionUnknown">
+			<Value>Unknown file version!</Value>
+		</Data>
+		<Data Name="FileHeaderEndEarly">
+			<Value>The file header is corrupted! Some header data was declared but is not present.</Value>
+		</Data>
+		<Data Name="UnknownHeaderID">
+			<Value>Unknown header ID!</Value>
+		</Data>
+		<Data Name="FileUnknownCompression">
+			<Value>The file is compressed using an unknown compression algorithm!</Value>
+		</Data>
+		<Data Name="MasterSeedLengthInvalid">
+			<Value>The length of the master key seed is invalid!</Value>
+		</Data>
+		<Data Name="FinalKeyCreationFailed">
+			<Value>Failed to create the final encryption/decryption key!</Value>
+		</Data>
+		<Data Name="OldFormat">
+			<Value>The selected file appears to be an old format</Value>
+		</Data>
+		<Data Name="FatalError">
+			<Value>Fatal Error</Value>
+		</Data>
+		<Data Name="FatalErrorText">
+			<Value>A fatal error has occured!</Value>
+		</Data>
+		<Data Name="FileLoadFailed">
+			<Value>Failed to load the specified file!</Value>
+		</Data>
+		<Data Name="FileSaveFailed">
+			<Value>Failed to save the current database to the specified location!</Value>
+		</Data>
+		<Data Name="ErrorFeedbackRequest">
+			<Value>An extended error report has been copied to the clipboard. Please send it to the KeePass developers.</Value>
+		</Data>
+	</StringTable>
+</Translation>

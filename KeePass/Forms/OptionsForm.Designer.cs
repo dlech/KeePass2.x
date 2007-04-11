@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -88,23 +87,32 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(586, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(418, 409);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(499, 409);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -115,9 +123,11 @@
 			this.m_tabMain.Controls.Add(this.m_tabGui);
 			this.m_tabMain.Controls.Add(this.m_tabIntegration);
 			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
-			resources.ApplyResources(this.m_tabMain, "m_tabMain");
+			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
+			this.m_tabMain.Size = new System.Drawing.Size(562, 337);
+			this.m_tabMain.TabIndex = 2;
 			// 
 			// m_tabSecurity
 			// 
@@ -128,8 +138,12 @@
 			this.m_tabSecurity.Controls.Add(this.m_cbDefaultExpireDays);
 			this.m_tabSecurity.Controls.Add(this.m_cbLockAfterTime);
 			this.m_tabSecurity.Controls.Add(this.m_numLockAfterTime);
-			resources.ApplyResources(this.m_tabSecurity, "m_tabSecurity");
+			this.m_tabSecurity.Location = new System.Drawing.Point(4, 22);
 			this.m_tabSecurity.Name = "m_tabSecurity";
+			this.m_tabSecurity.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabSecurity.Size = new System.Drawing.Size(554, 311);
+			this.m_tabSecurity.TabIndex = 0;
+			this.m_tabSecurity.Text = "Security";
 			this.m_tabSecurity.UseVisualStyleBackColor = true;
 			// 
 			// m_lvSecurityOptions
@@ -137,55 +151,75 @@
 			this.m_lvSecurityOptions.CheckBoxes = true;
 			this.m_lvSecurityOptions.FullRowSelect = true;
 			this.m_lvSecurityOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			resources.ApplyResources(this.m_lvSecurityOptions, "m_lvSecurityOptions");
+			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 81);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
+			this.m_lvSecurityOptions.Size = new System.Drawing.Size(542, 224);
+			this.m_lvSecurityOptions.TabIndex = 7;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
 			// 
 			// m_numClipClearTime
 			// 
-			resources.ApplyResources(this.m_numClipClearTime, "m_numClipClearTime");
+			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 57);
 			this.m_numClipClearTime.Name = "m_numClipClearTime";
+			this.m_numClipClearTime.Size = new System.Drawing.Size(66, 20);
+			this.m_numClipClearTime.TabIndex = 5;
 			// 
 			// m_cbClipClearTime
 			// 
-			resources.ApplyResources(this.m_cbClipClearTime, "m_cbClipClearTime");
+			this.m_cbClipClearTime.AutoSize = true;
+			this.m_cbClipClearTime.Location = new System.Drawing.Point(6, 58);
 			this.m_cbClipClearTime.Name = "m_cbClipClearTime";
+			this.m_cbClipClearTime.Size = new System.Drawing.Size(194, 17);
+			this.m_cbClipClearTime.TabIndex = 4;
+			this.m_cbClipClearTime.Text = "Clipboard auto-clear time (seconds):";
 			this.m_cbClipClearTime.UseVisualStyleBackColor = true;
 			// 
 			// m_numDefaultExpireDays
 			// 
-			resources.ApplyResources(this.m_numDefaultExpireDays, "m_numDefaultExpireDays");
+			this.m_numDefaultExpireDays.Location = new System.Drawing.Point(327, 34);
 			this.m_numDefaultExpireDays.Maximum = new decimal(new int[] {
             2920,
             0,
             0,
             0});
 			this.m_numDefaultExpireDays.Name = "m_numDefaultExpireDays";
+			this.m_numDefaultExpireDays.Size = new System.Drawing.Size(66, 20);
+			this.m_numDefaultExpireDays.TabIndex = 3;
 			// 
 			// m_cbDefaultExpireDays
 			// 
-			resources.ApplyResources(this.m_cbDefaultExpireDays, "m_cbDefaultExpireDays");
+			this.m_cbDefaultExpireDays.AutoSize = true;
+			this.m_cbDefaultExpireDays.Location = new System.Drawing.Point(6, 35);
 			this.m_cbDefaultExpireDays.Name = "m_cbDefaultExpireDays";
+			this.m_cbDefaultExpireDays.Size = new System.Drawing.Size(315, 17);
+			this.m_cbDefaultExpireDays.TabIndex = 2;
+			this.m_cbDefaultExpireDays.Text = "By default, new entries expire in the following number of days:";
 			this.m_cbDefaultExpireDays.UseVisualStyleBackColor = true;
 			this.m_cbDefaultExpireDays.CheckedChanged += new System.EventHandler(this.OnDefaultExpireDaysCheckedChanged);
 			// 
 			// m_cbLockAfterTime
 			// 
-			resources.ApplyResources(this.m_cbLockAfterTime, "m_cbLockAfterTime");
+			this.m_cbLockAfterTime.AutoSize = true;
+			this.m_cbLockAfterTime.Location = new System.Drawing.Point(6, 12);
 			this.m_cbLockAfterTime.Name = "m_cbLockAfterTime";
+			this.m_cbLockAfterTime.Size = new System.Drawing.Size(287, 17);
+			this.m_cbLockAfterTime.TabIndex = 0;
+			this.m_cbLockAfterTime.Text = "Lock workspace after the following number of seconds:";
 			this.m_cbLockAfterTime.UseVisualStyleBackColor = true;
 			this.m_cbLockAfterTime.CheckedChanged += new System.EventHandler(this.OnLockAfterTimeCheckedChanged);
 			// 
 			// m_numLockAfterTime
 			// 
-			resources.ApplyResources(this.m_numLockAfterTime, "m_numLockAfterTime");
+			this.m_numLockAfterTime.Location = new System.Drawing.Point(327, 11);
 			this.m_numLockAfterTime.Maximum = new decimal(new int[] {
             1209600,
             0,
             0,
             0});
 			this.m_numLockAfterTime.Name = "m_numLockAfterTime";
+			this.m_numLockAfterTime.Size = new System.Drawing.Size(66, 20);
+			this.m_numLockAfterTime.TabIndex = 1;
 			this.m_numLockAfterTime.ValueChanged += new System.EventHandler(this.OnLockAfterTimeValueChanged);
 			// 
 			// m_tabPolicy
@@ -198,55 +232,87 @@
 			this.m_tabPolicy.Controls.Add(this.m_lblPolicyMore);
 			this.m_tabPolicy.Controls.Add(this.m_lblPolicyRestart);
 			this.m_tabPolicy.Controls.Add(this.m_lblPolicyIntro);
-			resources.ApplyResources(this.m_tabPolicy, "m_tabPolicy");
+			this.m_tabPolicy.Location = new System.Drawing.Point(4, 22);
 			this.m_tabPolicy.Name = "m_tabPolicy";
+			this.m_tabPolicy.Size = new System.Drawing.Size(554, 311);
+			this.m_tabPolicy.TabIndex = 3;
+			this.m_tabPolicy.Text = "Policy";
 			this.m_tabPolicy.UseVisualStyleBackColor = true;
 			// 
 			// m_lblPolicyAffectHint
 			// 
-			resources.ApplyResources(this.m_lblPolicyAffectHint, "m_lblPolicyAffectHint");
+			this.m_lblPolicyAffectHint.Location = new System.Drawing.Point(83, 60);
 			this.m_lblPolicyAffectHint.Name = "m_lblPolicyAffectHint";
+			this.m_lblPolicyAffectHint.Size = new System.Drawing.Size(461, 28);
+			this.m_lblPolicyAffectHint.TabIndex = 5;
+			this.m_lblPolicyAffectHint.Text = "<>";
 			// 
 			// m_lblPolicyCurrentUserLevel
 			// 
-			resources.ApplyResources(this.m_lblPolicyCurrentUserLevel, "m_lblPolicyCurrentUserLevel");
+			this.m_lblPolicyCurrentUserLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_lblPolicyCurrentUserLevel.Location = new System.Drawing.Point(82, 45);
 			this.m_lblPolicyCurrentUserLevel.Name = "m_lblPolicyCurrentUserLevel";
+			this.m_lblPolicyCurrentUserLevel.Size = new System.Drawing.Size(462, 15);
+			this.m_lblPolicyCurrentUserLevel.TabIndex = 4;
+			this.m_lblPolicyCurrentUserLevel.Text = "<>";
 			// 
 			// m_lblPolicyStatus
 			// 
-			resources.ApplyResources(this.m_lblPolicyStatus, "m_lblPolicyStatus");
+			this.m_lblPolicyStatus.AutoSize = true;
+			this.m_lblPolicyStatus.Location = new System.Drawing.Point(3, 45);
 			this.m_lblPolicyStatus.Name = "m_lblPolicyStatus";
+			this.m_lblPolicyStatus.Size = new System.Drawing.Size(73, 13);
+			this.m_lblPolicyStatus.TabIndex = 3;
+			this.m_lblPolicyStatus.Text = "Current mode:";
 			// 
 			// m_lvPolicy
 			// 
 			this.m_lvPolicy.CheckBoxes = true;
 			this.m_lvPolicy.FullRowSelect = true;
 			this.m_lvPolicy.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			resources.ApplyResources(this.m_lvPolicy, "m_lvPolicy");
+			this.m_lvPolicy.Location = new System.Drawing.Point(6, 91);
 			this.m_lvPolicy.Name = "m_lvPolicy";
+			this.m_lvPolicy.Size = new System.Drawing.Size(538, 195);
+			this.m_lvPolicy.TabIndex = 6;
 			this.m_lvPolicy.UseCompatibleStateImageBehavior = false;
 			this.m_lvPolicy.View = System.Windows.Forms.View.Details;
 			// 
 			// m_linkPolicyInfo
 			// 
-			resources.ApplyResources(this.m_linkPolicyInfo, "m_linkPolicyInfo");
+			this.m_linkPolicyInfo.AutoSize = true;
+			this.m_linkPolicyInfo.Location = new System.Drawing.Point(134, 23);
 			this.m_linkPolicyInfo.Name = "m_linkPolicyInfo";
+			this.m_linkPolicyInfo.Size = new System.Drawing.Size(115, 13);
+			this.m_linkPolicyInfo.TabIndex = 2;
 			this.m_linkPolicyInfo.TabStop = true;
+			this.m_linkPolicyInfo.Text = "Application Policy Help";
 			// 
 			// m_lblPolicyMore
 			// 
-			resources.ApplyResources(this.m_lblPolicyMore, "m_lblPolicyMore");
+			this.m_lblPolicyMore.AutoSize = true;
+			this.m_lblPolicyMore.Location = new System.Drawing.Point(3, 23);
 			this.m_lblPolicyMore.Name = "m_lblPolicyMore";
+			this.m_lblPolicyMore.Size = new System.Drawing.Size(125, 13);
+			this.m_lblPolicyMore.TabIndex = 1;
+			this.m_lblPolicyMore.Text = "For more information see:";
 			// 
 			// m_lblPolicyRestart
 			// 
-			resources.ApplyResources(this.m_lblPolicyRestart, "m_lblPolicyRestart");
+			this.m_lblPolicyRestart.AutoSize = true;
+			this.m_lblPolicyRestart.Location = new System.Drawing.Point(3, 289);
 			this.m_lblPolicyRestart.Name = "m_lblPolicyRestart";
+			this.m_lblPolicyRestart.Size = new System.Drawing.Size(234, 13);
+			this.m_lblPolicyRestart.TabIndex = 7;
+			this.m_lblPolicyRestart.Text = "Changing the policy requires restarting KeePass.";
 			// 
 			// m_lblPolicyIntro
 			// 
-			resources.ApplyResources(this.m_lblPolicyIntro, "m_lblPolicyIntro");
+			this.m_lblPolicyIntro.Location = new System.Drawing.Point(3, 9);
 			this.m_lblPolicyIntro.Name = "m_lblPolicyIntro";
+			this.m_lblPolicyIntro.Size = new System.Drawing.Size(548, 14);
+			this.m_lblPolicyIntro.TabIndex = 0;
+			this.m_lblPolicyIntro.Text = "The application policy defines which security-critical operations are allowed and" +
+				" which aren\'t.";
 			// 
 			// m_tabGui
 			// 
@@ -254,14 +320,20 @@
 			this.m_tabGui.Controls.Add(this.m_lvGuiOptions);
 			this.m_tabGui.Controls.Add(this.m_lblBannerStyle);
 			this.m_tabGui.Controls.Add(this.m_cmbBannerStyle);
-			resources.ApplyResources(this.m_tabGui, "m_tabGui");
+			this.m_tabGui.Location = new System.Drawing.Point(4, 22);
 			this.m_tabGui.Name = "m_tabGui";
+			this.m_tabGui.Size = new System.Drawing.Size(554, 311);
+			this.m_tabGui.TabIndex = 2;
+			this.m_tabGui.Text = "GUI";
 			this.m_tabGui.UseVisualStyleBackColor = true;
 			// 
 			// m_btnSelFont
 			// 
-			resources.ApplyResources(this.m_btnSelFont, "m_btnSelFont");
+			this.m_btnSelFont.Location = new System.Drawing.Point(12, 270);
 			this.m_btnSelFont.Name = "m_btnSelFont";
+			this.m_btnSelFont.Size = new System.Drawing.Size(105, 23);
+			this.m_btnSelFont.TabIndex = 3;
+			this.m_btnSelFont.Text = "Select List Font";
 			this.m_btnSelFont.UseVisualStyleBackColor = true;
 			this.m_btnSelFont.Click += new System.EventHandler(this.OnBtnSelListFont);
 			// 
@@ -270,28 +342,36 @@
 			this.m_lvGuiOptions.CheckBoxes = true;
 			this.m_lvGuiOptions.FullRowSelect = true;
 			this.m_lvGuiOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			resources.ApplyResources(this.m_lvGuiOptions, "m_lvGuiOptions");
+			this.m_lvGuiOptions.Location = new System.Drawing.Point(12, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
+			this.m_lvGuiOptions.Size = new System.Drawing.Size(529, 219);
+			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvGuiOptions.View = System.Windows.Forms.View.Details;
 			// 
 			// m_lblBannerStyle
 			// 
-			resources.ApplyResources(this.m_lblBannerStyle, "m_lblBannerStyle");
+			this.m_lblBannerStyle.AutoSize = true;
+			this.m_lblBannerStyle.Location = new System.Drawing.Point(9, 246);
 			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
+			this.m_lblBannerStyle.Size = new System.Drawing.Size(103, 13);
+			this.m_lblBannerStyle.TabIndex = 1;
+			this.m_lblBannerStyle.Text = "Dialog Banner Style:";
 			// 
 			// m_cmbBannerStyle
 			// 
 			this.m_cmbBannerStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbBannerStyle.FormattingEnabled = true;
 			this.m_cmbBannerStyle.Items.AddRange(new object[] {
-            resources.GetString("m_cmbBannerStyle.Items"),
-            resources.GetString("m_cmbBannerStyle.Items1"),
-            resources.GetString("m_cmbBannerStyle.Items2"),
-            resources.GetString("m_cmbBannerStyle.Items3"),
-            resources.GetString("m_cmbBannerStyle.Items4")});
-			resources.ApplyResources(this.m_cmbBannerStyle, "m_cmbBannerStyle");
+            "(Current)",
+            "WinXP Login",
+            "WinVista Black",
+            "KeePass Win32",
+            "Blue Carbon"});
+			this.m_cmbBannerStyle.Location = new System.Drawing.Point(118, 243);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
+			this.m_cmbBannerStyle.Size = new System.Drawing.Size(148, 21);
+			this.m_cmbBannerStyle.TabIndex = 2;
 			this.m_cmbBannerStyle.SelectedValueChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
 			// 
 			// m_tabIntegration
@@ -302,32 +382,49 @@
 			this.m_tabIntegration.Controls.Add(this.m_cbAutoRun);
 			this.m_tabIntegration.Controls.Add(this.m_grpFileExt);
 			this.m_tabIntegration.Controls.Add(this.m_grpHotKeys);
-			resources.ApplyResources(this.m_tabIntegration, "m_tabIntegration");
+			this.m_tabIntegration.Location = new System.Drawing.Point(4, 22);
 			this.m_tabIntegration.Name = "m_tabIntegration";
+			this.m_tabIntegration.Size = new System.Drawing.Size(554, 311);
+			this.m_tabIntegration.TabIndex = 4;
+			this.m_tabIntegration.Text = "Integration";
 			this.m_tabIntegration.UseVisualStyleBackColor = true;
 			// 
 			// m_tbUrlOverride
 			// 
-			resources.ApplyResources(this.m_tbUrlOverride, "m_tbUrlOverride");
+			this.m_tbUrlOverride.Location = new System.Drawing.Point(139, 240);
 			this.m_tbUrlOverride.Name = "m_tbUrlOverride";
+			this.m_tbUrlOverride.Size = new System.Drawing.Size(406, 20);
+			this.m_tbUrlOverride.TabIndex = 5;
 			// 
 			// m_cbUrlOverride
 			// 
-			resources.ApplyResources(this.m_cbUrlOverride, "m_cbUrlOverride");
+			this.m_cbUrlOverride.AutoSize = true;
+			this.m_cbUrlOverride.Location = new System.Drawing.Point(12, 242);
 			this.m_cbUrlOverride.Name = "m_cbUrlOverride";
+			this.m_cbUrlOverride.Size = new System.Drawing.Size(112, 17);
+			this.m_cbUrlOverride.TabIndex = 4;
+			this.m_cbUrlOverride.Text = "Override all URLs:";
 			this.m_cbUrlOverride.UseVisualStyleBackColor = true;
 			this.m_cbUrlOverride.CheckedChanged += new System.EventHandler(this.OnOverrideURLsCheckedChanged);
 			// 
 			// m_cbSingleClickTrayAction
 			// 
-			resources.ApplyResources(this.m_cbSingleClickTrayAction, "m_cbSingleClickTrayAction");
+			this.m_cbSingleClickTrayAction.AutoSize = true;
+			this.m_cbSingleClickTrayAction.Location = new System.Drawing.Point(12, 219);
 			this.m_cbSingleClickTrayAction.Name = "m_cbSingleClickTrayAction";
+			this.m_cbSingleClickTrayAction.Size = new System.Drawing.Size(314, 17);
+			this.m_cbSingleClickTrayAction.TabIndex = 3;
+			this.m_cbSingleClickTrayAction.Text = "Single click instead of double click for default tray icon action";
 			this.m_cbSingleClickTrayAction.UseVisualStyleBackColor = true;
 			// 
 			// m_cbAutoRun
 			// 
-			resources.ApplyResources(this.m_cbAutoRun, "m_cbAutoRun");
+			this.m_cbAutoRun.AutoSize = true;
+			this.m_cbAutoRun.Location = new System.Drawing.Point(12, 195);
 			this.m_cbAutoRun.Name = "m_cbAutoRun";
+			this.m_cbAutoRun.Size = new System.Drawing.Size(250, 17);
+			this.m_cbAutoRun.TabIndex = 2;
+			this.m_cbAutoRun.Text = "Run KeePass at Windows startup (current user)";
 			this.m_cbAutoRun.UseVisualStyleBackColor = true;
 			this.m_cbAutoRun.CheckedChanged += new System.EventHandler(this.OnCheckedChangedAutoRun);
 			// 
@@ -336,30 +433,45 @@
 			this.m_grpFileExt.Controls.Add(this.m_btnFileExtRemove);
 			this.m_grpFileExt.Controls.Add(this.m_btnFileExtCreate);
 			this.m_grpFileExt.Controls.Add(this.m_lblFileExtHint);
-			resources.ApplyResources(this.m_grpFileExt, "m_grpFileExt");
+			this.m_grpFileExt.Location = new System.Drawing.Point(3, 95);
 			this.m_grpFileExt.Name = "m_grpFileExt";
+			this.m_grpFileExt.Size = new System.Drawing.Size(548, 82);
+			this.m_grpFileExt.TabIndex = 1;
 			this.m_grpFileExt.TabStop = false;
+			this.m_grpFileExt.Text = "KDBX File Association";
 			// 
 			// m_btnFileExtRemove
 			// 
 			this.m_btnFileExtRemove.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
-			resources.ApplyResources(this.m_btnFileExtRemove, "m_btnFileExtRemove");
+			this.m_btnFileExtRemove.Location = new System.Drawing.Point(151, 51);
 			this.m_btnFileExtRemove.Name = "m_btnFileExtRemove";
+			this.m_btnFileExtRemove.Size = new System.Drawing.Size(135, 23);
+			this.m_btnFileExtRemove.TabIndex = 2;
+			this.m_btnFileExtRemove.Text = "&Remove Association";
+			this.m_btnFileExtRemove.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnFileExtRemove.UseVisualStyleBackColor = true;
 			this.m_btnFileExtRemove.Click += new System.EventHandler(this.OnBtnFileExtRemove);
 			// 
 			// m_btnFileExtCreate
 			// 
 			this.m_btnFileExtCreate.Image = global::KeePass.Properties.Resources.B16x16_FileNew;
-			resources.ApplyResources(this.m_btnFileExtCreate, "m_btnFileExtCreate");
+			this.m_btnFileExtCreate.Location = new System.Drawing.Point(10, 51);
 			this.m_btnFileExtCreate.Name = "m_btnFileExtCreate";
+			this.m_btnFileExtCreate.Size = new System.Drawing.Size(131, 23);
+			this.m_btnFileExtCreate.TabIndex = 1;
+			this.m_btnFileExtCreate.Text = "Create &Association";
+			this.m_btnFileExtCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnFileExtCreate.UseVisualStyleBackColor = true;
 			this.m_btnFileExtCreate.Click += new System.EventHandler(this.OnBtnFileExtCreate);
 			// 
 			// m_lblFileExtHint
 			// 
-			resources.ApplyResources(this.m_lblFileExtHint, "m_lblFileExtHint");
+			this.m_lblFileExtHint.Location = new System.Drawing.Point(7, 20);
 			this.m_lblFileExtHint.Name = "m_lblFileExtHint";
+			this.m_lblFileExtHint.Size = new System.Drawing.Size(535, 28);
+			this.m_lblFileExtHint.TabIndex = 0;
+			this.m_lblFileExtHint.Text = "KDBX files can be associated with KeePass. When you double-click a KDBX file in W" +
+				"indows Explorer, they will automatically be opened by KeePass.";
 			// 
 			// m_grpHotKeys
 			// 
@@ -367,35 +479,54 @@
 			this.m_grpHotKeys.Controls.Add(this.m_lblGlobalAutoTypeHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_lblRestoreHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_tbGlobalAutoType);
-			resources.ApplyResources(this.m_grpHotKeys, "m_grpHotKeys");
+			this.m_grpHotKeys.Location = new System.Drawing.Point(3, 12);
 			this.m_grpHotKeys.Name = "m_grpHotKeys";
+			this.m_grpHotKeys.Size = new System.Drawing.Size(548, 77);
+			this.m_grpHotKeys.TabIndex = 0;
 			this.m_grpHotKeys.TabStop = false;
+			this.m_grpHotKeys.Text = "System-Wide Hot Keys";
 			// 
 			// m_tbShowWindowHotKey
 			// 
-			resources.ApplyResources(this.m_tbShowWindowHotKey, "m_tbShowWindowHotKey");
+			this.m_tbShowWindowHotKey.Location = new System.Drawing.Point(136, 45);
 			this.m_tbShowWindowHotKey.Name = "m_tbShowWindowHotKey";
+			this.m_tbShowWindowHotKey.Size = new System.Drawing.Size(150, 20);
+			this.m_tbShowWindowHotKey.TabIndex = 3;
 			// 
 			// m_lblGlobalAutoTypeHotKey
 			// 
-			resources.ApplyResources(this.m_lblGlobalAutoTypeHotKey, "m_lblGlobalAutoTypeHotKey");
+			this.m_lblGlobalAutoTypeHotKey.AutoSize = true;
+			this.m_lblGlobalAutoTypeHotKey.Location = new System.Drawing.Point(6, 22);
 			this.m_lblGlobalAutoTypeHotKey.Name = "m_lblGlobalAutoTypeHotKey";
+			this.m_lblGlobalAutoTypeHotKey.Size = new System.Drawing.Size(92, 13);
+			this.m_lblGlobalAutoTypeHotKey.TabIndex = 0;
+			this.m_lblGlobalAutoTypeHotKey.Text = "Global Auto-Type:";
 			// 
 			// m_lblRestoreHotKey
 			// 
-			resources.ApplyResources(this.m_lblRestoreHotKey, "m_lblRestoreHotKey");
+			this.m_lblRestoreHotKey.AutoSize = true;
+			this.m_lblRestoreHotKey.Location = new System.Drawing.Point(6, 48);
 			this.m_lblRestoreHotKey.Name = "m_lblRestoreHotKey";
+			this.m_lblRestoreHotKey.Size = new System.Drawing.Size(124, 13);
+			this.m_lblRestoreHotKey.TabIndex = 2;
+			this.m_lblRestoreHotKey.Text = "Show KeePass Window:";
 			// 
 			// m_tbGlobalAutoType
 			// 
-			resources.ApplyResources(this.m_tbGlobalAutoType, "m_tbGlobalAutoType");
+			this.m_tbGlobalAutoType.Location = new System.Drawing.Point(136, 19);
 			this.m_tbGlobalAutoType.Name = "m_tbGlobalAutoType";
+			this.m_tbGlobalAutoType.Size = new System.Drawing.Size(150, 20);
+			this.m_tbGlobalAutoType.TabIndex = 1;
 			// 
 			// m_tabAdvanced
 			// 
 			this.m_tabAdvanced.Controls.Add(this.m_lvAdvanced);
-			resources.ApplyResources(this.m_tabAdvanced, "m_tabAdvanced");
+			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAdvanced.Name = "m_tabAdvanced";
+			this.m_tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabAdvanced.Size = new System.Drawing.Size(554, 311);
+			this.m_tabAdvanced.TabIndex = 1;
+			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
 			// 
 			// m_lvAdvanced
@@ -403,8 +534,10 @@
 			this.m_lvAdvanced.CheckBoxes = true;
 			this.m_lvAdvanced.FullRowSelect = true;
 			this.m_lvAdvanced.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			resources.ApplyResources(this.m_lvAdvanced, "m_lvAdvanced");
+			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 6);
 			this.m_lvAdvanced.Name = "m_lvAdvanced";
+			this.m_lvAdvanced.Size = new System.Drawing.Size(542, 299);
+			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
@@ -416,9 +549,10 @@
 			// OptionsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(586, 444);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
@@ -428,6 +562,8 @@
 			this.MinimizeBox = false;
 			this.Name = "OptionsForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Options";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

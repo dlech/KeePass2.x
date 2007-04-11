@@ -29,8 +29,9 @@ using System.Diagnostics;
 using System.Threading;
 
 using KeePass.App;
-using KeePass.UI;
 using KeePass.Resources;
+using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Keys;
@@ -42,6 +43,9 @@ namespace KeePass.Forms
 	{
 		private CompositeKey m_pKey = null;
 		private string m_strDisplayName = string.Empty;
+		
+		private bool m_bCanExit = false;
+		private bool m_bHasExited = false;
 
 		private SecureEdit m_secPassword = new SecureEdit();
 
@@ -59,14 +63,21 @@ namespace KeePass.Forms
 			}
 		}
 
+		public bool HasClosedWithExit
+		{
+			get { return m_bHasExited; }
+		}
+
 		public KeyPromptForm()
 		{
 			InitializeComponent();
 		}
 
-		public void InitEx(string strDisplayName)
+		public void InitEx(string strDisplayName, bool bCanExit)
 		{
 			if(strDisplayName != null) m_strDisplayName = strDisplayName;
+
+			m_bCanExit = bCanExit;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -78,7 +89,7 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
-			string strBannerDesc = UrlUtil.CompactPath(m_strDisplayName, 45);
+			string strBannerDesc = WinUtil.CompactPath(m_strDisplayName, 45);
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Key2, KPRes.EnterCompositeKey,
@@ -126,6 +137,9 @@ namespace KeePass.Forms
 			OnCheckedHidePassword(sender, e);
 
 			Debug.Assert(m_cmbKeyFile.Text.Length != 0);
+
+			m_btnExit.Enabled = m_bCanExit;
+			m_btnExit.Visible = m_bCanExit;
 
 			EnableUserControls();
 
@@ -335,6 +349,18 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnBtnExit(object sender, EventArgs e)
+		{
+			if(m_bCanExit == false)
+			{
+				Debug.Assert(false);
+				this.DialogResult = DialogResult.None;
+				return;
+			}
+
+			m_bHasExited = true;
 		}
 	}
 }

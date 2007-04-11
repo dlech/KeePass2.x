@@ -68,7 +68,7 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
 
-			m_tbUrl.Text = m_ioc.Url;
+			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Url);
 			m_tbUserName.Text = m_ioc.UserName;
 			m_tbPassword.Text = m_ioc.Password;
 

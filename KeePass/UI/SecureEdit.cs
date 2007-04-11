@@ -119,7 +119,7 @@ namespace KeePass.UI
 			string strText = m_tbPassword.Text;
 
 			int inxLeft = -1, inxRight = 0;
-			string strNewPart = string.Empty;
+			StringBuilder sbNewPart = new StringBuilder();
 
 			for(int i = 0; i < strText.Length; ++i)
 			{
@@ -128,14 +128,15 @@ namespace KeePass.UI
 					if(inxLeft == -1) inxLeft = i;
 					inxRight = i;
 
-					strNewPart += strText[i];
+					sbNewPart.Append(strText[i]);
 				}
 			}
 
 			if(inxLeft < 0)
 				RemoveInsert(nSelPos, strText.Length - nSelPos, string.Empty);
 			else
-				RemoveInsert(inxLeft, strText.Length - inxRight - 1, strNewPart);
+				RemoveInsert(inxLeft, strText.Length - inxRight - 1,
+					sbNewPart.ToString());
 
 			ShowCurrentPassword(nSelPos, nSelLen);
 		}

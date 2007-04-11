@@ -40,11 +40,6 @@ namespace KeePass.Plugins
 		private List<PluginInfo> m_vPlugins = new List<PluginInfo>();
 		private IPluginHost m_host = null;
 
-		public uint PluginCount
-		{
-			get { return (uint)m_vPlugins.Count; }
-		}
-
 		public void Initialize(IPluginHost host)
 		{
 			Debug.Assert(host != null);
@@ -140,7 +135,7 @@ namespace KeePass.Plugins
 
 			string strType = UrlUtil.GetFileName(strFilePath);
 			strType = UrlUtil.StripExtension(strType) + "." +
-				UrlUtil.StripExtension(strType);
+				UrlUtil.StripExtension(strType) + "Ext";
 
 			ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
 			

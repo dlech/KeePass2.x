@@ -123,6 +123,8 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xmlChild, 365);
 				else if(strName == ElemMemoryProt)
 					ReadMemoryProtection(xmlChild);
+				else if(strName == ElemCustomIcons)
+					ReadCustomIcons(xmlChild);
 				else ReadUnknown(xmlChild);
 			}
 		}
@@ -149,6 +151,49 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xmlChild, true);
 				else ReadUnknown(xmlChild);
 			}
+		}
+
+		private void ReadCustomIcons(XmlNode xmlNode)
+		{
+			ProcessNode(xmlNode);
+
+			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
+			{
+				string strName = xmlChild.Name;
+
+				if(strName == ElemCustomIconItem)
+					ReadCustomIcon(xmlChild);
+				else ReadUnknown(xmlChild);
+			}
+		}
+
+		private void ReadCustomIcon(XmlNode xmlNode)
+		{
+			ProcessNode(xmlNode);
+
+			PwUuid uuid = PwUuid.Zero;
+			byte[] pbImageData = null;
+
+			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
+			{
+				string strName = xmlChild.Name;
+
+				if(strName == ElemCustomIconItemID)
+					uuid = ReadUuid(xmlChild);
+				else if(strName == ElemCustomIconItemData)
+				{
+					string str = ReadString(xmlChild);
+
+					if((str != null) && (str.Length > 0))
+						pbImageData = Convert.FromBase64String(str);
+					else { Debug.Assert(false); }
+				}
+				else ReadUnknown(xmlChild);
+			}
+
+			if((uuid != PwUuid.Zero) && (pbImageData != null))
+				m_pwDatabase.CustomIcons.Add(new PwCustomIcon(uuid, pbImageData));
+			else { Debug.Assert(false); }
 		}
 
 		private void ReadRoot(XmlNode xmlNode)
@@ -192,7 +237,8 @@ namespace KeePassLib.Serialization
 
 				if(strName == ElemUuid) pgStorage.Uuid = ReadUuid(xmlChild);
 				else if(strName == ElemName) pgStorage.Name = ReadString(xmlChild);
-				else if(strName == ElemIcon) pgStorage.Icon = (PwIcon)ReadUInt(xmlChild, (uint)PwIcon.Key);
+				else if(strName == ElemIcon) pgStorage.IconID = (PwIcon)ReadUInt(xmlChild, (uint)PwIcon.Key);
+				else if(strName == ElemCustomIconID) pgStorage.CustomIconUuid = ReadUuid(xmlChild);
 				else if(strName == ElemTimes) ReadTimes(xmlChild, pgStorage);
 				else if(strName == ElemIsExpanded)
 					pgStorage.IsExpanded = ReadBool(xmlChild, true);
@@ -234,17 +280,9 @@ namespace KeePassLib.Serialization
 
 				if(strName == ElemUuid) pe.Uuid = ReadUuid(xmlChild);
 				else if(strName == ElemIcon)
-					pe.Icon = (PwIcon)ReadUInt(xmlChild, (uint)PwIcon.Key);
-				// else if(strName == ElemCustomSmallIcon)
-				// {
-				//	string str = ReadString(xmlChild);
-				//	if((str != null) && (str.Length > 0))
-				//	{
-				//		byte[] pbIcon = Convert.FromBase64String(str);
-				//		MemoryStream ms = new MemoryStream(pbIcon, false);
-				//		pe.CustomSmallIcon = Image.FromStream(ms);
-				//	}
-				// }
+					pe.IconID = (PwIcon)ReadUInt(xmlChild, (uint)PwIcon.Key);
+				else if(strName == ElemCustomIconID)
+					pe.CustomIconUuid = ReadUuid(xmlChild);
 				else if(strName == ElemFgColor)
 				{
 					string strColor = ReadString(xmlChild);
@@ -477,6 +515,9 @@ namespace KeePassLib.Serialization
 			{
 				if(xmlChild.Name == ElemAutoTypeEnabled)
 					atConfig.Enabled = ReadBool(xmlChild, true);
+				else if(xmlChild.Name == ElemAutoTypeObfuscation)
+					atConfig.ObfuscationOptions =
+						(AutoTypeObfuscationOptions)ReadUInt(xmlChild, 0);
 				else if(xmlChild.Name == ElemAutoTypeDefaultSeq)
 					atConfig.DefaultSequence = ReadString(xmlChild);
 				else if(xmlChild.Name == ElemAutoTypeItem)

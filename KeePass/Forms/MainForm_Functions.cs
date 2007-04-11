@@ -29,6 +29,7 @@ using System.IO;
 using KeePass.App;
 using KeePass.Resources;
 using KeePass.DataExchange;
+using KeePass.Native;
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Plugins;
@@ -40,6 +41,8 @@ using KeePassLib.Keys;
 using KeePassLib.Utility;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Forms
 {
@@ -53,6 +56,7 @@ namespace KeePass.Forms
 		private Point m_ptLastEntriesMouseClick = new Point(0, 0);
 		private RichTextBoxContextMenu m_ctxEntryPreviewContextMenu = new RichTextBoxContextMenu();
 		private DynamicMenu m_dynCustomStrings;
+		private DynamicMenu m_dynCustomBinaries;
 
 		private string m_strLockedIoc = string.Empty;
 		private LockedStateInfo m_lockedState = new LockedStateInfo();
@@ -84,7 +88,7 @@ namespace KeePass.Forms
 
 		private bool m_bIsAutoTyping = false;
 
-		private int m_nAppMessage = (int)Program.ApplicationMessage;
+		private int m_nAppMessage = Program.ApplicationMessage;
 
 		private List<KeyValuePair<ToolStripItem, ToolStripItem>> m_vLinkedToolStripItems =
 			new List<KeyValuePair<ToolStripItem, ToolStripItem>>();
@@ -157,9 +161,13 @@ namespace KeePass.Forms
 			m_pluginManager.UnloadAllPlugins();
 
 			EntryTemplates.Clear();
+
+			m_dynCustomBinaries.MenuClick -= this.OnEntryBinaryView;
 			m_dynCustomStrings.MenuClick -= this.OnCopyCustomString;
 
 			m_ctxEntryPreviewContextMenu.Detach();
+
+			this.Visible = false;
 		}
 
 		/// <summary>
@@ -235,9 +243,8 @@ namespace KeePass.Forms
 
 			AppConfigEx.SetValue(AppDefs.ConfigKeys.ShowGridLines, m_lvEntries.GridLines);
 
-			AppConfigEx.SetValue(AppDefs.ConfigKeys.UseNativeForKeyEnc, NativeLib.AllowNative);
-
 			// Saved by options dialog:
+			// AppConfigEx.SetValue(AppDefs.ConfigKeys.UseNativeForKeyEnc, NativeLib.AllowNative);
 			// AppConfigEx.SetValue(AppDefs.ConfigKeys.LockAfterTime, (uint)m_nLockTimerMax);
 			// AppConfigEx.SetValue(AppDefs.ConfigKeys.ClipboardAutoClearTime, m_nClipClearMax);
 
@@ -306,43 +313,55 @@ namespace KeePass.Forms
 			m_statusPartInfo.Text = KPRes.Ready;
 
 			string strWindowText = string.Empty;
+			string strNtfText = string.Empty;
+
 			if(IsFileLocked())
-				strWindowText = PwDefs.ProductName + " - " +
-					KPRes.WorkspaceLocked;
-			else if(!bDatabaseOpened)
+			{
+				strWindowText = PwDefs.ProductName + " - " + KPRes.WorkspaceLocked;
+
+				IOConnectionInfo iocLck = IOConnectionInfo.UnserializeFromString(m_strLockedIoc);
+				string strNtfPre = PwDefs.ShortProductName + " - " +
+					KPRes.WorkspaceLocked + MessageService.NewLine;
+
+				strNtfText = strNtfPre + WinUtil.CompactPath(iocLck.Url, 63 -
+					strNtfPre.Length);
+
+				m_ntfTray.Icon = Properties.Resources.QuadLocked;
+			}
+			else if(bDatabaseOpened == false)
+			{
 				strWindowText = PwDefs.ProductName;
-			else
+				strNtfText = strWindowText;
+
+				m_ntfTray.Icon = Properties.Resources.QuadNormal;
+			}
+			else // Database open and not locked
 			{
 				string strFileDesc;
 				if(AppConfigEx.GetBool(AppDefs.ConfigKeys.ShowFullPathInTitleBar))
 					strFileDesc = m_pwDatabase.IOConnectionInfo.Url;
-				else strFileDesc = UrlUtil.GetFileName(m_pwDatabase.IOConnectionInfo.Url);
+				else
+					strFileDesc = UrlUtil.GetFileName(m_pwDatabase.IOConnectionInfo.Url);
 
-				int nMaxPathLen = 63 - PwDefs.ProductName.Length - 2 - 2;
-				Debug.Assert(nMaxPathLen > 1);
-				strFileDesc = UrlUtil.CompactPath(strFileDesc, (uint)nMaxPathLen);
+				strFileDesc = WinUtil.CompactPath(strFileDesc, 63 -
+					PwDefs.ProductName.Length - 2 - 2);
 
 				if(m_pwDatabase.Modified)
 					strWindowText = PwDefs.ProductName + " [" + strFileDesc + "*]";
 				else
 					strWindowText = PwDefs.ProductName + " [" + strFileDesc + "]";
-			}
 
-			this.Text = strWindowText;
+				string strNtfPre = PwDefs.ProductName + MessageService.NewLine;
+				strNtfText = strNtfPre + WinUtil.CompactPath(m_pwDatabase.IOConnectionInfo.Url,
+					63 - strNtfPre.Length);
 
-			if(IsFileLocked())
-			{
-				string strNtfText = strWindowText + "\r\n" +
-					UrlUtil.GetFileName(m_strLockedIoc);
-				if(strNtfText.Length > 64) strNtfText = strNtfText.Substring(0, 64);
-				m_ntfTray.Text = strNtfText;
-				m_ntfTray.Icon = Properties.Resources.QuadLocked;
-			}
-			else
-			{
-				m_ntfTray.Text = strWindowText;
 				m_ntfTray.Icon = Properties.Resources.QuadNormal;
 			}
+
+			// Clip the strings again (it could be that a translator used
+			// a string in KPRes that is too long to be displayed)
+			this.Text = StrUtil.CompactString3Dots(strWindowText, 63);
+			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, 63);
 
 			// Main menu
 			m_menuFileClose.Enabled = m_menuFileSave.Enabled =
@@ -368,7 +387,12 @@ namespace KeePass.Forms
 				m_pwDatabase.IOConnectionInfo.IsLocalFile() &&
 				(m_pwDatabase.IOConnectionInfo.Url.Length > 0);
 
-			m_ctxGroupAdd.Enabled = m_ctxGroupEdit.Enabled = m_ctxGroupDelete.Enabled =
+			m_ctxGroupAdd.Enabled = m_ctxGroupEdit.Enabled =
+				m_ctxGroupDelete.Enabled = m_ctxGroupFind.Enabled =
+				m_ctxGroupPrint.Enabled = bDatabaseOpened;
+
+			m_ctxGroupMoveToTop.Enabled = m_ctxGroupMoveOneUp.Enabled =
+				m_ctxGroupMoveOneDown.Enabled = m_ctxGroupMoveToBottom.Enabled =
 				bDatabaseOpened;
 
 			m_tbSaveDatabase.Enabled = m_tbFind.Enabled = m_tbViewsShowAll.Enabled =
@@ -529,12 +553,16 @@ namespace KeePass.Forms
 			ListViewItem lvi = new ListViewItem();
 			lvi.Tag = pe;
 
-			PwIcon pwIcon = pe.Icon;
-			if(pe.Expires && (pe.ExpiryTime < m_dtCachedNow))
+			if(pe.Expires && (pe.ExpiryTime <= m_dtCachedNow))
 			{
-				pwIcon = PwIcon.Expired;
+				lvi.ImageIndex = (int)PwIcon.Expired;
 				lvi.Font = m_fontExpired;
 			}
+			else if(pe.CustomIconUuid == PwUuid.Zero)
+				lvi.ImageIndex = (int)pe.IconID;
+			else
+				lvi.ImageIndex = (int)PwIcon.Count +
+					m_pwDatabase.GetCustomIconIndex(pe.CustomIconUuid);
 
 			if(m_bEntryGrouping)
 			{
@@ -556,8 +584,6 @@ namespace KeePass.Forms
 					lvi.Group = m_lvgLastEntryGroup;
 				}
 			}
-
-			lvi.ImageIndex = (int)pwIcon;
 
 			if(!pe.ForegroundColor.IsEmpty)
 				lvi.ForeColor = pe.ForegroundColor;
@@ -660,13 +686,15 @@ namespace KeePass.Forms
 
 			PwGroup pg = (pgNewSelected == null) ? GetSelectedGroup() : pgNewSelected;
 
+			UpdateImageLists();
+
 			m_tvGroups.BeginUpdate();
 			m_tvGroups.Nodes.Clear();
 
 			TreeNode tnRoot = null;
 			if(m_pwDatabase.RootGroup != null)
 			{
-				tnRoot = new TreeNode(m_pwDatabase.RootGroup.Name, (int)m_pwDatabase.RootGroup.Icon, (int)m_pwDatabase.RootGroup.Icon);
+				tnRoot = new TreeNode(m_pwDatabase.RootGroup.Name, (int)m_pwDatabase.RootGroup.IconID, (int)m_pwDatabase.RootGroup.IconID);
 				tnRoot.Tag = m_pwDatabase.RootGroup;
 				tnRoot.NodeFont = new Font(m_tvGroups.Font, FontStyle.Bold);
 				m_tvGroups.Nodes.Add(tnRoot);
@@ -706,10 +734,12 @@ namespace KeePass.Forms
 		{
 			NotifyUserActivity();
 
-			PwEntry[] vSelected = null;
+			UpdateImageLists();
 
+			PwEntry[] vSelected = null;
 			PwEntry peTop = null;
 			ListViewItem lviTop;
+
 			try
 			{
 				if(bRestoreView)
@@ -791,6 +821,8 @@ namespace KeePass.Forms
 			int nItemCount = m_lvEntries.Items.Count;
 			if(nItemCount <= 0) return;
 
+			UpdateImageLists();
+
 			PwEntry[] vSelected = GetSelectedEntries();
 			if(vSelected == null)
 				vSelected = new PwEntry[1]{ new PwEntry(null, false, false) };
@@ -824,11 +856,16 @@ namespace KeePass.Forms
 
 			foreach(PwGroup pg in pgContainer.Groups)
 			{
-				if(pg.Expires && (pg.ExpiryTime < m_dtCachedNow))
-					pg.Icon = PwIcon.Expired;
+				if(pg.Expires && (pg.ExpiryTime <= m_dtCachedNow))
+					pg.IconID = PwIcon.Expired;
 
 				string strName = pg.Name;
-				TreeNode tn = new TreeNode(strName, (int)pg.Icon, (int)pg.Icon);
+
+				int nIconID = (pg.CustomIconUuid != PwUuid.Zero) ? ((int)PwIcon.Count +
+					m_pwDatabase.GetCustomIconIndex(pg.CustomIconUuid)) :
+					(int)pg.IconID;
+
+				TreeNode tn = new TreeNode(strName, nIconID, nIconID);
 				tn.Tag = pg;
 				tnc.Add(tn);
 
@@ -943,20 +980,24 @@ namespace KeePass.Forms
 			if(pg != null) sb.Append(StrUtil.MakeRtfString(pg.Name));
 
 			EvAppendEntryField(sb, strItemSeparator, KPRes.Title,
-				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.TitleField)));
+				m_viewHideFields.ProtectTitle ? PwDefs.HiddenPassword :
+				StrUtil.MakeRtfString(pe.Strings.ReadSafe(PwDefs.TitleField)));
 			EvAppendEntryField(sb, strItemSeparator, KPRes.UserName,
-				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UserNameField)));
+				m_viewHideFields.ProtectUserName ? PwDefs.HiddenPassword :
+				StrUtil.MakeRtfString(pe.Strings.ReadSafe(PwDefs.UserNameField)));
 			EvAppendEntryField(sb, strItemSeparator, KPRes.Password,
-				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.PasswordField)));
+				m_viewHideFields.ProtectPassword ? PwDefs.HiddenPassword :
+				StrUtil.MakeRtfString(pe.Strings.ReadSafe(PwDefs.PasswordField)));
 			EvAppendEntryField(sb, strItemSeparator, KPRes.URL,
-				StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(PwDefs.UrlField)));
+				m_viewHideFields.ProtectUrl ? PwDefs.HiddenPassword :
+				StrUtil.MakeRtfString(pe.Strings.ReadSafe(PwDefs.UrlField)));
 
 			foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 			{
 				if(PwDefs.IsStandardField(kvp.Key)) continue;
 
 				EvAppendEntryField(sb, strItemSeparator, kvp.Key,
-					StrUtil.MakeRtfString(kvp.Value.ReadString()));
+					StrUtil.MakeRtfString(pe.Strings.ReadSafeEx(kvp.Key)));
 			}
 
 			EvAppendEntryField(sb, strItemSeparator, KPRes.CreationTime,
@@ -971,10 +1012,24 @@ namespace KeePass.Forms
 					StrUtil.MakeRtfString(TimeUtil.ToDisplayString(pe.ExpiryTime)));
 
 			if(pe.Binaries.UCount > 0)
-				EvAppendEntryField(sb, strItemSeparator, KPRes.Attachments,
-					pe.Binaries.UCount.ToString());
+			{
+				StringBuilder sbBinaries = new StringBuilder();
 
-			string strNotes = pe.Strings.ReadSafeEx(PwDefs.NotesField);
+				foreach(KeyValuePair<string, ProtectedBinary> kvpBin in pe.Binaries)
+				{
+					if(sbBinaries.Length > 0) sbBinaries.Append(", ");
+					sbBinaries.Append(kvpBin.Key);
+				}
+
+				EvAppendEntryField(sb, strItemSeparator, KPRes.Attachments,
+					StrUtil.MakeRtfString(sbBinaries.ToString()));
+			}
+
+			EvAppendEntryField(sb, strItemSeparator, KPRes.UrlOverride,
+				StrUtil.MakeRtfString(pe.OverrideUrl));
+
+			string strNotes = (m_viewHideFields.ProtectNotes ?
+				PwDefs.HiddenPassword : pe.Strings.ReadSafe(PwDefs.NotesField));
 			if(strNotes.Length != 0)
 			{
 				sb.Append("\\par \\par ");
@@ -1089,7 +1144,7 @@ namespace KeePass.Forms
 			pg.IsVirtual = true;
 
 			PwEntry peDesc = new PwEntry(pg, true, true);
-			peDesc.Icon = PwIcon.EMailSearch;
+			peDesc.IconID = PwIcon.EMailSearch;
 			pg.Entries.Add(peDesc);
 
 			SearchParameters sp = new SearchParameters();
@@ -1110,7 +1165,7 @@ namespace KeePass.Forms
 			pg.IsVirtual = true;
 
 			PwEntry peDesc = new PwEntry(pg, true, true);
-			peDesc.Icon = PwIcon.EMailSearch;
+			peDesc.IconID = PwIcon.EMailSearch;
 			pg.Entries.Add(peDesc);
 
 			DateTime dtLimit = DateTime.Now;
@@ -1163,6 +1218,17 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase.IsOpen); if(!m_pwDatabase.IsOpen) return;
 			if(!AppPolicy.Try(AppPolicyFlag.Export)) return;
+
+			if(fmt == KeeExportFormat.Kdb3)
+			{
+				Exception exLib;
+				if(Kdb3File.IsLibraryInstalled(out exLib) == false)
+				{
+					MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
+						KPRes.KDB3KeePassLibC, exLib);
+					return;
+				}
+			}
 
 			System.Xml.Xsl.XslCompiledTransform xsl = null;
 			if(fmt == KeeExportFormat.UseXsl)
@@ -1344,9 +1410,16 @@ namespace KeePass.Forms
 				for(int iTry = 0; iTry < 3; ++iTry)
 				{
 					KeyPromptForm kpf = new KeyPromptForm();
-					kpf.InitEx(ioc.GetDisplayName());
+					kpf.InitEx(ioc.GetDisplayName(), IsFileLocked());
+
 					DialogResult dr = kpf.ShowDialog();
-					if((dr == DialogResult.Cancel) || (dr == DialogResult.Abort)) break;
+					if(dr == DialogResult.Cancel) break;
+					else if(kpf.HasClosedWithExit)
+					{
+						Debug.Assert(dr == DialogResult.Abort);
+						OnFileExit(null, null);
+						return;
+					}
 
 					if(OpenDatabaseInternal(ioc, kpf.CompositeKey))
 						break;
@@ -1400,6 +1473,7 @@ namespace KeePass.Forms
 			}
 
 			swLogger.EndLogging();
+
 			return bResult;
 		}
 
@@ -1460,7 +1534,7 @@ namespace KeePass.Forms
 			return null;
 		}
 
-		private void PrintGroup(PwGroup pg)
+		private static void PrintGroup(PwGroup pg)
 		{
 			Debug.Assert(pg != null); if(pg == null) return;
 			if(!AppPolicy.Try(AppPolicyFlag.Print)) return;
@@ -1630,30 +1704,46 @@ namespace KeePass.Forms
 		/// <param name="m">Reference to the current Windows message.</param>
 		protected override void WndProc(ref Message m)
 		{
-			if(m.Msg == HotKeyManager.WM_HOTKEY)
+			if(m.Msg == NativeMethods.WM_HOTKEY)
 			{
 				switch((int)m.WParam)
 				{
-					case (int)AppDefs.GlobalHotKeyID.AutoType:
+					case AppDefs.GlobalHotKeyID.AutoType:
 						if(m_bIsAutoTyping) break;
 						m_bIsAutoTyping = true;
 
 						if(IsFileLocked())
 						{
-							IntPtr hPrevWnd = WinUtil.GetForegroundWindow();
+							try
+							{
+								IntPtr hPrevWnd = NativeMethods.GetForegroundWindow();
 
-							EnsureVisibleForegroundWindow();
-							OnFileLock(null, null);
+								EnsureVisibleForegroundWindow();
+								
+								// The window restoration function above maybe
+								// restored the window already, therefore only
+								// try to unlock if it's locked *now*
+								if(IsFileLocked()) OnFileLock(null, null);
 
-							WinUtil.EnsureForegroundWindow(hPrevWnd);
+								NativeMethods.EnsureForegroundWindow(hPrevWnd);
+							}
+							catch(Exception exAT)
+							{
+								MessageService.ShowWarning(exAT);
+							}
 						}
 						if(!m_pwDatabase.IsOpen) { m_bIsAutoTyping = false; break; }
 
-						AutoType.PerformGlobal(m_pwDatabase, m_ilClientIcons);
+						try { AutoType.PerformGlobal(m_pwDatabase, m_ilClientIcons); }
+						catch(Exception exGlobal)
+						{
+							MessageService.ShowWarning(exGlobal);
+						}
+
 						m_bIsAutoTyping = false;
 						break;
 
-					case (int)AppDefs.GlobalHotKeyID.ShowWindow:
+					case AppDefs.GlobalHotKeyID.ShowWindow:
 						EnsureVisibleForegroundWindow();
 						break;
 
@@ -1662,7 +1752,7 @@ namespace KeePass.Forms
 						break;
 				}
 			}
-			else if(m.Msg == m_nAppMessage) // KeePass application message
+			else if((m.Msg == m_nAppMessage) && (m_nAppMessage != 0))
 			{
 				if(m.WParam == (IntPtr)Program.AppMessage.RestoreWindow)
 					EnsureVisibleForegroundWindow();
@@ -1706,15 +1796,6 @@ namespace KeePass.Forms
 
 			RefreshEntriesList();
 			UpdateUIState(true);
-		}
-
-		private Image CreateColorBitmap(int nWidth, int nHeight, Color color)
-		{
-			Bitmap bmp = new Bitmap(nWidth, nHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			Graphics g = Graphics.FromImage(bmp);
-
-			g.FillRectangle(new SolidBrush(color), 0, 0, nWidth, nHeight);
-			return bmp;
 		}
 
 		private void OnCopyCustomString(object sender, DynamicMenuEventArgs e)
@@ -1761,6 +1842,8 @@ namespace KeePass.Forms
 			m_menuFileLock.ShortcutKeys = Keys.Control | Keys.L;
 
 			m_menuEditFind.ShortcutKeys = Keys.Control | Keys.F;
+
+			m_menuHelpContents.ShortcutKeys = Keys.F1;
 		}
 
 		private void SaveDatabaseAs(bool bOnline, object sender)
@@ -1855,7 +1938,7 @@ namespace KeePass.Forms
 			catch(Exception) { }
 		}
 
-		private bool PrepareLock()
+		private static bool PrepareLock()
 		{
 			if(GlobalWindowManager.WindowCount == 0) return true;
 
@@ -1866,6 +1949,69 @@ namespace KeePass.Forms
 			}
 
 			return false;
+		}
+
+		private void UpdateImageLists()
+		{
+			if(!m_pwDatabase.UINeedsIconUpdate) return;
+			m_pwDatabase.UINeedsIconUpdate = false;
+
+			ImageList imgList = new ImageList();
+
+			imgList.ImageSize = new Size(16, 16);
+			imgList.ColorDepth = ColorDepth.Depth32Bit;
+
+			foreach(Image img in m_ilClientIcons.Images)
+				imgList.Images.Add(img);
+			Debug.Assert(imgList.Images.Count == (int)PwIcon.Count);
+
+			ImageList imgListCustom =
+				UIUtil.BuildImageList(m_pwDatabase.CustomIcons, 16, 16);
+
+			foreach(Image imgCustom in imgListCustom.Images)
+				imgList.Images.Add(imgCustom);
+
+			ImageList imgFinal = UIUtil.ConvertImageList24(imgList, 16, 16,
+				AppDefs.ColorControlNormal);
+			m_tvGroups.ImageList = imgFinal;
+			m_lvEntries.SmallImageList = imgFinal;
+		}
+
+		private void MoveSelectedGroup(int iMove)
+		{
+			PwGroup pgMove = GetSelectedGroup();
+			if(pgMove == null) { Debug.Assert(false); return; }
+
+			PwGroup pgParent = pgMove.ParentGroup;
+			if(pgParent == null) return;
+
+			PwGroup[] pgAffected = new PwGroup[]{ pgMove };
+
+			if(iMove == 2)
+				pgParent.Groups.MoveTopBottom(pgAffected, true);
+			else if(iMove == 1)
+				pgParent.Groups.MoveOne(pgMove, true);
+			else if(iMove == -1)
+				pgParent.Groups.MoveOne(pgMove, false);
+			else if(iMove == -2)
+				pgParent.Groups.MoveTopBottom(pgAffected, false);
+			else { Debug.Assert(false); }
+
+			UpdateUIState(true, true);
+		}
+
+		private void OnEntryBinaryView(object sender, DynamicMenuEventArgs e)
+		{
+			PwEntry pe = GetSelectedEntry(false);
+			if(pe == null) { Debug.Assert(false); return; }
+
+			ProtectedBinary pbData = pe.Binaries.Get(e.ItemName);
+			if(pbData == null) { Debug.Assert(false); return; }
+
+			DataViewerForm dvf = new DataViewerForm();
+			dvf.InitEx(e.ItemName, pbData.ReadData());
+
+			dvf.ShowDialog();
 		}
 	}
 }

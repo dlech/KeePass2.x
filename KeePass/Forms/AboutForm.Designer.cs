@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_lblCopyright = new System.Windows.Forms.Label();
 			this.m_lblOsi = new System.Windows.Forms.Label();
@@ -45,82 +44,121 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(424, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_lblCopyright
 			// 
-			resources.ApplyResources(this.m_lblCopyright, "m_lblCopyright");
+			this.m_lblCopyright.Location = new System.Drawing.Point(12, 72);
 			this.m_lblCopyright.Name = "m_lblCopyright";
+			this.m_lblCopyright.Size = new System.Drawing.Size(321, 15);
+			this.m_lblCopyright.TabIndex = 1;
+			this.m_lblCopyright.Text = "Copyright © 2003-2007 Dominik Reichl.";
 			// 
 			// m_lblOsi
 			// 
-			resources.ApplyResources(this.m_lblOsi, "m_lblOsi");
+			this.m_lblOsi.Location = new System.Drawing.Point(12, 96);
 			this.m_lblOsi.Name = "m_lblOsi";
+			this.m_lblOsi.Size = new System.Drawing.Size(363, 14);
+			this.m_lblOsi.TabIndex = 2;
+			this.m_lblOsi.Text = "KeePass is OSI Certified Open Source Software.";
 			// 
 			// m_lblGpl
 			// 
-			resources.ApplyResources(this.m_lblGpl, "m_lblGpl");
+			this.m_lblGpl.Location = new System.Drawing.Point(12, 119);
 			this.m_lblGpl.Name = "m_lblGpl";
+			this.m_lblGpl.Size = new System.Drawing.Size(400, 27);
+			this.m_lblGpl.TabIndex = 3;
+			this.m_lblGpl.Text = "The program is distributed under the terms of the GNU General Public License v2 o" +
+				"r later.";
 			// 
 			// m_linkHomepage
 			// 
-			resources.ApplyResources(this.m_linkHomepage, "m_linkHomepage");
+			this.m_linkHomepage.AutoSize = true;
+			this.m_linkHomepage.Location = new System.Drawing.Point(12, 155);
 			this.m_linkHomepage.Name = "m_linkHomepage";
+			this.m_linkHomepage.Size = new System.Drawing.Size(104, 13);
+			this.m_linkHomepage.TabIndex = 4;
 			this.m_linkHomepage.TabStop = true;
+			this.m_linkHomepage.Text = "KeePass Homepage";
 			this.m_linkHomepage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHomepage);
 			// 
 			// m_linkHelp
 			// 
-			resources.ApplyResources(this.m_linkHelp, "m_linkHelp");
+			this.m_linkHelp.AutoSize = true;
+			this.m_linkHelp.Location = new System.Drawing.Point(228, 155);
 			this.m_linkHelp.Name = "m_linkHelp";
+			this.m_linkHelp.Size = new System.Drawing.Size(96, 13);
+			this.m_linkHelp.TabIndex = 6;
 			this.m_linkHelp.TabStop = true;
+			this.m_linkHelp.Text = "Online Help Center";
 			this.m_linkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHelpFile);
 			// 
 			// m_linkLicense
 			// 
-			resources.ApplyResources(this.m_linkLicense, "m_linkLicense");
+			this.m_linkLicense.AutoSize = true;
+			this.m_linkLicense.Location = new System.Drawing.Point(12, 177);
 			this.m_linkLicense.Name = "m_linkLicense";
+			this.m_linkLicense.Size = new System.Drawing.Size(44, 13);
+			this.m_linkLicense.TabIndex = 7;
 			this.m_linkLicense.TabStop = true;
+			this.m_linkLicense.Text = "License";
 			this.m_linkLicense.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkLicenseFile);
 			// 
 			// m_linkAcknowledgements
 			// 
-			resources.ApplyResources(this.m_linkAcknowledgements, "m_linkAcknowledgements");
+			this.m_linkAcknowledgements.AutoSize = true;
+			this.m_linkAcknowledgements.Location = new System.Drawing.Point(122, 155);
 			this.m_linkAcknowledgements.Name = "m_linkAcknowledgements";
+			this.m_linkAcknowledgements.Size = new System.Drawing.Size(100, 13);
+			this.m_linkAcknowledgements.TabIndex = 5;
 			this.m_linkAcknowledgements.TabStop = true;
+			this.m_linkAcknowledgements.Text = "Acknowledgements";
 			this.m_linkAcknowledgements.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkAcknowledgements);
 			// 
 			// m_linkDonate
 			// 
-			resources.ApplyResources(this.m_linkDonate, "m_linkDonate");
+			this.m_linkDonate.AutoSize = true;
+			this.m_linkDonate.Location = new System.Drawing.Point(122, 177);
 			this.m_linkDonate.Name = "m_linkDonate";
+			this.m_linkDonate.Size = new System.Drawing.Size(42, 13);
+			this.m_linkDonate.TabIndex = 8;
 			this.m_linkDonate.TabStop = true;
+			this.m_linkDonate.Text = "Donate";
 			this.m_linkDonate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkDonate);
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(337, 315);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			// 
 			// m_lvComponents
 			// 
 			this.m_lvComponents.FullRowSelect = true;
 			this.m_lvComponents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			resources.ApplyResources(this.m_lvComponents, "m_lvComponents");
+			this.m_lvComponents.Location = new System.Drawing.Point(15, 203);
 			this.m_lvComponents.Name = "m_lvComponents";
+			this.m_lvComponents.Size = new System.Drawing.Size(397, 101);
+			this.m_lvComponents.TabIndex = 9;
 			this.m_lvComponents.UseCompatibleStateImageBehavior = false;
 			this.m_lvComponents.View = System.Windows.Forms.View.Details;
 			// 
 			// AboutForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnOK;
+			this.ClientSize = new System.Drawing.Size(424, 350);
 			this.Controls.Add(this.m_lvComponents);
 			this.Controls.Add(this.m_btnOK);
 			this.Controls.Add(this.m_linkDonate);
@@ -138,6 +176,8 @@
 			this.Name = "AboutForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "About KeePass";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Resources;
 
@@ -114,7 +115,7 @@ namespace KeePass.Util
 					kRun.DeleteValue(strAppName);
 				}
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static bool GetStartWithWindows(string strAppName)
@@ -125,10 +126,13 @@ namespace KeePass.Util
 				string strResult = Registry.GetValue("HKEY_CURRENT_USER\\" + AutoRunKey,
 					strAppName, strNotFound) as string;
 
-				if((strResult != null) && (strResult != strNotFound) && (strResult != string.Empty))
+				if((strResult != null) && (strResult != strNotFound) &&
+					(strResult.Length > 0))
+				{
 					return true;
+				}
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}

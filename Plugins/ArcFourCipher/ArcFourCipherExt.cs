@@ -20,21 +20,28 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 using KeePass.Plugins;
 
-namespace KPScript
+namespace ArcFourCipher
 {
-	public sealed class KPScript : Plugin
+	public sealed class ArcFourCipherExt : Plugin
 	{
+		private IPluginHost m_host = null;
+		private static ArcFourEngine m_arcFourEngine = new ArcFourEngine();
+
 		public override bool Initialize(IPluginHost host)
 		{
-			return base.Initialize(host);
-		}
+			if(host == null) return false;
+			m_host = host;
 
-		public override void Terminate()
-		{
-			base.Terminate();
+			Debug.Assert(m_arcFourEngine != null);
+			if(m_arcFourEngine == null) return false;
+
+			m_host.CipherPool.AddCipher(m_arcFourEngine);
+
+			return true;
 		}
 	}
 }

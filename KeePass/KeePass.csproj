@@ -111,6 +111,18 @@
     <Compile Include="..\KeePassLib\Keys\KcpUserAccount.cs">
       <Link>KeePassLib\Keys\KcpUserAccount.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
+      <Link>KeePassLib\Keys\UserKeyType.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeLib.cs">
+      <Link>KeePassLib\Native\NativeLib.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeMethods.cs">
+      <Link>KeePassLib\Native\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\PwCustomIcon.cs">
+      <Link>KeePassLib\PwCustomIcon.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\PwDatabase.cs">
       <Link>KeePassLib\PwDatabase.cs</Link>
     </Compile>
@@ -132,8 +144,8 @@
     <Compile Include="..\KeePassLib\PwUuid.cs">
       <Link>KeePassLib\PwUuid.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Resources\KLRes.cs">
-      <Link>KeePassLib\Resources\KLRes.cs</Link>
+    <Compile Include="..\KeePassLib\Resources\KLRes.Generated.cs">
+      <Link>KeePassLib\Resources\KLRes.Generated.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>KeePassLib\Security\ProtectedBinary.cs</Link>
@@ -143,6 +155,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Security\XorredBuffer.cs">
       <Link>KeePassLib\Security\XorredBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
+      <Link>KeePassLib\Serialization\HashedBlockStream.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\IOConnection.cs">
       <Link>KeePassLib\Serialization\IOConnection.cs</Link>
@@ -180,14 +195,14 @@
     <Compile Include="..\KeePassLib\Utility\MessageService.cs">
       <Link>KeePassLib\Utility\MessageService.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Utility\NativeLib.cs">
-      <Link>KeePassLib\Utility\NativeLib.cs</Link>
-    </Compile>
     <Compile Include="..\KeePassLib\Utility\StrUtil.cs">
       <Link>KeePassLib\Utility\StrUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>KeePassLib\Utility\TimeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\TranslationUtil.cs">
+      <Link>KeePassLib\Utility\TranslationUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>KeePassLib\Utility\UrlUtil.cs</Link>
@@ -200,6 +215,7 @@
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
+    <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
@@ -212,6 +228,7 @@
     <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
+    <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\ImporterPool.cs" />
@@ -235,6 +252,12 @@
     </Compile>
     <Compile Include="Forms\DatabaseSettingsForm.Designer.cs">
       <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DataViewerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DataViewerForm.Designer.cs">
+      <DependentUpon>DataViewerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EditAutoTypeItemForm.cs">
       <SubType>Form</SubType>
@@ -386,8 +409,17 @@
     <Compile Include="Forms\IOConnectionForm.Designer.cs">
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="Native\NativeMethods.Defs.cs" />
+    <Compile Include="Native\NativeMethods.New.cs" />
+    <Compile Include="Native\NativeMethods.Structs.cs" />
+    <Compile Include="Resources\KPRes.Generated.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
+    <Compile Include="UI\PromptedTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\CancellableOperationEventArgs.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="UI\CheckedLVItemDXList.cs" />
@@ -422,6 +454,10 @@
     <EmbeddedResource Include="Forms\DatabaseSettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DataViewerForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DataViewerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditAutoTypeItemForm.resx">
       <SubType>Designer</SubType>
@@ -524,11 +560,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\KPRes.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>KPRes.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -543,11 +574,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Resources\KPRes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>KPRes.resx</DependentUpon>
-    </Compile>
     <Compile Include="UI\BannerFactory.cs" />
     <Compile Include="UI\MruList.cs" />
     <Compile Include="UI\ShowWarningsLogger.cs" />
@@ -556,6 +582,8 @@
     <Compile Include="Util\AppLocator.cs" />
     <Compile Include="Util\AutoType.cs" />
     <Compile Include="Util\CheckForUpdate.cs" />
+    <Compile Include="Util\ClipboardContents.cs" />
+    <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
@@ -567,7 +595,6 @@
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
-    <Compile Include="Util\TranslationUtil.cs" />
     <Compile Include="Util\WinUtil.cs" />
   </ItemGroup>
   <ItemGroup>

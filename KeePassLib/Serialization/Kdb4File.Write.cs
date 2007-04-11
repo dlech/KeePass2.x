@@ -27,6 +27,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Drawing;
 using System.Globalization;
+using System.Drawing.Imaging;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -70,6 +71,8 @@ namespace KeePassLib.Serialization
 			m_format = format;
 			m_slLogger = slLogger;
 
+			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
+
 			try
 			{
 				m_pbMasterSeed = CryptoRandom.GetRandomBytes(32);
@@ -79,21 +82,27 @@ namespace KeePassLib.Serialization
 				m_pbProtectedStreamKey = CryptoRandom.GetRandomBytes(32);
 				m_randomStream = new CryptoRandomStream(CrsAlgorithm.ArcFour, m_pbProtectedStreamKey);
 
+				m_pbStreamStartBytes = CryptoRandom.GetRandomBytes(32);
+
 				Stream writerStream;
 				BinaryWriter bw = null;
 				if(m_format == Kdb4Format.Default)
 				{
-					bw = new BinaryWriter(sSaveTo);
+					bw = new BinaryWriter(sSaveTo, encNoBom);
 					WriteHeader(bw);
 
 					Stream sEncrypted = AttachStreamEncryptor(sSaveTo);
 					if((sEncrypted == null) || (sEncrypted == sSaveTo))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
+					sEncrypted.Write(m_pbStreamStartBytes, 0, m_pbStreamStartBytes.Length);
+
+					Stream sHashed = new HashedBlockStream(sEncrypted, true);
+
 					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-						writerStream = new GZipStream(sEncrypted, CompressionMode.Compress);
+						writerStream = new GZipStream(sHashed, CompressionMode.Compress);
 					else
-						writerStream = sEncrypted;
+						writerStream = sHashed;
 				}
 				else if(m_format == Kdb4Format.PlainXml)
 					writerStream = sSaveTo;
@@ -107,12 +116,17 @@ namespace KeePassLib.Serialization
 				writerStream.Close();
 
 				GC.KeepAlive(bw);
+
 				sSaveTo.Close();
+
+				m_xmlWriter = null;
 			}
-			catch(Exception excp)
+			catch(Exception)
 			{
 				sSaveTo.Close();
-				throw excp;
+				m_xmlWriter = null;
+
+				throw;
 			}
 		}
 
@@ -137,12 +151,14 @@ namespace KeePassLib.Serialization
 
 			WriteHeaderField(bw, Kdb4HeaderFieldID.EncryptionIV, m_pbEncryptionIV);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
+			WriteHeaderField(bw, Kdb4HeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
 
 			WriteHeaderField(bw, Kdb4HeaderFieldID.EndOfHeader, new byte[]{ (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
 			bw.Flush();
 		}
 
-		private void WriteHeaderField(BinaryWriter bwOut, Kdb4HeaderFieldID kdbID, byte[] pbData)
+		private static void WriteHeaderField(BinaryWriter bwOut,
+			Kdb4HeaderFieldID kdbID, byte[] pbData)
 		{
 			Debug.Assert(bwOut != null);
 			if(bwOut == null) throw new ArgumentNullException("bwOut");
@@ -274,6 +290,8 @@ namespace KeePassLib.Serialization
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
 
+			WriteCustomIconList();
+
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -282,7 +300,11 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(ElemGroup);
 			WriteObject(ElemUuid, pg.Uuid);
 			WriteObject(ElemName, pg.Name);
-			WriteObject(ElemIcon, (uint)pg.Icon);
+			WriteObject(ElemIcon, (uint)pg.IconID);
+			
+			if(pg.CustomIconUuid != PwUuid.Zero)
+				WriteObject(ElemCustomIconID, pg.CustomIconUuid);
+			
 			WriteList(ElemTimes, pg);
 			WriteObject(ElemIsExpanded, pg.IsExpanded);
 			WriteObject(ElemGroupDefaultAutoTypeSeq, pg.DefaultAutoTypeSequence);
@@ -300,17 +322,10 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(ElemEntry);
 
 			WriteObject(ElemUuid, pe.Uuid);
-			WriteObject(ElemIcon, (uint)pe.Icon);
-
-			// if(pe.CustomSmallIcon == null)
-			//	WriteObject(ElemCustomSmallIcon, string.Empty);
-			// else
-			// {
-			//	MemoryStream msSave = new MemoryStream();
-			//	pe.CustomSmallIcon.Save(msSave, System.Drawing.Imaging.ImageFormat.Png);
-			//	string strCustomIcon = Convert.ToBase64String(msSave.ToArray());
-			//	WriteObject(ElemCustomSmallIcon, strCustomIcon);
-			// }
+			WriteObject(ElemIcon, (uint)pe.IconID);
+			
+			if(pe.CustomIconUuid != PwUuid.Zero)
+				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
 
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true));
 			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true));
@@ -355,6 +370,7 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(name);
 
 			WriteObject(ElemAutoTypeEnabled, dictAutoType.Enabled);
+			WriteObject(ElemAutoTypeObfuscation, (uint)dictAutoType.ObfuscationOptions);
 
 			if(dictAutoType.DefaultSequence.Length > 0)
 				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence);
@@ -380,11 +396,6 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUsageCount, times.UsageCount);
 
 			m_xmlWriter.WriteEndElement(); // Name
-		}
-
-		private void WriteList(string name, PwObjectList<PwEntry> entryList)
-		{
-			WriteList(name, entryList, false);
 		}
 
 		private void WriteList(string name, PwObjectList<PwEntry> entryList, bool bIsHistory)
@@ -426,6 +437,27 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemProtURL, value.ProtectUrl);
 			WriteObject(ElemProtNotes, value.ProtectNotes);
 			WriteObject(ElemProtAutoHide, value.AutoEnableVisualHiding);
+
+			m_xmlWriter.WriteEndElement();
+		}
+
+		private void WriteCustomIconList()
+		{
+			if(m_pwDatabase.CustomIcons.Count == 0) return;
+
+			m_xmlWriter.WriteStartElement(ElemCustomIcons);
+
+			foreach(PwCustomIcon pwci in m_pwDatabase.CustomIcons)
+			{
+				m_xmlWriter.WriteStartElement(ElemCustomIconItem);
+
+				WriteObject(ElemCustomIconItemID, pwci.Uuid);
+
+				string strData = Convert.ToBase64String(pwci.ImageDataPng);
+				WriteObject(ElemCustomIconItemData, strData);
+
+				m_xmlWriter.WriteEndElement();
+			}
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -505,11 +537,19 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
-			if(name == PwDefs.TitleField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectTitle);
-			else if(name == PwDefs.UserNameField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUserName);
-			else if(name == PwDefs.PasswordField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectPassword);
-			else if(name == PwDefs.UrlField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUrl);
-			else if(name == PwDefs.NotesField) value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectNotes);
+			if(bIsEntryString)
+			{
+				if(name == PwDefs.TitleField)
+					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectTitle);
+				else if(name == PwDefs.UserNameField)
+					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUserName);
+				else if(name == PwDefs.PasswordField)
+					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectPassword);
+				else if(name == PwDefs.UrlField)
+					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUrl);
+				else if(name == PwDefs.NotesField)
+					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectNotes);
+			}
 
 			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
 			{
@@ -611,12 +651,12 @@ namespace KeePassLib.Serialization
 		/// Write entries to a stream.
 		/// </summary>
 		/// <param name="msOutput">Output stream to which the entries will be written.</param>
-		/// <param name="m_pwDatabase">Source database.</param>
+		/// <param name="pwDatabase">Source database.</param>
 		/// <param name="vEntries">Entries to serialize.</param>
 		/// <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
-		public static bool WriteEntries(Stream msOutput, PwDatabase m_pwDatabase, PwEntry[] vEntries)
+		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase, PwEntry[] vEntries)
 		{
-			Kdb4File f = new Kdb4File(m_pwDatabase);
+			Kdb4File f = new Kdb4File(pwDatabase);
 			f.m_format = Kdb4Format.PlainXml;
 
 			XmlTextWriter xtw = null;

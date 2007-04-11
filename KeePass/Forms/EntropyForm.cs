@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
+using System.Diagnostics;
 
 using KeePass.UI;
 using KeePass.Resources;
@@ -38,7 +39,7 @@ namespace KeePass.Forms
 	public partial class EntropyForm : Form
 	{
 		private byte[] m_pbEntropy = null;
-		LinkedList<uint> m_llPool = new LinkedList<uint>();
+		private LinkedList<uint> m_llPool = new LinkedList<uint>();
 
 		public byte[] GeneratedEntropy
 		{
@@ -71,23 +72,29 @@ namespace KeePass.Forms
 				KPRes.EntropyDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.EntropyTitle;
+
+			UpdateUIState();
+		}
+
+		private void UpdateUIState()
+		{
+			int nBits = m_llPool.Count / 8;
+			m_lblStatus.Text = nBits.ToString() + " " + KPRes.Bits;
+
+			if(nBits > 256) { Debug.Assert(false); m_pbGenerated.Value = 100; }
+			else m_pbGenerated.Value = (nBits * 100) / 256;
 		}
 
 		private void OnRandomMouseMove(object sender, MouseEventArgs e)
 		{
-			if(m_llPool.Count >= 4096) return;
+			if(m_llPool.Count >= 2048) return;
 
 			uint ul = (uint)((e.X << 8) ^ e.Y);
 			ul ^= (uint)(Environment.TickCount << 16);
 
 			m_llPool.AddLast(ul);
 
-			int nBits = m_llPool.Count / 8;
-			m_lblStatus.Text = nBits.ToString() + " " + KPRes.Bits;
-
-			if(nBits >= 256) nBits = 100;
-			else nBits = (nBits * 100) / 256;
-			m_pbGenerated.Value = nBits;
+			UpdateUIState();
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -106,6 +113,8 @@ namespace KeePass.Forms
 
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbEntropy = sha256.ComputeHash(ms.ToArray());
+
+			ms.Close();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

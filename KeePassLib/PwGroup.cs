@@ -39,7 +39,9 @@ namespace KeePassLib
 
 		private PwUuid m_uuid = PwUuid.Zero;
 		private string m_strName = "";
+
 		private PwIcon m_pwIcon = PwIcon.Folder;
+		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 
 		private DateTime m_tCreation = PwDefs.DtDefaultNow;
 		private DateTime m_tLastMod = PwDefs.DtDefaultNow;
@@ -62,6 +64,7 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+				
 				m_uuid = value;
 			}
 		}
@@ -75,6 +78,7 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+				
 				m_strName = value;
 			}
 		}
@@ -82,10 +86,26 @@ namespace KeePassLib
 		/// <summary>
 		/// Icon of the group.
 		/// </summary>
-		public PwIcon Icon
+		public PwIcon IconID
 		{
 			get { return m_pwIcon; }
 			set { m_pwIcon = value; }
+		}
+
+		/// <summary>
+		/// Get the custom icon ID. This value is 0, if no custom icon is
+		/// being used (i.e. the icon specified by the <c>IconID</c> property
+		/// should be displayed).
+		/// </summary>
+		public PwUuid CustomIconUuid
+		{
+			get { return m_pwCustomIconID; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+
+				m_pwCustomIconID = value;
+			}
 		}
 
 		/// <summary>
@@ -94,7 +114,7 @@ namespace KeePassLib
 		public PwGroup ParentGroup
 		{
 			get { return m_pParentGroup; }
-			set { m_pParentGroup = value; }
+			set { Debug.Assert(value != this); m_pParentGroup = value; }
 		}
 
 		/// <summary>
@@ -225,7 +245,6 @@ namespace KeePassLib
 			if(bSetTimes)
 			{
 				m_tCreation = m_tLastMod = m_tLastAccess = DateTime.Now;
-				// m_tExpire == PwDefs.DtInfinity
 			}
 		}
 
@@ -266,7 +285,9 @@ namespace KeePassLib
 			pg.m_uuid = this.m_uuid; // PwUUID is immutable
 
 			pg.m_strName = this.m_strName;
+
 			pg.m_pwIcon = this.m_pwIcon;
+			pg.m_pwCustomIconID = this.m_pwCustomIconID;
 
 			pg.m_tCreation = this.m_tCreation;
 			pg.m_tExpire = this.m_tExpire;
@@ -716,7 +737,9 @@ namespace KeePassLib
 			}
 
 			m_strName = pgTemplate.m_strName;
+
 			m_pwIcon = pgTemplate.m_pwIcon;
+			m_pwCustomIconID = pgTemplate.m_pwCustomIconID;
 
 			m_tCreation = pgTemplate.m_tCreation;
 			m_tLastMod = pgTemplate.m_tLastMod;

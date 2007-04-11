@@ -45,7 +45,8 @@ namespace KeePassLib
 		private PwObjectList<PwEntry> m_listHistory = new PwObjectList<PwEntry>();
 
 		private PwIcon m_pwIcon = PwIcon.Key;
-		// private Image m_imgCustomSmallIcon = null;
+		private PwUuid m_pwCustomIconID = PwUuid.Zero;
+
 		private Color m_clrForeground = Color.Empty;
 		private Color m_clrBackground = Color.Empty;
 
@@ -140,17 +141,27 @@ namespace KeePassLib
 		/// <summary>
 		/// Image ID specifying the icon that will be used for this entry.
 		/// </summary>
-		public PwIcon Icon
+		public PwIcon IconID
 		{
 			get { return m_pwIcon; }
 			set { m_pwIcon = value; }
 		}
 
-		// public Image CustomSmallIcon
-		// {
-		//	get { return m_imgCustomSmallIcon; }
-		//	set { m_imgCustomSmallIcon = value; }
-		// }
+		/// <summary>
+		/// Get the custom icon ID. This value is 0, if no custom icon is
+		/// being used (i.e. the icon specified by the <c>IconID</c> property
+		/// should be displayed).
+		/// </summary>
+		public PwUuid CustomIconUuid
+		{
+			get { return m_pwCustomIconID; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+
+				m_pwCustomIconID = value;
+			}
+		}
 
 		/// <summary>
 		/// Get or set the foreground color of this entry.
@@ -283,7 +294,8 @@ namespace KeePassLib
 			peNew.m_listHistory = this.m_listHistory.CloneDeep();
 
 			peNew.m_pwIcon = this.m_pwIcon;
-			// peNew.m_imgCustomSmallIcon = this.m_imgCustomSmallIcon;
+			peNew.m_pwCustomIconID = this.m_pwCustomIconID;
+
 			peNew.m_clrForeground = this.m_clrForeground;
 			peNew.m_clrBackground = this.m_clrBackground;
 
@@ -374,7 +386,8 @@ namespace KeePassLib
 			if(bIncludeHistory) m_listHistory = peTemplate.m_listHistory;
 
 			m_pwIcon = peTemplate.m_pwIcon;
-			// m_imgCustomSmallIcon = peTemplate.m_imgCustomSmallIcon;
+			m_pwCustomIconID = peTemplate.m_pwCustomIconID;
+
 			m_clrForeground = peTemplate.m_clrForeground;
 			m_clrBackground = peTemplate.m_clrBackground;
 

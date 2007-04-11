@@ -44,12 +44,12 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, ...
 		/// </summary>
-		public const uint Version32 = 0x02000100;
+		public const uint Version32 = 0x02000200;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.01 Alpha";
+		public const string VersionString = "2.02 Alpha";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.

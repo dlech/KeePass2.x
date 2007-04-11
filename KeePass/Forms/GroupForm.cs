@@ -39,13 +39,16 @@ namespace KeePass.Forms
 	{
 		private PwGroup m_pwGroup = null;
 		private ImageList m_ilClientIcons = null;
+		private PwDatabase m_pwDatabase = null;
 
 		private PwIcon m_pwIconIndex = 0;
+		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 
-		public void InitEx(PwGroup pg, ImageList ilClientIcons)
+		public void InitEx(PwGroup pg, ImageList ilClientIcons, PwDatabase pwDatabase)
 		{
 			m_pwGroup = pg;
 			m_ilClientIcons = ilClientIcons;
+			m_pwDatabase = pwDatabase;
 		}
 
 		public GroupForm()
@@ -55,7 +58,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwGroup != null); if(m_pwGroup == null) throw new ArgumentNullException();
+			Debug.Assert(m_pwGroup != null); if(m_pwGroup == null) throw new InvalidOperationException();
+			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -68,7 +72,8 @@ namespace KeePass.Forms
 			m_dtExpires.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
 				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;
 
-			m_pwIconIndex = m_pwGroup.Icon;
+			m_pwIconIndex = m_pwGroup.IconID;
+			m_pwCustomIconID = m_pwGroup.CustomIconUuid;
 			
 			m_tbName.Text = m_pwGroup.Name;
 			m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
@@ -102,7 +107,8 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			m_pwGroup.Name = m_tbName.Text;
-			m_pwGroup.Icon = m_pwIconIndex;
+			m_pwGroup.IconID = m_pwIconIndex;
+			m_pwGroup.CustomIconUuid = m_pwCustomIconID;
 
 			m_pwGroup.Expires = m_cbExpires.Checked;
 			m_pwGroup.ExpiryTime = m_dtExpires.Value;
@@ -119,12 +125,22 @@ namespace KeePass.Forms
 		private void OnBtnIcon(object sender, EventArgs e)
 		{
 			IconPickerForm ipf = new IconPickerForm();
-			ipf.InitEx(m_ilClientIcons, (uint)m_pwIconIndex);
+			ipf.InitEx(m_ilClientIcons, m_pwDatabase, (uint)m_pwIconIndex,
+				m_pwCustomIconID);
 
 			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				m_pwIconIndex = (PwIcon)ipf.ChosenImageIndex;
-				m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
+				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
+				{
+					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+					m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+				}
+				else // Standard icon
+				{
+					m_pwIconIndex = (PwIcon)ipf.ChosenIconID;
+					m_pwCustomIconID = PwUuid.Zero;
+					m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
+				}
 			}
 		}
 

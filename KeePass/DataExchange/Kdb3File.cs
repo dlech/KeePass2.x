@@ -47,15 +47,28 @@ namespace KeePass.DataExchange
 		private const string AutoTypePrefix = "Auto-Type:";
 		private const string AutoTypeWindowPrefix = "Auto-Type-Window:";
 
+		private const string UrlOverridePrefix = "Url-Override:";
+
 		public static bool IsLibraryInstalled()
+		{
+			Exception ex;
+			return IsLibraryInstalled(out ex);
+		}
+
+		public static bool IsLibraryInstalled(out Exception ex)
 		{
 			try
 			{
 				Kdb3Manager mgr = new Kdb3Manager();
 				mgr.Unload();
 			}
-			catch(Exception) { return false; }
+			catch(Exception exMgr)
+			{
+				ex = exMgr;
+				return false;
+			}
 
+			ex = null;
 			return true;
 		}
 
@@ -138,7 +151,7 @@ namespace KeePass.DataExchange
 			Stack<PwGroup> vGroupStack = new Stack<PwGroup>();
 			vGroupStack.Push(m_pwDatabase.RootGroup);
 
-			DateTime dtNeverExpire = mgr.GetNeverExpireTime();
+			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
 
 			for(uint uGroup = 0; uGroup < uGroupCount; ++uGroup)
 			{
@@ -147,7 +160,7 @@ namespace KeePass.DataExchange
 				PwGroup pg = new PwGroup(true, false);
 
 				pg.Name = g.Name;
-				pg.Icon = (g.ImageID < (uint)PwIcon.Count) ? (PwIcon)g.ImageID : PwIcon.Folder;
+				pg.IconID = (g.ImageID < (uint)PwIcon.Count) ? (PwIcon)g.ImageID : PwIcon.Folder;
 				
 				pg.CreationTime = g.CreationTime.ToDateTime();
 				pg.LastModificationTime = g.LastModificationTime.ToDateTime();
@@ -175,7 +188,7 @@ namespace KeePass.DataExchange
 
 		private void ReadEntries(Kdb3Manager mgr, Dictionary<UInt32, PwGroup> dictGroups)
 		{
-			DateTime dtNeverExpire = mgr.GetNeverExpireTime();
+			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
 			uint uEntryCount = mgr.EntryCount;
 
 			for(uint uEntry = 0; uEntry < uEntryCount; ++uEntry)
@@ -195,7 +208,7 @@ namespace KeePass.DataExchange
 				pe.ParentGroup = pgContainer;
 				pgContainer.Entries.Add(pe);
 
-				pe.Icon = (e.ImageID < (uint)PwIcon.Count) ? (PwIcon)e.ImageID : PwIcon.Key;
+				pe.IconID = (e.ImageID < (uint)PwIcon.Count) ? (PwIcon)e.ImageID : PwIcon.Key;
 
 				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectTitle, e.Title));
@@ -208,6 +221,7 @@ namespace KeePass.DataExchange
 
 				string strNotes = e.Additional;
 				ImportAutoType(ref strNotes, pe);
+				ImportUrlOverride(ref strNotes, pe);
 				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectNotes, strNotes));
 
@@ -283,7 +297,7 @@ namespace KeePass.DataExchange
 			Dictionary<PwGroup, UInt32> dictGroups = new Dictionary<PwGroup, uint>();
 
 			uint uGroupIndex = 1;
-			DateTime dtNeverExpire = mgr.GetNeverExpireTime();
+			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
@@ -294,7 +308,7 @@ namespace KeePass.DataExchange
 				grp.GroupID = uGroupIndex;
 				dictGroups[pg] = grp.GroupID;
 
-				grp.ImageID = (uint)pg.Icon;
+				grp.ImageID = (uint)pg.IconID;
 				grp.Name = pg.Name;
 				grp.CreationTime.Set(pg.CreationTime);
 				grp.LastModificationTime.Set(pg.LastModificationTime);
@@ -329,7 +343,7 @@ namespace KeePass.DataExchange
 			uint uGroupCount, uEntryCount, uEntriesSaved = 0;
 			m_pwDatabase.RootGroup.GetCounts(true, out uGroupCount, out uEntryCount);
 
-			DateTime dtNeverExpire = mgr.GetNeverExpireTime();
+			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
@@ -358,7 +372,7 @@ namespace KeePass.DataExchange
 					}
 				}
 
-				e.ImageID = (uint)pe.Icon;
+				e.ImageID = (uint)pe.IconID;
 
 				e.Title = pe.Strings.ReadSafe(PwDefs.TitleField);
 				e.UserName = pe.Strings.ReadSafe(PwDefs.UserNameField);
@@ -367,6 +381,7 @@ namespace KeePass.DataExchange
 
 				string strNotes = pe.Strings.ReadSafe(PwDefs.NotesField);
 				ExportAutoType(pe, ref strNotes);
+				ExportUrlOverride(pe, ref strNotes);
 				e.Additional = strNotes;
 
 				e.PasswordLen = (uint)e.Password.Length;
@@ -527,6 +542,47 @@ namespace KeePass.DataExchange
 
 			strNotes = strNotes.TrimEnd(new char[]{ '\r', '\n', '\t', ' ' });
 			strNotes += sbAppend.ToString();
+		}
+
+		private static void ImportUrlOverride(ref string strNotes, PwEntry peStorage)
+		{
+			string str = strNotes;
+			char[] vTrim = new char[] { '\r', '\n', '\t', ' ' };
+
+			int nUrlStart = str.IndexOf(UrlOverridePrefix, 0,
+				StringComparison.OrdinalIgnoreCase);
+			if(nUrlStart < 0) return;
+
+			int nUrlEnd = str.IndexOf('\n', nUrlStart);
+			if(nUrlEnd < 0) nUrlEnd = str.Length - 1;
+
+			string strUrl = str.Substring(nUrlStart + UrlOverridePrefix.Length,
+				nUrlEnd - nUrlStart - UrlOverridePrefix.Length + 1);
+			strUrl = strUrl.Trim(vTrim);
+
+			peStorage.OverrideUrl = strUrl;
+
+			str = str.Remove(nUrlStart, nUrlEnd - nUrlStart + 1);
+
+			strNotes = str;
+		}
+
+		private static void ExportUrlOverride(PwEntry peSource, ref string strNotes)
+		{
+			if(peSource.OverrideUrl.Length > 0)
+			{
+				StringBuilder sbAppend = new StringBuilder();
+
+				sbAppend.AppendLine();
+				sbAppend.AppendLine();
+				sbAppend.Append(UrlOverridePrefix);
+				sbAppend.Append(@" ");
+				sbAppend.Append(peSource.OverrideUrl);
+				sbAppend.AppendLine();
+
+				strNotes = strNotes.TrimEnd(new char[] { '\r', '\n', '\t', ' ' });
+				strNotes += sbAppend.ToString();
+			}
 		}
 	}
 }

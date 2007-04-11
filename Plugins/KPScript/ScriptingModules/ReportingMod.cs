@@ -56,7 +56,7 @@ namespace KPScript.ScriptingModules
 				Console.WriteLine("UUID: " + pg.Uuid.ToHexString());
 				Console.WriteLine("N: " + pg.Name);
 				Console.WriteLine("DATS: " + pg.DefaultAutoTypeSequence);
-				Console.WriteLine("I: " + ((uint)pg.Icon).ToString());
+				Console.WriteLine("I: " + ((uint)pg.IconID).ToString());
 				Console.WriteLine("TC: " + pg.CreationTime.ToString("s"));
 				Console.WriteLine("TLA: " + pg.LastAccessTime.ToString("s"));
 				Console.WriteLine("TLM: " + pg.LastModificationTime.ToString("s"));

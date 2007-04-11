@@ -80,41 +80,60 @@
 			this.m_tabMain.Controls.Add(this.m_tabPreview);
 			this.m_tabMain.Controls.Add(this.m_tabDataLayout);
 			this.m_tabMain.ImageList = this.m_ilTabIcons;
-			resources.ApplyResources(this.m_tabMain, "m_tabMain");
+			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
+			this.m_tabMain.Size = new System.Drawing.Size(601, 396);
+			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabSelectedIndexChanged);
 			// 
 			// m_tabPreview
 			// 
 			this.m_tabPreview.Controls.Add(this.m_wbMain);
 			this.m_tabPreview.Controls.Add(this.m_lblPreviewHint);
-			resources.ApplyResources(this.m_tabPreview, "m_tabPreview");
+			this.m_tabPreview.ImageIndex = 0;
+			this.m_tabPreview.Location = new System.Drawing.Point(4, 23);
 			this.m_tabPreview.Name = "m_tabPreview";
+			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabPreview.Size = new System.Drawing.Size(593, 369);
+			this.m_tabPreview.TabIndex = 0;
+			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
 			// 
 			// m_wbMain
 			// 
 			this.m_wbMain.AllowWebBrowserDrop = false;
-			resources.ApplyResources(this.m_wbMain, "m_wbMain");
+			this.m_wbMain.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_wbMain.IsWebBrowserContextMenuEnabled = false;
+			this.m_wbMain.Location = new System.Drawing.Point(3, 22);
 			this.m_wbMain.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_wbMain.Name = "m_wbMain";
+			this.m_wbMain.Size = new System.Drawing.Size(587, 344);
+			this.m_wbMain.TabIndex = 1;
 			this.m_wbMain.WebBrowserShortcutsEnabled = false;
 			// 
 			// m_lblPreviewHint
 			// 
-			resources.ApplyResources(this.m_lblPreviewHint, "m_lblPreviewHint");
+			this.m_lblPreviewHint.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_lblPreviewHint.ForeColor = System.Drawing.Color.Brown;
+			this.m_lblPreviewHint.Location = new System.Drawing.Point(3, 3);
 			this.m_lblPreviewHint.Name = "m_lblPreviewHint";
+			this.m_lblPreviewHint.Size = new System.Drawing.Size(587, 19);
+			this.m_lblPreviewHint.TabIndex = 0;
+			this.m_lblPreviewHint.Text = "Note that this preview is a layout preview only. To see a preview of the printed " +
+				"document, click the \'Print Preview\' button.";
 			// 
 			// m_tabDataLayout
 			// 
 			this.m_tabDataLayout.Controls.Add(this.m_grpFont);
 			this.m_tabDataLayout.Controls.Add(this.m_grpFields);
 			this.m_tabDataLayout.Controls.Add(this.m_grpLayout);
-			resources.ApplyResources(this.m_tabDataLayout, "m_tabDataLayout");
+			this.m_tabDataLayout.ImageIndex = 1;
+			this.m_tabDataLayout.Location = new System.Drawing.Point(4, 23);
 			this.m_tabDataLayout.Name = "m_tabDataLayout";
+			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 369);
+			this.m_tabDataLayout.TabIndex = 2;
+			this.m_tabDataLayout.Text = "Layout";
 			this.m_tabDataLayout.UseVisualStyleBackColor = true;
 			// 
 			// m_grpFont
@@ -124,42 +143,68 @@
 			this.m_grpFont.Controls.Add(this.m_rbMonospace);
 			this.m_grpFont.Controls.Add(this.m_rbSansSerif);
 			this.m_grpFont.Controls.Add(this.m_rbSerif);
-			resources.ApplyResources(this.m_grpFont, "m_grpFont");
+			this.m_grpFont.Location = new System.Drawing.Point(12, 267);
 			this.m_grpFont.Name = "m_grpFont";
+			this.m_grpFont.Size = new System.Drawing.Size(571, 88);
+			this.m_grpFont.TabIndex = 0;
 			this.m_grpFont.TabStop = false;
+			this.m_grpFont.Text = "Font";
 			// 
 			// m_cbSmallMono
 			// 
-			resources.ApplyResources(this.m_cbSmallMono, "m_cbSmallMono");
+			this.m_cbSmallMono.AutoSize = true;
+			this.m_cbSmallMono.Location = new System.Drawing.Point(7, 66);
 			this.m_cbSmallMono.Name = "m_cbSmallMono";
+			this.m_cbSmallMono.Size = new System.Drawing.Size(183, 17);
+			this.m_cbSmallMono.TabIndex = 4;
+			this.m_cbSmallMono.Text = "Use Extra Small Monospace Font";
 			this.m_cbSmallMono.UseVisualStyleBackColor = true;
 			// 
 			// m_cbMonospaceForPasswords
 			// 
-			resources.ApplyResources(this.m_cbMonospaceForPasswords, "m_cbMonospaceForPasswords");
+			this.m_cbMonospaceForPasswords.AutoSize = true;
 			this.m_cbMonospaceForPasswords.Checked = true;
 			this.m_cbMonospaceForPasswords.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_cbMonospaceForPasswords.Location = new System.Drawing.Point(7, 43);
 			this.m_cbMonospaceForPasswords.Name = "m_cbMonospaceForPasswords";
+			this.m_cbMonospaceForPasswords.Size = new System.Drawing.Size(200, 17);
+			this.m_cbMonospaceForPasswords.TabIndex = 3;
+			this.m_cbMonospaceForPasswords.Text = "Use Monospace Font For Passwords";
 			this.m_cbMonospaceForPasswords.UseVisualStyleBackColor = true;
 			// 
 			// m_rbMonospace
 			// 
-			resources.ApplyResources(this.m_rbMonospace, "m_rbMonospace");
+			this.m_rbMonospace.AutoSize = true;
+			this.m_rbMonospace.Font = new System.Drawing.Font("Courier New", 8.25F);
+			this.m_rbMonospace.Location = new System.Drawing.Point(139, 19);
 			this.m_rbMonospace.Name = "m_rbMonospace";
+			this.m_rbMonospace.Size = new System.Drawing.Size(88, 18);
+			this.m_rbMonospace.TabIndex = 2;
+			this.m_rbMonospace.Text = "Monospace";
 			this.m_rbMonospace.UseVisualStyleBackColor = true;
 			// 
 			// m_rbSansSerif
 			// 
-			resources.ApplyResources(this.m_rbSansSerif, "m_rbSansSerif");
+			this.m_rbSansSerif.AutoSize = true;
 			this.m_rbSansSerif.Checked = true;
+			this.m_rbSansSerif.Font = new System.Drawing.Font("Tahoma", 8.25F);
+			this.m_rbSansSerif.Location = new System.Drawing.Point(59, 19);
 			this.m_rbSansSerif.Name = "m_rbSansSerif";
+			this.m_rbSansSerif.Size = new System.Drawing.Size(74, 17);
+			this.m_rbSansSerif.TabIndex = 1;
 			this.m_rbSansSerif.TabStop = true;
+			this.m_rbSansSerif.Text = "Sans-Serif";
 			this.m_rbSansSerif.UseVisualStyleBackColor = true;
 			// 
 			// m_rbSerif
 			// 
-			resources.ApplyResources(this.m_rbSerif, "m_rbSerif");
+			this.m_rbSerif.AutoSize = true;
+			this.m_rbSerif.Font = new System.Drawing.Font("Times New Roman", 8.25F);
+			this.m_rbSerif.Location = new System.Drawing.Point(7, 19);
 			this.m_rbSerif.Name = "m_rbSerif";
+			this.m_rbSerif.Size = new System.Drawing.Size(46, 18);
+			this.m_rbSerif.TabIndex = 0;
+			this.m_rbSerif.Text = "Serif";
 			this.m_rbSerif.UseVisualStyleBackColor = true;
 			// 
 			// m_grpFields
@@ -177,96 +222,151 @@
 			this.m_grpFields.Controls.Add(this.m_cbUrl);
 			this.m_grpFields.Controls.Add(this.m_cbUser);
 			this.m_grpFields.Controls.Add(this.m_cbTitle);
-			resources.ApplyResources(this.m_grpFields, "m_grpFields");
+			this.m_grpFields.Location = new System.Drawing.Point(12, 145);
 			this.m_grpFields.Name = "m_grpFields";
+			this.m_grpFields.Size = new System.Drawing.Size(571, 116);
+			this.m_grpFields.TabIndex = 2;
 			this.m_grpFields.TabStop = false;
+			this.m_grpFields.Text = "Fields";
 			// 
 			// m_cbGroups
 			// 
-			resources.ApplyResources(this.m_cbGroups, "m_cbGroups");
+			this.m_cbGroups.AutoSize = true;
+			this.m_cbGroups.Location = new System.Drawing.Point(6, 65);
 			this.m_cbGroups.Name = "m_cbGroups";
+			this.m_cbGroups.Size = new System.Drawing.Size(86, 17);
+			this.m_cbGroups.TabIndex = 10;
+			this.m_cbGroups.Text = "Group Name";
 			this.m_cbGroups.UseVisualStyleBackColor = true;
 			// 
 			// m_linkDeselectAllFields
 			// 
-			resources.ApplyResources(this.m_linkDeselectAllFields, "m_linkDeselectAllFields");
+			this.m_linkDeselectAllFields.AutoSize = true;
+			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(60, 94);
 			this.m_linkDeselectAllFields.Name = "m_linkDeselectAllFields";
+			this.m_linkDeselectAllFields.Size = new System.Drawing.Size(63, 13);
+			this.m_linkDeselectAllFields.TabIndex = 12;
 			this.m_linkDeselectAllFields.TabStop = true;
+			this.m_linkDeselectAllFields.Text = "Deselect All";
 			this.m_linkDeselectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkDeselectAllFields);
 			// 
 			// m_linkSelectAllFields
 			// 
-			resources.ApplyResources(this.m_linkSelectAllFields, "m_linkSelectAllFields");
+			this.m_linkSelectAllFields.AutoSize = true;
+			this.m_linkSelectAllFields.Location = new System.Drawing.Point(3, 94);
 			this.m_linkSelectAllFields.Name = "m_linkSelectAllFields";
+			this.m_linkSelectAllFields.Size = new System.Drawing.Size(51, 13);
+			this.m_linkSelectAllFields.TabIndex = 11;
 			this.m_linkSelectAllFields.TabStop = true;
+			this.m_linkSelectAllFields.Text = "Select All";
 			this.m_linkSelectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkSelectAllFields);
 			// 
 			// m_cbAutoType
 			// 
-			resources.ApplyResources(this.m_cbAutoType, "m_cbAutoType");
+			this.m_cbAutoType.AutoSize = true;
+			this.m_cbAutoType.Location = new System.Drawing.Point(461, 42);
 			this.m_cbAutoType.Name = "m_cbAutoType";
+			this.m_cbAutoType.Size = new System.Drawing.Size(75, 17);
+			this.m_cbAutoType.TabIndex = 9;
+			this.m_cbAutoType.Text = "Auto-Type";
 			this.m_cbAutoType.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastAccess
 			// 
-			resources.ApplyResources(this.m_cbLastAccess, "m_cbLastAccess");
+			this.m_cbLastAccess.AutoSize = true;
+			this.m_cbLastAccess.Location = new System.Drawing.Point(241, 42);
 			this.m_cbLastAccess.Name = "m_cbLastAccess";
+			this.m_cbLastAccess.Size = new System.Drawing.Size(110, 17);
+			this.m_cbLastAccess.TabIndex = 7;
+			this.m_cbLastAccess.Text = "Last Access Time";
 			this.m_cbLastAccess.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastMod
 			// 
-			resources.ApplyResources(this.m_cbLastMod, "m_cbLastMod");
+			this.m_cbLastMod.AutoSize = true;
+			this.m_cbLastMod.Location = new System.Drawing.Point(103, 42);
 			this.m_cbLastMod.Name = "m_cbLastMod";
+			this.m_cbLastMod.Size = new System.Drawing.Size(132, 17);
+			this.m_cbLastMod.TabIndex = 6;
+			this.m_cbLastMod.Text = "Last Modification Time";
 			this.m_cbLastMod.UseVisualStyleBackColor = true;
 			// 
 			// m_cbCreation
 			// 
-			resources.ApplyResources(this.m_cbCreation, "m_cbCreation");
+			this.m_cbCreation.AutoSize = true;
+			this.m_cbCreation.Location = new System.Drawing.Point(6, 42);
 			this.m_cbCreation.Name = "m_cbCreation";
+			this.m_cbCreation.Size = new System.Drawing.Size(91, 17);
+			this.m_cbCreation.TabIndex = 5;
+			this.m_cbCreation.Text = "Creation Time";
 			this.m_cbCreation.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExpire
 			// 
-			resources.ApplyResources(this.m_cbExpire, "m_cbExpire");
+			this.m_cbExpire.AutoSize = true;
+			this.m_cbExpire.Location = new System.Drawing.Point(357, 42);
 			this.m_cbExpire.Name = "m_cbExpire";
+			this.m_cbExpire.Size = new System.Drawing.Size(98, 17);
+			this.m_cbExpire.TabIndex = 8;
+			this.m_cbExpire.Text = "Expiration Time";
 			this.m_cbExpire.UseVisualStyleBackColor = true;
 			// 
 			// m_cbNotes
 			// 
-			resources.ApplyResources(this.m_cbNotes, "m_cbNotes");
+			this.m_cbNotes.AutoSize = true;
 			this.m_cbNotes.Checked = true;
 			this.m_cbNotes.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_cbNotes.Location = new System.Drawing.Point(461, 19);
 			this.m_cbNotes.Name = "m_cbNotes";
+			this.m_cbNotes.Size = new System.Drawing.Size(54, 17);
+			this.m_cbNotes.TabIndex = 4;
+			this.m_cbNotes.Text = "Notes";
 			this.m_cbNotes.UseVisualStyleBackColor = true;
 			// 
 			// m_cbPassword
 			// 
-			resources.ApplyResources(this.m_cbPassword, "m_cbPassword");
+			this.m_cbPassword.AutoSize = true;
 			this.m_cbPassword.Checked = true;
 			this.m_cbPassword.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_cbPassword.Location = new System.Drawing.Point(241, 19);
 			this.m_cbPassword.Name = "m_cbPassword";
+			this.m_cbPassword.Size = new System.Drawing.Size(72, 17);
+			this.m_cbPassword.TabIndex = 2;
+			this.m_cbPassword.Text = "Password";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUrl
 			// 
-			resources.ApplyResources(this.m_cbUrl, "m_cbUrl");
+			this.m_cbUrl.AutoSize = true;
+			this.m_cbUrl.Location = new System.Drawing.Point(357, 19);
 			this.m_cbUrl.Name = "m_cbUrl";
+			this.m_cbUrl.Size = new System.Drawing.Size(48, 17);
+			this.m_cbUrl.TabIndex = 3;
+			this.m_cbUrl.Text = "URL";
 			this.m_cbUrl.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUser
 			// 
-			resources.ApplyResources(this.m_cbUser, "m_cbUser");
+			this.m_cbUser.AutoSize = true;
 			this.m_cbUser.Checked = true;
 			this.m_cbUser.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_cbUser.Location = new System.Drawing.Point(103, 19);
 			this.m_cbUser.Name = "m_cbUser";
+			this.m_cbUser.Size = new System.Drawing.Size(79, 17);
+			this.m_cbUser.TabIndex = 1;
+			this.m_cbUser.Text = "User Name";
 			this.m_cbUser.UseVisualStyleBackColor = true;
 			// 
 			// m_cbTitle
 			// 
-			resources.ApplyResources(this.m_cbTitle, "m_cbTitle");
+			this.m_cbTitle.AutoSize = true;
 			this.m_cbTitle.Checked = true;
 			this.m_cbTitle.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_cbTitle.Location = new System.Drawing.Point(6, 19);
 			this.m_cbTitle.Name = "m_cbTitle";
+			this.m_cbTitle.Size = new System.Drawing.Size(46, 17);
+			this.m_cbTitle.TabIndex = 0;
+			this.m_cbTitle.Text = "Title";
 			this.m_cbTitle.UseVisualStyleBackColor = true;
 			// 
 			// m_grpLayout
@@ -275,32 +375,54 @@
 			this.m_grpLayout.Controls.Add(this.m_lblTabularInfo);
 			this.m_grpLayout.Controls.Add(this.m_rbDetails);
 			this.m_grpLayout.Controls.Add(this.m_rbTabular);
-			resources.ApplyResources(this.m_grpLayout, "m_grpLayout");
+			this.m_grpLayout.Location = new System.Drawing.Point(12, 13);
 			this.m_grpLayout.Name = "m_grpLayout";
+			this.m_grpLayout.Size = new System.Drawing.Size(571, 126);
+			this.m_grpLayout.TabIndex = 0;
 			this.m_grpLayout.TabStop = false;
+			this.m_grpLayout.Text = "Layout";
 			// 
 			// m_lblDetailsInfo
 			// 
-			resources.ApplyResources(this.m_lblDetailsInfo, "m_lblDetailsInfo");
+			this.m_lblDetailsInfo.AutoSize = true;
+			this.m_lblDetailsInfo.Location = new System.Drawing.Point(23, 99);
 			this.m_lblDetailsInfo.Name = "m_lblDetailsInfo";
+			this.m_lblDetailsInfo.Size = new System.Drawing.Size(337, 13);
+			this.m_lblDetailsInfo.TabIndex = 3;
+			this.m_lblDetailsInfo.Text = "Arrange the entries in blocks. The fields selected below will be printed.";
 			// 
 			// m_lblTabularInfo
 			// 
-			resources.ApplyResources(this.m_lblTabularInfo, "m_lblTabularInfo");
+			this.m_lblTabularInfo.Location = new System.Drawing.Point(23, 39);
 			this.m_lblTabularInfo.Name = "m_lblTabularInfo";
+			this.m_lblTabularInfo.Size = new System.Drawing.Size(542, 28);
+			this.m_lblTabularInfo.TabIndex = 1;
+			this.m_lblTabularInfo.Text = "Arrange the entries in a tabular form. Each entry will occupy approximately one l" +
+				"ine. The fields selected below will be printed; auto-type configuration is not p" +
+				"rinted.";
 			// 
 			// m_rbDetails
 			// 
-			resources.ApplyResources(this.m_rbDetails, "m_rbDetails");
+			this.m_rbDetails.AutoSize = true;
+			this.m_rbDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_rbDetails.Location = new System.Drawing.Point(6, 79);
 			this.m_rbDetails.Name = "m_rbDetails";
+			this.m_rbDetails.Size = new System.Drawing.Size(64, 17);
+			this.m_rbDetails.TabIndex = 2;
 			this.m_rbDetails.TabStop = true;
+			this.m_rbDetails.Text = "&Details";
 			this.m_rbDetails.UseVisualStyleBackColor = true;
 			// 
 			// m_rbTabular
 			// 
-			resources.ApplyResources(this.m_rbTabular, "m_rbTabular");
+			this.m_rbTabular.AutoSize = true;
+			this.m_rbTabular.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.m_rbTabular.Location = new System.Drawing.Point(6, 19);
 			this.m_rbTabular.Name = "m_rbTabular";
+			this.m_rbTabular.Size = new System.Drawing.Size(68, 17);
+			this.m_rbTabular.TabIndex = 0;
 			this.m_rbTabular.TabStop = true;
+			this.m_rbTabular.Text = "&Tabular";
 			this.m_rbTabular.UseVisualStyleBackColor = true;
 			this.m_rbTabular.CheckedChanged += new System.EventHandler(this.OnTabularCheckedChanged);
 			// 
@@ -313,48 +435,66 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(625, 60);
+			this.m_bannerImage.TabIndex = 1;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(457, 471);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(538, 471);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_btnConfigPrinter
 			// 
 			this.m_btnConfigPrinter.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
-			resources.ApplyResources(this.m_btnConfigPrinter, "m_btnConfigPrinter");
+			this.m_btnConfigPrinter.Location = new System.Drawing.Point(12, 471);
 			this.m_btnConfigPrinter.Name = "m_btnConfigPrinter";
+			this.m_btnConfigPrinter.Size = new System.Drawing.Size(100, 23);
+			this.m_btnConfigPrinter.TabIndex = 3;
+			this.m_btnConfigPrinter.Text = "Page &Setup";
+			this.m_btnConfigPrinter.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnConfigPrinter.UseVisualStyleBackColor = true;
 			this.m_btnConfigPrinter.Click += new System.EventHandler(this.OnBtnConfigPage);
 			// 
 			// m_btnPrintPreview
 			// 
 			this.m_btnPrintPreview.Image = global::KeePass.Properties.Resources.B16x16_FileQuickPrint;
-			resources.ApplyResources(this.m_btnPrintPreview, "m_btnPrintPreview");
+			this.m_btnPrintPreview.Location = new System.Drawing.Point(118, 471);
 			this.m_btnPrintPreview.Name = "m_btnPrintPreview";
+			this.m_btnPrintPreview.Size = new System.Drawing.Size(100, 23);
+			this.m_btnPrintPreview.TabIndex = 4;
+			this.m_btnPrintPreview.Text = "Print &Preview";
+			this.m_btnPrintPreview.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
 			// 
 			// PrintForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(625, 506);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnOK);
@@ -364,8 +504,11 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(64, 32);
 			this.Name = "PrintForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Print";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.m_tabMain.ResumeLayout(false);

@@ -46,83 +46,122 @@
 			// 
 			// m_bannerImage
 			// 
-			resources.ApplyResources(this.m_bannerImage, "m_bannerImage");
+			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
+			this.m_bannerImage.Size = new System.Drawing.Size(409, 60);
+			this.m_bannerImage.TabIndex = 0;
 			this.m_bannerImage.TabStop = false;
 			// 
 			// m_lblStringValueDesc
 			// 
-			resources.ApplyResources(this.m_lblStringValueDesc, "m_lblStringValueDesc");
+			this.m_lblStringValueDesc.AutoSize = true;
+			this.m_lblStringValueDesc.Location = new System.Drawing.Point(12, 156);
 			this.m_lblStringValueDesc.Name = "m_lblStringValueDesc";
+			this.m_lblStringValueDesc.Size = new System.Drawing.Size(62, 13);
+			this.m_lblStringValueDesc.TabIndex = 4;
+			this.m_lblStringValueDesc.Text = "Field Value:";
 			// 
 			// m_lblStringIDDesc
 			// 
-			resources.ApplyResources(this.m_lblStringIDDesc, "m_lblStringIDDesc");
+			this.m_lblStringIDDesc.AutoSize = true;
+			this.m_lblStringIDDesc.Location = new System.Drawing.Point(12, 117);
 			this.m_lblStringIDDesc.Name = "m_lblStringIDDesc";
+			this.m_lblStringIDDesc.Size = new System.Drawing.Size(63, 13);
+			this.m_lblStringIDDesc.TabIndex = 2;
+			this.m_lblStringIDDesc.Text = "Field Name:";
 			// 
 			// m_lblIDIntro
 			// 
-			resources.ApplyResources(this.m_lblIDIntro, "m_lblIDIntro");
+			this.m_lblIDIntro.Location = new System.Drawing.Point(12, 67);
 			this.m_lblIDIntro.Name = "m_lblIDIntro";
+			this.m_lblIDIntro.Size = new System.Drawing.Size(385, 40);
+			this.m_lblIDIntro.TabIndex = 1;
+			this.m_lblIDIntro.Text = resources.GetString("m_lblIDIntro.Text");
 			// 
 			// m_tbStringName
 			// 
-			resources.ApplyResources(this.m_tbStringName, "m_tbStringName");
+			this.m_tbStringName.Location = new System.Drawing.Point(81, 114);
 			this.m_tbStringName.Name = "m_tbStringName";
+			this.m_tbStringName.Size = new System.Drawing.Size(316, 20);
+			this.m_tbStringName.TabIndex = 0;
 			this.m_tbStringName.TextChanged += new System.EventHandler(this.OnTextChangedName);
 			// 
 			// m_richStringValue
 			// 
-			resources.ApplyResources(this.m_richStringValue, "m_richStringValue");
+			this.m_richStringValue.Location = new System.Drawing.Point(81, 154);
 			this.m_richStringValue.Name = "m_richStringValue";
+			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.m_richStringValue.Size = new System.Drawing.Size(316, 78);
+			this.m_richStringValue.TabIndex = 5;
+			this.m_richStringValue.Text = "";
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			resources.ApplyResources(this.m_lblSeparator, "m_lblSeparator");
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 271);
 			this.m_lblSeparator.Name = "m_lblSeparator";
+			this.m_lblSeparator.Size = new System.Drawing.Size(409, 2);
+			this.m_lblSeparator.TabIndex = 10;
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.Location = new System.Drawing.Point(241, 282);
 			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 7;
+			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Location = new System.Drawing.Point(322, 282);
 			this.m_btnCancel.Name = "m_btnCancel";
+			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCancel.TabIndex = 8;
+			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_btnHelp
 			// 
-			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 282);
 			this.m_btnHelp.Name = "m_btnHelp";
+			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
+			this.m_btnHelp.TabIndex = 9;
+			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
 			// m_cbProtect
 			// 
-			resources.ApplyResources(this.m_cbProtect, "m_cbProtect");
+			this.m_cbProtect.AutoSize = true;
+			this.m_cbProtect.Location = new System.Drawing.Point(81, 238);
 			this.m_cbProtect.Name = "m_cbProtect";
+			this.m_cbProtect.Size = new System.Drawing.Size(162, 17);
+			this.m_cbProtect.TabIndex = 6;
+			this.m_cbProtect.Text = "Enable In-Memory &Protection";
 			this.m_cbProtect.UseVisualStyleBackColor = true;
 			// 
 			// m_lblValidationInfo
 			// 
 			this.m_lblValidationInfo.ForeColor = System.Drawing.Color.Crimson;
-			resources.ApplyResources(this.m_lblValidationInfo, "m_lblValidationInfo");
+			this.m_lblValidationInfo.Location = new System.Drawing.Point(78, 137);
 			this.m_lblValidationInfo.Name = "m_lblValidationInfo";
+			this.m_lblValidationInfo.Size = new System.Drawing.Size(319, 14);
+			this.m_lblValidationInfo.TabIndex = 3;
+			this.m_lblValidationInfo.Text = "<>";
 			// 
 			// EditStringForm
 			// 
 			this.AcceptButton = this.m_btnOK;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.ClientSize = new System.Drawing.Size(409, 317);
 			this.Controls.Add(this.m_lblValidationInfo);
 			this.Controls.Add(this.m_cbProtect);
 			this.Controls.Add(this.m_btnHelp);
@@ -140,6 +179,8 @@
 			this.MinimizeBox = false;
 			this.Name = "EditStringForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Edit Entry String";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

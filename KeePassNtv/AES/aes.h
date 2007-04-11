@@ -1,6 +1,6 @@
 /*
  ---------------------------------------------------------------------------
- Copyright (c) 2003, Dr Brian Gladman, Worcester, UK.   All rights reserved.
+ Copyright (c) 1998-2006, Brian Gladman, Worcester, UK. All rights reserved.
 
  LICENSE TERMS
 
@@ -27,7 +27,7 @@
  in respect of its properties, including, but not limited to, correctness
  and/or fitness for purpose.
  ---------------------------------------------------------------------------
- Issue 1/08/2005
+ Issue 09/09/2006
 
  This file contains the definitions required to use AES in C. See aesopt.h
  for optimisation details.
@@ -39,7 +39,7 @@
 #include <stdlib.h>
 
 /*  This include is used to find 8 & 32 bit unsigned integer types  */
-#include "tdefs.h"
+#include "brg_types.h"
 
 #if defined(__cplusplus)
 extern "C"
@@ -75,9 +75,9 @@ extern "C"
 #endif
 
 #if defined( AES_ERR_CHK )
-#define aes_rval     int_ret
+#define AES_RETURN     INT_RETURN
 #else
-#define aes_rval     void_ret
+#define AES_RETURN     VOID_RETURN
 #endif
 
 /* the character array 'inf' in the following structures is used    */
@@ -103,7 +103,7 @@ typedef struct
 /* This routine must be called before first use if non-static       */
 /* tables are being used                                            */
 
-aes_rval gen_tabs(void);
+AES_RETURN gen_tabs(void);
 
 /* Key lengths in the range 16 <= key_len <= 32 are given in bytes, */
 /* those in the range 128 <= key_len <= 256 are given in bits       */
@@ -111,73 +111,89 @@ aes_rval gen_tabs(void);
 #if defined( AES_ENCRYPT )
 
 #if defined(AES_128) || defined(AES_VAR)
-aes_rval aes_encrypt_key128(const unsigned char *key, aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt_key128(const unsigned char *key, aes_encrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_192) || defined(AES_VAR)
-aes_rval aes_encrypt_key192(const unsigned char *key, aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt_key192(const unsigned char *key, aes_encrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_256) || defined(AES_VAR)
-aes_rval aes_encrypt_key256(const unsigned char *key, aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt_key256(const unsigned char *key, aes_encrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_VAR)
-aes_rval aes_encrypt_key(const unsigned char *key, int key_len, aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt_key(const unsigned char *key, int key_len, aes_encrypt_ctx cx[1]);
 #endif
 
-aes_rval aes_encrypt(const unsigned char *in, unsigned char *out, const aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_encrypt_ctx cx[1]);
 
 #endif
 
 #if defined( AES_DECRYPT )
 
 #if defined(AES_128) || defined(AES_VAR)
-aes_rval aes_decrypt_key128(const unsigned char *key, aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt_key128(const unsigned char *key, aes_decrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_192) || defined(AES_VAR)
-aes_rval aes_decrypt_key192(const unsigned char *key, aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt_key192(const unsigned char *key, aes_decrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_256) || defined(AES_VAR)
-aes_rval aes_decrypt_key256(const unsigned char *key, aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt_key256(const unsigned char *key, aes_decrypt_ctx cx[1]);
 #endif
 
 #if defined(AES_VAR)
-aes_rval aes_decrypt_key(const unsigned char *key, int key_len, aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt_key(const unsigned char *key, int key_len, aes_decrypt_ctx cx[1]);
 #endif
 
-aes_rval aes_decrypt(const unsigned char *in, unsigned char *out, const aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt(const unsigned char *in, unsigned char *out, const aes_decrypt_ctx cx[1]);
 
 #endif
 
 #if defined(AES_MODES)
 
-aes_rval aes_ecb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
+/* Multiple calls to the following subroutines for multiple block   */
+/* ECB, CBC, CFB, OFB and CTR mode encryption can be used to handle */
+/* long messages incremantally provided that the context AND the iv */
+/* are preserved between all such calls.  For the ECB and CBC modes */
+/* each individual call within a series of incremental calls must   */
+/* process only full blocks (i.e. len must be a multiple of 16) but */
+/* the CFB, OFB and CTR mode calls can handle multiple incremental  */
+/* calls of any length. Each mode is reset when a new AES key is    */
+/* set but ECB and CBC operations can be reset without setting a    */
+/* new key by setting a new IV value.  To reset CFB, OFB and CTR    */
+/* without setting the key, aes_mode_reset() must be called and the */
+/* IV must be set.  NOTE: All these calls update the IV on exit so  */
+/* this has to be reset if a new operation with the same IV as the  */
+/* previous one is required (or decryption follows encryption with  */
+/* the same IV array).                                              */
+
+AES_RETURN aes_ecb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, const aes_encrypt_ctx cx[1]);
 
-aes_rval aes_ecb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_ecb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, const aes_decrypt_ctx cx[1]);
 
-aes_rval aes_cbc_encrypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_cbc_encrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, const aes_encrypt_ctx cx[1]);
 
-aes_rval aes_cbc_decrypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_cbc_decrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, const aes_decrypt_ctx cx[1]);
 
-aes_rval aes_mode_reset(aes_encrypt_ctx cx[1]);
+AES_RETURN aes_mode_reset(aes_encrypt_ctx cx[1]);
 
-aes_rval aes_cfb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_cfb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, aes_encrypt_ctx cx[1]);
 
-aes_rval aes_cfb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_cfb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, aes_encrypt_ctx cx[1]);
 
 #define aes_ofb_encrypt aes_ofb_crypt
 #define aes_ofb_decrypt aes_ofb_crypt
 
-aes_rval aes_ofb_crypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_ofb_crypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, aes_encrypt_ctx cx[1]);
 
 typedef void cbuf_inc(unsigned char *cbuf);
@@ -185,7 +201,7 @@ typedef void cbuf_inc(unsigned char *cbuf);
 #define aes_ctr_encrypt aes_ctr_crypt
 #define aes_ctr_decrypt aes_ctr_crypt
 
-aes_rval aes_ctr_crypt(const unsigned char *ibuf, unsigned char *obuf,
+AES_RETURN aes_ctr_crypt(const unsigned char *ibuf, unsigned char *obuf,
             int len, unsigned char *cbuf, cbuf_inc ctr_inc, aes_encrypt_ctx cx[1]);
 
 #endif

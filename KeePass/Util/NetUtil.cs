@@ -56,5 +56,78 @@ namespace KeePass.Util
 
 			return Encoding.UTF8.GetString(msUTF8.ToArray());
 		}
+
+		public static string WebPageLogin(string strUrl, string strPostData,
+			out List<KeyValuePair<string, string>> vCookies)
+		{
+			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(strUrl);
+
+			byte[] pbPostData = Encoding.ASCII.GetBytes(strPostData);
+
+			hwr.Method = "POST";
+			hwr.ContentType = "application/x-www-form-urlencoded";
+			hwr.ContentLength = pbPostData.Length;
+			hwr.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)";
+
+			Stream s = hwr.GetRequestStream();
+			s.Write(pbPostData, 0, pbPostData.Length);
+			s.Close();
+
+			WebResponse wr = hwr.GetResponse();
+
+			StreamReader sr = new StreamReader(wr.GetResponseStream());
+			string strResponse = sr.ReadToEnd();
+			sr.Close();
+			wr.Close();
+
+			vCookies = new List<KeyValuePair<string, string>>();
+			foreach(string strHeader in wr.Headers.AllKeys)
+			{
+				if(strHeader == "Set-Cookie")
+				{
+					string strCookie = wr.Headers.Get(strHeader);
+					string[] vParts = strCookie.Split(new char[]{ ';' });
+					if(vParts.Length < 1) continue;
+
+					string[] vInfo = vParts[0].Split(new char[]{ '=' });
+					if(vInfo.Length != 2) continue;
+
+					vCookies.Add(new KeyValuePair<string, string>(
+						vInfo[0], vInfo[1]));
+				}
+			}
+
+			return strResponse;
+		}
+
+		public static string WebPageGetWithCookies(string strUrl,
+			List<KeyValuePair<string, string>> vCookies, string strDomain)
+		{
+			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(strUrl);
+
+			hwr.Method = "GET";
+			hwr.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)";
+
+			if(vCookies != null)
+			{
+				hwr.CookieContainer = new CookieContainer();
+
+				foreach(KeyValuePair<string, string> kvpCookie in vCookies)
+				{
+					Cookie ck = new Cookie(kvpCookie.Key, kvpCookie.Value,
+						"/", strDomain);
+					hwr.CookieContainer.Add(ck);
+				}
+			}
+
+			WebResponse wr = hwr.GetResponse();
+
+			StreamReader sr = new StreamReader(wr.GetResponseStream());
+			string strResponse = sr.ReadToEnd();
+			sr.Close();
+			wr.Close();
+
+			return strResponse;
+		}
 	}
 }

@@ -23,68 +23,109 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
+using KeePass.Native;
 using KeePass.Util;
+
+using KeePassLib;
 
 namespace KeePass.UI
 {
 	public static class UIUtil
 	{
-		[StructLayout(LayoutKind.Sequential)]
-		private struct CHARFORMAT2
-		{
-			public UInt32 cbSize;
-			public UInt32 dwMask;
-			public UInt32 dwEffects;
-			public Int32 yHeight;
-			public Int32 yOffset;
-			public Int32 crTextColor;
-			public Byte bCharSet;
-			public Byte bPitchAndFamily;
-			
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-			public char[] szFaceName;
-			
-			public UInt16 wWeight;
-			public UInt16 sSpacing;
-			public Int32 crBackColor;
-			public Int32 lcid;
-			public UInt32 dwReserved;
-			public Int16 sStyle;
-			public Int16 wKerning;
-			public Byte bUnderlineType;
-			public Byte bAnimation;
-			public Byte bRevAuthor;
-			public Byte bReserved1;
-		}
-
-		private const uint WM_USER = 0x0400;
-		private const uint EM_SETCHARFORMAT = WM_USER + 68;
-
-		private const Int32 SCF_SELECTION = 0x0001;
-
-		private const UInt32 CFM_LINK = 0x00000020;
-		private const UInt32 CFE_LINK = 0x00000020;
-
-		public static void RtfSetSelectionLink(RichTextBox rtb)
+		public static void RtfSetSelectionLink(RichTextBox richTextBox)
 		{
 			try
 			{
-				CHARFORMAT2 cf = new CHARFORMAT2();
+				NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
 				cf.cbSize = (UInt32)Marshal.SizeOf(cf);
 
-				cf.dwMask = CFM_LINK;
-				cf.dwEffects = CFE_LINK;
+				cf.dwMask = NativeMethods.CFM_LINK;
+				cf.dwEffects = NativeMethods.CFE_LINK;
 
-				IntPtr wParam = (IntPtr)SCF_SELECTION;
+				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
 				IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
 				Marshal.StructureToPtr(cf, lParam, false);
 
-				WinUtil.SendMessage(rtb.Handle, EM_SETCHARFORMAT, wParam, lParam);
+				NativeMethods.SendMessage(richTextBox.Handle,
+					NativeMethods.EM_SETCHARFORMAT, wParam, lParam);
 
 				Marshal.FreeCoTaskMem(lParam);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static Image CreateColorBitmap24(int nWidth, int nHeight, Color color)
+		{
+			Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
+
+			using(SolidBrush sb = new SolidBrush(color))
+			{
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.FillRectangle(sb, 0, 0, nWidth, nHeight);
+				}
+			}
+
+			return bmp;
+		}
+
+		public static ImageList BuildImageList(List<PwCustomIcon> vImages,
+			int nWidth, int nHeight)
+		{
+			ImageList imgList = new ImageList();
+
+			imgList.ImageSize = new Size(nWidth, nHeight);
+			imgList.ColorDepth = ColorDepth.Depth32Bit;
+
+			foreach(PwCustomIcon pwci in vImages)
+			{
+				Image imgNew = pwci.Image;
+
+				if(imgNew == null) { Debug.Assert(false); continue; }
+
+				if((imgNew.Width != nWidth) || (imgNew.Height != nHeight))
+					imgNew = new Bitmap(imgNew, new Size(nWidth, nHeight));
+
+				imgList.Images.Add(imgNew);
+			}
+
+			return imgList;
+		}
+
+		public static ImageList ConvertImageList24(ImageList vSourceImages,
+			int nWidth, int nHeight, Color clrBack)
+		{
+			ImageList vNew = new ImageList();
+			vNew.ImageSize = new Size(nWidth, nHeight);
+			vNew.ColorDepth = ColorDepth.Depth24Bit;
+
+			SolidBrush brushBk = new SolidBrush(clrBack);
+
+			foreach(Image img in vSourceImages.Images)
+			{
+				Bitmap bmpNew = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
+
+				using(Graphics g = Graphics.FromImage(bmpNew))
+				{
+					g.FillRectangle(brushBk, 0, 0, nWidth, nHeight);
+
+					if((img.Width == nWidth) && (img.Height == nHeight))
+						g.DrawImageUnscaled(img, 0, 0);
+					else
+					{
+						g.InterpolationMode = InterpolationMode.High;
+						g.DrawImage(img, 0, 0, nWidth, nHeight);
+					}
+				}
+
+				vNew.Images.Add(bmpNew);
+			}
+
+			return vNew;
 		}
 	}
 }

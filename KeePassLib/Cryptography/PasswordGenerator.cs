@@ -240,12 +240,14 @@ namespace KeePassLib.Cryptography
 		/// </summary>
 		/// <param name="uPos">Index of the character to get.</param>
 		/// <returns>Character at the specified position. If the index is invalid,
-		/// an <c>IndexOutOfRangeException</c> is thrown.</returns>
+		/// an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
 		public char this[uint uPos]
 		{
 			get
 			{
-				if(uPos >= m_vChars.Count) throw new IndexOutOfRangeException();
+				if(uPos >= (uint)m_vChars.Count)
+					throw new ArgumentOutOfRangeException("uPos");
+
 				return m_vChars[(int)uPos];
 			}
 		}

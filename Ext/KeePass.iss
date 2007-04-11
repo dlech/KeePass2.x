@@ -2,12 +2,16 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "KeePass Password Safe"
-#define MyAppVerName "KeePass Password Safe 2.01 Alpha"
 #define MyAppPublisher "Dominik Reichl"
+
+#define MyAppVerName "KeePass Password Safe 2.02 Alpha"
+#define MyAppBaseSetupExe "KeePass-2.02-Alpha-Setup"
+#define MyAppVerQuad "2.0.2.0"
+
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
-#define MyAppBaseSetupExe "KeePass-2.01-Alpha-Setup"
+
 
 [Setup]
 AppName={#MyAppName}
@@ -16,14 +20,16 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+AppCopyright=Copyright (c) 2003-2007 {#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=..\Docs\License_Install.txt
 OutputBaseFilename={#MyAppBaseSetupExe}
-Compression=lzma
+Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
+VersionInfoVersion={#MyAppVerQuad}
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -57,8 +63,10 @@ Source: ..\Build\KeePass_Distrib\XSL\KDB4_Styles.css; DestDir: {app}\XSL; Compon
 Source: ..\Build\KeePass_Distrib\XSL\KDB4_Tabular.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\TableHeader.gif; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist
-Source: ..\Build\KeePass_Distrib\KeePassLibC.dll; DestDir: {app}; Components: KDB3Support
-Source: ..\Build\KeePass_Distrib\KeePassNtv.dll; DestDir: {app}; Components: NativeLib
+Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Components: KDB3Support
+Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Components: KDB3Support
+Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Components: NativeLib
+Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Components: NativeLib
 Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Components: UserDoc
 Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}
 

@@ -23,7 +23,8 @@ DEL ..\ShInstUtil\ShInstUtil.csproj.user
 DEL /A:H ..\KeePass.suo
 DEL ..\KeePass.ncb
 
-DEL ..\KeePassNtv\KeePassNtv.vcproj.REDDYX.Dominik.user
+DEL /Q ..\KeePassNtv\*.aps
+DEL /Q ..\KeePassNtv\*.user
 
 RMDIR /S /Q ArcFourCipher\Debug
 RMDIR /S /Q ..\Plugins\ArcFourCipher\obj
@@ -40,5 +41,21 @@ RMDIR /S /Q SamplePlugin\Debug
 RMDIR /S /Q ..\Plugins\SamplePlugin\obj
 DEL ..\Plugins\SamplePlugin\SamplePlugin.csproj.user
 DEL SamplePlugin\Release\SamplePlugin.pdb
+
+RMDIR /S /Q SamplePluginCpp\Debug
+DEL /Q SamplePluginCpp\Release\*.res
+DEL /Q SamplePluginCpp\Release\*.obj
+DEL /Q SamplePluginCpp\Release\*.htm
+DEL /Q SamplePluginCpp\Release\*.dep
+DEL /Q SamplePluginCpp\Release\*.intermediate
+DEL /Q SamplePluginCpp\Release\*.manifest
+DEL /Q SamplePluginCpp\Release\*.pch
+DEL /Q SamplePluginCpp\Release\*.pdb
+DEL /Q SamplePluginCpp\Release\*.idb
+DEL /Q ..\Plugins\SamplePluginCpp\*.aps
+DEL /Q ..\Plugins\SamplePluginCpp\*.user
+
+RMDIR /S /Q ..\Translation\TrlUtil\obj
+DEL ..\Translation\TrlUtil.pdb
 
 CLS

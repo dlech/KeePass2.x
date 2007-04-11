@@ -170,7 +170,7 @@ namespace KPScript
 			{
 				EnsureGuiInitialized();
 				KeyPromptForm kpf = new KeyPromptForm();
-				kpf.InitEx(ioc.GetDisplayName());
+				kpf.InitEx(ioc.GetDisplayName(), false);
 				if(kpf.ShowDialog() != DialogResult.OK) return;
 
 				cmpKey = kpf.CompositeKey;

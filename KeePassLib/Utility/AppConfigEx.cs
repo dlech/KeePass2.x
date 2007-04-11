@@ -41,13 +41,16 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class AppConfigEx
 	{
-		private static SortedDictionary<string, string> m_cfgCurrent = new SortedDictionary<string,string>();
+		private static SortedDictionary<string, string> m_cfgCurrent =
+			new SortedDictionary<string, string>();
 
 		private static bool m_bModified = false;
 
 		private static string m_strGlobalConfigFile = null;
 		private static string m_strUserConfigFile = null;
 		private static string m_strCreateDir = null;
+
+		private static string m_strBaseName = null;
 
 		private const string RootElementName = "Configuration";
 		private const string ConfigItemElement = "Item";
@@ -58,14 +61,35 @@ namespace KeePassLib.Utility
 		private const string ValFalse = "False";
 
 		/// <summary>
+		/// Get/set the base name for the configuration. If this property is
+		/// <c>null</c>, the class constructs names based on the current
+		/// assembly and the product name.
+		/// </summary>
+		public static string BaseName
+		{
+			get { return m_strBaseName; }
+
+			set
+			{
+				m_strBaseName = value;
+
+				m_strGlobalConfigFile = null; // Invalidate paths
+				m_strUserConfigFile = null;
+				m_strCreateDir = null;
+			}
+		}
+
+		/// <summary>
 		/// Load configuration. This method will load configuration information
 		/// from several different files (global configuration file in application
 		/// directory, configuration file in user directory, etc.) and mix them
 		/// into one in-memory configuration pool.
+		/// <param name="strBaseName">Base name for the configuration files and
+		/// directories. For example, this could be "KeePass".</param>
 		/// </summary>
 		public static void Load()
 		{
-			GetPaths(false); // Get paths without requiring write access
+			GetConfigPaths();
 
 			SortedDictionary<string, string> dictGlobal;
 			LoadFile(m_strGlobalConfigFile, out dictGlobal);
@@ -86,7 +110,7 @@ namespace KeePassLib.Utility
 			m_bModified = false;
 		}
 
-		private static void GetPaths(bool bRequireWriteAccess)
+		private static void GetConfigPaths()
 		{
 			if(m_strGlobalConfigFile == null)
 			{
@@ -106,33 +130,61 @@ namespace KeePassLib.Utility
 #endif
 				Debug.Assert(strFile != null); if(strFile == null) return;
 
-				if(strFile.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-					strFile = strFile.Substring(0, strFile.Length - 4);
+				if((m_strBaseName == null) || (m_strBaseName.Length == 0))
+				{
+					// Remove assembly extension
+					if(strFile.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+						strFile = strFile.Substring(0, strFile.Length - 4);
+					else if(strFile.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+						strFile = strFile.Substring(0, strFile.Length - 4);
+				}
+				else // Base name != null
+				{
+					strFile = UrlUtil.GetFileDirectory(strFile, true) + m_strBaseName;
+				}
+
 				m_strGlobalConfigFile = strFile + ".config.xml";
 			}
 
 			if(m_strUserConfigFile == null)
 			{
-				m_strUserConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-				if((!m_strUserConfigFile.EndsWith("" + Path.DirectorySeparatorChar)) &&
-					(!m_strUserConfigFile.EndsWith("\\")) &&
-					(!m_strUserConfigFile.EndsWith("/")))
+				string strBaseDirName = PwDefs.ShortProductName;
+				if((m_strBaseName != null) && (m_strBaseName.Length > 0))
+					strBaseDirName = m_strBaseName;
+
+				string strUserDir;
+				try
 				{
-					m_strUserConfigFile = m_strUserConfigFile + System.IO.Path.DirectorySeparatorChar;
+					strUserDir = Environment.GetFolderPath(
+						Environment.SpecialFolder.ApplicationData);
+				}
+				catch(Exception)
+				{
+					strUserDir = UrlUtil.GetFileDirectory(UrlUtil.FileUrlToPath(
+						Assembly.GetExecutingAssembly().GetName().CodeBase), true);
 				}
 
-				m_strCreateDir = m_strUserConfigFile + PwDefs.ShortProductName;
+				if((!strUserDir.EndsWith(new string(Path.DirectorySeparatorChar, 1))) &&
+					(!strUserDir.EndsWith("\\")) && (!strUserDir.EndsWith("/")))
+				{
+					strUserDir += new string(Path.DirectorySeparatorChar, 1);
+				}
+
+				m_strCreateDir = strUserDir + strBaseDirName;
 				m_strUserConfigFile = m_strCreateDir + Path.DirectorySeparatorChar +
-					PwDefs.ShortProductName + ".config.xml";
+					strBaseDirName + ".config.xml";
 			}
+		}
 
-			if(bRequireWriteAccess)
+		private static void EnsureAppDataDirAvailable()
+		{
+			Debug.Assert(m_strCreateDir != null);
+			if(m_strCreateDir == null) return;
+
+			if(!Directory.Exists(m_strCreateDir))
 			{
-				if(!Directory.Exists(m_strCreateDir))
-				{
-					try { Directory.CreateDirectory(m_strCreateDir); }
-					catch(Exception) { }
-				}
+				try { Directory.CreateDirectory(m_strCreateDir); }
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 
@@ -165,6 +217,28 @@ namespace KeePassLib.Utility
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Save the current configuration to files. File cascading is
+		/// handled by this function. This function first tries to write
+		/// to the global configuration file, if this fails it tries the
+		/// configuration file in the user's application directory.
+		/// </summary>
+		/// <returns>Returns <c>true</c>, if the configuration was saved
+		/// successfully, <c>false</c> otherwise.</returns>
+		public static bool Save()
+		{
+			if(m_bModified == false) return true;
+
+			GetConfigPaths();
+
+			if(SaveFile(m_strGlobalConfigFile)) return true;
+
+			EnsureAppDataDirAvailable();
+			if(SaveFile(m_strUserConfigFile)) return true;
+
+			return false;
 		}
 
 		private static bool SaveFile(string strFile)
@@ -201,6 +275,28 @@ namespace KeePassLib.Utility
 			xtw.Close();
 
 			return true;
+		}
+
+		/// <summary>
+		/// Get the status of the global configuration file.
+		/// </summary>
+		/// <returns>Returns <c>true</c> if you can write to the
+		/// global configuration file.</returns>
+		public static bool HasWriteAccessToGlobal()
+		{
+			GetConfigPaths();
+
+			StreamWriter sw = null;
+			try { sw = File.AppendText(m_strGlobalConfigFile); }
+			catch(Exception) { }
+
+			if(sw != null)
+			{
+				sw.Close();
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -504,26 +600,6 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Save the current configuration to files. File cascading is
-		/// handled by this function. This function first tries to write
-		/// to the global configuration file, if this fails it tries the
-		/// configuration file in the user's application directory.
-		/// </summary>
-		/// <returns>Returns <c>true</c>, if the configuration was saved
-		/// successfully, <c>false</c> otherwise.</returns>
-		public static bool Save()
-		{
-			if(m_bModified == false) return true;
-
-			GetPaths(true);
-
-			if(SaveFile(m_strGlobalConfigFile)) return true;
-			if(SaveFile(m_strUserConfigFile)) return true;
-
-			return false;
-		}
-
-		/// <summary>
 		/// Remove all fields indexed by a prefix and consecutive numbers.
 		/// All fields starting with the prefix will be removed. Index
 		/// is zero-based.
@@ -548,28 +624,6 @@ namespace KeePassLib.Utility
 				}
 				else break;
 			}
-		}
-
-		/// <summary>
-		/// Get the status of the global configuration file.
-		/// </summary>
-		/// <returns>Returns <c>true</c> if you can write to the
-		/// global configuration file.</returns>
-		public static bool HasWriteAccessToGlobal()
-		{
-			GetPaths(true);
-
-			StreamWriter sw = null;
-			try { sw = File.AppendText(m_strGlobalConfigFile); }
-			catch(Exception) { }
-
-			if(sw != null)
-			{
-				sw.Close();
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

@@ -27,8 +27,9 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.App;
-using KeePass.UI;
+using KeePass.Native;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
@@ -170,16 +171,27 @@ namespace KeePass.Forms
 					m_rbKeySeq.Text = m_atConfig.DefaultSequence;
 			}
 
-			WinUtil.EnumWindowsProc procEnum = delegate(IntPtr hWnd, IntPtr lParam)
+			try
 			{
-				string strName = WinUtil.GetWindowText(hWnd);
-				if((strName != null) && (strName.Length > 0))
-					if((WinUtil.GetWindowStyle(hWnd) & WinUtil.WS_VISIBLE) != 0)
-						m_cmbWindow.Items.Add(strName);
+				NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
+					IntPtr lParam)
+				{
+					string strName = NativeMethods.GetWindowText(hWnd);
+					if((strName != null) && (strName.Length > 0))
+					{
+						if((NativeMethods.GetWindowStyle(hWnd) &
+							NativeMethods.WS_VISIBLE) != 0)
+						{
+							m_cmbWindow.Items.Add(strName);
+						}
+					}
 
-				return true;
-			};
-			WinUtil.EnumerateWindows(procEnum, IntPtr.Zero);
+					return true;
+				};
+
+				NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			EnableControlsEx();
 			m_cmbWindow.Focus();
@@ -299,7 +311,7 @@ namespace KeePass.Forms
 			ColorizeKeySeq();
 		}
 
-		private void LinkifyRtf(RichTextBox rtb)
+		private static void LinkifyRtf(RichTextBox rtb)
 		{
 			string str = rtb.Text;
 

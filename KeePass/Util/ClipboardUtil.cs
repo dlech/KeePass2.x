@@ -93,16 +93,18 @@ namespace KeePass.Util
 
 		public static void ClearIfOwner()
 		{
-			if(m_pbDataHash32 != null)
-			{
-				byte[] pbHash = HashClipboard();
+			// If we didn't copy anything or cleared it already: do nothing
+			if(m_pbDataHash32 == null) return;
+			if(m_pbDataHash32.Length != 32) { Debug.Assert(false); return; }
 
-				if(pbHash != null)
-				{
-					for(int i = 0; i < m_pbDataHash32.Length; ++i)
-						if(m_pbDataHash32[i] != pbHash[i])
-							return;
-				}
+			byte[] pbHash = HashClipboard(); // Hash current contents
+			if(pbHash == null) return; // Unknown data (i.e. no KeePass data)
+			if(pbHash.Length != 32) { Debug.Assert(false); return; }
+
+			for(int i = 0; i < m_pbDataHash32.Length; ++i)
+			{
+				if(m_pbDataHash32[i] != pbHash[i])
+					return; // No KeePass data
 			}
 
 			m_pbDataHash32 = null;

@@ -188,7 +188,7 @@ namespace KeePass.Forms
 			// m_lvPreview.EndUpdate();
 		}
 
-		private string SafeListIndex(List<string> vList, int nIndex)
+		private static string SafeListIndex(List<string> vList, int nIndex)
 		{
 			if(nIndex >= vList.Count) return string.Empty;
 			return vList[nIndex];
@@ -199,11 +199,6 @@ namespace KeePass.Forms
 			if(m_bBlockChangedEvent) return;
 
 			UpdateStringSource();
-			UpdatePreview();
-		}
-
-		private void OnHeaderColumnReordered(object sender, ColumnReorderedEventArgs e)
-		{
 			UpdatePreview();
 		}
 

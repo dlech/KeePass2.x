@@ -70,6 +70,7 @@ namespace KeePass.Util
 		private static void OnDownloadCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
 			string strXmlFile = NetUtil.GZipUtf8ResultToString(e);
+
 			if(strXmlFile == null)
 			{
 				if(e.Error != null)
@@ -105,14 +106,15 @@ namespace KeePass.Util
 			if(xmlRoot.Name != ElemRoot) { StructureFail(); return; }
 
 			uint uVersion = 0;
-			string strVersion = string.Empty;
 
 			foreach(XmlNode xmlChild in xmlRoot.ChildNodes)
 			{
 				if(xmlChild.Name == ElemVersionU)
 					uint.TryParse(xmlChild.InnerText, out uVersion);
 				else if(xmlChild.Name == ElemVersionStr)
-					strVersion = xmlChild.InnerText;
+				{
+					// strVersion = xmlChild.InnerText;
+				}
 			}
 
 			if(uVersion > PwDefs.Version32)

@@ -167,10 +167,9 @@ namespace KeePass.Util
 				pe.Strings.Set(eti.Name, new ProtectedString(eti.Protected, string.Empty));
 
 			PwEntryForm pef = new PwEntryForm();
-			pef.InitEx(pe, PwEntryForm.PwEditMode.AddNewEntry, Program.MainForm.Database,
-				Program.MainForm.ClientIcons);
+			pef.InitEx(pe, PwEditMode.AddNewEntry, Program.MainForm.Database,
+				Program.MainForm.ClientIcons, true);
 
-			pef.ShowAdvancedByDefault = true;
 			if(pef.ShowDialog() == DialogResult.OK)
 			{
 				pgContainer.Entries.Add(pe);

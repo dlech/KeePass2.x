@@ -141,7 +141,7 @@ namespace KeePass.Forms
 
 				if(pe.Expires && (pe.ExpiryTime <= dtNow))
 					lvi.ImageIndex = (int)PwIcon.Expired;
-				else lvi.ImageIndex = (int)pe.Icon;
+				else lvi.ImageIndex = (int)pe.IconID;
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
