@@ -1,4 +1,0 @@
-public static void Main()
-{
-	MessageService.ShowInfo("Hello World!");
-}

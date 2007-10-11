@@ -53,7 +53,7 @@ namespace KeePass.UI
 			}
 		}
 
-		public void StartLogging(string strOperation)
+		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
 			Debug.Assert(!m_bStartedLogging && !m_bEndedLogging);
 

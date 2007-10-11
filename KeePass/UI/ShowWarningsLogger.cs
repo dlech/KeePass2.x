@@ -57,16 +57,20 @@ namespace KeePass.UI
 			if(!m_bEndedLogging) EndLogging();
 		}
 
-		public void StartLogging(string strOperation)
+		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
 			Debug.Assert(!m_bStartedLogging && !m_bEndedLogging);
 
-			if(m_sbDefault != null) m_sbDefault.StartLogging(strOperation);
-			if(m_slForm != null) m_slForm.StartLogging(strOperation);
+			if(m_sbDefault != null)
+				m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
+			if(m_slForm != null)
+				m_slForm.StartLogging(strOperation, bWriteOperationToLog);
 
 			m_bStartedLogging = true;
-			m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
-				LogStatusType.Info, strOperation));
+			
+			if(bWriteOperationToLog)
+				m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
+					LogStatusType.Info, strOperation));
 		}
 
 		public void EndLogging()
@@ -121,7 +125,7 @@ namespace KeePass.UI
 				{
 					if(!bLoggingStarted)
 					{
-						m_slForm.StartLogging(kvp.Value);
+						m_slForm.StartLogging(kvp.Value, true);
 						bLoggingStarted = true;
 					}
 					else m_slForm.SetText(kvp.Value, kvp.Key);

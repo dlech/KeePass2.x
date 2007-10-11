@@ -4,6 +4,11 @@
         <name>KeePassLib</name>
     </assembly>
     <members>
+        <member name="T:KeePassLib.Cryptography.PasswordGenerator.PwGenerator">
+            <summary>
+            Utility functions for generating random passwords.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Serialization.Kdb4File">
             <summary>
             Serialization to KeePass KDB files.
@@ -144,6 +149,47 @@
             reference to a cached <c>ProtectedBinary</c> object).
             If no key data is available, <c>null</c> is returned.
             </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.#ctor">
+            <summary>
+            Create a new, empty character set collection object.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Clear">
+            <summary>
+            Remove all characters from this set.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Add(System.Char)">
+            <summary>
+            Add characters to the set.
+            </summary>
+            <param name="ch">Character to add.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Add(System.String)">
+            <summary>
+            Add characters to the set.
+            </summary>
+            <param name="strCharSet">String containing characters to add.</param>
+        </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.ToString">
+            <summary>
+            Convert the character set to a string containing all its characters.
+            </summary>
+            <returns>String containing all character set characters.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Size">
+            <summary>
+            Number of characters in this set.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Item(System.UInt32)">
+            <summary>
+            Get a character of the set using an index.
+            </summary>
+            <param name="uPos">Index of the character to get.</param>
+            <returns>Character at the specified position. If the index is invalid,
+            an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
         </member>
         <member name="T:KeePassLib.Cryptography.SelfTestResult">
             <summary>
@@ -408,7 +454,7 @@
             </summary>
             <returns>Plain-text string. Is never <c>null</c>.</returns>
         </member>
-        <member name="M:KeePassLib.Security.ProtectedString.ReadUTF8">
+        <member name="M:KeePassLib.Security.ProtectedString.ReadUtf8">
             <summary>
             Read out the string and return a byte array that contains the
             string encoded using UTF-8. The returned string is not protected
@@ -724,6 +770,26 @@
             <summary>
             Look up a localized string similar to
             'An extended error report has been copied to the clipboard. Please send it to the KeePass developers.'.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Cryptography.PasswordGenerator.PasswordGeneratorType">
+            <summary>
+            Type of the password generator. Different types like generators
+            based on given patterns, based on character sets, etc. are
+            available.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGenerator.PasswordGeneratorType.CharSet">
+            <summary>
+            Generator based on character spaces/sets, i.e. groups
+            of characters like lower-case, upper-case or numeric characters.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGenerator.PasswordGeneratorType.Pattern">
+            <summary>
+            Password generation based on a pattern. The user has provided
+            a pattern, which describes how the generated password has to
+            look like.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.Cipher.CipherPool">
@@ -1592,12 +1658,14 @@
             Status logging interface.
             </summary>
         </member>
-        <member name="M:KeePassLib.Interfaces.IStatusLogger.StartLogging(System.String)">
+        <member name="M:KeePassLib.Interfaces.IStatusLogger.StartLogging(System.String,System.Boolean)">
             <summary>
             Function which needs to be called when logging is started.
             </summary>
             <param name="strOperation">This string should roughly describe
             the operation, of which the status is logged.</param>
+            <param name="bWriteOperationToLog">Specifies whether the
+            operation is written to the log or not.</param>
         </member>
         <member name="M:KeePassLib.Interfaces.IStatusLogger.EndLogging">
             <summary>
@@ -1948,326 +2016,6 @@
             <param name="strName">Name of the dictionary.</param>
             <returns>Dictionary. Is never <c>null</c>.</returns>
         </member>
-        <member name="T:KeePassLib.Cryptography.PasswordGeneratorType">
-            <summary>
-            Type of the password generator. Different types like generators
-            based on given patterns, based on character sets, etc. are
-            available.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.CharSpaces">
-            <summary>
-            Generator based on character spaces/sets, i.e. groups
-            of characters like lower-case, upper-case or numeric characters.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.CustomCharSet">
-            <summary>
-            Custom character set. The user has provided a list of
-            characters which may be used in the final generated password.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Cryptography.PasswordGeneratorType.Pattern">
-            <summary>
-            Password generation based on a pattern. The user has provided
-            a pattern, which describes how the generated password has to
-            look like.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Cryptography.PasswordGenerationOptions">
-            <summary>
-            Random password generation options / layout.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.PasswordGenerationOptions.SerializeToString(KeePassLib.Cryptography.PasswordGenerationOptions)">
-            <summary>
-            Convert the options of a <c>GenerationOptions</c> object to a string.
-            </summary>
-            <returns>String representing the current options.</returns>
-        </member>
-        <member name="M:KeePassLib.Cryptography.PasswordGenerationOptions.UnserializeFromString(System.String)">
-            <summary>
-            Convert a serialized <c>GenerationOptions</c> string to an object.
-            </summary>
-            <param name="strSource">String to unserialize.</param>
-            <returns>Unserialized object representing the string.</returns>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.ProfileName">
-            <summary>
-            Name of the current generation options profile.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.GeneratorType">
-            <summary>
-            Get or set the generator type.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CollectUserEntropy">
-            <summary>
-            Specify if the user should generate additional entropy (by moving
-            mouse and typing random keys, ...).
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.PasswordLength">
-            <summary>
-            Length of the password to be generated.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CharSpaces">
-            <summary>
-            Character spaces from which characters will be selected to build
-            the generated password.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.CustomCharSet">
-            <summary>
-            A custom char set overriding the character spaces definition.
-            This set contains all characters that will be used to build the generated
-            password.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.PasswordGenerationOptions.Pattern">
-            <summary>
-            Password pattern.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Cryptography.CustomCharSet">
-            <summary>
-            A custom char set overriding the character spaces definition.
-            This set contains all characters that will be used to build the generated
-            password.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CustomCharSet.Clear">
-            <summary>
-            Remove all characters from this set.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CustomCharSet.Add(System.Char)">
-            <summary>
-            Add characters to the set.
-            </summary>
-            <param name="ch">Character to add.</param>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CustomCharSet.Add(System.String)">
-            <summary>
-            Add characters to the set.
-            </summary>
-            <param name="strCharSet">String containing characters to add.</param>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CustomCharSet.Set(System.String)">
-            <summary>
-            Set the character set to use.
-            </summary>
-            <param name="strCharSet">String containing all characters to use.</param>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CustomCharSet.GetAsString">
-            <summary>
-            Convert the character set to a string containing all its characters.
-            </summary>
-            <returns>String containing all character set characters.</returns>
-        </member>
-        <member name="P:KeePassLib.Cryptography.CustomCharSet.UCount">
-            <summary>
-            Number of characters in this set.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.CustomCharSet.Item(System.UInt32)">
-            <summary>
-            Get a character of the set using an index.
-            </summary>
-            <param name="uPos">Index of the character to get.</param>
-            <returns>Character at the specified position. If the index is invalid,
-            an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
-        </member>
-        <member name="T:KeePassLib.Cryptography.CharSpaces">
-            <summary>
-            Character spaces from which characters will be selected to build
-            the generated password.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CharSpaces.Clear">
-            <summary>
-            Disable all character spaces.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CharSpaces.SerializeToString(KeePassLib.Cryptography.CharSpaces)">
-            <summary>
-            Convert the current settings to a string.
-            </summary>
-            <returns>String representing the options.</returns>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CharSpaces.UnserializeFromString(System.String)">
-            <summary>
-            Extract settings from a compiled string (created by the <c>Compile</c>
-            member function).
-            </summary>
-            <param name="strCompiled">Compiled string generated by <c>Compile</c>.</param>
-        </member>
-        <member name="T:KeePassLib.Cryptography.PasswordGenerator">
-            <summary>
-            Utility functions for generating random passwords.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Utility.AppConfigEx">
-            <summary>
-            Implements a cascading configuration class (singleton). Application settings
-            are first tried to be loaded from the global configuration file. If the
-            requested configuration key isn't found, it is loaded from the user
-            configuration file (stored in the user directory).
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.Load">
-            <summary>
-            Load configuration. This method will load configuration information
-            from several different files (global configuration file in application
-            directory, configuration file in user directory, etc.) and mix them
-            into one in-memory configuration pool.
-            <param name="strBaseName">Base name for the configuration files and
-            directories. For example, this could be "KeePass".</param>
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.Save">
-            <summary>
-            Save the current configuration to files. File cascading is
-            handled by this function. This function first tries to write
-            to the global configuration file, if this fails it tries the
-            configuration file in the user's application directory.
-            </summary>
-            <returns>Returns <c>true</c>, if the configuration was saved
-            successfully, <c>false</c> otherwise.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.HasWriteAccessToGlobal">
-            <summary>
-            Get the status of the global configuration file.
-            </summary>
-            <returns>Returns <c>true</c> if you can write to the
-            global configuration file.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.String)">
-            <summary>
-            Get a configuration string.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <returns>Configuration item value. Returns an empty string (<c>""</c>) if
-            the named item could not be found.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
-            is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.String,System.String)">
-            <summary>
-            Get a configuration string.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="strDefault">Default string to return if the named item
-            doesn't exist. May be <c>null</c>.</param>
-            <returns>Configuration item value. Returns <paramref name="strDefault" />
-            if the configuration item doesn't exist.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetValue(System.Collections.Generic.KeyValuePair{System.String,System.String})">
-            <summary>
-            Get a configuration string.
-            </summary>
-            <param name="kvp">Key/value pair. Key = field name, value = default
-            value to return if the key isn't found.</param>
-            <returns>Configuration item value or the default value.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.String)">
-            <summary>
-            Set a configuration item's value. The item is created if it doesn't
-            exist yet. It is overwritten if it exists already.
-            </summary>
-            <param name="strField">Name of the configuration entry.</param>
-            <param name="strValue">Value of the configuration entry.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of
-            the parameters is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetBool(System.String,System.Boolean)">
-            <summary>
-            Get a boolean value from the current configuration.
-            </summary>
-            <param name="strField">Name of the field to get.</param>
-            <param name="bDefaultIfNotFound">Default value that is returned
-            if the specified field doesn't exist.</param>
-            <returns>Returns boolean value.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.Boolean)">
-            <summary>
-            Set a configuration item's value.
-            </summary>
-            <param name="strField">Name of the item.</param>
-            <param name="bValue">Value of the item.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetInt(System.String,System.Int32)">
-            <summary>
-            Get an integer value from the current configuration.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="nDefaultIfNotFound">Default value that is returned if
-            the specified item cannot be found.</param>
-            <returns>An integer.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
-            is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetUInt(System.String,System.UInt32)">
-            <summary>
-            Get an unsigned integer value from the current configuration.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="uDefaultIfNotFound">Default value that is returned if
-            the specified item cannot be found.</param>
-            <returns>An unsigned integer.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
-            is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.GetULong(System.String,System.UInt64)">
-            <summary>
-            Get an unsigned long integer value from the current configuration.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="uDefaultIfNotFound">Default value that is returned if
-            the specified item cannot be found.</param>
-            <returns>An unsigned long integer.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strField"/>
-            is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.Int32)">
-            <summary>
-            Set a configuration item's value.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="nValue">Value of the configuration item.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.UInt32)">
-            <summary>
-            Set a configuration item's value.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="uValue">Value of the configuration item.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.SetValue(System.String,System.UInt64)">
-            <summary>
-            Set a configuration item's value.
-            </summary>
-            <param name="strField">Name of the configuration item.</param>
-            <param name="uValue">Value of the configuration item.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.AppConfigEx.RemoveIndexedItems(System.String,System.UInt32)">
-            <summary>
-            Remove all fields indexed by a prefix and consecutive numbers.
-            All fields starting with the prefix will be removed. Index
-            is zero-based.
-            </summary>
-            <param name="strFieldPrefix">Field prefix.</param>
-            <param name="uStartIndex">First index.</param>
-        </member>
-        <member name="P:KeePassLib.Utility.AppConfigEx.BaseName">
-            <summary>
-            Get/set the base name for the configuration. If this property is
-            <c>null</c>, the class constructs names based on the current
-            assembly and the product name.
-            </summary>
-        </member>
         <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
             <summary>
             Standard AES cipher implementation.
@@ -2496,7 +2244,7 @@
             database any more after calling <c>Synchronize</c>.</param>
             <param name="mm">Merge method.</param>
         </member>
-        <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject})">
+        <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject},System.Boolean)">
             <summary>
             Apply a list of deleted objects.
             </summary>
@@ -2624,15 +2372,6 @@
             are unpredictable and cannot be reproduced.
             <c>CryptoRandom</c> is a singleton class.
             </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.CryptoRandom.Initialize">
-            <summary>
-            Initialize the random number generator. This function needs to be
-            called before any of the <c>GetRandom*</c> member functions
-            can be used. It must be called only once.
-            </summary>
-            <returns>Returns <c>true</c> if the generator was initialized
-            successfully, <c>false</c> otherwise.</returns>
         </member>
         <member name="M:KeePassLib.Cryptography.CryptoRandom.GetRandomBytes(System.UInt32)">
             <summary>
@@ -2829,11 +2568,6 @@
             sequence is specified, this sequence is used.
             </summary>
         </member>
-        <member name="F:KeePassLib.PwDefs.ProtectedUserRegKey">
-            <summary>
-            Name of the registration key that holds the user's account key.
-            </summary>
-        </member>
         <member name="F:KeePassLib.PwDefs.DtDefaultNow">
             <summary>
             A DateTime object that represents infinity.
@@ -2861,27 +2595,15 @@
             Search parameters for group and entry searches.
             </summary>
         </member>
-        <member name="F:KeePassLib.SearchParameters.SearchText">
-            <summary>
-            The text to be searched.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.SearchParameters.SearchInAllStrings">
-            <summary>
-            If this flag is <c>true</c>, all string fields of entries will
-            be searched. This parameter overrides all other <c>SearchIn*</c>
-            flags (only if set to <c>true</c>).
-            </summary>
-        </member>
-        <member name="F:KeePassLib.SearchParameters.StringCompare">
-            <summary>
-            String comparison type. Specifies the condition when the specified
-            text matches a group/entry string.
-            </summary>
-        </member>
         <member name="M:KeePassLib.SearchParameters.#ctor">
             <summary>
             Construct a new search parameters object.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.SearchParameters.ComparisonMode">
+            <summary>
+            String comparison type. Specifies the condition when the specified
+            text matches a group/entry string.
             </summary>
         </member>
         <member name="T:KeePassLib.MemoryProtectionConfig">
@@ -2952,15 +2674,6 @@
             <summary>
             Save both user name and password.
             </summary>
-        </member>
-        <member name="M:KeePassLib.Serialization.IOConnectionInfo.SerializeToString(KeePassLib.Serialization.IOConnectionInfo)">
-            <summary>
-            Serialize the current connection info to a string. Credentials
-            are only serialized if the <c>SaveCredentials</c> property
-            is <c>true</c>.
-            </summary>
-            <param name="iocToCompile">Input object to be serialized.</param>
-            <returns>Serialized object as string.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.IOConnectionInfo.TransformUnreadable(System.String,System.Boolean)">
             <summary>

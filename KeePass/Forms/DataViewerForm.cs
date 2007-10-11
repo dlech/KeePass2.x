@@ -131,7 +131,7 @@ namespace KeePass.Forms
 
 		private void OnRichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			WinUtil.OpenUrlInNewBrowser(e.LinkText, null);
+			WinUtil.OpenUrl(e.LinkText, null);
 		}
 
 		private string BinaryDataToString(Encoding enc)

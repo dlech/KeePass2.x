@@ -32,25 +32,10 @@ namespace KeePassLib.Cryptography
 	public static class CryptoRandom
 	{
 		private static RNGCryptoServiceProvider m_rng = null;
-		private static bool m_bNotInitializedYet = true;
 
-		/// <summary>
-		/// Initialize the random number generator. This function needs to be
-		/// called before any of the <c>GetRandom*</c> member functions
-		/// can be used. It must be called only once.
-		/// </summary>
-		/// <returns>Returns <c>true</c> if the generator was initialized
-		/// successfully, <c>false</c> otherwise.</returns>
-		public static bool Initialize()
+		private static void Initialize()
 		{
-			Debug.Assert(m_bNotInitializedYet);
-			if(!m_bNotInitializedYet) return true;
-
-			Debug.Assert(m_rng == null);
 			m_rng = new RNGCryptoServiceProvider();
-
-			m_bNotInitializedYet = (m_rng == null);
-			return (!m_bNotInitializedYet);
 		}
 
 		/// <summary>
@@ -63,10 +48,10 @@ namespace KeePassLib.Cryptography
 		/// random number generator hasn't been initialized.</exception>
 		public static byte[] GetRandomBytes(uint uRequestedBytes)
 		{
-			Debug.Assert((!m_bNotInitializedYet) && (m_rng != null));
-			if(m_rng == null) throw new SecurityException();
-
 			if(uRequestedBytes == 0) return new byte[0]; // Allow zero-length array
+
+			if(m_rng == null) CryptoRandom.Initialize();
+			Debug.Assert(m_rng != null);
 
 			byte[] pb = new byte[uRequestedBytes];
 			m_rng.GetBytes(pb);

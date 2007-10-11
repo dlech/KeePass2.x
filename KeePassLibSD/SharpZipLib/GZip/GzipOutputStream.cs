@@ -114,6 +114,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// Sets the active compression level (1-9).  The new level will be activated
 		/// immediately.
 		/// </summary>
+		/// <param name="level">The compression level to set.</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// Level specified is not supported.
 		/// </exception>
@@ -123,7 +124,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 			if (level < Deflater.BEST_SPEED) {
 				throw new ArgumentOutOfRangeException("level");
 			}
-			def.SetLevel(level);
+			deflater_.SetLevel(level);
 		}
 		
 		/// <summary>
@@ -132,7 +133,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// <returns>The current compression level.</returns>
 		public int GetLevel()
 		{
-			return def.GetLevel();
+			return deflater_.GetLevel();
 		}
 		#endregion
 		
@@ -159,10 +160,13 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// </summary>
 		public override void Close()
 		{
-			Finish();
-			
-			if ( IsStreamOwner ) {
-				baseOutputStream.Close();
+			try {
+				Finish();
+			}
+			finally {
+				if( IsStreamOwner ) {
+					baseOutputStream_.Close();
+				}
 			}
 		}
 		#endregion
@@ -180,10 +184,8 @@ namespace ICSharpCode.SharpZipLib.GZip
 
 			base.Finish();
 			
-			int totalin = def.TotalIn;
+			int totalin = deflater_.TotalIn;
 			int crcval = (int) (crc.Value & 0xffffffff);
-			
-			//    System.err.println("CRC val is " + Integer.toHexString( crcval ) 		       + " and length " + Integer.toHexString(totalin));
 			
 			byte[] gzipFooter = {
 				(byte) crcval, (byte) (crcval >> 8),
@@ -193,8 +195,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 				(byte) (totalin >> 16), (byte) (totalin >> 24)
 			};
 
-			baseOutputStream.Write(gzipFooter, 0, gzipFooter.Length);
-			//    System.err.println("wrote GZIP trailer (" + gzipFooter.length + " bytes )");
+			baseOutputStream_.Write(gzipFooter, 0, gzipFooter.Length);
 		}
 		#endregion
 		
@@ -225,7 +226,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 					// The OS type (unknown)
 					(byte) 255
 				};
-				baseOutputStream.Write(gzipHeader, 0, gzipHeader.Length);
+				baseOutputStream_.Write(gzipHeader, 0, gzipHeader.Length);
 			}
 		}
 		#endregion

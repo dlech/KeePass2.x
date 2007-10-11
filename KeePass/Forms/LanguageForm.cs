@@ -35,9 +35,11 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class LanguageForm : Form
+	public partial class LanguageForm : Form, IGwmWindow
 	{
 		private List<AvTranslation> m_lTranslations = null;
+
+		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		public LanguageForm()
 		{
@@ -46,10 +48,10 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			GlobalWindowManager.AddWindow(this);
+			GlobalWindowManager.AddWindow(this, this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Keyboard_Layout,
 				KPRes.SelectLanguage, KPRes.SelectLanguageDesc);
 			this.Icon = Properties.Resources.KeePass;
@@ -88,14 +90,25 @@ namespace KeePass.Forms
 			ListView.SelectedListViewItemCollection lvic = m_lvLanguages.SelectedItems;
 			if((lvic == null) || (lvic.Count != 1)) return;
 
-			if(lvic[0].Index == 0)
-				AppConfigEx.SetValue(AppDefs.ConfigKeys.Language, "en");
+			if(lvic[0].Index == 0) // First item selected = English
+			{
+				if((Program.Config.Application.Language.Length == 0) ||
+					(Program.Config.Application.Language == AppDefs.DefaultLanguage))
+					return; // Is built-English already
+
+				Program.Config.Application.Language = AppDefs.DefaultLanguage;
+			}
 			else
-				AppConfigEx.SetValue(AppDefs.ConfigKeys.Language,
-					m_lTranslations[lvic[0].Index - 1].LanguageID);
+			{
+				string strSelID = m_lTranslations[lvic[0].Index - 1].LanguageID;
+
+				if(strSelID == Program.Config.Application.Language) return;
+
+				Program.Config.Application.Language = strSelID;
+			}
 
 			this.DialogResult = DialogResult.OK;
-			Close();
+			this.Close();
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

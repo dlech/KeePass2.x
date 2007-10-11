@@ -36,7 +36,13 @@ namespace KeePassLib.Security
 	/// </summary>
 	public sealed class ProtectedString
 	{
-		private SecureString m_secString = new SecureString(); // Never null
+		// SecureString objects are supported only on Windows 2000 SP3 and
+		// higher. On all other systems (98 / ME) we use a standard string
+		// object instead of the secure one. This of course decreases the
+		// security of the class, but at least allows the application
+		// to run on older systems, too.
+		private SecureString m_secString = null; // Created in constructor
+		private string m_strAlternativeSecString = string.Empty;
 
 		private string m_strPlainText = ""; // Never null
 		private bool m_bIsProtected = false; // See default constructor
@@ -73,6 +79,8 @@ namespace KeePassLib.Security
 		/// </summary>
 		public ProtectedString()
 		{
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
 		}
 
 		/// <summary>
@@ -83,6 +91,9 @@ namespace KeePassLib.Security
 		/// is <c>false</c>, the string will be stored as plain-text.</param>
 		public ProtectedString(bool bEnableProtection)
 		{
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
+
 			m_bIsProtected = bEnableProtection;
 		}
 
@@ -97,6 +108,9 @@ namespace KeePassLib.Security
 		/// parameter won't be modified.</param>
 		public ProtectedString(bool bEnableProtection, string strValue)
 		{
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
+
 			m_bIsProtected = bEnableProtection;
 			SetString(strValue);
 		}
@@ -112,8 +126,10 @@ namespace KeePassLib.Security
 		/// UTF-8 byte array. This parameter won't be modified.</param>
 		public ProtectedString(bool bEnableProtection, byte[] vUTF8Value)
 		{
-			m_bIsProtected = bEnableProtection;
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
 
+			m_bIsProtected = bEnableProtection;
 			SetString(Encoding.UTF8.GetString(vUTF8Value, 0, vUTF8Value.Length));
 		}
 
@@ -127,7 +143,11 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public ProtectedString(ProtectedString psTemplate)
 		{
-			Debug.Assert(psTemplate != null); if(psTemplate == null) throw new ArgumentNullException();
+			Debug.Assert(psTemplate != null);
+			if(psTemplate == null) throw new ArgumentNullException("psTemplate");
+
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
 
 			m_bIsProtected = psTemplate.m_bIsProtected;
 			SetString(psTemplate.ReadString());
@@ -145,7 +165,11 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public ProtectedString(bool bEnableProtection, XorredBuffer xbProtected)
 		{
-			Debug.Assert(xbProtected != null); if(xbProtected == null) throw new ArgumentNullException();
+			Debug.Assert(xbProtected != null);
+			if(xbProtected == null) throw new ArgumentNullException("xbProtected");
+
+			try { m_secString = new SecureString(); }
+			catch(NotSupportedException) { } // Windows 98 / ME
 
 			m_bIsProtected = bEnableProtection;
 			m_xbEncrypted = xbProtected;
@@ -156,7 +180,9 @@ namespace KeePassLib.Security
 		/// </summary>
 		public void Clear()
 		{
-			m_secString.Clear();
+			if(m_secString != null) m_secString.Clear();
+			else m_strAlternativeSecString = string.Empty;
+
 			m_strPlainText = "";
 
 			m_xbEncrypted = null;
@@ -216,14 +242,18 @@ namespace KeePassLib.Security
 
 			if(m_bIsProtected)
 			{
-				char ch;
-				for(int i = 0; i < strNewValue.Length; i++)
+				if(m_secString != null)
 				{
-					ch = strNewValue[i];
-					if(ch == 0) throw new ArgumentException();
+					char ch;
+					for(int i = 0; i < strNewValue.Length; i++)
+					{
+						ch = strNewValue[i];
+						if(ch == 0) throw new ArgumentException();
 
-					m_secString.AppendChar(ch);
+						m_secString.AppendChar(ch);
+					}
 				}
+				else m_strAlternativeSecString = strNewValue;
 			}
 			else // Currently not protected
 			{
@@ -255,15 +285,18 @@ namespace KeePassLib.Security
 
 			if(m_bIsProtected)
 			{
+				if(m_secString != null)
+				{
 #if !KeePassLibSD
-				IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
-				string str = Marshal.PtrToStringUni(p);
-				Marshal.ZeroFreeGlobalAllocUnicode(p);
+					IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
+					string str = Marshal.PtrToStringUni(p);
+					Marshal.ZeroFreeGlobalAllocUnicode(p);
 #else
-				string str = m_secString.ReadAsString();
+					string str = m_secString.ReadAsString();
 #endif
-
-				return (str != null) ? str : string.Empty;
+					return (str != null) ? str : string.Empty;
+				}
+				else return m_strAlternativeSecString;
 			}
 			
 			return m_strPlainText; // Unprotected string
@@ -275,7 +308,7 @@ namespace KeePassLib.Security
 		/// anymore!
 		/// </summary>
 		/// <returns>Plain-text UTF-8 byte array.</returns>
-		public byte[] ReadUTF8()
+		public byte[] ReadUtf8()
 		{
 			if(m_xbEncrypted != null)
 			{
@@ -289,23 +322,27 @@ namespace KeePassLib.Security
 
 			if(m_bIsProtected)
 			{
+				if(m_secString != null)
+				{
 #if !KeePassLibSD
-				Debug.Assert(sizeof(char) == 2);
-				char[] vChars = new char[m_secString.Length];
+					Debug.Assert(sizeof(char) == 2);
+					char[] vChars = new char[m_secString.Length];
 
-				IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
-				for(int i = 0; i < vChars.Length; ++i)
-					vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
-				Marshal.ZeroFreeGlobalAllocUnicode(p);
+					IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
+					for(int i = 0; i < vChars.Length; ++i)
+						vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
+					Marshal.ZeroFreeGlobalAllocUnicode(p);
 
-				byte[] pb = Encoding.UTF8.GetBytes(vChars, 0, vChars.Length);
-				Array.Clear(vChars, 0, vChars.Length);
+					byte[] pb = Encoding.UTF8.GetBytes(vChars, 0, vChars.Length);
+					Array.Clear(vChars, 0, vChars.Length);
 #else
-				byte[] pb = Encoding.UTF8.GetBytes(m_secString.ReadAsString());
+					byte[] pb = Encoding.UTF8.GetBytes(m_secString.ReadAsString());
 #endif
-				return pb;
+					return pb;
+				}
+				else return Encoding.UTF8.GetBytes(m_strAlternativeSecString);
 			}
-			
+
 			return Encoding.UTF8.GetBytes(m_strPlainText); // Unprotected string
 		}
 
@@ -334,7 +371,7 @@ namespace KeePassLib.Security
 			}
 			else // Not using XorredBuffer
 			{
-				byte[] pbData = ReadUTF8();
+				byte[] pbData = ReadUtf8();
 				uint uLen = (uint)pbData.Length;
 
 				byte[] randomPad = crsRandomSource.GetRandomBytes(uLen);

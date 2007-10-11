@@ -31,6 +31,7 @@ using KeePass.UI;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
 using KeePassLib.Security;
@@ -62,7 +63,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
@@ -96,7 +97,8 @@ namespace KeePass.Forms
 			m_lbMemProt.Items.Add(KPRes.URL, m_pwDatabase.MemoryProtection.ProtectUrl);
 			m_lbMemProt.Items.Add(KPRes.Notes, m_pwDatabase.MemoryProtection.ProtectNotes);
 
-			m_cbAutoEnableHiding.Checked = m_pwDatabase.MemoryProtection.AutoEnableVisualHiding;
+			// m_cbAutoEnableHiding.Checked = m_pwDatabase.MemoryProtection.AutoEnableVisualHiding;
+			// m_cbAutoEnableHiding.Checked = false;
 
 			if(m_pwDatabase.Compression == PwCompressionAlgorithm.None)
 				m_rbNone.Checked = true;
@@ -135,7 +137,7 @@ namespace KeePass.Forms
 			m_pwDatabase.MemoryProtection.ProtectNotes = UpdateMemoryProtection(4,
 				m_pwDatabase.MemoryProtection.ProtectNotes, PwDefs.NotesField);
 
-			m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = m_cbAutoEnableHiding.Checked;
+			// m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = m_cbAutoEnableHiding.Checked;
 		}
 
 		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)
@@ -148,11 +150,11 @@ namespace KeePass.Forms
 			}
 
 #if DEBUG
-			KeePassLib.Delegates.GroupHandler gh = delegate(PwGroup pg)
+			GroupHandler gh = delegate(PwGroup pg)
 			{
 				return true;
 			};
-			KeePassLib.Delegates.EntryHandler eh = delegate(PwEntry pe)
+			EntryHandler eh = delegate(PwEntry pe)
 			{
 				Debug.Assert(pe.Strings.Get(strFieldID).IsProtected == bNewProt);
 				return true;

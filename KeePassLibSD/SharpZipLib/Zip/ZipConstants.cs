@@ -37,15 +37,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-#if COMPACT_FRAMEWORK_V10 && COMPACT_FRAMEWORK_V20
-#error Cannot define both COMPACT_FRAMEWORK_V10 and COMPACT_FRAMEWORK_V20
-#endif
-
 using System;
 using System.Text;
 using System.Threading;
 
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
+#if NETCF_1_0 || NETCF_2_0
 using System.Globalization;
 #endif
 
@@ -257,7 +253,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		/// <remarks>
 		/// This is also the Zip version for the library when comparing against the version required to extract
-		/// for an entry.  See <see cref="ZipInputStream.CanDecompressEntry"/>.
+		/// for an entry.  See <see cref="ZipEntry.CanDecompress"/>.
 		/// </remarks>
 		public const int VersionMadeBy = 45;
 		
@@ -463,15 +459,17 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public const int ENDSIG = 'P' | ('K' << 8) | (5 << 16) | (6 << 24);
 		#endregion
 		
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
-		// This isnt so great but is better than nothing?
+#if NETCF_1_0 || NETCF_2_0
+		// This isnt so great but is better than nothing.
+        // Trying to work out an appropriate OEM code page would be good.
+        // 850 is a good default for english speakers particularly in Europe.
 		static int defaultCodePage = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 #else
 		static int defaultCodePage = Thread.CurrentThread.CurrentCulture.TextInfo.OEMCodePage;
 #endif
 		
 		/// <summary>
-		/// Default encoding used for string conversion.  0 gives the default system Ansi code page.
+		/// Default encoding used for string conversion.  0 gives the default system OEM code page.
 		/// Dont use unicode encodings if you want to be Zip compatible!
 		/// Using the default code page isnt the full solution neccessarily
 		/// there are many variable factors, codepage 850 is often a good choice for
@@ -586,11 +584,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				return new byte[0];
 			}
 			
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
-			return Encoding.ASCII.GetBytes(str);
-#else
 			return Encoding.GetEncoding(DefaultCodePage).GetBytes(str);
-#endif
 		}
 
 		/// <summary>
@@ -603,17 +597,14 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <returns>Converted array</returns>
 		public static byte[] ConvertToArray(int flags, string str)
 		{
-			if (str == null)
-			{
+			if (str == null) {
 				return new byte[0];
 			}
 
-			if ((flags & (int)GeneralBitFlags.UnicodeText) != 0)
-			{
+			if ((flags & (int)GeneralBitFlags.UnicodeText) != 0) {
 				return Encoding.UTF8.GetBytes(str);
 			}
-			else
-			{
+			else {
 				return ConvertToArray(str);
 			}
 		}

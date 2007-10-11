@@ -72,8 +72,20 @@
     <Compile Include="..\KeePassLib\Cryptography\CryptoRandomStream.cs">
       <Link>KeePassLib\Cryptography\CryptoRandomStream.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator.cs">
-      <Link>KeePassLib\Cryptography\PasswordGenerator.cs</Link>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwCharSet.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\PwCharSet.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwGenerator.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\PwGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwProfile.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\PwProfile.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\QualityEstimation.cs">
       <Link>KeePassLib\Cryptography\QualityEstimation.cs</Link>
@@ -210,6 +222,19 @@
     <Compile Include="App\AppDefs.cs" />
     <Compile Include="App\AppHelp.cs" />
     <Compile Include="App\AppPolicy.cs" />
+    <Compile Include="App\Configuration\AceApplication.cs" />
+    <Compile Include="App\Configuration\AceDefaults.cs" />
+    <Compile Include="App\Configuration\AceIntegration.cs" />
+    <Compile Include="App\Configuration\AceLogging.cs" />
+    <Compile Include="App\Configuration\AceMainWindow.cs" />
+    <Compile Include="App\Configuration\AceNative.cs" />
+    <Compile Include="App\Configuration\AcePasswordGenerator.cs" />
+    <Compile Include="App\Configuration\AceSecurity.cs" />
+    <Compile Include="App\Configuration\AceToolBar.cs" />
+    <Compile Include="App\Configuration\AceTrayIcon.cs" />
+    <Compile Include="App\Configuration\AceUI.cs" />
+    <Compile Include="App\Configuration\AppConfigEx.cs" />
+    <Compile Include="App\Configuration\AppConfigSerializer.cs" />
     <Compile Include="DataExchange\FormatImporter.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
@@ -227,8 +252,10 @@
     <Compile Include="DataExchange\Formats\PwExporterXml105.cs" />
     <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
+    <Compile Include="DataExchange\Formats\PwTresor100.cs" />
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
     <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
+    <Compile Include="DataExchange\Formats\SplashIdCsv402.cs" />
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\ImporterPool.cs" />
@@ -240,6 +267,12 @@
     </Compile>
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CharPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CharPickerForm.Designer.cs">
+      <DependentUpon>CharPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DatabaseOperationsForm.cs">
       <SubType>Form</SubType>
@@ -318,6 +351,12 @@
     </Compile>
     <Compile Include="Forms\ImportMethodForm.Designer.cs">
       <DependentUpon>ImportMethodForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\InternalBrowserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InternalBrowserForm.Designer.cs">
+      <DependentUpon>InternalBrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\KeyCreationForm.cs">
       <SubType>Form</SubType>
@@ -414,10 +453,16 @@
     <Compile Include="Native\NativeMethods.New.cs" />
     <Compile Include="Native\NativeMethods.Structs.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
+    <Compile Include="UI\DocumentManagerEx.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
+    <Compile Include="UI\PasswordListPrintDocument.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\PromptedTextBox.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\CancellableOperationEventArgs.cs" />
@@ -446,6 +491,10 @@
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CharPickerForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CharPickerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DatabaseOperationsForm.resx">
       <SubType>Designer</SubType>
@@ -498,6 +547,10 @@
     <EmbeddedResource Include="Forms\ImportMethodForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ImportMethodForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InternalBrowserForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>InternalBrowserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\KeyCreationForm.resx">
       <SubType>Designer</SubType>
@@ -586,6 +639,7 @@
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
+    <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
     <Compile Include="Util\KeyUtil.cs" />
@@ -595,6 +649,7 @@
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
+    <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\WinUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -722,6 +777,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_SplashID.png" />
+    <None Include="Resources\Images\B16x16_Imp_PwTresor.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_File_Close.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_File_SaveAll.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_File_SaveAll_Disabled.png" />
     <None Include="Resources\Images\B16x16_Imp_Steganos.png" />
     <None Include="Resources\Images\B16x16_Imp_Whisper32.png" />
     <None Include="KeePass.pfx" />

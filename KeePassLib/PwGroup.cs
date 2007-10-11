@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
@@ -54,6 +55,8 @@ namespace KeePassLib
 		private bool m_bVirtual = false;
 
 		private string m_strDefaultAutoTypeSequence = string.Empty;
+
+		private PwUuid m_pwLastTopVisibleEntry = PwUuid.Zero;
 
 		/// <summary>
 		/// UUID of this group.
@@ -226,6 +229,16 @@ namespace KeePassLib
 			}
 		}
 
+		public PwUuid LastTopVisibleEntry
+		{
+			get { return m_pwLastTopVisibleEntry; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_pwLastTopVisibleEntry = value;
+			}
+		}
+
 		/// <summary>
 		/// Construct a new, empty group.
 		/// </summary>
@@ -300,6 +313,8 @@ namespace KeePassLib
 			pg.m_bVirtual = this.m_bVirtual;
 
 			pg.m_strDefaultAutoTypeSequence = this.m_strDefaultAutoTypeSequence;
+
+			pg.m_pwLastTopVisibleEntry = this.m_pwLastTopVisibleEntry;
 
 			return pg;
 		}
@@ -504,7 +519,7 @@ namespace KeePassLib
 				return true;
 			};
 
-			return PreOrderTraverseTree(null, eh);
+			return this.PreOrderTraverseTree(null, eh);
 		}
 
 		/// <summary>
@@ -518,80 +533,67 @@ namespace KeePassLib
 			Debug.Assert(searchParams != null); if(searchParams == null) throw new ArgumentNullException();
 			Debug.Assert(listStorage != null); if(listStorage == null) throw new ArgumentNullException();
 
-			string strSearch = searchParams.SearchText;
+			string strSearch = searchParams.SearchString;
 			Debug.Assert(strSearch != null); if(strSearch == null) throw new ArgumentNullException();
 
-			StringComparison scType = searchParams.StringCompare;
+			StringComparison scType = searchParams.ComparisonMode;
+			Regex rx = null;
+			EntryHandler eh = null;
 
 			bool bTitle = searchParams.SearchInTitles;
 			bool bUserName = searchParams.SearchInUserNames;
 			bool bPassword = searchParams.SearchInPasswords;
 			bool bUrl = searchParams.SearchInUrls;
 			bool bNotes = searchParams.SearchInNotes;
+			bool bOther = searchParams.SearchInOther;
 
-			EntryHandler eh;
-			if(searchParams.SearchInAllStrings)
+			if(searchParams.RegularExpression)
 			{
-				if(strSearch.Length <= 0)
+				RegexOptions ro = RegexOptions.Compiled;
+				if((scType == StringComparison.CurrentCultureIgnoreCase) ||
+					(scType == StringComparison.InvariantCultureIgnoreCase) ||
+					(scType == StringComparison.OrdinalIgnoreCase))
 				{
-					eh = delegate(PwEntry pwe)
-					{
-						listStorage.Add(pwe);
-						return true;
-					};
+					ro |= RegexOptions.IgnoreCase;
 				}
-				else // strSearch.Length > 0
-				{
-					eh = delegate(PwEntry pwe)
-					{
-						foreach(KeyValuePair<string, ProtectedString> kvp in pwe.Strings)
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{
-								listStorage.Add(pwe);
-								return true;
-							}
-						}
 
-						return true;
-					};
-				}
+				rx = new Regex(strSearch, ro);
 			}
-			else // searchParams.SearchInAllStrings == false
+
+			if(strSearch.Length <= 0) // Query all
 			{
-				eh = delegate(PwEntry pwe)
+				eh = delegate(PwEntry pe)
 				{
-					foreach(KeyValuePair<string, ProtectedString> kvp in pwe.Strings)
+					listStorage.Add(pe);
+					return true;
+				};
+			}
+			else
+			{
+				eh = delegate(PwEntry pe)
+				{
+					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
-						if(bTitle && kvp.Key.Equals(PwDefs.TitleField))
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{ listStorage.Add(pwe); return true; }
-						}
+						string strKey = kvp.Key;
 
-						if(bUserName && kvp.Key.Equals(PwDefs.UserNameField))
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{ listStorage.Add(pwe); return true; }
-						}
-
-						if(bPassword && kvp.Key.Equals(PwDefs.PasswordField))
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{ listStorage.Add(pwe); return true; }
-						}
-
-						if(bUrl && kvp.Key.Equals(PwDefs.UrlField))
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{ listStorage.Add(pwe); return true; }
-						}
-
-						if(bNotes && kvp.Key.Equals(PwDefs.NotesField))
-						{
-							if(kvp.Value.ReadString().IndexOf(strSearch, scType) >= 0)
-							{ listStorage.Add(pwe); return true; }
-						}
+						if(strKey == PwDefs.TitleField)
+							SearchEvalAdd(bTitle, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
+						else if(strKey == PwDefs.UserNameField)
+							SearchEvalAdd(bUserName, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
+						else if(strKey == PwDefs.PasswordField)
+							SearchEvalAdd(bPassword, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
+						else if(strKey == PwDefs.UrlField)
+							SearchEvalAdd(bUrl, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
+						else if(strKey == PwDefs.NotesField)
+							SearchEvalAdd(bNotes, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
+						else if(bOther)
+							SearchEvalAdd(true, strSearch, kvp.Value.ReadString(),
+								scType, rx, pe, listStorage);
 					}
 
 					return true;
@@ -599,6 +601,22 @@ namespace KeePassLib
 			}
 
 			PreOrderTraverseTree(null, eh);
+		}
+
+		private void SearchEvalAdd(bool bIf, string strSearch, string strDataField,
+			StringComparison scType, Regex rx, PwEntry pe, PwObjectList<PwEntry> lResults)
+		{
+			if(bIf == false) return;
+
+			if(rx == null)
+			{
+				if(strDataField.IndexOf(strSearch, scType) >= 0)
+					lResults.Add(pe);
+			}
+			else // Regular expression
+			{
+				if(rx.IsMatch(strDataField)) lResults.Add(pe);
+			}
 		}
 
 		/// <summary>
@@ -747,6 +765,8 @@ namespace KeePassLib
 			m_tExpire = pgTemplate.m_tExpire;
 			m_bExpires = pgTemplate.m_bExpires;
 			m_uUsageCount = pgTemplate.m_uUsageCount;
+
+			m_pwLastTopVisibleEntry = pgTemplate.m_pwLastTopVisibleEntry;
 		}
 
 		/// <summary>

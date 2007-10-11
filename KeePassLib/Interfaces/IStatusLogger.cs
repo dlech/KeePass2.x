@@ -58,7 +58,9 @@ namespace KeePassLib.Interfaces
 		/// </summary>
 		/// <param name="strOperation">This string should roughly describe
 		/// the operation, of which the status is logged.</param>
-		void StartLogging(string strOperation);
+		/// <param name="bWriteOperationToLog">Specifies whether the
+		/// operation is written to the log or not.</param>
+		void StartLogging(string strOperation, bool bWriteOperationToLog);
 
 		/// <summary>
 		/// Function which needs to be called when logging is ended

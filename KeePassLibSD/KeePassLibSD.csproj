@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Build\KeePassLibSD\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COMPACT_FRAMEWORK_V20;KeePassLibSD;NETCF_2_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -37,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\Build\KeePassLibSD\Release\</OutputPath>
-    <DefineConstants>TRACE;COMPACT_FRAMEWORK_V20;KeePassLibSD</DefineConstants>
+    <DefineConstants>TRACE;COMPACT_FRAMEWORK_V20;KeePassLibSD;NETCF_2_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -81,8 +81,20 @@
     <Compile Include="..\KeePassLib\Cryptography\CryptoRandomStream.cs">
       <Link>Cryptography\CryptoRandomStream.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator.cs">
-      <Link>Cryptography\PasswordGenerator.cs</Link>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
+      <Link>Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs">
+      <Link>Cryptography\PasswordGenerator\PatternBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwCharSet.cs">
+      <Link>Cryptography\PasswordGenerator\PwCharSet.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwGenerator.cs">
+      <Link>Cryptography\PasswordGenerator\PwGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwProfile.cs">
+      <Link>Cryptography\PasswordGenerator\PwProfile.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\QualityEstimation.cs">
       <Link>Cryptography\QualityEstimation.cs</Link>
@@ -230,7 +242,6 @@
     <Compile Include="SharpZipLib\Core\FileSystemScanner.cs" />
     <Compile Include="SharpZipLib\Core\INameTransform.cs" />
     <Compile Include="SharpZipLib\Core\IScanFilter.cs" />
-    <Compile Include="SharpZipLib\Core\IScanner.cs" />
     <Compile Include="SharpZipLib\Core\NameFilter.cs" />
     <Compile Include="SharpZipLib\Core\PathFilter.cs" />
     <Compile Include="SharpZipLib\Core\StreamUtils.cs" />
@@ -254,8 +265,10 @@
     <Compile Include="SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
     <Compile Include="SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="SharpZipLib\Zip\IEntryFactory.cs" />
     <Compile Include="SharpZipLib\Zip\ZipConstants.cs" />
     <Compile Include="SharpZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipEntryFactory.cs" />
     <Compile Include="SharpZipLib\Zip\ZipException.cs" />
     <Compile Include="SharpZipLib\Zip\ZipExtraData.cs" />
     <Compile Include="SharpZipLib\Zip\ZipFile.cs" />

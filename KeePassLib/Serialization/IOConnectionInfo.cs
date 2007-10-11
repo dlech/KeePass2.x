@@ -46,14 +46,21 @@ namespace KeePassLib.Serialization
 		SaveCred
 	}
 
+	/* public enum IOFileFormatHint
+	{
+		None = 0,
+		Deprecated
+	} */
+
 	public sealed class IOConnectionInfo : IDeepClonable<IOConnectionInfo>
 	{
 		private string m_strUrl = string.Empty;
 		private string m_strUser = string.Empty;
 		private string m_strPassword = string.Empty;
 		private IOCredSaveMode m_ioCredSaveMode = IOCredSaveMode.NoSave;
+		// private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
 
-		public string Url
+		public string Path
 		{
 			get { return m_strUrl; }
 			set
@@ -95,11 +102,18 @@ namespace KeePassLib.Serialization
 			set { m_ioCredSaveMode = value; }
 		}
 
+		/* public IOFileFormatHint FileFormatHint
+		{
+			get { return m_ioHint; }
+			set { m_ioHint = value; }
+		} */
+
 		public IOConnectionInfo CloneDeep()
 		{
 			return (IOConnectionInfo)this.MemberwiseClone();
 		}
 
+		/*
 		/// <summary>
 		/// Serialize the current connection info to a string. Credentials
 		/// are only serialized if the <c>SaveCredentials</c> property
@@ -112,7 +126,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(iocToCompile != null);
 			if(iocToCompile == null) throw new ArgumentNullException("iocToCompile");
 
-			string strUrl = iocToCompile.Url;
+			string strUrl = iocToCompile.Path;
 			string strUser = TransformUnreadable(iocToCompile.UserName, true);
 			string strPassword = TransformUnreadable(iocToCompile.Password, true);
 			string strAll = strUrl + strUser + strPassword;
@@ -184,7 +198,7 @@ namespace KeePassLib.Serialization
 			if(vParts.Length < 4) throw new ArgumentException();
 
 			IOConnectionInfo s = new IOConnectionInfo();
-			s.Url = vParts[0];
+			s.Path = vParts[0];
 
 			if(vParts[1] == "C")
 				s.CredSaveMode = IOCredSaveMode.SaveCred;
@@ -197,6 +211,7 @@ namespace KeePassLib.Serialization
 			s.Password = TransformUnreadable(vParts[3], false);
 			return s;
 		}
+		*/
 
 		/// <summary>
 		/// Very simple string protection. Doesn't really encrypt the input
@@ -256,7 +271,7 @@ namespace KeePassLib.Serialization
 		{
 			IOConnectionInfo ioc = new IOConnectionInfo();
 
-			ioc.Url = strPath;
+			ioc.Path = strPath;
 			ioc.CredSaveMode = IOCredSaveMode.NoSave;
 
 			return ioc;

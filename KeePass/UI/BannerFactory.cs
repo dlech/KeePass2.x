@@ -30,19 +30,19 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
+	public enum BannerStyle : uint
+	{
+		Default = 0,
+		WinXPLogin,
+		WinVistaBlack,
+		KeePassWin32,
+		BlueCarbon
+	}
+
 	public static class BannerFactory
 	{
 		private static Dictionary<string, Image> m_vImageCache = new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
-
-		public enum BannerStyle : uint
-		{
-			Default = 0,
-			WinXPLogin,
-			WinVistaBlack,
-			KeePassWin32,
-			BlueCarbon
-		}
 
 		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs, Image imgIcon, string strTitle, string strLine)
 		{
@@ -55,8 +55,7 @@ namespace KeePass.UI
 			strImageID += ":";
 			if(strLine != null) strImageID += strLine;
 
-			if(bs == BannerStyle.Default)
-				bs = (BannerStyle)AppConfigEx.GetUInt(AppDefs.ConfigKeys.BannerStyle);
+			if(bs == BannerStyle.Default) bs = Program.Config.UI.BannerStyle;
 
 			strImageID += ":" + ((uint)bs).ToString();
 

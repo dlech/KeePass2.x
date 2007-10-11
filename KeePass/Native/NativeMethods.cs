@@ -116,5 +116,10 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PathCompactPathEx(StringBuilder pszOut,
 			string szPath, uint cchMax, uint dwFlags);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DrawAnimatedRects(IntPtr hWnd,
+			int idAni, [In] ref RECT lprcFrom, [In] ref RECT lprcTo);
 	}
 }

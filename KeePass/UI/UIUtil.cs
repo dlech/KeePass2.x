@@ -127,5 +127,31 @@ namespace KeePass.UI
 
 			return vNew;
 		}
+
+		public static ImageList CloneImageList(ImageList ilSource, bool bCloneImages)
+		{
+			Debug.Assert(ilSource != null); if(ilSource == null) throw new ArgumentNullException("ilSource");
+
+			ImageList ilNew = new ImageList();
+			ilNew.ColorDepth = ilSource.ColorDepth;
+			ilNew.ImageSize = ilSource.ImageSize;
+
+			foreach(Image img in ilSource.Images)
+			{
+				if(bCloneImages) ilNew.Images.Add((Image)img.Clone());
+				else ilNew.Images.Add(img);
+			}
+
+			return ilNew;
+		}
+
+		public static bool DrawAnimatedRects(Rectangle rectFrom, Rectangle rectTo)
+		{
+			NativeMethods.RECT rnFrom = new NativeMethods.RECT(rectFrom);
+			NativeMethods.RECT rnTo = new NativeMethods.RECT(rectTo);
+
+			return NativeMethods.DrawAnimatedRects(IntPtr.Zero,
+				NativeMethods.IDANI_CAPTION, ref rnFrom, ref rnTo);
+		}
 	}
 }

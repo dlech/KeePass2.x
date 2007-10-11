@@ -1,5 +1,0 @@
-public static void Main()
-{
-	AboutForm dlg = new AboutForm();
-	dlg.ShowDialog();
-}

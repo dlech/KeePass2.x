@@ -124,7 +124,7 @@ namespace KeePass.Util
 					if(MessageService.AskYesNo(KPRes.ChkForUpdNewVersion +
 						MessageService.NewParagraph + KPRes.HomepageVisitQuestion))
 					{
-						WinUtil.OpenUrlInNewBrowser(PwDefs.HomepageUrl, null);
+						WinUtil.OpenUrl(PwDefs.HomepageUrl, null);
 					}
 				}
 				else m_tsResultsViewer.Text = KPRes.ChkForUpdNewVersion;

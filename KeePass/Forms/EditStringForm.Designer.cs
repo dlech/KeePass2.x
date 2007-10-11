@@ -58,18 +58,18 @@
 			this.m_lblStringValueDesc.AutoSize = true;
 			this.m_lblStringValueDesc.Location = new System.Drawing.Point(12, 156);
 			this.m_lblStringValueDesc.Name = "m_lblStringValueDesc";
-			this.m_lblStringValueDesc.Size = new System.Drawing.Size(62, 13);
+			this.m_lblStringValueDesc.Size = new System.Drawing.Size(37, 13);
 			this.m_lblStringValueDesc.TabIndex = 4;
-			this.m_lblStringValueDesc.Text = "Field Value:";
+			this.m_lblStringValueDesc.Text = "Value:";
 			// 
 			// m_lblStringIDDesc
 			// 
 			this.m_lblStringIDDesc.AutoSize = true;
 			this.m_lblStringIDDesc.Location = new System.Drawing.Point(12, 117);
 			this.m_lblStringIDDesc.Name = "m_lblStringIDDesc";
-			this.m_lblStringIDDesc.Size = new System.Drawing.Size(63, 13);
+			this.m_lblStringIDDesc.Size = new System.Drawing.Size(38, 13);
 			this.m_lblStringIDDesc.TabIndex = 2;
-			this.m_lblStringIDDesc.Text = "Field Name:";
+			this.m_lblStringIDDesc.Text = "Name:";
 			// 
 			// m_lblIDIntro
 			// 
@@ -81,18 +81,19 @@
 			// 
 			// m_tbStringName
 			// 
-			this.m_tbStringName.Location = new System.Drawing.Point(81, 114);
+			this.m_tbStringName.Location = new System.Drawing.Point(56, 114);
 			this.m_tbStringName.Name = "m_tbStringName";
-			this.m_tbStringName.Size = new System.Drawing.Size(316, 20);
+			this.m_tbStringName.Size = new System.Drawing.Size(341, 20);
 			this.m_tbStringName.TabIndex = 0;
 			this.m_tbStringName.TextChanged += new System.EventHandler(this.OnTextChangedName);
 			// 
 			// m_richStringValue
 			// 
-			this.m_richStringValue.Location = new System.Drawing.Point(81, 154);
+			this.m_richStringValue.AcceptsTab = true;
+			this.m_richStringValue.Location = new System.Drawing.Point(56, 154);
 			this.m_richStringValue.Name = "m_richStringValue";
 			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_richStringValue.Size = new System.Drawing.Size(316, 78);
+			this.m_richStringValue.Size = new System.Drawing.Size(341, 78);
 			this.m_richStringValue.TabIndex = 5;
 			this.m_richStringValue.Text = "";
 			// 
@@ -139,19 +140,19 @@
 			// m_cbProtect
 			// 
 			this.m_cbProtect.AutoSize = true;
-			this.m_cbProtect.Location = new System.Drawing.Point(81, 238);
+			this.m_cbProtect.Location = new System.Drawing.Point(56, 238);
 			this.m_cbProtect.Name = "m_cbProtect";
-			this.m_cbProtect.Size = new System.Drawing.Size(162, 17);
+			this.m_cbProtect.Size = new System.Drawing.Size(159, 17);
 			this.m_cbProtect.TabIndex = 6;
-			this.m_cbProtect.Text = "Enable In-Memory &Protection";
+			this.m_cbProtect.Text = "Enable in-memory &protection";
 			this.m_cbProtect.UseVisualStyleBackColor = true;
 			// 
 			// m_lblValidationInfo
 			// 
 			this.m_lblValidationInfo.ForeColor = System.Drawing.Color.Crimson;
-			this.m_lblValidationInfo.Location = new System.Drawing.Point(78, 137);
+			this.m_lblValidationInfo.Location = new System.Drawing.Point(53, 137);
 			this.m_lblValidationInfo.Name = "m_lblValidationInfo";
-			this.m_lblValidationInfo.Size = new System.Drawing.Size(319, 14);
+			this.m_lblValidationInfo.Size = new System.Drawing.Size(344, 14);
 			this.m_lblValidationInfo.TabIndex = 3;
 			this.m_lblValidationInfo.Text = "<>";
 			// 

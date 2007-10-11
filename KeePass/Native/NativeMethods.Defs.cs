@@ -28,10 +28,12 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		internal const int WM_KEYDOWN = 0x0100;
 		internal const int WM_DRAWCLIPBOARD = 0x0308;
 		internal const int WM_CHANGECBCHAIN = 0x030D;
 		internal const int WM_HOTKEY = 0x0312;
 		internal const int WM_USER = 0x0400;
+		internal const int WM_SYSCOMMAND = 0x0112;
 
 		internal const uint HWND_BROADCAST = 0xFFFF;
 
@@ -67,6 +69,11 @@ namespace KeePass.Native
 
 		internal const uint CFM_LINK = 0x00000020;
 		internal const uint CFE_LINK = 0x00000020;
+
+		internal const int SC_MINIMIZE = 0xF020;
+		internal const int SC_MAXIMIZE = 0xF030;
+
+		internal const int IDANI_CAPTION = 3;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

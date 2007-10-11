@@ -68,7 +68,7 @@ namespace KeePass.Util
 			Debug.Assert(pweData != null); if(pweData == null) return false;
 
 			if(!pweData.AutoType.Enabled) return false;
-			if(!AppPolicy.Try(AppPolicyFlag.AutoType)) return false;
+			if(!AppPolicy.Try(AppPolicyID.AutoType)) return false;
 
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
@@ -78,6 +78,7 @@ namespace KeePass.Util
 			strSend = StrUtil.FillPlaceholders(strSend, pweData,
 				WinUtil.GetExecutable(), pwDatabase, false, true);
 			strSend = AppLocator.FillPlaceholders(strSend, true);
+			strSend = EntryUtil.FillPlaceholders(strSend, pweData, true);
 
 			bool bObfuscate = !(pweData.AutoType.ObfuscationOptions ==
 				AutoTypeObfuscationOptions.None);
@@ -151,10 +152,10 @@ namespace KeePass.Util
 			return PwDefs.DefaultAutoTypeSequence;
 		}
 
-		public static bool PerformGlobal(PwDatabase pwDatabase, ImageList ilIcons)
+		public static bool PerformGlobal(List<PwDatabase> vSources,
+			ImageList ilIcons)
 		{
-			Debug.Assert(pwDatabase != null); if(pwDatabase == null) return false;
-			Debug.Assert(pwDatabase.IsOpen); if(!pwDatabase.IsOpen) return false;
+			Debug.Assert(vSources != null); if(vSources == null) return false;
 
 			IntPtr hWnd = NativeMethods.GetForegroundWindow();
 			string strWindow = NativeMethods.GetWindowText(hWnd);
@@ -162,15 +163,24 @@ namespace KeePass.Util
 
 			PwObjectList<PwEntry> m_vList = new PwObjectList<PwEntry>();
 
+			DateTime dtNow = DateTime.Now;
+
 			EntryHandler eh = delegate(PwEntry pe)
 			{
+				// Ignore expired entries
+				if(pe.Expires && (pe.ExpiryTime < dtNow)) return true;
+
 				if(GetSequenceForWindow(pe, strWindow, true) != null)
 					m_vList.Add(pe);
 
 				return true;
 			};
 
-			pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+			foreach(PwDatabase pwSource in vSources)
+			{
+				if(pwSource.IsOpen == false) continue;
+				pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+			}
 
 			if(m_vList.UCount == 1)
 				AutoType.PerformInternal(m_vList.GetAt(0), strWindow);
@@ -179,7 +189,7 @@ namespace KeePass.Util
 				EntryListForm elf = new EntryListForm();
 				elf.InitEx(KPRes.AutoTypeEntrySelection, KPRes.AutoTypeEntrySelectionDescShort,
 					KPRes.AutoTypeEntrySelectionDescLong,
-					KeePass.Properties.Resources.B48x48_KGPG_Key2, ilIcons, m_vList);
+					Properties.Resources.B48x48_KGPG_Key2, ilIcons, m_vList);
 				elf.EnsureForeground = true;
 
 				if(elf.ShowDialog() == DialogResult.OK)
@@ -198,6 +208,11 @@ namespace KeePass.Util
 		{
 			NativeMethods.LoseFocus(hWndCurrent);
 
+			return PerformIntoCurrentWindow(pe);
+		}
+
+		public static bool PerformIntoCurrentWindow(PwEntry pe)
+		{
 			string strWindow = NativeMethods.GetWindowText(
 				NativeMethods.GetForegroundWindow());
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;

@@ -27,12 +27,14 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.App;
-using KeePass.UI;
 using KeePass.Resources;
+using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Keys;
+using KeePassLib.Native;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -73,7 +75,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
 				m_strDisplayName);
 			this.Icon = Properties.Resources.KeePass;
@@ -89,6 +91,9 @@ namespace KeePass.Forms
 			ProcessTextChangedPassword(sender, e); // Update quality estimation
 
 			m_tbKeyFile.Text = KPRes.NoKeyFileSpecifiedMeta;
+
+			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
+				m_cbUserAccount.Enabled = false;
 
 			EnableUserControls();
 		}
@@ -115,7 +120,7 @@ namespace KeePass.Forms
 					}
 				}
 
-				byte[] pb = m_secPassword.ToUTF8();
+				byte[] pb = m_secPassword.ToUtf8();
 				m_pKey.AddUserKey(new KcpPassword(pb));
 				Array.Clear(pb, 0, pb.Length);
 			}
@@ -123,14 +128,22 @@ namespace KeePass.Forms
 			if(m_cbKeyFile.Checked && (!m_tbKeyFile.Text.Equals(KPRes.NoKeyFileSpecifiedMeta)))
 			{
 				try { m_pKey.AddUserKey(new KcpKeyFile(m_tbKeyFile.Text)); }
-				catch(Exception)
+				catch(Exception exKF)
 				{
-					MessageService.ShowWarning(m_tbKeyFile.Text, KPRes.KeyFileError);
+					MessageService.ShowWarning(m_tbKeyFile.Text, KPRes.KeyFileError, exKF);
 					return false;
 				}
 			}
+
 			if(m_cbUserAccount.Checked)
-				m_pKey.AddUserKey(new KcpUserAccount());
+			{
+				try { m_pKey.AddUserKey(new KcpUserAccount()); }
+				catch(Exception exUA)
+				{
+					MessageService.ShowWarning(exUA);
+					return false;
+				}
+			}
 
 			return true;
 		}
@@ -194,7 +207,7 @@ namespace KeePass.Forms
 
 		private void ProcessTextChangedPassword(object sender, EventArgs e)
 		{
-			byte[] pbUTF8 = m_secPassword.ToUTF8();
+			byte[] pbUTF8 = m_secPassword.ToUtf8();
 			uint uBits = QualityEstimation.EstimatePasswordBits(pbUTF8);
 			MemUtil.ZeroByteArray(pbUTF8);
 

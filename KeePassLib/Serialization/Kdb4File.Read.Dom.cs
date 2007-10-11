@@ -125,6 +125,10 @@ namespace KeePassLib.Serialization
 					ReadMemoryProtection(xmlChild);
 				else if(strName == ElemCustomIcons)
 					ReadCustomIcons(xmlChild);
+				else if(strName == ElemLastSelectedGroup)
+					m_pwDatabase.LastSelectedGroup = ReadUuid(xmlChild);
+				else if(strName == ElemLastTopVisibleGroup)
+					m_pwDatabase.LastTopVisibleGroup = ReadUuid(xmlChild);
 				else ReadUnknown(xmlChild);
 			}
 		}
@@ -244,6 +248,8 @@ namespace KeePassLib.Serialization
 					pgStorage.IsExpanded = ReadBool(xmlChild, true);
 				else if(strName == ElemGroupDefaultAutoTypeSeq)
 					pgStorage.DefaultAutoTypeSequence = ReadString(xmlChild);
+				else if(strName == ElemLastTopVisibleEntry)
+					pgStorage.LastTopVisibleEntry = ReadUuid(xmlChild);
 				else if(strName == ElemGroup)
 				{
 					PwGroup pgSub = ReadGroup(xmlChild);

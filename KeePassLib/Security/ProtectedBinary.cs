@@ -36,6 +36,10 @@ namespace KeePassLib.Security
 	/// </summary>
 	public sealed class ProtectedBinary
 	{
+		// In-memory protection is supported only on Windows 2000 SP3 and
+		// higher.
+		private static bool m_bProtectionSupported = true;
+
 		private byte[] m_pbData = new byte[0];
 
 		// The real length of the data. This value can be different than
@@ -75,6 +79,19 @@ namespace KeePassLib.Security
 		public uint Length
 		{
 			get { return m_uDataLen; }
+		}
+
+		static ProtectedBinary()
+		{
+			try // Test if ProtectedMemory is supported
+			{
+				byte[] pbDummy = new byte[128];
+				ProtectedMemory.Protect(pbDummy, MemoryProtectionScope.SameProcess);
+			}
+			catch(Exception) // Windows 98 / ME
+			{
+				m_bProtectionSupported = false;
+			}
 		}
 
 		/// <summary>
@@ -208,13 +225,14 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public void SetData(byte[] pbNew)
 		{
-			Clear();
+			this.Clear();
 
-			Debug.Assert(pbNew != null); if(pbNew == null) throw new ArgumentNullException();
+			Debug.Assert(pbNew != null);
+			if(pbNew == null) throw new ArgumentNullException("pbNew");
 
 			m_uDataLen = (uint)pbNew.Length;
 
-			if(m_bDoProtect)
+			if(m_bDoProtect && m_bProtectionSupported)
 			{
 				int nAllocatedMem = (((int)m_uDataLen / 16) + 1) * 16;
 				m_pbData = new byte[nAllocatedMem];
@@ -249,7 +267,7 @@ namespace KeePassLib.Security
 
 			if(m_pbData.Length == 0) return new byte[0];
 
-			if(m_bDoProtect)
+			if(m_bDoProtect && m_bProtectionSupported)
 			{
 				Debug.Assert((m_pbData.Length % 16) == 0);
 				ProtectedMemory.Unprotect(m_pbData, MemoryProtectionScope.SameProcess);
@@ -258,7 +276,7 @@ namespace KeePassLib.Security
 			byte[] pbReturn = new byte[m_uDataLen];
 			if(m_uDataLen > 0) Array.Copy(m_pbData, pbReturn, (int)m_uDataLen);
 
-			if(m_bDoProtect)
+			if(m_bDoProtect && m_bProtectionSupported)
 				ProtectedMemory.Protect(m_pbData, MemoryProtectionScope.SameProcess);
 
 			return pbReturn;

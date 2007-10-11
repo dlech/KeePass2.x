@@ -39,12 +39,15 @@ namespace KeePass.Forms
 	public partial class IconPickerForm : Form
 	{
 		private ImageList m_ilIcons = null;
+		private uint m_uNumberOfStandardIcons = 0;
 		private PwDatabase m_pwDatabase = null;
 		private uint m_uDefaultIcon = 0;
 		private PwUuid m_pwDefaultCustomIcon = PwUuid.Zero;
 
 		private uint m_uChosenImageID = 0;
 		private PwUuid m_pwChosenCustomImageUuid = PwUuid.Zero;
+
+		private bool m_bBlockCancel = false;
 
 		public uint ChosenIconID
 		{
@@ -61,10 +64,11 @@ namespace KeePass.Forms
 			InitializeComponent();
 		}
 
-		public void InitEx(ImageList ilIcons, PwDatabase pwDatabase,
-			uint uDefaultIcon, PwUuid pwCustomIconUuid)
+		public void InitEx(ImageList ilIcons, uint uNumberOfStandardIcons,
+			PwDatabase pwDatabase, uint uDefaultIcon, PwUuid pwCustomIconUuid)
 		{
 			m_ilIcons = ilIcons;
+			m_uNumberOfStandardIcons = uNumberOfStandardIcons;
 			m_pwDatabase = pwDatabase;
 			m_uDefaultIcon = uDefaultIcon;
 			m_pwDefaultCustomIcon = pwCustomIconUuid;
@@ -80,8 +84,8 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 
 			m_lvIcons.SmallImageList = m_ilIcons;
-			for(int i = 0; i < m_ilIcons.Images.Count; i++)
-				m_lvIcons.Items.Add(i.ToString(), i);
+			for(uint i = 0; i < m_uNumberOfStandardIcons; ++i)
+				m_lvIcons.Items.Add(i.ToString(), (int)i);
 
 			int iFoundCustom = RecreateCustomIconList();
 
@@ -90,7 +94,7 @@ namespace KeePass.Forms
 				m_radioCustom.Checked = true;
 				m_lvCustomIcons.Items[iFoundCustom].Selected = true;
 			}
-			else if(m_uDefaultIcon < (uint)PwIcon.Count)
+			else if(m_uDefaultIcon < m_uNumberOfStandardIcons)
 			{
 				m_radioStandard.Checked = true;
 				m_lvIcons.Items[(int)m_uDefaultIcon].Selected = true;
@@ -116,6 +120,8 @@ namespace KeePass.Forms
 				m_btnOK.Enabled = false;
 
 			m_btnCustomRemove.Enabled = (lvsic.Count >= 1);
+
+			if(m_bBlockCancel) m_btnCancel.Enabled = false;
 		}
 
 		private int RecreateCustomIconList()
@@ -170,6 +176,7 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			if(m_bBlockCancel) this.DialogResult = DialogResult.None;
 		}
 
 		private void OnIconsItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -199,15 +206,15 @@ namespace KeePass.Forms
 		private void OnBtnCustomAdd(object sender, EventArgs e)
 		{
 			string strAllSupportedFilter = KPRes.AllSupportedFiles +
-				@" (*.bmp; *.emf; *.gif; *.ico; *.jpg; *.jpe; *.jpeg; *.png; *.tif; *.tiff; *.wmf)" +
-				@"|*.bmp;*.emf;*.gif;*.ico;*.jpg;*.jpe;*.jpeg;*.png;*.tif;*.tiff;*.wmf";
+				@" (*.bmp; *.emf; *.gif; *.ico; *.jpg; *.jpe; *.jpeg; *.jfif; *.jfi; *.jif; *.png; *.tif; *.tiff; *.wmf)" +
+				@"|*.bmp;*.emf;*.gif;*.ico;*.jpg;*.jpe;*.jpeg;*.jfif;*.jfi;*.jif;*.png;*.tif;*.tiff;*.wmf";
 			StringBuilder sbFilter = new StringBuilder();
 			sbFilter.Append(strAllSupportedFilter);
 			AddFileType(sbFilter, "*.bmp", "Windows Bitmap (*.bmp)");
 			AddFileType(sbFilter, "*.emf", "Windows Enhanced Metafile (*.emf)");
 			AddFileType(sbFilter, "*.gif", "Graphics Interchange Format (*.gif)");
 			AddFileType(sbFilter, "*.ico", "Windows Icon (*.ico)");
-			AddFileType(sbFilter, "*.jpg;*.jpe;*.jpeg", "JPEG (*.jpg; *.jpe; *.jpeg)");
+			AddFileType(sbFilter, "*.jpg;*.jpe;*.jpeg;*.jfif;*.jfi;*.jif", "JPEG (*.jpg; *.jpe; *.jpeg; *.jfif; *.jfi; *.jif)");
 			AddFileType(sbFilter, "*.png", "Portable Network Graphics (*.png)");
 			AddFileType(sbFilter, "*.tif;*.tiff", "Tagged Image File Format (*.tif; *.tiff)");
 			AddFileType(sbFilter, "*.wmf", "Windows Metafile (*.wmf)");
@@ -230,7 +237,19 @@ namespace KeePass.Forms
 				{
 					try
 					{
-						Image img = Image.FromFile(strFile);
+						if(File.Exists(strFile) == false)
+							throw new FileNotFoundException();
+
+						// Image img = Image.FromFile(strFile);
+						// Image img = Image.FromFile(strFile, false);
+						// Image img = Bitmap.FromFile(strFile);
+						// Bitmap img = new Bitmap(strFile);
+						// Image img = Image.FromFile(strFile);
+						byte[] pb = File.ReadAllBytes(strFile);
+						MemoryStream msSource = new MemoryStream(pb, false);
+						Image img = Image.FromStream(msSource);
+						msSource.Close();
+
 						Image imgNew = img;
 
 						if((img.Width != 16) || (img.Height != 16))
@@ -244,6 +263,10 @@ namespace KeePass.Forms
 						m_pwDatabase.CustomIcons.Add(pwci);
 
 						m_pwDatabase.UINeedsIconUpdate = true;
+					}
+					catch(ArgumentException)
+					{
+						MessageService.ShowWarning(strFile, KPRes.ImageFormatFeatureUnsupported);
 					}
 					catch(Exception exImg)
 					{
@@ -268,7 +291,28 @@ namespace KeePass.Forms
 
 		private void OnBtnCustomRemove(object sender, EventArgs e)
 		{
+			ListView.SelectedListViewItemCollection lvsicSel = m_lvCustomIcons.SelectedItems;
+			List<PwUuid> vUuidsToDelete = new List<PwUuid>();
 
+			foreach(ListViewItem lvi in lvsicSel)
+			{
+				PwUuid uuidIcon = lvi.Tag as PwUuid;
+
+				Debug.Assert(uuidIcon != null);
+				if(uuidIcon != null) vUuidsToDelete.Add(uuidIcon);
+			}
+
+			m_pwDatabase.DeleteCustomIcons(vUuidsToDelete);
+
+			if(vUuidsToDelete.Count > 0)
+			{
+				m_bBlockCancel = true;
+
+				m_pwDatabase.UINeedsIconUpdate = true;
+			}
+
+			RecreateCustomIconList();
+			EnableControlsEx();
 		}
 	}
 }

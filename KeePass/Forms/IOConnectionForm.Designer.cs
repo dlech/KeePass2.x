@@ -44,6 +44,8 @@
 			this.m_ttInvalidUrl = new System.Windows.Forms.ToolTip(this.components);
 			this.m_cmbCredSaveMode = new System.Windows.Forms.ComboBox();
 			this.m_lblRemember = new System.Windows.Forms.Label();
+			this.m_lblUrlExamples = new System.Windows.Forms.Label();
+			this.m_lblUrlHints = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -59,7 +61,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(253, 234);
+			this.m_btnOK.Location = new System.Drawing.Point(253, 281);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 9;
@@ -70,7 +72,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(334, 234);
+			this.m_btnCancel.Location = new System.Drawing.Point(334, 281);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 10;
@@ -90,33 +92,33 @@
 			// 
 			// m_tbUrl
 			// 
-			this.m_tbUrl.Location = new System.Drawing.Point(91, 79);
+			this.m_tbUrl.Location = new System.Drawing.Point(89, 79);
 			this.m_tbUrl.Name = "m_tbUrl";
-			this.m_tbUrl.Size = new System.Drawing.Size(318, 20);
+			this.m_tbUrl.Size = new System.Drawing.Size(320, 20);
 			this.m_tbUrl.TabIndex = 0;
 			// 
 			// m_lblUserName
 			// 
 			this.m_lblUserName.AutoSize = true;
 			this.m_lblUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_lblUserName.Location = new System.Drawing.Point(12, 114);
+			this.m_lblUserName.Location = new System.Drawing.Point(12, 161);
 			this.m_lblUserName.Name = "m_lblUserName";
-			this.m_lblUserName.Size = new System.Drawing.Size(73, 13);
+			this.m_lblUserName.Size = new System.Drawing.Size(71, 13);
 			this.m_lblUserName.TabIndex = 2;
-			this.m_lblUserName.Text = "User Name:";
+			this.m_lblUserName.Text = "User name:";
 			// 
 			// m_tbUserName
 			// 
-			this.m_tbUserName.Location = new System.Drawing.Point(91, 111);
+			this.m_tbUserName.Location = new System.Drawing.Point(89, 158);
 			this.m_tbUserName.Name = "m_tbUserName";
-			this.m_tbUserName.Size = new System.Drawing.Size(119, 20);
+			this.m_tbUserName.Size = new System.Drawing.Size(121, 20);
 			this.m_tbUserName.TabIndex = 3;
 			// 
 			// m_lblPassword
 			// 
 			this.m_lblPassword.AutoSize = true;
 			this.m_lblPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_lblPassword.Location = new System.Drawing.Point(216, 114);
+			this.m_lblPassword.Location = new System.Drawing.Point(216, 161);
 			this.m_lblPassword.Name = "m_lblPassword";
 			this.m_lblPassword.Size = new System.Drawing.Size(65, 13);
 			this.m_lblPassword.TabIndex = 4;
@@ -124,7 +126,7 @@
 			// 
 			// m_tbPassword
 			// 
-			this.m_tbPassword.Location = new System.Drawing.Point(287, 111);
+			this.m_tbPassword.Location = new System.Drawing.Point(287, 158);
 			this.m_tbPassword.Name = "m_tbPassword";
 			this.m_tbPassword.Size = new System.Drawing.Size(122, 20);
 			this.m_tbPassword.TabIndex = 5;
@@ -133,14 +135,14 @@
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 223);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 270);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(421, 2);
 			this.m_lblSeparator.TabIndex = 12;
 			// 
 			// m_lblCredNote
 			// 
-			this.m_lblCredNote.Location = new System.Drawing.Point(12, 143);
+			this.m_lblCredNote.Location = new System.Drawing.Point(12, 190);
 			this.m_lblCredNote.Name = "m_lblCredNote";
 			this.m_lblCredNote.Size = new System.Drawing.Size(397, 26);
 			this.m_lblCredNote.TabIndex = 6;
@@ -149,7 +151,7 @@
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 234);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 281);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 11;
@@ -168,7 +170,7 @@
 			// 
 			this.m_cmbCredSaveMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbCredSaveMode.FormattingEnabled = true;
-			this.m_cmbCredSaveMode.Location = new System.Drawing.Point(91, 181);
+			this.m_cmbCredSaveMode.Location = new System.Drawing.Point(91, 228);
 			this.m_cmbCredSaveMode.Name = "m_cmbCredSaveMode";
 			this.m_cmbCredSaveMode.Size = new System.Drawing.Size(318, 21);
 			this.m_cmbCredSaveMode.TabIndex = 8;
@@ -177,11 +179,29 @@
 			// 
 			this.m_lblRemember.AutoSize = true;
 			this.m_lblRemember.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_lblRemember.Location = new System.Drawing.Point(12, 184);
+			this.m_lblRemember.Location = new System.Drawing.Point(12, 231);
 			this.m_lblRemember.Name = "m_lblRemember";
 			this.m_lblRemember.Size = new System.Drawing.Size(70, 13);
 			this.m_lblRemember.TabIndex = 7;
 			this.m_lblRemember.Text = "Remember:";
+			// 
+			// m_lblUrlExamples
+			// 
+			this.m_lblUrlExamples.AutoSize = true;
+			this.m_lblUrlExamples.Location = new System.Drawing.Point(86, 131);
+			this.m_lblUrlExamples.Name = "m_lblUrlExamples";
+			this.m_lblUrlExamples.Size = new System.Drawing.Size(284, 13);
+			this.m_lblUrlExamples.TabIndex = 13;
+			this.m_lblUrlExamples.Text = "Example: ftp://ftp.someserver.com/pub/MyDatabase.kdbx";
+			// 
+			// m_lblUrlHints
+			// 
+			this.m_lblUrlHints.Location = new System.Drawing.Point(86, 102);
+			this.m_lblUrlHints.Name = "m_lblUrlHints";
+			this.m_lblUrlHints.Size = new System.Drawing.Size(321, 29);
+			this.m_lblUrlHints.TabIndex = 14;
+			this.m_lblUrlHints.Text = "The complete URL must be specified, including protocol, server and full path to t" +
+				"he file.";
 			// 
 			// IOConnectionForm
 			// 
@@ -189,7 +209,9 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(421, 269);
+			this.ClientSize = new System.Drawing.Size(421, 316);
+			this.Controls.Add(this.m_lblUrlHints);
+			this.Controls.Add(this.m_lblUrlExamples);
 			this.Controls.Add(this.m_lblRemember);
 			this.Controls.Add(this.m_cmbCredSaveMode);
 			this.Controls.Add(this.m_btnHelp);
@@ -237,5 +259,7 @@
 		private System.Windows.Forms.ToolTip m_ttInvalidUrl;
 		private System.Windows.Forms.ComboBox m_cmbCredSaveMode;
 		private System.Windows.Forms.Label m_lblRemember;
+		private System.Windows.Forms.Label m_lblUrlExamples;
+		private System.Windows.Forms.Label m_lblUrlHints;
 	}
 }

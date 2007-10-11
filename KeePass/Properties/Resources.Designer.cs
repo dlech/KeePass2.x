@@ -221,9 +221,30 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_File_Close {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_File_Close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_File_Locked {
             get {
                 object obj = ResourceManager.GetObject("B16x16_File_Locked", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_File_SaveAll {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_File_SaveAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_File_SaveAll_Disabled {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_File_SaveAll_Disabled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -431,9 +452,23 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_PwTresor {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_PwTresor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_Security {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_Security", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_SplashID {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_SplashID", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

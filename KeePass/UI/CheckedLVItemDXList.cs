@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Reflection;
 
 using KeePass.App;
 
@@ -31,8 +32,9 @@ namespace KeePass.UI
 {
 	public sealed class CheckedLVItemDXList
 	{
-		private Dictionary<KeyValuePair<string, string>, ListViewItem> m_vItems =
-			new Dictionary<KeyValuePair<string, string>, ListViewItem>();
+		private List<object> m_vObjects = new List<object>();
+		private List<PropertyInfo> m_vProperties = new List<PropertyInfo>();
+		private List<ListViewItem> m_vListViewItems = new List<ListViewItem>();
 
 		public CheckedLVItemDXList()
 		{
@@ -40,42 +42,52 @@ namespace KeePass.UI
 
 		public void UpdateData(bool bGuiToInternals)
 		{
-			if(bGuiToInternals)
+			for(int i = 0; i < m_vObjects.Count; ++i)
 			{
-				foreach(KeyValuePair<KeyValuePair<string, string>, ListViewItem>
-					kvp in m_vItems)
+				object o = m_vObjects[i];
+
+				if(bGuiToInternals)
 				{
-					AppConfigEx.SetValue(kvp.Key.Key, kvp.Value.Checked);
+					bool bChecked = m_vListViewItems[i].Checked;
+					m_vProperties[i].SetValue(o, bChecked, null);
 				}
-			}
-			else
-			{
-				foreach(KeyValuePair<KeyValuePair<string, string>, ListViewItem>
-					kvp in m_vItems)
+				else // Internals to GUI
 				{
-					kvp.Value.Checked = AppConfigEx.GetBool(kvp.Key);
+					bool bValue = (bool)m_vProperties[i].GetValue(o, null);
+					m_vListViewItems[i].Checked = bValue;
 				}
 			}
 		}
 
-		public void AddItem(KeyValuePair<string, string> kvpItem, ListViewItem lvi)
+		public ListViewItem CreateItem(object pContainer, string strPropertyName,
+			ListView lvList, ListViewGroup lvgContainer, string strDisplayString)
 		{
-			Debug.Assert(lvi != null); if(lvi == null) return;
+			if(pContainer == null) throw new ArgumentNullException("pContainer");
+			if(strPropertyName == null) throw new ArgumentNullException("strPropertyName");
+			if(strPropertyName.Length == 0) throw new ArgumentException();
+			if(lvList == null) throw new ArgumentNullException("lvList");
+			if(strDisplayString == null) throw new ArgumentNullException("strDisplayString");
 
-			m_vItems.Add(kvpItem, lvi);
-		}
+			Type t = pContainer.GetType();
+			PropertyInfo pi = t.GetProperty(strPropertyName);
+			if((pi == null) || (pi.PropertyType != typeof(bool)) ||
+				(pi.CanRead == false) || (pi.CanWrite == false))
+				throw new ArgumentException();
 
-		public void CreateItem(KeyValuePair<string, string> kvpItem, ListView lvList,
-			ListViewGroup lvgContainer, string strDisplayString)
-		{
 			ListViewItem lvi = new ListViewItem(strDisplayString);
-			lvi.Group = lvgContainer;
-			Debug.Assert(lvgContainer.Items.IndexOf(lvi) >= 0);
+			if(lvgContainer != null)
+			{
+				lvi.Group = lvgContainer;
+				Debug.Assert(lvgContainer.Items.IndexOf(lvi) >= 0);
+			}
 
-			Debug.Assert(lvList != null);
-			if(lvList != null) lvList.Items.Add(lvi);
+			lvList.Items.Add(lvi);
 
-			AddItem(kvpItem, lvi);
+			m_vObjects.Add(pContainer);
+			m_vProperties.Add(pi);
+			m_vListViewItems.Add(lvi);
+
+			return lvi;
 		}
 	}
 }

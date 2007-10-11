@@ -49,8 +49,8 @@ namespace KeePass.Util
 
 			try
 			{
-				SystemEvents.SessionEnded += OnSessionEnded;
-				SystemEvents.SessionSwitch += OnSessionSwitch;
+				SystemEvents.SessionEnding += this.OnSessionEnding;
+				SystemEvents.SessionSwitch += this.OnSessionSwitch;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -65,8 +65,8 @@ namespace KeePass.Util
 			{
 				try
 				{
-					SystemEvents.SessionEnded -= OnSessionEnded;
-					SystemEvents.SessionSwitch -= OnSessionSwitch;
+					SystemEvents.SessionEnding -= this.OnSessionEnding;
+					SystemEvents.SessionSwitch -= this.OnSessionSwitch;
 				}
 				catch(Exception) { Debug.Assert(false); }
 
@@ -74,7 +74,7 @@ namespace KeePass.Util
 			}
 		}
 
-		private void OnSessionEnded(object sender, SessionEndedEventArgs e)
+		private void OnSessionEnding(object sender, SessionEndingEventArgs e)
 		{
 			if(m_evHandler != null) m_evHandler(sender, e);
 		}

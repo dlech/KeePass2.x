@@ -78,7 +78,7 @@ namespace KeePass.Forms
 			}
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_FilePrint, strTitle,
 				strDesc);
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -28,19 +29,229 @@ using KeePassLib.Utility;
 
 namespace KeePass.App
 {
-	public enum AppPolicyFlag
+	/// <summary>
+	/// Application policy IDs.
+	/// </summary>
+	public enum AppPolicyID
 	{
 		Plugins = 0,
 		Export,
 		Import,
 		Print,
-		SaveDatabase,
+		SaveFile,
 		AutoType,
 		CopyToClipboard,
-		DragDrop,
-		Count
+		DragDrop
 	}
 
+	/// <summary>
+	/// Application policy flags.
+	/// </summary>
+	public sealed class AppPolicyFlags
+	{
+		private bool m_bPlugins = true;
+		public bool Plugins
+		{
+			get { return m_bPlugins; }
+			set { m_bPlugins = value; }
+		}
+
+		private bool m_bExport = true;
+		public bool Export
+		{
+			get { return m_bExport;}
+			set { m_bExport = value;}
+		}
+
+		private bool m_bImport = true;
+		public bool Import
+		{
+			get { return m_bImport; }
+			set { m_bImport = value; }
+		}
+
+		private bool m_bPrint = true;
+		public bool Print
+		{
+			get { return m_bPrint; }
+			set { m_bPrint = value; }
+		}
+
+		private bool m_bSave = true;
+		public bool SaveFile
+		{
+			get { return m_bSave; }
+			set { m_bSave = value; }
+		}
+
+		private bool m_bAutoType = true;
+		public bool AutoType
+		{
+			get { return m_bAutoType; }
+			set { m_bAutoType = value; }
+		}
+
+		private bool m_bClipboard = true;
+		public bool CopyToClipboard
+		{
+			get { return m_bClipboard; }
+			set { m_bClipboard = value; }
+		}
+
+		private bool m_bDragDrop = true;
+		public bool DragDrop
+		{
+			get { return m_bDragDrop; }
+			set { m_bDragDrop = value; }
+		}
+
+		public AppPolicyFlags CloneDeep()
+		{
+			return (AppPolicyFlags)this.MemberwiseClone();
+		}
+	}
+
+	/// <summary>
+	/// Application policy settings.
+	/// </summary>
+	public static class AppPolicy
+	{
+		private static AppPolicyFlags m_apfCurrent = new AppPolicyFlags();
+		// private static AppPolicyFlags m_apfNew = new AppPolicyFlags();
+
+		public static AppPolicyFlags Current
+		{
+			get { return m_apfCurrent; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_apfCurrent = value;
+			}
+		}
+
+		/* public static AppPolicyFlags New
+		{
+			get { return m_apfNew; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_apfNew = value;
+			}
+		} */
+
+		private static string PolicyToString(AppPolicyID flag, bool bPrefix)
+		{
+			string str = (bPrefix ? "* " : string.Empty);
+			str += KPRes.Flag + @": ";
+
+			switch(flag)
+			{
+				case AppPolicyID.Plugins:
+					str += KPRes.Plugins;
+					break;
+				case AppPolicyID.Export:
+					str += KPRes.Export;
+					break;
+				case AppPolicyID.Import:
+					str += KPRes.Import;
+					break;
+				case AppPolicyID.Print:
+					str += KPRes.Print;
+					break;
+				case AppPolicyID.SaveFile:
+					str += KPRes.SaveDatabase;
+					break;
+				case AppPolicyID.AutoType:
+					str += KPRes.AutoType;
+					break;
+				case AppPolicyID.CopyToClipboard:
+					str += KPRes.Clipboard;
+					break;
+				case AppPolicyID.DragDrop:
+					str += KPRes.DragDrop;
+					break;
+				default:
+					Debug.Assert(false);
+					str += KPRes.Unknown + ".";
+					break;
+			}
+
+			str += MessageService.NewLine;
+			if(bPrefix) str += "* ";
+			str += KPRes.Description + @": ";
+
+			switch(flag)
+			{
+				case AppPolicyID.Plugins:
+					str += KPRes.PolicyPluginsDesc;
+					break;
+				case AppPolicyID.Export:
+					str += KPRes.PolicyExportDesc;
+					break;
+				case AppPolicyID.Import:
+					str += KPRes.PolicyImportDesc;
+					break;
+				case AppPolicyID.Print:
+					str += KPRes.PolicyPrintDesc;
+					break;
+				case AppPolicyID.SaveFile:
+					str += KPRes.PolicySaveDatabaseDesc;
+					break;
+				case AppPolicyID.AutoType:
+					str += KPRes.PolicyAutoTypeDesc;
+					break;
+				case AppPolicyID.CopyToClipboard:
+					str += KPRes.PolicyClipboardDesc;
+					break;
+				case AppPolicyID.DragDrop:
+					str += KPRes.PolicyDragDropDesc;
+					break;
+				default:
+					Debug.Assert(false);
+					str += KPRes.Unknown + ".";
+					break;
+			}
+
+			return str;
+		}
+
+		public static string RequiredPolicyMessage(AppPolicyID flag)
+		{
+			string str = KPRes.PolicyDisallowed + MessageService.NewParagraph;
+			str += KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine;
+			str += PolicyToString(flag, true);
+
+			return str;
+		}
+
+		public static bool Try(AppPolicyID flag)
+		{
+			bool bAllowed = true;
+
+			switch(flag)
+			{
+				case AppPolicyID.Plugins: bAllowed = m_apfCurrent.Plugins; break;
+				case AppPolicyID.Export: bAllowed = m_apfCurrent.Export; break;
+				case AppPolicyID.Import: bAllowed = m_apfCurrent.Import; break;
+				case AppPolicyID.Print: bAllowed = m_apfCurrent.Print; break;
+				case AppPolicyID.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
+				case AppPolicyID.AutoType: bAllowed = m_apfCurrent.AutoType; break;
+				case AppPolicyID.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
+				case AppPolicyID.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
+				default: Debug.Assert(false); break;
+			}
+
+			if(bAllowed == false)
+			{
+				string strMsg = RequiredPolicyMessage(flag);
+				MessageService.ShowWarning(strMsg);
+			}
+
+			return bAllowed;
+		}
+	}
+
+	/*
 	/// <summary>
 	/// Application policy settings
 	/// </summary>
@@ -170,4 +381,5 @@ namespace KeePass.App
 			return bAllowed;
 		}
 	}
+	*/
 }

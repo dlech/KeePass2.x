@@ -235,7 +235,7 @@ namespace KeePassLib.Utility
 				{
 					str = StrUtil.ReplaceCaseInsensitive(str, @"{DOCDIR}",
 						new ProtectedString(false,
-						UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Url,
+						UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Path,
 						false)), bCmdQuotes, bDataAsKeySequence);
 				}
 			}

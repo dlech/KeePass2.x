@@ -45,7 +45,7 @@ using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-#if !COMPACT_FRAMEWORK_V10
+#if !NETCF_1_0
 using ICSharpCode.SharpZipLib.Encryption;
 #endif
 
@@ -121,6 +121,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <summary>
 		/// Creates a new Zip input stream, for reading a zip archive.
 		/// </summary>
+		/// <param name="baseInputStream">The underlying <see cref="Stream"/> providing data.</param>
 		public ZipInputStream(Stream baseInputStream)
 			: base(baseInputStream, new Inflater(true))
 		{
@@ -131,6 +132,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <summary>
 		/// Optional password used for encryption when non-null
 		/// </summary>
+		/// <value>A password for all encrypted <see cref="ZipEntry">entries </see> in this <see cref="ZipInputStream"/></value>
 		public string Password
 		{
 			get {
@@ -143,7 +145,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		
 		
 		/// <summary>
-		/// Gets a value indicating if there is a current entry  and it can be decompressed
+		/// Gets a value indicating if there is a current entry and it can be decompressed
 		/// </summary>
 		/// <remarks>
 		/// The entry can only be decompressed if the library supports the zip features required to extract it.
@@ -184,10 +186,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 			int header = inputBuffer.ReadLeInt();
 			
 			if (header == ZipConstants.CentralHeaderSignature ||
-			    header == ZipConstants.EndOfCentralDirectorySignature ||
-			    header == ZipConstants.CentralHeaderDigitalSignature ||
+				header == ZipConstants.EndOfCentralDirectorySignature ||
+				header == ZipConstants.CentralHeaderDigitalSignature ||
 				header == ZipConstants.ArchiveExtraDataSignature ||
-			    header == ZipConstants.Zip64CentralFileHeaderSignature) {
+				header == ZipConstants.Zip64CentralFileHeaderSignature) {
 				// No more individual entries exist
 				Close();
 				return null;
@@ -231,7 +233,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				entry.Size = size & 0xFFFFFFFFL;
 				entry.CompressedSize = csize & 0xFFFFFFFFL;
 
-				entry.CryptoCheckValue = (byte)(crc2 >> 24);
+				entry.CryptoCheckValue = (byte)((crc2 >> 24) & 0xff);
 
 			} else {
 				
@@ -427,12 +429,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <returns>
 		/// The byte or -1 if end of stream is reached.
 		/// </returns>
-		/// <exception name="System.IO.IOException">
-		/// An i/o error occured.
-		/// </exception>
-		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
-		/// The deflated stream is corrupted.
-		/// </exception>
 		public override int ReadByte()
 		{
 			byte[] b = new byte[1];
@@ -478,8 +474,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 			
 			// Handle encryption if required.
 			if (entry.IsCrypted) {
-#if COMPACT_FRAMEWORK_V10
-				throw new ZipException("Encyptiong not supported for Compact Framework 1.0");
+#if NETCF_1_0
+				throw new ZipException("Encryption not supported for Compact Framework 1.0");
 #else
 				if (password == null) {
 					throw new ZipException("No password set.");
@@ -487,7 +483,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				
 				// Generate and set crypto transform...
 				PkzipClassicManaged managed = new PkzipClassicManaged();
-				byte[] key = PkzipClassic.GenerateKeys(Encoding.ASCII.GetBytes(password));
+				byte[] key = PkzipClassic.GenerateKeys(ZipConstants.ConvertToArray(password));
 				
 				inputBuffer.CryptoTransform = managed.CreateDecryptor(key, null);
 				
@@ -501,9 +497,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if (csize >= ZipConstants.CryptoHeaderSize) {
 					csize -= ZipConstants.CryptoHeaderSize;
 				}
+				else if ( (entry.Flags & (int)GeneralBitFlags.Descriptor) == 0 ) {
+					throw new ZipException(string.Format("Entry compressed size {0} too small for encryption", csize));
+				}
 #endif				
 			} else {
-#if !COMPACT_FRAMEWORK_V10
+#if !NETCF_1_0
 				inputBuffer.CryptoTransform = null;
 #endif				
 			}
@@ -531,7 +530,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 
 			if ( offset < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("offset");
 #else
 				throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
@@ -539,7 +538,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 
 			if ( count < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
 #else
 				throw new ArgumentOutOfRangeException("count", "Cannot be negative");

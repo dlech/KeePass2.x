@@ -31,7 +31,7 @@ using System.Diagnostics;
 using KeePass.UI;
 using KeePass.Resources;
 
-using KeePassLib.Cryptography;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -46,9 +46,9 @@ namespace KeePass.Forms
 			get { return m_pbEntropy; }
 		}
 
-		public static byte[] CollectEntropyIfEnabled(PasswordGenerationOptions opt)
+		public static byte[] CollectEntropyIfEnabled(PwProfile pp)
 		{
-			if(opt.CollectUserEntropy == false) return null;
+			if(pp.CollectUserEntropy == false) return null;
 
 			EntropyForm ef = new EntropyForm();
 			if(ef.ShowDialog() == DialogResult.OK)
@@ -67,7 +67,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Binary, KPRes.EntropyTitle,
 				KPRes.EntropyDesc);
 			this.Icon = Properties.Resources.KeePass;

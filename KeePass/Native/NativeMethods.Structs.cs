@@ -23,6 +23,7 @@ using System.Security;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace KeePass.Native
 {
@@ -96,6 +97,23 @@ namespace KeePass.Native
 			public Byte bAnimation;
 			public Byte bRevAuthor;
 			public Byte bReserved1;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct RECT
+		{
+			public Int32 Left;
+			public Int32 Top;
+			public Int32 Right;
+			public Int32 Bottom;
+
+			public RECT(Rectangle rect)
+			{
+				this.Left = rect.Left;
+				this.Top = rect.Top;
+				this.Right = rect.Right;
+				this.Bottom = rect.Bottom;
+			}
 		}
 	}
 }

@@ -155,9 +155,9 @@
 			this.m_cbSmallMono.AutoSize = true;
 			this.m_cbSmallMono.Location = new System.Drawing.Point(7, 66);
 			this.m_cbSmallMono.Name = "m_cbSmallMono";
-			this.m_cbSmallMono.Size = new System.Drawing.Size(183, 17);
+			this.m_cbSmallMono.Size = new System.Drawing.Size(176, 17);
 			this.m_cbSmallMono.TabIndex = 4;
-			this.m_cbSmallMono.Text = "Use Extra Small Monospace Font";
+			this.m_cbSmallMono.Text = "Use extra small monospace font";
 			this.m_cbSmallMono.UseVisualStyleBackColor = true;
 			// 
 			// m_cbMonospaceForPasswords
@@ -167,9 +167,9 @@
 			this.m_cbMonospaceForPasswords.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbMonospaceForPasswords.Location = new System.Drawing.Point(7, 43);
 			this.m_cbMonospaceForPasswords.Name = "m_cbMonospaceForPasswords";
-			this.m_cbMonospaceForPasswords.Size = new System.Drawing.Size(200, 17);
+			this.m_cbMonospaceForPasswords.Size = new System.Drawing.Size(192, 17);
 			this.m_cbMonospaceForPasswords.TabIndex = 3;
-			this.m_cbMonospaceForPasswords.Text = "Use Monospace Font For Passwords";
+			this.m_cbMonospaceForPasswords.Text = "Use monospace font for passwords";
 			this.m_cbMonospaceForPasswords.UseVisualStyleBackColor = true;
 			// 
 			// m_rbMonospace
@@ -234,9 +234,9 @@
 			this.m_cbGroups.AutoSize = true;
 			this.m_cbGroups.Location = new System.Drawing.Point(6, 65);
 			this.m_cbGroups.Name = "m_cbGroups";
-			this.m_cbGroups.Size = new System.Drawing.Size(86, 17);
+			this.m_cbGroups.Size = new System.Drawing.Size(84, 17);
 			this.m_cbGroups.TabIndex = 10;
-			this.m_cbGroups.Text = "Group Name";
+			this.m_cbGroups.Text = "Group name";
 			this.m_cbGroups.UseVisualStyleBackColor = true;
 			// 
 			// m_linkDeselectAllFields
@@ -266,9 +266,9 @@
 			this.m_cbAutoType.AutoSize = true;
 			this.m_cbAutoType.Location = new System.Drawing.Point(461, 42);
 			this.m_cbAutoType.Name = "m_cbAutoType";
-			this.m_cbAutoType.Size = new System.Drawing.Size(75, 17);
+			this.m_cbAutoType.Size = new System.Drawing.Size(71, 17);
 			this.m_cbAutoType.TabIndex = 9;
-			this.m_cbAutoType.Text = "Auto-Type";
+			this.m_cbAutoType.Text = "Auto-type";
 			this.m_cbAutoType.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastAccess
@@ -276,9 +276,9 @@
 			this.m_cbLastAccess.AutoSize = true;
 			this.m_cbLastAccess.Location = new System.Drawing.Point(241, 42);
 			this.m_cbLastAccess.Name = "m_cbLastAccess";
-			this.m_cbLastAccess.Size = new System.Drawing.Size(110, 17);
+			this.m_cbLastAccess.Size = new System.Drawing.Size(105, 17);
 			this.m_cbLastAccess.TabIndex = 7;
-			this.m_cbLastAccess.Text = "Last Access Time";
+			this.m_cbLastAccess.Text = "Last access time";
 			this.m_cbLastAccess.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastMod
@@ -286,9 +286,9 @@
 			this.m_cbLastMod.AutoSize = true;
 			this.m_cbLastMod.Location = new System.Drawing.Point(103, 42);
 			this.m_cbLastMod.Name = "m_cbLastMod";
-			this.m_cbLastMod.Size = new System.Drawing.Size(132, 17);
+			this.m_cbLastMod.Size = new System.Drawing.Size(127, 17);
 			this.m_cbLastMod.TabIndex = 6;
-			this.m_cbLastMod.Text = "Last Modification Time";
+			this.m_cbLastMod.Text = "Last modification time";
 			this.m_cbLastMod.UseVisualStyleBackColor = true;
 			// 
 			// m_cbCreation
@@ -296,9 +296,9 @@
 			this.m_cbCreation.AutoSize = true;
 			this.m_cbCreation.Location = new System.Drawing.Point(6, 42);
 			this.m_cbCreation.Name = "m_cbCreation";
-			this.m_cbCreation.Size = new System.Drawing.Size(91, 17);
+			this.m_cbCreation.Size = new System.Drawing.Size(87, 17);
 			this.m_cbCreation.TabIndex = 5;
-			this.m_cbCreation.Text = "Creation Time";
+			this.m_cbCreation.Text = "Creation time";
 			this.m_cbCreation.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExpire
@@ -306,9 +306,9 @@
 			this.m_cbExpire.AutoSize = true;
 			this.m_cbExpire.Location = new System.Drawing.Point(357, 42);
 			this.m_cbExpire.Name = "m_cbExpire";
-			this.m_cbExpire.Size = new System.Drawing.Size(98, 17);
+			this.m_cbExpire.Size = new System.Drawing.Size(94, 17);
 			this.m_cbExpire.TabIndex = 8;
-			this.m_cbExpire.Text = "Expiration Time";
+			this.m_cbExpire.Text = "Expiration time";
 			this.m_cbExpire.UseVisualStyleBackColor = true;
 			// 
 			// m_cbNotes
@@ -352,9 +352,9 @@
 			this.m_cbUser.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbUser.Location = new System.Drawing.Point(103, 19);
 			this.m_cbUser.Name = "m_cbUser";
-			this.m_cbUser.Size = new System.Drawing.Size(79, 17);
+			this.m_cbUser.Size = new System.Drawing.Size(77, 17);
 			this.m_cbUser.TabIndex = 1;
-			this.m_cbUser.Text = "User Name";
+			this.m_cbUser.Text = "User name";
 			this.m_cbUser.UseVisualStyleBackColor = true;
 			// 
 			// m_cbTitle

@@ -92,9 +92,9 @@
 			this.m_lblFileEncoding.AutoSize = true;
 			this.m_lblFileEncoding.Location = new System.Drawing.Point(9, 15);
 			this.m_lblFileEncoding.Name = "m_lblFileEncoding";
-			this.m_lblFileEncoding.Size = new System.Drawing.Size(74, 13);
+			this.m_lblFileEncoding.Size = new System.Drawing.Size(73, 13);
 			this.m_lblFileEncoding.TabIndex = 2;
-			this.m_lblFileEncoding.Text = "File Encoding:";
+			this.m_lblFileEncoding.Text = "File encoding:";
 			// 
 			// m_cmbEncoding
 			// 
@@ -108,9 +108,9 @@
             "UTF-32",
             "Unicode",
             "Big Endian Unicode"});
-			this.m_cmbEncoding.Location = new System.Drawing.Point(113, 12);
+			this.m_cmbEncoding.Location = new System.Drawing.Point(105, 12);
 			this.m_cmbEncoding.Name = "m_cmbEncoding";
-			this.m_cmbEncoding.Size = new System.Drawing.Size(220, 21);
+			this.m_cmbEncoding.Size = new System.Drawing.Size(228, 21);
 			this.m_cmbEncoding.TabIndex = 3;
 			this.m_cmbEncoding.SelectedIndexChanged += new System.EventHandler(this.OnCmbEncodingSelectedIndexChanged);
 			// 
@@ -176,11 +176,12 @@
 			// 
 			// m_tbSourcePreview
 			// 
-			this.m_tbSourcePreview.Location = new System.Drawing.Point(113, 39);
+			this.m_tbSourcePreview.AcceptsReturn = true;
+			this.m_tbSourcePreview.Location = new System.Drawing.Point(105, 39);
 			this.m_tbSourcePreview.Multiline = true;
 			this.m_tbSourcePreview.Name = "m_tbSourcePreview";
 			this.m_tbSourcePreview.ReadOnly = true;
-			this.m_tbSourcePreview.Size = new System.Drawing.Size(664, 90);
+			this.m_tbSourcePreview.Size = new System.Drawing.Size(672, 90);
 			this.m_tbSourcePreview.TabIndex = 5;
 			// 
 			// m_lblSourcePreview
@@ -188,9 +189,9 @@
 			this.m_lblSourcePreview.AutoSize = true;
 			this.m_lblSourcePreview.Location = new System.Drawing.Point(9, 42);
 			this.m_lblSourcePreview.Name = "m_lblSourcePreview";
-			this.m_lblSourcePreview.Size = new System.Drawing.Size(70, 13);
+			this.m_lblSourcePreview.Size = new System.Drawing.Size(68, 13);
 			this.m_lblSourcePreview.TabIndex = 4;
-			this.m_lblSourcePreview.Text = "Source Data:";
+			this.m_lblSourcePreview.Text = "Source data:";
 			// 
 			// m_lvHeaderOrder
 			// 
@@ -208,9 +209,9 @@
             this.m_chOrderIgnore1,
             this.m_chOrderIgnore2});
 			this.m_lvHeaderOrder.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvHeaderOrder.Location = new System.Drawing.Point(113, 135);
+			this.m_lvHeaderOrder.Location = new System.Drawing.Point(105, 135);
 			this.m_lvHeaderOrder.Name = "m_lvHeaderOrder";
-			this.m_lvHeaderOrder.Size = new System.Drawing.Size(664, 24);
+			this.m_lvHeaderOrder.Size = new System.Drawing.Size(672, 24);
 			this.m_lvHeaderOrder.TabIndex = 7;
 			this.m_lvHeaderOrder.UseCompatibleStateImageBehavior = false;
 			this.m_lvHeaderOrder.View = System.Windows.Forms.View.Details;
@@ -269,41 +270,41 @@
 			this.m_lblOrder.AutoSize = true;
 			this.m_lblOrder.Location = new System.Drawing.Point(9, 141);
 			this.m_lblOrder.Name = "m_lblOrder";
-			this.m_lblOrder.Size = new System.Drawing.Size(95, 13);
+			this.m_lblOrder.Size = new System.Drawing.Size(90, 13);
 			this.m_lblOrder.TabIndex = 6;
-			this.m_lblOrder.Text = "Define Field Order:";
+			this.m_lblOrder.Text = "Define field order:";
 			// 
 			// m_lblOrderHint
 			// 
 			this.m_lblOrderHint.AutoSize = true;
-			this.m_lblOrderHint.Location = new System.Drawing.Point(110, 162);
+			this.m_lblOrderHint.Location = new System.Drawing.Point(102, 162);
 			this.m_lblOrderHint.Name = "m_lblOrderHint";
-			this.m_lblOrderHint.Size = new System.Drawing.Size(489, 13);
+			this.m_lblOrderHint.Size = new System.Drawing.Size(499, 13);
 			this.m_lblOrderHint.TabIndex = 8;
-			this.m_lblOrderHint.Text = "Drag&&drop the columns to define the order of the fields in the CSV file. (Ignore" +
-				") columns will be ignored.";
+			this.m_lblOrderHint.Text = "Drag&&drop the columns to define the order of the fields in the CSV file. \"(Ignor" +
+				"e)\" columns will be ignored.";
 			// 
 			// m_lblPreview
 			// 
 			this.m_lblPreview.AutoSize = true;
 			this.m_lblPreview.Location = new System.Drawing.Point(9, 217);
 			this.m_lblPreview.Name = "m_lblPreview";
-			this.m_lblPreview.Size = new System.Drawing.Size(127, 13);
+			this.m_lblPreview.Size = new System.Drawing.Size(125, 13);
 			this.m_lblPreview.TabIndex = 12;
-			this.m_lblPreview.Text = "Imported Entries Preview:";
+			this.m_lblPreview.Text = "Imported entries preview:";
 			// 
 			// m_lblDelimiter
 			// 
 			this.m_lblDelimiter.AutoSize = true;
 			this.m_lblDelimiter.Location = new System.Drawing.Point(9, 187);
 			this.m_lblDelimiter.Name = "m_lblDelimiter";
-			this.m_lblDelimiter.Size = new System.Drawing.Size(75, 13);
+			this.m_lblDelimiter.Size = new System.Drawing.Size(73, 13);
 			this.m_lblDelimiter.TabIndex = 9;
-			this.m_lblDelimiter.Text = "Field Delimiter:";
+			this.m_lblDelimiter.Text = "Field delimiter:";
 			// 
 			// m_tbSepChar
 			// 
-			this.m_tbSepChar.Location = new System.Drawing.Point(113, 184);
+			this.m_tbSepChar.Location = new System.Drawing.Point(105, 184);
 			this.m_tbSepChar.Name = "m_tbSepChar";
 			this.m_tbSepChar.Size = new System.Drawing.Size(35, 20);
 			this.m_tbSepChar.TabIndex = 10;
@@ -312,11 +313,11 @@
 			// m_cbDoubleQuoteToSingle
 			// 
 			this.m_cbDoubleQuoteToSingle.AutoSize = true;
-			this.m_cbDoubleQuoteToSingle.Location = new System.Drawing.Point(296, 186);
+			this.m_cbDoubleQuoteToSingle.Location = new System.Drawing.Point(165, 186);
 			this.m_cbDoubleQuoteToSingle.Name = "m_cbDoubleQuoteToSingle";
-			this.m_cbDoubleQuoteToSingle.Size = new System.Drawing.Size(247, 17);
+			this.m_cbDoubleQuoteToSingle.Size = new System.Drawing.Size(238, 17);
 			this.m_cbDoubleQuoteToSingle.TabIndex = 11;
-			this.m_cbDoubleQuoteToSingle.Text = "Replace Double Quote (\"\") By Single Quote (\")";
+			this.m_cbDoubleQuoteToSingle.Text = "Replace double quote (\"\") by single quote (\")";
 			this.m_cbDoubleQuoteToSingle.UseVisualStyleBackColor = true;
 			this.m_cbDoubleQuoteToSingle.CheckedChanged += new System.EventHandler(this.OnDoubleQuoteCheckedChanged);
 			// 

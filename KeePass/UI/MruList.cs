@@ -37,7 +37,7 @@ namespace KeePass.UI
 		/// Function that is called when an MRU item is executed (i.e. when
 		/// the user has clicked the menu item).
 		/// </summary>
-		void OnMruExecute(string strDisplayName, string strTag);
+		void OnMruExecute(string strDisplayName, object oTag);
 
 		/// <summary>
 		/// Function to clear the MRU (for example all menu items must be
@@ -52,8 +52,8 @@ namespace KeePass.UI
 		private ToolStripMenuItem m_tsmiContainer = null;
 
 		private uint m_uMaxItemCount = 0;
-		private List<KeyValuePair<string, string>> m_vItems =
-			new List<KeyValuePair<string, string>>();
+		private List<KeyValuePair<string, object>> m_vItems =
+			new List<KeyValuePair<string, object>>();
 
 		public uint MaxItemCount
 		{
@@ -87,32 +87,32 @@ namespace KeePass.UI
 			m_tsmiContainer = tsmiContainer;
 		}
 
-		public void AddItem(string strDisplayName, string strTag)
+		public void AddItem(string strDisplayName, object oTag)
 		{
 			Debug.Assert(strDisplayName != null);
 			if(strDisplayName == null) throw new ArgumentNullException("strDisplayName");
-			Debug.Assert(strTag != null);
-			if(strTag == null) throw new ArgumentNullException("strTag");
+			Debug.Assert(oTag != null);
+			if(oTag == null) throw new ArgumentNullException("oTag");
 
 			bool bExists = false;
-			foreach(KeyValuePair<string, string> kvp in m_vItems)
-				if(kvp.Value == strTag)
+			foreach(KeyValuePair<string, object> kvp in m_vItems)
+				if(kvp.Key == strDisplayName)
 				{
 					bExists = true;
 					break;
 				}
 
-			if(bExists) MoveItemToTop(strTag);
+			if(bExists) this.MoveItemToTop(strDisplayName);
 			else
 			{
-				m_vItems.Insert(0, new KeyValuePair<string, string>(strDisplayName,
-					strTag));
+				m_vItems.Insert(0, new KeyValuePair<string, object>(
+					strDisplayName, oTag));
 
 				if(m_vItems.Count >= m_uMaxItemCount)
 					m_vItems.RemoveAt(m_vItems.Count - 1);
 			}
 
-			UpdateMenu();
+			this.UpdateMenu();
 		}
 
 		public void UpdateMenu()
@@ -123,7 +123,7 @@ namespace KeePass.UI
 
 			if(m_vItems.Count > 0)
 			{
-				foreach(KeyValuePair<string, string> kvp in m_vItems)
+				foreach(KeyValuePair<string, object> kvp in m_vItems)
 				{
 					ToolStripMenuItem tsi = new ToolStripMenuItem(kvp.Key);
 					tsi.Click += ClickedHandler;
@@ -147,7 +147,7 @@ namespace KeePass.UI
 			}
 		}
 
-		public KeyValuePair<string, string> GetItem(uint uIndex)
+		public KeyValuePair<string, object> GetItem(uint uIndex)
 		{
 			Debug.Assert(uIndex < (uint)m_vItems.Count);
 			if(uIndex >= (uint)m_vItems.Count) throw new ArgumentException();
@@ -161,20 +161,20 @@ namespace KeePass.UI
 			if(tsi == null) { Debug.Assert(false); return; }
 
 			string strName = tsi.Text;
-			string strTag = tsi.Tag as string;
+			object oTag = tsi.Tag;
 
-			MoveItemToTop(strTag);
+			this.MoveItemToTop(strName);
 
-			if(m_handler != null) m_handler.OnMruExecute(strName, strTag);
+			if(m_handler != null) m_handler.OnMruExecute(strName, oTag);
 		}
 
-		private void MoveItemToTop(string strTag)
+		private void MoveItemToTop(string strName)
 		{
 			for(int i = 0; i < m_vItems.Count; ++i)
 			{
-				if(m_vItems[i].Value == strTag)
+				if(m_vItems[i].Key == strName)
 				{
-					KeyValuePair<string, string> t = m_vItems[i];
+					KeyValuePair<string, object> t = m_vItems[i];
 					m_vItems.RemoveAt(i);
 					m_vItems.Insert(0, t);
 

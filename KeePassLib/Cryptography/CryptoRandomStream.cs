@@ -127,5 +127,15 @@ namespace KeePassLib.Cryptography
 
 			return pbRet;
 		}
+
+		public ulong GetRandomUInt64()
+		{
+			byte[] pb = this.GetRandomBytes(8);
+
+			return ((ulong)pb[0]) | ((ulong)pb[1] << 8) |
+				((ulong)pb[2] << 16) | ((ulong)pb[3] << 24) |
+				((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
+				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
+		}
 	}
 }

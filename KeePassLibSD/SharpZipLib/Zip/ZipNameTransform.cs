@@ -36,6 +36,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 using ICSharpCode.SharpZipLib.Core;
 
@@ -62,9 +63,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <param name="trimPrefix">The string to trim from front of paths if found.</param>
 		public ZipNameTransform(string trimPrefix)
 		{
-			if ( trimPrefix != null ) {
-				trimPrefix_ = trimPrefix.ToLower();
-			}
+			TrimPrefix = trimPrefix;
 		}
 		#endregion
 		
@@ -74,7 +73,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		static ZipNameTransform()
 		{
 			char[] invalidPathChars;
-#if NET_VER_1 || COMPACT_FRAMEWORK_V10
+#if NET_1_0 || NET_1_1 || NETCF_1_0
 			invalidPathChars = Path.InvalidPathChars;
 #else
 			invalidPathChars = Path.GetInvalidPathChars();
@@ -116,7 +115,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
-		/// Transform a file name according to the Zip file naming conventions.
+		/// Transform a windows file name according to the Zip file naming conventions.
 		/// </summary>
 		/// <param name="name">The file name to transform.</param>
 		/// <returns>The transformed name.</returns>
@@ -127,7 +126,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if ( (trimPrefix_ != null) && (lowerName.IndexOf(trimPrefix_) == 0) ) {
 					name = name.Substring(trimPrefix_.Length);
 				}
-				
+
+				// The following can throw exceptions when the name contains invalid characters
 				if (Path.IsPathRooted(name) == true) {
 					// NOTE:
 					// for UNC names...  \\machine\share\zoom\beet.txt gives \zoom\beet.txt
@@ -139,6 +139,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				while ( (name.Length > 0) && (name[0] == '/')) {
 					name = name.Remove(0, 1);
 				}
+
+				name = MakeValidName(name, '_');
 			}
 			else {
 				name = string.Empty;
@@ -149,10 +151,44 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <summary>
 		/// Get/set the path prefix to be trimmed from paths if present.
 		/// </summary>
+		/// <remarks>The prefix is trimmed before any conversion from
+		/// a windows path is done.</remarks>
 		public string TrimPrefix
 		{
 			get { return trimPrefix_; }
-			set { trimPrefix_ = value; }
+			set {
+				trimPrefix_ = value;
+				if (trimPrefix_ != null) {
+					trimPrefix_ = trimPrefix_.ToLower();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Force a name to be valid by replacing invalid characters with a fixed value
+		/// </summary>
+		/// <param name="name">The name to force valid</param>
+		/// <param name="replacement">The replacement character to use.</param>
+		/// <returns>Returns a valid name</returns>
+		static string MakeValidName(string name, char replacement)
+		{
+			int index = name.IndexOfAny(InvalidEntryChars);
+			if (index > 0) {
+				StringBuilder builder = new StringBuilder(name);
+
+				while (index >= 0 ) {
+					builder[index] = replacement;
+
+					if (index >= name.Length) {
+						index = -1;
+					}
+					else {
+						index = name.IndexOfAny(InvalidEntryChars, index + 1);
+					}
+				}
+				name = builder.ToString();
+			}
+			return name;
 		}
 
 		/// <summary>
@@ -161,8 +197,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <param name="name">The name to test.</param>
 		/// <param name="relaxed">If true checking is relaxed about windows file names and absolute paths.</param>
 		/// <returns>Returns true if the name is a valid zip name; false otherwise.</returns>
-		/// <remarks>Zip path names are actually in Unix format,
-		/// and should only contain relative paths.
+		/// <remarks>Zip path names are actually in Unix format, and should only contain relative paths.
 		/// This means that any path stored should not contain a drive or
 		/// device letter, or a leading slash.  All slashes should forward slashes '/'.
 		/// An empty name is valid for a file where the input comes from standard input.
@@ -211,6 +246,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		#region Instance Fields
 		string trimPrefix_;
 		#endregion
+		
 		#region Class Fields
 		static readonly char[] InvalidEntryChars;
 		static readonly char[] InvalidEntryCharsRelaxed;

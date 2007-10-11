@@ -62,13 +62,13 @@ namespace KeePass.Forms
 			string strDesc = (m_bSave ? KPRes.UrlSaveDesc : KPRes.UrlOpenDesc);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				KeePass.Properties.Resources.B48x48_WWW, strTitle,
 				strDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
 
-			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Url);
+			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Path);
 			m_tbUserName.Text = m_ioc.UserName;
 			m_tbPassword.Text = m_ioc.Password;
 
@@ -87,7 +87,7 @@ namespace KeePass.Forms
 
 			// Give the user name field the focus, if URL is specified.
 			// Anyone knows a better solution than SendKeys?
-			if(m_ioc.Url.Length > 0) SendKeys.Send(@"{TAB}");
+			if(m_ioc.Path.Length > 0) SendKeys.Send(@"{TAB}");
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -100,7 +100,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			m_ioc.Url = strUrl;
+			m_ioc.Path = strUrl;
 			m_ioc.UserName = m_tbUserName.Text;
 			m_ioc.Password = m_tbPassword.Text;
 

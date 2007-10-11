@@ -152,10 +152,15 @@ namespace KeePass.Util
 
 		private static void CreateEntry(EntryTemplate et)
 		{
-			if(Program.MainForm.Database.IsOpen == false) { Debug.Assert(false); return; }
+			if(Program.MainForm.ActiveDatabase.IsOpen == false)
+			{
+				Debug.Assert(false);
+				return;
+			}
 
 			PwGroup pgContainer = Program.MainForm.GetSelectedGroup();
-			if(pgContainer == null) pgContainer = Program.MainForm.Database.RootGroup;
+			if(pgContainer == null)
+				pgContainer = Program.MainForm.ActiveDatabase.RootGroup;
 
 			PwEntry pe = new PwEntry(pgContainer, true, true);
 
@@ -167,17 +172,18 @@ namespace KeePass.Util
 				pe.Strings.Set(eti.Name, new ProtectedString(eti.Protected, string.Empty));
 
 			PwEntryForm pef = new PwEntryForm();
-			pef.InitEx(pe, PwEditMode.AddNewEntry, Program.MainForm.Database,
+			pef.InitEx(pe, PwEditMode.AddNewEntry, Program.MainForm.ActiveDatabase,
 				Program.MainForm.ClientIcons, true);
 
 			if(pef.ShowDialog() == DialogResult.OK)
 			{
 				pgContainer.Entries.Add(pe);
 
-				Program.MainForm.UpdateEntryList(null, true);
-				Program.MainForm.UpdateUIState(true);
+				// Program.MainForm.UpdateEntryList(null, true);
+				// Program.MainForm.UpdateUIState(true);
+				Program.MainForm.UpdateUI(false, null, false, null, true, null, true);
 			}
-			else Program.MainForm.UpdateUIState(false);
+			else Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
 		}
 
 		private static readonly EntryTemplate BankAccount = new EntryTemplate(

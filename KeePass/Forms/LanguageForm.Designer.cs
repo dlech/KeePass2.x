@@ -56,6 +56,7 @@
 			this.m_lvLanguages.Location = new System.Drawing.Point(13, 67);
 			this.m_lvLanguages.MultiSelect = false;
 			this.m_lvLanguages.Name = "m_lvLanguages";
+			this.m_lvLanguages.ShowItemToolTips = true;
 			this.m_lvLanguages.Size = new System.Drawing.Size(507, 248);
 			this.m_lvLanguages.SmallImageList = this.m_ilLanguages;
 			this.m_lvLanguages.TabIndex = 0;

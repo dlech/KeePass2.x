@@ -66,6 +66,9 @@ namespace KeePassLib
 		private bool m_bDatabaseOpened = false;
 		private bool m_bModified = false;
 
+		private PwUuid m_pwLastSelectedGroup = PwUuid.Zero;
+		private PwUuid m_pwLastTopVisibleGroup = PwUuid.Zero;
+
 		private static string m_strLocalizedAppName = string.Empty;
 
 		/// <summary>
@@ -250,6 +253,26 @@ namespace KeePassLib
 			set { m_bUINeedsIconUpdate = value; }
 		}
 
+		public PwUuid LastSelectedGroup
+		{
+			get { return m_pwLastSelectedGroup; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_pwLastSelectedGroup = value;
+			}
+		}
+
+		public PwUuid LastTopVisibleGroup
+		{
+			get { return m_pwLastTopVisibleGroup; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_pwLastTopVisibleGroup = value;
+			}
+		}
+
 		/// <summary>
 		/// Localized application name.
 		/// </summary>
@@ -296,6 +319,9 @@ namespace KeePassLib
 			m_ioSource = new IOConnectionInfo();
 			m_bDatabaseOpened = false;
 			m_bModified = false;
+
+			m_pwLastSelectedGroup = PwUuid.Zero;
+			m_pwLastTopVisibleGroup = PwUuid.Zero;
 		}
 
 		/// <summary>
@@ -320,7 +346,7 @@ namespace KeePassLib
 			m_bModified = true;
 
 			m_pgRootGroup = new PwGroup(true, true,
-				UrlUtil.StripExtension(UrlUtil.GetFileName(ioConnection.Url)),
+				UrlUtil.StripExtension(UrlUtil.GetFileName(ioConnection.Path)),
 				PwIcon.FolderOpen);
 			m_pgRootGroup.IsExpanded = true;
 		}
@@ -344,7 +370,7 @@ namespace KeePassLib
 			try
 			{
 				m_pgRootGroup = new PwGroup(true, true, UrlUtil.StripExtension(
-					UrlUtil.GetFileName(ioSource.Url)), PwIcon.FolderOpen);
+					UrlUtil.GetFileName(ioSource.Path)), PwIcon.FolderOpen);
 				m_pgRootGroup.IsExpanded = true;
 
 				m_pwUserKey = pwKey;
@@ -517,8 +543,8 @@ namespace KeePassLib
 
 			if(mm == PwMergeMethod.Synchronize)
 			{
-				ApplyDeletions(pwSource.m_vDeletedObjects);
-				ApplyDeletions(m_vDeletedObjects);
+				ApplyDeletions(pwSource.m_vDeletedObjects, true);
+				ApplyDeletions(m_vDeletedObjects, false);
 			}
 		}
 
@@ -526,7 +552,8 @@ namespace KeePassLib
 		/// Apply a list of deleted objects.
 		/// </summary>
 		/// <param name="listDelObjects">List of deleted objects.</param>
-		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects)
+		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects,
+			bool bCopyDeletionInfoToLocal)
 		{
 			Debug.Assert(listDelObjects != null); if(listDelObjects == null) throw new ArgumentNullException();
 
@@ -565,6 +592,29 @@ namespace KeePassLib
 				pg.ParentGroup.Groups.Remove(pg);
 			foreach(PwEntry pe in listEntriesToDelete)
 				pe.ParentGroup.Entries.Remove(pe);
+
+			if(bCopyDeletionInfoToLocal)
+			{
+				foreach(PwDeletedObject pdoNew in listDelObjects)
+				{
+					bool bCopy = true;
+
+					foreach(PwDeletedObject pdoLocal in m_vDeletedObjects)
+					{
+						if(pdoNew.Uuid.EqualsValue(pdoLocal.Uuid))
+						{
+							bCopy = false;
+
+							if(pdoNew.DeletionTime > pdoLocal.DeletionTime)
+								pdoLocal.DeletionTime = pdoNew.DeletionTime;
+
+							break;
+						}
+					}
+
+					if(bCopy) m_vDeletedObjects.Add(pdoNew);
+				}
+			}
 		}
 
 		/// <summary>
@@ -598,7 +648,7 @@ namespace KeePassLib
 				++nIndex;
 			}
 
-			Debug.Assert(false);
+			// Debug.Assert(false); // Do not assert
 			return -1;
 		}
 
@@ -614,6 +664,46 @@ namespace KeePassLib
 
 			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
 			else { Debug.Assert(false); return null; }
+		}
+
+		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
+		{
+			Debug.Assert(vUuidsToDelete != null);
+			if(vUuidsToDelete == null) throw new ArgumentNullException("vUuidsToDelete");
+			if(vUuidsToDelete.Count <= 0) return true;
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				PwUuid uuidThis = pe.CustomIconUuid;
+
+				if(uuidThis == PwUuid.Zero) return true;
+
+				foreach(PwUuid uuidDelete in vUuidsToDelete)
+				{
+					if(uuidThis.EqualsValue(uuidDelete))
+					{
+						pe.CustomIconUuid = PwUuid.Zero;
+						break;
+					}
+				}
+
+				return true;
+			};
+
+			if(!m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh))
+			{
+				Debug.Assert(false);
+				return false;
+			}
+
+			foreach(PwUuid pwUuid in vUuidsToDelete)
+			{
+				int nIndex = GetCustomIconIndex(pwUuid);
+
+				if(nIndex >= 0) m_vCustomIcons.RemoveAt(nIndex);
+			}
+
+			return true;
 		}
 	}
 }

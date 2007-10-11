@@ -26,6 +26,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
+using KeePass.Forms;
 using KeePass.Resources;
 
 using KeePassLib;
@@ -144,6 +145,37 @@ namespace KeePass.Util
 			}
 
 			gz.Close(); ms.Close();
+		}
+
+		public static string FillPlaceholders(string strText, PwEntry pe,
+			bool bDataAsKeySequence)
+		{
+			string str = strText;
+
+			if(str.ToUpper().IndexOf(@"{PICKPASSWORDCHARS}") >= 0)
+			{
+				ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
+				byte[] pb = ps.ReadUtf8();
+				bool bNotEmpty = (pb.Length > 0);
+				Array.Clear(pb, 0, pb.Length);
+
+				if(bNotEmpty)
+				{
+					CharPickerForm cpf = new CharPickerForm();
+					cpf.InitEx(ps, true, true);
+
+					if(cpf.ShowDialog() == DialogResult.OK)
+					{
+						str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
+							cpf.SelectedCharacters, false, bDataAsKeySequence);
+					}
+				}
+
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
+					new ProtectedString(false), false, bDataAsKeySequence);
+			}
+
+			return str;
 		}
 	}
 }

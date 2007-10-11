@@ -26,6 +26,8 @@ using System.Security.Cryptography;
 
 using KeePass.App;
 
+using KeePassLib;
+
 namespace KeePass.Util
 {
 	public static class ClipboardUtil
@@ -33,18 +35,22 @@ namespace KeePass.Util
 		private static string m_strFormat = null;
 		private static byte[] m_pbDataHash32 = null;
 
+		private const string ClipboardIgnoreFormatName = "Clipboard Viewer Ignore";
+
 		public static bool Copy(string strToCopy, bool bIsEntryInfo)
 		{
 			Debug.Assert(strToCopy != null);
 			if(strToCopy == null) throw new ArgumentNullException("strToCopy");
 
-			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyFlag.CopyToClipboard))
+			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyID.CopyToClipboard))
 				return false;
 
 			try
 			{
 				Clipboard.Clear();
-				Clipboard.SetText(strToCopy);
+
+				DataObject doData = CreateProtectedDataObject(strToCopy);
+				Clipboard.SetDataObject(doData);
 
 				m_pbDataHash32 = HashClipboard();
 				m_strFormat = null;
@@ -59,13 +65,15 @@ namespace KeePass.Util
 			Debug.Assert(pbToCopy != null);
 			if(pbToCopy == null) throw new ArgumentNullException("pbToCopy");
 
-			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyFlag.CopyToClipboard))
+			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyID.CopyToClipboard))
 				return false;
 
 			try
 			{
 				Clipboard.Clear();
-				Clipboard.SetData(strFormat, pbToCopy);
+
+				DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
+				Clipboard.SetDataObject(doData);
 
 				m_strFormat = strFormat;
 
@@ -140,6 +148,40 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		private static DataObject CreateProtectedDataObject(string strText)
+		{
+			DataObject d = new DataObject();
+			AttachIgnoreFormat(d);
+
+			Debug.Assert(strText != null); if(strText == null) return d;
+
+			if(strText.Length > 0) d.SetText(strText);
+			return d;
+		}
+
+		private static DataObject CreateProtectedDataObject(string strFormat,
+			byte[] pbData)
+		{
+			DataObject d = new DataObject();
+			AttachIgnoreFormat(d);
+
+			Debug.Assert(strFormat != null); if(strFormat == null) return d;
+			Debug.Assert(pbData != null); if(pbData == null) return d;
+
+			if(pbData.Length > 0) Clipboard.SetData(strFormat, pbData);
+			return d;
+		}
+
+		private static void AttachIgnoreFormat(DataObject doData)
+		{
+			Debug.Assert(doData != null); if(doData == null) return;
+
+			string strName = PwDefs.ProductName;
+
+			try { doData.SetData(ClipboardIgnoreFormatName, false, strName); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

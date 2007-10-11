@@ -83,6 +83,8 @@ namespace KeePassLib.Serialization
 		private const string ElemDbDesc = "DatabaseDescription";
 		private const string ElemDbDefaultUser = "DefaultUserName";
 		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
+		private const string ElemLastSelectedGroup = "LastSelectedGroup";
+		private const string ElemLastTopVisibleGroup = "LastTopVisibleGroup";
 
 		private const string ElemMemoryProt = "MemoryProtection";
 		private const string ElemProtTitle = "ProtectTitle";
@@ -133,6 +135,7 @@ namespace KeePassLib.Serialization
 		private const string AttrProtected = "Protected";
 
 		private const string ElemIsExpanded = "IsExpanded";
+		private const string ElemLastTopVisibleEntry = "LastTopVisibleEntry";
 
 		private const string ElemDeletedObjects = "DeletedObjects";
 		private const string ElemDeletedObject = "DeletedObject";

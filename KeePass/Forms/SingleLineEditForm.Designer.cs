@@ -33,13 +33,14 @@
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_tbEdit = new System.Windows.Forms.TextBox();
 			this.m_lblLongDesc = new System.Windows.Forms.Label();
+			this.m_cmbEdit = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(263, 132);
+			this.m_btnOK.Location = new System.Drawing.Point(263, 139);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 1;
@@ -50,7 +51,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(344, 132);
+			this.m_btnCancel.Location = new System.Drawing.Point(344, 139);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 2;
@@ -82,13 +83,24 @@
 			this.m_lblLongDesc.TabIndex = 3;
 			this.m_lblLongDesc.Text = "<>";
 			// 
+			// m_cmbEdit
+			// 
+			this.m_cmbEdit.DropDownHeight = 400;
+			this.m_cmbEdit.FormattingEnabled = true;
+			this.m_cmbEdit.IntegralHeight = false;
+			this.m_cmbEdit.Location = new System.Drawing.Point(12, 106);
+			this.m_cmbEdit.Name = "m_cmbEdit";
+			this.m_cmbEdit.Size = new System.Drawing.Size(407, 21);
+			this.m_cmbEdit.TabIndex = 4;
+			// 
 			// SingleLineEditForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(431, 167);
+			this.ClientSize = new System.Drawing.Size(431, 174);
+			this.Controls.Add(this.m_cmbEdit);
 			this.Controls.Add(this.m_lblLongDesc);
 			this.Controls.Add(this.m_tbEdit);
 			this.Controls.Add(this.m_bannerImage);
@@ -116,5 +128,6 @@
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.TextBox m_tbEdit;
 		private System.Windows.Forms.Label m_lblLongDesc;
+		private System.Windows.Forms.ComboBox m_cmbEdit;
 	}
 }

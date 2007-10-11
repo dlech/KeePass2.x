@@ -63,6 +63,18 @@ namespace KeePassLib.Native
 			return bResult;
 		}
 
+		public static bool IsUnix()
+		{
+			PlatformID p = Environment.OSVersion.Platform;
+
+			// Mono defines Unix as 128 in early .NET versions
+#if !KeePassLibSD
+			return ((p == PlatformID.Unix) || ((int)p == 128));
+#else
+			return (((int)p == 4) || ((int)p == 128));
+#endif
+		}
+
 		/// <summary>
 		/// Transform a key.
 		/// </summary>

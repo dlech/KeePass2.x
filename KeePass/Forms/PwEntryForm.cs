@@ -36,6 +36,7 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Cryptography;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -80,9 +81,6 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxNotes = new RichTextBoxContextMenu();
 
 		private readonly string DeriveFromPrevious = "(" + KPRes.GenPwBasedOnPrevious + ")";
-
-		private List<PasswordGenerationOptions> m_vPwGenOptions =
-			new List<PasswordGenerationOptions>();
 		private DynamicMenu m_dynGenProfiles;
 
 		public bool HasModifiedEntry
@@ -120,9 +118,13 @@ namespace KeePass.Forms
 			m_pwCustomIconID = m_pwEntry.CustomIconUuid;
 
 			if(m_pwCustomIconID != PwUuid.Zero)
-				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
-			else
-				m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+			{
+				int nInx = (int)PwIcon.Count + m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID);
+				if((nInx > -1) && (nInx < m_ilIcons.Images.Count))
+					m_btnIcon.Image = m_ilIcons.Images[nInx];
+				else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+			}
+			else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
 
 			bool bHideInitial = m_cbHidePassword.Checked;
 			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, bHideInitial);
@@ -131,7 +133,7 @@ namespace KeePass.Forms
 			m_tbTitle.Text = m_vStrings.ReadSafe(PwDefs.TitleField);
 			m_tbUserName.Text = m_vStrings.ReadSafe(PwDefs.UserNameField);
 
-			byte[] pb = m_vStrings.GetSafe(PwDefs.PasswordField).ReadUTF8();
+			byte[] pb = m_vStrings.GetSafe(PwDefs.PasswordField).ReadUtf8();
 			m_secPassword.SetPassword(pb);
 			m_secRepeat.SetPassword(pb);
 			MemUtil.ZeroByteArray(pb);
@@ -251,6 +253,8 @@ namespace KeePass.Forms
 				m_btnPickBgColor.Enabled = false;
 				m_tbOverrideUrl.ReadOnly = true;
 			}
+
+			m_tbUuid.Text = m_pwEntry.Uuid.ToHexString();
 		}
 
 		private void InitAutoTypeTab()
@@ -398,7 +402,7 @@ namespace KeePass.Forms
 			int w = m_bannerImage.ClientRectangle.Width;
 			int h = m_bannerImage.ClientRectangle.Height;
 			m_bannerImage.Image = BannerFactory.CreateBanner(w, h,
-				BannerFactory.BannerStyle.Default,
+				BannerStyle.Default,
 				KeePass.Properties.Resources.B48x48_KGPG_Sign,
 				strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
@@ -409,13 +413,11 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
-			if(AppConfigEx.GetBool(AppDefs.ConfigKeys.RememberHidingInDialogs))
-				m_cbHidePassword.Checked = AppConfigEx.GetBool(
-					AppDefs.ConfigKeys.HidePasswordInEntryForm.Key,
-					AppConfigEx.GetBool(AppDefs.ConfigKeys.HidePasswords));
+			if(Program.Config.UI.Hiding.SeparateHidingSettings)
+				m_cbHidePassword.Checked = Program.Config.UI.Hiding.HideInEntryWindow;
 			else
-				m_cbHidePassword.Checked = AppConfigEx.GetBool(
-					AppDefs.ConfigKeys.HidePasswords);
+				m_cbHidePassword.Checked = Program.Config.MainWindow.Columns[
+					PwDefs.PasswordField].HideWithAsterisks;
 
 			InitEntryTab();
 			InitAdvancedTab();
@@ -432,15 +434,19 @@ namespace KeePass.Forms
 			EnableControlsEx();
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
-				m_btnCancel.Focus();
-			else m_tbTitle.Focus();
+				m_btnCancel.Select();
+			else
+			{
+				m_tbTitle.Select(0, 0);
+				m_tbTitle.Select();
+			}
 		}
 
 		private void EnableControlsEx()
 		{
 			if(m_bInitializing) return;
 
-			byte[] pb = m_secPassword.ToUTF8();
+			byte[] pb = m_secPassword.ToUtf8();
 			uint uBits = QualityEstimation.EstimatePasswordBits(pb);
 			MemUtil.ZeroByteArray(pb);
 			m_lblQualityBitsText.Text = uBits.ToString() + " " + KPRes.Bits;
@@ -518,7 +524,7 @@ namespace KeePass.Forms
 			m_vStrings.Set(PwDefs.UserNameField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUserName,
 				m_tbUserName.Text));
 
-			byte[] pb = m_secPassword.ToUTF8();
+			byte[] pb = m_secPassword.ToUtf8();
 			m_vStrings.Set(PwDefs.PasswordField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectPassword,
 				pb));
 			MemUtil.ZeroByteArray(pb);
@@ -577,11 +583,13 @@ namespace KeePass.Forms
 			m_dynGenProfiles.MenuClick -= this.OnProfilesDynamicMenuClick;
 
 			if(m_pwEditMode != PwEditMode.ViewReadOnlyEntry)
-				AppConfigEx.SetValue(AppDefs.ConfigKeys.HidePasswordInEntryForm, m_cbHidePassword.Checked);
+				Program.Config.UI.Hiding.HideInEntryWindow = m_cbHidePassword.Checked;
 
 			m_ctxNotes.Detach();
 			m_secPassword.Detach();
 			m_secRepeat.Detach();
+
+			// m_ilIcons.Dispose();
 		}
 
 		private void OnCheckedHidePassword(object sender, EventArgs e)
@@ -657,23 +665,19 @@ namespace KeePass.Forms
 
 		private void OnBtnStrDelete(object sender, EventArgs e)
 		{
-			ListView.SelectedIndexCollection vSel = m_lvStrings.SelectedIndices;
+			ListView.SelectedListViewItemCollection lvsicSel = m_lvStrings.SelectedItems;
 
-			bool bPostResize = (vSel.Count > 0);
-
-			for(int i = 0; i < vSel.Count; i++)
+			for(int i = 0; i < lvsicSel.Count; i++)
 			{
-				int j = vSel.Count - i - 1;
-
-				if(m_pwEntry.Strings.Remove(m_lvStrings.Items[j].Text))
+				if(!m_vStrings.Remove(lvsicSel[i].Text))
 				{
-					m_lvStrings.Items.RemoveAt(j);
+					Debug.Assert(false);
 				}
-				else { Debug.Assert(false); }
 			}
 
-			if(bPostResize)
+			if(lvsicSel.Count > 0)
 			{
+				UpdateStringsList();
 				ResizeColumnHeaders();
 
 				m_bModifiedEntry = true;
@@ -1006,16 +1010,16 @@ namespace KeePass.Forms
 		private void OnBtnPickIcon(object sender, EventArgs e)
 		{
 			IconPickerForm ipf = new IconPickerForm();
-
-			ipf.InitEx(m_ilIcons, m_pwDatabase, (uint)m_pwEntryIcon,
-				m_pwCustomIconID);
+			ipf.InitEx(m_ilIcons, (uint)PwIcon.Count, m_pwDatabase,
+				(uint)m_pwEntryIcon, m_pwCustomIconID);
 
 			if(ipf.ShowDialog() == DialogResult.OK)
 			{
 				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 				{
 					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+					m_btnIcon.Image = m_ilIcons.Images[(int)PwIcon.Count +
+						m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID)];
 				}
 				else // Standard icon
 				{
@@ -1131,7 +1135,7 @@ namespace KeePass.Forms
 
 		private void OnNotesLinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			WinUtil.OpenUrlInNewBrowser(e.LinkText, m_pwEntry);
+			WinUtil.OpenUrl(e.LinkText, m_pwEntry);
 		}
 
 		private void OnAutoTypeSelectedIndexChanged(object sender, EventArgs e)
@@ -1153,19 +1157,20 @@ namespace KeePass.Forms
 		{
 			PwGeneratorForm pgf = new PwGeneratorForm();
 
-			byte[] pbCurPassword = m_secPassword.ToUTF8();
+			byte[] pbCurPassword = m_secPassword.ToUtf8();
 			bool bAtLeastOneChar = (pbCurPassword.Length > 0);
 			ProtectedString ps = new ProtectedString(true, pbCurPassword);
 			Array.Clear(pbCurPassword, 0, pbCurPassword.Length);
-			PasswordGenerationOptions opt = PasswordGenerator.DeriveOptionsFromPassword(ps);
+			PwProfile opt = PwProfile.DeriveFromPassword(ps);
 
-			pgf.InitEx(bAtLeastOneChar ? opt : null, true);
+			pgf.InitEx(bAtLeastOneChar ? opt : null, true, false);
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
-				byte[] pbEntropy = EntropyForm.CollectEntropyIfEnabled(pgf.SelectedOptions);
-				ProtectedString psNew = PasswordGenerator.Generate(pgf.SelectedOptions, true, pbEntropy);
+				byte[] pbEntropy = EntropyForm.CollectEntropyIfEnabled(pgf.SelectedProfile);
+				ProtectedString psNew = new ProtectedString(true);
+				PwGenerator.Generate(psNew, pgf.SelectedProfile, pbEntropy);
 
-				byte[] pbNew = psNew.ReadUTF8();
+				byte[] pbNew = psNew.ReadUtf8();
 				m_secPassword.SetPassword(pbNew);
 				m_secRepeat.SetPassword(pbNew);
 				Array.Clear(pbNew, 0, pbNew.Length);
@@ -1178,59 +1183,54 @@ namespace KeePass.Forms
 
 		private void OnProfilesDynamicMenuClick(object sender, DynamicMenuEventArgs e)
 		{
-			foreach(PasswordGenerationOptions pwgo in m_vPwGenOptions)
+			PwProfile pwp = null;
+			if(e.ItemName == DeriveFromPrevious)
 			{
-				if(pwgo.ProfileName == e.ItemName)
+				byte[] pbCur = m_secPassword.ToUtf8();
+				ProtectedString psCur = new ProtectedString(true, pbCur);
+				Array.Clear(pbCur, 0, pbCur.Length);
+				pwp = PwProfile.DeriveFromPassword(psCur);
+			}
+			else
+			{
+				foreach(PwProfile pwgo in Program.Config.PasswordGenerator.UserProfiles)
 				{
-					ProtectedString ps = PasswordGenerator.Generate(pwgo, m_pwDatabase.MemoryProtection.ProtectPassword, null);
-					byte[] pbNew = ps.ReadUTF8();
-					m_secPassword.SetPassword(pbNew);
-					m_secRepeat.SetPassword(pbNew);
-					Array.Clear(pbNew, 0, pbNew.Length);
-
-					m_bModifiedEntry = true;
-					break;
+					if(pwgo.Name == e.ItemName)
+					{
+						pwp = pwgo;
+						break;
+					}
 				}
 			}
+
+			if(pwp != null)
+			{
+				ProtectedString psNew = new ProtectedString(true);
+				PwGenerator.Generate(psNew, pwp, null);
+				byte[] pbNew = psNew.ReadUtf8();
+				m_secPassword.SetPassword(pbNew);
+				m_secRepeat.SetPassword(pbNew);
+				Array.Clear(pbNew, 0, pbNew.Length);
+
+				m_bModifiedEntry = true;
+			}
+			else { Debug.Assert(false); }
 		}
 
 		private void OnPwGenClick(object sender, EventArgs e)
 		{
-			m_vPwGenOptions.Clear();
-
-			byte[] pbCurUTF8 = m_secPassword.ToUTF8();
-			ProtectedString psCur = new ProtectedString(true, pbCurUTF8);
-			Array.Clear(pbCurUTF8, 0, pbCurUTF8.Length);
-			PasswordGenerationOptions pwgoDerive = PasswordGenerator.DeriveOptionsFromPassword(psCur);
-			pwgoDerive.ProfileName = DeriveFromPrevious;
-			m_vPwGenOptions.Add(pwgoDerive);
+			m_dynGenProfiles.Clear();
+			m_dynGenProfiles.AddItem(DeriveFromPrevious, Properties.Resources.B16x16_CompFile);
 
 			PwGeneratorUtil.AddStandardProfilesIfNoneAvailable();
 
-			uint uProfileIndex = 0;
-			while(true)
+			if(Program.Config.PasswordGenerator.UserProfiles.Count > 0)
+				m_dynGenProfiles.AddSeparator();
+			foreach(PwProfile pwgo in Program.Config.PasswordGenerator.UserProfiles)
 			{
-				string strProfile = AppConfigEx.GetValue(AppDefs.ConfigKeys.PwGenProfile.Key +
-					uProfileIndex.ToString(), null);
-				if(strProfile == null) break;
-
-				PasswordGenerationOptions pwgo =
-					PasswordGenerationOptions.UnserializeFromString(strProfile);
-				if(pwgo.ProfileName.Length == 0) { Debug.Assert(false); ++uProfileIndex; continue; }
-
-				m_vPwGenOptions.Add(pwgo);
-				++uProfileIndex;
-			}
-
-			m_dynGenProfiles.Clear();
-			m_dynGenProfiles.AddItem(DeriveFromPrevious, KeePass.Properties.Resources.B16x16_CompFile);
-
-			if(m_vPwGenOptions.Count > 0) m_dynGenProfiles.AddSeparator();
-			foreach(PasswordGenerationOptions pwgo in m_vPwGenOptions)
-			{
-				if(pwgo.ProfileName != DeriveFromPrevious)
-					m_dynGenProfiles.AddItem(pwgo.ProfileName,
-						KeePass.Properties.Resources.B16x16_KOrganizer);
+				if(pwgo.Name != DeriveFromPrevious)
+					m_dynGenProfiles.AddItem(pwgo.Name,
+						Properties.Resources.B16x16_KOrganizer);
 			}
 
 			m_ctxPwGen.Show(m_btnGenPw, new Point(0, m_btnGenPw.Height));

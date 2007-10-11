@@ -77,10 +77,10 @@
 			this.m_radioLocal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioLocal.Location = new System.Drawing.Point(12, 101);
 			this.m_radioLocal.Name = "m_radioLocal";
-			this.m_radioLocal.Size = new System.Drawing.Size(110, 17);
+			this.m_radioLocal.Size = new System.Drawing.Size(105, 17);
 			this.m_radioLocal.TabIndex = 3;
 			this.m_radioLocal.TabStop = true;
-			this.m_radioLocal.Text = "Local Help File";
+			this.m_radioLocal.Text = "Local help file";
 			this.m_radioLocal.UseVisualStyleBackColor = true;
 			// 
 			// m_radioOnline
@@ -89,10 +89,10 @@
 			this.m_radioOnline.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioOnline.Location = new System.Drawing.Point(12, 162);
 			this.m_radioOnline.Name = "m_radioOnline";
-			this.m_radioOnline.Size = new System.Drawing.Size(132, 17);
+			this.m_radioOnline.Size = new System.Drawing.Size(129, 17);
 			this.m_radioOnline.TabIndex = 5;
 			this.m_radioOnline.TabStop = true;
-			this.m_radioOnline.Text = "Online Help Center";
+			this.m_radioOnline.Text = "Online help center";
 			this.m_radioOnline.UseVisualStyleBackColor = true;
 			// 
 			// m_lblLocal
@@ -118,9 +118,9 @@
 			this.m_lblIntro.AutoSize = true;
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
-			this.m_lblIntro.Size = new System.Drawing.Size(367, 13);
+			this.m_lblIntro.Size = new System.Drawing.Size(377, 13);
 			this.m_lblIntro.TabIndex = 2;
-			this.m_lblIntro.Text = "Use the following help source when a Help button within KeePass is clicked:";
+			this.m_lblIntro.Text = "Use the following help source when a \"Help\" button within KeePass is clicked:";
 			// 
 			// m_lblSeparator
 			// 

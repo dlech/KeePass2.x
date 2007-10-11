@@ -70,20 +70,19 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
+			slLogger.SetText("> Spamex.com...", LogStatusType.Info);
+
 			SingleLineEditForm dlgUser = new SingleLineEditForm();
 			dlgUser.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.UserName,
-				KPRes.UserNamePrompt, KeePass.Properties.Resources.B48x48_WWW);
+				KPRes.UserNamePrompt, KeePass.Properties.Resources.B48x48_WWW,
+				string.Empty, null);
 			if(dlgUser.ShowDialog() != DialogResult.OK) return;
 
 			SingleLineEditForm dlgPassword = new SingleLineEditForm();
 			dlgPassword.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.Password,
-				KPRes.PasswordPrompt, KeePass.Properties.Resources.B48x48_WWW);
+				KPRes.PasswordPrompt, KeePass.Properties.Resources.B48x48_WWW,
+				string.Empty, null);
 			if(dlgPassword.ShowDialog() != DialogResult.OK) return;
-
-			StatusLoggerForm slf = new StatusLoggerForm();
-			slf.InitEx(false);
-			slf.Show();
-			slf.StartLogging(KPRes.ImportingStatusMsg);
 
 			RemoteCertificateValidationCallback pPrevCertCb =
 				ServicePointManager.ServerCertificateValidationCallback;
@@ -97,7 +96,7 @@ namespace KeePass.DataExchange.Formats
 
 			try
 			{
-				slf.SetText("> Spamex.com...", LogStatusType.Info);
+				slLogger.SetText(KPRes.ImportingStatusMsg, LogStatusType.Info);
 
 				string strUser = dlgUser.ResultString; ;
 				string strPassword = dlgPassword.ResultString;
@@ -112,14 +111,13 @@ namespace KeePass.DataExchange.Formats
 				if(strMain.IndexOf("Welcome <b>" + strUser + "</b>") < 0)
 				{
 					MessageService.ShowWarning(KPRes.InvalidUserPassword);
-					slf.EndLogging(); slf.Close();
 					return;
 				}
 
 				string strIndexPage = NetUtil.WebPageGetWithCookies(UrlIndexPage,
 					vCookies, UrlDomain);
 
-				ImportIndex(pwStorage, strIndexPage, vCookies, slf);
+				ImportIndex(pwStorage, strIndexPage, vCookies, slLogger);
 
 				int nOffset = 0;
 				List<string> vSubPages = new List<string>();
@@ -139,18 +137,16 @@ namespace KeePass.DataExchange.Formats
 					string strSubPage = NetUtil.WebPageGetWithCookies(UrlBase +
 						strLink, vCookies, UrlDomain);
 
-					ImportIndex(pwStorage, strSubPage, vCookies, slf);
+					ImportIndex(pwStorage, strSubPage, vCookies, slLogger);
 				}
 			}
 			catch
 			{
 				ServicePointManager.ServerCertificateValidationCallback = pPrevCertCb;
-				slf.EndLogging(); slf.Close();
 				throw;
 			}
 
 			ServicePointManager.ServerCertificateValidationCallback = pPrevCertCb;
-			slf.EndLogging(); slf.Close();
 		}
 
 		private static void ImportIndex(PwDatabase pwStorage, string strIndexPage,

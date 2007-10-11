@@ -24,7 +24,7 @@ using System.Diagnostics;
 
 using KeePass.App;
 
-using KeePassLib.Cryptography;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -37,30 +37,24 @@ namespace KeePass.Util
 		/// </summary>
 		public static void AddStandardProfilesIfNoneAvailable()
 		{
-			string strPrefix = AppDefs.ConfigKeys.PwGenProfile.Key;
-			string strFirst = AppConfigEx.GetValue(strPrefix + "0", null);
-			if(strFirst != null) return;
+			if(Program.Config.PasswordGenerator.UserProfiles.Count > 0) return;
 
-			uint i = 0;
-			AddStdPattern(i++, "Random MAC Address", @"HH\-HH\-HH\-HH\-HH\-HH");
-			AddStdPattern(i++, "40-bit Hex Key", @"h{10}");
-			AddStdPattern(i++, "128-bit Hex Key", @"h{32}");
-			AddStdPattern(i++, "256-bit Hex Key", @"h{64}");
+			AddStdPattern("Random MAC Address", @"HH\-HH\-HH\-HH\-HH\-HH");
+			AddStdPattern("40-bit Hex Key", @"h{10}");
+			AddStdPattern("128-bit Hex Key", @"h{32}");
+			AddStdPattern("256-bit Hex Key", @"h{64}");
 		}
 
-		private static void AddStdPattern(uint uIndex, string strName,
-			string strPattern)
+		private static void AddStdPattern(string strName, string strPattern)
 		{
-			string strPrefix = AppDefs.ConfigKeys.PwGenProfile.Key;
-			PasswordGenerationOptions pwgo = new PasswordGenerationOptions();
+			PwProfile p = new PwProfile();
 
-			pwgo.CollectUserEntropy = false;
-			pwgo.GeneratorType = PasswordGeneratorType.Pattern;
-			pwgo.Pattern = strPattern;
-			pwgo.ProfileName = strName;
+			p.Name = strName;
+			p.CollectUserEntropy = false;
+			p.GeneratorType = PasswordGeneratorType.Pattern;
+			p.Pattern = strPattern;
 
-			AppConfigEx.SetValue(strPrefix + uIndex.ToString(),
-				PasswordGenerationOptions.SerializeToString(pwgo));
+			Program.Config.PasswordGenerator.UserProfiles.Add(p);
 		}
 	}
 }

@@ -57,13 +57,15 @@ namespace KeePass.Forms
 			set { m_bEnsureForeground = value; }
 		}
 
-		public void InitEx(string strTitle, string strDescShort, string strDescLong, Image imgIcon, ImageList ilIcons, PwObjectList<PwEntry> vEntries)
+		public void InitEx(string strTitle, string strDescShort,
+			string strDescLong, Image imgIcon, ImageList ilIcons,
+			PwObjectList<PwEntry> vEntries)
 		{
 			m_strTitle = strTitle;
 			m_strDescShort = strDescShort;
 			m_strDescLong = strDescLong;
 			m_imgIcon = imgIcon;
-			m_ilIcons = ilIcons;
+			m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
 			m_vEntries = vEntries;
 		}
 
@@ -76,17 +78,19 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_strTitle.Length > 0);
 			Debug.Assert(m_imgIcon != null);
+			Debug.Assert(m_ilIcons != null);
 
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				m_imgIcon, m_strTitle, m_strDescShort);
 			m_lblText.Text = m_strDescLong;
 			this.Text = m_strTitle;
 			this.Icon = Properties.Resources.KeePass;
 
 			if(m_ilIcons != null) m_lvEntries.SmallImageList = m_ilIcons;
+			else m_ilIcons = new ImageList();
 
 			m_lvEntries.Columns.Add(KPRes.Title);
 			m_lvEntries.Columns.Add(KPRes.UserName);
@@ -141,7 +145,25 @@ namespace KeePass.Forms
 
 				if(pe.Expires && (pe.ExpiryTime <= dtNow))
 					lvi.ImageIndex = (int)PwIcon.Expired;
-				else lvi.ImageIndex = (int)pe.IconID;
+				else if(pe.CustomIconUuid == PwUuid.Zero)
+					lvi.ImageIndex = (int)pe.IconID;
+				else
+				{
+					lvi.ImageIndex = (int)pe.IconID;
+
+					DocumentManagerEx dm = Program.MainForm.DocumentManager;
+					foreach(DocumentStateEx ds in dm.Documents)
+					{
+						int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
+						if(nInx > -1)
+						{
+							m_ilIcons.Images.Add((Image)ds.Database.GetCustomIcon(
+								pe.CustomIconUuid).Clone());
+							lvi.ImageIndex = m_ilIcons.Images.Count - 1;
+							break;
+						}
+					}
+				}
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
@@ -174,10 +196,18 @@ namespace KeePass.Forms
 		{
 			if(GetSelectedEntry(false) == false)
 				this.DialogResult = DialogResult.None;
+
+			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			CleanUpEx();
+		}
+
+		private void CleanUpEx()
+		{
+			m_ilIcons.Dispose();
 		}
 
 		private void OnEntriesItemActivate(object sender, EventArgs e)

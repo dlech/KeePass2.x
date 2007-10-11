@@ -54,19 +54,21 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
 		private bool m_bBlockUpdates = false;
 
+		private const string VkcBreak = "<break />";
+
 		private static string[] SpecialKeyCodes = new string[]{
 			"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
 			"HOME", "END", "PGUP", "PGDN",
-			"INSERT", "DELETE", "<break />",
+			"INSERT", "DELETE", VkcBreak,
 			"BACKSPACE", "BREAK", "CAPSLOCK",
-			"ESC", "HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", "<break />",
+			"ESC", "HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
 			"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-			"F13", "F14", "F15", "F16", "<break />",
+			"F13", "F14", "F15", "F16", VkcBreak,
 			"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"
 		};
 
 		private static string[] SpecialPlaceholders = new string[]{
-			"APPDIR", "DOCDIR"
+			"APPDIR", "DOCDIR", "GROUP"
 		};
 
 		public EditAutoTypeItemForm()
@@ -98,14 +100,14 @@ namespace KeePass.Forms
 			if(!m_bEditSequenceOnly)
 			{
 				m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-					m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+					m_bannerImage.Height, BannerStyle.Default,
 					Properties.Resources.B48x48_KCMSystem, KPRes.ConfigureAutoTypeItem,
 					KPRes.ConfigureAutoTypeItemDesc);
 			}
 			else // Edit keystrokes only
 			{
 				m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-					m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+					m_bannerImage.Height, BannerStyle.Default,
 					Properties.Resources.B48x48_KCMSystem, KPRes.ConfigureKeystrokeSeq,
 					KPRes.ConfigureKeystrokeSeqDesc);
 			}
@@ -147,14 +149,14 @@ namespace KeePass.Forms
 			sbPH.Append("<br /><br /><b>" + KPRes.SpecialKeys + ":</b><br />");
 			foreach(string strNav in SpecialKeyCodes)
 			{
-				if(strNav == "<break />") sbPH.Append("<br /><br />");
+				if(strNav == VkcBreak) sbPH.Append("<br /><br />");
 				else sbPH.Append("{" + strNav + "} ");
 			}
 
 			sbPH.Append("<br /><br /><b>" + KPRes.OtherPlaceholders + ":</b><br />");
 			foreach(string strPH in SpecialPlaceholders)
 			{
-				if(strPH == "<break />") sbPH.Append("<br /><br />");
+				if(strPH == VkcBreak) sbPH.Append("<br /><br />");
 				else sbPH.Append("{" + strPH + "} ");
 			}
 

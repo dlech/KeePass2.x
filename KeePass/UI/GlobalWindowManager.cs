@@ -78,7 +78,7 @@ namespace KeePass.UI
 			Debug.Assert(m_vWindows.IndexOf(kvp) < 0);
 			m_vWindows.Add(kvp);
 
-			form.TopMost = AppConfigEx.GetBool(AppDefs.ConfigKeys.AlwaysOnTop);
+			form.TopMost = Program.Config.MainWindow.AlwaysOnTop;
 		}
 
 		public static void AddDialog(CommonDialog dlg)

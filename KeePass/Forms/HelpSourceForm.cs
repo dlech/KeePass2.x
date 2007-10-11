@@ -31,8 +31,10 @@ using KeePass.Resources;
 
 namespace KeePass.Forms
 {
-	public partial class HelpSourceForm : Form
+	public partial class HelpSourceForm : Form, IGwmWindow
 	{
+		public bool CanCloseWithoutDataLoss { get { return true; } }
+
 		public HelpSourceForm()
 		{
 			InitializeComponent();
@@ -40,10 +42,10 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			GlobalWindowManager.AddWindow(this);
+			GlobalWindowManager.AddWindow(this, this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Folder_Download, KPRes.HelpSourceSelection,
 				KPRes.HelpSourceSelectionDesc);
 			this.Icon = Properties.Resources.KeePass;

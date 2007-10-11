@@ -58,12 +58,14 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TANWizard,
 				KPRes.TANWizardDesc);
 			
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.TANWizard;
+
+			m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
 			EnableControlsEx();
 		}
@@ -71,10 +73,17 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			ParseTANs();
+			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			CleanUpEx();
+		}
+
+		private void CleanUpEx()
+		{
+			Program.Config.Defaults.TanCharacters = m_tbTanChars.Text;
 		}
 
 		private void EnableControlsEx()
@@ -88,16 +97,13 @@ namespace KeePass.Forms
 			string strText = m_tbTANs.Text;
 			int nTANIndex = (int)m_numTANsIndex.Value;
 			bool bSetIndex = m_cbNumberTANs.Checked;
+			string strTanChars = m_tbTanChars.Text;
 
 			for(int i = 0; i < strText.Length; ++i)
 			{
 				char ch = strText[i];
 
-				if((ch >= '0') && (ch <= '9'))
-					sb.Append(ch);
-				else if((ch >= 'A') && (ch <= 'Z'))
-					sb.Append(ch);
-				else if((ch >= 'a') && (ch <= 'z'))
+				if(strTanChars.IndexOf(ch) >= 0)
 					sb.Append(ch);
 				else
 				{
@@ -107,6 +113,8 @@ namespace KeePass.Forms
 					sb = new StringBuilder();
 				}
 			}
+
+			if(sb.Length > 0) AddTAN(sb.ToString(), bSetIndex, nTANIndex);
 		}
 
 		private void AddTAN(string strTAN, bool bSetIndex, int nTANIndex)

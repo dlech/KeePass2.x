@@ -48,7 +48,7 @@ namespace KeePassLib.Serialization
 		{
 			if(ioc.IsLocalFile()) return OpenReadLocal(ioc);
 
-			return CreateWebClient(ioc).OpenRead(new Uri(ioc.Url));
+			return CreateWebClient(ioc).OpenRead(new Uri(ioc.Path));
 		}
 #else
 		public static Stream OpenRead(IOConnectionInfo ioc)
@@ -59,7 +59,7 @@ namespace KeePassLib.Serialization
 
 		private static Stream OpenReadLocal(IOConnectionInfo ioc)
 		{
-			return new FileStream(ioc.Url, FileMode.Open, FileAccess.Read,
+			return new FileStream(ioc.Path, FileMode.Open, FileAccess.Read,
 				FileShare.Read);
 		}
 
@@ -68,7 +68,7 @@ namespace KeePassLib.Serialization
 		{
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
-			return CreateWebClient(ioc).OpenWrite(new Uri(ioc.Url));
+			return CreateWebClient(ioc).OpenWrite(new Uri(ioc.Path));
 		}
 #else
 		public static Stream OpenWrite(IOConnectionInfo ioc)
@@ -79,7 +79,7 @@ namespace KeePassLib.Serialization
 
 		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
-			return new FileStream(ioc.Url, FileMode.Create, FileAccess.Write,
+			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
 				FileShare.None);
 		}
 	}

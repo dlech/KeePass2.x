@@ -1,0 +1,147 @@
+/*
+  KeePass Password Safe - The Open-Source Password Manager
+  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+
+using KeePassLib.Security;
+using KeePassLib.Utility;
+
+namespace KeePassLib.Cryptography.PasswordGenerator
+{
+	internal static class PatternBasedGenerator
+	{
+		public static PwgError Generate(ProtectedString psOutBuffer,
+			PwProfile pwProfile, CryptoRandomStream crsRandomSource)
+		{
+			LinkedList<char> vGenerated = new LinkedList<char>();
+			PwCharSet pcsCurrent = new PwCharSet();
+			PwCharSet pcsCustom = new PwCharSet();
+			bool bInCharSetDef = false;
+
+			string strPattern = ExpandPattern(pwProfile.Pattern);
+			if(strPattern.Length == 0) return PwgError.Success;
+
+			CharStream csStream = new CharStream(strPattern);
+			char ch = csStream.ReadChar();
+
+			while(ch != char.MinValue)
+			{
+				pcsCurrent.Clear();
+
+				bool bGenerateChar = false;
+
+				if(ch == '\\')
+				{
+					ch = csStream.ReadChar();
+					if(ch == char.MinValue) // Backslash at the end
+					{
+						vGenerated.AddLast('\\');
+						break;
+					}
+
+					if(bInCharSetDef) pcsCustom.Add(ch);
+					else vGenerated.AddLast(ch);
+				}
+				else if(ch == '[')
+				{
+					pcsCustom.Clear();
+					bInCharSetDef = true;
+				}
+				else if(ch == ']')
+				{
+					pcsCurrent.Add(pcsCustom.ToString());
+
+					bInCharSetDef = false;
+					bGenerateChar = true;
+				}
+				else if(bInCharSetDef)
+				{
+					if(pcsCustom.AddCharSet(ch) == false)
+						pcsCustom.Add(ch);
+				}
+				else if(pcsCurrent.AddCharSet(ch) == false)
+					vGenerated.AddLast(ch);
+				else bGenerateChar = true;
+
+				if(bGenerateChar)
+				{
+					PwGenerator.PrepareCharSet(pcsCurrent, pwProfile);
+
+					char chGen = PwGenerator.GenerateCharacter(pwProfile,
+						pcsCurrent, crsRandomSource);
+
+					if(chGen == char.MinValue) return PwgError.TooFewCharacters;
+
+					vGenerated.AddLast(chGen);
+				}
+
+				ch = csStream.ReadChar();
+			}
+
+			if(vGenerated.Count == 0) return PwgError.Success;
+
+			char[] vArray = new char[vGenerated.Count];
+			vGenerated.CopyTo(vArray, 0);
+
+			if(pwProfile.PatternPermutePassword)
+				PwGenerator.ShufflePassword(vArray, crsRandomSource);
+
+			byte[] pbUtf8 = Encoding.UTF8.GetBytes(vArray);
+			psOutBuffer.SetString(Encoding.UTF8.GetString(pbUtf8, 0, pbUtf8.Length));
+			Array.Clear(pbUtf8, 0, pbUtf8.Length);
+			Array.Clear(vArray, 0, vArray.Length);
+			vGenerated.Clear();
+
+			return PwgError.Success;
+		}
+
+		private static string ExpandPattern(string strPattern)
+		{
+			Debug.Assert(strPattern != null); if(strPattern == null) return string.Empty;
+			string str = strPattern;
+
+			while(true)
+			{
+				int nOpen = str.IndexOf('{');
+				int nClose = str.IndexOf('}');
+
+				if((nOpen >= 0) && (nOpen < nClose))
+				{
+					string strCount = str.Substring(nOpen + 1, nClose - nOpen - 1);
+					str = str.Remove(nOpen, nClose - nOpen + 1);
+
+					uint uRepeat;
+					if(StrUtil.TryParseUInt(strCount, out uRepeat) && (nOpen >= 1))
+					{
+						if(uRepeat == 0)
+							str = str.Remove(nOpen - 1, 1);
+						else
+							str = str.Insert(nOpen, new string(str[nOpen - 1], (int)uRepeat - 1));
+					}
+				}
+				else break;
+			}
+
+			return str;
+		}
+	}
+}

@@ -120,6 +120,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Deflate drives actual compression of data
 		/// </summary>
+		/// <param name="flush">True to flush input buffers</param>
+		/// <param name="finish">Finish deflation with the current input.</param>
 		/// <returns>Returns true if progress has been made.</returns>
 		public bool Deflate(bool flush, bool finish)
 		{
@@ -132,7 +134,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 #if DebugDeflation
 				if (DeflaterConstants.DEBUGGING) {
 					Console.WriteLine("window: [" + blockStart + "," + strstart + ","
-				                + lookahead + "], " + compressionFunction + "," + canFlush);
+								+ lookahead + "], " + compressionFunction + "," + canFlush);
 				}
 #endif
 				switch (compressionFunction) 
@@ -198,8 +200,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		}
 
 		/// <summary>
-		/// Return true if input is needed via <see cref="SetInput"> SetInput</see>
+		/// Determines if more <see cref="SetInput">input</see> is needed.
 		/// </summary>		
+		/// <returns>Return true if input is needed via <see cref="SetInput">SetInput</see></returns>
 		public bool NeedsInput()
 		{
 			return (inputEnd == inputOff);
@@ -208,6 +211,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Set compression dictionary
 		/// </summary>
+		/// <param name="buffer">The buffer containing the dictionary data</param>
+		/// <param name="offset">The offset in the buffer for the first byte of data</param>
+		/// <param name="length">The length of the dictionary data.</param>
 		public void SetDictionary(byte[] buffer, int offset, int length) 
 		{
 #if DebugDeflation
@@ -322,7 +328,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 #if DebugDeflation
 				if (DeflaterConstants.DEBUGGING) {
 				   Console.WriteLine("Change from " + compressionFunction + " to "
-									      + DeflaterConstants.COMPR_FUNC[level]);
+										  + DeflaterConstants.COMPR_FUNC[level]);
 				}
 #endif
 				switch (compressionFunction) {
@@ -422,12 +428,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			if (DeflaterConstants.DEBUGGING) 
 			{
 				if (hash != (((window[strstart] << (2*HASH_SHIFT)) ^ 
-							      (window[strstart + 1] << HASH_SHIFT) ^ 
-							      (window[strstart + 2])) & HASH_MASK)) {
+								  (window[strstart + 1] << HASH_SHIFT) ^ 
+								  (window[strstart + 2])) & HASH_MASK)) {
 						throw new SharpZipBaseException("hash inconsistent: " + hash + "/"
-									            +window[strstart] + ","
-									            +window[strstart + 1] + ","
-									            +window[strstart + 2] + "," + HASH_SHIFT);
+												+window[strstart] + ","
+												+window[strstart + 1] + ","
+												+window[strstart + 2] + "," + HASH_SHIFT);
 					}
 			}
 #endif
@@ -637,13 +643,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 					}
 #endif					
 
-					// This stops problems with fast/low compression and index out of range
-					if (huffman.TallyDist(strstart - matchStart, matchLen)) {
-						bool lastBlock = finish && lookahead == 0;
-						huffman.FlushBlock(window, blockStart, strstart - blockStart, lastBlock);
-						blockStart = strstart;
-					}
-				
+					bool full = huffman.TallyDist(strstart - matchStart, matchLen);
+
 					lookahead -= matchLen;
 					if (matchLen <= max_lazy && lookahead >= MIN_MATCH) {
 						while (--matchLen > 0) {
@@ -658,7 +659,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 						}
 					}
 					matchLen = MIN_MATCH - 1;
-					continue;
+					if (!full) {
+						continue;
+					}
 				} else {
 					// No match found
 					huffman.TallyLit(window[strstart] & 0xff);
@@ -736,8 +739,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 					if (DeflaterConstants.DEBUGGING) 
 					{
 					   for (int i = 0 ; i < matchLen; i++) {
-					      if (window[strstart-1+i] != window[prevMatch + i])
-					         throw new SharpZipBaseException();
+						  if (window[strstart-1+i] != window[prevMatch + i])
+							 throw new SharpZipBaseException();
 						}
 					}
 #endif

@@ -20,11 +20,13 @@
 using System;
 using System.Security;
 using System.Security.Cryptography;
+using System.IO;
 
 using Microsoft.Win32;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib.Keys
 {
@@ -35,10 +37,13 @@ namespace KeePassLib.Keys
 	{
 		private ProtectedBinary m_pbKeyData = null;
 
+		// Constant initialization vector (unique for KeePass)
 		private static readonly byte[] m_pbEntropy = new byte[]{
 			0xDE, 0x13, 0x5B, 0x5F, 0x18, 0xA3, 0x46, 0x70,
 			0xB2, 0x57, 0x24, 0x29, 0x69, 0x88, 0x98, 0xE6
 		};
+
+		private const string UserKeyFileName = "ProtectedUserKey.bin";
 
 		/// <summary>
 		/// Get key data. Querying this property is fast (it returns a
@@ -55,7 +60,13 @@ namespace KeePassLib.Keys
 		/// </summary>
 		public KcpUserAccount()
 		{
-			byte[] pbKey = LoadUserKey();
+			// Test if ProtectedData is supported -- throws an exception
+			// when running on an old system (Windows 98 / ME).
+			byte[] pbDummyData = new byte[128];
+			ProtectedData.Protect(pbDummyData, m_pbEntropy,
+				DataProtectionScope.CurrentUser);
+
+			byte[] pbKey = LoadUserKey(false);
 			if(pbKey == null) pbKey = CreateUserKey();
 			if(pbKey == null) throw new SecurityException();
 
@@ -75,67 +86,71 @@ namespace KeePassLib.Keys
 			}
 		}
 
-		private static byte[] LoadUserKey()
+		private static string GetUserKeyFilePath(bool bCreate)
 		{
+			string strUserDir = Environment.GetFolderPath(
+				Environment.SpecialFolder.ApplicationData);
+
+			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
+			strUserDir += PwDefs.ShortProductName;
+
+			if(bCreate && (Directory.Exists(strUserDir) == false))
+				Directory.CreateDirectory(strUserDir);
+
+			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
+			return strUserDir + UserKeyFileName;
+		}
+
+		private static byte[] LoadUserKey(bool bShowWarning)
+		{
+			byte[] pbKey = null;
+
+#if !KeePassLibSD
 			try
 			{
-				RegistryKey kSoftware = Registry.CurrentUser.OpenSubKey("Software");
-				
-				RegistryKey kApp = kSoftware.OpenSubKey(PwDefs.ShortProductName);
-				if(kApp == null)
-				{
-					kSoftware.Close();
-					return null;
-				}
+				string strFilePath = GetUserKeyFilePath(false);
+				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
 
-				byte[] pbProtectedKey = kApp.GetValue(PwDefs.ProtectedUserRegKey, null)
-					as byte[];
-
-				kApp.Close();
-				kSoftware.Close();
-
-				if((pbProtectedKey == null) || (pbProtectedKey.Length == 0))
-					return null;
-
-				byte[] pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
 
 				Array.Clear(pbProtectedKey, 0, pbProtectedKey.Length);
-				return pbKey;
 			}
-			catch(Exception) { }
+			catch(Exception exLoad)
+			{
+				if(bShowWarning) MessageService.ShowWarning(exLoad);
 
-			return null;
+				pbKey = null;
+			}
+#endif
+
+			return pbKey;
 		}
 
 		private static byte[] CreateUserKey()
 		{
+			byte[] pbKey = null;
+
+#if !KeePassLibSD
 			try
 			{
-				RegistryKey kSoftware = Registry.CurrentUser.OpenSubKey("Software");
+				string strFilePath = GetUserKeyFilePath(true);
 
-				RegistryKey kApp = kSoftware.OpenSubKey(PwDefs.ShortProductName, true);
-				if(kApp == null)
-					kApp = kSoftware.CreateSubKey(PwDefs.ShortProductName);
+				byte[] pbRandomKey = CryptoRandom.GetRandomBytes(64);
+				byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
+					m_pbEntropy, DataProtectionScope.CurrentUser);
 
-				byte[] pbKey = CryptoRandom.GetRandomBytes(64);
-				byte[] pbProtectedKey = ProtectedData.Protect(pbKey, m_pbEntropy,
-					DataProtectionScope.CurrentUser);
-
-				kApp.SetValue(PwDefs.ProtectedUserRegKey, pbProtectedKey,
-					RegistryValueKind.Binary);
-
-				kApp.Close();
-				kSoftware.Close();
+				File.WriteAllBytes(strFilePath, pbProtectedKey);
 
 				Array.Clear(pbProtectedKey, 0, pbProtectedKey.Length);
-				Array.Clear(pbKey, 0, pbKey.Length);
+				Array.Clear(pbRandomKey, 0, pbRandomKey.Length);
 
-				return LoadUserKey(); // (Re-)load the key that we just stored
+				pbKey = LoadUserKey(true);
 			}
-			catch(Exception) { }
+			catch(Exception) { pbKey = null; }
+#endif
 
-			return null;
+			return pbKey;
 		}
 	}
 }

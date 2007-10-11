@@ -99,8 +99,7 @@ namespace KeePass.Util
 				pInput[0].KeyboardInput.ScanCode =
 					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
 				pInput[0].KeyboardInput.Flags = (bDown ? 0 :
-					NativeMethods.KEYEVENTF_KEYUP) | ((((vKey >= 0x21) &&
-					(vKey <= 0x2E)) || ((vKey >= 0x6A) && (vKey <= 0x6F))) ?
+					NativeMethods.KEYEVENTF_KEYUP) | (IsExtendedKeyEx(vKey) ?
 					NativeMethods.KEYEVENTF_EXTENDEDKEY : 0);
 				pInput[0].KeyboardInput.Time = 0;
 				pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
@@ -114,6 +113,16 @@ namespace KeePass.Util
 
 				return true;
 			}
+
+			return false;
+		}
+
+		private static bool IsExtendedKeyEx(int vKey)
+		{
+			// if(vKey == NativeMethods.VK_CAPITAL) return true;
+
+			if((vKey >= 0x21) && (vKey <= 0x2E)) return true;
+			if((vKey >= 0x6A) && (vKey <= 0x6F)) return true;
 
 			return false;
 		}
@@ -165,7 +174,12 @@ namespace KeePass.Util
 
 			foreach(int vKey in vKeys)
 			{
-				SendModifierVKey(vKey, bDown);
+				if(vKey == NativeMethods.VK_CAPITAL) // Toggle
+				{
+					SendModifierVKey(vKey, true);
+					SendModifierVKey(vKey, false);
+				}
+				else SendModifierVKey(vKey, bDown);
 			}
 		}
 

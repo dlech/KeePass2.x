@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
@@ -28,6 +29,7 @@ using System.IO;
 
 using KeePass.App;
 using KeePass.Native;
+using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -36,24 +38,39 @@ namespace KeePass.Util
 {
 	public static class WinUtil
 	{
+		private static bool m_bIsWindows9x = false;
+
+		private const int ERROR_ACCESS_DENIED = 5;
+
+		public static bool IsWindows9x
+		{
+			get { return m_bIsWindows9x; }
+		}
+
+		static WinUtil()
+		{
+			m_bIsWindows9x = (Environment.OSVersion.Platform ==
+				PlatformID.Win32Windows);
+		}
+
 		public static void OpenEntryUrl(PwEntry pe)
 		{
 			Debug.Assert(pe != null);
 			if(pe == null) throw new ArgumentNullException("pe");
 
 			if(pe.OverrideUrl.Length > 0)
-				WinUtil.OpenUrlInNewBrowser(pe.OverrideUrl, pe);
+				WinUtil.OpenUrl(pe.OverrideUrl, pe);
 			else
 			{
-				string strOverride = AppConfigEx.GetValue(AppDefs.ConfigKeys.UrlOverride);
+				string strOverride = Program.Config.Integration.UrlOverride;
 				if(strOverride.Length > 0)
-					WinUtil.OpenUrlInNewBrowser(strOverride, pe);
+					WinUtil.OpenUrl(strOverride, pe);
 				else
-					WinUtil.OpenUrlInNewBrowser(pe.Strings.ReadSafe(PwDefs.UrlField), pe);
+					WinUtil.OpenUrl(pe.Strings.ReadSafe(PwDefs.UrlField), pe);
 			}
 		}
 
-		public static void OpenUrlInNewBrowser(string strUrlToOpen, PwEntry peDataSource)
+		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource)
 		{
 			// If URL is null, return false, do not throw exception.
 			Debug.Assert(strUrlToOpen != null); if(strUrlToOpen == null) return;
@@ -68,6 +85,8 @@ namespace KeePass.Util
 			string strUrl = strUrlToOpen;
 			bool bCmdQuotes = strUrl.StartsWith("cmd://");
 
+			strUrl = strUrl.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
+
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
 			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
@@ -75,6 +94,7 @@ namespace KeePass.Util
 			strUrl = StrUtil.FillPlaceholders(strUrl, peDataSource, strThisExe,
 				pwDatabase, bCmdQuotes, false);
 			strUrl = AppLocator.FillPlaceholders(strUrl, false);
+			strUrl = EntryUtil.FillPlaceholders(strUrl, peDataSource, false);
 
 			if(strUrl.StartsWith("cmd://"))
 			{
@@ -88,12 +108,17 @@ namespace KeePass.Util
 					else
 						Process.Start(strApp);
 				}
+				catch(Win32Exception)
+				{
+					StartWithoutShellExecute(strApp, strArgs);
+				}
 				catch(Exception exCmd)
 				{
-					string strInf = strApp;
+					string strInf = KPRes.FileOrUrl + ": " + strApp;
 					if((strArgs != null) && (strArgs.Length > 0))
-						strInf += MessageService.NewLine + strArgs;
-					
+						strInf += MessageService.NewLine + KPRes.Arguments +
+							": " + strArgs;
+
 					MessageService.ShowWarning(strInf, exCmd);
 				}
 			}
@@ -109,6 +134,32 @@ namespace KeePass.Util
 			// Restore previous working directory
 			try { Directory.SetCurrentDirectory(strPrevWorkDir); }
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void StartWithoutShellExecute(string strApp, string strArgs)
+		{
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo();
+
+				psi.FileName = strApp;
+
+				if((strArgs != null) && (strArgs.Length > 0))
+					psi.Arguments = strArgs;
+
+				psi.UseShellExecute = false;
+
+				Process.Start(psi);
+			}
+			catch(Exception exCmd)
+			{
+				string strInf = KPRes.FileOrUrl + ": " + strApp;
+				if((strArgs != null) && (strArgs.Length > 0))
+					strInf += MessageService.NewLine + KPRes.Arguments +
+						": " + strArgs;
+
+				MessageService.ShowWarning(strInf, exCmd);
+			}
 		}
 
 		public static void Restart()
@@ -136,8 +187,9 @@ namespace KeePass.Util
 			return strExePath;
 		}
 
+		/*
 		private const string FontPartsSeparator = @"/:/";
-
+		
 		public static Font FontIDToFont(string strFontID)
 		{
 			Debug.Assert(strFontID != null); if(strFontID == null) return null;
@@ -178,6 +230,7 @@ namespace KeePass.Util
 
 			return sb.ToString();
 		}
+		*/
 
 		/// <summary>
 		/// Shorten a path.

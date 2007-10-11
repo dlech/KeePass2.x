@@ -44,21 +44,22 @@ namespace KeePass.Util
 			set { m_hRecvWnd = value; }
 		}
 
-		public static bool RegisterHotKey(int nID, Keys kKey, Keys kModifiers)
+		public static bool RegisterHotKey(int nID, Keys kKey)
 		{
 			if(kKey == Keys.None) return false;
 
 			uint uMod = 0;
-			if((kModifiers & Keys.Shift) != Keys.None) uMod |= MOD_SHIFT;
-			if((kModifiers & Keys.Menu) != Keys.None) uMod |= MOD_ALT;
-			if((kModifiers & Keys.Alt) != Keys.None) uMod |= MOD_ALT;
-			if((kModifiers & Keys.Control) != Keys.None) uMod |= MOD_CONTROL;
+			if((kKey & Keys.Shift) != Keys.None) uMod |= MOD_SHIFT;
+			if((kKey & Keys.Alt) != Keys.None) uMod |= MOD_ALT;
+			if((kKey & Keys.Control) != Keys.None) uMod |= MOD_CONTROL;
+
+			uint vkCode = (uint)(kKey & Keys.KeyCode);
 
 			UnregisterHotKey(nID);
 
 			try
 			{
-				if(NativeMethods.RegisterHotKey(m_hRecvWnd, nID, uMod, (uint)kKey))
+				if(NativeMethods.RegisterHotKey(m_hRecvWnd, nID, uMod, vkCode))
 				{
 					m_vRegisteredIDs.Add(nID);
 					return true;

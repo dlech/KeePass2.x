@@ -48,12 +48,14 @@ namespace KeePass.Forms
 			m_bIsModal = bIsModal;
 		}
 
-		public void StartLogging(string strOperation)
+		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
 			if(strOperation != null)
 			{
 				this.Text = PwDefs.ShortProductName + " - " + strOperation;
-				this.SetText(strOperation, LogStatusType.Info);
+				
+				if(bWriteOperationToLog)
+					this.SetText(strOperation, LogStatusType.Info);
 			}
 
 			m_pbProgress.Value = 0;

@@ -99,8 +99,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static string ParseCsvWord(string strWord, bool bFixCodes)
 		{
-			string str = strWord.TrimStart(new char[]{ '\"' });
-			str = str.TrimEnd(new char[]{ '\"' });
+			string str = strWord.Trim(new char[]{ '\"' });
 
 			str = str.Replace("\"\"", "\"");
 

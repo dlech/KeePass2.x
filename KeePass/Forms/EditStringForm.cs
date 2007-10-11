@@ -85,7 +85,7 @@ namespace KeePass.Forms
 			}
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Font, strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 
@@ -105,7 +105,7 @@ namespace KeePass.Forms
 		private bool ValidateStringName()
 		{
 			string str = m_tbStringName.Text;
-			string strStart = (m_strStringName != null) ? m_strStringName : "";
+			string strStart = (m_strStringName != null) ? m_strStringName : string.Empty;
 			char[] vInvalidChars = new char[]{ '{', '}' };
 
 			if(PwDefs.IsStandardField(str))
@@ -113,15 +113,21 @@ namespace KeePass.Forms
 				m_lblValidationInfo.Text = KPRes.FieldNameInvalid;
 				m_tbStringName.BackColor = AppDefs.ColorEditError;
 				m_btnOK.Enabled = false;
-
 				return false;
 			}
-			else if((str.Length <= 0) || (str.IndexOfAny(vInvalidChars) >= 0))
+			else if(str.Length <= 0)
+			{
+				m_lblValidationInfo.Text = KPRes.FieldNamePrompt;
+				m_tbStringName.BackColor = m_clrNormalBackground;
+				m_btnOK.Enabled = false;
+				return false;
+
+			}
+			else if(str.IndexOfAny(vInvalidChars) >= 0)
 			{
 				m_lblValidationInfo.Text = KPRes.FieldNameInvalid;
 				m_tbStringName.BackColor = AppDefs.ColorEditError;
 				m_btnOK.Enabled = false;
-
 				return false;
 			}
 			else if(!strStart.Equals(str) && m_vStringDict.Exists(str))
@@ -129,12 +135,11 @@ namespace KeePass.Forms
 				m_lblValidationInfo.Text = KPRes.FieldNameExistsAlready;
 				m_tbStringName.BackColor = AppDefs.ColorEditError;
 				m_btnOK.Enabled = false;
-
 				return false;
 			}
 			else
 			{
-				m_lblValidationInfo.Text = "";
+				m_lblValidationInfo.Text = string.Empty;
 				m_tbStringName.BackColor = m_clrNormalBackground;
 				m_btnOK.Enabled = true;
 			}

@@ -92,10 +92,10 @@
 			this.m_linkHelp.AutoSize = true;
 			this.m_linkHelp.Location = new System.Drawing.Point(228, 155);
 			this.m_linkHelp.Name = "m_linkHelp";
-			this.m_linkHelp.Size = new System.Drawing.Size(96, 13);
+			this.m_linkHelp.Size = new System.Drawing.Size(29, 13);
 			this.m_linkHelp.TabIndex = 6;
 			this.m_linkHelp.TabStop = true;
-			this.m_linkHelp.Text = "Online Help Center";
+			this.m_linkHelp.Text = "Help";
 			this.m_linkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHelpFile);
 			// 
 			// m_linkLicense

@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -65,14 +66,14 @@ namespace KeePass.App
 		{
 			get
 			{
-				return (AppConfigEx.GetBool(AppDefs.ConfigKeys.HelpUseLocal) ?
+				return ((Program.Config.Application.HelpUseLocal) ?
 					AppHelpSource.Local : AppHelpSource.Online);
 			}
 
 			set
 			{
-				AppConfigEx.SetValue(AppDefs.ConfigKeys.HelpUseLocal,
-					value == AppHelpSource.Local);
+				Program.Config.Application.HelpUseLocal =
+					(value == AppHelpSource.Local);
 			}
 		}
 
@@ -84,7 +85,7 @@ namespace KeePass.App
 		/// with the '#' character.</param>
 		public static void ShowHelp(string strTopic, string strSection)
 		{
-			ShowHelp(strTopic, strSection, false);
+			AppHelp.ShowHelp(strTopic, strSection, false);
 		}
 
 		/// <summary>
@@ -101,11 +102,11 @@ namespace KeePass.App
 			if(AppHelp.LocalHelpAvailable)
 			{
 				if(bPreferLocal || (AppHelp.PreferredHelpSource == AppHelpSource.Local))
-					ShowHelpLocal(strTopic, strSection);
+					AppHelp.ShowHelpLocal(strTopic, strSection);
 				else
-					ShowHelpOnline(strTopic, strSection);
+					AppHelp.ShowHelpOnline(strTopic, strSection);
 			}
-			else ShowHelpOnline(strTopic, strSection);
+			else AppHelp.ShowHelpOnline(strTopic, strSection);
 		}
 
 		private static void ShowHelpLocal(string strTopic, string strSection)
@@ -141,10 +142,31 @@ namespace KeePass.App
 				strCmd += @"#" + strSection;
 			}
 
-			try { Process.Start(strCmd); }
+			try
+			{
+				ParameterizedThreadStart pts = new ParameterizedThreadStart(AppHelp.RunCommandAsync);
+				Thread th = new Thread(pts);
+				th.Start(strCmd);
+			}
+			catch(Exception exThread)
+			{
+				MessageService.ShowWarning(strCmd, exThread);
+			}
+		}
+
+		private static void RunCommandAsync(object pData)
+		{
+			Debug.Assert(pData != null);
+			if(pData == null) throw new ArgumentNullException("pData");
+
+			string strCommand = pData as string;
+			Debug.Assert(strCommand != null);
+			if(strCommand == null) throw new ArgumentException();
+
+			try { Process.Start(strCommand); }
 			catch(Exception exStart)
 			{
-				MessageService.ShowWarning(strCmd, exStart);
+				MessageService.ShowWarning(strCommand, exStart);
 			}
 		}
 	}

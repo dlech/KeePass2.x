@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TanWizardForm));
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
@@ -36,6 +37,8 @@
 			this.m_cbNumberTANs = new System.Windows.Forms.CheckBox();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_numTANsIndex = new System.Windows.Forms.NumericUpDown();
+			this.m_lblTanChars = new System.Windows.Forms.Label();
+			this.m_tbTanChars = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTANsIndex)).BeginInit();
 			this.SuspendLayout();
@@ -73,13 +76,11 @@
 			// 
 			// m_lblIntro
 			// 
-			this.m_lblIntro.Location = new System.Drawing.Point(12, 72);
+			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
-			this.m_lblIntro.Size = new System.Drawing.Size(547, 29);
+			this.m_lblIntro.Size = new System.Drawing.Size(550, 29);
 			this.m_lblIntro.TabIndex = 5;
-			this.m_lblIntro.Text = "Paste your TANs into the edit window below. Formatting doesn\'t matter, all non-al" +
-				"phanumerical characters are treated as separators. Alphanumerical strings are ad" +
-				"ded as TAN entries.";
+			this.m_lblIntro.Text = resources.GetString("m_lblIntro.Text");
 			// 
 			// m_tbTANs
 			// 
@@ -89,13 +90,13 @@
 			this.m_tbTANs.Multiline = true;
 			this.m_tbTANs.Name = "m_tbTANs";
 			this.m_tbTANs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbTANs.Size = new System.Drawing.Size(547, 271);
+			this.m_tbTANs.Size = new System.Drawing.Size(547, 228);
 			this.m_tbTANs.TabIndex = 0;
 			// 
 			// m_cbNumberTANs
 			// 
 			this.m_cbNumberTANs.AutoSize = true;
-			this.m_cbNumberTANs.Location = new System.Drawing.Point(12, 388);
+			this.m_cbNumberTANs.Location = new System.Drawing.Point(12, 344);
 			this.m_cbNumberTANs.Name = "m_cbNumberTANs";
 			this.m_cbNumberTANs.Size = new System.Drawing.Size(275, 17);
 			this.m_cbNumberTANs.TabIndex = 1;
@@ -113,7 +114,7 @@
 			// 
 			// m_numTANsIndex
 			// 
-			this.m_numTANsIndex.Location = new System.Drawing.Point(293, 387);
+			this.m_numTANsIndex.Location = new System.Drawing.Point(293, 343);
 			this.m_numTANsIndex.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -123,6 +124,22 @@
 			this.m_numTANsIndex.Size = new System.Drawing.Size(72, 20);
 			this.m_numTANsIndex.TabIndex = 2;
 			// 
+			// m_lblTanChars
+			// 
+			this.m_lblTanChars.AutoSize = true;
+			this.m_lblTanChars.Location = new System.Drawing.Point(9, 368);
+			this.m_lblTanChars.Name = "m_lblTanChars";
+			this.m_lblTanChars.Size = new System.Drawing.Size(200, 13);
+			this.m_lblTanChars.TabIndex = 7;
+			this.m_lblTanChars.Text = "TANs consist of the following characters:";
+			// 
+			// m_tbTanChars
+			// 
+			this.m_tbTanChars.Location = new System.Drawing.Point(12, 384);
+			this.m_tbTanChars.Name = "m_tbTanChars";
+			this.m_tbTanChars.Size = new System.Drawing.Size(547, 20);
+			this.m_tbTanChars.TabIndex = 8;
+			// 
 			// TanWizardForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -130,6 +147,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(571, 458);
+			this.Controls.Add(this.m_tbTanChars);
+			this.Controls.Add(this.m_lblTanChars);
 			this.Controls.Add(this.m_numTANsIndex);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_cbNumberTANs);
@@ -164,5 +183,7 @@
 		private System.Windows.Forms.CheckBox m_cbNumberTANs;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.NumericUpDown m_numTANsIndex;
+		private System.Windows.Forms.Label m_lblTanChars;
+		private System.Windows.Forms.TextBox m_tbTanChars;
 	}
 }

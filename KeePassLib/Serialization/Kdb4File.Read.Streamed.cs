@@ -188,6 +188,10 @@ namespace KeePassLib.Serialization
 						return SwitchContext(ctx, KdbContext.MemoryProtection, xr);
 					else if(xr.Name == ElemCustomIcons)
 						return SwitchContext(ctx, KdbContext.CustomIcons, xr);
+					else if(xr.Name == ElemLastSelectedGroup)
+						m_pwDatabase.LastSelectedGroup = ReadUuid(xr);
+					else if(xr.Name == ElemLastTopVisibleGroup)
+						m_pwDatabase.LastTopVisibleGroup = ReadUuid(xr);
 					else ReadUnknown(xr);
 					break;
 
@@ -258,6 +262,8 @@ namespace KeePassLib.Serialization
 						m_ctxGroup.IsExpanded = ReadBool(xr, true);
 					else if(xr.Name == ElemGroupDefaultAutoTypeSeq)
 						m_ctxGroup.DefaultAutoTypeSequence = ReadString(xr);
+					else if(xr.Name == ElemLastTopVisibleEntry)
+						m_ctxGroup.LastTopVisibleEntry = ReadUuid(xr);
 					else if(xr.Name == ElemGroup)
 					{
 						m_ctxGroup = new PwGroup(false, false);

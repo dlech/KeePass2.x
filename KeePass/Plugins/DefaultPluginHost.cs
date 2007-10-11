@@ -33,7 +33,6 @@ namespace KeePass.Plugins
 	internal sealed class DefaultPluginHost : IPluginHost
 	{
 		private MainForm m_form = null;
-		private PwDatabase m_pwDatabase = null;
 		private CommandLineArgs m_cmdLineArgs = null;
 		private CipherPool m_cipherPool = null;
 
@@ -41,16 +40,14 @@ namespace KeePass.Plugins
 		{
 		}
 
-		public void Initialize(MainForm form, PwDatabase pwDatabase,
-			CommandLineArgs cmdLineArgs, CipherPool cipherPool)
+		public void Initialize(MainForm form, CommandLineArgs cmdLineArgs,
+			CipherPool cipherPool)
 		{
 			Debug.Assert(form != null);
-			Debug.Assert(pwDatabase != null);
 			Debug.Assert(cmdLineArgs != null);
 			Debug.Assert(cipherPool != null);
 
 			m_form = form;
-			m_pwDatabase = pwDatabase;
 			m_cmdLineArgs = cmdLineArgs;
 			m_cipherPool = cipherPool;
 		}
@@ -62,7 +59,7 @@ namespace KeePass.Plugins
 
 		public PwDatabase Database
 		{
-			get { return m_pwDatabase; }
+			get { return m_form.ActiveDatabase; }
 		}
 
 		public CommandLineArgs CommandLineArgs

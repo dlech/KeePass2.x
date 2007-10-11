@@ -86,6 +86,8 @@
 			this.m_ctxListOperations = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
+			this.m_tbUuid = new System.Windows.Forms.TextBox();
+			this.m_lblUuid = new System.Windows.Forms.Label();
 			this.m_tbOverrideUrl = new System.Windows.Forms.TextBox();
 			this.m_lblOverrideUrl = new System.Windows.Forms.Label();
 			this.m_cbCustomBackgroundColor = new System.Windows.Forms.CheckBox();
@@ -144,9 +146,9 @@
 			this.m_lblUserName.AutoSize = true;
 			this.m_lblUserName.Location = new System.Drawing.Point(6, 40);
 			this.m_lblUserName.Name = "m_lblUserName";
-			this.m_lblUserName.Size = new System.Drawing.Size(63, 13);
+			this.m_lblUserName.Size = new System.Drawing.Size(62, 13);
 			this.m_lblUserName.TabIndex = 4;
-			this.m_lblUserName.Text = "User Name:";
+			this.m_lblUserName.Text = "User name:";
 			// 
 			// m_lblPassword
 			// 
@@ -549,7 +551,7 @@
 			this.m_grpAttachments.Size = new System.Drawing.Size(455, 162);
 			this.m_grpAttachments.TabIndex = 1;
 			this.m_grpAttachments.TabStop = false;
-			this.m_grpAttachments.Text = "File Attachments / Binary Fields";
+			this.m_grpAttachments.Text = "File attachments";
 			// 
 			// m_btnBinView
 			// 
@@ -616,7 +618,7 @@
 			this.m_grpStringFields.Size = new System.Drawing.Size(455, 162);
 			this.m_grpStringFields.TabIndex = 0;
 			this.m_grpStringFields.TabStop = false;
-			this.m_grpStringFields.Text = "String Fields";
+			this.m_grpStringFields.Text = "String fields";
 			// 
 			// m_btnStrMove
 			// 
@@ -691,6 +693,8 @@
 			// 
 			// m_tabProperties
 			// 
+			this.m_tabProperties.Controls.Add(this.m_tbUuid);
+			this.m_tabProperties.Controls.Add(this.m_lblUuid);
 			this.m_tabProperties.Controls.Add(this.m_tbOverrideUrl);
 			this.m_tabProperties.Controls.Add(this.m_lblOverrideUrl);
 			this.m_tabProperties.Controls.Add(this.m_cbCustomBackgroundColor);
@@ -701,6 +705,23 @@
 			this.m_tabProperties.TabIndex = 4;
 			this.m_tabProperties.Text = "Properties";
 			this.m_tabProperties.UseVisualStyleBackColor = true;
+			// 
+			// m_tbUuid
+			// 
+			this.m_tbUuid.Location = new System.Drawing.Point(51, 309);
+			this.m_tbUuid.Name = "m_tbUuid";
+			this.m_tbUuid.ReadOnly = true;
+			this.m_tbUuid.Size = new System.Drawing.Size(403, 21);
+			this.m_tbUuid.TabIndex = 5;
+			// 
+			// m_lblUuid
+			// 
+			this.m_lblUuid.AutoSize = true;
+			this.m_lblUuid.Location = new System.Drawing.Point(9, 312);
+			this.m_lblUuid.Name = "m_lblUuid";
+			this.m_lblUuid.Size = new System.Drawing.Size(36, 13);
+			this.m_lblUuid.TabIndex = 4;
+			this.m_lblUuid.Text = "UUID:";
 			// 
 			// m_tbOverrideUrl
 			// 
@@ -724,15 +745,15 @@
 			this.m_cbCustomBackgroundColor.AutoSize = true;
 			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(12, 16);
 			this.m_cbCustomBackgroundColor.Name = "m_cbCustomBackgroundColor";
-			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(153, 17);
+			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(151, 17);
 			this.m_cbCustomBackgroundColor.TabIndex = 0;
-			this.m_cbCustomBackgroundColor.Text = "Custom Background Color:";
+			this.m_cbCustomBackgroundColor.Text = "Custom background color:";
 			this.m_cbCustomBackgroundColor.UseVisualStyleBackColor = true;
 			this.m_cbCustomBackgroundColor.CheckedChanged += new System.EventHandler(this.OnCustomBackgroundColorCheckedChanged);
 			// 
 			// m_btnPickBgColor
 			// 
-			this.m_btnPickBgColor.Location = new System.Drawing.Point(171, 12);
+			this.m_btnPickBgColor.Location = new System.Drawing.Point(169, 12);
 			this.m_btnPickBgColor.Name = "m_btnPickBgColor";
 			this.m_btnPickBgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickBgColor.TabIndex = 1;
@@ -763,7 +784,7 @@
 			// m_linkAutoTypeObfuscation
 			// 
 			this.m_linkAutoTypeObfuscation.AutoSize = true;
-			this.m_linkAutoTypeObfuscation.Location = new System.Drawing.Point(220, 314);
+			this.m_linkAutoTypeObfuscation.Location = new System.Drawing.Point(213, 314);
 			this.m_linkAutoTypeObfuscation.Name = "m_linkAutoTypeObfuscation";
 			this.m_linkAutoTypeObfuscation.Size = new System.Drawing.Size(68, 13);
 			this.m_linkAutoTypeObfuscation.TabIndex = 11;
@@ -776,9 +797,9 @@
 			this.m_cbAutoTypeObfuscation.AutoSize = true;
 			this.m_cbAutoTypeObfuscation.Location = new System.Drawing.Point(10, 313);
 			this.m_cbAutoTypeObfuscation.Name = "m_cbAutoTypeObfuscation";
-			this.m_cbAutoTypeObfuscation.Size = new System.Drawing.Size(204, 17);
+			this.m_cbAutoTypeObfuscation.Size = new System.Drawing.Size(197, 17);
 			this.m_cbAutoTypeObfuscation.TabIndex = 10;
-			this.m_cbAutoTypeObfuscation.Text = "Two-Channel Auto-Type Obfuscation";
+			this.m_cbAutoTypeObfuscation.Text = "Two-channel auto-type obfuscation";
 			this.m_cbAutoTypeObfuscation.UseVisualStyleBackColor = true;
 			this.m_cbAutoTypeObfuscation.CheckedChanged += new System.EventHandler(this.OnAutoTypeObfuscationCheckedChanged);
 			// 
@@ -797,10 +818,10 @@
 			this.m_rbAutoTypeOverride.AutoSize = true;
 			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(10, 67);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
-			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(159, 17);
+			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(157, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 2;
 			this.m_rbAutoTypeOverride.TabStop = true;
-			this.m_rbAutoTypeOverride.Text = "Override Default Sequence:";
+			this.m_rbAutoTypeOverride.Text = "Override default sequence:";
 			this.m_rbAutoTypeOverride.UseVisualStyleBackColor = true;
 			// 
 			// m_rbAutoTypeSeqInherit
@@ -808,10 +829,10 @@
 			this.m_rbAutoTypeSeqInherit.AutoSize = true;
 			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(10, 44);
 			this.m_rbAutoTypeSeqInherit.Name = "m_rbAutoTypeSeqInherit";
-			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(258, 17);
+			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(250, 17);
 			this.m_rbAutoTypeSeqInherit.TabIndex = 1;
 			this.m_rbAutoTypeSeqInherit.TabStop = true;
-			this.m_rbAutoTypeSeqInherit.Text = "Inherit Default Auto-Type Sequence From Group";
+			this.m_rbAutoTypeSeqInherit.Text = "Inherit default auto-type sequence from group";
 			this.m_rbAutoTypeSeqInherit.UseVisualStyleBackColor = true;
 			this.m_rbAutoTypeSeqInherit.CheckedChanged += new System.EventHandler(this.OnAutoTypeSeqInheritCheckedChanged);
 			// 
@@ -829,17 +850,17 @@
 			this.m_cbAutoTypeEnabled.AutoSize = true;
 			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(10, 12);
 			this.m_cbAutoTypeEnabled.Name = "m_cbAutoTypeEnabled";
-			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(182, 17);
+			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(175, 17);
 			this.m_cbAutoTypeEnabled.TabIndex = 0;
-			this.m_cbAutoTypeEnabled.Text = "Enable Auto-Type For This Entry";
+			this.m_cbAutoTypeEnabled.Text = "Enable auto-type for this entry";
 			this.m_cbAutoTypeEnabled.UseVisualStyleBackColor = true;
 			this.m_cbAutoTypeEnabled.CheckedChanged += new System.EventHandler(this.OnAutoTypeEnableCheckedChanged);
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(175, 66);
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(173, 66);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
-			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(197, 21);
+			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(199, 21);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 3;
 			this.m_tbDefaultAutoTypeSeq.TextChanged += new System.EventHandler(this.OnDefaultAutoTypeSeqTextChanged);
 			// 
@@ -1063,8 +1084,10 @@
 			// 
 			// PwEntryForm
 			// 
+			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(487, 486);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_tabMain);
@@ -1199,6 +1222,8 @@
 		private System.Windows.Forms.LinkLabel m_linkAutoTypeObfuscation;
 		private System.Windows.Forms.CheckBox m_cbAutoTypeObfuscation;
 		private System.Windows.Forms.Button m_btnBinView;
+		private System.Windows.Forms.TextBox m_tbUuid;
+		private System.Windows.Forms.Label m_lblUuid;
 
 	}
 }

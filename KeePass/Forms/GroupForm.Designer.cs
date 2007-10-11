@@ -191,10 +191,10 @@
 			this.m_rbAutoTypeOverride.AutoSize = true;
 			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(12, 36);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
-			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(157, 17);
+			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(153, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 1;
 			this.m_rbAutoTypeOverride.TabStop = true;
-			this.m_rbAutoTypeOverride.Text = "Override Default Sequence:";
+			this.m_rbAutoTypeOverride.Text = "Override default sequence:";
 			this.m_rbAutoTypeOverride.UseVisualStyleBackColor = true;
 			// 
 			// m_rbAutoTypeInherit
@@ -202,10 +202,10 @@
 			this.m_rbAutoTypeInherit.AutoSize = true;
 			this.m_rbAutoTypeInherit.Location = new System.Drawing.Point(12, 13);
 			this.m_rbAutoTypeInherit.Name = "m_rbAutoTypeInherit";
-			this.m_rbAutoTypeInherit.Size = new System.Drawing.Size(287, 17);
+			this.m_rbAutoTypeInherit.Size = new System.Drawing.Size(272, 17);
 			this.m_rbAutoTypeInherit.TabIndex = 0;
 			this.m_rbAutoTypeInherit.TabStop = true;
-			this.m_rbAutoTypeInherit.Text = "Inherit Default Auto-Type Sequence From Parent Group";
+			this.m_rbAutoTypeInherit.Text = "Inherit default auto-type sequence from parent group";
 			this.m_rbAutoTypeInherit.UseVisualStyleBackColor = true;
 			this.m_rbAutoTypeInherit.CheckedChanged += new System.EventHandler(this.OnAutoTypeInheritCheckedChanged);
 			// 

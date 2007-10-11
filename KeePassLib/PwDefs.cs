@@ -44,12 +44,12 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, ...
 		/// </summary>
-		public const uint Version32 = 0x02000200;
+		public const uint Version32 = 0x02000300;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.02 Alpha";
+		public const string VersionString = "2.03";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.
@@ -153,11 +153,6 @@ namespace KeePassLib
 		public const string DefaultAutoTypeSequenceTan = @"{PASSWORD}";
 
 		/// <summary>
-		/// Name of the registration key that holds the user's account key.
-		/// </summary>
-		public const string ProtectedUserRegKey = "ProtectedUserKey";
-
-		/// <summary>
 		/// Check if a name is a standard field name.
 		/// </summary>
 		/// <param name="strFieldName">Input field name.</param>
@@ -193,29 +188,76 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class SearchParameters
 	{
-		/// <summary>
-		/// The text to be searched.
-		/// </summary>
-		public string SearchText = string.Empty;
+		private string m_strText = string.Empty;
+		public string SearchString
+		{
+			get { return m_strText; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strText = value;
+			}
+		}
 
-		/// <summary>
-		/// If this flag is <c>true</c>, all string fields of entries will
-		/// be searched. This parameter overrides all other <c>SearchIn*</c>
-		/// flags (only if set to <c>true</c>).
-		/// </summary>
-		public bool SearchInAllStrings = false;
+		private bool m_bRegex = false;
+		public bool RegularExpression
+		{
+			get { return m_bRegex; }
+			set { m_bRegex = value; }
+		}
 
-		public bool SearchInTitles = true;
-		public bool SearchInUserNames = true;
-		public bool SearchInPasswords = false;
-		public bool SearchInUrls = true;
-		public bool SearchInNotes = true;
+		private bool m_bSearchInTitles = true;
+		public bool SearchInTitles
+		{
+			get { return m_bSearchInTitles; }
+			set { m_bSearchInTitles = value; }
+		}
 
+		private bool m_bSearchInUserNames = true;
+		public bool SearchInUserNames
+		{
+			get { return m_bSearchInUserNames; }
+			set { m_bSearchInUserNames = value; }
+		}
+
+		private bool m_bSearchInPasswords = false;
+		public bool SearchInPasswords
+		{
+			get { return m_bSearchInPasswords; }
+			set { m_bSearchInPasswords = value; }
+		}
+
+		private bool m_bSearchInUrls = true;
+		public bool SearchInUrls
+		{
+			get { return m_bSearchInUrls; }
+			set { m_bSearchInUrls = value; }
+		}
+
+		private bool m_bSearchInNotes = true;
+		public bool SearchInNotes
+		{
+			get { return m_bSearchInNotes; }
+			set { m_bSearchInNotes = value; }
+		}
+
+		private bool m_bSearchInOther = true;
+		public bool SearchInOther
+		{
+			get { return m_bSearchInOther; }
+			set { m_bSearchInOther = value; }
+		}
+
+		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;
 		/// <summary>
 		/// String comparison type. Specifies the condition when the specified
 		/// text matches a group/entry string.
 		/// </summary>
-		public StringComparison StringCompare = StringComparison.InvariantCultureIgnoreCase;
+		public StringComparison ComparisonMode
+		{
+			get { return m_scType; }
+			set { m_scType = value; }
+		}
 
 		/// <summary>
 		/// Construct a new search parameters object.
@@ -238,7 +280,7 @@ namespace KeePassLib
 		public bool ProtectUrl = false;
 		public bool ProtectNotes = false;
 
-		public bool AutoEnableVisualHiding = true;
+		public bool AutoEnableVisualHiding = false;
 
 		public MemoryProtectionConfig CloneDeep()
 		{

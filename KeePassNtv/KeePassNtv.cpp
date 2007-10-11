@@ -18,7 +18,7 @@
 */
 
 #ifdef _WIN32_WCE
-#include "../KeePassNtvSD/StdAfx.h"
+#include "../KeePassSD/KeePassNtv/StdAfx.h"
 #else
 #include "StdAfx.h"
 #endif

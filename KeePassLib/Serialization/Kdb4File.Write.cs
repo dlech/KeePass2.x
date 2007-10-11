@@ -292,6 +292,9 @@ namespace KeePassLib.Serialization
 
 			WriteCustomIconList();
 
+			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
+			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
+
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -308,11 +311,12 @@ namespace KeePassLib.Serialization
 			WriteList(ElemTimes, pg);
 			WriteObject(ElemIsExpanded, pg.IsExpanded);
 			WriteObject(ElemGroupDefaultAutoTypeSeq, pg.DefaultAutoTypeSequence);
+			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
 		}
 
 		private void EndGroup()
 		{
-			m_xmlWriter.WriteEndElement(); // ElemGroup
+			m_xmlWriter.WriteEndElement(); // Close group element
 		}
 
 		private void WriteEntry(PwEntry pe, bool bIsHistory)

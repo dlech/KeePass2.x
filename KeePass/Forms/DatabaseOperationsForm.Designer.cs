@@ -82,7 +82,7 @@
 			this.m_grpHistoryDelete.Size = new System.Drawing.Size(419, 113);
 			this.m_grpHistoryDelete.TabIndex = 0;
 			this.m_grpHistoryDelete.TabStop = false;
-			this.m_grpHistoryDelete.Text = "Delete Entry History";
+			this.m_grpHistoryDelete.Text = "Delete entry history";
 			// 
 			// m_lblEntryHistoryWarning
 			// 
@@ -90,8 +90,8 @@
 			this.m_lblEntryHistoryWarning.Name = "m_lblEntryHistoryWarning";
 			this.m_lblEntryHistoryWarning.Size = new System.Drawing.Size(369, 29);
 			this.m_lblEntryHistoryWarning.TabIndex = 6;
-			this.m_lblEntryHistoryWarning.Text = "After clicking the \'Delete\' button, all history entries older than the specified " +
-				"number of days are deleted. There\'s no way to get them back.";
+			this.m_lblEntryHistoryWarning.Text = "Clicking the \'Delete\' button will remove all history entries older than the speci" +
+				"fied number of days. There\'s no way to get them back.";
 			// 
 			// m_btnHistoryEntriesDelete
 			// 
@@ -140,7 +140,7 @@
 			// 
 			// m_lblDeleteHistoryEntries
 			// 
-			this.m_lblDeleteHistoryEntries.Location = new System.Drawing.Point(44, 16);
+			this.m_lblDeleteHistoryEntries.Location = new System.Drawing.Point(44, 17);
 			this.m_lblDeleteHistoryEntries.Name = "m_lblDeleteHistoryEntries";
 			this.m_lblDeleteHistoryEntries.Size = new System.Drawing.Size(369, 32);
 			this.m_lblDeleteHistoryEntries.TabIndex = 1;

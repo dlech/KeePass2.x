@@ -510,12 +510,11 @@ namespace KeePass.DataExchange
 
 			if(peSource.AutoType.DefaultSequence.Length > 0)
 			{
-				sbAppend.AppendLine();
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewParagraph);
 				sbAppend.Append(AutoTypePrefix);
 				sbAppend.Append(@" ");
 				sbAppend.Append(peSource.AutoType.DefaultSequence);
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewLine);
 
 				bSeparator = true;
 			}
@@ -524,8 +523,7 @@ namespace KeePass.DataExchange
 			{
 				if(bSeparator == false)
 				{
-					sbAppend.AppendLine();
-					sbAppend.AppendLine();
+					sbAppend.Append(MessageService.NewParagraph);
 
 					bSeparator = true;
 				}
@@ -533,11 +531,11 @@ namespace KeePass.DataExchange
 				sbAppend.Append(AutoTypeWindowPrefix);
 				sbAppend.Append(@" ");
 				sbAppend.Append(kvp.Key);
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewLine);
 				sbAppend.Append(AutoTypePrefix);
 				sbAppend.Append(@" ");
 				sbAppend.Append(kvp.Value);
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewLine);
 			}
 
 			strNotes = strNotes.TrimEnd(new char[]{ '\r', '\n', '\t', ' ' });
@@ -573,12 +571,11 @@ namespace KeePass.DataExchange
 			{
 				StringBuilder sbAppend = new StringBuilder();
 
-				sbAppend.AppendLine();
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewParagraph);
 				sbAppend.Append(UrlOverridePrefix);
 				sbAppend.Append(@" ");
 				sbAppend.Append(peSource.OverrideUrl);
-				sbAppend.AppendLine();
+				sbAppend.Append(MessageService.NewLine);
 
 				strNotes = strNotes.TrimEnd(new char[] { '\r', '\n', '\t', ' ' });
 				strNotes += sbAppend.ToString();

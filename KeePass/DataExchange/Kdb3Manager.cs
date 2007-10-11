@@ -17,9 +17,13 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if PocketPC || Smartphone || WindowsCE
+#undef KDB3_ANSI
+#else
 // If compiling for the ANSI version of KeePassLibC, define KDB3_ANSI.
 // If compiling for the Unicode version of KeePassLibC, do not define KDB3_ANSI.
 #define KDB3_ANSI
+#endif
 
 using System;
 using System.Text;
@@ -335,6 +339,9 @@ namespace KeePass.DataExchange
 #pragma warning restore 1591 // Missing XML comments warning
 
 #if VPF_ALIGN
+		/// <summary>
+		/// Dummy entry for alignment purposes.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U1)]
 		public Byte Dummy;
 #endif
@@ -357,6 +364,10 @@ namespace KeePass.DataExchange
 			this.Hour = uHour;
 			this.Minute = uMinute;
 			this.Second = uSecond;
+
+#if VPF_ALIGN
+			this.Dummy = 0;
+#endif
 		}
 
 		/// <summary>
@@ -821,21 +832,6 @@ namespace KeePass.DataExchange
 			return kdbEntry;
 		}
 
-		/// <summary>
-		/// Get an entry, without returning the password.
-		/// </summary>
-		/// <param name="uIndex">Index of the entry. This index must be valid, otherwise
-		/// an <c>ArgumentOutOfRangeException</c> is thrown.</param>
-		/// <returns>The requested entry. Note that any modifications to this
-		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntryWithoutPassword(UInt32 uIndex)
-		{
-			Kdb3Entry kdbEntry = this.GetEntry(uIndex);
-			kdbEntry.Password = string.Empty;
-			kdbEntry.PasswordLen = 0;
-			return kdbEntry;
-		}
-
 		[DllImport(DllFile32, EntryPoint = "GetEntryByGroup")]
 		private static extern IntPtr GetEntryByGroup32(IntPtr pMgr, UInt32 idGroup, UInt32 dwIndex);
 		[DllImport(DllFile64, EntryPoint = "GetEntryByGroup")]
@@ -870,26 +866,6 @@ namespace KeePass.DataExchange
 			if(m_bX64) Kdb3Manager.LockEntryPassword64(m_pManager, p);
 			else Kdb3Manager.LockEntryPassword32(m_pManager, p);
 
-			return kdbEntry;
-		}
-
-		/// <summary>
-		/// Get an entry in a specific group, without returning the password.
-		/// </summary>
-		/// <param name="uIndex">Index of the entry in the group. This index must
-		/// be valid, otherwise an <c>ArgumentOutOfRangeException</c> is thrown.</param>
-		/// <param name="uGroupID">ID of the group containing the entry.</param>
-		/// <returns>The requested entry. Note that any modifications to this
-		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntryByGroupWithoutPassword(UInt32 uGroupID, UInt32 uIndex)
-		{
-			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
-			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
-				throw new ArgumentException("Invalid group ID!");
-
-			Kdb3Entry kdbEntry = this.GetEntryByGroup(uGroupID, uIndex);
-			kdbEntry.Password = string.Empty;
-			kdbEntry.PasswordLen = 0;
 			return kdbEntry;
 		}
 

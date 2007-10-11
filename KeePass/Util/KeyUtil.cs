@@ -51,12 +51,19 @@ namespace KeePass.Util
 				try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
 				catch(Exception exKey)
 				{
-					MessageService.ShowWarning(strKeyFile, exKey);
+					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKey);
 					return null;
 				}
 			}
 			if(strUserAcc != null)
-				cmpKey.AddUserKey(new KcpUserAccount());
+			{
+				try { cmpKey.AddUserKey(new KcpUserAccount()); }
+				catch(Exception exUA)
+				{
+					MessageService.ShowWarning(exUA);
+					return null;
+				}
+			}
 
 			return cmpKey;
 		}

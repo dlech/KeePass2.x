@@ -41,9 +41,6 @@
 			this.m_cbLockAfterTime = new System.Windows.Forms.CheckBox();
 			this.m_numLockAfterTime = new System.Windows.Forms.NumericUpDown();
 			this.m_tabPolicy = new System.Windows.Forms.TabPage();
-			this.m_lblPolicyAffectHint = new System.Windows.Forms.Label();
-			this.m_lblPolicyCurrentUserLevel = new System.Windows.Forms.Label();
-			this.m_lblPolicyStatus = new System.Windows.Forms.Label();
 			this.m_lvPolicy = new System.Windows.Forms.ListView();
 			this.m_linkPolicyInfo = new System.Windows.Forms.LinkLabel();
 			this.m_lblPolicyMore = new System.Windows.Forms.Label();
@@ -124,6 +121,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabIntegration);
 			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
+			this.m_tabMain.Multiline = true;
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(562, 337);
@@ -153,14 +151,20 @@
 			this.m_lvSecurityOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 81);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
+			this.m_lvSecurityOptions.ShowItemToolTips = true;
 			this.m_lvSecurityOptions.Size = new System.Drawing.Size(542, 224);
-			this.m_lvSecurityOptions.TabIndex = 7;
+			this.m_lvSecurityOptions.TabIndex = 6;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
 			// 
 			// m_numClipClearTime
 			// 
 			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 57);
+			this.m_numClipClearTime.Maximum = new decimal(new int[] {
+            1209600,
+            0,
+            0,
+            0});
 			this.m_numClipClearTime.Name = "m_numClipClearTime";
 			this.m_numClipClearTime.Size = new System.Drawing.Size(66, 20);
 			this.m_numClipClearTime.TabIndex = 5;
@@ -174,6 +178,7 @@
 			this.m_cbClipClearTime.TabIndex = 4;
 			this.m_cbClipClearTime.Text = "Clipboard auto-clear time (seconds):";
 			this.m_cbClipClearTime.UseVisualStyleBackColor = true;
+			this.m_cbClipClearTime.CheckedChanged += new System.EventHandler(this.OnClipboardClearTimeCheckedChanged);
 			// 
 			// m_numDefaultExpireDays
 			// 
@@ -224,9 +229,6 @@
 			// 
 			// m_tabPolicy
 			// 
-			this.m_tabPolicy.Controls.Add(this.m_lblPolicyAffectHint);
-			this.m_tabPolicy.Controls.Add(this.m_lblPolicyCurrentUserLevel);
-			this.m_tabPolicy.Controls.Add(this.m_lblPolicyStatus);
 			this.m_tabPolicy.Controls.Add(this.m_lvPolicy);
 			this.m_tabPolicy.Controls.Add(this.m_linkPolicyInfo);
 			this.m_tabPolicy.Controls.Add(this.m_lblPolicyMore);
@@ -239,40 +241,15 @@
 			this.m_tabPolicy.Text = "Policy";
 			this.m_tabPolicy.UseVisualStyleBackColor = true;
 			// 
-			// m_lblPolicyAffectHint
-			// 
-			this.m_lblPolicyAffectHint.Location = new System.Drawing.Point(83, 60);
-			this.m_lblPolicyAffectHint.Name = "m_lblPolicyAffectHint";
-			this.m_lblPolicyAffectHint.Size = new System.Drawing.Size(461, 28);
-			this.m_lblPolicyAffectHint.TabIndex = 5;
-			this.m_lblPolicyAffectHint.Text = "<>";
-			// 
-			// m_lblPolicyCurrentUserLevel
-			// 
-			this.m_lblPolicyCurrentUserLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_lblPolicyCurrentUserLevel.Location = new System.Drawing.Point(82, 45);
-			this.m_lblPolicyCurrentUserLevel.Name = "m_lblPolicyCurrentUserLevel";
-			this.m_lblPolicyCurrentUserLevel.Size = new System.Drawing.Size(462, 15);
-			this.m_lblPolicyCurrentUserLevel.TabIndex = 4;
-			this.m_lblPolicyCurrentUserLevel.Text = "<>";
-			// 
-			// m_lblPolicyStatus
-			// 
-			this.m_lblPolicyStatus.AutoSize = true;
-			this.m_lblPolicyStatus.Location = new System.Drawing.Point(3, 45);
-			this.m_lblPolicyStatus.Name = "m_lblPolicyStatus";
-			this.m_lblPolicyStatus.Size = new System.Drawing.Size(73, 13);
-			this.m_lblPolicyStatus.TabIndex = 3;
-			this.m_lblPolicyStatus.Text = "Current mode:";
-			// 
 			// m_lvPolicy
 			// 
 			this.m_lvPolicy.CheckBoxes = true;
 			this.m_lvPolicy.FullRowSelect = true;
 			this.m_lvPolicy.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvPolicy.Location = new System.Drawing.Point(6, 91);
+			this.m_lvPolicy.Location = new System.Drawing.Point(6, 42);
 			this.m_lvPolicy.Name = "m_lvPolicy";
-			this.m_lvPolicy.Size = new System.Drawing.Size(538, 195);
+			this.m_lvPolicy.ShowItemToolTips = true;
+			this.m_lvPolicy.Size = new System.Drawing.Size(538, 244);
 			this.m_lvPolicy.TabIndex = 6;
 			this.m_lvPolicy.UseCompatibleStateImageBehavior = false;
 			this.m_lvPolicy.View = System.Windows.Forms.View.Details;
@@ -286,6 +263,7 @@
 			this.m_linkPolicyInfo.TabIndex = 2;
 			this.m_linkPolicyInfo.TabStop = true;
 			this.m_linkPolicyInfo.Text = "Application Policy Help";
+			this.m_linkPolicyInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPolicyInfoLinkClicked);
 			// 
 			// m_lblPolicyMore
 			// 
@@ -324,7 +302,7 @@
 			this.m_tabGui.Name = "m_tabGui";
 			this.m_tabGui.Size = new System.Drawing.Size(554, 311);
 			this.m_tabGui.TabIndex = 2;
-			this.m_tabGui.Text = "GUI";
+			this.m_tabGui.Text = "Interface";
 			this.m_tabGui.UseVisualStyleBackColor = true;
 			// 
 			// m_btnSelFont
@@ -344,6 +322,7 @@
 			this.m_lvGuiOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.m_lvGuiOptions.Location = new System.Drawing.Point(12, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
+			this.m_lvGuiOptions.ShowItemToolTips = true;
 			this.m_lvGuiOptions.Size = new System.Drawing.Size(529, 219);
 			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
@@ -438,7 +417,7 @@
 			this.m_grpFileExt.Size = new System.Drawing.Size(548, 82);
 			this.m_grpFileExt.TabIndex = 1;
 			this.m_grpFileExt.TabStop = false;
-			this.m_grpFileExt.Text = "KDBX File Association";
+			this.m_grpFileExt.Text = "KDBX file association";
 			// 
 			// m_btnFileExtRemove
 			// 
@@ -484,7 +463,7 @@
 			this.m_grpHotKeys.Size = new System.Drawing.Size(548, 77);
 			this.m_grpHotKeys.TabIndex = 0;
 			this.m_grpHotKeys.TabStop = false;
-			this.m_grpHotKeys.Text = "System-Wide Hot Keys";
+			this.m_grpHotKeys.Text = "System-wide hot keys";
 			// 
 			// m_tbShowWindowHotKey
 			// 
@@ -536,6 +515,7 @@
 			this.m_lvAdvanced.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 6);
 			this.m_lvAdvanced.Name = "m_lvAdvanced";
+			this.m_lvAdvanced.ShowItemToolTips = true;
 			this.m_lvAdvanced.Size = new System.Drawing.Size(542, 299);
 			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
@@ -606,9 +586,6 @@
 		private System.Windows.Forms.Label m_lblPolicyRestart;
 		private System.Windows.Forms.Label m_lblPolicyIntro;
 		private System.Windows.Forms.ListView m_lvPolicy;
-		private System.Windows.Forms.Label m_lblPolicyStatus;
-		private System.Windows.Forms.Label m_lblPolicyAffectHint;
-		private System.Windows.Forms.Label m_lblPolicyCurrentUserLevel;
 		private System.Windows.Forms.ListView m_lvGuiOptions;
 		private System.Windows.Forms.FontDialog m_fontLists;
 		private System.Windows.Forms.Button m_btnSelFont;

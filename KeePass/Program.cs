@@ -23,8 +23,11 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
 using System.Diagnostics;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Resources;
@@ -47,10 +50,13 @@ namespace KeePass
 		private static Random m_rndGlobal = null;
 		private static int m_nAppMessage = 0;
 		private static MainForm m_formMain = null;
+		private static AppConfigEx m_appConfig = new AppConfigEx();
 
 		public enum AppMessage
 		{
-			RestoreWindow = 0
+			Null = 0,
+			RestoreWindow = 1,
+			Exit = 2
 		}
 
 		public static CommandLineArgs CommandLineArgs
@@ -73,6 +79,11 @@ namespace KeePass
 			get { return m_formMain; }
 		}
 
+		public static AppConfigEx Config
+		{
+			get { return m_appConfig; }
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -92,9 +103,11 @@ namespace KeePass
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
 			Kdb4File.DetermineLanguageID();
 
-			AppConfigEx.Load();
-			if(AppConfigEx.GetBool(AppDefs.ConfigKeys.EnableLogging))
+			m_appConfig = AppConfigSerializer.Load();
+			if(m_appConfig.Logging.Enabled)
 				AppLogEx.Open(PwDefs.ShortProductName);
+
+			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
 
 			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) +
 				".chm";
@@ -117,12 +130,21 @@ namespace KeePass
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
 			catch(Exception exAppMsg) { MessageService.ShowWarning(exAppMsg); }
 
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ExitAll] != null)
+			{
+				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+					m_nAppMessage, (IntPtr)AppMessage.Exit, IntPtr.Zero);
+				return;
+			}
+
 			Mutex mSingleLock = TrySingleInstanceLock();
-			if((mSingleLock == null) && AppConfigEx.GetBool(AppDefs.ConfigKeys.LimitSingleInstance))
+			if((mSingleLock == null) && m_appConfig.Integration.LimitToSingleInstance)
 			{
 				ActivatePreviousInstance();
 				return;
 			}
+
+			Mutex mGlobalNotify = TryGlobalInstanceNotify();
 
 #if DEBUG
 			m_formMain = new MainForm();
@@ -142,7 +164,10 @@ namespace KeePass
 			Debug.Assert(GlobalWindowManager.WindowCount == 0);
 			Debug.Assert(MessageService.CurrentMessageCount == 0);
 
+			EntryMenu.Destroy();
+
 			AppLogEx.Close();
+			if(mGlobalNotify != null) { GC.KeepAlive(mGlobalNotify); }
 			if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
 		}
 
@@ -163,6 +188,33 @@ namespace KeePass
 			return null;
 		}
 
+		private static Mutex TryGlobalInstanceNotify()
+		{
+			try
+			{
+				string strName = "Global\\" + AppDefs.MutexNameGlobal;
+				string strIdentity = Environment.UserDomainName + "\\" +
+					Environment.UserName;
+				MutexSecurity ms = new MutexSecurity();
+
+				MutexAccessRule mar = new MutexAccessRule(strIdentity,
+					MutexRights.FullControl, AccessControlType.Allow);
+				ms.AddAccessRule(mar);
+
+				SecurityIdentifier sid = new SecurityIdentifier(
+					WellKnownSidType.WorldSid, null);
+				mar = new MutexAccessRule(sid, MutexRights.ReadPermissions |
+					MutexRights.Synchronize, AccessControlType.Allow);
+				ms.AddAccessRule(mar);
+
+				bool bCreatedNew;
+				return new Mutex(false, strName, out bCreatedNew, ms);
+			}
+			catch(Exception) { }
+
+			return null;
+		}
+
 		private static void ActivatePreviousInstance()
 		{
 			if(m_nAppMessage == 0) { Debug.Assert(false); return; }
@@ -176,6 +228,11 @@ namespace KeePass
 			{
 				MessageService.ShowWarning(exActivation);
 			}
+		}
+
+		internal static void NotifyUserActivity()
+		{
+			if(Program.MainForm != null) Program.MainForm.NotifyUserActivity();
 		}
 	}
 }

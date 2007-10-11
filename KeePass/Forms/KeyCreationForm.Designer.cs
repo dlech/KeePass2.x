@@ -81,17 +81,17 @@
 			this.m_cbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbPassword.Location = new System.Drawing.Point(12, 164);
 			this.m_cbPassword.Name = "m_cbPassword";
-			this.m_cbPassword.Size = new System.Drawing.Size(126, 17);
+			this.m_cbPassword.Size = new System.Drawing.Size(125, 17);
 			this.m_cbPassword.TabIndex = 20;
-			this.m_cbPassword.Text = "Master Password:";
+			this.m_cbPassword.Text = "Master password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
 			// 
 			// m_tbPassword
 			// 
-			this.m_tbPassword.Location = new System.Drawing.Point(144, 162);
+			this.m_tbPassword.Location = new System.Drawing.Point(143, 162);
 			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(322, 20);
+			this.m_tbPassword.Size = new System.Drawing.Size(323, 20);
 			this.m_tbPassword.TabIndex = 0;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
@@ -106,9 +106,9 @@
 			// 
 			// m_tbRepeatPassword
 			// 
-			this.m_tbRepeatPassword.Location = new System.Drawing.Point(144, 188);
+			this.m_tbRepeatPassword.Location = new System.Drawing.Point(143, 188);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
-			this.m_tbRepeatPassword.Size = new System.Drawing.Size(322, 20);
+			this.m_tbRepeatPassword.Size = new System.Drawing.Size(323, 20);
 			this.m_tbRepeatPassword.TabIndex = 3;
 			this.m_tbRepeatPassword.UseSystemPasswordChar = true;
 			// 
@@ -118,9 +118,9 @@
 			this.m_cbKeyFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 240);
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
-			this.m_cbKeyFile.Size = new System.Drawing.Size(75, 17);
+			this.m_cbKeyFile.Size = new System.Drawing.Size(72, 17);
 			this.m_cbKeyFile.TabIndex = 7;
-			this.m_cbKeyFile.Text = "Key File:";
+			this.m_cbKeyFile.Text = "Key file:";
 			this.m_cbKeyFile.UseVisualStyleBackColor = true;
 			this.m_cbKeyFile.CheckedChanged += new System.EventHandler(this.OnCheckedKeyFile);
 			// 
@@ -130,9 +130,9 @@
 			this.m_cbUserAccount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 288);
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
-			this.m_cbUserAccount.Size = new System.Drawing.Size(158, 17);
+			this.m_cbUserAccount.Size = new System.Drawing.Size(155, 17);
 			this.m_cbUserAccount.TabIndex = 12;
-			this.m_cbUserAccount.Text = "Windows User Account";
+			this.m_cbUserAccount.Text = "Windows user account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
 			this.m_cbUserAccount.CheckedChanged += new System.EventHandler(this.OnWinUserCheckedChanged);
 			// 
@@ -241,11 +241,11 @@
 			// 
 			// m_pbPasswordQuality
 			// 
-			this.m_pbPasswordQuality.Location = new System.Drawing.Point(144, 214);
+			this.m_pbPasswordQuality.Location = new System.Drawing.Point(143, 214);
 			this.m_pbPasswordQuality.Maximum = 100;
 			this.m_pbPasswordQuality.Minimum = 0;
 			this.m_pbPasswordQuality.Name = "m_pbPasswordQuality";
-			this.m_pbPasswordQuality.Size = new System.Drawing.Size(266, 14);
+			this.m_pbPasswordQuality.Size = new System.Drawing.Size(267, 14);
 			this.m_pbPasswordQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbPasswordQuality.TabIndex = 5;
 			this.m_pbPasswordQuality.Value = 0;
@@ -270,10 +270,10 @@
 			// 
 			// m_tbKeyFile
 			// 
-			this.m_tbKeyFile.Location = new System.Drawing.Point(144, 237);
+			this.m_tbKeyFile.Location = new System.Drawing.Point(143, 237);
 			this.m_tbKeyFile.Name = "m_tbKeyFile";
 			this.m_tbKeyFile.ReadOnly = true;
-			this.m_tbKeyFile.Size = new System.Drawing.Size(201, 20);
+			this.m_tbKeyFile.Size = new System.Drawing.Size(202, 20);
 			this.m_tbKeyFile.TabIndex = 8;
 			// 
 			// m_bannerImage

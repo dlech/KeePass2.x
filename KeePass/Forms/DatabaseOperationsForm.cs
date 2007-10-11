@@ -34,9 +34,11 @@ using KeePassLib.Delegates;
 
 namespace KeePass.Forms
 {
-	public partial class DatabaseOperationsForm : Form
+	public partial class DatabaseOperationsForm : Form, IGwmWindow
 	{
 		private PwDatabase m_pwDatabase = null;
+
+		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		public void InitEx(PwDatabase pwDatabase)
 		{
@@ -52,10 +54,10 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
 
-			GlobalWindowManager.AddWindow(this);
+			GlobalWindowManager.AddWindow(this, this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerFactory.BannerStyle.Default,
+				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_Package_Settings, KPRes.DatabaseMaintenance,
 				KPRes.DatabaseMaintenanceDesc);
 			this.Icon = Properties.Resources.KeePass;

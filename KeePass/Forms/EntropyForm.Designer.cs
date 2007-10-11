@@ -139,7 +139,7 @@
 			this.m_grpMouse.Size = new System.Drawing.Size(301, 311);
 			this.m_grpMouse.TabIndex = 1;
 			this.m_grpMouse.TabStop = false;
-			this.m_grpMouse.Text = "Random Mouse Input";
+			this.m_grpMouse.Text = "Random mouse input";
 			// 
 			// m_grpKeyboard
 			// 
@@ -151,7 +151,7 @@
 			this.m_grpKeyboard.Size = new System.Drawing.Size(299, 311);
 			this.m_grpKeyboard.TabIndex = 0;
 			this.m_grpKeyboard.TabStop = false;
-			this.m_grpKeyboard.Text = "Random Keyboard Input";
+			this.m_grpKeyboard.Text = "Random keyboard input";
 			// 
 			// m_lblKeysDesc
 			// 
@@ -174,6 +174,8 @@
 			// 
 			// m_tbEdit
 			// 
+			this.m_tbEdit.AcceptsReturn = true;
+			this.m_tbEdit.AcceptsTab = true;
 			this.m_tbEdit.Location = new System.Drawing.Point(6, 47);
 			this.m_tbEdit.Multiline = true;
 			this.m_tbEdit.Name = "m_tbEdit";
