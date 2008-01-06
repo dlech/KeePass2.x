@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,11 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.TANWizard;
 
+			if((m_pgStorage.Name != null) && (m_pgStorage.Name.Length > 0))
+				m_lblToGroup.Text += ": " + m_pgStorage.Name + ".";
+			else
+				m_lblToGroup.Text += ".";
+
 			m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
 			EnableControlsEx();
@@ -72,7 +77,7 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			ParseTANs();
+			ParseTans();
 			CleanUpEx();
 		}
 
@@ -91,11 +96,11 @@ namespace KeePass.Forms
 			m_numTANsIndex.Enabled = m_cbNumberTANs.Checked;
 		}
 
-		private void ParseTANs()
+		private void ParseTans()
 		{
 			StringBuilder sb = new StringBuilder();
 			string strText = m_tbTANs.Text;
-			int nTANIndex = (int)m_numTANsIndex.Value;
+			int nTanIndex = (int)m_numTANsIndex.Value;
 			bool bSetIndex = m_cbNumberTANs.Checked;
 			string strTanChars = m_tbTanChars.Text;
 
@@ -107,33 +112,33 @@ namespace KeePass.Forms
 					sb.Append(ch);
 				else
 				{
-					AddTAN(sb.ToString(), bSetIndex, nTANIndex);
-					++nTANIndex;
-
-					sb = new StringBuilder();
+					AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
+					sb = new StringBuilder(); // Reset string
 				}
 			}
 
-			if(sb.Length > 0) AddTAN(sb.ToString(), bSetIndex, nTANIndex);
+			if(sb.Length > 0) AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
 		}
 
-		private void AddTAN(string strTAN, bool bSetIndex, int nTANIndex)
+		private void AddTan(string strTan, bool bSetIndex, ref int nTanIndex)
 		{
-			if(strTAN.Length == 0) return;
+			if(strTan.Length == 0) return;
 
 			PwEntry pe = new PwEntry(m_pgStorage, true, true);
 			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 				m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TanTitle));
 
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				m_pwDatabase.MemoryProtection.ProtectPassword, strTAN));
+				m_pwDatabase.MemoryProtection.ProtectPassword, strTan));
 
-			if(bSetIndex && (nTANIndex >= 0))
+			if(bSetIndex && (nTanIndex >= 0))
 			{
 				Debug.Assert(PwDefs.TanIndexField == PwDefs.UserNameField);
 
 				pe.Strings.Set(PwDefs.TanIndexField, new ProtectedString(
-					m_pwDatabase.MemoryProtection.ProtectUserName, nTANIndex.ToString()));
+					m_pwDatabase.MemoryProtection.ProtectUserName, nTanIndex.ToString()));
+
+				++nTanIndex;
 			}
 
 			m_pgStorage.Entries.Add(pe);

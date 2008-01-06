@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
+using KeePassLib.Keys;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -51,6 +52,7 @@ namespace KeePass
 		private static int m_nAppMessage = 0;
 		private static MainForm m_formMain = null;
 		private static AppConfigEx m_appConfig = new AppConfigEx();
+		private static KeyProviderPool m_keyProviderPool = new KeyProviderPool();
 
 		public enum AppMessage
 		{
@@ -82,6 +84,11 @@ namespace KeePass
 		public static AppConfigEx Config
 		{
 			get { return m_appConfig; }
+		}
+
+		public static KeyProviderPool KeyProviderPool
+		{
+			get { return m_keyProviderPool; }
 		}
 
 		/// <summary>
@@ -128,12 +135,17 @@ namespace KeePass
 			}
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
-			catch(Exception exAppMsg) { MessageService.ShowWarning(exAppMsg); }
+			catch(Exception) { Debug.Assert(false); }
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ExitAll] != null)
 			{
-				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
-					m_nAppMessage, (IntPtr)AppMessage.Exit, IntPtr.Zero);
+				try
+				{
+					NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+						m_nAppMessage, (IntPtr)AppMessage.Exit, IntPtr.Zero);
+				}
+				catch(Exception) { Debug.Assert(false); }
+
 				return;
 			}
 
@@ -210,7 +222,7 @@ namespace KeePass
 				bool bCreatedNew;
 				return new Mutex(false, strName, out bCreatedNew, ms);
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			return null;
 		}
@@ -224,10 +236,7 @@ namespace KeePass
 				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
 					m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
 			}
-			catch(Exception exActivation)
-			{
-				MessageService.ShowWarning(exActivation);
-			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		internal static void NotifyUserActivity()

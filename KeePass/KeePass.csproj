@@ -114,6 +114,9 @@
     <Compile Include="..\KeePassLib\Keys\IUserKey.cs">
       <Link>KeePassLib\Keys\IUserKey.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\KcpCustomKey.cs">
+      <Link>KeePassLib\Keys\KcpCustomKey.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\KcpKeyFile.cs">
       <Link>KeePassLib\Keys\KcpKeyFile.cs</Link>
     </Compile>
@@ -122,6 +125,12 @@
     </Compile>
     <Compile Include="..\KeePassLib\Keys\KcpUserAccount.cs">
       <Link>KeePassLib\Keys\KcpUserAccount.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyProvider.cs">
+      <Link>KeePassLib\Keys\KeyProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyProviderPool.cs">
+      <Link>KeePassLib\Keys\KeyProviderPool.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
       <Link>KeePassLib\Keys\UserKeyType.cs</Link>
@@ -453,6 +462,9 @@
     <Compile Include="Native\NativeMethods.New.cs" />
     <Compile Include="Native\NativeMethods.Structs.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
+    <Compile Include="UI\BackgroundForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
@@ -462,6 +474,7 @@
     <Compile Include="UI\PromptedTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="Util\BinaryDataClassifier.cs" />

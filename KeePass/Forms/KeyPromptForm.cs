@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -178,7 +178,10 @@ namespace KeePass.Forms
 
 			string strKeyFile = m_cmbKeyFile.Text;
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
-			if(m_cbKeyFile.Checked && !strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
+			bool bIsProvKey = Program.KeyProviderPool.IsKeyProvider(strKeyFile);
+
+			if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
+				(bIsProvKey == false))
 			{
 				if(ValidateKeyFileLocation() == false)
 				{
@@ -193,6 +196,22 @@ namespace KeePass.Forms
 					m_pKey = null;
 					return false;
 				}
+			}
+			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
+				(bIsProvKey == true))
+			{
+				byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile);
+
+				try { m_pKey.AddUserKey(new KcpCustomKey(pbProvKey)); }
+				catch(Exception exCKP)
+				{
+					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exCKP);
+					m_pKey = null;
+					return false;
+				}
+
+				if((pbProvKey != null) && (pbProvKey.Length > 0))
+					Array.Clear(pbProvKey, 0, pbProvKey.Length);
 			}
 
 			if(m_cbUserAccount.Checked)
@@ -213,6 +232,8 @@ namespace KeePass.Forms
 			string strKeyFile = m_cmbKeyFile.Text;
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
 			if(strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) return true;
+
+			if(Program.KeyProviderPool.IsKeyProvider(strKeyFile)) return true;
 
 			bool bSuccess = true;
 
@@ -343,6 +364,11 @@ namespace KeePass.Forms
 						m_vSuggestions.Add(fi.FullName);
 				}
 				catch(Exception) { Debug.Assert(false); }
+			}
+
+			foreach(KeyProvider prov in Program.KeyProviderPool)
+			{
+				m_vSuggestions.Add(prov.Name);
 			}
 
 			m_bSuggestionsReady = true;

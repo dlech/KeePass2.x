@@ -56,6 +56,9 @@
     <Compile Include="Cryptography\QualityEstimation.cs" />
     <Compile Include="Cryptography\SelfTest.cs" />
     <Compile Include="Interfaces\IUIOperations.cs" />
+    <Compile Include="Keys\KcpCustomKey.cs" />
+    <Compile Include="Keys\KeyProvider.cs" />
+    <Compile Include="Keys\KeyProviderPool.cs" />
     <Compile Include="Keys\UserKeyType.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="PwCustomIcon.cs" />

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -156,7 +156,8 @@ namespace KeePass.Forms
 			};
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				Debug.Assert(pe.Strings.Get(strFieldID).IsProtected == bNewProt);
+				ProtectedString ps = pe.Strings.Get(strFieldID);
+				if(ps != null) { Debug.Assert(ps.IsProtected == bNewProt); }
 				return true;
 			};
 			Debug.Assert(m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh));

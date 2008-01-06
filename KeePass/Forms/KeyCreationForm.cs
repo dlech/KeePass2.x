@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -90,7 +90,13 @@ namespace KeePass.Forms
 			m_cbPassword.Checked = true;
 			ProcessTextChangedPassword(sender, e); // Update quality estimation
 
-			m_tbKeyFile.Text = KPRes.NoKeyFileSpecifiedMeta;
+			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
+			foreach(KeyProvider prov in Program.KeyProviderPool)
+			{
+				m_cmbKeyFile.Items.Add(prov.Name);
+			}
+
+			m_cmbKeyFile.SelectedIndex = 0;
 
 			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
 				m_cbUserAccount.Enabled = false;
@@ -125,14 +131,33 @@ namespace KeePass.Forms
 				Array.Clear(pb, 0, pb.Length);
 			}
 
-			if(m_cbKeyFile.Checked && (!m_tbKeyFile.Text.Equals(KPRes.NoKeyFileSpecifiedMeta)))
+			string strKeyFile = m_cmbKeyFile.Text;
+			bool bIsKeyProv = Program.KeyProviderPool.IsKeyProvider(strKeyFile);
+
+			if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
+				(bIsKeyProv == false))
 			{
-				try { m_pKey.AddUserKey(new KcpKeyFile(m_tbKeyFile.Text)); }
+				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
 				catch(Exception exKF)
 				{
-					MessageService.ShowWarning(m_tbKeyFile.Text, KPRes.KeyFileError, exKF);
+					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKF);
 					return false;
 				}
+			}
+			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
+				(bIsKeyProv == true))
+			{
+				byte[] pbCustomKey = Program.KeyProviderPool.GetKey(strKeyFile);
+
+				try { m_pKey.AddUserKey(new KcpCustomKey(pbCustomKey)); }
+				catch(Exception exCKP)
+				{
+					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exCKP);
+					return false;
+				}
+
+				if((pbCustomKey != null) && (pbCustomKey.Length > 0))
+					Array.Clear(pbCustomKey, 0, pbCustomKey.Length);
 			}
 
 			if(m_cbUserAccount.Checked)
@@ -155,17 +180,19 @@ namespace KeePass.Forms
 				m_lblEstimatedQuality.Enabled = m_cbPassword.Checked;
 
 			m_btnOpenKeyFile.Enabled = m_btnSaveKeyFile.Enabled =
-				m_tbKeyFile.Enabled = m_cbKeyFile.Checked;
+				m_cmbKeyFile.Enabled = m_cbKeyFile.Checked;
+
+			string strKeyFile = m_cmbKeyFile.Text;
 
 			if((!m_cbPassword.Checked) && (!m_cbKeyFile.Checked) && (!m_cbUserAccount.Checked))
 				m_btnCreate.Enabled = false;
-			else if((m_cbKeyFile.Checked) && (m_tbKeyFile.Text.Equals(KPRes.NoKeyFileSpecifiedMeta)))
+			else if((m_cbKeyFile.Checked) && (strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)))
 				m_btnCreate.Enabled = false;
 			else m_btnCreate.Enabled = true;
 
 			SetHidePassword(m_cbHidePassword.Checked, false);
 
-			m_ttRect.SetToolTip(m_tbKeyFile, m_tbKeyFile.Text);
+			m_ttRect.SetToolTip(m_cmbKeyFile, strKeyFile);
 		}
 
 		private void SetHidePassword(bool bHide, bool bUpdateCheckBox)
@@ -236,7 +263,9 @@ namespace KeePass.Forms
 						KcpKeyFile.Create(m_saveKeyFileDialog.FileName,
 							pbAdditionalEntropy);
 						
-						m_tbKeyFile.Text = m_saveKeyFileDialog.FileName;
+						string str = m_saveKeyFileDialog.FileName;
+						m_cmbKeyFile.Items.Add(str);
+						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 					}
 					catch(Exception exKC)
 					{
@@ -254,7 +283,11 @@ namespace KeePass.Forms
 			m_openKeyFileDialog.InitialDirectory = UrlUtil.GetFileDirectory(m_strDisplayName, false);
 
 			if(m_openKeyFileDialog.ShowDialog() == DialogResult.OK)
-				m_tbKeyFile.Text = m_openKeyFileDialog.FileName;
+			{
+				string str = m_openKeyFileDialog.FileName;
+				m_cmbKeyFile.Items.Add(str);
+				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
+			}
 
 			EnableUserControls();
 		}

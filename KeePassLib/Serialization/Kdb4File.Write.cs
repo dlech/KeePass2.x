@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -72,17 +72,18 @@ namespace KeePassLib.Serialization
 			m_slLogger = slLogger;
 
 			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
+			CryptoRandom cr = CryptoRandom.Instance;
 
 			try
 			{
-				m_pbMasterSeed = CryptoRandom.GetRandomBytes(32);
-				m_pbTransformSeed = CryptoRandom.GetRandomBytes(32);
-				m_pbEncryptionIV = CryptoRandom.GetRandomBytes(16);
+				m_pbMasterSeed = cr.GetRandomBytes(32);
+				m_pbTransformSeed = cr.GetRandomBytes(32);
+				m_pbEncryptionIV = cr.GetRandomBytes(16);
 
-				m_pbProtectedStreamKey = CryptoRandom.GetRandomBytes(32);
+				m_pbProtectedStreamKey = cr.GetRandomBytes(32);
 				m_randomStream = new CryptoRandomStream(CrsAlgorithm.ArcFour, m_pbProtectedStreamKey);
 
-				m_pbStreamStartBytes = CryptoRandom.GetRandomBytes(32);
+				m_pbStreamStartBytes = cr.GetRandomBytes(32);
 
 				Stream writerStream;
 				BinaryWriter bw = null;
@@ -282,10 +283,10 @@ namespace KeePassLib.Serialization
 		{
 			m_xmlWriter.WriteStartElement(ElemMeta);
 
-			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName); // Generator name
-			WriteObject(ElemDbName, m_pwDatabase.Name);
-			WriteObject(ElemDbDesc, m_pwDatabase.Description);
-			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName);
+			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName, false); // Generator name
+			WriteObject(ElemDbName, m_pwDatabase.Name, true);
+			WriteObject(ElemDbDesc, m_pwDatabase.Description, true);
+			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName, true);
 			WriteObject(ElemDbMntncHistoryDays, m_pwDatabase.MaintenanceHistoryDays);
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
@@ -302,7 +303,7 @@ namespace KeePassLib.Serialization
 		{
 			m_xmlWriter.WriteStartElement(ElemGroup);
 			WriteObject(ElemUuid, pg.Uuid);
-			WriteObject(ElemName, pg.Name);
+			WriteObject(ElemName, pg.Name, true);
 			WriteObject(ElemIcon, (uint)pg.IconID);
 			
 			if(pg.CustomIconUuid != PwUuid.Zero)
@@ -310,7 +311,7 @@ namespace KeePassLib.Serialization
 			
 			WriteList(ElemTimes, pg);
 			WriteObject(ElemIsExpanded, pg.IsExpanded);
-			WriteObject(ElemGroupDefaultAutoTypeSeq, pg.DefaultAutoTypeSequence);
+			WriteObject(ElemGroupDefaultAutoTypeSeq, pg.DefaultAutoTypeSequence, true);
 			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
 		}
 
@@ -331,9 +332,9 @@ namespace KeePassLib.Serialization
 			if(pe.CustomIconUuid != PwUuid.Zero)
 				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
 
-			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true));
-			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true));
-			WriteObject(ElemOverrideUrl, pe.OverrideUrl);
+			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
+			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true), false);
+			WriteObject(ElemOverrideUrl, pe.OverrideUrl, true);
 
 			WriteList(ElemTimes, pe);
 
@@ -377,7 +378,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemAutoTypeObfuscation, (uint)dictAutoType.ObfuscationOptions);
 
 			if(dictAutoType.DefaultSequence.Length > 0)
-				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence);
+				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence, true);
 
 			foreach(KeyValuePair<string, string> kvp in dictAutoType.WindowSequencePairs)
 				WriteObject(kvp);
@@ -458,7 +459,7 @@ namespace KeePassLib.Serialization
 				WriteObject(ElemCustomIconItemID, pwci.Uuid);
 
 				string strData = Convert.ToBase64String(pwci.ImageDataPng);
-				WriteObject(ElemCustomIconItemData, strData);
+				WriteObject(ElemCustomIconItemData, strData, false);
 
 				m_xmlWriter.WriteEndElement();
 			}
@@ -466,13 +467,18 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 		}
 
-		private void WriteObject(string name, string value)
+		private void WriteObject(string name, string value,
+			bool bFilterValueXmlChars)
 		{
 			Debug.Assert(name != null);
 			Debug.Assert(value != null);
 
 			m_xmlWriter.WriteStartElement(name);
-			m_xmlWriter.WriteString(value);
+
+			if(bFilterValueXmlChars)
+				m_xmlWriter.WriteString(StrUtil.SafeXmlString(value));
+			else m_xmlWriter.WriteString(value);
+
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -480,7 +486,7 @@ namespace KeePassLib.Serialization
 		{
 			Debug.Assert(name != null);
 
-			WriteObject(name, value ? ValTrue : ValFalse);
+			WriteObject(name, value ? ValTrue : ValFalse, false);
 		}
 
 		private void WriteObject(string name, PwUuid value)
@@ -488,7 +494,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(name != null);
 			Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
 
-			WriteObject(name, Convert.ToBase64String(value.UuidBytes));
+			WriteObject(name, Convert.ToBase64String(value.UuidBytes), false);
 		}
 
 		private void WriteObject(string name, uint value)
@@ -513,7 +519,7 @@ namespace KeePassLib.Serialization
 		{
 			Debug.Assert(name != null);
 
-			WriteObject(name, value.ToString("s"));
+			WriteObject(name, value.ToString("s"), false);
 		}
 
 		private void WriteObject(KeyValuePair<string, string> kvp)
@@ -521,10 +527,10 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(ElemAutoTypeItem);
 
 			m_xmlWriter.WriteStartElement(ElemWindow);
-			m_xmlWriter.WriteString(kvp.Key);
+			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Key));
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemKeystrokeSequence);
-			m_xmlWriter.WriteString(kvp.Value);
+			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Value));
 			m_xmlWriter.WriteEndElement();
 
 			m_xmlWriter.WriteEndElement(); // ElemKeyValuePair
@@ -537,7 +543,7 @@ namespace KeePassLib.Serialization
 
 			m_xmlWriter.WriteStartElement(ElemString);
 			m_xmlWriter.WriteStartElement(ElemKey);
-			m_xmlWriter.WriteString(name);
+			m_xmlWriter.WriteString(StrUtil.SafeXmlString(name));
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
@@ -604,7 +610,7 @@ namespace KeePassLib.Serialization
 					strValue = sb.ToString(); // Correct string for current code page
 				}
 
-				m_xmlWriter.WriteString(strValue);
+				m_xmlWriter.WriteString(StrUtil.SafeXmlString(strValue));
 			}
 
 			m_xmlWriter.WriteEndElement(); // ElemValue
@@ -618,7 +624,7 @@ namespace KeePassLib.Serialization
 
 			m_xmlWriter.WriteStartElement(ElemBinary);
 			m_xmlWriter.WriteStartElement(ElemKey);
-			m_xmlWriter.WriteString(name);
+			m_xmlWriter.WriteString(StrUtil.SafeXmlString(name));
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 

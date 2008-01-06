@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ namespace KeePass.UI
 		private string m_strAlternativeSecString = string.Empty;
 
 		private bool m_bBlockTextChanged = false;
+
+		private bool m_bFirstGotFocus = true;
 
 		static SecureEdit()
 		{
@@ -98,6 +100,7 @@ namespace KeePass.UI
 
 			// Register event handler
 			m_tbPassword.TextChanged += this.OnPasswordTextChanged;
+			m_tbPassword.GotFocus += this.OnGotFocus;
 		}
 
 		/// <summary>
@@ -292,6 +295,15 @@ namespace KeePass.UI
 			else m_strAlternativeSecString = Encoding.UTF8.GetString(pbUTF8);
 
 			ShowCurrentPassword(0, 0);
+		}
+
+		private void OnGotFocus(object sender, EventArgs e)
+		{
+			Debug.Assert(m_tbPassword != null);
+			if(m_bFirstGotFocus && (m_tbPassword != null))
+				m_tbPassword.SelectAll();
+
+			m_bFirstGotFocus = false;
 		}
 	}
 }

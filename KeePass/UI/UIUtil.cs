@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -147,11 +147,82 @@ namespace KeePass.UI
 
 		public static bool DrawAnimatedRects(Rectangle rectFrom, Rectangle rectTo)
 		{
-			NativeMethods.RECT rnFrom = new NativeMethods.RECT(rectFrom);
-			NativeMethods.RECT rnTo = new NativeMethods.RECT(rectTo);
+			bool bResult;
 
-			return NativeMethods.DrawAnimatedRects(IntPtr.Zero,
-				NativeMethods.IDANI_CAPTION, ref rnFrom, ref rnTo);
+			try
+			{
+				NativeMethods.RECT rnFrom = new NativeMethods.RECT(rectFrom);
+				NativeMethods.RECT rnTo = new NativeMethods.RECT(rectTo);
+
+				bResult = NativeMethods.DrawAnimatedRects(IntPtr.Zero,
+					NativeMethods.IDANI_CAPTION, ref rnFrom, ref rnTo);
+			}
+			catch(Exception) { Debug.Assert(false); bResult = false; }
+
+			return bResult;
+		}
+
+		private static void SetCueBanner(IntPtr hWnd, string strText)
+		{
+			Debug.Assert(strText != null); if(strText == null) throw new ArgumentNullException();
+
+			try
+			{
+				IntPtr pText = Marshal.StringToHGlobalUni(strText);
+				NativeMethods.SendMessage(hWnd, NativeMethods.EM_SETCUEBANNER,
+					IntPtr.Zero, pText);
+				Marshal.FreeHGlobal(pText); pText = IntPtr.Zero;
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void SetCueBanner(TextBox tb, string strText)
+		{
+			SetCueBanner(tb.Handle, strText);
+		}
+
+		public static void SetCueBanner(ToolStripTextBox tb, string strText)
+		{
+			SetCueBanner(tb.TextBox, strText);
+		}
+
+		public static void SetCueBanner(ToolStripComboBox tb, string strText)
+		{
+			try
+			{
+				NativeMethods.COMBOBOXINFO cbi = new NativeMethods.COMBOBOXINFO();
+				cbi.cbSize = Marshal.SizeOf(cbi);
+
+				NativeMethods.GetComboBoxInfo(tb.ComboBox.Handle, ref cbi);
+
+				SetCueBanner(cbi.hwndEdit, strText);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static Bitmap CreateScreenshot()
+		{
+			Screen s = Screen.PrimaryScreen;
+			Bitmap bmp = new Bitmap(s.Bounds.Width, s.Bounds.Height);
+
+			using(Graphics g = Graphics.FromImage(bmp))
+			{
+				g.CopyFromScreen(s.Bounds.Location, new Point(0, 0),
+					s.Bounds.Size);
+			}
+
+			return bmp;
+		}
+
+		public static void DimBitmap(Bitmap bmp)
+		{
+			using(Brush b = new SolidBrush(Color.FromArgb(192, Color.Black)))
+			{
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
+				}
+			}
 		}
 	}
 }

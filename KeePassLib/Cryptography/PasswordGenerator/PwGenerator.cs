@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 		private static CryptoRandomStream CreateCryptoStream(byte[] pbAdditionalEntropy)
 		{
-			byte[] pbKey = CryptoRandom.GetRandomBytes(256);
+			byte[] pbKey = CryptoRandom.Instance.GetRandomBytes(256);
 
 			// Mix in additional entropy
 			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
@@ -81,7 +81,13 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			ulong uIndex = crsRandomSource.GetRandomUInt64();
 			uIndex %= (ulong)pwCharSet.Size;
-			return pwCharSet[(uint)uIndex];
+
+			char ch = pwCharSet[(uint)uIndex];
+
+			if(pwProfile.NoRepeatingCharacters)
+				pwCharSet.Remove(ch);
+
+			return ch;
 		}
 
 		internal static void PrepareCharSet(PwCharSet pwCharSet, PwProfile pwProfile)

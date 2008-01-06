@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -78,8 +78,7 @@ namespace KeePass.Forms
 			m_tbName.Text = m_pwGroup.Name;
 
 			if(m_pwCustomIconID != PwUuid.Zero)
-				m_btnIcon.Image = m_ilClientIcons.Images[(int)PwIcon.Count +
-					m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID)];
+				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
 			else m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
 
 			if(m_pwGroup.Expires)
@@ -93,7 +92,7 @@ namespace KeePass.Forms
 				m_cbExpires.Checked = false;
 			}
 
-			m_tbDefaultAutoTypeSeq.Text = m_pwGroup.DefaultAutoTypeSequence;
+			m_tbDefaultAutoTypeSeq.Text = m_pwGroup.GetAutoTypeSequenceInherited();
 
 			if(m_pwGroup.DefaultAutoTypeSequence.Length == 0)
 				m_rbAutoTypeInherit.Checked = true;
@@ -137,8 +136,7 @@ namespace KeePass.Forms
 				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 				{
 					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					m_btnIcon.Image = m_ilClientIcons.Images[(int)PwIcon.Count +
-						m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID)];
+					m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
 				}
 				else // Standard icon
 				{
@@ -163,7 +161,7 @@ namespace KeePass.Forms
 		{
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
 
-			string strName = "(" + KPRes.AutoType + ")";
+			string strName = @"(" + KPRes.AutoType + @")";
 
 			AutoTypeConfig atConfig = new AutoTypeConfig();
 			atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;

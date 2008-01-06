@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,7 +75,31 @@ namespace KeePass.Native
 
 		internal const int IDANI_CAPTION = 3;
 
+		internal const int ECM_FIRST = 0x1500;
+		internal const int EM_SETCUEBANNER = ECM_FIRST + 1;
+
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+		internal enum ComboBoxButtonState : uint
+		{
+			STATE_SYSTEM_NONE = 0,
+			STATE_SYSTEM_INVISIBLE = 0x00008000,
+			STATE_SYSTEM_PRESSED = 0x00000008
+		}
+
+		[Flags]
+		internal enum DesktopFlags : uint
+		{
+			ReadObjects = 0x0001,
+			CreateWindow = 0x0002,
+			CreateMenu = 0x0004,
+			HookControl = 0x0008,
+			JournalRecord = 0x0010,
+			JournalPlayback = 0x0020,
+			Enumerate = 0x0040,
+			WriteObjects = 0x0080,
+			SwitchDesktop = 0x0100,
+		}
 	}
 }

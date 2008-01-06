@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ namespace KeePass.Forms
 
 				m_uChosenImageID = (uint)lvsi[0];
 			}
-			else
+			else // Custom icon
 			{
 				ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
 
@@ -250,10 +250,7 @@ namespace KeePass.Forms
 						Image img = Image.FromStream(msSource);
 						msSource.Close();
 
-						Image imgNew = img;
-
-						if((img.Width != 16) || (img.Height != 16))
-							imgNew = new Bitmap(img, new Size(16, 16));
+						Image imgNew = new Bitmap(img, new Size(16, 16));
 
 						MemoryStream ms = new MemoryStream();
 						imgNew.Save(ms, ImageFormat.Png);

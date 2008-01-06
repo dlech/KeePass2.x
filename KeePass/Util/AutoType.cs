@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
@@ -80,6 +81,13 @@ namespace KeePass.Util
 			strSend = AppLocator.FillPlaceholders(strSend, true);
 			strSend = EntryUtil.FillPlaceholders(strSend, pweData, true);
 
+			string strError = ValidateAutoTypeSequence(strSend);
+			if(strError != null)
+			{
+				MessageService.ShowWarning(strError);
+				return false;
+			}
+
 			bool bObfuscate = !(pweData.AutoType.ObfuscationOptions ==
 				AutoTypeObfuscationOptions.None);
 
@@ -123,9 +131,10 @@ namespace KeePass.Util
 				}
 			}
 
+			string strTitle = pwe.Strings.ReadSafe(PwDefs.TitleField);
 			if(((strSeq == null) || (strSeq.Length == 0)) &&
-				(strWindow.IndexOf(pwe.Strings.ReadSafe(PwDefs.TitleField),
-				StrCaseIgnoreCmp) >= 0))
+				(strTitle.Length > 0) &&
+				(strWindow.IndexOf(strTitle, StrCaseIgnoreCmp) >= 0))
 			{
 				strSeq = pwe.AutoType.DefaultSequence;
 				Debug.Assert(strSeq != null);
@@ -157,8 +166,16 @@ namespace KeePass.Util
 		{
 			Debug.Assert(vSources != null); if(vSources == null) return false;
 
-			IntPtr hWnd = NativeMethods.GetForegroundWindow();
-			string strWindow = NativeMethods.GetWindowText(hWnd);
+			IntPtr hWnd;
+			string strWindow;
+
+			try
+			{
+				hWnd = NativeMethods.GetForegroundWindow();
+				strWindow = NativeMethods.GetWindowText(hWnd);
+			}
+			catch(Exception) { Debug.Assert(false); hWnd = IntPtr.Zero; strWindow = null; }
+
 			if((strWindow == null) || (strWindow.Length == 0)) return false;
 
 			PwObjectList<PwEntry> m_vList = new PwObjectList<PwEntry>();
@@ -194,7 +211,8 @@ namespace KeePass.Util
 
 				if(elf.ShowDialog() == DialogResult.OK)
 				{
-					NativeMethods.EnsureForegroundWindow(hWnd);
+					try { NativeMethods.EnsureForegroundWindow(hWnd); }
+					catch(Exception) { Debug.Assert(false); }
 
 					if(elf.SelectedEntry != null)
 						AutoType.PerformInternal(elf.SelectedEntry, strWindow);
@@ -206,20 +224,65 @@ namespace KeePass.Util
 
 		public static bool PerformIntoPreviousWindow(IntPtr hWndCurrent, PwEntry pe)
 		{
-			NativeMethods.LoseFocus(hWndCurrent);
+			try { NativeMethods.LoseFocus(hWndCurrent); }
+			catch(Exception) { Debug.Assert(false); }
 
 			return PerformIntoCurrentWindow(pe);
 		}
 
 		public static bool PerformIntoCurrentWindow(PwEntry pe)
 		{
-			string strWindow = NativeMethods.GetWindowText(
-				NativeMethods.GetForegroundWindow());
+			string strWindow;
+
+			try
+			{
+				strWindow = NativeMethods.GetWindowText(
+					NativeMethods.GetForegroundWindow());
+			}
+			catch(Exception) { strWindow = null; }
+
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
 
 			Thread.Sleep(100);
 
 			return AutoType.PerformInternal(pe, strWindow);
+		}
+
+		private static string ValidateAutoTypeSequence(string strSeq)
+		{
+			Debug.Assert(strSeq != null);
+
+			int cBrackets = 0;
+			for(int c = 0; c < strSeq.Length; ++c)
+			{
+				if(strSeq[c] == '{') ++cBrackets;
+				else if(strSeq[c] == '}') --cBrackets;
+
+				if((cBrackets < 0) || (cBrackets > 1))
+					return KPRes.AutoTypeSequenceInvalid;
+			}
+			if(cBrackets != 0) return KPRes.AutoTypeSequenceInvalid;
+
+			if(strSeq.IndexOf(@"{}") >= 0) return KPRes.AutoTypeSequenceInvalid;
+
+			try
+			{
+				Regex r = new Regex(@"\{[^\{\}]+\}", RegexOptions.CultureInvariant);
+				MatchCollection matches = r.Matches(strSeq);
+
+				foreach(Match m in matches)
+				{
+					string strValue = m.Value;
+					string strLower = strValue.ToLower();
+
+					if(strLower.StartsWith(@"{s:"))
+						return KPRes.AutoTypeUnknownPlaceholder +
+							MessageService.NewLine + strValue;
+				}
+			}
+			catch(Exception ex) { Debug.Assert(false); return ex.Message; }
+
+			return null;
 		}
 	}
 }

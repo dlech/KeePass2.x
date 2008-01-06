@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -33,6 +34,7 @@ using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -117,6 +119,17 @@ namespace KeePass.Forms
 		{
 			SearchParameters sp = GetSearchParameters(true);
 
+			if(sp.RegularExpression) // Validate regular expression
+			{
+				try { new Regex(sp.SearchString); }
+				catch(Exception exReg)
+				{
+					MessageService.ShowWarning(exReg.Message);
+					this.DialogResult = DialogResult.None;
+					return;
+				}
+			}
+
 			string strGroupName = KPRes.SearchGroupName + " (\"" + sp.SearchString + "\" ";
 			strGroupName += KPRes.SearchResultsInSeparator + " ";
 			strGroupName += m_pgRoot.Name + ")";
@@ -125,7 +138,9 @@ namespace KeePass.Forms
 
 			PwObjectList<PwEntry> listResults = pgResults.Entries;
 
-			m_pgRoot.SearchEntries(sp, listResults);
+			try { m_pgRoot.SearchEntries(sp, listResults); }
+			catch(Exception exFind) { MessageService.ShowWarning(exFind); }
+
 			m_pgResultsGroup = pgResults;
 
 			sp.SearchString = string.Empty; // Clear for saving

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ namespace KeePass.Forms
 	public partial class MainForm : Form, IMruExecuteHandler, IUIOperations
 	{
 		private bool m_bRestart = false;
-		private ListSorter m_pListSorter = new ListSorter(-1, SortOrder.Ascending);
+		private ListSorter m_pListSorter = new ListSorter();
 		private bool m_bBlockQuickFind = false;
 
 		private bool m_bDraggingEntries = false;
@@ -241,6 +241,14 @@ namespace KeePass.Forms
 			m_menuViewTanIndices.Checked = m_bShowTanIndices =
 				mw.TANView.ShowIndices;
 
+			m_menuViewShowEntriesOfSubGroups.Checked =
+				Program.Config.MainWindow.ShowEntriesOfSubGroups;
+
+			m_pListSorter = Program.Config.MainWindow.ListSorting;
+			if((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
+				m_lvEntries.ListViewItemSorter = m_pListSorter;
+			else m_pListSorter = new ListSorter();
+
 			m_menuViewAlwaysOnTop.Checked = mw.AlwaysOnTop;
 			OnViewAlwaysOnTop(null, null);
 
@@ -285,6 +293,10 @@ namespace KeePass.Forms
 			}
 			catch(Exception) { Debug.Assert(false); }
 
+			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
+				string.Empty : " ") + KPRes.Search);
+			UIUtil.SetCueBanner(m_tbQuickFind, strSearchTr);
+
 			m_sessionLockNotifier.Install(this.OnSessionLock);
 
 			m_pluginDefaultHost.Initialize(this, Program.CommandLineArgs,
@@ -323,7 +335,7 @@ namespace KeePass.Forms
 			if(Program.Config.Application.Start.CheckForUpdate)
 				CheckForUpdate.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
 
-			ResetDefaultFocus();
+			ResetDefaultFocus(null);
 
 			MinimizeToTrayAtStartIfEnabled(true);
 
@@ -751,7 +763,7 @@ namespace KeePass.Forms
 				pg.Entries.Add(peNew);
 			}
 
-			UpdateEntryList(pg);
+			UpdateEntryList(pg, false);
 			m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
 
 			UpdateUIState(true);
@@ -877,9 +889,14 @@ namespace KeePass.Forms
 			if(sf.ShowDialog() == DialogResult.OK)
 			{
 				PwGroup pg = sf.SearchResultsGroup;
-				UpdateEntryList(pg);
+
+				UpdateEntryList(pg, false);
+				SelectFirstEntryIfNoneSelected();
+
 				UpdateUIState(false);
 				ShowSearchResultsStatusMessage();
+
+				ResetDefaultFocus(m_lvEntries);
 			}
 		}
 
@@ -1295,7 +1312,7 @@ namespace KeePass.Forms
 				m_docMgr.ActiveDatabase.DeletedObjects.Add(pdo);
 
 				UpdateGroupList(null);
-				UpdateEntryList(null);
+				UpdateEntryList(null, false);
 				UpdateUIState(true);
 			}
 		}
@@ -1496,16 +1513,18 @@ namespace KeePass.Forms
 			if(!GlobalWindowManager.CanCloseAllWindows) return;
 			if((m_nLockTimerMax > 0) && m_bAllowLockTimerMod)
 			{
+				m_bAllowLockTimerMod = false;
+
 				--m_nLockTimerCur;
 				if(m_nLockTimerCur < 0) m_nLockTimerCur = 0;
 
 				if(m_nLockTimerCur == 0)
 				{
-					m_bAllowLockTimerMod = false;
 					NotifyUserActivity();
 					LockAllDocuments();
-					m_bAllowLockTimerMod = true;
 				}
+
+				m_bAllowLockTimerMod = true;
 			}
 		}
 
@@ -1735,7 +1754,7 @@ namespace KeePass.Forms
 			if(sf.ShowDialog() == DialogResult.OK)
 			{
 				PwGroup pgResults = sf.SearchResultsGroup;
-				UpdateEntryList(pgResults);
+				UpdateEntryList(pgResults, false);
 				UpdateUIState(false);
 				ShowSearchResultsStatusMessage();
 			}
@@ -1749,13 +1768,13 @@ namespace KeePass.Forms
 		private void OnViewTanSimpleListClick(object sender, EventArgs e)
 		{
 			m_bSimpleTanView = m_menuViewTanSimpleList.Checked;
-			UpdateEntryList(null);
+			UpdateEntryList(null, true);
 		}
 
 		private void OnViewTanIndicesClick(object sender, EventArgs e)
 		{
 			m_bShowTanIndices = m_menuViewTanIndices.Checked;
-			UpdateEntryList(null);
+			UpdateEntryList(null, true);
 		}
 
 		private void OnMenuFileExportUseXsl(object sender, EventArgs e)
@@ -2046,7 +2065,7 @@ namespace KeePass.Forms
 			if(bAppendedToRootOnly && pwDb.IsOpen)
 			{
 				UpdateGroupList(pwDb.RootGroup);
-				UpdateEntryList(null);
+				UpdateEntryList(null, false);
 				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
 				UpdateUIState(true);
 			}
@@ -2170,6 +2189,29 @@ namespace KeePass.Forms
 		private void OnFileSaveAsCopy(object sender, EventArgs e)
 		{
 			SaveDatabaseAs(false, sender, true);
+		}
+
+		private void OnEntrySelectedPrint(object sender, EventArgs e)
+		{
+			PwEntry[] vSel = GetSelectedEntries();
+			if((vSel == null) || (vSel.Length == 0)) return;
+			PwGroup pgSel = GetSelectedGroup();
+			if(pgSel == null) return;
+
+			PwGroup pg = new PwGroup(true, true, pgSel.Name, pgSel.IconID);
+			pg.CustomIconUuid = pgSel.CustomIconUuid;
+
+			foreach(PwEntry pe in vSel)
+				pg.Entries.Add(pe);
+
+			PrintGroup(pg);
+		}
+
+		private void OnViewShowEntriesOfSubGroups(object sender, EventArgs e)
+		{
+			Program.Config.MainWindow.ShowEntriesOfSubGroups =
+				m_menuViewShowEntriesOfSubGroups.Checked;
+			UpdateUI(false, null, false, null, true, null, false);
 		}
 	}
 }

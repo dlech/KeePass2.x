@@ -39,6 +39,7 @@
 			this.m_numTANsIndex = new System.Windows.Forms.NumericUpDown();
 			this.m_lblTanChars = new System.Windows.Forms.Label();
 			this.m_tbTanChars = new System.Windows.Forms.TextBox();
+			this.m_lblToGroup = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTANsIndex)).BeginInit();
 			this.SuspendLayout();
@@ -76,7 +77,7 @@
 			// 
 			// m_lblIntro
 			// 
-			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
+			this.m_lblIntro.Location = new System.Drawing.Point(9, 91);
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(550, 29);
 			this.m_lblIntro.TabIndex = 5;
@@ -86,11 +87,11 @@
 			// 
 			this.m_tbTANs.AcceptsReturn = true;
 			this.m_tbTANs.AcceptsTab = true;
-			this.m_tbTANs.Location = new System.Drawing.Point(12, 104);
+			this.m_tbTANs.Location = new System.Drawing.Point(12, 124);
 			this.m_tbTANs.Multiline = true;
 			this.m_tbTANs.Name = "m_tbTANs";
 			this.m_tbTANs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbTANs.Size = new System.Drawing.Size(547, 228);
+			this.m_tbTANs.Size = new System.Drawing.Size(547, 208);
 			this.m_tbTANs.TabIndex = 0;
 			// 
 			// m_cbNumberTANs
@@ -140,6 +141,14 @@
 			this.m_tbTanChars.Size = new System.Drawing.Size(547, 20);
 			this.m_tbTanChars.TabIndex = 8;
 			// 
+			// m_lblToGroup
+			// 
+			this.m_lblToGroup.Location = new System.Drawing.Point(9, 71);
+			this.m_lblToGroup.Name = "m_lblToGroup";
+			this.m_lblToGroup.Size = new System.Drawing.Size(550, 15);
+			this.m_lblToGroup.TabIndex = 9;
+			this.m_lblToGroup.Text = "TANs are imported into the currently selected group";
+			// 
 			// TanWizardForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -147,6 +156,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(571, 458);
+			this.Controls.Add(this.m_lblToGroup);
 			this.Controls.Add(this.m_tbTanChars);
 			this.Controls.Add(this.m_lblTanChars);
 			this.Controls.Add(this.m_numTANsIndex);
@@ -185,5 +195,6 @@
 		private System.Windows.Forms.NumericUpDown m_numTANsIndex;
 		private System.Windows.Forms.Label m_lblTanChars;
 		private System.Windows.Forms.TextBox m_tbTanChars;
+		private System.Windows.Forms.Label m_lblToGroup;
 	}
 }

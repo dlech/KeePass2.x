@@ -1260,7 +1260,8 @@
         <member name="P:KeePassLib.PwGroup.DefaultAutoTypeSequence">
             <summary>
             Default auto-type keystroke sequence for all entries in
-            this group.
+            this group. This property can be an empty string, which
+            means that the value should be inherited from the parent.
             </summary>
         </member>
         <member name="T:KeePassLib.Security.XorredBuffer">
@@ -2162,6 +2163,14 @@
             to the result string. This text is a generic, localized error message.</param>
             <returns>String representing the exception.</returns>
         </member>
+        <member name="M:KeePassLib.Utility.StrUtil.SafeXmlString(System.String)">
+            <summary>
+            Removes all characters that are not valid XML characters,
+            according to http://www.w3.org/TR/xml/#charsets .
+            </summary>
+            <param name="strText">Source text.</param>
+            <returns>Text containing only valid XML characters.</returns>
+        </member>
         <member name="T:KeePassLib.Serialization.Kdb4Format">
             <summary>
             The <c>Kdb4File</c> class supports saving the data to various
@@ -2378,10 +2387,8 @@
             Get a number of cryptographically strong random bytes.
             </summary>
             <param name="uRequestedBytes">Number of requested random bytes.</param>
-            <returns>A byte array consisting of <paramref name="nRequestedBytes"/>
+            <returns>A byte array consisting of <paramref name="nRequestedBytes" />
             random bytes.</returns>
-            <exception cref="T:System.Security.SecurityException">Thrown if the
-            random number generator hasn't been initialized.</exception>
         </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
@@ -2466,7 +2473,7 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000, 2.01 = 0x02000100, ...
+            2.00 = 0x02000000, 2.01 = 0x02000100, etc.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">
@@ -2487,6 +2494,11 @@
         <member name="F:KeePassLib.PwDefs.PluginsUrl">
             <summary>
             URL to the online plugins page.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.TranslationsUrl">
+            <summary>
+            URL to the online translations page.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionUrl">

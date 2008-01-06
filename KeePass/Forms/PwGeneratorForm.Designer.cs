@@ -44,7 +44,6 @@
 			this.m_cbPatternPermute = new System.Windows.Forms.CheckBox();
 			this.m_lblCustomChars = new System.Windows.Forms.Label();
 			this.m_tbCustomChars = new System.Windows.Forms.TextBox();
-			this.m_cbExcludeLookAlike = new System.Windows.Forms.CheckBox();
 			this.m_cbHighAnsi = new System.Windows.Forms.CheckBox();
 			this.m_cbBrackets = new System.Windows.Forms.CheckBox();
 			this.m_cbSpecial = new System.Windows.Forms.CheckBox();
@@ -57,9 +56,14 @@
 			this.m_cbEntropy = new System.Windows.Forms.CheckBox();
 			this.m_tbPattern = new System.Windows.Forms.TextBox();
 			this.m_rbPattern = new System.Windows.Forms.RadioButton();
+			this.m_cbExcludeLookAlike = new System.Windows.Forms.CheckBox();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabSettings = new System.Windows.Forms.TabPage();
+			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
+			this.m_grpSecReducing = new System.Windows.Forms.GroupBox();
+			this.m_cbNoRepeat = new System.Windows.Forms.CheckBox();
+			this.m_lblSecRedInfo = new System.Windows.Forms.Label();
 			this.m_tabPreview = new System.Windows.Forms.TabPage();
 			this.m_pbPreview = new System.Windows.Forms.ProgressBar();
 			this.m_tbPreview = new System.Windows.Forms.TextBox();
@@ -69,13 +73,15 @@
 			this.m_grpCurOpt.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSettings.SuspendLayout();
+			this.m_tabAdvanced.SuspendLayout();
+			this.m_grpSecReducing.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(321, 484);
+			this.m_btnOK.Location = new System.Drawing.Point(321, 466);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -86,7 +92,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(402, 484);
+			this.m_btnCancel.Location = new System.Drawing.Point(402, 466);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -152,6 +158,7 @@
 			this.m_cmbProfiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbProfiles.FormattingEnabled = true;
 			this.m_cmbProfiles.Location = new System.Drawing.Point(51, 6);
+			this.m_cmbProfiles.MaxDropDownItems = 16;
 			this.m_cmbProfiles.Name = "m_cmbProfiles";
 			this.m_cmbProfiles.Size = new System.Drawing.Size(341, 21);
 			this.m_cmbProfiles.TabIndex = 1;
@@ -184,7 +191,6 @@
 			this.m_grpCurOpt.Controls.Add(this.m_cbPatternPermute);
 			this.m_grpCurOpt.Controls.Add(this.m_lblCustomChars);
 			this.m_grpCurOpt.Controls.Add(this.m_tbCustomChars);
-			this.m_grpCurOpt.Controls.Add(this.m_cbExcludeLookAlike);
 			this.m_grpCurOpt.Controls.Add(this.m_cbHighAnsi);
 			this.m_grpCurOpt.Controls.Add(this.m_cbBrackets);
 			this.m_grpCurOpt.Controls.Add(this.m_cbSpecial);
@@ -202,7 +208,7 @@
 			this.m_grpCurOpt.Controls.Add(this.m_numGenChars);
 			this.m_grpCurOpt.Location = new System.Drawing.Point(6, 31);
 			this.m_grpCurOpt.Name = "m_grpCurOpt";
-			this.m_grpCurOpt.Size = new System.Drawing.Size(445, 347);
+			this.m_grpCurOpt.Size = new System.Drawing.Size(445, 329);
 			this.m_grpCurOpt.TabIndex = 4;
 			this.m_grpCurOpt.TabStop = false;
 			this.m_grpCurOpt.Text = "Current settings";
@@ -232,16 +238,6 @@
 			this.m_tbCustomChars.Name = "m_tbCustomChars";
 			this.m_tbCustomChars.Size = new System.Drawing.Size(410, 20);
 			this.m_tbCustomChars.TabIndex = 13;
-			// 
-			// m_cbExcludeLookAlike
-			// 
-			this.m_cbExcludeLookAlike.AutoSize = true;
-			this.m_cbExcludeLookAlike.Location = new System.Drawing.Point(9, 300);
-			this.m_cbExcludeLookAlike.Name = "m_cbExcludeLookAlike";
-			this.m_cbExcludeLookAlike.Size = new System.Drawing.Size(207, 17);
-			this.m_cbExcludeLookAlike.TabIndex = 17;
-			this.m_cbExcludeLookAlike.Text = "Exclude look-alike characters (l|1I, O0)";
-			this.m_cbExcludeLookAlike.UseVisualStyleBackColor = true;
 			// 
 			// m_cbHighAnsi
 			// 
@@ -336,11 +332,11 @@
 			// m_cbEntropy
 			// 
 			this.m_cbEntropy.AutoSize = true;
-			this.m_cbEntropy.Location = new System.Drawing.Point(9, 322);
+			this.m_cbEntropy.Location = new System.Drawing.Point(9, 302);
 			this.m_cbEntropy.Name = "m_cbEntropy";
-			this.m_cbEntropy.Size = new System.Drawing.Size(272, 17);
-			this.m_cbEntropy.TabIndex = 18;
-			this.m_cbEntropy.Text = "Collect entropy (recommended for strong passwords)";
+			this.m_cbEntropy.Size = new System.Drawing.Size(144, 17);
+			this.m_cbEntropy.TabIndex = 17;
+			this.m_cbEntropy.Text = "Collect additional entropy";
 			this.m_cbEntropy.UseVisualStyleBackColor = true;
 			// 
 			// m_tbPattern
@@ -362,9 +358,19 @@
 			this.m_rbPattern.Text = "Generate using pattern:";
 			this.m_rbPattern.UseVisualStyleBackColor = true;
 			// 
+			// m_cbExcludeLookAlike
+			// 
+			this.m_cbExcludeLookAlike.AutoSize = true;
+			this.m_cbExcludeLookAlike.Location = new System.Drawing.Point(9, 89);
+			this.m_cbExcludeLookAlike.Name = "m_cbExcludeLookAlike";
+			this.m_cbExcludeLookAlike.Size = new System.Drawing.Size(207, 17);
+			this.m_cbExcludeLookAlike.TabIndex = 2;
+			this.m_cbExcludeLookAlike.Text = "Exclude look-alike characters (l|1I, O0)";
+			this.m_cbExcludeLookAlike.UseVisualStyleBackColor = true;
+			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 484);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 466);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 3;
@@ -375,11 +381,12 @@
 			// m_tabMain
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabSettings);
+			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
 			this.m_tabMain.Controls.Add(this.m_tabPreview);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.Size = new System.Drawing.Size(465, 412);
+			this.m_tabMain.Size = new System.Drawing.Size(465, 392);
 			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabMainSelectedIndexChanged);
 			// 
@@ -393,10 +400,52 @@
 			this.m_tabSettings.Location = new System.Drawing.Point(4, 22);
 			this.m_tabSettings.Name = "m_tabSettings";
 			this.m_tabSettings.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabSettings.Size = new System.Drawing.Size(457, 386);
+			this.m_tabSettings.Size = new System.Drawing.Size(457, 366);
 			this.m_tabSettings.TabIndex = 0;
 			this.m_tabSettings.Text = "Settings";
 			this.m_tabSettings.UseVisualStyleBackColor = true;
+			// 
+			// m_tabAdvanced
+			// 
+			this.m_tabAdvanced.Controls.Add(this.m_grpSecReducing);
+			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
+			this.m_tabAdvanced.Name = "m_tabAdvanced";
+			this.m_tabAdvanced.Size = new System.Drawing.Size(457, 366);
+			this.m_tabAdvanced.TabIndex = 2;
+			this.m_tabAdvanced.Text = "Advanced";
+			this.m_tabAdvanced.UseVisualStyleBackColor = true;
+			// 
+			// m_grpSecReducing
+			// 
+			this.m_grpSecReducing.Controls.Add(this.m_cbNoRepeat);
+			this.m_grpSecReducing.Controls.Add(this.m_lblSecRedInfo);
+			this.m_grpSecReducing.Controls.Add(this.m_cbExcludeLookAlike);
+			this.m_grpSecReducing.Location = new System.Drawing.Point(6, 11);
+			this.m_grpSecReducing.Name = "m_grpSecReducing";
+			this.m_grpSecReducing.Size = new System.Drawing.Size(443, 117);
+			this.m_grpSecReducing.TabIndex = 0;
+			this.m_grpSecReducing.TabStop = false;
+			this.m_grpSecReducing.Text = "Security-reducing options";
+			// 
+			// m_cbNoRepeat
+			// 
+			this.m_cbNoRepeat.AutoSize = true;
+			this.m_cbNoRepeat.Location = new System.Drawing.Point(9, 66);
+			this.m_cbNoRepeat.Name = "m_cbNoRepeat";
+			this.m_cbNoRepeat.Size = new System.Drawing.Size(140, 17);
+			this.m_cbNoRepeat.TabIndex = 1;
+			this.m_cbNoRepeat.Text = "No repeating characters";
+			this.m_cbNoRepeat.UseVisualStyleBackColor = true;
+			// 
+			// m_lblSecRedInfo
+			// 
+			this.m_lblSecRedInfo.Location = new System.Drawing.Point(6, 18);
+			this.m_lblSecRedInfo.Name = "m_lblSecRedInfo";
+			this.m_lblSecRedInfo.Size = new System.Drawing.Size(384, 45);
+			this.m_lblSecRedInfo.TabIndex = 0;
+			this.m_lblSecRedInfo.Text = "Warning: the following options are reducing the security of generated passwords. " +
+				"Only enable them if you are forced to follow such rules by the website/applicati" +
+				"on.";
 			// 
 			// m_tabPreview
 			// 
@@ -406,7 +455,7 @@
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 22);
 			this.m_tabPreview.Name = "m_tabPreview";
 			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabPreview.Size = new System.Drawing.Size(457, 386);
+			this.m_tabPreview.Size = new System.Drawing.Size(457, 366);
 			this.m_tabPreview.TabIndex = 1;
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
@@ -426,7 +475,7 @@
 			this.m_tbPreview.Name = "m_tbPreview";
 			this.m_tbPreview.ReadOnly = true;
 			this.m_tbPreview.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.m_tbPreview.Size = new System.Drawing.Size(437, 325);
+			this.m_tbPreview.Size = new System.Drawing.Size(437, 304);
 			this.m_tbPreview.TabIndex = 2;
 			this.m_tbPreview.WordWrap = false;
 			// 
@@ -445,7 +494,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(489, 519);
+			this.ClientSize = new System.Drawing.Size(489, 501);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_bannerImage);
@@ -467,6 +516,9 @@
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabSettings.ResumeLayout(false);
 			this.m_tabSettings.PerformLayout();
+			this.m_tabAdvanced.ResumeLayout(false);
+			this.m_grpSecReducing.ResumeLayout(false);
+			this.m_grpSecReducing.PerformLayout();
 			this.m_tabPreview.ResumeLayout(false);
 			this.m_tabPreview.PerformLayout();
 			this.ResumeLayout(false);
@@ -510,5 +562,9 @@
 		private System.Windows.Forms.Label m_lblCustomChars;
 		private System.Windows.Forms.TextBox m_tbCustomChars;
 		private System.Windows.Forms.CheckBox m_cbPatternPermute;
+		private System.Windows.Forms.TabPage m_tabAdvanced;
+		private System.Windows.Forms.GroupBox m_grpSecReducing;
+		private System.Windows.Forms.CheckBox m_cbNoRepeat;
+		private System.Windows.Forms.Label m_lblSecRedInfo;
 	}
 }

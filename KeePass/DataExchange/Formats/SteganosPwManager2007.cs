@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,22 +69,26 @@ namespace KeePass.DataExchange.Formats
 				Application.DoEvents();
 			}
 
-			while(true)
+			try
 			{
-				PwEntry pe = ImportEntry(pwStorage);
-
-				if(EntryEquals(pe, pePrev))
+				while(true)
 				{
-					if(pe.ParentGroup != null) // Remove duplicate
-						pe.ParentGroup.Entries.Remove(pe);
-					break;
+					PwEntry pe = ImportEntry(pwStorage);
+
+					if(EntryEquals(pe, pePrev))
+					{
+						if(pe.ParentGroup != null) // Remove duplicate
+							pe.ParentGroup.Entries.Remove(pe);
+						break;
+					}
+
+					SendKeysPrc(@"{DOWN}");
+					pePrev = pe;
 				}
 
-				SendKeysPrc(@"{DOWN}");
-				pePrev = pe;
+				MessageService.ShowInfo(KPRes.ImportFinished);
 			}
-
-			MessageService.ShowInfo(KPRes.ImportFinished);
+			catch(Exception exImp) { MessageService.ShowWarning(exImp); }
 		}
 
 		private static bool EntryEquals(PwEntry pe1, PwEntry pe2)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace KeePassLib.Cryptography
 		/// <summary>
 		/// The ARCFour algorithm (RC4 compatible).
 		/// </summary>
-		ArcFour = 0
+		ArcFour = 0,
 	}
 
 	/// <summary>
@@ -86,7 +86,7 @@ namespace KeePassLib.Cryptography
 					if(inxKey >= uKeyLen) inxKey = 0;
 				}
 
-				GetRandomBytes(512); // Throw away the first bytes
+				this.GetRandomBytes(512); // Throw away the first bytes
 			}
 			else // Unknown algorithm
 			{

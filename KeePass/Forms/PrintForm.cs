@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -110,7 +110,11 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			if(m_bPrintMode) m_wbMain.Print();
+			if(m_bPrintMode)
+			{
+				try { m_wbMain.Print(); } // Throws in Mono 1.2.6
+				catch(Exception ex) { MessageService.ShowWarning(ex); }
+			}
 			else m_strGeneratedHTML = m_wbMain.DocumentText;
 
 			if(m_strGeneratedHTML == null) m_strGeneratedHTML = string.Empty;
@@ -363,13 +367,17 @@ namespace KeePass.Forms
 
 		private void OnBtnConfigPage(object sender, EventArgs e)
 		{
-			m_wbMain.ShowPageSetupDialog();
+			try { m_wbMain.ShowPageSetupDialog(); } // Throws in Mono 1.2.6
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
+
 			UpdateHTMLDocument();
 		}
 
 		private void OnBtnPrintPreview(object sender, EventArgs e)
 		{
-			m_wbMain.ShowPrintPreviewDialog();
+			try { m_wbMain.ShowPrintPreviewDialog(); } // Throws in Mono 1.2.6
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
+
 			UpdateHTMLDocument();
 		}
 

@@ -121,6 +121,12 @@
 		<Data Name="AutoTypeObfuscationHint">
 			<Value>Auto-type obfuscation may not work with all windows.</Value>
 		</Data>
+		<Data Name="AutoTypeSequenceInvalid">
+			<Value>The specified auto-type sequence is invalid.</Value>
+		</Data>
+		<Data Name="AutoTypeUnknownPlaceholder">
+			<Value>The following auto-type placeholder or special key code is unknown/unsupported:</Value>
+		</Data>
 		<Data Name="AvailableLanguages">
 			<Value>Available Languages</Value>
 		</Data>
@@ -175,14 +181,14 @@
 		<Data Name="Clipboard">
 			<Value>Clipboard</Value>
 		</Data>
-		<Data Name="ClipboardAutoClear">
-			<Value>Clipboard Auto-Clear</Value>
-		</Data>
 		<Data Name="ClipboardClearInSeconds">
-			<Value>Clipboard is automatically cleared in [PARAM] seconds</Value>
+			<Value>Clipboard will be cleared in [PARAM] seconds</Value>
 		</Data>
 		<Data Name="ClipboardClearOnExit">
 			<Value>Clear clipboard when closing KeePass</Value>
+		</Data>
+		<Data Name="ClipboardDataCopied">
+			<Value>Data copied to clipboard.</Value>
 		</Data>
 		<Data Name="CloseButton">
 			<Value>&amp;Close</Value>
@@ -234,6 +240,12 @@
 		</Data>
 		<Data Name="CopyAll">
 			<Value>Copy All</Value>
+		</Data>
+		<Data Name="CopyPasswordMenu">
+			<Value>Copy &amp;Password</Value>
+		</Data>
+		<Data Name="CopyTanMenu">
+			<Value>Copy &amp;TAN</Value>
 		</Data>
 		<Data Name="CreateMasterKey">
 			<Value>Create Composite Master Key</Value>
@@ -813,6 +825,9 @@
 		</Data>
 		<Data Name="SavingDatabase">
 			<Value>Saving database...</Value>
+		</Data>
+		<Data Name="Search">
+			<Value>Search...</Value>
 		</Data>
 		<Data Name="SearchDesc">
 			<Value>Search the password database for entries.</Value>

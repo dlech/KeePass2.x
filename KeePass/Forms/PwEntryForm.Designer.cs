@@ -146,7 +146,7 @@
 			this.m_lblUserName.AutoSize = true;
 			this.m_lblUserName.Location = new System.Drawing.Point(6, 40);
 			this.m_lblUserName.Name = "m_lblUserName";
-			this.m_lblUserName.Size = new System.Drawing.Size(62, 13);
+			this.m_lblUserName.Size = new System.Drawing.Size(61, 13);
 			this.m_lblUserName.TabIndex = 4;
 			this.m_lblUserName.Text = "User name:";
 			// 
@@ -155,7 +155,7 @@
 			this.m_lblPassword.AutoSize = true;
 			this.m_lblPassword.Location = new System.Drawing.Point(6, 67);
 			this.m_lblPassword.Name = "m_lblPassword";
-			this.m_lblPassword.Size = new System.Drawing.Size(57, 13);
+			this.m_lblPassword.Size = new System.Drawing.Size(56, 13);
 			this.m_lblPassword.TabIndex = 6;
 			this.m_lblPassword.Text = "Password:";
 			// 
@@ -164,7 +164,7 @@
 			this.m_lblTitle.AutoSize = true;
 			this.m_lblTitle.Location = new System.Drawing.Point(6, 13);
 			this.m_lblTitle.Name = "m_lblTitle";
-			this.m_lblTitle.Size = new System.Drawing.Size(31, 13);
+			this.m_lblTitle.Size = new System.Drawing.Size(30, 13);
 			this.m_lblTitle.TabIndex = 1;
 			this.m_lblTitle.Text = "Title:";
 			// 
@@ -173,7 +173,7 @@
 			this.m_lblPasswordRepeat.AutoSize = true;
 			this.m_lblPasswordRepeat.Location = new System.Drawing.Point(6, 94);
 			this.m_lblPasswordRepeat.Name = "m_lblPasswordRepeat";
-			this.m_lblPasswordRepeat.Size = new System.Drawing.Size(46, 13);
+			this.m_lblPasswordRepeat.Size = new System.Drawing.Size(45, 13);
 			this.m_lblPasswordRepeat.TabIndex = 9;
 			this.m_lblPasswordRepeat.Text = "Repeat:";
 			// 
@@ -182,7 +182,7 @@
 			this.m_lblUrl.AutoSize = true;
 			this.m_lblUrl.Location = new System.Drawing.Point(6, 143);
 			this.m_lblUrl.Name = "m_lblUrl";
-			this.m_lblUrl.Size = new System.Drawing.Size(30, 13);
+			this.m_lblUrl.Size = new System.Drawing.Size(32, 13);
 			this.m_lblUrl.TabIndex = 15;
 			this.m_lblUrl.Text = "URL:";
 			// 
@@ -191,7 +191,7 @@
 			this.m_lblNotes.AutoSize = true;
 			this.m_lblNotes.Location = new System.Drawing.Point(6, 170);
 			this.m_lblNotes.Name = "m_lblNotes";
-			this.m_lblNotes.Size = new System.Drawing.Size(39, 13);
+			this.m_lblNotes.Size = new System.Drawing.Size(38, 13);
 			this.m_lblNotes.TabIndex = 17;
 			this.m_lblNotes.Text = "Notes:";
 			// 
@@ -200,7 +200,7 @@
 			this.m_lblQuality.AutoSize = true;
 			this.m_lblQuality.Location = new System.Drawing.Point(6, 118);
 			this.m_lblQuality.Name = "m_lblQuality";
-			this.m_lblQuality.Size = new System.Drawing.Size(45, 13);
+			this.m_lblQuality.Size = new System.Drawing.Size(42, 13);
 			this.m_lblQuality.TabIndex = 12;
 			this.m_lblQuality.Text = "Quality:";
 			// 
@@ -208,7 +208,7 @@
 			// 
 			this.m_tbTitle.Location = new System.Drawing.Point(81, 10);
 			this.m_tbTitle.Name = "m_tbTitle";
-			this.m_tbTitle.Size = new System.Drawing.Size(293, 21);
+			this.m_tbTitle.Size = new System.Drawing.Size(293, 20);
 			this.m_tbTitle.TabIndex = 0;
 			this.m_tbTitle.TextChanged += new System.EventHandler(this.OnTitleTextChanged);
 			// 
@@ -227,7 +227,7 @@
 			this.m_lblIcon.AutoSize = true;
 			this.m_lblIcon.Location = new System.Drawing.Point(384, 13);
 			this.m_lblIcon.Name = "m_lblIcon";
-			this.m_lblIcon.Size = new System.Drawing.Size(32, 13);
+			this.m_lblIcon.Size = new System.Drawing.Size(31, 13);
 			this.m_lblIcon.TabIndex = 2;
 			this.m_lblIcon.Text = "Icon:";
 			// 
@@ -235,7 +235,7 @@
 			// 
 			this.m_tbUserName.Location = new System.Drawing.Point(81, 37);
 			this.m_tbUserName.Name = "m_tbUserName";
-			this.m_tbUserName.Size = new System.Drawing.Size(373, 21);
+			this.m_tbUserName.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUserName.TabIndex = 5;
 			this.m_tbUserName.TextChanged += new System.EventHandler(this.OnUserNameTextChanged);
 			// 
@@ -243,14 +243,14 @@
 			// 
 			this.m_tbPassword.Location = new System.Drawing.Point(81, 64);
 			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(335, 21);
+			this.m_tbPassword.Size = new System.Drawing.Size(335, 20);
 			this.m_tbPassword.TabIndex = 7;
 			// 
 			// m_tbRepeatPassword
 			// 
 			this.m_tbRepeatPassword.Location = new System.Drawing.Point(81, 91);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
-			this.m_tbRepeatPassword.Size = new System.Drawing.Size(335, 21);
+			this.m_tbRepeatPassword.Size = new System.Drawing.Size(335, 20);
 			this.m_tbRepeatPassword.TabIndex = 10;
 			this.m_ttBalloon.SetToolTip(this.m_tbRepeatPassword, "Repeat the password to prevent typing errors.");
 			// 
@@ -258,7 +258,7 @@
 			// 
 			this.m_tbUrl.Location = new System.Drawing.Point(81, 140);
 			this.m_tbUrl.Name = "m_tbUrl";
-			this.m_tbUrl.Size = new System.Drawing.Size(373, 21);
+			this.m_tbUrl.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUrl.TabIndex = 16;
 			this.m_tbUrl.TextChanged += new System.EventHandler(this.OnUrlTextChanged);
 			// 
@@ -279,7 +279,7 @@
 			this.m_cbExpires.AutoSize = true;
 			this.m_cbExpires.Location = new System.Drawing.Point(9, 316);
 			this.m_cbExpires.Name = "m_cbExpires";
-			this.m_cbExpires.Size = new System.Drawing.Size(65, 17);
+			this.m_cbExpires.Size = new System.Drawing.Size(63, 17);
 			this.m_cbExpires.TabIndex = 19;
 			this.m_cbExpires.Text = "Expires:";
 			this.m_cbExpires.UseVisualStyleBackColor = true;
@@ -290,7 +290,7 @@
 			this.m_dtExpireDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
 			this.m_dtExpireDateTime.Location = new System.Drawing.Point(81, 313);
 			this.m_dtExpireDateTime.Name = "m_dtExpireDateTime";
-			this.m_dtExpireDateTime.Size = new System.Drawing.Size(335, 21);
+			this.m_dtExpireDateTime.Size = new System.Drawing.Size(335, 20);
 			this.m_dtExpireDateTime.TabIndex = 20;
 			this.m_dtExpireDateTime.ValueChanged += new System.EventHandler(this.OnExpireDateTimeChanged);
 			// 
@@ -711,7 +711,7 @@
 			this.m_tbUuid.Location = new System.Drawing.Point(51, 309);
 			this.m_tbUuid.Name = "m_tbUuid";
 			this.m_tbUuid.ReadOnly = true;
-			this.m_tbUuid.Size = new System.Drawing.Size(403, 21);
+			this.m_tbUuid.Size = new System.Drawing.Size(403, 20);
 			this.m_tbUuid.TabIndex = 5;
 			// 
 			// m_lblUuid
@@ -719,7 +719,7 @@
 			this.m_lblUuid.AutoSize = true;
 			this.m_lblUuid.Location = new System.Drawing.Point(9, 312);
 			this.m_lblUuid.Name = "m_lblUuid";
-			this.m_lblUuid.Size = new System.Drawing.Size(36, 13);
+			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
 			this.m_lblUuid.TabIndex = 4;
 			this.m_lblUuid.Text = "UUID:";
 			// 
@@ -727,7 +727,7 @@
 			// 
 			this.m_tbOverrideUrl.Location = new System.Drawing.Point(12, 61);
 			this.m_tbOverrideUrl.Name = "m_tbOverrideUrl";
-			this.m_tbOverrideUrl.Size = new System.Drawing.Size(442, 21);
+			this.m_tbOverrideUrl.Size = new System.Drawing.Size(442, 20);
 			this.m_tbOverrideUrl.TabIndex = 3;
 			this.m_tbOverrideUrl.TextChanged += new System.EventHandler(this.OnOverrideUrlTextChanged);
 			// 
@@ -745,7 +745,7 @@
 			this.m_cbCustomBackgroundColor.AutoSize = true;
 			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(12, 16);
 			this.m_cbCustomBackgroundColor.Name = "m_cbCustomBackgroundColor";
-			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(151, 17);
+			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(150, 17);
 			this.m_cbCustomBackgroundColor.TabIndex = 0;
 			this.m_cbCustomBackgroundColor.Text = "Custom background color:";
 			this.m_cbCustomBackgroundColor.UseVisualStyleBackColor = true;
@@ -753,7 +753,7 @@
 			// 
 			// m_btnPickBgColor
 			// 
-			this.m_btnPickBgColor.Location = new System.Drawing.Point(169, 12);
+			this.m_btnPickBgColor.Location = new System.Drawing.Point(168, 12);
 			this.m_btnPickBgColor.Name = "m_btnPickBgColor";
 			this.m_btnPickBgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickBgColor.TabIndex = 1;
@@ -797,7 +797,7 @@
 			this.m_cbAutoTypeObfuscation.AutoSize = true;
 			this.m_cbAutoTypeObfuscation.Location = new System.Drawing.Point(10, 313);
 			this.m_cbAutoTypeObfuscation.Name = "m_cbAutoTypeObfuscation";
-			this.m_cbAutoTypeObfuscation.Size = new System.Drawing.Size(197, 17);
+			this.m_cbAutoTypeObfuscation.Size = new System.Drawing.Size(193, 17);
 			this.m_cbAutoTypeObfuscation.TabIndex = 10;
 			this.m_cbAutoTypeObfuscation.Text = "Two-channel auto-type obfuscation";
 			this.m_cbAutoTypeObfuscation.UseVisualStyleBackColor = true;
@@ -818,7 +818,7 @@
 			this.m_rbAutoTypeOverride.AutoSize = true;
 			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(10, 67);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
-			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(157, 17);
+			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(153, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 2;
 			this.m_rbAutoTypeOverride.TabStop = true;
 			this.m_rbAutoTypeOverride.Text = "Override default sequence:";
@@ -829,7 +829,7 @@
 			this.m_rbAutoTypeSeqInherit.AutoSize = true;
 			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(10, 44);
 			this.m_rbAutoTypeSeqInherit.Name = "m_rbAutoTypeSeqInherit";
-			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(250, 17);
+			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(239, 17);
 			this.m_rbAutoTypeSeqInherit.TabIndex = 1;
 			this.m_rbAutoTypeSeqInherit.TabStop = true;
 			this.m_rbAutoTypeSeqInherit.Text = "Inherit default auto-type sequence from group";
@@ -850,7 +850,7 @@
 			this.m_cbAutoTypeEnabled.AutoSize = true;
 			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(10, 12);
 			this.m_cbAutoTypeEnabled.Name = "m_cbAutoTypeEnabled";
-			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(175, 17);
+			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(166, 17);
 			this.m_cbAutoTypeEnabled.TabIndex = 0;
 			this.m_cbAutoTypeEnabled.Text = "Enable auto-type for this entry";
 			this.m_cbAutoTypeEnabled.UseVisualStyleBackColor = true;
@@ -860,7 +860,7 @@
 			// 
 			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(173, 66);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
-			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(199, 21);
+			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(199, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 3;
 			this.m_tbDefaultAutoTypeSeq.TextChanged += new System.EventHandler(this.OnDefaultAutoTypeSeqTextChanged);
 			// 
@@ -1084,10 +1084,8 @@
 			// 
 			// PwEntryForm
 			// 
-			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(487, 486);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_tabMain);
@@ -1095,7 +1093,6 @@
 			this.Controls.Add(this.m_bannerImage);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
-			this.Font = new System.Drawing.Font("Tahoma", 8.25F);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;

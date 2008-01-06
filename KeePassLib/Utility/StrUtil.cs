@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -514,6 +514,35 @@ namespace KeePassLib.Utility
 
 			nInnerStartIndex = nIndex;
 			return strText.Substring(nIndex, nEndIndex - nIndex);
+		}
+
+		/// <summary>
+		/// Removes all characters that are not valid XML characters,
+		/// according to http://www.w3.org/TR/xml/#charsets .
+		/// </summary>
+		/// <param name="strText">Source text.</param>
+		/// <returns>Text containing only valid XML characters.</returns>
+		public static string SafeXmlString(string strText)
+		{
+			Debug.Assert(strText != null); // No throw
+			if(string.IsNullOrEmpty(strText)) return strText;
+
+			char[] vChars = strText.ToCharArray();
+			StringBuilder sb = new StringBuilder(strText.Length, strText.Length);
+			char ch;
+
+			for(int i = 0; i < vChars.Length; ++i)
+			{
+				ch = vChars[i];
+
+				if(((ch >= 0x20) && (ch <= 0xD7FF)) ||
+					(ch == 0x9) || (ch == 0xA) || (ch == 0xD) ||
+					((ch >= 0xE000) && (ch <= 0xFFFD)))
+					sb.Append(ch);
+				// Range ((ch >= 0x10000) && (ch <= 0x10FFFF)) excluded
+			}
+
+			return sb.ToString();
 		}
 	}
 }

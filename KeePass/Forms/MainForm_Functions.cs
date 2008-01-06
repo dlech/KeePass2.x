@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ using KeePass.Util;
 using KeePass.Plugins;
 
 using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
@@ -240,6 +241,8 @@ namespace KeePass.Forms
 			SaveDisplayIndex(mw, AppDefs.ColumnIdnLastModificationTime, AppDefs.ColumnID.LastModificationTime);
 			SaveDisplayIndex(mw, AppDefs.ColumnIdnUuid, AppDefs.ColumnID.Uuid);
 
+			Program.Config.MainWindow.ListSorting = m_pListSorter;
+
 			Program.Config.Application.MostRecentlyUsed.MaxItemCount = m_mruList.MaxItemCount;
 			Program.Config.Application.MostRecentlyUsed.Items.Clear();
 			for(uint uMru = 0; uMru < m_mruList.ItemCount; ++uMru)
@@ -441,7 +444,8 @@ namespace KeePass.Forms
 				(nEntriesSelected == 1);
 
 			m_ctxEntryOpenUrl.Enabled = m_ctxEntryDuplicate.Enabled =
-				m_ctxEntryMassSetIcon.Enabled = (nEntriesSelected > 0);
+				m_ctxEntryMassSetIcon.Enabled = m_ctxEntrySelectedPrint.Enabled =
+				(nEntriesSelected > 0);
 
 			m_ctxEntryMoveToTop.Enabled = m_ctxEntryMoveToBottom.Enabled =
 				((m_pListSorter.Column < 0) && (nEntriesSelected > 0));
@@ -476,6 +480,16 @@ namespace KeePass.Forms
 				m_ctxEntryPerformAutoType.Enabled = false;
 				m_ctxEntrySaveAttachedFiles.Enabled = false;
 			}
+
+			bool bIsOneTan = (nEntriesSelected == 1);
+			if(pe != null) bIsOneTan &= PwDefs.IsTanEntry(pe);
+			else bIsOneTan = false;
+
+			m_ctxEntryCopyUserName.Visible = !bIsOneTan;
+			m_ctxEntryUrl.Visible = !bIsOneTan;
+			m_ctxEntrySaveAttachedFiles.Visible = !bIsOneTan;
+			m_ctxEntryCopyPassword.Text = (bIsOneTan ? KPRes.CopyTanMenu :
+				KPRes.CopyPasswordMenu);
 
 			string strLockUnlock = IsFileLocked(null) ? KPRes.LockMenuUnlock :
 				KPRes.LockMenuLock;
@@ -538,12 +552,15 @@ namespace KeePass.Forms
 				m_statusClipboard.Visible = true;
 				UpdateClipboardStatus();
 
-				string strText = KPRes.ClipboardClearInSeconds;
+				string strText = KPRes.ClipboardDataCopied + " " +
+					KPRes.ClipboardClearInSeconds + ".";
 				strText = strText.Replace(@"[PARAM]", m_nClipClearMax.ToString());
 
-				if(m_ntfTray.Visible)
-					m_ntfTray.ShowBalloonTip(0, KPRes.ClipboardAutoClear,
-						strText, ToolTipIcon.Info);
+				SetStatusEx(strText);
+
+				// if(m_ntfTray.Visible)
+				//	m_ntfTray.ShowBalloonTip(0, KPRes.ClipboardAutoClear,
+				//		strText, ToolTipIcon.Info);
 			}
 		}
 
@@ -790,7 +807,7 @@ namespace KeePass.Forms
 		/// parameter is <c>null</c>, the entries of the currently selected group
 		/// (groups view) are displayed, otherwise the entries of the <c>pgSelected</c>
 		/// group are displayed.</param>
-		private void UpdateEntryList(PwGroup pgSelected)
+		private void UpdateEntryList(PwGroup pgSelected, bool bOnlyUpdateCurrentlyShown)
 		{
 			NotifyUserActivity();
 
@@ -799,13 +816,27 @@ namespace KeePass.Forms
 			PwEntry peTop = GetTopEntry(), peFocused = GetSelectedEntry(false);
 			PwEntry[] vSelected = GetSelectedEntries();
 
+			bool bSubEntries = Program.Config.MainWindow.ShowEntriesOfSubGroups;
+
 			PwGroup pg = (pgSelected != null) ? pgSelected : GetSelectedGroup();
+			
+			// Disabled for now -- requires the group returned by
+			// GetCurrentEntries to be sorted by list view groups
+			// if(bOnlyUpdateCurrentlyShown)
+			// {
+			//	Debug.Assert(pgSelected == null);
+			//	pg = GetCurrentEntries();
+			// }
+
+			PwObjectList<PwEntry> pwlSource = ((pg != null) ?
+				pg.GetEntries(bSubEntries) : new PwObjectList<PwEntry>());
 
 			m_lvEntries.BeginUpdate();
 			m_lvEntries.Items.Clear();
 			m_bOnlyTans = true;
 
-			m_bEntryGrouping = (pg != null) ? pg.IsVirtual : false;
+			m_bEntryGrouping = (((pg != null) ? pg.IsVirtual : false) ||
+				bSubEntries);
 			m_lvgLastEntryGroup = null;
 			m_lvEntries.ShowGroups = m_bEntryGrouping;
 
@@ -815,11 +846,9 @@ namespace KeePass.Forms
 			m_dtCachedNow = DateTime.Now;
 			if(pg != null)
 			{
-				ListViewItem lvi;
-
-				foreach(PwEntry pe in pg.Entries)
+				foreach(PwEntry pe in pwlSource)
 				{
-					lvi = AddEntryToList(pe);
+					ListViewItem lvi = AddEntryToList(pe);
 
 					if(vSelected != null)
 					{
@@ -987,25 +1016,6 @@ namespace KeePass.Forms
 				}
 				else sortOrder = SortOrder.Ascending;
 
-				ColumnHeader ch;
-				if((nOldColumn >= 0) && (nOldColumn != nColumn))
-				{
-					ch = m_lvEntries.Columns[nOldColumn];
-					ch.ImageIndex = -1;
-				}
-
-				if(nColumn >= 0)
-				{
-					ch = m_lvEntries.Columns[nColumn];
-
-					if(sortOrder == SortOrder.None)
-						ch.ImageIndex = -1;
-					else if(sortOrder == SortOrder.Ascending)
-						ch.ImageIndex = (int)PwIcon.SortUpArrow;
-					else if(sortOrder == SortOrder.Descending)
-						ch.ImageIndex = (int)PwIcon.SortDownArrow;
-				}
-
 				if(sortOrder != SortOrder.None)
 				{
 					m_pListSorter = new ListSorter(nColumn, sortOrder);
@@ -1013,21 +1023,41 @@ namespace KeePass.Forms
 				}
 				else
 				{
-					m_pListSorter = new ListSorter(-1, SortOrder.Ascending);
+					m_pListSorter = new ListSorter();
 					m_lvEntries.ListViewItemSorter = null;
 
-					if(bUpdateEntryList) UpdateEntryList(null);
+					if(bUpdateEntryList) UpdateEntryList(null, true);
 				}
 			}
 			else // Disable sorting
 			{
-				m_pListSorter = new ListSorter(-1, SortOrder.Ascending);
+				m_pListSorter = new ListSorter();
 				m_lvEntries.ListViewItemSorter = null;
 
-				foreach(ColumnHeader ch in m_lvEntries.Columns)
-					ch.ImageIndex = -1;
+				if(bUpdateEntryList) UpdateEntryList(null, true);
+			}
 
-				if(bUpdateEntryList) UpdateEntryList(null);
+			UpdateColumnSortingIcons();
+		}
+
+		private void UpdateColumnSortingIcons()
+		{
+			if(m_lvEntries.SmallImageList == null) return;
+
+			if(m_pListSorter.Column < 0) { Debug.Assert(m_lvEntries.ListViewItemSorter == null); }
+
+			foreach(ColumnHeader ch in m_lvEntries.Columns)
+			{
+				if(ch.Index == m_pListSorter.Column)
+				{
+					if(m_pListSorter.Order == SortOrder.None)
+						ch.ImageIndex = -1;
+					else if(m_pListSorter.Order == SortOrder.Ascending)
+						ch.ImageIndex = (int)PwIcon.SortUpArrow;
+					else if(m_pListSorter.Order == SortOrder.Descending)
+						ch.ImageIndex = (int)PwIcon.SortDownArrow;
+				}
+				else ch.ImageIndex = -1;
 			}
 		}
 
@@ -1243,7 +1273,9 @@ namespace KeePass.Forms
 				sp.SearchInUrls = sp.SearchInNotes = sp.SearchInOther = true;
 			m_docMgr.ActiveDatabase.RootGroup.SearchEntries(sp, pg.Entries);
 
-			UpdateEntryList(pg);
+			UpdateEntryList(pg, false);
+			SelectFirstEntryIfNoneSelected();
+
 			UpdateUIState(false);
 			ShowSearchResultsStatusMessage();
 		}
@@ -1272,12 +1304,12 @@ namespace KeePass.Forms
 
 			if((pg.Entries.UCount > 1) || (bOnlyIfExists == false))
 			{
-				UpdateEntryList(pg);
+				UpdateEntryList(pg, false);
 				UpdateUIState(false);
 			}
 			else
 			{
-				UpdateEntryList(null);
+				UpdateEntryList(null, false);
 				UpdateUIState(false);
 			}
 
@@ -1542,6 +1574,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateUI(true, null, true, null, true, null, false);
+			UpdateColumnSortingIcons();
 
 			if(m_docMgr.ActiveDatabase.IsOpen && Program.Config.Application.FileOpening.ShowSoonToExpireEntries)
 			{
@@ -1558,7 +1591,7 @@ namespace KeePass.Forms
 				m_docMgr.ActiveDatabase.LastSelectedGroup = PwUuid.Zero;
 			}
 
-			ResetDefaultFocus();
+			ResetDefaultFocus(null);
 		}
 
 		private bool OpenDatabaseInternal(IOConnectionInfo ioc, CompositeKey cmpKey)
@@ -1773,7 +1806,7 @@ namespace KeePass.Forms
 		/// </summary>
 		public void NotifyUserActivity()
 		{
-			if(m_bAllowLockTimerMod) m_nLockTimerCur = m_nLockTimerMax;
+			m_nLockTimerCur = m_nLockTimerMax;
 		}
 
 		/// <summary>
@@ -1810,7 +1843,7 @@ namespace KeePass.Forms
 			else if(nMove == -2) pg.Entries.MoveTopBottom(vEntries, false);
 			else if(nMove == 2) pg.Entries.MoveTopBottom(vEntries, true);
 
-			UpdateEntryList(null);
+			UpdateEntryList(null, false);
 			UpdateUIState(true);
 		}
 
@@ -2026,6 +2059,9 @@ namespace KeePass.Forms
 			}
 			else
 			{
+				m_saveDatabaseFile.FileName = UrlUtil.GetFileName(
+					m_docMgr.ActiveDatabase.IOConnectionInfo.Path);
+
 				GlobalWindowManager.AddDialog(m_saveDatabaseFile);
 				dr = m_saveDatabaseFile.ShowDialog();
 				GlobalWindowManager.RemoveDialog(m_saveDatabaseFile);
@@ -2077,18 +2113,22 @@ namespace KeePass.Forms
 			return !m_docMgr.ActiveDatabase.Modified;
 		}
 
-		private void ResetDefaultFocus()
+		private void ResetDefaultFocus(Control cExplicit)
 		{
-			Control c = null;
+			Control c = cExplicit;
 
-			if(m_tbQuickFind.Visible && m_tbQuickFind.Enabled)
-				c = m_tbQuickFind.Control;
-			else if(m_lvEntries.Visible && m_lvEntries.Enabled)
-				c = m_lvEntries;
-			else if(m_tvGroups.Visible && m_tvGroups.Enabled)
-				c = m_tvGroups;
-			else if(m_richEntryView.Visible && m_richEntryView.Enabled)
-				c = m_richEntryView;
+			if(c == null)
+			{
+				if(m_tbQuickFind.Visible && m_tbQuickFind.Enabled)
+					c = m_tbQuickFind.Control;
+				else if(m_lvEntries.Visible && m_lvEntries.Enabled)
+					c = m_lvEntries;
+				else if(m_tvGroups.Visible && m_tvGroups.Enabled)
+					c = m_tvGroups;
+				else if(m_richEntryView.Visible && m_richEntryView.Enabled)
+					c = m_richEntryView;
+				else { Debug.Assert(false); c = m_lvEntries; }
+			}
 
 			try { this.ActiveControl = c; c.Focus(); }
 			catch(Exception) { }
@@ -2200,7 +2240,7 @@ namespace KeePass.Forms
 			{
 				pgSelect = pd.RootGroup.FindGroup(pd.LastSelectedGroup, true);
 				UpdateGroupList(pgSelect);
-				UpdateEntryList(pgSelect);
+				UpdateEntryList(pgSelect, false);
 			}
 
 			TreeNode tnTop = GuiFindGroup(pd.LastTopVisibleGroup, null);
@@ -2431,7 +2471,7 @@ namespace KeePass.Forms
 			UpdateImageLists();
 
 			if(bUpdateGroupList) UpdateGroupList(pgSelect);
-			if(bUpdateEntryList) UpdateEntryList(pgEntrySource);
+			if(bUpdateEntryList) UpdateEntryList(pgEntrySource, false);
 			
 			UpdateUIState(bSetModified);
 		}
@@ -2469,6 +2509,27 @@ namespace KeePass.Forms
 				if(Program.Config.MainWindow.MinimizeToTray) MinimizeToTray(true);
 				else this.WindowState = FormWindowState.Minimized;
 			}
+		}
+
+		private void SelectFirstEntryIfNoneSelected()
+		{
+			if((m_lvEntries.Items.Count > 0) &&
+				(m_lvEntries.SelectedIndices.Count == 0))
+			{
+				m_lvEntries.Items[0].Selected = true;
+				m_lvEntries.Items[0].Focused = true;
+			}
+		}
+
+		private PwGroup GetCurrentEntries()
+		{
+			PwGroup pg = new PwGroup(true, true);
+			pg.IsVirtual = true;
+
+			foreach(ListViewItem lvi in m_lvEntries.Items)
+				pg.Entries.Add(lvi.Tag as PwEntry);
+
+			return pg;
 		}
 	}
 }

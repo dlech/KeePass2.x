@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -124,6 +124,7 @@ namespace KeePass.Util
 
 			List<PwEntry> vEntries = Kdb4File.ReadEntries(pwDatabase, gz);
 
+			// Adjust protection settings
 			foreach(PwEntry pe in vEntries)
 			{
 				ProtectedString ps = pe.Strings.Get(PwDefs.TitleField);
@@ -155,19 +156,22 @@ namespace KeePass.Util
 			if(str.ToUpper().IndexOf(@"{PICKPASSWORDCHARS}") >= 0)
 			{
 				ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
-				byte[] pb = ps.ReadUtf8();
-				bool bNotEmpty = (pb.Length > 0);
-				Array.Clear(pb, 0, pb.Length);
-
-				if(bNotEmpty)
+				if(ps != null)
 				{
-					CharPickerForm cpf = new CharPickerForm();
-					cpf.InitEx(ps, true, true);
+					byte[] pb = ps.ReadUtf8();
+					bool bNotEmpty = (pb.Length > 0);
+					Array.Clear(pb, 0, pb.Length);
 
-					if(cpf.ShowDialog() == DialogResult.OK)
+					if(bNotEmpty)
 					{
-						str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
-							cpf.SelectedCharacters, false, bDataAsKeySequence);
+						CharPickerForm cpf = new CharPickerForm();
+						cpf.InitEx(ps, true, true);
+
+						if(cpf.ShowDialog() == DialogResult.OK)
+						{
+							str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
+								cpf.SelectedCharacters, false, bDataAsKeySequence);
+						}
 					}
 				}
 

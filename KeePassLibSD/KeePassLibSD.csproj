@@ -123,6 +123,9 @@
     <Compile Include="..\KeePassLib\Keys\IUserKey.cs">
       <Link>Keys\IUserKey.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\KcpCustomKey.cs">
+      <Link>Keys\KcpCustomKey.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\KcpKeyFile.cs">
       <Link>Keys\KcpKeyFile.cs</Link>
     </Compile>
@@ -131,6 +134,12 @@
     </Compile>
     <Compile Include="..\KeePassLib\Keys\KcpUserAccount.cs">
       <Link>Keys\KcpUserAccount.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyProvider.cs">
+      <Link>Keys\KeyProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyProviderPool.cs">
+      <Link>Keys\KeyProviderPool.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
       <Link>Keys\UserKeyType.cs</Link>

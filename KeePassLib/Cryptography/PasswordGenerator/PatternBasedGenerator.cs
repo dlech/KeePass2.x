@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			LinkedList<char> vGenerated = new LinkedList<char>();
 			PwCharSet pcsCurrent = new PwCharSet();
 			PwCharSet pcsCustom = new PwCharSet();
+			PwCharSet pcsUsed = new PwCharSet();
 			bool bInCharSetDef = false;
 
 			string strPattern = ExpandPattern(pwProfile.Pattern);
@@ -59,7 +60,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 					}
 
 					if(bInCharSetDef) pcsCustom.Add(ch);
-					else vGenerated.AddLast(ch);
+					else
+					{
+						vGenerated.AddLast(ch);
+						pcsUsed.Add(ch);
+					}
 				}
 				else if(ch == '[')
 				{
@@ -79,12 +84,18 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 						pcsCustom.Add(ch);
 				}
 				else if(pcsCurrent.AddCharSet(ch) == false)
+				{
 					vGenerated.AddLast(ch);
+					pcsUsed.Add(ch);
+				}
 				else bGenerateChar = true;
 
 				if(bGenerateChar)
 				{
 					PwGenerator.PrepareCharSet(pcsCurrent, pwProfile);
+
+					if(pwProfile.NoRepeatingCharacters)
+						pcsCurrent.Remove(pcsUsed.ToString());
 
 					char chGen = PwGenerator.GenerateCharacter(pwProfile,
 						pcsCurrent, crsRandomSource);
@@ -92,6 +103,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 					if(chGen == char.MinValue) return PwgError.TooFewCharacters;
 
 					vGenerated.AddLast(chGen);
+					pcsUsed.Add(chGen);
 				}
 
 				ch = csStream.ReadChar();

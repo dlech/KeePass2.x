@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -217,7 +217,8 @@ namespace KeePassLib
 
 		/// <summary>
 		/// Default auto-type keystroke sequence for all entries in
-		/// this group.
+		/// this group. This property can be an empty string, which
+		/// means that the value should be inherited from the parent.
 		/// </summary>
 		public string DefaultAutoTypeSequence
 		{
@@ -560,7 +561,7 @@ namespace KeePassLib
 				rx = new Regex(strSearch, ro);
 			}
 
-			if(strSearch.Length <= 0) // Query all
+			if(strSearch.Length <= 0) // Report all
 			{
 				eh = delegate(PwEntry pe)
 				{
@@ -572,6 +573,8 @@ namespace KeePassLib
 			{
 				eh = delegate(PwEntry pe)
 				{
+					uint uInitialResults = listStorage.UCount;
+
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
 						string strKey = kvp.Key;
@@ -594,6 +597,9 @@ namespace KeePassLib
 						else if(bOther)
 							SearchEvalAdd(true, strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+
+						// An entry can match only once => break if we have added it
+						if(listStorage.UCount > uInitialResults) break;
 					}
 
 					return true;
@@ -858,6 +864,31 @@ namespace KeePassLib
 			}
 
 			return uLevel;
+		}
+
+		public string GetAutoTypeSequenceInherited()
+		{
+			if(m_strDefaultAutoTypeSequence.Length > 0)
+				return m_strDefaultAutoTypeSequence;
+
+			if(m_pParentGroup != null)
+				return m_pParentGroup.GetAutoTypeSequenceInherited();
+
+			return string.Empty;
+		}
+
+		public PwObjectList<PwEntry> GetEntries(bool bIncludeSubGroupEntries)
+		{
+			if(bIncludeSubGroupEntries == false)
+				return m_listEntries;
+
+			PwObjectList<PwEntry> list = m_listEntries.CloneShallow();
+			foreach(PwGroup pgSub in m_listGroups)
+			{
+				list.Add(pgSub.GetEntries(true));
+			}
+
+			return list;
 		}
 	}
 }

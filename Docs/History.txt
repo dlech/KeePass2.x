@@ -1,3 +1,69 @@
+08/01/06 - 2.04 Alpha
+- Added key provider API (it now is very easy to write a plugin
+  that provides additional key methods, like locking to USB
+  device ID, certificates, smart cards, ... see the developers
+  section in the online KeePass help center)
+- Added option to show entries of sub-groups in the entry list
+  of a group (see 'View' -> 'Show Entries of Sub-Groups')
+- Added XML valid characters filter (to prevent XML document
+  corruption by ASCII/DOS control characters)
+- Added context menu command to print selected entries only
+- Added option to disallow repeating characters in generated
+  passwords (both character set-based and pattern-based)
+- Moved security-reducing / dangerous password generator
+  options to a separate 'Advanced' tab page (if you enable a
+  security-reducing option, an exclamation mark (!) is
+  appended to the 'Advanced' tab text)
+- Added 'Get more languages' button to the translations dialog
+- Added textual cue for the quick-search edit control
+- The TAN wizard now shows the name of the group into which the
+  TANs will be imported
+- Improved random number generator (it now additionally
+  collects system entropy manually and hashes it with random
+  numbers provided by the system's default CSP and a counter)
+- For determining the default text in the 'Override default
+  sequence' edit box in the 'Edit Entry' window, KeePass now
+  recursively traverses up the group tree
+- Last entry list sorting mode (column, ascending / descending)
+  is now remembered and restored
+- First item in the auto-type entry selection window is now
+  focused (allowing to immediately navigate using the keyboard)
+- Text in secure edit controls is now selected when the control
+  gets the focus the first time
+- For TAN entries, only a command 'Copy TAN' is now shown in
+  the context menu, others (that don't apply) are invisible
+- Regular expressions are validated before they are matched
+- KeePass now checks the auto-type string for invalid entry
+  field references before sending it
+- The clipboard auto-clear information message is now shown in
+  the status bar instead of the tray balloon tooltip
+- Matching entries are shown only once in the search results
+  list, even when multiple fields match the search text
+- First item of search results is selected automatically, if no
+  other item is already selected (selection restoration)
+- Entries with empty titles do not match all windows any more
+- Improved high DPI support in entry window
+- When having enabled the option to automatically lock the
+  workspace after some time and saving a file fails, KeePass
+  will prompt again after the specified amount of time instead
+  of 1 second
+- KeePass now suggests the current file name as name for new
+  files (save as, save as copy)
+- The password generator profile combo box can now show more
+  profiles in the list without scrolling
+- Improved native methods exception handling (Mono)
+- Updated CHM documentation file
+- TAN wizard now assigns correct indices to TANs after new line
+  characters
+- Copying KeePass entries to the clipboard now works together
+  with the CF_CLIPBOARD_VIEWER_IGNORE clipboard format
+- KeePass now uses the correct client icons image list
+  immediately after adding a custom icon to the database
+- Fixed 'generic error in GDI+' when trying to import a 16x16
+  icon (thanks to 'stroebele' for the patch)
+- File close button in the toolbar (multiple files) works now
+- Fixed minor bug in provider registration of cipher pool
+
 07/10/11 - 2.03 Alpha
 - Added multi-document support (tabbed interface when multiple
   files are opened)

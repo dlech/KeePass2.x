@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -121,5 +121,43 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool DrawAnimatedRects(IntPtr hWnd,
 			int idAni, [In] ref RECT lprcFrom, [In] ref RECT lprcTo);
+
+		[DllImport("User32.dll")]
+		internal static extern bool GetComboBoxInfo(IntPtr hWnd,
+			ref COMBOBOXINFO pcbi);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr CreateDesktop(string lpszDesktop,
+			string lpszDevice, IntPtr pDevMode, UInt32 dwFlags,
+			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess,
+			IntPtr lpSecurityAttributes);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool CloseDesktop(IntPtr hDesktop);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr OpenDesktop(string lpszDesktop,
+			UInt32 dwFlags, [MarshalAs(UnmanagedType.Bool)] bool fInherit,
+			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SwitchDesktop(IntPtr hDesktop);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr OpenInputDesktop(uint dwFlags,
+			[MarshalAs(UnmanagedType.Bool)] bool fInherit,
+			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr GetThreadDesktop(uint dwThreadId);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SetThreadDesktop(IntPtr hDesktop);
+
+		[DllImport("Kernel32.dll")]
+		internal static extern uint GetCurrentThreadId();
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ using System.Drawing;
 using System.Xml.Serialization;
 
 using KeePassLib;
+
+using KeePass.UI;
 
 namespace KeePass.App.Configuration
 {
@@ -223,6 +225,24 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bGridLines; }
 			set { m_bGridLines = value; }
+		}
+
+		private ListSorter m_pListSorter = new ListSorter();
+		public ListSorter ListSorting
+		{
+			get { return m_pListSorter; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_pListSorter = value;
+			}
+		}
+
+		private bool m_bShowEntriesOfSubGroups = false;
+		public bool ShowEntriesOfSubGroups
+		{
+			get { return m_bShowEntriesOfSubGroups; }
+			set { m_bShowEntriesOfSubGroups = value; }
 		}
 	}
 

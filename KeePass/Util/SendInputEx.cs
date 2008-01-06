@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ namespace KeePass.Util
 				NativeMethods.BlockInput(true);
 
 				SendKeys.Flush();
-				Application.DoEvents();
+				// Application.DoEvents(); // Done by SendKeys.Flush
 
 				List<int> lMod = GetActiveKeyModifiers();
 				ActivateKeyModifiers(lMod, false);
@@ -127,7 +127,7 @@ namespace KeePass.Util
 			return false;
 		}
 
-		public static List<int> GetActiveKeyModifiers()
+		private static List<int> GetActiveKeyModifiers()
 		{
 			List<int> lSet = new List<int>();
 
@@ -167,7 +167,7 @@ namespace KeePass.Util
 				return ((usState & 0x8000) != 0);
 		}
 
-		public static void ActivateKeyModifiers(List<int> vKeys, bool bDown)
+		private static void ActivateKeyModifiers(List<int> vKeys, bool bDown)
 		{
 			Debug.Assert(vKeys != null);
 			if(vKeys == null) throw new ArgumentNullException("vKeys");

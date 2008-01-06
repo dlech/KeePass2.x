@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -114,6 +114,18 @@ namespace KeePass.Native
 				this.Right = rect.Right;
 				this.Bottom = rect.Bottom;
 			}
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct COMBOBOXINFO
+		{
+			public Int32 cbSize;
+			public RECT rcItem;
+			public RECT rcButton;
+			public ComboBoxButtonState buttonState;
+			public IntPtr hwndCombo;
+			public IntPtr hwndEdit;
+			public IntPtr hwndList;
 		}
 	}
 }

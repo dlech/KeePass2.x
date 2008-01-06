@@ -75,6 +75,8 @@
 			this.m_ctxEntryColorSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryColorCustom = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryMassSetIcon = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntrySelectedSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxEntrySelectedPrint = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySelectAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryClipboard = new System.Windows.Forms.ToolStripMenuItem();
@@ -170,6 +172,8 @@
 			this.m_menuViewColumnsShowSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuViewColumnsShowUuid = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewColumnsShowAttachs = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuViewSep4 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuViewShowEntriesOfSubGroups = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuTools = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPwGenerator = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsGeneratePwList = new System.Windows.Forms.ToolStripMenuItem();
@@ -464,7 +468,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(216, 352);
+			this.m_ctxPwList.Size = new System.Drawing.Size(216, 374);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -482,7 +486,7 @@
 			this.m_ctxEntryCopyPassword.Name = "m_ctxEntryCopyPassword";
 			this.m_ctxEntryCopyPassword.ShortcutKeyDisplayString = "Ctrl+C";
 			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(215, 22);
-			this.m_ctxEntryCopyPassword.Text = "Copy &Password";
+			this.m_ctxEntryCopyPassword.Text = "<COPYPW>";
 			this.m_ctxEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
 			// m_ctxEntryUrl
@@ -606,7 +610,9 @@
 			// 
 			this.m_ctxEntryMassModify.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxEntrySetColor,
-            this.m_ctxEntryMassSetIcon});
+            this.m_ctxEntryMassSetIcon,
+            this.m_ctxEntrySelectedSep0,
+            this.m_ctxEntrySelectedPrint});
 			this.m_ctxEntryMassModify.Name = "m_ctxEntryMassModify";
 			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(215, 22);
 			this.m_ctxEntryMassModify.Text = "&Selected Entries";
@@ -685,6 +691,19 @@
 			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(142, 22);
 			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
+			// 
+			// m_ctxEntrySelectedSep0
+			// 
+			this.m_ctxEntrySelectedSep0.Name = "m_ctxEntrySelectedSep0";
+			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(139, 6);
+			// 
+			// m_ctxEntrySelectedPrint
+			// 
+			this.m_ctxEntrySelectedPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
+			this.m_ctxEntrySelectedPrint.Name = "m_ctxEntrySelectedPrint";
+			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(142, 22);
+			this.m_ctxEntrySelectedPrint.Text = "&Print...";
+			this.m_ctxEntrySelectedPrint.Click += new System.EventHandler(this.OnEntrySelectedPrint);
 			// 
 			// m_ctxEntrySelectAll
 			// 
@@ -1195,7 +1214,9 @@
             this.m_menuViewHiding,
             this.m_menuViewSep3,
             this.m_menuViewTanOptions,
-            this.m_menuViewColumns});
+            this.m_menuViewColumns,
+            this.m_menuViewSep4,
+            this.m_menuViewShowEntriesOfSubGroups});
 			this.m_menuView.Name = "m_menuView";
 			this.m_menuView.Size = new System.Drawing.Size(41, 20);
 			this.m_menuView.Text = "&View";
@@ -1204,20 +1225,20 @@
 			// 
 			this.m_menuChangeLanguage.Image = global::KeePass.Properties.Resources.B16x16_Keyboard_Layout;
 			this.m_menuChangeLanguage.Name = "m_menuChangeLanguage";
-			this.m_menuChangeLanguage.Size = new System.Drawing.Size(190, 22);
+			this.m_menuChangeLanguage.Size = new System.Drawing.Size(219, 22);
 			this.m_menuChangeLanguage.Text = "Change &Language...";
 			this.m_menuChangeLanguage.Click += new System.EventHandler(this.OnMenuChangeLanguage);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(187, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(216, 6);
 			// 
 			// m_menuViewShowToolBar
 			// 
 			this.m_menuViewShowToolBar.CheckOnClick = true;
 			this.m_menuViewShowToolBar.Name = "m_menuViewShowToolBar";
-			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
 			this.m_menuViewShowToolBar.Click += new System.EventHandler(this.OnViewShowToolBar);
 			// 
@@ -1225,7 +1246,7 @@
 			// 
 			this.m_menuViewShowEntryView.CheckOnClick = true;
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
-			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewShowEntryView.Text = "&Show Entry View";
 			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
 			// 
@@ -1235,7 +1256,7 @@
             this.m_menuViewWindowsStacked,
             this.m_menuViewWindowsSideBySide});
 			this.m_menuViewWindowLayout.Name = "m_menuViewWindowLayout";
-			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewWindowLayout.Text = "&Window Layout";
 			// 
 			// m_menuViewWindowsStacked
@@ -1257,20 +1278,20 @@
 			// m_menuViewSep1
 			// 
 			this.m_menuViewSep1.Name = "m_menuViewSep1";
-			this.m_menuViewSep1.Size = new System.Drawing.Size(187, 6);
+			this.m_menuViewSep1.Size = new System.Drawing.Size(216, 6);
 			// 
 			// m_menuViewAlwaysOnTop
 			// 
 			this.m_menuViewAlwaysOnTop.CheckOnClick = true;
 			this.m_menuViewAlwaysOnTop.Name = "m_menuViewAlwaysOnTop";
-			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewAlwaysOnTop.Text = "&Always on Top";
 			this.m_menuViewAlwaysOnTop.Click += new System.EventHandler(this.OnViewAlwaysOnTop);
 			// 
 			// m_menuViewSep2
 			// 
 			this.m_menuViewSep2.Name = "m_menuViewSep2";
-			this.m_menuViewSep2.Size = new System.Drawing.Size(187, 6);
+			this.m_menuViewSep2.Size = new System.Drawing.Size(216, 6);
 			// 
 			// m_menuViewHiding
 			// 
@@ -1281,7 +1302,7 @@
             this.m_menuViewHideURLs,
             this.m_menuViewHideNotes});
 			this.m_menuViewHiding.Name = "m_menuViewHiding";
-			this.m_menuViewHiding.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewHiding.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewHiding.Text = "&Hide Fields (Asterisks)";
 			// 
 			// m_menuViewHideTitles
@@ -1327,7 +1348,7 @@
 			// m_menuViewSep3
 			// 
 			this.m_menuViewSep3.Name = "m_menuViewSep3";
-			this.m_menuViewSep3.Size = new System.Drawing.Size(187, 6);
+			this.m_menuViewSep3.Size = new System.Drawing.Size(216, 6);
 			// 
 			// m_menuViewTanOptions
 			// 
@@ -1335,7 +1356,7 @@
             this.m_menuViewTanSimpleList,
             this.m_menuViewTanIndices});
 			this.m_menuViewTanOptions.Name = "m_menuViewTanOptions";
-			this.m_menuViewTanOptions.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewTanOptions.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewTanOptions.Text = "TAN &View Options";
 			// 
 			// m_menuViewTanSimpleList
@@ -1371,7 +1392,7 @@
             this.m_menuViewColumnsShowUuid,
             this.m_menuViewColumnsShowAttachs});
 			this.m_menuViewColumns.Name = "m_menuViewColumns";
-			this.m_menuViewColumns.Size = new System.Drawing.Size(190, 22);
+			this.m_menuViewColumns.Size = new System.Drawing.Size(219, 22);
 			this.m_menuViewColumns.Text = "Show &Columns";
 			// 
 			// m_menuViewColumnsShowTitle
@@ -1471,6 +1492,19 @@
 			this.m_menuViewColumnsShowAttachs.Size = new System.Drawing.Size(190, 22);
 			this.m_menuViewColumnsShowAttachs.Text = "&Attachments";
 			this.m_menuViewColumnsShowAttachs.Click += new System.EventHandler(this.OnViewShowColAttachs);
+			// 
+			// m_menuViewSep4
+			// 
+			this.m_menuViewSep4.Name = "m_menuViewSep4";
+			this.m_menuViewSep4.Size = new System.Drawing.Size(216, 6);
+			// 
+			// m_menuViewShowEntriesOfSubGroups
+			// 
+			this.m_menuViewShowEntriesOfSubGroups.CheckOnClick = true;
+			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
+			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(219, 22);
+			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Sub-Groups";
+			this.m_menuViewShowEntriesOfSubGroups.Click += new System.EventHandler(this.OnViewShowEntriesOfSubGroups);
 			// 
 			// m_menuTools
 			// 
@@ -1804,7 +1838,7 @@
 			// 
 			this.m_tbQuickFind.Name = "m_tbQuickFind";
 			this.m_tbQuickFind.Size = new System.Drawing.Size(121, 25);
-			this.m_tbQuickFind.ToolTipText = "Search for entries";
+			this.m_tbQuickFind.ToolTipText = "Type to search the database";
 			this.m_tbQuickFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyDown);
 			this.m_tbQuickFind.SelectedIndexChanged += new System.EventHandler(this.OnQuickFindSelectedIndexChanged);
 			this.m_tbQuickFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyUp);
@@ -1818,6 +1852,7 @@
 			this.m_tbCloseTab.Name = "m_tbCloseTab";
 			this.m_tbCloseTab.Size = new System.Drawing.Size(23, 22);
 			this.m_tbCloseTab.Text = "Close";
+			this.m_tbCloseTab.Click += new System.EventHandler(this.OnFileClose);
 			// 
 			// m_statusMain
 			// 
@@ -2299,6 +2334,10 @@
 		private System.Windows.Forms.ToolStripButton m_tbCloseTab;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSaveAsSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsCopy;
+		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySelectedSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySelectedPrint;
+		private System.Windows.Forms.ToolStripSeparator m_menuViewSep4;
+		private System.Windows.Forms.ToolStripMenuItem m_menuViewShowEntriesOfSubGroups;
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ namespace KeePass.Util
 	public static class WinUtil
 	{
 		private static bool m_bIsWindows9x = false;
+		private static bool m_bIsAtLeastWindowsVista = false;
 
 		private const int ERROR_ACCESS_DENIED = 5;
 
@@ -47,10 +48,18 @@ namespace KeePass.Util
 			get { return m_bIsWindows9x; }
 		}
 
+		public static bool IsAtLeastWindowsVista
+		{
+			get { return m_bIsAtLeastWindowsVista; }
+		}
+
 		static WinUtil()
 		{
 			m_bIsWindows9x = (Environment.OSVersion.Platform ==
 				PlatformID.Win32Windows);
+
+			m_bIsAtLeastWindowsVista =
+				(Environment.OSVersion.Version.Major >= 6);
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)
@@ -116,8 +125,8 @@ namespace KeePass.Util
 				{
 					string strInf = KPRes.FileOrUrl + ": " + strApp;
 					if((strArgs != null) && (strArgs.Length > 0))
-						strInf += MessageService.NewLine + KPRes.Arguments +
-							": " + strArgs;
+						strInf += MessageService.NewParagraph +
+							KPRes.Arguments + ": " + strArgs;
 
 					MessageService.ShowWarning(strInf, exCmd);
 				}
@@ -155,8 +164,8 @@ namespace KeePass.Util
 			{
 				string strInf = KPRes.FileOrUrl + ": " + strApp;
 				if((strArgs != null) && (strArgs.Length > 0))
-					strInf += MessageService.NewLine + KPRes.Arguments +
-						": " + strArgs;
+					strInf += MessageService.NewParagraph +
+						KPRes.Arguments + ": " + strArgs;
 
 				MessageService.ShowWarning(strInf, exCmd);
 			}

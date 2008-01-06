@@ -153,7 +153,7 @@
 			// m_cbSmallMono
 			// 
 			this.m_cbSmallMono.AutoSize = true;
-			this.m_cbSmallMono.Location = new System.Drawing.Point(7, 66);
+			this.m_cbSmallMono.Location = new System.Drawing.Point(10, 66);
 			this.m_cbSmallMono.Name = "m_cbSmallMono";
 			this.m_cbSmallMono.Size = new System.Drawing.Size(176, 17);
 			this.m_cbSmallMono.TabIndex = 4;
@@ -165,7 +165,7 @@
 			this.m_cbMonospaceForPasswords.AutoSize = true;
 			this.m_cbMonospaceForPasswords.Checked = true;
 			this.m_cbMonospaceForPasswords.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_cbMonospaceForPasswords.Location = new System.Drawing.Point(7, 43);
+			this.m_cbMonospaceForPasswords.Location = new System.Drawing.Point(10, 43);
 			this.m_cbMonospaceForPasswords.Name = "m_cbMonospaceForPasswords";
 			this.m_cbMonospaceForPasswords.Size = new System.Drawing.Size(192, 17);
 			this.m_cbMonospaceForPasswords.TabIndex = 3;
@@ -176,7 +176,7 @@
 			// 
 			this.m_rbMonospace.AutoSize = true;
 			this.m_rbMonospace.Font = new System.Drawing.Font("Courier New", 8.25F);
-			this.m_rbMonospace.Location = new System.Drawing.Point(139, 19);
+			this.m_rbMonospace.Location = new System.Drawing.Point(142, 19);
 			this.m_rbMonospace.Name = "m_rbMonospace";
 			this.m_rbMonospace.Size = new System.Drawing.Size(88, 18);
 			this.m_rbMonospace.TabIndex = 2;
@@ -188,7 +188,7 @@
 			this.m_rbSansSerif.AutoSize = true;
 			this.m_rbSansSerif.Checked = true;
 			this.m_rbSansSerif.Font = new System.Drawing.Font("Tahoma", 8.25F);
-			this.m_rbSansSerif.Location = new System.Drawing.Point(59, 19);
+			this.m_rbSansSerif.Location = new System.Drawing.Point(62, 19);
 			this.m_rbSansSerif.Name = "m_rbSansSerif";
 			this.m_rbSansSerif.Size = new System.Drawing.Size(74, 17);
 			this.m_rbSansSerif.TabIndex = 1;
@@ -200,7 +200,7 @@
 			// 
 			this.m_rbSerif.AutoSize = true;
 			this.m_rbSerif.Font = new System.Drawing.Font("Times New Roman", 8.25F);
-			this.m_rbSerif.Location = new System.Drawing.Point(7, 19);
+			this.m_rbSerif.Location = new System.Drawing.Point(10, 19);
 			this.m_rbSerif.Name = "m_rbSerif";
 			this.m_rbSerif.Size = new System.Drawing.Size(46, 18);
 			this.m_rbSerif.TabIndex = 0;
@@ -232,7 +232,7 @@
 			// m_cbGroups
 			// 
 			this.m_cbGroups.AutoSize = true;
-			this.m_cbGroups.Location = new System.Drawing.Point(6, 65);
+			this.m_cbGroups.Location = new System.Drawing.Point(9, 65);
 			this.m_cbGroups.Name = "m_cbGroups";
 			this.m_cbGroups.Size = new System.Drawing.Size(84, 17);
 			this.m_cbGroups.TabIndex = 10;
@@ -242,7 +242,7 @@
 			// m_linkDeselectAllFields
 			// 
 			this.m_linkDeselectAllFields.AutoSize = true;
-			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(60, 94);
+			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(63, 94);
 			this.m_linkDeselectAllFields.Name = "m_linkDeselectAllFields";
 			this.m_linkDeselectAllFields.Size = new System.Drawing.Size(63, 13);
 			this.m_linkDeselectAllFields.TabIndex = 12;
@@ -253,7 +253,7 @@
 			// m_linkSelectAllFields
 			// 
 			this.m_linkSelectAllFields.AutoSize = true;
-			this.m_linkSelectAllFields.Location = new System.Drawing.Point(3, 94);
+			this.m_linkSelectAllFields.Location = new System.Drawing.Point(6, 94);
 			this.m_linkSelectAllFields.Name = "m_linkSelectAllFields";
 			this.m_linkSelectAllFields.Size = new System.Drawing.Size(51, 13);
 			this.m_linkSelectAllFields.TabIndex = 11;
@@ -264,7 +264,7 @@
 			// m_cbAutoType
 			// 
 			this.m_cbAutoType.AutoSize = true;
-			this.m_cbAutoType.Location = new System.Drawing.Point(461, 42);
+			this.m_cbAutoType.Location = new System.Drawing.Point(464, 42);
 			this.m_cbAutoType.Name = "m_cbAutoType";
 			this.m_cbAutoType.Size = new System.Drawing.Size(71, 17);
 			this.m_cbAutoType.TabIndex = 9;
@@ -274,7 +274,7 @@
 			// m_cbLastAccess
 			// 
 			this.m_cbLastAccess.AutoSize = true;
-			this.m_cbLastAccess.Location = new System.Drawing.Point(241, 42);
+			this.m_cbLastAccess.Location = new System.Drawing.Point(244, 42);
 			this.m_cbLastAccess.Name = "m_cbLastAccess";
 			this.m_cbLastAccess.Size = new System.Drawing.Size(105, 17);
 			this.m_cbLastAccess.TabIndex = 7;
@@ -284,7 +284,7 @@
 			// m_cbLastMod
 			// 
 			this.m_cbLastMod.AutoSize = true;
-			this.m_cbLastMod.Location = new System.Drawing.Point(103, 42);
+			this.m_cbLastMod.Location = new System.Drawing.Point(106, 42);
 			this.m_cbLastMod.Name = "m_cbLastMod";
 			this.m_cbLastMod.Size = new System.Drawing.Size(127, 17);
 			this.m_cbLastMod.TabIndex = 6;
@@ -294,7 +294,7 @@
 			// m_cbCreation
 			// 
 			this.m_cbCreation.AutoSize = true;
-			this.m_cbCreation.Location = new System.Drawing.Point(6, 42);
+			this.m_cbCreation.Location = new System.Drawing.Point(9, 42);
 			this.m_cbCreation.Name = "m_cbCreation";
 			this.m_cbCreation.Size = new System.Drawing.Size(87, 17);
 			this.m_cbCreation.TabIndex = 5;
@@ -304,7 +304,7 @@
 			// m_cbExpire
 			// 
 			this.m_cbExpire.AutoSize = true;
-			this.m_cbExpire.Location = new System.Drawing.Point(357, 42);
+			this.m_cbExpire.Location = new System.Drawing.Point(360, 42);
 			this.m_cbExpire.Name = "m_cbExpire";
 			this.m_cbExpire.Size = new System.Drawing.Size(94, 17);
 			this.m_cbExpire.TabIndex = 8;
@@ -316,7 +316,7 @@
 			this.m_cbNotes.AutoSize = true;
 			this.m_cbNotes.Checked = true;
 			this.m_cbNotes.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_cbNotes.Location = new System.Drawing.Point(461, 19);
+			this.m_cbNotes.Location = new System.Drawing.Point(464, 19);
 			this.m_cbNotes.Name = "m_cbNotes";
 			this.m_cbNotes.Size = new System.Drawing.Size(54, 17);
 			this.m_cbNotes.TabIndex = 4;
@@ -328,7 +328,7 @@
 			this.m_cbPassword.AutoSize = true;
 			this.m_cbPassword.Checked = true;
 			this.m_cbPassword.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_cbPassword.Location = new System.Drawing.Point(241, 19);
+			this.m_cbPassword.Location = new System.Drawing.Point(244, 19);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(72, 17);
 			this.m_cbPassword.TabIndex = 2;
@@ -338,7 +338,7 @@
 			// m_cbUrl
 			// 
 			this.m_cbUrl.AutoSize = true;
-			this.m_cbUrl.Location = new System.Drawing.Point(357, 19);
+			this.m_cbUrl.Location = new System.Drawing.Point(360, 19);
 			this.m_cbUrl.Name = "m_cbUrl";
 			this.m_cbUrl.Size = new System.Drawing.Size(48, 17);
 			this.m_cbUrl.TabIndex = 3;
@@ -350,7 +350,7 @@
 			this.m_cbUser.AutoSize = true;
 			this.m_cbUser.Checked = true;
 			this.m_cbUser.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_cbUser.Location = new System.Drawing.Point(103, 19);
+			this.m_cbUser.Location = new System.Drawing.Point(106, 19);
 			this.m_cbUser.Name = "m_cbUser";
 			this.m_cbUser.Size = new System.Drawing.Size(77, 17);
 			this.m_cbUser.TabIndex = 1;
@@ -362,7 +362,7 @@
 			this.m_cbTitle.AutoSize = true;
 			this.m_cbTitle.Checked = true;
 			this.m_cbTitle.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_cbTitle.Location = new System.Drawing.Point(6, 19);
+			this.m_cbTitle.Location = new System.Drawing.Point(9, 19);
 			this.m_cbTitle.Name = "m_cbTitle";
 			this.m_cbTitle.Size = new System.Drawing.Size(46, 17);
 			this.m_cbTitle.TabIndex = 0;
@@ -385,7 +385,7 @@
 			// m_lblDetailsInfo
 			// 
 			this.m_lblDetailsInfo.AutoSize = true;
-			this.m_lblDetailsInfo.Location = new System.Drawing.Point(23, 99);
+			this.m_lblDetailsInfo.Location = new System.Drawing.Point(26, 99);
 			this.m_lblDetailsInfo.Name = "m_lblDetailsInfo";
 			this.m_lblDetailsInfo.Size = new System.Drawing.Size(337, 13);
 			this.m_lblDetailsInfo.TabIndex = 3;
@@ -393,9 +393,9 @@
 			// 
 			// m_lblTabularInfo
 			// 
-			this.m_lblTabularInfo.Location = new System.Drawing.Point(23, 39);
+			this.m_lblTabularInfo.Location = new System.Drawing.Point(26, 39);
 			this.m_lblTabularInfo.Name = "m_lblTabularInfo";
-			this.m_lblTabularInfo.Size = new System.Drawing.Size(542, 28);
+			this.m_lblTabularInfo.Size = new System.Drawing.Size(539, 28);
 			this.m_lblTabularInfo.TabIndex = 1;
 			this.m_lblTabularInfo.Text = "Arrange the entries in a tabular form. Each entry will occupy approximately one l" +
 				"ine. The fields selected below will be printed; auto-type configuration is not p" +
@@ -405,7 +405,7 @@
 			// 
 			this.m_rbDetails.AutoSize = true;
 			this.m_rbDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_rbDetails.Location = new System.Drawing.Point(6, 79);
+			this.m_rbDetails.Location = new System.Drawing.Point(9, 79);
 			this.m_rbDetails.Name = "m_rbDetails";
 			this.m_rbDetails.Size = new System.Drawing.Size(64, 17);
 			this.m_rbDetails.TabIndex = 2;
@@ -417,7 +417,7 @@
 			// 
 			this.m_rbTabular.AutoSize = true;
 			this.m_rbTabular.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_rbTabular.Location = new System.Drawing.Point(6, 19);
+			this.m_rbTabular.Location = new System.Drawing.Point(9, 19);
 			this.m_rbTabular.Name = "m_rbTabular";
 			this.m_rbTabular.Size = new System.Drawing.Size(68, 17);
 			this.m_rbTabular.TabIndex = 0;

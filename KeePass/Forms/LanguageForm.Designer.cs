@@ -34,6 +34,7 @@
 			this.m_lvLanguages = new System.Windows.Forms.ListView();
 			this.m_ilLanguages = new System.Windows.Forms.ImageList(this.components);
 			this.m_btnClose = new System.Windows.Forms.Button();
+			this.m_btnMore = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -81,6 +82,18 @@
 			this.m_btnClose.UseVisualStyleBackColor = true;
 			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
 			// 
+			// m_btnMore
+			// 
+			this.m_btnMore.Image = global::KeePass.Properties.Resources.B16x16_Keyboard_Layout;
+			this.m_btnMore.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.m_btnMore.Location = new System.Drawing.Point(13, 321);
+			this.m_btnMore.Name = "m_btnMore";
+			this.m_btnMore.Size = new System.Drawing.Size(158, 23);
+			this.m_btnMore.TabIndex = 2;
+			this.m_btnMore.Text = "Get more languages...";
+			this.m_btnMore.UseVisualStyleBackColor = true;
+			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
+			// 
 			// LanguageForm
 			// 
 			this.AcceptButton = this.m_btnClose;
@@ -88,6 +101,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnClose;
 			this.ClientSize = new System.Drawing.Size(532, 356);
+			this.Controls.Add(this.m_btnMore);
 			this.Controls.Add(this.m_btnClose);
 			this.Controls.Add(this.m_lvLanguages);
 			this.Controls.Add(this.m_bannerImage);
@@ -111,5 +125,6 @@
 		private System.Windows.Forms.ListView m_lvLanguages;
 		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ImageList m_ilLanguages;
+		private System.Windows.Forms.Button m_btnMore;
 	}
 }

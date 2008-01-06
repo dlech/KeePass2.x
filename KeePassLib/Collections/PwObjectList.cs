@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2007 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -76,6 +76,16 @@ namespace KeePassLib.Collections
 			return pl;
 		}
 
+		public PwObjectList<T> CloneShallow()
+		{
+			PwObjectList<T> tNew = new PwObjectList<T>();
+
+			foreach(T po in m_vObjects)
+				tNew.Add(po);
+
+			return tNew;
+		}
+
 		/// <summary>
 		/// Add an object to this list.
 		/// </summary>
@@ -87,6 +97,16 @@ namespace KeePassLib.Collections
 			Debug.Assert(pwObject != null); if(pwObject == null) throw new ArgumentNullException();
 
 			m_vObjects.Add(pwObject);
+		}
+
+		public void Add(PwObjectList<T> vObjects)
+		{
+			Debug.Assert(vObjects != null); if(vObjects == null) throw new ArgumentNullException();
+
+			foreach(T po in vObjects)
+			{
+				m_vObjects.Add(po);
+			}
 		}
 
 		/// <summary>

@@ -59,6 +59,8 @@ namespace KeePass.Resources
 			m_strAutoTypeEntrySelectionDescLong = TryGetEx(dictNew, "AutoTypeEntrySelectionDescLong", m_strAutoTypeEntrySelectionDescLong);
 			m_strAutoTypeEntrySelectionDescShort = TryGetEx(dictNew, "AutoTypeEntrySelectionDescShort", m_strAutoTypeEntrySelectionDescShort);
 			m_strAutoTypeObfuscationHint = TryGetEx(dictNew, "AutoTypeObfuscationHint", m_strAutoTypeObfuscationHint);
+			m_strAutoTypeSequenceInvalid = TryGetEx(dictNew, "AutoTypeSequenceInvalid", m_strAutoTypeSequenceInvalid);
+			m_strAutoTypeUnknownPlaceholder = TryGetEx(dictNew, "AutoTypeUnknownPlaceholder", m_strAutoTypeUnknownPlaceholder);
 			m_strAvailableLanguages = TryGetEx(dictNew, "AvailableLanguages", m_strAvailableLanguages);
 			m_strBankAccount = TryGetEx(dictNew, "BankAccount", m_strBankAccount);
 			m_strBits = TryGetEx(dictNew, "Bits", m_strBits);
@@ -77,9 +79,9 @@ namespace KeePass.Resources
 			m_strChkForUpdNewVersion = TryGetEx(dictNew, "ChkForUpdNewVersion", m_strChkForUpdNewVersion);
 			m_strClearMRU = TryGetEx(dictNew, "ClearMRU", m_strClearMRU);
 			m_strClipboard = TryGetEx(dictNew, "Clipboard", m_strClipboard);
-			m_strClipboardAutoClear = TryGetEx(dictNew, "ClipboardAutoClear", m_strClipboardAutoClear);
 			m_strClipboardClearInSeconds = TryGetEx(dictNew, "ClipboardClearInSeconds", m_strClipboardClearInSeconds);
 			m_strClipboardClearOnExit = TryGetEx(dictNew, "ClipboardClearOnExit", m_strClipboardClearOnExit);
+			m_strClipboardDataCopied = TryGetEx(dictNew, "ClipboardDataCopied", m_strClipboardDataCopied);
 			m_strCloseButton = TryGetEx(dictNew, "CloseButton", m_strCloseButton);
 			m_strCloseButtonMinimizes = TryGetEx(dictNew, "CloseButtonMinimizes", m_strCloseButtonMinimizes);
 			m_strCompany = TryGetEx(dictNew, "Company", m_strCompany);
@@ -97,6 +99,8 @@ namespace KeePass.Resources
 			m_strContact = TryGetEx(dictNew, "Contact", m_strContact);
 			m_strCopy = TryGetEx(dictNew, "Copy", m_strCopy);
 			m_strCopyAll = TryGetEx(dictNew, "CopyAll", m_strCopyAll);
+			m_strCopyPasswordMenu = TryGetEx(dictNew, "CopyPasswordMenu", m_strCopyPasswordMenu);
+			m_strCopyTanMenu = TryGetEx(dictNew, "CopyTanMenu", m_strCopyTanMenu);
 			m_strCreateMasterKey = TryGetEx(dictNew, "CreateMasterKey", m_strCreateMasterKey);
 			m_strCreateNewDatabase = TryGetEx(dictNew, "CreateNewDatabase", m_strCreateNewDatabase);
 			m_strCreationTime = TryGetEx(dictNew, "CreationTime", m_strCreationTime);
@@ -290,6 +294,7 @@ namespace KeePass.Resources
 			m_strSaveBeforeCloseTitle = TryGetEx(dictNew, "SaveBeforeCloseTitle", m_strSaveBeforeCloseTitle);
 			m_strSaveDatabase = TryGetEx(dictNew, "SaveDatabase", m_strSaveDatabase);
 			m_strSavingDatabase = TryGetEx(dictNew, "SavingDatabase", m_strSavingDatabase);
+			m_strSearch = TryGetEx(dictNew, "Search", m_strSearch);
 			m_strSearchDesc = TryGetEx(dictNew, "SearchDesc", m_strSearchDesc);
 			m_strSearchGroupName = TryGetEx(dictNew, "SearchGroupName", m_strSearchGroupName);
 			m_strSearchItemsFoundSmall = TryGetEx(dictNew, "SearchItemsFoundSmall", m_strSearchItemsFoundSmall);
@@ -729,6 +734,28 @@ namespace KeePass.Resources
 			get { return m_strAutoTypeObfuscationHint; }
 		}
 
+		private static string m_strAutoTypeSequenceInvalid =
+			@"The specified auto-type sequence is invalid.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The specified auto-type sequence is invalid.'.
+		/// </summary>
+		public static string AutoTypeSequenceInvalid
+		{
+			get { return m_strAutoTypeSequenceInvalid; }
+		}
+
+		private static string m_strAutoTypeUnknownPlaceholder =
+			@"The following auto-type placeholder or special key code is unknown/unsupported:";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The following auto-type placeholder or special key code is unknown/unsupported:'.
+		/// </summary>
+		public static string AutoTypeUnknownPlaceholder
+		{
+			get { return m_strAutoTypeUnknownPlaceholder; }
+		}
+
 		private static string m_strAvailableLanguages =
 			@"Available Languages";
 		/// <summary>
@@ -927,22 +954,11 @@ namespace KeePass.Resources
 			get { return m_strClipboard; }
 		}
 
-		private static string m_strClipboardAutoClear =
-			@"Clipboard Auto-Clear";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Clipboard Auto-Clear'.
-		/// </summary>
-		public static string ClipboardAutoClear
-		{
-			get { return m_strClipboardAutoClear; }
-		}
-
 		private static string m_strClipboardClearInSeconds =
-			@"Clipboard is automatically cleared in [PARAM] seconds";
+			@"Clipboard will be cleared in [PARAM] seconds";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Clipboard is automatically cleared in [PARAM] seconds'.
+		/// 'Clipboard will be cleared in [PARAM] seconds'.
 		/// </summary>
 		public static string ClipboardClearInSeconds
 		{
@@ -958,6 +974,17 @@ namespace KeePass.Resources
 		public static string ClipboardClearOnExit
 		{
 			get { return m_strClipboardClearOnExit; }
+		}
+
+		private static string m_strClipboardDataCopied =
+			@"Data copied to clipboard.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Data copied to clipboard.'.
+		/// </summary>
+		public static string ClipboardDataCopied
+		{
+			get { return m_strClipboardDataCopied; }
 		}
 
 		private static string m_strCloseButton =
@@ -1145,6 +1172,28 @@ namespace KeePass.Resources
 		public static string CopyAll
 		{
 			get { return m_strCopyAll; }
+		}
+
+		private static string m_strCopyPasswordMenu =
+			@"Copy &Password";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy &Password'.
+		/// </summary>
+		public static string CopyPasswordMenu
+		{
+			get { return m_strCopyPasswordMenu; }
+		}
+
+		private static string m_strCopyTanMenu =
+			@"Copy &TAN";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy &TAN'.
+		/// </summary>
+		public static string CopyTanMenu
+		{
+			get { return m_strCopyTanMenu; }
 		}
 
 		private static string m_strCreateMasterKey =
@@ -3268,6 +3317,17 @@ namespace KeePass.Resources
 		public static string SavingDatabase
 		{
 			get { return m_strSavingDatabase; }
+		}
+
+		private static string m_strSearch =
+			@"Search...";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Search...'.
+		/// </summary>
+		public static string Search
+		{
+			get { return m_strSearch; }
 		}
 
 		private static string m_strSearchDesc =

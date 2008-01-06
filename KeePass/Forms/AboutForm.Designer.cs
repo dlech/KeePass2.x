@@ -57,7 +57,7 @@
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(321, 15);
 			this.m_lblCopyright.TabIndex = 1;
-			this.m_lblCopyright.Text = "Copyright © 2003-2007 Dominik Reichl.";
+			this.m_lblCopyright.Text = "Copyright © 2003-2008 Dominik Reichl.";
 			// 
 			// m_lblOsi
 			// 
