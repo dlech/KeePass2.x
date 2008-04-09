@@ -7,7 +7,7 @@
 			<ID>en</ID> <!-- See RFC 1766: ISO 639-1, ISO 3166 -->
 		</Language>
 		<Version>
-			<ForApplicationVersion>2.02</ForApplicationVersion>
+			<ForApplicationVersion>2.x</ForApplicationVersion>
 		</Version>
 		<Author>
 			<Name>Dominik Reichl</Name>
@@ -37,12 +37,6 @@
 		<Data Name="Advanced">
 			<Value>Advanced</Value>
 		</Data>
-		<Data Name="AdvancedEntryProperties">
-			<Value>Entry Properties</Value>
-		</Data>
-		<Data Name="AdvancedEntryPropertiesDesc">
-			<Value>Here you can configure advanced properties of the entry.</Value>
-		</Data>
 		<Data Name="AfterDatabaseOpen">
 			<Value>After Opening a Database</Value>
 		</Data>
@@ -54,6 +48,9 @@
 		</Data>
 		<Data Name="AllSupportedFiles">
 			<Value>All Supported Files</Value>
+		</Data>
+		<Data Name="Application">
+			<Value>Application</Value>
 		</Data>
 		<Data Name="Arguments">
 			<Value>Arguments</Value>
@@ -164,7 +161,7 @@
 			<Value>Car Tel.</Value>
 		</Data>
 		<Data Name="ChangeMasterKeyIntro">
-			<Value>You are changing the composite master key for the currently-open database. After you do this, only the new composite master key will open the database; the old composite master key will no longer work. You need to save the database in order to apply the new composite master key.</Value>
+			<Value>You are changing the composite master key for the currently-open database. After you do this, only the new key will open the database; the old key will no longer work. You need to save the database afterwards in order to apply the new key.</Value>
 		</Data>
 		<Data Name="CheckForUpdAtStart">
 			<Value>Check for update at KeePass startup</Value>
@@ -241,6 +238,9 @@
 		<Data Name="CopyAll">
 			<Value>Copy All</Value>
 		</Data>
+		<Data Name="CopyOfItem">
+			<Value>Copy</Value>
+		</Data>
 		<Data Name="CopyPasswordMenu">
 			<Value>Copy &amp;Password</Value>
 		</Data>
@@ -275,7 +275,7 @@
 			<Value>Cut</Value>
 		</Data>
 		<Data Name="Database">
-			<Value>Datenbank</Value>
+			<Value>Database</Value>
 		</Data>
 		<Data Name="DatabaseDescPrompt">
 			<Value>Enter a short description of the database or leave it empty.</Value>
@@ -298,9 +298,6 @@
 		<Data Name="DatabaseSettingsDesc">
 			<Value>Here you can configure various database settings.</Value>
 		</Data>
-		<Data Name="Decompressing">
-			<Value>Decompressing</Value>
-		</Data>
 		<Data Name="Default">
 			<Value>Default</Value>
 		</Data>
@@ -311,7 +308,7 @@
 			<Value>Delete Entries Confirmation</Value>
 		</Data>
 		<Data Name="DeleteEntriesInfo">
-			<Value>This will remove all selected entries unrecoverably!</Value>
+			<Value>All selected entries will be removed irrevocably!</Value>
 		</Data>
 		<Data Name="DeleteEntriesQuestion">
 			<Value>Are you sure you want to permanently delete all selected entries?</Value>
@@ -320,7 +317,7 @@
 			<Value>Delete Group Confirmation</Value>
 		</Data>
 		<Data Name="DeleteGroupInfo">
-			<Value>Deleting a group will delete all entries and subgroups in that group.</Value>
+			<Value>Deleting a group will also delete all entries and subgroups in that group.</Value>
 		</Data>
 		<Data Name="DeleteGroupQuestion">
 			<Value>Are you sure you want to permanently delete this group?</Value>
@@ -337,14 +334,8 @@
 		<Data Name="DocumentationHint">
 			<Value>Please see the documentation for more details.</Value>
 		</Data>
-		<Data Name="DownloadAndInstall">
-			<Value>Download &amp; Install</Value>
-		</Data>
 		<Data Name="DownloadFailed">
 			<Value>Download failed.</Value>
-		</Data>
-		<Data Name="Downloading">
-			<Value>Downloading</Value>
 		</Data>
 		<Data Name="DragDrop">
 			<Value>Drag&amp;Drop</Value>
@@ -377,7 +368,7 @@
 			<Value>Empty</Value>
 		</Data>
 		<Data Name="EnterCompositeKey">
-			<Value>Enter Composite Master Key</Value>
+			<Value>Enter Master Key</Value>
 		</Data>
 		<Data Name="EntropyDesc">
 			<Value>Generate additional random bits.</Value>
@@ -466,6 +457,9 @@
 		<Data Name="Flag">
 			<Value>Flag</Value>
 		</Data>
+		<Data Name="FocusResultsAfterQuickFind">
+			<Value>Focus entry list after a successful quick search (toolbar)</Value>
+		</Data>
 		<Data Name="FormatNoDbDesc">
 			<Value>This file format doesn't support database descriptions.</Value>
 		</Data>
@@ -518,7 +512,7 @@
 			<Value>The selected group cannot store any entries.</Value>
 		</Data>
 		<Data Name="HelpSourceNoLocalOption">
-			<Value>This option is grayed out because local help is not installed.</Value>
+			<Value>This option is disabled, because local help is not installed.</Value>
 		</Data>
 		<Data Name="HelpSourceSelection">
 			<Value>Help Source Selection</Value>
@@ -638,7 +632,7 @@
 			<Value>Lock workspace when minimizing main window</Value>
 		</Data>
 		<Data Name="LockOnSessionLock">
-			<Value>Lock workspace when locking Windows or switching user</Value>
+			<Value>Lock workspace when locking Windows, switching user or sleeping</Value>
 		</Data>
 		<Data Name="MainWindow">
 			<Value>Main Window</Value>
@@ -883,12 +877,6 @@
 		<Data Name="SpecialKeys">
 			<Value>Special Keys</Value>
 		</Data>
-		<Data Name="SpecifyApplication">
-			<Value>Specify Application</Value>
-		</Data>
-		<Data Name="SpecifyApplicationDesc">
-			<Value>Customize used application for the current URL.</Value>
-		</Data>
 		<Data Name="StandardFields">
 			<Value>Standard Fields</Value>
 		</Data>
@@ -965,7 +953,7 @@
 			<Value>Unknown</Value>
 		</Data>
 		<Data Name="UnknownError">
-			<Value>An unknown error occured.</Value>
+			<Value>An unknown error occurred.</Value>
 		</Data>
 		<Data Name="UnknownFileVersion">
 			<Value>Unknown file version!</Value>
@@ -987,21 +975,6 @@
 		</Data>
 		<Data Name="UrlSaveTitle">
 			<Value>Save To URL</Value>
-		</Data>
-		<Data Name="UrlStarterCustomText">
-			<Value>Custom (Specify Path)</Value>
-		</Data>
-		<Data Name="UrlStarterFailCaption">
-			<Value>Plugin/program not found</Value>
-		</Data>
-		<Data Name="UrlStarterNotFoundPost">
-			<Value>However, this program/plugin is not installed on this system.</Value>
-		</Data>
-		<Data Name="UrlStarterNotFoundPre">
-			<Value>You have specified the following program/plugin to be used to open the URL of the current entry:</Value>
-		</Data>
-		<Data Name="UrlStarterUsesDefault">
-			<Value>The default system shell will be used to start the URL.</Value>
 		</Data>
 		<Data Name="UserName">
 			<Value>User Name</Value>
@@ -1067,7 +1040,7 @@
 			<Value>Found invalid data while decoding.</Value>
 		</Data>
 		<Data Name="FileUnknownCipher">
-			<Value>The file encrypted using an unknown encryption algorithm!</Value>
+			<Value>The file is encrypted using an unknown encryption algorithm!</Value>
 		</Data>
 		<Data Name="FileSigInvalid">
 			<Value>The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.</Value>
@@ -1097,7 +1070,7 @@
 			<Value>Fatal Error</Value>
 		</Data>
 		<Data Name="FatalErrorText">
-			<Value>A fatal error has occured!</Value>
+			<Value>A fatal error has occurred!</Value>
 		</Data>
 		<Data Name="FileLoadFailed">
 			<Value>Failed to load the specified file!</Value>

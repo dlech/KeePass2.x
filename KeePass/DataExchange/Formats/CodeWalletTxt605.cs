@@ -34,7 +34,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class CodeWalletTxt605 : FormatImporter
+	internal sealed class CodeWalletTxt605 : FormatImporter
 	{
 		private const string FieldSeparator = "*---------------------------------------------------";
 

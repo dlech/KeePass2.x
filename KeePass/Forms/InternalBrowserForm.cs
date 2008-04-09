@@ -46,6 +46,7 @@ namespace KeePass.Forms
 		public InternalBrowserForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

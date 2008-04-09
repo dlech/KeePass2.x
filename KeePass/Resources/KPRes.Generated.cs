@@ -31,12 +31,11 @@ namespace KeePass.Resources
 			m_strAddStringField = TryGetEx(dictNew, "AddStringField", m_strAddStringField);
 			m_strAddStringFieldDesc = TryGetEx(dictNew, "AddStringFieldDesc", m_strAddStringFieldDesc);
 			m_strAdvanced = TryGetEx(dictNew, "Advanced", m_strAdvanced);
-			m_strAdvancedEntryProperties = TryGetEx(dictNew, "AdvancedEntryProperties", m_strAdvancedEntryProperties);
-			m_strAdvancedEntryPropertiesDesc = TryGetEx(dictNew, "AdvancedEntryPropertiesDesc", m_strAdvancedEntryPropertiesDesc);
 			m_strAfterDatabaseOpen = TryGetEx(dictNew, "AfterDatabaseOpen", m_strAfterDatabaseOpen);
 			m_strAllEntriesTitle = TryGetEx(dictNew, "AllEntriesTitle", m_strAllEntriesTitle);
 			m_strAllFiles = TryGetEx(dictNew, "AllFiles", m_strAllFiles);
 			m_strAllSupportedFiles = TryGetEx(dictNew, "AllSupportedFiles", m_strAllSupportedFiles);
+			m_strApplication = TryGetEx(dictNew, "Application", m_strApplication);
 			m_strArguments = TryGetEx(dictNew, "Arguments", m_strArguments);
 			m_strAskContinue = TryGetEx(dictNew, "AskContinue", m_strAskContinue);
 			m_strAssistant = TryGetEx(dictNew, "Assistant", m_strAssistant);
@@ -99,6 +98,7 @@ namespace KeePass.Resources
 			m_strContact = TryGetEx(dictNew, "Contact", m_strContact);
 			m_strCopy = TryGetEx(dictNew, "Copy", m_strCopy);
 			m_strCopyAll = TryGetEx(dictNew, "CopyAll", m_strCopyAll);
+			m_strCopyOfItem = TryGetEx(dictNew, "CopyOfItem", m_strCopyOfItem);
 			m_strCopyPasswordMenu = TryGetEx(dictNew, "CopyPasswordMenu", m_strCopyPasswordMenu);
 			m_strCopyTanMenu = TryGetEx(dictNew, "CopyTanMenu", m_strCopyTanMenu);
 			m_strCreateMasterKey = TryGetEx(dictNew, "CreateMasterKey", m_strCreateMasterKey);
@@ -118,7 +118,6 @@ namespace KeePass.Resources
 			m_strDatabaseNamePrompt = TryGetEx(dictNew, "DatabaseNamePrompt", m_strDatabaseNamePrompt);
 			m_strDatabaseSettings = TryGetEx(dictNew, "DatabaseSettings", m_strDatabaseSettings);
 			m_strDatabaseSettingsDesc = TryGetEx(dictNew, "DatabaseSettingsDesc", m_strDatabaseSettingsDesc);
-			m_strDecompressing = TryGetEx(dictNew, "Decompressing", m_strDecompressing);
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
 			m_strDelete = TryGetEx(dictNew, "Delete", m_strDelete);
 			m_strDeleteEntriesCaption = TryGetEx(dictNew, "DeleteEntriesCaption", m_strDeleteEntriesCaption);
@@ -131,9 +130,7 @@ namespace KeePass.Resources
 			m_strDescription = TryGetEx(dictNew, "Description", m_strDescription);
 			m_strDetails = TryGetEx(dictNew, "Details", m_strDetails);
 			m_strDocumentationHint = TryGetEx(dictNew, "DocumentationHint", m_strDocumentationHint);
-			m_strDownloadAndInstall = TryGetEx(dictNew, "DownloadAndInstall", m_strDownloadAndInstall);
 			m_strDownloadFailed = TryGetEx(dictNew, "DownloadFailed", m_strDownloadFailed);
-			m_strDownloading = TryGetEx(dictNew, "Downloading", m_strDownloading);
 			m_strDragDrop = TryGetEx(dictNew, "DragDrop", m_strDragDrop);
 			m_strDuplicateStringFieldName = TryGetEx(dictNew, "DuplicateStringFieldName", m_strDuplicateStringFieldName);
 			m_strEditEntry = TryGetEx(dictNew, "EditEntry", m_strEditEntry);
@@ -174,6 +171,7 @@ namespace KeePass.Resources
 			m_strFileOrUrl = TryGetEx(dictNew, "FileOrUrl", m_strFileOrUrl);
 			m_strFiles = TryGetEx(dictNew, "Files", m_strFiles);
 			m_strFlag = TryGetEx(dictNew, "Flag", m_strFlag);
+			m_strFocusResultsAfterQuickFind = TryGetEx(dictNew, "FocusResultsAfterQuickFind", m_strFocusResultsAfterQuickFind);
 			m_strFormatNoDbDesc = TryGetEx(dictNew, "FormatNoDbDesc", m_strFormatNoDbDesc);
 			m_strFormatNoDbName = TryGetEx(dictNew, "FormatNoDbName", m_strFormatNoDbName);
 			m_strFormatNoRootEntries = TryGetEx(dictNew, "FormatNoRootEntries", m_strFormatNoRootEntries);
@@ -313,8 +311,6 @@ namespace KeePass.Resources
 			m_strSoonToExpireEntries = TryGetEx(dictNew, "SoonToExpireEntries", m_strSoonToExpireEntries);
 			m_strSortCode = TryGetEx(dictNew, "SortCode", m_strSortCode);
 			m_strSpecialKeys = TryGetEx(dictNew, "SpecialKeys", m_strSpecialKeys);
-			m_strSpecifyApplication = TryGetEx(dictNew, "SpecifyApplication", m_strSpecifyApplication);
-			m_strSpecifyApplicationDesc = TryGetEx(dictNew, "SpecifyApplicationDesc", m_strSpecifyApplicationDesc);
 			m_strStandardFields = TryGetEx(dictNew, "StandardFields", m_strStandardFields);
 			m_strStartAndExit = TryGetEx(dictNew, "StartAndExit", m_strStartAndExit);
 			m_strStartMinimizedAndLocked = TryGetEx(dictNew, "StartMinimizedAndLocked", m_strStartMinimizedAndLocked);
@@ -348,11 +344,6 @@ namespace KeePass.Resources
 			m_strUrlOverride = TryGetEx(dictNew, "UrlOverride", m_strUrlOverride);
 			m_strUrlSaveDesc = TryGetEx(dictNew, "UrlSaveDesc", m_strUrlSaveDesc);
 			m_strUrlSaveTitle = TryGetEx(dictNew, "UrlSaveTitle", m_strUrlSaveTitle);
-			m_strUrlStarterCustomText = TryGetEx(dictNew, "UrlStarterCustomText", m_strUrlStarterCustomText);
-			m_strUrlStarterFailCaption = TryGetEx(dictNew, "UrlStarterFailCaption", m_strUrlStarterFailCaption);
-			m_strUrlStarterNotFoundPost = TryGetEx(dictNew, "UrlStarterNotFoundPost", m_strUrlStarterNotFoundPost);
-			m_strUrlStarterNotFoundPre = TryGetEx(dictNew, "UrlStarterNotFoundPre", m_strUrlStarterNotFoundPre);
-			m_strUrlStarterUsesDefault = TryGetEx(dictNew, "UrlStarterUsesDefault", m_strUrlStarterUsesDefault);
 			m_strUserName = TryGetEx(dictNew, "UserName", m_strUserName);
 			m_strUserNamePrompt = TryGetEx(dictNew, "UserNamePrompt", m_strUserNamePrompt);
 			m_strUUID = TryGetEx(dictNew, "UUID", m_strUUID);
@@ -369,6 +360,348 @@ namespace KeePass.Resources
 			m_strWorkspaceLocked = TryGetEx(dictNew, "WorkspaceLocked", m_strWorkspaceLocked);
 			m_strWorkTel = TryGetEx(dictNew, "WorkTel", m_strWorkTel);
 			m_strXSLStylesheets = TryGetEx(dictNew, "XSLStylesheets", m_strXSLStylesheets);
+		}
+
+		private static readonly string[] m_vKeyNames = {
+			"AddEntry",
+			"AddEntryDesc",
+			"AddStringField",
+			"AddStringFieldDesc",
+			"Advanced",
+			"AfterDatabaseOpen",
+			"AllEntriesTitle",
+			"AllFiles",
+			"AllSupportedFiles",
+			"Application",
+			"Arguments",
+			"AskContinue",
+			"Assistant",
+			"AssistantTel",
+			"AttachedExistsAlready",
+			"AttachFailed",
+			"Attachments",
+			"AttachNewRename",
+			"AttachNewRenameRemarks0",
+			"AttachNewRenameRemarks1",
+			"AttachNewRenameRemarks2",
+			"Author",
+			"AutoGeneratedPasswordSettings",
+			"AutoOpenLastFile",
+			"AutoSaveAtExit",
+			"AutoShowExpiredEntries",
+			"AutoShowSoonToExpireEntries",
+			"AutoType",
+			"AutoTypeEntrySelection",
+			"AutoTypeEntrySelectionDescLong",
+			"AutoTypeEntrySelectionDescShort",
+			"AutoTypeObfuscationHint",
+			"AutoTypeSequenceInvalid",
+			"AutoTypeUnknownPlaceholder",
+			"AvailableLanguages",
+			"BankAccount",
+			"Bits",
+			"BranchCode",
+			"BranchHours",
+			"BranchTel",
+			"Browser",
+			"ButtonBack",
+			"ButtonFinish",
+			"ButtonNext",
+			"CannotMoveEntriesBcsGroup",
+			"CarTel",
+			"ChangeMasterKeyIntro",
+			"CheckForUpdAtStart",
+			"ChkForUpdGotLatest",
+			"ChkForUpdNewVersion",
+			"ClearMRU",
+			"Clipboard",
+			"ClipboardClearInSeconds",
+			"ClipboardClearOnExit",
+			"ClipboardDataCopied",
+			"CloseButton",
+			"CloseButtonMinimizes",
+			"Company",
+			"Components",
+			"ConfigAffectAdmin",
+			"ConfigAffectUser",
+			"ConfigSaveFailed",
+			"ConfigureAutoType",
+			"ConfigureAutoTypeDesc",
+			"ConfigureAutoTypeItem",
+			"ConfigureAutoTypeItemDesc",
+			"ConfigureKeystrokeSeq",
+			"ConfigureKeystrokeSeqDesc",
+			"ConfigureOnNewDatabase",
+			"Contact",
+			"Copy",
+			"CopyAll",
+			"CopyOfItem",
+			"CopyPasswordMenu",
+			"CopyTanMenu",
+			"CreateMasterKey",
+			"CreateNewDatabase",
+			"CreationTime",
+			"CredSaveAll",
+			"CredSaveNone",
+			"CredSaveUserOnly",
+			"Custom",
+			"CustomFields",
+			"Cut",
+			"Database",
+			"DatabaseDescPrompt",
+			"DatabaseMaintenance",
+			"DatabaseMaintenanceDesc",
+			"DatabaseModified",
+			"DatabaseNamePrompt",
+			"DatabaseSettings",
+			"DatabaseSettingsDesc",
+			"Default",
+			"Delete",
+			"DeleteEntriesCaption",
+			"DeleteEntriesInfo",
+			"DeleteEntriesQuestion",
+			"DeleteGroupCaption",
+			"DeleteGroupInfo",
+			"DeleteGroupQuestion",
+			"Department",
+			"Description",
+			"Details",
+			"DocumentationHint",
+			"DownloadFailed",
+			"DragDrop",
+			"DuplicateStringFieldName",
+			"EditEntry",
+			"EditEntryDesc",
+			"EditGroup",
+			"EditGroupDesc",
+			"EditStringField",
+			"EditStringFieldDesc",
+			"EMail",
+			"Empty",
+			"EnterCompositeKey",
+			"EntropyDesc",
+			"EntropyTitle",
+			"Entry",
+			"EntryList",
+			"ErrorCode",
+			"Errors",
+			"ExpiredEntries",
+			"ExpiryTime",
+			"Export",
+			"ExportHTML",
+			"ExportHTMLDesc",
+			"ExportingStatusMsg",
+			"FatalError",
+			"FieldName",
+			"FieldNameExistsAlready",
+			"FieldNameInvalid",
+			"FieldNamePrompt",
+			"FieldValue",
+			"FileExistsAlready",
+			"FileExtInstallFailed",
+			"FileExtInstallSuccess",
+			"FileExtName",
+			"FileLockedBy",
+			"FileLockedWarning",
+			"FileNameContainsSemicolonError",
+			"FileNotFoundError",
+			"FileOrUrl",
+			"Files",
+			"Flag",
+			"FocusResultsAfterQuickFind",
+			"FormatNoDbDesc",
+			"FormatNoDbName",
+			"FormatNoRootEntries",
+			"FormatNoSubGroupsInRoot",
+			"FormatOnlyOneAttachment",
+			"Frequency",
+			"General",
+			"GenerateCount",
+			"GenerateCountDesc",
+			"GenerateCountLongDesc",
+			"GeneratedPasswordSamples",
+			"GenProfileSave",
+			"GenProfileSaveDesc",
+			"GenProfileSaveDescLong",
+			"GenPwBasedOnPrevious",
+			"Group",
+			"GroupCannotStoreEntries",
+			"HelpSourceNoLocalOption",
+			"HelpSourceSelection",
+			"HelpSourceSelectionDesc",
+			"HomeAddress",
+			"Homebanking",
+			"HomeFax",
+			"HomepageVisitQuestion",
+			"HomeTel",
+			"IBAN",
+			"ImageFormatFeatureUnsupported",
+			"ImageViewer",
+			"Import",
+			"ImportBehavior",
+			"ImportBehaviorDesc",
+			"ImportFailed",
+			"ImportFileDesc",
+			"ImportFileTitle",
+			"ImportFinished",
+			"ImportingStatusMsg",
+			"ImportMustRead",
+			"ImportMustReadQuestion",
+			"Internet",
+			"InvalidFileStructure",
+			"InvalidKey",
+			"InvalidUrl",
+			"InvalidUserPassword",
+			"JobTitle",
+			"KDB3KeePassLibC",
+			"KeePassLibCLong",
+			"KeePassLibCNotFound",
+			"KeyFileError",
+			"KeystrokeSequence",
+			"LanguageSelected",
+			"LastAccessTime",
+			"LastModificationTime",
+			"LimitSingleInstance",
+			"Locked",
+			"LockMenuLock",
+			"LockMenuUnlock",
+			"LockOnMinimize",
+			"LockOnSessionLock",
+			"MainWindow",
+			"MasterKeyChanged",
+			"MasterKeyChangedSavePrompt",
+			"Menus",
+			"MergingData",
+			"MinBalance",
+			"MinimizeAfterCopy",
+			"MinimizeToTray",
+			"MobileTel",
+			"NativeLibUse",
+			"Navigation",
+			"Network",
+			"NeverExpires",
+			"NewDatabaseKDBFileName",
+			"NewGroup",
+			"NoFileAccessRead",
+			"NoKeyFileSpecifiedMeta",
+			"None",
+			"Notes",
+			"NotInstalled",
+			"NoXSLFile",
+			"OfLower",
+			"OpeningDatabase",
+			"Options",
+			"OptionsDesc",
+			"OtherPlaceholders",
+			"OverwriteExistingFileQuestion",
+			"Pager",
+			"Password",
+			"PasswordManagers",
+			"PasswordOptions",
+			"PasswordOptionsDesc",
+			"PasswordPrompt",
+			"PasswordRepeatFailed",
+			"Paste",
+			"PickCharacters",
+			"PickCharactersDesc",
+			"PluginFailedToLoad",
+			"Plugins",
+			"PluginsDesc",
+			"PolicyAutoTypeDesc",
+			"PolicyClipboardDesc",
+			"PolicyDisallowed",
+			"PolicyDragDropDesc",
+			"PolicyExportDesc",
+			"PolicyImportDesc",
+			"PolicyPluginsDesc",
+			"PolicyPrintDesc",
+			"PolicyRequiredFlag",
+			"PolicySaveDatabaseDesc",
+			"Print",
+			"PrintDesc",
+			"QuickSearch",
+			"Ready",
+			"RememberHidingSettings",
+			"RestartKeePassQuestion",
+			"RoutingCode",
+			"SampleEntry",
+			"SaveBeforeCloseQuestion",
+			"SaveBeforeCloseTitle",
+			"SaveDatabase",
+			"SavingDatabase",
+			"Search",
+			"SearchDesc",
+			"SearchGroupName",
+			"SearchItemsFoundSmall",
+			"SearchKeyFilesOnRemovable",
+			"SearchResultsInSeparator",
+			"SearchTitle",
+			"SelectAll",
+			"SelectDifferentGroup",
+			"SelectedLower",
+			"SelectLanguage",
+			"SelectLanguageDesc",
+			"SelfTestFailed",
+			"ShowFullPathInTitleBar",
+			"ShowGridLines",
+			"ShowTrayOnlyIfTrayed",
+			"SoonToExpireEntries",
+			"SortCode",
+			"SpecialKeys",
+			"StandardFields",
+			"StartAndExit",
+			"StartMinimizedAndLocked",
+			"Success",
+			"SWIFTCode",
+			"SyncFailed",
+			"Synchronize",
+			"Synchronizing",
+			"SynchronizingHint",
+			"SyncSuccess",
+			"System",
+			"SystemCodepage",
+			"TAccountInfoTel",
+			"TAccountNames",
+			"TAccountNumber",
+			"TAccountType",
+			"TANWizard",
+			"TANWizardDesc",
+			"TargetWindow",
+			"TextViewer",
+			"Title",
+			"TooManyFilesError",
+			"TransfersOf",
+			"Undo",
+			"Unknown",
+			"UnknownError",
+			"UnknownFileVersion",
+			"URL",
+			"UrlOpenDesc",
+			"UrlOpenTitle",
+			"UrlOverride",
+			"UrlSaveDesc",
+			"UrlSaveTitle",
+			"UserName",
+			"UserNamePrompt",
+			"UUID",
+			"Version",
+			"ViewEntry",
+			"ViewEntryDesc",
+			"Warnings",
+			"WebBrowser",
+			"WebPage",
+			"WebSiteLogin",
+			"WebSites",
+			"WindowsOS",
+			"WorkFax",
+			"WorkspaceLocked",
+			"WorkTel",
+			"XSLStylesheets"
+		};
+
+		public static string[] GetKeyNames()
+		{
+			return m_vKeyNames;
 		}
 
 		private static string m_strAddEntry =
@@ -426,28 +759,6 @@ namespace KeePass.Resources
 			get { return m_strAdvanced; }
 		}
 
-		private static string m_strAdvancedEntryProperties =
-			@"Entry Properties";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Entry Properties'.
-		/// </summary>
-		public static string AdvancedEntryProperties
-		{
-			get { return m_strAdvancedEntryProperties; }
-		}
-
-		private static string m_strAdvancedEntryPropertiesDesc =
-			@"Here you can configure advanced properties of the entry.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Here you can configure advanced properties of the entry.'.
-		/// </summary>
-		public static string AdvancedEntryPropertiesDesc
-		{
-			get { return m_strAdvancedEntryPropertiesDesc; }
-		}
-
 		private static string m_strAfterDatabaseOpen =
 			@"After Opening a Database";
 		/// <summary>
@@ -490,6 +801,17 @@ namespace KeePass.Resources
 		public static string AllSupportedFiles
 		{
 			get { return m_strAllSupportedFiles; }
+		}
+
+		private static string m_strApplication =
+			@"Application";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Application'.
+		/// </summary>
+		public static string Application
+		{
+			get { return m_strApplication; }
 		}
 
 		private static string m_strArguments =
@@ -889,10 +1211,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strChangeMasterKeyIntro =
-			@"You are changing the composite master key for the currently-open database. After you do this, only the new composite master key will open the database; the old composite master key will no longer work. You need to save the database in order to apply the new composite master key.";
+			@"You are changing the composite master key for the currently-open database. After you do this, only the new key will open the database; the old key will no longer work. You need to save the database afterwards in order to apply the new key.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'You are changing the composite master key for the currently-open database. After you do this, only the new composite master key will open the database; the old composite master key will no longer work. You need to save the database in order to apply the new composite master key.'.
+		/// 'You are changing the composite master key for the currently-open database. After you do this, only the new key will open the database; the old key will no longer work. You need to save the database afterwards in order to apply the new key.'.
 		/// </summary>
 		public static string ChangeMasterKeyIntro
 		{
@@ -1174,6 +1496,17 @@ namespace KeePass.Resources
 			get { return m_strCopyAll; }
 		}
 
+		private static string m_strCopyOfItem =
+			@"Copy";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy'.
+		/// </summary>
+		public static string CopyOfItem
+		{
+			get { return m_strCopyOfItem; }
+		}
+
 		private static string m_strCopyPasswordMenu =
 			@"Copy &Password";
 		/// <summary>
@@ -1296,10 +1629,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strDatabase =
-			@"Datenbank";
+			@"Database";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Datenbank'.
+		/// 'Database'.
 		/// </summary>
 		public static string Database
 		{
@@ -1383,17 +1716,6 @@ namespace KeePass.Resources
 			get { return m_strDatabaseSettingsDesc; }
 		}
 
-		private static string m_strDecompressing =
-			@"Decompressing";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Decompressing'.
-		/// </summary>
-		public static string Decompressing
-		{
-			get { return m_strDecompressing; }
-		}
-
 		private static string m_strDefault =
 			@"Default";
 		/// <summary>
@@ -1428,10 +1750,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strDeleteEntriesInfo =
-			@"This will remove all selected entries unrecoverably!";
+			@"All selected entries will be removed irrevocably!";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'This will remove all selected entries unrecoverably!'.
+		/// 'All selected entries will be removed irrevocably!'.
 		/// </summary>
 		public static string DeleteEntriesInfo
 		{
@@ -1461,10 +1783,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strDeleteGroupInfo =
-			@"Deleting a group will delete all entries and subgroups in that group.";
+			@"Deleting a group will also delete all entries and subgroups in that group.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Deleting a group will delete all entries and subgroups in that group.'.
+		/// 'Deleting a group will also delete all entries and subgroups in that group.'.
 		/// </summary>
 		public static string DeleteGroupInfo
 		{
@@ -1526,17 +1848,6 @@ namespace KeePass.Resources
 			get { return m_strDocumentationHint; }
 		}
 
-		private static string m_strDownloadAndInstall =
-			@"Download & Install";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Download & Install'.
-		/// </summary>
-		public static string DownloadAndInstall
-		{
-			get { return m_strDownloadAndInstall; }
-		}
-
 		private static string m_strDownloadFailed =
 			@"Download failed.";
 		/// <summary>
@@ -1546,17 +1857,6 @@ namespace KeePass.Resources
 		public static string DownloadFailed
 		{
 			get { return m_strDownloadFailed; }
-		}
-
-		private static string m_strDownloading =
-			@"Downloading";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Downloading'.
-		/// </summary>
-		public static string Downloading
-		{
-			get { return m_strDownloading; }
 		}
 
 		private static string m_strDragDrop =
@@ -1999,6 +2299,17 @@ namespace KeePass.Resources
 			get { return m_strFlag; }
 		}
 
+		private static string m_strFocusResultsAfterQuickFind =
+			@"Focus entry list after a successful quick search (toolbar)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Focus entry list after a successful quick search (toolbar)'.
+		/// </summary>
+		public static string FocusResultsAfterQuickFind
+		{
+			get { return m_strFocusResultsAfterQuickFind; }
+		}
+
 		private static string m_strFormatNoDbDesc =
 			@"This file format doesn't support database descriptions.";
 		/// <summary>
@@ -2187,10 +2498,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strHelpSourceNoLocalOption =
-			@"This option is grayed out because local help is not installed.";
+			@"This option is disabled, because local help is not installed.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'This option is grayed out because local help is not installed.'.
+		/// 'This option is disabled, because local help is not installed.'.
 		/// </summary>
 		public static string HelpSourceNoLocalOption
 		{
@@ -2627,10 +2938,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strLockOnSessionLock =
-			@"Lock workspace when locking Windows or switching user";
+			@"Lock workspace when locking Windows, switching user or sleeping";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Lock workspace when locking Windows or switching user'.
+		/// 'Lock workspace when locking Windows, switching user or sleeping'.
 		/// </summary>
 		public static string LockOnSessionLock
 		{
@@ -3528,28 +3839,6 @@ namespace KeePass.Resources
 			get { return m_strSpecialKeys; }
 		}
 
-		private static string m_strSpecifyApplication =
-			@"Specify Application";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Specify Application'.
-		/// </summary>
-		public static string SpecifyApplication
-		{
-			get { return m_strSpecifyApplication; }
-		}
-
-		private static string m_strSpecifyApplicationDesc =
-			@"Customize used application for the current URL.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Customize used application for the current URL.'.
-		/// </summary>
-		public static string SpecifyApplicationDesc
-		{
-			get { return m_strSpecifyApplicationDesc; }
-		}
-
 		private static string m_strStandardFields =
 			@"Standard Fields";
 		/// <summary>
@@ -3826,10 +4115,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strUnknownError =
-			@"An unknown error occured.";
+			@"An unknown error occurred.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'An unknown error occured.'.
+		/// 'An unknown error occurred.'.
 		/// </summary>
 		public static string UnknownError
 		{
@@ -3911,61 +4200,6 @@ namespace KeePass.Resources
 		public static string UrlSaveTitle
 		{
 			get { return m_strUrlSaveTitle; }
-		}
-
-		private static string m_strUrlStarterCustomText =
-			@"Custom (Specify Path)";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Custom (Specify Path)'.
-		/// </summary>
-		public static string UrlStarterCustomText
-		{
-			get { return m_strUrlStarterCustomText; }
-		}
-
-		private static string m_strUrlStarterFailCaption =
-			@"Plugin/program not found";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Plugin/program not found'.
-		/// </summary>
-		public static string UrlStarterFailCaption
-		{
-			get { return m_strUrlStarterFailCaption; }
-		}
-
-		private static string m_strUrlStarterNotFoundPost =
-			@"However, this program/plugin is not installed on this system.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'However, this program/plugin is not installed on this system.'.
-		/// </summary>
-		public static string UrlStarterNotFoundPost
-		{
-			get { return m_strUrlStarterNotFoundPost; }
-		}
-
-		private static string m_strUrlStarterNotFoundPre =
-			@"You have specified the following program/plugin to be used to open the URL of the current entry:";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'You have specified the following program/plugin to be used to open the URL of the current entry:'.
-		/// </summary>
-		public static string UrlStarterNotFoundPre
-		{
-			get { return m_strUrlStarterNotFoundPre; }
-		}
-
-		private static string m_strUrlStarterUsesDefault =
-			@"The default system shell will be used to start the URL.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'The default system shell will be used to start the URL.'.
-		/// </summary>
-		public static string UrlStarterUsesDefault
-		{
-			get { return m_strUrlStarterUsesDefault; }
 		}
 
 		private static string m_strUserName =

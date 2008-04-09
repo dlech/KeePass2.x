@@ -154,6 +154,13 @@ namespace KeePass.App.Configuration
 			set { m_bMinAfterCopy = value; }
 		}
 
+		private bool m_bFocusResAfterQuickFind = false;
+		public bool FocusResultsAfterQuickFind
+		{
+			get { return m_bFocusResAfterQuickFind; }
+			set { m_bFocusResAfterQuickFind = value; }
+		}
+
 		private AceToolBar m_tb = new AceToolBar();
 		public AceToolBar ToolBar
 		{

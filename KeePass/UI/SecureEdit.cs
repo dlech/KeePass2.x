@@ -161,6 +161,7 @@ namespace KeePass.UI
 					sbNewPart.ToString());
 
 			ShowCurrentPassword(nSelPos, nSelLen);
+			m_tbPassword.ClearUndo(); // Would need special undo buffer
 		}
 
 		private void ShowCurrentPassword(int nSelStart, int nSelLength)
@@ -227,7 +228,7 @@ namespace KeePass.UI
 
 			if(m_secString != null)
 			{
-				while(m_secString.Length != (nLeftRem + nRightRem))
+				while(m_secString.Length > (nLeftRem + nRightRem))
 					m_secString.RemoveAt(nLeftRem);
 
 				for(int i = 0; i < strInsert.Length; ++i)
@@ -237,7 +238,7 @@ namespace KeePass.UI
 			{
 				StringBuilder sb = new StringBuilder(m_strAlternativeSecString);
 
-				while(sb.Length != (nLeftRem + nRightRem))
+				while(sb.Length > (nLeftRem + nRightRem))
 					sb.Remove(nLeftRem, 1);
 
 				sb.Insert(nLeftRem, strInsert);

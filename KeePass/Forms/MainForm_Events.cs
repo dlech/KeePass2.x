@@ -27,9 +27,44 @@ using KeePass.App;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 
 namespace KeePass.Forms
 {
+	public delegate void FileCreatedEventHandler(object sender, FileCreatedEventArgs e);
+
+	public sealed class FileCreatedEventArgs : EventArgs
+	{
+		private PwDatabase m_pwDatabase;
+
+		public PwDatabase Database { get { return m_pwDatabase; } }
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public FileCreatedEventArgs(PwDatabase pwDatabase)
+		{
+			m_pwDatabase = pwDatabase;
+		}
+	}
+
+	public delegate void FileOpenedEventHandler(object sender, FileOpenedEventArgs e);
+
+	public sealed class FileOpenedEventArgs : EventArgs
+	{
+		private PwDatabase m_pwDatabase;
+
+		public PwDatabase Database { get { return m_pwDatabase; } }
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public FileOpenedEventArgs(PwDatabase pwDatabase)
+		{
+			m_pwDatabase = pwDatabase;
+		}
+	}
+
 	/// <summary>
 	/// Event handler definition for file-saving events.
 	/// </summary>
@@ -44,6 +79,8 @@ namespace KeePass.Forms
 	{
 		private bool m_bSaveAs;
 		private bool m_bCopy;
+		private PwDatabase m_pwDatabase;
+		private Guid m_eventGuid;
 
 		/// <summary>
 		/// Flag that determines if the user is performing a 'Save As' operation.
@@ -53,14 +90,21 @@ namespace KeePass.Forms
 
 		public bool Copy { get { return m_bCopy; } }
 
+		public PwDatabase Database { get { return m_pwDatabase; } }
+
+		public Guid EventGuid { get { return m_eventGuid; } }
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		/// <param name="bSaveAs">See <c>SaveAs</c> property.</param>
-		public FileSavingEventArgs(bool bSaveAs, bool bCopy)
+		public FileSavingEventArgs(bool bSaveAs, bool bCopy, PwDatabase pwDatabase,
+			Guid eventGuid)
 		{
 			m_bSaveAs = bSaveAs;
 			m_bCopy = bCopy;
+			m_pwDatabase = pwDatabase;
+			m_eventGuid = eventGuid;
 		}
 	}
 
@@ -77,6 +121,8 @@ namespace KeePass.Forms
 	public sealed class FileSavedEventArgs : EventArgs
 	{
 		private bool m_bResult;
+		private PwDatabase m_pwDatabase;
+		private Guid m_eventGuid;
 
 		/// <summary>
 		/// Specifies the result of the attempt to save the database. If
@@ -85,13 +131,44 @@ namespace KeePass.Forms
 		/// </summary>
 		public bool Success { get { return m_bResult; } }
 
+		public PwDatabase Database { get { return m_pwDatabase; } }
+
+		public Guid EventGuid { get { return m_eventGuid; } }
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		/// <param name="bResult">See <c>Result</c> property.</param>
-		public FileSavedEventArgs(bool bSuccess)
+		public FileSavedEventArgs(bool bSuccess, PwDatabase pwDatabase, Guid eventGuid)
 		{
 			m_bResult = bSuccess;
+			m_pwDatabase = pwDatabase;
+			m_eventGuid = eventGuid;
+		}
+	}
+
+	/// <summary>
+	/// Event handler definition for file-closed events.
+	/// </summary>
+	/// <param name="sender">Reserved for future use.</param>
+	/// <param name="e">Information about the file-closed event.</param>
+	public delegate void FileClosedEventHandler(object sender, FileClosedEventArgs e);
+
+	/// <summary>
+	/// Event arguments structure for the file-closed event.
+	/// </summary>
+	public sealed class FileClosedEventArgs : EventArgs
+	{
+		private IOConnectionInfo m_ioClosed;
+
+		public IOConnectionInfo IOConnectionInfo { get { return m_ioClosed; } }
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public FileClosedEventArgs(IOConnectionInfo ioClosed)
+		{
+			m_ioClosed = ioClosed;
 		}
 	}
 
@@ -115,14 +192,19 @@ namespace KeePass.Forms
 	public partial class MainForm : Form
 	{
 		/// <summary>
+		/// Event that is fired after a database has been created.
+		/// </summary>
+		public event FileCreatedEventHandler FileCreated;
+
+		/// <summary>
 		/// Event that is fired after a database has been opened.
 		/// </summary>
-		public event EventHandler FileOpened;
+		public event FileOpenedEventHandler FileOpened;
 
 		/// <summary>
 		/// Event that is fired after a database has been closed.
 		/// </summary>
-		public event EventHandler FileClosed;
+		public event FileClosedEventHandler FileClosed;
 
 		/// <summary>
 		/// Event that is fired before a database is being saved. By handling this

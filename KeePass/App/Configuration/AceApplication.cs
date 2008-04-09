@@ -32,14 +32,14 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private string m_strLanguage = string.Empty; // = English
-		public string Language
+		private string m_strLanguageFile = string.Empty; // = English
+		public string LanguageFile
 		{
-			get { return m_strLanguage; }
+			get { return m_strLanguageFile; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_strLanguage = value;
+				m_strLanguageFile = value;
 			}
 		}
 

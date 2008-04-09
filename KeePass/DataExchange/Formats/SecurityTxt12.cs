@@ -32,7 +32,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class SecurityTxt12 : FormatImporter
+	internal sealed class SecurityTxt12 : FormatImporter
 	{
 		public override string FormatName { get { return "Security TXT 1.2"; } }
 		public override string DefaultExtension { get { return "txt"; } }

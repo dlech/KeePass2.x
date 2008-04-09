@@ -180,6 +180,8 @@ namespace KeePass.App.Configuration
 		private static bool SaveConfigFileEx(AppConfigEx tConfig,
 			string strFilePath, bool bRemoveConfigPref)
 		{
+			tConfig.PrepareSave();
+
 			XmlSerializer xmlSerial = new XmlSerializer(typeof(AppConfigEx));
 			FileStream fs = null;
 			bool bResult = true;
@@ -212,7 +214,7 @@ namespace KeePass.App.Configuration
 			return bResult;
 		}
 
-		public static void Save(AppConfigEx tConfig)
+		public static bool Save(AppConfigEx tConfig)
 		{
 			Debug.Assert(tConfig != null);
 			if(tConfig == null) throw new ArgumentNullException("tConfig");
@@ -226,17 +228,21 @@ namespace KeePass.App.Configuration
 
 			if(bPreferUser)
 			{
-				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return;
-				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return;
+				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
+				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
 			}
 			else // Don't prefer user -- use global first
 			{
-				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return;
-				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return;
+				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
+				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
 			}
 
+#if !KeePassLibSD
 			if(Program.MainForm != null)
 				Program.MainForm.SetStatusEx(KPRes.ConfigSaveFailed);
+#endif
+
+			return false;
 		}
 	}
 }

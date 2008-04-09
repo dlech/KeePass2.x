@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
+using KeePassLib.Serialization;
+
 namespace KeePass.App.Configuration
 {
 	[XmlType(TypeName = "Configuration")]
@@ -139,6 +141,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_int = value;
 			}
+		}
+
+		public void PrepareSave()
+		{
+			m_aceApp.LastUsedFile.ClearCredentials(true);
+
+			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+				iocMru.ClearCredentials(true);
 		}
 	}
 

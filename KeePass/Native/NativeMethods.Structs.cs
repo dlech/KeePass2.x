@@ -127,5 +127,14 @@ namespace KeePass.Native
 			public IntPtr hwndEdit;
 			public IntPtr hwndList;
 		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct MARGINS
+		{
+			public Int32 Left;
+			public Int32 Right;
+			public Int32 Top;
+			public Int32 Bottom;
+		}
 	}
 }

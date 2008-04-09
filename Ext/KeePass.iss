@@ -5,10 +5,10 @@
 #define MyAppName "KeePass Password Safe"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.04"
-#define KeeVersionStrWithMinor "2.04 Alpha"
-#define KeeVersionStrWithMinorPath "2.04-Alpha"
-#define KeeVersionWin "2.0.4.0"
+#define KeeVersionStr "2.05"
+#define KeeVersionStrWithMinor "2.05 Alpha"
+#define KeeVersionStrWithMinorPath "2.05-Alpha"
+#define KeeVersionWin "2.0.5.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -105,7 +105,7 @@ Name: UserDoc; Description: Help Manual; Types: custom full
 Name: KDB3Support; Description: KDB3 Files Support (KeePass 1.x); Types: custom full
 Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: custom full
 Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: custom full
-Name: NGen; Description: Generate Native Executable; Types: custom full; ExtraDiskSpaceRequired: 1048576
+Name: NGen; Description: Optimize Application Performance; Types: custom full; ExtraDiskSpaceRequired: 1048576
 Name: FileAssoc; Description: Associate .KDBX Files with KeePass; Types: custom full
 
 [UninstallRun]

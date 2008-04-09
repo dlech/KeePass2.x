@@ -72,6 +72,7 @@ namespace KeePass.Forms
 		public KeyPromptForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(string strFilePath, bool bCanExit)

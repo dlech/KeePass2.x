@@ -76,5 +76,29 @@ namespace KeePass.Native
 
 			return EnsureForegroundWindow(hWnd);
 		}
+
+		public static bool IsInvalidHandleValue(IntPtr p)
+		{
+			long h = p.ToInt64();
+			if(h == -1) return true;
+			if(h == 0xFFFFFFFF) return true;
+
+			return false;
+		}
+
+		public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
+		{
+			Debug.Assert(lv != null); if(lv == null) return;
+			Debug.Assert(nIndex >= 0); if(nIndex < 0) return;
+			Debug.Assert(nIndex < lv.Items.Count); if(nIndex >= lv.Items.Count) return;
+
+			int nPartialOK = (bPartialOK ? 1 : 0);
+			try
+			{
+				NativeMethods.SendMessage(lv.Handle, LVM_ENSUREVISIBLE,
+					new IntPtr(nIndex), new IntPtr(nPartialOK));
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 	}
 }

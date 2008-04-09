@@ -32,7 +32,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class SplashIdCsv402 : FormatImporter
+	internal sealed class SplashIdCsv402 : FormatImporter
 	{
 		public override string FormatName { get { return "SplashID CSV 4.02"; } }
 		public override string DefaultExtension { get { return "csv"; } }

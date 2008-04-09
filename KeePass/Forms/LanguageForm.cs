@@ -24,6 +24,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 using KeePass.App;
 using KeePass.UI;
@@ -31,19 +32,21 @@ using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Translation;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
 	public partial class LanguageForm : Form, IGwmWindow
 	{
-		private List<AvTranslation> m_lTranslations = null;
+		private List<KPTranslation> m_lTranslations = null;
 
 		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		public LanguageForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -70,15 +73,40 @@ namespace KeePass.Forms
 
 			string strExe = WinUtil.GetExecutable();
 			string strPath = UrlUtil.GetFileDirectory(strExe, false);
-			m_lTranslations = TranslationUtil.GetAvailableTranslations(strPath);
+			m_lTranslations = GetAvailableTranslations(strPath);
+		}
 
-			foreach(AvTranslation trl in m_lTranslations)
+		private List<KPTranslation> GetAvailableTranslations(string strPath)
+		{
+			List<KPTranslation> l = new List<KPTranslation>();
+			DirectoryInfo di = new DirectoryInfo(strPath);
+			FileInfo[] vFiles = di.GetFiles();
+
+			foreach(FileInfo fi in vFiles)
 			{
-				lvi = m_lvLanguages.Items.Add(trl.LanguageEnglishName, 0);
-				lvi.SubItems.Add(trl.VersionForApp);
-				lvi.SubItems.Add(trl.AuthorName);
-				lvi.SubItems.Add(trl.AuthorContact);
+				if(fi.FullName.ToLower().EndsWith("." + KPTranslation.FileExtension))
+				{
+					try
+					{
+						KPTranslation kpTrl = KPTranslation.LoadFromFile(fi.FullName);
+						l.Add(kpTrl);
+
+						ListViewItem lvi = m_lvLanguages.Items.Add(
+							kpTrl.Properties.NameEnglish, 0);
+						lvi.SubItems.Add(kpTrl.Properties.ApplicationVersion);
+						lvi.SubItems.Add(kpTrl.Properties.AuthorName);
+						lvi.SubItems.Add(kpTrl.Properties.AuthorContact);
+						lvi.Tag = UrlUtil.GetFileName(fi.FullName);
+					}
+					catch(Exception ex)
+					{
+						MessageBox.Show(ex.Message, PwDefs.ShortProductName,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					}
+				}
 			}
+
+			return l;
 		}
 
 		private void OnBtnClose(object sender, EventArgs e)
@@ -92,19 +120,17 @@ namespace KeePass.Forms
 
 			if(lvic[0].Index == 0) // First item selected = English
 			{
-				if((Program.Config.Application.Language.Length == 0) ||
-					(Program.Config.Application.Language == AppDefs.DefaultLanguage))
+				if(Program.Config.Application.LanguageFile.Length == 0)
 					return; // Is built-English already
 
-				Program.Config.Application.Language = AppDefs.DefaultLanguage;
+				Program.Config.Application.LanguageFile = string.Empty;
 			}
 			else
 			{
-				string strSelID = m_lTranslations[lvic[0].Index - 1].LanguageID;
+				string strSelID = lvic[0].Tag as string;
+				if(strSelID == Program.Config.Application.LanguageFile) return;
 
-				if(strSelID == Program.Config.Application.Language) return;
-
-				Program.Config.Application.Language = strSelID;
+				Program.Config.Application.LanguageFile = strSelID;
 			}
 
 			this.DialogResult = DialogResult.OK;

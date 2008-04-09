@@ -48,6 +48,11 @@ namespace KeePassLib.Keys
 			get { return m_vUserKeys; }
 		}
 
+		public uint UserKeyCount
+		{
+			get { return (uint)m_vUserKeys.Count; }
+		}
+
 		/// <summary>
 		/// Construct a new, empty key object.
 		/// </summary>
@@ -250,6 +255,9 @@ namespace KeePassLib.Keys
 				(iCrypt.InputBlockSize != 16) || (iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
+				Debug.Assert(iCrypt.CanReuseTransform, "Can't reuse transform!");
+				Debug.Assert(iCrypt.InputBlockSize == 16, "Invalid input block size!");
+				Debug.Assert(iCrypt.OutputBlockSize == 16, "Invalid output block size!");
 				return null;
 			}
 
@@ -306,6 +314,9 @@ namespace KeePassLib.Keys
 				(iCrypt.InputBlockSize != 16) || (iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
+				Debug.Assert(iCrypt.CanReuseTransform, "Can't reuse transform!");
+				Debug.Assert(iCrypt.InputBlockSize == 16, "Invalid input block size!");
+				Debug.Assert(iCrypt.OutputBlockSize == 16, "Invalid output block size!");
 				return PwDefs.DefaultKeyEncryptionRounds;
 			}
 

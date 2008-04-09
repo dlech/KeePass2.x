@@ -94,14 +94,16 @@ namespace KeePassLib.Collections
 		/// parameter is <c>null</c>.</exception>
 		public void Add(T pwObject)
 		{
-			Debug.Assert(pwObject != null); if(pwObject == null) throw new ArgumentNullException();
+			Debug.Assert(pwObject != null);
+			if(pwObject == null) throw new ArgumentNullException("pwObject");
 
 			m_vObjects.Add(pwObject);
 		}
 
 		public void Add(PwObjectList<T> vObjects)
 		{
-			Debug.Assert(vObjects != null); if(vObjects == null) throw new ArgumentNullException();
+			Debug.Assert(vObjects != null);
+			if(vObjects == null) throw new ArgumentNullException("vObjects");
 
 			foreach(T po in vObjects)
 			{
@@ -117,7 +119,8 @@ namespace KeePassLib.Collections
 		/// <returns>Reference to an existing <c>T</c> object. Is never <c>null</c>.</returns>
 		public T GetAt(uint uIndex)
 		{
-			Debug.Assert(uIndex < m_vObjects.Count); if(uIndex >= m_vObjects.Count) throw new ArgumentException();
+			Debug.Assert(uIndex < m_vObjects.Count);
+			if(uIndex >= m_vObjects.Count) throw new ArgumentOutOfRangeException("uIndex");
 
 			return m_vObjects[(int)uIndex];
 		}
@@ -145,7 +148,8 @@ namespace KeePassLib.Collections
 		/// <param name="bUp">Move one up. If <c>false</c>, move one down.</param>
 		public void MoveOne(T tObject, bool bUp)
 		{
-			Debug.Assert(tObject != null); if(tObject == null) throw new ArgumentNullException();
+			Debug.Assert(tObject != null);
+			if(tObject == null) throw new ArgumentNullException("tObject");
 
 			int nCount = m_vObjects.Count;
 			if(nCount <= 1) return;
@@ -174,7 +178,8 @@ namespace KeePassLib.Collections
 		/// <param name="bTop">Move to top. If <c>false</c>, move to bottom.</param>
 		public void MoveTopBottom(T[] vObjects, bool bTop)
 		{
-			Debug.Assert(vObjects != null); if(vObjects == null) throw new ArgumentNullException();
+			Debug.Assert(vObjects != null);
+			if(vObjects == null) throw new ArgumentNullException("vObjects");
 
 			if(vObjects.Length == 0) return;
 

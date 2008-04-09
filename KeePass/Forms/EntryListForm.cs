@@ -28,6 +28,7 @@ using System.Diagnostics;
 
 using KeePass.UI;
 using KeePass.Resources;
+using KeePass.Native;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -72,6 +73,7 @@ namespace KeePass.Forms
 		public EntryListForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -110,7 +112,9 @@ namespace KeePass.Forms
 
 		private void EnableControlsEx()
 		{
-			m_btnOK.Enabled = (m_lvEntries.SelectedIndices.Count > 0);
+			bool bCond = (m_lvEntries.SelectedIndices.Count > 0);
+			bool bCur = m_btnOK.Enabled;
+			if(bCond != bCur) m_btnOK.Enabled = bCond;
 		}
 
 		private void ProcessResize()
@@ -224,6 +228,10 @@ namespace KeePass.Forms
 		private void OnEntriesSelectedIndexChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+
+			// ListView.SelectedIndexCollection lvsic = m_lvEntries.SelectedIndices;
+			// if((lvsic != null) && (lvsic.Count == 1))
+			//	NativeMethods.EnsureVisible(m_lvEntries, lvsic[0], false);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

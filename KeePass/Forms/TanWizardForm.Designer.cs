@@ -34,7 +34,7 @@
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_lblIntro = new System.Windows.Forms.Label();
 			this.m_tbTANs = new System.Windows.Forms.TextBox();
-			this.m_cbNumberTANs = new System.Windows.Forms.CheckBox();
+			this.m_cbNumberTans = new System.Windows.Forms.CheckBox();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_numTANsIndex = new System.Windows.Forms.NumericUpDown();
 			this.m_lblTanChars = new System.Windows.Forms.Label();
@@ -94,16 +94,16 @@
 			this.m_tbTANs.Size = new System.Drawing.Size(547, 208);
 			this.m_tbTANs.TabIndex = 0;
 			// 
-			// m_cbNumberTANs
+			// m_cbNumberTans
 			// 
-			this.m_cbNumberTANs.AutoSize = true;
-			this.m_cbNumberTANs.Location = new System.Drawing.Point(12, 344);
-			this.m_cbNumberTANs.Name = "m_cbNumberTANs";
-			this.m_cbNumberTANs.Size = new System.Drawing.Size(275, 17);
-			this.m_cbNumberTANs.TabIndex = 1;
-			this.m_cbNumberTANs.Text = "Number TANs consecutively, starting from this value:";
-			this.m_cbNumberTANs.UseVisualStyleBackColor = true;
-			this.m_cbNumberTANs.CheckedChanged += new System.EventHandler(this.OnNumberTANsCheckedChanged);
+			this.m_cbNumberTans.AutoSize = true;
+			this.m_cbNumberTans.Location = new System.Drawing.Point(12, 344);
+			this.m_cbNumberTans.Name = "m_cbNumberTans";
+			this.m_cbNumberTans.Size = new System.Drawing.Size(275, 17);
+			this.m_cbNumberTans.TabIndex = 1;
+			this.m_cbNumberTans.Text = "Number TANs consecutively, starting from this value:";
+			this.m_cbNumberTans.UseVisualStyleBackColor = true;
+			this.m_cbNumberTans.CheckedChanged += new System.EventHandler(this.OnNumberTANsCheckedChanged);
 			// 
 			// m_lblSeparator
 			// 
@@ -124,6 +124,7 @@
 			this.m_numTANsIndex.Name = "m_numTANsIndex";
 			this.m_numTANsIndex.Size = new System.Drawing.Size(72, 20);
 			this.m_numTANsIndex.TabIndex = 2;
+			this.m_numTANsIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// m_lblTanChars
 			// 
@@ -161,7 +162,7 @@
 			this.Controls.Add(this.m_lblTanChars);
 			this.Controls.Add(this.m_numTANsIndex);
 			this.Controls.Add(this.m_lblSeparator);
-			this.Controls.Add(this.m_cbNumberTANs);
+			this.Controls.Add(this.m_cbNumberTans);
 			this.Controls.Add(this.m_tbTANs);
 			this.Controls.Add(this.m_lblIntro);
 			this.Controls.Add(this.m_bannerImage);
@@ -174,8 +175,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTANsIndex)).EndInit();
 			this.ResumeLayout(false);
@@ -190,7 +191,7 @@
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.Label m_lblIntro;
 		private System.Windows.Forms.TextBox m_tbTANs;
-		private System.Windows.Forms.CheckBox m_cbNumberTANs;
+		private System.Windows.Forms.CheckBox m_cbNumberTans;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.NumericUpDown m_numTANsIndex;
 		private System.Windows.Forms.Label m_lblTanChars;

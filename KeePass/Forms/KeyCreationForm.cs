@@ -61,6 +61,7 @@ namespace KeePass.Forms
 		public KeyCreationForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(bool bCreatingNew, string strFilePath)
@@ -300,6 +301,11 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnBtnHelp(object sender, EventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources, null);
 		}
 	}
 }

@@ -52,6 +52,7 @@ namespace KeePass.Forms
 		public ImportCsvForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

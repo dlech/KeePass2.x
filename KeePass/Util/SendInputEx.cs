@@ -23,6 +23,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Threading;
 
 using KeePass.Native;
 
@@ -41,9 +42,9 @@ namespace KeePass.Util
 				if(bObfuscate)
 				{
 					try { SendObfuscated(strKeys); }
-					catch(Exception) { SendKeys.SendWait(strKeys); }
+					catch(Exception) { SendKeysWithSpecial(strKeys); }
 				}
-				else SendKeys.SendWait(strKeys);
+				else SendKeysWithSpecial(strKeys);
 			}
 			catch
 			{
@@ -107,7 +108,7 @@ namespace KeePass.Util
 				if(NativeMethods.SendInput(1, pInput,
 					Marshal.SizeOf(typeof(NativeMethods.INPUT))) != 1)
 				{
-					Debug.Assert(false);
+					// Debug.Assert(false);
 					return false;
 				}
 
@@ -205,7 +206,7 @@ namespace KeePass.Util
 					if(strPart.Length == 0) continue;
 
 					if(strPart.IndexOfAny(vSpecial) >= 0)
-						SendKeys.SendWait(strPart);
+						SendKeysWithSpecial(strPart);
 					else
 						MixedTransfer(strPart);
 				}
@@ -396,7 +397,7 @@ namespace KeePass.Util
 			if(strClip.Length > 0) Clipboard.SetText(strClip);
 			else Clipboard.Clear();
 
-			if(strKeys.Length > 0) SendKeys.SendWait(strKeys);
+			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys);
 
 			Clipboard.Clear();
 		}
@@ -414,6 +415,43 @@ namespace KeePass.Util
 			// Prevent overflow (see Random class constructor)
 			if(nSeed == int.MinValue) nSeed = 13;
 			return nSeed;
+		}
+
+		private static void SendKeysWithSpecial(string strSequence)
+		{
+			Debug.Assert(strSequence != null);
+			if(strSequence == null) return;
+			if(strSequence.Length == 0) return;
+
+			bool bDefaultSend = true;
+			string strLower = strSequence.ToLower();
+
+			int nDelayStart = strLower.IndexOf("{delay ");
+			if(nDelayStart >= 0)
+			{
+				int nDelayEnd = strLower.IndexOf('}', nDelayStart);
+				if(nDelayEnd >= 0)
+				{
+					uint uDelay;
+					string strDelay = strSequence.Substring(nDelayStart + 7,
+						nDelayEnd - (nDelayStart + 7));
+					if(uint.TryParse(strDelay, out uDelay))
+					{
+						string strFirstPart = strSequence.Substring(0,
+							nDelayStart);
+						string strSecondPart = strSequence.Substring(
+							nDelayEnd + 1);
+
+						SendKeysWithSpecial(strFirstPart);
+						SendKeys.Flush();
+						Thread.Sleep((int)uDelay);
+						SendKeysWithSpecial(strSecondPart);
+						bDefaultSend = false;
+					}
+				}
+			}
+
+			if(bDefaultSend) SendKeys.SendWait(strSequence);
 		}
 	}
 }

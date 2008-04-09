@@ -109,7 +109,7 @@ namespace KeePass.Forms
 			UseXsl
 		}
 
-		internal DocumentManagerEx DocumentManager { get { return m_docMgr; } }
+		public DocumentManagerEx DocumentManager { get { return m_docMgr; } }
 		public PwDatabase ActiveDatabase { get { return m_docMgr.ActiveDatabase; } }
 		public ImageList ClientIcons { get { return m_ilCurrentIcons; } }
 
@@ -123,6 +123,10 @@ namespace KeePass.Forms
 		/// main menu for the 'Tools' item.
 		/// </summary>
 		public ToolStripMenuItem ToolsMenu { get { return m_menuTools; } }
+
+		public ContextMenuStrip EntryContextMenu { get { return m_ctxPwList; } }
+		public ContextMenuStrip GroupContextMenu { get { return m_ctxGroupList; } }
+		public ContextMenuStrip TrayContextMenu { get { return m_ctxTray; } }
 
 		/// <summary>
 		/// Get a reference to the plugin host. This should not be used by plugins.
@@ -417,9 +421,10 @@ namespace KeePass.Forms
 				m_menuFileExportHtml.Enabled = m_menuFileExportKdb3.Enabled =
 				m_menuFileExportUseXsl.Enabled = bDatabaseOpened;
 
-			m_menuFileSynchronize.Enabled = bDatabaseOpened &&
+			m_menuFileSync.Enabled = m_menuFileSyncFile.Enabled =
+				m_menuFileSyncUrl.Enabled = (bDatabaseOpened &&
 				m_docMgr.ActiveDatabase.IOConnectionInfo.IsLocalFile() &&
-				(m_docMgr.ActiveDatabase.IOConnectionInfo.Path.Length > 0);
+				(m_docMgr.ActiveDatabase.IOConnectionInfo.Path.Length > 0));
 
 			m_ctxGroupAdd.Enabled = m_ctxGroupEdit.Enabled =
 				m_ctxGroupDelete.Enabled = m_ctxGroupFind.Enabled =
@@ -438,14 +443,8 @@ namespace KeePass.Forms
 			m_ctxEntryEdit.Enabled = (nEntriesSelected == 1);
 			m_ctxEntryDelete.Enabled = (nEntriesSelected > 0);
 
-			m_ctxEntryCopyUserName.Enabled = m_ctxEntryCopyPassword.Enabled =
-				m_tbCopyUserName.Enabled = m_tbCopyPassword.Enabled =
-				m_ctxEntryCopyUrl.Enabled = m_ctxEntryUrlOpenInInternal.Enabled =
-				(nEntriesSelected == 1);
-
-			m_ctxEntryOpenUrl.Enabled = m_ctxEntryDuplicate.Enabled =
-				m_ctxEntryMassSetIcon.Enabled = m_ctxEntrySelectedPrint.Enabled =
-				(nEntriesSelected > 0);
+			m_ctxEntryDuplicate.Enabled = m_ctxEntryMassSetIcon.Enabled =
+				m_ctxEntrySelectedPrint.Enabled = (nEntriesSelected > 0);
 
 			m_ctxEntryMoveToTop.Enabled = m_ctxEntryMoveToBottom.Enabled =
 				((m_pListSorter.Column < 0) && (nEntriesSelected > 0));
@@ -467,6 +466,18 @@ namespace KeePass.Forms
 
 			PwEntry pe = GetSelectedEntry(true);
 			ShowEntryDetails(pe);
+
+			m_tbCopyUserName.Enabled = m_ctxEntryCopyUserName.Enabled =
+				((nEntriesSelected == 1) && (pe != null) &&
+				(pe.Strings.GetSafe(PwDefs.UserNameField).Length > 0));
+			m_tbCopyPassword.Enabled = m_ctxEntryCopyPassword.Enabled =
+				((nEntriesSelected == 1) && (pe != null) &&
+				(pe.Strings.GetSafe(PwDefs.PasswordField).Length > 0));
+			m_ctxEntryCopyUrl.Enabled = m_ctxEntryUrlOpenInInternal.Enabled =
+				((nEntriesSelected == 1) && (pe != null) &&
+				(pe.Strings.GetSafe(PwDefs.UrlField).Length > 0));
+			m_ctxEntryOpenUrl.Enabled = ((nEntriesSelected > 1) || ((pe != null) &&
+				(pe.Strings.GetSafe(PwDefs.UrlField).Length > 0)));
 
 			if(pe != null)
 			{
@@ -719,20 +730,20 @@ namespace KeePass.Forms
 			else lvi.SubItems.Add(string.Empty);
 
 			if(m_lvEntries.Columns[(int)AppDefs.ColumnID.CreationTime].Width > 0)
-				lvi.SubItems.Add(pe.CreationTime.ToString());
+				lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.CreationTime));
 			else lvi.SubItems.Add(string.Empty);
 
 			if(m_lvEntries.Columns[(int)AppDefs.ColumnID.LastAccessTime].Width > 0)
-				lvi.SubItems.Add(pe.LastAccessTime.ToString());
+				lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.LastAccessTime));
 			else lvi.SubItems.Add(string.Empty);
 
 			if(m_lvEntries.Columns[(int)AppDefs.ColumnID.LastModificationTime].Width > 0)
-				lvi.SubItems.Add(pe.LastModificationTime.ToString());
+				lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.LastModificationTime));
 			else lvi.SubItems.Add(string.Empty);
 
 			if(m_lvEntries.Columns[(int)AppDefs.ColumnID.ExpiryTime].Width > 0)
 			{
-				if(pe.Expires) lvi.SubItems.Add(pe.ExpiryTime.ToString());
+				if(pe.Expires) lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.ExpiryTime));
 				else lvi.SubItems.Add(m_strNeverExpiresText);
 			}
 			else lvi.SubItems.Add(string.Empty);
@@ -819,14 +830,12 @@ namespace KeePass.Forms
 			bool bSubEntries = Program.Config.MainWindow.ShowEntriesOfSubGroups;
 
 			PwGroup pg = (pgSelected != null) ? pgSelected : GetSelectedGroup();
-			
-			// Disabled for now -- requires the group returned by
-			// GetCurrentEntries to be sorted by list view groups
-			// if(bOnlyUpdateCurrentlyShown)
-			// {
-			//	Debug.Assert(pgSelected == null);
-			//	pg = GetCurrentEntries();
-			// }
+
+			if(bOnlyUpdateCurrentlyShown)
+			{
+				Debug.Assert(pgSelected == null);
+				pg = GetCurrentEntries();
+			}
 
 			PwObjectList<PwEntry> pwlSource = ((pg != null) ?
 				pg.GetEntries(bSubEntries) : new PwObjectList<PwEntry>());
@@ -1001,6 +1010,9 @@ namespace KeePass.Forms
 		{
 			if(bEnableSorting)
 			{
+				bool bSortTimes = ((nColumn >= (int)AppDefs.ColumnID.CreationTime) &&
+					(nColumn <= (int)AppDefs.ColumnID.ExpiryTime));
+
 				int nOldColumn = m_pListSorter.Column;
 				SortOrder sortOrder = m_pListSorter.Order;
 
@@ -1018,7 +1030,7 @@ namespace KeePass.Forms
 
 				if(sortOrder != SortOrder.None)
 				{
-					m_pListSorter = new ListSorter(nColumn, sortOrder);
+					m_pListSorter = new ListSorter(nColumn, sortOrder, bSortTimes);
 					m_lvEntries.ListViewItemSorter = m_pListSorter;
 				}
 				else
@@ -1046,18 +1058,39 @@ namespace KeePass.Forms
 
 			if(m_pListSorter.Column < 0) { Debug.Assert(m_lvEntries.ListViewItemSorter == null); }
 
+			string strAsc = "  \u2191"; // Must have same length
+			string strDsc = "  \u2193"; // Must have same length
+			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP)
+			{
+				strAsc = @"  ^";
+				strDsc = @"  v";
+			}
+			else if(WinUtil.IsAtLeastWindowsVista)
+			{
+				strAsc = "  \u25B3";
+				strDsc = "  \u25BD";
+			}
+
 			foreach(ColumnHeader ch in m_lvEntries.Columns)
 			{
-				if(ch.Index == m_pListSorter.Column)
+				string strCur = ch.Text, strNew = null;
+
+				if(strCur.EndsWith(strAsc) || strCur.EndsWith(strDsc))
 				{
-					if(m_pListSorter.Order == SortOrder.None)
-						ch.ImageIndex = -1;
-					else if(m_pListSorter.Order == SortOrder.Ascending)
-						ch.ImageIndex = (int)PwIcon.SortUpArrow;
-					else if(m_pListSorter.Order == SortOrder.Descending)
-						ch.ImageIndex = (int)PwIcon.SortDownArrow;
+					strNew = strCur.Substring(0, strCur.Length - strAsc.Length);
+					strCur = strNew;
 				}
-				else ch.ImageIndex = -1;
+
+				if((ch.Index == m_pListSorter.Column) &&
+					(m_pListSorter.Order != SortOrder.None))
+				{
+					if(m_pListSorter.Order == SortOrder.Ascending)
+						strNew = strCur + strAsc;
+					else if(m_pListSorter.Order == SortOrder.Descending)
+						strNew = strCur + strDsc;
+				}
+
+				if(strNew != null) ch.Text = strNew;
 			}
 		}
 
@@ -1278,6 +1311,12 @@ namespace KeePass.Forms
 
 			UpdateUIState(false);
 			ShowSearchResultsStatusMessage();
+
+			if(Program.Config.MainWindow.FocusResultsAfterQuickFind &&
+				(pg.Entries.UCount > 0))
+			{
+				ResetDefaultFocus(m_lvEntries);
+			}
 		}
 
 		private void ShowExpiredEntries(bool bOnlyIfExists, uint uSkipDays)
@@ -1503,7 +1542,7 @@ namespace KeePass.Forms
 				else
 				{
 					IOConnectionForm iocf = new IOConnectionForm();
-					iocf.InitEx(false, new IOConnectionInfo());
+					iocf.InitEx(false, new IOConnectionInfo(), true, true);
 					if(iocf.ShowDialog() != DialogResult.OK) return;
 
 					ioc = iocf.IOConnectionInfo;
@@ -1517,7 +1556,7 @@ namespace KeePass.Forms
 					(!ioc.IsLocalFile()))
 				{
 					IOConnectionForm iocf = new IOConnectionForm();
-					iocf.InitEx(false, ioc.CloneDeep());
+					iocf.InitEx(false, ioc.CloneDeep(), true, true);
 					if(iocf.ShowDialog() != DialogResult.OK) return;
 
 					ioc = iocf.IOConnectionInfo;
@@ -1568,9 +1607,13 @@ namespace KeePass.Forms
 				else
 					Program.Config.Application.LastUsedFile = new IOConnectionInfo();
 
-				m_docMgr.ActiveDocument.LockedIoc = new IOConnectionInfo();
+				m_docMgr.ActiveDocument.LockedIoc = new IOConnectionInfo(); // Clear
 
-				if(this.FileOpened != null) this.FileOpened(this, EventArgs.Empty);
+				if(this.FileOpened != null)
+				{
+					FileOpenedEventArgs ea = new FileOpenedEventArgs(m_docMgr.ActiveDatabase);
+					this.FileOpened(this, ea);
+				}
 			}
 
 			UpdateUI(true, null, true, null, true, null, false);
@@ -1789,16 +1832,8 @@ namespace KeePass.Forms
 			if(m_docMgr.ActiveDatabase.IsOpen && !IsFileLocked(null))
 			{
 				if(Program.Config.Security.WorkspaceLocking.LockOnSessionLock)
-					OnFileLock(sender, e);
+					LockAllDocuments();
 			}
-
-			// if((this.WindowState != FormWindowState.Minimized) &&
-			//	(IsTrayed() == false) && (IsFileLocked(null) ||
-			//	!m_docMgr.ActiveDatabase.IsOpen))
-			// {
-			//	if(Program.Config.MainWindow.MinimizeToTray) MinimizeToTray(true);
-			//	else this.WindowState = FormWindowState.Minimized;
-			// }
 		}
 
 		/// <summary>
@@ -1942,6 +1977,13 @@ namespace KeePass.Forms
 					SaveWindowPositionAndSize();
 				}
 			}
+			else if((m.Msg == NativeMethods.WM_POWERBROADCAST) &&
+				((m.WParam == (IntPtr)NativeMethods.PBT_APMQUERYSUSPEND) ||
+				(m.WParam == (IntPtr)NativeMethods.PBT_APMSUSPEND)))
+			{
+				if(Program.Config.Security.WorkspaceLocking.LockOnSessionLock)
+					LockAllDocuments();
+			}
 
 			base.WndProc(ref m);
 		}
@@ -2039,10 +2081,13 @@ namespace KeePass.Forms
 			if(!m_docMgr.ActiveDatabase.IsOpen) return;
 			if(!AppPolicy.Try(AppPolicyID.SaveFile)) return;
 
-			if(FileSaving != null)
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+
+			Guid eventGuid = Guid.NewGuid();
+			if(this.FileSaving != null)
 			{
-				FileSavingEventArgs args = new FileSavingEventArgs(true, bCopy);
-				FileSaving(sender, args);
+				FileSavingEventArgs args = new FileSavingEventArgs(true, bCopy, pd, eventGuid);
+				this.FileSaving(sender, args);
 				if(args.Cancel) return;
 			}
 
@@ -2052,7 +2097,7 @@ namespace KeePass.Forms
 			if(bOnline)
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
-				iocf.InitEx(true, m_docMgr.ActiveDatabase.IOConnectionInfo.CloneDeep());
+				iocf.InitEx(true, pd.IOConnectionInfo.CloneDeep(), true, true);
 
 				dr = iocf.ShowDialog();
 				ioc = iocf.IOConnectionInfo;
@@ -2060,7 +2105,7 @@ namespace KeePass.Forms
 			else
 			{
 				m_saveDatabaseFile.FileName = UrlUtil.GetFileName(
-					m_docMgr.ActiveDatabase.IOConnectionInfo.Path);
+					pd.IOConnectionInfo.Path);
 
 				GlobalWindowManager.AddDialog(m_saveDatabaseFile);
 				dr = m_saveDatabaseFile.ShowDialog();
@@ -2078,7 +2123,7 @@ namespace KeePass.Forms
 				bool bSuccess = true;
 				try
 				{
-					m_docMgr.ActiveDatabase.SaveAs(ioc, !bCopy, swLogger);
+					pd.SaveAs(ioc, !bCopy, swLogger);
 
 					if(bCopy == false)
 					{
@@ -2087,6 +2132,8 @@ namespace KeePass.Forms
 
 						Program.Config.Application.LastUsedFile = ioc.CloneDeep();
 					}
+
+					WinUtil.FlushStorageBuffers(ioc.Path, true);
 				}
 				catch(Exception exSaveAs)
 				{
@@ -2096,10 +2143,10 @@ namespace KeePass.Forms
 
 				swLogger.EndLogging();
 
-				if(FileSaved != null)
+				if(this.FileSaved != null)
 				{
-					FileSavedEventArgs args = new FileSavedEventArgs(bSuccess);
-					FileSaved(sender, args);
+					FileSavedEventArgs args = new FileSavedEventArgs(bSuccess, pd, eventGuid);
+					this.FileSaved(sender, args);
 				}
 			}
 
@@ -2261,8 +2308,7 @@ namespace KeePass.Forms
 		{
 			DocumentStateEx ds = m_docMgr.ActiveDocument;
 			PwDatabase pd = ds.Database;
-
-			// if(!pd.IsOpen) return;
+			IOConnectionInfo ioClosing = pd.IOConnectionInfo.CloneDeep();
 
 			if(pd.Modified) // Implies pd.IsOpen
 			{
@@ -2297,7 +2343,11 @@ namespace KeePass.Forms
 
 			if(!bLocking) UpdateUI(true, null, true, null, true, null, false);
 
-			if(FileClosed != null) FileClosed(null, EventArgs.Empty);
+			if(FileClosed != null)
+			{
+				FileClosedEventArgs fcea = new FileClosedEventArgs(ioClosing);
+				FileClosed(null, fcea);
+			}
 		}
 
 		private void LockAllDocuments()
@@ -2521,13 +2571,45 @@ namespace KeePass.Forms
 			}
 		}
 
+		private void SelectEntries(PwObjectList<PwEntry> lEntries, bool bDeselectOthers)
+		{
+			for(int i = 0; i < m_lvEntries.Items.Count; ++i)
+			{
+				PwEntry pe = m_lvEntries.Items[i].Tag as PwEntry;
+				if(pe == null) { Debug.Assert(false); continue; }
+
+				bool bFound = false;
+				foreach(PwEntry peFocus in lEntries)
+				{
+					if(pe == peFocus)
+					{
+						m_lvEntries.Items[i].Selected = true;
+						bFound = true;
+						break;
+					}
+				}
+
+				if(bDeselectOthers && !bFound)
+					m_lvEntries.Items[i].Selected = false;
+			}
+		}
+
 		private PwGroup GetCurrentEntries()
 		{
 			PwGroup pg = new PwGroup(true, true);
 			pg.IsVirtual = true;
 
-			foreach(ListViewItem lvi in m_lvEntries.Items)
-				pg.Entries.Add(lvi.Tag as PwEntry);
+			if(m_lvEntries.ShowGroups == false)
+			{
+				foreach(ListViewItem lvi in m_lvEntries.Items)
+					pg.Entries.Add(lvi.Tag as PwEntry);
+			}
+			else // Groups
+			{
+				foreach(ListViewGroup lvg in m_lvEntries.Groups)
+					foreach(ListViewItem lvi in lvg.Items)
+						pg.Entries.Add(lvi.Tag as PwEntry);
+			}
 
 			return pg;
 		}

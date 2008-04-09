@@ -180,11 +180,18 @@ namespace KeePassLib.Serialization
 		{
 			MemoryStream ms = new MemoryStream();
 
+			Debug.Assert(m_pbMasterSeed != null);
 			Debug.Assert(m_pbMasterSeed.Length == 32);
 			ms.Write(m_pbMasterSeed, 0, 32);
 
-			byte[] pKey32 = m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
-				m_pwDatabase.KeyEncryptionRounds).ReadData();
+			Debug.Assert(m_pwDatabase != null);
+			Debug.Assert(m_pwDatabase.MasterKey != null);
+			ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
+				m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
+			Debug.Assert(pbinKey != null);
+			if(pbinKey == null)
+				throw new SecurityException(KLRes.InvalidCompositeKey);
+			byte[] pKey32 = pbinKey.ReadData();
 			if((pKey32 == null) || (pKey32.Length != 32))
 				throw new SecurityException(KLRes.InvalidCompositeKey);
 			ms.Write(pKey32, 0, 32);
@@ -195,6 +202,7 @@ namespace KeePassLib.Serialization
 			ms.Close();
 			Array.Clear(pKey32, 0, 32);
 
+			Debug.Assert(CipherPool.GlobalPool != null);
 			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
 			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
 			return iEngine.EncryptStream(s, aesKey, this.m_pbEncryptionIV);

@@ -122,9 +122,8 @@ namespace KeePassLib.Native
 			{
 				bResult = NativeMethods.TransformKeyTimed(kvp.Key, kvp.Value, ref puRounds, uSeconds);
 			}
-			catch(Exception) { Debug.Assert(false); bResult = false; }
+			catch(Exception) { bResult = false; }
 
-			Debug.Assert(bResult);
 			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
 			NativeLib.FreeArrays(kvp);

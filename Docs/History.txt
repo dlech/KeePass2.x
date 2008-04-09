@@ -1,4 +1,82 @@
-08/01/06 - 2.04 Alpha
+2008-04-08: 2.05 Alpha
+- Added placeholders for referencing fields of other entries
+  (dereferenced when starting URLs and performing auto-type,
+  see the auto-type placeholders documentation)
+- Added natural sorting (when sorting the entry list, KeePass
+  now performs a human-like comparison instead of a simple
+  lexicographical one; this sorts entries with numbers more
+  logically)
+- Added support for importing RoboForm passcards (HTML)
+- Added {DELAY X} auto-type command (to delay X milliseconds)
+- Added {GROUPPATH} placeholder (will be replaced by the group
+  hierarchy path to the entry; groups are separated by dots)
+- When saving databases to removable media, KeePass now tries
+  to lock and unlock the volume, which effectively flushes all
+  system caches related to this drive (this prevents data loss
+  caused by removing USB sticks without correctly unmounting in
+  Windows first; but it only works when no other program is
+  using the drive)
+- Added pattern placeholder 's' to generate special characters
+  of the printable 7-bit ASCII character set
+- A " - Copy" suffix is now appended to duplicated entries
+- After duplicating entries, the new entries are selected
+- The list view item sorter now supports dates/times, i.e.
+  sorting based on entry times is logically now, not
+  lexicographically
+- Added GUI option to focus the entry list after a successful
+  quick search (toolbar; disabled by default)
+- Several entry context menu commands are now only enabled if
+  applicable (if the user name field of an entry is empty, the
+  'Copy User Name' command is disabled, etc.)
+- Added a 'Tools' button menu in the entry editing dialog
+- Tools button menu: Added command to select an application for
+  the URL field (will be prefixed with cmd://)
+- Tools button menu: Added command to select a document for the
+  URL field (will be prefixed with cmd://)
+- Added password generator option to exclude/omit
+  user-specified characters in generated passwords
+- Added clearification paragraph in master key creation dialog
+  about using the Windows user account as source (backup, ...)
+- Added menu command to synchronize with an URL (database
+  stored on a server)
+- KeePass is now checking the network connection immediately
+  when trying to close the URL dialog 
+- Added file closed event arguments (IO connection info)
+- Added "file created" event for plugins
+
+- The document manager is now accessible by plugins
+- Improved field to standard field mapping function
+- KeePass now locks when the system is suspending (if the
+  option for locking on locking Windows or switching user is
+  enabled)
+- All documents are now locked when the session is ended or the
+  user is switched (if the option for this is enabled)
+- Moving a group into one of its child groups does not make the
+  group vanish anymore
+- Auto-type validator now supports "{{}" and "{}}" sequences
+  (i.e. auto-type can send '{' and '}' characters)
+- Undo buffers of secure edit controls are now cleared
+  correctly
+- Disabling sorting does not clear search results anymore
+- Entry editing dialog: Return and Esc work correctly now
+- Column sort order indicators are now rendered using text
+  instead of images (improves Windows Vista compatibility)
+- Splitter positions are now saved correctly when exiting after
+  minimizing the main window to tray
+- Added handler code for some more unsupported image file
+  format features (when importing special ICO files)
+- Translation system is now about 75% complete
+- KeePass is now developed using Visual Studio 2008
+- Minor UI improvements
+- Minor Windows installer improvements
+
+- The CSV importer does not crash anymore when clicking Cancel
+  while trying to import entries into an empty folder
+- IO connection credentials saving works correctly now
+- Fixed duplicate accelerator keys in the entry context menu
+- Help button in master key creation dialog now works correctly
+
+2008-01-06: 2.04 Alpha
 - Added key provider API (it now is very easy to write a plugin
   that provides additional key methods, like locking to USB
   device ID, certificates, smart cards, ... see the developers
@@ -64,7 +142,7 @@
 - File close button in the toolbar (multiple files) works now
 - Fixed minor bug in provider registration of cipher pool
 
-07/10/11 - 2.03 Alpha
+2007-10-11: 2.03 Alpha
 - Added multi-document support (tabbed interface when multiple
   files are opened)
 - KeePass 2.x now runs on Windows 98 / ME, too! (with .NET 2.0)
@@ -206,7 +284,7 @@
 - Last TAN is not ignored any more by the TAN wizard
 - Other minor features and bugfixes
 
-07/04/11 - 2.02 Alpha
+2007-04-11: 2.02 Alpha
 - Added "Two-Channel Auto-Type Obfuscation" feature, which
   makes auto-type resistant against keyloggers; this is an opt-
   in feature, see the documentation
@@ -287,7 +365,7 @@
 - Fixed bug in initialization of Random class (KeePass could
   have crashed 1 time in 2^32 starts)
 
-07/03/23 - 2.01 Alpha
+2007-03-23: 2.01 Alpha
 - Improved auto-type engine (releases and restores modifier
   keys, improved focusing, etc.)
 - Implemented update-checking functionality
@@ -338,7 +416,7 @@
 - The 'Copy Custom String' menu item doesn't disappear any more
 - Fixed enabled/disabled state of auto-type menu command
 
-07/03/17 - 2.00 Alpha
+2007-03-17: 2.00 Alpha
 - Strings containing quotes are now passed correctly over the
   command-line
 - Created small help file with links to online resources
@@ -360,10 +438,10 @@
 
 ... (a lot of versions here) ...
 
-06/10/07 - 2.00 Pre-Alpha 29
+2006-10-07: 2.00 Pre-Alpha 29
 - Various small additions and bugfixes
 
-06/10/06 - 2.00 Pre-Alpha 28
+2006-10-06: 2.00 Pre-Alpha 28
 - Implemented entry data drag-n-drop for main entry list
 - Implemented URL overriding
 - Added {} repeat operator in password generator
@@ -374,11 +452,11 @@
 
 ... (some versions here) ...
 
-06/09/17 - 2.00 Pre-Alpha 25
+2006-09-17: 2.00 Pre-Alpha 25
 - Fixed exception that occured when WTS notifications are
   unavailable
 
-06/09/16 - 2.00 Pre-Alpha 24
+2006-09-16: 2.00 Pre-Alpha 24
 - Implemented quality progress bars (gradient bars)
 - Added special key codes into placeholder insertion field in
   the 'Edit AutoType' dialog
@@ -393,15 +471,15 @@
 - VariousImport: Added support for Password Exporter XML files
 - A _lot_ of other features and bugfixes
 
-06/09/07 - 2.00 Pre-Alpha 23
+2006-09-07: 2.00 Pre-Alpha 23
 - Internal release
 
-06/09/07 - 2.00 Pre-Alpha 22
+2006-09-07: 2.00 Pre-Alpha 22
 - Improved password quality estimation
 - Implemented secure edit controls (in key creation dialog, key
   prompt dialog and entry editing dialog)
 
-06/09/05 - 2.00 Pre-Alpha 21
+2006-09-05: 2.00 Pre-Alpha 21
 - Removed BZip2 compression
 - Added font selection for main window lists
 - Added file association creation/removal buttons in the
@@ -430,10 +508,10 @@
   with '[Classic]'
 - Other features and bugfixes
 
-06/09/03 - 2.00 Pre-Alpha 20
+2006-09-03: 2.00 Pre-Alpha 20
 - First testing release
 
 ... (a lot of versions here) ...
 
-06/03/21 - 2.00 Pre-Alpha 0
+2006-03-21: 2.00 Pre-Alpha 0
 - Project started

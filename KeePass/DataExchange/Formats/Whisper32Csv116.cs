@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class Whisper32Csv116 : FormatImporter
+	internal sealed class Whisper32Csv116 : FormatImporter
 	{
 		public override string FormatName { get { return "Whisper 32 CSV 1.16"; } }
 		public override string DefaultExtension { get { return "csv"; } }

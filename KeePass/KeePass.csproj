@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{10938016-DEE2-4A25-9A5A-8FD3444379CA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -12,6 +12,11 @@
     <ApplicationIcon>KeePass.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KeePass.pfx</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -204,8 +209,23 @@
     <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
       <Link>KeePassLib\Serialization\OldFormatException.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Utility\AppConfigEx.cs">
-      <Link>KeePassLib\Utility\AppConfigEx.cs</Link>
+    <Compile Include="..\KeePassLib\Translation\KPControlCustomization.cs">
+      <Link>KeePassLib\Translation\KPControlCustomization.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPFormCustomization.cs">
+      <Link>KeePassLib\Translation\KPFormCustomization.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPStringTable.cs">
+      <Link>KeePassLib\Translation\KPStringTable.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPStringTableItem.cs">
+      <Link>KeePassLib\Translation\KPStringTableItem.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPTranslation.cs">
+      <Link>KeePassLib\Translation\KPTranslation.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPTranslationProperties.cs">
+      <Link>KeePassLib\Translation\KPTranslationProperties.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\AppLogEx.cs">
       <Link>KeePassLib\Utility\AppLogEx.cs</Link>
@@ -221,9 +241,6 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>KeePassLib\Utility\TimeUtil.cs</Link>
-    </Compile>
-    <Compile Include="..\KeePassLib\Utility\TranslationUtil.cs">
-      <Link>KeePassLib\Utility\TranslationUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>KeePassLib\Utility\UrlUtil.cs</Link>
@@ -262,6 +279,7 @@
     <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
     <Compile Include="DataExchange\Formats\PwTresor100.cs" />
+    <Compile Include="DataExchange\Formats\RoboFormHtml69.cs" />
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
     <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
     <Compile Include="DataExchange\Formats\SplashIdCsv402.cs" />
@@ -477,6 +495,7 @@
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
+    <Compile Include="UI\VistaTaskDialog.cs" />
     <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\CancellableOperationEventArgs.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
@@ -790,6 +809,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_RoboForm.png" />
     <None Include="Resources\Images\B16x16_Imp_SplashID.png" />
     <None Include="Resources\Images\B16x16_Imp_PwTresor.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_File_Close.png" />

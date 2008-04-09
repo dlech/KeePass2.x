@@ -62,6 +62,7 @@ namespace KeePass.Forms
 		public IconPickerForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(ImageList ilIcons, uint uNumberOfStandardIcons,
@@ -235,6 +236,8 @@ namespace KeePass.Forms
 			{
 				foreach(string strFile in ofd.FileNames)
 				{
+					bool bUnsupportedFormat = false;
+
 					try
 					{
 						if(File.Exists(strFile) == false)
@@ -263,12 +266,19 @@ namespace KeePass.Forms
 					}
 					catch(ArgumentException)
 					{
-						MessageService.ShowWarning(strFile, KPRes.ImageFormatFeatureUnsupported);
+						bUnsupportedFormat = true;
+					}
+					catch(System.Runtime.InteropServices.ExternalException)
+					{
+						bUnsupportedFormat = true;
 					}
 					catch(Exception exImg)
 					{
 						MessageService.ShowWarning(strFile, exImg);
 					}
+
+					if(bUnsupportedFormat)
+						MessageService.ShowWarning(strFile, KPRes.ImageFormatFeatureUnsupported);
 				}
 
 				RecreateCustomIconList();

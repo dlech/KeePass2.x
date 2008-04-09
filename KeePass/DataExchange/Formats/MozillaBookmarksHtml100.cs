@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class MozillaBookmarksHtml100 : FormatImporter
+	internal sealed class MozillaBookmarksHtml100 : FormatImporter
 	{
 		public override string FormatName { get { return "Mozilla Bookmarks.html 1.00"; } }
 		public override string DefaultExtension { get { return "html"; } }

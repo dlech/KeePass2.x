@@ -191,6 +191,11 @@
             <returns>Character at the specified position. If the index is invalid,
             an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
         </member>
+        <member name="P:KeePassLib.Translation.KPFormCustomization.FullName">
+            <summary>
+            The fully qualified name of the form.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.SelfTestResult">
             <summary>
             Return values of the <c>SelfTest.Perform</c> method.
@@ -691,7 +696,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FileUnknownCipher">
             <summary>
             Look up a localized string similar to
-            'The file encrypted using an unknown encryption algorithm!'.
+            'The file is encrypted using an unknown encryption algorithm!'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileSigInvalid">
@@ -751,7 +756,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FatalErrorText">
             <summary>
             Look up a localized string similar to
-            'A fatal error has occured!'.
+            'A fatal error has occurred!'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileLoadFailed">
@@ -1348,6 +1353,11 @@
             </summary>
             <param name="pbUnprotectedUTF8">Password to check, UTF-8 encoded.</param>
             <returns>Estimated bit-strength of the password.</returns>
+        </member>
+        <member name="P:KeePassLib.Translation.KPControlCustomization.Name">
+            <summary>
+            Member variable name of the control to be translated.
+            </summary>
         </member>
         <member name="T:KeePassLib.Collections.ProtectedBinaryDictionary">
             <summary>
@@ -2009,14 +2019,6 @@
             file.
             </summary>
         </member>
-        <member name="M:KeePassLib.Utility.TranslationUtil.GetAndRemoveDictionary(System.String)">
-            <summary>
-            Get and remove a loaded dictionary. Returns an empty dictionary
-            if there is no matching dictionary.
-            </summary>
-            <param name="strName">Name of the dictionary.</param>
-            <returns>Dictionary. Is never <c>null</c>.</returns>
-        </member>
         <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
             <summary>
             Standard AES cipher implementation.
@@ -2116,7 +2118,7 @@
             <param name="strApp">Application path.</param>
             <param name="strArgs">Arguments.</param>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.FillPlaceholders(System.String,KeePassLib.PwEntry,System.String,KeePassLib.PwDatabase,System.Boolean,System.Boolean)">
+        <member name="M:KeePassLib.Utility.StrUtil.FillPlaceholders(System.String,KeePassLib.PwEntry,System.String,KeePassLib.PwDatabase,System.Boolean,System.Boolean,System.UInt32)">
             <summary>
             Fill in all placeholders in a string using entry information.
             </summary>

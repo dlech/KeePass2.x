@@ -37,7 +37,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class SteganosPwManager2007 : FormatImporter
+	internal sealed class SteganosPwManager2007 : FormatImporter
 	{
 		public override string FormatName { get { return "Steganos Password Manager 2007"; } }
 		public override string DefaultExtension { get { return ""; } }

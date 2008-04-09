@@ -410,7 +410,7 @@ namespace KeePass.DataExchange
 	public enum Kdb3ErrorCode
 	{
 		/// <summary>
-		/// Unknown error occured.
+		/// Unknown error occurred.
 		/// </summary>
 		Unknown = 0,
 
@@ -445,12 +445,12 @@ namespace KeePass.DataExchange
 		NoFileAccessWrite,
 
 		/// <summary>
-		/// A file read error occured.
+		/// A file read error occurred.
 		/// </summary>
 		FileErrorRead,
 
 		/// <summary>
-		/// A file write error occured.
+		/// A file write error occurred.
 		/// </summary>
 		FileErrorWrite,
 
@@ -465,7 +465,7 @@ namespace KeePass.DataExchange
 		InvalidFileStructure,
 
 		/// <summary>
-		/// Cryptographic error occured.
+		/// Cryptographic error occurred.
 		/// </summary>
 		CryptoError,
 

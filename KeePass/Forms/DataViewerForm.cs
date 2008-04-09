@@ -56,6 +56,7 @@ namespace KeePass.Forms
 		public DataViewerForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

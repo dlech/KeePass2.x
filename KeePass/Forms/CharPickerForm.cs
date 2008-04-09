@@ -57,6 +57,7 @@ namespace KeePass.Forms
 		public CharPickerForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(ProtectedString psWord, bool bCenterScreen, bool bSetForeground)

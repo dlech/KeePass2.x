@@ -31,7 +31,7 @@ using KeePassLib.Serialization;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class KeePassKdb2x : FormatImporter
+	internal sealed class KeePassKdb2x : FormatImporter
 	{
 		public override string FormatName { get { return "KeePass KDBX (2.x)"; } }
 		public override string DefaultExtension { get { return "kdbx"; } }

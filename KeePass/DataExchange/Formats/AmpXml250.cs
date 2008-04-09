@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class AmpXml250 : FormatImporter
+	internal sealed class AmpXml250 : FormatImporter
 	{
 		private const string ElemRoot = "AmP_FILE";
 

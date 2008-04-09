@@ -41,11 +41,9 @@ namespace KeePass.Util
 			string strKeyFile = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
 			string strUserAcc = Program.CommandLineArgs[AppDefs.CommandLineOptions.UserAccount];
 
-			if((strPassword == null) && (strKeyFile == null))
-				return null;
-
 			if(strPassword != null)
 				cmpKey.AddUserKey(new KcpPassword(strPassword));
+			
 			if(strKeyFile != null)
 			{
 				try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
@@ -55,6 +53,7 @@ namespace KeePass.Util
 					return null;
 				}
 			}
+			
 			if(strUserAcc != null)
 			{
 				try { cmpKey.AddUserKey(new KcpUserAccount()); }
@@ -65,7 +64,7 @@ namespace KeePass.Util
 				}
 			}
 
-			return cmpKey;
+			return ((cmpKey.UserKeyCount > 0) ? cmpKey : null);
 		}
 	}
 }

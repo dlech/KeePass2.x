@@ -34,7 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PwExporterXml105 : FormatImporter
+	internal sealed class PwExporterXml105 : FormatImporter
 	{
 		public override string FormatName { get { return "Password Exporter XML 1.0.5"; } }
 		public override string DefaultExtension { get { return "xml"; } }

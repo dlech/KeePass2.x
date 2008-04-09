@@ -547,6 +547,7 @@ namespace KeePassLib
 			bool bUrl = searchParams.SearchInUrls;
 			bool bNotes = searchParams.SearchInNotes;
 			bool bOther = searchParams.SearchInOther;
+			bool bUuids = searchParams.SearchInUuids;
 
 			if(searchParams.RegularExpression)
 			{
@@ -601,6 +602,10 @@ namespace KeePassLib
 						// An entry can match only once => break if we have added it
 						if(listStorage.UCount > uInitialResults) break;
 					}
+
+					if((listStorage.UCount == uInitialResults) && bUuids)
+						SearchEvalAdd(true, strSearch, pe.Uuid.ToHexString(),
+							scType, rx, pe, listStorage);
 
 					return true;
 				};
@@ -889,6 +894,19 @@ namespace KeePassLib
 			}
 
 			return list;
+		}
+
+		public bool IsContainedIn(PwGroup pgContainer)
+		{
+			PwGroup pgCur = m_pParentGroup;
+			while(pgCur != null)
+			{
+				if(pgCur == pgContainer) return true;
+
+				pgCur = pgCur.m_pParentGroup;
+			}
+
+			return false;
 		}
 	}
 }

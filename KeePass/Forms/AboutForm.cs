@@ -44,18 +44,23 @@ namespace KeePass.Forms
 		public AboutForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			GlobalWindowManager.AddWindow(this, this);
 
+			m_lblCopyright.Text = PwDefs.Copyright + ".";
+
 			string strTitle = PwDefs.ProductName;
 			string strDesc = KPRes.Version + " " + PwDefs.VersionString;
 
+			Icon icoNew = new Icon(Properties.Resources.KeePass, 48, 48);
+
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_MessageBox_Info, strTitle, strDesc);
+				icoNew.ToBitmap(), strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 
 			m_lvComponents.Columns.Add(KPRes.Components, 100, HorizontalAlignment.Left);

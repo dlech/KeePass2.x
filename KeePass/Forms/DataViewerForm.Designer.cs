@@ -48,10 +48,10 @@
 			// 
 			// m_rtbText
 			// 
-			this.m_rtbText.Location = new System.Drawing.Point(36, 54);
+			this.m_rtbText.Location = new System.Drawing.Point(23, 40);
 			this.m_rtbText.Name = "m_rtbText";
 			this.m_rtbText.ReadOnly = true;
-			this.m_rtbText.Size = new System.Drawing.Size(163, 130);
+			this.m_rtbText.Size = new System.Drawing.Size(190, 114);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";
 			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnRichTextBoxLinkClicked);
@@ -68,7 +68,7 @@
 			// 
 			// m_webBrowser
 			// 
-			this.m_webBrowser.Location = new System.Drawing.Point(35, 190);
+			this.m_webBrowser.Location = new System.Drawing.Point(23, 160);
 			this.m_webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_webBrowser.Name = "m_webBrowser";
 			this.m_webBrowser.Size = new System.Drawing.Size(193, 158);
@@ -108,7 +108,7 @@
 			// m_tslEncoding
 			// 
 			this.m_tslEncoding.Name = "m_tslEncoding";
-			this.m_tslEncoding.Size = new System.Drawing.Size(54, 22);
+			this.m_tslEncoding.Size = new System.Drawing.Size(55, 22);
 			this.m_tslEncoding.Text = "Encoding:";
 			// 
 			// m_tscEncoding
@@ -158,9 +158,9 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "KeePass Data Viewer";
+			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
-			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.m_picBox)).EndInit();
 			this.m_toolMain.ResumeLayout(false);
 			this.m_toolMain.PerformLayout();

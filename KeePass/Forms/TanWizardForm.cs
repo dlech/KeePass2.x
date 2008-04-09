@@ -48,6 +48,7 @@ namespace KeePass.Forms
 		public TanWizardForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -93,7 +94,7 @@ namespace KeePass.Forms
 
 		private void EnableControlsEx()
 		{
-			m_numTANsIndex.Enabled = m_cbNumberTANs.Checked;
+			m_numTANsIndex.Enabled = m_cbNumberTans.Checked;
 		}
 
 		private void ParseTans()
@@ -101,7 +102,7 @@ namespace KeePass.Forms
 			StringBuilder sb = new StringBuilder();
 			string strText = m_tbTANs.Text;
 			int nTanIndex = (int)m_numTANsIndex.Value;
-			bool bSetIndex = m_cbNumberTANs.Checked;
+			bool bSetIndex = m_cbNumberTans.Checked;
 			string strTanChars = m_tbTanChars.Text;
 
 			for(int i = 0; i < strText.Length; ++i)

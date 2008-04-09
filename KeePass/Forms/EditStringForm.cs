@@ -47,6 +47,7 @@ namespace KeePass.Forms
 		public EditStringForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		/// <summary>

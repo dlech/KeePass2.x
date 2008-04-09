@@ -71,6 +71,33 @@ namespace KeePassLib.Security
 			get { return (!m_bIsProtected && (m_xbEncrypted == null)); }
 		}
 
+		public int Length
+		{
+			get
+			{
+				if(m_xbEncrypted != null)
+				{
+					byte[] pb = m_xbEncrypted.ReadPlainText();
+
+					string str = Encoding.UTF8.GetString(pb, 0, pb.Length);
+					SetString(str); // Clear the XorredBuffer object
+
+					// No need to erase the pb buffer, the plain text is
+					// now readable in memory anyway (in str).
+
+					return ((str != null) ? str.Length : 0);
+				}
+
+				if(m_bIsProtected)
+				{
+					if(m_secString != null) return m_secString.Length;
+					else return m_strAlternativeSecString.Length;
+				}
+				
+				return m_strPlainText.Length; // Unprotected string
+			}
+		}
+
 		/// <summary>
 		/// Construct a new protected string object. Protection is
 		/// disabled by default! You need to call the
@@ -280,7 +307,7 @@ namespace KeePassLib.Security
 				// No need to erase the pb buffer, the plain text is
 				// now readable in memory anyway (in str).
 
-				return (str != null) ? str : string.Empty;
+				return ((str != null) ? str : string.Empty);
 			}
 
 			if(m_bIsProtected)
@@ -294,7 +321,7 @@ namespace KeePassLib.Security
 #else
 					string str = m_secString.ReadAsString();
 #endif
-					return (str != null) ? str : string.Empty;
+					return ((str != null) ? str : string.Empty);
 				}
 				else return m_strAlternativeSecString;
 			}

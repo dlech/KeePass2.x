@@ -38,6 +38,7 @@ namespace KeePass.Forms
 		public HelpSourceForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

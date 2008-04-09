@@ -1,14 +1,20 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0ED7AFF1-B48D-4CC7-A5F5-DB4EB990EE80}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{B7E890E7-BF50-4450-9A52-C105BD98651C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TrlUtil</RootNamespace>
     <AssemblyName>TrlUtil</AssemblyName>
+    <ApplicationIcon>Resources\KeePass.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,11 +35,87 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormTrlMgr.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\KeePass\KeePass.csproj">
+      <Project>{10938016-DEE2-4A25-9A5A-8FD3444379CA}</Project>
+      <Name>KeePass</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_Keyboard_Layout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KeePass.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_FileSave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_FileSaveAs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_Folder_Yellow_Open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_Binary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_KRec_Record.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_LedGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_LedLightBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_LedLightGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_LedOrange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_View_Remove.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

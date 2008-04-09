@@ -147,6 +147,17 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			set { m_bNoRepeat = value; }
 		}
 
+		private string m_strExclude = string.Empty;
+		public string ExcludeCharacters
+		{
+			get { return m_strExclude; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strExclude = value;
+			}
+		}
+
 		private void UpdateCharSet(bool bSetXml)
 		{
 			if(bSetXml)
@@ -201,7 +212,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 		public bool HasSecurityReducingOption()
 		{
-			return (m_bNoLookAlike || m_bNoRepeat);
+			return (m_bNoLookAlike || m_bNoRepeat || (m_strExclude.Length > 0));
 		}
 	}
 }

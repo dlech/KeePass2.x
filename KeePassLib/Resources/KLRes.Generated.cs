@@ -46,6 +46,32 @@ namespace KeePassLib.Resources
 			m_strErrorFeedbackRequest = TryGetEx(dictNew, "ErrorFeedbackRequest", m_strErrorFeedbackRequest);
 		}
 
+		private static readonly string[] m_vKeyNames = {
+			"CryptoStreamFailed",
+			"InvalidCompositeKey",
+			"InvalidCompositeKeyHint",
+			"InvalidDataWhileDecoding",
+			"FileUnknownCipher",
+			"FileSigInvalid",
+			"FileVersionUnknown",
+			"FileHeaderEndEarly",
+			"UnknownHeaderID",
+			"FileUnknownCompression",
+			"MasterSeedLengthInvalid",
+			"FinalKeyCreationFailed",
+			"OldFormat",
+			"FatalError",
+			"FatalErrorText",
+			"FileLoadFailed",
+			"FileSaveFailed",
+			"ErrorFeedbackRequest"
+		};
+
+		public static string[] GetKeyNames()
+		{
+			return m_vKeyNames;
+		}
+
 		private static string m_strCryptoStreamFailed =
 			@"Failed to initialize encryption/decryption stream!";
 		/// <summary>
@@ -91,10 +117,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strFileUnknownCipher =
-			@"The file encrypted using an unknown encryption algorithm!";
+			@"The file is encrypted using an unknown encryption algorithm!";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The file encrypted using an unknown encryption algorithm!'.
+		/// 'The file is encrypted using an unknown encryption algorithm!'.
 		/// </summary>
 		public static string FileUnknownCipher
 		{
@@ -201,10 +227,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strFatalErrorText =
-			@"A fatal error has occured!";
+			@"A fatal error has occurred!";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'A fatal error has occured!'.
+		/// 'A fatal error has occurred!'.
 		/// </summary>
 		public static string FatalErrorText
 		{

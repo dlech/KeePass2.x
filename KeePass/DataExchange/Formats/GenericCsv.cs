@@ -31,7 +31,7 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class GenericCsv : FormatImporter
+	internal sealed class GenericCsv : FormatImporter
 	{
 		public override string FormatName { get { return "CSV / Text File"; } }
 		public override string DisplayName { get { return "Generic CSV Importer"; } }

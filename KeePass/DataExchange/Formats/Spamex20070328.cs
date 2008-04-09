@@ -39,7 +39,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class Spamex20070328 : FormatImporter
+	internal sealed class Spamex20070328 : FormatImporter
 	{
 		public override string FormatName { get { return "Spamex.com 2007-03-28"; } }
 		public override string DefaultExtension { get { return ""; } }

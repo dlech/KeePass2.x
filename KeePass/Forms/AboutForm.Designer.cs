@@ -55,9 +55,8 @@
 			// 
 			this.m_lblCopyright.Location = new System.Drawing.Point(12, 72);
 			this.m_lblCopyright.Name = "m_lblCopyright";
-			this.m_lblCopyright.Size = new System.Drawing.Size(321, 15);
+			this.m_lblCopyright.Size = new System.Drawing.Size(400, 15);
 			this.m_lblCopyright.TabIndex = 1;
-			this.m_lblCopyright.Text = "Copyright © 2003-2008 Dominik Reichl.";
 			// 
 			// m_lblOsi
 			// 
@@ -178,8 +177,8 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "About KeePass";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

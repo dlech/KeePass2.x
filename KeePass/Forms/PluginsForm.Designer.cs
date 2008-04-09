@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_btnOK = new System.Windows.Forms.Button();
+			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = new System.Windows.Forms.ColumnHeader();
 			this.m_chVersion = new System.Windows.Forms.ColumnHeader();
@@ -44,16 +44,16 @@
 			this.m_grpPluginDesc.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// m_btnOK
+			// m_btnClose
 			// 
-			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnOK.Location = new System.Drawing.Point(532, 406);
-			this.m_btnOK.Name = "m_btnOK";
-			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
-			this.m_btnOK.Text = "&Close";
-			this.m_btnOK.UseVisualStyleBackColor = true;
-			this.m_btnOK.Click += new System.EventHandler(this.OnBtnClose);
+			this.m_btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.m_btnClose.Location = new System.Drawing.Point(532, 406);
+			this.m_btnClose.Name = "m_btnClose";
+			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
+			this.m_btnClose.TabIndex = 0;
+			this.m_btnClose.Text = "&Close";
+			this.m_btnClose.UseVisualStyleBackColor = true;
+			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
 			// 
 			// m_lvPlugins
 			// 
@@ -147,16 +147,16 @@
 			// 
 			// PluginsForm
 			// 
-			this.AcceptButton = this.m_btnOK;
+			this.AcceptButton = this.m_btnClose;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.m_btnOK;
+			this.CancelButton = this.m_btnClose;
 			this.ClientSize = new System.Drawing.Size(619, 441);
 			this.Controls.Add(this.m_linkPlugins);
 			this.Controls.Add(this.m_grpPluginDesc);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lvPlugins);
-			this.Controls.Add(this.m_btnOK);
+			this.Controls.Add(this.m_btnClose);
 			this.Controls.Add(this.m_bannerImage);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
@@ -165,8 +165,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Plugins";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpPluginDesc.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -177,7 +177,7 @@
 		#endregion
 
 		private System.Windows.Forms.PictureBox m_bannerImage;
-		private System.Windows.Forms.Button m_btnOK;
+		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ListView m_lvPlugins;
 		private System.Windows.Forms.ColumnHeader m_chName;
 		private System.Windows.Forms.ColumnHeader m_chVersion;

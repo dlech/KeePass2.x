@@ -77,7 +77,7 @@ namespace KeePass.Util
 
 			string strSend = strSeq;
 			strSend = StrUtil.FillPlaceholders(strSend, pweData,
-				WinUtil.GetExecutable(), pwDatabase, false, true);
+				WinUtil.GetExecutable(), pwDatabase, false, true, 0);
 			strSend = AppLocator.FillPlaceholders(strSend, true);
 			strSend = EntryUtil.FillPlaceholders(strSend, pweData, true);
 
@@ -248,9 +248,13 @@ namespace KeePass.Util
 			return AutoType.PerformInternal(pe, strWindow);
 		}
 
-		private static string ValidateAutoTypeSequence(string strSeq)
+		private static string ValidateAutoTypeSequence(string strSequence)
 		{
-			Debug.Assert(strSeq != null);
+			Debug.Assert(strSequence != null);
+
+			string strSeq = strSequence;
+			strSeq = strSeq.Replace(@"{{}", string.Empty);
+			strSeq = strSeq.Replace(@"{}}", string.Empty);
 
 			int cBrackets = 0;
 			for(int c = 0; c < strSeq.Length; ++c)

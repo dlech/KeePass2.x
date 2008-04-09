@@ -60,6 +60,7 @@ namespace KeePass.Forms
 		public PrintForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void CreateDialogBanner()

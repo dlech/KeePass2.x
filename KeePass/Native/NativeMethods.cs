@@ -159,5 +159,31 @@ namespace KeePass.Native
 
 		[DllImport("Kernel32.dll")]
 		internal static extern uint GetCurrentThreadId();
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		internal static extern IntPtr CreateFile(string lpFileName,
+			[MarshalAs(UnmanagedType.U4)] EFileAccess dwDesiredAccess,
+			[MarshalAs(UnmanagedType.U4)] EFileShare dwShareMode,
+			IntPtr lpSecurityAttributes,
+			[MarshalAs(UnmanagedType.U4)] ECreationDisposition dwCreationDisposition,
+			[MarshalAs(UnmanagedType.U4)] uint dwFlagsAndAttributes,
+			IntPtr hTemplateFile);
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("Kernel32.dll", ExactSpelling = true, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+			IntPtr lpInBuffer, uint nInBufferSize, IntPtr lpOutBuffer, uint nOutBufferSize,
+			out uint lpBytesReturned, IntPtr lpOverlapped);
+
+		[DllImport("DwmApi.dll")]
+		internal static extern Int32 DwmExtendFrameIntoClientArea(IntPtr hWnd,
+			ref MARGINS pMarInset);
+
+		[DllImport("DwmApi.dll")]
+		internal static extern Int32 DwmIsCompositionEnabled(ref Int32 pfEnabled);
 	}
 }

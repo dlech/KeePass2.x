@@ -122,7 +122,7 @@ namespace KeePassLib.Utility
 		{
 			Debug.Assert(pbArray != null); if(pbArray == null) throw new ArgumentNullException();
 
-			// for(int i = 0; i < pbArray.Length; i++)
+			// for(int i = 0; i < pbArray.Length; ++i)
 			//	pbArray[i] = 0;
 
 			Array.Clear(pbArray, 0, pbArray.Length);

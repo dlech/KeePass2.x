@@ -24,7 +24,10 @@ using System.Diagnostics;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 
+using KeePassLib.Collections;
+using KeePassLib.Native;
 using KeePassLib.Security;
 
 namespace KeePassLib.Utility
@@ -110,6 +113,19 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
+		public static string XmlToString(string str)
+		{
+			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException();
+
+			str = str.Replace(@"&amp;", @"&");
+			str = str.Replace(@"&lt;", @"<");
+			str = str.Replace(@"&gt;", @">");
+			str = str.Replace(@"&quot;", "\"");
+			str = str.Replace(@"&#39;", "\'");
+
+			return str;
+		}
+
 		/// <summary>
 		/// Search for a substring case-insensitively and replace it by some new string.
 		/// </summary>
@@ -189,6 +205,8 @@ namespace KeePassLib.Utility
 			if(strArgs == null) strArgs = string.Empty;
 		}
 
+		const uint m_uFpMaxRecursionDepth = 10;
+
 		/// <summary>
 		/// Fill in all placeholders in a string using entry information.
 		/// </summary>
@@ -203,12 +221,20 @@ namespace KeePassLib.Utility
 		/// <returns>Returns the new string.</returns>
 		public static string FillPlaceholders(string strSeq, PwEntry pe,
 			string strAppPath, PwDatabase pwDatabase, bool bCmdQuotes,
-			bool bDataAsKeySequence)
+			bool bDataAsKeySequence, uint uRecursionLevel)
 		{
 			string str = strSeq;
 
-			for(int i = 0; i < 2; ++i) // Two-pass replacement
+			if(uRecursionLevel >= m_uFpMaxRecursionDepth)
 			{
+				Debug.Assert(false);
+				return str;
+			}
+
+			for(int iLoop = 0; iLoop < 20; ++iLoop)
+			{
+				string strAtLoopStart = str;
+
 				if(pe != null)
 				{
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
@@ -222,14 +248,23 @@ namespace KeePassLib.Utility
 					}
 
 					if(pe.ParentGroup != null)
+					{
 						str = StrUtil.ReplaceCaseInsensitive(str, @"{GROUP}",
 							new ProtectedString(false, pe.ParentGroup.Name),
 							bCmdQuotes, bDataAsKeySequence);
+
+						str = StrUtil.ReplaceCaseInsensitive(str, @"{GROUPPATH}",
+							new ProtectedString(false, pe.ParentGroup.GetFullPath()),
+							bCmdQuotes, bDataAsKeySequence);
+					}
 				}
 
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{APPDIR}",
-					new ProtectedString(false, UrlUtil.GetFileDirectory(strAppPath,
-					false)), bCmdQuotes, bDataAsKeySequence);
+				if(strAppPath != null)
+				{
+					str = StrUtil.ReplaceCaseInsensitive(str, @"{APPDIR}",
+						new ProtectedString(false, UrlUtil.GetFileDirectory(strAppPath,
+						false)), bCmdQuotes, bDataAsKeySequence);
+				}
 
 				if(pwDatabase != null)
 				{
@@ -238,22 +273,95 @@ namespace KeePassLib.Utility
 						UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Path,
 						false)), bCmdQuotes, bDataAsKeySequence);
 				}
-			}
+
+				str = FillRefPlaceholders(str, strAppPath, pwDatabase, bCmdQuotes,
+					bDataAsKeySequence, uRecursionLevel);
 
 #if !KeePassLibSD
-			// Replace environment variables
-			foreach(DictionaryEntry de in Environment.GetEnvironmentVariables())
-			{
-				string strKey = de.Key as string;
-				string strValue = de.Value as string;
+				// Replace environment variables
+				foreach(DictionaryEntry de in Environment.GetEnvironmentVariables())
+				{
+					string strKey = de.Key as string;
+					string strValue = de.Value as string;
 
-				if((strKey != null) && (strValue != null))
-					str = StrUtil.ReplaceCaseInsensitive(str, @"%" + strKey +
-						@"%", new ProtectedString(false, strValue), false,
-						bDataAsKeySequence);
-				else { Debug.Assert(false); }
-			}
+					if((strKey != null) && (strValue != null))
+						str = StrUtil.ReplaceCaseInsensitive(str, @"%" + strKey +
+							@"%", new ProtectedString(false, strValue), false,
+							bDataAsKeySequence);
+					else { Debug.Assert(false); }
+				}
 #endif
+
+				if(str == strAtLoopStart) break;
+			}
+
+			return str;
+		}
+
+		private static string FillRefPlaceholders(string strSeq, string strAppPath,
+			PwDatabase pwDatabase, bool bCmdQuotes, bool bDataAsKeySequence,
+			uint uRecursionLevel)
+		{
+			string str = strSeq;
+
+			const string strStart = @"{REF:";
+			const string strEnd = @"}";
+
+			for(int iLoop = 0; iLoop < 20; ++iLoop)
+			{
+				int nStart = str.IndexOf(strStart);
+				if(nStart < 0) break;
+				int nEnd = str.IndexOf(strEnd, nStart);
+				if(nEnd < 0) break;
+
+				string strRef = str.Substring(nStart + strStart.Length, nEnd -
+					nStart - strStart.Length);
+				if(strRef.Length <= 4) break;
+				if(strRef[1] != '@') break;
+				if(strRef[3] != ':') break;
+
+				char chScan = char.ToUpper(strRef[2]);
+				char chWanted = char.ToUpper(strRef[0]);
+
+				SearchParameters sp = SearchParameters.None;
+				sp.SearchString = strRef.Substring(4);
+				if(chScan == 'T') sp.SearchInTitles = true;
+				else if(chScan == 'U') sp.SearchInUserNames = true;
+				else if(chScan == 'A') sp.SearchInUrls = true;
+				else if(chScan == 'P') sp.SearchInPasswords = true;
+				else if(chScan == 'N') sp.SearchInNotes = true;
+				else if(chScan == 'I') sp.SearchInUuids = true;
+				else if(chScan == 'O') sp.SearchInOther = true;
+				else break;
+
+				PwObjectList<PwEntry> lFound = new PwObjectList<PwEntry>();
+				pwDatabase.RootGroup.SearchEntries(sp, lFound);
+				if(lFound.UCount > 0)
+				{
+					PwEntry peFound = lFound.GetAt(0);
+
+					string strInsData;
+					if(chWanted == 'T')
+						strInsData = peFound.Strings.ReadSafe(PwDefs.TitleField);
+					else if(chWanted == 'U')
+						strInsData = peFound.Strings.ReadSafe(PwDefs.UserNameField);
+					else if(chWanted == 'A')
+						strInsData = peFound.Strings.ReadSafe(PwDefs.UrlField);
+					else if(chWanted == 'P')
+						strInsData = peFound.Strings.ReadSafe(PwDefs.PasswordField);
+					else if(chWanted == 'N')
+						strInsData = peFound.Strings.ReadSafe(PwDefs.NotesField);
+					else if(chWanted == 'I')
+						strInsData = peFound.Uuid.ToHexString();
+					else break;
+
+					strInsData = FillPlaceholders(strInsData, peFound, strAppPath,
+						pwDatabase, bCmdQuotes, bDataAsKeySequence, uRecursionLevel + 1);
+
+					str = str.Substring(0, nStart) + strInsData + str.Substring(nEnd + 1);
+				}
+				else break;
+			}
 
 			return str;
 		}
@@ -543,6 +651,55 @@ namespace KeePassLib.Utility
 			}
 
 			return sb.ToString();
+		}
+
+		private static Regex m_rxNaturalSplit = null;
+		public static int CompareNaturally(string strX, string strY)
+		{
+			Debug.Assert(strX != null);
+			if(strX == null) throw new ArgumentNullException("strValueX");
+			Debug.Assert(strY != null);
+			if(strY == null) throw new ArgumentNullException("strValueY");
+
+			if(NativeMethods.SupportsStrCmpNaturally)
+				return NativeMethods.StrCmpNaturally(strX, strY);
+
+			strX = strX.ToLower();
+			strY = strY.ToLower();
+
+			if(m_rxNaturalSplit == null)
+				m_rxNaturalSplit = new Regex(@"([0-9]+)", RegexOptions.Compiled);
+
+			string[] vPartsX = m_rxNaturalSplit.Split(strX);
+			string[] vPartsY = m_rxNaturalSplit.Split(strY);
+
+			for(int i = 0; i < Math.Min(vPartsX.Length, vPartsY.Length); ++i)
+			{
+				string strPartX = vPartsX[i], strPartY = vPartsY[i];
+				int iPartCompare;
+
+#if KeePassLibSD
+				ulong uX = 0, uY = 0;
+				try
+				{
+					uX = ulong.Parse(strPartX);
+					uY = ulong.Parse(strPartY);
+					iPartCompare = uX.CompareTo(uY);
+				}
+				catch(Exception) { iPartCompare = strPartX.CompareTo(strPartY); }
+#else
+				ulong uX, uY;
+				if(ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
+					iPartCompare = uX.CompareTo(uY);
+				else iPartCompare = strPartX.CompareTo(strPartY);
+#endif
+
+				if(iPartCompare != 0) return iPartCompare;
+			}
+
+			if(vPartsX.Length == vPartsY.Length) return 0;
+			if(vPartsX.Length < vPartsY.Length) return -1;
+			return 1;
 		}
 	}
 }

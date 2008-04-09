@@ -1,4 +1,4 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -19,28 +19,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Text;
-using System.Xml;
 using System.IO;
 using System.IO.Compression;
+using System.Xml;
 
 namespace TrlUtil
 {
 	public static class Program
 	{
+		[STAThread]
 		public static void Main(string[] args)
 		{
-			if((args == null) || (args.Length != 2))
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+
+			if((args != null) && (args.Length == 2))
 			{
-				Console.WriteLine("Invalid or no arguments!");
+				try { ExecuteCmd(args[0], args[1]); }
+				catch(Exception exCmd)
+				{
+					MessageBox.Show(exCmd.Message, "TrlUtil",
+						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+
 				return;
 			}
 
-			try { ExecuteCmd(args[0], args[1]); }
-			catch(Exception exCmd)
-			{
-				Console.WriteLine(exCmd.Message);
-			}
+			Application.Run(new MainForm());
 		}
 
 		private static void ExecuteCmd(string strCmd, string strFile)
@@ -64,7 +71,7 @@ namespace TrlUtil
 
 				swOut.Close();
 			}
-			else if(strCmd == "compress")
+			/* else if(strCmd == "compress")
 			{
 				byte[] pbData = File.ReadAllBytes(strFile);
 
@@ -75,7 +82,7 @@ namespace TrlUtil
 				gz.Write(pbData, 0, pbData.Length);
 				gz.Close();
 				fs.Close();
-			}
+			} */
 			else if(strCmd == "src_from_xml")
 			{
 				XmlDocument xmlIn = new XmlDocument();
@@ -126,6 +133,24 @@ namespace TrlUtil
 							"\", m_str" + strName + ");");
 					}
 
+					swOut.WriteLine("\t\t}");
+					swOut.WriteLine();
+
+					swOut.WriteLine("\t\tprivate static readonly string[] m_vKeyNames = {");
+					XmlNodeList xNodes = xmlTable.SelectNodes("Data");
+					for(int i = 0; i < xNodes.Count; ++i)
+					{
+						XmlNode xmlData = xNodes.Item(i);
+						swOut.WriteLine("\t\t\t\"" + xmlData.Attributes["Name"].Value +
+							"\"" + ((i != xNodes.Count - 1) ? "," : string.Empty));
+					}
+
+					swOut.WriteLine("\t\t};");
+					swOut.WriteLine();
+
+					swOut.WriteLine("\t\tpublic static string[] GetKeyNames()");
+					swOut.WriteLine("\t\t{");
+					swOut.WriteLine("\t\t\treturn m_vKeyNames;");
 					swOut.WriteLine("\t\t}");
 
 					foreach(XmlNode xmlData in xmlTable.SelectNodes("Data"))

@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PwSafeXml302 : FormatImporter
+	internal sealed class PwSafeXml302 : FormatImporter
 	{
 		private string m_strLineBreak = "\n";
 

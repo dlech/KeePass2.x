@@ -118,6 +118,7 @@ namespace KeePass.Forms
 		public StatusLoggerForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

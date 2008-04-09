@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,6 +11,11 @@
     <AssemblyName>KeePassLib</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KeePassLib.pfx</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -92,14 +97,18 @@
     <Compile Include="Serialization\Kdb4File.Write.cs" />
     <Compile Include="Serialization\IOConnectionInfo.cs" />
     <Compile Include="Serialization\OldFormatException.cs" />
-    <Compile Include="Utility\AppConfigEx.cs" />
+    <Compile Include="Translation\KPControlCustomization.cs" />
+    <Compile Include="Translation\KPFormCustomization.cs" />
+    <Compile Include="Translation\KPStringTable.cs" />
+    <Compile Include="Translation\KPStringTableItem.cs" />
+    <Compile Include="Translation\KPTranslation.cs" />
+    <Compile Include="Translation\KPTranslationProperties.cs" />
     <Compile Include="Utility\AppLogEx.cs" />
     <Compile Include="Utility\MemUtil.cs" />
     <Compile Include="Utility\MessageService.cs" />
     <Compile Include="Native\NativeLib.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwGenerator.cs" />
     <Compile Include="Utility\StrUtil.cs" />
-    <Compile Include="Utility\TranslationUtil.cs" />
     <Compile Include="Utility\UrlUtil.cs" />
     <Compile Include="Utility\TimeUtil.cs" />
   </ItemGroup>

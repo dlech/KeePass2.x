@@ -95,6 +95,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			pwCharSet.Remove(PwCharSet.Invalid);
 
 			if(pwProfile.ExcludeLookAlike) pwCharSet.Remove(PwCharSet.LookAlike);
+
+			if(pwProfile.ExcludeCharacters.Length > 0)
+				pwCharSet.Remove(pwProfile.ExcludeCharacters);
 		}
 
 		internal static void ShufflePassword(char[] pPassword,

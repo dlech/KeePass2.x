@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -19,6 +19,12 @@
     </FormFactorID>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KeePassLibSD.pfx</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <NativePlatformName>Pocket PC 2003</NativePlatformName>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -213,8 +219,23 @@
     <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
       <Link>Serialization\OldFormatException.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Utility\AppConfigEx.cs">
-      <Link>Utility\AppConfigEx.cs</Link>
+    <Compile Include="..\KeePassLib\Translation\KPControlCustomization.cs">
+      <Link>Translation\KPControlCustomization.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPFormCustomization.cs">
+      <Link>Translation\KPFormCustomization.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPStringTable.cs">
+      <Link>Translation\KPStringTable.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPStringTableItem.cs">
+      <Link>Translation\KPStringTableItem.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPTranslation.cs">
+      <Link>Translation\KPTranslation.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Translation\KPTranslationProperties.cs">
+      <Link>Translation\KPTranslationProperties.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\AppLogEx.cs">
       <Link>Utility\AppLogEx.cs</Link>
@@ -230,9 +251,6 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>Utility\TimeUtil.cs</Link>
-    </Compile>
-    <Compile Include="..\KeePassLib\Utility\TranslationUtil.cs">
-      <Link>Utility\TranslationUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>Utility\UrlUtil.cs</Link>
@@ -306,4 +324,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Condition="'$(TargetFrameworkVersion)' == 'v3.5'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
 </Project>

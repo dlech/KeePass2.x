@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Xml.Serialization;
 
 using KeePassLib.Interfaces;
 
@@ -44,12 +45,14 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, etc.
 		/// </summary>
-		public const uint Version32 = 0x02000400;
+		public const uint Version32 = 0x02000500;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.04 Alpha";
+		public const string VersionString = "2.05 Alpha";
+
+		public const string Copyright = @"Copyright © 2003-2008 Dominik Reichl";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.
@@ -183,6 +186,8 @@ namespace KeePassLib
 		/// <returns>Returns <c>true</c> if the entry is a TAN.</returns>
 		public static bool IsTanEntry(PwEntry pe)
 		{
+			Debug.Assert(pe != null); if(pe == null) return false;
+
 			return pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle;
 		}
 	}
@@ -253,6 +258,13 @@ namespace KeePassLib
 			set { m_bSearchInOther = value; }
 		}
 
+		private bool m_bSearchInUuids = false;
+		public bool SearchInUuids
+		{
+			get { return m_bSearchInUuids; }
+			set { m_bSearchInUuids = value; }
+		}
+
 		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;
 		/// <summary>
 		/// String comparison type. Specifies the condition when the specified
@@ -262,6 +274,28 @@ namespace KeePassLib
 		{
 			get { return m_scType; }
 			set { m_scType = value; }
+		}
+
+		[XmlIgnore]
+		public static SearchParameters None
+		{
+			get
+			{
+				SearchParameters sp = new SearchParameters();
+
+				sp.m_strText = string.Empty;
+				sp.m_bRegex = false;
+				sp.m_bSearchInTitles = false;
+				sp.m_bSearchInUserNames = false;
+				sp.m_bSearchInUrls = false;
+				sp.m_bSearchInPasswords = false;
+				sp.m_bSearchInNotes = false;
+				sp.m_bSearchInOther = false;
+				sp.m_bSearchInUuids = false;
+				sp.m_scType = StringComparison.InvariantCultureIgnoreCase;
+
+				return sp;
+			}
 		}
 
 		/// <summary>
@@ -290,6 +324,17 @@ namespace KeePassLib
 		public MemoryProtectionConfig CloneDeep()
 		{
 			return (MemoryProtectionConfig)this.MemberwiseClone();
+		}
+
+		public bool GetProtection(string strField)
+		{
+			if(strField == PwDefs.TitleField) return this.ProtectTitle;
+			if(strField == PwDefs.UserNameField) return this.ProtectUserName;
+			if(strField == PwDefs.PasswordField) return this.ProtectPassword;
+			if(strField == PwDefs.UrlField) return this.ProtectUrl;
+			if(strField == PwDefs.NotesField) return this.ProtectNotes;
+
+			return false;
 		}
 	}
 	#pragma warning restore 1591 // Missing XML comments warning

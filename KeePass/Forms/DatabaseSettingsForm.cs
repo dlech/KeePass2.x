@@ -46,6 +46,7 @@ namespace KeePass.Forms
 		public DatabaseSettingsForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(bool bCreatingNew, PwDatabase pwDatabase)

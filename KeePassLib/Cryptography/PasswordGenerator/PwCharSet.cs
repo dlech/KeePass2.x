@@ -223,6 +223,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				case 'u': this.Add(PwCharSet.UpperCase); break;
 				case 'p': this.Add(PwCharSet.Punctuation); break;
 				case 'b': this.Add(PwCharSet.Brackets); break;
+				case 's': this.Add(PwCharSet.PrintableAsciiSpecial); break;
 				case 'S': this.Add(PwCharSet.UpperCase, PwCharSet.LowerCase);
 					this.Add(PwCharSet.Digits, PwCharSet.PrintableAsciiSpecial); break;
 				case 'v': this.Add(PwCharSet.LowerVowels); break;

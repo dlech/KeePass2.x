@@ -25,6 +25,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.IO;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -37,8 +38,10 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
+using KeePassLib.Translation;
 using KeePassLib.Utility;
 
 namespace KeePass
@@ -53,6 +56,7 @@ namespace KeePass
 		private static MainForm m_formMain = null;
 		private static AppConfigEx m_appConfig = new AppConfigEx();
 		private static KeyProviderPool m_keyProviderPool = new KeyProviderPool();
+		private static KPTranslation m_kpTranslation = new KPTranslation();
 
 		public enum AppMessage
 		{
@@ -91,6 +95,11 @@ namespace KeePass
 			get { return m_keyProviderPool; }
 		}
 
+		public static KPTranslation Translation
+		{
+			get { return m_kpTranslation; }
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -119,6 +128,27 @@ namespace KeePass
 			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) +
 				".chm";
 			AppHelp.LocalHelpFile = strHelpFile;
+
+			string strLangFile = m_appConfig.Application.LanguageFile;
+			if((strLangFile != null) && (strLangFile.Length > 0))
+			{
+				strLangFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), true) +
+					strLangFile;
+
+				try
+				{
+					m_kpTranslation = KPTranslation.LoadFromFile(strLangFile);
+
+					KPRes.SetTranslatedStrings(
+						m_kpTranslation.SafeGetStringTableDictionary(
+						"KeePass.Resources.KPRes"));
+					KLRes.SetTranslatedStrings(
+						m_kpTranslation.SafeGetStringTableDictionary(
+						"KeePassLib.Resources.KLRes"));
+				}
+				catch(FileNotFoundException) {} // Ignore
+				catch(Exception) { Debug.Assert(false); }
+			}
 
 			m_cmdLineArgs = new CommandLineArgs(args);
 

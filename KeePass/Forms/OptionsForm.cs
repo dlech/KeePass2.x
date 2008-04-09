@@ -66,6 +66,7 @@ namespace KeePass.Forms
 		public OptionsForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		/// <summary>
@@ -228,6 +229,8 @@ namespace KeePass.Forms
 				m_lvGuiOptions, lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
 				m_lvGuiOptions, lvg, KPRes.MinimizeAfterCopy);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
+				m_lvGuiOptions, lvg, KPRes.FocusResultsAfterQuickFind);
 
 			lvg = new ListViewGroup(KPRes.EntryList);
 			m_lvGuiOptions.Groups.Add(lvg);

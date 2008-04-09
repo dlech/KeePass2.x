@@ -73,21 +73,25 @@ namespace KeePass.Util
 
 			if(strXmlFile == null)
 			{
-				if(e.Error != null)
+				try
 				{
-					if(m_tsResultsViewer == null)
-						MessageService.ShowWarning(KPRes.DownloadFailed, e);
-					else if(e.Error.Message != null)
-						m_tsResultsViewer.Text = KPRes.DownloadFailed + " " +
-							e.Error.Message;
-				}
-				else
-				{
-					if(m_tsResultsViewer == null)
-						MessageService.ShowWarning(KPRes.DownloadFailed);
+					if(e.Error != null)
+					{
+						if(m_tsResultsViewer == null)
+							MessageService.ShowWarning(KPRes.DownloadFailed, e);
+						else if(e.Error.Message != null)
+							m_tsResultsViewer.Text = KPRes.DownloadFailed + " " +
+								e.Error.Message;
+					}
 					else
-						m_tsResultsViewer.Text = KPRes.DownloadFailed;
+					{
+						if(m_tsResultsViewer == null)
+							MessageService.ShowWarning(KPRes.DownloadFailed);
+						else
+							m_tsResultsViewer.Text = KPRes.DownloadFailed;
+					}
 				}
+				catch(Exception) {} // m_tsResultsViewer not ready
 
 				return;
 			}

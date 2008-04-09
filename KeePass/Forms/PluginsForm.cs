@@ -53,6 +53,7 @@ namespace KeePass.Forms
 		public PluginsForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

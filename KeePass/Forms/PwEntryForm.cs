@@ -91,6 +91,7 @@ namespace KeePass.Forms
 		public PwEntryForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(PwEntry pwEntry, PwEditMode pwMode, PwDatabase pwDatabase,
@@ -425,6 +426,9 @@ namespace KeePass.Forms
 			InitPropertiesTab();
 			InitAutoTypeTab();
 			InitHistoryTab();
+
+			if(PwDefs.IsTanEntry(m_pwEntry))
+				m_btnTools.Enabled = false;
 
 			m_bInitializing = false;
 
@@ -1124,14 +1128,6 @@ namespace KeePass.Forms
 
 		private void OnBtnHelp(object sender, EventArgs e)
 		{
-			if(m_tabMain.SelectedTab == m_tabAdvanced)
-				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryStrings);
-			else if(m_tabMain.SelectedTab == m_tabAutoType)
-				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryAutoType);
-			else if(m_tabMain.SelectedTab == m_tabHistory)
-				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryHistory);
-			else
-				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, null);
 		}
 
 		private void OnNotesLinkClicked(object sender, LinkClickedEventArgs e)
@@ -1329,6 +1325,62 @@ namespace KeePass.Forms
 		private void OnDefaultAutoTypeSeqTextChanged(object sender, EventArgs e)
 		{
 			if(!m_bInitializing) m_bModifiedEntry = true;
+		}
+
+		private void OnBtnTools(object sender, EventArgs e)
+		{
+			m_ctxTools.Show(m_btnTools, 0, m_btnTools.Height);
+		}
+
+		private void OnCtxToolsHelp(object sender, EventArgs e)
+		{
+			if(m_tabMain.SelectedTab == m_tabAdvanced)
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryStrings);
+			else if(m_tabMain.SelectedTab == m_tabAutoType)
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryAutoType);
+			else if(m_tabMain.SelectedTab == m_tabHistory)
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryHistory);
+			else
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, null);
+		}
+
+		private void OnCtxUrlHelp(object sender, EventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.UrlField, null);
+		}
+
+		private void SelectFileAsUrl(string strFilter)
+		{
+			OpenFileDialog dlg = new OpenFileDialog();
+			dlg.AddExtension = false;
+			dlg.CheckFileExists = true;
+			dlg.CheckPathExists = true;
+			dlg.DereferenceLinks = true;
+			dlg.Multiselect = false;
+			dlg.ShowReadOnly = false;
+			dlg.SupportMultiDottedExtensions = true;
+			dlg.ValidateNames = true;
+
+			string strFlt = string.Empty;
+			if(strFilter != null) strFlt += strFilter;
+			strFlt += KPRes.AllFiles;
+			strFlt += " (*.*)|*.*";
+			dlg.Filter = strFlt;
+			dlg.FilterIndex = 1;
+
+			if(dlg.ShowDialog() == DialogResult.OK)
+				m_tbUrl.Text = "cmd://\"" + dlg.FileName + "\"";
+		}
+
+		private void OnCtxUrlSelApp(object sender, EventArgs e)
+		{
+			SelectFileAsUrl(KPRes.Application + " (*.exe, *.com, *.bat, *.cmd)|" +
+				"*.exe;*.com;*.bat;*.cmd|");
+		}
+
+		private void OnCtxUrlSelDoc(object sender, EventArgs e)
+		{
+			SelectFileAsUrl(null);
 		}
 	}
 }

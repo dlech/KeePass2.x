@@ -128,5 +128,20 @@ namespace KeePassLib.Utility
 		{
 			return dt.ToString();
 		}
+
+		public static DateTime FromDisplayString(string strDisplay)
+		{
+			DateTime dt;
+
+#if !KeePassLibSD
+			if(DateTime.TryParse(strDisplay, out dt)) return dt;
+#else
+			try { dt = DateTime.Parse(strDisplay); return dt; }
+			catch(Exception) { }
+#endif
+
+			Debug.Assert(false);
+			return DateTime.Now;
+		}
 	}
 }

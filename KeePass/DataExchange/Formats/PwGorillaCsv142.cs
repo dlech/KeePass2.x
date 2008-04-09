@@ -32,7 +32,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PwGorillaCsv142 : FormatImporter
+	internal sealed class PwGorillaCsv142 : FormatImporter
 	{
 		public override string FormatName { get { return "Password Gorilla CSV 1.42"; } }
 		public override string DefaultExtension { get { return "csv"; } }

@@ -31,7 +31,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PVaultTxt14 : FormatImporter
+	internal sealed class PVaultTxt14 : FormatImporter
 	{
 		private const string InitGroup = "************";
 		private const string InitNewEntry = "----------------------";

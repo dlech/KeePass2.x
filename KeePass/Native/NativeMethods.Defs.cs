@@ -34,6 +34,7 @@ namespace KeePass.Native
 		internal const int WM_HOTKEY = 0x0312;
 		internal const int WM_USER = 0x0400;
 		internal const int WM_SYSCOMMAND = 0x0112;
+		internal const int WM_POWERBROADCAST = 0x0218;
 
 		internal const uint HWND_BROADCAST = 0xFFFF;
 
@@ -75,8 +76,17 @@ namespace KeePass.Native
 
 		internal const int IDANI_CAPTION = 3;
 
+		internal const int PBT_APMQUERYSUSPEND = 0x0000;
+		internal const int PBT_APMSUSPEND = 0x0004;
+
 		internal const int ECM_FIRST = 0x1500;
 		internal const int EM_SETCUEBANNER = ECM_FIRST + 1;
+
+		internal const uint FSCTL_LOCK_VOLUME = 589848;
+		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
+
+		internal const int LVM_FIRST = 0x1000;
+		internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -100,6 +110,64 @@ namespace KeePass.Native
 			Enumerate = 0x0040,
 			WriteObjects = 0x0080,
 			SwitchDesktop = 0x0100,
+		}
+
+		[Flags]
+		internal enum EFileAccess : uint
+		{
+			GenericRead = 0x80000000,
+			GenericWrite = 0x40000000,
+			GenericExecute = 0x20000000,
+			GenericAll = 0x10000000
+		}
+
+		[Flags]
+		internal enum EFileShare : uint
+		{
+			None = 0x00000000,
+			Read = 0x00000001,
+			Write = 0x00000002,
+			Delete = 0x00000004
+		}
+
+		internal enum ECreationDisposition : uint
+		{
+			CreateNew = 1,
+			CreateAlways = 2,
+			OpenExisting = 3,
+			OpenAlways = 4,
+			TruncateExisting = 5
+		}
+
+		[Flags]
+		internal enum TaskDialogFlags : uint
+		{
+			EnableHyperlinks = 0x0001,
+			UseHIconMain = 0x0002,
+			UseHIconFooter = 0x0004,
+			AllowDialogCancellation = 0x0008,
+			UseCommandLinks = 0x0010,
+			UseCommandLinksNoIcon = 0x0020,
+			ExpandFooterArea = 0x0040,
+			ExpandedByDefault = 0x0080,
+			VerificationFlagChecked = 0x0100,
+			ShowProgressBar = 0x0200,
+			ShowMarqueeProgressBar = 0x0400,
+			CallbackTimer = 0x0800,
+			PositionRelativeToWindow = 0x1000,
+			RtlLayout = 0x2000,
+			NoDefaultRadioButton = 0x4000
+		}
+
+		[Flags]
+		internal enum TaskDialogCommonButtonFlags : uint
+		{
+			OkButton = 0x0001, // Return value: IDOK
+			YesButton = 0x0002, // Return value: IDYES
+			NoButton = 0x0004, // Return value: IDNO
+			CancelButton = 0x0008, // Return value: IDCANCEL
+			RetryButton = 0x0010, // Return value: IDRETRY
+			CloseButton = 0x0020  // Return value: IDCLOSE
 		}
 	}
 }

@@ -58,6 +58,7 @@ namespace KeePass.DataExchange
 			m_vImporters.Add(new PwTresor100());
 			m_vImporters.Add(new PVaultTxt14());
 			m_vImporters.Add(new PinsTxt450());
+			m_vImporters.Add(new RoboFormHtml69());
 			m_vImporters.Add(new SecurityTxt12());
 			m_vImporters.Add(new SplashIdCsv402());
 			m_vImporters.Add(new SteganosPwManager2007());

@@ -55,6 +55,7 @@
 			this.m_saveKeyFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.m_openKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
+			this.m_lblWindowsAccDesc2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -63,7 +64,7 @@
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(457, 29);
-			this.m_lblIntro.TabIndex = 18;
+			this.m_lblIntro.TabIndex = 19;
 			this.m_lblIntro.Text = "You are creating a new password database.  Specify the composite master key, whic" +
 				"h will be used to encrypt the database.";
 			// 
@@ -72,7 +73,7 @@
 			this.m_lblMultiInfo.Location = new System.Drawing.Point(9, 110);
 			this.m_lblMultiInfo.Name = "m_lblMultiInfo";
 			this.m_lblMultiInfo.Size = new System.Drawing.Size(457, 42);
-			this.m_lblMultiInfo.TabIndex = 19;
+			this.m_lblMultiInfo.TabIndex = 20;
 			this.m_lblMultiInfo.Text = resources.GetString("m_lblMultiInfo.Text");
 			// 
 			// m_cbPassword
@@ -82,7 +83,7 @@
 			this.m_cbPassword.Location = new System.Drawing.Point(12, 164);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(125, 17);
-			this.m_cbPassword.TabIndex = 20;
+			this.m_cbPassword.TabIndex = 21;
 			this.m_cbPassword.Text = "Master password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
@@ -142,8 +143,8 @@
 			this.m_lblWindowsAccDesc.Name = "m_lblWindowsAccDesc";
 			this.m_lblWindowsAccDesc.Size = new System.Drawing.Size(479, 29);
 			this.m_lblWindowsAccDesc.TabIndex = 13;
-			this.m_lblWindowsAccDesc.Text = "This source uses the logon credentials of the current Windows user. These credent" +
-				"ials don\'t change if the Windows logon password changes.";
+			this.m_lblWindowsAccDesc.Text = "This source uses data of the current Windows user. This data does not change when" +
+				" the Windows account password changes.";
 			// 
 			// m_lblKeyFileInfo
 			// 
@@ -157,10 +158,10 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(432, 363);
+			this.m_btnCancel.Location = new System.Drawing.Point(432, 422);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 15;
+			this.m_btnCancel.TabIndex = 18;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCancel.UseVisualStyleBackColor = true;
@@ -169,10 +170,10 @@
 			// m_btnCreate
 			// 
 			this.m_btnCreate.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnCreate.Location = new System.Drawing.Point(351, 363);
+			this.m_btnCreate.Location = new System.Drawing.Point(351, 422);
 			this.m_btnCreate.Name = "m_btnCreate";
 			this.m_btnCreate.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCreate.TabIndex = 14;
+			this.m_btnCreate.TabIndex = 17;
 			this.m_btnCreate.Text = "&OK";
 			this.m_btnCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCreate.UseVisualStyleBackColor = true;
@@ -225,20 +226,21 @@
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 363);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 422);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 16;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
+			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 356);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 414);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(519, 2);
-			this.m_lblSeparator.TabIndex = 17;
+			this.m_lblSeparator.TabIndex = 15;
 			// 
 			// m_pbPasswordQuality
 			// 
@@ -301,7 +303,15 @@
 			this.m_cmbKeyFile.MaxDropDownItems = 16;
 			this.m_cmbKeyFile.Name = "m_cmbKeyFile";
 			this.m_cmbKeyFile.Size = new System.Drawing.Size(195, 21);
-			this.m_cmbKeyFile.TabIndex = 21;
+			this.m_cmbKeyFile.TabIndex = 8;
+			// 
+			// m_lblWindowsAccDesc2
+			// 
+			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(28, 349);
+			this.m_lblWindowsAccDesc2.Name = "m_lblWindowsAccDesc2";
+			this.m_lblWindowsAccDesc2.Size = new System.Drawing.Size(476, 55);
+			this.m_lblWindowsAccDesc2.TabIndex = 14;
+			this.m_lblWindowsAccDesc2.Text = resources.GetString("m_lblWindowsAccDesc2.Text");
 			// 
 			// KeyCreationForm
 			// 
@@ -309,7 +319,8 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(519, 398);
+			this.ClientSize = new System.Drawing.Size(519, 457);
+			this.Controls.Add(this.m_lblWindowsAccDesc2);
 			this.Controls.Add(this.m_cmbKeyFile);
 			this.Controls.Add(this.m_lblQualityBits);
 			this.Controls.Add(this.m_lblEstimatedQuality);
@@ -340,8 +351,8 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Create New Password Database - Step 1";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -375,5 +386,6 @@
 		private System.Windows.Forms.SaveFileDialog m_saveKeyFileDialog;
 		private System.Windows.Forms.OpenFileDialog m_openKeyFileDialog;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
+		private System.Windows.Forms.Label m_lblWindowsAccDesc2;
 	}
 }

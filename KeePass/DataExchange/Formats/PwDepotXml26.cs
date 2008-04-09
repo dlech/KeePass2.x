@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PwDepotXml26 : FormatImporter
+	internal sealed class PwDepotXml26 : FormatImporter
 	{
 		private const string ElemHeader = "HEADER";
 		private const string ElemContainer = "PASSWORDS";

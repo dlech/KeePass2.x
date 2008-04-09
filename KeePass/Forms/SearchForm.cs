@@ -64,6 +64,7 @@ namespace KeePass.Forms
 		public SearchForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		/// <summary>

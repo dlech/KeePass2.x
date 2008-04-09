@@ -48,6 +48,7 @@ namespace KeePass.Forms
 		public SingleLineEditForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(string strTitle, string strDesc, string strLongDesc,

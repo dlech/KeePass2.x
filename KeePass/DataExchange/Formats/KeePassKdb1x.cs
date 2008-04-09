@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class KeePassKdb1x : FormatImporter
+	internal sealed class KeePassKdb1x : FormatImporter
 	{
 		public override string FormatName { get { return "KeePass KDB (1.x)"; } }
 		public override string DefaultExtension { get { return "kdb"; } }

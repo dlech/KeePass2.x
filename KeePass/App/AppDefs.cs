@@ -35,10 +35,10 @@ namespace KeePass.App
 			Password,
 			Url,
 			Notes,
-			CreationTime,
-			LastAccessTime,
-			LastModificationTime,
-			ExpiryTime,
+			CreationTime, // Do not change order without checking all references
+			LastAccessTime, // ^
+			LastModificationTime, // ^
+			ExpiryTime, // ^
 			Uuid,
 			Attachment,
 			Count // Virtual identifier representing the number of columns
@@ -89,6 +89,7 @@ namespace KeePass.App
 			public const string KeySources = "base/keys";
 			public const string PwGenerator = "base/pwgenerator";
 			public const string IOConnections = "v2/ioconnect";
+			public const string UrlField = "base/autourl";
 
 			public const string ImportExport = "base/importexport";
 			public const string ImportExportSteganos = "imp_steganos";
@@ -146,7 +147,5 @@ namespace KeePass.App
 		public const string ColumnIdnExpiryTime = "ExpiryTime";
 		public const string ColumnIdnUuid = "UUID";
 		public const string ColumnIdnAttachment = "Attachment";
-
-		public const string DefaultLanguage = "en"; // ^= string.Empty
 	}
 }

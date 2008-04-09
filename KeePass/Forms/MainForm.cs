@@ -74,19 +74,28 @@ namespace KeePass.Forms
 		/// </summary>
 		public MainForm()
 		{
-			string strLang = Program.Config.Application.Language;
-			if((strLang != null) && (strLang.Length > 0))
+			string strIso6391 = Program.Translation.Properties.Iso6391Code;
+			if(strIso6391.Length > 0)
 			{
-				CultureInfo ci = CultureInfo.CreateSpecificCulture(strLang);
-				Application.CurrentCulture = ci;
-				Thread.CurrentThread.CurrentCulture = ci;
-				Thread.CurrentThread.CurrentUICulture = ci;
-				Properties.Resources.Culture = ci;
+				try
+				{
+					CultureInfo ci = CultureInfo.CreateSpecificCulture(strIso6391);
+					Application.CurrentCulture = ci;
+					Thread.CurrentThread.CurrentCulture = ci;
+					Thread.CurrentThread.CurrentUICulture = ci;
+					Properties.Resources.Culture = ci;
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
 
 			UISelfTest();
 
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
+			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_menuMain", m_menuMain.Items);
+			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxPwList", m_ctxPwList.Items);
+			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxGroupList", m_ctxGroupList.Items);
+			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxTray", m_ctxTray.Items);
 
 			m_fontBoldUI = new Font(m_tabMain.Font, FontStyle.Bold);
 
@@ -431,7 +440,6 @@ namespace KeePass.Forms
 
 #if DEBUG
 			Random r = Program.GlobalRandom;
-
 			for(uint iSamples = 0; iSamples < 1500; ++iSamples)
 			{
 				pg = pd.RootGroup.Groups.GetAt(iSamples % 5);
@@ -456,6 +464,12 @@ namespace KeePass.Forms
 #endif
 
 			UpdateUI(true, null, true, null, true, null, true);
+
+			if(this.FileCreated != null)
+			{
+				FileCreatedEventArgs ea = new FileCreatedEventArgs(pd);
+				this.FileCreated(this, ea);
+			}
 		}
 
 		private void OnFileOpen(object sender, EventArgs e)
@@ -482,9 +496,10 @@ namespace KeePass.Forms
 				return;
 			}
 
+			Guid eventGuid = Guid.NewGuid();
 			if(FileSaving != null)
 			{
-				FileSavingEventArgs args = new FileSavingEventArgs(false, false);
+				FileSavingEventArgs args = new FileSavingEventArgs(false, false, pd, eventGuid);
 				FileSaving(sender, args);
 				if(args.Cancel) return;
 			}
@@ -499,6 +514,8 @@ namespace KeePass.Forms
 			
 				string strName = pd.IOConnectionInfo.GetDisplayName();
 				m_mruList.AddItem(strName, pd.IOConnectionInfo.CloneDeep());
+
+				WinUtil.FlushStorageBuffers(pd.IOConnectionInfo.Path, true);
 			}
 			catch(Exception exSave)
 			{
@@ -510,7 +527,7 @@ namespace KeePass.Forms
 
 			if(this.FileSaved != null)
 			{
-				FileSavedEventArgs args = new FileSavedEventArgs(bSuccess);
+				FileSavedEventArgs args = new FileSavedEventArgs(bSuccess, pd, eventGuid);
 				this.FileSaved(sender, args);
 			}
 
@@ -756,14 +773,24 @@ namespace KeePass.Forms
 			Debug.Assert((pg != null) && (vSelected != null));
 			if((pg == null) || (vSelected == null)) return;
 
+			PwObjectList<PwEntry> vNewEntries = new PwObjectList<PwEntry>();
 			foreach(PwEntry pe in vSelected)
 			{
 				PwEntry peNew = pe.CloneDeep();
 				peNew.Uuid = new PwUuid(true); // Create new UUID
+
+				ProtectedString psTitle = peNew.Strings.Get(PwDefs.TitleField);
+				if(psTitle != null)
+					peNew.Strings.Set(PwDefs.TitleField, new ProtectedString(
+						psTitle.IsProtected, psTitle.ReadString() + " - " +
+						KPRes.CopyOfItem));
+				
 				pg.Entries.Add(peNew);
+				vNewEntries.Add(peNew);
 			}
 
 			UpdateEntryList(pg, false);
+			SelectEntries(vNewEntries, true);
 			m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
 
 			UpdateUIState(true);
@@ -817,13 +844,15 @@ namespace KeePass.Forms
 				{
 					if(Program.Config.MainWindow.CloseButtonMinimizesWindow)
 					{
+						SaveWindowPositionAndSize();
+
 						e.Cancel = true;
 						this.WindowState = FormWindowState.Minimized;
 						return;
 					}
 				}
 			}
-			m_bForceExitOnce = false;
+			m_bForceExitOnce = false; // Reset (flag works once only)
 
 			if(CloseAllDocuments() == false)
 			{
@@ -1195,14 +1224,14 @@ namespace KeePass.Forms
 				else { Debug.Assert(false); }
 
 				UpdateUI(false, null, true, null, true, null, true);
-				// UpdateUI(false, null, false, null, true, null, true);
 			}
 			else if(e.Data.GetDataPresent(typeof(PwGroup)))
 			{
 				PwGroup pgDragged = e.Data.GetData(typeof(PwGroup)) as PwGroup;
 				Debug.Assert(pgDragged != null);
 
-				if((pgDragged == null) || (pgDragged == pgSelected))
+				if((pgDragged == null) || (pgDragged == pgSelected) ||
+					pgSelected.IsContainedIn(pgDragged))
 				{
 					UpdateUI(false, null, true, null, true, null, false);
 					return;
@@ -1341,7 +1370,7 @@ namespace KeePass.Forms
 
 		private void OnFileSynchronize(object sender, EventArgs e)
 		{
-			bool bSuccess = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this);
+			bool bSuccess = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, false);
 			UpdateUI(false, null, true, null, true, null, false);
 			SetStatusEx(bSuccess ? KPRes.SyncSuccess : KPRes.SyncFailed);
 		}
@@ -2066,7 +2095,10 @@ namespace KeePass.Forms
 			{
 				UpdateGroupList(pwDb.RootGroup);
 				UpdateEntryList(null, false);
-				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+
+				if(m_lvEntries.Items.Count > 0)
+					m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+
 				UpdateUIState(true);
 			}
 			else UpdateUI(false, null, true, null, true, null, true);
@@ -2212,6 +2244,13 @@ namespace KeePass.Forms
 			Program.Config.MainWindow.ShowEntriesOfSubGroups =
 				m_menuViewShowEntriesOfSubGroups.Checked;
 			UpdateUI(false, null, false, null, true, null, false);
+		}
+
+		private void OnFileSynchronizeUrl(object sender, EventArgs e)
+		{
+			bool bSuccess = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, true);
+			UpdateUI(false, null, true, null, true, null, false);
+			SetStatusEx(bSuccess ? KPRes.SyncSuccess : KPRes.SyncFailed);
 		}
 	}
 }

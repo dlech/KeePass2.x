@@ -129,4 +129,7 @@
   <metadata name="m_openKeyFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>269, 17</value>
   </metadata>
+  <data name="m_lblWindowsAccDesc2.Text" xml:space="preserve">
+    <value>If the Windows account is lost, it will not be enough to create a new account with the same user name and password. A complete backup of the user account is required. Creating and restoring such a backup is not a simple task. If you don't know how to do this, don't enable this option.</value>
+  </data>
 </root>

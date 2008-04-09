@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PwAgentXml234 : FormatImporter
+	internal sealed class PwAgentXml234 : FormatImporter
 	{
 		private const string ElemGroup = "group";
 		private const string ElemGroupName = "name";

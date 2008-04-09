@@ -74,6 +74,7 @@ namespace KeePass.Forms
 		public EditAutoTypeItemForm()
 		{
 			InitializeComponent();
+			Program.Translation.ApplyTo(this);
 		}
 
 		public void InitEx(AutoTypeConfig atConfig, ProtectedStringDictionary vStringDict, string strOriginalName, bool bEditSequenceOnly)

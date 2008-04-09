@@ -61,35 +61,56 @@ namespace KeePass.DataExchange
 
 				bAppendedToRootOnly = dlgFmt.ResultFormat.AppendsToRootGroupOnly;
 
-				PerformImport(pwStorage, dlgFmt.ResultFormat,
-					dlgFmt.ResultFiles, false, null);
+				List<IOConnectionInfo> lConnections = new List<IOConnectionInfo>();
+				foreach(string strSelFile in dlgFmt.ResultFiles)
+					lConnections.Add(IOConnectionInfo.FromPath(strSelFile));
+
+				PerformImport(pwStorage, dlgFmt.ResultFormat, lConnections.ToArray(),
+					false, null);
 			}
 		}
 
-		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps)
+		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
+			bool bOpenFromUrl)
 		{
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
 			if(!pwStorage.IsOpen) return false;
 			if(!AppPolicy.Try(AppPolicyID.Import)) return false;
 
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.AddExtension = false;
-			ofd.CheckFileExists = true;
-			ofd.CheckPathExists = true;
-			ofd.Filter = KPRes.AllFiles + @" (*.*)|*.*";
-			ofd.Multiselect = true;
-			ofd.RestoreDirectory = true;
-			ofd.Title = KPRes.Synchronize;
-			ofd.ValidateNames = true;
+			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
+			if(bOpenFromUrl == false)
+			{
+				OpenFileDialog ofd = new OpenFileDialog();
+				ofd.AddExtension = false;
+				ofd.CheckFileExists = true;
+				ofd.CheckPathExists = true;
+				ofd.Filter = KPRes.AllFiles + @" (*.*)|*.*";
+				ofd.Multiselect = true;
+				ofd.RestoreDirectory = true;
+				ofd.Title = KPRes.Synchronize;
+				ofd.ValidateNames = true;
 
-			if(ofd.ShowDialog() != DialogResult.OK) return true;
+				if(ofd.ShowDialog() != DialogResult.OK) return true;
+
+				foreach(string strSelFile in ofd.FileNames)
+					vConnections.Add(IOConnectionInfo.FromPath(strSelFile));
+			}
+			else // Open URL
+			{
+				IOConnectionForm iocf = new IOConnectionForm();
+				iocf.InitEx(false, new IOConnectionInfo(), false, true);
+
+				if(iocf.ShowDialog() != DialogResult.OK) return true;
+
+				vConnections.Add(iocf.IOConnectionInfo);
+			}
 
 			return PerformImport(pwStorage, new KeePassKdb2x(),
-				ofd.FileNames, true, uiOps);
+				vConnections.ToArray(), true, uiOps);
 		}
 
 		private static bool PerformImport(PwDatabase pwDatabase, FormatImporter fmtImp,
-			string[] vFiles, bool bSynchronize, IUIOperations uiOps)
+			IOConnectionInfo[] vConnections, bool bSynchronize, IUIOperations uiOps)
 		{
 			if(fmtImp.TryBeginImport() == false) return false;
 
@@ -105,7 +126,7 @@ namespace KeePass.DataExchange
 			if(bSynchronize) slf.StartLogging(KPRes.Synchronize, false);
 			else slf.StartLogging(KPRes.ImportingStatusMsg, false);
 
-			if(vFiles.Length == 0)
+			if(vConnections.Length == 0)
 			{
 				try { fmtImp.Import(pwDatabase, null, slf); }
 				catch(Exception exSingular)
@@ -121,23 +142,19 @@ namespace KeePass.DataExchange
 				return true;
 			}
 
-			foreach(string strFile in vFiles)
+			foreach(IOConnectionInfo iocIn in vConnections)
 			{
-				FileStream fs = null;
+				Stream s = null;
 
-				try
-				{
-					fs = new FileStream(strFile, FileMode.Open, FileAccess.Read,
-						FileShare.Read);
-				}
+				try { s = IOConnection.OpenRead(iocIn); }
 				catch(Exception exFile)
 				{
-					MessageService.ShowWarning(strFile, exFile);
+					MessageService.ShowWarning(iocIn.GetDisplayName(), exFile);
 					bAllSuccess = false;
 					continue;
 				}
 
-				if(fs == null) { Debug.Assert(false); bAllSuccess = false; continue; }
+				if(s == null) { Debug.Assert(false); bAllSuccess = false; continue; }
 
 				PwDatabase pwImp;
 				if(bUseTempDb)
@@ -151,18 +168,18 @@ namespace KeePass.DataExchange
 				if(fmtImp.RequiresKey && !bSynchronize)
 				{
 					KeyPromptForm kpf = new KeyPromptForm();
-					kpf.InitEx(strFile, false);
+					kpf.InitEx(iocIn.GetDisplayName(), false);
 
-					if(kpf.ShowDialog() != DialogResult.OK) { fs.Close(); continue; }
+					if(kpf.ShowDialog() != DialogResult.OK) { s.Close(); continue; }
 
 					pwImp.MasterKey = kpf.CompositeKey;
 				}
 				else if(bSynchronize) pwImp.MasterKey = pwDatabase.MasterKey;
 
-				slf.SetText((bSynchronize ? KPRes.Synchronizing :
-					KPRes.ImportingStatusMsg) + " " + strFile, LogStatusType.Info);
+				slf.SetText((bSynchronize ? KPRes.Synchronizing : KPRes.ImportingStatusMsg) +
+					" " + iocIn.GetDisplayName(), LogStatusType.Info);
 
-				try { fmtImp.Import(pwImp, fs, slf); }
+				try { fmtImp.Import(pwImp, s, slf); }
 				catch(Exception excpFmt)
 				{
 					string strMsgEx = excpFmt.Message;
@@ -174,12 +191,12 @@ namespace KeePass.DataExchange
 
 					MessageService.ShowWarning(strMsgEx);
 
-					fs.Close();
+					s.Close();
 					bAllSuccess = false;
 					continue;
 				}
 
-				fs.Close();
+				s.Close();
 
 				if(bUseTempDb)
 				{
@@ -199,8 +216,8 @@ namespace KeePass.DataExchange
 					try { pwDatabase.MergeIn(pwImp, mm); }
 					catch(Exception exMerge)
 					{
-						MessageService.ShowWarning(strFile, KPRes.ImportFailed,
-							exMerge);
+						MessageService.ShowWarning(iocIn.GetDisplayName(),
+							KPRes.ImportFailed, exMerge);
 
 						bAllSuccess = false;
 						continue;
@@ -217,26 +234,27 @@ namespace KeePass.DataExchange
 
 				if(uiOps.UIFileSave())
 				{
-					foreach(string strFile in vFiles)
+					foreach(IOConnectionInfo ioc in vConnections)
 					{
 						try
 						{
 							if(pwDatabase.IOConnectionInfo.IsLocalFile())
 							{
-								if(pwDatabase.IOConnectionInfo.Path != strFile)
+								if((pwDatabase.IOConnectionInfo.Path != ioc.Path) &&
+									ioc.IsLocalFile())
 								{
 									File.Copy(pwDatabase.IOConnectionInfo.Path,
-										strFile, true);
+										ioc.Path, true);
 								}
 							}
 							else
-								pwDatabase.SaveAs(IOConnectionInfo.FromPath(strFile), false, null);
+								pwDatabase.SaveAs(ioc, false, null);
 						}
 						catch(Exception exSync)
 						{
 							MessageService.ShowWarning(KPRes.SyncFailed,
 								pwDatabase.IOConnectionInfo.GetDisplayName() +
-								MessageService.NewLine + strFile, exSync);
+								MessageService.NewLine + ioc.GetDisplayName(), exSync);
 
 							bAllSuccess = false;
 							continue;
@@ -369,14 +387,16 @@ namespace KeePass.DataExchange
 
 		private static readonly string[] m_vUserNames = {
 			"user", "name", "user name", "username",
-			"email", "e-mail", "id", "userid", "user id"
+			"email", "e-mail", "id", "userid", "user id",
+			"login", "form_loginname", "wpname"
 		};
 
 		private static readonly string[] m_vPasswords = {
 			"password", "pass word", "passphrase", "pass phrase",
-			"code", "code word", "codeword",
+			"pass", "code", "code word", "codeword",
 			"secret", "secret word",
-			"key", "keyword", "key word", "keyphrase", "key phrase"
+			"key", "keyword", "key word", "keyphrase", "key phrase",
+			"form_pw", "wppassword"
 		};
 
 		private static readonly string[] m_vUrls = {

@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	public sealed class PinsTxt450 : FormatImporter
+	internal sealed class PinsTxt450 : FormatImporter
 	{
 		private const string FirstLine = "\"Category\"\t\"System\"\t\"User\"\t" +
 			"\"Password\"\t\"URL/Comments\"\t\"Custom\"\t\"Start date\"\t\"Expires\"\t" +

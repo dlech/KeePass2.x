@@ -22,58 +22,90 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.Resources;
+using KeePassLib.Utility;
+
 namespace KeePass.UI
 {
 	public sealed class ListSorter : IComparer
 	{
 		private int m_nColumn = -1;
 		private SortOrder m_oSort = SortOrder.Ascending;
+		private bool m_bCompareTimes = false;
+
+		// Cached version of a string representing infinity
+		private string m_strNeverExpires = string.Empty;
 
 		public int Column
 		{
 			get { return m_nColumn; }
+
+			/// Only provided for XML serialization, do not use
 			set { m_nColumn = value; }
 		}
 
 		public SortOrder Order
 		{
 			get { return m_oSort; }
+
+			/// Only provided for XML serialization, do not use
 			set { m_oSort = value; }
+		}
+
+		public bool CompareTimes
+		{
+			get { return m_bCompareTimes; }
+
+			/// Only provided for XML serialization, do not use
+			set { m_bCompareTimes = value; }
 		}
 
 		public ListSorter()
 		{
+			m_strNeverExpires = KPRes.NeverExpires;
 		}
 
-		public ListSorter(int nColumn, SortOrder sortOrder)
+		public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareTimes)
 		{
+			m_strNeverExpires = KPRes.NeverExpires;
+
 			m_nColumn = nColumn;
 
 			Debug.Assert(sortOrder != SortOrder.None);
 			if(sortOrder != SortOrder.None) m_oSort = sortOrder;
+
+			m_bCompareTimes = bCompareTimes;
 		}
 
 		public int Compare(object x, object y)
 		{
-			ListViewItem lviX = (ListViewItem)x;
-			ListViewItem lviY = (ListViewItem)y;
+			bool bSwap = (m_oSort != SortOrder.Ascending);
+			ListViewItem lviX = (bSwap ? (ListViewItem)y : (ListViewItem)x);
+			ListViewItem lviY = (bSwap ? (ListViewItem)x : (ListViewItem)y);
+			string strL, strR;
 
-			if(lviY.SubItems.Count <= m_nColumn)
+			if((m_nColumn <= 0) || (lviX.SubItems.Count <= m_nColumn) ||
+				(lviY.SubItems.Count <= m_nColumn))
 			{
-				if(m_oSort == SortOrder.Ascending)
-					return lviX.Text.CompareTo(lviY.Text);
-				else
-					return lviY.Text.CompareTo(lviX.Text);
+				strL = lviX.Text;
+				strR = lviY.Text;
+			}
+			else
+			{
+				strL = lviX.SubItems[m_nColumn].Text;
+				strR = lviY.SubItems[m_nColumn].Text;
 			}
 
-			if(m_oSort == SortOrder.Ascending)
+			if(m_bCompareTimes)
 			{
-				if(m_nColumn <= 0) return lviX.Text.CompareTo(lviY.Text);
-				return lviX.SubItems[m_nColumn].Text.CompareTo(lviY.SubItems[m_nColumn].Text);
-			}
+				if((strL == m_strNeverExpires) || (strR == m_strNeverExpires))
+					return strL.CompareTo(strR);
 
-			if(m_nColumn <= 0) return lviY.Text.CompareTo(lviX.Text);
-			return lviY.SubItems[m_nColumn].Text.CompareTo(lviX.SubItems[m_nColumn].Text);
+				DateTime dtL = TimeUtil.FromDisplayString(strL);
+				DateTime dtR = TimeUtil.FromDisplayString(strR);
+				return dtL.CompareTo(dtR);
+			}
+			else return StrUtil.CompareNaturally(strL, strR);
 		}
 	}
 }

@@ -56,6 +56,10 @@ DEL /Q ..\Plugins\SamplePluginCpp\*.aps
 DEL /Q ..\Plugins\SamplePluginCpp\*.user
 
 RMDIR /S /Q ..\Translation\TrlUtil\obj
+RMDIR /S /Q ..\Translation\TrlUtil\Build
 DEL ..\Translation\TrlUtil.pdb
+DEL ..\Translation\TrlUtil.vshost.exe
+DEL ..\Translation\KeePass.exe
+DEL ..\Translation\KeePass.pdb
 
 CLS

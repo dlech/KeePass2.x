@@ -288,5 +288,21 @@ namespace KeePassLib.Serialization
 		{
 			return (m_strUrl.IndexOf(@"://") < 0);
 		}
+
+		public void ClearCredentials(bool bDependingOnRememberMode)
+		{
+			if((bDependingOnRememberMode == false) ||
+				(m_ioCredSaveMode == IOCredSaveMode.NoSave))
+			{
+				m_strUser = string.Empty;
+			}
+
+			if((bDependingOnRememberMode == false) ||
+				(m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
+				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly))
+			{
+				m_strPassword = string.Empty;
+			}
+		}
 	}
 }

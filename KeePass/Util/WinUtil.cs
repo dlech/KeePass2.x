@@ -39,6 +39,8 @@ namespace KeePass.Util
 	public static class WinUtil
 	{
 		private static bool m_bIsWindows9x = false;
+		private static bool m_bIsWindows2000 = false;
+		private static bool m_bIsWindowsXP = false;
 		private static bool m_bIsAtLeastWindowsVista = false;
 
 		private const int ERROR_ACCESS_DENIED = 5;
@@ -48,6 +50,16 @@ namespace KeePass.Util
 			get { return m_bIsWindows9x; }
 		}
 
+		public static bool IsWindows2000
+		{
+			get { return m_bIsWindows2000; }
+		}
+
+		public static bool IsWindowsXP
+		{
+			get { return m_bIsWindowsXP; }
+		}
+
 		public static bool IsAtLeastWindowsVista
 		{
 			get { return m_bIsAtLeastWindowsVista; }
@@ -55,11 +67,13 @@ namespace KeePass.Util
 
 		static WinUtil()
 		{
-			m_bIsWindows9x = (Environment.OSVersion.Platform ==
-				PlatformID.Win32Windows);
+			OperatingSystem os = Environment.OSVersion;
+			Version v = os.Version;
 
-			m_bIsAtLeastWindowsVista =
-				(Environment.OSVersion.Version.Major >= 6);
+			m_bIsWindows9x = (os.Platform == PlatformID.Win32Windows);
+			m_bIsWindows2000 = ((v.Major == 5) && (v.Minor == 0));
+			m_bIsWindowsXP = ((v.Major == 5) && (v.Minor == 1));
+			m_bIsAtLeastWindowsVista = (v.Major >= 6);
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)
@@ -101,7 +115,7 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
 
 			strUrl = StrUtil.FillPlaceholders(strUrl, peDataSource, strThisExe,
-				pwDatabase, bCmdQuotes, false);
+				pwDatabase, bCmdQuotes, false, 0);
 			strUrl = AppLocator.FillPlaceholders(strUrl, false);
 			strUrl = EntryUtil.FillPlaceholders(strUrl, peDataSource, false);
 
@@ -273,6 +287,92 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			return StrUtil.CompactString3Dots(strPath, nMaxChars);
+		}
+
+		public static bool FlushStorageBuffers(char chDriveLetter, bool bOnlyIfRemovable)
+		{
+			string strDriveLetter = new string(chDriveLetter, 1);
+			bool bResult = true;
+
+			try
+			{
+				if(bOnlyIfRemovable)
+				{
+					DriveInfo di = new DriveInfo(strDriveLetter);
+					if(di.DriveType != DriveType.Removable) return true;
+				}
+
+				string strDevice = "\\\\.\\" + strDriveLetter + ":";
+
+				IntPtr hDevice = NativeMethods.CreateFile(strDevice,
+					NativeMethods.EFileAccess.GenericRead | NativeMethods.EFileAccess.GenericWrite,
+					NativeMethods.EFileShare.Read | NativeMethods.EFileShare.Write,
+					IntPtr.Zero, NativeMethods.ECreationDisposition.OpenExisting,
+					0, IntPtr.Zero);
+				if(NativeMethods.IsInvalidHandleValue(hDevice))
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				string strDir = FreeDriveIfCurrent(chDriveLetter);
+
+				uint dwDummy;
+				if(NativeMethods.DeviceIoControl(hDevice, NativeMethods.FSCTL_LOCK_VOLUME,
+					IntPtr.Zero, 0, IntPtr.Zero, 0, out dwDummy, IntPtr.Zero) != false)
+				{
+					if(NativeMethods.DeviceIoControl(hDevice, NativeMethods.FSCTL_UNLOCK_VOLUME,
+						IntPtr.Zero, 0, IntPtr.Zero, 0, out dwDummy, IntPtr.Zero) == false)
+					{
+						Debug.Assert(false);
+					}
+				}
+				else bResult = false;
+
+				if(strDir.Length > 0) Directory.SetCurrentDirectory(strDir);
+
+				if(!NativeMethods.CloseHandle(hDevice)) { Debug.Assert(false); }
+			}
+			catch(Exception)
+			{
+				Debug.Assert(false);
+				return false;
+			}
+
+			return bResult;
+		}
+
+		public static bool FlushStorageBuffers(string strFileOnStorage, bool bOnlyIfRemovable)
+		{
+			if(strFileOnStorage == null) { Debug.Assert(false); return false; }
+			if(strFileOnStorage.Length < 3) return false;
+			if(strFileOnStorage[1] != ':') return false;
+			if(strFileOnStorage[2] != '\\') return false;
+
+			return FlushStorageBuffers(char.ToUpper(strFileOnStorage[0]), bOnlyIfRemovable);
+		}
+
+		private static string FreeDriveIfCurrent(char chDriveLetter)
+		{
+			try
+			{
+				string strCur = Directory.GetCurrentDirectory();
+				if((strCur == null) || (strCur.Length < 3)) return string.Empty;
+				if(strCur[1] != ':') return string.Empty;
+				if(strCur[2] != '\\') return string.Empty;
+
+				char chPar = char.ToUpper(chDriveLetter);
+				char chCur = char.ToUpper(strCur[0]);
+				if(chPar != chCur) return string.Empty;
+
+				string strTemp = Path.GetTempPath();
+				Directory.SetCurrentDirectory(strTemp);
+
+				return strCur;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return string.Empty;
 		}
 	}
 }
