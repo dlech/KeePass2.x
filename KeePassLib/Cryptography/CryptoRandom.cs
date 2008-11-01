@@ -24,7 +24,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Threading;
 
 using KeePassLib.Utility;
 

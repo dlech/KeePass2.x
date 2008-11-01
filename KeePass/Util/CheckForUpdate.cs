@@ -30,6 +30,7 @@ using System.Threading;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Resources;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -41,29 +42,37 @@ namespace KeePass.Util
 		private const string ElemVersionU = "Version32";
 		private const string ElemVersionStr = "VersionDisplayString";
 
-		private static string m_strVersionURL = string.Empty;
-		private static ToolStripStatusLabel m_tsResultsViewer = null;
+		private static volatile string m_strVersionURL = string.Empty;
+		private static volatile ToolStripStatusLabel m_tsResultsViewer = null;
 
-		public static void StartAsync(string strVersionURL, ToolStripStatusLabel tsResultsViewer)
+		public static void StartAsync(string strVersionUrl, ToolStripStatusLabel tsResultsViewer)
 		{
-			m_strVersionURL = strVersionURL;
+			m_strVersionURL = strVersionUrl;
 			m_tsResultsViewer = tsResultsViewer;
 
+			// Local, but thread will continue to run anyway
 			Thread th = new Thread(new ThreadStart(CheckForUpdate.OnStartCheck));
 			th.Start();
 		}
 
 		private static void OnStartCheck()
 		{
-			WebClient webClient = new WebClient();
-			webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+			try
+			{
+				WebClient webClient = new WebClient();
+				webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-			Uri uri = new Uri(m_strVersionURL);
+				Uri uri = new Uri(m_strVersionURL);
 
-			webClient.DownloadDataCompleted +=
-				new DownloadDataCompletedEventHandler(OnDownloadCompleted);
+				webClient.DownloadDataCompleted +=
+					new DownloadDataCompletedEventHandler(OnDownloadCompleted);
 
-			try { webClient.DownloadDataAsync(uri); }
+				webClient.DownloadDataAsync(uri);
+			}
+			catch(NotImplementedException)
+			{
+				ReportStatusEx(KLRes.FrameworkNotImplExcp, true);
+			}
 			catch(Exception) { }
 		}
 
@@ -73,25 +82,15 @@ namespace KeePass.Util
 
 			if(strXmlFile == null)
 			{
-				try
+				if(e.Error != null)
 				{
-					if(e.Error != null)
-					{
-						if(m_tsResultsViewer == null)
-							MessageService.ShowWarning(KPRes.DownloadFailed, e);
-						else if(e.Error.Message != null)
-							m_tsResultsViewer.Text = KPRes.DownloadFailed + " " +
-								e.Error.Message;
-					}
-					else
-					{
-						if(m_tsResultsViewer == null)
-							MessageService.ShowWarning(KPRes.DownloadFailed);
-						else
-							m_tsResultsViewer.Text = KPRes.DownloadFailed;
-					}
+					if(m_tsResultsViewer == null)
+						MessageService.ShowWarning(KPRes.DownloadFailed, e.Error);
+					else if(e.Error.Message != null)
+						CheckForUpdate.SetTsStatus(KPRes.DownloadFailed + " " +
+							e.Error.Message);
 				}
-				catch(Exception) {} // m_tsResultsViewer not ready
+				else ReportStatusEx(KPRes.DownloadFailed, true);
 
 				return;
 			}
@@ -131,22 +130,28 @@ namespace KeePass.Util
 						WinUtil.OpenUrl(PwDefs.HomepageUrl, null);
 					}
 				}
-				else m_tsResultsViewer.Text = KPRes.ChkForUpdNewVersion;
+				else CheckForUpdate.SetTsStatus(KPRes.ChkForUpdNewVersion);
 			}
 			else if(uVersion == PwDefs.Version32)
-			{
-				if(m_tsResultsViewer == null)
-					MessageService.ShowInfo(KPRes.ChkForUpdGotLatest);
-				else
-					m_tsResultsViewer.Text = KPRes.ChkForUpdGotLatest;
-			}
+				ReportStatusEx(KPRes.ChkForUpdGotLatest, false);
 			else
+				ReportStatusEx(KPRes.UnknownFileVersion, true);
+		}
+
+		private static void ReportStatusEx(string strText, bool bIsWarning)
+		{
+			ReportStatusEx(strText, strText, bIsWarning);
+		}
+
+		private static void ReportStatusEx(string strLongText, string strShortText,
+			bool bIsWarning)
+		{
+			if(m_tsResultsViewer == null)
 			{
-				if(m_tsResultsViewer == null)
-					MessageService.ShowWarning(KPRes.UnknownFileVersion);
-				else
-					m_tsResultsViewer.Text = KPRes.UnknownFileVersion;
+				if(bIsWarning) MessageService.ShowWarning(strLongText);
+				else MessageService.ShowInfo(strLongText);
 			}
+			else CheckForUpdate.SetTsStatus(strShortText);
 		}
 
 		private static void StructureFail()
@@ -156,8 +161,34 @@ namespace KeePass.Util
 			if(m_tsResultsViewer == null)
 				MessageService.ShowWarning(KPRes.InvalidFileStructure);
 			else
-				m_tsResultsViewer.Text = KPRes.ChkForUpdGotLatest + " " +
-					KPRes.InvalidFileStructure;
+				CheckForUpdate.SetTsStatus(KPRes.ChkForUpdGotLatest + " " +
+					KPRes.InvalidFileStructure);
+		}
+
+		private static void SetTsStatus(string strText)
+		{
+			if(strText == null) { Debug.Assert(false); return; }
+			if(m_tsResultsViewer == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				ToolStrip pParent = m_tsResultsViewer.Owner;
+				if((pParent != null) && pParent.InvokeRequired)
+				{
+					pParent.Invoke(new Priv_CfuSsd(CheckForUpdate.SetTsStatusDirect),
+						new object[] { strText });
+				}
+				else CheckForUpdate.SetTsStatusDirect(strText);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public delegate void Priv_CfuSsd(string strText);
+
+		private static void SetTsStatusDirect(string strText)
+		{
+			try { m_tsResultsViewer.Text = strText; }
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

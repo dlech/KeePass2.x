@@ -25,19 +25,23 @@ using System.Drawing;
 using System.IO;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassCsv1x : FormatImporter
+	internal sealed class KeePassCsv1x : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return true; } }
+
 		public override string FormatName { get { return "KeePass CSV (1.x)"; } }
 		public override string DefaultExtension { get { return "csv"; } }
-		public override string AppGroup { get { return PwDefs.ShortProductName; } }
+		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -62,7 +66,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static bool ReadEntry(PwDatabase pwStorage, CharStream csSource)
 		{
-			PwEntry pe = new PwEntry(pwStorage.RootGroup, true, true);
+			PwEntry pe = new PwEntry(true, true);
 
 			string strTitle = ReadCsvField(csSource);
 			if(strTitle == null) return false; // No entry available
@@ -97,7 +101,7 @@ namespace KeePass.DataExchange.Formats
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectNotes, strNotes));
 
-			pwStorage.RootGroup.Entries.Add(pe);
+			pwStorage.RootGroup.AddEntry(pe, true);
 			return true;
 		}
 
@@ -129,6 +133,55 @@ namespace KeePass.DataExchange.Formats
 			}
 
 			return sb.ToString();
+		}
+
+		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+			IStatusLogger slLogger)
+		{
+			PwGroup pg = (pwExportInfo.DataGroup ?? ((pwExportInfo.ContextDatabase !=
+				null) ? pwExportInfo.ContextDatabase.RootGroup : null));
+
+			StreamWriter sw = new StreamWriter(sOutput, Encoding.UTF8);
+			sw.Write("\"Account\",\"Login Name\",\"Password\",\"Web Site\",\"Comments\"\r\n");
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				WriteCsvEntry(sw, pe);
+				return true;
+			};
+
+			if(pg != null) pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
+
+			sw.Close();
+			return true;
+		}
+
+		private static void WriteCsvEntry(StreamWriter sw, PwEntry pe)
+		{
+			if(sw == null) { Debug.Assert(false); return; }
+			if(pe == null) { Debug.Assert(false); return; }
+
+			const string strSep = "\",\"";
+
+			sw.Write("\"");
+			WriteCsvString(sw, pe.Strings.ReadSafe(PwDefs.TitleField), strSep);
+			WriteCsvString(sw, pe.Strings.ReadSafe(PwDefs.UserNameField), strSep);
+			WriteCsvString(sw, pe.Strings.ReadSafe(PwDefs.PasswordField), strSep);
+			WriteCsvString(sw, pe.Strings.ReadSafe(PwDefs.UrlField), strSep);
+			WriteCsvString(sw, pe.Strings.ReadSafe(PwDefs.NotesField), "\"\r\n");
+		}
+
+		private static void WriteCsvString(StreamWriter sw, string strText,
+			string strAppend)
+		{
+			string str = strText;
+
+			str = str.Replace("\\", "\\\\");
+			str = str.Replace("\"", "\\\"");
+
+			sw.Write(str);
+
+			if((strAppend != null) && (strAppend.Length > 0)) sw.Write(strAppend);
 		}
 	}
 }

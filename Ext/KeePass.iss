@@ -5,20 +5,22 @@
 #define MyAppName "KeePass Password Safe"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.05"
-#define KeeVersionStrWithMinor "2.05 Alpha"
-#define KeeVersionStrWithMinorPath "2.05-Alpha"
-#define KeeVersionWin "2.0.5.0"
+#define KeeVersionStr "2.06"
+#define KeeVersionStrWithMinor "2.06 Beta"
+#define KeeVersionStrWithMinorPath "2.06-Beta"
+#define KeeVersionWin "2.0.6.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
 #define KeeDevPeriod "2003-2008"
+#define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
 AppName={#MyAppName}
 AppVerName={#MyAppName} {#KeeVersionStrWithMinor}
+AppId={#MyAppId}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -39,6 +41,8 @@ VersionInfoVersion={#KeeVersionWin}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} {#KeeVersionStr} Setup
 VersionInfoCopyright=Copyright (c) {#KeeDevPeriod} {#MyAppPublisher}
+WizardImageFile=compiler:WizModernImage-IS.bmp
+WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -64,21 +68,32 @@ Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
+[Components]
+Name: Core; Description: Core KeePass Application Files; Flags: fixed; Types: custom compact full
+Name: UserDoc; Description: Help Manual; Types: custom full
+Name: KDB3Support; Description: KDB3 Files Support (KeePass 1.x); Types: custom full
+Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: custom full
+Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: custom full
+Name: NGen; Description: Optimize Application Performance; Types: custom full; ExtraDiskSpaceRequired: 1048576
+Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: custom full
+
 [Files]
 Source: ..\Build\KeePass_Distrib\KeePass.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\Build\KeePass_Distrib\KeePass.XmlSerializers.dll; DestDir: {app}; Flags: ignoreversion
+Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist
 Source: ..\Build\KeePass_Distrib\License.txt; DestDir: {app}; Flags: ignoreversion
+Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}; Flags: ignoreversion
 Source: ..\Build\KeePass_Distrib\XSL\KDB4_DetailsFull.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDB4_DetailsLite.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDB4_PasswordsOnly.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDB4_Styles.css; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDB4_Tabular.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\TableHeader.gif; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist
 Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Components: KDB3Support
 Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Components: KDB3Support
 Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Components: NativeLib
 Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Components: NativeLib
 Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Components: UserDoc
-Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}
 
 [INI]
 Filename: {app}\{#MyAppUrlName}; Section: InternetShortcut; Key: URL; String: {#MyAppURL}
@@ -92,22 +107,13 @@ Name: {userdesktop}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: deskto
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: quicklaunchicon
 
 [Run]
-Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
-Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; Languages: ; Components: NGen; WorkingDir: {app}; Flags: skipifdoesntexist
+Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: postinstall nowait skipifsilent
+Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; Components: NGen; WorkingDir: {app}; Flags: skipifdoesntexist
 Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
 
 [UninstallDelete]
 Type: files; Name: {app}\{#MyAppUrlName}
 
-[Components]
-Name: Core; Description: Core KeePass Application Files; Flags: fixed; Types: custom compact full; Languages: 
-Name: UserDoc; Description: Help Manual; Types: custom full
-Name: KDB3Support; Description: KDB3 Files Support (KeePass 1.x); Types: custom full
-Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: custom full
-Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: custom full
-Name: NGen; Description: Optimize Application Performance; Types: custom full; ExtraDiskSpaceRequired: 1048576
-Name: FileAssoc; Description: Associate .KDBX Files with KeePass; Types: custom full
-
 [UninstallRun]
-Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; Languages: ; Components: NGen; WorkingDir: {app}; Flags: skipifdoesntexist
+Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; Components: NGen; WorkingDir: {app}; Flags: skipifdoesntexist
 Filename: {app}\KeePass.exe; Parameters: -UnregisterFileExt

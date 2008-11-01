@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PwAgentXml234 : FormatImporter
+	internal sealed class PwAgentXml234 : FileFormatProvider
 	{
 		private const string ElemGroup = "group";
 		private const string ElemGroupName = "name";
@@ -49,9 +49,12 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemEntryLastModTime = "date_modified";
 		private const string ElemEntryExpireTime = "date_expire";
 
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Password Agent XML 2.3.4"; } }
 		public override string DefaultExtension { get { return "xml"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -77,9 +80,7 @@ namespace KeePass.DataExchange.Formats
 		private static void ReadGroup(XmlNode xmlNode, PwGroup pgParent, PwDatabase pwStorage)
 		{
 			PwGroup pg = new PwGroup(true, true);
-
-			pg.ParentGroup = pgParent;
-			pgParent.Groups.Add(pg);
+			pgParent.AddGroup(pg, true);
 
 			foreach(XmlNode xmlChild in xmlNode)
 			{
@@ -95,8 +96,8 @@ namespace KeePass.DataExchange.Formats
 
 		private static void ReadEntry(XmlNode xmlNode, PwGroup pgParent, PwDatabase pwStorage)
 		{
-			PwEntry pe = new PwEntry(pgParent, true, true);
-			pgParent.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pgParent.AddEntry(pe, true);
 
 			DateTime dt;
 			foreach(XmlNode xmlChild in xmlNode)
@@ -106,7 +107,7 @@ namespace KeePass.DataExchange.Formats
 						pwStorage.MemoryProtection.ProtectTitle,
 						ImportUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryType)
-					pe.IconID = (ImportUtil.SafeInnerText(xmlChild) != "1") ?
+					pe.IconId = (ImportUtil.SafeInnerText(xmlChild) != "1") ?
 						PwIcon.Key : PwIcon.PaperNew;
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(

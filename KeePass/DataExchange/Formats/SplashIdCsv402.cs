@@ -32,13 +32,16 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class SplashIdCsv402 : FormatImporter
+	internal sealed class SplashIdCsv402 : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "SplashID CSV 4.02"; } }
 		public override string DefaultExtension { get { return "csv"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 		
-		public override bool AppendsToRootGroupOnly { get { return false; } }
+		public override bool ImportAppendsToRootGroupOnly { get { return false; } }
 
 		public override Image SmallIcon
 		{
@@ -151,15 +154,14 @@ namespace KeePass.DataExchange.Formats
 					PwIcon.FolderOpen : pwIcon);
 
 				pg = new PwGroup(true, true, strGroupName, pwGroupIcon);
-				pg.ParentGroup = pwStorage.RootGroup;
-				pwStorage.RootGroup.Groups.Add(pg);
+				pwStorage.RootGroup.AddGroup(pg, true);
 				dictGroups.Add(strGroupName, pg);
 			}
 
-			PwEntry pe = new PwEntry(pg, true, true);
-			pg.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pg.AddEntry(pe, true);
 
-			pe.IconID = pwIcon;
+			pe.IconId = pwIcon;
 
 			for(int iField = 0; iField < 9; ++iField)
 			{
@@ -168,8 +170,7 @@ namespace KeePass.DataExchange.Formats
 
 				string strLookup = ((mp != null) ? mp.FieldNames[iField] :
 					null);
-				string strField = ((strLookup != null) ? strLookup :
-					"Field " + (iField + 1).ToString());
+				string strField = (strLookup ?? ("Field " + (iField + 1).ToString()));
 
 				pe.Strings.Set(strField, new ProtectedString(false,
 					strData));
@@ -199,21 +200,18 @@ namespace KeePass.DataExchange.Formats
 			public string TypeName
 			{
 				get { return m_strTypeName; }
-				set { m_strTypeName = value; }
 			}
 
 			private PwIcon m_pwIcon;
 			public PwIcon Icon
 			{
 				get { return m_pwIcon; }
-				set { m_pwIcon = value; }
 			}
 
 			private string[] m_vFieldNames = new string[9];
 			public string[] FieldNames
 			{
 				get { return m_vFieldNames; }
-				set { m_vFieldNames = value; }
 			}
 
 			public SplashIdMapping(string strTypeName, PwIcon pwIcon, string[] vFieldNames)

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53573E4E-33CB-4FDB-8698-C95F5E40E7F3}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -54,6 +54,7 @@
     <Compile Include="Cryptography\CryptoRandom.cs" />
     <Compile Include="Cryptography\CryptoRandomStream.cs" />
     <Compile Include="Cryptography\Cipher\ICipherEngine.cs" />
+    <Compile Include="Cryptography\HashingStreamEx.cs" />
     <Compile Include="Cryptography\PasswordGenerator\CharSetBasedGenerator.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PatternBasedGenerator.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwCharSet.cs" />

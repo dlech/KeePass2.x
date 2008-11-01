@@ -183,6 +183,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private List<IOConnectionInfo> m_vItems = new List<IOConnectionInfo>();
+		[XmlArrayItem("ConnectionInfo")]
 		public List<IOConnectionInfo> Items
 		{
 			get { return m_vItems; }

@@ -47,51 +47,44 @@ namespace KeePassLib.Translation
 		}
 
 		private List<KPStringTable> m_vStringTables = new List<KPStringTable>();
+
 		[XmlArrayItem("StringTable")]
-		public KPStringTable[] StringTables
-		{
-			get { return m_vStringTables.ToArray(); }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-
-				m_vStringTables.Clear();
-				foreach(KPStringTable kpst in value)
-					m_vStringTables.Add(kpst);
-			}
-		}
-
-		[XmlIgnore]
-		public List<KPStringTable> StringTablesList
+		public List<KPStringTable> StringTables
 		{
 			get { return m_vStringTables; }
-			set { m_vStringTables = value; }
-		}
-
-		private List<KPFormCustomization> m_vForms =
-			new List<KPFormCustomization>();
-
-		[XmlArrayItem("Form")]
-		public KPFormCustomization[] Forms
-		{
-			get { return m_vForms.ToArray(); }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
 
-				m_vForms.Clear();
-				foreach(KPFormCustomization kpfc in value)
-					m_vForms.Add(kpfc);
+				m_vStringTables = value;
 			}
 		}
 
-		[XmlIgnore]
-		public List<KPFormCustomization> FormsList
+		private List<KPFormCustomization> m_vForms = new List<KPFormCustomization>();
+
+		[XmlArrayItem("Form")]
+		public List<KPFormCustomization> Forms
 		{
 			get { return m_vForms; }
-			set { m_vForms = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				m_vForms = value;
+			}
 		}
 
+		private string m_strUnusedText = string.Empty;
+		public string UnusedText
+		{
+			get { return m_strUnusedText; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				m_strUnusedText = value;
+			}
+		}
 
 		public static void SaveToFile(KPTranslation kpTrl, string strFileName)
 		{

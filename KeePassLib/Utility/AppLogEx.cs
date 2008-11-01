@@ -63,8 +63,8 @@ namespace KeePassLib.Utility
 				strTime = strTime.Replace('T', '-');
 				strTime = strTime.Replace(':', '-');
 
-				strPath += strTime + "-" + Environment.TickCount.ToString() +
-					".log.gz";
+				strPath += strTime + "-" + Environment.TickCount.ToString(
+					CultureInfo.InvariantCulture) + ".log.gz";
 
 				FileStream fsOut = new FileStream(strPath, FileMode.Create,
 					FileAccess.Write, FileShare.None);

@@ -28,9 +28,33 @@ using KeePassLib.Serialization;
 
 namespace KeePassLib.Utility
 {
+	public sealed class MessageServiceEventArgs : EventArgs
+	{
+		private string m_strTitle = string.Empty;
+		private string m_strText = string.Empty;
+		private MessageBoxButtons m_msgButtons = MessageBoxButtons.OK;
+		private MessageBoxIcon m_msgIcon = MessageBoxIcon.None;
+
+		public string Title { get { return m_strTitle; } }
+		public string Text { get { return m_strText; } }
+		public MessageBoxButtons Buttons { get { return m_msgButtons; } }
+		public MessageBoxIcon Icon { get { return m_msgIcon; } }
+
+		public MessageServiceEventArgs() { }
+
+		public MessageServiceEventArgs(string strTitle, string strText,
+			MessageBoxButtons msgButtons, MessageBoxIcon msgIcon)
+		{
+			m_strTitle = (strTitle ?? string.Empty);
+			m_strText = (strText ?? string.Empty);
+			m_msgButtons = msgButtons;
+			m_msgIcon = msgIcon;
+		}
+	}
+
 	public static class MessageService
 	{
-		private static uint m_uCurrentMessageCount = 0;
+		private static volatile uint m_uCurrentMessageCount = 0;
 
 #if !KeePassLibSD
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Information;
@@ -65,6 +89,8 @@ namespace KeePassLib.Utility
 		{
 			get { return m_uCurrentMessageCount; }
 		}
+
+		public static event EventHandler<MessageServiceEventArgs> MessageShowing;
 
 		private static string ObjectsToMessage(object[] vLines)
 		{
@@ -115,26 +141,43 @@ namespace KeePassLib.Utility
 
 		public static void ShowInfo(params object[] vLines)
 		{
+			++m_uCurrentMessageCount;
+
+			string strTitle = PwDefs.ShortProductName;
 			string strText = ObjectsToMessage(vLines);
 
-			++m_uCurrentMessageCount;
-			MessageBox.Show(strText, PwDefs.ShortProductName,
-				MessageBoxButtons.OK, m_mbiInfo, MessageBoxDefaultButton.Button1);
+			if(MessageService.MessageShowing != null)
+				MessageService.MessageShowing(null, new MessageServiceEventArgs(
+					strTitle, strText, MessageBoxButtons.OK, m_mbiInfo));
+
+			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiInfo,
+				MessageBoxDefaultButton.Button1);
+
 			--m_uCurrentMessageCount;
 		}
 
 		public static void ShowWarning(params object[] vLines)
 		{
+			++m_uCurrentMessageCount;
+
+			string strTitle = PwDefs.ShortProductName;
 			string strText = ObjectsToMessage(vLines);
 
-			++m_uCurrentMessageCount;
-			MessageBox.Show(strText, PwDefs.ShortProductName,
-				MessageBoxButtons.OK, m_mbiWarning, MessageBoxDefaultButton.Button1);
+			if(MessageService.MessageShowing != null)
+				MessageService.MessageShowing(null, new MessageServiceEventArgs(
+					strTitle, strText, MessageBoxButtons.OK, m_mbiWarning));
+
+			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiWarning,
+				MessageBoxDefaultButton.Button1);
+
 			--m_uCurrentMessageCount;
 		}
 
 		public static void ShowFatal(params object[] vLines)
 		{
+			++m_uCurrentMessageCount;
+
+			string strTitle = PwDefs.ShortProductName + @" - " + KLRes.FatalError;
 			string strText = KLRes.FatalErrorText + MessageService.NewParagraph +
 				KLRes.ErrorFeedbackRequest + MessageService.NewParagraph +
 				ObjectsToMessage(vLines);
@@ -150,37 +193,50 @@ namespace KeePassLib.Utility
 			}
 			catch(Exception) { }
 
-			++m_uCurrentMessageCount;
-			MessageBox.Show(strText, PwDefs.ShortProductName + @" - " +
-				KLRes.FatalError, MessageBoxButtons.OK, m_mbiFatal,
+			if(MessageService.MessageShowing != null)
+				MessageService.MessageShowing(null, new MessageServiceEventArgs(
+					strTitle, strText, MessageBoxButtons.OK, m_mbiFatal));
+
+			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiFatal,
 				MessageBoxDefaultButton.Button1);
+
 			--m_uCurrentMessageCount;
 		}
 
 		public static DialogResult Ask(string strText, string strTitle,
 			MessageBoxButtons mbb)
 		{
-			string strTextEx = ((strText != null) ? strText : string.Empty);
-			string strTitleEx = ((strTitle != null) ? strTitle : PwDefs.ShortProductName);
-
 			++m_uCurrentMessageCount;
-			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx, mbb,
-				m_mbiQuestion, MessageBoxDefaultButton.Button1);
-			--m_uCurrentMessageCount;
 
+			string strTextEx = (strText ?? string.Empty);
+			string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
+
+			if(MessageService.MessageShowing != null)
+				MessageService.MessageShowing(null, new MessageServiceEventArgs(
+					strTitleEx, strTextEx, mbb, m_mbiQuestion));
+
+			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx, mbb, m_mbiQuestion,
+				MessageBoxDefaultButton.Button1);
+
+			--m_uCurrentMessageCount;
 			return dr;
 		}
 
 		public static bool AskYesNo(string strText, string strTitle)
 		{
-			string strTextEx = ((strText != null) ? strText : string.Empty);
-			string strTitleEx = ((strTitle != null) ? strTitle : PwDefs.ShortProductName);
-
 			++m_uCurrentMessageCount;
-			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx, MessageBoxButtons.YesNo,
-				m_mbiQuestion, MessageBoxDefaultButton.Button1);
-			--m_uCurrentMessageCount;
 
+			string strTextEx = (strText ?? string.Empty);
+			string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
+
+			if(MessageService.MessageShowing != null)
+				MessageService.MessageShowing(null, new MessageServiceEventArgs(
+					strTitleEx, strTextEx, MessageBoxButtons.YesNo, m_mbiQuestion));
+
+			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx,
+				MessageBoxButtons.YesNo, m_mbiQuestion, MessageBoxDefaultButton.Button1);
+
+			--m_uCurrentMessageCount;
 			return (dr == DialogResult.Yes);
 		}
 
@@ -211,7 +267,8 @@ namespace KeePassLib.Utility
 			else ShowWarning(ex);
 		}
 
-		public static void ShowSaveWarning(string strFilePath, Exception ex)
+		public static void ShowSaveWarning(string strFilePath, Exception ex,
+			bool bCorruptionWarning)
 		{
 			string str = string.Empty;
 
@@ -223,14 +280,28 @@ namespace KeePassLib.Utility
 			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
 				str += MessageService.NewParagraph + ex.Message;
 
+			if(bCorruptionWarning)
+				str += MessageService.NewParagraph + KLRes.FileSaveCorruptionWarning;
+
 			ShowWarning(str);
 		}
 
-		public static void ShowSaveWarning(IOConnectionInfo ioConnection, Exception ex)
+		public static void ShowSaveWarning(IOConnectionInfo ioConnection, Exception ex,
+			bool bCorruptionWarning)
 		{
 			if(ioConnection != null)
-				ShowSaveWarning(ioConnection.GetDisplayName(), ex);
+				ShowSaveWarning(ioConnection.GetDisplayName(), ex, bCorruptionWarning);
 			else ShowWarning(ex);
+		}
+
+		public static void ExternalIncrementMessageCount()
+		{
+			++m_uCurrentMessageCount;
+		}
+
+		public static void ExternalDecrementMessageCount()
+		{
+			--m_uCurrentMessageCount;
 		}
 	}
 }

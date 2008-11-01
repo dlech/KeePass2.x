@@ -23,6 +23,7 @@ using System.Text;
 using System.Drawing;
 using System.Diagnostics;
 
+using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Util;
 
@@ -56,5 +57,7 @@ namespace KeePass.Plugins
 		CipherPool CipherPool { get; }
 
 		KeyProviderPool KeyProviderPool { get; }
+
+		FileFormatPool FileFormatPool { get; }
 	}
 }

@@ -69,6 +69,7 @@
 			this.m_ttValidationError = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEntry = new System.Windows.Forms.TabPage();
+			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_grpAttachments = new System.Windows.Forms.GroupBox();
 			this.m_btnBinView = new System.Windows.Forms.Button();
@@ -111,9 +112,6 @@
 			this.m_lvHistory = new System.Windows.Forms.ListView();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
-			this.m_dlgAttachFile = new System.Windows.Forms.OpenFileDialog();
-			this.m_dlgSaveAttachedFile = new System.Windows.Forms.SaveFileDialog();
-			this.m_dlgSaveAttachedFiles = new System.Windows.Forms.FolderBrowserDialog();
 			this.m_ctxStrMoveToStandard = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxMoveStandardTitle = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuListCtxMoveStandardUser = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,11 +125,17 @@
 			this.m_dlgColorSel = new System.Windows.Forms.ColorDialog();
 			this.m_ctxTools = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxToolsHelp = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_ctxToolsSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxToolsUrlHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsUrlSelApp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsUrlSelDoc = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxToolsUrlHelp = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxToolsFieldRefs = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsFieldRefsInTitle = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsFieldRefsInUserName = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsFieldRefsInPassword = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsFieldRefsInUrl = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsFieldRefsInNotes = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxDefaultTimes.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
@@ -225,7 +229,6 @@
 			this.m_btnIcon.Name = "m_btnIcon";
 			this.m_btnIcon.Size = new System.Drawing.Size(32, 23);
 			this.m_btnIcon.TabIndex = 3;
-			this.m_ttRect.SetToolTip(this.m_btnIcon, "Select an icon.");
 			this.m_btnIcon.UseVisualStyleBackColor = true;
 			this.m_btnIcon.Click += new System.EventHandler(this.OnBtnPickIcon);
 			// 
@@ -271,7 +274,6 @@
 			// 
 			// m_rtNotes
 			// 
-			this.m_rtNotes.AcceptsTab = true;
 			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
 			this.m_rtNotes.Name = "m_rtNotes";
 			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -421,11 +423,10 @@
 			// m_btnGenPw
 			// 
 			this.m_btnGenPw.Image = global::KeePass.Properties.Resources.B15x13_KGPG_Gen;
-			this.m_btnGenPw.Location = new System.Drawing.Point(422, 91);
+			this.m_btnGenPw.Location = new System.Drawing.Point(422, 90);
 			this.m_btnGenPw.Name = "m_btnGenPw";
 			this.m_btnGenPw.Size = new System.Drawing.Size(32, 23);
 			this.m_btnGenPw.TabIndex = 11;
-			this.m_ttRect.SetToolTip(this.m_btnGenPw, "Generate a password.");
 			this.m_btnGenPw.UseVisualStyleBackColor = true;
 			this.m_btnGenPw.Click += new System.EventHandler(this.OnPwGenClick);
 			// 
@@ -434,12 +435,11 @@
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;
 			this.m_cbHidePassword.Font = new System.Drawing.Font("Tahoma", 8.25F);
 			this.m_cbHidePassword.Image = global::KeePass.Properties.Resources.B17x05_3BlackDots;
-			this.m_cbHidePassword.Location = new System.Drawing.Point(422, 64);
+			this.m_cbHidePassword.Location = new System.Drawing.Point(422, 63);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 8;
 			this.m_cbHidePassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.m_ttRect.SetToolTip(this.m_cbHidePassword, "Show/hide password using asterisks.");
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
 			this.m_cbHidePassword.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
 			// 
@@ -447,11 +447,10 @@
 			// 
 			this.m_btnStandardExpires.ContextMenuStrip = this.m_ctxDefaultTimes;
 			this.m_btnStandardExpires.Image = global::KeePass.Properties.Resources.B16x16_History;
-			this.m_btnStandardExpires.Location = new System.Drawing.Point(422, 312);
+			this.m_btnStandardExpires.Location = new System.Drawing.Point(422, 311);
 			this.m_btnStandardExpires.Name = "m_btnStandardExpires";
 			this.m_btnStandardExpires.Size = new System.Drawing.Size(32, 23);
 			this.m_btnStandardExpires.TabIndex = 21;
-			this.m_ttRect.SetToolTip(this.m_btnStandardExpires, "Select one of the standard expire times.");
 			this.m_btnStandardExpires.UseVisualStyleBackColor = true;
 			this.m_btnStandardExpires.Click += new System.EventHandler(this.OnBtnStandardExpiresClick);
 			// 
@@ -523,6 +522,18 @@
 			this.m_tabEntry.Text = "Entry";
 			this.m_tabEntry.UseVisualStyleBackColor = true;
 			// 
+			// m_pbQuality
+			// 
+			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
+			this.m_pbQuality.Maximum = 100;
+			this.m_pbQuality.Minimum = 0;
+			this.m_pbQuality.Name = "m_pbQuality";
+			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
+			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbQuality.TabIndex = 13;
+			this.m_pbQuality.TabStop = false;
+			this.m_pbQuality.Value = 50;
+			// 
 			// m_tabAdvanced
 			// 
 			this.m_tabAdvanced.Controls.Add(this.m_grpAttachments);
@@ -571,7 +582,7 @@
 			// 
 			// m_btnBinDelete
 			// 
-			this.m_btnBinDelete.Location = new System.Drawing.Point(374, 49);
+			this.m_btnBinDelete.Location = new System.Drawing.Point(374, 48);
 			this.m_btnBinDelete.Name = "m_btnBinDelete";
 			this.m_btnBinDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnBinDelete.TabIndex = 2;
@@ -581,7 +592,7 @@
 			// 
 			// m_btnBinAdd
 			// 
-			this.m_btnBinAdd.Location = new System.Drawing.Point(374, 20);
+			this.m_btnBinAdd.Location = new System.Drawing.Point(374, 19);
 			this.m_btnBinAdd.Name = "m_btnBinAdd";
 			this.m_btnBinAdd.Size = new System.Drawing.Size(75, 23);
 			this.m_btnBinAdd.TabIndex = 1;
@@ -618,7 +629,7 @@
 			// 
 			// m_btnStrMove
 			// 
-			this.m_btnStrMove.Location = new System.Drawing.Point(374, 107);
+			this.m_btnStrMove.Location = new System.Drawing.Point(374, 106);
 			this.m_btnStrMove.Name = "m_btnStrMove";
 			this.m_btnStrMove.Size = new System.Drawing.Size(75, 23);
 			this.m_btnStrMove.TabIndex = 4;
@@ -628,7 +639,7 @@
 			// 
 			// m_btnStrAdd
 			// 
-			this.m_btnStrAdd.Location = new System.Drawing.Point(374, 20);
+			this.m_btnStrAdd.Location = new System.Drawing.Point(374, 19);
 			this.m_btnStrAdd.Name = "m_btnStrAdd";
 			this.m_btnStrAdd.Size = new System.Drawing.Size(75, 23);
 			this.m_btnStrAdd.TabIndex = 1;
@@ -638,7 +649,7 @@
 			// 
 			// m_btnStrEdit
 			// 
-			this.m_btnStrEdit.Location = new System.Drawing.Point(374, 49);
+			this.m_btnStrEdit.Location = new System.Drawing.Point(374, 48);
 			this.m_btnStrEdit.Name = "m_btnStrEdit";
 			this.m_btnStrEdit.Size = new System.Drawing.Size(75, 23);
 			this.m_btnStrEdit.TabIndex = 2;
@@ -648,7 +659,7 @@
 			// 
 			// m_btnStrDelete
 			// 
-			this.m_btnStrDelete.Location = new System.Drawing.Point(374, 78);
+			this.m_btnStrDelete.Location = new System.Drawing.Point(374, 77);
 			this.m_btnStrDelete.Name = "m_btnStrDelete";
 			this.m_btnStrDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnStrDelete.TabIndex = 3;
@@ -801,7 +812,7 @@
 			// 
 			// m_btnAutoTypeEditDefault
 			// 
-			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(378, 66);
+			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(378, 84);
 			this.m_btnAutoTypeEditDefault.Name = "m_btnAutoTypeEditDefault";
 			this.m_btnAutoTypeEditDefault.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEditDefault.TabIndex = 4;
@@ -812,7 +823,7 @@
 			// m_rbAutoTypeOverride
 			// 
 			this.m_rbAutoTypeOverride.AutoSize = true;
-			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(10, 67);
+			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(10, 65);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
 			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(153, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 2;
@@ -835,7 +846,7 @@
 			// m_lblCustomAutoType
 			// 
 			this.m_lblCustomAutoType.AutoSize = true;
-			this.m_lblCustomAutoType.Location = new System.Drawing.Point(7, 99);
+			this.m_lblCustomAutoType.Location = new System.Drawing.Point(7, 118);
 			this.m_lblCustomAutoType.Name = "m_lblCustomAutoType";
 			this.m_lblCustomAutoType.Size = new System.Drawing.Size(219, 13);
 			this.m_lblCustomAutoType.TabIndex = 5;
@@ -854,15 +865,15 @@
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(173, 66);
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(29, 86);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
-			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(199, 20);
+			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(343, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 3;
 			this.m_tbDefaultAutoTypeSeq.TextChanged += new System.EventHandler(this.OnDefaultAutoTypeSeqTextChanged);
 			// 
 			// m_btnAutoTypeEdit
 			// 
-			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(378, 144);
+			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(378, 162);
 			this.m_btnAutoTypeEdit.Name = "m_btnAutoTypeEdit";
 			this.m_btnAutoTypeEdit.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEdit.TabIndex = 8;
@@ -872,7 +883,7 @@
 			// 
 			// m_btnAutoTypeAdd
 			// 
-			this.m_btnAutoTypeAdd.Location = new System.Drawing.Point(378, 115);
+			this.m_btnAutoTypeAdd.Location = new System.Drawing.Point(378, 133);
 			this.m_btnAutoTypeAdd.Name = "m_btnAutoTypeAdd";
 			this.m_btnAutoTypeAdd.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeAdd.TabIndex = 7;
@@ -882,7 +893,7 @@
 			// 
 			// m_btnAutoTypeDelete
 			// 
-			this.m_btnAutoTypeDelete.Location = new System.Drawing.Point(378, 173);
+			this.m_btnAutoTypeDelete.Location = new System.Drawing.Point(378, 191);
 			this.m_btnAutoTypeDelete.Name = "m_btnAutoTypeDelete";
 			this.m_btnAutoTypeDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeDelete.TabIndex = 9;
@@ -896,10 +907,10 @@
 			this.m_lvAutoType.FullRowSelect = true;
 			this.m_lvAutoType.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvAutoType.HideSelection = false;
-			this.m_lvAutoType.Location = new System.Drawing.Point(10, 115);
+			this.m_lvAutoType.Location = new System.Drawing.Point(10, 134);
 			this.m_lvAutoType.Name = "m_lvAutoType";
 			this.m_lvAutoType.ShowItemToolTips = true;
-			this.m_lvAutoType.Size = new System.Drawing.Size(362, 189);
+			this.m_lvAutoType.Size = new System.Drawing.Size(362, 170);
 			this.m_lvAutoType.TabIndex = 6;
 			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
 			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
@@ -984,22 +995,6 @@
 			this.m_bannerImage.Size = new System.Drawing.Size(487, 60);
 			this.m_bannerImage.TabIndex = 16;
 			this.m_bannerImage.TabStop = false;
-			// 
-			// m_dlgAttachFile
-			// 
-			this.m_dlgAttachFile.AddExtension = false;
-			this.m_dlgAttachFile.Multiselect = true;
-			this.m_dlgAttachFile.RestoreDirectory = true;
-			this.m_dlgAttachFile.SupportMultiDottedExtensions = true;
-			this.m_dlgAttachFile.Title = "Attach File To Entry";
-			// 
-			// m_dlgSaveAttachedFile
-			// 
-			this.m_dlgSaveAttachedFile.Title = "Save Attached File As";
-			// 
-			// m_dlgSaveAttachedFiles
-			// 
-			this.m_dlgSaveAttachedFiles.Description = "Save selected attachments to:";
 			// 
 			// m_ctxStrMoveToStandard
 			// 
@@ -1087,9 +1082,11 @@
             this.m_ctxToolsSep0,
             this.m_ctxToolsUrlHelp,
             this.m_ctxToolsUrlSelApp,
-            this.m_ctxToolsUrlSelDoc});
+            this.m_ctxToolsUrlSelDoc,
+            this.m_ctxToolsSep1,
+            this.m_ctxToolsFieldRefs});
 			this.m_ctxTools.Name = "m_ctxTools";
-			this.m_ctxTools.Size = new System.Drawing.Size(222, 98);
+			this.m_ctxTools.Size = new System.Drawing.Size(222, 126);
 			// 
 			// m_ctxToolsHelp
 			// 
@@ -1099,28 +1096,25 @@
 			this.m_ctxToolsHelp.Text = "&Help";
 			this.m_ctxToolsHelp.Click += new System.EventHandler(this.OnCtxToolsHelp);
 			// 
-			// m_pbQuality
-			// 
-			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
-			this.m_pbQuality.Maximum = 100;
-			this.m_pbQuality.Minimum = 0;
-			this.m_pbQuality.Name = "m_pbQuality";
-			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
-			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbQuality.TabIndex = 13;
-			this.m_pbQuality.Value = 50;
-			// 
 			// m_ctxToolsSep0
 			// 
 			this.m_ctxToolsSep0.Name = "m_ctxToolsSep0";
 			this.m_ctxToolsSep0.Size = new System.Drawing.Size(218, 6);
+			// 
+			// m_ctxToolsUrlHelp
+			// 
+			this.m_ctxToolsUrlHelp.Image = global::KeePass.Properties.Resources.B16x16_Help;
+			this.m_ctxToolsUrlHelp.Name = "m_ctxToolsUrlHelp";
+			this.m_ctxToolsUrlHelp.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsUrlHelp.Text = "&URL Field: Help";
+			this.m_ctxToolsUrlHelp.Click += new System.EventHandler(this.OnCtxUrlHelp);
 			// 
 			// m_ctxToolsUrlSelApp
 			// 
 			this.m_ctxToolsUrlSelApp.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_ctxToolsUrlSelApp.Name = "m_ctxToolsUrlSelApp";
 			this.m_ctxToolsUrlSelApp.Size = new System.Drawing.Size(221, 22);
-			this.m_ctxToolsUrlSelApp.Text = "URL Field: Select Application...";
+			this.m_ctxToolsUrlSelApp.Text = "URL Field: Select &Application...";
 			this.m_ctxToolsUrlSelApp.Click += new System.EventHandler(this.OnCtxUrlSelApp);
 			// 
 			// m_ctxToolsUrlSelDoc
@@ -1128,16 +1122,60 @@
 			this.m_ctxToolsUrlSelDoc.Image = global::KeePass.Properties.Resources.B16x16_CompFile;
 			this.m_ctxToolsUrlSelDoc.Name = "m_ctxToolsUrlSelDoc";
 			this.m_ctxToolsUrlSelDoc.Size = new System.Drawing.Size(221, 22);
-			this.m_ctxToolsUrlSelDoc.Text = "URL Field: Select Document...";
+			this.m_ctxToolsUrlSelDoc.Text = "URL Field: Select &Document...";
 			this.m_ctxToolsUrlSelDoc.Click += new System.EventHandler(this.OnCtxUrlSelDoc);
 			// 
-			// m_ctxToolsUrlHelp
+			// m_ctxToolsSep1
 			// 
-			this.m_ctxToolsUrlHelp.Image = global::KeePass.Properties.Resources.B16x16_Help;
-			this.m_ctxToolsUrlHelp.Name = "m_ctxToolsUrlHelp";
-			this.m_ctxToolsUrlHelp.Size = new System.Drawing.Size(221, 22);
-			this.m_ctxToolsUrlHelp.Text = "URL Field: Help";
-			this.m_ctxToolsUrlHelp.Click += new System.EventHandler(this.OnCtxUrlHelp);
+			this.m_ctxToolsSep1.Name = "m_ctxToolsSep1";
+			this.m_ctxToolsSep1.Size = new System.Drawing.Size(218, 6);
+			// 
+			// m_ctxToolsFieldRefs
+			// 
+			this.m_ctxToolsFieldRefs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_ctxToolsFieldRefsInTitle,
+            this.m_ctxToolsFieldRefsInUserName,
+            this.m_ctxToolsFieldRefsInPassword,
+            this.m_ctxToolsFieldRefsInUrl,
+            this.m_ctxToolsFieldRefsInNotes});
+			this.m_ctxToolsFieldRefs.Name = "m_ctxToolsFieldRefs";
+			this.m_ctxToolsFieldRefs.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsFieldRefs.Text = "Insert Field &Reference";
+			// 
+			// m_ctxToolsFieldRefsInTitle
+			// 
+			this.m_ctxToolsFieldRefsInTitle.Name = "m_ctxToolsFieldRefsInTitle";
+			this.m_ctxToolsFieldRefsInTitle.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInTitle.Text = "In &Title Field";
+			this.m_ctxToolsFieldRefsInTitle.Click += new System.EventHandler(this.OnFieldRefInTitle);
+			// 
+			// m_ctxToolsFieldRefsInUserName
+			// 
+			this.m_ctxToolsFieldRefsInUserName.Name = "m_ctxToolsFieldRefsInUserName";
+			this.m_ctxToolsFieldRefsInUserName.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInUserName.Text = "In User &Name Field";
+			this.m_ctxToolsFieldRefsInUserName.Click += new System.EventHandler(this.OnFieldRefInUserName);
+			// 
+			// m_ctxToolsFieldRefsInPassword
+			// 
+			this.m_ctxToolsFieldRefsInPassword.Name = "m_ctxToolsFieldRefsInPassword";
+			this.m_ctxToolsFieldRefsInPassword.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInPassword.Text = "In &Password Field";
+			this.m_ctxToolsFieldRefsInPassword.Click += new System.EventHandler(this.OnFieldRefInPassword);
+			// 
+			// m_ctxToolsFieldRefsInUrl
+			// 
+			this.m_ctxToolsFieldRefsInUrl.Name = "m_ctxToolsFieldRefsInUrl";
+			this.m_ctxToolsFieldRefsInUrl.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInUrl.Text = "In &URL Field";
+			this.m_ctxToolsFieldRefsInUrl.Click += new System.EventHandler(this.OnFieldRefInUrl);
+			// 
+			// m_ctxToolsFieldRefsInNotes
+			// 
+			this.m_ctxToolsFieldRefsInNotes.Name = "m_ctxToolsFieldRefsInNotes";
+			this.m_ctxToolsFieldRefsInNotes.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInNotes.Text = "In N&otes Field";
+			this.m_ctxToolsFieldRefsInNotes.Click += new System.EventHandler(this.OnFieldRefInNotes);
 			// 
 			// PwEntryForm
 			// 
@@ -1250,9 +1288,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuExpire1Year;
 		private System.Windows.Forms.ContextMenuStrip m_ctxListOperations;
 		private System.Windows.Forms.ToolStripMenuItem m_menuListCtxCopyFieldValue;
-		private System.Windows.Forms.OpenFileDialog m_dlgAttachFile;
-		private System.Windows.Forms.SaveFileDialog m_dlgSaveAttachedFile;
-		private System.Windows.Forms.FolderBrowserDialog m_dlgSaveAttachedFiles;
 		private System.Windows.Forms.TextBox m_tbDefaultAutoTypeSeq;
 		private System.Windows.Forms.CheckBox m_cbAutoTypeEnabled;
 		private System.Windows.Forms.Label m_lblCustomAutoType;
@@ -1287,6 +1322,13 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsUrlHelp;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsUrlSelApp;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsUrlSelDoc;
+		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefs;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInTitle;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInUserName;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInPassword;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInUrl;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInNotes;
 
 	}
 }

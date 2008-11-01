@@ -1,6 +1,6 @@
 ﻿namespace KeePass.Forms
 {
-	partial class ImportDataForm
+	partial class ExchangeDataForm
 	{
 		/// <summary>
 		/// Erforderliche Designervariable.
@@ -92,7 +92,7 @@
 			this.m_lvFormats.Location = new System.Drawing.Point(9, 19);
 			this.m_lvFormats.MultiSelect = false;
 			this.m_lvFormats.Name = "m_lvFormats";
-			this.m_lvFormats.Size = new System.Drawing.Size(337, 270);
+			this.m_lvFormats.Size = new System.Drawing.Size(336, 268);
 			this.m_lvFormats.TabIndex = 1;
 			this.m_lvFormats.UseCompatibleStateImageBehavior = false;
 			this.m_lvFormats.View = System.Windows.Forms.View.Details;
@@ -124,7 +124,6 @@
 			// 
 			// m_btnSelFile
 			// 
-			this.m_btnSelFile.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_btnSelFile.Location = new System.Drawing.Point(316, 17);
 			this.m_btnSelFile.Name = "m_btnSelFile";
 			this.m_btnSelFile.Size = new System.Drawing.Size(32, 23);
@@ -145,11 +144,11 @@
 			this.m_lblFile.AutoSize = true;
 			this.m_lblFile.Location = new System.Drawing.Point(6, 22);
 			this.m_lblFile.Name = "m_lblFile";
-			this.m_lblFile.Size = new System.Drawing.Size(101, 13);
+			this.m_lblFile.Size = new System.Drawing.Size(19, 13);
 			this.m_lblFile.TabIndex = 0;
-			this.m_lblFile.Text = "Files to be imported:";
+			this.m_lblFile.Text = "<>";
 			// 
-			// ImportDataForm
+			// ExchangeDataForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -164,13 +163,13 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "ImportDataForm";
+			this.Name = "ExchangeDataForm";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<DYN>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpFormat.ResumeLayout(false);
 			this.m_grpFile.ResumeLayout(false);

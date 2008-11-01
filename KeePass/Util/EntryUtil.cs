@@ -28,6 +28,7 @@ using System.Security.Cryptography;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -124,7 +125,7 @@ namespace KeePass.Util
 
 			List<PwEntry> vEntries = Kdb4File.ReadEntries(pwDatabase, gz);
 
-			// Adjust protection settings
+			// Adjust protection settings and add entries
 			foreach(PwEntry pe in vEntries)
 			{
 				ProtectedString ps = pe.Strings.Get(PwDefs.TitleField);
@@ -142,15 +143,17 @@ namespace KeePass.Util
 				ps = pe.Strings.Get(PwDefs.NotesField);
 				if(ps != null) ps.EnableProtection(pwDatabase.MemoryProtection.ProtectNotes);
 
-				pgStorage.Entries.Add(pe);
+				pgStorage.AddEntry(pe, true);
 			}
 
 			gz.Close(); ms.Close();
 		}
 
 		public static string FillPlaceholders(string strText, PwEntry pe,
-			bool bDataAsKeySequence)
+			SprContentFlags cf)
 		{
+			if(pe == null) return strText;
+
 			string str = strText;
 
 			if(str.ToUpper().IndexOf(@"{PICKPASSWORDCHARS}") >= 0)
@@ -170,13 +173,12 @@ namespace KeePass.Util
 						if(cpf.ShowDialog() == DialogResult.OK)
 						{
 							str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
-								cpf.SelectedCharacters, false, bDataAsKeySequence);
+								SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
 						}
 					}
 				}
 
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
-					new ProtectedString(false), false, bDataAsKeySequence);
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}", string.Empty);
 			}
 
 			return str;

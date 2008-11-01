@@ -59,9 +59,9 @@ namespace KeePass.Native
 			{
 				if(hWnd != hCurrentWnd)
 				{
-					uint uStyle = GetWindowLong(hWnd, GWL_STYLE);
+					int nStyle = GetWindowStyle(hWnd);
 
-					if(((uStyle & WS_VISIBLE) != 0) &&
+					if(((nStyle & WS_VISIBLE) != 0) &&
 						(GetWindowTextLength(hWnd) > 0))
 					{
 						break;
@@ -86,7 +86,8 @@ namespace KeePass.Native
 			return false;
 		}
 
-		public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
+		// Workaround for only partially visible list view items
+		/* public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
 		{
 			Debug.Assert(lv != null); if(lv == null) return;
 			Debug.Assert(nIndex >= 0); if(nIndex < 0) return;
@@ -99,6 +100,6 @@ namespace KeePass.Native
 					new IntPtr(nIndex), new IntPtr(nPartialOK));
 			}
 			catch(Exception) { Debug.Assert(false); }
-		}
+		} */
 	}
 }

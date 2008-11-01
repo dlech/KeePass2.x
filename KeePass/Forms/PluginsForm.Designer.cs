@@ -30,11 +30,6 @@
 		{
 			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
-			this.m_chName = new System.Windows.Forms.ColumnHeader();
-			this.m_chVersion = new System.Windows.Forms.ColumnHeader();
-			this.m_chAuthor = new System.Windows.Forms.ColumnHeader();
-			this.m_chDesc = new System.Windows.Forms.ColumnHeader();
-			this.m_chFile = new System.Windows.Forms.ColumnHeader();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpPluginDesc = new System.Windows.Forms.GroupBox();
@@ -57,12 +52,6 @@
 			// 
 			// m_lvPlugins
 			// 
-			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.m_chName,
-            this.m_chVersion,
-            this.m_chAuthor,
-            this.m_chDesc,
-            this.m_chFile});
 			this.m_lvPlugins.FullRowSelect = true;
 			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvPlugins.HideSelection = false;
@@ -74,31 +63,6 @@
 			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
 			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
 			this.m_lvPlugins.SelectedIndexChanged += new System.EventHandler(this.OnPluginListSelectedIndexChanged);
-			// 
-			// m_chName
-			// 
-			this.m_chName.Text = "Plugin";
-			this.m_chName.Width = 197;
-			// 
-			// m_chVersion
-			// 
-			this.m_chVersion.Text = "Version";
-			this.m_chVersion.Width = 106;
-			// 
-			// m_chAuthor
-			// 
-			this.m_chAuthor.Text = "Author";
-			this.m_chAuthor.Width = 136;
-			// 
-			// m_chDesc
-			// 
-			this.m_chDesc.Text = "Description";
-			this.m_chDesc.Width = 0;
-			// 
-			// m_chFile
-			// 
-			this.m_chFile.Text = "File Path";
-			this.m_chFile.Width = 119;
 			// 
 			// m_lblSeparator
 			// 
@@ -179,14 +143,9 @@
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ListView m_lvPlugins;
-		private System.Windows.Forms.ColumnHeader m_chName;
-		private System.Windows.Forms.ColumnHeader m_chVersion;
-		private System.Windows.Forms.ColumnHeader m_chAuthor;
 		private System.Windows.Forms.Label m_lblSeparator;
-		private System.Windows.Forms.ColumnHeader m_chFile;
 		private System.Windows.Forms.GroupBox m_grpPluginDesc;
 		private System.Windows.Forms.Label m_lblSelectedPluginDesc;
-		private System.Windows.Forms.ColumnHeader m_chDesc;
 		private System.Windows.Forms.LinkLabel m_linkPlugins;
 	}
 }

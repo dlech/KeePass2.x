@@ -51,6 +51,17 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private AceMasterPassword m_mp = new AceMasterPassword();
+		public AceMasterPassword MasterPassword
+		{
+			get { return m_mp; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_mp = value;
+			}
+		}
+
 		private bool m_bClipClearOnExit = true;
 		public bool ClipboardClearOnExit
 		{
@@ -91,6 +102,27 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_uLockAfterTime; }
 			set { m_uLockAfterTime = value; }
+		}
+	}
+
+	public sealed class AceMasterPassword
+	{
+		public AceMasterPassword()
+		{
+		}
+
+		private uint m_uMinLength = 0;
+		public uint MinimumLength
+		{
+			get { return m_uMinLength; }
+			set { m_uMinLength = value; }
+		}
+
+		private uint m_uMinQuality = 0;
+		public uint MinimumQuality
+		{
+			get { return m_uMinQuality; }
+			set { m_uMinQuality = value; }
 		}
 	}
 }

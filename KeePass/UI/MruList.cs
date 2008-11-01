@@ -134,7 +134,7 @@ namespace KeePass.UI
 
 				m_tsmiContainer.DropDownItems.Add(new ToolStripSeparator());
 
-				ToolStripMenuItem tsmi = new ToolStripMenuItem(KPRes.ClearMRU);
+				ToolStripMenuItem tsmi = new ToolStripMenuItem(KPRes.ClearMru);
 				tsmi.Image = Properties.Resources.B16x16_EditDelete;
 				tsmi.Click += ClearHandler;
 				m_tsmiContainer.DropDownItems.Add(tsmi);

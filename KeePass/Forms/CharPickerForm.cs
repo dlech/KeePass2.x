@@ -84,7 +84,8 @@ namespace KeePass.Forms
 			this.Text = KPRes.PickCharacters;
 
 			m_secWord.Attach(m_tbSelected, null, true);
-			m_cbHideChars.Checked = Program.Config.MainWindow.Columns[PwDefs.PasswordField].HideWithAsterisks;
+			m_cbHideChars.Checked = Program.Config.MainWindow.ColumnsDict[
+				PwDefs.PasswordField].HideWithAsterisks;
 
 			RecreateResizableWindowControls();
 
@@ -124,21 +125,28 @@ namespace KeePass.Forms
 
 		private void RemoveAllCharButtons()
 		{
-			foreach(Button btn in m_lButtons)
+			if((m_lButtons != null) && (m_pnlSelect != null))
 			{
-				m_pnlSelect.Controls.Remove(btn);
-				btn.Click -= this.OnSelectCharacter;
-				btn.Dispose();
+				foreach(Button btn in m_lButtons)
+				{
+					m_pnlSelect.Controls.Remove(btn);
+					btn.Click -= this.OnSelectCharacter;
+					btn.Dispose();
+				}
+
+				m_lButtons.Clear();
 			}
 
-			foreach(Label lbl in m_lLabels)
+			if((m_lLabels != null) && (m_pnlSelect != null))
 			{
-				m_pnlSelect.Controls.Remove(lbl);
-				lbl.Dispose();
-			}
+				foreach(Label lbl in m_lLabels)
+				{
+					m_pnlSelect.Controls.Remove(lbl);
+					lbl.Dispose();
+				}
 
-			m_lButtons.Clear();
-			m_lLabels.Clear();
+				m_lLabels.Clear();
+			}
 		}
 
 		private void RecreateResizableWindowControls()
@@ -150,11 +158,10 @@ namespace KeePass.Forms
 
 			RemoveAllCharButtons();
 
-			string strWord = m_psWord.ReadString();
+			string strWord = ((m_psWord != null) ? m_psWord.ReadString() : string.Empty);
 			if(strWord.Length >= 1)
 			{
 				int x = 0;
-
 				for(int i = 0; i < strWord.Length; ++i)
 				{
 					int w = ((m_pnlSelect.Width * (i + 1)) / strWord.Length) - x;
@@ -219,7 +226,8 @@ namespace KeePass.Forms
 
 		private void ProcessResize()
 		{
-			if(this.Height != m_nFormHeight) this.Height = m_nFormHeight;
+			if((this.Height != m_nFormHeight) && (m_nFormHeight != 0))
+				this.Height = m_nFormHeight;
 
 			RecreateResizableWindowControls();
 		}

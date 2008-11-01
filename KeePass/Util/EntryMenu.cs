@@ -91,7 +91,7 @@ namespace KeePass.Util
 		{
 			ToolStripMenuItem tsmi = new ToolStripMenuItem();
 			tsmi.Text = pg.Name;
-			tsmi.ImageIndex = MenuGetImageIndex(ds, pg.IconID, pg.CustomIconUuid);
+			tsmi.ImageIndex = MenuGetImageIndex(ds, pg.IconId, pg.CustomIconUuid);
 			return tsmi;
 		}
 
@@ -123,7 +123,7 @@ namespace KeePass.Util
 			else if(strTitle.Length > 0) strText = strTitle;
 			else if(strUser.Length > 0) strText = strUser;
 			tsmiEntry.Text = strText;
-			tsmiEntry.ImageIndex = MenuGetImageIndex(ds, pe.IconID, pe.CustomIconUuid);
+			tsmiEntry.ImageIndex = MenuGetImageIndex(ds, pe.IconId, pe.CustomIconUuid);
 			tsmiContainer.DropDownItems.Add(tsmiEntry);
 
 			ToolStripMenuItem tsmi;
@@ -188,7 +188,8 @@ namespace KeePass.Util
 			PwEntry pe = tsmi.Tag as PwEntry;
 			Debug.Assert(pe != null); if(pe == null) return;
 
-			ClipboardUtil.Copy(pe.Strings.ReadSafe(strField), true);
+			ClipboardUtil.Copy(pe.Strings.ReadSafe(strField), true,
+				pe, Program.MainForm.DocumentManager.ActiveDatabase);
 		}
 
 		private static void OnCopyUserName(object sender, EventArgs e)

@@ -53,13 +53,13 @@ namespace KeePass.Forms
 		{
 			m_bCreatingNew = bCreatingNew;
 
-			Debug.Assert(pwDatabase != null); if(pwDatabase == null) throw new ArgumentNullException();
+			Debug.Assert(pwDatabase != null); if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
 			m_pwDatabase = pwDatabase;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
+			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -68,6 +68,8 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
+
+			m_ttRect.SetToolTip(m_lnkCompute1SecDelay, KPRes.TransformationRounds1SecHint);
 
 			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
 			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;
@@ -95,7 +97,7 @@ namespace KeePass.Forms
 			m_lbMemProt.Items.Add(KPRes.Title, m_pwDatabase.MemoryProtection.ProtectTitle);
 			m_lbMemProt.Items.Add(KPRes.UserName, m_pwDatabase.MemoryProtection.ProtectUserName);
 			m_lbMemProt.Items.Add(KPRes.Password, m_pwDatabase.MemoryProtection.ProtectPassword);
-			m_lbMemProt.Items.Add(KPRes.URL, m_pwDatabase.MemoryProtection.ProtectUrl);
+			m_lbMemProt.Items.Add(KPRes.Url, m_pwDatabase.MemoryProtection.ProtectUrl);
 			m_lbMemProt.Items.Add(KPRes.Notes, m_pwDatabase.MemoryProtection.ProtectNotes);
 
 			// m_cbAutoEnableHiding.Checked = m_pwDatabase.MemoryProtection.AutoEnableVisualHiding;

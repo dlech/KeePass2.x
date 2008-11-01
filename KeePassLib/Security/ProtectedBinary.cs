@@ -140,7 +140,7 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public ProtectedBinary(ProtectedBinary pbTemplate)
 		{
-			Debug.Assert(pbTemplate != null); if(pbTemplate == null) throw new ArgumentNullException();
+			Debug.Assert(pbTemplate != null); if(pbTemplate == null) throw new ArgumentNullException("pbTemplate");
 
 			m_bDoProtect = pbTemplate.m_bDoProtect;
 
@@ -160,7 +160,7 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public ProtectedBinary(bool bEnableProtection, XorredBuffer xbProtected)
 		{
-			Debug.Assert(xbProtected != null); if(xbProtected == null) throw new ArgumentNullException();
+			Debug.Assert(xbProtected != null); if(xbProtected == null) throw new ArgumentNullException("xbProtected");
 
 			m_bDoProtect = bEnableProtection;
 			m_xbEncrypted = xbProtected;
@@ -262,7 +262,7 @@ namespace KeePassLib.Security
 				byte[] pb = m_xbEncrypted.ReadPlainText();
 				SetData(pb); // Clear the XorredBuffer object
 
-				return (pb != null) ? pb : new byte[0];
+				return (pb ?? new byte[0]);
 			}
 
 			if(m_pbData.Length == 0) return new byte[0];
@@ -298,7 +298,7 @@ namespace KeePassLib.Security
 		public byte[] ReadXorredData(CryptoRandomStream crsRandomSource)
 		{
 			Debug.Assert(crsRandomSource != null);
-			if(crsRandomSource == null) throw new ArgumentNullException();
+			if(crsRandomSource == null) throw new ArgumentNullException("crsRandomSource");
 
 			if(m_xbEncrypted != null)
 			{

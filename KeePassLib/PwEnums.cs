@@ -46,7 +46,7 @@ namespace KeePassLib
 	/// <summary>
 	/// Tree traversal methods.
 	/// </summary>
-	public enum TraversalMethod : uint
+	public enum TraversalMethod
 	{
 		/// <summary>
 		/// Don't traverse the tree.
@@ -57,20 +57,21 @@ namespace KeePassLib
 		/// Traverse the tree in pre-order mode, i.e. first visit all items
 		/// in the current node, then visit all subnodes.
 		/// </summary>
-		PreOrder
+		PreOrder = 1
 	}
 
 #pragma warning disable 1591 // Missing XML comments warning
 	/// <summary>
 	/// Methods for merging password databases/entries.
 	/// </summary>
-	public enum PwMergeMethod : uint
+	public enum PwMergeMethod
 	{
-		OverwriteExisting = 0,
-		KeepExisting,
-		OverwriteIfNewer,
-		CreateNewUuids,
-		Synchronize
+		None = 0,
+		OverwriteExisting = 1,
+		KeepExisting = 2,
+		OverwriteIfNewer = 3,
+		CreateNewUuids = 4,
+		Synchronize = 5
 	}
 #pragma warning restore 1591 // Missing XML comments warning
 
@@ -97,7 +98,7 @@ namespace KeePassLib
 		Energy,
 		Scanner,
 		WorldStar,
-		CdRom,
+		CDRom,
 		Monitor,
 		EMail,
 		Configuration,
@@ -142,9 +143,13 @@ namespace KeePassLib
 		Tool,
 		Home,
 		Star,
-		None,
-		SortUpArrow,
-		SortDownArrow,
+		Tux,
+		Feather,
+		Apple,
+		Wiki,
+		Money,
+		Certificate,
+		BlackBerry,
 
 		/// <summary>
 		/// Virtual identifier -- represents the number of icons.

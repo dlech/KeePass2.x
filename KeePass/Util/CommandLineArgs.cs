@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace KeePass.Util
 {
@@ -118,6 +120,48 @@ namespace KeePass.Util
 			string strKey = str.Substring(0, posMin).ToLower();
 			string strValue = str.Remove(0, posMin + 1);
 			return new KeyValuePair<string, string>(strKey, strValue);
+		}
+
+		public static string SafeSerialize(string[] args)
+		{
+			if(args == null) throw new ArgumentNullException("args");
+
+			MemoryStream ms = new MemoryStream();
+
+			XmlSerializer xml = new XmlSerializer(typeof(string[]));
+			xml.Serialize(ms, args);
+
+			return Convert.ToBase64String(ms.ToArray(), Base64FormattingOptions.None);
+		}
+
+		public static string[] SafeDeserialize(string str)
+		{
+			if(str == null) throw new ArgumentNullException("str");
+
+			byte[] pb = Convert.FromBase64String(str);
+			MemoryStream ms = new MemoryStream(pb, false);
+			XmlSerializer xml = new XmlSerializer(typeof(string[]));
+
+			try { return (string[])xml.Deserialize(ms); }
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+
+		internal void CopyFrom(CommandLineArgs args)
+		{
+			if(args == null) throw new ArgumentNullException("args");
+
+			m_vFileNames.Clear();
+			foreach(string strFile in args.FileNames)
+			{
+				m_vFileNames.Add(strFile);
+			}
+
+			foreach(KeyValuePair<string, string> kvp in args.Parameters)
+			{
+				if(!string.IsNullOrEmpty(kvp.Key)) m_vParams[kvp.Key] = kvp.Value;
+			}
 		}
 	}
 }

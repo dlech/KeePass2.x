@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 using KeePassLib.Cryptography.PasswordGenerator;
 
@@ -54,6 +55,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private List<PwProfile> m_vUserProfiles = new List<PwProfile>();
+		[XmlArrayItem("Profile")]
 		public List<PwProfile> UserProfiles
 		{
 			get { return m_vUserProfiles; }

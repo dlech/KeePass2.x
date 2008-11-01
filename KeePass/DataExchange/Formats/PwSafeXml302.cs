@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PwSafeXml302 : FormatImporter
+	internal sealed class PwSafeXml302 : FileFormatProvider
 	{
 		private string m_strLineBreak = "\n";
 
@@ -63,9 +63,12 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemTimePartDate = "date";
 		private const string ElemTimePartTime = "time";
 
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Password Safe XML 3.02"; } }
 		public override string DefaultExtension { get { return "xml"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -106,7 +109,7 @@ namespace KeePass.DataExchange.Formats
 		{
 			Debug.Assert(xmlNode != null); if(xmlNode == null) return;
 
-			PwEntry pe = new PwEntry(null, true, true);
+			PwEntry pe = new PwEntry(true, true);
 			string strGroupName = string.Empty;
 
 			List<DatePasswordPair> listHistory = null;
@@ -179,8 +182,7 @@ namespace KeePass.DataExchange.Formats
 				pgContainer = pwStorage.RootGroup.FindCreateSubTree(strGroupName,
 					new char[]{ '.' });
 
-			pe.ParentGroup = pgContainer;
-			pgContainer.Entries.Add(pe);
+			pgContainer.AddEntry(pe, true);
 
 			pgContainer.IsExpanded = true;
 		}

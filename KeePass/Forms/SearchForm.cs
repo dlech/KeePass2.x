@@ -78,7 +78,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pgRoot != null); if(m_pgRoot == null) throw new ArgumentNullException();
+			Debug.Assert(m_pgRoot != null); if(m_pgRoot == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this, this);
 
@@ -105,15 +105,10 @@ namespace KeePass.Forms
 				(sc != StringComparison.OrdinalIgnoreCase));
 
 			m_cbRegEx.Checked = Program.Config.Defaults.SearchParameters.RegularExpression;
-
-			EnableUserControls();
+			m_cbExcludeExpired.Checked = Program.Config.Defaults.SearchParameters.ExcludeExpired;
 
 			this.ActiveControl = m_tbSearch;
 			m_tbSearch.Focus();
-		}
-
-		private void EnableUserControls()
-		{
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -176,6 +171,8 @@ namespace KeePass.Forms
 			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
 				StringComparison.InvariantCulture :
 				StringComparison.InvariantCultureIgnoreCase);
+
+			sp.ExcludeExpired = m_cbExcludeExpired.Checked;
 
 			return sp;
 		}

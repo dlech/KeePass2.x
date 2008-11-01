@@ -26,12 +26,15 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 
 using KeePass.App;
 using KeePass.Native;
 using KeePass.Resources;
+using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -106,23 +109,22 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			string strUrl = strUrlToOpen;
-			bool bCmdQuotes = strUrl.StartsWith("cmd://");
-
 			strUrl = strUrl.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
 
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
 			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
 
-			strUrl = StrUtil.FillPlaceholders(strUrl, peDataSource, strThisExe,
-				pwDatabase, bCmdQuotes, false, 0);
-			strUrl = AppLocator.FillPlaceholders(strUrl, false);
-			strUrl = EntryUtil.FillPlaceholders(strUrl, peDataSource, false);
+			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrl);
 
-			if(strUrl.StartsWith("cmd://"))
+			strUrl = SprEngine.Compile(strUrl, false, peDataSource, pwDatabase,
+				false, bCmdQuotes);
+
+			if(WinUtil.IsCommandLineUrl(strUrl))
 			{
 				string strApp, strArgs;
-				StrUtil.SplitCommandLine(strUrl.Remove(0, 6), out strApp, out strArgs);
+				StrUtil.SplitCommandLine(WinUtil.GetCommandLineFromUrl(strUrl),
+					out strApp, out strArgs);
 
 				try
 				{
@@ -210,8 +212,7 @@ namespace KeePass.Util
 			return strExePath;
 		}
 
-		/*
-		private const string FontPartsSeparator = @"/:/";
+		/* private const string FontPartsSeparator = @"/:/";
 		
 		public static Font FontIDToFont(string strFontID)
 		{
@@ -252,8 +253,7 @@ namespace KeePass.Util
 			sb.Append(f.Strikeout ? "1" : "0");
 
 			return sb.ToString();
-		}
-		*/
+		} */
 
 		/// <summary>
 		/// Shorten a path.
@@ -373,6 +373,73 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			return string.Empty;
+		}
+
+		private static readonly string[] m_vIE7Windows = new string[] {
+			"Windows Internet Explorer", "Maxthon"
+		};
+
+		public static bool IsInternetExplorer7Window(string strWindowTitle)
+		{
+			if(strWindowTitle == null) return false; // No assert or throw
+			if(strWindowTitle.Length == 0) return false; // No assert or throw
+
+			foreach(string str in m_vIE7Windows)
+			{
+				if(strWindowTitle.IndexOf(str) >= 0) return true;
+			}
+
+			return false;
+		}
+
+		public static byte[] HashFile(IOConnectionInfo iocFile)
+		{
+			if(iocFile == null) { Debug.Assert(false); return null; } // Assert only
+
+			Stream sIn;
+			try
+			{
+				sIn = IOConnection.OpenRead(iocFile);
+				if(sIn == null) throw new FileNotFoundException();
+			}
+			catch(Exception) { return null; }
+
+			byte[] pbHash;
+			try
+			{
+				SHA256Managed sha256 = new SHA256Managed();
+				pbHash = sha256.ComputeHash(sIn);
+			}
+			catch(Exception) { Debug.Assert(false); sIn.Close(); return null; }
+
+			sIn.Close();
+			return pbHash;
+		}
+
+		// See GetCommandLineFromUrl when editing this method
+		public static bool IsCommandLineUrl(string strUrl)
+		{
+			if(strUrl == null) { Debug.Assert(false); return false; }
+
+			string strLower = strUrl.ToLower();
+
+			if(strLower.StartsWith("cmd://")) return true;
+			if(strLower.StartsWith("\\\\")) return true; // UNC path support
+
+			return false;
+		}
+
+		// See IsCommandLineUrl when editing this method
+		public static string GetCommandLineFromUrl(string strUrl)
+		{
+			if(strUrl == null) { Debug.Assert(false); return string.Empty; }
+
+			string strLower = strUrl.ToLower();
+
+			if(strLower.StartsWith("cmd://")) return strUrl.Remove(0, 6);
+			if(strLower.StartsWith("\\\\")) return strUrl; // UNC path support
+
+			return strUrl;
 		}
 	}
 }

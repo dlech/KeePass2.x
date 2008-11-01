@@ -27,11 +27,11 @@ using KeePassLib.Interfaces;
 namespace KeePassLib.Collections
 {
 	/// <summary>
-	/// List of objects that implement <c>IDeepClonable</c> and cannot be <c>null</c>.
+	/// List of objects that implement <c>IDeepClonable</c> and <c>IPwTreeItem</c>,
+	/// and cannot be <c>null</c>.
 	/// </summary>
 	/// <typeparam name="T">Type specifier.</typeparam>
-	public sealed class PwObjectList<T> :
-		IEnumerable<T>
+	public sealed class PwObjectList<T> : IEnumerable<T>
 		where T : class, IDeepClonable<T>
 	{
 		private List<T> m_vObjects = new List<T>();
@@ -59,6 +59,12 @@ namespace KeePassLib.Collections
 		public IEnumerator<T> GetEnumerator()
 		{
 			return m_vObjects.GetEnumerator();
+		}
+
+		public void Clear()
+		{
+			// Do not destroy contained objects!
+			m_vObjects.Clear();
 		}
 
 		/// <summary>
@@ -136,7 +142,7 @@ namespace KeePassLib.Collections
 		/// parameter is <c>null</c>.</exception>
 		public bool Remove(T pwReference)
 		{
-			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException();
+			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException("pwReference");
 
 			return m_vObjects.Remove(pwReference);
 		}

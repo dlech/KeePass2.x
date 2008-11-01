@@ -34,13 +34,16 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PwExporterXml105 : FormatImporter
+	internal sealed class PwExporterXml105 : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Password Exporter XML 1.0.5"; } }
 		public override string DefaultExtension { get { return "xml"; } }
-		public override string AppGroup { get { return KPRes.Browser; } }
+		public override string ApplicationGroup { get { return KPRes.Browser; } }
 
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -130,8 +133,8 @@ namespace KeePass.DataExchange.Formats
 
 		private static void ImportEntry(XmlNode xmlNode, PwDatabase pwStorage)
 		{
-			PwEntry pe = new PwEntry(pwStorage.RootGroup, true, true);
-			pwStorage.RootGroup.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pwStorage.RootGroup.AddEntry(pe, true);
 
 			XmlAttributeCollection col = xmlNode.Attributes;
 			if(col == null) return;

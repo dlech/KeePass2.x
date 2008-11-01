@@ -44,14 +44,12 @@ namespace KeePass.UI
 		}
 	}
 
-	public delegate void DynamicMenuEventHandler(object sender, DynamicMenuEventArgs e);
-
 	public sealed class DynamicMenu
 	{
 		private ToolStripMenuItem m_tsmiHost;
 		private List<ToolStripItem> m_vMenuItems = new List<ToolStripItem>();
 
-		public event DynamicMenuEventHandler MenuClick;
+		public event EventHandler<DynamicMenuEventArgs> MenuClick;
 
 		public DynamicMenu(ToolStripMenuItem tsmiHost)
 		{

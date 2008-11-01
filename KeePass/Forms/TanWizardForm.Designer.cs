@@ -86,7 +86,6 @@
 			// m_tbTANs
 			// 
 			this.m_tbTANs.AcceptsReturn = true;
-			this.m_tbTANs.AcceptsTab = true;
 			this.m_tbTANs.Location = new System.Drawing.Point(12, 124);
 			this.m_tbTANs.Multiline = true;
 			this.m_tbTANs.Name = "m_tbTANs";

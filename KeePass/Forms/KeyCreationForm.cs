@@ -80,6 +80,11 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
 				m_strDisplayName);
 			this.Icon = Properties.Resources.KeePass;
+			this.Text = KPRes.CreateMasterKey;
+
+			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
+			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
+			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
 
 			if(!m_bCreatingNew)
 				m_lblIntro.Text = KPRes.ChangeMasterKeyIntro;
@@ -100,9 +105,21 @@ namespace KeePass.Forms
 			m_cmbKeyFile.SelectedIndex = 0;
 
 			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
+			{
 				m_cbUserAccount.Enabled = false;
+				m_lblWindowsAccDesc.Enabled = false;
+				m_lblWindowsAccDesc2.Enabled = false;
+			}
 
+			CustomizeForScreenReader();
 			EnableUserControls();
+		}
+
+		private void CustomizeForScreenReader()
+		{
+			if(!Program.Config.UI.OptimizeForScreenReader) return;
+
+			m_cbHidePassword.Text = KPRes.HideUsingAsterisks;
 		}
 
 		private void CleanUpEx()
@@ -122,12 +139,31 @@ namespace KeePass.Forms
 					if(m_secPassword.ContentsEqualTo(m_secRepeat) == false)
 					{
 						MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
-						m_pKey = null;
 						return false;
 					}
 				}
 
+				uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;
+				if(m_secPassword.TextLength < uMinLen)
+				{
+					string strML = KPRes.MasterPasswordMinLengthFailed;
+					strML = strML.Replace(@"{PARAM}", uMinLen.ToString());
+					MessageService.ShowWarning(strML);
+					return false;
+				}
+
 				byte[] pb = m_secPassword.ToUtf8();
+
+				uint uMinQual = Program.Config.Security.MasterPassword.MinimumQuality;
+				if(QualityEstimation.EstimatePasswordBits(pb) < uMinQual)
+				{
+					string strMQ = KPRes.MasterPasswordMinQualityFailed;
+					strMQ = strMQ.Replace(@"{PARAM}", uMinQual.ToString());
+					MessageService.ShowWarning(strMQ);
+					Array.Clear(pb, 0, pb.Length);
+					return false;
+				}
+
 				m_pKey.AddUserKey(new KcpPassword(pb));
 				Array.Clear(pb, 0, pb.Length);
 			}
@@ -247,11 +283,12 @@ namespace KeePass.Forms
 
 		private void OnClickKeyFileCreate(object sender, EventArgs e)
 		{
-			m_saveKeyFileDialog.FileName = UrlUtil.StripExtension(UrlUtil.GetFileName(m_strDisplayName)) +
-				"." + AppDefs.FileExtension.KeyFile;
-			m_saveKeyFileDialog.InitialDirectory = UrlUtil.GetFileDirectory(m_strDisplayName, false);
+			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreate,
+				UrlUtil.StripExtension(UrlUtil.GetFileName(m_strDisplayName)) + "." +
+				AppDefs.FileExtension.KeyFile, UIUtil.CreateFileTypeFilter("key",
+				KPRes.KeyFiles, true), 1, "key", true);
 
-			if(m_saveKeyFileDialog.ShowDialog() == DialogResult.OK)
+			if(sfd.ShowDialog() == DialogResult.OK)
 			{
 				EntropyForm dlg = new EntropyForm();
 
@@ -261,10 +298,9 @@ namespace KeePass.Forms
 
 					try
 					{
-						KcpKeyFile.Create(m_saveKeyFileDialog.FileName,
-							pbAdditionalEntropy);
+						KcpKeyFile.Create(sfd.FileName, pbAdditionalEntropy);
 						
-						string str = m_saveKeyFileDialog.FileName;
+						string str = sfd.FileName;
 						m_cmbKeyFile.Items.Add(str);
 						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 					}
@@ -280,12 +316,13 @@ namespace KeePass.Forms
 
 		private void OnClickKeyFileBrowse(object sender, EventArgs e)
 		{
-			m_openKeyFileDialog.FileName = string.Empty;
-			m_openKeyFileDialog.InitialDirectory = UrlUtil.GetFileDirectory(m_strDisplayName, false);
+			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileUseExisting,
+				UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true), 2, null,
+				false, true);
 
-			if(m_openKeyFileDialog.ShowDialog() == DialogResult.OK)
+			if(ofd.ShowDialog() == DialogResult.OK)
 			{
-				string str = m_openKeyFileDialog.FileName;
+				string str = ofd.FileName;
 				m_cmbKeyFile.Items.Add(str);
 				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 			}

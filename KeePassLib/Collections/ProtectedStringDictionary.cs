@@ -100,7 +100,7 @@ namespace KeePassLib.Collections
 		/// is <c>null</c>.</exception>
 		public ProtectedString Get(string strName)
 		{
-			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException();
+			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			ProtectedString ps;
 			if(m_vStrings.TryGetValue(strName, out ps))
@@ -121,7 +121,7 @@ namespace KeePassLib.Collections
 		/// parameter is <c>null</c>.</exception>
 		public ProtectedString GetSafe(string strName)
 		{
-			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException();
+			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			ProtectedString ps;
 			if(m_vStrings.TryGetValue(strName, out ps))
@@ -197,8 +197,8 @@ namespace KeePassLib.Collections
 		/// parameters is <c>null</c>.</exception>
 		public void Set(string strField, ProtectedString psNewValue)
 		{
-			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException();
-			Debug.Assert(psNewValue != null); if(psNewValue == null) throw new ArgumentNullException();
+			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException("strField");
+			Debug.Assert(psNewValue != null); if(psNewValue == null) throw new ArgumentNullException("psNewValue");
 
 			m_vStrings[strField] = psNewValue;
 		}
@@ -213,7 +213,7 @@ namespace KeePassLib.Collections
 		/// parameters is <c>null</c>.</exception>
 		public bool Remove(string strField)
 		{
-			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException();
+			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException("strField");
 
 			return m_vStrings.Remove(strField);
 		}

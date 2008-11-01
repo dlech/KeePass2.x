@@ -39,8 +39,6 @@ namespace KeePass.Forms
 {
 	public partial class LanguageForm : Form, IGwmWindow
 	{
-		private List<KPTranslation> m_lTranslations = null;
-
 		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		public LanguageForm()
@@ -73,12 +71,11 @@ namespace KeePass.Forms
 
 			string strExe = WinUtil.GetExecutable();
 			string strPath = UrlUtil.GetFileDirectory(strExe, false);
-			m_lTranslations = GetAvailableTranslations(strPath);
+			GetAvailableTranslations(strPath);
 		}
 
-		private List<KPTranslation> GetAvailableTranslations(string strPath)
+		private void GetAvailableTranslations(string strPath)
 		{
-			List<KPTranslation> l = new List<KPTranslation>();
 			DirectoryInfo di = new DirectoryInfo(strPath);
 			FileInfo[] vFiles = di.GetFiles();
 
@@ -89,7 +86,6 @@ namespace KeePass.Forms
 					try
 					{
 						KPTranslation kpTrl = KPTranslation.LoadFromFile(fi.FullName);
-						l.Add(kpTrl);
 
 						ListViewItem lvi = m_lvLanguages.Items.Add(
 							kpTrl.Properties.NameEnglish, 0);
@@ -105,8 +101,6 @@ namespace KeePass.Forms
 					}
 				}
 			}
-
-			return l;
 		}
 
 		private void OnBtnClose(object sender, EventArgs e)

@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class AmpXml250 : FormatImporter
+	internal sealed class AmpXml250 : FileFormatProvider
 	{
 		private const string ElemRoot = "AmP_FILE";
 
@@ -49,9 +49,12 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemUrl = "URL_Programm";
 		private const string ElemNotes = "Kommentar";
 
-		public override string FormatName { get { return "Alle meine Passworte XML 2.50"; } }
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
+		public override string FormatName { get { return "Alle meine Passworte XML 2.50-2.75+"; } }
 		public override string DefaultExtension { get { return "xml"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -103,10 +106,9 @@ namespace KeePass.DataExchange.Formats
 		private static void LoadCategoryNode(XmlNode xmlNode, PwDatabase pwStorage)
 		{
 			PwGroup pg = new PwGroup(true, true, xmlNode.Name, PwIcon.Folder);
-			pg.ParentGroup = pwStorage.RootGroup;
-			pwStorage.RootGroup.Groups.Add(pg);
+			pwStorage.RootGroup.AddGroup(pg, true);
 
-			PwEntry pe = new PwEntry(pg, true, true);
+			PwEntry pe = new PwEntry(true, true);
 
 			foreach(XmlNode xmlChild in xmlNode)
 			{
@@ -121,7 +123,7 @@ namespace KeePass.DataExchange.Formats
 				{
 					AddEntryIfValid(pg, pe);
 
-					pe = new PwEntry(pg, true, true);
+					pe = new PwEntry(true, true);
 
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle, strInner));
@@ -159,14 +161,14 @@ namespace KeePass.DataExchange.Formats
 		private static void AddEntryIfValid(PwGroup pgContainer, PwEntry pe)
 		{
 			if(pe == null) return;
+
 			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length == 0) &&
 				(pe.Strings.ReadSafe(PwDefs.UserNameField).Length == 0))
 			{
 				return;
 			}
 
-			pe.ParentGroup = pgContainer;
-			pgContainer.Entries.Add(pe);
+			pgContainer.AddEntry(pe, true);
 		}
 	}
 }

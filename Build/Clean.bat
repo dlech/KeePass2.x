@@ -26,40 +26,37 @@ DEL ..\KeePass.ncb
 DEL /Q ..\KeePassNtv\*.aps
 DEL /Q ..\KeePassNtv\*.user
 
-RMDIR /S /Q ArcFourCipher\Debug
+RMDIR /S /Q ArcFourCipher
 RMDIR /S /Q ..\Plugins\ArcFourCipher\obj
 DEL ..\Plugins\ArcFourCipher\ArcFourCipher.csproj.user
 DEL ArcFourCipher\Release\ArcFourCipher.pdb
 
-RMDIR /S /Q KPScript\Debug
+RMDIR /S /Q KPScript
 RMDIR /S /Q ..\Plugins\KPScript\obj
 DEL ..\Plugins\KPScript\KPScript.csproj.user
-DEL KPScript\Release\KPScript.pdb
-DEL KPScript\Release\KeePass.exe
 
-RMDIR /S /Q SamplePlugin\Debug
+RMDIR /S /Q SamplePlugin
 RMDIR /S /Q ..\Plugins\SamplePlugin\obj
 DEL ..\Plugins\SamplePlugin\SamplePlugin.csproj.user
-DEL SamplePlugin\Release\SamplePlugin.pdb
 
-RMDIR /S /Q SamplePluginCpp\Debug
-DEL /Q SamplePluginCpp\Release\*.res
-DEL /Q SamplePluginCpp\Release\*.obj
-DEL /Q SamplePluginCpp\Release\*.htm
-DEL /Q SamplePluginCpp\Release\*.dep
-DEL /Q SamplePluginCpp\Release\*.intermediate
-DEL /Q SamplePluginCpp\Release\*.manifest
-DEL /Q SamplePluginCpp\Release\*.pch
-DEL /Q SamplePluginCpp\Release\*.pdb
-DEL /Q SamplePluginCpp\Release\*.idb
+RMDIR /S /Q ..\Plugins\SamplePluginCpp\Build
 DEL /Q ..\Plugins\SamplePluginCpp\*.aps
 DEL /Q ..\Plugins\SamplePluginCpp\*.user
 
 RMDIR /S /Q ..\Translation\TrlUtil\obj
 RMDIR /S /Q ..\Translation\TrlUtil\Build
+DEL ..\Translation\TrlUtil.exe
 DEL ..\Translation\TrlUtil.pdb
 DEL ..\Translation\TrlUtil.vshost.exe
+DEL ..\Translation\TrlUtil.vshost.exe.manifest
 DEL ..\Translation\KeePass.exe
+DEL ..\Translation\KeePass.XmlSerializers.dll
 DEL ..\Translation\KeePass.pdb
+DEL ..\Translation\KeePass.config.xml
+
+DEL /A:H ..\Ext\KeePassMsi\KeePassMsi.suo
+RMDIR /S /Q KeePassMsi
+
+RMDIR /S /Q KPScript
 
 CLS

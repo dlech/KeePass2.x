@@ -73,10 +73,11 @@ namespace KeePass.Forms
 			m_dtExpires.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
 				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;
 
-			m_pwIconIndex = m_pwGroup.IconID;
+			m_pwIconIndex = m_pwGroup.IconId;
 			m_pwCustomIconID = m_pwGroup.CustomIconUuid;
 			
 			m_tbName.Text = m_pwGroup.Name;
+			m_tbNotes.Text = m_pwGroup.Notes;
 
 			if(m_pwCustomIconID != PwUuid.Zero)
 				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
@@ -99,7 +100,16 @@ namespace KeePass.Forms
 				m_rbAutoTypeInherit.Checked = true;
 			else m_rbAutoTypeOverride.Checked = true;
 
+			CustomizeForScreenReader();
 			EnableControlsEx();
+		}
+
+		private void CustomizeForScreenReader()
+		{
+			if(!Program.Config.UI.OptimizeForScreenReader) return;
+
+			m_btnIcon.Text = KPRes.PickIcon;
+			m_btnAutoTypeEdit.Text = KPRes.ConfigureAutoType;
 		}
 
 		private void EnableControlsEx()
@@ -111,7 +121,8 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			m_pwGroup.Name = m_tbName.Text;
-			m_pwGroup.IconID = m_pwIconIndex;
+			m_pwGroup.Notes = m_tbNotes.Text;
+			m_pwGroup.IconId = m_pwIconIndex;
 			m_pwGroup.CustomIconUuid = m_pwCustomIconID;
 
 			m_pwGroup.Expires = m_cbExpires.Checked;
@@ -141,7 +152,7 @@ namespace KeePass.Forms
 				}
 				else // Standard icon
 				{
-					m_pwIconIndex = (PwIcon)ipf.ChosenIconID;
+					m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
 					m_pwCustomIconID = PwUuid.Zero;
 					m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
 				}

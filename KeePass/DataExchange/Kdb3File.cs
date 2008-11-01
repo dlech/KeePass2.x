@@ -31,6 +31,7 @@ using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassLib.Utility;
+using KeePassLib.Resources;
 
 namespace KeePass.DataExchange
 {
@@ -81,7 +82,8 @@ namespace KeePass.DataExchange
 		/// reference is <c>null</c>.</exception>
 		public Kdb3File(PwDatabase pwDataStore, IStatusLogger slLogger)
 		{
-			Debug.Assert(pwDataStore != null); if(pwDataStore == null) throw new ArgumentNullException();
+			Debug.Assert(pwDataStore != null);
+			if(pwDataStore == null) throw new ArgumentNullException("pwDataStore");
 			m_pwDatabase = pwDataStore;
 
 			m_slLogger = slLogger;
@@ -105,7 +107,7 @@ namespace KeePass.DataExchange
 				e = mgr.SetMasterKey(strPassword, false, null, IntPtr.Zero, false);
 			else if(!bPassword && bKeyFile)
 				e = mgr.SetMasterKey(strKeyFile, true, null, IntPtr.Zero, false);
-			else { Debug.Assert(false); throw new ArgumentException(); }
+			else { Debug.Assert(false); throw new Exception(KLRes.InvalidCompositeKey); }
 
 			return e;
 		}
@@ -124,13 +126,13 @@ namespace KeePass.DataExchange
 			Kdb3ErrorCode e;
 
 			e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-			if(e != Kdb3ErrorCode.Success) throw new InvalidOperationException("SetDatabaseKey failed!");
+			if(e != Kdb3ErrorCode.Success) throw new Exception(KLRes.InvalidCompositeKey);
 
 			e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
 			if(e != Kdb3ErrorCode.Success)
 			{
 				mgr.Unload();
-				throw new InvalidOperationException("OpenDatabase failed!");
+				throw new Exception(KLRes.FileLoadFailed);
 			}
 
 			// Copy properties
@@ -160,7 +162,7 @@ namespace KeePass.DataExchange
 				PwGroup pg = new PwGroup(true, false);
 
 				pg.Name = g.Name;
-				pg.IconID = (g.ImageID < (uint)PwIcon.Count) ? (PwIcon)g.ImageID : PwIcon.Folder;
+				pg.IconId = (g.ImageId < (uint)PwIcon.Count) ? (PwIcon)g.ImageId : PwIcon.Folder;
 				
 				pg.CreationTime = g.CreationTime.ToDateTime();
 				pg.LastModificationTime = g.LastModificationTime.ToDateTime();
@@ -174,10 +176,9 @@ namespace KeePass.DataExchange
 				while(g.Level < (vGroupStack.Count - 1))
 					vGroupStack.Pop();
 
-				pg.ParentGroup = vGroupStack.Peek();
-				vGroupStack.Peek().Groups.Add(pg);
+				vGroupStack.Peek().AddGroup(pg, true);
 
-				dictGroups[g.GroupID] = pg;
+				dictGroups[g.GroupId] = pg;
 
 				if(g.Level == (uint)(vGroupStack.Count - 1))
 					vGroupStack.Push(pg);
@@ -196,19 +197,18 @@ namespace KeePass.DataExchange
 				Kdb3Entry e = mgr.GetEntry(uEntry);
 
 				PwGroup pgContainer;
-				if(!dictGroups.TryGetValue(e.GroupID, out pgContainer))
+				if(!dictGroups.TryGetValue(e.GroupId, out pgContainer))
 				{
 					Debug.Assert(false);
 					continue;
 				}
 
-				PwEntry pe = new PwEntry(pgContainer, false, false);
-				pe.Uuid = new PwUuid(e.UUID.ToByteArray());
+				PwEntry pe = new PwEntry(false, false);
+				pe.Uuid = new PwUuid(e.Uuid.ToByteArray());
 
-				pe.ParentGroup = pgContainer;
-				pgContainer.Entries.Add(pe);
+				pgContainer.AddEntry(pe, true);
 
-				pe.IconID = (e.ImageID < (uint)PwIcon.Count) ? (PwIcon)e.ImageID : PwIcon.Key;
+				pe.IconId = (e.ImageId < (uint)PwIcon.Count) ? (PwIcon)e.ImageId : PwIcon.Key;
 
 				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectTitle, e.Title));
@@ -217,7 +217,7 @@ namespace KeePass.DataExchange
 				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectPassword, e.Password));
 				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-					m_pwDatabase.MemoryProtection.ProtectUrl, e.URL));
+					m_pwDatabase.MemoryProtection.ProtectUrl, e.Url));
 
 				string strNotes = e.Additional;
 				ImportAutoType(ref strNotes, pe);
@@ -232,10 +232,10 @@ namespace KeePass.DataExchange
 
 				pe.Expires = (pe.ExpiryTime != dtNeverExpire);
 
-				if((e.BinaryDataLen > 0) && (e.BinaryData != IntPtr.Zero))
+				if((e.BinaryDataLength > 0) && (e.BinaryData != IntPtr.Zero))
 				{
-					byte[] pbData = Kdb3Manager.ReadBinary(e.BinaryData, e.BinaryDataLen);
-					Debug.Assert(pbData.Length == e.BinaryDataLen);
+					byte[] pbData = Kdb3Manager.ReadBinary(e.BinaryData, e.BinaryDataLength);
+					Debug.Assert(pbData.Length == e.BinaryDataLength);
 
 					string strDesc = e.BinaryDescription;
 					if((strDesc == null) || (strDesc.Length == 0))
@@ -246,7 +246,7 @@ namespace KeePass.DataExchange
 
 				if(m_slLogger != null)
 					if(!m_slLogger.SetProgress((100 * uEntry) / uEntryCount))
-						throw new InvalidOperationException();
+						throw new Exception(KPRes.Cancel);
 			}
 		}
 
@@ -254,7 +254,7 @@ namespace KeePass.DataExchange
 		/// Save the contents of the current <c>PwDatabase</c> to a KDB file.
 		/// </summary>
 		/// <param name="strSaveToFile">Location to save the KDB file to.</param>
-		public void Save(string strSaveToFile)
+		public void Save(string strSaveToFile, PwGroup pgDataSource)
 		{
 			Debug.Assert(strSaveToFile != null);
 			if(strSaveToFile == null) throw new ArgumentNullException("strSaveToFile");
@@ -265,34 +265,36 @@ namespace KeePass.DataExchange
 			if(e != Kdb3ErrorCode.Success)
 			{
 				Debug.Assert(false);
-				throw new InvalidOperationException();
+				throw new Exception(KLRes.InvalidCompositeKey);
 			}
 
 			if(m_slLogger != null)
 			{
 				if(m_pwDatabase.Name.Length != 0)
-					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbName, LogStatusType.Warning);
+					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
 				if(m_pwDatabase.Description.Length != 0)
-					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDbDesc, LogStatusType.Warning);
+					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
 			}
 
 			// Set properties
 			if(m_pwDatabase.KeyEncryptionRounds >= (ulong)UInt32.MaxValue)
-				mgr.KeyTransformationRounds = UInt32.MaxValue - 1;
+				mgr.KeyTransformationRounds = unchecked(uint.MaxValue - 1);
 			else mgr.KeyTransformationRounds = (uint)m_pwDatabase.KeyEncryptionRounds;
 
+			PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
+
 			// Write groups and entries
-			Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr);
-			WriteEntries(mgr, dictGroups);
+			Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr, pgRoot);
+			WriteEntries(mgr, dictGroups, pgRoot);
 
 			e = mgr.SaveDatabase(strSaveToFile);
-			if(e != Kdb3ErrorCode.Success)
-				throw new InvalidOperationException();
+			if(e != Kdb3ErrorCode.Success) throw new Exception(KLRes.FileSaveFailed);
 
 			mgr.Unload();
 		}
 
-		private Dictionary<PwGroup, UInt32> WriteGroups(Kdb3Manager mgr)
+		private static Dictionary<PwGroup, UInt32> WriteGroups(Kdb3Manager mgr,
+			PwGroup pgRoot)
 		{
 			Dictionary<PwGroup, UInt32> dictGroups = new Dictionary<PwGroup, uint>();
 
@@ -301,14 +303,14 @@ namespace KeePass.DataExchange
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				if(pg == m_pwDatabase.RootGroup) return true;
+				if(pg == pgRoot) return true;
 
 				Kdb3Group grp = new Kdb3Group();
 
-				grp.GroupID = uGroupIndex;
-				dictGroups[pg] = grp.GroupID;
+				grp.GroupId = uGroupIndex;
+				dictGroups[pg] = grp.GroupId;
 
-				grp.ImageID = (uint)pg.IconID;
+				grp.ImageId = (uint)pg.IconId;
 				grp.Name = pg.Name;
 				grp.CreationTime.Set(pg.CreationTime);
 				grp.LastModificationTime.Set(pg.LastModificationTime);
@@ -332,16 +334,17 @@ namespace KeePass.DataExchange
 				return true;
 			};
 
-			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, null);
+			pgRoot.TraverseTree(TraversalMethod.PreOrder, gh, null);
 			Debug.Assert(dictGroups.Count == (int)(uGroupIndex - 1));
 			return dictGroups;
 		}
 
-		private void WriteEntries(Kdb3Manager mgr, Dictionary<PwGroup, uint> dictGroups)
+		private void WriteEntries(Kdb3Manager mgr, Dictionary<PwGroup, uint> dictGroups,
+			PwGroup pgRoot)
 		{
 			bool bWarnedOnce = false;
 			uint uGroupCount, uEntryCount, uEntriesSaved = 0;
-			m_pwDatabase.RootGroup.GetCounts(true, out uGroupCount, out uEntryCount);
+			pgRoot.GetCounts(true, out uGroupCount, out uEntryCount);
 
 			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
 
@@ -349,13 +352,13 @@ namespace KeePass.DataExchange
 			{
 				Kdb3Entry e = new Kdb3Entry();
 
-				e.UUID.Set(pe.Uuid.UuidBytes);
+				e.Uuid.Set(pe.Uuid.UuidBytes);
 
-				if(pe.ParentGroup != m_pwDatabase.RootGroup)
-					e.GroupID = dictGroups[pe.ParentGroup];
+				if(pe.ParentGroup != pgRoot)
+					e.GroupId = dictGroups[pe.ParentGroup];
 				else
 				{
-					e.GroupID = 1;
+					e.GroupId = 1;
 					if((m_slLogger != null) && !bWarnedOnce)
 					{
 						m_slLogger.SetText(Kdb3Prefix +
@@ -364,27 +367,22 @@ namespace KeePass.DataExchange
 					}
 
 					if(dictGroups.Count == 0)
-					{
-						if(m_slLogger != null) m_slLogger.SetText(Kdb3Prefix +
-							KPRes.FormatNoSubGroupsInRoot, LogStatusType.Error);
-
-						throw new ArgumentNullException();
-					}
+						throw new Exception(KPRes.FormatNoSubGroupsInRoot);
 				}
 
-				e.ImageID = (uint)pe.IconID;
+				e.ImageId = (uint)pe.IconId;
 
 				e.Title = pe.Strings.ReadSafe(PwDefs.TitleField);
 				e.UserName = pe.Strings.ReadSafe(PwDefs.UserNameField);
 				e.Password = pe.Strings.ReadSafe(PwDefs.PasswordField);
-				e.URL = pe.Strings.ReadSafe(PwDefs.UrlField);
+				e.Url = pe.Strings.ReadSafe(PwDefs.UrlField);
 
 				string strNotes = pe.Strings.ReadSafe(PwDefs.NotesField);
 				ExportAutoType(pe, ref strNotes);
 				ExportUrlOverride(pe, ref strNotes);
 				e.Additional = strNotes;
 
-				e.PasswordLen = (uint)e.Password.Length;
+				e.PasswordLength = (uint)e.Password.Length;
 
 				Debug.Assert(TimeUtil.PwTimeLength == 7);
 				e.CreationTime.Set(pe.CreationTime);
@@ -402,12 +400,12 @@ namespace KeePass.DataExchange
 						e.BinaryDescription = kvp.Key;
 
 						byte[] pbAttached = kvp.Value.ReadData();
-						e.BinaryDataLen = (uint)pbAttached.Length;
+						e.BinaryDataLength = (uint)pbAttached.Length;
 
-						if(e.BinaryDataLen > 0)
+						if(e.BinaryDataLength > 0)
 						{
-							hBinaryData = Marshal.AllocHGlobal((int)e.BinaryDataLen);
-							Marshal.Copy(pbAttached, 0, hBinaryData, (int)e.BinaryDataLen);
+							hBinaryData = Marshal.AllocHGlobal((int)e.BinaryDataLength);
+							Marshal.Copy(pbAttached, 0, hBinaryData, (int)e.BinaryDataLength);
 
 							e.BinaryData = hBinaryData;
 						}
@@ -440,7 +438,7 @@ namespace KeePass.DataExchange
 				return true;
 			};
 
-			if(!m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh))
+			if(!pgRoot.TraverseTree(TraversalMethod.PreOrder, null, eh))
 				throw new InvalidOperationException();
 		}
 

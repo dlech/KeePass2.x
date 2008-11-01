@@ -56,7 +56,7 @@ namespace KeePassLib.Cryptography
 			Dictionary<int, uint> vDifferences = new Dictionary<int, uint>();
 			double dblEffectiveLength = 0.0;
 
-			Debug.Assert(vPasswordChars != null); if(vPasswordChars == null) throw new ArgumentNullException();
+			Debug.Assert(vPasswordChars != null); if(vPasswordChars == null) throw new ArgumentNullException("vPasswordChars");
 
 			for(int i = 0; i < vPasswordChars.Length; i++) // Get character types
 			{
@@ -117,12 +117,14 @@ namespace KeePassLib.Cryptography
 		/// <summary>
 		/// Estimate the quality of a password.
 		/// </summary>
-		/// <param name="pbUnprotectedUTF8">Password to check, UTF-8 encoded.</param>
+		/// <param name="pbUnprotectedUtf8">Password to check, UTF-8 encoded.</param>
 		/// <returns>Estimated bit-strength of the password.</returns>
-		public static uint EstimatePasswordBits(byte[] pbUnprotectedUTF8)
+		public static uint EstimatePasswordBits(byte[] pbUnprotectedUtf8)
 		{
+			if(pbUnprotectedUtf8 == null) { Debug.Assert(false); return 0; }
+
 			UTF8Encoding utf8 = new UTF8Encoding();
-			char[] vChars = utf8.GetChars(pbUnprotectedUTF8);
+			char[] vChars = utf8.GetChars(pbUnprotectedUtf8);
 
 			uint uResult = EstimatePasswordBits(vChars);
 			Array.Clear(vChars, 0, vChars.Length);

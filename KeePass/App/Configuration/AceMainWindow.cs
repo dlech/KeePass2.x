@@ -154,6 +154,13 @@ namespace KeePass.App.Configuration
 			set { m_bMinAfterCopy = value; }
 		}
 
+		private bool m_bQuickFindExcludeExpired = false;
+		public bool QuickFindExcludeExpired
+		{
+			get { return m_bQuickFindExcludeExpired; }
+			set { m_bQuickFindExcludeExpired = value; }
+		}
+
 		private bool m_bFocusResAfterQuickFind = false;
 		public bool FocusResultsAfterQuickFind
 		{
@@ -184,7 +191,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private AceTanView m_tan = new AceTanView();
-		public AceTanView TANView
+		public AceTanView TanView
 		{
 			get { return m_tan; }
 			set
@@ -197,7 +204,7 @@ namespace KeePass.App.Configuration
 		private Dictionary<string, AceColumn> m_aceColumns =
 			new Dictionary<string, AceColumn>();
 		[XmlIgnore]
-		public Dictionary<string, AceColumn> Columns
+		public Dictionary<string, AceColumn> ColumnsDict
 		{
 			get { return m_aceColumns; }
 			set
@@ -207,7 +214,8 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		public AceColumn[] ColumnsList
+		[XmlArray("EntryListColumns")]
+		public AceColumn[] ColumnsSerializable
 		{
 			get
 			{
@@ -215,7 +223,8 @@ namespace KeePass.App.Configuration
 				int i = 0;
 				foreach(KeyValuePair<string, AceColumn> kvp in m_aceColumns)
 				{
-					a[i] = kvp.Value; ++i;
+					a[i] = kvp.Value;
+					++i;
 				}
 				return a;
 			}

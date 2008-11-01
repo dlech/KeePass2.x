@@ -71,6 +71,13 @@ namespace KeePass.App.Configuration
 			get { return m_bannerStyle; }
 			set { m_bannerStyle = value; }
 		}
+
+		private bool m_bOptScreenReader = false;
+		public bool OptimizeForScreenReader
+		{
+			get { return m_bOptScreenReader; }
+			set { m_bOptScreenReader = value; }
+		}
 	}
 
 	public sealed class AceHiding

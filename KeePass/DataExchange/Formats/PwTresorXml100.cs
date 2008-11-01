@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PwTresor100 : FormatImporter
+	internal sealed class PwTresorXml100 : FileFormatProvider
 	{
 		private const string ElemGroup = "Group";
 		private const string ElemGroupName = "groupname";
@@ -45,9 +45,12 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemEntryURL = "url";
 		private const string ElemEntryNotes = "description";
 
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Passwort.Tresor XML 1.0.2001.157"; } }
 		public override string DefaultExtension { get { return "xml"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -75,9 +78,7 @@ namespace KeePass.DataExchange.Formats
 		private static void ReadGroup(XmlNode xmlNode, PwGroup pgParent, PwDatabase pwStorage)
 		{
 			PwGroup pg = new PwGroup(true, true);
-
-			pg.ParentGroup = pgParent;
-			pgParent.Groups.Add(pg);
+			pgParent.AddGroup(pg, true);
 
 			foreach(XmlNode xmlChild in xmlNode)
 			{
@@ -93,8 +94,8 @@ namespace KeePass.DataExchange.Formats
 
 		private static void ReadEntry(XmlNode xmlNode, PwGroup pgParent, PwDatabase pwStorage)
 		{
-			PwEntry pe = new PwEntry(pgParent, true, true);
-			pgParent.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pgParent.AddEntry(pe, true);
 
 			foreach(XmlNode xmlChild in xmlNode)
 			{

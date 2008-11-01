@@ -31,8 +31,6 @@ using KeePassLib.Serialization;
 
 namespace KeePass.Forms
 {
-	public delegate void FileCreatedEventHandler(object sender, FileCreatedEventArgs e);
-
 	public sealed class FileCreatedEventArgs : EventArgs
 	{
 		private PwDatabase m_pwDatabase;
@@ -48,8 +46,6 @@ namespace KeePass.Forms
 		}
 	}
 
-	public delegate void FileOpenedEventHandler(object sender, FileOpenedEventArgs e);
-
 	public sealed class FileOpenedEventArgs : EventArgs
 	{
 		private PwDatabase m_pwDatabase;
@@ -64,13 +60,6 @@ namespace KeePass.Forms
 			m_pwDatabase = pwDatabase;
 		}
 	}
-
-	/// <summary>
-	/// Event handler definition for file-saving events.
-	/// </summary>
-	/// <param name="sender">Reserved for future use.</param>
-	/// <param name="e">Information about the file-saving event.</param>
-	public delegate void FileSavingEventHandler(object sender, FileSavingEventArgs e);
 
 	/// <summary>
 	/// Event arguments structure for the file-saving event.
@@ -109,13 +98,6 @@ namespace KeePass.Forms
 	}
 
 	/// <summary>
-	/// Event handler definition for file-saved events.
-	/// </summary>
-	/// <param name="sender">Reserved for future use.</param>
-	/// <param name="e">Information about the file-saved event.</param>
-	public delegate void FileSavedEventHandler(object sender, FileSavedEventArgs e);
-
-	/// <summary>
 	/// Event arguments structure for the file-saved event.
 	/// </summary>
 	public sealed class FileSavedEventArgs : EventArgs
@@ -148,13 +130,6 @@ namespace KeePass.Forms
 	}
 
 	/// <summary>
-	/// Event handler definition for file-closed events.
-	/// </summary>
-	/// <param name="sender">Reserved for future use.</param>
-	/// <param name="e">Information about the file-closed event.</param>
-	public delegate void FileClosedEventHandler(object sender, FileClosedEventArgs e);
-
-	/// <summary>
 	/// Event arguments structure for the file-closed event.
 	/// </summary>
 	public sealed class FileClosedEventArgs : EventArgs
@@ -172,20 +147,18 @@ namespace KeePass.Forms
 		}
 	}
 
-	public delegate void CancelEntryEventHandler(object sender, CancelEntryEventArgs e);
-
 	public sealed class CancelEntryEventArgs : CancellableOperationEventArgs
 	{
 		private PwEntry m_pwEntry;
-		private AppDefs.ColumnID m_nColumn;
+		private AppDefs.ColumnId m_nColumn;
 
 		public PwEntry Entry { get { return m_pwEntry; } }
-		public AppDefs.ColumnID ColumnID { get { return m_nColumn; } }
+		public AppDefs.ColumnId ColumnId { get { return m_nColumn; } }
 
-		public CancelEntryEventArgs(PwEntry pe, AppDefs.ColumnID colID)
+		public CancelEntryEventArgs(PwEntry pe, AppDefs.ColumnId colId)
 		{
 			m_pwEntry = pe;
-			m_nColumn = colID;
+			m_nColumn = colId;
 		}
 	}
 
@@ -194,29 +167,29 @@ namespace KeePass.Forms
 		/// <summary>
 		/// Event that is fired after a database has been created.
 		/// </summary>
-		public event FileCreatedEventHandler FileCreated;
+		public event EventHandler<FileCreatedEventArgs> FileCreated;
 
 		/// <summary>
 		/// Event that is fired after a database has been opened.
 		/// </summary>
-		public event FileOpenedEventHandler FileOpened;
+		public event EventHandler<FileOpenedEventArgs> FileOpened;
 
 		/// <summary>
 		/// Event that is fired after a database has been closed.
 		/// </summary>
-		public event FileClosedEventHandler FileClosed;
+		public event EventHandler<FileClosedEventArgs> FileClosed;
 
 		/// <summary>
 		/// Event that is fired before a database is being saved. By handling this
 		/// event, you can abort the file-saving operation.
 		/// </summary>
-		public event FileSavingEventHandler FileSaving;
+		public event EventHandler<FileSavingEventArgs> FileSaving;
 
 		/// <summary>
 		/// Event that is fired after a database has been saved.
 		/// </summary>
-		public event FileSavedEventHandler FileSaved;
+		public event EventHandler<FileSavedEventArgs> FileSaved;
 
-		public event CancelEntryEventHandler DefaultEntryAction;
+		public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
 	}
 }

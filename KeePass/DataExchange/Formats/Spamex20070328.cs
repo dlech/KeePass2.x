@@ -39,13 +39,15 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class Spamex20070328 : FormatImporter
+	internal sealed class Spamex20070328 : FileFormatProvider
 	{
-		public override string FormatName { get { return "Spamex.com 2007-03-28"; } }
-		public override string DefaultExtension { get { return ""; } }
-		public override string AppGroup { get { return KPRes.WebSites; } }
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
 
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override string FormatName { get { return "Spamex.com 2007-03-28"; } }
+		public override string ApplicationGroup { get { return KPRes.WebSites; } }
+
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 		public override bool RequiresFile { get { return false; } }
 
 		public override Image SmallIcon
@@ -105,8 +107,8 @@ namespace KeePass.DataExchange.Formats
 					strUser + @"&LoginPassword=" + strPassword + @"&Remember=1";
 
 				List<KeyValuePair<string, string>> vCookies;
-				string strMain = NetUtil.WebPageLogin(UrlLoginPage, strPostData,
-					out vCookies);
+				string strMain = NetUtil.WebPageLogin(new Uri(UrlLoginPage),
+					strPostData, out vCookies);
 
 				if(strMain.IndexOf("Welcome <b>" + strUser + "</b>") < 0)
 				{
@@ -114,7 +116,7 @@ namespace KeePass.DataExchange.Formats
 					return;
 				}
 
-				string strIndexPage = NetUtil.WebPageGetWithCookies(UrlIndexPage,
+				string strIndexPage = NetUtil.WebPageGetWithCookies(new Uri(UrlIndexPage),
 					vCookies, UrlDomain);
 
 				ImportIndex(pwStorage, strIndexPage, vCookies, slLogger);
@@ -134,8 +136,8 @@ namespace KeePass.DataExchange.Formats
 
 					vSubPages.Add(strLink);
 
-					string strSubPage = NetUtil.WebPageGetWithCookies(UrlBase +
-						strLink, vCookies, UrlDomain);
+					string strSubPage = NetUtil.WebPageGetWithCookies(new Uri(
+						UrlBase + strLink), vCookies, UrlDomain);
 
 					ImportIndex(pwStorage, strSubPage, vCookies, slLogger);
 				}
@@ -177,11 +179,11 @@ namespace KeePass.DataExchange.Formats
 		private static void ImportAccount(PwDatabase pwStorage, string strID,
 			List<KeyValuePair<string, string>> vCookies, IStatusLogger slf)
 		{
-			string strPage = NetUtil.WebPageGetWithCookies(UrlAccountPage +
-				strID, vCookies, UrlDomain);
+			string strPage = NetUtil.WebPageGetWithCookies(new Uri(
+				UrlAccountPage + strID), vCookies, UrlDomain);
 
-			PwEntry pe = new PwEntry(pwStorage.RootGroup, true, true);
-			pwStorage.RootGroup.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pwStorage.RootGroup.AddEntry(pe, true);
 
 			string str;
 

@@ -88,7 +88,7 @@ namespace KeePass.Forms
 				Kdb3Manager.LibraryBuild.ToString("X4") + ")");
 			m_lvComponents.Items.Add(lvi);
 
-			lvi = new ListViewItem(KPRes.XSLStylesheets);
+			lvi = new ListViewItem(KPRes.XslStylesheets);
 			string strPath = WinUtil.GetExecutable();
 			strPath = UrlUtil.GetFileDirectory(strPath, true);
 			bool bInstalled = File.Exists(strPath + AppDefs.XslFileHtmlLite);

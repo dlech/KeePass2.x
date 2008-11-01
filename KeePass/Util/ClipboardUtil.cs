@@ -25,8 +25,11 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 
 using KeePass.App;
+using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -37,19 +40,23 @@ namespace KeePass.Util
 
 		private const string ClipboardIgnoreFormatName = "Clipboard Viewer Ignore";
 
-		public static bool Copy(string strToCopy, bool bIsEntryInfo)
+		public static bool Copy(string strToCopy, bool bIsEntryInfo,
+			PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
 			Debug.Assert(strToCopy != null);
 			if(strToCopy == null) throw new ArgumentNullException("strToCopy");
 
-			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyID.CopyToClipboard))
+			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
+
+			string strData = SprEngine.Compile(strToCopy, false, peEntryInfo,
+				pwReferenceSource, false, false);
 
 			try
 			{
 				Clipboard.Clear();
 
-				DataObject doData = CreateProtectedDataObject(strToCopy);
+				DataObject doData = CreateProtectedDataObject(strData);
 				Clipboard.SetDataObject(doData);
 
 				m_pbDataHash32 = HashClipboard();
@@ -65,7 +72,7 @@ namespace KeePass.Util
 			Debug.Assert(pbToCopy != null);
 			if(pbToCopy == null) throw new ArgumentNullException("pbToCopy");
 
-			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyID.CopyToClipboard))
+			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
 
 			try
@@ -86,9 +93,9 @@ namespace KeePass.Util
 		}
 
 		public static bool CopyAndMinimize(string strToCopy, bool bIsEntryInfo,
-			Form formToMinimize)
+			Form formToMinimize, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			if(ClipboardUtil.Copy(strToCopy, bIsEntryInfo))
+			if(ClipboardUtil.Copy(strToCopy, bIsEntryInfo, peEntryInfo, pwReferenceSource))
 			{
 				if(formToMinimize != null)
 					formToMinimize.WindowState = FormWindowState.Minimized;

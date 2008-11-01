@@ -33,7 +33,6 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_lblTargetWindow = new System.Windows.Forms.Label();
-			this.m_lblTargetWindowInfo = new System.Windows.Forms.Label();
 			this.m_lblKeystrokeSeq = new System.Windows.Forms.Label();
 			this.m_lblKeySeqInsertInfo = new System.Windows.Forms.Label();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
@@ -41,6 +40,7 @@
 			this.m_rtbPlaceholders = new System.Windows.Forms.RichTextBox();
 			this.m_cmbWindow = new System.Windows.Forms.ComboBox();
 			this.m_lblOpenHint = new System.Windows.Forms.Label();
+			this.m_lnkWildcardRegexHint = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -93,15 +93,6 @@
 			this.m_lblTargetWindow.Size = new System.Drawing.Size(80, 13);
 			this.m_lblTargetWindow.TabIndex = 1;
 			this.m_lblTargetWindow.Text = "Target window:";
-			// 
-			// m_lblTargetWindowInfo
-			// 
-			this.m_lblTargetWindowInfo.AutoSize = true;
-			this.m_lblTargetWindowInfo.Location = new System.Drawing.Point(120, 116);
-			this.m_lblTargetWindowInfo.Name = "m_lblTargetWindowInfo";
-			this.m_lblTargetWindowInfo.Size = new System.Drawing.Size(172, 13);
-			this.m_lblTargetWindowInfo.TabIndex = 2;
-			this.m_lblTargetWindowInfo.Text = "Simple placeholders are supported.";
 			// 
 			// m_lblKeystrokeSeq
 			// 
@@ -173,6 +164,17 @@
 			this.m_lblOpenHint.TabIndex = 11;
 			this.m_lblOpenHint.Text = "Click the drop-down button on the right to see currently opened windows.";
 			// 
+			// m_lnkWildcardRegexHint
+			// 
+			this.m_lnkWildcardRegexHint.AutoSize = true;
+			this.m_lnkWildcardRegexHint.Location = new System.Drawing.Point(120, 116);
+			this.m_lnkWildcardRegexHint.Name = "m_lnkWildcardRegexHint";
+			this.m_lnkWildcardRegexHint.Size = new System.Drawing.Size(270, 13);
+			this.m_lnkWildcardRegexHint.TabIndex = 12;
+			this.m_lnkWildcardRegexHint.TabStop = true;
+			this.m_lnkWildcardRegexHint.Text = "Simple wildcards and regular expressions are supported.";
+			this.m_lnkWildcardRegexHint.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnWildcardRegexLinkClicked);
+			// 
 			// EditAutoTypeItemForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -180,6 +182,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(511, 378);
+			this.Controls.Add(this.m_lnkWildcardRegexHint);
 			this.Controls.Add(this.m_lblOpenHint);
 			this.Controls.Add(this.m_cmbWindow);
 			this.Controls.Add(this.m_rtbPlaceholders);
@@ -187,7 +190,6 @@
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lblKeySeqInsertInfo);
 			this.Controls.Add(this.m_lblKeystrokeSeq);
-			this.Controls.Add(this.m_lblTargetWindowInfo);
 			this.Controls.Add(this.m_lblTargetWindow);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
@@ -201,8 +203,8 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Auto-Type Item";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -216,7 +218,6 @@
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.Label m_lblTargetWindow;
-		private System.Windows.Forms.Label m_lblTargetWindowInfo;
 		private System.Windows.Forms.Label m_lblKeystrokeSeq;
 		private System.Windows.Forms.Label m_lblKeySeqInsertInfo;
 		private System.Windows.Forms.Label m_lblSeparator;
@@ -224,5 +225,6 @@
 		private System.Windows.Forms.RichTextBox m_rtbPlaceholders;
 		private System.Windows.Forms.ComboBox m_cmbWindow;
 		private System.Windows.Forms.Label m_lblOpenHint;
+		private System.Windows.Forms.LinkLabel m_lnkWildcardRegexHint;
 	}
 }

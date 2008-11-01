@@ -28,6 +28,9 @@ using System.Diagnostics;
 using System.Reflection;
 
 using KeePass.Resources;
+using KeePass.UI;
+
+using KeePassLib;
 using KeePassLib.Resources;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
@@ -52,6 +55,8 @@ namespace TrlUtil
 
 		private bool m_bModified = false;
 
+		private PreviewForm m_prev = new PreviewForm();
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -59,10 +64,15 @@ namespace TrlUtil
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			this.CreateStringTableUI();
+			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
 
-			m_trl.FormsList = FormTrlMgr.CreateListOfCurrentVersion();
+			this.CreateStringTableUI();
 			this.UpdateControlTree();
+
+			if(m_tvControls.SelectedNode == null)
+				m_tvControls.SelectedNode = m_tvControls.Nodes[0];
+			UpdatePreviewForm();
+			m_prev.Show();
 		}
 
 		private void CreateStringTableUI()
@@ -86,25 +96,40 @@ namespace TrlUtil
 			m_lvStrings.Columns.Add("English", (nWidth * 2) / 5);
 			m_lvStrings.Columns.Add("Translated", (nWidth * 2) / 5);
 
-			m_trl.StringTablesList.Clear();
+			m_trl.StringTables.Clear();
 			KPStringTable kpstP = new KPStringTable();
 			kpstP.Name = "KeePass.Resources.KPRes";
-			m_trl.StringTablesList.Add(kpstP);
+			m_trl.StringTables.Add(kpstP);
 			KPStringTable kpstL = new KPStringTable();
 			kpstL.Name = "KeePassLib.Resources.KLRes";
-			m_trl.StringTablesList.Add(kpstL);
+			m_trl.StringTables.Add(kpstL);
 			KPStringTable kpstM = new KPStringTable();
 			kpstM.Name = "KeePass.Forms.MainForm.m_menuMain";
-			m_trl.StringTablesList.Add(kpstM);
+			m_trl.StringTables.Add(kpstM);
 			KPStringTable kpstE = new KPStringTable();
 			kpstE.Name = "KeePass.Forms.MainForm.m_ctxPwList";
-			m_trl.StringTablesList.Add(kpstE);
+			m_trl.StringTables.Add(kpstE);
 			KPStringTable kpstG = new KPStringTable();
 			kpstG.Name = "KeePass.Forms.MainForm.m_ctxGroupList";
-			m_trl.StringTablesList.Add(kpstG);
+			m_trl.StringTables.Add(kpstG);
 			KPStringTable kpstT = new KPStringTable();
 			kpstT.Name = "KeePass.Forms.MainForm.m_ctxTray";
-			m_trl.StringTablesList.Add(kpstT);
+			m_trl.StringTables.Add(kpstT);
+			KPStringTable kpstET = new KPStringTable();
+			kpstET.Name = "KeePass.Forms.PwEntryForm.m_ctxTools";
+			m_trl.StringTables.Add(kpstET);
+			KPStringTable kpstDT = new KPStringTable();
+			kpstDT.Name = "KeePass.Forms.PwEntryForm.m_ctxDefaultTimes";
+			m_trl.StringTables.Add(kpstDT);
+			KPStringTable kpstLO = new KPStringTable();
+			kpstLO.Name = "KeePass.Forms.PwEntryForm.m_ctxListOperations";
+			m_trl.StringTables.Add(kpstLO);
+			KPStringTable kpstPG = new KPStringTable();
+			kpstPG.Name = "KeePass.Forms.PwEntryForm.m_ctxPwGen";
+			m_trl.StringTables.Add(kpstPG);
+			KPStringTable kpstSM = new KPStringTable();
+			kpstSM.Name = "KeePass.Forms.PwEntryForm.m_ctxStrMoveToStandard";
+			m_trl.StringTables.Add(kpstSM);
 
 			Type tKP = typeof(KPRes);
 			ListViewGroup lvg = new ListViewGroup("KeePass Strings");
@@ -132,7 +157,8 @@ namespace TrlUtil
 
 				KPStringTableItem kpstItem = new KPStringTableItem();
 				kpstItem.Name = strKey;
-				kpstP.StringsList.Add(kpstItem);
+				kpstItem.ValueEnglish = strEng;
+				kpstP.Strings.Add(kpstItem);
 
 				ListViewItem lvi = new ListViewItem();
 				lvi.Group = lvg;
@@ -170,7 +196,8 @@ namespace TrlUtil
 
 				KPStringTableItem kpstItem = new KPStringTableItem();
 				kpstItem.Name = strLibKey;
-				kpstL.StringsList.Add(kpstItem);
+				kpstItem.ValueEnglish = strEng;
+				kpstL.Strings.Add(kpstItem);
 
 				ListViewItem lvi = new ListViewItem();
 				lvi.Group = lvg;
@@ -198,6 +225,27 @@ namespace TrlUtil
 			lvg = new ListViewGroup("System Tray Context Menu Commands");
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstT, lvg, mf.TrayContextMenu.Items);
+
+			lvg = new ListViewGroup("Entry Tools Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			KeePass.Forms.PwEntryForm ef = new KeePass.Forms.PwEntryForm();
+			TrlAddMenuCommands(kpstET, lvg, ef.ToolsContextMenu.Items);
+
+			lvg = new ListViewGroup("Default Times Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstDT, lvg, ef.DefaultTimesContextMenu.Items);
+
+			lvg = new ListViewGroup("List Operations Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstLO, lvg, ef.ListOperationsContextMenu.Items);
+
+			lvg = new ListViewGroup("Password Generator Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstPG, lvg, ef.PasswordGeneratorContextMenu.Items);
+
+			lvg = new ListViewGroup("Standard String Movement Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstSM, lvg, ef.StandardStringMovementContextMenu.Items);
 		}
 
 		private void TrlAddMenuCommands(KPStringTable kpst, ListViewGroup grp,
@@ -206,10 +254,12 @@ namespace TrlUtil
 			foreach(ToolStripItem tsi in tsic)
 			{
 				if(tsi.Text.Length == 0) continue;
+				if(tsi.Text.StartsWith(@"<") && tsi.Text.EndsWith(@">")) continue;
 
 				KPStringTableItem kpstItem = new KPStringTableItem();
 				kpstItem.Name = tsi.Name;
-				kpst.StringsList.Add(kpstItem);
+				kpstItem.ValueEnglish = tsi.Text;
+				kpst.Strings.Add(kpstItem);
 
 				ListViewItem lvi = new ListViewItem();
 				lvi.Group = grp;
@@ -239,7 +289,7 @@ namespace TrlUtil
 
 		private void UpdateControlTree()
 		{
-			FormTrlMgr.RenderToTreeControl(m_trl.FormsList, m_tvControls);
+			FormTrlMgr.RenderToTreeControl(m_trl.Forms, m_tvControls);
 			UpdateStatusImages(null);
 		}
 
@@ -258,17 +308,10 @@ namespace TrlUtil
 
 		private void OnFileOpen(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.CheckFileExists = true;
-			ofd.CheckPathExists = true;
-			ofd.Filter = m_strFileFilter;
-			ofd.FilterIndex = 1;
-			ofd.Multiselect = false;
-			ofd.RestoreDirectory = false;
-			ofd.Title = "Open KeePass Translation";
-			ofd.ValidateNames = true;
-			if(ofd.ShowDialog() != DialogResult.OK)
-				return;
+			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog("Open KeePass Translation",
+				m_strFileFilter, 1, null, false, false);
+
+			if(ofd.ShowDialog() != DialogResult.OK) return;
 
 			KPTranslation kpTrl = null;
 			try { kpTrl = KPTranslation.LoadFromFile(ofd.FileName); }
@@ -281,38 +324,61 @@ namespace TrlUtil
 
 			m_strFile = ofd.FileName;
 
-			m_trl.Properties = kpTrl.Properties;
-			foreach(KPStringTable kpstNew in kpTrl.StringTablesList)
+			StringBuilder sbUnusedText = new StringBuilder();
+			if(kpTrl.UnusedText.Length > 0)
 			{
-				foreach(KPStringTable kpstInto in m_trl.StringTablesList)
+				if(kpTrl.UnusedText.EndsWith("\r") || kpTrl.UnusedText.EndsWith("\n"))
+					sbUnusedText.Append(kpTrl.UnusedText);
+				else sbUnusedText.AppendLine(kpTrl.UnusedText);
+			}
+
+			m_trl.Properties = kpTrl.Properties;
+			foreach(KPStringTable kpstNew in kpTrl.StringTables)
+			{
+				foreach(KPStringTable kpstInto in m_trl.StringTables)
 				{
 					if(kpstInto.Name == kpstNew.Name)
-						MergeInStringTable(kpstInto, kpstNew);
+						MergeInStringTable(kpstInto, kpstNew, sbUnusedText);
 				}
 			}
 
-			FormTrlMgr.MergeForms(m_trl.FormsList, kpTrl.FormsList);
+			FormTrlMgr.MergeForms(m_trl.Forms, kpTrl.Forms, sbUnusedText);
 
 			m_tbNameEng.Text = m_trl.Properties.NameEnglish;
 			m_tbNameLcl.Text = m_trl.Properties.NameNative;
 			m_tbLangID.Text = m_trl.Properties.Iso6391Code;
 			m_tbAuthorName.Text = m_trl.Properties.AuthorName;
 			m_tbAuthorContact.Text = m_trl.Properties.AuthorContact;
+
+			m_rtbUnusedText.Text = sbUnusedText.ToString();
+
 			this.UpdateStringTableUI();
 			this.UpdateStatusImages(null);
+			this.UpdatePreviewForm();
 		}
 
-		private void MergeInStringTable(KPStringTable tbInto, KPStringTable tbSource)
+		private void MergeInStringTable(KPStringTable tbInto, KPStringTable tbSource,
+			StringBuilder sbUnusedText)
 		{
-			foreach(KPStringTableItem kpSrc in tbSource.StringsList)
+			foreach(KPStringTableItem kpSrc in tbSource.Strings)
 			{
-				foreach(KPStringTableItem kpDst in tbInto.StringsList)
+				bool bHasAssigned = false;
+				foreach(KPStringTableItem kpDst in tbInto.Strings)
 				{
 					if(kpSrc.Name == kpDst.Name)
 					{
 						if(kpSrc.Value.Length > 0)
+						{
 							kpDst.Value = kpSrc.Value;
+							bHasAssigned = true;
+						}
 					}
+				}
+
+				if(!bHasAssigned)
+				{
+					string strTrimmed = kpSrc.Value.Trim();
+					if(strTrimmed.Length > 0) sbUnusedText.AppendLine(strTrimmed);
 				}
 			}
 		}
@@ -344,7 +410,9 @@ namespace TrlUtil
 				{
 					int iCurrentImage = tn.ImageIndex, iNewImage;
 
-					if((kpcc.TextEnglish.Length > 0) && (kpcc.Text.Length > 0))
+					if((kpcc.TextEnglish == @"<DYN>") || (kpcc.TextEnglish == @"<>"))
+						iNewImage = ((kpcc.Text.Length == 0) ? m_inxOk : m_inxWarning);
+					else if((kpcc.TextEnglish.Length > 0) && (kpcc.Text.Length > 0))
 						iNewImage = m_inxOk;
 					else if((kpcc.TextEnglish.Length > 0) && (kpcc.Text.Length == 0))
 						iNewImage = m_inxMissing;
@@ -377,6 +445,8 @@ namespace TrlUtil
 				return;
 			}
 
+			PrepareSave();
+
 			try
 			{
 				KPTranslation.SaveToFile(m_trl, m_strFile);
@@ -387,6 +457,20 @@ namespace TrlUtil
 				MessageBox.Show(ex.Message, "TrlUtil", MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}
+		}
+
+		private void PrepareSave()
+		{
+			m_trl.Properties.Application = PwDefs.ProductName;
+			m_trl.Properties.ApplicationVersion = PwDefs.VersionString;
+			m_trl.Properties.Generator = "TrlUtil";
+
+			PwUuid pwUuid = new PwUuid(true);
+			m_trl.Properties.FileUuid = pwUuid.ToHexString();
+
+			m_trl.Properties.LastModified = DateTime.Now.ToString("u");
+
+			m_trl.UnusedText = m_rtbUnusedText.Text;
 		}
 
 		private void OnFileExit(object sender, EventArgs e)
@@ -455,16 +539,8 @@ namespace TrlUtil
 
 		private void OnFileSaveAs(object sender, EventArgs e)
 		{
-			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.AddExtension = true;
-			sfd.DefaultExt = "lngx";
-			sfd.FileName = m_tbNameEng.Text + ".lngx";
-			sfd.Filter = m_strFileFilter;
-			sfd.FilterIndex = 1;
-			sfd.OverwritePrompt = true;
-			sfd.RestoreDirectory = false;
-			sfd.Title = "Save KeePass Translation";
-			sfd.ValidateNames = true;
+			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog("Save KeePass Translation",
+				m_tbNameEng.Text + ".lngx", m_strFileFilter, 1, "lngx", false);
 
 			if(sfd.ShowDialog() != DialogResult.OK) return;
 
@@ -481,6 +557,7 @@ namespace TrlUtil
 		private void OnCustomControlsAfterSelect(object sender, TreeViewEventArgs e)
 		{
 			ShowCustomControlProps(e.Node.Tag as KPControlCustomization);
+			UpdatePreviewForm();
 		}
 
 		private void ShowCustomControlProps(KPControlCustomization kpcc)
@@ -508,6 +585,7 @@ namespace TrlUtil
 			}
 
 			UpdateStatusImages(null);
+			UpdatePreviewForm();
 		}
 
 		private void OnLayoutXTextChanged(object sender, EventArgs e)
@@ -517,6 +595,8 @@ namespace TrlUtil
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.X, m_tbLayoutX.Text);
 				m_bModified = true;
+
+				UpdatePreviewForm();
 			}
 		}
 
@@ -527,6 +607,8 @@ namespace TrlUtil
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Y, m_tbLayoutY.Text);
 				m_bModified = true;
+
+				UpdatePreviewForm();
 			}
 		}
 
@@ -537,6 +619,8 @@ namespace TrlUtil
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Width, m_tbLayoutW.Text);
 				m_bModified = true;
+
+				UpdatePreviewForm();
 			}
 		}
 
@@ -547,6 +631,8 @@ namespace TrlUtil
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Height, m_tbLayoutH.Text);
 				m_bModified = true;
+
+				UpdatePreviewForm();
 			}
 		}
 
@@ -572,6 +658,51 @@ namespace TrlUtil
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
 				e.Handled = true;
+		}
+
+		private void UpdatePreviewForm()
+		{
+			TreeNode tn = m_tvControls.SelectedNode;
+			if(tn == null) return;
+			if(tn.Parent != null) tn = tn.Parent;
+			string strFormName = tn.Text;
+
+			foreach(KPFormCustomization kpfc in m_trl.Forms)
+			{
+				if(kpfc.FullName.EndsWith(strFormName))
+				{
+					UpdatePreviewForm(kpfc);
+					break;
+				}
+			}
+		}
+
+		private void UpdatePreviewForm(KPFormCustomization kpfc)
+		{
+			m_prev.Controls.Clear();
+			m_prev.CopyForm(kpfc.FormEnglish);
+			kpfc.ApplyTo(m_prev);
+		}
+
+		private void OnBtnClearUnusedText(object sender, EventArgs e)
+		{
+			m_rtbUnusedText.Text = string.Empty;
+		}
+
+		private void OnImport1xLng(object sender, EventArgs e)
+		{
+			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog("Import KeePass 1.x LNG File",
+				"KeePass 1.x LNG File (*.lng)|*.lng|All Files (*.*)|*.*", 1, "lng", false, true);
+
+			if(ofd.ShowDialog() != DialogResult.OK) return;
+
+			try { KeePass1xLngImport.Import(m_trl, ofd.FileName); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
+
+			UpdateStringTableUI();
+			UpdateControlTree();
+			m_tvControls.SelectedNode = m_tvControls.Nodes[0];
+			UpdatePreviewForm();
 		}
 	}
 }

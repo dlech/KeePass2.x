@@ -32,7 +32,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	/// based on given patterns, based on character sets, etc. are
 	/// available.
 	/// </summary>
-	public enum PasswordGeneratorType : uint
+	public enum PasswordGeneratorType
 	{
 		/// <summary>
 		/// Generator based on character spaces/sets, i.e. groups
@@ -45,7 +45,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		/// a pattern, which describes how the generated password has to
 		/// look like.
 		/// </summary>
-		Pattern
+		Pattern = 1
 	}
 
 	public sealed class PwProfile

@@ -55,8 +55,8 @@ namespace KeePassLib.Security
 		/// of different size.</exception>
 		public XorredBuffer(byte[] pbProtectedData, byte[] pbXorPad)
 		{
-			Debug.Assert(pbProtectedData != null); if(pbProtectedData == null) throw new ArgumentNullException();
-			Debug.Assert(pbXorPad != null); if(pbXorPad == null) throw new ArgumentNullException();
+			Debug.Assert(pbProtectedData != null); if(pbProtectedData == null) throw new ArgumentNullException("pbProtectedData");
+			Debug.Assert(pbXorPad != null); if(pbXorPad == null) throw new ArgumentNullException("pbXorPad");
 
 			Debug.Assert(pbProtectedData.Length == pbXorPad.Length);
 			if(pbProtectedData.Length != pbXorPad.Length) throw new ArgumentException();
@@ -106,7 +106,7 @@ namespace KeePassLib.Security
 		/// byte array doesn't have the correct size.</exception>
 		public byte[] ChangeKey(byte[] pbNewXorPad)
 		{
-			Debug.Assert(pbNewXorPad != null); if(pbNewXorPad == null) throw new ArgumentNullException();
+			Debug.Assert(pbNewXorPad != null); if(pbNewXorPad == null) throw new ArgumentNullException("pbNewXorPad");
 
 			Debug.Assert(pbNewXorPad.Length == m_pbData.Length);
 			if(pbNewXorPad.Length != m_pbData.Length) throw new ArgumentException();
@@ -138,8 +138,8 @@ namespace KeePassLib.Security
 		/// the data array and the pad aren't equal.</exception>
 		public static void XorArrays(byte[] pbData, byte[] pbPad)
 		{
-			Debug.Assert(pbData != null); if(pbData == null) throw new ArgumentNullException();
-			Debug.Assert(pbPad != null); if(pbPad == null) throw new ArgumentNullException();
+			Debug.Assert(pbData != null); if(pbData == null) throw new ArgumentNullException("pbData");
+			Debug.Assert(pbPad != null); if(pbPad == null) throw new ArgumentNullException("pbPad");
 			
 			Debug.Assert(pbData.Length == pbPad.Length);
 			if(pbData.Length != pbPad.Length) throw new ArgumentException();

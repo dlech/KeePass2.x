@@ -32,11 +32,14 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class SecurityTxt12 : FormatImporter
+	internal sealed class SecurityTxt12 : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Security TXT 1.2"; } }
 		public override string DefaultExtension { get { return "txt"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -116,15 +119,14 @@ namespace KeePass.DataExchange.Formats
 					PwGroup pg = new PwGroup(true, true);
 					pg.Name = line.Text;
 
-					pg.ParentGroup = pgContainer;
-					pgContainer.Groups.Add(pg);
+					pgContainer.AddGroup(pg, true);
 
 					pgContainer = pg;
 				}
 				else
 				{
-					PwEntry pe = new PwEntry(pgContainer, true, true);
-					pgContainer.Entries.Add(pe);
+					PwEntry pe = new PwEntry(true, true);
+					pgContainer.AddEntry(pe, true);
 
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwParent.MemoryProtection.ProtectTitle, line.Text));

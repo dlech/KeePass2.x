@@ -47,13 +47,13 @@ namespace KeePass.DataExchange
 		/// The GroupID of the group.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 GroupID;
+		public UInt32 GroupId;
 
 		/// <summary>
 		/// The ImageID of the group.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 ImageID;
+		public UInt32 ImageId;
 
 		/// <summary>
 		/// The Name of the group.
@@ -137,19 +137,19 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// The UUID of the entry.
 		/// </summary>
-		public Kdb3Uuid UUID;
+		public Kdb3Uuid Uuid;
 
 		/// <summary>
 		/// The group ID of the enty.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 GroupID;
+		public UInt32 GroupId;
 
 		/// <summary>
 		/// The image ID of the entry.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 ImageID;
+		public UInt32 ImageId;
 
 #if KDB3_ANSI
 		/// <summary>
@@ -162,7 +162,7 @@ namespace KeePass.DataExchange
 		/// The URL of the entry.
 		/// </summary>
 		[MarshalAs(UnmanagedType.LPStr)]
-		public string URL;
+		public string Url;
 
 		/// <summary>
 		/// The user name of the entry.
@@ -174,7 +174,7 @@ namespace KeePass.DataExchange
 		/// The password length of the entry.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 PasswordLen;
+		public UInt32 PasswordLength;
 
 		/// <summary>
 		/// The password of the entry.
@@ -198,7 +198,7 @@ namespace KeePass.DataExchange
 		/// The URL of the entry.
 		/// </summary>
 		[MarshalAs(UnmanagedType.LPWStr)]
-		public string URL;
+		public string Url;
 
 		/// <summary>
 		/// The user name of the entry.
@@ -210,7 +210,7 @@ namespace KeePass.DataExchange
 		/// The password length of the entry.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 PasswordLen;
+		public UInt32 PasswordLength;
 
 		/// <summary>
 		/// The password of the entry.
@@ -265,7 +265,7 @@ namespace KeePass.DataExchange
 		/// The length of the attachment.
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
-		public UInt32 BinaryDataLen;
+		public UInt32 BinaryDataLength;
 	}
 
 	/// <summary>
@@ -303,7 +303,8 @@ namespace KeePass.DataExchange
 		public void Set(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 16));
-			if((pb == null) || (pb.Length != 16)) throw new ArgumentNullException();
+			if(pb == null) throw new ArgumentNullException("pb");
+			if(pb.Length != 16) throw new ArgumentException();
 
 			this.V0 = pb[0]; this.V1 = pb[1]; this.V2 = pb[2]; this.V3 = pb[3];
 			this.V4 = pb[4]; this.V5 = pb[5]; this.V6 = pb[6]; this.V7 = pb[7];
@@ -743,13 +744,18 @@ namespace KeePass.DataExchange
 		/// <param name="bOverwrite">Indicates if the target file should be overwritten when
 		/// creating a new key file.</param>
 		/// <returns>Error code (see <c>Kdb3ErrorCode</c>).</returns>
-		public Kdb3ErrorCode SetMasterKey(string strMasterKey, bool bDiskDrive, string strSecondKey, IntPtr pARI, bool bOverwrite)
+		public Kdb3ErrorCode SetMasterKey(string strMasterKey, bool bDiskDrive,
+			string strSecondKey, IntPtr pAri, bool bOverwrite)
 		{
 			Debug.Assert(strMasterKey != null);
 			if(strMasterKey == null) throw new ArgumentNullException("strMasterKey");
 
-			if(m_bX64) return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey64(m_pManager, strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
-			else return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey32(m_pManager, strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
+			if(m_bX64)
+				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey64(m_pManager,
+					strMasterKey, bDiskDrive, strSecondKey, pAri, bOverwrite);
+			else
+				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey32(m_pManager,
+					strMasterKey, bDiskDrive, strSecondKey, pAri, bOverwrite);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "GetNumberOfItemsInGroup")]
@@ -779,16 +785,16 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// Get the number of entries in a group.
 		/// </summary>
-		/// <param name="uGroupID">Group ID.</param>
+		/// <param name="uGroupId">Group ID.</param>
 		/// <returns>Number of entries in the specified group.</returns>
-		public UInt32 GetNumberOfEntriesInGroup(UInt32 uGroupID)
+		public UInt32 GetNumberOfEntriesInGroup(UInt32 uGroupId)
 		{
-			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
-			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
+			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
-			if(m_bX64) return Kdb3Manager.GetNumberOfItemsInGroupN64(m_pManager, uGroupID);
-			else return Kdb3Manager.GetNumberOfItemsInGroupN32(m_pManager, uGroupID);
+			if(m_bX64) return Kdb3Manager.GetNumberOfItemsInGroupN64(m_pManager, uGroupId);
+			else return Kdb3Manager.GetNumberOfItemsInGroupN32(m_pManager, uGroupId);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "LockEntryPassword")]
@@ -811,7 +817,7 @@ namespace KeePass.DataExchange
 		/// an <c>ArgumentOutOfRangeException</c> is thrown.</param>
 		/// <returns>The requested entry. Note that any modifications to this
 		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntry(UInt32 uIndex)
+		public Kdb3Entry GetEntry(uint uIndex)
 		{
 			Debug.Assert(uIndex < this.EntryCount);
 
@@ -819,7 +825,7 @@ namespace KeePass.DataExchange
 			if(m_bX64) p = Kdb3Manager.GetEntry64(m_pManager, uIndex);
 			else p = Kdb3Manager.GetEntry32(m_pManager, uIndex);
 
-			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("Entry doesn't exist.");
+			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
 
 			if(m_bX64) Kdb3Manager.UnlockEntryPassword64(m_pManager, p);
 			else Kdb3Manager.UnlockEntryPassword32(m_pManager, p);
@@ -841,20 +847,20 @@ namespace KeePass.DataExchange
 		/// </summary>
 		/// <param name="uIndex">Index of the entry in the group. This index must
 		/// be valid, otherwise an <c>ArgumentOutOfRangeException</c> is thrown.</param>
-		/// <param name="uGroupID">ID of the group containing the entry.</param>
+		/// <param name="uGroupId">ID of the group containing the entry.</param>
 		/// <returns>The requested entry. Note that any modifications to this
 		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntryByGroup(UInt32 uGroupID, UInt32 uIndex)
+		public Kdb3Entry GetEntryByGroup(UInt32 uGroupId, UInt32 uIndex)
 		{
-			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
-			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
+			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
 			Debug.Assert(uIndex < this.EntryCount);
 
 			IntPtr p;
-			if(m_bX64) p = GetEntryByGroup64(m_pManager, uGroupID, uIndex);
-			else p = GetEntryByGroup32(m_pManager, uGroupID, uIndex);
+			if(m_bX64) p = GetEntryByGroup64(m_pManager, uGroupId, uIndex);
+			else p = GetEntryByGroup32(m_pManager, uGroupId, uIndex);
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
 
@@ -899,17 +905,17 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// Get a group via the GroupID.
 		/// </summary>
-		/// <param name="uGroupID">ID of the group.</param>
+		/// <param name="uGroupId">ID of the group.</param>
 		/// <returns>Group structure.</returns>
-		public Kdb3Group GetGroupById(UInt32 uGroupID)
+		public Kdb3Group GetGroupById(UInt32 uGroupId)
 		{
-			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
-			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
+			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
 			IntPtr p;
-			if(m_bX64) p = Kdb3Manager.GetGroupById64(m_pManager, uGroupID);
-			else p = Kdb3Manager.GetGroupById32(m_pManager, uGroupID);
+			if(m_bX64) p = Kdb3Manager.GetGroupById64(m_pManager, uGroupId);
+			else p = Kdb3Manager.GetGroupById32(m_pManager, uGroupId);
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
 
@@ -923,16 +929,16 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// Get the group index via the GroupID.
 		/// </summary>
-		/// <param name="uGroupID">ID of the group.</param>
+		/// <param name="uGroupId">ID of the group.</param>
 		/// <returns>Group index.</returns>
-		public UInt32 GetGroupByIdN(UInt32 uGroupID)
+		public UInt32 GetGroupByIdN(UInt32 uGroupId)
 		{
-			Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
-			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
+			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
-			if(m_bX64) return Kdb3Manager.GetGroupByIdN64(m_pManager, uGroupID);
-			else return Kdb3Manager.GetGroupByIdN32(m_pManager, uGroupID);
+			if(m_bX64) return Kdb3Manager.GetGroupByIdN64(m_pManager, uGroupId);
+			else return Kdb3Manager.GetGroupByIdN32(m_pManager, uGroupId);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "OpenDatabase")]

@@ -36,12 +36,12 @@ namespace KeePassLib.Keys
 			get { return m_pbKey; }
 		}
 
-		public KcpCustomKey(byte[] pb)
+		public KcpCustomKey(byte[] pbKeyData)
 		{
-			Debug.Assert(pb != null); if(pb == null) throw new ArgumentNullException();
+			Debug.Assert(pbKeyData != null); if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
 			SHA256Managed sha256 = new SHA256Managed();
-			byte[] pbRaw = sha256.ComputeHash(pb);
+			byte[] pbRaw = sha256.ComputeHash(pbKeyData);
 			m_pbKey = new ProtectedBinary(true, pbRaw);
 		}
 

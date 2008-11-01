@@ -1,3 +1,161 @@
+2008-11-01: 2.06 Beta
+- Translation system is now complete (translations to various
+  languages will be published on the KeePass translations page
+  when translators finish them)
+- When saving the database, KeePass now first checks whether
+  the file on disk/server has been modified since it was loaded
+  and if so, asks the user whether to synchronize with the
+  changed file instead of overwriting it (i.e. multiple users
+  can now use a shared database on a network drive)
+- Database files are now verified (read and hashed) after
+  writing them to disk (in order to prevent data loss caused by
+  damaged/broken devices and/or file systems)
+- Completely new auto-type/URL placeholder replacement and
+  field reference engine
+- On Windows Vista, some of the message boxes are now displayed
+  as modern task dialogs
+- KeePass is now also available as MSI package
+- Accessibility: added advanced option to optimize the user
+  interface for screen readers (only enable this option if
+  you're really using a screen reader)
+- Added standard client icons: Tux, feather, apple, generic
+  Wiki icon, '$', certificate and BlackBerry
+- Secure edit controls in the master key and entry dialogs now
+  accept text drops
+- Added ability to store notes for each group (see 'Notes' tab
+  in the group editing window), these notes are shown in the
+  tooltip of the group in the group tree of the main window
+- Group names in the entry details view are now clickable;
+  click it to jump to the group of the entry (especially useful
+  for jumping from search results to the real group of an
+  entry)
+- Added 'GROUPPATH', 'DELAY' and 'PICKPASSWORDCHARS' special
+  placeholders to auto-type sequence editing dialog
+- Wildcards (*) may now also appear in the middle of auto-type
+  target window filters
+- For auto-type target window filters, regular expressions are
+  now supported (enclose in //)
+- KeePass now shows an explicit file corruption warning message
+  when saving to a file fails
+- Added option to prepend a special auto-type initialization
+  sequence for Internet Explorer and Maxthon windows to fix a
+  focus issue (option enabled by default)
+- Added ability to specify a minimum length and minimum
+  estimated quality that master passwords must have (see help
+  file -> Features -> Composite Master Key; for admins)
+- Added field reference creation dialog (accessible through
+  the 'Tools' menu in the entry editing dialog)
+- Field references are dereferenced when copying data to the
+  clipboard
+- Entry field references are now dereferenced in drag&drop
+  operations
+- KeePass now follows field references in indirect auto-type
+  sequence paths
+- Added internal field reference cache (highly improves
+  performance of multiple-cyclic/recursive field references)
+- Added managed system power mode change handler
+- Added "Lock Workspace" tray context menu command
+- Moved all export commands into a new export dialog
+- Added context menu command to export the selected group only
+- Added context menu command to export selected entries only
+- Added support for importing Password Memory 2008 XML files
+- Added support for importing Password Keeper 7.0 CSV files
+- Added support for importing Passphrase Keeper 2.70 HTML files
+- Added support for importing data from PassKeeper 1.2
+- Added support for importing Mozilla bookmarks JSON files
+  (Firefox 3 bookmark files)
+- Added support for exporting to KeePass 1.x CSV files
+- Added XSL transformation file to export passwords only
+  (useful for generating and exporting password lists)
+- Added support for writing databases to hidden files
+- When passing '/?', '--help' or similar on the command line,
+  KeePass will now open the command line help
+- When single instance mode is enabled and a second instance is
+  started with command line parameters, these parameters are
+  now sent to the already open KeePass instance
+- KeePass now ships with a compiled XML serializer library,
+  which highly improves startup performance
+- Added support for Uniform Naming Convention (UNC) paths
+  (Windows) in the URL field (without cmd:// prefix)
+- Added option to exclude expired entries in the 'Find' dialog
+- Added option to exclude expired entries in quick searches
+  (toolbar; disabled by default)
+- The box to enter the name of a custom string field is now a
+  combobox that suggests previously-used names in its drop-down
+  list
+- Added Shift, Control and Alt key modifiers to placeholder
+  overview in the auto-type sequence editing dialog
+- Added support for 64 byte key files which don't contain hex
+  keys
+- Added Ctrl-Shift-F accelerator for the 'Find in this Group'
+  context menu command (group tree must have the focus)
+- Added export ability to KPScript plugin
+- Ctrl-Tab now also works in the password list, groups tree and
+  entry details view
+- Added multi-user documentation
+- Plugin developers: DocumentManagerEx now has an
+  ActiveDocumentSelected event
+- Plugin developers: instead of manually setting the parent
+  group property and adding an object to a group, use the new
+  AddEntry / AddGroup methods of PwGroup (can take ownership)
+- Plugins can now add new export file formats (in addition to
+  import formats)
+- Plugins: added static message service event
+
+- When using the installation package and Windows Vista,
+  settings are now stored in the user's profile directory
+  (instead of Virtual Store; like on Windows XP and earlier)
+- Accessibility: multi-line edit controls do not accept tabs
+  anymore (i.e. tab jumps to the next dialog control), and
+  inserting a new line doesn't require pressing Ctrl anymore
+- When moving entries, KeePass doesn't switch to the target
+  group anymore
+- When deleting entries from the search results, the entry list
+  is not cleared anymore
+- Improved entry duplication method (now also works correctly
+  in search results list and grouped list views)
+- A more useful error message is shown when checking for
+  updates fails
+- Improved formats sorting in the import dialog
+- The 'Limit to single instance' option is now turned on by
+  default (multiple databases are opened in tabs)
+- Removed 'sort up', 'sort down' and empty client icons
+- Improved program termination code (common clean-up)
+- Improved error message that is shown when reading/writing the
+  protected user key fails
+- The key file selection dialog now by default shows all files
+- Plugins: improved event handlers (now using generic delegate)
+- Implemented several workarounds for Mono (1.9.1+)
+- Added conformance level specification for XSL transformations
+  (in order to improve non-XML text exports using XSLT)
+- Improved key state toggling for auto-type on 64-bit systems
+- Removed several unnecessary .NET assembly dependencies
+- Threading safety improvements
+- Highly improved entry context menu performance when many
+  entries are selected
+- Entry selection performance improvements in main window
+- Improved entries list view performance (state caching)
+- List view group assignment improvements (to avoid splitting)
+- Removed tab stops from quality progress bars
+- After moving entries to a different group, the original group
+  is selected instead of the target group
+- Layout and text improvements in the master key creation form
+- Text in the URL field is now shown in blue (if it's black in
+  the standard theme)
+- Improved auto-type tab in entry dialog (default sequence)
+- Improved AES/Rijndael cipher engine initialization
+- Improved build scripts
+- Various code optimizations
+- Minor other improvements
+- Installer: changed AppId to allow parallel installation of
+  KeePass 1.x and 2.x
+- Minor other installer improvements
+
+- The 'View' -> 'Show Columns' -> 'Last Access Time' menu
+  command now works correctly
+- The 'Clipboard' -> 'Paste Entries' menu command now assigns
+  correct group references to pasted entries
+
 2008-04-08: 2.05 Alpha
 - Added placeholders for referencing fields of other entries
   (dereferenced when starting URLs and performing auto-type,
@@ -40,7 +198,7 @@
 - Added menu command to synchronize with an URL (database
   stored on a server)
 - KeePass is now checking the network connection immediately
-  when trying to close the URL dialog 
+  when trying to close the URL dialog
 - Added file closed event arguments (IO connection info)
 - Added "file created" event for plugins
 

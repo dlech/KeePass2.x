@@ -31,7 +31,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PVaultTxt14 : FormatImporter
+	internal sealed class PVaultTxt14 : FileFormatProvider
 	{
 		private const string InitGroup = "************";
 		private const string InitNewEntry = "----------------------";
@@ -45,9 +45,12 @@ namespace KeePass.DataExchange.Formats
 		private const string InitNotes = "Comments:     ";
 		private const string ContinueNotes = "              ";
 
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Personal Vault TXT 1.4"; } }
 		public override string DefaultExtension { get { return "txt"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -64,7 +67,7 @@ namespace KeePass.DataExchange.Formats
 			string[] vLines = strData.Split(new char[]{ '\r', '\n' });
 
 			PwGroup pg = pwStorage.RootGroup;
-			PwEntry pe = new PwEntry(pg, true, true);
+			PwEntry pe = new PwEntry(true, true);
 
 			foreach(string strLine in vLines)
 			{
@@ -76,13 +79,13 @@ namespace KeePass.DataExchange.Formats
 
 					pg = pwStorage.RootGroup.FindCreateGroup(strGroup, true);
 
-					pe = new PwEntry(pg, true, true);
-					pg.Entries.Add(pe);
+					pe = new PwEntry(true, true);
+					pg.AddEntry(pe, true);
 				}
 				else if(strLine.StartsWith(InitNewEntry))
 				{
-					pe = new PwEntry(pg, true, true);
-					pg.Entries.Add(pe);
+					pe = new PwEntry(true, true);
+					pg.AddEntry(pe, true);
 				}
 				else if(strLine.StartsWith(InitTitle))
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(

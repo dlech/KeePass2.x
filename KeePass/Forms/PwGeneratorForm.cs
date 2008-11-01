@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading;
 
 using KeePass.App;
 using KeePass.UI;
@@ -89,6 +88,9 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_KGPG_Gen, KPRes.PasswordOptions,
 				KPRes.PasswordOptionsDesc);
 			this.Icon = Properties.Resources.KeePass;
+
+			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.GenProfileSaveDesc);
+			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.GenProfileRemoveDesc);
 
 			m_bBlockUIUpdate = true;
 
@@ -157,8 +159,18 @@ namespace KeePass.Forms
 			Debug.Assert(this.ShowInTaskbar == false);
 			if(m_bForceInTaskbar) this.ShowInTaskbar = true;
 
+			CustomizeForScreenReader();
+
 			m_bBlockUIUpdate = false;
 			EnableControlsEx(false);
+		}
+
+		private void CustomizeForScreenReader()
+		{
+			if(!Program.Config.UI.OptimizeForScreenReader) return;
+
+			m_btnProfileAdd.Text = KPRes.GenProfileSave;
+			m_btnProfileRemove.Text = KPRes.GenProfileRemove;
 		}
 
 		private void EnableControlsEx(bool bSwitchToCustomProfile)

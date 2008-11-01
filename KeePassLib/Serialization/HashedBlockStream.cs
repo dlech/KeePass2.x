@@ -35,15 +35,15 @@ namespace KeePassLib.Serialization
 
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
-		private bool m_bEos;
+		private bool m_bEos = false;
 
 		private BinaryReader m_brInput;
 		private BinaryWriter m_bwOutput;
 
 		private byte[] m_pbBuffer;
-		private int m_nBufferPos;
+		private int m_nBufferPos = 0;
 
-		private uint m_uBufferIndex;
+		private uint m_uBufferIndex = 0;
 
 		public override bool CanRead
 		{
@@ -90,7 +90,6 @@ namespace KeePassLib.Serialization
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
-			m_bEos = false;
 
 			UTF8Encoding utf8 = new UTF8Encoding(false, false);
 
@@ -112,9 +111,6 @@ namespace KeePassLib.Serialization
 
 				m_pbBuffer = new byte[nBufferSize];
 			}
-
-			m_nBufferPos = 0;
-			m_uBufferIndex = 0;
 		}
 
 		public override void Flush()
@@ -156,7 +152,7 @@ namespace KeePassLib.Serialization
 			throw new NotSupportedException();
 		}
 
-		public override void SetLength(long value)
+		public override void SetLength(long lValue)
 		{
 			throw new NotSupportedException();
 		}

@@ -31,11 +31,14 @@ using KeePassLib.Serialization;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassKdb2x : FormatImporter
+	internal sealed class KeePassKdb2x : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "KeePass KDBX (2.x)"; } }
 		public override string DefaultExtension { get { return "kdbx"; } }
-		public override string AppGroup { get { return PwDefs.ShortProductName; } }
+		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
 		public override bool SupportsUuids { get { return true; } }
 		public override bool RequiresKey { get { return true; } }

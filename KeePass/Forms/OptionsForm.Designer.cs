@@ -159,7 +159,7 @@
 			// 
 			// m_numClipClearTime
 			// 
-			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 57);
+			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 34);
 			this.m_numClipClearTime.Maximum = new decimal(new int[] {
             1209600,
             0,
@@ -167,22 +167,22 @@
             0});
 			this.m_numClipClearTime.Name = "m_numClipClearTime";
 			this.m_numClipClearTime.Size = new System.Drawing.Size(66, 20);
-			this.m_numClipClearTime.TabIndex = 5;
+			this.m_numClipClearTime.TabIndex = 3;
 			// 
 			// m_cbClipClearTime
 			// 
 			this.m_cbClipClearTime.AutoSize = true;
-			this.m_cbClipClearTime.Location = new System.Drawing.Point(6, 58);
+			this.m_cbClipClearTime.Location = new System.Drawing.Point(6, 35);
 			this.m_cbClipClearTime.Name = "m_cbClipClearTime";
 			this.m_cbClipClearTime.Size = new System.Drawing.Size(194, 17);
-			this.m_cbClipClearTime.TabIndex = 4;
+			this.m_cbClipClearTime.TabIndex = 2;
 			this.m_cbClipClearTime.Text = "Clipboard auto-clear time (seconds):";
 			this.m_cbClipClearTime.UseVisualStyleBackColor = true;
 			this.m_cbClipClearTime.CheckedChanged += new System.EventHandler(this.OnClipboardClearTimeCheckedChanged);
 			// 
 			// m_numDefaultExpireDays
 			// 
-			this.m_numDefaultExpireDays.Location = new System.Drawing.Point(327, 34);
+			this.m_numDefaultExpireDays.Location = new System.Drawing.Point(327, 57);
 			this.m_numDefaultExpireDays.Maximum = new decimal(new int[] {
             2920,
             0,
@@ -190,15 +190,15 @@
             0});
 			this.m_numDefaultExpireDays.Name = "m_numDefaultExpireDays";
 			this.m_numDefaultExpireDays.Size = new System.Drawing.Size(66, 20);
-			this.m_numDefaultExpireDays.TabIndex = 3;
+			this.m_numDefaultExpireDays.TabIndex = 5;
 			// 
 			// m_cbDefaultExpireDays
 			// 
 			this.m_cbDefaultExpireDays.AutoSize = true;
-			this.m_cbDefaultExpireDays.Location = new System.Drawing.Point(6, 35);
+			this.m_cbDefaultExpireDays.Location = new System.Drawing.Point(6, 58);
 			this.m_cbDefaultExpireDays.Name = "m_cbDefaultExpireDays";
 			this.m_cbDefaultExpireDays.Size = new System.Drawing.Size(315, 17);
-			this.m_cbDefaultExpireDays.TabIndex = 2;
+			this.m_cbDefaultExpireDays.TabIndex = 4;
 			this.m_cbDefaultExpireDays.Text = "By default, new entries expire in the following number of days:";
 			this.m_cbDefaultExpireDays.UseVisualStyleBackColor = true;
 			this.m_cbDefaultExpireDays.CheckedChanged += new System.EventHandler(this.OnDefaultExpireDaysCheckedChanged);
@@ -341,15 +341,9 @@
 			// 
 			this.m_cmbBannerStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbBannerStyle.FormattingEnabled = true;
-			this.m_cmbBannerStyle.Items.AddRange(new object[] {
-            "(Current)",
-            "WinXP Login",
-            "WinVista Black",
-            "KeePass Win32",
-            "Blue Carbon"});
 			this.m_cmbBannerStyle.Location = new System.Drawing.Point(118, 243);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
-			this.m_cmbBannerStyle.Size = new System.Drawing.Size(148, 21);
+			this.m_cmbBannerStyle.Size = new System.Drawing.Size(193, 21);
 			this.m_cmbBannerStyle.TabIndex = 2;
 			this.m_cmbBannerStyle.SelectedValueChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
 			// 
@@ -544,8 +538,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Options";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabSecurity.ResumeLayout(false);

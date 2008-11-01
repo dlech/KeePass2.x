@@ -1,0 +1,172 @@
+/*
+  KeePass Password Safe - The Open-Source Password Manager
+  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+
+using KeePass.DataExchange.Formats;
+
+namespace KeePass.DataExchange
+{
+	public sealed class FileFormatPool : IEnumerable<FileFormatProvider>
+	{
+		private List<FileFormatProvider> m_vFormats = null;
+
+		public IEnumerable<FileFormatProvider> Importers
+		{
+			get
+			{
+				EnsurePoolInitialized();
+
+				List<FileFormatProvider> v = new List<FileFormatProvider>();
+				foreach(FileFormatProvider prov in m_vFormats)
+				{
+					if(prov.SupportsImport) v.Add(prov);
+				}
+
+				return v;
+			}
+		}
+
+		public IEnumerable<FileFormatProvider> Exporters
+		{
+			get
+			{
+				EnsurePoolInitialized();
+
+				List<FileFormatProvider> v = new List<FileFormatProvider>();
+				foreach(FileFormatProvider prov in m_vFormats)
+				{
+					if(prov.SupportsExport) v.Add(prov);
+				}
+
+				return v;
+			}
+		}
+
+		public int Count
+		{
+			get
+			{
+				EnsurePoolInitialized();
+				return m_vFormats.Count;
+			}
+		}
+
+		public FileFormatPool() { }
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			EnsurePoolInitialized();
+			return m_vFormats.GetEnumerator();
+		}
+
+		public IEnumerator<FileFormatProvider> GetEnumerator()
+		{
+			EnsurePoolInitialized();
+			return m_vFormats.GetEnumerator();
+		}
+
+		private void EnsurePoolInitialized()
+		{
+			if(m_vFormats != null) return;
+
+			InitializePool();
+		}
+
+		private void InitializePool()
+		{
+			Debug.Assert(m_vFormats == null);
+			m_vFormats = new List<FileFormatProvider>();
+
+			m_vFormats.Add(new GenericCsv());
+
+			m_vFormats.Add(new AmpXml250());
+			m_vFormats.Add(new AnyPwCsv144());
+			m_vFormats.Add(new CodeWalletTxt605());
+			m_vFormats.Add(new PassKeeper12());
+			m_vFormats.Add(new PpKeeperHtml270());
+			m_vFormats.Add(new PwAgentXml234());
+			m_vFormats.Add(new PwDepotXml26());
+			m_vFormats.Add(new PwGorillaCsv142());
+			m_vFormats.Add(new PwKeeperCsv70());
+			m_vFormats.Add(new PwMemory2008Xml104());
+			m_vFormats.Add(new PwSafeXml302());
+			m_vFormats.Add(new PwTresorXml100());
+			m_vFormats.Add(new PVaultTxt14());
+			m_vFormats.Add(new PinsTxt450());
+			m_vFormats.Add(new RoboFormHtml69());
+			m_vFormats.Add(new SecurityTxt12());
+			m_vFormats.Add(new SplashIdCsv402());
+			m_vFormats.Add(new SteganosPwManager2007());
+			m_vFormats.Add(new Whisper32Csv116());
+
+			m_vFormats.Add(new KeePassCsv1x());
+			m_vFormats.Add(new KeePassKdb1x());
+			m_vFormats.Add(new KeePassKdb2x());
+			m_vFormats.Add(new KeePassXml2x());
+
+			m_vFormats.Add(new MozillaBookmarksHtml100());
+			m_vFormats.Add(new MozillaBookmarksJson100());
+			m_vFormats.Add(new PwExporterXml105());
+
+			m_vFormats.Add(new Spamex20070328());
+
+			m_vFormats.Add(new KeePassHtml2x());
+			m_vFormats.Add(new XslTransform2x());
+		}
+
+		public void Add(FileFormatProvider prov)
+		{
+			Debug.Assert(prov != null);
+			if(prov == null) throw new ArgumentNullException("prov");
+
+			EnsurePoolInitialized();
+
+			m_vFormats.Add(prov);
+		}
+
+		public bool Remove(FileFormatProvider prov)
+		{
+			Debug.Assert(prov != null);
+			if(prov == null) throw new ArgumentNullException("prov");
+
+			EnsurePoolInitialized();
+
+			return m_vFormats.Remove(prov);
+		}
+
+		public FileFormatProvider Find(string strFormatName)
+		{
+			if(strFormatName == null) return null;
+
+			EnsurePoolInitialized();
+
+			foreach(FileFormatProvider f in m_vFormats)
+			{
+				if(f.FormatName == strFormatName) return f;
+			}
+
+			return null;
+		}
+	}
+}

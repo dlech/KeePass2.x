@@ -31,14 +31,17 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class GenericCsv : FormatImporter
+	internal sealed class GenericCsv : FileFormatProvider
 	{
-		public override string FormatName { get { return "CSV / Text File"; } }
-		public override string DisplayName { get { return "Generic CSV Importer"; } }
-		public override string DefaultExtension { get { return @"*"; } }
-		public override string AppGroup { get { return KPRes.General; } }
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
 
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override string FormatName { get { return KPRes.CsvTextFile; } }
+		public override string DisplayName { get { return KPRes.GenericCsvImporter; } }
+		public override string DefaultExtension { get { return @"*"; } }
+		public override string ApplicationGroup { get { return KPRes.General; } }
+
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{

@@ -29,6 +29,7 @@ using System.IO;
 
 using KeePass.DataExchange;
 using KeePass.UI;
+using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -42,6 +43,13 @@ namespace KeePass.Forms
 		private bool m_bBlockChangedEvent = false;
 
 		private string m_strSource = string.Empty;
+
+		private const string StrEncAscii = "ASCII";
+		private const string StrEncUtf7 = "UTF-7";
+		private const string StrEncUtf8 = "UTF-8";
+		private const string StrEncUtf32 = "UTF-32";
+		private const string StrEncUnicode = "Unicode";
+		private const string StrEncBigUnicode = "Big Endian Unicode";
 
 		public void InitEx(PwDatabase pwStorage, byte[] pbInData)
 		{
@@ -57,12 +65,47 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
-			Debug.Assert(m_pbInData != null); if(m_pbInData == null) throw new ArgumentNullException();
+			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			Debug.Assert(m_pbInData != null); if(m_pbInData == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
+			this.Icon = Properties.Resources.KeePass;
+
 			m_bBlockChangedEvent = true;
+
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Title, -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.UserName, -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Password, -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Url, -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Notes, -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Custom + " 1", -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Custom + " 2", -1);
+			AddFieldColumn(m_lvHeaderOrder, KPRes.Custom + " 3", -1);
+			AddFieldColumn(m_lvHeaderOrder, "(" + KPRes.Ignore + ")", -1);
+			AddFieldColumn(m_lvHeaderOrder, "(" + KPRes.Ignore + ")", -1);
+			AddFieldColumn(m_lvHeaderOrder, "(" + KPRes.Ignore + ")", -1);
+
+			foreach(ColumnHeader chHdr in m_lvHeaderOrder.Columns)
+				chHdr.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+			const int nPrevColSize = 120;
+			AddFieldColumn(m_lvPreview, KPRes.Title, nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.UserName, nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Password, nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Url, nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Notes, nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Custom + " 1", nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Custom + " 2", nPrevColSize);
+			AddFieldColumn(m_lvPreview, KPRes.Custom + " 3", nPrevColSize);
+
+			m_cmbEncoding.Items.Add(KPRes.EncodingAnsi);
+			m_cmbEncoding.Items.Add(StrEncAscii);
+			m_cmbEncoding.Items.Add(StrEncUtf7);
+			m_cmbEncoding.Items.Add(StrEncUtf8);
+			m_cmbEncoding.Items.Add(StrEncUtf32);
+			m_cmbEncoding.Items.Add(StrEncUnicode);
+			m_cmbEncoding.Items.Add(StrEncBigUnicode);
 
 			m_cmbEncoding.SelectedIndex = 0;
 			m_tbSepChar.Text = ",";
@@ -72,6 +115,13 @@ namespace KeePass.Forms
 
 			UpdateStringSource();
 			UpdatePreview();
+		}
+
+		private static void AddFieldColumn(ListView lv, string strText, int nSize)
+		{
+			ColumnHeader hdr = lv.Columns.Add(strText);
+
+			if(nSize >= 0) hdr.Width = nSize;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -85,8 +135,8 @@ namespace KeePass.Forms
 				m_pbRender.Value = (100 * nItem) / m_lvPreview.Items.Count;
 				++nItem;
 
-				PwEntry pe = new PwEntry(m_pwDatabase.RootGroup, true, true);
-				m_pwDatabase.RootGroup.Entries.Add(pe);
+				PwEntry pe = new PwEntry(true, true);
+				m_pwDatabase.RootGroup.AddEntry(pe, true);
 
 				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectTitle, lvi.Text));
@@ -101,15 +151,15 @@ namespace KeePass.Forms
 
 				string strCustom = lvi.SubItems[5].Text;
 				if(strCustom.Length > 0)
-					pe.Strings.Set("Custom 1", new ProtectedString(false, strCustom));
+					pe.Strings.Set(KPRes.Custom + " 1", new ProtectedString(false, strCustom));
 
 				strCustom = lvi.SubItems[6].Text;
 				if(strCustom.Length > 0)
-					pe.Strings.Set("Custom 2", new ProtectedString(false, strCustom));
+					pe.Strings.Set(KPRes.Custom + " 2", new ProtectedString(false, strCustom));
 
 				strCustom = lvi.SubItems[7].Text;
 				if(strCustom.Length > 0)
-					pe.Strings.Set("Custom 3", new ProtectedString(false, strCustom));
+					pe.Strings.Set(KPRes.Custom + " 3", new ProtectedString(false, strCustom));
 			}
 
 			m_pbRender.Value = 100;
@@ -124,12 +174,13 @@ namespace KeePass.Forms
 			string strEncoding = m_cmbEncoding.Items[m_cmbEncoding.SelectedIndex] as string;
 
 			Encoding enc = Encoding.Default;
-			if(strEncoding == "ASCII") enc = Encoding.ASCII;
-			else if(strEncoding == "UTF-7") enc = Encoding.UTF7;
-			else if(strEncoding == "UTF-8") enc = Encoding.UTF8;
-			else if(strEncoding == "UTF-32") enc = Encoding.UTF32;
-			else if(strEncoding == "Unicode") enc = Encoding.Unicode;
-			else if(strEncoding == "Big Endian Unicode") enc = Encoding.BigEndianUnicode;
+			if(strEncoding == StrEncAscii) enc = Encoding.ASCII;
+			else if(strEncoding == StrEncUtf7) enc = Encoding.UTF7;
+			else if(strEncoding == StrEncUtf8) enc = Encoding.UTF8;
+			else if(strEncoding == StrEncUtf32) enc = Encoding.UTF32;
+			else if(strEncoding == StrEncUnicode) enc = Encoding.Unicode;
+			else if(strEncoding == StrEncBigUnicode) enc = Encoding.BigEndianUnicode;
+			else { Debug.Assert(strEncoding == KPRes.EncodingAnsi); }
 
 			try
 			{
@@ -139,10 +190,7 @@ namespace KeePass.Forms
 				sr.Close();
 				ms.Close();
 			}
-			catch(Exception)
-			{
-				m_strSource = "Selected encoding is invalid. The CSV file cannot be interpreted using the selected encoding.";
-			}
+			catch(Exception) { m_strSource = KPRes.EncodingFail; }
 
 			m_tbSourcePreview.Text = string.Empty;
 			m_tbSourcePreview.Text = m_strSource;
@@ -171,7 +219,7 @@ namespace KeePass.Forms
 					vParts[i] = vParts[i].TrimStart(new char[]{ '\"' }).TrimEnd(new char[]{
 						'\"' });
 
-				ListViewItem lvi = new ListViewItem("");
+				ListViewItem lvi = new ListViewItem(string.Empty);
 
 				lvi.Text = SafeListIndex(vParts, m_lvHeaderOrder.Columns[0].DisplayIndex);
 				lvi.SubItems.Add(SafeListIndex(vParts, m_lvHeaderOrder.Columns[1].DisplayIndex));

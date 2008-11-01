@@ -119,7 +119,7 @@
 			this.m_grpEncAlgo.Controls.Add(this.m_cmbEncAlgo);
 			this.m_grpEncAlgo.Location = new System.Drawing.Point(9, 37);
 			this.m_grpEncAlgo.Name = "m_grpEncAlgo";
-			this.m_grpEncAlgo.Size = new System.Drawing.Size(436, 48);
+			this.m_grpEncAlgo.Size = new System.Drawing.Size(436, 53);
 			this.m_grpEncAlgo.TabIndex = 1;
 			this.m_grpEncAlgo.TabStop = false;
 			this.m_grpEncAlgo.Text = "Encryption";
@@ -139,14 +139,14 @@
 			this.m_cmbEncAlgo.FormattingEnabled = true;
 			this.m_cmbEncAlgo.Location = new System.Drawing.Point(206, 19);
 			this.m_cmbEncAlgo.Name = "m_cmbEncAlgo";
-			this.m_cmbEncAlgo.Size = new System.Drawing.Size(224, 21);
+			this.m_cmbEncAlgo.Size = new System.Drawing.Size(219, 21);
 			this.m_cmbEncAlgo.TabIndex = 1;
 			// 
 			// m_lblTransIntro
 			// 
 			this.m_lblTransIntro.Location = new System.Drawing.Point(6, 16);
 			this.m_lblTransIntro.Name = "m_lblTransIntro";
-			this.m_lblTransIntro.Size = new System.Drawing.Size(429, 40);
+			this.m_lblTransIntro.Size = new System.Drawing.Size(424, 40);
 			this.m_lblTransIntro.TabIndex = 0;
 			this.m_lblTransIntro.Text = "The composite master key is transformed several times before being used as encryp" +
 				"tion key for the database. This adds a constant time factor and makes dictionary" +
@@ -165,7 +165,7 @@
 			// 
 			this.m_lblTransInfo.Location = new System.Drawing.Point(6, 103);
 			this.m_lblTransInfo.Name = "m_lblTransInfo";
-			this.m_lblTransInfo.Size = new System.Drawing.Size(429, 28);
+			this.m_lblTransInfo.Size = new System.Drawing.Size(424, 28);
 			this.m_lblTransInfo.TabIndex = 4;
 			this.m_lblTransInfo.Text = "The higher this number the harder are dictionary attacks. But also database loadi" +
 				"ng/saving takes more time.";
@@ -177,9 +177,9 @@
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransIntro);
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransInfo);
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransNum);
-			this.m_grpKeyTrans.Location = new System.Drawing.Point(9, 91);
+			this.m_grpKeyTrans.Location = new System.Drawing.Point(9, 96);
 			this.m_grpKeyTrans.Name = "m_grpKeyTrans";
-			this.m_grpKeyTrans.Size = new System.Drawing.Size(441, 137);
+			this.m_grpKeyTrans.Size = new System.Drawing.Size(436, 140);
 			this.m_grpKeyTrans.TabIndex = 2;
 			this.m_grpKeyTrans.TabStop = false;
 			this.m_grpKeyTrans.Text = "Key transformation";
@@ -193,14 +193,13 @@
 			this.m_lnkCompute1SecDelay.TabIndex = 3;
 			this.m_lnkCompute1SecDelay.TabStop = true;
 			this.m_lnkCompute1SecDelay.Text = "1 second delay";
-			this.m_ttRect.SetToolTip(this.m_lnkCompute1SecDelay, "Compute the number of rounds that lead to a delay of 1 second on this computer.");
 			this.m_lnkCompute1SecDelay.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked1SecondDelayRounds);
 			// 
 			// m_numEncRounds
 			// 
 			this.m_numEncRounds.Location = new System.Drawing.Point(206, 61);
 			this.m_numEncRounds.Name = "m_numEncRounds";
-			this.m_numEncRounds.Size = new System.Drawing.Size(229, 20);
+			this.m_numEncRounds.Size = new System.Drawing.Size(219, 20);
 			this.m_numEncRounds.TabIndex = 2;
 			this.m_numEncRounds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -276,7 +275,6 @@
 			// m_tbDbDesc
 			// 
 			this.m_tbDbDesc.AcceptsReturn = true;
-			this.m_tbDbDesc.AcceptsTab = true;
 			this.m_tbDbDesc.Location = new System.Drawing.Point(9, 57);
 			this.m_tbDbDesc.Multiline = true;
 			this.m_tbDbDesc.Name = "m_tbDbDesc";
@@ -397,10 +395,9 @@
 			// 
 			// m_lblProtIntro
 			// 
-			this.m_lblProtIntro.AutoSize = true;
 			this.m_lblProtIntro.Location = new System.Drawing.Point(6, 12);
 			this.m_lblProtIntro.Name = "m_lblProtIntro";
-			this.m_lblProtIntro.Size = new System.Drawing.Size(407, 13);
+			this.m_lblProtIntro.Size = new System.Drawing.Size(434, 13);
 			this.m_lblProtIntro.TabIndex = 0;
 			this.m_lblProtIntro.Text = "On this page you can configure run-time memory protection settings for this datab" +
 				"ase.";
@@ -533,8 +530,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<DYN>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpEncAlgo.ResumeLayout(false);
 			this.m_grpEncAlgo.PerformLayout();

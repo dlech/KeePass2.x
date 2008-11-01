@@ -49,6 +49,15 @@ namespace KeePass.UI
 
 		private bool m_bFirstGotFocus = true;
 
+		public uint TextLength
+		{
+			get
+			{
+				if(m_secString != null) return (uint)m_secString.Length;
+				return (uint)m_strAlternativeSecString.Length;
+			}
+		}
+
 		static SecureEdit()
 		{
 			// On Windows 98 / ME, an ANSI character must be used as
@@ -78,7 +87,8 @@ namespace KeePass.UI
 		/// </summary>
 		/// <param name="tbPasswordBox">Text box to link to.</param>
 		/// <param name="bHidePassword">Initial protection flag.</param>
-		public void Attach(TextBox tbPasswordBox, EventHandler evTextChanged, bool bHidePassword)
+		public void Attach(TextBox tbPasswordBox, EventHandler evTextChanged,
+			bool bHidePassword)
 		{
 			Debug.Assert(tbPasswordBox != null);
 			if(tbPasswordBox == null) throw new ArgumentNullException("tbPasswordBox");
@@ -98,9 +108,14 @@ namespace KeePass.UI
 
 			if(m_evTextChanged != null) m_evTextChanged(m_tbPassword, EventArgs.Empty);
 
+			m_tbPassword.AllowDrop = true;
+
 			// Register event handler
 			m_tbPassword.TextChanged += this.OnPasswordTextChanged;
 			m_tbPassword.GotFocus += this.OnGotFocus;
+			m_tbPassword.DragEnter += this.OnDragCheck;
+			m_tbPassword.DragOver += this.OnDragCheck;
+			m_tbPassword.DragDrop += this.OnDragDrop;
 		}
 
 		/// <summary>
@@ -112,12 +127,19 @@ namespace KeePass.UI
 			if(m_tbPassword != null)
 			{
 				m_tbPassword.TextChanged -= this.OnPasswordTextChanged;
+				m_tbPassword.GotFocus -= this.OnGotFocus;
+				m_tbPassword.DragEnter -= this.OnDragCheck;
+				m_tbPassword.DragOver -= this.OnDragCheck;
+				m_tbPassword.DragDrop -= this.OnDragDrop;
+
 				m_tbPassword = null;
 			}
 		}
 
 		public void EnableProtection(bool bEnable)
 		{
+			if(m_tbPassword == null) { Debug.Assert(false); return; }
+
 			if(m_tbPassword.UseSystemPasswordChar == bEnable) return;
 
 			m_tbPassword.UseSystemPasswordChar = bEnable;
@@ -126,6 +148,8 @@ namespace KeePass.UI
 
 		private void OnPasswordTextChanged(object sender, EventArgs e)
 		{
+			if(m_tbPassword == null) { Debug.Assert(false); return; }
+
 			if(m_bBlockTextChanged) return;
 
 			int nSelPos = m_tbPassword.SelectionStart;
@@ -166,6 +190,8 @@ namespace KeePass.UI
 
 		private void ShowCurrentPassword(int nSelStart, int nSelLength)
 		{
+			if(m_tbPassword == null) { Debug.Assert(false); return; }
+
 			if(m_tbPassword.UseSystemPasswordChar == false)
 			{
 				m_bBlockTextChanged = true;
@@ -275,17 +301,17 @@ namespace KeePass.UI
 			return bEqual;
 		}
 
-		public void SetPassword(byte[] pbUTF8)
+		public void SetPassword(byte[] pbUtf8)
 		{
-			Debug.Assert(pbUTF8 != null);
-			if(pbUTF8 == null) throw new ArgumentNullException("pbUTF8");
+			Debug.Assert(pbUtf8 != null);
+			if(pbUtf8 == null) throw new ArgumentNullException("pbUTF8");
 
 			if(m_secString != null)
 			{
 				m_secString.Clear();
 
 				UTF8Encoding utf8 = new UTF8Encoding();
-				char[] vChars = utf8.GetChars(pbUTF8);
+				char[] vChars = utf8.GetChars(pbUtf8);
 
 				for(int i = 0; i < vChars.Length; ++i)
 				{
@@ -293,18 +319,37 @@ namespace KeePass.UI
 					vChars[i] = char.MinValue;
 				}
 			}
-			else m_strAlternativeSecString = Encoding.UTF8.GetString(pbUTF8);
+			else m_strAlternativeSecString = Encoding.UTF8.GetString(pbUtf8);
 
 			ShowCurrentPassword(0, 0);
 		}
 
 		private void OnGotFocus(object sender, EventArgs e)
 		{
-			Debug.Assert(m_tbPassword != null);
+			if(m_tbPassword == null) { Debug.Assert(false); return; }
+
 			if(m_bFirstGotFocus && (m_tbPassword != null))
 				m_tbPassword.SelectAll();
 
 			m_bFirstGotFocus = false;
+		}
+
+		private void OnDragCheck(object sender, DragEventArgs e)
+		{
+			if(e.Data.GetDataPresent(typeof(string)))
+				e.Effect = DragDropEffects.Copy;
+			else e.Effect = DragDropEffects.None;
+		}
+
+		private void OnDragDrop(object sender, DragEventArgs e)
+		{
+			if(e.Data.GetDataPresent(typeof(string)))
+			{
+				string strData = e.Data.GetData(typeof(string)) as string;
+				if(strData == null) { Debug.Assert(false); return; }
+
+				if(m_tbPassword != null) m_tbPassword.Paste(strData);
+			}
 		}
 	}
 }

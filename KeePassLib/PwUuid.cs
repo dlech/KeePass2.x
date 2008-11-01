@@ -25,6 +25,7 @@ using KeePassLib.Utility;
 
 namespace KeePassLib
 {
+	// [ImmutableObject(true)]
 	/// <summary>
 	/// Represents an UUID of a password entry or group. Once created, <c>PwUUID</c>
 	/// objects aren't modifyable any more (immutable).
@@ -77,7 +78,7 @@ namespace KeePassLib
 		/// <param name="uuidBytes">Initial value of the <c>PwUUID</c> object.</param>
 		public PwUuid(byte[] uuidBytes)
 		{
-			Set(uuidBytes);
+			SetValue(uuidBytes);
 		}
 
 		/// <summary>
@@ -94,6 +95,7 @@ namespace KeePassLib
 				if((m_pbUuid == null) || (m_pbUuid.Length != UuidSize))
 					throw new InvalidOperationException();
 
+				// Zero is a reserved value -- do not generate Zero
 				if(this.EqualsValue(PwUuid.Zero) == false)
 					break;
 			}
@@ -130,10 +132,10 @@ namespace KeePassLib
 		/// </summary>
 		/// <param name="uuidBytes">UUID bytes. The byte array must contain
 		/// exactly <c>UUIDSize</c> bytes, otherwise the function will fail.</param>
-		private void Set(byte[] uuidBytes)
+		private void SetValue(byte[] uuidBytes)
 		{
 			Debug.Assert((uuidBytes != null) && (uuidBytes.Length == UuidSize));
-			if(uuidBytes == null) throw new ArgumentNullException();
+			if(uuidBytes == null) throw new ArgumentNullException("uuidBytes");
 			if(uuidBytes.Length != UuidSize) throw new ArgumentException();
 
 			Array.Copy(uuidBytes, m_pbUuid, (int)UuidSize);

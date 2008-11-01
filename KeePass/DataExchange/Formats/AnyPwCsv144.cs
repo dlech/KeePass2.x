@@ -33,13 +33,16 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class AnyPwCsv144 : FormatImporter
+	internal sealed class AnyPwCsv144 : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Any Password CSV 1.44"; } }
 		public override string DefaultExtension { get { return "csv"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 		
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -66,8 +69,8 @@ namespace KeePass.DataExchange.Formats
 			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
 			Debug.Assert(list.Count == 6);
 
-			PwEntry pe = new PwEntry(pwStorage.RootGroup, true, true);
-			pwStorage.RootGroup.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pwStorage.RootGroup.AddEntry(pe, true);
 
 			if(list.Count == 6)
 			{

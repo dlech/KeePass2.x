@@ -46,21 +46,21 @@ namespace KeePassLib.Keys
 
 		public void Add(KeyProvider prov)
 		{
-			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException();
+			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
 
 			m_vProviders.Add(prov);
 		}
 
 		public bool Remove(KeyProvider prov)
 		{
-			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException();
+			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
 
 			return m_vProviders.Remove(prov);
 		}
 
 		public bool IsKeyProvider(string strName)
 		{
-			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException();
+			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			foreach(KeyProvider prov in m_vProviders)
 			{
@@ -72,7 +72,7 @@ namespace KeePassLib.Keys
 
 		public byte[] GetKey(string strProviderName)
 		{
-			Debug.Assert(strProviderName != null); if(strProviderName == null) throw new ArgumentNullException();
+			Debug.Assert(strProviderName != null); if(strProviderName == null) throw new ArgumentNullException("strProviderName");
 
 			foreach(KeyProvider prov in m_vProviders)
 			{

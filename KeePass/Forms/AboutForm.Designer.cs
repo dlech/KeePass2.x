@@ -62,7 +62,7 @@
 			// 
 			this.m_lblOsi.Location = new System.Drawing.Point(12, 96);
 			this.m_lblOsi.Name = "m_lblOsi";
-			this.m_lblOsi.Size = new System.Drawing.Size(363, 14);
+			this.m_lblOsi.Size = new System.Drawing.Size(400, 14);
 			this.m_lblOsi.TabIndex = 2;
 			this.m_lblOsi.Text = "KeePass is OSI Certified Open Source Software.";
 			// 

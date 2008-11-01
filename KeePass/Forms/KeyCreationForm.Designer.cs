@@ -43,8 +43,8 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnCreate = new System.Windows.Forms.Button();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
-			this.m_btnSaveKeyFile = new System.Windows.Forms.Button();
 			this.m_cbHidePassword = new System.Windows.Forms.CheckBox();
+			this.m_btnSaveKeyFile = new System.Windows.Forms.Button();
 			this.m_btnOpenKeyFile = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
@@ -52,8 +52,6 @@
 			this.m_lblEstimatedQuality = new System.Windows.Forms.Label();
 			this.m_lblQualityBits = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
-			this.m_saveKeyFileDialog = new System.Windows.Forms.SaveFileDialog();
-			this.m_openKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
 			this.m_lblWindowsAccDesc2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
@@ -61,18 +59,18 @@
 			// 
 			// m_lblIntro
 			// 
+			this.m_lblIntro.AutoSize = true;
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
-			this.m_lblIntro.Size = new System.Drawing.Size(457, 29);
+			this.m_lblIntro.Size = new System.Drawing.Size(375, 13);
 			this.m_lblIntro.TabIndex = 19;
-			this.m_lblIntro.Text = "You are creating a new password database.  Specify the composite master key, whic" +
-				"h will be used to encrypt the database.";
+			this.m_lblIntro.Text = "Specify the composite master key, which will be used to encrypt the database.";
 			// 
 			// m_lblMultiInfo
 			// 
-			this.m_lblMultiInfo.Location = new System.Drawing.Point(9, 110);
+			this.m_lblMultiInfo.Location = new System.Drawing.Point(9, 93);
 			this.m_lblMultiInfo.Name = "m_lblMultiInfo";
-			this.m_lblMultiInfo.Size = new System.Drawing.Size(457, 42);
+			this.m_lblMultiInfo.Size = new System.Drawing.Size(498, 42);
 			this.m_lblMultiInfo.TabIndex = 20;
 			this.m_lblMultiInfo.Text = resources.GetString("m_lblMultiInfo.Text");
 			// 
@@ -80,7 +78,7 @@
 			// 
 			this.m_cbPassword.AutoSize = true;
 			this.m_cbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_cbPassword.Location = new System.Drawing.Point(12, 164);
+			this.m_cbPassword.Location = new System.Drawing.Point(12, 147);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(125, 17);
 			this.m_cbPassword.TabIndex = 21;
@@ -90,7 +88,7 @@
 			// 
 			// m_tbPassword
 			// 
-			this.m_tbPassword.Location = new System.Drawing.Point(150, 162);
+			this.m_tbPassword.Location = new System.Drawing.Point(150, 145);
 			this.m_tbPassword.Name = "m_tbPassword";
 			this.m_tbPassword.Size = new System.Drawing.Size(316, 20);
 			this.m_tbPassword.TabIndex = 0;
@@ -99,7 +97,7 @@
 			// m_lblRepeatPassword
 			// 
 			this.m_lblRepeatPassword.AutoSize = true;
-			this.m_lblRepeatPassword.Location = new System.Drawing.Point(28, 191);
+			this.m_lblRepeatPassword.Location = new System.Drawing.Point(28, 174);
 			this.m_lblRepeatPassword.Name = "m_lblRepeatPassword";
 			this.m_lblRepeatPassword.Size = new System.Drawing.Size(93, 13);
 			this.m_lblRepeatPassword.TabIndex = 2;
@@ -107,7 +105,7 @@
 			// 
 			// m_tbRepeatPassword
 			// 
-			this.m_tbRepeatPassword.Location = new System.Drawing.Point(150, 188);
+			this.m_tbRepeatPassword.Location = new System.Drawing.Point(150, 171);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
 			this.m_tbRepeatPassword.Size = new System.Drawing.Size(316, 20);
 			this.m_tbRepeatPassword.TabIndex = 3;
@@ -117,7 +115,7 @@
 			// 
 			this.m_cbKeyFile.AutoSize = true;
 			this.m_cbKeyFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 240);
+			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 223);
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
 			this.m_cbKeyFile.Size = new System.Drawing.Size(132, 17);
 			this.m_cbKeyFile.TabIndex = 7;
@@ -129,7 +127,7 @@
 			// 
 			this.m_cbUserAccount.AutoSize = true;
 			this.m_cbUserAccount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 300);
+			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 308);
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
 			this.m_cbUserAccount.Size = new System.Drawing.Size(155, 17);
 			this.m_cbUserAccount.TabIndex = 12;
@@ -139,16 +137,16 @@
 			// 
 			// m_lblWindowsAccDesc
 			// 
-			this.m_lblWindowsAccDesc.Location = new System.Drawing.Point(28, 320);
+			this.m_lblWindowsAccDesc.Location = new System.Drawing.Point(28, 328);
 			this.m_lblWindowsAccDesc.Name = "m_lblWindowsAccDesc";
-			this.m_lblWindowsAccDesc.Size = new System.Drawing.Size(479, 29);
+			this.m_lblWindowsAccDesc.Size = new System.Drawing.Size(479, 27);
 			this.m_lblWindowsAccDesc.TabIndex = 13;
 			this.m_lblWindowsAccDesc.Text = "This source uses data of the current Windows user. This data does not change when" +
 				" the Windows account password changes.";
 			// 
 			// m_lblKeyFileInfo
 			// 
-			this.m_lblKeyFileInfo.Location = new System.Drawing.Point(28, 265);
+			this.m_lblKeyFileInfo.Location = new System.Drawing.Point(28, 273);
 			this.m_lblKeyFileInfo.Name = "m_lblKeyFileInfo";
 			this.m_lblKeyFileInfo.Size = new System.Drawing.Size(479, 28);
 			this.m_lblKeyFileInfo.TabIndex = 11;
@@ -158,7 +156,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(432, 422);
+			this.m_btnCancel.Location = new System.Drawing.Point(432, 430);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 18;
@@ -170,7 +168,7 @@
 			// m_btnCreate
 			// 
 			this.m_btnCreate.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnCreate.Location = new System.Drawing.Point(351, 422);
+			this.m_btnCreate.Location = new System.Drawing.Point(351, 430);
 			this.m_btnCreate.Name = "m_btnCreate";
 			this.m_btnCreate.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCreate.TabIndex = 17;
@@ -186,47 +184,44 @@
 			this.m_ttRect.InitialDelay = 250;
 			this.m_ttRect.ReshowDelay = 50;
 			// 
-			// m_btnSaveKeyFile
-			// 
-			this.m_btnSaveKeyFile.Image = global::KeePass.Properties.Resources.B15x14_FileNew;
-			this.m_btnSaveKeyFile.Location = new System.Drawing.Point(351, 236);
-			this.m_btnSaveKeyFile.Name = "m_btnSaveKeyFile";
-			this.m_btnSaveKeyFile.Size = new System.Drawing.Size(75, 23);
-			this.m_btnSaveKeyFile.TabIndex = 9;
-			this.m_btnSaveKeyFile.Text = " C&reate";
-			this.m_btnSaveKeyFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.m_ttRect.SetToolTip(this.m_btnSaveKeyFile, "Create a new key file.");
-			this.m_btnSaveKeyFile.UseVisualStyleBackColor = true;
-			this.m_btnSaveKeyFile.Click += new System.EventHandler(this.OnClickKeyFileCreate);
-			// 
 			// m_cbHidePassword
 			// 
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;
 			this.m_cbHidePassword.Image = global::KeePass.Properties.Resources.B17x05_3BlackDots;
-			this.m_cbHidePassword.Location = new System.Drawing.Point(475, 160);
+			this.m_cbHidePassword.Location = new System.Drawing.Point(475, 143);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 1;
-			this.m_ttRect.SetToolTip(this.m_cbHidePassword, "Show/hide password using asterisks.");
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
 			this.m_cbHidePassword.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
+			// 
+			// m_btnSaveKeyFile
+			// 
+			this.m_btnSaveKeyFile.Image = global::KeePass.Properties.Resources.B15x14_FileNew;
+			this.m_btnSaveKeyFile.Location = new System.Drawing.Point(341, 247);
+			this.m_btnSaveKeyFile.Name = "m_btnSaveKeyFile";
+			this.m_btnSaveKeyFile.Size = new System.Drawing.Size(80, 23);
+			this.m_btnSaveKeyFile.TabIndex = 9;
+			this.m_btnSaveKeyFile.Text = " C&reate...";
+			this.m_btnSaveKeyFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.m_btnSaveKeyFile.UseVisualStyleBackColor = true;
+			this.m_btnSaveKeyFile.Click += new System.EventHandler(this.OnClickKeyFileCreate);
 			// 
 			// m_btnOpenKeyFile
 			// 
 			this.m_btnOpenKeyFile.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
-			this.m_btnOpenKeyFile.Location = new System.Drawing.Point(432, 236);
+			this.m_btnOpenKeyFile.Location = new System.Drawing.Point(427, 247);
 			this.m_btnOpenKeyFile.Name = "m_btnOpenKeyFile";
-			this.m_btnOpenKeyFile.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOpenKeyFile.Size = new System.Drawing.Size(80, 23);
 			this.m_btnOpenKeyFile.TabIndex = 10;
-			this.m_btnOpenKeyFile.Text = " &Browse";
+			this.m_btnOpenKeyFile.Text = " &Browse...";
 			this.m_btnOpenKeyFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.m_ttRect.SetToolTip(this.m_btnOpenKeyFile, "Use an existing file as key file.");
 			this.m_btnOpenKeyFile.UseVisualStyleBackColor = true;
 			this.m_btnOpenKeyFile.Click += new System.EventHandler(this.OnClickKeyFileBrowse);
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 422);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 430);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 16;
@@ -237,26 +232,27 @@
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 414);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 422);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(519, 2);
 			this.m_lblSeparator.TabIndex = 15;
 			// 
 			// m_pbPasswordQuality
 			// 
-			this.m_pbPasswordQuality.Location = new System.Drawing.Point(150, 214);
+			this.m_pbPasswordQuality.Location = new System.Drawing.Point(150, 197);
 			this.m_pbPasswordQuality.Maximum = 100;
 			this.m_pbPasswordQuality.Minimum = 0;
 			this.m_pbPasswordQuality.Name = "m_pbPasswordQuality";
 			this.m_pbPasswordQuality.Size = new System.Drawing.Size(260, 14);
 			this.m_pbPasswordQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbPasswordQuality.TabIndex = 5;
+			this.m_pbPasswordQuality.TabStop = false;
 			this.m_pbPasswordQuality.Value = 0;
 			// 
 			// m_lblEstimatedQuality
 			// 
 			this.m_lblEstimatedQuality.AutoSize = true;
-			this.m_lblEstimatedQuality.Location = new System.Drawing.Point(28, 215);
+			this.m_lblEstimatedQuality.Location = new System.Drawing.Point(28, 198);
 			this.m_lblEstimatedQuality.Name = "m_lblEstimatedQuality";
 			this.m_lblEstimatedQuality.Size = new System.Drawing.Size(89, 13);
 			this.m_lblEstimatedQuality.TabIndex = 4;
@@ -264,7 +260,7 @@
 			// 
 			// m_lblQualityBits
 			// 
-			this.m_lblQualityBits.Location = new System.Drawing.Point(413, 214);
+			this.m_lblQualityBits.Location = new System.Drawing.Point(413, 197);
 			this.m_lblQualityBits.Name = "m_lblQualityBits";
 			this.m_lblQualityBits.Size = new System.Drawing.Size(53, 13);
 			this.m_lblQualityBits.TabIndex = 6;
@@ -280,34 +276,19 @@
 			this.m_bannerImage.TabIndex = 15;
 			this.m_bannerImage.TabStop = false;
 			// 
-			// m_saveKeyFileDialog
-			// 
-			this.m_saveKeyFileDialog.DefaultExt = "key";
-			this.m_saveKeyFileDialog.Filter = "Key Files (*.key)|*.key|All Files (*.*)|*.*";
-			this.m_saveKeyFileDialog.RestoreDirectory = true;
-			this.m_saveKeyFileDialog.SupportMultiDottedExtensions = true;
-			this.m_saveKeyFileDialog.Title = "Create Key File";
-			// 
-			// m_openKeyFileDialog
-			// 
-			this.m_openKeyFileDialog.Filter = "Key Files (*.key)|*.key|All Files (*.*)|*.*";
-			this.m_openKeyFileDialog.RestoreDirectory = true;
-			this.m_openKeyFileDialog.SupportMultiDottedExtensions = true;
-			this.m_openKeyFileDialog.Title = "Use existing file as key file";
-			// 
 			// m_cmbKeyFile
 			// 
 			this.m_cmbKeyFile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbKeyFile.FormattingEnabled = true;
-			this.m_cmbKeyFile.Location = new System.Drawing.Point(150, 238);
+			this.m_cmbKeyFile.Location = new System.Drawing.Point(150, 220);
 			this.m_cmbKeyFile.MaxDropDownItems = 16;
 			this.m_cmbKeyFile.Name = "m_cmbKeyFile";
-			this.m_cmbKeyFile.Size = new System.Drawing.Size(195, 21);
+			this.m_cmbKeyFile.Size = new System.Drawing.Size(357, 21);
 			this.m_cmbKeyFile.TabIndex = 8;
 			// 
 			// m_lblWindowsAccDesc2
 			// 
-			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(28, 349);
+			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(28, 359);
 			this.m_lblWindowsAccDesc2.Name = "m_lblWindowsAccDesc2";
 			this.m_lblWindowsAccDesc2.Size = new System.Drawing.Size(476, 55);
 			this.m_lblWindowsAccDesc2.TabIndex = 14;
@@ -319,7 +300,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(519, 457);
+			this.ClientSize = new System.Drawing.Size(519, 464);
 			this.Controls.Add(this.m_lblWindowsAccDesc2);
 			this.Controls.Add(this.m_cmbKeyFile);
 			this.Controls.Add(this.m_lblQualityBits);
@@ -350,7 +331,7 @@
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Create New Password Database - Step 1";
+			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
@@ -383,8 +364,6 @@
 		private KeePass.UI.QualityProgressBar m_pbPasswordQuality;
 		private System.Windows.Forms.Label m_lblEstimatedQuality;
 		private System.Windows.Forms.Label m_lblQualityBits;
-		private System.Windows.Forms.SaveFileDialog m_saveKeyFileDialog;
-		private System.Windows.Forms.OpenFileDialog m_openKeyFileDialog;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
 		private System.Windows.Forms.Label m_lblWindowsAccDesc2;
 	}

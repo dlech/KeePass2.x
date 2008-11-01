@@ -73,6 +73,8 @@ namespace KeePassLib.Serialization
 			m_format = kdbFormat;
 			m_slLogger = slLogger;
 
+			HashingStreamEx hashedStream = new HashingStreamEx(sSource, false, null);
+
 			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
 
 			try
@@ -83,11 +85,11 @@ namespace KeePassLib.Serialization
 
 				if(kdbFormat == Kdb4Format.Default)
 				{
-					br = new BinaryReader(sSource, encNoBom);
+					br = new BinaryReader(hashedStream, encNoBom);
 					ReadHeader(br);
 
-					Stream sDecrypted = AttachStreamDecryptor(sSource);
-					if((sDecrypted == null) || (sDecrypted == sSource))
+					Stream sDecrypted = AttachStreamDecryptor(hashedStream);
+					if((sDecrypted == null) || (sDecrypted == hashedStream))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
 					brDecrypted = new BinaryReader(sDecrypted, encNoBom);
@@ -102,7 +104,7 @@ namespace KeePassLib.Serialization
 					for(int iStart = 0; iStart < 32; ++iStart)
 					{
 						if(pbStoredStartBytes[iStart] != m_pbStreamStartBytes[iStart])
-							throw new InvalidCompositeKeyException(null);
+							throw new InvalidCompositeKeyException();
 					}
 
 					Stream sHashed = new HashedBlockStream(sDecrypted, false);
@@ -112,7 +114,7 @@ namespace KeePassLib.Serialization
 					else readerStream = sHashed;
 				}
 				else if(kdbFormat == Kdb4Format.PlainXml)
-					readerStream = sSource;
+					readerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
 				if(kdbFormat != Kdb4Format.PlainXml) // Is an encrypted format
@@ -127,19 +129,27 @@ namespace KeePassLib.Serialization
 				}
 				else m_randomStream = null; // No random stream for plain text files
 
-				ReadXmlStreamed(readerStream, sSource);
+				ReadXmlStreamed(readerStream, hashedStream);
 				// ReadXmlDom(readerStream);
 
 				GC.KeepAlive(brDecrypted);
 				GC.KeepAlive(br);
-				
-				sSource.Close();
+
+				CommonCleanUpRead(sSource, hashedStream);
 			}
 			catch(Exception)
 			{
-				sSource.Close();
+				CommonCleanUpRead(sSource, hashedStream);
 				throw;
 			}
+		}
+
+		private void CommonCleanUpRead(Stream sSource, HashingStreamEx hashedStream)
+		{
+			hashedStream.Close();
+			m_pbHashOfFileOnDisk = hashedStream.Hash;
+
+			sSource.Close();
 		}
 
 		private void ReadHeader(BinaryReader br)
@@ -229,7 +239,7 @@ namespace KeePassLib.Serialization
 				default:
 					Debug.Assert(false);
 					if(m_slLogger != null)
-						m_slLogger.SetText(KLRes.UnknownHeaderID + @": " +
+						m_slLogger.SetText(KLRes.UnknownHeaderId + @": " +
 							kdbID.ToString() + "!", LogStatusType.Warning);
 					break;
 			}

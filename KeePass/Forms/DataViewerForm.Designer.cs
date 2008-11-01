@@ -90,14 +90,14 @@
 			// m_tslViewer
 			// 
 			this.m_tslViewer.Name = "m_tslViewer";
-			this.m_tslViewer.Size = new System.Drawing.Size(48, 22);
-			this.m_tslViewer.Text = "Show in:";
+			this.m_tslViewer.Size = new System.Drawing.Size(19, 22);
+			this.m_tslViewer.Text = "<>";
 			// 
 			// m_tscViewers
 			// 
 			this.m_tscViewers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_tscViewers.Name = "m_tscViewers";
-			this.m_tscViewers.Size = new System.Drawing.Size(121, 25);
+			this.m_tscViewers.Size = new System.Drawing.Size(140, 25);
 			this.m_tscViewers.SelectedIndexChanged += new System.EventHandler(this.OnViewersSelectedIndexChanged);
 			// 
 			// m_tssSeparator0
@@ -108,8 +108,8 @@
 			// m_tslEncoding
 			// 
 			this.m_tslEncoding.Name = "m_tslEncoding";
-			this.m_tslEncoding.Size = new System.Drawing.Size(55, 22);
-			this.m_tslEncoding.Text = "Encoding:";
+			this.m_tslEncoding.Size = new System.Drawing.Size(19, 22);
+			this.m_tslEncoding.Text = "<>";
 			// 
 			// m_tscEncoding
 			// 

@@ -33,16 +33,19 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PinsTxt450 : FormatImporter
+	internal sealed class PinsTxt450 : FileFormatProvider
 	{
 		private const string FirstLine = "\"Category\"\t\"System\"\t\"User\"\t" +
 			"\"Password\"\t\"URL/Comments\"\t\"Custom\"\t\"Start date\"\t\"Expires\"\t" +
 			"\"More info\"";
 		private const string FieldSeparator = "\"\t\"";
 
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "PINs TXT 4.50"; } }
 		public override string DefaultExtension { get { return "txt"; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override Image SmallIcon
 		{
@@ -86,8 +89,8 @@ namespace KeePass.DataExchange.Formats
 			vParts[8] = vParts[8].Replace("||", "\r\n");
 
 			PwGroup pg = pwStorage.RootGroup.FindCreateGroup(vParts[0], true);
-			PwEntry pe = new PwEntry(pg, true, true);
-			pg.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pg.AddEntry(pe, true);
 
 			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectTitle, vParts[1]));

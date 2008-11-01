@@ -27,10 +27,13 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
+using KeePass.App;
 using KeePass.Native;
+using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -164,7 +167,7 @@ namespace KeePass.UI
 
 		private static void SetCueBanner(IntPtr hWnd, string strText)
 		{
-			Debug.Assert(strText != null); if(strText == null) throw new ArgumentNullException();
+			Debug.Assert(strText != null); if(strText == null) throw new ArgumentNullException("strText");
 
 			try
 			{
@@ -214,7 +217,7 @@ namespace KeePass.UI
 			return bmp;
 		}
 
-		public static void DimBitmap(Bitmap bmp)
+		public static void DimImage(Image bmp)
 		{
 			using(Brush b = new SolidBrush(Color.FromArgb(192, Color.Black)))
 			{
@@ -222,6 +225,254 @@ namespace KeePass.UI
 				{
 					g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
 				}
+			}
+		}
+
+		public static void PrepareStandardMultilineControl(RichTextBox rtb)
+		{
+			Debug.Assert(rtb != null); if(rtb == null) throw new ArgumentNullException("rtb");
+
+			try
+			{
+				int nStyle = NativeMethods.GetWindowStyle(rtb.Handle);
+
+				if((nStyle & NativeMethods.ES_WANTRETURN) == 0)
+				{
+					NativeMethods.SetWindowLong(rtb.Handle, NativeMethods.GWL_STYLE,
+						nStyle | NativeMethods.ES_WANTRETURN);
+
+					Debug.Assert((NativeMethods.GetWindowStyle(rtb.Handle) &
+						NativeMethods.ES_WANTRETURN) != 0);
+				}
+			}
+			catch(Exception) { }
+		}
+
+		/// <summary>
+		/// Fill a <c>ListView</c> with password entries.
+		/// </summary>
+		/// <param name="lv"><c>ListView</c> to fill.</param>
+		/// <param name="vEntries">Entries.</param>
+		/// <param name="vColumns">Columns of the <c>ListView</c>. The first
+		/// parameter of the key-value pair is the internal string field name,
+		/// and the second one the text displayed in the column header.</param>
+		public static void CreateEntryList(ListView lv, IEnumerable<PwEntry> vEntries,
+			List<KeyValuePair<string, string>> vColumns, ImageList ilIcons)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(vEntries == null) throw new ArgumentNullException("vEntries");
+			if(vColumns == null) throw new ArgumentNullException("vColumns");
+			if(vColumns.Count == 0) throw new ArgumentException();
+
+			lv.BeginUpdate();
+
+			lv.Items.Clear();
+			lv.Columns.Clear();
+			lv.ShowGroups = true;
+			lv.SmallImageList = ilIcons;
+
+			foreach(KeyValuePair<string, string> kvp in vColumns)
+			{
+				lv.Columns.Add(kvp.Value);
+			}
+
+			DocumentManagerEx dm = Program.MainForm.DocumentManager;
+			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
+			DateTime dtNow = DateTime.Now;
+			bool bFirstEntry = true;
+
+			foreach(PwEntry pe in vEntries)
+			{
+				if(pe == null) { Debug.Assert(false); continue; }
+
+				if(pe.ParentGroup != null)
+				{
+					string strGroup = pe.ParentGroup.GetFullPath();
+
+					if(strGroup != lvg.Header)
+					{
+						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
+						lv.Groups.Add(lvg);
+					}
+				}
+
+				ListViewItem lvi = new ListViewItem(AppDefs.GetEntryField(pe, vColumns[0].Key));
+
+				if(pe.Expires && (pe.ExpiryTime <= dtNow))
+					lvi.ImageIndex = (int)PwIcon.Expired;
+				else if(pe.CustomIconUuid == PwUuid.Zero)
+					lvi.ImageIndex = (int)pe.IconId;
+				else
+				{
+					lvi.ImageIndex = (int)pe.IconId;
+
+					foreach(DocumentStateEx ds in dm.Documents)
+					{
+						int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
+						if(nInx > -1)
+						{
+							ilIcons.Images.Add((Image)ds.Database.GetCustomIcon(
+								pe.CustomIconUuid).Clone());
+							lvi.ImageIndex = ilIcons.Images.Count - 1;
+							break;
+						}
+					}
+				}
+
+				for(int iCol = 1; iCol < vColumns.Count; ++iCol)
+				{
+					lvi.SubItems.Add(AppDefs.GetEntryField(pe, vColumns[iCol].Key));
+				}
+
+				lvi.Tag = pe;
+
+				lv.Items.Add(lvi);
+				lvg.Items.Add(lvi);
+
+				if(bFirstEntry)
+				{
+					lvi.Selected = true;
+					lvi.Focused = true;
+
+					bFirstEntry = false;
+				}
+			}
+
+			int nColWidth = (lv.ClientRectangle.Width - GetVScrollBarWidth()) /
+				vColumns.Count;
+			foreach(ColumnHeader ch in lv.Columns)
+			{
+				ch.Width = nColWidth;
+			}
+
+			lv.EndUpdate();
+		}
+
+		public static int GetVScrollBarWidth()
+		{
+			try { return SystemInformation.VerticalScrollBarWidth; }
+			catch(Exception) { Debug.Assert(false); }
+
+			return 18; // Default theme on Windows Vista
+		}
+
+		public static string CreateFileTypeFilter(string strExtension, string strDescription,
+			bool bIncludeAllFiles)
+		{
+			string str = string.Empty;
+
+			if((strExtension != null) && (strExtension.Length > 0) &&
+				(strDescription != null) && (strDescription.Length > 0))
+			{
+				str += strDescription + @" (*." + strExtension + @")|*." + strExtension;
+			}
+
+			if(bIncludeAllFiles)
+			{
+				if(str.Length > 0) str += @"|";
+
+				str += KPRes.AllFiles + @" (*.*)|*.*";
+			}
+
+			return str;
+		}
+
+		public static OpenFileDialog CreateOpenFileDialog(string strTitle, string strFilter,
+			int iFilterIndex, string strDefaultExt, bool bMultiSelect, bool bRestoreDirectory)
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+
+			ofd.CheckFileExists = true;
+			ofd.CheckPathExists = true;
+			
+			if((strDefaultExt != null) && (strDefaultExt.Length > 0))
+				ofd.DefaultExt = strDefaultExt;
+
+			ofd.DereferenceLinks = true;
+
+			if((strFilter != null) && (strFilter.Length > 0))
+			{
+				ofd.Filter = strFilter;
+
+				if(iFilterIndex > 0) ofd.FilterIndex = iFilterIndex;
+			}
+
+			ofd.Multiselect = bMultiSelect;
+			ofd.ReadOnlyChecked = false;
+			ofd.RestoreDirectory = bRestoreDirectory;
+			ofd.ShowHelp = false;
+			ofd.ShowReadOnly = false;
+			ofd.SupportMultiDottedExtensions = false;
+
+			if((strTitle != null) && (strTitle.Length > 0))
+				ofd.Title = strTitle;
+
+			ofd.ValidateNames = true;
+
+			return ofd;
+		}
+
+		public static SaveFileDialog CreateSaveFileDialog(string strTitle,
+			string strSuggestedFileName, string strFilter, int iFilterIndex,
+			string strDefaultExt, bool bRestoreDirectory)
+		{
+			SaveFileDialog sfd = new SaveFileDialog();
+
+			sfd.AddExtension = true;
+			sfd.CheckFileExists = false;
+			sfd.CheckPathExists = true;
+			sfd.CreatePrompt = false;
+
+			if((strDefaultExt != null) && (strDefaultExt.Length > 0))
+				sfd.DefaultExt = strDefaultExt;
+
+			sfd.DereferenceLinks = true;
+
+			if((strSuggestedFileName != null) && (strSuggestedFileName.Length > 0))
+				sfd.FileName = strSuggestedFileName;
+
+			if((strFilter != null) && (strFilter.Length > 0))
+			{
+				sfd.Filter = strFilter;
+
+				if(iFilterIndex > 0) sfd.FilterIndex = iFilterIndex;
+			}
+
+			sfd.OverwritePrompt = true;
+			sfd.RestoreDirectory = bRestoreDirectory;
+			sfd.ShowHelp = false;
+			sfd.SupportMultiDottedExtensions = false;
+
+			if((strTitle != null) && (strTitle.Length > 0))
+				sfd.Title = strTitle;
+
+			sfd.ValidateNames = true;
+
+			return sfd;
+		}
+
+		public static FolderBrowserDialog CreateFolderBrowserDialog(string strDescription)
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+			if((strDescription != null) && (strDescription.Length > 0))
+				fbd.Description = strDescription;
+
+			fbd.ShowNewFolderButton = true;
+
+			return fbd;
+		}
+
+		public static void SetGroupNodeToolTip(TreeNode tn, PwGroup pg)
+		{
+			if((tn == null) || (pg == null)) { Debug.Assert(false); return; }
+
+			if(pg.Notes.Length > 0)
+			{
+				string str = pg.Name + MessageService.NewParagraph + pg.Notes;
+
+				try { tn.ToolTipText = str; }
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 	}

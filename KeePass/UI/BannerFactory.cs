@@ -31,13 +31,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
-	public enum BannerStyle : uint
+	public enum BannerStyle
 	{
 		Default = 0,
-		WinXPLogin,
-		WinVistaBlack,
-		KeePassWin32,
-		BlueCarbon
+		WinXPLogin = 1,
+		WinVistaBlack = 2,
+		KeePassWin32 = 3,
+		BlueCarbon = 4
 	}
 
 	public static class BannerFactory
@@ -48,8 +48,8 @@ namespace KeePass.UI
 		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs, Image imgIcon, string strTitle, string strLine)
 		{
 			// imgIcon may be null.
-			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException();
-			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException();
+			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
+			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException("strLine");
 
 			string strImageID = nWidth.ToString() + "x" + nHeight.ToString() + ":";
 			if(strTitle != null) strImageID += strTitle;

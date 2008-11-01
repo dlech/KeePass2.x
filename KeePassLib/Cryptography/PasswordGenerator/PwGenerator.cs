@@ -29,8 +29,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	public enum PwgError
 	{
 		Success = 0,
-		Unknown,
-		TooFewCharacters
+		Unknown = 1,
+		TooFewCharacters = 2
 	}
 
 	/// <summary>

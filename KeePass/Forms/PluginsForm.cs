@@ -68,6 +68,12 @@ namespace KeePass.Forms
 				KPRes.PluginsDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			m_lvPlugins.Columns.Add(KPRes.Plugin, 197);
+			m_lvPlugins.Columns.Add(KPRes.Version, 106);
+			m_lvPlugins.Columns.Add(KPRes.Author, 136);
+			m_lvPlugins.Columns.Add(KPRes.Description, 0);
+			m_lvPlugins.Columns.Add(KPRes.File, 119);
+
 			m_ilIcons.ImageSize = new Size(16, 16);
 			m_ilIcons.ColorDepth = ColorDepth.Depth32Bit;
 

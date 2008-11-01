@@ -70,11 +70,18 @@ namespace KeePass.App.Configuration
 			set { m_bSearchKeyFilesOnRemovable = value; }
 		}
 
-		private bool m_bSingleInstance = false;
+		private bool m_bSingleInstance = true;
 		public bool LimitToSingleInstance
 		{
 			get { return m_bSingleInstance; }
 			set { m_bSingleInstance = value; }
+		}
+
+		private bool m_bPrependInitSeqIE = true;
+		public bool AutoTypePrependInitSequenceForIE
+		{
+			get { return m_bPrependInitSeqIE; }
+			set { m_bPrependInitSeqIE = value; }
 		}
 	}
 }

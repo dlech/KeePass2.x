@@ -44,7 +44,7 @@ namespace KeePass.Util
 			set { m_hRecvWnd = value; }
 		}
 
-		public static bool RegisterHotKey(int nID, Keys kKey)
+		public static bool RegisterHotKey(int nId, Keys kKey)
 		{
 			if(kKey == Keys.None) return false;
 
@@ -55,13 +55,13 @@ namespace KeePass.Util
 
 			uint vkCode = (uint)(kKey & Keys.KeyCode);
 
-			UnregisterHotKey(nID);
+			UnregisterHotKey(nId);
 
 			try
 			{
-				if(NativeMethods.RegisterHotKey(m_hRecvWnd, nID, uMod, vkCode))
+				if(NativeMethods.RegisterHotKey(m_hRecvWnd, nId, uMod, vkCode))
 				{
-					m_vRegisteredIDs.Add(nID);
+					m_vRegisteredIDs.Add(nId);
 					return true;
 				}
 			}
@@ -70,15 +70,15 @@ namespace KeePass.Util
 			return false;
 		}
 
-		public static bool UnregisterHotKey(int nID)
+		public static bool UnregisterHotKey(int nId)
 		{
-			if(m_vRegisteredIDs.IndexOf(nID) >= 0)
+			if(m_vRegisteredIDs.IndexOf(nId) >= 0)
 			{
-				m_vRegisteredIDs.Remove(nID);
+				m_vRegisteredIDs.Remove(nId);
 
 				try
 				{
-					bool bResult = NativeMethods.UnregisterHotKey(m_hRecvWnd, nID);
+					bool bResult = NativeMethods.UnregisterHotKey(m_hRecvWnd, nId);
 					Debug.Assert(bResult);
 					return bResult;
 				}

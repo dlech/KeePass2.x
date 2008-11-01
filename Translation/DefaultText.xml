@@ -25,6 +25,9 @@
 		<Data Name="AddEntry">
 			<Value>Add Entry</Value>
 		</Data>
+		<Data Name="AddEntryBtn">
+			<Value>Add Entry...</Value>
+		</Data>
 		<Data Name="AddEntryDesc">
 			<Value>Add a new password entry to the database.</Value>
 		</Data>
@@ -70,8 +73,17 @@
 		<Data Name="AttachFailed">
 			<Value>Failed to attach file:</Value>
 		</Data>
+		<Data Name="AttachFiles">
+			<Value>Attach Files To Entry</Value>
+		</Data>
 		<Data Name="Attachments">
 			<Value>Attachments</Value>
+		</Data>
+		<Data Name="AttachmentSave">
+			<Value>Save Attached File As</Value>
+		</Data>
+		<Data Name="AttachmentsSave">
+			<Value>Save attached files to:</Value>
 		</Data>
 		<Data Name="AttachNewRename">
 			<Value>Do you wish to rename the new file or overwrite the existing attached file?</Value>
@@ -95,7 +107,7 @@
 			<Value>Automatically open last used database on startup</Value>
 		</Data>
 		<Data Name="AutoSaveAtExit">
-			<Value>Automatically save database on exit and workspace locking</Value>
+			<Value>Automatically save when closing/locking the database</Value>
 		</Data>
 		<Data Name="AutoShowExpiredEntries">
 			<Value>Show expired entries (if any)</Value>
@@ -117,6 +129,9 @@
 		</Data>
 		<Data Name="AutoTypeObfuscationHint">
 			<Value>Auto-type obfuscation may not work with all windows.</Value>
+		</Data>
+		<Data Name="AutoTypePrependInitSeqForIE">
+			<Value>Prepend special initialization sequence for Internet Explorer windows</Value>
 		</Data>
 		<Data Name="AutoTypeSequenceInvalid">
 			<Value>The specified auto-type sequence is invalid.</Value>
@@ -154,6 +169,9 @@
 		<Data Name="ButtonNext">
 			<Value>&amp;Next &gt;</Value>
 		</Data>
+		<Data Name="Cancel">
+			<Value>Cancel</Value>
+		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
 			<Value>Cannot move entries because they aren't stored in the same group.</Value>
 		</Data>
@@ -172,7 +190,7 @@
 		<Data Name="ChkForUpdNewVersion">
 			<Value>New KeePass version available!</Value>
 		</Data>
-		<Data Name="ClearMRU">
+		<Data Name="ClearMru">
 			<Value>&amp;Clear List</Value>
 		</Data>
 		<Data Name="Clipboard">
@@ -241,11 +259,17 @@
 		<Data Name="CopyOfItem">
 			<Value>Copy</Value>
 		</Data>
+		<Data Name="CopyPasswordFull">
+			<Value>Copy Password to Clipboard</Value>
+		</Data>
 		<Data Name="CopyPasswordMenu">
 			<Value>Copy &amp;Password</Value>
 		</Data>
 		<Data Name="CopyTanMenu">
 			<Value>Copy &amp;TAN</Value>
+		</Data>
+		<Data Name="CopyUserFull">
+			<Value>Copy User Name to Clipboard</Value>
 		</Data>
 		<Data Name="CreateMasterKey">
 			<Value>Create Composite Master Key</Value>
@@ -265,14 +289,26 @@
 		<Data Name="CredSaveUserOnly">
 			<Value>Remember user name only</Value>
 		</Data>
+		<Data Name="CsvTextFile">
+			<Value>CSV / Text File</Value>
+		</Data>
+		<Data Name="CurrentStyle">
+			<Value>Current Style</Value>
+		</Data>
 		<Data Name="Custom">
 			<Value>Custom</Value>
 		</Data>
 		<Data Name="CustomFields">
 			<Value>Custom Fields</Value>
 		</Data>
+		<Data Name="CustomizableHtml">
+			<Value>Customizable HTML File</Value>
+		</Data>
 		<Data Name="Cut">
 			<Value>Cut</Value>
+		</Data>
+		<Data Name="Data">
+			<Value>Data</Value>
 		</Data>
 		<Data Name="Database">
 			<Value>Database</Value>
@@ -286,8 +322,8 @@
 		<Data Name="DatabaseMaintenanceDesc">
 			<Value>Here you can maintain the currently opened database.</Value>
 		</Data>
-		<Data Name="DatabaseModified">
-			<Value>This database has been modified.</Value>
+		<Data Name="DatabaseModifiedNoDot">
+			<Value>The current database file has been modified</Value>
 		</Data>
 		<Data Name="DatabaseNamePrompt">
 			<Value>Enter a name for the database or leave it empty.</Value>
@@ -331,6 +367,9 @@
 		<Data Name="Details">
 			<Value>Details</Value>
 		</Data>
+		<Data Name="DiscardChanges">
+			<Value>Discard changes</Value>
+		</Data>
 		<Data Name="DocumentationHint">
 			<Value>Please see the documentation for more details.</Value>
 		</Data>
@@ -367,6 +406,15 @@
 		<Data Name="Empty">
 			<Value>Empty</Value>
 		</Data>
+		<Data Name="Encoding">
+			<Value>Encoding</Value>
+		</Data>
+		<Data Name="EncodingAnsi">
+			<Value>Default ANSI (System)</Value>
+		</Data>
+		<Data Name="EncodingFail">
+			<Value>Selected encoding is invalid. The file cannot be interpreted using the selected encoding.</Value>
+		</Data>
 		<Data Name="EnterCompositeKey">
 			<Value>Enter Master Key</Value>
 		</Data>
@@ -397,17 +445,29 @@
 		<Data Name="Export">
 			<Value>Export</Value>
 		</Data>
-		<Data Name="ExportHTML">
+		<Data Name="ExportFileDesc">
+			<Value>Export data to an external file.</Value>
+		</Data>
+		<Data Name="ExportFileTitle">
+			<Value>Export File/Data</Value>
+		</Data>
+		<Data Name="ExportHtml">
 			<Value>Export To HTML</Value>
 		</Data>
-		<Data Name="ExportHTMLDesc">
+		<Data Name="ExportHtmlDesc">
 			<Value>Export entries to a HTML file.</Value>
 		</Data>
 		<Data Name="ExportingStatusMsg">
 			<Value>Exporting...</Value>
 		</Data>
+		<Data Name="ExportToPrompt">
+			<Value>Export to:</Value>
+		</Data>
 		<Data Name="FatalError">
 			<Value>Fatal Error</Value>
+		</Data>
+		<Data Name="Feature">
+			<Value>Feature</Value>
 		</Data>
 		<Data Name="FieldName">
 			<Value>Field Name</Value>
@@ -421,8 +481,29 @@
 		<Data Name="FieldNamePrompt">
 			<Value>Please enter a field name.</Value>
 		</Data>
+		<Data Name="FieldRefInvalidChars">
+			<Value>The selected field, which identifies the source entry, contains illegal characters (like '{', '}', newline characters, ...).</Value>
+		</Data>
+		<Data Name="FieldRefMultiMatch">
+			<Value>Multiple entries match the specified identifying field.</Value>
+		</Data>
+		<Data Name="FieldRefMultiMatchHint">
+			<Value>To avoid ambiguity, entries can be identified by their UUIDs, which are unique.</Value>
+		</Data>
 		<Data Name="FieldValue">
 			<Value>Field Value</Value>
+		</Data>
+		<Data Name="File">
+			<Value>File</Value>
+		</Data>
+		<Data Name="FileChanged">
+			<Value>The file on disk/server has changed since it was loaded. Probably someone else has edited and saved the database.</Value>
+		</Data>
+		<Data Name="FileChangedOverwrite">
+			<Value>Save the current database to the file. Changes made by the other user will be lost.</Value>
+		</Data>
+		<Data Name="FileChangedSync">
+			<Value>Load the file on disk/server and merge it with the current database in memory.</Value>
 		</Data>
 		<Data Name="FileExistsAlready">
 			<Value>The following file exists already:</Value>
@@ -454,16 +535,58 @@
 		<Data Name="Files">
 			<Value>Files</Value>
 		</Data>
-		<Data Name="Flag">
-			<Value>Flag</Value>
+		<Data Name="FileSaveQClosing">
+			<Value>Save database changes before closing the file?</Value>
+		</Data>
+		<Data Name="FileSaveQExiting">
+			<Value>Save database changes before exiting KeePass?</Value>
+		</Data>
+		<Data Name="FileSaveQLocking">
+			<Value>Save database changes before locking the workspace?</Value>
+		</Data>
+		<Data Name="FileSaveQOpCancel">
+			<Value>Abort the current operation.</Value>
+		</Data>
+		<Data Name="FileSaveQOpCancelClosing">
+			<Value>The file will not be closed.</Value>
+		</Data>
+		<Data Name="FileSaveQOpCancelExiting">
+			<Value>KeePass will not be closed.</Value>
+		</Data>
+		<Data Name="FileSaveQOpCancelLocking">
+			<Value>The KeePass workspace will not be locked.</Value>
+		</Data>
+		<Data Name="FileSaveQOpNoClosing">
+			<Value>Discard all changes made to the database and close the file.</Value>
+		</Data>
+		<Data Name="FileSaveQOpNoExiting">
+			<Value>Discard all changes made to the database and exit KeePass.</Value>
+		</Data>
+		<Data Name="FileSaveQOpNoLocking">
+			<Value>Discard all changes made to the database and lock the KeePass workspace.</Value>
+		</Data>
+		<Data Name="FileSaveQOpYesClosing">
+			<Value>Save all changes made to the database and close the file.</Value>
+		</Data>
+		<Data Name="FileSaveQOpYesExiting">
+			<Value>Save all changes made to the database and exit KeePass.</Value>
+		</Data>
+		<Data Name="FileSaveQOpYesLocking">
+			<Value>Save all changes made to the database and lock the KeePass workspace.</Value>
+		</Data>
+		<Data Name="FileVerifyHashFail">
+			<Value>The new file's content does not match the data that KeePass has written, i.e. writing to the file has failed and it might be corrupted now.</Value>
+		</Data>
+		<Data Name="FileVerifyHashFailRec">
+			<Value>Please try saving again, and if that fails, save the database to a different location.</Value>
 		</Data>
 		<Data Name="FocusResultsAfterQuickFind">
 			<Value>Focus entry list after a successful quick search (toolbar)</Value>
 		</Data>
-		<Data Name="FormatNoDbDesc">
+		<Data Name="FormatNoDatabaseDesc">
 			<Value>This file format doesn't support database descriptions.</Value>
 		</Data>
-		<Data Name="FormatNoDbName">
+		<Data Name="FormatNoDatabaseName">
 			<Value>This file format doesn't support database names.</Value>
 		</Data>
 		<Data Name="FormatNoRootEntries">
@@ -493,6 +616,18 @@
 		<Data Name="GeneratedPasswordSamples">
 			<Value>Generated Passwords Samples</Value>
 		</Data>
+		<Data Name="GeneratePassword">
+			<Value>Generate a password</Value>
+		</Data>
+		<Data Name="GenericCsvImporter">
+			<Value>Generic CSV Importer</Value>
+		</Data>
+		<Data Name="GenProfileRemove">
+			<Value>Remove selected profile</Value>
+		</Data>
+		<Data Name="GenProfileRemoveDesc">
+			<Value>Remove the currently selected profile.</Value>
+		</Data>
 		<Data Name="GenProfileSave">
 			<Value>Save as Profile</Value>
 		</Data>
@@ -520,6 +655,9 @@
 		<Data Name="HelpSourceSelectionDesc">
 			<Value>Choose between local help and online help center.</Value>
 		</Data>
+		<Data Name="HideUsingAsterisks">
+			<Value>Hide field using asterisks</Value>
+		</Data>
 		<Data Name="HomeAddress">
 			<Value>Home Address</Value>
 		</Data>
@@ -535,8 +673,11 @@
 		<Data Name="HomeTel">
 			<Value>Home Tel.</Value>
 		</Data>
-		<Data Name="IBAN">
+		<Data Name="Iban">
 			<Value>IBAN</Value>
+		</Data>
+		<Data Name="Ignore">
+			<Value>Ignore</Value>
 		</Data>
 		<Data Name="ImageFormatFeatureUnsupported">
 			<Value>This file uses a file format feature that is not supported.</Value>
@@ -558,6 +699,9 @@
 		</Data>
 		<Data Name="ImportFileDesc">
 			<Value>Import an external file.</Value>
+		</Data>
+		<Data Name="ImportFilesPrompt">
+			<Value>Files to be imported:</Value>
 		</Data>
 		<Data Name="ImportFileTitle">
 			<Value>Import File/Data</Value>
@@ -592,8 +736,11 @@
 		<Data Name="JobTitle">
 			<Value>Job Title</Value>
 		</Data>
-		<Data Name="KDB3KeePassLibC">
+		<Data Name="Kdb3KeePassLibC">
 			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
+		</Data>
+		<Data Name="KdbxFiles">
+			<Value>KeePass KDBX Files</Value>
 		</Data>
 		<Data Name="KeePassLibCLong">
 			<Value>KeePassLibC (1.x File Support)</Value>
@@ -601,8 +748,32 @@
 		<Data Name="KeePassLibCNotFound">
 			<Value>KeePassLibC could not be found.</Value>
 		</Data>
+		<Data Name="KeyboardKeyAlt">
+			<Value>Alt</Value>
+		</Data>
+		<Data Name="KeyboardKeyControl">
+			<Value>Control</Value>
+		</Data>
+		<Data Name="KeyboardKeyModifiers">
+			<Value>Key Modifiers</Value>
+		</Data>
+		<Data Name="KeyboardKeyShift">
+			<Value>Shift</Value>
+		</Data>
+		<Data Name="KeyFileCreate">
+			<Value>Create a new key file</Value>
+		</Data>
 		<Data Name="KeyFileError">
 			<Value>The specified key file could not be found or its format is unknown.</Value>
+		</Data>
+		<Data Name="KeyFiles">
+			<Value>Key Files</Value>
+		</Data>
+		<Data Name="KeyFileSelect">
+			<Value>Select key file manually</Value>
+		</Data>
+		<Data Name="KeyFileUseExisting">
+			<Value>Use an existing file as key file</Value>
 		</Data>
 		<Data Name="KeystrokeSequence">
 			<Value>Keystroke Sequence</Value>
@@ -643,6 +814,12 @@
 		<Data Name="MasterKeyChangedSavePrompt">
 			<Value>Save the database now in order to get the new key applied.</Value>
 		</Data>
+		<Data Name="MasterPasswordMinLengthFailed">
+			<Value>The master password must be at least {PARAM} characters long!</Value>
+		</Data>
+		<Data Name="MasterPasswordMinQualityFailed">
+			<Value>The estimated quality of the master password must be at least {PARAM} bits!</Value>
+		</Data>
 		<Data Name="Menus">
 			<Value>Menus</Value>
 		</Data>
@@ -673,11 +850,14 @@
 		<Data Name="NeverExpires">
 			<Value>Never expires</Value>
 		</Data>
-		<Data Name="NewDatabaseKDBFileName">
+		<Data Name="NewDatabaseFileName">
 			<Value>NewDatabase.kdbx</Value>
 		</Data>
 		<Data Name="NewGroup">
 			<Value>New Group</Value>
+		</Data>
+		<Data Name="No">
+			<Value>No</Value>
 		</Data>
 		<Data Name="NoFileAccessRead">
 			<Value>The operating system didn't KeePass grant read access to the specified file.</Value>
@@ -694,14 +874,20 @@
 		<Data Name="NotInstalled">
 			<Value>Not installed</Value>
 		</Data>
-		<Data Name="NoXSLFile">
+		<Data Name="NoXslFile">
 			<Value>The selected file isn't a valid XSL stylesheet.</Value>
 		</Data>
 		<Data Name="OfLower">
 			<Value>of</Value>
 		</Data>
+		<Data Name="OpenDatabaseFile">
+			<Value>Open Database File</Value>
+		</Data>
 		<Data Name="OpeningDatabase">
 			<Value>Opening password database...</Value>
+		</Data>
+		<Data Name="OptimizeForScreenReader">
+			<Value>Optimize for screen reader (only enable if you're using a screen reader)</Value>
 		</Data>
 		<Data Name="Options">
 			<Value>Options</Value>
@@ -711,6 +897,9 @@
 		</Data>
 		<Data Name="OtherPlaceholders">
 			<Value>Other Placeholders</Value>
+		</Data>
+		<Data Name="Overwrite">
+			<Value>Overwrite</Value>
 		</Data>
 		<Data Name="OverwriteExistingFileQuestion">
 			<Value>Overwrite the existing file?</Value>
@@ -728,7 +917,7 @@
 			<Value>Password Generation Options</Value>
 		</Data>
 		<Data Name="PasswordOptionsDesc">
-			<Value>Here you can define the way generated passwords will look.</Value>
+			<Value>Here you can define properties of generated passwords.</Value>
 		</Data>
 		<Data Name="PasswordPrompt">
 			<Value>Enter the password:</Value>
@@ -744,6 +933,12 @@
 		</Data>
 		<Data Name="PickCharactersDesc">
 			<Value>Select the requested character positions.</Value>
+		</Data>
+		<Data Name="PickIcon">
+			<Value>Pick an icon.</Value>
+		</Data>
+		<Data Name="Plugin">
+			<Value>Plugin</Value>
 		</Data>
 		<Data Name="PluginFailedToLoad">
 			<Value>The following plugin cannot be loaded:</Value>
@@ -793,6 +988,9 @@
 		<Data Name="QuickSearch">
 			<Value>Quick Search</Value>
 		</Data>
+		<Data Name="QuickSearchExcludeExpired">
+			<Value>Exclude expired entries in quick searches (toolbar)</Value>
+		</Data>
 		<Data Name="Ready">
 			<Value>Ready.</Value>
 		</Data>
@@ -807,6 +1005,9 @@
 		</Data>
 		<Data Name="SampleEntry">
 			<Value>Sample Entry</Value>
+		</Data>
+		<Data Name="Save">
+			<Value>Save</Value>
 		</Data>
 		<Data Name="SaveBeforeCloseQuestion">
 			<Value>Do you want to save the changes before closing?</Value>
@@ -835,6 +1036,9 @@
 		<Data Name="SearchKeyFilesOnRemovable">
 			<Value>Automatically search key files on removable media</Value>
 		</Data>
+		<Data Name="SearchQuickPrompt">
+			<Value>Type to search the database</Value>
+		</Data>
 		<Data Name="SearchResultsInSeparator">
 			<Value>in</Value>
 		</Data>
@@ -844,11 +1048,20 @@
 		<Data Name="SelectAll">
 			<Value>Select All</Value>
 		</Data>
+		<Data Name="SelectColor">
+			<Value>Select Color</Value>
+		</Data>
 		<Data Name="SelectDifferentGroup">
 			<Value>Please select a different group.</Value>
 		</Data>
 		<Data Name="SelectedLower">
 			<Value>selected</Value>
+		</Data>
+		<Data Name="SelectFile">
+			<Value>Select a file.</Value>
+		</Data>
+		<Data Name="SelectIcon">
+			<Value>Select an icon</Value>
 		</Data>
 		<Data Name="SelectLanguage">
 			<Value>Select Language</Value>
@@ -859,11 +1072,20 @@
 		<Data Name="SelfTestFailed">
 			<Value>One or more of the KeePass self-tests failed.</Value>
 		</Data>
+		<Data Name="ShowAllEntries">
+			<Value>Show All Entries</Value>
+		</Data>
+		<Data Name="ShowExpiredEntries">
+			<Value>Show Expired Entries</Value>
+		</Data>
 		<Data Name="ShowFullPathInTitleBar">
 			<Value>Show full path in title bar (instead of file name only)</Value>
 		</Data>
 		<Data Name="ShowGridLines">
 			<Value>Show grid lines in password entry list</Value>
+		</Data>
+		<Data Name="ShowIn">
+			<Value>Show in</Value>
 		</Data>
 		<Data Name="ShowTrayOnlyIfTrayed">
 			<Value>Show tray icon only if main window has been sent to tray</Value>
@@ -877,6 +1099,9 @@
 		<Data Name="SpecialKeys">
 			<Value>Special Keys</Value>
 		</Data>
+		<Data Name="StandardExpireSelect">
+			<Value>Select one of the standard expire times</Value>
+		</Data>
 		<Data Name="StandardFields">
 			<Value>Standard Fields</Value>
 		</Data>
@@ -889,7 +1114,7 @@
 		<Data Name="Success">
 			<Value>Success.</Value>
 		</Data>
-		<Data Name="SWIFTCode">
+		<Data Name="SwiftCode">
 			<Value>SWIFT Code</Value>
 		</Data>
 		<Data Name="SyncFailed">
@@ -910,8 +1135,8 @@
 		<Data Name="System">
 			<Value>System</Value>
 		</Data>
-		<Data Name="SystemCodepage">
-			<Value>System Codepage</Value>
+		<Data Name="SystemCodePage">
+			<Value>System Code Page</Value>
 		</Data>
 		<Data Name="TAccountInfoTel">
 			<Value>Account Info Tel.</Value>
@@ -925,10 +1150,10 @@
 		<Data Name="TAccountType">
 			<Value>Account Type</Value>
 		</Data>
-		<Data Name="TANWizard">
+		<Data Name="TanWizard">
 			<Value>TAN Wizard</Value>
 		</Data>
-		<Data Name="TANWizardDesc">
+		<Data Name="TanWizardDesc">
 			<Value>With this TAN wizard you can easily add TAN entries.</Value>
 		</Data>
 		<Data Name="TargetWindow">
@@ -940,11 +1165,26 @@
 		<Data Name="Title">
 			<Value>Title</Value>
 		</Data>
+		<Data Name="TogglePasswordAsterisks">
+			<Value>Show/hide password using asterisks</Value>
+		</Data>
+		<Data Name="ToolBarNew">
+			<Value>New...</Value>
+		</Data>
+		<Data Name="ToolBarOpen">
+			<Value>Open...</Value>
+		</Data>
+		<Data Name="ToolBarSaveAll">
+			<Value>Save All</Value>
+		</Data>
 		<Data Name="TooManyFilesError">
 			<Value>Too many files have been selected. Select smaller groups and repeat the current procedure a few times.</Value>
 		</Data>
 		<Data Name="TransfersOf">
 			<Value>Transfers Of</Value>
+		</Data>
+		<Data Name="TransformationRounds1SecHint">
+			<Value>Compute the number of rounds that lead to a delay of 1 second on this computer.</Value>
 		</Data>
 		<Data Name="Undo">
 			<Value>Undo</Value>
@@ -958,7 +1198,7 @@
 		<Data Name="UnknownFileVersion">
 			<Value>Unknown file version!</Value>
 		</Data>
-		<Data Name="URL">
+		<Data Name="Url">
 			<Value>URL</Value>
 		</Data>
 		<Data Name="UrlOpenDesc">
@@ -982,7 +1222,7 @@
 		<Data Name="UserNamePrompt">
 			<Value>Enter the user name:</Value>
 		</Data>
-		<Data Name="UUID">
+		<Data Name="Uuid">
 			<Value>UUID</Value>
 		</Data>
 		<Data Name="Version">
@@ -1021,14 +1261,68 @@
 		<Data Name="WorkTel">
 			<Value>Work Tel.</Value>
 		</Data>
-		<Data Name="XSLStylesheets">
+		<Data Name="XslExporter">
+			<Value>Transform using XSL Stylesheet</Value>
+		</Data>
+		<Data Name="XslFileType">
+			<Value>XSL Stylesheets</Value>
+		</Data>
+		<Data Name="XslSelectFile">
+			<Value>Select XSL Transformation File</Value>
+		</Data>
+		<Data Name="XslStylesheets">
 			<Value>XSL Stylesheets for KDB4 XML</Value>
+		</Data>
+		<Data Name="Yes">
+			<Value>Yes</Value>
 		</Data>
 	</StringTable>
 
 	<StringTable Name="KLRes" Namespace="KeePassLib.Resources">
 		<Data Name="CryptoStreamFailed">
 			<Value>Failed to initialize encryption/decryption stream!</Value>
+		</Data>
+		<Data Name="EncAlgorithmAes">
+			<Value>AES/Rijndael (256-Bit Key)</Value>
+		</Data>
+		<Data Name="ErrorFeedbackRequest">
+			<Value>An extended error report has been copied to the clipboard. Please send it to the KeePass developers.</Value>
+		</Data>
+		<Data Name="FatalError">
+			<Value>Fatal Error</Value>
+		</Data>
+		<Data Name="FatalErrorText">
+			<Value>A fatal error has occurred!</Value>
+		</Data>
+		<Data Name="FileHeaderEndEarly">
+			<Value>The file header is corrupted! Some header data was declared but is not present.</Value>
+		</Data>
+		<Data Name="FileLoadFailed">
+			<Value>Failed to load the specified file!</Value>
+		</Data>
+		<Data Name="FileSaveCorruptionWarning">
+			<Value>The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.</Value>
+		</Data>
+		<Data Name="FileSaveFailed">
+			<Value>Failed to save the current database to the specified location!</Value>
+		</Data>
+		<Data Name="FileSigInvalid">
+			<Value>The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.</Value>
+		</Data>
+		<Data Name="FileUnknownCipher">
+			<Value>The file is encrypted using an unknown encryption algorithm!</Value>
+		</Data>
+		<Data Name="FileUnknownCompression">
+			<Value>The file is compressed using an unknown compression algorithm!</Value>
+		</Data>
+		<Data Name="FileVersionUnknown">
+			<Value>Unknown file version!</Value>
+		</Data>
+		<Data Name="FinalKeyCreationFailed">
+			<Value>Failed to create the final encryption/decryption key!</Value>
+		</Data>
+		<Data Name="FrameworkNotImplExcp">
+			<Value>The .NET framework/runtime, under which KeePass is currently running, does not support this operation.</Value>
 		</Data>
 		<Data Name="InvalidCompositeKey">
 			<Value>The composite key is invalid!</Value>
@@ -1039,47 +1333,17 @@
 		<Data Name="InvalidDataWhileDecoding">
 			<Value>Found invalid data while decoding.</Value>
 		</Data>
-		<Data Name="FileUnknownCipher">
-			<Value>The file is encrypted using an unknown encryption algorithm!</Value>
-		</Data>
-		<Data Name="FileSigInvalid">
-			<Value>The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.</Value>
-		</Data>
-		<Data Name="FileVersionUnknown">
-			<Value>Unknown file version!</Value>
-		</Data>
-		<Data Name="FileHeaderEndEarly">
-			<Value>The file header is corrupted! Some header data was declared but is not present.</Value>
-		</Data>
-		<Data Name="UnknownHeaderID">
-			<Value>Unknown header ID!</Value>
-		</Data>
-		<Data Name="FileUnknownCompression">
-			<Value>The file is compressed using an unknown compression algorithm!</Value>
-		</Data>
 		<Data Name="MasterSeedLengthInvalid">
 			<Value>The length of the master key seed is invalid!</Value>
-		</Data>
-		<Data Name="FinalKeyCreationFailed">
-			<Value>Failed to create the final encryption/decryption key!</Value>
 		</Data>
 		<Data Name="OldFormat">
 			<Value>The selected file appears to be an old format</Value>
 		</Data>
-		<Data Name="FatalError">
-			<Value>Fatal Error</Value>
+		<Data Name="UnknownHeaderId">
+			<Value>Unknown header ID!</Value>
 		</Data>
-		<Data Name="FatalErrorText">
-			<Value>A fatal error has occurred!</Value>
-		</Data>
-		<Data Name="FileLoadFailed">
-			<Value>Failed to load the specified file!</Value>
-		</Data>
-		<Data Name="FileSaveFailed">
-			<Value>Failed to save the current database to the specified location!</Value>
-		</Data>
-		<Data Name="ErrorFeedbackRequest">
-			<Value>An extended error report has been copied to the clipboard. Please send it to the KeePass developers.</Value>
+		<Data Name="UserAccountKeyError">
+			<Value>The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.</Value>
 		</Data>
 	</StringTable>
 </Translation>

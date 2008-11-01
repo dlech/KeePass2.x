@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Util;
 
@@ -76,6 +77,11 @@ namespace KeePass.Plugins
 		public KeyProviderPool KeyProviderPool
 		{
 			get { return Program.KeyProviderPool; }
+		}
+
+		public FileFormatPool FileFormatPool
+		{
+			get { return Program.FileFormatPool; }
 		}
 	}
 }

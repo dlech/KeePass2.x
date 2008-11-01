@@ -252,8 +252,10 @@ namespace KeePassLib.Serialization
 						m_ctxGroup.Uuid = ReadUuid(xr);
 					else if(xr.Name == ElemName)
 						m_ctxGroup.Name = ReadString(xr);
+					else if(xr.Name == ElemNotes)
+						m_ctxGroup.Notes = ReadString(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxGroup.IconID = (PwIcon)ReadUInt(xr, (uint)PwIcon.Folder);
+						m_ctxGroup.IconId = (PwIcon)ReadUInt(xr, (uint)PwIcon.Folder);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxGroup.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemTimes)
@@ -267,9 +269,7 @@ namespace KeePassLib.Serialization
 					else if(xr.Name == ElemGroup)
 					{
 						m_ctxGroup = new PwGroup(false, false);
-
-						m_ctxGroup.ParentGroup = m_ctxGroups.Peek();
-						m_ctxGroup.ParentGroup.Groups.Add(m_ctxGroup);
+						m_ctxGroups.Peek().AddGroup(m_ctxGroup, true);
 
 						m_ctxGroups.Push(m_ctxGroup);
 
@@ -277,10 +277,8 @@ namespace KeePassLib.Serialization
 					}
 					else if(xr.Name == ElemEntry)
 					{
-						m_ctxEntry = new PwEntry(m_ctxGroup, false, false);
-
-						m_ctxEntry.ParentGroup = m_ctxGroup;
-						m_ctxGroup.Entries.Add(m_ctxEntry);
+						m_ctxEntry = new PwEntry(false, false);
+						m_ctxGroup.AddEntry(m_ctxEntry, true);
 
 						m_bEntryInHistory = false;
 						return SwitchContext(ctx, KdbContext.Entry, xr);
@@ -292,7 +290,7 @@ namespace KeePassLib.Serialization
 					if(xr.Name == ElemUuid)
 						m_ctxEntry.Uuid = ReadUuid(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxEntry.IconID = (PwIcon)ReadUInt(xr, (uint)PwIcon.Key);
+						m_ctxEntry.IconId = (PwIcon)ReadUInt(xr, (uint)PwIcon.Key);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxEntry.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemFgColor)
@@ -392,7 +390,7 @@ namespace KeePassLib.Serialization
 				case KdbContext.EntryHistory:
 					if(xr.Name == ElemEntry)
 					{
-						m_ctxEntry = new PwEntry(null, false, false);
+						m_ctxEntry = new PwEntry(false, false);
 						m_ctxHistoryBase.History.Add(m_ctxEntry);
 
 						m_bEntryInHistory = true;

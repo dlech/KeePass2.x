@@ -37,25 +37,17 @@ namespace KeePassLib.Translation
 		}
 
 		private List<KPStringTableItem> m_vItems = new List<KPStringTableItem>();
+
 		[XmlArrayItem("Data")]
-		public KPStringTableItem[] Strings
-		{
-			get { return m_vItems.ToArray(); }
-			set
-			{
-				if(value == null) throw new ArgumentNullException();
-
-				m_vItems.Clear();
-				foreach(KPStringTableItem kpstItem in value)
-					m_vItems.Add(kpstItem);
-			}
-		}
-
-		[XmlIgnore]
-		public List<KPStringTableItem> StringsList
+		public List<KPStringTableItem> Strings
 		{
 			get { return m_vItems; }
-			set { m_vItems = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				m_vItems = value;
+			}
 		}
 
 		public Dictionary<string, string> ToDictionary()

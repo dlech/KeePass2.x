@@ -39,5 +39,13 @@ namespace KeePassLib.Translation
 			get { return m_strValue; }
 			set { m_strValue = value; }
 		}
+
+		private string m_strEnglish = string.Empty;
+		[XmlIgnore]
+		public string ValueEnglish
+		{
+			get { return m_strEnglish; }
+			set { m_strEnglish = value; }
+		}
 	}
 }

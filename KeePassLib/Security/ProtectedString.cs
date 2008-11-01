@@ -44,7 +44,7 @@ namespace KeePassLib.Security
 		private SecureString m_secString = null; // Created in constructor
 		private string m_strAlternativeSecString = string.Empty;
 
-		private string m_strPlainText = ""; // Never null
+		private string m_strPlainText = string.Empty; // Never null
 		private bool m_bIsProtected = false; // See default constructor
 
 		private XorredBuffer m_xbEncrypted = null; // UTF-8 representation
@@ -149,15 +149,17 @@ namespace KeePassLib.Security
 		/// <param name="bEnableProtection">If this parameter is <c>true</c>,
 		/// the string will be protected in-memory (encrypted). If it
 		/// is <c>false</c>, the string will be stored as plain-text.</param>
-		/// <param name="vUTF8Value">The initial string value, encoded as
+		/// <param name="vUtf8Value">The initial string value, encoded as
 		/// UTF-8 byte array. This parameter won't be modified.</param>
-		public ProtectedString(bool bEnableProtection, byte[] vUTF8Value)
+		public ProtectedString(bool bEnableProtection, byte[] vUtf8Value)
 		{
+			if(vUtf8Value == null) throw new ArgumentNullException("vUtf8Value");
+
 			try { m_secString = new SecureString(); }
 			catch(NotSupportedException) { } // Windows 98 / ME
 
 			m_bIsProtected = bEnableProtection;
-			SetString(Encoding.UTF8.GetString(vUTF8Value, 0, vUTF8Value.Length));
+			SetString(Encoding.UTF8.GetString(vUtf8Value, 0, vUtf8Value.Length));
 		}
 
 		/// <summary>
@@ -262,7 +264,7 @@ namespace KeePassLib.Security
 		{
 			Clear();
 
-			Debug.Assert(strNewValue != null); if(strNewValue == null) throw new ArgumentNullException();
+			Debug.Assert(strNewValue != null); if(strNewValue == null) throw new ArgumentNullException("strNewValue");
 
 			// String must not contain any null character
 			Debug.Assert(strNewValue.IndexOf((char)0) < 0);
@@ -307,7 +309,7 @@ namespace KeePassLib.Security
 				// No need to erase the pb buffer, the plain text is
 				// now readable in memory anyway (in str).
 
-				return ((str != null) ? str : string.Empty);
+				return (str ?? string.Empty);
 			}
 
 			if(m_bIsProtected)
@@ -321,7 +323,7 @@ namespace KeePassLib.Security
 #else
 					string str = m_secString.ReadAsString();
 #endif
-					return ((str != null) ? str : string.Empty);
+					return (str ?? string.Empty);
 				}
 				else return m_strAlternativeSecString;
 			}
@@ -388,7 +390,7 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public byte[] ReadXorredString(CryptoRandomStream crsRandomSource)
 		{
-			Debug.Assert(crsRandomSource != null); if(crsRandomSource == null) throw new ArgumentNullException();
+			Debug.Assert(crsRandomSource != null); if(crsRandomSource == null) throw new ArgumentNullException("crsRandomSource");
 
 			if(m_xbEncrypted != null)
 			{

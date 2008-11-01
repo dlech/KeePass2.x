@@ -59,7 +59,7 @@
 			this.m_lvIcons.Size = new System.Drawing.Size(462, 197);
 			this.m_lvIcons.TabIndex = 0;
 			this.m_lvIcons.UseCompatibleStateImageBehavior = false;
-			this.m_lvIcons.View = System.Windows.Forms.View.SmallIcon;
+			this.m_lvIcons.View = System.Windows.Forms.View.List;
 			this.m_lvIcons.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.OnIconsItemSelectionChanged);
 			// 
 			// m_btnOK
@@ -81,7 +81,7 @@
 			this.m_lvCustomIcons.Size = new System.Drawing.Size(381, 121);
 			this.m_lvCustomIcons.TabIndex = 2;
 			this.m_lvCustomIcons.UseCompatibleStateImageBehavior = false;
-			this.m_lvCustomIcons.View = System.Windows.Forms.View.SmallIcon;
+			this.m_lvCustomIcons.View = System.Windows.Forms.View.List;
 			this.m_lvCustomIcons.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.OnCustomIconsItemSelectionChanged);
 			// 
 			// m_radioStandard
@@ -161,8 +161,8 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Icon Picker";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

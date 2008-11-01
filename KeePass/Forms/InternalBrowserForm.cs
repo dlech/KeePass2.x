@@ -24,6 +24,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.UI;
 
@@ -54,6 +55,8 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
+
+			Debug.Assert(m_pgDataSource != null);
 
 			if(m_strInitialUrl.Length > 0)
 				m_webBrowser.Navigate(m_strInitialUrl);
@@ -87,7 +90,7 @@ namespace KeePass.Forms
 			m_tbUrl.Size = size;
 		}
 
-		private void DoAutoFill()
+		private static void DoAutoFill() // Remove static when implementing
 		{
 		}
 

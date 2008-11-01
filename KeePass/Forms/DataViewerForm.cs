@@ -64,9 +64,12 @@ namespace KeePass.Forms
 			Debug.Assert(m_pbData != null);
 			if(m_pbData == null) throw new InvalidOperationException();
 
+			GlobalWindowManager.AddWindow(this);
+
 			this.Icon = KeePass.Properties.Resources.KeePass;
 
-			GlobalWindowManager.AddWindow(this);
+			m_tslViewer.Text = KPRes.ShowIn + ":";
+			m_tslEncoding.Text = KPRes.Encoding + ":";
 
 			if(m_strDataDesc.Length > 0)
 				this.Text = this.Text + @" [" + m_strDataDesc + @"]";
@@ -85,7 +88,7 @@ namespace KeePass.Forms
 			m_picBox.Dock = DockStyle.Fill;
 
 			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeAnsi + " (" +
-				KPRes.SystemCodepage + ")");
+				KPRes.SystemCodePage + ")");
 			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeAscii);
 			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUtf7);
 			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUtf8);
@@ -142,7 +145,7 @@ namespace KeePass.Forms
 				string strEnc = m_tscEncoding.Text;
 
 				if(strEnc == BinaryDataClassifier.BdeAnsi + " (" +
-					KPRes.SystemCodepage + ")")
+					KPRes.SystemCodePage + ")")
 				{
 					enc = Encoding.Default;
 				}

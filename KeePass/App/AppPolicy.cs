@@ -32,7 +32,7 @@ namespace KeePass.App
 	/// <summary>
 	/// Application policy IDs.
 	/// </summary>
-	public enum AppPolicyID
+	public enum AppPolicyId
 	{
 		Plugins = 0,
 		Export,
@@ -139,35 +139,35 @@ namespace KeePass.App
 			}
 		} */
 
-		private static string PolicyToString(AppPolicyID flag, bool bPrefix)
+		private static string PolicyToString(AppPolicyId flag, bool bPrefix)
 		{
 			string str = (bPrefix ? "* " : string.Empty);
-			str += KPRes.Flag + @": ";
+			str += KPRes.Feature + @": ";
 
 			switch(flag)
 			{
-				case AppPolicyID.Plugins:
+				case AppPolicyId.Plugins:
 					str += KPRes.Plugins;
 					break;
-				case AppPolicyID.Export:
+				case AppPolicyId.Export:
 					str += KPRes.Export;
 					break;
-				case AppPolicyID.Import:
+				case AppPolicyId.Import:
 					str += KPRes.Import;
 					break;
-				case AppPolicyID.Print:
+				case AppPolicyId.Print:
 					str += KPRes.Print;
 					break;
-				case AppPolicyID.SaveFile:
+				case AppPolicyId.SaveFile:
 					str += KPRes.SaveDatabase;
 					break;
-				case AppPolicyID.AutoType:
+				case AppPolicyId.AutoType:
 					str += KPRes.AutoType;
 					break;
-				case AppPolicyID.CopyToClipboard:
+				case AppPolicyId.CopyToClipboard:
 					str += KPRes.Clipboard;
 					break;
-				case AppPolicyID.DragDrop:
+				case AppPolicyId.DragDrop:
 					str += KPRes.DragDrop;
 					break;
 				default:
@@ -182,28 +182,28 @@ namespace KeePass.App
 
 			switch(flag)
 			{
-				case AppPolicyID.Plugins:
+				case AppPolicyId.Plugins:
 					str += KPRes.PolicyPluginsDesc;
 					break;
-				case AppPolicyID.Export:
+				case AppPolicyId.Export:
 					str += KPRes.PolicyExportDesc;
 					break;
-				case AppPolicyID.Import:
+				case AppPolicyId.Import:
 					str += KPRes.PolicyImportDesc;
 					break;
-				case AppPolicyID.Print:
+				case AppPolicyId.Print:
 					str += KPRes.PolicyPrintDesc;
 					break;
-				case AppPolicyID.SaveFile:
+				case AppPolicyId.SaveFile:
 					str += KPRes.PolicySaveDatabaseDesc;
 					break;
-				case AppPolicyID.AutoType:
+				case AppPolicyId.AutoType:
 					str += KPRes.PolicyAutoTypeDesc;
 					break;
-				case AppPolicyID.CopyToClipboard:
+				case AppPolicyId.CopyToClipboard:
 					str += KPRes.PolicyClipboardDesc;
 					break;
-				case AppPolicyID.DragDrop:
+				case AppPolicyId.DragDrop:
 					str += KPRes.PolicyDragDropDesc;
 					break;
 				default:
@@ -215,7 +215,7 @@ namespace KeePass.App
 			return str;
 		}
 
-		public static string RequiredPolicyMessage(AppPolicyID flag)
+		public static string RequiredPolicyMessage(AppPolicyId flag)
 		{
 			string str = KPRes.PolicyDisallowed + MessageService.NewParagraph;
 			str += KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine;
@@ -224,20 +224,20 @@ namespace KeePass.App
 			return str;
 		}
 
-		public static bool Try(AppPolicyID flag)
+		public static bool Try(AppPolicyId flag)
 		{
 			bool bAllowed = true;
 
 			switch(flag)
 			{
-				case AppPolicyID.Plugins: bAllowed = m_apfCurrent.Plugins; break;
-				case AppPolicyID.Export: bAllowed = m_apfCurrent.Export; break;
-				case AppPolicyID.Import: bAllowed = m_apfCurrent.Import; break;
-				case AppPolicyID.Print: bAllowed = m_apfCurrent.Print; break;
-				case AppPolicyID.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
-				case AppPolicyID.AutoType: bAllowed = m_apfCurrent.AutoType; break;
-				case AppPolicyID.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
-				case AppPolicyID.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
+				case AppPolicyId.Plugins: bAllowed = m_apfCurrent.Plugins; break;
+				case AppPolicyId.Export: bAllowed = m_apfCurrent.Export; break;
+				case AppPolicyId.Import: bAllowed = m_apfCurrent.Import; break;
+				case AppPolicyId.Print: bAllowed = m_apfCurrent.Print; break;
+				case AppPolicyId.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
+				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;
+				case AppPolicyId.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
+				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
 				default: Debug.Assert(false); break;
 			}
 
@@ -262,7 +262,7 @@ namespace KeePass.App
 
 		private static string PolicyToString(AppPolicyFlag flag)
 		{
-			string str = KPRes.Flag + @": ";
+			string str = KPRes.Feature + @": ";
 
 			switch(flag)
 			{

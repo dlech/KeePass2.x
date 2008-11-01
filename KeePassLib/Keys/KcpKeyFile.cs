@@ -91,45 +91,59 @@ namespace KeePassLib.Keys
 
 			long lLength = fs.Length;
 			BinaryReader br = new BinaryReader(fs);
-			byte[] pbKey;
+			byte[] pbFileData = br.ReadBytes((int)lLength);
+			br.Close();
+			fs.Close();
 
-			if(lLength == 32) pbKey = LoadBinaryKey32(br);
-			else if(lLength == 64) pbKey = LoadHexKey32(br);
-			else // Any other length
+			byte[] pbKey = null;
+
+			if(lLength == 32) pbKey = LoadBinaryKey32(pbFileData);
+			else if(lLength == 64) pbKey = LoadHexKey32(pbFileData);
+			
+			if(pbKey == null)
 			{
-				byte[] pbFile = br.ReadBytes((int)lLength);
-
-				if(pbFile.Length == lLength)
+				if(pbFileData.Length == lLength)
 				{
 					SHA256Managed sha256 = new SHA256Managed();
-					pbKey = sha256.ComputeHash(pbFile);
+					pbKey = sha256.ComputeHash(pbFileData);
 				}
 				else { Debug.Assert(false); pbKey = null; }
 			}
 
-			br.Close();
-			fs.Close();
-
 			return pbKey;
 		}
 
-		private static byte[] LoadBinaryKey32(BinaryReader br)
+		private static byte[] LoadBinaryKey32(byte[] pbFileData)
 		{
-			return br.ReadBytes(32);
+			if(pbFileData == null) { Debug.Assert(false); return null; }
+			if(pbFileData.Length != 32) { Debug.Assert(false); return null; }
+
+			return pbFileData;
 		}
 
-		private static byte[] LoadHexKey32(BinaryReader br)
+		private static byte[] LoadHexKey32(byte[] pbFileData)
 		{
-			byte[] pbData = br.ReadBytes(64);
-			ASCIIEncoding ascii = new ASCIIEncoding();
-			string strHex = ascii.GetString(pbData, 0, 64);
+			if(pbFileData == null) { Debug.Assert(false); return null; }
+			if(pbFileData.Length != 64) { Debug.Assert(false); return null; }
 
-			byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
+			try
+			{
+				ASCIIEncoding ascii = new ASCIIEncoding();
+				string strHex = ascii.GetString(pbFileData, 0, 64);
 
-			if((pbKey == null) || (pbKey.Length != 32))
-				return null;
+				if(StrUtil.IsHexString(strHex, true) == false)
+					return null;
 
-			return pbKey;
+				byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
+
+				if((pbKey == null) || (pbKey.Length != 32))
+					return null;
+
+				return pbKey;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 
 		/// <summary>

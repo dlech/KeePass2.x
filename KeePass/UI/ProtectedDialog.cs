@@ -54,7 +54,7 @@ namespace KeePass.UI
 			Application.DoEvents();
 
 			Bitmap bmpBack = UIUtil.CreateScreenshot();
-			UIUtil.DimBitmap(bmpBack);
+			UIUtil.DimImage(bmpBack);
 
 			DialogResult dr = DialogResult.None;
 

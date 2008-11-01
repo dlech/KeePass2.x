@@ -23,12 +23,16 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using KeePass.UI;
+using KeePass.Resources;
+
+using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.App
 {
 	public static class AppDefs
 	{
-		public enum ColumnID
+		public enum ColumnId
 		{
 			Title,
 			UserName,
@@ -59,7 +63,7 @@ namespace KeePass.App
 		/// <summary>
 		/// Hot key IDs (used in WM_HOTKEY window messages).
 		/// </summary>
-		public static class GlobalHotKeyID
+		public static class GlobalHotKeyId
 		{
 			public const int AutoType = 195;
 			public const int ShowWindow = 226;
@@ -79,6 +83,7 @@ namespace KeePass.App
 
 			public const string AutoType = "base/autotype";
 			public const string AutoTypeObfuscation = "v2/autotype_obfuscation";
+			public const string AutoTypeWindowFilters = "autowindows";
 
 			public const string Entry = "v2/entry";
 			public const string EntryGeneral = "general";
@@ -90,9 +95,12 @@ namespace KeePass.App
 			public const string PwGenerator = "base/pwgenerator";
 			public const string IOConnections = "v2/ioconnect";
 			public const string UrlField = "base/autourl";
+			public const string CommandLine = "base/cmdline";
+			public const string FieldRefs = "base/fieldrefs";
 
 			public const string ImportExport = "base/importexport";
 			public const string ImportExportSteganos = "imp_steganos";
+			public const string ImportExportPassKeeper = "imp_passkeeper";
 
 			public const string AppPolicy = "v2/policy";
 		}
@@ -109,12 +117,15 @@ namespace KeePass.App
 			public const string FileExtUnregister = "unregisterfileext";
 
 			public const string ExitAll = "exit-all";
+
+			public const string Help = @"?";
+			public const string HelpLong = "help";
 		}
 
 		public static class FileExtension
 		{
 			public const string FileExt = "kdbx";
-			public const string ExtID = "kdbfile";
+			public const string ExtId = "kdbfile";
 
 			public const string KeyFile = "key";
 		}
@@ -141,11 +152,36 @@ namespace KeePass.App
 
 		public const string LanguageInfoFileName = "LanguageInfo.xml";
 
+		public const string ColumnIdnGroup = "Group";
 		public const string ColumnIdnCreationTime = "CreationTime";
 		public const string ColumnIdnLastAccessTime = "LastAccessTime";
 		public const string ColumnIdnLastModificationTime = "LastModificationTime";
 		public const string ColumnIdnExpiryTime = "ExpiryTime";
 		public const string ColumnIdnUuid = "UUID";
 		public const string ColumnIdnAttachment = "Attachment";
+
+		public static string GetEntryField(PwEntry pe, string strFieldId)
+		{
+			if(pe == null) throw new ArgumentNullException("pe");
+			if(strFieldId == null) throw new ArgumentNullException("strFieldId");
+
+			if(strFieldId == AppDefs.ColumnIdnGroup)
+				return ((pe.ParentGroup != null) ? pe.ParentGroup.Name : string.Empty);
+			else if(strFieldId == AppDefs.ColumnIdnCreationTime)
+				return TimeUtil.ToDisplayString(pe.CreationTime);
+			else if(strFieldId == AppDefs.ColumnIdnLastAccessTime)
+				return TimeUtil.ToDisplayString(pe.LastAccessTime);
+			else if(strFieldId == AppDefs.ColumnIdnLastModificationTime)
+				return TimeUtil.ToDisplayString(pe.LastModificationTime);
+			else if(strFieldId == AppDefs.ColumnIdnExpiryTime)
+				return (pe.Expires ? TimeUtil.ToDisplayString(pe.ExpiryTime) :
+					KPRes.NeverExpires);
+			else if(strFieldId == AppDefs.ColumnIdnUuid)
+				return pe.Uuid.ToHexString();
+			else if(strFieldId == AppDefs.ColumnIdnAttachment)
+				return pe.Binaries.UCount.ToString();
+
+			return pe.Strings.ReadSafe(strFieldId);
+		}
 	}
 }

@@ -31,9 +31,8 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditStringForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_lblStringValueDesc = new System.Windows.Forms.Label();
-			this.m_lblStringIDDesc = new System.Windows.Forms.Label();
+			this.m_lblStringIdDesc = new System.Windows.Forms.Label();
 			this.m_lblIDIntro = new System.Windows.Forms.Label();
-			this.m_tbStringName = new System.Windows.Forms.TextBox();
 			this.m_richStringValue = new System.Windows.Forms.RichTextBox();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -41,6 +40,7 @@
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_cbProtect = new System.Windows.Forms.CheckBox();
 			this.m_lblValidationInfo = new System.Windows.Forms.Label();
+			this.m_cmbStringName = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -62,34 +62,25 @@
 			this.m_lblStringValueDesc.TabIndex = 4;
 			this.m_lblStringValueDesc.Text = "Value:";
 			// 
-			// m_lblStringIDDesc
+			// m_lblStringIdDesc
 			// 
-			this.m_lblStringIDDesc.AutoSize = true;
-			this.m_lblStringIDDesc.Location = new System.Drawing.Point(12, 117);
-			this.m_lblStringIDDesc.Name = "m_lblStringIDDesc";
-			this.m_lblStringIDDesc.Size = new System.Drawing.Size(38, 13);
-			this.m_lblStringIDDesc.TabIndex = 2;
-			this.m_lblStringIDDesc.Text = "Name:";
+			this.m_lblStringIdDesc.AutoSize = true;
+			this.m_lblStringIdDesc.Location = new System.Drawing.Point(12, 116);
+			this.m_lblStringIdDesc.Name = "m_lblStringIdDesc";
+			this.m_lblStringIdDesc.Size = new System.Drawing.Size(38, 13);
+			this.m_lblStringIdDesc.TabIndex = 1;
+			this.m_lblStringIdDesc.Text = "Name:";
 			// 
 			// m_lblIDIntro
 			// 
 			this.m_lblIDIntro.Location = new System.Drawing.Point(12, 67);
 			this.m_lblIDIntro.Name = "m_lblIDIntro";
 			this.m_lblIDIntro.Size = new System.Drawing.Size(385, 40);
-			this.m_lblIDIntro.TabIndex = 1;
+			this.m_lblIDIntro.TabIndex = 0;
 			this.m_lblIDIntro.Text = resources.GetString("m_lblIDIntro.Text");
-			// 
-			// m_tbStringName
-			// 
-			this.m_tbStringName.Location = new System.Drawing.Point(56, 114);
-			this.m_tbStringName.Name = "m_tbStringName";
-			this.m_tbStringName.Size = new System.Drawing.Size(341, 20);
-			this.m_tbStringName.TabIndex = 0;
-			this.m_tbStringName.TextChanged += new System.EventHandler(this.OnTextChangedName);
 			// 
 			// m_richStringValue
 			// 
-			this.m_richStringValue.AcceptsTab = true;
 			this.m_richStringValue.Location = new System.Drawing.Point(56, 154);
 			this.m_richStringValue.Name = "m_richStringValue";
 			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -103,7 +94,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 271);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(409, 2);
-			this.m_lblSeparator.TabIndex = 10;
+			this.m_lblSeparator.TabIndex = 7;
 			// 
 			// m_btnOK
 			// 
@@ -111,7 +102,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(241, 282);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 7;
+			this.m_btnOK.TabIndex = 8;
 			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -122,7 +113,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(322, 282);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 8;
+			this.m_btnCancel.TabIndex = 9;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -132,7 +123,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 282);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 9;
+			this.m_btnHelp.TabIndex = 10;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -156,6 +147,15 @@
 			this.m_lblValidationInfo.TabIndex = 3;
 			this.m_lblValidationInfo.Text = "<>";
 			// 
+			// m_cmbStringName
+			// 
+			this.m_cmbStringName.FormattingEnabled = true;
+			this.m_cmbStringName.Location = new System.Drawing.Point(56, 113);
+			this.m_cmbStringName.Name = "m_cmbStringName";
+			this.m_cmbStringName.Size = new System.Drawing.Size(341, 21);
+			this.m_cmbStringName.TabIndex = 2;
+			this.m_cmbStringName.TextChanged += new System.EventHandler(this.OnNameTextChanged);
+			// 
 			// EditStringForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -163,6 +163,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(409, 317);
+			this.Controls.Add(this.m_cmbStringName);
 			this.Controls.Add(this.m_lblValidationInfo);
 			this.Controls.Add(this.m_cbProtect);
 			this.Controls.Add(this.m_btnHelp);
@@ -170,9 +171,8 @@
 			this.Controls.Add(this.m_btnOK);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_richStringValue);
-			this.Controls.Add(this.m_tbStringName);
 			this.Controls.Add(this.m_lblIDIntro);
-			this.Controls.Add(this.m_lblStringIDDesc);
+			this.Controls.Add(this.m_lblStringIdDesc);
 			this.Controls.Add(this.m_lblStringValueDesc);
 			this.Controls.Add(this.m_bannerImage);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -182,8 +182,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Entry String";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -194,9 +194,8 @@
 
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.Label m_lblStringValueDesc;
-		private System.Windows.Forms.Label m_lblStringIDDesc;
+		private System.Windows.Forms.Label m_lblStringIdDesc;
 		private System.Windows.Forms.Label m_lblIDIntro;
-		private System.Windows.Forms.TextBox m_tbStringName;
 		private System.Windows.Forms.RichTextBox m_richStringValue;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.Button m_btnOK;
@@ -204,5 +203,6 @@
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.CheckBox m_cbProtect;
 		private System.Windows.Forms.Label m_lblValidationInfo;
+		private System.Windows.Forms.ComboBox m_cmbStringName;
 	}
 }

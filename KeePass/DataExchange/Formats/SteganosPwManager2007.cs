@@ -37,11 +37,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class SteganosPwManager2007 : FormatImporter
+	internal sealed class SteganosPwManager2007 : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
+
 		public override string FormatName { get { return "Steganos Password Manager 2007"; } }
-		public override string DefaultExtension { get { return ""; } }
-		public override string AppGroup { get { return KPRes.PasswordManagers; } }
+		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override bool RequiresFile { get { return false; } }
 
@@ -61,7 +63,7 @@ namespace KeePass.DataExchange.Formats
 				return;
 			}
 
-			PwEntry pePrev = new PwEntry(null, true, true);
+			PwEntry pePrev = new PwEntry(true, true);
 
 			for(int i = 0; i < 20; ++i)
 			{
@@ -75,14 +77,14 @@ namespace KeePass.DataExchange.Formats
 				{
 					PwEntry pe = ImportEntry(pwStorage);
 
-					if(EntryEquals(pe, pePrev))
+					if(ImportUtil.EntryEquals(pe, pePrev))
 					{
 						if(pe.ParentGroup != null) // Remove duplicate
 							pe.ParentGroup.Entries.Remove(pe);
 						break;
 					}
 
-					SendKeysPrc(@"{DOWN}");
+					ImportUtil.GuiSendKeysPrc(@"{DOWN}");
 					pePrev = pe;
 				}
 
@@ -91,73 +93,32 @@ namespace KeePass.DataExchange.Formats
 			catch(Exception exImp) { MessageService.ShowWarning(exImp); }
 		}
 
-		private static bool EntryEquals(PwEntry pe1, PwEntry pe2)
-		{
-			if(pe1.ParentGroup == null) return false;
-			if(pe2.ParentGroup == null) return false;
-
-			if(pe1.ParentGroup.Name != pe2.ParentGroup.Name)
-				return false;
-
-			if(pe1.Strings.ReadSafe(PwDefs.TitleField) !=
-				pe2.Strings.ReadSafe(PwDefs.TitleField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.UserNameField) !=
-				pe2.Strings.ReadSafe(PwDefs.UserNameField))
-			{
-				return false;
-			}
-			
-			if(pe1.Strings.ReadSafe(PwDefs.PasswordField) !=
-				pe2.Strings.ReadSafe(PwDefs.PasswordField))
-			{
-				return false;
-			}
-			
-			if(pe1.Strings.ReadSafe(PwDefs.UrlField) !=
-				pe2.Strings.ReadSafe(PwDefs.UrlField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.NotesField) !=
-				pe2.Strings.ReadSafe(PwDefs.NotesField))
-			{
-				return false;
-			}
-
-			return true;
-		}
-
 		private static PwEntry ImportEntry(PwDatabase pwDb)
 		{
-			SendWaitWindowChange(@"{ENTER}");
+			ImportUtil.GuiSendWaitWindowChange(@"{ENTER}");
 			Thread.Sleep(1000);
-			SendKeysPrc(string.Empty);
+			ImportUtil.GuiSendKeysPrc(string.Empty); // Process messages
 
-			string strTitle = SendRetrieve(string.Empty);
-			string strGroup = SendRetrieve(@"{TAB}");
-			string strUserName = SendRetrieve(@"{TAB}");
-			SendKeysPrc(@"{TAB}{TAB}");
-			SendKeysPrc(@" ");
-			SendKeysPrc(@"+({TAB})");
-			string strPassword = SendRetrieve(string.Empty);
-			SendKeysPrc(@"{TAB} ");
-			string strNotes = SendRetrieve(@"{TAB}{TAB}");
-			
-			string strUrl = SendRetrieve(@"{TAB}");
-			string strUrl2 = SendRetrieve(@"{TAB}");
+			string strTitle = ImportUtil.GuiSendRetrieve(string.Empty);
+			string strGroup = ImportUtil.GuiSendRetrieve(@"{TAB}");
+			string strUserName = ImportUtil.GuiSendRetrieve(@"{TAB}");
+			ImportUtil.GuiSendKeysPrc(@"{TAB}{TAB}");
+			ImportUtil.GuiSendKeysPrc(@" ");
+			ImportUtil.GuiSendKeysPrc(@"+({TAB})");
+			string strPassword = ImportUtil.GuiSendRetrieve(string.Empty);
+			ImportUtil.GuiSendKeysPrc(@"{TAB} ");
+			string strNotes = ImportUtil.GuiSendRetrieve(@"{TAB}{TAB}");
 
-			SendWaitWindowChange(@"{ESC}");
+			string strUrl = ImportUtil.GuiSendRetrieve(@"{TAB}");
+			string strUrl2 = ImportUtil.GuiSendRetrieve(@"{TAB}");
+
+			ImportUtil.GuiSendWaitWindowChange(@"{ESC}");
 
 			if(strGroup.Length == 0) strGroup = "Steganos";
 
 			PwGroup pg = pwDb.RootGroup.FindCreateGroup(strGroup, true);
-			PwEntry pe = new PwEntry(pg, true, true);
-			pg.Entries.Add(pe);
+			PwEntry pe = new PwEntry(true, true);
+			pg.AddEntry(pe, true);
 
 			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 				pwDb.MemoryProtection.ProtectTitle, strTitle));
@@ -176,62 +137,6 @@ namespace KeePass.DataExchange.Formats
 					pwDb.MemoryProtection.ProtectUrl, strUrl2));
 
 			return pe;
-		}
-
-		private static void SendWaitWindowChange(string strSend)
-		{
-			IntPtr ptrCur = NativeMethods.GetForegroundWindow();
-
-			SendKeysPrc(strSend);
-
-			int nRound = 0;
-			while(true)
-			{
-				Application.DoEvents();
-
-				IntPtr ptr = NativeMethods.GetForegroundWindow();
-				if(ptr != ptrCur) break;
-
-				++nRound;
-				if(nRound > 1000)
-					throw new InvalidOperationException();
-
-				Thread.Sleep(50);
-			}
-
-			Thread.Sleep(100);
-			Application.DoEvents();
-		}
-
-		private static string SendRetrieve(string strSendPrefix)
-		{
-			if(strSendPrefix.Length > 0)
-				SendKeysPrc(strSendPrefix);
-
-			return RetrieveDataField();
-		}
-
-		private static string RetrieveDataField()
-		{
-			Clipboard.Clear();
-			Application.DoEvents();
-
-			SendKeysPrc(@"^c");
-
-			if(Clipboard.ContainsText())
-				return Clipboard.GetText();
-
-			return string.Empty;
-		}
-
-		private static void SendKeysPrc(string strSend)
-		{
-			if(strSend.Length > 0)
-				SendInputEx.SendKeysWait(strSend, false);
-
-			Application.DoEvents();
-			Thread.Sleep(100);
-			Application.DoEvents();
 		}
 	}
 }

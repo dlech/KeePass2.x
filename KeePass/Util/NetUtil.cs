@@ -57,10 +57,12 @@ namespace KeePass.Util
 			return Encoding.UTF8.GetString(msUTF8.ToArray());
 		}
 
-		public static string WebPageLogin(string strUrl, string strPostData,
+		public static string WebPageLogin(Uri url, string strPostData,
 			out List<KeyValuePair<string, string>> vCookies)
 		{
-			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(strUrl);
+			if(url == null) throw new ArgumentNullException("url");
+
+			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(url);
 
 			byte[] pbPostData = Encoding.ASCII.GetBytes(strPostData);
 
@@ -100,10 +102,12 @@ namespace KeePass.Util
 			return strResponse;
 		}
 
-		public static string WebPageGetWithCookies(string strUrl,
+		public static string WebPageGetWithCookies(Uri url,
 			List<KeyValuePair<string, string>> vCookies, string strDomain)
 		{
-			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(strUrl);
+			if(url == null) throw new ArgumentNullException("url");
+
+			HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(url);
 
 			hwr.Method = "GET";
 			hwr.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)";

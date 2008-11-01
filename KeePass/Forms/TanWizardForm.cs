@@ -53,18 +53,18 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new ArgumentNullException();
-			Debug.Assert(m_pgStorage != null); if(m_pgStorage == null) throw new ArgumentNullException();
+			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			Debug.Assert(m_pgStorage != null); if(m_pgStorage == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
-				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TANWizard,
-				KPRes.TANWizardDesc);
+				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TanWizard,
+				KPRes.TanWizardDesc);
 			
 			this.Icon = Properties.Resources.KeePass;
-			this.Text = KPRes.TANWizard;
+			this.Text = KPRes.TanWizard;
 
 			if((m_pgStorage.Name != null) && (m_pgStorage.Name.Length > 0))
 				m_lblToGroup.Text += ": " + m_pgStorage.Name + ".";
@@ -125,7 +125,7 @@ namespace KeePass.Forms
 		{
 			if(strTan.Length == 0) return;
 
-			PwEntry pe = new PwEntry(m_pgStorage, true, true);
+			PwEntry pe = new PwEntry(true, true);
 			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 				m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TanTitle));
 
@@ -142,7 +142,7 @@ namespace KeePass.Forms
 				++nTanIndex;
 			}
 
-			m_pgStorage.Entries.Add(pe);
+			m_pgStorage.AddEntry(pe, true);
 		}
 
 		private void OnNumberTANsCheckedChanged(object sender, EventArgs e)

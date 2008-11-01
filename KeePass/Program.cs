@@ -29,6 +29,7 @@ using System.IO;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Resources;
@@ -56,13 +57,16 @@ namespace KeePass
 		private static MainForm m_formMain = null;
 		private static AppConfigEx m_appConfig = new AppConfigEx();
 		private static KeyProviderPool m_keyProviderPool = new KeyProviderPool();
+		private static FileFormatPool m_fmtPool = new FileFormatPool();
 		private static KPTranslation m_kpTranslation = new KPTranslation();
+		private static TempFilesPool m_tempFilesPool = new TempFilesPool();
 
 		public enum AppMessage
 		{
 			Null = 0,
 			RestoreWindow = 1,
-			Exit = 2
+			Exit = 2,
+			IpcByFile = 3
 		}
 
 		public static CommandLineArgs CommandLineArgs
@@ -95,9 +99,19 @@ namespace KeePass
 			get { return m_keyProviderPool; }
 		}
 
+		public static FileFormatPool FileFormatPool
+		{
+			get { return m_fmtPool; }
+		}
+
 		public static KPTranslation Translation
 		{
 			get { return m_kpTranslation; }
+		}
+
+		public static TempFilesPool TempFilesPool
+		{
+			get { return m_tempFilesPool; }
 		}
 
 		/// <summary>
@@ -117,7 +131,7 @@ namespace KeePass
 
 			// Set global localized strings
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
-			Kdb4File.DetermineLanguageID();
+			Kdb4File.DetermineLanguageId();
 
 			m_appConfig = AppConfigSerializer.Load();
 			if(m_appConfig.Logging.Enabled)
@@ -146,7 +160,7 @@ namespace KeePass
 						m_kpTranslation.SafeGetStringTableDictionary(
 						"KeePassLib.Resources.KLRes"));
 				}
-				catch(FileNotFoundException) {} // Ignore
+				catch(FileNotFoundException) { } // Ignore
 				catch(Exception) { Debug.Assert(false); }
 			}
 
@@ -154,13 +168,22 @@ namespace KeePass
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
 			{
-				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtID,
+				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
 					KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, false);
+				MainCleanUp();
 				return;
 			}
 			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtUnregister] != null)
 			{
-				ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtID);
+				ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId);
+				MainCleanUp();
+				return;
+			}
+			else if((m_cmdLineArgs[AppDefs.CommandLineOptions.Help] != null) ||
+				(m_cmdLineArgs[AppDefs.CommandLineOptions.HelpLong] != null))
+			{
+				AppHelp.ShowHelp(AppDefs.HelpTopics.CommandLine, null);
+				MainCleanUp();
 				return;
 			}
 
@@ -176,17 +199,19 @@ namespace KeePass
 				}
 				catch(Exception) { Debug.Assert(false); }
 
+				MainCleanUp();
 				return;
 			}
 
-			Mutex mSingleLock = TrySingleInstanceLock();
+			Mutex mSingleLock = TrySingleInstanceLock(AppDefs.MutexName, true);
 			if((mSingleLock == null) && m_appConfig.Integration.LimitToSingleInstance)
 			{
-				ActivatePreviousInstance();
+				ActivatePreviousInstance(args);
+				MainCleanUp();
 				return;
 			}
 
-			Mutex mGlobalNotify = TryGlobalInstanceNotify();
+			Mutex mGlobalNotify = TryGlobalInstanceNotify(AppDefs.MutexNameGlobal);
 
 #if DEBUG
 			m_formMain = new MainForm();
@@ -206,20 +231,29 @@ namespace KeePass
 			Debug.Assert(GlobalWindowManager.WindowCount == 0);
 			Debug.Assert(MessageService.CurrentMessageCount == 0);
 
-			EntryMenu.Destroy();
+			MainCleanUp();
 
-			AppLogEx.Close();
 			if(mGlobalNotify != null) { GC.KeepAlive(mGlobalNotify); }
 			if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
 		}
 
-		private static Mutex TrySingleInstanceLock()
+		private static void MainCleanUp()
 		{
-			bool bCreatedNew;
+			m_tempFilesPool.Clear();
+
+			EntryMenu.Destroy();
+
+			AppLogEx.Close();
+		}
+
+		internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)
+		{
+			if(strName == null) throw new ArgumentNullException("strName");
 
 			try
 			{
-				Mutex mSingleLock = new Mutex(true, AppDefs.MutexName, out bCreatedNew);
+				bool bCreatedNew;
+				Mutex mSingleLock = new Mutex(bInitiallyOwned, strName, out bCreatedNew);
 
 				if(!bCreatedNew) return null;
 
@@ -230,11 +264,13 @@ namespace KeePass
 			return null;
 		}
 
-		private static Mutex TryGlobalInstanceNotify()
+		internal static Mutex TryGlobalInstanceNotify(string strBaseName)
 		{
+			if(strBaseName == null) throw new ArgumentNullException("strBaseName");
+
 			try
 			{
-				string strName = "Global\\" + AppDefs.MutexNameGlobal;
+				string strName = "Global\\" + strBaseName;
 				string strIdentity = Environment.UserDomainName + "\\" +
 					Environment.UserName;
 				MutexSecurity ms = new MutexSecurity();
@@ -252,24 +288,47 @@ namespace KeePass
 				bool bCreatedNew;
 				return new Mutex(false, strName, out bCreatedNew, ms);
 			}
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { } // Windows 9x and Mono 2.0+ (AddAccessRule) throw
 
 			return null;
 		}
 
-		private static void ActivatePreviousInstance()
+		internal static void DestroyMutex(Mutex m, bool bReleaseFirst)
+		{
+			if(m == null) return;
+
+			if(bReleaseFirst)
+			{
+				try { m.ReleaseMutex(); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			try { m.Close(); }
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void ActivatePreviousInstance(string[] args)
 		{
 			if(m_nAppMessage == 0) { Debug.Assert(false); return; }
 
 			try
 			{
-				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
-					m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+				if(string.IsNullOrEmpty(m_cmdLineArgs.FileName))
+					NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+						m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+				else
+				{
+					IpcParamEx ipcMsg = new IpcParamEx(IpcUtilEx.CmdOpenDatabase,
+						CommandLineArgs.SafeSerialize(args), null, null, null, null);
+
+					IpcUtilEx.SendGlobalMessage(ipcMsg);
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		internal static void NotifyUserActivity()
+		// For plugins
+		public static void NotifyUserActivity()
 		{
 			if(Program.MainForm != null) Program.MainForm.NotifyUserActivity();
 		}

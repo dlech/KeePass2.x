@@ -131,6 +131,19 @@ namespace KeePass.App.Configuration
 			Debug.Assert(m_strCreateDir != null); Debug.Assert(m_strCreateDir.Length > 0);
 		}
 
+		private static void EnsureAppDataDirAvailable()
+		{
+			Debug.Assert((m_strCreateDir != null) && (m_strCreateDir.Length > 0));
+			if((m_strCreateDir == null) || (m_strCreateDir.Length == 0)) return;
+
+			try
+			{
+				if(Directory.Exists(m_strCreateDir) == false)
+					Directory.CreateDirectory(m_strCreateDir);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		private static AppConfigEx LoadConfigFileEx(string strFilePath)
 		{
 			if((strFilePath == null) || (strFilePath.Length == 0))
@@ -186,6 +199,7 @@ namespace KeePass.App.Configuration
 			FileStream fs = null;
 			bool bResult = true;
 
+			// Temporarily remove user file preference (restore after saving)
 			bool bConfigPref = tConfig.Meta.PreferUserConfiguration;
 			if(bRemoveConfigPref) tConfig.Meta.PreferUserConfiguration = false;
 
@@ -228,12 +242,16 @@ namespace KeePass.App.Configuration
 
 			if(bPreferUser)
 			{
+				EnsureAppDataDirAvailable();
 				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
+
 				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
 			}
 			else // Don't prefer user -- use global first
 			{
 				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
+
+				EnsureAppDataDirAvailable();
 				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
 			}
 

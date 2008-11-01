@@ -25,6 +25,13 @@ namespace KeePassLib.Translation
 {
 	public sealed class KPTranslationProperties
 	{
+		private string m_strApp = string.Empty;
+		public string Application
+		{
+			get { return m_strApp; }
+			set { m_strApp = value; }
+		}
+
 		private string m_strForVersion = PwDefs.VersionString;
 		public string ApplicationVersion
 		{
@@ -65,6 +72,27 @@ namespace KeePassLib.Translation
 		{
 			get { return m_strAuthorContact; }
 			set { m_strAuthorContact = value; }
+		}
+
+		private string m_strGen = string.Empty;
+		public string Generator
+		{
+			get { return m_strGen; }
+			set { m_strGen = value; }
+		}
+
+		private string m_strUuid = string.Empty;
+		public string FileUuid
+		{
+			get { return m_strUuid; }
+			set { m_strUuid = value; }
+		}
+
+		private string m_strLastModified = string.Empty;
+		public string LastModified
+		{
+			get { return m_strLastModified; }
+			set { m_strLastModified = value; }
 		}
 	}
 }

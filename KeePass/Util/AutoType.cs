@@ -29,6 +29,7 @@ using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Resources;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -48,7 +49,8 @@ namespace KeePass.Util
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
 
 			string strF = strFilter.Trim();
-			bool bArbStart = strF.StartsWith("*"), bArbEnd = strF.EndsWith("*");
+			
+			/* bool bArbStart = strF.StartsWith("*"), bArbEnd = strF.EndsWith("*");
 
 			if(bArbStart) strF = strF.Remove(0, 1);
 			if(bArbEnd) strF = strF.Substring(0, strF.Length - 1);
@@ -60,7 +62,21 @@ namespace KeePass.Util
 			else if(bArbEnd)
 				return strWindow.StartsWith(strF, StrCaseIgnoreCmp);
 
-			return strWindow.Equals(strF, StrCaseIgnoreCmp);
+			return strWindow.Equals(strF, StrCaseIgnoreCmp); */
+
+			if(strF.StartsWith(@"//") && strF.EndsWith(@"//") && (strF.Length > 4))
+			{
+				try
+				{
+					Regex rx = new Regex(strF.Substring(2, strF.Length - 4),
+						RegexOptions.IgnoreCase);
+
+					return rx.IsMatch(strWindow);					
+				}
+				catch(Exception) { }
+			}
+
+			return StrUtil.SimplePatternMatch(strF, strWindow, StrCaseIgnoreCmp);
 		}
 
 		private static bool Execute(string strSeq, PwEntry pweData)
@@ -69,17 +85,14 @@ namespace KeePass.Util
 			Debug.Assert(pweData != null); if(pweData == null) return false;
 
 			if(!pweData.AutoType.Enabled) return false;
-			if(!AppPolicy.Try(AppPolicyID.AutoType)) return false;
+			if(!AppPolicy.Try(AppPolicyId.AutoType)) return false;
 
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
 			catch(Exception) { pwDatabase = null; }
 
-			string strSend = strSeq;
-			strSend = StrUtil.FillPlaceholders(strSend, pweData,
-				WinUtil.GetExecutable(), pwDatabase, false, true, 0);
-			strSend = AppLocator.FillPlaceholders(strSend, true);
-			strSend = EntryUtil.FillPlaceholders(strSend, pweData, true);
+			string strSend = SprEngine.Compile(strSeq, true, pweData,
+				pwDatabase, true, false);
 
 			string strError = ValidateAutoTypeSequence(strSend);
 			if(strError != null)
@@ -88,7 +101,7 @@ namespace KeePass.Util
 				return false;
 			}
 
-			bool bObfuscate = !(pweData.AutoType.ObfuscationOptions ==
+			bool bObfuscate = (pweData.AutoType.ObfuscationOptions !=
 				AutoTypeObfuscationOptions.None);
 
 			Application.DoEvents();
@@ -108,6 +121,12 @@ namespace KeePass.Util
 
 			string strSeq = GetSequenceForWindow(pwe, strWindow, false);
 			if((strSeq == null) || (strSeq.Length == 0)) return false;
+
+			if(Program.Config.Integration.AutoTypePrependInitSequenceForIE &&
+				WinUtil.IsInternetExplorer7Window(strWindow))
+			{
+				strSeq = @"{DELAY 50}1{DELAY 50}{BACKSPACE}" + strSeq;
+			}
 
 			AutoType.Execute(strSeq, pwe);
 			return true;

@@ -224,7 +224,7 @@ namespace KeePass.UI
 
 		public static HotKeyControlEx ReplaceTextBox(Control cContainer, TextBox tb)
 		{
-			Debug.Assert(tb != null); if(tb == null) throw new ArgumentNullException();
+			Debug.Assert(tb != null); if(tb == null) throw new ArgumentNullException("tb");
 			tb.Enabled = false;
 			tb.Visible = false;
 			cContainer.Controls.Remove(tb);

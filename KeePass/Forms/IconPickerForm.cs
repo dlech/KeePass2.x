@@ -49,7 +49,7 @@ namespace KeePass.Forms
 
 		private bool m_bBlockCancel = false;
 
-		public uint ChosenIconID
+		public uint ChosenIconId
 		{
 			get { return m_uChosenImageID; }
 		}
@@ -221,16 +221,8 @@ namespace KeePass.Forms
 			AddFileType(sbFilter, "*.wmf", "Windows Metafile (*.wmf)");
 			sbFilter.Append(@"|" + KPRes.AllFiles + @" (*.*)|*.*");
 
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.AddExtension = false;
-			ofd.CheckFileExists = true;
-			ofd.CheckPathExists = true;
-			ofd.Filter = sbFilter.ToString();
-			ofd.FilterIndex = 1;
-			ofd.Multiselect = true;
-			ofd.RestoreDirectory = true;
-			ofd.SupportMultiDottedExtensions = true;
-			ofd.Title = KPRes.ImportFileTitle;
+			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.ImportFileTitle,
+				sbFilter.ToString(), 1, null, true, true);
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{

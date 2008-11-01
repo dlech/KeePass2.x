@@ -21,8 +21,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 using Microsoft.Win32;
+
+using KeePass.Util.Spr;
 
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -80,24 +83,32 @@ namespace KeePass.Util
 			}
 		}
 
-		public static string FillPlaceholders(string strText, bool bDataAsKeySequence)
+		public static string FillPlaceholders(string strText, SprContentFlags cf)
 		{
 			string str = strText;
 
-			if(AppLocator.InternetExplorerPath != null)
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{INTERNETEXPLORER}",
-					new ProtectedString(false, "\"" + m_strIE + "\""), false,
-					bDataAsKeySequence);
-			if(AppLocator.FirefoxPath != null)
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{FIREFOX}",
-					new ProtectedString(false, "\"" + m_strFirefox + "\""), false,
-					bDataAsKeySequence);
-			if(AppLocator.OperaPath != null)
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{OPERA}",
-					new ProtectedString(false, "\"" + m_strOpera + "\""), false,
-					bDataAsKeySequence);
+			str = AppLocator.ReplacePath(str, @"{INTERNETEXPLORER}", AppLocator.InternetExplorerPath, cf);
+			str = AppLocator.ReplacePath(str, @"{FIREFOX}", AppLocator.FirefoxPath, cf);
+			str = AppLocator.ReplacePath(str, @"{OPERA}", AppLocator.OperaPath, cf);
 
 			return str;
+		}
+
+		private static string ReplacePath(string str, string strPlaceholder,
+			string strFill, SprContentFlags cf)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+			if(strPlaceholder == null) { Debug.Assert(false); return str; }
+			if(strPlaceholder.Length == 0) { Debug.Assert(false); return str; }
+			if(strFill == null) return str; // No assert
+
+			string strRep;
+			if((cf != null) && cf.EncodeQuotesForCommandLine)
+				strRep = "\"" + SprEngine.TransformContent(strFill, cf) + "\"";
+			else
+				strRep = SprEngine.TransformContent("\"" + strFill + "\"", cf);
+
+			return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, strRep);
 		}
 
 		private static string FindInternetExplorer()
@@ -150,7 +161,7 @@ namespace KeePass.Util
 
 		private static string FindOpera()
 		{
-			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("Opera.HTTP", false);
+			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("Opera.HTML", false);
 			RegistryKey kShell = kHtml.OpenSubKey("shell", false);
 			RegistryKey kOpen = kShell.OpenSubKey("open", false);
 			RegistryKey kCommand = kOpen.OpenSubKey("command", false);

@@ -134,10 +134,12 @@ namespace KeePassLib.Native
 			byte[] pKey256)
 		{
 			Debug.Assert((pBuf256 != null) && (pBuf256.Length == 32));
-			if((pBuf256 == null) || (pBuf256.Length != 32)) throw new ArgumentNullException();
+			if(pBuf256 == null) throw new ArgumentNullException("pBuf256");
+			if(pBuf256.Length != 32) throw new ArgumentException();
 
 			Debug.Assert((pKey256 != null) && (pKey256.Length == 32));
-			if((pKey256 == null) || (pKey256.Length != 32)) throw new ArgumentNullException();
+			if(pKey256 == null) throw new ArgumentNullException("pKey256");
+			if(pKey256.Length != 32) throw new ArgumentException();
 
 			IntPtr hBuf = Marshal.AllocHGlobal(pBuf256.Length);
 			Marshal.Copy(pBuf256, 0, hBuf, pBuf256.Length);

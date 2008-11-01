@@ -105,7 +105,7 @@ namespace KeePass.UI
 			g.FillRectangle(brush, rectDraw.Left, rectDraw.Top, nDrawWidth, rectDraw.Height);
 		}
 
-		protected override void OnPaintBackground(PaintEventArgs pevent)
+		protected override void OnPaintBackground(PaintEventArgs pEvent)
 		{
 			// base.OnPaintBackground(pevent);
 		}

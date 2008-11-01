@@ -25,12 +25,17 @@ namespace KeePassLib.Cryptography
 	/// <summary>
 	/// Algorithms supported by <c>CryptoRandomStream</c>.
 	/// </summary>
-	public enum CrsAlgorithm : uint
+	public enum CrsAlgorithm
 	{
+		/// <summary>
+		/// Not supported.
+		/// </summary>
+		Null = 0,
+
 		/// <summary>
 		/// The ARCFour algorithm (RC4 compatible).
 		/// </summary>
-		ArcFour = 0,
+		ArcFour = 1
 	}
 
 	/// <summary>
@@ -61,7 +66,7 @@ namespace KeePassLib.Cryptography
 		{
 			m_crsAlgorithm = genAlgorithm;
 
-			Debug.Assert(pbKey != null); if(pbKey == null) throw new ArgumentNullException();
+			Debug.Assert(pbKey != null); if(pbKey == null) throw new ArgumentNullException("pbKey");
 
 			uint uKeyLen = (uint)pbKey.Length;
 			Debug.Assert(uKeyLen != 0); if(uKeyLen == 0) throw new ArgumentException();

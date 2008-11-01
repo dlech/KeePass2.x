@@ -213,6 +213,7 @@ namespace KeePassLib.Serialization
 		}
 		*/
 
+		/*
 		/// <summary>
 		/// Very simple string protection. Doesn't really encrypt the input
 		/// string, only encodes it that it's not readable on the first glance.
@@ -251,6 +252,7 @@ namespace KeePassLib.Serialization
 				return Encoding.UTF8.GetString(pbBase, 0, pbBase.Length);
 			}
 		}
+		*/
 
 		public string GetDisplayName()
 		{

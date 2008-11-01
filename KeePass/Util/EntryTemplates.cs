@@ -162,7 +162,7 @@ namespace KeePass.Util
 			if(pgContainer == null)
 				pgContainer = Program.MainForm.ActiveDatabase.RootGroup;
 
-			PwEntry pe = new PwEntry(pgContainer, true, true);
+			PwEntry pe = new PwEntry(true, true);
 
 			// pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 			//	Program.MainForm.Database.MemoryProtection.ProtectTitle,
@@ -177,7 +177,7 @@ namespace KeePass.Util
 
 			if(pef.ShowDialog() == DialogResult.OK)
 			{
-				pgContainer.Entries.Add(pe);
+				pgContainer.AddEntry(pe, true);
 
 				// Program.MainForm.UpdateEntryList(null, true);
 				// Program.MainForm.UpdateUIState(true);
@@ -193,8 +193,8 @@ namespace KeePass.Util
 				new EntryTemplateItem(KPRes.BranchCode, false),
 				new EntryTemplateItem(KPRes.RoutingCode, false),
 				new EntryTemplateItem(KPRes.SortCode, false),
-				new EntryTemplateItem(KPRes.IBAN, false),
-				new EntryTemplateItem(KPRes.SWIFTCode, false),
+				new EntryTemplateItem(KPRes.Iban, false),
+				new EntryTemplateItem(KPRes.SwiftCode, false),
 				new EntryTemplateItem(KPRes.BranchTel, false),
 				new EntryTemplateItem(KPRes.TAccountInfoTel, false),
 				new EntryTemplateItem(KPRes.BranchHours, false),

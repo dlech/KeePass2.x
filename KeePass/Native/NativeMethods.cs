@@ -24,6 +24,8 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 
+using KeePass.UI;
+
 namespace KeePass.Native
 {
 	internal static partial class NativeMethods
@@ -43,7 +45,10 @@ namespace KeePass.Native
 		internal static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
 
 		[DllImport("User32.dll")]
-		internal static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+		internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int GetWindowTextLength(IntPtr hWnd);
@@ -62,7 +67,7 @@ namespace KeePass.Native
 			return sb.ToString();
 		}
 
-		internal static uint GetWindowStyle(IntPtr hWnd)
+		internal static int GetWindowStyle(IntPtr hWnd)
 		{
 			return GetWindowLong(hWnd, GWL_STYLE);
 		}
@@ -88,8 +93,12 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-		[DllImport("User32.dll", SetLastError = true)]
-		internal static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+		[DllImport("User32.dll", EntryPoint = "SendInput", SetLastError = true)]
+		internal static extern uint SendInput32(uint nInputs, INPUT32[] pInputs, int cbSize);
+
+		[DllImport("User32.dll", EntryPoint = "SendInput", SetLastError = true)]
+		internal static extern uint SendInput64Special(uint nInputs,
+			SpecializedKeyboardINPUT64[] pInputs, int cbSize);
 
 		[DllImport("User32.dll")]
 		internal static extern IntPtr GetMessageExtraInfo();
@@ -123,6 +132,7 @@ namespace KeePass.Native
 			int idAni, [In] ref RECT lprcFrom, [In] ref RECT lprcTo);
 
 		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetComboBoxInfo(IntPtr hWnd,
 			ref COMBOBOXINFO pcbi);
 
@@ -136,19 +146,19 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool CloseDesktop(IntPtr hDesktop);
 
-		[DllImport("User32.dll", SetLastError = true)]
-		internal static extern IntPtr OpenDesktop(string lpszDesktop,
-			UInt32 dwFlags, [MarshalAs(UnmanagedType.Bool)] bool fInherit,
-			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+		// [DllImport("User32.dll", SetLastError = true)]
+		// internal static extern IntPtr OpenDesktop(string lpszDesktop,
+		//	UInt32 dwFlags, [MarshalAs(UnmanagedType.Bool)] bool fInherit,
+		//	[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SwitchDesktop(IntPtr hDesktop);
 
-		[DllImport("User32.dll", SetLastError = true)]
-		internal static extern IntPtr OpenInputDesktop(uint dwFlags,
-			[MarshalAs(UnmanagedType.Bool)] bool fInherit,
-			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+		// [DllImport("User32.dll", SetLastError = true)]
+		// internal static extern IntPtr OpenInputDesktop(uint dwFlags,
+		//	[MarshalAs(UnmanagedType.Bool)] bool fInherit,
+		//	[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern IntPtr GetThreadDesktop(uint dwThreadId);
@@ -179,11 +189,16 @@ namespace KeePass.Native
 			IntPtr lpInBuffer, uint nInBufferSize, IntPtr lpOutBuffer, uint nOutBufferSize,
 			out uint lpBytesReturned, IntPtr lpOverlapped);
 
-		[DllImport("DwmApi.dll")]
-		internal static extern Int32 DwmExtendFrameIntoClientArea(IntPtr hWnd,
-			ref MARGINS pMarInset);
+		// [DllImport("DwmApi.dll")]
+		// internal static extern Int32 DwmExtendFrameIntoClientArea(IntPtr hWnd,
+		//	ref MARGINS pMarInset);
 
-		[DllImport("DwmApi.dll")]
-		internal static extern Int32 DwmIsCompositionEnabled(ref Int32 pfEnabled);
+		// [DllImport("DwmApi.dll")]
+		// internal static extern Int32 DwmIsCompositionEnabled(ref Int32 pfEnabled);
+
+		[DllImport("ComCtl32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+		internal static extern Int32 TaskDialogIndirect([In] ref VtdConfig pTaskConfig,
+			[Out] out int pnButton, [Out] out int pnRadioButton,
+			[Out] out bool pfVerificationFlagChecked);
 	}
 }

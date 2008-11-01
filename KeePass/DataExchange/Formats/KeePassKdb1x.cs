@@ -32,11 +32,14 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassKdb1x : FormatImporter
+	internal sealed class KeePassKdb1x : FileFormatProvider
 	{
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return true; } }
+
 		public override string FormatName { get { return "KeePass KDB (1.x)"; } }
 		public override string DefaultExtension { get { return "kdb"; } }
-		public override string AppGroup { get { return PwDefs.ShortProductName; } }
+		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
 		public override bool SupportsUuids { get { return true; } }
 		public override bool RequiresKey { get { return true; } }
@@ -52,7 +55,7 @@ namespace KeePass.DataExchange.Formats
 			if(!Kdb3File.IsLibraryInstalled(out exLib))
 			{
 				MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
-					KPRes.KDB3KeePassLibC, exLib);
+					KPRes.Kdb3KeePassLibC, exLib);
 
 				return false;
 			}
@@ -60,12 +63,15 @@ namespace KeePass.DataExchange.Formats
 			return true;
 		}
 
+		public override bool TryBeginExport()
+		{
+			return this.TryBeginImport();
+		}
+
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			string strTempFile = Path.GetTempFileName();
-			try { File.Delete(strTempFile); }
-			catch(Exception) { }
+			string strTempFile = Program.TempFilesPool.GetTempFileName();
 
 			BinaryReader br = new BinaryReader(sInput);
 			byte[] pb = br.ReadBytes((int)sInput.Length);
@@ -75,8 +81,34 @@ namespace KeePass.DataExchange.Formats
 			Kdb3File kdb3 = new Kdb3File(pwStorage, slLogger);
 			kdb3.Load(strTempFile);
 
-			try { File.Delete(strTempFile); }
-			catch(Exception) { }
+			Program.TempFilesPool.Delete(strTempFile);
+		}
+
+		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+			IStatusLogger slLogger)
+		{
+			PwDatabase pd = (pwExportInfo.ContextDatabase ?? new PwDatabase());
+
+			string strTempFile = Program.TempFilesPool.GetTempFileName(false);
+
+			try
+			{
+				Kdb3File kdb = new Kdb3File(pd, slLogger);
+				kdb.Save(strTempFile, pwExportInfo.DataGroup);
+
+				byte[] pbKdb = File.ReadAllBytes(strTempFile);
+				sOutput.Write(pbKdb, 0, pbKdb.Length);
+				Array.Clear(pbKdb, 0, pbKdb.Length);
+			}
+			catch(Exception exKdb)
+			{
+				if(slLogger != null) slLogger.SetText(exKdb.Message, LogStatusType.Error);
+
+				return false;
+			}
+
+			Program.TempFilesPool.Delete(strTempFile);
+			return true;
 		}
 	}
 }

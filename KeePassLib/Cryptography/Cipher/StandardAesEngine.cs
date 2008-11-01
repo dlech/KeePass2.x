@@ -17,7 +17,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,6 +25,8 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Diagnostics;
 
+using KeePassLib.Resources;
+
 namespace KeePassLib.Cryptography.Cipher
 {
 	/// <summary>
@@ -33,18 +34,8 @@ namespace KeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-		/// <summary>
-		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
-		/// </summary>
-		public PwUuid CipherUuid
-		{
-			get { return AesUuid; }
-		}
-
-		/// <summary>
-		/// Get a displayable name describing this cipher engine.
-		/// </summary>
-		public string DisplayName { get { return @"AES/Rijndael (256-Bit Key)"; } }
+		private const CipherMode m_rCipherMode = CipherMode.CBC;
+		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
 
 		private static PwUuid m_uuidAes = null;
 
@@ -67,9 +58,22 @@ namespace KeePassLib.Cryptography.Cipher
 			}
 		}
 
-		private static void AssertArguments(Stream stream, bool bEncrypt, byte[] pbKey, byte[] pbIV)
+		/// <summary>
+		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
+		/// </summary>
+		public PwUuid CipherUuid
 		{
-			Debug.Assert(stream != null); if(stream == null) throw new ArgumentNullException("sPlainText");
+			get { return StandardAesEngine.AesUuid; }
+		}
+
+		/// <summary>
+		/// Get a displayable name describing this cipher engine.
+		/// </summary>
+		public string DisplayName { get { return KLRes.EncAlgorithmAes; } }
+
+		private static void ValidateArguments(Stream stream, bool bEncrypt, byte[] pbKey, byte[] pbIV)
+		{
+			Debug.Assert(stream != null); if(stream == null) throw new ArgumentNullException("stream");
 
 			Debug.Assert(pbKey != null); if(pbKey == null) throw new ArgumentNullException("pbKey");
 			Debug.Assert(pbKey.Length == 32);
@@ -91,9 +95,9 @@ namespace KeePassLib.Cryptography.Cipher
 			}
 		}
 
-		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
+		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
-			StandardAesEngine.AssertArguments(sPlainText, true, pbKey, pbIV);
+			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
 
 			RijndaelManaged r = new RijndaelManaged();
 
@@ -101,43 +105,30 @@ namespace KeePassLib.Cryptography.Cipher
 			Array.Copy(pbIV, pbLocalIV, 16);
 			r.IV = pbLocalIV;
 
-			r.KeySize = 256;
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
+			r.KeySize = 256;
 			r.Key = pbLocalKey;
 
-			r.Mode = CipherMode.CBC;
+			r.Mode = m_rCipherMode;
+			r.Padding = m_rCipherPadding;
 
-			ICryptoTransform iTransform = r.CreateEncryptor();
+			ICryptoTransform iTransform = (bEncrypt ? r.CreateEncryptor() : r.CreateDecryptor());
 			Debug.Assert(iTransform != null);
 			if(iTransform == null) throw new SecurityException("Unable to create Rijndael transform!");
 
-			return new CryptoStream(sPlainText, iTransform, CryptoStreamMode.Write);
+			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
+				CryptoStreamMode.Read);
+		}
+
+		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
+		{
+			return StandardAesEngine.CreateStream(sPlainText, true, pbKey, pbIV);
 		}
 
 		public Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV)
 		{
-			StandardAesEngine.AssertArguments(sEncrypted, false, pbKey, pbIV);
-
-			RijndaelManaged aes = new RijndaelManaged();
-
-			Debug.Assert(pbIV.Length == 16);
-			if(pbIV.Length != 16) throw new SecurityException();
-			byte[] pbLocalIV = new byte[16];
-			Array.Copy(pbIV, pbLocalIV, 16);
-			aes.IV = pbLocalIV;
-
-			Debug.Assert(pbKey.Length == 32);
-			if(pbKey.Length != 32) throw new SecurityException();
-			byte[] pbLocalKey = new byte[32];
-			Array.Copy(pbKey, pbLocalKey, 32);
-			aes.KeySize = 256;
-			aes.Key = pbLocalKey;
-
-			aes.Mode = CipherMode.CBC;
-			ICryptoTransform iTransform = aes.CreateDecryptor();
-
-			return new CryptoStream(sEncrypted, iTransform, CryptoStreamMode.Read);
+			return StandardAesEngine.CreateStream(sEncrypted, false, pbKey, pbIV);
 		}
 	}
 }

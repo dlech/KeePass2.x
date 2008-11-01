@@ -48,7 +48,7 @@ namespace KeePassLib
 			get { return m_uuid; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException();
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
 
 				m_uuid = value;
 			}

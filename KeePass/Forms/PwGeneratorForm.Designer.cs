@@ -171,7 +171,6 @@
 			this.m_btnProfileAdd.Name = "m_btnProfileAdd";
 			this.m_btnProfileAdd.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileAdd.TabIndex = 2;
-			this.m_ttMain.SetToolTip(this.m_btnProfileAdd, "Save current options as profile.");
 			this.m_btnProfileAdd.UseVisualStyleBackColor = true;
 			this.m_btnProfileAdd.Click += new System.EventHandler(this.OnBtnProfileSave);
 			// 
@@ -182,7 +181,6 @@
 			this.m_btnProfileRemove.Name = "m_btnProfileRemove";
 			this.m_btnProfileRemove.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileRemove.TabIndex = 3;
-			this.m_ttMain.SetToolTip(this.m_btnProfileRemove, "Remove the currently selected profile.");
 			this.m_btnProfileRemove.UseVisualStyleBackColor = true;
 			this.m_btnProfileRemove.Click += new System.EventHandler(this.OnBtnProfileRemove);
 			// 

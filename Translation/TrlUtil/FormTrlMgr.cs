@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using KeePass.Forms;
+using KeePass.UI;
 using KeePassLib.Translation;
 
 namespace TrlUtil
@@ -44,11 +45,13 @@ namespace TrlUtil
 			AddForm(l, new EditStringForm());
 			AddForm(l, new EntropyForm());
 			AddForm(l, new EntryListForm());
+			AddForm(l, new EntryReportForm());
+			AddForm(l, new FieldRefForm());
 			AddForm(l, new GroupForm());
 			AddForm(l, new HelpSourceForm());
 			AddForm(l, new IconPickerForm());
 			AddForm(l, new ImportCsvForm());
-			AddForm(l, new ImportDataForm());
+			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new ImportMethodForm());
 			AddForm(l, new InternalBrowserForm());
 			AddForm(l, new IOConnectionForm());
@@ -64,6 +67,7 @@ namespace TrlUtil
 			AddForm(l, new SearchForm());
 			AddForm(l, new SingleLineEditForm());
 			AddForm(l, new StatusLoggerForm());
+			AddForm(l, new StatusProgressForm());
 			AddForm(l, new TanWizardForm());
 
 			return l;
@@ -74,9 +78,14 @@ namespace TrlUtil
 			KPFormCustomization kpfc = new KPFormCustomization();
 
 			kpfc.FullName = f.GetType().FullName;
-			kpfc.TextEnglish = f.Text;
+			kpfc.FormEnglish = f;
+
+			kpfc.Window.TextEnglish = f.Text;
+			kpfc.Window.BaseHash = KPControlCustomization.HashControl(f);
 
 			foreach(Control c in f.Controls) AddControl(kpfc, c);
+
+			kpfc.Controls.Sort();
 
 			listForms.Add(kpfc);
 		}
@@ -91,24 +100,37 @@ namespace TrlUtil
 			if(c.Text.Length == 0) bAdd = false;
 			else if(c.Name.Length == 0) bAdd = false;
 			else if(t == typeof(MenuStrip)) bAdd = false;
-			else if(t == typeof(TabControl)) bAdd = false;
 			else if(t == typeof(PictureBox)) bAdd = false;
-			else if(t == typeof(ListView)) bAdd = false;
 			else if(t == typeof(TreeView)) bAdd = false;
 			else if(t == typeof(ToolStrip)) bAdd = false;
 			else if(t == typeof(WebBrowser)) bAdd = false;
 			else if(t == typeof(Panel)) bAdd = false;
 			else if(t == typeof(StatusStrip)) bAdd = false;
-			else if(t == typeof(ProgressBar)) bAdd = false;
-			else if(t == typeof(NumericUpDown)) bAdd = false;
-			else if(c.Text == @"<>") bAdd = false;
+			else if(c.Text.StartsWith(@"<") && c.Text.EndsWith(@">")) bAdd = false;
 
-			if(bAdd)
+			if(t == typeof(TabControl)) bAdd = true;
+			else if(t == typeof(ProgressBar)) bAdd = true;
+			else if(t == typeof(TextBox)) bAdd = true;
+			else if(t == typeof(PromptedTextBox)) bAdd = true;
+			else if(t == typeof(RichTextBox)) bAdd = true;
+			else if(t == typeof(ComboBox)) bAdd = true;
+			else if(t == typeof(Label)) bAdd = true;
+			else if(t == typeof(ListView)) bAdd = true;
+			else if(t == typeof(Button)) bAdd = true;
+			else if(t == typeof(KeePass.UI.QualityProgressBar)) bAdd = true;
+			else if(t == typeof(DateTimePicker)) bAdd = true;
+
+			if(bAdd && (c.Name.Length > 0))
 			{
 				KPControlCustomization kpcc = new KPControlCustomization();
 				kpcc.Name = c.Name;
-				kpcc.TextEnglish = c.Text;
-				kpfc.ControlsList.Add(kpcc);
+				kpcc.BaseHash = KPControlCustomization.HashControl(c);
+
+				if((t != typeof(TabControl)) && (t != typeof(NumericUpDown)))
+					kpcc.TextEnglish = c.Text;
+				else kpcc.TextEnglish = string.Empty;
+
+				kpfc.Controls.Add(kpcc);
 			}
 
 			foreach(Control cSub in c.Controls) AddControl(kpfc, cSub);
@@ -129,7 +151,10 @@ namespace TrlUtil
 				TreeNode tnForm = tv.Nodes.Add(strName);
 				tnForm.Tag = kpfc;
 
-				foreach(KPControlCustomization kpcc in kpfc.ControlsList)
+				TreeNode tnWindow = tnForm.Nodes.Add("Window");
+				tnWindow.Tag = kpfc.Window;
+
+				foreach(KPControlCustomization kpcc in kpfc.Controls)
 				{
 					TreeNode tnControl = tnForm.Nodes.Add(kpcc.Name);
 					tnControl.Tag = kpcc;
@@ -142,35 +167,50 @@ namespace TrlUtil
 		}
 
 		public static void MergeForms(List<KPFormCustomization> lInto,
-			List<KPFormCustomization> lFrom)
+			List<KPFormCustomization> lFrom, StringBuilder sbUnusedText)
 		{
 			foreach(KPFormCustomization kpInto in lInto)
 			{
 				foreach(KPFormCustomization kpFrom in lFrom)
 				{
 					if(kpInto.FullName == kpFrom.FullName)
-						MergeFormCustomizations(kpInto, kpFrom);
+						MergeFormCustomizations(kpInto, kpFrom, sbUnusedText);
 				}
 			}
 		}
 
 		private static void MergeFormCustomizations(KPFormCustomization kpInto,
-			KPFormCustomization kpFrom)
+			KPFormCustomization kpFrom, StringBuilder sbUnusedText)
 		{
-			foreach(KPControlCustomization ccInto in kpInto.ControlsList)
+			MergeControlCustomizations(kpInto.Window, kpFrom.Window, sbUnusedText);
+
+			foreach(KPControlCustomization ccInto in kpInto.Controls)
 			{
-				foreach(KPControlCustomization ccFrom in kpFrom.ControlsList)
+				foreach(KPControlCustomization ccFrom in kpFrom.Controls)
 				{
 					if(ccInto.Name == ccFrom.Name)
-						MergeControlCustomizations(ccInto, ccFrom);
+						MergeControlCustomizations(ccInto, ccFrom, sbUnusedText);
 				}
 			}
 		}
 
 		private static void MergeControlCustomizations(KPControlCustomization ccInto,
-			KPControlCustomization ccFrom)
+			KPControlCustomization ccFrom, StringBuilder sbUnusedText)
 		{
-			if(ccFrom.Text.Length > 0) ccInto.Text = ccFrom.Text;
+			if(ccFrom.Text.Length > 0)
+			{
+				bool bTextValid = true;
+
+				if((ccFrom.BaseHash.Length > 0) && !ccInto.MatchHash(ccFrom.BaseHash))
+					bTextValid = false;
+
+				if(bTextValid) ccInto.Text = ccFrom.Text;
+				else // Create a backup
+				{
+					string strTrimmed = ccFrom.Text.Trim();
+					if(strTrimmed.Length > 0) sbUnusedText.AppendLine(strTrimmed);
+				}
+			}
 
 			if(ccFrom.Layout.X.Length > 0) ccInto.Layout.X = ccFrom.Layout.X;
 			if(ccFrom.Layout.Y.Length > 0) ccInto.Layout.Y = ccFrom.Layout.Y;

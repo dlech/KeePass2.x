@@ -94,11 +94,14 @@ namespace KeePass.Forms
 			if(m_ilIcons != null) m_lvEntries.SmallImageList = m_ilIcons;
 			else m_ilIcons = new ImageList();
 
-			m_lvEntries.Columns.Add(KPRes.Title);
-			m_lvEntries.Columns.Add(KPRes.UserName);
-			m_lvEntries.Columns.Add(KPRes.URL);
+			List<KeyValuePair<string, string>> vColumns =
+				new List<KeyValuePair<string, string>>();
+			vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
+			vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
+			vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
 
-			FillEntriesList();
+			UIUtil.CreateEntryList(m_lvEntries, m_vEntries, vColumns, m_ilIcons);
+
 			ProcessResize();
 
 			if(m_bEnsureForeground)
@@ -122,69 +125,6 @@ namespace KeePass.Forms
 			int nWidth = m_lvEntries.ClientRectangle.Width / m_lvEntries.Columns.Count;
 			for(int i = 0; i < m_lvEntries.Columns.Count; ++i)
 				m_lvEntries.Columns[i].Width = nWidth;
-		}
-
-		private void FillEntriesList()
-		{
-			if(m_vEntries == null) { Debug.Assert(false); return; }
-
-			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
-			DateTime dtNow = DateTime.Now;
-			bool bFirstEntry = true;
-
-			foreach(PwEntry pe in m_vEntries)
-			{
-				if(pe.ParentGroup != null)
-				{
-					string strGroup = pe.ParentGroup.GetFullPath();
-
-					if(strGroup != lvg.Header)
-					{
-						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
-						m_lvEntries.Groups.Add(lvg);
-					}
-				}
-
-				ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
-
-				if(pe.Expires && (pe.ExpiryTime <= dtNow))
-					lvi.ImageIndex = (int)PwIcon.Expired;
-				else if(pe.CustomIconUuid == PwUuid.Zero)
-					lvi.ImageIndex = (int)pe.IconID;
-				else
-				{
-					lvi.ImageIndex = (int)pe.IconID;
-
-					DocumentManagerEx dm = Program.MainForm.DocumentManager;
-					foreach(DocumentStateEx ds in dm.Documents)
-					{
-						int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
-						if(nInx > -1)
-						{
-							m_ilIcons.Images.Add((Image)ds.Database.GetCustomIcon(
-								pe.CustomIconUuid).Clone());
-							lvi.ImageIndex = m_ilIcons.Images.Count - 1;
-							break;
-						}
-					}
-				}
-
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
-
-				lvi.Tag = pe;
-
-				m_lvEntries.Items.Add(lvi);
-				lvg.Items.Add(lvi);
-
-				if(bFirstEntry)
-				{
-					lvi.Selected = true;
-					lvi.Focused = true;
-
-					bFirstEntry = false;
-				}
-			}
 		}
 
 		private bool GetSelectedEntry(bool bSetDialogResult)

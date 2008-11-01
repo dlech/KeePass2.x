@@ -29,9 +29,11 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
-		[StructLayout(LayoutKind.Sequential)]
-		internal struct MOUSEINPUT
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct MOUSEINPUT32_WithSkip
 		{
+			public uint __Unused0; // See INPUT32 structure
+
 			public int X;
 			public int Y;
 			public uint MouseData;
@@ -40,9 +42,11 @@ namespace KeePass.Native
 			public IntPtr ExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
-		internal struct KEYBDINPUT
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct KEYBDINPUT32_WithSkip
 		{
+			public uint __Unused0; // See INPUT32 structure
+
 			public ushort VirtualKeyCode;
 			public ushort ScanCode;
 			public uint Flags;
@@ -50,25 +54,33 @@ namespace KeePass.Native
 			public IntPtr ExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
-		internal struct HARDWAREINPUT
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct HARDWAREINPUT32_WithSkip
 		{
+			public uint __Unused0; // See INPUT32 structure
+
 			public uint Message;
 			public ushort ParamL;
 			public ushort ParamH;
 		}
 
 		[StructLayout(LayoutKind.Explicit)]
-		internal struct INPUT
+		internal struct INPUT32
 		{
 			[FieldOffset(0)]
 			public uint Type;
-			[FieldOffset(4)]
-			public MOUSEINPUT MouseInput;
-			[FieldOffset(4)]
-			public KEYBDINPUT KeyboardInput;
-			[FieldOffset(4)]
-			public HARDWAREINPUT HardwareInput;
+			[FieldOffset(0)]
+			public MOUSEINPUT32_WithSkip MouseInput;
+			[FieldOffset(0)]
+			public KEYBDINPUT32_WithSkip KeyboardInput;
+			[FieldOffset(0)]
+			public HARDWAREINPUT32_WithSkip HardwareInput;
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct SpecializedKeyboardINPUT64
+		{
+			public IntPtr Type;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -135,6 +147,14 @@ namespace KeePass.Native
 			public Int32 Right;
 			public Int32 Top;
 			public Int32 Bottom;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct COPYDATASTRUCT
+		{
+			public IntPtr dwData;
+			public Int32 cbData;
+			public IntPtr lpData;
 		}
 	}
 }

@@ -25,6 +25,13 @@ namespace KeePassLib.Interfaces
 {
 	public interface IUIOperations
 	{
-		bool UIFileSave();
+		/// <summary>
+		/// Let the user interface save the current database.
+		/// </summary>
+		/// <param name="bForceSave">If <c>true</c>, the UI will not ask for
+		/// whether to synchronize or overwrite, it'll simply overwrite the
+		/// file.</param>
+		/// <returns>Returns <c>true</c> if the file has been saved.</returns>
+		bool UIFileSave(bool bForceSave);
 	}
 }

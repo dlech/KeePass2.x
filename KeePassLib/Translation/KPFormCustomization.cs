@@ -40,47 +40,47 @@ namespace KeePassLib.Translation
 			set { m_strFQName = value; }
 		}
 
-		private List<KPControlCustomization> m_vControls =
-			new List<KPControlCustomization>();
-		[XmlIgnore]
-		public List<KPControlCustomization> ControlsList
+		private KPControlCustomization m_ccWindow = new KPControlCustomization();
+		public KPControlCustomization Window
 		{
-			get { return m_vControls; }
-			set { m_vControls = value; }
+			get { return m_ccWindow; }
+			set { m_ccWindow = value; }
 		}
 
+		private List<KPControlCustomization> m_vControls =
+			new List<KPControlCustomization>();
 		[XmlArray("ChildControls")]
 		[XmlArrayItem("Control")]
-		public KPControlCustomization[] Controls
+		public List<KPControlCustomization> Controls
 		{
-			get { return m_vControls.ToArray(); }
+			get { return m_vControls; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
 
-				m_vControls.Clear();
-				foreach(KPControlCustomization kpcc in value)
-					m_vControls.Add(kpcc);
+				m_vControls = value;
 			}
 		}
 
-		private string m_strTextEng = string.Empty;
+		private Form m_formEnglish = null;
 		[XmlIgnore]
-		public string TextEnglish
+		public Form FormEnglish
 		{
-			get { return m_strTextEng; }
-			set { m_strTextEng = value; }
+			get { return m_formEnglish; }
+			set { m_formEnglish = value; }
 		}
 
 #if !KeePassLibSD
 		public void ApplyTo(Form form)
 		{
 			Debug.Assert(form != null); if(form == null) throw new ArgumentNullException("form");
+			
+			// Not supported by TrlUtil (preview form):
+			// Debug.Assert(form.GetType().FullName == m_strFQName);
 
-			Debug.Assert(form.GetType().FullName == m_strFQName);
+			m_ccWindow.ApplyTo(form);
 
 			if(m_vControls.Count == 0) return;
-
 			foreach(Control c in form.Controls) ApplyToControl(c);
 		}
 

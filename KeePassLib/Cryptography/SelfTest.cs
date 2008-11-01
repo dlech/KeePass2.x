@@ -29,10 +29,10 @@ namespace KeePassLib.Cryptography
 	/// <summary>
 	/// Return values of the <c>SelfTest.Perform</c> method.
 	/// </summary>
-	public enum SelfTestResult : uint
+	public enum SelfTestResult
 	{
 		Success = 0,
-		RijndaelEcbError
+		RijndaelEcbError = 1
 	}
 #pragma warning restore 1591
 

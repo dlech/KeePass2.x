@@ -33,13 +33,14 @@ namespace KeePass.Util
 {
 	public static class KeyUtil
 	{
-		public static CompositeKey KeyFromCommandLine()
+		public static CompositeKey KeyFromCommandLine(CommandLineArgs args)
 		{
-			CompositeKey cmpKey = new CompositeKey();
+			if(args == null) throw new ArgumentNullException("args");
 
-			string strPassword = Program.CommandLineArgs[AppDefs.CommandLineOptions.Password];
-			string strKeyFile = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
-			string strUserAcc = Program.CommandLineArgs[AppDefs.CommandLineOptions.UserAccount];
+			CompositeKey cmpKey = new CompositeKey();
+			string strPassword = args[AppDefs.CommandLineOptions.Password];
+			string strKeyFile = args[AppDefs.CommandLineOptions.KeyFile];
+			string strUserAcc = args[AppDefs.CommandLineOptions.UserAccount];
 
 			if(strPassword != null)
 				cmpKey.AddUserKey(new KcpPassword(strPassword));

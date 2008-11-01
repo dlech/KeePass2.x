@@ -35,13 +35,15 @@ namespace KeePass.Native
 		internal const int WM_USER = 0x0400;
 		internal const int WM_SYSCOMMAND = 0x0112;
 		internal const int WM_POWERBROADCAST = 0x0218;
+		internal const int WM_COPYDATA = 0x004A;
 
-		internal const uint HWND_BROADCAST = 0xFFFF;
+		internal const int HWND_BROADCAST = 0xFFFF;
 
 		internal const uint INPUT_MOUSE = 0;
 		internal const uint INPUT_KEYBOARD = 1;
 		internal const uint INPUT_HARDWARE = 2;
 
+		internal const int VK_RETURN = 0x0D;
 		internal const int VK_SHIFT = 0x10;
 		internal const int VK_CONTROL = 0x11;
 		internal const int VK_MENU = 0x12;
@@ -62,9 +64,11 @@ namespace KeePass.Native
 
 		internal const int GWL_STYLE = -16;
 
-		internal const uint WS_VISIBLE = 0x10000000;
+		internal const int WS_VISIBLE = 0x10000000;
 
 		internal const int EM_SETCHARFORMAT = WM_USER + 68;
+
+		internal const int ES_WANTRETURN = 0x1000;
 
 		internal const int SCF_SELECTION = 0x0001;
 
@@ -137,37 +141,6 @@ namespace KeePass.Native
 			OpenExisting = 3,
 			OpenAlways = 4,
 			TruncateExisting = 5
-		}
-
-		[Flags]
-		internal enum TaskDialogFlags : uint
-		{
-			EnableHyperlinks = 0x0001,
-			UseHIconMain = 0x0002,
-			UseHIconFooter = 0x0004,
-			AllowDialogCancellation = 0x0008,
-			UseCommandLinks = 0x0010,
-			UseCommandLinksNoIcon = 0x0020,
-			ExpandFooterArea = 0x0040,
-			ExpandedByDefault = 0x0080,
-			VerificationFlagChecked = 0x0100,
-			ShowProgressBar = 0x0200,
-			ShowMarqueeProgressBar = 0x0400,
-			CallbackTimer = 0x0800,
-			PositionRelativeToWindow = 0x1000,
-			RtlLayout = 0x2000,
-			NoDefaultRadioButton = 0x4000
-		}
-
-		[Flags]
-		internal enum TaskDialogCommonButtonFlags : uint
-		{
-			OkButton = 0x0001, // Return value: IDOK
-			YesButton = 0x0002, // Return value: IDYES
-			NoButton = 0x0004, // Return value: IDNO
-			CancelButton = 0x0008, // Return value: IDCANCEL
-			RetryButton = 0x0010, // Return value: IDRETRY
-			CloseButton = 0x0020  // Return value: IDCLOSE
 		}
 	}
 }

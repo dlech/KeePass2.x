@@ -28,7 +28,7 @@ using KeePass.Native;
 
 namespace KeePass.Util
 {
-	public sealed class ClipboardEventChainBlocker : IDisposable
+	public sealed class ClipboardEventChainBlocker
 	{
 		private ClipboardBlockerForm m_form;
 		private IntPtr m_hChain;
@@ -46,10 +46,10 @@ namespace KeePass.Util
 
 		~ClipboardEventChainBlocker()
 		{
-			this.Dispose();
+			Release();
 		}
 
-		public void Dispose()
+		public void Release()
 		{
 			if(m_form != null)
 			{

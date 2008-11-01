@@ -33,6 +33,8 @@ namespace KeePass.UI
 		private List<DocumentStateEx> m_vDocs = new List<DocumentStateEx>();
 		private DocumentStateEx m_dsActive = null;
 
+		public event EventHandler ActiveDocumentSelected;
+
 		public DocumentManagerEx()
 		{
 			m_dsActive = new DocumentStateEx();
@@ -51,6 +53,8 @@ namespace KeePass.UI
 					if(m_vDocs[i] == value)
 					{
 						m_dsActive = value;
+
+						NotifyActiveDocumentSelected();
 						return;
 					}
 				}
@@ -88,6 +92,7 @@ namespace KeePass.UI
 			m_vDocs.Add(ds);
 			if(bMakeActive) m_dsActive = ds;
 
+			this.NotifyActiveDocumentSelected();
 			return ds;
 		}
 
@@ -111,6 +116,7 @@ namespace KeePass.UI
 
 				if(iFoundPos == m_vDocs.Count) --iFoundPos;
 				m_dsActive = m_vDocs[iFoundPos];
+				this.NotifyActiveDocumentSelected();
 			}
 			else { Debug.Assert(false); }
 		}
@@ -124,6 +130,22 @@ namespace KeePass.UI
 					list.Add(ds.Database);
 
 			return list;
+		}
+
+		private void NotifyActiveDocumentSelected()
+		{
+			if(this.ActiveDocumentSelected != null)
+				this.ActiveDocumentSelected(null, EventArgs.Empty);
+		}
+
+		public DocumentStateEx FindDocument(PwDatabase pwDatabase)
+		{
+			if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
+
+			foreach(DocumentStateEx ds in m_vDocs)
+				if(ds.Database == pwDatabase) return ds;
+
+			return null;
 		}
 	}
 

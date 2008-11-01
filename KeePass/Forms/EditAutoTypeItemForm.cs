@@ -46,9 +46,8 @@ namespace KeePass.Forms
 		private string m_strOriginalName = null;
 		private bool m_bEditSequenceOnly = false;
 
-		private Color m_clrOriginalForeground = Color.Black;
+		// private Color m_clrOriginalForeground = Color.Black;
 		private Color m_clrOriginalBackground = Color.White;
-		private string m_strOriginalWindowHint = string.Empty;
 
 		private RichTextBoxContextMenu m_ctxKeySeq = new RichTextBoxContextMenu();
 		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
@@ -68,7 +67,8 @@ namespace KeePass.Forms
 		};
 
 		private static string[] SpecialPlaceholders = new string[]{
-			"APPDIR", "DOCDIR", "GROUP"
+			"APPDIR", "DOCDIR", "GROUP", "GROUPPATH", "DELAY 1000",
+			"PICKPASSWORDCHARS"
 		};
 
 		public EditAutoTypeItemForm()
@@ -79,8 +79,8 @@ namespace KeePass.Forms
 
 		public void InitEx(AutoTypeConfig atConfig, ProtectedStringDictionary vStringDict, string strOriginalName, bool bEditSequenceOnly)
 		{
-			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException();
-			Debug.Assert(atConfig != null); if(atConfig == null) throw new ArgumentNullException();
+			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException("vStringDict");
+			Debug.Assert(atConfig != null); if(atConfig == null) throw new ArgumentNullException("atConfig");
 
 			m_atConfig = atConfig;
 			m_vStringDict = vStringDict;
@@ -90,8 +90,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new ArgumentNullException();
-			Debug.Assert(m_atConfig != null); if(m_atConfig == null) throw new ArgumentNullException();
+			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new InvalidOperationException();
+			Debug.Assert(m_atConfig != null); if(m_atConfig == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -115,9 +115,9 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
-			m_clrOriginalForeground = m_lblTargetWindowInfo.ForeColor;
+			// m_clrOriginalForeground = m_lblOpenHint.ForeColor;
 			m_clrOriginalBackground = m_cmbWindow.BackColor;
-			m_strOriginalWindowHint = m_lblTargetWindowInfo.Text;
+			// m_strOriginalWindowHint = m_lblTargetWindowInfo.Text;
 
 			StringBuilder sbPH = new StringBuilder();
 			sbPH.Append("<b>");
@@ -146,6 +146,11 @@ namespace KeePass.Forms
 					sbPH.Append("{" + PwDefs.AutoTypeStringPrefix + kvp.Key + "} ");
 				}
 			}
+
+			sbPH.Append("<br /><br /><b>" + KPRes.KeyboardKeyModifiers + ":</b><br />");
+			sbPH.Append(KPRes.KeyboardKeyShift + @": +, ");
+			sbPH.Append(KPRes.KeyboardKeyControl + @": ^, ");
+			sbPH.Append(KPRes.KeyboardKeyAlt + @": %");
 
 			sbPH.Append("<br /><br /><b>" + KPRes.SpecialKeys + ":</b><br />");
 			foreach(string strNav in SpecialKeyCodes)
@@ -243,32 +248,32 @@ namespace KeePass.Forms
 			string strItemName = m_cmbWindow.Text;
 
 			bool bEnableOK = true;
-			string strError = string.Empty;
+			// string strError = string.Empty;
 
 			if((m_atConfig.Get(strItemName) != null) && !m_bEditSequenceOnly)
 				if((m_strOriginalName == null) || !strItemName.Equals(m_strOriginalName))
 				{
 					bEnableOK = false;
-					strError = KPRes.FieldNameExistsAlready;
+					// strError = KPRes.FieldNameExistsAlready;
 				}
 
 			if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
 			{
 				bEnableOK = false;
-				strError = KPRes.FieldNameInvalid;
+				// strError = KPRes.FieldNameInvalid;
 			}
 
 			if(bEnableOK)
 			{
-				m_lblTargetWindowInfo.Text = m_strOriginalWindowHint;
-				m_lblTargetWindowInfo.ForeColor = m_clrOriginalForeground;
+				// m_lblTargetWindowInfo.Text = m_strOriginalWindowHint;
+				// m_lblTargetWindowInfo.ForeColor = m_clrOriginalForeground;
 				m_cmbWindow.BackColor = m_clrOriginalBackground;
 				m_btnOK.Enabled = true;
 			}
 			else
 			{
-				m_lblTargetWindowInfo.Text = strError;
-				m_lblTargetWindowInfo.ForeColor = Color.Red;
+				// m_lblTargetWindowInfo.Text = strError;
+				// m_lblTargetWindowInfo.ForeColor = Color.Red;
 				m_cmbWindow.BackColor = AppDefs.ColorEditError;
 				m_btnOK.Enabled = false;
 			}
@@ -276,7 +281,7 @@ namespace KeePass.Forms
 			if(m_bEditSequenceOnly)
 			{
 				m_cmbWindow.Enabled = false;
-				m_lblTargetWindowInfo.Enabled = false;
+				// m_lblTargetWindowInfo.Enabled = false;
 			}
 
 			m_bBlockUpdates = false;
@@ -362,6 +367,11 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnWildcardRegexLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.AutoType, AppDefs.HelpTopics.AutoTypeWindowFilters);
 		}
 	}
 }

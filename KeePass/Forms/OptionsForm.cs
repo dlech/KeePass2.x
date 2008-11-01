@@ -114,11 +114,17 @@ namespace KeePass.Forms
 			if(uTab < (uint)m_tabMain.TabPages.Count)
 				m_tabMain.SelectedTab = m_tabMain.TabPages[(int)uTab];
 
+			m_cmbBannerStyle.Items.Add("(" + KPRes.CurrentStyle + ")");
+			m_cmbBannerStyle.Items.Add("WinXP Login");
+			m_cmbBannerStyle.Items.Add("WinVista Black");
+			m_cmbBannerStyle.Items.Add("KeePass Win32");
+			m_cmbBannerStyle.Items.Add("Blue Carbon");
+
 			CreateDialogBanner(BannerStyle.Default);
 			m_cmbBannerStyle.SelectedIndex = (int)BannerStyle.Default;
 
 			int nWidth = m_lvPolicy.ClientRectangle.Width - 36;
-			m_lvPolicy.Columns.Add(KPRes.Flag, nWidth / 4);
+			m_lvPolicy.Columns.Add(KPRes.Feature, nWidth / 4);
 			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 3) / 4);
 
 			m_hkGlobalAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbGlobalAutoType);
@@ -229,6 +235,8 @@ namespace KeePass.Forms
 				m_lvGuiOptions, lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
 				m_lvGuiOptions, lvg, KPRes.MinimizeAfterCopy);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
+				m_lvGuiOptions, lvg, KPRes.QuickSearchExcludeExpired);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
 				m_lvGuiOptions, lvg, KPRes.FocusResultsAfterQuickFind);
 
@@ -287,12 +295,19 @@ namespace KeePass.Forms
 			m_cdxAdvanced.CreateItem(Program.Config.Application.FileOpening, "ShowSoonToExpireEntries",
 				m_lvAdvanced, lvg, KPRes.AutoShowSoonToExpireEntries);
 
+			lvg = new ListViewGroup(KPRes.AutoType);
+			m_lvAdvanced.Groups.Add(lvg);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypePrependInitSequenceForIE",
+				m_lvAdvanced, lvg, KPRes.AutoTypePrependInitSeqForIE);
+
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "SearchKeyFilesOnRemovableMedia",
 				m_lvAdvanced, lvg, KPRes.SearchKeyFilesOnRemovable);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
 				m_lvAdvanced, lvg, KPRes.RememberHidingSettings);
+			m_cdxAdvanced.CreateItem(Program.Config.UI, "OptimizeForScreenReader",
+				m_lvAdvanced, lvg, KPRes.OptimizeForScreenReader);
 
 			m_cdxAdvanced.UpdateData(false);
 			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width - 36;
@@ -328,9 +343,9 @@ namespace KeePass.Forms
 					m_cmbBannerStyle.SelectedIndex;
 
 			ChangeHotKey(ref m_kPrevATHKKey, m_hkGlobalAutoType, true,
-				AppDefs.GlobalHotKeyID.AutoType);
+				AppDefs.GlobalHotKeyId.AutoType);
 			ChangeHotKey(ref m_kPrevSWHKKey, m_hkShowWindow, false,
-				AppDefs.GlobalHotKeyID.ShowWindow);
+				AppDefs.GlobalHotKeyId.ShowWindow);
 
 			Program.Config.UI.TrayIcon.SingleClickDefault = m_cbSingleClickTrayAction.Checked;
 
@@ -430,13 +445,13 @@ namespace KeePass.Forms
 
 		private void OnBtnFileExtCreate(object sender, EventArgs e)
 		{
-			ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtID,
+			ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
 				KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
 		}
 
 		private void OnBtnFileExtRemove(object sender, EventArgs e)
 		{
-			ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtID);
+			ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId);
 		}
 
 		private void OnCheckedChangedAutoRun(object sender, EventArgs e)

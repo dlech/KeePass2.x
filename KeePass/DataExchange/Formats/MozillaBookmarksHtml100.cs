@@ -33,13 +33,16 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class MozillaBookmarksHtml100 : FormatImporter
+	internal sealed class MozillaBookmarksHtml100 : FileFormatProvider
 	{
-		public override string FormatName { get { return "Mozilla Bookmarks.html 1.00"; } }
-		public override string DefaultExtension { get { return "html"; } }
-		public override string AppGroup { get { return KPRes.Browser; } }
+		public override bool SupportsImport { get { return true; } }
+		public override bool SupportsExport { get { return false; } }
 
-		public override bool AppendsToRootGroupOnly { get { return true; } }
+		public override string FormatName { get { return "Mozilla Bookmarks HTML 1.00"; } }
+		public override string DefaultExtension { get { return "html"; } }
+		public override string ApplicationGroup { get { return KPRes.Browser; } }
+
+		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
 		public override Image SmallIcon
 		{
@@ -49,7 +52,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput);
+			StreamReader sr = new StreamReader(sInput, Encoding.UTF8);
 			string strContent = sr.ReadToEnd();
 			sr.Close();
 
@@ -106,8 +109,7 @@ namespace KeePass.DataExchange.Formats
 				{
 					try
 					{
-						PwEntry pe = new PwEntry(pwStorage.RootGroup, true, true);
-						pwStorage.RootGroup.Entries.Add(pe);
+						PwEntry pe = new PwEntry(true, true);
 
 						pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 							pwStorage.MemoryProtection.ProtectTitle,
@@ -119,6 +121,8 @@ namespace KeePass.DataExchange.Formats
 
 						pe.Strings.Set("RDF_ID", new ProtectedString(
 							false, xmlChild.Attributes.GetNamedItem("ID").Value));
+
+						pwStorage.RootGroup.AddEntry(pe, true);
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}

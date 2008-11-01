@@ -31,7 +31,8 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class UrlUtil
 	{
-		private static readonly char[] m_vDirSeps = new char[] { '\\', '/', Path.DirectorySeparatorChar };
+		private static readonly char[] m_vDirSeps = new char[] { '\\', '/',
+			Path.DirectorySeparatorChar };
 
 		/// <summary>
 		/// Get the directory (path) of a file name. The returned string is
@@ -66,7 +67,7 @@ namespace KeePassLib.Utility
 		/// an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
 		public static string GetFileName(string strPath)
 		{
-			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException();
+			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
 
 			int nLastSep = strPath.LastIndexOfAny(m_vDirSeps);
 
@@ -84,7 +85,7 @@ namespace KeePassLib.Utility
 		/// an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
 		public static string StripExtension(string strPath)
 		{
-			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException();
+			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
 
 			int nLastDirSep = strPath.LastIndexOfAny(m_vDirSeps);
 			int nLastExtDot = strPath.LastIndexOf('.');
@@ -101,7 +102,7 @@ namespace KeePassLib.Utility
 		/// <returns>Extension without prepending dot.</returns>
 		public static string GetExtension(string strPath)
 		{
-			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException();
+			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
 
 			int nLastDirSep = strPath.LastIndexOfAny(m_vDirSeps);
 			int nLastExtDot = strPath.LastIndexOf('.');
@@ -116,28 +117,29 @@ namespace KeePassLib.Utility
 		/// Ensure that a path is terminated with a directory separator character.
 		/// </summary>
 		/// <param name="strPath">Input path.</param>
-		/// <param name="bURL">If <c>true</c>, a slash (<c>/</c>) is appended to
+		/// <param name="bUrl">If <c>true</c>, a slash (<c>/</c>) is appended to
 		/// the string if it's not terminated already. If <c>false</c>, the
 		/// default system directory separator character is used.</param>
 		/// <returns>Path having a directory separator as last character.</returns>
-		public static string EnsureTerminatingSeparator(string strPath, bool bURL)
+		public static string EnsureTerminatingSeparator(string strPath, bool bUrl)
 		{
-			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException();
+			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
 
 			int nLength = strPath.Length;
 			if(nLength <= 0) return string.Empty;
 
 			char chLast = strPath[nLength - 1];
 
-			for(int i = 0; i < m_vDirSeps.Length; i++)
-				if(chLast == m_vDirSeps[i])
-					return strPath;
+			for(int i = 0; i < m_vDirSeps.Length; ++i)
+			{
+				if(chLast == m_vDirSeps[i]) return strPath;
+			}
 
-			if(bURL) return strPath + '/';
+			if(bUrl) return (strPath + '/');
 			return strPath + Path.DirectorySeparatorChar;
 		}
 
-		/// <summary>
+		/* /// <summary>
 		/// File access mode enumeration. Used by the <c>FileAccessible</c>
 		/// method.
 		/// </summary>
@@ -155,9 +157,9 @@ namespace KeePassLib.Utility
 			/// file.
 			/// </summary>
 			Create
-		}
+		} */
 
-		/// <summary>
+		/* /// <summary>
 		/// Test if a specified path is accessible, either in read or write mode.
 		/// </summary>
 		/// <param name="strFilePath">Path to test.</param>
@@ -167,7 +169,7 @@ namespace KeePassLib.Utility
 		public static bool FileAccessible(string strFilePath, FileAccessMode fMode)
 		{
 			Debug.Assert(strFilePath != null);
-			if(strFilePath == null) throw new ArgumentNullException();
+			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
 			if(fMode == FileAccessMode.Read)
 			{
@@ -193,7 +195,7 @@ namespace KeePassLib.Utility
 			}
 
 			return false;
-		}
+		} */
 
 		public static string GetQuotedAppPath(string strPath)
 		{
@@ -218,6 +220,53 @@ namespace KeePassLib.Utility
 			str = str.Replace('/', Path.DirectorySeparatorChar);
 
 			return str;
+		}
+
+		public static bool UnhideFile(string strFile)
+		{
+#if KeePassLibSD
+			return false;
+#else
+			if(strFile == null) throw new ArgumentNullException("strFile");
+
+			try
+			{
+				FileAttributes fa = File.GetAttributes(strFile);
+				if((long)(fa & FileAttributes.Hidden) == 0) return false;
+
+				return HideFile(strFile, false);
+			}
+			catch(Exception) { }
+
+			return false;
+#endif
+		}
+
+		public static bool HideFile(string strFile, bool bHide)
+		{
+#if KeePassLibSD
+			return false;
+#else
+			if(strFile == null) throw new ArgumentNullException("strFile");
+
+			try
+			{
+				FileAttributes fa = File.GetAttributes(strFile);
+
+				if(bHide) fa = ((fa & ~FileAttributes.Normal) | FileAttributes.Hidden);
+				else // Unhide
+				{
+					fa &= ~FileAttributes.Hidden;
+					if((long)fa == 0) fa |= FileAttributes.Normal;
+				}
+
+				File.SetAttributes(strFile, fa);
+				return true;
+			}
+			catch(Exception) { }
+
+			return false;
+#endif
 		}
 	}
 }
