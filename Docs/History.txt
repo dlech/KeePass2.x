@@ -1,3 +1,123 @@
+2009-03-14: 2.07 Beta
+- Added powerful trigger system (when events occur, check some
+  conditions and execute a list of actions; see options dialog
+  in 'Advanced'; more events / conditions / actions can be
+  added later based on user requests, and can also be provided
+  by plugins)
+- Native master key transformations (rounds) are now computed
+  by the native KeePassLibC support library (which contains the
+  new, highly optimized transformation code used by KeePass
+  1.15, in two threads); on dual/multi core processors this
+  results in almost triple the performance as before (by
+  tripling the amount of rounds you'll get the same waiting
+  time as in 2.06, but the protection against dictionary and
+  guessing attack is tripled)
+- Added recycle bin (enabled by default, it can be disabled in
+  the database settings dialog)
+- Added Salsa20 stream cipher for CryptoRandomStream (this
+  algorithm is not only more secure than ArcFour, but also
+  achieves a higher performance; CryptoRandomStream defaults to
+  Salsa20 now; port developers: KeePass uses Salsa20 for the
+  inner random stream in KDBX files)
+- KeePass is now storing file paths (last used file, MRU list)
+  in relative form in the configuration file
+- Added support for importing 1Password Pro CSV files
+- Added support for importing KeePass 1.x XML files
+- Windows XP and higher: added support for double-buffering in
+  all list views (including entry lists)
+- Windows Vista and higher: added support for alpha-blended
+  marquee selection in all list views (including entry lists)
+- Added 'EditEntry', 'DeleteEntry', 'AddEntries' and
+  'DeleteAllEntries' commands in KPScript scripting tool
+- Added support for importing special ICO files
+- Added option to exit instead of locking the workspace after
+  the specified time of inactivity
+- Added option to minimize the main window after locking the
+  KeePass workspace
+- Added option to minimize the main window after opening a
+  database
+- Added support for exporting to KDBX files
+- Added command to remove deleted objects information
+- TrlUtil now checks for duplicate accelerator keys in dialogs
+- Added controls in the entry editing dialog to specify a
+  custom text foreground color for entries
+- KeePass now retrieves the default auto-type sequence from
+  parent groups when adding new entries
+- The password character picking dialog can now be invoked
+  multiple times when auto-typing (use {PICKPASSWORDCHARS},
+  {PICKPASSWORDCHARS2}, {PICKPASSWORDCHARS3}, etc.)
+- Added '-set-urloverride', '-clear-urloverride' and
+  '-get-urloverride' command line options
+- Added '-set-translation' command line option
+- Added option to print custom string fields in details mode
+- Various entry listings now support custom foreground and
+  background colors for entry items
+- Added 'click through' behavior for menus and toolbars
+- File association methods are now UAC aware
+
+- User interface is now blocked while saving to a file (in
+  order to prevent accidental user actions that might interfere
+  with the saving process)
+- Improved native modifier keys handling on 64-bit systems
+- Improved application startup performance
+- Added image list processing workaround for Windows 7
+- OK button is now reenabled after manually activating the key
+  file checkbox and selecting a file in the master key dialog
+- The master key dialog now appears in the task bar
+- When KeePass is minimized to tray and locked, pressing the
+  global auto-type hot key doesn't restore the main window
+  anymore
+- The installer now by default installs KeePass 1.x and 2.x
+  into separate directories in the program files folder
+- The optional autorun registry keys of KeePass 1.x and 2.x do
+  not collide anymore
+- File type association identifiers of KeePass 1.x and 2.x do
+  not collide anymore
+- File MRU list now uses case-insensitive comparisons
+- Improved preview updates in Print and Data Viewer dialogs
+- Message service provider is thread safe now
+- Threading safety improvements in KPScript scripting plugin
+- Improved control state updates in password generator dialog
+- Improved master password validation in 'New Database' dialog
+- Times are now stored as UTC in KDBX files (ISO 8601 format)
+- Last access time fields are now updated when auto-typing,
+  copying fields to the clipboard and drag&drop operations
+- KPScript scripting tool now supports in-memory protection
+- Database is not marked as modified anymore when closing the
+  import dialog with Cancel
+- Added asterisks in application policy editing dialog to make
+  clearer that changing the policy requires a KeePass restart
+- Double-clicking a format in the import/export dialog now
+  automatically shows the file browsing dialog
+- Improved permanent entry deletion confirmation prompt
+- Improved font objects handling
+- Expired groups are now rendered using a striked out font
+- Improved auto-type statement conversion routine in KeePass
+  1.x KDB file importer
+- Clipboard clearing countdown is not started anymore when
+  copying data fails (e.g. policy disabled)
+- Improved synchronization with URLs
+- The database maintenance dialog now only marks the database
+  as modified when it actually has removed something
+- KeePass now broadcasts a shell notification after changing
+  the KDBX file association
+- Improved warning message when trying to directly open KeePass
+  1.x KDB files
+- Improved Linux / Mac OS X compatibility
+- Improved MSI package (removed unnecessary dependency)
+- TrlUtil: improved NumericUpDown and RichTextBox handling
+- Installer: file association is now a task, not a component
+- Installer now checks for minimum operating system version
+- Installer: various other improvements
+- Various code optimizations
+- Minor other improvements
+
+- When cloning a group tree using drag&drop, KeePass now
+  assigns correct parent group references to cloned groups and
+  entries
+- Fixed crash when clicking 'Cancel' in the settings dialog
+  when creating a new database
+
 2008-11-01: 2.06 Beta
 - Translation system is now complete (translations to various
   languages will be published on the KeePass translations page

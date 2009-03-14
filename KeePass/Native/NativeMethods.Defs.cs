@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ namespace KeePass.Native
 	internal static partial class NativeMethods
 	{
 		internal const int WM_KEYDOWN = 0x0100;
+		internal const int WM_KEYUP = 0x0101;
 		internal const int WM_DRAWCLIPBOARD = 0x0308;
 		internal const int WM_CHANGECBCHAIN = 0x030D;
 		internal const int WM_HOTKEY = 0x0312;
@@ -56,6 +57,11 @@ namespace KeePass.Native
 		internal const int VK_RMENU = 0xA5;
 		internal const int VK_LWIN = 0x5B;
 		internal const int VK_RWIN = 0x5C;
+
+		internal const int VK_F5 = 0x74;
+		internal const int VK_F6 = 0x75;
+		internal const int VK_F7 = 0x76;
+		internal const int VK_F8 = 0x77;
 
 		internal const uint KEYEVENTF_EXTENDEDKEY = 1;
 		internal const uint KEYEVENTF_KEYUP = 2;
@@ -91,6 +97,17 @@ namespace KeePass.Native
 
 		internal const int LVM_FIRST = 0x1000;
 		internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
+
+		internal const int WM_MOUSEACTIVATE = 0x21;
+		internal const int MA_ACTIVATE = 1;
+		internal const int MA_ACTIVATEANDEAT = 2;
+		internal const int MA_NOACTIVATE = 3;
+		internal const int MA_NOACTIVATEANDEAT = 4;
+
+		internal const int BCM_SETSHIELD = 0x160C;
+
+		internal const int SHCNE_ASSOCCHANGED = 0x08000000;
+		internal const uint SHCNF_IDLIST = 0x0000;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

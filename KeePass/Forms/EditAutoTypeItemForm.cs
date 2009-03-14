@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
 		private bool m_bBlockUpdates = false;
 
-		private const string VkcBreak = "<break />";
+		private const string VkcBreak = @"<break />";
 
 		private static string[] SpecialKeyCodes = new string[]{
 			"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",

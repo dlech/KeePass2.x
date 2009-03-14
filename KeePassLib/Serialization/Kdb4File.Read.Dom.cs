@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -128,6 +128,10 @@ namespace KeePassLib.Serialization
 					ReadMemoryProtection(xmlChild);
 				else if(strName == ElemCustomIcons)
 					ReadCustomIcons(xmlChild);
+				else if(strName == ElemRecycleBinEnabled)
+					m_pwDatabase.RecycleBinEnabled = ReadBool(xmlChild, true);
+				else if(strName == ElemRecycleBinUuid)
+					m_pwDatabase.RecycleBinUuid = ReadUuid(xmlChild);
 				else if(strName == ElemLastSelectedGroup)
 					m_pwDatabase.LastSelectedGroup = ReadUuid(xmlChild);
 				else if(strName == ElemLastTopVisibleGroup)
@@ -370,6 +374,7 @@ namespace KeePassLib.Serialization
 		{
 			ProcessNode(xmlNode);
 
+			if(string.IsNullOrEmpty(xmlNode.InnerText)) return PwUuid.Zero;
 			return new PwUuid(Convert.FromBase64String(xmlNode.InnerText));
 		}
 
@@ -400,7 +405,7 @@ namespace KeePassLib.Serialization
 			ProcessNode(xmlNode);
 
 			DateTime dt;
-			if(StrUtil.TryParseDateTime(xmlNode.InnerText, out dt)) return dt;
+			if(TimeUtil.TryDeserializeUtc(xmlNode.InnerText, out dt)) return dt;
 
 			Debug.Assert(false);
 			return m_dtNow;

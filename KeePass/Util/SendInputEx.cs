@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -88,34 +88,58 @@ namespace KeePass.Util
 
 		private static bool SendModifierVKey(int vKey, bool bDown)
 		{
-			Debug.Assert((Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 28) ||
-				(Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 32));
-
 			if(bDown || IsKeyModifierActive(vKey))
 			{
-				NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
-
-				pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
-				pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
-				pInput[0].KeyboardInput.ScanCode =
-					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
-				pInput[0].KeyboardInput.Flags = ((bDown ? 0 :
-					NativeMethods.KEYEVENTF_KEYUP) | (IsExtendedKeyEx(vKey) ?
-					NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
-				pInput[0].KeyboardInput.Time = 0;
-				pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
-
-				if(NativeMethods.SendInput32(1, pInput,
-					Marshal.SizeOf(typeof(NativeMethods.INPUT32))) != 1)
-				{
-					// Debug.Assert(false);
-					return false;
-				}
-
-				return true;
+				if(IntPtr.Size == 4) return SendModifierVKey32Unchecked(vKey, bDown);
+				else if(IntPtr.Size == 8) return SendModifierVKey64Unchecked(vKey, bDown);
+				else { Debug.Assert(false); }
 			}
 
 			return false;
+		}
+
+		private static bool SendModifierVKey32Unchecked(int vKey, bool bDown)
+		{
+			NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
+
+			pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
+			pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
+			pInput[0].KeyboardInput.ScanCode =
+				(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
+			pInput[0].KeyboardInput.Flags = ((bDown ? 0 :
+				NativeMethods.KEYEVENTF_KEYUP) | (IsExtendedKeyEx(vKey) ?
+				NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
+			pInput[0].KeyboardInput.Time = 0;
+			pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
+
+			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 28);
+			if(NativeMethods.SendInput32(1, pInput,
+				Marshal.SizeOf(typeof(NativeMethods.INPUT32))) != 1)
+				return false;
+
+			return true;
+		}
+
+		private static bool SendModifierVKey64Unchecked(int vKey, bool bDown)
+		{
+			NativeMethods.SpecializedKeyboardINPUT64[] pInput = new
+				NativeMethods.SpecializedKeyboardINPUT64[1];
+
+			pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
+			pInput[0].VirtualKeyCode = (ushort)vKey;
+			pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey(
+				(uint)vKey, 0) & 0xFF);
+			pInput[0].Flags = ((bDown ? 0 : NativeMethods.KEYEVENTF_KEYUP) |
+				(IsExtendedKeyEx(vKey) ? NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
+			pInput[0].Time = 0;
+			pInput[0].ExtraInfo = NativeMethods.GetMessageExtraInfo();
+
+			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64)) == 40);
+			if(NativeMethods.SendInput64Special(1, pInput,
+				Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64))) != 1)
+				return false;
+
+			return true;
 		}
 
 		private static bool IsExtendedKeyEx(int vKey)

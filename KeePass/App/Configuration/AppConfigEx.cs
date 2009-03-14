@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,8 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.Diagnostics;
+
+using KeePass.Util;
 
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
@@ -143,12 +147,58 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		public void PrepareSave()
+		/// <summary>
+		/// Prepare for saving the configuration to disk. None of the
+		/// modifications in this method need to be rolled back
+		/// (for rollback, use <c>OnSavePre</c> / <c>OnSavePost</c>).
+		/// </summary>
+		private void PrepareSave()
 		{
 			m_aceApp.LastUsedFile.ClearCredentials(true);
 
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				iocMru.ClearCredentials(true);
+
+			m_aceApp.TriggerSystem = Program.TriggerSystem;
+		}
+
+		internal void OnLoad()
+		{
+			ChangePathsRelAbs(true);
+		}
+
+		internal void OnSavePre()
+		{
+			PrepareSave();
+			ChangePathsRelAbs(false);
+		}
+
+		internal void OnSavePost()
+		{
+			ChangePathsRelAbs(true);
+		}
+
+		private void ChangePathsRelAbs(bool bMakeAbsolute)
+		{
+			ChangePathRelAbs(m_aceApp.LastUsedFile, bMakeAbsolute);
+
+			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+				ChangePathRelAbs(iocMru, bMakeAbsolute);
+		}
+
+		private static void ChangePathRelAbs(IOConnectionInfo ioc, bool bMakeAbsolute)
+		{
+			if(ioc == null) { Debug.Assert(false); return; }
+
+			if(ioc.IsLocalFile() == false) return;
+
+			string strBase = WinUtil.GetExecutable();
+			bool bIsAbs = UrlUtil.IsAbsolutePath(ioc.Path);
+
+			if(bMakeAbsolute && !bIsAbs)
+				ioc.Path = UrlUtil.MakeAbsolutePath(strBase, ioc.Path);
+			else if(!bMakeAbsolute && bIsAbs)
+				ioc.Path = UrlUtil.MakeRelativePath(strBase, ioc.Path);
 		}
 	}
 

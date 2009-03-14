@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,12 +73,12 @@ namespace KeePassLib.Serialization
 
 		public HashedBlockStream(Stream sBaseStream, bool bWriting)
 		{
-			this.Initialize(sBaseStream, bWriting, 0);
+			Initialize(sBaseStream, bWriting, 0);
 		}
 
 		public HashedBlockStream(Stream sBaseStream, bool bWriting, int nBufferSize)
 		{
-			this.Initialize(sBaseStream, bWriting, nBufferSize);
+			Initialize(sBaseStream, bWriting, nBufferSize);
 		}
 
 		private void Initialize(Stream sBaseStream, bool bWriting, int nBufferSize)

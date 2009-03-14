@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@ namespace KeePass.UI
 
 	public sealed class MruList
 	{
+		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+
 		private IMruExecuteHandler m_handler = null;
 		private ToolStripMenuItem m_tsmiContainer = null;
 
@@ -96,13 +98,16 @@ namespace KeePass.UI
 
 			bool bExists = false;
 			foreach(KeyValuePair<string, object> kvp in m_vItems)
-				if(kvp.Key == strDisplayName)
+			{
+				Debug.Assert(kvp.Key != null);
+				if(kvp.Key.Equals(strDisplayName, StrCaseIgnoreCmp))
 				{
 					bExists = true;
 					break;
 				}
+			}
 
-			if(bExists) this.MoveItemToTop(strDisplayName);
+			if(bExists) MoveItemToTop(strDisplayName);
 			else
 			{
 				m_vItems.Insert(0, new KeyValuePair<string, object>(
@@ -112,7 +117,7 @@ namespace KeePass.UI
 					m_vItems.RemoveAt(m_vItems.Count - 1);
 			}
 
-			this.UpdateMenu();
+			UpdateMenu();
 		}
 
 		public void UpdateMenu()
@@ -157,13 +162,13 @@ namespace KeePass.UI
 
 		private void ClickedHandler(object sender, EventArgs args)
 		{
-			ToolStripMenuItem tsi = sender as ToolStripMenuItem;
+			ToolStripMenuItem tsi = (sender as ToolStripMenuItem);
 			if(tsi == null) { Debug.Assert(false); return; }
 
 			string strName = tsi.Text;
 			object oTag = tsi.Tag;
 
-			this.MoveItemToTop(strName);
+			MoveItemToTop(strName);
 
 			if(m_handler != null) m_handler.OnMruExecute(strName, oTag);
 		}
@@ -172,7 +177,8 @@ namespace KeePass.UI
 		{
 			for(int i = 0; i < m_vItems.Count; ++i)
 			{
-				if(m_vItems[i].Key == strName)
+				Debug.Assert(m_vItems[i].Key != null);
+				if(m_vItems[i].Key.Equals(strName, StrCaseIgnoreCmp))
 				{
 					KeyValuePair<string, object> t = m_vItems[i];
 					m_vItems.RemoveAt(i);

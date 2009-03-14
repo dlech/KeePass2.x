@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -76,18 +76,15 @@ namespace KeePassLib.Cryptography
 
 #if !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
-#else
-			try
-			{
-				if(hashAlgorithm != null) m_hash = hashAlgorithm;
-				else // Prefer SHA-256, but allow others if SHA-256 isn't available
-				{
-					m_hash = HashAlgorithm.Create();
-					m_hash = HashAlgorithm.Create("SHA256");
-				}
-			}
+#else // KeePassLibSD
+			m_hash = null;
+
+			try { m_hash = HashAlgorithm.Create("SHA256"); }
+			catch(Exception) { }
+			try { if(m_hash == null) m_hash = HashAlgorithm.Create(); }
 			catch(Exception) { }
 #endif
+			if(m_hash == null) { Debug.Assert(false); return; }
 
 			// Validate hash algorithm
 			if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||

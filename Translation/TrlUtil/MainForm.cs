@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,6 +73,9 @@ namespace TrlUtil
 				m_tvControls.SelectedNode = m_tvControls.Nodes[0];
 			UpdatePreviewForm();
 			m_prev.Show();
+
+			try { this.DoubleBuffered = true; }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void CreateStringTableUI()
@@ -130,6 +133,12 @@ namespace TrlUtil
 			KPStringTable kpstSM = new KPStringTable();
 			kpstSM.Name = "KeePass.Forms.PwEntryForm.m_ctxStrMoveToStandard";
 			m_trl.StringTables.Add(kpstSM);
+			KPStringTable kpstTT = new KPStringTable();
+			kpstTT.Name = "KeePass.Forms.EcasTriggersForm.m_ctxTools";
+			m_trl.StringTables.Add(kpstTT);
+			KPStringTable kpstSD = new KPStringTable();
+			kpstSD.Name = "KeePassLib.Resources.KSRes";
+			m_trl.StringTables.Add(kpstSD);
 
 			Type tKP = typeof(KPRes);
 			ListViewGroup lvg = new ListViewGroup("KeePass Strings");
@@ -146,7 +155,7 @@ namespace TrlUtil
 					return;
 				}
 
-				string strEng = mi.Invoke(null, null) as string;
+				string strEng = (mi.Invoke(null, null) as string);
 				if(strEng == null)
 				{
 					MessageBox.Show("English string is null:\r\n" +
@@ -185,7 +194,7 @@ namespace TrlUtil
 					return;
 				}
 
-				string strEng = mi.Invoke(null, null) as string;
+				string strEng = (mi.Invoke(null, null) as string);
 				if(strEng == null)
 				{
 					MessageBox.Show("English string is null:\r\n" +
@@ -226,9 +235,9 @@ namespace TrlUtil
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstT, lvg, mf.TrayContextMenu.Items);
 
+			KeePass.Forms.PwEntryForm ef = new KeePass.Forms.PwEntryForm();
 			lvg = new ListViewGroup("Entry Tools Context Menu Commands");
 			m_lvStrings.Groups.Add(lvg);
-			KeePass.Forms.PwEntryForm ef = new KeePass.Forms.PwEntryForm();
 			TrlAddMenuCommands(kpstET, lvg, ef.ToolsContextMenu.Items);
 
 			lvg = new ListViewGroup("Default Times Context Menu Commands");
@@ -243,9 +252,53 @@ namespace TrlUtil
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstPG, lvg, ef.PasswordGeneratorContextMenu.Items);
 
+			KeePass.Forms.EcasTriggersForm tf = new KeePass.Forms.EcasTriggersForm();
+			lvg = new ListViewGroup("Ecas Trigger Tools Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstTT, lvg, tf.ToolsContextMenu.Items);
+
 			lvg = new ListViewGroup("Standard String Movement Context Menu Commands");
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstSM, lvg, ef.StandardStringMovementContextMenu.Items);
+
+			Type tSD = typeof(KSRes);
+			lvg = new ListViewGroup("KeePassLibSD Strings");
+			m_lvStrings.Groups.Add(lvg);
+			foreach(string strLibSDKey in KSRes.GetKeyNames())
+			{
+				PropertyInfo pi = tSD.GetProperty(strLibSDKey);
+				MethodInfo mi = pi.GetGetMethod();
+				if(mi.ReturnType != typeof(string))
+				{
+					MessageBox.Show("Return type is not string:\r\n" +
+						strLibSDKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+					return;
+				}
+
+				string strEng = (mi.Invoke(null, null) as string);
+				if(strEng == null)
+				{
+					MessageBox.Show("English string is null:\r\n" +
+						strLibSDKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+					return;
+				}
+
+				KPStringTableItem kpstItem = new KPStringTableItem();
+				kpstItem.Name = strLibSDKey;
+				kpstItem.ValueEnglish = strEng;
+				kpstL.Strings.Add(kpstItem);
+
+				ListViewItem lvi = new ListViewItem();
+				lvi.Group = lvg;
+				lvi.Text = strLibSDKey;
+				lvi.SubItems.Add(strEng);
+				lvi.SubItems.Add(string.Empty);
+				lvi.Tag = kpstItem;
+				lvi.ImageIndex = 0;
+				m_lvStrings.Items.Add(lvi);
+			}
 		}
 
 		private void TrlAddMenuCommands(KPStringTable kpst, ListViewGroup grp,
@@ -270,7 +323,7 @@ namespace TrlUtil
 				lvi.ImageIndex = 0;
 				m_lvStrings.Items.Add(lvi);
 
-				ToolStripMenuItem tsmi = tsi as ToolStripMenuItem;
+				ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
 				if(tsmi != null) TrlAddMenuCommands(kpst, grp, tsmi.DropDownItems);
 			}
 		}
@@ -279,7 +332,7 @@ namespace TrlUtil
 		{
 			foreach(ListViewItem lvi in m_lvStrings.Items)
 			{
-				KPStringTableItem kpstItem  = lvi.Tag as KPStringTableItem;
+				KPStringTableItem kpstItem = (lvi.Tag as KPStringTableItem);
 				Debug.Assert(kpstItem != null);
 				if(kpstItem == null) continue;
 
@@ -398,8 +451,8 @@ namespace TrlUtil
 
 			foreach(TreeNode tn in vtn)
 			{
-				KPFormCustomization kpfc = tn.Tag as KPFormCustomization;
-				KPControlCustomization kpcc = tn.Tag as KPControlCustomization;
+				KPFormCustomization kpfc = (tn.Tag as KPFormCustomization);
+				KPControlCustomization kpcc = (tn.Tag as KPControlCustomization);
 
 				if(kpfc != null)
 				{
@@ -471,6 +524,17 @@ namespace TrlUtil
 			m_trl.Properties.LastModified = DateTime.Now.ToString("u");
 
 			m_trl.UnusedText = m_rtbUnusedText.Text;
+
+			try
+			{
+				string strAccel = AccelKeysCheck.Validate(m_trl);
+				if(strAccel != null)
+				{
+					MessageService.ShowWarning("Warning! The following accelerator keys collide:",
+						strAccel, "Click OK to continue saving.");
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void OnFileExit(object sender, EventArgs e)
@@ -491,7 +555,7 @@ namespace TrlUtil
 				return;
 			}
 
-			KPStringTableItem kpstItem = lvsic[0].Tag as KPStringTableItem;
+			KPStringTableItem kpstItem = (lvsic[0].Tag as KPStringTableItem);
 			Debug.Assert(kpstItem != null);
 			if(kpstItem == null) return;
 
@@ -509,7 +573,7 @@ namespace TrlUtil
 					m_lvStrings.SelectedItems;
 				if(lvsic.Count != 1) return;
 
-				KPStringTableItem kpstItem = lvsic[0].Tag as KPStringTableItem;
+				KPStringTableItem kpstItem = (lvsic[0].Tag as KPStringTableItem);
 				if(kpstItem == null)
 				{
 					Debug.Assert(false);
@@ -679,7 +743,9 @@ namespace TrlUtil
 
 		private void UpdatePreviewForm(KPFormCustomization kpfc)
 		{
-			m_prev.Controls.Clear();
+			// bool bResizeEng = (string.IsNullOrEmpty(kpfc.Window.Layout.Width) &&
+			//	string.IsNullOrEmpty(kpfc.Window.Layout.Height));
+
 			m_prev.CopyForm(kpfc.FormEnglish);
 			kpfc.ApplyTo(m_prev);
 		}

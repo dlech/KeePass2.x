@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -54,16 +54,6 @@ namespace KeePass.Native
 			public IntPtr ExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		internal struct HARDWAREINPUT32_WithSkip
-		{
-			public uint __Unused0; // See INPUT32 structure
-
-			public uint Message;
-			public ushort ParamL;
-			public ushort ParamH;
-		}
-
 		[StructLayout(LayoutKind.Explicit)]
 		internal struct INPUT32
 		{
@@ -73,14 +63,24 @@ namespace KeePass.Native
 			public MOUSEINPUT32_WithSkip MouseInput;
 			[FieldOffset(0)]
 			public KEYBDINPUT32_WithSkip KeyboardInput;
-			[FieldOffset(0)]
-			public HARDWAREINPUT32_WithSkip HardwareInput;
 		}
 
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		// INPUT.KI (40). vk: 8, sc: 10, fl: 12, t: 16, ex: 24
+		[StructLayout(LayoutKind.Explicit, Size = 40)]
 		internal struct SpecializedKeyboardINPUT64
 		{
-			public IntPtr Type;
+			[FieldOffset(0)]
+			public uint Type;
+			[FieldOffset(8)]
+			public ushort VirtualKeyCode;
+			[FieldOffset(10)]
+			public ushort ScanCode;
+			[FieldOffset(12)]
+			public uint Flags;
+			[FieldOffset(16)]
+			public uint Time;
+			[FieldOffset(24)]
+			public IntPtr ExtraInfo;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]

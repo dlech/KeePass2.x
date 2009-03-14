@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,12 +41,14 @@ namespace KeePass.Util
 {
 	public static class WinUtil
 	{
+		private const int ERROR_ACCESS_DENIED = 5;
+
 		private static bool m_bIsWindows9x = false;
 		private static bool m_bIsWindows2000 = false;
 		private static bool m_bIsWindowsXP = false;
 		private static bool m_bIsAtLeastWindowsVista = false;
 
-		private const int ERROR_ACCESS_DENIED = 5;
+		private static string m_strExePath = null;
 
 		public static bool IsWindows9x
 		{
@@ -198,18 +200,18 @@ namespace KeePass.Util
 
 		public static string GetExecutable()
 		{
-			string strExePath = null;
+			if(m_strExePath != null) return m_strExePath;
 
-			try { strExePath = Assembly.GetExecutingAssembly().Location; }
+			try { m_strExePath = Assembly.GetExecutingAssembly().Location; }
 			catch(Exception) { }
 
-			if((strExePath == null) || (strExePath.Length == 0))
+			if((m_strExePath == null) || (m_strExePath.Length == 0))
 			{
-				strExePath = Assembly.GetExecutingAssembly().GetName().CodeBase;
-				strExePath = UrlUtil.FileUrlToPath(strExePath);
+				m_strExePath = Assembly.GetExecutingAssembly().GetName().CodeBase;
+				m_strExePath = UrlUtil.FileUrlToPath(m_strExePath);
 			}
 
-			return strExePath;
+			return m_strExePath;
 		}
 
 		/* private const string FontPartsSeparator = @"/:/";
@@ -440,6 +442,34 @@ namespace KeePass.Util
 			if(strLower.StartsWith("\\\\")) return strUrl; // UNC path support
 
 			return strUrl;
+		}
+
+		public static bool RunElevated(string strExe, string strArgs,
+			bool bShowMessageIfFailed)
+		{
+			if(strExe == null) throw new ArgumentNullException("strExe");
+
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo();
+				if(strArgs != null) psi.Arguments = strArgs;
+				psi.FileName = strExe;
+				psi.UseShellExecute = true;
+				psi.WindowStyle = ProcessWindowStyle.Normal;
+
+				// Elevate on Windows Vista and higher
+				if(WinUtil.IsAtLeastWindowsVista) psi.Verb = "runas";
+
+				Process.Start(psi);
+			}
+			catch(Exception ex)
+			{
+				if(bShowMessageIfFailed) MessageService.ShowWarning(ex);
+
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -102,6 +102,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_uLockAfterTime; }
 			set { m_uLockAfterTime = value; }
+		}
+
+		private bool m_bExitInsteadOfLockingAfterTime = false;
+		public bool ExitInsteadOfLockingAfterTime
+		{
+			get { return m_bExitInsteadOfLockingAfterTime; }
+			set { m_bExitInsteadOfLockingAfterTime = value; }
 		}
 	}
 

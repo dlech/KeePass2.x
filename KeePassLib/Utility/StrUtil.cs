@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -551,7 +551,7 @@ namespace KeePassLib.Utility
 				}
 			}
 
-			str = str.Replace("&", string.Empty);
+			str = str.Replace(@"&", string.Empty);
 
 			return str;
 		}
@@ -620,5 +620,32 @@ namespace KeePassLib.Utility
 			return true;
 		}
 #endif // !KeePassLibSD
+
+		public static bool StringToBool(string str)
+		{
+			if(string.IsNullOrEmpty(str)) return false; // No assert
+
+			string s = str.ToLower().Trim();
+			if(s == "true") return true;
+			if(s == "yes") return true;
+			if(s == "1") return true;
+			if(s == "enabled") return true;
+			if(s == "checked") return true;
+
+			return false;
+		}
+
+		public static string BoolToString(bool bValue)
+		{
+			return (bValue ? "true" : "false");
+		}
+
+		public static string ToWindowsString(string str)
+		{
+			if(string.IsNullOrEmpty(str)) return str;
+
+			string strSingular = str.Replace("\r", string.Empty);
+			return strSingular.Replace("\n", "\r\n");
+		}
 	}
 }

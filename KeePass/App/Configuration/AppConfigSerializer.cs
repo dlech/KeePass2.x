@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -163,6 +163,8 @@ namespace KeePass.App.Configuration
 
 			if(fs != null) { fs.Close(); fs = null; }
 
+			if(tConfig != null) tConfig.OnLoad();
+
 			return tConfig;
 		}
 
@@ -193,7 +195,7 @@ namespace KeePass.App.Configuration
 		private static bool SaveConfigFileEx(AppConfigEx tConfig,
 			string strFilePath, bool bRemoveConfigPref)
 		{
-			tConfig.PrepareSave();
+			tConfig.OnSavePre();
 
 			XmlSerializer xmlSerial = new XmlSerializer(typeof(AppConfigEx));
 			FileStream fs = null;
@@ -225,6 +227,7 @@ namespace KeePass.App.Configuration
 
 			if(bRemoveConfigPref) tConfig.Meta.PreferUserConfiguration = bConfigPref;
 
+			tConfig.OnSavePost();
 			return bResult;
 		}
 

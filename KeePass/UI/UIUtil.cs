@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Threading;
+using System.IO;
 
 using KeePass.App;
 using KeePass.Native;
@@ -33,6 +35,8 @@ using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Collections;
+using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -141,7 +145,7 @@ namespace KeePass.UI
 
 			foreach(Image img in ilSource.Images)
 			{
-				if(bCloneImages) ilNew.Images.Add((Image)img.Clone());
+				if(bCloneImages) ilNew.Images.Add(new Bitmap(img));
 				else ilNew.Images.Add(img);
 			}
 
@@ -205,20 +209,28 @@ namespace KeePass.UI
 
 		public static Bitmap CreateScreenshot()
 		{
-			Screen s = Screen.PrimaryScreen;
-			Bitmap bmp = new Bitmap(s.Bounds.Width, s.Bounds.Height);
-
-			using(Graphics g = Graphics.FromImage(bmp))
+			try
 			{
-				g.CopyFromScreen(s.Bounds.Location, new Point(0, 0),
-					s.Bounds.Size);
-			}
+				Screen s = Screen.PrimaryScreen;
+				Bitmap bmp = new Bitmap(s.Bounds.Width, s.Bounds.Height);
 
-			return bmp;
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.CopyFromScreen(s.Bounds.Location, new Point(0, 0),
+						s.Bounds.Size);
+				}
+
+				return bmp;
+			}
+			catch(Exception) { } // Throws on Cocoa and Quartz
+
+			return null;
 		}
 
 		public static void DimImage(Image bmp)
 		{
+			if(bmp == null) { Debug.Assert(false); return; }
+
 			using(Brush b = new SolidBrush(Color.FromArgb(192, Color.Black)))
 			{
 				using(Graphics g = Graphics.FromImage(bmp))
@@ -306,13 +318,13 @@ namespace KeePass.UI
 				{
 					lvi.ImageIndex = (int)pe.IconId;
 
-					foreach(DocumentStateEx ds in dm.Documents)
+					foreach(PwDocument ds in dm.Documents)
 					{
 						int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
 						if(nInx > -1)
 						{
-							ilIcons.Images.Add((Image)ds.Database.GetCustomIcon(
-								pe.CustomIconUuid).Clone());
+							ilIcons.Images.Add(new Bitmap(ds.Database.GetCustomIcon(
+								pe.CustomIconUuid)));
 							lvi.ImageIndex = ilIcons.Images.Count - 1;
 							break;
 						}
@@ -320,9 +332,12 @@ namespace KeePass.UI
 				}
 
 				for(int iCol = 1; iCol < vColumns.Count; ++iCol)
-				{
 					lvi.SubItems.Add(AppDefs.GetEntryField(pe, vColumns[iCol].Key));
-				}
+
+				if(!pe.ForegroundColor.IsEmpty)
+					lvi.ForeColor = pe.ForegroundColor;
+				if(!pe.BackgroundColor.IsEmpty)
+					lvi.BackColor = pe.BackgroundColor;
 
 				lvi.Tag = pe;
 
@@ -474,6 +489,159 @@ namespace KeePass.UI
 				try { tn.ToolTipText = str; }
 				catch(Exception) { Debug.Assert(false); }
 			}
+		}
+
+		public static Color LightenColor(Color clrBase, double dblFactor)
+		{
+			if((dblFactor <= 0.0) || (dblFactor > 1.0)) return clrBase;
+
+			unchecked
+			{
+				byte r = (byte)((double)(255 - clrBase.R) * dblFactor + clrBase.R);
+				byte g = (byte)((double)(255 - clrBase.G) * dblFactor + clrBase.G);
+				byte b = (byte)((double)(255 - clrBase.B) * dblFactor + clrBase.B);
+				return Color.FromArgb((int)r, (int)g, (int)b);
+			}
+		}
+
+		public static Color DarkenColor(Color clrBase, double dblFactor)
+		{
+			if((dblFactor <= 0.0) || (dblFactor > 1.0)) return clrBase;
+
+			unchecked
+			{
+				byte r = (byte)((double)clrBase.R - ((double)clrBase.R * dblFactor));
+				byte g = (byte)((double)clrBase.G - ((double)clrBase.G * dblFactor));
+				byte b = (byte)((double)clrBase.B - ((double)clrBase.B * dblFactor));
+				return Color.FromArgb((int)r, (int)g, (int)b);
+			}
+		}
+
+		public static void MoveSelectedItemsInternalOne<T>(ListView lv,
+			PwObjectList<T> v, bool bUp)
+			where T : class, IDeepClonable<T>
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(v == null) throw new ArgumentNullException("v");
+			if(lv.Items.Count != (int)v.UCount) throw new ArgumentException();
+
+			ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
+			if(lvsic.Count == 0) return;
+
+			int nStart = (bUp ? 0 : (lvsic.Count - 1));
+			int nEnd = (bUp ? lvsic.Count : -1);
+			for(int i = nStart; i != nEnd; i += (bUp ? 1 : -1))
+				v.MoveOne(lvsic[i].Tag as T, bUp);
+		}
+
+		public static void DeleteSelectedItems<T>(ListView lv, PwObjectList<T>
+			vInternalList)
+			where T : class, IDeepClonable<T>
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(vInternalList == null) throw new ArgumentNullException("vInternalList");
+
+			ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
+			int nSelectedCount = lvsic.Count;
+			for(int i = 0; i < nSelectedCount; ++i)
+			{
+				int nIndex = lvsic[nSelectedCount - i - 1];
+				if(vInternalList.Remove(lv.Items[nIndex].Tag as T))
+					lv.Items.RemoveAt(nIndex);
+				else { Debug.Assert(false); }
+			}
+		}
+
+		public static object[] GetSelectedItemTags(ListView lv)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+
+			ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
+			object[] p = new object[lvsic.Count];
+			for(int i = 0; i < lvsic.Count; ++i) p[i] = lvsic[i].Tag;
+			return p;
+		}
+
+		public static void SelectItems(ListView lv, object[] vItemTags)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(vItemTags == null) throw new ArgumentNullException("vItemTags");
+
+			for(int i = 0; i < lv.Items.Count; ++i)
+				if(Array.IndexOf<object>(vItemTags, lv.Items[i].Tag) >= 0)
+					lv.Items[i].Selected = true;
+		}
+
+		public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)
+		{
+			string strContent = (strDocumentText ?? string.Empty);
+
+			wb.AllowNavigation = true;
+			wb.DocumentText = strContent;
+
+			// Wait for document being loaded
+			for(int i = 0; i < 50; ++i)
+			{
+				if(wb.DocumentText == strContent) break;
+
+				Thread.Sleep(20);
+				Application.DoEvents();
+			}
+		}
+
+		public static void SetExplorerTheme(IntPtr hWnd)
+		{
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+
+			try { NativeMethods.SetWindowTheme(hWnd, "explorer", null); }
+			catch(Exception) { } // Not supported on older operating systems
+		}
+
+		public static Image LoadImage(byte[] pb)
+		{
+			if(pb == null) throw new ArgumentNullException("pb");
+
+			MemoryStream ms = new MemoryStream(pb, false);
+
+			try { return Image.FromStream(ms); }
+			catch(Exception)
+			{
+				Image imgIco = TryLoadIco(pb);
+				if(imgIco != null) return imgIco;
+
+				throw;
+			}
+		}
+
+		private static Image TryLoadIco(byte[] pb)
+		{
+			MemoryStream ms = new MemoryStream(pb, false);
+
+			try { return (new Icon(ms)).ToBitmap(); }
+			catch(Exception) { }
+
+			return null;
+		}
+
+		public static void SetShield(Button btn, bool bSetShield)
+		{
+			if(btn == null) throw new ArgumentNullException("btn");
+
+			try
+			{
+				if(btn.FlatStyle != FlatStyle.System)
+				{
+					Debug.Assert(false);
+					btn.FlatStyle = FlatStyle.System;
+				}
+
+				IntPtr h = btn.Handle;
+				if(h == IntPtr.Zero) { Debug.Assert(false); return; }
+
+				NativeMethods.SendMessage(h, NativeMethods.BCM_SETSHIELD,
+					IntPtr.Zero, (IntPtr)(bSetShield ? 1 : 0));
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

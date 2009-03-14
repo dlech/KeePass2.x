@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -223,7 +223,8 @@ namespace KeePassLib.Keys
 		/// be <c>null</c>. This parameter won't be modified.</param>
 		/// <param name="uNumRounds">Transformation count.</param>
 		/// <returns>256-bit transformed key.</returns>
-		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbKeySeed32, ulong uNumRounds)
+		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbKeySeed32,
+			ulong uNumRounds)
 		{
 			Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
 			if(pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
@@ -234,17 +235,26 @@ namespace KeePassLib.Keys
 			if(pbKeySeed32.Length != 32) throw new ArgumentException();
 
 			byte[] pbNewKey = new byte[32];
-			byte[] pbIV = new byte[16];
-			RijndaelManaged r = new RijndaelManaged();
-			ulong i;
-
-			for(i = 0; i < 16; i++) pbIV[i] = 0;
-			for(i = 0; i < 32; i++) pbNewKey[i] = pbOriginalKey32[i];
+			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
 
 			// Try to use the native library first
 			if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
 				return (new SHA256Managed()).ComputeHash(pbNewKey);
 
+			if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds) == false)
+				return null;
+
+			SHA256Managed sha256 = new SHA256Managed();
+			return sha256.ComputeHash(pbNewKey);
+		}
+
+		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+			ulong uNumRounds)
+		{
+			byte[] pbIV = new byte[16];
+			Array.Clear(pbIV, 0, pbIV.Length);
+
+			RijndaelManaged r = new RijndaelManaged();
 			r.IV = pbIV;
 			r.Mode = CipherMode.ECB;
 			r.KeySize = 256;
@@ -256,19 +266,18 @@ namespace KeePassLib.Keys
 				(iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
-				Debug.Assert(iCrypt.InputBlockSize == 16, "Invalid input block size!");
-				Debug.Assert(iCrypt.OutputBlockSize == 16, "Invalid output block size!");
-				return null;
+				Debug.Assert((iCrypt.InputBlockSize == 16), "Invalid input block size!");
+				Debug.Assert((iCrypt.OutputBlockSize == 16), "Invalid output block size!");
+				return false;
 			}
 
-			for(i = 0; i < uNumRounds; ++i)
+			for(ulong i = 0; i < uNumRounds; ++i)
 			{
-				iCrypt.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
-				iCrypt.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);
+				iCrypt.TransformBlock(pbNewKey32, 0, 16, pbNewKey32, 0);
+				iCrypt.TransformBlock(pbNewKey32, 16, 16, pbNewKey32, 16);
 			}
 
-			SHA256Managed sha256 = new SHA256Managed();
-			return sha256.ComputeHash(pbNewKey);
+			return true;
 		}
 
 		/// <summary>
@@ -277,8 +286,7 @@ namespace KeePassLib.Keys
 		/// and the number of performed transformations are returned.
 		/// </summary>
 		/// <param name="uMilliseconds">Test duration in ms.</param>
-		/// <param name="uStep">Stepping. The returned number of transformations
-		/// will be a multiple of this parameter or <c>uint.MaxValue</c>.
+		/// <param name="uStep">Stepping.
 		/// <paramref name="uStep" /> should be a prime number. For fast processors
 		/// (PCs) a value of <c>3001</c> is recommended, for slower processors (PocketPC)
 		/// a value of <c>401</c> is recommended.</param>
@@ -286,12 +294,16 @@ namespace KeePassLib.Keys
 		/// amount of time. Maximum value is <c>uint.MaxValue</c>.</returns>
 		public static ulong TransformKeyBenchmark(uint uMilliseconds, ulong uStep)
 		{
+			ulong uRounds;
+
+			// Try native method
+			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
+				return uRounds;
+
 			byte[] pbNewKey = new byte[32];
 			byte[] pbKey = new byte[32];
 			byte[] pbIV = new byte[16];
-			RijndaelManaged r = new RijndaelManaged();
 			uint i;
-			ulong uRounds = 0;
 
 			for(i = 0; i < 16; i++) pbIV[i] = 0;
 			for(i = 0; i < 32; i++)
@@ -300,10 +312,7 @@ namespace KeePassLib.Keys
 				pbNewKey[i] = (byte)i;
 			}
 
-			// Try native method
-			if(NativeLib.TransformKey256Timed(pbNewKey, pbKey, ref uRounds, uMilliseconds / 1000))
-				return uRounds;
-
+			RijndaelManaged r = new RijndaelManaged();
 			r.IV = pbIV;
 			r.Mode = CipherMode.ECB;
 			r.KeySize = 256;
@@ -324,9 +333,10 @@ namespace KeePassLib.Keys
 			TimeSpan ts;
 			double dblReqMillis = uMilliseconds;
 
+			uRounds = 0;
 			while(true)
 			{
-				for(i = 0; i < uStep; i++)
+				for(i = 0; i < uStep; ++i)
 				{
 					iCrypt.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
 					iCrypt.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);

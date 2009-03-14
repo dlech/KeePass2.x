@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ using KeePassLib.Interfaces;
 namespace KeePassLib.Collections
 {
 	/// <summary>
-	/// List of objects that implement <c>IDeepClonable</c> and <c>IPwTreeItem</c>,
+	/// List of objects that implement <c>IDeepClonable</c>,
 	/// and cannot be <c>null</c>.
 	/// </summary>
 	/// <typeparam name="T">Type specifier.</typeparam>
@@ -92,6 +92,12 @@ namespace KeePassLib.Collections
 			return tNew;
 		}
 
+		public List<T> CloneShallowToList()
+		{
+			PwObjectList<T> tNew = CloneShallow();
+			return tNew.m_vObjects;
+		}
+
 		/// <summary>
 		/// Add an object to this list.
 		/// </summary>
@@ -107,6 +113,17 @@ namespace KeePassLib.Collections
 		}
 
 		public void Add(PwObjectList<T> vObjects)
+		{
+			Debug.Assert(vObjects != null);
+			if(vObjects == null) throw new ArgumentNullException("vObjects");
+
+			foreach(T po in vObjects)
+			{
+				m_vObjects.Add(po);
+			}
+		}
+
+		public void Add(List<T> vObjects)
 		{
 			Debug.Assert(vObjects != null);
 			if(vObjects == null) throw new ArgumentNullException("vObjects");
@@ -163,13 +180,13 @@ namespace KeePassLib.Collections
 			int nIndex = m_vObjects.IndexOf(tObject);
 			Debug.Assert(nIndex >= 0);
 
-			if(bUp && (nIndex > 0))
+			if(bUp && (nIndex > 0)) // No assert for top item
 			{
 				T tTemp = m_vObjects[nIndex - 1];
 				m_vObjects[nIndex - 1] = m_vObjects[nIndex];
 				m_vObjects[nIndex] = tTemp;
 			}
-			else if(!bUp && (nIndex != (nCount - 1)))
+			else if(!bUp && (nIndex != (nCount - 1))) // No assert for bottom item
 			{
 				T tTemp = m_vObjects[nIndex + 1];
 				m_vObjects[nIndex + 1] = m_vObjects[nIndex];
@@ -190,8 +207,7 @@ namespace KeePassLib.Collections
 			if(vObjects.Length == 0) return;
 
 			int nCount = m_vObjects.Count;
-			foreach(T t in vObjects)
-				m_vObjects.Remove(t);
+			foreach(T t in vObjects) m_vObjects.Remove(t);
 
 			if(bTop)
 			{
@@ -203,12 +219,31 @@ namespace KeePassLib.Collections
 				}
 			}
 			else // Move to bottom
-				foreach(T t in vObjects)
-					m_vObjects.Add(t);
+			{
+				foreach(T t in vObjects) m_vObjects.Add(t);
+			}
 
 			Debug.Assert(nCount == m_vObjects.Count);
 			if(nCount != m_vObjects.Count)
 				throw new ArgumentException("At least one of the T objects in the vObjects list doesn't exist!");
+		}
+
+		public static PwObjectList<T> FromArray(T[] tArray)
+		{
+			if(tArray == null) throw new ArgumentNullException("tArray");
+
+			PwObjectList<T> l = new PwObjectList<T>();
+			foreach(T t in tArray) { l.Add(t); }
+			return l;
+		}
+
+		public static PwObjectList<T> FromList(List<T> tList)
+		{
+			if(tList == null) throw new ArgumentNullException("tList");
+
+			PwObjectList<T> l = new PwObjectList<T>();
+			l.Add(tList);
+			return l;
 		}
 	}
 }

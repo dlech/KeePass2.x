@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ namespace KeePass.Forms
 		private ProtectedBinaryDictionary m_vBinaries = null;
 		private AutoTypeConfig m_atConfig = null;
 		private PwObjectList<PwEntry> m_vHistory = null;
+		private Color m_clrForeground = Color.Empty;
 		private Color m_clrBackground = Color.Empty;
 
 		private PwIcon m_pwEntryIcon = PwIcon.Key;
@@ -273,19 +274,26 @@ namespace KeePass.Forms
 
 		private void InitPropertiesTab()
 		{
+			m_clrForeground = m_pwEntry.ForegroundColor;
 			m_clrBackground = m_pwEntry.BackgroundColor;
 
+			if(m_clrForeground != Color.Empty)
+				m_btnPickFgColor.Image = CreateColorButtonImage(m_btnPickFgColor,
+					m_clrForeground);
 			if(m_clrBackground != Color.Empty)
 				m_btnPickBgColor.Image = CreateColorButtonImage(m_btnPickBgColor,
 					m_clrBackground);
 
+			m_cbCustomForegroundColor.Checked = (m_clrForeground != Color.Empty);
 			m_cbCustomBackgroundColor.Checked = (m_clrBackground != Color.Empty);
 
 			m_tbOverrideUrl.Text = m_pwEntry.OverrideUrl;
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
+				m_cbCustomForegroundColor.Enabled = false;
 				m_cbCustomBackgroundColor.Enabled = false;
+				m_btnPickFgColor.Enabled = false;
 				m_btnPickBgColor.Enabled = false;
 				m_tbOverrideUrl.ReadOnly = true;
 			}
@@ -376,8 +384,8 @@ namespace KeePass.Forms
 
 			foreach(PwEntry pe in m_vHistory)
 			{
-				ListViewItem lvi = m_lvHistory.Items.Add(TimeUtil.ToDisplayString(pe.LastAccessTime),
-					(int)pe.IconId);
+				ListViewItem lvi = m_lvHistory.Items.Add(TimeUtil.ToDisplayString(
+					pe.LastAccessTime), (int)pe.IconId);
 
 				lvi.SubItems.Add(pe.Strings.ReadSafeEx(PwDefs.UserNameField));
 				lvi.SubItems.Add(pe.Strings.ReadSafeEx(PwDefs.PasswordField));
@@ -500,6 +508,7 @@ namespace KeePass.Forms
 			m_btnGenPw.Text = m_ttRect.GetToolTip(m_btnGenPw);
 			m_btnStandardExpires.Text = m_ttRect.GetToolTip(m_btnStandardExpires);
 
+			m_btnPickFgColor.Text = KPRes.SelectColor;
 			m_btnPickBgColor.Text = KPRes.SelectColor;
 		}
 
@@ -529,6 +538,7 @@ namespace KeePass.Forms
 			m_btnBinSave.Enabled = m_btnBinDelete.Enabled = (nBinSel >= 1);
 			m_btnBinView.Enabled = (nBinSel == 1);
 
+			m_btnPickFgColor.Enabled = m_cbCustomForegroundColor.Checked;
 			m_btnPickBgColor.Enabled = m_cbCustomBackgroundColor.Checked;
 
 			m_lvAutoType.Enabled = m_btnAutoTypeAdd.Enabled = m_btnAutoTypeDelete.Enabled =
@@ -571,6 +581,9 @@ namespace KeePass.Forms
 			m_pwEntry.IconId = m_pwEntryIcon;
 			m_pwEntry.CustomIconUuid = m_pwCustomIconID;
 
+			if(m_cbCustomForegroundColor.Checked)
+				m_pwEntry.ForegroundColor = m_clrForeground;
+			else m_pwEntry.ForegroundColor = Color.Empty;
 			if(m_cbCustomBackgroundColor.Checked)
 				m_pwEntry.BackgroundColor = m_clrBackground;
 			else m_pwEntry.BackgroundColor = Color.Empty;
@@ -1291,6 +1304,20 @@ namespace KeePass.Forms
 			m_ctxPwGen.Show(m_btnGenPw, new Point(0, m_btnGenPw.Height));
 		}
 
+		private void OnPickForegroundColor(object sender, EventArgs e)
+		{
+			m_dlgColorSel.Color = m_clrForeground;
+
+			if(m_dlgColorSel.ShowDialog() == DialogResult.OK)
+			{
+				m_clrForeground = m_dlgColorSel.Color;
+				m_btnPickFgColor.Image = CreateColorButtonImage(m_btnPickFgColor,
+					m_clrForeground);
+
+				m_bModifiedEntry = true;
+			}
+		}
+
 		private void OnPickBackgroundColor(object sender, EventArgs e)
 		{
 			m_dlgColorSel.Color = m_clrBackground;
@@ -1303,6 +1330,13 @@ namespace KeePass.Forms
 
 				m_bModifiedEntry = true;
 			}
+		}
+
+		private void OnCustomForegroundColorCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+
+			if(!m_bInitializing) m_bModifiedEntry = true;
 		}
 
 		private void OnCustomBackgroundColorCheckedChanged(object sender, EventArgs e)

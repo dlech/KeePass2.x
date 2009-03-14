@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,17 +41,22 @@ namespace TrlUtil
 			AddForm(l, new DatabaseOperationsForm());
 			AddForm(l, new DatabaseSettingsForm());
 			AddForm(l, new DataViewerForm());
+			AddForm(l, new EcasActionForm());
+			AddForm(l, new EcasConditionForm());
+			AddForm(l, new EcasEventForm());
+			AddForm(l, new EcasTriggerForm());
+			AddForm(l, new EcasTriggersForm());
 			AddForm(l, new EditAutoTypeItemForm());
 			AddForm(l, new EditStringForm());
 			AddForm(l, new EntropyForm());
 			AddForm(l, new EntryListForm());
 			AddForm(l, new EntryReportForm());
+			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new FieldRefForm());
 			AddForm(l, new GroupForm());
 			AddForm(l, new HelpSourceForm());
 			AddForm(l, new IconPickerForm());
 			AddForm(l, new ImportCsvForm());
-			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new ImportMethodForm());
 			AddForm(l, new InternalBrowserForm());
 			AddForm(l, new IOConnectionForm());
@@ -116,6 +121,7 @@ namespace TrlUtil
 			else if(t == typeof(ComboBox)) bAdd = true;
 			else if(t == typeof(Label)) bAdd = true;
 			else if(t == typeof(ListView)) bAdd = true;
+			else if(t == typeof(CustomListViewEx)) bAdd = true;
 			else if(t == typeof(Button)) bAdd = true;
 			else if(t == typeof(KeePass.UI.QualityProgressBar)) bAdd = true;
 			else if(t == typeof(DateTimePicker)) bAdd = true;

@@ -32,7 +32,7 @@
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_grpFormat = new System.Windows.Forms.GroupBox();
-			this.m_lvFormats = new System.Windows.Forms.ListView();
+			this.m_lvFormats = new KeePass.UI.CustomListViewEx();
 			this.m_grpFile = new System.Windows.Forms.GroupBox();
 			this.m_lnkFileFormats = new System.Windows.Forms.LinkLabel();
 			this.m_btnSelFile = new System.Windows.Forms.Button();
@@ -96,6 +96,7 @@
 			this.m_lvFormats.TabIndex = 1;
 			this.m_lvFormats.UseCompatibleStateImageBehavior = false;
 			this.m_lvFormats.View = System.Windows.Forms.View.Details;
+			this.m_lvFormats.ItemActivate += new System.EventHandler(this.OnFormatsItemActivate);
 			this.m_lvFormats.SelectedIndexChanged += new System.EventHandler(this.OnFormatsSelectedIndexChanged);
 			// 
 			// m_grpFile
@@ -184,7 +185,7 @@
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.GroupBox m_grpFormat;
-		private System.Windows.Forms.ListView m_lvFormats;
+		private KeePass.UI.CustomListViewEx m_lvFormats;
 		private System.Windows.Forms.GroupBox m_grpFile;
 		private System.Windows.Forms.Button m_btnSelFile;
 		private System.Windows.Forms.TextBox m_tbFile;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -106,12 +106,14 @@ namespace KeePass.Forms
 				m_lblPreviewHint.Visible = false;
 			}
 
-			UpdateHTMLDocument();
+			UpdateHtmlDocument();
 			UpdateUIState();
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
+			UpdateHtmlDocument();
+
 			if(m_bPrintMode)
 			{
 				try { m_wbMain.Print(); } // Throws in Mono 1.2.6+
@@ -132,12 +134,16 @@ namespace KeePass.Forms
 
 		private void UpdateUIState()
 		{
-			m_cbAutoType.Enabled = m_rbDetails.Checked;
+			m_cbAutoType.Enabled = m_cbCustomStrings.Enabled = m_rbDetails.Checked;
 
-			if(m_rbTabular.Checked) m_cbAutoType.Checked = false;
+			if(m_rbTabular.Checked)
+			{
+				m_cbAutoType.Checked = false;
+				m_cbCustomStrings.Checked = false;
+			}
 		}
 
-		private void UpdateHTMLDocument()
+		private void UpdateHtmlDocument()
 		{
 			if(m_bBlockPreviewRefresh) return;
 
@@ -163,6 +169,7 @@ namespace KeePass.Forms
 			bool bCreation = m_cbCreation.Checked, bLastMod = m_cbLastMod.Checked;
 			bool bLastAcc = m_cbLastAccess.Checked, bExpire = m_cbExpire.Checked;
 			bool bAutoType = m_cbAutoType.Checked;
+			bool bCustomStrings = m_cbCustomStrings.Checked;
 
 			bool bMonoPasswords = m_cbMonospaceForPasswords.Checked;
 			if(m_rbMonospace.Checked) bMonoPasswords = false; // Monospaced anyway
@@ -277,15 +284,11 @@ namespace KeePass.Forms
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
-						if((kvp.Key != PwDefs.TitleField) && (kvp.Key != PwDefs.UserNameField) &&
-							(kvp.Key != PwDefs.PasswordField) && (kvp.Key != PwDefs.UrlField) &&
-							(kvp.Key != PwDefs.NotesField))
-						{
+						if(bCustomStrings && !PwDefs.IsStandardField(kvp.Key))
 							WriteDetailsLine(sb, kvp, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
-						}
 					}
 
-					sb.AppendLine("<tr><td>&nbsp;</td></tr>");
+					sb.AppendLine(@"<tr><td>&nbsp;</td></tr>");
 
 					return true;
 				};
@@ -295,19 +298,13 @@ namespace KeePass.Forms
 			m_pgDataSource.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
 			if(m_rbTabular.Checked)
-			{
 				sb.AppendLine("</table>");
-			}
 			else if(m_rbDetails.Checked)
-			{
 				sb.AppendLine("</table><br />");
-			}
 
 			sb.AppendLine("</body></html>");
 
-			m_wbMain.AllowNavigation = true;
-
-			try { m_wbMain.DocumentText = sb.ToString(); }
+			try { UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString()); }
 			catch(Exception) { } // Throws in Mono 2.0+
 
 			m_bBlockPreviewRefresh = false;
@@ -375,31 +372,31 @@ namespace KeePass.Forms
 
 		private void OnBtnConfigPage(object sender, EventArgs e)
 		{
+			UpdateHtmlDocument();
+
 			try { m_wbMain.ShowPageSetupDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
 			{
 				MessageService.ShowWarning(KLRes.FrameworkNotImplExcp);
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
-
-			UpdateHTMLDocument();
 		}
 
 		private void OnBtnPrintPreview(object sender, EventArgs e)
 		{
+			UpdateHtmlDocument();
+
 			try { m_wbMain.ShowPrintPreviewDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
 			{
 				MessageService.ShowWarning(KLRes.FrameworkNotImplExcp);
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
-
-			UpdateHTMLDocument();
 		}
 
 		private void OnTabSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_tabMain.SelectedIndex == 0) UpdateHTMLDocument();
+			if(m_tabMain.SelectedIndex == 0) UpdateHtmlDocument();
 		}
 
 		private void OnTabularCheckedChanged(object sender, EventArgs e)
@@ -410,18 +407,18 @@ namespace KeePass.Forms
 		private void OnLinkSelectAllFields(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
-				m_cbUrl.Checked = m_cbNotes.Checked =
-				m_cbCreation.Checked = m_cbLastAccess.Checked = m_cbLastMod.Checked =
-				m_cbExpire.Checked = m_cbAutoType.Checked = m_cbGroups.Checked = true;
+				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
+				m_cbLastAccess.Checked = m_cbLastMod.Checked = m_cbExpire.Checked =
+				m_cbAutoType.Checked = m_cbGroups.Checked = m_cbCustomStrings.Checked = true;
 			UpdateUIState();
 		}
 
 		private void OnLinkDeselectAllFields(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
-				m_cbUrl.Checked = m_cbNotes.Checked =
-				m_cbCreation.Checked = m_cbLastAccess.Checked = m_cbLastMod.Checked =
-				m_cbExpire.Checked = m_cbAutoType.Checked = m_cbGroups.Checked = false;
+				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
+				m_cbLastAccess.Checked = m_cbLastMod.Checked = m_cbExpire.Checked =
+				m_cbAutoType.Checked = m_cbGroups.Checked = m_cbCustomStrings.Checked = false;
 			UpdateUIState();
 		}
 

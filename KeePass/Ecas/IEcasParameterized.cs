@@ -1,6 +1,6 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,14 +17,18 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ___KEEPASS_NATIVE_H___
-#define ___KEEPASS_NATIVE_H___
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-#define C_FN_SHARE extern "C" __declspec(dllexport)
+using KeePassLib;
 
-C_FN_SHARE BOOL TransformKey(__inout BYTE *pBuf256, __in const BYTE *pKey256,
-	unsigned __int64 uRounds);
-C_FN_SHARE BOOL TransformKeyTimed(__inout BYTE *pBuf256, __in const BYTE *pKey256,
-	__out unsigned __int64 *puRounds, unsigned int uSeconds);
+namespace KeePass.Ecas
+{
+	public interface IEcasParameterized
+	{
+		PwUuid Type { get; }
 
-#endif
+		EcasParameter[] Parameters { get; }
+	}
+}

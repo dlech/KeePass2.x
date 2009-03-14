@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -43,13 +43,13 @@ namespace KeePass.DataExchange
 {
 	public static class ImportUtil
 	{
-		public static void ImportInto(PwDatabase pwStorage, out bool bAppendedToRootOnly)
+		public static bool ImportInto(PwDatabase pwStorage, out bool bAppendedToRootOnly)
 		{
 			bAppendedToRootOnly = false;
 
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return;
-			if(!AppPolicy.Try(AppPolicyId.Import)) return;
+			if(!pwStorage.IsOpen) return false;
+			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
 
 			ExchangeDataForm dlgFmt = new ExchangeDataForm();
 			dlgFmt.InitEx(false, pwStorage, pwStorage.RootGroup);
@@ -60,7 +60,7 @@ namespace KeePass.DataExchange
 				if(dlgFmt.ResultFormat == null)
 				{
 					MessageService.ShowWarning(KPRes.ImportFailed);
-					return;
+					return false;
 				}
 
 				bAppendedToRootOnly = dlgFmt.ResultFormat.ImportAppendsToRootGroupOnly;
@@ -72,6 +72,9 @@ namespace KeePass.DataExchange
 				PerformImport(pwStorage, dlgFmt.ResultFormat, lConnections.ToArray(),
 					false, null, false);
 			}
+			else return false;
+
+			return true;
 		}
 
 		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
@@ -251,16 +254,17 @@ namespace KeePass.DataExchange
 					{
 						try
 						{
-							if(pwDatabase.IOConnectionInfo.IsLocalFile())
+							if(pwDatabase.IOConnectionInfo.Path != ioc.Path)
 							{
-								if((pwDatabase.IOConnectionInfo.Path != ioc.Path) &&
+								if(pwDatabase.IOConnectionInfo.IsLocalFile() &&
 									ioc.IsLocalFile())
 								{
 									File.Copy(pwDatabase.IOConnectionInfo.Path,
 										ioc.Path, true);
 								}
+								else pwDatabase.SaveAs(ioc, false, null);
 							}
-							else pwDatabase.SaveAs(ioc, false, null);
+							else { Debug.Assert(false); }
 						}
 						catch(Exception exSync)
 						{

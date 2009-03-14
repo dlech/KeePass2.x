@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -103,6 +103,11 @@ namespace KeePass.App
 			public const string ImportExportPassKeeper = "imp_passkeeper";
 
 			public const string AppPolicy = "v2/policy";
+
+			public const string Triggers = "v2/triggers";
+			public const string TriggersEvents = "events";
+			public const string TriggersConditions = "conditions";
+			public const string TriggersActions = "actions";
 		}
 
 		public static class CommandLineOptions
@@ -120,17 +125,23 @@ namespace KeePass.App
 
 			public const string Help = @"?";
 			public const string HelpLong = "help";
+
+			public const string ConfigSetUrlOverride = "set-urloverride";
+			public const string ConfigClearUrlOverride = "clear-urloverride";
+			public const string ConfigGetUrlOverride = "get-urloverride";
+
+			public const string ConfigSetLanguageFile = "set-languagefile";
 		}
 
 		public static class FileExtension
 		{
 			public const string FileExt = "kdbx";
-			public const string ExtId = "kdbfile";
+			public const string ExtId = "kdbxfile";
 
 			public const string KeyFile = "key";
 		}
 
-		public const string AutoRunName = "KeePass Password Safe";
+		public const string AutoRunName = "KeePass Password Safe 2";
 
 		public const string MutexName = "KeePassAppMutex";
 		public const string MutexNameGlobal = "KeePassAppMutexEx";

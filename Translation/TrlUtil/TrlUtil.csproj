@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccelKeysCheck.cs" />
     <Compile Include="FormTrlMgr.cs" />
     <Compile Include="KeePass1xLngImport.cs" />
     <Compile Include="MainForm.cs">

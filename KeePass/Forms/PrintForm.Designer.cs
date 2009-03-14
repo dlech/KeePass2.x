@@ -66,6 +66,7 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnConfigPrinter = new System.Windows.Forms.Button();
 			this.m_btnPrintPreview = new System.Windows.Forms.Button();
+			this.m_cbCustomStrings = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.m_tabDataLayout.SuspendLayout();
@@ -146,7 +147,7 @@
 			this.m_grpFont.Location = new System.Drawing.Point(12, 267);
 			this.m_grpFont.Name = "m_grpFont";
 			this.m_grpFont.Size = new System.Drawing.Size(571, 88);
-			this.m_grpFont.TabIndex = 0;
+			this.m_grpFont.TabIndex = 2;
 			this.m_grpFont.TabStop = false;
 			this.m_grpFont.Text = "Font";
 			// 
@@ -209,6 +210,7 @@
 			// 
 			// m_grpFields
 			// 
+			this.m_grpFields.Controls.Add(this.m_cbCustomStrings);
 			this.m_grpFields.Controls.Add(this.m_cbGroups);
 			this.m_grpFields.Controls.Add(this.m_linkDeselectAllFields);
 			this.m_grpFields.Controls.Add(this.m_linkSelectAllFields);
@@ -225,7 +227,7 @@
 			this.m_grpFields.Location = new System.Drawing.Point(12, 145);
 			this.m_grpFields.Name = "m_grpFields";
 			this.m_grpFields.Size = new System.Drawing.Size(571, 116);
-			this.m_grpFields.TabIndex = 2;
+			this.m_grpFields.TabIndex = 1;
 			this.m_grpFields.TabStop = false;
 			this.m_grpFields.Text = "Fields";
 			// 
@@ -245,7 +247,7 @@
 			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(63, 94);
 			this.m_linkDeselectAllFields.Name = "m_linkDeselectAllFields";
 			this.m_linkDeselectAllFields.Size = new System.Drawing.Size(63, 13);
-			this.m_linkDeselectAllFields.TabIndex = 12;
+			this.m_linkDeselectAllFields.TabIndex = 13;
 			this.m_linkDeselectAllFields.TabStop = true;
 			this.m_linkDeselectAllFields.Text = "Deselect All";
 			this.m_linkDeselectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkDeselectAllFields);
@@ -256,7 +258,7 @@
 			this.m_linkSelectAllFields.Location = new System.Drawing.Point(6, 94);
 			this.m_linkSelectAllFields.Name = "m_linkSelectAllFields";
 			this.m_linkSelectAllFields.Size = new System.Drawing.Size(51, 13);
-			this.m_linkSelectAllFields.TabIndex = 11;
+			this.m_linkSelectAllFields.TabIndex = 12;
 			this.m_linkSelectAllFields.TabStop = true;
 			this.m_linkSelectAllFields.Text = "Select All";
 			this.m_linkSelectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkSelectAllFields);
@@ -449,7 +451,7 @@
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.Text = "&Print";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -483,10 +485,20 @@
 			this.m_btnPrintPreview.Name = "m_btnPrintPreview";
 			this.m_btnPrintPreview.Size = new System.Drawing.Size(100, 23);
 			this.m_btnPrintPreview.TabIndex = 4;
-			this.m_btnPrintPreview.Text = "Print &Preview";
+			this.m_btnPrintPreview.Text = "Print Pre&view";
 			this.m_btnPrintPreview.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
+			// 
+			// m_cbCustomStrings
+			// 
+			this.m_cbCustomStrings.AutoSize = true;
+			this.m_cbCustomStrings.Location = new System.Drawing.Point(106, 65);
+			this.m_cbCustomStrings.Name = "m_cbCustomStrings";
+			this.m_cbCustomStrings.Size = new System.Drawing.Size(116, 17);
+			this.m_cbCustomStrings.TabIndex = 11;
+			this.m_cbCustomStrings.Text = "Custom string fields";
+			this.m_cbCustomStrings.UseVisualStyleBackColor = true;
 			// 
 			// PrintForm
 			// 
@@ -509,8 +521,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Print";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabPreview.ResumeLayout(false);
 			this.m_tabDataLayout.ResumeLayout(false);
@@ -563,5 +575,6 @@
 		private System.Windows.Forms.LinkLabel m_linkDeselectAllFields;
 		private System.Windows.Forms.LinkLabel m_linkSelectAllFields;
 		private System.Windows.Forms.CheckBox m_cbGroups;
+		private System.Windows.Forms.CheckBox m_cbCustomStrings;
 	}
 }

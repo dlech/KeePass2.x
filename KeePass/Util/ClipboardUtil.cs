@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 
 using KeePass.App;
+using KeePass.Ecas;
 using KeePass.Util;
 using KeePass.Util.Spr;
 
@@ -61,9 +62,12 @@ namespace KeePass.Util
 
 				m_pbDataHash32 = HashClipboard();
 				m_strFormat = null;
+
+				RaiseCopyEvent(bIsEntryInfo, strData);
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
 
+			if(peEntryInfo != null) peEntryInfo.Touch(false);
 			return true;
 		}
 
@@ -86,6 +90,8 @@ namespace KeePass.Util
 
 				SHA256Managed sha256 = new SHA256Managed();
 				m_pbDataHash32 = sha256.ComputeHash(pbToCopy);
+
+				RaiseCopyEvent(bIsEntryInfo, string.Empty);
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
 
@@ -106,6 +112,13 @@ namespace KeePass.Util
 			return false;
 		}
 
+		private static void RaiseCopyEvent(bool bIsEntryInfo, string strDesc)
+		{
+			if(bIsEntryInfo == false) return;
+
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.CopiedEntryInfo, strDesc);
+		}
+
 		public static void ClearIfOwner()
 		{
 			// If we didn't copy anything or cleared it already: do nothing
@@ -116,12 +129,8 @@ namespace KeePass.Util
 			if(pbHash == null) return; // Unknown data (i.e. no KeePass data)
 			if(pbHash.Length != 32) { Debug.Assert(false); return; }
 
-			for(int i = 0; i < m_pbDataHash32.Length; ++i)
-			{
-				if(m_pbDataHash32[i] != pbHash[i])
-					return; // No KeePass data
-			}
-
+			if(!MemUtil.ArraysEqual(m_pbDataHash32, pbHash)) return;
+			
 			m_pbDataHash32 = null;
 			m_strFormat = null;
 

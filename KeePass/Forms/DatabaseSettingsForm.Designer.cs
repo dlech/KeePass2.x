@@ -71,6 +71,11 @@
 			this.m_lblHeaderCp = new System.Windows.Forms.Label();
 			this.m_rbGZip = new System.Windows.Forms.RadioButton();
 			this.m_rbNone = new System.Windows.Forms.RadioButton();
+			this.m_tabRecycleBin = new System.Windows.Forms.TabPage();
+			this.m_cmbRecycleBin = new System.Windows.Forms.ComboBox();
+			this.m_lblRecycleBinGroup = new System.Windows.Forms.Label();
+			this.m_lblRecycleBinInfo = new System.Windows.Forms.Label();
+			this.m_cbRecycleBin = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpEncAlgo.SuspendLayout();
 			this.m_grpKeyTrans.SuspendLayout();
@@ -80,6 +85,7 @@
 			this.m_tabSecurity.SuspendLayout();
 			this.m_tabProtection.SuspendLayout();
 			this.m_tabCompression.SuspendLayout();
+			this.m_tabRecycleBin.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_bannerImage
@@ -234,6 +240,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabSecurity);
 			this.m_tabMain.Controls.Add(this.m_tabProtection);
 			this.m_tabMain.Controls.Add(this.m_tabCompression);
+			this.m_tabMain.Controls.Add(this.m_tabRecycleBin);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -511,6 +518,58 @@
 			this.m_rbNone.Text = "None";
 			this.m_rbNone.UseVisualStyleBackColor = true;
 			// 
+			// m_tabRecycleBin
+			// 
+			this.m_tabRecycleBin.Controls.Add(this.m_cmbRecycleBin);
+			this.m_tabRecycleBin.Controls.Add(this.m_lblRecycleBinGroup);
+			this.m_tabRecycleBin.Controls.Add(this.m_lblRecycleBinInfo);
+			this.m_tabRecycleBin.Controls.Add(this.m_cbRecycleBin);
+			this.m_tabRecycleBin.Location = new System.Drawing.Point(4, 22);
+			this.m_tabRecycleBin.Name = "m_tabRecycleBin";
+			this.m_tabRecycleBin.Padding = new System.Windows.Forms.Padding(3);
+			this.m_tabRecycleBin.Size = new System.Drawing.Size(454, 294);
+			this.m_tabRecycleBin.TabIndex = 4;
+			this.m_tabRecycleBin.Text = "Recycle Bin";
+			this.m_tabRecycleBin.UseVisualStyleBackColor = true;
+			// 
+			// m_cmbRecycleBin
+			// 
+			this.m_cmbRecycleBin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbRecycleBin.FormattingEnabled = true;
+			this.m_cmbRecycleBin.Location = new System.Drawing.Point(11, 103);
+			this.m_cmbRecycleBin.Name = "m_cmbRecycleBin";
+			this.m_cmbRecycleBin.Size = new System.Drawing.Size(429, 21);
+			this.m_cmbRecycleBin.TabIndex = 3;
+			// 
+			// m_lblRecycleBinGroup
+			// 
+			this.m_lblRecycleBinGroup.AutoSize = true;
+			this.m_lblRecycleBinGroup.Location = new System.Drawing.Point(8, 87);
+			this.m_lblRecycleBinGroup.Name = "m_lblRecycleBinGroup";
+			this.m_lblRecycleBinGroup.Size = new System.Drawing.Size(96, 13);
+			this.m_lblRecycleBinGroup.TabIndex = 2;
+			this.m_lblRecycleBinGroup.Text = "Recycle bin group:";
+			// 
+			// m_lblRecycleBinInfo
+			// 
+			this.m_lblRecycleBinInfo.Location = new System.Drawing.Point(28, 36);
+			this.m_lblRecycleBinInfo.Name = "m_lblRecycleBinInfo";
+			this.m_lblRecycleBinInfo.Size = new System.Drawing.Size(412, 40);
+			this.m_lblRecycleBinInfo.TabIndex = 1;
+			this.m_lblRecycleBinInfo.Text = "If this option is enabled, KeePass moves entries/groups to the recycle bin group " +
+				"instead of deleting them. Deleting an entry/group from the recycle bin will perm" +
+				"anently remove it.";
+			// 
+			// m_cbRecycleBin
+			// 
+			this.m_cbRecycleBin.AutoSize = true;
+			this.m_cbRecycleBin.Location = new System.Drawing.Point(11, 16);
+			this.m_cbRecycleBin.Name = "m_cbRecycleBin";
+			this.m_cbRecycleBin.Size = new System.Drawing.Size(108, 17);
+			this.m_cbRecycleBin.TabIndex = 0;
+			this.m_cbRecycleBin.Text = "&Use a recycle bin";
+			this.m_cbRecycleBin.UseVisualStyleBackColor = true;
+			// 
 			// DatabaseSettingsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -547,6 +606,8 @@
 			this.m_tabProtection.PerformLayout();
 			this.m_tabCompression.ResumeLayout(false);
 			this.m_tabCompression.PerformLayout();
+			this.m_tabRecycleBin.ResumeLayout(false);
+			this.m_tabRecycleBin.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -595,5 +656,10 @@
 		private System.Windows.Forms.Label m_lblViewHint;
 		private System.Windows.Forms.TextBox m_tbDefaultUser;
 		private System.Windows.Forms.Label m_lblDefaultUser;
+		private System.Windows.Forms.TabPage m_tabRecycleBin;
+		private System.Windows.Forms.Label m_lblRecycleBinInfo;
+		private System.Windows.Forms.CheckBox m_cbRecycleBin;
+		private System.Windows.Forms.ComboBox m_cmbRecycleBin;
+		private System.Windows.Forms.Label m_lblRecycleBinGroup;
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,10 +44,9 @@ namespace KeePassLib.Cryptography.Cipher
 			{
 				if(m_poolGlobal != null) return m_poolGlobal;
 
-				CipherPool cpGlobal = new CipherPool();
-				cpGlobal.AddCipher(new StandardAesEngine());
+				m_poolGlobal = new CipherPool();
+				m_poolGlobal.AddCipher(new StandardAesEngine());
 
-				m_poolGlobal = cpGlobal;
 				return m_poolGlobal;
 			}
 		}

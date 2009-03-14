@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_lvEntries = new System.Windows.Forms.ListView();
+			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_lblText = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -120,7 +120,7 @@
 		#endregion
 
 		private System.Windows.Forms.Button m_btnCancel;
-		private System.Windows.Forms.ListView m_lvEntries;
+		private KeePass.UI.CustomListViewEx m_lvEntries;
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.Label m_lblText;
 		private System.Windows.Forms.Button m_btnOK;

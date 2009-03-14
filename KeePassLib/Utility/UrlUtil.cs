@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+
+using KeePassLib.Native;
 
 namespace KeePassLib.Utility
 {
@@ -267,6 +269,82 @@ namespace KeePassLib.Utility
 
 			return false;
 #endif
+		}
+
+		public static string MakeRelativePath(string strBaseFile, string strTargetFile)
+		{
+			if(strBaseFile == null) throw new ArgumentNullException("strBasePath");
+			if(strTargetFile == null) throw new ArgumentNullException("strTargetPath");
+			if(strBaseFile.Length == 0) return strTargetFile;
+			if(strTargetFile.Length == 0) return string.Empty;
+
+			if(strTargetFile.StartsWith("\\\\")) return strTargetFile;
+
+			if((strBaseFile.Length >= 3) && (strTargetFile.Length >= 3))
+			{
+				if((strBaseFile[1] == ':') && (strTargetFile[1] == ':') &&
+					(strBaseFile[2] == '\\') && (strTargetFile[2] == '\\') &&
+					(strBaseFile[0] != strTargetFile[0]))
+					return strTargetFile;
+			}
+
+#if KeePassLibSD
+			return strTargetFile;
+#else
+			try
+			{
+				const int nMaxPath = NativeMethods.MAX_PATH * 2;
+				StringBuilder sb = new StringBuilder(nMaxPath + 2);
+				if(NativeMethods.PathRelativePathTo(sb, strBaseFile, 0,
+					strTargetFile, 0) == false)
+					return strTargetFile;
+
+				string str = sb.ToString();
+				while(str.StartsWith(".\\")) str = str.Substring(2, str.Length - 2);
+
+				return str;
+			}
+			catch(Exception) { Debug.Assert(false); return strTargetFile; }
+#endif
+		}
+
+		public static string MakeAbsolutePath(string strBaseFile, string strTargetFile)
+		{
+			if(strBaseFile == null) throw new ArgumentNullException("strBasePath");
+			if(strTargetFile == null) throw new ArgumentNullException("strTargetPath");
+			if(strBaseFile.Length == 0) return strTargetFile;
+			if(strTargetFile.Length == 0) return string.Empty;
+
+			if(IsAbsolutePath(strTargetFile)) return strTargetFile;
+
+			string strBaseDir = GetFileDirectory(strBaseFile, true);
+			return GetShortestAbsolutePath(strBaseDir + strTargetFile);
+		}
+
+		public static bool IsAbsolutePath(string strPath)
+		{
+			if(strPath == null) throw new ArgumentNullException("strPath");
+			if(strPath.Length == 0) return false;
+
+			if(strPath.StartsWith("\\\\")) return true;
+
+			try { return Path.IsPathRooted(strPath); }
+			catch(Exception) { Debug.Assert(false); }
+
+			return true;
+		}
+
+		public static string GetShortestAbsolutePath(string strPath)
+		{
+			if(strPath == null) throw new ArgumentNullException("strPath");
+			if(strPath.Length == 0) return string.Empty;
+
+			string str;
+			try { str = Path.GetFullPath(strPath); }
+			catch(Exception) { Debug.Assert(false); return strPath; }
+
+			Debug.Assert(str.IndexOf("\\..\\") < 0);
+			return str.Replace("\\.\\", "\\");
 		}
 	}
 }

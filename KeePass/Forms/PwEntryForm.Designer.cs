@@ -76,16 +76,18 @@
 			this.m_btnBinSave = new System.Windows.Forms.Button();
 			this.m_btnBinDelete = new System.Windows.Forms.Button();
 			this.m_btnBinAdd = new System.Windows.Forms.Button();
-			this.m_lvBinaries = new System.Windows.Forms.ListView();
+			this.m_lvBinaries = new KeePass.UI.CustomListViewEx();
 			this.m_grpStringFields = new System.Windows.Forms.GroupBox();
 			this.m_btnStrMove = new System.Windows.Forms.Button();
 			this.m_btnStrAdd = new System.Windows.Forms.Button();
 			this.m_btnStrEdit = new System.Windows.Forms.Button();
 			this.m_btnStrDelete = new System.Windows.Forms.Button();
-			this.m_lvStrings = new System.Windows.Forms.ListView();
+			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
 			this.m_ctxListOperations = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
+			this.m_btnPickFgColor = new System.Windows.Forms.Button();
+			this.m_cbCustomForegroundColor = new System.Windows.Forms.CheckBox();
 			this.m_tbUuid = new System.Windows.Forms.TextBox();
 			this.m_lblUuid = new System.Windows.Forms.Label();
 			this.m_tbOverrideUrl = new System.Windows.Forms.TextBox();
@@ -104,12 +106,12 @@
 			this.m_btnAutoTypeEdit = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeAdd = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeDelete = new System.Windows.Forms.Button();
-			this.m_lvAutoType = new System.Windows.Forms.ListView();
+			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
 			this.m_btnHistoryDelete = new System.Windows.Forms.Button();
 			this.m_btnHistoryView = new System.Windows.Forms.Button();
 			this.m_btnHistoryRestore = new System.Windows.Forms.Button();
-			this.m_lvHistory = new System.Windows.Forms.ListView();
+			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_ctxStrMoveToStandard = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -596,7 +598,7 @@
 			this.m_btnBinAdd.Name = "m_btnBinAdd";
 			this.m_btnBinAdd.Size = new System.Drawing.Size(75, 23);
 			this.m_btnBinAdd.TabIndex = 1;
-			this.m_btnBinAdd.Text = "A&ttach";
+			this.m_btnBinAdd.Text = "Attac&h";
 			this.m_btnBinAdd.UseVisualStyleBackColor = true;
 			this.m_btnBinAdd.Click += new System.EventHandler(this.OnBtnBinAdd);
 			// 
@@ -663,7 +665,7 @@
 			this.m_btnStrDelete.Name = "m_btnStrDelete";
 			this.m_btnStrDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnStrDelete.TabIndex = 3;
-			this.m_btnStrDelete.Text = "D&elete";
+			this.m_btnStrDelete.Text = "&Delete";
 			this.m_btnStrDelete.UseVisualStyleBackColor = true;
 			this.m_btnStrDelete.Click += new System.EventHandler(this.OnBtnStrDelete);
 			// 
@@ -700,6 +702,8 @@
 			// 
 			// m_tabProperties
 			// 
+			this.m_tabProperties.Controls.Add(this.m_btnPickFgColor);
+			this.m_tabProperties.Controls.Add(this.m_cbCustomForegroundColor);
 			this.m_tabProperties.Controls.Add(this.m_tbUuid);
 			this.m_tabProperties.Controls.Add(this.m_lblUuid);
 			this.m_tabProperties.Controls.Add(this.m_tbOverrideUrl);
@@ -713,57 +717,77 @@
 			this.m_tabProperties.Text = "Properties";
 			this.m_tabProperties.UseVisualStyleBackColor = true;
 			// 
+			// m_btnPickFgColor
+			// 
+			this.m_btnPickFgColor.Location = new System.Drawing.Point(166, 9);
+			this.m_btnPickFgColor.Name = "m_btnPickFgColor";
+			this.m_btnPickFgColor.Size = new System.Drawing.Size(48, 23);
+			this.m_btnPickFgColor.TabIndex = 1;
+			this.m_btnPickFgColor.UseVisualStyleBackColor = true;
+			this.m_btnPickFgColor.Click += new System.EventHandler(this.OnPickForegroundColor);
+			// 
+			// m_cbCustomForegroundColor
+			// 
+			this.m_cbCustomForegroundColor.AutoSize = true;
+			this.m_cbCustomForegroundColor.Location = new System.Drawing.Point(10, 13);
+			this.m_cbCustomForegroundColor.Name = "m_cbCustomForegroundColor";
+			this.m_cbCustomForegroundColor.Size = new System.Drawing.Size(144, 17);
+			this.m_cbCustomForegroundColor.TabIndex = 0;
+			this.m_cbCustomForegroundColor.Text = "Custom foreground color:";
+			this.m_cbCustomForegroundColor.UseVisualStyleBackColor = true;
+			this.m_cbCustomForegroundColor.CheckedChanged += new System.EventHandler(this.OnCustomForegroundColorCheckedChanged);
+			// 
 			// m_tbUuid
 			// 
-			this.m_tbUuid.Location = new System.Drawing.Point(51, 309);
+			this.m_tbUuid.Location = new System.Drawing.Point(50, 309);
 			this.m_tbUuid.Name = "m_tbUuid";
 			this.m_tbUuid.ReadOnly = true;
-			this.m_tbUuid.Size = new System.Drawing.Size(403, 20);
-			this.m_tbUuid.TabIndex = 5;
+			this.m_tbUuid.Size = new System.Drawing.Size(404, 20);
+			this.m_tbUuid.TabIndex = 7;
 			// 
 			// m_lblUuid
 			// 
 			this.m_lblUuid.AutoSize = true;
-			this.m_lblUuid.Location = new System.Drawing.Point(9, 312);
+			this.m_lblUuid.Location = new System.Drawing.Point(7, 312);
 			this.m_lblUuid.Name = "m_lblUuid";
 			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
-			this.m_lblUuid.TabIndex = 4;
+			this.m_lblUuid.TabIndex = 6;
 			this.m_lblUuid.Text = "UUID:";
 			// 
 			// m_tbOverrideUrl
 			// 
-			this.m_tbOverrideUrl.Location = new System.Drawing.Point(12, 61);
+			this.m_tbOverrideUrl.Location = new System.Drawing.Point(10, 94);
 			this.m_tbOverrideUrl.Name = "m_tbOverrideUrl";
 			this.m_tbOverrideUrl.Size = new System.Drawing.Size(442, 20);
-			this.m_tbOverrideUrl.TabIndex = 3;
+			this.m_tbOverrideUrl.TabIndex = 5;
 			this.m_tbOverrideUrl.TextChanged += new System.EventHandler(this.OnOverrideUrlTextChanged);
 			// 
 			// m_lblOverrideUrl
 			// 
 			this.m_lblOverrideUrl.AutoSize = true;
-			this.m_lblOverrideUrl.Location = new System.Drawing.Point(9, 45);
+			this.m_lblOverrideUrl.Location = new System.Drawing.Point(7, 76);
 			this.m_lblOverrideUrl.Name = "m_lblOverrideUrl";
 			this.m_lblOverrideUrl.Size = new System.Drawing.Size(75, 13);
-			this.m_lblOverrideUrl.TabIndex = 2;
+			this.m_lblOverrideUrl.TabIndex = 4;
 			this.m_lblOverrideUrl.Text = "Override URL:";
 			// 
 			// m_cbCustomBackgroundColor
 			// 
 			this.m_cbCustomBackgroundColor.AutoSize = true;
-			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(12, 16);
+			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(10, 42);
 			this.m_cbCustomBackgroundColor.Name = "m_cbCustomBackgroundColor";
 			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(150, 17);
-			this.m_cbCustomBackgroundColor.TabIndex = 0;
+			this.m_cbCustomBackgroundColor.TabIndex = 2;
 			this.m_cbCustomBackgroundColor.Text = "Custom background color:";
 			this.m_cbCustomBackgroundColor.UseVisualStyleBackColor = true;
 			this.m_cbCustomBackgroundColor.CheckedChanged += new System.EventHandler(this.OnCustomBackgroundColorCheckedChanged);
 			// 
 			// m_btnPickBgColor
 			// 
-			this.m_btnPickBgColor.Location = new System.Drawing.Point(168, 12);
+			this.m_btnPickBgColor.Location = new System.Drawing.Point(166, 38);
 			this.m_btnPickBgColor.Name = "m_btnPickBgColor";
 			this.m_btnPickBgColor.Size = new System.Drawing.Size(48, 23);
-			this.m_btnPickBgColor.TabIndex = 1;
+			this.m_btnPickBgColor.TabIndex = 3;
 			this.m_btnPickBgColor.UseVisualStyleBackColor = true;
 			this.m_btnPickBgColor.Click += new System.EventHandler(this.OnPickBackgroundColor);
 			// 
@@ -816,7 +840,7 @@
 			this.m_btnAutoTypeEditDefault.Name = "m_btnAutoTypeEditDefault";
 			this.m_btnAutoTypeEditDefault.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEditDefault.TabIndex = 4;
-			this.m_btnAutoTypeEditDefault.Text = "&Edit";
+			this.m_btnAutoTypeEditDefault.Text = "E&dit";
 			this.m_btnAutoTypeEditDefault.UseVisualStyleBackColor = true;
 			this.m_btnAutoTypeEditDefault.Click += new System.EventHandler(this.OnBtnAutoTypeEditDefault);
 			// 
@@ -855,7 +879,7 @@
 			// m_cbAutoTypeEnabled
 			// 
 			this.m_cbAutoTypeEnabled.AutoSize = true;
-			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(10, 12);
+			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(10, 13);
 			this.m_cbAutoTypeEnabled.Name = "m_cbAutoTypeEnabled";
 			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(166, 17);
 			this.m_cbAutoTypeEnabled.TabIndex = 0;
@@ -1260,20 +1284,20 @@
 		private System.Windows.Forms.Button m_btnBinSave;
 		private System.Windows.Forms.Button m_btnBinDelete;
 		private System.Windows.Forms.Button m_btnBinAdd;
-		private System.Windows.Forms.ListView m_lvBinaries;
+		private KeePass.UI.CustomListViewEx m_lvBinaries;
 		private System.Windows.Forms.GroupBox m_grpStringFields;
 		private System.Windows.Forms.Button m_btnStrEdit;
 		private System.Windows.Forms.Button m_btnStrDelete;
 		private System.Windows.Forms.Button m_btnStrAdd;
-		private System.Windows.Forms.ListView m_lvStrings;
+		private KeePass.UI.CustomListViewEx m_lvStrings;
 		private System.Windows.Forms.Button m_btnTools;
 		private System.Windows.Forms.Button m_btnAutoTypeEdit;
 		private System.Windows.Forms.Button m_btnAutoTypeAdd;
 		private System.Windows.Forms.Button m_btnAutoTypeDelete;
-		private System.Windows.Forms.ListView m_lvAutoType;
+		private KeePass.UI.CustomListViewEx m_lvAutoType;
 		private System.Windows.Forms.Button m_btnHistoryRestore;
 		private System.Windows.Forms.Button m_btnHistoryView;
-		private System.Windows.Forms.ListView m_lvHistory;
+		private KeePass.UI.CustomListViewEx m_lvHistory;
 		private System.Windows.Forms.Button m_btnHistoryDelete;
 		private System.Windows.Forms.ContextMenuStrip m_ctxDefaultTimes;
 		private System.Windows.Forms.ToolStripMenuItem m_menuExpireNow;
@@ -1329,6 +1353,8 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInPassword;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInNotes;
+		private System.Windows.Forms.Button m_btnPickFgColor;
+		private System.Windows.Forms.CheckBox m_cbCustomForegroundColor;
 
 	}
 }

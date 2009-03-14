@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.m_btnClose = new System.Windows.Forms.Button();
-			this.m_lvPlugins = new System.Windows.Forms.ListView();
+			this.m_lvPlugins = new KeePass.UI.CustomListViewEx();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpPluginDesc = new System.Windows.Forms.GroupBox();
@@ -103,10 +103,10 @@
 			this.m_linkPlugins.AutoSize = true;
 			this.m_linkPlugins.Location = new System.Drawing.Point(9, 411);
 			this.m_linkPlugins.Name = "m_linkPlugins";
-			this.m_linkPlugins.Size = new System.Drawing.Size(97, 13);
+			this.m_linkPlugins.Size = new System.Drawing.Size(95, 13);
 			this.m_linkPlugins.TabIndex = 4;
 			this.m_linkPlugins.TabStop = true;
-			this.m_linkPlugins.Text = "Get More Plugins...";
+			this.m_linkPlugins.Text = "Get more plugins...";
 			this.m_linkPlugins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPluginsLinkClicked);
 			// 
 			// PluginsForm
@@ -142,7 +142,7 @@
 
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.Button m_btnClose;
-		private System.Windows.Forms.ListView m_lvPlugins;
+		private KeePass.UI.CustomListViewEx m_lvPlugins;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.GroupBox m_grpPluginDesc;
 		private System.Windows.Forms.Label m_lblSelectedPluginDesc;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,14 +45,14 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, etc.
 		/// </summary>
-		public const uint Version32 = 0x02000600;
+		public const uint Version32 = 0x02000700;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.06 Beta";
+		public const string VersionString = "2.07 Beta";
 
-		public const string Copyright = @"Copyright © 2003-2008 Dominik Reichl";
+		public const string Copyright = @"Copyright © 2003-2009 Dominik Reichl";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.
@@ -188,7 +188,7 @@ namespace KeePassLib
 		{
 			Debug.Assert(pe != null); if(pe == null) return false;
 
-			return pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle;
+			return (pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle);
 		}
 	}
 

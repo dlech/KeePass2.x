@@ -50,6 +50,7 @@
     <Compile Include="Collections\ProtectedStringDictionary.cs" />
     <Compile Include="Collections\PwObjectList.cs" />
     <Compile Include="Cryptography\Cipher\CipherPool.cs" />
+    <Compile Include="Cryptography\Cipher\Salsa20Cipher.cs" />
     <Compile Include="Cryptography\Cipher\StandardAesEngine.cs" />
     <Compile Include="Cryptography\CryptoRandom.cs" />
     <Compile Include="Cryptography\CryptoRandomStream.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="PwCustomIcon.cs" />
     <Compile Include="Resources\KLRes.Generated.cs" />
+    <Compile Include="Resources\KSRes.Generated.cs" />
     <Compile Include="Security\XorredBuffer.cs" />
     <Compile Include="Delegates\Handlers.cs" />
     <Compile Include="Interfaces\IDeepClonable.cs" />

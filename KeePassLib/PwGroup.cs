@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -339,6 +339,42 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// Assign properties to the current group based on a template group.
+		/// </summary>
+		/// <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
+		/// <param name="bOnlyIfNewer">Only set the properties of the template group
+		/// if it is newer than the current one.</param>
+		public void AssignProperties(PwGroup pgTemplate, bool bOnlyIfNewer)
+		{
+			Debug.Assert(pgTemplate != null); if(pgTemplate == null) throw new ArgumentNullException("pgTemplate");
+
+			// Template UUID should be the same as the current one
+			Debug.Assert(m_uuid.EqualsValue(pgTemplate.m_uuid));
+
+			if(bOnlyIfNewer)
+			{
+				if(pgTemplate.m_tLastMod < m_tLastMod) return;
+			}
+
+			m_strName = pgTemplate.m_strName;
+			m_strNotes = pgTemplate.m_strNotes;
+
+			m_pwIcon = pgTemplate.m_pwIcon;
+			m_pwCustomIconID = pgTemplate.m_pwCustomIconID;
+
+			m_tCreation = pgTemplate.m_tCreation;
+			m_tLastMod = pgTemplate.m_tLastMod;
+			m_tLastAccess = pgTemplate.m_tLastAccess;
+			m_tExpire = pgTemplate.m_tExpire;
+			m_bExpires = pgTemplate.m_bExpires;
+			m_uUsageCount = pgTemplate.m_uUsageCount;
+
+			m_strDefaultAutoTypeSequence = pgTemplate.m_strDefaultAutoTypeSequence;
+
+			m_pwLastTopVisibleEntry = pgTemplate.m_pwLastTopVisibleEntry;
+		}
+
+		/// <summary>
 		/// Touch the group. This function updates the internal last access
 		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
 		/// the last modification time gets updated, too.
@@ -347,7 +383,7 @@ namespace KeePassLib
 		public void Touch(bool bModified)
 		{
 			m_tLastAccess = DateTime.Now;
-			m_uUsageCount++;
+			++m_uUsageCount;
 
 			if(bModified) m_tLastMod = m_tLastAccess;
 
@@ -665,6 +701,7 @@ namespace KeePassLib
 		/// <returns>Returns reference to found group, otherwise <c>null</c>.</returns>
 		public PwGroup FindGroup(PwUuid uuid, bool bSearchRecursive)
 		{
+			// Do not assert on PwUuid.Zero
 			if(this.m_uuid.EqualsValue(uuid)) return this;
 
 			if(bSearchRecursive)
@@ -774,40 +811,6 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Assign properties to the current group based on a template group.
-		/// </summary>
-		/// <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
-		/// <param name="bOnlyIfNewer">Only set the properties of the template group
-		/// if it is newer than the current one.</param>
-		public void AssignProperties(PwGroup pgTemplate, bool bOnlyIfNewer)
-		{
-			Debug.Assert(pgTemplate != null); if(pgTemplate == null) throw new ArgumentNullException("pgTemplate");
-
-			// Template UUID should be the same as the current one
-			Debug.Assert(m_uuid.EqualsValue(pgTemplate.m_uuid));
-
-			if(bOnlyIfNewer)
-			{
-				if(pgTemplate.m_tLastMod < m_tLastMod) return;
-			}
-
-			m_strName = pgTemplate.m_strName;
-			m_strNotes = pgTemplate.m_strNotes;
-
-			m_pwIcon = pgTemplate.m_pwIcon;
-			m_pwCustomIconID = pgTemplate.m_pwCustomIconID;
-
-			m_tCreation = pgTemplate.m_tCreation;
-			m_tLastMod = pgTemplate.m_tLastMod;
-			m_tLastAccess = pgTemplate.m_tLastAccess;
-			m_tExpire = pgTemplate.m_tExpire;
-			m_bExpires = pgTemplate.m_bExpires;
-			m_uUsageCount = pgTemplate.m_uUsageCount;
-
-			m_pwLastTopVisibleEntry = pgTemplate.m_pwLastTopVisibleEntry;
-		}
-
-		/// <summary>
 		/// Assign new UUIDs to groups and entries.
 		/// </summary>
 		/// <param name="bNewGroups">Create new UUIDs for subgroups.</param>
@@ -831,6 +834,27 @@ namespace KeePassLib
 			{
 				foreach(PwGroup pg in m_listGroups)
 					pg.CreateNewItemUuids(bNewGroups, bNewEntries, true);
+			}
+		}
+
+		public void TakeOwnership(bool bTakeSubGroups, bool bTakeEntries, bool bRecursive)
+		{
+			if(bTakeSubGroups)
+			{
+				foreach(PwGroup pg in m_listGroups)
+					pg.ParentGroup = this;
+			}
+
+			if(bTakeEntries)
+			{
+				foreach(PwEntry pe in m_listEntries)
+					pe.ParentGroup = this;
+			}
+
+			if(bRecursive)
+			{
+				foreach(PwGroup pg in m_listGroups)
+					pg.TakeOwnership(bTakeSubGroups, bTakeEntries, true);
 			}
 		}
 
@@ -964,6 +988,8 @@ namespace KeePassLib
 
 			m_listEntries.Add(pe);
 
+			// Do not remove the entry from its previous parent group,
+			// only assign it to the new one
 			if(bTakeOwnership) pe.ParentGroup = this;
 		}
 	}

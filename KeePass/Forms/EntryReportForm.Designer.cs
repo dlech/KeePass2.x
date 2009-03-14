@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_lvEntries = new System.Windows.Forms.ListView();
+			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.SuspendLayout();
 			// 
 			// m_lvEntries
@@ -63,7 +63,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.ListView m_lvEntries;
+		private KeePass.UI.CustomListViewEx m_lvEntries;
 
 	}
 }

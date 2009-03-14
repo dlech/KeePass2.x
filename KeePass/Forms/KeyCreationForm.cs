@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
 
 			if(!m_bCreatingNew)
-				m_lblIntro.Text = KPRes.ChangeMasterKeyIntro;
+				m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
 
 			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, true);
 			m_secRepeat.Attach(m_tbRepeatPassword, null, true);
@@ -134,13 +134,10 @@ namespace KeePass.Forms
 
 			if(m_cbPassword.Checked) // Use a password
 			{
-				if(m_cbHidePassword.Checked)
+				if(m_secPassword.ContentsEqualTo(m_secRepeat) == false)
 				{
-					if(m_secPassword.ContentsEqualTo(m_secRepeat) == false)
-					{
-						MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
-						return false;
-					}
+					MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
+					return false;
 				}
 
 				uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;

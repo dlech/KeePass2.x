@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -142,6 +142,24 @@ namespace KeePassLib.Utility
 
 			Debug.Assert(false);
 			return DateTime.Now;
+		}
+
+		public static string SerializeUtc(DateTime dt)
+		{
+			string str = dt.ToUniversalTime().ToString("s");
+			if(str.EndsWith("Z") == false) str += "Z";
+			return str;
+		}
+
+		public static bool TryDeserializeUtc(string str, out DateTime dt)
+		{
+			if(str == null) throw new ArgumentNullException("str");
+
+			if(str.EndsWith("Z")) str = str.Substring(0, str.Length - 1);
+
+			bool bResult = StrUtil.TryParseDateTime(str, out dt);
+			if(bResult) dt = dt.ToLocalTime();
+			return bResult;
 		}
 	}
 }

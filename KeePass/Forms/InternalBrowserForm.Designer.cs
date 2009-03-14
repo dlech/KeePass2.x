@@ -28,13 +28,13 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_menuMain = new System.Windows.Forms.MenuStrip();
+			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_statusMain = new System.Windows.Forms.StatusStrip();
 			this.m_lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
 			this.m_webBrowser = new System.Windows.Forms.WebBrowser();
-			this.m_toolNav = new System.Windows.Forms.ToolStrip();
+			this.m_toolNav = new KeePass.UI.CustomToolStripEx();
 			this.m_btnBack = new System.Windows.Forms.ToolStripButton();
 			this.m_btnForward = new System.Windows.Forms.ToolStripButton();
 			this.m_btnReload = new System.Windows.Forms.ToolStripButton();
@@ -67,7 +67,7 @@
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(103, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(91, 22);
 			this.m_menuFileExit.Text = "E&xit";
 			// 
 			// m_statusMain
@@ -82,7 +82,7 @@
 			// m_lblStatus
 			// 
 			this.m_lblStatus.Name = "m_lblStatus";
-			this.m_lblStatus.Size = new System.Drawing.Size(732, 17);
+			this.m_lblStatus.Size = new System.Drawing.Size(764, 17);
 			this.m_lblStatus.Spring = true;
 			this.m_lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -95,8 +95,8 @@
 			this.m_webBrowser.ScriptErrorsSuppressed = true;
 			this.m_webBrowser.Size = new System.Drawing.Size(779, 457);
 			this.m_webBrowser.TabIndex = 2;
-			this.m_webBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWbNavigated);
 			this.m_webBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.OnWbDocumentCompleted);
+			this.m_webBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWbNavigated);
 			// 
 			// m_toolNav
 			// 
@@ -112,7 +112,6 @@
 			this.m_toolNav.Name = "m_toolNav";
 			this.m_toolNav.Size = new System.Drawing.Size(779, 25);
 			this.m_toolNav.TabIndex = 3;
-			this.m_toolNav.Text = "toolStrip1";
 			// 
 			// m_btnBack
 			// 
@@ -196,9 +195,9 @@
 			this.Name = "InternalBrowserForm";
 			this.ShowInTaskbar = false;
 			this.Text = "<DYN>";
+			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
-			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.m_menuMain.ResumeLayout(false);
 			this.m_menuMain.PerformLayout();
 			this.m_statusMain.ResumeLayout(false);
@@ -212,13 +211,13 @@
 
 		#endregion
 
-		private System.Windows.Forms.MenuStrip m_menuMain;
+		private KeePass.UI.CustomMenuStripEx m_menuMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileExit;
 		private System.Windows.Forms.StatusStrip m_statusMain;
 		private System.Windows.Forms.ToolStripStatusLabel m_lblStatus;
 		private System.Windows.Forms.WebBrowser m_webBrowser;
-		private System.Windows.Forms.ToolStrip m_toolNav;
+		private KeePass.UI.CustomToolStripEx m_toolNav;
 		private System.Windows.Forms.ToolStripTextBox m_tbUrl;
 		private System.Windows.Forms.ToolStripButton m_btnBack;
 		private System.Windows.Forms.ToolStripButton m_btnForward;

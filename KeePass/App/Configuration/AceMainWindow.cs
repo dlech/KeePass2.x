@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -152,6 +152,20 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bMinAfterCopy; }
 			set { m_bMinAfterCopy = value; }
+		}
+
+		private bool m_bMinAfterLocking = false;
+		public bool MinimizeAfterLocking
+		{
+			get { return m_bMinAfterLocking; }
+			set { m_bMinAfterLocking = value; }
+		}
+
+		private bool m_bMinAfterOpeningDb = false;
+		public bool MinimizeAfterOpeningDatabase
+		{
+			get { return m_bMinAfterOpeningDb; }
+			set { m_bMinAfterOpeningDb = value; }
 		}
 
 		private bool m_bQuickFindExcludeExpired = false;

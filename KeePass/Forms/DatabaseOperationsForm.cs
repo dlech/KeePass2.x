@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,8 +37,10 @@ namespace KeePass.Forms
 	public partial class DatabaseOperationsForm : Form, IGwmWindow
 	{
 		private PwDatabase m_pwDatabase = null;
+		private bool m_bModified = false;
 
 		public bool CanCloseWithoutDataLoss { get { return true; } }
+		public bool HasModifiedDatabase { get { return m_bModified; } }
 
 		public void InitEx(PwDatabase pwDatabase)
 		{
@@ -74,18 +76,34 @@ namespace KeePass.Forms
 			m_pwDatabase.MaintenanceHistoryDays = (uint)m_numHistoryDays.Value;
 		}
 
+		private void EnableStatusMsgEx(bool bEnable)
+		{
+			if(bEnable)
+			{
+				m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled =
+					m_btnRemoveDelObjInfo.Enabled = false;
+				if(!m_pbStatus.Visible) m_pbStatus.Visible = true;
+
+				m_pbStatus.Value = 0;
+			}
+			else
+			{
+				m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled =
+					m_btnRemoveDelObjInfo.Enabled = true;
+
+				m_pbStatus.Value = m_pbStatus.Maximum;
+			}
+		}
+
 		private void OnBtnDelete(object sender, EventArgs e)
 		{
-			m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled = false;
-			if(!m_pbStatus.Visible) m_pbStatus.Visible = true;
+			EnableStatusMsgEx(true);
 
 			DateTime dtNow = DateTime.Now;
 			TimeSpan tsSpan = new TimeSpan((int)m_numHistoryDays.Value, 0, 0, 0);
 
 			uint uNumGroups, uNumEntries;
 			m_pwDatabase.RootGroup.GetCounts(true, out uNumGroups, out uNumEntries);
-
-			m_pbStatus.Value = 0;
 
 			uint uCurEntryNumber = 1;
 			EntryHandler eh = delegate(PwEntry pe)
@@ -98,6 +116,8 @@ namespace KeePass.Forms
 					{
 						pe.History.Remove(peHist);
 						--u;
+
+						m_bModified = true;
 					}
 				}
 
@@ -108,14 +128,25 @@ namespace KeePass.Forms
 
 			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
-			m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled = true;
-
-			// Database is set modified by parent
+			EnableStatusMsgEx(false); // Database is set modified by parent
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnBtnRemoveDelObjInfo(object sender, EventArgs e)
+		{
+			EnableStatusMsgEx(true);
+
+			if(m_pwDatabase.DeletedObjects.UCount > 0)
+			{
+				m_pwDatabase.DeletedObjects.Clear();
+				m_bModified = true;
+			}
+
+			EnableStatusMsgEx(false); // Database is set modified by parent
 		}
 	}
 }

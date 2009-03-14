@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -139,6 +139,49 @@ namespace KeePassLib.Utility
 			return sbText.ToString();
 		}
 
+		private static DialogResult SafeShowMessageBox(string strText, string strTitle,
+			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
+		{
+#if KeePassLibSD
+			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
+#else
+			IWin32Window wnd = null;
+			try
+			{
+				FormCollection fc = Application.OpenForms;
+				if((fc != null) && (fc.Count > 0))
+				{
+					Form f = fc[fc.Count - 1];
+					if((f != null) && f.InvokeRequired)
+						return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
+							SafeShowMessageBoxInternal), f, strText, strTitle, mb, mi, mdb);
+					else wnd = f;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			if(wnd == null) return MessageBox.Show(strText, strTitle, mb, mi, mdb);
+
+			try { return MessageBox.Show(wnd, strText, strTitle, mb, mi, mdb); }
+			catch(Exception) { Debug.Assert(false); }
+
+			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
+#endif
+		}
+
+#if !KeePassLibSD
+		internal delegate DialogResult SafeShowMessageBoxInternalDelegate(IWin32Window iParent,
+			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
+			MessageBoxDefaultButton mdb);
+
+		internal static DialogResult SafeShowMessageBoxInternal(IWin32Window iParent,
+			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
+			MessageBoxDefaultButton mdb)
+		{
+			return MessageBox.Show(iParent, strText, strTitle, mb, mi, mdb);
+		}
+#endif
+
 		public static void ShowInfo(params object[] vLines)
 		{
 			++m_uCurrentMessageCount;
@@ -150,7 +193,7 @@ namespace KeePassLib.Utility
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
 					strTitle, strText, MessageBoxButtons.OK, m_mbiInfo));
 
-			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiInfo,
+			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiInfo,
 				MessageBoxDefaultButton.Button1);
 
 			--m_uCurrentMessageCount;
@@ -167,7 +210,7 @@ namespace KeePassLib.Utility
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
 					strTitle, strText, MessageBoxButtons.OK, m_mbiWarning));
 
-			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiWarning,
+			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiWarning,
 				MessageBoxDefaultButton.Button1);
 
 			--m_uCurrentMessageCount;
@@ -197,7 +240,7 @@ namespace KeePassLib.Utility
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
 					strTitle, strText, MessageBoxButtons.OK, m_mbiFatal));
 
-			MessageBox.Show(strText, strTitle, MessageBoxButtons.OK, m_mbiFatal,
+			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiFatal,
 				MessageBoxDefaultButton.Button1);
 
 			--m_uCurrentMessageCount;
@@ -215,8 +258,8 @@ namespace KeePassLib.Utility
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
 					strTitleEx, strTextEx, mbb, m_mbiQuestion));
 
-			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx, mbb, m_mbiQuestion,
-				MessageBoxDefaultButton.Button1);
+			DialogResult dr = SafeShowMessageBox(strTextEx, strTitleEx, mbb,
+				m_mbiQuestion, MessageBoxDefaultButton.Button1);
 
 			--m_uCurrentMessageCount;
 			return dr;
@@ -233,7 +276,7 @@ namespace KeePassLib.Utility
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
 					strTitleEx, strTextEx, MessageBoxButtons.YesNo, m_mbiQuestion));
 
-			DialogResult dr = MessageBox.Show(strTextEx, strTitleEx,
+			DialogResult dr = SafeShowMessageBox(strTextEx, strTitleEx,
 				MessageBoxButtons.YesNo, m_mbiQuestion, MessageBoxDefaultButton.Button1);
 
 			--m_uCurrentMessageCount;

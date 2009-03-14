@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -68,6 +68,9 @@ namespace KeePassLib
 
 		private PwUuid m_pwLastSelectedGroup = PwUuid.Zero;
 		private PwUuid m_pwLastTopVisibleGroup = PwUuid.Zero;
+
+		private bool m_bUseRecycleBin = true;
+		private PwUuid m_pwRecycleBin = PwUuid.Zero;
 
 		private byte[] m_pbHashOfFileOnDisk = null;
 		private byte[] m_pbHashOfLastIO = null;
@@ -276,6 +279,22 @@ namespace KeePassLib
 			}
 		}
 
+		public bool RecycleBinEnabled
+		{
+			get { return m_bUseRecycleBin; }
+			set { m_bUseRecycleBin = value; }
+		}
+
+		public PwUuid RecycleBinUuid
+		{
+			get { return m_pwRecycleBin; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_pwRecycleBin = value;
+			}
+		}
+
 		/// <summary>
 		/// Hash value of the primary file on disk (last read or last write).
 		/// A call to <c>SaveAs</c> without making the saved file primary will
@@ -424,6 +443,10 @@ namespace KeePassLib
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void Save(IStatusLogger slLogger)
 		{
+#if DEBUG
+			Debug.Assert(ValidateUuidUniqueness());
+#endif
+
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_ioSource.Path);
 
 			Stream s = IOConnection.OpenWrite(m_ioSource);
@@ -657,7 +680,7 @@ namespace KeePassLib
 			}
 		}
 
-		/// <summary>
+		/* /// <summary>
 		/// Synchronize current database with another one.
 		/// </summary>
 		/// <param name="strFile">Source file.</param>
@@ -669,7 +692,7 @@ namespace KeePassLib
 			pwSource.Open(ioc, this.m_pwUserKey, null);
 
 			MergeIn(pwSource, PwMergeMethod.Synchronize);
-		}
+		} */
 
 		/// <summary>
 		/// Get the index of a custom icon.
@@ -745,5 +768,32 @@ namespace KeePassLib
 
 			return true;
 		}
+
+#if DEBUG
+		private bool ValidateUuidUniqueness()
+		{
+			List<PwUuid> l = new List<PwUuid>();
+			bool bAllUnique = true;
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				foreach(PwUuid u in l)
+					bAllUnique &= !pg.Uuid.EqualsValue(u);
+				l.Add(pg.Uuid);
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				foreach(PwUuid u in l)
+					bAllUnique &= !pe.Uuid.EqualsValue(u);
+				l.Add(pe.Uuid);
+				return true;
+			};
+
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+			return bAllUnique;
+		}
+#endif
 	}
 }

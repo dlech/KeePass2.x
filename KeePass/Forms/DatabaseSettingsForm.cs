@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@ namespace KeePass.Forms
 	{
 		private bool m_bCreatingNew = false;
 		private PwDatabase m_pwDatabase = null;
+
+		private string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
+		private Dictionary<int, PwUuid> m_dictRecycleBinGroups = new Dictionary<int, PwUuid>();
 
 		public DatabaseSettingsForm()
 		{
@@ -108,6 +111,34 @@ namespace KeePass.Forms
 			else if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
 				m_rbGZip.Checked = true;
 			else { Debug.Assert(false); }
+
+			InitRecycleBinTab();
+		}
+
+		private void InitRecycleBinTab()
+		{
+			m_cbRecycleBin.Checked = m_pwDatabase.RecycleBinEnabled;
+
+			m_cmbRecycleBin.Items.Add(m_strAutoCreateNew);
+			m_dictRecycleBinGroups[0] = PwUuid.Zero;
+			int iSelect = 0;
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				string str = new string(' ', Math.Abs(8 * ((int)pg.GetLevel() - 1)));
+				str += pg.Name;
+
+				if(pg.Uuid.EqualsValue(m_pwDatabase.RecycleBinUuid))
+					iSelect = m_cmbRecycleBin.Items.Count;
+
+				m_dictRecycleBinGroups[m_cmbRecycleBin.Items.Count] = pg.Uuid;
+				m_cmbRecycleBin.Items.Add(str);
+
+				return true;
+			};
+
+			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, null);
+			m_cmbRecycleBin.SelectedIndex = iSelect;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -141,6 +172,12 @@ namespace KeePass.Forms
 				m_pwDatabase.MemoryProtection.ProtectNotes, PwDefs.NotesField);
 
 			// m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = m_cbAutoEnableHiding.Checked;
+
+			m_pwDatabase.RecycleBinEnabled = m_cbRecycleBin.Checked;
+			int iRecBinSel = m_cmbRecycleBin.SelectedIndex;
+			if(m_dictRecycleBinGroups.ContainsKey(iRecBinSel))
+				m_pwDatabase.RecycleBinUuid = m_dictRecycleBinGroups[iRecBinSel];
+			else m_pwDatabase.RecycleBinUuid = PwUuid.Zero;
 		}
 
 		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dominik Reichl")]
 [assembly: AssemblyProduct("ShInstUtil - KeePass Installation Utility")]
-[assembly: AssemblyCopyright("Copyright © 2007-2008 Dominik Reichl")]
+[assembly: AssemblyCopyright("Copyright © 2007-2009 Dominik Reichl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("7e0eb6e8-4f13-4b04-aad9-2acf8417a776")]
 
 // Assembly version information
-[assembly: AssemblyVersion("2.0.6.*")]
-[assembly: AssemblyFileVersion("2.0.6.0")]
+[assembly: AssemblyVersion("2.0.7.*")]
+[assembly: AssemblyFileVersion("2.0.7.0")]

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -130,6 +130,18 @@ namespace KeePass.Forms
 			m_hkGlobalAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbGlobalAutoType);
 			m_hkShowWindow = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbShowWindowHotKey);
 
+			if(NativeLib.IsUnix() == false)
+			{
+				UIUtil.SetShield(m_btnFileExtCreate, true);
+				UIUtil.SetShield(m_btnFileExtRemove, true);
+			}
+			else // Unix
+			{
+				m_hkGlobalAutoType.Enabled = m_hkShowWindow.Enabled = false;
+				m_btnFileExtCreate.Enabled = m_btnFileExtRemove.Enabled = false;
+				m_cbAutoRun.Enabled = false;
+			}
+
 			LoadOptions();
 
 			if(Program.Config.Meta.IsEnforcedConfiguration)
@@ -186,6 +198,8 @@ namespace KeePass.Forms
 				"LockOnSessionLock", m_lvSecurityOptions, lvg, KPRes.LockOnSessionLock);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
 				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
+				"ExitInsteadOfLockingAfterTime", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAfterTime);
 
 			if(NativeLib.IsLibraryInstalled())
 				m_cdxSecurityOptions.CreateItem(Program.Config.Native, "NativeKeyTransformations",
@@ -199,7 +213,7 @@ namespace KeePass.Forms
 			string strDisplayDesc)
 		{
 			ListViewItem lvi = m_cdxPolicy.CreateItem(Program.Config.Security.Policy,
-				strPropertyName, m_lvPolicy, null, strDisplayName);
+				strPropertyName, m_lvPolicy, null, strDisplayName + "*");
 			lvi.SubItems.Add(strDisplayDesc);
 		}
 
@@ -235,6 +249,10 @@ namespace KeePass.Forms
 				m_lvGuiOptions, lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
 				m_lvGuiOptions, lvg, KPRes.MinimizeAfterCopy);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterLocking",
+				m_lvGuiOptions, lvg, KPRes.MinimizeAfterLocking);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterOpeningDatabase",
+				m_lvGuiOptions, lvg, KPRes.MinimizeAfterOpeningDatabase);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
 				m_lvGuiOptions, lvg, KPRes.QuickSearchExcludeExpired);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
@@ -278,7 +296,7 @@ namespace KeePass.Forms
 			ListViewGroup lvg = new ListViewGroup(KPRes.StartAndExit);
 			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.Start, "OpenLastFile",
-				m_lvAdvanced, lvg, KPRes.AutoOpenLastFile);
+				m_lvAdvanced, lvg, KPRes.AutoRememberOpenLastFile);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "LimitToSingleInstance",
 				m_lvAdvanced, lvg, KPRes.LimitSingleInstance);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.Start, "CheckForUpdate",
@@ -445,13 +463,18 @@ namespace KeePass.Forms
 
 		private void OnBtnFileExtCreate(object sender, EventArgs e)
 		{
-			ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
-				KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
+			// ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
+			//	KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
+			WinUtil.RunElevated(WinUtil.GetExecutable(), "/" +
+				AppDefs.CommandLineOptions.FileExtRegister, false);
 		}
 
 		private void OnBtnFileExtRemove(object sender, EventArgs e)
 		{
-			ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId);
+			// ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt,
+			//	AppDefs.FileExtension.ExtId);
+			WinUtil.RunElevated(WinUtil.GetExecutable(), "/" +
+				AppDefs.CommandLineOptions.FileExtUnregister, false);
 		}
 
 		private void OnCheckedChangedAutoRun(object sender, EventArgs e)
@@ -494,6 +517,13 @@ namespace KeePass.Forms
 		private void OnClipboardClearTimeCheckedChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+		}
+
+		private void OnBtnTriggers(object sender, EventArgs e)
+		{
+			EcasTriggersForm f = new EcasTriggersForm();
+			f.InitEx(Program.TriggerSystem, m_ilIcons);
+			f.ShowDialog();
 		}
 	}
 }

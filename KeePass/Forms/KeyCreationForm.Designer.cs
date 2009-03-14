@@ -59,10 +59,9 @@
 			// 
 			// m_lblIntro
 			// 
-			this.m_lblIntro.AutoSize = true;
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
-			this.m_lblIntro.Size = new System.Drawing.Size(375, 13);
+			this.m_lblIntro.Size = new System.Drawing.Size(498, 13);
 			this.m_lblIntro.TabIndex = 19;
 			this.m_lblIntro.Text = "Specify the composite master key, which will be used to encrypt the database.";
 			// 

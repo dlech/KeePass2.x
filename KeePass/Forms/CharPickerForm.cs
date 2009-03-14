@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ namespace KeePass.Forms
 		private List<Label> m_lLabels = new List<Label>();
 		private int m_nFormHeight = 0;
 		private bool m_bSetForeground = false;
+		private uint m_uCharCount = 0;
 
 		private Font m_fontChars = null;
 		private char m_chMaskChar = ((Environment.OSVersion.Platform ==
@@ -60,13 +61,25 @@ namespace KeePass.Forms
 			Program.Translation.ApplyTo(this);
 		}
 
-		public void InitEx(ProtectedString psWord, bool bCenterScreen, bool bSetForeground)
+		/// <summary>
+		/// Initialize the dialog.
+		/// </summary>
+		/// <param name="psWord">Password to pick characters from.</param>
+		/// <param name="bCenterScreen">Specifies whether to center the form
+		/// on the screen or not.</param>
+		/// <param name="bSetForeground">If <c>true</c>, the window will be
+		/// brought to the foreground when showing it.</param>
+		/// <param name="nCharCount">Number of characters to pick. Specify
+		/// 0 to allow picking a variable amount of characters.</param>
+		public void InitEx(ProtectedString psWord, bool bCenterScreen,
+			bool bSetForeground, uint uCharCount)
 		{
 			m_psWord = psWord;
 
 			if(bCenterScreen) this.StartPosition = FormStartPosition.CenterScreen;
 
 			m_bSetForeground = bSetForeground;
+			m_uCharCount = uCharCount;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -83,11 +96,13 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.PickCharacters;
 
-			m_secWord.Attach(m_tbSelected, null, true);
+			m_secWord.Attach(m_tbSelected, OnSelectedTextChangedEx, true);
 			m_cbHideChars.Checked = Program.Config.MainWindow.ColumnsDict[
 				PwDefs.PasswordField].HideWithAsterisks;
 
 			RecreateResizableWindowControls();
+
+			if(m_uCharCount > 0) m_btnOK.Enabled = false;
 
 			if(m_bSetForeground)
 			{
@@ -230,6 +245,15 @@ namespace KeePass.Forms
 				this.Height = m_nFormHeight;
 
 			RecreateResizableWindowControls();
+		}
+
+		private void OnSelectedTextChangedEx(object sender, EventArgs e)
+		{
+			if((m_uCharCount > 0) && (m_secWord.TextLength == m_uCharCount))
+			{
+				m_btnOK.Enabled = true;
+				m_btnOK.PerformClick();
+			}
 		}
 	}
 }

@@ -1,0 +1,127 @@
+﻿/*
+  KeePass Password Safe - The Open-Source Password Manager
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+
+using KeePass.Resources;
+
+using KeePassLib;
+
+namespace KeePass.Ecas
+{
+	internal static class EcasEventIDs
+	{
+		public static readonly PwUuid OpenedDatabaseFile = new PwUuid(new byte[] {
+			0xE5, 0xFF, 0x13, 0x06, 0x85, 0xB8, 0x41, 0x89,
+			0xB9, 0x06, 0xF6, 0x9E, 0x2B, 0x3B, 0x40, 0xA7
+		});
+		public static readonly PwUuid SavingDatabaseFile = new PwUuid(new byte[] {
+			0x95, 0xC1, 0xA6, 0xFD, 0x72, 0x7C, 0x40, 0xC7,
+			0xA2, 0xF9, 0x5B, 0x0F, 0xA0, 0x99, 0x63, 0x1C
+		});
+		public static readonly PwUuid SavedDatabaseFile = new PwUuid(new byte[] {
+			0xB3, 0xA8, 0xFD, 0xFE, 0x78, 0x13, 0x4A, 0x6A,
+			0x9C, 0x5D, 0xD5, 0xBA, 0x84, 0x3A, 0x9B, 0x8E
+		});
+		public static readonly PwUuid CopiedEntryInfo = new PwUuid(new byte[] {
+			0x3F, 0x7E, 0x5E, 0xC6, 0x2A, 0x54, 0x4C, 0x58,
+			0x95, 0x44, 0x85, 0xFB, 0xF2, 0x6F, 0x56, 0xDC
+		});
+		public static readonly PwUuid AppLoadPost = new PwUuid(new byte[] {
+			0xD8, 0xF3, 0x1E, 0xE9, 0xCC, 0x69, 0x48, 0x1B,
+			0x89, 0xC5, 0xFC, 0xE2, 0xEA, 0x4B, 0x6A, 0x97
+		});
+		public static readonly PwUuid AppExit = new PwUuid(new byte[] {
+			0x82, 0x8A, 0xB7, 0xAB, 0xB1, 0x1C, 0x4E, 0xBF,
+			0x80, 0x39, 0x36, 0x3F, 0x91, 0x71, 0x97, 0x78
+		});
+		public static readonly PwUuid CustomTbButtonClicked = new PwUuid(new byte[] {
+			0x47, 0x47, 0x59, 0x92, 0x97, 0xA7, 0x43, 0xA2,
+			0xB9, 0x68, 0x1F, 0x1F, 0xC2, 0xF7, 0x9B, 0x92
+		});
+	}
+
+	internal sealed class EcasDefaultEventProvider : EcasEventProvider
+	{
+		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+
+		public EcasDefaultEventProvider()
+		{
+			EcasParameter[] epFileFilter = new EcasParameter[] {
+				new EcasParameter(KPRes.FileOrUrl + " - " + KPRes.Comparison,
+					EcasValueType.EnumStrings, EcasUtil.StdStringCompare),
+				new EcasParameter(KPRes.FileOrUrl + " - " + KPRes.Filter,
+					EcasValueType.String, null) };
+			EcasParameter[] epValueFilter = new EcasParameter[] {
+				new EcasParameter(KPRes.Value + " - " + KPRes.Comparison,
+					EcasValueType.EnumStrings, EcasUtil.StdStringCompare),
+				new EcasParameter(KPRes.Value + " - " + KPRes.Filter,
+					EcasValueType.String, null) };
+
+			m_events.Add(new EcasEventType(EcasEventIDs.AppLoadPost,
+				KPRes.ApplicationStartup, PwIcon.ProgramIcons, null, null));
+			m_events.Add(new EcasEventType(EcasEventIDs.AppExit,
+				KPRes.ApplicationExit, PwIcon.ProgramIcons, null, null));
+			m_events.Add(new EcasEventType(EcasEventIDs.OpenedDatabaseFile,
+				KPRes.OpenedDatabaseFile, PwIcon.FolderOpen, epFileFilter,
+				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.SavingDatabaseFile,
+				KPRes.SavingDatabaseFile, PwIcon.Disk, epFileFilter,
+				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.SavedDatabaseFile,
+				KPRes.SavedDatabaseFile, PwIcon.Disk, epFileFilter,
+				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.CopiedEntryInfo,
+				KPRes.CopiedEntryData, PwIcon.ClipboardReady, epValueFilter,
+				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.CustomTbButtonClicked,
+				KPRes.CustomTbButtonClicked, PwIcon.Star, new EcasParameter[] {
+					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
+				IsMatchCustomTbButton));
+		}
+
+		private bool IsMatchTextEvent(EcasEvent e, EcasContext ctx)
+		{
+			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
+				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
+
+			string strFilter = EcasUtil.GetParamString(e.Parameters, 1);
+			if(string.IsNullOrEmpty(strFilter)) return true;
+
+			string strCurFile = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
+			if(string.IsNullOrEmpty(strCurFile)) return false;
+
+			return EcasUtil.CompareStrings(strCurFile, strFilter, uCompareType);
+		}
+
+		private bool IsMatchCustomTbButton(EcasEvent e, EcasContext ctx)
+		{
+			string strIdClicked = EcasUtil.GetParamString(e.Parameters, 0);
+			if(string.IsNullOrEmpty(strIdClicked)) { Debug.Assert(false); return false; }
+
+			string strIdWanted = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
+			if(string.IsNullOrEmpty(strIdWanted)) return true;
+
+			return strIdClicked.Equals(strIdWanted, StrCaseIgnoreCmp);
+		}
+	}
+}

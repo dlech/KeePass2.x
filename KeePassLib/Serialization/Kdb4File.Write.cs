@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -92,7 +92,9 @@ namespace KeePassLib.Serialization
 				m_pbEncryptionIV = cr.GetRandomBytes(16);
 
 				m_pbProtectedStreamKey = cr.GetRandomBytes(32);
-				m_randomStream = new CryptoRandomStream(CrsAlgorithm.ArcFour, m_pbProtectedStreamKey);
+				m_craInnerRandomStream = CrsAlgorithm.Salsa20;
+				m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
+					m_pbProtectedStreamKey);
 
 				m_pbStreamStartBytes = cr.GetRandomBytes(32);
 
@@ -166,10 +168,12 @@ namespace KeePassLib.Serialization
 			WriteHeaderField(bw, Kdb4HeaderFieldID.MasterSeed, m_pbMasterSeed);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.TransformSeed, m_pbTransformSeed);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.TransformRounds, MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
-
 			WriteHeaderField(bw, Kdb4HeaderFieldID.EncryptionIV, m_pbEncryptionIV);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
+
+			uint uIrsID = (uint)m_craInnerRandomStream;
+			WriteHeaderField(bw, Kdb4HeaderFieldID.InnerRandomStreamID, MemUtil.UInt32ToBytes(uIrsID));
 
 			WriteHeaderField(bw, Kdb4HeaderFieldID.EndOfHeader, new byte[]{ (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
 			bw.Flush();
@@ -319,6 +323,9 @@ namespace KeePassLib.Serialization
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
 
 			WriteCustomIconList();
+
+			WriteObject(ElemRecycleBinEnabled, m_pwDatabase.RecycleBinEnabled);
+			WriteObject(ElemRecycleBinUuid, m_pwDatabase.RecycleBinUuid);
 
 			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
 			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
@@ -547,7 +554,7 @@ namespace KeePassLib.Serialization
 		{
 			Debug.Assert(name != null);
 
-			WriteObject(name, value.ToString("s"), false);
+			WriteObject(name, TimeUtil.SerializeUtc(value), false);
 		}
 
 		private void WriteObject(KeyValuePair<string, string> kvp)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ namespace KeePassLib.Utility
 			if(pbArray == null) return null;
 
 			int nLen = pbArray.Length;
-			if(nLen == 0) return "";
+			if(nLen == 0) return string.Empty;
 
 			byte bt, btHigh, btLow;
 			for(int i = 0; i < nLen; i++)
@@ -187,8 +187,11 @@ namespace KeePassLib.Utility
 		{
 			byte[] pb = new byte[2];
 
-			pb[0] = (byte)(uValue & 0xFF);
-			pb[1] = (byte)(uValue >> 8);
+			unchecked
+			{
+				pb[0] = (byte)uValue;
+				pb[1] = (byte)(uValue >> 8);
+			}
 
 			return pb;
 		}
@@ -202,12 +205,15 @@ namespace KeePassLib.Utility
 		public static byte[] UInt32ToBytes(uint uValue)
 		{
 			byte[] pb = new byte[4];
-			
-			pb[0] = (byte)(uValue & 0xFF);
-			pb[1] = (byte)((uValue >> 8) & 0xFF);
-			pb[2] = (byte)((uValue >> 16) & 0xFF);
-			pb[3] = (byte)((uValue >> 24) & 0xFF);
-			
+
+			unchecked
+			{
+				pb[0] = (byte)uValue;
+				pb[1] = (byte)(uValue >> 8);
+				pb[2] = (byte)(uValue >> 16);
+				pb[3] = (byte)(uValue >> 24);
+			}
+
 			return pb;
 		}
 
@@ -221,14 +227,17 @@ namespace KeePassLib.Utility
 		{
 			byte[] pb = new byte[8];
 
-			pb[0] = (byte)(uValue & 0xFF);
-			pb[1] = (byte)((uValue >> 8) & 0xFF);
-			pb[2] = (byte)((uValue >> 16) & 0xFF);
-			pb[3] = (byte)((uValue >> 24) & 0xFF);
-			pb[4] = (byte)((uValue >> 32) & 0xFF);
-			pb[5] = (byte)((uValue >> 40) & 0xFF);
-			pb[6] = (byte)((uValue >> 48) & 0xFF);
-			pb[7] = (byte)((uValue >> 56) & 0xFF);
+			unchecked
+			{
+				pb[0] = (byte)uValue;
+				pb[1] = (byte)(uValue >> 8);
+				pb[2] = (byte)(uValue >> 16);
+				pb[3] = (byte)(uValue >> 24);
+				pb[4] = (byte)(uValue >> 32);
+				pb[5] = (byte)(uValue >> 40);
+				pb[6] = (byte)(uValue >> 48);
+				pb[7] = (byte)(uValue >> 56);
+			}
 
 			return pb;
 		}
@@ -246,6 +255,21 @@ namespace KeePassLib.Utility
 			}
 
 			return true;
+		}
+
+		public static void XorArray(byte[] pbSource, int nSourceOffset,
+			byte[] pbBuffer, int nBufferOffset, int nLength)
+		{
+			if(pbSource == null) throw new ArgumentNullException("pbSource");
+			if(nSourceOffset < 0) throw new ArgumentException();
+			if(pbBuffer == null) throw new ArgumentNullException("pbBuffer");
+			if(nBufferOffset < 0) throw new ArgumentException();
+			if(nLength < 0) throw new ArgumentException();
+			if((nSourceOffset + nLength) > pbSource.Length) throw new ArgumentException();
+			if((nBufferOffset + nLength) > pbBuffer.Length) throw new ArgumentException();
+
+			for(int i = 0; i < nLength; ++i)
+				pbBuffer[nBufferOffset + i] ^= pbSource[nSourceOffset + i];
 		}
 
 		public static void CopyStream(Stream sSource, Stream sTarget)

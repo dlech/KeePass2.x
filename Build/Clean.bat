@@ -3,7 +3,7 @@ RMDIR /S /Q KeePass_Distrib
 RMDIR /S /Q KeePassLib
 RMDIR /S /Q KeePassLibDoc
 RMDIR /S /Q KeePassLibSD
-RMDIR /S /Q KeePassNtv
+REM RMDIR /S /Q KeePassNtv
 RMDIR /S /Q ShInstUtil
 
 RMDIR /S /Q ..\Ext\Output
@@ -23,25 +23,29 @@ DEL ..\ShInstUtil\ShInstUtil.csproj.user
 DEL /A:H ..\KeePass.suo
 DEL ..\KeePass.ncb
 
-DEL /Q ..\KeePassNtv\*.aps
-DEL /Q ..\KeePassNtv\*.user
+REM DEL /Q ..\KeePassNtv\*.aps
+REM DEL /Q ..\KeePassNtv\*.user
 
 RMDIR /S /Q ArcFourCipher
 RMDIR /S /Q ..\Plugins\ArcFourCipher\obj
 DEL ..\Plugins\ArcFourCipher\ArcFourCipher.csproj.user
-DEL ArcFourCipher\Release\ArcFourCipher.pdb
+DEL /A:H ..\Plugins\ArcFourCipher\ArcFourCipher.suo
 
 RMDIR /S /Q KPScript
 RMDIR /S /Q ..\Plugins\KPScript\obj
 DEL ..\Plugins\KPScript\KPScript.csproj.user
+DEL /A:H ..\Plugins\KPScript\KPScript.suo
 
 RMDIR /S /Q SamplePlugin
 RMDIR /S /Q ..\Plugins\SamplePlugin\obj
 DEL ..\Plugins\SamplePlugin\SamplePlugin.csproj.user
+DEL /A:H ..\Plugins\SamplePlugin\SamplePlugin.suo
 
 RMDIR /S /Q ..\Plugins\SamplePluginCpp\Build
 DEL /Q ..\Plugins\SamplePluginCpp\*.aps
 DEL /Q ..\Plugins\SamplePluginCpp\*.user
+DEL /Q ..\Plugins\SamplePluginCpp\*.ncb
+DEL /A:H ..\Plugins\SamplePluginCpp\SamplePluginCpp.suo
 
 RMDIR /S /Q ..\Translation\TrlUtil\obj
 RMDIR /S /Q ..\Translation\TrlUtil\Build

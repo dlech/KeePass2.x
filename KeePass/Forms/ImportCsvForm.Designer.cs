@@ -32,10 +32,10 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_lblFileEncoding = new System.Windows.Forms.Label();
 			this.m_cmbEncoding = new System.Windows.Forms.ComboBox();
-			this.m_lvPreview = new System.Windows.Forms.ListView();
+			this.m_lvPreview = new KeePass.UI.CustomListViewEx();
 			this.m_tbSourcePreview = new System.Windows.Forms.TextBox();
 			this.m_lblSourcePreview = new System.Windows.Forms.Label();
-			this.m_lvHeaderOrder = new System.Windows.Forms.ListView();
+			this.m_lvHeaderOrder = new KeePass.UI.CustomListViewEx();
 			this.m_lblOrder = new System.Windows.Forms.Label();
 			this.m_lblOrderHint = new System.Windows.Forms.Label();
 			this.m_lblPreview = new System.Windows.Forms.Label();
@@ -229,6 +229,7 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ImportCsvForm";
+			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Generic CSV Importer";
@@ -245,10 +246,10 @@
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.Label m_lblFileEncoding;
 		private System.Windows.Forms.ComboBox m_cmbEncoding;
-		private System.Windows.Forms.ListView m_lvPreview;
+		private KeePass.UI.CustomListViewEx m_lvPreview;
 		private System.Windows.Forms.TextBox m_tbSourcePreview;
 		private System.Windows.Forms.Label m_lblSourcePreview;
-		private System.Windows.Forms.ListView m_lvHeaderOrder;
+		private KeePass.UI.CustomListViewEx m_lvHeaderOrder;
 		private System.Windows.Forms.Label m_lblOrder;
 		private System.Windows.Forms.Label m_lblOrderHint;
 		private System.Windows.Forms.Label m_lblPreview;

@@ -31,7 +31,7 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LanguageForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
-			this.m_lvLanguages = new System.Windows.Forms.ListView();
+			this.m_lvLanguages = new KeePass.UI.CustomListViewEx();
 			this.m_ilLanguages = new System.Windows.Forms.ImageList(this.components);
 			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_btnMore = new System.Windows.Forms.Button();
@@ -122,7 +122,7 @@
 		#endregion
 
 		private System.Windows.Forms.PictureBox m_bannerImage;
-		private System.Windows.Forms.ListView m_lvLanguages;
+		private KeePass.UI.CustomListViewEx m_lvLanguages;
 		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ImageList m_ilLanguages;
 		private System.Windows.Forms.Button m_btnMore;

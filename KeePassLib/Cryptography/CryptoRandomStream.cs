@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 
 using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
+
+using KeePassLib.Cryptography.Cipher;
 
 namespace KeePassLib.Cryptography
 {
@@ -33,9 +36,16 @@ namespace KeePassLib.Cryptography
 		Null = 0,
 
 		/// <summary>
-		/// The ARCFour algorithm (RC4 compatible).
+		/// A variant of the ARCFour algorithm (RC4 incompatible).
 		/// </summary>
-		ArcFour = 1
+		ArcFourVariant = 1,
+
+		/// <summary>
+		/// Salsa20 stream cipher algorithm.
+		/// </summary>
+		Salsa20 = 2,
+
+		Count = 3
 	}
 
 	/// <summary>
@@ -46,10 +56,13 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public sealed class CryptoRandomStream
 	{
-		private CrsAlgorithm m_crsAlgorithm = CrsAlgorithm.ArcFour;
-		private byte[] m_pbState = new byte[256];
+		private CrsAlgorithm m_crsAlgorithm;
+
+		private byte[] m_pbState = null;
 		private byte m_i = 0;
 		private byte m_j = 0;
+
+		private Salsa20Cipher m_salsa20 = null;
 
 		/// <summary>
 		/// Construct a new cryptographically secure random stream object.
@@ -71,27 +84,39 @@ namespace KeePassLib.Cryptography
 			uint uKeyLen = (uint)pbKey.Length;
 			Debug.Assert(uKeyLen != 0); if(uKeyLen == 0) throw new ArgumentException();
 
-			if(genAlgorithm == CrsAlgorithm.ArcFour)
+			if(genAlgorithm == CrsAlgorithm.ArcFourVariant)
 			{
-				uint w, inxKey = 0;
-
 				// Fill the state linearly
-				for(w = 0; w < 256; ++w) m_pbState[w] = (byte)w;
+				m_pbState = new byte[256];
+				for(uint w = 0; w < 256; ++w) m_pbState[w] = (byte)w;
 
-				byte i = 0, j = 0, t;
-				for(w = 0; w < 256; ++w) // Key setup
+				unchecked
 				{
-					j += (byte)(m_pbState[w] + pbKey[inxKey]);
+					byte j = 0, t;
+					uint inxKey = 0;
+					for(uint w = 0; w < 256; ++w) // Key setup
+					{
+						j += (byte)(m_pbState[w] + pbKey[inxKey]);
 
-					t = m_pbState[i]; // Swap entries
-					m_pbState[i] = m_pbState[j];
-					m_pbState[j] = t;
+						t = m_pbState[0]; // Swap entries
+						m_pbState[0] = m_pbState[j];
+						m_pbState[j] = t;
 
-					++inxKey;
-					if(inxKey >= uKeyLen) inxKey = 0;
+						++inxKey;
+						if(inxKey >= uKeyLen) inxKey = 0;
+					}
 				}
 
-				this.GetRandomBytes(512); // Throw away the first bytes
+				GetRandomBytes(512); // Increases security, see cryptanalysis
+			}
+			else if(genAlgorithm == CrsAlgorithm.Salsa20)
+			{
+				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbKey32 = sha256.ComputeHash(pbKey);
+				byte[] pbIV = new byte[]{ 0xE8, 0x30, 0x09, 0x4B,
+					0x97, 0x20, 0x5D, 0x2A }; // Unique constant
+
+				m_salsa20 = new Salsa20Cipher(pbKey32, pbIV);
 			}
 			else // Unknown algorithm
 			{
@@ -111,23 +136,26 @@ namespace KeePassLib.Cryptography
 
 			byte[] pbRet = new byte[uRequestedCount];
 
-			if(m_crsAlgorithm == CrsAlgorithm.ArcFour)
+			if(m_crsAlgorithm == CrsAlgorithm.ArcFourVariant)
 			{
-				byte t;
-
-				for(uint w = 0; w < uRequestedCount; ++w)
+				unchecked
 				{
-					++m_i;
-					m_j += m_pbState[m_i];
+					for(uint w = 0; w < uRequestedCount; ++w)
+					{
+						++m_i;
+						m_j += m_pbState[m_i];
 
-					t = m_pbState[m_i]; // Swap entries
-					m_pbState[m_i] = m_pbState[m_j];
-					m_pbState[m_j] = t;
+						byte t = m_pbState[m_i]; // Swap entries
+						m_pbState[m_i] = m_pbState[m_j];
+						m_pbState[m_j] = t;
 
-					t = (byte)(m_pbState[m_i] + m_pbState[m_j]);
-					pbRet[w] = m_pbState[t];
+						t = (byte)(m_pbState[m_i] + m_pbState[m_j]);
+						pbRet[w] = m_pbState[t];
+					}
 				}
 			}
+			else if(m_crsAlgorithm == CrsAlgorithm.Salsa20)
+				m_salsa20.Encrypt(pbRet, pbRet.Length, false);
 			else { Debug.Assert(false); }
 
 			return pbRet;
@@ -135,12 +163,47 @@ namespace KeePassLib.Cryptography
 
 		public ulong GetRandomUInt64()
 		{
-			byte[] pb = this.GetRandomBytes(8);
+			byte[] pb = GetRandomBytes(8);
 
-			return ((ulong)pb[0]) | ((ulong)pb[1] << 8) |
-				((ulong)pb[2] << 16) | ((ulong)pb[3] << 24) |
-				((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
-				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
+			unchecked
+			{
+				return ((ulong)pb[0]) | ((ulong)pb[1] << 8) |
+					((ulong)pb[2] << 16) | ((ulong)pb[3] << 24) |
+					((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
+					((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
+			}
 		}
+
+#if CRSBENCHMARK
+		public static string Benchmark()
+		{
+			int nRounds = 2000000;
+			
+			string str = "ArcFour small: " + BenchTime(CrsAlgorithm.ArcFourVariant,
+				nRounds, 16).ToString() + "\r\n";
+			str += "ArcFour big: " + BenchTime(CrsAlgorithm.ArcFourVariant,
+				32, 2 * 1024 * 1024).ToString() + "\r\n";
+			str += "Salsa20 small: " + BenchTime(CrsAlgorithm.Salsa20,
+				nRounds, 16).ToString() + "\r\n";
+			str += "Salsa20 big: " + BenchTime(CrsAlgorithm.Salsa20,
+				32, 2 * 1024 * 1024).ToString();
+			return str;
+		}
+
+		private static int BenchTime(CrsAlgorithm cra, int nRounds, int nDataSize)
+		{
+			byte[] pbKey = new byte[4] { 0x00, 0x01, 0x02, 0x03 };
+
+			int nStart = Environment.TickCount;
+			for(int i = 0; i < nRounds; ++i)
+			{
+				CryptoRandomStream c = new CryptoRandomStream(cra, pbKey);
+				c.GetRandomBytes((uint)nDataSize);
+			}
+			int nEnd = Environment.TickCount;
+
+			return (nEnd - nStart);
+		}
+#endif
 	}
 }

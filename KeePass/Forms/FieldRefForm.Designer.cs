@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_lvEntries = new System.Windows.Forms.ListView();
+			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_grpIdentify = new System.Windows.Forms.GroupBox();
 			this.m_radioIdUuid = new System.Windows.Forms.RadioButton();
 			this.m_radioIdNotes = new System.Windows.Forms.RadioButton();
@@ -278,7 +278,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.ListView m_lvEntries;
+		private KeePass.UI.CustomListViewEx m_lvEntries;
 		private System.Windows.Forms.GroupBox m_grpIdentify;
 		private System.Windows.Forms.GroupBox m_grpRefField;
 		private System.Windows.Forms.Button m_btnOK;

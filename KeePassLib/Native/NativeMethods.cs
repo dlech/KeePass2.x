@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@ namespace KeePassLib.Native
 {
 	internal static class NativeMethods
 	{
-		[DllImport("KeePassNtv32.dll", EntryPoint = "TransformKey")]
+		internal const int MAX_PATH = 260;
+
+		/* [DllImport("KeePassNtv32.dll", EntryPoint = "TransformKey")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey32(IntPtr pBuf256,
 			IntPtr pKey256, UInt64 uRounds);
@@ -62,11 +64,50 @@ namespace KeePassLib.Native
 				return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
 			else
 				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
+		} */
+
+		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TransformKey32(IntPtr pBuf256,
+			IntPtr pKey256, UInt64 uRounds);
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "TransformKey256")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TransformKey64(IntPtr pBuf256,
+			IntPtr pKey256, UInt64 uRounds);
+
+		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
+			UInt64 uRounds)
+		{
+			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+				return TransformKey64(pBuf256, pKey256, uRounds);
+			else
+				return TransformKey32(pBuf256, pKey256, uRounds);
+		}
+
+		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKeyBenchmark256")]
+		private static extern UInt64 TransformKeyBenchmark32(UInt32 uTimeMs);
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "TransformKeyBenchmark256")]
+		private static extern UInt64 TransformKeyBenchmark64(UInt32 uTimeMs);
+
+		internal static UInt64 TransformKeyBenchmark(UInt32 uTimeMs)
+		{
+			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+				return TransformKeyBenchmark64(uTimeMs);
+			else
+				return TransformKeyBenchmark32(uTimeMs);
 		}
 
 #if !KeePassLibSD
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
 		internal static extern int StrCmpLogicalW(string x, string y);
+
+		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool PathRelativePathTo([Out] StringBuilder pszPath,
+			[In] string pszFrom, [In] uint dwAttrFrom, [In] string pszTo,
+			[In] uint dwAttrTo);
 #endif
 
 		private static bool? m_bSupportsLogicalCmp = null;
@@ -79,7 +120,7 @@ namespace KeePassLib.Native
 #else
 			try
 			{
-				StrCmpLogicalW("Test 0 1 1", "Test 0 1 0");
+				StrCmpLogicalW("0", "0"); // Throws exception if unsupported
 				m_bSupportsLogicalCmp = true;
 			}
 			catch(Exception) { m_bSupportsLogicalCmp = false; }

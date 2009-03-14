@@ -68,6 +68,9 @@
     <Compile Include="..\KeePassLib\Cryptography\Cipher\ICipherEngine.cs">
       <Link>KeePassLib\Cryptography\Cipher\ICipherEngine.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Cipher\Salsa20Cipher.cs">
+      <Link>KeePassLib\Cryptography\Cipher\Salsa20Cipher.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\StandardAesEngine.cs">
       <Link>KeePassLib\Cryptography\Cipher\StandardAesEngine.cs</Link>
     </Compile>
@@ -176,6 +179,9 @@
     <Compile Include="..\KeePassLib\Resources\KLRes.Generated.cs">
       <Link>KeePassLib\Resources\KLRes.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Resources\KSRes.Generated.cs">
+      <Link>KeePassLib\Resources\KSRes.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>KeePassLib\Security\ProtectedBinary.cs</Link>
     </Compile>
@@ -274,9 +280,11 @@
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
+    <Compile Include="DataExchange\Formats\KeePassXml1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
+    <Compile Include="DataExchange\Formats\OnePwProCsv599.cs" />
     <Compile Include="DataExchange\Formats\PassKeeper12.cs" />
     <Compile Include="DataExchange\Formats\PinsTxt450.cs" />
     <Compile Include="DataExchange\Formats\PpKeeperHtml270.cs" />
@@ -302,6 +310,12 @@
     <Compile Include="DataExchange\Kdb3File.cs" />
     <Compile Include="DataExchange\Kdb3Manager.cs" />
     <Compile Include="DataExchange\PwExportInfo.cs" />
+    <Compile Include="Ecas\EcasContext.cs" />
+    <Compile Include="Ecas\EcasEnum.cs" />
+    <Compile Include="Ecas\EcasParameter.cs" />
+    <Compile Include="Ecas\EcasSystemEvents.cs" />
+    <Compile Include="Ecas\EcasValueType.cs" />
+    <Compile Include="Ecas\IEcasObject.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -331,6 +345,36 @@
     </Compile>
     <Compile Include="Forms\DataViewerForm.Designer.cs">
       <DependentUpon>DataViewerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EcasActionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EcasActionForm.Designer.cs">
+      <DependentUpon>EcasActionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EcasConditionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EcasConditionForm.Designer.cs">
+      <DependentUpon>EcasConditionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EcasEventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EcasEventForm.Designer.cs">
+      <DependentUpon>EcasEventForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EcasTriggerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EcasTriggerForm.Designer.cs">
+      <DependentUpon>EcasTriggerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EcasTriggersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EcasTriggersForm.Designer.cs">
+      <DependentUpon>EcasTriggersForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EditAutoTypeItemForm.cs">
       <SubType>Form</SubType>
@@ -514,6 +558,15 @@
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\CustomListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomMenuStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomToolStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
@@ -572,6 +625,21 @@
     <EmbeddedResource Include="Forms\DataViewerForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DataViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EcasActionForm.resx">
+      <DependentUpon>EcasActionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EcasConditionForm.resx">
+      <DependentUpon>EcasConditionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EcasEventForm.resx">
+      <DependentUpon>EcasEventForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EcasTriggerForm.resx">
+      <DependentUpon>EcasTriggerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EcasTriggersForm.resx">
+      <DependentUpon>EcasTriggersForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditAutoTypeItemForm.resx">
       <SubType>Designer</SubType>
@@ -713,6 +781,23 @@
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
+    <Compile Include="Ecas\EcasActionType.cs" />
+    <Compile Include="Ecas\EcasConditionType.cs" />
+    <Compile Include="Ecas\EcasDefaultActionProvider.cs" />
+    <Compile Include="Ecas\EcasAction.cs" />
+    <Compile Include="Ecas\EcasActionProvider.cs" />
+    <Compile Include="Ecas\EcasCondition.cs" />
+    <Compile Include="Ecas\EcasConditionProvider.cs" />
+    <Compile Include="Ecas\EcasDefaultConditionProvider.cs" />
+    <Compile Include="Ecas\EcasDefaultEventProvider.cs" />
+    <Compile Include="Ecas\EcasEvent.cs" />
+    <Compile Include="Ecas\EcasEventProvider.cs" />
+    <Compile Include="Ecas\EcasEventType.cs" />
+    <Compile Include="Ecas\EcasPool.cs" />
+    <Compile Include="Ecas\EcasTrigger.cs" />
+    <Compile Include="Ecas\EcasTriggerSystem.cs" />
+    <Compile Include="Ecas\EcasUtil.cs" />
+    <Compile Include="Ecas\IEcasParameterized.cs" />
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
@@ -856,6 +941,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_OnePwPro.png" />
+    <None Include="Resources\Nuvola\B48x48_Make_KDevelop.png" />
+    <None Include="Resources\Nuvola\B16x16_Make_KDevelop.png" />
+    <None Include="Resources\Nuvola\B48x48_KArm.png" />
+    <None Include="Resources\Nuvola\B16x16_KArm.png" />
     <None Include="Resources\Images\B16x16_Imp_PassKeeper.png" />
     <None Include="Resources\Images\B16x16_Imp_PwMem2008.png" />
     <None Include="Resources\Nuvola\B16x16_Folder_Outbox.png" />

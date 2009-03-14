@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,12 @@ namespace TrlUtil
 	public sealed class PreviewForm : Form
 	{
 		private static Random m_rand = new Random();
+
+		public PreviewForm()
+		{
+			try { this.DoubleBuffered = true; }
+			catch(Exception) { Debug.Assert(false); }
+		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -83,7 +89,8 @@ namespace TrlUtil
 				else if(t == typeof(CheckBox)) cCopy = new CheckBox();
 				else if(t == typeof(RadioButton)) cCopy = new RadioButton();
 				else if(t == typeof(GroupBox)) cCopy = new GroupBox();
-				else if(t == typeof(NumericUpDown)) cCopy = new NumericUpDown();
+				// NumericUpDown leads to GDI objects leak
+				// else if(t == typeof(NumericUpDown)) cCopy = new NumericUpDown();
 				else if(t == typeof(Panel)) cCopy = new Panel();
 				else if(t == typeof(TabControl)) cCopy = new TabControl();
 				else if(t == typeof(TabPage)) cCopy = new TabPage();
@@ -102,7 +109,11 @@ namespace TrlUtil
 					cCopy = new TextBox();
 					(cCopy as TextBox).Multiline = (c as TextBox).Multiline;
 				}
-				else if(t == typeof(RichTextBox)) cCopy = new RichTextBox();
+				else if(t == typeof(RichTextBox)) // RTB leads to GDI objects leak
+				{
+					cCopy = new TextBox();
+					(cCopy as TextBox).Multiline = true;
+				}
 				else
 				{
 					cCopy = new Label();

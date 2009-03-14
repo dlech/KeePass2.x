@@ -93,12 +93,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C27A4F4671AB4EC1B7F06F82DFEC8BC2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C34738027450488E935C153E9FD57296"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -111,14 +105,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F0E8FCDB9FA04E94B0277EE0B00F6683"
+        "MsmKey" = "8:_F99D264600A54E439A43BDD0AD42280C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F99D264600A54E439A43BDD0AD42280C"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1E5C8CB4F4B448C6893857E08EA012E5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -268,9 +262,14 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShInstUtil, Version=2.0.5.30791, Culture=neutral, PublicKeyToken=7952fc8ece49a093, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShInstUtil, Version=2.0.7.28261, Culture=neutral, PublicKeyToken=2b3ab31150cbd0c3, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_1E5C8CB4F4B448C6893857E08EA012E5"
+                    {
+                    "Name" = "8:ShInstUtil.exe"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\ShInstUtil.exe"
             "TargetName" = "8:"
@@ -394,7 +393,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.5.22151, Culture=neutral, PublicKeyToken=7952fc8ece49a093, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_838987B3C51D42C3C7B9BDA1339A5500"
@@ -417,7 +416,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -425,7 +424,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.0.5.22151, Culture=neutral, PublicKeyToken=7952fc8ece49a093, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -532,26 +531,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C27A4F4671AB4EC1B7F06F82DFEC8BC2"
-            {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassNtv64.dll"
-            "TargetName" = "8:KeePassNtv64.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C34738027450488E935C153E9FD57296"
             {
             "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\License.txt"
@@ -576,7 +555,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.5.22151, Culture=neutral, PublicKeyToken=7952fc8ece49a093, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -587,26 +566,6 @@
                 }
             "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePass.exe"
             "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0E8FCDB9FA04E94B0277EE0B00F6683"
-            {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassNtv32.dll"
-            "TargetName" = "8:KeePassNtv32.dll"
             "Tag" = "8:"
             "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
             "Condition" = "8:"
@@ -744,14 +703,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:KeePass"
-        "ProductCode" = "8:{2CBCF4EC-7D5F-4141-A3A6-001090E029AC}"
-        "PackageCode" = "8:{5622211D-BA43-4F76-892F-E75A067CFA55}"
+        "ProductCode" = "8:{013BA1B7-CE52-4A04-9B87-9F41A5CF4F46}"
+        "PackageCode" = "8:{3DC19383-684A-4927-91D7-9B363D24BA55}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.0.6"
+        "ProductVersion" = "8:2.0.7"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://keepass.info/"
@@ -986,7 +945,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass is Copyright (c) 2003-2008 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright (c) 2003-2009 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1109,7 +1068,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass is Copyright (c) 2003-2008 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright (c) 2003-2009 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 
+using KeePass.App;
 using KeePass.Resources;
 
 using KeePassLib;
@@ -34,10 +35,10 @@ namespace KeePass.DataExchange.Formats
 	internal sealed class KeePassKdb2x : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+		public override bool SupportsExport { get { return true; } }
 
 		public override string FormatName { get { return "KeePass KDBX (2.x)"; } }
-		public override string DefaultExtension { get { return "kdbx"; } }
+		public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
 		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
 		public override bool SupportsUuids { get { return true; } }
@@ -53,6 +54,14 @@ namespace KeePass.DataExchange.Formats
 		{
 			Kdb4File kdb4 = new Kdb4File(pwStorage);
 			kdb4.Load(sInput, Kdb4Format.Default, slLogger);
+		}
+
+		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+			IStatusLogger slLogger)
+		{
+			Kdb4File kdb4 = new Kdb4File(pwExportInfo.ContextDatabase);
+			kdb4.Save(sOutput, pwExportInfo.DataGroup, Kdb4Format.Default, slLogger);
+			return true;
 		}
 	}
 }

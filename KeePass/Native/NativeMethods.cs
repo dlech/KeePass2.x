@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -200,5 +200,13 @@ namespace KeePass.Native
 		internal static extern Int32 TaskDialogIndirect([In] ref VtdConfig pTaskConfig,
 			[Out] out int pnButton, [Out] out int pnRadioButton,
 			[Out] out bool pfVerificationFlagChecked);
+
+		[DllImport("UxTheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+		internal static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName,
+			string pszSubIdList);
+
+		[DllImport("Shell32.dll")]
+		internal static extern void SHChangeNotify(int wEventId, uint uFlags,
+			IntPtr dwItem1, IntPtr dwItem2);
 	}
 }

@@ -481,4 +481,13 @@
   <data name="B16x16_Imp_PassKeeper" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_PassKeeper.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="B16x16_Make_KDevelop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola\B16x16_Make_KDevelop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B48x48_Make_KDevelop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola\B48x48_Make_KDevelop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Imp_OnePwPro" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\B16x16_Imp_OnePwPro.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -78,6 +78,9 @@
     <Compile Include="..\KeePassLib\Cryptography\Cipher\ICipherEngine.cs">
       <Link>Cryptography\Cipher\ICipherEngine.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Cipher\Salsa20Cipher.cs">
+      <Link>Cryptography\Cipher\Salsa20Cipher.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\StandardAesEngine.cs">
       <Link>Cryptography\Cipher\StandardAesEngine.cs</Link>
     </Compile>
@@ -185,6 +188,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Resources\KLRes.Generated.cs">
       <Link>Resources\KLRes.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Resources\KSRes.Generated.cs">
+      <Link>Resources\KSRes.Generated.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Security\ProtectedBinary.cs">
       <Link>Security\ProtectedBinary.cs</Link>

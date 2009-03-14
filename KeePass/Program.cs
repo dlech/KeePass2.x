@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Ecas;
 
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
@@ -51,15 +52,17 @@ namespace KeePass
 	{
 		private const string m_strWndMsgID = "EB2FE38E1A6A4A138CF561442F1CF25A";
 
-		private static CommandLineArgs m_cmdLineArgs = new CommandLineArgs(null);
+		private static CommandLineArgs m_cmdLineArgs = null;
 		private static Random m_rndGlobal = null;
 		private static int m_nAppMessage = 0;
 		private static MainForm m_formMain = null;
-		private static AppConfigEx m_appConfig = new AppConfigEx();
-		private static KeyProviderPool m_keyProviderPool = new KeyProviderPool();
-		private static FileFormatPool m_fmtPool = new FileFormatPool();
+		private static AppConfigEx m_appConfig = null;
+		private static KeyProviderPool m_keyProviderPool = null;
+		private static FileFormatPool m_fmtPool = null;
 		private static KPTranslation m_kpTranslation = new KPTranslation();
-		private static TempFilesPool m_tempFilesPool = new TempFilesPool();
+		private static TempFilesPool m_tempFilesPool = null;
+		private static EcasPool m_ecasPool = null;
+		private static EcasTriggerSystem m_ecasTriggers = null;
 
 		public enum AppMessage
 		{
@@ -71,7 +74,11 @@ namespace KeePass
 
 		public static CommandLineArgs CommandLineArgs
 		{
-			get { return m_cmdLineArgs; }
+			get
+			{
+				if(m_cmdLineArgs == null) m_cmdLineArgs = new CommandLineArgs(null);
+				return m_cmdLineArgs;
+			}
 		}
 
 		public static Random GlobalRandom
@@ -91,17 +98,29 @@ namespace KeePass
 
 		public static AppConfigEx Config
 		{
-			get { return m_appConfig; }
+			get
+			{
+				if(m_appConfig == null) m_appConfig = new AppConfigEx();
+				return m_appConfig;
+			}
 		}
 
 		public static KeyProviderPool KeyProviderPool
 		{
-			get { return m_keyProviderPool; }
+			get
+			{
+				if(m_keyProviderPool == null) m_keyProviderPool = new KeyProviderPool();
+				return m_keyProviderPool;
+			}
 		}
 
 		public static FileFormatPool FileFormatPool
 		{
-			get { return m_fmtPool; }
+			get
+			{
+				if(m_fmtPool == null) m_fmtPool = new FileFormatPool();
+				return m_fmtPool;
+			}
 		}
 
 		public static KPTranslation Translation
@@ -111,7 +130,29 @@ namespace KeePass
 
 		public static TempFilesPool TempFilesPool
 		{
-			get { return m_tempFilesPool; }
+			get
+			{
+				if(m_tempFilesPool == null) m_tempFilesPool = new TempFilesPool();
+				return m_tempFilesPool;
+			}
+		}
+
+		public static EcasPool EcasPool // Construct on first access
+		{
+			get
+			{
+				if(m_ecasPool == null) m_ecasPool = new EcasPool(true);
+				return m_ecasPool;
+			}
+		}
+
+		public static EcasTriggerSystem TriggerSystem
+		{
+			get
+			{
+				if(m_ecasTriggers == null) m_ecasTriggers = new EcasTriggerSystem();
+				return m_ecasTriggers;
+			}
 		}
 
 		/// <summary>
@@ -139,8 +180,10 @@ namespace KeePass
 
 			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
 
-			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) +
-				".chm";
+			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
+			m_ecasTriggers.SetToInitialState();
+
+			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
 			AppHelp.LocalHelpFile = strHelpFile;
 
 			string strLangFile = m_appConfig.Application.LanguageFile;
@@ -183,6 +226,43 @@ namespace KeePass
 				(m_cmdLineArgs[AppDefs.CommandLineOptions.HelpLong] != null))
 			{
 				AppHelp.ShowHelp(AppDefs.HelpTopics.CommandLine, null);
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetUrlOverride] != null)
+			{
+				Program.Config.Integration.UrlOverride = m_cmdLineArgs[
+					AppDefs.CommandLineOptions.ConfigSetUrlOverride];
+				AppConfigSerializer.Save(Program.Config);
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigClearUrlOverride] != null)
+			{
+				Program.Config.Integration.UrlOverride = string.Empty;
+				AppConfigSerializer.Save(Program.Config);
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigGetUrlOverride] != null)
+			{
+				try
+				{
+					string strFileOut = UrlUtil.EnsureTerminatingSeparator(
+						Path.GetTempPath(), false) + "KeePass_UrlOverride.tmp";
+					string strContent = ("[KeePass]\r\nKeeURLOverride=" +
+						Program.Config.Integration.UrlOverride + "\r\n");
+					File.WriteAllText(strFileOut, strContent);
+				}
+				catch(Exception) { Debug.Assert(false); }
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetLanguageFile] != null)
+			{
+				Program.Config.Application.LanguageFile = m_cmdLineArgs[
+					AppDefs.CommandLineOptions.ConfigSetLanguageFile];
+				AppConfigSerializer.Save(Program.Config);
 				MainCleanUp();
 				return;
 			}
@@ -239,7 +319,7 @@ namespace KeePass
 
 		private static void MainCleanUp()
 		{
-			m_tempFilesPool.Clear();
+			if(m_tempFilesPool != null) m_tempFilesPool.Clear();
 
 			EntryMenu.Destroy();
 
@@ -331,6 +411,16 @@ namespace KeePass
 		public static void NotifyUserActivity()
 		{
 			if(Program.MainForm != null) Program.MainForm.NotifyUserActivity();
+		}
+
+		public static IntPtr GetSafeMainWindowHandle()
+		{
+			if(m_formMain == null) return IntPtr.Zero;
+
+			try { return m_formMain.Handle; }
+			catch(Exception) { Debug.Assert(false); }
+
+			return IntPtr.Zero;
 		}
 	}
 }

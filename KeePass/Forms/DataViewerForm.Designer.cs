@@ -31,7 +31,7 @@
 			this.m_rtbText = new System.Windows.Forms.RichTextBox();
 			this.m_picBox = new System.Windows.Forms.PictureBox();
 			this.m_webBrowser = new System.Windows.Forms.WebBrowser();
-			this.m_toolMain = new System.Windows.Forms.ToolStrip();
+			this.m_toolMain = new KeePass.UI.CustomToolStripEx();
 			this.m_tslViewer = new System.Windows.Forms.ToolStripLabel();
 			this.m_tscViewers = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tssSeparator0 = new System.Windows.Forms.ToolStripSeparator();
@@ -177,7 +177,7 @@
 		private System.Windows.Forms.RichTextBox m_rtbText;
 		private System.Windows.Forms.PictureBox m_picBox;
 		private System.Windows.Forms.WebBrowser m_webBrowser;
-		private System.Windows.Forms.ToolStrip m_toolMain;
+		private KeePass.UI.CustomToolStripEx m_toolMain;
 		private System.Windows.Forms.ToolStripLabel m_tslViewer;
 		private System.Windows.Forms.ToolStripComboBox m_tscViewers;
 		private System.Windows.Forms.ToolStripSeparator m_tssSeparator0;

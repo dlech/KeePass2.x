@@ -51,7 +51,7 @@
 			this.m_tbStrEng = new System.Windows.Forms.TextBox();
 			this.m_lblStrTrl = new System.Windows.Forms.Label();
 			this.m_lblStrEng = new System.Windows.Forms.Label();
-			this.m_lvStrings = new System.Windows.Forms.ListView();
+			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
 			this.m_tabDialogs = new System.Windows.Forms.TabPage();
 			this.m_lblIconColorHint = new System.Windows.Forms.Label();
 			this.m_grpControl = new System.Windows.Forms.GroupBox();
@@ -74,7 +74,7 @@
 			this.m_tabUnusedText = new System.Windows.Forms.TabPage();
 			this.m_btnClearUnusedText = new System.Windows.Forms.Button();
 			this.m_rtbUnusedText = new System.Windows.Forms.RichTextBox();
-			this.m_menuMain = new System.Windows.Forms.MenuStrip();
+			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -678,13 +678,13 @@
 		private System.Windows.Forms.LinkLabel m_linkLangCode;
 		private System.Windows.Forms.Label m_lblAuthorContact;
 		private System.Windows.Forms.TextBox m_tbAuthorContact;
-		private System.Windows.Forms.MenuStrip m_menuMain;
+		private KeePass.UI.CustomMenuStripEx m_menuMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileOpen;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSave;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileExit;
-		private System.Windows.Forms.ListView m_lvStrings;
+		private KeePass.UI.CustomListViewEx m_lvStrings;
 		private System.Windows.Forms.TextBox m_tbStrTrl;
 		private System.Windows.Forms.TextBox m_tbStrEng;
 		private System.Windows.Forms.Label m_lblStrTrl;

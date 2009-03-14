@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -745,17 +745,17 @@ namespace KeePass.DataExchange
 		/// creating a new key file.</param>
 		/// <returns>Error code (see <c>Kdb3ErrorCode</c>).</returns>
 		public Kdb3ErrorCode SetMasterKey(string strMasterKey, bool bDiskDrive,
-			string strSecondKey, IntPtr pAri, bool bOverwrite)
+			string strSecondKey, IntPtr pARI, bool bOverwrite)
 		{
 			Debug.Assert(strMasterKey != null);
 			if(strMasterKey == null) throw new ArgumentNullException("strMasterKey");
 
 			if(m_bX64)
 				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey64(m_pManager,
-					strMasterKey, bDiskDrive, strSecondKey, pAri, bOverwrite);
+					strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
 			else
 				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey32(m_pManager,
-					strMasterKey, bDiskDrive, strSecondKey, pAri, bOverwrite);
+					strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "GetNumberOfItemsInGroup")]

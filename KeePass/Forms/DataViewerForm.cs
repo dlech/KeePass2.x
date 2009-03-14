@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -193,10 +193,8 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == KPRes.ImageViewer)
 				{
-					MemoryStream ms = new MemoryStream(m_pbData, false);
-					Image img = Image.FromStream(ms);
+					Image img = UIUtil.LoadImage(m_pbData);
 					m_picBox.Image = img;
-					ms.Close();
 
 					m_pnlImageViewer.Visible = true;
 					m_picBox.Visible = true;
@@ -206,8 +204,8 @@ namespace KeePass.Forms
 				else if(strViewer == KPRes.WebBrowser)
 				{
 					string strData = BinaryDataToString(enc);
-					m_webBrowser.AllowNavigation = true;
-					m_webBrowser.DocumentText = strData;
+
+					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
 
 					m_webBrowser.Visible = true;
 				}

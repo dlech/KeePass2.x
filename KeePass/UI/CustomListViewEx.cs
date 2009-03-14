@@ -1,6 +1,6 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,4 +17,20 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "StdAfx.h"
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Forms;
+using System.Diagnostics;
+
+namespace KeePass.UI
+{
+	public sealed class CustomListViewEx : ListView
+	{
+		public CustomListViewEx()
+		{
+			try { this.DoubleBuffered = true; }
+			catch(Exception) { Debug.Assert(false); }
+		}
+	}
+}

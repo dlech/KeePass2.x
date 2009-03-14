@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -310,6 +310,11 @@ namespace KeePass.Forms
 		private void OnImportFileTextChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+		}
+
+		private void OnFormatsItemActivate(object sender, EventArgs e)
+		{
+			OnBtnSelFile(sender, e);
 		}
 	}
 }

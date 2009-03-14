@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ namespace KeePass.Forms
 			m_tbUrl.Focus();
 
 			// Give the user name field the focus, if URL is specified
-			if(m_ioc.Path.Length > 0)
+			if(m_tbUrl.Text.Length > 0)
 			{
 				this.ActiveControl = m_tbUserName;
 				m_tbUserName.Focus();

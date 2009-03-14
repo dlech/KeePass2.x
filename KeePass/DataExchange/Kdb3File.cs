@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,13 +40,15 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public sealed class Kdb3File
 	{
+		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+
 		private PwDatabase m_pwDatabase = null;
 		private IStatusLogger m_slLogger = null;
 
 		private const string Kdb3Prefix = "KDB3: ";
 
-		private const string AutoTypePrefix = "Auto-Type:";
-		private const string AutoTypeWindowPrefix = "Auto-Type-Window:";
+		private const string AutoTypePrefix = "Auto-Type";
+		private const string AutoTypeWindowPrefix = "Auto-Type-Window";
 
 		private const string UrlOverridePrefix = "Url-Override:";
 
@@ -442,7 +444,7 @@ namespace KeePass.DataExchange
 				throw new InvalidOperationException();
 		}
 
-		private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
+		/* private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
 		{
 			string str = strNotes;
 			char[] vTrim = new char[]{ '\r', '\n', '\t', ' ' };
@@ -499,6 +501,71 @@ namespace KeePass.DataExchange
 			}
 
 			strNotes = str;
+		} */
+
+		private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
+		{
+			if(string.IsNullOrEmpty(strNotes)) return;
+
+			string str = strNotes.Replace("\r", string.Empty);
+			string[] vLines = str.Split('\n');
+
+			string strOvr = FindPrefixedLine(vLines, AutoTypePrefix + ":");
+			if((strOvr != null) && (strOvr.Length > (AutoTypePrefix.Length + 1)))
+			{
+				strOvr = strOvr.Substring(AutoTypePrefix.Length + 1).Trim();
+				peStorage.AutoType.DefaultSequence = strOvr;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			foreach(string strLine in vLines)
+			{
+				bool bProcessed = false;
+				for(int iIdx = 0; iIdx < 32; ++iIdx)
+				{
+					string s = ((iIdx == 0) ? string.Empty : "-" + iIdx.ToString());
+					string strWndPrefix = (AutoTypeWindowPrefix + s + ":");
+					string strSeqPrefix = (AutoTypePrefix + s + ":");
+
+					if(strLine.StartsWith(strWndPrefix, StrCaseIgnoreCmp) &&
+						(strLine.Length > strWndPrefix.Length))
+					{
+						string strWindow = strLine.Substring(strWndPrefix.Length).Trim();
+						string strSeq = FindPrefixedLine(vLines, strSeqPrefix);
+						if((strSeq != null) && (strSeq.Length > strSeqPrefix.Length))
+						{
+							peStorage.AutoType.Set(strWindow, strSeq.Substring(
+								strSeqPrefix.Length).Trim());
+							bProcessed = true;
+							break;
+						}
+					}
+					else if(strLine.StartsWith(strSeqPrefix, StrCaseIgnoreCmp))
+					{
+						bProcessed = true;
+						break;
+					}
+				}
+
+				if(bProcessed == false)
+				{
+					sb.Append(strLine);
+					sb.Append(MessageService.NewLine);
+				}
+			}
+
+			strNotes = sb.ToString();
+		}
+
+		private static string FindPrefixedLine(string[] vLines, string strPrefix)
+		{
+			foreach(string str in vLines)
+			{
+				if(str.StartsWith(strPrefix, StrCaseIgnoreCmp))
+					return str;
+			}
+
+			return null;
 		}
 
 		private static void ExportAutoType(PwEntry peSource, ref string strNotes)
@@ -510,7 +577,7 @@ namespace KeePass.DataExchange
 			{
 				sbAppend.Append(MessageService.NewParagraph);
 				sbAppend.Append(AutoTypePrefix);
-				sbAppend.Append(@" ");
+				sbAppend.Append(@": ");
 				sbAppend.Append(peSource.AutoType.DefaultSequence);
 				sbAppend.Append(MessageService.NewLine);
 
@@ -527,11 +594,11 @@ namespace KeePass.DataExchange
 				}
 
 				sbAppend.Append(AutoTypeWindowPrefix);
-				sbAppend.Append(@" ");
+				sbAppend.Append(@": ");
 				sbAppend.Append(kvp.Key);
 				sbAppend.Append(MessageService.NewLine);
 				sbAppend.Append(AutoTypePrefix);
-				sbAppend.Append(@" ");
+				sbAppend.Append(@": ");
 				sbAppend.Append(kvp.Value);
 				sbAppend.Append(MessageService.NewLine);
 			}

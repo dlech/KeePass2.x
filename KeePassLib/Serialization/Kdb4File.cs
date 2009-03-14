@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ namespace KeePassLib.Serialization
 		/// <summary>
 		/// File version of files saved by the current <c>Kdb4File</c> class.
 		/// </summary>
-		private const uint FileVersion32 = 0x00010000; // 1.00
+		private const uint FileVersion32 = 0x00010001; // 1.01
 
 		private const uint FileSignatureOld1 = 0x9AA2D903;
 		private const uint FileSignatureOld2 = 0xB54BFB65;
@@ -84,6 +84,8 @@ namespace KeePassLib.Serialization
 		private const string ElemDbDesc = "DatabaseDescription";
 		private const string ElemDbDefaultUser = "DefaultUserName";
 		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
+		private const string ElemRecycleBinEnabled = "RecycleBinEnabled";
+		private const string ElemRecycleBinUuid = "RecycleBinUUID";
 		private const string ElemLastSelectedGroup = "LastSelectedGroup";
 		private const string ElemLastTopVisibleGroup = "LastTopVisibleGroup";
 
@@ -159,6 +161,10 @@ namespace KeePassLib.Serialization
 		private byte[] m_pbProtectedStreamKey = null;
 		private byte[] m_pbStreamStartBytes = null;
 
+		// ArcFourVariant only for compatibility; KeePass will default to a
+		// different (more secure) algorithm when *writing* databases
+		private CrsAlgorithm m_craInnerRandomStream = CrsAlgorithm.ArcFourVariant;
+
 		private byte[] m_pbHashOfFileOnDisk = null;
 
 		private readonly DateTime m_dtNow = DateTime.Now; // Cache current time
@@ -171,15 +177,16 @@ namespace KeePassLib.Serialization
 		private enum Kdb4HeaderFieldID : byte
 		{
 			EndOfHeader = 0,
-			Comment,
-			CipherID,
-			CompressionFlags,
-			MasterSeed,
-			TransformSeed,
-			TransformRounds,
-			EncryptionIV,
-			ProtectedStreamKey,
-			StreamStartBytes
+			Comment = 1,
+			CipherID = 2,
+			CompressionFlags = 3,
+			MasterSeed = 4,
+			TransformSeed = 5,
+			TransformRounds = 6,
+			EncryptionIV = 7,
+			ProtectedStreamKey = 8,
+			StreamStartBytes = 9,
+			InnerRandomStreamID = 10
 		}
 
 		public byte[] HashOfFileOnDisk
@@ -213,7 +220,7 @@ namespace KeePassLib.Serialization
 			{
 				uint uTest = 0;
 				foreach(char ch in PwDatabase.LocalizedAppName)
-					uTest = uTest * 5 + ch; // Quick hash
+					uTest = uTest * 5 + ch;
 
 				m_bLocalizedNames = (uTest != NeutralLanguageID);
 			}

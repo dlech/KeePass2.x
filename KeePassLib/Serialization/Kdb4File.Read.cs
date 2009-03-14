@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -125,7 +125,8 @@ namespace KeePassLib.Serialization
 						throw new SecurityException("Invalid protected stream key!");
 					}
 
-					m_randomStream = new CryptoRandomStream(CrsAlgorithm.ArcFour, m_pbProtectedStreamKey);
+					m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
+						m_pbProtectedStreamKey);
 				}
 				else m_randomStream = null; // No random stream for plain text files
 
@@ -163,7 +164,8 @@ namespace KeePassLib.Serialization
 			uint uSig2 = MemUtil.BytesToUInt32(pbSig2);
 
 			if((uSig1 == FileSignatureOld1) && (uSig2 == FileSignatureOld2))
-				throw new OldFormatException(PwDefs.ShortProductName + @" 1.x");
+				throw new OldFormatException(PwDefs.ShortProductName + @" 1.x",
+					OldFormatException.OldFormatType.KeePass1x);
 
 			if((uSig1 != FileSignature1) || (uSig2 != FileSignature2))
 				throw new FormatException(KLRes.FileSigInvalid);
@@ -236,6 +238,10 @@ namespace KeePassLib.Serialization
 					m_pbStreamStartBytes = pbData;
 					break;
 
+				case Kdb4HeaderFieldID.InnerRandomStreamID:
+					SetInnerRandomStreamID(pbData);
+					break;
+
 				default:
 					Debug.Assert(false);
 					if(m_slLogger != null)
@@ -262,6 +268,15 @@ namespace KeePassLib.Serialization
 				throw new FormatException(KLRes.FileUnknownCompression);
 
 			m_pwDatabase.Compression = (PwCompressionAlgorithm)uID;
+		}
+
+		private void SetInnerRandomStreamID(byte[] pbID)
+		{
+			uint uID = MemUtil.BytesToUInt32(pbID);
+			if(uID >= (uint)CrsAlgorithm.Count)
+				throw new FormatException(KLRes.FileUnknownCipher);
+
+			m_craInnerRandomStream = (CrsAlgorithm)uID;
 		}
 
 		private Stream AttachStreamDecryptor(Stream s)

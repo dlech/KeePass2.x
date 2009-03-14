@@ -44,6 +44,7 @@ namespace KeePassLib.Resources
 			m_strInvalidCompositeKey = TryGetEx(dictNew, "InvalidCompositeKey", m_strInvalidCompositeKey);
 			m_strInvalidCompositeKeyHint = TryGetEx(dictNew, "InvalidCompositeKeyHint", m_strInvalidCompositeKeyHint);
 			m_strInvalidDataWhileDecoding = TryGetEx(dictNew, "InvalidDataWhileDecoding", m_strInvalidDataWhileDecoding);
+			m_strKeePass1xHint = TryGetEx(dictNew, "KeePass1xHint", m_strKeePass1xHint);
 			m_strMasterSeedLengthInvalid = TryGetEx(dictNew, "MasterSeedLengthInvalid", m_strMasterSeedLengthInvalid);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strUnknownHeaderId = TryGetEx(dictNew, "UnknownHeaderId", m_strUnknownHeaderId);
@@ -69,6 +70,7 @@ namespace KeePassLib.Resources
 			"InvalidCompositeKey",
 			"InvalidCompositeKeyHint",
 			"InvalidDataWhileDecoding",
+			"KeePass1xHint",
 			"MasterSeedLengthInvalid",
 			"OldFormat",
 			"UnknownHeaderId",
@@ -276,6 +278,17 @@ namespace KeePassLib.Resources
 		public static string InvalidDataWhileDecoding
 		{
 			get { return m_strInvalidDataWhileDecoding; }
+		}
+
+		private static string m_strKeePass1xHint =
+			@"In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.'.
+		/// </summary>
+		public static string KeePass1xHint
+		{
+			get { return m_strKeePass1xHint; }
 		}
 
 		private static string m_strMasterSeedLengthInvalid =

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -100,6 +100,7 @@ namespace KeePass.DataExchange
 
 			m_vFormats.Add(new GenericCsv());
 
+			m_vFormats.Add(new OnePwProCsv599());
 			m_vFormats.Add(new AmpXml250());
 			m_vFormats.Add(new AnyPwCsv144());
 			m_vFormats.Add(new CodeWalletTxt605());
@@ -123,6 +124,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new KeePassCsv1x());
 			m_vFormats.Add(new KeePassKdb1x());
 			m_vFormats.Add(new KeePassKdb2x());
+			m_vFormats.Add(new KeePassXml1x());
 			m_vFormats.Add(new KeePassXml2x());
 
 			m_vFormats.Add(new MozillaBookmarksHtml100());

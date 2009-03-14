@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ namespace KeePass.Util
 	/// </summary>
 	public static class EntryUtil
 	{
+		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+
 		/// <summary>
 		/// Save all attachments of an array of entries to a directory.
 		/// </summary>
@@ -156,29 +158,45 @@ namespace KeePass.Util
 
 			string str = strText;
 
-			if(str.ToUpper().IndexOf(@"{PICKPASSWORDCHARS}") >= 0)
+			str = ReplacePickPw(str, pe, cf);
+
+			return str;
+		}
+
+		private static string ReplacePickPw(string strText, PwEntry pe,
+			SprContentFlags cf)
+		{
+			string str = strText;
+
+			for(int iID = 1; iID < (int.MaxValue - 1); ++iID)
 			{
-				ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
-				if(ps != null)
+				string strPlaceholder = @"{PICKPASSWORDCHARS";
+				if(iID > 1) strPlaceholder += iID.ToString();
+				strPlaceholder += @"}";
+
+				if(str.IndexOf(strPlaceholder, StrCaseIgnoreCmp) >= 0)
 				{
-					byte[] pb = ps.ReadUtf8();
-					bool bNotEmpty = (pb.Length > 0);
-					Array.Clear(pb, 0, pb.Length);
-
-					if(bNotEmpty)
+					ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
+					if(ps != null)
 					{
-						CharPickerForm cpf = new CharPickerForm();
-						cpf.InitEx(ps, true, true);
+						byte[] pb = ps.ReadUtf8();
+						bool bNotEmpty = (pb.Length > 0);
+						Array.Clear(pb, 0, pb.Length);
 
-						if(cpf.ShowDialog() == DialogResult.OK)
+						if(bNotEmpty)
 						{
-							str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}",
-								SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
+							CharPickerForm cpf = new CharPickerForm();
+							cpf.InitEx(ps, true, true, 0);
+
+							if(cpf.ShowDialog() == DialogResult.OK)
+								str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
+									SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
 						}
 					}
-				}
 
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{PICKPASSWORDCHARS}", string.Empty);
+					str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
+				}
+				else break;
 			}
 
 			return str;

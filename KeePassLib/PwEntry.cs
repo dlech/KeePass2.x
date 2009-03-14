@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2008 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -337,6 +337,49 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// Assign properties to the current entry based on a template entry.
+		/// </summary>
+		/// <param name="peTemplate">Template entry. Must not be <c>null</c>.</param>
+		/// <param name="bOnlyIfNewer">Only set the properties of the template entry
+		/// if it is newer than the current one.</param>
+		/// <param name="bIncludeHistory">If <c>true</c>, the history will be
+		/// copied, too.</param>
+		public void AssignProperties(PwEntry peTemplate, bool bOnlyIfNewer,
+			bool bIncludeHistory)
+		{
+			Debug.Assert(peTemplate != null); if(peTemplate == null) throw new ArgumentNullException("peTemplate");
+
+			// Template UUID should be the same as the current one
+			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
+			m_uuid = peTemplate.m_uuid;
+
+			if(bOnlyIfNewer)
+			{
+				if(peTemplate.m_tLastMod < this.m_tLastMod) return;
+			}
+
+			m_listStrings = peTemplate.m_listStrings;
+			m_listBinaries = peTemplate.m_listBinaries;
+			m_listAutoType = peTemplate.m_listAutoType;
+			if(bIncludeHistory) m_listHistory = peTemplate.m_listHistory;
+
+			m_pwIcon = peTemplate.m_pwIcon;
+			m_pwCustomIconID = peTemplate.m_pwCustomIconID;
+
+			m_clrForeground = peTemplate.m_clrForeground;
+			m_clrBackground = peTemplate.m_clrBackground;
+
+			m_tCreation = peTemplate.m_tCreation;
+			m_tLastMod = peTemplate.m_tLastMod;
+			m_tLastAccess = peTemplate.m_tLastAccess;
+			m_tExpire = peTemplate.m_tExpire;
+			m_bExpires = peTemplate.m_bExpires;
+			m_uUsageCount = peTemplate.m_uUsageCount;
+
+			m_strOverrideUrl = peTemplate.m_strOverrideUrl;
+		}
+
+		/// <summary>
 		/// Touch the entry. This function updates the internal last access
 		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
 		/// the last modification time gets updated, too.
@@ -380,50 +423,6 @@ namespace KeePassLib
 
 			CreateBackup();
 			AssignProperties(pe, false, false);
-		}
-
-		/// <summary>
-		/// Assign properties to the current entry based on a template entry.
-		/// </summary>
-		/// <param name="peTemplate">Template entry. Must not be <c>null</c>.</param>
-		/// <param name="bOnlyIfNewer">Only set the properties of the template entry
-		/// if it is newer than the current one.</param>
-		/// <param name="bIncludeHistory">If <c>true</c>, the history will be
-		/// copied, too.</param>
-		public void AssignProperties(PwEntry peTemplate, bool bOnlyIfNewer,
-			bool bIncludeHistory)
-		{
-			Debug.Assert(peTemplate != null); if(peTemplate == null) throw new ArgumentNullException("peTemplate");
-
-			// Template UUID should be the same as the current one
-			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
-			m_uuid = peTemplate.m_uuid;
-
-			if(bOnlyIfNewer)
-			{
-				if(peTemplate.m_tLastMod < this.m_tLastMod) return;
-			}
-
-			m_listStrings = peTemplate.m_listStrings;
-			m_listBinaries = peTemplate.m_listBinaries;
-			m_listAutoType = peTemplate.m_listAutoType;
-
-			if(bIncludeHistory) m_listHistory = peTemplate.m_listHistory;
-
-			m_pwIcon = peTemplate.m_pwIcon;
-			m_pwCustomIconID = peTemplate.m_pwCustomIconID;
-
-			m_clrForeground = peTemplate.m_clrForeground;
-			m_clrBackground = peTemplate.m_clrBackground;
-
-			m_tCreation = peTemplate.m_tCreation;
-			m_tLastMod = peTemplate.m_tLastMod;
-			m_tLastAccess = peTemplate.m_tLastAccess;
-			m_tExpire = peTemplate.m_tExpire;
-			m_bExpires = peTemplate.m_bExpires;
-			m_uUsageCount = peTemplate.m_uUsageCount;
-
-			m_strOverrideUrl = peTemplate.m_strOverrideUrl;
 		}
 	}
 }

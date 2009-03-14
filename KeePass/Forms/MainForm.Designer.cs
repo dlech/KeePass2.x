@@ -101,7 +101,7 @@
 			this.m_ctxEntrySortListByLastModTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByLastAccessTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByExpirationTime = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuMain = new System.Windows.Forms.MenuStrip();
+			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileNew = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -191,7 +191,7 @@
 			this.m_menuHelpCheckForUpdate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_toolMain = new System.Windows.Forms.ToolStrip();
+			this.m_toolMain = new KeePass.UI.CustomToolStripEx();
 			this.m_tbNewDatabase = new System.Windows.Forms.ToolStripButton();
 			this.m_tbOpenDatabase = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSaveDatabase = new System.Windows.Forms.ToolStripButton();
@@ -230,7 +230,7 @@
 			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
 			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
 			this.m_tvGroups = new System.Windows.Forms.TreeView();
-			this.m_lvEntries = new System.Windows.Forms.ListView();
+			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
@@ -922,7 +922,6 @@
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(654, 24);
 			this.m_menuMain.TabIndex = 0;
-			this.m_menuMain.Text = "Main Menu";
 			// 
 			// m_menuFile
 			// 
@@ -1216,20 +1215,20 @@
 			// 
 			this.m_menuChangeLanguage.Image = global::KeePass.Properties.Resources.B16x16_Keyboard_Layout;
 			this.m_menuChangeLanguage.Name = "m_menuChangeLanguage";
-			this.m_menuChangeLanguage.Size = new System.Drawing.Size(207, 22);
+			this.m_menuChangeLanguage.Size = new System.Drawing.Size(202, 22);
 			this.m_menuChangeLanguage.Text = "Change &Language...";
 			this.m_menuChangeLanguage.Click += new System.EventHandler(this.OnMenuChangeLanguage);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(204, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(199, 6);
 			// 
 			// m_menuViewShowToolBar
 			// 
 			this.m_menuViewShowToolBar.CheckOnClick = true;
 			this.m_menuViewShowToolBar.Name = "m_menuViewShowToolBar";
-			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
 			this.m_menuViewShowToolBar.Click += new System.EventHandler(this.OnViewShowToolBar);
 			// 
@@ -1237,7 +1236,7 @@
 			// 
 			this.m_menuViewShowEntryView.CheckOnClick = true;
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
-			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewShowEntryView.Text = "&Show Entry View";
 			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
 			// 
@@ -1247,7 +1246,7 @@
             this.m_menuViewWindowsStacked,
             this.m_menuViewWindowsSideBySide});
 			this.m_menuViewWindowLayout.Name = "m_menuViewWindowLayout";
-			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewWindowLayout.Text = "&Window Layout";
 			// 
 			// m_menuViewWindowsStacked
@@ -1269,20 +1268,20 @@
 			// m_menuViewSep1
 			// 
 			this.m_menuViewSep1.Name = "m_menuViewSep1";
-			this.m_menuViewSep1.Size = new System.Drawing.Size(204, 6);
+			this.m_menuViewSep1.Size = new System.Drawing.Size(199, 6);
 			// 
 			// m_menuViewAlwaysOnTop
 			// 
 			this.m_menuViewAlwaysOnTop.CheckOnClick = true;
 			this.m_menuViewAlwaysOnTop.Name = "m_menuViewAlwaysOnTop";
-			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewAlwaysOnTop.Text = "&Always on Top";
 			this.m_menuViewAlwaysOnTop.Click += new System.EventHandler(this.OnViewAlwaysOnTop);
 			// 
 			// m_menuViewSep2
 			// 
 			this.m_menuViewSep2.Name = "m_menuViewSep2";
-			this.m_menuViewSep2.Size = new System.Drawing.Size(204, 6);
+			this.m_menuViewSep2.Size = new System.Drawing.Size(199, 6);
 			// 
 			// m_menuViewHiding
 			// 
@@ -1293,7 +1292,7 @@
             this.m_menuViewHideURLs,
             this.m_menuViewHideNotes});
 			this.m_menuViewHiding.Name = "m_menuViewHiding";
-			this.m_menuViewHiding.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewHiding.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewHiding.Text = "&Hide Fields (Asterisks)";
 			// 
 			// m_menuViewHideTitles
@@ -1339,7 +1338,7 @@
 			// m_menuViewSep3
 			// 
 			this.m_menuViewSep3.Name = "m_menuViewSep3";
-			this.m_menuViewSep3.Size = new System.Drawing.Size(204, 6);
+			this.m_menuViewSep3.Size = new System.Drawing.Size(199, 6);
 			// 
 			// m_menuViewTanOptions
 			// 
@@ -1347,7 +1346,7 @@
             this.m_menuViewTanSimpleList,
             this.m_menuViewTanIndices});
 			this.m_menuViewTanOptions.Name = "m_menuViewTanOptions";
-			this.m_menuViewTanOptions.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewTanOptions.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewTanOptions.Text = "TAN &View Options";
 			// 
 			// m_menuViewTanSimpleList
@@ -1383,7 +1382,7 @@
             this.m_menuViewColumnsShowUuid,
             this.m_menuViewColumnsShowAttachs});
 			this.m_menuViewColumns.Name = "m_menuViewColumns";
-			this.m_menuViewColumns.Size = new System.Drawing.Size(207, 22);
+			this.m_menuViewColumns.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewColumns.Text = "Show &Columns";
 			// 
 			// m_menuViewColumnsShowTitle
@@ -1487,14 +1486,14 @@
 			// m_menuViewSep4
 			// 
 			this.m_menuViewSep4.Name = "m_menuViewSep4";
-			this.m_menuViewSep4.Size = new System.Drawing.Size(204, 6);
+			this.m_menuViewSep4.Size = new System.Drawing.Size(199, 6);
 			// 
 			// m_menuViewShowEntriesOfSubGroups
 			// 
 			this.m_menuViewShowEntriesOfSubGroups.CheckOnClick = true;
 			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
-			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(207, 22);
-			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Sub-Groups";
+			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(202, 22);
+			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Subgroups";
 			this.m_menuViewShowEntriesOfSubGroups.Click += new System.EventHandler(this.OnViewShowEntriesOfSubGroups);
 			// 
 			// m_menuTools
@@ -1590,7 +1589,7 @@
 			// 
 			this.m_menuHelpContents.Image = global::KeePass.Properties.Resources.B16x16_Toggle_Log;
 			this.m_menuHelpContents.Name = "m_menuHelpContents";
-			this.m_menuHelpContents.Size = new System.Drawing.Size(175, 22);
+			this.m_menuHelpContents.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpContents.Text = "&Help Contents";
 			this.m_menuHelpContents.Click += new System.EventHandler(this.OnHelpContents);
 			// 
@@ -1598,20 +1597,20 @@
 			// 
 			this.m_menuHelpSelectSource.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
 			this.m_menuHelpSelectSource.Name = "m_menuHelpSelectSource";
-			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(175, 22);
-			this.m_menuHelpSelectSource.Text = "&Select Help Source...";
+			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpSelectSource.Text = "Help &Source...";
 			this.m_menuHelpSelectSource.Click += new System.EventHandler(this.OnHelpSelectSource);
 			// 
 			// m_menuHelpSep0
 			// 
 			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
-			this.m_menuHelpSep0.Size = new System.Drawing.Size(172, 6);
+			this.m_menuHelpSep0.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpHomepage
 			// 
 			this.m_menuHelpHomepage.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
 			this.m_menuHelpHomepage.Name = "m_menuHelpHomepage";
-			this.m_menuHelpHomepage.Size = new System.Drawing.Size(175, 22);
+			this.m_menuHelpHomepage.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpHomepage.Text = "&KeePass Homepage";
 			this.m_menuHelpHomepage.Click += new System.EventHandler(this.OnHelpHomepage);
 			// 
@@ -1619,33 +1618,33 @@
 			// 
 			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
 			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
-			this.m_menuHelpDonate.Size = new System.Drawing.Size(175, 22);
+			this.m_menuHelpDonate.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpDonate.Text = "&Donate...";
 			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
 			// 
 			// m_menuHelpSep1
 			// 
 			this.m_menuHelpSep1.Name = "m_menuHelpSep1";
-			this.m_menuHelpSep1.Size = new System.Drawing.Size(172, 6);
+			this.m_menuHelpSep1.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpCheckForUpdate
 			// 
 			this.m_menuHelpCheckForUpdate.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_menuHelpCheckForUpdate.Name = "m_menuHelpCheckForUpdate";
-			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(175, 22);
+			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpCheckForUpdate.Text = "&Check for Update";
 			this.m_menuHelpCheckForUpdate.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
 			// 
 			// m_menuHelpSep2
 			// 
 			this.m_menuHelpSep2.Name = "m_menuHelpSep2";
-			this.m_menuHelpSep2.Size = new System.Drawing.Size(172, 6);
+			this.m_menuHelpSep2.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpAbout
 			// 
 			this.m_menuHelpAbout.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_menuHelpAbout.Name = "m_menuHelpAbout";
-			this.m_menuHelpAbout.Size = new System.Drawing.Size(175, 22);
+			this.m_menuHelpAbout.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpAbout.Text = "&About KeePass...";
 			this.m_menuHelpAbout.Click += new System.EventHandler(this.OnHelpAbout);
 			// 
@@ -2092,7 +2091,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.MenuStrip m_menuMain;
+		private KeePass.UI.CustomMenuStripEx m_menuMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileNew;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileClose;
@@ -2120,7 +2119,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpCheckForUpdate;
 		private System.Windows.Forms.ToolStripSeparator m_menuHelpSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpAbout;
-		private System.Windows.Forms.ToolStrip m_toolMain;
+		private KeePass.UI.CustomToolStripEx m_toolMain;
 		private System.Windows.Forms.ToolStripButton m_tbNewDatabase;
 		private System.Windows.Forms.ToolStripButton m_tbOpenDatabase;
 		private System.Windows.Forms.RichTextBox m_richEntryView;
@@ -2130,7 +2129,7 @@
 		private System.Windows.Forms.StatusStrip m_statusMain;
 		private System.Windows.Forms.ToolStripStatusLabel m_statusPartSelected;
 		private System.Windows.Forms.ToolStripStatusLabel m_statusPartInfo;
-		private System.Windows.Forms.ListView m_lvEntries;
+		private KeePass.UI.CustomListViewEx m_lvEntries;
 		private System.Windows.Forms.ToolStripButton m_tbSaveDatabase;
 		private System.Windows.Forms.ContextMenuStrip m_ctxPwList;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyUserName;

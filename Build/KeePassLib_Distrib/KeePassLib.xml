@@ -9,6 +9,17 @@
             Utility functions for generating random passwords.
             </summary>
         </member>
+        <member name="T:KeePassLib.Resources.KSRes">
+            <summary>
+            A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KSRes.Test">
+            <summary>
+            Look up a localized string similar to
+            'Test'.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Serialization.Kdb4File">
             <summary>
             Serialization to KeePass KDB files.
@@ -236,14 +247,12 @@
             <param name="uRounds">Number of transformation rounds.</param>
             <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
         </member>
-        <member name="M:KeePassLib.Native.NativeLib.TransformKey256Timed(System.Byte[],System.Byte[],System.UInt64@,System.UInt32)">
+        <member name="M:KeePassLib.Native.NativeLib.TransformKeyBenchmark256(System.UInt32,System.UInt64@)">
             <summary>
             Benchmark key transformation.
             </summary>
-            <param name="pBuf256">Source and destination buffer.</param>
-            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="uTimeMs">Number of seconds to perform the benchmark.</param>
             <param name="puRounds">Number of transformations done.</param>
-            <param name="uSeconds">Number of seconds to perform the benchmark.</param>
             <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
         </member>
         <member name="P:KeePassLib.Native.NativeLib.AllowNative">
@@ -341,8 +350,7 @@
             and the number of performed transformations are returned.
             </summary>
             <param name="uMilliseconds">Test duration in ms.</param>
-            <param name="uStep">Stepping. The returned number of transformations
-            will be a multiple of this parameter or <c>uint.MaxValue</c>.
+            <param name="uStep">Stepping.
             <paramref name="uStep" /> should be a prime number. For fast processors
             (PCs) a value of <c>3001</c> is recommended, for slower processors (PocketPC)
             a value of <c>401</c> is recommended.</param>
@@ -637,9 +645,14 @@
             Not supported.
             </summary>
         </member>
-        <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ArcFour">
+        <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ArcFourVariant">
             <summary>
-            The ARCFour algorithm (RC4 compatible).
+            A variant of the ARCFour algorithm (RC4 incompatible).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.CrsAlgorithm.Salsa20">
+            <summary>
+            Salsa20 stream cipher algorithm.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.CryptoRandomStream">
@@ -781,6 +794,12 @@
             <summary>
             Look up a localized string similar to
             'Found invalid data while decoding.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.KeePass1xHint">
+            <summary>
+            Look up a localized string similar to
+            'In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.MasterSeedLengthInvalid">
@@ -1066,6 +1085,14 @@
             </summary>
             <returns>Exact value copy of the current <c>PwGroup</c> object.</returns>
         </member>
+        <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean)">
+            <summary>
+            Assign properties to the current group based on a template group.
+            </summary>
+            <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
+            <param name="bOnlyIfNewer">Only set the properties of the template group
+            if it is newer than the current one.</param>
+        </member>
         <member name="M:KeePassLib.PwGroup.Touch(System.Boolean)">
             <summary>
             Touch the group. This function updates the internal last access
@@ -1176,14 +1203,6 @@
             <param name="strSeparator">String that separates the group
             names.</param>
             <returns>Full path of the group.</returns>
-        </member>
-        <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean)">
-            <summary>
-            Assign properties to the current group based on a template group.
-            </summary>
-            <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
-            <param name="bOnlyIfNewer">Only set the properties of the template group
-            if it is newer than the current one.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.CreateNewItemUuids(System.Boolean,System.Boolean,System.Boolean)">
             <summary>
@@ -1562,6 +1581,16 @@
             </summary>
             <returns>Exact value clone. All references to mutable values changed.</returns>
         </member>
+        <member name="M:KeePassLib.PwEntry.AssignProperties(KeePassLib.PwEntry,System.Boolean,System.Boolean)">
+            <summary>
+            Assign properties to the current entry based on a template entry.
+            </summary>
+            <param name="peTemplate">Template entry. Must not be <c>null</c>.</param>
+            <param name="bOnlyIfNewer">Only set the properties of the template entry
+            if it is newer than the current one.</param>
+            <param name="bIncludeHistory">If <c>true</c>, the history will be
+            copied, too.</param>
+        </member>
         <member name="M:KeePassLib.PwEntry.Touch(System.Boolean)">
             <summary>
             Touch the entry. This function updates the internal last access
@@ -1582,16 +1611,6 @@
             </summary>
             <param name="uBackupIndex">Index of the backup item, to which
             should be reverted.</param>
-        </member>
-        <member name="M:KeePassLib.PwEntry.AssignProperties(KeePassLib.PwEntry,System.Boolean,System.Boolean)">
-            <summary>
-            Assign properties to the current entry based on a template entry.
-            </summary>
-            <param name="peTemplate">Template entry. Must not be <c>null</c>.</param>
-            <param name="bOnlyIfNewer">Only set the properties of the template entry
-            if it is newer than the current one.</param>
-            <param name="bIncludeHistory">If <c>true</c>, the history will be
-            copied, too.</param>
         </member>
         <member name="P:KeePassLib.PwEntry.Uuid">
             <summary>
@@ -2282,12 +2301,6 @@
             </summary>
             <param name="listDelObjects">List of deleted objects.</param>
         </member>
-        <member name="M:KeePassLib.PwDatabase.Synchronize(System.String)">
-            <summary>
-            Synchronize current database with another one.
-            </summary>
-            <param name="strFile">Source file.</param>
-        </member>
         <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">
             <summary>
             Get the index of a custom icon.
@@ -2422,7 +2435,7 @@
         </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
-            List of objects that implement <c>IDeepClonable</c> and <c>IPwTreeItem</c>,
+            List of objects that implement <c>IDeepClonable</c>,
             and cannot be <c>null</c>.
             </summary>
             <typeparam name="T">Type specifier.</typeparam>

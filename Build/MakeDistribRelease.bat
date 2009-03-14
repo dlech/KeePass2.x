@@ -4,8 +4,8 @@ DEL /F /S /Q KeePass_Distrib\*.*
 COPY /B KeePass\Release\KeePass.exe /B KeePass_Distrib\KeePass.exe
 COPY /B KeePass\Release\KeePass.XmlSerializers.dll /B KeePass_Distrib\KeePass.XmlSerializers.dll
 
-COPY /B KeePassNtv\Release\KeePassNtv32.dll /B KeePass_Distrib\KeePassNtv32.dll
-COPY /B "KeePassNtv\Release x64\KeePassNtv64.dll" /B KeePass_Distrib\KeePassNtv64.dll
+REM COPY /B KeePassNtv\Release\KeePassNtv32.dll /B KeePass_Distrib\KeePassNtv32.dll
+REM COPY /B "KeePassNtv\Release x64\KeePassNtv64.dll" /B KeePass_Distrib\KeePassNtv64.dll
 
 COPY /B ..\Ext\KeePass.config.xml /B KeePass_Distrib\KeePass.config.xml
 
