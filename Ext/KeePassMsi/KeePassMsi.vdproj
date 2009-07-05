@@ -262,7 +262,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShInstUtil, Version=2.0.7.28261, Culture=neutral, PublicKeyToken=2b3ab31150cbd0c3, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShInstUtil, Version=2.0.8.21725, Culture=neutral, PublicKeyToken=2b3ab31150cbd0c3, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_1E5C8CB4F4B448C6893857E08EA012E5"
@@ -393,7 +393,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.8.21738, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_838987B3C51D42C3C7B9BDA1339A5500"
@@ -424,7 +424,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.0.8.21738, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -555,7 +555,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.7.28344, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.0.8.21738, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -703,14 +703,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:KeePass"
-        "ProductCode" = "8:{013BA1B7-CE52-4A04-9B87-9F41A5CF4F46}"
-        "PackageCode" = "8:{3DC19383-684A-4927-91D7-9B363D24BA55}"
+        "ProductCode" = "8:{06B701C7-27CF-48B3-B9D1-04DF82FEAE58}"
+        "PackageCode" = "8:{6D1044A8-F4B0-449F-A04A-28B23FE35D1E}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.0.7"
+        "ProductVersion" = "8:2.0.8"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://keepass.info/"

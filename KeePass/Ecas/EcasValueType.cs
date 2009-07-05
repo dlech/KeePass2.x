@@ -23,6 +23,7 @@ namespace KeePass.Ecas
 {
 	public enum EcasValueType
 	{
+		None = 0,
 		String = 1,
 		Bool = 2,
 		EnumStrings = 3,

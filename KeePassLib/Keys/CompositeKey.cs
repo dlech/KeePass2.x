@@ -144,7 +144,7 @@ namespace KeePassLib.Keys
 
 		/// <summary>
 		/// Creates the composite key from the supplied user key sources (password,
-		/// key-file, user account, computer ID, etc.).
+		/// key file, user account, computer ID, etc.).
 		/// </summary>
 		private byte[] CreateRawCompositeKey32()
 		{
@@ -155,7 +155,6 @@ namespace KeePassLib.Keys
 			foreach(IUserKey pKey in m_vUserKeys)
 			{
 				ProtectedBinary b = pKey.KeyData;
-
 				if(b != null)
 				{
 					byte[] pbKeyData = b.ReadData();
@@ -255,6 +254,13 @@ namespace KeePassLib.Keys
 			Array.Clear(pbIV, 0, pbIV.Length);
 
 			RijndaelManaged r = new RijndaelManaged();
+
+			if(r.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				r.BlockSize = 128;
+			}
+
 			r.IV = pbIV;
 			r.Mode = CipherMode.ECB;
 			r.KeySize = 256;
@@ -313,6 +319,13 @@ namespace KeePassLib.Keys
 			}
 
 			RijndaelManaged r = new RijndaelManaged();
+
+			if(r.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				r.BlockSize = 128;
+			}
+
 			r.IV = pbIV;
 			r.Mode = CipherMode.ECB;
 			r.KeySize = 256;

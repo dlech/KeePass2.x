@@ -79,27 +79,24 @@ namespace KeePassLib.Serialization
 
 			try
 			{
-				BinaryReader br = null;
-				BinaryReader brDecrypted = null;
+				BinaryReaderEx br = null;
+				BinaryReaderEx brDecrypted = null;
 				Stream readerStream = null;
 
 				if(kdbFormat == Kdb4Format.Default)
 				{
-					br = new BinaryReader(hashedStream, encNoBom);
+					br = new BinaryReaderEx(hashedStream, encNoBom, KLRes.FileCorrupted);
 					ReadHeader(br);
 
 					Stream sDecrypted = AttachStreamDecryptor(hashedStream);
 					if((sDecrypted == null) || (sDecrypted == hashedStream))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
-					brDecrypted = new BinaryReader(sDecrypted, encNoBom);
+					brDecrypted = new BinaryReaderEx(sDecrypted, encNoBom, KLRes.FileCorrupted);
 					byte[] pbStoredStartBytes = brDecrypted.ReadBytes(32);
 
-					if((pbStoredStartBytes == null) || (pbStoredStartBytes.Length != 32) ||
-						(m_pbStreamStartBytes == null) || (m_pbStreamStartBytes.Length != 32))
-					{
+					if((m_pbStreamStartBytes == null) || (m_pbStreamStartBytes.Length != 32))
 						throw new InvalidDataException();
-					}
 
 					for(int iStart = 0; iStart < 32; ++iStart)
 					{
@@ -153,7 +150,7 @@ namespace KeePassLib.Serialization
 			sSource.Close();
 		}
 
-		private void ReadHeader(BinaryReader br)
+		private void ReadHeader(BinaryReaderEx br)
 		{
 			Debug.Assert(br != null);
 			if(br == null) throw new ArgumentNullException("br");
@@ -167,13 +164,16 @@ namespace KeePassLib.Serialization
 				throw new OldFormatException(PwDefs.ShortProductName + @" 1.x",
 					OldFormatException.OldFormatType.KeePass1x);
 
-			if((uSig1 != FileSignature1) || (uSig2 != FileSignature2))
-				throw new FormatException(KLRes.FileSigInvalid);
+			if((uSig1 == FileSignature1) && (uSig2 == FileSignature2)) { }
+			else if((uSig1 == FileSignaturePreRelease1) && (uSig2 ==
+				FileSignaturePreRelease2)) { }
+			else throw new FormatException(KLRes.FileSigInvalid);
 
 			byte[] pb = br.ReadBytes(4);
 			uint uVersion = MemUtil.BytesToUInt32(pb);
-			if((uVersion > FileVersion32) && (m_slLogger != null))
-				m_slLogger.SetText(KLRes.FileVersionUnknown, LogStatusType.Warning);
+			if((uVersion & FileVersionCriticalMask) > (FileVersion32 & FileVersionCriticalMask))
+				throw new FormatException(KLRes.FileVersionUnsupported +
+					MessageService.NewParagraph + KLRes.FileNewVerReq);
 
 			while(true)
 			{
@@ -182,7 +182,7 @@ namespace KeePassLib.Serialization
 			}
 		}
 
-		private bool ReadHeaderField(BinaryReader brSource)
+		private bool ReadHeaderField(BinaryReaderEx brSource)
 		{
 			Debug.Assert(brSource != null);
 			if(brSource == null) throw new ArgumentNullException("brSource");
@@ -193,9 +193,12 @@ namespace KeePassLib.Serialization
 			byte[] pbData = null;
 			if(uSize > 0)
 			{
+				string strPrevExcpText = brSource.ReadExceptionText;
+				brSource.ReadExceptionText = KLRes.FileHeaderEndEarly;
+
 				pbData = brSource.ReadBytes(uSize);
-				if((pbData == null) || (pbData.Length != uSize))
-					throw new EndOfStreamException(KLRes.FileHeaderEndEarly);
+
+				brSource.ReadExceptionText = strPrevExcpText;
 			}
 
 			bool bResult = true;

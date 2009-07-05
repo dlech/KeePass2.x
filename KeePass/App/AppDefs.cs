@@ -118,10 +118,16 @@ namespace KeePass.App
 
 			public const string PreSelect = "preselect";
 
+			public const string IoCredUserName = "iousername";
+			public const string IoCredPassword = "iopassword";
+			public const string IoCredFromRecent = "iocredfromrecent";
+
 			public const string FileExtRegister = "registerfileext";
 			public const string FileExtUnregister = "unregisterfileext";
 
 			public const string ExitAll = "exit-all";
+			public const string AutoType = "auto-type";
+			public const string Minimize = "minimize";
 
 			public const string Help = @"?";
 			public const string HelpLong = "help";
@@ -146,7 +152,7 @@ namespace KeePass.App
 		public const string MutexName = "KeePassAppMutex";
 		public const string MutexNameGlobal = "KeePassAppMutexEx";
 
-		public const string ScriptExtension = "kps";
+		// public const string ScriptExtension = "kps";
 
 		public const int InvalidWindowValue = -16381;
 
@@ -161,7 +167,7 @@ namespace KeePass.App
 		public const string DefaultTrlAuthor = "Dominik Reichl";
 		public const string DefaultTrlContact = @"http://www.dominik-reichl.de/";
 
-		public const string LanguageInfoFileName = "LanguageInfo.xml";
+		// public const string LanguageInfoFileName = "LanguageInfo.xml";
 
 		public const string ColumnIdnGroup = "Group";
 		public const string ColumnIdnCreationTime = "CreationTime";

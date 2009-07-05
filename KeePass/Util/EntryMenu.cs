@@ -132,7 +132,7 @@ namespace KeePass.Util
 			tsmi.ImageIndex = (int)PwIcon.Run;
 			tsmi.Tag = pe;
 			tsmi.Click += OnAutoType;
-			tsmi.Enabled = pe.AutoType.Enabled;
+			tsmi.Enabled = pe.GetAutoTypeEnabled();
 			tsmiEntry.DropDownItems.Add(tsmi);
 
 			tsmiEntry.DropDownItems.Add(new ToolStripSeparator());

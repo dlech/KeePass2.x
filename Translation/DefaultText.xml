@@ -28,6 +28,15 @@
 		<Data Name="AfterDatabaseOpen">
 			<Value>After Opening a Database</Value>
 		</Data>
+		<Data Name="AlignCenter">
+			<Value>Align Center</Value>
+		</Data>
+		<Data Name="AlignLeft">
+			<Value>Align Left</Value>
+		</Data>
+		<Data Name="AlignRight">
+			<Value>Align Right</Value>
+		</Data>
 		<Data Name="AllEntriesTitle">
 			<Value>All Entries</Value>
 		</Data>
@@ -51,12 +60,6 @@
 		</Data>
 		<Data Name="AskContinue">
 			<Value>Do you want to continue?</Value>
-		</Data>
-		<Data Name="Assistant">
-			<Value>Assistant</Value>
-		</Data>
-		<Data Name="AssistantTel">
-			<Value>AssistantTel</Value>
 		</Data>
 		<Data Name="AttachedExistsAlready">
 			<Value>The following file has already been attached to the current entry:</Value>
@@ -127,6 +130,9 @@
 		<Data Name="AutoTypePrependInitSeqForIE">
 			<Value>Prepend special initialization sequence for Internet Explorer windows</Value>
 		</Data>
+		<Data Name="AutoTypeReleaseAltWithKeyPress">
+			<Value>Send Alt keypress when only the Alt modifier is active</Value>
+		</Data>
 		<Data Name="AutoTypeSequenceInvalid">
 			<Value>The specified auto-type sequence is invalid.</Value>
 		</Data>
@@ -136,20 +142,14 @@
 		<Data Name="AvailableLanguages">
 			<Value>Available Languages</Value>
 		</Data>
-		<Data Name="BankAccount">
-			<Value>Bank Account</Value>
+		<Data Name="BackgroundColor">
+			<Value>Background Color</Value>
 		</Data>
 		<Data Name="Bits">
 			<Value>Bits</Value>
 		</Data>
-		<Data Name="BranchCode">
-			<Value>Branch Code</Value>
-		</Data>
-		<Data Name="BranchHours">
-			<Value>Branch Hours</Value>
-		</Data>
-		<Data Name="BranchTel">
-			<Value>Branch Tel.</Value>
+		<Data Name="Bold">
+			<Value>Bold</Value>
 		</Data>
 		<Data Name="Browser">
 			<Value>Browser</Value>
@@ -168,9 +168,6 @@
 		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
 			<Value>Cannot move entries because they aren't stored in the same group.</Value>
-		</Data>
-		<Data Name="CarTel">
-			<Value>Car Tel.</Value>
 		</Data>
 		<Data Name="ChangeMasterKeyIntroShort">
 			<Value>You are changing the composite master key for the currently-open database.</Value>
@@ -198,6 +195,9 @@
 		</Data>
 		<Data Name="ClipboardDataCopied">
 			<Value>Data copied to clipboard.</Value>
+		</Data>
+		<Data Name="ClipboardViewerIgnoreFormat">
+			<Value>Protect clipboard using 'Clipboard Viewer Ignore' format</Value>
 		</Data>
 		<Data Name="CloseButton">
 			<Value>&amp;Close</Value>
@@ -273,6 +273,9 @@
 		</Data>
 		<Data Name="CopyTanMenu">
 			<Value>Copy &amp;TAN</Value>
+		</Data>
+		<Data Name="CopyUrlsInsteadOfOpening">
+			<Value>Copy URLs to clipboard instead of opening them</Value>
 		</Data>
 		<Data Name="CopyUserFull">
 			<Value>Copy User Name to Clipboard</Value>
@@ -370,14 +373,14 @@
 		<Data Name="DeleteGroupQuestion">
 			<Value>Are you sure you want to permanently delete the selected group?</Value>
 		</Data>
-		<Data Name="Department">
-			<Value>Department</Value>
-		</Data>
 		<Data Name="Description">
 			<Value>Description</Value>
 		</Data>
 		<Data Name="Details">
 			<Value>Details</Value>
+		</Data>
+		<Data Name="Disabled">
+			<Value>Disabled</Value>
 		</Data>
 		<Data Name="DiscardChanges">
 			<Value>Discard changes</Value>
@@ -403,6 +406,9 @@
 		<Data Name="EditGroupDesc">
 			<Value>Edit properties of the currently selected group.</Value>
 		</Data>
+		<Data Name="EditObject">
+			<Value>Edit {0}</Value>
+		</Data>
 		<Data Name="EditStringField">
 			<Value>Edit Entry String Field</Value>
 		</Data>
@@ -414,6 +420,18 @@
 		</Data>
 		<Data Name="Empty">
 			<Value>Empty</Value>
+		</Data>
+		<Data Name="EmptyMasterPw">
+			<Value>You have selected to use an empty master password.</Value>
+		</Data>
+		<Data Name="EmptyMasterPwHint">
+			<Value>An empty master password is not the same as using no master password at all.</Value>
+		</Data>
+		<Data Name="EmptyMasterPwQuestion">
+			<Value>Are you sure you want to use an empty master password?</Value>
+		</Data>
+		<Data Name="Enabled">
+			<Value>Enabled</Value>
 		</Data>
 		<Data Name="Encoding">
 			<Value>Encoding</Value>
@@ -441,6 +459,9 @@
 		</Data>
 		<Data Name="EntryList">
 			<Value>Entry List</Value>
+		</Data>
+		<Data Name="EntryListAutoResizeColumns">
+			<Value>Automatically resize entry list columns when resizing the main window</Value>
 		</Data>
 		<Data Name="EnvironmentVariable">
 			<Value>Environment variable</Value>
@@ -616,6 +637,9 @@
 		<Data Name="FocusResultsAfterQuickFind">
 			<Value>Focus entry list after a successful quick search (toolbar)</Value>
 		</Data>
+		<Data Name="Font">
+			<Value>Font</Value>
+		</Data>
 		<Data Name="FormatNoDatabaseDesc">
 			<Value>This file format doesn't support database descriptions.</Value>
 		</Data>
@@ -630,9 +654,6 @@
 		</Data>
 		<Data Name="FormatOnlyOneAttachment">
 			<Value>This file format only supports one attachment per entry. Only the first attachment is saved, the others are ignored.</Value>
-		</Data>
-		<Data Name="Frequency">
-			<Value>Frequency</Value>
 		</Data>
 		<Data Name="General">
 			<Value>General</Value>
@@ -691,23 +712,20 @@
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
 		</Data>
-		<Data Name="HomeAddress">
-			<Value>Home Address</Value>
-		</Data>
 		<Data Name="Homebanking">
 			<Value>Homebanking</Value>
-		</Data>
-		<Data Name="HomeFax">
-			<Value>Home Fax</Value>
 		</Data>
 		<Data Name="HomepageVisitQuestion">
 			<Value>Do you want to visit the KeePass homepage now?</Value>
 		</Data>
-		<Data Name="HomeTel">
-			<Value>Home Tel.</Value>
+		<Data Name="HotKeyAltOnly">
+			<Value>It is highly recommended not to use global hot keys with only Alt or Alt-Shift as modifier.</Value>
 		</Data>
-		<Data Name="Iban">
-			<Value>IBAN</Value>
+		<Data Name="HotKeyAltOnlyHint">
+			<Value>Recommended modifiers are Ctrl-Alt, Ctrl-Shift and Ctrl-Alt-Shift.</Value>
+		</Data>
+		<Data Name="HotKeyAltOnlyQuestion">
+			<Value>Are you sure you want to use the specified hot keys?</Value>
 		</Data>
 		<Data Name="Id">
 			<Value>ID</Value>
@@ -754,6 +772,9 @@
 		<Data Name="ImportMustReadQuestion">
 			<Value>Have you understood how the import process works and want to start it now?</Value>
 		</Data>
+		<Data Name="InheritSettingFromParent">
+			<Value>Inherit setting from parent</Value>
+		</Data>
 		<Data Name="Internet">
 			<Value>Internet</Value>
 		</Data>
@@ -769,14 +790,17 @@
 		<Data Name="InvalidUserPassword">
 			<Value>The specified user name / password combination is invalid.</Value>
 		</Data>
-		<Data Name="JobTitle">
-			<Value>Job Title</Value>
+		<Data Name="Italic">
+			<Value>Italic</Value>
 		</Data>
 		<Data Name="Kdb3KeePassLibC">
 			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
 		</Data>
 		<Data Name="KdbxFiles">
 			<Value>KeePass KDBX Files</Value>
+		</Data>
+		<Data Name="KeePassEditor">
+			<Value>KeePass Editor</Value>
 		</Data>
 		<Data Name="KeePassLibCLong">
 			<Value>KeePassLibC (1.x File Support)</Value>
@@ -862,9 +886,6 @@
 		<Data Name="MergingData">
 			<Value>Merging data...</Value>
 		</Data>
-		<Data Name="MinBalance">
-			<Value>Min. Balance</Value>
-		</Data>
 		<Data Name="MinimizeAfterCopy">
 			<Value>Minimize main window after copying data to the clipboard</Value>
 		</Data>
@@ -876,9 +897,6 @@
 		</Data>
 		<Data Name="MinimizeToTray">
 			<Value>Minimize to tray instead of taskbar</Value>
-		</Data>
-		<Data Name="MobileTel">
-			<Value>Mobile Tel.</Value>
 		</Data>
 		<Data Name="Name">
 			<Value>Name</Value>
@@ -918,6 +936,9 @@
 		</Data>
 		<Data Name="Not">
 			<Value>Not</Value>
+		</Data>
+		<Data Name="NotRecommended">
+			<Value>(not recommended)</Value>
 		</Data>
 		<Data Name="Notes">
 			<Value>Notes</Value>
@@ -970,9 +991,6 @@
 		<Data Name="OverwriteExistingFileQuestion">
 			<Value>Overwrite the existing file?</Value>
 		</Data>
-		<Data Name="Pager">
-			<Value>Pager</Value>
-		</Data>
 		<Data Name="ParamDescHelp">
 			<Value>Detailed descriptions of all parameters can be found in the help manual.</Value>
 		</Data>
@@ -1012,14 +1030,23 @@
 		<Data Name="Plugin">
 			<Value>Plugin</Value>
 		</Data>
-		<Data Name="PluginFailedToLoad">
-			<Value>The following plugin cannot be loaded:</Value>
+		<Data Name="Plugin1x">
+			<Value>This plugin appears to be a plugin for KeePass 1.x.</Value>
+		</Data>
+		<Data Name="Plugin1xHint">
+			<Value>KeePass 1.x plugins cannot be used together with KeePass 2.x and vice versa.</Value>
+		</Data>
+		<Data Name="PluginIncompatible">
+			<Value>The following plugin is incompatible with the current KeePass version:</Value>
 		</Data>
 		<Data Name="Plugins">
 			<Value>Plugins</Value>
 		</Data>
 		<Data Name="PluginsDesc">
 			<Value>Here you can configure all loaded KeePass plugins.</Value>
+		</Data>
+		<Data Name="PluginUpdateHint">
+			<Value>Have a look at the plugin's website for an appropriate version.</Value>
 		</Data>
 		<Data Name="PolicyAutoTypeDesc">
 			<Value>Allow auto-typing entries to other windows.</Value>
@@ -1069,14 +1096,17 @@
 		<Data Name="RecycleBin">
 			<Value>Recycle Bin</Value>
 		</Data>
+		<Data Name="Redo">
+			<Value>Redo</Value>
+		</Data>
 		<Data Name="RememberHidingSettings">
 			<Value>Remember password hiding setting in 'Edit Entry' window</Value>
 		</Data>
+		<Data Name="RememberKeyFilePaths">
+			<Value>Remember key file paths</Value>
+		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
-		</Data>
-		<Data Name="RoutingCode">
-			<Value>Routing Code</Value>
 		</Data>
 		<Data Name="SampleEntry">
 			<Value>Sample Entry</Value>
@@ -1163,7 +1193,7 @@
 			<Value>Show full path in title bar (instead of file name only)</Value>
 		</Data>
 		<Data Name="ShowGridLines">
-			<Value>Show grid lines in password entry list</Value>
+			<Value>Show grid lines in entry list</Value>
 		</Data>
 		<Data Name="ShowIn">
 			<Value>Show in</Value>
@@ -1171,11 +1201,11 @@
 		<Data Name="ShowTrayOnlyIfTrayed">
 			<Value>Show tray icon only if main window has been sent to tray</Value>
 		</Data>
+		<Data Name="Size">
+			<Value>Size</Value>
+		</Data>
 		<Data Name="SoonToExpireEntries">
 			<Value>Expired Entries and Entries That Will Expire Soon</Value>
-		</Data>
-		<Data Name="SortCode">
-			<Value>Sort Code</Value>
 		</Data>
 		<Data Name="SpecialKeys">
 			<Value>Special Keys</Value>
@@ -1195,11 +1225,11 @@
 		<Data Name="StartsWith">
 			<Value>Starts with</Value>
 		</Data>
+		<Data Name="Strikeout">
+			<Value>Strikeout</Value>
+		</Data>
 		<Data Name="Success">
 			<Value>Success.</Value>
-		</Data>
-		<Data Name="SwiftCode">
-			<Value>SWIFT Code</Value>
 		</Data>
 		<Data Name="SyncFailed">
 			<Value>Synchronization failed.</Value>
@@ -1222,18 +1252,6 @@
 		<Data Name="SystemCodePage">
 			<Value>System Code Page</Value>
 		</Data>
-		<Data Name="TAccountInfoTel">
-			<Value>Account Info Tel.</Value>
-		</Data>
-		<Data Name="TAccountNames">
-			<Value>Account names</Value>
-		</Data>
-		<Data Name="TAccountNumber">
-			<Value>Account Number</Value>
-		</Data>
-		<Data Name="TAccountType">
-			<Value>Account Type</Value>
-		</Data>
 		<Data Name="TanWizard">
 			<Value>TAN Wizard</Value>
 		</Data>
@@ -1242,6 +1260,9 @@
 		</Data>
 		<Data Name="TargetWindow">
 			<Value>Target Window</Value>
+		</Data>
+		<Data Name="TextColor">
+			<Value>Text Color</Value>
 		</Data>
 		<Data Name="TextViewer">
 			<Value>Text Viewer</Value>
@@ -1269,9 +1290,6 @@
 		</Data>
 		<Data Name="TooManyFilesError">
 			<Value>Too many files have been selected. Select smaller groups and repeat the current procedure a few times.</Value>
-		</Data>
-		<Data Name="TransfersOf">
-			<Value>Transfers Of</Value>
 		</Data>
 		<Data Name="TransformationRounds1SecHint">
 			<Value>Compute the number of rounds that lead to a delay of 1 second on this computer.</Value>
@@ -1314,6 +1332,9 @@
 		</Data>
 		<Data Name="TypeUnknownHint">
 			<Value>A newer KeePass version or a plugin might be required for this type.</Value>
+		</Data>
+		<Data Name="Underline">
+			<Value>Underline</Value>
 		</Data>
 		<Data Name="Undo">
 			<Value>Undo</Value>
@@ -1378,9 +1399,6 @@
 		<Data Name="WebBrowser">
 			<Value>Web Browser</Value>
 		</Data>
-		<Data Name="WebPage">
-			<Value>Web Page</Value>
-		</Data>
 		<Data Name="WebSiteLogin">
 			<Value>Web Site Login</Value>
 		</Data>
@@ -1390,14 +1408,8 @@
 		<Data Name="WindowsOS">
 			<Value>Windows</Value>
 		</Data>
-		<Data Name="WorkFax">
-			<Value>Work Fax</Value>
-		</Data>
 		<Data Name="WorkspaceLocked">
 			<Value>Workspace Locked</Value>
-		</Data>
-		<Data Name="WorkTel">
-			<Value>Work Tel.</Value>
 		</Data>
 		<Data Name="XslExporter">
 			<Value>Transform using XSL Stylesheet</Value>
@@ -1432,11 +1444,17 @@
 		<Data Name="FatalErrorText">
 			<Value>A fatal error has occurred!</Value>
 		</Data>
+		<Data Name="FileCorrupted">
+			<Value>The file is corrupted.</Value>
+		</Data>
 		<Data Name="FileHeaderEndEarly">
 			<Value>The file header is corrupted! Some header data was declared but is not present.</Value>
 		</Data>
 		<Data Name="FileLoadFailed">
 			<Value>Failed to load the specified file!</Value>
+		</Data>
+		<Data Name="FileNewVerReq">
+			<Value>A newer KeePass version is required to open this file.</Value>
 		</Data>
 		<Data Name="FileSaveCorruptionWarning">
 			<Value>The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.</Value>
@@ -1453,8 +1471,8 @@
 		<Data Name="FileUnknownCompression">
 			<Value>The file is compressed using an unknown compression algorithm!</Value>
 		</Data>
-		<Data Name="FileVersionUnknown">
-			<Value>Unknown file version!</Value>
+		<Data Name="FileVersionUnsupported">
+			<Value>The file version is unsupported.</Value>
 		</Data>
 		<Data Name="FinalKeyCreationFailed">
 			<Value>Failed to create the final encryption/decryption key!</Value>

@@ -94,6 +94,11 @@ namespace KeePass.Forms
 				m_cbExpires.Checked = false;
 			}
 
+			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableAutoType,
+				m_pwGroup.EnableAutoType, m_pwGroup.GetAutoTypeEnabledInherited());
+			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableSearching,
+				m_pwGroup.EnableSearching, m_pwGroup.GetSearchingEnabledInherited());
+
 			m_tbDefaultAutoTypeSeq.Text = m_pwGroup.GetAutoTypeSequenceInherited();
 
 			if(m_pwGroup.DefaultAutoTypeSequence.Length == 0)
@@ -120,6 +125,8 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
+			m_pwGroup.Touch(true, false);
+
 			m_pwGroup.Name = m_tbName.Text;
 			m_pwGroup.Notes = m_tbNotes.Text;
 			m_pwGroup.IconId = m_pwIconIndex;
@@ -127,6 +134,9 @@ namespace KeePass.Forms
 
 			m_pwGroup.Expires = m_cbExpires.Checked;
 			m_pwGroup.ExpiryTime = m_dtExpires.Value;
+
+			m_pwGroup.EnableAutoType = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableAutoType);
+			m_pwGroup.EnableSearching = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableSearching);
 
 			if(m_rbAutoTypeInherit.Checked)
 				m_pwGroup.DefaultAutoTypeSequence = string.Empty;

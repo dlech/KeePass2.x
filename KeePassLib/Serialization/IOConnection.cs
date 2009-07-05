@@ -22,20 +22,51 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 #if !KeePassLibSD
 using System.Net.Cache;
+using System.Net.Security;
 #endif
 
 namespace KeePassLib.Serialization
 {
+#if !KeePassLibSD
+	public sealed class IOWebClient : WebClient
+	{
+		protected override WebRequest GetWebRequest(Uri address)
+		{
+			WebRequest request = base.GetWebRequest(address);
+
+			// WebDAV support
+			if(request is HttpWebRequest)
+			{
+				request.PreAuthenticate = true; // Also auth GET
+				if(request.Method == "POST") request.Method = "PUT";
+			}
+
+			return request;
+		}
+	}
+#endif
+
 	public static class IOConnection
 	{
 #if !KeePassLibSD
-		private static WebClient CreateWebClient(IOConnectionInfo ioc)
+		// Allow self-signed certificates, expired certificates, etc.
+		private static bool ValidateServerCertificate(object sender,
+			X509Certificate certificate, X509Chain chain,
+			SslPolicyErrors sslPolicyErrors)
 		{
-			WebClient wc = new WebClient();
+			return true;
+		}
 
+		private static IOWebClient CreateWebClient(IOConnectionInfo ioc)
+		{
+			ServicePointManager.ServerCertificateValidationCallback =
+				ValidateServerCertificate;
+
+			IOWebClient wc = new IOWebClient();
 			wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
 			if((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))

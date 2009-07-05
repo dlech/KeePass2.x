@@ -69,7 +69,7 @@ namespace KeePass.Forms
 		/// on the screen or not.</param>
 		/// <param name="bSetForeground">If <c>true</c>, the window will be
 		/// brought to the foreground when showing it.</param>
-		/// <param name="nCharCount">Number of characters to pick. Specify
+		/// <param name="uCharCount">Number of characters to pick. Specify
 		/// 0 to allow picking a variable amount of characters.</param>
 		public void InitEx(ProtectedString psWord, bool bCenterScreen,
 			bool bSetForeground, uint uCharCount)
@@ -102,7 +102,11 @@ namespace KeePass.Forms
 
 			RecreateResizableWindowControls();
 
-			if(m_uCharCount > 0) m_btnOK.Enabled = false;
+			if(m_uCharCount > 0)
+			{
+				m_btnOK.Enabled = false;
+				// m_btnOK.Visible = false;
+			}
 
 			if(m_bSetForeground)
 			{
@@ -144,8 +148,8 @@ namespace KeePass.Forms
 			{
 				foreach(Button btn in m_lButtons)
 				{
-					m_pnlSelect.Controls.Remove(btn);
 					btn.Click -= this.OnSelectCharacter;
+					m_pnlSelect.Controls.Remove(btn);
 					btn.Dispose();
 				}
 
@@ -166,9 +170,11 @@ namespace KeePass.Forms
 
 		private void RecreateResizableWindowControls()
 		{
+			string strTitle = KPRes.PickCharacters;
+			if(m_uCharCount > 0) strTitle += " (" + m_uCharCount.ToString() + ")";
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_KGPG_Key2, KPRes.PickCharacters,
+				Properties.Resources.B48x48_KGPG_Key2, strTitle,
 				KPRes.PickCharactersDesc);
 
 			RemoveAllCharButtons();
@@ -251,6 +257,7 @@ namespace KeePass.Forms
 		{
 			if((m_uCharCount > 0) && (m_secWord.TextLength == m_uCharCount))
 			{
+				// m_btnOK.Visible = true;
 				m_btnOK.Enabled = true;
 				m_btnOK.PerformClick();
 			}

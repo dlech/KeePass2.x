@@ -101,6 +101,12 @@ namespace KeePassLib.Cryptography.Cipher
 
 			RijndaelManaged r = new RijndaelManaged();
 
+			if(r.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				r.BlockSize = 128;
+			}
+
 			byte[] pbLocalIV = new byte[16];
 			Array.Copy(pbIV, pbLocalIV, 16);
 			r.IV = pbLocalIV;

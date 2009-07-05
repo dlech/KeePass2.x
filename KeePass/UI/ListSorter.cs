@@ -84,6 +84,7 @@ namespace KeePass.UI
 			ListViewItem lviY = (bSwap ? (ListViewItem)x : (ListViewItem)y);
 			string strL, strR;
 
+			Debug.Assert(lviX.SubItems.Count == lviY.SubItems.Count);
 			if((m_nColumn <= 0) || (lviX.SubItems.Count <= m_nColumn) ||
 				(lviY.SubItems.Count <= m_nColumn))
 			{

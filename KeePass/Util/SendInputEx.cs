@@ -31,14 +31,22 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
+	internal sealed class SiStateEx
+	{
+		public bool InputBlocked = false;
+		public IntPtr OriginalKeyboardLayout = IntPtr.Zero;
+	}
+
 	public static class SendInputEx
 	{
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
-			InitSendKeys();
+			SiStateEx si = InitSendKeys();
 
 			try
 			{
+				Debug.Assert(GetActiveKeyModifiers().Count == 0);
+
 				if(bObfuscate)
 				{
 					try { SendObfuscated(strKeys); }
@@ -48,29 +56,36 @@ namespace KeePass.Util
 			}
 			catch
 			{
-				FinishSendKeys();
+				FinishSendKeys(si);
 				throw;
 			}
 
-			FinishSendKeys();
+			FinishSendKeys(si);
 		}
 
-		private static void InitSendKeys()
+		private static SiStateEx InitSendKeys()
 		{
+			SiStateEx si = new SiStateEx();
+
 			try
 			{
-				NativeMethods.BlockInput(true);
+				EnsureSameKeyboardLayout(si);
+
+				si.InputBlocked = NativeMethods.BlockInput(true);
 
 				SendKeys.Flush();
 				// Application.DoEvents(); // Done by SendKeys.Flush
 
 				List<int> lMod = GetActiveKeyModifiers();
 				ActivateKeyModifiers(lMod, false);
+				SpecialReleaseModifiers(lMod);
 			}
 			catch(Exception) { Debug.Assert(false); }
+
+			return si;
 		}
 
-		private static void FinishSendKeys()
+		private static void FinishSendKeys(SiStateEx si)
 		{
 			try
 			{
@@ -79,11 +94,34 @@ namespace KeePass.Util
 				// them while KeePass is auto-typing!
 				// ActivateKeyModifiers(lRestore, true);
 
-				NativeMethods.BlockInput(false);
+				if(si.InputBlocked) NativeMethods.BlockInput(false); // Unblock
+
+				if(si.OriginalKeyboardLayout != IntPtr.Zero)
+					NativeMethods.ActivateKeyboardLayout(si.OriginalKeyboardLayout, 0);
 
 				Application.DoEvents();
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void EnsureSameKeyboardLayout(SiStateEx si)
+		{
+			IntPtr hWndTarget = NativeMethods.GetForegroundWindow();
+
+			uint uTargetProcessId;
+			uint uTargetThreadId = NativeMethods.GetWindowThreadProcessId(hWndTarget,
+				out uTargetProcessId);
+			
+			IntPtr hklSelf = NativeMethods.GetKeyboardLayout(0);
+			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(uTargetThreadId);
+			
+			if(hklSelf != hklTarget)
+			{
+				si.OriginalKeyboardLayout = NativeMethods.ActivateKeyboardLayout(
+					hklTarget, 0);
+				
+				Debug.Assert(si.OriginalKeyboardLayout == hklSelf);
+			}
 		}
 
 		private static bool SendModifierVKey(int vKey, bool bDown)
@@ -205,6 +243,20 @@ namespace KeePass.Util
 					SendModifierVKey(vKey, false);
 				}
 				else SendModifierVKey(vKey, bDown);
+			}
+		}
+
+		private static void SpecialReleaseModifiers(List<int> vKeys)
+		{
+			// Get out of a menu bar that was focused when only
+			// using Alt as hot key modifier
+			if(Program.Config.Integration.AutoTypeReleaseAltWithKeyPress &&
+				(vKeys.Count == 2) && vKeys.Contains(NativeMethods.VK_MENU) &&
+				(vKeys.Contains(NativeMethods.VK_LMENU) ||
+				vKeys.Contains(NativeMethods.VK_RMENU)))
+			{
+				SendModifierVKey(NativeMethods.VK_LMENU, true);
+				SendModifierVKey(NativeMethods.VK_LMENU, false);
 			}
 		}
 

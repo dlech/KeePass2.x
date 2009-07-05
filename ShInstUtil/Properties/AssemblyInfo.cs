@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 
 // General assembly properties
 [assembly: AssemblyTitle("ShInstUtil - KeePass Installation Utility")]
-[assembly: AssemblyDescription("Integration Utility")]
+[assembly: AssemblyDescription("Installation Utility")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dominik Reichl")]
 [assembly: AssemblyProduct("ShInstUtil - KeePass Installation Utility")]
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("7e0eb6e8-4f13-4b04-aad9-2acf8417a776")]
 
 // Assembly version information
-[assembly: AssemblyVersion("2.0.7.*")]
-[assembly: AssemblyFileVersion("2.0.7.0")]
+[assembly: AssemblyVersion("2.0.8.*")]
+[assembly: AssemblyFileVersion("2.0.8.0")]

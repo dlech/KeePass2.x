@@ -355,7 +355,7 @@ namespace KeePassLib
 
 			if(bOnlyIfNewer)
 			{
-				if(peTemplate.m_tLastMod < this.m_tLastMod) return;
+				if(peTemplate.m_tLastMod < m_tLastMod) return;
 			}
 
 			m_listStrings = peTemplate.m_listStrings;
@@ -387,12 +387,26 @@ namespace KeePassLib
 		/// <param name="bModified">Modify last modification time.</param>
 		public void Touch(bool bModified)
 		{
+			Touch(bModified, true);
+		}
+
+		/// <summary>
+		/// Touch the entry. This function updates the internal last access
+		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+		/// the last modification time gets updated, too.
+		/// </summary>
+		/// <param name="bModified">Modify last modification time.</param>
+		/// <param name="bTouchParents">If <c>true</c>, all parent objects
+		/// get touched, too.</param>
+		public void Touch(bool bModified, bool bTouchParents)
+		{
 			m_tLastAccess = DateTime.Now;
 			++m_uUsageCount;
 
 			if(bModified) m_tLastMod = m_tLastAccess;
 
-			if(m_pParentGroup != null) m_pParentGroup.Touch(bModified);
+			if(bTouchParents && (m_pParentGroup != null))
+				m_pParentGroup.Touch(bModified, true);
 		}
 
 		/// <summary>
@@ -423,6 +437,24 @@ namespace KeePassLib
 
 			CreateBackup();
 			AssignProperties(pe, false, false);
+		}
+
+		public bool GetAutoTypeEnabled()
+		{
+			if(m_listAutoType.Enabled == false) return false;
+
+			if(m_pParentGroup != null)
+				return m_pParentGroup.GetAutoTypeEnabledInherited();
+
+			return PwGroup.DefaultAutoTypeEnabled;
+		}
+
+		public bool GetSearchingEnabled()
+		{
+			if(m_pParentGroup != null)
+				return m_pParentGroup.GetSearchingEnabledInherited();
+
+			return PwGroup.DefaultSearchingEnabled;
 		}
 	}
 }

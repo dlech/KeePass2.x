@@ -4,3 +4,6 @@ MOVE /Y KLRes.Generated.cs ..\KeePassLib\Resources\KLRes.Generated.cs
 
 TrlUtil.exe src_from_xml DefaultTextSD.xml
 MOVE /Y KSRes.Generated.cs ..\KeePassLib\Resources\KSRes.Generated.cs
+
+PAUSE
+CLS

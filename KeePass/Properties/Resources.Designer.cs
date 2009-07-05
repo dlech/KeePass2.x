@@ -144,6 +144,20 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Color_Fill {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Color_Fill", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Colorize {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Colorize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_CompFile {
             get {
                 object obj = ResourceManager.GetObject("B16x16_CompFile", resourceCulture);
@@ -347,6 +361,34 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_FontBold {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_FontBold", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_FontItalic {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_FontItalic", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_FontStrikeout {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_FontStrikeout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_FontUnderline {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_FontUnderline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_FTP {
             get {
                 object obj = ResourceManager.GetObject("B16x16_FTP", resourceCulture);
@@ -413,6 +455,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Imp_CWallet {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_CWallet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_FlexWallet {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_FlexWallet", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -655,6 +704,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Redo {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Redo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Reload_Page {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Reload_Page", resourceCulture);
@@ -665,6 +721,27 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Spreadsheet {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Spreadsheet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_TextAlignCenter {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_TextAlignCenter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_TextAlignLeft {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_TextAlignLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_TextAlignRight {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_TextAlignRight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

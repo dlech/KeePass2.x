@@ -56,7 +56,7 @@
 			this.m_ctxEntryUrlSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryUrlOpenInInternal = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyCustomString = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryBinaries = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntryAttachments = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySaveAttachedFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryPerformAutoType = new System.Windows.Forms.ToolStripMenuItem();
@@ -217,7 +217,6 @@
 			this.m_statusPartInfo = new System.Windows.Forms.ToolStripStatusLabel();
 			this.m_statusPartProgress = new System.Windows.Forms.ToolStripProgressBar();
 			this.m_statusClipboard = new System.Windows.Forms.ToolStripProgressBar();
-			this.m_ntfTray = new System.Windows.Forms.NotifyIcon(this.components);
 			this.m_ctxTray = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxTrayTray = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTraySep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -229,7 +228,7 @@
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
 			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
-			this.m_tvGroups = new System.Windows.Forms.TreeView();
+			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
 			this.m_ctxGroupList.SuspendLayout();
@@ -462,7 +461,7 @@
             this.m_ctxEntryCopyPassword,
             this.m_ctxEntryUrl,
             this.m_ctxEntryCopyCustomString,
-            this.m_ctxEntryBinaries,
+            this.m_ctxEntryAttachments,
             this.m_ctxEntrySaveAttachedFiles,
             this.m_ctxEntrySep0,
             this.m_ctxEntryPerformAutoType,
@@ -477,7 +476,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(201, 352);
+			this.m_ctxPwList.Size = new System.Drawing.Size(201, 374);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -547,11 +546,11 @@
 			this.m_ctxEntryCopyCustomString.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryCopyCustomString.Text = "Copy Custom &String";
 			// 
-			// m_ctxEntryBinaries
+			// m_ctxEntryAttachments
 			// 
-			this.m_ctxEntryBinaries.Name = "m_ctxEntryBinaries";
-			this.m_ctxEntryBinaries.Size = new System.Drawing.Size(200, 22);
-			this.m_ctxEntryBinaries.Text = "Show in Internal Viewer";
+			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
+			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(200, 22);
+			this.m_ctxEntryAttachments.Text = "Attachments";
 			// 
 			// m_ctxEntrySaveAttachedFiles
 			// 
@@ -1729,7 +1728,8 @@
 			// 
 			this.m_tbAddEntryDefault.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_tbAddEntryDefault.Name = "m_tbAddEntryDefault";
-			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(67, 22);
+			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(86, 22);
+			this.m_tbAddEntryDefault.Text = "<>";
 			this.m_tbAddEntryDefault.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
 			// m_tbSep1
@@ -1874,14 +1874,6 @@
 			this.m_statusClipboard.Name = "m_statusClipboard";
 			this.m_statusClipboard.Size = new System.Drawing.Size(100, 16);
 			this.m_statusClipboard.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			// 
-			// m_ntfTray
-			// 
-			this.m_ntfTray.ContextMenuStrip = this.m_ctxTray;
-			this.m_ntfTray.Text = "DYN";
-			this.m_ntfTray.Visible = true;
-			this.m_ntfTray.Click += new System.EventHandler(this.OnSystemTrayClick);
-			this.m_ntfTray.DoubleClick += new System.EventHandler(this.OnSystemTrayDoubleClick);
 			// 
 			// m_ctxTray
 			// 
@@ -2125,7 +2117,7 @@
 		private System.Windows.Forms.RichTextBox m_richEntryView;
 		private KeePass.UI.CustomSplitContainerEx m_splitHorizontal;
 		private KeePass.UI.CustomSplitContainerEx m_splitVertical;
-		private System.Windows.Forms.TreeView m_tvGroups;
+		private KeePass.UI.CustomTreeViewEx m_tvGroups;
 		private System.Windows.Forms.StatusStrip m_statusMain;
 		private System.Windows.Forms.ToolStripStatusLabel m_statusPartSelected;
 		private System.Windows.Forms.ToolStripStatusLabel m_statusPartInfo;
@@ -2207,7 +2199,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewColumnsShowUuid;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewColumnsShowAttachs;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileRecent;
-		private System.Windows.Forms.NotifyIcon m_ntfTray;
 		private System.Windows.Forms.ContextMenuStrip m_ctxTray;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayTray;
 		private System.Windows.Forms.Timer m_timerMain;
@@ -2272,7 +2263,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneUp;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneDown;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveToBottom;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryBinaries;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAttachments;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntryUrlSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryUrlOpenInInternal;
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep0;

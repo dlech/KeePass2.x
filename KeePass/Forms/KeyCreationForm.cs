@@ -98,9 +98,7 @@ namespace KeePass.Forms
 
 			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
 			foreach(KeyProvider prov in Program.KeyProviderPool)
-			{
 				m_cmbKeyFile.Items.Add(prov.Name);
-			}
 
 			m_cmbKeyFile.SelectedIndex = 0;
 
@@ -140,6 +138,17 @@ namespace KeePass.Forms
 					return false;
 				}
 
+				if(m_secPassword.TextLength == 0)
+				{
+					if(!MessageService.AskYesNo(KPRes.EmptyMasterPw +
+						MessageService.NewParagraph + KPRes.EmptyMasterPwHint +
+						MessageService.NewParagraph + KPRes.EmptyMasterPwQuestion,
+						null, false))
+					{
+						return false;
+					}
+				}
+
 				uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;
 				if(m_secPassword.TextLength < uMinLen)
 				{
@@ -157,6 +166,15 @@ namespace KeePass.Forms
 					string strMQ = KPRes.MasterPasswordMinQualityFailed;
 					strMQ = strMQ.Replace(@"{PARAM}", uMinQual.ToString());
 					MessageService.ShowWarning(strMQ);
+					Array.Clear(pb, 0, pb.Length);
+					return false;
+				}
+
+				string strValRes = Program.KeyValidatorPool.Validate(pb,
+					KeyValidationType.MasterPassword);
+				if(strValRes != null)
+				{
+					MessageService.ShowWarning(strValRes);
 					Array.Clear(pb, 0, pb.Length);
 					return false;
 				}
@@ -181,17 +199,24 @@ namespace KeePass.Forms
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsKeyProv == true))
 			{
-				byte[] pbCustomKey = Program.KeyProviderPool.GetKey(strKeyFile);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
+					m_strDisplayName, true);
 
-				try { m_pKey.AddUserKey(new KcpCustomKey(pbCustomKey)); }
-				catch(Exception exCKP)
-				{
-					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exCKP);
-					return false;
-				}
-
+				bool bPerformHash;
+				byte[] pbCustomKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,
+					out bPerformHash);
 				if((pbCustomKey != null) && (pbCustomKey.Length > 0))
+				{
+					try { m_pKey.AddUserKey(new KcpCustomKey(strKeyFile, pbCustomKey, bPerformHash)); }
+					catch(Exception exCKP)
+					{
+						MessageService.ShowWarning(exCKP);
+						return false;
+					}
+
 					Array.Clear(pbCustomKey, 0, pbCustomKey.Length);
+				}
+				else return false; // Provider has shown error message
 			}
 
 			if(m_cbUserAccount.Checked)
@@ -263,6 +288,7 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			m_pKey = null;
 			CleanUpEx();
 		}
 
@@ -288,7 +314,6 @@ namespace KeePass.Forms
 			if(sfd.ShowDialog() == DialogResult.OK)
 			{
 				EntropyForm dlg = new EntropyForm();
-
 				if(dlg.ShowDialog() == DialogResult.OK)
 				{
 					byte[] pbAdditionalEntropy = dlg.GeneratedEntropy;
@@ -340,6 +365,11 @@ namespace KeePass.Forms
 		private void OnBtnHelp(object sender, EventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources, null);
+		}
+
+		private void OnKeyFileSelectedIndexChanged(object sender, EventArgs e)
+		{
+			EnableUserControls();
 		}
 	}
 }

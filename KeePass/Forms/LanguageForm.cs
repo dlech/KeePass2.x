@@ -70,7 +70,7 @@ namespace KeePass.Forms
 			lvi.SubItems.Add(AppDefs.DefaultTrlContact);
 
 			string strExe = WinUtil.GetExecutable();
-			string strPath = UrlUtil.GetFileDirectory(strExe, false);
+			string strPath = UrlUtil.GetFileDirectory(strExe, false, true);
 			GetAvailableTranslations(strPath);
 		}
 

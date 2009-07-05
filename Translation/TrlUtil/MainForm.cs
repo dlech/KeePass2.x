@@ -27,8 +27,10 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 
+using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Resources;
@@ -43,6 +45,7 @@ namespace TrlUtil
 		private string m_strFile = string.Empty;
 
 		private ImageList m_ilStr = new ImageList();
+		private Color m_clrFindBack;
 
 		private const string m_strFileFilter = "KeePass Translation (*.lngx)|*.lngx|All Files (*.*)|*.*";
 
@@ -64,7 +67,14 @@ namespace TrlUtil
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			this.Text += " " + PwDefs.VersionString;
+
 			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
+			m_clrFindBack = m_tbFind.BackColor;
+
+			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
+				string.Empty : " ") + "Search in active tab...");
+			UIUtil.SetCueBanner(m_tbFind, strSearchTr);
 
 			this.CreateStringTableUI();
 			this.UpdateControlTree();
@@ -76,6 +86,8 @@ namespace TrlUtil
 
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }
+
+			UpdateUIState();
 		}
 
 		private void CreateStringTableUI()
@@ -136,6 +148,9 @@ namespace TrlUtil
 			KPStringTable kpstTT = new KPStringTable();
 			kpstTT.Name = "KeePass.Forms.EcasTriggersForm.m_ctxTools";
 			m_trl.StringTables.Add(kpstTT);
+			KPStringTable kpstDE = new KPStringTable();
+			kpstDE.Name = "KeePass.Forms.DataEditorForm.m_menuMain";
+			m_trl.StringTables.Add(kpstDE);
 			KPStringTable kpstSD = new KPStringTable();
 			kpstSD.Name = "KeePassLib.Resources.KSRes";
 			m_trl.StringTables.Add(kpstSD);
@@ -257,6 +272,11 @@ namespace TrlUtil
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstTT, lvg, tf.ToolsContextMenu.Items);
 
+			KeePass.Forms.DataEditorForm df = new KeePass.Forms.DataEditorForm();
+			lvg = new ListViewGroup("Data Editor Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstDE, lvg, df.MainMenuEx.Items);
+
 			lvg = new ListViewGroup("Standard String Movement Context Menu Commands");
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstSM, lvg, ef.StandardStringMovementContextMenu.Items);
@@ -344,6 +364,12 @@ namespace TrlUtil
 		{
 			FormTrlMgr.RenderToTreeControl(m_trl.Forms, m_tvControls);
 			UpdateStatusImages(null);
+		}
+
+		private void UpdateUIState()
+		{
+			m_tbFind.Enabled = ((m_tabMain.SelectedTab == m_tabStrings) ||
+				(m_tabMain.SelectedTab == m_tabDialogs));
 		}
 
 		private void OnLinkLangCodeClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -769,6 +795,120 @@ namespace TrlUtil
 			UpdateControlTree();
 			m_tvControls.SelectedNode = m_tvControls.Nodes[0];
 			UpdatePreviewForm();
+		}
+
+		private void PerformQuickFind()
+		{
+			string str = m_tbFind.Text;
+			if(string.IsNullOrEmpty(str)) return;
+
+			bool bResult = true;
+			if(m_tabMain.SelectedTab == m_tabStrings)
+				bResult = PerformQuickFindStrings(str);
+			else if(m_tabMain.SelectedTab == m_tabDialogs)
+				bResult = PerformQuickFindDialogs(str);
+
+			if(!bResult) m_tbFind.BackColor = AppDefs.ColorEditError;
+		}
+
+		private bool PerformQuickFindStrings(string strFind)
+		{
+			int nItems = m_lvStrings.Items.Count;
+			if(nItems == 0) return false;
+
+			ListViewItem lviStart = m_lvStrings.FocusedItem;
+			int iOffset = ((lviStart != null) ? (lviStart.Index + 1) : 0);
+
+			for(int i = 0; i < nItems; ++i)
+			{
+				int j = ((iOffset + i) % nItems);
+				ListViewItem lvi = m_lvStrings.Items[j];
+				foreach(ListViewItem.ListViewSubItem lvsi in lvi.SubItems)
+				{
+					if(lvsi.Text.IndexOf(strFind, StrUtil.CaseIgnoreCmp) >= 0)
+					{
+						m_lvStrings.FocusedItem = lvi;
+						m_lvStrings.SelectedItems.Clear();
+						lvi.Selected = true;
+
+						m_lvStrings.EnsureVisible(j);
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		private bool PerformQuickFindDialogs(string strFind)
+		{
+			List<TreeNode> vNodes = new List<TreeNode>();
+			List<string> vValues = new List<string>();
+			GetControlTreeItems(m_tvControls.Nodes, vNodes, vValues);
+
+			int iOffset = vNodes.IndexOf(m_tvControls.SelectedNode) + 1;
+
+			for(int i = 0; i < vNodes.Count; ++i)
+			{
+				int j = ((iOffset + i) % vNodes.Count);
+
+				if(vValues[j].IndexOf(strFind, StrUtil.CaseIgnoreCmp) >= 0)
+				{
+					m_tvControls.SelectedNode = vNodes[j];
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private void GetControlTreeItems(TreeNodeCollection tnBase,
+			List<TreeNode> vNodes, List<string> vValues)
+		{
+			foreach(TreeNode tn in tnBase)
+			{
+				KPFormCustomization kpfc = (tn.Tag as KPFormCustomization);
+				KPControlCustomization kpcc = (tn.Tag as KPControlCustomization);
+
+				vNodes.Add(tn);
+				if(kpfc != null)
+					vValues.Add(kpfc.Window.Name + "©" + kpfc.Window.TextEnglish +
+						"©" + kpfc.Window.Text);
+				else if(kpcc != null)
+					vValues.Add(kpcc.Name + "©" + kpcc.TextEnglish + "©" + kpcc.Text);
+				else vValues.Add(tn.Text);
+
+				GetControlTreeItems(tn.Nodes, vNodes, vValues);
+			}
+		}
+
+		private void OnFindKeyDown(object sender, KeyEventArgs e)
+		{
+			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			{
+				e.Handled = true;
+				PerformQuickFind();
+				return;
+			}
+		}
+
+		private void OnFindKeyUp(object sender, KeyEventArgs e)
+		{
+			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			{
+				e.Handled = true;
+				return;
+			}
+		}
+
+		private void OnFindTextChanged(object sender, EventArgs e)
+		{
+			m_tbFind.BackColor = m_clrFindBack;
+		}
+
+		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateUIState();
 		}
 	}
 }

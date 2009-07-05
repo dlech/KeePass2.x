@@ -132,10 +132,14 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.RecycleBinEnabled = ReadBool(xmlChild, true);
 				else if(strName == ElemRecycleBinUuid)
 					m_pwDatabase.RecycleBinUuid = ReadUuid(xmlChild);
+				else if(strName == ElemEntryTemplatesGroup)
+					m_pwDatabase.EntryTemplatesGroup = ReadUuid(xmlChild);
 				else if(strName == ElemLastSelectedGroup)
 					m_pwDatabase.LastSelectedGroup = ReadUuid(xmlChild);
 				else if(strName == ElemLastTopVisibleGroup)
 					m_pwDatabase.LastTopVisibleGroup = ReadUuid(xmlChild);
+				else if(strName == ElemCustomData)
+					ReadStringDictEx(xmlChild, m_pwDatabase.CustomData);
 				else ReadUnknown(xmlChild);
 			}
 		}
@@ -256,6 +260,10 @@ namespace KeePassLib.Serialization
 					pgStorage.IsExpanded = ReadBool(xmlChild, true);
 				else if(strName == ElemGroupDefaultAutoTypeSeq)
 					pgStorage.DefaultAutoTypeSequence = ReadString(xmlChild);
+				else if(strName == ElemEnableAutoType)
+					pgStorage.EnableAutoType = StrUtil.StringToBoolEx(ReadString(xmlChild));
+				else if(strName == ElemEnableSearching)
+					pgStorage.EnableSearching = StrUtil.StringToBoolEx(ReadString(xmlChild));
 				else if(strName == ElemLastTopVisibleEntry)
 					pgStorage.LastTopVisibleEntry = ReadUuid(xmlChild);
 				else if(strName == ElemGroup)
@@ -603,5 +611,39 @@ namespace KeePassLib.Serialization
 				else ReadUnknown(xmlChild);
 			}
 		}
+
+		/*
+		private void ReadStringDictEx(XmlNode xmlNode, StringDictionaryEx sdStorage)
+		{
+			ProcessNode(xmlNode);
+
+			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
+			{
+				if(xmlChild.Name == ElemStringDictExItem)
+					ReadStringDictExItem(xmlChild, sdStorage);
+				else ReadUnknown(xmlChild);
+			}
+		}
+
+		private void ReadStringDictExItem(XmlNode xmlNode, StringDictionaryEx sdStorage)
+		{
+			ProcessNode(xmlNode);
+
+			string strName = null, strValue = null;
+
+			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
+			{
+				if(xmlChild.Name == ElemKey)
+					strName = ReadString(xmlChild);
+				else if(xmlChild.Name == ElemValue)
+					strValue = ReadString(xmlChild);
+				else ReadUnknown(xmlChild);
+			}
+
+			if((strName != null) && (strValue != null))
+				m_pwDatabase.CustomData.Set(strName, strValue);
+			else { Debug.Assert(false); }
+		}
+		*/
 	}
 }

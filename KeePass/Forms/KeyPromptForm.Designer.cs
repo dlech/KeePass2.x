@@ -55,7 +55,7 @@
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
 			this.m_cbUserAccount.Size = new System.Drawing.Size(158, 17);
 			this.m_cbUserAccount.TabIndex = 5;
-			this.m_cbUserAccount.Text = "Windows User Account";
+			this.m_cbUserAccount.Text = "Windows &User Account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
 			// 
 			// m_btnOpenKeyFile
@@ -76,7 +76,7 @@
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
 			this.m_cbKeyFile.Size = new System.Drawing.Size(75, 17);
 			this.m_cbKeyFile.TabIndex = 2;
-			this.m_cbKeyFile.Text = "Key File:";
+			this.m_cbKeyFile.Text = "&Key File:";
 			this.m_cbKeyFile.UseVisualStyleBackColor = true;
 			this.m_cbKeyFile.CheckedChanged += new System.EventHandler(this.OnCheckedKeyFile);
 			// 
@@ -96,7 +96,7 @@
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(126, 17);
 			this.m_cbPassword.TabIndex = 10;
-			this.m_cbPassword.Text = "Master Password:";
+			this.m_cbPassword.Text = "Master &Password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
 			// 
@@ -190,7 +190,7 @@
 			this.m_btnExit.Name = "m_btnExit";
 			this.m_btnExit.Size = new System.Drawing.Size(75, 23);
 			this.m_btnExit.TabIndex = 25;
-			this.m_btnExit.Text = "&Exit";
+			this.m_btnExit.Text = "E&xit";
 			this.m_btnExit.UseVisualStyleBackColor = true;
 			this.m_btnExit.Click += new System.EventHandler(this.OnBtnExit);
 			// 

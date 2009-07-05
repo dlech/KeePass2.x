@@ -83,5 +83,12 @@ namespace KeePass.App.Configuration
 			get { return m_bPrependInitSeqIE; }
 			set { m_bPrependInitSeqIE = value; }
 		}
+
+		private bool m_bSpecialReleaseAlt = true;
+		public bool AutoTypeReleaseAltWithKeyPress
+		{
+			get { return m_bSpecialReleaseAlt; }
+			set { m_bSpecialReleaseAlt = value; }
+		}
 	}
 }

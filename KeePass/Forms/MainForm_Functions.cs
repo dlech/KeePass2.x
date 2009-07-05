@@ -35,6 +35,7 @@ using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -44,8 +45,6 @@ using KeePassLib.Keys;
 using KeePassLib.Utility;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
-
-using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Forms
 {
@@ -99,6 +98,7 @@ namespace KeePass.Forms
 		private bool m_bBlockTabChanged = false;
 		private bool m_bForceSave = false;
 		private volatile uint m_uUIBlocked = 0;
+		private MouseButtons m_mbLastTrayMouseButtons = MouseButtons.None;
 
 		private int m_nAppMessage = Program.ApplicationMessage;
 
@@ -127,6 +127,10 @@ namespace KeePass.Forms
 		public ContextMenuStrip GroupContextMenu { get { return m_ctxGroupList; } }
 		public ContextMenuStrip TrayContextMenu { get { return m_ctxTray; } }
 
+		public NotifyIcon MainNotifyIcon { get { return m_ntfTray.NotifyIcon; } }
+
+		public MruList FileMruList { get { return m_mruList; } }
+
 		/// <summary>
 		/// Get a reference to the plugin host. This should not be used by plugins.
 		/// Plugins should directly use the reference they get in the initialization
@@ -135,6 +139,17 @@ namespace KeePass.Forms
 		public IPluginHost PluginHost
 		{
 			get { return m_pluginDefaultHost; }
+		}
+
+		private sealed class EditableBinaryAttachment
+		{
+			private string m_strName;
+			public string Name { get { return m_strName; } }
+
+			public EditableBinaryAttachment(string strName)
+			{
+				m_strName = strName;
+			}
 		}
 
 		/// <summary>
@@ -165,26 +180,29 @@ namespace KeePass.Forms
 		{
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppExit);
 
-			foreach(ToolStripButton tbCustom in m_vCustomToolBarButtons)
-				tbCustom.Click -= OnCustomToolBarButtonClicked;
-			m_vCustomToolBarButtons.Clear();
-
 			m_nClipClearCur = -1;
 			if(Program.Config.Security.ClipboardClearOnExit)
 				ClipboardUtil.ClearIfOwner();
+
+			m_pluginManager.UnloadAllPlugins(); // Before SaveConfig
+
+			foreach(ToolStripButton tbCustom in m_vCustomToolBarButtons)
+				tbCustom.Click -= OnCustomToolBarButtonClicked;
+			m_vCustomToolBarButtons.Clear();
 
 			SaveConfig();
 
 			m_sessionLockNotifier.Uninstall();
 			HotKeyManager.UnregisterAll();
-			m_pluginManager.UnloadAllPlugins();
 
-			EntryTemplates.Clear();
+			EntryTemplates.Release();
 
 			m_dynCustomBinaries.MenuClick -= this.OnEntryBinaryView;
 			m_dynCustomStrings.MenuClick -= this.OnCopyCustomString;
 
 			m_ctxEntryPreviewContextMenu.Detach();
+
+			m_ntfTray.Visible = false;
 
 			Debug.Assert(m_uUIBlocked == 0);
 			this.Visible = false;
@@ -255,16 +273,7 @@ namespace KeePass.Forms
 
 			Program.Config.MainWindow.ListSorting = m_pListSorter;
 
-			Program.Config.Application.MostRecentlyUsed.MaxItemCount = m_mruList.MaxItemCount;
-			Program.Config.Application.MostRecentlyUsed.Items.Clear();
-			for(uint uMru = 0; uMru < m_mruList.ItemCount; ++uMru)
-			{
-				KeyValuePair<string, object> kvpMru = m_mruList.GetItem(uMru);
-				IOConnectionInfo ioMru = kvpMru.Value as IOConnectionInfo;
-				if(ioMru != null)
-					Program.Config.Application.MostRecentlyUsed.Items.Add(ioMru);
-				else { Debug.Assert(false); }
-			}
+			SerializeMruList(true);
 
 			mw.ShowGridLines = m_lvEntries.GridLines;
 
@@ -305,13 +314,15 @@ namespace KeePass.Forms
 
 			if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
 			{
-				Program.Config.MainWindow.SplitterHorizontalPosition =
-					m_splitHorizontal.SplitterDistance;
-				Program.Config.MainWindow.SplitterVerticalPosition =
-					m_splitVertical.SplitterDistance;
+				Program.Config.MainWindow.SplitterHorizontalFrac =
+					(float)m_splitHorizontal.SplitterDistance /
+					(float)m_splitHorizontal.Height;
+				Program.Config.MainWindow.SplitterVerticalFrac =
+					(float)m_splitVertical.SplitterDistance /
+					(float)m_splitVertical.Width;
 			}
 
-			Program.Config.MainWindow.Maximized = (ws == FormWindowState.Maximized);
+			// Program.Config.MainWindow.Maximized = (ws == FormWindowState.Maximized);
 		}
 
 		/// <summary>
@@ -482,15 +493,15 @@ namespace KeePass.Forms
 			m_tbCopyPassword.Enabled = m_ctxEntryCopyPassword.Enabled =
 				((nEntriesSelected == 1) && (pe != null) &&
 				(pe.Strings.GetSafe(PwDefs.PasswordField).Length > 0));
-			m_ctxEntryCopyUrl.Enabled = m_ctxEntryUrlOpenInInternal.Enabled =
-				((nEntriesSelected == 1) && (pe != null) &&
-				(pe.Strings.GetSafe(PwDefs.UrlField).Length > 0));
-			m_ctxEntryOpenUrl.Enabled = ((nEntriesSelected > 1) || ((pe != null) &&
+			m_ctxEntryUrlOpenInInternal.Enabled = ((nEntriesSelected == 1) &&
+				(pe != null) && (pe.Strings.GetSafe(PwDefs.UrlField).Length > 0));
+			m_ctxEntryOpenUrl.Enabled = m_ctxEntryCopyUrl.Enabled =
+				((nEntriesSelected > 1) || ((pe != null) &&
 				(pe.Strings.GetSafe(PwDefs.UrlField).Length > 0)));
 
 			if(pe != null)
 			{
-				m_ctxEntryPerformAutoType.Enabled = (pe.AutoType.Enabled &&
+				m_ctxEntryPerformAutoType.Enabled = (pe.GetAutoTypeEnabled() &&
 					(nEntriesSelected == 1));
 				m_ctxEntrySaveAttachedFiles.Enabled = ((pe.Binaries.UCount > 0) ||
 					(nEntriesSelected >= 2));
@@ -624,7 +635,6 @@ namespace KeePass.Forms
 			if(!m_docMgr.ActiveDatabase.IsOpen) return null;
 
 			ListView.SelectedListViewItemCollection coll = m_lvEntries.SelectedItems;
-
 			if((coll == null) || (coll.Count == 0)) return null;
 
 			PwEntry[] vSelected = new PwEntry[coll.Count];
@@ -645,13 +655,14 @@ namespace KeePass.Forms
 		{
 			PwGroup pg = new PwGroup(true, true);
 
-			PwGroup pgSel = GetSelectedGroup();
-			if(pgSel != null)
-			{
-				pg.Name = pgSel.Name;
-				pg.IconId = pgSel.IconId;
-				pg.CustomIconUuid = pgSel.CustomIconUuid;
-			}
+			// Copying group properties would confuse users
+			// PwGroup pgSel = GetSelectedGroup();
+			// if(pgSel != null)
+			// {
+			//	pg.Name = pgSel.Name;
+			//	pg.IconId = pgSel.IconId;
+			//	pg.CustomIconUuid = pgSel.CustomIconUuid;
+			// }
 
 			PwEntry[] vSel = GetSelectedEntries();
 			if((vSel == null) || (vSel.Length == 0)) return pg;
@@ -737,8 +748,6 @@ namespace KeePass.Forms
 				}
 			}
 
-			m_lvEntries.Items.Add(lvi);
-
 			if(lvse.ColumnWidths[(int)AppDefs.ColumnId.UserName] > 0)
 			{
 				if(m_viewHideFields.ProtectUserName) lvi.SubItems.Add(PwDefs.HiddenPassword);
@@ -796,9 +805,10 @@ namespace KeePass.Forms
 			else lvi.SubItems.Add(string.Empty);
 
 			if(lvse.ColumnWidths[(int)AppDefs.ColumnId.Attachment] > 0)
-				lvi.SubItems.Add(pe.Binaries.UCount.ToString());
+				lvi.SubItems.Add(pe.Binaries.KeysToString());
 			else lvi.SubItems.Add(string.Empty);
 
+			m_lvEntries.Items.Add(lvi);
 			return lvi;
 		}
 
@@ -904,6 +914,7 @@ namespace KeePass.Forms
 
 			PwEntry peTop = GetTopEntry(), peFocused = GetSelectedEntry(false);
 			PwEntry[] vSelected = GetSelectedEntries();
+			int iScrollY = NativeMethods.GetScrollPosY(m_lvEntries.Handle);
 
 			bool bSubEntries = Program.Config.MainWindow.ShowEntriesOfSubGroups;
 
@@ -952,10 +963,20 @@ namespace KeePass.Forms
 
 			Debug.Assert(lvseCachedState.CompareTo(m_lvEntries));
 
-			if(nTopIndex >= 0)
+			Debug.Assert(m_bEntryGrouping == m_lvEntries.ShowGroups);
+			if(m_lvEntries.ShowGroups)
 			{
-				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
-				m_lvEntries.EnsureVisible(nTopIndex);
+				// Test nTopIndex to ensure we're not scrolling an unrelated list
+				if((nTopIndex >= 0) && (iScrollY > 0))
+					NativeMethods.Scroll(m_lvEntries, 0, iScrollY);
+			}
+			else
+			{
+				if(nTopIndex >= 0)
+				{
+					m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+					m_lvEntries.EnsureVisible(nTopIndex);
+				}
 			}
 
 			if(lviFocused != null) m_lvEntries.FocusedItem = lviFocused;
@@ -980,6 +1001,10 @@ namespace KeePass.Forms
 			}
 
 			m_lvEntries.EndUpdate();
+
+			if(Program.Config.MainWindow.EntryListAutoResizeColumns &&
+				(m_lvEntries.View == View.Details))
+				UIUtil.ResizeColumns(m_lvEntries, true);
 		}
 
 		/// <summary>
@@ -995,6 +1020,7 @@ namespace KeePass.Forms
 
 			PwEntry peTop = GetTopEntry();
 			PwEntry peFocused = GetSelectedEntry(false);
+			int iScrollY = NativeMethods.GetScrollPosY(m_lvEntries.Handle);
 
 			UpdateImageLists();
 
@@ -1032,10 +1058,20 @@ namespace KeePass.Forms
 
 			Debug.Assert(lvseCachedState.CompareTo(m_lvEntries));
 
-			if(nTopIndex >= 0)
+			Debug.Assert(m_bEntryGrouping == m_lvEntries.ShowGroups);
+			if(m_lvEntries.ShowGroups)
 			{
-				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
-				m_lvEntries.EnsureVisible(nTopIndex);
+				// Test nTopIndex to ensure we're not scrolling an unrelated list
+				if((nTopIndex >= 0) && (iScrollY > 0))
+					NativeMethods.Scroll(m_lvEntries, 0, iScrollY);
+			}
+			else
+			{
+				if(nTopIndex >= 0)
+				{
+					m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+					m_lvEntries.EnsureVisible(nTopIndex);
+				}
 			}
 
 			if(lviFocused != null) m_lvEntries.FocusedItem = lviFocused;
@@ -1045,16 +1081,15 @@ namespace KeePass.Forms
 
 		private PwEntry GetTopEntry()
 		{
-			PwEntry peTop = null;
-
 			if(m_lvEntries.Items.Count == 0) return null;
 
+			PwEntry peTop = null;
 			try
 			{
 				ListViewItem lviTop = m_lvEntries.TopItem;
-				if(lviTop != null) peTop = (PwEntry)lviTop.Tag;
+				if(lviTop != null) peTop = (lviTop.Tag as PwEntry);
 			}
-			catch(Exception) { peTop = null; }
+			catch(Exception) { }
 
 			return peTop;
 		}
@@ -1308,6 +1343,9 @@ namespace KeePass.Forms
 				UIUtil.RtfSetSelectionLink(m_richEntryView);
 			}
 
+			string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField); // Not Ex
+			UIUtil.RtfLinkifyText(m_richEntryView, strUrl, false);
+
 			m_richEntryView.Select(0, 0);
 		}
 
@@ -1323,7 +1361,8 @@ namespace KeePass.Forms
 			sb.Append(strValue);
 		}
 
-		private void PerformDefaultAction(object sender, EventArgs e, PwEntry pe, AppDefs.ColumnId colID)
+		private void PerformDefaultAction(object sender, EventArgs e, PwEntry pe,
+			AppDefs.ColumnId colID)
 		{
 			Debug.Assert(pe != null); if(pe == null) return;
 
@@ -1353,7 +1392,7 @@ namespace KeePass.Forms
 					OnEntryCopyPassword(sender, e);
 					break;
 				case AppDefs.ColumnId.Url:
-					OnEntryOpenUrl(sender, e);
+					PerformDefaultUrlAction(false);
 					break;
 				case AppDefs.ColumnId.Notes:
 					bCnt = ClipboardUtil.CopyAndMinimize(pe.Strings.ReadSafe(
@@ -1380,6 +1419,7 @@ namespace KeePass.Forms
 							true, frmMin, pe, null);
 					break;
 				case AppDefs.ColumnId.Attachment:
+					PerformDefaultAttachmentAction();
 					break;
 				case AppDefs.ColumnId.Uuid:
 					bCnt = ClipboardUtil.CopyAndMinimize(pe.Uuid.ToHexString(),
@@ -1391,6 +1431,66 @@ namespace KeePass.Forms
 			}
 
 			if(bCnt) StartClipboardCountdown();
+		}
+
+		private void PerformDefaultUrlAction(bool bForceOpen)
+		{
+			PwEntry[] v = GetSelectedEntries();
+			Debug.Assert(v != null); if(v == null) return;
+
+			bool bCopy = Program.Config.MainWindow.CopyUrlsInsteadOfOpening;
+			if(bForceOpen) bCopy = false;
+
+			if(bCopy)
+			{
+				bool bMinimize = Program.Config.MainWindow.MinimizeAfterClipboardCopy;
+				Form frmMin = (bMinimize ? this : null);
+
+				if(ClipboardUtil.CopyAndMinimize(UrlsToString(v), true, frmMin, null, null))
+					StartClipboardCountdown();
+			}
+			else // Open
+			{
+				foreach(PwEntry pe in v) WinUtil.OpenEntryUrl(pe);
+			}
+		}
+
+		private void PerformDefaultAttachmentAction()
+		{
+			PwEntry pe = GetSelectedEntry(false);
+			if(pe == null) return;
+
+			if(pe.Binaries.UCount == 0) return;
+
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
+			{
+				BinaryDataClass bdc = BinaryDataClassifier.Classify(kvp.Key,
+					kvp.Value.ReadData());
+				DynamicMenuEventArgs args = new DynamicMenuEventArgs(kvp.Key,
+					DataEditorForm.SupportsDataType(bdc) ?
+					new EditableBinaryAttachment(kvp.Key) : null);
+				OnEntryBinaryView(null, args);
+				break;
+			}
+		}
+
+		private string UrlsToString(PwEntry[] vEntries)
+		{
+			if((vEntries == null) || (vEntries.Length == 0)) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+			foreach(PwEntry pe in vEntries)
+			{
+				if(sb.Length > 0) sb.Append(MessageService.NewLine);
+
+				string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
+				strUrl = SprEngine.Compile(strUrl, false, pe, m_docMgr.ActiveDatabase,
+					false, false);
+
+				sb.Append(strUrl);
+			}
+
+			return sb.ToString();
 		}
 
 		/// <summary>
@@ -1417,7 +1517,7 @@ namespace KeePass.Forms
 			if(bForceShowExpired == false)
 				sp.ExcludeExpired = Program.Config.MainWindow.QuickFindExcludeExpired;
 
-			m_docMgr.ActiveDatabase.RootGroup.SearchEntries(sp, pg.Entries);
+			m_docMgr.ActiveDatabase.RootGroup.SearchEntries(sp, pg.Entries, true);
 
 			UpdateEntryList(pg, false);
 			SelectFirstEntryIfNoneSelected();
@@ -1590,7 +1690,7 @@ namespace KeePass.Forms
 			if((pwOpenedDb == null) || !pwOpenedDb.IsOpen) return;
 
 			string strName = pwOpenedDb.IOConnectionInfo.GetDisplayName();
-			m_mruList.AddItem(strName, pwOpenedDb.IOConnectionInfo.CloneDeep());
+			m_mruList.AddItem(strName, pwOpenedDb.IOConnectionInfo.CloneDeep(), true);
 
 			PwDocument dsExisting = m_docMgr.FindDocument(pwOpenedDb);
 			if(dsExisting != null) m_docMgr.ActiveDocument = dsExisting;
@@ -1600,11 +1700,8 @@ namespace KeePass.Forms
 
 			AutoEnableVisualHiding();
 
-			if(Program.Config.Application.Start.OpenLastFile)
-				Program.Config.Application.LastUsedFile =
-					pwOpenedDb.IOConnectionInfo.CloneDeep();
-			else
-				Program.Config.Application.LastUsedFile = new IOConnectionInfo();
+			SetLastUsedFile(pwOpenedDb.IOConnectionInfo);
+			RememberKeyFilePath(pwOpenedDb);
 
 			if(bCorrectDbActive)
 				m_docMgr.ActiveDocument.LockedIoc = new IOConnectionInfo(); // Clear
@@ -1964,6 +2061,8 @@ namespace KeePass.Forms
 					this.OnFileExit(null, EventArgs.Empty);
 				else if(m.WParam == (IntPtr)Program.AppMessage.IpcByFile)
 					IpcUtilEx.ProcessGlobalMessage(m.LParam.ToInt32(), this);
+				else if(m.WParam == (IntPtr)Program.AppMessage.AutoType)
+					ExecuteGlobalAutoType();
 			}
 			else if(m.Msg == NativeMethods.WM_SYSCOMMAND)
 			{
@@ -2236,11 +2335,12 @@ namespace KeePass.Forms
 				catch(Exception exVerify) { Debug.Assert(false, exVerify.Message); }
 #endif
 
-				m_mruList.AddItem(ioc.GetDisplayName(), ioc.CloneDeep());
+				m_mruList.AddItem(ioc.GetDisplayName(), ioc.CloneDeep(), true);
 
-				Program.Config.Application.LastUsedFile = ioc.CloneDeep();
+				SetLastUsedFile(ioc);
 			}
 
+			RememberKeyFilePath(pwDatabase);
 			WinUtil.FlushStorageBuffers(ioc.Path, true);
 		}
 
@@ -2344,13 +2444,33 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			if(pe == null) { Debug.Assert(false); return; }
 
-			ProtectedBinary pbData = pe.Binaries.Get(e.ItemName);
+			EditableBinaryAttachment eba = (e.Tag as EditableBinaryAttachment);
+
+			ProtectedBinary pbData = pe.Binaries.Get((eba != null) ? eba.Name :
+				e.ItemName);
 			if(pbData == null) { Debug.Assert(false); return; }
 
-			DataViewerForm dvf = new DataViewerForm();
-			dvf.InitEx(e.ItemName, pbData.ReadData());
+			if(eba == null) // Not editable
+			{
+				DataViewerForm dvf = new DataViewerForm();
+				dvf.InitEx(e.ItemName, pbData.ReadData());
+				dvf.ShowDialog();
+			}
+			else
+			{
+				DataEditorForm def = new DataEditorForm();
+				def.InitEx(eba.Name, pbData.ReadData());
+				def.ShowDialog();
 
-			dvf.ShowDialog();
+				if(def.EditedBinaryData != null)
+				{
+					pe.Binaries.Set(eba.Name, new ProtectedBinary(false,
+						def.EditedBinaryData));
+
+					RefreshEntriesList();
+					UpdateUIState(true);
+				}
+			}
 		}
 
 		private void SaveWindowState()
@@ -2671,12 +2791,21 @@ namespace KeePass.Forms
 
 		private void MinimizeToTrayAtStartIfEnabled(bool bFormLoading)
 		{
-			if(Program.Config.Application.Start.MinimizedAndLocked)
+			if(Program.Config.Application.Start.MinimizedAndLocked ||
+				(Program.CommandLineArgs[AppDefs.CommandLineOptions.Minimize] != null))
 			{
 				if(bFormLoading) this.WindowState = FormWindowState.Minimized;
 
 				if(Program.Config.MainWindow.MinimizeToTray) MinimizeToTray(true);
-				else this.WindowState = FormWindowState.Minimized;
+				else if(!bFormLoading) this.WindowState = FormWindowState.Minimized;
+			}
+
+			// Remove taskbar item
+			if(Program.Config.MainWindow.MinimizeAfterOpeningDatabase &&
+				Program.Config.MainWindow.MinimizeToTray && (bFormLoading == false) &&
+				IsAtLeastOneFileOpen())
+			{
+				MinimizeToTray(true);
 			}
 		}
 
@@ -2778,17 +2907,6 @@ namespace KeePass.Forms
 			}
 
 			if(bLockUIUpdate) m_lvEntries.EndUpdate();
-		}
-
-		private static void ConfigureTbButton(ToolStripItem tb, string strText,
-			string strTooltip)
-		{
-			if(strText != null) tb.Text = strText;
-
-			if(strTooltip != null)
-				tb.ToolTipText = StrUtil.RemoveAccelerator(strTooltip);
-			else if(strText != null)
-				tb.ToolTipText = StrUtil.RemoveAccelerator(strText);
 		}
 
 		private bool PreSaveValidate(PwDatabase pd)
@@ -2919,6 +3037,8 @@ namespace KeePass.Forms
 			{
 				pgRecycleBin = new PwGroup(true, true, KPRes.RecycleBin,
 					PwIcon.TrashBin);
+				pgRecycleBin.EnableAutoType = false;
+				pgRecycleBin.EnableSearching = false;
 				pdContext.RootGroup.AddGroup(pgRecycleBin, true);
 
 				pdContext.RecycleBinUuid = pgRecycleBin.Uuid;
@@ -3104,6 +3224,104 @@ namespace KeePass.Forms
 			if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); return; }
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.CustomTbButtonClicked, strID);
+		}
+
+		private IOConnectionInfo IocFromCommandLine()
+		{
+			CommandLineArgs args = Program.CommandLineArgs;
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(args.FileName);
+
+			if(ioc.IsLocalFile()) // Expand relative path to absolute
+				ioc.Path = UrlUtil.MakeAbsolutePath(UrlUtil.EnsureTerminatingSeparator(
+					Directory.GetCurrentDirectory(), false) + "Sentinel", ioc.Path);
+
+			if(args[AppDefs.CommandLineOptions.IoCredFromRecent] != null)
+			{
+				for(uint u = 0; u < m_mruList.ItemCount; ++u)
+				{
+					KeyValuePair<string, object> kvp = m_mruList.GetItem(u);
+					if(kvp.Value == null) { Debug.Assert(false); continue; }
+					IOConnectionInfo iocMru = (kvp.Value as IOConnectionInfo);
+					if(iocMru == null) { Debug.Assert(false); continue; }
+
+					if(iocMru.Path.Equals(ioc.Path, StrUtil.CaseIgnoreCmp))
+					{
+						ioc.UserName = iocMru.UserName;
+						ioc.Password = iocMru.Password;
+						ioc.CredSaveMode = iocMru.CredSaveMode;
+						break;
+					}
+				}
+			}
+
+			string strUserName = args[AppDefs.CommandLineOptions.IoCredUserName];
+			if(strUserName != null) ioc.UserName = strUserName;
+
+			string strPassword = args[AppDefs.CommandLineOptions.IoCredPassword];
+			if(strPassword != null) ioc.Password = strPassword;
+
+			return ioc;
+		}
+
+		private static void SetLastUsedFile(IOConnectionInfo ioc)
+		{
+			if(ioc == null) { Debug.Assert(false); return; }
+
+			if(Program.Config.Application.Start.OpenLastFile)
+				Program.Config.Application.LastUsedFile = ioc.CloneDeep();
+			else
+				Program.Config.Application.LastUsedFile = new IOConnectionInfo();
+		}
+
+		private static void RememberKeyFilePath(PwDatabase pwDb)
+		{
+			if(pwDb == null) { Debug.Assert(false); return; }
+
+			IUserKey kcpFile = pwDb.MasterKey.GetUserKey(typeof(KcpKeyFile));
+			IUserKey kcpCustom = pwDb.MasterKey.GetUserKey(typeof(KcpCustomKey));
+
+			if(kcpFile != null)
+				Program.Config.Defaults.SetKeyFilePath(pwDb.IOConnectionInfo.Path,
+					((KcpKeyFile)kcpFile).Path);
+			else if(kcpCustom != null)
+				Program.Config.Defaults.SetKeyFilePath(pwDb.IOConnectionInfo.Path,
+					((KcpCustomKey)kcpCustom).Name);
+			else
+				Program.Config.Defaults.SetKeyFilePath(pwDb.IOConnectionInfo.Path, null);
+		}
+
+		private void SerializeMruList(bool bStore)
+		{
+			AceMru aceMru = Program.Config.Application.MostRecentlyUsed;
+
+			if(bStore)
+			{
+				aceMru.MaxItemCount = m_mruList.MaxItemCount;
+				
+				aceMru.Items.Clear();
+				// Count <= max is not guaranteed, therefore take minimum of both
+				for(uint uMru = 0; uMru < Math.Min(m_mruList.MaxItemCount,
+					m_mruList.ItemCount); ++uMru)
+				{
+					KeyValuePair<string, object> kvpMru = m_mruList.GetItem(uMru);
+					IOConnectionInfo ioMru = (kvpMru.Value as IOConnectionInfo);
+					if(ioMru != null) aceMru.Items.Add(ioMru);
+					else { Debug.Assert(false); }
+				}
+			}
+			else // Load
+			{
+				m_mruList.MaxItemCount = aceMru.MaxItemCount;
+
+				for(int iMru = 0; iMru < Math.Min((int)m_mruList.MaxItemCount,
+					aceMru.Items.Count); ++iMru)
+				{
+					IOConnectionInfo ioMru = aceMru.Items[iMru];
+					m_mruList.AddItem(ioMru.GetDisplayName(), ioMru.CloneDeep(), false);
+				}
+
+				m_mruList.UpdateMenu();
+			}
 		}
 	}
 }

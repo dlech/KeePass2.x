@@ -76,6 +76,9 @@
 			this.m_lblRecycleBinGroup = new System.Windows.Forms.Label();
 			this.m_lblRecycleBinInfo = new System.Windows.Forms.Label();
 			this.m_cbRecycleBin = new System.Windows.Forms.CheckBox();
+			this.m_tabTemplates = new System.Windows.Forms.TabPage();
+			this.m_lblEntryTemplatesGroup = new System.Windows.Forms.Label();
+			this.m_cmbEntryTemplates = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpEncAlgo.SuspendLayout();
 			this.m_grpKeyTrans.SuspendLayout();
@@ -86,6 +89,7 @@
 			this.m_tabProtection.SuspendLayout();
 			this.m_tabCompression.SuspendLayout();
 			this.m_tabRecycleBin.SuspendLayout();
+			this.m_tabTemplates.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_bannerImage
@@ -228,9 +232,9 @@
 			// 
 			// m_lblCompressionIntro
 			// 
-			this.m_lblCompressionIntro.Location = new System.Drawing.Point(8, 10);
+			this.m_lblCompressionIntro.Location = new System.Drawing.Point(6, 12);
 			this.m_lblCompressionIntro.Name = "m_lblCompressionIntro";
-			this.m_lblCompressionIntro.Size = new System.Drawing.Size(430, 15);
+			this.m_lblCompressionIntro.Size = new System.Drawing.Size(435, 15);
 			this.m_lblCompressionIntro.TabIndex = 0;
 			this.m_lblCompressionIntro.Text = "Data compression reduces the size of the database.";
 			// 
@@ -241,6 +245,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabProtection);
 			this.m_tabMain.Controls.Add(this.m_tabCompression);
 			this.m_tabMain.Controls.Add(this.m_tabRecycleBin);
+			this.m_tabMain.Controls.Add(this.m_tabTemplates);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -570,6 +575,35 @@
 			this.m_cbRecycleBin.Text = "&Use a recycle bin";
 			this.m_cbRecycleBin.UseVisualStyleBackColor = true;
 			// 
+			// m_tabTemplates
+			// 
+			this.m_tabTemplates.Controls.Add(this.m_cmbEntryTemplates);
+			this.m_tabTemplates.Controls.Add(this.m_lblEntryTemplatesGroup);
+			this.m_tabTemplates.Location = new System.Drawing.Point(4, 22);
+			this.m_tabTemplates.Name = "m_tabTemplates";
+			this.m_tabTemplates.Size = new System.Drawing.Size(454, 294);
+			this.m_tabTemplates.TabIndex = 5;
+			this.m_tabTemplates.Text = "Templates";
+			this.m_tabTemplates.UseVisualStyleBackColor = true;
+			// 
+			// m_lblEntryTemplatesGroup
+			// 
+			this.m_lblEntryTemplatesGroup.AutoSize = true;
+			this.m_lblEntryTemplatesGroup.Location = new System.Drawing.Point(6, 12);
+			this.m_lblEntryTemplatesGroup.Name = "m_lblEntryTemplatesGroup";
+			this.m_lblEntryTemplatesGroup.Size = new System.Drawing.Size(112, 13);
+			this.m_lblEntryTemplatesGroup.TabIndex = 0;
+			this.m_lblEntryTemplatesGroup.Text = "Entry templates group:";
+			// 
+			// m_cmbEntryTemplates
+			// 
+			this.m_cmbEntryTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbEntryTemplates.FormattingEnabled = true;
+			this.m_cmbEntryTemplates.Location = new System.Drawing.Point(9, 31);
+			this.m_cmbEntryTemplates.Name = "m_cmbEntryTemplates";
+			this.m_cmbEntryTemplates.Size = new System.Drawing.Size(433, 21);
+			this.m_cmbEntryTemplates.TabIndex = 1;
+			// 
 			// DatabaseSettingsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -608,6 +642,8 @@
 			this.m_tabCompression.PerformLayout();
 			this.m_tabRecycleBin.ResumeLayout(false);
 			this.m_tabRecycleBin.PerformLayout();
+			this.m_tabTemplates.ResumeLayout(false);
+			this.m_tabTemplates.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -661,5 +697,8 @@
 		private System.Windows.Forms.CheckBox m_cbRecycleBin;
 		private System.Windows.Forms.ComboBox m_cmbRecycleBin;
 		private System.Windows.Forms.Label m_lblRecycleBinGroup;
+		private System.Windows.Forms.TabPage m_tabTemplates;
+		private System.Windows.Forms.ComboBox m_cmbEntryTemplates;
+		private System.Windows.Forms.Label m_lblEntryTemplatesGroup;
 	}
 }

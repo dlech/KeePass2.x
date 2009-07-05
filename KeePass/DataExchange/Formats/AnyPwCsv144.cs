@@ -108,7 +108,7 @@ namespace KeePass.DataExchange.Formats
 
 			if(bFixCodes)
 			{
-				str = str.Replace("<13>", "");
+				str = str.Replace("<13>", string.Empty);
 				str = str.Replace("<10>", "\r\n");
 			}
 

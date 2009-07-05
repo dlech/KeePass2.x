@@ -25,6 +25,7 @@ using System.Diagnostics;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
@@ -62,8 +63,6 @@ namespace KeePass.Ecas
 
 	internal sealed class EcasDefaultEventProvider : EcasEventProvider
 	{
-		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
-
 		public EcasDefaultEventProvider()
 		{
 			EcasParameter[] epFileFilter = new EcasParameter[] {
@@ -121,7 +120,7 @@ namespace KeePass.Ecas
 			string strIdWanted = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
 			if(string.IsNullOrEmpty(strIdWanted)) return true;
 
-			return strIdClicked.Equals(strIdWanted, StrCaseIgnoreCmp);
+			return strIdClicked.Equals(strIdWanted, StrUtil.CaseIgnoreCmp);
 		}
 	}
 }

@@ -41,6 +41,9 @@
 			this.m_btnProfileRemove = new System.Windows.Forms.Button();
 			this.m_ttMain = new System.Windows.Forms.ToolTip(this.components);
 			this.m_grpCurOpt = new System.Windows.Forms.GroupBox();
+			this.m_btnCustomOpt = new System.Windows.Forms.Button();
+			this.m_cmbCustomAlgo = new System.Windows.Forms.ComboBox();
+			this.m_rbCustom = new System.Windows.Forms.RadioButton();
 			this.m_cbPatternPermute = new System.Windows.Forms.CheckBox();
 			this.m_lblCustomChars = new System.Windows.Forms.Label();
 			this.m_tbCustomChars = new System.Windows.Forms.TextBox();
@@ -81,7 +84,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(321, 466);
+			this.m_btnOK.Location = new System.Drawing.Point(321, 515);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -92,7 +95,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(402, 466);
+			this.m_btnCancel.Location = new System.Drawing.Point(402, 515);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -167,7 +170,7 @@
 			// m_btnProfileAdd
 			// 
 			this.m_btnProfileAdd.Image = global::KeePass.Properties.Resources.B16x16_FileSaveAs;
-			this.m_btnProfileAdd.Location = new System.Drawing.Point(398, 6);
+			this.m_btnProfileAdd.Location = new System.Drawing.Point(398, 5);
 			this.m_btnProfileAdd.Name = "m_btnProfileAdd";
 			this.m_btnProfileAdd.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileAdd.TabIndex = 2;
@@ -177,7 +180,7 @@
 			// m_btnProfileRemove
 			// 
 			this.m_btnProfileRemove.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
-			this.m_btnProfileRemove.Location = new System.Drawing.Point(426, 6);
+			this.m_btnProfileRemove.Location = new System.Drawing.Point(426, 5);
 			this.m_btnProfileRemove.Name = "m_btnProfileRemove";
 			this.m_btnProfileRemove.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileRemove.TabIndex = 3;
@@ -186,6 +189,9 @@
 			// 
 			// m_grpCurOpt
 			// 
+			this.m_grpCurOpt.Controls.Add(this.m_btnCustomOpt);
+			this.m_grpCurOpt.Controls.Add(this.m_cmbCustomAlgo);
+			this.m_grpCurOpt.Controls.Add(this.m_rbCustom);
 			this.m_grpCurOpt.Controls.Add(this.m_cbPatternPermute);
 			this.m_grpCurOpt.Controls.Add(this.m_lblCustomChars);
 			this.m_grpCurOpt.Controls.Add(this.m_tbCustomChars);
@@ -206,10 +212,41 @@
 			this.m_grpCurOpt.Controls.Add(this.m_numGenChars);
 			this.m_grpCurOpt.Location = new System.Drawing.Point(6, 31);
 			this.m_grpCurOpt.Name = "m_grpCurOpt";
-			this.m_grpCurOpt.Size = new System.Drawing.Size(445, 329);
+			this.m_grpCurOpt.Size = new System.Drawing.Size(445, 377);
 			this.m_grpCurOpt.TabIndex = 4;
 			this.m_grpCurOpt.TabStop = false;
 			this.m_grpCurOpt.Text = "Current settings";
+			// 
+			// m_btnCustomOpt
+			// 
+			this.m_btnCustomOpt.Image = global::KeePass.Properties.Resources.B16x16_Misc;
+			this.m_btnCustomOpt.Location = new System.Drawing.Point(414, 321);
+			this.m_btnCustomOpt.Name = "m_btnCustomOpt";
+			this.m_btnCustomOpt.Size = new System.Drawing.Size(25, 23);
+			this.m_btnCustomOpt.TabIndex = 19;
+			this.m_btnCustomOpt.UseVisualStyleBackColor = true;
+			this.m_btnCustomOpt.Click += new System.EventHandler(this.OnBtnCustomOpt);
+			// 
+			// m_cmbCustomAlgo
+			// 
+			this.m_cmbCustomAlgo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbCustomAlgo.FormattingEnabled = true;
+			this.m_cmbCustomAlgo.Location = new System.Drawing.Point(29, 322);
+			this.m_cmbCustomAlgo.Name = "m_cmbCustomAlgo";
+			this.m_cmbCustomAlgo.Size = new System.Drawing.Size(379, 21);
+			this.m_cmbCustomAlgo.TabIndex = 18;
+			// 
+			// m_rbCustom
+			// 
+			this.m_rbCustom.AutoSize = true;
+			this.m_rbCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.m_rbCustom.Location = new System.Drawing.Point(9, 299);
+			this.m_rbCustom.Name = "m_rbCustom";
+			this.m_rbCustom.Size = new System.Drawing.Size(214, 17);
+			this.m_rbCustom.TabIndex = 17;
+			this.m_rbCustom.TabStop = true;
+			this.m_rbCustom.Text = "Generate using custom algorithm:";
+			this.m_rbCustom.UseVisualStyleBackColor = true;
 			// 
 			// m_cbPatternPermute
 			// 
@@ -330,10 +367,10 @@
 			// m_cbEntropy
 			// 
 			this.m_cbEntropy.AutoSize = true;
-			this.m_cbEntropy.Location = new System.Drawing.Point(9, 302);
+			this.m_cbEntropy.Location = new System.Drawing.Point(9, 352);
 			this.m_cbEntropy.Name = "m_cbEntropy";
 			this.m_cbEntropy.Size = new System.Drawing.Size(144, 17);
-			this.m_cbEntropy.TabIndex = 17;
+			this.m_cbEntropy.TabIndex = 20;
 			this.m_cbEntropy.Text = "Collect additional entropy";
 			this.m_cbEntropy.UseVisualStyleBackColor = true;
 			// 
@@ -368,7 +405,7 @@
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 466);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 515);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 3;
@@ -384,7 +421,7 @@
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.Size = new System.Drawing.Size(465, 392);
+			this.m_tabMain.Size = new System.Drawing.Size(465, 439);
 			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabMainSelectedIndexChanged);
 			// 
@@ -398,7 +435,7 @@
 			this.m_tabSettings.Location = new System.Drawing.Point(4, 22);
 			this.m_tabSettings.Name = "m_tabSettings";
 			this.m_tabSettings.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabSettings.Size = new System.Drawing.Size(457, 366);
+			this.m_tabSettings.Size = new System.Drawing.Size(457, 413);
 			this.m_tabSettings.TabIndex = 0;
 			this.m_tabSettings.Text = "Settings";
 			this.m_tabSettings.UseVisualStyleBackColor = true;
@@ -412,7 +449,7 @@
 			this.m_tabAdvanced.Controls.Add(this.m_lblSecRedInfo);
 			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAdvanced.Name = "m_tabAdvanced";
-			this.m_tabAdvanced.Size = new System.Drawing.Size(457, 366);
+			this.m_tabAdvanced.Size = new System.Drawing.Size(457, 413);
 			this.m_tabAdvanced.TabIndex = 2;
 			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
@@ -461,7 +498,7 @@
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 22);
 			this.m_tabPreview.Name = "m_tabPreview";
 			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabPreview.Size = new System.Drawing.Size(457, 366);
+			this.m_tabPreview.Size = new System.Drawing.Size(457, 413);
 			this.m_tabPreview.TabIndex = 1;
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
@@ -500,7 +537,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(489, 501);
+			this.ClientSize = new System.Drawing.Size(489, 550);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_bannerImage);
@@ -572,5 +609,8 @@
 		private System.Windows.Forms.Label m_lblSecRedInfo;
 		private System.Windows.Forms.TextBox m_tbExcludeChars;
 		private System.Windows.Forms.Label m_lblExcludeChars;
+		private System.Windows.Forms.ComboBox m_cmbCustomAlgo;
+		private System.Windows.Forms.RadioButton m_rbCustom;
+		private System.Windows.Forms.Button m_btnCustomOpt;
 	}
 }

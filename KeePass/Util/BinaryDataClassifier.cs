@@ -30,6 +30,7 @@ namespace KeePass.Util
 	{
 		Unknown = 0,
 		Text,
+		RichText,
 		Image,
 		WebDocument
 	}
@@ -46,6 +47,10 @@ namespace KeePass.Util
 
 		private static readonly string[] m_vTextExtensions = new string[]{
 			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat"
+		};
+
+		private static readonly string[] m_vRichTextExtensions = new string[]{
+			"rtf"
 		};
 
 		private static readonly string[] m_vImageExtensions = new string[]{
@@ -68,6 +73,12 @@ namespace KeePass.Util
 			{
 				if(str.EndsWith("." + strTextExt))
 					return BinaryDataClass.Text;
+			}
+
+			foreach(string strRichTextExt in m_vRichTextExtensions)
+			{
+				if(str.EndsWith("." + strRichTextExt))
+					return BinaryDataClass.RichText;
 			}
 
 			foreach(string strImageExt in m_vImageExtensions)
@@ -101,6 +112,14 @@ namespace KeePass.Util
 			catch(Exception) { ms.Close(); }
 
 			return BinaryDataClass.Unknown;
+		}
+
+		public static BinaryDataClass Classify(string strUrl, byte[] pbData)
+		{
+			BinaryDataClass bdc = ClassifyUrl(strUrl);
+			if(bdc != BinaryDataClass.Unknown) return bdc;
+
+			return ClassifyData(pbData);
 		}
 
 		public static Encoding GetStringEncoding(byte[] pbData, bool bBom,

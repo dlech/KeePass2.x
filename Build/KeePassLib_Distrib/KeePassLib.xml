@@ -44,6 +44,9 @@
         <member name="F:KeePassLib.Serialization.Kdb4File.FileVersion32">
             <summary>
             File version of files saved by the current <c>Kdb4File</c> class.
+            KeePass 2.07 has version 1.01, KeePass 2.08 has 1.02.
+            The first 2 bytes are critical (i.e. loading will fail, if the
+            file version is too high), the last 2 bytes are informational.
             </summary>
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.PwGroup,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
@@ -142,6 +145,30 @@
             traversal. If you want to immediately stop the whole traversal,
             return <c>false</c>.</returns>
         </member>
+        <member name="M:KeePassLib.Cryptography.PasswordGenerator.CustomPwGenerator.Generate(KeePassLib.Cryptography.PasswordGenerator.PwProfile,KeePassLib.Cryptography.CryptoRandomStream)">
+            <summary>
+            Password generation function.
+            </summary>
+            <param name="prf">Password generation options chosen
+            by the user. This may be <c>null</c>, if the default
+            options should be used.</param>
+            <param name="crsRandomSource">Source that the algorithm
+            can use to generate random numbers.</param>
+            <returns>Generated password or <c>null</c> in case
+            of failure. If returning <c>null</c>, the caller assumes
+            that an error message has already been shown to the user.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerator.CustomPwGenerator.Uuid">
+            <summary>
+            Each custom password generation algorithm must have
+            its own unique UUID.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.PasswordGenerator.CustomPwGenerator.Name">
+            <summary>
+            Displayable name of the password generation algorithm.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Keys.KcpUserAccount">
             <summary>
             A user key depending on the currently logged on Windows user account.
@@ -210,9 +237,31 @@
             The fully qualified name of the form.
             </summary>
         </member>
-        <member name="T:KeePassLib.Cryptography.SelfTestResult">
+        <member name="P:KeePassLib.Keys.KeyProvider.Name">
             <summary>
-            Return values of the <c>SelfTest.Perform</c> method.
+            Name of your key provider (should be unique).
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KeyProvider.Exclusive">
+            <summary>
+            Property indicating whether the provider is exclusive.
+            If the provider is exclusive, KeePass doesn't allow other
+            key sources (master password, Windows user account, ...)
+            to be combined with the provider.
+            Key providers typically should return <c>false</c>
+            (to allow non-exclusive use), i.e. don't override this
+            property.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KeyProvider.DirectKey">
+            <summary>
+            Property that specifies whether the returned key data
+            gets hashed by KeePass first or is written directly to
+            the user key data stream.
+            Standard key provider plugins should return <c>false</c>
+            (i.e. don't overwrite this property). Returning <c>true</c>
+            may cause severe security problems and is highly
+            discouraged.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.SelfTest">
@@ -224,7 +273,6 @@
             <summary>
             Perform a self-test.
             </summary>
-            <returns>A <c>SelfTestResult</c> error code.</returns>
         </member>
         <member name="T:KeePassLib.Native.NativeLib">
             <summary>
@@ -318,7 +366,7 @@
         <member name="M:KeePassLib.Keys.CompositeKey.CreateRawCompositeKey32">
             <summary>
             Creates the composite key from the supplied user key sources (password,
-            key-file, user account, computer ID, etc.).
+            key file, user account, computer ID, etc.).
             </summary>
         </member>
         <member name="M:KeePassLib.Keys.CompositeKey.GenerateKey32(System.Byte[],System.UInt64)">
@@ -718,6 +766,12 @@
             'A fatal error has occurred!'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileCorrupted">
+            <summary>
+            Look up a localized string similar to
+            'The file is corrupted.'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.FileHeaderEndEarly">
             <summary>
             Look up a localized string similar to
@@ -728,6 +782,12 @@
             <summary>
             Look up a localized string similar to
             'Failed to load the specified file!'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileNewVerReq">
+            <summary>
+            Look up a localized string similar to
+            'A newer KeePass version is required to open this file.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileSaveCorruptionWarning">
@@ -760,10 +820,10 @@
             'The file is compressed using an unknown compression algorithm!'.
             </summary>
         </member>
-        <member name="P:KeePassLib.Resources.KLRes.FileVersionUnknown">
+        <member name="P:KeePassLib.Resources.KLRes.FileVersionUnsupported">
             <summary>
             Look up a localized string similar to
-            'Unknown file version!'.
+            'The file version is unsupported.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FinalKeyCreationFailed">
@@ -826,6 +886,11 @@
             'The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Keys.KcpCustomKey.Name">
+            <summary>
+            Name of the provider that generated the custom key.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.PasswordGenerator.PasswordGeneratorType">
             <summary>
             Type of the password generator. Different types like generators
@@ -845,6 +910,18 @@
             a pattern, which describes how the generated password has to
             look like.
             </summary>
+        </member>
+        <member name="T:KeePassLib.Interfaces.IDeepClonable`1">
+            <summary>
+            Interface for objects that are deeply clonable.
+            </summary>
+            <typeparam name="T">Reference type.</typeparam>
+        </member>
+        <member name="M:KeePassLib.Interfaces.IDeepClonable`1.CloneDeep">
+            <summary>
+            Deeply clone the object.
+            </summary>
+            <returns>Cloned object.</returns>
         </member>
         <member name="T:KeePassLib.Cryptography.Cipher.CipherPool">
             <summary>
@@ -934,8 +1011,8 @@
             </summary>
             <param name="pbArray">Input byte array.</param>
             <returns>Returns the hexadecimal string representing the byte
-            array. Returns <c>null</c> if the input byte array was <c>null</c>. Returns
-            an empty string ("") if the input byte array has length 0.</returns>
+            array. Returns <c>null</c>, if the input byte array was <c>null</c>. Returns
+            an empty string, if the input byte array has length 0.</returns>
         </member>
         <member name="M:KeePassLib.Utility.MemUtil.ZeroByteArray(System.Byte[])">
             <summary>
@@ -1000,7 +1077,7 @@
         <member name="T:KeePassLib.Interfaces.ITimeLogger">
             <summary>
             Interface for objects that support various times (creation time, last
-            access time, last modification time and expiration time). Offers
+            access time, last modification time and expiry time). Offers
             several helper functions (for example a function to touch the current
             object).
             </summary>
@@ -1045,18 +1122,6 @@
             count by one, use the <c>Touch</c> function.
             </summary>
         </member>
-        <member name="T:KeePassLib.Interfaces.IDeepClonable`1">
-            <summary>
-            Interface for objects that are deeply clonable.
-            </summary>
-            <typeparam name="T">Reference type.</typeparam>
-        </member>
-        <member name="M:KeePassLib.Interfaces.IDeepClonable`1.CloneDeep">
-            <summary>
-            Deeply clone the object.
-            </summary>
-            <returns>Cloned object.</returns>
-        </member>
         <member name="M:KeePassLib.PwGroup.#ctor">
             <summary>
             Construct a new, empty group.
@@ -1099,7 +1164,17 @@
             time. If the <paramref name="bModified" /> parameter is <c>true</c>,
             the last modification time gets updated, too.
             </summary>
-            <param name="bModified"></param>
+            <param name="bModified">Modify last modification time.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.Touch(System.Boolean,System.Boolean)">
+            <summary>
+            Touch the group. This function updates the internal last access
+            time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+            the last modification time gets updated, too.
+            </summary>
+            <param name="bModified">Modify last modification time.</param>
+            <param name="bTouchParents">If <c>true</c>, all parent objects
+            get touched, too.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.GetCounts(System.Boolean,System.UInt32@,System.UInt32@)">
             <summary>
@@ -1157,7 +1232,7 @@
             <returns>Returns <c>true</c>, if the operation completed successfully,
             otherwise <c>false</c>.</returns>
         </member>
-        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry})">
+        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry},System.Boolean)">
             <summary>
             Search this group and all groups in the current one for entries.
             </summary>
@@ -1404,6 +1479,21 @@
             Length of the protected data in bytes.
             </summary>
         </member>
+        <member name="M:KeePassLib.Keys.KeyValidator.Validate(System.String,KeePassLib.Keys.KeyValidationType)">
+            <summary>
+            Validate a key.
+            </summary>
+            <param name="strKey">Key to validate.</param>
+            <param name="t">Type of the validation to perform.</param>
+            <returns>Returns <c>null</c>, if the validation is successful.
+            If there's a problem with the key, the returned string describes
+            the problem.</returns>
+        </member>
+        <member name="P:KeePassLib.Keys.KeyValidator.Name">
+            <summary>
+            Name of your key validator (should be unique).
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.QualityEstimation">
             <summary>
             A class that offers static functions to estimate the quality of
@@ -1598,6 +1688,16 @@
             the last modification time gets updated, too.
             </summary>
             <param name="bModified">Modify last modification time.</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.Touch(System.Boolean,System.Boolean)">
+            <summary>
+            Touch the entry. This function updates the internal last access
+            time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+            the last modification time gets updated, too.
+            </summary>
+            <param name="bModified">Modify last modification time.</param>
+            <param name="bTouchParents">If <c>true</c>, all parent objects
+            get touched, too.</param>
         </member>
         <member name="M:KeePassLib.PwEntry.CreateBackup">
             <summary>
@@ -1881,8 +1981,8 @@
             <param name="strField">Name of the string field to delete.</param>
             <returns>Returns <c>true</c> if the field has been successfully
             removed, otherwise the return value is <c>false</c>.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
-            parameters is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
         </member>
         <member name="P:KeePassLib.Collections.ProtectedStringDictionary.UCount">
             <summary>
@@ -2036,7 +2136,7 @@
             stripping extension from a file, etc.).
             </summary>
         </member>
-        <member name="M:KeePassLib.Utility.UrlUtil.GetFileDirectory(System.String,System.Boolean)">
+        <member name="M:KeePassLib.Utility.UrlUtil.GetFileDirectory(System.String,System.Boolean,System.Boolean)">
             <summary>
             Get the directory (path) of a file name. The returned string is
             terminated by a directory separator character. Example:
@@ -2046,6 +2146,11 @@
             <param name="strFile">Full path of a file.</param>
             <param name="bAppendTerminatingChar">Append a terminating directory separator
             character to the returned path.</param>
+            <param name="bEnsureValidDirSpec">If <c>true</c>, the returned path
+            is guaranteed to be a valid directory path (for example <c>X:\\</c> instead
+            of <c>X:</c>, overriding <paramref name="bAppendTerminatingChar" />).
+            This should only be set to <c>true</c>, if the returned path is directly
+            passed to some directory API.</param>
             <returns>Directory of the file. The return value is an empty string
             (<c>""</c>) if the input parameter is <c>null</c>.</returns>
         </member>
@@ -2406,6 +2511,18 @@
             icon list update is required.
             </summary>
         </member>
+        <member name="P:KeePassLib.PwDatabase.EntryTemplatesGroup">
+            <summary>
+            UUID of the group containing template entries. May be
+            <c>PwUuid.Zero</c>, if no entry templates group has been specified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.CustomData">
+            <summary>
+            Custom data container that can be used by plugins to store
+            own data in KeePass databases.
+            </summary>
+        </member>
         <member name="P:KeePassLib.PwDatabase.HashOfFileOnDisk">
             <summary>
             Hash value of the primary file on disk (last read or last write).
@@ -2666,6 +2783,25 @@
             <summary>
             Memory protection configuration structure (for default fields).
             </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.StringDictionaryEx.Set(System.String,System.String)">
+            <summary>
+            Set a string.
+            </summary>
+            <param name="strField">Identifier of the string field to modify.</param>
+            <param name="strNewValue">New value. This parameter must not be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            parameters is <c>null</c>.</exception>
+        </member>
+        <member name="M:KeePassLib.Collections.StringDictionaryEx.Remove(System.String)">
+            <summary>
+            Delete a string.
+            </summary>
+            <param name="strField">Name of the string field to delete.</param>
+            <returns>Returns <c>true</c> if the field has been successfully
+            removed, otherwise the return value is <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
         </member>
         <member name="T:KeePassLib.Utility.TimeUtil">
             <summary>

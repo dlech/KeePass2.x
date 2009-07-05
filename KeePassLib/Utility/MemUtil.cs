@@ -86,19 +86,19 @@ namespace KeePassLib.Utility
 		/// </summary>
 		/// <param name="pbArray">Input byte array.</param>
 		/// <returns>Returns the hexadecimal string representing the byte
-		/// array. Returns <c>null</c> if the input byte array was <c>null</c>. Returns
-		/// an empty string ("") if the input byte array has length 0.</returns>
+		/// array. Returns <c>null</c>, if the input byte array was <c>null</c>. Returns
+		/// an empty string, if the input byte array has length 0.</returns>
 		public static string ByteArrayToHexString(byte[] pbArray)
 		{
-			StringBuilder sb = new StringBuilder();
-
 			if(pbArray == null) return null;
 
 			int nLen = pbArray.Length;
 			if(nLen == 0) return string.Empty;
 
+			StringBuilder sb = new StringBuilder();
+
 			byte bt, btHigh, btLow;
-			for(int i = 0; i < nLen; i++)
+			for(int i = 0; i < nLen; ++i)
 			{
 				bt = pbArray[i];
 				btHigh = bt; btHigh >>= 4;

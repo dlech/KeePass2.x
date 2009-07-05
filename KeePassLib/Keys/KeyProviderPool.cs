@@ -58,6 +58,18 @@ namespace KeePassLib.Keys
 			return m_vProviders.Remove(prov);
 		}
 
+		public KeyProvider Get(string strProviderName)
+		{
+			if(strProviderName == null) throw new ArgumentNullException("strProviderName");
+
+			foreach(KeyProvider prov in m_vProviders)
+			{
+				if(prov.Name == strProviderName) return prov;
+			}
+
+			return null;
+		}
+
 		public bool IsKeyProvider(string strName)
 		{
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
@@ -70,14 +82,20 @@ namespace KeePassLib.Keys
 			return false;
 		}
 
-		public byte[] GetKey(string strProviderName)
+		internal byte[] GetKey(string strProviderName, KeyProviderQueryContext ctx,
+			out bool bPerformHash)
 		{
 			Debug.Assert(strProviderName != null); if(strProviderName == null) throw new ArgumentNullException("strProviderName");
+
+			bPerformHash = true;
 
 			foreach(KeyProvider prov in m_vProviders)
 			{
 				if(prov.Name == strProviderName)
-					return prov.GetKey();
+				{
+					bPerformHash = !prov.DirectKey;
+					return prov.GetKey(ctx);
+				}
 			}
 
 			Debug.Assert(false);

@@ -28,69 +28,11 @@ using KeePass.Forms;
 using KeePass.Resources;
 
 using KeePassLib;
-using KeePassLib.Security;
 
 namespace KeePass.Util
 {
-	internal sealed class EntryTemplateItem
-	{
-		private bool m_bProtected = false;
-		private string m_strItemName = string.Empty;
-
-		public bool Protected
-		{
-			get { return m_bProtected; }
-		}
-
-		public string Name
-		{
-			get { return m_strItemName; }
-		}
-
-		public EntryTemplateItem(string strItemName, bool bProtected)
-		{
-			if(strItemName == null) throw new ArgumentNullException("strItemName");
-			m_strItemName = strItemName;
-			m_bProtected = bProtected;
-		}
-	}
-
-	internal sealed class EntryTemplate
-	{
-		private string m_strName = string.Empty;
-		private Image m_imgSmallIcon = null;
-		private EntryTemplateItem[] m_pItems = null;
-
-		public string Name
-		{
-			get { return m_strName; }
-		}
-
-		public Image SmallIcon
-		{
-			get { return m_imgSmallIcon; }
-		}
-
-		public EntryTemplateItem[] Items
-		{
-			get { return m_pItems; }
-		}
-
-		public EntryTemplate(string strName, Image imgSmallIcon, EntryTemplateItem[] pEntries)
-		{
-			if(strName == null) throw new ArgumentNullException("strName");
-			if(pEntries == null) throw new ArgumentNullException("pEntries");
-
-			m_strName = strName;
-			m_imgSmallIcon = imgSmallIcon;
-			m_pItems = pEntries;
-		}
-	}
-
 	public static class EntryTemplates
 	{
-		private static List<EntryTemplate> m_vTemplates = new List<EntryTemplate>();
-
 		private static ToolStripSplitButton m_btnItemsHost = null;
 		private static List<ToolStripItem> m_vToolStripItems = new List<ToolStripItem>();
 
@@ -99,81 +41,121 @@ namespace KeePass.Util
 			if(btnHost == null) throw new ArgumentNullException("btnHost");
 			m_btnItemsHost = btnHost;
 
+			m_btnItemsHost.DropDownOpening += OnMenuOpening;
+		}
+
+		public static void Release()
+		{
+			if(m_btnItemsHost != null)
+			{
+				Clear();
+				m_btnItemsHost.DropDownOpening -= OnMenuOpening;
+
+				m_btnItemsHost = null;
+			}
+		}
+
+		private static void AddSeparator()
+		{
 			ToolStripSeparator tsSep = new ToolStripSeparator();
 			m_btnItemsHost.DropDownItems.Add(tsSep);
 			m_vToolStripItems.Add(tsSep);
-
-			EntryTemplates.AddItem(BankAccount);
-			EntryTemplates.AddItem(PersonalContact);
 		}
 
-		private static void AddItem(EntryTemplate et)
+		private static void AddItem(PwEntry pe)
 		{
-			m_vTemplates.Add(et);
+			if(pe == null) { Debug.Assert(false); return; }
 
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(et.Name);
-			tsmi.Click += OnEntryTemplatesExecute;
+			ToolStripMenuItem tsmi = new ToolStripMenuItem(pe.Strings.ReadSafe(
+				PwDefs.TitleField));
+			tsmi.Tag = pe;
+			tsmi.Click += OnMenuExecute;
+
+			Image img = null;
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if(pd != null)
+			{
+				if(!pe.CustomIconUuid.EqualsValue(PwUuid.Zero))
+					img = pd.GetCustomIcon(pe.CustomIconUuid);
+				if(img == null)
+				{
+					try { img = Program.MainForm.ClientIcons.Images[(int)pe.IconId]; }
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
+			if(img == null) img = KeePass.Properties.Resources.B16x16_KGPG_Key1;
+			tsmi.Image = img;
+
 			m_btnItemsHost.DropDownItems.Add(tsmi);
-
-			if(et.SmallIcon != null) tsmi.Image = et.SmallIcon;
-			else tsmi.Image = KeePass.Properties.Resources.B16x16_KGPG_Key1;
-
 			m_vToolStripItems.Add(tsmi);
 		}
 
-		public static void Clear()
+		private static void Update()
 		{
-			m_vTemplates.Clear();
+			Clear();
 
-			foreach(ToolStripItem tsmi in m_vToolStripItems)
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if(pd == null) { Debug.Assert(false); return; }
+			if(pd.IsOpen == false) { Debug.Assert(false); return; }
+			if(pd.EntryTemplatesGroup.EqualsValue(PwUuid.Zero)) return;
+
+			PwGroup pg = pd.RootGroup.FindGroup(pd.EntryTemplatesGroup, true);
+			if(pg == null) { Debug.Assert(false); return; }
+			if(pg.Entries.UCount == 0) return;
+
+			AddSeparator();
+			for(uint u = 0; u < Math.Min(pg.Entries.UCount, 30); ++u)
 			{
-				tsmi.Click -= OnEntryTemplatesExecute;
+				try { AddItem(pg.Entries.GetAt(u)); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
+
+		private static void Clear()
+		{
+			int nCount = m_vToolStripItems.Count;
+			for(int i = 0; i < nCount; ++i)
+			{
+				int j = nCount - i - 1;
+				ToolStripItem tsmi = m_vToolStripItems[j];
+				tsmi.Click -= OnMenuExecute;
 				m_btnItemsHost.DropDownItems.Remove(tsmi);
 			}
 
 			m_vToolStripItems.Clear();
 		}
 
-		private static void OnEntryTemplatesExecute(object sender, EventArgs e)
+		private static void OnMenuExecute(object sender, EventArgs e)
 		{
-			ToolStripMenuItem tsmi = sender as ToolStripMenuItem;
+			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			string strName = tsmi.Text;
-			foreach(EntryTemplate et in m_vTemplates)
-			{
-				if(et.Name == strName)
-				{
-					CreateEntry(et);
-					break;
-				}
-			}
+			CreateEntry(tsmi.Tag as PwEntry);
 		}
 
-		private static void CreateEntry(EntryTemplate et)
+		private static void OnMenuOpening(object sender, EventArgs e)
 		{
-			if(Program.MainForm.ActiveDatabase.IsOpen == false)
-			{
-				Debug.Assert(false);
-				return;
-			}
+			Update();
+		}
+
+		private static void CreateEntry(PwEntry peTemplate)
+		{
+			if(peTemplate == null) { Debug.Assert(false); return; }
+
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if(pd == null) { Debug.Assert(false); return; }
+			if(pd.IsOpen == false) { Debug.Assert(false); return; }
 
 			PwGroup pgContainer = Program.MainForm.GetSelectedGroup();
-			if(pgContainer == null)
-				pgContainer = Program.MainForm.ActiveDatabase.RootGroup;
+			if(pgContainer == null) pgContainer = pd.RootGroup;
 
-			PwEntry pe = new PwEntry(true, true);
-
-			// pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-			//	Program.MainForm.Database.MemoryProtection.ProtectTitle,
-			//	et.Name));
-
-			foreach(EntryTemplateItem eti in et.Items)
-				pe.Strings.Set(eti.Name, new ProtectedString(eti.Protected, string.Empty));
+			PwEntry pe = peTemplate.CloneDeep();
+			pe.Uuid = new PwUuid(true);
+			pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = DateTime.Now;
 
 			PwEntryForm pef = new PwEntryForm();
-			pef.InitEx(pe, PwEditMode.AddNewEntry, Program.MainForm.ActiveDatabase,
-				Program.MainForm.ClientIcons, true);
+			pef.InitEx(pe, PwEditMode.AddNewEntry, pd, Program.MainForm.ClientIcons,
+				false, true);
 
 			if(pef.ShowDialog() == DialogResult.OK)
 			{
@@ -185,42 +167,5 @@ namespace KeePass.Util
 			}
 			else Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
 		}
-
-		private static readonly EntryTemplate BankAccount = new EntryTemplate(
-			KPRes.BankAccount, null, new EntryTemplateItem[]{
-				new EntryTemplateItem(KPRes.TAccountNumber, false),
-				new EntryTemplateItem(KPRes.TAccountType, false),
-				new EntryTemplateItem(KPRes.BranchCode, false),
-				new EntryTemplateItem(KPRes.RoutingCode, false),
-				new EntryTemplateItem(KPRes.SortCode, false),
-				new EntryTemplateItem(KPRes.Iban, false),
-				new EntryTemplateItem(KPRes.SwiftCode, false),
-				new EntryTemplateItem(KPRes.BranchTel, false),
-				new EntryTemplateItem(KPRes.TAccountInfoTel, false),
-				new EntryTemplateItem(KPRes.BranchHours, false),
-				new EntryTemplateItem(KPRes.TAccountNames, false),
-				new EntryTemplateItem(KPRes.MinBalance, false),
-				new EntryTemplateItem(KPRes.TransfersOf, false),
-				new EntryTemplateItem(KPRes.Frequency, false)
-			});
-
-		private static readonly EntryTemplate PersonalContact = new EntryTemplate(
-			KPRes.Contact, null, new EntryTemplateItem[]{
-				new EntryTemplateItem(KPRes.JobTitle, false),
-				new EntryTemplateItem(KPRes.Department, false),
-				new EntryTemplateItem(KPRes.Company, false),
-				new EntryTemplateItem(KPRes.WorkTel, false),
-				new EntryTemplateItem(KPRes.EMail, false),
-				new EntryTemplateItem(KPRes.HomeTel, false),
-				new EntryTemplateItem(KPRes.MobileTel, false),
-				new EntryTemplateItem(KPRes.Pager, false),
-				new EntryTemplateItem(KPRes.CarTel, false),
-				new EntryTemplateItem(KPRes.WorkFax, false),
-				new EntryTemplateItem(KPRes.HomeFax, false),
-				new EntryTemplateItem(KPRes.WebPage, false),
-				new EntryTemplateItem(KPRes.Assistant, false),
-				new EntryTemplateItem(KPRes.AssistantTel, false),
-				new EntryTemplateItem(KPRes.HomeAddress, false)
-			});
 	}
 }

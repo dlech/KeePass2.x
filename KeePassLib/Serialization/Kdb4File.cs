@@ -63,15 +63,24 @@ namespace KeePassLib.Serialization
 		/// <summary>
 		/// File identifier, second 32-bit value.
 		/// </summary>
-		private const uint FileSignature2 = 0xB54BFB66;
+		private const uint FileSignature2 = 0xB54BFB67;
 
 		/// <summary>
 		/// File version of files saved by the current <c>Kdb4File</c> class.
+		/// KeePass 2.07 has version 1.01, KeePass 2.08 has 1.02.
+		/// The first 2 bytes are critical (i.e. loading will fail, if the
+		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00010001; // 1.01
+		private const uint FileVersion32 = 0x00010002;
 
+		// KeePass 1.x signature
 		private const uint FileSignatureOld1 = 0x9AA2D903;
 		private const uint FileSignatureOld2 = 0xB54BFB65;
+		// KeePass 2.x pre-release (alpha and beta) signature
+		private const uint FileSignaturePreRelease1 = 0x9AA2D903;
+		private const uint FileSignaturePreRelease2 = 0xB54BFB66;
+
+		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
 		private const string ElemDocNode = "KeePassFile";
 		private const string ElemMeta = "Meta";
@@ -86,6 +95,7 @@ namespace KeePassLib.Serialization
 		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
 		private const string ElemRecycleBinEnabled = "RecycleBinEnabled";
 		private const string ElemRecycleBinUuid = "RecycleBinUUID";
+		private const string ElemEntryTemplatesGroup = "EntryTemplatesGroup";
 		private const string ElemLastSelectedGroup = "LastSelectedGroup";
 		private const string ElemLastTopVisibleGroup = "LastTopVisibleGroup";
 
@@ -123,6 +133,8 @@ namespace KeePassLib.Serialization
 		private const string ElemUsageCount = "UsageCount";
 
 		private const string ElemGroupDefaultAutoTypeSeq = "DefaultAutoTypeSequence";
+		private const string ElemEnableAutoType = "EnableAutoType";
+		private const string ElemEnableSearching = "EnableSearching";
 
 		private const string ElemString = "String";
 		private const string ElemBinary = "Binary";
@@ -147,6 +159,9 @@ namespace KeePassLib.Serialization
 
 		private const string ValFalse = "False";
 		private const string ValTrue = "True";
+
+		private const string ElemCustomData = "CustomData";
+		private const string ElemStringDictExItem = "Item";
 
 		private PwDatabase m_pwDatabase = null;
 

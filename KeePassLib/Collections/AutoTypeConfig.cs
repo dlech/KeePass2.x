@@ -136,9 +136,9 @@ namespace KeePassLib.Collections
 		{
 			AutoTypeConfig newDic = new AutoTypeConfig();
 
-			newDic.m_bEnabled = this.m_bEnabled;
-			newDic.m_atooObfuscation = this.m_atooObfuscation;
-			newDic.m_strDefaultSequence = this.m_strDefaultSequence;
+			newDic.m_bEnabled = m_bEnabled;
+			newDic.m_atooObfuscation = m_atooObfuscation;
+			newDic.m_strDefaultSequence = m_strDefaultSequence;
 
 			foreach(KeyValuePair<string, string> kvp in m_vWindowSeqPairs)
 				newDic.Set(kvp.Key, kvp.Value);

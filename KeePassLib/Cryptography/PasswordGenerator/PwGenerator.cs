@@ -30,7 +30,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	{
 		Success = 0,
 		Unknown = 1,
-		TooFewCharacters = 2
+		TooFewCharacters = 2,
+		UnknownAlgorithm = 3
 	}
 
 	/// <summary>
@@ -39,7 +40,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	public static class PwGenerator
 	{
 		public static PwgError Generate(ProtectedString psOutBuffer,
-			PwProfile pwProfile, byte[] pbUserEntropy)
+			PwProfile pwProfile, byte[] pbUserEntropy,
+			CustomPwGeneratorPool pwAlgorithmPool)
 		{
 			Debug.Assert(psOutBuffer != null);
 			if(psOutBuffer == null) throw new ArgumentNullException("psOutBuffer");
@@ -55,6 +57,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				e = CharSetBasedGenerator.Generate(psOutBuffer, pwProfile, crs);
 			else if(pwProfile.GeneratorType == PasswordGeneratorType.Pattern)
 				e = PatternBasedGenerator.Generate(psOutBuffer, pwProfile, crs);
+			else if(pwProfile.GeneratorType == PasswordGeneratorType.Custom)
+				e = GenerateCustom(psOutBuffer, pwProfile, crs, pwAlgorithmPool);
 			else { Debug.Assert(false); }
 
 			return e;
@@ -117,6 +121,28 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				pPassword[nSelect] = pPassword[nSelect + (int)uRandomIndex];
 				pPassword[nSelect + (int)uRandomIndex] = chTemp;
 			}
+		}
+
+		private static PwgError GenerateCustom(ProtectedString psOutBuffer,
+			PwProfile pwProfile, CryptoRandomStream crs,
+			CustomPwGeneratorPool pwAlgorithmPool)
+		{
+			Debug.Assert(pwProfile.GeneratorType == PasswordGeneratorType.Custom);
+			if(pwAlgorithmPool == null) return PwgError.UnknownAlgorithm;
+
+			string strID = pwProfile.CustomAlgorithmUuid;
+			if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); return PwgError.UnknownAlgorithm; }
+
+			byte[] pbUuid = Convert.FromBase64String(strID);
+			PwUuid uuid = new PwUuid(pbUuid);
+			CustomPwGenerator pwg = pwAlgorithmPool.Find(uuid);
+			if(pwg == null) { Debug.Assert(false); return PwgError.UnknownAlgorithm; }
+
+			ProtectedString pwd = pwg.Generate(pwProfile.CloneDeep(), crs);
+			if(pwd == null) return PwgError.Unknown;
+
+			psOutBuffer.SetString(pwd.ReadString());
+			return PwgError.Success;
 		}
 	}
 }

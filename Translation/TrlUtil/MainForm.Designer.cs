@@ -80,10 +80,15 @@
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSaveAs = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuFileSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileImport = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileImportLng = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_tsMain = new KeePass.UI.CustomToolStripEx();
+			this.m_tbOpen = new System.Windows.Forms.ToolStripButton();
+			this.m_tbSave = new System.Windows.Forms.ToolStripButton();
+			this.m_tbSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabProps.SuspendLayout();
 			this.m_tabStrings.SuspendLayout();
@@ -92,6 +97,7 @@
 			this.m_grpControlLayout.SuspendLayout();
 			this.m_tabUnusedText.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
+			this.m_tsMain.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_tabMain
@@ -100,11 +106,12 @@
 			this.m_tabMain.Controls.Add(this.m_tabStrings);
 			this.m_tabMain.Controls.Add(this.m_tabDialogs);
 			this.m_tabMain.Controls.Add(this.m_tabUnusedText);
-			this.m_tabMain.Location = new System.Drawing.Point(12, 27);
+			this.m_tabMain.Location = new System.Drawing.Point(12, 53);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(605, 461);
 			this.m_tabMain.TabIndex = 0;
+			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabMainSelectedIndexChanged);
 			// 
 			// m_tabProps
 			// 
@@ -512,7 +519,7 @@
 			this.m_tvControls.Name = "m_tvControls";
 			this.m_tvControls.ShowNodeToolTips = true;
 			this.m_tvControls.ShowRootLines = false;
-			this.m_tvControls.Size = new System.Drawing.Size(190, 423);
+			this.m_tvControls.Size = new System.Drawing.Size(200, 423);
 			this.m_tvControls.TabIndex = 0;
 			this.m_tvControls.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnCustomControlsAfterSelect);
 			// 
@@ -573,7 +580,7 @@
 			// 
 			this.m_menuFileOpen.Image = global::TrlUtil.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
-			this.m_menuFileOpen.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileOpen.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileOpen.Text = "&Open...";
 			this.m_menuFileOpen.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -581,7 +588,7 @@
 			// 
 			this.m_menuFileSave.Image = global::TrlUtil.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
@@ -589,33 +596,21 @@
 			// 
 			this.m_menuFileSaveAs.Image = global::TrlUtil.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			this.m_menuFileSaveAs.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileSaveAs.Text = "Save &As...";
 			this.m_menuFileSaveAs.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
-			// 
-			// m_menuFileExit
-			// 
-			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
-			this.m_menuFileExit.Text = "&Exit";
-			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
-			// 
-			// m_menuFileSep1
-			// 
-			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			this.m_menuFileSep1.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(120, 6);
 			// 
 			// m_menuFileImport
 			// 
 			this.m_menuFileImport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileImportLng});
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			this.m_menuFileImport.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileImport.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileImport.Text = "Import";
 			// 
 			// m_menuFileImportLng
@@ -625,11 +620,70 @@
 			this.m_menuFileImportLng.Text = "KeePass 1.x LNG File...";
 			this.m_menuFileImportLng.Click += new System.EventHandler(this.OnImport1xLng);
 			// 
+			// m_menuFileSep1
+			// 
+			this.m_menuFileSep1.Name = "m_menuFileSep1";
+			this.m_menuFileSep1.Size = new System.Drawing.Size(120, 6);
+			// 
+			// m_menuFileExit
+			// 
+			this.m_menuFileExit.Name = "m_menuFileExit";
+			this.m_menuFileExit.Size = new System.Drawing.Size(123, 22);
+			this.m_menuFileExit.Text = "&Exit";
+			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
+			// 
+			// m_tsMain
+			// 
+			this.m_tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_tbOpen,
+            this.m_tbSave,
+            this.m_tbSep0,
+            this.m_tbFind});
+			this.m_tsMain.Location = new System.Drawing.Point(0, 24);
+			this.m_tsMain.Name = "m_tsMain";
+			this.m_tsMain.Size = new System.Drawing.Size(629, 25);
+			this.m_tsMain.TabIndex = 2;
+			// 
+			// m_tbOpen
+			// 
+			this.m_tbOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbOpen.Image = global::TrlUtil.Properties.Resources.B16x16_Folder_Yellow_Open;
+			this.m_tbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbOpen.Name = "m_tbOpen";
+			this.m_tbOpen.Size = new System.Drawing.Size(23, 22);
+			this.m_tbOpen.Text = "Open...";
+			this.m_tbOpen.Click += new System.EventHandler(this.OnFileOpen);
+			// 
+			// m_tbSave
+			// 
+			this.m_tbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbSave.Image = global::TrlUtil.Properties.Resources.B16x16_FileSave;
+			this.m_tbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbSave.Name = "m_tbSave";
+			this.m_tbSave.Size = new System.Drawing.Size(23, 22);
+			this.m_tbSave.Text = "Save";
+			this.m_tbSave.Click += new System.EventHandler(this.OnFileSave);
+			// 
+			// m_tbSep0
+			// 
+			this.m_tbSep0.Name = "m_tbSep0";
+			this.m_tbSep0.Size = new System.Drawing.Size(6, 25);
+			// 
+			// m_tbFind
+			// 
+			this.m_tbFind.AcceptsReturn = true;
+			this.m_tbFind.Name = "m_tbFind";
+			this.m_tbFind.Size = new System.Drawing.Size(180, 25);
+			this.m_tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnFindKeyDown);
+			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnFindKeyUp);
+			this.m_tbFind.TextChanged += new System.EventHandler(this.OnFindTextChanged);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(629, 500);
+			this.ClientSize = new System.Drawing.Size(629, 526);
+			this.Controls.Add(this.m_tsMain);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_menuMain);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -653,6 +707,8 @@
 			this.m_tabUnusedText.ResumeLayout(false);
 			this.m_menuMain.ResumeLayout(false);
 			this.m_menuMain.PerformLayout();
+			this.m_tsMain.ResumeLayout(false);
+			this.m_tsMain.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -715,6 +771,11 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileImport;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileImportLng;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSep1;
+		private KeePass.UI.CustomToolStripEx m_tsMain;
+		private System.Windows.Forms.ToolStripButton m_tbOpen;
+		private System.Windows.Forms.ToolStripButton m_tbSave;
+		private System.Windows.Forms.ToolStripSeparator m_tbSep0;
+		private System.Windows.Forms.ToolStripTextBox m_tbFind;
 	}
 }
 

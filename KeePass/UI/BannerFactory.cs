@@ -45,7 +45,8 @@ namespace KeePass.UI
 		private static Dictionary<string, Image> m_vImageCache = new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
 
-		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs, Image imgIcon, string strTitle, string strLine)
+		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs,
+			Image imgIcon, string strTitle, string strLine)
 		{
 			// imgIcon may be null.
 			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");

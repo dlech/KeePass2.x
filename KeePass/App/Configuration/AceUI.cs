@@ -78,6 +78,38 @@ namespace KeePass.App.Configuration
 			get { return m_bOptScreenReader; }
 			set { m_bOptScreenReader = value; }
 		}
+
+		private int m_deSizeW = AppDefs.InvalidWindowValue;
+		public int DataEditorWidth
+		{
+			get { return m_deSizeW; }
+			set { m_deSizeW = value; }
+		}
+
+		private int m_deSizeH = AppDefs.InvalidWindowValue;
+		public int DataEditorHeight
+		{
+			get { return m_deSizeH; }
+			set { m_deSizeH = value; }
+		}
+
+		private AceFont m_deFont = new AceFont();
+		public AceFont DataEditorFont
+		{
+			get { return m_deFont; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_deFont = value;
+			}
+		}
+
+		private bool m_bDeWordWrap = true;
+		public bool DataEditorWordWrap
+		{
+			get { return m_bDeWordWrap; }
+			set { m_bDeWordWrap = value; }
+		}
 	}
 
 	public sealed class AceHiding

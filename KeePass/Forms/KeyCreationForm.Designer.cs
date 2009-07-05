@@ -284,6 +284,7 @@
 			this.m_cmbKeyFile.Name = "m_cmbKeyFile";
 			this.m_cmbKeyFile.Size = new System.Drawing.Size(357, 21);
 			this.m_cmbKeyFile.TabIndex = 8;
+			this.m_cmbKeyFile.SelectedIndexChanged += new System.EventHandler(this.OnKeyFileSelectedIndexChanged);
 			// 
 			// m_lblWindowsAccDesc2
 			// 

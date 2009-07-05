@@ -42,8 +42,6 @@ namespace KeePass.Util
 	/// </summary>
 	public static class EntryUtil
 	{
-		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
-
 		/// <summary>
 		/// Save all attachments of an array of entries to a directory.
 		/// </summary>
@@ -152,18 +150,18 @@ namespace KeePass.Util
 		}
 
 		public static string FillPlaceholders(string strText, PwEntry pe,
-			SprContentFlags cf)
+			PwDatabase pd, SprContentFlags cf)
 		{
 			if(pe == null) return strText;
 
 			string str = strText;
 
-			str = ReplacePickPw(str, pe, cf);
+			str = ReplacePickPw(str, pe, pd, cf);
 
 			return str;
 		}
 
-		private static string ReplacePickPw(string strText, PwEntry pe,
+		/* private static string ReplacePickPw(string strText, PwEntry pe,
 			SprContentFlags cf)
 		{
 			string str = strText;
@@ -174,7 +172,7 @@ namespace KeePass.Util
 				if(iID > 1) strPlaceholder += iID.ToString();
 				strPlaceholder += @"}";
 
-				if(str.IndexOf(strPlaceholder, StrCaseIgnoreCmp) >= 0)
+				if(str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) >= 0)
 				{
 					ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
 					if(ps != null)
@@ -200,6 +198,65 @@ namespace KeePass.Util
 			}
 
 			return str;
+		} */
+
+		private static string ReplacePickPw(string strText, PwEntry pe,
+			PwDatabase pd, SprContentFlags cf)
+		{
+			string str = strText;
+
+			while(true)
+			{
+				string strStart = @"{PICKPASSWORDCHARS";
+
+				int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
+				if(iStart < 0) break;
+
+				int iEnd = str.IndexOf('}', iStart);
+				if(iEnd < 0) break;
+
+				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
+
+				string strParam = str.Substring(iStart + strStart.Length,
+					iEnd - (iStart + strStart.Length));
+				string[] vParams = strParam.Split(new char[] { ':' });
+
+				uint uCharCount = 0;
+				if(vParams.Length >= 2) uint.TryParse(vParams[1], out uCharCount);
+
+				str = ReplacePickPlaceholder(str, strPlaceholder, pe, pd, cf, uCharCount);
+			}
+
+			return str;
+		}
+
+		private static string ReplacePickPlaceholder(string str,
+			string strPlaceholder, PwEntry pe, PwDatabase pd, SprContentFlags cf,
+			uint uCharCount)
+		{
+			if(str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) < 0) return str;
+
+			ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
+			if(ps != null)
+			{
+				string strPassword = ps.ReadString();
+				string strPick = SprEngine.Compile(strPassword, false, pe, pd,
+					(cf != null) ? cf.EncodeAsAutoTypeSequence : false,
+					(cf != null) ? cf.EncodeQuotesForCommandLine : false);
+
+				if(!string.IsNullOrEmpty(strPick))
+				{
+					ProtectedString psPick = new ProtectedString(false, strPick);
+					CharPickerForm dlg = new CharPickerForm();
+					dlg.InitEx(psPick, true, true, uCharCount);
+
+					if(dlg.ShowDialog() == DialogResult.OK)
+						str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
+							SprEngine.TransformContent(dlg.SelectedCharacters.ReadString(), cf));
+				}
+			}
+
+			return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
 		}
 	}
 }

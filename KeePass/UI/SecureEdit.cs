@@ -185,7 +185,12 @@ namespace KeePass.UI
 					sbNewPart.ToString());
 
 			ShowCurrentPassword(nSelPos, nSelLen);
-			m_tbPassword.ClearUndo(); // Would need special undo buffer
+
+			// Check for m_tbPassword being null from on now; the
+			// control might be disposed already (by the user handler
+			// triggered by the ShowCurrentPassword call)
+			if(m_tbPassword != null)
+				m_tbPassword.ClearUndo(); // Would need special undo buffer
 		}
 
 		private void ShowCurrentPassword(int nSelStart, int nSelLength)

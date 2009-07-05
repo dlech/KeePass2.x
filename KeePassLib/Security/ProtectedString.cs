@@ -212,7 +212,7 @@ namespace KeePassLib.Security
 			if(m_secString != null) m_secString.Clear();
 			else m_strAlternativeSecString = string.Empty;
 
-			m_strPlainText = "";
+			m_strPlainText = string.Empty;
 
 			m_xbEncrypted = null;
 		}
@@ -274,7 +274,7 @@ namespace KeePassLib.Security
 				if(m_secString != null)
 				{
 					char ch;
-					for(int i = 0; i < strNewValue.Length; i++)
+					for(int i = 0; i < strNewValue.Length; ++i)
 					{
 						ch = strNewValue[i];
 						if(ch == 0) throw new ArgumentException();

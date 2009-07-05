@@ -23,7 +23,7 @@ namespace KeePassLib.Interfaces
 {
 	/// <summary>
 	/// Interface for objects that support various times (creation time, last
-	/// access time, last modification time and expiration time). Offers
+	/// access time, last modification time and expiry time). Offers
 	/// several helper functions (for example a function to touch the current
 	/// object).
 	/// </summary>

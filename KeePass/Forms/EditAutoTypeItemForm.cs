@@ -67,8 +67,11 @@ namespace KeePass.Forms
 		};
 
 		private static string[] SpecialPlaceholders = new string[]{
-			"APPDIR", "DOCDIR", "GROUP", "GROUPPATH", "DELAY 1000",
-			"PICKPASSWORDCHARS"
+			"APPDIR", "GROUP", "GROUPPATH", "DELAY 1000", "PICKPASSWORDCHARS", VkcBreak,
+			"DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT", "ENV_DIRSEP", VkcBreak,
+			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
+			"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
+			"DT_UTC_DAY", "DT_UTC_HOUR", "DT_UTC_MINUTE", "DT_UTC_SECOND"
 		};
 
 		public EditAutoTypeItemForm()
@@ -179,6 +182,11 @@ namespace KeePass.Forms
 					m_rbKeySeq.Text = m_atConfig.DefaultSequence;
 			}
 
+			m_bBlockUpdates = true;
+			if(m_rbKeySeq.Text.Length > 0) m_rbSeqCustom.Checked = true;
+			else m_rbSeqDefault.Checked = true;
+			m_bBlockUpdates = false;
+
 			try
 			{
 				NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
@@ -216,16 +224,16 @@ namespace KeePass.Forms
 			EnableControlsEx();
 			Debug.Assert(m_btnOK.Enabled); if(!m_btnOK.Enabled) return;
 
+			string strNewSeq = (m_rbSeqCustom.Checked ? m_rbKeySeq.Text : string.Empty);
+
 			if(!m_bEditSequenceOnly)
 			{
 				if(m_strOriginalName != null)
-				{
 					m_atConfig.Remove(m_strOriginalName);
-				}
 
-				m_atConfig.Set(m_cmbWindow.Text, m_rbKeySeq.Text);
+				m_atConfig.Set(m_cmbWindow.Text, strNewSeq);
 			}
-			else m_atConfig.DefaultSequence = m_rbKeySeq.Text;
+			else m_atConfig.DefaultSequence = strNewSeq;
 
 			CleanUpEx();
 		}
@@ -251,11 +259,13 @@ namespace KeePass.Forms
 			// string strError = string.Empty;
 
 			if((m_atConfig.Get(strItemName) != null) && !m_bEditSequenceOnly)
+			{
 				if((m_strOriginalName == null) || !strItemName.Equals(m_strOriginalName))
 				{
 					bEnableOK = false;
 					// strError = KPRes.FieldNameExistsAlready;
 				}
+			}
 
 			if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
 			{
@@ -283,6 +293,8 @@ namespace KeePass.Forms
 				m_cmbWindow.Enabled = false;
 				// m_lblTargetWindowInfo.Enabled = false;
 			}
+
+			m_rbKeySeq.Enabled = m_rbSeqCustom.Checked;
 
 			m_bBlockUpdates = false;
 		}
@@ -372,6 +384,16 @@ namespace KeePass.Forms
 		private void OnWildcardRegexLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.AutoType, AppDefs.HelpTopics.AutoTypeWindowFilters);
+		}
+
+		private void OnSeqDefaultCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnSeqCustomCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
 		}
 	}
 }

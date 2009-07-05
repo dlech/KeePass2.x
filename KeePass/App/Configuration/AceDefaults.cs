@@ -20,11 +20,42 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
+
+using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
+	public sealed class AceKeyFilePath
+	{
+		private string m_strDb = string.Empty;
+		public string DatabasePath
+		{
+			get { return m_strDb; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strDb = value;
+			}
+		}
+
+		private string m_strKey = string.Empty;
+		public string KeyFilePath
+		{
+			get { return m_strKey; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strKey = value;
+			}
+		}
+
+		public AceKeyFilePath() { }
+	}
+
 	public sealed class AceDefaults
 	{
 		public AceDefaults()
@@ -65,6 +96,74 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_searchParams = value;
 			}
+		}
+
+		private bool m_bRememberKeyFilePaths = true;
+		public bool RememberKeyFilePaths
+		{
+			get { return m_bRememberKeyFilePaths; }
+			set { m_bRememberKeyFilePaths = value; }
+		}
+
+		private List<AceKeyFilePath> m_vKeyFilePaths = new List<AceKeyFilePath>();
+		[XmlArrayItem("Association")]
+		public List<AceKeyFilePath> KeyFilePaths
+		{
+			get { return m_vKeyFilePaths; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_vKeyFilePaths = value;
+			}
+		}
+
+		public void SetKeyFilePath(string strDatabase, string strKeyFile)
+		{
+			if(strDatabase == null) throw new ArgumentNullException("strDatabase");
+
+			string strDb = strDatabase;
+			if((strDb.Length > 0) && !UrlUtil.IsAbsolutePath(strDb))
+				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
+
+			string strKey = strKeyFile;
+			if(!string.IsNullOrEmpty(strKey) && !UrlUtil.IsAbsolutePath(strKey))
+				strKey = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strKey);
+
+			if(!m_bRememberKeyFilePaths) strKey = null;
+
+			foreach(AceKeyFilePath kfp in m_vKeyFilePaths)
+			{
+				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
+				{
+					if(string.IsNullOrEmpty(strKey)) m_vKeyFilePaths.Remove(kfp);
+					else kfp.KeyFilePath = strKey;
+					return;
+				}
+			}
+
+			if(string.IsNullOrEmpty(strKey)) return;
+
+			AceKeyFilePath kfpNew = new AceKeyFilePath();
+			kfpNew.DatabasePath = strDb;
+			kfpNew.KeyFilePath = strKey;
+			m_vKeyFilePaths.Add(kfpNew);
+		}
+
+		public string GetKeyFilePath(string strDatabase)
+		{
+			if(strDatabase == null) throw new ArgumentNullException("strDatabase");
+
+			string strDb = strDatabase;
+			if((strDb.Length > 0) && !UrlUtil.IsAbsolutePath(strDb))
+				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
+
+			foreach(AceKeyFilePath kfp in m_vKeyFilePaths)
+			{
+				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
+					return kfp.KeyFilePath;
+			}
+
+			return null;
 		}
 	}
 }

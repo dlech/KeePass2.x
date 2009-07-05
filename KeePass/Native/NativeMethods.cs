@@ -38,6 +38,11 @@ namespace KeePass.Native
 		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
 			IntPtr wParam, IntPtr lParam);
 
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool PostMessage(IntPtr hWnd, int nMsg,
+			IntPtr wParam, IntPtr lParam);
+
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int RegisterWindowMessage(string lpString);
 
@@ -56,21 +61,6 @@ namespace KeePass.Native
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern int GetWindowText(IntPtr hWnd,
 			[Out] StringBuilder lpString, int nMaxCount);
-
-		internal static string GetWindowText(IntPtr hWnd)
-		{
-			int nLength = GetWindowTextLength(hWnd);
-			if(nLength <= 0) return string.Empty;
-
-			StringBuilder sb = new StringBuilder(nLength + 1);
-			GetWindowText(hWnd, sb, sb.Capacity);
-			return sb.ToString();
-		}
-
-		internal static int GetWindowStyle(IntPtr hWnd)
-		{
-			return GetWindowLong(hWnd, GWL_STYLE);
-		}
 
 		[DllImport("User32.dll")]
 		internal static extern IntPtr GetForegroundWindow();
@@ -208,5 +198,28 @@ namespace KeePass.Native
 		[DllImport("Shell32.dll")]
 		internal static extern void SHChangeNotify(int wEventId, uint uFlags,
 			IntPtr dwItem1, IntPtr dwItem2);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool GetScrollInfo(IntPtr hwnd, int fnBar, ref SCROLLINFO lpsi);
+
+		// [DllImport("User32.dll")]
+		// private static extern int SetScrollInfo(IntPtr hwnd, int fnBar,
+		//	[In] ref SCROLLINFO lpsi, [MarshalAs(UnmanagedType.Bool)] bool fRedraw);
+
+		// [DllImport("User32.dll")]
+		// private static extern int ScrollWindowEx(IntPtr hWnd, int dx, int dy,
+		//	IntPtr prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate,
+		//	uint flags);
+
+		[DllImport("User32.dll")]
+		internal static extern IntPtr GetKeyboardLayout(uint idThread);
+
+		[DllImport("User32.dll")]
+		internal static extern IntPtr ActivateKeyboardLayout(IntPtr hkl, uint uFlags);
+
+		[DllImport("User32.dll")]
+		internal static extern uint GetWindowThreadProcessId(IntPtr hWnd,
+			out uint lpdwProcessId);
 	}
 }

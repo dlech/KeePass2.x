@@ -35,8 +35,6 @@ namespace KeePass.Ecas
 {
 	public static class EcasUtil
 	{
-		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
-
 		public const uint StdCompareEqual = 0;
 		public const uint StdCompareNotEqual = 1;
 		public const uint StdCompareLesser = 2;
@@ -404,14 +402,14 @@ namespace KeePass.Ecas
 			if(y == null) { Debug.Assert(false); return false; }
 
 			if(uCompareType == EcasUtil.StdStringCompareEquals)
-				return x.Equals(y, StrCaseIgnoreCmp);
+				return x.Equals(y, StrUtil.CaseIgnoreCmp);
 			if(uCompareType == EcasUtil.StdStringCompareStartsWith)
-				return x.StartsWith(y, StrCaseIgnoreCmp);
+				return x.StartsWith(y, StrUtil.CaseIgnoreCmp);
 			if(uCompareType == EcasUtil.StdStringCompareEndsWith)
-				return x.EndsWith(y, StrCaseIgnoreCmp);
+				return x.EndsWith(y, StrUtil.CaseIgnoreCmp);
 
 			Debug.Assert(uCompareType == EcasUtil.StdStringCompareContains);
-			return (x.IndexOf(y, StrCaseIgnoreCmp) >= 0);
+			return (x.IndexOf(y, StrUtil.CaseIgnoreCmp) >= 0);
 		}
 
 		private static string FilterTypeI64(string str)

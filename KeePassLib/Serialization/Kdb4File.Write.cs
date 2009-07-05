@@ -326,9 +326,12 @@ namespace KeePassLib.Serialization
 
 			WriteObject(ElemRecycleBinEnabled, m_pwDatabase.RecycleBinEnabled);
 			WriteObject(ElemRecycleBinUuid, m_pwDatabase.RecycleBinUuid);
+			WriteObject(ElemEntryTemplatesGroup, m_pwDatabase.EntryTemplatesGroup);
 
 			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
 			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
+
+			WriteList(ElemCustomData, m_pwDatabase.CustomData);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -347,6 +350,8 @@ namespace KeePassLib.Serialization
 			WriteList(ElemTimes, pg);
 			WriteObject(ElemIsExpanded, pg.IsExpanded);
 			WriteObject(ElemGroupDefaultAutoTypeSeq, pg.DefaultAutoTypeSequence, true);
+			WriteObject(ElemEnableAutoType, StrUtil.BoolToStringEx(pg.EnableAutoType), false);
+			WriteObject(ElemEnableSearching, StrUtil.BoolToStringEx(pg.EnableSearching), false);
 			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
 		}
 
@@ -416,7 +421,7 @@ namespace KeePassLib.Serialization
 				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence, true);
 
 			foreach(KeyValuePair<string, string> kvp in dictAutoType.WindowSequencePairs)
-				WriteObject(kvp);
+				WriteObject(ElemAutoTypeItem, ElemWindow, ElemKeystrokeSequence, kvp);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -477,6 +482,19 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemProtURL, value.ProtectUrl);
 			WriteObject(ElemProtNotes, value.ProtectNotes);
 			WriteObject(ElemProtAutoHide, value.AutoEnableVisualHiding);
+
+			m_xmlWriter.WriteEndElement();
+		}
+
+		private void WriteList(string name, StringDictionaryEx value)
+		{
+			Debug.Assert(name != null);
+			Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+
+			m_xmlWriter.WriteStartElement(name);
+
+			foreach(KeyValuePair<string, string> kvp in value)
+				WriteObject(ElemStringDictExItem, ElemKey, ElemValue, kvp);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -557,18 +575,19 @@ namespace KeePassLib.Serialization
 			WriteObject(name, TimeUtil.SerializeUtc(value), false);
 		}
 
-		private void WriteObject(KeyValuePair<string, string> kvp)
+		private void WriteObject(string name, string strKeyName,
+			string strValueName, KeyValuePair<string, string> kvp)
 		{
-			m_xmlWriter.WriteStartElement(ElemAutoTypeItem);
+			m_xmlWriter.WriteStartElement(name);
 
-			m_xmlWriter.WriteStartElement(ElemWindow);
+			m_xmlWriter.WriteStartElement(strKeyName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Key));
 			m_xmlWriter.WriteEndElement();
-			m_xmlWriter.WriteStartElement(ElemKeystrokeSequence);
+			m_xmlWriter.WriteStartElement(strValueName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Value));
 			m_xmlWriter.WriteEndElement();
 
-			m_xmlWriter.WriteEndElement(); // ElemKeyValuePair
+			m_xmlWriter.WriteEndElement();
 		}
 
 		private void WriteObject(string name, ProtectedString value, bool bIsEntryString)

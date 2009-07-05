@@ -36,6 +36,7 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
@@ -61,6 +62,53 @@ namespace KeePass.UI
 					NativeMethods.EM_SETCHARFORMAT, wParam, lParam);
 
 				Marshal.FreeCoTaskMem(lParam);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void RtfLinkifyExtUrls(RichTextBox richTextBox, bool bResetSelection)
+		{
+			const string strProto = "cmd://";
+
+			try
+			{
+				string strText = richTextBox.Text;
+
+				int nOffset = 0;
+				while(nOffset < strText.Length)
+				{
+					int nStart = strText.IndexOf(strProto, nOffset, StrUtil.CaseIgnoreCmp);
+					if(nStart < 0) break;
+
+					richTextBox.Select(nStart, UrlUtil.GetUrlLength(strText, nStart));
+					RtfSetSelectionLink(richTextBox);
+
+					nOffset = nStart + 1;
+				}
+
+				if(bResetSelection) richTextBox.Select(0, 0);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void RtfLinkifyText(RichTextBox rtb, string strLinkText,
+			bool bResetTempSelection)
+		{
+			if(rtb == null) throw new ArgumentNullException("rtb");
+			if(string.IsNullOrEmpty(strLinkText)) return; // No assert
+
+			try
+			{
+				string strText = rtb.Text;
+				int nStart = strText.IndexOf(strLinkText);
+
+				if(nStart >= 0)
+				{
+					rtb.Select(nStart, strLinkText.Length);
+					RtfSetSelectionLink(rtb);
+
+					if(bResetTempSelection) rtb.Select(0, 0);
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -642,6 +690,116 @@ namespace KeePass.UI
 					IntPtr.Zero, (IntPtr)(bSetShield ? 1 : 0));
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void ConfigureTbButton(ToolStripItem tb, string strText,
+			string strTooltip)
+		{
+			if(strText != null) tb.Text = strText;
+
+			if(strTooltip != null)
+				tb.ToolTipText = StrUtil.RemoveAccelerator(strTooltip);
+			else if(strText != null)
+				tb.ToolTipText = StrUtil.RemoveAccelerator(strText);
+		}
+
+		public static void CreateGroupList(PwGroup pgContainer, ComboBox cmb,
+			Dictionary<int, PwUuid> outCreatedItems, PwUuid uuidToSelect,
+			out int iSelectIndex)
+		{
+			iSelectIndex = -1;
+
+			if(pgContainer == null) { Debug.Assert(false); return; }
+			if(cmb == null) { Debug.Assert(false); return; }
+
+			int iSelectInner = -1;
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				string str = new string(' ', Math.Abs(8 * ((int)pg.GetLevel() - 1)));
+				str += pg.Name;
+
+				if((uuidToSelect != null) && pg.Uuid.EqualsValue(uuidToSelect))
+					iSelectInner = cmb.Items.Count;
+
+				if(outCreatedItems != null)
+					outCreatedItems[cmb.Items.Count] = pg.Uuid;
+
+				cmb.Items.Add(str);
+				return true;
+			};
+
+			pgContainer.TraverseTree(TraversalMethod.PreOrder, gh, null);
+			iSelectIndex = iSelectInner;
+		}
+
+		public static void MakeInheritableBoolComboBox(ComboBox cmb, bool? bSelect,
+			bool bInheritedState)
+		{
+			if(cmb == null) { Debug.Assert(false); return; }
+
+			cmb.Items.Clear();
+			cmb.Items.Add(KPRes.InheritSettingFromParent + " (" + (bInheritedState ?
+				KPRes.Enabled : KPRes.Disabled) + ")");
+			cmb.Items.Add(KPRes.Enabled);
+			cmb.Items.Add(KPRes.Disabled);
+
+			if(bSelect.HasValue) cmb.SelectedIndex = (bSelect.Value ? 1 : 2);
+			else cmb.SelectedIndex = 0;
+		}
+
+		public static bool? GetInheritableBoolComboBoxValue(ComboBox cmb)
+		{
+			if(cmb == null) { Debug.Assert(false); return null; }
+
+			if(cmb.SelectedIndex == 1) return true;
+			if(cmb.SelectedIndex == 2) return false;
+			return null;
+		}
+
+		public static void SetEnabled(Control c, bool bEnabled)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			if(c.Enabled != bEnabled) c.Enabled = bEnabled;
+		}
+
+		public static void SetChecked(CheckBox cb, bool bChecked)
+		{
+			if(cb == null) { Debug.Assert(false); return; }
+
+			if(cb.Checked != bChecked) cb.Checked = bChecked;
+		}
+
+		public static void ResizeColumns(ListView lv, bool bBlockUIUpdate)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			int nColumns = 0;
+			foreach(ColumnHeader ch in lv.Columns)
+			{
+				if(ch.Width > 0) ++nColumns;
+			}
+			if(nColumns == 0) return;
+
+			int cx = (lv.ClientSize.Width - 1) / nColumns;
+			int cx0 = (lv.ClientSize.Width - 1) - (cx * (nColumns - 1));
+			if((cx0 <= 0) || (cx <= 0)) return;
+
+			if(bBlockUIUpdate) lv.BeginUpdate();
+
+			bool bFirst = true;
+			foreach(ColumnHeader ch in lv.Columns)
+			{
+				int nCurWidth = ch.Width;
+				if(nCurWidth == 0) continue;
+				if(bFirst && (nCurWidth == cx0)) { bFirst = false; continue; }
+				if(!bFirst && (nCurWidth == cx)) continue;
+
+				ch.Width = (bFirst ? cx0 : cx);
+				bFirst = false;
+			}
+
+			if(bBlockUIUpdate) lv.EndUpdate();
 		}
 	}
 }

@@ -75,6 +75,16 @@ namespace KeePass.App.Configuration
 			get { return m_nClipClearSeconds; }
 			set { m_nClipClearSeconds = value; }
 		}
+
+		// Disabled by default, because Office's clipboard tools
+		// crash with the Clipboard Viewer Ignore format
+		// (when it is set using OleSetClipboard)
+		private bool m_bUseClipboardViewerIgnoreFmt = false;
+		public bool UseClipboardViewerIgnoreFormat
+		{
+			get { return m_bUseClipboardViewerIgnoreFmt; }
+			set { m_bUseClipboardViewerIgnoreFmt = value; }
+		}
 	}
 
 	public sealed class AceWorkspaceLocking

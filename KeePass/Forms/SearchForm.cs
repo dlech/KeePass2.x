@@ -134,7 +134,7 @@ namespace KeePass.Forms
 
 			PwObjectList<PwEntry> listResults = pgResults.Entries;
 
-			try { m_pgRoot.SearchEntries(sp, listResults); }
+			try { m_pgRoot.SearchEntries(sp, listResults, true); }
 			catch(Exception exFind) { MessageService.ShowWarning(exFind); }
 
 			m_pgResultsGroup = pgResults;

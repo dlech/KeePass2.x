@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Diagnostics;
 
 using KeePassLib;
@@ -84,7 +85,7 @@ namespace KeePass.Util.Spr
 
 			string str = strText;
 			str = AppLocator.FillPlaceholders(str, cf);
-			str = EntryUtil.FillPlaceholders(str, pwEntry, cf);
+			str = EntryUtil.FillPlaceholders(str, pwEntry, pwDatabase, cf);
 
 			if(pwEntry != null)
 			{
@@ -112,13 +113,83 @@ namespace KeePass.Util.Spr
 
 			if(m_strAppExePath != null)
 				str = SprEngine.FillIfExists(str, @"{APPDIR}", new ProtectedString(
-					false, UrlUtil.GetFileDirectory(m_strAppExePath, false)),
+					false, UrlUtil.GetFileDirectory(m_strAppExePath, false, false)),
 					pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
 
 			if(pwDatabase != null)
+			{
+				// For backward compatibility only
 				str = SprEngine.FillIfExists(str, @"{DOCDIR}", new ProtectedString(
-					false, UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Path, false)),
+					false, UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Path,
+					false, false)), pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
+
+				str = SprEngine.FillIfExists(str, @"{DB_PATH}", new ProtectedString(
+					false, pwDatabase.IOConnectionInfo.Path), pwEntry, pwDatabase,
+					cf, uRecursionLevel, vRefsCache);
+				str = SprEngine.FillIfExists(str, @"{DB_DIR}", new ProtectedString(
+					false, UrlUtil.GetFileDirectory(pwDatabase.IOConnectionInfo.Path,
+					false, false)), pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
+				str = SprEngine.FillIfExists(str, @"{DB_NAME}", new ProtectedString(
+					false, UrlUtil.GetFileName(pwDatabase.IOConnectionInfo.Path)),
 					pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
+				str = SprEngine.FillIfExists(str, @"{DB_BASENAME}", new ProtectedString(
+					false, UrlUtil.StripExtension(UrlUtil.GetFileName(
+					pwDatabase.IOConnectionInfo.Path))), pwEntry, pwDatabase, cf,
+					uRecursionLevel, vRefsCache);
+				str = SprEngine.FillIfExists(str, @"{DB_EXT}", new ProtectedString(
+					false, UrlUtil.GetExtension(pwDatabase.IOConnectionInfo.Path)),
+					pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
+			}
+
+			str = SprEngine.FillIfExists(str, @"{ENV_DIRSEP}", new ProtectedString(
+				false, Path.DirectorySeparatorChar.ToString()), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+
+			DateTime dtNow = DateTime.Now; // Local time
+			str = SprEngine.FillIfExists(str, @"{DT_YEAR}", new ProtectedString(
+				false, dtNow.Year.ToString("D4")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_MONTH}", new ProtectedString(
+				false, dtNow.Month.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_DAY}", new ProtectedString(
+				false, dtNow.Day.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_HOUR}", new ProtectedString(
+				false, dtNow.Hour.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_MINUTE}", new ProtectedString(
+				false, dtNow.Minute.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_SECOND}", new ProtectedString(
+				false, dtNow.Second.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_SIMPLE}", new ProtectedString(
+				false, dtNow.ToString("yyyyMMddHHmmss")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+
+			dtNow = dtNow.ToUniversalTime();
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_YEAR}", new ProtectedString(
+				false, dtNow.Year.ToString("D4")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_MONTH}", new ProtectedString(
+				false, dtNow.Month.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_DAY}", new ProtectedString(
+				false, dtNow.Day.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_HOUR}", new ProtectedString(
+				false, dtNow.Hour.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_MINUTE}", new ProtectedString(
+				false, dtNow.Minute.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_SECOND}", new ProtectedString(
+				false, dtNow.Second.ToString("D2")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
+			str = SprEngine.FillIfExists(str, @"{DT_UTC_SIMPLE}", new ProtectedString(
+				false, dtNow.ToString("yyyyMMddHHmmss")), pwEntry, pwDatabase, cf,
+				uRecursionLevel, vRefsCache);
 
 			str = SprEngine.FillRefPlaceholders(str, pwDatabase, cf, uRecursionLevel,
 				vRefsCache);
@@ -229,7 +300,7 @@ namespace KeePass.Util.Spr
 				else { nOffset = nStart + 1; continue; }
 
 				PwObjectList<PwEntry> lFound = new PwObjectList<PwEntry>();
-				pwDatabase.RootGroup.SearchEntries(sp, lFound);
+				pwDatabase.RootGroup.SearchEntries(sp, lFound, true);
 				if(lFound.UCount > 0)
 				{
 					PwEntry peFound = lFound.GetAt(0);

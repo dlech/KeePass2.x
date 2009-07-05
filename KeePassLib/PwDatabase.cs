@@ -71,6 +71,9 @@ namespace KeePassLib
 
 		private bool m_bUseRecycleBin = true;
 		private PwUuid m_pwRecycleBin = PwUuid.Zero;
+		private PwUuid m_pwEntryTemplatesGroup = PwUuid.Zero;
+
+		private StringDictionaryEx m_vCustomData = new StringDictionaryEx();
 
 		private byte[] m_pbHashOfFileOnDisk = null;
 		private byte[] m_pbHashOfLastIO = null;
@@ -296,6 +299,34 @@ namespace KeePassLib
 		}
 
 		/// <summary>
+		/// UUID of the group containing template entries. May be
+		/// <c>PwUuid.Zero</c>, if no entry templates group has been specified.
+		/// </summary>
+		public PwUuid EntryTemplatesGroup
+		{
+			get { return m_pwEntryTemplatesGroup; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_pwEntryTemplatesGroup = value;
+			}
+		}
+
+		/// <summary>
+		/// Custom data container that can be used by plugins to store
+		/// own data in KeePass databases.
+		/// </summary>
+		public StringDictionaryEx CustomData
+		{
+			get { return m_vCustomData; }
+			set
+			{
+				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				m_vCustomData = value;
+			}
+		}
+
+		/// <summary>
 		/// Hash value of the primary file on disk (last read or last write).
 		/// A call to <c>SaveAs</c> without making the saved file primary will
 		/// not change this hash. May be <c>null</c>.
@@ -359,6 +390,12 @@ namespace KeePassLib
 
 			m_pwLastSelectedGroup = PwUuid.Zero;
 			m_pwLastTopVisibleGroup = PwUuid.Zero;
+
+			m_bUseRecycleBin = true;
+			m_pwRecycleBin = PwUuid.Zero;
+			m_pwEntryTemplatesGroup = PwUuid.Zero;
+
+			m_vCustomData = new StringDictionaryEx();
 
 			m_pbHashOfFileOnDisk = null;
 			m_pbHashOfLastIO = null;
@@ -525,9 +562,7 @@ namespace KeePassLib
 		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm)
 		{
 			if(mm == PwMergeMethod.CreateNewUuids)
-			{
 				pwSource.RootGroup.CreateNewItemUuids(true, true, true);
-			}
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
@@ -584,7 +619,7 @@ namespace KeePassLib
 					peNew.AssignProperties(pe, false, true);
 					pgLocalContainer.AddEntry(peNew, true);
 				}
-				else // peLocal == null
+				else // peLocal != null
 				{
 					Debug.Assert(mm != PwMergeMethod.CreateNewUuids);
 

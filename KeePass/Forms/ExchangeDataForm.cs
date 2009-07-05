@@ -119,7 +119,8 @@ namespace KeePass.Forms
 
 			m_lvFormats.ShowGroups = true;
 			m_lvFormats.Columns.Add(string.Empty);
-			m_lvFormats.Columns[0].Width = m_lvFormats.ClientRectangle.Width - 1;
+			m_lvFormats.Columns[0].Width = m_lvFormats.ClientRectangle.Width -
+				UIUtil.GetVScrollBarWidth() - 1;
 
 			ImageList ilFormats = new ImageList();
 			ilFormats.ColorDepth = ColorDepth.Depth32Bit;

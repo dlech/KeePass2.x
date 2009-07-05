@@ -103,8 +103,7 @@ namespace KeePassLib.Collections
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			ProtectedString ps;
-			if(m_vStrings.TryGetValue(strName, out ps))
-				return ps;
+			if(m_vStrings.TryGetValue(strName, out ps)) return ps;
 
 			return null;
 		}
@@ -124,8 +123,7 @@ namespace KeePassLib.Collections
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			ProtectedString ps;
-			if(m_vStrings.TryGetValue(strName, out ps))
-				return ps;
+			if(m_vStrings.TryGetValue(strName, out ps)) return ps;
 
 			return new ProtectedString();
 		}
@@ -185,7 +183,7 @@ namespace KeePassLib.Collections
 				else return ps.ReadString();
 			}
 
-			return "";
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -209,8 +207,8 @@ namespace KeePassLib.Collections
 		/// <param name="strField">Name of the string field to delete.</param>
 		/// <returns>Returns <c>true</c> if the field has been successfully
 		/// removed, otherwise the return value is <c>false</c>.</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if one of the input
-		/// parameters is <c>null</c>.</exception>
+		/// <exception cref="System.ArgumentNullException">Thrown if the input
+		/// parameter is <c>null</c>.</exception>
 		public bool Remove(string strField)
 		{
 			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException("strField");

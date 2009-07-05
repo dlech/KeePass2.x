@@ -147,6 +147,30 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private AceCustomConfig m_cc = new AceCustomConfig();
+		[XmlIgnore]
+		public AceCustomConfig CustomConfig
+		{
+			get { return m_cc; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_cc = value;
+			}
+		}
+
+		[XmlArray("Custom")]
+		[XmlArrayItem("Item")]
+		public AceKvp[] CustomSerialized
+		{
+			get { return m_cc.Serialize(); }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_cc.Deserialize(value);
+			}
+		}
+
 		/// <summary>
 		/// Prepare for saving the configuration to disk. None of the
 		/// modifications in this method need to be rolled back
@@ -158,6 +182,9 @@ namespace KeePass.App.Configuration
 
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				iocMru.ClearCredentials(true);
+
+			if(m_def.RememberKeyFilePaths == false)
+				m_def.KeyFilePaths.Clear();
 
 			m_aceApp.TriggerSystem = Program.TriggerSystem;
 		}
@@ -184,6 +211,12 @@ namespace KeePass.App.Configuration
 
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				ChangePathRelAbs(iocMru, bMakeAbsolute);
+
+			foreach(AceKeyFilePath kfp in m_def.KeyFilePaths)
+			{
+				kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
+				kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
+			}
 		}
 
 		private static void ChangePathRelAbs(IOConnectionInfo ioc, bool bMakeAbsolute)
@@ -199,6 +232,15 @@ namespace KeePass.App.Configuration
 				ioc.Path = UrlUtil.MakeAbsolutePath(strBase, ioc.Path);
 			else if(!bMakeAbsolute && bIsAbs)
 				ioc.Path = UrlUtil.MakeRelativePath(strBase, ioc.Path);
+		}
+
+		private static string ChangePathRelAbsStr(string strPath, bool bMakeAbsolute)
+		{
+			if(strPath == null) { Debug.Assert(false); return string.Empty; }
+
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
+			ChangePathRelAbs(ioc, bMakeAbsolute);
+			return ioc.Path;
 		}
 	}
 

@@ -184,11 +184,13 @@ namespace KeePass.App.Configuration
 
 	public sealed class AceMru
 	{
+		public const uint DefaultMaxItemCount = 12;
+
 		public AceMru()
 		{
 		}
 
-		private uint m_uMaxItems = 12;
+		private uint m_uMaxItems = DefaultMaxItemCount;
 		public uint MaxItemCount
 		{
 			get { return m_uMaxItems; }

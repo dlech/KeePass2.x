@@ -161,7 +161,7 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); return true; }
 
 			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
-			m_pgEntrySource.SearchEntries(sp, l);
+			m_pgEntrySource.SearchEntries(sp, l, false);
 
 			if(l.UCount == 0) { Debug.Assert(false); return false; }
 			else if(l.UCount == 1) return false;

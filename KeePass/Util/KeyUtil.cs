@@ -21,13 +21,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Keys;
 using KeePassLib.Utility;
+using KeePassLib.Serialization;
 
 namespace KeePass.Util
 {
@@ -47,11 +50,35 @@ namespace KeePass.Util
 			
 			if(strKeyFile != null)
 			{
-				try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
-				catch(Exception exKey)
+				if(Program.KeyProviderPool.IsKeyProvider(strKeyFile))
 				{
-					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKey);
-					return null;
+					KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
+						args.FileName, false);
+
+					bool bPerformHash;
+					byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,
+						out bPerformHash);
+					if((pbProvKey != null) && (pbProvKey.Length > 0))
+					{
+						try { cmpKey.AddUserKey(new KcpCustomKey(strKeyFile, pbProvKey, bPerformHash)); }
+						catch(Exception exCKP)
+						{
+							MessageService.ShowWarning(exCKP);
+							return null;
+						}
+
+						Array.Clear(pbProvKey, 0, pbProvKey.Length);
+					}
+					else return null; // Provider has shown error message
+				}
+				else // Key file
+				{
+					try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
+					catch(Exception exKey)
+					{
+						MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKey);
+						return null;
+					}
 				}
 			}
 			

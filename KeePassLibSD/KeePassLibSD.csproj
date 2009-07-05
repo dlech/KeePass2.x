@@ -72,6 +72,9 @@
     <Compile Include="..\KeePassLib\Collections\PwObjectList.cs">
       <Link>Collections\PwObjectList.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\StringDictionaryEx.cs">
+      <Link>Collections\StringDictionaryEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\CipherPool.cs">
       <Link>Cryptography\Cipher\CipherPool.cs</Link>
     </Compile>
@@ -95,6 +98,12 @@
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
       <Link>Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CustomPwGenerator.cs">
+      <Link>Cryptography\PasswordGenerator\CustomPwGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs">
+      <Link>Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs">
       <Link>Cryptography\PasswordGenerator\PatternBasedGenerator.cs</Link>
@@ -153,6 +162,12 @@
     <Compile Include="..\KeePassLib\Keys\KeyProviderPool.cs">
       <Link>Keys\KeyProviderPool.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyValidator.cs">
+      <Link>Keys\KeyValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyValidatorPool.cs">
+      <Link>Keys\KeyValidatorPool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
       <Link>Keys\UserKeyType.cs</Link>
     </Compile>
@@ -200,6 +215,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Security\XorredBuffer.cs">
       <Link>Security\XorredBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
+      <Link>Serialization\BinaryReaderEx.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
       <Link>Serialization\HashedBlockStream.cs</Link>

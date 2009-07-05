@@ -88,24 +88,24 @@ namespace KeePass.UI
 			int iPos = -1;
 
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Undo,
-				KeePass.Properties.Resources.B16x16_Undo, this.OnUndoCommand);
+				Properties.Resources.B16x16_Undo, this.OnUndoCommand);
 			ctx.Items.Add(new ToolStripSeparator());
 
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Cut,
-				KeePass.Properties.Resources.B16x16_Cut, this.OnCutCommand);
+				Properties.Resources.B16x16_Cut, this.OnCutCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Copy,
-				KeePass.Properties.Resources.B16x16_EditCopy, this.OnCopyCommand);
+				Properties.Resources.B16x16_EditCopy, this.OnCopyCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Paste,
-				KeePass.Properties.Resources.B16x16_EditPaste, this.OnPasteCommand);
+				Properties.Resources.B16x16_EditPaste, this.OnPasteCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Delete,
-				KeePass.Properties.Resources.B16x16_EditDelete, this.OnDeleteCommand);
+				Properties.Resources.B16x16_EditDelete, this.OnDeleteCommand);
 			ctx.Items.Add(new ToolStripSeparator());
 
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.CopyAll,
-				KeePass.Properties.Resources.B16x16_EditShred, this.OnCopyAllCommand);
+				Properties.Resources.B16x16_EditShred, this.OnCopyAllCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.SelectAll,
-				KeePass.Properties.Resources.B16x16_Edit, this.OnSelectAllCommand);
-
+				Properties.Resources.B16x16_Edit, this.OnSelectAllCommand);
+			
 			Debug.Assert(iPos == ((int)RichTextBoxContextMenuCommands.Count - 1));
 			return ctx;
 		}

@@ -204,6 +204,7 @@ namespace KeePass.Forms
 			string strDelimiter = m_tbSepChar.Text;
 			if(strDelimiter.Length == 0) return;
 
+			char[] vPartTrimChars = new char[] { '\"' };
 			int nLine = 0;
 			string[] vLines = m_strSource.Split(new char[] { '\r', '\n' });
 			foreach(string strLine in vLines)
@@ -216,8 +217,7 @@ namespace KeePass.Forms
 				List<string> vParts = ImportUtil.SplitCsvLine(strLine, strDelimiter);
 
 				for(int i = 0; i < vParts.Count; ++i)
-					vParts[i] = vParts[i].TrimStart(new char[]{ '\"' }).TrimEnd(new char[]{
-						'\"' });
+					vParts[i] = vParts[i].Trim(vPartTrimChars);
 
 				ListViewItem lvi = new ListViewItem(string.Empty);
 

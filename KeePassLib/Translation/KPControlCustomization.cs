@@ -270,11 +270,20 @@ namespace KeePassLib.Translation
 
 			StringBuilder sb = new StringBuilder();
 			WriteCpiParam(sb, c.Text);
-			WriteCpiParam(sb, c.Left.ToString(KpccLayout.m_lclInv));
-			WriteCpiParam(sb, c.Top.ToString(KpccLayout.m_lclInv));
-			WriteCpiParam(sb, c.Width.ToString(KpccLayout.m_lclInv));
-			WriteCpiParam(sb, c.Height.ToString(KpccLayout.m_lclInv));
-			WriteCpiParam(sb, c.Dock.ToString());
+
+			if(c is Form)
+			{
+				WriteCpiParam(sb, c.ClientSize.Width.ToString());
+				WriteCpiParam(sb, c.ClientSize.Height.ToString());
+			}
+			else // Normal control
+			{
+				WriteCpiParam(sb, c.Left.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.Top.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.Width.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.Height.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.Dock.ToString());
+			}
 
 			WriteCpiParam(sb, c.Font.Name);
 			WriteCpiParam(sb, c.Font.SizeInPoints.ToString(KpccLayout.m_lclInv));
@@ -297,11 +306,11 @@ namespace KeePassLib.Translation
 
 		private static void WriteControlDependentParams(StringBuilder sb, Control c)
 		{
-			CheckBox cb = c as CheckBox;
-			RadioButton rb = c as RadioButton;
-			Button btn = c as Button;
-			Label l = c as Label;
-			LinkLabel ll = c as LinkLabel;
+			CheckBox cb = (c as CheckBox);
+			RadioButton rb = (c as RadioButton);
+			Button btn = (c as Button);
+			Label l = (c as Label);
+			LinkLabel ll = (c as LinkLabel);
 
 			if(cb != null)
 			{

@@ -97,6 +97,7 @@ namespace KeePass.Native
 
 		internal const int LVM_FIRST = 0x1000;
 		internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
+		internal const int LVM_SCROLL = LVM_FIRST + 20;
 
 		internal const int WM_MOUSEACTIVATE = 0x21;
 		internal const int MA_ACTIVATE = 1;
@@ -108,6 +109,8 @@ namespace KeePass.Native
 
 		internal const int SHCNE_ASSOCCHANGED = 0x08000000;
 		internal const uint SHCNF_IDLIST = 0x0000;
+
+		// internal const uint SW_INVALIDATE = 0x0002;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -158,6 +161,24 @@ namespace KeePass.Native
 			OpenExisting = 3,
 			OpenAlways = 4,
 			TruncateExisting = 5
+		}
+
+		private enum ScrollBarDirection : int
+		{
+			SB_HORZ = 0,
+			SB_VERT = 1,
+			SB_CTL = 2,
+			SB_BOTH = 3
+		}
+
+		private enum ScrollInfoMask : uint
+		{
+			SIF_RANGE = 0x1,
+			SIF_PAGE = 0x2,
+			SIF_POS = 0x4,
+			SIF_DISABLENOSCROLL = 0x8,
+			SIF_TRACKPOS = 0x10,
+			SIF_ALL = SIF_RANGE + SIF_PAGE + SIF_POS + SIF_TRACKPOS
 		}
 	}
 }

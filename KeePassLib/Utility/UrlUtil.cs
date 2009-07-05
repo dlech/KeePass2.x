@@ -45,15 +45,25 @@ namespace KeePassLib.Utility
 		/// <param name="strFile">Full path of a file.</param>
 		/// <param name="bAppendTerminatingChar">Append a terminating directory separator
 		/// character to the returned path.</param>
+		/// <param name="bEnsureValidDirSpec">If <c>true</c>, the returned path
+		/// is guaranteed to be a valid directory path (for example <c>X:\\</c> instead
+		/// of <c>X:</c>, overriding <paramref name="bAppendTerminatingChar" />).
+		/// This should only be set to <c>true</c>, if the returned path is directly
+		/// passed to some directory API.</param>
 		/// <returns>Directory of the file. The return value is an empty string
 		/// (<c>""</c>) if the input parameter is <c>null</c>.</returns>
-		public static string GetFileDirectory(string strFile, bool bAppendTerminatingChar)
+		public static string GetFileDirectory(string strFile, bool bAppendTerminatingChar,
+			bool bEnsureValidDirSpec)
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 
 			int nLastSep = strFile.LastIndexOfAny(m_vDirSeps);
-			if(nLastSep <= 2) return strFile; // None or X:\\
+			if(nLastSep < 0) return strFile; // None
+
+			if(bEnsureValidDirSpec && (nLastSep == 2) && (strFile[1] == ':') &&
+				(strFile[2] == '\\')) // Length >= 3 and Windows root directory
+				bAppendTerminatingChar = true;
 
 			if(!bAppendTerminatingChar) return strFile.Substring(0, nLastSep);
 			return EnsureTerminatingSeparator(strFile.Substring(0, nLastSep), false);
@@ -317,7 +327,7 @@ namespace KeePassLib.Utility
 
 			if(IsAbsolutePath(strTargetFile)) return strTargetFile;
 
-			string strBaseDir = GetFileDirectory(strBaseFile, true);
+			string strBaseDir = GetFileDirectory(strBaseFile, true, false);
 			return GetShortestAbsolutePath(strBaseDir + strTargetFile);
 		}
 
@@ -345,6 +355,27 @@ namespace KeePassLib.Utility
 
 			Debug.Assert(str.IndexOf("\\..\\") < 0);
 			return str.Replace("\\.\\", "\\");
+		}
+
+		public static int GetUrlLength(string strText, int nOffset)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+			if(nOffset > strText.Length) throw new ArgumentException(); // Not >= (0 len)
+
+			int iPosition = nOffset, nLength = 0, nStrLen = strText.Length;
+
+			while(iPosition < nStrLen)
+			{
+				char ch = strText[iPosition];
+				++iPosition;
+
+				if((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n'))
+					break;
+
+				++nLength;
+			}
+
+			return nLength;
 		}
 	}
 }

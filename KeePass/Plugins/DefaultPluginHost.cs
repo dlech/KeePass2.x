@@ -21,12 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using KeePass.App.Configuration;
 using KeePass.DataExchange;
+using KeePass.Ecas;
 using KeePass.Forms;
 using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Keys;
 using KeePassLib.Security;
 
@@ -69,6 +72,11 @@ namespace KeePass.Plugins
 			get { return m_cmdLineArgs; }
 		}
 
+		public AceCustomConfig CustomConfig
+		{
+			get { return Program.Config.CustomConfig; }
+		}
+
 		public CipherPool CipherPool
 		{
 			get { return m_cipherPool; }
@@ -79,9 +87,34 @@ namespace KeePass.Plugins
 			get { return Program.KeyProviderPool; }
 		}
 
+		public KeyValidatorPool KeyValidatorPool
+		{
+			get { return Program.KeyValidatorPool; }
+		}
+
 		public FileFormatPool FileFormatPool
 		{
 			get { return Program.FileFormatPool; }
+		}
+
+		public TempFilesPool TempFilesPool
+		{
+			get { return Program.TempFilesPool; }
+		}
+
+		public EcasPool EcasPool
+		{
+			get { return Program.EcasPool; }
+		}
+
+		public EcasTriggerSystem TriggerSystem
+		{
+			get { return Program.TriggerSystem; }
+		}
+
+		public CustomPwGeneratorPool PwGeneratorPool
+		{
+			get { return Program.PwGeneratorPool; }
 		}
 	}
 }

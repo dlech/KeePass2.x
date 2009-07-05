@@ -1,3 +1,157 @@
+2009-07-05: 2.08
+- Key transformation library: KeePass can now use Windows'
+  CNG/BCrypt API for key transformations (about 50% faster than
+  the KeePass built-in key transformation code; by increasing
+  the amount of rounds by 50%, you'll get the same waiting time
+  as in 2.07, but the protection against dictionary and
+  guessing attacks is raised by a factor of 1.5; only Windows
+  Vista and higher)
+- Added support for sending keystrokes (auto-type) to windows
+  that are using different keyboard layouts
+- Added option to remember key file paths (enabled by default)
+- Added internal editor for text files (text only and RTF
+  formatted text; editor can edit entry attachments)
+- Internal data viewer: added support for showing rich text
+  (text with formatting)
+- Added inheritable group settings for disabling auto-type and
+  searching for all entries in this group (see tab 'Behavior');
+  for new recycle bins, both properties are set to disabled
+- Added new placeholders: {DB_PATH}, {DB_DIR}, {DB_NAME},
+  {DB_BASENAME}, {DB_EXT}, {ENV_DIRSEP}, {DT_SIMPLE},
+  {DT_YEAR}, {DT_MONTH}, {DT_DAY}, {DT_HOUR}, {DT_MINUTE},
+  {DT_SECOND}, {DT_UTC_SIMPLE}, {DT_UTC_YEAR}, {DT_UTC_MONTH},
+  {DT_UTC_DAY}, {DT_UTC_HOUR}, {DT_UTC_MINUTE}, {DT_UTC_SECOND}
+- The password character picking dialog now supports pre-
+  defining the number of characters to pick; append :k in the
+  placeholder to specify a length of k (for example,
+  {PICKPASSWORDCHARS3:5} would be a placeholder with ID 3 and
+  would pick 5 characters from the password); advantage: when
+  having picked k characters, the dialog closes automatically,
+  i.e. saves you to click [OK]
+- IDs in {PICKPASSWORDCHARSn} do not need to be consecutive
+  anymore
+- The password character picking dialog now first dereferences
+  passwords (i.e. placeholders can be used here, too)
+- Added '-minimize' command line option
+- Added '-iousername', '-iopassword' and '-iocredfromrecent'
+  command line options
+- Added '--auto-type' command line option
+- Added support for importing FlexWallet 1.7 XML files
+- Added option to disable protecting the clipboard using the
+  CF_CLIPBOARD_VIEWER_IGNORE clipboard format
+- Added support for WebDAV URLs (thanks to Ryan Press)
+- Added shortcut keys in master key prompt dialog
+- Added entry templates functionality (first specify an entry
+  templates group in the database settings dialog, then use the
+  'Add Entry' toolbar drop-down button)
+- Added AceCustomConfig class (accessible through host
+  interface), that allows plugins to store their configuration
+  data in the KeePass configuration file
+- Added ability for plugins to store custom data in KDBX
+  database files (PwDatabase.CustomData)
+- Added interface for custom password generation algorithm
+  plugins
+- URLs in the entry preview window are now always clickable
+  (especially including cmd:// URLs)
+- Added option to copy URLs to the clipboard instead of opening
+  them (Options -> Interface, turned off by default)
+- Added option to automatically resize entry list columns when
+  resizing the main window (turned off by default)
+- Added 'Sync' command in KPScript scripting tool
+- Added FIPS compliance problems self-test (see FAQ for details
+  about FIPS compliance)
+- Added Rijndael/AES block size validation and configuration
+- Added NotifyIcon workaround for Mono under Mac OS X
+- Added confirmation box for empty master passwords
+- Added radio buttons in auto-type sequence editing dialog to
+  choose between the default entry sequence and a custom one
+- Added hint that group notes are shown in group tooltips
+- Added test for KeePass 1.x plugins and an appropriate error
+  message
+- Added interface for writing master password requirements
+  validation plugins
+- Key provider plugin API: enhanced key query method by a
+  context information object
+- Key provider plugin API: added 'DirectKey' property to key
+  provider base class that allows returning keys that are
+  directly written to the user key data stream
+- Key provider plugin API: added support for exclusive plugins
+- The '-keyfile' command line option now supports selecting key
+  providers (plugins)
+- Auto-Type: added option to send an Alt keypress when only the
+  Alt modifier is active (option enabled by default)
+- Added warning when trying to use only Alt or Alt-Shift as
+  global hot key modifier
+- TrlUtil: added search functionality and toolbar
+- TrlUtil: version is now shown in the window title
+
+- Improved database file versioning and changed KDBX file
+  signature in order to prevent older versions from corrupting
+  newer files
+- ShInstUtil now first tries to uninstall a previous native
+  image before creating a new one
+- Improved file corruption error messages (instead of index out
+  of array bounds exception text, ...)
+- The 'Open in Browser' command now opens all selected entries
+  instead of just the focused one
+- Data-editing commands in the 'Tools' menu in the entry dialog
+  are now disabled when being in history viewing mode
+- Right arrow key now works correctly in group tree view
+- Entry list is now updated when selecting a group by pressing
+  a A-Z, 0-9 or numpad key
+- Improved entry list performance and sorting behavior
+- Improved splitter distance remembering
+- Improved self-tests (KeePass now correctly terminates when a
+  self-test fails)
+- The attachment column in the main window now shows the names
+  of the attached files instead of the attachments count
+- Double-clicking an attachment field in the main window now
+  edits (if possible) or shows the first attachment of the
+  entry
+- Group modification times are now updated after editing groups
+- Improved scrolling of the entry list in item grouping mode
+- Changed history view to show last modification times, titles
+  and user names of history entries
+- KeePass now also automatically prompts to unlock when
+  restoring to a maximized window
+- Improved file system root directory support
+- Improved generic CSV importer preview performance
+- When saving a file, its path is not remembered anymore, if
+  the option for opening the recently used file at startup is
+  disabled
+- Improved auto-type input blocking
+- Instead of a blank text, the entry dialog now shows
+  "(Default)" if the default auto-type sequence is used in a
+  window-sequence association
+- Most broadcasted Windows messages do not wait for hanging
+  applications anymore
+- Improved main window hiding at startup when the options to
+  minimize after opening a database and to tray are enabled
+- Default tray action is now dependent on mouse button
+- New entries can now inherit custom icons from their parent
+  groups
+- Improved maximized state handling when exiting while the main
+  window is minimized
+- Improved state updating in key creation form
+- Improved MRU list updating performance
+- Improved plugin incompatibility error message
+- Deprecated {DOCDIR}, use {DB_DIR} instead ({DOCDIR} is still
+  supported for backward compatibility though)
+- Last modification times of TAN entries are now updated
+- F12 cannot be registered as global hot key anymore, because
+  it is reserved for kernel-mode / JIT debuggers
+- Improved auto-type statement conversion routine in KeePass
+  1.x KDB file importer
+- Improved column width calculation in file/data format dialog
+- Improved synchronization status bar messages
+- TrlUtil: base hash for forms is now computed using the form's
+  client rectangle instead of its window size
+- Various code optimizations
+- Minor other improvements
+
+- Recycle bin is now cleared correctly when clearing the
+  database
+
 2009-03-14: 2.07 Beta
 - Added powerful trigger system (when events occur, check some
   conditions and execute a list of actions; see options dialog
@@ -11,7 +165,7 @@
   results in almost triple the performance as before (by
   tripling the amount of rounds you'll get the same waiting
   time as in 2.06, but the protection against dictionary and
-  guessing attack is tripled)
+  guessing attacks is tripled)
 - Added recycle bin (enabled by default, it can be disabled in
   the database settings dialog)
 - Added Salsa20 stream cipher for CryptoRandomStream (this
@@ -106,8 +260,8 @@
 - Improved Linux / Mac OS X compatibility
 - Improved MSI package (removed unnecessary dependency)
 - TrlUtil: improved NumericUpDown and RichTextBox handling
-- Installer: file association is now a task, not a component
 - Installer now checks for minimum operating system version
+- Installer: file association is now a task, not a component
 - Installer: various other improvements
 - Various code optimizations
 - Minor other improvements

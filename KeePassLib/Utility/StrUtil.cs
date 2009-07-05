@@ -69,9 +69,9 @@ namespace KeePassLib.Utility
 			return chRet;
 		}
 
-		public char ReadChar(bool bSkipWhitespace)
+		public char ReadChar(bool bSkipWhiteSpace)
 		{
-			if(bSkipWhitespace == false) return ReadChar();
+			if(bSkipWhiteSpace == false) return ReadChar();
 
 			while(true)
 			{
@@ -90,9 +90,9 @@ namespace KeePassLib.Utility
 			return m_strString[m_nPos];
 		}
 
-		public char PeekChar(bool bSkipWhitespace)
+		public char PeekChar(bool bSkipWhiteSpace)
 		{
-			if(bSkipWhitespace == false) return PeekChar();
+			if(bSkipWhiteSpace == false) return PeekChar();
 
 			int iIndex = m_nPos;
 			while(true)
@@ -115,6 +115,8 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class StrUtil
 	{
+		public const StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+
 		/// <summary>
 		/// Convert a string into a valid RTF string.
 		/// </summary>
@@ -125,7 +127,7 @@ namespace KeePassLib.Utility
 			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
 
 			str = str.Replace("\\", "\\\\");
-			str = str.Replace("\r", "");
+			str = str.Replace("\r", string.Empty);
 			str = str.Replace("{", "\\{");
 			str = str.Replace("}", "\\}");
 			str = str.Replace("\n", "\\par ");
@@ -496,7 +498,7 @@ namespace KeePassLib.Utility
 			if(NativeMethods.SupportsStrCmpNaturally)
 				return NativeMethods.StrCmpNaturally(strX, strY);
 
-			strX = strX.ToLower();
+			strX = strX.ToLower(); // Case-insensitive comparison
 			strY = strY.ToLower();
 
 			if(m_rxNaturalSplit == null)
@@ -635,9 +637,26 @@ namespace KeePassLib.Utility
 			return false;
 		}
 
+		public static bool? StringToBoolEx(string str)
+		{
+			if(string.IsNullOrEmpty(str)) return null;
+
+			string s = str.ToLower().Trim();
+			if(s == "true") return true;
+			if(s == "false") return false;
+
+			return null;
+		}
+
 		public static string BoolToString(bool bValue)
 		{
 			return (bValue ? "true" : "false");
+		}
+
+		public static string BoolToStringEx(bool? bValue)
+		{
+			if(bValue.HasValue) return BoolToString(bValue.Value);
+			return "null";
 		}
 
 		public static string ToWindowsString(string str)

@@ -23,12 +23,15 @@ using System.Text;
 using System.Drawing;
 using System.Diagnostics;
 
+using KeePass.App.Configuration;
 using KeePass.DataExchange;
+using KeePass.Ecas;
 using KeePass.Forms;
 using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Keys;
 
 namespace KeePass.Plugins
@@ -50,6 +53,8 @@ namespace KeePass.Plugins
 		/// </summary>
 		CommandLineArgs CommandLineArgs { get; }
 
+		AceCustomConfig CustomConfig { get; }
+
 		/// <summary>
 		/// Reference to the global cipher pool. When implementing
 		/// an encryption algorithm, use this pool to register it.
@@ -57,7 +62,15 @@ namespace KeePass.Plugins
 		CipherPool CipherPool { get; }
 
 		KeyProviderPool KeyProviderPool { get; }
+		KeyValidatorPool KeyValidatorPool { get; }
 
 		FileFormatPool FileFormatPool { get; }
+
+		TempFilesPool TempFilesPool { get; }
+
+		EcasPool EcasPool { get; }
+		EcasTriggerSystem TriggerSystem { get; }
+
+		CustomPwGeneratorPool PwGeneratorPool { get; }
 	}
 }

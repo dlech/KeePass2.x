@@ -159,7 +159,7 @@ namespace KeePass.App
 			Debug.Assert(pData != null);
 			if(pData == null) throw new ArgumentNullException("pData");
 
-			string strCommand = pData as string;
+			string strCommand = (pData as string);
 			Debug.Assert(strCommand != null);
 			if(strCommand == null) throw new ArgumentException();
 

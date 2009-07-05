@@ -98,18 +98,18 @@ namespace KeePass.App.Configuration
 			set { m_bMax = value; }
 		}
 
-		private int m_nSplitterHorz = AppDefs.InvalidWindowValue;
-		public int SplitterHorizontalPosition
+		private float m_fSplitterHorz = float.Epsilon;
+		public float SplitterHorizontalFrac
 		{
-			get { return m_nSplitterHorz; }
-			set { m_nSplitterHorz = value; }
+			get { return m_fSplitterHorz; }
+			set { m_fSplitterHorz = value; }
 		}
 
-		private int m_nSplitterVert = AppDefs.InvalidWindowValue;
-		public int SplitterVerticalPosition
+		private float m_fSplitterVert = float.Epsilon;
+		public float SplitterVerticalFrac
 		{
-			get { return m_nSplitterVert; }
-			set { m_nSplitterVert = value; }
+			get { return m_fSplitterVert; }
+			set { m_fSplitterVert = value; }
 		}
 
 		private AceMainWindowLayout m_layout = AceMainWindowLayout.Default;
@@ -182,6 +182,13 @@ namespace KeePass.App.Configuration
 			set { m_bFocusResAfterQuickFind = value; }
 		}
 
+		private bool m_bCopyUrls = false;
+		public bool CopyUrlsInsteadOfOpening
+		{
+			get { return m_bCopyUrls; }
+			set { m_bCopyUrls = value; }
+		}
+
 		private AceToolBar m_tb = new AceToolBar();
 		public AceToolBar ToolBar
 		{
@@ -213,6 +220,13 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_tan = value;
 			}
+		}
+
+		private bool m_bAutoResizeColumns = false;
+		public bool EntryListAutoResizeColumns
+		{
+			get { return m_bAutoResizeColumns; }
+			set { m_bAutoResizeColumns = value; }
 		}
 
 		private Dictionary<string, AceColumn> m_aceColumns =

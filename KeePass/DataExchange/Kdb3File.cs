@@ -40,8 +40,6 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public sealed class Kdb3File
 	{
-		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
-
 		private PwDatabase m_pwDatabase = null;
 		private IStatusLogger m_slLogger = null;
 
@@ -527,20 +525,21 @@ namespace KeePass.DataExchange
 					string strWndPrefix = (AutoTypeWindowPrefix + s + ":");
 					string strSeqPrefix = (AutoTypePrefix + s + ":");
 
-					if(strLine.StartsWith(strWndPrefix, StrCaseIgnoreCmp) &&
+					if(strLine.StartsWith(strWndPrefix, StrUtil.CaseIgnoreCmp) &&
 						(strLine.Length > strWndPrefix.Length))
 					{
 						string strWindow = strLine.Substring(strWndPrefix.Length).Trim();
 						string strSeq = FindPrefixedLine(vLines, strSeqPrefix);
 						if((strSeq != null) && (strSeq.Length > strSeqPrefix.Length))
-						{
 							peStorage.AutoType.Set(strWindow, strSeq.Substring(
 								strSeqPrefix.Length).Trim());
-							bProcessed = true;
-							break;
-						}
+						else // Window, but no sequence
+							peStorage.AutoType.Set(strWindow, string.Empty);
+
+						bProcessed = true;
+						break;
 					}
-					else if(strLine.StartsWith(strSeqPrefix, StrCaseIgnoreCmp))
+					else if(strLine.StartsWith(strSeqPrefix, StrUtil.CaseIgnoreCmp))
 					{
 						bProcessed = true;
 						break;
@@ -561,7 +560,7 @@ namespace KeePass.DataExchange
 		{
 			foreach(string str in vLines)
 			{
-				if(str.StartsWith(strPrefix, StrCaseIgnoreCmp))
+				if(str.StartsWith(strPrefix, StrUtil.CaseIgnoreCmp))
 					return str;
 			}
 

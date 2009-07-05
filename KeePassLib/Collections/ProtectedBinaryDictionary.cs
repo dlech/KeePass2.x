@@ -20,6 +20,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Diagnostics;
 
 using KeePassLib.Interfaces;
@@ -135,6 +136,20 @@ namespace KeePassLib.Collections
 			Debug.Assert(strField != null); if(strField == null) throw new ArgumentNullException("strField");
 
 			return m_vBinaries.Remove(strField);
+		}
+
+		public string KeysToString()
+		{
+			if(m_vBinaries.Count == 0) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_vBinaries)
+			{
+				if(sb.Length > 0) sb.Append(", ");
+				sb.Append(kvp.Key);
+			}
+
+			return sb.ToString();
 		}
 	}
 }

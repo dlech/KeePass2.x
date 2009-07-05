@@ -20,6 +20,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Diagnostics;
@@ -60,20 +61,24 @@ namespace KeePass.Plugins
 		{
 			Debug.Assert(m_host != null);
 
-			string strPath = strDirectory;
-			if(Directory.Exists(strPath) == false)
+			try
 			{
-				Debug.Assert(false);
-				return;
+				string strPath = strDirectory;
+				if(Directory.Exists(strPath) == false)
+				{
+					Debug.Assert(false);
+					return;
+				}
+
+				DirectoryInfo di = new DirectoryInfo(strPath);
+
+				FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
+				LoadPlugins(vFiles);
+
+				vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
+				LoadPlugins(vFiles);
 			}
-
-			DirectoryInfo di = new DirectoryInfo(strPath);
-			
-			FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
-			LoadPlugins(vFiles);
-
-			vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
-			LoadPlugins(vFiles);
+			catch(Exception) { Debug.Assert(false); } // Path access violation
 		}
 
 		private void LoadPlugins(FileInfo[] vFiles)
@@ -94,6 +99,7 @@ namespace KeePass.Plugins
 				}
 				catch(Exception) { continue; }
 
+				bool bShowStandardError = false;
 				try
 				{
 					PluginInfo pi = new PluginInfo(fi.FullName, fvi);
@@ -105,11 +111,21 @@ namespace KeePass.Plugins
 
 					m_vPlugins.Add(pi);
 				}
-				catch(Exception excp)
+				catch(BadImageFormatException)
 				{
-					MessageService.ShowWarning(KPRes.PluginFailedToLoad +
-						MessageService.NewLine + fi.FullName, excp);
+					if(Is1xPlugin(fi.FullName))
+						MessageService.ShowWarning(KPRes.PluginIncompatible +
+							MessageService.NewLine + fi.FullName + MessageService.NewParagraph +
+							KPRes.Plugin1x + MessageService.NewParagraph + KPRes.Plugin1xHint);
+					else bShowStandardError = true;
 				}
+				catch(Exception) { bShowStandardError = true; }
+
+				if(bShowStandardError)
+					MessageService.ShowWarning(KPRes.PluginIncompatible +
+						MessageService.NewLine + fi.FullName + MessageService.NewParagraph +
+						KPRes.PluginUpdateHint);
+
 			}
 		}
 
@@ -139,10 +155,26 @@ namespace KeePass.Plugins
 				"Ext";
 
 			ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
-			
-			Plugin plugin = oh.Unwrap() as Plugin;
+
+			Plugin plugin = (oh.Unwrap() as Plugin);
 			if(plugin == null) throw new FileLoadException();
 			return plugin;
+		}
+
+		private static bool Is1xPlugin(string strFile)
+		{
+			try
+			{
+				byte[] pbFile = File.ReadAllBytes(strFile);
+				byte[] pbSig = Encoding.UTF8.GetBytes("KpCreateInstance");
+				string strData = MemUtil.ByteArrayToHexString(pbFile);
+				string strSig = MemUtil.ByteArrayToHexString(pbSig);
+
+				return (strData.IndexOf(strSig) >= 0);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 	}
 }

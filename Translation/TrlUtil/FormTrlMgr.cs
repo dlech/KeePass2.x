@@ -40,6 +40,7 @@ namespace TrlUtil
 			AddForm(l, new CharPickerForm());
 			AddForm(l, new DatabaseOperationsForm());
 			AddForm(l, new DatabaseSettingsForm());
+			AddForm(l, new DataEditorForm());
 			AddForm(l, new DataViewerForm());
 			AddForm(l, new EcasActionForm());
 			AddForm(l, new EcasConditionForm());

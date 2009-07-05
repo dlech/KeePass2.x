@@ -265,7 +265,7 @@ namespace KeePassLib.Utility
 			return dr;
 		}
 
-		public static bool AskYesNo(string strText, string strTitle)
+		public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes)
 		{
 			++m_uCurrentMessageCount;
 
@@ -277,15 +277,21 @@ namespace KeePassLib.Utility
 					strTitleEx, strTextEx, MessageBoxButtons.YesNo, m_mbiQuestion));
 
 			DialogResult dr = SafeShowMessageBox(strTextEx, strTitleEx,
-				MessageBoxButtons.YesNo, m_mbiQuestion, MessageBoxDefaultButton.Button1);
+				MessageBoxButtons.YesNo, m_mbiQuestion, bDefaultToYes ?
+				MessageBoxDefaultButton.Button1 : MessageBoxDefaultButton.Button2);
 
 			--m_uCurrentMessageCount;
 			return (dr == DialogResult.Yes);
 		}
 
+		public static bool AskYesNo(string strText, string strTitle)
+		{
+			return AskYesNo(strText, strTitle, true);
+		}
+
 		public static bool AskYesNo(string strText)
 		{
-			return AskYesNo(strText, null);
+			return AskYesNo(strText, null, true);
 		}
 
 		public static void ShowLoadWarning(string strFilePath, Exception ex)

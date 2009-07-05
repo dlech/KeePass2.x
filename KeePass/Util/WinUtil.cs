@@ -106,7 +106,7 @@ namespace KeePass.Util
 			string strPrevWorkDir = Directory.GetCurrentDirectory();
 			string strThisExe = WinUtil.GetExecutable();
 			
-			string strExeDir = UrlUtil.GetFileDirectory(strThisExe, false);
+			string strExeDir = UrlUtil.GetFileDirectory(strThisExe, false, true);
 			try { Directory.SetCurrentDirectory(strExeDir); }
 			catch(Exception) { Debug.Assert(false); }
 

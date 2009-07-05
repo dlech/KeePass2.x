@@ -45,12 +45,12 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, etc.
 		/// </summary>
-		public const uint Version32 = 0x02000700;
+		public const uint Version32 = 0x02000800;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.07 Beta";
+		public const string VersionString = "2.08";
 
 		public const string Copyright = @"Copyright © 2003-2009 Dominik Reichl";
 

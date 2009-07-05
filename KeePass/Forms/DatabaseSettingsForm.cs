@@ -46,6 +46,8 @@ namespace KeePass.Forms
 		private string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
 		private Dictionary<int, PwUuid> m_dictRecycleBinGroups = new Dictionary<int, PwUuid>();
 
+		private Dictionary<int, PwUuid> m_dictEntryTemplateGroups = new Dictionary<int, PwUuid>();
+
 		public DatabaseSettingsForm()
 		{
 			InitializeComponent();
@@ -113,6 +115,7 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); }
 
 			InitRecycleBinTab();
+			InitTemplatesTab();
 		}
 
 		private void InitRecycleBinTab()
@@ -121,24 +124,24 @@ namespace KeePass.Forms
 
 			m_cmbRecycleBin.Items.Add(m_strAutoCreateNew);
 			m_dictRecycleBinGroups[0] = PwUuid.Zero;
-			int iSelect = 0;
 
-			GroupHandler gh = delegate(PwGroup pg)
-			{
-				string str = new string(' ', Math.Abs(8 * ((int)pg.GetLevel() - 1)));
-				str += pg.Name;
+			int iSelect;
+			UIUtil.CreateGroupList(m_pwDatabase.RootGroup, m_cmbRecycleBin,
+				m_dictRecycleBinGroups, m_pwDatabase.RecycleBinUuid, out iSelect);
 
-				if(pg.Uuid.EqualsValue(m_pwDatabase.RecycleBinUuid))
-					iSelect = m_cmbRecycleBin.Items.Count;
+			m_cmbRecycleBin.SelectedIndex = Math.Max(0, iSelect);
+		}
 
-				m_dictRecycleBinGroups[m_cmbRecycleBin.Items.Count] = pg.Uuid;
-				m_cmbRecycleBin.Items.Add(str);
+		private void InitTemplatesTab()
+		{
+			m_cmbEntryTemplates.Items.Add("(" + KPRes.None + ")");
+			m_dictEntryTemplateGroups[0] = PwUuid.Zero;
 
-				return true;
-			};
+			int iSelect;
+			UIUtil.CreateGroupList(m_pwDatabase.RootGroup, m_cmbEntryTemplates,
+				m_dictEntryTemplateGroups, m_pwDatabase.EntryTemplatesGroup, out iSelect);
 
-			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, null);
-			m_cmbRecycleBin.SelectedIndex = iSelect;
+			m_cmbEntryTemplates.SelectedIndex = Math.Max(0, iSelect);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -178,6 +181,11 @@ namespace KeePass.Forms
 			if(m_dictRecycleBinGroups.ContainsKey(iRecBinSel))
 				m_pwDatabase.RecycleBinUuid = m_dictRecycleBinGroups[iRecBinSel];
 			else m_pwDatabase.RecycleBinUuid = PwUuid.Zero;
+
+			int iTemplSel = m_cmbEntryTemplates.SelectedIndex;
+			if(m_dictEntryTemplateGroups.ContainsKey(iTemplSel))
+				m_pwDatabase.EntryTemplatesGroup = m_dictEntryTemplateGroups[iTemplSel];
+			else m_pwDatabase.EntryTemplatesGroup = PwUuid.Zero;
 		}
 
 		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)

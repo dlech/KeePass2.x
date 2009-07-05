@@ -62,6 +62,9 @@
     <Compile Include="..\KeePassLib\Collections\PwObjectList.cs">
       <Link>KeePassLib\Collections\PwObjectList.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\StringDictionaryEx.cs">
+      <Link>KeePassLib\Collections\StringDictionaryEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\CipherPool.cs">
       <Link>KeePassLib\Cryptography\Cipher\CipherPool.cs</Link>
     </Compile>
@@ -85,6 +88,12 @@
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
       <Link>KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CustomPwGenerator.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\CustomPwGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs">
+      <Link>KeePassLib\Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs">
       <Link>KeePassLib\Cryptography\PasswordGenerator\PatternBasedGenerator.cs</Link>
@@ -143,6 +152,12 @@
     <Compile Include="..\KeePassLib\Keys\KeyProviderPool.cs">
       <Link>KeePassLib\Keys\KeyProviderPool.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyValidator.cs">
+      <Link>KeePassLib\Keys\KeyValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Keys\KeyValidatorPool.cs">
+      <Link>KeePassLib\Keys\KeyValidatorPool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
       <Link>KeePassLib\Keys\UserKeyType.cs</Link>
     </Compile>
@@ -191,11 +206,15 @@
     <Compile Include="..\KeePassLib\Security\XorredBuffer.cs">
       <Link>KeePassLib\Security\XorredBuffer.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
+      <Link>KeePassLib\Serialization\BinaryReaderEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
       <Link>KeePassLib\Serialization\HashedBlockStream.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\IOConnection.cs">
       <Link>KeePassLib\Serialization\IOConnection.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\IOConnectionInfo.cs">
       <Link>KeePassLib\Serialization\IOConnectionInfo.cs</Link>
@@ -258,6 +277,7 @@
     <Compile Include="App\AppHelp.cs" />
     <Compile Include="App\AppPolicy.cs" />
     <Compile Include="App\Configuration\AceApplication.cs" />
+    <Compile Include="App\Configuration\AceCustomConfig.cs" />
     <Compile Include="App\Configuration\AceDefaults.cs" />
     <Compile Include="App\Configuration\AceIntegration.cs" />
     <Compile Include="App\Configuration\AceLogging.cs" />
@@ -275,6 +295,7 @@
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
+    <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
     <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
@@ -339,6 +360,12 @@
     </Compile>
     <Compile Include="Forms\DatabaseSettingsForm.Designer.cs">
       <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DataEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DataEditorForm.Designer.cs">
+      <DependentUpon>DataEditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DataViewerForm.cs">
       <SubType>Form</SubType>
@@ -567,11 +594,15 @@
     <Compile Include="UI\CustomToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\CustomTreeViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
+    <Compile Include="UI\NotifyIconEx.cs" />
     <Compile Include="UI\PasswordListPrintDocument.cs">
     </Compile>
     <Compile Include="UI\PromptedTextBox.cs">
@@ -621,6 +652,9 @@
     <EmbeddedResource Include="Forms\DatabaseSettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DataEditorForm.resx">
+      <DependentUpon>DataEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DataViewerForm.resx">
       <SubType>Designer</SubType>
@@ -941,6 +975,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola\B16x16_Redo.png" />
+    <None Include="Resources\Images\B16x16_TextAlignRight.png" />
+    <None Include="Resources\Images\B16x16_TextAlignLeft.png" />
+    <None Include="Resources\Images\B16x16_TextAlignCenter.png" />
+    <None Include="Resources\Nuvola\B16x16_Color_Fill.png" />
+    <None Include="Resources\Nuvola\B16x16_Colorize.png" />
+    <None Include="Resources\Images\B16x16_FontStrikeout.png" />
+    <None Include="Resources\Images\B16x16_FontUnderline.png" />
+    <None Include="Resources\Images\B16x16_FontItalic.png" />
+    <None Include="Resources\Images\B16x16_FontBold.png" />
+    <None Include="Resources\Images\B16x16_Imp_FlexWallet.png" />
     <None Include="Resources\Images\B16x16_Imp_OnePwPro.png" />
     <None Include="Resources\Nuvola\B48x48_Make_KDevelop.png" />
     <None Include="Resources\Nuvola\B16x16_Make_KDevelop.png" />

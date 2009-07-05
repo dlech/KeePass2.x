@@ -146,8 +146,11 @@ namespace KeePass.UI
 				return true;
 			}
 
-			if (keyData == (Keys.Shift | Keys.Insert)) // Paste command
+			if(keyData == (Keys.Shift | Keys.Insert)) // Paste command
 				return true; // Not allowed
+
+			if((keyData & Keys.KeyCode) == Keys.F12)
+				return true; // Reserved for debugger, see MSDN
 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
@@ -169,7 +172,7 @@ namespace KeePass.UI
 
 			if((m_kHotKey == Keys.LWin) || (m_kHotKey == Keys.RWin))
 			{
-				this.Text = KPRes.None;
+				ResetHotKey();
 				return;
 			}
 
@@ -219,7 +222,7 @@ namespace KeePass.UI
 				m_kHotKey = Keys.None;
 			}
 
-			this.Text = this.m_kModifiers.ToString() + " + " + m_kHotKey.ToString();
+			this.Text = m_kModifiers.ToString() + " + " + m_kHotKey.ToString();
 		}
 
 		public static HotKeyControlEx ReplaceTextBox(Control cContainer, TextBox tb)

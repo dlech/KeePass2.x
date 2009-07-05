@@ -34,6 +34,9 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class PwGroup : ITimeLogger, IDeepClonable<PwGroup>
 	{
+		public const bool DefaultAutoTypeEnabled = true;
+		public const bool DefaultSearchingEnabled = true;
+
 		private PwObjectList<PwGroup> m_listGroups = new PwObjectList<PwGroup>();
 		private PwObjectList<PwEntry> m_listEntries = new PwObjectList<PwEntry>();
 		private PwGroup m_pParentGroup = null;
@@ -56,6 +59,9 @@ namespace KeePassLib
 		private bool m_bVirtual = false;
 
 		private string m_strDefaultAutoTypeSequence = string.Empty;
+
+		private bool? m_bEnableAutoType = null;
+		private bool? m_bEnableSearching = null;
 
 		private PwUuid m_pwLastTopVisibleEntry = PwUuid.Zero;
 
@@ -247,6 +253,18 @@ namespace KeePassLib
 			}
 		}
 
+		public bool? EnableAutoType
+		{
+			get { return m_bEnableAutoType; }
+			set { m_bEnableAutoType = value; }
+		}
+
+		public bool? EnableSearching
+		{
+			get { return m_bEnableSearching; }
+			set { m_bEnableSearching = value; }
+		}
+
 		public PwUuid LastTopVisibleEntry
 		{
 			get { return m_pwLastTopVisibleEntry; }
@@ -379,15 +397,29 @@ namespace KeePassLib
 		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
 		/// the last modification time gets updated, too.
 		/// </summary>
-		/// <param name="bModified"></param>
+		/// <param name="bModified">Modify last modification time.</param>
 		public void Touch(bool bModified)
+		{
+			Touch(bModified, true);
+		}
+
+		/// <summary>
+		/// Touch the group. This function updates the internal last access
+		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
+		/// the last modification time gets updated, too.
+		/// </summary>
+		/// <param name="bModified">Modify last modification time.</param>
+		/// <param name="bTouchParents">If <c>true</c>, all parent objects
+		/// get touched, too.</param>
+		public void Touch(bool bModified, bool bTouchParents)
 		{
 			m_tLastAccess = DateTime.Now;
 			++m_uUsageCount;
 
 			if(bModified) m_tLastMod = m_tLastAccess;
 
-			if(m_pParentGroup != null) m_pParentGroup.Touch(bModified);
+			if(bTouchParents && (m_pParentGroup != null))
+				m_pParentGroup.Touch(bModified, true);
 		}
 
 		/// <summary>
@@ -583,7 +615,8 @@ namespace KeePassLib
 		/// <param name="searchParams">Specifies the search method.</param>
 		/// <param name="listStorage">Entry list in which the search results will
 		/// be stored.</param>
-		public void SearchEntries(SearchParameters searchParams, PwObjectList<PwEntry> listStorage)
+		public void SearchEntries(SearchParameters searchParams, PwObjectList<PwEntry> listStorage,
+			bool bRespectEntrySearchingDisabled)
 		{
 			Debug.Assert(searchParams != null); if(searchParams == null) throw new ArgumentNullException("searchParams");
 			Debug.Assert(listStorage != null); if(listStorage == null) throw new ArgumentNullException("listStorage");
@@ -623,6 +656,8 @@ namespace KeePassLib
 			{
 				eh = delegate(PwEntry pe)
 				{
+					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
+						return true; // Skip
 					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
 						return true; // Skip
 
@@ -634,6 +669,8 @@ namespace KeePassLib
 			{
 				eh = delegate(PwEntry pe)
 				{
+					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
+						return true; // Skip
 					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
 						return true; // Skip
 
@@ -930,6 +967,26 @@ namespace KeePassLib
 				return m_pParentGroup.GetAutoTypeSequenceInherited();
 
 			return string.Empty;
+		}
+
+		public bool GetAutoTypeEnabledInherited()
+		{
+			if(m_bEnableAutoType.HasValue) return m_bEnableAutoType.Value;
+
+			if(m_pParentGroup != null)
+				return m_pParentGroup.GetAutoTypeEnabledInherited();
+
+			return DefaultAutoTypeEnabled;
+		}
+
+		public bool GetSearchingEnabledInherited()
+		{
+			if(m_bEnableSearching.HasValue) return m_bEnableSearching.Value;
+
+			if(m_pParentGroup != null)
+				return m_pParentGroup.GetSearchingEnabledInherited();
+
+			return DefaultSearchingEnabled;
 		}
 
 		public PwObjectList<PwEntry> GetEntries(bool bIncludeSubGroupEntries)

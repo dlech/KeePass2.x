@@ -49,6 +49,7 @@
     <Compile Include="Collections\ProtectedBinaryDictionary.cs" />
     <Compile Include="Collections\ProtectedStringDictionary.cs" />
     <Compile Include="Collections\PwObjectList.cs" />
+    <Compile Include="Collections\StringDictionaryEx.cs" />
     <Compile Include="Cryptography\Cipher\CipherPool.cs" />
     <Compile Include="Cryptography\Cipher\Salsa20Cipher.cs" />
     <Compile Include="Cryptography\Cipher\StandardAesEngine.cs" />
@@ -57,6 +58,8 @@
     <Compile Include="Cryptography\Cipher\ICipherEngine.cs" />
     <Compile Include="Cryptography\HashingStreamEx.cs" />
     <Compile Include="Cryptography\PasswordGenerator\CharSetBasedGenerator.cs" />
+    <Compile Include="Cryptography\PasswordGenerator\CustomPwGenerator.cs" />
+    <Compile Include="Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PatternBasedGenerator.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwCharSet.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwProfile.cs" />
@@ -66,6 +69,8 @@
     <Compile Include="Keys\KcpCustomKey.cs" />
     <Compile Include="Keys\KeyProvider.cs" />
     <Compile Include="Keys\KeyProviderPool.cs" />
+    <Compile Include="Keys\KeyValidator.cs" />
+    <Compile Include="Keys\KeyValidatorPool.cs" />
     <Compile Include="Keys\UserKeyType.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="PwCustomIcon.cs" />
@@ -91,8 +96,11 @@
     <Compile Include="PwDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PwEnums.cs" />
+    <Compile Include="Serialization\BinaryReaderEx.cs" />
     <Compile Include="Serialization\HashedBlockStream.cs" />
-    <Compile Include="Serialization\IOConnection.cs" />
+    <Compile Include="Serialization\IOConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Serialization\Kdb4File.cs" />
     <Compile Include="Serialization\Kdb4File.Read.cs" />
     <Compile Include="Serialization\Kdb4File.Read.Dom.cs" />

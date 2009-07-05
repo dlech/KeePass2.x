@@ -39,33 +39,33 @@ namespace ShInstUtil
 			if((args == null) || (args.Length == 0)) return;
 
 			string strCmd = args[0];
-			if((strCmd == null) || (strCmd.Length == 0)) return;
+			if(string.IsNullOrEmpty(strCmd)) return;
 			strCmd = strCmd.ToLower();
 			strCmd = strCmd.Trim(new char[]{ '\r', '\n', ' ', '\t', '-', '/',
 				'\"', '\'' });
 
 			if(strCmd == "ngen_install")
+			{
+				UpdateNativeImage(false);
 				UpdateNativeImage(true);
+			}
 			else if(strCmd == "ngen_uninstall")
 				UpdateNativeImage(false);
-
-			// Application.Run(new MainForm());
 		}
 
 		private static string FindNGenPath()
 		{
-			string strPath = null;
-
 			RegistryKey kSoftware = Registry.LocalMachine.OpenSubKey("SOFTWARE");
 			RegistryKey kMicrosoft = kSoftware.OpenSubKey("Microsoft");
 			RegistryKey kNet = kMicrosoft.OpenSubKey(".NETFramework");
 
-			strPath = kNet.GetValue("InstallRoot") as string;
-			if(strPath == null) return null;
+			string strPath = (kNet.GetValue("InstallRoot") as string);
 
 			kNet.Close();
 			kMicrosoft.Close();
 			kSoftware.Close();
+
+			if(string.IsNullOrEmpty(strPath)) return null;
 
 			DirectoryInfo di = new DirectoryInfo(strPath);
 			FileInfo[] vNGens = di.GetFiles("ngen.exe", SearchOption.AllDirectories);
@@ -90,6 +90,7 @@ namespace ShInstUtil
 			try
 			{
 				string strNGen = FindNGenPath();
+				if(string.IsNullOrEmpty(strNGen)) return;
 
 				string strMe = Assembly.GetExecutingAssembly().Location;
 				string strBasePath = Path.GetDirectoryName(strMe).Trim(new char[]{
@@ -104,7 +105,8 @@ namespace ShInstUtil
 				psi.FileName = strNGen;
 				psi.WindowStyle = ProcessWindowStyle.Hidden;
 
-				Process.Start(psi);
+				Process p = Process.Start(psi);
+				p.WaitForExit(16000);
 			}
 			catch(Exception) { }
 		}

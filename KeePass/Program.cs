@@ -38,7 +38,9 @@ using KeePass.Util;
 using KeePass.Ecas;
 
 using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Keys;
 using KeePassLib.Resources;
 using KeePassLib.Security;
@@ -58,18 +60,21 @@ namespace KeePass
 		private static MainForm m_formMain = null;
 		private static AppConfigEx m_appConfig = null;
 		private static KeyProviderPool m_keyProviderPool = null;
+		private static KeyValidatorPool m_keyValidatorPool = null;
 		private static FileFormatPool m_fmtPool = null;
 		private static KPTranslation m_kpTranslation = new KPTranslation();
 		private static TempFilesPool m_tempFilesPool = null;
 		private static EcasPool m_ecasPool = null;
 		private static EcasTriggerSystem m_ecasTriggers = null;
+		private static CustomPwGeneratorPool m_pwGenPool = null;
 
 		public enum AppMessage
 		{
 			Null = 0,
 			RestoreWindow = 1,
 			Exit = 2,
-			IpcByFile = 3
+			IpcByFile = 3,
+			AutoType = 4
 		}
 
 		public static CommandLineArgs CommandLineArgs
@@ -114,6 +119,15 @@ namespace KeePass
 			}
 		}
 
+		public static KeyValidatorPool KeyValidatorPool
+		{
+			get
+			{
+				if(m_keyValidatorPool == null) m_keyValidatorPool = new KeyValidatorPool();
+				return m_keyValidatorPool;
+			}
+		}
+
 		public static FileFormatPool FileFormatPool
 		{
 			get
@@ -155,6 +169,15 @@ namespace KeePass
 			}
 		}
 
+		public static CustomPwGeneratorPool PwGeneratorPool
+		{
+			get
+			{
+				if(m_pwGenPool == null) m_pwGenPool = new CustomPwGeneratorPool();
+				return m_pwGenPool;
+			}
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -163,7 +186,7 @@ namespace KeePass
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.DoEvents();
+			Application.DoEvents(); // Required
 
 			int nRandomSeed = (int)DateTime.Now.Ticks;
 			// Prevent overflow (see Random class constructor)
@@ -189,8 +212,8 @@ namespace KeePass
 			string strLangFile = m_appConfig.Application.LanguageFile;
 			if((strLangFile != null) && (strLangFile.Length > 0))
 			{
-				strLangFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), true) +
-					strLangFile;
+				strLangFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), true,
+					false) + strLangFile;
 
 				try
 				{
@@ -272,14 +295,12 @@ namespace KeePass
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ExitAll] != null)
 			{
-				try
-				{
-					NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
-						m_nAppMessage, (IntPtr)AppMessage.Exit, IntPtr.Zero);
-				}
-				catch(Exception) { Debug.Assert(false); }
-
-				MainCleanUp();
+				BroadcastAppMessageAndCleanUp(AppMessage.Exit);
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoType] != null)
+			{
+				BroadcastAppMessageAndCleanUp(AppMessage.AutoType);
 				return;
 			}
 
@@ -293,20 +314,31 @@ namespace KeePass
 
 			Mutex mGlobalNotify = TryGlobalInstanceNotify(AppDefs.MutexNameGlobal);
 
-#if DEBUG
-			m_formMain = new MainForm();
-			Application.Run(m_formMain);
-#else
-			try
+			bool bRunMainWindow = true;
+			try { SelfTest.Perform(); }
+			catch(Exception exSelfTest)
 			{
+				MessageService.ShowWarning(KPRes.SelfTestFailed, exSelfTest);
+				bRunMainWindow = false;
+			}
+
+			if(bRunMainWindow)
+			{
+#if DEBUG
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
-			}
-			catch(Exception exPrg)
-			{
-				MessageService.ShowFatal(exPrg);
-			}
+#else
+				try
+				{
+					m_formMain = new MainForm();
+					Application.Run(m_formMain);
+				}
+				catch(Exception exPrg)
+				{
+					MessageService.ShowFatal(exPrg);
+				}
 #endif
+			}
 
 			Debug.Assert(GlobalWindowManager.WindowCount == 0);
 			Debug.Assert(MessageService.CurrentMessageCount == 0);
@@ -394,7 +426,7 @@ namespace KeePass
 			try
 			{
 				if(string.IsNullOrEmpty(m_cmdLineArgs.FileName))
-					NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+					NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
 						m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
 				else
 				{
@@ -421,6 +453,18 @@ namespace KeePass
 			catch(Exception) { Debug.Assert(false); }
 
 			return IntPtr.Zero;
+		}
+
+		private static void BroadcastAppMessageAndCleanUp(AppMessage msg)
+		{
+			try
+			{
+				NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+					m_nAppMessage, (IntPtr)msg, IntPtr.Zero);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			MainCleanUp();
 		}
 	}
 }

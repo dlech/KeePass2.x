@@ -31,14 +31,16 @@ namespace KeePassLib.Resources
 			m_strErrorFeedbackRequest = TryGetEx(dictNew, "ErrorFeedbackRequest", m_strErrorFeedbackRequest);
 			m_strFatalError = TryGetEx(dictNew, "FatalError", m_strFatalError);
 			m_strFatalErrorText = TryGetEx(dictNew, "FatalErrorText", m_strFatalErrorText);
+			m_strFileCorrupted = TryGetEx(dictNew, "FileCorrupted", m_strFileCorrupted);
 			m_strFileHeaderEndEarly = TryGetEx(dictNew, "FileHeaderEndEarly", m_strFileHeaderEndEarly);
 			m_strFileLoadFailed = TryGetEx(dictNew, "FileLoadFailed", m_strFileLoadFailed);
+			m_strFileNewVerReq = TryGetEx(dictNew, "FileNewVerReq", m_strFileNewVerReq);
 			m_strFileSaveCorruptionWarning = TryGetEx(dictNew, "FileSaveCorruptionWarning", m_strFileSaveCorruptionWarning);
 			m_strFileSaveFailed = TryGetEx(dictNew, "FileSaveFailed", m_strFileSaveFailed);
 			m_strFileSigInvalid = TryGetEx(dictNew, "FileSigInvalid", m_strFileSigInvalid);
 			m_strFileUnknownCipher = TryGetEx(dictNew, "FileUnknownCipher", m_strFileUnknownCipher);
 			m_strFileUnknownCompression = TryGetEx(dictNew, "FileUnknownCompression", m_strFileUnknownCompression);
-			m_strFileVersionUnknown = TryGetEx(dictNew, "FileVersionUnknown", m_strFileVersionUnknown);
+			m_strFileVersionUnsupported = TryGetEx(dictNew, "FileVersionUnsupported", m_strFileVersionUnsupported);
 			m_strFinalKeyCreationFailed = TryGetEx(dictNew, "FinalKeyCreationFailed", m_strFinalKeyCreationFailed);
 			m_strFrameworkNotImplExcp = TryGetEx(dictNew, "FrameworkNotImplExcp", m_strFrameworkNotImplExcp);
 			m_strInvalidCompositeKey = TryGetEx(dictNew, "InvalidCompositeKey", m_strInvalidCompositeKey);
@@ -57,14 +59,16 @@ namespace KeePassLib.Resources
 			"ErrorFeedbackRequest",
 			"FatalError",
 			"FatalErrorText",
+			"FileCorrupted",
 			"FileHeaderEndEarly",
 			"FileLoadFailed",
+			"FileNewVerReq",
 			"FileSaveCorruptionWarning",
 			"FileSaveFailed",
 			"FileSigInvalid",
 			"FileUnknownCipher",
 			"FileUnknownCompression",
-			"FileVersionUnknown",
+			"FileVersionUnsupported",
 			"FinalKeyCreationFailed",
 			"FrameworkNotImplExcp",
 			"InvalidCompositeKey",
@@ -137,6 +141,17 @@ namespace KeePassLib.Resources
 			get { return m_strFatalErrorText; }
 		}
 
+		private static string m_strFileCorrupted =
+			@"The file is corrupted.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The file is corrupted.'.
+		/// </summary>
+		public static string FileCorrupted
+		{
+			get { return m_strFileCorrupted; }
+		}
+
 		private static string m_strFileHeaderEndEarly =
 			@"The file header is corrupted! Some header data was declared but is not present.";
 		/// <summary>
@@ -157,6 +172,17 @@ namespace KeePassLib.Resources
 		public static string FileLoadFailed
 		{
 			get { return m_strFileLoadFailed; }
+		}
+
+		private static string m_strFileNewVerReq =
+			@"A newer KeePass version is required to open this file.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'A newer KeePass version is required to open this file.'.
+		/// </summary>
+		public static string FileNewVerReq
+		{
+			get { return m_strFileNewVerReq; }
 		}
 
 		private static string m_strFileSaveCorruptionWarning =
@@ -214,15 +240,15 @@ namespace KeePassLib.Resources
 			get { return m_strFileUnknownCompression; }
 		}
 
-		private static string m_strFileVersionUnknown =
-			@"Unknown file version!";
+		private static string m_strFileVersionUnsupported =
+			@"The file version is unsupported.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Unknown file version!'.
+		/// 'The file version is unsupported.'.
 		/// </summary>
-		public static string FileVersionUnknown
+		public static string FileVersionUnsupported
 		{
-			get { return m_strFileVersionUnknown; }
+			get { return m_strFileVersionUnsupported; }
 		}
 
 		private static string m_strFinalKeyCreationFailed =

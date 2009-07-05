@@ -77,12 +77,12 @@ namespace KeePass.DataExchange
 			return true;
 		}
 
-		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
+		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
 			bool bOpenFromUrl)
 		{
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return false;
-			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
+			if(!pwStorage.IsOpen) return null;
+			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
 
 			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
 			if(bOpenFromUrl == false)
@@ -90,7 +90,7 @@ namespace KeePass.DataExchange
 				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
 					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true, true);
 
-				if(ofd.ShowDialog() != DialogResult.OK) return true;
+				if(ofd.ShowDialog() != DialogResult.OK) return null;
 
 				foreach(string strSelFile in ofd.FileNames)
 					vConnections.Add(IOConnectionInfo.FromPath(strSelFile));
@@ -100,7 +100,7 @@ namespace KeePass.DataExchange
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(false, new IOConnectionInfo(), false, true);
 
-				if(iocf.ShowDialog() != DialogResult.OK) return true;
+				if(iocf.ShowDialog() != DialogResult.OK) return null;
 
 				vConnections.Add(iocf.IOConnectionInfo);
 			}

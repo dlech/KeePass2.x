@@ -104,6 +104,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new AmpXml250());
 			m_vFormats.Add(new AnyPwCsv144());
 			m_vFormats.Add(new CodeWalletTxt605());
+			m_vFormats.Add(new FlexWalletXml17());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
 			m_vFormats.Add(new PwAgentXml234());

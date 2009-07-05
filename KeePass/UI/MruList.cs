@@ -25,6 +25,8 @@ using System.Diagnostics;
 
 using KeePass.Resources;
 
+using KeePassLib.Utility;
+
 namespace KeePass.UI
 {
 	/// <summary>
@@ -48,8 +50,6 @@ namespace KeePass.UI
 
 	public sealed class MruList
 	{
-		private const StringComparison StrCaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
-
 		private IMruExecuteHandler m_handler = null;
 		private ToolStripMenuItem m_tsmiContainer = null;
 
@@ -60,10 +60,7 @@ namespace KeePass.UI
 		public uint MaxItemCount
 		{
 			get { return m_uMaxItemCount; }
-			set
-			{
-				m_uMaxItemCount = value;
-			}
+			set { m_uMaxItemCount = value; }
 		}
 
 		public uint ItemCount
@@ -89,7 +86,7 @@ namespace KeePass.UI
 			m_tsmiContainer = tsmiContainer;
 		}
 
-		public void AddItem(string strDisplayName, object oTag)
+		public void AddItem(string strDisplayName, object oTag, bool bUpdateMenu)
 		{
 			Debug.Assert(strDisplayName != null);
 			if(strDisplayName == null) throw new ArgumentNullException("strDisplayName");
@@ -100,7 +97,7 @@ namespace KeePass.UI
 			foreach(KeyValuePair<string, object> kvp in m_vItems)
 			{
 				Debug.Assert(kvp.Key != null);
-				if(kvp.Key.Equals(strDisplayName, StrCaseIgnoreCmp))
+				if(kvp.Key.Equals(strDisplayName, StrUtil.CaseIgnoreCmp))
 				{
 					bExists = true;
 					break;
@@ -113,11 +110,11 @@ namespace KeePass.UI
 				m_vItems.Insert(0, new KeyValuePair<string, object>(
 					strDisplayName, oTag));
 
-				if(m_vItems.Count >= m_uMaxItemCount)
+				if(m_vItems.Count > m_uMaxItemCount)
 					m_vItems.RemoveAt(m_vItems.Count - 1);
 			}
 
-			UpdateMenu();
+			if(bUpdateMenu) UpdateMenu();
 		}
 
 		public void UpdateMenu()
@@ -160,6 +157,24 @@ namespace KeePass.UI
 			return m_vItems[(int)uIndex];
 		}
 
+		public bool RemoveItem(string strDisplayName)
+		{
+			Debug.Assert(strDisplayName != null);
+			if(strDisplayName == null) throw new ArgumentNullException("strDisplayName");
+
+			for(int i = 0; i < m_vItems.Count; ++i)
+			{
+				KeyValuePair<string, object> kvp = m_vItems[i];
+				if(kvp.Key.Equals(strDisplayName, StrUtil.CaseIgnoreCmp))
+				{
+					m_vItems.RemoveAt(i);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private void ClickedHandler(object sender, EventArgs args)
 		{
 			ToolStripMenuItem tsi = (sender as ToolStripMenuItem);
@@ -178,7 +193,7 @@ namespace KeePass.UI
 			for(int i = 0; i < m_vItems.Count; ++i)
 			{
 				Debug.Assert(m_vItems[i].Key != null);
-				if(m_vItems[i].Key.Equals(strName, StrCaseIgnoreCmp))
+				if(m_vItems[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
 				{
 					KeyValuePair<string, object> t = m_vItems[i];
 					m_vItems.RemoveAt(i);

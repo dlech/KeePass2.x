@@ -197,35 +197,36 @@ namespace KeePass.Forms
 			if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsProvKey == false))
 			{
-				if(ValidateKeyFileLocation() == false)
-				{
-					m_pKey = null;
-					return false;
-				}
+				if(ValidateKeyFileLocation() == false) return false;
 
 				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
 				catch(Exception)
 				{
 					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError);
-					m_pKey = null;
 					return false;
 				}
 			}
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsProvKey == true))
 			{
-				byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
+					m_strFilePath, false);
 
-				try { m_pKey.AddUserKey(new KcpCustomKey(pbProvKey)); }
-				catch(Exception exCKP)
-				{
-					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exCKP);
-					m_pKey = null;
-					return false;
-				}
-
+				bool bPerformHash;
+				byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,
+					out bPerformHash);
 				if((pbProvKey != null) && (pbProvKey.Length > 0))
+				{
+					try { m_pKey.AddUserKey(new KcpCustomKey(strKeyFile, pbProvKey, bPerformHash)); }
+					catch(Exception exCKP)
+					{
+						MessageService.ShowWarning(exCKP);
+						return false;
+					}
+
 					Array.Clear(pbProvKey, 0, pbProvKey.Length);
+				}
+				else return false; // Provider has shown error message
 			}
 
 			if(m_cbUserAccount.Checked)
@@ -275,6 +276,21 @@ namespace KeePass.Forms
 			if(m_cbKeyFile.Checked && strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
 				m_btnOK.Enabled = false;
 			else m_btnOK.Enabled = true;
+
+			bool bExclusiveProv = false;
+			KeyProvider prov = Program.KeyProviderPool.Get(strKeyFile);
+			if(prov != null) bExclusiveProv = prov.Exclusive;
+
+			if(bExclusiveProv)
+			{
+				m_tbPassword.Text = string.Empty;
+				UIUtil.SetChecked(m_cbPassword, false);
+				UIUtil.SetChecked(m_cbUserAccount, false);
+			}
+			UIUtil.SetEnabled(m_cbPassword, !bExclusiveProv);
+			UIUtil.SetEnabled(m_tbPassword, !bExclusiveProv);
+			UIUtil.SetEnabled(m_cbHidePassword, !bExclusiveProv);
+			UIUtil.SetEnabled(m_cbUserAccount, !bExclusiveProv);
 		}
 
 		private void OnCheckedPassword(object sender, EventArgs e)
@@ -310,6 +326,7 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			m_pKey = null;
 			CleanUpEx();
 		}
 
@@ -353,7 +370,7 @@ namespace KeePass.Forms
 
 		private void AsyncFormLoad()
 		{
-			try { this.PopulateKeyFileSuggestions(); }
+			try { PopulateKeyFileSuggestions(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
 
@@ -385,9 +402,7 @@ namespace KeePass.Forms
 			}
 
 			foreach(KeyProvider prov in Program.KeyProviderPool)
-			{
 				m_vSuggestions.Add(prov.Name);
-			}
 
 			m_bSuggestionsReady = true;
 		}
@@ -403,6 +418,16 @@ namespace KeePass.Forms
 					m_cmbKeyFile.Items.Add(str);
 
 				m_vSuggestions.Clear();
+
+				if(m_cmbKeyFile.SelectedIndex == 0)
+				{
+					string strRemKey = Program.Config.Defaults.GetKeyFilePath(m_strFilePath);
+					if(!string.IsNullOrEmpty(strRemKey))
+					{
+						m_cmbKeyFile.Items.Add(strRemKey);
+						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
+					}
+				}
 			}
 		}
 

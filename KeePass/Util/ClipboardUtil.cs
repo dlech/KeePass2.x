@@ -30,6 +30,7 @@ using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -194,9 +195,13 @@ namespace KeePass.Util
 		{
 			Debug.Assert(doData != null); if(doData == null) return;
 
-			string strName = PwDefs.ProductName;
+			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return;
+			if(NativeLib.IsUnix()) return;
 
-			try { doData.SetData(ClipboardIgnoreFormatName, false, strName); }
+			try
+			{
+				doData.SetData(ClipboardIgnoreFormatName, false, PwDefs.ProductName);
+			}
 			catch(Exception) { Debug.Assert(false); }
 		}
 	}

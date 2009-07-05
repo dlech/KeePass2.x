@@ -23,6 +23,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.Diagnostics;
 
+using KeePassLib.Interfaces;
 using KeePassLib.Security;
 
 namespace KeePassLib.Cryptography.PasswordGenerator
@@ -45,15 +46,13 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		/// a pattern, which describes how the generated password has to
 		/// look like.
 		/// </summary>
-		Pattern = 1
+		Pattern = 1,
+
+		Custom = 2
 	}
 
-	public sealed class PwProfile
+	public sealed class PwProfile : IDeepClonable<PwProfile>
 	{
-		public PwProfile()
-		{
-		}
-
 		private string m_strName = string.Empty;
 		public string Name
 		{
@@ -156,6 +155,54 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				if(value == null) throw new ArgumentNullException("value");
 				m_strExclude = value;
 			}
+		}
+
+		private string m_strCustomID = string.Empty;
+		public string CustomAlgorithmUuid
+		{
+			get { return m_strCustomID; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strCustomID = value;
+			}
+		}
+
+		private string m_strCustomOpt = string.Empty;
+		public string CustomAlgorithmOptions
+		{
+			get { return m_strCustomOpt; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strCustomOpt = value;
+			}
+		}
+
+		public PwProfile()
+		{
+		}
+
+		public PwProfile CloneDeep()
+		{
+			PwProfile p = new PwProfile();
+
+			p.m_strName = m_strName;
+			p.m_type = m_type;
+			p.m_bUserEntropy = m_bUserEntropy;
+			p.m_uLength = m_uLength;
+			p.m_pwCharSet = new PwCharSet(m_pwCharSet.ToString());
+			p.m_strCharSetRanges = m_strCharSetRanges;
+			p.m_strCharSetAdditional = m_strCharSetAdditional;
+			p.m_strPattern = m_strPattern;
+			p.m_bPatternPermute = m_bPatternPermute;
+			p.m_bNoLookAlike = m_bNoLookAlike;
+			p.m_bNoRepeat = m_bNoRepeat;
+			p.m_strExclude = m_strExclude;
+			p.m_strCustomID = m_strCustomID;
+			p.m_strCustomOpt = m_strCustomOpt;
+
+			return p;
 		}
 
 		private void UpdateCharSet(bool bSetXml)

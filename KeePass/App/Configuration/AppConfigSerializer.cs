@@ -91,9 +91,7 @@ namespace KeePass.App.Configuration
 						strFile = strFile.Substring(0, strFile.Length - 4);
 				}
 				else // Base name != null
-				{
-					strFile = UrlUtil.GetFileDirectory(strFile, true) + m_strBaseName;
-				}
+					strFile = UrlUtil.GetFileDirectory(strFile, true, false) + m_strBaseName;
 
 				m_strGlobalConfigFile = strFile + ".config.xml";
 				m_strEnforcedConfigFile = strFile + ".config.enforced.xml";
@@ -114,7 +112,7 @@ namespace KeePass.App.Configuration
 				catch(Exception)
 				{
 					strUserDir = UrlUtil.GetFileDirectory(UrlUtil.FileUrlToPath(
-						Assembly.GetExecutingAssembly().GetName().CodeBase), true);
+						Assembly.GetExecutingAssembly().GetName().CodeBase), true, false);
 				}
 
 				if((!strUserDir.EndsWith(new string(Path.DirectorySeparatorChar, 1))) &&
