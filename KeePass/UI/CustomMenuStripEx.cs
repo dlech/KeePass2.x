@@ -28,6 +28,11 @@ namespace KeePass.UI
 {
 	public sealed class CustomMenuStripEx : MenuStrip
 	{
+		public CustomMenuStripEx() : base()
+		{
+			// ThemeToolStripRenderer.AttachTo(this);
+		}
+
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);

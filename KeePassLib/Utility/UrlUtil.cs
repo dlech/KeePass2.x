@@ -377,5 +377,40 @@ namespace KeePassLib.Utility
 
 			return nLength;
 		}
+
+		public static string RemoveScheme(string strUrl)
+		{
+			if(string.IsNullOrEmpty(strUrl)) return string.Empty;
+
+			int nNetScheme = strUrl.IndexOf(@"://", StrUtil.CaseIgnoreCmp);
+			int nShScheme = strUrl.IndexOf(@":/", StrUtil.CaseIgnoreCmp);
+			int nSmpScheme = strUrl.IndexOf(@":", StrUtil.CaseIgnoreCmp);
+
+			if((nNetScheme < 0) && (nShScheme < 0) && (nSmpScheme < 0))
+				return strUrl; // No scheme
+
+			int nMin = Math.Min(Math.Min((nNetScheme >= 0) ? nNetScheme : int.MaxValue,
+				(nShScheme >= 0) ? nShScheme : int.MaxValue),
+				(nSmpScheme >= 0) ? nSmpScheme : int.MaxValue);
+
+			if(nMin == nNetScheme) return strUrl.Substring(nMin + 3);
+			if(nMin == nShScheme) return strUrl.Substring(nMin + 2);
+			return strUrl.Substring(nMin + 1);
+		}
+
+		public static string ConvertSeparators(string strPath)
+		{
+			return ConvertSeparators(strPath, Path.DirectorySeparatorChar);
+		}
+
+		public static string ConvertSeparators(string strPath, char chSeparator)
+		{
+			if(string.IsNullOrEmpty(strPath)) return string.Empty;
+
+			strPath = strPath.Replace('/', chSeparator);
+			strPath = strPath.Replace('\\', chSeparator);
+
+			return strPath;
+		}
 	}
 }

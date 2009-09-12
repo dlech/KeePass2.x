@@ -21,46 +21,73 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace KeePass.Util
 {
 	public sealed class ClipboardContents
 	{
-		private List<KeyValuePair<string, object>> m_vContents =
-			new List<KeyValuePair<string, object>>();
+		private string m_strText = null;
 
-		public ClipboardContents(bool bGetFromCurrent)
+		private List<KeyValuePair<string, object>> m_vContents = null;
+
+		public ClipboardContents(bool bGetFromCurrent, bool bSimpleOnly)
 		{
-			if(bGetFromCurrent) GetData();
+			if(bGetFromCurrent) GetData(bSimpleOnly);
 		}
 
-		~ClipboardContents()
+		/// <summary>
+		/// Create a backup of the current clipboard contents.
+		/// </summary>
+		/// <param name="bSimpleOnly">Create a simplified backup.
+		/// The advanced mode might crash in conjunction with
+		/// applications that use clipboard tricks like delay
+		/// rendering.</param>
+		public void GetData(bool bSimpleOnly)
 		{
-			m_vContents.Clear();
+			try { GetDataPriv(bSimpleOnly); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
-		public void GetData()
+		private void GetDataPriv(bool bSimpleOnly)
 		{
-			m_vContents.Clear();
-
-			IDataObject idoClip = Clipboard.GetDataObject();
-
-			foreach(string strFormat in idoClip.GetFormats())
+			if(bSimpleOnly)
 			{
-				KeyValuePair<string, object> kvp =
-					new KeyValuePair<string, object>(strFormat,
-					idoClip.GetData(strFormat));
+				if(Clipboard.ContainsText()) m_strText = Clipboard.GetText();
+			}
+			else // Advanced backup
+			{
+				m_vContents = new List<KeyValuePair<string, object>>();
 
-				m_vContents.Add(kvp);
+				IDataObject idoClip = Clipboard.GetDataObject();
+
+				foreach(string strFormat in idoClip.GetFormats())
+				{
+					KeyValuePair<string, object> kvp =
+						new KeyValuePair<string, object>(strFormat,
+						idoClip.GetData(strFormat));
+
+					m_vContents.Add(kvp);
+				}
 			}
 		}
 
 		public void SetData()
 		{
-			Clipboard.Clear();
+			try { SetDataPriv(); }
+			catch(Exception) { Debug.Assert(false); }
+		}
 
-			foreach(KeyValuePair<string, object> kvp in m_vContents)
-				Clipboard.SetData(kvp.Key, kvp.Value);
+		private void SetDataPriv()
+		{
+			ClipboardUtil.Clear();
+
+			if(m_strText != null) Clipboard.SetText(m_strText);
+			else if(m_vContents != null)
+			{
+				foreach(KeyValuePair<string, object> kvp in m_vContents)
+					Clipboard.SetData(kvp.Key, kvp.Value);
+			}
 		}
 	}
 }

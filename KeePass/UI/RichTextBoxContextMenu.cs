@@ -136,7 +136,9 @@ namespace KeePass.UI
 
 		private void OnPasteCommand(object sender, EventArgs e)
 		{
-			m_rtb.Paste();
+			CustomRichTextBoxEx crtb = (m_rtb as CustomRichTextBoxEx);
+			if(crtb != null) crtb.PasteAcceptable();
+			else m_rtb.Paste();
 		}
 
 		private void OnDeleteCommand(object sender, EventArgs e)

@@ -96,6 +96,20 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private bool m_bVerifyFile = true;
+		public bool VerifyWrittenFileAfterSaving
+		{
+			get { return m_bVerifyFile; }
+			set { m_bVerifyFile = value; }
+		}
+
+		private bool m_bTransactedWrites = true;
+		public bool UseTransactedFileWrites
+		{
+			get { return m_bTransactedWrites; }
+			set { m_bTransactedWrites = value; }
+		}
+
 		private AceCloseDb m_fc = new AceCloseDb();
 		public AceCloseDb FileClosing
 		{
@@ -144,6 +158,20 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bMinimizedAndLocked; }
 			set { m_bMinimizedAndLocked = value; }
+		}
+
+		private bool m_bPlgDeleteOld = true;
+		public bool PluginCacheDeleteOld
+		{
+			get { return m_bPlgDeleteOld; }
+			set { m_bPlgDeleteOld = value; }
+		}
+
+		private bool m_bClearPlgCache = false;
+		public bool PluginCacheClearOnce
+		{
+			get { return m_bClearPlgCache; }
+			set { m_bClearPlgCache = value; }
 		}
 	}
 

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.IO;
+using System.Net.NetworkInformation;
 
 using KeePass.Resources;
 using KeePass.Util.Spr;
@@ -50,9 +51,22 @@ namespace KeePass.Ecas
 				KPRes.FileExists, PwIcon.PaperReady, new EcasParameter[] {
 					new EcasParameter(KPRes.File, EcasValueType.String, null) },
 				IsMatchFile));
+
+			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
+				0x2A, 0x22, 0x83, 0xA8, 0x9D, 0x13, 0x41, 0xE8,
+				0x99, 0x87, 0x8B, 0xAC, 0x21, 0x8D, 0x81, 0xF4 }),
+				KPRes.RemoteHostReachable, PwIcon.NetworkServer, new EcasParameter[] {
+					new EcasParameter(KPRes.Host, EcasValueType.String, null) },
+				IsHostReachable));
+
+			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
+				0xD3, 0xCA, 0xFA, 0xEF, 0x28, 0x2A, 0x46, 0x4A,
+				0x99, 0x90, 0xD8, 0x65, 0xFC, 0xE0, 0x16, 0xED }),
+				KPRes.DatabaseUnsavedChanges, PwIcon.PaperFlag, null,
+				IsDatabaseModified));
 		}
 
-		private bool IsMatchEnvironmentVar(EcasCondition c, EcasContext ctx)
+		private static bool IsMatchEnvironmentVar(EcasCondition c, EcasContext ctx)
 		{
 			string strName = EcasUtil.GetParamString(c.Parameters, 0);
 			uint uCompareType = EcasUtil.GetParamEnum(c.Parameters, 1,
@@ -74,7 +88,7 @@ namespace KeePass.Ecas
 			return false;
 		}
 
-		private bool IsMatchFile(EcasCondition c, EcasContext ctx)
+		private static bool IsMatchFile(EcasCondition c, EcasContext ctx)
 		{
 			string strFileSpec = EcasUtil.GetParamString(c.Parameters, 0);
 			if(string.IsNullOrEmpty(strFileSpec)) return true;
@@ -87,6 +101,43 @@ namespace KeePass.Ecas
 			catch(Exception) { }
 
 			return false;
+		}
+
+		private static bool IsHostReachable(EcasCondition c, EcasContext ctx)
+		{
+			string strHostEnc = EcasUtil.GetParamString(c.Parameters, 0);
+			if(string.IsNullOrEmpty(strHostEnc)) return true;
+
+			string strHost = SprEngine.Compile(strHostEnc, false, null,
+				Program.MainForm.ActiveDatabase, false, false);
+			if(string.IsNullOrEmpty(strHost)) return true;
+
+			int[] vTimeOuts = { 250, 1250 };
+			const string strBuffer = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+			byte[] pbBuffer = Encoding.ASCII.GetBytes(strBuffer);
+			Ping ping = new Ping();
+			PingOptions options = new PingOptions(64, true);
+
+			try
+			{
+				foreach(int nTimeOut in vTimeOuts)
+				{
+					PingReply reply = ping.Send(strHost, nTimeOut, pbBuffer, options);
+					if(reply.Status == IPStatus.Success) return true;
+				}
+
+				return false;
+			}
+			catch(Exception) { }
+
+			return false;
+		}
+
+		private static bool IsDatabaseModified(EcasCondition c, EcasContext ctx)
+		{
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return false;
+			return pd.Modified;
 		}
 	}
 }

@@ -35,14 +35,19 @@
 			this.m_grpPluginDesc = new System.Windows.Forms.GroupBox();
 			this.m_lblSelectedPluginDesc = new System.Windows.Forms.Label();
 			this.m_linkPlugins = new System.Windows.Forms.LinkLabel();
+			this.m_grpCache = new System.Windows.Forms.GroupBox();
+			this.m_cbCacheDeleteOld = new System.Windows.Forms.CheckBox();
+			this.m_btnClearCache = new System.Windows.Forms.Button();
+			this.m_lblCacheSize = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpPluginDesc.SuspendLayout();
+			this.m_grpCache.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_btnClose
 			// 
 			this.m_btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnClose.Location = new System.Drawing.Point(532, 406);
+			this.m_btnClose.Location = new System.Drawing.Point(532, 431);
 			this.m_btnClose.Name = "m_btnClose";
 			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
 			this.m_btnClose.TabIndex = 0;
@@ -58,7 +63,7 @@
 			this.m_lvPlugins.Location = new System.Drawing.Point(12, 66);
 			this.m_lvPlugins.Name = "m_lvPlugins";
 			this.m_lvPlugins.ShowItemToolTips = true;
-			this.m_lvPlugins.Size = new System.Drawing.Size(595, 210);
+			this.m_lvPlugins.Size = new System.Drawing.Size(595, 165);
 			this.m_lvPlugins.TabIndex = 1;
 			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
 			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
@@ -67,10 +72,10 @@
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 398);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 422);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(619, 2);
-			this.m_lblSeparator.TabIndex = 3;
+			this.m_lblSeparator.TabIndex = 4;
 			// 
 			// m_bannerImage
 			// 
@@ -84,7 +89,7 @@
 			// m_grpPluginDesc
 			// 
 			this.m_grpPluginDesc.Controls.Add(this.m_lblSelectedPluginDesc);
-			this.m_grpPluginDesc.Location = new System.Drawing.Point(12, 282);
+			this.m_grpPluginDesc.Location = new System.Drawing.Point(12, 237);
 			this.m_grpPluginDesc.Name = "m_grpPluginDesc";
 			this.m_grpPluginDesc.Size = new System.Drawing.Size(595, 102);
 			this.m_grpPluginDesc.TabIndex = 2;
@@ -101,13 +106,53 @@
 			// m_linkPlugins
 			// 
 			this.m_linkPlugins.AutoSize = true;
-			this.m_linkPlugins.Location = new System.Drawing.Point(9, 411);
+			this.m_linkPlugins.Location = new System.Drawing.Point(9, 436);
 			this.m_linkPlugins.Name = "m_linkPlugins";
 			this.m_linkPlugins.Size = new System.Drawing.Size(95, 13);
-			this.m_linkPlugins.TabIndex = 4;
+			this.m_linkPlugins.TabIndex = 5;
 			this.m_linkPlugins.TabStop = true;
 			this.m_linkPlugins.Text = "Get more plugins...";
 			this.m_linkPlugins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPluginsLinkClicked);
+			// 
+			// m_grpCache
+			// 
+			this.m_grpCache.Controls.Add(this.m_cbCacheDeleteOld);
+			this.m_grpCache.Controls.Add(this.m_btnClearCache);
+			this.m_grpCache.Controls.Add(this.m_lblCacheSize);
+			this.m_grpCache.Location = new System.Drawing.Point(12, 345);
+			this.m_grpCache.Name = "m_grpCache";
+			this.m_grpCache.Size = new System.Drawing.Size(595, 65);
+			this.m_grpCache.TabIndex = 3;
+			this.m_grpCache.TabStop = false;
+			this.m_grpCache.Text = "Plugin Cache";
+			// 
+			// m_cbCacheDeleteOld
+			// 
+			this.m_cbCacheDeleteOld.AutoSize = true;
+			this.m_cbCacheDeleteOld.Location = new System.Drawing.Point(9, 40);
+			this.m_cbCacheDeleteOld.Name = "m_cbCacheDeleteOld";
+			this.m_cbCacheDeleteOld.Size = new System.Drawing.Size(215, 17);
+			this.m_cbCacheDeleteOld.TabIndex = 2;
+			this.m_cbCacheDeleteOld.Text = "Delete old files from cache automatically";
+			this.m_cbCacheDeleteOld.UseVisualStyleBackColor = true;
+			// 
+			// m_btnClearCache
+			// 
+			this.m_btnClearCache.Location = new System.Drawing.Point(509, 19);
+			this.m_btnClearCache.Name = "m_btnClearCache";
+			this.m_btnClearCache.Size = new System.Drawing.Size(75, 23);
+			this.m_btnClearCache.TabIndex = 1;
+			this.m_btnClearCache.Text = "&Clear";
+			this.m_btnClearCache.UseVisualStyleBackColor = true;
+			this.m_btnClearCache.Click += new System.EventHandler(this.OnBtnClearCache);
+			// 
+			// m_lblCacheSize
+			// 
+			this.m_lblCacheSize.Location = new System.Drawing.Point(6, 19);
+			this.m_lblCacheSize.Name = "m_lblCacheSize";
+			this.m_lblCacheSize.Size = new System.Drawing.Size(497, 18);
+			this.m_lblCacheSize.TabIndex = 0;
+			this.m_lblCacheSize.Text = "Data in cache (size):";
 			// 
 			// PluginsForm
 			// 
@@ -115,7 +160,8 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnClose;
-			this.ClientSize = new System.Drawing.Size(619, 441);
+			this.ClientSize = new System.Drawing.Size(619, 466);
+			this.Controls.Add(this.m_grpCache);
 			this.Controls.Add(this.m_linkPlugins);
 			this.Controls.Add(this.m_grpPluginDesc);
 			this.Controls.Add(this.m_lblSeparator);
@@ -131,8 +177,11 @@
 			this.Text = "Plugins";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_grpPluginDesc.ResumeLayout(false);
+			this.m_grpCache.ResumeLayout(false);
+			this.m_grpCache.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -147,5 +196,9 @@
 		private System.Windows.Forms.GroupBox m_grpPluginDesc;
 		private System.Windows.Forms.Label m_lblSelectedPluginDesc;
 		private System.Windows.Forms.LinkLabel m_linkPlugins;
+		private System.Windows.Forms.GroupBox m_grpCache;
+		private System.Windows.Forms.Button m_btnClearCache;
+		private System.Windows.Forms.Label m_lblCacheSize;
+		private System.Windows.Forms.CheckBox m_cbCacheDeleteOld;
 	}
 }

@@ -79,12 +79,10 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			ParseTans();
-			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-			CleanUpEx();
 		}
 
 		private void CleanUpEx()
@@ -153,6 +151,11 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

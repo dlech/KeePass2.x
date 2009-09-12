@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Resources;
@@ -65,6 +66,9 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			// Must work without a parent window
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
 			GlobalWindowManager.AddWindow(this);
 
 			string strTitle = (m_bSave ? KPRes.UrlSaveTitle : KPRes.UrlOpenTitle);
@@ -100,8 +104,12 @@ namespace KeePass.Forms
 
 			m_tbUrl.Focus();
 
-			// Give the user name field the focus, if URL is specified
-			if(m_tbUrl.Text.Length > 0)
+			if((m_tbUrl.TextLength > 0) && (m_tbUserName.TextLength > 0))
+			{
+				this.ActiveControl = m_tbPassword;
+				m_tbPassword.Focus();
+			}
+			else if(m_tbUrl.TextLength > 0)
 			{
 				this.ActiveControl = m_tbUserName;
 				m_tbUserName.Focus();

@@ -25,6 +25,7 @@ using System.Diagnostics;
 
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
@@ -67,6 +68,11 @@ namespace KeePassLib.Collections
 			return m_vBinaries.GetEnumerator();
 		}
 
+		public void Clear()
+		{
+			m_vBinaries.Clear();
+		}
+
 		/// <summary>
 		/// Clone the current <c>ProtectedBinaryList</c> object, including all
 		/// stored protected strings.
@@ -88,6 +94,22 @@ namespace KeePassLib.Collections
 			return plNew;
 		}
 
+		public bool EqualsDictionary(ProtectedBinaryDictionary dict)
+		{
+			if(dict == null) { Debug.Assert(false); return false; }
+
+			if(m_vBinaries.Count != dict.m_vBinaries.Count) return false;
+
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_vBinaries)
+			{
+				ProtectedBinary pb = dict.Get(kvp.Key);
+				if(pb == null) return false;
+				if(!MemUtil.ArraysEqual(pb.ReadData(), kvp.Value.ReadData())) return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Get one of the stored binaries.
 		/// </summary>
@@ -102,8 +124,7 @@ namespace KeePassLib.Collections
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 
 			ProtectedBinary pb;
-			if(m_vBinaries.TryGetValue(strName, out pb))
-				return pb;
+			if(m_vBinaries.TryGetValue(strName, out pb)) return pb;
 
 			return null;
 		}

@@ -151,6 +151,7 @@ namespace TrlUtil
 				cCopy.Width = c.Width;
 				cCopy.Height = c.Height;
 				cCopy.ClientSize = c.ClientSize;
+				if(c.Dock != DockStyle.None) cCopy.Dock = c.Dock;
 			}
 		}
 	}

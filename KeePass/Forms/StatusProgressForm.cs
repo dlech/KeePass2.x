@@ -26,6 +26,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.UI;
+using KeePass.Util;
+
 using KeePassLib;
 using KeePassLib.Interfaces;
 
@@ -33,11 +36,26 @@ namespace KeePass.Forms
 {
 	public partial class StatusProgressForm : Form, IStatusLogger
 	{
+		private string m_strTitle = null;
+		private bool m_bCanCancel = true;
+		private bool m_bMarquee = false;
+		private Form m_fOwner = null;
+
 		private volatile bool m_bCancelled = false;
+		private bool m_bCanClose = true;
 
 		public bool UserCancelled
 		{
 			get { return m_bCancelled; }
+		}
+
+		public void InitEx(string strTitle, bool bCanCancel, bool bMarqueeProgress,
+			Form fOwner)
+		{
+			m_strTitle = strTitle;
+			m_bCanCancel = bCanCancel;
+			m_bMarquee = bMarqueeProgress;
+			m_fOwner = fOwner;
 		}
 
 		public StatusProgressForm()
@@ -48,16 +66,33 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			// Must work without a parent window
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
+			GlobalWindowManager.AddWindow(this);
+
 			m_pbTotal.Minimum = 0;
 			m_pbTotal.Maximum = 100;
 			m_pbTotal.Value = 0;
 
-			this.Text = PwDefs.ShortProductName;
+			try { if(m_bMarquee) m_pbTotal.Style = ProgressBarStyle.Marquee; }
+			catch(Exception) { Debug.Assert(WinUtil.IsWindows9x || WinUtil.IsWindows2000); }
+
+			if(!string.IsNullOrEmpty(m_strTitle)) this.Text = m_strTitle;
+			else this.Text = PwDefs.ShortProductName;
+
+			try { if(m_fOwner != null) this.Owner = m_fOwner; }
+			catch(Exception) { Debug.Assert(false); } // Throws from other thread
+
+			if(!m_bCanCancel) m_btnCancel.Enabled = false;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+			this.DialogResult = DialogResult.None;
+
 			if(m_bCancelled) { Debug.Assert(false); return; }
+			if(!m_bCanCancel) return;
 
 			m_bCancelled = true;
 			m_btnCancel.Enabled = false;
@@ -89,10 +124,12 @@ namespace KeePass.Forms
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
 			SetProgressGlobal(strOperation, -1);
+			m_bCanClose = false;
 		}
 
 		public void EndLogging()
 		{
+			m_bCanClose = true;
 		}
 
 		public bool SetProgress(uint uPercent)
@@ -109,6 +146,20 @@ namespace KeePass.Forms
 		{
 			Application.DoEvents();
 			return !m_bCancelled;
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(!m_bCanClose)
+			{
+				Debug.Assert(e.CloseReason == CloseReason.UserClosing);
+				e.Cancel = true;
+			}
 		}
 	}
 }

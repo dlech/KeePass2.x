@@ -98,6 +98,8 @@ namespace KeePass.Forms
 			m_cbPassword.Checked = Program.Config.Defaults.SearchParameters.SearchInPasswords;
 			m_cbNotes.Checked = Program.Config.Defaults.SearchParameters.SearchInNotes;
 			m_cbOtherFields.Checked = Program.Config.Defaults.SearchParameters.SearchInOther;
+			m_cbUuid.Checked = Program.Config.Defaults.SearchParameters.SearchInUuids;
+			m_cbGroupName.Checked = Program.Config.Defaults.SearchParameters.SearchInGroupNames;
 
 			StringComparison sc = Program.Config.Defaults.SearchParameters.ComparisonMode;
 			m_cbCaseSensitive.Checked = ((sc != StringComparison.CurrentCultureIgnoreCase) &&
@@ -167,6 +169,8 @@ namespace KeePass.Forms
 			sp.SearchInUrls = m_cbURL.Checked;
 			sp.SearchInNotes = m_cbNotes.Checked;
 			sp.SearchInOther = m_cbOtherFields.Checked;
+			sp.SearchInUuids = m_cbUuid.Checked;
+			sp.SearchInGroupNames = m_cbGroupName.Checked;
 
 			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
 				StringComparison.InvariantCulture :

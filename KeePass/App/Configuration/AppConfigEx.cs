@@ -183,14 +183,15 @@ namespace KeePass.App.Configuration
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				iocMru.ClearCredentials(true);
 
-			if(m_def.RememberKeyFilePaths == false)
-				m_def.KeyFilePaths.Clear();
+			if(m_def.RememberKeySources == false)
+				m_def.KeySources.Clear();
 
 			m_aceApp.TriggerSystem = Program.TriggerSystem;
 		}
 
 		internal void OnLoad()
 		{
+			m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
 			ChangePathsRelAbs(true);
 		}
 
@@ -212,10 +213,13 @@ namespace KeePass.App.Configuration
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				ChangePathRelAbs(iocMru, bMakeAbsolute);
 
-			foreach(AceKeyFilePath kfp in m_def.KeyFilePaths)
+			foreach(AceKeyAssoc kfp in m_def.KeySources)
 			{
-				kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
-				kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
+				if(kfp.DatabasePath.Length > 0)
+					kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
+
+				if(kfp.KeyFilePath.Length > 0)
+					kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
 			}
 		}
 
@@ -257,12 +261,12 @@ namespace KeePass.App.Configuration
 			set { m_bPrefLocalCfg = value; }
 		}
 
-		private bool m_bIsEnforced = false;
-		[XmlIgnore]
-		public bool IsEnforcedConfiguration
-		{
-			get { return m_bIsEnforced; }
-			set { m_bIsEnforced = value; }
-		}
+		// private bool m_bIsEnforced = false;
+		// [XmlIgnore]
+		// public bool IsEnforcedConfiguration
+		// {
+		//	get { return m_bIsEnforced; }
+		//	set { m_bIsEnforced = value; }
+		// }
 	}
 }

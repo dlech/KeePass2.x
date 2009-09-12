@@ -132,7 +132,20 @@ namespace KeePassLib.Utility
 			str = str.Replace("}", "\\}");
 			str = str.Replace("\n", "\\par ");
 
-			return str;
+			StringBuilder sbEncoded = new StringBuilder();
+			for(int i = 0; i < str.Length; ++i)
+			{
+				char ch = str[i];
+				if((int)ch >= 256)
+				{
+					sbEncoded.Append("\\u");
+					sbEncoded.Append((int)ch);
+					sbEncoded.Append('?');
+				}
+				else sbEncoded.Append(ch);
+			}
+
+			return sbEncoded.ToString();
 		}
 
 		/// <summary>
@@ -373,6 +386,16 @@ namespace KeePassLib.Utility
 			}
 
 			return strText;
+		}
+
+		public static bool TryParseUShort(string str, out ushort u)
+		{
+#if !KeePassLibSD
+			return ushort.TryParse(str, out u);
+#else
+			try { u = ushort.Parse(str); return true; }
+			catch(Exception) { u = 0; return false; }
+#endif
 		}
 
 		public static bool TryParseInt(string str, out int n)
@@ -665,6 +688,70 @@ namespace KeePassLib.Utility
 
 			string strSingular = str.Replace("\r", string.Empty);
 			return strSingular.Replace("\n", "\r\n");
+		}
+
+		public static string AlphaNumericOnly(string str)
+		{
+			if(string.IsNullOrEmpty(str)) return str;
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < str.Length; ++i)
+			{
+				char ch = str[i];
+				if(((ch >= 'a') && (ch <= 'z')) || ((ch >= 'A') && (ch <= 'Z')) ||
+					((ch >= '0') && (ch <= '9')))
+					sb.Append(ch);
+			}
+
+			return sb.ToString();
+		}
+
+		public static string FormatDataSize(ulong uBytes)
+		{
+			const ulong uKB = 1024;
+			const ulong uMB = uKB * uKB;
+			const ulong uGB = uMB * uKB;
+			const ulong uTB = uGB * uKB;
+
+			if(uBytes == 0) return "0 KB";
+			if(uBytes <= uKB) return "1 KB";
+			if(uBytes <= uMB) return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
+			if(uBytes <= uGB) return (((uBytes - 1UL) / uMB) + 1UL).ToString() + " MB";
+			if(uBytes <= uTB) return (((uBytes - 1UL) / uGB) + 1UL).ToString() + " GB";
+
+			return (((uBytes - 1UL)/ uTB) + 1UL).ToString() + " TB";
+		}
+
+		public static ulong GetVersion(string strVersion)
+		{
+			if(string.IsNullOrEmpty(strVersion)) { Debug.Assert(false); return 0; }
+
+			string[] vVer = strVersion.Split(new char[] { '.', ',' });
+			if((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
+
+			ushort uPart;
+			StrUtil.TryParseUShort(vVer[0], out uPart);
+			ulong uVer = ((ulong)uPart << 48);
+
+			if(vVer.Length >= 2)
+			{
+				StrUtil.TryParseUShort(vVer[1], out uPart);
+				uVer |= ((ulong)uPart << 32);
+			}
+
+			if(vVer.Length >= 3)
+			{
+				StrUtil.TryParseUShort(vVer[2], out uPart);
+				uVer |= ((ulong)uPart << 16);
+			}
+
+			if(vVer.Length >= 4)
+			{
+				StrUtil.TryParseUShort(vVer[3], out uPart);
+				uVer |= (ulong)uPart;
+			}
+
+			return uVer;
 		}
 	}
 }

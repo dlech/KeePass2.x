@@ -37,6 +37,8 @@ using KeePassLib;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Util
 {
 	public static class WinUtil
@@ -49,6 +51,8 @@ namespace KeePass.Util
 		private static bool m_bIsAtLeastWindowsVista = false;
 
 		private static string m_strExePath = null;
+
+		private static ulong m_uFrameworkVersion = 0;
 
 		public static bool IsWindows9x
 		{
@@ -110,17 +114,26 @@ namespace KeePass.Util
 			try { Directory.SetCurrentDirectory(strExeDir); }
 			catch(Exception) { Debug.Assert(false); }
 
-			string strUrl = strUrlToOpen;
-			strUrl = strUrl.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
+			string strUrlFlt = strUrlToOpen;
+			strUrlFlt = strUrlFlt.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
 
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
 			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
 
-			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrl);
+			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrlFlt);
 
-			strUrl = SprEngine.Compile(strUrl, false, peDataSource, pwDatabase,
-				false, bCmdQuotes);
+			string strUrl = SprEngine.Compile(strUrlFlt, false, peDataSource,
+				pwDatabase, false, bCmdQuotes);
+
+			string strOvr = Program.Config.Integration.UrlSchemeOverrides.GetOverrideForUrl(
+				strUrl);
+			if(strOvr != null)
+			{
+				bCmdQuotes = WinUtil.IsCommandLineUrl(strOvr);
+				strUrl = SprEngine.Compile(strOvr, false, peDataSource, pwDatabase,
+					false, bCmdQuotes);
+			}
 
 			if(WinUtil.IsCommandLineUrl(strUrl))
 			{
@@ -149,7 +162,7 @@ namespace KeePass.Util
 					MessageService.ShowWarning(strInf, exCmd);
 				}
 			}
-			else
+			else // Standard URL
 			{
 				try { Process.Start(strUrl); }
 				catch(Exception exUrl)
@@ -161,6 +174,9 @@ namespace KeePass.Util
 			// Restore previous working directory
 			try { Directory.SetCurrentDirectory(strPrevWorkDir); }
 			catch(Exception) { Debug.Assert(false); }
+
+			// SprEngine.Compile might have modified the database
+			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
 		}
 
 		private static void StartWithoutShellExecute(string strApp, string strArgs)
@@ -470,6 +486,46 @@ namespace KeePass.Util
 			}
 
 			return true;
+		}
+
+		public static ulong GetMaxNetFrameworkVersion()
+		{
+			if(m_uFrameworkVersion != 0) return m_uFrameworkVersion;
+
+			try
+			{
+				m_uFrameworkVersion = GetNetVersion();
+				return m_uFrameworkVersion;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return 0;
+		}
+
+		private static ulong GetNetVersion()
+		{
+			string strSysRoot = Environment.GetEnvironmentVariable("SystemRoot");
+			string strFrameworks = UrlUtil.EnsureTerminatingSeparator(strSysRoot,
+				false) + "Microsoft.NET" + Path.DirectorySeparatorChar + "Framework";
+			if(!Directory.Exists(strFrameworks)) { Debug.Assert(false); return 0; }
+
+			ulong uFrameworkVersion = 0;
+			DirectoryInfo diFrameworks = new DirectoryInfo(strFrameworks);
+			foreach(DirectoryInfo di in diFrameworks.GetDirectories("v*",
+				SearchOption.TopDirectoryOnly))
+			{
+				string strVer = di.Name.TrimStart('v', 'V');
+				ulong uVer = StrUtil.GetVersion(strVer);
+				if(uVer > uFrameworkVersion) uFrameworkVersion = uVer;
+			}
+
+			return uFrameworkVersion;
+		}
+
+		public static string GetOSStr()
+		{
+			if(NativeLib.IsUnix()) return "Unix";
+			return "Windows";
 		}
 	}
 }

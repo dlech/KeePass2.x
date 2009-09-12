@@ -17,8 +17,12 @@ DEL ..\KeePassLib\KeePassLib.csproj.user
 RMDIR /S /Q ..\KeePassLibSD\obj
 DEL ..\KeePassLibSD\KeePassLibSD.csproj.user
 
-RMDIR /S /Q ..\ShInstUtil\obj
-DEL ..\ShInstUtil\ShInstUtil.csproj.user
+REM RMDIR /S /Q ..\ShInstUtil\obj
+REM DEL ..\ShInstUtil\ShInstUtil.csproj.user
+DEL ..\ShInstUtil\ShInstUtil.aps
+DEL ..\ShInstUtil\ShInstUtil.ncb
+DEL /A:H ..\ShInstUtil\ShInstUtil.suo
+DEL /Q ..\ShInstUtil\*.user
 
 DEL /A:H ..\KeePass.suo
 DEL ..\KeePass.ncb

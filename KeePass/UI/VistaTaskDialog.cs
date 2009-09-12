@@ -311,7 +311,9 @@ namespace KeePass.UI
 
 		private bool InternalShowDialog()
 		{
-			Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize);
+			if(IntPtr.Size == 4)
+				{ Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize); }
+
 			m_cfg.cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
 
 			int pnButton = 0, pnRadioButton = 0;

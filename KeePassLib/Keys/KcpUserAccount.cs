@@ -22,8 +22,6 @@ using System.Security;
 using System.Security.Cryptography;
 using System.IO;
 
-using Microsoft.Win32;
-
 using KeePassLib.Cryptography;
 using KeePassLib.Resources;
 using KeePassLib.Security;

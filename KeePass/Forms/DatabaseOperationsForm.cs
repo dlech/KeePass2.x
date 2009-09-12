@@ -112,7 +112,7 @@ namespace KeePass.Forms
 				{
 					PwEntry peHist = pe.History.GetAt(u);
 
-					if((dtNow - peHist.LastAccessTime) >= tsSpan)
+					if((dtNow - peHist.LastModificationTime) >= tsSpan)
 					{
 						pe.History.Remove(peHist);
 						--u;

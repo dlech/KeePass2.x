@@ -43,7 +43,6 @@
 			this.m_tbPassword = new System.Windows.Forms.TextBox();
 			this.m_tbRepeatPassword = new System.Windows.Forms.TextBox();
 			this.m_tbUrl = new System.Windows.Forms.TextBox();
-			this.m_rtNotes = new System.Windows.Forms.RichTextBox();
 			this.m_cbExpires = new System.Windows.Forms.CheckBox();
 			this.m_dtExpireDateTime = new System.Windows.Forms.DateTimePicker();
 			this.m_ctxDefaultTimes = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -69,20 +68,17 @@
 			this.m_ttValidationError = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEntry = new System.Windows.Forms.TabPage();
-			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_grpAttachments = new System.Windows.Forms.GroupBox();
 			this.m_btnBinView = new System.Windows.Forms.Button();
 			this.m_btnBinSave = new System.Windows.Forms.Button();
 			this.m_btnBinDelete = new System.Windows.Forms.Button();
 			this.m_btnBinAdd = new System.Windows.Forms.Button();
-			this.m_lvBinaries = new KeePass.UI.CustomListViewEx();
 			this.m_grpStringFields = new System.Windows.Forms.GroupBox();
 			this.m_btnStrMove = new System.Windows.Forms.Button();
 			this.m_btnStrAdd = new System.Windows.Forms.Button();
 			this.m_btnStrEdit = new System.Windows.Forms.Button();
 			this.m_btnStrDelete = new System.Windows.Forms.Button();
-			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
 			this.m_ctxListOperations = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
@@ -106,12 +102,10 @@
 			this.m_btnAutoTypeEdit = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeAdd = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeDelete = new System.Windows.Forms.Button();
-			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
 			this.m_btnHistoryDelete = new System.Windows.Forms.Button();
 			this.m_btnHistoryView = new System.Windows.Forms.Button();
 			this.m_btnHistoryRestore = new System.Windows.Forms.Button();
-			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_ctxStrMoveToStandard = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -138,6 +132,12 @@
 			this.m_ctxToolsFieldRefsInPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInNotes = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_rtNotes = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
+			this.m_lvBinaries = new KeePass.UI.CustomListViewEx();
+			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
+			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
+			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_ctxDefaultTimes.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
@@ -223,11 +223,10 @@
 			this.m_tbTitle.Name = "m_tbTitle";
 			this.m_tbTitle.Size = new System.Drawing.Size(293, 20);
 			this.m_tbTitle.TabIndex = 0;
-			this.m_tbTitle.TextChanged += new System.EventHandler(this.OnTitleTextChanged);
 			// 
 			// m_btnIcon
 			// 
-			this.m_btnIcon.Location = new System.Drawing.Point(422, 8);
+			this.m_btnIcon.Location = new System.Drawing.Point(423, 8);
 			this.m_btnIcon.Name = "m_btnIcon";
 			this.m_btnIcon.Size = new System.Drawing.Size(32, 23);
 			this.m_btnIcon.TabIndex = 3;
@@ -237,7 +236,7 @@
 			// m_lblIcon
 			// 
 			this.m_lblIcon.AutoSize = true;
-			this.m_lblIcon.Location = new System.Drawing.Point(384, 13);
+			this.m_lblIcon.Location = new System.Drawing.Point(386, 13);
 			this.m_lblIcon.Name = "m_lblIcon";
 			this.m_lblIcon.Size = new System.Drawing.Size(31, 13);
 			this.m_lblIcon.TabIndex = 2;
@@ -249,20 +248,19 @@
 			this.m_tbUserName.Name = "m_tbUserName";
 			this.m_tbUserName.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUserName.TabIndex = 5;
-			this.m_tbUserName.TextChanged += new System.EventHandler(this.OnUserNameTextChanged);
 			// 
 			// m_tbPassword
 			// 
 			this.m_tbPassword.Location = new System.Drawing.Point(81, 64);
 			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(335, 20);
+			this.m_tbPassword.Size = new System.Drawing.Size(336, 20);
 			this.m_tbPassword.TabIndex = 7;
 			// 
 			// m_tbRepeatPassword
 			// 
 			this.m_tbRepeatPassword.Location = new System.Drawing.Point(81, 91);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
-			this.m_tbRepeatPassword.Size = new System.Drawing.Size(335, 20);
+			this.m_tbRepeatPassword.Size = new System.Drawing.Size(336, 20);
 			this.m_tbRepeatPassword.TabIndex = 10;
 			this.m_ttBalloon.SetToolTip(this.m_tbRepeatPassword, "Repeat the password to prevent typing errors.");
 			// 
@@ -272,18 +270,6 @@
 			this.m_tbUrl.Name = "m_tbUrl";
 			this.m_tbUrl.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUrl.TabIndex = 16;
-			this.m_tbUrl.TextChanged += new System.EventHandler(this.OnUrlTextChanged);
-			// 
-			// m_rtNotes
-			// 
-			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
-			this.m_rtNotes.Name = "m_rtNotes";
-			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_rtNotes.Size = new System.Drawing.Size(373, 140);
-			this.m_rtNotes.TabIndex = 18;
-			this.m_rtNotes.Text = "";
-			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
-			this.m_rtNotes.TextChanged += new System.EventHandler(this.OnNotesTextChanged);
 			// 
 			// m_cbExpires
 			// 
@@ -294,7 +280,6 @@
 			this.m_cbExpires.TabIndex = 19;
 			this.m_cbExpires.Text = "Expires:";
 			this.m_cbExpires.UseVisualStyleBackColor = true;
-			this.m_cbExpires.CheckedChanged += new System.EventHandler(this.OnExpiresCheckedChanged);
 			// 
 			// m_dtExpireDateTime
 			// 
@@ -409,7 +394,7 @@
 			// 
 			// m_lblQualityBitsText
 			// 
-			this.m_lblQualityBitsText.Location = new System.Drawing.Point(366, 118);
+			this.m_lblQualityBitsText.Location = new System.Drawing.Point(367, 118);
 			this.m_lblQualityBitsText.Name = "m_lblQualityBitsText";
 			this.m_lblQualityBitsText.Size = new System.Drawing.Size(53, 13);
 			this.m_lblQualityBitsText.TabIndex = 14;
@@ -425,7 +410,7 @@
 			// m_btnGenPw
 			// 
 			this.m_btnGenPw.Image = global::KeePass.Properties.Resources.B15x13_KGPG_Gen;
-			this.m_btnGenPw.Location = new System.Drawing.Point(422, 90);
+			this.m_btnGenPw.Location = new System.Drawing.Point(423, 90);
 			this.m_btnGenPw.Name = "m_btnGenPw";
 			this.m_btnGenPw.Size = new System.Drawing.Size(32, 23);
 			this.m_btnGenPw.TabIndex = 11;
@@ -437,7 +422,7 @@
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;
 			this.m_cbHidePassword.Font = new System.Drawing.Font("Tahoma", 8.25F);
 			this.m_cbHidePassword.Image = global::KeePass.Properties.Resources.B17x05_3BlackDots;
-			this.m_cbHidePassword.Location = new System.Drawing.Point(422, 63);
+			this.m_cbHidePassword.Location = new System.Drawing.Point(423, 63);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 8;
@@ -449,7 +434,7 @@
 			// 
 			this.m_btnStandardExpires.ContextMenuStrip = this.m_ctxDefaultTimes;
 			this.m_btnStandardExpires.Image = global::KeePass.Properties.Resources.B16x16_History;
-			this.m_btnStandardExpires.Location = new System.Drawing.Point(422, 311);
+			this.m_btnStandardExpires.Location = new System.Drawing.Point(423, 311);
 			this.m_btnStandardExpires.Name = "m_btnStandardExpires";
 			this.m_btnStandardExpires.Size = new System.Drawing.Size(32, 23);
 			this.m_btnStandardExpires.TabIndex = 21;
@@ -524,18 +509,6 @@
 			this.m_tabEntry.Text = "Entry";
 			this.m_tabEntry.UseVisualStyleBackColor = true;
 			// 
-			// m_pbQuality
-			// 
-			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
-			this.m_pbQuality.Maximum = 100;
-			this.m_pbQuality.Minimum = 0;
-			this.m_pbQuality.Name = "m_pbQuality";
-			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
-			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbQuality.TabIndex = 13;
-			this.m_pbQuality.TabStop = false;
-			this.m_pbQuality.Value = 50;
-			// 
 			// m_tabAdvanced
 			// 
 			this.m_tabAdvanced.Controls.Add(this.m_grpAttachments);
@@ -602,19 +575,6 @@
 			this.m_btnBinAdd.UseVisualStyleBackColor = true;
 			this.m_btnBinAdd.Click += new System.EventHandler(this.OnBtnBinAdd);
 			// 
-			// m_lvBinaries
-			// 
-			this.m_lvBinaries.FullRowSelect = true;
-			this.m_lvBinaries.HideSelection = false;
-			this.m_lvBinaries.Location = new System.Drawing.Point(6, 20);
-			this.m_lvBinaries.Name = "m_lvBinaries";
-			this.m_lvBinaries.ShowItemToolTips = true;
-			this.m_lvBinaries.Size = new System.Drawing.Size(362, 136);
-			this.m_lvBinaries.TabIndex = 0;
-			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
-			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
-			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
-			// 
 			// m_grpStringFields
 			// 
 			this.m_grpStringFields.Controls.Add(this.m_btnStrMove);
@@ -669,22 +629,6 @@
 			this.m_btnStrDelete.UseVisualStyleBackColor = true;
 			this.m_btnStrDelete.Click += new System.EventHandler(this.OnBtnStrDelete);
 			// 
-			// m_lvStrings
-			// 
-			this.m_lvStrings.ContextMenuStrip = this.m_ctxListOperations;
-			this.m_lvStrings.FullRowSelect = true;
-			this.m_lvStrings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvStrings.HideSelection = false;
-			this.m_lvStrings.Location = new System.Drawing.Point(6, 20);
-			this.m_lvStrings.Name = "m_lvStrings";
-			this.m_lvStrings.ShowItemToolTips = true;
-			this.m_lvStrings.Size = new System.Drawing.Size(362, 136);
-			this.m_lvStrings.TabIndex = 0;
-			this.m_lvStrings.UseCompatibleStateImageBehavior = false;
-			this.m_lvStrings.View = System.Windows.Forms.View.Details;
-			this.m_lvStrings.ItemActivate += new System.EventHandler(this.OnStringsItemActivate);
-			this.m_lvStrings.SelectedIndexChanged += new System.EventHandler(this.OnStringsSelectedIndexChanged);
-			// 
 			// m_ctxListOperations
 			// 
 			this.m_ctxListOperations.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -719,7 +663,7 @@
 			// 
 			// m_btnPickFgColor
 			// 
-			this.m_btnPickFgColor.Location = new System.Drawing.Point(166, 9);
+			this.m_btnPickFgColor.Location = new System.Drawing.Point(165, 9);
 			this.m_btnPickFgColor.Name = "m_btnPickFgColor";
 			this.m_btnPickFgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickFgColor.TabIndex = 1;
@@ -729,7 +673,7 @@
 			// m_cbCustomForegroundColor
 			// 
 			this.m_cbCustomForegroundColor.AutoSize = true;
-			this.m_cbCustomForegroundColor.Location = new System.Drawing.Point(10, 13);
+			this.m_cbCustomForegroundColor.Location = new System.Drawing.Point(9, 13);
 			this.m_cbCustomForegroundColor.Name = "m_cbCustomForegroundColor";
 			this.m_cbCustomForegroundColor.Size = new System.Drawing.Size(144, 17);
 			this.m_cbCustomForegroundColor.TabIndex = 0;
@@ -739,16 +683,16 @@
 			// 
 			// m_tbUuid
 			// 
-			this.m_tbUuid.Location = new System.Drawing.Point(50, 309);
+			this.m_tbUuid.Location = new System.Drawing.Point(49, 309);
 			this.m_tbUuid.Name = "m_tbUuid";
 			this.m_tbUuid.ReadOnly = true;
-			this.m_tbUuid.Size = new System.Drawing.Size(404, 20);
+			this.m_tbUuid.Size = new System.Drawing.Size(407, 20);
 			this.m_tbUuid.TabIndex = 7;
 			// 
 			// m_lblUuid
 			// 
 			this.m_lblUuid.AutoSize = true;
-			this.m_lblUuid.Location = new System.Drawing.Point(7, 312);
+			this.m_lblUuid.Location = new System.Drawing.Point(6, 312);
 			this.m_lblUuid.Name = "m_lblUuid";
 			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
 			this.m_lblUuid.TabIndex = 6;
@@ -756,11 +700,10 @@
 			// 
 			// m_tbOverrideUrl
 			// 
-			this.m_tbOverrideUrl.Location = new System.Drawing.Point(10, 94);
+			this.m_tbOverrideUrl.Location = new System.Drawing.Point(9, 94);
 			this.m_tbOverrideUrl.Name = "m_tbOverrideUrl";
-			this.m_tbOverrideUrl.Size = new System.Drawing.Size(442, 20);
+			this.m_tbOverrideUrl.Size = new System.Drawing.Size(447, 20);
 			this.m_tbOverrideUrl.TabIndex = 5;
-			this.m_tbOverrideUrl.TextChanged += new System.EventHandler(this.OnOverrideUrlTextChanged);
 			// 
 			// m_lblOverrideUrl
 			// 
@@ -774,7 +717,7 @@
 			// m_cbCustomBackgroundColor
 			// 
 			this.m_cbCustomBackgroundColor.AutoSize = true;
-			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(10, 42);
+			this.m_cbCustomBackgroundColor.Location = new System.Drawing.Point(9, 42);
 			this.m_cbCustomBackgroundColor.Name = "m_cbCustomBackgroundColor";
 			this.m_cbCustomBackgroundColor.Size = new System.Drawing.Size(150, 17);
 			this.m_cbCustomBackgroundColor.TabIndex = 2;
@@ -784,7 +727,7 @@
 			// 
 			// m_btnPickBgColor
 			// 
-			this.m_btnPickBgColor.Location = new System.Drawing.Point(166, 38);
+			this.m_btnPickBgColor.Location = new System.Drawing.Point(165, 38);
 			this.m_btnPickBgColor.Name = "m_btnPickBgColor";
 			this.m_btnPickBgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickBgColor.TabIndex = 3;
@@ -815,7 +758,7 @@
 			// m_linkAutoTypeObfuscation
 			// 
 			this.m_linkAutoTypeObfuscation.AutoSize = true;
-			this.m_linkAutoTypeObfuscation.Location = new System.Drawing.Point(213, 314);
+			this.m_linkAutoTypeObfuscation.Location = new System.Drawing.Point(208, 314);
 			this.m_linkAutoTypeObfuscation.Name = "m_linkAutoTypeObfuscation";
 			this.m_linkAutoTypeObfuscation.Size = new System.Drawing.Size(68, 13);
 			this.m_linkAutoTypeObfuscation.TabIndex = 11;
@@ -826,7 +769,7 @@
 			// m_cbAutoTypeObfuscation
 			// 
 			this.m_cbAutoTypeObfuscation.AutoSize = true;
-			this.m_cbAutoTypeObfuscation.Location = new System.Drawing.Point(10, 313);
+			this.m_cbAutoTypeObfuscation.Location = new System.Drawing.Point(9, 313);
 			this.m_cbAutoTypeObfuscation.Name = "m_cbAutoTypeObfuscation";
 			this.m_cbAutoTypeObfuscation.Size = new System.Drawing.Size(193, 17);
 			this.m_cbAutoTypeObfuscation.TabIndex = 10;
@@ -836,7 +779,7 @@
 			// 
 			// m_btnAutoTypeEditDefault
 			// 
-			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(378, 84);
+			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(382, 84);
 			this.m_btnAutoTypeEditDefault.Name = "m_btnAutoTypeEditDefault";
 			this.m_btnAutoTypeEditDefault.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEditDefault.TabIndex = 4;
@@ -847,7 +790,7 @@
 			// m_rbAutoTypeOverride
 			// 
 			this.m_rbAutoTypeOverride.AutoSize = true;
-			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(10, 65);
+			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(9, 65);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
 			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(153, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 2;
@@ -858,7 +801,7 @@
 			// m_rbAutoTypeSeqInherit
 			// 
 			this.m_rbAutoTypeSeqInherit.AutoSize = true;
-			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(10, 44);
+			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(9, 44);
 			this.m_rbAutoTypeSeqInherit.Name = "m_rbAutoTypeSeqInherit";
 			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(239, 17);
 			this.m_rbAutoTypeSeqInherit.TabIndex = 1;
@@ -870,7 +813,7 @@
 			// m_lblCustomAutoType
 			// 
 			this.m_lblCustomAutoType.AutoSize = true;
-			this.m_lblCustomAutoType.Location = new System.Drawing.Point(7, 118);
+			this.m_lblCustomAutoType.Location = new System.Drawing.Point(6, 118);
 			this.m_lblCustomAutoType.Name = "m_lblCustomAutoType";
 			this.m_lblCustomAutoType.Size = new System.Drawing.Size(219, 13);
 			this.m_lblCustomAutoType.TabIndex = 5;
@@ -879,7 +822,7 @@
 			// m_cbAutoTypeEnabled
 			// 
 			this.m_cbAutoTypeEnabled.AutoSize = true;
-			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(10, 13);
+			this.m_cbAutoTypeEnabled.Location = new System.Drawing.Point(9, 13);
 			this.m_cbAutoTypeEnabled.Name = "m_cbAutoTypeEnabled";
 			this.m_cbAutoTypeEnabled.Size = new System.Drawing.Size(166, 17);
 			this.m_cbAutoTypeEnabled.TabIndex = 0;
@@ -889,15 +832,14 @@
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(29, 86);
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(28, 86);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
-			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(343, 20);
+			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(348, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 3;
-			this.m_tbDefaultAutoTypeSeq.TextChanged += new System.EventHandler(this.OnDefaultAutoTypeSeqTextChanged);
 			// 
 			// m_btnAutoTypeEdit
 			// 
-			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(378, 162);
+			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(382, 162);
 			this.m_btnAutoTypeEdit.Name = "m_btnAutoTypeEdit";
 			this.m_btnAutoTypeEdit.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEdit.TabIndex = 8;
@@ -907,7 +849,7 @@
 			// 
 			// m_btnAutoTypeAdd
 			// 
-			this.m_btnAutoTypeAdd.Location = new System.Drawing.Point(378, 133);
+			this.m_btnAutoTypeAdd.Location = new System.Drawing.Point(382, 133);
 			this.m_btnAutoTypeAdd.Name = "m_btnAutoTypeAdd";
 			this.m_btnAutoTypeAdd.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeAdd.TabIndex = 7;
@@ -917,29 +859,13 @@
 			// 
 			// m_btnAutoTypeDelete
 			// 
-			this.m_btnAutoTypeDelete.Location = new System.Drawing.Point(378, 191);
+			this.m_btnAutoTypeDelete.Location = new System.Drawing.Point(382, 191);
 			this.m_btnAutoTypeDelete.Name = "m_btnAutoTypeDelete";
 			this.m_btnAutoTypeDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeDelete.TabIndex = 9;
 			this.m_btnAutoTypeDelete.Text = "&Remove";
 			this.m_btnAutoTypeDelete.UseVisualStyleBackColor = true;
 			this.m_btnAutoTypeDelete.Click += new System.EventHandler(this.OnBtnAutoTypeDelete);
-			// 
-			// m_lvAutoType
-			// 
-			this.m_lvAutoType.ContextMenuStrip = this.m_ctxListOperations;
-			this.m_lvAutoType.FullRowSelect = true;
-			this.m_lvAutoType.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvAutoType.HideSelection = false;
-			this.m_lvAutoType.Location = new System.Drawing.Point(10, 134);
-			this.m_lvAutoType.Name = "m_lvAutoType";
-			this.m_lvAutoType.ShowItemToolTips = true;
-			this.m_lvAutoType.Size = new System.Drawing.Size(362, 170);
-			this.m_lvAutoType.TabIndex = 6;
-			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
-			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
-			this.m_lvAutoType.ItemActivate += new System.EventHandler(this.OnAutoTypeItemActivate);
-			this.m_lvAutoType.SelectedIndexChanged += new System.EventHandler(this.OnAutoTypeSelectedIndexChanged);
 			// 
 			// m_tabHistory
 			// 
@@ -956,7 +882,7 @@
 			// 
 			// m_btnHistoryDelete
 			// 
-			this.m_btnHistoryDelete.Location = new System.Drawing.Point(93, 307);
+			this.m_btnHistoryDelete.Location = new System.Drawing.Point(89, 307);
 			this.m_btnHistoryDelete.Name = "m_btnHistoryDelete";
 			this.m_btnHistoryDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHistoryDelete.TabIndex = 2;
@@ -966,7 +892,7 @@
 			// 
 			// m_btnHistoryView
 			// 
-			this.m_btnHistoryView.Location = new System.Drawing.Point(12, 307);
+			this.m_btnHistoryView.Location = new System.Drawing.Point(8, 307);
 			this.m_btnHistoryView.Name = "m_btnHistoryView";
 			this.m_btnHistoryView.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHistoryView.TabIndex = 1;
@@ -977,27 +903,13 @@
 			// 
 			// m_btnHistoryRestore
 			// 
-			this.m_btnHistoryRestore.Location = new System.Drawing.Point(377, 307);
+			this.m_btnHistoryRestore.Location = new System.Drawing.Point(382, 307);
 			this.m_btnHistoryRestore.Name = "m_btnHistoryRestore";
 			this.m_btnHistoryRestore.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHistoryRestore.TabIndex = 3;
 			this.m_btnHistoryRestore.Text = "&Restore";
 			this.m_btnHistoryRestore.UseVisualStyleBackColor = true;
 			this.m_btnHistoryRestore.Click += new System.EventHandler(this.OnBtnHistoryRestore);
-			// 
-			// m_lvHistory
-			// 
-			this.m_lvHistory.FullRowSelect = true;
-			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvHistory.HideSelection = false;
-			this.m_lvHistory.Location = new System.Drawing.Point(12, 14);
-			this.m_lvHistory.Name = "m_lvHistory";
-			this.m_lvHistory.ShowItemToolTips = true;
-			this.m_lvHistory.Size = new System.Drawing.Size(440, 287);
-			this.m_lvHistory.TabIndex = 0;
-			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
-			this.m_lvHistory.View = System.Windows.Forms.View.Details;
-			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
 			// 
 			// m_btnTools
 			// 
@@ -1201,6 +1113,88 @@
 			this.m_ctxToolsFieldRefsInNotes.Text = "In N&otes Field";
 			this.m_ctxToolsFieldRefsInNotes.Click += new System.EventHandler(this.OnFieldRefInNotes);
 			// 
+			// m_rtNotes
+			// 
+			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
+			this.m_rtNotes.Name = "m_rtNotes";
+			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.m_rtNotes.SimpleTextOnly = false;
+			this.m_rtNotes.Size = new System.Drawing.Size(374, 140);
+			this.m_rtNotes.TabIndex = 18;
+			this.m_rtNotes.Text = "";
+			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
+			// 
+			// m_pbQuality
+			// 
+			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
+			this.m_pbQuality.Maximum = 100;
+			this.m_pbQuality.Minimum = 0;
+			this.m_pbQuality.Name = "m_pbQuality";
+			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
+			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbQuality.TabIndex = 13;
+			this.m_pbQuality.TabStop = false;
+			this.m_pbQuality.Value = 50;
+			// 
+			// m_lvBinaries
+			// 
+			this.m_lvBinaries.FullRowSelect = true;
+			this.m_lvBinaries.HideSelection = false;
+			this.m_lvBinaries.Location = new System.Drawing.Point(6, 20);
+			this.m_lvBinaries.Name = "m_lvBinaries";
+			this.m_lvBinaries.ShowItemToolTips = true;
+			this.m_lvBinaries.Size = new System.Drawing.Size(362, 135);
+			this.m_lvBinaries.TabIndex = 0;
+			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
+			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
+			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
+			// 
+			// m_lvStrings
+			// 
+			this.m_lvStrings.ContextMenuStrip = this.m_ctxListOperations;
+			this.m_lvStrings.FullRowSelect = true;
+			this.m_lvStrings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvStrings.HideSelection = false;
+			this.m_lvStrings.Location = new System.Drawing.Point(6, 20);
+			this.m_lvStrings.Name = "m_lvStrings";
+			this.m_lvStrings.ShowItemToolTips = true;
+			this.m_lvStrings.Size = new System.Drawing.Size(362, 135);
+			this.m_lvStrings.TabIndex = 0;
+			this.m_lvStrings.UseCompatibleStateImageBehavior = false;
+			this.m_lvStrings.View = System.Windows.Forms.View.Details;
+			this.m_lvStrings.ItemActivate += new System.EventHandler(this.OnStringsItemActivate);
+			this.m_lvStrings.SelectedIndexChanged += new System.EventHandler(this.OnStringsSelectedIndexChanged);
+			// 
+			// m_lvAutoType
+			// 
+			this.m_lvAutoType.ContextMenuStrip = this.m_ctxListOperations;
+			this.m_lvAutoType.FullRowSelect = true;
+			this.m_lvAutoType.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvAutoType.HideSelection = false;
+			this.m_lvAutoType.Location = new System.Drawing.Point(9, 134);
+			this.m_lvAutoType.Name = "m_lvAutoType";
+			this.m_lvAutoType.ShowItemToolTips = true;
+			this.m_lvAutoType.Size = new System.Drawing.Size(367, 170);
+			this.m_lvAutoType.TabIndex = 6;
+			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
+			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
+			this.m_lvAutoType.ItemActivate += new System.EventHandler(this.OnAutoTypeItemActivate);
+			this.m_lvAutoType.SelectedIndexChanged += new System.EventHandler(this.OnAutoTypeSelectedIndexChanged);
+			// 
+			// m_lvHistory
+			// 
+			this.m_lvHistory.FullRowSelect = true;
+			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvHistory.HideSelection = false;
+			this.m_lvHistory.Location = new System.Drawing.Point(9, 13);
+			this.m_lvHistory.Name = "m_lvHistory";
+			this.m_lvHistory.ShowItemToolTips = true;
+			this.m_lvHistory.Size = new System.Drawing.Size(447, 288);
+			this.m_lvHistory.TabIndex = 0;
+			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
+			this.m_lvHistory.View = System.Windows.Forms.View.Details;
+			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
+			// 
 			// PwEntryForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -1223,6 +1217,7 @@
 			this.Text = "<DYN>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.m_ctxDefaultTimes.ResumeLayout(false);
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabEntry.ResumeLayout(false);
@@ -1261,7 +1256,7 @@
 		private System.Windows.Forms.TextBox m_tbRepeatPassword;
 		private KeePass.UI.QualityProgressBar m_pbQuality;
 		private System.Windows.Forms.TextBox m_tbUrl;
-		private System.Windows.Forms.RichTextBox m_rtNotes;
+		private KeePass.UI.CustomRichTextBoxEx m_rtNotes;
 		private System.Windows.Forms.CheckBox m_cbExpires;
 		private System.Windows.Forms.DateTimePicker m_dtExpireDateTime;
 		private System.Windows.Forms.Button m_btnStandardExpires;

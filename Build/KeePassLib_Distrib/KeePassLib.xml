@@ -9,6 +9,17 @@
             Utility functions for generating random passwords.
             </summary>
         </member>
+        <member name="M:KeePassLib.Serialization.IOConnection.RenameFile(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Serialization.IOConnectionInfo)">
+            <summary>
+            Rename/move a file. For local file system and WebDAV, the
+            specified file is moved, i.e. the file destination can be
+            in a different directory/path. In contrast, for FTP the
+            file is renamed, i.e. its destination must be in the same
+            directory/path.
+            </summary>
+            <param name="iocFrom">Source file path.</param>
+            <param name="iocTo">Target file path.</param>
+        </member>
         <member name="T:KeePassLib.Resources.KSRes">
             <summary>
             A strongly-typed resource class, for looking up localized strings, etc.
@@ -18,6 +29,11 @@
             <summary>
             Look up a localized string similar to
             'Test'.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.PwCustomIcon">
+            <summary>
+            Custom icon. <c>PwCustomIcon</c> objects are immutable.
             </summary>
         </member>
         <member name="T:KeePassLib.Serialization.Kdb4File">
@@ -44,7 +60,7 @@
         <member name="F:KeePassLib.Serialization.Kdb4File.FileVersion32">
             <summary>
             File version of files saved by the current <c>Kdb4File</c> class.
-            KeePass 2.07 has version 1.01, KeePass 2.08 has 1.02.
+            KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00.
             The first 2 bytes are critical (i.e. loading will fail, if the
             file version is too high), the last 2 bytes are informational.
             </summary>
@@ -805,7 +821,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FileSigInvalid">
             <summary>
             Look up a localized string similar to
-            'The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.'.
+            'The file signature is invalid. Either the file isn&#39;t a KeePass database file at all or it is corrupted.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileUnknownCipher">
@@ -859,7 +875,7 @@
         <member name="P:KeePassLib.Resources.KLRes.KeePass1xHint">
             <summary>
             Look up a localized string similar to
-            'In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.'.
+            'In order to import KeePass 1.x KDB files, create a new 2.x database file and click &#39;File&#39; -&gt; &#39;Import&#39; in the main menu. In the import dialog, choose &#39;KeePass KDB (1.x)&#39; as file format.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.MasterSeedLengthInvalid">
@@ -1122,6 +1138,11 @@
             count by one, use the <c>Touch</c> function.
             </summary>
         </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.LocationChanged">
+            <summary>
+            The date/time when the location of the object was last changed.
+            </summary>
+        </member>
         <member name="M:KeePassLib.PwGroup.#ctor">
             <summary>
             Construct a new, empty group.
@@ -1150,13 +1171,15 @@
             </summary>
             <returns>Exact value copy of the current <c>PwGroup</c> object.</returns>
         </member>
-        <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean)">
+        <member name="M:KeePassLib.PwGroup.AssignProperties(KeePassLib.PwGroup,System.Boolean,System.Boolean)">
             <summary>
             Assign properties to the current group based on a template group.
             </summary>
             <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
             <param name="bOnlyIfNewer">Only set the properties of the template group
             if it is newer than the current one.</param>
+            <param name="bAssignLocationChanged">If <c>true</c>, the
+            <c>LocationChanged</c> property is copied, otherwise not.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.Touch(System.Boolean)">
             <summary>
@@ -1248,6 +1271,17 @@
             <param name="bSearchRecursive">If <c>true</c>, the search is recursive.</param>
             <returns>Returns reference to found group, otherwise <c>null</c>.</returns>
         </member>
+        <member name="M:KeePassLib.PwGroup.FindObject(KeePassLib.PwUuid,System.Boolean,System.Nullable{System.Boolean})">
+            <summary>
+            Find an object.
+            </summary>
+            <param name="uuid">UUID of the object to find.</param>
+            <param name="bRecursive">Specifies whether to search recursively.</param>
+            <param name="bEntries">If <c>null</c>, groups and entries are
+            searched. If <c>true</c>, only entries are searched. If <c>false</c>,
+            only groups are searched.</param>
+            <returns>Reference to the object, if found. Otherwise <c>null</c>.</returns>
+        </member>
         <member name="M:KeePassLib.PwGroup.FindCreateGroup(System.String,System.Boolean)">
             <summary>
             Try to find a subgroup and create it, if it doesn't exist yet.
@@ -1302,6 +1336,24 @@
             </summary>
             <returns>Number of parent groups.</returns>
         </member>
+        <member name="M:KeePassLib.PwGroup.GetGroups(System.Boolean)">
+            <summary>
+            Get a list of subgroups (not including this one).
+            </summary>
+            <param name="bRecursive">If <c>true</c>, subgroups are added
+            recursively, i.e. all child groups are returned, too.</param>
+            <returns>List of subgroups.</returns>
+        </member>
+        <member name="M:KeePassLib.PwGroup.GetObjects(System.Boolean,System.Nullable{System.Boolean})">
+            <summary>
+            Get objects contained in this group.
+            </summary>
+            <param name="bRecursive">Specifies whether to search recursively.</param>
+            <param name="bEntries">If <c>null</c>, the returned list contains
+            groups and entries. If <c>true</c>, the returned list contains only
+            entries. If <c>false</c>, the returned list contains only groups.</param>
+            <returns>List of objects.</returns>
+        </member>
         <member name="M:KeePassLib.PwGroup.AddGroup(KeePassLib.PwGroup,System.Boolean)">
             <summary>
             Add a subgroup to this group.
@@ -1311,6 +1363,17 @@
             parent group reference of the subgroup will be set to the current
             group (i.e. the current group takes ownership of the subgroup).</param>
         </member>
+        <member name="M:KeePassLib.PwGroup.AddGroup(KeePassLib.PwGroup,System.Boolean,System.Boolean)">
+            <summary>
+            Add a subgroup to this group.
+            </summary>
+            <param name="subGroup">Group to be added. Must not be <c>null</c>.</param>
+            <param name="bTakeOwnership">If this parameter is <c>true</c>, the
+            parent group reference of the subgroup will be set to the current
+            group (i.e. the current group takes ownership of the subgroup).</param>
+            <param name="bUpdateLocationChangedOfSub">If <c>true</c>, the
+            <c>LocationChanged</c> property of the subgroup is updated.</param>
+        </member>
         <member name="M:KeePassLib.PwGroup.AddEntry(KeePassLib.PwEntry,System.Boolean)">
             <summary>
             Add an entry to this group.
@@ -1319,6 +1382,17 @@
             <param name="bTakeOwnership">If this parameter is <c>true</c>, the
             parent group reference of the entry will be set to the current
             group (i.e. the current group takes ownership of the entry).</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.AddEntry(KeePassLib.PwEntry,System.Boolean,System.Boolean)">
+            <summary>
+            Add an entry to this group.
+            </summary>
+            <param name="pe">Entry to be added. Must not be <c>null</c>.</param>
+            <param name="bTakeOwnership">If this parameter is <c>true</c>, the
+            parent group reference of the entry will be set to the current
+            group (i.e. the current group takes ownership of the entry).</param>
+            <param name="bUpdateLocationChangedOfEntry">If <c>true</c>, the
+            <c>LocationChanged</c> property of the entry is updated.</param>
         </member>
         <member name="P:KeePassLib.PwGroup.Uuid">
             <summary>
@@ -1352,6 +1426,11 @@
             Reference to the group to which this group belongs. May be <c>null</c>.
             </summary>
         </member>
+        <member name="P:KeePassLib.PwGroup.LocationChanged">
+            <summary>
+            The date/time when the location of the object was last changed.
+            </summary>
+        </member>
         <member name="P:KeePassLib.PwGroup.IsExpanded">
             <summary>
             A flag that specifies if the group is shown as expanded or
@@ -1375,8 +1454,7 @@
         </member>
         <member name="P:KeePassLib.PwGroup.ExpiryTime">
             <summary>
-            The date/time when this group expires. A value of <c>DtInfinity</c>
-            means that the entry never expires.
+            The date/time when this group expires.
             </summary>
         </member>
         <member name="P:KeePassLib.PwGroup.Expires">
@@ -1646,8 +1724,7 @@
             for this entry. If <c>false</c>, the UUID is zero and you must set it
             manually later.</param>
             <param name="bSetTimes">If <c>true</c>, the creation, last modification
-            and last access times will be set to the current system time. The expire
-            time is set to never (<c>DtInfinity</c>).</param>
+            and last access times will be set to the current system time.</param>
         </member>
         <member name="M:KeePassLib.PwEntry.#ctor(KeePassLib.PwGroup,System.Boolean,System.Boolean)">
             <summary>
@@ -1660,8 +1737,7 @@
             for this entry. If <c>false</c>, the UUID is zero and you must set it
             manually later.</param>
             <param name="bSetTimes">If <c>true</c>, the creation, last modification
-            and last access times will be set to the current system time. The expire
-            time is set to never (<c>DtInfinity</c>).</param>
+            and last access times will be set to the current system time.</param>
         </member>
         <member name="M:KeePassLib.PwEntry.CloneDeep">
             <summary>
@@ -1671,7 +1747,7 @@
             </summary>
             <returns>Exact value clone. All references to mutable values changed.</returns>
         </member>
-        <member name="M:KeePassLib.PwEntry.AssignProperties(KeePassLib.PwEntry,System.Boolean,System.Boolean)">
+        <member name="M:KeePassLib.PwEntry.AssignProperties(KeePassLib.PwEntry,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             Assign properties to the current entry based on a template entry.
             </summary>
@@ -1680,6 +1756,8 @@
             if it is newer than the current one.</param>
             <param name="bIncludeHistory">If <c>true</c>, the history will be
             copied, too.</param>
+            <param name="bAssignLocationChanged">If <c>true</c>, the
+            <c>LocationChanged</c> property is copied, otherwise not.</param>
         </member>
         <member name="M:KeePassLib.PwEntry.Touch(System.Boolean)">
             <summary>
@@ -1720,6 +1798,11 @@
         <member name="P:KeePassLib.PwEntry.ParentGroup">
             <summary>
             Reference to a group which contains the current entry.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.LocationChanged">
+            <summary>
+            The date/time when the location of the object was last changed.
             </summary>
         </member>
         <member name="P:KeePassLib.PwEntry.Strings">
@@ -1991,8 +2074,8 @@
         </member>
         <member name="T:KeePassLib.PwUuid">
             <summary>
-            Represents an UUID of a password entry or group. Once created, <c>PwUUID</c>
-            objects aren't modifyable any more (immutable).
+            Represents an UUID of a password entry or group. Once created, <c>PwUuid</c>
+            objects aren't modifyable anymore (immutable).
             </summary>
         </member>
         <member name="F:KeePassLib.PwUuid.UuidSize">
@@ -2022,7 +2105,7 @@
             <summary>
             Construct a new UUID object.
             </summary>
-            <param name="uuidBytes">Initial value of the <c>PwUUID</c> object.</param>
+            <param name="uuidBytes">Initial value of the <c>PwUuid</c> object.</param>
         </member>
         <member name="M:KeePassLib.PwUuid.CreateNew">
             <summary>
@@ -2389,7 +2472,7 @@
             before closing. Unsaved changes will be lost.
             </summary>
         </member>
-        <member name="M:KeePassLib.PwDatabase.MergeIn(KeePassLib.PwDatabase,KeePassLib.PwMergeMethod)">
+        <member name="M:KeePassLib.PwDatabase.MergeIn(KeePassLib.PwDatabase,KeePassLib.PwMergeMethod,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Synchronize the current database with another one.
             </summary>
@@ -2399,12 +2482,21 @@
             synchronized database. The input database must not be seen as valid
             database any more after calling <c>Synchronize</c>.</param>
             <param name="mm">Merge method.</param>
+            <param name="slStatus">Logger to report status messages to.
+            May be <c>null</c>.</param>
         </member>
         <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject},System.Boolean)">
             <summary>
             Apply a list of deleted objects.
             </summary>
             <param name="listDelObjects">List of deleted objects.</param>
+        </member>
+        <member name="M:KeePassLib.PwDatabase.ObjectListRequiresReorder``1(KeePassLib.Collections.PwObjectList{``0},KeePassLib.Collections.PwObjectPool,KeePassLib.Collections.PwObjectPool,System.Boolean)">
+            <summary>
+            Method to check whether a reordering is required. This fast test
+            allows to skip the reordering routine, resulting in a large
+            performance increase.
+            </summary>
         </member>
         <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">
             <summary>
@@ -2585,6 +2677,16 @@
             exception is thrown.</param>
             <returns>Reference to an existing <c>T</c> object. Is never <c>null</c>.</returns>
         </member>
+        <member name="M:KeePassLib.Collections.PwObjectList`1.GetRange(System.UInt32,System.UInt32)">
+            <summary>
+            Get a range of objects.
+            </summary>
+            <param name="uStartIndexIncl">Index of the first object to be
+            returned (inclusive).</param>
+            <param name="uEndIndexIncl">Index of the last object to be
+            returned (inclusive).</param>
+            <returns></returns>
+        </member>
         <member name="M:KeePassLib.Collections.PwObjectList`1.Remove(`0)">
             <summary>
             Delete an object of this list. The object to be deleted is identified
@@ -2743,9 +2845,8 @@
         </member>
         <member name="F:KeePassLib.PwDefs.DtDefaultNow">
             <summary>
-            A DateTime object that represents infinity.
-            Example: setting the expire time of an entry to DtInfinity would mean
-            that the entry never expires.
+            A <c>DateTime</c> object that represents the time when the assembly
+            was loaded.
             </summary>
         </member>
         <member name="M:KeePassLib.PwDefs.IsStandardField(System.String)">

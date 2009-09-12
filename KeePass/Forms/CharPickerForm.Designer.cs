@@ -226,10 +226,11 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
-			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
-			this.Resize += new System.EventHandler(this.OnFormResize);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+			this.Resize += new System.EventHandler(this.OnFormResize);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_pnlBottom.ResumeLayout(false);
 			this.m_pnlBottomRight.ResumeLayout(false);

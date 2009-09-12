@@ -88,7 +88,7 @@ namespace KeePass.Forms
 			for(uint i = 0; i < m_uNumberOfStandardIcons; ++i)
 				m_lvIcons.Items.Add(i.ToString(), (int)i);
 
-			int iFoundCustom = RecreateCustomIconList();
+			int iFoundCustom = RecreateCustomIconList(false);
 
 			if((m_pwDefaultCustomIcon != PwUuid.Zero) && (iFoundCustom >= 0))
 			{
@@ -125,7 +125,11 @@ namespace KeePass.Forms
 			if(m_bBlockCancel) m_btnCancel.Enabled = false;
 		}
 
-		private int RecreateCustomIconList()
+		/// <summary>
+		/// Recreate the custom icons list view.
+		/// </summary>
+		/// <returns>Index of the previous custom icon, if specified.</returns>
+		private int RecreateCustomIconList(bool bSelectLastIcon)
 		{
 			m_lvCustomIcons.Items.Clear();
 
@@ -144,10 +148,22 @@ namespace KeePass.Forms
 				++j;
 			}
 
+			if(bSelectLastIcon && (m_lvCustomIcons.Items.Count > 0))
+			{
+				m_lvCustomIcons.Items[m_lvCustomIcons.Items.Count - 1].Selected = true;
+				m_lvCustomIcons.EnsureVisible(m_lvCustomIcons.Items.Count - 1);
+				m_lvCustomIcons.Focus();
+			}
+
 			return iFoundCustom;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
+		{
+			SaveChosenIcon();
+		}
+
+		private void SaveChosenIcon()
 		{
 			if(m_radioStandard.Checked)
 			{
@@ -226,6 +242,7 @@ namespace KeePass.Forms
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{
+				bool bSelectLastIcon = false;
 				foreach(string strFile in ofd.FileNames)
 				{
 					bool bUnsupportedFormat = false;
@@ -258,6 +275,7 @@ namespace KeePass.Forms
 						m_pwDatabase.CustomIcons.Add(pwci);
 
 						m_pwDatabase.UINeedsIconUpdate = true;
+						bSelectLastIcon = true;
 					}
 					catch(ArgumentException)
 					{
@@ -276,7 +294,7 @@ namespace KeePass.Forms
 						MessageService.ShowWarning(strFile, KPRes.ImageFormatFeatureUnsupported);
 				}
 
-				RecreateCustomIconList();
+				RecreateCustomIconList(bSelectLastIcon);
 			}
 
 			EnableControlsEx();
@@ -309,12 +327,25 @@ namespace KeePass.Forms
 			if(vUuidsToDelete.Count > 0)
 			{
 				m_bBlockCancel = true;
-
 				m_pwDatabase.UINeedsIconUpdate = true;
 			}
 
-			RecreateCustomIconList();
+			RecreateCustomIconList(false);
 			EnableControlsEx();
+		}
+
+		private void OnIconsItemActivate(object sender, EventArgs e)
+		{
+			OnIconsItemSelectionChanged(sender, null);
+			SaveChosenIcon();
+			this.DialogResult = DialogResult.OK;
+		}
+
+		private void OnCustomIconsItemActivate(object sender, EventArgs e)
+		{
+			OnCustomIconsItemSelectionChanged(sender, null);
+			SaveChosenIcon();
+			this.DialogResult = DialogResult.OK;
 		}
 	}
 }

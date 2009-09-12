@@ -191,5 +191,7 @@ namespace KeePass.Forms
 		public event EventHandler<FileSavedEventArgs> FileSaved;
 
 		public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
+
+		public event EventHandler UIStateUpdated;
 	}
 }

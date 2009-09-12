@@ -71,8 +71,8 @@ namespace KeePassLib
 		{
 			PwDeletedObject pdo = new PwDeletedObject();
 
-			pdo.m_uuid = this.m_uuid; // PwUuid objects are immutable.
-			pdo.m_dtDeletionTime = this.m_dtDeletionTime;
+			pdo.m_uuid = m_uuid; // PwUuid objects are immutable
+			pdo.m_dtDeletionTime = m_dtDeletionTime;
 
 			return pdo;
 		}

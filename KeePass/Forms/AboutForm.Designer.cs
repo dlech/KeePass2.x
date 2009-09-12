@@ -53,24 +53,24 @@
 			// 
 			// m_lblCopyright
 			// 
-			this.m_lblCopyright.Location = new System.Drawing.Point(12, 72);
+			this.m_lblCopyright.Location = new System.Drawing.Point(10, 72);
 			this.m_lblCopyright.Name = "m_lblCopyright";
-			this.m_lblCopyright.Size = new System.Drawing.Size(400, 15);
+			this.m_lblCopyright.Size = new System.Drawing.Size(402, 15);
 			this.m_lblCopyright.TabIndex = 1;
 			// 
 			// m_lblOsi
 			// 
-			this.m_lblOsi.Location = new System.Drawing.Point(12, 96);
+			this.m_lblOsi.Location = new System.Drawing.Point(10, 96);
 			this.m_lblOsi.Name = "m_lblOsi";
-			this.m_lblOsi.Size = new System.Drawing.Size(400, 14);
+			this.m_lblOsi.Size = new System.Drawing.Size(402, 14);
 			this.m_lblOsi.TabIndex = 2;
 			this.m_lblOsi.Text = "KeePass is OSI Certified Open Source Software.";
 			// 
 			// m_lblGpl
 			// 
-			this.m_lblGpl.Location = new System.Drawing.Point(12, 119);
+			this.m_lblGpl.Location = new System.Drawing.Point(10, 119);
 			this.m_lblGpl.Name = "m_lblGpl";
-			this.m_lblGpl.Size = new System.Drawing.Size(400, 27);
+			this.m_lblGpl.Size = new System.Drawing.Size(402, 27);
 			this.m_lblGpl.TabIndex = 3;
 			this.m_lblGpl.Text = "The program is distributed under the terms of the GNU General Public License v2 o" +
 				"r later.";
@@ -78,7 +78,7 @@
 			// m_linkHomepage
 			// 
 			this.m_linkHomepage.AutoSize = true;
-			this.m_linkHomepage.Location = new System.Drawing.Point(12, 155);
+			this.m_linkHomepage.Location = new System.Drawing.Point(10, 155);
 			this.m_linkHomepage.Name = "m_linkHomepage";
 			this.m_linkHomepage.Size = new System.Drawing.Size(104, 13);
 			this.m_linkHomepage.TabIndex = 4;
@@ -100,7 +100,7 @@
 			// m_linkLicense
 			// 
 			this.m_linkLicense.AutoSize = true;
-			this.m_linkLicense.Location = new System.Drawing.Point(12, 177);
+			this.m_linkLicense.Location = new System.Drawing.Point(10, 177);
 			this.m_linkLicense.Name = "m_linkLicense";
 			this.m_linkLicense.Size = new System.Drawing.Size(44, 13);
 			this.m_linkLicense.TabIndex = 7;
@@ -144,9 +144,9 @@
 			// 
 			this.m_lvComponents.FullRowSelect = true;
 			this.m_lvComponents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvComponents.Location = new System.Drawing.Point(15, 203);
+			this.m_lvComponents.Location = new System.Drawing.Point(13, 203);
 			this.m_lvComponents.Name = "m_lvComponents";
-			this.m_lvComponents.Size = new System.Drawing.Size(397, 101);
+			this.m_lvComponents.Size = new System.Drawing.Size(398, 101);
 			this.m_lvComponents.TabIndex = 9;
 			this.m_lvComponents.UseCompatibleStateImageBehavior = false;
 			this.m_lvComponents.View = System.Windows.Forms.View.Details;

@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -85,7 +86,7 @@ namespace KeePass.DataExchange.Formats
 			foreach(XmlNode xmlChild in xmlNode)
 			{
 				if(xmlChild.Name == ElemGroupName)
-					pg.Name = ImportUtil.SafeInnerText(xmlChild);
+					pg.Name = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemGroup)
 					ReadGroup(xmlChild, pg, pwStorage);
 				else if(xmlChild.Name == ElemEntry)
@@ -105,39 +106,39 @@ namespace KeePass.DataExchange.Formats
 				if(xmlChild.Name == ElemEntryName)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryType)
-					pe.IconId = (ImportUtil.SafeInnerText(xmlChild) != "1") ?
+					pe.IconId = (XmlUtil.SafeInnerText(xmlChild) != "1") ?
 						PwIcon.Key : PwIcon.PaperNew;
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUserName,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryPassword)
 					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectPassword,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryURL)
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUrl,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryCreationTime)
 				{
-					if(DateTime.TryParse(ImportUtil.SafeInnerText(xmlChild), out dt))
+					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.CreationTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryLastModTime)
 				{
-					if(DateTime.TryParse(ImportUtil.SafeInnerText(xmlChild), out dt))
+					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.LastModificationTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryExpireTime)
 				{
-					if(DateTime.TryParse(ImportUtil.SafeInnerText(xmlChild), out dt))
+					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.ExpiryTime = dt;
 				}
 				else { Debug.Assert(false); }

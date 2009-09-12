@@ -83,7 +83,7 @@
 			this.m_grpHistoryDelete.Controls.Add(this.m_lblTrashIcon);
 			this.m_grpHistoryDelete.Location = new System.Drawing.Point(6, 6);
 			this.m_grpHistoryDelete.Name = "m_grpHistoryDelete";
-			this.m_grpHistoryDelete.Size = new System.Drawing.Size(419, 118);
+			this.m_grpHistoryDelete.Size = new System.Drawing.Size(417, 118);
 			this.m_grpHistoryDelete.TabIndex = 0;
 			this.m_grpHistoryDelete.TabStop = false;
 			this.m_grpHistoryDelete.Text = "Entry history";
@@ -92,14 +92,14 @@
 			// 
 			this.m_lblEntryHistoryWarning.Location = new System.Drawing.Point(44, 81);
 			this.m_lblEntryHistoryWarning.Name = "m_lblEntryHistoryWarning";
-			this.m_lblEntryHistoryWarning.Size = new System.Drawing.Size(369, 29);
+			this.m_lblEntryHistoryWarning.Size = new System.Drawing.Size(367, 29);
 			this.m_lblEntryHistoryWarning.TabIndex = 5;
 			this.m_lblEntryHistoryWarning.Text = "Clicking the \'Delete\' button will remove all history entries older than the speci" +
 				"fied number of days. There\'s no way to get them back.";
 			// 
 			// m_btnHistoryEntriesDelete
 			// 
-			this.m_btnHistoryEntriesDelete.Location = new System.Drawing.Point(338, 51);
+			this.m_btnHistoryEntriesDelete.Location = new System.Drawing.Point(335, 52);
 			this.m_btnHistoryEntriesDelete.Name = "m_btnHistoryEntriesDelete";
 			this.m_btnHistoryEntriesDelete.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHistoryEntriesDelete.TabIndex = 4;
@@ -138,7 +138,7 @@
 			// 
 			this.m_lblDeleteHistoryEntries.Location = new System.Drawing.Point(44, 17);
 			this.m_lblDeleteHistoryEntries.Name = "m_lblDeleteHistoryEntries";
-			this.m_lblDeleteHistoryEntries.Size = new System.Drawing.Size(369, 32);
+			this.m_lblDeleteHistoryEntries.Size = new System.Drawing.Size(367, 32);
 			this.m_lblDeleteHistoryEntries.TabIndex = 1;
 			this.m_lblDeleteHistoryEntries.Text = "Old history entries (items shown on the \'History\' tab page in the entries dialog)" +
 				" can be deleted. This will decrease the database size a bit.";
@@ -180,7 +180,7 @@
 			this.m_grpDeletedObjectsInfo.Controls.Add(this.m_lblDelObjInfoIntro);
 			this.m_grpDeletedObjectsInfo.Location = new System.Drawing.Point(6, 130);
 			this.m_grpDeletedObjectsInfo.Name = "m_grpDeletedObjectsInfo";
-			this.m_grpDeletedObjectsInfo.Size = new System.Drawing.Size(419, 115);
+			this.m_grpDeletedObjectsInfo.Size = new System.Drawing.Size(417, 114);
 			this.m_grpDeletedObjectsInfo.TabIndex = 1;
 			this.m_grpDeletedObjectsInfo.TabStop = false;
 			this.m_grpDeletedObjectsInfo.Text = "Deleted objects information";
@@ -189,7 +189,7 @@
 			// 
 			this.m_lblDelObjInfoWarning.Location = new System.Drawing.Point(44, 67);
 			this.m_lblDelObjInfoWarning.Name = "m_lblDelObjInfoWarning";
-			this.m_lblDelObjInfoWarning.Size = new System.Drawing.Size(369, 41);
+			this.m_lblDelObjInfoWarning.Size = new System.Drawing.Size(367, 41);
 			this.m_lblDelObjInfoWarning.TabIndex = 3;
 			this.m_lblDelObjInfoWarning.Text = "Warning! After removing this information, database synchronization will not work " +
 				"correctly anymore. Only remove it, if you\'re sure that you won\'t use the synchro" +
@@ -197,7 +197,7 @@
 			// 
 			// m_btnRemoveDelObjInfo
 			// 
-			this.m_btnRemoveDelObjInfo.Location = new System.Drawing.Point(338, 17);
+			this.m_btnRemoveDelObjInfo.Location = new System.Drawing.Point(335, 16);
 			this.m_btnRemoveDelObjInfo.Name = "m_btnRemoveDelObjInfo";
 			this.m_btnRemoveDelObjInfo.Size = new System.Drawing.Size(75, 23);
 			this.m_btnRemoveDelObjInfo.TabIndex = 2;
@@ -217,7 +217,7 @@
 			// 
 			this.m_lblDelObjInfoIntro.Location = new System.Drawing.Point(44, 17);
 			this.m_lblDelObjInfoIntro.Name = "m_lblDelObjInfoIntro";
-			this.m_lblDelObjInfoIntro.Size = new System.Drawing.Size(288, 41);
+			this.m_lblDelObjInfoIntro.Size = new System.Drawing.Size(285, 41);
 			this.m_lblDelObjInfoIntro.TabIndex = 1;
 			this.m_lblDelObjInfoIntro.Text = "KeePass keeps some information about deleted objects. This information can be rem" +
 				"oved in order to reduce the size of the database.";

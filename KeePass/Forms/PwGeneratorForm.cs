@@ -251,13 +251,10 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			m_optSelected = GetGenerationOptions();
-
-			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-			CleanUpEx();
 		}
 
 		private PwProfile GetGenerationOptions()
@@ -555,6 +552,11 @@ namespace KeePass.Forms
 				strCurOpt = (m_dictCustomOptions[pwg] ?? string.Empty);
 
 			m_dictCustomOptions[pwg] = pwg.GetOptions(strCurOpt);
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

@@ -77,8 +77,9 @@
 			this.m_lblRecycleBinInfo = new System.Windows.Forms.Label();
 			this.m_cbRecycleBin = new System.Windows.Forms.CheckBox();
 			this.m_tabTemplates = new System.Windows.Forms.TabPage();
-			this.m_lblEntryTemplatesGroup = new System.Windows.Forms.Label();
+			this.m_lblTemplatesHint = new System.Windows.Forms.Label();
 			this.m_cmbEntryTemplates = new System.Windows.Forms.ComboBox();
+			this.m_lblEntryTemplatesGroup = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpEncAlgo.SuspendLayout();
 			this.m_grpKeyTrans.SuspendLayout();
@@ -127,9 +128,9 @@
 			// 
 			this.m_grpEncAlgo.Controls.Add(this.m_lblEncAlgoDesc);
 			this.m_grpEncAlgo.Controls.Add(this.m_cmbEncAlgo);
-			this.m_grpEncAlgo.Location = new System.Drawing.Point(9, 37);
+			this.m_grpEncAlgo.Location = new System.Drawing.Point(6, 37);
 			this.m_grpEncAlgo.Name = "m_grpEncAlgo";
-			this.m_grpEncAlgo.Size = new System.Drawing.Size(436, 53);
+			this.m_grpEncAlgo.Size = new System.Drawing.Size(440, 53);
 			this.m_grpEncAlgo.TabIndex = 1;
 			this.m_grpEncAlgo.TabStop = false;
 			this.m_grpEncAlgo.Text = "Encryption";
@@ -147,7 +148,7 @@
 			// 
 			this.m_cmbEncAlgo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbEncAlgo.FormattingEnabled = true;
-			this.m_cmbEncAlgo.Location = new System.Drawing.Point(206, 19);
+			this.m_cmbEncAlgo.Location = new System.Drawing.Point(211, 19);
 			this.m_cmbEncAlgo.Name = "m_cmbEncAlgo";
 			this.m_cmbEncAlgo.Size = new System.Drawing.Size(219, 21);
 			this.m_cmbEncAlgo.TabIndex = 1;
@@ -156,7 +157,7 @@
 			// 
 			this.m_lblTransIntro.Location = new System.Drawing.Point(6, 16);
 			this.m_lblTransIntro.Name = "m_lblTransIntro";
-			this.m_lblTransIntro.Size = new System.Drawing.Size(424, 40);
+			this.m_lblTransIntro.Size = new System.Drawing.Size(428, 40);
 			this.m_lblTransIntro.TabIndex = 0;
 			this.m_lblTransIntro.Text = "The composite master key is transformed several times before being used as encryp" +
 				"tion key for the database. This adds a constant time factor and makes dictionary" +
@@ -175,7 +176,7 @@
 			// 
 			this.m_lblTransInfo.Location = new System.Drawing.Point(6, 103);
 			this.m_lblTransInfo.Name = "m_lblTransInfo";
-			this.m_lblTransInfo.Size = new System.Drawing.Size(424, 28);
+			this.m_lblTransInfo.Size = new System.Drawing.Size(428, 28);
 			this.m_lblTransInfo.TabIndex = 4;
 			this.m_lblTransInfo.Text = "The higher this number the harder are dictionary attacks. But also database loadi" +
 				"ng/saving takes more time.";
@@ -187,9 +188,9 @@
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransIntro);
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransInfo);
 			this.m_grpKeyTrans.Controls.Add(this.m_lblTransNum);
-			this.m_grpKeyTrans.Location = new System.Drawing.Point(9, 96);
+			this.m_grpKeyTrans.Location = new System.Drawing.Point(6, 96);
 			this.m_grpKeyTrans.Name = "m_grpKeyTrans";
-			this.m_grpKeyTrans.Size = new System.Drawing.Size(436, 140);
+			this.m_grpKeyTrans.Size = new System.Drawing.Size(440, 140);
 			this.m_grpKeyTrans.TabIndex = 2;
 			this.m_grpKeyTrans.TabStop = false;
 			this.m_grpKeyTrans.Text = "Key transformation";
@@ -197,7 +198,7 @@
 			// m_lnkCompute1SecDelay
 			// 
 			this.m_lnkCompute1SecDelay.AutoSize = true;
-			this.m_lnkCompute1SecDelay.Location = new System.Drawing.Point(203, 84);
+			this.m_lnkCompute1SecDelay.Location = new System.Drawing.Point(208, 84);
 			this.m_lnkCompute1SecDelay.Name = "m_lnkCompute1SecDelay";
 			this.m_lnkCompute1SecDelay.Size = new System.Drawing.Size(79, 13);
 			this.m_lnkCompute1SecDelay.TabIndex = 3;
@@ -207,7 +208,7 @@
 			// 
 			// m_numEncRounds
 			// 
-			this.m_numEncRounds.Location = new System.Drawing.Point(206, 61);
+			this.m_numEncRounds.Location = new System.Drawing.Point(211, 61);
 			this.m_numEncRounds.Name = "m_numEncRounds";
 			this.m_numEncRounds.Size = new System.Drawing.Size(219, 20);
 			this.m_numEncRounds.TabIndex = 2;
@@ -215,7 +216,7 @@
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 399);
+			this.m_btnHelp.Location = new System.Drawing.Point(11, 399);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 3;
@@ -232,7 +233,7 @@
 			// 
 			// m_lblCompressionIntro
 			// 
-			this.m_lblCompressionIntro.Location = new System.Drawing.Point(6, 12);
+			this.m_lblCompressionIntro.Location = new System.Drawing.Point(3, 12);
 			this.m_lblCompressionIntro.Name = "m_lblCompressionIntro";
 			this.m_lblCompressionIntro.Size = new System.Drawing.Size(435, 15);
 			this.m_lblCompressionIntro.TabIndex = 0;
@@ -246,10 +247,10 @@
 			this.m_tabMain.Controls.Add(this.m_tabCompression);
 			this.m_tabMain.Controls.Add(this.m_tabRecycleBin);
 			this.m_tabMain.Controls.Add(this.m_tabTemplates);
-			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
+			this.m_tabMain.Location = new System.Drawing.Point(12, 67);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.Size = new System.Drawing.Size(462, 320);
+			this.m_tabMain.Size = new System.Drawing.Size(463, 320);
 			this.m_tabMain.TabIndex = 0;
 			// 
 			// m_tabGeneral
@@ -263,22 +264,22 @@
 			this.m_tabGeneral.Location = new System.Drawing.Point(4, 22);
 			this.m_tabGeneral.Name = "m_tabGeneral";
 			this.m_tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabGeneral.Size = new System.Drawing.Size(454, 294);
+			this.m_tabGeneral.Size = new System.Drawing.Size(455, 294);
 			this.m_tabGeneral.TabIndex = 0;
 			this.m_tabGeneral.Text = "General";
 			this.m_tabGeneral.UseVisualStyleBackColor = true;
 			// 
 			// m_tbDefaultUser
 			// 
-			this.m_tbDefaultUser.Location = new System.Drawing.Point(180, 253);
+			this.m_tbDefaultUser.Location = new System.Drawing.Point(177, 253);
 			this.m_tbDefaultUser.Name = "m_tbDefaultUser";
-			this.m_tbDefaultUser.Size = new System.Drawing.Size(257, 20);
+			this.m_tbDefaultUser.Size = new System.Drawing.Size(269, 20);
 			this.m_tbDefaultUser.TabIndex = 5;
 			// 
 			// m_lblDefaultUser
 			// 
 			this.m_lblDefaultUser.AutoSize = true;
-			this.m_lblDefaultUser.Location = new System.Drawing.Point(6, 256);
+			this.m_lblDefaultUser.Location = new System.Drawing.Point(3, 256);
 			this.m_lblDefaultUser.Name = "m_lblDefaultUser";
 			this.m_lblDefaultUser.Size = new System.Drawing.Size(168, 13);
 			this.m_lblDefaultUser.TabIndex = 4;
@@ -287,18 +288,18 @@
 			// m_tbDbDesc
 			// 
 			this.m_tbDbDesc.AcceptsReturn = true;
-			this.m_tbDbDesc.Location = new System.Drawing.Point(9, 57);
+			this.m_tbDbDesc.Location = new System.Drawing.Point(6, 57);
 			this.m_tbDbDesc.Multiline = true;
 			this.m_tbDbDesc.Name = "m_tbDbDesc";
 			this.m_tbDbDesc.PromptText = "";
 			this.m_tbDbDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbDbDesc.Size = new System.Drawing.Size(428, 177);
+			this.m_tbDbDesc.Size = new System.Drawing.Size(440, 177);
 			this.m_tbDbDesc.TabIndex = 3;
 			// 
 			// m_lblDbDesc
 			// 
 			this.m_lblDbDesc.AutoSize = true;
-			this.m_lblDbDesc.Location = new System.Drawing.Point(6, 41);
+			this.m_lblDbDesc.Location = new System.Drawing.Point(3, 41);
 			this.m_lblDbDesc.Name = "m_lblDbDesc";
 			this.m_lblDbDesc.Size = new System.Drawing.Size(110, 13);
 			this.m_lblDbDesc.TabIndex = 2;
@@ -306,16 +307,16 @@
 			// 
 			// m_tbDbName
 			// 
-			this.m_tbDbName.Location = new System.Drawing.Point(97, 9);
+			this.m_tbDbName.Location = new System.Drawing.Point(94, 9);
 			this.m_tbDbName.Name = "m_tbDbName";
 			this.m_tbDbName.PromptText = "";
-			this.m_tbDbName.Size = new System.Drawing.Size(340, 20);
+			this.m_tbDbName.Size = new System.Drawing.Size(352, 20);
 			this.m_tbDbName.TabIndex = 0;
 			// 
 			// m_lblDbName
 			// 
 			this.m_lblDbName.AutoSize = true;
-			this.m_lblDbName.Location = new System.Drawing.Point(6, 12);
+			this.m_lblDbName.Location = new System.Drawing.Point(3, 12);
 			this.m_lblDbName.Name = "m_lblDbName";
 			this.m_lblDbName.Size = new System.Drawing.Size(85, 13);
 			this.m_lblDbName.TabIndex = 1;
@@ -329,7 +330,7 @@
 			this.m_tabSecurity.Location = new System.Drawing.Point(4, 22);
 			this.m_tabSecurity.Name = "m_tabSecurity";
 			this.m_tabSecurity.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabSecurity.Size = new System.Drawing.Size(454, 294);
+			this.m_tabSecurity.Size = new System.Drawing.Size(455, 294);
 			this.m_tabSecurity.TabIndex = 1;
 			this.m_tabSecurity.Text = "Security";
 			this.m_tabSecurity.UseVisualStyleBackColor = true;
@@ -337,7 +338,7 @@
 			// m_lblSecIntro
 			// 
 			this.m_lblSecIntro.AutoSize = true;
-			this.m_lblSecIntro.Location = new System.Drawing.Point(6, 12);
+			this.m_lblSecIntro.Location = new System.Drawing.Point(3, 12);
 			this.m_lblSecIntro.Name = "m_lblSecIntro";
 			this.m_lblSecIntro.Size = new System.Drawing.Size(277, 13);
 			this.m_lblSecIntro.TabIndex = 0;
@@ -353,16 +354,16 @@
 			this.m_tabProtection.Controls.Add(this.m_lblProtIntro);
 			this.m_tabProtection.Location = new System.Drawing.Point(4, 22);
 			this.m_tabProtection.Name = "m_tabProtection";
-			this.m_tabProtection.Size = new System.Drawing.Size(454, 294);
+			this.m_tabProtection.Size = new System.Drawing.Size(455, 294);
 			this.m_tabProtection.TabIndex = 3;
 			this.m_tabProtection.Text = "Protection";
 			this.m_tabProtection.UseVisualStyleBackColor = true;
 			// 
 			// m_lblViewHint
 			// 
-			this.m_lblViewHint.Location = new System.Drawing.Point(6, 257);
+			this.m_lblViewHint.Location = new System.Drawing.Point(3, 257);
 			this.m_lblViewHint.Name = "m_lblViewHint";
-			this.m_lblViewHint.Size = new System.Drawing.Size(434, 28);
+			this.m_lblViewHint.Size = new System.Drawing.Size(443, 28);
 			this.m_lblViewHint.TabIndex = 5;
 			this.m_lblViewHint.Text = "Memory protection is useless if you display the fields in the main window. Theref" +
 				"ore make sure that hiding by asterisks is enabled for the protected fields.";
@@ -370,7 +371,7 @@
 			// m_lblMemProtEnable
 			// 
 			this.m_lblMemProtEnable.AutoSize = true;
-			this.m_lblMemProtEnable.Location = new System.Drawing.Point(6, 119);
+			this.m_lblMemProtEnable.Location = new System.Drawing.Point(3, 119);
 			this.m_lblMemProtEnable.Name = "m_lblMemProtEnable";
 			this.m_lblMemProtEnable.Size = new System.Drawing.Size(247, 13);
 			this.m_lblMemProtEnable.TabIndex = 3;
@@ -378,9 +379,9 @@
 			// 
 			// m_lblMemProtHint
 			// 
-			this.m_lblMemProtHint.Location = new System.Drawing.Point(6, 71);
+			this.m_lblMemProtHint.Location = new System.Drawing.Point(3, 71);
 			this.m_lblMemProtHint.Name = "m_lblMemProtHint";
-			this.m_lblMemProtHint.Size = new System.Drawing.Size(434, 27);
+			this.m_lblMemProtHint.Size = new System.Drawing.Size(443, 27);
 			this.m_lblMemProtHint.TabIndex = 2;
 			this.m_lblMemProtHint.Text = "It is recommended to turn on memory protection for password fields and leave it d" +
 				"isabled for all others. Process memory protection slows down all operations a bi" +
@@ -388,9 +389,9 @@
 			// 
 			// m_lblMemProtDesc
 			// 
-			this.m_lblMemProtDesc.Location = new System.Drawing.Point(6, 34);
+			this.m_lblMemProtDesc.Location = new System.Drawing.Point(3, 34);
 			this.m_lblMemProtDesc.Name = "m_lblMemProtDesc";
-			this.m_lblMemProtDesc.Size = new System.Drawing.Size(434, 28);
+			this.m_lblMemProtDesc.Size = new System.Drawing.Size(443, 28);
 			this.m_lblMemProtDesc.TabIndex = 1;
 			this.m_lblMemProtDesc.Text = "Fields can be stored encrypted in the process memory. This ensures that no other " +
 				"application can read your data by dumping the memory.";
@@ -399,17 +400,17 @@
 			// 
 			this.m_lbMemProt.CheckOnClick = true;
 			this.m_lbMemProt.FormattingEnabled = true;
-			this.m_lbMemProt.Location = new System.Drawing.Point(9, 135);
+			this.m_lbMemProt.Location = new System.Drawing.Point(6, 135);
 			this.m_lbMemProt.Name = "m_lbMemProt";
 			this.m_lbMemProt.ScrollAlwaysVisible = true;
-			this.m_lbMemProt.Size = new System.Drawing.Size(431, 109);
+			this.m_lbMemProt.Size = new System.Drawing.Size(440, 109);
 			this.m_lbMemProt.TabIndex = 4;
 			// 
 			// m_lblProtIntro
 			// 
-			this.m_lblProtIntro.Location = new System.Drawing.Point(6, 12);
+			this.m_lblProtIntro.Location = new System.Drawing.Point(3, 12);
 			this.m_lblProtIntro.Name = "m_lblProtIntro";
-			this.m_lblProtIntro.Size = new System.Drawing.Size(434, 13);
+			this.m_lblProtIntro.Size = new System.Drawing.Size(443, 13);
 			this.m_lblProtIntro.TabIndex = 0;
 			this.m_lblProtIntro.Text = "On this page you can configure run-time memory protection settings for this datab" +
 				"ase.";
@@ -428,7 +429,7 @@
 			this.m_tabCompression.Controls.Add(this.m_lblCompressionIntro);
 			this.m_tabCompression.Location = new System.Drawing.Point(4, 22);
 			this.m_tabCompression.Name = "m_tabCompression";
-			this.m_tabCompression.Size = new System.Drawing.Size(454, 294);
+			this.m_tabCompression.Size = new System.Drawing.Size(455, 294);
 			this.m_tabCompression.TabIndex = 2;
 			this.m_tabCompression.Text = "Compression";
 			this.m_tabCompression.UseVisualStyleBackColor = true;
@@ -437,7 +438,7 @@
 			// 
 			this.m_lblHeaderCpAlgo.AutoSize = true;
 			this.m_lblHeaderCpAlgo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
-			this.m_lblHeaderCpAlgo.Location = new System.Drawing.Point(28, 56);
+			this.m_lblHeaderCpAlgo.Location = new System.Drawing.Point(23, 56);
 			this.m_lblHeaderCpAlgo.Name = "m_lblHeaderCpAlgo";
 			this.m_lblHeaderCpAlgo.Size = new System.Drawing.Size(50, 13);
 			this.m_lblHeaderCpAlgo.TabIndex = 1;
@@ -446,7 +447,7 @@
 			// m_lblCpGZipPerf
 			// 
 			this.m_lblCpGZipPerf.AutoSize = true;
-			this.m_lblCpGZipPerf.Location = new System.Drawing.Point(194, 101);
+			this.m_lblCpGZipPerf.Location = new System.Drawing.Point(189, 101);
 			this.m_lblCpGZipPerf.Name = "m_lblCpGZipPerf";
 			this.m_lblCpGZipPerf.Size = new System.Drawing.Size(55, 13);
 			this.m_lblCpGZipPerf.TabIndex = 9;
@@ -455,7 +456,7 @@
 			// m_lblCpGZipCp
 			// 
 			this.m_lblCpGZipCp.AutoSize = true;
-			this.m_lblCpGZipCp.Location = new System.Drawing.Point(96, 101);
+			this.m_lblCpGZipCp.Location = new System.Drawing.Point(91, 101);
 			this.m_lblCpGZipCp.Name = "m_lblCpGZipCp";
 			this.m_lblCpGZipCp.Size = new System.Drawing.Size(52, 13);
 			this.m_lblCpGZipCp.TabIndex = 8;
@@ -464,7 +465,7 @@
 			// m_lblCpNonePerf
 			// 
 			this.m_lblCpNonePerf.AutoSize = true;
-			this.m_lblCpNonePerf.Location = new System.Drawing.Point(194, 78);
+			this.m_lblCpNonePerf.Location = new System.Drawing.Point(189, 78);
 			this.m_lblCpNonePerf.Name = "m_lblCpNonePerf";
 			this.m_lblCpNonePerf.Size = new System.Drawing.Size(52, 13);
 			this.m_lblCpNonePerf.TabIndex = 6;
@@ -473,7 +474,7 @@
 			// m_lblCpNoneCp
 			// 
 			this.m_lblCpNoneCp.AutoSize = true;
-			this.m_lblCpNoneCp.Location = new System.Drawing.Point(96, 78);
+			this.m_lblCpNoneCp.Location = new System.Drawing.Point(91, 78);
 			this.m_lblCpNoneCp.Name = "m_lblCpNoneCp";
 			this.m_lblCpNoneCp.Size = new System.Drawing.Size(83, 13);
 			this.m_lblCpNoneCp.TabIndex = 5;
@@ -483,7 +484,7 @@
 			// 
 			this.m_lblHeaderPerf.AutoSize = true;
 			this.m_lblHeaderPerf.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
-			this.m_lblHeaderPerf.Location = new System.Drawing.Point(194, 56);
+			this.m_lblHeaderPerf.Location = new System.Drawing.Point(189, 56);
 			this.m_lblHeaderPerf.Name = "m_lblHeaderPerf";
 			this.m_lblHeaderPerf.Size = new System.Drawing.Size(67, 13);
 			this.m_lblHeaderPerf.TabIndex = 3;
@@ -493,7 +494,7 @@
 			// 
 			this.m_lblHeaderCp.AutoSize = true;
 			this.m_lblHeaderCp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
-			this.m_lblHeaderCp.Location = new System.Drawing.Point(96, 56);
+			this.m_lblHeaderCp.Location = new System.Drawing.Point(91, 56);
 			this.m_lblHeaderCp.Name = "m_lblHeaderCp";
 			this.m_lblHeaderCp.Size = new System.Drawing.Size(67, 13);
 			this.m_lblHeaderCp.TabIndex = 2;
@@ -503,7 +504,7 @@
 			// 
 			this.m_rbGZip.AutoSize = true;
 			this.m_rbGZip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_rbGZip.Location = new System.Drawing.Point(11, 99);
+			this.m_rbGZip.Location = new System.Drawing.Point(6, 99);
 			this.m_rbGZip.Name = "m_rbGZip";
 			this.m_rbGZip.Size = new System.Drawing.Size(52, 17);
 			this.m_rbGZip.TabIndex = 7;
@@ -515,7 +516,7 @@
 			// 
 			this.m_rbNone.AutoSize = true;
 			this.m_rbNone.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_rbNone.Location = new System.Drawing.Point(11, 76);
+			this.m_rbNone.Location = new System.Drawing.Point(6, 76);
 			this.m_rbNone.Name = "m_rbNone";
 			this.m_rbNone.Size = new System.Drawing.Size(55, 17);
 			this.m_rbNone.TabIndex = 4;
@@ -532,7 +533,7 @@
 			this.m_tabRecycleBin.Location = new System.Drawing.Point(4, 22);
 			this.m_tabRecycleBin.Name = "m_tabRecycleBin";
 			this.m_tabRecycleBin.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabRecycleBin.Size = new System.Drawing.Size(454, 294);
+			this.m_tabRecycleBin.Size = new System.Drawing.Size(455, 294);
 			this.m_tabRecycleBin.TabIndex = 4;
 			this.m_tabRecycleBin.Text = "Recycle Bin";
 			this.m_tabRecycleBin.UseVisualStyleBackColor = true;
@@ -541,15 +542,15 @@
 			// 
 			this.m_cmbRecycleBin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbRecycleBin.FormattingEnabled = true;
-			this.m_cmbRecycleBin.Location = new System.Drawing.Point(11, 103);
+			this.m_cmbRecycleBin.Location = new System.Drawing.Point(6, 99);
 			this.m_cmbRecycleBin.Name = "m_cmbRecycleBin";
-			this.m_cmbRecycleBin.Size = new System.Drawing.Size(429, 21);
+			this.m_cmbRecycleBin.Size = new System.Drawing.Size(440, 21);
 			this.m_cmbRecycleBin.TabIndex = 3;
 			// 
 			// m_lblRecycleBinGroup
 			// 
 			this.m_lblRecycleBinGroup.AutoSize = true;
-			this.m_lblRecycleBinGroup.Location = new System.Drawing.Point(8, 87);
+			this.m_lblRecycleBinGroup.Location = new System.Drawing.Point(3, 83);
 			this.m_lblRecycleBinGroup.Name = "m_lblRecycleBinGroup";
 			this.m_lblRecycleBinGroup.Size = new System.Drawing.Size(96, 13);
 			this.m_lblRecycleBinGroup.TabIndex = 2;
@@ -557,9 +558,9 @@
 			// 
 			// m_lblRecycleBinInfo
 			// 
-			this.m_lblRecycleBinInfo.Location = new System.Drawing.Point(28, 36);
+			this.m_lblRecycleBinInfo.Location = new System.Drawing.Point(22, 32);
 			this.m_lblRecycleBinInfo.Name = "m_lblRecycleBinInfo";
-			this.m_lblRecycleBinInfo.Size = new System.Drawing.Size(412, 40);
+			this.m_lblRecycleBinInfo.Size = new System.Drawing.Size(424, 40);
 			this.m_lblRecycleBinInfo.TabIndex = 1;
 			this.m_lblRecycleBinInfo.Text = "If this option is enabled, KeePass moves entries/groups to the recycle bin group " +
 				"instead of deleting them. Deleting an entry/group from the recycle bin will perm" +
@@ -568,7 +569,7 @@
 			// m_cbRecycleBin
 			// 
 			this.m_cbRecycleBin.AutoSize = true;
-			this.m_cbRecycleBin.Location = new System.Drawing.Point(11, 16);
+			this.m_cbRecycleBin.Location = new System.Drawing.Point(6, 12);
 			this.m_cbRecycleBin.Name = "m_cbRecycleBin";
 			this.m_cbRecycleBin.Size = new System.Drawing.Size(108, 17);
 			this.m_cbRecycleBin.TabIndex = 0;
@@ -577,32 +578,42 @@
 			// 
 			// m_tabTemplates
 			// 
+			this.m_tabTemplates.Controls.Add(this.m_lblTemplatesHint);
 			this.m_tabTemplates.Controls.Add(this.m_cmbEntryTemplates);
 			this.m_tabTemplates.Controls.Add(this.m_lblEntryTemplatesGroup);
 			this.m_tabTemplates.Location = new System.Drawing.Point(4, 22);
 			this.m_tabTemplates.Name = "m_tabTemplates";
-			this.m_tabTemplates.Size = new System.Drawing.Size(454, 294);
+			this.m_tabTemplates.Size = new System.Drawing.Size(455, 294);
 			this.m_tabTemplates.TabIndex = 5;
 			this.m_tabTemplates.Text = "Templates";
 			this.m_tabTemplates.UseVisualStyleBackColor = true;
 			// 
-			// m_lblEntryTemplatesGroup
+			// m_lblTemplatesHint
 			// 
-			this.m_lblEntryTemplatesGroup.AutoSize = true;
-			this.m_lblEntryTemplatesGroup.Location = new System.Drawing.Point(6, 12);
-			this.m_lblEntryTemplatesGroup.Name = "m_lblEntryTemplatesGroup";
-			this.m_lblEntryTemplatesGroup.Size = new System.Drawing.Size(112, 13);
-			this.m_lblEntryTemplatesGroup.TabIndex = 0;
-			this.m_lblEntryTemplatesGroup.Text = "Entry templates group:";
+			this.m_lblTemplatesHint.Location = new System.Drawing.Point(3, 257);
+			this.m_lblTemplatesHint.Name = "m_lblTemplatesHint";
+			this.m_lblTemplatesHint.Size = new System.Drawing.Size(443, 28);
+			this.m_lblTemplatesHint.TabIndex = 2;
+			this.m_lblTemplatesHint.Text = "Click the drop-down arrow of the \'Add Entry\' toolbar button in the main window to" +
+				" create a new entry based on a template in the group above.";
 			// 
 			// m_cmbEntryTemplates
 			// 
 			this.m_cmbEntryTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbEntryTemplates.FormattingEnabled = true;
-			this.m_cmbEntryTemplates.Location = new System.Drawing.Point(9, 31);
+			this.m_cmbEntryTemplates.Location = new System.Drawing.Point(6, 31);
 			this.m_cmbEntryTemplates.Name = "m_cmbEntryTemplates";
-			this.m_cmbEntryTemplates.Size = new System.Drawing.Size(433, 21);
+			this.m_cmbEntryTemplates.Size = new System.Drawing.Size(440, 21);
 			this.m_cmbEntryTemplates.TabIndex = 1;
+			// 
+			// m_lblEntryTemplatesGroup
+			// 
+			this.m_lblEntryTemplatesGroup.AutoSize = true;
+			this.m_lblEntryTemplatesGroup.Location = new System.Drawing.Point(3, 12);
+			this.m_lblEntryTemplatesGroup.Name = "m_lblEntryTemplatesGroup";
+			this.m_lblEntryTemplatesGroup.Size = new System.Drawing.Size(112, 13);
+			this.m_lblEntryTemplatesGroup.TabIndex = 0;
+			this.m_lblEntryTemplatesGroup.Text = "Entry templates group:";
 			// 
 			// DatabaseSettingsForm
 			// 
@@ -700,5 +711,6 @@
 		private System.Windows.Forms.TabPage m_tabTemplates;
 		private System.Windows.Forms.ComboBox m_cmbEntryTemplates;
 		private System.Windows.Forms.Label m_lblEntryTemplatesGroup;
+		private System.Windows.Forms.Label m_lblTemplatesHint;
 	}
 }

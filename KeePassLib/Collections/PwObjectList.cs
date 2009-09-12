@@ -86,8 +86,7 @@ namespace KeePassLib.Collections
 		{
 			PwObjectList<T> tNew = new PwObjectList<T>();
 
-			foreach(T po in m_vObjects)
-				tNew.Add(po);
+			foreach(T po in m_vObjects) tNew.Add(po);
 
 			return tNew;
 		}
@@ -148,6 +147,49 @@ namespace KeePassLib.Collections
 			return m_vObjects[(int)uIndex];
 		}
 
+		public void SetAt(uint uIndex, T pwObject)
+		{
+			Debug.Assert(pwObject != null);
+			if(pwObject == null) throw new ArgumentNullException("pwObject");
+			if(uIndex >= (uint)m_vObjects.Count)
+				throw new ArgumentOutOfRangeException("uIndex");
+
+			m_vObjects[(int)uIndex] = pwObject;
+		}
+
+		/// <summary>
+		/// Get a range of objects.
+		/// </summary>
+		/// <param name="uStartIndexIncl">Index of the first object to be
+		/// returned (inclusive).</param>
+		/// <param name="uEndIndexIncl">Index of the last object to be
+		/// returned (inclusive).</param>
+		/// <returns></returns>
+		public List<T> GetRange(uint uStartIndexIncl, uint uEndIndexIncl)
+		{
+			if(uStartIndexIncl >= (uint)m_vObjects.Count)
+				throw new ArgumentOutOfRangeException("uStartIndexIncl");
+			if(uEndIndexIncl >= (uint)m_vObjects.Count)
+				throw new ArgumentOutOfRangeException("uEndIndexIncl");
+			if(uStartIndexIncl > uEndIndexIncl)
+				throw new ArgumentException();
+
+			List<T> list = new List<T>((int)(uEndIndexIncl - uStartIndexIncl) + 1);
+			for(uint u = uStartIndexIncl; u <= uEndIndexIncl; ++u)
+			{
+				list.Add(m_vObjects[(int)u]);
+			}
+
+			return list;
+		}
+
+		public int IndexOf(T pwReference)
+		{
+			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException("pwReference");
+
+			return m_vObjects.IndexOf(pwReference);
+		}
+
 		/// <summary>
 		/// Delete an object of this list. The object to be deleted is identified
 		/// by a reference handle.
@@ -162,6 +204,11 @@ namespace KeePassLib.Collections
 			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException("pwReference");
 
 			return m_vObjects.Remove(pwReference);
+		}
+
+		public void RemoveAt(uint uIndex)
+		{
+			m_vObjects.RemoveAt((int)uIndex);
 		}
 
 		/// <summary>

@@ -61,7 +61,7 @@ namespace KeePassLib.Cryptography
 			Random r = new Random();
 			m_uCounter = (uint)r.Next();
 
-			this.GetSystemData(); // System only, not CSP
+			GetSystemData(); // System only, not CSP
 		}
 
 		private void GetSystemData()
@@ -154,8 +154,8 @@ namespace KeePassLib.Cryptography
 
 		private byte[] GenerateRandom256()
 		{
-			unchecked { m_uCounter += 13; }
-			this.GetCspData(); // CSP only, not system
+			unchecked { m_uCounter += 386047; } // Prime number
+			GetCspData(); // CSP only, not system
 
 			byte[] pbCounter = MemUtil.UInt32ToBytes(m_uCounter);
 
@@ -186,10 +186,10 @@ namespace KeePassLib.Cryptography
 
 			while(uRequestedBytes != 0)
 			{
-				byte[] pbRandom256 = this.GenerateRandom256();
+				byte[] pbRandom256 = GenerateRandom256();
 				Debug.Assert(pbRandom256.Length == 32);
 
-				long lCopy = (uint)((uRequestedBytes < 32) ? uRequestedBytes : 32);
+				long lCopy = (long)((uRequestedBytes < 32) ? uRequestedBytes : 32);
 
 #if !KeePassLibSD
 				Array.Copy(pbRandom256, 0, pbRes, lPos, lCopy);

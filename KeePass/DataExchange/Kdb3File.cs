@@ -206,7 +206,7 @@ namespace KeePass.DataExchange
 				PwEntry pe = new PwEntry(false, false);
 				pe.Uuid = new PwUuid(e.Uuid.ToByteArray());
 
-				pgContainer.AddEntry(pe, true);
+				pgContainer.AddEntry(pe, true, true);
 
 				pe.IconId = (e.ImageId < (uint)PwIcon.Count) ? (PwIcon)e.ImageId : PwIcon.Key;
 
@@ -378,6 +378,7 @@ namespace KeePass.DataExchange
 				e.Url = pe.Strings.ReadSafe(PwDefs.UrlField);
 
 				string strNotes = pe.Strings.ReadSafe(PwDefs.NotesField);
+				ExportCustomStrings(pe, ref strNotes);
 				ExportAutoType(pe, ref strNotes);
 				ExportUrlOverride(pe, ref strNotes);
 				e.Additional = strNotes;
@@ -512,7 +513,8 @@ namespace KeePass.DataExchange
 			if((strOvr != null) && (strOvr.Length > (AutoTypePrefix.Length + 1)))
 			{
 				strOvr = strOvr.Substring(AutoTypePrefix.Length + 1).Trim();
-				peStorage.AutoType.DefaultSequence = strOvr;
+				peStorage.AutoType.DefaultSequence = ConvertAutoTypeSequence(
+					strOvr, true);
 			}
 
 			StringBuilder sb = new StringBuilder();
@@ -531,8 +533,8 @@ namespace KeePass.DataExchange
 						string strWindow = strLine.Substring(strWndPrefix.Length).Trim();
 						string strSeq = FindPrefixedLine(vLines, strSeqPrefix);
 						if((strSeq != null) && (strSeq.Length > strSeqPrefix.Length))
-							peStorage.AutoType.Set(strWindow, strSeq.Substring(
-								strSeqPrefix.Length).Trim());
+							peStorage.AutoType.Set(strWindow, ConvertAutoTypeSequence(
+								strSeq.Substring(strSeqPrefix.Length), true));
 						else // Window, but no sequence
 							peStorage.AutoType.Set(strWindow, string.Empty);
 
@@ -567,6 +569,66 @@ namespace KeePass.DataExchange
 			return null;
 		}
 
+		private static Dictionary<string, string> m_dSeq1xTo2x = null;
+		private static Dictionary<string, string> m_dSeq1xTo2xBiDir = null;
+		private static string ConvertAutoTypeSequence(string strSeq, bool b1xTo2x)
+		{
+			if(string.IsNullOrEmpty(strSeq)) return string.Empty;
+
+			if(m_dSeq1xTo2x == null)
+			{
+				m_dSeq1xTo2x = new Dictionary<string, string>();
+				m_dSeq1xTo2xBiDir = new Dictionary<string, string>();
+
+				m_dSeq1xTo2x[@"{SPACE}"] = " ";
+				m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}(+{END}){DEL}";
+
+				m_dSeq1xTo2xBiDir[@"{AT}"] = @"@";
+				m_dSeq1xTo2xBiDir[@"{PLUS}"] = @"{+}";
+				m_dSeq1xTo2xBiDir[@"{PERCENT}"] = @"{%}";
+				m_dSeq1xTo2xBiDir[@"{CARET}"] = @"{^}";
+				m_dSeq1xTo2xBiDir[@"{TILDE}"] = @"{~}";
+				m_dSeq1xTo2xBiDir[@"{LEFTBRACE}"] = @"{{}";
+				m_dSeq1xTo2xBiDir[@"{RIGHTBRACE}"] = @"{}}";
+				m_dSeq1xTo2xBiDir[@"{LEFTPAREN}"] = @"{(}";
+				m_dSeq1xTo2xBiDir[@"{RIGHTPAREN}"] = @"{)}";
+			}
+
+			string str = strSeq.Trim();
+
+			if(b1xTo2x)
+			{
+				foreach(KeyValuePair<string, string> kvp in m_dSeq1xTo2x)
+					str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
+			}
+
+			foreach(KeyValuePair<string, string> kvp in m_dSeq1xTo2xBiDir)
+			{
+				if(b1xTo2x) str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
+				else str = StrUtil.ReplaceCaseInsensitive(str, kvp.Value, kvp.Key);
+			}
+
+			return str;
+		}
+
+		private static void ExportCustomStrings(PwEntry peSource, ref string strNotes)
+		{
+			bool bSep = false;
+			foreach(KeyValuePair<string, ProtectedString> kvp in peSource.Strings)
+			{
+				if(PwDefs.IsStandardField(kvp.Key)) continue;
+
+				if(!bSep)
+				{
+					if(strNotes.Length > 0) strNotes += MessageService.NewParagraph;
+					bSep = true;
+				}
+
+				strNotes += kvp.Key + ": " + kvp.Value.ReadString() +
+					MessageService.NewLine;
+			}
+		}
+
 		private static void ExportAutoType(PwEntry peSource, ref string strNotes)
 		{
 			StringBuilder sbAppend = new StringBuilder();
@@ -577,7 +639,8 @@ namespace KeePass.DataExchange
 				sbAppend.Append(MessageService.NewParagraph);
 				sbAppend.Append(AutoTypePrefix);
 				sbAppend.Append(@": ");
-				sbAppend.Append(peSource.AutoType.DefaultSequence);
+				sbAppend.Append(ConvertAutoTypeSequence(
+					peSource.AutoType.DefaultSequence, false));
 				sbAppend.Append(MessageService.NewLine);
 
 				bSeparator = true;
@@ -598,7 +661,7 @@ namespace KeePass.DataExchange
 				sbAppend.Append(MessageService.NewLine);
 				sbAppend.Append(AutoTypePrefix);
 				sbAppend.Append(@": ");
-				sbAppend.Append(kvp.Value);
+				sbAppend.Append(ConvertAutoTypeSequence(kvp.Value, false));
 				sbAppend.Append(MessageService.NewLine);
 			}
 

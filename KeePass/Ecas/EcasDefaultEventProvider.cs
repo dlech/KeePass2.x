@@ -47,6 +47,10 @@ namespace KeePass.Ecas
 			0x3F, 0x7E, 0x5E, 0xC6, 0x2A, 0x54, 0x4C, 0x58,
 			0x95, 0x44, 0x85, 0xFB, 0xF2, 0x6F, 0x56, 0xDC
 		});
+		public static readonly PwUuid AppInitPost = new PwUuid(new byte[] {
+			0xD4, 0xCE, 0xCD, 0xB5, 0x4B, 0x98, 0x4F, 0xF2,
+			0xA6, 0xA9, 0xE2, 0x55, 0x26, 0x1E, 0xC8, 0xE8
+		});
 		public static readonly PwUuid AppLoadPost = new PwUuid(new byte[] {
 			0xD8, 0xF3, 0x1E, 0xE9, 0xCC, 0x69, 0x48, 0x1B,
 			0x89, 0xC5, 0xFC, 0xE2, 0xEA, 0x4B, 0x6A, 0x97
@@ -58,6 +62,10 @@ namespace KeePass.Ecas
 		public static readonly PwUuid CustomTbButtonClicked = new PwUuid(new byte[] {
 			0x47, 0x47, 0x59, 0x92, 0x97, 0xA7, 0x43, 0xA2,
 			0xB9, 0x68, 0x1F, 0x1F, 0xC2, 0xF7, 0x9B, 0x92
+		});
+		public static readonly PwUuid UpdatedUIState = new PwUuid(new byte[] {
+			0x8D, 0x12, 0xD4, 0x9A, 0xF2, 0xCB, 0x4F, 0xF7,
+			0xA8, 0xEF, 0xCF, 0xDA, 0xAC, 0x62, 0x68, 0x99
 		});
 	}
 
@@ -76,8 +84,10 @@ namespace KeePass.Ecas
 				new EcasParameter(KPRes.Value + " - " + KPRes.Filter,
 					EcasValueType.String, null) };
 
+			m_events.Add(new EcasEventType(EcasEventIDs.AppInitPost,
+				KPRes.ApplicationInitialized, PwIcon.ProgramIcons, null, null));
 			m_events.Add(new EcasEventType(EcasEventIDs.AppLoadPost,
-				KPRes.ApplicationStartup, PwIcon.ProgramIcons, null, null));
+				KPRes.ApplicationStarted, PwIcon.ProgramIcons, null, null));
 			m_events.Add(new EcasEventType(EcasEventIDs.AppExit,
 				KPRes.ApplicationExit, PwIcon.ProgramIcons, null, null));
 			m_events.Add(new EcasEventType(EcasEventIDs.OpenedDatabaseFile,
@@ -92,13 +102,15 @@ namespace KeePass.Ecas
 			m_events.Add(new EcasEventType(EcasEventIDs.CopiedEntryInfo,
 				KPRes.CopiedEntryData, PwIcon.ClipboardReady, epValueFilter,
 				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.UpdatedUIState,
+				KPRes.UpdatedUIState, PwIcon.PaperReady, null, null));
 			m_events.Add(new EcasEventType(EcasEventIDs.CustomTbButtonClicked,
 				KPRes.CustomTbButtonClicked, PwIcon.Star, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
 				IsMatchCustomTbButton));
 		}
 
-		private bool IsMatchTextEvent(EcasEvent e, EcasContext ctx)
+		private static bool IsMatchTextEvent(EcasEvent e, EcasContext ctx)
 		{
 			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
 				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
@@ -112,7 +124,7 @@ namespace KeePass.Ecas
 			return EcasUtil.CompareStrings(strCurFile, strFilter, uCompareType);
 		}
 
-		private bool IsMatchCustomTbButton(EcasEvent e, EcasContext ctx)
+		private static bool IsMatchCustomTbButton(EcasEvent e, EcasContext ctx)
 		{
 			string strIdClicked = EcasUtil.GetParamString(e.Parameters, 0);
 			if(string.IsNullOrEmpty(strIdClicked)) { Debug.Assert(false); return false; }

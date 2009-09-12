@@ -26,6 +26,7 @@ using System.IO;
 using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -83,7 +84,7 @@ namespace KeePass.DataExchange.Formats
 			foreach(XmlNode xmlChild in xmlNode)
 			{
 				if(xmlChild.Name == ElemGroupName)
-					pg.Name = ImportUtil.SafeInnerText(xmlChild);
+					pg.Name = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemGroup)
 					ReadGroup(xmlChild, pg, pwStorage);
 				else if(xmlChild.Name == ElemEntry)
@@ -102,23 +103,23 @@ namespace KeePass.DataExchange.Formats
 				if(xmlChild.Name == ElemEntryName)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUserName,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryPassword)
 					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectPassword,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryURL)
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUrl,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else { Debug.Assert(false); }
 			}
 		}

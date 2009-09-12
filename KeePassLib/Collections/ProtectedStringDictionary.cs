@@ -68,6 +68,11 @@ namespace KeePassLib.Collections
 			return m_vStrings.GetEnumerator();
 		}
 
+		public void Clear()
+		{
+			m_vStrings.Clear();
+		}
+
 		/// <summary>
 		/// Clone the current <c>ProtectedStringList</c> object, including all
 		/// stored protected strings.
@@ -87,6 +92,22 @@ namespace KeePassLib.Collections
 			}
 
 			return plNew;
+		}
+
+		public bool EqualsDictionary(ProtectedStringDictionary dict)
+		{
+			if(dict == null) { Debug.Assert(false); return false; }
+
+			if(m_vStrings.Count != dict.m_vStrings.Count) return false;
+
+			foreach(KeyValuePair<string, ProtectedString> kvp in m_vStrings)
+			{
+				ProtectedString ps = dict.Get(kvp.Key);
+				if(ps == null) return false;
+				if(ps.ReadString() != kvp.Value.ReadString()) return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>

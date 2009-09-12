@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -71,14 +72,18 @@ namespace KeePass.Util
 			{
 				EnsureSameKeyboardLayout(si);
 
-				si.InputBlocked = NativeMethods.BlockInput(true);
-
-				SendKeys.Flush();
-				// Application.DoEvents(); // Done by SendKeys.Flush
+				// Do not use SendKeys.Flush here, use Application.DoEvents
+				// instead; SendKeys.Flush might run into an infinite loop here
+				// if a previous auto-type process failed with throwing an
+				// exception (SendKeys.Flush is waiting in a loop for an internal
+				// queue being empty, however the queue is never processed)
+				Application.DoEvents();
 
 				List<int> lMod = GetActiveKeyModifiers();
 				ActivateKeyModifiers(lMod, false);
 				SpecialReleaseModifiers(lMod);
+
+				si.InputBlocked = NativeMethods.BlockInput(true);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -268,7 +273,7 @@ namespace KeePass.Util
 			if(strKeys.Length == 0) return;
 
 			ClipboardEventChainBlocker cev = new ClipboardEventChainBlocker();
-			ClipboardContents cnt = new ClipboardContents(true);
+			ClipboardContents cnt = new ClipboardContents(true, true);
 			Exception excpInner = null;
 
 			char[] vSpecial = new char[]{ '{', '}', '(', ')', '+', '^', '%',
@@ -471,11 +476,11 @@ namespace KeePass.Util
 					@"}" + strKeys;
 
 			if(strClip.Length > 0) Clipboard.SetText(strClip);
-			else Clipboard.Clear();
+			else ClipboardUtil.Clear();
 
 			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys);
 
-			Clipboard.Clear();
+			ClipboardUtil.Clear();
 		}
 
 		private static int GetRandomSeed(string strText)
@@ -498,6 +503,18 @@ namespace KeePass.Util
 			Debug.Assert(strSequence != null);
 			if(strSequence == null) return;
 			if(strSequence.Length == 0) return;
+
+			const string strDefDelay = @"(\{[Dd][Ee][Ll][Aa][Yy]\s*=\s*)(\d+)(\})";
+			Match mDefDelay = Regex.Match(strSequence, strDefDelay);
+			if(mDefDelay.Success)
+			{
+				string strTime = mDefDelay.Groups[2].Value;
+				strSequence = Regex.Replace(strSequence, strDefDelay, string.Empty);
+				// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|.+?)",
+				//	@"{delay " + strTime + @"}$1");
+				strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|[\+\^%].+?|.+?)",
+					@"{delay " + strTime + @"}$1");
+			}
 
 			bool bDefaultSend = true;
 			string strLower = strSequence.ToLower();

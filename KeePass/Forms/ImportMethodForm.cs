@@ -24,6 +24,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.UI;
 using KeePass.Resources;
@@ -50,6 +51,8 @@ namespace KeePass.Forms
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			GlobalWindowManager.AddWindow(this);
+			try { if(this.Owner == null) this.Owner = Program.MainForm; }
+			catch(Exception) { Debug.Assert(false); }
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,

@@ -27,7 +27,7 @@ namespace KeePass.UI
 {
 	public sealed class CustomListViewEx : ListView
 	{
-		public CustomListViewEx()
+		public CustomListViewEx() : base()
 		{
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }

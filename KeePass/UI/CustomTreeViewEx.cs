@@ -23,15 +23,32 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+// using KeePass.Native;
+
 namespace KeePass.UI
 {
 	public sealed class CustomTreeViewEx : TreeView
 	{
-		public CustomTreeViewEx()
+		public CustomTreeViewEx() : base()
 		{
 			// Double-buffering isn't supported by tree views
 			// try { this.DoubleBuffered = true; }
 			// catch(Exception) { Debug.Assert(false); }
+
+			// try
+			// {
+			//	IntPtr hWnd = this.Handle;
+			//	if((hWnd != IntPtr.Zero) && (this.ItemHeight == 16))
+			//	{
+			//		int nStyle = NativeMethods.GetWindowStyle(hWnd);
+			//		nStyle |= (int)NativeMethods.TVS_NONEVENHEIGHT;
+			//		NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_STYLE, nStyle);
+			//		this.ItemHeight = 17;
+			//	}
+			// }
+			// catch(Exception) { }
+
+			// this.ItemHeight = 18;
 		}
 	}
 }

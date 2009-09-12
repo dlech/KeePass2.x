@@ -125,13 +125,10 @@ namespace KeePass.Forms
 			byte[] pbUtf8 = m_secWord.ToUtf8();
 			m_psSelected = new ProtectedString(true, pbUtf8);
 			Array.Clear(pbUtf8, 0, pbUtf8.Length);
-
-			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-			CleanUpEx();
 		}
 
 		private void CleanUpEx()
@@ -261,6 +258,11 @@ namespace KeePass.Forms
 				m_btnOK.Enabled = true;
 				m_btnOK.PerformClick();
 			}
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

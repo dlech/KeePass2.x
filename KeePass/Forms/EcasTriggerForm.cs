@@ -229,6 +229,8 @@ namespace KeePass.Forms
 		private void OnEventAdd(object sender, EventArgs e)
 		{
 			EcasEvent eNew = new EcasEvent();
+			eNew.Type = EcasEventIDs.AppLoadPost;
+
 			EcasEventForm dlg = new EcasEventForm();
 			dlg.InitEx(eNew);
 			if(dlg.ShowDialog() == DialogResult.OK)

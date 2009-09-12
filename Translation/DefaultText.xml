@@ -46,14 +46,20 @@
 		<Data Name="AllSupportedFiles">
 			<Value>All Supported Files</Value>
 		</Data>
+		<Data Name="AlternatingBgColors">
+			<Value>Use alternating item background colors</Value>
+		</Data>
 		<Data Name="Application">
 			<Value>Application</Value>
 		</Data>
 		<Data Name="ApplicationExit">
 			<Value>Application exit</Value>
 		</Data>
-		<Data Name="ApplicationStartup">
-			<Value>Application startup</Value>
+		<Data Name="ApplicationInitialized">
+			<Value>Application initialized</Value>
+		</Data>
+		<Data Name="ApplicationStarted">
+			<Value>Application started and ready</Value>
 		</Data>
 		<Data Name="Arguments">
 			<Value>Arguments</Value>
@@ -124,6 +130,12 @@
 		<Data Name="AutoTypeEntrySelectionDescShort">
 			<Value>Multiple entries exist for the current window.</Value>
 		</Data>
+		<Data Name="AutoTypeGlobalHint">
+			<Value>If you want KeePass to search the active database for a matching entry and auto-type it, use the 'Global auto-type' hot key.</Value>
+		</Data>
+		<Data Name="AutoTypeMatchByTitle">
+			<Value>An entry matches if its title is contained in the target window title</Value>
+		</Data>
 		<Data Name="AutoTypeObfuscationHint">
 			<Value>Auto-type obfuscation may not work with all windows.</Value>
 		</Data>
@@ -132,6 +144,9 @@
 		</Data>
 		<Data Name="AutoTypeReleaseAltWithKeyPress">
 			<Value>Send Alt keypress when only the Alt modifier is active</Value>
+		</Data>
+		<Data Name="AutoTypeSelectedNoEntry">
+			<Value>To use the 'Auto-type selected entry' hot key, you first need to select an entry in KeePass.</Value>
 		</Data>
 		<Data Name="AutoTypeSequenceInvalid">
 			<Value>The specified auto-type sequence is invalid.</Value>
@@ -197,7 +212,7 @@
 			<Value>Data copied to clipboard.</Value>
 		</Data>
 		<Data Name="ClipboardViewerIgnoreFormat">
-			<Value>Protect clipboard using 'Clipboard Viewer Ignore' format</Value>
+			<Value>Use 'Clipboard Viewer Ignore' clipboard format</Value>
 		</Data>
 		<Data Name="CloseButton">
 			<Value>&amp;Close</Value>
@@ -298,8 +313,14 @@
 		<Data Name="CredSaveUserOnly">
 			<Value>Remember user name only</Value>
 		</Data>
+		<Data Name="CsprojCountError">
+			<Value>There must be exactly one .csproj or .vbproj file.</Value>
+		</Data>
 		<Data Name="CsvTextFile">
 			<Value>CSV / Text File</Value>
+		</Data>
+		<Data Name="CtrlKey">
+			<Value>Ctrl</Value>
 		</Data>
 		<Data Name="CurrentStyle">
 			<Value>Current Style</Value>
@@ -346,6 +367,9 @@
 		<Data Name="DatabaseSettingsDesc">
 			<Value>Here you can configure various database settings.</Value>
 		</Data>
+		<Data Name="DatabaseUnsavedChanges">
+			<Value>Active database has unsaved changes</Value>
+		</Data>
 		<Data Name="Default">
 			<Value>Default</Value>
 		</Data>
@@ -390,6 +414,9 @@
 		</Data>
 		<Data Name="DragDrop">
 			<Value>Drag&amp;Drop</Value>
+		</Data>
+		<Data Name="DropToBackOnCopy">
+			<Value>Drop to background after copying data to the clipboard</Value>
 		</Data>
 		<Data Name="DuplicateStringFieldName">
 			<Value>The string field name you specified already exists. String field names must be unique for each entry.</Value>
@@ -508,6 +535,9 @@
 		<Data Name="ExportingStatusMsg">
 			<Value>Exporting...</Value>
 		</Data>
+		<Data Name="ExportStc">
+			<Value>Export active database</Value>
+		</Data>
 		<Data Name="ExportToPrompt">
 			<Value>Export to:</Value>
 		</Data>
@@ -567,6 +597,9 @@
 		</Data>
 		<Data Name="FileExtName">
 			<Value>KeePass Password Database</Value>
+		</Data>
+		<Data Name="FileFormatStc">
+			<Value>File format</Value>
 		</Data>
 		<Data Name="FileLockedBy">
 			<Value>The specified file is currently locked by the following user:</Value>
@@ -633,6 +666,9 @@
 		</Data>
 		<Data Name="Filter">
 			<Value>Filter</Value>
+		</Data>
+		<Data Name="FocusQuickFindOnUntray">
+			<Value>Focus quick search box when restoring from tray</Value>
 		</Data>
 		<Data Name="FocusResultsAfterQuickFind">
 			<Value>Focus entry list after a successful quick search (toolbar)</Value>
@@ -717,6 +753,9 @@
 		</Data>
 		<Data Name="HomepageVisitQuestion">
 			<Value>Do you want to visit the KeePass homepage now?</Value>
+		</Data>
+		<Data Name="Host">
+			<Value>Host</Value>
 		</Data>
 		<Data Name="HotKeyAltOnly">
 			<Value>It is highly recommended not to use global hot keys with only Alt or Alt-Shift as modifier.</Value>
@@ -820,6 +859,9 @@
 		<Data Name="KeyboardKeyShift">
 			<Value>Shift</Value>
 		</Data>
+		<Data Name="KeyChanged">
+			<Value>Key Changed</Value>
+		</Data>
 		<Data Name="KeyFileCreate">
 			<Value>Create a new key file</Value>
 		</Data>
@@ -916,6 +958,9 @@
 		<Data Name="NewDatabaseFileName">
 			<Value>NewDatabase.kdbx</Value>
 		</Data>
+		<Data Name="NewerNetRequired">
+			<Value>A newer .NET Framework is required.</Value>
+		</Data>
 		<Data Name="NewGroup">
 			<Value>New Group</Value>
 		</Data>
@@ -926,7 +971,7 @@
 			<Value>No</Value>
 		</Data>
 		<Data Name="NoFileAccessRead">
-			<Value>The operating system didn't KeePass grant read access to the specified file.</Value>
+			<Value>The operating system didn't grant KeePass read access to the specified file.</Value>
 		</Data>
 		<Data Name="NoKeyFileSpecifiedMeta">
 			<Value>(None)</Value>
@@ -1036,11 +1081,23 @@
 		<Data Name="Plugin1xHint">
 			<Value>KeePass 1.x plugins cannot be used together with KeePass 2.x and vice versa.</Value>
 		</Data>
+		<Data Name="PluginCacheClearInfo">
+			<Value>The plugin cache will be cleared and rebuilt if necessary when KeePass is restarted.</Value>
+		</Data>
 		<Data Name="PluginIncompatible">
 			<Value>The following plugin is incompatible with the current KeePass version:</Value>
 		</Data>
+		<Data Name="PluginLoadFailed">
+			<Value>The plugin cannot be loaded.</Value>
+		</Data>
+		<Data Name="PluginOperatingSystemUnsupported">
+			<Value>The current operating system is unsupported by the plugin.</Value>
+		</Data>
 		<Data Name="Plugins">
 			<Value>Plugins</Value>
+		</Data>
+		<Data Name="PluginsCompilingAndLoading">
+			<Value>Compiling and loading plugins...</Value>
 		</Data>
 		<Data Name="PluginsDesc">
 			<Value>Here you can configure all loaded KeePass plugins.</Value>
@@ -1102,8 +1159,11 @@
 		<Data Name="RememberHidingSettings">
 			<Value>Remember password hiding setting in 'Edit Entry' window</Value>
 		</Data>
-		<Data Name="RememberKeyFilePaths">
-			<Value>Remember key file paths</Value>
+		<Data Name="RememberKeySources">
+			<Value>Remember key sources (key file paths, provider names, ...)</Value>
+		</Data>
+		<Data Name="RemoteHostReachable">
+			<Value>Remote host is reachable (ping)</Value>
 		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
@@ -1123,6 +1183,9 @@
 		<Data Name="SaveDatabase">
 			<Value>Save Database</Value>
 		</Data>
+		<Data Name="SaveDatabaseStc">
+			<Value>Save active database</Value>
+		</Data>
 		<Data Name="SavedDatabaseFile">
 			<Value>Saved database file</Value>
 		</Data>
@@ -1131,6 +1194,9 @@
 		</Data>
 		<Data Name="SavingDatabaseFile">
 			<Value>Saving database file</Value>
+		</Data>
+		<Data Name="Scheme">
+			<Value>Scheme</Value>
 		</Data>
 		<Data Name="Search">
 			<Value>Search...</Value>
@@ -1237,6 +1303,9 @@
 		<Data Name="Synchronize">
 			<Value>Synchronize</Value>
 		</Data>
+		<Data Name="SynchronizeStc">
+			<Value>Synchronize active database with a file/URL</Value>
+		</Data>
 		<Data Name="Synchronizing">
 			<Value>Synchronizing...</Value>
 		</Data>
@@ -1251,6 +1320,9 @@
 		</Data>
 		<Data Name="SystemCodePage">
 			<Value>System Code Page</Value>
+		</Data>
+		<Data Name="TanExpiresOnUse">
+			<Value>Mark TAN entries as expired when using them</Value>
 		</Data>
 		<Data Name="TanWizard">
 			<Value>TAN Wizard</Value>
@@ -1351,6 +1423,9 @@
 		<Data Name="UpdateCheckingFailed">
 			<Value>Update checking failed.</Value>
 		</Data>
+		<Data Name="UpdatedUIState">
+			<Value>User interface state updated</Value>
+		</Data>
 		<Data Name="Url">
 			<Value>URL</Value>
 		</Data>
@@ -1369,6 +1444,18 @@
 		<Data Name="UrlSaveTitle">
 			<Value>Save To URL</Value>
 		</Data>
+		<Data Name="UrlSchemeOverride">
+			<Value>Scheme-Specific URL Override</Value>
+		</Data>
+		<Data Name="UrlSchemeOverrides">
+			<Value>Scheme-Specific URL Overrides</Value>
+		</Data>
+		<Data Name="UseCustomToolStripRenderer">
+			<Value>Use custom ToolStrip renderer</Value>
+		</Data>
+		<Data Name="UseTransactedDatabaseWrites">
+			<Value>Use file transactions for writing databases</Value>
+		</Data>
 		<Data Name="UserName">
 			<Value>User Name</Value>
 		</Data>
@@ -1380,6 +1467,9 @@
 		</Data>
 		<Data Name="Value">
 			<Value>Value</Value>
+		</Data>
+		<Data Name="VerifyWrittenFileAfterSave">
+			<Value>Verify written file after saving a database</Value>
 		</Data>
 		<Data Name="Version">
 			<Value>Version</Value>

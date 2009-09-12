@@ -83,7 +83,7 @@ namespace KeePass.Native
 			public IntPtr ExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		internal struct CHARFORMAT2
 		{
 			public UInt32 cbSize;
@@ -91,12 +91,12 @@ namespace KeePass.Native
 			public UInt32 dwEffects;
 			public Int32 yHeight;
 			public Int32 yOffset;
-			public Int32 crTextColor;
+			public UInt32 crTextColor;
 			public Byte bCharSet;
 			public Byte bPitchAndFamily;
 
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-			public char[] szFaceName;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+			public string szFaceName;
 
 			public UInt16 wWeight;
 			public UInt16 sSpacing;
@@ -134,7 +134,10 @@ namespace KeePass.Native
 			public Int32 cbSize;
 			public RECT rcItem;
 			public RECT rcButton;
+
+			[MarshalAs(UnmanagedType.U4)]
 			public ComboBoxButtonState buttonState;
+
 			public IntPtr hwndCombo;
 			public IntPtr hwndEdit;
 			public IntPtr hwndList;
@@ -167,6 +170,23 @@ namespace KeePass.Native
 			public uint nPage;
 			public int nPos;
 			public int nTrackPos;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct HDITEM
+		{
+			public UInt32 mask;
+			public Int32 cxy;
+
+			[MarshalAs(UnmanagedType.LPTStr)]
+			public string pszText;
+
+			public IntPtr hbm;
+			public Int32 cchTextMax;
+			public Int32 fmt;
+			public IntPtr lParam;
+			public Int32 iImage;
+			public Int32 iOrder;
 		}
 	}
 }

@@ -118,10 +118,16 @@ namespace KeePassLib.Serialization
 				if(strName == ElemGenerator) { } // Ignore
 				else if(strName == ElemDbName)
 					m_pwDatabase.Name = ReadString(xmlChild);
+				else if(strName == ElemDbNameChanged)
+					m_pwDatabase.NameChanged = ReadTime(xmlChild);
 				else if(strName == ElemDbDesc)
 					m_pwDatabase.Description = ReadString(xmlChild);
+				else if(strName == ElemDbDescChanged)
+					m_pwDatabase.DescriptionChanged = ReadTime(xmlChild);
 				else if(strName == ElemDbDefaultUser)
 					m_pwDatabase.DefaultUserName = ReadString(xmlChild);
+				else if(strName == ElemDbDefaultUserChanged)
+					m_pwDatabase.DefaultUserNameChanged = ReadTime(xmlChild);
 				else if(strName == ElemDbMntncHistoryDays)
 					m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xmlChild, 365);
 				else if(strName == ElemMemoryProt)
@@ -132,8 +138,12 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.RecycleBinEnabled = ReadBool(xmlChild, true);
 				else if(strName == ElemRecycleBinUuid)
 					m_pwDatabase.RecycleBinUuid = ReadUuid(xmlChild);
+				else if(strName == ElemRecycleBinChanged)
+					m_pwDatabase.RecycleBinChanged = ReadTime(xmlChild);
 				else if(strName == ElemEntryTemplatesGroup)
 					m_pwDatabase.EntryTemplatesGroup = ReadUuid(xmlChild);
+				else if(strName == ElemEntryTemplatesGroupChanged)
+					m_pwDatabase.EntryTemplatesGroupChanged = ReadTime(xmlChild);
 				else if(strName == ElemLastSelectedGroup)
 					m_pwDatabase.LastSelectedGroup = ReadUuid(xmlChild);
 				else if(strName == ElemLastTopVisibleGroup)
@@ -282,7 +292,7 @@ namespace KeePassLib.Serialization
 
 			// Create new UUID if absent
 			if(PwUuid.Zero.EqualsValue(pgStorage.Uuid))
-				pgStorage.Uuid = new PwUuid(true);
+				pgStorage.Uuid = new PwUuid(true); // No assert (import)
 
 			return pgStorage;
 		}
@@ -329,7 +339,7 @@ namespace KeePassLib.Serialization
 
 			// Create new UUID if absent
 			if(PwUuid.Zero.EqualsValue(pe.Uuid))
-				pe.Uuid = new PwUuid(true);
+				pe.Uuid = new PwUuid(true); // No assert (import)
 
 			return pe;
 		}
@@ -354,6 +364,8 @@ namespace KeePassLib.Serialization
 					times.Expires = ReadBool(xmlChild, false);
 				else if(strName == ElemUsageCount)
 					times.UsageCount = ReadULong(xmlChild, 0);
+				else if(strName == ElemLocationChanged)
+					times.LocationChanged = ReadTime(xmlChild);
 				else
 					ReadUnknown(xmlChild);
 			}

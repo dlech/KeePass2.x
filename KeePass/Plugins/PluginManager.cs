@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using KeePass.App;
 using KeePass.Resources;
 using KeePass.Plugins;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -73,15 +74,37 @@ namespace KeePass.Plugins
 				DirectoryInfo di = new DirectoryInfo(strPath);
 
 				FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
-				LoadPlugins(vFiles);
+				LoadPlugins(vFiles, null, null);
 
 				vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
-				LoadPlugins(vFiles);
+				LoadPlugins(vFiles, null, null);
+
+				List<FileInfo> vPlgx = new List<FileInfo>();
+				vFiles = di.GetFiles("*." + PlgxPlugin.PlgxExtension, SearchOption.AllDirectories);
+				if(vFiles.Length > 0)
+				{
+					OnDemandStatusDialog dlgStatus = new OnDemandStatusDialog(true, null);
+					dlgStatus.StartLogging(PwDefs.ShortProductName, false);
+
+					foreach(FileInfo fi in vFiles) PlgxPlugin.Load(fi.FullName, dlgStatus);
+
+					dlgStatus.EndLogging();
+				}
 			}
 			catch(Exception) { Debug.Assert(false); } // Path access violation
 		}
 
-		private void LoadPlugins(FileInfo[] vFiles)
+		public void LoadPlugin(string strFilePath, string strTypeName,
+			string strDisplayFilePath)
+		{
+			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
+
+			LoadPlugins(new FileInfo[] { new FileInfo(strFilePath) }, strTypeName,
+				strDisplayFilePath);
+		}
+
+		private void LoadPlugins(FileInfo[] vFiles, string strTypeName,
+			string strDisplayFilePath)
 		{
 			foreach(FileInfo fi in vFiles)
 			{
@@ -102,9 +125,9 @@ namespace KeePass.Plugins
 				bool bShowStandardError = false;
 				try
 				{
-					PluginInfo pi = new PluginInfo(fi.FullName, fvi);
+					PluginInfo pi = new PluginInfo(fi.FullName, fvi, strDisplayFilePath);
 
-					pi.Interface = CreatePluginInstance(pi.FilePath);
+					pi.Interface = CreatePluginInstance(pi.FilePath, strTypeName);
 
 					if(pi.Interface.Initialize(m_host) == false)
 						continue; // Fail without error
@@ -119,13 +142,17 @@ namespace KeePass.Plugins
 							KPRes.Plugin1x + MessageService.NewParagraph + KPRes.Plugin1xHint);
 					else bShowStandardError = true;
 				}
-				catch(Exception) { bShowStandardError = true; }
+				catch(Exception exLoad)
+				{
+					if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+						MessageService.ShowWarning(fi.FullName, exLoad);
+					else bShowStandardError = true;
+				}
 
 				if(bShowStandardError)
 					MessageService.ShowWarning(KPRes.PluginIncompatible +
 						MessageService.NewLine + fi.FullName + MessageService.NewParagraph +
 						KPRes.PluginUpdateHint);
-
 			}
 		}
 
@@ -144,15 +171,20 @@ namespace KeePass.Plugins
 			m_vPlugins.Clear();
 		}
 
-		private static Plugin CreatePluginInstance(string strFilePath)
+		private static Plugin CreatePluginInstance(string strFilePath,
+			string strTypeName)
 		{
 			Debug.Assert(strFilePath != null);
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			string strType = UrlUtil.GetFileName(strFilePath);
-			strType = UrlUtil.StripExtension(strType) + "." +
-				UrlUtil.GetExtension("." + UrlUtil.StripExtension(strType)) +
-				"Ext";
+			string strType;
+			if(string.IsNullOrEmpty(strTypeName))
+			{
+				strType = UrlUtil.GetFileName(strFilePath);
+				strType = UrlUtil.StripExtension(strType) + "." +
+					UrlUtil.StripExtension(strType) + "Ext";
+			}
+			else strType = strTypeName + "." + strTypeName + "Ext";
 
 			ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
 

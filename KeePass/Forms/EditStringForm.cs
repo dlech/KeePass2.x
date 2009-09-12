@@ -100,7 +100,7 @@ namespace KeePass.Forms
 
 			m_clrNormalBackground = m_cmbStringName.BackColor;
 
-			UIUtil.PrepareStandardMultilineControl(m_richStringValue);
+			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true);
 
 			if(m_strStringName != null) m_cmbStringName.Text = m_strStringName;
 			if(m_psStringValue != null)
@@ -219,13 +219,10 @@ namespace KeePass.Forms
 					m_vStringDict.Set(strName, ps);
 				}
 			}
-
-			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-			CleanUpEx();
 		}
 
 		private void CleanUpEx()
@@ -298,6 +295,11 @@ namespace KeePass.Forms
 				return false; // Forward to RichTextBox
 
 			return base.ProcessDialogKey(keyData);
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

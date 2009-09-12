@@ -21,9 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Forms;
 using System.Threading;
 
+using KeePass.DataExchange;
+using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -67,6 +71,27 @@ namespace KeePass.Ecas
 				KPRes.OpenDatabaseFileStc, PwIcon.FolderOpen, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
 				OpenDatabaseFile));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0xF5, 0x57, 0x61, 0x4B, 0xF8, 0x4C, 0x41, 0x5D,
+				0xA9, 0x13, 0x7A, 0x39, 0xCD, 0x10, 0xF0, 0xBD }),
+				KPRes.SaveDatabaseStc, PwIcon.Disk, null,
+				SaveDatabaseFile));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x22, 0xAD, 0x77, 0xE4, 0x17, 0x78, 0x4E, 0xED,
+				0x99, 0xB4, 0x57, 0x1D, 0x02, 0xB3, 0xAD, 0x4D }),
+				KPRes.SynchronizeStc, PwIcon.PaperReady, new EcasParameter[] {
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
+				SyncDatabaseFile));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x0F, 0x9A, 0x6B, 0x5B, 0xCE, 0xD5, 0x46, 0xBE,
+				0xB9, 0x34, 0xED, 0xB1, 0x3F, 0x94, 0x48, 0x22 }),
+				KPRes.ExportStc, PwIcon.Disk, new EcasParameter[] {
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
+					new EcasParameter(KPRes.FileFormatStc, EcasValueType.String, null) },
+				ExportDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x3B, 0x3D, 0x3E, 0x31, 0xE4, 0xB3, 0x42, 0xA6,
@@ -147,6 +172,59 @@ namespace KeePass.Ecas
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 
 			Program.MainForm.OpenDatabase(ioc, null, true);
+		}
+
+		private static void SaveDatabaseFile(EcasAction a, EcasContext ctx)
+		{
+			Program.MainForm.UIFileSave(false);
+		}
+
+		private static void SyncDatabaseFile(EcasAction a, EcasContext ctx)
+		{
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0);
+			if(string.IsNullOrEmpty(strPath)) return;
+
+			IOConnectionInfo iocBase = IOConnectionInfo.FromPath(strPath);
+
+			MruList mru = Program.MainForm.FileMruList;
+			for(uint u = 0; u < mru.ItemCount; ++u)
+			{
+				IOConnectionInfo iocMru = (mru.GetItem(u).Value as IOConnectionInfo);
+				if(iocMru == null) { Debug.Assert(false); continue; }
+
+				if(iocMru.Path == iocBase.Path)
+				{
+					iocBase = iocMru.CloneDeep();
+					break;
+				}
+			}
+
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
+			IOConnectionInfo ioc = MainForm.CompleteConnectionInfo(iocBase,
+				false, true, true, false);
+			if(ioc == null) return;
+
+			bool? b = ImportUtil.Synchronize(pd, Program.MainForm, ioc, false,
+				Program.MainForm);
+			Program.MainForm.UpdateUI(false, null, true, null, true, null, false);
+			if(b.HasValue) Program.MainForm.SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+		}
+
+		private static void ExportDatabaseFile(EcasAction a, EcasContext ctx)
+		{
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0);
+			if(string.IsNullOrEmpty(strPath)) return;
+			string strFormat = EcasUtil.GetParamString(a.Parameters, 1);
+			if(string.IsNullOrEmpty(strFormat)) return;
+
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
+			PwExportInfo pei = new PwExportInfo(pd.RootGroup, pd, true);
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
+			ExportUtil.Export(pei, strFormat, ioc);
 		}
 
 		private static void ExecuteSleep(EcasAction a, EcasContext ctx)

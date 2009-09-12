@@ -133,6 +133,13 @@ namespace KeePass.App.Configuration
 			set { m_bCloseMin = value; }
 		}
 
+		private bool m_bMinToTray = false;
+		public bool MinimizeToTray
+		{
+			get { return m_bMinToTray; }
+			set { m_bMinToTray = value; }
+		}
+
 		private bool m_bFullPath = false;
 		public bool ShowFullPathInTitle
 		{
@@ -140,11 +147,11 @@ namespace KeePass.App.Configuration
 			set { m_bFullPath = value; }
 		}
 
-		private bool m_bMinToTray = false;
-		public bool MinimizeToTray
+		private bool m_bDropToBackAfterCopy = false;
+		public bool DropToBackAfterClipboardCopy
 		{
-			get { return m_bMinToTray; }
-			set { m_bMinToTray = value; }
+			get { return m_bDropToBackAfterCopy; }
+			set { m_bDropToBackAfterCopy = value; }
 		}
 
 		private bool m_bMinAfterCopy = false;
@@ -180,6 +187,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bFocusResAfterQuickFind; }
 			set { m_bFocusResAfterQuickFind = value; }
+		}
+
+		private bool m_bFocusQuickFindOnUntray = false;
+		public bool FocusQuickFindOnUntray
+		{
+			get { return m_bFocusQuickFindOnUntray; }
+			set { m_bFocusQuickFindOnUntray = value; }
 		}
 
 		private bool m_bCopyUrls = false;
@@ -262,6 +276,13 @@ namespace KeePass.App.Configuration
 				foreach(AceColumn ac in value)
 					m_aceColumns[ac.Name] = ac;
 			}
+		}
+
+		private bool m_bAlternatingBgColor = true;
+		public bool EntryListAlternatingBgColors
+		{
+			get { return m_bAlternatingBgColor; }
+			set { m_bAlternatingBgColor = value; }
 		}
 
 		private bool m_bGridLines = false;

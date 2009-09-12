@@ -91,13 +91,19 @@ namespace KeePass.Util.Spr
 			{
 				foreach(KeyValuePair<string, ProtectedString> kvp in pwEntry.Strings)
 				{
-					string strKey = PwDefs.IsStandardField(kvp.Key) ?
+					string strKey = (PwDefs.IsStandardField(kvp.Key) ?
 						(@"{" + kvp.Key + @"}") :
-						(@"{" + PwDefs.AutoTypeStringPrefix + kvp.Key + @"}");
+						(@"{" + PwDefs.AutoTypeStringPrefix + kvp.Key + @"}"));
 
 					str = SprEngine.FillIfExists(str, strKey, kvp.Value, pwEntry,
 						pwDatabase, cf, uRecursionLevel, vRefsCache);
 				}
+
+				if(cf != null) cf.UrlRemoveSchemeOnce = true;
+				str = SprEngine.FillIfExists(str, @"{URL:RMVSCM}",
+					pwEntry.Strings.GetSafe(PwDefs.UrlField), pwEntry,
+					pwDatabase, cf, uRecursionLevel, vRefsCache);
+				if(cf != null) { Debug.Assert(!cf.UrlRemoveSchemeOnce); }
 
 				if(pwEntry.ParentGroup != null)
 				{
@@ -207,6 +213,7 @@ namespace KeePass.Util.Spr
 				else { Debug.Assert(false); }
 			}
 
+			str = EntryUtil.FillPlaceholdersFinal(str, pwEntry, pwDatabase, cf);
 			return str;
 		}
 
@@ -214,15 +221,31 @@ namespace KeePass.Util.Spr
 			ProtectedString psParsable, PwEntry pwEntry, PwDatabase pwDatabase,
 			SprContentFlags cf, uint uRecursionLevel, SprRefsCache vRefsCache)
 		{
+			// The UrlRemoveSchemeOnce property of cf must be cleared
+			// before this method returns and before any recursive call
+			bool bRemoveScheme = false;
+			if(cf != null)
+			{
+				bRemoveScheme = cf.UrlRemoveSchemeOnce;
+				cf.UrlRemoveSchemeOnce = false;
+			}
+
 			if(strData == null) { Debug.Assert(false); return string.Empty; }
 			if(strPlaceholder == null) { Debug.Assert(false); return strData; }
 			if(strPlaceholder.Length == 0) { Debug.Assert(false); return strData; }
 			if(psParsable == null) { Debug.Assert(false); return strData; }
 
 			if(strData.IndexOf(strPlaceholder, SprEngine.ScMethod) >= 0)
+			{
+				string strReplacement = SprEngine.CompileInternal(
+					psParsable.ReadString(), pwEntry, pwDatabase, null,
+					uRecursionLevel + 1, vRefsCache);
+
+				if(bRemoveScheme) strReplacement = UrlUtil.RemoveScheme(strReplacement);
+
 				return SprEngine.FillPlaceholder(strData, strPlaceholder,
-					SprEngine.CompileInternal(psParsable.ReadString(), pwEntry,
-					pwDatabase, null, uRecursionLevel + 1, vRefsCache), cf);
+					strReplacement, cf);
+			}
 
 			return strData;
 		}

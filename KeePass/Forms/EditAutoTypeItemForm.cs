@@ -55,7 +55,7 @@ namespace KeePass.Forms
 
 		private const string VkcBreak = @"<break />";
 
-		private static string[] SpecialKeyCodes = new string[]{
+		private static string[] SpecialKeyCodes = new string[] {
 			"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
 			"HOME", "END", "PGUP", "PGDN",
 			"INSERT", "DELETE", VkcBreak,
@@ -66,8 +66,9 @@ namespace KeePass.Forms
 			"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"
 		};
 
-		private static string[] SpecialPlaceholders = new string[]{
-			"APPDIR", "GROUP", "GROUPPATH", "DELAY 1000", "PICKPASSWORDCHARS", VkcBreak,
+		private static string[] SpecialPlaceholders = new string[] {
+			"APPDIR", "GROUP", "GROUPPATH", "DELAY 1000", "DELAY=200",
+			"PICKPASSWORDCHARS", "NEWPASSWORD", VkcBreak,
 			"DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT", "ENV_DIRSEP", VkcBreak,
 			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
 			"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
@@ -234,13 +235,10 @@ namespace KeePass.Forms
 				m_atConfig.Set(m_cmbWindow.Text, strNewSeq);
 			}
 			else m_atConfig.DefaultSequence = strNewSeq;
-
-			CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-			CleanUpEx();
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)
@@ -394,6 +392,11 @@ namespace KeePass.Forms
 		private void OnSeqCustomCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

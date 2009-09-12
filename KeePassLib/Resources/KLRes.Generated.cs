@@ -211,7 +211,7 @@ namespace KeePassLib.Resources
 			@"The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The file signature is invalid. Either the file isn't a KeePass database file at all or it is corrupted.'.
+		/// 'The file signature is invalid. Either the file isn&#39;t a KeePass database file at all or it is corrupted.'.
 		/// </summary>
 		public static string FileSigInvalid
 		{
@@ -310,7 +310,7 @@ namespace KeePassLib.Resources
 			@"In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -> 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.'.
+		/// 'In order to import KeePass 1.x KDB files, create a new 2.x database file and click &#39;File&#39; -&gt; &#39;Import&#39; in the main menu. In the import dialog, choose &#39;KeePass KDB (1.x)&#39; as file format.'.
 		/// </summary>
 		public static string KeePass1xHint
 		{

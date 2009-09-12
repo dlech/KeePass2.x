@@ -57,7 +57,10 @@ namespace KeePassLib.Cryptography
 
 			TestRijndael();
 			TestSalsa20();
+			
 			TestNativeKeyTransform();
+			
+			TestGZip();
 		}
 
 		private static void TestFipsComplianceProblems()
@@ -195,6 +198,19 @@ namespace KeePassLib.Cryptography
 
 			if(!MemUtil.ArraysEqual(pbManaged, pbNative))
 				throw new SecurityException("Native transform.");
+#endif
+		}
+
+		private static void TestGZip()
+		{
+#if DEBUG
+			Random r = new Random();
+			byte[] pb = CryptoRandom.Instance.GetRandomBytes((uint)r.Next(
+				0, 0x2FFFF));
+
+			byte[] pbCompressed = MemUtil.Compress(pb);
+			if(!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pb))
+				throw new InvalidOperationException("GZip");
 #endif
 		}
 	}

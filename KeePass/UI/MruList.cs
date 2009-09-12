@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -42,6 +43,11 @@ namespace KeePass.UI
 		void OnMruExecute(string strDisplayName, object oTag);
 
 		/// <summary>
+		/// Secondary MRU item click handler.
+		/// </summary>
+		void OnMruExecute2(string strDisplayName, object oTag);
+
+		/// <summary>
 		/// Function to clear the MRU (for example all menu items must be
 		/// removed from the menu).
 		/// </summary>
@@ -52,6 +58,7 @@ namespace KeePass.UI
 	{
 		private IMruExecuteHandler m_handler = null;
 		private ToolStripMenuItem m_tsmiContainer = null;
+		private ToolStripMenuItem m_tsmiContainer2 = null;
 
 		private uint m_uMaxItemCount = 0;
 		private List<KeyValuePair<string, object>> m_vItems =
@@ -77,13 +84,16 @@ namespace KeePass.UI
 			m_vItems.Clear();
 		}
 
-		public void Initialize(IMruExecuteHandler handler, ToolStripMenuItem tsmiContainer)
+		public void Initialize(IMruExecuteHandler handler, ToolStripMenuItem tsmiContainer,
+			ToolStripMenuItem tsmiContainer2)
 		{
-			Debug.Assert(handler != null);
-			Debug.Assert(tsmiContainer != null);
+			Debug.Assert(handler != null); // No throw
+			Debug.Assert(tsmiContainer != null); // No throw
+			// Debug.Assert(tsmiContainer2 != null); // Is optional
 
 			m_handler = handler;
 			m_tsmiContainer = tsmiContainer;
+			m_tsmiContainer2 = tsmiContainer2;
 		}
 
 		public void AddItem(string strDisplayName, object oTag, bool bUpdateMenu)
@@ -107,8 +117,7 @@ namespace KeePass.UI
 			if(bExists) MoveItemToTop(strDisplayName);
 			else
 			{
-				m_vItems.Insert(0, new KeyValuePair<string, object>(
-					strDisplayName, oTag));
+				m_vItems.Insert(0, new KeyValuePair<string, object>(strDisplayName, oTag));
 
 				if(m_vItems.Count > m_uMaxItemCount)
 					m_vItems.RemoveAt(m_vItems.Count - 1);
@@ -122,31 +131,62 @@ namespace KeePass.UI
 			if(m_tsmiContainer == null) return;
 
 			m_tsmiContainer.DropDownItems.Clear();
+			if(m_tsmiContainer2 != null) m_tsmiContainer2.DropDownItems.Clear();
 
+			uint uAccessKey = 1, uNull = 0;
 			if(m_vItems.Count > 0)
 			{
 				foreach(KeyValuePair<string, object> kvp in m_vItems)
-				{
-					ToolStripMenuItem tsi = new ToolStripMenuItem(kvp.Key);
-					tsi.Click += ClickedHandler;
-					tsi.Tag = kvp.Value;
-
-					m_tsmiContainer.DropDownItems.Add(tsi);
-				}
+					AddMenuItem(kvp.Key, kvp.Value, false, null, true, ref uAccessKey);
 
 				m_tsmiContainer.DropDownItems.Add(new ToolStripSeparator());
+				if(m_tsmiContainer2 != null)
+					m_tsmiContainer2.DropDownItems.Add(new ToolStripSeparator());
 
-				ToolStripMenuItem tsmi = new ToolStripMenuItem(KPRes.ClearMru);
-				tsmi.Image = Properties.Resources.B16x16_EditDelete;
-				tsmi.Click += ClearHandler;
-				m_tsmiContainer.DropDownItems.Add(tsmi);
+				AddMenuItem(KPRes.ClearMru, null, true,
+					Properties.Resources.B16x16_EditDelete, true, ref uNull);
 			}
-			else
+			else AddMenuItem("(" + KPRes.Empty + ")", null, null, null, false, ref uNull);
+		}
+
+		private void AddMenuItem(string strText, object oTag, bool? bClearHandler,
+			Image img, bool bEnabled, ref uint uAccessKey)
+		{
+			if(m_tsmiContainer != null)
+				m_tsmiContainer.DropDownItems.Add(CreateMenuItem(strText, oTag,
+					bClearHandler, img, bEnabled, uAccessKey, false));
+			if(m_tsmiContainer2 != null)
+				m_tsmiContainer2.DropDownItems.Add(CreateMenuItem(strText, oTag,
+					bClearHandler, img, bEnabled, uAccessKey, true));
+
+			if(uAccessKey != 0) ++uAccessKey;
+		}
+
+		private ToolStripMenuItem CreateMenuItem(string strText, object oTag,
+			bool? bClearHandler, Image img, bool bEnabled, uint uAccessKey,
+			bool b2)
+		{
+			string strItem = strText;
+			if(uAccessKey >= 1)
 			{
-				ToolStripMenuItem tsi = new ToolStripMenuItem("(" + KPRes.Empty + ")");
-				tsi.Enabled = false;
-				m_tsmiContainer.DropDownItems.Add(tsi);
+				if(uAccessKey < 10)
+					strItem = @"&" + uAccessKey.ToString() + " " + strText;
+				else if(uAccessKey == 10)
+					strItem = @"1&0 " + strText;
+				else strItem = uAccessKey.ToString() + " " + strText;
 			}
+
+			ToolStripMenuItem tsi = new ToolStripMenuItem(strItem);
+			if(oTag != null) tsi.Tag = oTag;
+			if(img != null) tsi.Image = img;
+
+			if(bClearHandler.HasValue)
+				tsi.Click += (bClearHandler.Value ? new EventHandler(this.ClearHandler) :
+					(b2 ? new EventHandler(this.ClickedHandler2) :
+					new EventHandler(this.ClickedHandler)));
+
+			if(bEnabled == false) tsi.Enabled = false;
+			return tsi;
 		}
 
 		public KeyValuePair<string, object> GetItem(uint uIndex)
@@ -177,6 +217,16 @@ namespace KeePass.UI
 
 		private void ClickedHandler(object sender, EventArgs args)
 		{
+			ProcessClick(sender, false);
+		}
+
+		private void ClickedHandler2(object sender, EventArgs args)
+		{
+			ProcessClick(sender, true);
+		}
+
+		private void ProcessClick(object sender, bool b2)
+		{
 			ToolStripMenuItem tsi = (sender as ToolStripMenuItem);
 			if(tsi == null) { Debug.Assert(false); return; }
 
@@ -185,7 +235,11 @@ namespace KeePass.UI
 
 			MoveItemToTop(strName);
 
-			if(m_handler != null) m_handler.OnMruExecute(strName, oTag);
+			if(m_handler != null)
+			{
+				if(b2) m_handler.OnMruExecute2(strName, oTag);
+				else m_handler.OnMruExecute(strName, oTag);
+			}
 		}
 
 		private void MoveItemToTop(string strName)

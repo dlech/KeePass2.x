@@ -54,6 +54,7 @@
 			this.m_lblBannerStyle = new System.Windows.Forms.Label();
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
+			this.m_btnSchemeOverrides = new System.Windows.Forms.Button();
 			this.m_tbUrlOverride = new System.Windows.Forms.TextBox();
 			this.m_cbUrlOverride = new System.Windows.Forms.CheckBox();
 			this.m_cbSingleClickTrayAction = new System.Windows.Forms.CheckBox();
@@ -63,12 +64,13 @@
 			this.m_btnFileExtCreate = new System.Windows.Forms.Button();
 			this.m_lblFileExtHint = new System.Windows.Forms.Label();
 			this.m_grpHotKeys = new System.Windows.Forms.GroupBox();
+			this.m_lblSelAutoTypeHotKey = new System.Windows.Forms.Label();
+			this.m_tbSelAutoTypeHotKey = new System.Windows.Forms.TextBox();
 			this.m_tbShowWindowHotKey = new System.Windows.Forms.TextBox();
 			this.m_lblGlobalAutoTypeHotKey = new System.Windows.Forms.Label();
 			this.m_lblRestoreHotKey = new System.Windows.Forms.Label();
 			this.m_tbGlobalAutoType = new System.Windows.Forms.TextBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
-			this.m_btnTriggers = new System.Windows.Forms.Button();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			this.m_fontLists = new System.Windows.Forms.FontDialog();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
@@ -156,7 +158,7 @@
 			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 81);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
 			this.m_lvSecurityOptions.ShowItemToolTips = true;
-			this.m_lvSecurityOptions.Size = new System.Drawing.Size(542, 224);
+			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 222);
 			this.m_lvSecurityOptions.TabIndex = 6;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
@@ -212,9 +214,9 @@
 			this.m_cbLockAfterTime.AutoSize = true;
 			this.m_cbLockAfterTime.Location = new System.Drawing.Point(6, 12);
 			this.m_cbLockAfterTime.Name = "m_cbLockAfterTime";
-			this.m_cbLockAfterTime.Size = new System.Drawing.Size(287, 17);
+			this.m_cbLockAfterTime.Size = new System.Drawing.Size(284, 17);
 			this.m_cbLockAfterTime.TabIndex = 0;
-			this.m_cbLockAfterTime.Text = "Lock workspace after the following number of seconds:";
+			this.m_cbLockAfterTime.Text = "Lock workspace after the following idle time (seconds):";
 			this.m_cbLockAfterTime.UseVisualStyleBackColor = true;
 			this.m_cbLockAfterTime.CheckedChanged += new System.EventHandler(this.OnLockAfterTimeCheckedChanged);
 			// 
@@ -250,18 +252,18 @@
 			this.m_lvPolicy.CheckBoxes = true;
 			this.m_lvPolicy.FullRowSelect = true;
 			this.m_lvPolicy.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvPolicy.Location = new System.Drawing.Point(6, 42);
+			this.m_lvPolicy.Location = new System.Drawing.Point(6, 46);
 			this.m_lvPolicy.Name = "m_lvPolicy";
 			this.m_lvPolicy.ShowItemToolTips = true;
-			this.m_lvPolicy.Size = new System.Drawing.Size(538, 244);
-			this.m_lvPolicy.TabIndex = 6;
+			this.m_lvPolicy.Size = new System.Drawing.Size(540, 240);
+			this.m_lvPolicy.TabIndex = 3;
 			this.m_lvPolicy.UseCompatibleStateImageBehavior = false;
 			this.m_lvPolicy.View = System.Windows.Forms.View.Details;
 			// 
 			// m_linkPolicyInfo
 			// 
 			this.m_linkPolicyInfo.AutoSize = true;
-			this.m_linkPolicyInfo.Location = new System.Drawing.Point(134, 23);
+			this.m_linkPolicyInfo.Location = new System.Drawing.Point(134, 26);
 			this.m_linkPolicyInfo.Name = "m_linkPolicyInfo";
 			this.m_linkPolicyInfo.Size = new System.Drawing.Size(115, 13);
 			this.m_linkPolicyInfo.TabIndex = 2;
@@ -272,7 +274,7 @@
 			// m_lblPolicyMore
 			// 
 			this.m_lblPolicyMore.AutoSize = true;
-			this.m_lblPolicyMore.Location = new System.Drawing.Point(3, 23);
+			this.m_lblPolicyMore.Location = new System.Drawing.Point(3, 26);
 			this.m_lblPolicyMore.Name = "m_lblPolicyMore";
 			this.m_lblPolicyMore.Size = new System.Drawing.Size(125, 13);
 			this.m_lblPolicyMore.TabIndex = 1;
@@ -284,7 +286,7 @@
 			this.m_lblPolicyRestart.Location = new System.Drawing.Point(3, 289);
 			this.m_lblPolicyRestart.Name = "m_lblPolicyRestart";
 			this.m_lblPolicyRestart.Size = new System.Drawing.Size(238, 13);
-			this.m_lblPolicyRestart.TabIndex = 7;
+			this.m_lblPolicyRestart.TabIndex = 4;
 			this.m_lblPolicyRestart.Text = "*Changing the policy requires restarting KeePass.";
 			// 
 			// m_lblPolicyIntro
@@ -313,7 +315,7 @@
 			// 
 			// m_numMruCount
 			// 
-			this.m_numMruCount.Location = new System.Drawing.Point(163, 276);
+			this.m_numMruCount.Location = new System.Drawing.Point(157, 280);
 			this.m_numMruCount.Maximum = new decimal(new int[] {
             120,
             0,
@@ -327,7 +329,7 @@
 			// m_lblMruCount
 			// 
 			this.m_lblMruCount.AutoSize = true;
-			this.m_lblMruCount.Location = new System.Drawing.Point(9, 278);
+			this.m_lblMruCount.Location = new System.Drawing.Point(3, 282);
 			this.m_lblMruCount.Name = "m_lblMruCount";
 			this.m_lblMruCount.Size = new System.Drawing.Size(148, 13);
 			this.m_lblMruCount.TabIndex = 4;
@@ -335,7 +337,7 @@
 			// 
 			// m_btnSelFont
 			// 
-			this.m_btnSelFont.Location = new System.Drawing.Point(436, 241);
+			this.m_btnSelFont.Location = new System.Drawing.Point(442, 253);
 			this.m_btnSelFont.Name = "m_btnSelFont";
 			this.m_btnSelFont.Size = new System.Drawing.Size(105, 23);
 			this.m_btnSelFont.TabIndex = 3;
@@ -348,10 +350,10 @@
 			this.m_lvGuiOptions.CheckBoxes = true;
 			this.m_lvGuiOptions.FullRowSelect = true;
 			this.m_lvGuiOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.m_lvGuiOptions.Location = new System.Drawing.Point(12, 12);
+			this.m_lvGuiOptions.Location = new System.Drawing.Point(6, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
 			this.m_lvGuiOptions.ShowItemToolTips = true;
-			this.m_lvGuiOptions.Size = new System.Drawing.Size(529, 219);
+			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 230);
 			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvGuiOptions.View = System.Windows.Forms.View.Details;
@@ -359,7 +361,7 @@
 			// m_lblBannerStyle
 			// 
 			this.m_lblBannerStyle.AutoSize = true;
-			this.m_lblBannerStyle.Location = new System.Drawing.Point(9, 246);
+			this.m_lblBannerStyle.Location = new System.Drawing.Point(3, 256);
 			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
 			this.m_lblBannerStyle.Size = new System.Drawing.Size(100, 13);
 			this.m_lblBannerStyle.TabIndex = 1;
@@ -369,7 +371,7 @@
 			// 
 			this.m_cmbBannerStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbBannerStyle.FormattingEnabled = true;
-			this.m_cmbBannerStyle.Location = new System.Drawing.Point(163, 243);
+			this.m_cmbBannerStyle.Location = new System.Drawing.Point(157, 253);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
 			this.m_cmbBannerStyle.Size = new System.Drawing.Size(193, 21);
 			this.m_cmbBannerStyle.TabIndex = 2;
@@ -377,6 +379,7 @@
 			// 
 			// m_tabIntegration
 			// 
+			this.m_tabIntegration.Controls.Add(this.m_btnSchemeOverrides);
 			this.m_tabIntegration.Controls.Add(this.m_tbUrlOverride);
 			this.m_tabIntegration.Controls.Add(this.m_cbUrlOverride);
 			this.m_tabIntegration.Controls.Add(this.m_cbSingleClickTrayAction);
@@ -390,17 +393,27 @@
 			this.m_tabIntegration.Text = "Integration";
 			this.m_tabIntegration.UseVisualStyleBackColor = true;
 			// 
+			// m_btnSchemeOverrides
+			// 
+			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(402, 265);
+			this.m_btnSchemeOverrides.Name = "m_btnSchemeOverrides";
+			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(145, 23);
+			this.m_btnSchemeOverrides.TabIndex = 6;
+			this.m_btnSchemeOverrides.Text = "URL Scheme Overrides...";
+			this.m_btnSchemeOverrides.UseVisualStyleBackColor = true;
+			this.m_btnSchemeOverrides.Click += new System.EventHandler(this.OnBtnUrlSchemeOverrides);
+			// 
 			// m_tbUrlOverride
 			// 
-			this.m_tbUrlOverride.Location = new System.Drawing.Point(139, 241);
+			this.m_tbUrlOverride.Location = new System.Drawing.Point(124, 239);
 			this.m_tbUrlOverride.Name = "m_tbUrlOverride";
-			this.m_tbUrlOverride.Size = new System.Drawing.Size(406, 20);
+			this.m_tbUrlOverride.Size = new System.Drawing.Size(422, 20);
 			this.m_tbUrlOverride.TabIndex = 5;
 			// 
 			// m_cbUrlOverride
 			// 
 			this.m_cbUrlOverride.AutoSize = true;
-			this.m_cbUrlOverride.Location = new System.Drawing.Point(12, 243);
+			this.m_cbUrlOverride.Location = new System.Drawing.Point(6, 241);
 			this.m_cbUrlOverride.Name = "m_cbUrlOverride";
 			this.m_cbUrlOverride.Size = new System.Drawing.Size(112, 17);
 			this.m_cbUrlOverride.TabIndex = 4;
@@ -411,7 +424,7 @@
 			// m_cbSingleClickTrayAction
 			// 
 			this.m_cbSingleClickTrayAction.AutoSize = true;
-			this.m_cbSingleClickTrayAction.Location = new System.Drawing.Point(12, 219);
+			this.m_cbSingleClickTrayAction.Location = new System.Drawing.Point(6, 218);
 			this.m_cbSingleClickTrayAction.Name = "m_cbSingleClickTrayAction";
 			this.m_cbSingleClickTrayAction.Size = new System.Drawing.Size(314, 17);
 			this.m_cbSingleClickTrayAction.TabIndex = 3;
@@ -421,7 +434,7 @@
 			// m_cbAutoRun
 			// 
 			this.m_cbAutoRun.AutoSize = true;
-			this.m_cbAutoRun.Location = new System.Drawing.Point(12, 195);
+			this.m_cbAutoRun.Location = new System.Drawing.Point(6, 195);
 			this.m_cbAutoRun.Name = "m_cbAutoRun";
 			this.m_cbAutoRun.Size = new System.Drawing.Size(250, 17);
 			this.m_cbAutoRun.TabIndex = 2;
@@ -434,9 +447,9 @@
 			this.m_grpFileExt.Controls.Add(this.m_btnFileExtRemove);
 			this.m_grpFileExt.Controls.Add(this.m_btnFileExtCreate);
 			this.m_grpFileExt.Controls.Add(this.m_lblFileExtHint);
-			this.m_grpFileExt.Location = new System.Drawing.Point(3, 95);
+			this.m_grpFileExt.Location = new System.Drawing.Point(6, 97);
 			this.m_grpFileExt.Name = "m_grpFileExt";
-			this.m_grpFileExt.Size = new System.Drawing.Size(548, 82);
+			this.m_grpFileExt.Size = new System.Drawing.Size(540, 85);
 			this.m_grpFileExt.TabIndex = 1;
 			this.m_grpFileExt.TabStop = false;
 			this.m_grpFileExt.Text = "KDBX file association";
@@ -444,7 +457,7 @@
 			// m_btnFileExtRemove
 			// 
 			this.m_btnFileExtRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.m_btnFileExtRemove.Location = new System.Drawing.Point(151, 51);
+			this.m_btnFileExtRemove.Location = new System.Drawing.Point(146, 52);
 			this.m_btnFileExtRemove.Name = "m_btnFileExtRemove";
 			this.m_btnFileExtRemove.Size = new System.Drawing.Size(135, 23);
 			this.m_btnFileExtRemove.TabIndex = 2;
@@ -455,7 +468,7 @@
 			// m_btnFileExtCreate
 			// 
 			this.m_btnFileExtCreate.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.m_btnFileExtCreate.Location = new System.Drawing.Point(10, 51);
+			this.m_btnFileExtCreate.Location = new System.Drawing.Point(9, 52);
 			this.m_btnFileExtCreate.Name = "m_btnFileExtCreate";
 			this.m_btnFileExtCreate.Size = new System.Drawing.Size(131, 23);
 			this.m_btnFileExtCreate.TabIndex = 1;
@@ -465,61 +478,78 @@
 			// 
 			// m_lblFileExtHint
 			// 
-			this.m_lblFileExtHint.Location = new System.Drawing.Point(7, 20);
+			this.m_lblFileExtHint.Location = new System.Drawing.Point(6, 21);
 			this.m_lblFileExtHint.Name = "m_lblFileExtHint";
-			this.m_lblFileExtHint.Size = new System.Drawing.Size(535, 28);
+			this.m_lblFileExtHint.Size = new System.Drawing.Size(525, 28);
 			this.m_lblFileExtHint.TabIndex = 0;
 			this.m_lblFileExtHint.Text = "KDBX files can be associated with KeePass. When you double-click a KDBX file in W" +
 				"indows Explorer, they will automatically be opened by KeePass.";
 			// 
 			// m_grpHotKeys
 			// 
+			this.m_grpHotKeys.Controls.Add(this.m_lblSelAutoTypeHotKey);
+			this.m_grpHotKeys.Controls.Add(this.m_tbSelAutoTypeHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_tbShowWindowHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_lblGlobalAutoTypeHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_lblRestoreHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_tbGlobalAutoType);
-			this.m_grpHotKeys.Location = new System.Drawing.Point(3, 12);
+			this.m_grpHotKeys.Location = new System.Drawing.Point(6, 12);
 			this.m_grpHotKeys.Name = "m_grpHotKeys";
-			this.m_grpHotKeys.Size = new System.Drawing.Size(548, 77);
+			this.m_grpHotKeys.Size = new System.Drawing.Size(540, 77);
 			this.m_grpHotKeys.TabIndex = 0;
 			this.m_grpHotKeys.TabStop = false;
 			this.m_grpHotKeys.Text = "System-wide hot keys";
 			// 
+			// m_lblSelAutoTypeHotKey
+			// 
+			this.m_lblSelAutoTypeHotKey.AutoSize = true;
+			this.m_lblSelAutoTypeHotKey.Location = new System.Drawing.Point(278, 21);
+			this.m_lblSelAutoTypeHotKey.Name = "m_lblSelAutoTypeHotKey";
+			this.m_lblSelAutoTypeHotKey.Size = new System.Drawing.Size(124, 13);
+			this.m_lblSelAutoTypeHotKey.TabIndex = 2;
+			this.m_lblSelAutoTypeHotKey.Text = "Auto-type selected entry:";
+			// 
+			// m_tbSelAutoTypeHotKey
+			// 
+			this.m_tbSelAutoTypeHotKey.Location = new System.Drawing.Point(408, 18);
+			this.m_tbSelAutoTypeHotKey.Name = "m_tbSelAutoTypeHotKey";
+			this.m_tbSelAutoTypeHotKey.Size = new System.Drawing.Size(123, 20);
+			this.m_tbSelAutoTypeHotKey.TabIndex = 3;
+			// 
 			// m_tbShowWindowHotKey
 			// 
-			this.m_tbShowWindowHotKey.Location = new System.Drawing.Point(136, 45);
+			this.m_tbShowWindowHotKey.Location = new System.Drawing.Point(133, 44);
 			this.m_tbShowWindowHotKey.Name = "m_tbShowWindowHotKey";
-			this.m_tbShowWindowHotKey.Size = new System.Drawing.Size(150, 20);
-			this.m_tbShowWindowHotKey.TabIndex = 3;
+			this.m_tbShowWindowHotKey.Size = new System.Drawing.Size(123, 20);
+			this.m_tbShowWindowHotKey.TabIndex = 5;
 			// 
 			// m_lblGlobalAutoTypeHotKey
 			// 
 			this.m_lblGlobalAutoTypeHotKey.AutoSize = true;
-			this.m_lblGlobalAutoTypeHotKey.Location = new System.Drawing.Point(6, 22);
+			this.m_lblGlobalAutoTypeHotKey.Location = new System.Drawing.Point(6, 21);
 			this.m_lblGlobalAutoTypeHotKey.Name = "m_lblGlobalAutoTypeHotKey";
-			this.m_lblGlobalAutoTypeHotKey.Size = new System.Drawing.Size(92, 13);
+			this.m_lblGlobalAutoTypeHotKey.Size = new System.Drawing.Size(87, 13);
 			this.m_lblGlobalAutoTypeHotKey.TabIndex = 0;
-			this.m_lblGlobalAutoTypeHotKey.Text = "Global Auto-Type:";
+			this.m_lblGlobalAutoTypeHotKey.Text = "Global auto-type:";
 			// 
 			// m_lblRestoreHotKey
 			// 
 			this.m_lblRestoreHotKey.AutoSize = true;
-			this.m_lblRestoreHotKey.Location = new System.Drawing.Point(6, 48);
+			this.m_lblRestoreHotKey.Location = new System.Drawing.Point(6, 47);
 			this.m_lblRestoreHotKey.Name = "m_lblRestoreHotKey";
-			this.m_lblRestoreHotKey.Size = new System.Drawing.Size(124, 13);
-			this.m_lblRestoreHotKey.TabIndex = 2;
-			this.m_lblRestoreHotKey.Text = "Show KeePass Window:";
+			this.m_lblRestoreHotKey.Size = new System.Drawing.Size(121, 13);
+			this.m_lblRestoreHotKey.TabIndex = 4;
+			this.m_lblRestoreHotKey.Text = "Show KeePass window:";
 			// 
 			// m_tbGlobalAutoType
 			// 
-			this.m_tbGlobalAutoType.Location = new System.Drawing.Point(136, 19);
+			this.m_tbGlobalAutoType.Location = new System.Drawing.Point(133, 18);
 			this.m_tbGlobalAutoType.Name = "m_tbGlobalAutoType";
-			this.m_tbGlobalAutoType.Size = new System.Drawing.Size(150, 20);
+			this.m_tbGlobalAutoType.Size = new System.Drawing.Size(123, 20);
 			this.m_tbGlobalAutoType.TabIndex = 1;
 			// 
 			// m_tabAdvanced
 			// 
-			this.m_tabAdvanced.Controls.Add(this.m_btnTriggers);
 			this.m_tabAdvanced.Controls.Add(this.m_lvAdvanced);
 			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAdvanced.Name = "m_tabAdvanced";
@@ -529,27 +559,15 @@
 			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
 			// 
-			// m_btnTriggers
-			// 
-			this.m_btnTriggers.Image = global::KeePass.Properties.Resources.B16x16_Make_KDevelop;
-			this.m_btnTriggers.Location = new System.Drawing.Point(459, 282);
-			this.m_btnTriggers.Name = "m_btnTriggers";
-			this.m_btnTriggers.Size = new System.Drawing.Size(89, 23);
-			this.m_btnTriggers.TabIndex = 1;
-			this.m_btnTriggers.Text = "&Triggers...";
-			this.m_btnTriggers.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.m_btnTriggers.UseVisualStyleBackColor = true;
-			this.m_btnTriggers.Click += new System.EventHandler(this.OnBtnTriggers);
-			// 
 			// m_lvAdvanced
 			// 
 			this.m_lvAdvanced.CheckBoxes = true;
 			this.m_lvAdvanced.FullRowSelect = true;
 			this.m_lvAdvanced.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 6);
+			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 12);
 			this.m_lvAdvanced.Name = "m_lvAdvanced";
 			this.m_lvAdvanced.ShowItemToolTips = true;
-			this.m_lvAdvanced.Size = new System.Drawing.Size(542, 270);
+			this.m_lvAdvanced.Size = new System.Drawing.Size(540, 291);
 			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
@@ -579,6 +597,7 @@
 			this.Text = "Options";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabSecurity.ResumeLayout(false);
@@ -643,8 +662,10 @@
 		private System.Windows.Forms.TextBox m_tbUrlOverride;
 		private System.Windows.Forms.CheckBox m_cbUrlOverride;
 		private KeePass.UI.CustomListViewEx m_lvSecurityOptions;
-		private System.Windows.Forms.Button m_btnTriggers;
 		private System.Windows.Forms.NumericUpDown m_numMruCount;
 		private System.Windows.Forms.Label m_lblMruCount;
+		private System.Windows.Forms.Button m_btnSchemeOverrides;
+		private System.Windows.Forms.Label m_lblSelAutoTypeHotKey;
+		private System.Windows.Forms.TextBox m_tbSelAutoTypeHotKey;
 	}
 }

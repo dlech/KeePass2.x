@@ -68,6 +68,8 @@ namespace KeePass.Forms
 				KPRes.PluginsDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			m_cbCacheDeleteOld.Checked = Program.Config.Application.Start.PluginCacheDeleteOld;
+
 			m_lvPlugins.Columns.Add(KPRes.Plugin, 197);
 			m_lvPlugins.Columns.Add(KPRes.Version, 106);
 			m_lvPlugins.Columns.Add(KPRes.Author, 136);
@@ -76,6 +78,9 @@ namespace KeePass.Forms
 
 			m_ilIcons.ImageSize = new Size(16, 16);
 			m_ilIcons.ColorDepth = ColorDepth.Depth32Bit;
+
+			m_lblCacheSize.Text += " " + StrUtil.FormatDataSize(
+				PlgxCache.GetUsedCacheSize()) + ".";
 
 			m_lvPlugins.SmallImageList = m_ilIcons;
 			UpdatePluginsList();
@@ -101,15 +106,13 @@ namespace KeePass.Forms
 
 			foreach(PluginInfo plugin in m_mgr)
 			{
-				string strName = UrlUtil.GetFileName(plugin.FilePath);
-				ListViewItem lvi = new ListViewItem(strName);
+				ListViewItem lvi = new ListViewItem(plugin.Name);
 				ListViewItem lviNew = m_lvPlugins.Items.Add(lvi);
 
-				lviNew.Text = plugin.Name;
 				lviNew.SubItems.Add(plugin.FileVersion);
 				lviNew.SubItems.Add(plugin.Author);
 				lviNew.SubItems.Add(plugin.Description);
-				lviNew.SubItems.Add(plugin.FilePath);
+				lviNew.SubItems.Add(plugin.DisplayFilePath);
 
 				int nImageIndex = 0;
 				Debug.Assert(plugin.Interface != null);
@@ -158,6 +161,18 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnBtnClearCache(object sender, EventArgs e)
+		{
+			Program.Config.Application.Start.PluginCacheClearOnce = true;
+
+			MessageService.ShowInfo(KPRes.PluginCacheClearInfo);
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			Program.Config.Application.Start.PluginCacheDeleteOld = m_cbCacheDeleteOld.Checked;
 		}
 	}
 }

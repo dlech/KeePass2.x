@@ -53,7 +53,7 @@ namespace KeePass.Util
 				if(Program.KeyProviderPool.IsKeyProvider(strKeyFile))
 				{
 					KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
-						args.FileName, false);
+						IOConnectionInfo.FromPath(args.FileName), false);
 
 					bool bPerformHash;
 					byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,

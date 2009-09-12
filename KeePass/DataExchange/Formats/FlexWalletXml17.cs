@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -121,13 +122,13 @@ namespace KeePass.DataExchange.Formats
 					catch(Exception) { Debug.Assert(false); }
 					if(string.IsNullOrEmpty(strName)) continue;
 
-					string strValue = ImportUtil.SafeInnerText(xmlChild);
+					string strValue = XmlUtil.SafeInnerText(xmlChild);
 					pe.Strings.Set(strName, new ProtectedString(false, strValue));
 				}
 				else if(xmlChild.Name == ElemNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else { Debug.Assert(false); }
 			}
 

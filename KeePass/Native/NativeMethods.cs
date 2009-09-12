@@ -38,12 +38,16 @@ namespace KeePass.Native
 		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
 			IntPtr wParam, IntPtr lParam);
 
+		[DllImport("User32.dll", EntryPoint = "SendMessage")]
+		internal static extern IntPtr SendMessageHDItem(IntPtr hWnd, int nMsg,
+			IntPtr wParam, ref HDITEM hdItem);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PostMessage(IntPtr hWnd, int nMsg,
 			IntPtr wParam, IntPtr lParam);
 
-		[DllImport("User32.dll", SetLastError = true)]
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern int RegisterWindowMessage(string lpString);
 
 		[DllImport("User32.dll")]
@@ -58,7 +62,7 @@ namespace KeePass.Native
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int GetWindowTextLength(IntPtr hWnd);
 
-		[DllImport("User32.dll", SetLastError = true)]
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		private static extern int GetWindowText(IntPtr hWnd,
 			[Out] StringBuilder lpString, int nMaxCount);
 
@@ -111,7 +115,19 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
 
-		[DllImport("ShlWApi.dll")]
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool EmptyClipboard();
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool CloseClipboard();
+
+		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PathCompactPathEx(StringBuilder pszOut,
 			string szPath, uint cchMax, uint dwFlags);
@@ -221,5 +237,16 @@ namespace KeePass.Native
 		[DllImport("User32.dll")]
 		internal static extern uint GetWindowThreadProcessId(IntPtr hWnd,
 			out uint lpdwProcessId);
+
+		// [DllImport("UxTheme.dll")]
+		// internal static extern IntPtr OpenThemeData(IntPtr hWnd,
+		//	[MarshalAs(UnmanagedType.LPWStr)] string pszClassList);
+
+		// [DllImport("UxTheme.dll")]
+		// internal static extern uint CloseThemeData(IntPtr hTheme);
+
+		// [DllImport("UxTheme.dll")]
+		// internal extern static uint DrawThemeBackground(IntPtr hTheme, IntPtr hdc,
+		//	int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);	
 	}
 }

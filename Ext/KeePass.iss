@@ -7,10 +7,10 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.08"
-#define KeeVersionStrWithMinor "2.08"
-#define KeeVersionStrWithMinorPath "2.08"
-#define KeeVersionWin "2.0.8.0"
+#define KeeVersionStr "2.09"
+#define KeeVersionStrWithMinor "2.09"
+#define KeeVersionStrWithMinorPath "2.09"
+#define KeeVersionWin "2.0.9.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -124,6 +124,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filen
 
 [Run]
 ; Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
+Filename: {app}\ShInstUtil.exe; Parameters: net_check; WorkingDir: {app}; Flags: skipifdoesntexist skipifsilent
 Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; WorkingDir: {app}; StatusMsg: "Optimizing application performance..."; Flags: skipifdoesntexist; Components: NGen
 Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: postinstall nowait skipifsilent
 

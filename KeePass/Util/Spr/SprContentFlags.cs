@@ -37,6 +37,13 @@ namespace KeePass.Util.Spr
 			get { return m_bMakeCmdQuotes; }
 		}
 
+		private bool m_bNoUrlSchemeOnce = false;
+		public bool UrlRemoveSchemeOnce
+		{
+			get { return m_bNoUrlSchemeOnce; }
+			set { m_bNoUrlSchemeOnce = value; }
+		}
+
 		public SprContentFlags(bool bEncodeAsAutoTypeSequence,
 			bool bEncodeQuotesForCommandLine)
 		{

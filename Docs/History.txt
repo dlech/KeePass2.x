@@ -1,3 +1,165 @@
+2009-09-12: 2.09
+- Added option to use file transactions when writing databases
+  (enabled by default; writing to a temporary file and
+  replacing the actual file afterwards avoids data loss when
+  KeePass is prevented from saving the database completely)
+- Added PLGX plugin file format
+- Enhanced database synchronization by structure merging
+  (relocation/moving and reordering groups and entries)
+- Added synchronization 'Recent Files' list (in 'File' menu)
+- Synchronization / import: added merging of entry histories
+- Synchronization / import: backups of current entries are
+  created automatically, if their data would be lost in the
+  merging process
+- Database name, description, default user name, entry
+  templates group and the recycle bin settings are now
+  synchronized
+- Added {NEWPASSWORD} placeholder, which generates a new
+  password for the current entry, based on the "Automatically
+  generated passwords for new entries" generator profile; this
+  placeholder is replaced once in an auto-type process, i.e.
+  for a typical 'Old Password'-'New Password'-'Repeat New
+  Password' dialog you can use
+  {PASSWORD}{TAB}{NEWPASSWORD}{TAB}{NEWPASSWORD}{ENTER}
+- Added scheme-specific URL overrides (this way you can for
+  example tell KeePass to open all http- and https-URLs with
+  Firefox or Opera instead of the system default browser; PuTTY
+  is set as handler for ssh-URLs by default; see Options ->
+  Integration)
+- Added option to drop to the background when copying data to
+  the clipboard
+- Added option to use alternating item background colors in the
+  main entry list (option enabled by default)
+- The Ctrl+E shortcut key now jumps to the quick search box
+- Added auto-type sequence conversion routine to convert key
+  codes between 1.x and 2.x format
+- Added workaround for internal queue issue in SendKeys.Flush
+- Added more simple clipboard backup routine to workaround
+  clipboard issues when special formats are present
+- Added native clipboard clearing method to avoid empty data
+  objects being left in the clipboard
+- Added import support for custom icons
+- Added {GOOGLECHROME} placeholder, which is replaced by the
+  executable path of Google Chrome, if installed
+- Added {URL:RMVSCM} placeholder, which inserts the URL of the
+  current entry without the scheme specifier
+- Added ability to search for UUIDs and group names
+- Toolbar searches now also search in UUIDs and group names
+- Added {DELAY=X} placeholder to specify a default delay of X
+  milliseconds between standard keypresses in this sequence
+- Added option to disable verifying written database files
+- Attachment names in the entry view are now clickable (to open
+  the attachments in the internal editor or viewer)
+- Added Unicode support in entry details view
+- Added option to render menus and toolbars with gradient
+  backgrounds (enabled by default)
+- MRU lists now have numeric access keys
+- Added '--entry-url-open' command line option (specify the
+  UUID of the entry as '--uuid:' command line parameter)
+- Added 'Application initialized' trigger event
+- Added 'User interface state updated' trigger event
+- Added host reachability trigger condition
+- Added 'Active database has unsaved changes' trigger condition
+- Added 'Save active database' trigger action
+- Added database file synchronization trigger action
+- Added database file export trigger action
+- KeePass now restores the last view when opening databases
+- Added system-wide hot key to execute auto-type for the
+  currently selected entry (configurable in the options)
+- Added option to disable auto-type entry matching based on
+  title (by default an entry matches if its title is contained
+  in the target window title)
+- Added option to disable marking TAN entries as expired when
+  using them
+- Added option to focus the quick search box when restoring
+  from tray (disabled by default)
+- Added entry context menu commands to sort by UUID and
+  file attachments
+- Custom string fields are now appended to the notes when
+  exporting to KeePass 1.x KDB files
+- Enforced configuration files are now item-based (items not
+  defined in the enforced configuration file are now loaded
+  from the global/local configuration files instead of being
+  set to defaults)
+- File transactions are used when writing configuration files
+- KPScript: added 'ChangeMasterKey' command
+- ShInstUtil: added check for the presence of .NET
+- TrlUtil: added command under 'Import' that loads 2.x LNGX
+  files without checking base hashes
+- TrlUtil: added control docking support
+- Plugin developers: added static window addition and removal
+  events to the GlobalWindowManager class
+- Plugin developers: added ability to write custom dialog
+  banner generators (CustomGenerator of BannerFactory)
+- Plugin developers: the IOConnectionInfo of the database is
+  now accessible through the key provider query context
+- Plugin developers: added static auto-type filter events
+  (plugins can provide own placeholders, do sequence
+  customizations like inserting delays, and provide alternative
+  key sending methods)
+- Plugin developers: added UIStateUpdated main window event
+
+- Simple text boxes now convert rich text immediately
+- Improved entry change detection (avoid unnecessary backups
+  when closing the entry dialog with [OK] but without any
+  changes; detect by content instead of change events)
+- Header in entry selection dialog is now non-clickable
+- Entry list header now uses native sorting icons
+- Key providers are now remembered separately from key files
+- The main window is now the owner of the import method dialog
+- The global URL override is now also applied for main entry
+  URLs in the entry details view
+- Improved grouping behavior when disabling entry sorting
+- Improved field mapping in RoboForm import
+- Root groups now support custom icons
+- In the entry dialog, string values are now copied to the
+  clipboard instead of asterisks
+- Improved import/synchronization status dialog
+- Improved import/synchronization error message dialogs
+- Entry history items are now identified by the last
+  modification time instead of last access time
+- The trigger system can now be accessed directly through
+  'Tools' -> 'Triggers...', not the options anymore
+- Changed order of commands in the 'Tools' menu
+- Improved auto-type target window validity checking
+- Ctrl-V does not make the main window lose the focus anymore
+  if auto-type is disabled for the currently selected entry
+- When restoring from tray, the main window is now brought to
+  the foreground
+- Double-clicking an icon in the icon picker dialog now chooses
+  the icon and closes the dialog
+- When adding a custom icon to the database, the new icon is
+  selected automatically
+- When opening a database by running KeePass.exe with the
+  database file path as parameter (and single instance option
+  enabled), the existing KeePass instance will not prompt for
+  keys of previously locked databases anymore when restoring
+  (they are just left in locked state)
+- Unlocking routine doesn't display multiple dialogs anymore
+- Improved shortcut key handling in main window
+- Master key change success message now has a distinguishable
+  window title
+- Improved start position and focus of the URL dialog
+- Improved layout in options dialog
+- Improved UUID and UI updates when removing custom icons
+- Improved window deconstruction when closing with [X]
+- Improved user activity detection
+- Improved state updating of sorting context menu commands
+- Improved sorting by UUIDs
+- Improved naming of options to clarify their meaning
+- Converted ShInstUtil to a native application (in order to be
+  able to show a warning in case .NET is not installed)
+- Plugins: improved IOConnection to allow using registered
+  custom WebRequest descendants (WebRequest.RegisterPrefix)
+- TrlUtil: improved XML comments generation
+- Various code optimizations
+- Minor other improvements
+
+- Password profile derivation function doesn't incorrectly
+  always add standard character ranges anymore
+- In-memory protection for the title field of new entries can
+  be enabled now
+
 2009-07-05: 2.08
 - Key transformation library: KeePass can now use Windows'
   CNG/BCrypt API for key transformations (about 50% faster than

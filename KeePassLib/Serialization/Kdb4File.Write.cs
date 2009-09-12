@@ -51,17 +51,17 @@ namespace KeePassLib.Serialization
 	/// </summary>
 	public sealed partial class Kdb4File
 	{
-		public void Save(string strFile, PwGroup pgDataSource, Kdb4Format format,
-			IStatusLogger slLogger)
-		{
-			bool bMadeUnhidden = UrlUtil.UnhideFile(strFile);
+		// public void Save(string strFile, PwGroup pgDataSource, Kdb4Format format,
+		//	IStatusLogger slLogger)
+		// {
+		//	bool bMadeUnhidden = UrlUtil.UnhideFile(strFile);
+		//
+		//	IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+		//	this.Save(IOConnection.OpenWrite(ioc), pgDataSource, format, slLogger);
+		//
+		//	if(bMadeUnhidden) UrlUtil.HideFile(strFile, true); // Hide again
+		// }
 
-			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			this.Save(IOConnection.OpenWrite(ioc), pgDataSource, format, slLogger);
-
-			if(bMadeUnhidden) UrlUtil.HideFile(strFile, true); // Hide again
-		}
-	
 		/// <summary>
 		/// Save the contents of the current <c>PwDatabase</c> to a KDB file.
 		/// </summary>
@@ -130,14 +130,8 @@ namespace KeePassLib.Serialization
 				writerStream.Close();
 
 				GC.KeepAlive(bw);
-
-				CommonCleanUpWrite(sSaveTo, hashedStream);
 			}
-			catch(Exception)
-			{
-				CommonCleanUpWrite(sSaveTo, hashedStream);
-				throw;
-			}
+			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
 		}
 
 		private void CommonCleanUpWrite(Stream sSaveTo, HashingStreamEx hashedStream)
@@ -226,7 +220,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(CipherPool.GlobalPool != null);
 			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
 			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
-			return iEngine.EncryptStream(s, aesKey, this.m_pbEncryptionIV);
+			return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
 		}
 
 		private void WriteDocument(PwGroup pgDataSource)
@@ -316,8 +310,11 @@ namespace KeePassLib.Serialization
 
 			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName, false); // Generator name
 			WriteObject(ElemDbName, m_pwDatabase.Name, true);
+			WriteObject(ElemDbNameChanged, m_pwDatabase.NameChanged);
 			WriteObject(ElemDbDesc, m_pwDatabase.Description, true);
+			WriteObject(ElemDbDescChanged, m_pwDatabase.DescriptionChanged);
 			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName, true);
+			WriteObject(ElemDbDefaultUserChanged, m_pwDatabase.DefaultUserNameChanged);
 			WriteObject(ElemDbMntncHistoryDays, m_pwDatabase.MaintenanceHistoryDays);
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
@@ -326,7 +323,9 @@ namespace KeePassLib.Serialization
 
 			WriteObject(ElemRecycleBinEnabled, m_pwDatabase.RecycleBinEnabled);
 			WriteObject(ElemRecycleBinUuid, m_pwDatabase.RecycleBinUuid);
+			WriteObject(ElemRecycleBinChanged, m_pwDatabase.RecycleBinChanged);
 			WriteObject(ElemEntryTemplatesGroup, m_pwDatabase.EntryTemplatesGroup);
+			WriteObject(ElemEntryTemplatesGroupChanged, m_pwDatabase.EntryTemplatesGroupChanged);
 
 			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
 			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
@@ -439,6 +438,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemExpiryTime, times.ExpiryTime);
 			WriteObject(ElemExpires, times.Expires);
 			WriteObject(ElemUsageCount, times.UsageCount);
+			WriteObject(ElemLocationChanged, times.LocationChanged);
 
 			m_xmlWriter.WriteEndElement(); // Name
 		}

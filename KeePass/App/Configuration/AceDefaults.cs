@@ -25,11 +25,12 @@ using System.Xml.Serialization;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceKeyFilePath
+	public sealed class AceKeyAssoc
 	{
 		private string m_strDb = string.Empty;
 		public string DatabasePath
@@ -53,7 +54,18 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		public AceKeyFilePath() { }
+		private string m_strProv = string.Empty;
+		public string KeyProvider
+		{
+			get { return m_strProv; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strProv = value;
+			}
+		}
+
+		public AceKeyAssoc() { }
 	}
 
 	public sealed class AceDefaults
@@ -87,6 +99,13 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private bool m_bExpireTansOnUse = true;
+		public bool TanExpiresOnUse
+		{
+			get { return m_bExpireTansOnUse; }
+			set { m_bExpireTansOnUse = value; }
+		}
+
 		private SearchParameters m_searchParams = new SearchParameters();
 		public SearchParameters SearchParameters
 		{
@@ -98,69 +117,78 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bRememberKeyFilePaths = true;
-		public bool RememberKeyFilePaths
+		private bool m_bRememberKeySources = true;
+		public bool RememberKeySources
 		{
-			get { return m_bRememberKeyFilePaths; }
-			set { m_bRememberKeyFilePaths = value; }
+			get { return m_bRememberKeySources; }
+			set { m_bRememberKeySources = value; }
 		}
 
-		private List<AceKeyFilePath> m_vKeyFilePaths = new List<AceKeyFilePath>();
+		private List<AceKeyAssoc> m_vKeySources = new List<AceKeyAssoc>();
 		[XmlArrayItem("Association")]
-		public List<AceKeyFilePath> KeyFilePaths
+		public List<AceKeyAssoc> KeySources
 		{
-			get { return m_vKeyFilePaths; }
+			get { return m_vKeySources; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_vKeyFilePaths = value;
+				m_vKeySources = value;
 			}
 		}
 
-		public void SetKeyFilePath(string strDatabase, string strKeyFile)
+		public void SetKeySource(IOConnectionInfo ioDatabase, string strKeySource,
+			bool bIsKeyFile)
 		{
-			if(strDatabase == null) throw new ArgumentNullException("strDatabase");
+			if(ioDatabase == null) throw new ArgumentNullException("ioDatabase");
 
-			string strDb = strDatabase;
-			if((strDb.Length > 0) && !UrlUtil.IsAbsolutePath(strDb))
+			string strDb = ioDatabase.Path;
+			if((strDb.Length > 0) && ioDatabase.IsLocalFile() &&
+				!UrlUtil.IsAbsolutePath(strDb))
 				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
 
-			string strKey = strKeyFile;
-			if(!string.IsNullOrEmpty(strKey) && !UrlUtil.IsAbsolutePath(strKey))
+			string strKey = strKeySource;
+			if(bIsKeyFile && !string.IsNullOrEmpty(strKey) &&
+				!UrlUtil.IsAbsolutePath(strKey))
 				strKey = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strKey);
 
-			if(!m_bRememberKeyFilePaths) strKey = null;
+			if(!m_bRememberKeySources) strKey = null;
 
-			foreach(AceKeyFilePath kfp in m_vKeyFilePaths)
+			foreach(AceKeyAssoc kfp in m_vKeySources)
 			{
 				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
 				{
-					if(string.IsNullOrEmpty(strKey)) m_vKeyFilePaths.Remove(kfp);
-					else kfp.KeyFilePath = strKey;
+					if(string.IsNullOrEmpty(strKey)) m_vKeySources.Remove(kfp);
+					else
+					{
+						kfp.KeyFilePath = (bIsKeyFile ? strKey : string.Empty);
+						kfp.KeyProvider = (bIsKeyFile ? string.Empty : strKey);
+					}
 					return;
 				}
 			}
 
 			if(string.IsNullOrEmpty(strKey)) return;
 
-			AceKeyFilePath kfpNew = new AceKeyFilePath();
+			AceKeyAssoc kfpNew = new AceKeyAssoc();
 			kfpNew.DatabasePath = strDb;
-			kfpNew.KeyFilePath = strKey;
-			m_vKeyFilePaths.Add(kfpNew);
+			if(bIsKeyFile) kfpNew.KeyFilePath = strKey;
+			else kfpNew.KeyProvider = strKey;
+			m_vKeySources.Add(kfpNew);
 		}
 
-		public string GetKeyFilePath(string strDatabase)
+		public string GetKeySource(IOConnectionInfo ioDatabase, bool bGetKeyFile)
 		{
-			if(strDatabase == null) throw new ArgumentNullException("strDatabase");
+			if(ioDatabase == null) throw new ArgumentNullException("ioDatabase");
 
-			string strDb = strDatabase;
-			if((strDb.Length > 0) && !UrlUtil.IsAbsolutePath(strDb))
+			string strDb = ioDatabase.Path;
+			if((strDb.Length > 0) && ioDatabase.IsLocalFile() &&
+				!UrlUtil.IsAbsolutePath(strDb))
 				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
 
-			foreach(AceKeyFilePath kfp in m_vKeyFilePaths)
+			foreach(AceKeyAssoc kfp in m_vKeySources)
 			{
 				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
-					return kfp.KeyFilePath;
+					return (bGetKeyFile ? kfp.KeyFilePath : kfp.KeyProvider);
 			}
 
 			return null;

@@ -184,9 +184,14 @@ namespace KeePassLib.Utility
 
 		public static void ShowInfo(params object[] vLines)
 		{
+			ShowInfoEx(null, vLines);
+		}
+
+		public static void ShowInfoEx(string strTitle, params object[] vLines)
+		{
 			++m_uCurrentMessageCount;
 
-			string strTitle = PwDefs.ShortProductName;
+			strTitle = (strTitle ?? PwDefs.ShortProductName);
 			string strText = ObjectsToMessage(vLines);
 
 			if(MessageService.MessageShowing != null)
@@ -234,7 +239,7 @@ namespace KeePassLib.Utility
 				Clipboard.SetDataObject(ObjectsToMessage(vLines, true));
 #endif
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			if(MessageService.MessageShowing != null)
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(

@@ -72,6 +72,9 @@
     <Compile Include="..\KeePassLib\Collections\PwObjectList.cs">
       <Link>Collections\PwObjectList.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\PwObjectPool.cs">
+      <Link>Collections\PwObjectPool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Collections\StringDictionaryEx.cs">
       <Link>Collections\StringDictionaryEx.cs</Link>
     </Compile>
@@ -131,6 +134,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\IStatusLogger.cs">
       <Link>Interfaces\IStatusLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Interfaces\IStructureItem.cs">
+      <Link>Interfaces\IStructureItem.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\ITimeLogger.cs">
       <Link>Interfaces\ITimeLogger.cs</Link>
@@ -218,6 +224,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
       <Link>Serialization\BinaryReaderEx.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\FileTransactionEx.cs">
+      <Link>Serialization\FileTransactionEx.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
       <Link>Serialization\HashedBlockStream.cs</Link>

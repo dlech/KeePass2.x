@@ -72,6 +72,13 @@ namespace KeePass.App.Configuration
 			set { m_bannerStyle = value; }
 		}
 
+		private bool m_bUseCustomTsRenderer = true;
+		public bool UseCustomToolStripRenderer
+		{
+			get { return m_bUseCustomTsRenderer; }
+			set { m_bUseCustomTsRenderer = value; }
+		}
+
 		private bool m_bOptScreenReader = false;
 		public bool OptimizeForScreenReader
 		{

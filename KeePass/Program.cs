@@ -36,6 +36,7 @@ using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Ecas;
+using KeePass.Plugins;
 
 using KeePassLib;
 using KeePassLib.Cryptography;
@@ -230,6 +231,13 @@ namespace KeePass
 				catch(Exception) { Debug.Assert(false); }
 			}
 
+			if(m_appConfig.Application.Start.PluginCacheClearOnce)
+			{
+				PlgxCache.Clear();
+				m_appConfig.Application.Start.PluginCacheClearOnce = false;
+				AppConfigSerializer.Save(Program.Config);
+			}
+
 			m_cmdLineArgs = new CommandLineArgs(args);
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
@@ -289,6 +297,18 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreate] != null)
+			{
+				PlgxPlugin.CreateFromCommandLine();
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreateInfo] != null)
+			{
+				PlgxPlugin.CreateInfoFile(m_cmdLineArgs.FileName);
+				MainCleanUp();
+				return;
+			}
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
 			catch(Exception) { Debug.Assert(false); }
@@ -301,6 +321,19 @@ namespace KeePass
 			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoType] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.AutoType);
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.OpenEntryUrl] != null)
+			{
+				string strEntryUuid = m_cmdLineArgs[AppDefs.CommandLineOptions.Uuid];
+				if(!string.IsNullOrEmpty(strEntryUuid))
+				{
+					IpcParamEx ipUrl = new IpcParamEx(IpcUtilEx.CmdOpenEntryUrl,
+						strEntryUuid, null, null, null, null);
+					IpcUtilEx.SendGlobalMessage(ipUrl);
+				}
+
+				MainCleanUp();
 				return;
 			}
 
@@ -322,6 +355,9 @@ namespace KeePass
 				bRunMainWindow = false;
 			}
 
+			UserActivityNotifyFilter nfActivity = new UserActivityNotifyFilter();
+			Application.AddMessageFilter(nfActivity);
+
 			if(bRunMainWindow)
 			{
 #if DEBUG
@@ -333,12 +369,11 @@ namespace KeePass
 					m_formMain = new MainForm();
 					Application.Run(m_formMain);
 				}
-				catch(Exception exPrg)
-				{
-					MessageService.ShowFatal(exPrg);
-				}
+				catch(Exception exPrg) { MessageService.ShowFatal(exPrg); }
 #endif
 			}
+
+			Application.RemoveMessageFilter(nfActivity);
 
 			Debug.Assert(GlobalWindowManager.WindowCount == 0);
 			Debug.Assert(MessageService.CurrentMessageCount == 0);
@@ -442,7 +477,7 @@ namespace KeePass
 		// For plugins
 		public static void NotifyUserActivity()
 		{
-			if(Program.MainForm != null) Program.MainForm.NotifyUserActivity();
+			if(Program.m_formMain != null) Program.m_formMain.NotifyUserActivity();
 		}
 
 		public static IntPtr GetSafeMainWindowHandle()

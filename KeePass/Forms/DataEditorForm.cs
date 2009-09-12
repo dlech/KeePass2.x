@@ -138,6 +138,7 @@ namespace KeePass.Forms
 			if(bSimpleText)
 			{
 				m_rtbText.Text = strData;
+				m_rtbText.SimpleTextOnly = true;
 
 				if(Program.Config.UI.DataEditorFont.OverrideUIDefault)
 				{
@@ -462,7 +463,7 @@ namespace KeePass.Forms
 
 		private void OnEditPaste(object sender, EventArgs e)
 		{
-			m_rtbText.Paste();
+			m_rtbText.PasteAcceptable();
 			UpdateUIState(true, true);
 		}
 

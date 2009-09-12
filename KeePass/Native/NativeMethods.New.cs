@@ -46,8 +46,7 @@ namespace KeePass.Native
 
 		internal static bool EnsureForegroundWindow(IntPtr hWnd)
 		{
-			if(IsWindow(hWnd) == false)
-				return false;
+			if(IsWindow(hWnd) == false) return false;
 
 			if(SetForegroundWindow(hWnd) == false)
 			{
@@ -69,27 +68,34 @@ namespace KeePass.Native
 
 		internal static bool LoseFocus(IntPtr hCurrentWnd)
 		{
-			IntPtr hWnd = GetWindow(hCurrentWnd, GW_HWNDNEXT);
-
-			while(true)
+			try
 			{
-				if(hWnd != hCurrentWnd)
+				IntPtr hWnd = GetWindow(hCurrentWnd, GW_HWNDNEXT);
+
+				while(true)
 				{
-					int nStyle = GetWindowStyle(hWnd);
-					if(((nStyle & WS_VISIBLE) != 0) &&
-						(GetWindowTextLength(hWnd) > 0))
+					if(hWnd != hCurrentWnd)
 					{
-						break;
+						int nStyle = GetWindowStyle(hWnd);
+						if(((nStyle & WS_VISIBLE) != 0) &&
+							(GetWindowTextLength(hWnd) > 0))
+						{
+							break;
+						}
 					}
+
+					hWnd = GetWindow(hWnd, GW_HWNDNEXT);
+					if(hWnd == IntPtr.Zero) break;
 				}
 
-				hWnd = GetWindow(hWnd, GW_HWNDNEXT);
-				if(hWnd == IntPtr.Zero) break;
+				if(hWnd == IntPtr.Zero) return false;
+
+				Debug.Assert(GetWindowText(hWnd) != "Start");
+				return EnsureForegroundWindow(hWnd);
 			}
+			catch(Exception) { Debug.Assert(false); }
 
-			if(hWnd == IntPtr.Zero) return false;
-
-			return EnsureForegroundWindow(hWnd);
+			return false;
 		}
 
 		public static bool IsInvalidHandleValue(IntPtr p)

@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -118,7 +119,7 @@ namespace KeePass.DataExchange.Formats
 					}
 					catch(Exception) { }
 
-					string strLast = ImportUtil.SafeInnerText(xmlChild);
+					string strLast = XmlUtil.SafeInnerText(xmlChild);
 					string strGroup = ((!string.IsNullOrEmpty(strPreTree)) ?
 						strPreTree + "\\" + strLast : strLast);
 
@@ -128,30 +129,30 @@ namespace KeePass.DataExchange.Formats
 				else if(xmlChild.Name == ElemTitle)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemUserName)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUserName,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemUrl)
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUrl,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemPassword)
 					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectPassword,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemUuid)
 					pe.Uuid = new PwUuid(MemUtil.HexStringToByteArray(
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemImage)
 				{
 					uint uImage;
-					if(uint.TryParse(ImportUtil.SafeInnerText(xmlChild), out uImage))
+					if(uint.TryParse(XmlUtil.SafeInnerText(xmlChild), out uImage))
 					{
 						if(uImage < (uint)PwIcon.Count) pe.IconId = (PwIcon)uImage;
 						else { Debug.Assert(false); }
@@ -159,11 +160,11 @@ namespace KeePass.DataExchange.Formats
 					else { Debug.Assert(false); }
 				}
 				else if(xmlChild.Name == ElemCreationTime)
-					pe.CreationTime = ParseTime(ImportUtil.SafeInnerText(xmlChild));
+					pe.CreationTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
 				else if(xmlChild.Name == ElemLastModTime)
-					pe.LastModificationTime = ParseTime(ImportUtil.SafeInnerText(xmlChild));
+					pe.LastModificationTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
 				else if(xmlChild.Name == ElemLastAccessTime)
-					pe.LastAccessTime = ParseTime(ImportUtil.SafeInnerText(xmlChild));
+					pe.LastAccessTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
 				else if(xmlChild.Name == ElemExpiryTime)
 				{
 					try
@@ -172,16 +173,16 @@ namespace KeePass.DataExchange.Formats
 						if(StrUtil.StringToBool(xmlExpires.Value))
 						{
 							pe.Expires = true;
-							pe.ExpiryTime = ParseTime(ImportUtil.SafeInnerText(xmlChild));
+							pe.ExpiryTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
 						}
-						else { Debug.Assert(ParseTime(ImportUtil.SafeInnerText(xmlChild)).Year == 2999); }
+						else { Debug.Assert(ParseTime(XmlUtil.SafeInnerText(xmlChild)).Year == 2999); }
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}
 				else if(xmlChild.Name == ElemAttachDesc)
-					strAttachDesc = ImportUtil.SafeInnerText(xmlChild);
+					strAttachDesc = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemAttachment)
-					strAttachment = ImportUtil.SafeInnerText(xmlChild);
+					strAttachment = XmlUtil.SafeInnerText(xmlChild);
 				else { Debug.Assert(false); }
 			}
 

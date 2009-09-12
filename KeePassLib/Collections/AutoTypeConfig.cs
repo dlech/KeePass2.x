@@ -146,6 +146,24 @@ namespace KeePassLib.Collections
 			return newDic;
 		}
 
+		public bool EqualsConfig(AutoTypeConfig cfg)
+		{
+			if(cfg == null) { Debug.Assert(false); return false; }
+
+			if(m_bEnabled != cfg.m_bEnabled) return false;
+			if(m_atooObfuscation != cfg.m_atooObfuscation) return false;
+			if(m_strDefaultSequence != cfg.m_strDefaultSequence) return false;
+
+			if(m_vWindowSeqPairs.Count != cfg.m_vWindowSeqPairs.Count) return false;
+			foreach(KeyValuePair<string, string> kvp in m_vWindowSeqPairs)
+			{
+				string strValue = cfg.Get(kvp.Key);
+				if((strValue == null) || (strValue != kvp.Value)) return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Set a window/keystroke sequence pair.
 		/// </summary>
@@ -177,8 +195,7 @@ namespace KeePassLib.Collections
 			Debug.Assert(strWindow != null); if(strWindow == null) throw new ArgumentNullException("strWindow");
 
 			string str;
-			if(m_vWindowSeqPairs.TryGetValue(strWindow, out str))
-				return str;
+			if(m_vWindowSeqPairs.TryGetValue(strWindow, out str)) return str;
 
 			return null;
 		}

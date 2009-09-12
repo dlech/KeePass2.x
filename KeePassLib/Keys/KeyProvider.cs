@@ -21,14 +21,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using KeePassLib.Serialization;
+
 namespace KeePassLib.Keys
 {
 	public sealed class KeyProviderQueryContext
 	{
-		private string m_strDbPath;
+		private IOConnectionInfo m_ioInfo;
+		public IOConnectionInfo DatabaseIOInfo
+		{
+			get { return m_ioInfo; }
+		}
+
 		public string DatabasePath
 		{
-			get { return m_strDbPath; }
+			get { return m_ioInfo.Path; }
 		}
 
 		private bool m_bCreatingNewKey;
@@ -37,11 +44,11 @@ namespace KeePassLib.Keys
 			get { return m_bCreatingNewKey; }
 		}
 
-		public KeyProviderQueryContext(string strDbPath, bool bCreatingNewKey)
+		public KeyProviderQueryContext(IOConnectionInfo ioInfo, bool bCreatingNewKey)
 		{
-			if(strDbPath == null) throw new ArgumentNullException("strDbPath");
+			if(ioInfo == null) throw new ArgumentNullException("ioInfo");
 
-			m_strDbPath = strDbPath;
+			m_ioInfo = ioInfo.CloneDeep();
 			m_bCreatingNewKey = bCreatingNewKey;
 		}
 	}
@@ -91,4 +98,19 @@ namespace KeePassLib.Keys
 
 		public abstract byte[] GetKey(KeyProviderQueryContext ctx);
 	}
+
+#if DEBUG
+	public sealed class SampleKeyProvider : KeyProvider
+	{
+		public override string Name
+		{
+			get { return "Built-In Sample Key Provider"; }
+		}
+
+		public override byte[] GetKey(KeyProviderQueryContext ctx)
+		{
+			return new byte[]{ 2, 3, 5, 7, 11, 13 };
+		}
+	}
+#endif
 }

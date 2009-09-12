@@ -36,6 +36,7 @@ using KeePassLib.Cryptography;
 using KeePassLib.Keys;
 using KeePassLib.Native;
 using KeePassLib.Security;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -44,7 +45,7 @@ namespace KeePass.Forms
 	{
 		private CompositeKey m_pKey = null;
 		private bool m_bCreatingNew = false;
-		private string m_strDisplayName = string.Empty;
+		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
 
 		private SecureEdit m_secPassword = new SecureEdit();
 		private SecureEdit m_secRepeat = new SecureEdit();
@@ -64,11 +65,11 @@ namespace KeePass.Forms
 			Program.Translation.ApplyTo(this);
 		}
 
-		public void InitEx(bool bCreatingNew, string strFilePath)
+		public void InitEx(IOConnectionInfo ioInfo, bool bCreatingNew)
 		{
-			m_bCreatingNew = bCreatingNew;
+			if(ioInfo != null) m_ioInfo = ioInfo;
 
-			if(strFilePath != null) m_strDisplayName = strFilePath;
+			m_bCreatingNew = bCreatingNew;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -78,7 +79,7 @@ namespace KeePass.Forms
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
-				m_strDisplayName);
+				m_ioInfo.GetDisplayName());
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.CreateMasterKey;
 
@@ -199,8 +200,7 @@ namespace KeePass.Forms
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsKeyProv == true))
 			{
-				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
-					m_strDisplayName, true);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(m_ioInfo, true);
 
 				bool bPerformHash;
 				byte[] pbCustomKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,
@@ -283,13 +283,11 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			if(!CreateCompositeKey()) this.DialogResult = DialogResult.None;
-			else CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
 			m_pKey = null;
-			CleanUpEx();
 		}
 
 		private void ProcessTextChangedPassword(object sender, EventArgs e)
@@ -307,7 +305,7 @@ namespace KeePass.Forms
 		private void OnClickKeyFileCreate(object sender, EventArgs e)
 		{
 			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreate,
-				UrlUtil.StripExtension(UrlUtil.GetFileName(m_strDisplayName)) + "." +
+				UrlUtil.StripExtension(UrlUtil.GetFileName(m_ioInfo.Path)) + "." +
 				AppDefs.FileExtension.KeyFile, UIUtil.CreateFileTypeFilter("key",
 				KPRes.KeyFiles, true), 1, "key", true);
 
@@ -370,6 +368,11 @@ namespace KeePass.Forms
 		private void OnKeyFileSelectedIndexChanged(object sender, EventArgs e)
 		{
 			EnableUserControls();
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			CleanUpEx();
 		}
 	}
 }

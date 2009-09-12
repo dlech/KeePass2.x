@@ -33,6 +33,10 @@ namespace KeePass.UI
 		private Control m_cFocused = null;
 		private Control m_cLastKnown = null;
 
+		public CustomSplitContainerEx() : base()
+		{
+		}
+
 		public void InitEx(ControlCollection cc, Control cDefault)
 		{
 			m_ccControls = cc;

@@ -127,6 +127,8 @@
 			this.m_menuFileSync = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSyncFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSyncUrl = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileSyncSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuFileSyncRecent = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep4 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileLock = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
@@ -179,8 +181,10 @@
 			this.m_menuToolsTanWizard = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsDbMaintenance = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuToolsOptions = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsTriggers = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuToolsOptions = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpContents = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSelectSource = new System.Windows.Forms.ToolStripMenuItem();
@@ -231,6 +235,8 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
+			this.m_ctxEntrySortListByUuid = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntrySortListByAttachments = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -592,7 +598,7 @@
 			// 
 			this.m_ctxEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_ctxEntryEdit.Name = "m_ctxEntryEdit";
-			this.m_ctxEntryEdit.ShortcutKeyDisplayString = "Ctrl+E";
+			this.m_ctxEntryEdit.ShortcutKeyDisplayString = "Return";
 			this.m_ctxEntryEdit.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryEdit.Text = "&Edit/View Entry...";
 			this.m_ctxEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
@@ -748,7 +754,7 @@
 			// 
 			this.m_ctxEntryClipCopy.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxEntryClipCopy.Name = "m_ctxEntryClipCopy";
-			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(136, 22);
+			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryClipCopy.Text = "&Copy Entries";
 			this.m_ctxEntryClipCopy.Click += new System.EventHandler(this.OnEntryClipCopy);
 			// 
@@ -756,7 +762,7 @@
 			// 
 			this.m_ctxEntryClipPaste.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_ctxEntryClipPaste.Name = "m_ctxEntryClipPaste";
-			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(136, 22);
+			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryClipPaste.Text = "&Paste Entries";
 			this.m_ctxEntryClipPaste.Click += new System.EventHandler(this.OnEntryClipPaste);
 			// 
@@ -778,7 +784,9 @@
             this.m_ctxEntrySortListByCreationTime,
             this.m_ctxEntrySortListByLastModTime,
             this.m_ctxEntrySortListByLastAccessTime,
-            this.m_ctxEntrySortListByExpirationTime});
+            this.m_ctxEntrySortListByExpirationTime,
+            this.m_ctxEntrySortListByUuid,
+            this.m_ctxEntrySortListByAttachments});
 			this.m_ctxEntryRearrangePopup.Name = "m_ctxEntryRearrangePopup";
 			this.m_ctxEntryRearrangePopup.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryRearrangePopup.Text = "&Rearrange";
@@ -788,7 +796,7 @@
 			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
 			this.m_ctxEntryMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
-			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(236, 22);
+			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveToTop.Text = "Move Entry to &Top";
 			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
 			// 
@@ -797,7 +805,7 @@
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
 			this.m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = "Alt+Up";
-			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(236, 22);
+			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
 			// 
@@ -806,7 +814,7 @@
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
 			this.m_ctxEntryMoveOneDown.ShortcutKeyDisplayString = "Alt+Down";
-			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(236, 22);
+			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
@@ -815,98 +823,98 @@
 			this.m_ctxEntryMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxEntryMoveToBottom.Name = "m_ctxEntryMoveToBottom";
 			this.m_ctxEntryMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
-			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(236, 22);
+			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveToBottom.Text = "Move Entry to &Bottom";
 			this.m_ctxEntryMoveToBottom.Click += new System.EventHandler(this.OnEntryMoveToBottom);
 			// 
 			// m_ctxEntryRearrangeSep0
 			// 
 			this.m_ctxEntryRearrangeSep0.Name = "m_ctxEntryRearrangeSep0";
-			this.m_ctxEntryRearrangeSep0.Size = new System.Drawing.Size(233, 6);
+			this.m_ctxEntryRearrangeSep0.Size = new System.Drawing.Size(232, 6);
 			// 
 			// m_ctxEntrySortUnsorted
 			// 
 			this.m_ctxEntrySortUnsorted.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortUnsorted.Name = "m_ctxEntrySortUnsorted";
-			this.m_ctxEntrySortUnsorted.Size = new System.Drawing.Size(236, 22);
+			this.m_ctxEntrySortUnsorted.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntrySortUnsorted.Text = "Original Order (Unsorted)";
 			this.m_ctxEntrySortUnsorted.Click += new System.EventHandler(this.OnEntrySortUnsorted);
 			// 
 			// m_ctxEntryRearrangeSep1
 			// 
 			this.m_ctxEntryRearrangeSep1.Name = "m_ctxEntryRearrangeSep1";
-			this.m_ctxEntryRearrangeSep1.Size = new System.Drawing.Size(233, 6);
+			this.m_ctxEntryRearrangeSep1.Size = new System.Drawing.Size(232, 6);
 			// 
 			// m_ctxEntrySortListByTitle
 			// 
 			this.m_ctxEntrySortListByTitle.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByTitle.Name = "m_ctxEntrySortListByTitle";
-			this.m_ctxEntrySortListByTitle.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByTitle.Text = "Sort List By &Title";
+			this.m_ctxEntrySortListByTitle.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByTitle.Text = "Sort List by &Title";
 			this.m_ctxEntrySortListByTitle.Click += new System.EventHandler(this.OnEntrySortTitle);
 			// 
 			// m_ctxEntrySortListByUserName
 			// 
 			this.m_ctxEntrySortListByUserName.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByUserName.Name = "m_ctxEntrySortListByUserName";
-			this.m_ctxEntrySortListByUserName.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByUserName.Text = "Sort List By User &Name";
+			this.m_ctxEntrySortListByUserName.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByUserName.Text = "Sort List by User &Name";
 			this.m_ctxEntrySortListByUserName.Click += new System.EventHandler(this.OnEntrySortUserName);
 			// 
 			// m_ctxEntrySortListByPassword
 			// 
 			this.m_ctxEntrySortListByPassword.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByPassword.Name = "m_ctxEntrySortListByPassword";
-			this.m_ctxEntrySortListByPassword.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByPassword.Text = "Sort List By &Password";
+			this.m_ctxEntrySortListByPassword.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByPassword.Text = "Sort List by &Password";
 			this.m_ctxEntrySortListByPassword.Click += new System.EventHandler(this.OnEntrySortPassword);
 			// 
 			// m_ctxEntrySortListByURL
 			// 
 			this.m_ctxEntrySortListByURL.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByURL.Name = "m_ctxEntrySortListByURL";
-			this.m_ctxEntrySortListByURL.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByURL.Text = "Sort List By &URL";
+			this.m_ctxEntrySortListByURL.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByURL.Text = "Sort List by &URL";
 			this.m_ctxEntrySortListByURL.Click += new System.EventHandler(this.OnEntrySortURL);
 			// 
 			// m_ctxEntrySortListByNotes
 			// 
 			this.m_ctxEntrySortListByNotes.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_ctxEntrySortListByNotes.Name = "m_ctxEntrySortListByNotes";
-			this.m_ctxEntrySortListByNotes.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByNotes.Text = "Sort List By Note&s";
+			this.m_ctxEntrySortListByNotes.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByNotes.Text = "Sort List by Note&s";
 			this.m_ctxEntrySortListByNotes.Click += new System.EventHandler(this.OnEntrySortNotes);
 			// 
 			// m_ctxEntrySortListByCreationTime
 			// 
 			this.m_ctxEntrySortListByCreationTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByCreationTime.Name = "m_ctxEntrySortListByCreationTime";
-			this.m_ctxEntrySortListByCreationTime.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByCreationTime.Text = "Sort List By &Creation Time";
+			this.m_ctxEntrySortListByCreationTime.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByCreationTime.Text = "Sort List by &Creation Time";
 			this.m_ctxEntrySortListByCreationTime.Click += new System.EventHandler(this.OnEntrySortCreationTime);
 			// 
 			// m_ctxEntrySortListByLastModTime
 			// 
 			this.m_ctxEntrySortListByLastModTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByLastModTime.Name = "m_ctxEntrySortListByLastModTime";
-			this.m_ctxEntrySortListByLastModTime.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByLastModTime.Text = "Sort List By Last &Modification Time";
+			this.m_ctxEntrySortListByLastModTime.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByLastModTime.Text = "Sort List by Last &Modification Time";
 			this.m_ctxEntrySortListByLastModTime.Click += new System.EventHandler(this.OnEntrySortLastMod);
 			// 
 			// m_ctxEntrySortListByLastAccessTime
 			// 
 			this.m_ctxEntrySortListByLastAccessTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByLastAccessTime.Name = "m_ctxEntrySortListByLastAccessTime";
-			this.m_ctxEntrySortListByLastAccessTime.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByLastAccessTime.Text = "Sort List By Last &Access Time";
+			this.m_ctxEntrySortListByLastAccessTime.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByLastAccessTime.Text = "Sort List by Last &Access Time";
 			this.m_ctxEntrySortListByLastAccessTime.Click += new System.EventHandler(this.OnEntrySortLastAccess);
 			// 
 			// m_ctxEntrySortListByExpirationTime
 			// 
 			this.m_ctxEntrySortListByExpirationTime.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_ctxEntrySortListByExpirationTime.Name = "m_ctxEntrySortListByExpirationTime";
-			this.m_ctxEntrySortListByExpirationTime.Size = new System.Drawing.Size(236, 22);
-			this.m_ctxEntrySortListByExpirationTime.Text = "Sort List By &Expiration Time";
+			this.m_ctxEntrySortListByExpirationTime.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByExpirationTime.Text = "Sort List by &Expiration Time";
 			this.m_ctxEntrySortListByExpirationTime.Click += new System.EventHandler(this.OnEntrySortExpiration);
 			// 
 			// m_menuMain
@@ -1107,17 +1115,19 @@
 			// 
 			this.m_menuFileSync.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileSyncFile,
-            this.m_menuFileSyncUrl});
+            this.m_menuFileSyncUrl,
+            this.m_menuFileSyncSep0,
+            this.m_menuFileSyncRecent});
 			this.m_menuFileSync.Name = "m_menuFileSync";
 			this.m_menuFileSync.Size = new System.Drawing.Size(176, 22);
-			this.m_menuFileSync.Text = "Synchronize";
+			this.m_menuFileSync.Text = "S&ynchronize";
 			// 
 			// m_menuFileSyncFile
 			// 
 			this.m_menuFileSyncFile.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncFile.Name = "m_menuFileSyncFile";
 			this.m_menuFileSyncFile.Size = new System.Drawing.Size(188, 22);
-			this.m_menuFileSyncFile.Text = "Synchronize with File...";
+			this.m_menuFileSyncFile.Text = "Synchronize with &File...";
 			this.m_menuFileSyncFile.Click += new System.EventHandler(this.OnFileSynchronize);
 			// 
 			// m_menuFileSyncUrl
@@ -1125,8 +1135,19 @@
 			this.m_menuFileSyncUrl.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncUrl.Name = "m_menuFileSyncUrl";
 			this.m_menuFileSyncUrl.Size = new System.Drawing.Size(188, 22);
-			this.m_menuFileSyncUrl.Text = "Synchronize with URL...";
+			this.m_menuFileSyncUrl.Text = "Synchronize with &URL...";
 			this.m_menuFileSyncUrl.Click += new System.EventHandler(this.OnFileSynchronizeUrl);
+			// 
+			// m_menuFileSyncSep0
+			// 
+			this.m_menuFileSyncSep0.Name = "m_menuFileSyncSep0";
+			this.m_menuFileSyncSep0.Size = new System.Drawing.Size(185, 6);
+			// 
+			// m_menuFileSyncRecent
+			// 
+			this.m_menuFileSyncRecent.Name = "m_menuFileSyncRecent";
+			this.m_menuFileSyncRecent.Size = new System.Drawing.Size(188, 22);
+			this.m_menuFileSyncRecent.Text = "&Recent Files";
 			// 
 			// m_menuFileSep4
 			// 
@@ -1504,8 +1525,10 @@
             this.m_menuToolsTanWizard,
             this.m_menuToolsDbMaintenance,
             this.m_menuToolsSep1,
-            this.m_menuToolsOptions,
-            this.m_menuToolsPlugins});
+            this.m_menuToolsTriggers,
+            this.m_menuToolsPlugins,
+            this.m_menuToolsSep2,
+            this.m_menuToolsOptions});
 			this.m_menuTools.Name = "m_menuTools";
 			this.m_menuTools.Size = new System.Drawing.Size(45, 20);
 			this.m_menuTools.Text = "&Tools";
@@ -1552,13 +1575,13 @@
 			this.m_menuToolsSep1.Name = "m_menuToolsSep1";
 			this.m_menuToolsSep1.Size = new System.Drawing.Size(192, 6);
 			// 
-			// m_menuToolsOptions
+			// m_menuToolsTriggers
 			// 
-			this.m_menuToolsOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
-			this.m_menuToolsOptions.Name = "m_menuToolsOptions";
-			this.m_menuToolsOptions.Size = new System.Drawing.Size(195, 22);
-			this.m_menuToolsOptions.Text = "&Options...";
-			this.m_menuToolsOptions.Click += new System.EventHandler(this.OnToolsOptions);
+			this.m_menuToolsTriggers.Image = global::KeePass.Properties.Resources.B16x16_Make_KDevelop;
+			this.m_menuToolsTriggers.Name = "m_menuToolsTriggers";
+			this.m_menuToolsTriggers.Size = new System.Drawing.Size(195, 22);
+			this.m_menuToolsTriggers.Text = "T&riggers...";
+			this.m_menuToolsTriggers.Click += new System.EventHandler(this.OnToolsTriggers);
 			// 
 			// m_menuToolsPlugins
 			// 
@@ -1567,6 +1590,19 @@
 			this.m_menuToolsPlugins.Size = new System.Drawing.Size(195, 22);
 			this.m_menuToolsPlugins.Text = "&Plugins...";
 			this.m_menuToolsPlugins.Click += new System.EventHandler(this.OnToolsPlugins);
+			// 
+			// m_menuToolsSep2
+			// 
+			this.m_menuToolsSep2.Name = "m_menuToolsSep2";
+			this.m_menuToolsSep2.Size = new System.Drawing.Size(192, 6);
+			// 
+			// m_menuToolsOptions
+			// 
+			this.m_menuToolsOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
+			this.m_menuToolsOptions.Name = "m_menuToolsOptions";
+			this.m_menuToolsOptions.Size = new System.Drawing.Size(195, 22);
+			this.m_menuToolsOptions.Text = "&Options...";
+			this.m_menuToolsOptions.Click += new System.EventHandler(this.OnToolsOptions);
 			// 
 			// m_menuHelp
 			// 
@@ -2043,6 +2079,22 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_ctxEntrySortListByUuid
+			// 
+			this.m_ctxEntrySortListByUuid.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
+			this.m_ctxEntrySortListByUuid.Name = "m_ctxEntrySortListByUuid";
+			this.m_ctxEntrySortListByUuid.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByUuid.Text = "Sort List by UU&ID";
+			this.m_ctxEntrySortListByUuid.Click += new System.EventHandler(this.OnEntrySortUuid);
+			// 
+			// m_ctxEntrySortListByAttachments
+			// 
+			this.m_ctxEntrySortListByAttachments.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
+			this.m_ctxEntrySortListByAttachments.Name = "m_ctxEntrySortListByAttachments";
+			this.m_ctxEntrySortListByAttachments.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByAttachments.Text = "Sort List by Attac&hments";
+			this.m_ctxEntrySortListByAttachments.Click += new System.EventHandler(this.OnEntrySortAttachments);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2056,9 +2108,10 @@
 			this.MainMenuStrip = this.m_menuMain;
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "<DYN>";
+			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.Shown += new System.EventHandler(this.OnFormShown);
+			this.Activated += new System.EventHandler(this.OnFormActivated);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.Resize += new System.EventHandler(this.OnFormResize);
 			this.m_ctxGroupList.ResumeLayout(false);
@@ -2284,6 +2337,12 @@
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep1;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupExport;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySelectedExport;
+		private System.Windows.Forms.ToolStripSeparator m_menuFileSyncSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncRecent;
+		private System.Windows.Forms.ToolStripSeparator m_menuToolsSep2;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsTriggers;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySortListByUuid;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySortListByAttachments;
 	}
 }
 

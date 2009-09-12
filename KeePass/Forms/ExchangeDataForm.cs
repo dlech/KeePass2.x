@@ -272,7 +272,7 @@ namespace KeePass.Forms
 
 			if((lvsc == null) || (lvsc.Count != 1)) bFormatSelected = false;
 
-			if(bFormatSelected) m_fmtCur = lvsc[0].Tag as FileFormatProvider;
+			if(bFormatSelected) m_fmtCur = (lvsc[0].Tag as FileFormatProvider);
 			else m_fmtCur = null;
 
 			if(m_fmtCur != null)

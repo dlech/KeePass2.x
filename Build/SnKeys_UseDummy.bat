@@ -4,7 +4,7 @@ COPY /Y /B Ext\KPDummyKey.pfx /B KeePass\KeePass.pfx
 COPY /Y /B Ext\KPDummyKey.pfx /B KeePassLib\KeePassLib.pfx
 COPY /Y /B Ext\KPDummyKey.pfx /B KeePassLibSD\KeePassLibSD.pfx
 
-COPY /Y /B Ext\KPDummyKey.pfx /B ShInstUtil\ShInstUtil.pfx
+REM COPY /Y /B Ext\KPDummyKey.pfx /B ShInstUtil\ShInstUtil.pfx
 
 COPY /Y /B Ext\KPDummyKey.pfx /B Plugins\ArcFourCipher\ArcFourCipher.pfx
 COPY /Y /B Ext\KPDummyKey.pfx /B Plugins\KPScript\KPScript.pfx

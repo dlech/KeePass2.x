@@ -23,6 +23,12 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.IO;
 
+#if !KeePassLibSD
+using System.IO.Compression;
+#else
+using KeePassLibSD;
+#endif
+
 namespace KeePassLib.Utility
 {
 	/// <summary>
@@ -284,6 +290,40 @@ namespace KeePassLib.Utility
 
 			while((nRead = sSource.Read(pbBuf, 0, nBufSize)) > 0)
 				sTarget.Write(pbBuf, 0, nRead);
+		}
+
+		public static byte[] Compress(byte[] pbData)
+		{
+			if(pbData == null) throw new ArgumentNullException("pbData");
+			if(pbData.Length == 0) return pbData;
+
+			MemoryStream msCompressed = new MemoryStream();
+			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Compress);
+			MemoryStream msSource = new MemoryStream(pbData, false);
+			MemUtil.CopyStream(msSource, gz);
+			gz.Close();
+			msSource.Close();
+
+			byte[] pbCompressed = msCompressed.ToArray();
+			msCompressed.Close();
+			return pbCompressed;
+		}
+
+		public static byte[] Decompress(byte[] pbCompressed)
+		{
+			if(pbCompressed == null) throw new ArgumentNullException("pbCompressed");
+			if(pbCompressed.Length == 0) return pbCompressed;
+
+			MemoryStream msCompressed = new MemoryStream(pbCompressed, false);
+			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Decompress);
+			MemoryStream msData = new MemoryStream();
+			MemUtil.CopyStream(gz, msData);
+			gz.Close();
+			msCompressed.Close();
+
+			byte[] pbData = msData.ToArray();
+			msData.Close();
+			return pbData;
 		}
 	}
 }

@@ -66,6 +66,7 @@ namespace KeePass.App
 		public static class GlobalHotKeyId
 		{
 			public const int AutoType = 195;
+			public const int AutoTypeSelected = 196;
 			public const int ShowWindow = 226;
 			public const int EntryMenu = 227;
 		}
@@ -126,8 +127,11 @@ namespace KeePass.App
 			public const string FileExtUnregister = "unregisterfileext";
 
 			public const string ExitAll = "exit-all";
-			public const string AutoType = "auto-type";
 			public const string Minimize = "minimize";
+			public const string AutoType = "auto-type";
+			public const string OpenEntryUrl = "entry-url-open";
+
+			public const string Uuid = "uuid";
 
 			public const string Help = @"?";
 			public const string HelpLong = "help";
@@ -137,6 +141,17 @@ namespace KeePass.App
 			public const string ConfigGetUrlOverride = "get-urloverride";
 
 			public const string ConfigSetLanguageFile = "set-languagefile";
+
+			public const string PlgxCreate = "plgx-create";
+			public const string PlgxCreateInfo = "plgx-create-info";
+			public const string PlgxPrereqKP = "plgx-prereq-kp";
+			public const string PlgxPrereqNet = "plgx-prereq-net";
+			public const string PlgxPrereqOS = "plgx-prereq-os";
+			public const string PlgxPrereqPtr = "plgx-prereq-ptr";
+			public const string PlgxBuildPre = "plgx-build-pre";
+			public const string PlgxBuildPost = "plgx-build-post";
+
+			public const string Debug = "debug";
 		}
 
 		public static class FileExtension

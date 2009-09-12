@@ -55,7 +55,7 @@ namespace KeePassLib.Serialization
 		public void Load(string strFilePath, Kdb4Format kdbFormat, IStatusLogger slLogger)
 		{
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
-			this.Load(IOConnection.OpenRead(ioc), kdbFormat, slLogger);
+			Load(IOConnection.OpenRead(ioc), kdbFormat, slLogger);
 		}
 
 		/// <summary>
@@ -132,14 +132,8 @@ namespace KeePassLib.Serialization
 
 				GC.KeepAlive(brDecrypted);
 				GC.KeepAlive(br);
-
-				CommonCleanUpRead(sSource, hashedStream);
 			}
-			catch(Exception)
-			{
-				CommonCleanUpRead(sSource, hashedStream);
-				throw;
-			}
+			finally { CommonCleanUpRead(sSource, hashedStream); }
 		}
 
 		private void CommonCleanUpRead(Stream sSource, HashingStreamEx hashedStream)

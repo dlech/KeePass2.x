@@ -224,16 +224,16 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public static PwProfile DeriveFromPassword(ProtectedString psPassword)
 		{
 			PwProfile pp = new PwProfile();
-
 			Debug.Assert(psPassword != null); if(psPassword == null) return pp;
-
-			PwCharSet pcs = pp.CharSet;
 
 			byte[] pbUTF8 = psPassword.ReadUtf8();
 			char[] vChars = Encoding.UTF8.GetChars(pbUTF8);
 
 			pp.GeneratorType = PasswordGeneratorType.CharSet;
 			pp.Length = (uint)vChars.Length;
+
+			PwCharSet pcs = pp.CharSet;
+			pcs.Clear();
 
 			foreach(char ch in vChars)
 			{

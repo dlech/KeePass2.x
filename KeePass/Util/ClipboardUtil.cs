@@ -26,12 +26,14 @@ using System.Security.Cryptography;
 
 using KeePass.App;
 using KeePass.Ecas;
+using KeePass.Native;
 using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
-using KeePassLib.Native;
 using KeePassLib.Utility;
+
+using KeeNativeLib = KeePassLib.Native;
 
 namespace KeePass.Util
 {
@@ -56,7 +58,7 @@ namespace KeePass.Util
 
 			try
 			{
-				Clipboard.Clear();
+				ClipboardUtil.Clear();
 
 				DataObject doData = CreateProtectedDataObject(strData);
 				Clipboard.SetDataObject(doData);
@@ -69,6 +71,10 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); return false; }
 
 			if(peEntryInfo != null) peEntryInfo.Touch(false);
+
+			// SprEngine.Compile might have modified the database
+			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
+
 			return true;
 		}
 
@@ -82,7 +88,7 @@ namespace KeePass.Util
 
 			try
 			{
-				Clipboard.Clear();
+				ClipboardUtil.Clear();
 
 				DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
 				Clipboard.SetDataObject(doData);
@@ -100,12 +106,18 @@ namespace KeePass.Util
 		}
 
 		public static bool CopyAndMinimize(string strToCopy, bool bIsEntryInfo,
-			Form formToMinimize, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
+			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
 			if(ClipboardUtil.Copy(strToCopy, bIsEntryInfo, peEntryInfo, pwReferenceSource))
 			{
-				if(formToMinimize != null)
-					formToMinimize.WindowState = FormWindowState.Minimized;
+				if(formContext != null)
+				{
+					if(Program.Config.MainWindow.DropToBackAfterClipboardCopy)
+						NativeMethods.LoseFocus(formContext.Handle);
+
+					if(Program.Config.MainWindow.MinimizeAfterClipboardCopy)
+						formContext.WindowState = FormWindowState.Minimized;
+				}
 
 				return true;
 			}
@@ -118,6 +130,36 @@ namespace KeePass.Util
 			if(bIsEntryInfo == false) return;
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.CopiedEntryInfo, strDesc);
+		}
+
+		/// <summary>
+		/// Safely clear the clipboard. The clipboard clearing method of the
+		/// .NET framework sets the clipboard to an empty <c>DataObject</c> when
+		/// invoking the clearing method -- this might cause incompatibilities
+		/// with other applications. Therefore, the <c>Clear</c> method of
+		/// <c>ClipboardUtil</c> first tries to clear the clipboard using
+		/// native Windows functions (which *really* clear the clipboard).
+		/// </summary>
+		public static void Clear()
+		{
+			bool bNativeSuccess = true;
+			try
+			{
+				if(!NativeMethods.OpenClipboard(IntPtr.Zero))
+				{
+					Debug.Assert(false);
+					throw new InvalidOperationException();
+				}
+
+				if(!NativeMethods.EmptyClipboard()) { Debug.Assert(false); }
+				if(!NativeMethods.CloseClipboard()) { Debug.Assert(false); }
+			}
+			catch(Exception) { bNativeSuccess = false; }
+
+			if(bNativeSuccess) return;
+
+			try { Clipboard.Clear(); } // Fallback to .NET framework method
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void ClearIfOwner()
@@ -135,8 +177,7 @@ namespace KeePass.Util
 			m_pbDataHash32 = null;
 			m_strFormat = null;
 
-			try { Clipboard.Clear(); }
-			catch(Exception) { Debug.Assert(false); }
+			ClipboardUtil.Clear();
 		}
 
 		private static byte[] HashClipboard()
@@ -196,7 +237,7 @@ namespace KeePass.Util
 			Debug.Assert(doData != null); if(doData == null) return;
 
 			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return;
-			if(NativeLib.IsUnix()) return;
+			if(KeeNativeLib.NativeLib.IsUnix()) return;
 
 			try
 			{

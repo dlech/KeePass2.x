@@ -33,7 +33,7 @@
 			this.m_lblStringValueDesc = new System.Windows.Forms.Label();
 			this.m_lblStringIdDesc = new System.Windows.Forms.Label();
 			this.m_lblIDIntro = new System.Windows.Forms.Label();
-			this.m_richStringValue = new System.Windows.Forms.RichTextBox();
+			this.m_richStringValue = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -84,6 +84,7 @@
 			this.m_richStringValue.Location = new System.Drawing.Point(56, 154);
 			this.m_richStringValue.Name = "m_richStringValue";
 			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.m_richStringValue.SimpleTextOnly = false;
 			this.m_richStringValue.Size = new System.Drawing.Size(341, 78);
 			this.m_richStringValue.TabIndex = 5;
 			this.m_richStringValue.Text = "";
@@ -184,6 +185,7 @@
 			this.Text = "Edit Entry String";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -196,7 +198,7 @@
 		private System.Windows.Forms.Label m_lblStringValueDesc;
 		private System.Windows.Forms.Label m_lblStringIdDesc;
 		private System.Windows.Forms.Label m_lblIDIntro;
-		private System.Windows.Forms.RichTextBox m_richStringValue;
+		private KeePass.UI.CustomRichTextBoxEx m_richStringValue;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;

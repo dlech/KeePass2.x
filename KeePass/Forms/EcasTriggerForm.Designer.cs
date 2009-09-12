@@ -327,6 +327,7 @@
 			this.m_lvEvents.HideSelection = false;
 			this.m_lvEvents.Location = new System.Drawing.Point(9, 26);
 			this.m_lvEvents.Name = "m_lvEvents";
+			this.m_lvEvents.ShowItemToolTips = true;
 			this.m_lvEvents.Size = new System.Drawing.Size(463, 253);
 			this.m_lvEvents.TabIndex = 1;
 			this.m_lvEvents.UseCompatibleStateImageBehavior = false;
@@ -426,6 +427,7 @@
 			this.m_lvConditions.HideSelection = false;
 			this.m_lvConditions.Location = new System.Drawing.Point(9, 26);
 			this.m_lvConditions.Name = "m_lvConditions";
+			this.m_lvConditions.ShowItemToolTips = true;
 			this.m_lvConditions.Size = new System.Drawing.Size(463, 237);
 			this.m_lvConditions.TabIndex = 1;
 			this.m_lvConditions.UseCompatibleStateImageBehavior = false;
@@ -506,6 +508,7 @@
 			this.m_lvActions.HideSelection = false;
 			this.m_lvActions.Location = new System.Drawing.Point(9, 26);
 			this.m_lvActions.Name = "m_lvActions";
+			this.m_lvActions.ShowItemToolTips = true;
 			this.m_lvActions.Size = new System.Drawing.Size(463, 253);
 			this.m_lvActions.TabIndex = 1;
 			this.m_lvActions.UseCompatibleStateImageBehavior = false;

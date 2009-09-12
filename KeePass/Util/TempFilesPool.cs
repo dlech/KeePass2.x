@@ -28,6 +28,8 @@ namespace KeePass.Util
 	public sealed class TempFilesPool
 	{
 		private List<string> m_vFiles = new List<string>();
+		private List<KeyValuePair<string, bool>> m_vDirs =
+			new List<KeyValuePair<string, bool>>();
 
 		public TempFilesPool()
 		{
@@ -40,8 +42,17 @@ namespace KeePass.Util
 				try
 				{
 					File.Delete(m_vFiles[i]);
-
 					m_vFiles.RemoveAt(i);
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			for(int j = m_vDirs.Count - 1; j >= 0; --j)
+			{
+				try
+				{
+					Directory.Delete(m_vDirs[j].Key, m_vDirs[j].Value);
+					m_vDirs.RemoveAt(j);
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -50,10 +61,17 @@ namespace KeePass.Util
 		public void Add(string strTempFile)
 		{
 			Debug.Assert(strTempFile != null);
-			if(strTempFile == null) return;
-			if(strTempFile.Length == 0) return;
+			if(string.IsNullOrEmpty(strTempFile)) return;
 
 			m_vFiles.Add(strTempFile);
+		}
+
+		public void AddDirectory(string strTempDir, bool bDeleteRecursive)
+		{
+			Debug.Assert(strTempDir != null);
+			if(string.IsNullOrEmpty(strTempDir)) return;
+
+			m_vDirs.Add(new KeyValuePair<string, bool>(strTempDir, bDeleteRecursive));
 		}
 
 		public string GetTempFileName()

@@ -37,14 +37,16 @@ using KeePassLib;
 using KeePassLib.Keys;
 using KeePassLib.Native;
 using KeePassLib.Utility;
+using KeePassLib.Serialization;
 
 namespace KeePass.Forms
 {
 	public partial class KeyPromptForm : Form
 	{
 		private CompositeKey m_pKey = null;
-		private string m_strFilePath = string.Empty;
-		
+		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
+
+		private bool m_bRedirectActivation = false;
 		private bool m_bCanExit = false;
 		private bool m_bHasExited = false;
 
@@ -75,23 +77,23 @@ namespace KeePass.Forms
 			Program.Translation.ApplyTo(this);
 		}
 
-		public void InitEx(string strFilePath, bool bCanExit)
+		public void InitEx(IOConnectionInfo ioInfo, bool bCanExit,
+			bool bRedirectActivation)
 		{
-			if(strFilePath != null) m_strFilePath = strFilePath;
+			if(ioInfo != null) m_ioInfo = ioInfo;
 
 			m_bCanExit = bCanExit;
+			m_bRedirectActivation = bRedirectActivation;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_strFilePath != null);
-			if(m_strFilePath == null) m_strFilePath = string.Empty;
-
 			GlobalWindowManager.AddWindow(this);
+			if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
 
 			m_bInitializing = true;
 
-			string strBannerDesc = WinUtil.CompactPath(m_strFilePath, 45);
+			string strBannerDesc = WinUtil.CompactPath(m_ioInfo.Path, 45);
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
 				Properties.Resources.B48x48_KGPG_Key2, KPRes.EnterCompositeKey,
@@ -101,7 +103,7 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
 
-			string strNameEx = UrlUtil.GetFileName(m_strFilePath);
+			string strNameEx = UrlUtil.GetFileName(m_ioInfo.Path);
 			if(strNameEx.Length > 0) this.Text += " - " + strNameEx;
 
 			m_tbPassword.Text = string.Empty;
@@ -111,7 +113,7 @@ namespace KeePass.Forms
 			m_cmbKeyFile.SelectedIndex = 0;
 
 			if((Program.CommandLineArgs.FileName != null) &&
-				(m_strFilePath == Program.CommandLineArgs.FileName))
+				(m_ioInfo.Path == Program.CommandLineArgs.FileName))
 			{
 				string str;
 
@@ -209,8 +211,7 @@ namespace KeePass.Forms
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsProvKey == true))
 			{
-				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
-					m_strFilePath, false);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(m_ioInfo, false);
 
 				bool bPerformHash;
 				byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,
@@ -321,13 +322,11 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			if(!CreateCompositeKey()) this.DialogResult = DialogResult.None;
-			else CleanUpEx();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
 			m_pKey = null;
-			CleanUpEx();
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)
@@ -421,11 +420,20 @@ namespace KeePass.Forms
 
 				if(m_cmbKeyFile.SelectedIndex == 0)
 				{
-					string strRemKey = Program.Config.Defaults.GetKeyFilePath(m_strFilePath);
-					if(!string.IsNullOrEmpty(strRemKey))
+					string strRemKeyFile = Program.Config.Defaults.GetKeySource(
+						m_ioInfo, true);
+					if(!string.IsNullOrEmpty(strRemKeyFile))
 					{
-						m_cmbKeyFile.Items.Add(strRemKey);
+						m_cmbKeyFile.Items.Add(strRemKeyFile);
 						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
+					}
+
+					string strRemKeyProv = Program.Config.Defaults.GetKeySource(
+						m_ioInfo, false);
+					if(!string.IsNullOrEmpty(strRemKeyProv))
+					{
+						int iProv = m_cmbKeyFile.FindStringExact(strRemKeyProv);
+						if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
 					}
 				}
 			}
@@ -446,6 +454,12 @@ namespace KeePass.Forms
 			}
 
 			m_bHasExited = true;
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(m_bRedirectActivation) Program.MainForm.RedirectActivationPop();
+			CleanUpEx();
 		}
 	}
 }

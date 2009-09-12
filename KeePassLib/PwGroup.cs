@@ -32,7 +32,7 @@ namespace KeePassLib
 	/// <summary>
 	/// A group containing several password entries.
 	/// </summary>
-	public sealed class PwGroup : ITimeLogger, IDeepClonable<PwGroup>
+	public sealed class PwGroup : ITimeLogger, IStructureItem, IDeepClonable<PwGroup>
 	{
 		public const bool DefaultAutoTypeEnabled = true;
 		public const bool DefaultSearchingEnabled = true;
@@ -40,6 +40,7 @@ namespace KeePassLib
 		private PwObjectList<PwGroup> m_listGroups = new PwObjectList<PwGroup>();
 		private PwObjectList<PwEntry> m_listEntries = new PwObjectList<PwEntry>();
 		private PwGroup m_pParentGroup = null;
+		private DateTime m_tParentGroupLastMod = PwDefs.DtDefaultNow;
 
 		private PwUuid m_uuid = PwUuid.Zero;
 		private string m_strName = string.Empty;
@@ -139,8 +140,17 @@ namespace KeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			/// Plugins: use PwGroup.AddGroup instead.
+			/// Plugins: use <c>PwGroup.AddGroup</c> instead.
 			internal set { Debug.Assert(value != this); m_pParentGroup = value; }
+		}
+
+		/// <summary>
+		/// The date/time when the location of the object was last changed.
+		/// </summary>
+		public DateTime LocationChanged
+		{
+			get { return m_tParentGroupLastMod; }
+			set { m_tParentGroupLastMod = value; }
 		}
 
 		/// <summary>
@@ -181,8 +191,7 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// The date/time when this group expires. A value of <c>DtInfinity</c>
-		/// means that the entry never expires.
+		/// The date/time when this group expires.
 		/// </summary>
 		public DateTime ExpiryTime
 		{
@@ -293,7 +302,8 @@ namespace KeePassLib
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess = DateTime.Now;
+				m_tCreation = m_tLastMod = m_tLastAccess =
+					m_tParentGroupLastMod = DateTime.Now;
 			}
 		}
 
@@ -310,7 +320,8 @@ namespace KeePassLib
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess = DateTime.Now;
+				m_tCreation = m_tLastMod = m_tLastAccess =
+					m_tParentGroupLastMod = DateTime.Now;
 			}
 
 			if(strName != null) m_strName = strName;
@@ -327,11 +338,12 @@ namespace KeePassLib
 		{
 			PwGroup pg = new PwGroup(false, false);
 
+			pg.m_uuid = m_uuid; // PwUuid is immutable
+
 			pg.m_listGroups = m_listGroups.CloneDeep();
 			pg.m_listEntries = m_listEntries.CloneDeep();
 			pg.m_pParentGroup = m_pParentGroup;
-
-			pg.m_uuid = m_uuid; // PwUUID is immutable
+			pg.m_tParentGroupLastMod = m_tParentGroupLastMod;
 
 			pg.m_strName = m_strName;
 			pg.m_strNotes = m_strNotes;
@@ -356,23 +368,44 @@ namespace KeePassLib
 			return pg;
 		}
 
+		public PwGroup CloneStructure()
+		{
+			PwGroup pg = new PwGroup(false, false);
+
+			pg.m_uuid = m_uuid; // PwUuid is immutable
+			pg.m_tParentGroupLastMod = m_tParentGroupLastMod;
+			// Do not assign m_pParentGroup
+
+			foreach(PwGroup pgSub in m_listGroups)
+				pg.AddGroup(pgSub.CloneStructure(), true);
+
+			foreach(PwEntry peSub in m_listEntries)
+				pg.AddEntry(peSub.CloneStructure(), true);
+
+			return pg;
+		}
+
 		/// <summary>
 		/// Assign properties to the current group based on a template group.
 		/// </summary>
 		/// <param name="pgTemplate">Template group. Must not be <c>null</c>.</param>
 		/// <param name="bOnlyIfNewer">Only set the properties of the template group
 		/// if it is newer than the current one.</param>
-		public void AssignProperties(PwGroup pgTemplate, bool bOnlyIfNewer)
+		/// <param name="bAssignLocationChanged">If <c>true</c>, the
+		/// <c>LocationChanged</c> property is copied, otherwise not.</param>
+		public void AssignProperties(PwGroup pgTemplate, bool bOnlyIfNewer,
+			bool bAssignLocationChanged)
 		{
 			Debug.Assert(pgTemplate != null); if(pgTemplate == null) throw new ArgumentNullException("pgTemplate");
 
+			if(bOnlyIfNewer && (pgTemplate.m_tLastMod < m_tLastMod)) return;
+
 			// Template UUID should be the same as the current one
 			Debug.Assert(m_uuid.EqualsValue(pgTemplate.m_uuid));
+			m_uuid = pgTemplate.m_uuid;
 
-			if(bOnlyIfNewer)
-			{
-				if(pgTemplate.m_tLastMod < m_tLastMod) return;
-			}
+			if(bAssignLocationChanged)
+				m_tParentGroupLastMod = pgTemplate.m_tParentGroupLastMod;
 
 			m_strName = pgTemplate.m_strName;
 			m_strNotes = pgTemplate.m_strNotes;
@@ -606,7 +639,7 @@ namespace KeePassLib
 				return true;
 			};
 
-			return this.PreOrderTraverseTree(null, eh);
+			return PreOrderTraverseTree(null, eh);
 		}
 
 		/// <summary>
@@ -635,6 +668,7 @@ namespace KeePassLib
 			bool bNotes = searchParams.SearchInNotes;
 			bool bOther = searchParams.SearchInOther;
 			bool bUuids = searchParams.SearchInUuids;
+			bool bGroupName = searchParams.SearchInGroupNames;
 			bool bExcludeExpired = searchParams.ExcludeExpired;
 
 			DateTime dtNow = DateTime.Now;
@@ -703,8 +737,12 @@ namespace KeePassLib
 						if(listStorage.UCount > uInitialResults) break;
 					}
 
-					if((listStorage.UCount == uInitialResults) && bUuids)
-						SearchEvalAdd(true, strSearch, pe.Uuid.ToHexString(),
+					if(listStorage.UCount == uInitialResults)
+						SearchEvalAdd(bUuids, strSearch, pe.Uuid.ToHexString(),
+							scType, rx, pe, listStorage);
+
+					if((listStorage.UCount == uInitialResults) && (pe.ParentGroup != null))
+						SearchEvalAdd(bGroupName, strSearch, pe.ParentGroup.Name,
 							scType, rx, pe, listStorage);
 
 					return true;
@@ -739,7 +777,7 @@ namespace KeePassLib
 		public PwGroup FindGroup(PwUuid uuid, bool bSearchRecursive)
 		{
 			// Do not assert on PwUuid.Zero
-			if(this.m_uuid.EqualsValue(uuid)) return this;
+			if(m_uuid.EqualsValue(uuid)) return this;
 
 			if(bSearchRecursive)
 			{
@@ -760,6 +798,29 @@ namespace KeePassLib
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Find an object.
+		/// </summary>
+		/// <param name="uuid">UUID of the object to find.</param>
+		/// <param name="bRecursive">Specifies whether to search recursively.</param>
+		/// <param name="bEntries">If <c>null</c>, groups and entries are
+		/// searched. If <c>true</c>, only entries are searched. If <c>false</c>,
+		/// only groups are searched.</param>
+		/// <returns>Reference to the object, if found. Otherwise <c>null</c>.</returns>
+		public IStructureItem FindObject(PwUuid uuid, bool bRecursive,
+			bool? bEntries)
+		{
+			if(bEntries.HasValue)
+			{
+				if(bEntries.Value) return FindEntry(uuid, bRecursive);
+				else return FindGroup(uuid, bRecursive);
+			}
+
+			PwGroup pg = FindGroup(uuid, bRecursive);
+			if(pg != null) return pg;
+			return FindEntry(uuid, bRecursive);
 		}
 
 		/// <summary>
@@ -817,7 +878,7 @@ namespace KeePassLib
 		/// <returns>Full path of the group.</returns>
 		public string GetFullPath()
 		{
-			return this.GetFullPath(".", false);
+			return GetFullPath(".", false);
 		}
 
 		/// <summary>
@@ -946,7 +1007,7 @@ namespace KeePassLib
 		/// <returns>Number of parent groups.</returns>
 		public uint GetLevel()
 		{
-			PwGroup pg = this.ParentGroup;
+			PwGroup pg = m_pParentGroup;
 			uint uLevel = 0;
 
 			while(pg != null)
@@ -989,15 +1050,60 @@ namespace KeePassLib
 			return DefaultSearchingEnabled;
 		}
 
+		/// <summary>
+		/// Get a list of subgroups (not including this one).
+		/// </summary>
+		/// <param name="bRecursive">If <c>true</c>, subgroups are added
+		/// recursively, i.e. all child groups are returned, too.</param>
+		/// <returns>List of subgroups.</returns>
+		public PwObjectList<PwGroup> GetGroups(bool bRecursive)
+		{
+			if(bRecursive == false) return m_listGroups;
+
+			PwObjectList<PwGroup> list = m_listGroups.CloneShallow();
+			foreach(PwGroup pgSub in m_listGroups)
+			{
+				list.Add(pgSub.GetGroups(true));
+			}
+
+			return list;
+		}
+
 		public PwObjectList<PwEntry> GetEntries(bool bIncludeSubGroupEntries)
 		{
-			if(bIncludeSubGroupEntries == false)
-				return m_listEntries;
+			if(bIncludeSubGroupEntries == false) return m_listEntries;
 
 			PwObjectList<PwEntry> list = m_listEntries.CloneShallow();
 			foreach(PwGroup pgSub in m_listGroups)
 			{
 				list.Add(pgSub.GetEntries(true));
+			}
+
+			return list;
+		}
+
+		/// <summary>
+		/// Get objects contained in this group.
+		/// </summary>
+		/// <param name="bRecursive">Specifies whether to search recursively.</param>
+		/// <param name="bEntries">If <c>null</c>, the returned list contains
+		/// groups and entries. If <c>true</c>, the returned list contains only
+		/// entries. If <c>false</c>, the returned list contains only groups.</param>
+		/// <returns>List of objects.</returns>
+		public List<IStructureItem> GetObjects(bool bRecursive, bool? bEntries)
+		{
+			List<IStructureItem> list = new List<IStructureItem>();
+
+			if(!bEntries.HasValue || !bEntries.Value)
+			{
+				PwObjectList<PwGroup> lGroups = GetGroups(bRecursive);
+				foreach(PwGroup pg in lGroups) list.Add(pg);
+			}
+
+			if(!bEntries.HasValue || bEntries.Value)
+			{
+				PwObjectList<PwEntry> lEntries = GetEntries(bRecursive);
+				foreach(PwEntry pe in lEntries) list.Add(pe);
 			}
 
 			return list;
@@ -1025,11 +1131,28 @@ namespace KeePassLib
 		/// group (i.e. the current group takes ownership of the subgroup).</param>
 		public void AddGroup(PwGroup subGroup, bool bTakeOwnership)
 		{
+			AddGroup(subGroup, bTakeOwnership, false);
+		}
+
+		/// <summary>
+		/// Add a subgroup to this group.
+		/// </summary>
+		/// <param name="subGroup">Group to be added. Must not be <c>null</c>.</param>
+		/// <param name="bTakeOwnership">If this parameter is <c>true</c>, the
+		/// parent group reference of the subgroup will be set to the current
+		/// group (i.e. the current group takes ownership of the subgroup).</param>
+		/// <param name="bUpdateLocationChangedOfSub">If <c>true</c>, the
+		/// <c>LocationChanged</c> property of the subgroup is updated.</param>
+		public void AddGroup(PwGroup subGroup, bool bTakeOwnership,
+			bool bUpdateLocationChangedOfSub)
+		{
 			if(subGroup == null) throw new ArgumentNullException("subGroup");
 
 			m_listGroups.Add(subGroup);
 
-			if(bTakeOwnership) subGroup.ParentGroup = this;
+			if(bTakeOwnership) subGroup.m_pParentGroup = this;
+
+			if(bUpdateLocationChangedOfSub) subGroup.LocationChanged = DateTime.Now;
 		}
 
 		/// <summary>
@@ -1041,6 +1164,21 @@ namespace KeePassLib
 		/// group (i.e. the current group takes ownership of the entry).</param>
 		public void AddEntry(PwEntry pe, bool bTakeOwnership)
 		{
+			AddEntry(pe, bTakeOwnership, false);
+		}
+
+		/// <summary>
+		/// Add an entry to this group.
+		/// </summary>
+		/// <param name="pe">Entry to be added. Must not be <c>null</c>.</param>
+		/// <param name="bTakeOwnership">If this parameter is <c>true</c>, the
+		/// parent group reference of the entry will be set to the current
+		/// group (i.e. the current group takes ownership of the entry).</param>
+		/// <param name="bUpdateLocationChangedOfEntry">If <c>true</c>, the
+		/// <c>LocationChanged</c> property of the entry is updated.</param>
+		public void AddEntry(PwEntry pe, bool bTakeOwnership,
+			bool bUpdateLocationChangedOfEntry)
+		{
 			if(pe == null) throw new ArgumentNullException("pe");
 
 			m_listEntries.Add(pe);
@@ -1048,6 +1186,8 @@ namespace KeePassLib
 			// Do not remove the entry from its previous parent group,
 			// only assign it to the new one
 			if(bTakeOwnership) pe.ParentGroup = this;
+
+			if(bUpdateLocationChangedOfEntry) pe.LocationChanged = DateTime.Now;
 		}
 	}
 }

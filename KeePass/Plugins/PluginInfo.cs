@@ -32,7 +32,8 @@ namespace KeePass.Plugins
 {
 	internal sealed class PluginInfo
 	{
-		private string m_strFilePath = string.Empty;
+		private string m_strFilePath;
+		private string m_strDisplayFilePath;
 		private Plugin m_pluginInterface = null;
 
 		private string m_strFileVersion = string.Empty;
@@ -44,6 +45,11 @@ namespace KeePass.Plugins
 		public string FilePath
 		{
 			get { return m_strFilePath; }
+		}
+
+		public string DisplayFilePath
+		{
+			get { return (m_strDisplayFilePath ?? m_strFilePath); }
 		}
 
 		public Plugin Interface
@@ -72,7 +78,8 @@ namespace KeePass.Plugins
 			get { return m_strAuthor; }
 		}
 
-		public PluginInfo(string strFilePath, FileVersionInfo fvi)
+		public PluginInfo(string strFilePath, FileVersionInfo fvi,
+			string strDisplayFilePath)
 		{
 			Debug.Assert(strFilePath != null);
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
@@ -80,14 +87,13 @@ namespace KeePass.Plugins
 			if(fvi == null) throw new ArgumentNullException("fvi");
 
 			m_strFilePath = strFilePath;
+			m_strDisplayFilePath = strDisplayFilePath;
 
 			if(fvi.FileVersion != null) m_strFileVersion = fvi.FileVersion;
 
 			if(fvi.FileDescription != null) m_strName = fvi.FileDescription;
 			if(fvi.Comments != null) m_strDescription = fvi.Comments;
 			if(fvi.CompanyName != null) m_strAuthor = fvi.CompanyName;
-
-			fvi = null;
 		}
 	}
 }

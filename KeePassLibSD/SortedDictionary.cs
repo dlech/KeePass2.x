@@ -72,6 +72,11 @@ namespace KeePassLibSD
 			return m_dict.TryGetValue(pKey, out pValue);
 		}
 
+		public void Clear()
+		{
+			m_dict.Clear();
+		}
+
 		public void Add(TKey pKey, TValue pValue)
 		{
 			m_dict.Add(pKey, pValue);

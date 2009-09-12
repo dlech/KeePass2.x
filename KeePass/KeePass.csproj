@@ -62,6 +62,9 @@
     <Compile Include="..\KeePassLib\Collections\PwObjectList.cs">
       <Link>KeePassLib\Collections\PwObjectList.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\PwObjectPool.cs">
+      <Link>KeePassLib\Collections\PwObjectPool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Collections\StringDictionaryEx.cs">
       <Link>KeePassLib\Collections\StringDictionaryEx.cs</Link>
     </Compile>
@@ -121,6 +124,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\IStatusLogger.cs">
       <Link>KeePassLib\Interfaces\IStatusLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Interfaces\IStructureItem.cs">
+      <Link>KeePassLib\Interfaces\IStructureItem.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\ITimeLogger.cs">
       <Link>KeePassLib\Interfaces\ITimeLogger.cs</Link>
@@ -208,6 +214,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
       <Link>KeePassLib\Serialization\BinaryReaderEx.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\FileTransactionEx.cs">
+      <Link>KeePassLib\Serialization\FileTransactionEx.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
       <Link>KeePassLib\Serialization\HashedBlockStream.cs</Link>
@@ -577,10 +586,26 @@
     <Compile Include="Forms\IOConnectionForm.Designer.cs">
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\UrlSchemeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UrlSchemeForm.Designer.cs">
+      <DependentUpon>UrlSchemeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UrlSchemesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UrlSchemesForm.Designer.cs">
+      <DependentUpon>UrlSchemesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\NativeMethods.Defs.cs" />
     <Compile Include="Native\NativeMethods.New.cs" />
     <Compile Include="Native\NativeMethods.Structs.cs" />
+    <Compile Include="Plugins\PlgxCache.cs" />
+    <Compile Include="Plugins\PlgxCsprojLoader.cs" />
+    <Compile Include="Plugins\PlgxPluginInfo.cs" />
+    <Compile Include="Plugins\PlgxPlugin.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
@@ -591,9 +616,13 @@
     <Compile Include="UI\CustomMenuStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\CustomRichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\CustomToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\CustomToolStripRendererEx.cs" />
     <Compile Include="UI\CustomTreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -603,6 +632,7 @@
     <Compile Include="UI\IGwmWindow.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
+    <Compile Include="UI\OnDemandStatusDialog.cs" />
     <Compile Include="UI\PasswordListPrintDocument.cs">
     </Compile>
     <Compile Include="UI\PromptedTextBox.cs">
@@ -611,6 +641,8 @@
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
+    <Compile Include="UI\ThemeToolStripRenderer.cs" />
+    <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>
     <Compile Include="Util\BinaryDataClassifier.cs" />
@@ -784,6 +816,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UrlSchemeForm.resx">
+      <DependentUpon>UrlSchemeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UrlSchemesForm.resx">
+      <DependentUpon>UrlSchemesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -849,6 +887,7 @@
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\WinUtil.cs" />
+    <Compile Include="Util\XmlUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />

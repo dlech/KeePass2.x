@@ -27,8 +27,8 @@ namespace KeePassLib
 {
 	// [ImmutableObject(true)]
 	/// <summary>
-	/// Represents an UUID of a password entry or group. Once created, <c>PwUUID</c>
-	/// objects aren't modifyable any more (immutable).
+	/// Represents an UUID of a password entry or group. Once created, <c>PwUuid</c>
+	/// objects aren't modifyable anymore (immutable).
 	/// </summary>
 	public sealed class PwUuid
 	{
@@ -75,7 +75,7 @@ namespace KeePassLib
 		/// <summary>
 		/// Construct a new UUID object.
 		/// </summary>
-		/// <param name="uuidBytes">Initial value of the <c>PwUUID</c> object.</param>
+		/// <param name="uuidBytes">Initial value of the <c>PwUuid</c> object.</param>
 		public PwUuid(byte[] uuidBytes)
 		{
 			SetValue(uuidBytes);
@@ -147,6 +147,31 @@ namespace KeePassLib
 		private void SetZero()
 		{
 			Array.Clear(m_pbUuid, 0, (int)UuidSize);
+		}
+	}
+
+	public sealed class PwUuidComparable : IComparable<PwUuidComparable>
+	{
+		private byte[] m_pbUuid = new byte[PwUuid.UuidSize];
+
+		public PwUuidComparable(PwUuid pwUuid)
+		{
+			if(pwUuid == null) throw new ArgumentNullException("pwUuid");
+
+			Array.Copy(pwUuid.UuidBytes, m_pbUuid, (int)PwUuid.UuidSize);
+		}
+
+		public int CompareTo(PwUuidComparable other)
+		{
+			if(other == null) throw new ArgumentNullException("other");
+
+			for(int i = 0; i < (int)PwUuid.UuidSize; ++i)
+			{
+				if(m_pbUuid[i] < other.m_pbUuid[i]) return -1;
+				if(m_pbUuid[i] > other.m_pbUuid[i]) return 1;
+			}
+
+			return 0;
 		}
 	}
 }

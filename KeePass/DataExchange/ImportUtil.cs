@@ -36,6 +36,8 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Keys;
+using KeePassLib.Resources;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -43,13 +45,14 @@ namespace KeePass.DataExchange
 {
 	public static class ImportUtil
 	{
-		public static bool ImportInto(PwDatabase pwStorage, out bool bAppendedToRootOnly)
+		public static bool? Import(PwDatabase pwStorage, out bool bAppendedToRootOnly,
+			Form fParent)
 		{
 			bAppendedToRootOnly = false;
 
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return false;
-			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
+			if(!pwStorage.IsOpen) return null;
+			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
 
 			ExchangeDataForm dlgFmt = new ExchangeDataForm();
 			dlgFmt.InitEx(false, pwStorage, pwStorage.RootGroup);
@@ -69,16 +72,15 @@ namespace KeePass.DataExchange
 				foreach(string strSelFile in dlgFmt.ResultFiles)
 					lConnections.Add(IOConnectionInfo.FromPath(strSelFile));
 
-				PerformImport(pwStorage, dlgFmt.ResultFormat, lConnections.ToArray(),
-					false, null, false);
+				return Import(pwStorage, dlgFmt.ResultFormat, lConnections.ToArray(),
+					false, null, false, fParent);
 			}
-			else return false;
 
-			return true;
+			return null;
 		}
 
 		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
-			bool bOpenFromUrl)
+			bool bOpenFromUrl, Form fParent)
 		{
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
 			if(!pwStorage.IsOpen) return null;
@@ -98,63 +100,68 @@ namespace KeePass.DataExchange
 			else // Open URL
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
-				iocf.InitEx(false, new IOConnectionInfo(), false, true);
+				iocf.InitEx(false, new IOConnectionInfo(), true, true);
 
 				if(iocf.ShowDialog() != DialogResult.OK) return null;
 
 				vConnections.Add(iocf.IOConnectionInfo);
 			}
 
-			return PerformImport(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
-				true, uiOps, false);
+			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
+				true, uiOps, false, fParent);
 		}
 
-		public static bool Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
-			IOConnectionInfo iocSyncWith, bool bForceSave)
+		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
+			IOConnectionInfo iocSyncWith, bool bForceSave, Form fParent)
 		{
 			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return false;
+			if(!pwStorage.IsOpen) return null; // No assert or throw
 			if(iocSyncWith == null) throw new ArgumentNullException("iocSyncWith");
-			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
+			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
 
 			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
 			vConnections.Add(iocSyncWith);
 
-			return PerformImport(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
-				true, uiOps, bForceSave);
+			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
+				true, uiOps, bForceSave, fParent);
 		}
 
-		private static bool PerformImport(PwDatabase pwDatabase, FileFormatProvider fmtImp,
+		public static bool? Import(PwDatabase pwDatabase, FileFormatProvider fmtImp,
 			IOConnectionInfo[] vConnections, bool bSynchronize, IUIOperations uiOps,
-			bool bForceSave)
+			bool bForceSave, Form fParent)
 		{
-			if(fmtImp.TryBeginImport() == false) return false;
+			if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
+			if(!pwDatabase.IsOpen) return null;
+			if(fmtImp == null) throw new ArgumentNullException("fmtImp");
+			if(vConnections == null) throw new ArgumentNullException("vConnections");
+
+			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
+			if(!fmtImp.TryBeginImport()) return false;
 
 			bool bUseTempDb = (fmtImp.SupportsUuids || fmtImp.RequiresKey);
 			bool bAllSuccess = true;
 
 			// if(bSynchronize) { Debug.Assert(vFiles.Length == 1); }
 
-			StatusLoggerForm slf = new StatusLoggerForm();
-			slf.InitEx(false);
-			slf.Show();
-
-			if(bSynchronize) slf.StartLogging(KPRes.Synchronize, false);
-			else slf.StartLogging(KPRes.ImportingStatusMsg, false);
+			OnDemandStatusDialog dlgStatus = new OnDemandStatusDialog(false, fParent);
+			dlgStatus.StartLogging(PwDefs.ShortProductName + " - " + (bSynchronize ?
+				KPRes.Synchronizing : KPRes.ImportingStatusMsg), false);
+			dlgStatus.SetText(bSynchronize ? KPRes.Synchronizing :
+				KPRes.ImportingStatusMsg, LogStatusType.Info);
 
 			if(vConnections.Length == 0)
 			{
-				try { fmtImp.Import(pwDatabase, null, slf); }
+				try { fmtImp.Import(pwDatabase, null, dlgStatus); }
 				catch(Exception exSingular)
 				{
 					if((exSingular.Message != null) && (exSingular.Message.Length > 0))
 					{
-						slf.SetText(exSingular.Message, LogStatusType.Warning);
+						// slf.SetText(exSingular.Message, LogStatusType.Warning);
 						MessageService.ShowWarning(exSingular);
 					}
 				}
 
-				slf.EndLogging(); slf.Close();
+				dlgStatus.EndLogging();
 				return true;
 			}
 
@@ -169,7 +176,6 @@ namespace KeePass.DataExchange
 					bAllSuccess = false;
 					continue;
 				}
-
 				if(s == null) { Debug.Assert(false); bAllSuccess = false; continue; }
 
 				PwDatabase pwImp;
@@ -184,7 +190,7 @@ namespace KeePass.DataExchange
 				if(fmtImp.RequiresKey && !bSynchronize)
 				{
 					KeyPromptForm kpf = new KeyPromptForm();
-					kpf.InitEx(iocIn.GetDisplayName(), false);
+					kpf.InitEx(iocIn, false, true);
 
 					if(kpf.ShowDialog() != DialogResult.OK) { s.Close(); continue; }
 
@@ -192,18 +198,17 @@ namespace KeePass.DataExchange
 				}
 				else if(bSynchronize) pwImp.MasterKey = pwDatabase.MasterKey;
 
-				slf.SetText((bSynchronize ? KPRes.Synchronizing : KPRes.ImportingStatusMsg) +
-					" " + iocIn.GetDisplayName(), LogStatusType.Info);
+				dlgStatus.SetText((bSynchronize ? KPRes.Synchronizing :
+					KPRes.ImportingStatusMsg) + " (" + iocIn.GetDisplayName() +
+					")", LogStatusType.Info);
 
-				try { fmtImp.Import(pwImp, s, slf); }
+				try { fmtImp.Import(pwImp, s, dlgStatus); }
 				catch(Exception excpFmt)
 				{
 					string strMsgEx = excpFmt.Message;
-					if(bSynchronize)
-					{
-						strMsgEx += MessageService.NewParagraph +
+					if(bSynchronize && (excpFmt is InvalidCompositeKeyException))
+						strMsgEx = KLRes.InvalidCompositeKey + MessageService.NewParagraph +
 							KPRes.SynchronizingHint;
-					}
 
 					MessageService.ShowWarning(strMsgEx);
 
@@ -227,9 +232,9 @@ namespace KeePass.DataExchange
 						mm = imf.MergeMethod;
 					}
 
-					slf.SetText(KPRes.MergingData, LogStatusType.Info);
+					// slf.SetText(KPRes.MergingData, LogStatusType.Info);
 
-					try { pwDatabase.MergeIn(pwImp, mm); }
+					try { pwDatabase.MergeIn(pwImp, mm, dlgStatus); }
 					catch(Exception exMerge)
 					{
 						MessageService.ShowWarning(iocIn.GetDisplayName(),
@@ -241,7 +246,7 @@ namespace KeePass.DataExchange
 				}
 			}
 
-			slf.EndLogging(); slf.Close();
+			dlgStatus.EndLogging();
 
 			if(bSynchronize && bAllSuccess)
 			{
@@ -254,7 +259,7 @@ namespace KeePass.DataExchange
 					{
 						try
 						{
-							if(pwDatabase.IOConnectionInfo.Path != ioc.Path)
+							if(ioc.Path != pwDatabase.IOConnectionInfo.Path)
 							{
 								if(pwDatabase.IOConnectionInfo.IsLocalFile() &&
 									ioc.IsLocalFile())
@@ -264,7 +269,10 @@ namespace KeePass.DataExchange
 								}
 								else pwDatabase.SaveAs(ioc, false, null);
 							}
-							else { Debug.Assert(false); }
+							else { } // No assert (sync on save)
+
+							Program.MainForm.FileMruList.AddItem(ioc.GetDisplayName(),
+								ioc.CloneDeep(), true);
 						}
 						catch(Exception exSync)
 						{
@@ -285,34 +293,8 @@ namespace KeePass.DataExchange
 					bAllSuccess = false;
 				}
 			}
-			else if(bSynchronize) // Synchronized but not successfully imported
-			{
-				MessageService.ShowWarning(KPRes.SyncFailed,
-					pwDatabase.IOConnectionInfo.GetDisplayName());
-				
-				bAllSuccess = false;
-			}
 
 			return bAllSuccess;
-		}
-
-		public static string SafeInnerText(XmlNode xmlNode)
-		{
-			Debug.Assert(xmlNode != null); if(xmlNode == null) return string.Empty;
-
-			string strInner = xmlNode.InnerText;
-			if(strInner == null) return string.Empty;
-
-			return strInner;
-		}
-
-		public static string SafeInnerText(XmlNode xmlNode, string strNewLineCode)
-		{
-			if((strNewLineCode == null) || (strNewLineCode.Length == 0))
-				return SafeInnerText(xmlNode);
-
-			string strInner = SafeInnerText(xmlNode);
-			return strInner.Replace(strNewLineCode, "\r\n");
 		}
 
 		public static int CountQuotes(string str, int posMax)
@@ -359,35 +341,6 @@ namespace KeePass.DataExchange
 			return list;
 		}
 
-		private static readonly string[] m_vNonStandardEntitiesTable = new string[]{
-			@"&sect;", @"§", @"&acute;", @"´", @"&szlig;", @"ß",
-			@"&Auml;", @"Ä", @"&Ouml;", @"Ö", @"&Uuml;", @"Ü",
-			@"&auml;", @"ä", @"&ouml;", @"ö", @"&uuml;", @"ü",
-			@"&micro;", @"µ", @"&euro;", @"€", @"&copy;", @"©",
-			@"&reg;", @"®", @"&sup2;", @"²", @"&sup3;", @"³",
-			@"&eacute;", @"é", @"&egrave;", @"è", @"&ecirc;", @"ê",
-			@"&Aacute;", @"Á", @"&Agrave;", @"À", @"&Acirc;", @"Â",
-			@"&aacute;", @"á", @"&agrave;", @"à", @"&acirc;", @"â"
-		};
-
-		/// <summary>
-		/// Decode most entities except the standard ones (&lt;, &gt;, etc.).
-		/// </summary>
-		/// <param name="strToDecode">String to decode.</param>
-		/// <returns>String without non-standard entities.</returns>
-		public static string DecodeNonStandardEntities(string strToDecode)
-		{
-			string str = strToDecode;
-
-			Debug.Assert((m_vNonStandardEntitiesTable.Length % 2) == 0); // Static
-
-			for(int i = 0; i < m_vNonStandardEntitiesTable.Length; i += 2)
-				str = str.Replace(m_vNonStandardEntitiesTable[i],
-					m_vNonStandardEntitiesTable[i + 1]);
-
-			return str;
-		}
-
 		public static bool SetStatus(IStatusLogger slLogger, uint uPercent)
 		{
 			if(slLogger != null) return slLogger.SetProgress(uPercent);
@@ -404,7 +357,8 @@ namespace KeePass.DataExchange
 		private static readonly string[] m_vUserNames = {
 			"user", "name", "user name", "username",
 			"email", "e-mail", "id", "userid", "user id",
-			"login", "form_loginname", "wpname"
+			"login", "form_loginname", "wpname", "mail",
+			"loginid", "login id"
 		};
 
 		private static readonly string[] m_vPasswords = {
@@ -412,7 +366,7 @@ namespace KeePass.DataExchange
 			"pass", "code", "code word", "codeword",
 			"secret", "secret word",
 			"key", "keyword", "key word", "keyphrase", "key phrase",
-			"form_pw", "wppassword"
+			"form_pw", "wppassword", "pin", "pwd", "pw", "pword"
 		};
 
 		private static readonly string[] m_vUrls = {
@@ -427,7 +381,29 @@ namespace KeePass.DataExchange
 			"free text", "freetext", "free"
 		};
 
-		public static string MapNameToStandardField(string strName)
+		private static readonly string[] m_vSubstrTitles = {
+			"title", "system", "account", "entry",
+			"item", "subject", "service", "head"
+		};
+
+		private static readonly string[] m_vSubstrUserNames = {
+			"user", "name", "id", "login", "mail"
+		};
+
+		private static readonly string[] m_vSubstrPasswords = {
+			"pass", "code",	"secret", "key", "pw", "pin"
+		};
+
+		private static readonly string[] m_vSubstrUrls = {
+			"url", "link", "host", "address", "hyper ref", "href",
+			"web", "site"
+		};
+
+		private static readonly string[] m_vSubstrNotes = { 
+			"note", "comment", "memo", "description", "free"
+		};
+
+		public static string MapNameToStandardField(string strName, bool bAllowFuzzy)
 		{
 			Debug.Assert(strName != null);
 			if(strName == null) throw new ArgumentNullException("strName");
@@ -444,6 +420,43 @@ namespace KeePass.DataExchange
 				return PwDefs.UrlField;
 			if(Array.IndexOf<string>(m_vNotes, strFind) >= 0)
 				return PwDefs.NotesField;
+
+			return (bAllowFuzzy ? MapNameSubstringToStandardField(strName) : string.Empty);
+		}
+
+		private static string MapNameSubstringToStandardField(string strName)
+		{
+			Debug.Assert(strName != null);
+			if(strName == null) throw new ArgumentNullException("strName");
+
+			string strFind = strName.ToLower();
+
+			// Check for passwords first, then user names ('vb_login_password')
+			foreach(string strPassword in m_vSubstrPasswords)
+			{
+				if(strFind.Contains(strPassword))
+					return PwDefs.PasswordField;
+			}
+			foreach(string strUserName in m_vSubstrUserNames)
+			{
+				if(strFind.Contains(strUserName))
+					return PwDefs.UserNameField;
+			}
+			foreach(string strTitle in m_vSubstrTitles)
+			{
+				if(strFind.Contains(strTitle))
+					return PwDefs.TitleField;
+			}
+			foreach(string strUrl in m_vSubstrUrls)
+			{
+				if(strFind.Contains(strUrl))
+					return PwDefs.UrlField;
+			}
+			foreach(string strNotes in m_vSubstrNotes)
+			{
+				if(strFind.Contains(strNotes))
+					return PwDefs.NotesField;
+			}
 
 			return string.Empty;
 		}
@@ -499,13 +512,12 @@ namespace KeePass.DataExchange
 
 		private static string GuiRetrieveDataField()
 		{
-			Clipboard.Clear();
+			ClipboardUtil.Clear();
 			Application.DoEvents();
 
 			GuiSendKeysPrc(@"^c");
 
-			if(Clipboard.ContainsText())
-				return Clipboard.GetText();
+			if(Clipboard.ContainsText()) return Clipboard.GetText();
 
 			return string.Empty;
 		}

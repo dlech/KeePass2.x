@@ -34,10 +34,11 @@ namespace KeePassLib
 	/// fields like title, user name, password, etc. Each password entry has a
 	/// unique ID (UUID).
 	/// </summary>
-	public sealed class PwEntry : ITimeLogger, IDeepClonable<PwEntry>
+	public sealed class PwEntry : ITimeLogger, IStructureItem, IDeepClonable<PwEntry>
 	{
 		private PwUuid m_uuid = PwUuid.Zero;
 		private PwGroup m_pParentGroup = null;
+		private DateTime m_tParentGroupLastMod = PwDefs.DtDefaultNow;
 
 		private ProtectedStringDictionary m_listStrings = new ProtectedStringDictionary();
 		private ProtectedBinaryDictionary m_listBinaries = new ProtectedBinaryDictionary();
@@ -80,8 +81,17 @@ namespace KeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			/// Plugins: use PwGroup.AddEntry instead.
+			/// Plugins: use <c>PwGroup.AddEntry</c> instead.
 			internal set { m_pParentGroup = value; }
+		}
+
+		/// <summary>
+		/// The date/time when the location of the object was last changed.
+		/// </summary>
+		public DateTime LocationChanged
+		{
+			get { return m_tParentGroupLastMod; }
+			set { m_tParentGroupLastMod = value; }
 		}
 
 		/// <summary>
@@ -261,16 +271,15 @@ namespace KeePassLib
 		/// for this entry. If <c>false</c>, the UUID is zero and you must set it
 		/// manually later.</param>
 		/// <param name="bSetTimes">If <c>true</c>, the creation, last modification
-		/// and last access times will be set to the current system time. The expire
-		/// time is set to never (<c>DtInfinity</c>).</param>
+		/// and last access times will be set to the current system time.</param>
 		public PwEntry(bool bCreateNewUuid, bool bSetTimes)
 		{
 			if(bCreateNewUuid) m_uuid = new PwUuid(true);
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess = DateTime.Now;
-				// m_tExpire == PwDefs.DtInfinity
+				m_tCreation = m_tLastMod = m_tLastAccess =
+					m_tParentGroupLastMod = DateTime.Now;
 			}
 		}
 
@@ -284,8 +293,7 @@ namespace KeePassLib
 		/// for this entry. If <c>false</c>, the UUID is zero and you must set it
 		/// manually later.</param>
 		/// <param name="bSetTimes">If <c>true</c>, the creation, last modification
-		/// and last access times will be set to the current system time. The expire
-		/// time is set to never (<c>DtInfinity</c>).</param>
+		/// and last access times will be set to the current system time.</param>
 		[Obsolete("Use a different constructor. To add an entry to a group, use AddEntry of PwGroup.")]
 		public PwEntry(PwGroup pwParentGroup, bool bCreateNewUuid, bool bSetTimes)
 		{
@@ -295,8 +303,8 @@ namespace KeePassLib
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess = DateTime.Now;
-				// m_tExpire == PwDefs.DtInfinity
+				m_tCreation = m_tLastMod = m_tLastAccess =
+					m_tParentGroupLastMod = DateTime.Now;
 			}
 		}
 
@@ -310,8 +318,9 @@ namespace KeePassLib
 		{
 			PwEntry peNew = new PwEntry(false, false);
 
-			peNew.m_pParentGroup = m_pParentGroup;
 			peNew.m_uuid = m_uuid; // PwUuid is immutable
+			peNew.m_pParentGroup = m_pParentGroup;
+			peNew.m_tParentGroupLastMod = m_tParentGroupLastMod;
 
 			peNew.m_listStrings = m_listStrings.CloneDeep();
 			peNew.m_listBinaries = m_listBinaries.CloneDeep();
@@ -336,6 +345,72 @@ namespace KeePassLib
 			return peNew;
 		}
 
+		public PwEntry CloneStructure()
+		{
+			PwEntry peNew = new PwEntry(false, false);
+
+			peNew.m_uuid = m_uuid; // PwUuid is immutable
+			peNew.m_tParentGroupLastMod = m_tParentGroupLastMod;
+			// Do not assign m_pParentGroup
+
+			return peNew;
+		}
+
+		public bool EqualsEntry(PwEntry pe, bool bIgnoreParentGroup, bool bIgnoreLastMod,
+			bool bIgnoreLastAccess, bool bIgnoreHistory, bool bIgnoreThisLastBackup)
+		{
+			if(pe == null) { Debug.Assert(false); return false; }
+
+			if(!m_uuid.EqualsValue(pe.m_uuid)) return false;
+			if(!bIgnoreParentGroup)
+			{
+				if(m_pParentGroup != pe.m_pParentGroup) return false;
+				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pe.m_tParentGroupLastMod))
+					return false;
+			}
+
+			if(!m_listStrings.EqualsDictionary(pe.m_listStrings)) return false;
+			if(!m_listBinaries.EqualsDictionary(pe.m_listBinaries)) return false;
+
+			if(!m_listAutoType.EqualsConfig(pe.m_listAutoType)) return false;
+
+			if(!bIgnoreHistory)
+			{
+				if(!bIgnoreThisLastBackup && (m_listHistory.UCount != pe.m_listHistory.UCount))
+					return false;
+				if(bIgnoreThisLastBackup && (m_listHistory.UCount == 0))
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if(bIgnoreThisLastBackup && ((m_listHistory.UCount - 1) != pe.m_listHistory.UCount))
+					return false;
+				for(uint uHist = 0; uHist < pe.m_listHistory.UCount; ++uHist)
+				{
+					if(!m_listHistory.GetAt(uHist).EqualsEntry(pe.m_listHistory.GetAt(
+						uHist), true, bIgnoreLastMod, bIgnoreLastAccess, false, false))
+						return false;
+				}
+			}
+
+			if(m_pwIcon != pe.m_pwIcon) return false;
+			if(!m_pwCustomIconID.EqualsValue(pe.m_pwCustomIconID)) return false;
+
+			if(m_clrForeground != pe.m_clrForeground) return false;
+			if(m_clrBackground != pe.m_clrBackground) return false;
+
+			if(m_tCreation != pe.m_tCreation) return false;
+			if(!bIgnoreLastMod && (m_tLastMod != pe.m_tLastMod)) return false;
+			if(!bIgnoreLastAccess && (m_tLastAccess != pe.m_tLastAccess)) return false;
+			if(m_tExpire != pe.m_tExpire) return false;
+			if(m_bExpires != pe.m_bExpires) return false;
+			if(!bIgnoreLastAccess && (m_uUsageCount != pe.m_uUsageCount)) return false;
+
+			if(m_strOverrideUrl != pe.m_strOverrideUrl) return false;
+
+			return true;
+		}
+
 		/// <summary>
 		/// Assign properties to the current entry based on a template entry.
 		/// </summary>
@@ -344,19 +419,21 @@ namespace KeePassLib
 		/// if it is newer than the current one.</param>
 		/// <param name="bIncludeHistory">If <c>true</c>, the history will be
 		/// copied, too.</param>
+		/// <param name="bAssignLocationChanged">If <c>true</c>, the
+		/// <c>LocationChanged</c> property is copied, otherwise not.</param>
 		public void AssignProperties(PwEntry peTemplate, bool bOnlyIfNewer,
-			bool bIncludeHistory)
+			bool bIncludeHistory, bool bAssignLocationChanged)
 		{
 			Debug.Assert(peTemplate != null); if(peTemplate == null) throw new ArgumentNullException("peTemplate");
+
+			if(bOnlyIfNewer && (peTemplate.m_tLastMod < m_tLastMod)) return;
 
 			// Template UUID should be the same as the current one
 			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
 			m_uuid = peTemplate.m_uuid;
 
-			if(bOnlyIfNewer)
-			{
-				if(peTemplate.m_tLastMod < m_tLastMod) return;
-			}
+			if(bAssignLocationChanged)
+				m_tParentGroupLastMod = peTemplate.m_tParentGroupLastMod;
 
 			m_listStrings = peTemplate.m_listStrings;
 			m_listBinaries = peTemplate.m_listBinaries;
@@ -364,7 +441,7 @@ namespace KeePassLib
 			if(bIncludeHistory) m_listHistory = peTemplate.m_listHistory;
 
 			m_pwIcon = peTemplate.m_pwIcon;
-			m_pwCustomIconID = peTemplate.m_pwCustomIconID;
+			m_pwCustomIconID = peTemplate.m_pwCustomIconID; // Immutable
 
 			m_clrForeground = peTemplate.m_clrForeground;
 			m_clrBackground = peTemplate.m_clrBackground;
@@ -415,10 +492,10 @@ namespace KeePassLib
 		/// </summary>
 		public void CreateBackup()
 		{
-			PwEntry peCopy = this.CloneDeep();
+			PwEntry peCopy = CloneDeep();
 			peCopy.History = new PwObjectList<PwEntry>(); // Remove history
 
-			this.m_listHistory.Add(peCopy);
+			m_listHistory.Add(peCopy); // Must be added at end, see EqualsEntry
 		}
 
 		/// <summary>
@@ -436,7 +513,21 @@ namespace KeePassLib
 			Debug.Assert(pe != null); if(pe == null) throw new InvalidOperationException();
 
 			CreateBackup();
-			AssignProperties(pe, false, false);
+			AssignProperties(pe, false, false, false);
+		}
+
+		public bool HasBackupOfData(PwEntry peData, bool bIgnoreLastMod,
+			bool bIgnoreLastAccess)
+		{
+			if(peData == null) { Debug.Assert(false); return false; }
+
+			foreach(PwEntry pe in m_listHistory)
+			{
+				if(pe.EqualsEntry(peData, true, bIgnoreLastMod, bIgnoreLastAccess,
+					true, false)) return true;
+			}
+
+			return false;
 		}
 
 		public bool GetAutoTypeEnabled()

@@ -159,7 +159,7 @@ namespace KeePass.Util
 
 			if(pef.ShowDialog() == DialogResult.OK)
 			{
-				pgContainer.AddEntry(pe, true);
+				pgContainer.AddEntry(pe, true, true);
 
 				// Program.MainForm.UpdateEntryList(null, true);
 				// Program.MainForm.UpdateUIState(true);

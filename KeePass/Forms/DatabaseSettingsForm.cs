@@ -146,9 +146,23 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			m_pwDatabase.Name = m_tbDbName.Text;
-			m_pwDatabase.Description = m_tbDbDesc.Text;
-			m_pwDatabase.DefaultUserName = m_tbDefaultUser.Text;
+			if(!m_tbDbName.Text.Equals(m_pwDatabase.Name))
+			{
+				m_pwDatabase.Name = m_tbDbName.Text;
+				m_pwDatabase.NameChanged = DateTime.Now;
+			}
+
+			if(!m_tbDbDesc.Text.Equals(m_pwDatabase.Description))
+			{
+				m_pwDatabase.Description = m_tbDbDesc.Text;
+				m_pwDatabase.DescriptionChanged = DateTime.Now;
+			}
+
+			if(!m_tbDefaultUser.Text.Equals(m_pwDatabase.DefaultUserName))
+			{
+				m_pwDatabase.DefaultUserName = m_tbDefaultUser.Text;
+				m_pwDatabase.DefaultUserNameChanged = DateTime.Now;
+			}
 
 			int nCipher = CipherPool.GlobalPool.GetCipherIndex(m_cmbEncAlgo.Text);
 			Debug.Assert(nCipher >= 0);
@@ -176,16 +190,48 @@ namespace KeePass.Forms
 
 			// m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = m_cbAutoEnableHiding.Checked;
 
-			m_pwDatabase.RecycleBinEnabled = m_cbRecycleBin.Checked;
+			if(m_cbRecycleBin.Checked != m_pwDatabase.RecycleBinEnabled)
+			{
+				m_pwDatabase.RecycleBinEnabled = m_cbRecycleBin.Checked;
+				m_pwDatabase.RecycleBinChanged = DateTime.Now;
+			}
 			int iRecBinSel = m_cmbRecycleBin.SelectedIndex;
 			if(m_dictRecycleBinGroups.ContainsKey(iRecBinSel))
-				m_pwDatabase.RecycleBinUuid = m_dictRecycleBinGroups[iRecBinSel];
-			else m_pwDatabase.RecycleBinUuid = PwUuid.Zero;
+			{
+				if(!m_dictRecycleBinGroups[iRecBinSel].EqualsValue(m_pwDatabase.RecycleBinUuid))
+				{
+					m_pwDatabase.RecycleBinUuid = m_dictRecycleBinGroups[iRecBinSel];
+					m_pwDatabase.RecycleBinChanged = DateTime.Now;
+				}
+			}
+			else
+			{
+				Debug.Assert(false);
+				if(!PwUuid.Zero.EqualsValue(m_pwDatabase.RecycleBinUuid))
+				{
+					m_pwDatabase.RecycleBinUuid = PwUuid.Zero;
+					m_pwDatabase.RecycleBinChanged = DateTime.Now;
+				}
+			}
 
 			int iTemplSel = m_cmbEntryTemplates.SelectedIndex;
 			if(m_dictEntryTemplateGroups.ContainsKey(iTemplSel))
-				m_pwDatabase.EntryTemplatesGroup = m_dictEntryTemplateGroups[iTemplSel];
-			else m_pwDatabase.EntryTemplatesGroup = PwUuid.Zero;
+			{
+				if(!m_dictEntryTemplateGroups[iTemplSel].EqualsValue(m_pwDatabase.EntryTemplatesGroup))
+				{
+					m_pwDatabase.EntryTemplatesGroup = m_dictEntryTemplateGroups[iTemplSel];
+					m_pwDatabase.EntryTemplatesGroupChanged = DateTime.Now;
+				}
+			}
+			else
+			{
+				Debug.Assert(false);
+				if(!PwUuid.Zero.EqualsValue(m_pwDatabase.EntryTemplatesGroup))
+				{
+					m_pwDatabase.EntryTemplatesGroup = PwUuid.Zero;
+					m_pwDatabase.EntryTemplatesGroupChanged = DateTime.Now;
+				}
+			}
 		}
 
 		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)

@@ -172,7 +172,7 @@ namespace TrlUtil
 
 						swOut.WriteLine("\t\t/// <summary>");
 						swOut.WriteLine("\t\t/// Look up a localized string similar to");
-						swOut.WriteLine("\t\t/// '" + strValue + "'.");
+						swOut.WriteLine("\t\t/// '" + StrUtil.StringToHtml(strValue) + "'.");
 						swOut.WriteLine("\t\t/// </summary>");
 						swOut.WriteLine("\t\tpublic static string " +
 							strName);

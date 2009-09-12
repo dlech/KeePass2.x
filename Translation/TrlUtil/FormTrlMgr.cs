@@ -32,6 +32,13 @@ namespace TrlUtil
 {
 	public static class FormTrlMgr
 	{
+		private static bool m_bIgnoreBaseHash = false;
+		public static bool IgnoreBaseHash
+		{
+			get { return m_bIgnoreBaseHash; }
+			set { m_bIgnoreBaseHash = value; }
+		}
+
 		public static List<KPFormCustomization> CreateListOfCurrentVersion()
 		{
 			List<KPFormCustomization> l = new List<KPFormCustomization>();
@@ -75,6 +82,8 @@ namespace TrlUtil
 			AddForm(l, new StatusLoggerForm());
 			AddForm(l, new StatusProgressForm());
 			AddForm(l, new TanWizardForm());
+			AddForm(l, new UrlSchemeForm());
+			AddForm(l, new UrlSchemesForm());
 
 			return l;
 		}
@@ -119,6 +128,7 @@ namespace TrlUtil
 			else if(t == typeof(TextBox)) bAdd = true;
 			else if(t == typeof(PromptedTextBox)) bAdd = true;
 			else if(t == typeof(RichTextBox)) bAdd = true;
+			else if(t == typeof(KeePass.UI.CustomRichTextBoxEx)) bAdd = true;
 			else if(t == typeof(ComboBox)) bAdd = true;
 			else if(t == typeof(Label)) bAdd = true;
 			else if(t == typeof(ListView)) bAdd = true;
@@ -126,6 +136,7 @@ namespace TrlUtil
 			else if(t == typeof(Button)) bAdd = true;
 			else if(t == typeof(KeePass.UI.QualityProgressBar)) bAdd = true;
 			else if(t == typeof(DateTimePicker)) bAdd = true;
+			else if(t == typeof(CheckedListBox)) bAdd = true;
 
 			if(bAdd && (c.Name.Length > 0))
 			{
@@ -208,7 +219,8 @@ namespace TrlUtil
 			{
 				bool bTextValid = true;
 
-				if((ccFrom.BaseHash.Length > 0) && !ccInto.MatchHash(ccFrom.BaseHash))
+				if(!m_bIgnoreBaseHash && (ccFrom.BaseHash.Length > 0) &&
+					!ccInto.MatchHash(ccFrom.BaseHash))
 					bTextValid = false;
 
 				if(bTextValid) ccInto.Text = ccFrom.Text;

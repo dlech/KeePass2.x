@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -68,7 +69,7 @@ namespace KeePass.DataExchange.Formats
 			string strDoc = sr.ReadToEnd();
 			sr.Close();
 
-			strDoc = ImportUtil.DecodeNonStandardEntities(strDoc);
+			strDoc = XmlUtil.DecodeNonStandardEntities(strDoc);
 
 			ImportFileString(strDoc, pwStorage, slLogger);
 		}

@@ -29,6 +29,27 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
+	public sealed class GwmWindowEventArgs : EventArgs
+	{
+		private Form m_form;
+		public Form Form
+		{
+			get { return m_form; }
+		}
+
+		private IGwmWindow m_gwmWindow;
+		public IGwmWindow GwmWindow
+		{
+			get { return m_gwmWindow; }
+		}
+
+		public GwmWindowEventArgs(Form form, IGwmWindow gwmWindow)
+		{
+			m_form = form;
+			m_gwmWindow = gwmWindow;
+		}
+	}
+
 	public static class GlobalWindowManager
 	{
 		private static List<KeyValuePair<Form, IGwmWindow>> m_vWindows =
@@ -62,6 +83,9 @@ namespace KeePass.UI
 			}
 		}
 
+		public static event EventHandler<GwmWindowEventArgs> WindowAdded;
+		public static event EventHandler<GwmWindowEventArgs> WindowRemoved;
+
 		public static void AddWindow(Form form)
 		{
 			AddWindow(form, null);
@@ -84,6 +108,10 @@ namespace KeePass.UI
 			// else { Debug.Assert(false); }
 
 			// form.Font = new System.Drawing.Font(System.Drawing.SystemFonts.MessageBoxFont.Name, 12.0f);
+
+			if(GlobalWindowManager.WindowAdded != null)
+				GlobalWindowManager.WindowAdded(null, new GwmWindowEventArgs(
+					form, wnd));
 		}
 
 		public static void AddDialog(CommonDialog dlg)
@@ -103,6 +131,10 @@ namespace KeePass.UI
 			{
 				if(m_vWindows[i].Key == form)
 				{
+					if(GlobalWindowManager.WindowRemoved != null)
+						GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
+							form, m_vWindows[i].Value));
+
 					m_vWindows.RemoveAt(i);
 					return;
 				}
@@ -138,6 +170,16 @@ namespace KeePass.UI
 					Application.DoEvents();
 				}
 			}
+		}
+
+		public static bool HasWindow(IntPtr hWindow)
+		{
+			foreach(KeyValuePair<Form, IGwmWindow> kvp in m_vWindows)
+			{
+				if(kvp.Key.Handle == hWindow) return true;
+			}
+
+			return false;
 		}
 	}
 }

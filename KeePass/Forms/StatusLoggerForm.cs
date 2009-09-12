@@ -151,7 +151,7 @@ namespace KeePass.Forms
 			if(m_bCloseMode)
 			{
 				if(m_bIsModal) this.DialogResult = DialogResult.Cancel;
-				else this.Close();
+				else Close();
 			}
 			else
 			{

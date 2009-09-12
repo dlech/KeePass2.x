@@ -24,6 +24,9 @@ using System.IO;
 
 namespace KeePassLib
 {
+	/// <summary>
+	/// Custom icon. <c>PwCustomIcon</c> objects are immutable.
+	/// </summary>
 	public sealed class PwCustomIcon
 	{
 		private PwUuid m_pwUuid;

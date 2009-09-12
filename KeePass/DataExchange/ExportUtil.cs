@@ -29,64 +29,88 @@ using KeePass.Forms;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange
 {
 	public static class ExportUtil
 	{
-		public static void Export(PwExportInfo pwExportInfo, IStatusLogger slLogger)
+		public static bool Export(PwExportInfo pwExportInfo, IStatusLogger slLogger)
 		{
 			if(pwExportInfo == null) throw new ArgumentNullException("pwExportInfo");
 			if(pwExportInfo.DataGroup == null) throw new ArgumentException();
 
-			if(!AppPolicy.Try(AppPolicyId.Export)) return;
+			if(!AppPolicy.Try(AppPolicyId.Export)) return false;
 
 			ExchangeDataForm dlg = new ExchangeDataForm();
 			dlg.InitEx(true, pwExportInfo.ContextDatabase, pwExportInfo.DataGroup);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 			{
-				if(dlg.ResultFormat == null) { Debug.Assert(false); return; }
-				if(dlg.ResultFiles.Length != 1) { Debug.Assert(false); return; }
-				if(dlg.ResultFiles[0] == null) { Debug.Assert(false); return; }
-				if(dlg.ResultFiles[0].Length == 0) { Debug.Assert(false); return; }
+				if(dlg.ResultFormat == null) { Debug.Assert(false); return false; }
+				if(dlg.ResultFiles.Length != 1) { Debug.Assert(false); return false; }
+				if(dlg.ResultFiles[0] == null) { Debug.Assert(false); return false; }
+				if(dlg.ResultFiles[0].Length == 0) { Debug.Assert(false); return false; }
 
 				Application.DoEvents(); // Redraw parent window
 
+				IOConnectionInfo iocOutput = IOConnectionInfo.FromPath(dlg.ResultFiles[0]);
+
 				try
 				{
-					PerformExport(pwExportInfo, dlg.ResultFormat, dlg.ResultFiles[0],
-						slLogger);
+					return Export(pwExportInfo, dlg.ResultFormat, iocOutput, slLogger);
 				}
-				catch(Exception ex)
-				{
-					MessageService.ShowWarning(ex);
-				}
+				catch(Exception ex) { MessageService.ShowWarning(ex); }
 			}
+
+			return false;
 		}
 
-		private static void PerformExport(PwExportInfo pwExportInfo,
-			FileFormatProvider fileFormat, string strOutputFile, IStatusLogger slLogger)
+		public static bool Export(PwExportInfo pwExportInfo, string strFormatName,
+			IOConnectionInfo iocOutput)
 		{
-			if(!fileFormat.SupportsExport) return;
-			if(fileFormat.TryBeginExport() == false) return;
+			if(strFormatName == null) throw new ArgumentNullException("strFormatName");
 
-			bool bExistedAlready = File.Exists(strOutputFile);
+			FileFormatProvider prov = Program.FileFormatPool.Find(strFormatName);
+			if(prov == null) return false;
 
-			FileStream fsOut = new FileStream(strOutputFile, FileMode.Create,
-				FileAccess.Write, FileShare.None);
+			NullStatusLogger slLogger = new NullStatusLogger();
+			return Export(pwExportInfo, prov, iocOutput, slLogger);
+		}
 
-			bool bResult = fileFormat.Export(pwExportInfo, fsOut, slLogger);
+		public static bool Export(PwExportInfo pwExportInfo, FileFormatProvider
+			fileFormat, IOConnectionInfo iocOutput, IStatusLogger slLogger)
+		{
+			if(pwExportInfo == null) throw new ArgumentNullException("pwExportInfo");
+			if(pwExportInfo.DataGroup == null) throw new ArgumentException();
+			if(fileFormat == null) throw new ArgumentNullException("fileFormat");
+			if(iocOutput == null) throw new ArgumentNullException("iocOutput");
 
-			fsOut.Close();
-			fsOut.Dispose();
+			if(!AppPolicy.Try(AppPolicyId.Export)) return false;
+			if(!fileFormat.SupportsExport) return false;
+			if(!fileFormat.TryBeginExport()) return false;
+
+			// bool bExistedAlready = File.Exists(strOutputFile);
+			bool bExistedAlready = IOConnection.FileExists(iocOutput);
+
+			// FileStream fsOut = new FileStream(strOutputFile, FileMode.Create,
+			//	FileAccess.Write, FileShare.None);
+			Stream sOut = IOConnection.OpenWrite(iocOutput);
+
+			bool bResult = false;
+			try { bResult = fileFormat.Export(pwExportInfo, sOut, slLogger); }
+			catch(Exception) { }
+
+			sOut.Close();
 
 			if((bResult == false) && (bExistedAlready == false))
 			{
-				try { File.Delete(strOutputFile); }
+				try { IOConnection.DeleteFile(iocOutput); }
 				catch(Exception) { }
 			}
+
+			return bResult;
 		}
 	}
 }

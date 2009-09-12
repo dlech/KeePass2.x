@@ -193,7 +193,7 @@ namespace KeePass.Forms
 
 			try
 			{
-				Clipboard.Clear();
+				ClipboardUtil.Clear();
 				if(vTriggers.Length == 0) return;
 
 				EcasTriggerContainer v = new EcasTriggerContainer();

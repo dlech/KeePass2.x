@@ -60,6 +60,7 @@
 			this.m_lvIcons.TabIndex = 0;
 			this.m_lvIcons.UseCompatibleStateImageBehavior = false;
 			this.m_lvIcons.View = System.Windows.Forms.View.List;
+			this.m_lvIcons.ItemActivate += new System.EventHandler(this.OnIconsItemActivate);
 			this.m_lvIcons.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.OnIconsItemSelectionChanged);
 			// 
 			// m_btnOK
@@ -82,6 +83,7 @@
 			this.m_lvCustomIcons.TabIndex = 2;
 			this.m_lvCustomIcons.UseCompatibleStateImageBehavior = false;
 			this.m_lvCustomIcons.View = System.Windows.Forms.View.List;
+			this.m_lvCustomIcons.ItemActivate += new System.EventHandler(this.OnCustomIconsItemActivate);
 			this.m_lvCustomIcons.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.OnCustomIconsItemSelectionChanged);
 			// 
 			// m_radioStandard

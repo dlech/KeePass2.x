@@ -31,6 +31,7 @@ namespace KeePass.UI
 	{
 		private int m_nColumn = -1;
 		private SortOrder m_oSort = SortOrder.Ascending;
+		private bool m_bCompareNaturally = true;
 		private bool m_bCompareTimes = false;
 
 		// Cached version of a string representing infinity
@@ -52,6 +53,14 @@ namespace KeePass.UI
 			set { m_oSort = value; }
 		}
 
+		public bool CompareNaturally
+		{
+			get { return m_bCompareNaturally; }
+
+			/// Only provided for XML serialization, do not use
+			set { m_bCompareNaturally = value; }
+		}
+
 		public bool CompareTimes
 		{
 			get { return m_bCompareTimes; }
@@ -65,7 +74,8 @@ namespace KeePass.UI
 			m_strNeverExpires = KPRes.NeverExpires;
 		}
 
-		public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareTimes)
+		public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareNaturally,
+			bool bCompareTimes)
 		{
 			m_strNeverExpires = KPRes.NeverExpires;
 
@@ -74,6 +84,7 @@ namespace KeePass.UI
 			Debug.Assert(sortOrder != SortOrder.None);
 			if(sortOrder != SortOrder.None) m_oSort = sortOrder;
 
+			m_bCompareNaturally = bCompareNaturally;
 			m_bCompareTimes = bCompareTimes;
 		}
 
@@ -106,7 +117,9 @@ namespace KeePass.UI
 				DateTime dtR = TimeUtil.FromDisplayString(strR);
 				return dtL.CompareTo(dtR);
 			}
-			else return StrUtil.CompareNaturally(strL, strR);
+
+			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strL, strR);
+			return strL.ToUpper().CompareTo(strR.ToUpper()); // UUIDs are upper
 		}
 	}
 }

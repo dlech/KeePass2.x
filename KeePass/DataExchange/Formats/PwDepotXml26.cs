@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -130,36 +131,36 @@ namespace KeePass.DataExchange.Formats
 				if(xmlChild.Name == ElemEntryName)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUserName,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryPassword)
 					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectPassword,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryURL)
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUrl,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes,
-						ImportUtil.SafeInnerText(xmlChild)));
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryLastModTime)
 				{
-					if(DateTime.TryParse(ImportUtil.SafeInnerText(xmlChild), out dt))
+					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.LastModificationTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryExpireTime)
 				{
-					if(DateTime.TryParse(ImportUtil.SafeInnerText(xmlChild), out dt))
+					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.ExpiryTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryImportance) { } // Unsupported
 				else if(xmlChild.Name == ElemEntryAutoType)
-					pe.AutoType.DefaultSequence = ImportUtil.SafeInnerText(xmlChild);
+					pe.AutoType.DefaultSequence = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemEntryCustom)
 					ReadCustomContainer(xmlChild, pe);
 				else { Debug.Assert(false); }
@@ -183,9 +184,9 @@ namespace KeePass.DataExchange.Formats
 			foreach(XmlNode xmlChild in xmlNode)
 			{
 				if(xmlChild.Name == ElemCustomFieldName)
-					strName = ImportUtil.SafeInnerText(xmlChild);
+					strName = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemCustomFieldValue)
-					strValue = ImportUtil.SafeInnerText(xmlChild);
+					strValue = XmlUtil.SafeInnerText(xmlChild);
 				else { Debug.Assert(false); }
 			}
 

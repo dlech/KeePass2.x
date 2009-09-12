@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataEditorForm));
-			this.m_rtbText = new System.Windows.Forms.RichTextBox();
+			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_menuMain = new System.Windows.Forms.MenuStrip();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -416,7 +416,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.RichTextBox m_rtbText;
+		private KeePass.UI.CustomRichTextBoxEx m_rtbText;
 		private System.Windows.Forms.MenuStrip m_menuMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSave;

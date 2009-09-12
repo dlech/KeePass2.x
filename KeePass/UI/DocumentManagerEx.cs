@@ -92,7 +92,7 @@ namespace KeePass.UI
 			m_vDocs.Add(ds);
 			if(bMakeActive) m_dsActive = ds;
 
-			this.NotifyActiveDocumentSelected();
+			NotifyActiveDocumentSelected();
 			return ds;
 		}
 
@@ -116,7 +116,7 @@ namespace KeePass.UI
 
 				if(iFoundPos == m_vDocs.Count) --iFoundPos;
 				m_dsActive = m_vDocs[iFoundPos];
-				this.NotifyActiveDocumentSelected();
+				NotifyActiveDocumentSelected();
 			}
 			else { Debug.Assert(false); }
 		}

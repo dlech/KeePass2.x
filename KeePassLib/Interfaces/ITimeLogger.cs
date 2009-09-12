@@ -85,6 +85,15 @@ namespace KeePassLib.Interfaces
 		}
 
 		/// <summary>
+		/// The date/time when the location of the object was last changed.
+		/// </summary>
+		DateTime LocationChanged
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Touch the object. This function updates the internal last access
 		/// time. If the <paramref name="bModified" /> parameter is <c>true</c>,
 		/// the last modification time gets updated, too. Each time you call

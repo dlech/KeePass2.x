@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Drawing;
@@ -44,6 +45,29 @@ namespace KeePass.UI
 {
 	public static class UIUtil
 	{
+		private static ToolStripRenderer m_tsrOverride = null;
+		public static ToolStripRenderer ToolStripRendererOverride
+		{
+			get { return m_tsrOverride; }
+			set { m_tsrOverride = value; }
+		}
+
+		public static void Initialize(bool bReinitialize)
+		{
+			bool bVisualStyles = true;
+			try { bVisualStyles = VisualStyleRenderer.IsSupported; }
+			catch(Exception) { Debug.Assert(false); bVisualStyles = false; }
+
+			if(m_tsrOverride != null) ToolStripManager.Renderer = m_tsrOverride;
+			else if(Program.Config.UI.UseCustomToolStripRenderer && bVisualStyles)
+			{
+				ToolStripManager.Renderer = new CustomToolStripRendererEx();
+				Debug.Assert(ToolStripManager.RenderMode == ToolStripManagerRenderMode.Custom);
+			}
+			else if(bReinitialize)
+				ToolStripManager.Renderer = new ToolStripProfessionalRenderer();
+		}
+
 		public static void RtfSetSelectionLink(RichTextBox richTextBox)
 		{
 			try
@@ -117,11 +141,11 @@ namespace KeePass.UI
 		{
 			Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 
-			using(SolidBrush sb = new SolidBrush(color))
+			using(SolidBrush br = new SolidBrush(color))
 			{
 				using(Graphics g = Graphics.FromImage(bmp))
 				{
-					g.FillRectangle(sb, 0, 0, nWidth, nHeight);
+					g.FillRectangle(br, 0, 0, nWidth, nHeight);
 				}
 			}
 
@@ -139,7 +163,6 @@ namespace KeePass.UI
 			foreach(PwCustomIcon pwci in vImages)
 			{
 				Image imgNew = pwci.Image;
-
 				if(imgNew == null) { Debug.Assert(false); continue; }
 
 				if((imgNew.Width != nWidth) || (imgNew.Height != nHeight))
@@ -288,7 +311,8 @@ namespace KeePass.UI
 			}
 		}
 
-		public static void PrepareStandardMultilineControl(RichTextBox rtb)
+		public static void PrepareStandardMultilineControl(RichTextBox rtb,
+			bool bSimpleTextOnly)
 		{
 			Debug.Assert(rtb != null); if(rtb == null) throw new ArgumentNullException("rtb");
 
@@ -306,6 +330,9 @@ namespace KeePass.UI
 				}
 			}
 			catch(Exception) { }
+
+			CustomRichTextBoxEx crtb = (rtb as CustomRichTextBoxEx);
+			if(crtb != null) crtb.SimpleTextOnly = bSimpleTextOnly;
 		}
 
 		/// <summary>
@@ -711,6 +738,7 @@ namespace KeePass.UI
 
 			if(pgContainer == null) { Debug.Assert(false); return; }
 			if(cmb == null) { Debug.Assert(false); return; }
+			// Do not clear the combobox!
 
 			int iSelectInner = -1;
 			GroupHandler gh = delegate(PwGroup pg)
@@ -800,6 +828,165 @@ namespace KeePass.UI
 			}
 
 			if(bBlockUIUpdate) lv.EndUpdate();
+		}
+
+		public static bool ColorsEqual(Color c1, Color c2)
+		{
+			return ((c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B) &&
+				(c1.A == c2.A));
+		}
+
+		public static Color GetAlternateColor(Color clrBase)
+		{
+			if(ColorsEqual(clrBase, Color.White)) return Color.FromArgb(238, 238, 255);
+
+			float b = clrBase.GetBrightness();
+			if(b >= 0.5) return UIUtil.DarkenColor(clrBase, 0.1);
+			return UIUtil.LightenColor(clrBase, 0.25);
+		}
+
+		public static void SetAlternatingBgColors(ListView lv, Color clrAlternate,
+			bool bAlternate)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+
+			Color clrBg = lv.BackColor;
+
+			// Items in sorted groups don't have display-ordered indices
+			// (in contrast to a non-grouped sorted list)
+			if(lv.ShowGroups && (lv.ListViewItemSorter != null))
+				bAlternate = false;
+
+			for(int i = 0; i < lv.Items.Count; ++i)
+			{
+				ListViewItem lvi = lv.Items[i];
+				Debug.Assert(lvi.Index == i);
+				Debug.Assert(lvi.UseItemStyleForSubItems);
+
+				if(!bAlternate)
+				{
+					if(ColorsEqual(lvi.BackColor, clrAlternate))
+						lvi.BackColor = clrBg;
+				}
+				else if(((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
+					lvi.BackColor = clrBg;
+				else if(((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
+					lvi.BackColor = clrAlternate;
+			}
+		}
+
+		public static bool SetSortIcon(ListView lv, int iColumn, SortOrder so)
+		{
+			if(lv == null) { Debug.Assert(false); return false; }
+
+			try
+			{
+				IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
+					NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+
+				for(int i = 0; i < lv.Columns.Count; ++i)
+				{
+					int nGetMsg = ((WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
+						WinUtil.IsAtLeastWindowsVista) ? NativeMethods.HDM_GETITEMW :
+						NativeMethods.HDM_GETITEMA);
+					int nSetMsg = ((WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
+						WinUtil.IsAtLeastWindowsVista) ? NativeMethods.HDM_SETITEMW :
+						NativeMethods.HDM_SETITEMA);
+					IntPtr pColIndex = new IntPtr(i);
+
+					NativeMethods.HDITEM hdItem = new NativeMethods.HDITEM();
+					hdItem.mask = NativeMethods.HDI_FORMAT;
+
+					if(NativeMethods.SendMessageHDItem(hHeader, nGetMsg, pColIndex,
+						ref hdItem) == IntPtr.Zero) { Debug.Assert(false); }
+
+					if((i != iColumn) || (so == SortOrder.None))
+						hdItem.fmt &= (~NativeMethods.HDF_SORTUP &
+							~NativeMethods.HDF_SORTDOWN);
+					else
+					{
+						if(so == SortOrder.Ascending)
+						{
+							hdItem.fmt &= ~NativeMethods.HDF_SORTDOWN;
+							hdItem.fmt |= NativeMethods.HDF_SORTUP;
+						}
+						else // SortOrder.Descending
+						{
+							hdItem.fmt &= ~NativeMethods.HDF_SORTUP;
+							hdItem.fmt |= NativeMethods.HDF_SORTDOWN;
+						}
+					}
+
+					Debug.Assert(hdItem.mask == NativeMethods.HDI_FORMAT);
+					if(NativeMethods.SendMessageHDItem(hHeader, nSetMsg, pColIndex,
+						ref hdItem) == IntPtr.Zero) { Debug.Assert(false); }
+				}
+			}
+			catch(Exception) { Debug.Assert(false); return false; }
+
+			return true;
+		}
+
+		public static Color ColorToGrayscale(Color clr)
+		{
+			int l = (int)((0.3f * clr.R) + (0.59f * clr.G) + (0.11f * clr.B));
+			if(l >= 256) l = 255;
+			return Color.FromArgb(l, l, l);
+		}
+
+		public static Color ColorTowards(Color clr, Color clrBase, double dblFactor)
+		{
+			int l = (int)((0.3f * clrBase.R) + (0.59f * clrBase.G) + (0.11f * clrBase.B));
+
+			if(l < 128) return DarkenColor(clr, dblFactor);
+			return LightenColor(clr, dblFactor);
+		}
+
+		public static Color ColorTowardsGrayscale(Color clr, Color clrBase, double dblFactor)
+		{
+			return ColorToGrayscale(ColorTowards(clr, clrBase, dblFactor));
+		}
+
+		public static GraphicsPath CreateRoundedRectangle(int x, int y, int dx, int dy,
+			int r)
+		{
+			try
+			{
+				GraphicsPath gp = new GraphicsPath();
+
+				gp.AddLine(x + r, y, x + dx - (r * 2), y);
+				gp.AddArc(x + dx - (r * 2), y, r * 2, r * 2, 270.0f, 90.0f);
+				gp.AddLine(x + dx, y + r, x + dx, y + dy - (r * 2));
+				gp.AddArc(x + dx - (r * 2), y + dy - (r * 2), r * 2, r * 2, 0.0f, 90.0f);
+				gp.AddLine(x + dx - (r * 2), y + dy, x + r, y + dy);
+				gp.AddArc(x, y + dy - (r * 2), r * 2, r * 2, 90.0f, 90.0f);
+				gp.AddLine(x, y + dy - (r * 2), x, y + r);
+				gp.AddArc(x, y, r * 2, r * 2, 180.0f, 90.0f);
+
+				gp.CloseFigure();
+				return gp;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+
+		public static Control GetActiveControl(ContainerControl cc)
+		{
+			if(cc == null) { Debug.Assert(false); return null; }
+
+			try
+			{
+				Control c = cc.ActiveControl;
+				if(c == cc) return c;
+
+				ContainerControl ccSub = (c as ContainerControl);
+				if(ccSub != null) return GetActiveControl(ccSub);
+				else return c;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 	}
 }

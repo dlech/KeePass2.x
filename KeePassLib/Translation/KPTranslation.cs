@@ -125,7 +125,7 @@ namespace KeePassLib.Translation
 #endif
 
 			XmlSerializer xmlSerial = new XmlSerializer(typeof(KPTranslation));
-			KPTranslation kpTrl = xmlSerial.Deserialize(gz) as KPTranslation;
+			KPTranslation kpTrl = (xmlSerial.Deserialize(gz) as KPTranslation);
 
 			gz.Close();
 			fs.Close();

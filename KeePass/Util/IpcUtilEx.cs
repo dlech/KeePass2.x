@@ -28,6 +28,7 @@ using System.Threading;
 using KeePass.Forms;
 using KeePass.Native;
 
+using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -69,6 +70,7 @@ namespace KeePass.Util
 	public static class IpcUtilEx
 	{
 		public const string CmdOpenDatabase = "OpenDatabase";
+		public const string CmdOpenEntryUrl = "OpenEntryUrl";
 
 		public static void SendGlobalMessage(IpcParamEx ipcMsg)
 		{
@@ -88,29 +90,6 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			RemoveIpcInfoFile(nId);
-		}
-
-		public static void ProcessGlobalMessage(int nId, MainForm mf)
-		{
-			if(mf == null) throw new ArgumentNullException("mf");
-
-			IpcParamEx ipcMsg = LoadIpcInfoFile(nId);
-			if(ipcMsg == null) return;
-
-			if(ipcMsg.Message == CmdOpenDatabase)
-			{
-				mf.EnsureVisibleForegroundWindow(true, true);
-
-				string[] vArgs = CommandLineArgs.SafeDeserialize(ipcMsg.Param0);
-				if(vArgs == null) { Debug.Assert(false); return; }
-
-				CommandLineArgs args = new CommandLineArgs(vArgs);
-				Program.CommandLineArgs.CopyFrom(args);
-
-				mf.OpenDatabase(IOConnectionInfo.FromPath(args.FileName),
-					KeyUtil.KeyFromCommandLine(args), true);
-			}
-			else { Debug.Assert(false); }
 		}
 
 		private static string GetIpcFilePath(int nId)
@@ -154,8 +133,8 @@ namespace KeePass.Util
 			string strPath = GetIpcFilePath(nId);
 			if(string.IsNullOrEmpty(strPath)) return;
 
-			try { File.Delete(strPath); }
-			catch(Exception) { }
+			try { if(File.Exists(strPath)) File.Delete(strPath); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private static IpcParamEx LoadIpcInfoFile(int nId)
@@ -185,6 +164,49 @@ namespace KeePass.Util
 
 			Program.DestroyMutex(m, true);
 			return ipcParam;
+		}
+
+		public static void ProcessGlobalMessage(int nId, MainForm mf)
+		{
+			if(mf == null) throw new ArgumentNullException("mf");
+
+			IpcParamEx ipcMsg = LoadIpcInfoFile(nId);
+			if(ipcMsg == null) return;
+
+			if(ipcMsg.Message == CmdOpenDatabase)
+			{
+				mf.UIBlockAutoUnlock(true);
+				mf.EnsureVisibleForegroundWindow(true, true);
+				mf.UIBlockAutoUnlock(false);
+
+				string[] vArgs = CommandLineArgs.SafeDeserialize(ipcMsg.Param0);
+				if(vArgs == null) { Debug.Assert(false); return; }
+
+				CommandLineArgs args = new CommandLineArgs(vArgs);
+				Program.CommandLineArgs.CopyFrom(args);
+
+				mf.OpenDatabase(IOConnectionInfo.FromPath(args.FileName),
+					KeyUtil.KeyFromCommandLine(args), true);
+			}
+			else if(ipcMsg.Message == CmdOpenEntryUrl) OpenEntryUrl(ipcMsg, mf);
+			else { Debug.Assert(false); }
+		}
+
+		private static void OpenEntryUrl(IpcParamEx ip, MainForm mf)
+		{
+			string strUuid = ip.Param0;
+			if(string.IsNullOrEmpty(strUuid)) return; // No assert (user data)
+
+			byte[] pbUuid = MemUtil.HexStringToByteArray(strUuid);
+			if((pbUuid == null) || (pbUuid.Length != PwUuid.UuidSize)) return;
+
+			PwDatabase pdb = mf.ActiveDatabase;
+			if((pdb == null) || !pdb.IsOpen) return;
+
+			PwEntry pe = pdb.RootGroup.FindEntry(new PwUuid(pbUuid), true);
+			if(pe == null) return;
+
+			mf.PerformDefaultUrlAction(new PwEntry[] { pe }, true);
 		}
 	}
 }

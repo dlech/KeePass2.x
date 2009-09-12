@@ -71,6 +71,7 @@ namespace TrlUtil
 
 			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
 			m_clrFindBack = m_tbFind.BackColor;
+			m_rtbUnusedText.SimpleTextOnly = true;
 
 			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
 				string.Empty : " ") + "Search in active tab...");
@@ -909,6 +910,13 @@ namespace TrlUtil
 		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+		}
+
+		private void OnImport2xNoChecks(object sender, EventArgs e)
+		{
+			FormTrlMgr.IgnoreBaseHash = true;
+			OnFileOpen(sender, EventArgs.Empty);
+			FormTrlMgr.IgnoreBaseHash = false;
 		}
 	}
 }

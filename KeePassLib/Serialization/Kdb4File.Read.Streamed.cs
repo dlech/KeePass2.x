@@ -182,10 +182,16 @@ namespace KeePassLib.Serialization
 						ReadString(xr); // Ignore
 					else if(xr.Name == ElemDbName)
 						m_pwDatabase.Name = ReadString(xr);
+					else if(xr.Name == ElemDbNameChanged)
+						m_pwDatabase.NameChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbDesc)
 						m_pwDatabase.Description = ReadString(xr);
+					else if(xr.Name == ElemDbDescChanged)
+						m_pwDatabase.DescriptionChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbDefaultUser)
 						m_pwDatabase.DefaultUserName = ReadString(xr);
+					else if(xr.Name == ElemDbDefaultUserChanged)
+						m_pwDatabase.DefaultUserNameChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbMntncHistoryDays)
 						m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xr, 365);
 					else if(xr.Name == ElemMemoryProt)
@@ -196,8 +202,12 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.RecycleBinEnabled = ReadBool(xr, true);
 					else if(xr.Name == ElemRecycleBinUuid)
 						m_pwDatabase.RecycleBinUuid = ReadUuid(xr);
+					else if(xr.Name == ElemRecycleBinChanged)
+						m_pwDatabase.RecycleBinChanged = ReadTime(xr);
 					else if(xr.Name == ElemEntryTemplatesGroup)
 						m_pwDatabase.EntryTemplatesGroup = ReadUuid(xr);
+					else if(xr.Name == ElemEntryTemplatesGroupChanged)
+						m_pwDatabase.EntryTemplatesGroupChanged = ReadTime(xr);
 					else if(xr.Name == ElemLastSelectedGroup)
 						m_pwDatabase.LastSelectedGroup = ReadUuid(xr);
 					else if(xr.Name == ElemLastTopVisibleGroup)
@@ -209,7 +219,7 @@ namespace KeePassLib.Serialization
 
 				case KdbContext.MemoryProtection:
 					if(xr.Name == ElemProtTitle)
-						m_pwDatabase.MemoryProtection.ProtectNotes = ReadBool(xr, false);
+						m_pwDatabase.MemoryProtection.ProtectTitle = ReadBool(xr, false);
 					else if(xr.Name == ElemProtUserName)
 						m_pwDatabase.MemoryProtection.ProtectUserName = ReadBool(xr, false);
 					else if(xr.Name == ElemProtPassword)
@@ -377,6 +387,8 @@ namespace KeePassLib.Serialization
 						tl.Expires = ReadBool(xr, false);
 					else if(xr.Name == ElemUsageCount)
 						tl.UsageCount = ReadULong(xr, 0);
+					else if(xr.Name == ElemLocationChanged)
+						tl.LocationChanged = ReadTime(xr);
 					else ReadUnknown(xr);
 					break;
 
@@ -498,10 +510,7 @@ namespace KeePassLib.Serialization
 			else if((ctx == KdbContext.Group) && (xr.Name == ElemGroup))
 			{
 				if(PwUuid.Zero.EqualsValue(m_ctxGroup.Uuid))
-				{
-					Debug.Assert(false);
-					m_ctxGroup.Uuid = new PwUuid(true);
-				}
+					m_ctxGroup.Uuid = new PwUuid(true); // No assert (import)
 
 				m_ctxGroups.Pop();
 
@@ -522,10 +531,7 @@ namespace KeePassLib.Serialization
 			{
 				// Create new UUID if absent
 				if(PwUuid.Zero.EqualsValue(m_ctxEntry.Uuid))
-				{
-					Debug.Assert(false);
-					m_ctxEntry.Uuid = new PwUuid(true);
-				}
+					m_ctxEntry.Uuid = new PwUuid(true); // No assert (import)
 
 				if(m_bEntryInHistory)
 				{

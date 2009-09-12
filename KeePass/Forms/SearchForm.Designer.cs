@@ -44,6 +44,8 @@
 			this.m_cbExcludeExpired = new System.Windows.Forms.CheckBox();
 			this.m_cbCaseSensitive = new System.Windows.Forms.CheckBox();
 			this.m_cbRegEx = new System.Windows.Forms.CheckBox();
+			this.m_cbUuid = new System.Windows.Forms.CheckBox();
+			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpSearchIn.SuspendLayout();
 			this.m_grpOptions.SuspendLayout();
@@ -98,6 +100,8 @@
 			// 
 			// m_grpSearchIn
 			// 
+			this.m_grpSearchIn.Controls.Add(this.m_cbGroupName);
+			this.m_grpSearchIn.Controls.Add(this.m_cbUuid);
 			this.m_grpSearchIn.Controls.Add(this.m_cbOtherFields);
 			this.m_grpSearchIn.Controls.Add(this.m_cbNotes);
 			this.m_grpSearchIn.Controls.Add(this.m_cbURL);
@@ -106,7 +110,7 @@
 			this.m_grpSearchIn.Controls.Add(this.m_cbTitle);
 			this.m_grpSearchIn.Location = new System.Drawing.Point(12, 118);
 			this.m_grpSearchIn.Name = "m_grpSearchIn";
-			this.m_grpSearchIn.Size = new System.Drawing.Size(327, 87);
+			this.m_grpSearchIn.Size = new System.Drawing.Size(327, 89);
 			this.m_grpSearchIn.TabIndex = 3;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
@@ -114,17 +118,17 @@
 			// m_cbOtherFields
 			// 
 			this.m_cbOtherFields.AutoSize = true;
-			this.m_cbOtherFields.Location = new System.Drawing.Point(109, 65);
+			this.m_cbOtherFields.Location = new System.Drawing.Point(217, 42);
 			this.m_cbOtherFields.Name = "m_cbOtherFields";
 			this.m_cbOtherFields.Size = new System.Drawing.Size(79, 17);
 			this.m_cbOtherFields.TabIndex = 5;
-			this.m_cbOtherFields.Text = "Other fields";
+			this.m_cbOtherFields.Text = "&Other fields";
 			this.m_cbOtherFields.UseVisualStyleBackColor = true;
 			// 
 			// m_cbNotes
 			// 
 			this.m_cbNotes.AutoSize = true;
-			this.m_cbNotes.Location = new System.Drawing.Point(9, 65);
+			this.m_cbNotes.Location = new System.Drawing.Point(113, 42);
 			this.m_cbNotes.Name = "m_cbNotes";
 			this.m_cbNotes.Size = new System.Drawing.Size(54, 17);
 			this.m_cbNotes.TabIndex = 4;
@@ -134,7 +138,7 @@
 			// m_cbURL
 			// 
 			this.m_cbURL.AutoSize = true;
-			this.m_cbURL.Location = new System.Drawing.Point(109, 42);
+			this.m_cbURL.Location = new System.Drawing.Point(9, 42);
 			this.m_cbURL.Name = "m_cbURL";
 			this.m_cbURL.Size = new System.Drawing.Size(48, 17);
 			this.m_cbURL.TabIndex = 3;
@@ -144,7 +148,7 @@
 			// m_cbPassword
 			// 
 			this.m_cbPassword.AutoSize = true;
-			this.m_cbPassword.Location = new System.Drawing.Point(9, 42);
+			this.m_cbPassword.Location = new System.Drawing.Point(217, 19);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(72, 17);
 			this.m_cbPassword.TabIndex = 2;
@@ -154,7 +158,7 @@
 			// m_cbUserName
 			// 
 			this.m_cbUserName.AutoSize = true;
-			this.m_cbUserName.Location = new System.Drawing.Point(109, 19);
+			this.m_cbUserName.Location = new System.Drawing.Point(113, 19);
 			this.m_cbUserName.Name = "m_cbUserName";
 			this.m_cbUserName.Size = new System.Drawing.Size(77, 17);
 			this.m_cbUserName.TabIndex = 1;
@@ -175,7 +179,7 @@
 			// 
 			this.m_grpOptions.Controls.Add(this.m_cbExcludeExpired);
 			this.m_grpOptions.Controls.Add(this.m_cbCaseSensitive);
-			this.m_grpOptions.Location = new System.Drawing.Point(12, 211);
+			this.m_grpOptions.Location = new System.Drawing.Point(12, 212);
 			this.m_grpOptions.Name = "m_grpOptions";
 			this.m_grpOptions.Size = new System.Drawing.Size(327, 67);
 			this.m_grpOptions.TabIndex = 4;
@@ -199,7 +203,7 @@
 			this.m_cbCaseSensitive.Name = "m_cbCaseSensitive";
 			this.m_cbCaseSensitive.Size = new System.Drawing.Size(94, 17);
 			this.m_cbCaseSensitive.TabIndex = 0;
-			this.m_cbCaseSensitive.Text = "Case-sensitive";
+			this.m_cbCaseSensitive.Text = "Case-sensiti&ve";
 			this.m_cbCaseSensitive.UseVisualStyleBackColor = true;
 			// 
 			// m_cbRegEx
@@ -211,6 +215,26 @@
 			this.m_cbRegEx.TabIndex = 2;
 			this.m_cbRegEx.Text = "&Regular expression";
 			this.m_cbRegEx.UseVisualStyleBackColor = true;
+			// 
+			// m_cbUuid
+			// 
+			this.m_cbUuid.AutoSize = true;
+			this.m_cbUuid.Location = new System.Drawing.Point(9, 65);
+			this.m_cbUuid.Name = "m_cbUuid";
+			this.m_cbUuid.Size = new System.Drawing.Size(53, 17);
+			this.m_cbUuid.TabIndex = 6;
+			this.m_cbUuid.Text = "UU&ID";
+			this.m_cbUuid.UseVisualStyleBackColor = true;
+			// 
+			// m_cbGroupName
+			// 
+			this.m_cbGroupName.AutoSize = true;
+			this.m_cbGroupName.Location = new System.Drawing.Point(113, 65);
+			this.m_cbGroupName.Name = "m_cbGroupName";
+			this.m_cbGroupName.Size = new System.Drawing.Size(84, 17);
+			this.m_cbGroupName.TabIndex = 7;
+			this.m_cbGroupName.Text = "&Group name";
+			this.m_cbGroupName.UseVisualStyleBackColor = true;
 			// 
 			// SearchForm
 			// 
@@ -264,5 +288,7 @@
 		private System.Windows.Forms.CheckBox m_cbOtherFields;
 		private System.Windows.Forms.CheckBox m_cbRegEx;
 		private System.Windows.Forms.CheckBox m_cbExcludeExpired;
+		private System.Windows.Forms.CheckBox m_cbGroupName;
+		private System.Windows.Forms.CheckBox m_cbUuid;
 	}
 }

@@ -45,12 +45,13 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, etc.
 		/// </summary>
-		public const uint Version32 = 0x02000800;
+		public const uint Version32 = 0x02000900;
+		public const ulong FileVersion64 = 0x0002000900000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.08";
+		public const string VersionString = "2.09";
 
 		public const string Copyright = @"Copyright © 2003-2009 Dominik Reichl";
 
@@ -87,9 +88,8 @@ namespace KeePassLib
 		public const string HelpUrl = "http://keepass.info/help/";
 
 		/// <summary>
-		/// A DateTime object that represents infinity.
-		/// Example: setting the expire time of an entry to DtInfinity would mean
-		/// that the entry never expires.
+		/// A <c>DateTime</c> object that represents the time when the assembly
+		/// was loaded.
 		/// </summary>
 		public static readonly DateTime DtDefaultNow = DateTime.Now;
 
@@ -265,6 +265,13 @@ namespace KeePassLib
 			set { m_bSearchInUuids = value; }
 		}
 
+		private bool m_bSearchInGroupNames = false;
+		public bool SearchInGroupNames
+		{
+			get { return m_bSearchInGroupNames; }
+			set { m_bSearchInGroupNames = value; }
+		}
+
 		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;
 		/// <summary>
 		/// String comparison type. Specifies the condition when the specified
@@ -299,6 +306,7 @@ namespace KeePassLib
 				sp.m_bSearchInNotes = false;
 				sp.m_bSearchInOther = false;
 				// sp.m_bSearchInUuids = false;
+				// sp.SearchInGroupNames = false;
 				// sp.m_scType = StringComparison.InvariantCultureIgnoreCase;
 				// sp.m_bExcludeExpired = false;
 
