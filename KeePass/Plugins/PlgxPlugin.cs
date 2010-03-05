@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ namespace KeePass.Plugins
 			{
 				fsOut = new FileStream(strPlgxPath + ".txt", FileMode.Create,
 					FileAccess.Write, FileShare.None);
-				twLog = new StreamWriter(fsOut, Encoding.UTF8);
+				twLog = new StreamWriter(fsOut, new UTF8Encoding(false));
 
 				NullStatusLogger sl = new NullStatusLogger();
 				LoadPriv(strPlgxPath, sl, false, false, false, twLog);
@@ -162,7 +162,7 @@ namespace KeePass.Plugins
 
 			if(!string.IsNullOrEmpty(strPluginPath) && bAllowLoad)
 				Program.MainForm.PluginManager.LoadPlugin(strPluginPath,
-					plgx.BaseFileName, strFilePath);
+					plgx.BaseFileName, strFilePath, false);
 		}
 
 		private static string ReadFile(BinaryReader br, PlgxPluginInfo plgx,

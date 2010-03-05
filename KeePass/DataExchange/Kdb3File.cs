@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -238,8 +238,7 @@ namespace KeePass.DataExchange
 					Debug.Assert(pbData.Length == e.BinaryDataLength);
 
 					string strDesc = e.BinaryDescription;
-					if((strDesc == null) || (strDesc.Length == 0))
-						strDesc = "Attachment";
+					if(string.IsNullOrEmpty(strDesc)) strDesc = "Attachment";
 
 					pe.Binaries.Set(strDesc, new ProtectedBinary(false, pbData));
 				}
@@ -608,6 +607,32 @@ namespace KeePass.DataExchange
 				else str = StrUtil.ReplaceCaseInsensitive(str, kvp.Value, kvp.Key);
 			}
 
+			if(!b1xTo2x) str = CapitalizePlaceholders(str);
+
+			return str;
+		}
+
+		private static string CapitalizePlaceholders(string strSeq)
+		{
+			string str = strSeq;
+
+			int iOffset = 0;
+			while(true)
+			{
+				int iStart = str.IndexOf('{', iOffset);
+				if(iStart < 0) break;
+
+				int iEnd = str.IndexOf('}', iStart);
+				if(iEnd < 0) { Debug.Assert(false); break; }
+
+				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
+
+				if(!strPlaceholder.StartsWith("{S:", StrUtil.CaseIgnoreCmp))
+					str = str.Replace(strPlaceholder, strPlaceholder.ToUpper());
+
+				iOffset = iStart + 1;
+			}
+
 			return str;
 		}
 
@@ -633,40 +658,58 @@ namespace KeePass.DataExchange
 		{
 			StringBuilder sbAppend = new StringBuilder();
 			bool bSeparator = false;
+			uint uIndex = 0;
 
-			if(peSource.AutoType.DefaultSequence.Length > 0)
+			if((peSource.AutoType.DefaultSequence.Length > 0) &&
+				(peSource.AutoType.AssociationsCount == 0)) // Avoid broken indices
 			{
-				sbAppend.Append(MessageService.NewParagraph);
+				if(strNotes.Length > 0)
+					sbAppend.Append(MessageService.NewParagraph);
+
 				sbAppend.Append(AutoTypePrefix);
 				sbAppend.Append(@": ");
-				sbAppend.Append(ConvertAutoTypeSequence(
-					peSource.AutoType.DefaultSequence, false));
+				sbAppend.Append(ConvertAutoTypeSeqExp(peSource.AutoType.DefaultSequence,
+					peSource));
 				sbAppend.Append(MessageService.NewLine);
 
 				bSeparator = true;
+				++uIndex;
 			}
 
 			foreach(KeyValuePair<string, string> kvp in peSource.AutoType.WindowSequencePairs)
 			{
 				if(bSeparator == false)
 				{
-					sbAppend.Append(MessageService.NewParagraph);
+					if(strNotes.Length > 0)
+						sbAppend.Append(MessageService.NewParagraph);
 
 					bSeparator = true;
 				}
 
-				sbAppend.Append(AutoTypeWindowPrefix);
+				string strSuffix = ((uIndex > 0) ? ("-" + uIndex.ToString()) : string.Empty);
+
+				sbAppend.Append(AutoTypePrefix + strSuffix);
+				sbAppend.Append(@": ");
+				sbAppend.Append(ConvertAutoTypeSeqExp(kvp.Value, peSource));
+				sbAppend.Append(MessageService.NewLine);
+				sbAppend.Append(AutoTypeWindowPrefix + strSuffix);
 				sbAppend.Append(@": ");
 				sbAppend.Append(kvp.Key);
 				sbAppend.Append(MessageService.NewLine);
-				sbAppend.Append(AutoTypePrefix);
-				sbAppend.Append(@": ");
-				sbAppend.Append(ConvertAutoTypeSequence(kvp.Value, false));
-				sbAppend.Append(MessageService.NewLine);
+
+				++uIndex;
 			}
 
 			strNotes = strNotes.TrimEnd(new char[]{ '\r', '\n', '\t', ' ' });
 			strNotes += sbAppend.ToString();
+		}
+
+		private static string ConvertAutoTypeSeqExp(string strSeq, PwEntry pe)
+		{
+			string strExp = strSeq;
+			if(string.IsNullOrEmpty(strExp)) strExp = pe.GetAutoTypeSequence();
+
+			return ConvertAutoTypeSequence(strExp, false);
 		}
 
 		private static void ImportUrlOverride(ref string strNotes, PwEntry peStorage)

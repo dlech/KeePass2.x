@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,11 @@ namespace KeePass.Native
 		// internal const int WM_MOUSEWHEEL = 0x020A;
 
 		internal const int HWND_BROADCAST = 0xFFFF;
+
+		internal const uint SMTO_NORMAL = 0x0000;
+		internal const uint SMTO_BLOCK = 0x0001;
+		internal const uint SMTO_ABORTIFHUNG = 0x0002;
+		internal const uint SMTO_NOTIMEOUTIFNOTHUNG = 0x0008;
 
 		internal const uint INPUT_MOUSE = 0;
 		internal const uint INPUT_KEYBOARD = 1;
@@ -128,6 +133,8 @@ namespace KeePass.Native
 		internal const int HDM_GETITEMW = HDM_FIRST + 11;
 		internal const int HDM_SETITEMA = HDM_FIRST + 4;
 		internal const int HDM_SETITEMW = HDM_FIRST + 12;
+
+		internal const int OFN_DONTADDTORECENT = 0x02000000;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ using System.IO;
 using System.Net.NetworkInformation;
 
 using KeePass.Resources;
-using KeePass.Util.Spr;
 
 using KeePassLib;
 
@@ -68,10 +67,10 @@ namespace KeePass.Ecas
 
 		private static bool IsMatchEnvironmentVar(EcasCondition c, EcasContext ctx)
 		{
-			string strName = EcasUtil.GetParamString(c.Parameters, 0);
+			string strName = EcasUtil.GetParamString(c.Parameters, 0, true);
 			uint uCompareType = EcasUtil.GetParamEnum(c.Parameters, 1,
 				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
-			string strValue = EcasUtil.GetParamString(c.Parameters, 2);
+			string strValue = EcasUtil.GetParamString(c.Parameters, 2, true);
 
 			if(string.IsNullOrEmpty(strName) || (strValue == null))
 				return false;
@@ -90,11 +89,7 @@ namespace KeePass.Ecas
 
 		private static bool IsMatchFile(EcasCondition c, EcasContext ctx)
 		{
-			string strFileSpec = EcasUtil.GetParamString(c.Parameters, 0);
-			if(string.IsNullOrEmpty(strFileSpec)) return true;
-
-			string strFile = SprEngine.Compile(strFileSpec, false, null,
-				null, false, false);
+			string strFile = EcasUtil.GetParamString(c.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strFile)) return true;
 
 			try { return File.Exists(strFile); }
@@ -105,11 +100,7 @@ namespace KeePass.Ecas
 
 		private static bool IsHostReachable(EcasCondition c, EcasContext ctx)
 		{
-			string strHostEnc = EcasUtil.GetParamString(c.Parameters, 0);
-			if(string.IsNullOrEmpty(strHostEnc)) return true;
-
-			string strHost = SprEngine.Compile(strHostEnc, false, null,
-				Program.MainForm.ActiveDatabase, false, false);
+			string strHost = EcasUtil.GetParamString(c.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strHost)) return true;
 
 			int[] vTimeOuts = { 250, 1250 };

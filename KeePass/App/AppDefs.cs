@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -117,6 +117,8 @@ namespace KeePass.App
 			public const string KeyFile = "keyfile";
 			public const string UserAccount = "useraccount";
 
+			public const string PasswordEncrypted = "pw-enc";
+
 			public const string PreSelect = "preselect";
 
 			public const string IoCredUserName = "iousername";
@@ -130,6 +132,8 @@ namespace KeePass.App
 			public const string Minimize = "minimize";
 			public const string AutoType = "auto-type";
 			public const string OpenEntryUrl = "entry-url-open";
+			public const string LockAll = "lock-all";
+			public const string UnlockAll = "unlock-all";
 
 			public const string Uuid = "uuid";
 

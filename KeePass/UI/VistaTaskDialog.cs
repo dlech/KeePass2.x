@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -79,7 +79,8 @@ namespace KeePass.UI
 		Question = 1
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	// Pack = 4 required for 64-bit compatibility
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
 	internal struct VtdButton
 	{
 		public int ID;
@@ -96,7 +97,8 @@ namespace KeePass.UI
 		}
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	// Pack = 4 required for 64-bit compatibility
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
 	internal struct VtdConfig
 	{
 		public uint cbSize;
@@ -155,7 +157,10 @@ namespace KeePass.UI
 			cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
 			hwndParent = IntPtr.Zero;
 			hInstance = IntPtr.Zero;
+
 			dwFlags = VtdFlags.None;
+			if(Program.Translation.Properties.RightToLeft) dwFlags |= VtdFlags.RtlLayout;
+
 			dwCommonButtons = VtdCommonButtonFlags.None;
 			pszWindowTitle = null;
 			hMainIcon = IntPtr.Zero;
@@ -325,19 +330,15 @@ namespace KeePass.UI
 			try
 			{
 				if(NativeMethods.TaskDialogIndirect(ref m_cfg, out pnButton,
-					out pnRadioButton, out bVerification) < 0)
+					out pnRadioButton, out bVerification) != 0)
 					throw new NotSupportedException();
 			}
-			catch(Exception)
+			catch(Exception) { return false; }
+			finally
 			{
 				try { FreeButtonsPtr(); }
 				catch(Exception) { Debug.Assert(false); }
-
-				return false;
 			}
-
-			try { FreeButtonsPtr(); }
-			catch(Exception) { Debug.Assert(false); }
 
 			m_iResult = pnButton;
 			m_bVerification = bVerification;

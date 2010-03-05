@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace KeePassLib.Serialization
 
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
+		private bool m_bVerify;
 		private bool m_bEos = false;
 
 		private BinaryReader m_brInput;
@@ -73,15 +74,22 @@ namespace KeePassLib.Serialization
 
 		public HashedBlockStream(Stream sBaseStream, bool bWriting)
 		{
-			Initialize(sBaseStream, bWriting, 0);
+			Initialize(sBaseStream, bWriting, 0, true);
 		}
 
 		public HashedBlockStream(Stream sBaseStream, bool bWriting, int nBufferSize)
 		{
-			Initialize(sBaseStream, bWriting, nBufferSize);
+			Initialize(sBaseStream, bWriting, nBufferSize, true);
 		}
 
-		private void Initialize(Stream sBaseStream, bool bWriting, int nBufferSize)
+		public HashedBlockStream(Stream sBaseStream, bool bWriting, int nBufferSize,
+			bool bVerify)
+		{
+			Initialize(sBaseStream, bWriting, nBufferSize, bVerify);
+		}
+
+		private void Initialize(Stream sBaseStream, bool bWriting, int nBufferSize,
+			bool bVerify)
 		{
 			if(sBaseStream == null) throw new ArgumentNullException("sBaseStream");
 			if(nBufferSize < 0) throw new ArgumentOutOfRangeException("nBufferSize");
@@ -90,6 +98,7 @@ namespace KeePassLib.Serialization
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
+			m_bVerify = bVerify;
 
 			UTF8Encoding utf8 = new UTF8Encoding(false, false);
 
@@ -130,14 +139,14 @@ namespace KeePassLib.Serialization
 				else // Writing mode
 				{
 					if(m_nBufferPos == 0) // No data left in buffer
-						this.WriteHashedBlock(); // Write terminating block
+						WriteHashedBlock(); // Write terminating block
 					else
 					{
-						this.WriteHashedBlock(); // Write remaining buffered data
-						this.WriteHashedBlock(); // Write terminating block
+						WriteHashedBlock(); // Write remaining buffered data
+						WriteHashedBlock(); // Write terminating block
 					}
 
-					this.Flush();
+					Flush();
 					m_bwOutput.Close();
 					m_bwOutput = null;
 				}
@@ -215,18 +224,21 @@ namespace KeePassLib.Serialization
 			}
 
 			m_pbBuffer = m_brInput.ReadBytes(nBufferSize);
-			if((m_pbBuffer == null) || (m_pbBuffer.Length != nBufferSize))
+			if((m_pbBuffer == null) || ((m_pbBuffer.Length != nBufferSize) && m_bVerify))
 				throw new InvalidDataException();
 
-			SHA256Managed sha256 = new SHA256Managed();
-			byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
-			if((pbComputedHash == null) || (pbComputedHash.Length != 32))
-				throw new InvalidOperationException();
-
-			for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
+			if(m_bVerify)
 			{
-				if(pbStoredHash[iHashPos] != pbComputedHash[iHashPos])
-					throw new InvalidDataException();
+				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
+				if((pbComputedHash == null) || (pbComputedHash.Length != 32))
+					throw new InvalidOperationException();
+
+				for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
+				{
+					if(pbStoredHash[iHashPos] != pbComputedHash[iHashPos])
+						throw new InvalidDataException();
+				}
 			}
 
 			return true;

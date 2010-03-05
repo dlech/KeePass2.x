@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,15 +40,23 @@ namespace KeePass.UI
 	{
 		private StatusBarLogger m_sbDefault = null;
 		private StatusLoggerForm m_slForm = null;
+		private Form m_fTaskbarWindow = null;
 		private bool m_bStartedLogging = false;
 		private bool m_bEndedLogging = false;
 
 		private List<KeyValuePair<LogStatusType, string>> m_vCachedMessages =
 			new List<KeyValuePair<LogStatusType, string>>();
 
+		[Obsolete]
 		public ShowWarningsLogger(StatusBarLogger sbDefault)
 		{
 			m_sbDefault = sbDefault;
+		}
+
+		public ShowWarningsLogger(StatusBarLogger sbDefault, Form fTaskbarWindow)
+		{
+			m_sbDefault = sbDefault;
+			m_fTaskbarWindow = fTaskbarWindow;
 		}
 
 		~ShowWarningsLogger()
@@ -65,6 +73,11 @@ namespace KeePass.UI
 				m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
 			if(m_slForm != null)
 				m_slForm.StartLogging(strOperation, bWriteOperationToLog);
+			if(m_fTaskbarWindow != null)
+			{
+				TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
+				TaskbarList.SetProgressState(m_fTaskbarWindow, TbpFlag.Normal);
+			}
 
 			m_bStartedLogging = true;
 			
@@ -79,6 +92,8 @@ namespace KeePass.UI
 
 			if(m_sbDefault != null) m_sbDefault.EndLogging();
 			if(m_slForm != null) m_slForm.EndLogging();
+			if(m_fTaskbarWindow != null)
+				TaskbarList.SetProgressState(m_fTaskbarWindow, TbpFlag.NoProgress);
 
 			m_bEndedLogging = true;
 		}
@@ -96,6 +111,8 @@ namespace KeePass.UI
 			bool b = true;
 			if(m_sbDefault != null) b &= m_sbDefault.SetProgress(uPercent);
 			if(m_slForm != null) b &= m_slForm.SetProgress(uPercent);
+			if(m_fTaskbarWindow != null)
+				TaskbarList.SetProgressValue(m_fTaskbarWindow, uPercent, 100);
 
 			return b;
 		}

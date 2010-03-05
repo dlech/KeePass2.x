@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ namespace KeePassLib.Cryptography
 		/// parameter is <c>null</c>.</exception>
 		public static uint EstimatePasswordBits(char[] vPasswordChars)
 		{
+			Debug.Assert(vPasswordChars != null);
+			if(vPasswordChars == null) throw new ArgumentNullException("vPasswordChars");
+
 			bool bChLower = false, bChUpper = false, bChNumber = false;
 			bool bChSimpleSpecial = false, bChExtSpecial = false, bChHigh = false;
 			bool bChEscape = false;
@@ -56,9 +59,7 @@ namespace KeePassLib.Cryptography
 			Dictionary<int, uint> vDifferences = new Dictionary<int, uint>();
 			double dblEffectiveLength = 0.0;
 
-			Debug.Assert(vPasswordChars != null); if(vPasswordChars == null) throw new ArgumentNullException("vPasswordChars");
-
-			for(int i = 0; i < vPasswordChars.Length; i++) // Get character types
+			for(int i = 0; i < vPasswordChars.Length; ++i) // Get character types
 			{
 				char tch = vPasswordChars[i];
 
@@ -123,9 +124,7 @@ namespace KeePassLib.Cryptography
 		{
 			if(pbUnprotectedUtf8 == null) { Debug.Assert(false); return 0; }
 
-			UTF8Encoding utf8 = new UTF8Encoding();
-			char[] vChars = utf8.GetChars(pbUnprotectedUtf8);
-
+			char[] vChars = Encoding.UTF8.GetChars(pbUnprotectedUtf8);
 			uint uResult = EstimatePasswordBits(vChars);
 			Array.Clear(vChars, 0, vChars.Length);
 

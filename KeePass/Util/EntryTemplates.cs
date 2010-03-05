@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,10 +31,28 @@ using KeePassLib;
 
 namespace KeePass.Util
 {
+	public sealed class TemplateEntryEventArgs : EventArgs
+	{
+		private PwEntry m_peTemplate;
+		public PwEntry TemplateEntry { get { return m_peTemplate; } }
+
+		private PwEntry m_pe;
+		public PwEntry Entry { get { return m_pe; } }
+
+		public TemplateEntryEventArgs(PwEntry peTemplate, PwEntry pe)
+		{
+			m_peTemplate = peTemplate;
+			m_pe = pe;
+		}
+	}
+
 	public static class EntryTemplates
 	{
 		private static ToolStripSplitButton m_btnItemsHost = null;
 		private static List<ToolStripItem> m_vToolStripItems = new List<ToolStripItem>();
+
+		public static event EventHandler<TemplateEntryEventArgs> EntryCreating;
+		public static event EventHandler<TemplateEntryEventArgs> EntryCreated;
 
 		public static void Init(ToolStripSplitButton btnHost)
 		{
@@ -153,6 +171,10 @@ namespace KeePass.Util
 			pe.Uuid = new PwUuid(true);
 			pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = DateTime.Now;
 
+			if(EntryTemplates.EntryCreating != null)
+				EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(
+					peTemplate.CloneDeep(), pe));
+
 			PwEntryForm pef = new PwEntryForm();
 			pef.InitEx(pe, PwEditMode.AddNewEntry, pd, Program.MainForm.ClientIcons,
 				false, true);
@@ -161,11 +183,17 @@ namespace KeePass.Util
 			{
 				pgContainer.AddEntry(pe, true, true);
 
+				if(EntryTemplates.EntryCreated != null)
+					EntryTemplates.EntryCreated(null, new TemplateEntryEventArgs(
+						peTemplate.CloneDeep(), pe));
+
 				// Program.MainForm.UpdateEntryList(null, true);
 				// Program.MainForm.UpdateUIState(true);
-				Program.MainForm.UpdateUI(false, null, false, null, true, null, true);
+				Program.MainForm.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
+					true, null, true);
 			}
-			else Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
+			else Program.MainForm.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
+				pd.UINeedsIconUpdate, null, false);
 		}
 	}
 }

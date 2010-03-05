@@ -50,10 +50,9 @@
 			// m_cbUserAccount
 			// 
 			this.m_cbUserAccount.AutoSize = true;
-			this.m_cbUserAccount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 125);
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
-			this.m_cbUserAccount.Size = new System.Drawing.Size(158, 17);
+			this.m_cbUserAccount.Size = new System.Drawing.Size(138, 17);
 			this.m_cbUserAccount.TabIndex = 5;
 			this.m_cbUserAccount.Text = "Windows &User Account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
@@ -71,10 +70,9 @@
 			// m_cbKeyFile
 			// 
 			this.m_cbKeyFile.AutoSize = true;
-			this.m_cbKeyFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 100);
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
-			this.m_cbKeyFile.Size = new System.Drawing.Size(75, 17);
+			this.m_cbKeyFile.Size = new System.Drawing.Size(66, 17);
 			this.m_cbKeyFile.TabIndex = 2;
 			this.m_cbKeyFile.Text = "&Key File:";
 			this.m_cbKeyFile.UseVisualStyleBackColor = true;
@@ -91,10 +89,9 @@
 			// m_cbPassword
 			// 
 			this.m_cbPassword.AutoSize = true;
-			this.m_cbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_cbPassword.Location = new System.Drawing.Point(12, 75);
 			this.m_cbPassword.Name = "m_cbPassword";
-			this.m_cbPassword.Size = new System.Drawing.Size(126, 17);
+			this.m_cbPassword.Size = new System.Drawing.Size(110, 17);
 			this.m_cbPassword.TabIndex = 10;
 			this.m_cbPassword.Text = "Master &Password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;

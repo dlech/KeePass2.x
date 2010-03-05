@@ -58,6 +58,7 @@
     <Compile Include="Cryptography\CryptoRandomStream.cs" />
     <Compile Include="Cryptography\Cipher\ICipherEngine.cs" />
     <Compile Include="Cryptography\HashingStreamEx.cs" />
+    <Compile Include="Cryptography\HmacOtp.cs" />
     <Compile Include="Cryptography\PasswordGenerator\CharSetBasedGenerator.cs" />
     <Compile Include="Cryptography\PasswordGenerator\CustomPwGenerator.cs" />
     <Compile Include="Cryptography\PasswordGenerator\CustomPwGeneratorPool.cs" />

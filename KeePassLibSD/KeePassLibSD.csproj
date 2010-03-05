@@ -99,6 +99,9 @@
     <Compile Include="..\KeePassLib\Cryptography\HashingStreamEx.cs">
       <Link>Cryptography\HashingStreamEx.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\HmacOtp.cs">
+      <Link>Cryptography\HmacOtp.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
       <Link>Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
     </Compile>

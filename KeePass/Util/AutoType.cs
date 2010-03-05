@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
 using System.Media;
+using System.Configuration;
 
 using KeePass.App;
 using KeePass.Forms;
@@ -73,6 +74,17 @@ namespace KeePass.Util
 		public static event EventHandler<AutoTypeEventArgs> FilterCompilePre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSendPre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSend;
+
+		internal static void InitStatic()
+		{
+			try
+			{
+				// Enable new SendInput method; see
+				// http://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.aspx
+				ConfigurationManager.AppSettings.Set("SendKeys", "SendInput");
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 
 		private static bool MatchWindows(string strFilter, string strWindow)
 		{
@@ -208,23 +220,8 @@ namespace KeePass.Util
 
 			if((strSeq == null) && bRequireDefinedWindow) return null;
 
-			// Assume default sequence now
-			if((strSeq == null) || (strSeq.Length == 0))
-				strSeq = pwe.AutoType.DefaultSequence;
-
-			PwGroup pg = pwe.ParentGroup;
-			while(pg != null)
-			{
-				if(strSeq.Length != 0) break;
-
-				strSeq = pg.DefaultAutoTypeSequence;
-				pg = pg.ParentGroup;
-			}
-
-			if(strSeq.Length != 0) return strSeq;
-
-			if(PwDefs.IsTanEntry(pwe)) return PwDefs.DefaultAutoTypeSequenceTan;
-			return PwDefs.DefaultAutoTypeSequence;
+			if(!string.IsNullOrEmpty(strSeq)) return strSeq;
+			return pwe.GetAutoTypeSequence();
 		}
 
 		public static bool IsValidAutoTypeWindow(IntPtr hWindow, bool bBeepIfNot)
@@ -298,19 +295,28 @@ namespace KeePass.Util
 			return true;
 		}
 
-		public static bool PerformIntoPreviousWindow(IntPtr hWndCurrent, PwEntry pe)
+		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe)
 		{
 			if((pe != null) && !pe.GetAutoTypeEnabled()) return false;
 
-			if(!NativeMethods.LoseFocus(hWndCurrent)) { Debug.Assert(false); }
+			bool bTopMost = ((fCurrent != null) ? fCurrent.TopMost : false);
+			if(bTopMost) fCurrent.TopMost = false;
 
-			return PerformIntoCurrentWindow(pe);
+			try
+			{
+				if(!NativeMethods.LoseFocus(fCurrent)) { Debug.Assert(false); }
+
+				return PerformIntoCurrentWindow(pe);
+			}
+			finally
+			{
+				if(bTopMost) fCurrent.TopMost = true;
+			}
 		}
 
 		public static bool PerformIntoCurrentWindow(PwEntry pe)
 		{
 			string strWindow;
-
 			try
 			{
 				strWindow = NativeMethods.GetWindowText(
@@ -318,7 +324,11 @@ namespace KeePass.Util
 			}
 			catch(Exception) { strWindow = null; }
 
-			Debug.Assert(strWindow != null); if(strWindow == null) return false;
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+			{
+				if(strWindow == null) { Debug.Assert(false); return false; }
+			}
+			else strWindow = string.Empty;
 
 			Thread.Sleep(100);
 

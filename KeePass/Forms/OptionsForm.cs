@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -136,15 +136,15 @@ namespace KeePass.Forms
 			m_cmbBannerStyle.SelectedIndex = (int)BannerStyle.Default;
 			if(BannerFactory.CustomGenerator != null) m_cmbBannerStyle.Enabled = false;
 
-			int nWidth = m_lvPolicy.ClientRectangle.Width - 36;
-			m_lvPolicy.Columns.Add(KPRes.Feature, nWidth / 4);
-			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 3) / 4);
+			int nWidth = m_lvPolicy.ClientRectangle.Width - UIUtil.GetVScrollBarWidth() - 1;
+			m_lvPolicy.Columns.Add(KPRes.Feature, (nWidth * 2) / 7);
+			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 5) / 7);
 
 			m_hkGlobalAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbGlobalAutoType);
 			m_hkSelectedAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbSelAutoTypeHotKey);
 			m_hkShowWindow = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys, m_tbShowWindowHotKey);
 
-			if(NativeLib.IsUnix() == false)
+			if(!NativeLib.IsUnix())
 			{
 				UIUtil.SetShield(m_btnFileExtCreate, true);
 				UIUtil.SetShield(m_btnFileExtRemove, true);
@@ -180,8 +180,10 @@ namespace KeePass.Forms
 
 		private void LoadSecurityOptions()
 		{
-			m_numLockAfterTime.Value = Program.Config.Security.WorkspaceLocking.LockAfterTime;
-			m_cbLockAfterTime.Checked = (m_numLockAfterTime.Value > 0);
+			uint uLockTime = Program.Config.Security.WorkspaceLocking.LockAfterTime;
+			bool bLockTime = (uLockTime > 0);
+			m_numLockAfterTime.Value = (bLockTime ? uLockTime : 300);
+			m_cbLockAfterTime.Checked = bLockTime;
 
 			int nDefaultExpireDays = Program.Config.Defaults.NewEntryExpiresInDays;
 			if(nDefaultExpireDays < 0)
@@ -225,7 +227,8 @@ namespace KeePass.Forms
 				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended);
 
 			m_cdxSecurityOptions.UpdateData(false);
-			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width - 36;
+			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width -
+				UIUtil.GetVScrollBarWidth() - 1;
 		}
 
 		private void LoadPolicyOption(string strPropertyName, string strDisplayName,
@@ -246,6 +249,8 @@ namespace KeePass.Forms
 			LoadPolicyOption("AutoType", KPRes.AutoType, KPRes.PolicyAutoTypeDesc);
 			LoadPolicyOption("CopyToClipboard", KPRes.Copy, KPRes.PolicyClipboardDesc);
 			LoadPolicyOption("DragDrop", KPRes.DragDrop, KPRes.PolicyDragDropDesc);
+			LoadPolicyOption("ChangeMasterKey", KPRes.ChangeMasterKey, KPRes.PolicyChangeMasterKey);
+			LoadPolicyOption("EditTriggers", KPRes.TriggersEdit, KPRes.PolicyTriggersEditDesc);
 
 			m_cdxPolicy.UpdateData(false);
 		}
@@ -276,12 +281,16 @@ namespace KeePass.Forms
 				m_lvGuiOptions, lvg, KPRes.MinimizeAfterLocking);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterOpeningDatabase",
 				m_lvGuiOptions, lvg, KPRes.MinimizeAfterOpeningDatabase);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindSearchInPasswords",
+				m_lvGuiOptions, lvg, KPRes.QuickSearchInPasswords);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
 				m_lvGuiOptions, lvg, KPRes.QuickSearchExcludeExpired);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
 				m_lvGuiOptions, lvg, KPRes.FocusResultsAfterQuickFind);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
 				m_lvGuiOptions, lvg, KPRes.FocusQuickFindOnUntray);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DisableSaveIfNotModified",
+				m_lvGuiOptions, lvg, KPRes.DisableSaveIfNotModified);
 
 			lvg = new ListViewGroup(KPRes.EntryList);
 			m_lvGuiOptions.Groups.Add(lvg);
@@ -298,9 +307,12 @@ namespace KeePass.Forms
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "UseCustomToolStripRenderer",
 				m_lvGuiOptions, lvg, KPRes.UseCustomToolStripRenderer);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ForceSystemFontUnix",
+				m_lvGuiOptions, lvg, KPRes.ForceSystemFontUnix);
 
 			m_cdxGuiOptions.UpdateData(false);
-			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width - 36;
+			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width -
+				UIUtil.GetVScrollBarWidth() - 1;
 
 			try { m_numMruCount.Value = Program.Config.Application.MostRecentlyUsed.MaxItemCount; }
 			catch(Exception) { Debug.Assert(false); m_numMruCount.Value = AceMru.DefaultMaxItemCount; }
@@ -369,8 +381,10 @@ namespace KeePass.Forms
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "SearchKeyFiles",
+				m_lvAdvanced, lvg, KPRes.SearchKeyFiles);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "SearchKeyFilesOnRemovableMedia",
-				m_lvAdvanced, lvg, KPRes.SearchKeyFilesOnRemovable);
+				m_lvAdvanced, lvg, KPRes.SearchKeyFilesAlsoOnRemovable);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RememberKeySources",
 				m_lvAdvanced, lvg, KPRes.RememberKeySources);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
@@ -385,7 +399,8 @@ namespace KeePass.Forms
 				m_lvAdvanced, lvg, KPRes.OptimizeForScreenReader);
 
 			m_cdxAdvanced.UpdateData(false);
-			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width - 36;
+			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width -
+				UIUtil.GetVScrollBarWidth() - 1;
 		}
 
 		private bool ValidateOptions()

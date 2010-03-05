@@ -90,10 +90,9 @@
 			// m_radioCreateNew
 			// 
 			this.m_radioCreateNew.AutoSize = true;
-			this.m_radioCreateNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioCreateNew.Location = new System.Drawing.Point(15, 114);
 			this.m_radioCreateNew.Name = "m_radioCreateNew";
-			this.m_radioCreateNew.Size = new System.Drawing.Size(112, 17);
+			this.m_radioCreateNew.Size = new System.Drawing.Size(98, 17);
 			this.m_radioCreateNew.TabIndex = 0;
 			this.m_radioCreateNew.TabStop = true;
 			this.m_radioCreateNew.Text = "Create new &IDs";
@@ -112,10 +111,9 @@
 			// m_radioKeepExisting
 			// 
 			this.m_radioKeepExisting.AutoSize = true;
-			this.m_radioKeepExisting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioKeepExisting.Location = new System.Drawing.Point(15, 174);
 			this.m_radioKeepExisting.Name = "m_radioKeepExisting";
-			this.m_radioKeepExisting.Size = new System.Drawing.Size(101, 17);
+			this.m_radioKeepExisting.Size = new System.Drawing.Size(88, 17);
 			this.m_radioKeepExisting.TabIndex = 3;
 			this.m_radioKeepExisting.TabStop = true;
 			this.m_radioKeepExisting.Text = "&Keep existing";
@@ -133,10 +131,9 @@
 			// m_radioOverwrite
 			// 
 			this.m_radioOverwrite.AutoSize = true;
-			this.m_radioOverwrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioOverwrite.Location = new System.Drawing.Point(15, 233);
 			this.m_radioOverwrite.Name = "m_radioOverwrite";
-			this.m_radioOverwrite.Size = new System.Drawing.Size(126, 17);
+			this.m_radioOverwrite.Size = new System.Drawing.Size(108, 17);
 			this.m_radioOverwrite.TabIndex = 5;
 			this.m_radioOverwrite.TabStop = true;
 			this.m_radioOverwrite.Text = "Overwrite &existing";
@@ -154,10 +151,9 @@
 			// m_radioOverwriteIfNewer
 			// 
 			this.m_radioOverwriteIfNewer.AutoSize = true;
-			this.m_radioOverwriteIfNewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioOverwriteIfNewer.Location = new System.Drawing.Point(15, 293);
 			this.m_radioOverwriteIfNewer.Name = "m_radioOverwriteIfNewer";
-			this.m_radioOverwriteIfNewer.Size = new System.Drawing.Size(128, 17);
+			this.m_radioOverwriteIfNewer.Size = new System.Drawing.Size(110, 17);
 			this.m_radioOverwriteIfNewer.TabIndex = 7;
 			this.m_radioOverwriteIfNewer.TabStop = true;
 			this.m_radioOverwriteIfNewer.Text = "Overwrite if &newer";
@@ -175,10 +171,9 @@
 			// m_radioSynchronize
 			// 
 			this.m_radioSynchronize.AutoSize = true;
-			this.m_radioSynchronize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioSynchronize.Location = new System.Drawing.Point(15, 352);
 			this.m_radioSynchronize.Name = "m_radioSynchronize";
-			this.m_radioSynchronize.Size = new System.Drawing.Size(242, 17);
+			this.m_radioSynchronize.Size = new System.Drawing.Size(204, 17);
 			this.m_radioSynchronize.TabIndex = 9;
 			this.m_radioSynchronize.TabStop = true;
 			this.m_radioSynchronize.Text = "Overwrite if newer and apply deletions";
@@ -229,8 +224,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<DYN>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

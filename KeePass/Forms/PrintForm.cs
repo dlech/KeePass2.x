@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.UI;
 using KeePass.Resources;
 
@@ -41,6 +42,7 @@ namespace KeePass.Forms
 	{
 		private PwGroup m_pgDataSource = null;
 		private bool m_bPrintMode = true;
+		private int m_nDefaultSortColumn = -1;
 
 		private bool m_bBlockPreviewRefresh = false;
 		private string m_strGeneratedHtml = string.Empty;
@@ -50,12 +52,13 @@ namespace KeePass.Forms
 			get { return m_strGeneratedHtml; }
 		}
 
-		public void InitEx(PwGroup pgDataSource, bool bPrintMode)
+		public void InitEx(PwGroup pgDataSource, bool bPrintMode, int nDefaultSortColumn)
 		{
 			Debug.Assert(pgDataSource != null); if(pgDataSource == null) throw new ArgumentNullException("pgDataSource");
 
 			m_pgDataSource = pgDataSource;
 			m_bPrintMode = bPrintMode;
+			m_nDefaultSortColumn = nDefaultSortColumn;
 		}
 
 		public PrintForm()
@@ -96,8 +99,27 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			CreateDialogBanner();
 
+			UIUtil.AssignFontDefaultBold(m_rbTabular);
+			UIUtil.AssignFontDefaultBold(m_rbDetails);
+
+			if(!m_bPrintMode) m_btnOK.Text = KPRes.Export;
+
 			m_bBlockPreviewRefresh = true;
 			m_rbTabular.Checked = true;
+
+			m_cmbSortEntries.Items.Add("(" + KPRes.None + ")");
+			m_cmbSortEntries.Items.Add(KPRes.Title);
+			m_cmbSortEntries.Items.Add(KPRes.UserName);
+			m_cmbSortEntries.Items.Add(KPRes.Password);
+			m_cmbSortEntries.Items.Add(KPRes.Url);
+			m_cmbSortEntries.Items.Add(KPRes.Notes);
+			int nSortSel = 0;
+			if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Title) nSortSel = 1;
+			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.UserName) nSortSel = 2;
+			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Password) nSortSel = 3;
+			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Url) nSortSel = 4;
+			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Notes) nSortSel = 5;
+			m_cmbSortEntries.SelectedIndex = nSortSel;
 			m_bBlockPreviewRefresh = false;
 
 			if(!m_bPrintMode) // Export to HTML
@@ -149,15 +171,53 @@ namespace KeePass.Forms
 
 			m_bBlockPreviewRefresh = true;
 
+			PwGroup pgDataSource = m_pgDataSource.CloneDeep();
+
+			int nSortEntries = m_cmbSortEntries.SelectedIndex;
+			string strSortFieldName = null;
+			if(nSortEntries == 0) { } // No sort
+			else if(nSortEntries == 1) strSortFieldName = PwDefs.TitleField;
+			else if(nSortEntries == 2) strSortFieldName = PwDefs.UserNameField;
+			else if(nSortEntries == 3) strSortFieldName = PwDefs.PasswordField;
+			else if(nSortEntries == 4) strSortFieldName = PwDefs.UrlField;
+			else if(nSortEntries == 5) strSortFieldName = PwDefs.NotesField;
+			else { Debug.Assert(false); }
+			if(strSortFieldName != null)
+				SortGroupEntriesRecursive(pgDataSource, strSortFieldName);
+
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append(@"<html><head><meta><title>");
-			sb.Append(m_pgDataSource.Name);
-			sb.Append(@"</title></meta></head><body>");
+			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 
-			sb.Append(@"<h2>");
-			sb.Append(m_pgDataSource.Name);
-			sb.Append(@"</h2>");
+			sb.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+			sb.AppendLine("<head>");
+			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
+			sb.Append("<title>");
+			sb.Append(StrUtil.StringToHtml(pgDataSource.Name));
+			sb.AppendLine("</title>");
+			sb.AppendLine("<meta http-equiv=\"expires\" content=\"0\" />");
+			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
+			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
+
+			sb.AppendLine("<style type=\"text/css\"><!--");
+
+			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
+			sb.AppendLine("\tfont-family: Tahoma, MS Sans Serif, Sans Serif, Verdana, sans-serif;");
+			sb.AppendLine("}");
+			sb.AppendLine("span.fserif {");
+			sb.AppendLine("\tfont-family: Times New Roman, serif;");
+			sb.AppendLine("}");
+			sb.AppendLine("td {");
+			sb.AppendLine("\ttext-align: left;");
+			sb.AppendLine("\tvertical-align: top;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("--></style>");
+
+			sb.AppendLine("</head><body>");
+
+			sb.AppendLine("<h2>" + StrUtil.StringToHtml(pgDataSource.Name) + "</h2>");
 
 			GroupHandler gh = null;
 			EntryHandler eh = null;
@@ -180,48 +240,53 @@ namespace KeePass.Forms
 
 			if(m_rbSerif.Checked)
 			{
-				strFontInit = "<font face=\"Times New Roman,Serif\"><small>";
-				strFontExit = @"</small></font>";
+				strFontInit = "<span class=\"fserif\"><small>";
+				strFontExit = "</small></span>";
 			}
 			else if(m_rbSansSerif.Checked)
 			{
-				strFontInit = "<font face=\"Tahoma,MS Sans Serif,Sans Serif,Verdana\"><small>";
-				strFontExit = @"</small></font>";
+				strFontInit = "<small>";
+				strFontExit = "</small>";
 			}
 			else if(m_rbMonospace.Checked)
 			{
-				strFontInit = @"<code>";
-				if(bSmallMono) strFontInit += @"<small>";
-
-				strFontExit = (bSmallMono ? @"</small></code>" : @"</code>");
+				strFontInit = (bSmallMono ? "<code><small>" : "<code>");
+				strFontExit = (bSmallMono ? "</small></code>" : "</code>");
 			}
 			else { Debug.Assert(false); }
+
+			string strTableInit = "<table width=\"100%\">";
 
 			if(m_rbTabular.Checked)
 			{
 				// int nFieldCount = (bTitle ? 1 : 0) + (bUserName ? 1 : 0);
 				// nFieldCount += (bPassword ? 1 : 0) + (bURL ? 1 : 0) + (bNotes ? 1 : 0);
 
-				string strCellPre = "<td align=\"left\" valign=\"top\">";
-				string strCellPost = @"</td>";
+				string strCellPre = "<td>" + strFontInit;
+				string strCellPost = strFontExit + "</td>";
 
-				strCellPre += strFontInit;
-				strCellPost = strFontExit + strCellPost;
+				sb.AppendLine(strTableInit);
 
-				sb.AppendLine("<table width=\"100%\">");
+				string strHTdInit = "<td><b><small>";
+				string strHTdExit = "</small></b></td>";
 
-				sb.Append("<tr>");
-				if(bGroup) sb.Append("<td><b><small>" + KPRes.Group + "</small></b></td>");
-				if(bTitle) sb.Append("<td><b><small>" + KPRes.Title + "</small></b></td>");
-				if(bUserName) sb.Append("<td><b><small>" + KPRes.UserName + "</small></b></td>");
-				if(bPassword) sb.Append("<td><b><small>" + KPRes.Password + "</small></b></td>");
-				if(bURL) sb.Append("<td><b><small>" + KPRes.Url + "</small></b></td>");
-				if(bNotes) sb.Append("<td><b><small>" + KPRes.Notes + "</small></b></td>");
-				if(bCreation) sb.Append("<td><b><small>" + KPRes.CreationTime + "</small></b></td>");
-				if(bLastAcc) sb.Append("<td><b><small>" + KPRes.LastAccessTime + "</small></b></td>");
-				if(bLastMod) sb.Append("<td><b><small>" + KPRes.LastModificationTime + "</small></b></td>");
-				if(bExpire) sb.Append("<td><b><small>" + KPRes.ExpiryTime + "</small></b></td>");
-				sb.AppendLine("</tr>");
+				StringBuilder sbH = new StringBuilder();
+				sbH.Append("<tr>");
+				if(bGroup) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Group) + strHTdExit);
+				if(bTitle) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Title) + strHTdExit);
+				if(bUserName) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.UserName) + strHTdExit);
+				if(bPassword) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Password) + strHTdExit);
+				if(bURL) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Url) + strHTdExit);
+				if(bNotes) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Notes) + strHTdExit);
+				if(bCreation) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.CreationTime) + strHTdExit);
+				if(bLastAcc) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastAccessTime) + strHTdExit);
+				if(bLastMod) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastModificationTime) + strHTdExit);
+				if(bExpire) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.ExpiryTime) + strHTdExit);
+				sbH.AppendLine("</tr>");
+
+				string strH = sbH.ToString();
+				sb.Append(strH);
+				strTableInit += strH;
 
 				eh = delegate(PwEntry pe)
 				{
@@ -254,19 +319,18 @@ namespace KeePass.Forms
 					WriteTabularIf(bLastMod, sb, pe.LastModificationTime.ToString(), strCellPre, strCellPost);
 					WriteTabularIf(bExpire, sb, pe.ExpiryTime.ToString(), strCellPre, strCellPost);
 
-					sb.Append(strCellPost);
 					sb.AppendLine("</tr>");
 					return true;
 				};
 			}
 			else if(m_rbDetails.Checked)
 			{
-				sb.AppendLine("<table width=\"100%\">");
+				sb.AppendLine(strTableInit);
 
 				eh = delegate(PwEntry pe)
 				{
 					if(bGroup) WriteDetailsLine(sb, KPRes.Group, pe.ParentGroup.Name, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
-					if(bTitle) WriteDetailsLine(sb, KPRes.Title, pe.Strings.ReadSafe(PwDefs.TitleField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+					if(bTitle) WriteDetailsLine(sb, KPRes.Title, pe.Strings.ReadSafe(PwDefs.TitleField), bSmallMono, bMonoPasswords, strFontInit + "<b>", "</b>" + strFontExit);
 					if(bUserName) WriteDetailsLine(sb, KPRes.UserName, pe.Strings.ReadSafe(PwDefs.UserNameField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bPassword) WriteDetailsLine(sb, KPRes.Password, pe.Strings.ReadSafe(PwDefs.PasswordField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bURL) WriteDetailsLine(sb, KPRes.Url, pe.Strings.ReadSafe(PwDefs.UrlField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
@@ -295,7 +359,19 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
-			m_pgDataSource.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+			gh = delegate(PwGroup pg)
+			{
+				if(pg.Entries.UCount == 0) return true;
+
+				sb.Append("</table><br /><hr /><h3>");
+				sb.Append(StrUtil.StringToHtml(pg.GetFullPath(" - ", false)));
+				sb.AppendLine("</h3>");
+				sb.AppendLine(strTableInit);
+
+				return true;
+			};
+
+			pgDataSource.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
 			if(m_rbTabular.Checked)
 				sb.AppendLine("</table>");
@@ -341,17 +417,19 @@ namespace KeePass.Forms
 			KeyValuePair<string, ProtectedString> kvp, bool bSmallMono,
 			bool bMonoPasswords, string strFontInit, string strFontExit)
 		{
-			sb.Append("<tr><td align=\"left\" valign=\"top\"><i><small>");
+			sb.Append("<tr><td><i><small>");
 			sb.Append(StrUtil.StringToHtml(kvp.Key));
 			sb.AppendLine(":</small></i></td>");
 
-			sb.Append("<td align=\"left\" valign=\"top\">");
+			sb.Append("<td>");
 
 			if(bMonoPasswords && (kvp.Key == PwDefs.PasswordField))
 				sb.Append(bSmallMono ? "<code><small>" : "<code>");
 			else sb.Append(strFontInit);
 
-			sb.Append(StrUtil.StringToHtml(kvp.Value.ReadString()));
+			string strInner = StrUtil.StringToHtml(kvp.Value.ReadString());
+			if(strInner.Length > 0) sb.Append(strInner);
+			else sb.Append("&nbsp;");
 
 			if(kvp.Key == PwDefs.PasswordField)
 				sb.Append(bSmallMono ? "</small></code>" : "</code>");
@@ -368,6 +446,17 @@ namespace KeePass.Forms
 				new ProtectedString(false, strValue));
 
 			WriteDetailsLine(sb, kvp, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+		}
+
+		private void SortGroupEntriesRecursive(PwGroup pg, string strFieldName)
+		{
+			PwEntryComparer cmp = new PwEntryComparer(strFieldName, true, true);
+			pg.Entries.Sort(cmp);
+
+			foreach(PwGroup pgSub in pg.Groups)
+			{
+				SortGroupEntriesRecursive(pgSub, strFieldName);
+			}
 		}
 
 		private void OnBtnConfigPage(object sender, EventArgs e)

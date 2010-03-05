@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -284,6 +284,9 @@ namespace KeePassLib
 			}
 		}
 
+		public static EventHandler<ObjectTouchedEventArgs> GroupTouched;
+		public EventHandler<ObjectTouchedEventArgs> Touched;
+
 		/// <summary>
 		/// Construct a new, empty group.
 		/// </summary>
@@ -450,6 +453,13 @@ namespace KeePassLib
 			++m_uUsageCount;
 
 			if(bModified) m_tLastMod = m_tLastAccess;
+
+			if(this.Touched != null)
+				this.Touched(this, new ObjectTouchedEventArgs(this,
+					bModified, bTouchParents));
+			if(PwGroup.GroupTouched != null)
+				PwGroup.GroupTouched(this, new ObjectTouchedEventArgs(this,
+					bModified, bTouchParents));
 
 			if(bTouchParents && (m_pParentGroup != null))
 				m_pParentGroup.Touch(bModified, true);
@@ -715,34 +725,45 @@ namespace KeePassLib
 						string strKey = kvp.Key;
 
 						if(strKey == PwDefs.TitleField)
-							SearchEvalAdd(bTitle, strSearch, kvp.Value.ReadString(),
+						{
+							if(bTitle) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+						}
 						else if(strKey == PwDefs.UserNameField)
-							SearchEvalAdd(bUserName, strSearch, kvp.Value.ReadString(),
+						{
+							if(bUserName) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+						}
 						else if(strKey == PwDefs.PasswordField)
-							SearchEvalAdd(bPassword, strSearch, kvp.Value.ReadString(),
+						{
+							if(bPassword) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+						}
 						else if(strKey == PwDefs.UrlField)
-							SearchEvalAdd(bUrl, strSearch, kvp.Value.ReadString(),
+						{
+							if(bUrl) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+						}
 						else if(strKey == PwDefs.NotesField)
-							SearchEvalAdd(bNotes, strSearch, kvp.Value.ReadString(),
+						{
+							if(bNotes) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
+						}
 						else if(bOther)
-							SearchEvalAdd(true, strSearch, kvp.Value.ReadString(),
+							SearchEvalAdd(strSearch, kvp.Value.ReadString(),
 								scType, rx, pe, listStorage);
 
 						// An entry can match only once => break if we have added it
 						if(listStorage.UCount > uInitialResults) break;
 					}
 
-					if(listStorage.UCount == uInitialResults)
-						SearchEvalAdd(bUuids, strSearch, pe.Uuid.ToHexString(),
+					if(bUuids && (listStorage.UCount == uInitialResults))
+						SearchEvalAdd(strSearch, pe.Uuid.ToHexString(),
 							scType, rx, pe, listStorage);
 
-					if((listStorage.UCount == uInitialResults) && (pe.ParentGroup != null))
-						SearchEvalAdd(bGroupName, strSearch, pe.ParentGroup.Name,
+					if(bGroupName && (listStorage.UCount == uInitialResults) &&
+						(pe.ParentGroup != null))
+						SearchEvalAdd(strSearch, pe.ParentGroup.Name,
 							scType, rx, pe, listStorage);
 
 					return true;
@@ -752,11 +773,9 @@ namespace KeePassLib
 			PreOrderTraverseTree(null, eh);
 		}
 
-		private static void SearchEvalAdd(bool bIf, string strSearch, string strDataField,
+		private static void SearchEvalAdd(string strSearch, string strDataField,
 			StringComparison scType, Regex rx, PwEntry pe, PwObjectList<PwEntry> lResults)
 		{
-			if(bIf == false) return;
-
 			if(rx == null)
 			{
 				if(strDataField.IndexOf(strSearch, scType) >= 0)

@@ -83,10 +83,9 @@
 			// m_lblUrl
 			// 
 			this.m_lblUrl.AutoSize = true;
-			this.m_lblUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_lblUrl.Location = new System.Drawing.Point(12, 82);
 			this.m_lblUrl.Name = "m_lblUrl";
-			this.m_lblUrl.Size = new System.Drawing.Size(36, 13);
+			this.m_lblUrl.Size = new System.Drawing.Size(32, 13);
 			this.m_lblUrl.TabIndex = 1;
 			this.m_lblUrl.Text = "URL:";
 			// 
@@ -100,10 +99,9 @@
 			// m_lblUserName
 			// 
 			this.m_lblUserName.AutoSize = true;
-			this.m_lblUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_lblUserName.Location = new System.Drawing.Point(12, 161);
 			this.m_lblUserName.Name = "m_lblUserName";
-			this.m_lblUserName.Size = new System.Drawing.Size(71, 13);
+			this.m_lblUserName.Size = new System.Drawing.Size(61, 13);
 			this.m_lblUserName.TabIndex = 2;
 			this.m_lblUserName.Text = "User name:";
 			// 
@@ -117,10 +115,9 @@
 			// m_lblPassword
 			// 
 			this.m_lblPassword.AutoSize = true;
-			this.m_lblPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_lblPassword.Location = new System.Drawing.Point(216, 161);
 			this.m_lblPassword.Name = "m_lblPassword";
-			this.m_lblPassword.Size = new System.Drawing.Size(65, 13);
+			this.m_lblPassword.Size = new System.Drawing.Size(56, 13);
 			this.m_lblPassword.TabIndex = 4;
 			this.m_lblPassword.Text = "Password:";
 			// 
@@ -178,10 +175,9 @@
 			// m_lblRemember
 			// 
 			this.m_lblRemember.AutoSize = true;
-			this.m_lblRemember.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_lblRemember.Location = new System.Drawing.Point(12, 231);
 			this.m_lblRemember.Name = "m_lblRemember";
-			this.m_lblRemember.Size = new System.Drawing.Size(70, 13);
+			this.m_lblRemember.Size = new System.Drawing.Size(61, 13);
 			this.m_lblRemember.TabIndex = 7;
 			this.m_lblRemember.Text = "Remember:";
 			// 

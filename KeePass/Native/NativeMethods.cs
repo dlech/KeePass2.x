@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,11 @@ namespace KeePass.Native
 		internal static extern IntPtr SendMessageHDItem(IntPtr hWnd, int nMsg,
 			IntPtr wParam, ref HDITEM hdItem);
 
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr SendMessageTimeout(IntPtr hWnd, int nMsg,
+			IntPtr wParam, IntPtr lParam, uint fuFlags, uint uTimeout,
+			ref IntPtr lpdwResult);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PostMessage(IntPtr hWnd, int nMsg,
@@ -80,15 +85,16 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers,
-			uint vk);
+		internal static extern bool RegisterHotKey(IntPtr hWnd, int id,
+			uint fsModifiers, uint vk);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
 		[DllImport("User32.dll", EntryPoint = "SendInput", SetLastError = true)]
-		internal static extern uint SendInput32(uint nInputs, INPUT32[] pInputs, int cbSize);
+		internal static extern uint SendInput32(uint nInputs, INPUT32[] pInputs,
+			int cbSize);
 
 		[DllImport("User32.dll", EntryPoint = "SendInput", SetLastError = true)]
 		internal static extern uint SendInput64Special(uint nInputs,
@@ -113,7 +119,8 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
+		internal static extern bool ChangeClipboardChain(IntPtr hWndRemove,
+			IntPtr hWndNewNext);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -142,7 +149,7 @@ namespace KeePass.Native
 		internal static extern bool GetComboBoxInfo(IntPtr hWnd,
 			ref COMBOBOXINFO pcbi);
 
-		[DllImport("User32.dll", SetLastError = true)]
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateDesktop(string lpszDesktop,
 			string lpszDevice, IntPtr pDevMode, UInt32 dwFlags,
 			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess,
@@ -202,10 +209,10 @@ namespace KeePass.Native
 		// [DllImport("DwmApi.dll")]
 		// internal static extern Int32 DwmIsCompositionEnabled(ref Int32 pfEnabled);
 
-		[DllImport("ComCtl32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+		[DllImport("ComCtl32.dll", CharSet = CharSet.Auto)]
 		internal static extern Int32 TaskDialogIndirect([In] ref VtdConfig pTaskConfig,
 			[Out] out int pnButton, [Out] out int pnRadioButton,
-			[Out] out bool pfVerificationFlagChecked);
+			[Out] [MarshalAs(UnmanagedType.Bool)] out bool pfVerificationFlagChecked);
 
 		[DllImport("UxTheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		internal static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName,
@@ -217,7 +224,8 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetScrollInfo(IntPtr hwnd, int fnBar, ref SCROLLINFO lpsi);
+		private static extern bool GetScrollInfo(IntPtr hwnd, int fnBar,
+			ref SCROLLINFO lpsi);
 
 		// [DllImport("User32.dll")]
 		// private static extern int SetScrollInfo(IntPtr hwnd, int fnBar,
@@ -236,7 +244,7 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		internal static extern uint GetWindowThreadProcessId(IntPtr hWnd,
-			out uint lpdwProcessId);
+			[Out] out uint lpdwProcessId);
 
 		// [DllImport("UxTheme.dll")]
 		// internal static extern IntPtr OpenThemeData(IntPtr hWnd,

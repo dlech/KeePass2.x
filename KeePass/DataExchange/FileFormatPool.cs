@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -98,6 +98,13 @@ namespace KeePass.DataExchange
 			Debug.Assert(m_vFormats == null);
 			m_vFormats = new List<FileFormatProvider>();
 
+			m_vFormats.Add(new KeePassCsv1x());
+			m_vFormats.Add(new KeePassKdb1x());
+			m_vFormats.Add(new KeePassKdb2x());
+			m_vFormats.Add(new KeePassKdb2xRepair());
+			m_vFormats.Add(new KeePassXml1x());
+			m_vFormats.Add(new KeePassXml2x());
+
 			m_vFormats.Add(new GenericCsv());
 
 			m_vFormats.Add(new OnePwProCsv599());
@@ -105,6 +112,9 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new AnyPwCsv144());
 			m_vFormats.Add(new CodeWalletTxt605());
 			m_vFormats.Add(new FlexWalletXml17());
+			m_vFormats.Add(new HandySafeTxt512());
+			m_vFormats.Add(new HandySafeProXml12());
+			m_vFormats.Add(new KeePassXXml041());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
 			m_vFormats.Add(new PwAgentXml234());
@@ -121,12 +131,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new SplashIdCsv402());
 			m_vFormats.Add(new SteganosPwManager2007());
 			m_vFormats.Add(new Whisper32Csv116());
-
-			m_vFormats.Add(new KeePassCsv1x());
-			m_vFormats.Add(new KeePassKdb1x());
-			m_vFormats.Add(new KeePassKdb2x());
-			m_vFormats.Add(new KeePassXml1x());
-			m_vFormats.Add(new KeePassXml2x());
+			m_vFormats.Add(new ZdnPwProTxt314());
 
 			m_vFormats.Add(new MozillaBookmarksHtml100());
 			m_vFormats.Add(new MozillaBookmarksJson100());

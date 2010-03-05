@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,16 +63,20 @@ namespace KeePassLib.Native
 			return bResult;
 		}
 
+		private static bool? m_bIsUnix = null;
 		public static bool IsUnix()
 		{
+			if(m_bIsUnix.HasValue) return m_bIsUnix.Value;
+
 			PlatformID p = Environment.OSVersion.Platform;
 
 			// Mono defines Unix as 128 in early .NET versions
 #if !KeePassLibSD
-			return ((p == PlatformID.Unix) || ((int)p == 128));
+			m_bIsUnix = ((p == PlatformID.Unix) || ((int)p == 128));
 #else
-			return (((int)p == 4) || ((int)p == 128));
+			m_bIsUnix = (((int)p == 4) || ((int)p == 128));
 #endif
+			return m_bIsUnix.Value;
 		}
 
 		/// <summary>

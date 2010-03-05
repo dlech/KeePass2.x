@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -143,7 +143,11 @@ namespace KeePass.DataExchange
 
 			// if(bSynchronize) { Debug.Assert(vFiles.Length == 1); }
 
-			OnDemandStatusDialog dlgStatus = new OnDemandStatusDialog(false, fParent);
+			IStatusLogger dlgStatus;
+			if(Program.Config.UI.ShowImportStatusDialog)
+				dlgStatus = new OnDemandStatusDialog(false, fParent);
+			else dlgStatus = new UIBlockerStatusLogger(fParent);
+
 			dlgStatus.StartLogging(PwDefs.ShortProductName + " - " + (bSynchronize ?
 				KPRes.Synchronizing : KPRes.ImportingStatusMsg), false);
 			dlgStatus.SetText(bSynchronize ? KPRes.Synchronizing :
@@ -351,14 +355,19 @@ namespace KeePass.DataExchange
 			"title", "system", "account", "entry",
 			"item", "itemname", "item name", "subject",
 			"service", "servicename", "service name",
-			"head", "heading"
+			"head", "heading", "card", "product", "provider", "bank",
+
+			"seite"
 		};
 
 		private static readonly string[] m_vUserNames = {
 			"user", "name", "user name", "username",
 			"email", "e-mail", "id", "userid", "user id",
 			"login", "form_loginname", "wpname", "mail",
-			"loginid", "login id"
+			"loginid", "login id", "first name", "last name",
+			"card#",
+
+			"nom"
 		};
 
 		private static readonly string[] m_vPasswords = {
@@ -366,13 +375,16 @@ namespace KeePass.DataExchange
 			"pass", "code", "code word", "codeword",
 			"secret", "secret word",
 			"key", "keyword", "key word", "keyphrase", "key phrase",
-			"form_pw", "wppassword", "pin", "pwd", "pw", "pword"
+			"form_pw", "wppassword", "pin", "pwd", "pw", "pword",
+			"serial", "serial#",
 		};
 
 		private static readonly string[] m_vUrls = {
 			"url", "hyper link", "hyperlink", "link",
 			"host", "address", "hyper ref", "href",
-			"web", "website", "web site", "site"
+			"web", "website", "web site", "site",
+
+			"ort"
 		};
 
 		private static readonly string[] m_vNotes = {

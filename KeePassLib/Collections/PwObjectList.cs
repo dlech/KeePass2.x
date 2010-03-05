@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -273,6 +273,13 @@ namespace KeePassLib.Collections
 			Debug.Assert(nCount == m_vObjects.Count);
 			if(nCount != m_vObjects.Count)
 				throw new ArgumentException("At least one of the T objects in the vObjects list doesn't exist!");
+		}
+
+		public void Sort(IComparer<T> tComparer)
+		{
+			if(tComparer == null) throw new ArgumentNullException("tComparer");
+
+			m_vObjects.Sort(tComparer);
 		}
 
 		public static PwObjectList<T> FromArray(T[] tArray)

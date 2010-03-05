@@ -7,16 +7,16 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.09"
-#define KeeVersionStrWithMinor "2.09"
-#define KeeVersionStrWithMinorPath "2.09"
-#define KeeVersionWin "2.0.9.0"
+#define KeeVersionStr "2.10"
+#define KeeVersionStrWithMinor "2.10"
+#define KeeVersionStrWithMinorPath "2.10"
+#define KeeVersionWin "2.1.0.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2009"
+#define KeeDevPeriod "2003-2010"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -46,6 +46,10 @@ VersionInfoDescription={#MyAppName} {#KeeVersionStr} Setup
 VersionInfoCopyright=Copyright (c) {#KeeDevPeriod} {#MyAppPublisher}
 WizardImageFile=compiler:WizModernImage-IS.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
+DisableDirPage=auto
+AlwaysShowDirOnReadyPage=yes
+DisableProgramGroupPage=auto
+AlwaysShowGroupOnReadyPage=yes
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,13 +35,26 @@ namespace KeePass.Util
 	internal sealed class SiStateEx
 	{
 		public bool InputBlocked = false;
+
 		public IntPtr OriginalKeyboardLayout = IntPtr.Zero;
+		public IntPtr CurrentKeyboardLayout = IntPtr.Zero;
+
+		public uint DefaultDelay = 10;
 	}
 
 	public static class SendInputEx
 	{
+		// private const ushort LangIDGerman = 0x0407;
+
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
+			if(KeePassLib.Native.NativeLib.IsUnix())
+			{
+				try { OSSendKeys(strKeys); }
+				catch(Exception) { Debug.Assert(false); }
+				return;
+			}
+
 			SiStateEx si = InitSendKeys();
 
 			try
@@ -50,10 +63,10 @@ namespace KeePass.Util
 
 				if(bObfuscate)
 				{
-					try { SendObfuscated(strKeys); }
-					catch(Exception) { SendKeysWithSpecial(strKeys); }
+					try { SendObfuscated(strKeys, si); }
+					catch(Exception) { SendKeysWithSpecial(strKeys, si); }
 				}
-				else SendKeysWithSpecial(strKeys);
+				else SendKeysWithSpecial(strKeys, si);
 			}
 			catch
 			{
@@ -119,14 +132,20 @@ namespace KeePass.Util
 			
 			IntPtr hklSelf = NativeMethods.GetKeyboardLayout(0);
 			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(uTargetThreadId);
-			
+
+			si.CurrentKeyboardLayout = hklSelf;
+
 			if(hklSelf != hklTarget)
 			{
 				si.OriginalKeyboardLayout = NativeMethods.ActivateKeyboardLayout(
 					hklTarget, 0);
-				
+				si.CurrentKeyboardLayout = hklTarget;
+
 				Debug.Assert(si.OriginalKeyboardLayout == hklSelf);
 			}
+
+			// ushort uLangID = (ushort)(si.CurrentKeyboardLayout.ToInt64() & 0xFFFF);
+			// si.EnableCaretWorkaround = (uLangID == LangIDGerman);
 		}
 
 		private static bool SendModifierVKey(int vKey, bool bDown)
@@ -221,8 +240,7 @@ namespace KeePass.Util
 
 		private static void AddKeyModifierIfSet(List<int> lList, int vKey)
 		{
-			if(IsKeyModifierActive(vKey))
-				lList.Add(vKey);
+			if(IsKeyModifierActive(vKey)) lList.Add(vKey);
 		}
 
 		private static bool IsKeyModifierActive(int vKey)
@@ -256,20 +274,25 @@ namespace KeePass.Util
 			// Get out of a menu bar that was focused when only
 			// using Alt as hot key modifier
 			if(Program.Config.Integration.AutoTypeReleaseAltWithKeyPress &&
-				(vKeys.Count == 2) && vKeys.Contains(NativeMethods.VK_MENU) &&
-				(vKeys.Contains(NativeMethods.VK_LMENU) ||
-				vKeys.Contains(NativeMethods.VK_RMENU)))
+				(vKeys.Count == 2) && vKeys.Contains(NativeMethods.VK_MENU))
 			{
-				SendModifierVKey(NativeMethods.VK_LMENU, true);
-				SendModifierVKey(NativeMethods.VK_LMENU, false);
+				if(vKeys.Contains(NativeMethods.VK_LMENU))
+				{
+					SendModifierVKey(NativeMethods.VK_LMENU, true);
+					SendModifierVKey(NativeMethods.VK_LMENU, false);
+				}
+				else if(vKeys.Contains(NativeMethods.VK_RMENU))
+				{
+					SendModifierVKey(NativeMethods.VK_RMENU, true);
+					SendModifierVKey(NativeMethods.VK_RMENU, false);
+				}
 			}
 		}
 
-		private static void SendObfuscated(string strKeys)
+		private static void SendObfuscated(string strKeys, SiStateEx siState)
 		{
 			Debug.Assert(strKeys != null);
 			if(strKeys == null) throw new ArgumentNullException("strKeys");
-
 			if(strKeys.Length == 0) return;
 
 			ClipboardEventChainBlocker cev = new ClipboardEventChainBlocker();
@@ -284,12 +307,11 @@ namespace KeePass.Util
 				List<string> vParts = SplitKeySequence(strKeys);
 				foreach(string strPart in vParts)
 				{
-					if(strPart.Length == 0) continue;
+					if(string.IsNullOrEmpty(strPart)) continue;
 
 					if(strPart.IndexOfAny(vSpecial) >= 0)
-						SendKeysWithSpecial(strPart);
-					else
-						MixedTransfer(strPart);
+						SendKeysWithSpecial(strPart, siState);
+					else MixedTransfer(strPart, siState);
 				}
 			}
 			catch(Exception ex) { excpInner = ex; }
@@ -303,8 +325,7 @@ namespace KeePass.Util
 		private static List<string> SplitKeySequence(string strKeys)
 		{
 			List<string> vParts = new List<string>();
-
-			if(strKeys.Length == 0) return vParts;
+			if(string.IsNullOrEmpty(strKeys)) return vParts;
 
 			CharStream cs = new CharStream(strKeys);
 			StringBuilder sbRawText = new StringBuilder();
@@ -446,7 +467,7 @@ namespace KeePass.Util
 			}
 		}
 
-		private static void MixedTransfer(string strText)
+		private static void MixedTransfer(string strText, SiStateEx siState)
 		{
 			StringBuilder sbKeys = new StringBuilder();
 			StringBuilder sbClip = new StringBuilder();
@@ -472,13 +493,19 @@ namespace KeePass.Util
 			string strKeys = sbKeys.ToString();
 
 			if(strClip.Length > 0)
-				strKeys = @"^v{LEFT " + strClip.Length.ToString() +
-					@"}" + strKeys;
+			{
+				StringBuilder sbNav = new StringBuilder();
+				sbNav.Append(@"^v");
+				for(int iLeft = 0; iLeft < strClip.Length; ++iLeft)
+					sbNav.Append(@"{LEFT}");
+
+				strKeys = sbNav.ToString() + strKeys;
+			}
 
 			if(strClip.Length > 0) Clipboard.SetText(strClip);
 			else ClipboardUtil.Clear();
 
-			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys);
+			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys, siState);
 
 			ClipboardUtil.Clear();
 		}
@@ -498,11 +525,9 @@ namespace KeePass.Util
 			return nSeed;
 		}
 
-		private static void SendKeysWithSpecial(string strSequence)
+		private static string ApplyGlobalDelay(string strSequence, SiStateEx siState)
 		{
-			Debug.Assert(strSequence != null);
-			if(strSequence == null) return;
-			if(strSequence.Length == 0) return;
+			if(string.IsNullOrEmpty(strSequence)) return string.Empty;
 
 			const string strDefDelay = @"(\{[Dd][Ee][Ll][Aa][Yy]\s*=\s*)(\d+)(\})";
 			Match mDefDelay = Regex.Match(strSequence, strDefDelay);
@@ -510,41 +535,120 @@ namespace KeePass.Util
 			{
 				string strTime = mDefDelay.Groups[2].Value;
 				strSequence = Regex.Replace(strSequence, strDefDelay, string.Empty);
-				// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|.+?)",
-				//	@"{delay " + strTime + @"}$1");
-				strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|[\+\^%].+?|.+?)",
-					@"{delay " + strTime + @"}$1");
+
+				uint uTime;
+				if(uint.TryParse(strTime, out uTime)) siState.DefaultDelay = uTime;
+				else { Debug.Assert(false); }
 			}
 
-			bool bDefaultSend = true;
-			string strLower = strSequence.ToLower();
+			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|.+?)",
+			//	@"{delay " + strTime + @"}$1");
+			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|[\+\^%].+?|.+?)",
+			//	@"{delay " + strTime + @"}$1");
+			if(siState.DefaultDelay > 0)
+				strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|([\+\^%]\{.+?\})|[\+\^%].+?|.+?)",
+					@"{DELAY " + siState.DefaultDelay.ToString() + @"}$1");
 
-			int nDelayStart = strLower.IndexOf("{delay ");
-			if(nDelayStart >= 0)
+			return strSequence;
+		}
+
+		private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
+		{
+			Debug.Assert(strSequence != null);
+			if(string.IsNullOrEmpty(strSequence)) return;
+
+			strSequence = ApplyGlobalDelay(strSequence, siState);
+
+			while(true)
 			{
-				int nDelayEnd = strLower.IndexOf('}', nDelayStart);
-				if(nDelayEnd >= 0)
+				int nDelayStart = strSequence.IndexOf("{DELAY ", StrUtil.CaseIgnoreCmp);
+				if(nDelayStart >= 0)
 				{
-					uint uDelay;
-					string strDelay = strSequence.Substring(nDelayStart + 7,
-						nDelayEnd - (nDelayStart + 7));
-					if(uint.TryParse(strDelay, out uDelay))
+					int nDelayEnd = strSequence.IndexOf('}', nDelayStart);
+					if(nDelayEnd >= 0)
 					{
-						string strFirstPart = strSequence.Substring(0,
-							nDelayStart);
-						string strSecondPart = strSequence.Substring(
-							nDelayEnd + 1);
+						uint uDelay;
+						string strDelay = strSequence.Substring(nDelayStart + 7,
+							nDelayEnd - (nDelayStart + 7));
+						if(uint.TryParse(strDelay, out uDelay))
+						{
+							string strFirstPart = strSequence.Substring(0,
+								nDelayStart);
+							string strSecondPart = strSequence.Substring(
+								nDelayEnd + 1);
 
-						SendKeysWithSpecial(strFirstPart);
-						SendKeys.Flush();
-						Thread.Sleep((int)uDelay);
-						SendKeysWithSpecial(strSecondPart);
-						bDefaultSend = false;
+							if(!string.IsNullOrEmpty(strFirstPart))
+								OSSendKeys(strFirstPart);
+							SendKeys.Flush();
+							Thread.Sleep((int)uDelay);
+
+							strSequence = strSecondPart;
+						}
+						else { Debug.Assert(false); break; }
+					}
+					else { Debug.Assert(false); break; }
+				}
+				else break;
+			}
+
+			if(!string.IsNullOrEmpty(strSequence)) OSSendKeys(strSequence);
+		}
+
+		private static void OSSendKeys(string strSequence)
+		{
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+				SendKeys.SendWait(strSequence);
+			else // Unix
+				OSSendKeysUnix(strSequence);
+		}
+
+		private static void OSSendKeysUnix(string strSequence)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = 0; i < strSequence.Length; ++i)
+			{
+				char ch = strSequence[i];
+
+				if(ch == '{')
+				{
+					if(sb.Length > 0)
+					{
+						OSSendKeysUnixString(sb.ToString());
+						sb.Remove(0, sb.Length);
 					}
 				}
+				else if(ch == '}')
+				{
+					if(sb.Length > 0)
+					{
+						// KeySyms need to be in Pascal case (e.g. "Tab")
+						string strKey = sb.ToString().ToLower();
+						strKey = ((new string(strKey[0], 1)).ToUpper() +
+							strKey.Substring(1));
+
+						if(strKey == "Enter") strKey = "Return";
+
+						if(strKey.StartsWith("Delay")) { }
+						else OSSendKeysUnixKey(strKey);
+
+						sb.Remove(0, sb.Length);
+					}
+				}
+				else sb.Append(ch);
 			}
 
-			if(bDefaultSend) SendKeys.SendWait(strSequence);
+			if(sb.Length > 0) OSSendKeysUnixString(sb.ToString());
+		}
+
+		private static void OSSendKeysUnixKey(string strKey)
+		{
+			NativeMethods.RunXDoTool("key " + strKey);
+		}
+
+		private static void OSSendKeysUnixString(string strString)
+		{
+			NativeMethods.RunXDoTool(@"type '" + strString + @"'");
 		}
 	}
 }

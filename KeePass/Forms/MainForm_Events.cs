@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -162,6 +162,21 @@ namespace KeePass.Forms
 		}
 	}
 
+	public sealed class FocusEventArgs : CancellableOperationEventArgs
+	{
+		private Control m_cNewRequested;
+		private Control m_cNewFocusing;
+
+		public Control RequestedControl { get { return m_cNewRequested; } }
+		public Control FocusingControl { get { return m_cNewFocusing; } }
+
+		public FocusEventArgs(Control cRequested, Control cFocusing)
+		{
+			m_cNewRequested = cRequested;
+			m_cNewFocusing = cFocusing;
+		}
+	}
+
 	public partial class MainForm : Form
 	{
 		/// <summary>
@@ -193,5 +208,7 @@ namespace KeePass.Forms
 		public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
 
 		public event EventHandler UIStateUpdated;
+
+		public event EventHandler<FocusEventArgs> FocusChanging;
 	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Drawing;
 using KeePass.Ecas;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -84,6 +85,18 @@ namespace KeePass.Ecas
 		public static string GetParamString(List<string> vParams, int iIndex)
 		{
 			return GetParamString(vParams, iIndex, string.Empty);
+		}
+
+		public static string GetParamString(List<string> vParams, int iIndex,
+			bool bSprCompile)
+		{
+			string str = GetParamString(vParams, iIndex, string.Empty);
+
+			if(bSprCompile && !string.IsNullOrEmpty(str))
+				str = SprEngine.Compile(str, false, null, Program.MainForm.ActiveDatabase,
+					false, false);
+
+			return str;
 		}
 
 		public static string GetParamString(List<string> vParams, int iIndex,

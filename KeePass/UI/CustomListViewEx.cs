@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,5 +32,28 @@ namespace KeePass.UI
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		/* private Color m_clrPrev = Color.Black;
+		private Point m_ptLast = new Point(-1, -1);
+		protected override void OnMouseHover(EventArgs e)
+		{
+			if((m_ptLast.X >= 0) && (m_ptLast.X < this.Columns.Count) &&
+				(m_ptLast.Y >= 0) && (m_ptLast.Y < this.Items.Count))
+			{
+				this.Items[m_ptLast.Y].SubItems[m_ptLast.X].ForeColor = m_clrPrev;
+			}
+
+			ListViewHitTestInfo lh = this.HitTest(this.PointToClient(Cursor.Position));
+			if((lh.Item != null) && (lh.SubItem != null))
+			{
+				m_ptLast = new Point(lh.Item.SubItems.IndexOf(lh.SubItem),
+					lh.Item.Index);
+				m_clrPrev = lh.SubItem.ForeColor;
+
+				lh.SubItem.ForeColor = Color.LightBlue;
+			}
+
+			base.OnMouseHover(e);
+		} */
 	}
 }

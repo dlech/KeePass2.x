@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,7 +75,9 @@ namespace KeePass
 			RestoreWindow = 1,
 			Exit = 2,
 			IpcByFile = 3,
-			AutoType = 4
+			AutoType = 4,
+			Lock = 5,
+			Unlock = 6
 		}
 
 		public static CommandLineArgs CommandLineArgs
@@ -226,6 +228,8 @@ namespace KeePass
 					KLRes.SetTranslatedStrings(
 						m_kpTranslation.SafeGetStringTableDictionary(
 						"KeePassLib.Resources.KLRes"));
+
+					StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
 				}
 				catch(FileNotFoundException) { } // Ignore
 				catch(Exception) { Debug.Assert(false); }
@@ -336,6 +340,16 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.LockAll] != null)
+			{
+				BroadcastAppMessageAndCleanUp(AppMessage.Lock);
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.UnlockAll] != null)
+			{
+				BroadcastAppMessageAndCleanUp(AppMessage.Unlock);
+				return;
+			}
 
 			Mutex mSingleLock = TrySingleInstanceLock(AppDefs.MutexName, true);
 			if((mSingleLock == null) && m_appConfig.Integration.LimitToSingleInstance)
@@ -346,6 +360,8 @@ namespace KeePass
 			}
 
 			Mutex mGlobalNotify = TryGlobalInstanceNotify(AppDefs.MutexNameGlobal);
+
+			AutoType.InitStatic();
 
 			bool bRunMainWindow = true;
 			try { SelfTest.Perform(); }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -46,6 +47,10 @@ namespace KeePass.Forms
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
 
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
+
+		public event EventHandler<DvfContextEventArgs> Initializing;
+		public event EventHandler<DvfContextEventArgs> UpdatingDataView;
+		public event EventHandler<DvfContextEventArgs> Uninitializing;
 
 		public void InitEx(string strDataDesc, byte[] pbData)
 		{
@@ -129,6 +134,10 @@ namespace KeePass.Forms
 			else if(m_bdc == BinaryDataClass.WebDocument) m_tscViewers.SelectedIndex = 2;
 			else m_tscViewers.SelectedIndex = 0;
 
+			if(this.Initializing != null)
+				this.Initializing(this, new DvfContextEventArgs(this,
+					m_pbData, m_strDataDesc, m_tscViewers));
+
 			m_bInitializing = false;
 			UpdateDataView(enc);
 		}
@@ -184,6 +193,14 @@ namespace KeePass.Forms
 
 			try
 			{
+				if(this.UpdatingDataView != null)
+				{
+					DvfContextEventArgs args = new DvfContextEventArgs(this,
+						m_pbData, m_strDataDesc, m_tscViewers);
+					this.UpdatingDataView(this, args);
+					if(args.Cancel) return;
+				}
+
 				if(strViewer == KPRes.TextViewer)
 				{
 					string strData = BinaryDataToString(enc);
@@ -241,8 +258,60 @@ namespace KeePass.Forms
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
+			if(this.Uninitializing != null)
+			{
+				DvfContextEventArgs args = new DvfContextEventArgs(this,
+					m_pbData, m_strDataDesc, m_tscViewers);
+				this.Uninitializing(sender, args);
+				if(args.Cancel)
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+
 			m_ctxText.Detach();
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if(keyData == Keys.Escape)
+			{
+				if(msg.Msg == NativeMethods.WM_KEYDOWN)
+				{
+					this.Close();
+					return true;
+				}
+				else if(msg.Msg == NativeMethods.WM_KEYUP) return true;
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+	}
+
+	public sealed class DvfContextEventArgs : CancelEventArgs
+	{
+		private DataViewerForm m_form;
+		public DataViewerForm Form { get { return m_form; } }
+
+		private byte[] m_pbData;
+		public byte[] Data { get { return m_pbData; } }
+
+		private string m_strDataDesc;
+		public string DataDescription { get { return m_strDataDesc; } }
+
+		private ToolStripComboBox m_tscViewers;
+		public ToolStripComboBox ViewersComboBox { get { return m_tscViewers; } }
+
+		public DvfContextEventArgs(DataViewerForm form, byte[] pbData,
+			string strDataDesc, ToolStripComboBox cbViewers) :
+			base(false)
+		{
+			m_form = form;
+			m_pbData = pbData;
+			m_strDataDesc = strDataDesc;
+			m_tscViewers = cbViewers;
 		}
 	}
 }

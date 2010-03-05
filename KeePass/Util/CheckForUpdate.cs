@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Xml;
 using System.Diagnostics;
 using System.Threading;
 
+// using KeePass.Native;
 using KeePass.Resources;
 
 using KeePassLib;
@@ -57,6 +58,13 @@ namespace KeePass.Util
 
 		private static void OnStartCheck()
 		{
+			// NativeProgressDialog dlg = null;
+			// if(m_tsResultsViewer == null)
+			// {
+			//	dlg = new NativeProgressDialog();
+			//	dlg.StartLogging(KPRes.Wait + "...", false);
+			// }
+
 			try
 			{
 				WebClient webClient = new WebClient();
@@ -74,6 +82,8 @@ namespace KeePass.Util
 				ReportStatusEx(KLRes.FrameworkNotImplExcp, true);
 			}
 			catch(Exception) { }
+
+			// if(dlg != null) dlg.EndLogging();
 		}
 
 		private static void OnDownloadCompleted(object sender, DownloadDataCompletedEventArgs e)

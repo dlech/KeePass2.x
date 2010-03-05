@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ namespace KeePassLib.Serialization
 							throw new InvalidCompositeKeyException();
 					}
 
-					Stream sHashed = new HashedBlockStream(sDecrypted, false);
+					Stream sHashed = new HashedBlockStream(sDecrypted, false, 0,
+						!m_bRepairMode);
 
 					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
 						readerStream = new GZipStream(sHashed, CompressionMode.Decompress);
@@ -132,6 +133,10 @@ namespace KeePassLib.Serialization
 
 				GC.KeepAlive(brDecrypted);
 				GC.KeepAlive(br);
+			}
+			catch(CryptographicException) // Thrown on invalid padding
+			{
+				throw new CryptographicException(KLRes.FileCorrupted);
 			}
 			finally { CommonCleanUpRead(sSource, hashedStream); }
 		}
@@ -213,10 +218,12 @@ namespace KeePassLib.Serialization
 
 				case Kdb4HeaderFieldID.MasterSeed:
 					m_pbMasterSeed = pbData;
+					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
 				case Kdb4HeaderFieldID.TransformSeed:
 					m_pbTransformSeed = pbData;
+					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
 				case Kdb4HeaderFieldID.TransformRounds:
@@ -229,6 +236,7 @@ namespace KeePassLib.Serialization
 
 				case Kdb4HeaderFieldID.ProtectedStreamKey:
 					m_pbProtectedStreamKey = pbData;
+					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
 				case Kdb4HeaderFieldID.StreamStartBytes:

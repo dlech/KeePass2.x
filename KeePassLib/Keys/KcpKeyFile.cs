@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -128,8 +128,7 @@ namespace KeePassLib.Keys
 
 			try
 			{
-				ASCIIEncoding ascii = new ASCIIEncoding();
-				string strHex = ascii.GetString(pbFileData, 0, 64);
+				string strHex = Encoding.ASCII.GetString(pbFileData, 0, 64);
 
 				if(StrUtil.IsHexString(strHex, true) == false)
 					return null;
@@ -240,7 +239,7 @@ namespace KeePassLib.Keys
 			Debug.Assert(pbKeyData != null);
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
-			XmlTextWriter xtw = new XmlTextWriter(strFile, Encoding.UTF8);
+			XmlTextWriter xtw = new XmlTextWriter(strFile, new UTF8Encoding(false));
 
 			xtw.WriteStartDocument();
 			xtw.WriteWhitespace("\r\n");

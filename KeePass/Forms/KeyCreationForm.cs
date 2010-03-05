@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -83,6 +84,10 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.CreateMasterKey;
 
+			UIUtil.AssignFontDefaultBold(m_cbPassword);
+			UIUtil.AssignFontDefaultBold(m_cbKeyFile);
+			UIUtil.AssignFontDefaultBold(m_cbUserAccount);
+
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
@@ -103,11 +108,15 @@ namespace KeePass.Forms
 
 			m_cmbKeyFile.SelectedIndex = 0;
 
+			UIUtil.ApplyKeyUIFlags(Program.Config.UI.KeyCreationFlags,
+				m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
+
 			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
 			{
-				m_cbUserAccount.Enabled = false;
-				m_lblWindowsAccDesc.Enabled = false;
-				m_lblWindowsAccDesc2.Enabled = false;
+				UIUtil.SetChecked(m_cbUserAccount, false);
+				UIUtil.SetEnabled(m_cbUserAccount, false);
+				UIUtil.SetEnabled(m_lblWindowsAccDesc, false);
+				UIUtil.SetEnabled(m_lblWindowsAccDesc2, false);
 			}
 
 			CustomizeForScreenReader();
@@ -234,18 +243,21 @@ namespace KeePass.Forms
 
 		private void EnableUserControls()
 		{
-			m_tbPassword.Enabled = m_tbRepeatPassword.Enabled = m_cbHidePassword.Enabled =
+			m_tbPassword.Enabled = m_tbRepeatPassword.Enabled =
 				m_lblRepeatPassword.Enabled = m_lblQualityBits.Enabled =
 				m_lblEstimatedQuality.Enabled = m_cbPassword.Checked;
+			if((Program.Config.UI.KeyCreationFlags &
+				(ulong)AceKeyUIFlags.DisableHidePassword) == 0)
+				m_cbHidePassword.Enabled = m_cbPassword.Checked;
 
 			m_btnOpenKeyFile.Enabled = m_btnSaveKeyFile.Enabled =
 				m_cmbKeyFile.Enabled = m_cbKeyFile.Checked;
 
 			string strKeyFile = m_cmbKeyFile.Text;
 
-			if((!m_cbPassword.Checked) && (!m_cbKeyFile.Checked) && (!m_cbUserAccount.Checked))
+			if(!m_cbPassword.Checked && !m_cbKeyFile.Checked && !m_cbUserAccount.Checked)
 				m_btnCreate.Enabled = false;
-			else if((m_cbKeyFile.Checked) && (strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)))
+			else if(m_cbKeyFile.Checked && strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
 				m_btnCreate.Enabled = false;
 			else m_btnCreate.Enabled = true;
 

@@ -1,3 +1,126 @@
+2010-03-05: 2.10
+- Translation system: added support for right-to-left scripts
+- Added {HMACOTP} placeholder to generate HMAC-based one-time
+  passwords as specified in RFC 4226 (the shared secret is the
+  UTF-8 representation of the value of the 'HmacOtp-Secret'
+  custom entry string field, and the counter is stored in
+  decimal form in the 'HmacOtp-Counter' field)
+- On Windows 7, KeePass now shows a 'locked' overlay icon on
+  the taskbar button when the database is locked
+- On Windows 7, the database loading/saving progress is now
+  shown on the taskbar button
+- Added option to disable automatic searching for key files
+- Added KDBX database repair functionality (in File -> Import)
+- Added support for expired root groups
+- Added global delay support for shifted special keys
+- Added 'Change Master Key' application policy flag
+- Added 'Edit Triggers' application policy flag
+- Added trigger action to activate a database (select tab)
+- Added configuration options to allow enforcing states
+  (enabled, disabled, checked, unchecked) of key source
+  controls in the master key creation and prompt dialogs
+  (see 'Composite Master Key' documentation page)
+- Added option to disable the 'Save' command (instead of
+  graying it out) if the database hasn't been modified
+- Added support for importing KeePassX 0.4.1 XML files
+- Added support for importing Handy Safe 5.12 TXT files
+- Added support for importing Handy Safe Pro 1.2 XML files
+- Added support for importing ZDNet's Password Pro 3.1.4 TXT
+  files
+- Added dialog for selecting the encoding of text files to be
+  attached to an entry
+- Added option to search for passwords in quick finds (disabled
+  by default)
+- Added Ctrl+S shortcut in the internal data editor
+- Internal data editor window can now be maximized
+- Document tabs can now be closed by middle-clicking on them
+- Most strings in the trigger system are now Spr-compiled (i.e.
+  placeholders, environment variables, etc. can be used)
+- Added '--lock-all' and '--unlock-all' command line options to
+  lock/unlock the workspaces of all other KeePass instances
+- Added 'pw-enc' command line option and {PASSWORD_ENC}
+  placeholder
+- Added preliminary auto-type support for Linux (right-click on
+  an entry and select 'Perform Auto-Type'; the 'xdotool'
+  package is required)
+- Added option to enforce using the system font when running
+  under KDE and Gnome (option enabled by default)
+- HTML exports are now XHTML 1.0 compliant
+- Printing: added option to sort entries
+- Printing: group names are now shown as headings
+- KPScript: added '-CreateBackup' option for the EditEntry
+  command (to create backups of entries before modifying them)
+- The PLGX plugin cache root path can now be specified in the
+  configuration file (Application/PluginCachePath)
+- Plugin developers: added ability to write entropy providers
+  that can update the internal pool of the cryptographically
+  strong random number generator
+- Plugin developers: added some public PwEntryForm properties,
+  events and methods
+- Plugin developers: added entry template events
+- Plugin developers: added group and entry touching events
+- Plugin developers: added main window focus changing event
+- Plugin developers: added support for writing format providers
+  for the internal attachments viewer
+
+- Expired icons of groups are non-permanent now
+- Improved search performance and in-memory protection
+  compatibility
+- The SendKeys class now always uses the SendInput method (not
+  JournalHook anymore)
+- Improved auto-type delay handling
+- Two-channel auto-type obfuscation: added support for default
+  delays
+- The default auto-type delay is now 10 ms
+- Improved top-most window auto-type support
+- Improved high DPI support (text rendering, banners, ...)
+- Temporary file transaction files are now deleted before
+  writing to them
+- Broadcasted file IPC notification messages do not wait
+  infinitely for hanging applications anymore
+- On Windows XP and higher, KeePass now uses alpha-transparent
+  icons in the main entry list
+- In the entry editing dialog, when moving a custom string to a
+  standard field, the string is now appended to the field
+  (instead of overwriting the previous contents of the field)
+- Improved UTF-8 encoding (don't emit byte order marks)
+- Improved field to standard field mapping function
+- HTML exports do not contain byte-order marks anymore
+- For improved clarity, some controls are now renamed/changed
+  dynamically when using the password generator without having
+  a database open
+- Improved auto-type definition conversion for KDB exports
+- Standard field placeholders are now correctly removed when
+  auto-typing, if the standard field doesn't exist
+- Improved icon picker cancel blocking when removing an icon
+- The default workspace locking time is now 300 seconds (but
+  the option is still disabled by default)
+- Modern task dialogs are now displayed on 64-bit Windows
+  systems, too
+- Improved file corruption error messages
+- Improved entry attachments renaming method
+- Double-clicking an attachment in the entry editing dialog now
+  opens it in the internal viewer (the internal editor can only
+  be invoked in the main window)
+- When attachments are edited using the internal editor, the
+  entry's last modification time is now updated
+- Improved plugin loading (detect PLGX cache files)
+- If the application policy disallows clipboard operations,
+  KeePass doesn't unnecessarily decrypt sensitive data anymore
+- Added tooltip for the 'View' toolbar drop-down button
+- Improved menu accelerator and shortcut keys
+- Upgraded installer
+- Installer: various minor improvements
+- Various performance improvements
+- Various code optimizations
+- Minor other improvements
+
+- No exception is thrown anymore when lowering the clipboard
+  auto-clear time in the options below the value of a currently
+  running clearing countdown
+- The 'Show expired entries' functionality now also works when
+  there's exactly one matching entry
+
 2009-09-12: 2.09
 - Added option to use file transactions when writing databases
   (enabled by default; writing to a temporary file and

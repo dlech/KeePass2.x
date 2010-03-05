@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,6 +58,13 @@ namespace KeePassLib.Translation
 		{
 			get { return m_strIso6391Code; }
 			set { m_strIso6391Code = value; }
+		}
+
+		private bool m_bRtl = false;
+		public bool RightToLeft
+		{
+			get { return m_bRtl; }
+			set { m_bRtl = value; }
 		}
 
 		private string m_strAuthorName = string.Empty;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Threading;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -100,6 +101,10 @@ namespace KeePass.Forms
 				strBannerDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			UIUtil.AssignFontDefaultBold(m_cbPassword);
+			UIUtil.AssignFontDefaultBold(m_cbKeyFile);
+			UIUtil.AssignFontDefaultBold(m_cbUserAccount);
+
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
 
@@ -122,6 +127,13 @@ namespace KeePass.Forms
 				{
 					m_cbPassword.Checked = true;
 					m_tbPassword.Text = str;
+				}
+
+				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PasswordEncrypted];
+				if(str != null)
+				{
+					m_cbPassword.Checked = true;
+					m_tbPassword.Text = StrUtil.DecryptString(str);
 				}
 
 				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
@@ -151,8 +163,14 @@ namespace KeePass.Forms
 			m_btnExit.Enabled = m_bCanExit;
 			m_btnExit.Visible = m_bCanExit;
 
-			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
-				m_cbUserAccount.Enabled = false;
+			UIUtil.ApplyKeyUIFlags(Program.Config.UI.KeyPromptFlags,
+				m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
+
+			if((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.DisableKeyFile) != 0)
+			{
+				UIUtil.SetEnabled(m_cmbKeyFile, m_cbKeyFile.Checked);
+				UIUtil.SetEnabled(m_btnOpenKeyFile, m_cbKeyFile.Checked);
+			}
 
 			CustomizeForScreenReader();
 			EnableUserControls();
@@ -275,8 +293,8 @@ namespace KeePass.Forms
 			string strKeyFile = m_cmbKeyFile.Text;
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
 			if(m_cbKeyFile.Checked && strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
-				m_btnOK.Enabled = false;
-			else m_btnOK.Enabled = true;
+				UIUtil.SetEnabled(m_btnOK, false);
+			else UIUtil.SetEnabled(m_btnOK, true);
 
 			bool bExclusiveProv = false;
 			KeyProvider prov = Program.KeyProviderPool.Get(strKeyFile);
@@ -288,10 +306,20 @@ namespace KeePass.Forms
 				UIUtil.SetChecked(m_cbPassword, false);
 				UIUtil.SetChecked(m_cbUserAccount, false);
 			}
-			UIUtil.SetEnabled(m_cbPassword, !bExclusiveProv);
-			UIUtil.SetEnabled(m_tbPassword, !bExclusiveProv);
-			UIUtil.SetEnabled(m_cbHidePassword, !bExclusiveProv);
-			UIUtil.SetEnabled(m_cbUserAccount, !bExclusiveProv);
+
+			bool bPwAllowed = ((Program.Config.UI.KeyPromptFlags &
+				(ulong)AceKeyUIFlags.DisablePassword) == 0);
+			bool bPwInput = (bPwAllowed || m_cbPassword.Checked);
+			UIUtil.SetEnabled(m_cbPassword, !bExclusiveProv && bPwAllowed);
+			UIUtil.SetEnabled(m_tbPassword, !bExclusiveProv && bPwInput);
+			if((Program.Config.UI.KeyPromptFlags &
+				(ulong)AceKeyUIFlags.DisableHidePassword) == 0)
+				UIUtil.SetEnabled(m_cbHidePassword, !bExclusiveProv && bPwInput);
+
+			bool bUaAllowed = ((Program.Config.UI.KeyPromptFlags &
+				(ulong)AceKeyUIFlags.DisableUserAccount) == 0);
+			bUaAllowed &= !(WinUtil.IsWindows9x || NativeLib.IsUnix());
+			UIUtil.SetEnabled(m_cbUserAccount, !bExclusiveProv && bUaAllowed);
 		}
 
 		private void OnCheckedPassword(object sender, EventArgs e)
@@ -303,15 +331,16 @@ namespace KeePass.Forms
 		{
 			if(m_bInitializing) return;
 
-			if(!m_cbKeyFile.Checked)
-				m_cmbKeyFile.SelectedIndex = 0;
+			if(!m_cbKeyFile.Checked) m_cmbKeyFile.SelectedIndex = 0;
 
 			EnableUserControls();
 		}
 
 		private void ProcessTextChangedPassword(object sender, EventArgs e)
 		{
-			m_cbPassword.Checked = (m_tbPassword.Text.Length != 0);
+			if(((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.CheckPassword) == 0) &&
+				((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.UncheckPassword) == 0))
+				UIUtil.SetChecked(m_cbPassword, m_tbPassword.Text.Length > 0);
 		}
 
 		private void OnCheckedHidePassword(object sender, EventArgs e)
@@ -342,7 +371,9 @@ namespace KeePass.Forms
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{
-				m_cbKeyFile.Checked = true;
+				if((Program.Config.UI.KeyPromptFlags &
+					(ulong)AceKeyUIFlags.UncheckKeyFile) == 0)
+					UIUtil.SetChecked(m_cbKeyFile, true);
 
 				m_cmbKeyFile.Items.Add(ofd.FileName);
 				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
@@ -360,9 +391,15 @@ namespace KeePass.Forms
 			if(strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) == false)
 			{
 				if(ValidateKeyFileLocation())
-					m_cbKeyFile.Checked = true;
+				{
+					if((Program.Config.UI.KeyPromptFlags &
+						(ulong)AceKeyUIFlags.UncheckKeyFile) == 0)
+						UIUtil.SetChecked(m_cbKeyFile, true);
+				}
 			}
-			else m_cbKeyFile.Checked = false;
+			else if((Program.Config.UI.KeyPromptFlags &
+				(ulong)AceKeyUIFlags.CheckKeyFile) == 0)
+				UIUtil.SetChecked(m_cbKeyFile, false);
 
 			EnableUserControls();
 		}
@@ -375,29 +412,32 @@ namespace KeePass.Forms
 
 		private void PopulateKeyFileSuggestions()
 		{
-			bool bSearchOnRemovable = Program.Config.Integration.SearchKeyFilesOnRemovableMedia;
-
-			foreach(DriveInfo di in DriveInfo.GetDrives())
+			if(Program.Config.Integration.SearchKeyFiles)
 			{
-				if(di.DriveType == DriveType.NoRootDirectory)
-					continue;
-				else if((di.DriveType == DriveType.Removable) && !bSearchOnRemovable)
-					continue;
-				else if(di.DriveType == DriveType.CDRom)
-					continue;
+				bool bSearchOnRemovable = Program.Config.Integration.SearchKeyFilesOnRemovableMedia;
 
-				if(di.IsReady == false) continue;
-
-				try
+				foreach(DriveInfo di in DriveInfo.GetDrives())
 				{
-					FileInfo[] vFiles = di.RootDirectory.GetFiles(@"*." +
-						AppDefs.FileExtension.KeyFile, SearchOption.TopDirectoryOnly);
-					if(vFiles == null) continue;
+					if(di.DriveType == DriveType.NoRootDirectory)
+						continue;
+					else if((di.DriveType == DriveType.Removable) && !bSearchOnRemovable)
+						continue;
+					else if(di.DriveType == DriveType.CDRom)
+						continue;
 
-					foreach(FileInfo fi in vFiles)
-						m_vSuggestions.Add(fi.FullName);
+					if(di.IsReady == false) continue;
+
+					try
+					{
+						FileInfo[] vFiles = di.RootDirectory.GetFiles(@"*." +
+							AppDefs.FileExtension.KeyFile, SearchOption.TopDirectoryOnly);
+						if(vFiles == null) continue;
+
+						foreach(FileInfo fi in vFiles)
+							m_vSuggestions.Add(fi.FullName);
+					}
+					catch(Exception) { Debug.Assert(false); }
 				}
-				catch(Exception) { Debug.Assert(false); }
 			}
 
 			foreach(KeyProvider prov in Program.KeyProviderPool)

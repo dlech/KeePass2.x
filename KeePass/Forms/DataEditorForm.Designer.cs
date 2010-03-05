@@ -77,6 +77,7 @@
 			this.m_rtbText.HideSelection = false;
 			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
 			this.m_rtbText.Name = "m_rtbText";
+			this.m_rtbText.SimpleTextOnly = false;
 			this.m_rtbText.Size = new System.Drawing.Size(100, 96);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";
@@ -108,20 +109,22 @@
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(100, 22);
+			this.m_menuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+			this.m_menuFileSave.Size = new System.Drawing.Size(134, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(97, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(131, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(100, 22);
+			this.m_menuFileExit.ShortcutKeyDisplayString = "Esc";
+			this.m_menuFileExit.Size = new System.Drawing.Size(134, 22);
 			this.m_menuFileExit.Text = "&Close";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -393,7 +396,6 @@
 			this.Controls.Add(this.m_toolFile);
 			this.Controls.Add(this.m_menuMain);
 			this.MainMenuStrip = this.m_menuMain;
-			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "DataEditorForm";
 			this.ShowInTaskbar = false;

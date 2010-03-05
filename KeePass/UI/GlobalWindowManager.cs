@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing;
 
 using KeePass.App;
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -109,6 +111,8 @@ namespace KeePass.UI
 
 			// form.Font = new System.Drawing.Font(System.Drawing.SystemFonts.MessageBoxFont.Name, 12.0f);
 
+			CustomizeControl(form);
+
 			if(GlobalWindowManager.WindowAdded != null)
 				GlobalWindowManager.WindowAdded(null, new GwmWindowEventArgs(
 					form, wnd));
@@ -180,6 +184,27 @@ namespace KeePass.UI
 			}
 
 			return false;
+		}
+
+		public static void CustomizeControl(Control c)
+		{
+			if(NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix)
+			{
+				Font font = UISystemFonts.DefaultFont;
+				if(font != null) CustomizeFont(c, font);
+			}
+		}
+
+		private static void CustomizeFont(Control c, Font font)
+		{
+			if((c is Form) || (c is ToolStrip) || (c is ContextMenuStrip))
+				c.Font = font;
+
+			foreach(Control cSub in c.Controls)
+				CustomizeFont(cSub, font);
+
+			if(c.ContextMenuStrip != null)
+				CustomizeFont(c.ContextMenuStrip, font);
 		}
 	}
 }

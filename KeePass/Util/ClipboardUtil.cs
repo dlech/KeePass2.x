@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 using KeeNativeLib = KeePassLib.Native;
@@ -50,11 +51,21 @@ namespace KeePass.Util
 			Debug.Assert(strToCopy != null);
 			if(strToCopy == null) throw new ArgumentNullException("strToCopy");
 
+			return ClipboardUtil.Copy(new ProtectedString(false, strToCopy),
+				bIsEntryInfo, peEntryInfo, pwReferenceSource);
+		}
+
+		public static bool Copy(ProtectedString psToCopy, bool bIsEntryInfo,
+			PwEntry peEntryInfo, PwDatabase pwReferenceSource)
+		{
+			Debug.Assert(psToCopy != null);
+			if(psToCopy == null) throw new ArgumentNullException("psToCopy");
+
 			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
 
-			string strData = SprEngine.Compile(strToCopy, false, peEntryInfo,
-				pwReferenceSource, false, false);
+			string strData = SprEngine.Compile(psToCopy.ReadString(), false,
+				peEntryInfo, pwReferenceSource, false, false);
 
 			try
 			{
@@ -108,12 +119,19 @@ namespace KeePass.Util
 		public static bool CopyAndMinimize(string strToCopy, bool bIsEntryInfo,
 			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			if(ClipboardUtil.Copy(strToCopy, bIsEntryInfo, peEntryInfo, pwReferenceSource))
+			return ClipboardUtil.CopyAndMinimize(new ProtectedString(false, strToCopy),
+				bIsEntryInfo, formContext, peEntryInfo, pwReferenceSource);
+		}
+
+		public static bool CopyAndMinimize(ProtectedString psToCopy, bool bIsEntryInfo,
+			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
+		{
+			if(ClipboardUtil.Copy(psToCopy, bIsEntryInfo, peEntryInfo, pwReferenceSource))
 			{
 				if(formContext != null)
 				{
 					if(Program.Config.MainWindow.DropToBackAfterClipboardCopy)
-						NativeMethods.LoseFocus(formContext.Handle);
+						NativeMethods.LoseFocus(formContext);
 
 					if(Program.Config.MainWindow.MinimizeAfterClipboardCopy)
 						formContext.WindowState = FormWindowState.Minimized;

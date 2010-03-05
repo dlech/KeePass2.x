@@ -437,7 +437,6 @@
 			// m_lblHeaderCpAlgo
 			// 
 			this.m_lblHeaderCpAlgo.AutoSize = true;
-			this.m_lblHeaderCpAlgo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
 			this.m_lblHeaderCpAlgo.Location = new System.Drawing.Point(23, 56);
 			this.m_lblHeaderCpAlgo.Name = "m_lblHeaderCpAlgo";
 			this.m_lblHeaderCpAlgo.Size = new System.Drawing.Size(50, 13);
@@ -483,7 +482,6 @@
 			// m_lblHeaderPerf
 			// 
 			this.m_lblHeaderPerf.AutoSize = true;
-			this.m_lblHeaderPerf.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
 			this.m_lblHeaderPerf.Location = new System.Drawing.Point(189, 56);
 			this.m_lblHeaderPerf.Name = "m_lblHeaderPerf";
 			this.m_lblHeaderPerf.Size = new System.Drawing.Size(67, 13);
@@ -493,7 +491,6 @@
 			// m_lblHeaderCp
 			// 
 			this.m_lblHeaderCp.AutoSize = true;
-			this.m_lblHeaderCp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
 			this.m_lblHeaderCp.Location = new System.Drawing.Point(91, 56);
 			this.m_lblHeaderCp.Name = "m_lblHeaderCp";
 			this.m_lblHeaderCp.Size = new System.Drawing.Size(67, 13);
@@ -503,10 +500,9 @@
 			// m_rbGZip
 			// 
 			this.m_rbGZip.AutoSize = true;
-			this.m_rbGZip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_rbGZip.Location = new System.Drawing.Point(6, 99);
 			this.m_rbGZip.Name = "m_rbGZip";
-			this.m_rbGZip.Size = new System.Drawing.Size(52, 17);
+			this.m_rbGZip.Size = new System.Drawing.Size(48, 17);
 			this.m_rbGZip.TabIndex = 7;
 			this.m_rbGZip.TabStop = true;
 			this.m_rbGZip.Text = "GZip";
@@ -515,10 +511,9 @@
 			// m_rbNone
 			// 
 			this.m_rbNone.AutoSize = true;
-			this.m_rbNone.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_rbNone.Location = new System.Drawing.Point(6, 76);
 			this.m_rbNone.Name = "m_rbNone";
-			this.m_rbNone.Size = new System.Drawing.Size(55, 17);
+			this.m_rbNone.Size = new System.Drawing.Size(51, 17);
 			this.m_rbNone.TabIndex = 4;
 			this.m_rbNone.TabStop = true;
 			this.m_rbNone.Text = "None";

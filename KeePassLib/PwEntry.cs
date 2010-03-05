@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ using System.Drawing;
 using KeePassLib.Collections;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib
 {
@@ -263,6 +264,9 @@ namespace KeePassLib
 			}
 		}
 
+		public static EventHandler<ObjectTouchedEventArgs> EntryTouched;
+		public EventHandler<ObjectTouchedEventArgs> Touched;
+
 		/// <summary>
 		/// Construct a new, empty password entry. Member variables will be initialized
 		/// to their default values.
@@ -482,6 +486,13 @@ namespace KeePassLib
 
 			if(bModified) m_tLastMod = m_tLastAccess;
 
+			if(this.Touched != null)
+				this.Touched(this, new ObjectTouchedEventArgs(this,
+					bModified, bTouchParents));
+			if(PwEntry.EntryTouched != null)
+				PwEntry.EntryTouched(this, new ObjectTouchedEventArgs(this,
+					bModified, bTouchParents));
+
 			if(bTouchParents && (m_pParentGroup != null))
 				m_pParentGroup.Touch(bModified, true);
 		}
@@ -540,12 +551,57 @@ namespace KeePassLib
 			return PwGroup.DefaultAutoTypeEnabled;
 		}
 
+		public string GetAutoTypeSequence()
+		{
+			string strSeq = m_listAutoType.DefaultSequence;
+
+			PwGroup pg = m_pParentGroup;
+			while(pg != null)
+			{
+				if(strSeq.Length != 0) break;
+
+				strSeq = pg.DefaultAutoTypeSequence;
+				pg = pg.ParentGroup;
+			}
+
+			if(strSeq.Length != 0) return strSeq;
+
+			if(PwDefs.IsTanEntry(this)) return PwDefs.DefaultAutoTypeSequenceTan;
+			return PwDefs.DefaultAutoTypeSequence;
+		}
+
 		public bool GetSearchingEnabled()
 		{
 			if(m_pParentGroup != null)
 				return m_pParentGroup.GetSearchingEnabledInherited();
 
 			return PwGroup.DefaultSearchingEnabled;
+		}
+	}
+
+	public sealed class PwEntryComparer : IComparer<PwEntry>
+	{
+		private string m_strFieldName;
+		private bool m_bCaseInsensitive;
+		private bool m_bCompareNaturally;
+
+		public PwEntryComparer(string strFieldName, bool bCaseInsensitive,
+			bool bCompareNaturally)
+		{
+			if(strFieldName == null) throw new ArgumentNullException("strFieldName");
+
+			m_strFieldName = strFieldName;
+			m_bCaseInsensitive = bCaseInsensitive;
+			m_bCompareNaturally = bCompareNaturally;
+		}
+
+		public int Compare(PwEntry a, PwEntry b)
+		{
+			string strA = a.Strings.ReadSafe(m_strFieldName);
+			string strB = b.Strings.ReadSafe(m_strFieldName);
+
+			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strA, strB);
+			return string.Compare(strA, strB, m_bCaseInsensitive);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,11 +42,14 @@ namespace KeePass.Util
 
 			CompositeKey cmpKey = new CompositeKey();
 			string strPassword = args[AppDefs.CommandLineOptions.Password];
+			string strPasswordEnc = args[AppDefs.CommandLineOptions.PasswordEncrypted];
 			string strKeyFile = args[AppDefs.CommandLineOptions.KeyFile];
 			string strUserAcc = args[AppDefs.CommandLineOptions.UserAccount];
 
 			if(strPassword != null)
 				cmpKey.AddUserKey(new KcpPassword(strPassword));
+			else if(strPasswordEnc != null)
+				cmpKey.AddUserKey(new KcpPassword(StrUtil.DecryptString(strPasswordEnc)));
 			
 			if(strKeyFile != null)
 			{

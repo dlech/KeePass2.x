@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,9 @@ namespace KeePass.App
 		SaveFile,
 		AutoType,
 		CopyToClipboard,
-		DragDrop
+		DragDrop,
+		ChangeMasterKey,
+		EditTriggers
 	}
 
 	/// <summary>
@@ -105,6 +107,20 @@ namespace KeePass.App
 			set { m_bDragDrop = value; }
 		}
 
+		private bool m_bChangeMasterKey = true;
+		public bool ChangeMasterKey
+		{
+			get { return m_bChangeMasterKey; }
+			set { m_bChangeMasterKey = value; }
+		}
+
+		private bool m_bTriggersEdit = true;
+		public bool EditTriggers
+		{
+			get { return m_bTriggersEdit; }
+			set { m_bTriggersEdit = value; }
+		}
+
 		public AppPolicyFlags CloneDeep()
 		{
 			return (AppPolicyFlags)this.MemberwiseClone();
@@ -142,7 +158,7 @@ namespace KeePass.App
 		private static string PolicyToString(AppPolicyId flag, bool bPrefix)
 		{
 			string str = (bPrefix ? "* " : string.Empty);
-			str += KPRes.Feature + @": ";
+			str += KPRes.Feature + ": ";
 
 			switch(flag)
 			{
@@ -170,6 +186,12 @@ namespace KeePass.App
 				case AppPolicyId.DragDrop:
 					str += KPRes.DragDrop;
 					break;
+				case AppPolicyId.ChangeMasterKey:
+					str += KPRes.ChangeMasterKey;
+					break;
+				case AppPolicyId.EditTriggers:
+					str += KPRes.TriggersEdit;
+					break;
 				default:
 					Debug.Assert(false);
 					str += KPRes.Unknown + ".";
@@ -178,7 +200,7 @@ namespace KeePass.App
 
 			str += MessageService.NewLine;
 			if(bPrefix) str += "* ";
-			str += KPRes.Description + @": ";
+			str += KPRes.Description + ": ";
 
 			switch(flag)
 			{
@@ -205,6 +227,12 @@ namespace KeePass.App
 					break;
 				case AppPolicyId.DragDrop:
 					str += KPRes.PolicyDragDropDesc;
+					break;
+				case AppPolicyId.ChangeMasterKey:
+					str += KPRes.PolicyChangeMasterKey;
+					break;
+				case AppPolicyId.EditTriggers:
+					str += KPRes.PolicyTriggersEditDesc;
 					break;
 				default:
 					Debug.Assert(false);
@@ -238,6 +266,8 @@ namespace KeePass.App
 				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;
 				case AppPolicyId.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
 				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
+				case AppPolicyId.ChangeMasterKey: bAllowed = m_apfCurrent.ChangeMasterKey; break;
+				case AppPolicyId.EditTriggers: bAllowed = m_apfCurrent.EditTriggers; break;
 				default: Debug.Assert(false); break;
 			}
 
@@ -290,6 +320,12 @@ namespace KeePass.App
 				case AppPolicyFlag.DragDrop:
 					str += KPRes.DragDrop;
 					break;
+				case AppPolicyFlag.ChangeMasterKey:
+					str += KPRes.ChangeMasterKey;
+					break;
+				case AppPolicyFlag.EditTriggers:
+					str += KPRes.TriggersEdit;
+					break;
 				default:
 					Debug.Assert(false);
 					str += KPRes.Unknown + ".";
@@ -323,6 +359,12 @@ namespace KeePass.App
 					break;
 				case AppPolicyFlag.DragDrop:
 					str += KPRes.PolicyDragDropDesc;
+					break;
+				case AppPolicyFlag.ChangeMasterKey:
+					str += KPRes.PolicyChangeMasterKey;
+					break;
+				case AppPolicyFlag.EditTriggers:
+					str += KPRes.PolicyTriggersEditDesc;
 					break;
 				default:
 					Debug.Assert(false);

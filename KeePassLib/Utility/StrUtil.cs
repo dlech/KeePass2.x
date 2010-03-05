@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 using KeePassLib.Collections;
 using KeePassLib.Native;
@@ -117,6 +118,19 @@ namespace KeePassLib.Utility
 	{
 		public const StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
+		private static bool m_bRtl = false;
+		public static bool RightToLeft
+		{
+			get { return m_bRtl; }
+			set { m_bRtl = value; }
+		}
+
+		public static string RtfPar
+		{
+			// get { return (m_bRtl ? "\\rtlpar " : "\\par "); }
+			get { return "\\par "; }
+		}
+
 		/// <summary>
 		/// Convert a string into a valid RTF string.
 		/// </summary>
@@ -130,7 +144,7 @@ namespace KeePassLib.Utility
 			str = str.Replace("\r", string.Empty);
 			str = str.Replace("{", "\\{");
 			str = str.Replace("}", "\\}");
-			str = str.Replace("\n", "\\par ");
+			str = str.Replace("\n", StrUtil.RtfPar);
 
 			StringBuilder sbEncoded = new StringBuilder();
 			for(int i = 0; i < str.Length; ++i)
@@ -257,15 +271,22 @@ namespace KeePassLib.Utility
 			Debug.Assert(sb != null); if(sb == null) throw new ArgumentNullException("sb");
 			Debug.Assert(strFontFace != null); if(strFontFace == null) throw new ArgumentNullException("strFontFace");
 
-			sb.Append("{\\rtf1\\ansi\\ansicpg");
+			sb.Append("{\\rtf1");
+			if(m_bRtl) sb.Append("\\fbidis");
+			sb.Append("\\ansi\\ansicpg");
 			sb.Append(Encoding.Default.CodePage);
 			sb.Append("\\deff0{\\fonttbl{\\f0\\fswiss MS Sans Serif;}{\\f1\\froman\\fcharset2 Symbol;}{\\f2\\fswiss ");
 			sb.Append(strFontFace);
 			sb.Append(";}{\\f3\\fswiss Arial;}}");
 			sb.Append("{\\colortbl\\red0\\green0\\blue0;}");
+
+			if(m_bRtl) sb.Append("\\rtldoc");
+
 			sb.Append("\\deflang1031\\pard\\plain\\f2\\cf0 ");
 			sb.Append("\\fs");
 			sb.Append((int)(fFontSize * 2));
+
+			if(m_bRtl) sb.Append("\\rtlpar\\qr\\rtlch ");
 		}
 
 		/// <summary>
@@ -287,7 +308,7 @@ namespace KeePassLib.Utility
 			str = str.Replace("</i>", "\\i0 ");
 			str = str.Replace("<u>", "\\ul ");
 			str = str.Replace("</u>", "\\ul0 ");
-			str = str.Replace("<br />", "\\par ");
+			str = str.Replace("<br />", StrUtil.RtfPar);
 
 			sb.Append(str);
 			return sb.ToString();
@@ -752,6 +773,46 @@ namespace KeePassLib.Utility
 			}
 
 			return uVer;
+		}
+
+		private static readonly byte[] m_pbOptEnt = { 0xA5, 0x74, 0x2E, 0xEC };
+
+		public static string EncryptString(string strPlainText)
+		{
+			if(string.IsNullOrEmpty(strPlainText)) return string.Empty;
+
+			try
+			{
+				byte[] pbPlain = Encoding.UTF8.GetBytes(strPlainText);
+				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
+					DataProtectionScope.CurrentUser);
+
+#if !KeePassLibSD
+				return Convert.ToBase64String(pbEnc, Base64FormattingOptions.None);
+#else
+				return Convert.ToBase64String(pbEnc);
+#endif
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strPlainText;
+		}
+
+		public static string DecryptString(string strCipherText)
+		{
+			if(string.IsNullOrEmpty(strCipherText)) return string.Empty;
+
+			try
+			{
+				byte[] pbEnc = Convert.FromBase64String(strCipherText);
+				byte[] pbPlain = ProtectedData.Unprotect(pbEnc, m_pbOptEnt,
+					DataProtectionScope.CurrentUser);
+
+				return Encoding.UTF8.GetString(pbPlain, 0, pbPlain.Length);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strCipherText;
 		}
 	}
 }

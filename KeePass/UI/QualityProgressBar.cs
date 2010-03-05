@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,16 +66,15 @@ namespace KeePass.UI
 			Graphics g = e.Graphics;
 			if(g == null) { base.OnPaint(e); return; }
 
-			Rectangle rectClient = this.ClientRectangle;
-
 			int nNormalizedPos = m_nPosition - m_nMinimum;
 			int nNormalizedMax = m_nMaximum - m_nMinimum;
 
+			Rectangle rectClient = this.ClientRectangle;
 			Rectangle rectDraw;
-
 			if(VisualStyleRenderer.IsSupported)
 			{
-				VisualStyleRenderer vsr = new VisualStyleRenderer(VisualStyleElement.ProgressBar.Bar.Normal);
+				VisualStyleRenderer vsr = new VisualStyleRenderer(
+					VisualStyleElement.ProgressBar.Bar.Normal);
 				vsr.DrawBackground(g, rectClient);
 
 				rectDraw = vsr.GetBackgroundContentRectangle(g, rectClient);
@@ -91,18 +90,34 @@ namespace KeePass.UI
 				g.DrawLine(Pens.White, 0, rectClient.Height - 1,
 					rectClient.Width - 1, rectClient.Height - 1);
 
-				rectDraw = new Rectangle(rectClient.X + 1, rectClient.Y + 1, rectClient.Width - 2,
-					rectClient.Height - 2);
+				rectDraw = new Rectangle(rectClient.X + 1, rectClient.Y + 1,
+					rectClient.Width - 2, rectClient.Height - 2);
 			}
 
 			Rectangle rectGradient = new Rectangle(rectDraw.X, rectDraw.Y,
 				rectDraw.Width, rectDraw.Height);
 			if((rectGradient.Width & 1) == 0) ++rectGradient.Width;
 
-			int nDrawWidth = (int)((float)rectDraw.Width * ((float)nNormalizedPos / (float)nNormalizedMax));
-			LinearGradientBrush brush = new LinearGradientBrush(rectGradient,
-				Color.FromArgb(255, 128, 0), Color.FromArgb(0, 255, 0), LinearGradientMode.Horizontal);
-			g.FillRectangle(brush, rectDraw.Left, rectDraw.Top, nDrawWidth, rectDraw.Height);
+			int nDrawWidth = (int)((float)rectDraw.Width * ((float)nNormalizedPos /
+				(float)nNormalizedMax));
+
+			Color clrStart = Color.FromArgb(255, 128, 0);
+			Color clrEnd = Color.FromArgb(0, 255, 0);
+
+			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
+			if(bRtl)
+			{
+				Color clrTemp = clrStart;
+				clrStart = clrEnd;
+				clrEnd = clrTemp;
+			}
+			
+			using(LinearGradientBrush brush = new LinearGradientBrush(rectGradient,
+				clrStart, clrEnd, LinearGradientMode.Horizontal))
+			{
+				g.FillRectangle(brush, (bRtl ? (rectDraw.Width - nDrawWidth + 1) :
+					rectDraw.Left), rectDraw.Top, nDrawWidth, rectDraw.Height);
+			}
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs pEvent)

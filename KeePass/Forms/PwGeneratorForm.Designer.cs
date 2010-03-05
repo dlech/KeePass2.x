@@ -107,10 +107,9 @@
 			// 
 			this.m_rbStandardCharSet.AutoSize = true;
 			this.m_rbStandardCharSet.Checked = true;
-			this.m_rbStandardCharSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_rbStandardCharSet.Location = new System.Drawing.Point(9, 20);
 			this.m_rbStandardCharSet.Name = "m_rbStandardCharSet";
-			this.m_rbStandardCharSet.Size = new System.Drawing.Size(194, 17);
+			this.m_rbStandardCharSet.Size = new System.Drawing.Size(165, 17);
 			this.m_rbStandardCharSet.TabIndex = 0;
 			this.m_rbStandardCharSet.TabStop = true;
 			this.m_rbStandardCharSet.Text = "Generate using character set:";
@@ -239,10 +238,9 @@
 			// m_rbCustom
 			// 
 			this.m_rbCustom.AutoSize = true;
-			this.m_rbCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.m_rbCustom.Location = new System.Drawing.Point(9, 299);
 			this.m_rbCustom.Name = "m_rbCustom";
-			this.m_rbCustom.Size = new System.Drawing.Size(214, 17);
+			this.m_rbCustom.Size = new System.Drawing.Size(182, 17);
 			this.m_rbCustom.TabIndex = 17;
 			this.m_rbCustom.TabStop = true;
 			this.m_rbCustom.Text = "Generate using custom algorithm:";
@@ -384,10 +382,9 @@
 			// m_rbPattern
 			// 
 			this.m_rbPattern.AutoSize = true;
-			this.m_rbPattern.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_rbPattern.Location = new System.Drawing.Point(9, 227);
 			this.m_rbPattern.Name = "m_rbPattern";
-			this.m_rbPattern.Size = new System.Drawing.Size(159, 17);
+			this.m_rbPattern.Size = new System.Drawing.Size(136, 17);
 			this.m_rbPattern.TabIndex = 14;
 			this.m_rbPattern.TabStop = true;
 			this.m_rbPattern.Text = "Generate using pattern:";
@@ -482,7 +479,7 @@
 			// 
 			// m_lblSecRedInfo
 			// 
-			this.m_lblSecRedInfo.Location = new System.Drawing.Point(9, 316);
+			this.m_lblSecRedInfo.Location = new System.Drawing.Point(9, 362);
 			this.m_lblSecRedInfo.Name = "m_lblSecRedInfo";
 			this.m_lblSecRedInfo.Size = new System.Drawing.Size(445, 41);
 			this.m_lblSecRedInfo.TabIndex = 4;
@@ -518,7 +515,7 @@
 			this.m_tbPreview.Name = "m_tbPreview";
 			this.m_tbPreview.ReadOnly = true;
 			this.m_tbPreview.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.m_tbPreview.Size = new System.Drawing.Size(437, 304);
+			this.m_tbPreview.Size = new System.Drawing.Size(437, 350);
 			this.m_tbPreview.TabIndex = 2;
 			this.m_tbPreview.WordWrap = false;
 			// 

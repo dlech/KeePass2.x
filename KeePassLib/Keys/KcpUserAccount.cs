@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ namespace KeePassLib.Keys
 		}
 
 		/// <summary>
-		/// Construct a machine user key.
+		/// Construct a user account key.
 		/// </summary>
 		public KcpUserAccount()
 		{
@@ -93,7 +93,7 @@ namespace KeePassLib.Keys
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
 			strUserDir += PwDefs.ShortProductName;
 
-			if(bCreate && (Directory.Exists(strUserDir) == false))
+			if(bCreate && !Directory.Exists(strUserDir))
 				Directory.CreateDirectory(strUserDir);
 
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);

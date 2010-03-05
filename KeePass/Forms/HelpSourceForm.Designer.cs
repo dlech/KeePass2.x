@@ -74,10 +74,9 @@
 			// m_radioLocal
 			// 
 			this.m_radioLocal.AutoSize = true;
-			this.m_radioLocal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioLocal.Location = new System.Drawing.Point(12, 101);
 			this.m_radioLocal.Name = "m_radioLocal";
-			this.m_radioLocal.Size = new System.Drawing.Size(105, 17);
+			this.m_radioLocal.Size = new System.Drawing.Size(90, 17);
 			this.m_radioLocal.TabIndex = 3;
 			this.m_radioLocal.TabStop = true;
 			this.m_radioLocal.Text = "Local help file";
@@ -86,10 +85,9 @@
 			// m_radioOnline
 			// 
 			this.m_radioOnline.AutoSize = true;
-			this.m_radioOnline.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_radioOnline.Location = new System.Drawing.Point(12, 162);
 			this.m_radioOnline.Name = "m_radioOnline";
-			this.m_radioOnline.Size = new System.Drawing.Size(129, 17);
+			this.m_radioOnline.Size = new System.Drawing.Size(111, 17);
 			this.m_radioOnline.TabIndex = 5;
 			this.m_radioOnline.TabStop = true;
 			this.m_radioOnline.Text = "Online help center";
@@ -154,8 +152,8 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<DYN>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

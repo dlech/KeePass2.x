@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -102,8 +102,7 @@ namespace KeePass.DataExchange.Formats
 				nIndex = strDoc.IndexOf('>', nIndex + 1);
 			}
 
-			UTF8Encoding utf8 = new UTF8Encoding();
-			MemoryStream msXml = new MemoryStream(utf8.GetBytes(strDoc), false);
+			MemoryStream msXml = new MemoryStream(Encoding.UTF8.GetBytes(strDoc), false);
 
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(msXml);

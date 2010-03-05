@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,9 +83,14 @@ namespace KeePass.Util
 
 			try
 			{
-				NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+				// NativeMethods.SendMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+				//	Program.ApplicationMessage, (IntPtr)Program.AppMessage.IpcByFile,
+				//	(IntPtr)nId);
+
+				IntPtr pResult = new IntPtr(0);
+				NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST,
 					Program.ApplicationMessage, (IntPtr)Program.AppMessage.IpcByFile,
-					(IntPtr)nId);
+					(IntPtr)nId, NativeMethods.SMTO_ABORTIFHUNG, 5000, ref pResult);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -206,7 +211,7 @@ namespace KeePass.Util
 			PwEntry pe = pdb.RootGroup.FindEntry(new PwUuid(pbUuid), true);
 			if(pe == null) return;
 
-			mf.PerformDefaultUrlAction(new PwEntry[] { pe }, true);
+			mf.PerformDefaultUrlAction(new PwEntry[]{ pe }, true);
 		}
 	}
 }

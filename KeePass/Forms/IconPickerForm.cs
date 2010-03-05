@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -84,6 +84,9 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
+			UIUtil.AssignFontDefaultBold(m_radioStandard);
+			UIUtil.AssignFontDefaultBold(m_radioCustom);
+
 			m_lvIcons.SmallImageList = m_ilIcons;
 			for(uint i = 0; i < m_uNumberOfStandardIcons; ++i)
 				m_lvIcons.Items.Add(i.ToString(), (int)i);
@@ -122,7 +125,11 @@ namespace KeePass.Forms
 
 			m_btnCustomRemove.Enabled = (lvsic.Count >= 1);
 
-			if(m_bBlockCancel) m_btnCancel.Enabled = false;
+			if(m_bBlockCancel)
+			{
+				m_btnCancel.Enabled = false;
+				if(this.ControlBox) this.ControlBox = false;
+			}
 		}
 
 		/// <summary>
@@ -168,7 +175,6 @@ namespace KeePass.Forms
 			if(m_radioStandard.Checked)
 			{
 				ListView.SelectedIndexCollection lvsi = m_lvIcons.SelectedIndices;
-
 				if(lvsi.Count != 1)
 				{
 					this.DialogResult = DialogResult.None;
@@ -180,7 +186,6 @@ namespace KeePass.Forms
 			else // Custom icon
 			{
 				ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
-
 				if(lvsic.Count != 1)
 				{
 					this.DialogResult = DialogResult.None;
@@ -346,6 +351,13 @@ namespace KeePass.Forms
 			OnCustomIconsItemSelectionChanged(sender, null);
 			SaveChosenIcon();
 			this.DialogResult = DialogResult.OK;
+		}
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(m_bBlockCancel && (e.CloseReason == CloseReason.UserClosing) &&
+				(this.DialogResult != DialogResult.OK))
+				e.Cancel = true;
 		}
 	}
 }

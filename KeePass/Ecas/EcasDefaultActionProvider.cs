@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Resources;
 using KeePass.UI;
-using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Keys;
@@ -94,6 +93,13 @@ namespace KeePass.Ecas
 				ExportDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x3F, 0xB8, 0x33, 0x2D, 0xD6, 0x16, 0x4E, 0x87,
+				0x99, 0x05, 0x64, 0xDB, 0x16, 0x4C, 0xD6, 0x26 }),
+				KPRes.ActivateDatabaseTab, PwIcon.List, new EcasParameter[] {
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
+				ActivateDatabaseTab));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x3B, 0x3D, 0x3E, 0x31, 0xE4, 0xB3, 0x42, 0xA6,
 				0xBA, 0xCC, 0xD5, 0xC0, 0x3B, 0xAC, 0xA9, 0x69 }),
 				KPRes.Wait, PwIcon.Clock, new EcasParameter[] {
@@ -117,32 +123,25 @@ namespace KeePass.Ecas
 
 		private static void ExecuteShellCmd(EcasAction a, EcasContext ctx)
 		{
-			string strCmd = EcasUtil.GetParamString(a.Parameters, 0);
-			string strArgs = EcasUtil.GetParamString(a.Parameters, 1);
+			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true);
 
 			if(string.IsNullOrEmpty(strCmd)) return;
 
-			string strCmdEx = SprEngine.Compile(strCmd, false, null,
-				Program.MainForm.ActiveDatabase, false, false);
-			if(string.IsNullOrEmpty(strCmdEx)) return;
-
-			string strArgsEx = ((strArgs != null) ? SprEngine.Compile(strArgs,
-				false, null, Program.MainForm.ActiveDatabase, false, false) : null);
-
 			try
 			{
-				if(string.IsNullOrEmpty(strArgsEx)) Process.Start(strCmdEx);
-				else Process.Start(strCmdEx, strArgsEx);
+				if(string.IsNullOrEmpty(strArgs)) Process.Start(strCmd);
+				else Process.Start(strCmd, strArgs);
 			}
 			catch(Exception e)
 			{
-				throw new Exception(strCmdEx + MessageService.NewParagraph + e.Message);
+				throw new Exception(strCmd + MessageService.NewParagraph + e.Message);
 			}
 		}
 
 		private static void ChangeTriggerOnOff(EcasAction a, EcasContext ctx)
 		{
-			string strName = EcasUtil.GetParamString(a.Parameters, 0);
+			string strName = EcasUtil.GetParamString(a.Parameters, 0, true);
 			uint uState = EcasUtil.GetParamUInt(a.Parameters, 1);
 
 			EcasTrigger t = null;
@@ -166,7 +165,7 @@ namespace KeePass.Ecas
 
 		private static void OpenDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0);
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
@@ -181,7 +180,7 @@ namespace KeePass.Ecas
 
 		private static void SyncDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0);
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
 			IOConnectionInfo iocBase = IOConnectionInfo.FromPath(strPath);
@@ -214,9 +213,9 @@ namespace KeePass.Ecas
 
 		private static void ExportDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0);
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
-			string strFormat = EcasUtil.GetParamString(a.Parameters, 1);
+			string strFormat = EcasUtil.GetParamString(a.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFormat)) return;
 
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
@@ -225,6 +224,31 @@ namespace KeePass.Ecas
 			PwExportInfo pei = new PwExportInfo(pd.RootGroup, pd, true);
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 			ExportUtil.Export(pei, strFormat, ioc);
+		}
+
+		private static void ActivateDatabaseTab(EcasAction a, EcasContext ctx)
+		{
+			string strName = EcasUtil.GetParamString(a.Parameters, 0, true);
+			if(string.IsNullOrEmpty(strName)) return;
+
+			DocumentManagerEx dm = Program.MainForm.DocumentManager;
+			foreach(PwDocument doc in dm.Documents)
+			{
+				if(doc.Database == null) { Debug.Assert(false); continue; }
+
+				IOConnectionInfo ioc = null;
+				if((doc.LockedIoc != null) && !string.IsNullOrEmpty(doc.LockedIoc.Path))
+					ioc = doc.LockedIoc;
+				else if((doc.Database.IOConnectionInfo != null) &&
+					!string.IsNullOrEmpty(doc.Database.IOConnectionInfo.Path))
+					ioc = doc.Database.IOConnectionInfo;
+
+				if((ioc != null) && (ioc.Path.IndexOf(strName, StrUtil.CaseIgnoreCmp) >= 0))
+				{
+					Program.MainForm.MakeDocumentActive(doc);
+					break;
+				}
+			}
 		}
 
 		private static void ExecuteSleep(EcasAction a, EcasContext ctx)
@@ -242,9 +266,9 @@ namespace KeePass.Ecas
 
 		private static void AddToolBarButton(EcasAction a, EcasContext ctx)
 		{
-			string strID = EcasUtil.GetParamString(a.Parameters, 0);
-			string strName = EcasUtil.GetParamString(a.Parameters, 1);
-			string strDesc = EcasUtil.GetParamString(a.Parameters, 2);
+			string strID = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strName = EcasUtil.GetParamString(a.Parameters, 1, true);
+			string strDesc = EcasUtil.GetParamString(a.Parameters, 2, true);
 
 			Program.MainForm.AddCustomToolBarButton(strID, strName, strDesc);
 		}

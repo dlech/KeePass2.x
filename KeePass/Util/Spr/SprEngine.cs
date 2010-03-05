@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ namespace KeePass.Util.Spr
 			string str = SprEngine.CompileInternal(strText, pwEntry, pwDatabase,
 				cf, 0, vRefsCache);
 
-			if(bEscapeForAutoType && (bIsAutoTypeSequence == false))
+			if(bEscapeForAutoType && !bIsAutoTypeSequence)
 				str = SprEncoding.MakeAutoTypeSequence(str);
 
 			return str;
@@ -89,14 +89,30 @@ namespace KeePass.Util.Spr
 
 			if(pwEntry != null)
 			{
-				foreach(KeyValuePair<string, ProtectedString> kvp in pwEntry.Strings)
-				{
-					string strKey = (PwDefs.IsStandardField(kvp.Key) ?
-						(@"{" + kvp.Key + @"}") :
-						(@"{" + PwDefs.AutoTypeStringPrefix + kvp.Key + @"}"));
+				List<string> vKeys = pwEntry.Strings.GetKeys();
 
-					str = SprEngine.FillIfExists(str, strKey, kvp.Value, pwEntry,
-						pwDatabase, cf, uRecursionLevel, vRefsCache);
+				// Ensure that all standard field names are in the list
+				// (this is required in order to replace the standard placeholders
+				// even if the corresponding standard field isn't present in
+				// the entry)
+				List<string> vStdNames = PwDefs.GetStandardFields();
+				foreach(string strStdField in vStdNames)
+				{
+					if(!vKeys.Contains(strStdField)) vKeys.Add(strStdField);
+				}
+
+				// Do not directly enumerate the strings in pwEntry.Strings,
+				// because strings might change during the Spr compilation
+				foreach(string strField in vKeys)
+				{
+					string strKey = (PwDefs.IsStandardField(strField) ?
+						(@"{" + strField + @"}") :
+						(@"{" + PwDefs.AutoTypeStringPrefix + strField + @"}"));
+
+					// Use GetSafe because the field doesn't necessarily exist
+					// (might be a standard field that has been added above)
+					str = SprEngine.FillIfExists(str, strKey, pwEntry.Strings.GetSafe(
+						strField), pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
 				}
 
 				if(cf != null) cf.UrlRemoveSchemeOnce = true;
@@ -104,6 +120,11 @@ namespace KeePass.Util.Spr
 					pwEntry.Strings.GetSafe(PwDefs.UrlField), pwEntry,
 					pwDatabase, cf, uRecursionLevel, vRefsCache);
 				if(cf != null) { Debug.Assert(!cf.UrlRemoveSchemeOnce); }
+
+				if(str.IndexOf(@"{PASSWORD_ENC}", SprEngine.ScMethod) >= 0)
+					str = SprEngine.FillIfExists(str, @"{PASSWORD_ENC}", new ProtectedString(false,
+						StrUtil.EncryptString(pwEntry.Strings.ReadSafe(PwDefs.PasswordField))),
+						pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
 
 				if(pwEntry.ParentGroup != null)
 				{
@@ -203,8 +224,8 @@ namespace KeePass.Util.Spr
 			// Replace environment variables
 			foreach(DictionaryEntry de in Environment.GetEnvironmentVariables())
 			{
-				string strKey = de.Key as string;
-				string strValue = de.Value as string;
+				string strKey = (de.Key as string);
+				string strValue = (de.Value as string);
 
 				if((strKey != null) && (strValue != null))
 					str = SprEngine.FillIfExists(str, @"%" + strKey + @"%",

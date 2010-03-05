@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -175,6 +175,13 @@ namespace KeePass.App.Configuration
 			set { m_bMinAfterOpeningDb = value; }
 		}
 
+		private bool m_bQuickFindSearchInPasswords = false;
+		public bool QuickFindSearchInPasswords
+		{
+			get { return m_bQuickFindSearchInPasswords; }
+			set { m_bQuickFindSearchInPasswords = value; }
+		}
+
 		private bool m_bQuickFindExcludeExpired = false;
 		public bool QuickFindExcludeExpired
 		{
@@ -201,6 +208,17 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bCopyUrls; }
 			set { m_bCopyUrls = value; }
+		}
+
+		private bool m_bDisableSaveIfNotModified = false;
+		/// <summary>
+		/// Disable 'Save' button (instead of graying it out) if the database
+		/// hasn't been modified.
+		/// </summary>
+		public bool DisableSaveIfNotModified
+		{
+			get { return m_bDisableSaveIfNotModified; }
+			set { m_bDisableSaveIfNotModified = value; }
 		}
 
 		private AceToolBar m_tb = new AceToolBar();

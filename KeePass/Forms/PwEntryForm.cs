@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -86,6 +86,9 @@ namespace KeePass.Forms
 		private const PwIcon m_pwObjectProtected = PwIcon.PaperLocked;
 		private const PwIcon m_pwObjectPlainText = PwIcon.PaperNew;
 
+		public event EventHandler<CancellableOperationEventArgs> EntrySaving;
+		public event EventHandler EntrySaved;
+
 		public bool HasModifiedEntry
 		{
 			get
@@ -100,6 +103,10 @@ namespace KeePass.Forms
 					false, false);
 			}
 		}
+
+		public PwEntry EntryRef { get { return m_pwEntry; } }
+		public ProtectedStringDictionary EntryStrings { get { return m_vStrings; } }
+		public ProtectedBinaryDictionary EntryBinaries { get { return m_vBinaries; } }
 
 		public ContextMenuStrip ToolsContextMenu
 		{
@@ -176,17 +183,6 @@ namespace KeePass.Forms
 			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, bHideInitial);
 			m_secRepeat.Attach(m_tbRepeatPassword, ProcessTextChangedRepeatPw, bHideInitial);
 
-			m_tbTitle.Text = m_vStrings.ReadSafe(PwDefs.TitleField);
-			m_tbUserName.Text = m_vStrings.ReadSafe(PwDefs.UserNameField);
-
-			byte[] pb = m_vStrings.GetSafe(PwDefs.PasswordField).ReadUtf8();
-			m_secPassword.SetPassword(pb);
-			m_secRepeat.SetPassword(pb);
-			MemUtil.ZeroByteArray(pb);
-
-			m_tbUrl.Text = m_vStrings.ReadSafe(PwDefs.UrlField);
-			m_rtNotes.Text = m_vStrings.ReadSafe(PwDefs.NotesField);
-
 			m_dtExpireDateTime.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
 				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;
 
@@ -244,9 +240,6 @@ namespace KeePass.Forms
 			m_lvBinaries.Columns.Add(KPRes.Attachments, nWidth);
 			// m_lvBinaries.Columns.Add(KPRes.FieldValue, nWidth);
 
-			UpdateStringsList();
-			UpdateBinariesList();
-
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
 				m_btnStrAdd.Enabled = m_btnStrEdit.Enabled =
@@ -256,34 +249,73 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void UpdateStringsList()
+		// Public for plugins
+		public void UpdateEntryStrings(bool bGuiToInternal, bool bSetRepeatPw)
 		{
-			m_lvStrings.Items.Clear();
-
-			foreach(KeyValuePair<string, ProtectedString> kvpStr in m_vStrings)
+			if(bGuiToInternal)
 			{
-				if(!PwDefs.IsStandardField(kvpStr.Key))
+				m_vStrings.Set(PwDefs.TitleField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectTitle,
+					m_tbTitle.Text));
+				m_vStrings.Set(PwDefs.UserNameField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUserName,
+					m_tbUserName.Text));
+
+				byte[] pb = m_secPassword.ToUtf8();
+				m_vStrings.Set(PwDefs.PasswordField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectPassword,
+					pb));
+				MemUtil.ZeroByteArray(pb);
+
+				m_vStrings.Set(PwDefs.UrlField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUrl,
+					m_tbUrl.Text));
+				m_vStrings.Set(PwDefs.NotesField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectNotes,
+					m_rtNotes.Text));
+			}
+			else // Internal to GUI
+			{
+				m_tbTitle.Text = m_vStrings.ReadSafe(PwDefs.TitleField);
+				m_tbUserName.Text = m_vStrings.ReadSafe(PwDefs.UserNameField);
+
+				byte[] pb = m_vStrings.GetSafe(PwDefs.PasswordField).ReadUtf8();
+				m_secPassword.SetPassword(pb);
+				if(bSetRepeatPw) m_secRepeat.SetPassword(pb);
+				MemUtil.ZeroByteArray(pb);
+
+				m_tbUrl.Text = m_vStrings.ReadSafe(PwDefs.UrlField);
+				m_rtNotes.Text = m_vStrings.ReadSafe(PwDefs.NotesField);
+
+				int iTopVisible = UIUtil.GetTopVisibleItem(m_lvStrings);
+				m_lvStrings.Items.Clear();
+				foreach(KeyValuePair<string, ProtectedString> kvpStr in m_vStrings)
 				{
-					PwIcon pwIcon = (kvpStr.Value.IsProtected ? m_pwObjectProtected :
-						m_pwObjectPlainText);
+					if(!PwDefs.IsStandardField(kvpStr.Key))
+					{
+						PwIcon pwIcon = (kvpStr.Value.IsProtected ? m_pwObjectProtected :
+							m_pwObjectPlainText);
 
-					ListViewItem lvi = m_lvStrings.Items.Add(kvpStr.Key, (int)pwIcon);
+						ListViewItem lvi = m_lvStrings.Items.Add(kvpStr.Key, (int)pwIcon);
 
-					if(!kvpStr.Value.IsViewable) lvi.SubItems.Add("********");
-					else lvi.SubItems.Add(kvpStr.Value.ReadString());
+						if(!kvpStr.Value.IsViewable) lvi.SubItems.Add("********");
+						else lvi.SubItems.Add(kvpStr.Value.ReadString());
+					}
 				}
+				UIUtil.SetTopVisibleItem(m_lvStrings, iTopVisible);
 			}
 		}
 
-		private void UpdateBinariesList()
+		// Public for plugins
+		public void UpdateEntryBinaries(bool bGuiToInternal)
 		{
-			m_lvBinaries.Items.Clear();
-
-			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in m_vBinaries)
+			if(bGuiToInternal) { }
+			else // Internal to GUI
 			{
-				PwIcon pwIcon = (kvpBin.Value.IsProtected ? m_pwObjectProtected :
-					m_pwObjectPlainText);
-				m_lvBinaries.Items.Add(kvpBin.Key, (int)pwIcon);
+				int iTopVisible = UIUtil.GetTopVisibleItem(m_lvBinaries);
+				m_lvBinaries.Items.Clear();
+				foreach(KeyValuePair<string, ProtectedBinary> kvpBin in m_vBinaries)
+				{
+					PwIcon pwIcon = (kvpBin.Value.IsProtected ? m_pwObjectProtected :
+						m_pwObjectPlainText);
+					m_lvBinaries.Items.Add(kvpBin.Key, (int)pwIcon);
+				}
+				UIUtil.SetTopVisibleItem(m_lvBinaries, iTopVisible);
 			}
 		}
 
@@ -442,6 +474,9 @@ namespace KeePass.Forms
 			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
+			GlobalWindowManager.CustomizeControl(m_ctxTools);
+			GlobalWindowManager.CustomizeControl(m_ctxPwGen);
+			GlobalWindowManager.CustomizeControl(m_ctxStrMoveToStandard);
 
 			m_pwInitialEntry = m_pwEntry.CloneDeep();
 
@@ -500,6 +535,9 @@ namespace KeePass.Forms
 			InitPropertiesTab();
 			InitAutoTypeTab();
 			InitHistoryTab();
+
+			UpdateEntryStrings(false, true);
+			UpdateEntryBinaries(false);
 
 			if(PwDefs.IsTanEntry(m_pwEntry))
 				m_btnTools.Enabled = false;
@@ -598,15 +636,20 @@ namespace KeePass.Forms
 				(nStringsSel == 1);
 		}
 
-		private void SaveEntry()
+		private bool SaveEntry()
 		{
-			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
+			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return true;
+
+			if(this.EntrySaving != null)
+			{
+				CancellableOperationEventArgs eaCancel = new CancellableOperationEventArgs();
+				this.EntrySaving(this, eaCancel);
+				if(eaCancel.Cancel) return false;
+			}
 
 			m_pwEntry.History = m_vHistory; // Must be called before CreateBackup()
 			bool bCreateBackup = (m_pwEditMode != PwEditMode.AddNewEntry);
 			if(bCreateBackup) m_pwEntry.CreateBackup();
-
-			m_pwEntry.Touch(true, false); // Touch *after* backup
 
 			m_pwEntry.IconId = m_pwEntryIcon;
 			m_pwEntry.CustomIconUuid = m_pwCustomIconID;
@@ -623,20 +666,7 @@ namespace KeePass.Forms
 			m_pwEntry.Expires = m_cbExpires.Checked;
 			if(m_pwEntry.Expires) m_pwEntry.ExpiryTime = m_dtExpireDateTime.Value;
 
-			m_vStrings.Set(PwDefs.TitleField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectTitle,
-				m_tbTitle.Text));
-			m_vStrings.Set(PwDefs.UserNameField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUserName,
-				m_tbUserName.Text));
-
-			byte[] pb = m_secPassword.ToUtf8();
-			m_vStrings.Set(PwDefs.PasswordField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectPassword,
-				pb));
-			MemUtil.ZeroByteArray(pb);
-
-			m_vStrings.Set(PwDefs.UrlField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUrl,
-				m_tbUrl.Text));
-			m_vStrings.Set(PwDefs.NotesField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectNotes,
-				m_rtNotes.Text));
+			UpdateEntryStrings(true, false);
 
 			m_pwEntry.Strings = m_vStrings;
 			m_pwEntry.Binaries = m_vBinaries;
@@ -653,6 +683,8 @@ namespace KeePass.Forms
 
 			m_pwEntry.AutoType = m_atConfig;
 
+			m_pwEntry.Touch(true, false); // Touch *after* backup
+
 			if(m_pwEntry.EqualsEntry(m_pwInitialEntry, false, true, true, false,
 				bCreateBackup))
 			{
@@ -662,6 +694,10 @@ namespace KeePass.Forms
 					m_pwEntry.History.Remove(m_pwEntry.History.GetAt(
 						m_pwEntry.History.UCount - 1)); // Undo backup
 			}
+
+			if(this.EntrySaved != null) this.EntrySaved(this, EventArgs.Empty);
+
+			return true;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -680,7 +716,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			SaveEntry();
+			if(!SaveEntry()) this.DialogResult = DialogResult.None;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -736,12 +772,14 @@ namespace KeePass.Forms
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			EditStringForm esf = new EditStringForm();
+			UpdateEntryStrings(true, false);
 
+			EditStringForm esf = new EditStringForm();
 			esf.InitEx(m_vStrings, null, null, m_pwDatabase);
+
 			if(esf.ShowDialog() == DialogResult.OK)
 			{
-				UpdateStringsList();
+				UpdateEntryStrings(false, false);
 				ResizeColumnHeaders();
 			}
 		}
@@ -750,37 +788,36 @@ namespace KeePass.Forms
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			EditStringForm esf = new EditStringForm();
-
 			ListView.SelectedListViewItemCollection vSel = m_lvStrings.SelectedItems;
 			if(vSel.Count <= 0) return;
+
+			UpdateEntryStrings(true, false);
 
 			string strName = vSel[0].Text;
 			ProtectedString psValue = m_vStrings.Get(strName);
 			Debug.Assert(psValue != null);
 
+			EditStringForm esf = new EditStringForm();
 			esf.InitEx(m_vStrings, strName, psValue, m_pwDatabase);
 			if(esf.ShowDialog() == DialogResult.OK)
-				UpdateStringsList();
+				UpdateEntryStrings(false, false);
 		}
 
 		private void OnBtnStrDelete(object sender, EventArgs e)
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			ListView.SelectedListViewItemCollection lvsicSel = m_lvStrings.SelectedItems;
+			UpdateEntryStrings(true, false);
 
-			for(int i = 0; i < lvsicSel.Count; i++)
+			ListView.SelectedListViewItemCollection lvsicSel = m_lvStrings.SelectedItems;
+			for(int i = 0; i < lvsicSel.Count; ++i)
 			{
-				if(!m_vStrings.Remove(lvsicSel[i].Text))
-				{
-					Debug.Assert(false);
-				}
+				if(!m_vStrings.Remove(lvsicSel[i].Text)) { Debug.Assert(false); }
 			}
 
 			if(lvsicSel.Count > 0)
 			{
-				UpdateStringsList();
+				UpdateEntryStrings(false, false);
 				ResizeColumnHeaders();
 			}
 		}
@@ -794,6 +831,8 @@ namespace KeePass.Forms
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{
+				UpdateEntryBinaries(true);
+
 				foreach(string strFile in ofd.FileNames)
 				{
 					byte[] vBytes = null;
@@ -812,8 +851,8 @@ namespace KeePass.Forms
 						if(dr == DialogResult.Cancel) continue;
 						else if(dr == DialogResult.Yes)
 						{
-							string strFileName = UrlUtil.StripExtension(strItem) + ".";
-							string strExtension = UrlUtil.GetExtension(strItem);
+							string strFileName = UrlUtil.StripExtension(strItem);
+							string strExtension = "." + UrlUtil.GetExtension(strItem);
 
 							int nTry = 0;
 							while(true)
@@ -833,9 +872,13 @@ namespace KeePass.Forms
 					try
 					{
 						vBytes = File.ReadAllBytes(strFile);
+						vBytes = DataEditorForm.ConvertAttachment(strItem, vBytes);
 
-						ProtectedBinary pb = new ProtectedBinary(false, vBytes);
-						m_vBinaries.Set(strItem, pb);
+						if(vBytes != null)
+						{
+							ProtectedBinary pb = new ProtectedBinary(false, vBytes);
+							m_vBinaries.Set(strItem, pb);
+						}
 					}
 					catch(Exception exAttach)
 					{
@@ -843,7 +886,7 @@ namespace KeePass.Forms
 					}
 				}
 
-				UpdateBinariesList();
+				UpdateEntryBinaries(false);
 				ResizeColumnHeaders();
 			}
 		}
@@ -852,19 +895,16 @@ namespace KeePass.Forms
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			ListView.SelectedListViewItemCollection lvsc = m_lvBinaries.SelectedItems;
+			UpdateEntryBinaries(true);
 
+			ListView.SelectedListViewItemCollection lvsc = m_lvBinaries.SelectedItems;
 			int nSelCount = lvsc.Count;
 			if(nSelCount == 0) { Debug.Assert(false); return; }
 
-			for(int i = 0; i < nSelCount; i++)
-			{
-				int j = nSelCount - i - 1;
+			for(int i = 0; i < nSelCount; ++i)
+				m_vBinaries.Remove(lvsc[nSelCount - i - 1].Text);
 
-				m_vBinaries.Remove(lvsc[j].Text);
-			}
-
-			UpdateBinariesList();
+			UpdateEntryBinaries(false);
 			ResizeColumnHeaders();
 		}
 
@@ -892,9 +932,7 @@ namespace KeePass.Forms
 					string strRootPath = UrlUtil.EnsureTerminatingSeparator(fbd.SelectedPath, false);
 
 					foreach(ListViewItem lvi in lvsc)
-					{
 						SaveAttachmentTo(lvi, strRootPath + lvi.Text, true);
-					}
 				}
 			}
 		}
@@ -930,7 +968,6 @@ namespace KeePass.Forms
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
-
 			dlg.InitEx(m_atConfig, m_vStrings, null, false);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
@@ -1002,11 +1039,8 @@ namespace KeePass.Forms
 
 			if(nSelCount == 0) return;
 
-			for(int i = 0; i < lvsi.Count; i++)
-			{
-				int j = nSelCount - i - 1;
-				m_vHistory.Remove(m_vHistory.GetAt((uint)lvsi[j]));
-			}
+			for(int i = 0; i < lvsi.Count; ++i)
+				m_vHistory.Remove(m_vHistory.GetAt((uint)lvsi[nSelCount - i - 1]));
 
 			UpdateHistoryList();
 			ResizeColumnHeaders();
@@ -1103,7 +1137,7 @@ namespace KeePass.Forms
 				if((lvsc != null) && (lvsc.Count > 0))
 				{
 					string strName = lvsc[0].Text;
-					ClipboardUtil.Copy(m_vStrings.ReadSafe(strName), true, null, m_pwDatabase);
+					ClipboardUtil.Copy(m_vStrings.GetSafe(strName), true, null, m_pwDatabase);
 				}
 			}
 			else if(m_lvAutoType.Focused)
@@ -1195,15 +1229,47 @@ namespace KeePass.Forms
 			ListViewItem lvi = lvsic[0];
 			string strText = m_vStrings.ReadSafe(lvi.Text);
 
-			if(strStandardField == PwDefs.TitleField) m_tbTitle.Text = strText;
-			else if(strStandardField == PwDefs.UserNameField) m_tbUserName.Text = strText;
-			else if(strStandardField == PwDefs.PasswordField) m_tbPassword.Text = strText;
-			else if(strStandardField == PwDefs.UrlField) m_tbUrl.Text = strText;
-			else if(strStandardField == PwDefs.NotesField) m_rtNotes.Text = strText;
+			if(strStandardField == PwDefs.TitleField)
+			{
+				if((m_tbTitle.TextLength > 0) && (strText.Length > 0))
+					m_tbTitle.Text += ", ";
+				m_tbTitle.Text += strText;
+			}
+			else if(strStandardField == PwDefs.UserNameField)
+			{
+				if((m_tbUserName.TextLength > 0) && (strText.Length > 0))
+					m_tbUserName.Text += ", ";
+				m_tbUserName.Text += strText;
+			}
+			else if(strStandardField == PwDefs.PasswordField)
+			{
+				string strPw = Encoding.UTF8.GetString(m_secPassword.ToUtf8());
+				if((strPw.Length > 0) && (strText.Length > 0))
+					strPw += ", ";
+				m_tbPassword.Text = (strPw + strText);
+
+				string strRep = Encoding.UTF8.GetString(m_secRepeat.ToUtf8());
+				if((strRep.Length > 0) && (strText.Length > 0))
+					strRep += ", ";
+				m_tbRepeatPassword.Text = (strRep + strText);
+			}
+			else if(strStandardField == PwDefs.UrlField)
+			{
+				if((m_tbUrl.TextLength > 0) && (strText.Length > 0))
+					m_tbUrl.Text += ", ";
+				m_tbUrl.Text += strText;
+			}
+			else if(strStandardField == PwDefs.NotesField)
+			{
+				if((m_rtNotes.TextLength > 0) && (strText.Length > 0))
+					m_rtNotes.Text += MessageService.NewParagraph;
+				m_rtNotes.Text += strText;
+			}
 			else { Debug.Assert(false); }
 
+			UpdateEntryStrings(true, false);
 			m_vStrings.Remove(lvi.Text);
-			UpdateStringsList();
+			UpdateEntryStrings(false, false);
 			EnableControlsEx();
 		}
 
@@ -1490,6 +1556,11 @@ namespace KeePass.Forms
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			CleanUpEx();
+		}
+
+		private void OnBinariesItemActivate(object sender, EventArgs e)
+		{
+			OnBtnBinView(sender, e);
 		}
 	}
 }

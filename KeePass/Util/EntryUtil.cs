@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Delegates;
 using KeePassLib.Security;
@@ -172,6 +173,7 @@ namespace KeePass.Util
 			string str = strText;
 
 			str = ReplaceNewPasswordPlaceholder(str, pe, pd, cf);
+			str = ReplaceHmacOtpPlaceholder(str, pe, pd, cf);
 
 			return str;
 		}
@@ -299,6 +301,38 @@ namespace KeePass.Util
 					str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh,
 						psAutoGen.ReadString());
 				}
+			}
+
+			return str;
+		}
+
+		private static string ReplaceHmacOtpPlaceholder(string strText,
+			PwEntry pe, PwDatabase pd, SprContentFlags cf)
+		{
+			if((pe == null) || (pd == null)) return strText;
+
+			string str = strText;
+
+			const string strHmacOtpPlh = @"{HMACOTP}";
+			if(str.IndexOf(strHmacOtpPlh, StrUtil.CaseIgnoreCmp) >= 0)
+			{
+				const string strKeyField = "HmacOtp-Secret";
+				const string strCounterField = "HmacOtp-Counter";
+
+				byte[] pbSecret = Encoding.UTF8.GetBytes(pe.Strings.ReadSafe(
+					strKeyField));
+
+				string strCounter = pe.Strings.ReadSafe(strCounterField);
+				ulong uCounter;
+				ulong.TryParse(strCounter, out uCounter);
+
+				string strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
+
+				pe.Strings.Set(strCounterField, new ProtectedString(false,
+					(uCounter + 1).ToString()));
+				pd.Modified = true;
+
+				str = StrUtil.ReplaceCaseInsensitive(str, strHmacOtpPlh, strValue);
 			}
 
 			return str;

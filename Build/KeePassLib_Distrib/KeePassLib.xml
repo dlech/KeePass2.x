@@ -192,7 +192,7 @@
         </member>
         <member name="M:KeePassLib.Keys.KcpUserAccount.#ctor">
             <summary>
-            Construct a machine user key.
+            Construct a user account key.
             </summary>
         </member>
         <member name="M:KeePassLib.Keys.KcpUserAccount.Clear">
@@ -2272,6 +2272,11 @@
             default system directory separator character is used.</param>
             <returns>Path having a directory separator as last character.</returns>
         </member>
+        <member name="T:KeePassLib.Cryptography.HmacOtp">
+            <summary>
+            Generate HMAC-based one-time passwords as specified in RFC 4226.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
             <summary>
             Standard AES cipher implementation.
@@ -2634,13 +2639,35 @@
             <c>CryptoRandom</c> is a singleton class.
             </summary>
         </member>
+        <member name="M:KeePassLib.Cryptography.CryptoRandom.AddEntropy(System.Byte[])">
+            <summary>
+            Update the internal seed of the random number generator based
+            on entropy data.
+            This method is thread-safe.
+            </summary>
+            <param name="pbEntropy">Entropy bytes.</param>
+        </member>
         <member name="M:KeePassLib.Cryptography.CryptoRandom.GetRandomBytes(System.UInt32)">
             <summary>
             Get a number of cryptographically strong random bytes.
+            This method is thread-safe.
             </summary>
             <param name="uRequestedBytes">Number of requested random bytes.</param>
-            <returns>A byte array consisting of <paramref name="nRequestedBytes" />
+            <returns>A byte array consisting of <paramref name="uRequestedBytes" />
             random bytes.</returns>
+        </member>
+        <member name="P:KeePassLib.Cryptography.CryptoRandom.GeneratedBytesCount">
+            <summary>
+            Get the number of random bytes that this instance generated so far.
+            Note that this number can be higher than the number of random bytes
+            actually requested using the <c>GetRandomBytes</c> method.
+            </summary>
+        </member>
+        <member name="E:KeePassLib.Cryptography.CryptoRandom.GenerateRandom256Pre">
+            <summary>
+            Event that is triggered whenever the internal <c>GenerateRandom256</c>
+            method is called to generate random bytes.
+            </summary>
         </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
@@ -2736,7 +2763,7 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000, 2.01 = 0x02000100, etc.
+            2.00 = 0x02000000, 2.01 = 0x02000100, 2.10 = 0x02010000, etc.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">

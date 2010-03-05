@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,6 +73,10 @@ namespace KeePassLib.Serialization
 				if(request.Method == WebRequestMethods.Http.Post)
 					request.Method = WebRequestMethods.Http.Put;
 			}
+			// else if(request is FtpWebRequest)
+			// {
+			//	Debug.Assert(((FtpWebRequest)request).UsePassive);
+			// }
 		}
 
 		private static void PrepareWebAccess()

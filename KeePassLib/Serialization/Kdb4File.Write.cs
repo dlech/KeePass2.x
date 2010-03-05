@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ namespace KeePassLib.Serialization
 					writerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
-				m_xmlWriter = new XmlTextWriter(writerStream, Encoding.UTF8);
+				m_xmlWriter = new XmlTextWriter(writerStream, encNoBom);
 				WriteDocument(pgDataSource);
 
 				m_xmlWriter.Flush();
@@ -724,7 +724,7 @@ namespace KeePassLib.Serialization
 			f.m_format = Kdb4Format.PlainXml;
 
 			XmlTextWriter xtw = null;
-			try { xtw = new XmlTextWriter(msOutput, Encoding.UTF8); }
+			try { xtw = new XmlTextWriter(msOutput, new UTF8Encoding(false)); }
 			catch(Exception) { Debug.Assert(false); return false; }
 			if(xtw == null) { Debug.Assert(false); return false; }
 

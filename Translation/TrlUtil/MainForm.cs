@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -429,6 +429,7 @@ namespace TrlUtil
 			m_tbLangID.Text = m_trl.Properties.Iso6391Code;
 			m_tbAuthorName.Text = m_trl.Properties.AuthorName;
 			m_tbAuthorContact.Text = m_trl.Properties.AuthorContact;
+			m_cbRtl.Checked = m_trl.Properties.RightToLeft;
 
 			m_rtbUnusedText.Text = sbUnusedText.ToString();
 
@@ -470,6 +471,7 @@ namespace TrlUtil
 			m_trl.Properties.Iso6391Code = StrUtil.SafeXmlString(m_tbLangID.Text);
 			m_trl.Properties.AuthorName = StrUtil.SafeXmlString(m_tbAuthorName.Text);
 			m_trl.Properties.AuthorContact = StrUtil.SafeXmlString(m_tbAuthorContact.Text);
+			m_trl.Properties.RightToLeft = m_cbRtl.Checked;
 		}
 
 		private void UpdateStatusImages(TreeNodeCollection vtn)

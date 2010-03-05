@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -275,7 +275,7 @@ namespace KeePass.App.Configuration
 			if(bRemoveConfigPref) tConfig.Meta.PreferUserConfiguration = false;
 
 			XmlWriterSettings xws = new XmlWriterSettings();
-			xws.Encoding = Encoding.UTF8;
+			xws.Encoding = new UTF8Encoding(false);
 			xws.Indent = true;
 			xws.IndentChars = "\t";
 

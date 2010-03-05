@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Diagnostics;
 
 #if !KeePassLibSD
@@ -99,7 +100,7 @@ namespace KeePassLib.Translation
 
 			XmlWriterSettings xws = new XmlWriterSettings();
 			xws.CheckCharacters = true;
-			xws.Encoding = Encoding.UTF8;
+			xws.Encoding = new UTF8Encoding(false);
 			xws.Indent = true;
 			xws.IndentChars = "\t";
 
@@ -148,6 +149,16 @@ namespace KeePassLib.Translation
 		{
 			if(form == null) throw new ArgumentNullException("form");
 
+			if(m_props.RightToLeft)
+			{
+				try
+				{
+					form.RightToLeft = RightToLeft.Yes;
+					form.RightToLeftLayout = true;
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+
 			string strTypeName = form.GetType().FullName;
 			foreach(KPFormCustomization kpfc in m_vForms)
 			{
@@ -156,6 +167,58 @@ namespace KeePassLib.Translation
 					kpfc.ApplyTo(form);
 					break;
 				}
+			}
+
+			if(m_props.RightToLeft)
+			{
+				try { RtlApplyToControls(form.Controls); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
+
+		private static void RtlApplyToControls(Control.ControlCollection cc)
+		{
+			foreach(Control c in cc)
+			{
+				if(c.Controls.Count > 0) RtlApplyToControls(c.Controls);
+
+				if(c is DateTimePicker)
+					((DateTimePicker)c).RightToLeftLayout = true;
+				else if(c is ListView)
+					((ListView)c).RightToLeftLayout = true;
+				else if(c is MonthCalendar)
+					((MonthCalendar)c).RightToLeftLayout = true;
+				else if(c is ProgressBar)
+					((ProgressBar)c).RightToLeftLayout = true;
+				else if(c is TabControl)
+					((TabControl)c).RightToLeftLayout = true;
+				else if(c is TrackBar)
+					((TrackBar)c).RightToLeftLayout = true;
+				else if(c is TreeView)
+					((TreeView)c).RightToLeftLayout = true;
+				else if(c is ToolStrip)
+					RtlApplyToToolStripItems(((ToolStrip)c).Items);
+
+				if((c is GroupBox) || (c is Panel)) RtlMoveChildControls(c);
+			}
+		}
+
+		private static void RtlMoveChildControls(Control cParent)
+		{
+			int nParentWidth = cParent.Size.Width;
+
+			foreach(Control c in cParent.Controls)
+			{
+				Point ptCur = c.Location;
+				c.Location = new Point(nParentWidth - c.Size.Width - ptCur.X, ptCur.Y);
+			}
+		}
+
+		private static void RtlApplyToToolStripItems(ToolStripItemCollection tsic)
+		{
+			foreach(ToolStripItem tsi in tsic)
+			{
+				tsi.RightToLeftAutoMirrorImage = true;
 			}
 		}
 

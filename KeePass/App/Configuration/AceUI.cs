@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,28 @@ using KeePass.UI;
 
 namespace KeePass.App.Configuration
 {
+	[Flags]
+	public enum AceKeyUIFlags : ulong
+	{
+		None = 0,
+		EnablePassword = 0x1,
+		EnableKeyFile = 0x2,
+		EnableUserAccount = 0x4,
+		EnableHidePassword = 0x8,
+		DisablePassword = 0x100,
+		DisableKeyFile = 0x200,
+		DisableUserAccount = 0x400,
+		DisableHidePassword = 0x800,
+		CheckPassword = 0x10000,
+		CheckKeyFile = 0x20000,
+		CheckUserAccount = 0x40000,
+		CheckHidePassword = 0x80000,
+		UncheckPassword = 0x1000000,
+		UncheckKeyFile = 0x2000000,
+		UncheckUserAccount = 0x4000000,
+		UncheckHidePassword = 0x8000000
+	}
+
 	public sealed class AceUI
 	{
 		public AceUI()
@@ -65,11 +87,25 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private bool m_bForceSysFont = true;
+		public bool ForceSystemFontUnix
+		{
+			get { return m_bForceSysFont; }
+			set { m_bForceSysFont = value; }
+		}
+
 		private BannerStyle m_bannerStyle = BannerStyle.WinVistaBlack;
 		public BannerStyle BannerStyle
 		{
 			get { return m_bannerStyle; }
 			set { m_bannerStyle = value; }
+		}
+
+		private bool m_bShowImportStatusDlg = true;
+		public bool ShowImportStatusDialog
+		{
+			get { return m_bShowImportStatusDlg; }
+			set { m_bShowImportStatusDlg = value; }
 		}
 
 		private bool m_bUseCustomTsRenderer = true;
@@ -117,6 +153,20 @@ namespace KeePass.App.Configuration
 			get { return m_bDeWordWrap; }
 			set { m_bDeWordWrap = value; }
 		}
+
+		private ulong m_uKeyCreationFlags = (ulong)AceKeyUIFlags.None;
+		public ulong KeyCreationFlags
+		{
+			get { return m_uKeyCreationFlags; }
+			set { m_uKeyCreationFlags = value; }
+		}
+
+		private ulong m_uKeyPromptFlags = (ulong)AceKeyUIFlags.None;
+		public ulong KeyPromptFlags
+		{
+			get { return m_uKeyPromptFlags; }
+			set { m_uKeyPromptFlags = value; }
+		}
 	}
 
 	public sealed class AceHiding
@@ -125,7 +175,7 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bSepHiding = true;
+		private bool m_bSepHiding = false;
 		public bool SeparateHidingSettings
 		{
 			get { return m_bSepHiding; }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,6 +60,9 @@ namespace KeePassLib.Utility
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Information;
 		private const MessageBoxIcon m_mbiWarning = MessageBoxIcon.Warning;
 		private const MessageBoxIcon m_mbiFatal = MessageBoxIcon.Error;
+
+		private const MessageBoxOptions m_mboRtl = (MessageBoxOptions.RtlReading |
+			MessageBoxOptions.RightAlign);
 #else
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Asterisk;
 		private const MessageBoxIcon m_mbiWarning = MessageBoxIcon.Exclamation;
@@ -160,11 +163,23 @@ namespace KeePassLib.Utility
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			if(wnd == null) return MessageBox.Show(strText, strTitle, mb, mi, mdb);
+			if(wnd == null)
+			{
+				if(StrUtil.RightToLeft)
+					return MessageBox.Show(strText, strTitle, mb, mi, mdb, m_mboRtl);
+				return MessageBox.Show(strText, strTitle, mb, mi, mdb);
+			}
 
-			try { return MessageBox.Show(wnd, strText, strTitle, mb, mi, mdb); }
+			try
+			{
+				if(StrUtil.RightToLeft)
+					return MessageBox.Show(wnd, strText, strTitle, mb, mi, mdb, m_mboRtl);
+				return MessageBox.Show(wnd, strText, strTitle, mb, mi, mdb);
+			}
 			catch(Exception) { Debug.Assert(false); }
 
+			if(StrUtil.RightToLeft)
+				return MessageBox.Show(strText, strTitle, mb, mi, mdb, m_mboRtl);
 			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
 #endif
 		}
@@ -178,6 +193,8 @@ namespace KeePassLib.Utility
 			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
 			MessageBoxDefaultButton mdb)
 		{
+			if(StrUtil.RightToLeft)
+				return MessageBox.Show(iParent, strText, strTitle, mb, mi, mdb, m_mboRtl);
 			return MessageBox.Show(iParent, strText, strTitle, mb, mi, mdb);
 		}
 #endif

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
@@ -43,17 +44,17 @@ namespace KeePassLib
 
 		/// <summary>
 		/// Version, encoded as 32-bit unsigned integer.
-		/// 2.00 = 0x02000000, 2.01 = 0x02000100, etc.
+		/// 2.00 = 0x02000000, 2.01 = 0x02000100, 2.10 = 0x02010000, etc.
 		/// </summary>
-		public const uint Version32 = 0x02000900;
-		public const ulong FileVersion64 = 0x0002000900000000UL;
+		public const uint Version32 = 0x02010000;
+		public const ulong FileVersion64 = 0x0002000A00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.09";
+		public const string VersionString = "2.10";
 
-		public const string Copyright = @"Copyright © 2003-2009 Dominik Reichl";
+		public const string Copyright = @"Copyright © 2003-2010 Dominik Reichl";
 
 		/// <summary>
 		/// Product homepage URL. Terminated by a forward slash.
@@ -177,6 +178,19 @@ namespace KeePassLib
 			if(strFieldName.Equals(NotesField)) return true;
 
 			return false;
+		}
+
+		public static List<string> GetStandardFields()
+		{
+			List<string> l = new List<string>();
+
+			l.Add(TitleField);
+			l.Add(UserNameField);
+			l.Add(PasswordField);
+			l.Add(UrlField);
+			l.Add(NotesField);
+
+			return l;
 		}
 
 		/// <summary>
@@ -354,4 +368,24 @@ namespace KeePassLib
 		}
 	}
 	#pragma warning restore 1591 // Missing XML comments warning
+
+	public sealed class ObjectTouchedEventArgs : EventArgs
+	{
+		private object m_o;
+		public object Object { get { return m_o; } }
+
+		private bool m_bModified;
+		public bool Modified { get { return m_bModified; } }
+
+		private bool m_bParentsTouched;
+		public bool ParentsTouched { get { return m_bParentsTouched; } }
+
+		public ObjectTouchedEventArgs(object o, bool bModified,
+			bool bParentsTouched)
+		{
+			m_o = o;
+			m_bModified = bModified;
+			m_bParentsTouched = bParentsTouched;
+		}
+	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,6 +73,13 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
+
+			UIUtil.AssignFontDefaultItalic(m_lblHeaderCpAlgo);
+			UIUtil.AssignFontDefaultItalic(m_lblHeaderCp);
+			UIUtil.AssignFontDefaultItalic(m_lblHeaderPerf);
+
+			UIUtil.AssignFontDefaultBold(m_rbNone);
+			UIUtil.AssignFontDefaultBold(m_rbGZip);
 
 			m_ttRect.SetToolTip(m_lnkCompute1SecDelay, KPRes.TransformationRounds1SecHint);
 

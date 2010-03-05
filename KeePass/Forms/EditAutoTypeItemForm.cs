@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ namespace KeePass.Forms
 
 		private static string[] SpecialPlaceholders = new string[] {
 			"APPDIR", "GROUP", "GROUPPATH", "DELAY 1000", "DELAY=200",
-			"PICKPASSWORDCHARS", "NEWPASSWORD", VkcBreak,
+			"PICKPASSWORDCHARS", "NEWPASSWORD", "HMACOTP", VkcBreak,
 			"DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT", "ENV_DIRSEP", VkcBreak,
 			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
 			"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",

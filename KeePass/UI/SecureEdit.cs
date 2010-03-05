@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -302,7 +302,6 @@ namespace KeePass.UI
 
 			Array.Clear(pbThis, 0, pbThis.Length);
 			Array.Clear(pbOther, 0, pbOther.Length);
-
 			return bEqual;
 		}
 

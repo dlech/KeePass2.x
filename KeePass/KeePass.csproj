@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
@@ -88,6 +89,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\HashingStreamEx.cs">
       <Link>KeePassLib\Cryptography\HashingStreamEx.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\HmacOtp.cs">
+      <Link>KeePassLib\Cryptography\HmacOtp.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
       <Link>KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
@@ -306,12 +310,16 @@
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
+    <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />
+    <Compile Include="DataExchange\Formats\HandySafeTxt512.cs" />
     <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdb2xRepair.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
+    <Compile Include="DataExchange\Formats\KeePassXXml041.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
     <Compile Include="DataExchange\Formats\OnePwProCsv599.cs" />
@@ -335,6 +343,7 @@
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
     <Compile Include="DataExchange\Formats\XslTransform2x.cs" />
+    <Compile Include="DataExchange\Formats\ZdnPwProTxt314.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
     <Compile Include="DataExchange\Json.cs" />
     <Compile Include="DataExchange\Kdb3File.cs" />
@@ -586,6 +595,12 @@
     <Compile Include="Forms\IOConnectionForm.Designer.cs">
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TextEncodingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TextEncodingForm.Designer.cs">
+      <DependentUpon>TextEncodingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\UrlSchemeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -602,6 +617,8 @@
     <Compile Include="Native\NativeMethods.Defs.cs" />
     <Compile Include="Native\NativeMethods.New.cs" />
     <Compile Include="Native\NativeMethods.Structs.cs" />
+    <Compile Include="Native\NativeMethods.Unix.cs" />
+    <Compile Include="Native\NativeProgressDialog.cs" />
     <Compile Include="Plugins\PlgxCache.cs" />
     <Compile Include="Plugins\PlgxCsprojLoader.cs" />
     <Compile Include="Plugins\PlgxPluginInfo.cs" />
@@ -641,7 +658,9 @@
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
+    <Compile Include="UI\TaskbarList.cs" />
     <Compile Include="UI\ThemeToolStripRenderer.cs" />
+    <Compile Include="UI\UISystemFonts.cs" />
     <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>
@@ -816,6 +835,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>IOConnectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TextEncodingForm.resx">
+      <DependentUpon>TextEncodingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UrlSchemeForm.resx">
       <DependentUpon>UrlSchemeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -873,6 +895,7 @@
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
+    <Compile Include="Util\IniFile.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
@@ -1014,6 +1037,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_HandySafePro.png" />
+    <None Include="Resources\Images\B16x16_Imp_ZdnPwPro.png" />
+    <None Include="Resources\Images\B16x16_Imp_HandySafe.png" />
+    <None Include="Resources\Images\B16x16_Imp_KeePassX.png" />
+    <None Include="Resources\Icons\LockOverlay.ico" />
     <None Include="Resources\Nuvola\B16x16_Redo.png" />
     <None Include="Resources\Images\B16x16_TextAlignRight.png" />
     <None Include="Resources\Images\B16x16_TextAlignLeft.png" />

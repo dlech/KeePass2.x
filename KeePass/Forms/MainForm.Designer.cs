@@ -101,6 +101,8 @@
 			this.m_ctxEntrySortListByLastModTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByLastAccessTime = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySortListByExpirationTime = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntrySortListByUuid = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntrySortListByAttachments = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -235,8 +237,6 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
-			this.m_ctxEntrySortListByUuid = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntrySortListByAttachments = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -273,7 +273,7 @@
 			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_Sent_Mail;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
 			this.m_ctxGroupAdd.Size = new System.Drawing.Size(226, 22);
-			this.m_ctxGroupAdd.Text = "&Add Group";
+			this.m_ctxGroupAdd.Text = "Add &Group";
 			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
 			// 
 			// m_ctxGroupSep0
@@ -286,7 +286,7 @@
 			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
 			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
 			this.m_ctxGroupEdit.Size = new System.Drawing.Size(226, 22);
-			this.m_ctxGroupEdit.Text = "&Edit Group";
+			this.m_ctxGroupEdit.Text = "Ed&it Group";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
 			// 
 			// m_ctxGroupDelete
@@ -295,7 +295,7 @@
 			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
 			this.m_ctxGroupDelete.ShortcutKeyDisplayString = "Del";
 			this.m_ctxGroupDelete.Size = new System.Drawing.Size(226, 22);
-			this.m_ctxGroupDelete.Text = "&Delete Group";
+			this.m_ctxGroupDelete.Text = "Dele&te Group";
 			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
 			// 
 			// m_ctxGroupSep1
@@ -310,7 +310,7 @@
 			this.m_ctxGroupFind.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
 						| System.Windows.Forms.Keys.F)));
 			this.m_ctxGroupFind.Size = new System.Drawing.Size(226, 22);
-			this.m_ctxGroupFind.Text = "Find in this Group...";
+			this.m_ctxGroupFind.Text = "&Find in this Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnGroupsFind);
 			// 
 			// m_ctxGroupSep2
@@ -556,7 +556,7 @@
 			// 
 			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
 			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(200, 22);
-			this.m_ctxEntryAttachments.Text = "Attachments";
+			this.m_ctxEntryAttachments.Text = "Attach&ments";
 			// 
 			// m_ctxEntrySaveAttachedFiles
 			// 
@@ -577,7 +577,7 @@
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
 			this.m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = "Ctrl+V";
 			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(200, 22);
-			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
+			this.m_ctxEntryPerformAutoType.Text = "&Perform Auto-Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_ctxEntrySep1
@@ -630,7 +630,7 @@
             this.m_ctxEntrySelectedExport});
 			this.m_ctxEntryMassModify.Name = "m_ctxEntryMassModify";
 			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(200, 22);
-			this.m_ctxEntryMassModify.Text = "Selected Entries";
+			this.m_ctxEntryMassModify.Text = "Selected Entr&ies";
 			// 
 			// m_ctxEntrySetColor
 			// 
@@ -644,7 +644,7 @@
             this.m_ctxEntryColorSep1,
             this.m_ctxEntryColorCustom});
 			this.m_ctxEntrySetColor.Name = "m_ctxEntrySetColor";
-			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(128, 22);
+			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySetColor.Text = "Set &Color";
 			// 
 			// m_ctxEntryColorStandard
@@ -703,20 +703,20 @@
 			// 
 			this.m_ctxEntryMassSetIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_ctxEntryMassSetIcon.Name = "m_ctxEntryMassSetIcon";
-			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(128, 22);
+			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
 			// m_ctxEntrySelectedSep0
 			// 
 			this.m_ctxEntrySelectedSep0.Name = "m_ctxEntrySelectedSep0";
-			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(125, 6);
+			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_ctxEntrySelectedPrint
 			// 
 			this.m_ctxEntrySelectedPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxEntrySelectedPrint.Name = "m_ctxEntrySelectedPrint";
-			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(128, 22);
+			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySelectedPrint.Text = "&Print...";
 			this.m_ctxEntrySelectedPrint.Click += new System.EventHandler(this.OnEntrySelectedPrint);
 			// 
@@ -724,8 +724,8 @@
 			// 
 			this.m_ctxEntrySelectedExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxEntrySelectedExport.Name = "m_ctxEntrySelectedExport";
-			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(128, 22);
-			this.m_ctxEntrySelectedExport.Text = "&Export...";
+			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedExport.Text = "E&xport...";
 			this.m_ctxEntrySelectedExport.Click += new System.EventHandler(this.OnEntrySelectedExport);
 			// 
 			// m_ctxEntrySelectAll
@@ -754,7 +754,7 @@
 			// 
 			this.m_ctxEntryClipCopy.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxEntryClipCopy.Name = "m_ctxEntryClipCopy";
-			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(136, 22);
 			this.m_ctxEntryClipCopy.Text = "&Copy Entries";
 			this.m_ctxEntryClipCopy.Click += new System.EventHandler(this.OnEntryClipCopy);
 			// 
@@ -762,7 +762,7 @@
 			// 
 			this.m_ctxEntryClipPaste.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_ctxEntryClipPaste.Name = "m_ctxEntryClipPaste";
-			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(136, 22);
 			this.m_ctxEntryClipPaste.Text = "&Paste Entries";
 			this.m_ctxEntryClipPaste.Click += new System.EventHandler(this.OnEntryClipPaste);
 			// 
@@ -916,6 +916,22 @@
 			this.m_ctxEntrySortListByExpirationTime.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntrySortListByExpirationTime.Text = "Sort List by &Expiration Time";
 			this.m_ctxEntrySortListByExpirationTime.Click += new System.EventHandler(this.OnEntrySortExpiration);
+			// 
+			// m_ctxEntrySortListByUuid
+			// 
+			this.m_ctxEntrySortListByUuid.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
+			this.m_ctxEntrySortListByUuid.Name = "m_ctxEntrySortListByUuid";
+			this.m_ctxEntrySortListByUuid.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByUuid.Text = "Sort List by UU&ID";
+			this.m_ctxEntrySortListByUuid.Click += new System.EventHandler(this.OnEntrySortUuid);
+			// 
+			// m_ctxEntrySortListByAttachments
+			// 
+			this.m_ctxEntrySortListByAttachments.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
+			this.m_ctxEntrySortListByAttachments.Name = "m_ctxEntrySortListByAttachments";
+			this.m_ctxEntrySortListByAttachments.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntrySortListByAttachments.Text = "Sort List by Attac&hments";
+			this.m_ctxEntrySortListByAttachments.Click += new System.EventHandler(this.OnEntrySortAttachments);
 			// 
 			// m_menuMain
 			// 
@@ -1194,7 +1210,7 @@
 			this.m_menuEditShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExpired.Name = "m_menuEditShowExpired";
 			this.m_menuEditShowExpired.Size = new System.Drawing.Size(188, 22);
-			this.m_menuEditShowExpired.Text = "Show All &Expired Entries";
+			this.m_menuEditShowExpired.Text = "Show All E&xpired Entries";
 			this.m_menuEditShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
 			// 
 			// m_menuEditSep0
@@ -1513,7 +1529,7 @@
 			this.m_menuViewShowEntriesOfSubGroups.CheckOnClick = true;
 			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
 			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(202, 22);
-			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Subgroups";
+			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Su&bgroups";
 			this.m_menuViewShowEntriesOfSubGroups.Click += new System.EventHandler(this.OnViewShowEntriesOfSubGroups);
 			// 
 			// m_menuTools
@@ -1977,6 +1993,7 @@
 			this.m_tabMain.ShowToolTips = true;
 			this.m_tabMain.Size = new System.Drawing.Size(654, 22);
 			this.m_tabMain.TabIndex = 1;
+			this.m_tabMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnTabMainMouseClick);
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabMainSelectedIndexChanged);
 			// 
 			// m_splitHorizontal
@@ -2078,22 +2095,6 @@
 			this.m_richEntryView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyDown);
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
-			// 
-			// m_ctxEntrySortListByUuid
-			// 
-			this.m_ctxEntrySortListByUuid.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
-			this.m_ctxEntrySortListByUuid.Name = "m_ctxEntrySortListByUuid";
-			this.m_ctxEntrySortListByUuid.Size = new System.Drawing.Size(235, 22);
-			this.m_ctxEntrySortListByUuid.Text = "Sort List by UU&ID";
-			this.m_ctxEntrySortListByUuid.Click += new System.EventHandler(this.OnEntrySortUuid);
-			// 
-			// m_ctxEntrySortListByAttachments
-			// 
-			this.m_ctxEntrySortListByAttachments.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
-			this.m_ctxEntrySortListByAttachments.Name = "m_ctxEntrySortListByAttachments";
-			this.m_ctxEntrySortListByAttachments.Size = new System.Drawing.Size(235, 22);
-			this.m_ctxEntrySortListByAttachments.Text = "Sort List by Attac&hments";
-			this.m_ctxEntrySortListByAttachments.Click += new System.EventHandler(this.OnEntrySortAttachments);
 			// 
 			// MainForm
 			// 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1197,7 +1197,7 @@ namespace KeePassLib
 				m_pwRecycleBin = pwPrefBin;
 			else if(m_pgRootGroup.FindGroup(pwAltBin, true) != null)
 				m_pwRecycleBin = pwAltBin;
-			else { Debug.Assert(false); m_pwRecycleBin = PwUuid.Zero; }
+			else m_pwRecycleBin = PwUuid.Zero; // Debug.Assert(false);
 
 			PwUuid pwPrefTmp = m_pwEntryTemplatesGroup, pwAltTmp = pwSource.m_pwEntryTemplatesGroup;
 			if(bForce || (pwSource.m_dtEntryTemplatesChanged > m_dtEntryTemplatesChanged))
@@ -1210,7 +1210,7 @@ namespace KeePassLib
 				m_pwEntryTemplatesGroup = pwPrefTmp;
 			else if(m_pgRootGroup.FindGroup(pwAltTmp, true) != null)
 				m_pwEntryTemplatesGroup = pwAltTmp;
-			else { Debug.Assert(false); m_pwEntryTemplatesGroup = PwUuid.Zero; }
+			else m_pwEntryTemplatesGroup = PwUuid.Zero; // Debug.Assert(false);
 		}
 
 		private void MergeEntryHistory(PwEntry pe, PwEntry peSource,

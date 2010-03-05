@@ -82,6 +82,8 @@
 			this.m_menuFileSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileImport = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileImportLng = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileImportSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuFileImport2xNoChecks = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tsMain = new KeePass.UI.CustomToolStripEx();
@@ -89,8 +91,7 @@
 			this.m_tbSave = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
-			this.m_menuFileImportSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuFileImport2xNoChecks = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_cbRtl = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabProps.SuspendLayout();
 			this.m_tabStrings.SuspendLayout();
@@ -117,6 +118,7 @@
 			// 
 			// m_tabProps
 			// 
+			this.m_tabProps.Controls.Add(this.m_cbRtl);
 			this.m_tabProps.Controls.Add(this.m_lblAuthorContact);
 			this.m_tabProps.Controls.Add(this.m_tbAuthorContact);
 			this.m_tabProps.Controls.Add(this.m_linkLangCode);
@@ -583,7 +585,7 @@
 			// 
 			this.m_menuFileOpen.Image = global::TrlUtil.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
-			this.m_menuFileOpen.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileOpen.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileOpen.Text = "&Open...";
 			this.m_menuFileOpen.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -591,7 +593,7 @@
 			// 
 			this.m_menuFileSave.Image = global::TrlUtil.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
@@ -599,14 +601,14 @@
 			// 
 			this.m_menuFileSaveAs.Image = global::TrlUtil.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			this.m_menuFileSaveAs.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileSaveAs.Text = "Save &As...";
 			this.m_menuFileSaveAs.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(120, 6);
 			// 
 			// m_menuFileImport
 			// 
@@ -615,7 +617,7 @@
             this.m_menuFileImportSep0,
             this.m_menuFileImport2xNoChecks});
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			this.m_menuFileImport.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileImport.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileImport.Text = "Import";
 			// 
 			// m_menuFileImportLng
@@ -625,15 +627,27 @@
 			this.m_menuFileImportLng.Text = "KeePass 1.x LNG File...";
 			this.m_menuFileImportLng.Click += new System.EventHandler(this.OnImport1xLng);
 			// 
+			// m_menuFileImportSep0
+			// 
+			this.m_menuFileImportSep0.Name = "m_menuFileImportSep0";
+			this.m_menuFileImportSep0.Size = new System.Drawing.Size(279, 6);
+			// 
+			// m_menuFileImport2xNoChecks
+			// 
+			this.m_menuFileImport2xNoChecks.Name = "m_menuFileImport2xNoChecks";
+			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(282, 22);
+			this.m_menuFileImport2xNoChecks.Text = "KeePass 2.x LNGX File (No Base Checks)...";
+			this.m_menuFileImport2xNoChecks.Click += new System.EventHandler(this.OnImport2xNoChecks);
+			// 
 			// m_menuFileSep1
 			// 
 			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			this.m_menuFileSep1.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFileSep1.Size = new System.Drawing.Size(120, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(123, 22);
 			this.m_menuFileExit.Text = "&Exit";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -683,17 +697,15 @@
 			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnFindKeyUp);
 			this.m_tbFind.TextChanged += new System.EventHandler(this.OnFindTextChanged);
 			// 
-			// m_menuFileImportSep0
+			// m_cbRtl
 			// 
-			this.m_menuFileImportSep0.Name = "m_menuFileImportSep0";
-			this.m_menuFileImportSep0.Size = new System.Drawing.Size(279, 6);
-			// 
-			// m_menuFileImport2xNoChecks
-			// 
-			this.m_menuFileImport2xNoChecks.Name = "m_menuFileImport2xNoChecks";
-			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(282, 22);
-			this.m_menuFileImport2xNoChecks.Text = "KeePass 2.x LNGX File (No Base Checks)...";
-			this.m_menuFileImport2xNoChecks.Click += new System.EventHandler(this.OnImport2xNoChecks);
+			this.m_cbRtl.AutoSize = true;
+			this.m_cbRtl.Location = new System.Drawing.Point(9, 238);
+			this.m_cbRtl.Name = "m_cbRtl";
+			this.m_cbRtl.Size = new System.Drawing.Size(149, 17);
+			this.m_cbRtl.TabIndex = 14;
+			this.m_cbRtl.Text = "Script is written right-to-left";
+			this.m_cbRtl.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
@@ -795,6 +807,7 @@
 		private System.Windows.Forms.ToolStripTextBox m_tbFind;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileImportSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileImport2xNoChecks;
+		private System.Windows.Forms.CheckBox m_cbRtl;
 	}
 }
 

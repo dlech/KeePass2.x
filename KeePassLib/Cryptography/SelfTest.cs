@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
+using System.Text;
 
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
@@ -61,6 +62,8 @@ namespace KeePassLib.Cryptography
 			TestNativeKeyTransform();
 			
 			TestGZip();
+
+			TestHmacOtp();
 		}
 
 		private static void TestFipsComplianceProblems()
@@ -211,6 +214,22 @@ namespace KeePassLib.Cryptography
 			byte[] pbCompressed = MemUtil.Compress(pb);
 			if(!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pb))
 				throw new InvalidOperationException("GZip");
+#endif
+		}
+
+		private static void TestHmacOtp()
+		{
+#if (DEBUG && !KeePassLibSD)
+			byte[] pbSecret = Encoding.ASCII.GetBytes("12345678901234567890");
+			string[] vExp = new string[]{ "755224", "287082", "359152",
+				"969429", "338314", "254676", "287922", "162583", "399871",
+				"520489" };
+
+			for(int i = 0; i < vExp.Length; ++i)
+			{
+				if(HmacOtp.Generate(pbSecret, (ulong)i, 6, false, -1) != vExp[i])
+					throw new InvalidOperationException("HmacOtp");
+			}
 #endif
 		}
 	}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ using System.Threading;
 using System.IO;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util;
@@ -52,6 +53,12 @@ namespace KeePass.UI
 			set { m_tsrOverride = value; }
 		}
 
+		// private static bool m_bVistaStyleLists = false;
+		// public static bool VistaStyleListsSupported
+		// {
+		//	get { return m_bVistaStyleLists; }
+		// }
+
 		public static void Initialize(bool bReinitialize)
 		{
 			bool bVisualStyles = true;
@@ -66,6 +73,9 @@ namespace KeePass.UI
 			}
 			else if(bReinitialize)
 				ToolStripManager.Renderer = new ToolStripProfessionalRenderer();
+
+			// m_bVistaStyleLists = (WinUtil.IsAtLeastWindowsVista &&
+			//	(Environment.Version.Major >= 2));
 		}
 
 		public static void RtfSetSelectionLink(RichTextBox richTextBox)
@@ -798,6 +808,13 @@ namespace KeePass.UI
 			if(cb.Checked != bChecked) cb.Checked = bChecked;
 		}
 
+		public static void SetChecked(ToolStripMenuItem tsmi, bool bChecked)
+		{
+			if(tsmi == null) { Debug.Assert(false); return; }
+
+			if(tsmi.Checked != bChecked) tsmi.Checked = bChecked;
+		}
+
 		public static void ResizeColumns(ListView lv, bool bBlockUIUpdate)
 		{
 			if(lv == null) { Debug.Assert(false); return; }
@@ -987,6 +1004,98 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		public static void ApplyKeyUIFlags(ulong aceUIFlags, CheckBox cbPassword,
+			CheckBox cbKeyFile, CheckBox cbUserAccount, CheckBox cbHidePassword)
+		{
+			if((aceUIFlags & (ulong)AceKeyUIFlags.EnablePassword) != 0)
+				UIUtil.SetEnabled(cbPassword, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.EnableKeyFile) != 0)
+				UIUtil.SetEnabled(cbKeyFile, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.EnableUserAccount) != 0)
+				UIUtil.SetEnabled(cbUserAccount, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.EnableHidePassword) != 0)
+				UIUtil.SetEnabled(cbHidePassword, true);
+
+			if((aceUIFlags & (ulong)AceKeyUIFlags.CheckPassword) != 0)
+				UIUtil.SetChecked(cbPassword, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.CheckKeyFile) != 0)
+				UIUtil.SetChecked(cbKeyFile, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.CheckUserAccount) != 0)
+				UIUtil.SetChecked(cbUserAccount, true);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.CheckHidePassword) != 0)
+				UIUtil.SetChecked(cbHidePassword, true);
+
+			if((aceUIFlags & (ulong)AceKeyUIFlags.UncheckPassword) != 0)
+				UIUtil.SetChecked(cbPassword, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.UncheckKeyFile) != 0)
+				UIUtil.SetChecked(cbKeyFile, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.UncheckUserAccount) != 0)
+				UIUtil.SetChecked(cbUserAccount, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.UncheckHidePassword) != 0)
+				UIUtil.SetChecked(cbHidePassword, false);
+
+			if((aceUIFlags & (ulong)AceKeyUIFlags.DisablePassword) != 0)
+				UIUtil.SetEnabled(cbPassword, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.DisableKeyFile) != 0)
+				UIUtil.SetEnabled(cbKeyFile, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.DisableUserAccount) != 0)
+				UIUtil.SetEnabled(cbUserAccount, false);
+			if((aceUIFlags & (ulong)AceKeyUIFlags.DisableHidePassword) != 0)
+				UIUtil.SetEnabled(cbHidePassword, false);
+		}
+
+		public static int GetTopVisibleItem(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return -1; }
+
+			int nRes = -1;
+			try
+			{
+				if((lv.Items.Count > 0) && (lv.TopItem != null))
+					nRes = lv.TopItem.Index;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return nRes;
+		}
+
+		public static void SetTopVisibleItem(ListView lv, int iIndex)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+			if((iIndex < 0) || (iIndex >= lv.Items.Count)) return; // No assert
+
+			lv.EnsureVisible(lv.Items.Count - 1);
+			lv.EnsureVisible(iIndex);
+		}
+
+		private static Font m_fontBold = null;
+		public static void AssignFontDefaultBold(Control c)
+		{
+			if(c == null) throw new ArgumentNullException("c");
+
+			if(m_fontBold == null)
+			{
+				try { m_fontBold = new Font(c.Font, FontStyle.Bold); }
+				catch(Exception) { Debug.Assert(false); m_fontBold = c.Font; }
+			}
+				
+			if(m_fontBold != null) c.Font = m_fontBold;
+		}
+
+		private static Font m_fontItalic = null;
+		public static void AssignFontDefaultItalic(Control c)
+		{
+			if(c == null) throw new ArgumentNullException("c");
+
+			if(m_fontItalic == null)
+			{
+				try { m_fontItalic = new Font(c.Font, FontStyle.Italic); }
+				catch(Exception) { Debug.Assert(false); m_fontItalic = c.Font; }
+			}
+
+			if(m_fontItalic != null) c.Font = m_fontItalic;
 		}
 	}
 }

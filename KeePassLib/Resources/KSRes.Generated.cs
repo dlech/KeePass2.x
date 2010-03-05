@@ -1,4 +1,4 @@
-﻿// This is a generated file!
+// This is a generated file!
 // Do not edit manually, changes will be overwritten.
 
 using System;

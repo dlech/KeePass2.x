@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 
 using KeePass.App;
+using KeePass.Util;
 
 using KeePassLib.Utility;
 
@@ -107,7 +108,14 @@ namespace KeePass.UI
 			{
 				img = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 				Graphics g = Graphics.FromImage(img);
-				const int offsetIcon = 10;
+				int xIcon = DpiScaleInt(10, nHeight);
+
+				bool bRtl = Program.Translation.Properties.RightToLeft;
+				if(bRtl)
+				{
+					g.TranslateTransform(nWidth, 0.0f);
+					g.ScaleTransform(-1.0f, 1.0f);
+				}
 
 				Color clrStart = Color.White;
 				Color clrEnd = Color.LightBlue;
@@ -161,16 +169,22 @@ namespace KeePass.UI
 
 				if(imgIcon != null)
 				{
-					int yIcon = (nHeight - imgIcon.Height) / 2;
-					g.DrawImageUnscaled(imgIcon, offsetIcon, yIcon);
+					int wIconScaled = DpiScaleInt(imgIcon.Width, nHeight);
+					int hIconScaled = DpiScaleInt(imgIcon.Height, nHeight);
+
+					int yIcon = (nHeight - hIconScaled) / 2;
+					if(hIconScaled == imgIcon.Height)
+						g.DrawImageUnscaled(imgIcon, xIcon, yIcon);
+					else
+						g.DrawImage(imgIcon, xIcon, yIcon, wIconScaled, hIconScaled);
 
 					ColorMatrix cm = new ColorMatrix();
 					cm.Matrix33 = 0.1f;
 					ImageAttributes ia = new ImageAttributes();
 					ia.SetColorMatrix(cm);
 
-					int w = imgIcon.Width * 3, h = imgIcon.Height * 3;
-					int x = nWidth - w - 10, y = (nHeight - h) / 2;
+					int w = wIconScaled * 3, h = hIconScaled * 3;
+					int x = nWidth - w - xIcon, y = (nHeight - h) / 2;
 					Rectangle rectDest = new Rectangle(x, y, w, h);
 					g.DrawImage(imgIcon, rectDest, 0, 0, imgIcon.Width, imgIcon.Height,
 						GraphicsUnit.Pixel, ia);
@@ -201,20 +215,52 @@ namespace KeePass.UI
 					g.DrawLine(penBlack, 0, nHeight - 1, nWidth - 1, nHeight - 1);
 				}
 
-				Font font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
+				// Brush brush;
+				Color clrText;
+				if(bs == BannerStyle.KeePassWin32)
+				{
+					// brush = Brushes.Black;
+					clrText = Color.Black;
+				}
+				else
+				{
+					// brush = Brushes.White;
+					clrText = Color.White;
+				}
 
-				Brush brush;
-				if(bs == BannerStyle.KeePassWin32) brush = Brushes.Black;
-				else brush = Brushes.White;
+				// float fx = 2 * xIcon, fy = 9.0f;
+				int tx = 2 * xIcon, ty = DpiScaleInt(9, nHeight);
+				if(imgIcon != null) tx += DpiScaleInt(imgIcon.Width, nHeight); // fx
 
-				float fx = 2 * offsetIcon, fy = 9.0f;
-				if(imgIcon != null) fx += imgIcon.Width;
-				g.DrawString(strTitle, font, brush, fx, fy);
+				TextFormatFlags tff = TextFormatFlags.PreserveGraphicsClipping;
+				if(bRtl) tff |= TextFormatFlags.RightToLeft;
 
-				Font fontSmall = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Regular);
-				fx += offsetIcon;
-				fy += offsetIcon * 2 + 2;
-				g.DrawString(strLine, fontSmall, brush, fx, fy);
+				float fFontSize = DpiScaleFloat((12.0f * 96.0f) / g.DpiY, nHeight);
+				using(Font font = new Font(FontFamily.GenericSansSerif,
+					fFontSize, FontStyle.Bold))
+				{
+					int txs = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
+						strTitle, font).Width));
+
+					// g.DrawString(strTitle, font, brush, fx, fy);
+					BannerFactory.DrawText(g, strTitle, font, new Point(txs, ty),
+						clrText, tff, nWidth, nHeight);
+				}
+
+				tx += xIcon; // fx
+				ty += xIcon * 2 + 2; // fy
+
+				float fFontSizeSm = DpiScaleFloat((9.0f * 96.0f) / g.DpiY, nHeight);
+				using(Font fontSmall = new Font(FontFamily.GenericSansSerif,
+					fFontSizeSm, FontStyle.Regular))
+				{
+					int txl = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
+						strLine, fontSmall).Width));
+
+					// g.DrawString(strLine, fontSmall, brush, fx, fy);
+					BannerFactory.DrawText(g, strLine, fontSmall, new Point(txl, ty),
+						clrText, tff, nWidth, nHeight);
+				}
 
 				g.Dispose();
 			}
@@ -232,6 +278,29 @@ namespace KeePass.UI
 			m_vImageCache[strImageID] = img;
 
 			return img;
+		}
+
+		private static void DrawText(Graphics g, string strText,
+			Font font, Point pt, Color clrForeground, TextFormatFlags tff,
+			int nWidth, int nHeight)
+		{
+			// On Windows 2000 the DrawText method taking a Point doesn't
+			// work by design, see MSDN
+			if(WinUtil.IsWindows2000)
+				TextRenderer.DrawText(g, strText, font, new Rectangle(pt.X, pt.Y,
+					nWidth - pt.X - 1, nHeight - pt.Y - 1), clrForeground, tff);
+			else
+				TextRenderer.DrawText(g, strText, font, pt, clrForeground, tff);
+		}
+
+		private static int DpiScaleInt(int x, int nBaseHeight)
+		{
+			return (int)Math.Round((double)(x * nBaseHeight) / 60.0);
+		}
+
+		private static float DpiScaleFloat(float x, int nBaseHeight)
+		{
+			return ((x * (float)nBaseHeight) / 60.0f);
 		}
 	}
 }

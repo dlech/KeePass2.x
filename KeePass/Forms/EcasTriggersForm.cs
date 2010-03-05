@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -54,12 +54,14 @@ namespace KeePass.Forms
 			get { return m_ctxTools; }
 		}
 
-		public void InitEx(EcasTriggerSystem triggers, ImageList ilIcons)
+		public bool InitEx(EcasTriggerSystem triggers, ImageList ilIcons)
 		{
 			m_triggersInOut = triggers;
 			m_triggers = triggers.CloneDeep();
 
 			m_ilIcons = ilIcons;
+
+			return AppPolicy.Try(AppPolicyId.EditTriggers);
 		}
 
 		public EcasTriggersForm()
@@ -75,6 +77,7 @@ namespace KeePass.Forms
 			Debug.Assert(m_triggers != null); if(m_triggers == null) return;
 
 			GlobalWindowManager.AddWindow(this);
+			GlobalWindowManager.CustomizeControl(m_ctxTools);
 
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
@@ -201,7 +204,7 @@ namespace KeePass.Forms
 					v.Triggers.Add(vTriggers[iTrigger].Tag as EcasTrigger);
 
 				XmlWriterSettings xws = new XmlWriterSettings();
-				xws.Encoding = Encoding.UTF8;
+				xws.Encoding = new UTF8Encoding(false);
 				xws.Indent = true;
 				xws.IndentChars = "\t";
 

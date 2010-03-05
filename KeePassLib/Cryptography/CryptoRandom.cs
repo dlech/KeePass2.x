@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,13 +36,14 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public sealed class CryptoRandom
 	{
-		private static CryptoRandom m_pInstance = null;
-
-		private byte[] m_pbSystemData = null;
-		private byte[] m_pbCspData = null;
+		private byte[] m_pbEntropyPool = new byte[64];
 		private uint m_uCounter;
-		private RNGCryptoServiceProvider m_rng = null;
+		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+		private ulong m_uGeneratedBytesCount = 0;
 
+		private object m_oSyncRoot = new object();
+
+		private static CryptoRandom m_pInstance = null;
 		public static CryptoRandom Instance
 		{
 			get
@@ -54,17 +55,76 @@ namespace KeePassLib.Cryptography
 			}
 		}
 
+		/// <summary>
+		/// Get the number of random bytes that this instance generated so far.
+		/// Note that this number can be higher than the number of random bytes
+		/// actually requested using the <c>GetRandomBytes</c> method.
+		/// </summary>
+		public ulong GeneratedBytesCount
+		{
+			get
+			{
+				ulong u;
+				lock(m_oSyncRoot) { u = m_uGeneratedBytesCount; }
+				return u;
+			}
+		}
+
+		/// <summary>
+		/// Event that is triggered whenever the internal <c>GenerateRandom256</c>
+		/// method is called to generate random bytes.
+		/// </summary>
+		public event EventHandler GenerateRandom256Pre;
+
 		private CryptoRandom()
 		{
-			m_rng = new RNGCryptoServiceProvider();
-
 			Random r = new Random();
 			m_uCounter = (uint)r.Next();
 
-			GetSystemData(); // System only, not CSP
+			AddEntropy(GetSystemData());
+			AddEntropy(GetCspData());
 		}
 
-		private void GetSystemData()
+		/// <summary>
+		/// Update the internal seed of the random number generator based
+		/// on entropy data.
+		/// This method is thread-safe.
+		/// </summary>
+		/// <param name="pbEntropy">Entropy bytes.</param>
+		public void AddEntropy(byte[] pbEntropy)
+		{
+			if(pbEntropy == null) { Debug.Assert(false); return; }
+			if(pbEntropy.Length == 0) { Debug.Assert(false); return; }
+
+			byte[] pbNewData = pbEntropy;
+			if(pbEntropy.Length >= 64)
+			{
+#if !KeePassLibSD
+				SHA512Managed shaNew = new SHA512Managed();
+#else
+				SHA256Managed shaNew = new SHA256Managed();
+#endif
+				pbNewData = shaNew.ComputeHash(pbEntropy);
+			}
+
+			MemoryStream ms = new MemoryStream();
+			lock(m_oSyncRoot)
+			{
+				ms.Write(m_pbEntropyPool, 0, m_pbEntropyPool.Length);
+				ms.Write(pbNewData, 0, pbNewData.Length);
+
+				byte[] pbFinal = ms.ToArray();
+#if !KeePassLibSD
+				Debug.Assert(pbFinal.Length == (64 + pbNewData.Length));
+				SHA512Managed shaPool = new SHA512Managed();
+#else
+				SHA256Managed shaPool = new SHA256Managed();
+#endif
+				m_pbEntropyPool = shaPool.ComputeHash(pbFinal);
+			}
+		}
+
+		private static byte[] GetSystemData()
 		{
 			byte[] pb;
 			MemoryStream ms = new MemoryStream();
@@ -143,29 +203,39 @@ namespace KeePassLib.Cryptography
 			pb = Guid.NewGuid().ToByteArray();
 			ms.Write(pb, 0, pb.Length);
 
-			m_pbSystemData = ms.ToArray();
+			return ms.ToArray();
 		}
 
-		private void GetCspData()
+		private byte[] GetCspData()
 		{
-			m_pbCspData = new byte[32];
-			m_rng.GetBytes(m_pbCspData);
+			byte[] pbCspRandom = new byte[32];
+			m_rng.GetBytes(pbCspRandom);
+			return pbCspRandom;
 		}
 
 		private byte[] GenerateRandom256()
 		{
-			unchecked { m_uCounter += 386047; } // Prime number
-			GetCspData(); // CSP only, not system
+			if(this.GenerateRandom256Pre != null)
+				this.GenerateRandom256Pre(this, EventArgs.Empty);
 
-			byte[] pbCounter = MemUtil.UInt32ToBytes(m_uCounter);
+			byte[] pbFinal;
+			lock(m_oSyncRoot)
+			{
+				unchecked { m_uCounter += 386047; } // Prime number
+				byte[] pbCounter = MemUtil.UInt32ToBytes(m_uCounter);
 
-			MemoryStream ms = new MemoryStream();
-			ms.Write(m_pbSystemData, 0, m_pbSystemData.Length);
-			ms.Write(pbCounter, 0, pbCounter.Length);
-			ms.Write(m_pbCspData, 0, m_pbCspData.Length);
-			byte[] pbFinal = ms.ToArray();
-			Debug.Assert(pbFinal.Length == (m_pbSystemData.Length +
-				m_pbCspData.Length + pbCounter.Length));
+				byte[] pbCspRandom = GetCspData();
+
+				MemoryStream ms = new MemoryStream();
+				ms.Write(m_pbEntropyPool, 0, m_pbEntropyPool.Length);
+				ms.Write(pbCounter, 0, pbCounter.Length);
+				ms.Write(pbCspRandom, 0, pbCspRandom.Length);
+				pbFinal = ms.ToArray();
+				Debug.Assert(pbFinal.Length == (m_pbEntropyPool.Length +
+					pbCounter.Length + pbCspRandom.Length));
+
+				m_uGeneratedBytesCount += 32;
+			}
 
 			SHA256Managed sha256 = new SHA256Managed();
 			return sha256.ComputeHash(pbFinal);
@@ -173,9 +243,10 @@ namespace KeePassLib.Cryptography
 
 		/// <summary>
 		/// Get a number of cryptographically strong random bytes.
+		/// This method is thread-safe.
 		/// </summary>
 		/// <param name="uRequestedBytes">Number of requested random bytes.</param>
-		/// <returns>A byte array consisting of <paramref name="nRequestedBytes" />
+		/// <returns>A byte array consisting of <paramref name="uRequestedBytes" />
 		/// random bytes.</returns>
 		public byte[] GetRandomBytes(uint uRequestedBytes)
 		{

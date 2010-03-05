@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -103,10 +103,6 @@ namespace KeePass.Forms
 			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxGroupList", m_ctxGroupList.Items);
 			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxTray", m_ctxTray.Items);
 
-			m_fontBoldUI = new Font(m_tabMain.Font, FontStyle.Bold);
-			m_fontBoldTree = new Font(m_tvGroups.Font, FontStyle.Bold);
-			m_fontItalicTree = new Font(m_tvGroups.Font, FontStyle.Italic);
-
 			m_splitHorizontal.InitEx(this.Controls, m_menuMain);
 			m_splitVertical.InitEx(this.Controls, m_menuMain);
 
@@ -116,6 +112,8 @@ namespace KeePass.Forms
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			m_bFormLoading = true;
+			GlobalWindowManager.CustomizeControl(this);
+			GlobalWindowManager.CustomizeControl(m_ctxTray);
 
 			m_strNeverExpiresText = KPRes.NeverExpires;
 
@@ -123,8 +121,8 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			m_imgFileSaveEnabled = Properties.Resources.B16x16_FileSave;
 			m_imgFileSaveDisabled = Properties.Resources.B16x16_FileSave_Disabled;
-			m_imgFileSaveAllEnabled = Properties.Resources.B16x16_File_SaveAll;
-			m_imgFileSaveAllDisabled = Properties.Resources.B16x16_File_SaveAll_Disabled;
+			// m_imgFileSaveAllEnabled = Properties.Resources.B16x16_File_SaveAll;
+			// m_imgFileSaveAllDisabled = Properties.Resources.B16x16_File_SaveAll_Disabled;
 			m_ilCurrentIcons = m_ilClientIcons;
 
 			m_ntfTray = new NotifyIconEx(this.components);
@@ -169,6 +167,7 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbCopyUserName, KPRes.CopyUserFull, null);
 			UIUtil.ConfigureTbButton(m_tbCopyPassword, KPRes.CopyPasswordFull, null);
 			UIUtil.ConfigureTbButton(m_tbFind, KPRes.Search, null);
+			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, null, KPRes.View);
 			UIUtil.ConfigureTbButton(m_tbViewsShowAll, KPRes.ShowAllEntries, null);
 			UIUtil.ConfigureTbButton(m_tbViewsShowExpired, KPRes.ShowExpiredEntries, null);
 			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null);
@@ -302,6 +301,11 @@ namespace KeePass.Forms
 				AppDefs.NamedEntryColor.LightYellow);
 
 			m_lvEntries.GridLines = mw.ShowGridLines;
+			// if(UIUtil.VistaStyleListsSupported)
+			// {
+			//	UIUtil.SetExplorerTheme(m_tvGroups.Handle);
+			//	UIUtil.SetExplorerTheme(m_lvEntries.Handle);
+			// }
 
 			m_clrAlternateItemBgColor = UIUtil.GetAlternateColor(m_lvEntries.BackColor);
 
@@ -347,7 +351,7 @@ namespace KeePass.Forms
 			if(Program.Config.Application.Start.PluginCacheDeleteOld)
 				PlgxCache.DeleteOldFilesAsync();
 
-			HotKeyManager.ReceiverWindow = this.Handle;
+			HotKeyManager.Initialize(this);
 
 			Keys kAutoTypeKey = (Keys)Program.Config.Integration.HotKeyGlobalAutoType;
 			HotKeyManager.RegisterHotKey(AppDefs.GlobalHotKeyId.AutoType, kAutoTypeKey);
@@ -511,7 +515,7 @@ namespace KeePass.Forms
 
 		private void OnFileClose(object sender, EventArgs e)
 		{
-			CloseActiveDocument(false, false);
+			CloseDocument(null, false, false);
 		}
 
 		private void OnFileSave(object sender, EventArgs e)
@@ -600,7 +604,10 @@ namespace KeePass.Forms
 
 		private void OnFileChangeMasterKey(object sender, EventArgs e)
 		{
+			if(!AppPolicy.Try(AppPolicyId.ChangeMasterKey)) return;
+
 			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
 			KeyCreationForm kcf = new KeyCreationForm();
 			kcf.InitEx(pd.IOConnectionInfo, false);
@@ -609,9 +616,10 @@ namespace KeePass.Forms
 				pd.MasterKey = kcf.CompositeKey;
 				MessageService.ShowInfoEx(PwDefs.ShortProductName + " - " +
 					KPRes.KeyChanged, KPRes.MasterKeyChanged, KPRes.MasterKeyChangedSavePrompt);
-			}
 
-			UpdateUIState(true);
+				UpdateUIState(true);
+			}
+			else UpdateUIState(false);
 		}
 
 		private void OnFilePrint(object sender, EventArgs e)
@@ -685,7 +693,7 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			Debug.Assert(pe != null); if(pe == null) return;
 
-			if(ClipboardUtil.CopyAndMinimize(pe.Strings.ReadSafe(PwDefs.UserNameField),
+			if(ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.UserNameField),
 				true, this, pe, m_docMgr.ActiveDatabase))
 				StartClipboardCountdown();
 		}
@@ -702,7 +710,7 @@ namespace KeePass.Forms
 				UpdateUIState(true);
 			}
 
-			if(ClipboardUtil.CopyAndMinimize(pe.Strings.ReadSafe(PwDefs.PasswordField),
+			if(ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.PasswordField),
 				true, this, pe, m_docMgr.ActiveDatabase))
 				StartClipboardCountdown();
 		}
@@ -730,7 +738,7 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			if(pe != null)
 			{
-				try { AutoType.PerformIntoPreviousWindow(this.Handle, pe); }
+				try { AutoType.PerformIntoPreviousWindow(this, pe); }
 				catch(Exception ex)
 				{
 					MessageService.ShowWarning(ex);
@@ -1112,7 +1120,7 @@ namespace KeePass.Forms
 				UpdateTrayIcon();
 			}
 
-			UpdateUIState(false);
+			UpdateUI(false, null, true, null, true, null, false); // Fonts changed
 		}
 
 		private void OnClickHideTitles(object sender, EventArgs e)
@@ -2270,7 +2278,7 @@ namespace KeePass.Forms
 			TabPage tbSelect = m_tabMain.SelectedTab;
 			if(tbSelect == null) return;
 
-			PwDocument ds = (PwDocument)tbSelect.Tag;
+			PwDocument ds = (tbSelect.Tag as PwDocument);
 			MakeDocumentActive(ds);
 
 			if(IsFileLocked(ds)) OnFileLock(sender, e);
@@ -2360,7 +2368,7 @@ namespace KeePass.Forms
 		private void OnToolsTriggers(object sender, EventArgs e)
 		{
 			EcasTriggersForm f = new EcasTriggersForm();
-			f.InitEx(Program.TriggerSystem, m_ilCurrentIcons);
+			if(!f.InitEx(Program.TriggerSystem, m_ilCurrentIcons)) return;
 			f.ShowDialog();
 		}
 
@@ -2372,6 +2380,23 @@ namespace KeePass.Forms
 		private void OnEntrySortAttachments(object sender, EventArgs e)
 		{
 			SortPasswordList(true, (int)AppDefs.ColumnId.Attachment, true);
+		}
+
+		private void OnTabMainMouseClick(object sender, MouseEventArgs e)
+		{
+			if(e.Button == MouseButtons.Middle)
+			{
+				for(int i = 0; i < m_tabMain.TabCount; ++i)
+				{
+					if(m_tabMain.GetTabRect(i).Contains(e.Location))
+					{
+						PwDocument pd = (m_tabMain.TabPages[i].Tag as PwDocument);
+						if(pd == null) { Debug.Assert(false); return; }
+						CloseDocument(pd, false, false);
+						break;
+					}
+				}
+			}
 		}
 	}
 }

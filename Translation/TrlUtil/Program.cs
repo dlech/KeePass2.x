@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ namespace TrlUtil
 			if(strCmd == "convert_resx")
 			{
 				StreamWriter swOut = new StreamWriter(strFile + ".lng.xml",
-					false, Encoding.UTF8);
+					false, new UTF8Encoding(false));
 
 				XmlDocument xmlIn = new XmlDocument();
 				xmlIn.Load(strFile);
@@ -93,7 +93,7 @@ namespace TrlUtil
 				foreach(XmlNode xmlTable in xmlIn.DocumentElement.SelectNodes("StringTable"))
 				{
 					StreamWriter swOut = new StreamWriter(xmlTable.Attributes["Name"].Value +
-						".Generated.cs", false, Encoding.UTF8);
+						".Generated.cs", false, new UTF8Encoding(false));
 
 					swOut.WriteLine("// This is a generated file!");
 					swOut.WriteLine("// Do not edit manually, changes will be overwritten.");

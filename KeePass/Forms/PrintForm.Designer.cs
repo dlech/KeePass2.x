@@ -35,6 +35,10 @@
 			this.m_wbMain = new System.Windows.Forms.WebBrowser();
 			this.m_lblPreviewHint = new System.Windows.Forms.Label();
 			this.m_tabDataLayout = new System.Windows.Forms.TabPage();
+			this.m_grpSorting = new System.Windows.Forms.GroupBox();
+			this.m_lblEntrySortHint = new System.Windows.Forms.Label();
+			this.m_cmbSortEntries = new System.Windows.Forms.ComboBox();
+			this.m_lblSortEntries = new System.Windows.Forms.Label();
 			this.m_grpFont = new System.Windows.Forms.GroupBox();
 			this.m_cbSmallMono = new System.Windows.Forms.CheckBox();
 			this.m_cbMonospaceForPasswords = new System.Windows.Forms.CheckBox();
@@ -42,6 +46,7 @@
 			this.m_rbSansSerif = new System.Windows.Forms.RadioButton();
 			this.m_rbSerif = new System.Windows.Forms.RadioButton();
 			this.m_grpFields = new System.Windows.Forms.GroupBox();
+			this.m_cbCustomStrings = new System.Windows.Forms.CheckBox();
 			this.m_cbGroups = new System.Windows.Forms.CheckBox();
 			this.m_linkDeselectAllFields = new System.Windows.Forms.LinkLabel();
 			this.m_linkSelectAllFields = new System.Windows.Forms.LinkLabel();
@@ -66,10 +71,10 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnConfigPrinter = new System.Windows.Forms.Button();
 			this.m_btnPrintPreview = new System.Windows.Forms.Button();
-			this.m_cbCustomStrings = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.m_tabDataLayout.SuspendLayout();
+			this.m_grpSorting.SuspendLayout();
 			this.m_grpFont.SuspendLayout();
 			this.m_grpFields.SuspendLayout();
 			this.m_grpLayout.SuspendLayout();
@@ -84,7 +89,7 @@
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.Size = new System.Drawing.Size(601, 396);
+			this.m_tabMain.Size = new System.Drawing.Size(601, 463);
 			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabSelectedIndexChanged);
 			// 
@@ -96,7 +101,7 @@
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 23);
 			this.m_tabPreview.Name = "m_tabPreview";
 			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabPreview.Size = new System.Drawing.Size(593, 369);
+			this.m_tabPreview.Size = new System.Drawing.Size(593, 436);
 			this.m_tabPreview.TabIndex = 0;
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
@@ -109,7 +114,7 @@
 			this.m_wbMain.Location = new System.Drawing.Point(3, 22);
 			this.m_wbMain.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_wbMain.Name = "m_wbMain";
-			this.m_wbMain.Size = new System.Drawing.Size(587, 344);
+			this.m_wbMain.Size = new System.Drawing.Size(587, 411);
 			this.m_wbMain.TabIndex = 1;
 			this.m_wbMain.WebBrowserShortcutsEnabled = false;
 			// 
@@ -126,16 +131,57 @@
 			// 
 			// m_tabDataLayout
 			// 
+			this.m_tabDataLayout.Controls.Add(this.m_grpSorting);
 			this.m_tabDataLayout.Controls.Add(this.m_grpFont);
 			this.m_tabDataLayout.Controls.Add(this.m_grpFields);
 			this.m_tabDataLayout.Controls.Add(this.m_grpLayout);
 			this.m_tabDataLayout.ImageIndex = 1;
 			this.m_tabDataLayout.Location = new System.Drawing.Point(4, 23);
 			this.m_tabDataLayout.Name = "m_tabDataLayout";
-			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 369);
+			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 436);
 			this.m_tabDataLayout.TabIndex = 2;
 			this.m_tabDataLayout.Text = "Layout";
 			this.m_tabDataLayout.UseVisualStyleBackColor = true;
+			// 
+			// m_grpSorting
+			// 
+			this.m_grpSorting.Controls.Add(this.m_lblEntrySortHint);
+			this.m_grpSorting.Controls.Add(this.m_cmbSortEntries);
+			this.m_grpSorting.Controls.Add(this.m_lblSortEntries);
+			this.m_grpSorting.Location = new System.Drawing.Point(10, 356);
+			this.m_grpSorting.Name = "m_grpSorting";
+			this.m_grpSorting.Size = new System.Drawing.Size(571, 69);
+			this.m_grpSorting.TabIndex = 3;
+			this.m_grpSorting.TabStop = false;
+			this.m_grpSorting.Text = "Sorting";
+			// 
+			// m_lblEntrySortHint
+			// 
+			this.m_lblEntrySortHint.AutoSize = true;
+			this.m_lblEntrySortHint.Location = new System.Drawing.Point(6, 46);
+			this.m_lblEntrySortHint.Name = "m_lblEntrySortHint";
+			this.m_lblEntrySortHint.Size = new System.Drawing.Size(371, 13);
+			this.m_lblEntrySortHint.TabIndex = 2;
+			this.m_lblEntrySortHint.Text = "Entries are sorted within their groups, i.e. the group structure is not broken up" +
+				".";
+			// 
+			// m_cmbSortEntries
+			// 
+			this.m_cmbSortEntries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbSortEntries.FormattingEnabled = true;
+			this.m_cmbSortEntries.Location = new System.Drawing.Point(111, 19);
+			this.m_cmbSortEntries.Name = "m_cmbSortEntries";
+			this.m_cmbSortEntries.Size = new System.Drawing.Size(172, 21);
+			this.m_cmbSortEntries.TabIndex = 1;
+			// 
+			// m_lblSortEntries
+			// 
+			this.m_lblSortEntries.AutoSize = true;
+			this.m_lblSortEntries.Location = new System.Drawing.Point(6, 22);
+			this.m_lblSortEntries.Name = "m_lblSortEntries";
+			this.m_lblSortEntries.Size = new System.Drawing.Size(99, 13);
+			this.m_lblSortEntries.TabIndex = 0;
+			this.m_lblSortEntries.Text = "Sort entries by field:";
 			// 
 			// m_grpFont
 			// 
@@ -144,9 +190,9 @@
 			this.m_grpFont.Controls.Add(this.m_rbMonospace);
 			this.m_grpFont.Controls.Add(this.m_rbSansSerif);
 			this.m_grpFont.Controls.Add(this.m_rbSerif);
-			this.m_grpFont.Location = new System.Drawing.Point(12, 267);
+			this.m_grpFont.Location = new System.Drawing.Point(10, 259);
 			this.m_grpFont.Name = "m_grpFont";
-			this.m_grpFont.Size = new System.Drawing.Size(571, 88);
+			this.m_grpFont.Size = new System.Drawing.Size(571, 91);
 			this.m_grpFont.TabIndex = 2;
 			this.m_grpFont.TabStop = false;
 			this.m_grpFont.Text = "Font";
@@ -224,12 +270,22 @@
 			this.m_grpFields.Controls.Add(this.m_cbUrl);
 			this.m_grpFields.Controls.Add(this.m_cbUser);
 			this.m_grpFields.Controls.Add(this.m_cbTitle);
-			this.m_grpFields.Location = new System.Drawing.Point(12, 145);
+			this.m_grpFields.Location = new System.Drawing.Point(10, 137);
 			this.m_grpFields.Name = "m_grpFields";
 			this.m_grpFields.Size = new System.Drawing.Size(571, 116);
 			this.m_grpFields.TabIndex = 1;
 			this.m_grpFields.TabStop = false;
 			this.m_grpFields.Text = "Fields";
+			// 
+			// m_cbCustomStrings
+			// 
+			this.m_cbCustomStrings.AutoSize = true;
+			this.m_cbCustomStrings.Location = new System.Drawing.Point(106, 65);
+			this.m_cbCustomStrings.Name = "m_cbCustomStrings";
+			this.m_cbCustomStrings.Size = new System.Drawing.Size(116, 17);
+			this.m_cbCustomStrings.TabIndex = 11;
+			this.m_cbCustomStrings.Text = "Custom string fields";
+			this.m_cbCustomStrings.UseVisualStyleBackColor = true;
 			// 
 			// m_cbGroups
 			// 
@@ -244,7 +300,7 @@
 			// m_linkDeselectAllFields
 			// 
 			this.m_linkDeselectAllFields.AutoSize = true;
-			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(63, 94);
+			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(63, 91);
 			this.m_linkDeselectAllFields.Name = "m_linkDeselectAllFields";
 			this.m_linkDeselectAllFields.Size = new System.Drawing.Size(63, 13);
 			this.m_linkDeselectAllFields.TabIndex = 13;
@@ -255,7 +311,7 @@
 			// m_linkSelectAllFields
 			// 
 			this.m_linkSelectAllFields.AutoSize = true;
-			this.m_linkSelectAllFields.Location = new System.Drawing.Point(6, 94);
+			this.m_linkSelectAllFields.Location = new System.Drawing.Point(6, 91);
 			this.m_linkSelectAllFields.Name = "m_linkSelectAllFields";
 			this.m_linkSelectAllFields.Size = new System.Drawing.Size(51, 13);
 			this.m_linkSelectAllFields.TabIndex = 12;
@@ -377,9 +433,9 @@
 			this.m_grpLayout.Controls.Add(this.m_lblTabularInfo);
 			this.m_grpLayout.Controls.Add(this.m_rbDetails);
 			this.m_grpLayout.Controls.Add(this.m_rbTabular);
-			this.m_grpLayout.Location = new System.Drawing.Point(12, 13);
+			this.m_grpLayout.Location = new System.Drawing.Point(10, 10);
 			this.m_grpLayout.Name = "m_grpLayout";
-			this.m_grpLayout.Size = new System.Drawing.Size(571, 126);
+			this.m_grpLayout.Size = new System.Drawing.Size(571, 121);
 			this.m_grpLayout.TabIndex = 0;
 			this.m_grpLayout.TabStop = false;
 			this.m_grpLayout.Text = "Layout";
@@ -387,7 +443,7 @@
 			// m_lblDetailsInfo
 			// 
 			this.m_lblDetailsInfo.AutoSize = true;
-			this.m_lblDetailsInfo.Location = new System.Drawing.Point(26, 99);
+			this.m_lblDetailsInfo.Location = new System.Drawing.Point(26, 96);
 			this.m_lblDetailsInfo.Name = "m_lblDetailsInfo";
 			this.m_lblDetailsInfo.Size = new System.Drawing.Size(337, 13);
 			this.m_lblDetailsInfo.TabIndex = 3;
@@ -406,10 +462,9 @@
 			// m_rbDetails
 			// 
 			this.m_rbDetails.AutoSize = true;
-			this.m_rbDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.m_rbDetails.Location = new System.Drawing.Point(9, 79);
+			this.m_rbDetails.Location = new System.Drawing.Point(9, 76);
 			this.m_rbDetails.Name = "m_rbDetails";
-			this.m_rbDetails.Size = new System.Drawing.Size(64, 17);
+			this.m_rbDetails.Size = new System.Drawing.Size(57, 17);
 			this.m_rbDetails.TabIndex = 2;
 			this.m_rbDetails.TabStop = true;
 			this.m_rbDetails.Text = "&Details";
@@ -418,10 +473,9 @@
 			// m_rbTabular
 			// 
 			this.m_rbTabular.AutoSize = true;
-			this.m_rbTabular.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.m_rbTabular.Location = new System.Drawing.Point(9, 19);
 			this.m_rbTabular.Name = "m_rbTabular";
-			this.m_rbTabular.Size = new System.Drawing.Size(68, 17);
+			this.m_rbTabular.Size = new System.Drawing.Size(61, 17);
 			this.m_rbTabular.TabIndex = 0;
 			this.m_rbTabular.TabStop = true;
 			this.m_rbTabular.Text = "&Tabular";
@@ -447,7 +501,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(457, 471);
+			this.m_btnOK.Location = new System.Drawing.Point(457, 537);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -458,7 +512,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(538, 471);
+			this.m_btnCancel.Location = new System.Drawing.Point(538, 537);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -469,7 +523,7 @@
 			// m_btnConfigPrinter
 			// 
 			this.m_btnConfigPrinter.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
-			this.m_btnConfigPrinter.Location = new System.Drawing.Point(12, 471);
+			this.m_btnConfigPrinter.Location = new System.Drawing.Point(12, 537);
 			this.m_btnConfigPrinter.Name = "m_btnConfigPrinter";
 			this.m_btnConfigPrinter.Size = new System.Drawing.Size(100, 23);
 			this.m_btnConfigPrinter.TabIndex = 3;
@@ -481,7 +535,7 @@
 			// m_btnPrintPreview
 			// 
 			this.m_btnPrintPreview.Image = global::KeePass.Properties.Resources.B16x16_FileQuickPrint;
-			this.m_btnPrintPreview.Location = new System.Drawing.Point(118, 471);
+			this.m_btnPrintPreview.Location = new System.Drawing.Point(118, 537);
 			this.m_btnPrintPreview.Name = "m_btnPrintPreview";
 			this.m_btnPrintPreview.Size = new System.Drawing.Size(100, 23);
 			this.m_btnPrintPreview.TabIndex = 4;
@@ -490,23 +544,13 @@
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
 			// 
-			// m_cbCustomStrings
-			// 
-			this.m_cbCustomStrings.AutoSize = true;
-			this.m_cbCustomStrings.Location = new System.Drawing.Point(106, 65);
-			this.m_cbCustomStrings.Name = "m_cbCustomStrings";
-			this.m_cbCustomStrings.Size = new System.Drawing.Size(116, 17);
-			this.m_cbCustomStrings.TabIndex = 11;
-			this.m_cbCustomStrings.Text = "Custom string fields";
-			this.m_cbCustomStrings.UseVisualStyleBackColor = true;
-			// 
 			// PrintForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(625, 506);
+			this.ClientSize = new System.Drawing.Size(625, 572);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnOK);
@@ -526,6 +570,8 @@
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabPreview.ResumeLayout(false);
 			this.m_tabDataLayout.ResumeLayout(false);
+			this.m_grpSorting.ResumeLayout(false);
+			this.m_grpSorting.PerformLayout();
 			this.m_grpFont.ResumeLayout(false);
 			this.m_grpFont.PerformLayout();
 			this.m_grpFields.ResumeLayout(false);
@@ -576,5 +622,9 @@
 		private System.Windows.Forms.LinkLabel m_linkSelectAllFields;
 		private System.Windows.Forms.CheckBox m_cbGroups;
 		private System.Windows.Forms.CheckBox m_cbCustomStrings;
+		private System.Windows.Forms.GroupBox m_grpSorting;
+		private System.Windows.Forms.ComboBox m_cmbSortEntries;
+		private System.Windows.Forms.Label m_lblSortEntries;
+		private System.Windows.Forms.Label m_lblEntrySortHint;
 	}
 }

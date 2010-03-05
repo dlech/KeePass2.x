@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -53,6 +54,11 @@ namespace KeePass.Forms
 
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
+		/// <summary>
+		/// Get the edited, new data. This property is non-<c>null</c> only,
+		/// if the user has really edited the data (i.e. if the user makes no
+		/// changes, <c>null</c> is returned).
+		/// </summary>
 		public byte[] EditedBinaryData
 		{
 			get { return m_pbEditedData; }
@@ -509,6 +515,50 @@ namespace KeePass.Forms
 			m_rtbText.WordWrap = !m_rtbText.WordWrap;
 			Program.Config.UI.DataEditorWordWrap = m_rtbText.WordWrap;
 			UpdateUIState(false, false);
+		}
+
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if(keyData == Keys.Escape)
+			{
+				if(msg.Msg == NativeMethods.WM_KEYDOWN)
+				{
+					this.Close();
+					return true;
+				}
+				else if(msg.Msg == NativeMethods.WM_KEYUP) return true;
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+		internal static byte[] ConvertAttachment(string strDesc, byte[] pbData)
+		{
+			BinaryDataClass bdc = BinaryDataClassifier.Classify(strDesc, pbData);
+			if(bdc == BinaryDataClass.Text)
+			{
+				string strContext = (KPRes.File + (string.IsNullOrEmpty(strDesc) ?
+					string.Empty : (": " + strDesc)));
+
+				TextEncodingForm dlg = new TextEncodingForm();
+				dlg.InitEx(strContext, pbData);
+				if(dlg.ShowDialog() == DialogResult.OK)
+				{
+					Encoding enc = dlg.SelectedEncoding;
+					if(enc != null)
+					{
+						try
+						{
+							string strText = enc.GetString(pbData);
+							return (new UTF8Encoding(false)).GetBytes(strText);
+						}
+						catch(Exception) { Debug.Assert(false); }
+					}
+				}
+				else return null;
+			}
+
+			return pbData;
 		}
 	}
 }

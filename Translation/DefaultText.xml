@@ -4,6 +4,9 @@
 		<Data Name="Action">
 			<Value>Action</Value>
 		</Data>
+		<Data Name="ActivateDatabaseTab">
+			<Value>Activate database (select tab)</Value>
+		</Data>
 		<Data Name="AddCustomToolBarButton">
 			<Value>Add custom toolbar button</Value>
 		</Data>
@@ -160,6 +163,9 @@
 		<Data Name="BackgroundColor">
 			<Value>Background Color</Value>
 		</Data>
+		<Data Name="BinaryNoConv">
+			<Value>Binary (no conversion)</Value>
+		</Data>
 		<Data Name="Bits">
 			<Value>Bits</Value>
 		</Data>
@@ -183,6 +189,9 @@
 		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
 			<Value>Cannot move entries because they aren't stored in the same group.</Value>
+		</Data>
+		<Data Name="ChangeMasterKey">
+			<Value>Change Master Key</Value>
 		</Data>
 		<Data Name="ChangeMasterKeyIntroShort">
 			<Value>You are changing the composite master key for the currently-open database.</Value>
@@ -405,6 +414,9 @@
 		</Data>
 		<Data Name="Disabled">
 			<Value>Disabled</Value>
+		</Data>
+		<Data Name="DisableSaveIfNotModified">
+			<Value>Disable 'Save' command (instead of graying it out) if the database hasn't been modified</Value>
 		</Data>
 		<Data Name="DiscardChanges">
 			<Value>Discard changes</Value>
@@ -676,6 +688,9 @@
 		<Data Name="Font">
 			<Value>Font</Value>
 		</Data>
+		<Data Name="ForceSystemFontUnix">
+			<Value>Force using system font (Unix only)</Value>
+		</Data>
 		<Data Name="FormatNoDatabaseDesc">
 			<Value>This file format doesn't support database descriptions.</Value>
 		</Data>
@@ -693,6 +708,9 @@
 		</Data>
 		<Data Name="General">
 			<Value>General</Value>
+		</Data>
+		<Data Name="Generate">
+			<Value>Generate</Value>
 		</Data>
 		<Data Name="GenerateCount">
 			<Value>Generated Passwords Count</Value>
@@ -1108,6 +1126,9 @@
 		<Data Name="PolicyAutoTypeDesc">
 			<Value>Allow auto-typing entries to other windows.</Value>
 		</Data>
+		<Data Name="PolicyChangeMasterKey">
+			<Value>Allow changing the master key of a database.</Value>
+		</Data>
 		<Data Name="PolicyClipboardDesc">
 			<Value>Allow copying entry information to clipboard (main window only).</Value>
 		</Data>
@@ -1135,6 +1156,9 @@
 		<Data Name="PolicySaveDatabaseDesc">
 			<Value>Allow saving databases to disk/URL.</Value>
 		</Data>
+		<Data Name="PolicyTriggersEditDesc">
+			<Value>Allow editing triggers.</Value>
+		</Data>
 		<Data Name="Print">
 			<Value>Print</Value>
 		</Data>
@@ -1146,6 +1170,9 @@
 		</Data>
 		<Data Name="QuickSearchExcludeExpired">
 			<Value>Exclude expired entries in quick searches (toolbar)</Value>
+		</Data>
+		<Data Name="QuickSearchInPasswords">
+			<Value>Search for passwords in quick searches (toolbar)</Value>
 		</Data>
 		<Data Name="Ready">
 			<Value>Ready.</Value>
@@ -1164,6 +1191,9 @@
 		</Data>
 		<Data Name="RemoteHostReachable">
 			<Value>Remote host is reachable (ping)</Value>
+		</Data>
+		<Data Name="RepairMode">
+			<Value>Repair Mode</Value>
 		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
@@ -1210,8 +1240,11 @@
 		<Data Name="SearchItemsFoundSmall">
 			<Value>entries found.</Value>
 		</Data>
-		<Data Name="SearchKeyFilesOnRemovable">
-			<Value>Automatically search key files on removable media</Value>
+		<Data Name="SearchKeyFiles">
+			<Value>Automatically search key files</Value>
+		</Data>
+		<Data Name="SearchKeyFilesAlsoOnRemovable">
+			<Value>Automatically search key files also on removable media</Value>
 		</Data>
 		<Data Name="SearchQuickPrompt">
 			<Value>Type to search the database</Value>
@@ -1399,6 +1432,9 @@
 		<Data Name="TriggersDesc">
 			<Value>Automate workflows using the trigger system.</Value>
 		</Data>
+		<Data Name="TriggersEdit">
+			<Value>Edit Triggers</Value>
+		</Data>
 		<Data Name="TriggerStateChange">
 			<Value>Change trigger on/off state</Value>
 		</Data>
@@ -1473,6 +1509,9 @@
 		</Data>
 		<Data Name="Version">
 			<Value>Version</Value>
+		</Data>
+		<Data Name="View">
+			<Value>View</Value>
 		</Data>
 		<Data Name="ViewEntry">
 			<Value>View Entry</Value>

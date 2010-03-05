@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -74,12 +74,11 @@ namespace KeePass.Plugins
 				DirectoryInfo di = new DirectoryInfo(strPath);
 
 				FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
-				LoadPlugins(vFiles, null, null);
+				LoadPlugins(vFiles, null, null, true);
 
 				vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
-				LoadPlugins(vFiles, null, null);
+				LoadPlugins(vFiles, null, null, true);
 
-				List<FileInfo> vPlgx = new List<FileInfo>();
 				vFiles = di.GetFiles("*." + PlgxPlugin.PlgxExtension, SearchOption.AllDirectories);
 				if(vFiles.Length > 0)
 				{
@@ -95,21 +94,26 @@ namespace KeePass.Plugins
 		}
 
 		public void LoadPlugin(string strFilePath, string strTypeName,
-			string strDisplayFilePath)
+			string strDisplayFilePath, bool bSkipCacheFile)
 		{
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
 			LoadPlugins(new FileInfo[] { new FileInfo(strFilePath) }, strTypeName,
-				strDisplayFilePath);
+				strDisplayFilePath, bSkipCacheFile);
 		}
 
 		private void LoadPlugins(FileInfo[] vFiles, string strTypeName,
-			string strDisplayFilePath)
+			string strDisplayFilePath, bool bSkipCacheFiles)
 		{
+			string strCacheRoot = PlgxCache.GetCacheRoot();
+
 			foreach(FileInfo fi in vFiles)
 			{
-				FileVersionInfo fvi = null;
+				if(bSkipCacheFiles && fi.FullName.StartsWith(strCacheRoot,
+					StrUtil.CaseIgnoreCmp))
+					continue;
 
+				FileVersionInfo fvi = null;
 				try
 				{
 					fvi = FileVersionInfo.GetVersionInfo(fi.FullName);

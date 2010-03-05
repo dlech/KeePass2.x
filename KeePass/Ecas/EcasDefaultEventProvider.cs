@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2009 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ namespace KeePass.Ecas
 			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
 				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
 
-			string strFilter = EcasUtil.GetParamString(e.Parameters, 1);
+			string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFilter)) return true;
 
 			string strCurFile = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
@@ -126,13 +126,13 @@ namespace KeePass.Ecas
 
 		private static bool IsMatchCustomTbButton(EcasEvent e, EcasContext ctx)
 		{
-			string strIdClicked = EcasUtil.GetParamString(e.Parameters, 0);
-			if(string.IsNullOrEmpty(strIdClicked)) { Debug.Assert(false); return false; }
+			string strIdRef = EcasUtil.GetParamString(e.Parameters, 0, true);
+			if(string.IsNullOrEmpty(strIdRef)) return true;
 
-			string strIdWanted = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
-			if(string.IsNullOrEmpty(strIdWanted)) return true;
+			string strIdCur = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
+			if(string.IsNullOrEmpty(strIdCur)) return false;
 
-			return strIdClicked.Equals(strIdWanted, StrUtil.CaseIgnoreCmp);
+			return strIdRef.Equals(strIdCur, StrUtil.CaseIgnoreCmp);
 		}
 	}
 }

@@ -142,7 +142,7 @@
 			this.m_btnClearCache.Name = "m_btnClearCache";
 			this.m_btnClearCache.Size = new System.Drawing.Size(75, 23);
 			this.m_btnClearCache.TabIndex = 1;
-			this.m_btnClearCache.Text = "&Clear";
+			this.m_btnClearCache.Text = "C&lear";
 			this.m_btnClearCache.UseVisualStyleBackColor = true;
 			this.m_btnClearCache.Click += new System.EventHandler(this.OnBtnClearCache);
 			// 
