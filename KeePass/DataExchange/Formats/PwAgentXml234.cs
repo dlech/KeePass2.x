@@ -34,6 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 2.3.4
 	internal sealed class PwAgentXml234 : FileFormatProvider
 	{
 		private const string ElemGroup = "group";
@@ -53,7 +54,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Agent XML 2.3.4"; } }
+		public override string FormatName { get { return "Password Agent XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

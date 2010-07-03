@@ -52,7 +52,7 @@ namespace KeePassLib.Serialization
 		Deprecated
 	} */
 
-	public sealed class IOConnectionInfo : IDeepClonable<IOConnectionInfo>
+	public sealed class IOConnectionInfo : IDeepCloneable<IOConnectionInfo>
 	{
 		private string m_strUrl = string.Empty;
 		private string m_strUser = string.Empty;

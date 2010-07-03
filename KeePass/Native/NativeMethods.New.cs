@@ -24,6 +24,10 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
+
+using KeePass.UI;
+using KeePass.Util;
 
 namespace KeePass.Native
 {
@@ -178,5 +182,22 @@ namespace KeePass.Native
 			}
 			catch(Exception) { Debug.Assert(false); }
 		} */
+
+		/* internal static void ClearIconicBitmaps(IntPtr hWnd)
+		{
+			// TaskbarList.SetThumbnailClip(hWnd, new Rectangle(0, 0, 1, 1));
+			// TaskbarList.SetThumbnailClip(hWnd, null);
+
+			try { DwmInvalidateIconicBitmaps(hWnd); }
+			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows7); }
+		} */
+
+		internal static void EnableWindowPeekPreview(IntPtr hWnd, bool bEnable)
+		{
+			int iNoPeek = (bEnable ? 0 : 1);
+
+			try { DwmSetWindowAttributeInt(hWnd, DWMWA_DISALLOW_PEEK, ref iNoPeek, 4); }
+			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
+		}
 	}
 }

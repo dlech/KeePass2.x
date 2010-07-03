@@ -194,6 +194,12 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.DefaultUserNameChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbMntncHistoryDays)
 						m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xr, 365);
+					else if(xr.Name == ElemDbKeyChanged)
+						m_pwDatabase.MasterKeyChanged = ReadTime(xr);
+					else if(xr.Name == ElemDbKeyChangeRec)
+						m_pwDatabase.MasterKeyChangeRec = ReadLong(xr, -1);
+					else if(xr.Name == ElemDbKeyChangeForce)
+						m_pwDatabase.MasterKeyChangeForce = ReadLong(xr, -1);
 					else if(xr.Name == ElemMemoryProt)
 						return SwitchContext(ctx, KdbContext.MemoryProtection, xr);
 					else if(xr.Name == ElemCustomIcons)
@@ -224,12 +230,12 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.MemoryProtection.ProtectUserName = ReadBool(xr, false);
 					else if(xr.Name == ElemProtPassword)
 						m_pwDatabase.MemoryProtection.ProtectPassword = ReadBool(xr, true);
-					else if(xr.Name == ElemProtURL)
+					else if(xr.Name == ElemProtUrl)
 						m_pwDatabase.MemoryProtection.ProtectUrl = ReadBool(xr, false);
 					else if(xr.Name == ElemProtNotes)
 						m_pwDatabase.MemoryProtection.ProtectNotes = ReadBool(xr, false);
-					else if(xr.Name == ElemProtAutoHide)
-						m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xr, true);
+					// else if(xr.Name == ElemProtAutoHide)
+					//	m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xr, true);
 					else ReadUnknown(xr);
 					break;
 
@@ -347,6 +353,8 @@ namespace KeePassLib.Serialization
 					}
 					else if(xr.Name == ElemOverrideUrl)
 						m_ctxEntry.OverrideUrl = ReadString(xr);
+					else if(xr.Name == ElemTags)
+						m_ctxEntry.Tags = StrUtil.StringToTags(ReadString(xr));
 					else if(xr.Name == ElemTimes)
 						return SwitchContext(ctx, KdbContext.EntryTimes, xr);
 					else if(xr.Name == ElemString)
@@ -631,6 +639,17 @@ namespace KeePassLib.Serialization
 
 			Debug.Assert(false);
 			return uDefault;
+		}
+
+		private long ReadLong(XmlReader xr, long nDefault)
+		{
+			string str = ReadString(xr);
+
+			long n;
+			if(StrUtil.TryParseLong(str, out n)) return n;
+
+			Debug.Assert(false);
+			return nDefault;
 		}
 
 		private ulong ReadULong(XmlReader xr, ulong uDefault)

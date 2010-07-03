@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -191,6 +190,7 @@ namespace KeePass.Forms
 		private void OnBtnSelFile(object sender, EventArgs e)
 		{
 			if(m_fmtCur == null) { Debug.Assert(false); return; }
+			if(!m_fmtCur.RequiresFile) return; // Break on double-click
 
 			string strFormat = m_fmtCur.FormatName;
 			if((strFormat == null) || (strFormat.Length == 0))

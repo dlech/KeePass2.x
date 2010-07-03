@@ -316,6 +316,9 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName, true);
 			WriteObject(ElemDbDefaultUserChanged, m_pwDatabase.DefaultUserNameChanged);
 			WriteObject(ElemDbMntncHistoryDays, m_pwDatabase.MaintenanceHistoryDays);
+			WriteObject(ElemDbKeyChanged, m_pwDatabase.MasterKeyChanged);
+			WriteObject(ElemDbKeyChangeRec, m_pwDatabase.MasterKeyChangeRec);
+			WriteObject(ElemDbKeyChangeForce, m_pwDatabase.MasterKeyChangeForce);
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
 
@@ -374,6 +377,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
 			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true), false);
 			WriteObject(ElemOverrideUrl, pe.OverrideUrl, true);
+			WriteObject(ElemTags, StrUtil.TagsToString(pe.Tags, false), true);
 
 			WriteList(ElemTimes, pe);
 
@@ -479,9 +483,9 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemProtTitle, value.ProtectTitle);
 			WriteObject(ElemProtUserName, value.ProtectUserName);
 			WriteObject(ElemProtPassword, value.ProtectPassword);
-			WriteObject(ElemProtURL, value.ProtectUrl);
+			WriteObject(ElemProtUrl, value.ProtectUrl);
 			WriteObject(ElemProtNotes, value.ProtectNotes);
-			WriteObject(ElemProtAutoHide, value.AutoEnableVisualHiding);
+			// WriteObject(ElemProtAutoHide, value.AutoEnableVisualHiding);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -551,6 +555,15 @@ namespace KeePassLib.Serialization
 		}
 
 		private void WriteObject(string name, uint value)
+		{
+			Debug.Assert(name != null);
+
+			m_xmlWriter.WriteStartElement(name);
+			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteEndElement();
+		}
+
+		private void WriteObject(string name, long value)
 		{
 			Debug.Assert(name != null);
 

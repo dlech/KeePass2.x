@@ -51,7 +51,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		Custom = 2
 	}
 
-	public sealed class PwProfile : IDeepClonable<PwProfile>
+	public sealed class PwProfile : IDeepCloneable<PwProfile>
 	{
 		private string m_strName = string.Empty;
 		public string Name

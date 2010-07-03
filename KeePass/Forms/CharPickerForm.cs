@@ -20,12 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 
@@ -97,8 +98,11 @@ namespace KeePass.Forms
 			this.Text = KPRes.PickCharacters;
 
 			m_secWord.Attach(m_tbSelected, OnSelectedTextChangedEx, true);
-			m_cbHideChars.Checked = Program.Config.MainWindow.ColumnsDict[
-				PwDefs.PasswordField].HideWithAsterisks;
+
+			AceColumn colPw = Program.Config.MainWindow.FindColumn(AceColumnType.Password);
+			bool bHide = ((colPw != null) ? colPw.HideWithAsterisks : true);
+			bHide |= !AppPolicy.Current.UnhidePasswords;
+			m_cbHideChars.Checked = bHide;
 
 			RecreateResizableWindowControls();
 
@@ -214,8 +218,13 @@ namespace KeePass.Forms
 		private void OnHideCharsCheckedChanged(object sender, EventArgs e)
 		{
 			bool bHide = m_cbHideChars.Checked;
-			m_secWord.EnableProtection(bHide);
+			if(!bHide && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
+			{
+				m_cbHideChars.Checked = true;
+				return;
+			}
 
+			m_secWord.EnableProtection(bHide);
 			foreach(Button btn in m_lButtons)
 			{
 				if(bHide) btn.Text = string.Empty + m_chMaskChar;

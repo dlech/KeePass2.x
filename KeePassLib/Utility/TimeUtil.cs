@@ -129,6 +129,11 @@ namespace KeePassLib.Utility
 			return dt.ToString();
 		}
 
+		public static string ToDisplayStringDateOnly(DateTime dt)
+		{
+			return dt.ToString("d");
+		}
+
 		public static DateTime FromDisplayString(string strDisplay)
 		{
 			DateTime dt;

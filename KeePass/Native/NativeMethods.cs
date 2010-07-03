@@ -256,5 +256,24 @@ namespace KeePass.Native
 		// [DllImport("UxTheme.dll")]
 		// internal extern static uint DrawThemeBackground(IntPtr hTheme, IntPtr hdc,
 		//	int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);	
+
+		// [DllImport("Gdi32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool DeleteObject(IntPtr hObject);
+
+		[DllImport("DwmApi.dll")]
+		internal static extern int DwmInvalidateIconicBitmaps(IntPtr hWnd);
+
+		[DllImport("DwmApi.dll", EntryPoint = "DwmSetWindowAttribute")]
+		internal static extern int DwmSetWindowAttributeInt(IntPtr hWnd,
+			uint dwAttribute, [In] ref int pvAttribute, uint cbAttribute);
+
+		// [DllImport("DwmApi.dll")]
+		// internal static extern int DwmSetIconicThumbnail(IntPtr hWnd,
+		//	IntPtr hBmp, uint dwSITFlags);
+
+		// [DllImport("DwmApi.dll")]
+		// internal static extern int DwmSetIconicLivePreviewBitmap(IntPtr hWnd,
+		//	IntPtr hBmp, IntPtr pptClient, uint dwSITFlags);
 	}
 }

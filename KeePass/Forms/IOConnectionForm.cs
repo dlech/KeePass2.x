@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -161,7 +160,11 @@ namespace KeePass.Forms
 
 			Application.DoEvents();
 
-			try { IOConnection.OpenRead(m_ioc).Close(); }
+			try
+			{
+				if(!IOConnection.FileExists(m_ioc, true))
+					throw new FileNotFoundException();
+			}
 			catch(Exception exTest)
 			{
 				MessageService.ShowWarning(m_ioc.GetDisplayName(), exTest.Message);

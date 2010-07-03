@@ -31,6 +31,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabProps = new System.Windows.Forms.TabPage();
+			this.m_cbRtl = new System.Windows.Forms.CheckBox();
 			this.m_lblAuthorContact = new System.Windows.Forms.Label();
 			this.m_tbAuthorContact = new System.Windows.Forms.TextBox();
 			this.m_linkLangCode = new System.Windows.Forms.LinkLabel();
@@ -91,7 +92,6 @@
 			this.m_tbSave = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
-			this.m_cbRtl = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabProps.SuspendLayout();
 			this.m_tabStrings.SuspendLayout();
@@ -140,6 +140,16 @@
 			this.m_tabProps.TabIndex = 0;
 			this.m_tabProps.Text = "Properties";
 			this.m_tabProps.UseVisualStyleBackColor = true;
+			// 
+			// m_cbRtl
+			// 
+			this.m_cbRtl.AutoSize = true;
+			this.m_cbRtl.Location = new System.Drawing.Point(9, 238);
+			this.m_cbRtl.Name = "m_cbRtl";
+			this.m_cbRtl.Size = new System.Drawing.Size(149, 17);
+			this.m_cbRtl.TabIndex = 14;
+			this.m_cbRtl.Text = "Script is written right-to-left";
+			this.m_cbRtl.UseVisualStyleBackColor = true;
 			// 
 			// m_lblAuthorContact
 			// 
@@ -566,6 +576,7 @@
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(629, 24);
 			this.m_menuMain.TabIndex = 1;
+			this.m_menuMain.TabStop = true;
 			// 
 			// m_menuFile
 			// 
@@ -662,6 +673,7 @@
 			this.m_tsMain.Name = "m_tsMain";
 			this.m_tsMain.Size = new System.Drawing.Size(629, 25);
 			this.m_tsMain.TabIndex = 2;
+			this.m_tsMain.TabStop = true;
 			// 
 			// m_tbOpen
 			// 
@@ -696,16 +708,6 @@
 			this.m_tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnFindKeyDown);
 			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnFindKeyUp);
 			this.m_tbFind.TextChanged += new System.EventHandler(this.OnFindTextChanged);
-			// 
-			// m_cbRtl
-			// 
-			this.m_cbRtl.AutoSize = true;
-			this.m_cbRtl.Location = new System.Drawing.Point(9, 238);
-			this.m_cbRtl.Name = "m_cbRtl";
-			this.m_cbRtl.Size = new System.Drawing.Size(149, 17);
-			this.m_cbRtl.TabIndex = 14;
-			this.m_cbRtl.Text = "Script is written right-to-left";
-			this.m_cbRtl.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 

@@ -42,6 +42,12 @@ namespace KeePass.UI
 			get { EnsureInitialized(); return m_fontUI; }
 		}
 
+		private static Font m_fontList = null;
+		public static Font ListFont
+		{
+			get { EnsureInitialized(); return m_fontList; }
+		}
+
 		private static void EnsureInitialized()
 		{
 			if(m_bInitialized) return;
@@ -53,6 +59,18 @@ namespace KeePass.UI
 			}
 
 			if(m_fontUI == null) m_fontUI = SystemFonts.DefaultFont;
+
+			if(m_fontList == null)
+			{
+				if(UIUtil.VistaStyleListsSupported)
+				{
+					string str1 = SystemFonts.IconTitleFont.ToString();
+					string str2 = SystemFonts.StatusFont.ToString();
+					if(str1 == str2) m_fontList = SystemFonts.StatusFont;
+					else m_fontList = m_fontUI;
+				}
+				else m_fontList = m_fontUI;
+			}
 
 			m_bInitialized = true;
 		}

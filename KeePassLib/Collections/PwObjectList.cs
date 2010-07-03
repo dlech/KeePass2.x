@@ -27,12 +27,12 @@ using KeePassLib.Interfaces;
 namespace KeePassLib.Collections
 {
 	/// <summary>
-	/// List of objects that implement <c>IDeepClonable</c>,
+	/// List of objects that implement <c>IDeepCloneable</c>,
 	/// and cannot be <c>null</c>.
 	/// </summary>
 	/// <typeparam name="T">Type specifier.</typeparam>
 	public sealed class PwObjectList<T> : IEnumerable<T>
-		where T : class, IDeepClonable<T>
+		where T : class, IDeepCloneable<T>
 	{
 		private List<T> m_vObjects = new List<T>();
 

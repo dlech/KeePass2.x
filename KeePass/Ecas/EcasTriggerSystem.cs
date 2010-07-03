@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasTriggerSystem : IDeepClonable<EcasTriggerSystem>
+	public sealed class EcasTriggerSystem : IDeepCloneable<EcasTriggerSystem>
 	{
 		private bool m_bEnabled = true;
 		public bool Enabled

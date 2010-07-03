@@ -33,12 +33,13 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.44
 	internal sealed class AnyPwCsv144 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Any Password CSV 1.44"; } }
+		public override string FormatName { get { return "Any Password CSV"; } }
 		public override string DefaultExtension { get { return "csv"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 		

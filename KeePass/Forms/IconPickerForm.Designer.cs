@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_lvIcons = new KeePass.UI.CustomListViewEx();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_lvCustomIcons = new KeePass.UI.CustomListViewEx();
@@ -38,17 +37,6 @@
 			this.m_btnCustomAdd = new System.Windows.Forms.Button();
 			this.m_btnCustomRemove = new System.Windows.Forms.Button();
 			this.SuspendLayout();
-			// 
-			// m_btnCancel
-			// 
-			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(419, 414);
-			this.m_btnCancel.Name = "m_btnCancel";
-			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 6;
-			this.m_btnCancel.Text = "&Cancel";
-			this.m_btnCancel.UseVisualStyleBackColor = true;
-			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_lvIcons
 			// 
@@ -66,11 +54,11 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(338, 414);
+			this.m_btnOK.Location = new System.Drawing.Point(419, 414);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 5;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.TabIndex = 6;
+			this.m_btnOK.Text = "&Close";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -92,7 +80,7 @@
 			this.m_radioStandard.Location = new System.Drawing.Point(12, 12);
 			this.m_radioStandard.Name = "m_radioStandard";
 			this.m_radioStandard.Size = new System.Drawing.Size(114, 17);
-			this.m_radioStandard.TabIndex = 8;
+			this.m_radioStandard.TabIndex = 7;
 			this.m_radioStandard.TabStop = true;
 			this.m_radioStandard.Text = "Use standard icon:";
 			this.m_radioStandard.UseVisualStyleBackColor = true;
@@ -115,7 +103,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(-1, 407);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(507, 2);
-			this.m_lblSeparator.TabIndex = 7;
+			this.m_lblSeparator.TabIndex = 5;
 			// 
 			// m_btnCustomAdd
 			// 
@@ -142,7 +130,7 @@
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.m_btnCancel;
+			this.CancelButton = this.m_btnOK;
 			this.ClientSize = new System.Drawing.Size(506, 449);
 			this.Controls.Add(this.m_btnCustomRemove);
 			this.Controls.Add(this.m_btnCustomAdd);
@@ -152,7 +140,6 @@
 			this.Controls.Add(this.m_lvCustomIcons);
 			this.Controls.Add(this.m_btnOK);
 			this.Controls.Add(this.m_lvIcons);
-			this.Controls.Add(this.m_btnCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -171,7 +158,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button m_btnCancel;
 		private KeePass.UI.CustomListViewEx m_lvIcons;
 		private System.Windows.Forms.Button m_btnOK;
 		private KeePass.UI.CustomListViewEx m_lvCustomIcons;

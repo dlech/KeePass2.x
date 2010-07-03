@@ -33,12 +33,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 6.9.82
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "RoboForm HTML 6.9.82 (PassCards)"; } }
+		public override string FormatName { get { return "RoboForm HTML (PassCards)"; } }
 		public override string DefaultExtension { get { return "html"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

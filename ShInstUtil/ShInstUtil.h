@@ -92,6 +92,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPTSTR lpCmdLine, int nCmdShow);
 
 void UpdateNativeImage(bool bInstall);
+void RegisterPreLoad(bool bRegister);
 std_string GetNetInstallRoot();
 std_string GetKeePassExePath();
 void EnsureTerminatingSeparator(std_string& strPath);

@@ -53,42 +53,53 @@ namespace KeePass.UI
 
 	public sealed class DynamicMenu
 	{
-		private ToolStripMenuItem m_tsmiHost;
+		private ToolStripItemCollection m_tsicHost;
 		private List<ToolStripItem> m_vMenuItems = new List<ToolStripItem>();
 
 		public event EventHandler<DynamicMenuEventArgs> MenuClick;
 
+		// Constructor required by plugins
 		public DynamicMenu(ToolStripMenuItem tsmiHost)
 		{
 			Debug.Assert(tsmiHost != null);
 			if(tsmiHost == null) throw new ArgumentNullException("tsmiHost");
 
-			m_tsmiHost = tsmiHost;
+			m_tsicHost = tsmiHost.DropDownItems;
+		}
+
+		public DynamicMenu(ToolStripItemCollection tsicHost)
+		{
+			Debug.Assert(tsicHost != null);
+			if(tsicHost == null) throw new ArgumentNullException("tsicHost");
+
+			m_tsicHost = tsicHost;
 		}
 
 		~DynamicMenu()
 		{
-			this.Clear();
+			Clear();
 		}
 
 		public void Clear()
 		{
-			foreach(ToolStripItem tsi in m_vMenuItems)
+			for(int i = 0; i < m_vMenuItems.Count; ++i)
 			{
+				ToolStripItem tsi = m_vMenuItems[m_vMenuItems.Count - i - 1];
+
 				if(tsi is ToolStripMenuItem)
 					tsi.Click -= this.OnMenuClick;
 
-				m_tsmiHost.DropDownItems.Remove(tsi);
+				m_tsicHost.Remove(tsi);
 			}
 			m_vMenuItems.Clear();
 		}
 
-		public void AddItem(string strItemText, Image imgSmallIcon)
+		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon)
 		{
-			AddItem(strItemText, imgSmallIcon, null);
+			return AddItem(strItemText, imgSmallIcon, null);
 		}
 
-		public void AddItem(string strItemText, Image imgSmallIcon, object objTag)
+		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon, object objTag)
 		{
 			Debug.Assert(strItemText != null);
 			if(strItemText == null) throw new ArgumentNullException("strItemText");
@@ -99,15 +110,16 @@ namespace KeePass.UI
 
 			if(imgSmallIcon != null) tsmi.Image = imgSmallIcon;
 
-			m_tsmiHost.DropDownItems.Add(tsmi);
+			m_tsicHost.Add(tsmi);
 			m_vMenuItems.Add(tsmi);
+			return tsmi;
 		}
 
 		public void AddSeparator()
 		{
 			ToolStripSeparator sep = new ToolStripSeparator();
 
-			m_tsmiHost.DropDownItems.Add(sep);
+			m_tsicHost.Add(sep);
 			m_vMenuItems.Add(sep);
 		}
 

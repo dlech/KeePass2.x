@@ -34,12 +34,13 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.7
 	internal sealed class FlexWalletXml17 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "FlexWallet XML 1.7"; } }
+		public override string FormatName { get { return "FlexWallet XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

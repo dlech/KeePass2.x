@@ -35,7 +35,7 @@ namespace KeePassLib
 	/// fields like title, user name, password, etc. Each password entry has a
 	/// unique ID (UUID).
 	/// </summary>
-	public sealed class PwEntry : ITimeLogger, IStructureItem, IDeepClonable<PwEntry>
+	public sealed class PwEntry : ITimeLogger, IStructureItem, IDeepCloneable<PwEntry>
 	{
 		private PwUuid m_uuid = PwUuid.Zero;
 		private PwGroup m_pParentGroup = null;
@@ -60,6 +60,8 @@ namespace KeePassLib
 		private ulong m_uUsageCount = 0;
 
 		private string m_strOverrideUrl = string.Empty;
+
+		private List<string> m_vTags = new List<string>();
 
 		/// <summary>
 		/// UUID of this entry.
@@ -264,6 +266,20 @@ namespace KeePassLib
 			}
 		}
 
+		/// <summary>
+		/// List of tags associated with this entry.
+		/// </summary>
+		public List<string> Tags
+		{
+			get { return m_vTags; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				m_vTags = value;
+			}
+		}
+
 		public static EventHandler<ObjectTouchedEventArgs> EntryTouched;
 		public EventHandler<ObjectTouchedEventArgs> Touched;
 
@@ -346,6 +362,8 @@ namespace KeePassLib
 
 			peNew.m_strOverrideUrl = m_strOverrideUrl;
 
+			peNew.m_vTags = new List<string>(m_vTags);
+
 			return peNew;
 		}
 
@@ -412,6 +430,12 @@ namespace KeePassLib
 
 			if(m_strOverrideUrl != pe.m_strOverrideUrl) return false;
 
+			if(m_vTags.Count != pe.m_vTags.Count) return false;
+			for(int iTag = 0; iTag < m_vTags.Count; ++iTag)
+			{
+				if(m_vTags[iTag] != pe.m_vTags[iTag]) return false;
+			}
+
 			return true;
 		}
 
@@ -458,6 +482,8 @@ namespace KeePassLib
 			m_uUsageCount = peTemplate.m_uUsageCount;
 
 			m_strOverrideUrl = peTemplate.m_strOverrideUrl;
+
+			m_vTags = new List<string>(peTemplate.m_vTags);
 		}
 
 		/// <summary>
@@ -576,6 +602,86 @@ namespace KeePassLib
 				return m_pParentGroup.GetSearchingEnabledInherited();
 
 			return PwGroup.DefaultSearchingEnabled;
+		}
+
+		/// <summary>
+		/// Approximate the total size of this entry in bytes (including
+		/// strings, binaries and history entries).
+		/// </summary>
+		/// <returns>Size in bytes.</returns>
+		public ulong GetSize()
+		{
+			ulong uSize = 128; // Approx fixed length data
+
+			foreach(KeyValuePair<string, ProtectedString> kvpStr in m_listStrings)
+			{
+				uSize += (ulong)kvpStr.Key.Length;
+				uSize += (ulong)kvpStr.Value.Length;
+			}
+
+			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in m_listBinaries)
+			{
+				uSize += (ulong)kvpBin.Key.Length;
+				uSize += kvpBin.Value.Length;
+			}
+
+			uSize += (ulong)m_listAutoType.DefaultSequence.Length;
+			foreach(KeyValuePair<string, string> kvpCfg in m_listAutoType.WindowSequencePairs)
+			{
+				uSize += (ulong)kvpCfg.Key.Length;
+				uSize += (ulong)kvpCfg.Value.Length;
+			}
+
+			foreach(PwEntry peHistory in m_listHistory)
+				uSize += peHistory.GetSize();
+
+			uSize += (ulong)m_strOverrideUrl.Length;
+
+			foreach(string strTag in m_vTags)
+				uSize += (ulong)strTag.Length;
+
+			return uSize;
+		}
+
+		public bool HasTag(string strTag)
+		{
+			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
+
+			for(int i = 0; i < m_vTags.Count; ++i)
+			{
+				if(m_vTags[i].Equals(strTag, StrUtil.CaseIgnoreCmp)) return true;
+			}
+
+			return false;
+		}
+
+		public bool AddTag(string strTag)
+		{
+			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
+
+			for(int i = 0; i < m_vTags.Count; ++i)
+			{
+				if(m_vTags[i].Equals(strTag, StrUtil.CaseIgnoreCmp)) return false;
+			}
+
+			m_vTags.Add(strTag);
+			return true;
+		}
+
+		public bool RemoveTag(string strTag)
+		{
+			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
+
+			for(int i = 0; i < m_vTags.Count; ++i)
+			{
+				if(m_vTags[i].Equals(strTag, StrUtil.CaseIgnoreCmp))
+				{
+					m_vTags.RemoveAt(i);
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 

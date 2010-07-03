@@ -127,7 +127,7 @@ namespace KeePass.App.Configuration
 		}
 	}
 
-	public sealed class AceUrlSchemeOverrides : IDeepClonable<AceUrlSchemeOverrides>
+	public sealed class AceUrlSchemeOverrides : IDeepCloneable<AceUrlSchemeOverrides>
 	{
 		private bool m_bSetToDefaults = true;
 		public bool SetToDefaults
@@ -211,7 +211,7 @@ namespace KeePass.App.Configuration
 		}
 	}
 
-	public sealed class AceUrlSchemeOverride : IDeepClonable<AceUrlSchemeOverride>
+	public sealed class AceUrlSchemeOverride : IDeepCloneable<AceUrlSchemeOverride>
 	{
 		private bool m_bEnabled = true;
 		public bool Enabled

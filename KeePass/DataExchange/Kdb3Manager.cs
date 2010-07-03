@@ -893,7 +893,7 @@ namespace KeePass.DataExchange
 			if(m_bX64) p = Kdb3Manager.GetGroup64(m_pManager, uIndex);
 			else p = Kdb3Manager.GetGroup32(m_pManager, uIndex);
 
-			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
+			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
 
 			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
 		}
@@ -917,7 +917,7 @@ namespace KeePass.DataExchange
 			if(m_bX64) p = Kdb3Manager.GetGroupById64(m_pManager, uGroupId);
 			else p = Kdb3Manager.GetGroupById32(m_pManager, uGroupId);
 
-			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
+			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uGroupId");
 
 			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
 		}

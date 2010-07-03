@@ -66,6 +66,10 @@ namespace KeePassLib
 		private DateTime m_dtDefaultUserChanged = PwDefs.DtDefaultNow;
 		private uint m_uMntncHistoryDays = 365;
 
+		private DateTime m_dtKeyLastChanged = PwDefs.DtDefaultNow;
+		private long m_lKeyChangeRecDays = -1;
+		private long m_lKeyChangeForceDays = -1;
+
 		private IOConnectionInfo m_ioSource = new IOConnectionInfo();
 		private bool m_bDatabaseOpened = false;
 		private bool m_bModified = false;
@@ -218,6 +222,24 @@ namespace KeePassLib
 		{
 			get { return m_uMntncHistoryDays; }
 			set { m_uMntncHistoryDays = value; }
+		}
+
+		public DateTime MasterKeyChanged
+		{
+			get { return m_dtKeyLastChanged; }
+			set { m_dtKeyLastChanged = value; }
+		}
+
+		public long MasterKeyChangeRec
+		{
+			get { return m_lKeyChangeRecDays; }
+			set { m_lKeyChangeRecDays = value; }
+		}
+
+		public long MasterKeyChangeForce
+		{
+			get { return m_lKeyChangeForceDays; }
+			set { m_lKeyChangeForceDays = value; }
 		}
 
 		/// <summary>
@@ -423,13 +445,19 @@ namespace KeePassLib
 			m_vCustomIcons = new List<PwCustomIcon>();
 			m_bUINeedsIconUpdate = true;
 
+			DateTime dtNow = DateTime.Now;
+
 			m_strName = string.Empty;
-			m_dtNameChanged = PwDefs.DtDefaultNow;
+			m_dtNameChanged = dtNow;
 			m_strDesc = string.Empty;
-			m_dtDescChanged = PwDefs.DtDefaultNow;
+			m_dtDescChanged = dtNow;
 			m_strDefaultUserName = string.Empty;
-			m_dtDefaultUserChanged = PwDefs.DtDefaultNow;
+			m_dtDefaultUserChanged = dtNow;
 			m_uMntncHistoryDays = 365;
+
+			m_dtKeyLastChanged = dtNow;
+			m_lKeyChangeRecDays = -1;
+			m_lKeyChangeForceDays = -1;
 
 			m_ioSource = new IOConnectionInfo();
 			m_bDatabaseOpened = false;
@@ -440,9 +468,9 @@ namespace KeePassLib
 
 			m_bUseRecycleBin = true;
 			m_pwRecycleBin = PwUuid.Zero;
-			m_dtRecycleBinChanged = PwDefs.DtDefaultNow;
+			m_dtRecycleBinChanged = dtNow;
 			m_pwEntryTemplatesGroup = PwUuid.Zero;
-			m_dtEntryTemplatesChanged = PwDefs.DtDefaultNow;
+			m_dtEntryTemplatesChanged = dtNow;
 
 			m_vCustomData = new StringDictionaryEx();
 
@@ -958,7 +986,7 @@ namespace KeePassLib
 
 		private void ReorderObjectList<T>(PwObjectList<T> vItems,
 			PwObjectPool ppOrgStructure, PwObjectPool ppSrcStructure, bool bEntries)
-			where T : class, IStructureItem, IDeepClonable<T>
+			where T : class, IStructureItem, IDeepCloneable<T>
 		{
 			if(!ObjectListRequiresReorder<T>(vItems, ppOrgStructure, ppSrcStructure,
 				bEntries)) return;
@@ -1054,7 +1082,7 @@ namespace KeePassLib
 			KeyValuePair<uint, uint> kvpRange, PwObjectPool ppOrgStructure,
 			PwObjectPool ppSrcStructure, Queue<PwUuid> qBefore, Queue<PwUuid> qAfter,
 			bool bEntries)
-			where T : class, IStructureItem, IDeepClonable<T>
+			where T : class, IStructureItem, IDeepCloneable<T>
 		{
 			uint uPosMax = kvpRange.Key;
 			DateTime dtMax = DateTime.MinValue;
@@ -1115,7 +1143,7 @@ namespace KeePassLib
 		/// </summary>
 		private bool ObjectListRequiresReorder<T>(PwObjectList<T> vItems,
 			PwObjectPool ppOrgStructure, PwObjectPool ppSrcStructure, bool bEntries)
-			where T : class, IStructureItem, IDeepClonable<T>
+			where T : class, IStructureItem, IDeepCloneable<T>
 		{
 			Debug.Assert(ppOrgStructure.ContainsOnlyType(bEntries ? typeof(PwEntry) : typeof(PwGroup)));
 			Debug.Assert(ppSrcStructure.ContainsOnlyType(bEntries ? typeof(PwEntry) : typeof(PwGroup)));

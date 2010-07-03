@@ -263,10 +263,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strFrameworkNotImplExcp =
-			@"The .NET framework/runtime, under which KeePass is currently running, does not support this operation.";
+			@"The .NET framework/runtime under which KeePass is currently running does not support this operation.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The .NET framework/runtime, under which KeePass is currently running, does not support this operation.'.
+		/// 'The .NET framework/runtime under which KeePass is currently running does not support this operation.'.
 		/// </summary>
 		public static string FrameworkNotImplExcp
 		{

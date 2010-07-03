@@ -33,12 +33,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 5.12
 	internal sealed class HandySafeTxt512 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Handy Safe TXT 5.12"; } }
+		public override string FormatName { get { return "Handy Safe TXT"; } }
 		public override string DefaultExtension { get { return "txt"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

@@ -44,7 +44,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -123,8 +122,8 @@
     <Compile Include="..\KeePassLib\Delegates\Handlers.cs">
       <Link>KeePassLib\Delegates\Handlers.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Interfaces\IDeepClonable.cs">
-      <Link>KeePassLib\Interfaces\IDeepClonable.cs</Link>
+    <Compile Include="..\KeePassLib\Interfaces\IDeepCloneable.cs">
+      <Link>KeePassLib\Interfaces\IDeepCloneable.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\IStatusLogger.cs">
       <Link>KeePassLib\Interfaces\IStatusLogger.cs</Link>
@@ -366,6 +365,12 @@
     </Compile>
     <Compile Include="Forms\CharPickerForm.Designer.cs">
       <DependentUpon>CharPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ColumnsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ColumnsForm.Designer.cs">
+      <DependentUpon>ColumnsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DatabaseOperationsForm.cs">
       <SubType>Form</SubType>
@@ -627,6 +632,8 @@
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\ColumnProvider.cs" />
+    <Compile Include="UI\ColumnProviderPool.cs" />
     <Compile Include="UI\CustomListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -695,6 +702,9 @@
     <EmbeddedResource Include="Forms\CharPickerForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CharPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColumnsForm.resx">
+      <DependentUpon>ColumnsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DatabaseOperationsForm.resx">
       <SubType>Designer</SubType>
@@ -853,15 +863,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="UI\BannerFactory.cs" />
     <Compile Include="UI\MruList.cs" />
@@ -1037,6 +1038,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola\B16x16_KNotes.png" />
+    <None Include="Resources\Nuvola\B48x48_View_Detailed.png" />
     <None Include="Resources\Images\B16x16_Imp_HandySafePro.png" />
     <None Include="Resources\Images\B16x16_Imp_ZdnPwPro.png" />
     <None Include="Resources\Images\B16x16_Imp_HandySafe.png" />

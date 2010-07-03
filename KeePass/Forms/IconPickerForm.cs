@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
@@ -46,8 +45,6 @@ namespace KeePass.Forms
 
 		private uint m_uChosenImageID = 0;
 		private PwUuid m_pwChosenCustomImageUuid = PwUuid.Zero;
-
-		private bool m_bBlockCancel = false;
 
 		public uint ChosenIconId
 		{
@@ -120,16 +117,15 @@ namespace KeePass.Forms
 				m_btnOK.Enabled = true;
 			else if(m_radioCustom.Checked && (lvsic.Count == 1))
 				m_btnOK.Enabled = true;
-			else
-				m_btnOK.Enabled = false;
+			else m_btnOK.Enabled = false;
 
 			m_btnCustomRemove.Enabled = (lvsic.Count >= 1);
 
-			if(m_bBlockCancel)
-			{
-				m_btnCancel.Enabled = false;
-				if(this.ControlBox) this.ControlBox = false;
-			}
+			// if(m_bBlockCancel)
+			// {
+			//	m_btnCancel.Enabled = false;
+			//	if(this.ControlBox) this.ControlBox = false;
+			// }
 		}
 
 		/// <summary>
@@ -167,38 +163,27 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			SaveChosenIcon();
+			// SaveChosenIcon();
 		}
 
-		private void SaveChosenIcon()
+		private bool SaveChosenIcon()
 		{
 			if(m_radioStandard.Checked)
 			{
 				ListView.SelectedIndexCollection lvsi = m_lvIcons.SelectedIndices;
-				if(lvsi.Count != 1)
-				{
-					this.DialogResult = DialogResult.None;
-					return;
-				}
+				if(lvsi.Count != 1) return false;
 
 				m_uChosenImageID = (uint)lvsi[0];
 			}
 			else // Custom icon
 			{
 				ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
-				if(lvsic.Count != 1)
-				{
-					this.DialogResult = DialogResult.None;
-					return;
-				}
+				if(lvsic.Count != 1) return false;
 
 				m_pwChosenCustomImageUuid = (PwUuid)lvsic[0].Tag;
 			}
-		}
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-			if(m_bBlockCancel) this.DialogResult = DialogResult.None;
+			return true;
 		}
 
 		private void OnIconsItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -330,10 +315,7 @@ namespace KeePass.Forms
 			m_pwDatabase.DeleteCustomIcons(vUuidsToDelete);
 
 			if(vUuidsToDelete.Count > 0)
-			{
-				m_bBlockCancel = true;
 				m_pwDatabase.UINeedsIconUpdate = true;
-			}
 
 			RecreateCustomIconList(false);
 			EnableControlsEx();
@@ -342,22 +324,28 @@ namespace KeePass.Forms
 		private void OnIconsItemActivate(object sender, EventArgs e)
 		{
 			OnIconsItemSelectionChanged(sender, null);
-			SaveChosenIcon();
+			if(!SaveChosenIcon()) return;
 			this.DialogResult = DialogResult.OK;
 		}
 
 		private void OnCustomIconsItemActivate(object sender, EventArgs e)
 		{
 			OnCustomIconsItemSelectionChanged(sender, null);
-			SaveChosenIcon();
+			if(!SaveChosenIcon()) return;
 			this.DialogResult = DialogResult.OK;
 		}
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
-			if(m_bBlockCancel && (e.CloseReason == CloseReason.UserClosing) &&
-				(this.DialogResult != DialogResult.OK))
+			// if(m_bBlockCancel && (e.CloseReason == CloseReason.UserClosing) &&
+			//	(this.DialogResult != DialogResult.OK))
+			//	e.Cancel = true;
+
+			if(!SaveChosenIcon())
+			{
 				e.Cancel = true;
+				MessageService.ShowWarning(KPRes.PickIcon);
+			}
 		}
 	}
 }

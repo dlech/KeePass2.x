@@ -38,7 +38,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -81,7 +80,7 @@
     <Compile Include="Resources\KSRes.Generated.cs" />
     <Compile Include="Security\XorredBuffer.cs" />
     <Compile Include="Delegates\Handlers.cs" />
-    <Compile Include="Interfaces\IDeepClonable.cs" />
+    <Compile Include="Interfaces\IDeepCloneable.cs" />
     <Compile Include="Interfaces\IStatusLogger.cs" />
     <Compile Include="Interfaces\ITimeLogger.cs" />
     <Compile Include="Keys\KcpKeyFile.cs" />

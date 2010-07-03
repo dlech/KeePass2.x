@@ -63,7 +63,7 @@ namespace KeePassLib.Collections
 	/// <summary>
 	/// A dictionary of auto-type window/keystroke sequence pairs.
 	/// </summary>
-	public sealed class AutoTypeConfig : IDeepClonable<AutoTypeConfig>
+	public sealed class AutoTypeConfig : IDeepCloneable<AutoTypeConfig>
 	{
 		private bool m_bEnabled = true;
 		private AutoTypeObfuscationOptions m_atooObfuscation =

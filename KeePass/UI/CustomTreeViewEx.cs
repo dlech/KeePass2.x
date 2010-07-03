@@ -23,7 +23,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-// using KeePass.Native;
+using KeePass.Native;
 
 namespace KeePass.UI
 {
@@ -49,6 +49,21 @@ namespace KeePass.UI
 			// catch(Exception) { }
 
 			// this.ItemHeight = 18;
+
+			// try
+			// {
+			//	IntPtr hWnd = this.Handle;
+			//	if((hWnd != IntPtr.Zero) && UIUtil.VistaStyleListsSupported)
+			//	{
+			//		int nStyle = NativeMethods.GetWindowStyle(hWnd);
+			//		nStyle |= (int)NativeMethods.TVS_FULLROWSELECT;
+			//		NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_STYLE, nStyle);
+			//		nStyle = NativeMethods.GetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE);
+			//		nStyle |= (int)NativeMethods.TVS_EX_FADEINOUTEXPANDOS;
+			//		NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE, nStyle);
+			//	}
+			// }
+			// catch(Exception) { }
 		}
 	}
 }

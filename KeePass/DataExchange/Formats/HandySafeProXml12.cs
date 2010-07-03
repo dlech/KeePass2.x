@@ -67,12 +67,13 @@ namespace KeePass.DataExchange.Formats
 		public string Value { get; set; }
 	}
 
+	// 1.2
 	internal sealed class HandySafeProXml12 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Handy Safe Pro XML 1.2"; } }
+		public override string FormatName { get { return "Handy Safe Pro XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

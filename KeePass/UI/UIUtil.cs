@@ -53,11 +53,11 @@ namespace KeePass.UI
 			set { m_tsrOverride = value; }
 		}
 
-		// private static bool m_bVistaStyleLists = false;
-		// public static bool VistaStyleListsSupported
-		// {
-		//	get { return m_bVistaStyleLists; }
-		// }
+		private static bool m_bVistaStyleLists = false;
+		public static bool VistaStyleListsSupported
+		{
+			get { return m_bVistaStyleLists; }
+		}
 
 		public static void Initialize(bool bReinitialize)
 		{
@@ -74,8 +74,8 @@ namespace KeePass.UI
 			else if(bReinitialize)
 				ToolStripManager.Renderer = new ToolStripProfessionalRenderer();
 
-			// m_bVistaStyleLists = (WinUtil.IsAtLeastWindowsVista &&
-			//	(Environment.Version.Major >= 2));
+			m_bVistaStyleLists = (WinUtil.IsAtLeastWindowsVista &&
+				(Environment.Version.Major >= 2));
 		}
 
 		public static void RtfSetSelectionLink(RichTextBox richTextBox)
@@ -516,6 +516,14 @@ namespace KeePass.UI
 			string strSuggestedFileName, string strFilter, int iFilterIndex,
 			string strDefaultExt, bool bRestoreDirectory)
 		{
+			return CreateSaveFileDialog(strTitle, strSuggestedFileName, strFilter,
+				iFilterIndex, strDefaultExt, bRestoreDirectory, false);
+		}
+
+		public static SaveFileDialog CreateSaveFileDialog(string strTitle,
+			string strSuggestedFileName, string strFilter, int iFilterIndex,
+			string strDefaultExt, bool bRestoreDirectory, bool bIsDatabaseFile)
+		{
 			SaveFileDialog sfd = new SaveFileDialog();
 
 			sfd.AddExtension = true;
@@ -547,6 +555,9 @@ namespace KeePass.UI
 				sfd.Title = strTitle;
 
 			sfd.ValidateNames = true;
+
+			if(bIsDatabaseFile && (Program.Config.Defaults.FileSaveAsDirectory.Length > 0))
+				sfd.InitialDirectory = Program.Config.Defaults.FileSaveAsDirectory;
 
 			return sfd;
 		}
@@ -604,7 +615,7 @@ namespace KeePass.UI
 
 		public static void MoveSelectedItemsInternalOne<T>(ListView lv,
 			PwObjectList<T> v, bool bUp)
-			where T : class, IDeepClonable<T>
+			where T : class, IDeepCloneable<T>
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(v == null) throw new ArgumentNullException("v");
@@ -621,7 +632,7 @@ namespace KeePass.UI
 
 		public static void DeleteSelectedItems<T>(ListView lv, PwObjectList<T>
 			vInternalList)
-			where T : class, IDeepClonable<T>
+			where T : class, IDeepCloneable<T>
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(vInternalList == null) throw new ArgumentNullException("vInternalList");
@@ -672,6 +683,11 @@ namespace KeePass.UI
 				Thread.Sleep(20);
 				Application.DoEvents();
 			}
+		}
+
+		public static string GetWebBrowserDocument(WebBrowser wb)
+		{
+			return wb.DocumentText;
 		}
 
 		public static void SetExplorerTheme(IntPtr hWnd)

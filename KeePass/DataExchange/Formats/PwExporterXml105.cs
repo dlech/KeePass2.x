@@ -34,12 +34,13 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.0.5
 	internal sealed class PwExporterXml105 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Exporter XML 1.0.5"; } }
+		public override string FormatName { get { return "Password Exporter XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.Browser; } }
 

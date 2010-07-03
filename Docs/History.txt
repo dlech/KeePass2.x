@@ -1,3 +1,62 @@
+2010-07-03: 2.11
+- Added entry tags (you can assign tags to entries in the entry
+  editing window or by using the 'Selected Entries' context
+  menu; to list all entries having a specific tag, choose the
+  tag either in the 'Edit' main menu or in the 'Show Entries'
+  toolbar drop-down button)
+- Completely new entry list column engine; the columns are
+  dynamic now, custom entry strings can be shown in the list,
+  to configure go 'View' -> 'Configure Columns...'; the column
+  engine is also extensible now, i.e. plugins can provide new
+  columns
+- Added 'Size' entry list column (shows the approximate memory
+  required for the entry)
+- Added 'History (Count)' entry list column (double-clicking a
+  cell of this column opens the entry editing window and
+  automatically switches to the 'History' tab)
+- Added 'Expiry Time (Date Only)' entry list column
+- Added options to specify the number of days until the master
+  key of a database is recommended to and/or must be changed
+- Added support for exporting selected entries to KDB
+- Added 'FileSaveAsDirectory' configuration key to specify the
+  default directory for 'Save As' database file dialogs
+- Double-clicking a history entry in the entry editing dialog
+  now opens/views the entry
+- It's now possible to tab from menus and toolbars to dialog
+  controls
+- Added option to turn off hiding in-memory protected custom
+  strings using asterisks in the entry view
+- Added workaround for FTP servers sending a 550 error after
+  opening and closing a file without downloading data
+- Added 'Unhide Passwords' application policy flag
+- Password Depot importer: some icons are converted now
+- {GOOGLECHROME} placeholder: updated detection code to also
+  support the latest versions of Chrome
+- The main window now uses the shell font by default
+- On Windows Vista and higher, Explorer-themed tree and list
+  views are now used in the main window
+- On Windows 7 and higher, the main window peek preview is now
+  disabled when the KeePass workspace is locked
+- Installer: added option to optimize the on-demand start-up
+  performance of KeePass
+- TrlUtil: added 3 dots string validation
+
+- Improved entry list item selection performance (defer UI
+  state update on selection change burst)
+- Improved special key code conversion in KDB importer
+- Icon picker dialog now has a 'Close' button
+- When sorting is enabled, the entry list view now doesn't get
+  destroyed anymore when trying to move entries
+- Main window is now brought to the foreground when untraying
+- Removed grid lines option
+- Reduced size of MSI file
+- Various performance improvements
+- Various code optimizations
+- Minor other improvements
+
+- No file path is requested anymore when double-clicking an
+  import source that doesn't require a file
+
 2010-03-05: 2.10
 - Translation system: added support for right-to-left scripts
 - Added {HMACOTP} placeholder to generate HMAC-based one-time

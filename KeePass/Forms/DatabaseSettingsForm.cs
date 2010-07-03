@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -48,6 +47,8 @@ namespace KeePass.Forms
 
 		private Dictionary<int, PwUuid> m_dictEntryTemplateGroups = new Dictionary<int, PwUuid>();
 
+		private bool m_bInitializing = false;
+
 		public DatabaseSettingsForm()
 		{
 			InitializeComponent();
@@ -73,6 +74,8 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
+
+			m_bInitializing = true;
 
 			UIUtil.AssignFontDefaultItalic(m_lblHeaderCpAlgo);
 			UIUtil.AssignFontDefaultItalic(m_lblHeaderCp);
@@ -122,7 +125,10 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); }
 
 			InitRecycleBinTab();
-			InitTemplatesTab();
+			InitAdvancedTab();
+
+			m_bInitializing = false;
+			EnableControlsEx();
 		}
 
 		private void InitRecycleBinTab()
@@ -139,7 +145,7 @@ namespace KeePass.Forms
 			m_cmbRecycleBin.SelectedIndex = Math.Max(0, iSelect);
 		}
 
-		private void InitTemplatesTab()
+		private void InitAdvancedTab()
 		{
 			m_cmbEntryTemplates.Items.Add("(" + KPRes.None + ")");
 			m_dictEntryTemplateGroups[0] = PwUuid.Zero;
@@ -149,6 +155,26 @@ namespace KeePass.Forms
 				m_dictEntryTemplateGroups, m_pwDatabase.EntryTemplatesGroup, out iSelect);
 
 			m_cmbEntryTemplates.SelectedIndex = Math.Max(0, iSelect);
+
+			m_numKeyRecDays.Minimum = 0;
+			m_numKeyRecDays.Maximum = long.MaxValue;
+			bool bChangeRec = (m_pwDatabase.MasterKeyChangeRec >= 0);
+			m_numKeyRecDays.Value = (bChangeRec ? m_pwDatabase.MasterKeyChangeRec : 182);
+			m_cbKeyRec.Checked = bChangeRec;
+
+			m_numKeyForceDays.Minimum = 0;
+			m_numKeyForceDays.Maximum = long.MaxValue;
+			bool bChangeForce = (m_pwDatabase.MasterKeyChangeForce >= 0);
+			m_numKeyForceDays.Value = (bChangeForce ? m_pwDatabase.MasterKeyChangeForce : 365);
+			m_cbKeyForce.Checked = bChangeForce;
+		}
+
+		private void EnableControlsEx()
+		{
+			if(m_bInitializing) return;
+
+			m_numKeyRecDays.Enabled = m_cbKeyRec.Checked;
+			m_numKeyForceDays.Enabled = m_cbKeyForce.Checked;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -239,6 +265,12 @@ namespace KeePass.Forms
 					m_pwDatabase.EntryTemplatesGroupChanged = DateTime.Now;
 				}
 			}
+
+			if(!m_cbKeyRec.Checked) m_pwDatabase.MasterKeyChangeRec = -1;
+			else m_pwDatabase.MasterKeyChangeRec = (long)m_numKeyRecDays.Value;
+
+			if(!m_cbKeyForce.Checked) m_pwDatabase.MasterKeyChangeForce = -1;
+			else m_pwDatabase.MasterKeyChangeForce = (long)m_numKeyForceDays.Value;
 		}
 
 		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)
@@ -295,6 +327,16 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnKeyRecCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnKeyForceCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
 		}
 	}
 }

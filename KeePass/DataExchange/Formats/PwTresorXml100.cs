@@ -34,6 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.0.2001.157
 	internal sealed class PwTresorXml100 : FileFormatProvider
 	{
 		private const string ElemGroup = "Group";
@@ -49,7 +50,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Passwort.Tresor XML 1.0.2001.157"; } }
+		public override string FormatName { get { return "Passwort.Tresor XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

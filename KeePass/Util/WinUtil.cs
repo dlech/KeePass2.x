@@ -49,6 +49,7 @@ namespace KeePass.Util
 		private static bool m_bIsWindows2000 = false;
 		private static bool m_bIsWindowsXP = false;
 		private static bool m_bIsAtLeastWindowsVista = false;
+		private static bool m_bIsAtLeastWindows7 = false;
 
 		private static string m_strExePath = null;
 
@@ -74,6 +75,11 @@ namespace KeePass.Util
 			get { return m_bIsAtLeastWindowsVista; }
 		}
 
+		public static bool IsAtLeastWindows7
+		{
+			get { return m_bIsAtLeastWindows7; }
+		}
+
 		static WinUtil()
 		{
 			OperatingSystem os = Environment.OSVersion;
@@ -83,6 +89,7 @@ namespace KeePass.Util
 			m_bIsWindows2000 = ((v.Major == 5) && (v.Minor == 0));
 			m_bIsWindowsXP = ((v.Major == 5) && (v.Minor == 1));
 			m_bIsAtLeastWindowsVista = (v.Major >= 6);
+			m_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)

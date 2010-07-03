@@ -249,7 +249,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			bool bResult = true;
 			foreach(char ch in strCharacters)
-				bResult &= this.Remove(ch);
+			{
+				if(!Remove(ch)) bResult = false;
+			}
 
 			return bResult;
 		}

@@ -353,8 +353,6 @@ namespace KeePassLib.Utility
 		/// Format an exception and convert it to a string.
 		/// </summary>
 		/// <param name="excp"><c>Exception</c> to convert/format.</param>
-		/// <param name="bHeaderText">If this is <c>true</c>, a header text is prepended
-		/// to the result string. This text is a generic, localized error message.</param>
 		/// <returns>String representing the exception.</returns>
 		public static string FormatException(Exception excp)
 		{
@@ -436,6 +434,16 @@ namespace KeePassLib.Utility
 #else
 			try { u = uint.Parse(str); return true; }
 			catch(Exception) { u = 0; return false; }
+#endif
+		}
+
+		public static bool TryParseLong(string str, out long n)
+		{
+#if !KeePassLibSD
+			return long.TryParse(str, out n);
+#else
+			try { n = long.Parse(str); return true; }
+			catch(Exception) { n = 0; return false; }
 #endif
 		}
 
@@ -625,6 +633,7 @@ namespace KeePassLib.Utility
 		}
 
 #if !KeePassLibSD
+		private static readonly char[] m_vPatternPartsSep = new char[]{ '*' };
 		public static bool SimplePatternMatch(string strPattern, string strText,
 			StringComparison sc)
 		{
@@ -633,7 +642,7 @@ namespace KeePassLib.Utility
 
 			if(strPattern.IndexOf('*') < 0) return strText.Equals(strPattern, sc);
 
-			string[] vPatternParts = strPattern.Split(new char[]{ '*' },
+			string[] vPatternParts = strPattern.Split(m_vPatternPartsSep,
 				StringSplitOptions.RemoveEmptyEntries);
 			if(vPatternParts == null) { Debug.Assert(false); return true; }
 			if(vPatternParts.Length == 0) return true;
@@ -743,11 +752,22 @@ namespace KeePassLib.Utility
 			return (((uBytes - 1UL)/ uTB) + 1UL).ToString() + " TB";
 		}
 
+		public static string FormatDataSizeKB(ulong uBytes)
+		{
+			const ulong uKB = 1024;
+
+			if(uBytes == 0) return "0 KB";
+			if(uBytes <= uKB) return "1 KB";
+			
+			return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
+		}
+
+		private static readonly char[] m_vVersionSep = new char[]{ '.', ',' };
 		public static ulong GetVersion(string strVersion)
 		{
 			if(string.IsNullOrEmpty(strVersion)) { Debug.Assert(false); return 0; }
 
-			string[] vVer = strVersion.Split(new char[] { '.', ',' });
+			string[] vVer = strVersion.Split(m_vVersionSep);
 			if((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
 
 			ushort uPart;
@@ -813,6 +833,81 @@ namespace KeePassLib.Utility
 			catch(Exception) { Debug.Assert(false); }
 
 			return strCipherText;
+		}
+
+		public static string SerializeIntArray(int[] vNumbers)
+		{
+			if(vNumbers == null) throw new ArgumentNullException("vNumbers");
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < vNumbers.Length; ++i)
+			{
+				if(i > 0) sb.Append(' ');
+				sb.Append(vNumbers[i]);
+			}
+
+			return sb.ToString();
+		}
+
+		public static int[] DeserializeIntArray(string strSerialized)
+		{
+			if(strSerialized == null) throw new ArgumentNullException("strSerialized");
+			if(strSerialized.Length == 0) return new int[0];
+
+			string[] vParts = strSerialized.Split(' ');
+			int[] v = new int[vParts.Length];
+
+			for(int i = 0; i < vParts.Length; ++i)
+			{
+				int n;
+				if(!TryParseInt(vParts[i], out n)) { Debug.Assert(false); }
+				v[i] = n;
+			}
+
+			return v;
+		}
+
+		private static readonly char[] m_vTagSep = new char[]{ ',', ';', ':' };
+		public static string TagsToString(List<string> vTags, bool bForDisplay)
+		{
+			if(vTags == null) throw new ArgumentNullException("vTags");
+
+			StringBuilder sb = new StringBuilder();
+			bool bFirst = true;
+
+			foreach(string strTag in vTags)
+			{
+				if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); continue; }
+				Debug.Assert(strTag.IndexOfAny(m_vTagSep) < 0);
+
+				if(!bFirst)
+				{
+					if(bForDisplay) sb.Append(", ");
+					else sb.Append(';');
+				}
+				sb.Append(strTag);
+
+				bFirst = false;
+			}
+
+			return sb.ToString();
+		}
+
+		public static List<string> StringToTags(string strTags)
+		{
+			if(strTags == null) throw new ArgumentNullException("strTags");
+
+			List<string> lTags = new List<string>();
+			if(strTags.Length == 0) return lTags;
+
+			string[] vTags = strTags.Split(m_vTagSep);
+			foreach(string strTag in vTags)
+			{
+				string strFlt = strTag.Trim();
+				if(strFlt.Length > 0) lTags.Add(strFlt);
+			}
+
+			return lTags;
 		}
 	}
 }

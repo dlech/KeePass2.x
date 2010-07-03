@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -251,6 +250,7 @@ namespace KeePass.Forms
 			LoadPolicyOption("DragDrop", KPRes.DragDrop, KPRes.PolicyDragDropDesc);
 			LoadPolicyOption("ChangeMasterKey", KPRes.ChangeMasterKey, KPRes.PolicyChangeMasterKey);
 			LoadPolicyOption("EditTriggers", KPRes.TriggersEdit, KPRes.PolicyTriggersEditDesc);
+			LoadPolicyOption("UnhidePasswords", KPRes.UnhidePasswords, KPRes.UnhidePasswordsDesc);
 
 			m_cdxPolicy.UpdateData(false);
 		}
@@ -294,14 +294,19 @@ namespace KeePass.Forms
 
 			lvg = new ListViewGroup(KPRes.EntryList);
 			m_lvGuiOptions.Groups.Add(lvg);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowGridLines",
-				m_lvGuiOptions, lvg, KPRes.ShowGridLines);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowGridLines",
+			//	m_lvGuiOptions, lvg, KPRes.ShowGridLines);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAutoResizeColumns",
 				m_lvGuiOptions, lvg, KPRes.EntryListAutoResizeColumns);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAlternatingBgColors",
 				m_lvGuiOptions, lvg, KPRes.AlternatingBgColors);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CopyUrlsInsteadOfOpening",
 				m_lvGuiOptions, lvg, KPRes.CopyUrlsInsteadOfOpening);
+
+			lvg = new ListViewGroup(KPRes.EntryView);
+			m_lvGuiOptions.Groups.Add(lvg);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow.EntryView, "HideProtectedCustomStrings",
+				m_lvGuiOptions, lvg, KPRes.EntryViewHideProtectedCustomStrings);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);

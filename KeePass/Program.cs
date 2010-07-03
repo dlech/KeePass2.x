@@ -68,6 +68,7 @@ namespace KeePass
 		private static EcasPool m_ecasPool = null;
 		private static EcasTriggerSystem m_ecasTriggers = null;
 		private static CustomPwGeneratorPool m_pwGenPool = null;
+		private static ColumnProviderPool m_colProvPool = null;
 
 		public enum AppMessage
 		{
@@ -181,6 +182,15 @@ namespace KeePass
 			}
 		}
 
+		public static ColumnProviderPool ColumnProviderPool
+		{
+			get
+			{
+				if(m_colProvPool == null) m_colProvPool = new ColumnProviderPool();
+				return m_colProvPool;
+			}
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -257,6 +267,31 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoad] != null)
+			{
+				// All important .NET assemblies are in memory now already
+				try { SelfTest.Perform(); }
+				catch(Exception) { Debug.Assert(false); }
+				MainCleanUp();
+				return;
+			}
+			/* else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadRegister] != null)
+			{
+				string strPreLoadPath = WinUtil.GetExecutable().Trim();
+				if(strPreLoadPath.StartsWith("\"") == false)
+					strPreLoadPath = "\"" + strPreLoadPath + "\"";
+				ShellUtil.RegisterPreLoad(AppDefs.PreLoadName, strPreLoadPath,
+					@"--" + AppDefs.CommandLineOptions.PreLoad, true);
+				MainCleanUp();
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadUnregister] != null)
+			{
+				ShellUtil.RegisterPreLoad(AppDefs.PreLoadName, string.Empty,
+					string.Empty, false);
+				MainCleanUp();
+				return;
+			} */
 			else if((m_cmdLineArgs[AppDefs.CommandLineOptions.Help] != null) ||
 				(m_cmdLineArgs[AppDefs.CommandLineOptions.HelpLong] != null))
 			{
@@ -363,31 +398,20 @@ namespace KeePass
 
 			AutoType.InitStatic();
 
-			bool bRunMainWindow = true;
-			try { SelfTest.Perform(); }
-			catch(Exception exSelfTest)
-			{
-				MessageService.ShowWarning(KPRes.SelfTestFailed, exSelfTest);
-				bRunMainWindow = false;
-			}
-
 			UserActivityNotifyFilter nfActivity = new UserActivityNotifyFilter();
 			Application.AddMessageFilter(nfActivity);
 
-			if(bRunMainWindow)
-			{
 #if DEBUG
+			m_formMain = new MainForm();
+			Application.Run(m_formMain);
+#else
+			try
+			{
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
-#else
-				try
-				{
-					m_formMain = new MainForm();
-					Application.Run(m_formMain);
-				}
-				catch(Exception exPrg) { MessageService.ShowFatal(exPrg); }
-#endif
 			}
+			catch(Exception exPrg) { MessageService.ShowFatal(exPrg); }
+#endif
 
 			Application.RemoveMessageFilter(nfActivity);
 

@@ -130,6 +130,12 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.DefaultUserNameChanged = ReadTime(xmlChild);
 				else if(strName == ElemDbMntncHistoryDays)
 					m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xmlChild, 365);
+				else if(strName == ElemDbKeyChanged)
+					m_pwDatabase.MasterKeyChanged = ReadTime(xmlChild);
+				else if(strName == ElemDbKeyChangeRec)
+					m_pwDatabase.MasterKeyChangeRec = ReadLong(xmlChild, -1);
+				else if(strName == ElemDbKeyChangeForce)
+					m_pwDatabase.MasterKeyChangeForce = ReadLong(xmlChild, -1);
 				else if(strName == ElemMemoryProt)
 					ReadMemoryProtection(xmlChild);
 				else if(strName == ElemCustomIcons)
@@ -168,12 +174,12 @@ namespace KeePassLib.Serialization
 					m_pwDatabase.MemoryProtection.ProtectUserName = ReadBool(xmlChild, false);
 				else if(strName == ElemProtPassword)
 					m_pwDatabase.MemoryProtection.ProtectPassword = ReadBool(xmlChild, true);
-				else if(strName == ElemProtURL)
+				else if(strName == ElemProtUrl)
 					m_pwDatabase.MemoryProtection.ProtectUrl = ReadBool(xmlChild, false);
 				else if(strName == ElemProtNotes)
 					m_pwDatabase.MemoryProtection.ProtectNotes = ReadBool(xmlChild, false);
-				else if(strName == ElemProtAutoHide)
-					m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xmlChild, true);
+				// else if(strName == ElemProtAutoHide)
+				//	m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = ReadBool(xmlChild, true);
 				else ReadUnknown(xmlChild);
 			}
 		}
@@ -329,6 +335,8 @@ namespace KeePassLib.Serialization
 				}
 				else if(strName == ElemOverrideUrl)
 					pe.OverrideUrl = ReadString(xmlChild);
+				else if(strName == ElemTags)
+					pe.Tags = StrUtil.StringToTags(ReadString(xmlChild));
 				else if(strName == ElemTimes) ReadTimes(xmlChild, pe);
 				else if(strName == ElemString) ReadProtectedStringEx(xmlChild, pe.Strings);
 				else if(strName == ElemBinary) ReadProtectedBinaryEx(xmlChild, pe.Binaries);
@@ -407,6 +415,17 @@ namespace KeePassLib.Serialization
 
 			Debug.Assert(false);
 			return uDefault;
+		}
+
+		private long ReadLong(XmlNode xmlNode, long nDefault)
+		{
+			ProcessNode(xmlNode);
+
+			long n;
+			if(StrUtil.TryParseLong(xmlNode.InnerText, out n)) return n;
+
+			Debug.Assert(false);
+			return nDefault;
 		}
 
 		private ulong ReadULong(XmlNode xmlNode, ulong uDefault)

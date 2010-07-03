@@ -31,7 +31,7 @@ using KeePassLibSD;
 
 namespace KeePassLib.Collections
 {
-	public sealed class StringDictionaryEx : IDeepClonable<StringDictionaryEx>,
+	public sealed class StringDictionaryEx : IDeepCloneable<StringDictionaryEx>,
 		IEnumerable<KeyValuePair<string, string>>
 	{
 		private SortedDictionary<string, string> m_vDict =

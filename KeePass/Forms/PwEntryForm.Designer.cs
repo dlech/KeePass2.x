@@ -86,6 +86,8 @@
 			this.m_ctxListOperations = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
+			this.m_tbTags = new System.Windows.Forms.TextBox();
+			this.m_lblTags = new System.Windows.Forms.Label();
 			this.m_btnPickFgColor = new System.Windows.Forms.Button();
 			this.m_cbCustomForegroundColor = new System.Windows.Forms.CheckBox();
 			this.m_tbUuid = new System.Windows.Forms.TextBox();
@@ -699,6 +701,8 @@
 			// 
 			// m_tabProperties
 			// 
+			this.m_tabProperties.Controls.Add(this.m_tbTags);
+			this.m_tabProperties.Controls.Add(this.m_lblTags);
 			this.m_tabProperties.Controls.Add(this.m_btnPickFgColor);
 			this.m_tabProperties.Controls.Add(this.m_cbCustomForegroundColor);
 			this.m_tabProperties.Controls.Add(this.m_tbUuid);
@@ -713,6 +717,22 @@
 			this.m_tabProperties.TabIndex = 4;
 			this.m_tabProperties.Text = "Properties";
 			this.m_tabProperties.UseVisualStyleBackColor = true;
+			// 
+			// m_tbTags
+			// 
+			this.m_tbTags.Location = new System.Drawing.Point(9, 94);
+			this.m_tbTags.Name = "m_tbTags";
+			this.m_tbTags.Size = new System.Drawing.Size(447, 20);
+			this.m_tbTags.TabIndex = 5;
+			// 
+			// m_lblTags
+			// 
+			this.m_lblTags.AutoSize = true;
+			this.m_lblTags.Location = new System.Drawing.Point(6, 76);
+			this.m_lblTags.Name = "m_lblTags";
+			this.m_lblTags.Size = new System.Drawing.Size(34, 13);
+			this.m_lblTags.TabIndex = 4;
+			this.m_lblTags.Text = "Tags:";
 			// 
 			// m_btnPickFgColor
 			// 
@@ -740,7 +760,7 @@
 			this.m_tbUuid.Name = "m_tbUuid";
 			this.m_tbUuid.ReadOnly = true;
 			this.m_tbUuid.Size = new System.Drawing.Size(407, 20);
-			this.m_tbUuid.TabIndex = 7;
+			this.m_tbUuid.TabIndex = 9;
 			// 
 			// m_lblUuid
 			// 
@@ -748,23 +768,23 @@
 			this.m_lblUuid.Location = new System.Drawing.Point(6, 312);
 			this.m_lblUuid.Name = "m_lblUuid";
 			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
-			this.m_lblUuid.TabIndex = 6;
+			this.m_lblUuid.TabIndex = 8;
 			this.m_lblUuid.Text = "UUID:";
 			// 
 			// m_tbOverrideUrl
 			// 
-			this.m_tbOverrideUrl.Location = new System.Drawing.Point(9, 94);
+			this.m_tbOverrideUrl.Location = new System.Drawing.Point(9, 144);
 			this.m_tbOverrideUrl.Name = "m_tbOverrideUrl";
 			this.m_tbOverrideUrl.Size = new System.Drawing.Size(447, 20);
-			this.m_tbOverrideUrl.TabIndex = 5;
+			this.m_tbOverrideUrl.TabIndex = 7;
 			// 
 			// m_lblOverrideUrl
 			// 
 			this.m_lblOverrideUrl.AutoSize = true;
-			this.m_lblOverrideUrl.Location = new System.Drawing.Point(7, 76);
+			this.m_lblOverrideUrl.Location = new System.Drawing.Point(6, 126);
 			this.m_lblOverrideUrl.Name = "m_lblOverrideUrl";
 			this.m_lblOverrideUrl.Size = new System.Drawing.Size(75, 13);
-			this.m_lblOverrideUrl.TabIndex = 4;
+			this.m_lblOverrideUrl.TabIndex = 6;
 			this.m_lblOverrideUrl.Text = "Override URL:";
 			// 
 			// m_cbCustomBackgroundColor
@@ -992,6 +1012,7 @@
 			this.m_lvHistory.TabIndex = 0;
 			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
 			this.m_lvHistory.View = System.Windows.Forms.View.Details;
+			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
 			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
 			// 
 			// m_btnTools
@@ -1351,6 +1372,8 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInNotes;
 		private System.Windows.Forms.Button m_btnPickFgColor;
 		private System.Windows.Forms.CheckBox m_cbCustomForegroundColor;
+		private System.Windows.Forms.TextBox m_tbTags;
+		private System.Windows.Forms.Label m_lblTags;
 
 	}
 }

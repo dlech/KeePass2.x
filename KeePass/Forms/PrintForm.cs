@@ -20,13 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.UI;
 using KeePass.Resources;
 
@@ -113,12 +113,18 @@ namespace KeePass.Forms
 			m_cmbSortEntries.Items.Add(KPRes.Password);
 			m_cmbSortEntries.Items.Add(KPRes.Url);
 			m_cmbSortEntries.Items.Add(KPRes.Notes);
+
+			AceColumnType colType = AceColumnType.Count;
+			List<AceColumn> vCols = Program.Config.MainWindow.EntryListColumns;
+			if((m_nDefaultSortColumn >= 0) && (m_nDefaultSortColumn < vCols.Count))
+				colType = vCols[m_nDefaultSortColumn].Type;
+
 			int nSortSel = 0;
-			if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Title) nSortSel = 1;
-			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.UserName) nSortSel = 2;
-			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Password) nSortSel = 3;
-			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Url) nSortSel = 4;
-			else if(m_nDefaultSortColumn == (int)AppDefs.ColumnId.Notes) nSortSel = 5;
+			if(colType == AceColumnType.Title) nSortSel = 1;
+			else if(colType == AceColumnType.UserName) nSortSel = 2;
+			else if(colType == AceColumnType.Password) nSortSel = 3;
+			else if(colType == AceColumnType.Url) nSortSel = 4;
+			else if(colType == AceColumnType.Notes) nSortSel = 5;
 			m_cmbSortEntries.SelectedIndex = nSortSel;
 			m_bBlockPreviewRefresh = false;
 
@@ -145,7 +151,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception ex) { MessageService.ShowWarning(ex); }
 			}
-			else m_strGeneratedHtml = m_wbMain.DocumentText;
+			else m_strGeneratedHtml = UIUtil.GetWebBrowserDocument(m_wbMain);
 
 			if(m_strGeneratedHtml == null) m_strGeneratedHtml = string.Empty;
 		}

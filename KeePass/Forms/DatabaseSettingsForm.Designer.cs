@@ -55,7 +55,7 @@
 			this.m_tabSecurity = new System.Windows.Forms.TabPage();
 			this.m_lblSecIntro = new System.Windows.Forms.Label();
 			this.m_tabProtection = new System.Windows.Forms.TabPage();
-			this.m_lblViewHint = new System.Windows.Forms.Label();
+			this.m_lblTurnOffHint = new System.Windows.Forms.Label();
 			this.m_lblMemProtEnable = new System.Windows.Forms.Label();
 			this.m_lblMemProtHint = new System.Windows.Forms.Label();
 			this.m_lblMemProtDesc = new System.Windows.Forms.Label();
@@ -76,9 +76,15 @@
 			this.m_lblRecycleBinGroup = new System.Windows.Forms.Label();
 			this.m_lblRecycleBinInfo = new System.Windows.Forms.Label();
 			this.m_cbRecycleBin = new System.Windows.Forms.CheckBox();
-			this.m_tabTemplates = new System.Windows.Forms.TabPage();
-			this.m_lblTemplatesHint = new System.Windows.Forms.Label();
+			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
+			this.m_grpMasterKey = new System.Windows.Forms.GroupBox();
+			this.m_cbKeyForce = new System.Windows.Forms.CheckBox();
+			this.m_cbKeyRec = new System.Windows.Forms.CheckBox();
+			this.m_numKeyForceDays = new System.Windows.Forms.NumericUpDown();
+			this.m_numKeyRecDays = new System.Windows.Forms.NumericUpDown();
+			this.m_grpTemplates = new System.Windows.Forms.GroupBox();
 			this.m_cmbEntryTemplates = new System.Windows.Forms.ComboBox();
+			this.m_lblTemplatesHint = new System.Windows.Forms.Label();
 			this.m_lblEntryTemplatesGroup = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpEncAlgo.SuspendLayout();
@@ -90,7 +96,11 @@
 			this.m_tabProtection.SuspendLayout();
 			this.m_tabCompression.SuspendLayout();
 			this.m_tabRecycleBin.SuspendLayout();
-			this.m_tabTemplates.SuspendLayout();
+			this.m_tabAdvanced.SuspendLayout();
+			this.m_grpMasterKey.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKeyForceDays)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKeyRecDays)).BeginInit();
+			this.m_grpTemplates.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_bannerImage
@@ -246,7 +256,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabProtection);
 			this.m_tabMain.Controls.Add(this.m_tabCompression);
 			this.m_tabMain.Controls.Add(this.m_tabRecycleBin);
-			this.m_tabMain.Controls.Add(this.m_tabTemplates);
+			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 67);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -346,7 +356,7 @@
 			// 
 			// m_tabProtection
 			// 
-			this.m_tabProtection.Controls.Add(this.m_lblViewHint);
+			this.m_tabProtection.Controls.Add(this.m_lblTurnOffHint);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtEnable);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtHint);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtDesc);
@@ -359,14 +369,14 @@
 			this.m_tabProtection.Text = "Protection";
 			this.m_tabProtection.UseVisualStyleBackColor = true;
 			// 
-			// m_lblViewHint
+			// m_lblTurnOffHint
 			// 
-			this.m_lblViewHint.Location = new System.Drawing.Point(3, 257);
-			this.m_lblViewHint.Name = "m_lblViewHint";
-			this.m_lblViewHint.Size = new System.Drawing.Size(443, 28);
-			this.m_lblViewHint.TabIndex = 5;
-			this.m_lblViewHint.Text = "Memory protection is useless if you display the fields in the main window. Theref" +
-				"ore make sure that hiding by asterisks is enabled for the protected fields.";
+			this.m_lblTurnOffHint.Location = new System.Drawing.Point(3, 257);
+			this.m_lblTurnOffHint.Name = "m_lblTurnOffHint";
+			this.m_lblTurnOffHint.Size = new System.Drawing.Size(443, 28);
+			this.m_lblTurnOffHint.TabIndex = 5;
+			this.m_lblTurnOffHint.Text = "For all fields except the password field, memory protection is turned off automat" +
+				"ically when the fields are searched or displayed as plain text.";
 			// 
 			// m_lblMemProtEnable
 			// 
@@ -571,40 +581,102 @@
 			this.m_cbRecycleBin.Text = "&Use a recycle bin";
 			this.m_cbRecycleBin.UseVisualStyleBackColor = true;
 			// 
-			// m_tabTemplates
+			// m_tabAdvanced
 			// 
-			this.m_tabTemplates.Controls.Add(this.m_lblTemplatesHint);
-			this.m_tabTemplates.Controls.Add(this.m_cmbEntryTemplates);
-			this.m_tabTemplates.Controls.Add(this.m_lblEntryTemplatesGroup);
-			this.m_tabTemplates.Location = new System.Drawing.Point(4, 22);
-			this.m_tabTemplates.Name = "m_tabTemplates";
-			this.m_tabTemplates.Size = new System.Drawing.Size(455, 294);
-			this.m_tabTemplates.TabIndex = 5;
-			this.m_tabTemplates.Text = "Templates";
-			this.m_tabTemplates.UseVisualStyleBackColor = true;
+			this.m_tabAdvanced.Controls.Add(this.m_grpMasterKey);
+			this.m_tabAdvanced.Controls.Add(this.m_grpTemplates);
+			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
+			this.m_tabAdvanced.Name = "m_tabAdvanced";
+			this.m_tabAdvanced.Size = new System.Drawing.Size(455, 294);
+			this.m_tabAdvanced.TabIndex = 5;
+			this.m_tabAdvanced.Text = "Advanced";
+			this.m_tabAdvanced.UseVisualStyleBackColor = true;
 			// 
-			// m_lblTemplatesHint
+			// m_grpMasterKey
 			// 
-			this.m_lblTemplatesHint.Location = new System.Drawing.Point(3, 257);
-			this.m_lblTemplatesHint.Name = "m_lblTemplatesHint";
-			this.m_lblTemplatesHint.Size = new System.Drawing.Size(443, 28);
-			this.m_lblTemplatesHint.TabIndex = 2;
-			this.m_lblTemplatesHint.Text = "Click the drop-down arrow of the \'Add Entry\' toolbar button in the main window to" +
-				" create a new entry based on a template in the group above.";
+			this.m_grpMasterKey.Controls.Add(this.m_cbKeyForce);
+			this.m_grpMasterKey.Controls.Add(this.m_cbKeyRec);
+			this.m_grpMasterKey.Controls.Add(this.m_numKeyForceDays);
+			this.m_grpMasterKey.Controls.Add(this.m_numKeyRecDays);
+			this.m_grpMasterKey.Location = new System.Drawing.Point(6, 117);
+			this.m_grpMasterKey.Name = "m_grpMasterKey";
+			this.m_grpMasterKey.Size = new System.Drawing.Size(440, 75);
+			this.m_grpMasterKey.TabIndex = 1;
+			this.m_grpMasterKey.TabStop = false;
+			this.m_grpMasterKey.Text = "Master key";
+			// 
+			// m_cbKeyForce
+			// 
+			this.m_cbKeyForce.AutoSize = true;
+			this.m_cbKeyForce.Location = new System.Drawing.Point(9, 44);
+			this.m_cbKeyForce.Name = "m_cbKeyForce";
+			this.m_cbKeyForce.Size = new System.Drawing.Size(172, 17);
+			this.m_cbKeyForce.TabIndex = 2;
+			this.m_cbKeyForce.Text = "Force changing the key (days):";
+			this.m_cbKeyForce.UseVisualStyleBackColor = true;
+			this.m_cbKeyForce.CheckedChanged += new System.EventHandler(this.OnKeyForceCheckedChanged);
+			// 
+			// m_cbKeyRec
+			// 
+			this.m_cbKeyRec.AutoSize = true;
+			this.m_cbKeyRec.Location = new System.Drawing.Point(9, 19);
+			this.m_cbKeyRec.Name = "m_cbKeyRec";
+			this.m_cbKeyRec.Size = new System.Drawing.Size(205, 17);
+			this.m_cbKeyRec.TabIndex = 0;
+			this.m_cbKeyRec.Text = "Recommend changing the key (days):";
+			this.m_cbKeyRec.UseVisualStyleBackColor = true;
+			this.m_cbKeyRec.CheckedChanged += new System.EventHandler(this.OnKeyRecCheckedChanged);
+			// 
+			// m_numKeyForceDays
+			// 
+			this.m_numKeyForceDays.Location = new System.Drawing.Point(349, 43);
+			this.m_numKeyForceDays.Name = "m_numKeyForceDays";
+			this.m_numKeyForceDays.Size = new System.Drawing.Size(81, 20);
+			this.m_numKeyForceDays.TabIndex = 3;
+			this.m_numKeyForceDays.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_numKeyRecDays
+			// 
+			this.m_numKeyRecDays.Location = new System.Drawing.Point(349, 18);
+			this.m_numKeyRecDays.Name = "m_numKeyRecDays";
+			this.m_numKeyRecDays.Size = new System.Drawing.Size(81, 20);
+			this.m_numKeyRecDays.TabIndex = 1;
+			this.m_numKeyRecDays.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_grpTemplates
+			// 
+			this.m_grpTemplates.Controls.Add(this.m_cmbEntryTemplates);
+			this.m_grpTemplates.Controls.Add(this.m_lblTemplatesHint);
+			this.m_grpTemplates.Controls.Add(this.m_lblEntryTemplatesGroup);
+			this.m_grpTemplates.Location = new System.Drawing.Point(6, 7);
+			this.m_grpTemplates.Name = "m_grpTemplates";
+			this.m_grpTemplates.Size = new System.Drawing.Size(440, 104);
+			this.m_grpTemplates.TabIndex = 0;
+			this.m_grpTemplates.TabStop = false;
+			this.m_grpTemplates.Text = "Templates";
 			// 
 			// m_cmbEntryTemplates
 			// 
 			this.m_cmbEntryTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbEntryTemplates.FormattingEnabled = true;
-			this.m_cmbEntryTemplates.Location = new System.Drawing.Point(6, 31);
+			this.m_cmbEntryTemplates.Location = new System.Drawing.Point(9, 35);
 			this.m_cmbEntryTemplates.Name = "m_cmbEntryTemplates";
-			this.m_cmbEntryTemplates.Size = new System.Drawing.Size(440, 21);
+			this.m_cmbEntryTemplates.Size = new System.Drawing.Size(421, 21);
 			this.m_cmbEntryTemplates.TabIndex = 1;
+			// 
+			// m_lblTemplatesHint
+			// 
+			this.m_lblTemplatesHint.Location = new System.Drawing.Point(6, 68);
+			this.m_lblTemplatesHint.Name = "m_lblTemplatesHint";
+			this.m_lblTemplatesHint.Size = new System.Drawing.Size(424, 28);
+			this.m_lblTemplatesHint.TabIndex = 2;
+			this.m_lblTemplatesHint.Text = "Click the drop-down arrow of the \'Add Entry\' toolbar button in the main window to" +
+				" create a new entry based on a template in the group above.";
 			// 
 			// m_lblEntryTemplatesGroup
 			// 
 			this.m_lblEntryTemplatesGroup.AutoSize = true;
-			this.m_lblEntryTemplatesGroup.Location = new System.Drawing.Point(3, 12);
+			this.m_lblEntryTemplatesGroup.Location = new System.Drawing.Point(6, 19);
 			this.m_lblEntryTemplatesGroup.Name = "m_lblEntryTemplatesGroup";
 			this.m_lblEntryTemplatesGroup.Size = new System.Drawing.Size(112, 13);
 			this.m_lblEntryTemplatesGroup.TabIndex = 0;
@@ -648,8 +720,13 @@
 			this.m_tabCompression.PerformLayout();
 			this.m_tabRecycleBin.ResumeLayout(false);
 			this.m_tabRecycleBin.PerformLayout();
-			this.m_tabTemplates.ResumeLayout(false);
-			this.m_tabTemplates.PerformLayout();
+			this.m_tabAdvanced.ResumeLayout(false);
+			this.m_grpMasterKey.ResumeLayout(false);
+			this.m_grpMasterKey.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKeyForceDays)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKeyRecDays)).EndInit();
+			this.m_grpTemplates.ResumeLayout(false);
+			this.m_grpTemplates.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -695,7 +772,7 @@
 		private System.Windows.Forms.Label m_lblCpGZipPerf;
 		private System.Windows.Forms.Label m_lblCpGZipCp;
 		private System.Windows.Forms.Label m_lblHeaderCpAlgo;
-		private System.Windows.Forms.Label m_lblViewHint;
+		private System.Windows.Forms.Label m_lblTurnOffHint;
 		private System.Windows.Forms.TextBox m_tbDefaultUser;
 		private System.Windows.Forms.Label m_lblDefaultUser;
 		private System.Windows.Forms.TabPage m_tabRecycleBin;
@@ -703,9 +780,15 @@
 		private System.Windows.Forms.CheckBox m_cbRecycleBin;
 		private System.Windows.Forms.ComboBox m_cmbRecycleBin;
 		private System.Windows.Forms.Label m_lblRecycleBinGroup;
-		private System.Windows.Forms.TabPage m_tabTemplates;
+		private System.Windows.Forms.TabPage m_tabAdvanced;
 		private System.Windows.Forms.ComboBox m_cmbEntryTemplates;
 		private System.Windows.Forms.Label m_lblEntryTemplatesGroup;
 		private System.Windows.Forms.Label m_lblTemplatesHint;
+		private System.Windows.Forms.GroupBox m_grpTemplates;
+		private System.Windows.Forms.GroupBox m_grpMasterKey;
+		private System.Windows.Forms.CheckBox m_cbKeyForce;
+		private System.Windows.Forms.CheckBox m_cbKeyRec;
+		private System.Windows.Forms.NumericUpDown m_numKeyForceDays;
+		private System.Windows.Forms.NumericUpDown m_numKeyRecDays;
 	}
 }

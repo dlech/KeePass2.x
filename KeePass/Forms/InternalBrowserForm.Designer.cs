@@ -55,6 +55,7 @@
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(779, 24);
 			this.m_menuMain.TabIndex = 0;
+			this.m_menuMain.TabStop = true;
 			// 
 			// m_menuFile
 			// 
@@ -112,6 +113,7 @@
 			this.m_toolNav.Name = "m_toolNav";
 			this.m_toolNav.Size = new System.Drawing.Size(779, 25);
 			this.m_toolNav.TabIndex = 3;
+			this.m_toolNav.TabStop = true;
 			// 
 			// m_btnBack
 			// 

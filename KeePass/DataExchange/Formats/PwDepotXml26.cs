@@ -34,6 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 2.6-4+
 	internal sealed class PwDepotXml26 : FileFormatProvider
 	{
 		private const string ElemHeader = "HEADER";
@@ -50,9 +51,15 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemEntryNotes = "COMMENT";
 		private const string ElemEntryLastModTime = "LASTMODIFIED";
 		private const string ElemEntryExpireTime = "EXPIRYDATE";
-		private const string ElemEntryImportance = "IMPORTANCE";
 		private const string ElemEntryAutoType = "TEMPLATE";
 		private const string ElemEntryCustom = "CUSTOMFIELDS";
+
+		private static readonly string[] ElemEntryUnsupportedItems = new string[]{
+			"IMPORTANCE", "IMAGECUSTOM", "PARAMSTR",
+			"CATEGORY", "CUSTOMBROWSER", "AUTOCOMPLETEMETHOD"
+		};
+
+		private const string ElemImageIndex = "IMAGEINDEX";
 
 		private const string ElemCustomField = "FIELD";
 		private const string ElemCustomFieldName = "NAME";
@@ -61,7 +68,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Depot XML 2.6"; } }
+		public override string FormatName { get { return "Password Depot XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
@@ -158,12 +165,15 @@ namespace KeePass.DataExchange.Formats
 					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
 						pe.ExpiryTime = dt;
 				}
-				else if(xmlChild.Name == ElemEntryImportance) { } // Unsupported
 				else if(xmlChild.Name == ElemEntryAutoType)
 					pe.AutoType.DefaultSequence = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemEntryCustom)
 					ReadCustomContainer(xmlChild, pe);
-				else { Debug.Assert(false); }
+				else if(xmlChild.Name == ElemImageIndex)
+					pe.IconId = MapIcon(XmlUtil.SafeInnerText(xmlChild), true);
+				else if(Array.IndexOf<string>(ElemEntryUnsupportedItems,
+					xmlChild.Name) >= 0) { }
+				else { Debug.Assert(false, xmlChild.Name); }
 			}
 		}
 
@@ -194,6 +204,38 @@ namespace KeePass.DataExchange.Formats
 				pe.Strings.Set(Guid.NewGuid().ToString(), new ProtectedString(false, strValue));
 			else
 				pe.Strings.Set(strName, new ProtectedString(false, strValue));
+		}
+
+		private static PwIcon MapIcon(string strIconId, bool bEntryIcon)
+		{
+			PwIcon ico = (bEntryIcon ? PwIcon.Key : PwIcon.Folder);
+
+			int idIcon;
+			if(!int.TryParse(strIconId, out idIcon)) return ico;
+
+			++idIcon; // In the icon picker dialog, all indices are + 1
+			switch(idIcon)
+			{
+				case 1: ico = PwIcon.Key; break;
+				case 4: ico = PwIcon.Folder; break;
+				case 5: ico = PwIcon.LockOpen; break;
+				case 15: ico = PwIcon.EMail; break;
+				case 16: ico = PwIcon.EMail; break;
+				case 17: ico = PwIcon.ProgramIcons; break;
+				case 18: ico = PwIcon.ProgramIcons; break;
+				case 21: ico = PwIcon.World; break;
+				case 22: ico = PwIcon.World; break;
+				case 25: ico = PwIcon.Money; break;
+				case 26: ico = PwIcon.Money; break;
+				case 27: ico = PwIcon.Star; break;
+				case 28: ico = PwIcon.Star; break;
+				case 47: ico = PwIcon.FolderOpen; break;
+				case 48: ico = PwIcon.TrashBin; break;
+				case 49: ico = PwIcon.TrashBin; break;
+				default: break;
+			};
+
+			return ico;
 		}
 	}
 }

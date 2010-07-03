@@ -33,6 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 4.50
 	internal sealed class PinsTxt450 : FileFormatProvider
 	{
 		private const string FirstLine = "\"Category\"\t\"System\"\t\"User\"\t" +
@@ -43,7 +44,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "PINs TXT 4.50"; } }
+		public override string FormatName { get { return "PINs TXT"; } }
 		public override string DefaultExtension { get { return "txt"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

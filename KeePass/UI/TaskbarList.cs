@@ -25,6 +25,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 
+// using KeePass.Native;
+
 namespace KeePass.UI
 {
 	public static class TaskbarList
@@ -76,6 +78,30 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		/* public static void SetThumbnailClip(IntPtr hWnd, Rectangle? rect)
+		{
+			if(!EnsureInitialized()) return;
+
+			try
+			{
+				if(!rect.HasValue)
+					m_tbList.SetThumbnailClip(hWnd, IntPtr.Zero);
+				else
+				{
+					NativeMethods.RECT rc = new NativeMethods.RECT(rect.Value);
+					IntPtr prc = Marshal.AllocCoTaskMem(Marshal.SizeOf(
+						typeof(NativeMethods.RECT)));
+					Marshal.StructureToPtr(rc, prc, false);
+
+					m_tbList.SetThumbnailClip(hWnd, prc);
+
+					Marshal.DestroyStructure(prc, typeof(NativeMethods.RECT));
+					Marshal.FreeCoTaskMem(prc);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 	}
 
 	[Flags]
@@ -90,6 +116,7 @@ namespace KeePass.UI
 
 	internal enum TbatFlag
 	{
+		None = 0x0,
 		UseMdiThumbnail = 0x1,
 		UseMdiLivePreview = 0x2
 	}

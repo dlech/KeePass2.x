@@ -302,40 +302,75 @@ namespace KeePass.DataExchange
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				if(pg == pgRoot) return true;
-
-				Kdb3Group grp = new Kdb3Group();
-
-				grp.GroupId = uGroupIndex;
-				dictGroups[pg] = grp.GroupId;
-
-				grp.ImageId = (uint)pg.IconId;
-				grp.Name = pg.Name;
-				grp.CreationTime.Set(pg.CreationTime);
-				grp.LastModificationTime.Set(pg.LastModificationTime);
-				grp.LastAccessTime.Set(pg.LastAccessTime);
-
-				if(pg.Expires)
-					grp.ExpirationTime.Set(pg.ExpiryTime);
-				else grp.ExpirationTime.Set(dtNeverExpire);
-
-				grp.Level = (ushort)(pg.GetLevel() - 1);
-
-				if(pg.IsExpanded) grp.Flags |= (uint)Kdb3GroupFlags.Expanded;
-
-				if(!mgr.AddGroup(ref grp))
-				{
-					Debug.Assert(false);
-					throw new InvalidOperationException();
-				}
-
-				++uGroupIndex;
+				WriteGroup(pg, pgRoot, ref uGroupIndex, dictGroups, dtNeverExpire,
+					mgr, false);
 				return true;
 			};
 
 			pgRoot.TraverseTree(TraversalMethod.PreOrder, gh, null);
 			Debug.Assert(dictGroups.Count == (int)(uGroupIndex - 1));
+
+			EnsureParentGroupsExported(pgRoot, ref uGroupIndex, dictGroups,
+				dtNeverExpire, mgr);
 			return dictGroups;
+		}
+
+		private static void WriteGroup(PwGroup pg, PwGroup pgRoot, ref uint uGroupIndex,
+			Dictionary<PwGroup, UInt32> dictGroups, DateTime dtNeverExpire,
+			Kdb3Manager mgr, bool bForceLevel0)
+		{
+			if(pg == pgRoot) return;
+
+			Kdb3Group grp = new Kdb3Group();
+
+			grp.GroupId = uGroupIndex;
+			dictGroups[pg] = grp.GroupId;
+
+			grp.ImageId = (uint)pg.IconId;
+			grp.Name = pg.Name;
+			grp.CreationTime.Set(pg.CreationTime);
+			grp.LastModificationTime.Set(pg.LastModificationTime);
+			grp.LastAccessTime.Set(pg.LastAccessTime);
+
+			if(pg.Expires)
+				grp.ExpirationTime.Set(pg.ExpiryTime);
+			else grp.ExpirationTime.Set(dtNeverExpire);
+
+			grp.Level = (bForceLevel0 ? (ushort)0 : (ushort)(pg.GetLevel() - 1));
+
+			if(pg.IsExpanded) grp.Flags |= (uint)Kdb3GroupFlags.Expanded;
+
+			if(!mgr.AddGroup(ref grp))
+			{
+				Debug.Assert(false);
+				throw new InvalidOperationException();
+			}
+
+			++uGroupIndex;
+		}
+
+		private static void EnsureParentGroupsExported(PwGroup pgRoot, ref uint uGroupIndex,
+			Dictionary<PwGroup, UInt32> dictGroups, DateTime dtNeverExpires,
+			Kdb3Manager mgr)
+		{
+			bool bHasAtLeastOneGroup = (dictGroups.Count > 0);
+			uint uLocalIndex = uGroupIndex; // Local copy, can't use ref in delegate
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				PwGroup pg = pe.ParentGroup;
+				if(pg == null) { Debug.Assert(false); return true; }
+				if(bHasAtLeastOneGroup && (pg == pgRoot)) return true;
+
+				if(dictGroups.ContainsKey(pg)) return true;
+
+				WriteGroup(pg, pgRoot, ref uLocalIndex, dictGroups, dtNeverExpires,
+					mgr, true);
+				return true;
+			};
+
+			pgRoot.TraverseTree(TraversalMethod.PreOrder, null, eh);
+			uGroupIndex = uLocalIndex;
 		}
 
 		private void WriteEntries(Kdb3Manager mgr, Dictionary<PwGroup, uint> dictGroups,
@@ -580,7 +615,7 @@ namespace KeePass.DataExchange
 				m_dSeq1xTo2xBiDir = new Dictionary<string, string>();
 
 				m_dSeq1xTo2x[@"{SPACE}"] = " ";
-				m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}(+{END}){DEL}";
+				m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}+({END}){DEL}";
 
 				m_dSeq1xTo2xBiDir[@"{AT}"] = @"@";
 				m_dSeq1xTo2xBiDir[@"{PLUS}"] = @"{+}";
@@ -591,6 +626,7 @@ namespace KeePass.DataExchange
 				m_dSeq1xTo2xBiDir[@"{RIGHTBRACE}"] = @"{}}";
 				m_dSeq1xTo2xBiDir[@"{LEFTPAREN}"] = @"{(}";
 				m_dSeq1xTo2xBiDir[@"{RIGHTPAREN}"] = @"{)}";
+				m_dSeq1xTo2xBiDir[@"(+{END})"] = @"+({END})";
 			}
 
 			string str = strSeq.Trim();

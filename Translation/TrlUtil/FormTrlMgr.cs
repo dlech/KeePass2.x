@@ -45,6 +45,7 @@ namespace TrlUtil
 
 			AddForm(l, new AboutForm());
 			AddForm(l, new CharPickerForm());
+			AddForm(l, new ColumnsForm());
 			AddForm(l, new DatabaseOperationsForm());
 			AddForm(l, new DatabaseSettingsForm());
 			AddForm(l, new DataEditorForm());

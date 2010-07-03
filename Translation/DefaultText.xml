@@ -70,6 +70,9 @@
 		<Data Name="AskContinue">
 			<Value>Do you want to continue?</Value>
 		</Data>
+		<Data Name="Asterisks">
+			<Value>Asterisks</Value>
+		</Data>
 		<Data Name="AttachedExistsAlready">
 			<Value>The following file has already been attached to the current entry:</Value>
 		</Data>
@@ -229,6 +232,9 @@
 		<Data Name="CloseButtonMinimizes">
 			<Value>Close button [X] minimizes main window instead of terminating the application</Value>
 		</Data>
+		<Data Name="Column">
+			<Value>Column</Value>
+		</Data>
 		<Data Name="Company">
 			<Value>Company</Value>
 		</Data>
@@ -261,6 +267,12 @@
 		</Data>
 		<Data Name="ConfigureAutoTypeItemDesc">
 			<Value>Associate a window title with a keystroke sequence.</Value>
+		</Data>
+		<Data Name="ConfigureColumns">
+			<Value>Configure Columns</Value>
+		</Data>
+		<Data Name="ConfigureColumnsDesc">
+			<Value>Configure entry list columns.</Value>
 		</Data>
 		<Data Name="ConfigureKeystrokeSeq">
 			<Value>Configure Keystroke Sequence</Value>
@@ -303,6 +315,9 @@
 		</Data>
 		<Data Name="CopyUserFull">
 			<Value>Copy User Name to Clipboard</Value>
+		</Data>
+		<Data Name="Count">
+			<Value>Count</Value>
 		</Data>
 		<Data Name="CreateMasterKey">
 			<Value>Create Composite Master Key</Value>
@@ -502,6 +517,12 @@
 		<Data Name="EntryListAutoResizeColumns">
 			<Value>Automatically resize entry list columns when resizing the main window</Value>
 		</Data>
+		<Data Name="EntryView">
+			<Value>Entry View</Value>
+		</Data>
+		<Data Name="EntryViewHideProtectedCustomStrings">
+			<Value>Hide in-memory protected custom strings using asterisks</Value>
+		</Data>
 		<Data Name="EnvironmentVariable">
 			<Value>Environment variable</Value>
 		</Data>
@@ -528,6 +549,9 @@
 		</Data>
 		<Data Name="ExpiryTime">
 			<Value>Expiry Time</Value>
+		</Data>
+		<Data Name="ExpiryTimeDateOnly">
+			<Value>Expiry Time (Date Only)</Value>
 		</Data>
 		<Data Name="Export">
 			<Value>Export</Value>
@@ -679,6 +703,9 @@
 		<Data Name="Filter">
 			<Value>Filter</Value>
 		</Data>
+		<Data Name="Find">
+			<Value>Find</Value>
+		</Data>
 		<Data Name="FocusQuickFindOnUntray">
 			<Value>Focus quick search box when restoring from tray</Value>
 		</Data>
@@ -765,6 +792,9 @@
 		</Data>
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
+		</Data>
+		<Data Name="History">
+			<Value>History</Value>
 		</Data>
 		<Data Name="Homebanking">
 			<Value>Homebanking</Value>
@@ -934,6 +964,18 @@
 		<Data Name="MasterKeyChangedSavePrompt">
 			<Value>Save the database now in order to get the new key applied.</Value>
 		</Data>
+		<Data Name="MasterKeyChangeForce">
+			<Value>The master key for this database has been used for quite a while and must be changed now.</Value>
+		</Data>
+		<Data Name="MasterKeyChangeInfo">
+			<Value>Click [OK] to open the master key changing dialog.</Value>
+		</Data>
+		<Data Name="MasterKeyChangeQ">
+			<Value>Do you want to change the master key now?</Value>
+		</Data>
+		<Data Name="MasterKeyChangeRec">
+			<Value>The master key for this database has been used for quite a while and it is recommended to change it now.</Value>
+		</Data>
 		<Data Name="MasterPasswordMinLengthFailed">
 			<Value>The master password must be at least {PARAM} characters long!</Value>
 		</Data>
@@ -957,6 +999,9 @@
 		</Data>
 		<Data Name="MinimizeToTray">
 			<Value>Minimize to tray instead of taskbar</Value>
+		</Data>
+		<Data Name="More">
+			<Value>More</Value>
 		</Data>
 		<Data Name="Name">
 			<Value>Name</Value>
@@ -1285,14 +1330,14 @@
 		<Data Name="ShowAllEntries">
 			<Value>Show All Entries</Value>
 		</Data>
+		<Data Name="ShowEntries">
+			<Value>Show Entries</Value>
+		</Data>
 		<Data Name="ShowExpiredEntries">
 			<Value>Show Expired Entries</Value>
 		</Data>
 		<Data Name="ShowFullPathInTitleBar">
 			<Value>Show full path in title bar (instead of file name only)</Value>
-		</Data>
-		<Data Name="ShowGridLines">
-			<Value>Show grid lines in entry list</Value>
 		</Data>
 		<Data Name="ShowIn">
 			<Value>Show in</Value>
@@ -1353,6 +1398,21 @@
 		</Data>
 		<Data Name="SystemCodePage">
 			<Value>System Code Page</Value>
+		</Data>
+		<Data Name="Tag">
+			<Value>Tag</Value>
+		</Data>
+		<Data Name="TagAddNew">
+			<Value>Add a new tag.</Value>
+		</Data>
+		<Data Name="TagNew">
+			<Value>New Tag</Value>
+		</Data>
+		<Data Name="Tags">
+			<Value>Tags</Value>
+		</Data>
+		<Data Name="TagsNotFound">
+			<Value>No tags found</Value>
 		</Data>
 		<Data Name="TanExpiresOnUse">
 			<Value>Mark TAN entries as expired when using them</Value>
@@ -1446,6 +1506,12 @@
 		</Data>
 		<Data Name="Undo">
 			<Value>Undo</Value>
+		</Data>
+		<Data Name="UnhidePasswords">
+			<Value>Unhide Passwords</Value>
+		</Data>
+		<Data Name="UnhidePasswordsDesc">
+			<Value>Allow displaying passwords as plain text.</Value>
 		</Data>
 		<Data Name="Unknown">
 			<Value>Unknown</Value>
@@ -1607,7 +1673,7 @@
 			<Value>Failed to create the final encryption/decryption key!</Value>
 		</Data>
 		<Data Name="FrameworkNotImplExcp">
-			<Value>The .NET framework/runtime, under which KeePass is currently running, does not support this operation.</Value>
+			<Value>The .NET framework/runtime under which KeePass is currently running does not support this operation.</Value>
 		</Data>
 		<Data Name="InvalidCompositeKey">
 			<Value>The composite key is invalid!</Value>

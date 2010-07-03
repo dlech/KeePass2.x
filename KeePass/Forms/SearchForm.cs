@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -45,6 +44,7 @@ namespace KeePass.Forms
 	/// </summary>
 	public partial class SearchForm : Form, IGwmWindow
 	{
+		private PwDatabase m_pdContext = null;
 		private PwGroup m_pgRoot = null;
 		private PwGroup m_pgResultsGroup = null;
 
@@ -71,8 +71,9 @@ namespace KeePass.Forms
 		/// Initialize the form. Must be called before the dialog is displayed.
 		/// </summary>
 		/// <param name="pwRoot">Data source group. This group will be searched.</param>
-		public void InitEx(PwGroup pwRoot)
+		public void InitEx(PwDatabase pdContext, PwGroup pwRoot)
 		{
+			m_pdContext = pdContext;
 			m_pgRoot = pwRoot;
 		}
 
@@ -92,14 +93,16 @@ namespace KeePass.Forms
 				KPRes.SearchDesc);
 			this.Icon = Properties.Resources.KeePass;
 
-			m_cbTitle.Checked = Program.Config.Defaults.SearchParameters.SearchInTitles;
-			m_cbUserName.Checked = Program.Config.Defaults.SearchParameters.SearchInUserNames;
-			m_cbURL.Checked = Program.Config.Defaults.SearchParameters.SearchInUrls;
-			m_cbPassword.Checked = Program.Config.Defaults.SearchParameters.SearchInPasswords;
-			m_cbNotes.Checked = Program.Config.Defaults.SearchParameters.SearchInNotes;
-			m_cbOtherFields.Checked = Program.Config.Defaults.SearchParameters.SearchInOther;
-			m_cbUuid.Checked = Program.Config.Defaults.SearchParameters.SearchInUuids;
-			m_cbGroupName.Checked = Program.Config.Defaults.SearchParameters.SearchInGroupNames;
+			SearchParameters sp = Program.Config.Defaults.SearchParameters;
+			m_cbTitle.Checked = sp.SearchInTitles;
+			m_cbUserName.Checked = sp.SearchInUserNames;
+			m_cbURL.Checked = sp.SearchInUrls;
+			m_cbPassword.Checked = sp.SearchInPasswords;
+			m_cbNotes.Checked = sp.SearchInNotes;
+			m_cbOtherFields.Checked = sp.SearchInOther;
+			m_cbUuid.Checked = sp.SearchInUuids;
+			m_cbGroupName.Checked = sp.SearchInGroupNames;
+			m_cbTags.Checked = sp.SearchInTags;
 
 			StringComparison sc = Program.Config.Defaults.SearchParameters.ComparisonMode;
 			m_cbCaseSensitive.Checked = ((sc != StringComparison.CurrentCultureIgnoreCase) &&
@@ -136,6 +139,9 @@ namespace KeePass.Forms
 
 			PwObjectList<PwEntry> listResults = pgResults.Entries;
 
+			if(m_pdContext != null)
+				MainForm.AutoAdjustMemProtSettings(m_pdContext, sp);
+
 			try { m_pgRoot.SearchEntries(sp, listResults, true); }
 			catch(Exception exFind) { MessageService.ShowWarning(exFind); }
 
@@ -171,6 +177,7 @@ namespace KeePass.Forms
 			sp.SearchInOther = m_cbOtherFields.Checked;
 			sp.SearchInUuids = m_cbUuid.Checked;
 			sp.SearchInGroupNames = m_cbGroupName.Checked;
+			sp.SearchInTags = m_cbTags.Checked;
 
 			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
 				StringComparison.InvariantCulture :

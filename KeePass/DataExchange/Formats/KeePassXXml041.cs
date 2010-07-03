@@ -38,12 +38,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 0.4.1
 	internal sealed class KeePassXXml041 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "KeePassX XML 0.4.1"; } }
+		public override string FormatName { get { return "KeePassX XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

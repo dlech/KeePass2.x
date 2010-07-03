@@ -39,12 +39,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 2007-03-28
 	internal sealed class Spamex20070328 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Spamex.com 2007-03-28"; } }
+		public override string FormatName { get { return "Spamex.com"; } }
 		public override string ApplicationGroup { get { return KPRes.WebSites; } }
 
 		public override bool ImportAppendsToRootGroupOnly { get { return true; } }

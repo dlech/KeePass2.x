@@ -193,6 +193,17 @@ namespace KeePass.App.Configuration
 		{
 			m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
 			ChangePathsRelAbs(true);
+
+			// Remove invalid columns
+			List<AceColumn> vColumns = m_uiMainWindow.EntryListColumns;
+			int i = 0;
+			while(i < vColumns.Count)
+			{
+				if(((int)vColumns[i].Type < 0) || ((int)vColumns[i].Type >=
+					(int)AceColumnType.Count))
+					vColumns.RemoveAt(i);
+				else ++i;
+			}
 		}
 
 		internal void OnSavePre()

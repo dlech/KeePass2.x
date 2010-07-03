@@ -34,6 +34,8 @@
 			this.m_tbSearch = new System.Windows.Forms.TextBox();
 			this.m_lblSearchFor = new System.Windows.Forms.Label();
 			this.m_grpSearchIn = new System.Windows.Forms.GroupBox();
+			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
+			this.m_cbUuid = new System.Windows.Forms.CheckBox();
 			this.m_cbOtherFields = new System.Windows.Forms.CheckBox();
 			this.m_cbNotes = new System.Windows.Forms.CheckBox();
 			this.m_cbURL = new System.Windows.Forms.CheckBox();
@@ -44,8 +46,7 @@
 			this.m_cbExcludeExpired = new System.Windows.Forms.CheckBox();
 			this.m_cbCaseSensitive = new System.Windows.Forms.CheckBox();
 			this.m_cbRegEx = new System.Windows.Forms.CheckBox();
-			this.m_cbUuid = new System.Windows.Forms.CheckBox();
-			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
+			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpSearchIn.SuspendLayout();
 			this.m_grpOptions.SuspendLayout();
@@ -100,6 +101,7 @@
 			// 
 			// m_grpSearchIn
 			// 
+			this.m_grpSearchIn.Controls.Add(this.m_cbTags);
 			this.m_grpSearchIn.Controls.Add(this.m_cbGroupName);
 			this.m_grpSearchIn.Controls.Add(this.m_cbUuid);
 			this.m_grpSearchIn.Controls.Add(this.m_cbOtherFields);
@@ -114,6 +116,26 @@
 			this.m_grpSearchIn.TabIndex = 3;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
+			// 
+			// m_cbGroupName
+			// 
+			this.m_cbGroupName.AutoSize = true;
+			this.m_cbGroupName.Location = new System.Drawing.Point(217, 65);
+			this.m_cbGroupName.Name = "m_cbGroupName";
+			this.m_cbGroupName.Size = new System.Drawing.Size(84, 17);
+			this.m_cbGroupName.TabIndex = 8;
+			this.m_cbGroupName.Text = "&Group name";
+			this.m_cbGroupName.UseVisualStyleBackColor = true;
+			// 
+			// m_cbUuid
+			// 
+			this.m_cbUuid.AutoSize = true;
+			this.m_cbUuid.Location = new System.Drawing.Point(9, 65);
+			this.m_cbUuid.Name = "m_cbUuid";
+			this.m_cbUuid.Size = new System.Drawing.Size(53, 17);
+			this.m_cbUuid.TabIndex = 6;
+			this.m_cbUuid.Text = "UU&ID";
+			this.m_cbUuid.UseVisualStyleBackColor = true;
 			// 
 			// m_cbOtherFields
 			// 
@@ -216,25 +238,15 @@
 			this.m_cbRegEx.Text = "&Regular expression";
 			this.m_cbRegEx.UseVisualStyleBackColor = true;
 			// 
-			// m_cbUuid
+			// m_cbTags
 			// 
-			this.m_cbUuid.AutoSize = true;
-			this.m_cbUuid.Location = new System.Drawing.Point(9, 65);
-			this.m_cbUuid.Name = "m_cbUuid";
-			this.m_cbUuid.Size = new System.Drawing.Size(53, 17);
-			this.m_cbUuid.TabIndex = 6;
-			this.m_cbUuid.Text = "UU&ID";
-			this.m_cbUuid.UseVisualStyleBackColor = true;
-			// 
-			// m_cbGroupName
-			// 
-			this.m_cbGroupName.AutoSize = true;
-			this.m_cbGroupName.Location = new System.Drawing.Point(113, 65);
-			this.m_cbGroupName.Name = "m_cbGroupName";
-			this.m_cbGroupName.Size = new System.Drawing.Size(84, 17);
-			this.m_cbGroupName.TabIndex = 7;
-			this.m_cbGroupName.Text = "&Group name";
-			this.m_cbGroupName.UseVisualStyleBackColor = true;
+			this.m_cbTags.AutoSize = true;
+			this.m_cbTags.Location = new System.Drawing.Point(113, 65);
+			this.m_cbTags.Name = "m_cbTags";
+			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
+			this.m_cbTags.TabIndex = 7;
+			this.m_cbTags.Text = "T&ags";
+			this.m_cbTags.UseVisualStyleBackColor = true;
 			// 
 			// SearchForm
 			// 
@@ -290,5 +302,6 @@
 		private System.Windows.Forms.CheckBox m_cbExcludeExpired;
 		private System.Windows.Forms.CheckBox m_cbGroupName;
 		private System.Windows.Forms.CheckBox m_cbUuid;
+		private System.Windows.Forms.CheckBox m_cbTags;
 	}
 }

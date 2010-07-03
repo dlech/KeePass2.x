@@ -32,22 +32,6 @@ namespace KeePass.App
 {
 	public static class AppDefs
 	{
-		public enum ColumnId
-		{
-			Title,
-			UserName,
-			Password,
-			Url,
-			Notes,
-			CreationTime, // Do not change order without checking all references
-			LastAccessTime, // ^
-			LastModificationTime, // ^
-			ExpiryTime, // ^
-			Uuid,
-			Attachment,
-			Count // Virtual identifier representing the number of columns
-		}
-
 		public static readonly Color ColorControlNormal = SystemColors.Window;
 		public static readonly Color ColorControlDisabled = SystemColors.Control;
 		public static readonly Color ColorEditError = Color.FromArgb(255, 192, 192);
@@ -128,6 +112,10 @@ namespace KeePass.App
 			public const string FileExtRegister = "registerfileext";
 			public const string FileExtUnregister = "unregisterfileext";
 
+			public const string PreLoad = "preload";
+			// public const string PreLoadRegister = "registerpreload";
+			// public const string PreLoadUnregister = "unregisterpreload";
+
 			public const string ExitAll = "exit-all";
 			public const string Minimize = "minimize";
 			public const string AutoType = "auto-type";
@@ -167,6 +155,7 @@ namespace KeePass.App
 		}
 
 		public const string AutoRunName = "KeePass Password Safe 2";
+		public const string PreLoadName = "KeePass 2 PreLoad";
 
 		public const string MutexName = "KeePassAppMutex";
 		public const string MutexNameGlobal = "KeePassAppMutexEx";

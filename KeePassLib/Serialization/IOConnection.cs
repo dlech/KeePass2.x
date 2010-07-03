@@ -48,9 +48,11 @@ namespace KeePassLib.Serialization
 
 	public static class IOConnection
 	{
+		// Web request methods
 		public const string WrmDeleteFile = "DELETEFILE";
 		public const string WrmMoveFile = "MOVEFILE";
 
+		// Web request headers
 		public const string WrhMoveFileTo = "MoveFileTo";
 
 #if !KeePassLibSD
@@ -153,14 +155,29 @@ namespace KeePassLib.Serialization
 
 		public static bool FileExists(IOConnectionInfo ioc)
 		{
+			return FileExists(ioc, false);
+		}
+
+		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
+		{
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 
 			try
 			{
 				Stream s = OpenRead(ioc);
-				s.Close();
+				if(s == null) throw new FileNotFoundException();
+
+				// For FTP clients we called RETR to get the file, but we never
+				// followed-up and downloaded the file. Close may produce a
+				// 550 error -- that's okay
+				try { s.Close(); }
+				catch(Exception) { }
 			}
-			catch(Exception) { return false; }
+			catch(Exception)
+			{
+				if(bThrowErrors) throw;
+				return false;
+			}
 
 			return true;
 		}

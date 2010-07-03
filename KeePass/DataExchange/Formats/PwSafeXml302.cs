@@ -34,6 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 3.02
 	internal sealed class PwSafeXml302 : FileFormatProvider
 	{
 		private string m_strLineBreak = "\n";
@@ -67,7 +68,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Safe XML 3.02"; } }
+		public override string FormatName { get { return "Password Safe XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

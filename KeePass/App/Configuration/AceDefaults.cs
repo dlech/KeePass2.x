@@ -117,6 +117,17 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private string m_strDbSaveAsPath = string.Empty;
+		public string FileSaveAsDirectory
+		{
+			get { return m_strDbSaveAsPath; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strDbSaveAsPath = value;
+			}
+		}
+
 		private bool m_bRememberKeySources = true;
 		public bool RememberKeySources
 		{

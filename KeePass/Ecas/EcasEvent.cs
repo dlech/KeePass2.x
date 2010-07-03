@@ -27,7 +27,7 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasEvent : IDeepClonable<EcasEvent>, IEcasObject
+	public sealed class EcasEvent : IDeepCloneable<EcasEvent>, IEcasObject
 	{
 		private PwUuid m_type = PwUuid.Zero;
 		[XmlIgnore]

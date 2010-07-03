@@ -26,13 +26,14 @@ using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib
 {
 	/// <summary>
 	/// A group containing several password entries.
 	/// </summary>
-	public sealed class PwGroup : ITimeLogger, IStructureItem, IDeepClonable<PwGroup>
+	public sealed class PwGroup : ITimeLogger, IStructureItem, IDeepCloneable<PwGroup>
 	{
 		public const bool DefaultAutoTypeEnabled = true;
 		public const bool DefaultSearchingEnabled = true;
@@ -679,6 +680,7 @@ namespace KeePassLib
 			bool bOther = searchParams.SearchInOther;
 			bool bUuids = searchParams.SearchInUuids;
 			bool bGroupName = searchParams.SearchInGroupNames;
+			bool bTags = searchParams.SearchInTags;
 			bool bExcludeExpired = searchParams.ExcludeExpired;
 
 			DateTime dtNow = DateTime.Now;
@@ -766,6 +768,16 @@ namespace KeePassLib
 						SearchEvalAdd(strSearch, pe.ParentGroup.Name,
 							scType, rx, pe, listStorage);
 
+					if(bTags)
+					{
+						foreach(string strTag in pe.Tags)
+						{
+							if(listStorage.UCount != uInitialResults) break; // Match
+
+							SearchEvalAdd(strSearch, strTag, scType, rx, pe, listStorage);
+						}
+					}
+
 					return true;
 				};
 			}
@@ -784,6 +796,59 @@ namespace KeePassLib
 			else // Regular expression
 			{
 				if(rx.IsMatch(strDataField)) lResults.Add(pe);
+			}
+		}
+
+		public List<string> BuildEntryTagsList()
+		{
+			List<string> vTags = new List<string>();
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				foreach(string strTag in pe.Tags)
+				{
+					bool bFound = false;
+					for(int i = 0; i < vTags.Count; ++i)
+					{
+						if(vTags[i].Equals(strTag, StrUtil.CaseIgnoreCmp))
+						{
+							bFound = true;
+							break;
+						}
+					}
+
+					if(!bFound) vTags.Add(strTag);
+				}
+
+				return true;
+			};
+
+			TraverseTree(TraversalMethod.PreOrder, null, eh);
+			return vTags;
+		}
+
+		public void FindEntriesByTag(string strTag, PwObjectList<PwEntry> listStorage,
+			bool bSearchRecursive)
+		{
+			if(strTag == null) throw new ArgumentNullException("strTag");
+			if(strTag.Length == 0) return;
+
+			foreach(PwEntry pe in m_listEntries)
+			{
+				foreach(string strEntryTag in pe.Tags)
+				{
+					if(strEntryTag.Equals(strTag, StrUtil.CaseIgnoreCmp))
+					{
+						listStorage.Add(pe);
+						break;
+					}
+				}
+			}
+
+			if(bSearchRecursive)
+			{
+				foreach(PwGroup pg in m_listGroups)
+					pg.FindEntriesByTag(strTag, listStorage, true);
 			}
 		}
 

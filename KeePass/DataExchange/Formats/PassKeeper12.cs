@@ -37,12 +37,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.2
 	internal sealed class PassKeeper12 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "PassKeeper 1.2"; } }
+		public override string FormatName { get { return "PassKeeper"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override bool RequiresFile { get { return false; } }

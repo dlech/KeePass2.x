@@ -37,7 +37,7 @@ namespace KeePassLib.Collections
 	/// A list of <c>ProtectedString</c> objects (dictionary).
 	/// </summary>
 	public sealed class ProtectedStringDictionary :
-		IDeepClonable<ProtectedStringDictionary>,
+		IDeepCloneable<ProtectedStringDictionary>,
 		IEnumerable<KeyValuePair<string, ProtectedString>>
 	{
 		private SortedDictionary<string, ProtectedString> m_vStrings =

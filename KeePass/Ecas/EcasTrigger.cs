@@ -30,7 +30,7 @@ using KeePassLib.Interfaces;
 namespace KeePass.Ecas
 {
 	[DebuggerDisplay("Name = {m_strName}")]
-	public sealed class EcasTrigger : IDeepClonable<EcasTrigger>
+	public sealed class EcasTrigger : IDeepCloneable<EcasTrigger>
 	{
 		private PwUuid m_uuid = PwUuid.Zero;
 		[XmlIgnore]

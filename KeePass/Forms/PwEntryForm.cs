@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -29,6 +28,7 @@ using System.Globalization;
 using System.IO;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.UI;
 using KeePass.Resources;
 using KeePass.Util;
@@ -131,6 +131,13 @@ namespace KeePass.Forms
 		public ContextMenuStrip StandardStringMovementContextMenu
 		{
 			get { return m_ctxStrMoveToStandard; }
+		}
+
+		private bool m_bInitSwitchToHistory = false;
+		internal bool InitSwitchToHistoryTab
+		{
+			get { return m_bInitSwitchToHistory; }
+			set { m_bInitSwitchToHistory = value; }
 		}
 
 		public PwEntryForm()
@@ -341,6 +348,7 @@ namespace KeePass.Forms
 			m_cbCustomBackgroundColor.Checked = (m_clrBackground != Color.Empty);
 
 			m_tbOverrideUrl.Text = m_pwEntry.OverrideUrl;
+			m_tbTags.Text = StrUtil.TagsToString(m_pwEntry.Tags, true);
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
@@ -349,6 +357,7 @@ namespace KeePass.Forms
 				m_btnPickFgColor.Enabled = false;
 				m_btnPickBgColor.Enabled = false;
 				m_tbOverrideUrl.ReadOnly = true;
+				m_tbTags.ReadOnly = true;
 			}
 
 			m_tbUuid.Text = m_pwEntry.Uuid.ToHexString();
@@ -486,7 +495,7 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_btnStandardExpires, KPRes.StandardExpireSelect);
 
 			m_clrNormalBackColor = m_tbPassword.BackColor;
-			m_dynGenProfiles = new DynamicMenu(m_ctxPwGenProfiles);
+			m_dynGenProfiles = new DynamicMenu(m_ctxPwGenProfiles.DropDownItems);
 			m_dynGenProfiles.MenuClick += this.OnProfilesDynamicMenuClick;
 			m_ctxNotes.Attach(m_rtNotes);
 
@@ -524,11 +533,15 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
+			bool bForceHide = !AppPolicy.Current.UnhidePasswords;
 			if(Program.Config.UI.Hiding.SeparateHidingSettings)
-				m_cbHidePassword.Checked = Program.Config.UI.Hiding.HideInEntryWindow;
+				m_cbHidePassword.Checked = (Program.Config.UI.Hiding.HideInEntryWindow || bForceHide);
 			else
-				m_cbHidePassword.Checked = Program.Config.MainWindow.ColumnsDict[
-					PwDefs.PasswordField].HideWithAsterisks;
+			{
+				AceColumn colPw = Program.Config.MainWindow.FindColumn(AceColumnType.Password);
+				m_cbHidePassword.Checked = (((colPw != null) ? colPw.HideWithAsterisks :
+					true) || bForceHide);
+			}
 
 			InitEntryTab();
 			InitAdvancedTab();
@@ -546,7 +559,9 @@ namespace KeePass.Forms
 
 			m_bInitializing = false;
 
-			if(m_bShowAdvancedByDefault)
+			if(m_bInitSwitchToHistory) // Before 'Advanced' tab switch
+				m_tabMain.SelectedTab = m_tabHistory;
+			else if(m_bShowAdvancedByDefault)
 				m_tabMain.SelectedTab = m_tabAdvanced;
 
 			ResizeColumnHeaders();
@@ -663,6 +678,10 @@ namespace KeePass.Forms
 
 			m_pwEntry.OverrideUrl = m_tbOverrideUrl.Text;
 
+			List<string> vNewTags = StrUtil.StringToTags(m_tbTags.Text);
+			m_pwEntry.Tags.Clear();
+			foreach(string strTag in vNewTags) m_pwEntry.AddTag(strTag);
+
 			m_pwEntry.Expires = m_cbExpires.Checked;
 			if(m_pwEntry.Expires) m_pwEntry.ExpiryTime = m_dtExpireDateTime.Value;
 
@@ -741,6 +760,12 @@ namespace KeePass.Forms
 		private void OnCheckedHidePassword(object sender, EventArgs e)
 		{
 			if(m_bInitializing) return;
+
+			if(!m_cbHidePassword.Checked && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
+			{
+				m_cbHidePassword.Checked = true;
+				return;
+			}
 
 			ProcessTextChangedRepeatPw(sender, e); // Clear red warning color
 			EnableControlsEx();
@@ -1156,20 +1181,18 @@ namespace KeePass.Forms
 			IconPickerForm ipf = new IconPickerForm();
 			ipf.InitEx(m_ilIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwEntryIcon, m_pwCustomIconID);
+			ipf.ShowDialog();
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 			{
-				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
-				{
-					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
-				}
-				else // Standard icon
-				{
-					m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
-					m_pwCustomIconID = PwUuid.Zero;
-					m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
-				}
+				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+			}
+			else // Standard icon
+			{
+				m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
+				m_pwCustomIconID = PwUuid.Zero;
+				m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
 			}
 		}
 
@@ -1561,6 +1584,11 @@ namespace KeePass.Forms
 		private void OnBinariesItemActivate(object sender, EventArgs e)
 		{
 			OnBtnBinView(sender, e);
+		}
+
+		private void OnHistoryItemActivate(object sender, EventArgs e)
+		{
+			OnBtnHistoryView(sender, e);
 		}
 	}
 }

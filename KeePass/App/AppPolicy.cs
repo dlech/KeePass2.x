@@ -43,7 +43,8 @@ namespace KeePass.App
 		CopyToClipboard,
 		DragDrop,
 		ChangeMasterKey,
-		EditTriggers
+		EditTriggers,
+		UnhidePasswords
 	}
 
 	/// <summary>
@@ -121,6 +122,13 @@ namespace KeePass.App
 			set { m_bTriggersEdit = value; }
 		}
 
+		private bool m_bUnhidePasswords = true;
+		public bool UnhidePasswords
+		{
+			get { return m_bUnhidePasswords; }
+			set { m_bUnhidePasswords = value; }
+		}
+
 		public AppPolicyFlags CloneDeep()
 		{
 			return (AppPolicyFlags)this.MemberwiseClone();
@@ -192,6 +200,9 @@ namespace KeePass.App
 				case AppPolicyId.EditTriggers:
 					str += KPRes.TriggersEdit;
 					break;
+				case AppPolicyId.UnhidePasswords:
+					str += KPRes.UnhidePasswords;
+					break;
 				default:
 					Debug.Assert(false);
 					str += KPRes.Unknown + ".";
@@ -234,6 +245,9 @@ namespace KeePass.App
 				case AppPolicyId.EditTriggers:
 					str += KPRes.PolicyTriggersEditDesc;
 					break;
+				case AppPolicyId.UnhidePasswords:
+					str += KPRes.UnhidePasswordsDesc;
+					break;
 				default:
 					Debug.Assert(false);
 					str += KPRes.Unknown + ".";
@@ -268,6 +282,7 @@ namespace KeePass.App
 				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
 				case AppPolicyId.ChangeMasterKey: bAllowed = m_apfCurrent.ChangeMasterKey; break;
 				case AppPolicyId.EditTriggers: bAllowed = m_apfCurrent.EditTriggers; break;
+				case AppPolicyId.UnhidePasswords: bAllowed = m_apfCurrent.UnhidePasswords; break;
 				default: Debug.Assert(false); break;
 			}
 
@@ -326,6 +341,9 @@ namespace KeePass.App
 				case AppPolicyFlag.EditTriggers:
 					str += KPRes.TriggersEdit;
 					break;
+				case AppPolicyFlag.UnhidePasswords:
+					str += KPRes.UnhidePasswords;
+					break;
 				default:
 					Debug.Assert(false);
 					str += KPRes.Unknown + ".";
@@ -365,6 +383,9 @@ namespace KeePass.App
 					break;
 				case AppPolicyFlag.EditTriggers:
 					str += KPRes.PolicyTriggersEditDesc;
+					break;
+				case AppPolicyFlag.UnhidePasswords:
+					str += KPRes.UnhidePasswordsDesc;
 					break;
 				default:
 					Debug.Assert(false);

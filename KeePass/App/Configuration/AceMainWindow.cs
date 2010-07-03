@@ -21,10 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.Diagnostics;
 
 using KeePassLib;
 
+using KeePass.Resources;
 using KeePass.UI;
 
 namespace KeePass.App.Configuration
@@ -39,28 +42,6 @@ namespace KeePass.App.Configuration
 	{
 		public AceMainWindow()
 		{
-			this.AddColumn(PwDefs.TitleField, 75);
-			this.AddColumn(PwDefs.UserNameField, 75);
-			this.AddColumn(PwDefs.PasswordField, 75, true);
-			this.AddColumn(PwDefs.UrlField, 75);
-			this.AddColumn(PwDefs.NotesField, 75);
-
-			this.AddColumn(AppDefs.ColumnIdnCreationTime, 0);
-			this.AddColumn(AppDefs.ColumnIdnLastAccessTime, 0);
-			this.AddColumn(AppDefs.ColumnIdnLastModificationTime, 0);
-			this.AddColumn(AppDefs.ColumnIdnExpiryTime, 0);
-			this.AddColumn(AppDefs.ColumnIdnUuid, 0);
-			this.AddColumn(AppDefs.ColumnIdnAttachment, 0);
-		}
-
-		private void AddColumn(string strID, int nWidth)
-		{
-			m_aceColumns.Add(strID, new AceColumn(strID, nWidth));
-		}
-
-		private void AddColumn(string strID, int nWidth, bool bHide)
-		{
-			m_aceColumns.Add(strID, new AceColumn(strID, nWidth, bHide));
 		}
 
 		private int m_posX = AppDefs.InvalidWindowValue;
@@ -254,17 +235,9 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bAutoResizeColumns = false;
-		public bool EntryListAutoResizeColumns
-		{
-			get { return m_bAutoResizeColumns; }
-			set { m_bAutoResizeColumns = value; }
-		}
-
-		private Dictionary<string, AceColumn> m_aceColumns =
-			new Dictionary<string, AceColumn>();
-		[XmlIgnore]
-		public Dictionary<string, AceColumn> ColumnsDict
+		private List<AceColumn> m_aceColumns = new List<AceColumn>();
+		[XmlArray("EntryListColumnCollection")]
+		public List<AceColumn> EntryListColumns
 		{
 			get { return m_aceColumns; }
 			set
@@ -274,26 +247,22 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		[XmlArray("EntryListColumns")]
-		public AceColumn[] ColumnsSerializable
+		private string m_strDisplayIndices = string.Empty;
+		public string EntryListColumnDisplayOrder
 		{
-			get
-			{
-				AceColumn[] a = new AceColumn[m_aceColumns.Count];
-				int i = 0;
-				foreach(KeyValuePair<string, AceColumn> kvp in m_aceColumns)
-				{
-					a[i] = kvp.Value;
-					++i;
-				}
-				return a;
-			}
+			get { return m_strDisplayIndices; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				foreach(AceColumn ac in value)
-					m_aceColumns[ac.Name] = ac;
+				m_strDisplayIndices = value;
 			}
+		}
+
+		private bool m_bAutoResizeColumns = false;
+		public bool EntryListAutoResizeColumns
+		{
+			get { return m_bAutoResizeColumns; }
+			set { m_bAutoResizeColumns = value; }
 		}
 
 		private bool m_bAlternatingBgColor = true;
@@ -303,12 +272,12 @@ namespace KeePass.App.Configuration
 			set { m_bAlternatingBgColor = value; }
 		}
 
-		private bool m_bGridLines = false;
-		public bool ShowGridLines
-		{
-			get { return m_bGridLines; }
-			set { m_bGridLines = value; }
-		}
+		// private bool m_bGridLines = false;
+		// public bool ShowGridLines
+		// {
+		//	get { return m_bGridLines; }
+		//	set { m_bGridLines = value; }
+		// }
 
 		private ListSorter m_pListSorter = new ListSorter();
 		public ListSorter ListSorting
@@ -327,6 +296,16 @@ namespace KeePass.App.Configuration
 			get { return m_bShowEntriesOfSubGroups; }
 			set { m_bShowEntriesOfSubGroups = value; }
 		}
+
+		public AceColumn FindColumn(AceColumnType t)
+		{
+			foreach(AceColumn c in m_aceColumns)
+			{
+				if(c.Type == t) return c;
+			}
+
+			return null;
+		}
 	}
 
 	public sealed class AceEntryView
@@ -340,6 +319,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bShow; }
 			set { m_bShow = value; }
+		}
+
+		private bool m_bHideProtectedCustomStrings = true;
+		public bool HideProtectedCustomStrings
+		{
+			get { return m_bHideProtectedCustomStrings; }
+			set { m_bHideProtectedCustomStrings = value; }
 		}
 	}
 
@@ -364,34 +350,56 @@ namespace KeePass.App.Configuration
 		}
 	}
 
+	public enum AceColumnType
+	{
+		Title = 0,
+		UserName,
+		Password,
+		Url,
+		Notes,
+		CreationTime,
+		LastAccessTime,
+		LastModificationTime,
+		ExpiryTime,
+		Uuid,
+		Attachment,
+
+		CustomString,
+
+		PluginExt, // Column data provided by a plugin
+
+		OverrideUrl,
+		Tags,
+		ExpiryTimeDateOnly,
+		Size,
+		HistoryCount,
+
+		Count // Virtual identifier representing the number of types
+	}
+
 	[XmlType(TypeName = "Column")]
 	public sealed class AceColumn
 	{
-		public AceColumn()
+		private AceColumnType m_type = AceColumnType.Count;
+		public AceColumnType Type
 		{
+			get { return m_type; }
+			set
+			{
+				if(((int)value >= 0) && ((int)value < (int)AceColumnType.Count))
+					m_type = value;
+				else { Debug.Assert(false); }
+			}
 		}
 
-		public AceColumn(string strName, int nWidth)
+		private string m_strCustomName = string.Empty;
+		public string CustomName
 		{
-			this.Name = strName;
-			this.Width = nWidth;
-		}
-
-		public AceColumn(string strName, int nWidth, bool bHide)
-		{
-			this.Name = strName;
-			this.Width = nWidth;
-			this.HideWithAsterisks = bHide;
-		}
-
-		private string m_strName = string.Empty;
-		public string Name
-		{
-			get { return m_strName; }
+			get { return m_strCustomName; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_strName = value;
+				m_strCustomName = value;
 			}
 		}
 
@@ -402,13 +410,6 @@ namespace KeePass.App.Configuration
 			set { m_nWidth = value; }
 		}
 
-		private int m_nDisplayIndex = -1;
-		public int DisplayIndex
-		{
-			get { return m_nDisplayIndex; }
-			set { m_nDisplayIndex = value; }
-		}
-
 		private bool m_bHide = false;
 		public bool HideWithAsterisks
 		{
@@ -416,10 +417,74 @@ namespace KeePass.App.Configuration
 			set { m_bHide = value; }
 		}
 
+		public AceColumn()
+		{
+		}
+
+		public AceColumn(AceColumnType t)
+		{
+			m_type = t;
+		}
+
+		public AceColumn(AceColumnType t, string strCustomName, bool bHide,
+			int nWidth)
+		{
+			m_type = t;
+			m_strCustomName = strCustomName;
+			m_bHide = bHide;
+			m_nWidth = nWidth;
+		}
+
+		public string GetDisplayName()
+		{
+			string str = string.Empty;
+
+			switch(m_type)
+			{
+				case AceColumnType.Title: str = KPRes.Title; break;
+				case AceColumnType.UserName: str = KPRes.UserName; break;
+				case AceColumnType.Password: str = KPRes.Password; break;
+				case AceColumnType.Url: str = KPRes.Url; break;
+				case AceColumnType.Notes: str = KPRes.Notes; break;
+				case AceColumnType.CreationTime: str = KPRes.CreationTime; break;
+				case AceColumnType.LastAccessTime: str = KPRes.LastAccessTime; break;
+				case AceColumnType.LastModificationTime: str = KPRes.LastModificationTime; break;
+				case AceColumnType.ExpiryTime: str = KPRes.ExpiryTime; break;
+				case AceColumnType.Uuid: str = KPRes.Uuid; break;
+				case AceColumnType.Attachment: str = KPRes.Attachments; break;
+				case AceColumnType.CustomString: str = m_strCustomName; break;
+				case AceColumnType.PluginExt: str = m_strCustomName; break;
+				case AceColumnType.OverrideUrl: str = KPRes.UrlOverride; break;
+				case AceColumnType.Tags: str = KPRes.Tags; break;
+				case AceColumnType.ExpiryTimeDateOnly: str = KPRes.ExpiryTimeDateOnly; break;
+				case AceColumnType.Size: str = KPRes.Size; break;
+				case AceColumnType.HistoryCount: str = KPRes.History + " (" +
+					KPRes.Count + ")"; break;
+				default: Debug.Assert(false); break;
+			};
+
+			return str;
+		}
+
 		public int SafeGetWidth(int nDefaultWidth)
 		{
 			if(m_nWidth >= 0) return m_nWidth;
 			return nDefaultWidth;
+		}
+
+		public static bool IsTimeColumn(AceColumnType t)
+		{
+			return ((t == AceColumnType.CreationTime) || (t == AceColumnType.LastAccessTime) ||
+				(t == AceColumnType.LastModificationTime) || (t == AceColumnType.ExpiryTime) ||
+				(t == AceColumnType.ExpiryTimeDateOnly));
+		}
+
+		public static HorizontalAlignment GetTextAlign(AceColumnType t)
+		{
+			if((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount))
+				return HorizontalAlignment.Right;
+
+			return HorizontalAlignment.Left;
 		}
 	}
 }

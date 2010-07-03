@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -554,6 +553,9 @@ namespace TrlUtil
 
 			m_trl.UnusedText = m_rtbUnusedText.Text;
 
+			try { Validate3Dots(); }
+			catch(Exception) { Debug.Assert(false); }
+
 			try
 			{
 				string strAccel = AccelKeysCheck.Validate(m_trl);
@@ -564,6 +566,25 @@ namespace TrlUtil
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void Validate3Dots()
+		{
+			if(m_trl.Properties.RightToLeft) return; // Check doesn't support RTL
+
+			foreach(KPStringTable kpst in m_trl.StringTables)
+			{
+				foreach(KPStringTableItem kpi in kpst.Strings)
+				{
+					string strEn = kpi.ValueEnglish;
+					string strTrl = kpi.Value;
+					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
+
+					if(strEn.EndsWith("...") && !strTrl.EndsWith("..."))
+						MessageService.ShowWarning("Warning! The English string",
+							strEn, "ends with 3 dots, but the translated string does not:", strTrl);
+				}
+			}
 		}
 
 		private void OnFileExit(object sender, EventArgs e)

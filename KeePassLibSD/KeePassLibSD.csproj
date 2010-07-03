@@ -132,8 +132,8 @@
     <Compile Include="..\KeePassLib\Delegates\Handlers.cs">
       <Link>Delegates\Handlers.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Interfaces\IDeepClonable.cs">
-      <Link>Interfaces\IDeepClonable.cs</Link>
+    <Compile Include="..\KeePassLib\Interfaces\IDeepCloneable.cs">
+      <Link>Interfaces\IDeepCloneable.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Interfaces\IStatusLogger.cs">
       <Link>Interfaces\IStatusLogger.cs</Link>

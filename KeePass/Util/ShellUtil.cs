@@ -116,7 +116,6 @@ namespace KeePass.Util
 		}
 
 		private const string AutoRunKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-
 		public static void SetStartWithWindows(string strAppName, string strAppPath,
 			bool bAutoStart)
 		{
@@ -152,5 +151,29 @@ namespace KeePass.Util
 
 			return false;
 		}
+
+		/* private const string PreLoadKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+		public static void RegisterPreLoad(string strAppName, string strAppPath,
+			string strCmdLineOptions, bool bPreLoad)
+		{
+			try
+			{
+				if(bPreLoad)
+				{
+					string strValue = strAppPath;
+					if(!string.IsNullOrEmpty(strCmdLineOptions))
+						strValue += " " + strCmdLineOptions;
+
+					Registry.SetValue("HKEY_LOCAL_MACHINE\\" + PreLoadKey, strAppName,
+						strValue, RegistryValueKind.String);
+				}
+				else
+				{
+					RegistryKey kRun = Registry.LocalMachine.OpenSubKey(PreLoadKey, true);
+					kRun.DeleteValue(strAppName);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 	}
 }

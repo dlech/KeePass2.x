@@ -109,8 +109,14 @@ namespace KeePass.UI
 			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
 
 			bool b = true;
-			if(m_sbDefault != null) b &= m_sbDefault.SetProgress(uPercent);
-			if(m_slForm != null) b &= m_slForm.SetProgress(uPercent);
+			if(m_sbDefault != null)
+			{
+				if(!m_sbDefault.SetProgress(uPercent)) b = false;
+			}
+			if(m_slForm != null)
+			{
+				if(!m_slForm.SetProgress(uPercent)) b = false;
+			}
 			if(m_fTaskbarWindow != null)
 				TaskbarList.SetProgressValue(m_fTaskbarWindow, uPercent, 100);
 
@@ -153,8 +159,14 @@ namespace KeePass.UI
 			}
 
 			bool b = true;
-			if(m_sbDefault != null) b &= m_sbDefault.SetText(strNewText, lsType);
-			if(m_slForm != null) b &= m_slForm.SetText(strNewText, lsType);
+			if(m_sbDefault != null)
+			{
+				if(!m_sbDefault.SetText(strNewText, lsType)) b = false;
+			}
+			if(m_slForm != null)
+			{
+				if(!m_slForm.SetText(strNewText, lsType)) b = false;
+			}
 
 			if(m_slForm == null)
 				m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
@@ -173,8 +185,14 @@ namespace KeePass.UI
 			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
 
 			bool b = true;
-			if(m_slForm != null) b &= m_slForm.ContinueWork();
-			if(m_sbDefault != null) b &= m_sbDefault.ContinueWork();
+			if(m_slForm != null)
+			{
+				if(!m_slForm.ContinueWork()) b = false;
+			}
+			if(m_sbDefault != null)
+			{
+				if(!m_sbDefault.ContinueWork()) b = false;
+			}
 
 			return b;
 		}

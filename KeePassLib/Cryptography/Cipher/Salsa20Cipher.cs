@@ -134,7 +134,7 @@ namespace KeePassLib.Cryptography.Cipher
 
 		private void KeySetup(byte[] k)
 		{
-			if(k == null) throw new ArgumentNullException("pbKey");
+			if(k == null) throw new ArgumentNullException("k");
 			if(k.Length != 32) throw new ArgumentException();
 
 			m_state[1] = U8To32Little(k, 0);

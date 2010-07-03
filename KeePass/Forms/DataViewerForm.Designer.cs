@@ -86,6 +86,7 @@
 			this.m_toolMain.Name = "m_toolMain";
 			this.m_toolMain.Size = new System.Drawing.Size(524, 25);
 			this.m_toolMain.TabIndex = 3;
+			this.m_toolMain.TabStop = true;
 			// 
 			// m_tslViewer
 			// 
@@ -124,7 +125,7 @@
 			this.m_pnlImageViewer.Location = new System.Drawing.Point(234, 70);
 			this.m_pnlImageViewer.Name = "m_pnlImageViewer";
 			this.m_pnlImageViewer.Size = new System.Drawing.Size(264, 212);
-			this.m_pnlImageViewer.TabIndex = 4;
+			this.m_pnlImageViewer.TabIndex = 1;
 			// 
 			// m_statusMain
 			// 
@@ -133,7 +134,7 @@
 			this.m_statusMain.Location = new System.Drawing.Point(0, 366);
 			this.m_statusMain.Name = "m_statusMain";
 			this.m_statusMain.Size = new System.Drawing.Size(524, 22);
-			this.m_statusMain.TabIndex = 5;
+			this.m_statusMain.TabIndex = 4;
 			// 
 			// m_tssStatusMain
 			// 

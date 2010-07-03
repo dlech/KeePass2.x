@@ -7,10 +7,10 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.10"
-#define KeeVersionStrWithMinor "2.10"
-#define KeeVersionStrWithMinorPath "2.10"
-#define KeeVersionWin "2.1.0.0"
+#define KeeVersionStr "2.11"
+#define KeeVersionStrWithMinor "2.11"
+#define KeeVersionStrWithMinorPath "2.11"
+#define KeeVersionWin "2.1.1.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -82,7 +82,8 @@ Name: UserDoc; Description: Help Manual; Types: full custom
 Name: KeePassLibC; Description: Native Support Library (KeePass 1.x); Types: full custom
 ; Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: full custom
 Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: full custom
-Name: NGen; Description: Optimize Application Performance; Types: full custom; ExtraDiskSpaceRequired: 1048576
+Name: NGen; Description: Optimize KeePass Performance; Types: full custom; ExtraDiskSpaceRequired: 1048576
+Name: PreLoad; Description: Optimize KeePass On-Demand Start-Up Performance; Types: full custom; ExtraDiskSpaceRequired: 2048
 ; Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: full custom
 
 [Files]
@@ -129,11 +130,13 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filen
 [Run]
 ; Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
 Filename: {app}\ShInstUtil.exe; Parameters: net_check; WorkingDir: {app}; Flags: skipifdoesntexist skipifsilent
-Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; WorkingDir: {app}; StatusMsg: "Optimizing application performance..."; Flags: skipifdoesntexist; Components: NGen
+Filename: {app}\ShInstUtil.exe; Parameters: preload_register; WorkingDir: {app}; StatusMsg: "Optimizing KeePass on-demand start-up performance..."; Flags: skipifdoesntexist; Components: PreLoad
+Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; WorkingDir: {app}; StatusMsg: "Optimizing KeePass performance..."; Flags: skipifdoesntexist; Components: NGen
 Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: postinstall nowait skipifsilent
 
 [UninstallRun]
 ; Filename: {app}\KeePass.exe; Parameters: -UnregisterFileExt
+Filename: {app}\ShInstUtil.exe; Parameters: preload_unregister; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "PreLoad"; Components: PreLoad
 Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "NGen"; Components: NGen
 
 [UninstallDelete]

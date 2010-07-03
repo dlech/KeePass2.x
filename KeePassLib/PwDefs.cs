@@ -46,13 +46,13 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, 2.10 = 0x02010000, etc.
 		/// </summary>
-		public const uint Version32 = 0x02010000;
-		public const ulong FileVersion64 = 0x0002000A00000000UL;
+		public const uint Version32 = 0x02010100;
+		public const ulong FileVersion64 = 0x0002000B00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.10";
+		public const string VersionString = "2.11";
 
 		public const string Copyright = @"Copyright © 2003-2010 Dominik Reichl";
 
@@ -286,6 +286,13 @@ namespace KeePassLib
 			set { m_bSearchInGroupNames = value; }
 		}
 
+		private bool m_bSearchInTags = true;
+		public bool SearchInTags
+		{
+			get { return m_bSearchInTags; }
+			set { m_bSearchInTags = value; }
+		}
+
 		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;
 		/// <summary>
 		/// String comparison type. Specifies the condition when the specified
@@ -321,6 +328,7 @@ namespace KeePassLib
 				sp.m_bSearchInOther = false;
 				// sp.m_bSearchInUuids = false;
 				// sp.SearchInGroupNames = false;
+				sp.m_bSearchInTags = false;
 				// sp.m_scType = StringComparison.InvariantCultureIgnoreCase;
 				// sp.m_bExcludeExpired = false;
 
@@ -341,7 +349,7 @@ namespace KeePassLib
 	/// <summary>
 	/// Memory protection configuration structure (for default fields).
 	/// </summary>
-	public sealed class MemoryProtectionConfig : IDeepClonable<MemoryProtectionConfig>
+	public sealed class MemoryProtectionConfig : IDeepCloneable<MemoryProtectionConfig>
 	{
 		public bool ProtectTitle = false;
 		public bool ProtectUserName = false;
@@ -349,7 +357,7 @@ namespace KeePassLib
 		public bool ProtectUrl = false;
 		public bool ProtectNotes = false;
 
-		public bool AutoEnableVisualHiding = false;
+		// public bool AutoEnableVisualHiding = false;
 
 		public MemoryProtectionConfig CloneDeep()
 		{

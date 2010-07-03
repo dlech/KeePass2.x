@@ -31,6 +31,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.4
 	internal sealed class PVaultTxt14 : FileFormatProvider
 	{
 		private const string InitGroup = "************";
@@ -48,7 +49,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Personal Vault TXT 1.4"; } }
+		public override string FormatName { get { return "Personal Vault TXT"; } }
 		public override string DefaultExtension { get { return "txt"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

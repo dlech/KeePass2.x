@@ -33,12 +33,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 2.70
 	internal sealed class PpKeeperHtml270 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Passphrase Keeper HTML 2.70"; } }
+		public override string FormatName { get { return "Passphrase Keeper HTML"; } }
 		public override string DefaultExtension { get { return "html"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

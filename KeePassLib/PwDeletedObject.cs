@@ -28,7 +28,7 @@ namespace KeePassLib
 	/// <summary>
 	/// Represents an object that has been deleted.
 	/// </summary>
-	public sealed class PwDeletedObject : IDeepClonable<PwDeletedObject>
+	public sealed class PwDeletedObject : IDeepCloneable<PwDeletedObject>
 	{
 		PwUuid m_uuid = PwUuid.Zero;
 		DateTime m_dtDeletionTime = PwDefs.DtDefaultNow;

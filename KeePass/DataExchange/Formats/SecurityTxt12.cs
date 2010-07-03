@@ -32,12 +32,13 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.2
 	internal sealed class SecurityTxt12 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Security TXT 1.2"; } }
+		public override string FormatName { get { return "Security TXT"; } }
 		public override string DefaultExtension { get { return "txt"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 

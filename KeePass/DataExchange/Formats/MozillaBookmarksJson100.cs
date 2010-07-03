@@ -33,12 +33,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
+	// 1.00
 	internal sealed class MozillaBookmarksJson100 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Mozilla Bookmarks JSON 1.00"; } }
+		public override string FormatName { get { return "Mozilla Bookmarks JSON"; } }
 		public override string DefaultExtension { get { return "json"; } }
 		public override string ApplicationGroup { get { return KPRes.Browser; } }
 

@@ -150,12 +150,12 @@ namespace KeePass.Forms
 	public sealed class CancelEntryEventArgs : CancellableOperationEventArgs
 	{
 		private PwEntry m_pwEntry;
-		private AppDefs.ColumnId m_nColumn;
+		private int m_nColumn;
 
 		public PwEntry Entry { get { return m_pwEntry; } }
-		public AppDefs.ColumnId ColumnId { get { return m_nColumn; } }
+		public int ColumnId { get { return m_nColumn; } }
 
-		public CancelEntryEventArgs(PwEntry pe, AppDefs.ColumnId colId)
+		public CancelEntryEventArgs(PwEntry pe, int colId)
 		{
 			m_pwEntry = pe;
 			m_nColumn = colId;

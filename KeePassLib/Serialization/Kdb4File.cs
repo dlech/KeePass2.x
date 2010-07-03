@@ -67,11 +67,12 @@ namespace KeePassLib.Serialization
 
 		/// <summary>
 		/// File version of files saved by the current <c>Kdb4File</c> class.
-		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00.
+		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
+		/// 2.10 has 2.02, 2.11 has 2.04.
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00020000;
+		private const uint FileVersion32 = 0x00020004;
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
@@ -96,6 +97,9 @@ namespace KeePassLib.Serialization
 		private const string ElemDbDefaultUser = "DefaultUserName";
 		private const string ElemDbDefaultUserChanged = "DefaultUserNameChanged";
 		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
+		private const string ElemDbKeyChanged = "MasterKeyChanged";
+		private const string ElemDbKeyChangeRec = "MasterKeyChangeRec";
+		private const string ElemDbKeyChangeForce = "MasterKeyChangeForce";
 		private const string ElemRecycleBinEnabled = "RecycleBinEnabled";
 		private const string ElemRecycleBinUuid = "RecycleBinUUID";
 		private const string ElemRecycleBinChanged = "RecycleBinChanged";
@@ -108,9 +112,9 @@ namespace KeePassLib.Serialization
 		private const string ElemProtTitle = "ProtectTitle";
 		private const string ElemProtUserName = "ProtectUserName";
 		private const string ElemProtPassword = "ProtectPassword";
-		private const string ElemProtURL = "ProtectURL";
+		private const string ElemProtUrl = "ProtectURL";
 		private const string ElemProtNotes = "ProtectNotes";
-		private const string ElemProtAutoHide = "AutoEnableVisualHiding";
+		// private const string ElemProtAutoHide = "AutoEnableVisualHiding";
 
 		private const string ElemCustomIcons = "CustomIcons";
 		private const string ElemCustomIconItem = "Icon";
@@ -129,6 +133,7 @@ namespace KeePassLib.Serialization
 		private const string ElemBgColor = "BackgroundColor";
 		private const string ElemOverrideUrl = "OverrideURL";
 		private const string ElemTimes = "Times";
+		private const string ElemTags = "Tags";
 
 		private const string ElemCreationTime = "CreationTime";
 		private const string ElemLastModTime = "LastModificationTime";

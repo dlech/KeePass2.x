@@ -43,6 +43,8 @@ namespace KeePass.Native
 		internal const int WM_MBUTTONDOWN = 0x0207;
 		// internal const int WM_MOUSEWHEEL = 0x020A;
 
+		internal const int WM_NOTIFY = 0x004E;
+
 		internal const int HWND_BROADCAST = 0xFFFF;
 
 		internal const uint SMTO_NORMAL = 0x0000;
@@ -79,6 +81,7 @@ namespace KeePass.Native
 		internal const uint GW_HWNDNEXT = 2;
 
 		internal const int GWL_STYLE = -16;
+		internal const int GWL_EXSTYLE = -20;
 
 		internal const int WS_VISIBLE = 0x10000000;
 
@@ -122,7 +125,10 @@ namespace KeePass.Native
 
 		// internal const uint SW_INVALIDATE = 0x0002;
 
+		internal const uint TVS_FULLROWSELECT = 0x1000;
 		internal const uint TVS_NONEVENHEIGHT = 0x4000;
+		internal const uint TVS_EX_DOUBLEBUFFER = 0x0004;
+		internal const uint TVS_EX_FADEINOUTEXPANDOS = 0x0040;
 
 		internal const int HDI_FORMAT = 0x0004;
 		internal const int HDF_SORTUP = 0x0400;
@@ -135,6 +141,11 @@ namespace KeePass.Native
 		internal const int HDM_SETITEMW = HDM_FIRST + 12;
 
 		internal const int OFN_DONTADDTORECENT = 0x02000000;
+
+		internal const uint DWMWA_DISALLOW_PEEK = 11;
+
+		// internal const int LVN_FIRST = -100;
+		// internal const int LVN_LINKCLICK = LVN_FIRST - 84;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

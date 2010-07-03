@@ -208,8 +208,31 @@ namespace KeePass.Util
 			return strPath;
 		}
 
-		// HKEY_CLASSES_ROOT\\Applications\\chrome.exe\\shell\\open\\command
+		// HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command
 		private static string FindChrome()
+		{
+			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("ChromeHTML", false);
+			RegistryKey kShell = kHtml.OpenSubKey("shell", false);
+			RegistryKey kOpen = kShell.OpenSubKey("open", false);
+			RegistryKey kCommand = kOpen.OpenSubKey("command", false);
+			string strPath = (kCommand.GetValue(string.Empty) as string);
+
+			if(!string.IsNullOrEmpty(strPath))
+			{
+				strPath = strPath.Trim();
+				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
+			}
+			else strPath = null;
+
+			kCommand.Close();
+			kOpen.Close();
+			kShell.Close();
+			kHtml.Close();
+			return (strPath ?? FindChromeOld());
+		}
+
+		// HKEY_CLASSES_ROOT\\Applications\\chrome.exe\\shell\\open\\command
+		private static string FindChromeOld()
 		{
 			RegistryKey kApps = Registry.ClassesRoot.OpenSubKey("Applications", false);
 			RegistryKey kExe = kApps.OpenSubKey("chrome.exe", false);
@@ -218,7 +241,7 @@ namespace KeePass.Util
 			RegistryKey kCommand = kOpen.OpenSubKey("command", false);
 			string strPath = (kCommand.GetValue(string.Empty) as string);
 
-			if((strPath != null) && (strPath.Length > 0))
+			if(!string.IsNullOrEmpty(strPath))
 			{
 				strPath = strPath.Trim();
 				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();

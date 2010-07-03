@@ -37,7 +37,7 @@ namespace KeePassLib.Collections
 	/// A list of <c>ProtectedBinary</c> objects (dictionary).
 	/// </summary>
 	public sealed class ProtectedBinaryDictionary :
-		IDeepClonable<ProtectedBinaryDictionary>,
+		IDeepCloneable<ProtectedBinaryDictionary>,
 		IEnumerable<KeyValuePair<string, ProtectedBinary>>
 	{
 		private SortedDictionary<string, ProtectedBinary> m_vBinaries =

@@ -23,10 +23,10 @@ using System.Collections.Generic;
 namespace KeePassLib.Interfaces
 {
 	/// <summary>
-	/// Interface for objects that are deeply clonable.
+	/// Interface for objects that are deeply cloneable.
 	/// </summary>
 	/// <typeparam name="T">Reference type.</typeparam>
-	public interface IDeepClonable<T> where T : class
+	public interface IDeepCloneable<T> where T : class
 	{
 		/// <summary>
 		/// Deeply clone the object.

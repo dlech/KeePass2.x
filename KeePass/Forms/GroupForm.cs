@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -152,20 +151,18 @@ namespace KeePass.Forms
 			IconPickerForm ipf = new IconPickerForm();
 			ipf.InitEx(m_ilClientIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwIconIndex, m_pwCustomIconID);
+			ipf.ShowDialog();
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 			{
-				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
-				{
-					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
-				}
-				else // Standard icon
-				{
-					m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
-					m_pwCustomIconID = PwUuid.Zero;
-					m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
-				}
+				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+			}
+			else // Standard icon
+			{
+				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
+				m_pwCustomIconID = PwUuid.Zero;
+				m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
 			}
 		}
 

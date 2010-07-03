@@ -24,6 +24,8 @@
 static const std_string g_strNGenInstall = _T("ngen_install");
 static const std_string g_strNGenUninstall = _T("ngen_uninstall");
 static const std_string g_strNetCheck = _T("net_check");
+static const std_string g_strPreLoadRegister = _T("preload_register");
+static const std_string g_strPreLoadUnregister = _T("preload_unregister");
 
 static LPCTSTR g_lpPathTrimChars = _T("\"' \t\r\n");
 
@@ -58,6 +60,18 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		strCmdLine.size() - g_strNGenUninstall.size()) == g_strNGenUninstall))
 	{
 		UpdateNativeImage(false);
+	}
+
+	if((strCmdLine.size() >= g_strPreLoadRegister.size()) && (strCmdLine.substr(
+		strCmdLine.size() - g_strPreLoadRegister.size()) == g_strPreLoadRegister))
+	{
+		RegisterPreLoad(true);
+	}
+
+	if((strCmdLine.size() >= g_strPreLoadUnregister.size()) && (strCmdLine.substr(
+		strCmdLine.size() - g_strPreLoadUnregister.size()) == g_strPreLoadUnregister))
+	{
+		RegisterPreLoad(false);
 	}
 
 	if((strCmdLine.size() >= g_strNetCheck.size()) && (strCmdLine.substr(
@@ -96,6 +110,31 @@ void UpdateNativeImage(bool bInstall)
 		WaitForSingleObject(sei.hProcess, 16000);
 		CloseHandle(sei.hProcess);
 	}
+}
+
+void RegisterPreLoad(bool bRegister)
+{
+	const std_string strPath = GetKeePassExePath();
+	if(strPath.size() == 0) return;
+
+	HKEY hKey = NULL;
+	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
+		0, KEY_WRITE, &hKey) != ERROR_SUCCESS) return;
+	if(hKey == NULL) return;
+
+	const std_string strItemName = _T("KeePass 2 PreLoad");
+	std_string strItemValue = _T("\"");
+	strItemValue += strPath;
+	strItemValue += _T("\" --preload");
+
+	if(bRegister)
+		RegSetValueEx(hKey, strItemName.c_str(), 0, REG_SZ,
+			(const BYTE*)strItemValue.c_str(), static_cast<DWORD>((strItemValue.size() +
+			1) * sizeof(TCHAR)));
+	else
+		RegDeleteValue(hKey, strItemName.c_str());
+
+	RegCloseKey(hKey);
 }
 
 std_string GetNetInstallRoot()

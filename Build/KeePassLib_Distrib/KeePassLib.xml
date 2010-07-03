@@ -60,7 +60,8 @@
         <member name="F:KeePassLib.Serialization.Kdb4File.FileVersion32">
             <summary>
             File version of files saved by the current <c>Kdb4File</c> class.
-            KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00.
+            KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
+            2.10 has 2.02, 2.11 has 2.04.
             The first 2 bytes are critical (i.e. loading will fail, if the
             file version is too high), the last 2 bytes are informational.
             </summary>
@@ -851,7 +852,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FrameworkNotImplExcp">
             <summary>
             Look up a localized string similar to
-            'The .NET framework/runtime, under which KeePass is currently running, does not support this operation.'.
+            'The .NET framework/runtime under which KeePass is currently running does not support this operation.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.InvalidCompositeKey">
@@ -927,13 +928,13 @@
             look like.
             </summary>
         </member>
-        <member name="T:KeePassLib.Interfaces.IDeepClonable`1">
+        <member name="T:KeePassLib.Interfaces.IDeepCloneable`1">
             <summary>
-            Interface for objects that are deeply clonable.
+            Interface for objects that are deeply cloneable.
             </summary>
             <typeparam name="T">Reference type.</typeparam>
         </member>
-        <member name="M:KeePassLib.Interfaces.IDeepClonable`1.CloneDeep">
+        <member name="M:KeePassLib.Interfaces.IDeepCloneable`1.CloneDeep">
             <summary>
             Deeply clone the object.
             </summary>
@@ -1790,6 +1791,13 @@
             <param name="uBackupIndex">Index of the backup item, to which
             should be reverted.</param>
         </member>
+        <member name="M:KeePassLib.PwEntry.GetSize">
+            <summary>
+            Approximate the total size of this entry in bytes (including
+            strings, binaries and history entries).
+            </summary>
+            <returns>Size in bytes.</returns>
+        </member>
         <member name="P:KeePassLib.PwEntry.Uuid">
             <summary>
             UUID of this entry.
@@ -1882,6 +1890,11 @@
         <member name="P:KeePassLib.PwEntry.OverrideUrl">
             <summary>
             Entry-specific override URL. If this string is non-empty,
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.Tags">
+            <summary>
+            List of tags associated with this entry.
             </summary>
         </member>
         <member name="T:KeePassLib.Keys.KcpPassword">
@@ -2394,8 +2407,6 @@
             Format an exception and convert it to a string.
             </summary>
             <param name="excp"><c>Exception</c> to convert/format.</param>
-            <param name="bHeaderText">If this is <c>true</c>, a header text is prepended
-            to the result string. This text is a generic, localized error message.</param>
             <returns>String representing the exception.</returns>
         </member>
         <member name="M:KeePassLib.Utility.StrUtil.SafeXmlString(System.String)">
@@ -2671,7 +2682,7 @@
         </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
-            List of objects that implement <c>IDeepClonable</c>,
+            List of objects that implement <c>IDeepCloneable</c>,
             and cannot be <c>null</c>.
             </summary>
             <typeparam name="T">Type specifier.</typeparam>

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.IO;
@@ -345,7 +344,14 @@ namespace KeePass.Forms
 
 		private void OnCheckedHidePassword(object sender, EventArgs e)
 		{
-			m_secPassword.EnableProtection(m_cbHidePassword.Checked);
+			bool bHide = m_cbHidePassword.Checked;
+			if(!bHide && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
+			{
+				m_cbHidePassword.Checked = true;
+				return;
+			}
+
+			m_secPassword.EnableProtection(bHide);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
