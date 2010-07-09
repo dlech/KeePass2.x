@@ -84,7 +84,6 @@
 			this.m_richStringValue.Location = new System.Drawing.Point(56, 154);
 			this.m_richStringValue.Name = "m_richStringValue";
 			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_richStringValue.SimpleTextOnly = false;
 			this.m_richStringValue.Size = new System.Drawing.Size(341, 78);
 			this.m_richStringValue.TabIndex = 5;
 			this.m_richStringValue.Text = "";

@@ -546,8 +546,12 @@ namespace KeePass.Util
 			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|[\+\^%].+?|.+?)",
 			//	@"{delay " + strTime + @"}$1");
 			if(siState.DefaultDelay > 0)
-				strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|([\+\^%]\{.+?\})|[\+\^%].+?|.+?)",
-					@"{DELAY " + siState.DefaultDelay.ToString() + @"}$1");
+			{
+				// const string strRx = @"(\{.+?\}+?|([\+\^%]\(.+?\))|([\+\^%]\{.+?\})|[\+\^%].+?|.+?)";
+				const string strRx = @"(\{.+?\}+?|([\+\^%]+\(.+?\))|([\+\^%]+\{.+?\})|[\+\^%]+.+?|.+?)";
+				strSequence = Regex.Replace(strSequence, strRx, @"{DELAY " +
+					siState.DefaultDelay.ToString() + @"}$1");
+			}
 
 			return strSequence;
 		}

@@ -93,8 +93,17 @@ namespace KeePass.Ecas
 			string str = GetParamString(vParams, iIndex, string.Empty);
 
 			if(bSprCompile && !string.IsNullOrEmpty(str))
-				str = SprEngine.Compile(str, false, null, Program.MainForm.ActiveDatabase,
-					false, false);
+			{
+				PwDatabase pd = null;
+				try { pd = Program.MainForm.ActiveDatabase; }
+				catch(Exception) { Debug.Assert(false); }
+
+				PwEntry pe = null;
+				try { pe = Program.MainForm.GetSelectedEntry(false); }
+				catch(Exception) { Debug.Assert(false); }
+
+				str = SprEngine.Compile(str, false, pe, pd, false, false);
+			}
 
 			return str;
 		}

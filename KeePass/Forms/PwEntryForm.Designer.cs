@@ -516,7 +516,6 @@
 			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
 			this.m_rtNotes.Name = "m_rtNotes";
 			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_rtNotes.SimpleTextOnly = false;
 			this.m_rtNotes.Size = new System.Drawing.Size(374, 140);
 			this.m_rtNotes.TabIndex = 18;
 			this.m_rtNotes.Text = "";

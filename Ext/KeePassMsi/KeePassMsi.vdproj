@@ -356,7 +356,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.1.1.16948, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.1.2.16375, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_838987B3C51D42C3C7B9BDA1339A5500"
@@ -387,7 +387,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.1.1.16948, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.1.2.16375, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -538,7 +538,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.1.1.16948, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.1.2.16375, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -686,14 +686,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:KeePass"
-        "ProductCode" = "8:{4C627FAC-778C-4CE1-A65F-2E50962D379B}"
-        "PackageCode" = "8:{C930E4AF-11FC-4F30-8A6E-F88C3D58B8F3}"
+        "ProductCode" = "8:{00F2099E-6262-4FC6-96F2-913639FE7506}"
+        "PackageCode" = "8:{47D1A38B-D139-47B0-A812-C165A40C68D4}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.1.1"
+        "ProductVersion" = "8:2.1.2"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://keepass.info/"

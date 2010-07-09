@@ -95,6 +95,11 @@ namespace KeePass.Native
 			return false;
 		}
 
+		internal static bool TryXDoTool()
+		{
+			return !string.IsNullOrEmpty(RunXDoTool("help"));
+		}
+
 		internal static string RunXDoTool(string strParams)
 		{
 			try

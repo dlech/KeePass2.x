@@ -28,6 +28,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -51,12 +52,18 @@ namespace KeePass.DataExchange.Formats
 
 		public override bool TryBeginImport()
 		{
+			if(NativeLib.IsUnix())
+			{
+				MessageService.ShowWarning(KPRes.KeePassLibCNotWindows,
+					KPRes.KeePassLibCNotWindowsHint);
+				return false;
+			}
+
 			Exception exLib;
 			if(!Kdb3File.IsLibraryInstalled(out exLib))
 			{
 				MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
 					KPRes.Kdb3KeePassLibC, exLib);
-
 				return false;
 			}
 

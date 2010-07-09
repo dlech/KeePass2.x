@@ -207,7 +207,7 @@
 			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
-			this.m_richEntryView = new System.Windows.Forms.RichTextBox();
+			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -1891,7 +1891,7 @@
 		private KeePass.UI.CustomToolStripEx m_toolMain;
 		private System.Windows.Forms.ToolStripButton m_tbNewDatabase;
 		private System.Windows.Forms.ToolStripButton m_tbOpenDatabase;
-		private System.Windows.Forms.RichTextBox m_richEntryView;
+		private KeePass.UI.CustomRichTextBoxEx m_richEntryView;
 		private KeePass.UI.CustomSplitContainerEx m_splitHorizontal;
 		private KeePass.UI.CustomSplitContainerEx m_splitVertical;
 		private KeePass.UI.CustomTreeViewEx m_tvGroups;

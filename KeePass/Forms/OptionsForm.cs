@@ -244,13 +244,15 @@ namespace KeePass.Forms
 			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc);
 			LoadPolicyOption("Import", KPRes.Import, KPRes.PolicyImportDesc);
 			LoadPolicyOption("Print", KPRes.Print, KPRes.PolicyPrintDesc);
+			LoadPolicyOption("NewFile", KPRes.NewDatabase, KPRes.PolicyNewDatabaseDesc);
 			LoadPolicyOption("SaveFile", KPRes.SaveDatabase, KPRes.PolicySaveDatabaseDesc);
 			LoadPolicyOption("AutoType", KPRes.AutoType, KPRes.PolicyAutoTypeDesc);
 			LoadPolicyOption("CopyToClipboard", KPRes.Copy, KPRes.PolicyClipboardDesc);
+			LoadPolicyOption("CopyWholeEntries", KPRes.CopyWholeEntries, KPRes.PolicyCopyWholeEntriesDesc);
 			LoadPolicyOption("DragDrop", KPRes.DragDrop, KPRes.PolicyDragDropDesc);
+			LoadPolicyOption("UnhidePasswords", KPRes.UnhidePasswords, KPRes.UnhidePasswordsDesc);
 			LoadPolicyOption("ChangeMasterKey", KPRes.ChangeMasterKey, KPRes.PolicyChangeMasterKey);
 			LoadPolicyOption("EditTriggers", KPRes.TriggersEdit, KPRes.PolicyTriggersEditDesc);
-			LoadPolicyOption("UnhidePasswords", KPRes.UnhidePasswords, KPRes.UnhidePasswordsDesc);
 
 			m_cdxPolicy.UpdateData(false);
 		}

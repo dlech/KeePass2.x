@@ -1,3 +1,30 @@
+2010-07-09: 2.12
+- Auto-type window definitions in custom window-sequence pairs
+  are now Spr-compiled (i.e. placeholders, environment
+  variables, etc. can be used)
+- Global auto-type delay: added support for multi-modified keys
+  and special keys
+- Added 'New Database' application policy flag
+- Added 'Copy Whole Entries' application policy flag
+- Multi-monitor support: at startup, KeePass now ensures that
+  the main window's normal area at least partially overlaps the
+  virtual screen rectangle of at least one monitor
+- RoboForm importer: URLs without protocol prefix are now
+  prefixed automatically (HTTP)
+- Entry-dependent placeholders can now be used in most trigger
+  events, conditions and actions (the currently focused entry
+  is used)
+- Auto-type on Unix-like systems: KeePass now shows an
+  informative error message when trying to invoke auto-type
+  without having installed the 'xdotool' package
+
+- New column engine: drag&dropping hidden fields works as
+  expected again (the field data is transferred, not asterisks)
+- Improved restoration of a maximized main window
+- Improved error message when trying to import/export data
+  from/to a KDB file on a non-Windows operating system
+- Minor other improvements
+
 2010-07-03: 2.11
 - Added entry tags (you can assign tags to entries in the entry
   editing window or by using the 'Selected Entries' context

@@ -563,7 +563,6 @@
 			// 
 			this.m_rtbUnusedText.Location = new System.Drawing.Point(6, 6);
 			this.m_rtbUnusedText.Name = "m_rtbUnusedText";
-			this.m_rtbUnusedText.SimpleTextOnly = false;
 			this.m_rtbUnusedText.Size = new System.Drawing.Size(585, 394);
 			this.m_rtbUnusedText.TabIndex = 0;
 			this.m_rtbUnusedText.Text = "";

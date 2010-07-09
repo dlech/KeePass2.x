@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_rtbText = new System.Windows.Forms.RichTextBox();
+			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_picBox = new System.Windows.Forms.PictureBox();
 			this.m_webBrowser = new System.Windows.Forms.WebBrowser();
 			this.m_toolMain = new KeePass.UI.CustomToolStripEx();
@@ -175,7 +175,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.RichTextBox m_rtbText;
+		private KeePass.UI.CustomRichTextBoxEx m_rtbText;
 		private System.Windows.Forms.PictureBox m_picBox;
 		private System.Windows.Forms.WebBrowser m_webBrowser;
 		private KeePass.UI.CustomToolStripEx m_toolMain;

@@ -188,24 +188,35 @@ namespace KeePass.Forms
 			m_toolMain.Visible = bVisible;
 			m_menuViewShowToolBar.Checked = bVisible;
 
+			// Make a copy of the maximized setting (the configuration item might
+			// get changed when the window's position/size is restored)
+			bool bMaximizedSetting = Program.Config.MainWindow.Maximized;
+
 			int wndX = Program.Config.MainWindow.X;
 			int wndY = Program.Config.MainWindow.Y;
 			int sizeX = Program.Config.MainWindow.Width;
 			int sizeY = Program.Config.MainWindow.Height;
-			bool bWndValid = ((wndX != -32000) && (wndY != -32000) && (wndX != -64000) && (wndY != -64000));
+			bool bWndValid = ((wndX != -32000) && (wndY != -32000) &&
+				(wndX != -64000) && (wndY != -64000));
 
 			if((sizeX != AppDefs.InvalidWindowValue) &&
 				(sizeY != AppDefs.InvalidWindowValue) && bWndValid)
 				this.Size = new Size(sizeX, sizeY);
 
-			Rectangle rectScreen = Screen.GetWorkingArea(this);
-
+			Rectangle rectRestWindow = new Rectangle(wndX, wndY,
+				this.Size.Width, this.Size.Height);
+			bool bWndPartVisible = UIUtil.IsScreenAreaVisible(rectRestWindow);
 			if((wndX != AppDefs.InvalidWindowValue) &&
-				(wndY != AppDefs.InvalidWindowValue) && bWndValid)
+				(wndY != AppDefs.InvalidWindowValue) && bWndValid && bWndPartVisible)
+			{
 				this.Location = new Point(wndX, wndY);
+			}
 			else
+			{
+				Rectangle rectScreen = Screen.PrimaryScreen.WorkingArea;
 				this.Location = new Point((rectScreen.Width - this.Size.Width) / 2,
 					(rectScreen.Height - this.Size.Height) / 2);
+			}
 
 			SetMainWindowLayout(Program.Config.MainWindow.Layout == AceMainWindowLayout.SideBySide);
 			ShowEntryView(Program.Config.MainWindow.EntryView.Show);
@@ -258,7 +269,11 @@ namespace KeePass.Forms
 
 			m_statusPartProgress.Visible = false;
 
-			if(mw.Maximized) this.WindowState = FormWindowState.Maximized;
+			if(bMaximizedSetting)
+			{
+				if((this.WindowState == FormWindowState.Normal) && !IsTrayed())
+					this.WindowState = FormWindowState.Maximized;
+			}
 
 			try
 			{
@@ -348,6 +363,7 @@ namespace KeePass.Forms
 
 		private void OnFileNew(object sender, EventArgs e)
 		{
+			if(!AppPolicy.Try(AppPolicyId.NewFile)) return;
 			if(!AppPolicy.Try(AppPolicyId.SaveFile)) return;
 
 			// OnFileClose(sender, e);
@@ -1063,7 +1079,7 @@ namespace KeePass.Forms
 				{
 					if(lvs == lvHit.SubItem)
 					{
-						strText = GetEntryFieldEx(pe, i);
+						strText = GetEntryFieldEx(pe, i, false);
 						break;
 					}
 
@@ -1677,6 +1693,8 @@ namespace KeePass.Forms
 			if(m_docMgr.ActiveDatabase.IsOpen == false) return;
 			PwEntry[] vSelected = GetSelectedEntries();
 			if((vSelected == null) || (vSelected.Length == 0)) return;
+
+			if(!AppPolicy.Try(AppPolicyId.CopyWholeEntries)) return;
 
 			try
 			{

@@ -160,6 +160,9 @@
 		<Data Name="AutoTypeUnknownPlaceholder">
 			<Value>The following auto-type placeholder or special key code is unknown/unsupported:</Value>
 		</Data>
+		<Data Name="AutoTypeXDoToolRequired">
+			<Value>The 'xdotool' utility/package is required for auto-type.</Value>
+		</Data>
 		<Data Name="AvailableLanguages">
 			<Value>Available Languages</Value>
 		</Data>
@@ -315,6 +318,9 @@
 		</Data>
 		<Data Name="CopyUserFull">
 			<Value>Copy User Name to Clipboard</Value>
+		</Data>
+		<Data Name="CopyWholeEntries">
+			<Value>Copy Whole Entries</Value>
 		</Data>
 		<Data Name="Count">
 			<Value>Count</Value>
@@ -895,6 +901,12 @@
 		<Data Name="KeePassLibCNotFound">
 			<Value>KeePassLibC could not be found.</Value>
 		</Data>
+		<Data Name="KeePassLibCNotWindows">
+			<Value>Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).</Value>
+		</Data>
+		<Data Name="KeePassLibCNotWindowsHint">
+			<Value>Please use a different file format for migrating your data.</Value>
+		</Data>
 		<Data Name="KeyboardKeyAlt">
 			<Value>Alt</Value>
 		</Data>
@@ -1018,6 +1030,9 @@
 		<Data Name="NeverExpires">
 			<Value>Never expires</Value>
 		</Data>
+		<Data Name="NewDatabase">
+			<Value>New Database</Value>
+		</Data>
 		<Data Name="NewDatabaseFileName">
 			<Value>NewDatabase.kdbx</Value>
 		</Data>
@@ -1099,6 +1114,9 @@
 		<Data Name="OverwriteExistingFileQuestion">
 			<Value>Overwrite the existing file?</Value>
 		</Data>
+		<Data Name="PackageInstallHint">
+			<Value>Install this package and try again.</Value>
+		</Data>
 		<Data Name="ParamDescHelp">
 			<Value>Detailed descriptions of all parameters can be found in the help manual.</Value>
 		</Data>
@@ -1177,6 +1195,9 @@
 		<Data Name="PolicyClipboardDesc">
 			<Value>Allow copying entry information to clipboard (main window only).</Value>
 		</Data>
+		<Data Name="PolicyCopyWholeEntriesDesc">
+			<Value>Allow copying whole entries to clipboard.</Value>
+		</Data>
 		<Data Name="PolicyDisallowed">
 			<Value>This operation is disallowed by the application policy. Ask your administrator to allow this operation.</Value>
 		</Data>
@@ -1188,6 +1209,9 @@
 		</Data>
 		<Data Name="PolicyImportDesc">
 			<Value>Allow importing entries from external files.</Value>
+		</Data>
+		<Data Name="PolicyNewDatabaseDesc">
+			<Value>Allow creating new database files.</Value>
 		</Data>
 		<Data Name="PolicyPluginsDesc">
 			<Value>Allow loading plugins to extend KeePass functionality.</Value>

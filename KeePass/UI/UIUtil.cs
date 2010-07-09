@@ -1113,5 +1113,29 @@ namespace KeePass.UI
 
 			if(m_fontItalic != null) c.Font = m_fontItalic;
 		}
+
+		/// <summary>
+		/// Test whether a screen area is at least partially visible.
+		/// </summary>
+		/// <param name="rect">Area to test.</param>
+		/// <returns>Returns <c>true</c>, if the area is at least partially
+		/// visible. Otherwise, <c>false</c> is returned.</returns>
+		public static bool IsScreenAreaVisible(Rectangle rect)
+		{
+			try
+			{
+				foreach(Screen scr in Screen.AllScreens)
+				{
+					Rectangle scrBounds = scr.Bounds;
+
+					if((rect.Left > scrBounds.Right) || (rect.Right < scrBounds.Left) ||
+						(rect.Top > scrBounds.Bottom) || (rect.Bottom < scrBounds.Top)) { }
+					else return true;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); return true; }
+
+			return false;
+		}
 	}
 }

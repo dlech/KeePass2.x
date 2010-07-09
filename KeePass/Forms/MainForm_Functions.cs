@@ -602,7 +602,7 @@ namespace KeePass.Forms
 			return GetSelectedEntry(bRequireSelected, false);
 		}
 
-		public PwEntry GetSelectedEntry(bool bRequireSelected, bool bGetLastMatchingEntry)
+		public PwEntry GetSelectedEntry(bool bRequireSelected, bool bGetLastSelectedEntry)
 		{
 			if(!m_docMgr.ActiveDatabase.IsOpen) return null;
 
@@ -615,7 +615,7 @@ namespace KeePass.Forms
 			ListView.SelectedListViewItemCollection coll = m_lvEntries.SelectedItems;
 			if(coll.Count > 0)
 			{
-				ListViewItem lvi = coll[bGetLastMatchingEntry ? (coll.Count - 1) : 0];
+				ListViewItem lvi = coll[bGetLastSelectedEntry ? (coll.Count - 1) : 0];
 				if(lvi != null) return (PwEntry)lvi.Tag;
 			}
 
@@ -739,10 +739,10 @@ namespace KeePass.Forms
 				if(strIndex.Length > 0) lvi.Text = strIndex;
 				else lvi.Text = PwDefs.TanTitle;
 			}
-			else lvi.Text = GetEntryFieldEx(pe, 0);
+			else lvi.Text = GetEntryFieldEx(pe, 0, true);
 
 			for(int iColumn = 1; iColumn < m_lvEntries.Columns.Count; ++iColumn)
-				lvi.SubItems.Add(GetEntryFieldEx(pe, iColumn));
+				lvi.SubItems.Add(GetEntryFieldEx(pe, iColumn, true));
 
 			m_lvEntries.Items.Add(lvi);
 			return lvi;
@@ -3656,13 +3656,13 @@ namespace KeePass.Forms
 			Program.Config.MainWindow.EntryListColumns.Add(c);
 		}
 
-		private string GetEntryFieldEx(PwEntry pe, int iColumnID)
+		private string GetEntryFieldEx(PwEntry pe, int iColumnID, bool bAsterisksIfHidden)
 		{
 			List<AceColumn> l = Program.Config.MainWindow.EntryListColumns;
 			if((iColumnID < 0) || (iColumnID >= l.Count)) { Debug.Assert(false); return string.Empty; }
 
 			AceColumn col = l[iColumnID];
-			if(col.HideWithAsterisks) return PwDefs.HiddenPassword;
+			if(bAsterisksIfHidden && col.HideWithAsterisks) return PwDefs.HiddenPassword;
 
 			string str = string.Empty;
 			switch(col.Type)

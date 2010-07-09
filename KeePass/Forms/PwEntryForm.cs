@@ -136,7 +136,7 @@ namespace KeePass.Forms
 		private bool m_bInitSwitchToHistory = false;
 		internal bool InitSwitchToHistoryTab
 		{
-			get { return m_bInitSwitchToHistory; }
+			// get { return m_bInitSwitchToHistory; } // Internal, uncalled
 			set { m_bInitSwitchToHistory = value; }
 		}
 

@@ -130,9 +130,19 @@ namespace KeePass.Util
 			if(!pweData.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoType)) return false;
 
+			if(KeePassLib.Native.NativeLib.IsUnix())
+			{
+				if(!NativeMethods.TryXDoTool())
+				{
+					MessageService.ShowWarning(KPRes.AutoTypeXDoToolRequired,
+						KPRes.PackageInstallHint);
+					return false;
+				}
+			}
+
 			PwDatabase pwDatabase = null;
 			try { pwDatabase = Program.MainForm.PluginHost.Database; }
-			catch(Exception) { pwDatabase = null; }
+			catch(Exception) { }
 
 			bool bObfuscate = (pweData.AutoType.ObfuscationOptions !=
 				AutoTypeObfuscationOptions.None);
@@ -200,7 +210,12 @@ namespace KeePass.Util
 			string strSeq = null;
 			foreach(KeyValuePair<string, string> kvp in pwe.AutoType.WindowSequencePairs)
 			{
-				if(MatchWindows(kvp.Key, strWindow))
+				string strWndSpec = kvp.Key;
+				if(!string.IsNullOrEmpty(strWndSpec))
+					strWndSpec = SprEngine.Compile(strWndSpec, false, pwe,
+						null, false, false);
+
+				if(MatchWindows(strWndSpec, strWindow))
 				{
 					strSeq = kvp.Value;
 					break;
@@ -251,8 +266,7 @@ namespace KeePass.Util
 			if((strWindow == null) || (strWindow.Length == 0)) return false;
 			if(!IsValidAutoTypeWindow(hWnd, true)) return false;
 
-			PwObjectList<PwEntry> m_vList = new PwObjectList<PwEntry>();
-
+			PwObjectList<PwEntry> vList = new PwObjectList<PwEntry>();
 			DateTime dtNow = DateTime.Now;
 
 			EntryHandler eh = delegate(PwEntry pe)
@@ -261,7 +275,7 @@ namespace KeePass.Util
 				if(pe.Expires && (pe.ExpiryTime < dtNow)) return true;
 
 				if(GetSequenceForWindow(pe, strWindow, true) != null)
-					m_vList.Add(pe);
+					vList.Add(pe);
 
 				return true;
 			};
@@ -272,14 +286,14 @@ namespace KeePass.Util
 				pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 			}
 
-			if(m_vList.UCount == 1)
-				AutoType.PerformInternal(m_vList.GetAt(0), strWindow);
-			else if(m_vList.UCount > 1)
+			if(vList.UCount == 1)
+				AutoType.PerformInternal(vList.GetAt(0), strWindow);
+			else if(vList.UCount > 1)
 			{
 				EntryListForm elf = new EntryListForm();
 				elf.InitEx(KPRes.AutoTypeEntrySelection, KPRes.AutoTypeEntrySelectionDescShort,
 					KPRes.AutoTypeEntrySelectionDescLong,
-					Properties.Resources.B48x48_KGPG_Key2, ilIcons, m_vList);
+					Properties.Resources.B48x48_KGPG_Key2, ilIcons, vList);
 				elf.EnsureForeground = true;
 
 				if(elf.ShowDialog() == DialogResult.OK)

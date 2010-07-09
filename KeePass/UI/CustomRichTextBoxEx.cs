@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Drawing;
 using System.Diagnostics;
 
 namespace KeePass.UI
@@ -28,6 +30,8 @@ namespace KeePass.UI
 	public sealed class CustomRichTextBoxEx : RichTextBox
 	{
 		private bool m_bSimpleTextOnly = false;
+		[Browsable(false)]
+		[DefaultValue(false)]
 		public bool SimpleTextOnly
 		{
 			get { return m_bSimpleTextOnly; }
@@ -36,6 +40,7 @@ namespace KeePass.UI
 
 		public CustomRichTextBoxEx() : base()
 		{
+			// this.EnableAutoDragDrop = true;
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -76,5 +81,26 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		/* protected override void OnDragDrop(DragEventArgs drgevent)
+		{
+			if(m_bSimpleTextOnly)
+			{
+				try
+				{
+					string strText = this.Text;
+
+					base.OnDragDrop(drgevent);
+
+					if(this.Text != strText)
+						this.Text = strText; // Clears all formats
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return; // Do not accept other drops in simple text mode
+			}
+
+			base.OnDragDrop(drgevent);
+		} */
 	}
 }

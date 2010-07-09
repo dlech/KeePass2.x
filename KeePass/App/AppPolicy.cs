@@ -38,13 +38,15 @@ namespace KeePass.App
 		Export,
 		Import,
 		Print,
+		NewFile,
 		SaveFile,
 		AutoType,
 		CopyToClipboard,
+		CopyWholeEntries,
 		DragDrop,
+		UnhidePasswords,
 		ChangeMasterKey,
-		EditTriggers,
-		UnhidePasswords
+		EditTriggers
 	}
 
 	/// <summary>
@@ -80,6 +82,13 @@ namespace KeePass.App
 			set { m_bPrint = value; }
 		}
 
+		private bool m_bNewFile = true;
+		public bool NewFile
+		{
+			get { return m_bNewFile; }
+			set { m_bNewFile = value; }
+		}
+
 		private bool m_bSave = true;
 		public bool SaveFile
 		{
@@ -101,11 +110,25 @@ namespace KeePass.App
 			set { m_bClipboard = value; }
 		}
 
+		private bool m_bCopyWholeEntries = true;
+		public bool CopyWholeEntries
+		{
+			get { return m_bCopyWholeEntries; }
+			set { m_bCopyWholeEntries = value; }
+		}
+
 		private bool m_bDragDrop = true;
 		public bool DragDrop
 		{
 			get { return m_bDragDrop; }
 			set { m_bDragDrop = value; }
+		}
+
+		private bool m_bUnhidePasswords = true;
+		public bool UnhidePasswords
+		{
+			get { return m_bUnhidePasswords; }
+			set { m_bUnhidePasswords = value; }
 		}
 
 		private bool m_bChangeMasterKey = true;
@@ -120,13 +143,6 @@ namespace KeePass.App
 		{
 			get { return m_bTriggersEdit; }
 			set { m_bTriggersEdit = value; }
-		}
-
-		private bool m_bUnhidePasswords = true;
-		public bool UnhidePasswords
-		{
-			get { return m_bUnhidePasswords; }
-			set { m_bUnhidePasswords = value; }
 		}
 
 		public AppPolicyFlags CloneDeep()
@@ -182,6 +198,9 @@ namespace KeePass.App
 				case AppPolicyId.Print:
 					str += KPRes.Print;
 					break;
+				case AppPolicyId.NewFile:
+					str += KPRes.NewDatabase;
+					break;
 				case AppPolicyId.SaveFile:
 					str += KPRes.SaveDatabase;
 					break;
@@ -191,17 +210,20 @@ namespace KeePass.App
 				case AppPolicyId.CopyToClipboard:
 					str += KPRes.Clipboard;
 					break;
+				case AppPolicyId.CopyWholeEntries:
+					str += KPRes.CopyWholeEntries;
+					break;
 				case AppPolicyId.DragDrop:
 					str += KPRes.DragDrop;
+					break;
+				case AppPolicyId.UnhidePasswords:
+					str += KPRes.UnhidePasswords;
 					break;
 				case AppPolicyId.ChangeMasterKey:
 					str += KPRes.ChangeMasterKey;
 					break;
 				case AppPolicyId.EditTriggers:
 					str += KPRes.TriggersEdit;
-					break;
-				case AppPolicyId.UnhidePasswords:
-					str += KPRes.UnhidePasswords;
 					break;
 				default:
 					Debug.Assert(false);
@@ -227,6 +249,9 @@ namespace KeePass.App
 				case AppPolicyId.Print:
 					str += KPRes.PolicyPrintDesc;
 					break;
+				case AppPolicyId.NewFile:
+					str += KPRes.PolicyNewDatabaseDesc;
+					break;
 				case AppPolicyId.SaveFile:
 					str += KPRes.PolicySaveDatabaseDesc;
 					break;
@@ -236,17 +261,20 @@ namespace KeePass.App
 				case AppPolicyId.CopyToClipboard:
 					str += KPRes.PolicyClipboardDesc;
 					break;
+				case AppPolicyId.CopyWholeEntries:
+					str += KPRes.PolicyCopyWholeEntriesDesc;
+					break;
 				case AppPolicyId.DragDrop:
 					str += KPRes.PolicyDragDropDesc;
+					break;
+				case AppPolicyId.UnhidePasswords:
+					str += KPRes.UnhidePasswordsDesc;
 					break;
 				case AppPolicyId.ChangeMasterKey:
 					str += KPRes.PolicyChangeMasterKey;
 					break;
 				case AppPolicyId.EditTriggers:
 					str += KPRes.PolicyTriggersEditDesc;
-					break;
-				case AppPolicyId.UnhidePasswords:
-					str += KPRes.UnhidePasswordsDesc;
 					break;
 				default:
 					Debug.Assert(false);
@@ -276,13 +304,15 @@ namespace KeePass.App
 				case AppPolicyId.Export: bAllowed = m_apfCurrent.Export; break;
 				case AppPolicyId.Import: bAllowed = m_apfCurrent.Import; break;
 				case AppPolicyId.Print: bAllowed = m_apfCurrent.Print; break;
+				case AppPolicyId.NewFile: bAllowed = m_apfCurrent.NewFile; break;
 				case AppPolicyId.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
 				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;
 				case AppPolicyId.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
+				case AppPolicyId.CopyWholeEntries: bAllowed = m_apfCurrent.CopyWholeEntries; break;
 				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
+				case AppPolicyId.UnhidePasswords: bAllowed = m_apfCurrent.UnhidePasswords; break;
 				case AppPolicyId.ChangeMasterKey: bAllowed = m_apfCurrent.ChangeMasterKey; break;
 				case AppPolicyId.EditTriggers: bAllowed = m_apfCurrent.EditTriggers; break;
-				case AppPolicyId.UnhidePasswords: bAllowed = m_apfCurrent.UnhidePasswords; break;
 				default: Debug.Assert(false); break;
 			}
 
@@ -295,154 +325,4 @@ namespace KeePass.App
 			return bAllowed;
 		}
 	}
-
-	/*
-	/// <summary>
-	/// Application policy settings
-	/// </summary>
-	public static class AppPolicy
-	{
-		private static bool[] m_vCurPolicyFlags = new bool[(int)AppPolicyFlag.Count];
-		private static bool[] m_vNewPolicyFlags = new bool[(int)AppPolicyFlag.Count];
-
-		private static string PolicyToString(AppPolicyFlag flag)
-		{
-			string str = KPRes.Feature + @": ";
-
-			switch(flag)
-			{
-				case AppPolicyFlag.Plugins:
-					str += KPRes.Plugins;
-					break;
-				case AppPolicyFlag.Export:
-					str += KPRes.Export;
-					break;
-				case AppPolicyFlag.Import:
-					str += KPRes.Import;
-					break;
-				case AppPolicyFlag.Print:
-					str += KPRes.Print;
-					break;
-				case AppPolicyFlag.SaveDatabase:
-					str += KPRes.SaveDatabase;
-					break;
-				case AppPolicyFlag.AutoType:
-					str += KPRes.AutoType;
-					break;
-				case AppPolicyFlag.CopyToClipboard:
-					str += KPRes.Clipboard;
-					break;
-				case AppPolicyFlag.DragDrop:
-					str += KPRes.DragDrop;
-					break;
-				case AppPolicyFlag.ChangeMasterKey:
-					str += KPRes.ChangeMasterKey;
-					break;
-				case AppPolicyFlag.EditTriggers:
-					str += KPRes.TriggersEdit;
-					break;
-				case AppPolicyFlag.UnhidePasswords:
-					str += KPRes.UnhidePasswords;
-					break;
-				default:
-					Debug.Assert(false);
-					str += KPRes.Unknown + ".";
-					break;
-			}
-
-			str += MessageService.NewLine + KPRes.Description + @": ";
-
-			switch(flag)
-			{
-				case AppPolicyFlag.Plugins:
-					str += KPRes.PolicyPluginsDesc;
-					break;
-				case AppPolicyFlag.Export:
-					str += KPRes.PolicyExportDesc;
-					break;
-				case AppPolicyFlag.Import:
-					str += KPRes.PolicyImportDesc;
-					break;
-				case AppPolicyFlag.Print:
-					str += KPRes.PolicyPrintDesc;
-					break;
-				case AppPolicyFlag.SaveDatabase:
-					str += KPRes.PolicySaveDatabaseDesc;
-					break;
-				case AppPolicyFlag.AutoType:
-					str += KPRes.PolicyAutoTypeDesc;
-					break;
-				case AppPolicyFlag.CopyToClipboard:
-					str += KPRes.PolicyClipboardDesc;
-					break;
-				case AppPolicyFlag.DragDrop:
-					str += KPRes.PolicyDragDropDesc;
-					break;
-				case AppPolicyFlag.ChangeMasterKey:
-					str += KPRes.PolicyChangeMasterKey;
-					break;
-				case AppPolicyFlag.EditTriggers:
-					str += KPRes.PolicyTriggersEditDesc;
-					break;
-				case AppPolicyFlag.UnhidePasswords:
-					str += KPRes.UnhidePasswordsDesc;
-					break;
-				default:
-					Debug.Assert(false);
-					str += KPRes.Unknown + ".";
-					break;
-			}
-
-			return str;
-		}
-
-		public static string RequiredPolicyMessage(AppPolicyFlag flag)
-		{
-			string str = KPRes.PolicyDisallowed + MessageService.NewParagraph;
-			str += KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine;
-			str += PolicyToString(flag);
-
-			return str;
-		}
-
-		public static void CurrentAllowAll(bool bAllow)
-		{
-			for(int i = 0; i < (int)AppPolicyFlag.Count; ++i)
-				m_vCurPolicyFlags[i] = m_vNewPolicyFlags[i] = bAllow;
-		}
-
-		public static void CurrentAllow(AppPolicyFlag flag, bool bAllow)
-		{
-			m_vCurPolicyFlags[(int)flag] = m_vNewPolicyFlags[(int)flag] = bAllow;
-		}
-
-		public static void NewAllow(AppPolicyFlag flag, bool bAllow)
-		{
-			m_vNewPolicyFlags[(int)flag] = bAllow;
-		}
-
-		public static bool NewIsAllowed(AppPolicyFlag flag)
-		{
-			return m_vNewPolicyFlags[(int)flag];
-		}
-
-		public static bool IsAllowed(AppPolicyFlag flag)
-		{
-			return m_vCurPolicyFlags[(int)flag];
-		}
-
-		public static bool Try(AppPolicyFlag flag)
-		{
-			bool bAllowed = m_vCurPolicyFlags[(int)flag];
-
-			if(bAllowed == false)
-			{
-				string strMsg = RequiredPolicyMessage(flag);
-				MessageService.ShowWarning(strMsg);
-			}
-
-			return bAllowed;
-		}
-	}
-	*/
 }

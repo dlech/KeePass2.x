@@ -77,7 +77,6 @@
 			this.m_rtbText.HideSelection = false;
 			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
 			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.SimpleTextOnly = false;
 			this.m_rtbText.Size = new System.Drawing.Size(100, 96);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";

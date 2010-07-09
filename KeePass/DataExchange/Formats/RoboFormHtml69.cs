@@ -97,10 +97,17 @@ namespace KeePass.DataExchange.Formats
 
 				int nUrlTD = strData.IndexOf(m_strUrlTD, nOffset);
 				if((nUrlTD >= 0) && (nUrlTD < nNextTitleTD))
+				{
+					string strUrl = StrUtil.XmlToString(StrUtil.GetStringBetween(
+						strData, nUrlTD, @">", @"</TD>"));
+
+					if(!string.IsNullOrEmpty(strUrl) && (strUrl.IndexOf(':') < 0) &&
+						(strUrl.IndexOf('@') < 0))
+						strUrl = @"http://" + strUrl;
+
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectUrl,
-						StrUtil.XmlToString(StrUtil.GetStringBetween(
-							strData, nUrlTD, @">", @"</TD>"))));
+						pwStorage.MemoryProtection.ProtectUrl, strUrl));
+				}
 
 				while(true)
 				{

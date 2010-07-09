@@ -79,6 +79,7 @@ namespace KeePass.Resources
 			m_strAutoTypeSelectedNoEntry = TryGetEx(dictNew, "AutoTypeSelectedNoEntry", m_strAutoTypeSelectedNoEntry);
 			m_strAutoTypeSequenceInvalid = TryGetEx(dictNew, "AutoTypeSequenceInvalid", m_strAutoTypeSequenceInvalid);
 			m_strAutoTypeUnknownPlaceholder = TryGetEx(dictNew, "AutoTypeUnknownPlaceholder", m_strAutoTypeUnknownPlaceholder);
+			m_strAutoTypeXDoToolRequired = TryGetEx(dictNew, "AutoTypeXDoToolRequired", m_strAutoTypeXDoToolRequired);
 			m_strAvailableLanguages = TryGetEx(dictNew, "AvailableLanguages", m_strAvailableLanguages);
 			m_strBackgroundColor = TryGetEx(dictNew, "BackgroundColor", m_strBackgroundColor);
 			m_strBinaryNoConv = TryGetEx(dictNew, "BinaryNoConv", m_strBinaryNoConv);
@@ -131,6 +132,7 @@ namespace KeePass.Resources
 			m_strCopyTanMenu = TryGetEx(dictNew, "CopyTanMenu", m_strCopyTanMenu);
 			m_strCopyUrlsInsteadOfOpening = TryGetEx(dictNew, "CopyUrlsInsteadOfOpening", m_strCopyUrlsInsteadOfOpening);
 			m_strCopyUserFull = TryGetEx(dictNew, "CopyUserFull", m_strCopyUserFull);
+			m_strCopyWholeEntries = TryGetEx(dictNew, "CopyWholeEntries", m_strCopyWholeEntries);
 			m_strCount = TryGetEx(dictNew, "Count", m_strCount);
 			m_strCreateMasterKey = TryGetEx(dictNew, "CreateMasterKey", m_strCreateMasterKey);
 			m_strCreateNewDatabase = TryGetEx(dictNew, "CreateNewDatabase", m_strCreateNewDatabase);
@@ -324,6 +326,8 @@ namespace KeePass.Resources
 			m_strKeePassEditor = TryGetEx(dictNew, "KeePassEditor", m_strKeePassEditor);
 			m_strKeePassLibCLong = TryGetEx(dictNew, "KeePassLibCLong", m_strKeePassLibCLong);
 			m_strKeePassLibCNotFound = TryGetEx(dictNew, "KeePassLibCNotFound", m_strKeePassLibCNotFound);
+			m_strKeePassLibCNotWindows = TryGetEx(dictNew, "KeePassLibCNotWindows", m_strKeePassLibCNotWindows);
+			m_strKeePassLibCNotWindowsHint = TryGetEx(dictNew, "KeePassLibCNotWindowsHint", m_strKeePassLibCNotWindowsHint);
 			m_strKeyboardKeyAlt = TryGetEx(dictNew, "KeyboardKeyAlt", m_strKeyboardKeyAlt);
 			m_strKeyboardKeyControl = TryGetEx(dictNew, "KeyboardKeyControl", m_strKeyboardKeyControl);
 			m_strKeyboardKeyModifiers = TryGetEx(dictNew, "KeyboardKeyModifiers", m_strKeyboardKeyModifiers);
@@ -365,6 +369,7 @@ namespace KeePass.Resources
 			m_strNavigation = TryGetEx(dictNew, "Navigation", m_strNavigation);
 			m_strNetwork = TryGetEx(dictNew, "Network", m_strNetwork);
 			m_strNeverExpires = TryGetEx(dictNew, "NeverExpires", m_strNeverExpires);
+			m_strNewDatabase = TryGetEx(dictNew, "NewDatabase", m_strNewDatabase);
 			m_strNewDatabaseFileName = TryGetEx(dictNew, "NewDatabaseFileName", m_strNewDatabaseFileName);
 			m_strNewerNetRequired = TryGetEx(dictNew, "NewerNetRequired", m_strNewerNetRequired);
 			m_strNewGroup = TryGetEx(dictNew, "NewGroup", m_strNewGroup);
@@ -392,6 +397,7 @@ namespace KeePass.Resources
 			m_strOtherPlaceholders = TryGetEx(dictNew, "OtherPlaceholders", m_strOtherPlaceholders);
 			m_strOverwrite = TryGetEx(dictNew, "Overwrite", m_strOverwrite);
 			m_strOverwriteExistingFileQuestion = TryGetEx(dictNew, "OverwriteExistingFileQuestion", m_strOverwriteExistingFileQuestion);
+			m_strPackageInstallHint = TryGetEx(dictNew, "PackageInstallHint", m_strPackageInstallHint);
 			m_strParamDescHelp = TryGetEx(dictNew, "ParamDescHelp", m_strParamDescHelp);
 			m_strPassword = TryGetEx(dictNew, "Password", m_strPassword);
 			m_strPasswordManagers = TryGetEx(dictNew, "PasswordManagers", m_strPasswordManagers);
@@ -418,10 +424,12 @@ namespace KeePass.Resources
 			m_strPolicyAutoTypeDesc = TryGetEx(dictNew, "PolicyAutoTypeDesc", m_strPolicyAutoTypeDesc);
 			m_strPolicyChangeMasterKey = TryGetEx(dictNew, "PolicyChangeMasterKey", m_strPolicyChangeMasterKey);
 			m_strPolicyClipboardDesc = TryGetEx(dictNew, "PolicyClipboardDesc", m_strPolicyClipboardDesc);
+			m_strPolicyCopyWholeEntriesDesc = TryGetEx(dictNew, "PolicyCopyWholeEntriesDesc", m_strPolicyCopyWholeEntriesDesc);
 			m_strPolicyDisallowed = TryGetEx(dictNew, "PolicyDisallowed", m_strPolicyDisallowed);
 			m_strPolicyDragDropDesc = TryGetEx(dictNew, "PolicyDragDropDesc", m_strPolicyDragDropDesc);
 			m_strPolicyExportDesc = TryGetEx(dictNew, "PolicyExportDesc", m_strPolicyExportDesc);
 			m_strPolicyImportDesc = TryGetEx(dictNew, "PolicyImportDesc", m_strPolicyImportDesc);
+			m_strPolicyNewDatabaseDesc = TryGetEx(dictNew, "PolicyNewDatabaseDesc", m_strPolicyNewDatabaseDesc);
 			m_strPolicyPluginsDesc = TryGetEx(dictNew, "PolicyPluginsDesc", m_strPolicyPluginsDesc);
 			m_strPolicyPrintDesc = TryGetEx(dictNew, "PolicyPrintDesc", m_strPolicyPrintDesc);
 			m_strPolicyRequiredFlag = TryGetEx(dictNew, "PolicyRequiredFlag", m_strPolicyRequiredFlag);
@@ -622,6 +630,7 @@ namespace KeePass.Resources
 			"AutoTypeSelectedNoEntry",
 			"AutoTypeSequenceInvalid",
 			"AutoTypeUnknownPlaceholder",
+			"AutoTypeXDoToolRequired",
 			"AvailableLanguages",
 			"BackgroundColor",
 			"BinaryNoConv",
@@ -674,6 +683,7 @@ namespace KeePass.Resources
 			"CopyTanMenu",
 			"CopyUrlsInsteadOfOpening",
 			"CopyUserFull",
+			"CopyWholeEntries",
 			"Count",
 			"CreateMasterKey",
 			"CreateNewDatabase",
@@ -867,6 +877,8 @@ namespace KeePass.Resources
 			"KeePassEditor",
 			"KeePassLibCLong",
 			"KeePassLibCNotFound",
+			"KeePassLibCNotWindows",
+			"KeePassLibCNotWindowsHint",
 			"KeyboardKeyAlt",
 			"KeyboardKeyControl",
 			"KeyboardKeyModifiers",
@@ -908,6 +920,7 @@ namespace KeePass.Resources
 			"Navigation",
 			"Network",
 			"NeverExpires",
+			"NewDatabase",
 			"NewDatabaseFileName",
 			"NewerNetRequired",
 			"NewGroup",
@@ -935,6 +948,7 @@ namespace KeePass.Resources
 			"OtherPlaceholders",
 			"Overwrite",
 			"OverwriteExistingFileQuestion",
+			"PackageInstallHint",
 			"ParamDescHelp",
 			"Password",
 			"PasswordManagers",
@@ -961,10 +975,12 @@ namespace KeePass.Resources
 			"PolicyAutoTypeDesc",
 			"PolicyChangeMasterKey",
 			"PolicyClipboardDesc",
+			"PolicyCopyWholeEntriesDesc",
 			"PolicyDisallowed",
 			"PolicyDragDropDesc",
 			"PolicyExportDesc",
 			"PolicyImportDesc",
+			"PolicyNewDatabaseDesc",
 			"PolicyPluginsDesc",
 			"PolicyPrintDesc",
 			"PolicyRequiredFlag",
@@ -1699,6 +1715,17 @@ namespace KeePass.Resources
 			get { return m_strAutoTypeUnknownPlaceholder; }
 		}
 
+		private static string m_strAutoTypeXDoToolRequired =
+			@"The 'xdotool' utility/package is required for auto-type.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The &#39;xdotool&#39; utility/package is required for auto-type.'.
+		/// </summary>
+		public static string AutoTypeXDoToolRequired
+		{
+			get { return m_strAutoTypeXDoToolRequired; }
+		}
+
 		private static string m_strAvailableLanguages =
 			@"Available Languages";
 		/// <summary>
@@ -2269,6 +2296,17 @@ namespace KeePass.Resources
 		public static string CopyUserFull
 		{
 			get { return m_strCopyUserFull; }
+		}
+
+		private static string m_strCopyWholeEntries =
+			@"Copy Whole Entries";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy Whole Entries'.
+		/// </summary>
+		public static string CopyWholeEntries
+		{
+			get { return m_strCopyWholeEntries; }
 		}
 
 		private static string m_strCount =
@@ -4394,6 +4432,28 @@ namespace KeePass.Resources
 			get { return m_strKeePassLibCNotFound; }
 		}
 
+		private static string m_strKeePassLibCNotWindows =
+			@"Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).'.
+		/// </summary>
+		public static string KeePassLibCNotWindows
+		{
+			get { return m_strKeePassLibCNotWindows; }
+		}
+
+		private static string m_strKeePassLibCNotWindowsHint =
+			@"Please use a different file format for migrating your data.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Please use a different file format for migrating your data.'.
+		/// </summary>
+		public static string KeePassLibCNotWindowsHint
+		{
+			get { return m_strKeePassLibCNotWindowsHint; }
+		}
+
 		private static string m_strKeyboardKeyAlt =
 			@"Alt";
 		/// <summary>
@@ -4845,6 +4905,17 @@ namespace KeePass.Resources
 			get { return m_strNeverExpires; }
 		}
 
+		private static string m_strNewDatabase =
+			@"New Database";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'New Database'.
+		/// </summary>
+		public static string NewDatabase
+		{
+			get { return m_strNewDatabase; }
+		}
+
 		private static string m_strNewDatabaseFileName =
 			@"NewDatabase.kdbx";
 		/// <summary>
@@ -5142,6 +5213,17 @@ namespace KeePass.Resources
 			get { return m_strOverwriteExistingFileQuestion; }
 		}
 
+		private static string m_strPackageInstallHint =
+			@"Install this package and try again.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Install this package and try again.'.
+		/// </summary>
+		public static string PackageInstallHint
+		{
+			get { return m_strPackageInstallHint; }
+		}
+
 		private static string m_strParamDescHelp =
 			@"Detailed descriptions of all parameters can be found in the help manual.";
 		/// <summary>
@@ -5428,6 +5510,17 @@ namespace KeePass.Resources
 			get { return m_strPolicyClipboardDesc; }
 		}
 
+		private static string m_strPolicyCopyWholeEntriesDesc =
+			@"Allow copying whole entries to clipboard.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Allow copying whole entries to clipboard.'.
+		/// </summary>
+		public static string PolicyCopyWholeEntriesDesc
+		{
+			get { return m_strPolicyCopyWholeEntriesDesc; }
+		}
+
 		private static string m_strPolicyDisallowed =
 			@"This operation is disallowed by the application policy. Ask your administrator to allow this operation.";
 		/// <summary>
@@ -5470,6 +5563,17 @@ namespace KeePass.Resources
 		public static string PolicyImportDesc
 		{
 			get { return m_strPolicyImportDesc; }
+		}
+
+		private static string m_strPolicyNewDatabaseDesc =
+			@"Allow creating new database files.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Allow creating new database files.'.
+		/// </summary>
+		public static string PolicyNewDatabaseDesc
+		{
+			get { return m_strPolicyNewDatabaseDesc; }
 		}
 
 		private static string m_strPolicyPluginsDesc =

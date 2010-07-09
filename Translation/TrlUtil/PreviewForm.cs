@@ -109,7 +109,8 @@ namespace TrlUtil
 					cCopy = new TextBox();
 					(cCopy as TextBox).Multiline = (c as TextBox).Multiline;
 				}
-				else if(t == typeof(RichTextBox)) // RTB leads to GDI objects leak
+				else if((t == typeof(RichTextBox)) || // RTB leads to GDI objects leak
+					(t == typeof(CustomRichTextBoxEx)))
 				{
 					cCopy = new TextBox();
 					(cCopy as TextBox).Multiline = true;

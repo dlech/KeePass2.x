@@ -417,7 +417,7 @@ namespace KeePassLib.Serialization
 			return uDefault;
 		}
 
-		private long ReadLong(XmlNode xmlNode, long nDefault)
+		/* private long ReadLong(XmlNode xmlNode, long nDefault)
 		{
 			ProcessNode(xmlNode);
 
@@ -426,7 +426,7 @@ namespace KeePassLib.Serialization
 
 			Debug.Assert(false);
 			return nDefault;
-		}
+		} */
 
 		private ulong ReadULong(XmlNode xmlNode, ulong uDefault)
 		{

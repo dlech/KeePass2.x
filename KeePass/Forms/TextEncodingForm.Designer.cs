@@ -33,7 +33,7 @@
 			this.m_lblSelEnc = new System.Windows.Forms.Label();
 			this.m_cmbEnc = new System.Windows.Forms.ComboBox();
 			this.m_lblPreview = new System.Windows.Forms.Label();
-			this.m_rtbPreview = new System.Windows.Forms.RichTextBox();
+			this.m_rtbPreview = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_lblContext = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -144,7 +144,7 @@
 		private System.Windows.Forms.Label m_lblSelEnc;
 		private System.Windows.Forms.ComboBox m_cmbEnc;
 		private System.Windows.Forms.Label m_lblPreview;
-		private System.Windows.Forms.RichTextBox m_rtbPreview;
+		private KeePass.UI.CustomRichTextBoxEx m_rtbPreview;
 		private System.Windows.Forms.Label m_lblContext;
 	}
 }

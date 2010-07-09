@@ -261,8 +261,8 @@ namespace KeePass.Native
 		// [return: MarshalAs(UnmanagedType.Bool)]
 		// internal static extern bool DeleteObject(IntPtr hObject);
 
-		[DllImport("DwmApi.dll")]
-		internal static extern int DwmInvalidateIconicBitmaps(IntPtr hWnd);
+		// [DllImport("DwmApi.dll")]
+		// internal static extern int DwmInvalidateIconicBitmaps(IntPtr hWnd);
 
 		[DllImport("DwmApi.dll", EntryPoint = "DwmSetWindowAttribute")]
 		internal static extern int DwmSetWindowAttributeInt(IntPtr hWnd,

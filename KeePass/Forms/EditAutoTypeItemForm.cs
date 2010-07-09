@@ -264,11 +264,11 @@ namespace KeePass.Forms
 				}
 			}
 
-			if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
-			{
-				bEnableOK = false;
-				// strError = KPRes.FieldNameInvalid;
-			}
+			// if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
+			// {
+			//	bEnableOK = false;
+			//	// strError = KPRes.FieldNameInvalid;
+			// }
 
 			if(bEnableOK)
 			{
@@ -353,13 +353,13 @@ namespace KeePass.Forms
 			int nSelStart = m_rbKeySeq.SelectionStart;
 			int nSelLength = m_rbKeySeq.SelectionLength;
 			string strText = m_rbKeySeq.Text;
-			string strURL = e.LinkText;
+			string strUrl = e.LinkText;
 
 			if(nSelLength > 0)
 				strText = strText.Remove(nSelStart, nSelLength);
 
-			m_rbKeySeq.Text = strText.Insert(nSelStart, strURL);
-			m_rbKeySeq.Select(nSelStart + strURL.Length, 0);
+			m_rbKeySeq.Text = strText.Insert(nSelStart, strUrl);
+			m_rbKeySeq.Select(nSelStart + strUrl.Length, 0);
 			m_rbKeySeq.Focus();
 		}
 
