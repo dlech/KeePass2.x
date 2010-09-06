@@ -168,7 +168,6 @@
 			// 
 			// m_btnProfileAdd
 			// 
-			this.m_btnProfileAdd.Image = global::KeePass.Properties.Resources.B16x16_FileSaveAs;
 			this.m_btnProfileAdd.Location = new System.Drawing.Point(398, 5);
 			this.m_btnProfileAdd.Name = "m_btnProfileAdd";
 			this.m_btnProfileAdd.Size = new System.Drawing.Size(25, 23);
@@ -178,7 +177,6 @@
 			// 
 			// m_btnProfileRemove
 			// 
-			this.m_btnProfileRemove.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
 			this.m_btnProfileRemove.Location = new System.Drawing.Point(426, 5);
 			this.m_btnProfileRemove.Name = "m_btnProfileRemove";
 			this.m_btnProfileRemove.Size = new System.Drawing.Size(25, 23);
@@ -472,9 +470,9 @@
 			this.m_cbNoRepeat.AutoSize = true;
 			this.m_cbNoRepeat.Location = new System.Drawing.Point(12, 16);
 			this.m_cbNoRepeat.Name = "m_cbNoRepeat";
-			this.m_cbNoRepeat.Size = new System.Drawing.Size(140, 17);
+			this.m_cbNoRepeat.Size = new System.Drawing.Size(218, 17);
 			this.m_cbNoRepeat.TabIndex = 0;
-			this.m_cbNoRepeat.Text = "No repeating characters";
+			this.m_cbNoRepeat.Text = "Each character must occur at most once";
 			this.m_cbNoRepeat.UseVisualStyleBackColor = true;
 			// 
 			// m_lblSecRedInfo

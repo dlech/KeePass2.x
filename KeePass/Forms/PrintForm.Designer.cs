@@ -522,7 +522,6 @@
 			// 
 			// m_btnConfigPrinter
 			// 
-			this.m_btnConfigPrinter.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_btnConfigPrinter.Location = new System.Drawing.Point(12, 537);
 			this.m_btnConfigPrinter.Name = "m_btnConfigPrinter";
 			this.m_btnConfigPrinter.Size = new System.Drawing.Size(100, 23);
@@ -534,7 +533,6 @@
 			// 
 			// m_btnPrintPreview
 			// 
-			this.m_btnPrintPreview.Image = global::KeePass.Properties.Resources.B16x16_FileQuickPrint;
 			this.m_btnPrintPreview.Location = new System.Drawing.Point(118, 537);
 			this.m_btnPrintPreview.Name = "m_btnPrintPreview";
 			this.m_btnPrintPreview.Size = new System.Drawing.Size(100, 23);

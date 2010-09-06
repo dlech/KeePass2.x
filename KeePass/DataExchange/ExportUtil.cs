@@ -48,14 +48,19 @@ namespace KeePass.DataExchange
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 			{
-				if(dlg.ResultFormat == null) { Debug.Assert(false); return false; }
-				if(dlg.ResultFiles.Length != 1) { Debug.Assert(false); return false; }
-				if(dlg.ResultFiles[0] == null) { Debug.Assert(false); return false; }
-				if(dlg.ResultFiles[0].Length == 0) { Debug.Assert(false); return false; }
+				FileFormatProvider ffp = dlg.ResultFormat;
+				if(ffp == null) { Debug.Assert(false); return false; }
+				if(ffp.RequiresFile)
+				{
+					if(dlg.ResultFiles.Length != 1) { Debug.Assert(false); return false; }
+					if(dlg.ResultFiles[0] == null) { Debug.Assert(false); return false; }
+					if(dlg.ResultFiles[0].Length == 0) { Debug.Assert(false); return false; }
+				}
 
 				Application.DoEvents(); // Redraw parent window
 
-				IOConnectionInfo iocOutput = IOConnectionInfo.FromPath(dlg.ResultFiles[0]);
+				IOConnectionInfo iocOutput = (ffp.RequiresFile ? IOConnectionInfo.FromPath(
+					dlg.ResultFiles[0]) : null);
 
 				try
 				{
@@ -71,6 +76,7 @@ namespace KeePass.DataExchange
 			IOConnectionInfo iocOutput)
 		{
 			if(strFormatName == null) throw new ArgumentNullException("strFormatName");
+			// iocOutput may be null
 
 			FileFormatProvider prov = Program.FileFormatPool.Find(strFormatName);
 			if(prov == null) return false;
@@ -85,26 +91,29 @@ namespace KeePass.DataExchange
 			if(pwExportInfo == null) throw new ArgumentNullException("pwExportInfo");
 			if(pwExportInfo.DataGroup == null) throw new ArgumentException();
 			if(fileFormat == null) throw new ArgumentNullException("fileFormat");
-			if(iocOutput == null) throw new ArgumentNullException("iocOutput");
+			if(fileFormat.RequiresFile && (iocOutput == null))
+				throw new ArgumentNullException("iocOutput");
 
 			if(!AppPolicy.Try(AppPolicyId.Export)) return false;
 			if(!fileFormat.SupportsExport) return false;
 			if(!fileFormat.TryBeginExport()) return false;
 
 			// bool bExistedAlready = File.Exists(strOutputFile);
-			bool bExistedAlready = IOConnection.FileExists(iocOutput);
+			bool bExistedAlready = (fileFormat.RequiresFile ? IOConnection.FileExists(
+				iocOutput) : false);
 
 			// FileStream fsOut = new FileStream(strOutputFile, FileMode.Create,
 			//	FileAccess.Write, FileShare.None);
-			Stream sOut = IOConnection.OpenWrite(iocOutput);
+			Stream sOut = (fileFormat.RequiresFile ? IOConnection.OpenWrite(
+				iocOutput) : null);
 
 			bool bResult = false;
 			try { bResult = fileFormat.Export(pwExportInfo, sOut, slLogger); }
 			catch(Exception) { }
 
-			sOut.Close();
+			if(sOut != null) sOut.Close();
 
-			if((bResult == false) && (bExistedAlready == false))
+			if(fileFormat.RequiresFile && (bResult == false) && (bExistedAlready == false))
 			{
 				try { IOConnection.DeleteFile(iocOutput); }
 				catch(Exception) { }

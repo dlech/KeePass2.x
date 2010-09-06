@@ -801,6 +801,11 @@ namespace KeePassLib
 
 		public List<string> BuildEntryTagsList()
 		{
+			return BuildEntryTagsList(false);
+		}
+
+		public List<string> BuildEntryTagsList(bool bSort)
+		{
 			List<string> vTags = new List<string>();
 
 			EntryHandler eh = delegate(PwEntry pe)
@@ -824,6 +829,7 @@ namespace KeePassLib
 			};
 
 			TraverseTree(TraversalMethod.PreOrder, null, eh);
+			if(bSort) vTags.Sort(StrUtil.CaseIgnoreComparer);
 			return vTags;
 		}
 

@@ -101,7 +101,7 @@ namespace KeePass.Util
 					catch(Exception) { Debug.Assert(false); }
 				}
 			}
-			if(img == null) img = KeePass.Properties.Resources.B16x16_KGPG_Key1;
+			if(img == null) img = Properties.Resources.B16x16_KGPG_Key1;
 			tsmi.Image = img;
 
 			m_btnItemsHost.DropDownItems.Add(tsmi);

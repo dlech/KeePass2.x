@@ -77,7 +77,7 @@ namespace KeePass.UI
 				foreach(KeyValuePair<Form, IGwmWindow> kvp in m_vWindows)
 				{
 					if(kvp.Value == null) return false;
-					else if(kvp.Value.CanCloseWithoutDataLoss == false)
+					else if(!kvp.Value.CanCloseWithoutDataLoss)
 						return false;
 				}
 

@@ -40,6 +40,7 @@
 			this.m_dtExpires = new System.Windows.Forms.DateTimePicker();
 			this.m_cbExpires = new System.Windows.Forms.CheckBox();
 			this.m_tabNotes = new System.Windows.Forms.TabPage();
+			this.m_lblNotesHint = new System.Windows.Forms.Label();
 			this.m_tbNotes = new System.Windows.Forms.TextBox();
 			this.m_tabBehavior = new System.Windows.Forms.TabPage();
 			this.m_cmbEnableSearching = new System.Windows.Forms.ComboBox();
@@ -52,7 +53,6 @@
 			this.m_rbAutoTypeInherit = new System.Windows.Forms.RadioButton();
 			this.m_lblAutoTypeDesc = new System.Windows.Forms.Label();
 			this.m_tbDefaultAutoTypeSeq = new System.Windows.Forms.TextBox();
-			this.m_lblNotesHint = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabGeneral.SuspendLayout();
@@ -183,6 +183,15 @@
 			this.m_tabNotes.Text = "Notes";
 			this.m_tabNotes.UseVisualStyleBackColor = true;
 			// 
+			// m_lblNotesHint
+			// 
+			this.m_lblNotesHint.AutoSize = true;
+			this.m_lblNotesHint.Location = new System.Drawing.Point(3, 121);
+			this.m_lblNotesHint.Name = "m_lblNotesHint";
+			this.m_lblNotesHint.Size = new System.Drawing.Size(167, 13);
+			this.m_lblNotesHint.TabIndex = 1;
+			this.m_lblNotesHint.Text = "Notes are shown in group tooltips.";
+			// 
 			// m_tbNotes
 			// 
 			this.m_tbNotes.AcceptsReturn = true;
@@ -258,7 +267,6 @@
 			// 
 			// m_btnAutoTypeEdit
 			// 
-			this.m_btnAutoTypeEdit.Image = global::KeePass.Properties.Resources.B16x16_Wizard;
 			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(318, 57);
 			this.m_btnAutoTypeEdit.Name = "m_btnAutoTypeEdit";
 			this.m_btnAutoTypeEdit.Size = new System.Drawing.Size(32, 23);
@@ -304,15 +312,6 @@
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
 			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(280, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 2;
-			// 
-			// m_lblNotesHint
-			// 
-			this.m_lblNotesHint.AutoSize = true;
-			this.m_lblNotesHint.Location = new System.Drawing.Point(3, 121);
-			this.m_lblNotesHint.Name = "m_lblNotesHint";
-			this.m_lblNotesHint.Size = new System.Drawing.Size(167, 13);
-			this.m_lblNotesHint.TabIndex = 1;
-			this.m_lblNotesHint.Text = "Notes are shown in group tooltips.";
 			// 
 			// GroupForm
 			// 

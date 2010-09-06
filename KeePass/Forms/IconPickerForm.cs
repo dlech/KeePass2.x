@@ -81,8 +81,8 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
-			UIUtil.AssignFontDefaultBold(m_radioStandard);
-			UIUtil.AssignFontDefaultBold(m_radioCustom);
+			FontUtil.AssignDefaultBold(m_radioStandard);
+			FontUtil.AssignDefaultBold(m_radioCustom);
 
 			m_lvIcons.SmallImageList = m_ilIcons;
 			for(uint i = 0; i < m_uNumberOfStandardIcons; ++i)

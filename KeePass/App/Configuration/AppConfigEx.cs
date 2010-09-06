@@ -192,6 +192,8 @@ namespace KeePass.App.Configuration
 		internal void OnLoad()
 		{
 			m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
+
+			ObfuscateCred(false);
 			ChangePathsRelAbs(true);
 
 			// Remove invalid columns
@@ -209,11 +211,14 @@ namespace KeePass.App.Configuration
 		internal void OnSavePre()
 		{
 			PrepareSave();
+
 			ChangePathsRelAbs(false);
+			ObfuscateCred(true);
 		}
 
 		internal void OnSavePost()
 		{
+			ObfuscateCred(false);
 			ChangePathsRelAbs(true);
 		}
 
@@ -256,6 +261,18 @@ namespace KeePass.App.Configuration
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 			ChangePathRelAbs(ioc, bMakeAbsolute);
 			return ioc.Path;
+		}
+
+		private void ObfuscateCred(bool bObf)
+		{
+			if(m_aceApp.LastUsedFile == null) { Debug.Assert(false); }
+			else m_aceApp.LastUsedFile.Obfuscate(bObf);
+
+			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+			{
+				if(iocMru == null) { Debug.Assert(false); }
+				else iocMru.Obfuscate(bObf);
+			}
 		}
 	}
 

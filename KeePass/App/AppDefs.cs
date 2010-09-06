@@ -93,6 +93,9 @@ namespace KeePass.App
 			public const string TriggersEvents = "events";
 			public const string TriggersConditions = "conditions";
 			public const string TriggersActions = "actions";
+
+			public const string Setup = "v2/setup";
+			public const string SetupMono = "mono";
 		}
 
 		public static class CommandLineOptions
@@ -144,6 +147,10 @@ namespace KeePass.App
 			public const string PlgxBuildPost = "plgx-build-post";
 
 			public const string Debug = "debug";
+
+#if (DEBUG && !KeePassLibSD)
+			public const string MakePopularPasswordTable = "makepopularpasswordtable";
+#endif
 		}
 
 		public static class FileExtension

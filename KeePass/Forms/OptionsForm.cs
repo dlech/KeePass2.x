@@ -51,15 +51,14 @@ namespace KeePass.Forms
 		private CheckedLVItemDXList m_cdxSecurityOptions = new CheckedLVItemDXList();
 		private CheckedLVItemDXList m_cdxPolicy = new CheckedLVItemDXList();
 		private CheckedLVItemDXList m_cdxGuiOptions = new CheckedLVItemDXList();
+		private CheckedLVItemDXList m_cdxAdvanced = new CheckedLVItemDXList();
+
 		private HotKeyControlEx m_hkGlobalAutoType = null;
 		private HotKeyControlEx m_hkSelectedAutoType = null;
 		private HotKeyControlEx m_hkShowWindow = null;
-
 		private Keys m_kPrevATHKKey = Keys.None;
 		private Keys m_kPrevATSHKKey = Keys.None;
 		private Keys m_kPrevSWHKKey = Keys.None;
-
-		private CheckedLVItemDXList m_cdxAdvanced = new CheckedLVItemDXList();
 
 		private AceUrlSchemeOverrides m_aceUrlSchemeOverrides = null;
 
@@ -147,9 +146,15 @@ namespace KeePass.Forms
 			{
 				UIUtil.SetShield(m_btnFileExtCreate, true);
 				UIUtil.SetShield(m_btnFileExtRemove, true);
+
+				m_linkHotKeyHelp.Visible = false;
 			}
 			else // Unix
 			{
+				Program.Config.Integration.HotKeyGlobalAutoType = (ulong)Keys.None;
+				Program.Config.Integration.HotKeySelectedAutoType = (ulong)Keys.None;
+				Program.Config.Integration.HotKeyShowWindow = (ulong)Keys.None;
+
 				m_hkGlobalAutoType.Enabled = m_hkSelectedAutoType.Enabled =
 					m_hkShowWindow.Enabled = false;
 				m_btnFileExtCreate.Enabled = m_btnFileExtRemove.Enabled = false;
@@ -554,13 +559,44 @@ namespace KeePass.Forms
 
 		private void OnBtnSelListFont(object sender, EventArgs e)
 		{
-			AceFont fOld = Program.Config.UI.StandardFont;
-			if(fOld.OverrideUIDefault) m_fontLists.Font = fOld.ToFont();
+			FontDialog dlg = UIUtil.CreateFontDialog(false);
 
-			if(m_fontLists.ShowDialog() == DialogResult.OK)
+			AceFont fOld = Program.Config.UI.StandardFont;
+			if(fOld.OverrideUIDefault) dlg.Font = fOld.ToFont();
+			else
 			{
-				Program.Config.UI.StandardFont = new AceFont(m_fontLists.Font);
+				try { dlg.Font = m_tbUrlOverride.Font; }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			if(dlg.ShowDialog() == DialogResult.OK)
+			{
+				Program.Config.UI.StandardFont = new AceFont(dlg.Font);
 				Program.Config.UI.StandardFont.OverrideUIDefault = true;
+			}
+		}
+
+		private void OnBtnSelPwFont(object sender, EventArgs e)
+		{
+			FontDialog dlg = UIUtil.CreateFontDialog(false);
+
+			AceFont fOld = Program.Config.UI.PasswordFont;
+			if(fOld.OverrideUIDefault) dlg.Font = fOld.ToFont();
+			else if(FontUtil.MonoFont != null) dlg.Font = FontUtil.MonoFont;
+			else
+			{
+				try
+				{
+					dlg.Font = new Font(FontFamily.GenericMonospace,
+						m_tbUrlOverride.Font.SizeInPoints);
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			if(dlg.ShowDialog() == DialogResult.OK)
+			{
+				Program.Config.UI.PasswordFont = new AceFont(dlg.Font);
+				Program.Config.UI.PasswordFont.OverrideUIDefault = true;
 			}
 		}
 
@@ -637,6 +673,11 @@ namespace KeePass.Forms
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			CleanUpEx();
+		}
+
+		private void OnHotKeyHelpLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.Setup, AppDefs.HelpTopics.SetupMono);
 		}
 	}
 }

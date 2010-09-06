@@ -201,7 +201,6 @@
 			this.m_ctxTraySep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxTrayFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_timerMain = new System.Windows.Forms.Timer(this.components);
-			this.m_colorDlg = new System.Windows.Forms.ColorDialog();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
 			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
@@ -1561,14 +1560,14 @@
 			// 
 			this.m_tbViewsShowAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_tbViewsShowAll.Name = "m_tbViewsShowAll";
-			this.m_tbViewsShowAll.Size = new System.Drawing.Size(152, 22);
+			this.m_tbViewsShowAll.Size = new System.Drawing.Size(67, 22);
 			this.m_tbViewsShowAll.Click += new System.EventHandler(this.OnShowAllEntries);
 			// 
 			// m_tbViewsShowExpired
 			// 
 			this.m_tbViewsShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_tbViewsShowExpired.Name = "m_tbViewsShowExpired";
-			this.m_tbViewsShowExpired.Size = new System.Drawing.Size(152, 22);
+			this.m_tbViewsShowExpired.Size = new System.Drawing.Size(67, 22);
 			this.m_tbViewsShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
 			// 
 			// m_tbSep2
@@ -1703,11 +1702,6 @@
 			this.m_timerMain.Enabled = true;
 			this.m_timerMain.Interval = 1000;
 			this.m_timerMain.Tick += new System.EventHandler(this.OnTimerMainTick);
-			// 
-			// m_colorDlg
-			// 
-			this.m_colorDlg.AnyColor = true;
-			this.m_colorDlg.FullOpen = true;
 			// 
 			// m_tabMain
 			// 
@@ -1979,7 +1973,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorLightYellow;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntryColorSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorCustom;
-		private System.Windows.Forms.ColorDialog m_colorDlg;
 		private System.Windows.Forms.ToolStripDropDownButton m_tbEntryViewsDropDown;
 		private System.Windows.Forms.ToolStripMenuItem m_tbViewsShowAll;
 		private System.Windows.Forms.ToolStripMenuItem m_tbViewsShowExpired;

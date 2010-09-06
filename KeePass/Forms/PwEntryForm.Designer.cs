@@ -126,7 +126,6 @@
 			this.m_ctxPwGenOpen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxPwGenSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxPwGenProfiles = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_dlgColorSel = new System.Windows.Forms.ColorDialog();
 			this.m_ctxTools = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxToolsHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -435,7 +434,6 @@
 			// m_btnStandardExpires
 			// 
 			this.m_btnStandardExpires.ContextMenuStrip = this.m_ctxDefaultTimes;
-			this.m_btnStandardExpires.Image = global::KeePass.Properties.Resources.B16x16_History;
 			this.m_btnStandardExpires.Location = new System.Drawing.Point(423, 311);
 			this.m_btnStandardExpires.Name = "m_btnStandardExpires";
 			this.m_btnStandardExpires.Size = new System.Drawing.Size(32, 23);
@@ -1016,7 +1014,6 @@
 			// 
 			// m_btnTools
 			// 
-			this.m_btnTools.Image = global::KeePass.Properties.Resources.B16x16_Package_Settings;
 			this.m_btnTools.Location = new System.Drawing.Point(6, 453);
 			this.m_btnTools.Name = "m_btnTools";
 			this.m_btnTools.Size = new System.Drawing.Size(80, 23);
@@ -1108,11 +1105,6 @@
 			this.m_ctxPwGenProfiles.Name = "m_ctxPwGenProfiles";
 			this.m_ctxPwGenProfiles.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxPwGenProfiles.Text = "Generate Using Profile";
-			// 
-			// m_dlgColorSel
-			// 
-			this.m_dlgColorSel.AnyColor = true;
-			this.m_dlgColorSel.FullOpen = true;
 			// 
 			// m_ctxTools
 			// 
@@ -1347,7 +1339,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxPwGenProfiles;
 		private System.Windows.Forms.TabPage m_tabProperties;
 		private System.Windows.Forms.Button m_btnPickBgColor;
-		private System.Windows.Forms.ColorDialog m_dlgColorSel;
 		private System.Windows.Forms.CheckBox m_cbCustomBackgroundColor;
 		private System.Windows.Forms.TextBox m_tbOverrideUrl;
 		private System.Windows.Forms.Label m_lblOverrideUrl;

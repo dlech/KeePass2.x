@@ -100,9 +100,9 @@ namespace KeePass.Forms
 				strBannerDesc);
 			this.Icon = Properties.Resources.KeePass;
 
-			UIUtil.AssignFontDefaultBold(m_cbPassword);
-			UIUtil.AssignFontDefaultBold(m_cbKeyFile);
-			UIUtil.AssignFontDefaultBold(m_cbUserAccount);
+			FontUtil.AssignDefaultBold(m_cbPassword);
+			FontUtil.AssignDefaultBold(m_cbKeyFile);
+			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);

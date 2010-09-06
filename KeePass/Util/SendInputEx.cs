@@ -647,12 +647,12 @@ namespace KeePass.Util
 
 		private static void OSSendKeysUnixKey(string strKey)
 		{
-			NativeMethods.RunXDoTool("key " + strKey);
+			NativeMethods.RunXDoTool("key --clearmodifiers " + strKey);
 		}
 
 		private static void OSSendKeysUnixString(string strString)
 		{
-			NativeMethods.RunXDoTool(@"type '" + strString + @"'");
+			NativeMethods.RunXDoTool(@"type --clearmodifiers '" + strString + @"'");
 		}
 	}
 }

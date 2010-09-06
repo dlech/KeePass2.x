@@ -201,6 +201,8 @@ namespace KeePass
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
 
+			InitEnvSecurity();
+
 			int nRandomSeed = (int)DateTime.Now.Ticks;
 			// Prevent overflow (see Random class constructor)
 			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
@@ -348,6 +350,14 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+#if (DEBUG && !KeePassLibSD)
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
+			{
+				PopularPasswords.MakeList();
+				MainCleanUp();
+				return;
+			}
+#endif
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
 			catch(Exception) { Debug.Assert(false); }
@@ -426,11 +436,23 @@ namespace KeePass
 
 		private static void MainCleanUp()
 		{
+			IpcBroadcast.StopServer();
+
 			if(m_tempFilesPool != null) m_tempFilesPool.Clear();
 
 			EntryMenu.Destroy();
 
 			AppLogEx.Close();
+		}
+
+		private static void InitEnvSecurity()
+		{
+			try
+			{
+				// Do not load libraries from the current working directory
+				if(!NativeMethods.SetDllDirectory(string.Empty)) { Debug.Assert(false); }
+			}
+			catch(Exception) { } // Throws on Unix and Windows < XP SP1
 		}
 
 		internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)
@@ -501,8 +523,11 @@ namespace KeePass
 			try
 			{
 				if(string.IsNullOrEmpty(m_cmdLineArgs.FileName))
-					NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
-						m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+				{
+					// NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+					//	m_nAppMessage, (IntPtr)AppMessage.RestoreWindow, IntPtr.Zero);
+					IpcBroadcast.Send(AppMessage.RestoreWindow, 0, false);
+				}
 				else
 				{
 					IpcParamEx ipcMsg = new IpcParamEx(IpcUtilEx.CmdOpenDatabase,
@@ -534,8 +559,9 @@ namespace KeePass
 		{
 			try
 			{
-				NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
-					m_nAppMessage, (IntPtr)msg, IntPtr.Zero);
+				// NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
+				//	m_nAppMessage, (IntPtr)msg, IntPtr.Zero);
+				IpcBroadcast.Send(msg, 0, false);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

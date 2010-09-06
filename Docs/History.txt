@@ -1,3 +1,59 @@
+2010-09-06: 2.13
+- Password quality estimation algorithm: added check for about
+  1500 most common passwords (these are rated down to 1/8th of
+  their statistical rating; Bloom filter-based implementation)
+- Global auto-type (using a system-wide hot key) is now
+  possible on Unix-like systems (see the documentation for
+  setup instructions, section 'Installation / Portability' in
+  the 'KeePass 2.x' group; thanks to Jordan Sissel for
+  enhancing 'xdotool')
+- Added IPC functionality for Unix-like systems
+- Added possibility to write export plugins that don't require
+  an output file
+- Tag lists are sorted alphabetically now
+- Password text boxes now use a monospace font by default
+- Added option to select a different font for password text
+  boxes (menu 'Tools' -> 'Options' -> tab 'Interface')
+- Added support for importing Password Prompter 1.2 DAT files
+- Added ability to export to Windows/IE favorites
+- Added ability to specify IO credentials in the 'Synchronize'
+  trigger action
+- Added ability to specify IO credentials and a master key in
+  the 'Open database file' trigger action
+- If IO credentials are stored, they are now obfuscated
+- Custom colors in the Windows color selection dialog are now
+  remembered
+- Added high resolution version of the KeePass application icon
+- Improved lock overlay icon (higher resolution)
+- PLGX loader: added support for unversioned KeePass assembly
+  references
+
+- Added workaround to avoid alpha transparency corruption when
+  adding images to an image list
+- Improved image list generation performance
+- Added workaround to display the lock overlay icon when having
+  enabled the option to start minimized and locked
+- Improved group and entries deletion confirmation dialogs
+  (with preview; only Windows Vista and higher)
+- The password character picking dialog now offers the raw
+  password characters instead of an auto-type encoded sequence
+- PINs importer: improved importing of expiry dates
+- Some button icons are now resized to 16x15 when the 16x16
+  icon is too large
+- Renamed character repetition option in the password generator
+  for improved clarity
+- Improved workspace locking
+- Locking timer is now thread-safe
+- Added code to prevent loading libraries from the current
+  working directory (to avoid binary planting attacks)
+- Removed Tomboy references (on Unix-like systems)
+- Various code optimizations
+- Minor other improvements
+
+- {NEWPASSWORD} placeholder: special characters in generated
+  passwords are now transformed correctly based on context
+  (auto-type, command line, etc.)
+
 2010-07-09: 2.12
 - Auto-type window definitions in custom window-sequence pairs
   are now Spr-compiled (i.e. placeholders, environment

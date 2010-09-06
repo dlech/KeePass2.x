@@ -300,6 +300,7 @@ namespace KeePass.Forms
 #endif
 
 			m_sessionLockNotifier.Install(this.OnSessionLock);
+			IpcBroadcast.StartServer();
 
 			m_pluginDefaultHost.Initialize(this, Program.CommandLineArgs,
 				CipherPool.GlobalPool);
@@ -585,15 +586,11 @@ namespace KeePass.Forms
 			if(GlobalWindowManager.WindowCount != 0) return;
 
 			PwDocument ds = m_docMgr.ActiveDocument;
-			PwDatabase pd = ds.Database;
-
 			if(!IsFileLocked(ds)) // Lock
-			{
-				if(!PrepareLock()) return; // Unable to lock
 				LockAllDocuments();
-			}
 			else // Unlock
 			{
+				PwDatabase pd = ds.Database;
 				Debug.Assert(!pd.IsOpen);
 				OpenDatabase(ds.LockedIoc, null, false);
 
@@ -609,6 +606,7 @@ namespace KeePass.Forms
 
 		private void OnFileExit(object sender, EventArgs e)
 		{
+			NotifyUserActivity();
 			m_bForceExitOnce = true;
 			this.Close();
 		}
@@ -1383,23 +1381,22 @@ namespace KeePass.Forms
 			}
 
 			if(!GlobalWindowManager.CanCloseAllWindows) return;
-			if((m_nLockTimerMax > 0) && m_bAllowLockTimerMod)
+			if(m_nLockTimerMax > 0)
 			{
-				m_bAllowLockTimerMod = false;
-
-				--m_nLockTimerCur;
-				if(m_nLockTimerCur < 0) m_nLockTimerCur = 0;
-
-				if(m_nLockTimerCur == 0)
+				if(Monitor.TryEnter(m_objLockTimerSync))
 				{
-					NotifyUserActivity();
+					--m_nLockTimerCur;
+					if(m_nLockTimerCur < 0) m_nLockTimerCur = 0;
 
-					if(Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
-						OnFileExit(sender, e);
-					else LockAllDocuments();
+					if(m_nLockTimerCur == 0)
+					{
+						if(Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
+							OnFileExit(sender, e);
+						else LockAllDocuments();
+					}
+
+					Monitor.Exit(m_objLockTimerSync);
 				}
-
-				m_bAllowLockTimerMod = true;
 			}
 		}
 
@@ -1751,13 +1748,10 @@ namespace KeePass.Forms
 		private void OnEntryColorCustom(object sender, EventArgs e)
 		{
 			PwEntry pe = GetSelectedEntry(false);
-			if((pe != null) && !pe.BackgroundColor.IsEmpty)
-				m_colorDlg.Color = pe.BackgroundColor;
+			Color clrCur = ((pe != null) ? pe.BackgroundColor : Color.Empty);
 
-			GlobalWindowManager.AddDialog(m_colorDlg);
-			if(m_colorDlg.ShowDialog() == DialogResult.OK)
-				SetSelectedEntryColor(m_colorDlg.Color);
-			GlobalWindowManager.RemoveDialog(m_colorDlg);
+			Color? clr = UIUtil.ShowColorDialog(clrCur);
+			if(clr.HasValue) SetSelectedEntryColor(clr.Value);
 		}
 
 		private void OnPwListMouseDown(object sender, MouseEventArgs e)

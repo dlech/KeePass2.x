@@ -99,8 +99,13 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			CreateDialogBanner();
 
-			UIUtil.AssignFontDefaultBold(m_rbTabular);
-			UIUtil.AssignFontDefaultBold(m_rbDetails);
+			UIUtil.SetButtonImage(m_btnConfigPrinter,
+				Properties.Resources.B16x16_EditCopy, true);
+			UIUtil.SetButtonImage(m_btnPrintPreview,
+				Properties.Resources.B16x16_FileQuickPrint, true);
+
+			FontUtil.AssignDefaultBold(m_rbTabular);
+			FontUtil.AssignDefaultBold(m_rbDetails);
 
 			if(!m_bPrintMode) m_btnOK.Text = KPRes.Export;
 

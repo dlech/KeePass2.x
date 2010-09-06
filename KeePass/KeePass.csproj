@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -112,6 +113,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\PwProfile.cs">
       <Link>KeePassLib\Cryptography\PasswordGenerator\PwProfile.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\PopularPasswords.cs">
+      <Link>KeePassLib\Cryptography\PopularPasswords.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\QualityEstimation.cs">
       <Link>KeePassLib\Cryptography\QualityEstimation.cs</Link>
@@ -332,6 +336,7 @@
     <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwKeeperCsv70.cs" />
     <Compile Include="DataExchange\Formats\PwMemory2008Xml104.cs" />
+    <Compile Include="DataExchange\Formats\PwPrompterDat12.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
     <Compile Include="DataExchange\Formats\PwTresorXml100.cs" />
     <Compile Include="DataExchange\Formats\RoboFormHtml69.cs" />
@@ -341,6 +346,7 @@
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
+    <Compile Include="DataExchange\Formats\WinFavorites10.cs" />
     <Compile Include="DataExchange\Formats\XslTransform2x.cs" />
     <Compile Include="DataExchange\Formats\ZdnPwProTxt314.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
@@ -652,6 +658,7 @@
     </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
+    <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
@@ -897,6 +904,7 @@
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
     <Compile Include="Util\IniFile.cs" />
+    <Compile Include="Util\IpcBroadcast.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
@@ -1038,6 +1046,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_PwPrompter.png" />
+    <None Include="Resources\Images\B16x16_WinFavs.png" />
     <None Include="Resources\Nuvola\B16x16_KNotes.png" />
     <None Include="Resources\Nuvola\B48x48_View_Detailed.png" />
     <None Include="Resources\Images\B16x16_Imp_HandySafePro.png" />

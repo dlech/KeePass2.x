@@ -87,10 +87,12 @@ namespace KeePass.Util
 				//	Program.ApplicationMessage, (IntPtr)Program.AppMessage.IpcByFile,
 				//	(IntPtr)nId);
 
-				IntPtr pResult = new IntPtr(0);
-				NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST,
-					Program.ApplicationMessage, (IntPtr)Program.AppMessage.IpcByFile,
-					(IntPtr)nId, NativeMethods.SMTO_ABORTIFHUNG, 5000, ref pResult);
+				// IntPtr pResult = new IntPtr(0);
+				// NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST,
+				//	Program.ApplicationMessage, (IntPtr)Program.AppMessage.IpcByFile,
+				//	(IntPtr)nId, NativeMethods.SMTO_ABORTIFHUNG, 5000, ref pResult);
+
+				IpcBroadcast.Send(Program.AppMessage.IpcByFile, nId, true);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

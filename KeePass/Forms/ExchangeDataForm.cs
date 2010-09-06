@@ -105,7 +105,8 @@ namespace KeePass.Forms
 			if(m_bExport)
 			{
 				m_lblFile.Text = KPRes.ExportToPrompt;
-				m_btnSelFile.Image = KeePass.Properties.Resources.B16x16_FileSaveAs;
+				UIUtil.SetButtonImage(m_btnSelFile,
+					Properties.Resources.B16x16_FileSaveAs, false);
 
 				m_lnkFileFormats.Enabled = false;
 				m_lnkFileFormats.Visible = false;
@@ -113,7 +114,8 @@ namespace KeePass.Forms
 			else // Import mode
 			{
 				m_lblFile.Text = KPRes.ImportFilesPrompt;
-				m_btnSelFile.Image = KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
+				UIUtil.SetButtonImage(m_btnSelFile,
+					Properties.Resources.B16x16_Folder_Yellow_Open, false);
 			}
 
 			m_lvFormats.ShowGroups = true;
@@ -154,7 +156,7 @@ namespace KeePass.Forms
 
 				Image imgSmallIcon = f.SmallIcon;
 				if(imgSmallIcon == null)
-					imgSmallIcon = KeePass.Properties.Resources.B16x16_Folder_Inbox;
+					imgSmallIcon = Properties.Resources.B16x16_Folder_Inbox;
 
 				ilFormats.Images.Add(imgSmallIcon);
 				lvi.ImageIndex = ilFormats.Images.Count - 1;

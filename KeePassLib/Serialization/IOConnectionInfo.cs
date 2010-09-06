@@ -25,6 +25,7 @@ using System.IO;
 using System.Net;
 
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
 {
@@ -46,6 +47,12 @@ namespace KeePassLib.Serialization
 		SaveCred
 	}
 
+	public enum IOCredProtMode
+	{
+		None = 0,
+		Obf
+	}
+
 	/* public enum IOFileFormatHint
 	{
 		None = 0,
@@ -54,12 +61,9 @@ namespace KeePassLib.Serialization
 
 	public sealed class IOConnectionInfo : IDeepCloneable<IOConnectionInfo>
 	{
-		private string m_strUrl = string.Empty;
-		private string m_strUser = string.Empty;
-		private string m_strPassword = string.Empty;
-		private IOCredSaveMode m_ioCredSaveMode = IOCredSaveMode.NoSave;
 		// private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
 
+		private string m_strUrl = string.Empty;
 		public string Path
 		{
 			get { return m_strUrl; }
@@ -72,6 +76,7 @@ namespace KeePassLib.Serialization
 			}
 		}
 
+		private string m_strUser = string.Empty;
 		public string UserName
 		{
 			get { return m_strUser; }
@@ -84,6 +89,7 @@ namespace KeePassLib.Serialization
 			}
 		}
 
+		private string m_strPassword = string.Empty;
 		public string Password
 		{
 			get { return m_strPassword; }
@@ -96,6 +102,14 @@ namespace KeePassLib.Serialization
 			}
 		}
 
+		private IOCredProtMode m_ioCredProtMode = IOCredProtMode.None;
+		public IOCredProtMode CredProtMode
+		{
+			get { return m_ioCredProtMode; }
+			set { m_ioCredProtMode = value; }
+		}
+
+		private IOCredSaveMode m_ioCredSaveMode = IOCredSaveMode.NoSave;
 		public IOCredSaveMode CredSaveMode
 		{
 			get { return m_ioCredSaveMode; }
@@ -304,6 +318,20 @@ namespace KeePassLib.Serialization
 				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly))
 			{
 				m_strPassword = string.Empty;
+			}
+		}
+
+		public void Obfuscate(bool bObf)
+		{
+			if(bObf && (m_ioCredProtMode == IOCredProtMode.None))
+			{
+				m_strPassword = StrUtil.Obfuscate(m_strPassword);
+				m_ioCredProtMode = IOCredProtMode.Obf;
+			}
+			else if(!bObf && (m_ioCredProtMode == IOCredProtMode.Obf))
+			{
+				m_strPassword = StrUtil.Deobfuscate(m_strPassword);
+				m_ioCredProtMode = IOCredProtMode.None;
 			}
 		}
 	}

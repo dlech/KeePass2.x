@@ -254,12 +254,22 @@ namespace KeePass.Util
 		{
 			Debug.Assert(vSources != null); if(vSources == null) return false;
 
+			if(KeePassLib.Native.NativeLib.IsUnix())
+			{
+				if(!NativeMethods.TryXDoTool(true))
+				{
+					MessageService.ShowWarning(KPRes.AutoTypeXDoToolRequiredGlobalVer);
+					return false;
+				}
+			}
+
 			IntPtr hWnd;
 			string strWindow;
 			try
 			{
-				hWnd = NativeMethods.GetForegroundWindow();
-				strWindow = NativeMethods.GetWindowText(hWnd);
+				// hWnd = NativeMethods.GetForegroundWindow();
+				// strWindow = NativeMethods.GetWindowText(hWnd);
+				NativeMethods.GetForegroundWindowInfo(out hWnd, out strWindow);
 			}
 			catch(Exception) { Debug.Assert(false); hWnd = IntPtr.Zero; strWindow = null; }
 

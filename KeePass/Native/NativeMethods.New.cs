@@ -43,6 +43,21 @@ namespace KeePass.Native
 			return sb.ToString();
 		}
 
+		internal static void GetForegroundWindowInfo(out IntPtr hWnd,
+			out string strWindowText)
+		{
+			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
+			{
+				hWnd = GetForegroundWindow();
+				strWindowText = GetWindowText(hWnd);
+			}
+			else // Unix
+			{
+				hWnd = new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
+				strWindowText = RunXDoTool("getactivewindow getwindowname");
+			}
+		}
+
 		internal static int GetWindowStyle(IntPtr hWnd)
 		{
 			return GetWindowLong(hWnd, GWL_STYLE);

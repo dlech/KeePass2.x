@@ -147,6 +147,28 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private string m_strCustomColors = string.Empty;
+		public string CustomColors
+		{
+			get { return m_strCustomColors; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strCustomColors = value;
+			}
+		}
+
+		private string m_strWinFavsBaseName = string.Empty;
+		public string WinFavsBaseFolderName
+		{
+			get { return m_strWinFavsBaseName; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strWinFavsBaseName = value;
+			}
+		}
+
 		public void SetKeySource(IOConnectionInfo ioDatabase, string strKeySource,
 			bool bIsKeyFile)
 		{

@@ -47,6 +47,7 @@
 			this.m_lblPolicyRestart = new System.Windows.Forms.Label();
 			this.m_lblPolicyIntro = new System.Windows.Forms.Label();
 			this.m_tabGui = new System.Windows.Forms.TabPage();
+			this.m_btnSelPwFont = new System.Windows.Forms.Button();
 			this.m_numMruCount = new System.Windows.Forms.NumericUpDown();
 			this.m_lblMruCount = new System.Windows.Forms.Label();
 			this.m_btnSelFont = new System.Windows.Forms.Button();
@@ -72,7 +73,7 @@
 			this.m_tbGlobalAutoType = new System.Windows.Forms.TextBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
-			this.m_fontLists = new System.Windows.Forms.FontDialog();
+			this.m_linkHotKeyHelp = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -300,6 +301,7 @@
 			// 
 			// m_tabGui
 			// 
+			this.m_tabGui.Controls.Add(this.m_btnSelPwFont);
 			this.m_tabGui.Controls.Add(this.m_numMruCount);
 			this.m_tabGui.Controls.Add(this.m_lblMruCount);
 			this.m_tabGui.Controls.Add(this.m_btnSelFont);
@@ -312,6 +314,16 @@
 			this.m_tabGui.TabIndex = 2;
 			this.m_tabGui.Text = "Interface";
 			this.m_tabGui.UseVisualStyleBackColor = true;
+			// 
+			// m_btnSelPwFont
+			// 
+			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 279);
+			this.m_btnSelPwFont.Name = "m_btnSelPwFont";
+			this.m_btnSelPwFont.Size = new System.Drawing.Size(133, 23);
+			this.m_btnSelPwFont.TabIndex = 6;
+			this.m_btnSelPwFont.Text = "Select Password Font";
+			this.m_btnSelPwFont.UseVisualStyleBackColor = true;
+			this.m_btnSelPwFont.Click += new System.EventHandler(this.OnBtnSelPwFont);
 			// 
 			// m_numMruCount
 			// 
@@ -337,9 +349,9 @@
 			// 
 			// m_btnSelFont
 			// 
-			this.m_btnSelFont.Location = new System.Drawing.Point(442, 253);
+			this.m_btnSelFont.Location = new System.Drawing.Point(414, 252);
 			this.m_btnSelFont.Name = "m_btnSelFont";
-			this.m_btnSelFont.Size = new System.Drawing.Size(105, 23);
+			this.m_btnSelFont.Size = new System.Drawing.Size(133, 23);
 			this.m_btnSelFont.TabIndex = 3;
 			this.m_btnSelFont.Text = "Select List Font";
 			this.m_btnSelFont.UseVisualStyleBackColor = true;
@@ -487,6 +499,7 @@
 			// 
 			// m_grpHotKeys
 			// 
+			this.m_grpHotKeys.Controls.Add(this.m_linkHotKeyHelp);
 			this.m_grpHotKeys.Controls.Add(this.m_lblSelAutoTypeHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_tbSelAutoTypeHotKey);
 			this.m_grpHotKeys.Controls.Add(this.m_tbShowWindowHotKey);
@@ -572,10 +585,16 @@
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
-			// m_fontLists
+			// m_linkHotKeyHelp
 			// 
-			this.m_fontLists.FontMustExist = true;
-			this.m_fontLists.ShowEffects = false;
+			this.m_linkHotKeyHelp.AutoSize = true;
+			this.m_linkHotKeyHelp.Location = new System.Drawing.Point(278, 47);
+			this.m_linkHotKeyHelp.Name = "m_linkHotKeyHelp";
+			this.m_linkHotKeyHelp.Size = new System.Drawing.Size(177, 13);
+			this.m_linkHotKeyHelp.TabIndex = 6;
+			this.m_linkHotKeyHelp.TabStop = true;
+			this.m_linkHotKeyHelp.Text = "Help: Creating system-wide hot keys";
+			this.m_linkHotKeyHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnHotKeyHelpLinkClicked);
 			// 
 			// OptionsForm
 			// 
@@ -640,7 +659,6 @@
 		private System.Windows.Forms.Label m_lblPolicyIntro;
 		private KeePass.UI.CustomListViewEx m_lvPolicy;
 		private KeePass.UI.CustomListViewEx m_lvGuiOptions;
-		private System.Windows.Forms.FontDialog m_fontLists;
 		private System.Windows.Forms.Button m_btnSelFont;
 		private System.Windows.Forms.TabPage m_tabIntegration;
 		private System.Windows.Forms.TextBox m_tbGlobalAutoType;
@@ -667,5 +685,7 @@
 		private System.Windows.Forms.Button m_btnSchemeOverrides;
 		private System.Windows.Forms.Label m_lblSelAutoTypeHotKey;
 		private System.Windows.Forms.TextBox m_tbSelAutoTypeHotKey;
+		private System.Windows.Forms.Button m_btnSelPwFont;
+		private System.Windows.Forms.LinkLabel m_linkHotKeyHelp;
 	}
 }

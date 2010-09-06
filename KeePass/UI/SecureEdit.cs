@@ -140,9 +140,16 @@ namespace KeePass.UI
 		{
 			if(m_tbPassword == null) { Debug.Assert(false); return; }
 
-			if(m_tbPassword.UseSystemPasswordChar == bEnable) return;
+			if(bEnable) FontUtil.AssignDefault(m_tbPassword);
+			else
+			{
+				FontUtil.SetDefaultFont(m_tbPassword);
+				FontUtil.AssignDefaultMono(m_tbPassword, true);
+			}
 
+			if(m_tbPassword.UseSystemPasswordChar == bEnable) return;
 			m_tbPassword.UseSystemPasswordChar = bEnable;
+
 			ShowCurrentPassword(m_tbPassword.SelectionStart, m_tbPassword.SelectionLength);
 		}
 

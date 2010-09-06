@@ -51,8 +51,8 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.HelpSourceSelection;
 
-			UIUtil.AssignFontDefaultBold(m_radioLocal);
-			UIUtil.AssignFontDefaultBold(m_radioOnline);
+			FontUtil.AssignDefaultBold(m_radioLocal);
+			FontUtil.AssignDefaultBold(m_radioOnline);
 
 			if(AppHelp.LocalHelpAvailable == false)
 			{

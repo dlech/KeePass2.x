@@ -163,6 +163,9 @@
 		<Data Name="AutoTypeXDoToolRequired">
 			<Value>The 'xdotool' utility/package is required for auto-type.</Value>
 		</Data>
+		<Data Name="AutoTypeXDoToolRequiredGlobalVer">
+			<Value>For global auto-type, the 'xdotool' utility/package is required (version 2.20100818.3004 or higher!).</Value>
+		</Data>
 		<Data Name="AvailableLanguages">
 			<Value>Available Languages</Value>
 		</Data>
@@ -406,6 +409,9 @@
 		<Data Name="Delete">
 			<Value>Delete</Value>
 		</Data>
+		<Data Name="DeleteCmd">
+			<Value>&amp;Delete</Value>
+		</Data>
 		<Data Name="DeleteEntriesTitle">
 			<Value>Delete Entries</Value>
 		</Data>
@@ -444,6 +450,9 @@
 		</Data>
 		<Data Name="DocumentationHint">
 			<Value>Please see the documentation for more details.</Value>
+		</Data>
+		<Data Name="DontDeleteCmd">
+			<Value>Do&amp;n't delete</Value>
 		</Data>
 		<Data Name="DragDrop">
 			<Value>Drag&amp;Drop</Value>
@@ -883,6 +892,9 @@
 		<Data Name="InvalidUserPassword">
 			<Value>The specified user name / password combination is invalid.</Value>
 		</Data>
+		<Data Name="IOConnection">
+			<Value>IO Connection</Value>
+		</Data>
 		<Data Name="Italic">
 			<Value>Italic</Value>
 		</Data>
@@ -921,6 +933,9 @@
 		</Data>
 		<Data Name="KeyChanged">
 			<Value>Key Changed</Value>
+		</Data>
+		<Data Name="KeyFile">
+			<Value>Key file</Value>
 		</Data>
 		<Data Name="KeyFileCreate">
 			<Value>Create a new key file</Value>
@@ -1014,6 +1029,9 @@
 		</Data>
 		<Data Name="More">
 			<Value>More</Value>
+		</Data>
+		<Data Name="MoreEntries">
+			<Value>{PARAM} more entries</Value>
 		</Data>
 		<Data Name="Name">
 			<Value>Name</Value>
@@ -1581,6 +1599,9 @@
 		</Data>
 		<Data Name="UseTransactedDatabaseWrites">
 			<Value>Use file transactions for writing databases</Value>
+		</Data>
+		<Data Name="UserAccount">
+			<Value>User account</Value>
 		</Data>
 		<Data Name="UserName">
 			<Value>User Name</Value>

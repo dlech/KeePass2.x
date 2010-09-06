@@ -80,10 +80,10 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
 
-			UIUtil.AssignFontDefaultBold(m_lblUrl);
-			UIUtil.AssignFontDefaultBold(m_lblUserName);
-			UIUtil.AssignFontDefaultBold(m_lblPassword);
-			UIUtil.AssignFontDefaultBold(m_lblRemember);
+			FontUtil.AssignDefaultBold(m_lblUrl);
+			FontUtil.AssignDefaultBold(m_lblUserName);
+			FontUtil.AssignDefaultBold(m_lblPassword);
+			FontUtil.AssignDefaultBold(m_lblRemember);
 
 			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Path);
 			m_tbUserName.Text = m_ioc.UserName;

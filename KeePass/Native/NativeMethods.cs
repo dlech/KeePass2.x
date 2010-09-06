@@ -30,6 +30,10 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SetDllDirectory(string lpPathName);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool IsWindow(IntPtr hWnd);

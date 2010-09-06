@@ -24,10 +24,12 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
 
+using KeePass.App;
 using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Keys;
@@ -68,7 +70,14 @@ namespace KeePass.Ecas
 				0xFD, 0x41, 0x55, 0xD5, 0x79, 0x8F, 0x44, 0xFA,
 				0xAB, 0x89, 0xF2, 0xF8, 0x70, 0xEF, 0x94, 0xB8 }),
 				KPRes.OpenDatabaseFileStc, PwIcon.FolderOpen, new EcasParameter[] {
-					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserName,
+						EcasValueType.String, null),
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.Password,
+						EcasValueType.String, null),
+					new EcasParameter(KPRes.Password, EcasValueType.String, null),
+					new EcasParameter(KPRes.KeyFile, EcasValueType.String, null),
+					new EcasParameter(KPRes.UserAccount, EcasValueType.Bool, null) },
 				OpenDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -81,7 +90,11 @@ namespace KeePass.Ecas
 				0x22, 0xAD, 0x77, 0xE4, 0x17, 0x78, 0x4E, 0xED,
 				0x99, 0xB4, 0x57, 0x1D, 0x02, 0xB3, 0xAD, 0x4D }),
 				KPRes.SynchronizeStc, PwIcon.PaperReady, new EcasParameter[] {
-					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserName,
+						EcasValueType.String, null),
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.Password,
+						EcasValueType.String, null) },
 				SyncDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -168,9 +181,34 @@ namespace KeePass.Ecas
 			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
-			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
+			string strIOUserName = EcasUtil.GetParamString(a.Parameters, 1, true);
+			string strIOPassword = EcasUtil.GetParamString(a.Parameters, 2, true);
 
-			Program.MainForm.OpenDatabase(ioc, null, true);
+			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
+			if(ioc == null) return;
+
+			string strPassword = EcasUtil.GetParamString(a.Parameters, 3, true);
+			string strKeyFile = EcasUtil.GetParamString(a.Parameters, 4, true);
+			bool bUserAccount = StrUtil.StringToBool(EcasUtil.GetParamString(
+				a.Parameters, 5, true));
+
+			CompositeKey cmpKey = null;
+			if(!string.IsNullOrEmpty(strPassword) || !string.IsNullOrEmpty(strKeyFile) ||
+				bUserAccount)
+			{
+				List<string> vArgs = new List<string>();
+				if(!string.IsNullOrEmpty(strPassword))
+					vArgs.Add("-" + AppDefs.CommandLineOptions.Password + ":" + strPassword);
+				if(!string.IsNullOrEmpty(strKeyFile))
+					vArgs.Add("-" + AppDefs.CommandLineOptions.KeyFile + ":" + strKeyFile);
+				if(bUserAccount)
+					vArgs.Add("-" + AppDefs.CommandLineOptions.UserAccount);
+
+				CommandLineArgs cmdArgs = new CommandLineArgs(vArgs.ToArray());
+				cmpKey = KeyUtil.KeyFromCommandLine(cmdArgs);
+			}
+
+			Program.MainForm.OpenDatabase(ioc, cmpKey, ioc.IsLocalFile());
 		}
 
 		private static void SaveDatabaseFile(EcasAction a, EcasContext ctx)
@@ -183,27 +221,14 @@ namespace KeePass.Ecas
 			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
-			IOConnectionInfo iocBase = IOConnectionInfo.FromPath(strPath);
+			string strIOUserName = EcasUtil.GetParamString(a.Parameters, 1, true);
+			string strIOPassword = EcasUtil.GetParamString(a.Parameters, 2, true);
 
-			MruList mru = Program.MainForm.FileMruList;
-			for(uint u = 0; u < mru.ItemCount; ++u)
-			{
-				IOConnectionInfo iocMru = (mru.GetItem(u).Value as IOConnectionInfo);
-				if(iocMru == null) { Debug.Assert(false); continue; }
-
-				if(iocMru.Path == iocBase.Path)
-				{
-					iocBase = iocMru.CloneDeep();
-					break;
-				}
-			}
+			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
+			if(ioc == null) return;
 
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
-
-			IOConnectionInfo ioc = MainForm.CompleteConnectionInfo(iocBase,
-				false, true, true, false);
-			if(ioc == null) return;
 
 			bool? b = ImportUtil.Synchronize(pd, Program.MainForm, ioc, false,
 				Program.MainForm);
@@ -211,10 +236,41 @@ namespace KeePass.Ecas
 			if(b.HasValue) Program.MainForm.SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
 		}
 
+		private static IOConnectionInfo IOFromParameters(string strPath,
+			string strUser, string strPassword)
+		{
+			IOConnectionInfo iocBase = IOConnectionInfo.FromPath(strPath);
+			if(!string.IsNullOrEmpty(strUser)) iocBase.UserName = strUser;
+			if(!string.IsNullOrEmpty(strPassword)) iocBase.Password = strPassword;
+
+			if(!string.IsNullOrEmpty(iocBase.UserName))
+				iocBase.CredSaveMode = IOCredSaveMode.UserNameOnly;
+			if(!string.IsNullOrEmpty(iocBase.Password))
+				iocBase.CredSaveMode = IOCredSaveMode.SaveCred;
+
+			if(string.IsNullOrEmpty(iocBase.UserName) && string.IsNullOrEmpty(iocBase.Password))
+			{
+				MruList mru = Program.MainForm.FileMruList;
+				for(uint u = 0; u < mru.ItemCount; ++u)
+				{
+					IOConnectionInfo iocMru = (mru.GetItem(u).Value as IOConnectionInfo);
+					if(iocMru == null) { Debug.Assert(false); continue; }
+
+					if(iocMru.Path == iocBase.Path)
+					{
+						iocBase = iocMru.CloneDeep();
+						break;
+					}
+				}
+			}
+
+			return MainForm.CompleteConnectionInfo(iocBase, false, true, true, false);
+		}
+
 		private static void ExportDatabaseFile(EcasAction a, EcasContext ctx)
 		{
 			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
-			if(string.IsNullOrEmpty(strPath)) return;
+			// if(string.IsNullOrEmpty(strPath)) return; // Allow no-file exports
 			string strFormat = EcasUtil.GetParamString(a.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFormat)) return;
 
@@ -222,7 +278,8 @@ namespace KeePass.Ecas
 			if((pd == null) || !pd.IsOpen) return;
 
 			PwExportInfo pei = new PwExportInfo(pd.RootGroup, pd, true);
-			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
+			IOConnectionInfo ioc = (!string.IsNullOrEmpty(strPath) ?
+				IOConnectionInfo.FromPath(strPath) : null);
 			ExportUtil.Export(pei, strFormat, ioc);
 		}
 

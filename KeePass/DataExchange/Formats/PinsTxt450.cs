@@ -106,11 +106,14 @@ namespace KeePass.DataExchange.Formats
 				pe.Strings.Set("Custom", new ProtectedString(false, vParts[5]));
 
 			DateTime dt;
-			if(DateTime.TryParse(vParts[6], out dt))
+			if((vParts[6].Length > 0) && DateTime.TryParse(vParts[6], out dt))
 				pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = dt;
 
-			if(DateTime.TryParse(vParts[7], out dt))
+			if((vParts[7].Length > 0) && DateTime.TryParse(vParts[7], out dt))
+			{
 				pe.ExpiryTime = dt;
+				pe.Expires = true;
+			}
 
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectNotes, vParts[8]));

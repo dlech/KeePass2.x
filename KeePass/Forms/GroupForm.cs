@@ -69,6 +69,9 @@ namespace KeePass.Forms
 				KPRes.EditGroupDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
+				Properties.Resources.B16x16_Wizard, true);
+
 			m_dtExpires.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
 				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;
 
@@ -79,8 +82,11 @@ namespace KeePass.Forms
 			m_tbNotes.Text = m_pwGroup.Notes;
 
 			if(m_pwCustomIconID != PwUuid.Zero)
-				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
-			else m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
+				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
+					m_pwCustomIconID), true);
+			else
+				UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
+					(int)m_pwIconIndex], true);
 
 			if(m_pwGroup.Expires)
 			{
@@ -156,13 +162,15 @@ namespace KeePass.Forms
 			if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 			{
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
+					m_pwCustomIconID), true);
 			}
 			else // Standard icon
 			{
 				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = PwUuid.Zero;
-				m_btnIcon.Image = m_ilClientIcons.Images[(int)m_pwIconIndex];
+				UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
+					(int)m_pwIconIndex], true);
 			}
 		}
 

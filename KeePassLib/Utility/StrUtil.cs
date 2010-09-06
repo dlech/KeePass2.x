@@ -118,6 +118,11 @@ namespace KeePassLib.Utility
 	{
 		public const StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
+		public static StringComparer CaseIgnoreComparer
+		{
+			get { return StringComparer.OrdinalIgnoreCase; }
+		}
+
 		private static bool m_bRtl = false;
 		public static bool RightToLeft
 		{
@@ -908,6 +913,44 @@ namespace KeePassLib.Utility
 			}
 
 			return lTags;
+		}
+
+		public static string Obfuscate(string strPlain)
+		{
+			if(strPlain == null) { Debug.Assert(false); return string.Empty; }
+			if(strPlain.Length == 0) return string.Empty;
+
+			UTF8Encoding utf8 = new UTF8Encoding(false);
+			byte[] pb = utf8.GetBytes(strPlain);
+
+			Array.Reverse(pb);
+			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
+
+#if !KeePassLibSD
+			return Convert.ToBase64String(pb, Base64FormattingOptions.None);
+#else
+			return Convert.ToBase64String(pb);
+#endif
+		}
+
+		public static string Deobfuscate(string strObf)
+		{
+			if(strObf == null) { Debug.Assert(false); return string.Empty; }
+			if(strObf.Length == 0) return string.Empty;
+
+			try
+			{
+				byte[] pb = Convert.FromBase64String(strObf);
+
+				for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
+				Array.Reverse(pb);
+
+				UTF8Encoding utf8 = new UTF8Encoding(false);
+				return utf8.GetString(pb, 0, pb.Length);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return string.Empty;
 		}
 	}
 }

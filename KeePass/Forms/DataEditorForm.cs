@@ -332,22 +332,12 @@ namespace KeePass.Forms
 
 		private static bool ShowColorDialog(Color clrCurrent, out Color clrSelected)
 		{
-			ColorDialog dlg = new ColorDialog();
+			Color? clrNew = UIUtil.ShowColorDialog(clrCurrent);
 
-			dlg.AllowFullOpen = true;
-			dlg.AnyColor = true;
-			dlg.Color = clrCurrent;
-			dlg.FullOpen = true;
-			dlg.SolidColorOnly = true;
+			if(clrNew.HasValue) clrSelected = clrNew.Value;
+			else clrSelected = clrCurrent;
 
-			if(dlg.ShowDialog() == DialogResult.OK)
-			{
-				clrSelected = dlg.Color;
-				return true;
-			}
-
-			clrSelected = clrCurrent;
-			return false;
+			return clrNew.HasValue;
 		}
 
 		private void OnColorForegroundClicked(object sender, EventArgs e)

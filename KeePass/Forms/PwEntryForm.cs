@@ -179,12 +179,22 @@ namespace KeePass.Forms
 
 			if(m_pwCustomIconID != PwUuid.Zero)
 			{
-				int nInx = (int)PwIcon.Count + m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID);
-				if((nInx > -1) && (nInx < m_ilIcons.Images.Count))
-					m_btnIcon.Image = m_ilIcons.Images[nInx];
-				else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+				// int nInx = (int)PwIcon.Count + m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID);
+				// if((nInx > -1) && (nInx < m_ilIcons.Images.Count))
+				//	m_btnIcon.Image = m_ilIcons.Images[nInx];
+				// else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+
+				Image imgCustom = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+				// m_btnIcon.Image = (imgCustom ?? m_ilIcons.Images[(int)m_pwEntryIcon]);
+				UIUtil.SetButtonImage(m_btnIcon, (imgCustom ?? m_ilIcons.Images[
+					(int)m_pwEntryIcon]), true);
 			}
-			else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+			else
+			{
+				// m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+				UIUtil.SetButtonImage(m_btnIcon, m_ilIcons.Images[
+					(int)m_pwEntryIcon], true);
+			}
 
 			bool bHideInitial = m_cbHidePassword.Checked;
 			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, bHideInitial);
@@ -326,10 +336,10 @@ namespace KeePass.Forms
 			}
 		}
 
-		private static Image CreateColorButtonImage(Button btn, Color color)
+		private static Image CreateColorButtonImage(Button btn, Color clr)
 		{
-			return UIUtil.CreateColorBitmap24(btn.ClientRectangle.Width,
-				btn.ClientRectangle.Height, color);
+			return UIUtil.CreateColorBitmap24(btn.ClientRectangle.Width - 8,
+				btn.ClientRectangle.Height - 8, clr);
 		}
 
 		private void InitPropertiesTab()
@@ -338,11 +348,11 @@ namespace KeePass.Forms
 			m_clrBackground = m_pwEntry.BackgroundColor;
 
 			if(m_clrForeground != Color.Empty)
-				m_btnPickFgColor.Image = CreateColorButtonImage(m_btnPickFgColor,
-					m_clrForeground);
+				UIUtil.SetButtonImage(m_btnPickFgColor, CreateColorButtonImage(
+					m_btnPickFgColor, m_clrForeground), false);
 			if(m_clrBackground != Color.Empty)
-				m_btnPickBgColor.Image = CreateColorButtonImage(m_btnPickBgColor,
-					m_clrBackground);
+				UIUtil.SetButtonImage(m_btnPickBgColor, CreateColorButtonImage(
+					m_btnPickBgColor, m_clrBackground), false);
 
 			m_cbCustomForegroundColor.Checked = (m_clrForeground != Color.Empty);
 			m_cbCustomBackgroundColor.Checked = (m_clrBackground != Color.Empty);
@@ -525,6 +535,11 @@ namespace KeePass.Forms
 				strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
+
+			UIUtil.SetButtonImage(m_btnTools,
+				Properties.Resources.B16x16_Package_Settings, true);
+			UIUtil.SetButtonImage(m_btnStandardExpires,
+				Properties.Resources.B16x16_History, true);
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 				m_bLockEnabledState = true;
@@ -753,8 +768,6 @@ namespace KeePass.Forms
 			m_ctxNotes.Detach();
 			m_secPassword.Detach();
 			m_secRepeat.Detach();
-
-			// m_ilIcons.Dispose();
 		}
 
 		private void OnCheckedHidePassword(object sender, EventArgs e)
@@ -1186,13 +1199,15 @@ namespace KeePass.Forms
 			if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
 			{
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-				m_btnIcon.Image = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
+				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
+					m_pwCustomIconID), true);
 			}
 			else // Standard icon
 			{
 				m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = PwUuid.Zero;
-				m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
+				UIUtil.SetButtonImage(m_btnIcon, m_ilIcons.Images[
+					(int)m_pwEntryIcon], true);
 			}
 		}
 
@@ -1409,25 +1424,23 @@ namespace KeePass.Forms
 
 		private void OnPickForegroundColor(object sender, EventArgs e)
 		{
-			m_dlgColorSel.Color = m_clrForeground;
-
-			if(m_dlgColorSel.ShowDialog() == DialogResult.OK)
+			Color? clr = UIUtil.ShowColorDialog(m_clrForeground);
+			if(clr.HasValue)
 			{
-				m_clrForeground = m_dlgColorSel.Color;
-				m_btnPickFgColor.Image = CreateColorButtonImage(m_btnPickFgColor,
-					m_clrForeground);
+				m_clrForeground = clr.Value;
+				UIUtil.SetButtonImage(m_btnPickFgColor, CreateColorButtonImage(
+					m_btnPickFgColor, m_clrForeground), false);
 			}
 		}
 
 		private void OnPickBackgroundColor(object sender, EventArgs e)
 		{
-			m_dlgColorSel.Color = m_clrBackground;
-
-			if(m_dlgColorSel.ShowDialog() == DialogResult.OK)
+			Color? clr = UIUtil.ShowColorDialog(m_clrBackground);
+			if(clr.HasValue)
 			{
-				m_clrBackground = m_dlgColorSel.Color;
-				m_btnPickBgColor.Image = CreateColorButtonImage(m_btnPickBgColor,
-					m_clrBackground);
+				m_clrBackground = clr.Value;
+				UIUtil.SetButtonImage(m_btnPickBgColor, CreateColorButtonImage(
+					m_btnPickBgColor, m_clrBackground), false);
 			}
 		}
 

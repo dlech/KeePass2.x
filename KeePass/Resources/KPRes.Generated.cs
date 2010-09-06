@@ -80,6 +80,7 @@ namespace KeePass.Resources
 			m_strAutoTypeSequenceInvalid = TryGetEx(dictNew, "AutoTypeSequenceInvalid", m_strAutoTypeSequenceInvalid);
 			m_strAutoTypeUnknownPlaceholder = TryGetEx(dictNew, "AutoTypeUnknownPlaceholder", m_strAutoTypeUnknownPlaceholder);
 			m_strAutoTypeXDoToolRequired = TryGetEx(dictNew, "AutoTypeXDoToolRequired", m_strAutoTypeXDoToolRequired);
+			m_strAutoTypeXDoToolRequiredGlobalVer = TryGetEx(dictNew, "AutoTypeXDoToolRequiredGlobalVer", m_strAutoTypeXDoToolRequiredGlobalVer);
 			m_strAvailableLanguages = TryGetEx(dictNew, "AvailableLanguages", m_strAvailableLanguages);
 			m_strBackgroundColor = TryGetEx(dictNew, "BackgroundColor", m_strBackgroundColor);
 			m_strBinaryNoConv = TryGetEx(dictNew, "BinaryNoConv", m_strBinaryNoConv);
@@ -161,6 +162,7 @@ namespace KeePass.Resources
 			m_strDatabaseUnsavedChanges = TryGetEx(dictNew, "DatabaseUnsavedChanges", m_strDatabaseUnsavedChanges);
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
 			m_strDelete = TryGetEx(dictNew, "Delete", m_strDelete);
+			m_strDeleteCmd = TryGetEx(dictNew, "DeleteCmd", m_strDeleteCmd);
 			m_strDeleteEntriesTitle = TryGetEx(dictNew, "DeleteEntriesTitle", m_strDeleteEntriesTitle);
 			m_strDeleteEntriesTitleSingle = TryGetEx(dictNew, "DeleteEntriesTitleSingle", m_strDeleteEntriesTitleSingle);
 			m_strDeleteEntriesQuestion = TryGetEx(dictNew, "DeleteEntriesQuestion", m_strDeleteEntriesQuestion);
@@ -174,6 +176,7 @@ namespace KeePass.Resources
 			m_strDisableSaveIfNotModified = TryGetEx(dictNew, "DisableSaveIfNotModified", m_strDisableSaveIfNotModified);
 			m_strDiscardChanges = TryGetEx(dictNew, "DiscardChanges", m_strDiscardChanges);
 			m_strDocumentationHint = TryGetEx(dictNew, "DocumentationHint", m_strDocumentationHint);
+			m_strDontDeleteCmd = TryGetEx(dictNew, "DontDeleteCmd", m_strDontDeleteCmd);
 			m_strDragDrop = TryGetEx(dictNew, "DragDrop", m_strDragDrop);
 			m_strDropToBackOnCopy = TryGetEx(dictNew, "DropToBackOnCopy", m_strDropToBackOnCopy);
 			m_strDuplicateStringFieldName = TryGetEx(dictNew, "DuplicateStringFieldName", m_strDuplicateStringFieldName);
@@ -320,6 +323,7 @@ namespace KeePass.Resources
 			m_strInvalidKey = TryGetEx(dictNew, "InvalidKey", m_strInvalidKey);
 			m_strInvalidUrl = TryGetEx(dictNew, "InvalidUrl", m_strInvalidUrl);
 			m_strInvalidUserPassword = TryGetEx(dictNew, "InvalidUserPassword", m_strInvalidUserPassword);
+			m_strIOConnection = TryGetEx(dictNew, "IOConnection", m_strIOConnection);
 			m_strItalic = TryGetEx(dictNew, "Italic", m_strItalic);
 			m_strKdb3KeePassLibC = TryGetEx(dictNew, "Kdb3KeePassLibC", m_strKdb3KeePassLibC);
 			m_strKdbxFiles = TryGetEx(dictNew, "KdbxFiles", m_strKdbxFiles);
@@ -333,6 +337,7 @@ namespace KeePass.Resources
 			m_strKeyboardKeyModifiers = TryGetEx(dictNew, "KeyboardKeyModifiers", m_strKeyboardKeyModifiers);
 			m_strKeyboardKeyShift = TryGetEx(dictNew, "KeyboardKeyShift", m_strKeyboardKeyShift);
 			m_strKeyChanged = TryGetEx(dictNew, "KeyChanged", m_strKeyChanged);
+			m_strKeyFile = TryGetEx(dictNew, "KeyFile", m_strKeyFile);
 			m_strKeyFileCreate = TryGetEx(dictNew, "KeyFileCreate", m_strKeyFileCreate);
 			m_strKeyFileError = TryGetEx(dictNew, "KeyFileError", m_strKeyFileError);
 			m_strKeyFiles = TryGetEx(dictNew, "KeyFiles", m_strKeyFiles);
@@ -364,6 +369,7 @@ namespace KeePass.Resources
 			m_strMinimizeAfterOpeningDatabase = TryGetEx(dictNew, "MinimizeAfterOpeningDatabase", m_strMinimizeAfterOpeningDatabase);
 			m_strMinimizeToTray = TryGetEx(dictNew, "MinimizeToTray", m_strMinimizeToTray);
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
+			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strName = TryGetEx(dictNew, "Name", m_strName);
 			m_strNativeLibUse = TryGetEx(dictNew, "NativeLibUse", m_strNativeLibUse);
 			m_strNavigation = TryGetEx(dictNew, "Navigation", m_strNavigation);
@@ -553,6 +559,7 @@ namespace KeePass.Resources
 			m_strUrlSchemeOverrides = TryGetEx(dictNew, "UrlSchemeOverrides", m_strUrlSchemeOverrides);
 			m_strUseCustomToolStripRenderer = TryGetEx(dictNew, "UseCustomToolStripRenderer", m_strUseCustomToolStripRenderer);
 			m_strUseTransactedDatabaseWrites = TryGetEx(dictNew, "UseTransactedDatabaseWrites", m_strUseTransactedDatabaseWrites);
+			m_strUserAccount = TryGetEx(dictNew, "UserAccount", m_strUserAccount);
 			m_strUserName = TryGetEx(dictNew, "UserName", m_strUserName);
 			m_strUserNamePrompt = TryGetEx(dictNew, "UserNamePrompt", m_strUserNamePrompt);
 			m_strUuid = TryGetEx(dictNew, "Uuid", m_strUuid);
@@ -631,6 +638,7 @@ namespace KeePass.Resources
 			"AutoTypeSequenceInvalid",
 			"AutoTypeUnknownPlaceholder",
 			"AutoTypeXDoToolRequired",
+			"AutoTypeXDoToolRequiredGlobalVer",
 			"AvailableLanguages",
 			"BackgroundColor",
 			"BinaryNoConv",
@@ -712,6 +720,7 @@ namespace KeePass.Resources
 			"DatabaseUnsavedChanges",
 			"Default",
 			"Delete",
+			"DeleteCmd",
 			"DeleteEntriesTitle",
 			"DeleteEntriesTitleSingle",
 			"DeleteEntriesQuestion",
@@ -725,6 +734,7 @@ namespace KeePass.Resources
 			"DisableSaveIfNotModified",
 			"DiscardChanges",
 			"DocumentationHint",
+			"DontDeleteCmd",
 			"DragDrop",
 			"DropToBackOnCopy",
 			"DuplicateStringFieldName",
@@ -871,6 +881,7 @@ namespace KeePass.Resources
 			"InvalidKey",
 			"InvalidUrl",
 			"InvalidUserPassword",
+			"IOConnection",
 			"Italic",
 			"Kdb3KeePassLibC",
 			"KdbxFiles",
@@ -884,6 +895,7 @@ namespace KeePass.Resources
 			"KeyboardKeyModifiers",
 			"KeyboardKeyShift",
 			"KeyChanged",
+			"KeyFile",
 			"KeyFileCreate",
 			"KeyFileError",
 			"KeyFiles",
@@ -915,6 +927,7 @@ namespace KeePass.Resources
 			"MinimizeAfterOpeningDatabase",
 			"MinimizeToTray",
 			"More",
+			"MoreEntries",
 			"Name",
 			"NativeLibUse",
 			"Navigation",
@@ -1104,6 +1117,7 @@ namespace KeePass.Resources
 			"UrlSchemeOverrides",
 			"UseCustomToolStripRenderer",
 			"UseTransactedDatabaseWrites",
+			"UserAccount",
 			"UserName",
 			"UserNamePrompt",
 			"Uuid",
@@ -1724,6 +1738,17 @@ namespace KeePass.Resources
 		public static string AutoTypeXDoToolRequired
 		{
 			get { return m_strAutoTypeXDoToolRequired; }
+		}
+
+		private static string m_strAutoTypeXDoToolRequiredGlobalVer =
+			@"For global auto-type, the 'xdotool' utility/package is required (version 2.20100818.3004 or higher!).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'For global auto-type, the &#39;xdotool&#39; utility/package is required (version 2.20100818.3004 or higher!).'.
+		/// </summary>
+		public static string AutoTypeXDoToolRequiredGlobalVer
+		{
+			get { return m_strAutoTypeXDoToolRequiredGlobalVer; }
 		}
 
 		private static string m_strAvailableLanguages =
@@ -2617,6 +2642,17 @@ namespace KeePass.Resources
 			get { return m_strDelete; }
 		}
 
+		private static string m_strDeleteCmd =
+			@"&Delete";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Delete'.
+		/// </summary>
+		public static string DeleteCmd
+		{
+			get { return m_strDeleteCmd; }
+		}
+
 		private static string m_strDeleteEntriesTitle =
 			@"Delete Entries";
 		/// <summary>
@@ -2758,6 +2794,17 @@ namespace KeePass.Resources
 		public static string DocumentationHint
 		{
 			get { return m_strDocumentationHint; }
+		}
+
+		private static string m_strDontDeleteCmd =
+			@"Do&n't delete";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do&amp;n&#39;t delete'.
+		/// </summary>
+		public static string DontDeleteCmd
+		{
+			get { return m_strDontDeleteCmd; }
 		}
 
 		private static string m_strDragDrop =
@@ -4366,6 +4413,17 @@ namespace KeePass.Resources
 			get { return m_strInvalidUserPassword; }
 		}
 
+		private static string m_strIOConnection =
+			@"IO Connection";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'IO Connection'.
+		/// </summary>
+		public static string IOConnection
+		{
+			get { return m_strIOConnection; }
+		}
+
 		private static string m_strItalic =
 			@"Italic";
 		/// <summary>
@@ -4507,6 +4565,17 @@ namespace KeePass.Resources
 		public static string KeyChanged
 		{
 			get { return m_strKeyChanged; }
+		}
+
+		private static string m_strKeyFile =
+			@"Key file";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Key file'.
+		/// </summary>
+		public static string KeyFile
+		{
+			get { return m_strKeyFile; }
 		}
 
 		private static string m_strKeyFileCreate =
@@ -4848,6 +4917,17 @@ namespace KeePass.Resources
 		public static string More
 		{
 			get { return m_strMore; }
+		}
+
+		private static string m_strMoreEntries =
+			@"{PARAM} more entries";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '{PARAM} more entries'.
+		/// </summary>
+		public static string MoreEntries
+		{
+			get { return m_strMoreEntries; }
 		}
 
 		private static string m_strName =
@@ -6927,6 +7007,17 @@ namespace KeePass.Resources
 		public static string UseTransactedDatabaseWrites
 		{
 			get { return m_strUseTransactedDatabaseWrites; }
+		}
+
+		private static string m_strUserAccount =
+			@"User account";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'User account'.
+		/// </summary>
+		public static string UserAccount
+		{
+			get { return m_strUserAccount; }
 		}
 
 		private static string m_strUserName =

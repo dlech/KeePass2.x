@@ -37,8 +37,8 @@ namespace KeePass.Util
 		private static Form m_fRecvWnd = null;
 		private static Dictionary<int, Keys> m_vRegKeys = new Dictionary<int, Keys>();
 
-		private static NativeMethods.BindKeyHandler m_hOnHotKey =
-			new NativeMethods.BindKeyHandler(HotKeyManager.OnHotKey);
+		// private static NativeMethods.BindKeyHandler m_hOnHotKey =
+		//	new NativeMethods.BindKeyHandler(HotKeyManager.OnHotKey);
 
 		private const uint MOD_ALT = 1;
 		private const uint MOD_CONTROL = 2;
@@ -55,11 +55,11 @@ namespace KeePass.Util
 		{
 			m_fRecvWnd = fRecvWnd;
 
-			if(NativeLib.IsUnix())
-			{
-				try { NativeMethods.tomboy_keybinder_init(); }
-				catch(Exception) { Debug.Assert(false); return false; }
-			}
+			// if(NativeLib.IsUnix())
+			// {
+			//	try { NativeMethods.tomboy_keybinder_init(); }
+			//	catch(Exception) { Debug.Assert(false); return false; }
+			// }
 
 			return true;
 		}
@@ -89,11 +89,10 @@ namespace KeePass.Util
 				}
 				else // Unix
 				{
-					NativeMethods.tomboy_keybinder_bind(EggAccKeysToString(kKey),
-						m_hOnHotKey);
-
-					m_vRegKeys[nId] = kKey;
-					return true;
+					// NativeMethods.tomboy_keybinder_bind(EggAccKeysToString(kKey),
+					//	m_hOnHotKey);
+					// m_vRegKeys[nId] = kKey;
+					// return true;
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -105,7 +104,7 @@ namespace KeePass.Util
 		{
 			if(m_vRegKeys.ContainsKey(nId))
 			{
-				Keys k = m_vRegKeys[nId];
+				// Keys k = m_vRegKeys[nId];
 				m_vRegKeys.Remove(nId);
 
 				try
@@ -115,12 +114,13 @@ namespace KeePass.Util
 						bResult = NativeMethods.UnregisterHotKey(m_fRecvWnd.Handle, nId);
 					else // Unix
 					{
-						NativeMethods.tomboy_keybinder_unbind(EggAccKeysToString(k),
-							m_hOnHotKey);
-						bResult = true;
+						// NativeMethods.tomboy_keybinder_unbind(EggAccKeysToString(k),
+						//	m_hOnHotKey);
+						// bResult = true;
+						bResult = false;
 					}
 
-					Debug.Assert(bResult);
+					// Debug.Assert(bResult);
 					return bResult;
 				}
 				catch(Exception) { Debug.Assert(false); }
@@ -137,9 +137,9 @@ namespace KeePass.Util
 				{
 					if(!NativeLib.IsUnix())
 						NativeMethods.UnregisterHotKey(m_fRecvWnd.Handle, kvp.Key);
-					else // Unix
-						NativeMethods.tomboy_keybinder_unbind(
-							EggAccKeysToString(kvp.Value), m_hOnHotKey);
+					// else // Unix
+					//	NativeMethods.tomboy_keybinder_unbind(
+					//		EggAccKeysToString(kvp.Value), m_hOnHotKey);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -147,7 +147,7 @@ namespace KeePass.Util
 			m_vRegKeys.Clear();
 		}
 
-		private static void OnHotKey(string strKey, IntPtr lpUserData)
+		/* private static void OnHotKey(string strKey, IntPtr lpUserData)
 		{
 			if(string.IsNullOrEmpty(strKey)) return;
 			if(strKey.IndexOf(@"<Release>", StrUtil.CaseIgnoreCmp) >= 0) return;
@@ -209,6 +209,6 @@ namespace KeePass.Util
 
 			sb.Append((k & Keys.KeyCode).ToString());
 			return sb.ToString();
-		}
+		} */
 	}
 }

@@ -49,7 +49,7 @@ namespace KeePass.Native
 		internal delegate void BindKeyHandler([MarshalAs(NtvStringType)]
 			string strKey, IntPtr lpUserData); */
 
-		private const string PathLibTomBoy = "/usr/lib/tomboy/libtomboy.so";
+		/* private const string PathLibTomBoy = "/usr/lib/tomboy/libtomboy.so";
 
 		[DllImport(PathLibTomBoy)]
 		internal static extern void tomboy_keybinder_init();
@@ -62,7 +62,7 @@ namespace KeePass.Native
 		internal static extern void tomboy_keybinder_unbind(string strKey,
 			BindKeyHandler lpHandler);
 
-		internal delegate void BindKeyHandler(string strKey, IntPtr lpUserData);
+		internal delegate void BindKeyHandler(string strKey, IntPtr lpUserData); */
 
 		private static bool LoseFocusUnix(Form fCurrent)
 		{
@@ -98,6 +98,16 @@ namespace KeePass.Native
 		internal static bool TryXDoTool()
 		{
 			return !string.IsNullOrEmpty(RunXDoTool("help"));
+		}
+
+		internal static bool TryXDoTool(bool bRequireWindowNameSupport)
+		{
+			if(!bRequireWindowNameSupport) return TryXDoTool();
+
+			string str = RunXDoTool("getactivewindow getwindowname");
+			if(string.IsNullOrEmpty(str)) return false;
+
+			return (str.Trim() != "usage: getactivewindow");
 		}
 
 		internal static string RunXDoTool(string strParams)

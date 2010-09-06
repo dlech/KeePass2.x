@@ -83,9 +83,9 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.CreateMasterKey;
 
-			UIUtil.AssignFontDefaultBold(m_cbPassword);
-			UIUtil.AssignFontDefaultBold(m_cbKeyFile);
-			UIUtil.AssignFontDefaultBold(m_cbUserAccount);
+			FontUtil.AssignDefaultBold(m_cbPassword);
+			FontUtil.AssignDefaultBold(m_cbKeyFile);
+			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);

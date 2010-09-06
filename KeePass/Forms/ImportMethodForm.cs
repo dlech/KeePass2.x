@@ -61,11 +61,11 @@ namespace KeePass.Forms
 
 			this.Text = KPRes.ImportBehavior;
 
-			UIUtil.AssignFontDefaultBold(m_radioCreateNew);
-			UIUtil.AssignFontDefaultBold(m_radioKeepExisting);
-			UIUtil.AssignFontDefaultBold(m_radioOverwrite);
-			UIUtil.AssignFontDefaultBold(m_radioOverwriteIfNewer);
-			UIUtil.AssignFontDefaultBold(m_radioSynchronize);
+			FontUtil.AssignDefaultBold(m_radioCreateNew);
+			FontUtil.AssignDefaultBold(m_radioKeepExisting);
+			FontUtil.AssignDefaultBold(m_radioOverwrite);
+			FontUtil.AssignDefaultBold(m_radioOverwriteIfNewer);
+			FontUtil.AssignDefaultBold(m_radioSynchronize);
 
 			m_radioCreateNew.Checked = true;
 		}

@@ -122,6 +122,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PwGorillaCsv142());
 			m_vFormats.Add(new PwKeeperCsv70());
 			m_vFormats.Add(new PwMemory2008Xml104());
+			m_vFormats.Add(new PwPrompterDat12());
 			m_vFormats.Add(new PwSafeXml302());
 			m_vFormats.Add(new PwTresorXml100());
 			m_vFormats.Add(new PVaultTxt14());
@@ -141,6 +142,7 @@ namespace KeePass.DataExchange
 
 			m_vFormats.Add(new KeePassHtml2x());
 			m_vFormats.Add(new XslTransform2x());
+			m_vFormats.Add(new WinFavorites10());
 		}
 
 		public void Add(FileFormatProvider prov)

@@ -908,6 +908,11 @@
             Name of the provider that generated the custom key.
             </summary>
         </member>
+        <member name="T:KeePassLib.Cryptography.PopularPasswords">
+            <summary>
+            Bloom filter-based popular password checking.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.PasswordGenerator.PasswordGeneratorType">
             <summary>
             Type of the password generator. Different types like generators

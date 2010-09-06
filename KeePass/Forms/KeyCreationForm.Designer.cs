@@ -88,7 +88,7 @@
 			// 
 			this.m_tbPassword.Location = new System.Drawing.Point(150, 145);
 			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(316, 20);
+			this.m_tbPassword.Size = new System.Drawing.Size(319, 20);
 			this.m_tbPassword.TabIndex = 0;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
@@ -105,7 +105,7 @@
 			// 
 			this.m_tbRepeatPassword.Location = new System.Drawing.Point(150, 171);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
-			this.m_tbRepeatPassword.Size = new System.Drawing.Size(316, 20);
+			this.m_tbRepeatPassword.Size = new System.Drawing.Size(319, 20);
 			this.m_tbRepeatPassword.TabIndex = 3;
 			this.m_tbRepeatPassword.UseSystemPasswordChar = true;
 			// 
@@ -239,7 +239,7 @@
 			this.m_pbPasswordQuality.Maximum = 100;
 			this.m_pbPasswordQuality.Minimum = 0;
 			this.m_pbPasswordQuality.Name = "m_pbPasswordQuality";
-			this.m_pbPasswordQuality.Size = new System.Drawing.Size(260, 14);
+			this.m_pbPasswordQuality.Size = new System.Drawing.Size(262, 14);
 			this.m_pbPasswordQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbPasswordQuality.TabIndex = 5;
 			this.m_pbPasswordQuality.TabStop = false;
@@ -256,7 +256,7 @@
 			// 
 			// m_lblQualityBits
 			// 
-			this.m_lblQualityBits.Location = new System.Drawing.Point(413, 197);
+			this.m_lblQualityBits.Location = new System.Drawing.Point(416, 197);
 			this.m_lblQualityBits.Name = "m_lblQualityBits";
 			this.m_lblQualityBits.Size = new System.Drawing.Size(53, 13);
 			this.m_lblQualityBits.TabIndex = 6;

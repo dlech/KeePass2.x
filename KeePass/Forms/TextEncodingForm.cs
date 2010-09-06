@@ -78,7 +78,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bInitializing = true;
-			UIUtil.AssignFontDefaultBold(m_lblContext);
+			FontUtil.AssignDefaultBold(m_lblContext);
 			m_lblContext.Text = m_strContext;
 
 			foreach(string strEnc in m_vEncText)

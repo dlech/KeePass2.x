@@ -79,8 +79,8 @@ namespace KeePass.Forms
 		private PluginManager m_pluginManager = new PluginManager();
 
 		private int m_nLockTimerMax = 0;
-		private int m_nLockTimerCur = 0;
-		private volatile bool m_bAllowLockTimerMod = true;
+		private volatile int m_nLockTimerCur = 0;
+		private object m_objLockTimerSync = new object();
 		private List<ToolStripButton> m_vCustomToolBarButtons = new List<ToolStripButton>();
 
 		private int m_nClipClearMax = 0;
@@ -2122,28 +2122,7 @@ namespace KeePass.Forms
 				HandleHotKey((int)m.WParam);
 			}
 			else if((m.Msg == m_nAppMessage) && (m_nAppMessage != 0))
-			{
-				NotifyUserActivity();
-
-				if(m.WParam == (IntPtr)Program.AppMessage.RestoreWindow)
-					EnsureVisibleForegroundWindow(true, true);
-				else if(m.WParam == (IntPtr)Program.AppMessage.Exit)
-					OnFileExit(null, EventArgs.Empty);
-				else if(m.WParam == (IntPtr)Program.AppMessage.IpcByFile)
-					IpcUtilEx.ProcessGlobalMessage(m.LParam.ToInt32(), this);
-				else if(m.WParam == (IntPtr)Program.AppMessage.AutoType)
-					ExecuteGlobalAutoType();
-				else if(m.WParam == (IntPtr)Program.AppMessage.Lock)
-					LockAllDocuments();
-				else if(m.WParam == (IntPtr)Program.AppMessage.Unlock)
-				{
-					if(IsFileLocked(null))
-					{
-						EnsureVisibleForegroundWindow(false, false);
-						OnFileLock(null, EventArgs.Empty);
-					}
-				}
-			}
+				ProcessAppMessage(m.WParam, m.LParam);
 			else if(m.Msg == NativeMethods.WM_SYSCOMMAND)
 			{
 				if((m.WParam == (IntPtr)NativeMethods.SC_MINIMIZE) ||
@@ -2161,6 +2140,30 @@ namespace KeePass.Forms
 			}
 
 			base.WndProc(ref m);
+		}
+
+		public void ProcessAppMessage(IntPtr wParam, IntPtr lParam)
+		{
+			NotifyUserActivity();
+
+			if(wParam == (IntPtr)Program.AppMessage.RestoreWindow)
+				EnsureVisibleForegroundWindow(true, true);
+			else if(wParam == (IntPtr)Program.AppMessage.Exit)
+				OnFileExit(null, EventArgs.Empty);
+			else if(wParam == (IntPtr)Program.AppMessage.IpcByFile)
+				IpcUtilEx.ProcessGlobalMessage(lParam.ToInt32(), this);
+			else if(wParam == (IntPtr)Program.AppMessage.AutoType)
+				ExecuteGlobalAutoType();
+			else if(wParam == (IntPtr)Program.AppMessage.Lock)
+				LockAllDocuments();
+			else if(wParam == (IntPtr)Program.AppMessage.Unlock)
+			{
+				if(IsFileLocked(null))
+				{
+					EnsureVisibleForegroundWindow(false, false);
+					OnFileLock(null, EventArgs.Empty);
+				}
+			}
 		}
 
 		public void ExecuteGlobalAutoType()
@@ -2563,11 +2566,14 @@ namespace KeePass.Forms
 				imgList.Images.Add(img);
 			Debug.Assert(imgList.Images.Count == (int)PwIcon.Count);
 
-			ImageList imgListCustom = UIUtil.BuildImageList(
+			// ImageList imgListCustom = UIUtil.BuildImageList(
+			//	m_docMgr.ActiveDatabase.CustomIcons, 16, 16);
+			// foreach(Image imgCustom in imgListCustom.Images)
+			//	imgList.Images.Add(imgCustom); // Breaks alpha partially
+			List<Image> lCustom = UIUtil.BuildImageListEx(
 				m_docMgr.ActiveDatabase.CustomIcons, 16, 16);
-
-			foreach(Image imgCustom in imgListCustom.Images)
-				imgList.Images.Add(imgCustom);
+			if((lCustom != null) && (lCustom.Count > 0))
+				imgList.Images.AddRange(lCustom.ToArray());
 
 			m_ilCurrentIcons = imgList;
 
@@ -2578,7 +2584,13 @@ namespace KeePass.Forms
 			}
 			else
 			{
-				ImageList imgSafe = UIUtil.ConvertImageList24(imgList, 16, 16,
+				List<Image> vAllImages = new List<Image>();
+				foreach(Image imgClient in m_ilClientIcons.Images)
+					vAllImages.Add(imgClient);
+				vAllImages.AddRange(lCustom);
+				Debug.Assert(imgList.Images.Count == vAllImages.Count);
+
+				ImageList imgSafe = UIUtil.ConvertImageList24(vAllImages, 16, 16,
 					AppDefs.ColorControlNormal);
 				m_tvGroups.ImageList = imgSafe; // TreeView doesn't fully support alpha on < Vista
 				m_lvEntries.SmallImageList = ((WinUtil.IsAtLeastWindowsVista ||
@@ -2753,7 +2765,9 @@ namespace KeePass.Forms
 		// Public for plugins
 		public void LockAllDocuments()
 		{
+			NotifyUserActivity();
 			if(UIIsInteractionBlocked()) { Debug.Assert(false); return; }
+			if(!PrepareLock()) return; // Unable to lock
 
 			SaveWindowState();
 
@@ -2982,7 +2996,17 @@ namespace KeePass.Forms
 			if(Program.Config.Application.Start.MinimizedAndLocked ||
 				(Program.CommandLineArgs[AppDefs.CommandLineOptions.Minimize] != null))
 			{
-				if(bFormLoading) this.WindowState = FormWindowState.Minimized;
+				if(bFormLoading)
+				{
+					this.WindowState = FormWindowState.Minimized;
+
+					// Set the lock overlay icon again (the first time
+					// Windows ignores the call, maybe because the window
+					// wasn't fully constructed at that time yet)
+					if(IsFileLocked(null))
+						TaskbarList.SetOverlayIcon(this,
+							Properties.Resources.LockOverlay, KPRes.Locked);
+				}
 
 				if(Program.Config.MainWindow.MinimizeToTray) MinimizeToTray(true);
 				else if(!bFormLoading) this.WindowState = FormWindowState.Minimized;
@@ -3298,10 +3322,50 @@ namespace KeePass.Forms
 			if(bAtLeastOnePermanent)
 			{
 				bool bSingle = (vSelected.Length == 1);
-				if(!MessageService.AskYesNo(bSingle ? KPRes.DeleteEntriesQuestionSingle :
-					KPRes.DeleteEntriesQuestion, bSingle ? KPRes.DeleteEntriesTitleSingle :
-					KPRes.DeleteEntriesTitle))
-					return;
+
+				int nSummaryShow = Math.Min(10, vSelected.Length);
+				if(nSummaryShow == (vSelected.Length - 1)) --nSummaryShow; // Plural msg
+				string strSummary = string.Empty;
+				for(int iSumEnum = 0; iSumEnum < nSummaryShow; ++iSumEnum)
+				{
+					if(strSummary.Length > 0) strSummary += MessageService.NewLine;
+
+					PwEntry peDel = vSelected[iSumEnum];
+					strSummary += ("- " + StrUtil.CompactString3Dots(
+						peDel.Strings.ReadSafe(PwDefs.TitleField), 39));
+					if(PwDefs.IsTanEntry(peDel))
+					{
+						string strTanIdx = peDel.Strings.ReadSafe(PwDefs.UserNameField);
+						if(!string.IsNullOrEmpty(strTanIdx))
+							strSummary += (@" (#" + strTanIdx + @")");
+					}
+				}
+				if(nSummaryShow != vSelected.Length)
+					strSummary += (MessageService.NewLine + "- " +
+						KPRes.MoreEntries.Replace(@"{PARAM}", (vSelected.Length -
+						nSummaryShow).ToString()));
+
+				VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+				dlg.CommandLinks = false;
+				dlg.Content = strSummary;
+				dlg.MainInstruction = (bSingle ? KPRes.DeleteEntriesQuestionSingle :
+					KPRes.DeleteEntriesQuestion);
+				dlg.SetIcon(VtdCustomIcon.Question);
+				dlg.WindowTitle = PwDefs.ProductName;
+				dlg.AddButton((int)DialogResult.OK, KPRes.DeleteCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.DontDeleteCmd, null);
+
+				if(dlg.ShowDialog())
+				{
+					if(dlg.Result == (int)DialogResult.Cancel) return;
+				}
+				else
+				{
+					if(!MessageService.AskYesNo(bSingle ? KPRes.DeleteEntriesQuestionSingle :
+						KPRes.DeleteEntriesQuestion, bSingle ? KPRes.DeleteEntriesTitleSingle :
+						KPRes.DeleteEntriesTitle))
+						return;
+				}
 			}
 
 			bool bUpdateGroupList = false;
@@ -3362,10 +3426,26 @@ namespace KeePass.Forms
 
 			if(bPermanent)
 			{
-				string strText = KPRes.DeleteGroupInfo + MessageService.NewParagraph +
-					KPRes.DeleteGroupQuestion;
-				if(!MessageService.AskYesNo(strText, KPRes.DeleteGroupTitle))
-					return;
+				VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+				dlg.CommandLinks = false;
+				dlg.Content = KPRes.DeleteGroupInfo;
+				dlg.MainInstruction = KPRes.DeleteGroupQuestion;
+				dlg.SetIcon(VtdCustomIcon.Question);
+				dlg.WindowTitle = PwDefs.ProductName;
+				dlg.AddButton((int)DialogResult.OK, KPRes.DeleteCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.DontDeleteCmd, null);
+
+				if(dlg.ShowDialog())
+				{
+					if(dlg.Result == (int)DialogResult.Cancel) return;
+				}
+				else
+				{
+					string strText = KPRes.DeleteGroupInfo + MessageService.NewParagraph +
+						KPRes.DeleteGroupQuestion;
+					if(!MessageService.AskYesNo(strText, KPRes.DeleteGroupTitle))
+						return;
+				}
 			}
 
 			pgParent.Groups.Remove(pg);
@@ -3820,7 +3900,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			List<string> vTags = pd.RootGroup.BuildEntryTagsList();
+			List<string> vTags = pd.RootGroup.BuildEntryTagsList(true);
 			string strPrefix = KPRes.Tag + ": ";
 			Image imgIcon = Properties.Resources.B16x16_KNotes;
 			bool bEnable = m_ctxEntrySelectedNewTag.Enabled;
@@ -3829,7 +3909,7 @@ namespace KeePass.Forms
 			if(bEnableOnlySelected)
 			{
 				PwGroup pgSel = GetSelectedEntriesAsGroup();
-				vEnabledTags = pgSel.BuildEntryTagsList();
+				vEnabledTags = pgSel.BuildEntryTagsList(true);
 			}
 
 			for(int i = 0; i < vTags.Count; ++i)

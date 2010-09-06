@@ -77,12 +77,12 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
-			UIUtil.AssignFontDefaultItalic(m_lblHeaderCpAlgo);
-			UIUtil.AssignFontDefaultItalic(m_lblHeaderCp);
-			UIUtil.AssignFontDefaultItalic(m_lblHeaderPerf);
+			FontUtil.AssignDefaultItalic(m_lblHeaderCpAlgo);
+			FontUtil.AssignDefaultItalic(m_lblHeaderCp);
+			FontUtil.AssignDefaultItalic(m_lblHeaderPerf);
 
-			UIUtil.AssignFontDefaultBold(m_rbNone);
-			UIUtil.AssignFontDefaultBold(m_rbGZip);
+			FontUtil.AssignDefaultBold(m_rbNone);
+			FontUtil.AssignDefaultBold(m_rbGZip);
 
 			m_ttRect.SetToolTip(m_lnkCompute1SecDelay, KPRes.TransformationRounds1SecHint);
 

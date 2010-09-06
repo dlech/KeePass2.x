@@ -166,9 +166,20 @@ namespace KeePass.UI
 			int nWidth, int nHeight)
 		{
 			ImageList imgList = new ImageList();
-
 			imgList.ImageSize = new Size(nWidth, nHeight);
 			imgList.ColorDepth = ColorDepth.Depth32Bit;
+
+			List<Image> lImages = BuildImageListEx(vImages, nWidth, nHeight);
+			if((lImages != null) && (lImages.Count > 0))
+				imgList.Images.AddRange(lImages.ToArray());
+
+			return imgList;
+		}
+
+		public static List<Image> BuildImageListEx(List<PwCustomIcon> vImages,
+			int nWidth, int nHeight)
+		{
+			List<Image> lImages = new List<Image>();
 
 			foreach(PwCustomIcon pwci in vImages)
 			{
@@ -178,22 +189,23 @@ namespace KeePass.UI
 				if((imgNew.Width != nWidth) || (imgNew.Height != nHeight))
 					imgNew = new Bitmap(imgNew, new Size(nWidth, nHeight));
 
-				imgList.Images.Add(imgNew);
+				lImages.Add(imgNew);
 			}
 
-			return imgList;
+			return lImages;
 		}
 
-		public static ImageList ConvertImageList24(ImageList vSourceImages,
+		public static ImageList ConvertImageList24(List<Image> vImages,
 			int nWidth, int nHeight, Color clrBack)
 		{
-			ImageList vNew = new ImageList();
-			vNew.ImageSize = new Size(nWidth, nHeight);
-			vNew.ColorDepth = ColorDepth.Depth24Bit;
+			ImageList ilNew = new ImageList();
+			ilNew.ImageSize = new Size(nWidth, nHeight);
+			ilNew.ColorDepth = ColorDepth.Depth24Bit;
 
 			SolidBrush brushBk = new SolidBrush(clrBack);
 
-			foreach(Image img in vSourceImages.Images)
+			List<Image> vNewImages = new List<Image>();
+			foreach(Image img in vImages)
 			{
 				Bitmap bmpNew = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 
@@ -210,10 +222,11 @@ namespace KeePass.UI
 					}
 				}
 
-				vNew.Images.Add(bmpNew);
+				vNewImages.Add(bmpNew);
 			}
+			ilNew.Images.AddRange(vNewImages.ToArray());
 
-			return vNew;
+			return ilNew;
 		}
 
 		public static ImageList CloneImageList(ImageList ilSource, bool bCloneImages)
@@ -572,6 +585,72 @@ namespace KeePass.UI
 			fbd.ShowNewFolderButton = true;
 
 			return fbd;
+		}
+
+		private static ColorDialog CreateColorDialog(Color clrDefault)
+		{
+			ColorDialog dlg = new ColorDialog();
+
+			dlg.AllowFullOpen = true;
+			dlg.AnyColor = true;
+			if(!clrDefault.IsEmpty) dlg.Color = clrDefault;
+			dlg.FullOpen = true;
+			dlg.ShowHelp = false;
+			// dlg.SolidColorOnly = false;
+
+			try
+			{
+				string strColors = Program.Config.Defaults.CustomColors;
+				if(!string.IsNullOrEmpty(strColors))
+				{
+					int[] vColors = StrUtil.DeserializeIntArray(strColors);
+					if((vColors != null) && (vColors.Length > 0))
+						dlg.CustomColors = vColors;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return dlg;
+		}
+
+		private static void SaveCustomColors(ColorDialog dlg)
+		{
+			if(dlg == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				int[] vColors = dlg.CustomColors;
+				if((vColors == null) || (vColors.Length == 0))
+					Program.Config.Defaults.CustomColors = string.Empty;
+				else
+					Program.Config.Defaults.CustomColors =
+						StrUtil.SerializeIntArray(vColors);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static Color? ShowColorDialog(Color clrDefault)
+		{
+			ColorDialog dlg = CreateColorDialog(clrDefault);
+
+			GlobalWindowManager.AddDialog(dlg);
+			DialogResult dr = dlg.ShowDialog();
+			GlobalWindowManager.RemoveDialog(dlg);
+
+			SaveCustomColors(dlg);
+
+			if(dr == DialogResult.OK) return dlg.Color;
+			return null;
+		}
+
+		public static FontDialog CreateFontDialog(bool bEffects)
+		{
+			FontDialog dlg = new FontDialog();
+
+			dlg.FontMustExist = true;
+			dlg.ShowEffects = bEffects;
+
+			return dlg;
 		}
 
 		public static void SetGroupNodeToolTip(TreeNode tn, PwGroup pg)
@@ -1086,34 +1165,6 @@ namespace KeePass.UI
 			lv.EnsureVisible(iIndex);
 		}
 
-		private static Font m_fontBold = null;
-		public static void AssignFontDefaultBold(Control c)
-		{
-			if(c == null) throw new ArgumentNullException("c");
-
-			if(m_fontBold == null)
-			{
-				try { m_fontBold = new Font(c.Font, FontStyle.Bold); }
-				catch(Exception) { Debug.Assert(false); m_fontBold = c.Font; }
-			}
-				
-			if(m_fontBold != null) c.Font = m_fontBold;
-		}
-
-		private static Font m_fontItalic = null;
-		public static void AssignFontDefaultItalic(Control c)
-		{
-			if(c == null) throw new ArgumentNullException("c");
-
-			if(m_fontItalic == null)
-			{
-				try { m_fontItalic = new Font(c.Font, FontStyle.Italic); }
-				catch(Exception) { Debug.Assert(false); m_fontItalic = c.Font; }
-			}
-
-			if(m_fontItalic != null) c.Font = m_fontItalic;
-		}
-
 		/// <summary>
 		/// Test whether a screen area is at least partially visible.
 		/// </summary>
@@ -1136,6 +1187,32 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); return true; }
 
 			return false;
+		}
+
+		public static void SetButtonImage(Button btn, Image img, bool b16To15)
+		{
+			if(btn == null) { Debug.Assert(false); return; }
+			if(img == null) { Debug.Assert(false); return; }
+
+			if(b16To15 && (btn.Height == 23) && (img.Height == 16))
+			{
+				Bitmap bmp = new Bitmap(img.Width, 15, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					using(SolidBrush sb = new SolidBrush(Color.Transparent))
+					{
+						g.FillRectangle(sb, 0, 0, img.Width, 15);
+					}
+
+					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
+					g.DrawImage(img, 0, 0, img.Width, 15);
+				}
+
+				btn.Image = bmp;
+			}
+			else btn.Image = img;
 		}
 	}
 }

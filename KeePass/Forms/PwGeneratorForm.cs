@@ -93,9 +93,14 @@ namespace KeePass.Forms
 				KPRes.PasswordOptionsDesc);
 			this.Icon = Properties.Resources.KeePass;
 
-			UIUtil.AssignFontDefaultBold(m_rbStandardCharSet);
-			UIUtil.AssignFontDefaultBold(m_rbPattern);
-			UIUtil.AssignFontDefaultBold(m_rbCustom);
+			UIUtil.SetButtonImage(m_btnProfileAdd,
+				Properties.Resources.B16x16_FileSaveAs, false);
+			UIUtil.SetButtonImage(m_btnProfileRemove,
+				Properties.Resources.B16x16_EditDelete, true);
+
+			FontUtil.AssignDefaultBold(m_rbStandardCharSet);
+			FontUtil.AssignDefaultBold(m_rbPattern);
+			FontUtil.AssignDefaultBold(m_rbCustom);
 
 			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.GenProfileSaveDesc);
 			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.GenProfileRemoveDesc);

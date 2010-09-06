@@ -87,6 +87,17 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private AceFont m_fontPasswords = new AceFont(true);
+		public AceFont PasswordFont
+		{
+			get { return m_fontPasswords; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_fontPasswords = value;
+			}
+		}
+
 		private bool m_bForceSysFont = true;
 		public bool ForceSystemFontUnix
 		{
@@ -207,7 +218,7 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private float m_fSize = 8.0f;
+		private float m_fSize = 8.25f;
 		public float Size
 		{
 			get { return m_fSize; }
@@ -241,10 +252,17 @@ namespace KeePass.App.Configuration
 
 		public AceFont(Font f)
 		{
+			if(f == null) throw new ArgumentNullException("f");
+
 			this.Family = f.FontFamily.Name;
-			this.Size = f.Size;
-			this.Style = f.Style;
-			this.GraphicsUnit = f.Unit;
+			m_fSize = f.Size;
+			m_fStyle = f.Style;
+			m_gu = f.Unit;
+		}
+
+		public AceFont(bool bMonospace)
+		{
+			if(bMonospace) m_strFamily = "Courier New";
 		}
 
 		public Font ToFont()

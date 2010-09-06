@@ -111,8 +111,17 @@ namespace KeePassLib.Cryptography
 			if(charSpace == 0) return 0;
 
 			double dblBitsPerChar = Math.Log((double)charSpace) / Math.Log(2.0);
+			double dblRating = dblBitsPerChar * dblEffectiveLength;
 
-			return (uint)Math.Ceiling(dblBitsPerChar * dblEffectiveLength);
+#if !KeePassLibSD
+			char[] vLowerCopy = new char[vPasswordChars.Length];
+			for(int ilc = 0; ilc < vLowerCopy.Length; ++ilc)
+				vLowerCopy[ilc] = char.ToLower(vPasswordChars[ilc]);
+			if(PopularPasswords.IsPopularPassword(vLowerCopy)) dblRating /= 8.0;
+			Array.Clear(vLowerCopy, 0, vLowerCopy.Length);
+#endif
+
+			return (uint)Math.Ceiling(dblRating);
 		}
 
 		/// <summary>

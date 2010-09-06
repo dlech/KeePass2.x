@@ -136,6 +136,8 @@ namespace KeePassLib.Serialization
 #if !KeePassLibSD
 		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
+			if(ioc == null) { Debug.Assert(false); return null; }
+
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
 			return CreateWebClient(ioc).OpenWrite(new Uri(ioc.Path));
@@ -160,6 +162,8 @@ namespace KeePassLib.Serialization
 
 		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
 		{
+			if(ioc == null) { Debug.Assert(false); return false; }
+
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 
 			try

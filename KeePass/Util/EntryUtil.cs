@@ -258,8 +258,7 @@ namespace KeePass.Util
 			{
 				string strPassword = ps.ReadString();
 				string strPick = SprEngine.Compile(strPassword, false, pe, pd,
-					(cf != null) ? cf.EncodeAsAutoTypeSequence : false,
-					(cf != null) ? cf.EncodeQuotesForCommandLine : false);
+					false, false); // Do not transform content yet
 
 				if(!string.IsNullOrEmpty(strPick))
 				{
@@ -298,8 +297,8 @@ namespace KeePass.Util
 					pe.Strings.Set(PwDefs.PasswordField, psAutoGen);
 					pd.Modified = true;
 
-					str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh,
-						psAutoGen.ReadString());
+					string strIns = SprEngine.TransformContent(psAutoGen.ReadString(), cf);
+					str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh, strIns);
 				}
 			}
 
