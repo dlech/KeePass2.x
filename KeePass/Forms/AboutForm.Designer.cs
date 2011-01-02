@@ -80,16 +80,16 @@
 			this.m_linkHomepage.AutoSize = true;
 			this.m_linkHomepage.Location = new System.Drawing.Point(10, 155);
 			this.m_linkHomepage.Name = "m_linkHomepage";
-			this.m_linkHomepage.Size = new System.Drawing.Size(104, 13);
+			this.m_linkHomepage.Size = new System.Drawing.Size(91, 13);
 			this.m_linkHomepage.TabIndex = 4;
 			this.m_linkHomepage.TabStop = true;
-			this.m_linkHomepage.Text = "KeePass Homepage";
+			this.m_linkHomepage.Text = "KeePass Website";
 			this.m_linkHomepage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHomepage);
 			// 
 			// m_linkHelp
 			// 
 			this.m_linkHelp.AutoSize = true;
-			this.m_linkHelp.Location = new System.Drawing.Point(228, 155);
+			this.m_linkHelp.Location = new System.Drawing.Point(213, 155);
 			this.m_linkHelp.Name = "m_linkHelp";
 			this.m_linkHelp.Size = new System.Drawing.Size(29, 13);
 			this.m_linkHelp.TabIndex = 6;
@@ -111,7 +111,7 @@
 			// m_linkAcknowledgements
 			// 
 			this.m_linkAcknowledgements.AutoSize = true;
-			this.m_linkAcknowledgements.Location = new System.Drawing.Point(122, 155);
+			this.m_linkAcknowledgements.Location = new System.Drawing.Point(107, 155);
 			this.m_linkAcknowledgements.Name = "m_linkAcknowledgements";
 			this.m_linkAcknowledgements.Size = new System.Drawing.Size(100, 13);
 			this.m_linkAcknowledgements.TabIndex = 5;
@@ -122,7 +122,7 @@
 			// m_linkDonate
 			// 
 			this.m_linkDonate.AutoSize = true;
-			this.m_linkDonate.Location = new System.Drawing.Point(122, 177);
+			this.m_linkDonate.Location = new System.Drawing.Point(107, 177);
 			this.m_linkDonate.Name = "m_linkDonate";
 			this.m_linkDonate.Size = new System.Drawing.Size(42, 13);
 			this.m_linkDonate.TabIndex = 8;

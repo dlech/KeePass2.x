@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,6 +96,9 @@ namespace KeePass.App
 
 			public const string Setup = "v2/setup";
 			public const string SetupMono = "mono";
+
+			public const string FaqTech = "base/faq_tech";
+			public const string FaqTechMemProt = "memprot";
 		}
 
 		public static class CommandLineOptions
@@ -147,6 +150,7 @@ namespace KeePass.App
 			public const string PlgxBuildPost = "plgx-build-post";
 
 			public const string Debug = "debug";
+			public const string ShowAssemblyInfo = "showasminfo";
 
 #if (DEBUG && !KeePassLibSD)
 			public const string MakePopularPasswordTable = "makepopularpasswordtable";

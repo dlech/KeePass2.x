@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -95,8 +95,10 @@ namespace KeePass.Forms
 
 			lvi.SubItems.Add(c.HideWithAsterisks ? KPRes.Yes : string.Empty);
 
-			if(c.Type == AceColumnType.Password) lvi.SubItems.Add(KPRes.CtrlKey + "+H");
-			else if(c.Type == AceColumnType.UserName) lvi.SubItems.Add(KPRes.CtrlKey + "+J");
+			if(c.Type == AceColumnType.Password)
+				lvi.SubItems.Add(KPRes.KeyboardKeyCtrl + "+H");
+			else if(c.Type == AceColumnType.UserName)
+				lvi.SubItems.Add(KPRes.KeyboardKeyCtrl + "+J");
 			else lvi.SubItems.Add(string.Empty);
 
 			bool bChecked = false;

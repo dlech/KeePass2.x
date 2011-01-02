@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,14 +73,19 @@ namespace KeePass.Forms
 
 		private MruList m_mruList = new MruList();
 
-		private SessionLockNotifier m_sessionLockNotifier = new SessionLockNotifier(true);
+		private SessionLockNotifier m_sessionLockNotifier = new SessionLockNotifier();
 
 		private DefaultPluginHost m_pluginDefaultHost = new DefaultPluginHost();
 		private PluginManager m_pluginManager = new PluginManager();
 
-		private int m_nLockTimerMax = 0;
-		private volatile int m_nLockTimerCur = 0;
 		private object m_objLockTimerSync = new object();
+		private int m_nLockTimerMax = 0;
+		// private volatile int m_nLockTimerCur = 0;
+		private long m_lLockAtTicks = long.MaxValue;
+		private uint m_uLastInputTime = uint.MaxValue;
+		private long m_lLockAtGlobalTicks = long.MaxValue;
+
+		private ToolStripSeparator m_tsSepCustomToolBar = null;
 		private List<ToolStripButton> m_vCustomToolBarButtons = new List<ToolStripButton>();
 
 		private int m_nClipClearMax = 0;
@@ -182,7 +187,9 @@ namespace KeePass.Forms
 		public bool IsAtLeastOneFileOpen()
 		{
 			foreach(PwDocument ds in m_docMgr.Documents)
+			{
 				if(ds.Database.IsOpen) return true;
+			}
 
 			return false;
 		}
@@ -197,6 +204,7 @@ namespace KeePass.Forms
 
 			m_pluginManager.UnloadAllPlugins(); // Before SaveConfig
 
+			// Just unregister the events; no need to remove the buttons
 			foreach(ToolStripButton tbCustom in m_vCustomToolBarButtons)
 				tbCustom.Click -= OnCustomToolBarButtonClicked;
 			m_vCustomToolBarButtons.Clear();
@@ -454,12 +462,7 @@ namespace KeePass.Forms
 			m_ctxEntrySelectAll.Enabled = (bDatabaseOpened && (nEntriesCount > 0));
 
 			m_ctxEntryClipCopy.Enabled = (nEntriesSelected > 0);
-			try // Might fail/throw due to clipboard access timeout
-			{
-				m_ctxEntryClipPaste.Enabled = Clipboard.ContainsData(
-					EntryUtil.ClipFormatEntries);
-			}
-			catch(Exception) { m_ctxEntryClipPaste.Enabled = false; }
+			// For the 'Paste' command, see the menu drop-down opening handler
 
 			m_ctxEntryColorStandard.Enabled = m_ctxEntryColorLightRed.Enabled =
 				m_ctxEntryColorLightGreen.Enabled = m_ctxEntryColorLightBlue.Enabled =
@@ -1157,13 +1160,14 @@ namespace KeePass.Forms
 			if(UIUtil.SetSortIcon(m_lvEntries, m_pListSorter.Column,
 				m_pListSorter.Order)) return;
 
-			if(m_lvEntries.SmallImageList == null) return;
+			// if(m_lvEntries.SmallImageList == null) return;
 
 			if(m_pListSorter.Column < 0) { Debug.Assert(m_lvEntries.ListViewItemSorter == null); }
 
 			string strAsc = "  \u2191"; // Must have same length
 			string strDsc = "  \u2193"; // Must have same length
-			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP)
+			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
+				KeePassLib.Native.NativeLib.IsUnix())
 			{
 				strAsc = @"  ^";
 				strDsc = @"  v";
@@ -1597,7 +1601,7 @@ namespace KeePass.Forms
 			if(!AppPolicy.Try(AppPolicyId.Export)) return;
 
 			PwDatabase pd = m_docMgr.ActiveDatabase;
-			if((pd == null) || (pd.IsOpen == false)) return;
+			if((pd == null) || !pd.IsOpen) return;
 
 			PwGroup pg = (pgDataSource ?? pd.RootGroup);
 			PwExportInfo pwInfo = new PwExportInfo(pg, pd, bExportDeleted);
@@ -2002,13 +2006,17 @@ namespace KeePass.Forms
 				m_ntfTray.Visible = true;
 		}
 
-		private void OnSessionLock(object sender, EventArgs e)
+		private void OnSessionLock(object sender, SessionLockEventArgs e)
 		{
-			if(m_docMgr.ActiveDatabase.IsOpen && !IsFileLocked(null))
-			{
-				if(Program.Config.Security.WorkspaceLocking.LockOnSessionLock)
-					LockAllDocuments();
-			}
+			if((e.Reason == SessionLockReason.RemoteControlChange) &&
+				Program.Config.Security.WorkspaceLocking.LockOnRemoteControlChange) { }
+			else if(((e.Reason == SessionLockReason.Lock) || (e.Reason == SessionLockReason.Ending)) &&
+				Program.Config.Security.WorkspaceLocking.LockOnSessionSwitch) { }
+			else if((e.Reason == SessionLockReason.Suspend) &&
+				Program.Config.Security.WorkspaceLocking.LockOnSuspend) { }
+			else return;
+
+			if(IsAtLeastOneFileOpen()) LockAllDocuments();
 		}
 
 		/// <summary>
@@ -2016,7 +2024,32 @@ namespace KeePass.Forms
 		/// </summary>
 		public void NotifyUserActivity()
 		{
-			m_nLockTimerCur = m_nLockTimerMax;
+			// m_nLockTimerCur = m_nLockTimerMax;
+
+			if(m_nLockTimerMax == 0) m_lLockAtTicks = long.MaxValue;
+			else
+			{
+				DateTime utcLockAt = DateTime.UtcNow;
+				utcLockAt = utcLockAt.AddSeconds((double)m_nLockTimerMax);
+				m_lLockAtTicks = utcLockAt.Ticks;
+			}
+		}
+
+		private void UpdateGlobalLockTimeout(DateTime utcNow)
+		{
+			uint uLockGlobal = Program.Config.Security.WorkspaceLocking.LockAfterGlobalTime;
+			if(uLockGlobal == 0) { m_lLockAtGlobalTicks = long.MaxValue; return; }
+
+			uint? uLastInputTime = NativeMethods.GetLastInputTime();
+			if(!uLastInputTime.HasValue) return;
+
+			if(uLastInputTime.Value != m_uLastInputTime)
+			{
+				DateTime utcLockAt = utcNow.AddSeconds((double)uLockGlobal);
+				m_lLockAtGlobalTicks = utcLockAt.Ticks;
+
+				m_uLastInputTime = uLastInputTime.Value;
+			}
 		}
 
 		/// <summary>
@@ -2135,8 +2168,7 @@ namespace KeePass.Forms
 				((m.WParam == (IntPtr)NativeMethods.PBT_APMQUERYSUSPEND) ||
 				(m.WParam == (IntPtr)NativeMethods.PBT_APMSUSPEND)))
 			{
-				if(Program.Config.Security.WorkspaceLocking.LockOnSessionLock)
-					LockAllDocuments();
+				OnSessionLock(null, new SessionLockEventArgs(SessionLockReason.Suspend));
 			}
 
 			base.WndProc(ref m);
@@ -2161,7 +2193,7 @@ namespace KeePass.Forms
 				if(IsFileLocked(null))
 				{
 					EnsureVisibleForegroundWindow(false, false);
-					OnFileLock(null, EventArgs.Empty);
+					OnFileLock(null, EventArgs.Empty); // Unlock
 				}
 			}
 		}
@@ -2175,14 +2207,14 @@ namespace KeePass.Forms
 			{
 				try
 				{
-					IntPtr hPrevWnd = NativeMethods.GetForegroundWindow();
+					IntPtr hPrevWnd = NativeMethods.GetForegroundWindowHandle();
 
 					EnsureVisibleForegroundWindow(false, false);
 
 					// The window restoration function above maybe
 					// restored the window already, therefore only
 					// try to unlock if it's locked *now*
-					if(IsFileLocked(null)) OnFileLock(null, null);
+					if(IsFileLocked(null)) OnFileLock(null, EventArgs.Empty);
 
 					NativeMethods.EnsureForegroundWindow(hPrevWnd);
 				}
@@ -2210,7 +2242,7 @@ namespace KeePass.Forms
 		{
 			try
 			{
-				IntPtr hFG = NativeMethods.GetForegroundWindow();
+				IntPtr hFG = NativeMethods.GetForegroundWindowHandle();
 				if(!AutoType.IsValidAutoTypeWindow(hFG, true)) return;
 			}
 			catch(Exception) { Debug.Assert(false); return; }
@@ -2276,7 +2308,10 @@ namespace KeePass.Forms
 			if((vSelected == null) || (vSelected.Length == 0)) return;
 
 			foreach(PwEntry pe in vSelected)
+			{
 				pe.BackgroundColor = clrBack;
+				pe.Touch(true, false);
+			}
 
 			RefreshEntriesList();
 			UpdateUIState(true);
@@ -2908,7 +2943,7 @@ namespace KeePass.Forms
 		private void GetTabText(PwDocument dsInfo, out string strName,
 			out string strTip)
 		{
-			if(IsFileLocked(dsInfo) == false) // Not locked
+			if(!IsFileLocked(dsInfo))
 			{
 				strTip = dsInfo.Database.IOConnectionInfo.Path;
 				strName = UrlUtil.GetFileName(strTip);
@@ -3284,6 +3319,7 @@ namespace KeePass.Forms
 					PwIcon.TrashBin);
 				pgRecycleBin.EnableAutoType = false;
 				pgRecycleBin.EnableSearching = false;
+				pgRecycleBin.IsExpanded = !Program.Config.Defaults.RecycleBinCollapse;
 				pdContext.RootGroup.AddGroup(pgRecycleBin, true);
 
 				pdContext.RecycleBinUuid = pgRecycleBin.Uuid;
@@ -3466,7 +3502,7 @@ namespace KeePass.Forms
 				pg.Touch(false);
 			}
 
-			UpdateUI(false, null, true, null, true, null, true);
+			UpdateUI(false, null, true, pgParent, true, null, true);
 		}
 
 		// private static bool GroupOnlyContainsTans(PwGroup pg, bool bAllowSubgroups)
@@ -3505,7 +3541,10 @@ namespace KeePass.Forms
 			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return; } // No throw
 
 			if(m_vCustomToolBarButtons.Count == 0)
-				m_toolMain.Items.Add(new ToolStripSeparator());
+			{
+				m_tsSepCustomToolBar = new ToolStripSeparator();
+				m_toolMain.Items.Add(m_tsSepCustomToolBar);
+			}
 
 			ToolStripButton btn = new ToolStripButton(strName);
 			btn.Tag = strID;
@@ -3514,6 +3553,31 @@ namespace KeePass.Forms
 
 			m_toolMain.Items.Add(btn);
 			m_vCustomToolBarButtons.Add(btn);
+		}
+
+		public void RemoveCustomToolBarButton(string strID)
+		{
+			if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); return; } // No throw
+
+			foreach(ToolStripButton tb in m_vCustomToolBarButtons)
+			{
+				string str = (tb.Tag as string);
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); continue; }
+
+				if(str.Equals(strID, StrUtil.CaseIgnoreCmp))
+				{
+					tb.Click -= OnCustomToolBarButtonClicked;
+					m_toolMain.Items.Remove(tb);
+					m_vCustomToolBarButtons.Remove(tb);
+					break;
+				}
+			}
+
+			if((m_vCustomToolBarButtons.Count == 0) && (m_tsSepCustomToolBar != null))
+			{
+				m_toolMain.Items.Remove(m_tsSepCustomToolBar);
+				m_tsSepCustomToolBar = null;
+			}
 		}
 
 		private void OnCustomToolBarButtonClicked(object sender, EventArgs e)

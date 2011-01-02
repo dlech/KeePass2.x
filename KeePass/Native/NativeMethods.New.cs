@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -43,19 +43,36 @@ namespace KeePass.Native
 			return sb.ToString();
 		}
 
+		internal static IntPtr GetForegroundWindowHandle()
+		{
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+				return GetForegroundWindow(); // Windows API
+
+			return new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
+		}
+
+		private static readonly char[] m_vWindowTrim = { '\r', '\n' };
 		internal static void GetForegroundWindowInfo(out IntPtr hWnd,
 			out string strWindowText)
 		{
+			hWnd = GetForegroundWindowHandle();
+
 			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
-			{
-				hWnd = GetForegroundWindow();
 				strWindowText = GetWindowText(hWnd);
-			}
 			else // Unix
 			{
-				hWnd = new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
 				strWindowText = RunXDoTool("getactivewindow getwindowname");
+				if(!string.IsNullOrEmpty(strWindowText))
+					strWindowText = strWindowText.Trim(m_vWindowTrim);
 			}
+		}
+
+		internal static bool IsWindowEx(IntPtr hWnd)
+		{
+			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
+				return IsWindow(hWnd);
+
+			return true;
 		}
 
 		internal static int GetWindowStyle(IntPtr hWnd)
@@ -63,11 +80,20 @@ namespace KeePass.Native
 			return GetWindowLong(hWnd, GWL_STYLE);
 		}
 
+		internal static bool SetForegroundWindowEx(IntPtr hWnd)
+		{
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+				return SetForegroundWindow(hWnd);
+
+			return (RunXDoTool("windowactivate " +
+				hWnd.ToInt64().ToString()).Trim().Length == 0);
+		}
+
 		internal static bool EnsureForegroundWindow(IntPtr hWnd)
 		{
-			if(IsWindow(hWnd) == false) return false;
+			if(IsWindowEx(hWnd) == false) return false;
 
-			if(SetForegroundWindow(hWnd) == false)
+			if(SetForegroundWindowEx(hWnd) == false)
 			{
 				Debug.Assert(false);
 				return false;
@@ -76,7 +102,7 @@ namespace KeePass.Native
 			int nStartMS = Environment.TickCount;
 			while((Environment.TickCount - nStartMS) < 1000)
 			{
-				IntPtr h = GetForegroundWindow();
+				IntPtr h = GetForegroundWindowHandle();
 				if(h == hWnd) return true;
 
 				Application.DoEvents();
@@ -213,6 +239,26 @@ namespace KeePass.Native
 
 			try { DwmSetWindowAttributeInt(hWnd, DWMWA_DISALLOW_PEEK, ref iNoPeek, 4); }
 			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
+		}
+
+		internal static uint? GetLastInputTime()
+		{
+			try
+			{
+				LASTINPUTINFO lii = new LASTINPUTINFO();
+				lii.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
+
+				if(!GetLastInputInfo(ref lii)) { Debug.Assert(false); return null; }
+
+				return lii.dwTime;
+			}
+			catch(Exception)
+			{
+				Debug.Assert(KeePassLib.Native.NativeLib.IsUnix() ||
+					WinUtil.IsWindows9x);
+			}
+
+			return null;
 		}
 	}
 }

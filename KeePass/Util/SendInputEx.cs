@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Threading;
+using System.Diagnostics;
 
 using KeePass.Native;
 
@@ -42,26 +41,22 @@ namespace KeePass.Util
 		public uint DefaultDelay = 10;
 	}
 
-	public static class SendInputEx
+	public static partial class SendInputEx
 	{
 		// private const ushort LangIDGerman = 0x0407;
 
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
-			if(KeePassLib.Native.NativeLib.IsUnix())
-			{
-				try { OSSendKeys(strKeys); }
-				catch(Exception) { Debug.Assert(false); }
-				return;
-			}
-
 			SiStateEx si = InitSendKeys();
 
+			bool bUnix = KeePassLib.Native.NativeLib.IsUnix();
 			try
 			{
-				Debug.Assert(GetActiveKeyModifiers().Count == 0);
+				if(!bUnix) { Debug.Assert(GetActiveKeyModifiers().Count == 0); }
 
-				if(bObfuscate)
+				strKeys = ExtractGlobalDelay(strKeys, si); // Before TCATO splitting
+
+				if(bObfuscate && !bUnix)
 				{
 					try { SendObfuscated(strKeys, si); }
 					catch(Exception) { SendKeysWithSpecial(strKeys, si); }
@@ -80,6 +75,11 @@ namespace KeePass.Util
 		private static SiStateEx InitSendKeys()
 		{
 			SiStateEx si = new SiStateEx();
+			if(KeePassLib.Native.NativeLib.IsUnix())
+			{
+				si.DefaultDelay /= 2; // Starting external program takes time
+				return si;
+			}
 
 			try
 			{
@@ -96,6 +96,8 @@ namespace KeePass.Util
 				ActivateKeyModifiers(lMod, false);
 				SpecialReleaseModifiers(lMod);
 
+				Debug.Assert(GetActiveKeyModifiers().Count == 0);
+
 				si.InputBlocked = NativeMethods.BlockInput(true);
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -105,6 +107,8 @@ namespace KeePass.Util
 
 		private static void FinishSendKeys(SiStateEx si)
 		{
+			if(KeePassLib.Native.NativeLib.IsUnix()) return;
+
 			try
 			{
 				// Do not restore original modifier keys here, otherwise
@@ -122,178 +126,9 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		private static void EnsureSameKeyboardLayout(SiStateEx si)
-		{
-			IntPtr hWndTarget = NativeMethods.GetForegroundWindow();
-
-			uint uTargetProcessId;
-			uint uTargetThreadId = NativeMethods.GetWindowThreadProcessId(hWndTarget,
-				out uTargetProcessId);
-			
-			IntPtr hklSelf = NativeMethods.GetKeyboardLayout(0);
-			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(uTargetThreadId);
-
-			si.CurrentKeyboardLayout = hklSelf;
-
-			if(hklSelf != hklTarget)
-			{
-				si.OriginalKeyboardLayout = NativeMethods.ActivateKeyboardLayout(
-					hklTarget, 0);
-				si.CurrentKeyboardLayout = hklTarget;
-
-				Debug.Assert(si.OriginalKeyboardLayout == hklSelf);
-			}
-
-			// ushort uLangID = (ushort)(si.CurrentKeyboardLayout.ToInt64() & 0xFFFF);
-			// si.EnableCaretWorkaround = (uLangID == LangIDGerman);
-		}
-
-		private static bool SendModifierVKey(int vKey, bool bDown)
-		{
-			if(bDown || IsKeyModifierActive(vKey))
-			{
-				if(IntPtr.Size == 4) return SendModifierVKey32Unchecked(vKey, bDown);
-				else if(IntPtr.Size == 8) return SendModifierVKey64Unchecked(vKey, bDown);
-				else { Debug.Assert(false); }
-			}
-
-			return false;
-		}
-
-		private static bool SendModifierVKey32Unchecked(int vKey, bool bDown)
-		{
-			NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
-
-			pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
-			pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
-			pInput[0].KeyboardInput.ScanCode =
-				(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
-			pInput[0].KeyboardInput.Flags = ((bDown ? 0 :
-				NativeMethods.KEYEVENTF_KEYUP) | (IsExtendedKeyEx(vKey) ?
-				NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
-			pInput[0].KeyboardInput.Time = 0;
-			pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
-
-			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 28);
-			if(NativeMethods.SendInput32(1, pInput,
-				Marshal.SizeOf(typeof(NativeMethods.INPUT32))) != 1)
-				return false;
-
-			return true;
-		}
-
-		private static bool SendModifierVKey64Unchecked(int vKey, bool bDown)
-		{
-			NativeMethods.SpecializedKeyboardINPUT64[] pInput = new
-				NativeMethods.SpecializedKeyboardINPUT64[1];
-
-			pInput[0].Type = NativeMethods.INPUT_KEYBOARD;
-			pInput[0].VirtualKeyCode = (ushort)vKey;
-			pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey(
-				(uint)vKey, 0) & 0xFF);
-			pInput[0].Flags = ((bDown ? 0 : NativeMethods.KEYEVENTF_KEYUP) |
-				(IsExtendedKeyEx(vKey) ? NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
-			pInput[0].Time = 0;
-			pInput[0].ExtraInfo = NativeMethods.GetMessageExtraInfo();
-
-			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64)) == 40);
-			if(NativeMethods.SendInput64Special(1, pInput,
-				Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64))) != 1)
-				return false;
-
-			return true;
-		}
-
-		private static bool IsExtendedKeyEx(int vKey)
-		{
-			// if(vKey == NativeMethods.VK_CAPITAL) return true;
-
-			if((vKey >= 0x21) && (vKey <= 0x2E)) return true;
-			if((vKey >= 0x6A) && (vKey <= 0x6F)) return true;
-
-			return false;
-		}
-
-		private static List<int> GetActiveKeyModifiers()
-		{
-			List<int> lSet = new List<int>();
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LSHIFT);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RSHIFT);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_SHIFT);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LCONTROL);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RCONTROL);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_CONTROL);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LMENU);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RMENU);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_MENU);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LWIN);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RWIN);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_CAPITAL);
-
-			return lSet;
-		}
-
-		private static void AddKeyModifierIfSet(List<int> lList, int vKey)
-		{
-			if(IsKeyModifierActive(vKey)) lList.Add(vKey);
-		}
-
-		private static bool IsKeyModifierActive(int vKey)
-		{
-			ushort usState = NativeMethods.GetKeyState(vKey);
-
-			if(vKey == NativeMethods.VK_CAPITAL)
-				return ((usState & 1) != 0);
-			else
-				return ((usState & 0x8000) != 0);
-		}
-
-		private static void ActivateKeyModifiers(List<int> vKeys, bool bDown)
-		{
-			Debug.Assert(vKeys != null);
-			if(vKeys == null) throw new ArgumentNullException("vKeys");
-
-			foreach(int vKey in vKeys)
-			{
-				if(vKey == NativeMethods.VK_CAPITAL) // Toggle
-				{
-					SendModifierVKey(vKey, true);
-					SendModifierVKey(vKey, false);
-				}
-				else SendModifierVKey(vKey, bDown);
-			}
-		}
-
-		private static void SpecialReleaseModifiers(List<int> vKeys)
-		{
-			// Get out of a menu bar that was focused when only
-			// using Alt as hot key modifier
-			if(Program.Config.Integration.AutoTypeReleaseAltWithKeyPress &&
-				(vKeys.Count == 2) && vKeys.Contains(NativeMethods.VK_MENU))
-			{
-				if(vKeys.Contains(NativeMethods.VK_LMENU))
-				{
-					SendModifierVKey(NativeMethods.VK_LMENU, true);
-					SendModifierVKey(NativeMethods.VK_LMENU, false);
-				}
-				else if(vKeys.Contains(NativeMethods.VK_RMENU))
-				{
-					SendModifierVKey(NativeMethods.VK_RMENU, true);
-					SendModifierVKey(NativeMethods.VK_RMENU, false);
-				}
-			}
-		}
-
 		private static void SendObfuscated(string strKeys, SiStateEx siState)
 		{
-			Debug.Assert(strKeys != null);
-			if(strKeys == null) throw new ArgumentNullException("strKeys");
-			if(strKeys.Length == 0) return;
+			if(string.IsNullOrEmpty(strKeys)) return;
 
 			ClipboardEventChainBlocker cev = new ClipboardEventChainBlocker();
 			ClipboardContents cnt = new ClipboardContents(true, true);
@@ -525,7 +360,12 @@ namespace KeePass.Util
 			return nSeed;
 		}
 
-		private static string ApplyGlobalDelay(string strSequence, SiStateEx siState)
+		/// <summary>
+		/// This method searches for a <c>{DELAY=X}</c> placeholder,
+		/// removes it from the sequence and sets the global delay in
+		/// <paramref name="siState" /> to X.
+		/// </summary>
+		private static string ExtractGlobalDelay(string strSequence, SiStateEx siState)
 		{
 			if(string.IsNullOrEmpty(strSequence)) return string.Empty;
 
@@ -540,6 +380,13 @@ namespace KeePass.Util
 				if(uint.TryParse(strTime, out uTime)) siState.DefaultDelay = uTime;
 				else { Debug.Assert(false); }
 			}
+
+			return strSequence;
+		}
+
+		private static string ApplyGlobalDelay(string strSequence, SiStateEx siState)
+		{
+			if(string.IsNullOrEmpty(strSequence)) return string.Empty;
 
 			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|.+?)",
 			//	@"{delay " + strTime + @"}$1");
@@ -556,7 +403,7 @@ namespace KeePass.Util
 			return strSequence;
 		}
 
-		private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
+		/* private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
 		{
 			Debug.Assert(strSequence != null);
 			if(string.IsNullOrEmpty(strSequence)) return;
@@ -596,63 +443,115 @@ namespace KeePass.Util
 			}
 
 			if(!string.IsNullOrEmpty(strSequence)) OSSendKeys(strSequence);
+		} */
+
+		private const string SkcDelay = "DELAY";
+		private const string SkcVKey = "VKEY";
+		private static readonly string[] SkcAll = new string[] {
+			SkcDelay, SkcVKey
+		};
+
+		private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
+		{
+			Debug.Assert(strSequence != null);
+			if(string.IsNullOrEmpty(strSequence)) return;
+
+			strSequence = ExtractGlobalDelay(strSequence, siState); // Update
+			strSequence = ApplyGlobalDelay(strSequence, siState);
+			List<string> v = SplitSpecialSequence(strSequence);
+
+			foreach(string strPart in v)
+			{
+				string strParam = GetParamIfSpecial(strPart, SkcDelay);
+				if(strParam != null) // Might be empty (invalid parameter)
+				{
+					uint uDelay;
+					if(uint.TryParse(strParam, out uDelay)) Thread.Sleep((int)uDelay);
+					continue;
+				}
+
+				strParam = GetParamIfSpecial(strPart, SkcVKey);
+				if(strParam != null) // Might be empty (invalid parameter)
+				{
+					int vKey;
+					if(int.TryParse(strParam, out vKey) &&
+						!KeePassLib.Native.NativeLib.IsUnix())
+					{
+						SendVKeyNative(vKey, true);
+						SendVKeyNative(vKey, false);
+						Application.DoEvents();
+					}
+
+					continue;
+				}
+
+				OSSendKeys(strPart);
+				Application.DoEvents(); // SendKeys.SendWait uses SendKeys.Flush
+			}
+		}
+
+		private static string GetParamIfSpecial(string strSeq, string strSpecialCode)
+		{
+			if(!strSeq.StartsWith(@"{" + strSpecialCode + @" ", StrUtil.CaseIgnoreCmp))
+				return null;
+			if(!strSeq.EndsWith(@"}", StrUtil.CaseIgnoreCmp)) return null;
+
+			string strParam = strSeq.Substring(strSpecialCode.Length + 2);
+			strParam = strParam.Substring(0, strParam.Length - 1); // Remove '}'
+
+			return strParam.Trim();
+		}
+
+		private static List<string> SplitSpecialSequence(string strSeq)
+		{
+			List<string> v = new List<string>();
+			if(string.IsNullOrEmpty(strSeq)) return v;
+
+			v.Add(strSeq);
+
+			bool bModified = true;
+			while(bModified)
+			{
+				bModified = false;
+
+				foreach(string strSplitCode in SkcAll)
+				{
+					List<string> vNew = new List<string>();
+
+					foreach(string str in v)
+					{
+						int l = str.IndexOf(@"{" + strSplitCode + @" ", StrUtil.CaseIgnoreCmp);
+						if(l < 0) { vNew.Add(str); continue; }
+
+						int r = str.IndexOf('}', l);
+						if(r < 0) { Debug.Assert(false); vNew.Add(str); continue; }
+
+						if((l == 0) && (r == (str.Length - 1))) // Is atomic
+						{
+							vNew.Add(str);
+							continue;
+						}
+
+						if(l > 0) vNew.Add(str.Substring(0, l));
+						vNew.Add(str.Substring(l, r - l + 1));
+						if(r < (str.Length - 1)) vNew.Add(str.Substring(r + 1));
+
+						bModified = true;
+					}
+
+					v = vNew;
+				}
+			}
+
+			return v;
 		}
 
 		private static void OSSendKeys(string strSequence)
 		{
 			if(!KeePassLib.Native.NativeLib.IsUnix())
-				SendKeys.SendWait(strSequence);
+				OSSendKeysWindows(strSequence);
 			else // Unix
 				OSSendKeysUnix(strSequence);
-		}
-
-		private static void OSSendKeysUnix(string strSequence)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			for(int i = 0; i < strSequence.Length; ++i)
-			{
-				char ch = strSequence[i];
-
-				if(ch == '{')
-				{
-					if(sb.Length > 0)
-					{
-						OSSendKeysUnixString(sb.ToString());
-						sb.Remove(0, sb.Length);
-					}
-				}
-				else if(ch == '}')
-				{
-					if(sb.Length > 0)
-					{
-						// KeySyms need to be in Pascal case (e.g. "Tab")
-						string strKey = sb.ToString().ToLower();
-						strKey = ((new string(strKey[0], 1)).ToUpper() +
-							strKey.Substring(1));
-
-						if(strKey == "Enter") strKey = "Return";
-
-						if(strKey.StartsWith("Delay")) { }
-						else OSSendKeysUnixKey(strKey);
-
-						sb.Remove(0, sb.Length);
-					}
-				}
-				else sb.Append(ch);
-			}
-
-			if(sb.Length > 0) OSSendKeysUnixString(sb.ToString());
-		}
-
-		private static void OSSendKeysUnixKey(string strKey)
-		{
-			NativeMethods.RunXDoTool("key --clearmodifiers " + strKey);
-		}
-
-		private static void OSSendKeysUnixString(string strString)
-		{
-			NativeMethods.RunXDoTool(@"type --clearmodifiers '" + strString + @"'");
 		}
 	}
 }

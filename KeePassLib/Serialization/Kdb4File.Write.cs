@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
+using KeePassLib.Keys;
 using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -63,9 +64,9 @@ namespace KeePassLib.Serialization
 		// }
 
 		/// <summary>
-		/// Save the contents of the current <c>PwDatabase</c> to a KDB file.
+		/// Save the contents of the current <c>PwDatabase</c> to a KDBX file.
 		/// </summary>
-		/// <param name="sSaveTo">Stream to write the KDB file into.</param>
+		/// <param name="sSaveTo">Stream to write the KDBX file into.</param>
 		/// <param name="pgDataSource">Group containing all groups and
 		/// entries to write. If <c>null</c>, the complete database will
 		/// be written.</param>
@@ -724,16 +725,23 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 		}
 
+		[Obsolete]
+		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase,
+			PwEntry[] vEntries)
+		{
+			return WriteEntries(msOutput, vEntries);
+		}
+
 		/// <summary>
 		/// Write entries to a stream.
 		/// </summary>
 		/// <param name="msOutput">Output stream to which the entries will be written.</param>
-		/// <param name="pwDatabase">Source database.</param>
 		/// <param name="vEntries">Entries to serialize.</param>
-		/// <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
-		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase, PwEntry[] vEntries)
+		/// <returns>Returns <c>true</c>, if the entries were written successfully
+		/// to the stream.</returns>
+		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
-			Kdb4File f = new Kdb4File(pwDatabase);
+			/* Kdb4File f = new Kdb4File(pwDatabase);
 			f.m_format = Kdb4Format.PlainXml;
 
 			XmlTextWriter xtw = null;
@@ -758,6 +766,16 @@ namespace KeePassLib.Serialization
 
 			xtw.Flush();
 			xtw.Close();
+			return true; */
+
+			PwDatabase pd = new PwDatabase();
+			pd.New(new IOConnectionInfo(), new CompositeKey());
+
+			foreach(PwEntry peCopy in vEntries)
+				pd.RootGroup.AddEntry(peCopy.CloneDeep(), true);
+
+			Kdb4File f = new Kdb4File(pd);
+			f.Save(msOutput, null, Kdb4Format.PlainXml, null);
 			return true;
 		}
 	}

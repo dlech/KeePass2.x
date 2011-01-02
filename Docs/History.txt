@@ -1,3 +1,64 @@
+2011-01-02: 2.14
+- Added option to lock after some time of global user
+  inactivity
+- Added option to lock when the remote control status changes
+- Auto-type on Unix-like systems: added special key code
+  support (translation to X KeySyms) and support for {DELAY X}
+  and {DELAY=X}
+- Added window activation support on Unix-like systems
+- Auto-type on Windows: added {VKEY X} special key code (sends
+  virtual key X)
+- Added support for importing DataVault 4.7 CSV files
+- Added support for importing Revelation 0.4 XML files
+- Added 'Auto-Type - Without Context' application policy to
+  disable the 'Perform Auto-Type' command (Ctrl+V), but still
+  leave global auto-type available
+- Added option to collapse newly-created recycle bin tree nodes
+- Added 'Size' column in the history list of the entry dialog
+- Added trigger action to remove custom toolbar buttons
+- Added kdbx:// URL scheme overrides (for Windows and Unix-like
+  systems; disabled by default)
+- Added KeePass.exe.config file to redirect old assemblies to
+  the latest one, and explicitly declare .NET 4.0 runtime
+  support
+- Added documentation for the '-pw-enc' command line parameter,
+  the {PASSWORD_ENC} placeholder and URL overrides
+- Added workaround for ^/& .NET SendKeys issue
+
+- New locking timer (using a timeout instead of a countdown)
+- Improved locking when the Windows session is being ended or
+  switched
+- Improved multi-database locking
+- Separated the options for locking when the computer is locked
+  and the computer is about to be suspended
+- {FIREFOX} placeholder: added support for registry-redirected
+  32-bit Firefox installations on 64-bit Windows systems
+- File transactions: the NTFS/EFS encryption flag is now also
+  preserved when the containing directory isn't encrypted
+- The IPC channel name on Unix-like systems is now dependent on
+  the current user and machine name
+- KeePass now selects the parent group after deleting a group
+- Entries are now marked as modified when mass-changing their
+  colors or icons
+- Key states are now queried on interrupt level
+- A {DELAY=X} global delay now affects all characters of a
+  keystroke sequence when TCATO is enabled, too
+- Improved dialog closing when exiting automatically
+- Plugin-provided entry list columns can now be right-aligned
+  at KeePass startup already
+- Removed KDBX DOM code
+- Installer: the KeePass start menu shortcut is now created
+  directly in the programs folder; the other shortcuts have
+  been removed (use the Control Panel for uninstalling and the
+  'Help' menu in KeePass to access the help)
+- Various code optimizations
+- Minor other improvements
+
+- Quotes in parameters for the 'Execute command line / URL'
+  trigger action are now escaped correctly
+- Auto-type on Unix-like systems: window filters without
+  wildcards now match correctly
+
 2010-09-06: 2.13
 - Password quality estimation algorithm: added check for about
   1500 most common passwords (these are rated down to 1/8th of

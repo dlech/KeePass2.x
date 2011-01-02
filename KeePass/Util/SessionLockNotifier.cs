@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,16 +27,34 @@ using Microsoft.Win32;
 
 namespace KeePass.Util
 {
+	public enum SessionLockReason
+	{
+		Unknown = 0,
+		Ending = 1,
+		Lock = 2,
+		Suspend = 3,
+		RemoteControlChange = 4
+	}
+
+	public sealed class SessionLockEventArgs : EventArgs
+	{
+		private SessionLockReason m_r;
+
+		public SessionLockReason Reason { get { return m_r; } }
+
+		public SessionLockEventArgs(SessionLockReason r)
+		{
+			m_r = r;
+		}
+	}
+
 	public sealed class SessionLockNotifier
 	{
 		private bool m_bEventsRegistered = false;
-		private EventHandler m_evHandler = null;
+		private EventHandler<SessionLockEventArgs> m_evHandler = null;
 
-		private bool m_bNotifyOnSuspend;
-
-		public SessionLockNotifier(bool bNotifyOnSuspend)
+		public SessionLockNotifier()
 		{
-			m_bNotifyOnSuspend = bNotifyOnSuspend;
 		}
 
 #if DEBUG
@@ -46,7 +64,7 @@ namespace KeePass.Util
 		}
 #endif
 
-		public void Install(EventHandler ev)
+		public void Install(EventHandler<SessionLockEventArgs> ev)
 		{
 			this.Uninstall();
 
@@ -54,49 +72,60 @@ namespace KeePass.Util
 			{
 				SystemEvents.SessionEnding += this.OnSessionEnding;
 				SystemEvents.SessionSwitch += this.OnSessionSwitch;
-
-				if(m_bNotifyOnSuspend)
-					SystemEvents.PowerModeChanged += this.OnPowerModeChanged;
+				SystemEvents.PowerModeChanged += this.OnPowerModeChanged;
 			}
-			catch(Exception) { Debug.Assert(WinUtil.IsWindows2000); } // 2000 always fails
-
-			m_bEventsRegistered = true;
+			catch(Exception) { Debug.Assert(WinUtil.IsWindows2000); } // 2000 always throws
 
 			m_evHandler = ev;
+			m_bEventsRegistered = true;
 		}
 
 		public void Uninstall()
 		{
 			if(m_bEventsRegistered)
 			{
+				// Unregister event handlers (in the same order as registering,
+				// in case one of them throws)
 				try
 				{
 					SystemEvents.SessionEnding -= this.OnSessionEnding;
 					SystemEvents.SessionSwitch -= this.OnSessionSwitch;
-
-					if(m_bNotifyOnSuspend)
-						SystemEvents.PowerModeChanged -= this.OnPowerModeChanged;
+					SystemEvents.PowerModeChanged -= this.OnPowerModeChanged;
 				}
-				catch(Exception) { Debug.Assert(WinUtil.IsWindows2000); } // 2000 always fails
+				catch(Exception) { Debug.Assert(WinUtil.IsWindows2000); } // 2000 always throws
 
+				m_evHandler = null;
 				m_bEventsRegistered = false;
 			}
 		}
 
 		private void OnSessionEnding(object sender, SessionEndingEventArgs e)
 		{
-			if(m_evHandler != null) m_evHandler(sender, e);
+			if(m_evHandler != null)
+				m_evHandler(sender, new SessionLockEventArgs(SessionLockReason.Ending));
 		}
 
 		private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
 		{
-			if(m_evHandler != null) m_evHandler(sender, e);
+			if(m_evHandler != null)
+			{
+				SessionLockReason r = SessionLockReason.Unknown;
+				if(e.Reason == SessionSwitchReason.SessionLock)
+					r = SessionLockReason.Lock;
+				else if(e.Reason == SessionSwitchReason.SessionLogoff)
+					r = SessionLockReason.Ending;
+				else if(e.Reason == SessionSwitchReason.SessionRemoteControl)
+					r = SessionLockReason.RemoteControlChange;
+
+				if(r != SessionLockReason.Unknown)
+					m_evHandler(sender, new SessionLockEventArgs(r));
+			}
 		}
 
 		private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
 			if((m_evHandler != null) && (e.Mode == PowerModes.Suspend))
-				m_evHandler(sender, e);
+				m_evHandler(sender, new SessionLockEventArgs(SessionLockReason.Suspend));
 		}
 	}
 }

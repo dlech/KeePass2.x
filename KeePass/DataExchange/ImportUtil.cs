@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -546,7 +546,7 @@ namespace KeePass.DataExchange
 		
 		internal static void GuiSendWaitWindowChange(string strSend)
 		{
-			IntPtr ptrCur = NativeMethods.GetForegroundWindow();
+			IntPtr ptrCur = NativeMethods.GetForegroundWindowHandle();
 
 			ImportUtil.GuiSendKeysPrc(strSend);
 
@@ -555,7 +555,7 @@ namespace KeePass.DataExchange
 			{
 				Application.DoEvents();
 
-				IntPtr ptr = NativeMethods.GetForegroundWindow();
+				IntPtr ptr = NativeMethods.GetForegroundWindowHandle();
 				if(ptr != ptrCur) break;
 
 				++nRound;

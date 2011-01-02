@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -50,6 +50,13 @@ namespace KeePass.UI
 		{
 			get { return m_kModifiers; }
 			set { m_kModifiers = value; }
+		}
+
+		private bool m_bNoRightModKeys = false;
+		public bool NoRightModKeys
+		{
+			get { return m_bNoRightModKeys; }
+			set { m_bNoRightModKeys = value; }
 		}
 
 		public override ContextMenu ContextMenu
@@ -189,7 +196,7 @@ namespace KeePass.UI
 				else
 				{
 					m_kHotKey = Keys.None;
-					this.Text = m_kModifiers.ToString() + " + " + KPRes.InvalidKey;
+					this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.InvalidKey;
 					return;
 				}
 			}
@@ -198,7 +205,7 @@ namespace KeePass.UI
 				m_vNeedNonAltGrModifier.Contains(m_kHotKey))
 			{
 				m_kHotKey = Keys.None;
-				this.Text = m_kModifiers.ToString() + " + " + KPRes.InvalidKey;
+				this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.InvalidKey;
 				return;
 			}
 
@@ -222,10 +229,37 @@ namespace KeePass.UI
 				m_kHotKey = Keys.None;
 			}
 
-			this.Text = m_kModifiers.ToString() + " + " + m_kHotKey.ToString();
+			this.Text = ModifiersToString(m_kModifiers) + " + " + m_kHotKey.ToString();
 		}
 
+		private string ModifiersToString(Keys kModifiers)
+		{
+			string str = string.Empty;
+
+			if((kModifiers & Keys.Shift) != Keys.None)
+				str = (m_bNoRightModKeys ? KPRes.KeyboardKeyShiftLeft : KPRes.KeyboardKeyShift);
+			if((kModifiers & Keys.Control) != Keys.None)
+			{
+				if(str.Length > 0) str += ", ";
+				str += (m_bNoRightModKeys ? KPRes.KeyboardKeyCtrlLeft : KPRes.KeyboardKeyCtrl);
+			}
+			if((kModifiers & Keys.Alt) != Keys.None)
+			{
+				if(str.Length > 0) str += ", ";
+				str += KPRes.KeyboardKeyAlt;
+			}
+
+			return str;
+		}
+
+		[Obsolete]
 		public static HotKeyControlEx ReplaceTextBox(Control cContainer, TextBox tb)
+		{
+			return ReplaceTextBox(cContainer, tb, false);
+		}
+
+		public static HotKeyControlEx ReplaceTextBox(Control cContainer, TextBox tb,
+			bool bNoRightModKeys)
 		{
 			Debug.Assert(tb != null); if(tb == null) throw new ArgumentNullException("tb");
 			tb.Enabled = false;
@@ -235,6 +269,7 @@ namespace KeePass.UI
 			HotKeyControlEx hk = new HotKeyControlEx();
 			hk.Location = tb.Location;
 			hk.Size = tb.Size;
+			hk.NoRightModKeys = bNoRightModKeys;
 
 			cContainer.Controls.Add(hk);
 			cContainer.PerformLayout();

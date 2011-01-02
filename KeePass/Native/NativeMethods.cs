@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool IsWindow(IntPtr hWnd);
+		private static extern bool IsWindow(IntPtr hWnd);
 
 		[DllImport("User32.dll")]
 		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
@@ -55,6 +55,9 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PostMessage(IntPtr hWnd, int nMsg,
 			IntPtr wParam, IntPtr lParam);
+
+		// [DllImport("User32.dll")]
+		// internal static extern uint GetMessagePos();
 
 		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern int RegisterWindowMessage(string lpString);
@@ -76,11 +79,11 @@ namespace KeePass.Native
 			[Out] StringBuilder lpString, int nMaxCount);
 
 		[DllImport("User32.dll")]
-		internal static extern IntPtr GetForegroundWindow();
+		private static extern IntPtr GetForegroundWindow(); // Private, is wrapped
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool SetForegroundWindow(IntPtr hWnd);
+		private static extern bool SetForegroundWindow(IntPtr hWnd);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -110,8 +113,14 @@ namespace KeePass.Native
 		[DllImport("User32.dll")]
 		internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
+		[DllImport("User32.dll", CharSet = CharSet.Auto)]
+		internal static extern ushort VkKeyScan(char ch);
+
 		[DllImport("User32.dll")]
 		internal static extern ushort GetKeyState(int vKey);
+
+		[DllImport("User32.dll")]
+		internal static extern ushort GetAsyncKeyState(int vKey);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -279,5 +288,9 @@ namespace KeePass.Native
 		// [DllImport("DwmApi.dll")]
 		// internal static extern int DwmSetIconicLivePreviewBitmap(IntPtr hWnd,
 		//	IntPtr hBmp, IntPtr pptClient, uint dwSITFlags);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 	}
 }

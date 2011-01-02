@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -437,10 +437,10 @@ namespace KeePass.Forms
 		{
 			m_lvHistory.SmallImageList = m_ilIcons;
 
-			int nWidth = m_lvHistory.ClientRectangle.Width / 3;
-			m_lvHistory.Columns.Add(KPRes.Version, nWidth);
-			m_lvHistory.Columns.Add(KPRes.Title, nWidth);
-			m_lvHistory.Columns.Add(KPRes.UserName, nWidth);
+			m_lvHistory.Columns.Add(KPRes.Version);
+			m_lvHistory.Columns.Add(KPRes.Title);
+			m_lvHistory.Columns.Add(KPRes.UserName);
+			m_lvHistory.Columns.Add(KPRes.Size, 72, HorizontalAlignment.Right);
 
 			UpdateHistoryList();
 
@@ -462,6 +462,7 @@ namespace KeePass.Forms
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.TitleField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
+				lvi.SubItems.Add(StrUtil.FormatDataSizeKB(pe.GetSize()));
 			}
 		}
 
@@ -479,10 +480,13 @@ namespace KeePass.Forms
 			dx = m_lvAutoType.ClientRectangle.Width;
 			m_lvAutoType.Columns[0].Width = m_lvAutoType.Columns[1].Width = dx / 2;
 
-			Debug.Assert(m_lvHistory.Columns.Count == 3);
+			Debug.Assert(m_lvHistory.Columns.Count == 4);
 			dx = m_lvHistory.ClientRectangle.Width;
-			m_lvHistory.Columns[0].Width = m_lvHistory.Columns[1].Width =
-				m_lvHistory.Columns[2].Width = dx / 3;
+			int dt = dx / 85;
+			m_lvHistory.Columns[0].Width = (dx * 2) / 7 + dt;
+			m_lvHistory.Columns[1].Width = (dx * 2) / 7;
+			m_lvHistory.Columns[2].Width = ((dx * 2) / 7) - (dt * 2);
+			m_lvHistory.Columns[3].Width = (dx / 7) + dt;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -1591,6 +1595,25 @@ namespace KeePass.Forms
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
+			/* VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+			dlg.AddButton((int)DialogResult.Yes, KPRes.Yes, null);
+			dlg.AddButton((int)DialogResult.No, KPRes.No, null);
+			dlg.CommandLinks = false;
+			dlg.Content = KPRes.CloseDialogWarning;
+			dlg.MainInstruction = KPRes.CloseDialogConfirmation;
+			dlg.VerificationText = KPRes.DialogNoShowAgain;
+			dlg.WindowTitle = PwDefs.ShortProductName;
+
+			if(dlg.ShowDialog())
+			{
+				if((dlg.Result == (int)DialogResult.No) ||
+					(dlg.Result == (int)DialogResult.Cancel))
+				{
+					e.Cancel = true;
+					return;
+				}
+			} */
+
 			CleanUpEx();
 		}
 

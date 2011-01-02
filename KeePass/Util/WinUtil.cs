@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ namespace KeePass.Util
 		private static bool m_bIsWindows9x = false;
 		private static bool m_bIsWindows2000 = false;
 		private static bool m_bIsWindowsXP = false;
+		private static bool m_bIsAtLeastWindows2000 = false;
 		private static bool m_bIsAtLeastWindowsVista = false;
 		private static bool m_bIsAtLeastWindows7 = false;
 
@@ -70,6 +71,11 @@ namespace KeePass.Util
 			get { return m_bIsWindowsXP; }
 		}
 
+		public static bool IsAtLeastWindows2000
+		{
+			get { return m_bIsAtLeastWindows2000; }
+		}
+
 		public static bool IsAtLeastWindowsVista
 		{
 			get { return m_bIsAtLeastWindowsVista; }
@@ -88,6 +94,8 @@ namespace KeePass.Util
 			m_bIsWindows9x = (os.Platform == PlatformID.Win32Windows);
 			m_bIsWindows2000 = ((v.Major == 5) && (v.Minor == 0));
 			m_bIsWindowsXP = ((v.Major == 5) && (v.Minor == 1));
+
+			m_bIsAtLeastWindows2000 = (v.Major >= 5);
 			m_bIsAtLeastWindowsVista = (v.Major >= 6);
 			m_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
 		}

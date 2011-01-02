@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.Text;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Security.Cryptography;
 
 using KeePass.Native;
 
@@ -36,6 +37,8 @@ namespace KeePass.Util
 
 		private const string IpcServerPortName = "KeePassBroadcastPort";
 		private const string IpcObjectName = "KeePassBroadcastSingleton";
+
+		private static string m_strPortName = null;
 
 		public static void Send(Program.AppMessage msg, int lParam,
 			bool bWaitWithTimeout)
@@ -64,12 +67,34 @@ namespace KeePass.Util
 				try
 				{
 					IpcBroadcastSingleton ipc = (Activator.GetObject(typeof(
-						IpcBroadcastSingleton), "ipc://" + IpcServerPortName + "/" +
+						IpcBroadcastSingleton), "ipc://" + GetPortName() + "/" +
 						IpcObjectName) as IpcBroadcastSingleton);
 					if(ipc != null) ipc.Call((int)msg, lParam);
 				}
 				catch(Exception) { } // Server might not exist
 			}
+		}
+
+		private static string GetPortName()
+		{
+			if(m_strPortName != null) return m_strPortName;
+
+			string strID = (Environment.UserName ?? string.Empty) + @" @ " +
+				(Environment.MachineName ?? string.Empty);
+			UTF8Encoding utf8 = new UTF8Encoding(false);
+			byte[] pbID = utf8.GetBytes(strID);
+
+			SHA1Managed sha1 = new SHA1Managed();
+			byte[] pbHash = sha1.ComputeHash(pbID);
+
+			string strShort = Convert.ToBase64String(pbHash,
+				Base64FormattingOptions.None);
+			strShort = strShort.Replace(@"+", string.Empty);
+			strShort = strShort.Replace(@"/", string.Empty);
+			if(strShort.Length > 8) strShort = strShort.Substring(0, 8);
+
+			m_strPortName = IpcServerPortName + "-" + strShort;
+			return m_strPortName;
 		}
 
 		public static void StartServer()
@@ -79,7 +104,7 @@ namespace KeePass.Util
 			if(!KeePassLib.Native.NativeLib.IsUnix()) return; // Windows
 
 			IDictionary dOpt = new Hashtable();
-			dOpt["portName"] = IpcServerPortName;
+			dOpt["portName"] = GetPortName();
 			dOpt["exclusiveAddressUse"] = false;
 			dOpt["secure"] = false;
 

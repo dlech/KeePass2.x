@@ -459,6 +459,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_DataVault {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_DataVault", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_FlexWallet {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_FlexWallet", resourceCulture);
@@ -560,6 +567,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Imp_PwTresor {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_PwTresor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_Revelation {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Revelation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

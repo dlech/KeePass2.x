@@ -8,6 +8,7 @@ REM COPY /B KeePassNtv\Release\KeePassNtv32.dll /B KeePass_Distrib\KeePassNtv32.
 REM COPY /B "KeePassNtv\Release x64\KeePassNtv64.dll" /B KeePass_Distrib\KeePassNtv64.dll
 
 COPY /B ..\Ext\KeePass.config.xml /B KeePass_Distrib\KeePass.config.xml
+COPY /B ..\Ext\KeePass.exe.config /B KeePass_Distrib\KeePass.exe.config
 
 COPY /B ..\Docs\License.txt /B KeePass_Distrib\License.txt
 

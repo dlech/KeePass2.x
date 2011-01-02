@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ namespace KeePass.Util
 			string strWindow;
 			try
 			{
-				// hWnd = NativeMethods.GetForegroundWindow();
+				// hWnd = NativeMethods.GetForegroundWindowHandle();
 				// strWindow = NativeMethods.GetWindowText(hWnd);
 				NativeMethods.GetForegroundWindowInfo(out hWnd, out strWindow);
 			}
@@ -322,6 +322,7 @@ namespace KeePass.Util
 		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe)
 		{
 			if((pe != null) && !pe.GetAutoTypeEnabled()) return false;
+			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
 			bool bTopMost = ((fCurrent != null) ? fCurrent.TopMost : false);
 			if(bTopMost) fCurrent.TopMost = false;
@@ -340,11 +341,13 @@ namespace KeePass.Util
 
 		public static bool PerformIntoCurrentWindow(PwEntry pe)
 		{
+			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
+
 			string strWindow;
 			try
 			{
-				strWindow = NativeMethods.GetWindowText(
-					NativeMethods.GetForegroundWindow());
+				IntPtr hDummy;
+				NativeMethods.GetForegroundWindowInfo(out hDummy, out strWindow);
 			}
 			catch(Exception) { strWindow = null; }
 

@@ -162,7 +162,7 @@
 			this.m_menuHelpContents = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSelectSource = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuHelpHomepage = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuHelpWebsite = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpDonate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuHelpCheckForUpdate = new System.Windows.Forms.ToolStripMenuItem();
@@ -751,6 +751,7 @@
 			this.m_ctxEntryClipboard.Name = "m_ctxEntryClipboard";
 			this.m_ctxEntryClipboard.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryClipboard.Text = "Clip&board";
+			this.m_ctxEntryClipboard.DropDownOpening += new System.EventHandler(this.OnCtxEntryClipboardOpening);
 			// 
 			// m_ctxEntryClipCopy
 			// 
@@ -1348,7 +1349,7 @@
             this.m_menuHelpContents,
             this.m_menuHelpSelectSource,
             this.m_menuHelpSep0,
-            this.m_menuHelpHomepage,
+            this.m_menuHelpWebsite,
             this.m_menuHelpDonate,
             this.m_menuHelpSep1,
             this.m_menuHelpCheckForUpdate,
@@ -1362,7 +1363,7 @@
 			// 
 			this.m_menuHelpContents.Image = global::KeePass.Properties.Resources.B16x16_Toggle_Log;
 			this.m_menuHelpContents.Name = "m_menuHelpContents";
-			this.m_menuHelpContents.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpContents.Size = new System.Drawing.Size(158, 22);
 			this.m_menuHelpContents.Text = "&Help Contents";
 			this.m_menuHelpContents.Click += new System.EventHandler(this.OnHelpContents);
 			// 
@@ -1370,54 +1371,54 @@
 			// 
 			this.m_menuHelpSelectSource.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
 			this.m_menuHelpSelectSource.Name = "m_menuHelpSelectSource";
-			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(158, 22);
 			this.m_menuHelpSelectSource.Text = "Help &Source...";
 			this.m_menuHelpSelectSource.Click += new System.EventHandler(this.OnHelpSelectSource);
 			// 
 			// m_menuHelpSep0
 			// 
 			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
-			this.m_menuHelpSep0.Size = new System.Drawing.Size(168, 6);
+			this.m_menuHelpSep0.Size = new System.Drawing.Size(155, 6);
 			// 
-			// m_menuHelpHomepage
+			// m_menuHelpWebsite
 			// 
-			this.m_menuHelpHomepage.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
-			this.m_menuHelpHomepage.Name = "m_menuHelpHomepage";
-			this.m_menuHelpHomepage.Size = new System.Drawing.Size(171, 22);
-			this.m_menuHelpHomepage.Text = "&KeePass Homepage";
-			this.m_menuHelpHomepage.Click += new System.EventHandler(this.OnHelpHomepage);
+			this.m_menuHelpWebsite.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
+			this.m_menuHelpWebsite.Name = "m_menuHelpWebsite";
+			this.m_menuHelpWebsite.Size = new System.Drawing.Size(158, 22);
+			this.m_menuHelpWebsite.Text = "KeePass &Website";
+			this.m_menuHelpWebsite.Click += new System.EventHandler(this.OnHelpHomepage);
 			// 
 			// m_menuHelpDonate
 			// 
 			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
 			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
-			this.m_menuHelpDonate.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpDonate.Size = new System.Drawing.Size(158, 22);
 			this.m_menuHelpDonate.Text = "&Donate...";
 			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
 			// 
 			// m_menuHelpSep1
 			// 
 			this.m_menuHelpSep1.Name = "m_menuHelpSep1";
-			this.m_menuHelpSep1.Size = new System.Drawing.Size(168, 6);
+			this.m_menuHelpSep1.Size = new System.Drawing.Size(155, 6);
 			// 
 			// m_menuHelpCheckForUpdate
 			// 
 			this.m_menuHelpCheckForUpdate.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_menuHelpCheckForUpdate.Name = "m_menuHelpCheckForUpdate";
-			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(158, 22);
 			this.m_menuHelpCheckForUpdate.Text = "&Check for Update";
 			this.m_menuHelpCheckForUpdate.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
 			// 
 			// m_menuHelpSep2
 			// 
 			this.m_menuHelpSep2.Name = "m_menuHelpSep2";
-			this.m_menuHelpSep2.Size = new System.Drawing.Size(168, 6);
+			this.m_menuHelpSep2.Size = new System.Drawing.Size(155, 6);
 			// 
 			// m_menuHelpAbout
 			// 
 			this.m_menuHelpAbout.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_menuHelpAbout.Name = "m_menuHelpAbout";
-			this.m_menuHelpAbout.Size = new System.Drawing.Size(171, 22);
+			this.m_menuHelpAbout.Size = new System.Drawing.Size(158, 22);
 			this.m_menuHelpAbout.Text = "&About KeePass...";
 			this.m_menuHelpAbout.Click += new System.EventHandler(this.OnHelpAbout);
 			// 
@@ -1874,7 +1875,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuView;
 		private System.Windows.Forms.ToolStripMenuItem m_menuTools;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelp;
-		private System.Windows.Forms.ToolStripMenuItem m_menuHelpHomepage;
+		private System.Windows.Forms.ToolStripMenuItem m_menuHelpWebsite;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpDonate;
 		private System.Windows.Forms.ToolStripSeparator m_menuHelpSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpContents;

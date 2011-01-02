@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -100,11 +100,25 @@ namespace KeePass.App.Configuration
 			set { m_bOnMinimize = value; }
 		}
 
-		private bool m_bOnSessionLock = false;
-		public bool LockOnSessionLock
+		private bool m_bOnSessionSwitch = false;
+		public bool LockOnSessionSwitch
 		{
-			get { return m_bOnSessionLock; }
-			set { m_bOnSessionLock = value; }
+			get { return m_bOnSessionSwitch; }
+			set { m_bOnSessionSwitch = value; }
+		}
+
+		private bool m_bOnSuspend = false;
+		public bool LockOnSuspend
+		{
+			get { return m_bOnSuspend; }
+			set { m_bOnSuspend = value; }
+		}
+
+		private bool m_bOnRemoteControlChange = false;
+		public bool LockOnRemoteControlChange
+		{
+			get { return m_bOnRemoteControlChange; }
+			set { m_bOnRemoteControlChange = value; }
 		}
 
 		private uint m_uLockAfterTime = 0;
@@ -112,6 +126,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_uLockAfterTime; }
 			set { m_uLockAfterTime = value; }
+		}
+
+		private uint m_uLockAfterGlobalTime = 0;
+		public uint LockAfterGlobalTime
+		{
+			get { return m_uLockAfterGlobalTime; }
+			set { m_uLockAfterGlobalTime = value; }
 		}
 
 		private bool m_bExitInsteadOfLockingAfterTime = false;

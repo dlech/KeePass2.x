@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -313,15 +313,20 @@ namespace KeePassLib.Serialization
 			return iEngine.DecryptStream(s, aesKey, m_pbEncryptionIV);
 		}
 
+		[Obsolete]
+		public static List<PwEntry> ReadEntries(PwDatabase pwDatabase, Stream msData)
+		{
+			return ReadEntries(msData);
+		}
+
 		/// <summary>
 		/// Read entries from a stream.
 		/// </summary>
-		/// <param name="pwDatabase">Source database.</param>
 		/// <param name="msData">Input stream to read the entries from.</param>
 		/// <returns>Extracted entries.</returns>
-		public static List<PwEntry> ReadEntries(PwDatabase pwDatabase, Stream msData)
+		public static List<PwEntry> ReadEntries(Stream msData)
 		{
-			Kdb4File f = new Kdb4File(pwDatabase);
+			/* Kdb4File f = new Kdb4File(pwDatabase);
 			f.m_format = Kdb4Format.PlainXml;
 
 			XmlDocument doc = new XmlDocument();
@@ -345,6 +350,23 @@ namespace KeePassLib.Serialization
 					vEntries.Add(pe);
 				}
 				else { Debug.Assert(false); }
+			}
+
+			return vEntries; */
+
+			PwDatabase pd = new PwDatabase();
+			Kdb4File f = new Kdb4File(pd);
+			f.Load(msData, Kdb4Format.PlainXml, null);
+
+			List<PwEntry> vEntries = new List<PwEntry>();
+			foreach(PwEntry pe in pd.RootGroup.Entries)
+			{
+				pe.Uuid = new PwUuid(true);
+
+				foreach(PwEntry peHistory in pe.History)
+					peHistory.Uuid = pe.Uuid;
+
+				vEntries.Add(pe);
 			}
 
 			return vEntries;

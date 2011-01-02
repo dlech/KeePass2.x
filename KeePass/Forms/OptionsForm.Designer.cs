@@ -33,6 +33,8 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabSecurity = new System.Windows.Forms.TabPage();
+			this.m_numLockAfterGlobalTime = new System.Windows.Forms.NumericUpDown();
+			this.m_cbLockAfterGlobalTime = new System.Windows.Forms.CheckBox();
 			this.m_lvSecurityOptions = new KeePass.UI.CustomListViewEx();
 			this.m_numClipClearTime = new System.Windows.Forms.NumericUpDown();
 			this.m_cbClipClearTime = new System.Windows.Forms.CheckBox();
@@ -65,6 +67,7 @@
 			this.m_btnFileExtCreate = new System.Windows.Forms.Button();
 			this.m_lblFileExtHint = new System.Windows.Forms.Label();
 			this.m_grpHotKeys = new System.Windows.Forms.GroupBox();
+			this.m_linkHotKeyHelp = new System.Windows.Forms.LinkLabel();
 			this.m_lblSelAutoTypeHotKey = new System.Windows.Forms.Label();
 			this.m_tbSelAutoTypeHotKey = new System.Windows.Forms.TextBox();
 			this.m_tbShowWindowHotKey = new System.Windows.Forms.TextBox();
@@ -73,10 +76,10 @@
 			this.m_tbGlobalAutoType = new System.Windows.Forms.TextBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
-			this.m_linkHotKeyHelp = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterGlobalTime)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numClipClearTime)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numDefaultExpireDays)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterTime)).BeginInit();
@@ -136,6 +139,8 @@
 			// 
 			// m_tabSecurity
 			// 
+			this.m_tabSecurity.Controls.Add(this.m_numLockAfterGlobalTime);
+			this.m_tabSecurity.Controls.Add(this.m_cbLockAfterGlobalTime);
 			this.m_tabSecurity.Controls.Add(this.m_lvSecurityOptions);
 			this.m_tabSecurity.Controls.Add(this.m_numClipClearTime);
 			this.m_tabSecurity.Controls.Add(this.m_cbClipClearTime);
@@ -151,22 +156,45 @@
 			this.m_tabSecurity.Text = "Security";
 			this.m_tabSecurity.UseVisualStyleBackColor = true;
 			// 
+			// m_numLockAfterGlobalTime
+			// 
+			this.m_numLockAfterGlobalTime.Location = new System.Drawing.Point(327, 37);
+			this.m_numLockAfterGlobalTime.Maximum = new decimal(new int[] {
+            1209600,
+            0,
+            0,
+            0});
+			this.m_numLockAfterGlobalTime.Name = "m_numLockAfterGlobalTime";
+			this.m_numLockAfterGlobalTime.Size = new System.Drawing.Size(66, 20);
+			this.m_numLockAfterGlobalTime.TabIndex = 3;
+			// 
+			// m_cbLockAfterGlobalTime
+			// 
+			this.m_cbLockAfterGlobalTime.AutoSize = true;
+			this.m_cbLockAfterGlobalTime.Location = new System.Drawing.Point(6, 38);
+			this.m_cbLockAfterGlobalTime.Name = "m_cbLockAfterGlobalTime";
+			this.m_cbLockAfterGlobalTime.Size = new System.Drawing.Size(279, 17);
+			this.m_cbLockAfterGlobalTime.TabIndex = 2;
+			this.m_cbLockAfterGlobalTime.Text = "Lock workspace after global user inactivity (seconds):";
+			this.m_cbLockAfterGlobalTime.UseVisualStyleBackColor = true;
+			this.m_cbLockAfterGlobalTime.CheckedChanged += new System.EventHandler(this.OnLockAfterGlobalTimeCheckedChanged);
+			// 
 			// m_lvSecurityOptions
 			// 
 			this.m_lvSecurityOptions.CheckBoxes = true;
 			this.m_lvSecurityOptions.FullRowSelect = true;
 			this.m_lvSecurityOptions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 81);
+			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 115);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
 			this.m_lvSecurityOptions.ShowItemToolTips = true;
-			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 222);
-			this.m_lvSecurityOptions.TabIndex = 6;
+			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 188);
+			this.m_lvSecurityOptions.TabIndex = 8;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
 			// 
 			// m_numClipClearTime
 			// 
-			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 34);
+			this.m_numClipClearTime.Location = new System.Drawing.Point(327, 63);
 			this.m_numClipClearTime.Maximum = new decimal(new int[] {
             1209600,
             0,
@@ -174,22 +202,22 @@
             0});
 			this.m_numClipClearTime.Name = "m_numClipClearTime";
 			this.m_numClipClearTime.Size = new System.Drawing.Size(66, 20);
-			this.m_numClipClearTime.TabIndex = 3;
+			this.m_numClipClearTime.TabIndex = 5;
 			// 
 			// m_cbClipClearTime
 			// 
 			this.m_cbClipClearTime.AutoSize = true;
-			this.m_cbClipClearTime.Location = new System.Drawing.Point(6, 35);
+			this.m_cbClipClearTime.Location = new System.Drawing.Point(6, 64);
 			this.m_cbClipClearTime.Name = "m_cbClipClearTime";
 			this.m_cbClipClearTime.Size = new System.Drawing.Size(194, 17);
-			this.m_cbClipClearTime.TabIndex = 2;
+			this.m_cbClipClearTime.TabIndex = 4;
 			this.m_cbClipClearTime.Text = "Clipboard auto-clear time (seconds):";
 			this.m_cbClipClearTime.UseVisualStyleBackColor = true;
 			this.m_cbClipClearTime.CheckedChanged += new System.EventHandler(this.OnClipboardClearTimeCheckedChanged);
 			// 
 			// m_numDefaultExpireDays
 			// 
-			this.m_numDefaultExpireDays.Location = new System.Drawing.Point(327, 57);
+			this.m_numDefaultExpireDays.Location = new System.Drawing.Point(327, 89);
 			this.m_numDefaultExpireDays.Maximum = new decimal(new int[] {
             2920,
             0,
@@ -197,15 +225,15 @@
             0});
 			this.m_numDefaultExpireDays.Name = "m_numDefaultExpireDays";
 			this.m_numDefaultExpireDays.Size = new System.Drawing.Size(66, 20);
-			this.m_numDefaultExpireDays.TabIndex = 5;
+			this.m_numDefaultExpireDays.TabIndex = 7;
 			// 
 			// m_cbDefaultExpireDays
 			// 
 			this.m_cbDefaultExpireDays.AutoSize = true;
-			this.m_cbDefaultExpireDays.Location = new System.Drawing.Point(6, 58);
+			this.m_cbDefaultExpireDays.Location = new System.Drawing.Point(6, 90);
 			this.m_cbDefaultExpireDays.Name = "m_cbDefaultExpireDays";
 			this.m_cbDefaultExpireDays.Size = new System.Drawing.Size(315, 17);
-			this.m_cbDefaultExpireDays.TabIndex = 4;
+			this.m_cbDefaultExpireDays.TabIndex = 6;
 			this.m_cbDefaultExpireDays.Text = "By default, new entries expire in the following number of days:";
 			this.m_cbDefaultExpireDays.UseVisualStyleBackColor = true;
 			this.m_cbDefaultExpireDays.CheckedChanged += new System.EventHandler(this.OnDefaultExpireDaysCheckedChanged);
@@ -215,9 +243,9 @@
 			this.m_cbLockAfterTime.AutoSize = true;
 			this.m_cbLockAfterTime.Location = new System.Drawing.Point(6, 12);
 			this.m_cbLockAfterTime.Name = "m_cbLockAfterTime";
-			this.m_cbLockAfterTime.Size = new System.Drawing.Size(284, 17);
+			this.m_cbLockAfterTime.Size = new System.Drawing.Size(270, 17);
 			this.m_cbLockAfterTime.TabIndex = 0;
-			this.m_cbLockAfterTime.Text = "Lock workspace after the following idle time (seconds):";
+			this.m_cbLockAfterTime.Text = "Lock workspace after KeePass inactivity (seconds):";
 			this.m_cbLockAfterTime.UseVisualStyleBackColor = true;
 			this.m_cbLockAfterTime.CheckedChanged += new System.EventHandler(this.OnLockAfterTimeCheckedChanged);
 			// 
@@ -232,7 +260,6 @@
 			this.m_numLockAfterTime.Name = "m_numLockAfterTime";
 			this.m_numLockAfterTime.Size = new System.Drawing.Size(66, 20);
 			this.m_numLockAfterTime.TabIndex = 1;
-			this.m_numLockAfterTime.ValueChanged += new System.EventHandler(this.OnLockAfterTimeValueChanged);
 			// 
 			// m_tabPolicy
 			// 
@@ -513,6 +540,17 @@
 			this.m_grpHotKeys.TabStop = false;
 			this.m_grpHotKeys.Text = "System-wide hot keys";
 			// 
+			// m_linkHotKeyHelp
+			// 
+			this.m_linkHotKeyHelp.AutoSize = true;
+			this.m_linkHotKeyHelp.Location = new System.Drawing.Point(278, 47);
+			this.m_linkHotKeyHelp.Name = "m_linkHotKeyHelp";
+			this.m_linkHotKeyHelp.Size = new System.Drawing.Size(177, 13);
+			this.m_linkHotKeyHelp.TabIndex = 6;
+			this.m_linkHotKeyHelp.TabStop = true;
+			this.m_linkHotKeyHelp.Text = "Help: Creating system-wide hot keys";
+			this.m_linkHotKeyHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnHotKeyHelpLinkClicked);
+			// 
 			// m_lblSelAutoTypeHotKey
 			// 
 			this.m_lblSelAutoTypeHotKey.AutoSize = true;
@@ -585,17 +623,6 @@
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
-			// m_linkHotKeyHelp
-			// 
-			this.m_linkHotKeyHelp.AutoSize = true;
-			this.m_linkHotKeyHelp.Location = new System.Drawing.Point(278, 47);
-			this.m_linkHotKeyHelp.Name = "m_linkHotKeyHelp";
-			this.m_linkHotKeyHelp.Size = new System.Drawing.Size(177, 13);
-			this.m_linkHotKeyHelp.TabIndex = 6;
-			this.m_linkHotKeyHelp.TabStop = true;
-			this.m_linkHotKeyHelp.Text = "Help: Creating system-wide hot keys";
-			this.m_linkHotKeyHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnHotKeyHelpLinkClicked);
-			// 
 			// OptionsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -621,6 +648,7 @@
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabSecurity.ResumeLayout(false);
 			this.m_tabSecurity.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterGlobalTime)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numClipClearTime)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numDefaultExpireDays)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterTime)).EndInit();
@@ -687,5 +715,7 @@
 		private System.Windows.Forms.TextBox m_tbSelAutoTypeHotKey;
 		private System.Windows.Forms.Button m_btnSelPwFont;
 		private System.Windows.Forms.LinkLabel m_linkHotKeyHelp;
+		private System.Windows.Forms.CheckBox m_cbLockAfterGlobalTime;
+		private System.Windows.Forms.NumericUpDown m_numLockAfterGlobalTime;
 	}
 }

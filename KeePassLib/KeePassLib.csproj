@@ -107,7 +107,6 @@
     </Compile>
     <Compile Include="Serialization\Kdb4File.cs" />
     <Compile Include="Serialization\Kdb4File.Read.cs" />
-    <Compile Include="Serialization\Kdb4File.Read.Dom.cs" />
     <Compile Include="Serialization\Kdb4File.Read.Streamed.cs" />
     <Compile Include="Serialization\Kdb4File.Write.cs" />
     <Compile Include="Serialization\IOConnectionInfo.cs" />

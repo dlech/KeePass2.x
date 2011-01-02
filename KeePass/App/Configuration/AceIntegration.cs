@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -180,6 +180,10 @@ namespace KeePass.App.Configuration
 				"cmd://{GOOGLECHROME} \"{URL}\""));
 			m_vOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{GOOGLECHROME} \"{URL}\""));
+			m_vOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
+				"cmd://\"{APPDIR}\\KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\""));
+			m_vOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
+				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\""));
 		}
 
 		public string GetOverrideForUrl(string strUrl)

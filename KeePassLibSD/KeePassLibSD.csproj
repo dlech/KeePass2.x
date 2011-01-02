@@ -248,9 +248,6 @@
     <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.cs">
       <Link>Serialization\Kdb4File.Read.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.Dom.cs">
-      <Link>Serialization\Kdb4File.Read.Dom.cs</Link>
-    </Compile>
     <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.Streamed.cs">
       <Link>Serialization\Kdb4File.Read.Streamed.cs</Link>
     </Compile>

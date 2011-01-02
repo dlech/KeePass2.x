@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -93,6 +93,7 @@ namespace KeePassLib.Serialization
 
 #if !KeePassLibSD
 			FileSecurity bkSecurity = null;
+			bool bEfsEncrypted = false;
 #endif
 
 			if(IOConnection.FileExists(m_iocBase))
@@ -102,6 +103,9 @@ namespace KeePassLib.Serialization
 				{
 					try
 					{
+						FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
+						bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
+
 						DateTime tCreation = File.GetCreationTime(m_iocBase.Path);
 						bkSecurity = File.GetAccessControl(m_iocBase.Path);
 
@@ -121,6 +125,12 @@ namespace KeePassLib.Serialization
 			{
 				try
 				{
+					if(bEfsEncrypted)
+					{
+						try { File.Encrypt(m_iocBase.Path); }
+						catch(Exception) { Debug.Assert(false); }
+					}
+
 					if(bkSecurity != null)
 						File.SetAccessControl(m_iocBase.Path, bkSecurity);
 				}

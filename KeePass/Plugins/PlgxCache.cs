@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -77,8 +77,22 @@ namespace KeePass.Plugins
 				}
 			}
 
-			return AppConfigSerializer.AppDataDirectory +
-				Path.DirectorySeparatorChar + CacheDirName;
+			string strDataDir = AppConfigSerializer.AppDataDirectory;
+			// try
+			// {
+			//	DirectoryInfo diAppData = new DirectoryInfo(strDataDir);
+			//	DirectoryInfo diRoot = diAppData.Root;
+			//	DriveInfo di = new DriveInfo(diRoot.FullName);
+			//	if(di.DriveType == DriveType.Network)
+			//	{
+			//		strDataDir = UrlUtil.EnsureTerminatingSeparator(
+			//			Path.GetTempPath(), false);
+			//		strDataDir = strDataDir.Substring(0, strDataDir.Length - 1);
+			//	}
+			// }
+			// catch(Exception) { Debug.Assert(false); }
+
+			return (strDataDir + Path.DirectorySeparatorChar + CacheDirName);
 		}
 
 		public static string GetCacheDirectory(PwUuid pwPluginUuid, bool bEnsureExists)
@@ -116,7 +130,7 @@ namespace KeePass.Plugins
 			if(bMustExist && bExists)
 			{
 				try { File.SetLastAccessTime(strPlugin, DateTime.Now); }
-				catch(Exception) { Debug.Assert(false); }
+				catch(Exception) { } // Might be locked by other KeePass instance
 			}
 
 			if(!bMustExist || bExists) return strPlugin;

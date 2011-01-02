@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbViewsShowExpired, KPRes.ShowExpiredEntries, null);
 			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null);
 			UIUtil.ConfigureTbButton(m_tbQuickFind, null, KPRes.SearchQuickPrompt +
-				" (" + KPRes.CtrlKey + "+E)");
+				" (" + KPRes.KeyboardKeyCtrl + "+E)");
 
 			bool bVisible = Program.Config.MainWindow.ToolBar.Show;
 			m_toolMain.Visible = bVisible;
@@ -302,6 +302,8 @@ namespace KeePass.Forms
 			m_sessionLockNotifier.Install(this.OnSessionLock);
 			IpcBroadcast.StartServer();
 
+			int nInitColProvCount = Program.ColumnProviderPool.Count;
+
 			m_pluginDefaultHost.Initialize(this, Program.CommandLineArgs,
 				CipherPool.GlobalPool);
 			m_pluginManager.Initialize(m_pluginDefaultHost);
@@ -313,6 +315,9 @@ namespace KeePass.Forms
 
 			if(Program.Config.Application.Start.PluginCacheDeleteOld)
 				PlgxCache.DeleteOldFilesAsync();
+
+			if(Program.ColumnProviderPool.Count != nInitColProvCount)
+				UpdateColumnsEx(false);
 
 			HotKeyManager.Initialize(this);
 
@@ -354,6 +359,7 @@ namespace KeePass.Forms
 			MinimizeToTrayAtStartIfEnabled(true);
 
 			m_bFormLoading = false;
+			NotifyUserActivity(); // Initialize locking timeout
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppLoadPost);
 		}
 
@@ -366,9 +372,6 @@ namespace KeePass.Forms
 		{
 			if(!AppPolicy.Try(AppPolicyId.NewFile)) return;
 			if(!AppPolicy.Try(AppPolicyId.SaveFile)) return;
-
-			// OnFileClose(sender, e);
-			// if(m_pwDatabase.IsOpen) return;
 
 			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.CreateNewDatabase,
 				KPRes.NewDatabaseFileName, UIUtil.CreateFileTypeFilter(
@@ -607,6 +610,10 @@ namespace KeePass.Forms
 		private void OnFileExit(object sender, EventArgs e)
 		{
 			NotifyUserActivity();
+
+			if(GlobalWindowManager.CanCloseAllWindows)
+				GlobalWindowManager.CloseAllWindows();
+
 			m_bForceExitOnce = true;
 			this.Close();
 		}
@@ -1053,6 +1060,7 @@ namespace KeePass.Forms
 				UpdateTrayIcon();
 			}
 
+			NotifyUserActivity(); // Update locking timeout with new m_nLockTimerMax
 			UpdateUI(false, null, true, null, true, null, false); // Fonts changed
 		}
 
@@ -1319,8 +1327,12 @@ namespace KeePass.Forms
 			{
 				// For default value, also see options dialog
 				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimize)
-					if(IsFileLocked(null) == false) // Not locked currently
-						OnFileLock(sender, e); // Lock
+				{
+					// if(!IsFileLocked(null)) // Not locked currently
+					//	OnFileLock(sender, e); // Lock
+
+					if(IsAtLeastOneFileOpen()) LockAllDocuments();
+				}
 
 				if(Program.Config.MainWindow.MinimizeToTray)
 					MinimizeToTray(true);
@@ -1380,23 +1392,27 @@ namespace KeePass.Forms
 				UpdateUIState(false);
 			}
 
-			if(!GlobalWindowManager.CanCloseAllWindows) return;
-			if(m_nLockTimerMax > 0)
-			{
-				if(Monitor.TryEnter(m_objLockTimerSync))
-				{
-					--m_nLockTimerCur;
-					if(m_nLockTimerCur < 0) m_nLockTimerCur = 0;
+			DateTime utcNow = DateTime.UtcNow; // Fast; DateTime internally uses UTC
 
-					if(m_nLockTimerCur == 0)
+			// Update the global inactivity timeout in every main timer tick,
+			// *before* checking the timeout (otherwise KeePass could be locked
+			// even though the user did something within the last second)
+			UpdateGlobalLockTimeout(utcNow);
+
+			if(Monitor.TryEnter(m_objLockTimerSync))
+			{
+				if(IsAtLeastOneFileOpen() && GlobalWindowManager.CanCloseAllWindows)
+				{
+					long lCurTicks = utcNow.Ticks;
+					if((lCurTicks >= m_lLockAtTicks) || (lCurTicks >= m_lLockAtGlobalTicks))
 					{
 						if(Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
 							OnFileExit(sender, e);
 						else LockAllDocuments();
 					}
-
-					Monitor.Exit(m_objLockTimerSync);
 				}
+
+				Monitor.Exit(m_objLockTimerSync);
 			}
 		}
 
@@ -1453,6 +1469,8 @@ namespace KeePass.Forms
 					pe.IconId = (PwIcon)ipf.ChosenIconId;
 					pe.CustomIconUuid = PwUuid.Zero;
 				}
+
+				pe.Touch(true, false);
 			}
 
 			bool bUpdImg = m_docMgr.ActiveDatabase.UINeedsIconUpdate;
@@ -1687,7 +1705,7 @@ namespace KeePass.Forms
 
 		private void OnEntryClipCopy(object sender, EventArgs e)
 		{
-			if(m_docMgr.ActiveDatabase.IsOpen == false) return;
+			if(!m_docMgr.ActiveDatabase.IsOpen) return;
 			PwEntry[] vSelected = GetSelectedEntries();
 			if((vSelected == null) || (vSelected.Length == 0)) return;
 
@@ -1707,7 +1725,7 @@ namespace KeePass.Forms
 
 		private void OnEntryClipPaste(object sender, EventArgs e)
 		{
-			if(m_docMgr.ActiveDatabase.IsOpen == false) return;
+			if(!m_docMgr.ActiveDatabase.IsOpen) return;
 			PwGroup pg = GetSelectedGroup();
 			if(pg == null) return;
 
@@ -1761,7 +1779,7 @@ namespace KeePass.Forms
 
 		private void OnToolsDbMaintenance(object sender, EventArgs e)
 		{
-			if(m_docMgr.ActiveDatabase.IsOpen == false) return;
+			if(!m_docMgr.ActiveDatabase.IsOpen) return;
 
 			DatabaseOperationsForm form = new DatabaseOperationsForm();
 			form.InitEx(m_docMgr.ActiveDatabase);
@@ -2030,7 +2048,7 @@ namespace KeePass.Forms
 			PwDocument ds = (tbSelect.Tag as PwDocument);
 			MakeDocumentActive(ds);
 
-			if(IsFileLocked(ds)) OnFileLock(sender, e);
+			if(IsFileLocked(ds)) OnFileLock(sender, e); // Unlock
 		}
 
 		private void OnFileSaveAll(object sender, EventArgs e)
@@ -2171,6 +2189,16 @@ namespace KeePass.Forms
 		private void OnEntrySelectedRemoveTagOpening(object sender, EventArgs e)
 		{
 			UpdateTagsMenu(m_dynRemoveTag, false, false, true, true);
+		}
+
+		private void OnCtxEntryClipboardOpening(object sender, EventArgs e)
+		{
+			try // Might fail/throw due to clipboard access timeout
+			{
+				m_ctxEntryClipPaste.Enabled = Clipboard.ContainsData(
+					EntryUtil.ClipFormatEntries);
+			}
+			catch(Exception) { m_ctxEntryClipPaste.Enabled = false; }
 		}
 	}
 }

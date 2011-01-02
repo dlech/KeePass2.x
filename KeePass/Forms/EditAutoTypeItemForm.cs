@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ namespace KeePass.Forms
 
 			sbPH.Append("<br /><br /><b>" + KPRes.KeyboardKeyModifiers + ":</b><br />");
 			sbPH.Append(KPRes.KeyboardKeyShift + @": +, ");
-			sbPH.Append(KPRes.KeyboardKeyControl + @": ^, ");
+			sbPH.Append(KPRes.KeyboardKeyCtrl + @": ^, ");
 			sbPH.Append(KPRes.KeyboardKeyAlt + @": %");
 
 			sbPH.Append("<br /><br /><b>" + KPRes.SpecialKeys + ":</b><br />");

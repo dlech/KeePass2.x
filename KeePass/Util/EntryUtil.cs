@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -101,14 +101,14 @@ namespace KeePass.Util
 			}
 		}
 
-		public const string ClipFormatEntries = "KeePassEntries";
-		private static byte[] AdditionalEntropy = { 0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5C };
+		public const string ClipFormatEntries = "KeePassEntriesCF";
+		private static byte[] AdditionalEntropy = { 0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries)
 		{
 			MemoryStream ms = new MemoryStream();
 			GZipStream gz = new GZipStream(ms, CompressionMode.Compress);
-			Kdb4File.WriteEntries(gz, pwDatabase, vEntries);
+			Kdb4File.WriteEntries(gz, vEntries);
 
 			byte[] pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy, DataProtectionScope.CurrentUser);
 
@@ -127,7 +127,7 @@ namespace KeePass.Util
 			MemoryStream ms = new MemoryStream(pbPlain, false);
 			GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
 
-			List<PwEntry> vEntries = Kdb4File.ReadEntries(pwDatabase, gz);
+			List<PwEntry> vEntries = Kdb4File.ReadEntries(gz);
 
 			// Adjust protection settings and add entries
 			foreach(PwEntry pe in vEntries)

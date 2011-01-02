@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -167,6 +167,13 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strWinFavsBaseName = value;
 			}
+		}
+
+		private bool m_bCollapseRecycleBin = false;
+		public bool RecycleBinCollapse
+		{
+			get { return m_bCollapseRecycleBin; }
+			set { m_bCollapseRecycleBin = value; }
 		}
 
 		public void SetKeySource(IOConnectionInfo ioDatabase, string strKeySource,

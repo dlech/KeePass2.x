@@ -68,23 +68,23 @@
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.PwGroup,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Save the contents of the current <c>PwDatabase</c> to a KDB file.
+            Save the contents of the current <c>PwDatabase</c> to a KDBX file.
             </summary>
-            <param name="sSaveTo">Stream to write the KDB file into.</param>
+            <param name="sSaveTo">Stream to write the KDBX file into.</param>
             <param name="pgDataSource">Group containing all groups and
             entries to write. If <c>null</c>, the complete database will
             be written.</param>
             <param name="format">Format of the file to create.</param>
             <param name="slLogger">Logger that recieves status information.</param>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.WriteEntries(System.IO.Stream,KeePassLib.PwDatabase,KeePassLib.PwEntry[])">
+        <member name="M:KeePassLib.Serialization.Kdb4File.WriteEntries(System.IO.Stream,KeePassLib.PwEntry[])">
             <summary>
             Write entries to a stream.
             </summary>
             <param name="msOutput">Output stream to which the entries will be written.</param>
-            <param name="pwDatabase">Source database.</param>
             <param name="vEntries">Entries to serialize.</param>
-            <returns>Returns <c>true</c>, if the entries were written successfully to the stream.</returns>
+            <returns>Returns <c>true</c>, if the entries were written successfully
+            to the stream.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.String,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
@@ -103,11 +103,10 @@
             <param name="kdbFormat">Format specifier.</param>
             <param name="slLogger">Status logger (optional).</param>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.ReadEntries(KeePassLib.PwDatabase,System.IO.Stream)">
+        <member name="M:KeePassLib.Serialization.Kdb4File.ReadEntries(System.IO.Stream)">
             <summary>
             Read entries from a stream.
             </summary>
-            <param name="pwDatabase">Source database.</param>
             <param name="msData">Input stream to read the entries from.</param>
             <returns>Extracted entries.</returns>
         </member>
@@ -2779,7 +2778,7 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000, 2.01 = 0x02000100, 2.10 = 0x02010000, etc.
+            2.00 = 0x02000000, 2.01 = 0x02000100, 2.14 = 0x02010400, etc.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">
@@ -2789,7 +2788,7 @@
         </member>
         <member name="F:KeePassLib.PwDefs.HomepageUrl">
             <summary>
-            Product homepage URL. Terminated by a forward slash.
+            Product website URL. Terminated by a forward slash.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.DonationsUrl">
@@ -2810,7 +2809,7 @@
         <member name="F:KeePassLib.PwDefs.VersionUrl">
             <summary>
             URL to an XML file that contains information about the latest KeePass
-            available on the homepage.
+            available on the website.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.HelpUrl">

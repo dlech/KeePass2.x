@@ -55,7 +55,7 @@
 			this.m_tabSecurity = new System.Windows.Forms.TabPage();
 			this.m_lblSecIntro = new System.Windows.Forms.Label();
 			this.m_tabProtection = new System.Windows.Forms.TabPage();
-			this.m_lblTurnOffHint = new System.Windows.Forms.Label();
+			this.m_lnkMemProtHelp = new System.Windows.Forms.LinkLabel();
 			this.m_lblMemProtEnable = new System.Windows.Forms.Label();
 			this.m_lblMemProtHint = new System.Windows.Forms.Label();
 			this.m_lblMemProtDesc = new System.Windows.Forms.Label();
@@ -356,7 +356,7 @@
 			// 
 			// m_tabProtection
 			// 
-			this.m_tabProtection.Controls.Add(this.m_lblTurnOffHint);
+			this.m_tabProtection.Controls.Add(this.m_lnkMemProtHelp);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtEnable);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtHint);
 			this.m_tabProtection.Controls.Add(this.m_lblMemProtDesc);
@@ -369,14 +369,16 @@
 			this.m_tabProtection.Text = "Protection";
 			this.m_tabProtection.UseVisualStyleBackColor = true;
 			// 
-			// m_lblTurnOffHint
+			// m_lnkMemProtHelp
 			// 
-			this.m_lblTurnOffHint.Location = new System.Drawing.Point(3, 257);
-			this.m_lblTurnOffHint.Name = "m_lblTurnOffHint";
-			this.m_lblTurnOffHint.Size = new System.Drawing.Size(443, 28);
-			this.m_lblTurnOffHint.TabIndex = 5;
-			this.m_lblTurnOffHint.Text = "For all fields except the password field, memory protection is turned off automat" +
-				"ically when the fields are searched or displayed as plain text.";
+			this.m_lnkMemProtHelp.AutoSize = true;
+			this.m_lnkMemProtHelp.Location = new System.Drawing.Point(3, 271);
+			this.m_lnkMemProtHelp.Name = "m_lnkMemProtHelp";
+			this.m_lnkMemProtHelp.Size = new System.Drawing.Size(257, 13);
+			this.m_lnkMemProtHelp.TabIndex = 5;
+			this.m_lnkMemProtHelp.TabStop = true;
+			this.m_lnkMemProtHelp.Text = "Help: Automatic reset of in-memory protection options";
+			this.m_lnkMemProtHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClickedMemProtHelp);
 			// 
 			// m_lblMemProtEnable
 			// 
@@ -413,7 +415,7 @@
 			this.m_lbMemProt.Location = new System.Drawing.Point(6, 135);
 			this.m_lbMemProt.Name = "m_lbMemProt";
 			this.m_lbMemProt.ScrollAlwaysVisible = true;
-			this.m_lbMemProt.Size = new System.Drawing.Size(440, 109);
+			this.m_lbMemProt.Size = new System.Drawing.Size(440, 124);
 			this.m_lbMemProt.TabIndex = 4;
 			// 
 			// m_lblProtIntro
@@ -772,7 +774,6 @@
 		private System.Windows.Forms.Label m_lblCpGZipPerf;
 		private System.Windows.Forms.Label m_lblCpGZipCp;
 		private System.Windows.Forms.Label m_lblHeaderCpAlgo;
-		private System.Windows.Forms.Label m_lblTurnOffHint;
 		private System.Windows.Forms.TextBox m_tbDefaultUser;
 		private System.Windows.Forms.Label m_lblDefaultUser;
 		private System.Windows.Forms.TabPage m_tabRecycleBin;
@@ -790,5 +791,6 @@
 		private System.Windows.Forms.CheckBox m_cbKeyRec;
 		private System.Windows.Forms.NumericUpDown m_numKeyForceDays;
 		private System.Windows.Forms.NumericUpDown m_numKeyRecDays;
+		private System.Windows.Forms.LinkLabel m_lnkMemProtHelp;
 	}
 }

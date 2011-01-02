@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ namespace KeePass.App
 		NewFile,
 		SaveFile,
 		AutoType,
+		AutoTypeWithoutContext,
 		CopyToClipboard,
 		CopyWholeEntries,
 		DragDrop,
@@ -101,6 +102,13 @@ namespace KeePass.App
 		{
 			get { return m_bAutoType; }
 			set { m_bAutoType = value; }
+		}
+
+		private bool m_bAutoTypeWithoutContext = true;
+		public bool AutoTypeWithoutContext
+		{
+			get { return m_bAutoTypeWithoutContext; }
+			set { m_bAutoTypeWithoutContext = value; }
 		}
 
 		private bool m_bClipboard = true;
@@ -207,6 +215,9 @@ namespace KeePass.App
 				case AppPolicyId.AutoType:
 					str += KPRes.AutoType;
 					break;
+				case AppPolicyId.AutoTypeWithoutContext:
+					str += KPRes.AutoType + " - " + KPRes.WithoutContext;
+					break;
 				case AppPolicyId.CopyToClipboard:
 					str += KPRes.Clipboard;
 					break;
@@ -258,6 +269,9 @@ namespace KeePass.App
 				case AppPolicyId.AutoType:
 					str += KPRes.PolicyAutoTypeDesc;
 					break;
+				case AppPolicyId.AutoTypeWithoutContext:
+					str += KPRes.PolicyAutoTypeWithoutContextDesc;
+					break;
 				case AppPolicyId.CopyToClipboard:
 					str += KPRes.PolicyClipboardDesc;
 					break;
@@ -307,6 +321,7 @@ namespace KeePass.App
 				case AppPolicyId.NewFile: bAllowed = m_apfCurrent.NewFile; break;
 				case AppPolicyId.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
 				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;
+				case AppPolicyId.AutoTypeWithoutContext: bAllowed = m_apfCurrent.AutoTypeWithoutContext; break;
 				case AppPolicyId.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
 				case AppPolicyId.CopyWholeEntries: bAllowed = m_apfCurrent.CopyWholeEntries; break;
 				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;

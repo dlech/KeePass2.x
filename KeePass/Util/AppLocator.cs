@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -154,8 +154,23 @@ namespace KeePass.Util
 
 		private static string FindFirefox()
 		{
+			try
+			{
+				string strPath = FindFirefoxPr(false);
+				if(!string.IsNullOrEmpty(strPath)) return strPath;
+			}
+			catch(Exception) { }
+
+			return FindFirefoxPr(true);
+		}
+
+		private static string FindFirefoxPr(bool bWowNode)
+		{
 			RegistryKey kSoftware = Registry.LocalMachine.OpenSubKey("SOFTWARE", false);
-			RegistryKey kMozilla = kSoftware.OpenSubKey("Mozilla", false);
+
+			RegistryKey kWow = (bWowNode ? kSoftware.OpenSubKey("Wow6432Node", false) : null);
+
+			RegistryKey kMozilla = (kWow ?? kSoftware).OpenSubKey("Mozilla", false);
 			RegistryKey kFirefox = kMozilla.OpenSubKey("Mozilla Firefox", false);
 
 			string strCurVer = (kFirefox.GetValue("CurrentVersion") as string);
@@ -163,6 +178,7 @@ namespace KeePass.Util
 			{
 				kFirefox.Close();
 				kMozilla.Close();
+				if(kWow != null) kWow.Close();
 				kSoftware.Close();
 				return null;
 			}
@@ -182,6 +198,7 @@ namespace KeePass.Util
 			kCurVer.Close();
 			kFirefox.Close();
 			kMozilla.Close();
+			if(kWow != null) kWow.Close();
 			kSoftware.Close();
 			return strPath;
 		}

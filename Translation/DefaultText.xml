@@ -7,9 +7,6 @@
 		<Data Name="ActivateDatabaseTab">
 			<Value>Activate database (select tab)</Value>
 		</Data>
-		<Data Name="AddCustomToolBarButton">
-			<Value>Add custom toolbar button</Value>
-		</Data>
 		<Data Name="AddEntry">
 			<Value>Add Entry</Value>
 		</Data>
@@ -352,9 +349,6 @@
 		<Data Name="CsvTextFile">
 			<Value>CSV / Text File</Value>
 		</Data>
-		<Data Name="CtrlKey">
-			<Value>Ctrl</Value>
-		</Data>
 		<Data Name="CurrentStyle">
 			<Value>Current Style</Value>
 		</Data>
@@ -367,8 +361,14 @@
 		<Data Name="CustomizableHtml">
 			<Value>Customizable HTML File</Value>
 		</Data>
+		<Data Name="CustomTbButtonAdd">
+			<Value>Add custom toolbar button</Value>
+		</Data>
 		<Data Name="CustomTbButtonClicked">
 			<Value>Custom toolbar button clicked</Value>
+		</Data>
+		<Data Name="CustomTbButtonRemove">
+			<Value>Remove custom toolbar button</Value>
 		</Data>
 		<Data Name="Cut">
 			<Value>Cut</Value>
@@ -438,6 +438,9 @@
 		</Data>
 		<Data Name="Details">
 			<Value>Details</Value>
+		</Data>
+		<Data Name="DialogNoShowAgain">
+			<Value>Do not show this dialog again.</Value>
 		</Data>
 		<Data Name="Disabled">
 			<Value>Disabled</Value>
@@ -814,9 +817,6 @@
 		<Data Name="Homebanking">
 			<Value>Homebanking</Value>
 		</Data>
-		<Data Name="HomepageVisitQuestion">
-			<Value>Do you want to visit the KeePass homepage now?</Value>
-		</Data>
 		<Data Name="Host">
 			<Value>Host</Value>
 		</Data>
@@ -922,14 +922,20 @@
 		<Data Name="KeyboardKeyAlt">
 			<Value>Alt</Value>
 		</Data>
-		<Data Name="KeyboardKeyControl">
-			<Value>Control</Value>
+		<Data Name="KeyboardKeyCtrl">
+			<Value>Ctrl</Value>
+		</Data>
+		<Data Name="KeyboardKeyCtrlLeft">
+			<Value>LCtrl</Value>
 		</Data>
 		<Data Name="KeyboardKeyModifiers">
 			<Value>Key Modifiers</Value>
 		</Data>
 		<Data Name="KeyboardKeyShift">
 			<Value>Shift</Value>
+		</Data>
+		<Data Name="KeyboardKeyShiftLeft">
+			<Value>LShift</Value>
 		</Data>
 		<Data Name="KeyChanged">
 			<Value>Key Changed</Value>
@@ -979,8 +985,14 @@
 		<Data Name="LockOnMinimize">
 			<Value>Lock workspace when minimizing main window</Value>
 		</Data>
-		<Data Name="LockOnSessionLock">
-			<Value>Lock workspace when locking Windows, switching user or sleeping</Value>
+		<Data Name="LockOnRemoteControlChange">
+			<Value>Lock workspace when the remote control mode changes</Value>
+		</Data>
+		<Data Name="LockOnSessionSwitch">
+			<Value>Lock workspace when locking the computer or switching the user</Value>
+		</Data>
+		<Data Name="LockOnSuspend">
+			<Value>Lock workspace when the computer is about to be suspended</Value>
 		</Data>
 		<Data Name="MainWindow">
 			<Value>Main Window</Value>
@@ -1207,6 +1219,9 @@
 		<Data Name="PolicyAutoTypeDesc">
 			<Value>Allow auto-typing entries to other windows.</Value>
 		</Data>
+		<Data Name="PolicyAutoTypeWithoutContextDesc">
+			<Value>Allow auto-typing using the 'Perform Auto-Type' command (Ctrl+V).</Value>
+		</Data>
 		<Data Name="PolicyChangeMasterKey">
 			<Value>Allow changing the master key of a database.</Value>
 		</Data>
@@ -1266,6 +1281,9 @@
 		</Data>
 		<Data Name="RecycleBin">
 			<Value>Recycle Bin</Value>
+		</Data>
+		<Data Name="RecycleBinCollapse">
+			<Value>Collapse newly-created recycle bin tree node</Value>
 		</Data>
 		<Data Name="Redo">
 			<Value>Redo</Value>
@@ -1645,8 +1663,14 @@
 		<Data Name="WebSites">
 			<Value>Web Sites</Value>
 		</Data>
+		<Data Name="WebsiteVisitQuestion">
+			<Value>Do you want to visit the KeePass website now?</Value>
+		</Data>
 		<Data Name="WindowsOS">
 			<Value>Windows</Value>
+		</Data>
+		<Data Name="WithoutContext">
+			<Value>Without Context</Value>
 		</Data>
 		<Data Name="WorkspaceLocked">
 			<Value>Workspace Locked</Value>

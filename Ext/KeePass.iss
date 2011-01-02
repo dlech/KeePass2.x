@@ -3,20 +3,21 @@
 ; Thanks to Hilbrand Edskes for installer improvements.
 
 #define MyAppNameShort "KeePass"
+#define MyAppNameShortEx "KeePass 2"
 #define MyAppName "KeePass Password Safe"
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.13"
-#define KeeVersionStrWithMinor "2.13"
-#define KeeVersionStrWithMinorPath "2.13"
-#define KeeVersionWin "2.1.3.0"
+#define KeeVersionStr "2.14"
+#define KeeVersionStrWithMinor "2.14"
+#define KeeVersionStrWithMinorPath "2.14"
+#define KeeVersionWin "2.1.4.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2010"
+#define KeeDevPeriod "2003-2011"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -48,8 +49,8 @@ WizardImageFile=compiler:WizModernImage-IS.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
 DisableDirPage=auto
 AlwaysShowDirOnReadyPage=yes
-DisableProgramGroupPage=auto
-AlwaysShowGroupOnReadyPage=yes
+DisableProgramGroupPage=yes
+AlwaysShowGroupOnReadyPage=no
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -89,6 +90,7 @@ Name: PreLoad; Description: Optimize KeePass On-Demand Start-Up Performance; Typ
 [Files]
 Source: ..\Build\KeePass_Distrib\KeePass.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.XmlSerializers.dll; DestDir: {app}; Flags: ignoreversion; Components: Core
+Source: ..\Build\KeePass_Distrib\KeePass.exe.config; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist; Components: Core
 Source: ..\Build\KeePass_Distrib\License.txt; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
@@ -116,28 +118,40 @@ Root: HKCR; Subkey: kdbxfile\DefaultIcon; ValueType: string; ValueData: """{app}
 Root: HKCR; Subkey: kdbxfile\shell\open; ValueType: string; ValueData: &Open with {#MyAppName}; Flags: uninsdeletekey; Tasks: FileAssoc
 Root: HKCR; Subkey: kdbxfile\shell\open\command; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Flags: uninsdeletekey; Tasks: FileAssoc
 
-[INI]
-Filename: {app}\{#MyAppUrlName}; Section: InternetShortcut; Key: URL; String: {#MyAppURL}
+; [INI]
+; Filename: {app}\{#MyAppUrlName}; Section: InternetShortcut; Key: URL; String: {#MyAppURL}
 
 [Icons]
-Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}
-Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}; Filename: {app}\{#MyAppUrlName}
-Name: {group}\Help; Filename: {app}\{#MyAppHelpName}; Components: UserDoc
-Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
-Name: {userdesktop}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: DesktopIcon
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: QuickLaunchIcon
+; Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}
+; Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}; Filename: {app}\{#MyAppUrlName}
+; Name: {group}\Help; Filename: {app}\{#MyAppHelpName}; Components: UserDoc
+; Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
+Name: {commonprograms}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}
+Name: {userdesktop}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: DesktopIcon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: QuickLaunchIcon
 
 [Run]
 ; Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
 Filename: {app}\ShInstUtil.exe; Parameters: net_check; WorkingDir: {app}; Flags: skipifdoesntexist skipifsilent
 Filename: {app}\ShInstUtil.exe; Parameters: preload_register; WorkingDir: {app}; StatusMsg: "Optimizing KeePass on-demand start-up performance..."; Flags: skipifdoesntexist; Components: PreLoad
 Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; WorkingDir: {app}; StatusMsg: "Optimizing KeePass performance..."; Flags: skipifdoesntexist; Components: NGen
-Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: postinstall nowait skipifsilent
+Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppNameShort}}; Flags: postinstall nowait skipifsilent
 
 [UninstallRun]
 ; Filename: {app}\KeePass.exe; Parameters: -UnregisterFileExt
 Filename: {app}\ShInstUtil.exe; Parameters: preload_unregister; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "PreLoad"; Components: PreLoad
 Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "NGen"; Components: NGen
 
-[UninstallDelete]
-Type: files; Name: {app}\{#MyAppUrlName}
+; Delete old files when upgrading
+[InstallDelete]
+Name: {app}\{#MyAppUrlName}; Type: files
+Name: {group}\{#MyAppName}.lnk; Type: files
+Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}.lnk; Type: files
+Name: {group}\Help.lnk; Type: files
+Name: {group}\{cm:UninstallProgram,{#MyAppName}}.lnk; Type: files
+Name: {group}; Type: dirifempty
+Name: {userdesktop}\{#MyAppName}.lnk; Type: files
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}.lnk; Type: files
+
+; [UninstallDelete]
+; Type: files; Name: {app}\{#MyAppUrlName}

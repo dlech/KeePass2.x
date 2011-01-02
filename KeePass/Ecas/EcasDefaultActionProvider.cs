@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2010 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -127,17 +127,24 @@ namespace KeePass.Ecas
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x95, 0x81, 0x8F, 0x45, 0x99, 0x66, 0x49, 0x88,
 				0xAB, 0x3E, 0x86, 0xE8, 0x1A, 0x96, 0x68, 0x36 }),
-				KPRes.AddCustomToolBarButton, PwIcon.List, new EcasParameter[] {
+				KPRes.CustomTbButtonAdd, PwIcon.List, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null),
 					new EcasParameter(KPRes.Name, EcasValueType.String, null),
 					new EcasParameter(KPRes.Description, EcasValueType.String, null) },
 				AddToolBarButton));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0xD6, 0x6D, 0x41, 0xA2, 0x6C, 0xB2, 0x44, 0xBA,
+				0xA4, 0x48, 0x0A, 0x41, 0xFA, 0x09, 0x48, 0x79 }),
+				KPRes.CustomTbButtonRemove, PwIcon.List, new EcasParameter[] {
+					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
+				RemoveToolBarButton));
 		}
 
 		private static void ExecuteShellCmd(EcasAction a, EcasContext ctx)
 		{
-			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true);
-			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true);
+			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true, true);
+			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
 
 			if(string.IsNullOrEmpty(strCmd)) return;
 
@@ -328,6 +335,12 @@ namespace KeePass.Ecas
 			string strDesc = EcasUtil.GetParamString(a.Parameters, 2, true);
 
 			Program.MainForm.AddCustomToolBarButton(strID, strName, strDesc);
+		}
+
+		private static void RemoveToolBarButton(EcasAction a, EcasContext ctx)
+		{
+			string strID = EcasUtil.GetParamString(a.Parameters, 0, true);
+			Program.MainForm.RemoveCustomToolBarButton(strID);
 		}
 	}
 }

@@ -65,6 +65,7 @@
 			this.m_lvOverrides.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvOverrides.Location = new System.Drawing.Point(12, 12);
 			this.m_lvOverrides.Name = "m_lvOverrides";
+			this.m_lvOverrides.ShowItemToolTips = true;
 			this.m_lvOverrides.Size = new System.Drawing.Size(383, 218);
 			this.m_lvOverrides.TabIndex = 2;
 			this.m_lvOverrides.UseCompatibleStateImageBehavior = false;
