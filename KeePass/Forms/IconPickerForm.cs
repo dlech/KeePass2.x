@@ -120,6 +120,7 @@ namespace KeePass.Forms
 			else m_btnOK.Enabled = false;
 
 			m_btnCustomRemove.Enabled = (lvsic.Count >= 1);
+			m_btnCustomExport.Enabled = (lvsic.Count >= 1);
 
 			// if(m_bBlockCancel)
 			// {
@@ -155,7 +156,7 @@ namespace KeePass.Forms
 			{
 				m_lvCustomIcons.Items[m_lvCustomIcons.Items.Count - 1].Selected = true;
 				m_lvCustomIcons.EnsureVisible(m_lvCustomIcons.Items.Count - 1);
-				m_lvCustomIcons.Focus();
+				UIUtil.SetFocus(m_lvCustomIcons, this);
 			}
 
 			return iFoundCustom;
@@ -293,7 +294,7 @@ namespace KeePass.Forms
 		private static void AddFileType(StringBuilder sbBuffer, string strEnding,
 			string strName)
 		{
-			sbBuffer.Append('|');
+			if(sbBuffer.Length > 0) sbBuffer.Append('|');
 			sbBuffer.Append(strName);
 			sbBuffer.Append('|');
 			sbBuffer.Append(strEnding);
@@ -345,6 +346,79 @@ namespace KeePass.Forms
 			{
 				e.Cancel = true;
 				MessageService.ShowWarning(KPRes.PickIcon);
+			}
+		}
+
+		private void OnBtnCustomSave(object sender, EventArgs e)
+		{
+			ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
+			if((lvsic == null) || (lvsic.Count == 0)) return;
+
+			if(lvsic.Count == 1)
+			{
+				StringBuilder sbFilter = new StringBuilder();
+				AddFileType(sbFilter, "*.png", "Portable Network Graphics (*.png)");
+				// AddFileType(sbFilter, "*.ico", "Windows Icon (*.ico)");
+				sbFilter.Append(@"|" + KPRes.AllFiles + @" (*.*)|*.*");
+
+				SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.ExportFileTitle,
+					KPRes.Export + ".png", sbFilter.ToString(), 1, null, true);
+				if(sfd.ShowDialog() == DialogResult.OK)
+					SaveImageFile(lvsic[0], sfd.FileName);
+			}
+			else // lvsic.Count >= 2
+			{
+				FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(KPRes.ExportToPrompt);
+				if(fbd.ShowDialog() == DialogResult.OK)
+				{
+					string strDir = UrlUtil.EnsureTerminatingSeparator(
+						fbd.SelectedPath, false);
+
+					int nExportIndex = 0;
+					foreach(ListViewItem lvi in lvsic)
+					{
+						try
+						{
+							string strFile;
+							do
+							{
+								strFile = strDir + KPRes.Export +
+									nExportIndex.ToString() + ".png";
+								++nExportIndex;
+							}
+							while(File.Exists(strFile));
+
+							SaveImageFile(lvi, strFile);
+						}
+						catch(Exception ex)
+						{
+							MessageService.ShowWarning(ex.Message);
+						}
+					}
+				}
+			}
+		}
+
+		private void SaveImageFile(ListViewItem lvi, string strFile)
+		{
+			if((lvi == null) || string.IsNullOrEmpty(strFile)) { Debug.Assert(false); return; }
+
+			try
+			{
+				PwUuid pwUuid = (lvi.Tag as PwUuid);
+				if(pwUuid == null) { Debug.Assert(false); return; }
+				Image img = m_pwDatabase.GetCustomIcon(pwUuid);
+				if(img == null) { Debug.Assert(false); return; }
+
+				// string strExt = UrlUtil.GetExtension(strFile);
+				ImageFormat fmt = ImageFormat.Png;
+				// if(strExt.Equals("ico", StrUtil.CaseIgnoreCmp)) fmt = ImageFormat.Icon;
+
+				img.Save(strFile, fmt);
+			}
+			catch(Exception ex)
+			{
+				MessageService.ShowWarning(ex.Message);
 			}
 		}
 	}

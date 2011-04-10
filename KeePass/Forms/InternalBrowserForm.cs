@@ -55,8 +55,6 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
-			Debug.Assert(m_pgDataSource != null);
-
 			if(m_strInitialUrl.Length > 0)
 				m_webBrowser.Navigate(m_strInitialUrl);
 

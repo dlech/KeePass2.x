@@ -40,7 +40,7 @@ namespace KeePassLib.Security
 		// higher.
 		private static bool m_bProtectionSupported = true;
 
-		private byte[] m_pbData = new byte[0];
+		private byte[] m_pbData = new byte[0]; // Never null
 
 		// The real length of the data. This value can be different than
 		// m_pbData.Length, as the length of m_pbData always is a multiple
@@ -78,7 +78,11 @@ namespace KeePassLib.Security
 		/// </summary>
 		public uint Length
 		{
-			get { return m_uDataLen; }
+			get
+			{
+				if(m_xbEncrypted != null) return m_xbEncrypted.Length;
+				return m_uDataLen;
+			}
 		}
 
 		static ProtectedBinary()
@@ -207,7 +211,6 @@ namespace KeePassLib.Security
 			else if(!m_bDoProtect && bEnableProtection) // Protect
 			{
 				m_bDoProtect = true;
-
 				SetData(m_pbData);
 			}
 		}
@@ -225,10 +228,11 @@ namespace KeePassLib.Security
 		/// parameter is <c>null</c>.</exception>
 		public void SetData(byte[] pbNew)
 		{
-			this.Clear();
-
 			Debug.Assert(pbNew != null);
 			if(pbNew == null) throw new ArgumentNullException("pbNew");
+
+			// Clear();
+			m_xbEncrypted = null;
 
 			m_uDataLen = (uint)pbNew.Length;
 
@@ -236,7 +240,7 @@ namespace KeePassLib.Security
 			{
 				int nAllocatedMem = (((int)m_uDataLen / 16) + 1) * 16;
 				m_pbData = new byte[nAllocatedMem];
-				Array.Clear(m_pbData, nAllocatedMem - 16, 16);
+				Array.Clear(m_pbData, nAllocatedMem - 16, 16); // Clear the rest
 				Array.Copy(pbNew, m_pbData, (int)m_uDataLen);
 
 				ProtectedMemory.Protect(m_pbData, MemoryProtectionScope.SameProcess);
@@ -262,7 +266,7 @@ namespace KeePassLib.Security
 				byte[] pb = m_xbEncrypted.ReadPlainText();
 				SetData(pb); // Clear the XorredBuffer object
 
-				return (pb ?? new byte[0]);
+				return (pb ?? new byte[0]); // pb is writable, because XB is now invalid
 			}
 
 			if(m_pbData.Length == 0) return new byte[0];
@@ -314,11 +318,48 @@ namespace KeePassLib.Security
 				byte[] randomPad = crsRandomSource.GetRandomBytes(uLen);
 				Debug.Assert(randomPad.Length == uLen);
 
-				for(uint i = 0; i < uLen; i++)
+				for(uint i = 0; i < uLen; ++i)
 					pbData[i] ^= randomPad[i];
 
 				return pbData;
 			}
+		}
+
+		public bool EqualsValue(ProtectedBinary pb)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+
+			if((pb.m_xbEncrypted != null) && (m_xbEncrypted != null))
+				return pb.m_xbEncrypted.EqualsValue(m_xbEncrypted);
+			if((pb.m_xbEncrypted != null) && (m_xbEncrypted == null))
+			{
+				if(pb.m_xbEncrypted.Length != m_uDataLen) return false;
+
+				byte[] pbThis = ReadData();
+				bool bEqThis = pb.m_xbEncrypted.EqualsValue(pbThis);
+				MemUtil.ZeroByteArray(pbThis);
+				return bEqThis;
+			}
+			if((pb.m_xbEncrypted == null) && (m_xbEncrypted != null))
+			{
+				if(m_xbEncrypted.Length != pb.m_uDataLen) return false;
+
+				byte[] pbOther = pb.ReadData();
+				bool bEqOther = m_xbEncrypted.EqualsValue(pbOther);
+				MemUtil.ZeroByteArray(pbOther);
+				return bEqOther;
+			}
+
+			// (pb.m_xbEncrypted == null) && (m_xbEncrypted == null)
+
+			if(m_uDataLen != pb.m_uDataLen) return false;
+
+			byte[] pbL = ReadData();
+			byte[] pbR = pb.ReadData();
+			bool bEq = MemUtil.ArraysEqual(pbL, pbR);
+			MemUtil.ZeroByteArray(pbL);
+			MemUtil.ZeroByteArray(pbR);
+			return bEq;
 		}
 	}
 }

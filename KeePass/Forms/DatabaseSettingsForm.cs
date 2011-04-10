@@ -42,6 +42,11 @@ namespace KeePass.Forms
 		private bool m_bCreatingNew = false;
 		private PwDatabase m_pwDatabase = null;
 
+		private Color m_clr = Color.Empty;
+
+		private ContextMenu m_ctxColor = null;
+		private List<ColorMenuItem> m_vColorItems = new List<ColorMenuItem>();
+
 		private string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
 		private Dictionary<int, PwUuid> m_dictRecycleBinGroups = new Dictionary<int, PwUuid>();
 
@@ -95,6 +100,12 @@ namespace KeePass.Forms
 			m_tbDbName.Text = m_pwDatabase.Name;
 			m_tbDbDesc.Text = m_pwDatabase.Description;
 			m_tbDefaultUser.Text = m_pwDatabase.DefaultUserName;
+
+			m_clr = m_pwDatabase.Color;
+			if(m_clr != Color.Empty)
+				UIUtil.SetButtonImage(m_btnColor, PwEntryForm.CreateColorButtonImage(
+					m_btnColor, m_clr), false);
+			m_cbColor.Checked = (m_clr != Color.Empty);
 
 			for(int inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
 				m_cmbEncAlgo.Items.Add(CipherPool.GlobalPool[inx].DisplayName);
@@ -156,6 +167,20 @@ namespace KeePass.Forms
 
 			m_cmbEntryTemplates.SelectedIndex = Math.Max(0, iSelect);
 
+			m_numHistoryMaxItems.Minimum = 0;
+			m_numHistoryMaxItems.Maximum = int.MaxValue;
+			bool bHistMaxItems = (m_pwDatabase.HistoryMaxItems >= 0);
+			m_numHistoryMaxItems.Value = (bHistMaxItems ? m_pwDatabase.HistoryMaxItems :
+				PwDatabase.DefaultHistoryMaxItems);
+			m_cbHistoryMaxItems.Checked = bHistMaxItems;
+
+			m_numHistoryMaxSize.Minimum = 0;
+			m_numHistoryMaxSize.Maximum = long.MaxValue / (1024 * 1024);
+			bool bHistMaxSize = (m_pwDatabase.HistoryMaxSize >= 0);
+			m_numHistoryMaxSize.Value = (bHistMaxSize ? m_pwDatabase.HistoryMaxSize /
+				(1024 * 1024) : PwDatabase.DefaultHistoryMaxSize);
+			m_cbHistoryMaxSize.Checked = bHistMaxSize;
+
 			m_numKeyRecDays.Minimum = 0;
 			m_numKeyRecDays.Maximum = long.MaxValue;
 			bool bChangeRec = (m_pwDatabase.MasterKeyChangeRec >= 0);
@@ -173,6 +198,10 @@ namespace KeePass.Forms
 		{
 			if(m_bInitializing) return;
 
+			m_btnColor.Enabled = m_cbColor.Checked;
+
+			m_numHistoryMaxItems.Enabled = m_cbHistoryMaxItems.Checked;
+			m_numHistoryMaxSize.Enabled = m_cbHistoryMaxSize.Checked;
 			m_numKeyRecDays.Enabled = m_cbKeyRec.Checked;
 			m_numKeyForceDays.Enabled = m_cbKeyForce.Checked;
 		}
@@ -196,6 +225,9 @@ namespace KeePass.Forms
 				m_pwDatabase.DefaultUserName = m_tbDefaultUser.Text;
 				m_pwDatabase.DefaultUserNameChanged = DateTime.Now;
 			}
+
+			if(!m_cbColor.Checked) m_pwDatabase.Color = Color.Empty;
+			else m_pwDatabase.Color = m_clr;
 
 			int nCipher = CipherPool.GlobalPool.GetCipherIndex(m_cmbEncAlgo.Text);
 			Debug.Assert(nCipher >= 0);
@@ -266,6 +298,14 @@ namespace KeePass.Forms
 				}
 			}
 
+			if(!m_cbHistoryMaxItems.Checked) m_pwDatabase.HistoryMaxItems = -1;
+			else m_pwDatabase.HistoryMaxItems = (int)m_numHistoryMaxItems.Value;
+
+			if(!m_cbHistoryMaxSize.Checked) m_pwDatabase.HistoryMaxSize = -1;
+			else m_pwDatabase.HistoryMaxSize = (long)m_numHistoryMaxSize.Value * 1024 * 1024;
+
+			m_pwDatabase.MaintainBackups(); // Apply new history settings
+
 			if(!m_cbKeyRec.Checked) m_pwDatabase.MasterKeyChangeRec = -1;
 			else m_pwDatabase.MasterKeyChangeRec = (long)m_numKeyRecDays.Value;
 
@@ -327,6 +367,10 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+
+			foreach(ColorMenuItem mi in m_vColorItems)
+				mi.Click -= this.HandleColorButtonClicked;
+			m_vColorItems.Clear();
 		}
 
 		private void OnKeyRecCheckedChanged(object sender, EventArgs e)
@@ -342,6 +386,105 @@ namespace KeePass.Forms
 		private void OnLinkClickedMemProtHelp(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.FaqTech, AppDefs.HelpTopics.FaqTechMemProt);
+		}
+
+		private void OnHistoryMaxItemsCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnHistoryMaxSizeCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void HandleColorButtonClicked(object sender, EventArgs e)
+		{
+			if(sender == null) { Debug.Assert(false); return; }
+			ColorMenuItem mi = (sender as ColorMenuItem);
+			if(mi == null) { Debug.Assert(false); return; }
+
+			m_clr = mi.Color;
+			UIUtil.SetButtonImage(m_btnColor, PwEntryForm.CreateColorButtonImage(
+				m_btnColor, m_clr), false);
+		}
+
+		private void OnBtnColor(object sender, EventArgs e)
+		{
+			// Color? clr = UIUtil.ShowColorDialog(m_clr);
+			// if(clr.HasValue)
+			// {
+			//	float h, s, v;
+			//	UIUtil.ColorToHsv(clr.Value, out h, out s, out v);
+			//	m_clr = UIUtil.ColorFromHsv(h, 1.0f, 1.0f);
+			//	UIUtil.SetButtonImage(m_btnColor, PwEntryForm.CreateColorButtonImage(
+			//		m_btnColor, m_clr), false);
+			// }
+
+			if(m_ctxColor == null)
+			{
+				m_ctxColor = new ContextMenu();
+
+				int qSize = (int)((20.0f * m_btnColor.Height) / 23.0f + 0.01f);
+
+				const int nMaxColors = 64;
+				int nBreakAt = (int)Math.Sqrt(0.1 + nMaxColors);
+
+				// m_ctxColor.LayoutStyle = ToolStripLayoutStyle.Flow;
+				// FlowLayoutSettings fls = (m_ctxColor.LayoutSettings as FlowLayoutSettings);
+				// if(fls == null) { Debug.Assert(false); return; }
+				// fls.FlowDirection = FlowDirection.LeftToRight;
+
+				// m_ctxColor.LayoutStyle = ToolStripLayoutStyle.Table;
+				// TableLayoutSettings tls = (m_ctxColor.LayoutSettings as TableLayoutSettings);
+				// if(tls == null) { Debug.Assert(false); return; }
+				// tls.ColumnCount = nBreakAt;
+				// tls.RowCount = nBreakAt;
+
+				// m_ctxColor.SuspendLayout();
+
+				for(int i = 0; i < nMaxColors; ++i)
+				{
+					float fHue = ((float)i * 360.0f) / (float)nMaxColors;
+					Color clr = UIUtil.ColorFromHsv(fHue, 1.0f, 1.0f);
+
+					// Image img = UIUtil.CreateColorBitmap24(16, 16, clr);
+					// ToolStripButton btn = new ToolStripButton(string.Empty, img);
+					// btn.DisplayStyle = ToolStripItemDisplayStyle.Image;
+					// btn.ImageAlign = ContentAlignment.MiddleCenter;
+					// btn.AutoSize = true;
+
+					ColorMenuItem mi = new ColorMenuItem(clr, qSize);
+
+					if((i > 0) && ((i % nBreakAt) == 0))
+						mi.Break = true;
+					//	fls.SetFlowBreak(btn, true);
+
+					mi.Click += this.HandleColorButtonClicked;
+
+					// m_ctxColor.Items.Add(btn);
+					m_vColorItems.Add(mi);
+				}
+
+				m_ctxColor.MenuItems.AddRange(m_vColorItems.ToArray());
+
+				// m_ctxColor.ResumeLayout(true);
+				// this.Controls.Add(m_ctxColor);
+				// m_ctxColor.BringToFront();
+			}
+
+			// m_ctxColor.Show(m_btnColor, new Point(0, m_btnColor.Height));
+			// m_ctxColor.Location = new Point(m_btnColor.Location.X,
+			//	m_btnColor.Location.Y - m_btnColor.Height - m_ctxColor.Height);
+			// m_ctxColor.Visible = true;
+			// m_ctxColor.Show();
+
+			m_ctxColor.Show(m_btnColor, new Point(0, m_btnColor.Height));
+		}
+
+		private void OnColorCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
 		}
 	}
 }

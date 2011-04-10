@@ -31,6 +31,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Native;
 using KeePassLib.Security;
 
 namespace KeePass.Forms
@@ -43,12 +44,15 @@ namespace KeePass.Forms
 		private SecureEdit m_secWord = new SecureEdit();
 		private List<Button> m_lButtons = new List<Button>();
 		private List<Label> m_lLabels = new List<Label>();
+		private bool m_bInFormLoad = false;
 		private int m_nFormHeight = 0;
+		private string m_strInitialFormRect = string.Empty;
 		private bool m_bSetForeground = false;
 		private uint m_uCharCount = 0;
+		private bool? m_bInitHide = null;
 
 		private Font m_fontChars = null;
-		private char m_chMaskChar = ((Environment.OSVersion.Platform ==
+		private char m_chMaskChar = ((NativeLib.GetPlatformID() ==
 			PlatformID.Win32Windows) ? '\u00D7' : '\u25CF');
 
 		public ProtectedString SelectedCharacters
@@ -73,7 +77,7 @@ namespace KeePass.Forms
 		/// <param name="uCharCount">Number of characters to pick. Specify
 		/// 0 to allow picking a variable amount of characters.</param>
 		public void InitEx(ProtectedString psWord, bool bCenterScreen,
-			bool bSetForeground, uint uCharCount)
+			bool bSetForeground, uint uCharCount, bool? bInitHide)
 		{
 			m_psWord = psWord;
 
@@ -81,6 +85,7 @@ namespace KeePass.Forms
 
 			m_bSetForeground = bSetForeground;
 			m_uCharCount = uCharCount;
+			m_bInitHide = bInitHide;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -88,19 +93,26 @@ namespace KeePass.Forms
 			Debug.Assert(m_psWord != null);
 			if(m_psWord == null) throw new InvalidOperationException();
 
+			m_bInFormLoad = true;
+
 			GlobalWindowManager.AddWindow(this);
 
-			m_nFormHeight = this.Height;
+			m_nFormHeight = this.Height; // Before restoring the position/size
+
+			string strRect = Program.Config.UI.CharPickerRect;
+			if(strRect.Length > 0) UIUtil.SetWindowScreenRect(this, strRect);
+			m_strInitialFormRect = UIUtil.GetWindowScreenRect(this);
 
 			m_fontChars = new Font("Tahoma", 8.25f, FontStyle.Bold);
 
 			this.Icon = Properties.Resources.KeePass;
-			this.Text = KPRes.PickCharacters;
+			this.Text = KPRes.PickCharacters + " - " + PwDefs.ShortProductName;
 
 			m_secWord.Attach(m_tbSelected, OnSelectedTextChangedEx, true);
 
 			AceColumn colPw = Program.Config.MainWindow.FindColumn(AceColumnType.Password);
 			bool bHide = ((colPw != null) ? colPw.HideWithAsterisks : true);
+			if(m_bInitHide.HasValue) bHide = m_bInitHide.Value;
 			bHide |= !AppPolicy.Current.UnhidePasswords;
 			m_cbHideChars.Checked = bHide;
 
@@ -117,6 +129,8 @@ namespace KeePass.Forms
 				this.BringToFront();
 				this.Activate();
 			}
+
+			m_bInFormLoad = false;
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -138,6 +152,10 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			string strRect = UIUtil.GetWindowScreenRect(this);
+			if(strRect != m_strInitialFormRect)
+				Program.Config.UI.CharPickerRect = strRect;
+
 			m_secWord.Detach();
 
 			RemoveAllCharButtons();
@@ -225,16 +243,19 @@ namespace KeePass.Forms
 			}
 
 			m_secWord.EnableProtection(bHide);
+
+			bool bHideBtns = bHide;
+			bHideBtns |= !Program.Config.UI.Hiding.UnhideButtonAlsoUnhidesSource;
 			foreach(Button btn in m_lButtons)
 			{
-				if(bHide) btn.Text = string.Empty + m_chMaskChar;
+				if(bHideBtns) btn.Text = string.Empty + m_chMaskChar;
 				else btn.Text = string.Empty + (char)btn.Tag;
 			}
 		}
 
 		private void OnSelectCharacter(object sender, EventArgs e)
 		{
-			Button btn = sender as Button;
+			Button btn = (sender as Button);
 			if(btn == null) { Debug.Assert(false); return; }
 
 			char ch = (char)btn.Tag;
@@ -257,7 +278,7 @@ namespace KeePass.Forms
 			if((this.Height != m_nFormHeight) && (m_nFormHeight != 0))
 				this.Height = m_nFormHeight;
 
-			RecreateResizableWindowControls();
+			if(!m_bInFormLoad) RecreateResizableWindowControls();
 		}
 
 		private void OnSelectedTextChangedEx(object sender, EventArgs e)

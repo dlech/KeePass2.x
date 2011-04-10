@@ -28,6 +28,7 @@ using System.Security.Cryptography;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -101,29 +102,53 @@ namespace KeePass.Util
 			}
 		}
 
-		public const string ClipFormatEntries = "KeePassEntriesCF";
+		// Old format name (<= 2.14): "KeePassEntriesCF"
+		public const string ClipFormatEntries = "KeePassEntriesCX";
 		private static byte[] AdditionalEntropy = { 0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
+		[Obsolete]
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries)
+		{
+			CopyEntriesToClipboard(pwDatabase, vEntries, IntPtr.Zero);
+		}
+
+		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
+			IntPtr hOwner)
 		{
 			MemoryStream ms = new MemoryStream();
 			GZipStream gz = new GZipStream(ms, CompressionMode.Compress);
 			Kdb4File.WriteEntries(gz, vEntries);
 
-			byte[] pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy, DataProtectionScope.CurrentUser);
+			byte[] pbFinal;
+			if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
+			else pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy,
+				DataProtectionScope.CurrentUser);
 
-			ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true);
+			ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
 
 			gz.Close(); ms.Close();
 		}
 
-		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase, PwGroup pgStorage)
+		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
+			PwGroup pgStorage)
 		{
-			if(Clipboard.ContainsData(ClipFormatEntries) == false) return;
+			try { PasteEntriesFromClipboardPriv(pwDatabase, pgStorage); }
+			catch(Exception) { Debug.Assert(false); }
+		}
 
-			byte[] pbEnc = (byte[])Clipboard.GetData(ClipFormatEntries);
+		private static void PasteEntriesFromClipboardPriv(PwDatabase pwDatabase,
+			PwGroup pgStorage)
+		{
+			if(!Clipboard.ContainsData(ClipFormatEntries)) return;
 
-			byte[] pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy, DataProtectionScope.CurrentUser);
+			byte[] pbEnc = ClipboardUtil.GetEncodedData(ClipFormatEntries, IntPtr.Zero);
+			if(pbEnc == null) { Debug.Assert(false); return; }
+
+			byte[] pbPlain;
+			if(WinUtil.IsWindows9x) pbPlain = pbEnc;
+			else pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy,
+				DataProtectionScope.CurrentUser);
+
 			MemoryStream ms = new MemoryStream(pbPlain, false);
 			GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
 
@@ -160,6 +185,7 @@ namespace KeePass.Util
 
 			string str = strText;
 
+			// Legacy, for backward compatibility only; see PickChars
 			str = ReplacePickPw(str, pe, pd, cf);
 
 			return str;
@@ -172,6 +198,7 @@ namespace KeePass.Util
 
 			string str = strText;
 
+			str = ReplacePickChars(str, pe, pd, cf);
 			str = ReplaceNewPasswordPlaceholder(str, pe, pd, cf);
 			str = ReplaceHmacOtpPlaceholder(str, pe, pd, cf);
 
@@ -206,6 +233,7 @@ namespace KeePass.Util
 							if(cpf.ShowDialog() == DialogResult.OK)
 								str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
 									SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
+							UIUtil.DestroyForm(cpf);
 						}
 					}
 
@@ -217,6 +245,7 @@ namespace KeePass.Util
 			return str;
 		} */
 
+		// Legacy, for backward compatibility only; see PickChars
 		private static string ReplacePickPw(string strText, PwEntry pe,
 			PwDatabase pd, SprContentFlags cf)
 		{
@@ -236,18 +265,18 @@ namespace KeePass.Util
 
 				string strParam = str.Substring(iStart + strStart.Length,
 					iEnd - (iStart + strStart.Length));
-				string[] vParams = strParam.Split(new char[] { ':' });
+				string[] vParams = strParam.Split(new char[]{ ':' });
 
 				uint uCharCount = 0;
 				if(vParams.Length >= 2) uint.TryParse(vParams[1], out uCharCount);
 
-				str = ReplacePickPlaceholder(str, strPlaceholder, pe, pd, cf, uCharCount);
+				str = ReplacePickPwPlaceholder(str, strPlaceholder, pe, pd, cf, uCharCount);
 			}
 
 			return str;
 		}
 
-		private static string ReplacePickPlaceholder(string str,
+		private static string ReplacePickPwPlaceholder(string str,
 			string strPlaceholder, PwEntry pe, PwDatabase pd, SprContentFlags cf,
 			uint uCharCount)
 		{
@@ -264,15 +293,184 @@ namespace KeePass.Util
 				{
 					ProtectedString psPick = new ProtectedString(false, strPick);
 					CharPickerForm dlg = new CharPickerForm();
-					dlg.InitEx(psPick, true, true, uCharCount);
+					dlg.InitEx(psPick, true, true, uCharCount, null);
 
 					if(dlg.ShowDialog() == DialogResult.OK)
 						str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
 							SprEngine.TransformContent(dlg.SelectedCharacters.ReadString(), cf));
+					UIUtil.DestroyForm(dlg);
 				}
 			}
 
 			return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
+		}
+
+		private static string ReplacePickChars(string strText, PwEntry pe,
+			PwDatabase pd, SprContentFlags cf)
+		{
+			string str = strText;
+
+			Dictionary<string, string> dPicked = new Dictionary<string, string>();
+			while(true)
+			{
+				const string strStart = @"{PICKCHARS";
+
+				int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
+				if(iStart < 0) break;
+
+				int iEnd = str.IndexOf('}', iStart);
+				if(iEnd < 0) break;
+
+				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
+
+				string strParam = str.Substring(iStart + strStart.Length,
+					iEnd - (iStart + strStart.Length));
+
+				string strRep = string.Empty;
+				bool bEncode = true;
+
+				if(strParam.Length == 0)
+					strRep = ShowCharPickDlg(pe.Strings.GetSafe(PwDefs.PasswordField),
+						0, null);
+				else if(strParam.StartsWith(":"))
+				{
+					string strParams = strParam.Substring(1);
+					string[] vParams = strParams.Split(new char[] { ':' },
+						StringSplitOptions.None);
+
+					string strField = string.Empty;
+					if(vParams.Length >= 1) strField = (vParams[0] ?? string.Empty).Trim();
+					if(strField.Length == 0) strField = PwDefs.PasswordField;
+
+					string strOptions = string.Empty;
+					if(vParams.Length >= 2) strOptions = (vParams[1] ?? string.Empty);
+
+					Dictionary<string, string> dOptions = new Dictionary<string, string>();
+					string[] vOptions = strOptions.Split(new char[] { ',' },
+						StringSplitOptions.RemoveEmptyEntries);
+					foreach(string strOption in vOptions)
+					{
+						string[] vKvp = strOption.Split(new char[] { '=' },
+							StringSplitOptions.None);
+						if(vKvp.Length != 2) continue;
+
+						dOptions[vKvp[0].Trim().ToLower()] = vKvp[1].Trim();
+					}
+
+					string strID = string.Empty;
+					if(dOptions.ContainsKey("id")) strID = dOptions["id"].ToLower();
+
+					uint uCharCount = 0;
+					if(dOptions.ContainsKey("c"))
+						uint.TryParse(dOptions["c"], out uCharCount);
+					if(dOptions.ContainsKey("count"))
+						uint.TryParse(dOptions["count"], out uCharCount);
+
+					bool? bInitHide = null;
+					if(dOptions.ContainsKey("hide"))
+						bInitHide = StrUtil.StringToBool(dOptions["hide"]);
+
+					ProtectedString psContent = pe.Strings.GetSafe(strField);
+					if(psContent.Length == 0) { } // Leave strRep empty
+					else if((strID.Length > 0) && dPicked.ContainsKey(strID))
+						strRep = dPicked[strID];
+					else
+						strRep = ShowCharPickDlg(psContent, uCharCount, bInitHide);
+
+					if(strID.Length > 0) dPicked[strID] = strRep;
+
+					if(dOptions.ContainsKey("conv"))
+					{
+						int iOffset = 0;
+						if(dOptions.ContainsKey("conv-offset"))
+							int.TryParse(dOptions["conv-offset"], out iOffset);
+
+						string strConvFmt = string.Empty;
+						if(dOptions.ContainsKey("conv-fmt"))
+							strConvFmt = dOptions["conv-fmt"];
+
+						string strConv = dOptions["conv"];
+						if(strConv.Equals("d", StrUtil.CaseIgnoreCmp))
+						{
+							strRep = ConvertToDownArrows(strRep, iOffset, strConvFmt);
+							bEncode = false;
+						}
+					}
+				}
+
+				str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
+					bEncode ? SprEngine.TransformContent(strRep, cf) : strRep);
+			}
+
+			return str;
+		}
+
+		private static string ShowCharPickDlg(ProtectedString psWord, uint uCharCount,
+			bool? bInitHide)
+		{
+			CharPickerForm cpf = new CharPickerForm();
+			cpf.InitEx(psWord, true, true, uCharCount, bInitHide);
+
+			string strResult = string.Empty;
+			if(cpf.ShowDialog() == DialogResult.OK)
+				strResult = cpf.SelectedCharacters.ReadString();
+
+			UIUtil.DestroyForm(cpf);
+			return strResult;
+		}
+
+		private static string ConvertToDownArrows(string str, int iOffset,
+			string strLayout)
+		{
+			if(string.IsNullOrEmpty(str)) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < str.Length; ++i)
+			{
+				// if((sb.Length > 0) && !string.IsNullOrEmpty(strSep)) sb.Append(strSep);
+
+				char ch = str[i];
+
+				int? iDowns = null;
+				if(strLayout.Length == 0)
+				{
+					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0';
+					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
+					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
+				}
+				else if(strLayout.Equals("0a", StrUtil.CaseIgnoreCmp))
+				{
+					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0';
+					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a' + 10;
+					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A' + 10;
+				}
+				else if(strLayout.Equals("a0", StrUtil.CaseIgnoreCmp))
+				{
+					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0' + 26;
+					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
+					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
+				}
+				else if(strLayout.Equals("1a", StrUtil.CaseIgnoreCmp))
+				{
+					if((ch >= '1') && (ch <= '9')) iDowns = (int)ch - '1';
+					else if(ch == '0') iDowns = 9;
+					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a' + 10;
+					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A' + 10;
+				}
+				else if(strLayout.Equals("a1", StrUtil.CaseIgnoreCmp))
+				{
+					if((ch >= '1') && (ch <= '9')) iDowns = (int)ch - '1' + 26;
+					else if(ch == '0') iDowns = 9 + 26;
+					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
+					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
+				}
+
+				if(!iDowns.HasValue) continue;
+
+				for(int j = 0; j < (iOffset + iDowns); ++j) sb.Append(@"{DOWN}");
+			}
+
+			return sb.ToString();
 		}
 
 		private static string ReplaceNewPasswordPlaceholder(string strText,
@@ -293,7 +491,7 @@ namespace KeePass.Util
 
 				if(e == PwgError.Success)
 				{
-					pe.CreateBackup();
+					pe.CreateBackup(pd);
 					pe.Strings.Set(PwDefs.PasswordField, psAutoGen);
 					pd.Modified = true;
 
@@ -318,7 +516,7 @@ namespace KeePass.Util
 				const string strKeyField = "HmacOtp-Secret";
 				const string strCounterField = "HmacOtp-Counter";
 
-				byte[] pbSecret = Encoding.UTF8.GetBytes(pe.Strings.ReadSafe(
+				byte[] pbSecret = StrUtil.Utf8.GetBytes(pe.Strings.ReadSafe(
 					strKeyField));
 
 				string strCounter = pe.Strings.ReadSafe(strCounterField);
@@ -376,17 +574,33 @@ namespace KeePass.Util
 			foreach(PwEntry peRem in vRem) v.Add(peRem); // Entries not found
 		}
 
+		[Obsolete]
 		public static void ExpireTanEntry(PwEntry pe)
 		{
+			ExpireTanEntryIfOption(pe);
+		}
+
+		/// <summary>
+		/// Test whether an entry is a TAN entry and if so, expire it, provided
+		/// that the option for expiring TANs on use is enabled.
+		/// </summary>
+		/// <param name="pe">Entry.</param>
+		/// <returns>If the entry has been modified, the return value is
+		/// <c>true</c>, otherwise <c>false</c>.</returns>
+		public static bool ExpireTanEntryIfOption(PwEntry pe)
+		{
 			if(pe == null) throw new ArgumentNullException("pe");
-			Debug.Assert(PwDefs.IsTanEntry(pe));
+			if(!PwDefs.IsTanEntry(pe)) return false; // No assert
 
 			if(Program.Config.Defaults.TanExpiresOnUse)
 			{
 				pe.ExpiryTime = DateTime.Now;
 				pe.Expires = true;
 				pe.Touch(true);
+				return true;
 			}
+
+			return false;
 		}
 	}
 }

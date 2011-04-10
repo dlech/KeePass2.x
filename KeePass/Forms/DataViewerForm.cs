@@ -162,7 +162,7 @@ namespace KeePass.Forms
 				else if(strEnc == BinaryDataClassifier.BdeUtf7)
 					enc = Encoding.UTF7;
 				else if(strEnc == BinaryDataClassifier.BdeUtf8)
-					enc = Encoding.UTF8;
+					enc = new UTF8Encoding(false);
 				else if(strEnc == BinaryDataClassifier.BdeUtf32)
 					enc = Encoding.UTF32;
 				else if(strEnc == BinaryDataClassifier.BdeUnicodeLE)

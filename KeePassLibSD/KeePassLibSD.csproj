@@ -293,6 +293,10 @@
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>Utility\UrlUtil.cs</Link>
     </Compile>
+    <Compile Include="BouncyCastle\GeneralDigest.cs" />
+    <Compile Include="BouncyCastle\IDigest.cs" />
+    <Compile Include="BouncyCastle\Pack.cs" />
+    <Compile Include="BouncyCastle\Sha256Digest.cs" />
     <Compile Include="ColorTranslator.cs" />
     <Compile Include="InvalidDataException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

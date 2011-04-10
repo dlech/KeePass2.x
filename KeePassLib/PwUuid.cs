@@ -112,8 +112,10 @@ namespace KeePassLib
 			Debug.Assert(uuid != null);
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			for(int i = 0; i < UuidSize; i++)
+			for(int i = 0; i < UuidSize; ++i)
+			{
 				if(m_pbUuid[i] != uuid.m_pbUuid[i]) return false;
+			}
 
 			return true;
 		}

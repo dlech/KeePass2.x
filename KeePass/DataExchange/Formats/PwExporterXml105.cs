@@ -31,6 +31,7 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -103,7 +104,7 @@ namespace KeePass.DataExchange.Formats
 				nIndex = strDoc.IndexOf('>', nIndex + 1);
 			}
 
-			MemoryStream msXml = new MemoryStream(Encoding.UTF8.GetBytes(strDoc), false);
+			MemoryStream msXml = new MemoryStream(StrUtil.Utf8.GetBytes(strDoc), false);
 
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(msXml);

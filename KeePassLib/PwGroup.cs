@@ -1279,5 +1279,28 @@ namespace KeePassLib
 
 			if(bUpdateLocationChangedOfEntry) pe.LocationChanged = DateTime.Now;
 		}
+
+		public void SortSubGroups(bool bRecursive)
+		{
+			m_listGroups.Sort(new PwGroupComparer());
+
+			if(bRecursive)
+			{
+				foreach(PwGroup pgSub in m_listGroups)
+					pgSub.SortSubGroups(true);
+			}
+		}
+	}
+
+	public sealed class PwGroupComparer : IComparer<PwGroup>
+	{
+		public PwGroupComparer()
+		{
+		}
+
+		public int Compare(PwGroup a, PwGroup b)
+		{
+			return StrUtil.CompareNaturally(a.Name, b.Name);
+		}
 	}
 }

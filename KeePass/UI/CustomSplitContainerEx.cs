@@ -74,7 +74,7 @@ namespace KeePass.UI
 
 			if(m_cFocused != null)
 			{
-				m_cFocused.Focus();
+				UIUtil.SetFocus(m_cFocused, null);
 				m_cFocused = null;
 			}
 			else { Debug.Assert(false); }
@@ -86,8 +86,8 @@ namespace KeePass.UI
 
 			if(this.Focused && (m_cFocused == null))
 			{
-				if(m_cLastKnown != null) m_cLastKnown.Focus();
-				else if(m_cDefault != null) m_cDefault.Focus();
+				if(m_cLastKnown != null) UIUtil.SetFocus(m_cLastKnown, null);
+				else if(m_cDefault != null) UIUtil.SetFocus(m_cDefault, null);
 			}
 		}
 	}

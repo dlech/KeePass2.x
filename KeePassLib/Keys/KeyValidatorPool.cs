@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Keys
 {
 	public sealed class KeyValidatorPool : IEnumerable<KeyValidator>
@@ -77,7 +79,7 @@ namespace KeePassLib.Keys
 
 			if(m_vValidators.Count == 0) return null;
 
-			string strKey = Encoding.UTF8.GetString(pbKeyUtf8, 0, pbKeyUtf8.Length);
+			string strKey = StrUtil.Utf8.GetString(pbKeyUtf8, 0, pbKeyUtf8.Length);
 			return Validate(strKey, t);
 		}
 	}

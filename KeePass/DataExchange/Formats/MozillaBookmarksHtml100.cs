@@ -30,6 +30,7 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -86,7 +87,7 @@ namespace KeePass.DataExchange.Formats
 
 			strContent = "<RootSentinel>" + strContent + "</META></RootSentinel>";
 
-			byte[] pbFixedData = Encoding.UTF8.GetBytes(strContent);
+			byte[] pbFixedData = StrUtil.Utf8.GetBytes(strContent);
 			MemoryStream msFixed = new MemoryStream(pbFixedData, false);
 
 			XmlDocument xmlDoc = new XmlDocument();

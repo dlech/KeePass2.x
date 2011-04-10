@@ -106,18 +106,12 @@ namespace KeePass.Forms
 				m_cmbCredSaveMode.Enabled = false;
 			}
 
-			m_tbUrl.Focus();
+			UIUtil.SetFocus(m_tbUrl, this);
 
 			if((m_tbUrl.TextLength > 0) && (m_tbUserName.TextLength > 0))
-			{
-				this.ActiveControl = m_tbPassword;
-				m_tbPassword.Focus();
-			}
+				UIUtil.SetFocus(m_tbPassword, this);
 			else if(m_tbUrl.TextLength > 0)
-			{
-				this.ActiveControl = m_tbUserName;
-				m_tbUserName.Focus();
-			}
+				UIUtil.SetFocus(m_tbUserName, this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

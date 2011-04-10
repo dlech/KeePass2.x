@@ -99,7 +99,8 @@ namespace KeePass.Forms
 
 			m_clrNormalBackground = m_cmbStringName.BackColor;
 
-			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true);
+			UIUtil.EnableAutoCompletion(m_cmbStringName, true);
+			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true, true);
 
 			if(m_strStringName != null) m_cmbStringName.Text = m_strStringName;
 			if(m_psStringValue != null)
@@ -111,8 +112,7 @@ namespace KeePass.Forms
 			ValidateStringName();
 
 			PopulateNamesComboBox();
-
-			m_cmbStringName.Focus();
+			// UIUtil.SetFocus(m_cmbStringName, this); // See PopulateNamesComboBox
 		}
 
 		private bool ValidateStringNameEx(string str)
@@ -261,16 +261,16 @@ namespace KeePass.Forms
 			m_vSuggestedNames.Sort();
 
 			if(m_cmbStringName.InvokeRequired)
-				m_cmbStringName.Invoke(new Priv_PnFnVoid(this.PopulateNamesAddFunc));
+				m_cmbStringName.Invoke(new VoidDelegate(this.PopulateNamesAddFunc));
 			else this.PopulateNamesAddFunc();
 		}
-
-		public delegate void Priv_PnFnVoid();
 
 		private void PopulateNamesAddFunc()
 		{
 			foreach(string str in m_vSuggestedNames)
 				m_cmbStringName.Items.Add(str);
+
+			UIUtil.SetFocus(m_cmbStringName, this);
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)

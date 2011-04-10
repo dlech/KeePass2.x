@@ -130,42 +130,49 @@ namespace KeePassLib.Utility
 			set { m_bRtl = value; }
 		}
 
-		public static string RtfPar
+		private static UTF8Encoding m_encUtf8 = null;
+		public static UTF8Encoding Utf8
 		{
-			// get { return (m_bRtl ? "\\rtlpar " : "\\par "); }
-			get { return "\\par "; }
-		}
-
-		/// <summary>
-		/// Convert a string into a valid RTF string.
-		/// </summary>
-		/// <param name="str">Any string.</param>
-		/// <returns>RTF-encoded string.</returns>
-		public static string MakeRtfString(string str)
-		{
-			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
-
-			str = str.Replace("\\", "\\\\");
-			str = str.Replace("\r", string.Empty);
-			str = str.Replace("{", "\\{");
-			str = str.Replace("}", "\\}");
-			str = str.Replace("\n", StrUtil.RtfPar);
-
-			StringBuilder sbEncoded = new StringBuilder();
-			for(int i = 0; i < str.Length; ++i)
+			get
 			{
-				char ch = str[i];
-				if((int)ch >= 256)
-				{
-					sbEncoded.Append("\\u");
-					sbEncoded.Append((int)ch);
-					sbEncoded.Append('?');
-				}
-				else sbEncoded.Append(ch);
+				if(m_encUtf8 == null) m_encUtf8 = new UTF8Encoding(false);
+				return m_encUtf8;
 			}
-
-			return sbEncoded.ToString();
 		}
+
+		// public static string RtfPar
+		// {
+		//	// get { return (m_bRtl ? "\\rtlpar " : "\\par "); }
+		//	get { return "\\par "; }
+		// }
+
+		// /// <summary>
+		// /// Convert a string into a valid RTF string.
+		// /// </summary>
+		// /// <param name="str">Any string.</param>
+		// /// <returns>RTF-encoded string.</returns>
+		// public static string MakeRtfString(string str)
+		// {
+		//	Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
+		//	str = str.Replace("\\", "\\\\");
+		//	str = str.Replace("\r", string.Empty);
+		//	str = str.Replace("{", "\\{");
+		//	str = str.Replace("}", "\\}");
+		//	str = str.Replace("\n", StrUtil.RtfPar);
+		//	StringBuilder sbEncoded = new StringBuilder();
+		//	for(int i = 0; i < str.Length; ++i)
+		//	{
+		//		char ch = str[i];
+		//		if((int)ch >= 256)
+		//		{
+		//			sbEncoded.Append("\\u");
+		//			sbEncoded.Append((int)ch);
+		//			sbEncoded.Append('?');
+		//		}
+		//		else sbEncoded.Append(ch);
+		//	}
+		//	return sbEncoded.ToString();
+		// }
 
 		/// <summary>
 		/// Convert a string into a valid HTML sequence representing that string.
@@ -265,59 +272,52 @@ namespace KeePassLib.Utility
 			if(strArgs == null) strArgs = string.Empty;
 		}
 
-		/// <summary>
-		/// Initialize an RTF document based on given font face and size.
-		/// </summary>
-		/// <param name="sb"><c>StringBuilder</c> to put the generated RTF into.</param>
-		/// <param name="strFontFace">Face name of the font to use.</param>
-		/// <param name="fFontSize">Size of the font to use.</param>
-		public static void InitRtf(StringBuilder sb, string strFontFace, float fFontSize)
-		{
-			Debug.Assert(sb != null); if(sb == null) throw new ArgumentNullException("sb");
-			Debug.Assert(strFontFace != null); if(strFontFace == null) throw new ArgumentNullException("strFontFace");
+		// /// <summary>
+		// /// Initialize an RTF document based on given font face and size.
+		// /// </summary>
+		// /// <param name="sb"><c>StringBuilder</c> to put the generated RTF into.</param>
+		// /// <param name="strFontFace">Face name of the font to use.</param>
+		// /// <param name="fFontSize">Size of the font to use.</param>
+		// public static void InitRtf(StringBuilder sb, string strFontFace, float fFontSize)
+		// {
+		//	Debug.Assert(sb != null); if(sb == null) throw new ArgumentNullException("sb");
+		//	Debug.Assert(strFontFace != null); if(strFontFace == null) throw new ArgumentNullException("strFontFace");
+		//	sb.Append("{\\rtf1");
+		//	if(m_bRtl) sb.Append("\\fbidis");
+		//	sb.Append("\\ansi\\ansicpg");
+		//	sb.Append(Encoding.Default.CodePage);
+		//	sb.Append("\\deff0{\\fonttbl{\\f0\\fswiss MS Sans Serif;}{\\f1\\froman\\fcharset2 Symbol;}{\\f2\\fswiss ");
+		//	sb.Append(strFontFace);
+		//	sb.Append(";}{\\f3\\fswiss Arial;}}");
+		//	sb.Append("{\\colortbl\\red0\\green0\\blue0;}");
+		//	if(m_bRtl) sb.Append("\\rtldoc");
+		//	sb.Append("\\deflang1031\\pard\\plain\\f2\\cf0 ");
+		//	sb.Append("\\fs");
+		//	sb.Append((int)(fFontSize * 2));
+		//	if(m_bRtl) sb.Append("\\rtlpar\\qr\\rtlch ");
+		// }
 
-			sb.Append("{\\rtf1");
-			if(m_bRtl) sb.Append("\\fbidis");
-			sb.Append("\\ansi\\ansicpg");
-			sb.Append(Encoding.Default.CodePage);
-			sb.Append("\\deff0{\\fonttbl{\\f0\\fswiss MS Sans Serif;}{\\f1\\froman\\fcharset2 Symbol;}{\\f2\\fswiss ");
-			sb.Append(strFontFace);
-			sb.Append(";}{\\f3\\fswiss Arial;}}");
-			sb.Append("{\\colortbl\\red0\\green0\\blue0;}");
-
-			if(m_bRtl) sb.Append("\\rtldoc");
-
-			sb.Append("\\deflang1031\\pard\\plain\\f2\\cf0 ");
-			sb.Append("\\fs");
-			sb.Append((int)(fFontSize * 2));
-
-			if(m_bRtl) sb.Append("\\rtlpar\\qr\\rtlch ");
-		}
-
-		/// <summary>
-		/// Convert a simple HTML string to an RTF string.
-		/// </summary>
-		/// <param name="strHtmlString">Input HTML string.</param>
-		/// <returns>RTF string representing the HTML input string.</returns>
-		public static string SimpleHtmlToRtf(string strHtmlString)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			StrUtil.InitRtf(sb, "Microsoft Sans Serif", 8.25f);
-			sb.Append(" ");
-
-			string str = MakeRtfString(strHtmlString);
-			str = str.Replace("<b>", "\\b ");
-			str = str.Replace("</b>", "\\b0 ");
-			str = str.Replace("<i>", "\\i ");
-			str = str.Replace("</i>", "\\i0 ");
-			str = str.Replace("<u>", "\\ul ");
-			str = str.Replace("</u>", "\\ul0 ");
-			str = str.Replace("<br />", StrUtil.RtfPar);
-
-			sb.Append(str);
-			return sb.ToString();
-		}
+		// /// <summary>
+		// /// Convert a simple HTML string to an RTF string.
+		// /// </summary>
+		// /// <param name="strHtmlString">Input HTML string.</param>
+		// /// <returns>RTF string representing the HTML input string.</returns>
+		// public static string SimpleHtmlToRtf(string strHtmlString)
+		// {
+		//	StringBuilder sb = new StringBuilder();
+		//	StrUtil.InitRtf(sb, "Microsoft Sans Serif", 8.25f);
+		//	sb.Append(" ");
+		//	string str = MakeRtfString(strHtmlString);
+		//	str = str.Replace("<b>", "\\b ");
+		//	str = str.Replace("</b>", "\\b0 ");
+		//	str = str.Replace("<i>", "\\i ");
+		//	str = str.Replace("</i>", "\\i0 ");
+		//	str = str.Replace("<u>", "\\ul ");
+		//	str = str.Replace("</u>", "\\ul0 ");
+		//	str = str.Replace("<br />", StrUtil.RtfPar);
+		//	sb.Append(str);
+		//	return sb.ToString();
+		// }
 
 		/// <summary>
 		/// Convert a <c>Color</c> to a HTML color identifier string.
@@ -808,7 +808,7 @@ namespace KeePassLib.Utility
 
 			try
 			{
-				byte[] pbPlain = Encoding.UTF8.GetBytes(strPlainText);
+				byte[] pbPlain = StrUtil.Utf8.GetBytes(strPlainText);
 				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
@@ -833,7 +833,7 @@ namespace KeePassLib.Utility
 				byte[] pbPlain = ProtectedData.Unprotect(pbEnc, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
-				return Encoding.UTF8.GetString(pbPlain, 0, pbPlain.Length);
+				return StrUtil.Utf8.GetString(pbPlain, 0, pbPlain.Length);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -920,8 +920,7 @@ namespace KeePassLib.Utility
 			if(strPlain == null) { Debug.Assert(false); return string.Empty; }
 			if(strPlain.Length == 0) return string.Empty;
 
-			UTF8Encoding utf8 = new UTF8Encoding(false);
-			byte[] pb = utf8.GetBytes(strPlain);
+			byte[] pb = StrUtil.Utf8.GetBytes(strPlain);
 
 			Array.Reverse(pb);
 			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
@@ -945,12 +944,68 @@ namespace KeePassLib.Utility
 				for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
 				Array.Reverse(pb);
 
-				UTF8Encoding utf8 = new UTF8Encoding(false);
-				return utf8.GetString(pb, 0, pb.Length);
+				return StrUtil.Utf8.GetString(pb, 0, pb.Length);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return string.Empty;
+		}
+
+		/// <summary>
+		/// Split a string and include the separators in the splitted array.
+		/// </summary>
+		/// <param name="str">String to split.</param>
+		/// <param name="vSeps">Separators.</param>
+		/// <param name="bCaseSensitive">Specifies whether separators are
+		/// matched case-sensitively or not.</param>
+		/// <returns>Splitted string including separators.</returns>
+		public static List<string> SplitWithSep(string str, string[] vSeps,
+			bool bCaseSensitive)
+		{
+			if(str == null) throw new ArgumentNullException("str");
+			if(vSeps == null) throw new ArgumentNullException("vSeps");
+
+			List<string> v = new List<string>();
+			while(true)
+			{
+				int minIndex = int.MaxValue, minSep = -1;
+				for(int i = 0; i < vSeps.Length; ++i)
+				{
+					string strSep = vSeps[i];
+					if(string.IsNullOrEmpty(strSep)) { Debug.Assert(false); continue; }
+
+					int iIndex = (bCaseSensitive ? str.IndexOf(strSep) :
+						str.IndexOf(strSep, StrUtil.CaseIgnoreCmp));
+					if((iIndex >= 0) && (iIndex < minIndex))
+					{
+						minIndex = iIndex;
+						minSep = i;
+					}
+				}
+
+				if(minIndex == int.MaxValue) break;
+
+				v.Add(str.Substring(0, minIndex));
+				v.Add(vSeps[minSep]);
+
+				str = str.Substring(minIndex + vSeps[minSep].Length);
+			}
+
+			v.Add(str);
+			return v;
+		}
+
+		public static string MultiToSingleLine(string strMulti)
+		{
+			if(strMulti == null) { Debug.Assert(false); return string.Empty; }
+			if(strMulti.Length == 0) return string.Empty;
+
+			string str = strMulti;
+			str = str.Replace("\r\n", "\n");
+			str = str.Replace("\r", " ");
+			str = str.Replace("\n", " ");
+
+			return str;
 		}
 	}
 }

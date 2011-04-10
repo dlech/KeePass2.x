@@ -69,6 +69,7 @@ namespace KeePass.Native
 		internal const int VK_RMENU = 0xA5;
 		internal const int VK_LWIN = 0x5B;
 		internal const int VK_RWIN = 0x5C;
+		internal const int VK_SNAPSHOT = 0x2C;
 
 		internal const int VK_F5 = 0x74;
 		internal const int VK_F6 = 0x75;
@@ -144,6 +145,28 @@ namespace KeePass.Native
 		internal const int OFN_DONTADDTORECENT = 0x02000000;
 
 		internal const uint DWMWA_DISALLOW_PEEK = 11;
+
+		internal const uint SHGFI_DISPLAYNAME = 0x000000200;
+		internal const uint SHGFI_ICON = 0x000000100;
+		internal const uint SHGFI_TYPENAME = 0x000000400;
+		internal const uint SHGFI_SMALLICON = 0x000000001;
+
+		internal const uint MOD_ALT = 1;
+		internal const uint MOD_CONTROL = 2;
+		internal const uint MOD_SHIFT = 4;
+		internal const uint MOD_WIN = 8;
+
+		internal const int IDHOT_SNAPDESKTOP = -2;
+		internal const int IDHOT_SNAPWINDOW = -1;
+
+		internal const uint GHND = 0x0042;
+		internal const uint GMEM_MOVEABLE = 0x0002;
+		internal const uint GMEM_ZEROINIT = 0x0040;
+
+		internal const uint CF_TEXT = 1;
+		internal const uint CF_UNICODETEXT = 13;
+
+		// internal const uint DI_NORMAL = 0x0003;
 
 		// internal const int LVN_FIRST = -100;
 		// internal const int LVN_LINKCLICK = LVN_FIRST - 84;

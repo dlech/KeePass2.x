@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="author" content="Dominik Reichl" />
+
+	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+
+	<meta name="robots" content="index" />
+	<meta name="revisit-after" content="14 days" />
+
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
+	<meta name="DC.Creator" content="Dominik Reichl" />
+	<meta name="DC.Subject" content="Open-Source Password Safe" />
+	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="DC.Publisher" content="Dominik Reichl" />
+	<meta name="DC.Contributor" content="Dominik Reichl" />
+	<meta name="DC.Type" content="text" />
+	<meta name="DC.Format" content="text/html" />
+	<meta name="DC.Identifier" content="http://keepass.info/" />
+	<meta name="DC.Language" content="en" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2011 Dominik Reichl" />
+
+	<title>Placeholders - KeePass</title>
+	<base target="_self" />
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+	
+</head>
+<body>
+
+
+
+
+
+<table class="sectionsummary"><tr><td width="68px">
+<img src="../images/b64x64_chardevice.png" width="64px" height="64px"
+class="singleimg" align="left" alt="Placeholder Icon" />
+</td><td valign="middle"><h1>Placeholders</h1><br />
+KeePass supports various placeholders.
+</td></tr></table>
+
+<p>In many places in KeePass (auto-type, URL field, triggers, ...),
+placeholders can be used.</p>
+
+<ul>
+<li><a href="#entryfields">Entry Field Placeholders</a></li>
+<li><a href="#fieldrefs">Entry Field References</a></li>
+<li><a href="#envctx">Paths and Date/Time Placeholders</a></li>
+<li><a href="#envvars">Environment Variables</a></li>
+<li><a href="#plh">More Placeholders</a></li>
+</ul>
+
+
+
+
+
+
+
+
+Placeholders are case-insensitive.
+
+
+<br /><br />
+
+<br />
+
+<a name="entryfields"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
+class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field Placeholders</h2>
+
+<br />
+
+<table class="tablebox75">
+<tr><th width="50%">Field</th><th width="50%">Placeholder</th></tr>
+<tr><td width="50%">Title</td><td width="50%">{TITLE}</td></tr>
+<tr><td width="50%">User Name</td><td width="50%">{USERNAME}</td></tr>
+<tr><td width="50%">URL</td><td width="50%">{URL}</td></tr>
+<tr><td width="50%">Password</td><td width="50%">{PASSWORD}</td></tr>
+<tr><td width="50%">Notes</td><td width="50%">{NOTES}</td></tr>
+</table>
+
+<br />
+
+
+Custom strings can be referenced using <code>{S:<i>Name</i>}</code>.
+For example, if you have a custom string named &quot;eMail&quot;,
+you can use the placeholder <code>{S:eMail}</code>.
+
+
+<br />
+
+<br />
+
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
+<tr><td width="50%">{URL:RMVSCM}</td><td width="50%">Entry URL without scheme specifier.</td></tr>
+</table>
+
+
+<br /><br />
+
+<a name="fieldrefs"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
+class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field References</h2>
+
+<p>Fields of <i>other</i> entries can be inserted using
+<a href="fieldrefs.html">Field References</a>.</p>
+
+<br />
+
+<a name="envctx"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
+class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholders</h2>
+
+<br />
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
+<tr><td width="50%">{INTERNETEXPLORER}</td><td width="50%">Path of Internet Explorer, if installed.</td></tr>
+<tr><td width="50%">{FIREFOX}</td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
+<tr><td width="50%">{OPERA}</td><td width="50%">Path of Opera, if installed.</td></tr>
+<tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome, if installed.</td></tr>
+</table>
+
+<br />
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
+<tr><td width="50%">{APPDIR}</td><td width="50%">KeePass application directory path.</td></tr>
+</table>
+
+<br />
+
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
+<tr><td width="50%">{GROUP}</td><td width="50%">Name of the entry's parent group.</td></tr>
+<tr><td width="50%">{GROUPPATH}</td><td width="50%">Full group path of the entry.</td></tr>
+<tr><td width="50%">{DB_PATH}</td><td width="50%">Full path of the current database.</td></tr>
+<tr><td width="50%">{DB_DIR}</td><td width="50%">Directory of the current database.</td></tr>
+<tr><td width="50%">{DB_NAME}</td><td width="50%">File name (including extension) of the current database.</td></tr>
+<tr><td width="50%">{DB_BASENAME}</td><td width="50%">File name (excluding extension) of the current database.</td></tr>
+<tr><td width="50%">{DB_EXT}</td><td width="50%">File name extension of the current database.</td></tr>
+<tr><td width="50%">{ENV_DIRSEP}</td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
+<tr><td width="50%">{DT_SIMPLE}</td><td width="50%">Current local date/time as a simple, sortable string.</td></tr>
+<tr><td width="50%">{DT_YEAR}</td><td width="50%">Year component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_MONTH}</td><td width="50%">Month component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_DAY}</td><td width="50%">Day component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_HOUR}</td><td width="50%">Hour component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_MINUTE}</td><td width="50%">Minute component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_SECOND}</td><td width="50%">Seconds component of the current local date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_SIMPLE}</td><td width="50%">Current UTC date/time as a simple, sortable string.</td></tr>
+<tr><td width="50%">{DT_UTC_YEAR}</td><td width="50%">Year component of the current UTC date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_MONTH}</td><td width="50%">Month component of the current UTC date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_DAY}</td><td width="50%">Day component of the current UTC date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_HOUR}</td><td width="50%">Hour component of the current UTC date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_MINUTE}</td><td width="50%">Minute component of the current UTC date/time.</td></tr>
+<tr><td width="50%">{DT_UTC_SECOND}</td><td width="50%">Seconds component of the current UTC date/time.</td></tr>
+</table>
+
+
+<br /><br />
+
+<a name="envvars"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
+class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Environment Variables</h2>
+
+<p>System environment variables are supported.
+The name of the variable must be enclosed in '<code>%</code>' characters.
+For example <code>%TEMP%</code> is replaced by the user's temporary path.</p>
+
+<br />
+
+<a name="plh"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
+class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Other Placeholders</h2>
+
+<br />
+
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Action</th></tr>
+<!-- <tr><td width="50%">{PICKPASSWORDCHARS}<br />
+{PICKPASSWORDCHARS<i>n</i>:<i>k</i>}</td><td width="50%">Shows a dialog to pick certain characters from the password.
+See <a href="#pickpasswordchars">below</a>.</td></tr> -->
+<tr><td width="50%">{PICKCHARS}<br />
+{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</td><td width="50%">Shows a dialog to pick certain characters from an entry string.
+See <a href="#pickchars">below</a>.</td></tr>
+<tr><td width="50%">{NEWPASSWORD}</td><td width="50%">Generates a new password.
+See <a href="#newpassword">below</a>.</td></tr>
+<tr><td width="50%">{PASSWORD_ENC}</td><td width="50%">Password in encrypted form.
+See <a href="#passwordenc">below</a>.</td></tr>
+<tr><td width="50%">{HMACOTP}</td><td width="50%">Generates a one-time password.
+See <a href="#hmacotp">below</a>.</td></tr>
+</table>
+
+
+<!-- <a name="pickpasswordchars"></a>
+<b>Picking Password Characters:</b><br />
+The password character picking dialog can be invoked multiple times in one
+auto-typing sequence. Use <code>{PICKPASSWORDCHARS}</code> first, then append
+numbers starting with 2, i.e. <code>{PICKPASSWORDCHARS2}</code>,
+<code>{PICKPASSWORDCHARS3}</code>, etc.<br />
+<br />
+In KeePass &ge; 2.08, you can additionally specify the number of characters
+to pick. To do this, append <code>:k</code> in the placeholder, where
+<code>k</code> is the number of characters. For example,
+<code>{PICKPASSWORDCHARS2:5}</code> is a placeholder with ID 2 and will
+allow to pick 5 characters. Advantage of predefining the number of characters:
+when enough characters have been picked, the dialog closes automatically,
+i.e. you don't need to click [OK] anymore. -->
+
+<br /><br />
+
+<a name="pickchars"></a>
+
+<b><code>{PICKCHARS}</code> &#8211; Picking Characters:</b><br />
+<a href="http://keepass.info/screenshots/windows_vista/pickchars_big.png"
+target="_blank"><img src="../../screenshots/windows_vista/pickchars.png"
+align="right" alt="Character Picking Dialog" /></a>
+In KeePass &ge; 2.15,
+the <code>{PICKCHARS}</code> placeholder shows a dialog, in which you can
+pick characters of an entry string (like the password) at certain positions.<br />
+<br />
+<code>{PICKCHARS}</code> without any parameters lets you pick an arbitrary
+amount of characters from the password of the entry.
+A different entry string can be specified by appending a '<code>:</code>'
+and the name of the field; e.g. <code>{PICKCHARS:UserName}</code>.
+The names of the standard fields are <i>Title</i>, <i>UserName</i> (without a space),
+<i>Password</i>, <i>URL</i> and <i>Notes</i>. A custom entry string can
+be referenced by its name (without an <code>S:</code> prefix).<br />
+<br />
+Additionally, the placeholder supports various (optional!) options. Options are appended
+after the field name, separated by a '<code>:</code>'. If you want to specify
+multiple options, separate them by a comma '<code>,</code>'. Options are
+key-value pairs, separated by a '<code>=</code>'. The following options
+are supported:
+<ul>
+<li><b>ID</b>: Specifies an alphanumeric ID for the placeholder (see below).</li>
+<li><b>C</b> or <b>Count</b>: Specifies the number of characters to pick from
+the string. When enough characters have been picked,
+the dialog closes automatically (i.e. you don't need to manually click [OK]
+anymore).</li>
+<li><b>Hide</b>: If set to <i>False</i>, the picked characters in the dialog
+are shown as plain text by default, i.e. not hidden by asterisks.
+By default, KeePass uses the hiding setting of passwords in the main window.</li>
+<li><b>Conv</b>: Specifies how to convert the picked characters.
+When this parameter is omitted, no conversion is performed, i.e. the selected
+characters are auto-typed directly. The option supports the following values:
+<ul>
+<li><b>D</b>: Convert the picked characters to down arrow keypresses; e.g.
+'2', 'c' and 'C' are converted to 2 down arrow keypresses.<br />
+<br />
+A fixed number of
+down arrow keypresses can be added by specifying them using the <b>Conv-Offset</b>
+option. For example, if you specify <code>Conv=D, Conv-Offset=1</code>, '2', 'c' and 'C'
+are converted to 3 down arrow keypresses.<br />
+<br />
+By using the <b>Conv-Fmt</b> option, you can specify the layout of comboboxes.
+By default, KeePass assumes a combobox containing values from 0 to 9 <i>or</i> from A to Z.
+If the combobox contains values 0-9A-Z (i.e. first all ten digits, immediately followed
+by all characters from A to Z), specify <code>Conv=D, Conv-Fmt=0A</code>.
+Similarly, if it contains values A-Z0-9, specify <code>Conv=D, Conv-Fmt=A0</code>.
+If digits start with 1 instead of 0 (i.e. the 0 appears after the 9), use
+<code>1A</code> and <code>A1</code> instead of <code>0A</code> and <code>A0</code>.</li>
+</ul></li>
+</ul>
+If you want to show the character picking dialog multiple times within one sequence,
+assign different IDs to the placeholders.
+If an ID is specified multiple times (or no ID is specified
+and the placeholders are the same),
+KeePass shows the character picking dialog once and reuses the picked characters
+in all following placeholders with the same ID.<br />
+<br />
+Usage examples:<br />
+<br />
+<code>{USERNAME}{TAB}{PICKCHARS:Password:C=5}{ENTER}</code><br />
+Types the user name, presses Tab, allows the user to pick exactly 5 characters
+from the entry password, types these 5 characters, and presses Enter.<br />
+<br />
+<a href="http://keepass.info/screenshots/windows_vista/comboboxform_big.png"
+target="_blank"><img src="../../screenshots/windows_vista/comboboxform.png"
+align="right" alt="ComboBox Form" /></a>
+<code>{S:Memorable}{TAB}{PICKCHARS:Password:ID=1, C=1, Conv=D,
+Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=2, C=1, Conv=D,
+Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=3, C=1, Conv=D,
+Conv-Offset=1}{ENTER}</code><br />
+This first types the contents of a custom entry string named &quot;Memorable&quot;,
+and presses Tab. Then the character picking dialog allows to pick exactly
+one character from the password, and this character is converted to
+down arrow keypresses (with one additional keypress, e.g. a '1' is converted
+to two down arrow keypresses), and the focus is switched to the next control
+by pressing Tab. This is repeated two more times
+(the IDs are different, thus the dialog is shown two more times).<br />
+<br />
+Note this is not equivalent to picking three characters at once.
+If you'd use <code>{S:Memorable}{TAB}{PICKCHARS:Password:C=3, Conv=D, Conv-Offset=1}</code>,
+all the down arrow keypresses are sent to the same, currently active control.<br />
+<br />
+In some browsers (e.g. Opera), setting the focus to a combobox can
+be slow. If you experience auto-type failures, consider slowing down
+the focus changes, e.g. by adding <code>{DELAY 250}</code> after each <code>{TAB}</code>,
+or slowing down the whole sequence, e.g. by prepending <code>{DELAY=150}</code>.
+
+
+<br /><br />
+
+<a name="newpassword"></a>
+
+<b><code>{NEWPASSWORD}</code> &#8211; Generating new passwords:</b><br />
+The <code>{NEWPASSWORD}</code> placeholder
+generates a new password for the current entry, based on the &quot;Automatically
+generated passwords for new entries&quot; generator profile.<br />
+<br />
+This placeholder is replaced once in an auto-type process, i.e.
+for a typical 'Old Password'-'New Password'-'Repeat New Password'
+dialog you can use
+<code>{PASSWORD}{TAB}{NEWPASSWORD}{TAB}{NEWPASSWORD}{ENTER}</code>
+as auto-type sequence.
+
+
+<br /><br />
+
+<a name="passwordenc"></a>
+
+<b><code>{PASSWORD_ENC}</code> &#8211; Encrypting passwords:</b><br />
+The <code>{PASSWORD_ENC}</code> placeholder is replaced by the password
+of the current entry in encrypted form. The password is encrypted using
+credentials of the current Windows user. The encrypted password should
+not be stored and only works for the current user.<br />
+<br />
+It is intended to be used in conjunction with the
+<code>-pw-enc</code> <a href="cmdline.html">command line</a> parameter
+(see the <a href="autourl.html">URL Field Capabilities</a> page for
+an example how to define an URL to open an additional KeePass database).
+The placeholder cannot be used to transfer passwords to other applications
+(except KeePass), because the target applications don't know how to decrypt
+encrypted passwords generated by <code>{PASSWORD_ENC}</code>.
+
+
+<br /><br />
+
+<a name="hmacotp"></a>
+
+<b><code>{HMACOTP}</code> &#8211; Generating one-time passwords:</b><br />
+The <code>{HMACOTP}</code> placeholder
+generates a HMAC-based one-time password as specified in RFC 4226.
+The shared secret is the UTF-8 representation of the value of the
+'<code>HmacOtp-Secret</code>' custom entry string field
+(case-sensitive), and
+the counter is stored in decimal form in the '<code>HmacOtp-Counter</code>' field.
+
+
+</body></html>
+

@@ -157,8 +157,9 @@ namespace KeePassLib.Serialization
 			WriteHeaderField(bw, Kdb4HeaderFieldID.CipherID,
 				m_pwDatabase.DataCipherUuid.UuidBytes);
 
-			uint uCprID = (uint)m_pwDatabase.Compression;
-			WriteHeaderField(bw, Kdb4HeaderFieldID.CompressionFlags, MemUtil.UInt32ToBytes(uCprID));
+			int nCprID = (int)m_pwDatabase.Compression;
+			WriteHeaderField(bw, Kdb4HeaderFieldID.CompressionFlags,
+				MemUtil.UInt32ToBytes((uint)nCprID));
 
 			WriteHeaderField(bw, Kdb4HeaderFieldID.MasterSeed, m_pbMasterSeed);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.TransformSeed, m_pbTransformSeed);
@@ -167,8 +168,9 @@ namespace KeePassLib.Serialization
 			WriteHeaderField(bw, Kdb4HeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
 			WriteHeaderField(bw, Kdb4HeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
 
-			uint uIrsID = (uint)m_craInnerRandomStream;
-			WriteHeaderField(bw, Kdb4HeaderFieldID.InnerRandomStreamID, MemUtil.UInt32ToBytes(uIrsID));
+			int nIrsID = (int)m_craInnerRandomStream;
+			WriteHeaderField(bw, Kdb4HeaderFieldID.InnerRandomStreamID,
+				MemUtil.UInt32ToBytes((uint)nIrsID));
 
 			WriteHeaderField(bw, Kdb4HeaderFieldID.EndOfHeader, new byte[]{ (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
 			bw.Flush();
@@ -233,6 +235,8 @@ namespace KeePassLib.Serialization
 
 			uint uNumGroups, uNumEntries, uCurEntry = 0;
 			pgRoot.GetCounts(true, out uNumGroups, out uNumEntries);
+
+			BinPoolBuild(pgRoot);
 
 			m_xmlWriter.Formatting = Formatting.Indented;
 			m_xmlWriter.IndentChar = '\t';
@@ -317,6 +321,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemDbDefaultUser, m_pwDatabase.DefaultUserName, true);
 			WriteObject(ElemDbDefaultUserChanged, m_pwDatabase.DefaultUserNameChanged);
 			WriteObject(ElemDbMntncHistoryDays, m_pwDatabase.MaintenanceHistoryDays);
+			WriteObject(ElemDbColor, StrUtil.ColorToUnnamedHtml(m_pwDatabase.Color, true), false);
 			WriteObject(ElemDbKeyChanged, m_pwDatabase.MasterKeyChanged);
 			WriteObject(ElemDbKeyChangeRec, m_pwDatabase.MasterKeyChangeRec);
 			WriteObject(ElemDbKeyChangeForce, m_pwDatabase.MasterKeyChangeForce);
@@ -330,10 +335,13 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemRecycleBinChanged, m_pwDatabase.RecycleBinChanged);
 			WriteObject(ElemEntryTemplatesGroup, m_pwDatabase.EntryTemplatesGroup);
 			WriteObject(ElemEntryTemplatesGroupChanged, m_pwDatabase.EntryTemplatesGroupChanged);
+			WriteObject(ElemHistoryMaxItems, m_pwDatabase.HistoryMaxItems);
+			WriteObject(ElemHistoryMaxSize, m_pwDatabase.HistoryMaxSize);
 
 			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
 			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
 
+			WriteBinPool();
 			WriteList(ElemCustomData, m_pwDatabase.CustomData);
 
 			m_xmlWriter.WriteEndElement();
@@ -345,7 +353,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUuid, pg.Uuid);
 			WriteObject(ElemName, pg.Name, true);
 			WriteObject(ElemNotes, pg.Notes, true);
-			WriteObject(ElemIcon, (uint)pg.IconId);
+			WriteObject(ElemIcon, (int)pg.IconId);
 			
 			if(pg.CustomIconUuid != PwUuid.Zero)
 				WriteObject(ElemCustomIconID, pg.CustomIconUuid);
@@ -370,7 +378,7 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(ElemEntry);
 
 			WriteObject(ElemUuid, pe.Uuid);
-			WriteObject(ElemIcon, (uint)pe.IconId);
+			WriteObject(ElemIcon, (int)pe.IconId);
 			
 			if(pe.CustomIconUuid != PwUuid.Zero)
 				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
@@ -407,7 +415,7 @@ namespace KeePassLib.Serialization
 			if(dictBinaries == null) throw new ArgumentNullException("dictBinaries");
 
 			foreach(KeyValuePair<string, ProtectedBinary> kvp in dictBinaries)
-				WriteObject(kvp.Key, kvp.Value);
+				WriteObject(kvp.Key, kvp.Value, true);
 		}
 
 		private void WriteList(string name, AutoTypeConfig dictAutoType)
@@ -419,7 +427,7 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(name);
 
 			WriteObject(ElemAutoTypeEnabled, dictAutoType.Enabled);
-			WriteObject(ElemAutoTypeObfuscation, (uint)dictAutoType.ObfuscationOptions);
+			WriteObject(ElemAutoTypeObfuscation, (int)dictAutoType.ObfuscationOptions);
 
 			if(dictAutoType.DefaultSequence.Length > 0)
 				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence, true);
@@ -555,6 +563,15 @@ namespace KeePassLib.Serialization
 			WriteObject(name, Convert.ToBase64String(value.UuidBytes), false);
 		}
 
+		private void WriteObject(string name, int value)
+		{
+			Debug.Assert(name != null);
+
+			m_xmlWriter.WriteStartElement(name);
+			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteEndElement();
+		}
+
 		private void WriteObject(string name, uint value)
 		{
 			Debug.Assert(name != null);
@@ -685,7 +702,7 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement(); // ElemString
 		}
 
-		private void WriteObject(string name, ProtectedBinary value)
+		private void WriteObject(string name, ProtectedBinary value, bool bAllowRef)
 		{
 			Debug.Assert(name != null);
 			Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
@@ -696,7 +713,20 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
-			if((value.IsProtected) && (m_format != Kdb4Format.PlainXml))
+			string strRef = (bAllowRef ? BinPoolFind(value) : null);
+			if(strRef != null)
+			{
+				m_xmlWriter.WriteAttributeString(AttrRef, strRef);
+			}
+			else SubWriteValue(value);
+
+			m_xmlWriter.WriteEndElement(); // ElemValue
+			m_xmlWriter.WriteEndElement(); // ElemBinary
+		}
+
+		private void SubWriteValue(ProtectedBinary value)
+		{
+			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -706,12 +736,20 @@ namespace KeePassLib.Serialization
 			}
 			else
 			{
-				byte[] pbRaw = value.ReadData();
-				m_xmlWriter.WriteBase64(pbRaw, 0, pbRaw.Length);
-			}
+				if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
+				{
+					m_xmlWriter.WriteAttributeString(AttrCompressed, ValTrue);
 
-			m_xmlWriter.WriteEndElement(); // ElemValue
-			m_xmlWriter.WriteEndElement(); // ElemBinary
+					byte[] pbRaw = value.ReadData();
+					byte[] pbCmp = MemUtil.Compress(pbRaw);
+					m_xmlWriter.WriteBase64(pbCmp, 0, pbCmp.Length);
+				}
+				else
+				{
+					byte[] pbRaw = value.ReadData();
+					m_xmlWriter.WriteBase64(pbRaw, 0, pbRaw.Length);
+				}
+			}
 		}
 
 		private void WriteObject(string name, PwDeletedObject value)
@@ -722,6 +760,21 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(name);
 			WriteObject(ElemUuid, value.Uuid);
 			WriteObject(ElemDeletionTime, value.DeletionTime);
+			m_xmlWriter.WriteEndElement();
+		}
+
+		private void WriteBinPool()
+		{
+			m_xmlWriter.WriteStartElement(ElemBinaries);
+
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_dictBinPool)
+			{
+				m_xmlWriter.WriteStartElement(ElemBinary);
+				m_xmlWriter.WriteAttributeString(AttrId, kvp.Key);
+				SubWriteValue(kvp.Value);
+				m_xmlWriter.WriteEndElement();
+			}
+
 			m_xmlWriter.WriteEndElement();
 		}
 

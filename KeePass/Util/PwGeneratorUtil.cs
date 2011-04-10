@@ -23,6 +23,7 @@ using System.Text;
 using System.Diagnostics;
 
 using KeePass.App;
+using KeePass.Resources;
 
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Utility;
@@ -39,10 +40,12 @@ namespace KeePass.Util
 		{
 			if(Program.Config.PasswordGenerator.UserProfiles.Count > 0) return;
 
-			AddStdPattern("Random MAC Address", @"HH\-HH\-HH\-HH\-HH\-HH");
-			AddStdPattern("40-bit Hex Key", @"h{10}");
-			AddStdPattern("128-bit Hex Key", @"h{32}");
-			AddStdPattern("256-bit Hex Key", @"h{64}");
+			AddStdPattern(KPRes.RandomMacAddress, @"HH\-HH\-HH\-HH\-HH\-HH");
+
+			string strHex = KPRes.HexKey;
+			AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"h{10}");
+			AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"h{32}");
+			AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"h{64}");
 		}
 
 		private static void AddStdPattern(string strName, string strPattern)

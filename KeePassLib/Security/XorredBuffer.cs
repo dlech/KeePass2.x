@@ -29,8 +29,8 @@ namespace KeePassLib.Security
 	/// </summary>
 	public sealed class XorredBuffer
 	{
-		private byte[] m_pbData = new byte[0];
-		private byte[] m_pbXorPad = new byte[0];
+		private byte[] m_pbData = new byte[0]; // Never null
+		private byte[] m_pbXorPad = new byte[0]; // Never null
 
 		/// <summary>
 		/// Length of the protected data in bytes.
@@ -67,7 +67,7 @@ namespace KeePassLib.Security
 
 		private void Decrypt()
 		{
-			Debug.Assert((m_pbData.Length == m_pbXorPad.Length) || (m_pbData.Length == 0));
+			Debug.Assert((m_pbData.Length == m_pbXorPad.Length) || (m_pbXorPad.Length == 0));
 
 			if(m_pbData.Length == m_pbXorPad.Length)
 			{
@@ -126,6 +126,50 @@ namespace KeePassLib.Security
 			return m_pbData;
 		}
 
+		public bool EqualsValue(XorredBuffer xb)
+		{
+			if(xb == null) { Debug.Assert(false); throw new ArgumentNullException("xb"); }
+
+			if(xb.m_pbData.Length != m_pbData.Length) return false;
+
+			bool bDecThis = (m_pbData.Length == m_pbXorPad.Length);
+			bool bDecOther = (xb.m_pbData.Length == xb.m_pbXorPad.Length);
+			for(int i = 0; i < m_pbData.Length; ++i)
+			{
+				byte bt1 = m_pbData[i];
+				if(bDecThis) bt1 ^= m_pbXorPad[i];
+
+				byte bt2 = xb.m_pbData[i];
+				if(bDecOther) bt2 ^= xb.m_pbXorPad[i];
+
+				if(bt1 != bt2) return false;
+			}
+
+			return true;
+		}
+
+		public bool EqualsValue(byte[] pb)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+
+			if(pb.Length != m_pbData.Length) return false;
+
+			if(m_pbData.Length == m_pbXorPad.Length)
+			{
+				for(int i = 0; i < m_pbData.Length; ++i)
+				{
+					if((byte)(m_pbData[i] ^ m_pbXorPad[i]) != pb[i]) return false;
+				}
+				return true;
+			}
+
+			for(int i = 0; i < m_pbData.Length; ++i)
+			{
+				if(m_pbData[i] != pb[i]) return false;
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// XOR all bytes in a data buffer with a pad. Both byte arrays must
 		/// be of the same size.
@@ -136,6 +180,7 @@ namespace KeePassLib.Security
 		/// parameters is <c>null</c>.</exception>
 		/// <exception cref="System.ArgumentException">Thrown if the length of
 		/// the data array and the pad aren't equal.</exception>
+		[Obsolete("Use MemUtil.XorArray instead.")]
 		public static void XorArrays(byte[] pbData, byte[] pbPad)
 		{
 			Debug.Assert(pbData != null); if(pbData == null) throw new ArgumentNullException("pbData");

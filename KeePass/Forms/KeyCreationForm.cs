@@ -277,7 +277,7 @@ namespace KeePass.Forms
 		{
 			EnableUserControls();
 
-			if(m_cbPassword.Checked) m_tbPassword.Focus();
+			if(m_cbPassword.Checked) UIUtil.SetFocus(m_tbPassword, this);
 		}
 
 		private void OnCheckedKeyFile(object sender, EventArgs e)
@@ -295,7 +295,7 @@ namespace KeePass.Forms
 			}
 
 			SetHidePassword(bHide, false);
-			m_tbPassword.Focus();
+			UIUtil.SetFocus(m_tbPassword, this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -347,6 +347,7 @@ namespace KeePass.Forms
 						MessageService.ShowWarning(exKC);
 					}
 				}
+				UIUtil.DestroyForm(dlg);
 			}
 
 			EnableUserControls();

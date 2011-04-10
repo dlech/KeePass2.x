@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -115,8 +116,11 @@ namespace KeePassLib.Utility
 
 				string strAppend = null;
 
-				Exception exObj = obj as Exception;
-				string strObj = obj as string;
+				Exception exObj = (obj as Exception);
+				string strObj = (obj as string);
+#if !KeePassLibSD
+				StringCollection scObj = (obj as StringCollection);
+#endif
 
 				if(exObj != null)
 				{
@@ -125,6 +129,18 @@ namespace KeePassLib.Utility
 					else if((exObj.Message != null) && (exObj.Message.Length > 0))
 						strAppend = exObj.Message;
 				}
+#if !KeePassLibSD
+				else if(scObj != null)
+				{
+					StringBuilder sb = new StringBuilder();
+					foreach(string strCollLine in scObj)
+					{
+						if(sb.Length > 0) sb.AppendLine();
+						sb.Append(strCollLine.TrimEnd());
+					}
+					strAppend = sb.ToString();
+				}
+#endif
 				else if(strObj != null)
 					strAppend = strObj;
 				else
@@ -223,10 +239,20 @@ namespace KeePassLib.Utility
 
 		public static void ShowWarning(params object[] vLines)
 		{
+			ShowWarningPriv(vLines, false);
+		}
+
+		internal static void ShowWarningExcp(params object[] vLines)
+		{
+			ShowWarningPriv(vLines, true);
+		}
+
+		private static void ShowWarningPriv(object[] vLines, bool bFullExceptions)
+		{
 			++m_uCurrentMessageCount;
 
 			string strTitle = PwDefs.ShortProductName;
-			string strText = ObjectsToMessage(vLines);
+			string strText = ObjectsToMessage(vLines, bFullExceptions);
 
 			if(MessageService.MessageShowing != null)
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(

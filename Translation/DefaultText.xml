@@ -64,6 +64,9 @@
 		<Data Name="Arguments">
 			<Value>Arguments</Value>
 		</Data>
+		<Data Name="Ascending">
+			<Value>&amp;Ascending</Value>
+		</Data>
 		<Data Name="AskContinue">
 			<Value>Do you want to continue?</Value>
 		</Data>
@@ -123,6 +126,9 @@
 		</Data>
 		<Data Name="AutoType">
 			<Value>Auto-Type</Value>
+		</Data>
+		<Data Name="AutoTypeCancelOnWindowChange">
+			<Value>Cancel auto-type when the target window changes</Value>
 		</Data>
 		<Data Name="AutoTypeEntrySelection">
 			<Value>Auto-Type Entry Selection</Value>
@@ -210,6 +216,9 @@
 		</Data>
 		<Data Name="ChkForUpdNewVersion">
 			<Value>New KeePass version available!</Value>
+		</Data>
+		<Data Name="ClearKeyCmdLineParams">
+			<Value>Clear master key command line parameters after using them once</Value>
 		</Data>
 		<Data Name="ClearMru">
 			<Value>&amp;Clear List</Value>
@@ -433,6 +442,9 @@
 		<Data Name="DeleteGroupQuestion">
 			<Value>Are you sure you want to permanently delete the selected group?</Value>
 		</Data>
+		<Data Name="Descending">
+			<Value>&amp;Descending</Value>
+		</Data>
 		<Data Name="Description">
 			<Value>Description</Value>
 		</Data>
@@ -519,6 +531,9 @@
 		</Data>
 		<Data Name="EnterCompositeKey">
 			<Value>Enter Master Key</Value>
+		</Data>
+		<Data Name="EnterCurrentCompositeKey">
+			<Value>Enter Current Master Key</Value>
 		</Data>
 		<Data Name="EntropyDesc">
 			<Value>Generate additional random bits.</Value>
@@ -808,6 +823,9 @@
 		<Data Name="HelpSourceSelectionDesc">
 			<Value>Choose between local help and online help center.</Value>
 		</Data>
+		<Data Name="HexKey">
+			<Value>{PARAM}-Bit Hex Key</Value>
+		</Data>
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
 		</Data>
@@ -958,6 +976,12 @@
 		<Data Name="KeyFileUseExisting">
 			<Value>Use an existing file as key file</Value>
 		</Data>
+		<Data Name="KeyProvWithGuiOnSD">
+			<Value>The selected key provider cannot be used, because it might try to show a dialog and this isn't allowed on a secure desktop.</Value>
+		</Data>
+		<Data Name="KeyProvWithGuiOnSDHint">
+			<Value>If you want to use the selected key provider, you have to disable the secure desktop option in 'Tools' -&gt; 'Options' -&gt; tab 'Security'.</Value>
+		</Data>
 		<Data Name="KeystrokeSequence">
 			<Value>Keystroke Sequence</Value>
 		</Data>
@@ -1014,6 +1038,9 @@
 		</Data>
 		<Data Name="MasterKeyChangeRec">
 			<Value>The master key for this database has been used for quite a while and it is recommended to change it now.</Value>
+		</Data>
+		<Data Name="MasterKeyOnSecureDesktop">
+			<Value>Enter master key on secure desktop</Value>
 		</Data>
 		<Data Name="MasterPasswordMinLengthFailed">
 			<Value>The master password must be at least {PARAM} characters long!</Value>
@@ -1084,8 +1111,14 @@
 		<Data Name="NoKeyFileSpecifiedMeta">
 			<Value>(None)</Value>
 		</Data>
+		<Data Name="NoKeyRepeat">
+			<Value>No Key Repeat</Value>
+		</Data>
 		<Data Name="None">
 			<Value>None</Value>
+		</Data>
+		<Data Name="NoSort">
+			<Value>&amp;No Sort</Value>
 		</Data>
 		<Data Name="Not">
 			<Value>Not</Value>
@@ -1113,6 +1146,12 @@
 		</Data>
 		<Data Name="On">
 			<Value>On</Value>
+		</Data>
+		<Data Name="OpenCmd">
+			<Value>&amp;Open</Value>
+		</Data>
+		<Data Name="OpenDatabase">
+			<Value>Open Database</Value>
 		</Data>
 		<Data Name="OpenDatabaseFile">
 			<Value>Open Database File</Value>
@@ -1167,6 +1206,9 @@
 		</Data>
 		<Data Name="PasswordRepeatFailed">
 			<Value>Password and repeated password aren't identical!</Value>
+		</Data>
+		<Data Name="PasswordRepeatHint">
+			<Value>Repeat the password to prevent typing errors.</Value>
 		</Data>
 		<Data Name="Paste">
 			<Value>Paste</Value>
@@ -1225,6 +1267,9 @@
 		<Data Name="PolicyChangeMasterKey">
 			<Value>Allow changing the master key of a database.</Value>
 		</Data>
+		<Data Name="PolicyChangeMasterKeyNoKeyDesc">
+			<Value>Do not require entering current master key before changing it.</Value>
+		</Data>
 		<Data Name="PolicyClipboardDesc">
 			<Value>Allow copying entry information to clipboard (main window only).</Value>
 		</Data>
@@ -1239,6 +1284,9 @@
 		</Data>
 		<Data Name="PolicyExportDesc">
 			<Value>Allow exporting entries to (non-encrypted) file formats.</Value>
+		</Data>
+		<Data Name="PolicyExportNoKeyDesc">
+			<Value>Do not require entering current master key before exporting.</Value>
 		</Data>
 		<Data Name="PolicyImportDesc">
 			<Value>Allow importing entries from external files.</Value>
@@ -1275,6 +1323,9 @@
 		</Data>
 		<Data Name="QuickSearchInPasswords">
 			<Value>Search for passwords in quick searches (toolbar)</Value>
+		</Data>
+		<Data Name="RandomMacAddress">
+			<Value>Random MAC Address</Value>
 		</Data>
 		<Data Name="Ready">
 			<Value>Ready.</Value>
@@ -1314,6 +1365,9 @@
 		</Data>
 		<Data Name="SaveBeforeCloseTitle">
 			<Value>KeePass - Save Before Close/Lock?</Value>
+		</Data>
+		<Data Name="SaveCmd">
+			<Value>&amp;Save</Value>
 		</Data>
 		<Data Name="SaveDatabase">
 			<Value>Save Database</Value>
@@ -1359,6 +1413,9 @@
 		</Data>
 		<Data Name="SearchTitle">
 			<Value>Find</Value>
+		</Data>
+		<Data Name="SecDeskFileDialogHint">
+			<Value>Note: KeePass shows this simple file browser dialog, because standard Windows file dialogs cannot be shown on the secure desktop for security reasons.</Value>
 		</Data>
 		<Data Name="SelectAll">
 			<Value>Select All</Value>
@@ -1431,6 +1488,9 @@
 		</Data>
 		<Data Name="Strikeout">
 			<Value>Strikeout</Value>
+		</Data>
+		<Data Name="String">
+			<Value>String</Value>
 		</Data>
 		<Data Name="Success">
 			<Value>Success.</Value>
@@ -1573,6 +1633,9 @@
 		<Data Name="UnhidePasswordsDesc">
 			<Value>Allow displaying passwords as plain text.</Value>
 		</Data>
+		<Data Name="UnhideSourceCharactersToo">
+			<Value>Unhide button also unhides source characters</Value>
+		</Data>
 		<Data Name="Unknown">
 			<Value>Unknown</Value>
 		</Data>
@@ -1629,6 +1692,9 @@
 		</Data>
 		<Data Name="Uuid">
 			<Value>UUID</Value>
+		</Data>
+		<Data Name="ValidationFailed">
+			<Value>Validation failed</Value>
 		</Data>
 		<Data Name="Value">
 			<Value>Value</Value>

@@ -96,13 +96,14 @@ namespace KeePass.Forms
 
 				foreach(string strPreDef in m_vSelectable)
 					m_cmbEdit.Items.Add(strPreDef);
+
+				UIUtil.EnableAutoCompletion(m_cmbEdit, false);
 			}
 
 			cFocus.Text = m_strDefaultText;
 
 			this.Invalidate();
-			try { this.ActiveControl = cFocus; cFocus.Focus(); }
-			catch(Exception) { }
+			UIUtil.SetFocus(cFocus, this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

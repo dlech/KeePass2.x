@@ -26,7 +26,7 @@ using KeePassLib.Interfaces;
 namespace KeePassLib.Collections
 {
 	[Flags]
-	public enum AutoTypeObfuscationOptions : uint
+	public enum AutoTypeObfuscationOptions
 	{
 		None = 0,
 		UseClipboard = 1

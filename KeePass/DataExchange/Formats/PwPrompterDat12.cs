@@ -27,6 +27,7 @@ using System.Diagnostics;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -58,9 +59,10 @@ namespace KeePass.DataExchange.Formats
 			dlg.InitEx(KPRes.Password, KPRes.Import + ": " + this.FormatName,
 				KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
 				string.Empty, null);
-			if(dlg.ShowDialog() != DialogResult.OK) return;
-
+			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
 			string strPassword = dlg.ResultString;
+			UIUtil.DestroyForm(dlg);
+
 			byte[] pbPassword = Encoding.Default.GetBytes(strPassword);
 
 			BinaryReader br = new BinaryReader(sInput, Encoding.Default);

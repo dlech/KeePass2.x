@@ -527,12 +527,28 @@ namespace KeePassLib
 		/// Create a backup of this entry. The backup item doesn't contain any
 		/// history items.
 		/// </summary>
+		[Obsolete]
 		public void CreateBackup()
+		{
+			CreateBackup(null);
+		}
+
+		/// <summary>
+		/// Create a backup of this entry. The backup item doesn't contain any
+		/// history items.
+		/// <param name="pwHistMntcSettings">If this parameter isn't <c>null</c>,
+		/// the history list is maintained automatically (i.e. old backups are
+		/// deleted if there are too many or the history size is too large).
+		/// This parameter may be <c>null</c> (no maintenance then).</param>
+		/// </summary>
+		public void CreateBackup(PwDatabase pwHistMntcSettings)
 		{
 			PwEntry peCopy = CloneDeep();
 			peCopy.History = new PwObjectList<PwEntry>(); // Remove history
 
 			m_listHistory.Add(peCopy); // Must be added at end, see EqualsEntry
+
+			if(pwHistMntcSettings != null) MaintainBackups(pwHistMntcSettings);
 		}
 
 		/// <summary>
@@ -540,7 +556,22 @@ namespace KeePassLib
 		/// </summary>
 		/// <param name="uBackupIndex">Index of the backup item, to which
 		/// should be reverted.</param>
+		[Obsolete]
 		public void RestoreFromBackup(uint uBackupIndex)
+		{
+			RestoreFromBackup(uBackupIndex, null);
+		}
+
+		/// <summary>
+		/// Restore an entry snapshot from backups.
+		/// </summary>
+		/// <param name="uBackupIndex">Index of the backup item, to which
+		/// should be reverted.</param>
+		/// <param name="pwHistMntcSettings">If this parameter isn't <c>null</c>,
+		/// the history list is maintained automatically (i.e. old backups are
+		/// deleted if there are too many or the history size is too large).
+		/// This parameter may be <c>null</c> (no maintenance then).</param>
+		public void RestoreFromBackup(uint uBackupIndex, PwDatabase pwHistMntcSettings)
 		{
 			Debug.Assert(uBackupIndex < m_listHistory.UCount);
 			if(uBackupIndex >= m_listHistory.UCount)
@@ -549,7 +580,7 @@ namespace KeePassLib
 			PwEntry pe = m_listHistory.GetAt(uBackupIndex);
 			Debug.Assert(pe != null); if(pe == null) throw new InvalidOperationException();
 
-			CreateBackup();
+			CreateBackup(pwHistMntcSettings); // Backup current data before restoring
 			AssignProperties(pe, false, false, false);
 		}
 
@@ -565,6 +596,66 @@ namespace KeePassLib
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Delete old history items if there are too many or the history
+		/// size is too large.
+		/// <returns>If one or more history items have been deleted, <c>true</c>
+		/// is returned. Otherwise <c>false</c>.</returns>
+		/// </summary>
+		public bool MaintainBackups(PwDatabase pwSettings)
+		{
+			if(pwSettings == null) { Debug.Assert(false); return false; }
+
+			bool bDeleted = false;
+
+			int nMaxItems = pwSettings.HistoryMaxItems;
+			if(nMaxItems >= 0)
+			{
+				while(m_listHistory.UCount > (uint)nMaxItems)
+				{
+					RemoveOldestBackup();
+					bDeleted = true;
+				}
+			}
+
+			long lMaxSize = pwSettings.HistoryMaxSize;
+			if(lMaxSize >= 0)
+			{
+				while(true)
+				{
+					ulong uHistSize = 0;
+					foreach(PwEntry pe in m_listHistory) { uHistSize += pe.GetSize(); }
+
+					if(uHistSize > (ulong)lMaxSize)
+					{
+						RemoveOldestBackup();
+						bDeleted = true;
+					}
+					else break;
+				}
+			}
+
+			return bDeleted;
+		}
+
+		private void RemoveOldestBackup()
+		{
+			DateTime dtMin = DateTime.MaxValue;
+			uint idxRemove = uint.MaxValue;
+
+			for(uint u = 0; u < m_listHistory.UCount; ++u)
+			{
+				PwEntry pe = m_listHistory.GetAt(u);
+				if(pe.LastModificationTime < dtMin)
+				{
+					idxRemove = u;
+					dtMin = pe.LastModificationTime;
+				}
+			}
+
+			if(idxRemove != uint.MaxValue) m_listHistory.RemoveAt(idxRemove);
 		}
 
 		public bool GetAutoTypeEnabled()

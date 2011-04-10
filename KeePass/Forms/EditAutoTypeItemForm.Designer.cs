@@ -60,7 +60,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(343, 388);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 10;
+			this.m_btnOK.TabIndex = 8;
 			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -71,7 +71,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(424, 388);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 11;
+			this.m_btnCancel.TabIndex = 9;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -81,7 +81,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 388);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 12;
+			this.m_btnHelp.TabIndex = 10;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -92,7 +92,7 @@
 			this.m_lblTargetWindow.Location = new System.Drawing.Point(9, 75);
 			this.m_lblTargetWindow.Name = "m_lblTargetWindow";
 			this.m_lblTargetWindow.Size = new System.Drawing.Size(80, 13);
-			this.m_lblTargetWindow.TabIndex = 1;
+			this.m_lblTargetWindow.TabIndex = 12;
 			this.m_lblTargetWindow.Text = "Target window:";
 			// 
 			// m_lblKeySeqInsertInfo
@@ -101,7 +101,7 @@
 			this.m_lblKeySeqInsertInfo.Location = new System.Drawing.Point(119, 213);
 			this.m_lblKeySeqInsertInfo.Name = "m_lblKeySeqInsertInfo";
 			this.m_lblKeySeqInsertInfo.Size = new System.Drawing.Size(94, 13);
-			this.m_lblKeySeqInsertInfo.TabIndex = 7;
+			this.m_lblKeySeqInsertInfo.TabIndex = 6;
 			this.m_lblKeySeqInsertInfo.Text = "Insert placeholder:";
 			// 
 			// m_lblSeparator
@@ -110,7 +110,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 379);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(511, 2);
-			this.m_lblSeparator.TabIndex = 9;
+			this.m_lblSeparator.TabIndex = 11;
 			// 
 			// m_rbKeySeq
 			// 
@@ -121,7 +121,7 @@
 			this.m_rbKeySeq.Multiline = false;
 			this.m_rbKeySeq.Name = "m_rbKeySeq";
 			this.m_rbKeySeq.Size = new System.Drawing.Size(377, 20);
-			this.m_rbKeySeq.TabIndex = 6;
+			this.m_rbKeySeq.TabIndex = 5;
 			this.m_rbKeySeq.Text = "";
 			this.m_rbKeySeq.TextChanged += new System.EventHandler(this.OnTextChangedKeySeq);
 			// 
@@ -133,7 +133,7 @@
 			this.m_rtbPlaceholders.ReadOnly = true;
 			this.m_rtbPlaceholders.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
 			this.m_rtbPlaceholders.Size = new System.Drawing.Size(377, 136);
-			this.m_rtbPlaceholders.TabIndex = 8;
+			this.m_rtbPlaceholders.TabIndex = 7;
 			this.m_rtbPlaceholders.Text = "";
 			this.m_rtbPlaceholders.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnPlaceholdersLinkClicked);
 			// 
@@ -153,7 +153,7 @@
 			this.m_lblOpenHint.Location = new System.Drawing.Point(120, 99);
 			this.m_lblOpenHint.Name = "m_lblOpenHint";
 			this.m_lblOpenHint.Size = new System.Drawing.Size(351, 13);
-			this.m_lblOpenHint.TabIndex = 2;
+			this.m_lblOpenHint.TabIndex = 1;
 			this.m_lblOpenHint.Text = "Click the drop-down button on the right to see currently opened windows.";
 			// 
 			// m_lnkWildcardRegexHint
@@ -162,7 +162,7 @@
 			this.m_lnkWildcardRegexHint.Location = new System.Drawing.Point(120, 116);
 			this.m_lnkWildcardRegexHint.Name = "m_lnkWildcardRegexHint";
 			this.m_lnkWildcardRegexHint.Size = new System.Drawing.Size(270, 13);
-			this.m_lnkWildcardRegexHint.TabIndex = 3;
+			this.m_lnkWildcardRegexHint.TabIndex = 2;
 			this.m_lnkWildcardRegexHint.TabStop = true;
 			this.m_lnkWildcardRegexHint.Text = "Simple wildcards and regular expressions are supported.";
 			this.m_lnkWildcardRegexHint.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnWildcardRegexLinkClicked);
@@ -173,7 +173,7 @@
 			this.m_rbSeqDefault.Location = new System.Drawing.Point(12, 142);
 			this.m_rbSeqDefault.Name = "m_rbSeqDefault";
 			this.m_rbSeqDefault.Size = new System.Drawing.Size(234, 17);
-			this.m_rbSeqDefault.TabIndex = 4;
+			this.m_rbSeqDefault.TabIndex = 3;
 			this.m_rbSeqDefault.TabStop = true;
 			this.m_rbSeqDefault.Text = "Use default keystroke sequence of the entry";
 			this.m_rbSeqDefault.UseVisualStyleBackColor = true;
@@ -185,7 +185,7 @@
 			this.m_rbSeqCustom.Location = new System.Drawing.Point(12, 164);
 			this.m_rbSeqCustom.Name = "m_rbSeqCustom";
 			this.m_rbSeqCustom.Size = new System.Drawing.Size(183, 17);
-			this.m_rbSeqCustom.TabIndex = 5;
+			this.m_rbSeqCustom.TabIndex = 4;
 			this.m_rbSeqCustom.TabStop = true;
 			this.m_rbSeqCustom.Text = "Use custom keystroke sequence:";
 			this.m_rbSeqCustom.UseVisualStyleBackColor = true;
@@ -221,6 +221,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Auto-Type Item";
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.Shown += new System.EventHandler(this.OnFormShown);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

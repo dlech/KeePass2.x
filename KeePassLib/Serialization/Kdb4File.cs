@@ -28,8 +28,11 @@ using System.Globalization;
 using System.IO.Compression;
 #endif
 
+using KeePassLib.Collections;
 using KeePassLib.Cryptography;
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
+using KeePassLib.Security;
 
 namespace KeePassLib.Serialization
 {
@@ -68,11 +71,11 @@ namespace KeePassLib.Serialization
 		/// <summary>
 		/// File version of files saved by the current <c>Kdb4File</c> class.
 		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
-		/// 2.10 has 2.02, 2.11 has 2.04.
+		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00.
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00020004;
+		private const uint FileVersion32 = 0x00030000;
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
@@ -97,6 +100,7 @@ namespace KeePassLib.Serialization
 		private const string ElemDbDefaultUser = "DefaultUserName";
 		private const string ElemDbDefaultUserChanged = "DefaultUserNameChanged";
 		private const string ElemDbMntncHistoryDays = "MaintenanceHistoryDays";
+		private const string ElemDbColor = "Color";
 		private const string ElemDbKeyChanged = "MasterKeyChanged";
 		private const string ElemDbKeyChangeRec = "MasterKeyChangeRec";
 		private const string ElemDbKeyChangeForce = "MasterKeyChangeForce";
@@ -105,6 +109,8 @@ namespace KeePassLib.Serialization
 		private const string ElemRecycleBinChanged = "RecycleBinChanged";
 		private const string ElemEntryTemplatesGroup = "EntryTemplatesGroup";
 		private const string ElemEntryTemplatesGroupChanged = "EntryTemplatesGroupChanged";
+		private const string ElemHistoryMaxItems = "HistoryMaxItems";
+		private const string ElemHistoryMaxSize = "HistoryMaxSize";
 		private const string ElemLastSelectedGroup = "LastSelectedGroup";
 		private const string ElemLastTopVisibleGroup = "LastTopVisibleGroup";
 
@@ -159,7 +165,12 @@ namespace KeePassLib.Serialization
 		private const string ElemWindow = "Window";
 		private const string ElemKeystrokeSequence = "KeystrokeSequence";
 
+		private const string ElemBinaries = "Binaries";
+
+		private const string AttrId = "ID";
+		private const string AttrRef = "Ref";
 		private const string AttrProtected = "Protected";
+		private const string AttrCompressed = "Compressed";
 
 		private const string ElemIsExpanded = "IsExpanded";
 		private const string ElemLastTopVisibleEntry = "LastTopVisibleEntry";
@@ -174,7 +185,7 @@ namespace KeePassLib.Serialization
 		private const string ElemCustomData = "CustomData";
 		private const string ElemStringDictExItem = "Item";
 
-		private PwDatabase m_pwDatabase = null;
+		private PwDatabase m_pwDatabase; // Not null, see constructor
 
 		private XmlTextWriter m_xmlWriter = null;
 		private CryptoRandomStream m_randomStream = null;
@@ -190,6 +201,11 @@ namespace KeePassLib.Serialization
 		// ArcFourVariant only for compatibility; KeePass will default to a
 		// different (more secure) algorithm when *writing* databases
 		private CrsAlgorithm m_craInnerRandomStream = CrsAlgorithm.ArcFourVariant;
+
+		private Dictionary<string, ProtectedBinary> m_dictBinPool =
+			new Dictionary<string, ProtectedBinary>();
+		private Dictionary<string, ProtectedBinary> m_dictBinPoolCopyOnRead =
+			new Dictionary<string, ProtectedBinary>();
 
 		private byte[] m_pbHashOfFileOnDisk = null;
 
@@ -230,8 +246,8 @@ namespace KeePassLib.Serialization
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		/// <param name="pwDataStore">The PwDatabase instance that the class will
-		/// load file data into or use to create a KDB file.</param>
+		/// <param name="pwDataStore">The <c>PwDatabase</c> instance that the
+		/// class will load file data into or use to create a KDBX file.</param>
 		public Kdb4File(PwDatabase pwDataStore)
 		{
 			Debug.Assert(pwDataStore != null);
@@ -257,6 +273,74 @@ namespace KeePassLib.Serialization
 
 				m_bLocalizedNames = (uTest != NeutralLanguageID);
 			}
+		}
+
+		private void BinPoolBuild(PwGroup pgDataSource)
+		{
+			m_dictBinPool = new Dictionary<string, ProtectedBinary>();
+
+			if(pgDataSource == null) { Debug.Assert(false); return; }
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				foreach(PwEntry peHistory in pe.History)
+				{
+					BinPoolAdd(peHistory.Binaries);
+				}
+
+				BinPoolAdd(pe.Binaries);
+				return true;
+			};
+
+			pgDataSource.TraverseTree(TraversalMethod.PreOrder, null, eh);
+		}
+
+		private void BinPoolAdd(ProtectedBinaryDictionary dict)
+		{
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in dict)
+			{
+				BinPoolAdd(kvp.Value);
+			}
+		}
+
+		private void BinPoolAdd(ProtectedBinary pb)
+		{
+			if(pb == null) { Debug.Assert(false); return; }
+
+			if(BinPoolFind(pb) != null) return; // Exists already
+
+			m_dictBinPool.Add(m_dictBinPool.Count.ToString(), pb);
+		}
+
+		private string BinPoolFind(ProtectedBinary pb)
+		{
+			if(pb == null) { Debug.Assert(false); return null; }
+
+			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_dictBinPool)
+			{
+				if(pb.EqualsValue(kvp.Value)) return kvp.Key;
+			}
+
+			return null;
+		}
+
+		private ProtectedBinary BinPoolGet(string strKey)
+		{
+			if(strKey == null) { Debug.Assert(false); return null; }
+
+			ProtectedBinary pb;
+			if(m_dictBinPool.TryGetValue(strKey, out pb))
+			{
+				m_dictBinPool.Remove(strKey);
+				m_dictBinPoolCopyOnRead[strKey] = pb;
+
+				return pb;
+			}
+
+			if(m_dictBinPoolCopyOnRead.TryGetValue(strKey, out pb))
+				return new ProtectedBinary(pb);
+
+			return null;
 		}
 	}
 }

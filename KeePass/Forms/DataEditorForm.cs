@@ -126,6 +126,9 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbAlignLeft, KPRes.AlignLeft, null);
 			UIUtil.ConfigureTbButton(m_tbAlignRight, KPRes.AlignRight, null);
 
+			UIUtil.EnableAutoCompletion(m_tbFontCombo, true);
+			UIUtil.EnableAutoCompletion(m_tbFontSizeCombo, true);
+
 			m_rtbText.Dock = DockStyle.Fill;
 			m_ctxText.Attach(m_rtbText);
 			m_tssStatusMain.Text = KPRes.Ready;
@@ -222,7 +225,7 @@ namespace KeePass.Forms
 			m_tbAlignRight.Checked = (ha == HorizontalAlignment.Right);
 
 			BlockUIEvents(false);
-			if(bFocusText) m_rtbText.Focus();
+			if(bFocusText) UIUtil.SetFocus(m_rtbText, this);
 		}
 
 		private void BlockUIEvents(bool bBlock)
@@ -253,8 +256,8 @@ namespace KeePass.Forms
 		private void OnFileSave(object sender, EventArgs e)
 		{
 			if(m_bdc == BinaryDataClass.RichText)
-				m_pbEditedData = Encoding.UTF8.GetBytes(m_rtbText.Rtf);
-			else m_pbEditedData = Encoding.UTF8.GetBytes(m_rtbText.Text);
+				m_pbEditedData = StrUtil.Utf8.GetBytes(m_rtbText.Rtf);
+			else m_pbEditedData = StrUtil.Utf8.GetBytes(m_rtbText.Text);
 
 			m_bModified = false;
 			UpdateUIState(false, false);
@@ -476,7 +479,7 @@ namespace KeePass.Forms
 
 		private void OnViewFont(object sender, EventArgs e)
 		{
-			FontDialog dlg = new FontDialog();
+			FontDialog dlg = UIUtil.CreateFontDialog(true);
 			dlg.Font = Program.Config.UI.DataEditorFont.ToFont();
 			dlg.ShowColor = false;
 
@@ -497,6 +500,7 @@ namespace KeePass.Forms
 					UpdateUIState(false, false);
 				}
 			}
+			dlg.Dispose();
 		}
 
 		private void OnViewWordWrap(object sender, EventArgs e)
@@ -531,20 +535,20 @@ namespace KeePass.Forms
 
 				TextEncodingForm dlg = new TextEncodingForm();
 				dlg.InitEx(strContext, pbData);
-				if(dlg.ShowDialog() == DialogResult.OK)
+				if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
+
+				Encoding enc = dlg.SelectedEncoding;
+				UIUtil.DestroyForm(dlg);
+				if(enc != null)
 				{
-					Encoding enc = dlg.SelectedEncoding;
-					if(enc != null)
+					try
 					{
-						try
-						{
-							string strText = enc.GetString(pbData);
-							return (new UTF8Encoding(false)).GetBytes(strText);
-						}
-						catch(Exception) { Debug.Assert(false); }
+						string strText = enc.GetString(pbData);
+						UTF8Encoding utf8 = new UTF8Encoding(false);
+						return utf8.GetBytes(strText);
 					}
+					catch(Exception) { Debug.Assert(false); }
 				}
-				else return null;
 			}
 
 			return pbData;

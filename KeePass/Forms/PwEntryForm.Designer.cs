@@ -263,7 +263,6 @@
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
 			this.m_tbRepeatPassword.Size = new System.Drawing.Size(336, 20);
 			this.m_tbRepeatPassword.TabIndex = 10;
-			this.m_ttBalloon.SetToolTip(this.m_tbRepeatPassword, "Repeat the password to prevent typing errors.");
 			// 
 			// m_tbUrl
 			// 
@@ -462,7 +461,6 @@
 			this.m_ttValidationError.InitialDelay = 250;
 			this.m_ttValidationError.ReshowDelay = 100;
 			this.m_ttValidationError.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Warning;
-			this.m_ttValidationError.ToolTipTitle = "Validation Warning";
 			// 
 			// m_tabMain
 			// 

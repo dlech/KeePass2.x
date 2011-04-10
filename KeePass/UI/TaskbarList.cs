@@ -104,7 +104,7 @@ namespace KeePass.UI
 		} */
 	}
 
-	[Flags]
+	// States are mutually exclusive, see MSDN
 	public enum TbpFlag
 	{
 		NoProgress = 0x0,

@@ -149,7 +149,7 @@ namespace KeePass.Plugins
 				catch(Exception exLoad)
 				{
 					if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
-						MessageService.ShowWarning(fi.FullName, exLoad);
+						MessageService.ShowWarningExcp(fi.FullName, exLoad);
 					else bShowStandardError = true;
 				}
 
@@ -202,7 +202,7 @@ namespace KeePass.Plugins
 			try
 			{
 				byte[] pbFile = File.ReadAllBytes(strFile);
-				byte[] pbSig = Encoding.UTF8.GetBytes("KpCreateInstance");
+				byte[] pbSig = StrUtil.Utf8.GetBytes("KpCreateInstance");
 				string strData = MemUtil.ByteArrayToHexString(pbFile);
 				string strSig = MemUtil.ByteArrayToHexString(pbSig);
 

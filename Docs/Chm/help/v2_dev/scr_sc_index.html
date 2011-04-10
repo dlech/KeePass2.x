@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="author" content="Dominik Reichl" />
+
+	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+
+	<meta name="robots" content="index" />
+	<meta name="revisit-after" content="14 days" />
+
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
+	<meta name="DC.Creator" content="Dominik Reichl" />
+	<meta name="DC.Subject" content="Open-Source Password Safe" />
+	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="DC.Publisher" content="Dominik Reichl" />
+	<meta name="DC.Contributor" content="Dominik Reichl" />
+	<meta name="DC.Type" content="text" />
+	<meta name="DC.Format" content="text/html" />
+	<meta name="DC.Identifier" content="http://keepass.info/" />
+	<meta name="DC.Language" content="en" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2011 Dominik Reichl" />
+
+	<title>Single Command Operations - KeePass</title>
+	<base target="_self" />
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+	
+</head>
+<body>
+
+
+
+
+<table class="sectionsummary"><tr><td width="68px">
+<img src="../images/b64x64_konsole.png" width="64px" height="64px"
+class="singleimg" align="left" alt="Console" />
+</td><td valign="middle"><h1>Single Command Operations</h1><br />
+How to use KPScript with single command operations to perform simple
+database operations.
+</td></tr></table>
+
+<p>KPScript can be invoked using single commands. By passing the database location,
+its key, a command and eventually some parameters, simple operations like adding
+an entry can be performed. The syntax is very simple, no scripting knowledge is
+required. This method is ideal when you quickly want to do some small changes to
+the database. It is not recommended when you need to perform many operations, because
+for each command the database needs to be loaded from file, decrypted, modified,
+encrypted and written back to file.</p>
+
+<p>Commands are specified by passing <code>-c:COMMAND</code> to KPScript, where <code>COMMAND</code>
+is the command to execute (see below for a list of available commands).</p>
+
+<p>The database location is passed to KPScript by just passing it as a parameter,
+without any option prefix.</p>
+
+<p>The composite key for the database can be given to KPScript using one of the
+following ways:</p>
+
+<ul>
+<li><i>Command Line Parameters.</i>.
+Using the <code>-pw:</code>, <code>-keyfile:</code> and <code>-useraccount</code>
+parameters. For example, to pass &quot;Secret&quot; as password, you'd give
+KPScript the following parameter: <code>-pw:Secret</code>. If the password contains
+spaces or other special characters, it must be enclosed in quotes: <code>-pw:&quot;My Top
+Secret Password&quot;</code>. Similarly, the <code>-keyfile:</code> parameter can
+specify the key file location. If <code>-useraccount</code> is passed to KPScript, the
+user account credentials of the currently logged on user are used, otherwise not.<br />
+<br /></li>
+<li><i>Entering interactively using the command line.</i>
+If you pass <code>-keyprompt</code> to KPScript, it will prompt you for the key. You
+can enter the password, key file location and user account directly in the console window.<br />
+<br /></li>
+<li><i>Entering interactively using graphical user interface.</i>
+If you pass <code>-guikeyprompt</code> to KPScript, it will prompt you for the key using
+the standard key dialog of KeePass.</li>
+</ul>
+
+<hr />
+
+<p><b>Available Commands:</b></p>
+
+<p>Please note that commands are added incrementally based on user requests. If you are
+missing a command, please let the KeePass team know and it will be added to the
+next release of KPScript.</p>
+
+<p>Currently, the following commands are available:</p>
+
+<ul>
+<li>ListGroups</li>
+<li>ListEntries</li>
+<li>AddEntry</li>
+<li>EditEntry</li>
+<li>DeleteEntry</li>
+<li>Export</li>
+<li>Sync</li>
+<li>ChangeMasterKey</li>
+</ul>
+
+<hr />
+<p><b>Command: ListGroups</b></p>
+
+<p>This command lists all groups in a format that easily machine-readable. The output
+is not intended to be printed/used directly. Usage example:</p>
+
+<p><code>KPScript -c:ListGroups &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPassword</code><br />
+This will list all groups contained in the MyDb.kdbx database file.</p>
+
+<hr />
+<p><b>Command: ListEntries</b></p>
+
+<p>This command lists all entries in a format that easily machine-readable. The output
+is not intended to be printed/used directly. Usage example:</p>
+
+<p><code>KPScript -c:ListEntries &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPassword
+-keyfile:&quot;C:\KeePass\MyDb.key&quot;</code><br />
+Opens the MyDb.kdbx database using 'MyPassword' as password and the MyDb.key file as key file.
+It will output a list of all entries contained in the MyDb.kdbx database file.</p>
+
+<hr />
+<p><b>Command: AddEntry</b></p>
+
+<p>This command adds an entry to the database. To specify the entry details, use the
+standard string field identifiers as parameter names and their values for the contents.
+Supported standard string fields are: Title, UserName, Password, URL, and Notes.
+Usage examples:</p>
+
+<p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:&quot;New entry title&quot;</code></p>
+
+<p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:SomeWebsite
+-UserName:Don -Password:pao5j3eg -URL:http://website.com</code></p>
+
+<p>The <code>-GroupName:</code> parameter can be used to specify the group in which the
+entry is created. For searching, KPScript performs a pre-order traversal and uses the
+first matching group (the name is case-sensitive). If no group with the specified name is
+found, it will be created in the root group. If you do not specify a group name,
+the entry will be created in the root group. Example:</p>
+
+<p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:&quot;My Provider&quot;
+-GroupName:&quot;Internet Sites&quot;</code></p>
+
+<hr />
+<p><b>Command: EditEntry</b></p>
+
+<p>This command edits existing entries. To identify the entries to be edited,
+specify string fields to be compared. The syntax is
+<code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.
+To specify one or more new entry string values, use the following syntax:
+<code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.
+Usage examples:</p>
+
+<p><code>KPScript -c:EditEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -ref-Title:&quot;Existing
+entry title&quot; -set-UserName:&quot;New user name&quot;</code></p>
+
+<p><code>KPScript -c:EditEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -ref-UserName:MyName
+-set-UserName:NewName -set-Password:&quot;Top Secret&quot;</code></p>
+
+<p>If you additionally pass <code>-CreateBackup</code>, KPScript will
+first create backups of entries before modifying them.</p>
+
+<hr />
+<p><b>Command: DeleteEntry</b></p>
+
+<p>This command deletes one or more existing entries. The entry identification
+syntax is exactly the same as in the <code>EditEntry</code> command.</p>
+
+<hr />
+<p><b>Command: Export</b></p>
+
+<p>This command exports the complete database. The format is specified by
+setting the &quot;-Format&quot; parameter (see names in
+KeePass' export dialog). The file to export to is specified using the
+&quot;-OutFile&quot; parameter. Usage example:</p>
+
+<p><code>KPScript -c:Export &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Format:&quot;KeePass XML (2.x)&quot; -OutFile:TargetFile.xml</code></p>
+
+<hr />
+<p><b>Command: Sync</b></p>
+
+<p>This command synchronizes the database with another one.
+The other database path has to be specified using the
+&quot;-File&quot; command line parameter.</p>
+
+<hr />
+<p><b>Command: ChangeMasterKey</b></p>
+
+<p>This command changes the master key of the database.
+The new key values are specified using the standard
+options prefixed with 'new', i.e. <code>-newpw:</code>, <code>-newkeyfile:</code>
+and <code>-newuseraccount</code> (all are optional). Usage example:</p>
+
+<p><code>KPScript -c:ChangeMasterKey &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -newpw:MyNewPw</code></p>
+
+</body></html>
+

@@ -23,6 +23,9 @@ using System.Security;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Threading;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -48,6 +51,13 @@ namespace KeePass.UI
 		private bool m_bBlockTextChanged = false;
 
 		private bool m_bFirstGotFocus = true;
+
+		private bool m_bSecureDesktop = false;
+		public bool SecureDesktopMode
+		{
+			get { return m_bSecureDesktop; }
+			set { m_bSecureDesktop = value; }
+		}
 
 		public uint TextLength
 		{
@@ -108,14 +118,17 @@ namespace KeePass.UI
 
 			if(m_evTextChanged != null) m_evTextChanged(m_tbPassword, EventArgs.Empty);
 
-			m_tbPassword.AllowDrop = true;
+			if(!m_bSecureDesktop) m_tbPassword.AllowDrop = true;
 
 			// Register event handler
 			m_tbPassword.TextChanged += this.OnPasswordTextChanged;
 			m_tbPassword.GotFocus += this.OnGotFocus;
-			m_tbPassword.DragEnter += this.OnDragCheck;
-			m_tbPassword.DragOver += this.OnDragCheck;
-			m_tbPassword.DragDrop += this.OnDragDrop;
+			if(!m_bSecureDesktop)
+			{
+				m_tbPassword.DragEnter += this.OnDragCheck;
+				m_tbPassword.DragOver += this.OnDragCheck;
+				m_tbPassword.DragDrop += this.OnDragDrop;
+			}
 		}
 
 		/// <summary>
@@ -128,9 +141,12 @@ namespace KeePass.UI
 			{
 				m_tbPassword.TextChanged -= this.OnPasswordTextChanged;
 				m_tbPassword.GotFocus -= this.OnGotFocus;
-				m_tbPassword.DragEnter -= this.OnDragCheck;
-				m_tbPassword.DragOver -= this.OnDragCheck;
-				m_tbPassword.DragDrop -= this.OnDragDrop;
+				if(!m_bSecureDesktop)
+				{
+					m_tbPassword.DragEnter -= this.OnDragCheck;
+					m_tbPassword.DragOver -= this.OnDragCheck;
+					m_tbPassword.DragDrop -= this.OnDragDrop;
+				}
 
 				m_tbPassword = null;
 			}
@@ -239,12 +255,12 @@ namespace KeePass.UI
 					vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
 				Marshal.ZeroFreeGlobalAllocUnicode(p);
 
-				byte[] pb = Encoding.UTF8.GetBytes(vChars);
+				byte[] pb = StrUtil.Utf8.GetBytes(vChars);
 				Array.Clear(vChars, 0, vChars.Length);
 
 				return pb;
 			}
-			else return Encoding.UTF8.GetBytes(m_strAlternativeSecString);
+			else return StrUtil.Utf8.GetBytes(m_strAlternativeSecString);
 		}
 
 		private string GetAsString()
@@ -321,8 +337,7 @@ namespace KeePass.UI
 			{
 				m_secString.Clear();
 
-				UTF8Encoding utf8 = new UTF8Encoding();
-				char[] vChars = utf8.GetChars(pbUtf8);
+				char[] vChars = StrUtil.Utf8.GetChars(pbUtf8);
 
 				for(int i = 0; i < vChars.Length; ++i)
 				{
@@ -330,7 +345,7 @@ namespace KeePass.UI
 					vChars[i] = char.MinValue;
 				}
 			}
-			else m_strAlternativeSecString = Encoding.UTF8.GetString(pbUtf8);
+			else m_strAlternativeSecString = StrUtil.Utf8.GetString(pbUtf8);
 
 			ShowCurrentPassword(0, 0);
 		}

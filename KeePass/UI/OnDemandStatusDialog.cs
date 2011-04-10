@@ -165,7 +165,8 @@ namespace KeePass.UI
 				dlg.Close();
 				dlg.Dispose();
 
-				if(mfOwner != null) mfOwner.Activate(); // Prevent disappearing
+				// Conflict with 3116455
+				// if(mfOwner != null) mfOwner.Activate(); // Prevent disappearing
 			}
 		}
 	}

@@ -96,6 +96,18 @@ namespace KeePassLib.Keys
 		//	get { return PwIcon.UserKey; }
 		// }
 
+		/// <summary>
+		/// This property specifies whether the <c>GetKey</c> method might
+		/// show a form or dialog. If there is any chance that the method shows
+		/// one, this property must return <c>true</c>. Only if it's guaranteed
+		/// that the <c>GetKey</c> method doesn't show any form or dialog, this
+		/// property should return <c>false</c>.
+		/// </summary>
+		public virtual bool GetKeyMightShowGui
+		{
+			get { return true; }
+		}
+
 		public abstract byte[] GetKey(KeyProviderQueryContext ctx);
 	}
 
@@ -105,6 +117,12 @@ namespace KeePassLib.Keys
 		public override string Name
 		{
 			get { return "Built-In Sample Key Provider"; }
+		}
+
+		// Do not just copy this to your own key provider class! See above.
+		public override bool GetKeyMightShowGui
+		{
+			get { return false; }
 		}
 
 		public override byte[] GetKey(KeyProviderQueryContext ctx)

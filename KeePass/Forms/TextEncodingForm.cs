@@ -51,7 +51,7 @@ namespace KeePass.Forms
 			null,
 			Encoding.Default,
 			Encoding.ASCII,
-			Encoding.UTF7, Encoding.UTF8,
+			Encoding.UTF7, new UTF8Encoding(false),
 			Encoding.UTF32,
 			Encoding.Unicode, Encoding.BigEndianUnicode
 		};
@@ -108,7 +108,7 @@ namespace KeePass.Forms
 			try
 			{
 				Encoding enc = m_vEnc[m_cmbEnc.SelectedIndex];
-				if(enc == null) enc = Encoding.UTF8;
+				if(enc == null) enc = new UTF8Encoding(false);
 
 				m_rtbPreview.Text = enc.GetString(m_pbData);
 			}

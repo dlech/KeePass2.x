@@ -39,6 +39,15 @@ namespace KeePass.Util
 		public IntPtr CurrentKeyboardLayout = IntPtr.Zero;
 
 		public uint DefaultDelay = 10;
+
+		public IntPtr TargetHWnd = IntPtr.Zero;
+		public uint ThisThreadID = 0;
+		public uint TargetThreadID = 0;
+		public uint TargetProcessID = 0;
+
+		// public bool ThreadInputAttached = false;
+
+		public bool Cancelled = false;
 	}
 
 	public static partial class SendInputEx
@@ -83,6 +92,13 @@ namespace KeePass.Util
 
 			try
 			{
+				si.TargetHWnd = NativeMethods.GetForegroundWindowHandle();
+				si.ThisThreadID = NativeMethods.GetCurrentThreadId();
+				uint uTargetProcessID;
+				si.TargetThreadID = NativeMethods.GetWindowThreadProcessId(
+					si.TargetHWnd, out uTargetProcessID);
+				si.TargetProcessID = uTargetProcessID;
+
 				EnsureSameKeyboardLayout(si);
 
 				// Do not use SendKeys.Flush here, use Application.DoEvents
@@ -91,6 +107,14 @@ namespace KeePass.Util
 				// exception (SendKeys.Flush is waiting in a loop for an internal
 				// queue being empty, however the queue is never processed)
 				Application.DoEvents();
+
+				// if(si.ThisThreadID != si.TargetThreadID)
+				// {
+				//	si.ThreadInputAttached = NativeMethods.AttachThreadInput(
+				//		si.ThisThreadID, si.TargetThreadID, true);
+				//	Debug.Assert(si.ThreadInputAttached);
+				// }
+				// else { Debug.Assert(false); }
 
 				List<int> lMod = GetActiveKeyModifiers();
 				ActivateKeyModifiers(lMod, false);
@@ -117,6 +141,10 @@ namespace KeePass.Util
 				// ActivateKeyModifiers(lRestore, true);
 
 				if(si.InputBlocked) NativeMethods.BlockInput(false); // Unblock
+
+				// if(si.ThreadInputAttached)
+				//	NativeMethods.AttachThreadInput(si.ThisThreadID,
+				//		si.TargetThreadID, false); // Detach
 
 				if(si.OriginalKeyboardLayout != IntPtr.Zero)
 					NativeMethods.ActivateKeyboardLayout(si.OriginalKeyboardLayout, 0);
@@ -337,7 +365,8 @@ namespace KeePass.Util
 				strKeys = sbNav.ToString() + strKeys;
 			}
 
-			if(strClip.Length > 0) Clipboard.SetText(strClip);
+			if(strClip.Length > 0)
+				ClipboardUtil.Copy(strClip, false, false, null, null, IntPtr.Zero);
 			else ClipboardUtil.Clear();
 
 			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys, siState);
@@ -358,6 +387,28 @@ namespace KeePass.Util
 			// Prevent overflow (see Random class constructor)
 			if(nSeed == int.MinValue) nSeed = 13;
 			return nSeed;
+		}
+
+		private static bool ValidateTargetWindow(SiStateEx siState)
+		{
+			if(siState.Cancelled) return false;
+
+			if(!Program.Config.Integration.AutoTypeCancelOnWindowChange) return true;
+			if(KeePassLib.Native.NativeLib.IsUnix()) return true;
+
+			bool bValid = true;
+			try
+			{
+				IntPtr h = NativeMethods.GetForegroundWindowHandle();
+				if(h != siState.TargetHWnd)
+				{
+					siState.Cancelled = true;
+					bValid = false;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return bValid;
 		}
 
 		/// <summary>
@@ -431,6 +482,7 @@ namespace KeePass.Util
 							if(!string.IsNullOrEmpty(strFirstPart))
 								OSSendKeys(strFirstPart);
 							SendKeys.Flush();
+							if(uDelay == 0) uDelay = 1;
 							Thread.Sleep((int)uDelay);
 
 							strSequence = strSecondPart;
@@ -466,7 +518,12 @@ namespace KeePass.Util
 				if(strParam != null) // Might be empty (invalid parameter)
 				{
 					uint uDelay;
-					if(uint.TryParse(strParam, out uDelay)) Thread.Sleep((int)uDelay);
+					if(uint.TryParse(strParam, out uDelay))
+					{
+						if(uDelay == 0) uDelay = 1;
+						if((uDelay <= (uint)int.MaxValue) && !siState.Cancelled)
+							Thread.Sleep((int)uDelay);
+					}
 					continue;
 				}
 
@@ -485,8 +542,10 @@ namespace KeePass.Util
 					continue;
 				}
 
-				OSSendKeys(strPart);
+				OSSendKeys(strPart, siState);
 				Application.DoEvents(); // SendKeys.SendWait uses SendKeys.Flush
+
+				if(siState.Cancelled) break;
 			}
 		}
 
@@ -546,8 +605,10 @@ namespace KeePass.Util
 			return v;
 		}
 
-		private static void OSSendKeys(string strSequence)
+		private static void OSSendKeys(string strSequence, SiStateEx siState)
 		{
+			if(!ValidateTargetWindow(siState)) return;
+
 			if(!KeePassLib.Native.NativeLib.IsUnix())
 				OSSendKeysWindows(strSequence);
 			else // Unix

@@ -28,6 +28,8 @@ using System.Security.Cryptography;
 
 using KeePass.Native;
 
+using KeePassLib.Utility;
+
 namespace KeePass.Util
 {
 	public static class IpcBroadcast
@@ -81,8 +83,7 @@ namespace KeePass.Util
 
 			string strID = (Environment.UserName ?? string.Empty) + @" @ " +
 				(Environment.MachineName ?? string.Empty);
-			UTF8Encoding utf8 = new UTF8Encoding(false);
-			byte[] pbID = utf8.GetBytes(strID);
+			byte[] pbID = StrUtil.Utf8.GetBytes(strID);
 
 			SHA1Managed sha1 = new SHA1Managed();
 			byte[] pbHash = sha1.ComputeHash(pbID);

@@ -26,6 +26,7 @@ using System.Diagnostics;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 
@@ -179,7 +180,7 @@ namespace KeePass.Util
 			pef.InitEx(pe, PwEditMode.AddNewEntry, pd, Program.MainForm.ClientIcons,
 				false, true);
 
-			if(pef.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(pef) == DialogResult.OK)
 			{
 				pgContainer.AddEntry(pe, true, true);
 

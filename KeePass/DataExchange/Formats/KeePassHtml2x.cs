@@ -26,6 +26,7 @@ using System.Windows.Forms;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -53,16 +54,18 @@ namespace KeePass.DataExchange.Formats
 			PrintForm dlg = new PrintForm();
 			dlg.InitEx(pwExportInfo.DataGroup, false, -1);
 
+			bool bResult = false;
 			if(dlg.ShowDialog() == DialogResult.OK)
 			{
-				byte[] pb = Encoding.UTF8.GetBytes(dlg.GeneratedHtml);
+				byte[] pb = StrUtil.Utf8.GetBytes(dlg.GeneratedHtml);
 				sOutput.Write(pb, 0, pb.Length);
 				sOutput.Close();
 
-				return true;
+				bResult = true;
 			}
 
-			return false;
+			UIUtil.DestroyForm(dlg);
+			return bResult;
 		}
 	}
 }

@@ -19,10 +19,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Threading;
 
 using KeePass.App;
 using KeePass.Ecas;
@@ -38,48 +43,73 @@ using KeeNativeLib = KeePassLib.Native;
 
 namespace KeePass.Util
 {
-	public static class ClipboardUtil
+	public static partial class ClipboardUtil
 	{
-		private static string m_strFormat = null;
 		private static byte[] m_pbDataHash32 = null;
+		private static string m_strFormat = null;
+		private static bool m_bEncoded = false;
 
 		private const string ClipboardIgnoreFormatName = "Clipboard Viewer Ignore";
 
+		[Obsolete]
 		public static bool Copy(string strToCopy, bool bIsEntryInfo,
 			PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			Debug.Assert(strToCopy != null);
-			if(strToCopy == null) throw new ArgumentNullException("strToCopy");
-
-			return ClipboardUtil.Copy(new ProtectedString(false, strToCopy),
-				bIsEntryInfo, peEntryInfo, pwReferenceSource);
+			return Copy(strToCopy, true, bIsEntryInfo, peEntryInfo,
+				pwReferenceSource, IntPtr.Zero);
 		}
 
+		[Obsolete]
 		public static bool Copy(ProtectedString psToCopy, bool bIsEntryInfo,
 			PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			Debug.Assert(psToCopy != null);
 			if(psToCopy == null) throw new ArgumentNullException("psToCopy");
+			return Copy(psToCopy.ReadString(), true, bIsEntryInfo, peEntryInfo,
+				pwReferenceSource, IntPtr.Zero);
+		}
+
+		public static bool Copy(string strToCopy, bool bSprCompile, bool bIsEntryInfo,
+			PwEntry peEntryInfo, PwDatabase pwReferenceSource, IntPtr hOwner)
+		{
+			if(strToCopy == null) throw new ArgumentNullException("strToCopy");
 
 			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
 
-			string strData = SprEngine.Compile(psToCopy.ReadString(), false,
-				peEntryInfo, pwReferenceSource, false, false);
+			string strData = (bSprCompile ? SprEngine.Compile(strToCopy, false,
+				peEntryInfo, pwReferenceSource, false, false) : strToCopy);
 
 			try
 			{
-				ClipboardUtil.Clear();
+				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				{
+					if(!OpenW(hOwner, true))
+						throw new InvalidOperationException();
 
-				DataObject doData = CreateProtectedDataObject(strData);
-				Clipboard.SetDataObject(doData);
+					bool bFailed = false;
+					if(!AttachIgnoreFormatW()) bFailed = true;
+					if(!SetDataW(null, strData, null)) bFailed = true;
+					CloseW();
 
-				m_pbDataHash32 = HashClipboard();
-				m_strFormat = null;
+					if(bFailed) return false;
+				}
+				else // Managed
+				{
+					Clear();
 
-				RaiseCopyEvent(bIsEntryInfo, strData);
+					DataObject doData = CreateProtectedDataObject(strData);
+					Clipboard.SetDataObject(doData);
+				}
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
+
+			m_strFormat = null;
+
+			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
+			SHA256Managed sha256 = new SHA256Managed();
+			m_pbDataHash32 = sha256.ComputeHash(pbUtf8);
+
+			RaiseCopyEvent(bIsEntryInfo, strData);
 
 			if(peEntryInfo != null) peEntryInfo.Touch(false);
 
@@ -89,7 +119,14 @@ namespace KeePass.Util
 			return true;
 		}
 
+		[Obsolete]
 		public static bool Copy(byte[] pbToCopy, string strFormat, bool bIsEntryInfo)
+		{
+			return Copy(pbToCopy, strFormat, false, bIsEntryInfo, IntPtr.Zero);
+		}
+
+		public static bool Copy(byte[] pbToCopy, string strFormat, bool bEncode,
+			bool bIsEntryInfo, IntPtr hOwner)
 		{
 			Debug.Assert(pbToCopy != null);
 			if(pbToCopy == null) throw new ArgumentNullException("pbToCopy");
@@ -99,34 +136,95 @@ namespace KeePass.Util
 
 			try
 			{
-				ClipboardUtil.Clear();
+				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				{
+					if(!OpenW(hOwner, true))
+						throw new InvalidOperationException();
 
-				DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
-				Clipboard.SetDataObject(doData);
+					uint uFormat = NativeMethods.RegisterClipboardFormat(strFormat);
 
-				m_strFormat = strFormat;
+					bool bFailed = false;
+					if(!AttachIgnoreFormatW()) bFailed = true;
 
-				SHA256Managed sha256 = new SHA256Managed();
-				m_pbDataHash32 = sha256.ComputeHash(pbToCopy);
+					if(!bEncode)
+					{
+						if(!SetDataW(uFormat, pbToCopy)) bFailed = true;
+					}
+					else // Encode
+					{
+						string strData = Convert.ToBase64String(pbToCopy,
+							Base64FormattingOptions.None);
+						if(!SetDataW(uFormat, strData, false)) bFailed = true;
+					}
 
-				RaiseCopyEvent(bIsEntryInfo, string.Empty);
+					CloseW();
+
+					if(bFailed) return false;
+				}
+				else // Managed, no encoding
+				{
+					Clear();
+
+					DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
+					Clipboard.SetDataObject(doData);
+				}
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
 
+			m_strFormat = strFormat;
+			m_bEncoded = bEncode;
+
+			SHA256Managed sha256 = new SHA256Managed();
+			m_pbDataHash32 = sha256.ComputeHash(pbToCopy);
+
+			RaiseCopyEvent(bIsEntryInfo, string.Empty);
+
 			return true;
+		}
+
+		public static byte[] GetEncodedData(string strFormat, IntPtr hOwner)
+		{
+			try
+			{
+				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				{
+					if(!OpenW(hOwner, false))
+						throw new InvalidOperationException();
+
+					string str = GetStringW(strFormat, false);
+					CloseW();
+
+					if(str == null) return null;
+					if(str.Length == 0) return new byte[0];
+
+					return Convert.FromBase64String(str);
+				}
+				else // Managed, no encoding
+				{
+					return (byte[])Clipboard.GetData(strFormat);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 
 		public static bool CopyAndMinimize(string strToCopy, bool bIsEntryInfo,
 			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			return ClipboardUtil.CopyAndMinimize(new ProtectedString(false, strToCopy),
+			return CopyAndMinimize(new ProtectedString(false, strToCopy),
 				bIsEntryInfo, formContext, peEntryInfo, pwReferenceSource);
 		}
 
 		public static bool CopyAndMinimize(ProtectedString psToCopy, bool bIsEntryInfo,
 			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
 		{
-			if(ClipboardUtil.Copy(psToCopy, bIsEntryInfo, peEntryInfo, pwReferenceSource))
+			if(psToCopy == null) throw new ArgumentNullException("psToCopy");
+
+			IntPtr hOwner = ((formContext != null) ? formContext.Handle : IntPtr.Zero);
+
+			if(Copy(psToCopy.ReadString(), true, bIsEntryInfo, peEntryInfo,
+				pwReferenceSource, hOwner))
 			{
 				if(formContext != null)
 				{
@@ -160,19 +258,19 @@ namespace KeePass.Util
 		/// </summary>
 		public static void Clear()
 		{
-			bool bNativeSuccess = true;
+			bool bNativeSuccess = false;
 			try
 			{
-				if(!NativeMethods.OpenClipboard(IntPtr.Zero))
+				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
 				{
-					Debug.Assert(false);
-					throw new InvalidOperationException();
+					if(OpenW(IntPtr.Zero, true)) // Clears the clipboard
+					{
+						CloseW();
+						bNativeSuccess = true;
+					}
 				}
-
-				if(!NativeMethods.EmptyClipboard()) { Debug.Assert(false); }
-				if(!NativeMethods.CloseClipboard()) { Debug.Assert(false); }
 			}
-			catch(Exception) { bNativeSuccess = false; }
+			catch(Exception) { Debug.Assert(false); }
 
 			if(bNativeSuccess) return;
 
@@ -191,11 +289,11 @@ namespace KeePass.Util
 			if(pbHash.Length != 32) { Debug.Assert(false); return; }
 
 			if(!MemUtil.ArraysEqual(m_pbDataHash32, pbHash)) return;
-			
+
 			m_pbDataHash32 = null;
 			m_strFormat = null;
 
-			ClipboardUtil.Clear();
+			Clear();
 		}
 
 		private static byte[] HashClipboard()
@@ -205,7 +303,7 @@ namespace KeePass.Util
 				if(Clipboard.ContainsText())
 				{
 					string strData = Clipboard.GetText();
-					byte[] pbUtf8 = Encoding.UTF8.GetBytes(strData);
+					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
 
 					SHA256Managed sha256 = new SHA256Managed();
 					return sha256.ComputeHash(pbUtf8);
@@ -214,12 +312,84 @@ namespace KeePass.Util
 				{
 					if(Clipboard.ContainsData(m_strFormat))
 					{
-						byte[] pbData = (byte[])Clipboard.GetData(m_strFormat);
+						byte[] pbData;
+						if(m_bEncoded) pbData = GetEncodedData(m_strFormat, IntPtr.Zero);
+						else pbData = (byte[])Clipboard.GetData(m_strFormat);
+						if(pbData == null) { Debug.Assert(false); return null; }
 
 						SHA256Managed sha256 = new SHA256Managed();
 						return sha256.ComputeHash(pbData);
 					}
 				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+
+		public static byte[] ComputeHash()
+		{
+			try // This works always or never
+			{
+				bool bOpened = OpenW(IntPtr.Zero, false);
+				// The following seems to work even without opening the
+				// clipboard, but opening maybe is safer
+				uint u = NativeMethods.GetClipboardSequenceNumber();
+				if(bOpened) CloseW();
+
+				if(u == 0) throw new UnauthorizedAccessException();
+
+				SHA256Managed sha256 = new SHA256Managed();
+				return sha256.ComputeHash(MemUtil.UInt32ToBytes(u));
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			try
+			{
+				MemoryStream ms = new MemoryStream();
+
+				byte[] pbPre = StrUtil.Utf8.GetBytes("pb");
+				ms.Write(pbPre, 0, pbPre.Length); // Prevent empty buffer
+
+				if(Clipboard.ContainsAudio())
+				{
+					Stream sAudio = Clipboard.GetAudioStream();
+					MemUtil.CopyStream(sAudio, ms);
+					sAudio.Close();
+				}
+				if(Clipboard.ContainsFileDropList())
+				{
+					StringCollection sc = Clipboard.GetFileDropList();
+					foreach(string str in sc)
+					{
+						byte[] pbStr = StrUtil.Utf8.GetBytes(str);
+						ms.Write(pbStr, 0, pbStr.Length);
+					}
+				}
+				if(Clipboard.ContainsImage())
+				{
+					using(Image img = Clipboard.GetImage())
+					{
+						MemoryStream msImage = new MemoryStream();
+						img.Save(msImage, ImageFormat.Bmp);
+						byte[] pbImg = msImage.ToArray();
+						ms.Write(pbImg, 0, pbImg.Length);
+						msImage.Close();
+					}
+				}
+				if(Clipboard.ContainsText())
+				{
+					string str = Clipboard.GetText();
+					byte[] pbText = StrUtil.Utf8.GetBytes(str);
+					ms.Write(pbText, 0, pbText.Length);
+				}
+
+				byte[] pbData = ms.ToArray();
+				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbHash = sha256.ComputeHash(pbData);
+				ms.Close();
+
+				return pbHash;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -255,7 +425,7 @@ namespace KeePass.Util
 			Debug.Assert(doData != null); if(doData == null) return;
 
 			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return;
-			if(KeeNativeLib.NativeLib.IsUnix()) return;
+			if(KeeNativeLib.NativeLib.IsUnix()) return; // Not supported on Unix
 
 			try
 			{

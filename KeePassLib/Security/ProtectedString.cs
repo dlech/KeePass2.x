@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using KeePassLib.Cryptography;
+using KeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
@@ -95,7 +96,7 @@ namespace KeePassLib.Security
 				{
 					byte[] pb = m_xbEncrypted.ReadPlainText();
 
-					string str = Encoding.UTF8.GetString(pb, 0, pb.Length);
+					string str = StrUtil.Utf8.GetString(pb, 0, pb.Length);
 					SetString(str); // Clear the XorredBuffer object
 
 					// No need to erase the pb buffer, the plain text is
@@ -175,7 +176,7 @@ namespace KeePassLib.Security
 			catch(NotSupportedException) { } // Windows 98 / ME
 
 			m_bIsProtected = bEnableProtection;
-			SetString(Encoding.UTF8.GetString(vUtf8Value, 0, vUtf8Value.Length));
+			SetString(StrUtil.Utf8.GetString(vUtf8Value, 0, vUtf8Value.Length));
 		}
 
 		/// <summary>
@@ -319,7 +320,7 @@ namespace KeePassLib.Security
 			{
 				byte[] pb = m_xbEncrypted.ReadPlainText();
 
-				string str = Encoding.UTF8.GetString(pb, 0, pb.Length);
+				string str = StrUtil.Utf8.GetString(pb, 0, pb.Length);
 				SetString(str); // Clear the XorredBuffer object
 
 				// No need to erase the pb buffer, the plain text is
@@ -360,7 +361,7 @@ namespace KeePassLib.Security
 				byte[] pb = m_xbEncrypted.ReadPlainText();
 
 				// Clear XorredBuffer
-				SetString(Encoding.UTF8.GetString(pb, 0, pb.Length));
+				SetString(StrUtil.Utf8.GetString(pb, 0, pb.Length));
 
 				return pb;
 			}
@@ -378,17 +379,17 @@ namespace KeePassLib.Security
 						vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
 					Marshal.ZeroFreeGlobalAllocUnicode(p);
 
-					byte[] pb = Encoding.UTF8.GetBytes(vChars, 0, vChars.Length);
+					byte[] pb = StrUtil.Utf8.GetBytes(vChars, 0, vChars.Length);
 					Array.Clear(vChars, 0, vChars.Length);
 #else
-					byte[] pb = Encoding.UTF8.GetBytes(m_secString.ReadAsString());
+					byte[] pb = StrUtil.Utf8.GetBytes(m_secString.ReadAsString());
 #endif
 					return pb;
 				}
-				else return Encoding.UTF8.GetBytes(m_strAlternativeSecString);
+				else return StrUtil.Utf8.GetBytes(m_strAlternativeSecString);
 			}
 
-			return Encoding.UTF8.GetBytes(m_strPlainText); // Unprotected string
+			return StrUtil.Utf8.GetBytes(m_strPlainText); // Unprotected string
 		}
 
 		/// <summary>

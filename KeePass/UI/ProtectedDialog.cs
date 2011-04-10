@@ -26,6 +26,9 @@ using System.Threading;
 using System.Drawing;
 
 using KeePass.Native;
+using KeePass.Util;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -51,19 +54,22 @@ namespace KeePass.UI
 
 		public DialogResult ShowDialog()
 		{
-			Application.DoEvents();
+			ProcessMessagesEx();
+
+			ClipboardEventChainBlocker ccb = new ClipboardEventChainBlocker();
+			byte[] pbClipHash = ClipboardUtil.ComputeHash();
 
 			Bitmap bmpBack = UIUtil.CreateScreenshot();
 			if(bmpBack != null) UIUtil.DimImage(bmpBack);
 
 			DialogResult dr = DialogResult.None;
-
 			try
 			{
 				uint uOrgThreadId = NativeMethods.GetCurrentThreadId();
 				IntPtr pOrgDesktop = NativeMethods.GetThreadDesktop(uOrgThreadId);
 
-				string strName = "D" + Guid.NewGuid().ToString();
+				string strName = "D" + Convert.ToBase64String(
+					Guid.NewGuid().ToByteArray(), Base64FormattingOptions.None);
 				strName = strName.Replace(@"+", string.Empty);
 				strName = strName.Replace(@"/", string.Empty);
 				strName = strName.Replace(@"=", string.Empty);
@@ -77,6 +83,11 @@ namespace KeePass.UI
 
 				IntPtr pNewDesktop = NativeMethods.CreateDesktop(strName,
 					null, IntPtr.Zero, 0, deskFlags, IntPtr.Zero);
+				if(pNewDesktop == IntPtr.Zero)
+				{
+					Debug.Assert(false);
+					return DialogResult.Cancel;
+				}
 
 				SecureThreadParams stp = new SecureThreadParams();
 				stp.BackgroundBitmap = bmpBack;
@@ -88,39 +99,92 @@ namespace KeePass.UI
 				th.Start(stp);
 				th.Join();
 
-				NativeMethods.SwitchDesktop(pOrgDesktop);
+				if(!NativeMethods.SwitchDesktop(pOrgDesktop)) { Debug.Assert(false); }
 				NativeMethods.SetThreadDesktop(pOrgDesktop);
 
-				NativeMethods.CloseDesktop(pNewDesktop);
+				if(!NativeMethods.CloseDesktop(pNewDesktop)) { Debug.Assert(false); }
 				NativeMethods.CloseDesktop(pOrgDesktop);
 
 				dr = stp.Result;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
+			byte[] pbNewClipHash = ClipboardUtil.ComputeHash();
+			if((pbClipHash != null) && (pbNewClipHash != null) &&
+				!MemUtil.ArraysEqual(pbClipHash, pbNewClipHash))
+				ClipboardUtil.Clear();
+			ccb.Release();
+
+			if(bmpBack != null) bmpBack.Dispose();
 			return dr;
+		}
+
+		private static void ProcessMessagesEx()
+		{
+			Application.DoEvents();
+			Thread.Sleep(5);
+			Application.DoEvents();
 		}
 
 		private void SecureDialogThread(object oParam)
 		{
 			try
 			{
-				SecureThreadParams stp = oParam as SecureThreadParams;
+				SecureThreadParams stp = (oParam as SecureThreadParams);
 				if(stp == null) { Debug.Assert(false); return; }
 
-				NativeMethods.SetThreadDesktop(stp.ThreadDesktop);
+				if(!NativeMethods.SetThreadDesktop(stp.ThreadDesktop)) { Debug.Assert(false); }
+				Debug.Assert(NativeMethods.GetThreadDesktop(
+					NativeMethods.GetCurrentThreadId()) == stp.ThreadDesktop);
 
-				BackgroundForm formBack = new BackgroundForm(
-					stp.BackgroundBitmap);
+				// Creating a window on the new desktop spawns a CtfMon.exe child
+				// process by default. On Windows Vista, this process is terminated
+				// correctly when the desktop is closed. However, on Windows 7 it
+				// isn't terminated (probably a bug); creating multiple desktops
+				// accumulates CtfMon.exe child processes. In order to prevent this,
+				// we simply disable IME for the new desktop thread (CtfMon.exe then
+				// isn't loaded automatically).
+				try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
+				catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
+
+				ProcessMessagesEx();
+
+				BackgroundForm formBack = new BackgroundForm(stp.BackgroundBitmap);
 				formBack.Show();
 
-				NativeMethods.SwitchDesktop(stp.ThreadDesktop);
+				ProcessMessagesEx();
+
+				if(!NativeMethods.SwitchDesktop(stp.ThreadDesktop)) { Debug.Assert(false); }
+
+				ProcessMessagesEx();
 
 				stp.Result = m_form.ShowDialog(formBack);
 
-				formBack.Hide();
+				UIUtil.DestroyForm(formBack);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		/* private static void BlockPrintScreen(Form f, bool bBlock)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				if(bBlock)
+				{
+					NativeMethods.RegisterHotKey(f.Handle, NativeMethods.IDHOT_SNAPDESKTOP,
+						0, NativeMethods.VK_SNAPSHOT);
+					NativeMethods.RegisterHotKey(f.Handle, NativeMethods.IDHOT_SNAPWINDOW,
+						NativeMethods.MOD_ALT, NativeMethods.VK_SNAPSHOT);
+				}
+				else
+				{
+					NativeMethods.UnregisterHotKey(f.Handle, NativeMethods.IDHOT_SNAPWINDOW);
+					NativeMethods.UnregisterHotKey(f.Handle, NativeMethods.IDHOT_SNAPDESKTOP);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 	}
 }

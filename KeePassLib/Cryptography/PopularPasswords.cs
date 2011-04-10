@@ -399,8 +399,7 @@ namespace KeePassLib.Cryptography
 				if(!IsPopularChar(ch)) return false;
 			}
 
-			UTF8Encoding utf8 = new UTF8Encoding(false);
-			byte[] pbUtf8 = utf8.GetBytes(vPassword);
+			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(vPassword);
 
 			int[] vIndices = GetTableIndices(pbUtf8, PpcTableSize);
 			Array.Clear(pbUtf8, 0, pbUtf8.Length);
@@ -488,10 +487,9 @@ namespace KeePassLib.Cryptography
 			Array.Clear(vTable, 0, vTable.Length);
 
 			long lBitsInTable = 0;
-			UTF8Encoding utf8 = new UTF8Encoding(false);
 			foreach(string strPassword in vPasswords)
 			{
-				byte[] pbUtf8 = utf8.GetBytes(strPassword);
+				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strPassword);
 				int[] vIndices = GetTableIndices(pbUtf8, PpcTableSize);
 
 				foreach(int i in vIndices)
@@ -523,7 +521,7 @@ namespace KeePassLib.Cryptography
 			sb.AppendLine();
 			sb.AppendLine("Bits set: " + lBitsInTable.ToString() + " of " +
 				PpcTableSize.ToString());
-			int cHashFn = GetTableIndices(utf8.GetBytes("Dummy"), PpcTableSize).Length;
+			int cHashFn = GetTableIndices(StrUtil.Utf8.GetBytes("Dummy"), PpcTableSize).Length;
 			sb.AppendLine("Hash functions: " + cHashFn.ToString());
 			double dblPhi = Math.Pow(1.0 - ((double)cHashFn / PpcTableSize),
 				(double)vPasswords.Count);

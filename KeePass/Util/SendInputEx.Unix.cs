@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.Native;
@@ -93,6 +94,7 @@ namespace KeePass.Util
 
 			StringBuilder sb = new StringBuilder();
 			bool bInCode = false;
+			Keys kMod = Keys.None;
 			for(int i = 0; i < strSequence.Length; ++i)
 			{
 				char ch = strSequence[i];
@@ -101,7 +103,7 @@ namespace KeePass.Util
 				{
 					if(sb.Length > 0)
 					{
-						OSSendKeysUnixString(sb.ToString());
+						OSSendKeysUnixString(sb.ToString(), ref kMod);
 						sb.Remove(0, sb.Length);
 					}
 
@@ -119,7 +121,7 @@ namespace KeePass.Util
 							strKeyCode = strRep;
 
 						if(!strKeyCode.StartsWith("Delay", StrUtil.CaseIgnoreCmp))
-							OSSendKeysUnixKey(strKeyCode);
+							OSSendKeysUnixKey(strKeyCode, ref kMod);
 
 						sb.Remove(0, sb.Length);
 					}
@@ -129,17 +131,65 @@ namespace KeePass.Util
 				else sb.Append(ch);
 			}
 
-			if(sb.Length > 0) OSSendKeysUnixString(sb.ToString());
+			if(sb.Length > 0) OSSendKeysUnixString(sb.ToString(), ref kMod);
 		}
 
-		private static void OSSendKeysUnixKey(string strKey)
+		private static void OSSendKeysUnixKey(string strKey, ref Keys kMod)
 		{
-			NativeMethods.RunXDoTool("key --clearmodifiers " + strKey);
+			if(string.IsNullOrEmpty(strKey)) return;
+
+			if(kMod != Keys.None) NativeMethods.RunXDoTool("key " + strKey);
+			else NativeMethods.RunXDoTool("key --clearmodifiers " + strKey);
+
+			ClearModifiers(ref kMod);
 		}
 
-		private static void OSSendKeysUnixString(string strString)
+		private static void OSSendKeysUnixString(string strString, ref Keys kMod)
 		{
-			NativeMethods.RunXDoTool(@"type --clearmodifiers '" + strString + @"'");
+			if(string.IsNullOrEmpty(strString)) return;
+
+			while(true)
+			{
+				if(strString.StartsWith(@"+"))
+				{
+					kMod |= Keys.Shift;
+					NativeMethods.RunXDoTool("keydown shift");
+					strString = strString.Substring(1);
+				}
+				else if(strString.StartsWith(@"^"))
+				{
+					kMod |= Keys.Control;
+					NativeMethods.RunXDoTool("keydown ctrl");
+					strString = strString.Substring(1);
+				}
+				else if(strString.StartsWith(@"%"))
+				{
+					kMod |= Keys.Alt;
+					NativeMethods.RunXDoTool("keydown alt");
+					strString = strString.Substring(1);
+				}
+				else break;
+			}
+			if(strString.Length == 0) return;
+
+			if(kMod != Keys.None)
+				NativeMethods.RunXDoTool(@"type '" + strString + @"'");
+			else
+				NativeMethods.RunXDoTool(@"type --clearmodifiers '" + strString + @"'");
+
+			ClearModifiers(ref kMod);
+		}
+
+		private static void ClearModifiers(ref Keys kMod)
+		{
+			if((kMod & Keys.Alt) != Keys.None)
+				NativeMethods.RunXDoTool("keyup alt");
+			if((kMod & Keys.Control) != Keys.None)
+				NativeMethods.RunXDoTool("keyup ctrl");
+			if((kMod & Keys.Shift) != Keys.None)
+				NativeMethods.RunXDoTool("keyup shift");
+
+			kMod = Keys.None;
 		}
 	}
 }

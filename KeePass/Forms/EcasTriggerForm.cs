@@ -90,7 +90,7 @@ namespace KeePass.Forms
 
 			UpdateListsEx(false);
 			EnableControlsEx();
-			this.ActiveControl = m_tbName;
+			UIUtil.SetFocus(m_tbName, this);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -232,7 +232,7 @@ namespace KeePass.Forms
 
 			EcasEventForm dlg = new EcasEventForm();
 			dlg.InitEx(eNew);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
 				m_trigger.EventCollection.Add(eNew);
 				UpdateEventListEx(false);
@@ -246,7 +246,7 @@ namespace KeePass.Forms
 
 			EcasEventForm dlg = new EcasEventForm();
 			dlg.InitEx(lvsic[0].Tag as EcasEvent);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				UpdateEventListEx(true);
 		}
 
@@ -260,7 +260,7 @@ namespace KeePass.Forms
 			EcasCondition eNew = new EcasCondition();
 			EcasConditionForm dlg = new EcasConditionForm();
 			dlg.InitEx(eNew);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
 				m_trigger.ConditionCollection.Add(eNew);
 				UpdateConditionListEx(false);
@@ -274,7 +274,7 @@ namespace KeePass.Forms
 
 			EcasConditionForm dlg = new EcasConditionForm();
 			dlg.InitEx(lvsic[0].Tag as EcasCondition);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				UpdateConditionListEx(true);
 		}
 
@@ -288,7 +288,7 @@ namespace KeePass.Forms
 			EcasAction eNew = new EcasAction();
 			EcasActionForm dlg = new EcasActionForm();
 			dlg.InitEx(eNew);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
 				m_trigger.ActionCollection.Add(eNew);
 				UpdateActionListEx(false);
@@ -302,7 +302,7 @@ namespace KeePass.Forms
 
 			EcasActionForm dlg = new EcasActionForm();
 			dlg.InitEx(lvsic[0].Tag as EcasAction);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				UpdateActionListEx(true);
 		}
 

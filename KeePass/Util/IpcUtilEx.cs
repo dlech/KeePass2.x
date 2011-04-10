@@ -193,7 +193,7 @@ namespace KeePass.Util
 				Program.CommandLineArgs.CopyFrom(args);
 
 				mf.OpenDatabase(IOConnectionInfo.FromPath(args.FileName),
-					KeyUtil.KeyFromCommandLine(args), true);
+					KeyUtil.KeyFromCommandLine(Program.CommandLineArgs), true);
 			}
 			else if(ipcMsg.Message == CmdOpenEntryUrl) OpenEntryUrl(ipcMsg, mf);
 			else { Debug.Assert(false); }

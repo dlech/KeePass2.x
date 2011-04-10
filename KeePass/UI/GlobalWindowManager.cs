@@ -85,6 +85,15 @@ namespace KeePass.UI
 			}
 		}
 
+		public static Form TopWindow
+		{
+			get
+			{
+				if(m_vWindows.Count == 0) return null;
+				return m_vWindows[m_vWindows.Count - 1].Key;
+			}
+		}
+
 		public static event EventHandler<GwmWindowEventArgs> WindowAdded;
 		public static event EventHandler<GwmWindowEventArgs> WindowRemoved;
 
@@ -186,6 +195,10 @@ namespace KeePass.UI
 			return false;
 		}
 
+		/// <summary>
+		/// Eventually force using the system font.
+		/// </summary>
+		/// <param name="c">Control to customize.</param>
 		public static void CustomizeControl(Control c)
 		{
 			if(NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix)

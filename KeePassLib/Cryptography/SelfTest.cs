@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
@@ -28,6 +29,7 @@ using KeePassLib.Keys;
 using KeePassLib.Native;
 using KeePassLib.Utility;
 using KeePassLib.Resources;
+using KeePassLib.Security;
 
 namespace KeePassLib.Cryptography
 {
@@ -64,6 +66,14 @@ namespace KeePassLib.Cryptography
 			TestGZip();
 
 			TestHmacOtp();
+
+			TestProtectedMemory();
+			TestStrUtil();
+			TestUrlUtil();
+
+			Debug.Assert((int)PwIcon.World == 1);
+			Debug.Assert((int)PwIcon.Warning == 2);
+			Debug.Assert((int)PwIcon.BlackBerry == 68);
 		}
 
 		private static void TestFipsComplianceProblems()
@@ -230,6 +240,76 @@ namespace KeePassLib.Cryptography
 				if(HmacOtp.Generate(pbSecret, (ulong)i, 6, false, -1) != vExp[i])
 					throw new InvalidOperationException("HmacOtp");
 			}
+#endif
+		}
+
+		private static void TestProtectedMemory()
+		{
+#if DEBUG
+			byte[] pbData = Encoding.ASCII.GetBytes("Test Test Test Test");
+			ProtectedBinary pb = new ProtectedBinary(true, pbData);
+			if(!pb.IsProtected) throw new SecurityException("ProtectedBinary-1");
+
+			byte[] pbDec = pb.ReadData();
+			if(!MemUtil.ArraysEqual(pbData, pbDec))
+				throw new SecurityException("ProtectedBinary-2");
+			if(!pb.IsProtected) throw new SecurityException("ProtectedBinary-3");
+
+			byte[] pbData2 = Encoding.ASCII.GetBytes("Test Test Test Test");
+			byte[] pbData3 = Encoding.ASCII.GetBytes("Test Test Test Test Test");
+			ProtectedBinary pb2 = new ProtectedBinary(true, pbData2);
+			ProtectedBinary pb3 = new ProtectedBinary(true, pbData3);
+			if(!pb.EqualsValue(pb2)) throw new SecurityException("ProtectedBinary-4");
+			if(pb.EqualsValue(pb3)) throw new SecurityException("ProtectedBinary-5");
+			if(pb2.EqualsValue(pb3)) throw new SecurityException("ProtectedBinary-6");
+#endif
+		}
+
+		private static void TestStrUtil()
+		{
+#if DEBUG
+			string[] vSeps = new string[]{ "ax", "b", "c" };
+			const string str1 = "axbqrstcdeax";
+			List<string> v1 = StrUtil.SplitWithSep(str1, vSeps, true);
+
+			if(v1.Count != 9) throw new InvalidOperationException("StrUtil-1");
+			if(v1[0].Length > 0) throw new InvalidOperationException("StrUtil-2");
+			if(!v1[1].Equals("ax")) throw new InvalidOperationException("StrUtil-3");
+			if(v1[2].Length > 0) throw new InvalidOperationException("StrUtil-4");
+			if(!v1[3].Equals("b")) throw new InvalidOperationException("StrUtil-5");
+			if(!v1[4].Equals("qrst")) throw new InvalidOperationException("StrUtil-6");
+			if(!v1[5].Equals("c")) throw new InvalidOperationException("StrUtil-7");
+			if(!v1[6].Equals("de")) throw new InvalidOperationException("StrUtil-8");
+			if(!v1[7].Equals("ax")) throw new InvalidOperationException("StrUtil-9");
+			if(v1[8].Length > 0) throw new InvalidOperationException("StrUtil-10");
+
+			const string str2 = "12ab56";
+			List<string> v2 = StrUtil.SplitWithSep(str2, new string[]{ "AB" }, false);
+			if(v2.Count != 3) throw new InvalidOperationException("StrUtil-11");
+			if(!v2[0].Equals("12")) throw new InvalidOperationException("StrUtil-12");
+			if(!v2[1].Equals("AB")) throw new InvalidOperationException("StrUtil-13");
+			if(!v2[2].Equals("56")) throw new InvalidOperationException("StrUtil-14");
+
+			List<string> v3 = StrUtil.SplitWithSep("pqrs", vSeps, false);
+			if(v3.Count != 1) throw new InvalidOperationException("StrUtil-15");
+			if(!v3[0].Equals("pqrs")) throw new InvalidOperationException("StrUtil-16");
+#endif
+		}
+
+		private static void TestUrlUtil()
+		{
+#if DEBUG
+			if(NativeLib.IsUnix()) return;
+
+			string strBase = "\\\\HOMESERVER\\Apps\\KeePass\\KeePass.exe";
+			string strDoc = "\\\\HOMESERVER\\Documents\\KeePass\\NewDatabase.kdbx";
+			string strRel = "..\\..\\Documents\\KeePass\\NewDatabase.kdbx";
+
+			string str = UrlUtil.MakeRelativePath(strBase, strDoc);
+			if(!str.Equals(strRel)) throw new InvalidOperationException("UrlUtil-1");
+
+			str = UrlUtil.MakeAbsolutePath(strBase, strRel);
+			if(!str.Equals(strDoc)) throw new InvalidOperationException("UrlUtil-2");
 #endif
 		}
 	}

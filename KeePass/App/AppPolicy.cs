@@ -36,6 +36,7 @@ namespace KeePass.App
 	{
 		Plugins = 0,
 		Export,
+		ExportNoKey, // Don't require the current key to be repeated
 		Import,
 		Print,
 		NewFile,
@@ -47,6 +48,7 @@ namespace KeePass.App
 		DragDrop,
 		UnhidePasswords,
 		ChangeMasterKey,
+		ChangeMasterKeyNoKey, // Don't require the current key to be repeated
 		EditTriggers
 	}
 
@@ -67,6 +69,13 @@ namespace KeePass.App
 		{
 			get { return m_bExport;}
 			set { m_bExport = value;}
+		}
+
+		private bool m_bExportNoKey = true;
+		public bool ExportNoKey
+		{
+			get { return m_bExportNoKey; }
+			set { m_bExportNoKey = value; }
 		}
 
 		private bool m_bImport = true;
@@ -146,6 +155,13 @@ namespace KeePass.App
 			set { m_bChangeMasterKey = value; }
 		}
 
+		private bool m_bChangeMasterKeyNoKey = true;
+		public bool ChangeMasterKeyNoKey
+		{
+			get { return m_bChangeMasterKeyNoKey; }
+			set { m_bChangeMasterKeyNoKey = value; }
+		}
+
 		private bool m_bTriggersEdit = true;
 		public bool EditTriggers
 		{
@@ -200,6 +216,9 @@ namespace KeePass.App
 				case AppPolicyId.Export:
 					str += KPRes.Export;
 					break;
+				case AppPolicyId.ExportNoKey:
+					str += KPRes.Export + " - " + KPRes.NoKeyRepeat;
+					break;
 				case AppPolicyId.Import:
 					str += KPRes.Import;
 					break;
@@ -233,6 +252,9 @@ namespace KeePass.App
 				case AppPolicyId.ChangeMasterKey:
 					str += KPRes.ChangeMasterKey;
 					break;
+				case AppPolicyId.ChangeMasterKeyNoKey:
+					str += KPRes.ChangeMasterKey + " - " + KPRes.NoKeyRepeat;
+					break;
 				case AppPolicyId.EditTriggers:
 					str += KPRes.TriggersEdit;
 					break;
@@ -253,6 +275,9 @@ namespace KeePass.App
 					break;
 				case AppPolicyId.Export:
 					str += KPRes.PolicyExportDesc;
+					break;
+				case AppPolicyId.ExportNoKey:
+					str += KPRes.PolicyExportNoKeyDesc;
 					break;
 				case AppPolicyId.Import:
 					str += KPRes.PolicyImportDesc;
@@ -287,6 +312,9 @@ namespace KeePass.App
 				case AppPolicyId.ChangeMasterKey:
 					str += KPRes.PolicyChangeMasterKey;
 					break;
+				case AppPolicyId.ChangeMasterKeyNoKey:
+					str += KPRes.PolicyChangeMasterKeyNoKeyDesc;
+					break;
 				case AppPolicyId.EditTriggers:
 					str += KPRes.PolicyTriggersEditDesc;
 					break;
@@ -316,6 +344,7 @@ namespace KeePass.App
 			{
 				case AppPolicyId.Plugins: bAllowed = m_apfCurrent.Plugins; break;
 				case AppPolicyId.Export: bAllowed = m_apfCurrent.Export; break;
+				case AppPolicyId.ExportNoKey: bAllowed = m_apfCurrent.ExportNoKey; break;
 				case AppPolicyId.Import: bAllowed = m_apfCurrent.Import; break;
 				case AppPolicyId.Print: bAllowed = m_apfCurrent.Print; break;
 				case AppPolicyId.NewFile: bAllowed = m_apfCurrent.NewFile; break;
@@ -327,6 +356,7 @@ namespace KeePass.App
 				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
 				case AppPolicyId.UnhidePasswords: bAllowed = m_apfCurrent.UnhidePasswords; break;
 				case AppPolicyId.ChangeMasterKey: bAllowed = m_apfCurrent.ChangeMasterKey; break;
+				case AppPolicyId.ChangeMasterKeyNoKey: bAllowed = m_apfCurrent.ChangeMasterKeyNoKey; break;
 				case AppPolicyId.EditTriggers: bAllowed = m_apfCurrent.EditTriggers; break;
 				default: Debug.Assert(false); break;
 			}

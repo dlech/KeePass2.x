@@ -229,18 +229,22 @@ namespace KeePass.Forms
 				"LockOnSuspend", m_lvSecurityOptions, lvg, KPRes.LockOnSuspend);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
 				"LockOnRemoteControlChange", m_lvSecurityOptions, lvg, KPRes.LockOnRemoteControlChange);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
-				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
 				"ExitInsteadOfLockingAfterTime", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAfterTime);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
+				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
+				"UseClipboardViewerIgnoreFormat", m_lvSecurityOptions, lvg,
+				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended);
 
 			if(NativeLib.IsLibraryInstalled())
 				m_cdxSecurityOptions.CreateItem(Program.Config.Native, "NativeKeyTransformations",
 					m_lvSecurityOptions, lvg, KPRes.NativeLibUse);
 
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
-				"UseClipboardViewerIgnoreFormat", m_lvSecurityOptions, lvg,
-				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "MasterKeyOnSecureDesktop",
+				m_lvSecurityOptions, lvg, KPRes.MasterKeyOnSecureDesktop);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClearKeyCommandLineParams",
+				m_lvSecurityOptions, lvg, KPRes.ClearKeyCmdLineParams);
 
 			m_cdxSecurityOptions.UpdateData(false);
 			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width -
@@ -259,6 +263,8 @@ namespace KeePass.Forms
 		{
 			LoadPolicyOption("Plugins", KPRes.Plugins, KPRes.PolicyPluginsDesc);
 			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc);
+			LoadPolicyOption("ExportNoKey", KPRes.Export + " - " + KPRes.NoKeyRepeat,
+				KPRes.PolicyExportNoKeyDesc);
 			LoadPolicyOption("Import", KPRes.Import, KPRes.PolicyImportDesc);
 			LoadPolicyOption("Print", KPRes.Print, KPRes.PolicyPrintDesc);
 			LoadPolicyOption("NewFile", KPRes.NewDatabase, KPRes.PolicyNewDatabaseDesc);
@@ -271,6 +277,8 @@ namespace KeePass.Forms
 			LoadPolicyOption("DragDrop", KPRes.DragDrop, KPRes.PolicyDragDropDesc);
 			LoadPolicyOption("UnhidePasswords", KPRes.UnhidePasswords, KPRes.UnhidePasswordsDesc);
 			LoadPolicyOption("ChangeMasterKey", KPRes.ChangeMasterKey, KPRes.PolicyChangeMasterKey);
+			LoadPolicyOption("ChangeMasterKeyNoKey", KPRes.ChangeMasterKey + " - " +
+				KPRes.NoKeyRepeat, KPRes.PolicyChangeMasterKeyNoKeyDesc);
 			LoadPolicyOption("EditTriggers", KPRes.TriggersEdit, KPRes.PolicyTriggersEditDesc);
 
 			m_cdxPolicy.UpdateData(false);
@@ -404,6 +412,8 @@ namespace KeePass.Forms
 				m_lvAdvanced, lvg, KPRes.AutoTypePrependInitSeqForIE);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeReleaseAltWithKeyPress",
 				m_lvAdvanced, lvg, KPRes.AutoTypeReleaseAltWithKeyPress);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnWindowChange",
+				m_lvAdvanced, lvg, KPRes.AutoTypeCancelOnWindowChange);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
@@ -415,6 +425,8 @@ namespace KeePass.Forms
 				m_lvAdvanced, lvg, KPRes.RememberKeySources);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
 				m_lvAdvanced, lvg, KPRes.RememberHidingSettings);
+			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "UnhideButtonAlsoUnhidesSource",
+				m_lvAdvanced, lvg, KPRes.UnhideSourceCharactersToo);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "VerifyWrittenFileAfterSaving",
 				m_lvAdvanced, lvg, KPRes.VerifyWrittenFileAfterSave);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
@@ -600,6 +612,7 @@ namespace KeePass.Forms
 				Program.Config.UI.StandardFont = new AceFont(dlg.Font);
 				Program.Config.UI.StandardFont.OverrideUIDefault = true;
 			}
+			dlg.Dispose();
 		}
 
 		private void OnBtnSelPwFont(object sender, EventArgs e)
@@ -624,6 +637,7 @@ namespace KeePass.Forms
 				Program.Config.UI.PasswordFont = new AceFont(dlg.Font);
 				Program.Config.UI.PasswordFont.OverrideUIDefault = true;
 			}
+			dlg.Dispose();
 		}
 
 		private void OnDefaultExpireDaysCheckedChanged(object sender, EventArgs e)
@@ -693,7 +707,7 @@ namespace KeePass.Forms
 		{
 			UrlSchemesForm dlg = new UrlSchemesForm();
 			dlg.InitEx(m_aceUrlSchemeOverrides);
-			dlg.ShowDialog();
+			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)

@@ -165,6 +165,17 @@ namespace KeePass.App.Configuration
 			set { m_bDeWordWrap = value; }
 		}
 
+		private string m_strCharPickerRect = string.Empty;
+		public string CharPickerRect
+		{
+			get { return m_strCharPickerRect; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strCharPickerRect = value;
+			}
+		}
+
 		private ulong m_uKeyCreationFlags = (ulong)AceKeyUIFlags.None;
 		public ulong KeyCreationFlags
 		{
@@ -205,6 +216,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bHideInEntryDialog; }
 			set { m_bHideInEntryDialog = value; }
+		}
+
+		private bool m_bUnhideBtnAlsoUnhidesSec = false;
+		public bool UnhideButtonAlsoUnhidesSource
+		{
+			get { return m_bUnhideBtnAlsoUnhidesSec; }
+			set { m_bUnhideBtnAlsoUnhidesSec = value; }
 		}
 	}
 

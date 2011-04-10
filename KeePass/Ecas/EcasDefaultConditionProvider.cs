@@ -45,6 +45,16 @@ namespace KeePass.Ecas
 				IsMatchEnvironmentVar));
 
 			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
+				0xB9, 0x0F, 0xF8, 0x07, 0x73, 0x38, 0x4F, 0xEA,
+				0xBB, 0x2E, 0xBC, 0x0B, 0xEA, 0x3B, 0x98, 0xC3 }),
+				KPRes.String, PwIcon.Configuration, new EcasParameter[] {
+					new EcasParameter(KPRes.String, EcasValueType.String, null),
+					new EcasParameter(KPRes.Value + " - " + KPRes.Comparison,
+						EcasValueType.EnumStrings, EcasUtil.StdStringCompare),
+					new EcasParameter(KPRes.Value, EcasValueType.String, null) },
+				IsMatchString));
+
+			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
 				0xCB, 0x4A, 0x9E, 0x34, 0x56, 0x8C, 0x4C, 0x95,
 				0xAD, 0x67, 0x4D, 0x1C, 0xA1, 0x04, 0x19, 0xBC }),
 				KPRes.FileExists, PwIcon.PaperReady, new EcasParameter[] {
@@ -85,6 +95,18 @@ namespace KeePass.Ecas
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
+		}
+
+		private static bool IsMatchString(EcasCondition c, EcasContext ctx)
+		{
+			string str = EcasUtil.GetParamString(c.Parameters, 0, true);
+			uint uCompareType = EcasUtil.GetParamEnum(c.Parameters, 1,
+				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
+			string strValue = EcasUtil.GetParamString(c.Parameters, 2, true);
+
+			if((str == null) || (strValue == null)) return false;
+
+			return EcasUtil.CompareStrings(str, strValue, uCompareType);
 		}
 
 		private static bool IsMatchFile(EcasCondition c, EcasContext ctx)

@@ -337,6 +337,7 @@
     <Compile Include="DataExchange\Formats\PwMemory2008Xml104.cs" />
     <Compile Include="DataExchange\Formats\PwPrompterDat12.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
+    <Compile Include="DataExchange\Formats\PwsPlusCsv1007.cs" />
     <Compile Include="DataExchange\Formats\PwTresorXml100.cs" />
     <Compile Include="DataExchange\Formats\RevelationXml04.cs" />
     <Compile Include="DataExchange\Formats\RoboFormHtml69.cs" />
@@ -467,6 +468,12 @@
     </Compile>
     <Compile Include="Forms\FieldRefForm.Designer.cs">
       <DependentUpon>FieldRefForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FileBrowserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FileBrowserForm.Designer.cs">
+      <DependentUpon>FileBrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ImportCsvForm.cs">
       <SubType>Form</SubType>
@@ -638,6 +645,9 @@
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\ColorMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ColumnProvider.cs" />
     <Compile Include="UI\ColumnProviderPool.cs" />
     <Compile Include="UI\CustomListViewEx.cs">
@@ -661,6 +671,9 @@
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
+    <Compile Include="UI\KeyboardControl.cs">
+    </Compile>
+    <Compile Include="UI\ListViewSortMenu.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
     <Compile Include="UI\OnDemandStatusDialog.cs" />
@@ -670,6 +683,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ProtectedDialog.cs" />
+    <Compile Include="UI\RichTextBuilder.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="UI\TaskbarList.cs" />
@@ -764,6 +778,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FieldRefForm.resx">
       <DependentUpon>FieldRefForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FileBrowserForm.resx">
+      <DependentUpon>FileBrowserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImportCsvForm.resx">
       <DependentUpon>ImportCsvForm.cs</DependentUpon>
@@ -882,6 +899,7 @@
     <Compile Include="Util\ClipboardContents.cs" />
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
+    <Compile Include="Util\ClipboardUtil.Windows.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
     <Compile Include="Ecas\EcasActionType.cs" />
     <Compile Include="Ecas\EcasConditionType.cs" />
@@ -1048,6 +1066,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_PwsPlus.png" />
+    <None Include="Resources\Nuvola\B16x16_KaboodleLoop.png" />
+    <None Include="Resources\Images\B16x16_MenuRadio.png" />
     <None Include="Resources\Images\B16x16_Imp_DataVault.png" />
     <None Include="Resources\Images\B16x16_Imp_Revelation.png" />
     <None Include="Resources\Images\B16x16_Imp_PwPrompter.png" />

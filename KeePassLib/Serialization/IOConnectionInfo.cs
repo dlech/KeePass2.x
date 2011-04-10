@@ -243,7 +243,7 @@ namespace KeePassLib.Serialization
 
 			if(bEncode)
 			{
-				byte[] pbUtf8 = Encoding.UTF8.GetBytes(strToEncode);
+				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strToEncode);
 
 				unchecked
 				{
@@ -263,7 +263,7 @@ namespace KeePassLib.Serialization
 						pbBase[iPos] -= (byte)(iPos * 11);
 				}
 
-				return Encoding.UTF8.GetString(pbBase, 0, pbBase.Length);
+				return StrUtil.Utf8.GetString(pbBase, 0, pbBase.Length);
 			}
 		}
 		*/

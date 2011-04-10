@@ -189,8 +189,8 @@ namespace KeePass.Util
 			PwEntry pe = tsmi.Tag as PwEntry;
 			Debug.Assert(pe != null); if(pe == null) return;
 
-			ClipboardUtil.Copy(pe.Strings.GetSafe(strField), true,
-				pe, Program.MainForm.DocumentManager.ActiveDatabase);
+			ClipboardUtil.Copy(pe.Strings.ReadSafe(strField), true, true,
+				pe, Program.MainForm.DocumentManager.ActiveDatabase, IntPtr.Zero);
 		}
 
 		private static void OnCopyUserName(object sender, EventArgs e)

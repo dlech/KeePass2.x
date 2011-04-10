@@ -30,6 +30,7 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -52,7 +53,7 @@ namespace KeePass.DataExchange.Formats
 			IStatusLogger slLogger)
 		{
 			string str = PwMemory2008Xml104.Preprocess(sInput);
-			MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(str), false);
+			MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(str), false);
 
 			XmlSerializer xs = new XmlSerializer(typeof(Priv_PwMem2008XmlFile));
 			Priv_PwMem2008XmlFile f = (Priv_PwMem2008XmlFile)xs.Deserialize(ms);

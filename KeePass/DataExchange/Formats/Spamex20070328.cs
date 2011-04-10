@@ -29,6 +29,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
@@ -79,13 +80,17 @@ namespace KeePass.DataExchange.Formats
 			dlgUser.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.UserName,
 				KPRes.UserNamePrompt, KeePass.Properties.Resources.B48x48_WWW,
 				string.Empty, null);
-			if(dlgUser.ShowDialog() != DialogResult.OK) return;
+			if(UIUtil.ShowDialogNotValue(dlgUser, DialogResult.OK)) return;
+			string strUser = dlgUser.ResultString;
+			UIUtil.DestroyForm(dlgUser);
 
 			SingleLineEditForm dlgPassword = new SingleLineEditForm();
 			dlgPassword.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.Password,
 				KPRes.PasswordPrompt, KeePass.Properties.Resources.B48x48_WWW,
 				string.Empty, null);
-			if(dlgPassword.ShowDialog() != DialogResult.OK) return;
+			if(UIUtil.ShowDialogNotValue(dlgPassword, DialogResult.OK)) return;
+			string strPassword = dlgPassword.ResultString;
+			UIUtil.DestroyForm(dlgPassword);
 
 			RemoteCertificateValidationCallback pPrevCertCb =
 				ServicePointManager.ServerCertificateValidationCallback;
@@ -100,9 +105,6 @@ namespace KeePass.DataExchange.Formats
 			try
 			{
 				slLogger.SetText(KPRes.ImportingStatusMsg, LogStatusType.Info);
-
-				string strUser = dlgUser.ResultString; ;
-				string strPassword = dlgPassword.ResultString;
 
 				string strPostData = @"toollogin=&MetaDomain=&LoginEmail=" +
 					strUser + @"&LoginPassword=" + strPassword + @"&Remember=1";

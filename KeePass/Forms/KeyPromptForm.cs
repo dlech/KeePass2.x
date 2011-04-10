@@ -34,6 +34,7 @@ using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -45,6 +46,7 @@ namespace KeePass.Forms
 	{
 		private CompositeKey m_pKey = null;
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
+		private string m_strCustomTitle = null;
 
 		private bool m_bRedirectActivation = false;
 		private bool m_bCanExit = false;
@@ -55,7 +57,6 @@ namespace KeePass.Forms
 		private bool m_bInitializing = false;
 
 		private volatile List<string> m_vSuggestions = new List<string>();
-		private volatile bool m_bSuggestionsReady = false;
 
 		public CompositeKey CompositeKey
 		{
@@ -71,6 +72,19 @@ namespace KeePass.Forms
 			get { return m_bHasExited; }
 		}
 
+		private bool m_bSecureDesktop = false;
+		public bool SecureDesktopMode
+		{
+			get { return m_bSecureDesktop; }
+			set { m_bSecureDesktop = value; }
+		}
+
+		private bool m_bShowHelpAfterClose = false;
+		public bool ShowHelpAfterClose
+		{
+			get { return m_bShowHelpAfterClose; }
+		}
+
 		public KeyPromptForm()
 		{
 			InitializeComponent();
@@ -80,10 +94,17 @@ namespace KeePass.Forms
 		public void InitEx(IOConnectionInfo ioInfo, bool bCanExit,
 			bool bRedirectActivation)
 		{
+			InitEx(ioInfo, bCanExit, bRedirectActivation, null);
+		}
+
+		public void InitEx(IOConnectionInfo ioInfo, bool bCanExit,
+			bool bRedirectActivation, string strCustomTitle)
+		{
 			if(ioInfo != null) m_ioInfo = ioInfo;
 
 			m_bCanExit = bCanExit;
 			m_bRedirectActivation = bRedirectActivation;
+			m_strCustomTitle = strCustomTitle;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -93,11 +114,12 @@ namespace KeePass.Forms
 
 			m_bInitializing = true;
 
+			string strBannerTitle = (!string.IsNullOrEmpty(m_strCustomTitle) ?
+				m_strCustomTitle : KPRes.EnterCompositeKey);
 			string strBannerDesc = WinUtil.CompactPath(m_ioInfo.Path, 45);
 			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
 				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_KGPG_Key2, KPRes.EnterCompositeKey,
-				strBannerDesc);
+				Properties.Resources.B48x48_KGPG_Key2, strBannerTitle, strBannerDesc);
 			this.Icon = Properties.Resources.KeePass;
 
 			FontUtil.AssignDefaultBold(m_cbPassword);
@@ -107,10 +129,15 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
 
+			string strStart = (!string.IsNullOrEmpty(m_strCustomTitle) ?
+				m_strCustomTitle : KPRes.OpenDatabase);
 			string strNameEx = UrlUtil.GetFileName(m_ioInfo.Path);
-			if(strNameEx.Length > 0) this.Text += " - " + strNameEx;
+			if(!string.IsNullOrEmpty(strNameEx))
+				this.Text = strStart + " - " + strNameEx;
+			else this.Text = strStart;
 
 			m_tbPassword.Text = string.Empty;
+			m_secPassword.SecureDesktopMode = m_bSecureDesktop;
 			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, true);
 
 			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
@@ -182,7 +209,7 @@ namespace KeePass.Forms
 
 			this.BringToFront();
 			this.Activate();
-			m_tbPassword.Focus();
+			UIUtil.SetFocus(m_tbPassword, this);
 		}
 
 		private void CustomizeForScreenReader()
@@ -228,6 +255,17 @@ namespace KeePass.Forms
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsProvKey == true))
 			{
+				KeyProvider kp = Program.KeyProviderPool.Get(strKeyFile);
+				if((kp != null) && m_bSecureDesktop)
+				{
+					if(kp.GetKeyMightShowGui)
+					{
+						MessageService.ShowWarning(KPRes.KeyProvWithGuiOnSD,
+							KPRes.KeyProvWithGuiOnSDHint);
+						return false;
+					}
+				}
+
 				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(m_ioInfo, false);
 
 				bool bPerformHash;
@@ -323,7 +361,7 @@ namespace KeePass.Forms
 
 		private void OnCheckedPassword(object sender, EventArgs e)
 		{
-			if(m_cbPassword.Checked) m_tbPassword.Focus();
+			if(m_cbPassword.Checked) UIUtil.SetFocus(m_tbPassword, this);
 		}
 
 		private void OnCheckedKeyFile(object sender, EventArgs e)
@@ -366,22 +404,42 @@ namespace KeePass.Forms
 
 		private void OnBtnHelp(object sender, EventArgs e)
 		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources, null);
+			if(m_bSecureDesktop)
+			{
+				m_bShowHelpAfterClose = true;
+				this.DialogResult = DialogResult.Cancel;
+			}
+			else AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources, null);
 		}
 
 		private void OnClickKeyFileBrowse(object sender, EventArgs e)
 		{
-			string strFilter = UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true);
-			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileSelect,
-				strFilter, 2, null, false, true);
+			string strFile = null;
+			if(m_bSecureDesktop)
+			{
+				FileBrowserForm dlg = new FileBrowserForm();
+				dlg.InitEx(false, KPRes.KeyFileSelect, KPRes.SecDeskFileDialogHint);
+				if(dlg.ShowDialog() == DialogResult.OK)
+					strFile = dlg.SelectedFile;
+				UIUtil.DestroyForm(dlg);
+			}
+			else
+			{
+				string strFilter = UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true);
+				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileSelect,
+					strFilter, 2, null, false, true);
 
-			if(ofd.ShowDialog() == DialogResult.OK)
+				if(ofd.ShowDialog() == DialogResult.OK)
+					strFile = ofd.FileName;
+			}
+
+			if(!string.IsNullOrEmpty(strFile))
 			{
 				if((Program.Config.UI.KeyPromptFlags &
 					(ulong)AceKeyUIFlags.UncheckKeyFile) == 0)
 					UIUtil.SetChecked(m_cbKeyFile, true);
 
-				m_cmbKeyFile.Items.Add(ofd.FileName);
+				m_cmbKeyFile.Items.Add(strFile);
 				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 			}
 
@@ -422,7 +480,8 @@ namespace KeePass.Forms
 			{
 				bool bSearchOnRemovable = Program.Config.Integration.SearchKeyFilesOnRemovableMedia;
 
-				foreach(DriveInfo di in DriveInfo.GetDrives())
+				DriveInfo[] vDrives = DriveInfo.GetDrives();
+				foreach(DriveInfo di in vDrives)
 				{
 					if(di.DriveType == DriveType.NoRootDirectory)
 						continue;
@@ -449,38 +508,34 @@ namespace KeePass.Forms
 			foreach(KeyProvider prov in Program.KeyProviderPool)
 				m_vSuggestions.Add(prov.Name);
 
-			m_bSuggestionsReady = true;
+			if(m_cmbKeyFile.InvokeRequired)
+				m_cmbKeyFile.Invoke(new VoidDelegate(this.PresentKeyFileSuggestions));
+			else PresentKeyFileSuggestions();
 		}
 
-		private void OnKeyFileFillerTimerTick(object sender, EventArgs e)
+		private void PresentKeyFileSuggestions()
 		{
-			if(m_bSuggestionsReady)
+			foreach(string str in m_vSuggestions)
+				m_cmbKeyFile.Items.Add(str);
+
+			m_vSuggestions.Clear();
+
+			if(m_cmbKeyFile.SelectedIndex == 0)
 			{
-				m_bSuggestionsReady = false;
-				m_timerKeyFileFiller.Enabled = false;
-
-				foreach(string str in m_vSuggestions)
-					m_cmbKeyFile.Items.Add(str);
-
-				m_vSuggestions.Clear();
-
-				if(m_cmbKeyFile.SelectedIndex == 0)
+				string strRemKeyFile = Program.Config.Defaults.GetKeySource(
+					m_ioInfo, true);
+				if(!string.IsNullOrEmpty(strRemKeyFile))
 				{
-					string strRemKeyFile = Program.Config.Defaults.GetKeySource(
-						m_ioInfo, true);
-					if(!string.IsNullOrEmpty(strRemKeyFile))
-					{
-						m_cmbKeyFile.Items.Add(strRemKeyFile);
-						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
-					}
+					m_cmbKeyFile.Items.Add(strRemKeyFile);
+					m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
+				}
 
-					string strRemKeyProv = Program.Config.Defaults.GetKeySource(
-						m_ioInfo, false);
-					if(!string.IsNullOrEmpty(strRemKeyProv))
-					{
-						int iProv = m_cmbKeyFile.FindStringExact(strRemKeyProv);
-						if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
-					}
+				string strRemKeyProv = Program.Config.Defaults.GetKeySource(
+					m_ioInfo, false);
+				if(!string.IsNullOrEmpty(strRemKeyProv))
+				{
+					int iProv = m_cmbKeyFile.FindStringExact(strRemKeyProv);
+					if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
 				}
 			}
 		}

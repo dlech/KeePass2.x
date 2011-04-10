@@ -290,6 +290,8 @@ namespace KeePassLib.Utility
 
 			while((nRead = sSource.Read(pbBuf, 0, nBufSize)) > 0)
 				sTarget.Write(pbBuf, 0, nRead);
+
+			// Do not close any of the streams
 		}
 
 		public static byte[] Compress(byte[] pbData)

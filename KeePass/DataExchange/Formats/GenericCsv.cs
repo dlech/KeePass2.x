@@ -25,6 +25,7 @@ using System.Drawing;
 
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -57,7 +58,7 @@ namespace KeePass.DataExchange.Formats
 
 			ImportCsvForm csv = new ImportCsvForm();
 			csv.InitEx(pwStorage, pbData);
-			csv.ShowDialog();
+			UIUtil.ShowDialogAndDestroy(csv);
 		}
 	}
 }

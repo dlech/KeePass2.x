@@ -151,10 +151,11 @@ namespace KeePass.DataExchange.Formats
 						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemImage)
 				{
-					uint uImage;
-					if(uint.TryParse(XmlUtil.SafeInnerText(xmlChild), out uImage))
+					int nImage;
+					if(int.TryParse(XmlUtil.SafeInnerText(xmlChild), out nImage))
 					{
-						if(uImage < (uint)PwIcon.Count) pe.IconId = (PwIcon)uImage;
+						if((nImage >= 0) && (nImage < (int)PwIcon.Count))
+							pe.IconId = (PwIcon)nImage;
 						else { Debug.Assert(false); }
 					}
 					else { Debug.Assert(false); }

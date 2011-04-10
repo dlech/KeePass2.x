@@ -119,8 +119,10 @@ namespace KeePass.DataExchange.Formats
 
 					string strKey = StrUtil.XmlToString(StrUtil.GetStringBetween(
 						strData, nKeyTD, @">", @"</TD>")).TrimEnd(new char[]{ '$' });
-					string strValue = StrUtil.XmlToString(StrUtil.GetStringBetween(
-						strData, nValueTD, @">", @"</TD>"));
+					string strValueRaw = StrUtil.GetStringBetween(strData,
+						nValueTD, @">", @"</TD>");
+					strValueRaw = strValueRaw.Replace(@"<BR>", Environment.NewLine);
+					string strValue = StrUtil.XmlToString(strValueRaw);
 
 					string strKeyMapped = ImportUtil.MapNameToStandardField(strKey, true);
 					if((strKeyMapped == PwDefs.TitleField) ||

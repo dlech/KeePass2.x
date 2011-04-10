@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Cryptography
 {
 	/// <summary>
@@ -133,7 +135,7 @@ namespace KeePassLib.Cryptography
 		{
 			if(pbUnprotectedUtf8 == null) { Debug.Assert(false); return 0; }
 
-			char[] vChars = Encoding.UTF8.GetChars(pbUnprotectedUtf8);
+			char[] vChars = StrUtil.Utf8.GetChars(pbUnprotectedUtf8);
 			uint uResult = EstimatePasswordBits(vChars);
 			Array.Clear(vChars, 0, vChars.Length);
 

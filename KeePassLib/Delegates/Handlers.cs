@@ -42,4 +42,6 @@ namespace KeePassLib.Delegates
 	/// traversal. If you want to immediately stop the whole traversal,
 	/// return <c>false</c>.</returns>
 	public delegate bool EntryHandler(PwEntry pe);
+
+	public delegate void VoidDelegate();
 }

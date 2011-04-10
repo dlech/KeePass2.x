@@ -29,8 +29,11 @@ using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Keys;
+using KeePassLib.Resources;
 using KeePassLib.Utility;
 using KeePassLib.Serialization;
+
+using KeePass.Forms;
 
 namespace KeePass.Util
 {
@@ -95,7 +98,47 @@ namespace KeePass.Util
 				}
 			}
 
-			return ((cmpKey.UserKeyCount > 0) ? cmpKey : null);
+			if(cmpKey.UserKeyCount > 0)
+			{
+				ClearKeyOptions(args, true);
+				return cmpKey;
+			}
+
+			return null;
+		}
+
+		private static void ClearKeyOptions(CommandLineArgs args, bool bOnlyIfOptionEnabled)
+		{
+			if(args == null) { Debug.Assert(false); return; }
+
+			if(bOnlyIfOptionEnabled && !Program.Config.Security.ClearKeyCommandLineParams)
+				return;
+
+			args.Remove(AppDefs.CommandLineOptions.Password);
+			args.Remove(AppDefs.CommandLineOptions.PasswordEncrypted);
+			args.Remove(AppDefs.CommandLineOptions.KeyFile);
+			args.Remove(AppDefs.CommandLineOptions.PreSelect);
+			args.Remove(AppDefs.CommandLineOptions.UserAccount);
+		}
+
+		public static bool ReAskKey(PwDatabase pwDatabase, bool bFailWithUI)
+		{
+			if(pwDatabase == null) { Debug.Assert(false); return false; }
+
+			KeyPromptForm dlg = new KeyPromptForm();
+			dlg.InitEx(pwDatabase.IOConnectionInfo, false, true,
+				KPRes.EnterCurrentCompositeKey);
+			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return false;
+
+			CompositeKey ck = dlg.CompositeKey;
+			bool bResult = ck.EqualsValue(pwDatabase.MasterKey);
+
+			if(!bResult)
+				MessageService.ShowWarning(KLRes.InvalidCompositeKey,
+						KLRes.InvalidCompositeKeyHint);
+
+			UIUtil.DestroyForm(dlg);
+			return bResult;
 		}
 	}
 }

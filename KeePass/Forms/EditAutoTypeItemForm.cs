@@ -66,9 +66,12 @@ namespace KeePass.Forms
 		};
 
 		private static string[] SpecialPlaceholders = new string[] {
-			"APPDIR", "GROUP", "GROUPPATH", "DELAY 1000", "DELAY=200",
-			"PICKPASSWORDCHARS", "NEWPASSWORD", "HMACOTP", VkcBreak,
-			"DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT", "ENV_DIRSEP", VkcBreak,
+			"GROUP", "GROUPPATH", "PASSWORD_ENC", "URL:RMVSCM", VkcBreak,
+			"DELAY 1000", "DELAY=200", "VKEY 65",
+			"PICKCHARS", "PICKCHARS:Password:C=3",
+			"NEWPASSWORD", "HMACOTP", VkcBreak,
+			"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
+			"ENV_DIRSEP", VkcBreak,
 			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
 			"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
 			"DT_UTC_DAY", "DT_UTC_HOUR", "DT_UTC_MINUTE", "DT_UTC_SECOND"
@@ -118,58 +121,79 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
+			UIUtil.EnableAutoCompletion(m_cmbWindow, false);
+
 			// m_clrOriginalForeground = m_lblOpenHint.ForeColor;
 			m_clrOriginalBackground = m_cmbWindow.BackColor;
 			// m_strOriginalWindowHint = m_lblTargetWindowInfo.Text;
 
-			StringBuilder sbPH = new StringBuilder();
-			sbPH.Append("<b>");
-			sbPH.Append(KPRes.StandardFields);
-			sbPH.Append(":</b><br />");
+			RichTextBuilder rb = new RichTextBuilder();
+			rb.AppendLine(KPRes.StandardFields, FontStyle.Bold, null, null, ":", null);
 
-			sbPH.Append("{" + PwDefs.TitleField + "} ");
-			sbPH.Append("{" + PwDefs.UserNameField + "} ");
-			sbPH.Append("{" + PwDefs.PasswordField + "} ");
-			sbPH.Append("{" + PwDefs.UrlField + "} ");
-			sbPH.Append("{" + PwDefs.NotesField + "}");
+			rb.Append("{" + PwDefs.TitleField + "} ");
+			rb.Append("{" + PwDefs.UserNameField + "} ");
+			rb.Append("{" + PwDefs.PasswordField + "} ");
+			rb.Append("{" + PwDefs.UrlField + "} ");
+			rb.Append("{" + PwDefs.NotesField + "}");
 
-			bool bCustomInitialized = false;
+			bool bCustomInitialized = false, bFirst = true;
 			foreach(KeyValuePair<string, ProtectedString> kvp in m_vStringDict)
 			{
 				if(!PwDefs.IsStandardField(kvp.Key))
 				{
 					if(bCustomInitialized == false)
 					{
-						sbPH.Append("<br /><br /><b>");
-						sbPH.Append(KPRes.CustomFields);
-						sbPH.Append(":</b><br />");
+						rb.AppendLine();
+						rb.AppendLine();
+						rb.AppendLine(KPRes.CustomFields, FontStyle.Bold, null, null, ":", null);
 						bCustomInitialized = true;
 					}
 
-					sbPH.Append("{" + PwDefs.AutoTypeStringPrefix + kvp.Key + "} ");
+					if(!bFirst) rb.Append(" ");
+					rb.Append("{" + PwDefs.AutoTypeStringPrefix + kvp.Key + "}");
+					bFirst = false;
 				}
 			}
 
-			sbPH.Append("<br /><br /><b>" + KPRes.KeyboardKeyModifiers + ":</b><br />");
-			sbPH.Append(KPRes.KeyboardKeyShift + @": +, ");
-			sbPH.Append(KPRes.KeyboardKeyCtrl + @": ^, ");
-			sbPH.Append(KPRes.KeyboardKeyAlt + @": %");
+			rb.AppendLine();
+			rb.AppendLine();
+			rb.AppendLine(KPRes.KeyboardKeyModifiers, FontStyle.Bold, null, null, ":", null);
+			rb.Append(KPRes.KeyboardKeyShift + @": +, ");
+			rb.Append(KPRes.KeyboardKeyCtrl + @": ^, ");
+			rb.Append(KPRes.KeyboardKeyAlt + @": %");
 
-			sbPH.Append("<br /><br /><b>" + KPRes.SpecialKeys + ":</b><br />");
+			rb.AppendLine();
+			rb.AppendLine();
+			rb.AppendLine(KPRes.SpecialKeys, FontStyle.Bold, null, null, ":", null);
+			bFirst = true;
 			foreach(string strNav in SpecialKeyCodes)
 			{
-				if(strNav == VkcBreak) sbPH.Append("<br /><br />");
-				else sbPH.Append("{" + strNav + "} ");
+				if(strNav == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
+				else
+				{
+					if(!bFirst) rb.Append(" ");
+					rb.Append("{" + strNav + "}");
+					bFirst = false;
+				}
 			}
 
-			sbPH.Append("<br /><br /><b>" + KPRes.OtherPlaceholders + ":</b><br />");
+			rb.AppendLine();
+			rb.AppendLine();
+			rb.AppendLine(KPRes.OtherPlaceholders, FontStyle.Bold, null, null, ":", null);
+			bFirst = true;
 			foreach(string strPH in SpecialPlaceholders)
 			{
-				if(strPH == VkcBreak) sbPH.Append("<br /><br />");
-				else sbPH.Append("{" + strPH + "} ");
+				if(strPH == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
+				else
+				{
+					if(!bFirst) rb.Append(" ");
+					rb.Append("{" + strPH + "}");
+					bFirst = false;
+				}
 			}
 
-			m_rtbPlaceholders.Rtf = StrUtil.SimpleHtmlToRtf(sbPH.ToString());
+			rb.Build(m_rtbPlaceholders);
+
 			LinkifyRtf(m_rtbPlaceholders);
 
 			if(m_strOriginalName != null)
@@ -192,7 +216,7 @@ namespace KeePass.Forms
 				NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
 					IntPtr lParam)
 				{
-					string strName = NativeMethods.GetWindowText(hWnd);
+					string strName = NativeMethods.GetWindowText(hWnd, true);
 					if((strName != null) && (strName.Length > 0))
 					{
 						if((NativeMethods.GetWindowStyle(hWnd) &
@@ -210,7 +234,11 @@ namespace KeePass.Forms
 			catch(Exception) { Debug.Assert(false); }
 
 			EnableControlsEx();
-			m_cmbWindow.Focus();
+		}
+
+		private void OnFormShown(object sender, EventArgs e)
+		{
+			UIUtil.SetFocus(m_cmbWindow, this); // Doesn't work in OnFormLoad
 		}
 
 		private void CleanUpEx()
@@ -330,6 +358,8 @@ namespace KeePass.Forms
 
 		private static void LinkifyRtf(RichTextBox rtb)
 		{
+			Debug.Assert(rtb.HideSelection); // Flicker otherwise
+
 			string str = rtb.Text;
 
 			int iPos = str.IndexOf('{');
@@ -350,6 +380,8 @@ namespace KeePass.Forms
 
 		private void OnPlaceholdersLinkClicked(object sender, LinkClickedEventArgs e)
 		{
+			if(!m_rbSeqCustom.Checked) m_rbSeqCustom.Checked = true;
+
 			int nSelStart = m_rbKeySeq.SelectionStart;
 			int nSelLength = m_rbKeySeq.SelectionLength;
 			string strText = m_rbKeySeq.Text;
@@ -360,7 +392,7 @@ namespace KeePass.Forms
 
 			m_rbKeySeq.Text = strText.Insert(nSelStart, strUrl);
 			m_rbKeySeq.Select(nSelStart + strUrl.Length, 0);
-			m_rbKeySeq.Focus();
+			UIUtil.SetFocus(m_rbKeySeq, this);
 		}
 
 		private void OnWindowTextUpdate(object sender, EventArgs e)

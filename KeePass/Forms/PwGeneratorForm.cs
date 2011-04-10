@@ -67,7 +67,7 @@ namespace KeePass.Forms
 		/// <summary>
 		/// Initialize this password generator form instance.
 		/// </summary>
-		/// <param name="optInitial">Initial options (may be <c>null</c>).</param>
+		/// <param name="pwInitial">Initial options (may be <c>null</c>).</param>
 		public void InitEx(PwProfile pwInitial, bool bCanAccept, bool bForceInTaskbar)
 		{
 			m_optInitial = pwInitial;
@@ -437,6 +437,7 @@ namespace KeePass.Forms
 					}
 				}
 			}
+			UIUtil.DestroyForm(slef);
 
 			EnableControlsEx(false);
 		}

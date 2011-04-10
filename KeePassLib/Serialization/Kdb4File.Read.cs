@@ -42,7 +42,7 @@ using KeePassLib.Utility;
 namespace KeePassLib.Serialization
 {
 	/// <summary>
-	/// Serialization to KeePass KDB files.
+	/// Serialization to KeePass KDBX files.
 	/// </summary>
 	public sealed partial class Kdb4File
 	{
@@ -131,6 +131,7 @@ namespace KeePassLib.Serialization
 				ReadXmlStreamed(readerStream, hashedStream);
 				// ReadXmlDom(readerStream);
 
+				readerStream.Close();
 				GC.KeepAlive(brDecrypted);
 				GC.KeepAlive(br);
 			}
@@ -147,6 +148,13 @@ namespace KeePassLib.Serialization
 			m_pbHashOfFileOnDisk = hashedStream.Hash;
 
 			sSource.Close();
+
+			// Remove old backups (this call is required here in order to apply
+			// the default history maintenance settings for people upgrading from
+			// KeePass <= 2.14 to >= 2.15; also it ensures history integrity in
+			// case a different application has created the KDBX file and ignored
+			// the history maintenance settings)
+			m_pwDatabase.MaintainBackups(); // Don't mark database as modified
 		}
 
 		private void ReadHeader(BinaryReaderEx br)
@@ -268,11 +276,11 @@ namespace KeePassLib.Serialization
 
 		private void SetCompressionFlags(byte[] pbFlags)
 		{
-			uint uID = MemUtil.BytesToUInt32(pbFlags);
-			if(uID >= (uint)PwCompressionAlgorithm.Count)
+			int nID = (int)MemUtil.BytesToUInt32(pbFlags);
+			if((nID < 0) || (nID >= (int)PwCompressionAlgorithm.Count))
 				throw new FormatException(KLRes.FileUnknownCompression);
 
-			m_pwDatabase.Compression = (PwCompressionAlgorithm)uID;
+			m_pwDatabase.Compression = (PwCompressionAlgorithm)nID;
 		}
 
 		private void SetInnerRandomStreamID(byte[] pbID)

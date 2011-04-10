@@ -195,5 +195,20 @@ namespace KeePass.Native
 			public uint cbSize;
 			public uint dwTime;
 		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		private struct SHFILEINFO
+		{
+			public IntPtr hIcon;
+			public int iIcon;
+			public uint dwAttributes;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst =
+				KeePassLib.Native.NativeMethods.MAX_PATH)]
+			public string szDisplayName;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+			public string szTypeName;
+		}
 	}
 }

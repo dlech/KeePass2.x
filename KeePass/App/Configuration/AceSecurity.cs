@@ -62,6 +62,13 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private bool m_bSecureDesktop = false;
+		public bool MasterKeyOnSecureDesktop
+		{
+			get { return m_bSecureDesktop; }
+			set { m_bSecureDesktop = value; }
+		}
+
 		private bool m_bClipClearOnExit = true;
 		public bool ClipboardClearOnExit
 		{
@@ -84,6 +91,13 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bUseClipboardViewerIgnoreFmt; }
 			set { m_bUseClipboardViewerIgnoreFmt = value; }
+		}
+
+		private bool m_bClearKeyCmdLineOpt = true;
+		public bool ClearKeyCommandLineParams
+		{
+			get { return m_bClearKeyCmdLineOpt; }
+			set { m_bClearKeyCmdLineOpt = value; }
 		}
 	}
 

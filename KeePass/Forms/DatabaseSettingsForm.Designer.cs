@@ -46,6 +46,8 @@
 			this.m_lblCompressionIntro = new System.Windows.Forms.Label();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabGeneral = new System.Windows.Forms.TabPage();
+			this.m_cbColor = new System.Windows.Forms.CheckBox();
+			this.m_btnColor = new System.Windows.Forms.Button();
 			this.m_tbDefaultUser = new System.Windows.Forms.TextBox();
 			this.m_lblDefaultUser = new System.Windows.Forms.Label();
 			this.m_tbDbDesc = new KeePass.UI.PromptedTextBox();
@@ -77,6 +79,11 @@
 			this.m_lblRecycleBinInfo = new System.Windows.Forms.Label();
 			this.m_cbRecycleBin = new System.Windows.Forms.CheckBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
+			this.m_grpHistory = new System.Windows.Forms.GroupBox();
+			this.m_numHistoryMaxSize = new System.Windows.Forms.NumericUpDown();
+			this.m_numHistoryMaxItems = new System.Windows.Forms.NumericUpDown();
+			this.m_cbHistoryMaxSize = new System.Windows.Forms.CheckBox();
+			this.m_cbHistoryMaxItems = new System.Windows.Forms.CheckBox();
 			this.m_grpMasterKey = new System.Windows.Forms.GroupBox();
 			this.m_cbKeyForce = new System.Windows.Forms.CheckBox();
 			this.m_cbKeyRec = new System.Windows.Forms.CheckBox();
@@ -97,6 +104,9 @@
 			this.m_tabCompression.SuspendLayout();
 			this.m_tabRecycleBin.SuspendLayout();
 			this.m_tabAdvanced.SuspendLayout();
+			this.m_grpHistory.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numHistoryMaxSize)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numHistoryMaxItems)).BeginInit();
 			this.m_grpMasterKey.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numKeyForceDays)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numKeyRecDays)).BeginInit();
@@ -265,6 +275,8 @@
 			// 
 			// m_tabGeneral
 			// 
+			this.m_tabGeneral.Controls.Add(this.m_cbColor);
+			this.m_tabGeneral.Controls.Add(this.m_btnColor);
 			this.m_tabGeneral.Controls.Add(this.m_tbDefaultUser);
 			this.m_tabGeneral.Controls.Add(this.m_lblDefaultUser);
 			this.m_tabGeneral.Controls.Add(this.m_tbDbDesc);
@@ -279,9 +291,29 @@
 			this.m_tabGeneral.Text = "General";
 			this.m_tabGeneral.UseVisualStyleBackColor = true;
 			// 
+			// m_cbColor
+			// 
+			this.m_cbColor.AutoSize = true;
+			this.m_cbColor.Location = new System.Drawing.Point(6, 269);
+			this.m_cbColor.Name = "m_cbColor";
+			this.m_cbColor.Size = new System.Drawing.Size(137, 17);
+			this.m_cbColor.TabIndex = 6;
+			this.m_cbColor.Text = "Custom database color:";
+			this.m_cbColor.UseVisualStyleBackColor = true;
+			this.m_cbColor.CheckedChanged += new System.EventHandler(this.OnColorCheckedChanged);
+			// 
+			// m_btnColor
+			// 
+			this.m_btnColor.Location = new System.Drawing.Point(176, 265);
+			this.m_btnColor.Name = "m_btnColor";
+			this.m_btnColor.Size = new System.Drawing.Size(48, 23);
+			this.m_btnColor.TabIndex = 7;
+			this.m_btnColor.UseVisualStyleBackColor = true;
+			this.m_btnColor.Click += new System.EventHandler(this.OnBtnColor);
+			// 
 			// m_tbDefaultUser
 			// 
-			this.m_tbDefaultUser.Location = new System.Drawing.Point(177, 253);
+			this.m_tbDefaultUser.Location = new System.Drawing.Point(177, 239);
 			this.m_tbDefaultUser.Name = "m_tbDefaultUser";
 			this.m_tbDefaultUser.Size = new System.Drawing.Size(269, 20);
 			this.m_tbDefaultUser.TabIndex = 5;
@@ -289,7 +321,7 @@
 			// m_lblDefaultUser
 			// 
 			this.m_lblDefaultUser.AutoSize = true;
-			this.m_lblDefaultUser.Location = new System.Drawing.Point(3, 256);
+			this.m_lblDefaultUser.Location = new System.Drawing.Point(3, 242);
 			this.m_lblDefaultUser.Name = "m_lblDefaultUser";
 			this.m_lblDefaultUser.Size = new System.Drawing.Size(168, 13);
 			this.m_lblDefaultUser.TabIndex = 4;
@@ -303,7 +335,7 @@
 			this.m_tbDbDesc.Name = "m_tbDbDesc";
 			this.m_tbDbDesc.PromptText = "";
 			this.m_tbDbDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbDbDesc.Size = new System.Drawing.Size(440, 177);
+			this.m_tbDbDesc.Size = new System.Drawing.Size(440, 176);
 			this.m_tbDbDesc.TabIndex = 3;
 			// 
 			// m_lblDbDesc
@@ -585,6 +617,7 @@
 			// 
 			// m_tabAdvanced
 			// 
+			this.m_tabAdvanced.Controls.Add(this.m_grpHistory);
 			this.m_tabAdvanced.Controls.Add(this.m_grpMasterKey);
 			this.m_tabAdvanced.Controls.Add(this.m_grpTemplates);
 			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
@@ -594,16 +627,67 @@
 			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
 			// 
+			// m_grpHistory
+			// 
+			this.m_grpHistory.Controls.Add(this.m_numHistoryMaxSize);
+			this.m_grpHistory.Controls.Add(this.m_numHistoryMaxItems);
+			this.m_grpHistory.Controls.Add(this.m_cbHistoryMaxSize);
+			this.m_grpHistory.Controls.Add(this.m_cbHistoryMaxItems);
+			this.m_grpHistory.Location = new System.Drawing.Point(6, 117);
+			this.m_grpHistory.Name = "m_grpHistory";
+			this.m_grpHistory.Size = new System.Drawing.Size(440, 75);
+			this.m_grpHistory.TabIndex = 1;
+			this.m_grpHistory.TabStop = false;
+			this.m_grpHistory.Text = "Automatic entry history maintenance";
+			// 
+			// m_numHistoryMaxSize
+			// 
+			this.m_numHistoryMaxSize.Location = new System.Drawing.Point(349, 43);
+			this.m_numHistoryMaxSize.Name = "m_numHistoryMaxSize";
+			this.m_numHistoryMaxSize.Size = new System.Drawing.Size(81, 20);
+			this.m_numHistoryMaxSize.TabIndex = 3;
+			this.m_numHistoryMaxSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_numHistoryMaxItems
+			// 
+			this.m_numHistoryMaxItems.Location = new System.Drawing.Point(349, 18);
+			this.m_numHistoryMaxItems.Name = "m_numHistoryMaxItems";
+			this.m_numHistoryMaxItems.Size = new System.Drawing.Size(81, 20);
+			this.m_numHistoryMaxItems.TabIndex = 1;
+			this.m_numHistoryMaxItems.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_cbHistoryMaxSize
+			// 
+			this.m_cbHistoryMaxSize.AutoSize = true;
+			this.m_cbHistoryMaxSize.Location = new System.Drawing.Point(9, 44);
+			this.m_cbHistoryMaxSize.Name = "m_cbHistoryMaxSize";
+			this.m_cbHistoryMaxSize.Size = new System.Drawing.Size(173, 17);
+			this.m_cbHistoryMaxSize.TabIndex = 2;
+			this.m_cbHistoryMaxSize.Text = "Limit history size per entry (MB):";
+			this.m_cbHistoryMaxSize.UseVisualStyleBackColor = true;
+			this.m_cbHistoryMaxSize.CheckedChanged += new System.EventHandler(this.OnHistoryMaxSizeCheckedChanged);
+			// 
+			// m_cbHistoryMaxItems
+			// 
+			this.m_cbHistoryMaxItems.AutoSize = true;
+			this.m_cbHistoryMaxItems.Location = new System.Drawing.Point(9, 19);
+			this.m_cbHistoryMaxItems.Name = "m_cbHistoryMaxItems";
+			this.m_cbHistoryMaxItems.Size = new System.Drawing.Size(204, 17);
+			this.m_cbHistoryMaxItems.TabIndex = 0;
+			this.m_cbHistoryMaxItems.Text = "Limit number of history items per entry:";
+			this.m_cbHistoryMaxItems.UseVisualStyleBackColor = true;
+			this.m_cbHistoryMaxItems.CheckedChanged += new System.EventHandler(this.OnHistoryMaxItemsCheckedChanged);
+			// 
 			// m_grpMasterKey
 			// 
 			this.m_grpMasterKey.Controls.Add(this.m_cbKeyForce);
 			this.m_grpMasterKey.Controls.Add(this.m_cbKeyRec);
 			this.m_grpMasterKey.Controls.Add(this.m_numKeyForceDays);
 			this.m_grpMasterKey.Controls.Add(this.m_numKeyRecDays);
-			this.m_grpMasterKey.Location = new System.Drawing.Point(6, 117);
+			this.m_grpMasterKey.Location = new System.Drawing.Point(6, 198);
 			this.m_grpMasterKey.Name = "m_grpMasterKey";
 			this.m_grpMasterKey.Size = new System.Drawing.Size(440, 75);
-			this.m_grpMasterKey.TabIndex = 1;
+			this.m_grpMasterKey.TabIndex = 2;
 			this.m_grpMasterKey.TabStop = false;
 			this.m_grpMasterKey.Text = "Master key";
 			// 
@@ -723,6 +807,10 @@
 			this.m_tabRecycleBin.ResumeLayout(false);
 			this.m_tabRecycleBin.PerformLayout();
 			this.m_tabAdvanced.ResumeLayout(false);
+			this.m_grpHistory.ResumeLayout(false);
+			this.m_grpHistory.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_numHistoryMaxSize)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numHistoryMaxItems)).EndInit();
 			this.m_grpMasterKey.ResumeLayout(false);
 			this.m_grpMasterKey.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numKeyForceDays)).EndInit();
@@ -792,5 +880,12 @@
 		private System.Windows.Forms.NumericUpDown m_numKeyForceDays;
 		private System.Windows.Forms.NumericUpDown m_numKeyRecDays;
 		private System.Windows.Forms.LinkLabel m_lnkMemProtHelp;
+		private System.Windows.Forms.GroupBox m_grpHistory;
+		private System.Windows.Forms.CheckBox m_cbHistoryMaxItems;
+		private System.Windows.Forms.NumericUpDown m_numHistoryMaxSize;
+		private System.Windows.Forms.NumericUpDown m_numHistoryMaxItems;
+		private System.Windows.Forms.CheckBox m_cbHistoryMaxSize;
+		private System.Windows.Forms.Button m_btnColor;
+		private System.Windows.Forms.CheckBox m_cbColor;
 	}
 }

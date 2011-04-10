@@ -95,6 +95,8 @@ namespace KeePass.Forms
 			lvi = new ListViewItem(KPRes.XslStylesheets);
 			string strPath = WinUtil.GetExecutable();
 			strPath = UrlUtil.GetFileDirectory(strPath, true, false);
+			strPath += AppDefs.XslFilesDir;
+			strPath = UrlUtil.EnsureTerminatingSeparator(strPath, false);
 			bool bInstalled = File.Exists(strPath + AppDefs.XslFileHtmlLite);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlFull);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlTabular);

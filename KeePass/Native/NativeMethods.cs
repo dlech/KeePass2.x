@@ -72,7 +72,7 @@ namespace KeePass.Native
 		internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
 		[DllImport("User32.dll", SetLastError = true)]
-		internal static extern int GetWindowTextLength(IntPtr hWnd);
+		private static extern int GetWindowTextLength(IntPtr hWnd);
 
 		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		private static extern int GetWindowText(IntPtr hWnd,
@@ -110,11 +110,15 @@ namespace KeePass.Native
 		[DllImport("User32.dll")]
 		internal static extern IntPtr GetMessageExtraInfo();
 
+		// [DllImport("User32.dll")]
+		// internal static extern void keybd_event(byte bVk, byte bScan, uint dwFlags,
+		//	IntPtr dwExtraInfo);
+
 		[DllImport("User32.dll")]
 		internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
-		internal static extern ushort VkKeyScan(char ch);
+		internal static extern ushort VkKeyScan(char ch); // TCHAR
 
 		[DllImport("User32.dll")]
 		internal static extern ushort GetKeyState(int vKey);
@@ -126,6 +130,11 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool BlockInput([MarshalAs(UnmanagedType.Bool)]
 			bool fBlockIt);
+
+		// [DllImport("User32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool AttachThreadInput(uint idAttach,
+		//	uint idAttachTo, [MarshalAs(UnmanagedType.Bool)] bool fAttach);
 
 		[DllImport("User32.dll")]
 		internal static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
@@ -146,6 +155,34 @@ namespace KeePass.Native
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool CloseClipboard();
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr GetClipboardData(uint uFormat);
+
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		internal static extern uint RegisterClipboardFormat(string lpszFormat);
+
+		[DllImport("User32.dll")]
+		internal static extern uint GetClipboardSequenceNumber();
+
+		[DllImport("Kernel32.dll")]
+		internal static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
+
+		[DllImport("Kernel32.dll")]
+		internal static extern IntPtr GlobalFree(IntPtr hMem);
+
+		[DllImport("Kernel32.dll")]
+		internal static extern IntPtr GlobalLock(IntPtr hMem);
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GlobalUnlock(IntPtr hMem);
+
+		[DllImport("Kernel32.dll")]
+		internal static extern UIntPtr GlobalSize(IntPtr hMem);
 
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -195,6 +232,10 @@ namespace KeePass.Native
 
 		[DllImport("Kernel32.dll")]
 		internal static extern uint GetCurrentThreadId();
+
+		[DllImport("Imm32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool ImmDisableIME(uint idThread);
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateFile(string lpFileName,
@@ -292,5 +333,20 @@ namespace KeePass.Native
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+		[DllImport("Shell32.dll", CharSet = CharSet.Auto)]
+		private static extern IntPtr SHGetFileInfo(string pszPath,
+			uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo,
+			uint uFlags);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DestroyIcon(IntPtr hIcon);
+
+		// [DllImport("User32.dll", SetLastError = true)]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop,
+		//	IntPtr hIcon, int cxWidth, int cyWidth, uint istepIfAniCur,
+		//	IntPtr hbrFlickerFreeDraw, uint diFlags);
 	}
 }

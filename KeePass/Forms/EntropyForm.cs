@@ -51,10 +51,11 @@ namespace KeePass.Forms
 			if(pp.CollectUserEntropy == false) return null;
 
 			EntropyForm ef = new EntropyForm();
-			if(ef.ShowDialog() == DialogResult.OK)
-				return ef.GeneratedEntropy;
+			if(UIUtil.ShowDialogNotValue(ef, DialogResult.OK)) return null;
 
-			return null;
+			byte[] pbGen = ef.GeneratedEntropy;
+			UIUtil.DestroyForm(ef);
+			return pbGen;
 		}
 
 		public EntropyForm()
@@ -102,12 +103,16 @@ namespace KeePass.Forms
 		{
 			MemoryStream ms = new MemoryStream();
 
+			// Prevent empty / low entropy buffer
+			byte[] pbGuid = Guid.NewGuid().ToByteArray();
+			ms.Write(pbGuid, 0, pbGuid.Length);
+
 			foreach(uint ln in m_llPool)
 				ms.Write(MemUtil.UInt32ToBytes(ln), 0, 4);
 
 			if(m_tbEdit.Text.Length > 0)
 			{
-				byte[] pbUTF8 = Encoding.UTF8.GetBytes(m_tbEdit.Text);
+				byte[] pbUTF8 = StrUtil.Utf8.GetBytes(m_tbEdit.Text);
 				ms.Write(pbUTF8, 0, pbUTF8.Length);
 			}
 
@@ -116,7 +121,7 @@ namespace KeePass.Forms
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbEntropy = sha256.ComputeHash(pbColl);
 
-			CryptoRandom.Instance.AddEntropy(pbColl);
+			CryptoRandom.Instance.AddEntropy(pbColl); // Will be hashed using SHA-512
 			ms.Close();
 		}
 

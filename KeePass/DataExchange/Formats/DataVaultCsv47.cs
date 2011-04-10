@@ -61,7 +61,7 @@ namespace KeePass.DataExchange.Formats
 			// Fix broken newlines
 			strData = strData.Replace("\r\r\n", "\r\n");
 
-			CsvStreamReader csv = new CsvStreamReader(strData);
+			CsvStreamReader csv = new CsvStreamReader(strData, false);
 			while(true)
 			{
 				string[] v = csv.ReadLine();

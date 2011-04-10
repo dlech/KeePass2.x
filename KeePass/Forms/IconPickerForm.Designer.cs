@@ -36,6 +36,7 @@
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_btnCustomAdd = new System.Windows.Forms.Button();
 			this.m_btnCustomRemove = new System.Windows.Forms.Button();
+			this.m_btnCustomExport = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// m_lvIcons
@@ -57,7 +58,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(419, 414);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 6;
+			this.m_btnOK.TabIndex = 7;
 			this.m_btnOK.Text = "&Close";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -80,7 +81,7 @@
 			this.m_radioStandard.Location = new System.Drawing.Point(12, 12);
 			this.m_radioStandard.Name = "m_radioStandard";
 			this.m_radioStandard.Size = new System.Drawing.Size(114, 17);
-			this.m_radioStandard.TabIndex = 7;
+			this.m_radioStandard.TabIndex = 8;
 			this.m_radioStandard.TabStop = true;
 			this.m_radioStandard.Text = "Use standard icon:";
 			this.m_radioStandard.UseVisualStyleBackColor = true;
@@ -103,7 +104,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(-1, 407);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(507, 2);
-			this.m_lblSeparator.TabIndex = 5;
+			this.m_lblSeparator.TabIndex = 6;
 			// 
 			// m_btnCustomAdd
 			// 
@@ -125,6 +126,16 @@
 			this.m_btnCustomRemove.UseVisualStyleBackColor = true;
 			this.m_btnCustomRemove.Click += new System.EventHandler(this.OnBtnCustomRemove);
 			// 
+			// m_btnCustomExport
+			// 
+			this.m_btnCustomExport.Location = new System.Drawing.Point(419, 369);
+			this.m_btnCustomExport.Name = "m_btnCustomExport";
+			this.m_btnCustomExport.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCustomExport.TabIndex = 5;
+			this.m_btnCustomExport.Text = "E&xport...";
+			this.m_btnCustomExport.UseVisualStyleBackColor = true;
+			this.m_btnCustomExport.Click += new System.EventHandler(this.OnBtnCustomSave);
+			// 
 			// IconPickerForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -132,6 +143,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnOK;
 			this.ClientSize = new System.Drawing.Size(506, 449);
+			this.Controls.Add(this.m_btnCustomExport);
 			this.Controls.Add(this.m_btnCustomRemove);
 			this.Controls.Add(this.m_btnCustomAdd);
 			this.Controls.Add(this.m_lblSeparator);
@@ -166,5 +178,6 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.Button m_btnCustomAdd;
 		private System.Windows.Forms.Button m_btnCustomRemove;
+		private System.Windows.Forms.Button m_btnCustomExport;
 	}
 }

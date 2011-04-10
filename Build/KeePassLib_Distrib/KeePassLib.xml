@@ -41,7 +41,7 @@
             Serialization to KeePass KDB files.
             </summary>
             <summary>
-            Serialization to KeePass KDB files.
+            Serialization to KeePass KDBX files.
             </summary>
             <summary>
             Serialization to KeePass KDB files.
@@ -61,7 +61,7 @@
             <summary>
             File version of files saved by the current <c>Kdb4File</c> class.
             KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
-            2.10 has 2.02, 2.11 has 2.04.
+            2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00.
             The first 2 bytes are critical (i.e. loading will fail, if the
             file version is too high), the last 2 bytes are informational.
             </summary>
@@ -114,8 +114,8 @@
             <summary>
             Default constructor.
             </summary>
-            <param name="pwDataStore">The PwDatabase instance that the class will
-            load file data into or use to create a KDB file.</param>
+            <param name="pwDataStore">The <c>PwDatabase</c> instance that the
+            class will load file data into or use to create a KDBX file.</param>
         </member>
         <member name="M:KeePassLib.Serialization.Kdb4File.DetermineLanguageId">
             <summary>
@@ -278,6 +278,15 @@
             (i.e. don't overwrite this property). Returning <c>true</c>
             may cause severe security problems and is highly
             discouraged.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Keys.KeyProvider.GetKeyMightShowGui">
+            <summary>
+            This property specifies whether the <c>GetKey</c> method might
+            show a form or dialog. If there is any chance that the method shows
+            one, this property must return <c>true</c>. Only if it's guaranteed
+            that the <c>GetKey</c> method doesn't show any form or dialog, this
+            property should return <c>false</c>.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.SelfTest">
@@ -1788,12 +1797,41 @@
             history items.
             </summary>
         </member>
+        <member name="M:KeePassLib.PwEntry.CreateBackup(KeePassLib.PwDatabase)">
+            <summary>
+            Create a backup of this entry. The backup item doesn't contain any
+            history items.
+            <param name="pwHistMntcSettings">If this parameter isn't <c>null</c>,
+            the history list is maintained automatically (i.e. old backups are
+            deleted if there are too many or the history size is too large).
+            This parameter may be <c>null</c> (no maintenance then).</param>
+            </summary>
+        </member>
         <member name="M:KeePassLib.PwEntry.RestoreFromBackup(System.UInt32)">
             <summary>
             Restore an entry snapshot from backups.
             </summary>
             <param name="uBackupIndex">Index of the backup item, to which
             should be reverted.</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.RestoreFromBackup(System.UInt32,KeePassLib.PwDatabase)">
+            <summary>
+            Restore an entry snapshot from backups.
+            </summary>
+            <param name="uBackupIndex">Index of the backup item, to which
+            should be reverted.</param>
+            <param name="pwHistMntcSettings">If this parameter isn't <c>null</c>,
+            the history list is maintained automatically (i.e. old backups are
+            deleted if there are too many or the history size is too large).
+            This parameter may be <c>null</c> (no maintenance then).</param>
+        </member>
+        <member name="M:KeePassLib.PwEntry.MaintainBackups(KeePassLib.PwDatabase)">
+            <summary>
+            Delete old history items if there are too many or the history
+            size is too large.
+            <returns>If one or more history items have been deleted, <c>true</c>
+            is returned. Otherwise <c>false</c>.</returns>
+            </summary>
         </member>
         <member name="M:KeePassLib.PwEntry.GetSize">
             <summary>
@@ -2360,13 +2398,6 @@
             A class containing various string helper methods.
             </summary>
         </member>
-        <member name="M:KeePassLib.Utility.StrUtil.MakeRtfString(System.String)">
-            <summary>
-            Convert a string into a valid RTF string.
-            </summary>
-            <param name="str">Any string.</param>
-            <returns>RTF-encoded string.</returns>
-        </member>
         <member name="M:KeePassLib.Utility.StrUtil.StringToHtml(System.String)">
             <summary>
             Convert a string into a valid HTML sequence representing that string.
@@ -2381,21 +2412,6 @@
             <param name="strCmdLine">Command-line to split.</param>
             <param name="strApp">Application path.</param>
             <param name="strArgs">Arguments.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.StrUtil.InitRtf(System.Text.StringBuilder,System.String,System.Single)">
-            <summary>
-            Initialize an RTF document based on given font face and size.
-            </summary>
-            <param name="sb"><c>StringBuilder</c> to put the generated RTF into.</param>
-            <param name="strFontFace">Face name of the font to use.</param>
-            <param name="fFontSize">Size of the font to use.</param>
-        </member>
-        <member name="M:KeePassLib.Utility.StrUtil.SimpleHtmlToRtf(System.String)">
-            <summary>
-            Convert a simple HTML string to an RTF string.
-            </summary>
-            <param name="strHtmlString">Input HTML string.</param>
-            <returns>RTF string representing the HTML input string.</returns>
         </member>
         <member name="M:KeePassLib.Utility.StrUtil.ColorToUnnamedHtml(System.Drawing.Color,System.Boolean)">
             <summary>
@@ -2420,6 +2436,16 @@
             </summary>
             <param name="strText">Source text.</param>
             <returns>Text containing only valid XML characters.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.SplitWithSep(System.String,System.String[],System.Boolean)">
+            <summary>
+            Split a string and include the separators in the splitted array.
+            </summary>
+            <param name="str">String to split.</param>
+            <param name="vSeps">Separators.</param>
+            <param name="bCaseSensitive">Specifies whether separators are
+            matched case-sensitively or not.</param>
+            <returns>Splitted string including separators.</returns>
         </member>
         <member name="T:KeePassLib.Serialization.Kdb4Format">
             <summary>
@@ -2778,7 +2804,7 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000, 2.01 = 0x02000100, 2.14 = 0x02010400, etc.
+            2.00 = 0x02000000, 2.01 = 0x02000100, 2.15 = 0x02010500, etc.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">

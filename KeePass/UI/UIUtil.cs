@@ -162,6 +162,19 @@ namespace KeePass.UI
 			return bmp;
 		}
 
+		public static ImageList BuildImageListUnscaled(List<Image> lImages,
+			int nWidth, int nHeight)
+		{
+			ImageList imgList = new ImageList();
+			imgList.ImageSize = new Size(nWidth, nHeight);
+			imgList.ColorDepth = ColorDepth.Depth32Bit;
+
+			if((lImages != null) && (lImages.Count > 0))
+				imgList.Images.AddRange(lImages.ToArray());
+
+			return imgList;
+		}
+
 		public static ImageList BuildImageList(List<PwCustomIcon> vImages,
 			int nWidth, int nHeight)
 		{
@@ -335,7 +348,7 @@ namespace KeePass.UI
 		}
 
 		public static void PrepareStandardMultilineControl(RichTextBox rtb,
-			bool bSimpleTextOnly)
+			bool bSimpleTextOnly, bool bCtrlEnterAccepts)
 		{
 			Debug.Assert(rtb != null); if(rtb == null) throw new ArgumentNullException("rtb");
 
@@ -355,7 +368,12 @@ namespace KeePass.UI
 			catch(Exception) { }
 
 			CustomRichTextBoxEx crtb = (rtb as CustomRichTextBoxEx);
-			if(crtb != null) crtb.SimpleTextOnly = bSimpleTextOnly;
+			if(crtb != null)
+			{
+				crtb.SimpleTextOnly = bSimpleTextOnly;
+				crtb.CtrlEnterAccepts = bCtrlEnterAccepts;
+			}
+			else { Debug.Assert(!bSimpleTextOnly && !bCtrlEnterAccepts); }
 		}
 
 		/// <summary>
@@ -639,8 +657,11 @@ namespace KeePass.UI
 
 			SaveCustomColors(dlg);
 
-			if(dr == DialogResult.OK) return dlg.Color;
-			return null;
+			Color? clrResult = null;
+			if(dr == DialogResult.OK) clrResult = dlg.Color;
+
+			dlg.Dispose();
+			return clrResult;
 		}
 
 		public static FontDialog CreateFontDialog(bool bEffects)
@@ -1189,6 +1210,67 @@ namespace KeePass.UI
 			return false;
 		}
 
+		public static string GetWindowScreenRect(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return string.Empty; }
+
+			StringBuilder sb = new StringBuilder();
+
+			Point ptLocation = f.Location;
+			sb.Append(ptLocation.X);
+			sb.Append(", ");
+			sb.Append(ptLocation.Y);
+
+			if((f.FormBorderStyle == FormBorderStyle.Sizable) ||
+				(f.FormBorderStyle == FormBorderStyle.SizableToolWindow))
+			{
+				Size szSize = f.Size;
+				sb.Append(", ");
+				sb.Append(szSize.Width);
+				sb.Append(", ");
+				sb.Append(szSize.Height);
+			}
+
+			return sb.ToString();
+		}
+
+		public static void SetWindowScreenRect(Form f, string strScreenRect)
+		{
+			if((f == null) || (strScreenRect == null)) { Debug.Assert(false); return; }
+
+			string[] v = strScreenRect.Split(new char[] { ',', ' ' },
+				StringSplitOptions.RemoveEmptyEntries);
+
+			if(v.Length == 4)
+			{
+				int x, y, w, h;
+				if(int.TryParse(v[0], out x) && int.TryParse(v[1], out y) &&
+					int.TryParse(v[2], out w) && int.TryParse(v[3], out h))
+				{
+					Rectangle rect = new Rectangle(x, y, w, h);
+					if(UIUtil.IsScreenAreaVisible(rect))
+					{
+						f.Location = new Point(x, y);
+						f.Size = new Size(w, h);
+					}
+				}
+				else { Debug.Assert(false); }
+			}
+			else if(v.Length == 2)
+			{
+				int x, y;
+				if(int.TryParse(v[0], out x) && int.TryParse(v[1], out y))
+				{
+					Size sz = f.Size;
+					Rectangle rect = new Rectangle(x, y, sz.Width, sz.Height);
+					if(UIUtil.IsScreenAreaVisible(rect))
+						f.Location = new Point(x, y);
+				}
+				else { Debug.Assert(false); }
+			}
+			else { Debug.Assert(false); }
+		}
+
 		public static void SetButtonImage(Button btn, Image img, bool b16To15)
 		{
 			if(btn == null) { Debug.Assert(false); return; }
@@ -1213,6 +1295,297 @@ namespace KeePass.UI
 				btn.Image = bmp;
 			}
 			else btn.Image = img;
+		}
+
+		public static void EnableAutoCompletion(ComboBox cb, bool bAlsoAutoAppend)
+		{
+			if(cb == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(cb.DropDownStyle != ComboBoxStyle.DropDownList);
+
+			cb.AutoCompleteMode = (bAlsoAutoAppend ? AutoCompleteMode.SuggestAppend :
+				AutoCompleteMode.Suggest);
+			cb.AutoCompleteSource = AutoCompleteSource.ListItems;
+		}
+
+		public static void EnableAutoCompletion(ToolStripComboBox cb, bool bAlsoAutoAppend)
+		{
+			if(cb == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(cb.DropDownStyle != ComboBoxStyle.DropDownList);
+
+			cb.AutoCompleteMode = (bAlsoAutoAppend ? AutoCompleteMode.SuggestAppend :
+				AutoCompleteMode.Suggest);
+			cb.AutoCompleteSource = AutoCompleteSource.ListItems;
+		}
+
+		public static void SetFocus(Control c, Form fParent)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+			// fParent may be null
+
+			try
+			{
+				if(fParent != null) fParent.ActiveControl = c;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			try
+			{
+				if(c.CanSelect) c.Select();
+				if(c.CanFocus) c.Focus();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		/// <summary>
+		/// Show a modal dialog and destroy it afterwards.
+		/// </summary>
+		/// <param name="f">Form to show and destroy.</param>
+		/// <returns>Result from <c>ShowDialog</c>.</returns>
+		public static DialogResult ShowDialogAndDestroy(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return DialogResult.None; }
+
+			DialogResult dr = f.ShowDialog();
+			UIUtil.DestroyForm(f);
+			return dr;
+		}
+
+		/// <summary>
+		/// Show a modal dialog. If the result isn't the specified value, the
+		/// dialog is disposed and <c>true</c> is returned. Otherwise, <c>false</c>
+		/// is returned (without disposing the dialog!).
+		/// </summary>
+		/// <param name="f">Dialog to show.</param>
+		/// <param name="drNotValue">Comparison value.</param>
+		/// <returns>See description.</returns>
+		public static bool ShowDialogNotValue(Form f, DialogResult drNotValue)
+		{
+			if(f == null) { Debug.Assert(false); return true; }
+
+			if(f.ShowDialog() != drNotValue)
+			{
+				UIUtil.DestroyForm(f);
+				return true;
+			}
+
+			return false;
+		}
+
+		public static void DestroyForm(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				// f.Close(); // Don't trigger closing events
+				f.Dispose();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static Bitmap ExtractVistaIcon(Icon ico)
+		{
+			if(ico == null) { Debug.Assert(false); return null; }
+
+			try
+			{
+				MemoryStream ms = new MemoryStream();
+				ico.Save(ms);
+				byte[] pb = ms.ToArray();
+				ms.Close();
+
+				const int SizeICONDIR = 6;
+				const int SizeICONDIRENTRY = 16;
+
+				int nImages = BitConverter.ToInt16(pb, 4);
+				for(int i = 0; i < nImages; ++i)
+				{
+					int iWidth = pb[SizeICONDIR + (i * SizeICONDIRENTRY)];
+					int iHeight = pb[SizeICONDIR + (i * SizeICONDIRENTRY) + 1];
+					int iBitCount = BitConverter.ToInt16(pb, SizeICONDIR +
+						(i * SizeICONDIRENTRY) + 6);
+
+					if((iWidth == 0) && (iHeight == 0) && (iBitCount == 32))
+					{
+						int iImageSize = BitConverter.ToInt32(pb, SizeICONDIR +
+							(i * SizeICONDIRENTRY) + 8);
+						int iImageOffset = BitConverter.ToInt32(pb, SizeICONDIR +
+							(i * SizeICONDIRENTRY) + 12);
+
+						MemoryStream msImage = new MemoryStream();
+						msImage.Write(pb, iImageOffset, iImageSize);
+						byte[] pbImage = msImage.ToArray();
+						msImage.Close();
+
+						msImage = new MemoryStream(pbImage, false);
+						Bitmap bmp = new Bitmap(msImage);
+						msImage.Close();
+
+						return bmp;
+					}
+				}
+			}
+			catch { Debug.Assert(false); }
+
+			return null;
+		}
+
+		public static void ColorToHsv(Color clr, out float fHue,
+			out float fSaturation, out float fValue)
+		{
+			int nMax = Math.Max(clr.R, Math.Max(clr.G, clr.B));
+			int nMin = Math.Min(clr.R, Math.Min(clr.G, clr.B));
+
+			fHue = clr.GetHue(); // In degrees
+			fSaturation = ((nMax == 0) ? 0.0f : (1.0f - ((float)nMin / nMax)));
+			fValue = (float)nMax / 255.0f;
+		}
+
+		public static Color ColorFromHsv(float fHue, float fSaturation, float fValue)
+		{
+			float d = fHue / 60;
+			float fl = (float)Math.Floor(d);
+			float f = d - fl;
+
+			fValue *= 255.0f;
+			int v = (int)fValue;
+			int p = (int)(fValue * (1.0f - fSaturation));
+			int q = (int)(fValue * (1.0f - (fSaturation * f)));
+			int t = (int)(fValue * (1.0f - (fSaturation * (1.0f - f))));
+
+			try
+			{
+				int hi = (int)fl % 6;
+				if(hi == 0) return Color.FromArgb(255, v, t, p);
+				if(hi == 1) return Color.FromArgb(255, q, v, p);
+				if(hi == 2) return Color.FromArgb(255, p, v, t);
+				if(hi == 3) return Color.FromArgb(255, p, q, v);
+				if(hi == 4) return Color.FromArgb(255, t, p, v);
+
+				return Color.FromArgb(255, v, p, q);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return Color.Transparent;
+		}
+
+		public static Icon CreateColorizedIcon(Icon icoBase, Color clr, int qSize)
+		{
+			if(icoBase == null) { Debug.Assert(false); return null; }
+
+			if(qSize <= 0) qSize = 48; // Large shell icon size
+
+			try
+			{
+				Bitmap bmp = new Bitmap(qSize, qSize, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.Clear(Color.Transparent);
+
+					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
+					if(qSize > 32)
+					{
+						Bitmap bmpIco = ExtractVistaIcon(icoBase);
+						if(bmpIco != null)
+						{
+							g.DrawImage(bmpIco, 0, 0, bmp.Width, bmp.Height);
+							bmpIco.Dispose();
+						}
+						else g.DrawIcon(icoBase, new Rectangle(0, 0, bmp.Width, bmp.Height));
+					}
+					else g.DrawIcon(icoBase, new Rectangle(0, 0, bmp.Width, bmp.Height));
+
+					// IntPtr hdc = g.GetHdc();
+					// NativeMethods.DrawIconEx(hdc, 0, 0, icoBase.Handle, bmp.Width,
+					//	bmp.Height, 0, IntPtr.Zero, NativeMethods.DI_NORMAL);
+					// g.ReleaseHdc(hdc);
+				}
+
+				BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width,
+					bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+				int nBytes = Math.Abs(bd.Stride * bmp.Height);
+				byte[] pbArgb = new byte[nBytes];
+				Marshal.Copy(bd.Scan0, pbArgb, 0, nBytes);
+
+				float fHue, fSaturation, fValue;
+				ColorToHsv(clr, out fHue, out fSaturation, out fValue);
+
+				for(int i = 0; i < nBytes; i += 4)
+				{
+					if(pbArgb[i + 3] == 0) continue; // Transparent
+					if((pbArgb[i] == pbArgb[i + 1]) && (pbArgb[i] == pbArgb[i + 2]))
+						continue; // Gray
+
+					Color clrPixel = Color.FromArgb((int)pbArgb[i + 2],
+						(int)pbArgb[i + 1], (int)pbArgb[i]); // BGRA
+
+					float h, s, v;
+					ColorToHsv(clrPixel, out h, out s, out v);
+
+					Color clrNew = ColorFromHsv(fHue, s, v);
+
+					pbArgb[i] = clrNew.B;
+					pbArgb[i + 1] = clrNew.G;
+					pbArgb[i + 2] = clrNew.R;
+				}
+
+				Marshal.Copy(pbArgb, 0, bd.Scan0, nBytes);
+				bmp.UnlockBits(bd);
+
+				IntPtr hIcon = bmp.GetHicon();
+				Icon icoBmp = Icon.FromHandle(hIcon);
+
+				Icon icoResult = (Icon)icoBmp.Clone();
+
+				try { NativeMethods.DestroyIcon(hIcon); }
+				catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+				bmp.Dispose();
+
+				return icoResult;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return (Icon)icoBase.Clone();
+		}
+
+		public static Image CreateTabColorImage(Color clr, TabControl cTab)
+		{
+			if(cTab == null) { Debug.Assert(false); return null; }
+
+			int qSize = cTab.ItemSize.Height - 3;
+			if(qSize < 4) { Debug.Assert(false); return null; }
+
+			const int dyTrans = 3;
+			int yCenter = (qSize - dyTrans) / 2 + dyTrans;
+			Rectangle rectTop = new Rectangle(0, dyTrans, qSize, yCenter - dyTrans);
+			Rectangle rectBottom = new Rectangle(0, yCenter, qSize, qSize - yCenter);
+
+			Color clrLight = UIUtil.LightenColor(clr, 0.5);
+			Color clrDark = UIUtil.DarkenColor(clr, 0.1);
+
+			Bitmap bmp = new Bitmap(qSize, qSize, PixelFormat.Format32bppArgb);
+			using(Graphics g = Graphics.FromImage(bmp))
+			{
+				g.Clear(Color.Transparent);
+
+				using(LinearGradientBrush brLight = new LinearGradientBrush(
+					rectTop, clrLight, clr, LinearGradientMode.Vertical))
+				{
+					g.FillRectangle(brLight, rectTop);
+				}
+
+				using(LinearGradientBrush brDark = new LinearGradientBrush(
+					rectBottom, clr, clrDark, LinearGradientMode.Vertical))
+				{
+					g.FillRectangle(brDark, rectBottom);
+				}
+			}
+
+			return bmp;
 		}
 	}
 }

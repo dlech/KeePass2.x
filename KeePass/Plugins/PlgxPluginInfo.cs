@@ -156,7 +156,8 @@ namespace KeePass.Plugins
 		public string GetAbsPath(string strRelPath)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(this.CsprojFilePath));
-			return UrlUtil.MakeAbsolutePath(this.CsprojFilePath, strRelPath);
+			return UrlUtil.MakeAbsolutePath(this.CsprojFilePath,
+				UrlUtil.ConvertSeparators(strRelPath));
 		}
 	}
 }

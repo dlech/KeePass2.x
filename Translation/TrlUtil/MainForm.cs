@@ -580,7 +580,10 @@ namespace TrlUtil
 					string strTrl = kpi.Value;
 					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
 
-					if(strEn.EndsWith("...") && !strTrl.EndsWith("..."))
+					bool bEllEn = (strEn.EndsWith(@"...") || strEn.EndsWith(@"…"));
+					bool bEllTrl = (strTrl.EndsWith(@"...") || strTrl.EndsWith(@"…"));
+
+					if(bEllEn && !bEllTrl)
 						MessageService.ShowWarning("Warning! The English string",
 							strEn, "ends with 3 dots, but the translated string does not:", strTrl);
 				}
@@ -665,7 +668,7 @@ namespace TrlUtil
 
 		private void OnStrDoubleClick(object sender, EventArgs e)
 		{
-			this.ActiveControl = m_tbStrTrl;
+			UIUtil.SetFocus(m_tbStrTrl, this);
 		}
 
 		private void OnCustomControlsAfterSelect(object sender, TreeViewEventArgs e)

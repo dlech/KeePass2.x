@@ -62,6 +62,7 @@ namespace TrlUtil
 			AddForm(l, new EntryReportForm());
 			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new FieldRefForm());
+			AddForm(l, new FileBrowserForm());
 			AddForm(l, new GroupForm());
 			AddForm(l, new HelpSourceForm());
 			AddForm(l, new IconPickerForm());

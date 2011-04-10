@@ -46,6 +46,9 @@
 			this.m_ctxGroupMoveOneUp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupMoveOneDown = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupRearrSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxGroupSort = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ilClientIcons = new System.Windows.Forms.ImageList(this.components);
 			this.m_ctxPwList = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
@@ -142,6 +145,7 @@
 			this.m_menuViewAlwaysOnTop = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuViewConfigColumns = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuViewSortBy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewTanOptions = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewTanSimpleList = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewTanIndices = new System.Windows.Forms.ToolStripMenuItem();
@@ -237,6 +241,7 @@
             this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
 			this.m_ctxGroupList.Size = new System.Drawing.Size(227, 182);
+			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupAdd
 			// 
@@ -315,7 +320,10 @@
             this.m_ctxGroupMoveToTop,
             this.m_ctxGroupMoveOneUp,
             this.m_ctxGroupMoveOneDown,
-            this.m_ctxGroupMoveToBottom});
+            this.m_ctxGroupMoveToBottom,
+            this.m_ctxGroupRearrSep0,
+            this.m_ctxGroupSort,
+            this.m_ctxGroupSortRec});
 			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
 			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(226, 22);
 			this.m_ctxGroupRearrange.Text = "&Rearrange";
@@ -326,7 +334,7 @@
 			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
 			this.m_ctxGroupMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
 			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(240, 22);
-			this.m_ctxGroupMoveToTop.Text = "Move Group To &Top";
+			this.m_ctxGroupMoveToTop.Text = "Move Group to &Top";
 			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
 			// 
 			// m_ctxGroupMoveOneUp
@@ -353,8 +361,29 @@
 			this.m_ctxGroupMoveToBottom.Name = "m_ctxGroupMoveToBottom";
 			this.m_ctxGroupMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
 			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(240, 22);
-			this.m_ctxGroupMoveToBottom.Text = "Move Group To &Bottom";
+			this.m_ctxGroupMoveToBottom.Text = "Move Group to &Bottom";
 			this.m_ctxGroupMoveToBottom.Click += new System.EventHandler(this.OnGroupsMoveToBottom);
+			// 
+			// m_ctxGroupRearrSep0
+			// 
+			this.m_ctxGroupRearrSep0.Name = "m_ctxGroupRearrSep0";
+			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(237, 6);
+			// 
+			// m_ctxGroupSort
+			// 
+			this.m_ctxGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
+			this.m_ctxGroupSort.Name = "m_ctxGroupSort";
+			this.m_ctxGroupSort.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupSort.Text = "&Sort Direct Subgroups";
+			this.m_ctxGroupSort.Click += new System.EventHandler(this.OnGroupsSort);
+			// 
+			// m_ctxGroupSortRec
+			// 
+			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
+			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
+			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupSortRec.Text = "So&rt Subgroup Tree";
+			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
 			// 
 			// m_ilClientIcons
 			// 
@@ -425,7 +454,7 @@
 			this.m_ilClientIcons.Images.SetKeyName(62, "C62_Tux.png");
 			this.m_ilClientIcons.Images.SetKeyName(63, "C63_Feather.png");
 			this.m_ilClientIcons.Images.SetKeyName(64, "C64_Apple.png");
-			this.m_ilClientIcons.Images.SetKeyName(65, "C65_Apple.png");
+			this.m_ilClientIcons.Images.SetKeyName(65, "C65_W.png");
 			this.m_ilClientIcons.Images.SetKeyName(66, "C66_Money.png");
 			this.m_ilClientIcons.Images.SetKeyName(67, "C67_Certificate.png");
 			this.m_ilClientIcons.Images.SetKeyName(68, "C68_BlackBerry.png");
@@ -1081,6 +1110,7 @@
 			this.m_menuEdit.Name = "m_menuEdit";
 			this.m_menuEdit.Size = new System.Drawing.Size(37, 20);
 			this.m_menuEdit.Text = "&Edit";
+			this.m_menuEdit.DropDownOpening += new System.EventHandler(this.OnMenuEditOpening);
 			// 
 			// m_menuEditShowAllEntries
 			// 
@@ -1130,6 +1160,7 @@
             this.m_menuViewAlwaysOnTop,
             this.m_menuViewSep2,
             this.m_menuViewConfigColumns,
+            this.m_menuViewSortBy,
             this.m_menuViewTanOptions,
             this.m_menuViewSep3,
             this.m_menuViewShowEntriesOfSubGroups});
@@ -1216,6 +1247,12 @@
 			this.m_menuViewConfigColumns.Size = new System.Drawing.Size(202, 22);
 			this.m_menuViewConfigColumns.Text = "Configure &Columns...";
 			this.m_menuViewConfigColumns.Click += new System.EventHandler(this.OnViewConfigColumns);
+			// 
+			// m_menuViewSortBy
+			// 
+			this.m_menuViewSortBy.Name = "m_menuViewSortBy";
+			this.m_menuViewSortBy.Size = new System.Drawing.Size(202, 22);
+			this.m_menuViewSortBy.Text = "S&ort By";
 			// 
 			// m_menuViewTanOptions
 			// 
@@ -1606,7 +1643,6 @@
 			this.m_tbCloseTab.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbCloseTab.Name = "m_tbCloseTab";
 			this.m_tbCloseTab.Size = new System.Drawing.Size(23, 22);
-			this.m_tbCloseTab.Text = "Close";
 			this.m_tbCloseTab.Click += new System.EventHandler(this.OnFileClose);
 			// 
 			// m_statusMain
@@ -1800,6 +1836,7 @@
 			this.m_lvEntries.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnPwListKeyUp);
 			this.m_lvEntries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnPwListKeyDown);
 			this.m_lvEntries.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnPwListItemDrag);
+			this.m_lvEntries.Click += new System.EventHandler(this.OnPwListClick);
 			// 
 			// m_richEntryView
 			// 
@@ -2032,6 +2069,10 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySelectedNewTag;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySelectedSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySelectedRemoveTag;
+		private System.Windows.Forms.ToolStripMenuItem m_menuViewSortBy;
+		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSort;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSortRec;
 	}
 }
 

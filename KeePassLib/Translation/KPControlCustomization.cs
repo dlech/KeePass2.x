@@ -28,6 +28,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Drawing;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Translation
 {
 	public sealed class KpccLayout
@@ -294,7 +296,7 @@ namespace KeePassLib.Translation
 
 			WriteControlDependentParams(sb, c);
 
-			byte[] pb = Encoding.UTF8.GetBytes(sb.ToString());
+			byte[] pb = StrUtil.Utf8.GetBytes(sb.ToString());
 
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] pbSha = sha256.ComputeHash(pb);

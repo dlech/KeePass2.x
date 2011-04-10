@@ -142,7 +142,7 @@ namespace KeePass.Forms
 
 		private void AddStdAceColumn(List<AceColumn> lContainer, AceColumnType colType)
 		{
-			bool bHide = false;
+			bool bHide = (colType == AceColumnType.Password); // Passwords hidden by default
 			int nWidth = -1;
 			List<AceColumn> lCur = Program.Config.MainWindow.EntryListColumns;
 			foreach(AceColumn cCur in lCur)

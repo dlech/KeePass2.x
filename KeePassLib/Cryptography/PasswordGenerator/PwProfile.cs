@@ -25,6 +25,7 @@ using System.Diagnostics;
 
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography.PasswordGenerator
 {
@@ -227,7 +228,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			Debug.Assert(psPassword != null); if(psPassword == null) return pp;
 
 			byte[] pbUTF8 = psPassword.ReadUtf8();
-			char[] vChars = Encoding.UTF8.GetChars(pbUTF8);
+			char[] vChars = StrUtil.Utf8.GetChars(pbUTF8);
 
 			pp.GeneratorType = PasswordGeneratorType.CharSet;
 			pp.Length = (uint)vChars.Length;
@@ -253,7 +254,6 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			Array.Clear(vChars, 0, vChars.Length);
 			Array.Clear(pbUTF8, 0, pbUTF8.Length);
-
 			return pp;
 		}
 

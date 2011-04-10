@@ -115,7 +115,7 @@ namespace KeePass.Forms
 
 			UrlSchemeForm dlg = new UrlSchemeForm();
 			dlg.InitEx(ovr);
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
 				m_aceTmp.Overrides.Add(ovr);
 				UpdateOverridesList();
@@ -133,7 +133,7 @@ namespace KeePass.Forms
 
 			UrlSchemeForm dlg = new UrlSchemeForm();
 			dlg.InitEx(ovr);
-			if(dlg.ShowDialog() == DialogResult.OK) UpdateOverridesList();
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) UpdateOverridesList();
 		}
 
 		private void OnBtnDelete(object sender, EventArgs e)

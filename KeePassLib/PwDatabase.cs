@@ -42,6 +42,9 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class PwDatabase
 	{
+		internal const int DefaultHistoryMaxItems = 10; // -1 = unlimited
+		internal const long DefaultHistoryMaxSize = 6 * 1024 * 1024; // -1 = unlimited
+
 		private static bool m_bPrimaryCreated = false;
 
 		// Initializations see Clear()
@@ -65,6 +68,7 @@ namespace KeePassLib
 		private string m_strDefaultUserName = string.Empty;
 		private DateTime m_dtDefaultUserChanged = PwDefs.DtDefaultNow;
 		private uint m_uMntncHistoryDays = 365;
+		private Color m_clr = Color.Empty;
 
 		private DateTime m_dtKeyLastChanged = PwDefs.DtDefaultNow;
 		private long m_lKeyChangeRecDays = -1;
@@ -82,6 +86,9 @@ namespace KeePassLib
 		private DateTime m_dtRecycleBinChanged = PwDefs.DtDefaultNow;
 		private PwUuid m_pwEntryTemplatesGroup = PwUuid.Zero;
 		private DateTime m_dtEntryTemplatesChanged = PwDefs.DtDefaultNow;
+
+		private int m_nHistoryMaxItems = DefaultHistoryMaxItems;
+		private long m_lHistoryMaxSize = DefaultHistoryMaxSize; // In bytes
 
 		private StringDictionaryEx m_vCustomData = new StringDictionaryEx();
 
@@ -222,6 +229,12 @@ namespace KeePassLib
 		{
 			get { return m_uMntncHistoryDays; }
 			set { m_uMntncHistoryDays = value; }
+		}
+
+		public Color Color
+		{
+			get { return m_clr; }
+			set { m_clr = value; }
 		}
 
 		public DateTime MasterKeyChanged
@@ -376,6 +389,18 @@ namespace KeePassLib
 			set { m_dtEntryTemplatesChanged = value; }
 		}
 
+		public int HistoryMaxItems
+		{
+			get { return m_nHistoryMaxItems; }
+			set { m_nHistoryMaxItems = value; }
+		}
+
+		public long HistoryMaxSize
+		{
+			get { return m_lHistoryMaxSize; }
+			set { m_lHistoryMaxSize = value; }
+		}
+
 		/// <summary>
 		/// Custom data container that can be used by plugins to store
 		/// own data in KeePass databases.
@@ -454,6 +479,7 @@ namespace KeePassLib
 			m_strDefaultUserName = string.Empty;
 			m_dtDefaultUserChanged = dtNow;
 			m_uMntncHistoryDays = 365;
+			m_clr = Color.Empty;
 
 			m_dtKeyLastChanged = dtNow;
 			m_lKeyChangeRecDays = -1;
@@ -471,6 +497,9 @@ namespace KeePassLib
 			m_dtRecycleBinChanged = dtNow;
 			m_pwEntryTemplatesGroup = PwUuid.Zero;
 			m_dtEntryTemplatesChanged = dtNow;
+
+			m_nHistoryMaxItems = DefaultHistoryMaxItems;
+			m_lHistoryMaxSize = DefaultHistoryMaxSize;
 
 			m_vCustomData = new StringDictionaryEx();
 
@@ -726,12 +755,12 @@ namespace KeePassLib
 					if(mm != PwMergeMethod.OverwriteExisting)
 						bOrgBackup &= (pe.LastModificationTime > peLocal.LastModificationTime);
 					bOrgBackup &= !pe.HasBackupOfData(peLocal, false, true);
-					if(bOrgBackup) peLocal.CreateBackup();
+					if(bOrgBackup) peLocal.CreateBackup(null); // Maintain at end
 
 					bool bSrcBackup = !bEquals && (mm != PwMergeMethod.OverwriteExisting);
 					bSrcBackup &= (peLocal.LastModificationTime > pe.LastModificationTime);
 					bSrcBackup &= !peLocal.HasBackupOfData(pe, false, true);
-					if(bSrcBackup) pe.CreateBackup();
+					if(bSrcBackup) pe.CreateBackup(null); // Maintain at end
 
 					if(mm == PwMergeMethod.OverwriteExisting)
 						peLocal.AssignProperties(pe, false, false, false);
@@ -780,6 +809,8 @@ namespace KeePassLib
 			MergeInDbProperties(pwSource, mm);
 
 			MergeInCustomIcons(pwSource);
+
+			MaintainBackups();
 
 			m_slStatus = slPrevStatus;
 		}
@@ -1213,6 +1244,8 @@ namespace KeePassLib
 				m_dtDefaultUserChanged = pwSource.m_dtDefaultUserChanged;
 			}
 
+			if(bForce) m_clr = pwSource.m_clr;
+
 			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pwSource.m_pwRecycleBin;
 			if(bForce || (pwSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
 			{
@@ -1266,7 +1299,9 @@ namespace KeePassLib
 
 			SortedList<DateTime, PwEntry> list = new SortedList<DateTime, PwEntry>();
 			foreach(PwEntry peOrg in pe.History)
+			{
 				list[peOrg.LastModificationTime] = peOrg;
+			}
 
 			foreach(PwEntry peSrc in peSource.History)
 			{
@@ -1286,6 +1321,21 @@ namespace KeePassLib
 				Debug.Assert(kvpCur.Value.History.UCount == 0);
 				pe.History.Add(kvpCur.Value);
 			}
+		}
+
+		public bool MaintainBackups()
+		{
+			if(m_pgRootGroup == null) { Debug.Assert(false); return false; }
+
+			bool bDeleted = false;
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				if(pe.MaintainBackups(this)) bDeleted = true;
+				return true;
+			};
+
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+			return bDeleted;
 		}
 
 		/* /// <summary>

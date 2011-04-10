@@ -24,6 +24,8 @@ using System.Net;
 using System.IO;
 using System.IO.Compression;
 
+using KeePassLib.Utility;
+
 namespace KeePass.Util
 {
 	public static class NetUtil
@@ -54,7 +56,7 @@ namespace KeePass.Util
 			gz.Close();
 			msZipped.Close();
 
-			return Encoding.UTF8.GetString(msUTF8.ToArray());
+			return StrUtil.Utf8.GetString(msUTF8.ToArray());
 		}
 
 		public static string WebPageLogin(Uri url, string strPostData,

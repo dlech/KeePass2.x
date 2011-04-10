@@ -87,7 +87,7 @@ namespace KeePass.Forms
 			if(m_lvPlugins.Items.Count > 0)
 			{
 				m_lvPlugins.Items[0].Selected = true;
-				m_lvPlugins.Focus();
+				UIUtil.SetFocus(m_lvPlugins, this);
 			}
 
 			UpdatePluginDescription();

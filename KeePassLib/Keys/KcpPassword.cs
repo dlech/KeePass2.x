@@ -60,7 +60,7 @@ namespace KeePassLib.Keys
 
 		public KcpPassword(string strPassword)
 		{
-			SetKey(Encoding.UTF8.GetBytes(strPassword));
+			SetKey(StrUtil.Utf8.GetBytes(strPassword));
 		}
 
 		private void SetKey(byte[] pbPasswordUtf8)

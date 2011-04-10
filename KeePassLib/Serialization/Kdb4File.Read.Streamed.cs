@@ -48,6 +48,7 @@ namespace KeePassLib.Serialization
 			MemoryProtection,
 			CustomIcons,
 			CustomIcon,
+			Binaries,
 			CustomData,
 			CustomDataItem,
 			RootDeletedObjects,
@@ -103,6 +104,8 @@ namespace KeePassLib.Serialization
 			if(xr == null) throw new ArgumentNullException("xr");
 
 			m_ctxGroups.Clear();
+			m_dictBinPool = new Dictionary<string, ProtectedBinary>();
+			m_dictBinPoolCopyOnRead = new Dictionary<string, ProtectedBinary>();
 
 			KdbContext ctx = KdbContext.Null;
 
@@ -194,6 +197,12 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.DefaultUserNameChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbMntncHistoryDays)
 						m_pwDatabase.MaintenanceHistoryDays = ReadUInt(xr, 365);
+					else if(xr.Name == ElemDbColor)
+					{
+						string strColor = ReadString(xr);
+						if(!string.IsNullOrEmpty(strColor))
+							m_pwDatabase.Color = ColorTranslator.FromHtml(strColor);
+					}
 					else if(xr.Name == ElemDbKeyChanged)
 						m_pwDatabase.MasterKeyChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbKeyChangeRec)
@@ -214,10 +223,16 @@ namespace KeePassLib.Serialization
 						m_pwDatabase.EntryTemplatesGroup = ReadUuid(xr);
 					else if(xr.Name == ElemEntryTemplatesGroupChanged)
 						m_pwDatabase.EntryTemplatesGroupChanged = ReadTime(xr);
+					else if(xr.Name == ElemHistoryMaxItems)
+						m_pwDatabase.HistoryMaxItems = ReadInt(xr, -1);
+					else if(xr.Name == ElemHistoryMaxSize)
+						m_pwDatabase.HistoryMaxSize = ReadLong(xr, -1);
 					else if(xr.Name == ElemLastSelectedGroup)
 						m_pwDatabase.LastSelectedGroup = ReadUuid(xr);
 					else if(xr.Name == ElemLastTopVisibleGroup)
 						m_pwDatabase.LastTopVisibleGroup = ReadUuid(xr);
+					else if(xr.Name == ElemBinaries)
+						return SwitchContext(ctx, KdbContext.Binaries, xr);
 					else if(xr.Name == ElemCustomData)
 						return SwitchContext(ctx, KdbContext.CustomData, xr);
 					else ReadUnknown(xr);
@@ -251,9 +266,24 @@ namespace KeePassLib.Serialization
 					else if(xr.Name == ElemCustomIconItemData)
 					{
 						string strData = ReadString(xr);
-						if((strData != null) && (strData.Length > 0))
+						if(!string.IsNullOrEmpty(strData))
 							m_pbCustomIconData = Convert.FromBase64String(strData);
 						else { Debug.Assert(false); }
+					}
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.Binaries:
+					if(xr.Name == ElemBinary)
+					{
+						if(xr.MoveToAttribute(AttrId))
+						{
+							string strKey = xr.Value;
+							ProtectedBinary pbData = ReadProtectedBinary(xr);
+
+							m_dictBinPool[strKey ?? string.Empty] = pbData;
+						}
+						else ReadUnknown(xr);
 					}
 					else ReadUnknown(xr);
 					break;
@@ -297,7 +327,7 @@ namespace KeePassLib.Serialization
 					else if(xr.Name == ElemNotes)
 						m_ctxGroup.Notes = ReadString(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxGroup.IconId = (PwIcon)ReadUInt(xr, (uint)PwIcon.Folder);
+						m_ctxGroup.IconId = (PwIcon)ReadInt(xr, (int)PwIcon.Folder);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxGroup.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemTimes)
@@ -336,19 +366,19 @@ namespace KeePassLib.Serialization
 					if(xr.Name == ElemUuid)
 						m_ctxEntry.Uuid = ReadUuid(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxEntry.IconId = (PwIcon)ReadUInt(xr, (uint)PwIcon.Key);
+						m_ctxEntry.IconId = (PwIcon)ReadInt(xr, (int)PwIcon.Key);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxEntry.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemFgColor)
 					{
 						string strColor = ReadString(xr);
-						if((strColor != null) && (strColor.Length > 0))
+						if(!string.IsNullOrEmpty(strColor))
 							m_ctxEntry.ForegroundColor = ColorTranslator.FromHtml(strColor);
 					}
 					else if(xr.Name == ElemBgColor)
 					{
 						string strColor = ReadString(xr);
-						if((strColor != null) && (strColor.Length > 0))
+						if(!string.IsNullOrEmpty(strColor))
 							m_ctxEntry.BackgroundColor = ColorTranslator.FromHtml(strColor);
 					}
 					else if(xr.Name == ElemOverrideUrl)
@@ -421,7 +451,7 @@ namespace KeePassLib.Serialization
 						m_ctxEntry.AutoType.Enabled = ReadBool(xr, true);
 					else if(xr.Name == ElemAutoTypeObfuscation)
 						m_ctxEntry.AutoType.ObfuscationOptions =
-							(AutoTypeObfuscationOptions)ReadUInt(xr, 0);
+							(AutoTypeObfuscationOptions)ReadInt(xr, 0);
 					else if(xr.Name == ElemAutoTypeDefaultSeq)
 						m_ctxEntry.AutoType.DefaultSequence = ReadString(xr);
 					else if(xr.Name == ElemAutoTypeItem)
@@ -502,6 +532,8 @@ namespace KeePassLib.Serialization
 
 				return KdbContext.CustomIcons;
 			}
+			else if((ctx == KdbContext.Binaries) && (xr.Name == ElemBinaries))
+				return KdbContext.Meta;
 			else if((ctx == KdbContext.CustomData) && (xr.Name == ElemCustomData))
 				return KdbContext.Meta;
 			else if((ctx == KdbContext.CustomDataItem) && (xr.Name == ElemStringDictExItem))
@@ -600,7 +632,7 @@ namespace KeePassLib.Serialization
 			if(xb != null)
 			{
 				byte[] pb = xb.ReadPlainText();
-				return Encoding.UTF8.GetString(pb, 0, pb.Length);
+				return StrUtil.Utf8.GetString(pb, 0, pb.Length);
 			}
 
 			m_bReadNextNode = false; // ReadElementString skips end tag
@@ -630,6 +662,17 @@ namespace KeePassLib.Serialization
 			return new PwUuid(Convert.FromBase64String(str));
 		}
 
+		private int ReadInt(XmlReader xr, int nDefault)
+		{
+			string str = ReadString(xr);
+
+			int n;
+			if(StrUtil.TryParseInt(str, out n)) return n;
+
+			Debug.Assert(false);
+			return nDefault;
+		}
+
 		private uint ReadUInt(XmlReader xr, uint uDefault)
 		{
 			string str = ReadString(xr);
@@ -641,15 +684,15 @@ namespace KeePassLib.Serialization
 			return uDefault;
 		}
 
-		private long ReadLong(XmlReader xr, long nDefault)
+		private long ReadLong(XmlReader xr, long lDefault)
 		{
 			string str = ReadString(xr);
 
-			long n;
-			if(StrUtil.TryParseLong(str, out n)) return n;
+			long l;
+			if(StrUtil.TryParseLong(str, out l)) return l;
 
 			Debug.Assert(false);
-			return nDefault;
+			return lDefault;
 		}
 
 		private ulong ReadULong(XmlReader xr, ulong uDefault)
@@ -677,7 +720,6 @@ namespace KeePassLib.Serialization
 		private ProtectedString ReadProtectedString(XmlReader xr)
 		{
 			XorredBuffer xb = ProcessNode(xr);
-
 			if(xb != null) return new ProtectedString(true, xb);
 
 			ProtectedString ps = new ProtectedString(false, ReadString(xr));
@@ -686,14 +728,35 @@ namespace KeePassLib.Serialization
 
 		private ProtectedBinary ReadProtectedBinary(XmlReader xr)
 		{
-			XorredBuffer xb = ProcessNode(xr);
+			if(xr.MoveToAttribute(AttrRef))
+			{
+				string strRef = xr.Value;
+				if(strRef != null)
+				{
+					ProtectedBinary pb = BinPoolGet(strRef);
+					if(pb != null) return pb;
+					else { Debug.Assert(false); }
+				}
+				else { Debug.Assert(false); }
+			}
 
-			if(xb != null) return new ProtectedBinary(true, xb);
+			bool bCompressed = false;
+			if(xr.MoveToAttribute(AttrCompressed))
+				bCompressed = (xr.Value == ValTrue);
+
+			XorredBuffer xb = ProcessNode(xr);
+			if(xb != null)
+			{
+				Debug.Assert(!bCompressed); // See SubWriteValue(ProtectedBinary value)
+				return new ProtectedBinary(true, xb);
+			}
 
 			string strValue = ReadString(xr);
 			if(strValue.Length == 0) return new ProtectedBinary(false);
 
-			return new ProtectedBinary(false, Convert.FromBase64String(strValue));
+			byte[] pbData = Convert.FromBase64String(strValue);
+			if(bCompressed) pbData = MemUtil.Decompress(pbData);
+			return new ProtectedBinary(false, pbData);
 		}
 
 		private void ReadUnknown(XmlReader xr)
@@ -718,10 +781,9 @@ namespace KeePassLib.Serialization
 
 		private XorredBuffer ProcessNode(XmlReader xr)
 		{
-			Debug.Assert(xr.NodeType == XmlNodeType.Element);
+			// Debug.Assert(xr.NodeType == XmlNodeType.Element);
 
 			XorredBuffer xb = null;
-
 			if(xr.HasAttributes)
 			{
 				if(xr.MoveToAttribute(AttrProtected))

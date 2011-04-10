@@ -122,6 +122,13 @@ namespace KeePass.App.Configuration
 			set { m_bSpecialReleaseAlt = value; }
 		}
 
+		private bool m_bCancelOnWindowChange = false;
+		public bool AutoTypeCancelOnWindowChange
+		{
+			get { return m_bCancelOnWindowChange; }
+			set { m_bCancelOnWindowChange = value; }
+		}
+
 		public AceIntegration()
 		{
 		}

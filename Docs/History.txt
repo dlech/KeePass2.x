@@ -1,3 +1,107 @@
+2011-04-10: 2.15
+- Added option to show the master key dialog on a secure
+  desktop (similar to Windows' UAC; almost no keylogger works
+  on a secure desktop; the option is disabled by default for
+  compatibility reasons)
+- Added option to limit the number of history items per entry
+  (the default is 10)
+- Added option to limit the history size per entry (the default
+  is 6 MB)
+- Added {PICKCHARS} placeholder, which shows a dialog to pick
+  certain characters from an entry string; various options like
+  specifying the number of characters to pick and conversion to
+  down arrow keypresses are supported; see the one page long
+  documentation on the auto-type help page; the less powerful
+  {PICKPASSWORDCHARS} is now obsolete (but still supported for
+  backward compatibility)
+- The character picking dialog now remembers and restores its
+  last position and size
+- KDBX file format: attachments are now stored in a pool within
+  the file and entries reference these items; this reduces the
+  file size a lot when there are history items of entries
+  having attachments
+- KDBX file format: attachments are now compressed (if the
+  compression option is enabled) before being Base64-encoded,
+  compressed and encrypted; this results in a smaller file,
+  because the compression algorithm works better on the raw
+  data than on its encoded form
+- PLGX plugins can now be loaded on Unix-like systems, too
+- Added option to specify a database color; by specifying a
+  color, the main window icon and the tray icon are recolored
+  and the database tab (shown when multiple databases are
+  opened in one window) gets a colored rectangle icon
+- New rich text builder, which supports using multiple
+  languages in one text (e.g. different Chinese variants)
+- Added 'Sort By' popup menu in the 'View' menu
+- Added context menu commands to sort subgroups of a group
+- Added option to clear master key command line parameters
+  after using them once (enabled by default)
+- Added application policies to ask for the current master key
+  before changing the master key and/or exporting
+- Added option to also unhide source characters when unhiding
+  the selected characters in the character picking dialog
+- Added ability to export custom icons
+- Added 'String' trigger condition
+- Added support for importing DataViz Passwords Plus 1.007 CSV
+  files
+- Enhanced 1Password Pro importer to also support 1PW CSV files
+- Enhanced FlexWallet importer to also support version 2006 XML
+  files (in addition to version 1.7 XML files)
+- Enabled auto-suggest for editable drop-down combo boxes (and
+  auto-append where it makes sense)
+- Pressing Ctrl+Enter in the rich text boxes of the entry
+  dialog and the custom string dialog now closes with OK (if
+  possible)
+- Added option to cancel auto-type when the target window
+  changes
+- Auto-type on Unix-like systems: added support for key
+  modifiers
+- Added '--saveplgxcr' command line option to save compiler
+  results in case the compilation of a PLGX plugin fails
+- Added workaround for % .NET SendKeys issue
+- Added workaround for Mono bug 620618 in the main entry list
+
+- Improved key file suggestion performance
+- When the master key change application policy is disabled and
+  the master key expires (forced change), KeePass now shows the
+  two information dialogs only once per opening
+- After removing the password column, hiding behind asterisks
+  is suggested by default now when showing the column again
+- TAN entries now expire on auto-type, if the option for
+  expiring TANs on use is enabled
+- Auto-type now sends acute and grave accents as separate
+  characters
+- Auto-type now explicitly skips the taskbar window when
+  searching for the target window
+- Multiple lines are now separated in the entry list and in the
+  custom string list of the entry dialog by a space
+- RoboForm importer: improved multiline value support
+- Improved UNC path support
+- Improved entry list refresh performance
+- Improved UI state update performance
+- Entry list context menus are now configured instantly
+- Inapplicable group commands are now disabled
+- Improved control focusing
+- Improved clipboard handling
+- Copying and pasting whole entries is now also supported on
+  Windows 98 and ME
+- Improved releasing of dialog resources
+- Improved keys/placeholders box in auto-type editing dialog
+- Improved user-friendliness in UAC dialogs
+- Tooltips of the tab close button and the password repeat box
+  can be translated now
+- Improved help (moved placeholders to separate page, ...)
+- KeePassLibSD now uses the SHA-256 implementation of Bouncy
+  Castle
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- Window titles are now trimmed, such that auto-type also works
+  with windows whose titles have leading or trailing whitespace
+  characters
+- Detection of XSL files works under Linux / Mac OS X now, too
+
 2011-01-02: 2.14
 - Added option to lock after some time of global user
   inactivity

@@ -26,20 +26,16 @@ using System.Diagnostics;
 
 using KeePass.Native;
 
+using KeePassLib.Utility;
+
 namespace KeePass.Util
 {
 	public static partial class SendInputEx
 	{
 		private static void EnsureSameKeyboardLayout(SiStateEx si)
 		{
-			IntPtr hWndTarget = NativeMethods.GetForegroundWindowHandle();
-
-			uint uTargetProcessId;
-			uint uTargetThreadId = NativeMethods.GetWindowThreadProcessId(hWndTarget,
-				out uTargetProcessId);
-
 			IntPtr hklSelf = NativeMethods.GetKeyboardLayout(0);
-			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(uTargetThreadId);
+			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(si.TargetThreadID);
 
 			si.CurrentKeyboardLayout = hklSelf;
 
@@ -62,9 +58,26 @@ namespace KeePass.Util
 
 			if(bDown || IsKeyActive(vKey))
 			{
+				// if(!bDown && ((vKey == NativeMethods.VK_RCONTROL) ||
+				//	(vKey == NativeMethods.VK_CONTROL)))
+				// {
+				//	try
+				//	{
+				//		uint uVk = (uint)vKey;
+				//		uint uScan = NativeMethods.MapVirtualKey(uVk, 0);
+				//		NativeMethods.keybd_event((byte)uVk, (byte)uScan,
+				//			NativeMethods.KEYEVENTF_KEYUP, IntPtr.Zero);
+				//		return true;
+				//	}
+				//	catch(Exception) { Debug.Assert(false); }
+				// }
+
 				if(IntPtr.Size == 4) bRes = SendVKeyNative32(vKey, null, bDown);
 				else if(IntPtr.Size == 8) bRes = SendVKeyNative64(vKey, null, bDown);
 				else { Debug.Assert(false); }
+
+				// if(!bDown && (vKey == NativeMethods.VK_RCONTROL))
+				//	SendKeys.SendWait(@"^()");
 			}
 
 			if(bDown && (vKey != NativeMethods.VK_CAPITAL))
@@ -72,6 +85,13 @@ namespace KeePass.Util
 				Debug.Assert(IsKeyActive(vKey));
 			}
 
+			return bRes;
+		}
+
+		private static bool SendCharNative(char ch)
+		{
+			bool bRes = SendCharNative(ch, true);
+			if(!SendCharNative(ch, false)) bRes = false; // Not |= (short-circuit)
 			return bRes;
 		}
 
@@ -251,7 +271,7 @@ namespace KeePass.Util
 			}
 		}
 
-		private static void OSSendKeysWindows(string strSequence)
+		/* private static void OSSendKeysWindows(string strSequence)
 		{
 			// Workaround for ^/& .NET SendKeys bug:
 			// https://connect.microsoft.com/VisualStudio/feedback/details/93922/sendkeys-send-sends-wrong-character
@@ -273,13 +293,32 @@ namespace KeePass.Util
 					// }
 					// else { Debug.Assert(false); }
 
-					SendCharNative('^', true);
-					SendCharNative('^', false);
+					SendCharNative('^');
 				}
 
 				if(!string.IsNullOrEmpty(strSend)) SendKeys.SendWait(strSend);
 
 				bHat = true;
+			}
+		} */
+
+		private static void OSSendKeysWindows(string strSequence)
+		{
+			// Workaround for ^/& .NET SendKeys bug:
+			// https://connect.microsoft.com/VisualStudio/feedback/details/93922/sendkeys-send-sends-wrong-character
+
+			string[] vSpecial = new string[]{ @"{^}", @"{%}", @"´", @"`" };
+			List<string> vSend = StrUtil.SplitWithSep(strSequence, vSpecial, true);
+
+			foreach(string strSend in vSend)
+			{
+				if(string.IsNullOrEmpty(strSend)) continue;
+
+				if(strSend.Equals(@"{^}")) SendCharNative('^');
+				else if(strSend.Equals(@"{%}")) SendCharNative('%');
+				else if(strSend.Equals(@"´")) SendCharNative('´');
+				else if(strSend.Equals(@"`")) SendCharNative('`');
+				else SendKeys.SendWait(strSend);
 			}
 		}
 	}

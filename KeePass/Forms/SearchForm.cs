@@ -112,8 +112,7 @@ namespace KeePass.Forms
 			m_cbRegEx.Checked = Program.Config.Defaults.SearchParameters.RegularExpression;
 			m_cbExcludeExpired.Checked = Program.Config.Defaults.SearchParameters.ExcludeExpired;
 
-			this.ActiveControl = m_tbSearch;
-			m_tbSearch.Focus();
+			UIUtil.SetFocus(m_tbSearch, this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

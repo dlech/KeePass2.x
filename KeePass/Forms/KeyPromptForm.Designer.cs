@@ -42,7 +42,6 @@
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
-			this.m_timerKeyFileFiller = new System.Windows.Forms.Timer(this.components);
 			this.m_btnExit = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
@@ -175,11 +174,6 @@
 			this.m_cmbKeyFile.TabIndex = 3;
 			this.m_cmbKeyFile.SelectedIndexChanged += new System.EventHandler(this.OnKeyFileSelectedIndexChanged);
 			// 
-			// m_timerKeyFileFiller
-			// 
-			this.m_timerKeyFileFiller.Enabled = true;
-			this.m_timerKeyFileFiller.Tick += new System.EventHandler(this.OnKeyFileFillerTimerTick);
-			// 
 			// m_btnExit
 			// 
 			this.m_btnExit.DialogResult = System.Windows.Forms.DialogResult.Abort;
@@ -217,7 +211,7 @@
 			this.Name = "KeyPromptForm";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Open Database";
+			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
@@ -242,7 +236,6 @@
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
-		private System.Windows.Forms.Timer m_timerKeyFileFiller;
 		private System.Windows.Forms.Button m_btnExit;
 	}
 }

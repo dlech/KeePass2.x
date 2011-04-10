@@ -77,7 +77,7 @@ namespace KeePass.DataExchange.Formats
 			get { return KeePass.Properties.Resources.B16x16_Imp_PwSafe; }
 		}
 
-		public sealed class DatePasswordPair
+		private sealed class DatePasswordPair
 		{
 			public DateTime Time = DateTime.Now;
 			public string Password = string.Empty;
@@ -171,8 +171,11 @@ namespace KeePass.DataExchange.Formats
 						pwStorage.MemoryProtection.ProtectPassword,
 						dpp.Password));
 
-					pe.CreateBackup();
+					pe.CreateBackup(null);
 				}
+				// Maintain backups manually now (backups from the imported file
+				// might have been out of order)
+				pe.MaintainBackups(pwStorage);
 
 				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 					pwStorage.MemoryProtection.ProtectPassword,

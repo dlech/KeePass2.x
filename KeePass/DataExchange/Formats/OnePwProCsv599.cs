@@ -30,16 +30,17 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 5.99
+	// 1Password Pro 5.99 and 1PW 6.15
 	internal sealed class OnePwProCsv599 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "1Password Pro CSV"; } }
+		public override string FormatName { get { return @"1PW & 1Password Pro CSV"; } }
 		public override string DefaultExtension { get { return "csv"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
@@ -70,66 +71,71 @@ namespace KeePass.DataExchange.Formats
 		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage,
 			Dictionary<string, PwGroup> dictGroups)
 		{
+			if(strLine == "\"Bezeichnung\"\t\"User/ID\"\t\"1.Passwort\"\t\"Url/Programm\"\t\"Geändert am\"\t\"Bemerkung\"\t\"2.Passwort\"\t\"Läuft ab\"\t\"Kategorie\"\t\"Eigene Felder\"")
+				return;
+
 			string str = strLine;
 			if(str.StartsWith("\"") && str.EndsWith("\""))
 				str = str.Substring(1, str.Length - 2);
 			else { Debug.Assert(false); }
 
-			string[] list = str.Split(new string[] { "\"\t\"" }, StringSplitOptions.None);
-			Debug.Assert(list.Length == 11);
+			string[] list = str.Split(new string[]{ "\"\t\"" }, StringSplitOptions.None);
 
-			if(list.Length >= 11)
+			int iOffset;
+			if(list.Length == 11) iOffset = 0; // 1Password Pro 5.99
+			else if(list.Length == 10) iOffset = -1; // 1PW 6.15
+			else if(list.Length > 11) iOffset = 0; // Unknown extension
+			else return;
+
+			string strGroup = list[9 + iOffset];
+			PwGroup pg;
+			if(dictGroups.ContainsKey(strGroup)) pg = dictGroups[strGroup];
+			else
 			{
-				string strGroup = list[0];
-				PwGroup pg;
-				if(dictGroups.ContainsKey(strGroup)) pg = dictGroups[strGroup];
-				else
-				{
-					pg = new PwGroup(true, true, strGroup, PwIcon.Folder);
-					pwStorage.RootGroup.AddGroup(pg, true);
-					dictGroups[strGroup] = pg;
-				}
-
-				PwEntry pe = new PwEntry(true, true);
-				pg.AddEntry(pe, true);
-
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle,
-					ParseCsvWord(list[1])));
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUserName,
-					ParseCsvWord(list[2])));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword,
-					ParseCsvWord(list[3])));
-				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUrl,
-					ParseCsvWord(list[4])));
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes,
-					ParseCsvWord(list[6])));
-				pe.Strings.Set(PwDefs.PasswordField + " 2", new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword,
-					ParseCsvWord(list[7])));
-
-				Debug.Assert(list[9] == list[0]); // Very mysterious format...
-
-				DateTime dt;
-				if(ParseDateTime(list[5], out dt))
-				{
-					pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime = dt;
-				}
-				else { Debug.Assert(false); }
-
-				if(ParseDateTime(list[8], out dt))
-				{
-					pe.Expires = true;
-					pe.ExpiryTime = dt;
-				}
-
-				AddCustomFields(pe, list[10]);
+				pg = new PwGroup(true, true, strGroup, PwIcon.Folder);
+				pwStorage.RootGroup.AddGroup(pg, true);
+				dictGroups[strGroup] = pg;
 			}
-			else throw new FormatException("Invalid field count!");
+
+			PwEntry pe = new PwEntry(true, true);
+			pg.AddEntry(pe, true);
+
+			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectTitle,
+				ParseCsvWord(list[1 + iOffset])));
+			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectUserName,
+				ParseCsvWord(list[2 + iOffset])));
+			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectPassword,
+				ParseCsvWord(list[3 + iOffset])));
+			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectUrl,
+				ParseCsvWord(list[4 + iOffset])));
+			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectNotes,
+				ParseCsvWord(list[6 + iOffset])));
+			pe.Strings.Set(PwDefs.PasswordField + " 2", new ProtectedString(
+				pwStorage.MemoryProtection.ProtectPassword,
+				ParseCsvWord(list[7 + iOffset])));
+
+			// 1Password Pro only:
+			// Debug.Assert(list[9] == list[0]); // Very mysterious format...
+
+			DateTime dt;
+			if(ParseDateTime(list[5 + iOffset], out dt))
+			{
+				pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime = dt;
+			}
+			else { Debug.Assert(false); }
+
+			if(ParseDateTime(list[8 + iOffset], out dt))
+			{
+				pe.Expires = true;
+				pe.ExpiryTime = dt;
+			}
+
+			AddCustomFields(pe, list[10 + iOffset]);
 		}
 
 		private static string ParseCsvWord(string strWord)
@@ -146,7 +152,13 @@ namespace KeePass.DataExchange.Formats
 		{
 			dt = DateTime.MinValue;
 			if(string.IsNullOrEmpty(str)) return false;
-			if(str.ToLower().Trim() == "nie") return false;
+			if(str.Trim().Equals("nie", StrUtil.CaseIgnoreCmp)) return false;
+			if(str.Trim().Equals("never", StrUtil.CaseIgnoreCmp)) return false;
+			if(str.Trim().Equals("morgen", StrUtil.CaseIgnoreCmp))
+			{
+				dt = DateTime.Now.AddDays(1.0);
+				return true;
+			}
 
 			string[] list = str.Split(new char[]{ '.', '\r', '\n', ' ', '\t',
 				'-', ':' }, StringSplitOptions.RemoveEmptyEntries);

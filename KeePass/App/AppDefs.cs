@@ -36,9 +36,10 @@ namespace KeePass.App
 		public static readonly Color ColorControlDisabled = SystemColors.Control;
 		public static readonly Color ColorEditError = Color.FromArgb(255, 192, 192);
 
-		public const string XslFileHtmlLite = "XSL\\KDB4_DetailsLite.xsl";
-		public const string XslFileHtmlFull = "XSL\\KDB4_DetailsFull.xsl";
-		public const string XslFileHtmlTabular = "XSL\\KDB4_Tabular.xsl";
+		public const string XslFilesDir = "XSL";
+		public const string XslFileHtmlLite = "KDB4_DetailsLite.xsl";
+		public const string XslFileHtmlFull = "KDB4_DetailsFull.xsl";
+		public const string XslFileHtmlTabular = "KDB4_Tabular.xsl";
 
 		public const string PluginProductName = "KeePass Plugin";
 
@@ -115,8 +116,9 @@ namespace KeePass.App
 			public const string IoCredPassword = "iopassword";
 			public const string IoCredFromRecent = "iocredfromrecent";
 
-			public const string FileExtRegister = "registerfileext";
-			public const string FileExtUnregister = "unregisterfileext";
+			// User-friendly Pascal-case (shown in UAC dialog)
+			public const string FileExtRegister = "RegisterFileExt";
+			public const string FileExtUnregister = "UnregisterFileExt";
 
 			public const string PreLoad = "preload";
 			// public const string PreLoadRegister = "registerpreload";
@@ -150,6 +152,7 @@ namespace KeePass.App
 			public const string PlgxBuildPost = "plgx-build-post";
 
 			public const string Debug = "debug";
+			public const string SavePluginCompileRes = "saveplgxcr";
 			public const string ShowAssemblyInfo = "showasminfo";
 
 #if (DEBUG && !KeePassLibSD)

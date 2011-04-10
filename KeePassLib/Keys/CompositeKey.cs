@@ -167,6 +167,19 @@ namespace KeePassLib.Keys
 			return sha256.ComputeHash(ms.ToArray());
 		}
 
+		public bool EqualsValue(CompositeKey ckOther)
+		{
+			if(ckOther == null) throw new ArgumentNullException("ckOther");
+
+			byte[] pbThis = CreateRawCompositeKey32();
+			byte[] pbOther = ckOther.CreateRawCompositeKey32();
+			bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
+			Array.Clear(pbOther, 0, pbOther.Length);
+			Array.Clear(pbThis, 0, pbThis.Length);
+
+			return bResult;
+		}
+
 		/// <summary>
 		/// Generate a 32-bit wide key out of the composite key.
 		/// </summary>
@@ -203,8 +216,10 @@ namespace KeePassLib.Keys
 			int nAccounts = 0;
 
 			foreach(IUserKey uKey in m_vUserKeys)
+			{
 				if(uKey is KcpUserAccount)
 					++nAccounts;
+			}
 
 			if(nAccounts >= 2)
 			{
@@ -254,7 +269,6 @@ namespace KeePassLib.Keys
 			Array.Clear(pbIV, 0, pbIV.Length);
 
 			RijndaelManaged r = new RijndaelManaged();
-
 			if(r.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
@@ -306,20 +320,18 @@ namespace KeePassLib.Keys
 			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
 				return uRounds;
 
-			byte[] pbNewKey = new byte[32];
-			byte[] pbKey = new byte[32];
 			byte[] pbIV = new byte[16];
-			uint i;
+			Array.Clear(pbIV, 0, pbIV.Length);
 
-			for(i = 0; i < 16; i++) pbIV[i] = 0;
-			for(i = 0; i < 32; i++)
+			byte[] pbKey = new byte[32];
+			byte[] pbNewKey = new byte[32];
+			for(int i = 0; i < pbKey.Length; ++i)
 			{
 				pbKey[i] = (byte)i;
 				pbNewKey[i] = (byte)i;
 			}
 
 			RijndaelManaged r = new RijndaelManaged();
-
 			if(r.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
@@ -349,7 +361,7 @@ namespace KeePassLib.Keys
 			uRounds = 0;
 			while(true)
 			{
-				for(i = 0; i < uStep; ++i)
+				for(ulong j = 0; j < uStep; ++j)
 				{
 					iCrypt.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
 					iCrypt.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);

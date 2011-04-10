@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
@@ -121,6 +122,7 @@ namespace KeePassLib.Cryptography
 				SHA256Managed shaPool = new SHA256Managed();
 #endif
 				m_pbEntropyPool = shaPool.ComputeHash(pbFinal);
+				ms.Close();
 			}
 		}
 
@@ -147,7 +149,7 @@ namespace KeePassLib.Cryptography
 			pb = MemUtil.UInt32ToBytes((uint)r.Next());
 			ms.Write(pb, 0, pb.Length);
 
-			pb = MemUtil.UInt32ToBytes((uint)Environment.OSVersion.Platform);
+			pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
 			ms.Write(pb, 0, pb.Length);
 
 #if !KeePassLibSD

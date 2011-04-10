@@ -122,6 +122,20 @@ namespace KeePass.Util
 			return new KeyValuePair<string, string>(strKey, strValue);
 		}
 
+		public bool Remove(string strParamName)
+		{
+			if(strParamName == null) { Debug.Assert(false); return false; }
+
+			string strKey = strParamName.ToLower();
+			if(m_vParams.ContainsKey(strKey))
+			{
+				if(m_vParams.Remove(strKey)) return true;
+				else { Debug.Assert(false); }
+			}
+
+			return false; // No assert when not found
+		}
+
 		public static string SafeSerialize(string[] args)
 		{
 			if(args == null) throw new ArgumentNullException("args");
@@ -158,9 +172,11 @@ namespace KeePass.Util
 				m_vFileNames.Add(strFile);
 			}
 
+			m_vParams.Clear();
 			foreach(KeyValuePair<string, string> kvp in args.Parameters)
 			{
-				if(!string.IsNullOrEmpty(kvp.Key)) m_vParams[kvp.Key] = kvp.Value;
+				if(!string.IsNullOrEmpty(kvp.Key))
+					m_vParams[kvp.Key] = kvp.Value;
 			}
 		}
 	}

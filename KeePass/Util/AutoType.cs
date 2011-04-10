@@ -175,8 +175,11 @@ namespace KeePass.Util
 			}
 
 			pweData.Touch(false);
+			if(EntryUtil.ExpireTanEntryIfOption(pweData))
+				Program.MainForm.RefreshEntriesList();
 
-			// SprEngine.Compile might have modified the database
+			// SprEngine.Compile might have modified the database;
+			// pd.Modified is set by SprEngine
 			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
 
 			return true;
@@ -211,7 +214,11 @@ namespace KeePass.Util
 			foreach(KeyValuePair<string, string> kvp in pwe.AutoType.WindowSequencePairs)
 			{
 				string strWndSpec = kvp.Key;
-				if(!string.IsNullOrEmpty(strWndSpec))
+				if(strWndSpec == null) { Debug.Assert(false); continue; }
+
+				strWndSpec = strWndSpec.Trim();
+
+				if(strWndSpec.Length > 0)
 					strWndSpec = SprEngine.Compile(strWndSpec, false, pwe,
 						null, false, false);
 
@@ -225,6 +232,8 @@ namespace KeePass.Util
 			if(Program.Config.Integration.AutoTypeMatchByTitle)
 			{
 				string strTitle = pwe.Strings.ReadSafe(PwDefs.TitleField);
+				strTitle = strTitle.Trim();
+
 				if(string.IsNullOrEmpty(strSeq) && (strTitle.Length > 0) &&
 					(strWindow.IndexOf(strTitle, StrUtil.CaseIgnoreCmp) >= 0))
 				{
@@ -269,11 +278,11 @@ namespace KeePass.Util
 			{
 				// hWnd = NativeMethods.GetForegroundWindowHandle();
 				// strWindow = NativeMethods.GetWindowText(hWnd);
-				NativeMethods.GetForegroundWindowInfo(out hWnd, out strWindow);
+				NativeMethods.GetForegroundWindowInfo(out hWnd, out strWindow, true);
 			}
 			catch(Exception) { Debug.Assert(false); hWnd = IntPtr.Zero; strWindow = null; }
 
-			if((strWindow == null) || (strWindow.Length == 0)) return false;
+			if(string.IsNullOrEmpty(strWindow)) return false;
 			if(!IsValidAutoTypeWindow(hWnd, true)) return false;
 
 			PwObjectList<PwEntry> vList = new PwObjectList<PwEntry>();
@@ -314,6 +323,7 @@ namespace KeePass.Util
 					if(elf.SelectedEntry != null)
 						AutoType.PerformInternal(elf.SelectedEntry, strWindow);
 				}
+				UIUtil.DestroyForm(elf);
 			}
 
 			return true;
@@ -347,7 +357,7 @@ namespace KeePass.Util
 			try
 			{
 				IntPtr hDummy;
-				NativeMethods.GetForegroundWindowInfo(out hDummy, out strWindow);
+				NativeMethods.GetForegroundWindowInfo(out hDummy, out strWindow, true);
 			}
 			catch(Exception) { strWindow = null; }
 

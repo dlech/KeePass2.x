@@ -38,6 +38,15 @@ namespace KeePass.UI
 			set { m_bSimpleTextOnly = value; }
 		}
 
+		private bool m_bCtrlEnterAccepts = false;
+		[Browsable(false)]
+		[DefaultValue(false)]
+		public bool CtrlEnterAccepts
+		{
+			get { return m_bCtrlEnterAccepts; }
+			set { m_bCtrlEnterAccepts = value; }
+		}
+
 		public CustomRichTextBoxEx() : base()
 		{
 			// this.EnableAutoDragDrop = true;
@@ -54,6 +63,34 @@ namespace KeePass.UI
 				return;
 			}
 
+			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
+				(e.KeyCode == Keys.Enter)))
+			{
+				e.Handled = true;
+				Debug.Assert(this.Multiline);
+
+				Control p = this;
+				Form f;
+				while(true)
+				{
+					f = (p as Form);
+					if(f != null) break;
+
+					Control pParent = p.Parent;
+					if((pParent == null) || (pParent == p)) break;
+					p = pParent;
+				}
+				if(f != null)
+				{
+					IButtonControl btn = f.AcceptButton;
+					if(btn != null) btn.PerformClick();
+					else { Debug.Assert(false); }
+				}
+				else { Debug.Assert(false); }
+
+				return;
+			}
+
 			base.OnKeyDown(e);
 		}
 
@@ -61,6 +98,13 @@ namespace KeePass.UI
 		{
 			if(m_bSimpleTextOnly && ((e.Control && (e.KeyCode == Keys.V)) ||
 				(e.Shift && (e.KeyCode == Keys.Insert))))
+			{
+				e.Handled = true;
+				return;
+			}
+
+			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
+				(e.KeyCode == Keys.Enter)))
 			{
 				e.Handled = true;
 				return;

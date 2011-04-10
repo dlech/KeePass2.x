@@ -38,6 +38,7 @@ using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassLib.Resources;
+using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -57,26 +58,26 @@ namespace KeePass.DataExchange
 			ExchangeDataForm dlgFmt = new ExchangeDataForm();
 			dlgFmt.InitEx(false, pwStorage, pwStorage.RootGroup);
 
-			if(dlgFmt.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogNotValue(dlgFmt, DialogResult.OK)) return null;
+
+			Debug.Assert(dlgFmt.ResultFormat != null);
+			if(dlgFmt.ResultFormat == null)
 			{
-				Debug.Assert(dlgFmt.ResultFormat != null);
-				if(dlgFmt.ResultFormat == null)
-				{
-					MessageService.ShowWarning(KPRes.ImportFailed);
-					return false;
-				}
-
-				bAppendedToRootOnly = dlgFmt.ResultFormat.ImportAppendsToRootGroupOnly;
-
-				List<IOConnectionInfo> lConnections = new List<IOConnectionInfo>();
-				foreach(string strSelFile in dlgFmt.ResultFiles)
-					lConnections.Add(IOConnectionInfo.FromPath(strSelFile));
-
-				return Import(pwStorage, dlgFmt.ResultFormat, lConnections.ToArray(),
-					false, null, false, fParent);
+				MessageService.ShowWarning(KPRes.ImportFailed);
+				UIUtil.DestroyForm(dlgFmt);
+				return false;
 			}
 
-			return null;
+			bAppendedToRootOnly = dlgFmt.ResultFormat.ImportAppendsToRootGroupOnly;
+			FileFormatProvider ffp = dlgFmt.ResultFormat;
+
+			List<IOConnectionInfo> lConnections = new List<IOConnectionInfo>();
+			foreach(string strSelFile in dlgFmt.ResultFiles)
+				lConnections.Add(IOConnectionInfo.FromPath(strSelFile));
+
+			UIUtil.DestroyForm(dlgFmt);
+			return Import(pwStorage, ffp, lConnections.ToArray(),
+				false, null, false, fParent);
 		}
 
 		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
@@ -102,9 +103,10 @@ namespace KeePass.DataExchange
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(false, new IOConnectionInfo(), true, true);
 
-				if(iocf.ShowDialog() != DialogResult.OK) return null;
+				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
 
 				vConnections.Add(iocf.IOConnectionInfo);
+				UIUtil.DestroyForm(iocf);
 			}
 
 			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
@@ -196,9 +198,10 @@ namespace KeePass.DataExchange
 					KeyPromptForm kpf = new KeyPromptForm();
 					kpf.InitEx(iocIn, false, true);
 
-					if(kpf.ShowDialog() != DialogResult.OK) { s.Close(); continue; }
+					if(UIUtil.ShowDialogNotValue(kpf, DialogResult.OK)) { s.Close(); continue; }
 
 					pwImp.MasterKey = kpf.CompositeKey;
+					UIUtil.DestroyForm(kpf);
 				}
 				else if(bSynchronize) pwImp.MasterKey = pwDatabase.MasterKey;
 
@@ -231,9 +234,9 @@ namespace KeePass.DataExchange
 					else
 					{
 						ImportMethodForm imf = new ImportMethodForm();
-						if(imf.ShowDialog() != DialogResult.OK)
-							continue;
+						if(UIUtil.ShowDialogNotValue(imf, DialogResult.OK)) continue;
 						mm = imf.MergeMethod;
+						UIUtil.DestroyForm(imf);
 					}
 
 					// slf.SetText(KPRes.MergingData, LogStatusType.Info);
@@ -473,6 +476,20 @@ namespace KeePass.DataExchange
 			return string.Empty;
 		}
 
+		public static void AppendToField(PwEntry pe, string strName, string strValue,
+			PwDatabase pdContext)
+		{
+			bool bProtect = ((pdContext == null) ? false :
+				pdContext.MemoryProtection.GetProtection(strName));
+
+			string strPrev = pe.Strings.ReadSafe(strName);
+			if(string.IsNullOrEmpty(strPrev))
+				pe.Strings.Set(strName, new ProtectedString(bProtect, strValue));
+			else if(!string.IsNullOrEmpty(strValue))
+				pe.Strings.Set(strName, new ProtectedString(bProtect,
+					strPrev + @", " + strValue));
+		}
+
 		public static bool EntryEquals(PwEntry pe1, PwEntry pe2)
 		{
 			if(pe1.ParentGroup == null) return false;
@@ -529,7 +546,11 @@ namespace KeePass.DataExchange
 
 			GuiSendKeysPrc(@"^c");
 
-			if(Clipboard.ContainsText()) return Clipboard.GetText();
+			try
+			{
+				if(Clipboard.ContainsText()) return Clipboard.GetText();
+			}
+			catch(Exception) { Debug.Assert(false); } // Opened by other process
 
 			return string.Empty;
 		}

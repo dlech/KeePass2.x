@@ -170,6 +170,7 @@ namespace KeePassLib.Keys
 
 				SHA256Managed sha256 = new SHA256Managed();
 				pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
+				ms.Close();
 			}
 
 			CreateXmlKeyFile(strFilePath, pbFinalKey32);

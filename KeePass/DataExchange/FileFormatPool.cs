@@ -125,6 +125,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PwMemory2008Xml104());
 			m_vFormats.Add(new PwPrompterDat12());
 			m_vFormats.Add(new PwSafeXml302());
+			m_vFormats.Add(new PwsPlusCsv1007());
 			m_vFormats.Add(new PwTresorXml100());
 			m_vFormats.Add(new PVaultTxt14());
 			m_vFormats.Add(new PinsTxt450());

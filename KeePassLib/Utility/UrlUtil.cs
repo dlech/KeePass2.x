@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -148,7 +149,7 @@ namespace KeePassLib.Utility
 			}
 
 			if(bUrl) return (strPath + '/');
-			return strPath + Path.DirectorySeparatorChar;
+			return (strPath + Path.DirectorySeparatorChar);
 		}
 
 		/* /// <summary>
@@ -288,8 +289,7 @@ namespace KeePassLib.Utility
 			if(strBaseFile.Length == 0) return strTargetFile;
 			if(strTargetFile.Length == 0) return string.Empty;
 
-			if(strTargetFile.StartsWith("\\\\")) return strTargetFile;
-
+			// Test whether on different Windows drives
 			if((strBaseFile.Length >= 3) && (strTargetFile.Length >= 3))
 			{
 				if((strBaseFile[1] == ':') && (strTargetFile[1] == ':') &&
@@ -298,10 +298,41 @@ namespace KeePassLib.Utility
 					return strTargetFile;
 			}
 
+			if(NativeLib.IsUnix())
+			{
+				bool bBaseUnc = IsUncPath(strBaseFile);
+				bool bTargetUnc = IsUncPath(strTargetFile);
+				if((!bBaseUnc && bTargetUnc) || (bBaseUnc && !bTargetUnc))
+					return strTargetFile;
+
+				string strBase = GetShortestAbsolutePath(strBaseFile);
+				string strTarget = GetShortestAbsolutePath(strTargetFile);
+				string[] vBase = strBase.Split(m_vDirSeps);
+				string[] vTarget = strTarget.Split(m_vDirSeps);
+
+				int i = 0;
+				while((i < (vBase.Length - 1)) && (i < (vTarget.Length - 1)) &&
+					(vBase[i] == vTarget[i])) { ++i; }
+
+				StringBuilder sbRel = new StringBuilder();
+				for(int j = i; j < (vBase.Length - 1); ++j)
+				{
+					if(sbRel.Length > 0) sbRel.Append(Path.DirectorySeparatorChar);
+					sbRel.Append("..");
+				}
+				for(int k = i; k < vTarget.Length; ++k)
+				{
+					if(sbRel.Length > 0) sbRel.Append(Path.DirectorySeparatorChar);
+					sbRel.Append(vTarget[k]);
+				}
+
+				return sbRel.ToString();
+			}
+
 #if KeePassLibSD
 			return strTargetFile;
 #else
-			try
+			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
 				StringBuilder sb = new StringBuilder(nMaxPath + 2);
@@ -336,7 +367,7 @@ namespace KeePassLib.Utility
 			if(strPath == null) throw new ArgumentNullException("strPath");
 			if(strPath.Length == 0) return false;
 
-			if(strPath.StartsWith("\\\\")) return true;
+			if(IsUncPath(strPath)) return true;
 
 			try { return Path.IsPathRooted(strPath); }
 			catch(Exception) { Debug.Assert(false); }
@@ -349,12 +380,58 @@ namespace KeePassLib.Utility
 			if(strPath == null) throw new ArgumentNullException("strPath");
 			if(strPath.Length == 0) return string.Empty;
 
+			// Path.GetFullPath is incompatible with UNC paths traversing over
+			// different server shares (which are created by PathRelativePathTo);
+			// we need to build the absolute path on our own...
+			if(IsUncPath(strPath))
+			{
+				char chSep = strPath[0];
+				Debug.Assert(Array.IndexOf<char>(m_vDirSeps, chSep) >= 0);
+
+				List<string> l = new List<string>();
+#if !KeePassLibSD
+				string[] v = strPath.Split(m_vDirSeps, StringSplitOptions.None);
+#else
+				string[] v = strPath.Split(m_vDirSeps);
+#endif
+				Debug.Assert((v.Length >= 3) && (v[0].Length == 0) &&
+					(v[1].Length == 0));
+
+				foreach(string strPart in v)
+				{
+					if(strPart.Equals(".")) continue;
+					else if(strPart.Equals(".."))
+					{
+						if(l.Count > 0) l.RemoveAt(l.Count - 1);
+						else { Debug.Assert(false); }
+					}
+					else l.Add(strPart); // Do not ignore zero length parts
+				}
+
+				StringBuilder sb = new StringBuilder();
+				for(int i = 0; i < l.Count; ++i)
+				{
+					// Don't test length of sb, might be 0 due to initial UNC seps
+					if(i > 0) sb.Append(chSep);
+
+					sb.Append(l[i]);
+				}
+
+				return sb.ToString();
+			}
+
 			string str;
 			try { str = Path.GetFullPath(strPath); }
 			catch(Exception) { Debug.Assert(false); return strPath; }
 
 			Debug.Assert(str.IndexOf("\\..\\") < 0);
-			return str.Replace("\\.\\", "\\");
+			foreach(char ch in m_vDirSeps)
+			{
+				string strSep = new string(ch, 1);
+				str = str.Replace(strSep + "." + strSep, strSep);
+			}
+
+			return str;
 		}
 
 		public static int GetUrlLength(string strText, int nOffset)
@@ -411,6 +488,13 @@ namespace KeePassLib.Utility
 			strPath = strPath.Replace('\\', chSeparator);
 
 			return strPath;
+		}
+
+		public static bool IsUncPath(string strPath)
+		{
+			if(strPath == null) throw new ArgumentNullException("strPath");
+
+			return (strPath.StartsWith("\\\\") || strPath.StartsWith("//"));
 		}
 	}
 }
