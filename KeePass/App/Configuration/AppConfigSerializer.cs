@@ -40,6 +40,7 @@ namespace KeePass.App.Configuration
 		private static string m_strBaseName = null; // Null prop allowed
 
 		private static string m_strCreateDir = null;
+		private static string m_strCreateDirLocal = null;
 		private static string m_strEnforcedConfigFile = null;
 		private static string m_strGlobalConfigFile = null;
 		private static string m_strUserConfigFile = null;
@@ -50,6 +51,15 @@ namespace KeePass.App.Configuration
 			{
 				AppConfigSerializer.GetConfigPaths();
 				return m_strCreateDir;
+			}
+		}
+
+		public static string LocalAppDataDirectory
+		{
+			get
+			{
+				AppConfigSerializer.GetConfigPaths();
+				return m_strCreateDirLocal;
 			}
 		}
 
@@ -67,6 +77,7 @@ namespace KeePass.App.Configuration
 				m_strBaseName = value;
 
 				m_strCreateDir = null;
+				m_strCreateDirLocal = null;
 				m_strEnforcedConfigFile = null; // Invalidate paths
 				m_strGlobalConfigFile = null;
 				m_strUserConfigFile = null;
@@ -125,19 +136,24 @@ namespace KeePass.App.Configuration
 					strUserDir = UrlUtil.GetFileDirectory(UrlUtil.FileUrlToPath(
 						Assembly.GetExecutingAssembly().GetName().CodeBase), true, false);
 				}
+				strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
 
-				if(!strUserDir.EndsWith(new string(Path.DirectorySeparatorChar, 1)) &&
-					!strUserDir.EndsWith("\\") && !strUserDir.EndsWith("/"))
+				string strUserDirLocal;
+				try
 				{
-					strUserDir += new string(Path.DirectorySeparatorChar, 1);
+					strUserDirLocal = Environment.GetFolderPath(
+						Environment.SpecialFolder.LocalApplicationData);
 				}
+				catch(Exception) { strUserDirLocal = strUserDir; }
+				strUserDirLocal = UrlUtil.EnsureTerminatingSeparator(strUserDirLocal, false);
 
 				m_strCreateDir = strUserDir + strBaseDirName;
+				m_strCreateDirLocal = strUserDirLocal + strBaseDirName;
 				m_strUserConfigFile = m_strCreateDir + Path.DirectorySeparatorChar +
 					strBaseDirName + ".config.xml";
 			}
 
-			Debug.Assert(m_strCreateDir != null); Debug.Assert(m_strCreateDir.Length > 0);
+			Debug.Assert(!string.IsNullOrEmpty(m_strCreateDir));
 		}
 
 		private static void EnsureAppDataDirAvailable()

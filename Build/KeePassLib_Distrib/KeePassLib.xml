@@ -122,6 +122,13 @@
             Call this once to determine the current localization settings.
             </summary>
         </member>
+        <member name="P:KeePassLib.Serialization.Kdb4File.DetachBinaries">
+            <summary>
+            Detach binaries when opening a file. If this isn't <c>null</c>,
+            all binaries are saved to the specified path and are removed
+            from the database.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Keys.IUserKey">
             <summary>
             Interface to a user key, like a password, key file data, etc.
@@ -773,10 +780,10 @@
             'AES/Rijndael (256-Bit Key)'.
             </summary>
         </member>
-        <member name="P:KeePassLib.Resources.KLRes.ErrorFeedbackRequest">
+        <member name="P:KeePassLib.Resources.KLRes.ErrorInClipboard">
             <summary>
             Look up a localized string similar to
-            'An extended error report has been copied to the clipboard. Please send it to the KeePass developers.'.
+            'An extended error report has been copied to the clipboard.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FatalError">
@@ -1356,7 +1363,9 @@
             </summary>
             <param name="bRecursive">If <c>true</c>, subgroups are added
             recursively, i.e. all child groups are returned, too.</param>
-            <returns>List of subgroups.</returns>
+            <returns>List of subgroups. If <paramref name="bRecursive" /> is
+            <c>true</c>, it is guaranteed that subsubgroups appear after
+            subgroups.</returns>
         </member>
         <member name="M:KeePassLib.PwGroup.GetObjects(System.Boolean,System.Nullable{System.Boolean})">
             <summary>
@@ -2307,8 +2316,7 @@
             Strip the extension of a file.
             </summary>
             <param name="strPath">Full path of a file with extension.</param>
-            <returns>File name without extension. The return value is
-            an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+            <returns>File name without extension.</returns>
         </member>
         <member name="M:KeePassLib.Utility.UrlUtil.GetExtension(System.String)">
             <summary>
@@ -2666,6 +2674,13 @@
             Hash value of the primary file on disk (last read or last write).
             A call to <c>SaveAs</c> without making the saved file primary will
             not change this hash. May be <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.DetachBinaries">
+            <summary>
+            Detach binaries when opening a file. If this isn't <c>null</c>,
+            all binaries are saved to the specified path and are removed
+            from the database.
             </summary>
         </member>
         <member name="P:KeePassLib.PwDatabase.LocalizedAppName">

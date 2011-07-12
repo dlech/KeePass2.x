@@ -76,6 +76,7 @@
 			this.m_tbGlobalAutoType = new System.Windows.Forms.TextBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
+			this.m_btnProxy = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -601,6 +602,7 @@
 			// 
 			// m_tabAdvanced
 			// 
+			this.m_tabAdvanced.Controls.Add(this.m_btnProxy);
 			this.m_tabAdvanced.Controls.Add(this.m_lvAdvanced);
 			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAdvanced.Name = "m_tabAdvanced";
@@ -618,10 +620,20 @@
 			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 12);
 			this.m_lvAdvanced.Name = "m_lvAdvanced";
 			this.m_lvAdvanced.ShowItemToolTips = true;
-			this.m_lvAdvanced.Size = new System.Drawing.Size(540, 291);
+			this.m_lvAdvanced.Size = new System.Drawing.Size(540, 261);
 			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
+			// 
+			// m_btnProxy
+			// 
+			this.m_btnProxy.Location = new System.Drawing.Point(472, 279);
+			this.m_btnProxy.Name = "m_btnProxy";
+			this.m_btnProxy.Size = new System.Drawing.Size(75, 23);
+			this.m_btnProxy.TabIndex = 1;
+			this.m_btnProxy.Text = "Proxy...";
+			this.m_btnProxy.UseVisualStyleBackColor = true;
+			this.m_btnProxy.Click += new System.EventHandler(this.OnBtnProxy);
 			// 
 			// OptionsForm
 			// 
@@ -717,5 +729,6 @@
 		private System.Windows.Forms.LinkLabel m_linkHotKeyHelp;
 		private System.Windows.Forms.CheckBox m_cbLockAfterGlobalTime;
 		private System.Windows.Forms.NumericUpDown m_numLockAfterGlobalTime;
+		private System.Windows.Forms.Button m_btnProxy;
 	}
 }

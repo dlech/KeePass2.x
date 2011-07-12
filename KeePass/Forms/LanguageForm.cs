@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using System.IO;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.UI;
 using KeePass.Resources;
 using KeePass.Util;
@@ -50,8 +51,7 @@ namespace KeePass.Forms
 		{
 			GlobalWindowManager.AddWindow(this, this);
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Keyboard_Layout,
 				KPRes.SelectLanguage, KPRes.SelectLanguageDesc);
 			this.Icon = Properties.Resources.KeePass;
@@ -68,37 +68,62 @@ namespace KeePass.Forms
 			lvi.SubItems.Add(AppDefs.DefaultTrlAuthor);
 			lvi.SubItems.Add(AppDefs.DefaultTrlContact);
 
+			List<string> vList = new List<string>();
+			GetAvailableTranslations(AppConfigSerializer.AppDataDirectory, vList);
+			GetAvailableTranslations(AppConfigSerializer.LocalAppDataDirectory, vList);
+
 			string strExe = WinUtil.GetExecutable();
 			string strPath = UrlUtil.GetFileDirectory(strExe, false, true);
-			GetAvailableTranslations(strPath);
+			GetAvailableTranslations(strPath, vList);
 		}
 
-		private void GetAvailableTranslations(string strPath)
+		private void GetAvailableTranslations(string strPath, List<string> vList)
 		{
-			DirectoryInfo di = new DirectoryInfo(strPath);
-			FileInfo[] vFiles = di.GetFiles();
-
-			foreach(FileInfo fi in vFiles)
+			try
 			{
-				if(fi.FullName.ToLower().EndsWith("." + KPTranslation.FileExtension))
-				{
-					try
-					{
-						KPTranslation kpTrl = KPTranslation.LoadFromFile(fi.FullName);
+				DirectoryInfo di = new DirectoryInfo(strPath);
+				FileInfo[] vFiles = di.GetFiles();
 
-						ListViewItem lvi = m_lvLanguages.Items.Add(
-							kpTrl.Properties.NameEnglish, 0);
-						lvi.SubItems.Add(kpTrl.Properties.ApplicationVersion);
-						lvi.SubItems.Add(kpTrl.Properties.AuthorName);
-						lvi.SubItems.Add(kpTrl.Properties.AuthorContact);
-						lvi.Tag = UrlUtil.GetFileName(fi.FullName);
-					}
-					catch(Exception ex)
+				foreach(FileInfo fi in vFiles)
+				{
+					string strFullName = fi.FullName;
+
+					if(strFullName.ToLower().EndsWith("." + KPTranslation.FileExtension))
 					{
-						MessageService.ShowWarning(ex.Message);
+						string strFileName = UrlUtil.GetFileName(strFullName);
+
+						bool bFound = false;
+						foreach(string strExisting in vList)
+						{
+							if(strExisting.Equals(strFileName, StrUtil.CaseIgnoreCmp))
+							{
+								bFound = true;
+								break;
+							}
+						}
+						if(bFound) continue;
+
+						try
+						{
+							KPTranslation kpTrl = KPTranslation.LoadFromFile(strFullName);
+
+							ListViewItem lvi = m_lvLanguages.Items.Add(
+								kpTrl.Properties.NameEnglish, 0);
+							lvi.SubItems.Add(kpTrl.Properties.ApplicationVersion);
+							lvi.SubItems.Add(kpTrl.Properties.AuthorName);
+							lvi.SubItems.Add(kpTrl.Properties.AuthorContact);
+							lvi.Tag = strFileName;
+
+							vList.Add(strFileName);
+						}
+						catch(Exception ex)
+						{
+							MessageService.ShowWarning(ex.Message);
+						}
 					}
 				}
 			}
+			catch(Exception) { } // Directory might not exist or cause access violation
 		}
 
 		private void OnBtnClose(object sender, EventArgs e)
@@ -113,13 +138,13 @@ namespace KeePass.Forms
 			if(lvic[0].Index == 0) // First item selected = English
 			{
 				if(Program.Config.Application.LanguageFile.Length == 0)
-					return; // Is built-English already
+					return; // Is English already
 
 				Program.Config.Application.LanguageFile = string.Empty;
 			}
 			else
 			{
-				string strSelID = lvic[0].Tag as string;
+				string strSelID = (lvic[0].Tag as string);
 				if(strSelID == Program.Config.Application.LanguageFile) return;
 
 				Program.Config.Application.LanguageFile = strSelID;

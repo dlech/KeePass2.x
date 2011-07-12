@@ -30,16 +30,7 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class PwDeletedObject : IDeepCloneable<PwDeletedObject>
 	{
-		PwUuid m_uuid = PwUuid.Zero;
-		DateTime m_dtDeletionTime = PwDefs.DtDefaultNow;
-
-		/// <summary>
-		/// Construct a new <c>PwDeletedObject</c> object.
-		/// </summary>
-		public PwDeletedObject()
-		{
-		}
-
+		private PwUuid m_uuid = PwUuid.Zero;
 		/// <summary>
 		/// UUID of the entry that has been deleted.
 		/// </summary>
@@ -48,12 +39,12 @@ namespace KeePassLib
 			get { return m_uuid; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
+				if(value == null) throw new ArgumentNullException("value");
 				m_uuid = value;
 			}
 		}
 
+		private DateTime m_dtDeletionTime = PwDefs.DtDefaultNow;
 		/// <summary>
 		/// The date/time when the entry has been deleted.
 		/// </summary>
@@ -61,6 +52,21 @@ namespace KeePassLib
 		{
 			get { return m_dtDeletionTime; }
 			set { m_dtDeletionTime = value; }
+		}
+
+		/// <summary>
+		/// Construct a new <c>PwDeletedObject</c> object.
+		/// </summary>
+		public PwDeletedObject()
+		{
+		}
+
+		public PwDeletedObject(PwUuid uuid, DateTime dtDeletionTime)
+		{
+			if(uuid == null) throw new ArgumentNullException("uuid");
+
+			m_uuid = uuid;
+			m_dtDeletionTime = dtDeletionTime;
 		}
 
 		/// <summary>

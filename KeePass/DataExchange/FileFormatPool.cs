@@ -115,6 +115,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new FlexWalletXml17());
 			m_vFormats.Add(new HandySafeTxt512());
 			m_vFormats.Add(new HandySafeProXml12());
+			m_vFormats.Add(new KasperskyPwMgrXml50());
 			m_vFormats.Add(new KeePassXXml041());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
@@ -134,6 +135,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new SecurityTxt12());
 			m_vFormats.Add(new SplashIdCsv402());
 			m_vFormats.Add(new SteganosPwManager2007());
+			m_vFormats.Add(new StickyPwXml50());
 			m_vFormats.Add(new Whisper32Csv116());
 			m_vFormats.Add(new ZdnPwProTxt314());
 
@@ -145,7 +147,8 @@ namespace KeePass.DataExchange
 
 			m_vFormats.Add(new KeePassHtml2x());
 			m_vFormats.Add(new XslTransform2x());
-			m_vFormats.Add(new WinFavorites10());
+			m_vFormats.Add(new WinFavorites10(false));
+			m_vFormats.Add(new WinFavorites10(true));
 		}
 
 		public void Add(FileFormatProvider prov)

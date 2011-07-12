@@ -30,6 +30,7 @@ using System.Net.Cache;
 using System.Net.Security;
 #endif
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
@@ -48,6 +49,14 @@ namespace KeePassLib.Serialization
 
 	public static class IOConnection
 	{
+#if !KeePassLibSD
+		private static ProxyServerType m_pstProxyType = ProxyServerType.System;
+		private static string m_strProxyAddr = string.Empty;
+		private static string m_strProxyPort = string.Empty;
+		private static string m_strProxyUserName = string.Empty;
+		private static string m_strProxyPassword = string.Empty;
+#endif
+
 		// Web request methods
 		public const string WrmDeleteFile = "DELETEFILE";
 		public const string WrmMoveFile = "MOVEFILE";
@@ -62,6 +71,16 @@ namespace KeePassLib.Serialization
 			SslPolicyErrors sslPolicyErrors)
 		{
 			return true;
+		}
+
+		public static void SetProxy(ProxyServerType pst, string strAddr,
+			string strPort, string strUserName, string strPassword)
+		{
+			m_pstProxyType = pst;
+			m_strProxyAddr = (strAddr ?? string.Empty);
+			m_strProxyPort = (strPort ?? string.Empty);
+			m_strProxyUserName = (strUserName ?? string.Empty);
+			m_strProxyPassword = (strPassword ?? string.Empty);
 		}
 
 		internal static void ConfigureWebRequest(WebRequest request)
@@ -79,6 +98,87 @@ namespace KeePassLib.Serialization
 			// {
 			//	Debug.Assert(((FtpWebRequest)request).UsePassive);
 			// }
+
+			// Not implemented and ignored in Mono < 2.10
+			try
+			{
+				request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+			}
+			catch(NotImplementedException) { }
+			catch(Exception) { Debug.Assert(false); }
+
+			try
+			{
+				IWebProxy prx;
+				if(GetWebProxy(out prx)) request.Proxy = prx;
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		internal static void ConfigureWebClient(WebClient wc)
+		{
+			// Not implemented and ignored in Mono < 2.10
+			try
+			{
+				wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+			}
+			catch(NotImplementedException) { }
+			catch(Exception) { Debug.Assert(false); }
+
+			try
+			{
+				IWebProxy prx;
+				if(GetWebProxy(out prx)) wc.Proxy = prx;
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static bool GetWebProxy(out IWebProxy prx)
+		{
+			prx = null;
+
+			if(m_pstProxyType == ProxyServerType.None)
+				return true; // Use null proxy
+			if(m_pstProxyType == ProxyServerType.Manual)
+			{
+				try
+				{
+					if(m_strProxyPort.Length > 0)
+						prx = new WebProxy(m_strProxyAddr, int.Parse(m_strProxyPort));
+					else prx = new WebProxy(m_strProxyAddr);
+
+					if((m_strProxyUserName.Length > 0) || (m_strProxyPassword.Length > 0))
+						prx.Credentials = new NetworkCredential(m_strProxyUserName,
+							m_strProxyPassword);
+
+					return true; // Use manual proxy
+				}
+				catch(Exception exProxy)
+				{
+					string strInfo = m_strProxyAddr;
+					if(m_strProxyPort.Length > 0) strInfo += ":" + m_strProxyPort;
+					MessageService.ShowWarning(strInfo, exProxy.Message);
+				}
+
+				return false; // Use default
+			}
+
+			if((m_strProxyUserName.Length == 0) && (m_strProxyPassword.Length == 0))
+				return false; // Use default proxy, no auth
+
+			try
+			{
+				prx = WebRequest.DefaultWebProxy;
+				if(prx == null) prx = WebRequest.GetSystemWebProxy();
+				if(prx == null) throw new InvalidOperationException();
+
+				prx.Credentials = new NetworkCredential(m_strProxyUserName,
+					m_strProxyPassword);
+				return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 
 		private static void PrepareWebAccess()
@@ -92,10 +192,12 @@ namespace KeePassLib.Serialization
 			PrepareWebAccess();
 
 			IOWebClient wc = new IOWebClient();
-			wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+			ConfigureWebClient(wc);
 
 			if((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))
 				wc.Credentials = new NetworkCredential(ioc.UserName, ioc.Password);
+			else if(NativeLib.IsUnix()) // Mono requires credentials
+				wc.Credentials = new NetworkCredential("anonymous", string.Empty);
 
 			return wc;
 		}
@@ -106,10 +208,11 @@ namespace KeePassLib.Serialization
 
 			WebRequest req = WebRequest.Create(ioc.Path);
 			ConfigureWebRequest(req);
-			req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
 			if((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))
 				req.Credentials = new NetworkCredential(ioc.UserName, ioc.Password);
+			else if(NativeLib.IsUnix()) // Mono requires credentials
+				req.Credentials = new NetworkCredential("anonymous", string.Empty);
 
 			return req;
 		}

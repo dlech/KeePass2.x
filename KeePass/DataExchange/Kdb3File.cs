@@ -204,7 +204,7 @@ namespace KeePass.DataExchange
 				}
 
 				PwEntry pe = new PwEntry(false, false);
-				pe.Uuid = new PwUuid(e.Uuid.ToByteArray());
+				pe.SetUuid(new PwUuid(e.Uuid.ToByteArray()), false);
 
 				pgContainer.AddEntry(pe, true, true);
 
@@ -615,7 +615,7 @@ namespace KeePass.DataExchange
 				m_dSeq1xTo2xBiDir = new Dictionary<string, string>();
 
 				m_dSeq1xTo2x[@"{SPACE}"] = " ";
-				m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}+({END}){DEL}";
+				// m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}+({END}){DEL}";
 
 				m_dSeq1xTo2xBiDir[@"{AT}"] = @"@";
 				m_dSeq1xTo2xBiDir[@"{PLUS}"] = @"{+}";

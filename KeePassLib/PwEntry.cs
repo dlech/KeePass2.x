@@ -774,6 +774,32 @@ namespace KeePassLib
 
 			return false;
 		}
+
+		public bool IsContainedIn(PwGroup pgContainer)
+		{
+			PwGroup pgCur = m_pParentGroup;
+			while(pgCur != null)
+			{
+				if(pgCur == pgContainer) return true;
+
+				pgCur = pgCur.ParentGroup;
+			}
+
+			return false;
+		}
+
+		public void SetUuid(PwUuid pwNewUuid, bool bAlsoChangeHistoryUuids)
+		{
+			this.Uuid = pwNewUuid;
+
+			if(bAlsoChangeHistoryUuids)
+			{
+				foreach(PwEntry peHist in m_listHistory)
+				{
+					peHist.Uuid = pwNewUuid;
+				}
+			}
+		}
 	}
 
 	public sealed class PwEntryComparer : IComparer<PwEntry>

@@ -327,6 +327,11 @@ namespace KeePass.Forms
 		// Public for plugins
 		public void UpdateEntryBinaries(bool bGuiToInternal)
 		{
+			UpdateEntryBinaries(bGuiToInternal, false);
+		}
+
+		public void UpdateEntryBinaries(bool bGuiToInternal, bool bUpdateState)
+		{
 			if(bGuiToInternal) { }
 			else // Internal to GUI
 			{
@@ -340,6 +345,8 @@ namespace KeePass.Forms
 				}
 				UIUtil.SetTopVisibleItem(m_lvBinaries, iTopVisible);
 			}
+
+			if(bUpdateState) EnableControlsEx();
 		}
 
 		internal static Image CreateColorButtonImage(Button btn, Color clr)
@@ -541,12 +548,8 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
-			int w = m_bannerImage.ClientRectangle.Width;
-			int h = m_bannerImage.ClientRectangle.Height;
-			m_bannerImage.Image = BannerFactory.CreateBanner(w, h,
-				BannerStyle.Default,
-				KeePass.Properties.Resources.B48x48_KGPG_Sign,
-				strTitle, strDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				KeePass.Properties.Resources.B48x48_KGPG_Sign, strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
 
@@ -579,7 +582,7 @@ namespace KeePass.Forms
 			InitHistoryTab();
 
 			UpdateEntryStrings(false, true);
-			UpdateEntryBinaries(false);
+			UpdateEntryBinaries(false, false);
 
 			if(PwDefs.IsTanEntry(m_pwEntry))
 				m_btnTools.Enabled = false;
@@ -636,15 +639,35 @@ namespace KeePass.Forms
 			m_secPassword.EnableProtection(bHidePassword);
 			m_secRepeat.EnableProtection(bHidePassword);
 
+			int nStringsSel = m_lvStrings.SelectedItems.Count;
+			int nBinSel = m_lvBinaries.SelectedItems.Count;
+
+			bool bBinEdit = false;
+			if(nBinSel == 1)
+			{
+				string strBin = m_lvBinaries.SelectedItems[0].Text;
+				ProtectedBinary pbSel = m_vBinaries.Get(strBin);
+				if(pbSel != null)
+				{
+					BinaryDataClass bdc = BinaryDataClassifier.Classify(
+						strBin, pbSel.ReadData());
+					if(DataEditorForm.SupportsDataType(bdc) && (m_pwEditMode !=
+						PwEditMode.ViewReadOnlyEntry))
+						bBinEdit = true;
+				}
+				else { Debug.Assert(false); }
+			}
+			m_btnBinView.Text = (bBinEdit ? StrUtil.RemoveAccelerator(
+				KPRes.EditCmd) : KPRes.ViewCmd);
+
+			m_btnBinView.Enabled = (nBinSel == 1);
+
 			if(m_bLockEnabledState) return;
 
-			int nStringsSel = m_lvStrings.SelectedItems.Count;
 			m_btnStrEdit.Enabled = (nStringsSel == 1);
 			m_btnStrDelete.Enabled = (nStringsSel >= 1);
 
-			int nBinSel = m_lvBinaries.SelectedItems.Count;
 			m_btnBinSave.Enabled = m_btnBinDelete.Enabled = (nBinSel >= 1);
-			m_btnBinView.Enabled = (nBinSel == 1);
 
 			m_btnPickFgColor.Enabled = m_cbCustomForegroundColor.Checked;
 			m_btnPickBgColor.Enabled = m_cbCustomBackgroundColor.Checked;
@@ -885,7 +908,7 @@ namespace KeePass.Forms
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{
-				UpdateEntryBinaries(true);
+				UpdateEntryBinaries(true, false);
 
 				foreach(string strFile in ofd.FileNames)
 				{
@@ -940,7 +963,7 @@ namespace KeePass.Forms
 					}
 				}
 
-				UpdateEntryBinaries(false);
+				UpdateEntryBinaries(false, true);
 				ResizeColumnHeaders();
 			}
 		}
@@ -949,7 +972,7 @@ namespace KeePass.Forms
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			UpdateEntryBinaries(true);
+			UpdateEntryBinaries(true, false);
 
 			ListView.SelectedListViewItemCollection lvsc = m_lvBinaries.SelectedItems;
 			int nSelCount = lvsc.Count;
@@ -958,7 +981,7 @@ namespace KeePass.Forms
 			for(int i = 0; i < nSelCount; ++i)
 				m_vBinaries.Remove(lvsc[nSelCount - i - 1].Text);
 
-			UpdateEntryBinaries(false);
+			UpdateEntryBinaries(false, true);
 			ResizeColumnHeaders();
 		}
 
@@ -1111,6 +1134,7 @@ namespace KeePass.Forms
 			if(lvsi.Count != 1) { Debug.Assert(false); return; }
 
 			m_pwEntry.RestoreFromBackup((uint)lvsi[0], m_pwDatabase);
+			m_pwEntry.Touch(true, false);
 			this.DialogResult = DialogResult.OK; // Doesn't invoke OnBtnOK
 		}
 
@@ -1373,6 +1397,8 @@ namespace KeePass.Forms
 			PwProfile opt = PwProfile.DeriveFromPassword(ps);
 
 			pgf.InitEx(bAtLeastOneChar ? opt : null, true, false);
+			// pgf.InitEx(null, true, false);
+
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
 				byte[] pbEntropy = EntropyForm.CollectEntropyIfEnabled(pgf.SelectedProfile);
@@ -1502,13 +1528,33 @@ namespace KeePass.Forms
 			if((lvsic == null) || (lvsic.Count != 1)) return;
 
 			string strDataItem = lvsic[0].Text;
-			ProtectedBinary pbData = m_vBinaries.Get(strDataItem);
-			if(pbData == null) return;
+			ProtectedBinary pbinData = m_vBinaries.Get(strDataItem);
+			if(pbinData == null) { Debug.Assert(false); return; }
+			byte[] pbData = pbinData.ReadData();
 
-			DataViewerForm dvf = new DataViewerForm();
-			dvf.InitEx(strDataItem, pbData.ReadData());
+			BinaryDataClass bdc = BinaryDataClassifier.Classify(strDataItem, pbData);
+			if(DataEditorForm.SupportsDataType(bdc) && (m_pwEditMode !=
+				PwEditMode.ViewReadOnlyEntry))
+			{
+				DataEditorForm def = new DataEditorForm();
+				def.InitEx(strDataItem, pbData);
+				def.ShowDialog();
 
-			UIUtil.ShowDialogAndDestroy(dvf);
+				if(def.EditedBinaryData != null)
+				{
+					m_vBinaries.Set(strDataItem, new ProtectedBinary(
+						pbinData.IsProtected, def.EditedBinaryData));
+					UpdateEntryBinaries(false, true);
+				}
+
+				UIUtil.DestroyForm(def);
+			}
+			else
+			{
+				DataViewerForm dvf = new DataViewerForm();
+				dvf.InitEx(strDataItem, pbData);
+				UIUtil.ShowDialogAndDestroy(dvf);
+			}
 		}
 
 		private void OnBtnTools(object sender, EventArgs e)

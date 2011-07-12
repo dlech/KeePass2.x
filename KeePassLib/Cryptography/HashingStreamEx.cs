@@ -136,6 +136,15 @@ namespace KeePassLib.Cryptography
 
 			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
 
+			// Mono bug workaround (LaunchPad 798910)
+			int nPartialRead = nRead;
+			while((nRead < nCount) && (nPartialRead != 0))
+			{
+				nPartialRead = m_sBaseStream.Read(pbBuffer, nOffset + nRead,
+					nCount - nRead);
+				nRead += nPartialRead;
+			}
+
 #if DEBUG
 			byte[] pbOrg = new byte[pbBuffer.Length];
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);

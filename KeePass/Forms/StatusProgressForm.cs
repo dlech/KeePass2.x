@@ -51,7 +51,7 @@ namespace KeePass.Forms
 		public void InitEx(string strTitle, bool bCanCancel, bool bMarqueeProgress,
 			Form fOwner)
 		{
-			m_strTitle = strTitle;
+			m_strTitle = strTitle; // May be null
 			m_bCanCancel = bCanCancel;
 			m_bMarquee = bMarqueeProgress;
 			m_fOwner = fOwner;

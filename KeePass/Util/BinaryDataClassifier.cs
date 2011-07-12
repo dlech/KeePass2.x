@@ -67,7 +67,7 @@ namespace KeePass.Util
 			Debug.Assert(strUrl != null);
 			if(strUrl == null) throw new ArgumentNullException("strUrl");
 
-			string str = strUrl.ToLower();
+			string str = strUrl.Trim().ToLower();
 
 			foreach(string strTextExt in m_vTextExtensions)
 			{

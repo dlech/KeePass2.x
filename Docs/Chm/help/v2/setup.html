@@ -224,9 +224,31 @@ you need to create an appropriate system-wide hot key. This only needs to be don
 manually once. KeePass performs global auto-type when it's invoked with
 the <code>--auto-type</code> <a href="../base/cmdline.html">command line</a> option.</p>
 
-<p>For example, to create a system-wide hot key for global auto-type on
-Ubuntu Linux, follow these steps:</p>
+<p>Some examples how to create a system-wide hot key for global auto-type,
+for different operating systems:</p>
 
+<ul>
+<li><b>KDE.</b>
+On Linux systems with KDE, the hot key can be created in <i>Computer</i>
+-&gt; <i>System Settings</i> -&gt; <i>Shortcuts and Gestures</i>:
+in this dialog, go <i>Edit</i> -&gt; <i>New</i> -&gt; <i>Global Shortcut</i> -&gt;
+<i>Command/URL</i>, specify the shortcut on the <i>Trigger</i> tab
+and enter<br />
+<code>mono /<i>YourPathToKeePass</i>/KeePass.exe --auto-type</code><br />
+into the <i>Command/URL</i> field on the <i>Action</i> tab.
+</li>
+
+<li><b>Ubuntu Linux &ge; 11.04 (Unity/GNOME).</b>
+Open the dialog <i>Keyboard Shortcuts</i> in the system preferences,
+click the <i>Add</i> button, enter <code>KeePass Auto-Type</code> as name
+and<br />
+<code>mono /<i>YourPathToKeePass</i>/KeePass.exe --auto-type</code><br />
+as command, then click [Apply]. Click on <i>Disabled</i> of the newly
+created item (such that the text <i>'New shortcut...'</i> appears),
+press Ctrl+Alt+A, and close the dialog.
+</li>
+ 
+<li><b>Ubuntu Linux &le; 10.10 (GNOME).</b>
 <ol>
 <li>Press Alt-F2, enter <code>gconf-editor</code> and click [OK].</li>
 <li>Navigate to <code>apps</code> -&gt; <code>metacity</code> -&gt; <code>keybinding_commands</code>.</li>
@@ -240,6 +262,8 @@ double-click <code>run_command_5</code> now) and specify the hot key of your
 choice. For example, to use Ctrl+Alt+A as hot key, you'd enter
 <code>&lt;Control&gt;&lt;Alt&gt;a</code>.</li>
 </ol>
+</li>
+</ul>
 
 <p>Important: for global auto-type, the version of the <code>xdotool</code> package
 must be 2.20100818.3004 or higher! If your distribution only offers an

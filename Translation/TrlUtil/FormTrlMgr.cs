@@ -77,6 +77,7 @@ namespace TrlUtil
 			AddForm(l, new OptionsForm());
 			AddForm(l, new PluginsForm());
 			AddForm(l, new PrintForm());
+			AddForm(l, new ProxyForm());
 			AddForm(l, new PwEntryForm());
 			AddForm(l, new PwGeneratorForm());
 			AddForm(l, new SearchForm());

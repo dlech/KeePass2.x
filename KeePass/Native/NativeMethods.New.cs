@@ -88,6 +88,12 @@ namespace KeePass.Native
 			return GetWindowLong(hWnd, GWL_STYLE);
 		}
 
+		internal static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
+		{
+			if(IntPtr.Size > 4) return GetClassLongPtr64(hWnd, nIndex);
+			return GetClassLongPtr32(hWnd, nIndex);
+		}
+
 		internal static bool SetForegroundWindowEx(IntPtr hWnd)
 		{
 			if(!KeePassLib.Native.NativeLib.IsUnix())
@@ -158,7 +164,7 @@ namespace KeePass.Native
 			return false;
 		}
 
-		private static bool IsTaskBar(IntPtr hWnd)
+		internal static bool IsTaskBar(IntPtr hWnd)
 		{
 			try
 			{

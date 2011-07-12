@@ -94,8 +94,7 @@ namespace KeePassLib.Utility
 		/// Strip the extension of a file.
 		/// </summary>
 		/// <param name="strPath">Full path of a file with extension.</param>
-		/// <returns>File name without extension. The return value is
-		/// an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+		/// <returns>File name without extension.</returns>
 		public static string StripExtension(string strPath)
 		{
 			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
@@ -495,6 +494,26 @@ namespace KeePassLib.Utility
 			if(strPath == null) throw new ArgumentNullException("strPath");
 
 			return (strPath.StartsWith("\\\\") || strPath.StartsWith("//"));
+		}
+
+		public static string FilterFileName(string strName)
+		{
+			if(strName == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strName;
+
+			str = str.Replace('/', '-');
+			str = str.Replace('\\', '-');
+			str = str.Replace(":", string.Empty);
+			str = str.Replace("*", string.Empty);
+			str = str.Replace("?", string.Empty);
+			str = str.Replace("\"", string.Empty);
+			str = str.Replace(@"'", string.Empty);
+			str = str.Replace('<', '(');
+			str = str.Replace('>', ')');
+			str = str.Replace('|', '-');
+
+			return str;
 		}
 	}
 }

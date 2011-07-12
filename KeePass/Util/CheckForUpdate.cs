@@ -32,6 +32,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Resources;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -67,8 +68,8 @@ namespace KeePass.Util
 
 			try
 			{
-				WebClient webClient = new WebClient();
-				webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+				IOWebClient webClient = new IOWebClient();
+				IOConnection.ConfigureWebClient(webClient);
 
 				Uri uri = new Uri(m_strVersionURL);
 
@@ -77,10 +78,10 @@ namespace KeePass.Util
 
 				webClient.DownloadDataAsync(uri);
 			}
-			catch(NotImplementedException)
-			{
-				ReportStatusEx(KLRes.FrameworkNotImplExcp, true);
-			}
+			// catch(NotImplementedException)
+			// {
+			//	ReportStatusEx(KLRes.FrameworkNotImplExcp, true);
+			// }
 			catch(Exception) { }
 
 			// if(dlg != null) dlg.EndLogging();

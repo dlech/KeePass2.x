@@ -134,7 +134,7 @@ namespace KeePass.UI
 			if(v[4] == "75") fs |= FontStyle.Bold;
 			if(v[5] == "2") fs |= FontStyle.Italic;
 
-			return new Font(v[0], fSize, fs);
+			return FontUtil.CreateFont(v[0], fSize, fs);
 		}
 
 		private static void GnomeLoadFonts()
@@ -178,7 +178,7 @@ namespace KeePass.UI
 				strName = strName.Substring(0, strName.Length - 5);
 			}
 
-			return new Font(strName, fSize, fs);
+			return FontUtil.CreateFont(strName, fSize, fs);
 		}
 	}
 }

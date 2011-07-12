@@ -82,10 +82,8 @@ namespace KeePass.Forms
 				strDesc = KPRes.ExportHtmlDesc;
 			}
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_FilePrint, strTitle,
-				strDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				Properties.Resources.B48x48_FilePrint, strTitle, strDesc);
 
 			this.Text = strTitle;
 		}

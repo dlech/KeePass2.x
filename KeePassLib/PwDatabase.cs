@@ -436,6 +436,18 @@ namespace KeePassLib
 			set { m_bUseFileTransactions = value; }
 		}
 
+		private string m_strDetachBins = null;
+		/// <summary>
+		/// Detach binaries when opening a file. If this isn't <c>null</c>,
+		/// all binaries are saved to the specified path and are removed
+		/// from the database.
+		/// </summary>
+		public string DetachBinaries
+		{
+			get { return m_strDetachBins; }
+			set { m_strDetachBins = value; }
+		}
+
 		/// <summary>
 		/// Localized application name.
 		/// </summary>
@@ -563,6 +575,8 @@ namespace KeePassLib
 				m_bModified = false;
 
 				Kdb4File kdb4 = new Kdb4File(this);
+				kdb4.DetachBinaries = m_strDetachBins;
+
 				Stream s = IOConnection.OpenRead(ioSource);
 				kdb4.Load(s, Kdb4Format.Default, slLogger);
 				s.Close();
@@ -1531,5 +1545,195 @@ namespace KeePassLib
 
 			pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
 		} */
+
+		public uint DeleteDuplicateEntries(IStatusLogger sl)
+		{
+			uint uDeleted = 0;
+
+			PwGroup pgRecycleBin = null;
+			if(m_bUseRecycleBin)
+				pgRecycleBin = m_pgRootGroup.FindGroup(m_pwRecycleBin, true);
+
+			DateTime dtNow = DateTime.Now;
+			PwObjectList<PwEntry> l = m_pgRootGroup.GetEntries(true);
+			int i = 0;
+			while(true)
+			{
+				if(i >= ((int)l.UCount - 1)) break;
+
+				if(sl != null)
+				{
+					long lCnt = (long)l.UCount, li = (long)i;
+					long nArTotal = (lCnt * lCnt) / 2L;
+					long nArCur = li * lCnt - ((li * li) / 2L);
+					long nArPct = (nArCur * 100L) / nArTotal;
+					if(nArPct < 0) nArPct = 0;
+					if(nArPct > 100) nArPct = 100;
+					if(!sl.SetProgress((uint)nArPct)) break;
+				}
+
+				PwEntry peA = l.GetAt((uint)i);
+
+				for(uint j = (uint)i + 1; j < l.UCount; ++j)
+				{
+					PwEntry peB = l.GetAt(j);
+					if(!DupEntriesEqual(peA, peB)) continue;
+
+					bool bDeleteA = (peA.LastModificationTime <= peB.LastModificationTime);
+					if(pgRecycleBin != null)
+					{
+						bool bAInBin = peA.IsContainedIn(pgRecycleBin);
+						bool bBInBin = peB.IsContainedIn(pgRecycleBin);
+
+						if(bAInBin && !bBInBin) bDeleteA = true;
+						else if(bBInBin && !bAInBin) bDeleteA = false;
+					}
+
+					if(bDeleteA)
+					{
+						peA.ParentGroup.Entries.Remove(peA);
+						m_vDeletedObjects.Add(new PwDeletedObject(peA.Uuid, dtNow));
+
+						l.RemoveAt((uint)i);
+						--i;
+					}
+					else
+					{
+						peB.ParentGroup.Entries.Remove(peB);
+						m_vDeletedObjects.Add(new PwDeletedObject(peB.Uuid, dtNow));
+
+						l.RemoveAt(j);
+					}
+
+					++uDeleted;
+					break;
+				}
+
+				++i;
+			}
+
+			return uDeleted;
+		}
+
+		private static List<string> m_lStdFields = null;
+		private static bool DupEntriesEqual(PwEntry a, PwEntry b)
+		{
+			if(m_lStdFields == null) m_lStdFields = PwDefs.GetStandardFields();
+
+			foreach(string strStdKey in m_lStdFields)
+			{
+				string strA = a.Strings.ReadSafe(strStdKey);
+				string strB = b.Strings.ReadSafe(strStdKey);
+				if(!strA.Equals(strB)) return false;
+			}
+
+			foreach(KeyValuePair<string, ProtectedString> kvpA in a.Strings)
+			{
+				if(PwDefs.IsStandardField(kvpA.Key)) continue;
+
+				ProtectedString psB = b.Strings.Get(kvpA.Key);
+				if(psB == null) return false;
+
+				if(!kvpA.Value.ReadString().Equals(psB.ReadString())) return false;
+			}
+
+			foreach(KeyValuePair<string, ProtectedString> kvpB in b.Strings)
+			{
+				if(PwDefs.IsStandardField(kvpB.Key)) continue;
+
+				ProtectedString psA = a.Strings.Get(kvpB.Key);
+				if(psA == null) return false;
+
+				// Must be equal by logic
+				Debug.Assert(kvpB.Value.ReadString().Equals(psA.ReadString()));
+			}
+
+			if(a.Binaries.UCount != b.Binaries.UCount) return false;
+			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in a.Binaries)
+			{
+				ProtectedBinary pbB = b.Binaries.Get(kvpBin.Key);
+				if(pbB == null) return false;
+
+				if(!kvpBin.Value.EqualsValue(pbB)) return false;
+			}
+
+			return true;
+		}
+
+		public uint DeleteEmptyGroups()
+		{
+			uint uDeleted = 0;
+
+			PwObjectList<PwGroup> l = m_pgRootGroup.GetGroups(true);
+			int iStart = (int)l.UCount - 1;
+			for(int i = iStart; i >= 0; --i)
+			{
+				PwGroup pg = l.GetAt((uint)i);
+				if((pg.Groups.UCount > 0) || (pg.Entries.UCount > 0)) continue;
+
+				pg.ParentGroup.Groups.Remove(pg);
+				m_vDeletedObjects.Add(new PwDeletedObject(pg.Uuid, DateTime.Now));
+
+				++uDeleted;
+			}
+
+			return uDeleted;
+		}
+
+		public uint DeleteUnusedCustomIcons()
+		{
+			List<PwUuid> lToDelete = new List<PwUuid>();
+			foreach(PwCustomIcon pwci in m_vCustomIcons)
+				lToDelete.Add(pwci.Uuid);
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				PwUuid pwUuid = pg.CustomIconUuid;
+				if((pwUuid == null) || pwUuid.EqualsValue(PwUuid.Zero)) return true;
+
+				for(int i = 0; i < lToDelete.Count; ++i)
+				{
+					if(lToDelete[i].EqualsValue(pwUuid))
+					{
+						lToDelete.RemoveAt(i);
+						break;
+					}
+				}
+
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				PwUuid pwUuid = pe.CustomIconUuid;
+				if((pwUuid == null) || pwUuid.EqualsValue(PwUuid.Zero)) return true;
+
+				for(int i = 0; i < lToDelete.Count; ++i)
+				{
+					if(lToDelete[i].EqualsValue(pwUuid))
+					{
+						lToDelete.RemoveAt(i);
+						break;
+					}
+				}
+
+				return true;
+			};
+
+			gh(m_pgRootGroup);
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+
+			uint uDeleted = 0;
+			foreach(PwUuid pwDel in lToDelete)
+			{
+				int nIndex = GetCustomIconIndex(pwDel);
+				if(nIndex < 0) { Debug.Assert(false); continue; }
+
+				m_vCustomIcons.RemoveAt(nIndex);
+				++uDeleted;
+			}
+
+			return uDeleted;
+		}
 	}
 }

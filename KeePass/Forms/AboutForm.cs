@@ -58,9 +58,8 @@ namespace KeePass.Forms
 
 			Icon icoNew = new Icon(Properties.Resources.KeePass, 48, 48);
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
-				icoNew.ToBitmap(), strTitle, strDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage, icoNew.ToBitmap(),
+				strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 
 			m_lvComponents.Columns.Add(KPRes.Components, 100, HorizontalAlignment.Left);

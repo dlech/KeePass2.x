@@ -64,8 +64,7 @@ namespace KeePass.Forms
 
 			string strTitle = (m_bEditing ? KPRes.TriggerEdit : KPRes.TriggerAdd);
 			string strDesc = (m_bEditing ? KPRes.TriggerEditDesc : KPRes.TriggerAddDesc);
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Run, strTitle, strDesc);
 			this.Text = strTitle;
 			this.Icon = Properties.Resources.KeePass;

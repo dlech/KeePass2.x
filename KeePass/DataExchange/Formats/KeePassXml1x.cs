@@ -147,8 +147,8 @@ namespace KeePass.DataExchange.Formats
 						pwStorage.MemoryProtection.ProtectNotes,
 						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemUuid)
-					pe.Uuid = new PwUuid(MemUtil.HexStringToByteArray(
-						XmlUtil.SafeInnerText(xmlChild)));
+					pe.SetUuid(new PwUuid(MemUtil.HexStringToByteArray(
+						XmlUtil.SafeInnerText(xmlChild))), false);
 				else if(xmlChild.Name == ElemImage)
 				{
 					int nImage;

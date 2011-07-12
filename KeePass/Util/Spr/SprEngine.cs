@@ -168,6 +168,9 @@ namespace KeePass.Util.Spr
 					pwEntry, pwDatabase, cf, uRecursionLevel, vRefsCache);
 			}
 
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEARFIELD}",
+				@"{HOME}+({END}){DEL}{DELAY 50}");
+
 			str = SprEngine.FillIfExists(str, @"{ENV_DIRSEP}", new ProtectedString(
 				false, Path.DirectorySeparatorChar.ToString()), pwEntry, pwDatabase, cf,
 				uRecursionLevel, vRefsCache);

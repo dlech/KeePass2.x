@@ -45,6 +45,8 @@
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
+			this.m_lblFilter = new System.Windows.Forms.Label();
+			this.m_tbFilter = new System.Windows.Forms.TextBox();
 			this.m_grpIdentify.SuspendLayout();
 			this.m_grpRefField.SuspendLayout();
 			this.SuspendLayout();
@@ -55,10 +57,10 @@
 			this.m_lvEntries.GridLines = true;
 			this.m_lvEntries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvEntries.HideSelection = false;
-			this.m_lvEntries.Location = new System.Drawing.Point(12, 12);
+			this.m_lvEntries.Location = new System.Drawing.Point(12, 38);
 			this.m_lvEntries.MultiSelect = false;
 			this.m_lvEntries.Name = "m_lvEntries";
-			this.m_lvEntries.Size = new System.Drawing.Size(608, 306);
+			this.m_lvEntries.Size = new System.Drawing.Size(608, 280);
 			this.m_lvEntries.TabIndex = 0;
 			this.m_lvEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvEntries.View = System.Windows.Forms.View.Details;
@@ -246,6 +248,24 @@
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
+			// m_lblFilter
+			// 
+			this.m_lblFilter.AutoSize = true;
+			this.m_lblFilter.Location = new System.Drawing.Point(396, 15);
+			this.m_lblFilter.Name = "m_lblFilter";
+			this.m_lblFilter.Size = new System.Drawing.Size(32, 13);
+			this.m_lblFilter.TabIndex = 6;
+			this.m_lblFilter.Text = "Filter:";
+			// 
+			// m_tbFilter
+			// 
+			this.m_tbFilter.Location = new System.Drawing.Point(434, 12);
+			this.m_tbFilter.Name = "m_tbFilter";
+			this.m_tbFilter.Size = new System.Drawing.Size(186, 20);
+			this.m_tbFilter.TabIndex = 7;
+			this.m_tbFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnFilterKeyDown);
+			this.m_tbFilter.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnFilterKeyUp);
+			// 
 			// FieldRefForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -253,6 +273,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(632, 440);
+			this.Controls.Add(this.m_tbFilter);
+			this.Controls.Add(this.m_lblFilter);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
@@ -273,6 +295,7 @@
 			this.m_grpRefField.ResumeLayout(false);
 			this.m_grpRefField.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -295,5 +318,7 @@
 		private System.Windows.Forms.RadioButton m_radioRefPassword;
 		private System.Windows.Forms.RadioButton m_radioRefUserName;
 		private System.Windows.Forms.RadioButton m_radioRefTitle;
+		private System.Windows.Forms.Label m_lblFilter;
+		private System.Windows.Forms.TextBox m_tbFilter;
 	}
 }

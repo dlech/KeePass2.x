@@ -47,6 +47,7 @@ namespace KeePass.Forms
 
 		// private Color m_clrOriginalForeground = Color.Black;
 		private Color m_clrOriginalBackground = Color.White;
+		private List<Image> m_vWndImages = new List<Image>();
 
 		private RichTextBoxContextMenu m_ctxKeySeq = new RichTextBoxContextMenu();
 		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
@@ -69,7 +70,7 @@ namespace KeePass.Forms
 			"GROUP", "GROUPPATH", "PASSWORD_ENC", "URL:RMVSCM", VkcBreak,
 			"DELAY 1000", "DELAY=200", "VKEY 65",
 			"PICKCHARS", "PICKCHARS:Password:C=3",
-			"NEWPASSWORD", "HMACOTP", VkcBreak,
+			"NEWPASSWORD", "HMACOTP", "CLEARFIELD", VkcBreak,
 			"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 			"ENV_DIRSEP", VkcBreak,
 			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
@@ -106,15 +107,13 @@ namespace KeePass.Forms
 
 			if(!m_bEditSequenceOnly)
 			{
-				m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-					m_bannerImage.Height, BannerStyle.Default,
+				BannerFactory.CreateBannerEx(this, m_bannerImage,
 					Properties.Resources.B48x48_KCMSystem, KPRes.ConfigureAutoTypeItem,
 					KPRes.ConfigureAutoTypeItemDesc);
 			}
 			else // Edit keystrokes only
 			{
-				m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-					m_bannerImage.Height, BannerStyle.Default,
+				BannerFactory.CreateBannerEx(this, m_bannerImage,
 					Properties.Resources.B48x48_KCMSystem, KPRes.ConfigureKeystrokeSeq,
 					KPRes.ConfigureKeystrokeSeqDesc);
 			}
@@ -217,12 +216,15 @@ namespace KeePass.Forms
 					IntPtr lParam)
 				{
 					string strName = NativeMethods.GetWindowText(hWnd, true);
-					if((strName != null) && (strName.Length > 0))
+					if(!string.IsNullOrEmpty(strName))
 					{
-						if((NativeMethods.GetWindowStyle(hWnd) &
-							NativeMethods.WS_VISIBLE) != 0)
+						if(((NativeMethods.GetWindowStyle(hWnd) &
+							NativeMethods.WS_VISIBLE) != 0) &&
+							AutoType.IsValidAutoTypeWindow(hWnd, false) &&
+							!NativeMethods.IsTaskBar(hWnd))
 						{
 							m_cmbWindow.Items.Add(strName);
+							m_vWndImages.Add(UIUtil.GetWindowImage(hWnd, true));
 						}
 					}
 
@@ -230,6 +232,7 @@ namespace KeePass.Forms
 				};
 
 				NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
+				m_cmbWindow.OrderedImageList = m_vWndImages;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -243,6 +246,13 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			m_cmbWindow.OrderedImageList = null;
+			foreach(Image img in m_vWndImages)
+			{
+				if(img != null) img.Dispose();
+			}
+			m_vWndImages.Clear();
+
 			m_ctxKeyCodes.Detach();
 			m_ctxKeySeq.Detach();
 		}

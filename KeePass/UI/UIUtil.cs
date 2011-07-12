@@ -29,12 +29,16 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.IO;
+using System.Media;
+
+using Microsoft.Win32;
 
 using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -1586,6 +1590,78 @@ namespace KeePass.UI
 			}
 
 			return bmp;
+		}
+
+		public static bool PlayUacSound()
+		{
+			try
+			{
+				string strRoot = "HKEY_CURRENT_USER\\AppEvents\\Schemes\\Apps\\.Default\\WindowsUAC\\";
+
+				string strWav = (Registry.GetValue(strRoot + ".Current",
+					string.Empty, string.Empty) as string);
+				if(string.IsNullOrEmpty(strWav))
+					strWav = (Registry.GetValue(strRoot + ".Default",
+						string.Empty, string.Empty) as string);
+				if(string.IsNullOrEmpty(strWav))
+					strWav = @"%SystemRoot%\Media\Windows User Account Control.wav";
+
+				strWav = SprEngine.Compile(strWav, false, null, null, false, false);
+
+				if(!File.Exists(strWav)) throw new FileNotFoundException();
+
+				NativeMethods.PlaySound(strWav, IntPtr.Zero, NativeMethods.SND_FILENAME |
+					NativeMethods.SND_ASYNC | NativeMethods.SND_NODEFAULT);
+				return true;
+			}
+			catch(Exception) { }
+
+			Debug.Assert(KeePassLib.Native.NativeLib.IsUnix() ||
+				!WinUtil.IsAtLeastWindowsVista);
+			// Do not play a standard sound here
+			return false;
+		}
+
+		public static Image GetWindowImage(IntPtr hWnd, bool bPrefSmall)
+		{
+			try
+			{
+				IntPtr hIcon;
+				if(bPrefSmall)
+				{
+					hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
+						new IntPtr(NativeMethods.ICON_SMALL2), IntPtr.Zero);
+					if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+				}
+
+				hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
+					new IntPtr(bPrefSmall ? NativeMethods.ICON_SMALL :
+					NativeMethods.ICON_BIG), IntPtr.Zero);
+				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+
+				hIcon = NativeMethods.GetClassLongPtr(hWnd, bPrefSmall ?
+					NativeMethods.GCLP_HICONSM : NativeMethods.GCLP_HICON);
+				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+
+				hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
+					new IntPtr(bPrefSmall ? NativeMethods.ICON_BIG : NativeMethods.ICON_SMALL),
+					IntPtr.Zero);
+				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+
+				hIcon = NativeMethods.GetClassLongPtr(hWnd, bPrefSmall ?
+					NativeMethods.GCLP_HICON : NativeMethods.GCLP_HICONSM);
+				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+
+				if(!bPrefSmall)
+				{
+					hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
+						new IntPtr(NativeMethods.ICON_SMALL2), IntPtr.Zero);
+					if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 	}
 }

@@ -1,3 +1,133 @@
+2011-07-12: 2.16
+- When searching for a string containing a whitespace
+  character, KeePass now splits the terms and reports all
+  entries containing all of the terms (e.g. when you search for
+  "Forum KeePass" without the quotes, all entries containing
+  both "Forum" and "KeePass" are reported); the order of the
+  terms is arbitrary; if you want to search for a term
+  containing whitespace, enclose the term in quotes
+- When searching for a term starting with a minus ('-'), all
+  entries that do not contain the term are reported (e.g. when
+  you search for "Forum -KeePass" without the quotes, all
+  entries containing "Forum" but not "KeePass" are reported)
+- Added dialog in the options to specify a web proxy (none,
+  system or manual) and user name and password for it
+- Added option to always exit instead of locking the workspace
+- Added option to play the UAC sound when switching to a secure
+  desktop (enabled by default)
+- Added filter box in the field references creation dialog
+- Added command to delete duplicate entries (entries are
+  considered to be equal when their strings and attachments are
+  the same, all other data is ignored; if one of two equal
+  entries is in the recycle bin, it is deleted preferably;
+  otherwise the decision is based on the last modification
+  time)
+- Added command to delete empty groups
+- Added command to delete unused custom icons
+- For Unix-like systems: new file-based IPC broadcast mechanism
+  (supporting multiple endpoints)
+- For Unix-like systems: added file-based global mutex
+  mechanism
+- Auto-type on Unix-like systems: added support for sending
+  square brackets and apostrophes
+- Two-channel auto-type obfuscation is now supported on
+  Unix-like systems, too
+- Web access on Unix-like systems: added workarounds for non-
+  implemented cache policy and credentials requirement
+- Added context menu command to empty the recycle bin (without
+  deleting the recycle bin group)
+- On Windows Vista and higher, when trying to delete a group,
+  the confirmation dialog now shows a short summary of the
+  subgroups and entries that will be deleted, too
+- In the auto-type target window drop-down combobox, icons are
+  now shown left of the window names
+- Added {CLEARFIELD} auto-type command (to clear the contents
+  of single-line edit controls)
+- Added support for importing Sticky Password 5.0 XML files
+  (formatted memos are imported as RTF file attachments, which
+  you can edit using the internal KeePass editor; e.g. right-
+  click on the entry in the main window and go 'Attachments' ->
+  'Edit Notes.rtf' or click on the attachment in the entry view
+  at the bottom of the main window; see 'How to store and work
+  with large amounts of formatted text?' in the FAQ)
+- Added support for importing Kaspersky Password Manager 5.0
+  XML files (formatted memos are imported the same as by the
+  Sticky Password importer, see above)
+- Password Depot importer: added support for more fields (new
+  time fields and usage count), time fields can be imported
+  using the stored format specifier, vertical tabulators are
+  removed, improved import of information cards, and auto-type
+  sequences are converted now
+- Added ability to export links into the root directory of
+  Windows/IE favorites
+- Windows/IE favorites export: added configuration items to
+  specify a prefix and a suffix for exported links/files
+- In the entry editing dialog, KeePass now opens an attachment
+  either in the internal editor or in the internal viewer,
+  depending on whether the format is supported by the editor
+- When creating a new database, KeePass now automatically
+  creates a second sample entry, which is configured for the
+  test form in the online help center
+- Added configuration option to disable the 'Options',
+  'Plugins' and/or 'Triggers' menu items
+- Added workaround for Mono tab bar height bug
+- Added workaround for Mono FTP bug
+- Added workaround for Mono CryptoStream bug
+- Added workaround for a Mono bug related to focusing list view
+  items
+- Added shell script to prepare the sources for MonoDevelop
+- Translations can now also be loaded from the KeePass
+  application data directory
+- TrlUtil: added support for ellipses as alternative to 3 dots
+- KPScript: added 'DetachBins' command to save all entry
+  attachments (into the directory of the database) and remove
+  them from the database
+
+- After performing a quick-find, the search text is now
+  selected
+- Improved quick-find deselection performance
+- On Unix-like systems, command line parameters prefixed with a
+  '/' are now treated as absolute file paths instead of options
+- Improved IPC support on Unix-like systems
+- Locked databases can now be dismissed using the close command
+- Invalid target windows (like the taskbar, own KeePass
+  windows, etc.) are not shown in the auto-type target window
+  drop-down combobox anymore
+- Newly created entries are now selected and focused
+- The entry list is now focused when duplicating and selecting
+  all entries
+- If KeePass is blocked from showing a dialog on the secure
+  desktop, KeePass now shows the dialog on the normal desktop
+- Improved dialog initialization on the secure desktop
+- The current status is now shown while exporting Windows/IE
+  favorites
+- Windows/IE favorites export: improved naming of containing
+  folder when exporting selected entries only
+- Windows/IE favorites export: if a group doesn't contain any
+  exportable entry, no directory is created for this group
+  anymore
+- Improved data editor window position/size remembering
+- Key modifiers of shortcut key strings are translated now
+- Shortcut keys of group and entry commands are now also shown
+  in the main menu
+- When no template entries are specified/found, this is now
+  indicated in the 'Add Entry' toolbar drop-down menu
+- When deleting a group, its subgroups and entries are now
+  added correctly to the list of deleted objects
+- Font handling improvements
+- Improved lock timeout updating when a dialog is displayed
+- Improved export error handling
+- Improved FIPS compliance problems self-test (error message
+  immediately at start), and specified configuration option to
+  prevent .NET from enforcing FIPS policy
+- Various code optimizations
+- Minor other improvements
+
+- Last modification time is now updated when restoring an older
+  version of an entry
+- When duplicating an entry, the UUIDs of history items are now
+  changed, too
+
 2011-04-10: 2.15
 - Added option to show the master key dialog on a secure
   desktop (similar to Windows' UAC; almost no keylogger works

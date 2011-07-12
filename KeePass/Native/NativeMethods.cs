@@ -71,6 +71,12 @@ namespace KeePass.Native
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
+		[DllImport("User32.dll", EntryPoint = "GetClassLong")]
+		private static extern IntPtr GetClassLongPtr32(IntPtr hWnd, int nIndex);
+
+		[DllImport("User32.dll", EntryPoint = "GetClassLongPtr")]
+		private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
+
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern int GetWindowTextLength(IntPtr hWnd);
 
@@ -348,5 +354,10 @@ namespace KeePass.Native
 		// internal static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop,
 		//	IntPtr hIcon, int cxWidth, int cyWidth, uint istepIfAniCur,
 		//	IntPtr hbrFlickerFreeDraw, uint diFlags);
+
+		[DllImport("WinMM.dll", CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool PlaySound(string pszSound, IntPtr hmod,
+			uint fdwSound);
 	}
 }

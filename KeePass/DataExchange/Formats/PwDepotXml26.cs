@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -31,10 +32,11 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.6-4+
+	// 2.6 - 5.3.0+
 	internal sealed class PwDepotXml26 : FileFormatProvider
 	{
 		private const string ElemHeader = "HEADER";
@@ -51,12 +53,16 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemEntryNotes = "COMMENT";
 		private const string ElemEntryLastModTime = "LASTMODIFIED";
 		private const string ElemEntryExpireTime = "EXPIRYDATE";
+		private const string ElemEntryCreatedTime = "CREATED";
+		private const string ElemEntryLastAccTime = "LASTACCESSED";
+		private const string ElemEntryUsageCount = "USAGECOUNT";
 		private const string ElemEntryAutoType = "TEMPLATE";
 		private const string ElemEntryCustom = "CUSTOMFIELDS";
 
 		private static readonly string[] ElemEntryUnsupportedItems = new string[]{
-			"IMPORTANCE", "IMAGECUSTOM", "PARAMSTR",
-			"CATEGORY", "CUSTOMBROWSER", "AUTOCOMPLETEMETHOD"
+			"TYPE", "IMPORTANCE", "IMAGECUSTOM", "PARAMSTR",
+			"CATEGORY", "CUSTOMBROWSER", "AUTOCOMPLETEMETHOD",
+			"WEBFORMDATA", "TANS", "FINGERPRINT"
 		};
 
 		private const string ElemImageIndex = "IMAGEINDEX";
@@ -64,6 +70,10 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemCustomField = "FIELD";
 		private const string ElemCustomFieldName = "NAME";
 		private const string ElemCustomFieldValue = "VALUE";
+
+		private const string AttribFormat = "FMT";
+
+		private const string FieldInfoText = "IDS_InformationText";
 
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
@@ -80,8 +90,15 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
+			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
+			string strData = sr.ReadToEnd();
+			sr.Close();
+
+			// Remove vertical tabulators
+			strData = strData.Replace("\u000B", string.Empty);
+
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(sInput);
+			xmlDoc.LoadXml(strData);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
 
@@ -132,7 +149,7 @@ namespace KeePass.DataExchange.Formats
 			PwEntry pe = new PwEntry(true, true);
 			pgParent.AddEntry(pe, true);
 
-			DateTime dt;
+			DateTime? ndt;
 			foreach(XmlNode xmlChild in xmlNode)
 			{
 				if(xmlChild.Name == ElemEntryName)
@@ -157,16 +174,37 @@ namespace KeePass.DataExchange.Formats
 						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryLastModTime)
 				{
-					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
-						pe.LastModificationTime = dt;
+					ndt = ReadTime(xmlChild);
+					if(ndt.HasValue) pe.LastModificationTime = ndt.Value;
 				}
 				else if(xmlChild.Name == ElemEntryExpireTime)
 				{
-					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
-						pe.ExpiryTime = dt;
+					ndt = ReadTime(xmlChild);
+					if(ndt.HasValue)
+					{
+						pe.ExpiryTime = ndt.Value;
+						pe.Expires = true;
+					}
+				}
+				else if(xmlChild.Name == ElemEntryCreatedTime)
+				{
+					ndt = ReadTime(xmlChild);
+					if(ndt.HasValue) pe.CreationTime = ndt.Value;
+				}
+				else if(xmlChild.Name == ElemEntryLastAccTime)
+				{
+					ndt = ReadTime(xmlChild);
+					if(ndt.HasValue) pe.LastAccessTime = ndt.Value;
+				}
+				else if(xmlChild.Name == ElemEntryUsageCount)
+				{
+					ulong uUsageCount;
+					if(ulong.TryParse(XmlUtil.SafeInnerText(xmlChild), out uUsageCount))
+						pe.UsageCount = uUsageCount;
 				}
 				else if(xmlChild.Name == ElemEntryAutoType)
-					pe.AutoType.DefaultSequence = XmlUtil.SafeInnerText(xmlChild);
+					pe.AutoType.DefaultSequence = MapAutoType(
+						XmlUtil.SafeInnerText(xmlChild));
 				else if(xmlChild.Name == ElemEntryCustom)
 					ReadCustomContainer(xmlChild, pe);
 				else if(xmlChild.Name == ElemImageIndex)
@@ -174,6 +212,15 @@ namespace KeePass.DataExchange.Formats
 				else if(Array.IndexOf<string>(ElemEntryUnsupportedItems,
 					xmlChild.Name) >= 0) { }
 				else { Debug.Assert(false, xmlChild.Name); }
+			}
+
+			string strInfoText = pe.Strings.ReadSafe(FieldInfoText);
+			if((pe.Strings.ReadSafe(PwDefs.NotesField).Length == 0) &&
+				(strInfoText.Length > 0))
+			{
+				pe.Strings.Remove(FieldInfoText);
+				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+					pwStorage.MemoryProtection.ProtectNotes, strInfoText));
 			}
 		}
 
@@ -197,7 +244,7 @@ namespace KeePass.DataExchange.Formats
 					strName = XmlUtil.SafeInnerText(xmlChild);
 				else if(xmlChild.Name == ElemCustomFieldValue)
 					strValue = XmlUtil.SafeInnerText(xmlChild);
-				else { Debug.Assert(false); }
+				// else { } // Field 'VISIBLE'
 			}
 
 			if((strName.Length == 0) || PwDefs.IsStandardField(strName))
@@ -236,6 +283,63 @@ namespace KeePass.DataExchange.Formats
 			};
 
 			return ico;
+		}
+
+		private static string MapAutoType(string str)
+		{
+			str = str.Replace('<', '{');
+			str = str.Replace('>', '}');
+
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{USER}",
+				@"{" + PwDefs.UserNameField.ToUpper() + @"}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{PASS}",
+				@"{" + PwDefs.PasswordField.ToUpper() + @"}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEAR}",
+				@"{HOME}+({END}){DEL}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_LEFT}", @"{LEFT}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_UP}", @"{UP}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_RIGHT}", @"{RIGHT}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_DOWN}", @"{DOWN}");
+
+			if(str.Equals(PwDefs.DefaultAutoTypeSequence, StrUtil.CaseIgnoreCmp))
+				return string.Empty;
+			return str;
+		}
+
+		private static DateTime? ReadTime(XmlNode xmlNode)
+		{
+			DateTime? ndt = ReadTimeRaw(xmlNode);
+			if(!ndt.HasValue) return null;
+
+			if(ndt.Value.Year < 1950) return null;
+
+			return ndt.Value;
+		}
+
+		private static DateTime? ReadTimeRaw(XmlNode xmlNode)
+		{
+			string strTime = XmlUtil.SafeInnerText(xmlNode);
+
+			string strFormat = null;
+			try
+			{
+				XmlAttributeCollection xac = xmlNode.Attributes;
+				strFormat = xac.GetNamedItem(AttribFormat).Value;
+			}
+			catch(Exception) { }
+
+			DateTime dt;
+			if(!string.IsNullOrEmpty(strFormat))
+			{
+				strFormat = strFormat.Replace("mm", "MM");
+				if(DateTime.TryParseExact(strTime, strFormat, null,
+					DateTimeStyles.AssumeLocal, out dt))
+					return dt;
+			}
+
+			if(DateTime.TryParse(strTime, out dt)) return dt;
+
+			return null;
 		}
 	}
 }

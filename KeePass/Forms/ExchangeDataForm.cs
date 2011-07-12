@@ -96,8 +96,8 @@ namespace KeePass.Forms
 			string strWndDesc = (m_bExport ? KPRes.ExportFileDesc : KPRes.ImportFileDesc);
 			Bitmap bmpBanner = (m_bExport ? Properties.Resources.B48x48_Folder_Txt :
 				Properties.Resources.B48x48_Folder_Download);
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default, bmpBanner, strWndTitle, strWndDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				bmpBanner, strWndTitle, strWndDesc);
 			this.Icon = Properties.Resources.KeePass;
 
 			this.Text = strWndTitle;

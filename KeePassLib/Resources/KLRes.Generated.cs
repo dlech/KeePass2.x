@@ -28,7 +28,7 @@ namespace KeePassLib.Resources
 
 			m_strCryptoStreamFailed = TryGetEx(dictNew, "CryptoStreamFailed", m_strCryptoStreamFailed);
 			m_strEncAlgorithmAes = TryGetEx(dictNew, "EncAlgorithmAes", m_strEncAlgorithmAes);
-			m_strErrorFeedbackRequest = TryGetEx(dictNew, "ErrorFeedbackRequest", m_strErrorFeedbackRequest);
+			m_strErrorInClipboard = TryGetEx(dictNew, "ErrorInClipboard", m_strErrorInClipboard);
 			m_strFatalError = TryGetEx(dictNew, "FatalError", m_strFatalError);
 			m_strFatalErrorText = TryGetEx(dictNew, "FatalErrorText", m_strFatalErrorText);
 			m_strFileCorrupted = TryGetEx(dictNew, "FileCorrupted", m_strFileCorrupted);
@@ -56,7 +56,7 @@ namespace KeePassLib.Resources
 		private static readonly string[] m_vKeyNames = {
 			"CryptoStreamFailed",
 			"EncAlgorithmAes",
-			"ErrorFeedbackRequest",
+			"ErrorInClipboard",
 			"FatalError",
 			"FatalErrorText",
 			"FileCorrupted",
@@ -108,15 +108,15 @@ namespace KeePassLib.Resources
 			get { return m_strEncAlgorithmAes; }
 		}
 
-		private static string m_strErrorFeedbackRequest =
-			@"An extended error report has been copied to the clipboard. Please send it to the KeePass developers.";
+		private static string m_strErrorInClipboard =
+			@"An extended error report has been copied to the clipboard.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'An extended error report has been copied to the clipboard. Please send it to the KeePass developers.'.
+		/// 'An extended error report has been copied to the clipboard.'.
 		/// </summary>
-		public static string ErrorFeedbackRequest
+		public static string ErrorInClipboard
 		{
-			get { return m_strErrorFeedbackRequest; }
+			get { return m_strErrorInClipboard; }
 		}
 
 		private static string m_strFatalError =

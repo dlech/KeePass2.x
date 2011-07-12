@@ -21,8 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Text;
-using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Diagnostics;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -33,6 +34,7 @@ using KeePassLib.Cryptography;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
 {
@@ -243,6 +245,18 @@ namespace KeePassLib.Serialization
 			set { m_bRepairMode = value; }
 		}
 
+		private string m_strDetachBins = null;
+		/// <summary>
+		/// Detach binaries when opening a file. If this isn't <c>null</c>,
+		/// all binaries are saved to the specified path and are removed
+		/// from the database.
+		/// </summary>
+		public string DetachBinaries
+		{
+			get { return m_strDetachBins; }
+			set { m_strDetachBins = value; }
+		}
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -341,6 +355,42 @@ namespace KeePassLib.Serialization
 				return new ProtectedBinary(pb);
 
 			return null;
+		}
+
+		private static void SaveBinary(string strName, ProtectedBinary pb,
+			string strSaveDir)
+		{
+			if(pb == null) { Debug.Assert(false); return; }
+
+			if(string.IsNullOrEmpty(strName)) strName = "File.bin";
+
+			string strPath;
+			int iTry = 1;
+			do
+			{
+				strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
+
+				string strExt = UrlUtil.GetExtension(strName);
+				string strDesc = UrlUtil.StripExtension(strName);
+
+				strPath += strDesc;
+				if(iTry > 1) strPath += " (" + iTry.ToString() + ")";
+
+				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
+
+				++iTry;
+			}
+			while(File.Exists(strPath));
+
+#if !KeePassLibSD
+			File.WriteAllBytes(strPath, pb.ReadData());
+#else
+			FileStream fs = new FileStream(strPath, FileMode.Create,
+				FileAccess.Write, FileShare.None);
+			byte[] pbData = pb.ReadData();
+			fs.Write(pbData, 0, pbData.Length);
+			fs.Close();
+#endif
 		}
 	}
 }

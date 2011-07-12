@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Diagnostics;
 
 using KeePass.UI;
 
@@ -46,6 +47,15 @@ namespace KeePass.App.Configuration
 		UncheckKeyFile = 0x2000000,
 		UncheckUserAccount = 0x4000000,
 		UncheckHidePassword = 0x8000000
+	}
+
+	[Flags]
+	public enum AceUIFlags : ulong
+	{
+		None = 0,
+		DisableOptions = 0x1,
+		DisablePlugins = 0x2,
+		DisableTriggers = 0x4
 	}
 
 	public sealed class AceUI
@@ -119,6 +129,13 @@ namespace KeePass.App.Configuration
 			set { m_bShowImportStatusDlg = value; }
 		}
 
+		private bool m_bShowDbMntncResDlg = true;
+		public bool ShowDbMntncResultsDialog
+		{
+			get { return m_bShowDbMntncResDlg; }
+			set { m_bShowDbMntncResDlg = value; }
+		}
+
 		private bool m_bUseCustomTsRenderer = true;
 		public bool UseCustomToolStripRenderer
 		{
@@ -133,18 +150,15 @@ namespace KeePass.App.Configuration
 			set { m_bOptScreenReader = value; }
 		}
 
-		private int m_deSizeW = AppDefs.InvalidWindowValue;
-		public int DataEditorWidth
+		private string m_strDataEditorRect = string.Empty;
+		public string DataEditorRect
 		{
-			get { return m_deSizeW; }
-			set { m_deSizeW = value; }
-		}
-
-		private int m_deSizeH = AppDefs.InvalidWindowValue;
-		public int DataEditorHeight
-		{
-			get { return m_deSizeH; }
-			set { m_deSizeH = value; }
+			get { return m_strDataEditorRect; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strDataEditorRect = value;
+			}
 		}
 
 		private AceFont m_deFont = new AceFont();
@@ -176,6 +190,13 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private ulong m_uUIFlags = (ulong)AceUIFlags.None;
+		public ulong UIFlags
+		{
+			get { return m_uUIFlags; }
+			set { m_uUIFlags = value; }
+		}
+
 		private ulong m_uKeyCreationFlags = (ulong)AceKeyUIFlags.None;
 		public ulong KeyCreationFlags
 		{
@@ -196,6 +217,13 @@ namespace KeePass.App.Configuration
 		//	get { return m_bEditCancelConfirmation; }
 		//	set { m_bEditCancelConfirmation = value; }
 		// }
+
+		private bool m_bSecDeskSound = true;
+		public bool SecureDesktopPlaySound
+		{
+			get { return m_bSecDeskSound; }
+			set { m_bSecDeskSound = value; }
+		}
 	}
 
 	public sealed class AceHiding
@@ -294,7 +322,7 @@ namespace KeePass.App.Configuration
 		{
 			if(m_bCacheValid) return m_fCached;
 
-			m_fCached = new Font(m_strFamily, m_fSize, m_fStyle, m_gu);
+			m_fCached = FontUtil.CreateFont(m_strFamily, m_fSize, m_fStyle, m_gu);
 			m_bCacheValid = true;
 			return m_fCached;
 		}

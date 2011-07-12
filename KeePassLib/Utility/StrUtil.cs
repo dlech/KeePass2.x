@@ -1007,5 +1007,38 @@ namespace KeePassLib.Utility
 
 			return str;
 		}
+
+		public static List<string> SplitSearchTerms(string strSearch)
+		{
+			List<string> l = new List<string>();
+			if(strSearch == null) { Debug.Assert(false); return l; }
+
+			StringBuilder sbTerm = new StringBuilder();
+			bool bQuoted = false;
+
+			for(int i = 0; i < strSearch.Length; ++i)
+			{
+				char ch = strSearch[i];
+
+				if(((ch == ' ') || (ch == '\t') || (ch == '\r') ||
+					(ch == '\n')) && !bQuoted)
+				{
+					if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
+
+					sbTerm.Remove(0, sbTerm.Length);
+				}
+				else if(ch == '\"') bQuoted = !bQuoted;
+				else sbTerm.Append(ch);
+			}
+			if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
+
+			return l;
+		}
+
+		public static int CompareLengthGt(string x, string y)
+		{
+			if(x.Length == y.Length) return 0;
+			return ((x.Length > y.Length) ? -1 : 1);
+		}
 	}
 }

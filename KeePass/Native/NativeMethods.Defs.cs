@@ -45,6 +45,8 @@ namespace KeePass.Native
 
 		internal const int WM_NOTIFY = 0x004E;
 
+		internal const int WM_GETICON = 0x007F;
+
 		internal const int HWND_BROADCAST = 0xFFFF;
 
 		internal const uint SMTO_NORMAL = 0x0000;
@@ -86,6 +88,13 @@ namespace KeePass.Native
 		internal const int GWL_EXSTYLE = -20;
 
 		internal const int WS_VISIBLE = 0x10000000;
+
+		internal const int GCLP_HICON = -14;
+		internal const int GCLP_HICONSM = -34;
+
+		internal const int ICON_SMALL = 0;
+		internal const int ICON_BIG = 1;
+		internal const int ICON_SMALL2 = 2;
 
 		internal const int EM_SETCHARFORMAT = WM_USER + 68;
 
@@ -165,6 +174,10 @@ namespace KeePass.Native
 
 		internal const uint CF_TEXT = 1;
 		internal const uint CF_UNICODETEXT = 13;
+
+		internal const uint SND_ASYNC = 0x0001;
+		internal const uint SND_FILENAME = 0x00020000;
+		internal const uint SND_NODEFAULT = 0x0002;
 
 		// internal const uint DI_NORMAL = 0x0003;
 

@@ -69,6 +69,9 @@ namespace KeePass.Util
 
 	public static class IpcUtilEx
 	{
+		internal const string IpcMsgFilePreID = "KeePassIPC-";
+		internal const string IpcMsgFilePostID = "-Msgs.tmp";
+
 		public const string CmdOpenDatabase = "OpenDatabase";
 		public const string CmdOpenEntryUrl = "OpenEntryUrl";
 
@@ -96,6 +99,14 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); }
 
+			string strIpcFile = GetIpcFilePath(nId);
+			for(int r = 0; r < 50; ++r)
+			{
+				try { if(!File.Exists(strIpcFile)) break; }
+				catch(Exception) { }
+				Thread.Sleep(20);
+			}
+
 			RemoveIpcInfoFile(nId);
 		}
 
@@ -106,7 +117,7 @@ namespace KeePass.Util
 				string str = Path.GetTempPath();
 				str = UrlUtil.EnsureTerminatingSeparator(str, false);
 				
-				return (str + "KeePassIpc" + nId.ToString() + ".tmp");
+				return (str + IpcMsgFilePreID + nId.ToString() + ".tmp");
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -149,16 +160,18 @@ namespace KeePass.Util
 			string strPath = GetIpcFilePath(nId);
 			if(string.IsNullOrEmpty(strPath)) return null;
 
-			string strMtxName = ("KeePassIpc" + nId.ToString());
-			Mutex m = Program.TrySingleInstanceLock(strMtxName, true);
-			if(m == null) return null;
+			string strMtxName = (IpcMsgFilePreID + nId.ToString());
+			// Mutex m = Program.TrySingleInstanceLock(strMtxName, true);
+			bool bMutex = GlobalMutexPool.CreateMutex(strMtxName, true);
+			// if(m == null) return null;
+			if(!bMutex) return null;
 
 			IpcParamEx ipcParam = null;
 			try
 			{
 				XmlSerializer xml = new XmlSerializer(typeof(IpcParamEx));
-				FileStream fs = new FileStream(strPath, FileMode.Open, FileAccess.Read,
-					FileShare.Read);
+				FileStream fs = new FileStream(strPath, FileMode.Open,
+					FileAccess.Read, FileShare.Read);
 
 				try { ipcParam = (IpcParamEx)xml.Deserialize(fs); }
 				catch(Exception) { Debug.Assert(false); }
@@ -169,7 +182,8 @@ namespace KeePass.Util
 
 			RemoveIpcInfoFile(nId);
 
-			Program.DestroyMutex(m, true);
+			// Program.DestroyMutex(m, true);
+			if(!GlobalMutexPool.ReleaseMutex(strMtxName)) { Debug.Assert(false); }
 			return ipcParam;
 		}
 

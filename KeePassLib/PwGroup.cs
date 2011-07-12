@@ -662,11 +662,60 @@ namespace KeePassLib
 		public void SearchEntries(SearchParameters searchParams, PwObjectList<PwEntry> listStorage,
 			bool bRespectEntrySearchingDisabled)
 		{
+			List<string> lTerms = StrUtil.SplitSearchTerms(searchParams.SearchString);
+			if((lTerms.Count <= 1) || searchParams.RegularExpression)
+			{
+				SearchEntriesSingle(searchParams, listStorage, bRespectEntrySearchingDisabled);
+				return;
+			}
+
+			// Search longer strings first (for improved performance)
+			lTerms.Sort(StrUtil.CompareLengthGt);
+
+			string strFullSearch = searchParams.SearchString; // Backup
+
+			PwGroup pg = this;
+			for(int iTerm = 0; iTerm < lTerms.Count; ++iTerm)
+			{
+				PwGroup pgNew = new PwGroup();
+
+				searchParams.SearchString = lTerms[iTerm];
+
+				bool bNegate = false;
+				if(searchParams.SearchString.StartsWith("-"))
+				{
+					searchParams.SearchString = searchParams.SearchString.Substring(1);
+					bNegate = (searchParams.SearchString.Length > 0);
+				}
+
+				pg.SearchEntriesSingle(searchParams, pgNew.Entries, bRespectEntrySearchingDisabled);
+
+				if(bNegate)
+				{
+					PwObjectList<PwEntry> lCand = pg.GetEntries(true);
+
+					pg = new PwGroup();
+					foreach(PwEntry peCand in lCand)
+					{
+						if(pgNew.Entries.IndexOf(peCand) < 0) pg.Entries.Add(peCand);
+					}
+				}
+				else pg = pgNew;
+			}
+
+			listStorage.Add(pg.Entries);
+			searchParams.SearchString = strFullSearch; // Restore
+		}
+
+		private void SearchEntriesSingle(SearchParameters searchParams,
+			PwObjectList<PwEntry> listStorage, bool bRespectEntrySearchingDisabled)
+		{
 			Debug.Assert(searchParams != null); if(searchParams == null) throw new ArgumentNullException("searchParams");
 			Debug.Assert(listStorage != null); if(listStorage == null) throw new ArgumentNullException("listStorage");
 
 			string strSearch = searchParams.SearchString;
-			Debug.Assert(strSearch != null); if(strSearch == null) throw new ArgumentException();
+			if(strSearch == null) { Debug.Assert(false); throw new ArgumentException(); }
+			strSearch = strSearch.Trim();
 
 			StringComparison scType = searchParams.ComparisonMode;
 			Regex rx = null;
@@ -1015,7 +1064,7 @@ namespace KeePassLib
 			if(bNewEntries)
 			{
 				foreach(PwEntry pe in m_listEntries)
-					pe.Uuid = new PwUuid(true);
+					pe.SetUuid(new PwUuid(true), true);
 			}
 
 			if(bRecursive)
@@ -1145,7 +1194,9 @@ namespace KeePassLib
 		/// </summary>
 		/// <param name="bRecursive">If <c>true</c>, subgroups are added
 		/// recursively, i.e. all child groups are returned, too.</param>
-		/// <returns>List of subgroups.</returns>
+		/// <returns>List of subgroups. If <paramref name="bRecursive" /> is
+		/// <c>true</c>, it is guaranteed that subsubgroups appear after
+		/// subgroups.</returns>
 		public PwObjectList<PwGroup> GetGroups(bool bRecursive)
 		{
 			if(bRecursive == false) return m_listGroups;
@@ -1289,6 +1340,27 @@ namespace KeePassLib
 				foreach(PwGroup pgSub in m_listGroups)
 					pgSub.SortSubGroups(true);
 			}
+		}
+
+		public void DeleteAllObjects(PwDatabase pdContext)
+		{
+			DateTime dtNow = DateTime.Now;
+
+			foreach(PwEntry pe in m_listEntries)
+			{
+				PwDeletedObject pdo = new PwDeletedObject(pe.Uuid, dtNow);
+				pdContext.DeletedObjects.Add(pdo);
+			}
+			m_listEntries.Clear();
+
+			foreach(PwGroup pg in m_listGroups)
+			{
+				pg.DeleteAllObjects(pdContext);
+
+				PwDeletedObject pdo = new PwDeletedObject(pg.Uuid, dtNow);
+				pdContext.DeletedObjects.Add(pdo);
+			}
+			m_listGroups.Clear();
 		}
 	}
 

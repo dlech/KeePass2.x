@@ -22,9 +22,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.ComponentModel;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Util;
@@ -92,6 +91,11 @@ namespace KeePass.UI
 			if(strLine != null) strImageID += strLine;
 
 			if(bs == BannerStyle.Default) bs = Program.Config.UI.BannerStyle;
+			if(bs == BannerStyle.Default)
+			{
+				Debug.Assert(false);
+				bs = BannerStyle.WinVistaBlack;
+			}
 
 			strImageID += ":" + ((uint)bs).ToString();
 
@@ -103,6 +107,9 @@ namespace KeePass.UI
 			if(m_pCustomGen != null)
 				img = m_pCustomGen(new BfBannerInfo(nWidth, nHeight, bs, imgIcon,
 					strTitle, strLine));
+
+			const float fHorz = 0.90f;
+			const float fVert = 90.0f;
 
 			if(img == null)
 			{
@@ -119,27 +126,31 @@ namespace KeePass.UI
 
 				Color clrStart = Color.White;
 				Color clrEnd = Color.LightBlue;
-				float fAngle = 0.90f;
+				float fAngle = fHorz;
 
 				if(bs == BannerStyle.BlueCarbon)
 				{
-					fAngle = 90.0f;
+					fAngle = fVert;
 
 					clrStart = Color.LightGray;
 					clrEnd = Color.Black;
 
 					Rectangle rect = new Rectangle(0, 0, nWidth, (nHeight * 3) / 8);
-					LinearGradientBrush washBrush = new LinearGradientBrush(rect, clrStart,
-						clrEnd, fAngle, true);
-					g.FillRectangle(washBrush, rect);
+					using(LinearGradientBrush brCarbonT = new LinearGradientBrush(
+						rect, clrStart, clrEnd, fAngle, true))
+					{
+						g.FillRectangle(brCarbonT, rect);
+					}
 
 					clrStart = Color.FromArgb(0, 0, 32);
 					clrEnd = Color.FromArgb(192, 192, 255);
 
 					rect = new Rectangle(0, nHeight / 2, nWidth, (nHeight * 5) / 8);
-					washBrush = new LinearGradientBrush(rect, clrStart,
-						clrEnd, fAngle, true);
-					g.FillRectangle(washBrush, rect);
+					using(LinearGradientBrush brCarbonB = new LinearGradientBrush(
+						rect, clrStart, clrEnd, fAngle, true))
+					{
+						g.FillRectangle(brCarbonB, rect);
+					}
 				}
 				else
 				{
@@ -153,7 +164,7 @@ namespace KeePass.UI
 						clrStart = Color.FromArgb(151, 154, 173);
 						clrEnd = Color.FromArgb(27, 27, 37);
 
-						fAngle = 90.0f;
+						fAngle = fVert;
 					}
 					else if(bs == BannerStyle.KeePassWin32)
 					{
@@ -162,9 +173,11 @@ namespace KeePass.UI
 					}
 
 					Rectangle rect = new Rectangle(0, 0, nWidth, nHeight);
-					LinearGradientBrush washBrush = new LinearGradientBrush(rect, clrStart,
-						clrEnd, fAngle, true);
-					g.FillRectangle(washBrush, rect);
+					using(LinearGradientBrush brBack = new LinearGradientBrush(
+						rect, clrStart, clrEnd, fAngle, true))
+					{
+						g.FillRectangle(brBack, rect);
+					}
 				}
 
 				if(imgIcon != null)
@@ -190,7 +203,8 @@ namespace KeePass.UI
 						GraphicsUnit.Pixel, ia);
 				}
 
-				if((bs == BannerStyle.WinXPLogin) || (bs == BannerStyle.WinVistaBlack) || (bs == BannerStyle.BlueCarbon))
+				if((bs == BannerStyle.WinXPLogin) || (bs == BannerStyle.WinVistaBlack) ||
+					(bs == BannerStyle.BlueCarbon))
 				{
 					Rectangle rect = new Rectangle(0, nHeight - 2, 0, 2);
 
@@ -198,21 +212,29 @@ namespace KeePass.UI
 					rect.X = nWidth / 2;
 					clrStart = Color.FromArgb(248, 136, 24);
 					clrEnd = Color.White;
-					LinearGradientBrush brushOrangeWhite = new LinearGradientBrush(rect, clrStart, clrEnd, 0.90f, true);
-					g.FillRectangle(brushOrangeWhite, rect);
+					using(LinearGradientBrush brushOrangeWhite = new LinearGradientBrush(
+						rect, clrStart, clrEnd, fHorz, true))
+					{
+						g.FillRectangle(brushOrangeWhite, rect);
+					}
 
 					rect.Width = nWidth / 2 + 1;
 					rect.X = 0;
 					clrStart = Color.White;
 					clrEnd = Color.FromArgb(248, 136, 24);
-					LinearGradientBrush brushWhiteOrange = new LinearGradientBrush(rect, clrStart, clrEnd, 0.90f, true);
-					g.FillRectangle(brushWhiteOrange, rect);
+					using(LinearGradientBrush brushWhiteOrange = new LinearGradientBrush(
+						rect, clrStart, clrEnd, fHorz, true))
+					{
+						g.FillRectangle(brushWhiteOrange, rect);
+					}
 				}
 				else if(bs == BannerStyle.KeePassWin32)
 				{
 					// Black separator line
-					Pen penBlack = new Pen(Color.Black);
-					g.DrawLine(penBlack, 0, nHeight - 1, nWidth - 1, nHeight - 1);
+					using(Pen penBlack = new Pen(Color.Black))
+					{
+						g.DrawLine(penBlack, 0, nHeight - 1, nWidth - 1, nHeight - 1);
+					}
 				}
 
 				// Brush brush;
@@ -236,31 +258,27 @@ namespace KeePass.UI
 				if(bRtl) tff |= TextFormatFlags.RightToLeft;
 
 				float fFontSize = DpiScaleFloat((12.0f * 96.0f) / g.DpiY, nHeight);
-				using(Font font = new Font(FontFamily.GenericSansSerif,
-					fFontSize, FontStyle.Bold))
-				{
-					int txs = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
-						strTitle, font).Width));
-
-					// g.DrawString(strTitle, font, brush, fx, fy);
-					BannerFactory.DrawText(g, strTitle, font, new Point(txs, ty),
-						clrText, tff, nWidth, nHeight);
-				}
+				Font font = FontUtil.CreateFont(FontFamily.GenericSansSerif,
+					fFontSize, FontStyle.Bold);
+				int txs = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
+					strTitle, font).Width));
+				// g.DrawString(strTitle, font, brush, fx, fy);
+				BannerFactory.DrawText(g, strTitle, font, new Point(txs, ty),
+					clrText, tff, nWidth, nHeight);
+				font.Dispose();
 
 				tx += xIcon; // fx
 				ty += xIcon * 2 + 2; // fy
 
 				float fFontSizeSm = DpiScaleFloat((9.0f * 96.0f) / g.DpiY, nHeight);
-				using(Font fontSmall = new Font(FontFamily.GenericSansSerif,
-					fFontSizeSm, FontStyle.Regular))
-				{
-					int txl = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
-						strLine, fontSmall).Width));
-
-					// g.DrawString(strLine, fontSmall, brush, fx, fy);
-					BannerFactory.DrawText(g, strLine, fontSmall, new Point(txl, ty),
-						clrText, tff, nWidth, nHeight);
-				}
+				Font fontSmall = FontUtil.CreateFont(FontFamily.GenericSansSerif,
+					fFontSizeSm, FontStyle.Regular);
+				int txl = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
+					strLine, fontSmall).Width));
+				// g.DrawString(strLine, fontSmall, brush, fx, fy);
+				BannerFactory.DrawText(g, strLine, fontSmall, new Point(txl, ty),
+					clrText, tff, nWidth, nHeight);
+				fontSmall.Dispose();
 
 				g.Dispose();
 			}
@@ -301,6 +319,19 @@ namespace KeePass.UI
 		private static float DpiScaleFloat(float x, int nBaseHeight)
 		{
 			return ((x * (float)nBaseHeight) / 60.0f);
+		}
+
+		public static void CreateBannerEx(Form f, PictureBox picBox, Image imgIcon,
+			string strTitle, string strLine)
+		{
+			if(picBox == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				picBox.Image = CreateBanner(picBox.Width, picBox.Height,
+					BannerStyle.Default, imgIcon, strTitle, strLine);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

@@ -602,5 +602,64 @@ namespace KeePass.Util
 
 			return false;
 		}
+
+		public static string CreateSummaryList(PwGroup pgItems, bool bStartWithNewPar)
+		{
+			List<PwEntry> l = pgItems.GetEntries(true).CloneShallowToList();
+			string str = CreateSummaryList(pgItems, l.ToArray());
+
+			if((str.Length == 0) || !bStartWithNewPar) return str;
+			return (MessageService.NewParagraph + str);
+		}
+
+		public static string CreateSummaryList(PwGroup pgSubGroups, PwEntry[] vEntries)
+		{
+			int nMaxEntries = 10;
+			string strSummary = string.Empty;
+
+			if(pgSubGroups != null)
+			{
+				PwObjectList<PwGroup> vGroups = pgSubGroups.GetGroups(true);
+				if(vGroups.UCount > 0)
+				{
+					StringBuilder sbGroups = new StringBuilder();
+					sbGroups.Append("- ");
+					uint uToList = Math.Min(3U, vGroups.UCount);
+					for(uint u = 0; u < uToList; ++u)
+					{
+						if(sbGroups.Length > 2) sbGroups.Append(", ");
+						sbGroups.Append(vGroups.GetAt(u).Name);
+					}
+					if(uToList < vGroups.UCount) sbGroups.Append(", ...");
+					strSummary += sbGroups.ToString(); // New line below
+
+					nMaxEntries -= 2;
+				}
+			}
+
+			int nSummaryShow = Math.Min(nMaxEntries, vEntries.Length);
+			if(nSummaryShow == (vEntries.Length - 1)) --nSummaryShow; // Plural msg
+
+			for(int iSumEnum = 0; iSumEnum < nSummaryShow; ++iSumEnum)
+			{
+				if(strSummary.Length > 0) strSummary += MessageService.NewLine;
+
+				PwEntry pe = vEntries[iSumEnum];
+				strSummary += ("- " + StrUtil.CompactString3Dots(
+					pe.Strings.ReadSafe(PwDefs.TitleField), 39));
+				if(PwDefs.IsTanEntry(pe))
+				{
+					string strTanIdx = pe.Strings.ReadSafe(PwDefs.UserNameField);
+					if(!string.IsNullOrEmpty(strTanIdx))
+						strSummary += (@" (#" + strTanIdx + @")");
+				}
+			}
+			if(nSummaryShow != vEntries.Length)
+				strSummary += (MessageService.NewLine + "- " +
+					KPRes.MoreEntries.Replace(@"{PARAM}", (vEntries.Length -
+					nSummaryShow).ToString()));
+
+			return strSummary;
+		}
 	}
 }

@@ -561,7 +561,7 @@
 			this.m_btnBinView.Name = "m_btnBinView";
 			this.m_btnBinView.Size = new System.Drawing.Size(75, 23);
 			this.m_btnBinView.TabIndex = 4;
-			this.m_btnBinView.Text = "&View";
+			this.m_btnBinView.Text = "<>";
 			this.m_btnBinView.UseVisualStyleBackColor = true;
 			this.m_btnBinView.Click += new System.EventHandler(this.OnBtnBinView);
 			// 

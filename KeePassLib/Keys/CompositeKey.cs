@@ -118,8 +118,10 @@ namespace KeePassLib.Keys
 			if(tUserKeyType == null) throw new ArgumentNullException("tUserKeyType");
 
 			foreach(IUserKey pKey in m_vUserKeys)
+			{
 				if(tUserKeyType.IsInstanceOfType(pKey))
 					return true;
+			}
 
 			return false;
 		}
@@ -136,8 +138,10 @@ namespace KeePassLib.Keys
 			if(tUserKeyType == null) throw new ArgumentNullException("tUserKeyType");
 
 			foreach(IUserKey pKey in m_vUserKeys)
+			{
 				if(tUserKeyType.IsInstanceOfType(pKey))
 					return pKey;
+			}
 
 			return null;
 		}

@@ -23,6 +23,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
+using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
@@ -127,6 +128,57 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bCancelOnWindowChange; }
 			set { m_bCancelOnWindowChange = value; }
+		}
+
+		private ProxyServerType m_pstProxyType = ProxyServerType.System;
+		public ProxyServerType ProxyType
+		{
+			get { return m_pstProxyType; }
+			set { m_pstProxyType = value; }
+		}
+
+		private string m_strProxyAddr = string.Empty;
+		public string ProxyAddress
+		{
+			get { return m_strProxyAddr; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strProxyAddr = value;
+			}
+		}
+
+		private string m_strProxyPort = string.Empty;
+		public string ProxyPort
+		{
+			get { return m_strProxyPort; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strProxyPort = value;
+			}
+		}
+
+		private string m_strProxyUser = string.Empty;
+		public string ProxyUserName
+		{
+			get { return m_strProxyUser; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strProxyUser = value;
+			}
+		}
+
+		private string m_strProxyPassword = string.Empty;
+		public string ProxyPassword
+		{
+			get { return m_strProxyPassword; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strProxyPassword = value;
+			}
 		}
 
 		public AceIntegration()

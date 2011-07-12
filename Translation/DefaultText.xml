@@ -412,6 +412,9 @@
 		<Data Name="DatabaseUnsavedChanges">
 			<Value>Active database has unsaved changes</Value>
 		</Data>
+		<Data Name="DbMntncResults">
+			<Value>Show results of database maintenance in a dialog</Value>
+		</Data>
 		<Data Name="Default">
 			<Value>Default</Value>
 		</Data>
@@ -478,6 +481,9 @@
 		<Data Name="DuplicateStringFieldName">
 			<Value>The string field name you specified already exists. String field names must be unique for each entry.</Value>
 		</Data>
+		<Data Name="EditCmd">
+			<Value>&amp;Edit</Value>
+		</Data>
 		<Data Name="EditEntry">
 			<Value>Edit Entry</Value>
 		</Data>
@@ -513,6 +519,9 @@
 		</Data>
 		<Data Name="EmptyMasterPwQuestion">
 			<Value>Are you sure you want to use an empty master password?</Value>
+		</Data>
+		<Data Name="EmptyRecycleBinQuestion">
+			<Value>Are you sure you want to permanently delete the items?</Value>
 		</Data>
 		<Data Name="Enabled">
 			<Value>Enabled</Value>
@@ -576,6 +585,9 @@
 		</Data>
 		<Data Name="ExitInsteadOfLockingAfterTime">
 			<Value>Exit instead of locking the workspace after the specified time</Value>
+		</Data>
+		<Data Name="ExitInsteadOfLockingAlways">
+			<Value>Always exit instead of locking the workspace</Value>
 		</Data>
 		<Data Name="ExpiredEntries">
 			<Value>Expired Entries</Value>
@@ -744,6 +756,9 @@
 		</Data>
 		<Data Name="FocusResultsAfterQuickFind">
 			<Value>Focus entry list after a successful quick search (toolbar)</Value>
+		</Data>
+		<Data Name="Folder">
+			<Value>Folder</Value>
 		</Data>
 		<Data Name="Font">
 			<Value>Font</Value>
@@ -1138,6 +1153,9 @@
 		<Data Name="ObjectNotFound">
 			<Value>The object with the specified name could not be found.</Value>
 		</Data>
+		<Data Name="ObjectsDeleted">
+			<Value>{PARAM} object(s) deleted</Value>
+		</Data>
 		<Data Name="Off">
 			<Value>Off</Value>
 		</Data>
@@ -1354,6 +1372,9 @@
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
 		</Data>
+		<Data Name="RootDirectory">
+			<Value>Root Directory</Value>
+		</Data>
 		<Data Name="SampleEntry">
 			<Value>Sample Entry</Value>
 		</Data>
@@ -1416,6 +1437,9 @@
 		</Data>
 		<Data Name="SecDeskFileDialogHint">
 			<Value>Note: KeePass shows this simple file browser dialog, because standard Windows file dialogs cannot be shown on the secure desktop for security reasons.</Value>
+		</Data>
+		<Data Name="SecDeskPlaySound">
+			<Value>Play UAC sound when switching to secure desktop</Value>
 		</Data>
 		<Data Name="SelectAll">
 			<Value>Select All</Value>
@@ -1545,6 +1569,9 @@
 		</Data>
 		<Data Name="TargetWindow">
 			<Value>Target Window</Value>
+		</Data>
+		<Data Name="TemplatesNotFound">
+			<Value>No templates found</Value>
 		</Data>
 		<Data Name="TextColor">
 			<Value>Text Color</Value>
@@ -1708,6 +1735,9 @@
 		<Data Name="View">
 			<Value>View</Value>
 		</Data>
+		<Data Name="ViewCmd">
+			<Value>&amp;View</Value>
+		</Data>
 		<Data Name="ViewEntry">
 			<Value>View Entry</Value>
 		</Data>
@@ -1731,6 +1761,9 @@
 		</Data>
 		<Data Name="WebsiteVisitQuestion">
 			<Value>Do you want to visit the KeePass website now?</Value>
+		</Data>
+		<Data Name="WindowsFavorites">
+			<Value>Windows Favorites</Value>
 		</Data>
 		<Data Name="WindowsOS">
 			<Value>Windows</Value>
@@ -1765,8 +1798,8 @@
 		<Data Name="EncAlgorithmAes">
 			<Value>AES/Rijndael (256-Bit Key)</Value>
 		</Data>
-		<Data Name="ErrorFeedbackRequest">
-			<Value>An extended error report has been copied to the clipboard. Please send it to the KeePass developers.</Value>
+		<Data Name="ErrorInClipboard">
+			<Value>An extended error report has been copied to the clipboard.</Value>
 		</Data>
 		<Data Name="FatalError">
 			<Value>Fatal Error</Value>

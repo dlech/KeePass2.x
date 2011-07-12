@@ -62,6 +62,7 @@ namespace KeePass.Forms
 		private NotifyIconEx m_ntfTray = null;
 
 		private bool m_bFormLoading = false;
+		private bool m_bCleanedUp = false;
 
 		private bool m_bRestart = false;
 		private ListSorter m_pListSorter = new ListSorter();
@@ -107,6 +108,13 @@ namespace KeePass.Forms
 			m_splitVertical.InitEx(this.Controls, m_menuMain);
 
 			AssignMenuShortcuts();
+
+			if(NativeLib.IsUnix())
+			{
+				// Workaround for tab bar height bug in Mono
+				// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
+				m_tabMain.Height += 3;
+			}
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -348,6 +356,7 @@ namespace KeePass.Forms
 				false, false); // Ensure popup arrow
 			UpdateTagsMenu(m_dynRemoveTag, false, false, false, false);
 			UpdateUIState(false);
+			ApplyUICustomizations();
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppInitPost);
 
@@ -464,6 +473,18 @@ namespace KeePass.Forms
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(pd.MemoryProtection.ProtectNotes,
 				KPRes.Notes));
 			pe.AutoType.Set(KPRes.TargetWindow, @"{USERNAME}{TAB}{PASSWORD}{TAB}{ENTER}");
+			pd.RootGroup.AddEntry(pe, true);
+
+			pe = new PwEntry(true, true);
+			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(pd.MemoryProtection.ProtectTitle,
+				KPRes.SampleEntry + " #2"));
+			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
+				"Michael321"));
+			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
+				@"http://keepass.info/help/kb/kb090406_testform.html"));
+			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
+				"12345"));
+			pe.AutoType.Set("Test Form - KeePass*", string.Empty);
 			pd.RootGroup.AddEntry(pe, true);
 
 #if DEBUG
@@ -617,7 +638,10 @@ namespace KeePass.Forms
 
 			PwDocument ds = m_docMgr.ActiveDocument;
 			if(!IsFileLocked(ds)) // Lock
+			{
 				LockAllDocuments();
+				if(m_bCleanedUp) return; // Exited instead of locking
+			}
 			else // Unlock
 			{
 				PwDatabase pd = ds.Database;
@@ -777,7 +801,15 @@ namespace KeePass.Forms
 			if(UIUtil.ShowDialogAndDestroy(pForm) == DialogResult.OK)
 			{
 				pg.AddEntry(pwe, true);
-				UpdateUI(false, null, pwDb.UINeedsIconUpdate, null, true, null, true);
+				UpdateUI(false, null, pwDb.UINeedsIconUpdate, null, true,
+					null, true, m_lvEntries);
+
+				PwObjectList<PwEntry> vSelect = new PwObjectList<PwEntry>();
+				vSelect.Add(pwe);
+				SelectEntries(vSelect, true);
+				ListViewItem lviFocus = GuiFindEntry(pwe.Uuid);
+				if(lviFocus != null) m_lvEntries.FocusedItem = lviFocus;
+
 				EnsureVisibleEntry(pwe.Uuid);
 			}
 			else UpdateUI(false, null, pwDb.UINeedsIconUpdate, null,
@@ -800,7 +832,7 @@ namespace KeePass.Forms
 			foreach(PwEntry pe in vSelected)
 			{
 				PwEntry peNew = pe.CloneDeep();
-				peNew.Uuid = new PwUuid(true); // Create new UUID
+				peNew.SetUuid(new PwUuid(true), true); // Create new UUID
 
 				ProtectedString psTitle = peNew.Strings.Get(PwDefs.TitleField);
 				if(psTitle != null)
@@ -825,7 +857,7 @@ namespace KeePass.Forms
 				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
 			else EnsureVisibleSelected(true);
 
-			UpdateUIState(true);
+			UpdateUIState(true, m_lvEntries);
 		}
 
 		private void OnEntryDelete(object sender, EventArgs e)
@@ -842,6 +874,7 @@ namespace KeePass.Forms
 			}
 			m_bBlockEntrySelectionEvent = false;
 
+			ResetDefaultFocus(m_lvEntries);
 			UpdateUIState(false);
 		}
 
@@ -999,6 +1032,7 @@ namespace KeePass.Forms
 		private void OnQuickFindSelectedIndexChanged(object sender, EventArgs e)
 		{
 			if(m_bBlockQuickFind) return;
+			m_bBlockQuickFind = true;
 
 			string strSearch = m_tbQuickFind.Text; // Text, not selected index!
 			string strGroupName = KPRes.SearchGroupName + " (\"" + strSearch + "\" ";
@@ -1020,23 +1054,18 @@ namespace KeePass.Forms
 			}
 
 			// Update the history items in the combobox
-			bool bDoSetText = false;
 			if(nExistsAlready >= 0)
-			{
 				m_tbQuickFind.Items.RemoveAt(nExistsAlready);
-				bDoSetText = true;
-			}
 			else if(m_tbQuickFind.Items.Count >= 8)
 				m_tbQuickFind.Items.RemoveAt(m_tbQuickFind.Items.Count - 1);
 
 			m_tbQuickFind.Items.Insert(0, strSearch);
 
-			if(bDoSetText)
-			{
-				m_bBlockQuickFind = true;
-				m_tbQuickFind.Text = strSearch;
-				m_bBlockQuickFind = false;
-			}
+			// if(bDoSetText) m_tbQuickFind.Text = strSearch;
+			m_tbQuickFind.SelectedIndex = 0;
+			m_tbQuickFind.Select(0, strSearch.Length);
+
+			m_bBlockQuickFind = false;
 		}
 
 		private void OnQuickFindKeyDown(object sender, KeyEventArgs e)
@@ -1096,7 +1125,6 @@ namespace KeePass.Forms
 			}
 			UIUtil.DestroyForm(ofDlg);
 
-			NotifyUserActivity(); // Update locking timeout with new m_nLockTimerMax
 			UpdateUI(false, null, true, null, true, null, false); // Fonts changed
 		}
 
@@ -1194,7 +1222,7 @@ namespace KeePass.Forms
 					foreach(PwEntry pe in vSelected)
 					{
 						PwEntry peCopy = pe.CloneDeep();
-						peCopy.Uuid = new PwUuid(true); // Create new UUID
+						peCopy.SetUuid(new PwUuid(true), true); // Create new UUID
 
 						pgSelected.AddEntry(peCopy, true, true);
 					}
@@ -1367,7 +1395,11 @@ namespace KeePass.Forms
 					// if(!IsFileLocked(null)) // Not locked currently
 					//	OnFileLock(sender, e); // Lock
 
-					if(IsAtLeastOneFileOpen()) LockAllDocuments();
+					if(IsAtLeastOneFileOpen())
+					{
+						LockAllDocuments();
+						if(m_bCleanedUp) return; // Exited instead of locking
+					}
 				}
 
 				if(Program.Config.MainWindow.MinimizeToTray)
@@ -1441,12 +1473,15 @@ namespace KeePass.Forms
 					{
 						if(Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
 							OnFileExit(sender, e);
-						else LockAllDocuments();
+						else LockAllDocuments(); // Might exit instead of locking
 					}
 				}
+				else NotifyUserActivity(); // Unclosable dialog = activity
 
 				Monitor.Exit(m_objLockTimerSync);
 			}
+
+			GlobalMutexPool.Refresh();
 		}
 
 		private void OnToolsPlugins(object sender, EventArgs e)
@@ -2269,6 +2304,51 @@ namespace KeePass.Forms
 			// The following ensures a faster update when multiple items
 			// are automatically deselected when clicking on another item
 			UpdateUIState(false);
+		}
+
+		private void OnGroupsEmpty(object sender, EventArgs e)
+		{
+			EmptyRecycleBin();
+		}
+
+		private void OnToolsDelDupEntries(object sender, EventArgs e)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			StatusProgressForm dlg = new StatusProgressForm();
+			dlg.InitEx(null, true, false, this);
+			dlg.Show();
+			dlg.StartLogging(KPRes.Delete + "...", false);
+
+			uint uDeleted = pd.DeleteDuplicateEntries(dlg);
+
+			dlg.EndLogging();
+			dlg.Close();
+			UIUtil.DestroyForm(dlg);
+
+			UpdateUI(false, null, false, null, (uDeleted > 0), null, (uDeleted > 0));
+			SetObjectsDeletedStatus(uDeleted, true);
+		}
+
+		private void OnToolsDelEmptyGroups(object sender, EventArgs e)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			uint uDeleted = pd.DeleteEmptyGroups();
+			UpdateUI(false, null, (uDeleted > 0), null, false, null, (uDeleted > 0));
+			SetObjectsDeletedStatus(uDeleted, true);
+		}
+
+		private void OnToolsDelUnusedIcons(object sender, EventArgs e)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			uint uDeleted = pd.DeleteUnusedCustomIcons();
+			UpdateUIState(uDeleted > 0);
+			SetObjectsDeletedStatus(uDeleted, true);
 		}
 	}
 }

@@ -565,4 +565,10 @@
   <data name="B16x16_Imp_PwsPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_PwsPlus.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="B16x16_Imp_StickyPw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\B16x16_Imp_StickyPw.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Imp_KasperskyPwMgr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\B16x16_Imp_KasperskyPwMgr.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -57,8 +57,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TanWizard,
 				KPRes.TanWizardDesc);
 			

@@ -92,8 +92,7 @@ namespace KeePass.Forms
 				strDesc = KPRes.EditStringFieldDesc;
 			}
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Font, strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 

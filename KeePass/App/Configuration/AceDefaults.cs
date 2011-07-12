@@ -169,6 +169,28 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private string m_strWinFavsFilePrefix = string.Empty;
+		public string WinFavsFileNamePrefix
+		{
+			get { return m_strWinFavsFilePrefix; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strWinFavsFilePrefix = value;
+			}
+		}
+
+		private string m_strWinFavsFileSuffix = string.Empty;
+		public string WinFavsFileNameSuffix
+		{
+			get { return m_strWinFavsFileSuffix; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strWinFavsFileSuffix = value;
+			}
+		}
+
 		private bool m_bCollapseRecycleBin = false;
 		public bool RecycleBinCollapse
 		{

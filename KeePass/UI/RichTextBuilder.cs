@@ -156,16 +156,23 @@ namespace KeePass.UI
 			m_sb.AppendLine();
 		}
 
-		public void Build(RichTextBox rtb)
+		private static RichTextBox CreateOpRtb()
 		{
-			if(rtb == null) throw new ArgumentNullException("rtb");
-
 			RichTextBox rtbOp = new RichTextBox();
 			rtbOp.Visible = false; // Ensure invisibility
 			rtbOp.DetectUrls = false;
 			rtbOp.HideSelection = true;
 			rtbOp.Multiline = true;
 			rtbOp.WordWrap = false;
+
+			return rtbOp;
+		}
+
+		public void Build(RichTextBox rtb)
+		{
+			if(rtb == null) throw new ArgumentNullException("rtb");
+
+			RichTextBox rtbOp = CreateOpRtb();
 
 			rtbOp.Text = m_sb.ToString();
 			Debug.Assert(rtbOp.Text == m_sb.ToString()); // Test committed

@@ -32,28 +32,39 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
+	public delegate Form UIFormConstructor(object objParam);
+	public delegate object UIFormResultBuilder(Form f);
+
 	public sealed class ProtectedDialog
 	{
-		private Form m_form;
+		private UIFormConstructor m_fnConstruct;
+		private UIFormResultBuilder m_fnResultBuilder;
 
 		private sealed class SecureThreadParams
 		{
 			public Bitmap BackgroundBitmap = null;
 			public IntPtr ThreadDesktop = IntPtr.Zero;
 
-			public DialogResult Result = DialogResult.None;
+			public object FormConstructParam = null;
+
+			public DialogResult DialogResult = DialogResult.None;
+			public object ResultObject = null;
 		}
 
-		public ProtectedDialog(Form form)
+		public ProtectedDialog(UIFormConstructor fnConstruct,
+			UIFormResultBuilder fnResultBuilder)
 		{
-			Debug.Assert(form != null);
-			if(form == null) throw new ArgumentNullException("form");
+			if(fnConstruct == null) { Debug.Assert(false); throw new ArgumentNullException("fnConstruct"); }
+			if(fnResultBuilder == null) { Debug.Assert(false); throw new ArgumentNullException("fnResultBuilder"); }
 
-			m_form = form;
+			m_fnConstruct = fnConstruct;
+			m_fnResultBuilder = fnResultBuilder;
 		}
 
-		public DialogResult ShowDialog()
+		public DialogResult ShowDialog(out object objResult, object objConstructParam)
 		{
+			objResult = null;
+
 			ProcessMessagesEx();
 
 			ClipboardEventChainBlocker ccb = new ClipboardEventChainBlocker();
@@ -84,14 +95,12 @@ namespace KeePass.UI
 				IntPtr pNewDesktop = NativeMethods.CreateDesktop(strName,
 					null, IntPtr.Zero, 0, deskFlags, IntPtr.Zero);
 				if(pNewDesktop == IntPtr.Zero)
-				{
-					Debug.Assert(false);
-					return DialogResult.Cancel;
-				}
+					throw new InvalidOperationException();
 
 				SecureThreadParams stp = new SecureThreadParams();
 				stp.BackgroundBitmap = bmpBack;
 				stp.ThreadDesktop = pNewDesktop;
+				stp.FormConstructParam = objConstructParam;
 
 				Thread th = new Thread(this.SecureDialogThread);
 				th.CurrentCulture = Thread.CurrentThread.CurrentCulture;
@@ -105,7 +114,8 @@ namespace KeePass.UI
 				if(!NativeMethods.CloseDesktop(pNewDesktop)) { Debug.Assert(false); }
 				NativeMethods.CloseDesktop(pOrgDesktop);
 
-				dr = stp.Result;
+				dr = stp.DialogResult;
+				objResult = stp.ResultObject;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -116,6 +126,16 @@ namespace KeePass.UI
 			ccb.Release();
 
 			if(bmpBack != null) bmpBack.Dispose();
+
+			// If something failed, show the dialog on the normal desktop
+			if(dr == DialogResult.None)
+			{
+				Form f = m_fnConstruct(objConstructParam);
+				dr = f.ShowDialog();
+				objResult = m_fnResultBuilder(f);
+				UIUtil.DestroyForm(f);
+			}
+
 			return dr;
 		}
 
@@ -128,14 +148,28 @@ namespace KeePass.UI
 
 		private void SecureDialogThread(object oParam)
 		{
+			BackgroundForm formBack = null;
+
 			try
 			{
 				SecureThreadParams stp = (oParam as SecureThreadParams);
 				if(stp == null) { Debug.Assert(false); return; }
 
-				if(!NativeMethods.SetThreadDesktop(stp.ThreadDesktop)) { Debug.Assert(false); }
-				Debug.Assert(NativeMethods.GetThreadDesktop(
-					NativeMethods.GetCurrentThreadId()) == stp.ThreadDesktop);
+				if(!NativeMethods.SetThreadDesktop(stp.ThreadDesktop))
+				{
+					Debug.Assert(false);
+					return;
+				}
+
+				ProcessMessagesEx();
+
+				// Test whether we're really on the secure desktop
+				if(NativeMethods.GetThreadDesktop(NativeMethods.GetCurrentThreadId()) !=
+					stp.ThreadDesktop)
+				{
+					Debug.Assert(false);
+					return;
+				}
 
 				// Creating a window on the new desktop spawns a CtfMon.exe child
 				// process by default. On Windows Vista, this process is terminated
@@ -149,7 +183,7 @@ namespace KeePass.UI
 
 				ProcessMessagesEx();
 
-				BackgroundForm formBack = new BackgroundForm(stp.BackgroundBitmap);
+				formBack = new BackgroundForm(stp.BackgroundBitmap);
 				formBack.Show();
 
 				ProcessMessagesEx();
@@ -158,11 +192,30 @@ namespace KeePass.UI
 
 				ProcessMessagesEx();
 
-				stp.Result = m_form.ShowDialog(formBack);
+				Form f = m_fnConstruct(stp.FormConstructParam);
+				if(f == null) { Debug.Assert(false); return; }
 
-				UIUtil.DestroyForm(formBack);
+				if(Program.Config.UI.SecureDesktopPlaySound)
+					UIUtil.PlayUacSound();
+
+				stp.DialogResult = f.ShowDialog(formBack);
+				stp.ResultObject = m_fnResultBuilder(f);
+
+				UIUtil.DestroyForm(f);
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				if(formBack != null)
+				{
+					try
+					{
+						formBack.Close();
+						UIUtil.DestroyForm(formBack);
+					}
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
 		}
 
 		/* private static void BlockPrintScreen(Form f, bool bBlock)

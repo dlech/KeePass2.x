@@ -53,8 +53,7 @@ namespace KeePass.Forms
 			try { if(this.Owner == null) this.Owner = Program.MainForm; }
 			catch(Exception) { Debug.Assert(false); }
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Folder_Download, KPRes.ImportBehavior,
 				KPRes.ImportBehaviorDesc);
 			this.Icon = Properties.Resources.KeePass;

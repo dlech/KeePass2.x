@@ -155,6 +155,13 @@ namespace KeePass.App.Configuration
 			get { return m_bExitInsteadOfLockingAfterTime; }
 			set { m_bExitInsteadOfLockingAfterTime = value; }
 		}
+
+		private bool m_bAlwaysExitInsteadOfLocking = false;
+		public bool AlwaysExitInsteadOfLocking
+		{
+			get { return m_bAlwaysExitInsteadOfLocking; }
+			set { m_bAlwaysExitInsteadOfLocking = value; }
+		}
 	}
 
 	public sealed class AceMasterPassword

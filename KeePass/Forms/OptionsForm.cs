@@ -231,6 +231,8 @@ namespace KeePass.Forms
 				"LockOnRemoteControlChange", m_lvSecurityOptions, lvg, KPRes.LockOnRemoteControlChange);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
 				"ExitInsteadOfLockingAfterTime", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAfterTime);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
+				"AlwaysExitInsteadOfLocking", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAlways);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
 				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
@@ -343,6 +345,8 @@ namespace KeePass.Forms
 				m_lvGuiOptions, lvg, KPRes.UseCustomToolStripRenderer);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ForceSystemFontUnix",
 				m_lvGuiOptions, lvg, KPRes.ForceSystemFontUnix);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbMntncResultsDialog",
+				m_lvGuiOptions, lvg, KPRes.DbMntncResults);
 
 			m_cdxGuiOptions.UpdateData(false);
 			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width -
@@ -435,6 +439,8 @@ namespace KeePass.Forms
 				m_lvAdvanced, lvg, KPRes.TanExpiresOnUse);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RecycleBinCollapse",
 				m_lvAdvanced, lvg, KPRes.RecycleBinCollapse);
+			m_cdxAdvanced.CreateItem(Program.Config.UI, "SecureDesktopPlaySound",
+				m_lvAdvanced, lvg, KPRes.SecDeskPlaySound);
 			m_cdxAdvanced.CreateItem(Program.Config.UI, "OptimizeForScreenReader",
 				m_lvAdvanced, lvg, KPRes.OptimizeForScreenReader);
 
@@ -723,6 +729,12 @@ namespace KeePass.Forms
 		private void OnLockAfterGlobalTimeCheckedChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+		}
+
+		private void OnBtnProxy(object sender, EventArgs e)
+		{
+			ProxyForm dlg = new ProxyForm();
+			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 	}
 }

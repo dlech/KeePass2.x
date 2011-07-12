@@ -273,6 +273,12 @@ namespace KeePass.App.Configuration
 				if(iocMru == null) { Debug.Assert(false); }
 				else iocMru.Obfuscate(bObf);
 			}
+
+			if(bObf) m_int.ProxyUserName = StrUtil.Obfuscate(m_int.ProxyUserName);
+			else m_int.ProxyUserName = StrUtil.Deobfuscate(m_int.ProxyUserName);
+
+			if(bObf) m_int.ProxyPassword = StrUtil.Obfuscate(m_int.ProxyPassword);
+			else m_int.ProxyPassword = StrUtil.Deobfuscate(m_int.ProxyPassword);
 		}
 	}
 

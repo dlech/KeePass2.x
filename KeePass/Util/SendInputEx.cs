@@ -65,7 +65,7 @@ namespace KeePass.Util
 
 				strKeys = ExtractGlobalDelay(strKeys, si); // Before TCATO splitting
 
-				if(bObfuscate && !bUnix)
+				if(bObfuscate)
 				{
 					try { SendObfuscated(strKeys, si); }
 					catch(Exception) { SendKeysWithSpecial(strKeys, si); }

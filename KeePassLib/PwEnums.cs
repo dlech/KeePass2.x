@@ -157,4 +157,11 @@ namespace KeePassLib
 		Count
 	}
 #pragma warning restore 1591 // Missing XML comments warning
+
+	public enum ProxyServerType
+	{
+		None = 0,
+		System = 1,
+		Manual = 2
+	}
 }

@@ -41,6 +41,9 @@ namespace KeePass.Forms
 		private ImageList m_ilIcons = null;
 		private string m_strResultRef = string.Empty;
 
+		private List<KeyValuePair<string, string>> m_vColumns =
+			new List<KeyValuePair<string, string>>();
+
 		public string ResultReference
 		{
 			get { return m_strResultRef; }
@@ -65,16 +68,20 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			List<KeyValuePair<string, string>> vColumns =
-				new List<KeyValuePair<string, string>>();
-			vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
-			vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
-			vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
-			vColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
+			this.Icon = Properties.Resources.KeePass;
+
+			UIUtil.SetExplorerTheme(m_lvEntries.Handle);
+
+			if(UISystemFonts.ListFont != null)
+				m_lvEntries.Font = UISystemFonts.ListFont;
+
+			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
+			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
+			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
+			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
 
 			PwObjectList<PwEntry> vEntries = m_pgEntrySource.GetEntries(true);
-
-			UIUtil.CreateEntryList(m_lvEntries, vEntries, vColumns, m_ilIcons);
+			UIUtil.CreateEntryList(m_lvEntries, vEntries, m_vColumns, m_ilIcons);
 
 			m_radioIdUuid.Checked = true;
 			m_radioRefPassword.Checked = true;
@@ -90,7 +97,7 @@ namespace KeePass.Forms
 			ListView.SelectedListViewItemCollection lvsic = m_lvEntries.SelectedItems;
 			if((lvsic == null) || (lvsic.Count != 1)) return null;
 
-			return lvsic[0].Tag as PwEntry;
+			return (lvsic[0].Tag as PwEntry);
 		}
 
 		private bool CreateResultRef()
@@ -170,7 +177,7 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			if(this.CreateResultRef() == false) this.DialogResult = DialogResult.None;
+			if(!this.CreateResultRef()) this.DialogResult = DialogResult.None;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -190,6 +197,37 @@ namespace KeePass.Forms
 		private void OnBtnHelp(object sender, EventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.FieldRefs, null);
+		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			if(((keyData == Keys.Return) || (keyData == Keys.Enter)) && m_tbFilter.Focused)
+				return false; // Forward to TextBox
+
+			return base.ProcessDialogKey(keyData);
+		}
+
+		private void OnFilterKeyDown(object sender, KeyEventArgs e)
+		{
+			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			{
+				e.SuppressKeyPress = true;
+
+				SearchParameters sp = new SearchParameters();
+				sp.SearchString = m_tbFilter.Text;
+				sp.SearchInPasswords = true;
+
+				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();
+				m_pgEntrySource.SearchEntries(sp, lResults, true);
+
+				UIUtil.CreateEntryList(m_lvEntries, lResults, m_vColumns, m_ilIcons);
+			}
+		}
+
+		private void OnFilterKeyUp(object sender, KeyEventArgs e)
+		{
+			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+				e.SuppressKeyPress = true;
 		}
 	}
 }

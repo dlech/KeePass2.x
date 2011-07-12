@@ -18,12 +18,11 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
+// using System.Runtime.Remoting;
+// using System.Runtime.Remoting.Channels;
+// using System.Runtime.Remoting.Channels.Ipc;
 using System.Security.Cryptography;
 
 using KeePass.Native;
@@ -32,15 +31,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static class IpcBroadcast
+	public static partial class IpcBroadcast
 	{
-		private static IpcServerChannel m_chServer = null;
-		private static IpcClientChannel m_chClient = null;
+		// private static IpcServerChannel m_chServer = null;
+		// private static IpcClientChannel m_chClient = null;
 
-		private const string IpcServerPortName = "KeePassBroadcastPort";
-		private const string IpcObjectName = "KeePassBroadcastSingleton";
-
-		private static string m_strPortName = null;
+		// private const string IpcServerPortName = "KeePassBroadcastPort";
+		// private const string IpcObjectName = "KeePassBroadcastSingleton";
 
 		public static void Send(Program.AppMessage msg, int lParam,
 			bool bWaitWithTimeout)
@@ -60,26 +57,33 @@ namespace KeePass.Util
 			}
 			else // Unix
 			{
-				if(m_chClient == null)
-				{
-					m_chClient = new IpcClientChannel();
-					ChannelServices.RegisterChannel(m_chClient, false);
-				}
+				// if(m_chClient == null)
+				// {
+				//	m_chClient = new IpcClientChannel();
+				//	ChannelServices.RegisterChannel(m_chClient, false);
+				// }
+				// try
+				// {
+				//	IpcBroadcastSingleton ipc = (Activator.GetObject(typeof(
+				//		IpcBroadcastSingleton), "ipc://" + GetPortName() + "/" +
+				//		IpcObjectName) as IpcBroadcastSingleton);
+				//	if(ipc != null) ipc.Call((int)msg, lParam);
+				// }
+				// catch(Exception) { } // Server might not exist
 
-				try
-				{
-					IpcBroadcastSingleton ipc = (Activator.GetObject(typeof(
-						IpcBroadcastSingleton), "ipc://" + GetPortName() + "/" +
-						IpcObjectName) as IpcBroadcastSingleton);
-					if(ipc != null) ipc.Call((int)msg, lParam);
-				}
-				catch(Exception) { } // Server might not exist
+				FswSend(msg, lParam);
 			}
 		}
 
-		private static string GetPortName()
+		// private static string GetPortName()
+		// {
+		//	return (IpcServerPortName + "-" + GetUserID());
+		// }
+
+		private static string m_strUserID = null;
+		internal static string GetUserID()
 		{
-			if(m_strPortName != null) return m_strPortName;
+			if(m_strUserID != null) return m_strUserID;
 
 			string strID = (Environment.UserName ?? string.Empty) + @" @ " +
 				(Environment.MachineName ?? string.Empty);
@@ -94,8 +98,8 @@ namespace KeePass.Util
 			strShort = strShort.Replace(@"/", string.Empty);
 			if(strShort.Length > 8) strShort = strShort.Substring(0, 8);
 
-			m_strPortName = IpcServerPortName + "-" + strShort;
-			return m_strPortName;
+			m_strUserID = strShort;
+			return strShort;
 		}
 
 		public static void StartServer()
@@ -104,46 +108,48 @@ namespace KeePass.Util
 
 			if(!KeePassLib.Native.NativeLib.IsUnix()) return; // Windows
 
-			IDictionary dOpt = new Hashtable();
-			dOpt["portName"] = GetPortName();
-			dOpt["exclusiveAddressUse"] = false;
-			dOpt["secure"] = false;
+			// IDictionary dOpt = new Hashtable();
+			// dOpt["portName"] = GetPortName();
+			// dOpt["exclusiveAddressUse"] = false;
+			// dOpt["secure"] = false;
+			// m_chServer = new IpcServerChannel(dOpt, null);
+			// ChannelServices.RegisterChannel(m_chServer, false);
+			// RemotingConfiguration.RegisterWellKnownServiceType(typeof(
+			//	IpcBroadcastSingleton), IpcObjectName,
+			//	WellKnownObjectMode.SingleCall);
 
-			m_chServer = new IpcServerChannel(dOpt, null);
-			ChannelServices.RegisterChannel(m_chServer, false);
-
-			RemotingConfiguration.RegisterWellKnownServiceType(typeof(
-				IpcBroadcastSingleton), IpcObjectName,
-				WellKnownObjectMode.SingleCall);
+			FswStartServer();
 		}
 
 		public static void StopServer()
 		{
-			if(m_chClient != null)
-			{
-				ChannelServices.UnregisterChannel(m_chClient);
-				m_chClient = null;
-			}
+			if(!KeePassLib.Native.NativeLib.IsUnix()) return; // Windows
 
-			if(m_chServer != null)
-			{
-				ChannelServices.UnregisterChannel(m_chServer);
-				m_chServer = null;
-			}
+			// if(m_chClient != null)
+			// {
+			//	ChannelServices.UnregisterChannel(m_chClient);
+			//	m_chClient = null;
+			// }
+			// if(m_chServer != null)
+			// {
+			//	ChannelServices.UnregisterChannel(m_chServer);
+			//	m_chServer = null;
+			// }
+
+			FswStopServer();
 		}
 	}
 
-	public sealed class IpcBroadcastSingleton : MarshalByRefObject
-	{
-		public void Call(int msg, int lParam)
-		{
-			Program.MainForm.Invoke(new CallPrivDelegate(CallPriv), msg, lParam);
-		}
-
-		public delegate void CallPrivDelegate(int msg, int lParam);
-		private void CallPriv(int msg, int lParam)
-		{
-			Program.MainForm.ProcessAppMessage(new IntPtr(msg), new IntPtr(0));
-		}
-	}
+	// public sealed class IpcBroadcastSingleton : MarshalByRefObject
+	// {
+	//	public void Call(int msg, int lParam)
+	//	{
+	//		Program.MainForm.Invoke(new CallPrivDelegate(CallPriv), msg, lParam);
+	//	}
+	//	public delegate void CallPrivDelegate(int msg, int lParam);
+	//	private void CallPriv(int msg, int lParam)
+	//	{
+	//		Program.MainForm.ProcessAppMessage(new IntPtr(msg), new IntPtr(lParam));
+	//	}
+	// }
 }

@@ -45,7 +45,6 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -314,6 +313,7 @@
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
     <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />
     <Compile Include="DataExchange\Formats\HandySafeTxt512.cs" />
+    <Compile Include="DataExchange\Formats\KasperskyPwMgrXml50.cs" />
     <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
@@ -345,6 +345,7 @@
     <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
     <Compile Include="DataExchange\Formats\SplashIdCsv402.cs" />
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
+    <Compile Include="DataExchange\Formats\StickyPwXml50.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
     <Compile Include="DataExchange\Formats\WinFavorites10.cs" />
@@ -565,6 +566,12 @@
     <Compile Include="Forms\PrintForm.Designer.cs">
       <DependentUpon>PrintForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ProxyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProxyForm.Designer.cs">
+      <DependentUpon>ProxyForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\PwEntryForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -671,14 +678,15 @@
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
+    <Compile Include="UI\ImageComboBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\KeyboardControl.cs">
     </Compile>
     <Compile Include="UI\ListViewSortMenu.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
     <Compile Include="UI\OnDemandStatusDialog.cs" />
-    <Compile Include="UI\PasswordListPrintDocument.cs">
-    </Compile>
     <Compile Include="UI\PromptedTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -838,6 +846,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PrintForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProxyForm.resx">
+      <DependentUpon>ProxyForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\PwEntryForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PwEntryForm.cs</DependentUpon>
@@ -888,7 +899,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="UI\BannerFactory.cs" />
+    <Compile Include="UI\BannerFactory.cs">
+    </Compile>
     <Compile Include="UI\MruList.cs" />
     <Compile Include="UI\ShowWarningsLogger.cs" />
     <Compile Include="UI\StatusBarLogger.cs" />
@@ -921,8 +933,10 @@
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
+    <Compile Include="Util\GlobalMutexPool.cs" />
     <Compile Include="Util\IniFile.cs" />
     <Compile Include="Util\IpcBroadcast.cs" />
+    <Compile Include="Util\IpcBroadcast.Fsw.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
@@ -1066,6 +1080,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_KasperskyPwMgr.png" />
+    <None Include="Resources\Images\B16x16_Imp_StickyPw.png" />
     <None Include="Resources\Images\B16x16_Imp_PwsPlus.png" />
     <None Include="Resources\Nuvola\B16x16_KaboodleLoop.png" />
     <None Include="Resources\Images\B16x16_MenuRadio.png" />

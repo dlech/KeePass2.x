@@ -103,7 +103,7 @@ namespace KeePass.Forms
 			if(strRect.Length > 0) UIUtil.SetWindowScreenRect(this, strRect);
 			m_strInitialFormRect = UIUtil.GetWindowScreenRect(this);
 
-			m_fontChars = new Font("Tahoma", 8.25f, FontStyle.Bold);
+			m_fontChars = FontUtil.CreateFont("Tahoma", 8.25f, FontStyle.Bold);
 
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.PickCharacters + " - " + PwDefs.ShortProductName;
@@ -192,10 +192,8 @@ namespace KeePass.Forms
 		{
 			string strTitle = KPRes.PickCharacters;
 			if(m_uCharCount > 0) strTitle += " (" + m_uCharCount.ToString() + ")";
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_KGPG_Key2, strTitle,
-				KPRes.PickCharactersDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				Properties.Resources.B48x48_KGPG_Key2, strTitle, KPRes.PickCharactersDesc);
 
 			RemoveAllCharButtons();
 
@@ -203,13 +201,14 @@ namespace KeePass.Forms
 			if(strWord.Length >= 1)
 			{
 				int x = 0;
+				int nPnlWidth = m_pnlSelect.Width, nPnlHeight = m_pnlSelect.Height;
 				for(int i = 0; i < strWord.Length; ++i)
 				{
-					int w = ((m_pnlSelect.Width * (i + 1)) / strWord.Length) - x;
+					int w = ((nPnlWidth * (i + 1)) / strWord.Length) - x;
 
 					Button btn = new Button();
 					btn.Location = new Point(x, 0);
-					btn.Size = new Size(w, m_pnlSelect.Height / 2 - 1);
+					btn.Size = new Size(w, nPnlHeight / 2 - 1);
 					btn.Font = m_fontChars;
 					btn.Tag = strWord[i];
 					btn.Click += this.OnSelectCharacter;
@@ -220,8 +219,8 @@ namespace KeePass.Forms
 					Label lbl = new Label();
 					lbl.Text = (i + 1).ToString();
 					lbl.TextAlign = ContentAlignment.MiddleCenter;
-					lbl.Location = new Point(x, m_pnlSelect.Height / 2);
-					lbl.Size = new Size(w + 1, m_pnlSelect.Height / 2 - 3);
+					lbl.Location = new Point(x, nPnlHeight / 2);
+					lbl.Size = new Size(w + 1, nPnlHeight / 2 - 3);
 
 					m_lLabels.Add(lbl);
 					m_pnlSelect.Controls.Add(lbl);

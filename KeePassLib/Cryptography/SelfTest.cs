@@ -76,7 +76,7 @@ namespace KeePassLib.Cryptography
 			Debug.Assert((int)PwIcon.BlackBerry == 68);
 		}
 
-		private static void TestFipsComplianceProblems()
+		internal static void TestFipsComplianceProblems()
 		{
 			try { new RijndaelManaged(); }
 			catch(Exception exAes)

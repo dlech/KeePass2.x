@@ -270,7 +270,9 @@ namespace KeePassLib.Utility
 
 			string strTitle = PwDefs.ShortProductName + @" - " + KLRes.FatalError;
 			string strText = KLRes.FatalErrorText + MessageService.NewParagraph +
-				KLRes.ErrorFeedbackRequest + MessageService.NewParagraph +
+				KLRes.ErrorInClipboard + MessageService.NewParagraph +
+				// Please send it to the KeePass developers.
+				// KLRes.ErrorFeedbackRequest + MessageService.NewParagraph +
 				ObjectsToMessage(vLines);
 
 			try

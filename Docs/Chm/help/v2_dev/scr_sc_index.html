@@ -100,6 +100,7 @@ next release of KPScript.</p>
 <li>Export</li>
 <li>Sync</li>
 <li>ChangeMasterKey</li>
+<li>DetachBins</li>
 </ul>
 
 <hr />
@@ -195,6 +196,17 @@ options prefixed with 'new', i.e. <code>-newpw:</code>, <code>-newkeyfile:</code
 and <code>-newuseraccount</code> (all are optional). Usage example:</p>
 
 <p><code>KPScript -c:ChangeMasterKey &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -newpw:MyNewPw</code></p>
+
+<hr />
+<p><b>Command: DetachBins</b></p>
+
+<p>This command saves all entry attachments (into the directory of the database)
+and removes them from the database.
+<!-- This might e.g. be useful when the database is too large to be opened on
+the current computer. -->
+Usage example:</p>
+
+<p><code>KPScript -c:DetachBins -guikeyprompt &quot;C:\KeePass\MyDb.kdbx&quot;</code></p>
 
 </body></html>
 

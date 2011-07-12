@@ -193,7 +193,7 @@ namespace KeePass.Util
 			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return true;
 
 			uint uIgnoreFmt = NativeMethods.RegisterClipboardFormat(
-					ClipboardIgnoreFormatName);
+				ClipboardIgnoreFormatName);
 			if(uIgnoreFmt == 0) { Debug.Assert(false); return false; }
 
 			return SetDataW(uIgnoreFmt, PwDefs.ProductName, null);

@@ -32,7 +32,7 @@ namespace KeePass.UI
 
 		public TabControlEx() : base()
 		{
-			m_fBold = new Font(this.Font, FontStyle.Bold);
+			m_fBold = FontUtil.CreateFont(this.Font, FontStyle.Bold);
 
 			this.DrawMode = TabDrawMode.OwnerDrawFixed;
 		}

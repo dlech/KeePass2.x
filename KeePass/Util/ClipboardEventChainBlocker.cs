@@ -30,18 +30,20 @@ namespace KeePass.Util
 {
 	public sealed class ClipboardEventChainBlocker
 	{
-		private ClipboardBlockerForm m_form;
-		private IntPtr m_hChain;
+		private ClipboardBlockerForm m_form = null;
+		private IntPtr m_hChain = IntPtr.Zero;
 
 		public ClipboardEventChainBlocker()
 		{
+			if(KeePassLib.Native.NativeLib.IsUnix()) return; // Unsupported
+
 			m_form = new ClipboardBlockerForm();
 
 			try
 			{
 				m_hChain = NativeMethods.SetClipboardViewer(m_form.Handle);
 			}
-			catch(Exception) { Debug.Assert(false); m_hChain = IntPtr.Zero; }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		~ClipboardEventChainBlocker()

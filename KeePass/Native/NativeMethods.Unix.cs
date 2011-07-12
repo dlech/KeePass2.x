@@ -114,6 +114,8 @@ namespace KeePass.Native
 		{
 			try
 			{
+				Application.DoEvents(); // E.g. for clipboard updates
+
 				ProcessStartInfo psi = new ProcessStartInfo();
 
 				psi.CreateNoWindow = true;
@@ -129,6 +131,7 @@ namespace KeePass.Native
 				string strOutput = p.StandardOutput.ReadToEnd();
 				p.WaitForExit();
 
+				Application.DoEvents(); // E.g. for clipboard updates
 				return strOutput;
 			}
 			catch(Exception) { Debug.Assert(false); }

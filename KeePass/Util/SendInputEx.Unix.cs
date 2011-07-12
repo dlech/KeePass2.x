@@ -79,6 +79,8 @@ namespace KeePass.Util
 				m_dictXDoReplace[@")"] = "parenright";
 				m_dictXDoReplace[@"{"] = "braceleft";
 				m_dictXDoReplace[@"}"] = "braceright";
+				m_dictXDoReplace[@"["] = "bracketleft";
+				m_dictXDoReplace[@"]"] = "bracketright";
 
 				foreach(string strKpKey in m_dictXDoReplace.Keys)
 				{
@@ -91,6 +93,10 @@ namespace KeePass.Util
 			strSequence = strSequence.Replace(@"{~}", strTildeEnc);
 			strSequence = strSequence.Replace(@"~", @"{ENTER}");
 			strSequence = strSequence.Replace(strTildeEnc, @"{~}");
+
+			// Support sending apostrophes (encoding required, because
+			// the xdotool command line parameter is wrapped in '')
+			strSequence = strSequence.Replace(@"'", @"{apostrophe}");
 
 			StringBuilder sb = new StringBuilder();
 			bool bInCode = false;

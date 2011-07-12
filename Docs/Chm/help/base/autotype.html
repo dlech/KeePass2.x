@@ -182,11 +182,11 @@ here, click into the
 textbox below &quot;Global Auto-Type Hot Key Combination&quot; and press the
 hot key that you wish to use. If the hot key is usable, it will appear in the textbox.</p>
 
-<p>When you press the hot key, KeePass will look at the title of the currently opened window and
-search the currently opened database for usable entries. If KeePass finds multiple
-entries that can be used, it displays a selection dialog. In order to decide if an
-entry is usable for the current window title, at least one of the following conditions
-must be fulfilled:</p>
+<p>When you press the hot key, KeePass looks at the title of the currently opened window and
+searches the currently opened database for usable entries. If KeePass finds multiple
+entries that can be used, it displays a selection dialog.
+An entry is considered to be usable for the current window title when
+at least one of the following conditions is fulfilled:</p>
 
 <ul>
 <li>The title of the entry is a substring of the currently active window title.</li>
@@ -307,6 +307,8 @@ The following codes for special keys are supported:</p>
 <table class="tablebox75">
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
 <tr><td width="50%">{DELAY <i>X</i>}</td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
+<tr><td width="50%">{CLEARFIELD}</td><td width="50%">Clears the contents of the edit control that currently
+has the focus (only single-line edit controls).</td></tr>
 <tr><td width="50%">{VKEY <i>X</i>}</td><td width="50%">Sends the virtual key of value <i>X</i>.</td></tr>
 </table>
 

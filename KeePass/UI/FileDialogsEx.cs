@@ -54,7 +54,7 @@ namespace KeePass.UI
 				else strText += ".";
 
 				dlg.CommandLinks = true;
-				dlg.WindowTitle = PwDefs.ProductName;
+				dlg.WindowTitle = PwDefs.ShortProductName;
 				dlg.Content = strText;
 				dlg.SetIcon(VtdCustomIcon.Question);
 

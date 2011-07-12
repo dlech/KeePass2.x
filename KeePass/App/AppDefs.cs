@@ -154,6 +154,7 @@ namespace KeePass.App
 			public const string Debug = "debug";
 			public const string SavePluginCompileRes = "saveplgxcr";
 			public const string ShowAssemblyInfo = "showasminfo";
+			public const string DebugThrowException = "debug-throwexcp";
 
 #if (DEBUG && !KeePassLibSD)
 			public const string MakePopularPasswordTable = "makepopularpasswordtable";

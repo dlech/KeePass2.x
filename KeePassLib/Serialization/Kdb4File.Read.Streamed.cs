@@ -592,7 +592,16 @@ namespace KeePassLib.Serialization
 			}
 			else if((ctx == KdbContext.EntryBinary) && (xr.Name == ElemBinary))
 			{
-				m_ctxEntry.Binaries.Set(m_ctxBinaryName, m_ctxBinaryValue);
+				if(string.IsNullOrEmpty(m_strDetachBins))
+					m_ctxEntry.Binaries.Set(m_ctxBinaryName, m_ctxBinaryValue);
+				else
+				{
+					SaveBinary(m_ctxBinaryName, m_ctxBinaryValue, m_strDetachBins);
+
+					m_ctxBinaryValue = null;
+					GC.Collect();
+				}
+
 				m_ctxBinaryName = null;
 				m_ctxBinaryValue = null;
 				return KdbContext.Entry;

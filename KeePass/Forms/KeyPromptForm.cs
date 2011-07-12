@@ -60,11 +60,7 @@ namespace KeePass.Forms
 
 		public CompositeKey CompositeKey
 		{
-			get
-			{
-				Debug.Assert(m_pKey != null);
-				return m_pKey;
-			}
+			get { return m_pKey; }
 		}
 
 		public bool HasClosedWithExit
@@ -117,8 +113,7 @@ namespace KeePass.Forms
 			string strBannerTitle = (!string.IsNullOrEmpty(m_strCustomTitle) ?
 				m_strCustomTitle : KPRes.EnterCompositeKey);
 			string strBannerDesc = WinUtil.CompactPath(m_ioInfo.Path, 45);
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Key2, strBannerTitle, strBannerDesc);
 			this.Icon = Properties.Resources.KeePass;
 

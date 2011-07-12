@@ -46,13 +46,13 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, 2.15 = 0x02010500, etc.
 		/// </summary>
-		public const uint Version32 = 0x02010500;
-		public const ulong FileVersion64 = 0x0002000F00000000UL;
+		public const uint Version32 = 0x02010600;
+		public const ulong FileVersion64 = 0x0002001000000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.15";
+		public const string VersionString = "2.16";
 
 		public const string Copyright = @"Copyright © 2003-2011 Dominik Reichl";
 

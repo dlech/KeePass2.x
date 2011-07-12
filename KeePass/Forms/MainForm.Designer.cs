@@ -35,6 +35,7 @@
 			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupDelete = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupEmpty = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupFind = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep2 = new System.Windows.Forms.ToolStripSeparator();
@@ -156,7 +157,12 @@
 			this.m_menuToolsGeneratePwList = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsTanWizard = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsDb = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsDbMaintenance = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsDbSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuToolsDbDelDupEntries = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsDbDelEmptyGroups = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsDbDelUnusedIcons = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsTriggers = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
@@ -232,6 +238,7 @@
             this.m_ctxGroupSep0,
             this.m_ctxGroupEdit,
             this.m_ctxGroupDelete,
+            this.m_ctxGroupEmpty,
             this.m_ctxGroupSep1,
             this.m_ctxGroupFind,
             this.m_ctxGroupSep2,
@@ -240,7 +247,7 @@
             this.m_ctxGroupSep3,
             this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(227, 182);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(166, 226);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupAdd
@@ -268,10 +275,17 @@
 			// 
 			this.m_ctxGroupDelete.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
-			this.m_ctxGroupDelete.ShortcutKeyDisplayString = "Del";
 			this.m_ctxGroupDelete.Size = new System.Drawing.Size(226, 22);
 			this.m_ctxGroupDelete.Text = "Dele&te Group";
 			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
+			// 
+			// m_ctxGroupEmpty
+			// 
+			this.m_ctxGroupEmpty.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
+			this.m_ctxGroupEmpty.Name = "m_ctxGroupEmpty";
+			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupEmpty.Text = "&Empty Recycle Bin";
+			this.m_ctxGroupEmpty.Click += new System.EventHandler(this.OnGroupsEmpty);
 			// 
 			// m_ctxGroupSep1
 			// 
@@ -282,9 +296,7 @@
 			// 
 			this.m_ctxGroupFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_ctxGroupFind.Name = "m_ctxGroupFind";
-			this.m_ctxGroupFind.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
-						| System.Windows.Forms.Keys.F)));
-			this.m_ctxGroupFind.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupFind.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupFind.Text = "&Find in this Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnGroupsFind);
 			// 
@@ -332,7 +344,6 @@
 			// 
 			this.m_ctxGroupMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
-			this.m_ctxGroupMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
 			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(240, 22);
 			this.m_ctxGroupMoveToTop.Text = "Move Group to &Top";
 			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
@@ -341,7 +352,6 @@
 			// 
 			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
-			this.m_ctxGroupMoveOneUp.ShortcutKeyDisplayString = "Alt+Up";
 			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(240, 22);
 			this.m_ctxGroupMoveOneUp.Text = "Move Group &One Up";
 			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
@@ -350,8 +360,7 @@
 			// 
 			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
-			this.m_ctxGroupMoveOneDown.ShortcutKeyDisplayString = "Alt+Down";
-			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(225, 22);
 			this.m_ctxGroupMoveOneDown.Text = "Mo&ve Group One Down";
 			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
 			// 
@@ -359,8 +368,7 @@
 			// 
 			this.m_ctxGroupMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxGroupMoveToBottom.Name = "m_ctxGroupMoveToBottom";
-			this.m_ctxGroupMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
-			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupMoveToBottom.Text = "Move Group to &Bottom";
 			this.m_ctxGroupMoveToBottom.Click += new System.EventHandler(this.OnGroupsMoveToBottom);
 			// 
@@ -488,7 +496,6 @@
 			// 
 			this.m_ctxEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
 			this.m_ctxEntryCopyUserName.Name = "m_ctxEntryCopyUserName";
-			this.m_ctxEntryCopyUserName.ShortcutKeyDisplayString = "Ctrl+B";
 			this.m_ctxEntryCopyUserName.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryCopyUserName.Text = "Copy User &Name";
 			this.m_ctxEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
@@ -497,7 +504,6 @@
 			// 
 			this.m_ctxEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
 			this.m_ctxEntryCopyPassword.Name = "m_ctxEntryCopyPassword";
-			this.m_ctxEntryCopyPassword.ShortcutKeyDisplayString = "Ctrl+C";
 			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryCopyPassword.Text = "<COPYPW>";
 			this.m_ctxEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
@@ -517,7 +523,6 @@
 			// 
 			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
-			this.m_ctxEntryOpenUrl.ShortcutKeyDisplayString = "Ctrl+U";
 			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(190, 22);
 			this.m_ctxEntryOpenUrl.Text = "&Open in Browser";
 			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
@@ -574,7 +579,6 @@
 			// 
 			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KRec_Record;
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
-			this.m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = "Ctrl+V";
 			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryPerformAutoType.Text = "&Perform Auto-Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
@@ -588,7 +592,6 @@
 			// 
 			this.m_ctxEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_ctxEntryAdd.Name = "m_ctxEntryAdd";
-			this.m_ctxEntryAdd.ShortcutKeyDisplayString = "Ins";
 			this.m_ctxEntryAdd.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryAdd.Text = "&Add Entry...";
 			this.m_ctxEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
@@ -597,7 +600,6 @@
 			// 
 			this.m_ctxEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_ctxEntryEdit.Name = "m_ctxEntryEdit";
-			this.m_ctxEntryEdit.ShortcutKeyDisplayString = "Return";
 			this.m_ctxEntryEdit.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryEdit.Text = "&Edit/View Entry...";
 			this.m_ctxEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
@@ -614,7 +616,6 @@
 			// 
 			this.m_ctxEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_ctxEntryDelete.Name = "m_ctxEntryDelete";
-			this.m_ctxEntryDelete.ShortcutKeyDisplayString = "Del";
 			this.m_ctxEntryDelete.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryDelete.Text = "&Delete Entry";
 			this.m_ctxEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
@@ -762,7 +763,6 @@
 			// m_ctxEntrySelectAll
 			// 
 			this.m_ctxEntrySelectAll.Name = "m_ctxEntrySelectAll";
-			this.m_ctxEntrySelectAll.ShortcutKeyDisplayString = "Ctrl+A";
 			this.m_ctxEntrySelectAll.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntrySelectAll.Text = "Se&lect All";
 			this.m_ctxEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
@@ -813,7 +813,6 @@
 			// 
 			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
-			this.m_ctxEntryMoveToTop.ShortcutKeyDisplayString = "Alt+Home";
 			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveToTop.Text = "Move Entry to &Top";
 			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
@@ -822,7 +821,6 @@
 			// 
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
-			this.m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = "Alt+Up";
 			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(235, 22);
 			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
@@ -831,8 +829,7 @@
 			// 
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
-			this.m_ctxEntryMoveOneDown.ShortcutKeyDisplayString = "Alt+Down";
-			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(220, 22);
 			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
@@ -840,8 +837,7 @@
 			// 
 			this.m_ctxEntryMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxEntryMoveToBottom.Name = "m_ctxEntryMoveToBottom";
-			this.m_ctxEntryMoveToBottom.ShortcutKeyDisplayString = "Alt+End";
-			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(182, 22);
 			this.m_ctxEntryMoveToBottom.Text = "Move Entry to &Bottom";
 			this.m_ctxEntryMoveToBottom.Click += new System.EventHandler(this.OnEntryMoveToBottom);
 			// 
@@ -1299,7 +1295,7 @@
             this.m_menuToolsGeneratePwList,
             this.m_menuToolsSep0,
             this.m_menuToolsTanWizard,
-            this.m_menuToolsDbMaintenance,
+            this.m_menuToolsDb,
             this.m_menuToolsSep1,
             this.m_menuToolsTriggers,
             this.m_menuToolsPlugins,
@@ -1338,13 +1334,54 @@
 			this.m_menuToolsTanWizard.Text = "&TAN Wizard...";
 			this.m_menuToolsTanWizard.Click += new System.EventHandler(this.OnToolsTanWizard);
 			// 
+			// m_menuToolsDb
+			// 
+			this.m_menuToolsDb.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuToolsDbMaintenance,
+            this.m_menuToolsDbSep0,
+            this.m_menuToolsDbDelDupEntries,
+            this.m_menuToolsDbDelEmptyGroups,
+            this.m_menuToolsDbDelUnusedIcons});
+			this.m_menuToolsDb.Name = "m_menuToolsDb";
+			this.m_menuToolsDb.Size = new System.Drawing.Size(195, 22);
+			this.m_menuToolsDb.Text = "&Database Tools";
+			// 
 			// m_menuToolsDbMaintenance
 			// 
 			this.m_menuToolsDbMaintenance.Image = global::KeePass.Properties.Resources.B16x16_Package_Settings;
 			this.m_menuToolsDbMaintenance.Name = "m_menuToolsDbMaintenance";
-			this.m_menuToolsDbMaintenance.Size = new System.Drawing.Size(195, 22);
+			this.m_menuToolsDbMaintenance.Size = new System.Drawing.Size(212, 22);
 			this.m_menuToolsDbMaintenance.Text = "Database &Maintenance...";
 			this.m_menuToolsDbMaintenance.Click += new System.EventHandler(this.OnToolsDbMaintenance);
+			// 
+			// m_menuToolsDbSep0
+			// 
+			this.m_menuToolsDbSep0.Name = "m_menuToolsDbSep0";
+			this.m_menuToolsDbSep0.Size = new System.Drawing.Size(209, 6);
+			// 
+			// m_menuToolsDbDelDupEntries
+			// 
+			this.m_menuToolsDbDelDupEntries.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
+			this.m_menuToolsDbDelDupEntries.Name = "m_menuToolsDbDelDupEntries";
+			this.m_menuToolsDbDelDupEntries.Size = new System.Drawing.Size(212, 22);
+			this.m_menuToolsDbDelDupEntries.Text = "Delete &Duplicate Entries";
+			this.m_menuToolsDbDelDupEntries.Click += new System.EventHandler(this.OnToolsDelDupEntries);
+			// 
+			// m_menuToolsDbDelEmptyGroups
+			// 
+			this.m_menuToolsDbDelEmptyGroups.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
+			this.m_menuToolsDbDelEmptyGroups.Name = "m_menuToolsDbDelEmptyGroups";
+			this.m_menuToolsDbDelEmptyGroups.Size = new System.Drawing.Size(212, 22);
+			this.m_menuToolsDbDelEmptyGroups.Text = "Delete Empty &Groups";
+			this.m_menuToolsDbDelEmptyGroups.Click += new System.EventHandler(this.OnToolsDelEmptyGroups);
+			// 
+			// m_menuToolsDbDelUnusedIcons
+			// 
+			this.m_menuToolsDbDelUnusedIcons.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
+			this.m_menuToolsDbDelUnusedIcons.Name = "m_menuToolsDbDelUnusedIcons";
+			this.m_menuToolsDbDelUnusedIcons.Size = new System.Drawing.Size(212, 22);
+			this.m_menuToolsDbDelUnusedIcons.Text = "Delete Unused Custom &Icons";
+			this.m_menuToolsDbDelUnusedIcons.Click += new System.EventHandler(this.OnToolsDelUnusedIcons);
 			// 
 			// m_menuToolsSep1
 			// 
@@ -2016,7 +2053,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_tbViewsShowExpired;
 		private System.Windows.Forms.ToolStripSplitButton m_tbAddEntry;
 		private System.Windows.Forms.ToolStripMenuItem m_tbAddEntryDefault;
-		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbMaintenance;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyCustomString;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsGeneratePwList;
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsSep1;
@@ -2073,6 +2109,13 @@
 		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSort;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSortRec;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupEmpty;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDb;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbMaintenance;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelDupEntries;
+		private System.Windows.Forms.ToolStripSeparator m_menuToolsDbSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelEmptyGroups;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelUnusedIcons;
 	}
 }
 

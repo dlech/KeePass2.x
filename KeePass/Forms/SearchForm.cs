@@ -87,10 +87,8 @@ namespace KeePass.Forms
 			if((m_pgRoot != null) && (m_pgRoot.ParentGroup != null))
 				strTitle += " - " + m_pgRoot.Name;
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
-				Properties.Resources.B48x48_XMag, strTitle,
-				KPRes.SearchDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc);
 			this.Icon = Properties.Resources.KeePass;
 
 			SearchParameters sp = Program.Config.Defaults.SearchParameters;

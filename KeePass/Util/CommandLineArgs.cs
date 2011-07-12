@@ -24,6 +24,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 
+using KeePassLib.Native;
+
 namespace KeePass.Util
 {
 	public sealed class CommandLineArgs
@@ -102,7 +104,8 @@ namespace KeePass.Util
 
 			if(str.StartsWith("--")) str = str.Remove(0, 2);
 			else if(str.StartsWith("-")) str = str.Remove(0, 1);
-			else if(str.StartsWith("/")) str = str.Remove(0, 1);
+			else if(str.StartsWith("/") && !NativeLib.IsUnix())
+				str = str.Remove(0, 1);
 			else return new KeyValuePair<string, string>(string.Empty, str);
 
 			int posDbl = str.IndexOf(':');
@@ -112,7 +115,7 @@ namespace KeePass.Util
 				return new KeyValuePair<string, string>(str.ToLower(), string.Empty);
 
 			int posMin = Math.Min(posDbl, posEq);
-			if(posMin < 0) posMin = (posDbl < 0) ? posEq : posDbl;
+			if(posMin < 0) posMin = ((posDbl < 0) ? posEq : posDbl);
 
 			if(posMin <= 0)
 				return new KeyValuePair<string, string>(str.ToLower(), string.Empty);

@@ -51,6 +51,7 @@ namespace KeePass.Forms
 			new Stack<KeyValuePair<int, int>>();
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
 
+		private string m_strInitialFormRect = string.Empty;
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
 		/// <summary>
@@ -82,13 +83,6 @@ namespace KeePass.Forms
 			InitializeComponent();
 			Program.Translation.ApplyTo(this);
 			Program.Translation.ApplyTo("KeePass.Forms.DataEditorForm.m_menuMain", m_menuMain.Items);
-
-			if((Program.Config.UI.DataEditorWidth != AppDefs.InvalidWindowValue) &&
-				(Program.Config.UI.DataEditorHeight != AppDefs.InvalidWindowValue))
-			{
-				this.Width = Program.Config.UI.DataEditorWidth;
-				this.Height = Program.Config.UI.DataEditorHeight;
-			}
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -100,6 +94,10 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 			this.DoubleBuffered = true;
+
+			string strRect = Program.Config.UI.DataEditorRect;
+			if(strRect.Length > 0) UIUtil.SetWindowScreenRect(this, strRect);
+			m_strInitialFormRect = UIUtil.GetWindowScreenRect(this);
 
 			m_bdc = BinaryDataClassifier.Classify(m_strDataDesc, m_pbData);
 			string strEncodingName;
@@ -271,59 +269,45 @@ namespace KeePass.Forms
 					OnFileSave(sender, EventArgs.Empty);
 			}
 
-			Program.Config.UI.DataEditorWidth = this.Width;
-			Program.Config.UI.DataEditorHeight = this.Height;
+			string strRect = UIUtil.GetWindowScreenRect(this);
+			if(strRect != m_strInitialFormRect)
+				Program.Config.UI.DataEditorRect = strRect;
 
 			m_ctxText.Detach();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private void OnFormatBoldClicked(object sender, EventArgs e)
+		private void ToggleSelectionFormat(FontStyle fs)
 		{
 			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Font f = m_rtbText.SelectionFont;
 			if(f == null) return;
 
-			m_rtbText.SelectionFont = new Font(f, f.Style ^ FontStyle.Bold);
-	
+			try { m_rtbText.SelectionFont = new Font(f, f.Style ^ fs); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
+
 			UpdateUIState(true, true);
+		}
+
+		private void OnFormatBoldClicked(object sender, EventArgs e)
+		{
+			ToggleSelectionFormat(FontStyle.Bold);
 		}
 
 		private void OnFormatItalicClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
-
-			Font f = m_rtbText.SelectionFont;
-			if(f == null) return;
-
-			m_rtbText.SelectionFont = new Font(f, f.Style ^ FontStyle.Italic);
-	
-			UpdateUIState(true, true);
+			ToggleSelectionFormat(FontStyle.Italic);
 		}
 
 		private void OnFormatUnderlineClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
-
-			Font f = m_rtbText.SelectionFont;
-			if(f == null) return;
-
-			m_rtbText.SelectionFont = new Font(f, f.Style ^ FontStyle.Underline);
-
-			UpdateUIState(true, true);
+			ToggleSelectionFormat(FontStyle.Underline);
 		}
 
 		private void OnFormatStrikeoutClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
-
-			Font f = m_rtbText.SelectionFont;
-			if(f == null) return;
-
-			m_rtbText.SelectionFont = new Font(f, f.Style ^ FontStyle.Strikeout);
-			
-			UpdateUIState(true, true);
+			ToggleSelectionFormat(FontStyle.Strikeout);
 		}
 
 		private void OnTextSelectionChanged(object sender, EventArgs e)
@@ -416,8 +400,12 @@ namespace KeePass.Forms
 			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Font f = m_rtbText.SelectionFont;
-			m_rtbText.SelectionFont = new Font(m_tbFontCombo.Text, f.Size,
-				f.Style, f.Unit, f.GdiCharSet, f.GdiVerticalFont);
+			try
+			{
+				m_rtbText.SelectionFont = new Font(m_tbFontCombo.Text, f.Size,
+					f.Style, f.Unit, f.GdiCharSet, f.GdiVerticalFont);
+			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUIState(true, true);
 		}
@@ -428,9 +416,14 @@ namespace KeePass.Forms
 
 			Font f = m_rtbText.SelectionFont;
 			float fSize;
-			if(!float.TryParse(m_tbFontSizeCombo.Text, out fSize)) fSize = f.SizeInPoints;
-			m_rtbText.SelectionFont = new Font(f.Name, fSize,
-				f.Style, f.Unit, f.GdiCharSet, f.GdiVerticalFont);
+			if(!float.TryParse(m_tbFontSizeCombo.Text, out fSize)) fSize = f.Size;
+
+			try
+			{
+				m_rtbText.SelectionFont = new Font(f.Name, fSize,
+					f.Style, f.Unit, f.GdiCharSet, f.GdiVerticalFont);
+			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUIState(true, true);
 		}

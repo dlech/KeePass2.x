@@ -163,6 +163,7 @@ namespace KeePass.Resources
 			m_strDatabaseSettings = TryGetEx(dictNew, "DatabaseSettings", m_strDatabaseSettings);
 			m_strDatabaseSettingsDesc = TryGetEx(dictNew, "DatabaseSettingsDesc", m_strDatabaseSettingsDesc);
 			m_strDatabaseUnsavedChanges = TryGetEx(dictNew, "DatabaseUnsavedChanges", m_strDatabaseUnsavedChanges);
+			m_strDbMntncResults = TryGetEx(dictNew, "DbMntncResults", m_strDbMntncResults);
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
 			m_strDelete = TryGetEx(dictNew, "Delete", m_strDelete);
 			m_strDeleteCmd = TryGetEx(dictNew, "DeleteCmd", m_strDeleteCmd);
@@ -185,6 +186,7 @@ namespace KeePass.Resources
 			m_strDragDrop = TryGetEx(dictNew, "DragDrop", m_strDragDrop);
 			m_strDropToBackOnCopy = TryGetEx(dictNew, "DropToBackOnCopy", m_strDropToBackOnCopy);
 			m_strDuplicateStringFieldName = TryGetEx(dictNew, "DuplicateStringFieldName", m_strDuplicateStringFieldName);
+			m_strEditCmd = TryGetEx(dictNew, "EditCmd", m_strEditCmd);
 			m_strEditEntry = TryGetEx(dictNew, "EditEntry", m_strEditEntry);
 			m_strEditEntryDesc = TryGetEx(dictNew, "EditEntryDesc", m_strEditEntryDesc);
 			m_strEditGroup = TryGetEx(dictNew, "EditGroup", m_strEditGroup);
@@ -197,6 +199,7 @@ namespace KeePass.Resources
 			m_strEmptyMasterPw = TryGetEx(dictNew, "EmptyMasterPw", m_strEmptyMasterPw);
 			m_strEmptyMasterPwHint = TryGetEx(dictNew, "EmptyMasterPwHint", m_strEmptyMasterPwHint);
 			m_strEmptyMasterPwQuestion = TryGetEx(dictNew, "EmptyMasterPwQuestion", m_strEmptyMasterPwQuestion);
+			m_strEmptyRecycleBinQuestion = TryGetEx(dictNew, "EmptyRecycleBinQuestion", m_strEmptyRecycleBinQuestion);
 			m_strEnabled = TryGetEx(dictNew, "Enabled", m_strEnabled);
 			m_strEncoding = TryGetEx(dictNew, "Encoding", m_strEncoding);
 			m_strEncodingAnsi = TryGetEx(dictNew, "EncodingAnsi", m_strEncodingAnsi);
@@ -218,6 +221,7 @@ namespace KeePass.Resources
 			m_strEvent = TryGetEx(dictNew, "Event", m_strEvent);
 			m_strExecuteCmdLineUrl = TryGetEx(dictNew, "ExecuteCmdLineUrl", m_strExecuteCmdLineUrl);
 			m_strExitInsteadOfLockingAfterTime = TryGetEx(dictNew, "ExitInsteadOfLockingAfterTime", m_strExitInsteadOfLockingAfterTime);
+			m_strExitInsteadOfLockingAlways = TryGetEx(dictNew, "ExitInsteadOfLockingAlways", m_strExitInsteadOfLockingAlways);
 			m_strExpiredEntries = TryGetEx(dictNew, "ExpiredEntries", m_strExpiredEntries);
 			m_strExpiryTime = TryGetEx(dictNew, "ExpiryTime", m_strExpiryTime);
 			m_strExpiryTimeDateOnly = TryGetEx(dictNew, "ExpiryTimeDateOnly", m_strExpiryTimeDateOnly);
@@ -274,6 +278,7 @@ namespace KeePass.Resources
 			m_strFind = TryGetEx(dictNew, "Find", m_strFind);
 			m_strFocusQuickFindOnUntray = TryGetEx(dictNew, "FocusQuickFindOnUntray", m_strFocusQuickFindOnUntray);
 			m_strFocusResultsAfterQuickFind = TryGetEx(dictNew, "FocusResultsAfterQuickFind", m_strFocusResultsAfterQuickFind);
+			m_strFolder = TryGetEx(dictNew, "Folder", m_strFolder);
 			m_strFont = TryGetEx(dictNew, "Font", m_strFont);
 			m_strForceSystemFontUnix = TryGetEx(dictNew, "ForceSystemFontUnix", m_strForceSystemFontUnix);
 			m_strFormatNoDatabaseDesc = TryGetEx(dictNew, "FormatNoDatabaseDesc", m_strFormatNoDatabaseDesc);
@@ -405,6 +410,7 @@ namespace KeePass.Resources
 			m_strNotInstalled = TryGetEx(dictNew, "NotInstalled", m_strNotInstalled);
 			m_strNoXslFile = TryGetEx(dictNew, "NoXslFile", m_strNoXslFile);
 			m_strObjectNotFound = TryGetEx(dictNew, "ObjectNotFound", m_strObjectNotFound);
+			m_strObjectsDeleted = TryGetEx(dictNew, "ObjectsDeleted", m_strObjectsDeleted);
 			m_strOff = TryGetEx(dictNew, "Off", m_strOff);
 			m_strOfLower = TryGetEx(dictNew, "OfLower", m_strOfLower);
 			m_strOn = TryGetEx(dictNew, "On", m_strOn);
@@ -477,6 +483,7 @@ namespace KeePass.Resources
 			m_strRemoteHostReachable = TryGetEx(dictNew, "RemoteHostReachable", m_strRemoteHostReachable);
 			m_strRepairMode = TryGetEx(dictNew, "RepairMode", m_strRepairMode);
 			m_strRestartKeePassQuestion = TryGetEx(dictNew, "RestartKeePassQuestion", m_strRestartKeePassQuestion);
+			m_strRootDirectory = TryGetEx(dictNew, "RootDirectory", m_strRootDirectory);
 			m_strSampleEntry = TryGetEx(dictNew, "SampleEntry", m_strSampleEntry);
 			m_strSave = TryGetEx(dictNew, "Save", m_strSave);
 			m_strSaveBeforeCloseQuestion = TryGetEx(dictNew, "SaveBeforeCloseQuestion", m_strSaveBeforeCloseQuestion);
@@ -498,6 +505,7 @@ namespace KeePass.Resources
 			m_strSearchResultsInSeparator = TryGetEx(dictNew, "SearchResultsInSeparator", m_strSearchResultsInSeparator);
 			m_strSearchTitle = TryGetEx(dictNew, "SearchTitle", m_strSearchTitle);
 			m_strSecDeskFileDialogHint = TryGetEx(dictNew, "SecDeskFileDialogHint", m_strSecDeskFileDialogHint);
+			m_strSecDeskPlaySound = TryGetEx(dictNew, "SecDeskPlaySound", m_strSecDeskPlaySound);
 			m_strSelectAll = TryGetEx(dictNew, "SelectAll", m_strSelectAll);
 			m_strSelectColor = TryGetEx(dictNew, "SelectColor", m_strSelectColor);
 			m_strSelectDifferentGroup = TryGetEx(dictNew, "SelectDifferentGroup", m_strSelectDifferentGroup);
@@ -541,6 +549,7 @@ namespace KeePass.Resources
 			m_strTanWizard = TryGetEx(dictNew, "TanWizard", m_strTanWizard);
 			m_strTanWizardDesc = TryGetEx(dictNew, "TanWizardDesc", m_strTanWizardDesc);
 			m_strTargetWindow = TryGetEx(dictNew, "TargetWindow", m_strTargetWindow);
+			m_strTemplatesNotFound = TryGetEx(dictNew, "TemplatesNotFound", m_strTemplatesNotFound);
 			m_strTextColor = TryGetEx(dictNew, "TextColor", m_strTextColor);
 			m_strTextViewer = TryGetEx(dictNew, "TextViewer", m_strTextViewer);
 			m_strTimeSpan = TryGetEx(dictNew, "TimeSpan", m_strTimeSpan);
@@ -595,6 +604,7 @@ namespace KeePass.Resources
 			m_strVerifyWrittenFileAfterSave = TryGetEx(dictNew, "VerifyWrittenFileAfterSave", m_strVerifyWrittenFileAfterSave);
 			m_strVersion = TryGetEx(dictNew, "Version", m_strVersion);
 			m_strView = TryGetEx(dictNew, "View", m_strView);
+			m_strViewCmd = TryGetEx(dictNew, "ViewCmd", m_strViewCmd);
 			m_strViewEntry = TryGetEx(dictNew, "ViewEntry", m_strViewEntry);
 			m_strViewEntryDesc = TryGetEx(dictNew, "ViewEntryDesc", m_strViewEntryDesc);
 			m_strWait = TryGetEx(dictNew, "Wait", m_strWait);
@@ -603,6 +613,7 @@ namespace KeePass.Resources
 			m_strWebSiteLogin = TryGetEx(dictNew, "WebSiteLogin", m_strWebSiteLogin);
 			m_strWebSites = TryGetEx(dictNew, "WebSites", m_strWebSites);
 			m_strWebsiteVisitQuestion = TryGetEx(dictNew, "WebsiteVisitQuestion", m_strWebsiteVisitQuestion);
+			m_strWindowsFavorites = TryGetEx(dictNew, "WindowsFavorites", m_strWindowsFavorites);
 			m_strWindowsOS = TryGetEx(dictNew, "WindowsOS", m_strWindowsOS);
 			m_strWithoutContext = TryGetEx(dictNew, "WithoutContext", m_strWithoutContext);
 			m_strWorkspaceLocked = TryGetEx(dictNew, "WorkspaceLocked", m_strWorkspaceLocked);
@@ -751,6 +762,7 @@ namespace KeePass.Resources
 			"DatabaseSettings",
 			"DatabaseSettingsDesc",
 			"DatabaseUnsavedChanges",
+			"DbMntncResults",
 			"Default",
 			"Delete",
 			"DeleteCmd",
@@ -773,6 +785,7 @@ namespace KeePass.Resources
 			"DragDrop",
 			"DropToBackOnCopy",
 			"DuplicateStringFieldName",
+			"EditCmd",
 			"EditEntry",
 			"EditEntryDesc",
 			"EditGroup",
@@ -785,6 +798,7 @@ namespace KeePass.Resources
 			"EmptyMasterPw",
 			"EmptyMasterPwHint",
 			"EmptyMasterPwQuestion",
+			"EmptyRecycleBinQuestion",
 			"Enabled",
 			"Encoding",
 			"EncodingAnsi",
@@ -806,6 +820,7 @@ namespace KeePass.Resources
 			"Event",
 			"ExecuteCmdLineUrl",
 			"ExitInsteadOfLockingAfterTime",
+			"ExitInsteadOfLockingAlways",
 			"ExpiredEntries",
 			"ExpiryTime",
 			"ExpiryTimeDateOnly",
@@ -862,6 +877,7 @@ namespace KeePass.Resources
 			"Find",
 			"FocusQuickFindOnUntray",
 			"FocusResultsAfterQuickFind",
+			"Folder",
 			"Font",
 			"ForceSystemFontUnix",
 			"FormatNoDatabaseDesc",
@@ -993,6 +1009,7 @@ namespace KeePass.Resources
 			"NotInstalled",
 			"NoXslFile",
 			"ObjectNotFound",
+			"ObjectsDeleted",
 			"Off",
 			"OfLower",
 			"On",
@@ -1065,6 +1082,7 @@ namespace KeePass.Resources
 			"RemoteHostReachable",
 			"RepairMode",
 			"RestartKeePassQuestion",
+			"RootDirectory",
 			"SampleEntry",
 			"Save",
 			"SaveBeforeCloseQuestion",
@@ -1086,6 +1104,7 @@ namespace KeePass.Resources
 			"SearchResultsInSeparator",
 			"SearchTitle",
 			"SecDeskFileDialogHint",
+			"SecDeskPlaySound",
 			"SelectAll",
 			"SelectColor",
 			"SelectDifferentGroup",
@@ -1129,6 +1148,7 @@ namespace KeePass.Resources
 			"TanWizard",
 			"TanWizardDesc",
 			"TargetWindow",
+			"TemplatesNotFound",
 			"TextColor",
 			"TextViewer",
 			"TimeSpan",
@@ -1183,6 +1203,7 @@ namespace KeePass.Resources
 			"VerifyWrittenFileAfterSave",
 			"Version",
 			"View",
+			"ViewCmd",
 			"ViewEntry",
 			"ViewEntryDesc",
 			"Wait",
@@ -1191,6 +1212,7 @@ namespace KeePass.Resources
 			"WebSiteLogin",
 			"WebSites",
 			"WebsiteVisitQuestion",
+			"WindowsFavorites",
 			"WindowsOS",
 			"WithoutContext",
 			"WorkspaceLocked",
@@ -2713,6 +2735,17 @@ namespace KeePass.Resources
 			get { return m_strDatabaseUnsavedChanges; }
 		}
 
+		private static string m_strDbMntncResults =
+			@"Show results of database maintenance in a dialog";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show results of database maintenance in a dialog'.
+		/// </summary>
+		public static string DbMntncResults
+		{
+			get { return m_strDbMntncResults; }
+		}
+
 		private static string m_strDefault =
 			@"Default";
 		/// <summary>
@@ -2955,6 +2988,17 @@ namespace KeePass.Resources
 			get { return m_strDuplicateStringFieldName; }
 		}
 
+		private static string m_strEditCmd =
+			@"&Edit";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Edit'.
+		/// </summary>
+		public static string EditCmd
+		{
+			get { return m_strEditCmd; }
+		}
+
 		private static string m_strEditEntry =
 			@"Edit Entry";
 		/// <summary>
@@ -3085,6 +3129,17 @@ namespace KeePass.Resources
 		public static string EmptyMasterPwQuestion
 		{
 			get { return m_strEmptyMasterPwQuestion; }
+		}
+
+		private static string m_strEmptyRecycleBinQuestion =
+			@"Are you sure you want to permanently delete the items?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Are you sure you want to permanently delete the items?'.
+		/// </summary>
+		public static string EmptyRecycleBinQuestion
+		{
+			get { return m_strEmptyRecycleBinQuestion; }
 		}
 
 		private static string m_strEnabled =
@@ -3316,6 +3371,17 @@ namespace KeePass.Resources
 		public static string ExitInsteadOfLockingAfterTime
 		{
 			get { return m_strExitInsteadOfLockingAfterTime; }
+		}
+
+		private static string m_strExitInsteadOfLockingAlways =
+			@"Always exit instead of locking the workspace";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Always exit instead of locking the workspace'.
+		/// </summary>
+		public static string ExitInsteadOfLockingAlways
+		{
+			get { return m_strExitInsteadOfLockingAlways; }
 		}
 
 		private static string m_strExpiredEntries =
@@ -3932,6 +3998,17 @@ namespace KeePass.Resources
 		public static string FocusResultsAfterQuickFind
 		{
 			get { return m_strFocusResultsAfterQuickFind; }
+		}
+
+		private static string m_strFolder =
+			@"Folder";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Folder'.
+		/// </summary>
+		public static string Folder
+		{
+			get { return m_strFolder; }
 		}
 
 		private static string m_strFont =
@@ -5375,6 +5452,17 @@ namespace KeePass.Resources
 			get { return m_strObjectNotFound; }
 		}
 
+		private static string m_strObjectsDeleted =
+			@"{PARAM} object(s) deleted";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '{PARAM} object(s) deleted'.
+		/// </summary>
+		public static string ObjectsDeleted
+		{
+			get { return m_strObjectsDeleted; }
+		}
+
 		private static string m_strOff =
 			@"Off";
 		/// <summary>
@@ -6167,6 +6255,17 @@ namespace KeePass.Resources
 			get { return m_strRestartKeePassQuestion; }
 		}
 
+		private static string m_strRootDirectory =
+			@"Root Directory";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Root Directory'.
+		/// </summary>
+		public static string RootDirectory
+		{
+			get { return m_strRootDirectory; }
+		}
+
 		private static string m_strSampleEntry =
 			@"Sample Entry";
 		/// <summary>
@@ -6396,6 +6495,17 @@ namespace KeePass.Resources
 		public static string SecDeskFileDialogHint
 		{
 			get { return m_strSecDeskFileDialogHint; }
+		}
+
+		private static string m_strSecDeskPlaySound =
+			@"Play UAC sound when switching to secure desktop";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Play UAC sound when switching to secure desktop'.
+		/// </summary>
+		public static string SecDeskPlaySound
+		{
+			get { return m_strSecDeskPlaySound; }
 		}
 
 		private static string m_strSelectAll =
@@ -6869,6 +6979,17 @@ namespace KeePass.Resources
 		public static string TargetWindow
 		{
 			get { return m_strTargetWindow; }
+		}
+
+		private static string m_strTemplatesNotFound =
+			@"No templates found";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'No templates found'.
+		/// </summary>
+		public static string TemplatesNotFound
+		{
+			get { return m_strTemplatesNotFound; }
 		}
 
 		private static string m_strTextColor =
@@ -7465,6 +7586,17 @@ namespace KeePass.Resources
 			get { return m_strView; }
 		}
 
+		private static string m_strViewCmd =
+			@"&View";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;View'.
+		/// </summary>
+		public static string ViewCmd
+		{
+			get { return m_strViewCmd; }
+		}
+
 		private static string m_strViewEntry =
 			@"View Entry";
 		/// <summary>
@@ -7551,6 +7683,17 @@ namespace KeePass.Resources
 		public static string WebsiteVisitQuestion
 		{
 			get { return m_strWebsiteVisitQuestion; }
+		}
+
+		private static string m_strWindowsFavorites =
+			@"Windows Favorites";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Windows Favorites'.
+		/// </summary>
+		public static string WindowsFavorites
+		{
+			get { return m_strWindowsFavorites; }
 		}
 
 		private static string m_strWindowsOS =

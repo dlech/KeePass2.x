@@ -170,6 +170,10 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Customize">
+			<param name="Local" value="help\v2_dev\customize.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Creating Plugins">
 			<param name="Local" value="help\v2_dev\plg_index.html">
 			</OBJECT>

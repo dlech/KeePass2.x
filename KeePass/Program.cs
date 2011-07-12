@@ -204,6 +204,13 @@ namespace KeePass
 
 			InitEnvSecurity();
 
+			try { SelfTest.TestFipsComplianceProblems(); }
+			catch(Exception exFips)
+			{
+				MessageService.ShowWarning(KPRes.SelfTestFailed, exFips);
+				return;
+			}
+
 			int nRandomSeed = (int)DateTime.Now.Ticks;
 			// Prevent overflow (see Random class constructor)
 			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
@@ -218,6 +225,9 @@ namespace KeePass
 				AppLogEx.Open(PwDefs.ShortProductName);
 
 			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
+			IOConnection.SetProxy(m_appConfig.Integration.ProxyType,
+				m_appConfig.Integration.ProxyAddress, m_appConfig.Integration.ProxyPort,
+				m_appConfig.Integration.ProxyUserName, m_appConfig.Integration.ProxyPassword);
 
 			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
 			m_ecasTriggers.SetToInitialState();
@@ -225,28 +235,7 @@ namespace KeePass
 			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
 			AppHelp.LocalHelpFile = strHelpFile;
 
-			string strLangFile = m_appConfig.Application.LanguageFile;
-			if((strLangFile != null) && (strLangFile.Length > 0))
-			{
-				strLangFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), true,
-					false) + strLangFile;
-
-				try
-				{
-					m_kpTranslation = KPTranslation.LoadFromFile(strLangFile);
-
-					KPRes.SetTranslatedStrings(
-						m_kpTranslation.SafeGetStringTableDictionary(
-						"KeePass.Resources.KPRes"));
-					KLRes.SetTranslatedStrings(
-						m_kpTranslation.SafeGetStringTableDictionary(
-						"KeePassLib.Resources.KLRes"));
-
-					StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
-				}
-				catch(FileNotFoundException) { } // Ignore
-				catch(Exception) { Debug.Assert(false); }
-			}
+			LoadTranslation();
 
 			if(m_appConfig.Application.Start.PluginCacheClearOnce)
 			{
@@ -367,7 +356,7 @@ namespace KeePass
 #endif
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ExitAll] != null)
 			{
@@ -403,8 +392,10 @@ namespace KeePass
 				return;
 			}
 
-			Mutex mSingleLock = TrySingleInstanceLock(AppDefs.MutexName, true);
-			if((mSingleLock == null) && m_appConfig.Integration.LimitToSingleInstance)
+			// Mutex mSingleLock = TrySingleInstanceLock(AppDefs.MutexName, true);
+			bool bSingleLock = GlobalMutexPool.CreateMutex(AppDefs.MutexName, true);
+			// if((mSingleLock == null) && m_appConfig.Integration.LimitToSingleInstance)
+			if(!bSingleLock && m_appConfig.Integration.LimitToSingleInstance)
 			{
 				ActivatePreviousInstance(args);
 				MainCleanUp();
@@ -419,11 +410,17 @@ namespace KeePass
 			Application.AddMessageFilter(nfActivity);
 
 #if DEBUG
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.DebugThrowException] != null)
+				throw new Exception(AppDefs.CommandLineOptions.DebugThrowException);
+
 			m_formMain = new MainForm();
 			Application.Run(m_formMain);
 #else
 			try
 			{
+				if(m_cmdLineArgs[AppDefs.CommandLineOptions.DebugThrowException] != null)
+					throw new Exception(AppDefs.CommandLineOptions.DebugThrowException);
+
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
 			}
@@ -438,7 +435,7 @@ namespace KeePass
 			MainCleanUp();
 
 			if(mGlobalNotify != null) { GC.KeepAlive(mGlobalNotify); }
-			if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
+			// if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
 		}
 
 		private static void MainCleanUp()
@@ -450,6 +447,8 @@ namespace KeePass
 			EntryMenu.Destroy();
 
 			AppLogEx.Close();
+
+			GlobalMutexPool.ReleaseAll();
 		}
 
 		private static void InitEnvSecurity()
@@ -462,23 +461,19 @@ namespace KeePass
 			catch(Exception) { } // Throws on Unix and Windows < XP SP1
 		}
 
-		internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)
-		{
-			if(strName == null) throw new ArgumentNullException("strName");
-
-			try
-			{
-				bool bCreatedNew;
-				Mutex mSingleLock = new Mutex(bInitiallyOwned, strName, out bCreatedNew);
-
-				if(!bCreatedNew) return null;
-
-				return mSingleLock;
-			}
-			catch(Exception) { }
-
-			return null;
-		}
+		// internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)
+		// {
+		//	if(strName == null) throw new ArgumentNullException("strName");
+		//	try
+		//	{
+		//		bool bCreatedNew;
+		//		Mutex mSingleLock = new Mutex(bInitiallyOwned, strName, out bCreatedNew);
+		//		if(!bCreatedNew) return null;
+		//		return mSingleLock;
+		//	}
+		//	catch(Exception) { }
+		//	return null;
+		// }
 
 		internal static Mutex TryGlobalInstanceNotify(string strBaseName)
 		{
@@ -509,23 +504,25 @@ namespace KeePass
 			return null;
 		}
 
-		internal static void DestroyMutex(Mutex m, bool bReleaseFirst)
-		{
-			if(m == null) return;
-
-			if(bReleaseFirst)
-			{
-				try { m.ReleaseMutex(); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-
-			try { m.Close(); }
-			catch(Exception) { Debug.Assert(false); }
-		}
+		// internal static void DestroyMutex(Mutex m, bool bReleaseFirst)
+		// {
+		//	if(m == null) return;
+		//	if(bReleaseFirst)
+		//	{
+		//		try { m.ReleaseMutex(); }
+		//		catch(Exception) { Debug.Assert(false); }
+		//	}
+		//	try { m.Close(); }
+		//	catch(Exception) { Debug.Assert(false); }
+		// }
 
 		private static void ActivatePreviousInstance(string[] args)
 		{
-			if(m_nAppMessage == 0) { Debug.Assert(false); return; }
+			if((m_nAppMessage == 0) && !KeePassLib.Native.NativeLib.IsUnix())
+			{
+				Debug.Assert(false);
+				return;
+			}
 
 			try
 			{
@@ -573,6 +570,43 @@ namespace KeePass
 			catch(Exception) { Debug.Assert(false); }
 
 			MainCleanUp();
+		}
+
+		private static void LoadTranslation()
+		{
+			string strLangFile = m_appConfig.Application.LanguageFile;
+			if((strLangFile != null) && (strLangFile.Length > 0))
+			{
+				string[] vLangDirs = new string[]{
+					AppConfigSerializer.AppDataDirectory,
+					AppConfigSerializer.LocalAppDataDirectory,
+					UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), false, false)
+				};
+
+				foreach(string strLangDir in vLangDirs)
+				{
+					string strLangPath = UrlUtil.EnsureTerminatingSeparator(
+						strLangDir, false) + strLangFile;
+
+					try
+					{
+						m_kpTranslation = KPTranslation.LoadFromFile(strLangPath);
+
+						KPRes.SetTranslatedStrings(
+							m_kpTranslation.SafeGetStringTableDictionary(
+							"KeePass.Resources.KPRes"));
+						KLRes.SetTranslatedStrings(
+							m_kpTranslation.SafeGetStringTableDictionary(
+							"KeePassLib.Resources.KLRes"));
+
+						StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
+						break;
+					}
+					catch(DirectoryNotFoundException) { } // Ignore
+					catch(FileNotFoundException) { } // Ignore
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
 		}
 	}
 }

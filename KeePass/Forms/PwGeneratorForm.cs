@@ -87,8 +87,7 @@ namespace KeePass.Forms
 
 			m_strAdvControlText = m_tabAdvanced.Text;
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Gen, KPRes.PasswordOptions,
 				KPRes.PasswordOptionsDesc);
 			this.Icon = Properties.Resources.KeePass;

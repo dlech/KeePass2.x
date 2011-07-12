@@ -23,6 +23,8 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text;
 
+using KeePassLib.Native;
+
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
@@ -206,7 +208,13 @@ namespace KeePassLib.Serialization
 			if((pbStoredHash == null) || (pbStoredHash.Length != 32))
 				throw new InvalidDataException();
 
-			int nBufferSize = m_brInput.ReadInt32();
+			int nBufferSize = 0;
+			try { nBufferSize = m_brInput.ReadInt32(); }
+			catch(NullReferenceException) // Mono bug workaround (LaunchPad 783268)
+			{
+				if(!NativeLib.IsUnix()) throw;
+			}
+
 			if(nBufferSize < 0)
 				throw new InvalidDataException();
 

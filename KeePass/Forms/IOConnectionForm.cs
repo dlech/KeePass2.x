@@ -73,10 +73,8 @@ namespace KeePass.Forms
 			string strTitle = (m_bSave ? KPRes.UrlSaveTitle : KPRes.UrlOpenTitle);
 			string strDesc = (m_bSave ? KPRes.UrlSaveDesc : KPRes.UrlOpenDesc);
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, BannerStyle.Default,
-				KeePass.Properties.Resources.B48x48_WWW, strTitle,
-				strDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				KeePass.Properties.Resources.B48x48_WWW, strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = strTitle;
 
@@ -161,7 +159,13 @@ namespace KeePass.Forms
 			}
 			catch(Exception exTest)
 			{
-				MessageService.ShowWarning(m_ioc.GetDisplayName(), exTest.Message);
+				string strError = exTest.Message;
+				if((exTest.InnerException != null) &&
+					!string.IsNullOrEmpty(exTest.InnerException.Message))
+					strError += MessageService.NewParagraph +
+						exTest.InnerException.Message;
+
+				MessageService.ShowWarning(m_ioc.GetDisplayName(), strError);
 				bResult = false;
 			}
 

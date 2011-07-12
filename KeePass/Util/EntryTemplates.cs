@@ -109,18 +109,35 @@ namespace KeePass.Util
 			m_vToolStripItems.Add(tsmi);
 		}
 
+		private static void AddEmpty()
+		{
+			AddSeparator();
+
+			ToolStripMenuItem tsmi = new ToolStripMenuItem("(" +
+				KPRes.TemplatesNotFound + ")");
+			tsmi.Click += OnMenuExecute; // Required for clean releasing
+			tsmi.Enabled = false;
+
+			m_btnItemsHost.DropDownItems.Add(tsmi);
+			m_vToolStripItems.Add(tsmi);
+		}
+
 		private static void Update()
 		{
 			Clear();
+			if(!UpdateEx()) AddEmpty();
+		}
 
+		private static bool UpdateEx()
+		{
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
-			if(pd == null) { Debug.Assert(false); return; }
-			if(pd.IsOpen == false) { Debug.Assert(false); return; }
-			if(pd.EntryTemplatesGroup.EqualsValue(PwUuid.Zero)) return;
+			if(pd == null) { Debug.Assert(false); return false; }
+			if(pd.IsOpen == false) { Debug.Assert(false); return false; }
+			if(pd.EntryTemplatesGroup.EqualsValue(PwUuid.Zero)) return false;
 
 			PwGroup pg = pd.RootGroup.FindGroup(pd.EntryTemplatesGroup, true);
-			if(pg == null) { Debug.Assert(false); return; }
-			if(pg.Entries.UCount == 0) return;
+			if(pg == null) { Debug.Assert(false); return false; }
+			if(pg.Entries.UCount == 0) return false;
 
 			AddSeparator();
 			for(uint u = 0; u < Math.Min(pg.Entries.UCount, 30); ++u)
@@ -128,6 +145,8 @@ namespace KeePass.Util
 				try { AddItem(pg.Entries.GetAt(u)); }
 				catch(Exception) { Debug.Assert(false); }
 			}
+
+			return true;
 		}
 
 		private static void Clear()
@@ -137,7 +156,10 @@ namespace KeePass.Util
 			{
 				int j = nCount - i - 1;
 				ToolStripItem tsmi = m_vToolStripItems[j];
-				tsmi.Click -= OnMenuExecute;
+
+				if(tsmi is ToolStripMenuItem)
+					tsmi.Click -= OnMenuExecute;
+
 				m_btnItemsHost.DropDownItems.Remove(tsmi);
 			}
 
@@ -169,7 +191,7 @@ namespace KeePass.Util
 			if(pgContainer == null) pgContainer = pd.RootGroup;
 
 			PwEntry pe = peTemplate.CloneDeep();
-			pe.Uuid = new PwUuid(true);
+			pe.SetUuid(new PwUuid(true), true);
 			pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = DateTime.Now;
 
 			if(EntryTemplates.EntryCreating != null)

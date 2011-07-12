@@ -113,7 +113,7 @@ namespace KeePass.DataExchange
 
 			bool bResult = false;
 			try { bResult = fileFormat.Export(pwExportInfo, sOut, slLogger); }
-			catch(Exception) { }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			if(sOut != null) sOut.Close();
 

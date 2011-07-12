@@ -369,11 +369,7 @@ namespace KeePassLib.Serialization
 			List<PwEntry> vEntries = new List<PwEntry>();
 			foreach(PwEntry pe in pd.RootGroup.Entries)
 			{
-				pe.Uuid = new PwUuid(true);
-
-				foreach(PwEntry peHistory in pe.History)
-					peHistory.Uuid = pe.Uuid;
-
+				pe.SetUuid(new PwUuid(true), true);
 				vEntries.Add(pe);
 			}
 

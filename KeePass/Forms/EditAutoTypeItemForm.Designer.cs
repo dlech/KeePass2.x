@@ -37,7 +37,7 @@
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_rbKeySeq = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_rtbPlaceholders = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_cmbWindow = new System.Windows.Forms.ComboBox();
+			this.m_cmbWindow = new KeePass.UI.ImageComboBoxEx();
 			this.m_lblOpenHint = new System.Windows.Forms.Label();
 			this.m_lnkWildcardRegexHint = new System.Windows.Forms.LinkLabel();
 			this.m_rbSeqDefault = new System.Windows.Forms.RadioButton();
@@ -241,7 +241,7 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private KeePass.UI.CustomRichTextBoxEx m_rbKeySeq;
 		private KeePass.UI.CustomRichTextBoxEx m_rtbPlaceholders;
-		private System.Windows.Forms.ComboBox m_cmbWindow;
+		private KeePass.UI.ImageComboBoxEx m_cmbWindow;
 		private System.Windows.Forms.Label m_lblOpenHint;
 		private System.Windows.Forms.LinkLabel m_lnkWildcardRegexHint;
 		private System.Windows.Forms.RadioButton m_rbSeqDefault;
