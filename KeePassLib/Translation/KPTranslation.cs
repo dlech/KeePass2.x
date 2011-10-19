@@ -24,6 +24,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Drawing;
 using System.Diagnostics;
 
@@ -76,6 +77,7 @@ namespace KeePassLib.Translation
 		}
 
 		private string m_strUnusedText = string.Empty;
+		[DefaultValue("")]
 		public string UnusedText
 		{
 			get { return m_strUnusedText; }

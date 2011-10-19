@@ -130,7 +130,7 @@ namespace KeePass.Forms
 			ListView.SelectedListViewItemCollection slvic = m_lvEntries.SelectedItems;
 			if(slvic.Count == 1)
 			{
-				m_peSelected = slvic[0].Tag as PwEntry;
+				m_peSelected = (slvic[0].Tag as PwEntry);
 
 				if(bSetDialogResult) this.DialogResult = DialogResult.OK;
 				return true;

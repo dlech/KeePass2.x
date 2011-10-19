@@ -62,25 +62,25 @@ namespace KeePass.UI
 				if(fsOrigin == FileSaveOrigin.Locking)
 				{
 					dlg.MainInstruction = KPRes.FileSaveQLocking;
-					dlg.AddButton((int)DialogResult.Yes, KPRes.Save, KPRes.FileSaveQOpYesLocking);
-					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChanges, KPRes.FileSaveQOpNoLocking);
-					dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, KPRes.FileSaveQOpCancel +
+					dlg.AddButton((int)DialogResult.Yes, KPRes.SaveCmd, KPRes.FileSaveQOpYesLocking);
+					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChangesCmd, KPRes.FileSaveQOpNoLocking);
+					dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, KPRes.FileSaveQOpCancel +
 						" " + KPRes.FileSaveQOpCancelLocking);
 				}
 				else if(fsOrigin == FileSaveOrigin.Exiting)
 				{
 					dlg.MainInstruction = KPRes.FileSaveQExiting;
-					dlg.AddButton((int)DialogResult.Yes, KPRes.Save, KPRes.FileSaveQOpYesExiting);
-					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChanges, KPRes.FileSaveQOpNoExiting);
-					dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, KPRes.FileSaveQOpCancel +
+					dlg.AddButton((int)DialogResult.Yes, KPRes.SaveCmd, KPRes.FileSaveQOpYesExiting);
+					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChangesCmd, KPRes.FileSaveQOpNoExiting);
+					dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, KPRes.FileSaveQOpCancel +
 						" " + KPRes.FileSaveQOpCancelExiting);
 				}
 				else
 				{
 					dlg.MainInstruction = KPRes.FileSaveQClosing;
-					dlg.AddButton((int)DialogResult.Yes, KPRes.Save, KPRes.FileSaveQOpYesClosing);
-					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChanges, KPRes.FileSaveQOpNoClosing);
-					dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, KPRes.FileSaveQOpCancel +
+					dlg.AddButton((int)DialogResult.Yes, KPRes.SaveCmd, KPRes.FileSaveQOpYesClosing);
+					dlg.AddButton((int)DialogResult.No, KPRes.DiscardChangesCmd, KPRes.FileSaveQOpNoClosing);
+					dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, KPRes.FileSaveQOpCancel +
 						" " + KPRes.FileSaveQOpCancelClosing);
 					bShowCheckBox = false;
 				}

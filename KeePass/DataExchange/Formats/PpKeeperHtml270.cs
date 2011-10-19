@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Drawing;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
 
 using KeePass.Resources;
 
@@ -33,7 +34,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.70
+	// 2.50 and 2.70
 	internal sealed class PpKeeperHtml270 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -47,15 +48,17 @@ namespace KeePass.DataExchange.Formats
 
 		public override Image SmallIcon
 		{
+			// Passphrase Keeper uses the same standard XP keys icon
+			// as Whisper 32
 			get { return KeePass.Properties.Resources.B16x16_Imp_Whisper32; }
 		}
 
 		private const string m_strStartTd = "<td class=\"c0\" nowrap>";
 		private const string m_strEndTd = @"</td>";
 
-		private const string m_strModifiedField = @"{0530D298-F983-454c-B5A3-BFB0775844D1}";
+		private const string m_strModifiedField = @"{0530D298-F983-454C-B5A3-BFB0775844D1}";
 
-		private const string m_strModifiedHeader = "Modified";
+		private const string m_strModifiedHdrStart = "Modified";
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -64,18 +67,34 @@ namespace KeePass.DataExchange.Formats
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
-			const string strNormalized = "<td class=\"c0\" nowrap>";
-			strData = strData.Replace("<td class=\"c1\" nowrap>", strNormalized);
-			strData = strData.Replace("<td class=\"c2\" nowrap>", strNormalized);
-			strData = strData.Replace("<td class=\"c3\" nowrap>", strNormalized);
-			strData = strData.Replace("<td class=\"c4\" nowrap>", strNormalized);
-			strData = strData.Replace("<td class=\"c5\" nowrap>", strNormalized);
-			strData = strData.Replace("<td class=\"c6\" nowrap>", strNormalized);
+			// Normalize 2.70 files
+			strData = strData.Replace("<td class=\"c1\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c2\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c3\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c4\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c5\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c6\" nowrap>", m_strStartTd);
+
+			// Additionally support the old version 2.50
+			string[] vRepl = new string[4]{
+				@"<td nowrap align=""(center|right)"" bgcolor=""#[0-9a-fA-F]{6}""><font color=""#[0-9a-fA-F]{6}"">",
+				@"<td nowrap bgcolor=""#[0-9a-fA-F]{6}""><font color=""#[0-9a-fA-F]{6}"">",
+				@"<td nowrap align=""(center|right)"" bgcolor=""#[0-9a-fA-F]{6}""><b>",
+				@"<td nowrap bgcolor=""#[0-9a-fA-F]{6}""><b>"
+			};
+			MatchCollection mc = Regex.Matches(strData, vRepl[2]);
+			if((mc != null) && (mc.Count > 0))
+			{
+				foreach(string strRepl in vRepl)
+					strData = Regex.Replace(strData, strRepl, m_strStartTd);
+
+				strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
+			}
 
 			int nOffset = 0;
 
 			PwEntry peHeader;
-			if(ReadEntry(out peHeader, strData, ref nOffset, pwStorage) == false)
+			if(!ReadEntry(out peHeader, strData, ref nOffset, pwStorage))
 			{
 				Debug.Assert(false);
 				return;
@@ -84,7 +103,7 @@ namespace KeePass.DataExchange.Formats
 			while((nOffset >= 0) && (nOffset < strData.Length))
 			{
 				PwEntry pe;
-				if(ReadEntry(out pe, strData, ref nOffset, pwStorage) == false)
+				if(!ReadEntry(out pe, strData, ref nOffset, pwStorage))
 				{
 					Debug.Assert(false);
 					break;
@@ -95,8 +114,8 @@ namespace KeePass.DataExchange.Formats
 			}
 		}
 
-		private static bool ReadEntry(out PwEntry pe, string strData, ref int nOffset,
-			PwDatabase pd)
+		private static bool ReadEntry(out PwEntry pe, string strData,
+			ref int nOffset, PwDatabase pd)
 		{
 			pe = new PwEntry(true, true);
 
@@ -159,7 +178,7 @@ namespace KeePass.DataExchange.Formats
 		private static DateTime ReadModified(string strValue)
 		{
 			if(strValue == null) { Debug.Assert(false); return DateTime.Now; }
-			if(strValue == m_strModifiedHeader) return DateTime.Now;
+			if(strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.Now;
 
 			string[] vParts = strValue.Split(new char[]{ ' ', ':', '/' },
 				StringSplitOptions.RemoveEmptyEntries);

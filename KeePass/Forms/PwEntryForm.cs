@@ -99,8 +99,8 @@ namespace KeePass.Forms
 					return true;
 				}
 
-				return !m_pwEntry.EqualsEntry(m_pwInitialEntry, false, true, true,
-					false, false);
+				return !m_pwEntry.EqualsEntry(m_pwInitialEntry, false, true,
+					true, false, false, MemProtCmpMode.CustomOnly);
 			}
 		}
 
@@ -418,7 +418,7 @@ namespace KeePass.Forms
 
 			int nWidth = m_lvAutoType.ClientRectangle.Width / 2;
 			m_lvAutoType.Columns.Add(KPRes.TargetWindow, nWidth);
-			m_lvAutoType.Columns.Add(KPRes.KeystrokeSequence, nWidth);
+			m_lvAutoType.Columns.Add(KPRes.Sequence, nWidth);
 
 			UpdateAutoTypeList();
 
@@ -439,10 +439,10 @@ namespace KeePass.Forms
 			m_lvAutoType.Items.Clear();
 
 			string strDefault = "(" + KPRes.Default + ")";
-			foreach(KeyValuePair<string, string> kvp in m_atConfig.WindowSequencePairs)
+			foreach(AutoTypeAssociation a in m_atConfig.Associations)
 			{
-				ListViewItem lvi = m_lvAutoType.Items.Add(kvp.Key, (int)PwIcon.List);
-				lvi.SubItems.Add((kvp.Value.Length > 0) ? kvp.Value : strDefault);
+				ListViewItem lvi = m_lvAutoType.Items.Add(a.WindowName, (int)PwIcon.List);
+				lvi.SubItems.Add((a.Sequence.Length > 0) ? a.Sequence : strDefault);
 			}
 		}
 
@@ -528,7 +528,7 @@ namespace KeePass.Forms
 			m_clrNormalBackColor = m_tbPassword.BackColor;
 			m_dynGenProfiles = new DynamicMenu(m_ctxPwGenProfiles.DropDownItems);
 			m_dynGenProfiles.MenuClick += this.OnProfilesDynamicMenuClick;
-			m_ctxNotes.Attach(m_rtNotes);
+			m_ctxNotes.Attach(m_rtNotes, this);
 
 			string strTitle = string.Empty, strDesc = string.Empty;
 			if(m_pwEditMode == PwEditMode.AddNewEntry)
@@ -757,7 +757,7 @@ namespace KeePass.Forms
 			m_pwEntry.Touch(true, false); // Touch *after* backup
 
 			if(m_pwEntry.EqualsEntry(m_pwInitialEntry, false, true, true, false,
-				bCreateBackup))
+				bCreateBackup, MemProtCmpMode.CustomOnly))
 			{
 				m_pwEntry.LastModificationTime = m_pwInitialEntry.LastModificationTime;
 
@@ -1046,7 +1046,7 @@ namespace KeePass.Forms
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
-			dlg.InitEx(m_atConfig, m_vStrings, null, false);
+			dlg.InitEx(m_atConfig, m_vStrings, -1, false);
 
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
@@ -1061,11 +1061,10 @@ namespace KeePass.Forms
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
 
-			ListView.SelectedListViewItemCollection lvSel = m_lvAutoType.SelectedItems;
+			ListView.SelectedIndexCollection lvSel = m_lvAutoType.SelectedIndices;
 			Debug.Assert(lvSel.Count == 1); if(lvSel.Count != 1) return;
 
-			string strOriginalName = lvSel[0].Text;
-			dlg.InitEx(m_atConfig, m_vStrings, strOriginalName, false);
+			dlg.InitEx(m_atConfig, m_vStrings, lvSel[0], false);
 
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				UpdateAutoTypeList();
@@ -1082,7 +1081,7 @@ namespace KeePass.Forms
 				j = nItemCount - i - 1;
 
 				if(m_lvAutoType.Items[j].Selected)
-					m_atConfig.Remove(m_lvAutoType.Items[j].Text);
+					m_atConfig.RemoveAt(j);
 			}
 
 			UpdateAutoTypeList();
@@ -1272,7 +1271,7 @@ namespace KeePass.Forms
 			m_atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;
 
 			EditAutoTypeItemForm ef = new EditAutoTypeItemForm();
-			ef.InitEx(m_atConfig, m_vStrings, "(" + KPRes.Default + ")", true);
+			ef.InitEx(m_atConfig, m_vStrings, -1, true);
 
 			if(UIUtil.ShowDialogAndDestroy(ef) == DialogResult.OK)
 				m_tbDefaultAutoTypeSeq.Text = m_atConfig.DefaultSequence;

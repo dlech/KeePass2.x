@@ -23,6 +23,7 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePassLib;
@@ -73,6 +74,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMax = false;
+		[DefaultValue(false)]
 		public bool Maximized
 		{
 			get { return m_bMax; }
@@ -101,6 +103,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bTop = false;
+		[DefaultValue(false)]
 		public bool AlwaysOnTop
 		{
 			get { return m_bTop; }
@@ -108,6 +111,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCloseMin = false;
+		[DefaultValue(false)]
 		public bool CloseButtonMinimizesWindow
 		{
 			get { return m_bCloseMin; }
@@ -115,6 +119,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMinToTray = false;
+		[DefaultValue(false)]
 		public bool MinimizeToTray
 		{
 			get { return m_bMinToTray; }
@@ -122,6 +127,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bFullPath = false;
+		[DefaultValue(false)]
 		public bool ShowFullPathInTitle
 		{
 			get { return m_bFullPath; }
@@ -129,6 +135,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bDropToBackAfterCopy = false;
+		[DefaultValue(false)]
 		public bool DropToBackAfterClipboardCopy
 		{
 			get { return m_bDropToBackAfterCopy; }
@@ -136,13 +143,15 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMinAfterCopy = false;
+		[DefaultValue(false)]
 		public bool MinimizeAfterClipboardCopy
 		{
 			get { return m_bMinAfterCopy; }
 			set { m_bMinAfterCopy = value; }
 		}
 
-		private bool m_bMinAfterLocking = false;
+		private bool m_bMinAfterLocking = true;
+		[DefaultValue(true)]
 		public bool MinimizeAfterLocking
 		{
 			get { return m_bMinAfterLocking; }
@@ -150,6 +159,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMinAfterOpeningDb = false;
+		[DefaultValue(false)]
 		public bool MinimizeAfterOpeningDatabase
 		{
 			get { return m_bMinAfterOpeningDb; }
@@ -157,6 +167,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bQuickFindSearchInPasswords = false;
+		[DefaultValue(false)]
 		public bool QuickFindSearchInPasswords
 		{
 			get { return m_bQuickFindSearchInPasswords; }
@@ -164,20 +175,44 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bQuickFindExcludeExpired = false;
+		[DefaultValue(false)]
 		public bool QuickFindExcludeExpired
 		{
 			get { return m_bQuickFindExcludeExpired; }
 			set { m_bQuickFindExcludeExpired = value; }
 		}
 
+		private bool m_bQuickFindDerefData = false;
+		[DefaultValue(false)]
+		public bool QuickFindDerefData
+		{
+			get { return m_bQuickFindDerefData; }
+			set { m_bQuickFindDerefData = value; }
+		}
+
 		private bool m_bFocusResAfterQuickFind = false;
+		[DefaultValue(false)]
 		public bool FocusResultsAfterQuickFind
 		{
 			get { return m_bFocusResAfterQuickFind; }
 			set { m_bFocusResAfterQuickFind = value; }
 		}
 
+		private bool m_bFocusQuickFindOnRestore = false;
+		/// <summary>
+		/// Focus the quick search box when restoring the main
+		/// window. Here 'restoring' actually means unminimizing,
+		/// i.e. restoring or maximizing the window.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool FocusQuickFindOnRestore
+		{
+			get { return m_bFocusQuickFindOnRestore; }
+			set { m_bFocusQuickFindOnRestore = value; }
+		}
+
 		private bool m_bFocusQuickFindOnUntray = false;
+		[DefaultValue(false)]
 		public bool FocusQuickFindOnUntray
 		{
 			get { return m_bFocusQuickFindOnUntray; }
@@ -185,6 +220,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCopyUrls = false;
+		[DefaultValue(false)]
 		public bool CopyUrlsInsteadOfOpening
 		{
 			get { return m_bCopyUrls; }
@@ -196,6 +232,7 @@ namespace KeePass.App.Configuration
 		/// Disable 'Save' button (instead of graying it out) if the database
 		/// hasn't been modified.
 		/// </summary>
+		[DefaultValue(false)]
 		public bool DisableSaveIfNotModified
 		{
 			get { return m_bDisableSaveIfNotModified; }
@@ -248,6 +285,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strDisplayIndices = string.Empty;
+		[DefaultValue("")]
 		public string EntryListColumnDisplayOrder
 		{
 			get { return m_strDisplayIndices; }
@@ -259,6 +297,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bAutoResizeColumns = false;
+		[DefaultValue(false)]
 		public bool EntryListAutoResizeColumns
 		{
 			get { return m_bAutoResizeColumns; }
@@ -266,10 +305,27 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bAlternatingBgColor = true;
+		[DefaultValue(true)]
 		public bool EntryListAlternatingBgColors
 		{
 			get { return m_bAlternatingBgColor; }
 			set { m_bAlternatingBgColor = value; }
+		}
+
+		private bool m_bResolveFieldRefs = false;
+		[DefaultValue(false)]
+		public bool EntryListShowDerefData
+		{
+			get { return m_bResolveFieldRefs; }
+			set { m_bResolveFieldRefs = value; }
+		}
+
+		private bool m_bResolveFieldRefsAsync = false;
+		[DefaultValue(false)]
+		public bool EntryListShowDerefDataAsync
+		{
+			get { return m_bResolveFieldRefsAsync; }
+			set { m_bResolveFieldRefsAsync = value; }
 		}
 
 		// private bool m_bGridLines = false;
@@ -291,6 +347,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShowEntriesOfSubGroups = false;
+		[DefaultValue(false)]
 		public bool ShowEntriesOfSubGroups
 		{
 			get { return m_bShowEntriesOfSubGroups; }
@@ -306,6 +363,16 @@ namespace KeePass.App.Configuration
 
 			return null;
 		}
+
+		public bool IsColumnHidden(AceColumnType t, bool bDefault)
+		{
+			foreach(AceColumn c in m_aceColumns)
+			{
+				if(c.Type == t) return c.HideWithAsterisks;
+			}
+
+			return bDefault;
+		}
 	}
 
 	public sealed class AceEntryView
@@ -315,6 +382,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShow = true;
+		[DefaultValue(true)]
 		public bool Show
 		{
 			get { return m_bShow; }
@@ -322,6 +390,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bHideProtectedCustomStrings = true;
+		[DefaultValue(true)]
 		public bool HideProtectedCustomStrings
 		{
 			get { return m_bHideProtectedCustomStrings; }
@@ -336,6 +405,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSimple = true;
+		[DefaultValue(true)]
 		public bool UseSimpleView
 		{
 			get { return m_bSimple; }
@@ -343,6 +413,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bIndices = true;
+		[DefaultValue(true)]
 		public bool ShowIndices
 		{
 			get { return m_bIndices; }
@@ -393,6 +464,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strCustomName = string.Empty;
+		[DefaultValue("")]
 		public string CustomName
 		{
 			get { return m_strCustomName; }
@@ -411,6 +483,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bHide = false;
+		[DefaultValue(false)]
 		public bool HideWithAsterisks
 		{
 			get { return m_bHide; }

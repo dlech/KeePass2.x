@@ -21,9 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 using System.Diagnostics;
 
 using KeePass.Native;
+using KeePass.Util;
 
 namespace KeePass.UI
 {
@@ -57,5 +59,123 @@ namespace KeePass.UI
 
 			base.OnMouseHover(e);
 		} */
+
+		/* protected override void OnKeyUp(KeyEventArgs e)
+		{
+			base.OnKeyUp(e);
+			UnfocusGroupInSingleMode();
+		}
+		private void UnfocusGroupInSingleMode()
+		{
+			try
+			{
+				if(!WinUtil.IsAtLeastWindowsVista) return;
+				if(KeePassLib.Native.NativeLib.IsUnix()) return;
+				if(!this.ShowGroups) return;
+				if(this.MultiSelect) return;
+
+				const uint m = (NativeMethods.LVGS_FOCUSED | NativeMethods.LVGS_SELECTED);
+
+				uint uGroups = (uint)this.Groups.Count;
+				for(uint u = 0; u < uGroups; ++u)
+				{
+					int iGroupID;
+					if(NativeMethods.GetGroupStateByIndex(this, u, m,
+						out iGroupID) == m)
+					{
+						NativeMethods.SetGroupState(this, iGroupID, m,
+							NativeMethods.LVGS_SELECTED);
+						return;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			try { if(SkipGroupHeaderIfRequired(e)) return; }
+			catch(Exception) { Debug.Assert(false); }
+
+			base.OnKeyDown(e);
+		}
+
+		private bool SkipGroupHeaderIfRequired(KeyEventArgs e)
+		{
+			if(!this.ShowGroups) return false;
+			if(this.MultiSelect) return false;
+
+			ListViewItem lvi = this.FocusedItem;
+			if(lvi != null)
+			{
+				ListViewGroup g = lvi.Group;
+				ListViewItem lviChangeTo = null;
+
+				if((e.KeyCode == Keys.Up) && IsFirstLastItemInGroup(g, lvi, true))
+					lviChangeTo = (GetNextLvi(g, true) ?? lvi); // '??' for top item
+				else if((e.KeyCode == Keys.Down) && IsFirstLastItemInGroup(g, lvi, false))
+					lviChangeTo = (GetNextLvi(g, false) ?? lvi); // '??' for bottom item
+
+				if(lviChangeTo != null)
+				{
+					foreach(ListViewItem lviEnum in this.Items)
+						lviEnum.Selected = false;
+
+					lviChangeTo.Selected = true;
+					lviChangeTo.Focused = true;
+					EnsureVisible(lviChangeTo.Index);
+
+					e.Handled = true;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool IsFirstLastItemInGroup(ListViewGroup g,
+			ListViewItem lvi, bool bFirst)
+		{
+			if(g == null) { Debug.Assert(false); return false; }
+
+			ListViewItemCollection c = g.Items;
+			if(c.Count == 0) { Debug.Assert(false); return false; }
+
+			return (bFirst ? (c[0] == lvi) : (c[c.Count - 1] == lvi));
+		}
+
+		private ListViewItem GetNextLvi(ListViewGroup gBaseExcl, bool bUp)
+		{
+			if(gBaseExcl == null) { Debug.Assert(false); return null; }
+
+			int i = this.Groups.IndexOf(gBaseExcl);
+			if(i < 0) { Debug.Assert(false); return null; }
+
+			if(bUp)
+			{
+				--i;
+				while(i >= 0)
+				{
+					ListViewGroup g = this.Groups[i];
+					if(g.Items.Count > 0) return g.Items[g.Items.Count - 1];
+
+					--i;
+				}
+			}
+			else // Down
+			{
+				++i;
+				int nGroups = this.Groups.Count;
+				while(i < nGroups)
+				{
+					ListViewGroup g = this.Groups[i];
+					if(g.Items.Count > 0) return g.Items[0];
+
+					++i;
+				}
+			}
+
+			return null;
+		}
 	}
 }

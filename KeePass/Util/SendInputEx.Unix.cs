@@ -98,6 +98,8 @@ namespace KeePass.Util
 			// the xdotool command line parameter is wrapped in '')
 			strSequence = strSequence.Replace(@"'", @"{apostrophe}");
 
+			strSequence = strSequence.Replace("\\", @"{backslash}");
+
 			StringBuilder sb = new StringBuilder();
 			bool bInCode = false;
 			Keys kMod = Keys.None;

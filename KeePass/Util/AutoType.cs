@@ -57,8 +57,10 @@ namespace KeePass.Util
 
 		public bool SendObfuscated { get; set; }
 		public PwEntry Entry { get; private set; }
+		public PwDatabase Database { get; private set; }
 
-		public AutoTypeEventArgs(string strSequence, bool bObfuscated, PwEntry pe)
+		public AutoTypeEventArgs(string strSequence, bool bObfuscated, PwEntry pe,
+			PwDatabase pd)
 		{
 			if(strSequence == null) throw new ArgumentNullException("strSequence");
 			// pe may be null
@@ -66,6 +68,7 @@ namespace KeePass.Util
 			m_strSeq = strSequence;
 			this.SendObfuscated = bObfuscated;
 			this.Entry = pe;
+			this.Database = pd;
 		}
 	}
 
@@ -122,10 +125,13 @@ namespace KeePass.Util
 			return StrUtil.SimplePatternMatch(strF, strWindow, StrUtil.CaseIgnoreCmp);
 		}
 
-		private static bool Execute(string strSeq, PwEntry pweData)
+		private static bool Execute(AutoTypeCtx ctx)
 		{
-			Debug.Assert(strSeq != null); if(strSeq == null) return false;
-			Debug.Assert(pweData != null); if(pweData == null) return false;
+			if(ctx == null) { Debug.Assert(false); return false; }
+
+			string strSeq = ctx.Sequence;
+			PwEntry pweData = ctx.Entry;
+			if(pweData == null) { Debug.Assert(false); return false; }
 
 			if(!pweData.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoType)) return false;
@@ -140,18 +146,17 @@ namespace KeePass.Util
 				}
 			}
 
-			PwDatabase pwDatabase = null;
-			try { pwDatabase = Program.MainForm.PluginHost.Database; }
-			catch(Exception) { }
+			PwDatabase pwDatabase = ctx.Database;
 
 			bool bObfuscate = (pweData.AutoType.ObfuscationOptions !=
 				AutoTypeObfuscationOptions.None);
-			AutoTypeEventArgs args = new AutoTypeEventArgs(strSeq, bObfuscate, pweData);
+			AutoTypeEventArgs args = new AutoTypeEventArgs(strSeq, bObfuscate,
+				pweData, pwDatabase);
 
 			if(AutoType.FilterCompilePre != null) AutoType.FilterCompilePre(null, args);
 
-			args.Sequence = SprEngine.Compile(args.Sequence, true, pweData,
-				pwDatabase, true, false);
+			args.Sequence = SprEngine.Compile(args.Sequence, new SprContext(
+				pweData, pwDatabase, SprCompileFlags.All, true, false));
 
 			string strError = ValidateAutoTypeSequence(args.Sequence);
 			if(strError != null)
@@ -185,47 +190,51 @@ namespace KeePass.Util
 			return true;
 		}
 
-		private static bool PerformInternal(PwEntry pwe, string strWindow)
+		private static bool PerformInternal(AutoTypeCtx ctx, string strWindow)
 		{
-			Debug.Assert(pwe != null); if(pwe == null) return false;
+			if(ctx == null) { Debug.Assert(false); return false; }
 
-			string strSeq = GetSequenceForWindow(pwe, strWindow, false);
-			if((strSeq == null) || (strSeq.Length == 0)) return false;
+			AutoTypeCtx ctxNew = ctx.Clone();
 
 			if(Program.Config.Integration.AutoTypePrependInitSequenceForIE &&
 				WinUtil.IsInternetExplorer7Window(strWindow))
 			{
-				strSeq = @"{DELAY 50}1{DELAY 50}{BACKSPACE}" + strSeq;
+				ctxNew.Sequence = @"{DELAY 50}1{DELAY 50}{BACKSPACE}" +
+					ctxNew.Sequence;
 			}
 
-			AutoType.Execute(strSeq, pwe);
-			return true;
+			return AutoType.Execute(ctxNew);
 		}
 
-		private static string GetSequenceForWindow(PwEntry pwe, string strWindow,
-			bool bRequireDefinedWindow)
+		private static List<string> GetSequencesForWindow(PwEntry pwe,
+			string strWindow, PwDatabase pdContext)
 		{
-			Debug.Assert(strWindow != null); if(strWindow == null) return null;
-			Debug.Assert(pwe != null); if(pwe == null) return null;
+			List<string> l = new List<string>();
 
-			if(!pwe.GetAutoTypeEnabled()) return null;
+			if(pwe == null) { Debug.Assert(false); return l; }
+			if(strWindow == null) { Debug.Assert(false); return l; }
 
-			string strSeq = null;
-			foreach(KeyValuePair<string, string> kvp in pwe.AutoType.WindowSequencePairs)
+			if(!pwe.GetAutoTypeEnabled()) return l;
+
+			// Specifically defined sequences must match before the title,
+			// in order to allow selecting the first item as default one
+			foreach(AutoTypeAssociation a in pwe.AutoType.Associations)
 			{
-				string strWndSpec = kvp.Key;
+				string strWndSpec = a.WindowName;
 				if(strWndSpec == null) { Debug.Assert(false); continue; }
 
 				strWndSpec = strWndSpec.Trim();
 
 				if(strWndSpec.Length > 0)
-					strWndSpec = SprEngine.Compile(strWndSpec, false, pwe,
-						null, false, false);
+					strWndSpec = SprEngine.Compile(strWndSpec, new SprContext(
+						pwe, pdContext, SprCompileFlags.All));
 
 				if(MatchWindows(strWndSpec, strWindow))
 				{
-					strSeq = kvp.Value;
-					break;
+					string strSeq = a.Sequence;
+					if(string.IsNullOrEmpty(strSeq))
+						strSeq = pwe.GetAutoTypeSequence();
+					AddSequence(l, strSeq);
 				}
 			}
 
@@ -234,18 +243,66 @@ namespace KeePass.Util
 				string strTitle = pwe.Strings.ReadSafe(PwDefs.TitleField);
 				strTitle = strTitle.Trim();
 
-				if(string.IsNullOrEmpty(strSeq) && (strTitle.Length > 0) &&
-					(strWindow.IndexOf(strTitle, StrUtil.CaseIgnoreCmp) >= 0))
-				{
-					strSeq = pwe.AutoType.DefaultSequence;
-					Debug.Assert(strSeq != null);
-				}
+				if((strTitle.Length > 0) && (strWindow.IndexOf(strTitle,
+					StrUtil.CaseIgnoreCmp) >= 0))
+					AddSequence(l, pwe.GetAutoTypeSequence());
 			}
 
-			if((strSeq == null) && bRequireDefinedWindow) return null;
+			if(Program.Config.Integration.AutoTypeMatchByUrlInTitle)
+			{
+				string strUrl = pwe.Strings.ReadSafe(PwDefs.UrlField);
+				strUrl = strUrl.Trim();
 
-			if(!string.IsNullOrEmpty(strSeq)) return strSeq;
-			return pwe.GetAutoTypeSequence();
+				if((strUrl.Length > 0) && (strWindow.IndexOf(strUrl,
+					StrUtil.CaseIgnoreCmp) >= 0))
+					AddSequence(l, pwe.GetAutoTypeSequence());
+			}
+
+			return l;
+		}
+
+		private static void AddSequence(List<string> lSeq, string strSeq)
+		{
+			string strCanSeq = CanonicalizeSeq(strSeq);
+
+			for(int i = 0; i < lSeq.Count; ++i)
+			{
+				string strCanEx = CanonicalizeSeq(lSeq[i]);
+				if(strCanEx.Equals(strCanSeq)) return; // Exists already
+			}
+
+			lSeq.Add(strSeq); // Non-canonical version
+		}
+
+		private const string StrBraceOpen = @"{1E1F63AB-2F63-4B60-ADBA-7F38B8D7778E}";
+		private const string StrBraceClose = @"{34D698D7-CEBF-4AF0-87BF-DC1B1F5E95A0}";
+		private static string CanonicalizeSeq(string strSeq)
+		{
+			// Preprocessing: balance braces
+			strSeq = strSeq.Replace(@"{{}", StrBraceOpen);
+			strSeq = strSeq.Replace(@"{}}", StrBraceClose);
+
+			StringBuilder sb = new StringBuilder();
+
+			bool bInPlh = false;
+			for(int i = 0; i < strSeq.Length; ++i)
+			{
+				char ch = strSeq[i];
+
+				if(ch == '{') bInPlh = true;
+				else if(ch == '}') bInPlh = false;
+				else if(bInPlh) ch = char.ToUpper(ch);
+
+				sb.Append(ch);
+			}
+
+			strSeq = sb.ToString();
+
+			// Postprocessing: restore braces
+			strSeq = strSeq.Replace(StrBraceOpen, @"{{}");
+			strSeq = strSeq.Replace(StrBraceClose, @"{}}");
+
+			return strSeq;
 		}
 
 		public static bool IsValidAutoTypeWindow(IntPtr hWindow, bool bBeepIfNot)
@@ -285,7 +342,8 @@ namespace KeePass.Util
 			if(string.IsNullOrEmpty(strWindow)) return false;
 			if(!IsValidAutoTypeWindow(hWnd, true)) return false;
 
-			PwObjectList<PwEntry> vList = new PwObjectList<PwEntry>();
+			List<AutoTypeCtx> lCtxs = new List<AutoTypeCtx>();
+			PwDatabase pdCurrent = null;
 			DateTime dtNow = DateTime.Now;
 
 			EntryHandler eh = delegate(PwEntry pe)
@@ -293,8 +351,11 @@ namespace KeePass.Util
 				// Ignore expired entries
 				if(pe.Expires && (pe.ExpiryTime < dtNow)) return true;
 
-				if(GetSequenceForWindow(pe, strWindow, true) != null)
-					vList.Add(pe);
+				List<string> lSeq = GetSequencesForWindow(pe, strWindow, pdCurrent);
+				foreach(string strSeq in lSeq)
+				{
+					lCtxs.Add(new AutoTypeCtx(strSeq, pe, pdCurrent));
+				}
 
 				return true;
 			};
@@ -302,36 +363,43 @@ namespace KeePass.Util
 			foreach(PwDatabase pwSource in vSources)
 			{
 				if(pwSource.IsOpen == false) continue;
+				pdCurrent = pwSource;
 				pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 			}
 
-			if(vList.UCount == 1)
-				AutoType.PerformInternal(vList.GetAt(0), strWindow);
-			else if(vList.UCount > 1)
+			if(lCtxs.Count == 1)
+				AutoType.PerformInternal(lCtxs[0], strWindow);
+			else if(lCtxs.Count > 1)
 			{
-				EntryListForm elf = new EntryListForm();
-				elf.InitEx(KPRes.AutoTypeEntrySelection, KPRes.AutoTypeEntrySelectionDescShort,
-					KPRes.AutoTypeEntrySelectionDescLong,
-					Properties.Resources.B48x48_KGPG_Key2, ilIcons, vList);
-				elf.EnsureForeground = true;
+				AutoTypeCtxForm dlg = new AutoTypeCtxForm();
+				dlg.InitEx(lCtxs, ilIcons);
 
-				if(elf.ShowDialog() == DialogResult.OK)
+				if(dlg.ShowDialog() == DialogResult.OK)
 				{
 					try { NativeMethods.EnsureForegroundWindow(hWnd); }
 					catch(Exception) { Debug.Assert(false); }
 
-					if(elf.SelectedEntry != null)
-						AutoType.PerformInternal(elf.SelectedEntry, strWindow);
+					if(dlg.SelectedCtx != null)
+						AutoType.PerformInternal(dlg.SelectedCtx, strWindow);
 				}
-				UIUtil.DestroyForm(elf);
+				UIUtil.DestroyForm(dlg);
 			}
 
 			return true;
 		}
 
+		[Obsolete]
 		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe)
 		{
-			if((pe != null) && !pe.GetAutoTypeEnabled()) return false;
+			return PerformIntoPreviousWindow(fCurrent, pe,
+				Program.MainForm.DocumentManager.SafeFindContainerOf(pe));
+		}
+
+		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe,
+			PwDatabase pdContext)
+		{
+			if(pe == null) { Debug.Assert(false); return false; }
+			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
 			bool bTopMost = ((fCurrent != null) ? fCurrent.TopMost : false);
@@ -341,7 +409,7 @@ namespace KeePass.Util
 			{
 				if(!NativeMethods.LoseFocus(fCurrent)) { Debug.Assert(false); }
 
-				return PerformIntoCurrentWindow(pe);
+				return PerformIntoCurrentWindow(pe, pdContext);
 			}
 			finally
 			{
@@ -349,8 +417,17 @@ namespace KeePass.Util
 			}
 		}
 
+		[Obsolete]
 		public static bool PerformIntoCurrentWindow(PwEntry pe)
 		{
+			return PerformIntoCurrentWindow(pe,
+				Program.MainForm.DocumentManager.SafeFindContainerOf(pe));
+		}
+
+		public static bool PerformIntoCurrentWindow(PwEntry pe, PwDatabase pdContext)
+		{
+			if(pe == null) { Debug.Assert(false); return false; }
+			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
 			string strWindow;
@@ -369,7 +446,11 @@ namespace KeePass.Util
 
 			Thread.Sleep(100);
 
-			return AutoType.PerformInternal(pe, strWindow);
+			List<string> lSeq = GetSequencesForWindow(pe, strWindow, pdContext);
+			if(lSeq.Count == 0) lSeq.Add(pe.GetAutoTypeSequence());
+
+			AutoTypeCtx ctx = new AutoTypeCtx(lSeq[0], pe, pdContext);
+			return AutoType.PerformInternal(ctx, strWindow);
 		}
 
 		private static string ValidateAutoTypeSequence(string strSequence)

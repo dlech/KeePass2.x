@@ -87,7 +87,7 @@ namespace KeePass.UI
 			try
 			{
 				NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
-				cf.cbSize = (UInt32)Marshal.SizeOf(cf);
+				cf.cbSize = (uint)Marshal.SizeOf(cf);
 
 				cf.dwMask = NativeMethods.CFM_LINK;
 				cf.dwEffects = NativeMethods.CFE_LINK;
@@ -102,6 +102,35 @@ namespace KeePass.UI
 				Marshal.FreeCoTaskMem(lParam);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static NativeMethods.CHARFORMAT2 RtfGetCharFormat(RichTextBox rtb)
+		{
+			NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
+			cf.cbSize = (uint)Marshal.SizeOf(cf);
+
+			try
+			{
+				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
+				IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+				Marshal.StructureToPtr(cf, lParam, false);
+
+				NativeMethods.SendMessage(rtb.Handle,
+					NativeMethods.EM_GETCHARFORMAT, wParam, lParam);
+
+				cf = (NativeMethods.CHARFORMAT2)Marshal.PtrToStructure(lParam,
+					typeof(NativeMethods.CHARFORMAT2));
+				Marshal.FreeCoTaskMem(lParam);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return cf;
+		}
+
+		public static bool RtfIsFirstCharLink(RichTextBox rtb)
+		{
+			NativeMethods.CHARFORMAT2 cf = RtfGetCharFormat(rtb);
+			return ((cf.dwEffects & NativeMethods.CFE_LINK) != 0);
 		}
 
 		public static void RtfLinkifyExtUrls(RichTextBox richTextBox, bool bResetSelection)
@@ -146,6 +175,32 @@ namespace KeePass.UI
 					RtfSetSelectionLink(rtb);
 
 					if(bResetTempSelection) rtb.Select(0, 0);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void RtfLinkifyReferences(RichTextBox rtb,
+			bool bResetTempSelection)
+		{
+			try
+			{
+				string str = rtb.Text;
+
+				int iOffset = 0;
+				while(true)
+				{
+					int iStart = str.IndexOf(SprEngine.StrRefStart, iOffset,
+						StrUtil.CaseIgnoreCmp);
+					if(iStart < 0) break;
+					int iEnd = str.IndexOf(SprEngine.StrRefEnd, iStart + 1,
+						StrUtil.CaseIgnoreCmp);
+					if(iEnd <= iStart) break;
+
+					string strRef = str.Substring(iStart, iEnd - iStart + 1);
+					RtfLinkifyText(rtb, strRef, bResetTempSelection);
+
+					iOffset = iStart + 1;
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -420,7 +475,6 @@ namespace KeePass.UI
 				if(pe.ParentGroup != null)
 				{
 					string strGroup = pe.ParentGroup.GetFullPath();
-
 					if(strGroup != lvg.Header)
 					{
 						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
@@ -475,6 +529,106 @@ namespace KeePass.UI
 
 			int nColWidth = (lv.ClientRectangle.Width - GetVScrollBarWidth()) /
 				vColumns.Count;
+			foreach(ColumnHeader ch in lv.Columns)
+			{
+				ch.Width = nColWidth;
+			}
+
+			lv.EndUpdate();
+		}
+
+		/// <summary>
+		/// Fill a <c>ListView</c> with password entries.
+		/// </summary>
+		public static void CreateEntryList(ListView lv, List<AutoTypeCtx> lCtxs,
+			ImageList ilIcons)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(lCtxs == null) throw new ArgumentNullException("lCtxs");
+
+			lv.BeginUpdate();
+
+			lv.Items.Clear();
+			lv.Columns.Clear();
+			lv.ShowGroups = true;
+			lv.SmallImageList = ilIcons;
+
+			lv.Columns.Add(KPRes.Title);
+			lv.Columns.Add(KPRes.UserName);
+			lv.Columns.Add(KPRes.Url);
+			lv.Columns.Add(KPRes.Sequence);
+
+			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
+			DateTime dtNow = DateTime.Now;
+			bool bFirstEntry = true;
+
+			foreach(AutoTypeCtx ctx in lCtxs)
+			{
+				if(ctx == null) { Debug.Assert(false); continue; }
+				PwEntry pe = ctx.Entry;
+				if(pe == null) { Debug.Assert(false); continue; }
+				PwDatabase pd = ctx.Database;
+				if(pd == null) { Debug.Assert(false); continue; }
+
+				if(pe.ParentGroup != null)
+				{
+					string strGroup = pe.ParentGroup.GetFullPath(" - ", true);
+					if(strGroup != lvg.Header)
+					{
+						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
+						lv.Groups.Add(lvg);
+					}
+				}
+
+				SprContext sprCtx = new SprContext(pe, pd, SprCompileFlags.Deref);
+				sprCtx.ForcePlainTextPasswords = false;
+
+				ListViewItem lvi = new ListViewItem(SprEngine.Compile(
+					pe.Strings.ReadSafe(PwDefs.TitleField), sprCtx));
+
+				if(pe.Expires && (pe.ExpiryTime <= dtNow))
+					lvi.ImageIndex = (int)PwIcon.Expired;
+				else if(pe.CustomIconUuid == PwUuid.Zero)
+					lvi.ImageIndex = (int)pe.IconId;
+				else
+				{
+					int nInx = pd.GetCustomIconIndex(pe.CustomIconUuid);
+					if(nInx > -1)
+					{
+						ilIcons.Images.Add(new Bitmap(pd.GetCustomIcon(
+							pe.CustomIconUuid)));
+						lvi.ImageIndex = ilIcons.Images.Count - 1;
+					}
+					else { Debug.Assert(false); lvi.ImageIndex = (int)pe.IconId; }
+				}
+
+				lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
+					PwDefs.UserNameField), sprCtx));
+				lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
+					PwDefs.UrlField), sprCtx));
+				lvi.SubItems.Add(ctx.Sequence);
+
+				if(!pe.ForegroundColor.IsEmpty)
+					lvi.ForeColor = pe.ForegroundColor;
+				if(!pe.BackgroundColor.IsEmpty)
+					lvi.BackColor = pe.BackgroundColor;
+
+				lvi.Tag = ctx;
+
+				lv.Items.Add(lvi);
+				lvg.Items.Add(lvi);
+
+				if(bFirstEntry)
+				{
+					lvi.Selected = true;
+					lvi.Focused = true;
+
+					bFirstEntry = false;
+				}
+			}
+
+			int nColWidth = (lv.ClientRectangle.Width - GetVScrollBarWidth()) /
+				lv.Columns.Count;
 			foreach(ColumnHeader ch in lv.Columns)
 			{
 				ch.Width = nColWidth;
@@ -989,27 +1143,53 @@ namespace KeePass.UI
 
 			Color clrBg = lv.BackColor;
 
-			// Items in sorted groups don't have display-ordered indices
-			// (in contrast to a non-grouped sorted list)
-			if(lv.ShowGroups && (lv.ListViewItemSorter != null))
-				bAlternate = false;
-
-			for(int i = 0; i < lv.Items.Count; ++i)
+			if(!lv.ShowGroups || !bAlternate)
 			{
-				ListViewItem lvi = lv.Items[i];
-				Debug.Assert(lvi.Index == i);
-				Debug.Assert(lvi.UseItemStyleForSubItems);
-
-				if(!bAlternate)
+				for(int i = 0; i < lv.Items.Count; ++i)
 				{
-					if(ColorsEqual(lvi.BackColor, clrAlternate))
+					ListViewItem lvi = lv.Items[i];
+					Debug.Assert(lvi.Index == i);
+					Debug.Assert(lvi.UseItemStyleForSubItems);
+
+					if(!bAlternate)
+					{
+						if(ColorsEqual(lvi.BackColor, clrAlternate))
+							lvi.BackColor = clrBg;
+					}
+					else if(((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
 						lvi.BackColor = clrBg;
+					else if(((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
+						lvi.BackColor = clrAlternate;
 				}
-				else if(((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
-					lvi.BackColor = clrBg;
-				else if(((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
-					lvi.BackColor = clrAlternate;
 			}
+			else // Groups && alternating
+			{
+				foreach(ListViewGroup lvg in lv.Groups)
+				{
+					// Within the group the items are not in display order,
+					// but the order can be derived from the item indices
+					List<ListViewItem> lItems = new List<ListViewItem>();
+					foreach(ListViewItem lviEnum in lvg.Items)
+						lItems.Add(lviEnum);
+					lItems.Sort(UIUtil.LviCompareByIndex);
+
+					for(int i = 0; i < lItems.Count; ++i)
+					{
+						ListViewItem lvi = lItems[i];
+						Debug.Assert(lvi.UseItemStyleForSubItems);
+
+						if(((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
+							lvi.BackColor = clrBg;
+						else if(((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
+							lvi.BackColor = clrAlternate;
+					}
+				}
+			}
+		}
+
+		private static int LviCompareByIndex(ListViewItem a, ListViewItem b)
+		{
+			return a.Index.CompareTo(b.Index);
 		}
 
 		public static bool SetSortIcon(ListView lv, int iColumn, SortOrder so)
@@ -1273,6 +1453,30 @@ namespace KeePass.UI
 				else { Debug.Assert(false); }
 			}
 			else { Debug.Assert(false); }
+		}
+
+		public static string GetColumnWidths(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return string.Empty; }
+
+			int n = lv.Columns.Count;
+			int[] vSizes = new int[n];
+			for(int i = 0; i < n; ++i) vSizes[i] = lv.Columns[i].Width;
+
+			return StrUtil.SerializeIntArray(vSizes);
+		}
+
+		public static void SetColumnWidths(ListView lv, string strSizes)
+		{
+			if(string.IsNullOrEmpty(strSizes)) return; // No assert
+
+			int[] vSizes = StrUtil.DeserializeIntArray(strSizes);
+
+			int n = lv.Columns.Count;
+			Debug.Assert(n == vSizes.Length);
+
+			for(int i = 0; i < Math.Min(n, vSizes.Length); ++i)
+				lv.Columns[i].Width = vSizes[i];
 		}
 
 		public static void SetButtonImage(Button btn, Image img, bool b16To15)
@@ -1606,7 +1810,7 @@ namespace KeePass.UI
 				if(string.IsNullOrEmpty(strWav))
 					strWav = @"%SystemRoot%\Media\Windows User Account Control.wav";
 
-				strWav = SprEngine.Compile(strWav, false, null, null, false, false);
+				strWav = SprEngine.Compile(strWav, null);
 
 				if(!File.Exists(strWav)) throw new FileNotFoundException();
 
@@ -1662,6 +1866,58 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		/// <summary>
+		/// Set the state of a window. This is a workaround for
+		/// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4610118
+		/// </summary>
+		public static void SetWindowState(Form f, FormWindowState fws)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			f.WindowState = fws;
+
+			// If the window state change / resize handler changes
+			// the window state again, the property gets out of sync
+			// with the real state. Therefore, we now make sure that
+			// the property is synchronized with the actual window
+			// state.
+			try
+			{
+				// Get the value that .NET currently caches; note
+				// this isn't necessarily the real window state
+				// due to the bug
+				FormWindowState fwsCached = f.WindowState;
+
+				IntPtr hWnd = f.Handle;
+				if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+
+				// Get the real state using Windows API functions
+				bool bIsRealMin = NativeMethods.IsIconic(hWnd);
+				bool bIsRealMax = NativeMethods.IsZoomed(hWnd);
+
+				FormWindowState? fwsFix = null;
+				if(bIsRealMin && (fwsCached != FormWindowState.Minimized))
+					fwsFix = FormWindowState.Minimized;
+				else if(bIsRealMax && (fwsCached != FormWindowState.Maximized) &&
+					!bIsRealMin)
+					fwsFix = FormWindowState.Maximized;
+				else if(!bIsRealMin && !bIsRealMax &&
+					(fwsCached != FormWindowState.Normal))
+					fwsFix = FormWindowState.Normal;
+
+				if(fwsFix.HasValue)
+				{
+					// If the window is invisible, no state
+					// change / resize handlers are called
+					bool bVisible = f.Visible;
+					if(bVisible) f.Visible = false;
+					f.WindowState = fwsFix.Value;
+					if(bVisible) f.Visible = true;
+				}
+			}
+			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
 		}
 	}
 }

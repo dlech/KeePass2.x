@@ -78,7 +78,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			m_ctxValue.Attach(m_richStringValue);
+			m_ctxValue.Attach(m_richStringValue, this);
 
 			string strTitle, strDesc;
 			if(m_strStringName == null)

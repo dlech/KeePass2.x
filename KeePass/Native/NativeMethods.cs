@@ -46,6 +46,10 @@ namespace KeePass.Native
 		internal static extern IntPtr SendMessageHDItem(IntPtr hWnd, int nMsg,
 			IntPtr wParam, ref HDITEM hdItem);
 
+		// [DllImport("User32.dll", EntryPoint = "SendMessage")]
+		// private static extern IntPtr SendMessageLVGroup(IntPtr hWnd, int nMsg,
+		//	IntPtr wParam, ref LVGROUP lvGroup);
+
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern IntPtr SendMessageTimeout(IntPtr hWnd, int nMsg,
 			IntPtr wParam, IntPtr lParam, uint fuFlags, uint uTimeout,
@@ -76,6 +80,14 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll", EntryPoint = "GetClassLongPtr")]
 		private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool IsIconic(IntPtr hWnd);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool IsZoomed(IntPtr hWnd);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern int GetWindowTextLength(IntPtr hWnd);
@@ -255,6 +267,13 @@ namespace KeePass.Native
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		internal static extern uint GetFileAttributes(string lpFileName);
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DeleteFile(string lpFileName);
 
 		[DllImport("Kernel32.dll", ExactSpelling = true, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

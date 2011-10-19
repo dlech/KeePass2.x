@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 using KeePass.Util;
 
@@ -44,6 +45,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strKey = string.Empty;
+		[DefaultValue("")]
 		public string KeyFilePath
 		{
 			get { return m_strKey; }
@@ -55,6 +57,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strProv = string.Empty;
+		[DefaultValue("")]
 		public string KeyProvider
 		{
 			get { return m_strProv; }
@@ -75,6 +78,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private int m_nNewEntryExpireDays = -1;
+		[DefaultValue(-1)]
 		public int NewEntryExpiresInDays
 		{
 			get { return m_nNewEntryExpireDays; }
@@ -88,7 +92,9 @@ namespace KeePass.App.Configuration
 			set { m_uDefaultOptionsTab = value; }
 		}
 
-		private string m_strTanChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+		private const string DefaultTanChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+		private string m_strTanChars = DefaultTanChars;
+		[DefaultValue(DefaultTanChars)]
 		public string TanCharacters
 		{
 			get { return m_strTanChars; }
@@ -100,6 +106,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bExpireTansOnUse = true;
+		[DefaultValue(true)]
 		public bool TanExpiresOnUse
 		{
 			get { return m_bExpireTansOnUse; }
@@ -118,6 +125,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strDbSaveAsPath = string.Empty;
+		[DefaultValue("")]
 		public string FileSaveAsDirectory
 		{
 			get { return m_strDbSaveAsPath; }
@@ -129,6 +137,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bRememberKeySources = true;
+		[DefaultValue(true)]
 		public bool RememberKeySources
 		{
 			get { return m_bRememberKeySources; }
@@ -148,6 +157,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strCustomColors = string.Empty;
+		[DefaultValue("")]
 		public string CustomColors
 		{
 			get { return m_strCustomColors; }
@@ -159,6 +169,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strWinFavsBaseName = string.Empty;
+		[DefaultValue("")]
 		public string WinFavsBaseFolderName
 		{
 			get { return m_strWinFavsBaseName; }
@@ -170,6 +181,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strWinFavsFilePrefix = string.Empty;
+		[DefaultValue("")]
 		public string WinFavsFileNamePrefix
 		{
 			get { return m_strWinFavsFilePrefix; }
@@ -181,6 +193,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strWinFavsFileSuffix = string.Empty;
+		[DefaultValue("")]
 		public string WinFavsFileNameSuffix
 		{
 			get { return m_strWinFavsFileSuffix; }
@@ -192,6 +205,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCollapseRecycleBin = false;
+		[DefaultValue(false)]
 		public bool RecycleBinCollapse
 		{
 			get { return m_bCollapseRecycleBin; }
@@ -209,9 +223,13 @@ namespace KeePass.App.Configuration
 				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
 
 			string strKey = strKeySource;
-			if(bIsKeyFile && !string.IsNullOrEmpty(strKey) &&
-				!UrlUtil.IsAbsolutePath(strKey))
-				strKey = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strKey);
+			if(bIsKeyFile && !string.IsNullOrEmpty(strKey))
+			{
+				if(StrUtil.IsDataUri(strKey))
+					strKey = null; // Don't remember data URIs
+				else if(!UrlUtil.IsAbsolutePath(strKey))
+					strKey = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strKey);
+			}
 
 			if(!m_bRememberKeySources) strKey = null;
 

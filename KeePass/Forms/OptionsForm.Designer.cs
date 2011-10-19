@@ -75,8 +75,8 @@
 			this.m_lblRestoreHotKey = new System.Windows.Forms.Label();
 			this.m_tbGlobalAutoType = new System.Windows.Forms.TextBox();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
-			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			this.m_btnProxy = new System.Windows.Forms.Button();
+			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -612,6 +612,16 @@
 			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
 			// 
+			// m_btnProxy
+			// 
+			this.m_btnProxy.Location = new System.Drawing.Point(472, 279);
+			this.m_btnProxy.Name = "m_btnProxy";
+			this.m_btnProxy.Size = new System.Drawing.Size(75, 23);
+			this.m_btnProxy.TabIndex = 1;
+			this.m_btnProxy.Text = "Proxy...";
+			this.m_btnProxy.UseVisualStyleBackColor = true;
+			this.m_btnProxy.Click += new System.EventHandler(this.OnBtnProxy);
+			// 
 			// m_lvAdvanced
 			// 
 			this.m_lvAdvanced.CheckBoxes = true;
@@ -624,16 +634,6 @@
 			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
-			// 
-			// m_btnProxy
-			// 
-			this.m_btnProxy.Location = new System.Drawing.Point(472, 279);
-			this.m_btnProxy.Name = "m_btnProxy";
-			this.m_btnProxy.Size = new System.Drawing.Size(75, 23);
-			this.m_btnProxy.TabIndex = 1;
-			this.m_btnProxy.Text = "Proxy...";
-			this.m_btnProxy.UseVisualStyleBackColor = true;
-			this.m_btnProxy.Click += new System.EventHandler(this.OnBtnProxy);
 			// 
 			// OptionsForm
 			// 
@@ -651,7 +651,7 @@
 			this.MinimizeBox = false;
 			this.Name = "OptionsForm";
 			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Options";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);

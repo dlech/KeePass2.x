@@ -368,6 +368,12 @@
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AutoTypeCtxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AutoTypeCtxForm.Designer.cs">
+      <DependentUpon>AutoTypeCtxForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CharPickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -403,6 +409,12 @@
     </Compile>
     <Compile Include="Forms\DataViewerForm.Designer.cs">
       <DependentUpon>DataViewerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DuplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DuplicationForm.Designer.cs">
+      <DependentUpon>DuplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EcasActionForm.cs">
       <SubType>Form</SubType>
@@ -649,6 +661,7 @@
     <Compile Include="Plugins\PlgxPluginInfo.cs" />
     <Compile Include="Plugins\PlgxPlugin.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
+    <Compile Include="UI\AsyncPwListUpdate.cs" />
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -687,11 +700,13 @@
     <Compile Include="UI\ListViewStateEx.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
     <Compile Include="UI\OnDemandStatusDialog.cs" />
+    <Compile Include="UI\OpenWithMenu.cs" />
     <Compile Include="UI\PromptedTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
+    <Compile Include="UI\StatusUtil.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="UI\TaskbarList.cs" />
@@ -700,6 +715,7 @@
     <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>
+    <Compile Include="Util\AutoTypeCtx.cs" />
     <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\CancellableOperationEventArgs.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
@@ -728,6 +744,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AutoTypeCtxForm.resx">
+      <DependentUpon>AutoTypeCtxForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CharPickerForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CharPickerForm.cs</DependentUpon>
@@ -749,6 +768,9 @@
     <EmbeddedResource Include="Forms\DataViewerForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DataViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DuplicationForm.resx">
+      <DependentUpon>DuplicationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EcasActionForm.resx">
       <DependentUpon>EcasActionForm.cs</DependentUpon>
@@ -941,15 +963,17 @@
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
     <Compile Include="Util\PwGeneratorUtil.cs" />
+    <Compile Include="Util\SearchUtil.cs" />
     <Compile Include="Util\SendInputEx.cs" />
     <Compile Include="Util\SendInputEx.Unix.cs" />
     <Compile Include="Util\SendInputEx.Windows.cs" />
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
-    <Compile Include="Util\Spr\SprContentFlags.cs" />
+    <Compile Include="Util\Spr\SprContext.cs" />
     <Compile Include="Util\Spr\SprEncoding.cs" />
     <Compile Include="Util\Spr\SprEngine.cs" />
+    <Compile Include="Util\Spr\SprEngine.PickChars.cs" />
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\WinUtil.cs" />
@@ -1080,6 +1104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola_Derived\B16x16_EditCopyLink.png" />
     <None Include="Resources\Images\B16x16_Imp_KasperskyPwMgr.png" />
     <None Include="Resources\Images\B16x16_Imp_StickyPw.png" />
     <None Include="Resources\Images\B16x16_Imp_PwsPlus.png" />
@@ -1203,6 +1228,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_E6D8E2B3F89DA59B /compiler:/delaysign-</PostBuildEvent>
+    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_33430356D8D7D1B8 /compiler:/delaysign-</PostBuildEvent>
   </PropertyGroup>
 </Project>

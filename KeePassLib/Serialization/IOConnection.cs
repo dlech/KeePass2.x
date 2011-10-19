@@ -219,6 +219,12 @@ namespace KeePassLib.Serialization
 
 		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
+			if(StrUtil.IsDataUri(ioc.Path))
+			{
+				byte[] pbData = StrUtil.DataUriToData(ioc.Path);
+				if(pbData != null) return new MemoryStream(pbData, false);
+			}
+
 			if(ioc.IsLocalFile()) return OpenReadLocal(ioc);
 
 			return CreateWebClient(ioc).OpenRead(new Uri(ioc.Path));
@@ -243,7 +249,16 @@ namespace KeePassLib.Serialization
 
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
-			return CreateWebClient(ioc).OpenWrite(new Uri(ioc.Path));
+			Uri uri = new Uri(ioc.Path);
+
+			// Mono does not set HttpWebRequest.Method to POST for writes,
+			// so one needs to set the method to PUT explicitly
+			if(NativeLib.IsUnix() && (uri.Scheme.Equals(Uri.UriSchemeHttp,
+				StrUtil.CaseIgnoreCmp) || uri.Scheme.Equals(Uri.UriSchemeHttps,
+				StrUtil.CaseIgnoreCmp)))
+				return CreateWebClient(ioc).OpenWrite(uri, WebRequestMethods.Http.Put);
+
+			return CreateWebClient(ioc).OpenWrite(uri);
 		}
 #else
 		public static Stream OpenWrite(IOConnectionInfo ioc)
@@ -306,7 +321,7 @@ namespace KeePassLib.Serialization
 				}
 				else req.Method = WrmDeleteFile;
 
-				req.GetResponse();
+				DisposeResponse(req.GetResponse(), true);
 			}
 #endif
 		}
@@ -350,7 +365,7 @@ namespace KeePassLib.Serialization
 					req.Headers.Set(WrhMoveFileTo, iocTo.Path);
 				}
 
-				req.GetResponse();
+				DisposeResponse(req.GetResponse(), true);
 			}
 #endif
 
@@ -365,6 +380,24 @@ namespace KeePassLib.Serialization
 			//	sIn.Close();
 			// }
 			// DeleteFile(iocFrom);
+		}
+
+		private static void DisposeResponse(WebResponse wr, bool bGetStream)
+		{
+			if(wr == null) return;
+
+			try
+			{
+				if(bGetStream)
+				{
+					Stream s = wr.GetResponseStream();
+					if(s != null) s.Close();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			try { wr.Close(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

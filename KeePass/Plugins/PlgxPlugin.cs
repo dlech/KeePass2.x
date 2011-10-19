@@ -524,16 +524,31 @@ namespace KeePass.Plugins
 			CompileEmbeddedRes(plgx);
 			PrepareSourceFiles(plgx);
 
-			CompilerResults cr;
-			if(!CompileAssembly(plgx, out cr, null))
-				if(!CompileAssembly(plgx, out cr, "v3.5"))
-				{
-					if(Program.CommandLineArgs[
-						AppDefs.CommandLineOptions.SavePluginCompileRes] != null)
-						SaveCompilerResults(plgx, cr);
+			string[] vCompilers = new string[] {
+				null, "v3.5",
+				"v4", // Suggested in CodeDomProvider.CreateProvider doc
+				"v4.0" // Apparently works for most people
+			};
 
-					throw new InvalidOperationException();
+			CompilerResults cr = null;
+			bool bCompiled = false;
+			for(int iCmp = 0; iCmp < vCompilers.Length; ++iCmp)
+			{
+				if(CompileAssembly(plgx, ref cr, vCompilers[iCmp]))
+				{
+					bCompiled = true;
+					break;
 				}
+			}
+
+			if(!bCompiled)
+			{
+				if(Program.CommandLineArgs[
+					AppDefs.CommandLineOptions.SavePluginCompileRes] != null)
+					SaveCompilerResults(plgx, cr);
+
+				throw new InvalidOperationException();
+			}
 
 			Program.TempFilesPool.Add(cr.PathToAssembly);
 
@@ -547,7 +562,7 @@ namespace KeePass.Plugins
 		}
 
 		private static bool CompileAssembly(PlgxPluginInfo plgx,
-			out CompilerResults cr, string strCompilerVersion)
+			ref CompilerResults cr, string strCompilerVersion)
 		{
 			try
 			{
@@ -575,13 +590,15 @@ namespace KeePass.Plugins
 			}
 			catch(Exception) { }
 
-			cr = null;
+			// cr = null; // Keep previous results for output
 			return false;
 		}
 
 		private static void SaveCompilerResults(PlgxPluginInfo plgx,
 			CompilerResults cr)
 		{
+			if(cr == null) { Debug.Assert(false); return; }
+
 			StringBuilder sb = new StringBuilder();
 			foreach(string strOut in cr.Output)
 			{
@@ -696,7 +713,7 @@ namespace KeePass.Plugins
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_CACHE_DIR}", strCacheDir);
 
 			// str = UrlUtil.ConvertSeparators(str);
-			str = SprEngine.Compile(str, false, null, null, false, false);
+			str = SprEngine.Compile(str, null);
 
 			string strApp, strArgs;
 			StrUtil.SplitCommandLine(str, out strApp, out strArgs);

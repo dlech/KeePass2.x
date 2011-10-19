@@ -36,17 +36,19 @@ using KeePassLib.Security;
 using KeePassLib.Collections;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Forms
 {
 	public partial class EditAutoTypeItemForm : Form
 	{
 		private AutoTypeConfig m_atConfig = null;
 		private ProtectedStringDictionary m_vStringDict = null;
-		private string m_strOriginalName = null;
+		private int m_iOrgIndex = -1;
 		private bool m_bEditSequenceOnly = false;
 
 		// private Color m_clrOriginalForeground = Color.Black;
-		private Color m_clrOriginalBackground = Color.White;
+		// private Color m_clrOriginalBackground = Color.White;
 		private List<Image> m_vWndImages = new List<Image>();
 
 		private RichTextBoxContextMenu m_ctxKeySeq = new RichTextBoxContextMenu();
@@ -84,14 +86,15 @@ namespace KeePass.Forms
 			Program.Translation.ApplyTo(this);
 		}
 
-		public void InitEx(AutoTypeConfig atConfig, ProtectedStringDictionary vStringDict, string strOriginalName, bool bEditSequenceOnly)
+		public void InitEx(AutoTypeConfig atConfig, ProtectedStringDictionary vStringDict,
+			int iOrgIndex, bool bEditSequenceOnly)
 		{
 			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException("vStringDict");
 			Debug.Assert(atConfig != null); if(atConfig == null) throw new ArgumentNullException("atConfig");
 
 			m_atConfig = atConfig;
 			m_vStringDict = vStringDict;
-			m_strOriginalName = strOriginalName;
+			m_iOrgIndex = iOrgIndex;
 			m_bEditSequenceOnly = bEditSequenceOnly;
 		}
 
@@ -102,8 +105,8 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			m_ctxKeySeq.Attach(m_rbKeySeq);
-			m_ctxKeyCodes.Attach(m_rtbPlaceholders);
+			m_ctxKeySeq.Attach(m_rbKeySeq, this);
+			m_ctxKeyCodes.Attach(m_rtbPlaceholders, this);
 
 			if(!m_bEditSequenceOnly)
 			{
@@ -123,7 +126,7 @@ namespace KeePass.Forms
 			UIUtil.EnableAutoCompletion(m_cmbWindow, false);
 
 			// m_clrOriginalForeground = m_lblOpenHint.ForeColor;
-			m_clrOriginalBackground = m_cmbWindow.BackColor;
+			// m_clrOriginalBackground = m_cmbWindow.BackColor;
 			// m_strOriginalWindowHint = m_lblTargetWindowInfo.Text;
 
 			RichTextBuilder rb = new RichTextBuilder();
@@ -195,15 +198,18 @@ namespace KeePass.Forms
 
 			LinkifyRtf(m_rtbPlaceholders);
 
-			if(m_strOriginalName != null)
+			if(m_iOrgIndex >= 0)
 			{
-				m_cmbWindow.Text = m_strOriginalName;
+				AutoTypeAssociation asInit = m_atConfig.GetAt(m_iOrgIndex);
+				m_cmbWindow.Text = asInit.WindowName;
 
 				if(!m_bEditSequenceOnly)
-					m_rbKeySeq.Text = m_atConfig.GetSafe(m_strOriginalName);
+					m_rbKeySeq.Text = asInit.Sequence;
 				else
 					m_rbKeySeq.Text = m_atConfig.DefaultSequence;
 			}
+			else if(m_bEditSequenceOnly)
+				m_cmbWindow.Text = "(" + KPRes.Default + ")";
 
 			m_bBlockUpdates = true;
 			if(m_rbKeySeq.Text.Length > 0) m_rbSeqCustom.Checked = true;
@@ -212,27 +218,8 @@ namespace KeePass.Forms
 
 			try
 			{
-				NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
-					IntPtr lParam)
-				{
-					string strName = NativeMethods.GetWindowText(hWnd, true);
-					if(!string.IsNullOrEmpty(strName))
-					{
-						if(((NativeMethods.GetWindowStyle(hWnd) &
-							NativeMethods.WS_VISIBLE) != 0) &&
-							AutoType.IsValidAutoTypeWindow(hWnd, false) &&
-							!NativeMethods.IsTaskBar(hWnd))
-						{
-							m_cmbWindow.Items.Add(strName);
-							m_vWndImages.Add(UIUtil.GetWindowImage(hWnd, true));
-						}
-					}
-
-					return true;
-				};
-
-				NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
-				m_cmbWindow.OrderedImageList = m_vWndImages;
+				if(NativeLib.IsUnix()) PopulateWindowsListUnix();
+				else PopulateWindowsListWin();
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -266,10 +253,16 @@ namespace KeePass.Forms
 
 			if(!m_bEditSequenceOnly)
 			{
-				if(m_strOriginalName != null)
-					m_atConfig.Remove(m_strOriginalName);
+				AutoTypeAssociation atAssoc;
+				if(m_iOrgIndex >= 0) atAssoc = m_atConfig.GetAt(m_iOrgIndex);
+				else
+				{
+					atAssoc = new AutoTypeAssociation();
+					m_atConfig.Add(atAssoc);
+				}
 
-				m_atConfig.Set(m_cmbWindow.Text, strNewSeq);
+				atAssoc.WindowName = m_cmbWindow.Text;
+				atAssoc.Sequence = strNewSeq;
 			}
 			else m_atConfig.DefaultSequence = strNewSeq;
 		}
@@ -288,40 +281,40 @@ namespace KeePass.Forms
 			if(m_bBlockUpdates) return;
 			m_bBlockUpdates = true;
 
-			string strItemName = m_cmbWindow.Text;
+			// string strItemName = m_cmbWindow.Text;
 
-			bool bEnableOK = true;
-			// string strError = string.Empty;
+			// bool bEnableOK = true;
+			// // string strError = string.Empty;
 
-			if((m_atConfig.Get(strItemName) != null) && !m_bEditSequenceOnly)
-			{
-				if((m_strOriginalName == null) || !strItemName.Equals(m_strOriginalName))
-				{
-					bEnableOK = false;
-					// strError = KPRes.FieldNameExistsAlready;
-				}
-			}
-
-			// if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
+			// if((m_atConfig.Get(strItemName) != null) && !m_bEditSequenceOnly)
 			// {
-			//	bEnableOK = false;
-			//	// strError = KPRes.FieldNameInvalid;
+			//	if((m_strOriginalName == null) || !strItemName.Equals(m_strOriginalName))
+			//	{
+			//		bEnableOK = false;
+			//		// strError = KPRes.FieldNameExistsAlready;
+			//	}
 			// }
 
-			if(bEnableOK)
-			{
-				// m_lblTargetWindowInfo.Text = m_strOriginalWindowHint;
-				// m_lblTargetWindowInfo.ForeColor = m_clrOriginalForeground;
-				m_cmbWindow.BackColor = m_clrOriginalBackground;
-				m_btnOK.Enabled = true;
-			}
-			else
-			{
-				// m_lblTargetWindowInfo.Text = strError;
-				// m_lblTargetWindowInfo.ForeColor = Color.Red;
-				m_cmbWindow.BackColor = AppDefs.ColorEditError;
-				m_btnOK.Enabled = false;
-			}
+			// // if((strItemName.IndexOf('{') >= 0) || (strItemName.IndexOf('}') >= 0))
+			// // {
+			// //	bEnableOK = false;
+			// //	// strError = KPRes.FieldNameInvalid;
+			// // }
+
+			// if(bEnableOK)
+			// {
+			//	// m_lblTargetWindowInfo.Text = m_strOriginalWindowHint;
+			//	// m_lblTargetWindowInfo.ForeColor = m_clrOriginalForeground;
+			//	m_cmbWindow.BackColor = m_clrOriginalBackground;
+			//	m_btnOK.Enabled = true;
+			// }
+			// else
+			// {
+			//	// m_lblTargetWindowInfo.Text = strError;
+			//	// m_lblTargetWindowInfo.ForeColor = Color.Red;
+			//	m_cmbWindow.BackColor = AppDefs.ColorEditError;
+			//	m_btnOK.Enabled = false;
+			// }
 
 			if(m_bEditSequenceOnly)
 			{
@@ -438,6 +431,80 @@ namespace KeePass.Forms
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			CleanUpEx();
+		}
+
+		private void PopulateWindowsListWin()
+		{
+			NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
+				IntPtr lParam)
+			{
+				// Wrapped in try-catch, because it's passed to native code
+				try
+				{
+					string strName = NativeMethods.GetWindowText(hWnd, true);
+					if(!string.IsNullOrEmpty(strName))
+					{
+						if(((NativeMethods.GetWindowStyle(hWnd) &
+							NativeMethods.WS_VISIBLE) != 0) &&
+							AutoType.IsValidAutoTypeWindow(hWnd, false) &&
+							!NativeMethods.IsTaskBar(hWnd))
+						{
+							m_cmbWindow.Items.Add(strName);
+							m_vWndImages.Add(UIUtil.GetWindowImage(hWnd, true));
+						}
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return true;
+			};
+
+			NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
+			m_cmbWindow.OrderedImageList = m_vWndImages;
+		}
+
+		private void PopulateWindowsListUnix()
+		{
+			string strWindows = NativeMethods.RunXDoTool(
+				@"search --onlyvisible --name '.+' getwindowname %@");
+			if(string.IsNullOrEmpty(strWindows)) return;
+
+			strWindows = strWindows.Replace("\r\n", "\n");
+			strWindows = strWindows.Replace("\r", string.Empty);
+			string[] vWindows = strWindows.Split(new char[]{ '\n' });
+
+			List<string> vListed = new List<string>();
+			for(int i = 0; i < vWindows.Length; ++i)
+			{
+				string str = vWindows[i].Trim();
+
+				bool bValid = true;
+				foreach(Form f in Application.OpenForms)
+				{
+					if(IsOwnWindow(f, str)) { bValid = false; break; }
+				}
+				if(!bValid) continue;
+
+				if((str.Length > 0) && (vListed.IndexOf(str) < 0))
+				{
+					m_cmbWindow.Items.Add(str);
+					vListed.Add(str);
+				}
+			}
+		}
+
+		private static bool IsOwnWindow(Control cRoot, string strText)
+		{
+			if(cRoot == null) { Debug.Assert(false); return false; }
+			if(cRoot.Text.Trim() == strText) return true;
+
+			foreach(Control cSub in cRoot.Controls)
+			{
+				if(cSub == cRoot) { Debug.Assert(false); continue; }
+				if(IsOwnWindow(cSub, strText)) return true;
+			}
+
+			return false;
 		}
 	}
 }

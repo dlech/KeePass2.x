@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePassLib.Interfaces;
@@ -55,6 +56,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	public sealed class PwProfile : IDeepCloneable<PwProfile>
 	{
 		private string m_strName = string.Empty;
+		[DefaultValue("")]
 		public string Name
 		{
 			get { return m_strName; }
@@ -69,6 +71,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private bool m_bUserEntropy = false;
+		[DefaultValue(false)]
 		public bool CollectUserEntropy
 		{
 			get { return m_bUserEntropy; }
@@ -96,6 +99,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strCharSetRanges = string.Empty;
+		[DefaultValue("")]
 		public string CharSetRanges
 		{
 			get { this.UpdateCharSet(true); return m_strCharSetRanges; }
@@ -108,6 +112,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strCharSetAdditional = string.Empty;
+		[DefaultValue("")]
 		public string CharSetAdditional
 		{
 			get { this.UpdateCharSet(true); return m_strCharSetAdditional; }
@@ -120,6 +125,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strPattern = string.Empty;
+		[DefaultValue("")]
 		public string Pattern
 		{
 			get { return m_strPattern; }
@@ -127,6 +133,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private bool m_bPatternPermute = false;
+		[DefaultValue(false)]
 		public bool PatternPermutePassword
 		{
 			get { return m_bPatternPermute; }
@@ -134,6 +141,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private bool m_bNoLookAlike = false;
+		[DefaultValue(false)]
 		public bool ExcludeLookAlike
 		{
 			get { return m_bNoLookAlike; }
@@ -141,6 +149,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private bool m_bNoRepeat = false;
+		[DefaultValue(false)]
 		public bool NoRepeatingCharacters
 		{
 			get { return m_bNoRepeat; }
@@ -148,6 +157,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strExclude = string.Empty;
+		[DefaultValue("")]
 		public string ExcludeCharacters
 		{
 			get { return m_strExclude; }
@@ -159,6 +169,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strCustomID = string.Empty;
+		[DefaultValue("")]
 		public string CustomAlgorithmUuid
 		{
 			get { return m_strCustomID; }
@@ -170,6 +181,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		}
 
 		private string m_strCustomOpt = string.Empty;
+		[DefaultValue("")]
 		public string CustomAlgorithmOptions
 		{
 			get { return m_strCustomOpt; }

@@ -68,7 +68,8 @@ namespace KeePass.UI
 
 	public static class BannerFactory
 	{
-		private static Dictionary<string, Image> m_vImageCache = new Dictionary<string, Image>();
+		private static Dictionary<string, Image> m_vImageCache =
+			new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
 
 		private static BfBannerGenerator m_pCustomGen = null;
@@ -80,6 +81,12 @@ namespace KeePass.UI
 
 		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs,
 			Image imgIcon, string strTitle, string strLine)
+		{
+			return CreateBanner(nWidth, nHeight, bs, imgIcon, strTitle, strLine, false);
+		}
+
+		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs,
+			Image imgIcon, string strTitle, string strLine, bool bNoCache)
 		{
 			// imgIcon may be null.
 			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
@@ -99,11 +106,11 @@ namespace KeePass.UI
 
 			strImageID += ":" + ((uint)bs).ToString();
 
-			// Try getting the banner from the banner cache.
-			Image img;
-			if(m_vImageCache.TryGetValue(strImageID, out img)) return img;
+			// Try getting the banner from the banner cache
+			Image img = null;
+			if(!bNoCache && m_vImageCache.TryGetValue(strImageID, out img))
+				return img;
 
-			Debug.Assert(img == null);
 			if(m_pCustomGen != null)
 				img = m_pCustomGen(new BfBannerInfo(nWidth, nHeight, bs, imgIcon,
 					strTitle, strLine));
@@ -283,17 +290,20 @@ namespace KeePass.UI
 				g.Dispose();
 			}
 
-			if(m_vImageCache.Count >= MaxCachedImages)
+			if(!bNoCache)
 			{
-				foreach(string strKey in m_vImageCache.Keys)
+				if(m_vImageCache.Count >= MaxCachedImages)
 				{
-					m_vImageCache.Remove(strKey);
-					break; // Remove first item only
+					foreach(string strKey in m_vImageCache.Keys)
+					{
+						m_vImageCache.Remove(strKey);
+						break; // Remove first item only
+					}
 				}
-			}
 
-			// Save in cache
-			m_vImageCache[strImageID] = img;
+				// Save in cache
+				m_vImageCache[strImageID] = img;
+			}
 
 			return img;
 		}
@@ -324,14 +334,45 @@ namespace KeePass.UI
 		public static void CreateBannerEx(Form f, PictureBox picBox, Image imgIcon,
 			string strTitle, string strLine)
 		{
+			CreateBannerEx(f, picBox, imgIcon, strTitle, strLine, false);
+		}
+
+		public static void CreateBannerEx(Form f, PictureBox picBox, Image imgIcon,
+			string strTitle, string strLine, bool bNoCache)
+		{
 			if(picBox == null) { Debug.Assert(false); return; }
 
 			try
 			{
 				picBox.Image = CreateBanner(picBox.Width, picBox.Height,
-					BannerStyle.Default, imgIcon, strTitle, strLine);
+					BannerStyle.Default, imgIcon, strTitle, strLine, bNoCache);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		/// <summary>
+		/// Update/create a dialog banner. This method is intended for
+		/// updating banners in resizable dialogs. The created banner
+		/// images bypass the cache of the factory and are disposed
+		/// when the dialog is resized (i.e. the caller shouldn't do
+		/// anything with the banner images).
+		/// </summary>
+		public static void UpdateBanner(Form f, PictureBox picBox, Image imgIcon,
+			string strTitle, string strLine, ref int nOldWidth)
+		{
+			int nWidth = picBox.Width;
+			if(nWidth != nOldWidth)
+			{
+				Image imgPrev = null;
+				if(nOldWidth >= 0) imgPrev = picBox.Image;
+
+				BannerFactory.CreateBannerEx(f, picBox, imgIcon, strTitle,
+					strLine, true);
+
+				if(imgPrev != null) imgPrev.Dispose(); // Release old banner
+
+				nOldWidth = nWidth;
+			}
 		}
 	}
 }

@@ -41,6 +41,8 @@ namespace KeePass.App
 		public const string XslFileHtmlFull = "KDB4_DetailsFull.xsl";
 		public const string XslFileHtmlTabular = "KDB4_Tabular.xsl";
 
+		public const string ShInstUtil = "ShInstUtil.exe";
+
 		public const string PluginProductName = "KeePass Plugin";
 
 		// public const string MruNameValueSplitter = @"/::/";

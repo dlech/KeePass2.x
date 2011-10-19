@@ -207,7 +207,8 @@ namespace KeePass.Forms
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
 				(bIsKeyProv == true))
 			{
-				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(m_ioInfo, true);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
+					m_ioInfo, true, false);
 
 				bool bPerformHash;
 				byte[] pbCustomKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,

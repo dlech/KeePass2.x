@@ -133,8 +133,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			while(true)
 			{
-				int nOpen = str.IndexOf('{');
-				int nClose = str.IndexOf('}');
+				int nOpen = FindFirstUnescapedChar(str, '{');
+				int nClose = FindFirstUnescapedChar(str, '}');
 
 				if((nOpen >= 0) && (nOpen < nClose))
 				{
@@ -154,6 +154,19 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			}
 
 			return str;
+		}
+
+		private static int FindFirstUnescapedChar(string str, char ch)
+		{
+			for(int i = 0; i < str.Length; ++i)
+			{
+				char chCur = str[i];
+
+				if(chCur == '\\') ++i; // Next is escaped, skip it
+				else if(chCur == ch) return i;
+			}
+
+			return -1;
 		}
 	}
 }

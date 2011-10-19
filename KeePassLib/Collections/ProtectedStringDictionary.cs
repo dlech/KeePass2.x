@@ -94,7 +94,14 @@ namespace KeePassLib.Collections
 			return plNew;
 		}
 
+		[Obsolete]
 		public bool EqualsDictionary(ProtectedStringDictionary dict)
+		{
+			return EqualsDictionary(dict, MemProtCmpMode.None);
+		}
+
+		public bool EqualsDictionary(ProtectedStringDictionary dict,
+			MemProtCmpMode mpCompare)
 		{
 			if(dict == null) { Debug.Assert(false); return false; }
 
@@ -104,6 +111,17 @@ namespace KeePassLib.Collections
 			{
 				ProtectedString ps = dict.Get(kvp.Key);
 				if(ps == null) return false;
+
+				if(mpCompare == MemProtCmpMode.Full)
+				{
+					if(ps.IsProtected != kvp.Value.IsProtected) return false;
+				}
+				else if(mpCompare == MemProtCmpMode.CustomOnly)
+				{
+					if(!PwDefs.IsStandardField(kvp.Key) &&
+						(ps.IsProtected != kvp.Value.IsProtected)) return false;
+				}
+
 				if(ps.ReadString() != kvp.Value.ReadString()) return false;
 			}
 

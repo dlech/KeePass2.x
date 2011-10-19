@@ -22,35 +22,53 @@ using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using KeePass.Util;
+
 using KeePassLib;
 using KeePassLib.Interfaces;
 
 namespace KeePass.Native
 {
+	[Flags]
+	public enum ProgDlgFlags
+	{
+		Normal = 0x0,
+		Modal = 0x1,
+		AutoTime = 0x2,
+		NoTime = 0x4,
+		NoMinimize = 0x8,
+		NoProgressBar = 0x10,
+		MarqueeProgress = 0x20,
+		NoCancel = 0x40
+	}
+
 	public sealed class NativeProgressDialog : IStatusLogger
 	{
-		private IProgressDialog m_p = null;
-		private uint m_uFlags = 0;
+		private IProgressDialog m_p;
+		private uint m_uFlags;
+		private IntPtr m_hWndParent;
+		private uint m_uLastPercent = 0;
 
-		private const uint PROGDLG_NORMAL = 0x00000000;
-		private const uint PROGDLG_MODAL = 0x00000001;
-		private const uint PROGDLG_AUTOTIME = 0x00000002;
-		private const uint PROGDLG_NOTIME = 0x00000004;
-		private const uint PROGDLG_NOMINIMIZE = 0x00000008;
-		private const uint PROGDLG_NOPROGRESSBAR = 0x00000010;
-		private const uint PROGDLG_MARQUEEPROGRESS = 0x00000020;
-		private const uint PROGDLG_NOCANCEL = 0x00000040;
+		private const uint PDTIMER_RESET = 0x1;
+		private const uint PDTIMER_PAUSE = 0x2;
+		private const uint PDTIMER_RESUME = 0x3;
 
-		public NativeProgressDialog(bool bAutoTime, bool bNoTime, bool bMarquee,
-			bool bNoCancel)
+		public static bool IsSupported
 		{
-			if(bAutoTime) m_uFlags |= PROGDLG_AUTOTIME;
-			if(bNoTime) m_uFlags |= PROGDLG_NOTIME;
-			if(bMarquee) m_uFlags |= PROGDLG_MARQUEEPROGRESS;
-			if(bNoCancel) m_uFlags |= PROGDLG_NOCANCEL;
+			get
+			{
+				return (WinUtil.IsAtLeastWindowsVista &&
+					!KeePassLib.Native.NativeLib.IsUnix());
+			}
+		}
+
+		public NativeProgressDialog(IntPtr hWndParent, ProgDlgFlags fl)
+		{
+			m_hWndParent = hWndParent;
+			m_uFlags = (uint)fl;
 
 			try { m_p = (IProgressDialog)(new Win32ProgressDialog()); }
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(false); m_p = null; }
 		}
 
 		~NativeProgressDialog()
@@ -60,54 +78,53 @@ namespace KeePass.Native
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
-			if(m_p != null)
-			{
-				m_p.SetTitle(PwDefs.ShortProductName);
+			if(m_p == null) { Debug.Assert(false); return; }
 
-				m_p.StartProgressDialog(IntPtr.Zero, IntPtr.Zero, m_uFlags, IntPtr.Zero);
+			m_p.SetTitle(PwDefs.ShortProductName);
+			m_p.StartProgressDialog(m_hWndParent, IntPtr.Zero, m_uFlags, IntPtr.Zero);
+			m_p.Timer(PDTIMER_RESET, IntPtr.Zero);
+			m_p.SetLine(1, strOperation, false, IntPtr.Zero);
 
-				m_p.SetLine(1, strOperation, false, IntPtr.Zero);
-			}
+			m_p.SetProgress(0, 100);
+			m_uLastPercent = 0;
 		}
 
 		public void EndLogging()
 		{
-			if(m_p != null)
-			{
-				m_p.StopProgressDialog();
-				try { Marshal.ReleaseComObject(m_p); }
-				catch(Exception) { Debug.Assert(false); }
-				m_p = null;
-			}
+			if(m_p == null) return; // Might be freed/null already, don't assert
+
+			m_p.StopProgressDialog();
+			try { Marshal.ReleaseComObject(m_p); }
+			catch(Exception) { Debug.Assert(false); }
+			m_p = null;
 		}
 
 		public bool SetProgress(uint uPercent)
 		{
-			if(m_p != null)
+			if(m_p == null) { Debug.Assert(false); return true; }
+
+			if(uPercent != m_uLastPercent)
 			{
 				m_p.SetProgress(uPercent, 100);
-				return !m_p.HasUserCancelled();
+				m_uLastPercent = uPercent;
 			}
 
-			return true;
+			return !m_p.HasUserCancelled();
 		}
 
 		public bool SetText(string strNewText, LogStatusType lsType)
 		{
-			if(m_p != null)
-			{
-				m_p.SetLine(2, strNewText, false, IntPtr.Zero);
-				return !m_p.HasUserCancelled();
-			}
+			if(m_p == null) { Debug.Assert(false); return true; }
 
-			return true;
+			m_p.SetLine(2, strNewText, false, IntPtr.Zero);
+			return !m_p.HasUserCancelled();
 		}
 
 		public bool ContinueWork()
 		{
-			if(m_p != null) return !m_p.HasUserCancelled();
+			if(m_p == null) { Debug.Assert(false); return true; }
 
-			return true;
+			return !m_p.HasUserCancelled();
 		}
 	}
 

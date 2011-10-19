@@ -217,6 +217,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_ctxTrayOptions = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -247,27 +248,27 @@
             this.m_ctxGroupSep3,
             this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(166, 226);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(166, 204);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupAdd
 			// 
 			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_Sent_Mail;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
-			this.m_ctxGroupAdd.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupAdd.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupAdd.Text = "Add &Group";
 			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
 			// 
 			// m_ctxGroupSep0
 			// 
 			this.m_ctxGroupSep0.Name = "m_ctxGroupSep0";
-			this.m_ctxGroupSep0.Size = new System.Drawing.Size(223, 6);
+			this.m_ctxGroupSep0.Size = new System.Drawing.Size(162, 6);
 			// 
 			// m_ctxGroupEdit
 			// 
 			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
 			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
-			this.m_ctxGroupEdit.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupEdit.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupEdit.Text = "Ed&it Group";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
 			// 
@@ -275,7 +276,7 @@
 			// 
 			this.m_ctxGroupDelete.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
-			this.m_ctxGroupDelete.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupDelete.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupDelete.Text = "Dele&te Group";
 			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
 			// 
@@ -283,14 +284,14 @@
 			// 
 			this.m_ctxGroupEmpty.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
 			this.m_ctxGroupEmpty.Name = "m_ctxGroupEmpty";
-			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupEmpty.Text = "&Empty Recycle Bin";
 			this.m_ctxGroupEmpty.Click += new System.EventHandler(this.OnGroupsEmpty);
 			// 
 			// m_ctxGroupSep1
 			// 
 			this.m_ctxGroupSep1.Name = "m_ctxGroupSep1";
-			this.m_ctxGroupSep1.Size = new System.Drawing.Size(223, 6);
+			this.m_ctxGroupSep1.Size = new System.Drawing.Size(162, 6);
 			// 
 			// m_ctxGroupFind
 			// 
@@ -303,13 +304,13 @@
 			// m_ctxGroupSep2
 			// 
 			this.m_ctxGroupSep2.Name = "m_ctxGroupSep2";
-			this.m_ctxGroupSep2.Size = new System.Drawing.Size(223, 6);
+			this.m_ctxGroupSep2.Size = new System.Drawing.Size(162, 6);
 			// 
 			// m_ctxGroupPrint
 			// 
 			this.m_ctxGroupPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxGroupPrint.Name = "m_ctxGroupPrint";
-			this.m_ctxGroupPrint.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupPrint.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupPrint.Text = "&Print Group...";
 			this.m_ctxGroupPrint.Click += new System.EventHandler(this.OnGroupsPrint);
 			// 
@@ -317,14 +318,14 @@
 			// 
 			this.m_ctxGroupExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxGroupExport.Name = "m_ctxGroupExport";
-			this.m_ctxGroupExport.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupExport.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupExport.Text = "E&xport...";
 			this.m_ctxGroupExport.Click += new System.EventHandler(this.OnGroupsExport);
 			// 
 			// m_ctxGroupSep3
 			// 
 			this.m_ctxGroupSep3.Name = "m_ctxGroupSep3";
-			this.m_ctxGroupSep3.Size = new System.Drawing.Size(223, 6);
+			this.m_ctxGroupSep3.Size = new System.Drawing.Size(162, 6);
 			// 
 			// m_ctxGroupRearrange
 			// 
@@ -337,14 +338,14 @@
             this.m_ctxGroupSort,
             this.m_ctxGroupSortRec});
 			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
-			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(226, 22);
+			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(165, 22);
 			this.m_ctxGroupRearrange.Text = "&Rearrange";
 			// 
 			// m_ctxGroupMoveToTop
 			// 
 			this.m_ctxGroupMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
-			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupMoveToTop.Text = "Move Group to &Top";
 			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
 			// 
@@ -352,7 +353,7 @@
 			// 
 			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
-			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupMoveOneUp.Text = "Move Group &One Up";
 			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
 			// 
@@ -360,7 +361,7 @@
 			// 
 			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
-			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(225, 22);
+			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupMoveOneDown.Text = "Mo&ve Group One Down";
 			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
 			// 
@@ -375,13 +376,13 @@
 			// m_ctxGroupRearrSep0
 			// 
 			this.m_ctxGroupRearrSep0.Name = "m_ctxGroupRearrSep0";
-			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(237, 6);
+			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(184, 6);
 			// 
 			// m_ctxGroupSort
 			// 
 			this.m_ctxGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSort.Name = "m_ctxGroupSort";
-			this.m_ctxGroupSort.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupSort.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupSort.Text = "&Sort Direct Subgroups";
 			this.m_ctxGroupSort.Click += new System.EventHandler(this.OnGroupsSort);
 			// 
@@ -389,7 +390,7 @@
 			// 
 			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
-			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(240, 22);
+			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(187, 22);
 			this.m_ctxGroupSortRec.Text = "So&rt Subgroup Tree";
 			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
 			// 
@@ -524,7 +525,7 @@
 			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
 			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(190, 22);
-			this.m_ctxEntryOpenUrl.Text = "&Open in Browser";
+			this.m_ctxEntryOpenUrl.Text = "<>";
 			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
 			// 
 			// m_ctxEntryCopyUrl
@@ -813,7 +814,7 @@
 			// 
 			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
-			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(182, 22);
 			this.m_ctxEntryMoveToTop.Text = "Move Entry to &Top";
 			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
 			// 
@@ -821,7 +822,7 @@
 			// 
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
-			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(235, 22);
+			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(182, 22);
 			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
 			// 
@@ -829,7 +830,7 @@
 			// 
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
-			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(220, 22);
+			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(182, 22);
 			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
@@ -1730,46 +1731,47 @@
 			this.m_ctxTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxTrayTray,
             this.m_ctxTraySep0,
-            this.m_ctxTrayLock,
+            this.m_ctxTrayOptions,
             this.m_ctxTraySep1,
+            this.m_ctxTrayLock,
             this.m_ctxTrayFileExit});
 			this.m_ctxTray.Name = "m_ctxTray";
-			this.m_ctxTray.Size = new System.Drawing.Size(138, 82);
+			this.m_ctxTray.Size = new System.Drawing.Size(153, 126);
 			this.m_ctxTray.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxTrayOpening);
 			// 
 			// m_ctxTrayTray
 			// 
 			this.m_ctxTrayTray.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_ctxTrayTray.Name = "m_ctxTrayTray";
-			this.m_ctxTrayTray.Size = new System.Drawing.Size(137, 22);
+			this.m_ctxTrayTray.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxTrayTray.Text = "&Tray / Untray";
 			this.m_ctxTrayTray.Click += new System.EventHandler(this.OnTrayTray);
 			// 
 			// m_ctxTraySep0
 			// 
 			this.m_ctxTraySep0.Name = "m_ctxTraySep0";
-			this.m_ctxTraySep0.Size = new System.Drawing.Size(134, 6);
+			this.m_ctxTraySep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_ctxTrayLock
 			// 
 			this.m_ctxTrayLock.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
 			this.m_ctxTrayLock.Name = "m_ctxTrayLock";
-			this.m_ctxTrayLock.Size = new System.Drawing.Size(137, 22);
+			this.m_ctxTrayLock.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxTrayLock.Text = "<>";
 			this.m_ctxTrayLock.Click += new System.EventHandler(this.OnTrayLock);
 			// 
 			// m_ctxTraySep1
 			// 
 			this.m_ctxTraySep1.Name = "m_ctxTraySep1";
-			this.m_ctxTraySep1.Size = new System.Drawing.Size(134, 6);
+			this.m_ctxTraySep1.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_ctxTrayFileExit
 			// 
 			this.m_ctxTrayFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_ctxTrayFileExit.Name = "m_ctxTrayFileExit";
-			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(137, 22);
+			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxTrayFileExit.Text = "E&xit";
-			this.m_ctxTrayFileExit.Click += new System.EventHandler(this.OnFileExit);
+			this.m_ctxTrayFileExit.Click += new System.EventHandler(this.OnTrayExit);
 			// 
 			// m_timerMain
 			// 
@@ -1887,6 +1889,14 @@
 			this.m_richEntryView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyDown);
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
+			// 
+			// m_ctxTrayOptions
+			// 
+			this.m_ctxTrayOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
+			this.m_ctxTrayOptions.Name = "m_ctxTrayOptions";
+			this.m_ctxTrayOptions.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxTrayOptions.Text = "&Options...";
+			this.m_ctxTrayOptions.Click += new System.EventHandler(this.OnTrayOptions);
 			// 
 			// MainForm
 			// 
@@ -2116,6 +2126,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsDbSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelEmptyGroups;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelUnusedIcons;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayOptions;
 	}
 }
 

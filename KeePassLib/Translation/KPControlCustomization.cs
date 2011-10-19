@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Serialization;
@@ -47,34 +48,54 @@ namespace KeePassLib.Translation
 
 		private string m_strPosX = string.Empty;
 		[XmlAttribute]
+		[DefaultValue("")]
 		public string X
 		{
 			get { return m_strPosX; }
-			set { m_strPosX = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strPosX = value;
+			}
 		}
 
 		private string m_strPosY = string.Empty;
 		[XmlAttribute]
+		[DefaultValue("")]
 		public string Y
 		{
 			get { return m_strPosY; }
-			set { m_strPosY = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strPosY = value;
+			}
 		}
 
 		private string m_strSizeW = string.Empty;
 		[XmlAttribute]
+		[DefaultValue("")]
 		public string Width
 		{
 			get { return m_strSizeW; }
-			set { m_strSizeW = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strSizeW = value;
+			}
 		}
 
 		private string m_strSizeH = string.Empty;
 		[XmlAttribute]
+		[DefaultValue("")]
 		public string Height
 		{
 			get { return m_strSizeH; }
-			set { m_strSizeH = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strSizeH = value;
+			}
 		}
 
 		public void SetControlRelativeValue(LayoutParameterEx lp, string strValue)
@@ -181,7 +202,7 @@ namespace KeePassLib.Translation
 
 	public sealed class KPControlCustomization : IComparable<KPControlCustomization>
 	{
-		private string m_strMemberName;
+		private string m_strMemberName = string.Empty;
 		/// <summary>
 		/// Member variable name of the control to be translated.
 		/// </summary>
@@ -189,7 +210,11 @@ namespace KeePassLib.Translation
 		public string Name
 		{
 			get { return m_strMemberName; }
-			set { m_strMemberName = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strMemberName = value;
+			}
 		}
 
 		private string m_strHash = string.Empty;
@@ -197,14 +222,23 @@ namespace KeePassLib.Translation
 		public string BaseHash
 		{
 			get { return m_strHash; }
-			set { m_strHash = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strHash = value;
+			}
 		}
 
 		private string m_strText = string.Empty;
+		[DefaultValue("")]
 		public string Text
 		{
 			get { return m_strText; }
-			set { m_strText = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strText = value;
+			}
 		}
 
 		private string m_strEngText = string.Empty;

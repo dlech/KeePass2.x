@@ -33,7 +33,11 @@ namespace KeePassLib.Translation
 		public string Name
 		{
 			get { return m_strName; }
-			set { m_strName = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strName = value;
+			}
 		}
 
 		private List<KPStringTableItem> m_vItems = new List<KPStringTableItem>();
@@ -45,7 +49,6 @@ namespace KeePassLib.Translation
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-
 				m_vItems = value;
 			}
 		}

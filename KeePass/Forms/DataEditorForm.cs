@@ -128,7 +128,7 @@ namespace KeePass.Forms
 			UIUtil.EnableAutoCompletion(m_tbFontSizeCombo, true);
 
 			m_rtbText.Dock = DockStyle.Fill;
-			m_ctxText.Attach(m_rtbText);
+			m_ctxText.Attach(m_rtbText, this);
 			m_tssStatusMain.Text = KPRes.Ready;
 			m_rtbText.WordWrap = Program.Config.UI.DataEditorWordWrap;
 

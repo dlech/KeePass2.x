@@ -83,7 +83,7 @@ namespace KeePass.Forms
 
 			m_tssStatusMain.Text = KPRes.Ready;
 
-			m_ctxText.Attach(m_rtbText);
+			m_ctxText.Attach(m_rtbText, this);
 
 			m_bInitializing = true;
 

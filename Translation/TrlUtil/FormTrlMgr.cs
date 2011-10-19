@@ -44,12 +44,14 @@ namespace TrlUtil
 			List<KPFormCustomization> l = new List<KPFormCustomization>();
 
 			AddForm(l, new AboutForm());
+			AddForm(l, new AutoTypeCtxForm());
 			AddForm(l, new CharPickerForm());
 			AddForm(l, new ColumnsForm());
 			AddForm(l, new DatabaseOperationsForm());
 			AddForm(l, new DatabaseSettingsForm());
 			AddForm(l, new DataEditorForm());
 			AddForm(l, new DataViewerForm());
+			AddForm(l, new DuplicationForm());
 			AddForm(l, new EcasActionForm());
 			AddForm(l, new EcasConditionForm());
 			AddForm(l, new EcasEventForm());
@@ -134,6 +136,7 @@ namespace TrlUtil
 			else if(t == typeof(RichTextBox)) bAdd = true;
 			else if(t == typeof(KeePass.UI.CustomRichTextBoxEx)) bAdd = true;
 			else if(t == typeof(ComboBox)) bAdd = true;
+			else if(t == typeof(KeePass.UI.ImageComboBoxEx)) bAdd = true;
 			else if(t == typeof(Label)) bAdd = true;
 			else if(t == typeof(ListView)) bAdd = true;
 			else if(t == typeof(CustomListViewEx)) bAdd = true;

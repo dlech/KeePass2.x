@@ -128,11 +128,12 @@ namespace KeePass.Ecas
 			int[] vTimeOuts = { 250, 1250 };
 			const string strBuffer = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 			byte[] pbBuffer = Encoding.ASCII.GetBytes(strBuffer);
-			Ping ping = new Ping();
-			PingOptions options = new PingOptions(64, true);
 
 			try
 			{
+				Ping ping = new Ping(); // We have sufficient privileges?
+				PingOptions options = new PingOptions(64, true);
+
 				foreach(int nTimeOut in vTimeOuts)
 				{
 					PingReply reply = ping.Send(strHost, nTimeOut, pbBuffer, options);

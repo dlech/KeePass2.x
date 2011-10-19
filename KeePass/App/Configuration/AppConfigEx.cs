@@ -178,6 +178,8 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		private void PrepareSave()
 		{
+			m_meta.OmitItemsWithDefaultValues = true;
+
 			m_aceApp.LastUsedFile.ClearCredentials(true);
 
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
@@ -187,11 +189,13 @@ namespace KeePass.App.Configuration
 				m_def.KeySources.Clear();
 
 			m_aceApp.TriggerSystem = Program.TriggerSystem;
+
+			SearchUtil.PrepareForSerialize(m_def.SearchParameters);
 		}
 
 		internal void OnLoad()
 		{
-			m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
+			// m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
 
 			ObfuscateCred(false);
 			ChangePathsRelAbs(true);
@@ -206,6 +210,8 @@ namespace KeePass.App.Configuration
 					vColumns.RemoveAt(i);
 				else ++i;
 			}
+
+			SearchUtil.FinishDeserialize(m_def.SearchParameters);
 		}
 
 		internal void OnSavePre()
@@ -243,7 +249,11 @@ namespace KeePass.App.Configuration
 		{
 			if(ioc == null) { Debug.Assert(false); return; }
 
-			if(ioc.IsLocalFile() == false) return;
+			if(!ioc.IsLocalFile()) return;
+
+			// Update path separators for current system
+			if(!UrlUtil.IsUncPath(ioc.Path))
+				ioc.Path = UrlUtil.ConvertSeparators(ioc.Path);
 
 			string strBase = WinUtil.GetExecutable();
 			bool bIsAbs = UrlUtil.IsAbsolutePath(ioc.Path);
@@ -302,5 +312,16 @@ namespace KeePass.App.Configuration
 		//	get { return m_bIsEnforced; }
 		//	set { m_bIsEnforced = value; }
 		// }
+
+		private bool m_bOmitDefaultValues = true;
+		// Informational property only (like an XML comment);
+		// currently doesn't have any effect (the XmlSerializer
+		// always omits default values, independent of this
+		// property)
+		public bool OmitItemsWithDefaultValues
+		{
+			get { return m_bOmitDefaultValues; }
+			set { m_bOmitDefaultValues = value; }
+		}
 	}
 }

@@ -50,6 +50,7 @@ namespace KeePass.Forms
 		private bool m_bSetForeground = false;
 		private uint m_uCharCount = 0;
 		private bool? m_bInitHide = null;
+		private int m_nBannerWidth = -1;
 
 		private Font m_fontChars = null;
 		private char m_chMaskChar = ((NativeLib.GetPlatformID() ==
@@ -192,8 +193,10 @@ namespace KeePass.Forms
 		{
 			string strTitle = KPRes.PickCharacters;
 			if(m_uCharCount > 0) strTitle += " (" + m_uCharCount.ToString() + ")";
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				Properties.Resources.B48x48_KGPG_Key2, strTitle, KPRes.PickCharactersDesc);
+
+			BannerFactory.UpdateBanner(this, m_bannerImage,
+				Properties.Resources.B48x48_KGPG_Key2, strTitle,
+				KPRes.PickCharactersDesc, ref m_nBannerWidth);
 
 			RemoveAllCharButtons();
 

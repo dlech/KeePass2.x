@@ -178,304 +178,26 @@ namespace KeePass.Util
 			gz.Close(); ms.Close();
 		}
 
-		public static string FillPlaceholders(string strText, PwEntry pe,
-			PwDatabase pd, SprContentFlags cf)
+		public static string FillPlaceholders(string strText, SprContext ctx)
 		{
-			if(pe == null) return strText;
+			if((ctx == null) || (ctx.Entry == null)) return strText;
 
 			string str = strText;
 
-			// Legacy, for backward compatibility only; see PickChars
-			str = ReplacePickPw(str, pe, pd, cf);
+			if((ctx.Flags & SprCompileFlags.NewPassword) != SprCompileFlags.None)
+				str = ReplaceNewPasswordPlaceholder(str, ctx);
+
+			if((ctx.Flags & SprCompileFlags.HmacOtp) != SprCompileFlags.None)
+				str = ReplaceHmacOtpPlaceholder(str, ctx);
 
 			return str;
-		}
-
-		public static string FillPlaceholdersFinal(string strText, PwEntry pe,
-			PwDatabase pd, SprContentFlags cf)
-		{
-			if(pe == null) return strText;
-
-			string str = strText;
-
-			str = ReplacePickChars(str, pe, pd, cf);
-			str = ReplaceNewPasswordPlaceholder(str, pe, pd, cf);
-			str = ReplaceHmacOtpPlaceholder(str, pe, pd, cf);
-
-			return str;
-		}
-
-		/* private static string ReplacePickPw(string strText, PwEntry pe,
-			SprContentFlags cf)
-		{
-			string str = strText;
-
-			for(int iID = 1; iID < (int.MaxValue - 1); ++iID)
-			{
-				string strPlaceholder = @"{PICKPASSWORDCHARS";
-				if(iID > 1) strPlaceholder += iID.ToString();
-				strPlaceholder += @"}";
-
-				if(str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) >= 0)
-				{
-					ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
-					if(ps != null)
-					{
-						byte[] pb = ps.ReadUtf8();
-						bool bNotEmpty = (pb.Length > 0);
-						Array.Clear(pb, 0, pb.Length);
-
-						if(bNotEmpty)
-						{
-							CharPickerForm cpf = new CharPickerForm();
-							cpf.InitEx(ps, true, true, 0);
-
-							if(cpf.ShowDialog() == DialogResult.OK)
-								str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
-									SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
-							UIUtil.DestroyForm(cpf);
-						}
-					}
-
-					str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
-				}
-				else break;
-			}
-
-			return str;
-		} */
-
-		// Legacy, for backward compatibility only; see PickChars
-		private static string ReplacePickPw(string strText, PwEntry pe,
-			PwDatabase pd, SprContentFlags cf)
-		{
-			string str = strText;
-
-			while(true)
-			{
-				const string strStart = @"{PICKPASSWORDCHARS";
-
-				int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
-				if(iStart < 0) break;
-
-				int iEnd = str.IndexOf('}', iStart);
-				if(iEnd < 0) break;
-
-				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
-
-				string strParam = str.Substring(iStart + strStart.Length,
-					iEnd - (iStart + strStart.Length));
-				string[] vParams = strParam.Split(new char[]{ ':' });
-
-				uint uCharCount = 0;
-				if(vParams.Length >= 2) uint.TryParse(vParams[1], out uCharCount);
-
-				str = ReplacePickPwPlaceholder(str, strPlaceholder, pe, pd, cf, uCharCount);
-			}
-
-			return str;
-		}
-
-		private static string ReplacePickPwPlaceholder(string str,
-			string strPlaceholder, PwEntry pe, PwDatabase pd, SprContentFlags cf,
-			uint uCharCount)
-		{
-			if(str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) < 0) return str;
-
-			ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
-			if(ps != null)
-			{
-				string strPassword = ps.ReadString();
-				string strPick = SprEngine.Compile(strPassword, false, pe, pd,
-					false, false); // Do not transform content yet
-
-				if(!string.IsNullOrEmpty(strPick))
-				{
-					ProtectedString psPick = new ProtectedString(false, strPick);
-					CharPickerForm dlg = new CharPickerForm();
-					dlg.InitEx(psPick, true, true, uCharCount, null);
-
-					if(dlg.ShowDialog() == DialogResult.OK)
-						str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
-							SprEngine.TransformContent(dlg.SelectedCharacters.ReadString(), cf));
-					UIUtil.DestroyForm(dlg);
-				}
-			}
-
-			return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
-		}
-
-		private static string ReplacePickChars(string strText, PwEntry pe,
-			PwDatabase pd, SprContentFlags cf)
-		{
-			string str = strText;
-
-			Dictionary<string, string> dPicked = new Dictionary<string, string>();
-			while(true)
-			{
-				const string strStart = @"{PICKCHARS";
-
-				int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
-				if(iStart < 0) break;
-
-				int iEnd = str.IndexOf('}', iStart);
-				if(iEnd < 0) break;
-
-				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
-
-				string strParam = str.Substring(iStart + strStart.Length,
-					iEnd - (iStart + strStart.Length));
-
-				string strRep = string.Empty;
-				bool bEncode = true;
-
-				if(strParam.Length == 0)
-					strRep = ShowCharPickDlg(pe.Strings.GetSafe(PwDefs.PasswordField),
-						0, null);
-				else if(strParam.StartsWith(":"))
-				{
-					string strParams = strParam.Substring(1);
-					string[] vParams = strParams.Split(new char[] { ':' },
-						StringSplitOptions.None);
-
-					string strField = string.Empty;
-					if(vParams.Length >= 1) strField = (vParams[0] ?? string.Empty).Trim();
-					if(strField.Length == 0) strField = PwDefs.PasswordField;
-
-					string strOptions = string.Empty;
-					if(vParams.Length >= 2) strOptions = (vParams[1] ?? string.Empty);
-
-					Dictionary<string, string> dOptions = new Dictionary<string, string>();
-					string[] vOptions = strOptions.Split(new char[] { ',' },
-						StringSplitOptions.RemoveEmptyEntries);
-					foreach(string strOption in vOptions)
-					{
-						string[] vKvp = strOption.Split(new char[] { '=' },
-							StringSplitOptions.None);
-						if(vKvp.Length != 2) continue;
-
-						dOptions[vKvp[0].Trim().ToLower()] = vKvp[1].Trim();
-					}
-
-					string strID = string.Empty;
-					if(dOptions.ContainsKey("id")) strID = dOptions["id"].ToLower();
-
-					uint uCharCount = 0;
-					if(dOptions.ContainsKey("c"))
-						uint.TryParse(dOptions["c"], out uCharCount);
-					if(dOptions.ContainsKey("count"))
-						uint.TryParse(dOptions["count"], out uCharCount);
-
-					bool? bInitHide = null;
-					if(dOptions.ContainsKey("hide"))
-						bInitHide = StrUtil.StringToBool(dOptions["hide"]);
-
-					ProtectedString psContent = pe.Strings.GetSafe(strField);
-					if(psContent.Length == 0) { } // Leave strRep empty
-					else if((strID.Length > 0) && dPicked.ContainsKey(strID))
-						strRep = dPicked[strID];
-					else
-						strRep = ShowCharPickDlg(psContent, uCharCount, bInitHide);
-
-					if(strID.Length > 0) dPicked[strID] = strRep;
-
-					if(dOptions.ContainsKey("conv"))
-					{
-						int iOffset = 0;
-						if(dOptions.ContainsKey("conv-offset"))
-							int.TryParse(dOptions["conv-offset"], out iOffset);
-
-						string strConvFmt = string.Empty;
-						if(dOptions.ContainsKey("conv-fmt"))
-							strConvFmt = dOptions["conv-fmt"];
-
-						string strConv = dOptions["conv"];
-						if(strConv.Equals("d", StrUtil.CaseIgnoreCmp))
-						{
-							strRep = ConvertToDownArrows(strRep, iOffset, strConvFmt);
-							bEncode = false;
-						}
-					}
-				}
-
-				str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
-					bEncode ? SprEngine.TransformContent(strRep, cf) : strRep);
-			}
-
-			return str;
-		}
-
-		private static string ShowCharPickDlg(ProtectedString psWord, uint uCharCount,
-			bool? bInitHide)
-		{
-			CharPickerForm cpf = new CharPickerForm();
-			cpf.InitEx(psWord, true, true, uCharCount, bInitHide);
-
-			string strResult = string.Empty;
-			if(cpf.ShowDialog() == DialogResult.OK)
-				strResult = cpf.SelectedCharacters.ReadString();
-
-			UIUtil.DestroyForm(cpf);
-			return strResult;
-		}
-
-		private static string ConvertToDownArrows(string str, int iOffset,
-			string strLayout)
-		{
-			if(string.IsNullOrEmpty(str)) return string.Empty;
-
-			StringBuilder sb = new StringBuilder();
-			for(int i = 0; i < str.Length; ++i)
-			{
-				// if((sb.Length > 0) && !string.IsNullOrEmpty(strSep)) sb.Append(strSep);
-
-				char ch = str[i];
-
-				int? iDowns = null;
-				if(strLayout.Length == 0)
-				{
-					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0';
-					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
-					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
-				}
-				else if(strLayout.Equals("0a", StrUtil.CaseIgnoreCmp))
-				{
-					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0';
-					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a' + 10;
-					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A' + 10;
-				}
-				else if(strLayout.Equals("a0", StrUtil.CaseIgnoreCmp))
-				{
-					if((ch >= '0') && (ch <= '9')) iDowns = (int)ch - '0' + 26;
-					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
-					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
-				}
-				else if(strLayout.Equals("1a", StrUtil.CaseIgnoreCmp))
-				{
-					if((ch >= '1') && (ch <= '9')) iDowns = (int)ch - '1';
-					else if(ch == '0') iDowns = 9;
-					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a' + 10;
-					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A' + 10;
-				}
-				else if(strLayout.Equals("a1", StrUtil.CaseIgnoreCmp))
-				{
-					if((ch >= '1') && (ch <= '9')) iDowns = (int)ch - '1' + 26;
-					else if(ch == '0') iDowns = 9 + 26;
-					else if((ch >= 'a') && (ch <= 'z')) iDowns = (int)ch - 'a';
-					else if((ch >= 'A') && (ch <= 'Z')) iDowns = (int)ch - 'A';
-				}
-
-				if(!iDowns.HasValue) continue;
-
-				for(int j = 0; j < (iOffset + iDowns); ++j) sb.Append(@"{DOWN}");
-			}
-
-			return sb.ToString();
 		}
 
 		private static string ReplaceNewPasswordPlaceholder(string strText,
-			PwEntry pe, PwDatabase pd, SprContentFlags cf)
+			SprContext ctx)
 		{
+			PwEntry pe = ctx.Entry;
+			PwDatabase pd = ctx.Database;
 			if((pe == null) || (pd == null)) return strText;
 
 			string str = strText;
@@ -493,9 +215,10 @@ namespace KeePass.Util
 				{
 					pe.CreateBackup(pd);
 					pe.Strings.Set(PwDefs.PasswordField, psAutoGen);
+					pe.Touch(true, false);
 					pd.Modified = true;
 
-					string strIns = SprEngine.TransformContent(psAutoGen.ReadString(), cf);
+					string strIns = SprEngine.TransformContent(psAutoGen.ReadString(), ctx);
 					str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh, strIns);
 				}
 			}
@@ -504,8 +227,10 @@ namespace KeePass.Util
 		}
 
 		private static string ReplaceHmacOtpPlaceholder(string strText,
-			PwEntry pe, PwDatabase pd, SprContentFlags cf)
+			SprContext ctx)
 		{
+			PwEntry pe = ctx.Entry;
+			PwDatabase pd = ctx.Database;
 			if((pe == null) || (pd == null)) return strText;
 
 			string str = strText;

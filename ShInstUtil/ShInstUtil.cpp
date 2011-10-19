@@ -19,7 +19,10 @@
 
 #include "ShInstUtil.h"
 
+#pragma warning(push)
+#pragma warning(disable: 4996) // SCL warning
 #include <boost/algorithm/string/trim.hpp>
+#pragma warning(pop)
 
 static const std_string g_strNGenInstall = _T("ngen_install");
 static const std_string g_strNGenUninstall = _T("ngen_uninstall");
@@ -201,6 +204,8 @@ std_string FindNGen()
 	return strNGen;
 }
 
+#pragma warning(push)
+#pragma warning(disable: 4127) // Conditional expression is constant
 void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& ftCreation)
 {
 	const std_string strSearch = strPath + _T("*.*");
@@ -233,6 +238,7 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& f
 
 	FindClose(hFind);
 }
+#pragma warning(pop)
 
 void CheckDotNetInstalled()
 {

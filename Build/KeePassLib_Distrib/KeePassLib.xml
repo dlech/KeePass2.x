@@ -296,6 +296,13 @@
             property should return <c>false</c>.
             </summary>
         </member>
+        <member name="P:KeePassLib.Keys.KeyProvider.SecureDesktopCompatible">
+            <summary>
+            This property specifies whether the key provider is compatible
+            with the secure desktop mode. This almost never is the case,
+            so you usually won't override this property.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.SelfTest">
             <summary>
             Class containing self-test methods.
@@ -1276,11 +1283,19 @@
             <returns>Returns <c>true</c>, if the operation completed successfully,
             otherwise <c>false</c>.</returns>
         </member>
-        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry},System.Boolean)">
+        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry})">
             <summary>
-            Search this group and all groups in the current one for entries.
+            Search this group and all subgroups for entries.
             </summary>
-            <param name="searchParams">Specifies the search method.</param>
+            <param name="sp">Specifies the search method.</param>
+            <param name="listStorage">Entry list in which the search results will
+            be stored.</param>
+        </member>
+        <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry},KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Search this group and all subgroups for entries.
+            </summary>
+            <param name="sp">Specifies the search method.</param>
             <param name="listStorage">Entry list in which the search results will
             be stored.</param>
         </member>
@@ -1729,6 +1744,28 @@
         <member name="F:KeePassLib.PwIcon.Count">
             <summary>
             Virtual identifier -- represents the number of icons.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.MemProtCmpMode">
+            <summary>
+            Comparison modes for in-memory protected objects.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.MemProtCmpMode.None">
+            <summary>
+            Ignore the in-memory protection states.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.MemProtCmpMode.CustomOnly">
+            <summary>
+            Ignore the in-memory protection states of standard
+            objects; do compare in-memory protection states of
+            custom objects.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.MemProtCmpMode.Full">
+            <summary>
+            Compare in-memory protection states.
             </summary>
         </member>
         <member name="T:KeePassLib.PwEntry">
@@ -2455,6 +2492,22 @@
             matched case-sensitively or not.</param>
             <returns>Splitted string including separators.</returns>
         </member>
+        <member name="M:KeePassLib.Utility.StrUtil.DataToDataUri(System.Byte[],System.String)">
+            <summary>
+            Create a data URI (according to RFC 2397).
+            </summary>
+            <param name="pbData">Data to encode.</param>
+            <param name="strMimeType">Optional MIME type. If <c>null</c>,
+            an appropriate type is used.</param>
+            <returns>Data URI.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.DataUriToData(System.String)">
+            <summary>
+            Convert a data URI (according to RFC 2397) to binary data.
+            </summary>
+            <param name="strDataUri">Data URI to decode.</param>
+            <returns>Decoded binary data.</returns>
+        </member>
         <member name="T:KeePassLib.Serialization.Kdb4Format">
             <summary>
             The <c>Kdb4File</c> class supports saving the data to various
@@ -2963,6 +3016,11 @@
             text matches a group/entry string.
             </summary>
         </member>
+        <member name="P:KeePassLib.SearchParameters.DataTransformation">
+            <summary>
+            Only for serialization.
+            </summary>
+        </member>
         <member name="T:KeePassLib.MemoryProtectionConfig">
             <summary>
             Memory protection configuration structure (for default fields).
@@ -3053,65 +3111,24 @@
         </member>
         <member name="T:KeePassLib.Collections.AutoTypeConfig">
             <summary>
-            A dictionary of auto-type window/keystroke sequence pairs.
+            A list of auto-type associations.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.AutoTypeConfig.#ctor">
             <summary>
-            Construct a new auto-type dictionary.
+            Construct a new auto-type associations list.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.AutoTypeConfig.Clear">
             <summary>
-            Remove all window/keystroke sequence associations.
+            Remove all associations.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.AutoTypeConfig.CloneDeep">
             <summary>
-            Clone the auto-type dictionary.
+            Clone the auto-type associations list.
             </summary>
             <returns>New, cloned object.</returns>
-        </member>
-        <member name="M:KeePassLib.Collections.AutoTypeConfig.Set(System.String,System.String)">
-            <summary>
-            Set a window/keystroke sequence pair.
-            </summary>
-            <param name="strWindow">Name of the window. Must not be <c>null</c>.</param>
-            <param name="strKeystrokeSequence">Keystroke sequence for the specified
-            window. Must not be <c>null</c>.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
-            parameters is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Collections.AutoTypeConfig.Get(System.String)">
-            <summary>
-            Get a keystroke sequence associated with the specified window.
-            Returns <c>null</c>, if no sequence can be found.
-            </summary>
-            <param name="strWindow">Window identifier.</param>
-            <returns>Keystroke sequence associated with the specified window.
-            The return value is <c>null</c>, if no keystroke sequence has been
-            defined for this window yet.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Collections.AutoTypeConfig.GetSafe(System.String)">
-            <summary>
-            Get a keystroke sequence associated with the specified window.
-            Returns an empty string (<c>""</c>), if no sequence can be found.
-            </summary>
-            <param name="strWindow">Window identifier.</param>
-            <returns>Keystroke sequence associated with the specified window.
-            The return value is an empty string (<c>""</c>), if no keystroke
-            sequence has been defined for this window yet.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Collections.AutoTypeConfig.Remove(System.String)">
-            <summary>
-            Remove an auto-type entry.
-            </summary>
-            <param name="strWindow">Window identifier. Must not be <c>null</c>.</param>
-            <returns>Returns <c>true</c> if the entry has been removed.</returns>
         </member>
         <member name="P:KeePassLib.Collections.AutoTypeConfig.Enabled">
             <summary>
@@ -3126,11 +3143,11 @@
         <member name="P:KeePassLib.Collections.AutoTypeConfig.DefaultSequence">
             <summary>
             The default keystroke sequence that is auto-typed if
-            no matching window is found in the <c>Items</c>
+            no matching window is found in the <c>Associations</c>
             container.
             </summary>
         </member>
-        <member name="P:KeePassLib.Collections.AutoTypeConfig.WindowSequencePairs">
+        <member name="P:KeePassLib.Collections.AutoTypeConfig.Associations">
             <summary>
             Get all auto-type window/keystroke sequence pairs.
             </summary>

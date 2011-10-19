@@ -19,9 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Xml.Serialization;
+using System.ComponentModel;
+using System.Diagnostics;
 
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 
 namespace KeePassLib
@@ -46,13 +48,13 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, 2.15 = 0x02010500, etc.
 		/// </summary>
-		public const uint Version32 = 0x02010600;
-		public const ulong FileVersion64 = 0x0002001000000000UL;
+		public const uint Version32 = 0x02010700;
+		public const ulong FileVersion64 = 0x0002001100000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.16";
+		public const string VersionString = "2.17";
 
 		public const string Copyright = @"Copyright © 2003-2011 Dominik Reichl";
 
@@ -213,6 +215,7 @@ namespace KeePassLib
 	public sealed class SearchParameters
 	{
 		private string m_strText = string.Empty;
+		[DefaultValue("")]
 		public string SearchString
 		{
 			get { return m_strText; }
@@ -224,6 +227,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bRegex = false;
+		[DefaultValue(false)]
 		public bool RegularExpression
 		{
 			get { return m_bRegex; }
@@ -231,6 +235,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInTitles = true;
+		[DefaultValue(true)]
 		public bool SearchInTitles
 		{
 			get { return m_bSearchInTitles; }
@@ -238,6 +243,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInUserNames = true;
+		[DefaultValue(true)]
 		public bool SearchInUserNames
 		{
 			get { return m_bSearchInUserNames; }
@@ -245,6 +251,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInPasswords = false;
+		[DefaultValue(false)]
 		public bool SearchInPasswords
 		{
 			get { return m_bSearchInPasswords; }
@@ -252,6 +259,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInUrls = true;
+		[DefaultValue(true)]
 		public bool SearchInUrls
 		{
 			get { return m_bSearchInUrls; }
@@ -259,6 +267,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInNotes = true;
+		[DefaultValue(true)]
 		public bool SearchInNotes
 		{
 			get { return m_bSearchInNotes; }
@@ -266,6 +275,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInOther = true;
+		[DefaultValue(true)]
 		public bool SearchInOther
 		{
 			get { return m_bSearchInOther; }
@@ -273,6 +283,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInUuids = false;
+		[DefaultValue(false)]
 		public bool SearchInUuids
 		{
 			get { return m_bSearchInUuids; }
@@ -280,6 +291,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInGroupNames = false;
+		[DefaultValue(false)]
 		public bool SearchInGroupNames
 		{
 			get { return m_bSearchInGroupNames; }
@@ -287,6 +299,7 @@ namespace KeePassLib
 		}
 
 		private bool m_bSearchInTags = true;
+		[DefaultValue(true)]
 		public bool SearchInTags
 		{
 			get { return m_bSearchInTags; }
@@ -305,10 +318,42 @@ namespace KeePassLib
 		}
 
 		private bool m_bExcludeExpired = false;
+		[DefaultValue(false)]
 		public bool ExcludeExpired
 		{
 			get { return m_bExcludeExpired; }
 			set { m_bExcludeExpired = value; }
+		}
+
+		private bool m_bRespectEntrySearchingDisabled = true;
+		[DefaultValue(true)]
+		public bool RespectEntrySearchingDisabled
+		{
+			get { return m_bRespectEntrySearchingDisabled; }
+			set { m_bRespectEntrySearchingDisabled = value; }
+		}
+
+		private StrPwEntryDelegate m_fnDataTrf = null;
+		[XmlIgnore]
+		public StrPwEntryDelegate DataTransformationFn
+		{
+			get { return m_fnDataTrf; }
+			set { m_fnDataTrf = value; }
+		}
+
+		private string m_strDataTrf = string.Empty;
+		/// <summary>
+		/// Only for serialization.
+		/// </summary>
+		[DefaultValue("")]
+		public string DataTransformation
+		{
+			get { return m_strDataTrf; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strDataTrf = value;
+			}
 		}
 
 		[XmlIgnore]
@@ -322,8 +367,8 @@ namespace KeePassLib
 				// sp.m_bRegex = false;
 				sp.m_bSearchInTitles = false;
 				sp.m_bSearchInUserNames = false;
-				sp.m_bSearchInUrls = false;
 				// sp.m_bSearchInPasswords = false;
+				sp.m_bSearchInUrls = false;
 				sp.m_bSearchInNotes = false;
 				sp.m_bSearchInOther = false;
 				// sp.m_bSearchInUuids = false;
@@ -331,6 +376,7 @@ namespace KeePassLib
 				sp.m_bSearchInTags = false;
 				// sp.m_scType = StringComparison.InvariantCultureIgnoreCase;
 				// sp.m_bExcludeExpired = false;
+				// m_bRespectEntrySearchingDisabled = true;
 
 				return sp;
 			}
@@ -341,6 +387,11 @@ namespace KeePassLib
 		/// </summary>
 		public SearchParameters()
 		{
+		}
+
+		public SearchParameters Clone()
+		{
+			return (SearchParameters)this.MemberwiseClone();
 		}
 	}
 	#pragma warning restore 1591 // Missing XML comments warning

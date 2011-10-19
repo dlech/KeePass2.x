@@ -72,7 +72,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_uuid = value;
 			}
 		}
@@ -106,7 +105,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
 				m_listStrings = value;
 			}
 		}
@@ -120,7 +118,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
 				m_listBinaries = value;
 			}
 		}
@@ -134,7 +131,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
 				m_listAutoType = value;
 			}
 		}
@@ -148,7 +144,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_listHistory = value;
 			}
 		}
@@ -173,7 +168,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_pwCustomIconID = value;
 			}
 		}
@@ -261,7 +255,6 @@ namespace KeePassLib
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-
 				m_strOverrideUrl = value;
 			}
 		}
@@ -275,7 +268,6 @@ namespace KeePassLib
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-
 				m_vTags = value;
 			}
 		}
@@ -378,8 +370,17 @@ namespace KeePassLib
 			return peNew;
 		}
 
+		[Obsolete]
 		public bool EqualsEntry(PwEntry pe, bool bIgnoreParentGroup, bool bIgnoreLastMod,
 			bool bIgnoreLastAccess, bool bIgnoreHistory, bool bIgnoreThisLastBackup)
+		{
+			return EqualsEntry(pe, bIgnoreParentGroup, bIgnoreLastMod, bIgnoreLastAccess,
+				bIgnoreHistory, bIgnoreThisLastBackup, MemProtCmpMode.None);
+		}
+
+		public bool EqualsEntry(PwEntry pe, bool bIgnoreParentGroup, bool bIgnoreLastMod,
+			bool bIgnoreLastAccess, bool bIgnoreHistory, bool bIgnoreThisLastBackup,
+			MemProtCmpMode mpCmpStr)
 		{
 			if(pe == null) { Debug.Assert(false); return false; }
 
@@ -391,10 +392,11 @@ namespace KeePassLib
 					return false;
 			}
 
-			if(!m_listStrings.EqualsDictionary(pe.m_listStrings)) return false;
+			if(!m_listStrings.EqualsDictionary(pe.m_listStrings, mpCmpStr))
+				return false;
 			if(!m_listBinaries.EqualsDictionary(pe.m_listBinaries)) return false;
 
-			if(!m_listAutoType.EqualsConfig(pe.m_listAutoType)) return false;
+			if(!m_listAutoType.Equals(pe.m_listAutoType)) return false;
 
 			if(!bIgnoreHistory)
 			{
@@ -410,7 +412,8 @@ namespace KeePassLib
 				for(uint uHist = 0; uHist < pe.m_listHistory.UCount; ++uHist)
 				{
 					if(!m_listHistory.GetAt(uHist).EqualsEntry(pe.m_listHistory.GetAt(
-						uHist), true, bIgnoreLastMod, bIgnoreLastAccess, false, false))
+						uHist), true, bIgnoreLastMod, bIgnoreLastAccess, false, false,
+						MemProtCmpMode.None))
 						return false;
 				}
 			}
@@ -592,7 +595,7 @@ namespace KeePassLib
 			foreach(PwEntry pe in m_listHistory)
 			{
 				if(pe.EqualsEntry(peData, true, bIgnoreLastMod, bIgnoreLastAccess,
-					true, false)) return true;
+					true, false, MemProtCmpMode.None)) return true;
 			}
 
 			return false;
@@ -660,7 +663,7 @@ namespace KeePassLib
 
 		public bool GetAutoTypeEnabled()
 		{
-			if(m_listAutoType.Enabled == false) return false;
+			if(!m_listAutoType.Enabled) return false;
 
 			if(m_pParentGroup != null)
 				return m_pParentGroup.GetAutoTypeEnabledInherited();
@@ -717,10 +720,10 @@ namespace KeePassLib
 			}
 
 			uSize += (ulong)m_listAutoType.DefaultSequence.Length;
-			foreach(KeyValuePair<string, string> kvpCfg in m_listAutoType.WindowSequencePairs)
+			foreach(AutoTypeAssociation a in m_listAutoType.Associations)
 			{
-				uSize += (ulong)kvpCfg.Key.Length;
-				uSize += (ulong)kvpCfg.Value.Length;
+				uSize += (ulong)a.WindowName.Length;
+				uSize += (ulong)a.Sequence.Length;
 			}
 
 			foreach(PwEntry peHistory in m_listHistory)

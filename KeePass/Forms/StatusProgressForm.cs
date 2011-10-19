@@ -48,6 +48,30 @@ namespace KeePass.Forms
 			get { return m_bCancelled; }
 		}
 
+		public static StatusProgressForm ConstructEx(string strTitle,
+			bool bCanCancel, bool bMarqueeProgress, Form fOwner,
+			string strInitialOp)
+		{
+			StatusProgressForm dlg = new StatusProgressForm();
+			dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fOwner);
+
+			if(fOwner != null) dlg.Show(fOwner);
+			else dlg.Show();
+
+			dlg.StartLogging(strInitialOp, false);
+
+			return dlg;
+		}
+
+		public static void DestroyEx(StatusProgressForm dlg)
+		{
+			if(dlg == null) { Debug.Assert(false); return; }
+
+			dlg.EndLogging();
+			dlg.Close();
+			UIUtil.DestroyForm(dlg);
+		}
+
 		public void InitEx(string strTitle, bool bCanCancel, bool bMarqueeProgress,
 			Form fOwner)
 		{
@@ -106,7 +130,8 @@ namespace KeePass.Forms
 
 			if(strText != null) m_lblTotal.Text = strText;
 
-			if((nPercent >= 0) && (nPercent <= 100)) m_pbTotal.Value = nPercent;
+			if((nPercent >= 0) && (nPercent <= 100))
+				m_pbTotal.Value = nPercent; // .NET compares with cached value
 		}
 
 		private bool SetProgressGlobal(string strText, int nPercent)

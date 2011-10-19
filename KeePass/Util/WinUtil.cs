@@ -119,7 +119,13 @@ namespace KeePass.Util
 
 		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource)
 		{
-			// If URL is null, return false, do not throw exception.
+			OpenUrl(strUrlToOpen, peDataSource, true);
+		}
+
+		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource,
+			bool bAllowOverride)
+		{
+			// If URL is null, return, do not throw exception.
 			Debug.Assert(strUrlToOpen != null); if(strUrlToOpen == null) return;
 
 			string strPrevWorkDir = Directory.GetCurrentDirectory();
@@ -138,16 +144,17 @@ namespace KeePass.Util
 
 			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrlFlt);
 
-			string strUrl = SprEngine.Compile(strUrlFlt, false, peDataSource,
-				pwDatabase, false, bCmdQuotes);
+			string strUrl = SprEngine.Compile(strUrlFlt, new SprContext(
+				peDataSource, pwDatabase, SprCompileFlags.All, false, bCmdQuotes));
 
 			string strOvr = Program.Config.Integration.UrlSchemeOverrides.GetOverrideForUrl(
 				strUrl);
+			if(!bAllowOverride) strOvr = null;
 			if(strOvr != null)
 			{
 				bCmdQuotes = WinUtil.IsCommandLineUrl(strOvr);
-				strUrl = SprEngine.Compile(strOvr, false, peDataSource, pwDatabase,
-					false, bCmdQuotes);
+				strUrl = SprEngine.Compile(strOvr, new SprContext(
+					peDataSource, pwDatabase, SprCompileFlags.All, false, bCmdQuotes));
 			}
 
 			if(WinUtil.IsCommandLineUrl(strUrl))
@@ -194,6 +201,25 @@ namespace KeePass.Util
 			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
 		}
 
+		public static void OpenUrlWithApp(string strUrlToOpen, PwEntry peDataSource,
+			string strAppPath)
+		{
+			if(string.IsNullOrEmpty(strUrlToOpen)) return;
+			if(string.IsNullOrEmpty(strAppPath)) return;
+
+			char[] vPathTrim = new char[]{ ' ', '\t', '\r', '\n',
+				'\"', '\'' };
+
+			string strUrl = strUrlToOpen.Trim(vPathTrim);
+			if(strUrl.Length == 0) { Debug.Assert(false); return; }
+
+			string strApp = strAppPath.Trim(vPathTrim);
+			if(strApp.Length == 0) { Debug.Assert(false); return; }
+
+			string str = "cmd://\"" + strApp + "\" \"" + strUrl + "\"";
+			OpenUrl(str, peDataSource, false);
+		}
+
 		private static void StartWithoutShellExecute(string strApp, string strArgs)
 		{
 			try
@@ -236,7 +262,7 @@ namespace KeePass.Util
 			try { m_strExePath = Assembly.GetExecutingAssembly().Location; }
 			catch(Exception) { }
 
-			if((m_strExePath == null) || (m_strExePath.Length == 0))
+			if(string.IsNullOrEmpty(m_strExePath))
 			{
 				m_strExePath = Assembly.GetExecutingAssembly().GetName().CodeBase;
 				m_strExePath = UrlUtil.FileUrlToPath(m_strExePath);
@@ -498,6 +524,50 @@ namespace KeePass.Util
 		{
 			if(NativeLib.IsUnix()) return "Unix";
 			return "Windows";
+		}
+
+		public static void RemoveZoneIdentifier(string strFilePath)
+		{
+			// No throw
+			if(string.IsNullOrEmpty(strFilePath)) { Debug.Assert(false); return; }
+
+			try
+			{
+				string strZoneId = strFilePath + ":Zone.Identifier";
+
+				if(NativeMethods.FileExists(strZoneId))
+					NativeMethods.DeleteFile(strZoneId);
+			}
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+		}
+
+		public static string RunConsoleApp(string strAppPath, string strParams)
+		{
+			if(strAppPath == null) throw new ArgumentNullException("strAppPath");
+			if(strAppPath.Length == 0) throw new ArgumentException("strAppPath");
+
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo();
+
+				psi.CreateNoWindow = true;
+				psi.FileName = strAppPath;
+				psi.WindowStyle = ProcessWindowStyle.Hidden;
+				psi.UseShellExecute = false;
+				psi.RedirectStandardOutput = true;
+
+				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+
+				Process p = Process.Start(psi);
+
+				string strOutput = p.StandardOutput.ReadToEnd();
+				p.WaitForExit();
+
+				return strOutput;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 	}
 }

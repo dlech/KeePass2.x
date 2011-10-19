@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePassLib;
@@ -57,6 +58,7 @@ namespace KeePass.Ecas
 		}
 
 		private string m_strName = string.Empty;
+		[DefaultValue("")]
 		public string Name
 		{
 			get { return m_strName; }
@@ -68,6 +70,7 @@ namespace KeePass.Ecas
 		}
 
 		private string m_strComments = string.Empty;
+		[DefaultValue("")]
 		public string Comments
 		{
 			get { return m_strComments; }
@@ -79,6 +82,7 @@ namespace KeePass.Ecas
 		}
 
 		private bool m_bEnabled = true;
+		[DefaultValue(true)]
 		public bool Enabled
 		{
 			get { return m_bEnabled; }
@@ -86,6 +90,7 @@ namespace KeePass.Ecas
 		}
 
 		private bool m_bInitiallyOn = true;
+		[DefaultValue(true)]
 		public bool InitiallyOn
 		{
 			get { return m_bInitiallyOn; }
@@ -101,6 +106,7 @@ namespace KeePass.Ecas
 		}
 
 		private bool m_bTurnOffAfterAction = false;
+		[DefaultValue(false)]
 		public bool TurnOffAfterAction
 		{
 			get { return m_bTurnOffAfterAction; }

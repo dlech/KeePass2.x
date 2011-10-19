@@ -27,11 +27,14 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.UI;
+using KeePass.Util;
+using KeePass.Util.Spr;
 using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
+using KeePassLib.Interfaces;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -91,6 +94,8 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc);
 			this.Icon = Properties.Resources.KeePass;
 
+			m_cbDerefData.Text = m_cbDerefData.Text + " (" + KPRes.Slow + ")";
+
 			SearchParameters sp = Program.Config.Defaults.SearchParameters;
 			m_cbTitle.Checked = sp.SearchInTitles;
 			m_cbUserName.Checked = sp.SearchInUserNames;
@@ -102,13 +107,16 @@ namespace KeePass.Forms
 			m_cbGroupName.Checked = sp.SearchInGroupNames;
 			m_cbTags.Checked = sp.SearchInTags;
 
-			StringComparison sc = Program.Config.Defaults.SearchParameters.ComparisonMode;
+			StringComparison sc = sp.ComparisonMode;
 			m_cbCaseSensitive.Checked = ((sc != StringComparison.CurrentCultureIgnoreCase) &&
 				(sc != StringComparison.InvariantCultureIgnoreCase) &&
 				(sc != StringComparison.OrdinalIgnoreCase));
 
-			m_cbRegEx.Checked = Program.Config.Defaults.SearchParameters.RegularExpression;
-			m_cbExcludeExpired.Checked = Program.Config.Defaults.SearchParameters.ExcludeExpired;
+			m_cbRegEx.Checked = sp.RegularExpression;
+			m_cbExcludeExpired.Checked = sp.ExcludeExpired;
+
+			string strTrf = SearchUtil.GetTransformation(sp);
+			m_cbDerefData.Checked = (strTrf == SearchUtil.StrTrfDeref);
 
 			UIUtil.SetFocus(m_tbSearch, this);
 		}
@@ -139,12 +147,25 @@ namespace KeePass.Forms
 			if(m_pdContext != null)
 				MainForm.AutoAdjustMemProtSettings(m_pdContext, sp);
 
-			try { m_pgRoot.SearchEntries(sp, listResults, true); }
-			catch(Exception exFind) { MessageService.ShowWarning(exFind); }
+			Form fOptDialog;
+			IStatusLogger sl = StatusUtil.CreateStatusDialog(this, out fOptDialog,
+				null, KPRes.SearchingOp + "...", true, false);
+			if(fOptDialog != null) Program.MainForm.RedirectActivationPush(fOptDialog);
+			this.Enabled = false;
+
+			Exception exFind = null;
+			try { m_pgRoot.SearchEntries(sp, listResults, sl); }
+			catch(Exception ex) { exFind = ex; }
+
+			if(fOptDialog != null) Program.MainForm.RedirectActivationPop();
+			this.Enabled = true;
+			sl.EndLogging();
+
+			if(exFind != null) MessageService.ShowWarning(exFind);
 
 			m_pgResultsGroup = pgResults;
 
-			sp.SearchString = string.Empty; // Clear for saving
+			sp.SearchString = string.Empty; // Clear for saving (sp points to global)
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -181,6 +202,9 @@ namespace KeePass.Forms
 				StringComparison.InvariantCultureIgnoreCase);
 
 			sp.ExcludeExpired = m_cbExcludeExpired.Checked;
+
+			SearchUtil.SetTransformation(sp, (m_cbDerefData.Checked ?
+				SearchUtil.StrTrfDeref : string.Empty));
 
 			return sp;
 		}

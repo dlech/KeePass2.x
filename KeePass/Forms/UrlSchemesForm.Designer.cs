@@ -30,7 +30,7 @@
 		{
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_lvOverrides = new System.Windows.Forms.ListView();
+			this.m_lvOverrides = new KeePass.UI.CustomListViewEx();
 			this.m_btnAdd = new System.Windows.Forms.Button();
 			this.m_btnEdit = new System.Windows.Forms.Button();
 			this.m_btnDelete = new System.Windows.Forms.Button();
@@ -40,7 +40,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(320, 253);
+			this.m_btnOK.Location = new System.Drawing.Point(320, 289);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -51,7 +51,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(401, 253);
+			this.m_btnCancel.Location = new System.Drawing.Point(401, 289);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -66,7 +66,7 @@
 			this.m_lvOverrides.Location = new System.Drawing.Point(12, 12);
 			this.m_lvOverrides.Name = "m_lvOverrides";
 			this.m_lvOverrides.ShowItemToolTips = true;
-			this.m_lvOverrides.Size = new System.Drawing.Size(383, 218);
+			this.m_lvOverrides.Size = new System.Drawing.Size(383, 256);
 			this.m_lvOverrides.TabIndex = 2;
 			this.m_lvOverrides.UseCompatibleStateImageBehavior = false;
 			this.m_lvOverrides.View = System.Windows.Forms.View.Details;
@@ -106,7 +106,7 @@
 			// m_lblSep
 			// 
 			this.m_lblSep.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSep.Location = new System.Drawing.Point(0, 243);
+			this.m_lblSep.Location = new System.Drawing.Point(0, 280);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(489, 2);
 			this.m_lblSep.TabIndex = 6;
@@ -117,7 +117,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(488, 288);
+			this.ClientSize = new System.Drawing.Size(488, 324);
 			this.Controls.Add(this.m_lblSep);
 			this.Controls.Add(this.m_btnDelete);
 			this.Controls.Add(this.m_btnEdit);
@@ -142,7 +142,7 @@
 
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
-		private System.Windows.Forms.ListView m_lvOverrides;
+		private KeePass.UI.CustomListViewEx m_lvOverrides;
 		private System.Windows.Forms.Button m_btnAdd;
 		private System.Windows.Forms.Button m_btnEdit;
 		private System.Windows.Forms.Button m_btnDelete;

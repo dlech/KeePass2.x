@@ -253,15 +253,21 @@ namespace KeePass.Forms
 				KeyProvider kp = Program.KeyProviderPool.Get(strKeyFile);
 				if((kp != null) && m_bSecureDesktop)
 				{
-					if(kp.GetKeyMightShowGui)
+					if(kp.GetKeyMightShowGui && !kp.SecureDesktopCompatible)
 					{
 						MessageService.ShowWarning(KPRes.KeyProvWithGuiOnSD,
 							KPRes.KeyProvWithGuiOnSDHint);
 						return false;
 					}
+					else if(!kp.SecureDesktopCompatible)
+					{
+						MessageService.ShowWarning(KPRes.KeyProvWithGuiOnSDHint);
+						return false;
+					}
 				}
 
-				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(m_ioInfo, false);
+				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
+					m_ioInfo, false, m_bSecureDesktop);
 
 				bool bPerformHash;
 				byte[] pbProvKey = Program.KeyProviderPool.GetKey(strKeyFile, ctxKP,

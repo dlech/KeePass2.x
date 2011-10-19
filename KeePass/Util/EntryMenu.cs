@@ -170,12 +170,16 @@ namespace KeePass.Util
 
 		private static void OnAutoType(object sender, EventArgs e)
 		{
-			ToolStripMenuItem tsmi = sender as ToolStripMenuItem;
+			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
 			Debug.Assert(tsmi != null); if(tsmi == null) return;
-			PwEntry pe = tsmi.Tag as PwEntry;
+			PwEntry pe = (tsmi.Tag as PwEntry);
 			Debug.Assert(pe != null); if(pe == null) return;
 
-			try { AutoType.PerformIntoCurrentWindow(pe); }
+			try
+			{
+				AutoType.PerformIntoCurrentWindow(pe,
+					Program.MainForm.DocumentManager.SafeFindContainerOf(pe));
+			}
 			catch(Exception ex)
 			{
 				MessageService.ShowWarning(ex);
@@ -184,13 +188,14 @@ namespace KeePass.Util
 
 		private static void OnCopyField(object sender, string strField)
 		{
-			ToolStripMenuItem tsmi = sender as ToolStripMenuItem;
+			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
 			Debug.Assert(tsmi != null); if(tsmi == null) return;
-			PwEntry pe = tsmi.Tag as PwEntry;
+			PwEntry pe = (tsmi.Tag as PwEntry);
 			Debug.Assert(pe != null); if(pe == null) return;
 
 			ClipboardUtil.Copy(pe.Strings.ReadSafe(strField), true, true,
-				pe, Program.MainForm.DocumentManager.ActiveDatabase, IntPtr.Zero);
+				pe, Program.MainForm.DocumentManager.SafeFindContainerOf(pe),
+				IntPtr.Zero);
 		}
 
 		private static void OnCopyUserName(object sender, EventArgs e)

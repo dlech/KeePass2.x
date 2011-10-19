@@ -86,7 +86,7 @@ namespace KeePass.Util
 			SiStateEx si = new SiStateEx();
 			if(KeePassLib.Native.NativeLib.IsUnix())
 			{
-				si.DefaultDelay /= 2; // Starting external program takes time
+				si.DefaultDelay /= 3; // Starting external program takes time
 				return si;
 			}
 

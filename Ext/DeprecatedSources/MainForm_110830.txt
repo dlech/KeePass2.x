@@ -1,0 +1,66 @@
+		/* public void RefreshEntriesList()
+		{
+			int nItemCount = m_lvEntries.Items.Count;
+			if(nItemCount <= 0) return;
+
+			PwEntry peTop = GetTopEntry();
+			PwEntry peFocused = GetSelectedEntry(false);
+			int iScrollY = NativeMethods.GetScrollPosY(m_lvEntries.Handle);
+
+			UpdateImageLists(); // Important
+
+			PwEntry[] vSelected = GetSelectedEntries();
+			if(vSelected == null) vSelected = new PwEntry[0];
+
+			PwEntry[] vList = new PwEntry[nItemCount];
+			for(int iEnum = 0; iEnum < nItemCount; ++iEnum)
+				vList[iEnum] = (PwEntry)m_lvEntries.Items[iEnum].Tag;
+
+			m_lvEntries.BeginUpdate();
+			m_lvEntries.Items.Clear();
+			m_lvEntries.Groups.Clear();
+			m_lvgLastEntryGroup = null;
+
+			int nTopIndex = -1;
+			ListViewItem lviFocused = null;
+
+			m_dtCachedNow = DateTime.Now;
+			ListViewStateEx lvseCachedState = new ListViewStateEx(m_lvEntries);
+
+			for(int iAdd = 0; iAdd < nItemCount; ++iAdd)
+			{
+				PwEntry pe = vList[iAdd];
+
+				ListViewItem lvi = SetListEntry(pe, null);
+
+				if(pe == peTop) nTopIndex = iAdd;
+				if(pe == peFocused) lviFocused = lvi;
+
+				if(Array.IndexOf(vSelected, pe) >= 0) lvi.Selected = true;
+			}
+
+			Debug.Assert(lvseCachedState.CompareTo(m_lvEntries));
+
+			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
+				Program.Config.MainWindow.EntryListAlternatingBgColors);
+
+			Debug.Assert(m_bEntryGrouping == m_lvEntries.ShowGroups);
+			if(m_lvEntries.ShowGroups)
+			{
+				// Test nTopIndex to ensure we're not scrolling an unrelated list
+				if((nTopIndex >= 0) && (iScrollY > 0))
+					NativeMethods.Scroll(m_lvEntries, 0, iScrollY);
+			}
+			else
+			{
+				if(nTopIndex >= 0)
+				{
+					m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+					m_lvEntries.EnsureVisible(nTopIndex);
+				}
+			}
+
+			if(lviFocused != null) m_lvEntries.FocusedItem = lviFocused;
+
+			m_lvEntries.EndUpdate();
+		} */

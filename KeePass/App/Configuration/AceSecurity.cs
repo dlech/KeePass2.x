@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 
 namespace KeePass.App.Configuration
 {
@@ -63,6 +64,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSecureDesktop = false;
+		[DefaultValue(false)]
 		public bool MasterKeyOnSecureDesktop
 		{
 			get { return m_bSecureDesktop; }
@@ -70,6 +72,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bClipClearOnExit = true;
+		[DefaultValue(true)]
 		public bool ClipboardClearOnExit
 		{
 			get { return m_bClipClearOnExit; }
@@ -77,6 +80,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private int m_nClipClearSeconds = 12;
+		[DefaultValue(12)]
 		public int ClipboardClearAfterSeconds
 		{
 			get { return m_nClipClearSeconds; }
@@ -87,6 +91,7 @@ namespace KeePass.App.Configuration
 		// crash with the Clipboard Viewer Ignore format
 		// (when it is set using OleSetClipboard)
 		private bool m_bUseClipboardViewerIgnoreFmt = false;
+		[DefaultValue(false)]
 		public bool UseClipboardViewerIgnoreFormat
 		{
 			get { return m_bUseClipboardViewerIgnoreFmt; }
@@ -94,6 +99,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bClearKeyCmdLineOpt = true;
+		[DefaultValue(true)]
 		public bool ClearKeyCommandLineParams
 		{
 			get { return m_bClearKeyCmdLineOpt; }
@@ -108,6 +114,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOnMinimize = false;
+		[DefaultValue(false)]
 		public bool LockOnWindowMinimize
 		{
 			get { return m_bOnMinimize; }
@@ -115,6 +122,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOnSessionSwitch = false;
+		[DefaultValue(false)]
 		public bool LockOnSessionSwitch
 		{
 			get { return m_bOnSessionSwitch; }
@@ -122,6 +130,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOnSuspend = false;
+		[DefaultValue(false)]
 		public bool LockOnSuspend
 		{
 			get { return m_bOnSuspend; }
@@ -129,6 +138,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOnRemoteControlChange = false;
+		[DefaultValue(false)]
 		public bool LockOnRemoteControlChange
 		{
 			get { return m_bOnRemoteControlChange; }
@@ -150,6 +160,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bExitInsteadOfLockingAfterTime = false;
+		[DefaultValue(false)]
 		public bool ExitInsteadOfLockingAfterTime
 		{
 			get { return m_bExitInsteadOfLockingAfterTime; }
@@ -157,6 +168,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bAlwaysExitInsteadOfLocking = false;
+		[DefaultValue(false)]
 		public bool AlwaysExitInsteadOfLocking
 		{
 			get { return m_bAlwaysExitInsteadOfLocking; }

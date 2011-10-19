@@ -91,7 +91,7 @@ namespace KeePass.Util
 			tsmi.Click += OnMenuExecute;
 
 			Image img = null;
-			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 			if(pd != null)
 			{
 				if(!pe.CustomIconUuid.EqualsValue(PwUuid.Zero))

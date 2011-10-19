@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.ComponentModel;
+using System.Diagnostics;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -60,6 +62,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strUrlOverride = string.Empty;
+		[DefaultValue("")]
 		public string UrlOverride
 		{
 			get { return m_strUrlOverride; }
@@ -82,6 +85,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSearchKeyFiles = true;
+		[DefaultValue(true)]
 		public bool SearchKeyFiles
 		{
 			get { return m_bSearchKeyFiles; }
@@ -89,6 +93,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSearchKeyFilesOnRemovable = false;
+		[DefaultValue(false)]
 		public bool SearchKeyFilesOnRemovableMedia
 		{
 			get { return m_bSearchKeyFilesOnRemovable; }
@@ -96,6 +101,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSingleInstance = true;
+		[DefaultValue(true)]
 		public bool LimitToSingleInstance
 		{
 			get { return m_bSingleInstance; }
@@ -103,13 +109,23 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMatchByTitle = true;
+		[DefaultValue(true)]
 		public bool AutoTypeMatchByTitle
 		{
 			get { return m_bMatchByTitle; }
 			set { m_bMatchByTitle = value; }
 		}
 
+		private bool m_bMatchByUrlInTitle = false;
+		[DefaultValue(false)]
+		public bool AutoTypeMatchByUrlInTitle
+		{
+			get { return m_bMatchByUrlInTitle; }
+			set { m_bMatchByUrlInTitle = value; }
+		}
+
 		private bool m_bPrependInitSeqIE = true;
+		[DefaultValue(true)]
 		public bool AutoTypePrependInitSequenceForIE
 		{
 			get { return m_bPrependInitSeqIE; }
@@ -117,6 +133,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSpecialReleaseAlt = true;
+		[DefaultValue(true)]
 		public bool AutoTypeReleaseAltWithKeyPress
 		{
 			get { return m_bSpecialReleaseAlt; }
@@ -124,6 +141,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCancelOnWindowChange = false;
+		[DefaultValue(false)]
 		public bool AutoTypeCancelOnWindowChange
 		{
 			get { return m_bCancelOnWindowChange; }
@@ -138,6 +156,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strProxyAddr = string.Empty;
+		[DefaultValue("")]
 		public string ProxyAddress
 		{
 			get { return m_strProxyAddr; }
@@ -149,6 +168,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strProxyPort = string.Empty;
+		[DefaultValue("")]
 		public string ProxyPort
 		{
 			get { return m_strProxyPort; }
@@ -160,6 +180,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strProxyUser = string.Empty;
+		[DefaultValue("")]
 		public string ProxyUserName
 		{
 			get { return m_strProxyUser; }
@@ -171,6 +192,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strProxyPassword = string.Empty;
+		[DefaultValue("")]
 		public string ProxyPassword
 		{
 			get { return m_strProxyPassword; }
@@ -188,73 +210,103 @@ namespace KeePass.App.Configuration
 
 	public sealed class AceUrlSchemeOverrides : IDeepCloneable<AceUrlSchemeOverrides>
 	{
-		private bool m_bSetToDefaults = true;
-		public bool SetToDefaults
-		{
-			get { return m_bSetToDefaults; }
-			set { m_bSetToDefaults = value; }
-		}
-
-		private List<AceUrlSchemeOverride> m_vOverrides =
+		private List<AceUrlSchemeOverride> m_lBuiltInOverrides =
 			new List<AceUrlSchemeOverride>();
-		[XmlArrayItem("Override")]
-		public List<AceUrlSchemeOverride> Overrides
+		[XmlIgnore]
+		public List<AceUrlSchemeOverride> BuiltInOverrides
 		{
-			get { return m_vOverrides; }
+			get { return m_lBuiltInOverrides; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_vOverrides = value;
+				m_lBuiltInOverrides = value;
+			}
+		}
+
+		public ulong BuiltInOverridesEnabled
+		{
+			get { return GetEnabledBuiltInOverrides(); }
+			set { SetEnabledBuiltInOverrides(value); }
+		}
+
+		private List<AceUrlSchemeOverride> m_lCustomOverrides =
+			new List<AceUrlSchemeOverride>();
+		[XmlArrayItem("Override")]
+		public List<AceUrlSchemeOverride> CustomOverrides
+		{
+			get { return m_lCustomOverrides; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_lCustomOverrides = value;
 			}
 		}
 
 		public AceUrlSchemeOverrides()
 		{
+			MakeBuiltInList();
 		}
 
-		public void SetDefaultsIfEmpty()
+		private void MakeBuiltInList()
 		{
-			if(m_bSetToDefaults == false) return;
+			m_lBuiltInOverrides.Clear();
 
-			m_bSetToDefaults = false; // Set only once
-			m_vOverrides.Clear(); // Avoid duplication of defaults
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(true, "ssh",
+				@"cmd://PuTTY.exe -ssh {USERNAME}@{URL:RMVSCM}", 0x1));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{INTERNETEXPLORER} \"{URL}\"", 0x2));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{INTERNETEXPLORER} \"{URL}\"", 0x4));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{FIREFOX} \"{URL}\"", 0x8));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{FIREFOX} \"{URL}\"", 0x10));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "chrome",
+				"cmd://{FIREFOX} -chrome \"{URL}\"", 0x20));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{OPERA} \"{URL}\"", 0x40));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{OPERA} \"{URL}\"", 0x80));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{GOOGLECHROME} \"{URL}\"", 0x100));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{GOOGLECHROME} \"{URL}\"", 0x200));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{SAFARI} \"{URL}\"", 0x400));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{SAFARI} \"{URL}\"", 0x800));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
+				"cmd://\"{APPDIR}\\KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
+				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
 
-			m_vOverrides.Add(new AceUrlSchemeOverride(true, "ssh",
-				@"cmd://PuTTY.exe -ssh {USERNAME}@{URL:RMVSCM}"));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{INTERNETEXPLORER} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{INTERNETEXPLORER} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{FIREFOX} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{FIREFOX} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "chrome",
-				"cmd://{FIREFOX} -chrome \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{OPERA} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{OPERA} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{GOOGLECHROME} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{GOOGLECHROME} \"{URL}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
-				"cmd://\"{APPDIR}\\KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\""));
-			m_vOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
-				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\""));
+#if DEBUG
+			ulong u = 0;
+			for(int i = 0; i < m_lBuiltInOverrides.Count; ++i)
+			{
+				Debug.Assert(m_lBuiltInOverrides[i].IsBuiltIn);
+				u += m_lBuiltInOverrides[i].BuiltInFlagID;
+			}
+			Debug.Assert(u == ((1UL << m_lBuiltInOverrides.Count) - 1UL));
+#endif
 		}
 
 		public string GetOverrideForUrl(string strUrl)
 		{
 			if(string.IsNullOrEmpty(strUrl)) return null;
 
-			foreach(AceUrlSchemeOverride ovr in m_vOverrides)
+			for(int i = 0; i < 2; ++i)
 			{
-				if(!ovr.Enabled) continue;
+				List<AceUrlSchemeOverride> l = ((i == 0) ? m_lBuiltInOverrides :
+					m_lCustomOverrides);
 
-				if(strUrl.StartsWith(ovr.Scheme + ":", StrUtil.CaseIgnoreCmp))
-					return ovr.UrlOverride;
+				foreach(AceUrlSchemeOverride ovr in l)
+				{
+					if(!ovr.Enabled) continue;
+
+					if(strUrl.StartsWith(ovr.Scheme + ":", StrUtil.CaseIgnoreCmp))
+						return ovr.UrlOverride;
+				}
 			}
 
 			return null;
@@ -263,14 +315,42 @@ namespace KeePass.App.Configuration
 		public AceUrlSchemeOverrides CloneDeep()
 		{
 			AceUrlSchemeOverrides ovr = new AceUrlSchemeOverrides();
+			CopyTo(ovr);
+			return ovr;
+		}
 
-			ovr.m_bSetToDefaults = m_bSetToDefaults;
-			foreach(AceUrlSchemeOverride sh in m_vOverrides)
+		public void CopyTo(AceUrlSchemeOverrides ovrTarget)
+		{
+			ovrTarget.m_lBuiltInOverrides.Clear();
+			foreach(AceUrlSchemeOverride shB in m_lBuiltInOverrides)
 			{
-				ovr.m_vOverrides.Add(sh.CloneDeep());
+				ovrTarget.m_lBuiltInOverrides.Add(shB.CloneDeep());
 			}
 
-			return ovr;
+			ovrTarget.m_lCustomOverrides.Clear();
+			foreach(AceUrlSchemeOverride shC in m_lCustomOverrides)
+			{
+				ovrTarget.m_lCustomOverrides.Add(shC.CloneDeep());
+			}
+		}
+
+		public ulong GetEnabledBuiltInOverrides()
+		{
+			ulong u = 0;
+			for(int i = 0; i < m_lBuiltInOverrides.Count; ++i)
+			{
+				if(m_lBuiltInOverrides[i].Enabled)
+					u |= m_lBuiltInOverrides[i].BuiltInFlagID;
+			}
+
+			return u;
+		}
+
+		public void SetEnabledBuiltInOverrides(ulong uFlags)
+		{
+			for(int i = 0; i < m_lBuiltInOverrides.Count; ++i)
+				m_lBuiltInOverrides[i].Enabled = ((uFlags &
+					m_lBuiltInOverrides[i].BuiltInFlagID) != 0UL);
 		}
 	}
 
@@ -305,6 +385,19 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private ulong m_uBuiltInFlagID = 0;
+		[XmlIgnore]
+		internal ulong BuiltInFlagID
+		{
+			get { return m_uBuiltInFlagID; }
+		}
+
+		[XmlIgnore]
+		public bool IsBuiltIn
+		{
+			get { return (m_uBuiltInFlagID != 0UL); }
+		}
+
 		public AceUrlSchemeOverride()
 		{
 		}
@@ -312,17 +405,31 @@ namespace KeePass.App.Configuration
 		public AceUrlSchemeOverride(bool bEnable, string strScheme,
 			string strUrlOverride)
 		{
+			Init(bEnable, strScheme, strUrlOverride, 0);
+		}
+
+		internal AceUrlSchemeOverride(bool bEnable, string strScheme,
+			string strUrlOverride, ulong uBuiltInFlagID)
+		{
+			Init(bEnable, strScheme, strUrlOverride, uBuiltInFlagID);
+		}
+
+		private void Init(bool bEnable, string strScheme, string strUrlOverride,
+			ulong uBuiltInFlagID)
+		{
 			if(strScheme == null) throw new ArgumentNullException("strScheme");
 			if(strUrlOverride == null) throw new ArgumentNullException("strUrlOverride");
 
 			m_bEnabled = bEnable;
 			m_strScheme = strScheme;
 			m_strOvr = strUrlOverride;
+			m_uBuiltInFlagID = uBuiltInFlagID;
 		}
 
 		public AceUrlSchemeOverride CloneDeep()
 		{
-			return new AceUrlSchemeOverride(m_bEnabled, m_strScheme, m_strOvr);
+			return new AceUrlSchemeOverride(m_bEnabled, m_strScheme,
+				m_strOvr, m_uBuiltInFlagID);
 		}
 	}
 }

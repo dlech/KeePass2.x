@@ -76,7 +76,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
 				m_uuid = value;
 			}
 		}
@@ -90,7 +89,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
 				m_strName = value;
 			}
 		}
@@ -104,7 +102,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_strNotes = value;
 			}
 		}
@@ -129,7 +126,6 @@ namespace KeePassLib
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_pwCustomIconID = value;
 			}
 		}
@@ -503,6 +499,13 @@ namespace KeePassLib
 			}
 		}
 
+		public uint GetEntriesCount(bool bRecursive)
+		{
+			uint uGroups, uEntries;
+			GetCounts(bRecursive, out uGroups, out uEntries);
+			return uEntries;
+		}
+
 		/// <summary>
 		/// Traverse the group/entry tree in the current group. Various traversal
 		/// methods are available.
@@ -654,41 +657,72 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Search this group and all groups in the current one for entries.
+		/// Search this group and all subgroups for entries.
 		/// </summary>
-		/// <param name="searchParams">Specifies the search method.</param>
+		/// <param name="sp">Specifies the search method.</param>
 		/// <param name="listStorage">Entry list in which the search results will
 		/// be stored.</param>
-		public void SearchEntries(SearchParameters searchParams, PwObjectList<PwEntry> listStorage,
-			bool bRespectEntrySearchingDisabled)
+		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> listStorage)
 		{
-			List<string> lTerms = StrUtil.SplitSearchTerms(searchParams.SearchString);
-			if((lTerms.Count <= 1) || searchParams.RegularExpression)
+			SearchEntries(sp, listStorage, null);
+		}
+
+		/// <summary>
+		/// Search this group and all subgroups for entries.
+		/// </summary>
+		/// <param name="sp">Specifies the search method.</param>
+		/// <param name="listStorage">Entry list in which the search results will
+		/// be stored.</param>
+		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> listStorage,
+			IStatusLogger slStatus)
+		{
+			if(sp == null) { Debug.Assert(false); return; }
+			if(listStorage == null) { Debug.Assert(false); return; }
+
+			ulong uCurEntries = 0, uTotalEntries = 0;
+
+			List<string> lTerms = StrUtil.SplitSearchTerms(sp.SearchString);
+			if((lTerms.Count <= 1) || sp.RegularExpression)
 			{
-				SearchEntriesSingle(searchParams, listStorage, bRespectEntrySearchingDisabled);
+				if(slStatus != null) uTotalEntries = GetEntriesCount(true);
+				SearchEntriesSingle(sp, listStorage, slStatus, ref uCurEntries,
+					uTotalEntries);
 				return;
 			}
 
 			// Search longer strings first (for improved performance)
 			lTerms.Sort(StrUtil.CompareLengthGt);
 
-			string strFullSearch = searchParams.SearchString; // Backup
+			string strFullSearch = sp.SearchString; // Backup
 
 			PwGroup pg = this;
 			for(int iTerm = 0; iTerm < lTerms.Count; ++iTerm)
 			{
-				PwGroup pgNew = new PwGroup();
-
-				searchParams.SearchString = lTerms[iTerm];
-
-				bool bNegate = false;
-				if(searchParams.SearchString.StartsWith("-"))
+				// Update counters for a better state guess
+				if(slStatus != null)
 				{
-					searchParams.SearchString = searchParams.SearchString.Substring(1);
-					bNegate = (searchParams.SearchString.Length > 0);
+					ulong uRemRounds = (ulong)(lTerms.Count - iTerm);
+					uTotalEntries = uCurEntries + (uRemRounds *
+						pg.GetEntriesCount(true));
 				}
 
-				pg.SearchEntriesSingle(searchParams, pgNew.Entries, bRespectEntrySearchingDisabled);
+				PwGroup pgNew = new PwGroup();
+
+				sp.SearchString = lTerms[iTerm];
+
+				bool bNegate = false;
+				if(sp.SearchString.StartsWith("-"))
+				{
+					sp.SearchString = sp.SearchString.Substring(1);
+					bNegate = (sp.SearchString.Length > 0);
+				}
+
+				if(!pg.SearchEntriesSingle(sp, pgNew.Entries, slStatus,
+					ref uCurEntries, uTotalEntries))
+				{
+					pg = null;
+					break;
+				}
 
 				if(bNegate)
 				{
@@ -703,54 +737,60 @@ namespace KeePassLib
 				else pg = pgNew;
 			}
 
-			listStorage.Add(pg.Entries);
-			searchParams.SearchString = strFullSearch; // Restore
+			if(pg != null) listStorage.Add(pg.Entries);
+			sp.SearchString = strFullSearch; // Restore
 		}
 
-		private void SearchEntriesSingle(SearchParameters searchParams,
-			PwObjectList<PwEntry> listStorage, bool bRespectEntrySearchingDisabled)
+		private bool SearchEntriesSingle(SearchParameters spIn,
+			PwObjectList<PwEntry> listStorage, IStatusLogger slStatus,
+			ref ulong uCurEntries, ulong uTotalEntries)
 		{
-			Debug.Assert(searchParams != null); if(searchParams == null) throw new ArgumentNullException("searchParams");
-			Debug.Assert(listStorage != null); if(listStorage == null) throw new ArgumentNullException("listStorage");
+			SearchParameters sp = spIn.Clone();
+			if(sp.SearchString == null) { Debug.Assert(false); return true; }
+			sp.SearchString = sp.SearchString.Trim();
 
-			string strSearch = searchParams.SearchString;
-			if(strSearch == null) { Debug.Assert(false); throw new ArgumentException(); }
-			strSearch = strSearch.Trim();
-
-			StringComparison scType = searchParams.ComparisonMode;
-			Regex rx = null;
-			EntryHandler eh = null;
-
-			bool bTitle = searchParams.SearchInTitles;
-			bool bUserName = searchParams.SearchInUserNames;
-			bool bPassword = searchParams.SearchInPasswords;
-			bool bUrl = searchParams.SearchInUrls;
-			bool bNotes = searchParams.SearchInNotes;
-			bool bOther = searchParams.SearchInOther;
-			bool bUuids = searchParams.SearchInUuids;
-			bool bGroupName = searchParams.SearchInGroupNames;
-			bool bTags = searchParams.SearchInTags;
-			bool bExcludeExpired = searchParams.ExcludeExpired;
+			bool bTitle = sp.SearchInTitles;
+			bool bUserName = sp.SearchInUserNames;
+			bool bPassword = sp.SearchInPasswords;
+			bool bUrl = sp.SearchInUrls;
+			bool bNotes = sp.SearchInNotes;
+			bool bOther = sp.SearchInOther;
+			bool bUuids = sp.SearchInUuids;
+			bool bGroupName = sp.SearchInGroupNames;
+			bool bTags = sp.SearchInTags;
+			bool bExcludeExpired = sp.ExcludeExpired;
+			bool bRespectEntrySearchingDisabled = sp.RespectEntrySearchingDisabled;
 
 			DateTime dtNow = DateTime.Now;
 
-			if(searchParams.RegularExpression)
+			Regex rx = null;
+			if(sp.RegularExpression)
 			{
 				RegexOptions ro = RegexOptions.Compiled;
-				if((scType == StringComparison.CurrentCultureIgnoreCase) ||
-					(scType == StringComparison.InvariantCultureIgnoreCase) ||
-					(scType == StringComparison.OrdinalIgnoreCase))
+				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
+					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||
+					(sp.ComparisonMode == StringComparison.OrdinalIgnoreCase))
 				{
 					ro |= RegexOptions.IgnoreCase;
 				}
 
-				rx = new Regex(strSearch, ro);
+				rx = new Regex(sp.SearchString, ro);
 			}
 
-			if(strSearch.Length <= 0) // Report all
+			ulong uLocalCurEntries = uCurEntries;
+
+			EntryHandler eh = null;
+			if(sp.SearchString.Length <= 0) // Report all
 			{
 				eh = delegate(PwEntry pe)
 				{
+					if(slStatus != null)
+					{
+						if(!slStatus.SetProgress((uint)((uLocalCurEntries *
+							100UL) / uTotalEntries))) return false;
+						++uLocalCurEntries;
+					}
+
 					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
 						return true; // Skip
 					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
@@ -764,6 +804,13 @@ namespace KeePassLib
 			{
 				eh = delegate(PwEntry pe)
 				{
+					if(slStatus != null)
+					{
+						if(!slStatus.SetProgress((uint)((uLocalCurEntries *
+							100UL) / uTotalEntries))) return false;
+						++uLocalCurEntries;
+					}
+
 					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
 						return true; // Skip
 					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
@@ -777,45 +824,43 @@ namespace KeePassLib
 
 						if(strKey == PwDefs.TitleField)
 						{
-							if(bTitle) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							if(bTitle) SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 						}
 						else if(strKey == PwDefs.UserNameField)
 						{
-							if(bUserName) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							if(bUserName) SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 						}
 						else if(strKey == PwDefs.PasswordField)
 						{
-							if(bPassword) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							if(bPassword) SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 						}
 						else if(strKey == PwDefs.UrlField)
 						{
-							if(bUrl) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							if(bUrl) SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 						}
 						else if(strKey == PwDefs.NotesField)
 						{
-							if(bNotes) SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							if(bNotes) SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 						}
 						else if(bOther)
-							SearchEvalAdd(strSearch, kvp.Value.ReadString(),
-								scType, rx, pe, listStorage);
+							SearchEvalAdd(sp, kvp.Value.ReadString(),
+								rx, pe, listStorage);
 
 						// An entry can match only once => break if we have added it
 						if(listStorage.UCount > uInitialResults) break;
 					}
 
 					if(bUuids && (listStorage.UCount == uInitialResults))
-						SearchEvalAdd(strSearch, pe.Uuid.ToHexString(),
-							scType, rx, pe, listStorage);
+						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, listStorage);
 
 					if(bGroupName && (listStorage.UCount == uInitialResults) &&
 						(pe.ParentGroup != null))
-						SearchEvalAdd(strSearch, pe.ParentGroup.Name,
-							scType, rx, pe, listStorage);
+						SearchEvalAdd(sp, pe.ParentGroup.Name, rx, pe, listStorage);
 
 					if(bTags)
 					{
@@ -823,7 +868,7 @@ namespace KeePassLib
 						{
 							if(listStorage.UCount != uInitialResults) break; // Match
 
-							SearchEvalAdd(strSearch, strTag, scType, rx, pe, listStorage);
+							SearchEvalAdd(sp, strTag, rx, pe, listStorage);
 						}
 					}
 
@@ -831,21 +876,34 @@ namespace KeePassLib
 				};
 			}
 
-			PreOrderTraverseTree(null, eh);
+			if(!PreOrderTraverseTree(null, eh)) return false;
+			uCurEntries = uLocalCurEntries;
+			return true;
 		}
 
-		private static void SearchEvalAdd(string strSearch, string strDataField,
-			StringComparison scType, Regex rx, PwEntry pe, PwObjectList<PwEntry> lResults)
+		private static void SearchEvalAdd(SearchParameters sp, string strDataField,
+			Regex rx, PwEntry pe, PwObjectList<PwEntry> lResults)
 		{
+			bool bMatch = false;
+
 			if(rx == null)
+				bMatch = (strDataField.IndexOf(sp.SearchString,
+					sp.ComparisonMode) >= 0);
+			else bMatch = rx.IsMatch(strDataField);
+
+			if(!bMatch && (sp.DataTransformationFn != null))
 			{
-				if(strDataField.IndexOf(strSearch, scType) >= 0)
-					lResults.Add(pe);
+				string strCmp = sp.DataTransformationFn(strDataField, pe);
+				if(!object.ReferenceEquals(strCmp, strDataField))
+				{
+					if(rx == null)
+						bMatch = (strCmp.IndexOf(sp.SearchString,
+							sp.ComparisonMode) >= 0);
+					else bMatch = rx.IsMatch(strCmp);
+				}
 			}
-			else // Regular expression
-			{
-				if(rx.IsMatch(strDataField)) lResults.Add(pe);
-			}
+
+			if(bMatch) lResults.Add(pe);
 		}
 
 		public List<string> BuildEntryTagsList()

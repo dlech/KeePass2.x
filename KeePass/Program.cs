@@ -202,6 +202,11 @@ namespace KeePass
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
 
+			int nRandomSeed = (int)DateTime.UtcNow.Ticks;
+			// Prevent overflow (see Random class constructor)
+			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
+			m_rndGlobal = new Random(nRandomSeed);
+
 			InitEnvSecurity();
 
 			try { SelfTest.TestFipsComplianceProblems(); }
@@ -210,11 +215,6 @@ namespace KeePass
 				MessageService.ShowWarning(KPRes.SelfTestFailed, exFips);
 				return;
 			}
-
-			int nRandomSeed = (int)DateTime.Now.Ticks;
-			// Prevent overflow (see Random class constructor)
-			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
-			m_rndGlobal = new Random(nRandomSeed);
 
 			// Set global localized strings
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;

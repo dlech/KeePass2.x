@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Serialization;
 
 namespace KeePass.UI
@@ -146,6 +147,67 @@ namespace KeePass.UI
 				if(ds.Database == pwDatabase) return ds;
 
 			return null;
+		}
+
+		/// <summary>
+		/// Search for an entry in all opened databases. The
+		/// entry is identified by its reference (not its UUID).
+		/// </summary>
+		/// <param name="peObj">Entry to search for.</param>
+		/// <returns>Database containing the entry.</returns>
+		public PwDatabase FindContainerOf(PwEntry peObj)
+		{
+			if(peObj == null) return null; // No assert
+
+			PwGroup pg = peObj.ParentGroup;
+			if(pg != null)
+			{
+				while(pg.ParentGroup != null) { pg = pg.ParentGroup; }
+
+				foreach(PwDocument ds in m_vDocs)
+				{
+					PwDatabase pd = ds.Database;
+					if((pd == null) || !pd.IsOpen) continue;
+
+					if(object.ReferenceEquals(pd.RootGroup, pg))
+						return pd;
+				}
+
+				Debug.Assert(false);
+			}
+
+			return SlowFindContainerOf(peObj);
+		}
+
+		private PwDatabase SlowFindContainerOf(PwEntry peObj)
+		{
+			PwDatabase pdRet = null;
+			foreach(PwDocument ds in m_vDocs)
+			{
+				PwDatabase pd = ds.Database;
+				if((pd == null) || !pd.IsOpen) continue;
+
+				EntryHandler eh = delegate(PwEntry pe)
+				{
+					if(object.ReferenceEquals(pe, peObj))
+					{
+						pdRet = pd;
+						return false; // Stop traversal
+					}
+
+					return true;
+				};
+
+				pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+				if(pdRet != null) return pdRet;
+			}
+
+			return null;
+		}
+
+		public PwDatabase SafeFindContainerOf(PwEntry peObj)
+		{
+			return (FindContainerOf(peObj) ?? m_dsActive.Database);
 		}
 	}
 

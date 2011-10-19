@@ -21,11 +21,12 @@ using System;
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Diagnostics;
 
 using KeePass.UI;
 using KeePass.Util;
@@ -53,7 +54,12 @@ namespace KeePass.Native
 			if(!KeePassLib.Native.NativeLib.IsUnix())
 				return GetForegroundWindow(); // Windows API
 
-			return new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
+			try
+			{
+				return new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
+			}
+			catch(Exception) { Debug.Assert(false); }
+			return IntPtr.Zero;
 		}
 
 		private static readonly char[] m_vWindowTrim = { '\r', '\n' };
@@ -337,5 +343,97 @@ namespace KeePass.Native
 
 			return false;
 		}
+
+		/// <summary>
+		/// Method for testing whether a file exists or not. Also
+		/// supports NTFS alternate data streams.
+		/// </summary>
+		/// <param name="strFilePath">Path of the file or stream.</param>
+		/// <returns><c>true</c> if the file exists.</returns>
+		public static bool FileExists(string strFilePath)
+		{
+			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
+
+			try
+			{
+				return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
+			}
+			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+
+			// Fallback to .NET method for Unix-like systems
+			try { return File.Exists(strFilePath); }
+			catch(Exception) { Debug.Assert(false); } // Invalid path
+
+			return false;
+		}
+
+		/* internal static LVGROUP GetGroupInfoByIndex(ListView lv, uint uIndex)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(uIndex >= (uint)lv.Groups.Count)
+				throw new ArgumentOutOfRangeException("uIndex");
+
+			const int nStrLen = 1024;
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
+
+			g.mask = ...;
+
+			g.pszHeader = new StringBuilder(nStrLen);
+			g.cchHeader = nStrLen - 1;
+			g.pszFooter = new StringBuilder(nStrLen);
+			g.cchFooter = nStrLen - 1;
+			g.pszSubtitle = new StringBuilder(nStrLen);
+			g.cchSubtitle = (uint)(nStrLen - 1);
+			g.pszTask = new StringBuilder(nStrLen);
+			g.cchTask = (uint)(nStrLen - 1);
+			g.pszDescriptionTop = new StringBuilder(nStrLen);
+			g.cchDescriptionTop = (uint)(nStrLen - 1);
+			g.pszDescriptionBottom = new StringBuilder(nStrLen);
+			g.cchDescriptionBottom = (uint)(nStrLen - 1);
+			g.pszSubsetTitle = new StringBuilder(nStrLen);
+			g.cchSubsetTitle = (uint)(nStrLen - 1);
+
+			SendMessageLVGroup(lv.Handle, LVM_GETGROUPINFOBYINDEX,
+				new IntPtr((int)uIndex), ref g);
+			return g;
+		} */
+
+		/* internal static uint GetGroupStateByIndex(ListView lv, uint uIndex,
+			uint uStateMask, out int iGroupID)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+			if(uIndex >= (uint)lv.Groups.Count)
+				throw new ArgumentOutOfRangeException("uIndex");
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(g);
+
+			g.mask = (LVGF_STATE | LVGF_GROUPID);
+			g.stateMask = uStateMask;
+
+			SendMessageLVGroup(lv.Handle, LVM_GETGROUPINFOBYINDEX,
+				new IntPtr((int)uIndex), ref g);
+
+			iGroupID = g.iGroupId;
+			return g.state;
+		}
+
+		internal static void SetGroupState(ListView lv, int iGroupID,
+			uint uStateMask, uint uState)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(g);
+
+			g.mask = LVGF_STATE;
+			g.stateMask = uStateMask;
+			g.state = uState;
+
+			SendMessageLVGroup(lv.Handle, LVM_SETGROUPINFO,
+				new IntPtr(iGroupID), ref g);
+		} */
 	}
 }

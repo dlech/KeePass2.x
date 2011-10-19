@@ -27,6 +27,7 @@ using Microsoft.Win32;
 
 using KeePass.Util.Spr;
 
+using KeePassLib.Native;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -34,85 +35,74 @@ namespace KeePass.Util
 {
 	public static class AppLocator
 	{
-		private static string m_strIE = null;
-		private static string m_strFirefox = null;
-		private static string m_strOpera = null;
-		private static string m_strChrome = null;
+		private const int BrwIE = 0;
+		private const int BrwFirefox = 1;
+		private const int BrwOpera = 2;
+		private const int BrwChrome = 3;
+		private const int BrwSafari = 4;
+
+		private static Dictionary<int, string> m_dictPaths =
+			new Dictionary<int, string>();
 
 		public static string InternetExplorerPath
 		{
-			get
-			{
-				if(m_strIE != null) return m_strIE;
-				else
-				{
-					try { m_strIE = FindInternetExplorer(); }
-					catch(Exception) { m_strIE = null; }
-
-					return m_strIE;
-				}
-			}
+			get { return GetPath(BrwIE, FindInternetExplorer); }
 		}
 
 		public static string FirefoxPath
 		{
-			get
-			{
-				if(m_strFirefox != null) return m_strFirefox;
-				else
-				{
-					try { m_strFirefox = FindFirefox(); }
-					catch(Exception) { m_strFirefox = null; }
-
-					return m_strFirefox;
-				}
-			}
+			get { return GetPath(BrwFirefox, FindFirefox); }
 		}
 
 		public static string OperaPath
 		{
-			get
-			{
-				if(m_strOpera != null) return m_strOpera;
-				else
-				{
-					try { m_strOpera = FindOpera(); }
-					catch(Exception) { m_strOpera = null; }
-
-					return m_strOpera;
-				}
-			}
+			get { return GetPath(BrwOpera, FindOpera); }
 		}
 
 		public static string ChromePath
 		{
-			get
-			{
-				if(m_strChrome != null) return m_strChrome;
-				else
-				{
-					try { m_strChrome = FindChrome(); }
-					catch(Exception) { m_strChrome = null; }
-
-					return m_strChrome;
-				}
-			}
+			get { return GetPath(BrwChrome, FindChrome); }
 		}
 
-		public static string FillPlaceholders(string strText, SprContentFlags cf)
+		public static string SafariPath
+		{
+			get { return GetPath(BrwSafari, FindSafari); }
+		}
+
+		private delegate string FindAppDelegate();
+
+		private static string GetPath(int iBrwID, FindAppDelegate f)
+		{
+			string strPath;
+			if(m_dictPaths.TryGetValue(iBrwID, out strPath)) return strPath;
+
+			try { strPath = f(); }
+			catch(Exception) { strPath = null; }
+
+			m_dictPaths[iBrwID] = strPath;
+			return strPath;
+		}
+
+		public static string FillPlaceholders(string strText, SprContext ctx)
 		{
 			string str = strText;
 
-			str = AppLocator.ReplacePath(str, @"{INTERNETEXPLORER}", AppLocator.InternetExplorerPath, cf);
-			str = AppLocator.ReplacePath(str, @"{FIREFOX}", AppLocator.FirefoxPath, cf);
-			str = AppLocator.ReplacePath(str, @"{OPERA}", AppLocator.OperaPath, cf);
-			str = AppLocator.ReplacePath(str, @"{GOOGLECHROME}", AppLocator.ChromePath, cf);
+			str = AppLocator.ReplacePath(str, @"{INTERNETEXPLORER}",
+				AppLocator.InternetExplorerPath, ctx);
+			str = AppLocator.ReplacePath(str, @"{FIREFOX}",
+				AppLocator.FirefoxPath, ctx);
+			str = AppLocator.ReplacePath(str, @"{OPERA}",
+				AppLocator.OperaPath, ctx);
+			str = AppLocator.ReplacePath(str, @"{GOOGLECHROME}",
+				AppLocator.ChromePath, ctx);
+			str = AppLocator.ReplacePath(str, @"{SAFARI}",
+				AppLocator.SafariPath, ctx);
 
 			return str;
 		}
 
 		private static string ReplacePath(string str, string strPlaceholder,
-			string strFill, SprContentFlags cf)
+			string strFill, SprContext ctx)
 		{
 			if(str == null) { Debug.Assert(false); return string.Empty; }
 			if(strPlaceholder == null) { Debug.Assert(false); return str; }
@@ -120,10 +110,10 @@ namespace KeePass.Util
 			if(strFill == null) return str; // No assert
 
 			string strRep;
-			if((cf != null) && cf.EncodeQuotesForCommandLine)
-				strRep = "\"" + SprEngine.TransformContent(strFill, cf) + "\"";
+			if((ctx != null) && ctx.EncodeQuotesForCommandLine)
+				strRep = "\"" + SprEngine.TransformContent(strFill, ctx) + "\"";
 			else
-				strRep = SprEngine.TransformContent("\"" + strFill + "\"", cf);
+				strRep = SprEngine.TransformContent("\"" + strFill + "\"", ctx);
 
 			return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, strRep);
 		}
@@ -154,6 +144,8 @@ namespace KeePass.Util
 
 		private static string FindFirefox()
 		{
+			if(NativeLib.IsUnix()) return FindAppUnix("firefox");
+
 			try
 			{
 				string strPath = FindFirefoxPr(false);
@@ -205,6 +197,8 @@ namespace KeePass.Util
 
 		private static string FindOpera()
 		{
+			if(NativeLib.IsUnix()) return FindAppUnix("opera");
+
 			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("Opera.HTML", false);
 			RegistryKey kShell = kHtml.OpenSubKey("shell", false);
 			RegistryKey kOpen = kShell.OpenSubKey("open", false);
@@ -228,6 +222,8 @@ namespace KeePass.Util
 		// HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command
 		private static string FindChrome()
 		{
+			if(NativeLib.IsUnix()) return FindAppUnix("chromium-browser");
+
 			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("ChromeHTML", false);
 			RegistryKey kShell = kHtml.OpenSubKey("shell", false);
 			RegistryKey kOpen = kShell.OpenSubKey("open", false);
@@ -271,6 +267,43 @@ namespace KeePass.Util
 			kExe.Close();
 			kApps.Close();
 			return strPath;
+		}
+
+		// HKEY_LOCAL_MACHINE\\SOFTWARE\\Apple Computer, Inc.\\Safari\\BrowserExe
+		private static string FindSafari()
+		{
+			RegistryKey kSoftware = Registry.LocalMachine.OpenSubKey("SOFTWARE", false);
+			RegistryKey kApple = kSoftware.OpenSubKey("Apple Computer, Inc.", false);
+			RegistryKey kSafari = kApple.OpenSubKey("Safari", false);
+			string strPath = (kSafari.GetValue("BrowserExe") as string);
+
+			if(strPath != null)
+			{
+				strPath = strPath.Trim();
+				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
+			}
+			else { Debug.Assert(false); }
+
+			kSafari.Close();
+			kApple.Close();
+			kSoftware.Close();
+			return strPath;
+		}
+
+		public static string FindAppUnix(string strApp)
+		{
+			string str = WinUtil.RunConsoleApp("whereis", "-b " + strApp);
+			if(str == null) return null;
+
+			str = str.Trim();
+
+			int iPrefix = str.IndexOf(':');
+			if(iPrefix >= 0) str = str.Substring(iPrefix + 1).Trim();
+
+			int iSep = str.IndexOfAny(new char[]{ ' ', '\t', '\r', '\n' });
+			if(iSep >= 0) str = str.Substring(0, iSep);
+
+			return ((str.Length > 0) ? str : null);
 		}
 	}
 }

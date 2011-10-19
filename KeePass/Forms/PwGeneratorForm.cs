@@ -100,6 +100,7 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_rbStandardCharSet);
 			FontUtil.AssignDefaultBold(m_rbPattern);
 			FontUtil.AssignDefaultBold(m_rbCustom);
+			FontUtil.AssignDefaultMono(m_tbPreview, true);
 
 			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.GenProfileSaveDesc);
 			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.GenProfileRemoveDesc);

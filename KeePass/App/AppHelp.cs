@@ -22,6 +22,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
+using KeePass.Util;
+
 using KeePassLib;
 using KeePassLib.Utility;
 
@@ -113,7 +115,10 @@ namespace KeePass.App
 		{
 			Debug.Assert(m_strLocalHelpFile != null);
 
-			string strCmd = @"ms-its:" + m_strLocalHelpFile;
+			// Unblock CHM file for proper display of help contents
+			WinUtil.RemoveZoneIdentifier(m_strLocalHelpFile);
+
+			string strCmd = "\"ms-its:" + m_strLocalHelpFile;
 
 			if(strTopic != null)
 				strCmd += @"::/help/" + strTopic + ".html";
@@ -123,6 +128,8 @@ namespace KeePass.App
 				Debug.Assert(strTopic != null); // Topic must be present for section
 				strCmd += @"#" + strSection;
 			}
+
+			strCmd += "\"";
 
 			try { Process.Start("hh.exe", strCmd); }
 			catch(Exception exStart)

@@ -127,6 +127,7 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 <tr><td width="50%">{FIREFOX}</td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
 <tr><td width="50%">{OPERA}</td><td width="50%">Path of Opera, if installed.</td></tr>
 <tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome, if installed.</td></tr>
+<tr><td width="50%">{SAFARI}</td><td width="50%">Path of Safari, if installed. (KeePass &ge; 1.21 and &ge; 2.17)</td></tr>
 </table>
 
 <br />
@@ -199,6 +200,7 @@ See <a href="#newpassword">below</a>.</td></tr>
 See <a href="#passwordenc">below</a>.</td></tr>
 <tr><td width="50%">{HMACOTP}</td><td width="50%">Generates a one-time password.
 See <a href="#hmacotp">below</a>.</td></tr>
+<tr><td width="50%">{C:<i>Comment</i>}</td><td width="50%">Comment; is removed.</td></tr>
 </table>
 
 
@@ -259,8 +261,8 @@ characters are auto-typed directly. The option supports the following values:
 <br />
 A fixed number of
 down arrow keypresses can be added by specifying them using the <b>Conv-Offset</b>
-option. For example, if you specify <code>Conv=D, Conv-Offset=1</code>, '2', 'c' and 'C'
-are converted to 3 down arrow keypresses.<br />
+option. For example, if you specify <code>Conv=D, Conv-Offset=1</code>,
+then '2', 'c' and 'C' are converted to 3 down arrow keypresses.<br />
 <br />
 By using the <b>Conv-Fmt</b> option, you can specify the layout of comboboxes.
 By default, KeePass assumes a combobox containing values from 0 to 9 <i>or</i> from A to Z.
@@ -354,7 +356,20 @@ generates a HMAC-based one-time password as specified in RFC 4226.
 The shared secret is the UTF-8 representation of the value of the
 '<code>HmacOtp-Secret</code>' custom entry string field
 (case-sensitive), and
-the counter is stored in decimal form in the '<code>HmacOtp-Counter</code>' field.
+the counter is stored in decimal form in the '<code>HmacOtp-Counter</code>' field.<br />
+<br />
+<i>Usage example.</i>
+Create a new entry, set its password to the <code>{HMACOTP}</code>
+placeholder, switch to the 'Advanced' tab, add a string named
+<code>HmacOtp-Secret</code> with value 12345678901234567890,
+and add a string named <code>HmacOtp-Counter</code> with value 0.
+When you now double-click onto the password cell of the entry in the
+entry list of the main window, an OTP is copied to the
+clipboard. When auto-typing, an OTP is sent as password.
+Each time you perform such an action, KeePass updates the counter value.
+With the secret key and counter values above, the following OTPs
+are generated: 755224, 287082, 359152, 969429, 338314, ...
+(more generated OTPs can be found in the example in RFC 4226).
 
 
 </body></html>

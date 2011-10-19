@@ -145,6 +145,9 @@
 		<Data Name="AutoTypeMatchByTitle">
 			<Value>An entry matches if its title is contained in the target window title</Value>
 		</Data>
+		<Data Name="AutoTypeMatchByUrlInTitle">
+			<Value>An entry matches if its URL is contained in the target window title</Value>
+		</Data>
 		<Data Name="AutoTypeObfuscationHint">
 			<Value>Auto-type obfuscation may not work with all windows.</Value>
 		</Data>
@@ -198,6 +201,9 @@
 		</Data>
 		<Data Name="Cancel">
 			<Value>Cancel</Value>
+		</Data>
+		<Data Name="CancelCmd">
+			<Value>&amp;Cancel</Value>
 		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
 			<Value>Cannot move entries because they aren't stored in the same group.</Value>
@@ -309,6 +315,9 @@
 		</Data>
 		<Data Name="CopyAll">
 			<Value>Copy All</Value>
+		</Data>
+		<Data Name="CopyLink">
+			<Value>Copy Link</Value>
 		</Data>
 		<Data Name="CopyOfItem">
 			<Value>Copy</Value>
@@ -463,14 +472,11 @@
 		<Data Name="DisableSaveIfNotModified">
 			<Value>Disable 'Save' command (instead of graying it out) if the database hasn't been modified</Value>
 		</Data>
-		<Data Name="DiscardChanges">
-			<Value>Discard changes</Value>
+		<Data Name="DiscardChangesCmd">
+			<Value>&amp;Discard changes</Value>
 		</Data>
 		<Data Name="DocumentationHint">
 			<Value>Please see the documentation for more details.</Value>
-		</Data>
-		<Data Name="DontDeleteCmd">
-			<Value>Do&amp;n't delete</Value>
 		</Data>
 		<Data Name="DragDrop">
 			<Value>Drag&amp;Drop</Value>
@@ -751,11 +757,14 @@
 		<Data Name="Find">
 			<Value>Find</Value>
 		</Data>
+		<Data Name="FocusQuickFindOnRestore">
+			<Value>Focus quick search box when restoring from taskbar</Value>
+		</Data>
 		<Data Name="FocusQuickFindOnUntray">
 			<Value>Focus quick search box when restoring from tray</Value>
 		</Data>
-		<Data Name="FocusResultsAfterQuickFind">
-			<Value>Focus entry list after a successful quick search (toolbar)</Value>
+		<Data Name="FocusResultsAfterQuickSearch">
+			<Value>Focus entry list after a successful quick search</Value>
 		</Data>
 		<Data Name="Folder">
 			<Value>Folder</Value>
@@ -907,6 +916,9 @@
 		<Data Name="ImportMustReadQuestion">
 			<Value>Have you understood how the import process works and want to start it now?</Value>
 		</Data>
+		<Data Name="IncompatibleWithSorting">
+			<Value>incompatible with sorting</Value>
+		</Data>
 		<Data Name="InheritSettingFromParent">
 			<Value>Inherit setting from parent</Value>
 		</Data>
@@ -996,9 +1008,6 @@
 		</Data>
 		<Data Name="KeyProvWithGuiOnSDHint">
 			<Value>If you want to use the selected key provider, you have to disable the secure desktop option in 'Tools' -&gt; 'Options' -&gt; tab 'Security'.</Value>
-		</Data>
-		<Data Name="KeystrokeSequence">
-			<Value>Keystroke Sequence</Value>
 		</Data>
 		<Data Name="LanguageSelected">
 			<Value>The selected language has been activated. KeePass must be restarted in order to load the language.</Value>
@@ -1183,6 +1192,9 @@
 		<Data Name="OpeningDatabase">
 			<Value>Opening password database...</Value>
 		</Data>
+		<Data Name="OpenWith">
+			<Value>Open with {PARAM}</Value>
+		</Data>
 		<Data Name="OptimizeForScreenReader">
 			<Value>Optimize for screen reader (only enable if you're using a screen reader)</Value>
 		</Data>
@@ -1194,6 +1206,12 @@
 		</Data>
 		<Data Name="OtherPlaceholders">
 			<Value>Other Placeholders</Value>
+		</Data>
+		<Data Name="OverridesBuiltIn">
+			<Value>Built-In Overrides</Value>
+		</Data>
+		<Data Name="OverridesCustom">
+			<Value>Custom Overrides</Value>
 		</Data>
 		<Data Name="Overwrite">
 			<Value>Overwrite</Value>
@@ -1318,6 +1336,9 @@
 		<Data Name="PolicyPrintDesc">
 			<Value>Allow printing password entry lists.</Value>
 		</Data>
+		<Data Name="PolicyPrintNoKeyDesc">
+			<Value>Do not require entering current master key before printing.</Value>
+		</Data>
 		<Data Name="PolicyRequiredFlag">
 			<Value>The following policy flag is required</Value>
 		</Data>
@@ -1333,14 +1354,17 @@
 		<Data Name="PrintDesc">
 			<Value>Print password entries.</Value>
 		</Data>
-		<Data Name="QuickSearch">
-			<Value>Quick Search</Value>
+		<Data Name="QuickSearchExclExpired">
+			<Value>Exclude expired entries in quick searches</Value>
 		</Data>
-		<Data Name="QuickSearchExcludeExpired">
-			<Value>Exclude expired entries in quick searches (toolbar)</Value>
+		<Data Name="QuickSearchInPwFields">
+			<Value>Search for passwords in quick searches</Value>
 		</Data>
-		<Data Name="QuickSearchInPasswords">
-			<Value>Search for passwords in quick searches (toolbar)</Value>
+		<Data Name="QuickSearchDerefData">
+			<Value>Resolve field references in quick searches</Value>
+		</Data>
+		<Data Name="QuickSearchTb">
+			<Value>Quick Search (Toolbar)</Value>
 		</Data>
 		<Data Name="RandomMacAddress">
 			<Value>Random MAC Address</Value>
@@ -1417,6 +1441,9 @@
 		<Data Name="SearchGroupName">
 			<Value>Search Results</Value>
 		</Data>
+		<Data Name="SearchingOp">
+			<Value>Searching</Value>
+		</Data>
 		<Data Name="SearchItemsFoundSmall">
 			<Value>entries found.</Value>
 		</Data>
@@ -1468,8 +1495,17 @@
 		<Data Name="SelfTestFailed">
 			<Value>One or more of the KeePass self-tests failed.</Value>
 		</Data>
+		<Data Name="Sequence">
+			<Value>Sequence</Value>
+		</Data>
 		<Data Name="ShowAllEntries">
 			<Value>Show All Entries</Value>
+		</Data>
+		<Data Name="ShowDerefData">
+			<Value>Show dereferenced data</Value>
+		</Data>
+		<Data Name="ShowDerefDataAsync">
+			<Value>Show dereferenced data asynchronously</Value>
 		</Data>
 		<Data Name="ShowEntries">
 			<Value>Show Entries</Value>
@@ -1488,6 +1524,9 @@
 		</Data>
 		<Data Name="Size">
 			<Value>Size</Value>
+		</Data>
+		<Data Name="Slow">
+			<Value>slow</Value>
 		</Data>
 		<Data Name="SoonToExpireEntries">
 			<Value>Expired Entries and Entries That Will Expire Soon</Value>

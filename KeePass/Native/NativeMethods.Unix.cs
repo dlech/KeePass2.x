@@ -24,6 +24,11 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using KeePass.UI;
+using KeePass.Util;
+
+using KeePassLib.Utility;
+
 namespace KeePass.Native
 {
 	internal static partial class NativeMethods
@@ -74,7 +79,7 @@ namespace KeePass.Native
 				long lCurrent;
 				long.TryParse(strCurrent.Trim(), out lCurrent);
 
-				fCurrent.WindowState = FormWindowState.Minimized;
+				UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
 
 				int nStart = Environment.TickCount;
 				while((Environment.TickCount - nStart) < 1000)
@@ -107,7 +112,7 @@ namespace KeePass.Native
 			string str = RunXDoTool("getactivewindow getwindowname");
 			if(string.IsNullOrEmpty(str)) return false;
 
-			return (str.Trim() != "usage: getactivewindow");
+			return !(str.Trim().Equals("usage: getactivewindow", StrUtil.CaseIgnoreCmp));
 		}
 
 		internal static string RunXDoTool(string strParams)
@@ -115,24 +120,9 @@ namespace KeePass.Native
 			try
 			{
 				Application.DoEvents(); // E.g. for clipboard updates
-
-				ProcessStartInfo psi = new ProcessStartInfo();
-
-				psi.CreateNoWindow = true;
-				psi.FileName = "xdotool";
-				psi.WindowStyle = ProcessWindowStyle.Hidden;
-				psi.UseShellExecute = false;
-				psi.RedirectStandardOutput = true;
-
-				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
-
-				Process p = Process.Start(psi);
-
-				string strOutput = p.StandardOutput.ReadToEnd();
-				p.WaitForExit();
-
+				string strOutput = WinUtil.RunConsoleApp("xdotool", strParams);
 				Application.DoEvents(); // E.g. for clipboard updates
-				return strOutput;
+				return (strOutput ?? string.Empty);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

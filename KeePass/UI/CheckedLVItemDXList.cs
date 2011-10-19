@@ -30,22 +30,83 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
+	public enum CheckItemLinkType
+	{
+		None = 0,
+		CheckedChecked,
+		UncheckedUnchecked,
+		CheckedUnchecked,
+		UncheckedChecked
+	}
+
 	public sealed class CheckedLVItemDXList
 	{
+		private ListView m_lv;
+
 		private List<object> m_vObjects = new List<object>();
 		private List<PropertyInfo> m_vProperties = new List<PropertyInfo>();
 		private List<ListViewItem> m_vListViewItems = new List<ListViewItem>();
 
-		public CheckedLVItemDXList()
+		private List<CheckItemLink> m_vLinks = new List<CheckItemLink>();
+
+		private sealed class CheckItemLink
 		{
+			private ListViewItem m_lvSource;
+			public ListViewItem Source { get { return m_lvSource; } }
+
+			private ListViewItem m_lvTarget;
+			public ListViewItem Target { get { return m_lvTarget; } }
+
+			private CheckItemLinkType m_t;
+			public CheckItemLinkType Type { get { return m_t; } }
+
+			public CheckItemLink(ListViewItem lviSource, ListViewItem lviTarget,
+				CheckItemLinkType cilType)
+			{
+				m_lvSource = lviSource;
+				m_lvTarget = lviTarget;
+				m_t = cilType;
+			}
+		}
+
+		public CheckedLVItemDXList(ListView lv)
+		{
+			if(lv == null) throw new ArgumentNullException("lv");
+
+			m_lv = lv;
+			m_lv.ItemChecked += this.OnItemCheckedChanged;
+		}
+
+#if DEBUG
+		~CheckedLVItemDXList()
+		{
+			Debug.Assert(m_lv == null); // Release should have been called
+		}
+#endif
+
+		public void Release()
+		{
+			if(m_lv == null) { Debug.Assert(false); return; }
+
+			m_vObjects.Clear();
+			m_vProperties.Clear();
+			m_vListViewItems.Clear();
+			m_vLinks.Clear();
+
+			m_lv.ItemChecked -= this.OnItemCheckedChanged;
+			m_lv = null;
 		}
 
 		public void UpdateData(bool bGuiToInternals)
 		{
+			if(m_lv == null) { Debug.Assert(false); return; }
+
 			for(int i = 0; i < m_vObjects.Count; ++i)
 			{
 				object o = m_vObjects[i];
 
+				Debug.Assert(m_vListViewItems[i].Index >= 0);
+				Debug.Assert(m_lv.Items.IndexOf(m_vListViewItems[i]) >= 0);
 				if(bGuiToInternals)
 				{
 					bool bChecked = m_vListViewItems[i].Checked;
@@ -60,18 +121,19 @@ namespace KeePass.UI
 		}
 
 		public ListViewItem CreateItem(object pContainer, string strPropertyName,
-			ListView lvList, ListViewGroup lvgContainer, string strDisplayString)
+			ListViewGroup lvgContainer, string strDisplayString)
 		{
 			if(pContainer == null) throw new ArgumentNullException("pContainer");
 			if(strPropertyName == null) throw new ArgumentNullException("strPropertyName");
 			if(strPropertyName.Length == 0) throw new ArgumentException();
-			if(lvList == null) throw new ArgumentNullException("lvList");
 			if(strDisplayString == null) throw new ArgumentNullException("strDisplayString");
+
+			if(m_lv == null) { Debug.Assert(false); return null; }
 
 			Type t = pContainer.GetType();
 			PropertyInfo pi = t.GetProperty(strPropertyName);
 			if((pi == null) || (pi.PropertyType != typeof(bool)) ||
-				(pi.CanRead == false) || (pi.CanWrite == false))
+				!pi.CanRead || !pi.CanWrite)
 				throw new ArgumentException();
 
 			ListViewItem lvi = new ListViewItem(strDisplayString);
@@ -79,15 +141,60 @@ namespace KeePass.UI
 			{
 				lvi.Group = lvgContainer;
 				Debug.Assert(lvgContainer.Items.IndexOf(lvi) >= 0);
+				Debug.Assert(m_lv.Groups.IndexOf(lvgContainer) >= 0);
 			}
 
-			lvList.Items.Add(lvi);
+			m_lv.Items.Add(lvi);
 
 			m_vObjects.Add(pContainer);
 			m_vProperties.Add(pi);
 			m_vListViewItems.Add(lvi);
 
 			return lvi;
+		}
+
+		public void AddLink(ListViewItem lviSource, ListViewItem lviTarget,
+			CheckItemLinkType t)
+		{
+			if(lviSource == null) { Debug.Assert(false); return; }
+			if(lviTarget == null) { Debug.Assert(false); return; }
+
+			if(m_lv == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(m_vListViewItems.IndexOf(lviSource) >= 0);
+			Debug.Assert(m_vListViewItems.IndexOf(lviTarget) >= 0);
+
+			m_vLinks.Add(new CheckItemLink(lviSource, lviTarget, t));
+		}
+
+		private void OnItemCheckedChanged(object sender, ItemCheckedEventArgs e)
+		{
+			ListViewItem lvi = e.Item;
+			if(lvi == null) { Debug.Assert(false); return; }
+
+			bool bChecked = lvi.Checked;
+
+			// Debug.Assert(m_vListViewItems.IndexOf(lvi) >= 0);
+			foreach(CheckItemLink cl in m_vLinks)
+			{
+				if(cl.Source == lvi)
+				{
+					if(cl.Target.Index < 0) continue;
+
+					if((cl.Type == CheckItemLinkType.CheckedChecked) &&
+						bChecked && !cl.Target.Checked)
+						cl.Target.Checked = true;
+					else if((cl.Type == CheckItemLinkType.UncheckedUnchecked) &&
+						!bChecked && cl.Target.Checked)
+						cl.Target.Checked = false;
+					else if((cl.Type == CheckItemLinkType.CheckedUnchecked) &&
+						bChecked && cl.Target.Checked)
+						cl.Target.Checked = false;
+					else if((cl.Type == CheckItemLinkType.UncheckedChecked) &&
+						!bChecked && !cl.Target.Checked)
+						cl.Target.Checked = true;
+				}
+			}
 		}
 	}
 }

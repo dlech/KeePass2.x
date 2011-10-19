@@ -44,4 +44,6 @@ namespace KeePassLib.Delegates
 	public delegate bool EntryHandler(PwEntry pe);
 
 	public delegate void VoidDelegate();
+
+	public delegate string StrPwEntryDelegate(string str, PwEntry pe);
 }

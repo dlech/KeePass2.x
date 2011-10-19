@@ -23,27 +23,31 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 namespace KeePass.UI
 {
-	internal enum RichTextBoxContextMenuCommands
-	{
-		Undo = 0,
-		Cut,
-		Copy,
-		Paste,
-		Delete,
-		CopyAll,
-		SelectAll,
-		Count
-	}
-
 	public sealed class RichTextBoxContextMenu
 	{
 		private RichTextBox m_rtb = null;
+		private Form m_form = null;
 		private ContextMenuStrip m_ctx = null;
 		private ToolStripItem[] m_vMenuItems =
-			new ToolStripItem[(int)RichTextBoxContextMenuCommands.Count];
+			new ToolStripItem[(int)RtbCtxCommands.Count];
+		private string m_strCurLink = string.Empty;
+
+		private enum RtbCtxCommands
+		{
+			Undo = 0,
+			Cut,
+			Copy,
+			Paste,
+			Delete,
+			CopyLink,
+			CopyAll,
+			SelectAll,
+			Count
+		}
 
 		public RichTextBoxContextMenu()
 		{
@@ -51,14 +55,21 @@ namespace KeePass.UI
 
 		~RichTextBoxContextMenu()
 		{
-			this.Detach();
+			Detach();
 		}
 
+		[Obsolete]
 		public void Attach(RichTextBox rtb)
 		{
-			this.Detach();
+			Attach(rtb, null);
+		}
+
+		public void Attach(RichTextBox rtb, Form fParent)
+		{
+			Detach();
 
 			m_rtb = rtb;
+			m_form = fParent;
 
 			m_ctx = CreateContextMenu();
 			m_ctx.Opening += this.OnMenuOpening;
@@ -77,10 +88,11 @@ namespace KeePass.UI
 				m_ctx.Opening -= this.OnMenuOpening;
 				m_ctx = null;
 
-				for(int i = 0; i < (int)RichTextBoxContextMenuCommands.Count; ++i)
+				for(int i = 0; i < (int)RtbCtxCommands.Count; ++i)
 					m_vMenuItems[i] = null;
 
 				m_rtb = null;
+				m_form = null;
 			}
 		}
 
@@ -103,22 +115,81 @@ namespace KeePass.UI
 				Properties.Resources.B16x16_EditDelete, this.OnDeleteCommand);
 			ctx.Items.Add(new ToolStripSeparator());
 
+			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.CopyLink,
+				Properties.Resources.B16x16_EditCopyLink, this.OnCopyLinkCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.CopyAll,
 				Properties.Resources.B16x16_EditShred, this.OnCopyAllCommand);
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.SelectAll,
 				Properties.Resources.B16x16_Edit, this.OnSelectAllCommand);
 			
-			Debug.Assert(iPos == ((int)RichTextBoxContextMenuCommands.Count - 1));
+			Debug.Assert(iPos == ((int)RtbCtxCommands.Count - 1));
 			return ctx;
 		}
 
 		private void OnMenuOpening(object sender, EventArgs e)
 		{
-			m_vMenuItems[(int)RichTextBoxContextMenuCommands.Undo].Enabled =
-				m_vMenuItems[(int)RichTextBoxContextMenuCommands.Cut].Enabled =
-				m_vMenuItems[(int)RichTextBoxContextMenuCommands.Paste].Enabled =
-				m_vMenuItems[(int)RichTextBoxContextMenuCommands.Delete].Enabled =
-				!m_rtb.ReadOnly;
+			bool bHasText = (m_rtb.TextLength > 0);
+			bool bHasSel = (m_rtb.SelectionLength > 0);
+
+			if(m_rtb.ReadOnly)
+			{
+				m_vMenuItems[(int)RtbCtxCommands.Undo].Enabled = false;
+				m_vMenuItems[(int)RtbCtxCommands.Cut].Enabled = false;
+				m_vMenuItems[(int)RtbCtxCommands.Paste].Enabled = false;
+				m_vMenuItems[(int)RtbCtxCommands.Delete].Enabled = false;
+			}
+			else // Editable
+			{
+				m_vMenuItems[(int)RtbCtxCommands.Undo].Enabled = m_rtb.CanUndo;
+				m_vMenuItems[(int)RtbCtxCommands.Cut].Enabled = bHasSel;
+				m_vMenuItems[(int)RtbCtxCommands.Paste].Enabled = true; // Optimistic
+				m_vMenuItems[(int)RtbCtxCommands.Delete].Enabled = bHasSel;
+			}
+
+			m_vMenuItems[(int)RtbCtxCommands.Copy].Enabled = bHasSel;
+			m_vMenuItems[(int)RtbCtxCommands.CopyAll].Enabled = bHasText;
+			m_vMenuItems[(int)RtbCtxCommands.SelectAll].Enabled = bHasText;
+
+			m_strCurLink = GetLinkBelowMouse();
+			m_vMenuItems[(int)RtbCtxCommands.CopyLink].Enabled = (m_strCurLink.Length > 0);
+		}
+
+		private string GetLinkBelowMouse()
+		{
+			// Save selection
+			int iSelStart = m_rtb.SelectionStart, iSelLength = m_rtb.SelectionLength;
+
+			string strLink = string.Empty;
+			try
+			{
+				int p = m_rtb.GetCharIndexFromPosition(m_rtb.PointToClient(
+					Cursor.Position));
+				m_rtb.Select(p, 1);
+				if(UIUtil.RtfIsFirstCharLink(m_rtb))
+				{
+					int l = p;
+					while((l - 1) >= 0)
+					{
+						m_rtb.Select(l - 1, 1);
+						if(!UIUtil.RtfIsFirstCharLink(m_rtb)) break;
+						--l;
+					}
+
+					int r = p, n = m_rtb.TextLength;
+					while((r + 1) < n)
+					{
+						m_rtb.Select(r + 1, 1);
+						if(!UIUtil.RtfIsFirstCharLink(m_rtb)) break;
+						++r;
+					}
+
+					strLink = m_rtb.Text.Substring(l, r - l + 1);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			m_rtb.Select(iSelStart, iSelLength); // Restore selection
+			return strLink;
 		}
 
 		private void OnUndoCommand(object sender, EventArgs e)
@@ -153,6 +224,12 @@ namespace KeePass.UI
 			m_rtb.Text = strText;
 
 			m_rtb.Select(nStart, 0);
+		}
+
+		private void OnCopyLinkCommand(object sender, EventArgs e)
+		{
+			ClipboardUtil.Copy(m_strCurLink, false, false, null, null,
+				(m_form != null) ? m_form.Handle : IntPtr.Zero);
 		}
 
 		private void OnCopyAllCommand(object sender, EventArgs e)

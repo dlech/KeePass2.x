@@ -34,6 +34,7 @@
 			this.m_tbSearch = new System.Windows.Forms.TextBox();
 			this.m_lblSearchFor = new System.Windows.Forms.Label();
 			this.m_grpSearchIn = new System.Windows.Forms.GroupBox();
+			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
 			this.m_cbUuid = new System.Windows.Forms.CheckBox();
 			this.m_cbOtherFields = new System.Windows.Forms.CheckBox();
@@ -43,10 +44,10 @@
 			this.m_cbUserName = new System.Windows.Forms.CheckBox();
 			this.m_cbTitle = new System.Windows.Forms.CheckBox();
 			this.m_grpOptions = new System.Windows.Forms.GroupBox();
+			this.m_cbDerefData = new System.Windows.Forms.CheckBox();
 			this.m_cbExcludeExpired = new System.Windows.Forms.CheckBox();
 			this.m_cbCaseSensitive = new System.Windows.Forms.CheckBox();
 			this.m_cbRegEx = new System.Windows.Forms.CheckBox();
-			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpSearchIn.SuspendLayout();
 			this.m_grpOptions.SuspendLayout();
@@ -64,7 +65,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(183, 289);
+			this.m_btnOK.Location = new System.Drawing.Point(183, 314);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 5;
@@ -75,7 +76,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(264, 289);
+			this.m_btnCancel.Location = new System.Drawing.Point(264, 314);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 6;
@@ -116,6 +117,16 @@
 			this.m_grpSearchIn.TabIndex = 3;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
+			// 
+			// m_cbTags
+			// 
+			this.m_cbTags.AutoSize = true;
+			this.m_cbTags.Location = new System.Drawing.Point(113, 65);
+			this.m_cbTags.Name = "m_cbTags";
+			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
+			this.m_cbTags.TabIndex = 7;
+			this.m_cbTags.Text = "T&ags";
+			this.m_cbTags.UseVisualStyleBackColor = true;
 			// 
 			// m_cbGroupName
 			// 
@@ -199,14 +210,25 @@
 			// 
 			// m_grpOptions
 			// 
+			this.m_grpOptions.Controls.Add(this.m_cbDerefData);
 			this.m_grpOptions.Controls.Add(this.m_cbExcludeExpired);
 			this.m_grpOptions.Controls.Add(this.m_cbCaseSensitive);
 			this.m_grpOptions.Location = new System.Drawing.Point(12, 212);
 			this.m_grpOptions.Name = "m_grpOptions";
-			this.m_grpOptions.Size = new System.Drawing.Size(327, 67);
+			this.m_grpOptions.Size = new System.Drawing.Size(327, 92);
 			this.m_grpOptions.TabIndex = 4;
 			this.m_grpOptions.TabStop = false;
 			this.m_grpOptions.Text = "Options";
+			// 
+			// m_cbDerefData
+			// 
+			this.m_cbDerefData.AutoSize = true;
+			this.m_cbDerefData.Location = new System.Drawing.Point(9, 65);
+			this.m_cbDerefData.Name = "m_cbDerefData";
+			this.m_cbDerefData.Size = new System.Drawing.Size(140, 17);
+			this.m_cbDerefData.TabIndex = 2;
+			this.m_cbDerefData.Text = "Resolve fiel&d references";
+			this.m_cbDerefData.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExcludeExpired
 			// 
@@ -238,23 +260,13 @@
 			this.m_cbRegEx.Text = "&Regular expression";
 			this.m_cbRegEx.UseVisualStyleBackColor = true;
 			// 
-			// m_cbTags
-			// 
-			this.m_cbTags.AutoSize = true;
-			this.m_cbTags.Location = new System.Drawing.Point(113, 65);
-			this.m_cbTags.Name = "m_cbTags";
-			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
-			this.m_cbTags.TabIndex = 7;
-			this.m_cbTags.Text = "T&ags";
-			this.m_cbTags.UseVisualStyleBackColor = true;
-			// 
 			// SearchForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(351, 324);
+			this.ClientSize = new System.Drawing.Size(351, 349);
 			this.Controls.Add(this.m_cbRegEx);
 			this.Controls.Add(this.m_grpOptions);
 			this.Controls.Add(this.m_grpSearchIn);
@@ -303,5 +315,6 @@
 		private System.Windows.Forms.CheckBox m_cbGroupName;
 		private System.Windows.Forms.CheckBox m_cbUuid;
 		private System.Windows.Forms.CheckBox m_cbTags;
+		private System.Windows.Forms.CheckBox m_cbDerefData;
 	}
 }

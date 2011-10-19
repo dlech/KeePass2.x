@@ -418,22 +418,23 @@ namespace KeePassLib.Serialization
 				WriteObject(kvp.Key, kvp.Value, true);
 		}
 
-		private void WriteList(string name, AutoTypeConfig dictAutoType)
+		private void WriteList(string name, AutoTypeConfig cfgAutoType)
 		{
 			Debug.Assert(name != null);
-			Debug.Assert(dictAutoType != null);
-			if(dictAutoType == null) throw new ArgumentNullException("dictAutoType");
+			Debug.Assert(cfgAutoType != null);
+			if(cfgAutoType == null) throw new ArgumentNullException("cfgAutoType");
 
 			m_xmlWriter.WriteStartElement(name);
 
-			WriteObject(ElemAutoTypeEnabled, dictAutoType.Enabled);
-			WriteObject(ElemAutoTypeObfuscation, (int)dictAutoType.ObfuscationOptions);
+			WriteObject(ElemAutoTypeEnabled, cfgAutoType.Enabled);
+			WriteObject(ElemAutoTypeObfuscation, (int)cfgAutoType.ObfuscationOptions);
 
-			if(dictAutoType.DefaultSequence.Length > 0)
-				WriteObject(ElemAutoTypeDefaultSeq, dictAutoType.DefaultSequence, true);
+			if(cfgAutoType.DefaultSequence.Length > 0)
+				WriteObject(ElemAutoTypeDefaultSeq, cfgAutoType.DefaultSequence, true);
 
-			foreach(KeyValuePair<string, string> kvp in dictAutoType.WindowSequencePairs)
-				WriteObject(ElemAutoTypeItem, ElemWindow, ElemKeystrokeSequence, kvp);
+			foreach(AutoTypeAssociation a in cfgAutoType.Associations)
+				WriteObject(ElemAutoTypeItem, ElemWindow, ElemKeystrokeSequence,
+					new KeyValuePair<string, string>(a.WindowName, a.Sequence));
 
 			m_xmlWriter.WriteEndElement();
 		}

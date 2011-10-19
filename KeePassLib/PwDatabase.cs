@@ -763,7 +763,7 @@ namespace KeePassLib
 					Debug.Assert(mm != PwMergeMethod.CreateNewUuids);
 
 					bool bEquals = peLocal.EqualsEntry(pe, true, false, true,
-						true, false);
+						true, false, MemProtCmpMode.None);
 
 					bool bOrgBackup = !bEquals;
 					if(mm != PwMergeMethod.OverwriteExisting)

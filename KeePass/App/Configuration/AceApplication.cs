@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 using KeePass.Ecas;
 
@@ -35,6 +36,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strLanguageFile = string.Empty; // = English
+		[DefaultValue("")]
 		public string LanguageFile
 		{
 			get { return m_strLanguageFile; }
@@ -46,6 +48,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bHelpUseLocal = false;
+		[DefaultValue(false)]
 		public bool HelpUseLocal
 		{
 			get { return m_bHelpUseLocal; }
@@ -97,6 +100,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bVerifyFile = true;
+		[DefaultValue(true)]
 		public bool VerifyWrittenFileAfterSaving
 		{
 			get { return m_bVerifyFile; }
@@ -104,6 +108,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bTransactedWrites = true;
+		[DefaultValue(true)]
 		public bool UseTransactedFileWrites
 		{
 			get { return m_bTransactedWrites; }
@@ -133,6 +138,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strPluginCachePath = string.Empty;
+		[DefaultValue("")]
 		public string PluginCachePath
 		{
 			get { return m_strPluginCachePath; }
@@ -151,6 +157,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOpenLastDb = true;
+		[DefaultValue(true)]
 		public bool OpenLastFile
 		{
 			get { return m_bOpenLastDb; }
@@ -158,6 +165,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCheckForUpdate = false;
+		[DefaultValue(false)]
 		public bool CheckForUpdate
 		{
 			get { return m_bCheckForUpdate; }
@@ -165,6 +173,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bMinimizedAndLocked = false;
+		[DefaultValue(false)]
 		public bool MinimizedAndLocked
 		{
 			get { return m_bMinimizedAndLocked; }
@@ -172,6 +181,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bPlgDeleteOld = true;
+		[DefaultValue(true)]
 		public bool PluginCacheDeleteOld
 		{
 			get { return m_bPlgDeleteOld; }
@@ -179,6 +189,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bClearPlgCache = false;
+		[DefaultValue(false)]
 		public bool PluginCacheClearOnce
 		{
 			get { return m_bClearPlgCache; }
@@ -193,6 +204,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShowExpiredEntries = false;
+		[DefaultValue(false)]
 		public bool ShowExpiredEntries
 		{
 			get { return m_bShowExpiredEntries; }
@@ -200,6 +212,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShowSoonToExpireEntries = false;
+		[DefaultValue(false)]
 		public bool ShowSoonToExpireEntries
 		{
 			get { return m_bShowSoonToExpireEntries; }
@@ -214,6 +227,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bAutoSave = false;
+		[DefaultValue(false)]
 		public bool AutoSave
 		{
 			get { return m_bAutoSave; }

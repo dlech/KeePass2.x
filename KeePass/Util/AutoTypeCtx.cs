@@ -20,35 +20,56 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
-namespace KeePass.Util.Spr
+using KeePassLib;
+
+namespace KeePass.Util
 {
-	public sealed class SprContentFlags
+	/// <summary>
+	/// Auto-type candidate context.
+	/// </summary>
+	public sealed class AutoTypeCtx
 	{
-		private bool m_bMakeAT;
-		public bool EncodeAsAutoTypeSequence
+		private string m_strSeq = string.Empty;
+		public string Sequence
 		{
-			get { return m_bMakeAT; }
+			get { return m_strSeq; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strSeq = value;
+			}
 		}
 
-		private bool m_bMakeCmdQuotes;
-		public bool EncodeQuotesForCommandLine
+		private PwEntry m_pe = null;
+		public PwEntry Entry
 		{
-			get { return m_bMakeCmdQuotes; }
+			get { return m_pe; }
+			set { m_pe = value; }
 		}
 
-		private bool m_bNoUrlSchemeOnce = false;
-		public bool UrlRemoveSchemeOnce
+		private PwDatabase m_pd = null;
+		public PwDatabase Database
 		{
-			get { return m_bNoUrlSchemeOnce; }
-			set { m_bNoUrlSchemeOnce = value; }
+			get { return m_pd; }
+			set { m_pd = value; }
 		}
 
-		public SprContentFlags(bool bEncodeAsAutoTypeSequence,
-			bool bEncodeQuotesForCommandLine)
+		public AutoTypeCtx() { }
+
+		public AutoTypeCtx(string strSequence, PwEntry pe, PwDatabase pd)
 		{
-			m_bMakeAT = bEncodeAsAutoTypeSequence;
-			m_bMakeCmdQuotes = bEncodeQuotesForCommandLine;
+			if(strSequence == null) throw new ArgumentNullException("strSequence");
+
+			m_strSeq = strSequence;
+			m_pe = pe;
+			m_pd = pd;
+		}
+
+		public AutoTypeCtx Clone()
+		{
+			return (AutoTypeCtx)this.MemberwiseClone();
 		}
 	}
 }

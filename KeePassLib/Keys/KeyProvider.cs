@@ -44,12 +44,20 @@ namespace KeePassLib.Keys
 			get { return m_bCreatingNewKey; }
 		}
 
-		public KeyProviderQueryContext(IOConnectionInfo ioInfo, bool bCreatingNewKey)
+		private bool m_bSecDesktop;
+		public bool IsOnSecureDesktop
+		{
+			get { return m_bSecDesktop; }
+		}
+
+		public KeyProviderQueryContext(IOConnectionInfo ioInfo, bool bCreatingNewKey,
+			bool bOnSecDesktop)
 		{
 			if(ioInfo == null) throw new ArgumentNullException("ioInfo");
 
 			m_ioInfo = ioInfo.CloneDeep();
 			m_bCreatingNewKey = bCreatingNewKey;
+			m_bSecDesktop = bOnSecDesktop;
 		}
 	}
 
@@ -106,6 +114,16 @@ namespace KeePassLib.Keys
 		public virtual bool GetKeyMightShowGui
 		{
 			get { return true; }
+		}
+
+		/// <summary>
+		/// This property specifies whether the key provider is compatible
+		/// with the secure desktop mode. This almost never is the case,
+		/// so you usually won't override this property.
+		/// </summary>
+		public virtual bool SecureDesktopCompatible
+		{
+			get { return false; }
 		}
 
 		public abstract byte[] GetKey(KeyProviderQueryContext ctx);

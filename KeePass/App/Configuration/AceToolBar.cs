@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 
 namespace KeePass.App.Configuration
 {
@@ -30,6 +31,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShow = true;
+		[DefaultValue(true)]
 		public bool Show
 		{
 			get { return m_bShow; }

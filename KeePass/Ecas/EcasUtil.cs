@@ -100,15 +100,14 @@ namespace KeePass.Ecas
 
 			if(bSprCompile && !string.IsNullOrEmpty(str))
 			{
-				PwDatabase pd = null;
-				try { pd = Program.MainForm.ActiveDatabase; }
-				catch(Exception) { Debug.Assert(false); }
-
 				PwEntry pe = null;
 				try { pe = Program.MainForm.GetSelectedEntry(false); }
 				catch(Exception) { Debug.Assert(false); }
 
-				str = SprEngine.Compile(str, false, pe, pd, false, bSprForCommandLine);
+				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
+
+				str = SprEngine.Compile(str, new SprContext(pe, pd,
+					SprCompileFlags.All, false, bSprForCommandLine));
 			}
 
 			return str;

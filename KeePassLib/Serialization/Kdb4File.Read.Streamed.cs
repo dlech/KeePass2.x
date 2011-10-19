@@ -610,7 +610,9 @@ namespace KeePassLib.Serialization
 				return KdbContext.Entry;
 			else if((ctx == KdbContext.EntryAutoTypeItem) && (xr.Name == ElemAutoTypeItem))
 			{
-				m_ctxEntry.AutoType.Set(m_ctxATName, m_ctxATSeq);
+				AutoTypeAssociation atAssoc = new AutoTypeAssociation(m_ctxATName,
+					m_ctxATSeq);
+				m_ctxEntry.AutoType.Add(atAssoc);
 				m_ctxATName = null;
 				m_ctxATSeq = null;
 				return KdbContext.EntryAutoType;

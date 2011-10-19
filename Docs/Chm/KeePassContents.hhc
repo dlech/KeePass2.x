@@ -115,6 +115,10 @@
 			<param name="Local" value="help\base\secedits.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Synchronization">
+			<param name="Local" value="help\v2\sync.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="TAN Support">
 			<param name="Local" value="help\base\tans.html">
 			</OBJECT>

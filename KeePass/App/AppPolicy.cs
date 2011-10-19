@@ -19,8 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Diagnostics;
 
 using KeePass.Resources;
 
@@ -39,6 +40,7 @@ namespace KeePass.App
 		ExportNoKey, // Don't require the current key to be repeated
 		Import,
 		Print,
+		PrintNoKey, // Don't require the current key to be repeated
 		NewFile,
 		SaveFile,
 		AutoType,
@@ -58,6 +60,7 @@ namespace KeePass.App
 	public sealed class AppPolicyFlags
 	{
 		private bool m_bPlugins = true;
+		[DefaultValue(true)]
 		public bool Plugins
 		{
 			get { return m_bPlugins; }
@@ -65,6 +68,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bExport = true;
+		[DefaultValue(true)]
 		public bool Export
 		{
 			get { return m_bExport;}
@@ -72,6 +76,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bExportNoKey = true;
+		[DefaultValue(true)]
 		public bool ExportNoKey
 		{
 			get { return m_bExportNoKey; }
@@ -79,6 +84,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bImport = true;
+		[DefaultValue(true)]
 		public bool Import
 		{
 			get { return m_bImport; }
@@ -86,13 +92,23 @@ namespace KeePass.App
 		}
 
 		private bool m_bPrint = true;
+		[DefaultValue(true)]
 		public bool Print
 		{
 			get { return m_bPrint; }
 			set { m_bPrint = value; }
 		}
 
+		private bool m_bPrintNoKey = true;
+		[DefaultValue(true)]
+		public bool PrintNoKey
+		{
+			get { return m_bPrintNoKey; }
+			set { m_bPrintNoKey = value; }
+		}
+
 		private bool m_bNewFile = true;
+		[DefaultValue(true)]
 		public bool NewFile
 		{
 			get { return m_bNewFile; }
@@ -100,6 +116,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bSave = true;
+		[DefaultValue(true)]
 		public bool SaveFile
 		{
 			get { return m_bSave; }
@@ -107,6 +124,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bAutoType = true;
+		[DefaultValue(true)]
 		public bool AutoType
 		{
 			get { return m_bAutoType; }
@@ -114,6 +132,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bAutoTypeWithoutContext = true;
+		[DefaultValue(true)]
 		public bool AutoTypeWithoutContext
 		{
 			get { return m_bAutoTypeWithoutContext; }
@@ -121,6 +140,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bClipboard = true;
+		[DefaultValue(true)]
 		public bool CopyToClipboard
 		{
 			get { return m_bClipboard; }
@@ -128,6 +148,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bCopyWholeEntries = true;
+		[DefaultValue(true)]
 		public bool CopyWholeEntries
 		{
 			get { return m_bCopyWholeEntries; }
@@ -135,6 +156,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bDragDrop = true;
+		[DefaultValue(true)]
 		public bool DragDrop
 		{
 			get { return m_bDragDrop; }
@@ -142,6 +164,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bUnhidePasswords = true;
+		[DefaultValue(true)]
 		public bool UnhidePasswords
 		{
 			get { return m_bUnhidePasswords; }
@@ -149,6 +172,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bChangeMasterKey = true;
+		[DefaultValue(true)]
 		public bool ChangeMasterKey
 		{
 			get { return m_bChangeMasterKey; }
@@ -156,6 +180,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bChangeMasterKeyNoKey = true;
+		[DefaultValue(true)]
 		public bool ChangeMasterKeyNoKey
 		{
 			get { return m_bChangeMasterKeyNoKey; }
@@ -163,6 +188,7 @@ namespace KeePass.App
 		}
 
 		private bool m_bTriggersEdit = true;
+		[DefaultValue(true)]
 		public bool EditTriggers
 		{
 			get { return m_bTriggersEdit; }
@@ -225,6 +251,9 @@ namespace KeePass.App
 				case AppPolicyId.Print:
 					str += KPRes.Print;
 					break;
+				case AppPolicyId.PrintNoKey:
+					str += KPRes.Print + " - " + KPRes.NoKeyRepeat;
+					break;
 				case AppPolicyId.NewFile:
 					str += KPRes.NewDatabase;
 					break;
@@ -284,6 +313,9 @@ namespace KeePass.App
 					break;
 				case AppPolicyId.Print:
 					str += KPRes.PolicyPrintDesc;
+					break;
+				case AppPolicyId.PrintNoKey:
+					str += KPRes.PolicyPrintNoKeyDesc;
 					break;
 				case AppPolicyId.NewFile:
 					str += KPRes.PolicyNewDatabaseDesc;
@@ -347,6 +379,7 @@ namespace KeePass.App
 				case AppPolicyId.ExportNoKey: bAllowed = m_apfCurrent.ExportNoKey; break;
 				case AppPolicyId.Import: bAllowed = m_apfCurrent.Import; break;
 				case AppPolicyId.Print: bAllowed = m_apfCurrent.Print; break;
+				case AppPolicyId.PrintNoKey: bAllowed = m_apfCurrent.PrintNoKey; break;
 				case AppPolicyId.NewFile: bAllowed = m_apfCurrent.NewFile; break;
 				case AppPolicyId.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
 				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;

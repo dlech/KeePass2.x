@@ -96,6 +96,7 @@ namespace KeePass.Native
 		internal const int ICON_BIG = 1;
 		internal const int ICON_SMALL2 = 2;
 
+		internal const int EM_GETCHARFORMAT = WM_USER + 58;
 		internal const int EM_SETCHARFORMAT = WM_USER + 68;
 
 		internal const int ES_WANTRETURN = 0x1000;
@@ -116,12 +117,16 @@ namespace KeePass.Native
 		internal const int ECM_FIRST = 0x1500;
 		internal const int EM_SETCUEBANNER = ECM_FIRST + 1;
 
+		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFFU;
+
 		internal const uint FSCTL_LOCK_VOLUME = 589848;
 		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
 
 		internal const int LVM_FIRST = 0x1000;
 		internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
 		internal const int LVM_SCROLL = LVM_FIRST + 20;
+		// internal const int LVM_SETGROUPINFO = LVM_FIRST + 147; // >= Vista
+		// internal const int LVM_GETGROUPINFOBYINDEX = LVM_FIRST + 153; // >= Vista
 
 		internal const int WM_MOUSEACTIVATE = 0x21;
 		internal const int MA_ACTIVATE = 1;
@@ -183,6 +188,32 @@ namespace KeePass.Native
 
 		// internal const int LVN_FIRST = -100;
 		// internal const int LVN_LINKCLICK = LVN_FIRST - 84;
+
+		// internal const uint LVGF_NONE = 0x00000000;
+		// internal const uint LVGF_HEADER = 0x00000001;
+		// internal const uint LVGF_FOOTER = 0x00000002;
+		// internal const uint LVGF_STATE = 0x00000004;
+		// internal const uint LVGF_ALIGN = 0x00000008;
+		// internal const uint LVGF_GROUPID = 0x00000010;
+		// internal const uint LVGF_SUBTITLE = 0x00000100;
+		// internal const uint LVGF_TASK = 0x00000200;
+		// internal const uint LVGF_DESCRIPTIONTOP = 0x00000400;
+		// internal const uint LVGF_DESCRIPTIONBOTTOM = 0x00000800;
+		// internal const uint LVGF_TITLEIMAGE = 0x00001000;
+		// internal const uint LVGF_EXTENDEDIMAGE = 0x00002000;
+		// internal const uint LVGF_ITEMS = 0x00004000;
+		// internal const uint LVGF_SUBSET = 0x00008000;
+		// internal const uint LVGF_SUBSETITEMS = 0x00010000;
+
+		// internal const uint LVGS_NORMAL = 0x00000000;
+		// internal const uint LVGS_COLLAPSED = 0x00000001;
+		// internal const uint LVGS_HIDDEN = 0x00000002;
+		// internal const uint LVGS_NOHEADER = 0x00000004;
+		// internal const uint LVGS_COLLAPSIBLE = 0x00000008;
+		// internal const uint LVGS_FOCUSED = 0x00000010;
+		// internal const uint LVGS_SELECTED = 0x00000020;
+		// internal const uint LVGS_SUBSETED = 0x00000040;
+		// internal const uint LVGS_SUBSETLINKFOCUSED = 0x00000080;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 using KeePass.Resources;
 using KeePass.UI;
@@ -35,6 +36,7 @@ namespace KeePass.Ecas
 	public sealed class EcasTriggerSystem : IDeepCloneable<EcasTriggerSystem>
 	{
 		private bool m_bEnabled = true;
+		[DefaultValue(true)]
 		public bool Enabled
 		{
 			get { return m_bEnabled; }

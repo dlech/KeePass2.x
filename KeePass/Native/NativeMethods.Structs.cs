@@ -210,5 +210,58 @@ namespace KeePass.Native
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
 			public string szTypeName;
 		}
+
+		/* // LVGROUP for Windows Vista and higher
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		private struct LVGROUP
+		{
+			public uint cbSize;
+			public uint mask;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszHeader;
+			public IntPtr pszHeader;
+			public int cchHeader;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszFooter;
+			public IntPtr pszFooter;
+			public int cchFooter;
+
+			public int iGroupId;
+			public uint stateMask;
+			public uint state;
+			public uint uAlign;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszSubtitle;
+			public IntPtr pszSubtitle;
+			public uint cchSubtitle;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszTask;
+			public IntPtr pszTask;
+			public uint cchTask;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszDescriptionTop;
+			public IntPtr pszDescriptionTop;
+			public uint cchDescriptionTop;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszDescriptionBottom;
+			public IntPtr pszDescriptionBottom;
+			public uint cchDescriptionBottom;
+
+			public int iTitleImage;
+			public int iExtendedImage;
+			public int iFirstItem;
+			public uint cItems;
+
+			// [MarshalAs(UnmanagedType.LPWStr)]
+			// public StringBuilder pszSubsetTitle;
+			public IntPtr pszSubsetTitle;
+			public uint cchSubsetTitle;
+		} */
 	}
 }

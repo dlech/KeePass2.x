@@ -60,7 +60,6 @@ namespace KeePassLib
 		PreOrder = 1
 	}
 
-#pragma warning disable 1591 // Missing XML comments warning
 	/// <summary>
 	/// Methods for merging password databases/entries.
 	/// </summary>
@@ -73,9 +72,7 @@ namespace KeePassLib
 		CreateNewUuids = 4,
 		Synchronize = 5
 	}
-#pragma warning restore 1591 // Missing XML comments warning
 
-#pragma warning disable 1591 // Missing XML comments warning
 	/// <summary>
 	/// Icon identifiers for groups and password entries.
 	/// </summary>
@@ -156,12 +153,34 @@ namespace KeePassLib
 		/// </summary>
 		Count
 	}
-#pragma warning restore 1591 // Missing XML comments warning
 
 	public enum ProxyServerType
 	{
 		None = 0,
 		System = 1,
 		Manual = 2
+	}
+
+	/// <summary>
+	/// Comparison modes for in-memory protected objects.
+	/// </summary>
+	public enum MemProtCmpMode
+	{
+		/// <summary>
+		/// Ignore the in-memory protection states.
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Ignore the in-memory protection states of standard
+		/// objects; do compare in-memory protection states of
+		/// custom objects.
+		/// </summary>
+		CustomOnly,
+
+		/// <summary>
+		/// Compare in-memory protection states.
+		/// </summary>
+		Full
 	}
 }

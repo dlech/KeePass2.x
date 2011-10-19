@@ -31,6 +31,7 @@ using KeePass.UI;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Security;
 using KeePassLib.Delegates;
 using KeePassLib.Resources;
@@ -147,7 +148,7 @@ namespace KeePass.Forms
 
 			if(m_bPrintMode)
 			{
-				try { m_wbMain.Print(); } // Throws in Mono 1.2.6+
+				try { m_wbMain.ShowPrintDialog(); } // Throws in Mono 1.2.6+
 				catch(NotImplementedException)
 				{
 					MessageService.ShowWarning(KLRes.FrameworkNotImplExcp);
@@ -351,14 +352,17 @@ namespace KeePass.Forms
 
 					if(bAutoType)
 					{
-						foreach(KeyValuePair<string, string> kvp in pe.AutoType.WindowSequencePairs)
-							WriteDetailsLine(sb, KPRes.AutoType, kvp.Key + ": " + kvp.Value, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+						foreach(AutoTypeAssociation a in pe.AutoType.Associations)
+							WriteDetailsLine(sb, KPRes.AutoType, a.WindowName +
+								": " + a.Sequence, bSmallMono, bMonoPasswords,
+								strFontInit, strFontExit);
 					}
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
 						if(bCustomStrings && !PwDefs.IsStandardField(kvp.Key))
-							WriteDetailsLine(sb, kvp, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+							WriteDetailsLine(sb, kvp, bSmallMono, bMonoPasswords,
+								strFontInit, strFontExit);
 					}
 
 					sb.AppendLine(@"<tr><td>&nbsp;</td></tr>");

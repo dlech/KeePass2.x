@@ -99,7 +99,8 @@ namespace KeePass.UI
 			return AddItem(strItemText, imgSmallIcon, null);
 		}
 
-		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon, object objTag)
+		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon,
+			object objTag)
 		{
 			Debug.Assert(strItemText != null);
 			if(strItemText == null) throw new ArgumentNullException("strItemText");

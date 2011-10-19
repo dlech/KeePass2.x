@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePass.UI;
@@ -109,6 +110,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bForceSysFont = true;
+		[DefaultValue(true)]
 		public bool ForceSystemFontUnix
 		{
 			get { return m_bForceSysFont; }
@@ -123,6 +125,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShowImportStatusDlg = true;
+		[DefaultValue(true)]
 		public bool ShowImportStatusDialog
 		{
 			get { return m_bShowImportStatusDlg; }
@@ -130,6 +133,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bShowDbMntncResDlg = true;
+		[DefaultValue(true)]
 		public bool ShowDbMntncResultsDialog
 		{
 			get { return m_bShowDbMntncResDlg; }
@@ -137,6 +141,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bUseCustomTsRenderer = true;
+		[DefaultValue(true)]
 		public bool UseCustomToolStripRenderer
 		{
 			get { return m_bUseCustomTsRenderer; }
@@ -144,6 +149,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bOptScreenReader = false;
+		[DefaultValue(false)]
 		public bool OptimizeForScreenReader
 		{
 			get { return m_bOptScreenReader; }
@@ -151,6 +157,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strDataEditorRect = string.Empty;
+		[DefaultValue("")]
 		public string DataEditorRect
 		{
 			get { return m_strDataEditorRect; }
@@ -173,6 +180,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bDeWordWrap = true;
+		[DefaultValue(true)]
 		public bool DataEditorWordWrap
 		{
 			get { return m_bDeWordWrap; }
@@ -180,6 +188,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private string m_strCharPickerRect = string.Empty;
+		[DefaultValue("")]
 		public string CharPickerRect
 		{
 			get { return m_strCharPickerRect; }
@@ -187,6 +196,30 @@ namespace KeePass.App.Configuration
 			{
 				if(value == null) throw new ArgumentNullException("value");
 				m_strCharPickerRect = value;
+			}
+		}
+
+		private string m_strAutoTypeCtxRect = string.Empty;
+		[DefaultValue("")]
+		public string AutoTypeCtxRect
+		{
+			get { return m_strAutoTypeCtxRect; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strAutoTypeCtxRect = value;
+			}
+		}
+
+		private string m_strAutoTypeCtxColWidths = string.Empty;
+		[DefaultValue("")]
+		public string AutoTypeCtxColumnWidths
+		{
+			get { return m_strAutoTypeCtxColWidths; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strAutoTypeCtxColWidths = value;
 			}
 		}
 
@@ -219,6 +252,7 @@ namespace KeePass.App.Configuration
 		// }
 
 		private bool m_bSecDeskSound = true;
+		[DefaultValue(true)]
 		public bool SecureDesktopPlaySound
 		{
 			get { return m_bSecDeskSound; }
@@ -233,6 +267,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bSepHiding = false;
+		[DefaultValue(false)]
 		public bool SeparateHidingSettings
 		{
 			get { return m_bSepHiding; }
@@ -240,6 +275,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bHideInEntryDialog = true;
+		[DefaultValue(true)]
 		public bool HideInEntryWindow
 		{
 			get { return m_bHideInEntryDialog; }
@@ -247,6 +283,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bUnhideBtnAlsoUnhidesSec = false;
+		[DefaultValue(false)]
 		public bool UnhideButtonAlsoUnhidesSource
 		{
 			get { return m_bUnhideBtnAlsoUnhidesSec; }

@@ -36,6 +36,7 @@ namespace KeePass.UI
 		private Thread m_th = null;
 		private Form m_fOwner;
 		private StatusProgressForm m_dlgModal = null;
+		private object m_objSync = new object();
 
 		private const uint InitialProgress = 0;
 		private const string InitialStatus = null;
@@ -58,7 +59,7 @@ namespace KeePass.UI
 
 		public void EndLogging()
 		{
-			lock(this) { m_bTerminate = true; }
+			lock(m_objSync) { m_bTerminate = true; }
 			m_th = null;
 
 			if(m_dlgModal != null)
@@ -70,7 +71,7 @@ namespace KeePass.UI
 
 		public bool SetProgress(uint uPercent)
 		{
-			lock(this) { m_uProgress = uPercent; }
+			lock(m_objSync) { m_uProgress = uPercent; }
 
 			return ((m_dlgModal != null) ? m_dlgModal.SetProgress(uPercent) : true);
 		}
@@ -89,7 +90,7 @@ namespace KeePass.UI
 			if(!m_bUseThread && (m_dlgModal == null))
 				m_dlgModal = ConstructStatusDialog();
 
-			lock(this) { m_strProgress = strNewText; }
+			lock(m_objSync) { m_strProgress = strNewText; }
 			return ((m_dlgModal != null) ? m_dlgModal.SetText(strNewText, lsType) : true);
 		}
 
@@ -106,7 +107,7 @@ namespace KeePass.UI
 			StatusProgressForm dlg = null;
 			while(true)
 			{
-				lock(this)
+				lock(m_objSync)
 				{
 					if(m_bTerminate) break;
 
@@ -134,10 +135,8 @@ namespace KeePass.UI
 
 		private StatusProgressForm ConstructStatusDialog()
 		{
-			StatusProgressForm dlg = new StatusProgressForm();
-			dlg.InitEx(m_strTitle, false, true, m_bUseThread ? null : m_fOwner);
-			dlg.Show();
-			dlg.StartLogging(null, false);
+			StatusProgressForm dlg = StatusProgressForm.ConstructEx(
+				m_strTitle, false, true, (m_bUseThread ? null : m_fOwner), null);
 			dlg.SetProgress(m_uProgress);
 
 			MainForm mfOwner = ((m_fOwner != null) ? (m_fOwner as MainForm) : null);
@@ -161,9 +160,7 @@ namespace KeePass.UI
 					mfOwner.UIBlockInteraction(false);
 				}
 
-				dlg.EndLogging();
-				dlg.Close();
-				dlg.Dispose();
+				StatusProgressForm.DestroyEx(dlg);
 
 				// Conflict with 3116455
 				// if(mfOwner != null) mfOwner.Activate(); // Prevent disappearing

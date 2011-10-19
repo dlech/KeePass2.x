@@ -1,3 +1,128 @@
+2011-10-19: 2.17
+- Multiple auto-type sequences can now be defined for a window
+  in one entry
+- The auto-type entry selection dialog now displays the
+  sequence that will be typed
+- The auto-type entry selection dialog is now resizable;
+  KeePass remembers the dialog's position, size and the list
+  view column widths
+- Added auto-type option 'An entry matches if its URL is
+  contained in the target window title'
+- Added two options to show dereferenced data in the main entry
+  list (synchronously or asynchronously)
+- Dereferenced data fields are now shown in the entry view of
+  the main window and the auto-type entry selection dialog
+  (additionally to the references)
+- Field references in the entry view are now clickable; when
+  clicking one, KeePass jumps to the data source entry
+- Added option in the 'Find' dialog to search in dereferenced
+  data fields
+- Added option to search in dereferenced data fields when
+  performing a quick search (toolbar in main window)
+- The 'Find' dialog now shows a status dialog while searching
+  for entries
+- The main window now shows a status bar and the UI is disabled
+  while performing a quick search
+- Added context menu commands to open the URL of an entry in a
+  specific browser
+- Added {SAFARI} browser path placeholder
+- Added {C:...} comment placeholder
+- Added entry duplication options dialog (appending "- Copy" to
+  entry titles, and/or replacing user names and passwords by
+  field references to the original entries)
+- Added option to focus the quick search box when restoring
+  from taskbar (disabled by default)
+- Added tray context menu command to show the options dialog
+- Source fields are now compiled before using them in a
+  {PICKCHARS} dialog
+- Added 'Copy Link' rich text box context menu command
+- Before printing, the data/format dialog now shows a print
+  dialog, in which the printer can be selected
+- Added application policy to ask for the current master key
+  before printing
+- Added support for importing Passphrase Keeper 2.50 HTML files
+  (in addition to the already supported 2.70 format)
+- KeePass now removes zone identifiers from itself, ShInstUtil
+  and the CHM help file
+- Listing currently opened windows works under Unix-like
+  systems now, too
+- Alternating item background colors are now also supported in
+  list views with item groups
+- IOConnection now supports reading from data URIs (RFC 2397)
+- Group headers are now skipped when navigating in single
+  selection list views using the arrow keys
+- Added detection support for the following web browsers on
+  Unix-like systems: Firefox, Opera, Chromium, Epiphany, Arora,
+  Galeon and Konqueror
+- Added documentation of the synchronization feature
+- Key provider plugins can now declare that they're compatible
+  with the secure desktop mode, and a new property in the query
+  context specifies whether the user currently is on the secure
+  desktop
+- Added workaround for a list view sorting bug under Windows XP
+- Added workaround for a .NET bug where a cached window state
+  gets out of sync with the real window state
+- Added workaround for a Mono WebRequest bug affecting WebDAV
+  support
+
+- Items in the auto-type entry selection dialog can now be
+  selected using a single click
+- When performing global auto-type, the Spr engine now uses the
+  entry container database instead of the current database as
+  data source
+- The generated passwords list in the password generator dialog
+  now uses the password font (monospace by default)
+- The last modification time of an entry is now updated when a
+  new password is generated using the {NEWPASSWORD} placeholder
+- The overlay icon for the taskbar button (on Windows 7) is now
+  restored when Windows Explorer crashes and when starting in
+  minimized and locked mode
+- Improved opening of CHM help file
+- The buttons in file save dialogs now have accelerator keys
+- Separated URL scheme overrides into built-in and custom ones
+- Improved tray command state updating
+- The default tray command is now rendered using a bold font
+- The main window is now disabled while searching and removing
+  duplicate entries
+- Improved banner handling/updating in resizable dialogs
+- The 'Ctrl+U' shortcut hint is now moved either to the open or
+  to the copy command, depending on whether the option 'Copy
+  URLs to clipboard instead of opening them' is enabled or not
+- Improved command availability updating of rich text context
+  menus
+- Quick searches are now invoked asynchronously
+- Improved quick search performance
+- The option to minimize the main window after locking the
+  KeePass workspace is now enabled by default
+- When performing auto-type, newline characters are now
+  converted to Enter keypresses
+- Auto-type on Unix-like systems: improved sending of backslash
+  characters
+- On Unix-like systems, the default delay between auto-typed
+  keystrokes is now 3 ms
+- Spr engine performance improvements
+- Changing the in-memory protection state of a custom entry
+  string is now treated as a database change
+- Some options in the options dialog are now linked (e.g. the
+  option 'Automatically search key files also on removable
+  media' can only be enabled when 'Automatically search key
+  files' is enabled)
+- Most items with default values aren't written to the
+  configuration file anymore (resulting in a smaller file and
+  making it possible to change defaults in future versions)
+- Path separators in the configuration file are now updated for
+  the current operating system
+- Improved 'xdotool' version detection
+- Improved IO response handling when deleting/renaming files
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- Status bar text is now correctly updated to 'Ready' after an
+  unsuccessful/cancelled database opening attempt
+- Password generation based on patterns: escaped curly brackets
+  are now parsed correctly
+
 2011-07-12: 2.16
 - When searching for a string containing a whitespace
   character, KeePass now splits the terms and reports all

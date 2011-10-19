@@ -20,6 +20,7 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -29,14 +30,11 @@ namespace KeePass.UI
 {
 	public sealed class ListSorter : IComparer
 	{
-		private int m_nColumn = -1;
-		private SortOrder m_oSort = SortOrder.Ascending;
-		private bool m_bCompareNaturally = true;
-		private bool m_bCompareTimes = false;
-
 		// Cached version of a string representing infinity
 		private string m_strNeverExpires = string.Empty;
 
+		private int m_nColumn = -1;
+		[DefaultValue(-1)]
 		public int Column
 		{
 			get { return m_nColumn; }
@@ -45,6 +43,7 @@ namespace KeePass.UI
 			set { m_nColumn = value; }
 		}
 
+		private SortOrder m_oSort = SortOrder.Ascending;
 		public SortOrder Order
 		{
 			get { return m_oSort; }
@@ -53,6 +52,8 @@ namespace KeePass.UI
 			set { m_oSort = value; }
 		}
 
+		private bool m_bCompareNaturally = true;
+		[DefaultValue(true)]
 		public bool CompareNaturally
 		{
 			get { return m_bCompareNaturally; }
@@ -61,6 +62,8 @@ namespace KeePass.UI
 			set { m_bCompareNaturally = value; }
 		}
 
+		private bool m_bCompareTimes = false;
+		[DefaultValue(false)]
 		public bool CompareTimes
 		{
 			get { return m_bCompareTimes; }

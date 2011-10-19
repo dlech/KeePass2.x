@@ -37,7 +37,11 @@ namespace KeePassLib.Translation
 		public string FullName
 		{
 			get { return m_strFQName; }
-			set { m_strFQName = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strFQName = value;
+			}
 		}
 
 		private KPControlCustomization m_ccWindow = new KPControlCustomization();

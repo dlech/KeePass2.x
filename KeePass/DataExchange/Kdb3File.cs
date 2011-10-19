@@ -27,6 +27,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Security;
+using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
@@ -567,10 +568,12 @@ namespace KeePass.DataExchange
 						string strWindow = strLine.Substring(strWndPrefix.Length).Trim();
 						string strSeq = FindPrefixedLine(vLines, strSeqPrefix);
 						if((strSeq != null) && (strSeq.Length > strSeqPrefix.Length))
-							peStorage.AutoType.Set(strWindow, ConvertAutoTypeSequence(
-								strSeq.Substring(strSeqPrefix.Length), true));
+							peStorage.AutoType.Add(new AutoTypeAssociation(
+								strWindow, ConvertAutoTypeSequence(strSeq.Substring(
+								strSeqPrefix.Length), true)));
 						else // Window, but no sequence
-							peStorage.AutoType.Set(strWindow, string.Empty);
+							peStorage.AutoType.Add(new AutoTypeAssociation(
+								strWindow, string.Empty));
 
 						bProcessed = true;
 						break;
@@ -712,7 +715,7 @@ namespace KeePass.DataExchange
 				++uIndex;
 			}
 
-			foreach(KeyValuePair<string, string> kvp in peSource.AutoType.WindowSequencePairs)
+			foreach(AutoTypeAssociation a in peSource.AutoType.Associations)
 			{
 				if(bSeparator == false)
 				{
@@ -726,11 +729,11 @@ namespace KeePass.DataExchange
 
 				sbAppend.Append(AutoTypePrefix + strSuffix);
 				sbAppend.Append(@": ");
-				sbAppend.Append(ConvertAutoTypeSeqExp(kvp.Value, peSource));
+				sbAppend.Append(ConvertAutoTypeSeqExp(a.Sequence, peSource));
 				sbAppend.Append(MessageService.NewLine);
 				sbAppend.Append(AutoTypeWindowPrefix + strSuffix);
 				sbAppend.Append(@": ");
-				sbAppend.Append(kvp.Key);
+				sbAppend.Append(a.WindowName);
 				sbAppend.Append(MessageService.NewLine);
 
 				++uIndex;

@@ -32,45 +32,70 @@ namespace KeePassLib.Collections
 		UseClipboard = 1
 	}
 
-	/* public sealed class AutoTypeAssociation
+	public sealed class AutoTypeAssociation : IEquatable<AutoTypeAssociation>,
+		IDeepCloneable<AutoTypeAssociation>
 	{
 		private string m_strWindow = string.Empty;
-		private string m_strSequence = string.Empty;
-
 		public string WindowName
 		{
 			get { return m_strWindow; }
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_strWindow = value;
 			}
 		}
 
-		public string KeySequence
+		private string m_strSequence = string.Empty;
+		public string Sequence
 		{
 			get { return m_strSequence; }
 			set
 			{
 				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
 				m_strSequence = value;
 			}
 		}
-	} */
+
+		public AutoTypeAssociation() { }
+
+		public AutoTypeAssociation(string strWindow, string strSeq)
+		{
+			if(strWindow == null) throw new ArgumentNullException("strWindow");
+			if(strSeq == null) throw new ArgumentNullException("strSeq");
+
+			m_strWindow = strWindow;
+			m_strSequence = strSeq;
+		}
+
+		public bool Equals(AutoTypeAssociation other)
+		{
+			if(other == null) return false;
+
+			if(m_strWindow != other.m_strWindow) return false;
+			if(m_strSequence != other.m_strSequence) return false;
+
+			return true;
+		}
+
+		public AutoTypeAssociation CloneDeep()
+		{
+			return (AutoTypeAssociation)this.MemberwiseClone();
+		}
+	}
 
 	/// <summary>
-	/// A dictionary of auto-type window/keystroke sequence pairs.
+	/// A list of auto-type associations.
 	/// </summary>
-	public sealed class AutoTypeConfig : IDeepCloneable<AutoTypeConfig>
+	public sealed class AutoTypeConfig : IEquatable<AutoTypeConfig>,
+		IDeepCloneable<AutoTypeConfig>
 	{
 		private bool m_bEnabled = true;
 		private AutoTypeObfuscationOptions m_atooObfuscation =
 			AutoTypeObfuscationOptions.None;
 		private string m_strDefaultSequence = string.Empty;
-		private Dictionary<string, string> m_vWindowSeqPairs =
-			new Dictionary<string, string>();
+		private List<AutoTypeAssociation> m_lWindowAssocs =
+			new List<AutoTypeAssociation>();
 
 		/// <summary>
 		/// Specify whether auto-type is enabled or not.
@@ -92,7 +117,7 @@ namespace KeePassLib.Collections
 
 		/// <summary>
 		/// The default keystroke sequence that is auto-typed if
-		/// no matching window is found in the <c>Items</c>
+		/// no matching window is found in the <c>Associations</c>
 		/// container.
 		/// </summary>
 		public string DefaultSequence
@@ -108,134 +133,88 @@ namespace KeePassLib.Collections
 		/// <summary>
 		/// Get all auto-type window/keystroke sequence pairs.
 		/// </summary>
-		public IEnumerable<KeyValuePair<string, string>> WindowSequencePairs
+		public IEnumerable<AutoTypeAssociation> Associations
 		{
-			get { return m_vWindowSeqPairs; }
+			get { return m_lWindowAssocs; }
 		}
 
 		public int AssociationsCount
 		{
-			get { return m_vWindowSeqPairs.Count; }
+			get { return m_lWindowAssocs.Count; }
 		}
 
 		/// <summary>
-		/// Construct a new auto-type dictionary.
+		/// Construct a new auto-type associations list.
 		/// </summary>
 		public AutoTypeConfig()
 		{
 		}
 
 		/// <summary>
-		/// Remove all window/keystroke sequence associations.
+		/// Remove all associations.
 		/// </summary>
 		public void Clear()
 		{
-			m_vWindowSeqPairs.Clear();
+			m_lWindowAssocs.Clear();
 		}
 
 		/// <summary>
-		/// Clone the auto-type dictionary.
+		/// Clone the auto-type associations list.
 		/// </summary>
 		/// <returns>New, cloned object.</returns>
 		public AutoTypeConfig CloneDeep()
 		{
-			AutoTypeConfig newDic = new AutoTypeConfig();
+			AutoTypeConfig newCfg = new AutoTypeConfig();
 
-			newDic.m_bEnabled = m_bEnabled;
-			newDic.m_atooObfuscation = m_atooObfuscation;
-			newDic.m_strDefaultSequence = m_strDefaultSequence;
+			newCfg.m_bEnabled = m_bEnabled;
+			newCfg.m_atooObfuscation = m_atooObfuscation;
+			newCfg.m_strDefaultSequence = m_strDefaultSequence;
 
-			foreach(KeyValuePair<string, string> kvp in m_vWindowSeqPairs)
-				newDic.Set(kvp.Key, kvp.Value);
+			foreach(AutoTypeAssociation a in m_lWindowAssocs)
+				newCfg.Add(a.CloneDeep());
 
-			return newDic;
+			return newCfg;
 		}
 
-		public bool EqualsConfig(AutoTypeConfig cfg)
+		public bool Equals(AutoTypeConfig other)
 		{
-			if(cfg == null) { Debug.Assert(false); return false; }
+			if(other == null) { Debug.Assert(false); return false; }
 
-			if(m_bEnabled != cfg.m_bEnabled) return false;
-			if(m_atooObfuscation != cfg.m_atooObfuscation) return false;
-			if(m_strDefaultSequence != cfg.m_strDefaultSequence) return false;
+			if(m_bEnabled != other.m_bEnabled) return false;
+			if(m_atooObfuscation != other.m_atooObfuscation) return false;
+			if(m_strDefaultSequence != other.m_strDefaultSequence) return false;
 
-			if(m_vWindowSeqPairs.Count != cfg.m_vWindowSeqPairs.Count) return false;
-			foreach(KeyValuePair<string, string> kvp in m_vWindowSeqPairs)
+			if(m_lWindowAssocs.Count != other.m_lWindowAssocs.Count) return false;
+			for(int i = 0; i < m_lWindowAssocs.Count; ++i)
 			{
-				string strValue = cfg.Get(kvp.Key);
-				if((strValue == null) || (strValue != kvp.Value)) return false;
+				if(!m_lWindowAssocs[i].Equals(other.m_lWindowAssocs[i]))
+					return false;
 			}
 
 			return true;
 		}
 
-		/// <summary>
-		/// Set a window/keystroke sequence pair.
-		/// </summary>
-		/// <param name="strWindow">Name of the window. Must not be <c>null</c>.</param>
-		/// <param name="strKeystrokeSequence">Keystroke sequence for the specified
-		/// window. Must not be <c>null</c>.</param>
-		/// <exception cref="System.ArgumentNullException">Thrown if one of the input
-		/// parameters is <c>null</c>.</exception>
-		public void Set(string strWindow, string strKeystrokeSequence)
+		public void Add(AutoTypeAssociation a)
 		{
-			Debug.Assert(strWindow != null); if(strWindow == null) throw new ArgumentNullException("strWindow");
-			Debug.Assert(strKeystrokeSequence != null); if(strKeystrokeSequence == null) throw new ArgumentNullException("strKeystrokeSequence");
+			Debug.Assert(a != null); if(a == null) throw new ArgumentNullException("a");
 
-			m_vWindowSeqPairs[strWindow] = strKeystrokeSequence;
+			m_lWindowAssocs.Add(a);
 		}
 
-		/// <summary>
-		/// Get a keystroke sequence associated with the specified window.
-		/// Returns <c>null</c>, if no sequence can be found.
-		/// </summary>
-		/// <param name="strWindow">Window identifier.</param>
-		/// <returns>Keystroke sequence associated with the specified window.
-		/// The return value is <c>null</c>, if no keystroke sequence has been
-		/// defined for this window yet.</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if the input
-		/// parameter is <c>null</c>.</exception>
-		public string Get(string strWindow)
+		public AutoTypeAssociation GetAt(int iIndex)
 		{
-			Debug.Assert(strWindow != null); if(strWindow == null) throw new ArgumentNullException("strWindow");
+			if((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
+				throw new ArgumentOutOfRangeException("iIndex");
 
-			string str;
-			if(m_vWindowSeqPairs.TryGetValue(strWindow, out str)) return str;
-
-			return null;
+			return m_lWindowAssocs[iIndex];
 		}
 
-		/// <summary>
-		/// Get a keystroke sequence associated with the specified window.
-		/// Returns an empty string (<c>""</c>), if no sequence can be found.
-		/// </summary>
-		/// <param name="strWindow">Window identifier.</param>
-		/// <returns>Keystroke sequence associated with the specified window.
-		/// The return value is an empty string (<c>""</c>), if no keystroke
-		/// sequence has been defined for this window yet.</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if the input
-		/// parameter is <c>null</c>.</exception>
-		public string GetSafe(string strWindow)
+		public void RemoveAt(int iIndex)
 		{
-			Debug.Assert(strWindow != null); if(strWindow == null) throw new ArgumentNullException("strWindow");
+			if((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
+				throw new ArgumentOutOfRangeException("iIndex");
 
-			string str;
-			if(m_vWindowSeqPairs.TryGetValue(strWindow, out str))
-				return str;
-
-			return string.Empty;
-		}
-
-		/// <summary>
-		/// Remove an auto-type entry.
-		/// </summary>
-		/// <param name="strWindow">Window identifier. Must not be <c>null</c>.</param>
-		/// <returns>Returns <c>true</c> if the entry has been removed.</returns>
-		public bool Remove(string strWindow)
-		{
-			Debug.Assert(strWindow != null); if(strWindow == null) throw new ArgumentNullException("strWindow");
-
-			return m_vWindowSeqPairs.Remove(strWindow);
+			m_lWindowAssocs.RemoveAt(iIndex);
 		}
 	}
 }

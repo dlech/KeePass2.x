@@ -111,6 +111,7 @@ namespace KeePass.Forms
 
 			CustomizeForScreenReader();
 			EnableControlsEx();
+			UIUtil.SetFocus(m_tbName, this);
 		}
 
 		private void CustomizeForScreenReader()
@@ -187,14 +188,13 @@ namespace KeePass.Forms
 
 		private void OnBtnAutoTypeEdit(object sender, EventArgs e)
 		{
-			string strName = @"(" + KPRes.AutoType + @")";
+			// string strName = @"(" + KPRes.AutoType + @")";
 
 			AutoTypeConfig atConfig = new AutoTypeConfig();
 			atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
-			dlg.InitEx(atConfig, new ProtectedStringDictionary(),
-				strName, true);
+			dlg.InitEx(atConfig, new ProtectedStringDictionary(), -1, true);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 				m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;

@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.ComponentModel;
+using System.Diagnostics;
 
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
@@ -77,6 +78,7 @@ namespace KeePassLib.Serialization
 		}
 
 		private string m_strUser = string.Empty;
+		[DefaultValue("")]
 		public string UserName
 		{
 			get { return m_strUser; }
@@ -90,6 +92,7 @@ namespace KeePassLib.Serialization
 		}
 
 		private string m_strPassword = string.Empty;
+		[DefaultValue("")]
 		public string Password
 		{
 			get { return m_strPassword; }

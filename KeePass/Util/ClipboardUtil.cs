@@ -32,6 +32,7 @@ using System.Threading;
 using KeePass.App;
 using KeePass.Ecas;
 using KeePass.Native;
+using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.Spr;
 
@@ -76,8 +77,9 @@ namespace KeePass.Util
 			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
 
-			string strData = (bSprCompile ? SprEngine.Compile(strToCopy, false,
-				peEntryInfo, pwReferenceSource, false, false) : strToCopy);
+			string strData = (bSprCompile ? SprEngine.Compile(strToCopy,
+				new SprContext(peEntryInfo, pwReferenceSource,
+				SprCompileFlags.All)) : strToCopy);
 
 			try
 			{
@@ -232,7 +234,7 @@ namespace KeePass.Util
 						NativeMethods.LoseFocus(formContext);
 
 					if(Program.Config.MainWindow.MinimizeAfterClipboardCopy)
-						formContext.WindowState = FormWindowState.Minimized;
+						UIUtil.SetWindowState(formContext, FormWindowState.Minimized);
 				}
 
 				return true;

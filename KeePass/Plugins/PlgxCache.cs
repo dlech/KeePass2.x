@@ -68,7 +68,7 @@ namespace KeePass.Plugins
 			if(Program.Config.Application.PluginCachePath.Length > 0)
 			{
 				string strRoot = SprEngine.Compile(Program.Config.Application.PluginCachePath,
-					false, null, null, false, false);
+					null);
 				if(!string.IsNullOrEmpty(strRoot))
 				{
 					if(strRoot.EndsWith(new string(Path.DirectorySeparatorChar, 1)))
@@ -202,7 +202,8 @@ namespace KeePass.Plugins
 			if(!Directory.Exists(strRoot)) return;
 			
 			DirectoryInfo di = new DirectoryInfo(strRoot);
-			foreach(DirectoryInfo diSub in di.GetDirectories("*", SearchOption.TopDirectoryOnly))
+			foreach(DirectoryInfo diSub in di.GetDirectories("*",
+				SearchOption.TopDirectoryOnly))
 			{
 				try
 				{

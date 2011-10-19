@@ -48,10 +48,10 @@ namespace KeePass.Forms
 		private bool m_bBlockUIUpdate = false;
 		private bool m_bLoadingSettings = false;
 
-		private CheckedLVItemDXList m_cdxSecurityOptions = new CheckedLVItemDXList();
-		private CheckedLVItemDXList m_cdxPolicy = new CheckedLVItemDXList();
-		private CheckedLVItemDXList m_cdxGuiOptions = new CheckedLVItemDXList();
-		private CheckedLVItemDXList m_cdxAdvanced = new CheckedLVItemDXList();
+		private CheckedLVItemDXList m_cdxSecurityOptions = null;
+		private CheckedLVItemDXList m_cdxPolicy = null;
+		private CheckedLVItemDXList m_cdxGuiOptions = null;
+		private CheckedLVItemDXList m_cdxAdvanced = null;
 
 		private HotKeyControlEx m_hkGlobalAutoType = null;
 		private HotKeyControlEx m_hkSelectedAutoType = null;
@@ -102,6 +102,9 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			// Can be invoked by tray command; don't use CenterParent
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
@@ -221,32 +224,34 @@ namespace KeePass.Forms
 			m_lvSecurityOptions.Groups.Add(lvg);
 			Debug.Assert(lvg.ListView == m_lvSecurityOptions);
 
+			m_cdxSecurityOptions = new CheckedLVItemDXList(m_lvSecurityOptions);
+
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnWindowMinimize", m_lvSecurityOptions, lvg, KPRes.LockOnMinimize);
+				"LockOnWindowMinimize", lvg, KPRes.LockOnMinimize);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnSessionSwitch", m_lvSecurityOptions, lvg, KPRes.LockOnSessionSwitch);
+				"LockOnSessionSwitch", lvg, KPRes.LockOnSessionSwitch);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnSuspend", m_lvSecurityOptions, lvg, KPRes.LockOnSuspend);
+				"LockOnSuspend", lvg, KPRes.LockOnSuspend);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnRemoteControlChange", m_lvSecurityOptions, lvg, KPRes.LockOnRemoteControlChange);
+				"LockOnRemoteControlChange", lvg, KPRes.LockOnRemoteControlChange);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"ExitInsteadOfLockingAfterTime", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAfterTime);
+				"ExitInsteadOfLockingAfterTime", lvg, KPRes.ExitInsteadOfLockingAfterTime);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"AlwaysExitInsteadOfLocking", m_lvSecurityOptions, lvg, KPRes.ExitInsteadOfLockingAlways);
+				"AlwaysExitInsteadOfLocking", lvg, KPRes.ExitInsteadOfLockingAlways);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
-				m_lvSecurityOptions, lvg, KPRes.ClipboardClearOnExit);
+				lvg, KPRes.ClipboardClearOnExit);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
-				"UseClipboardViewerIgnoreFormat", m_lvSecurityOptions, lvg,
+				"UseClipboardViewerIgnoreFormat", lvg,
 				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended);
 
 			if(NativeLib.IsLibraryInstalled())
 				m_cdxSecurityOptions.CreateItem(Program.Config.Native, "NativeKeyTransformations",
-					m_lvSecurityOptions, lvg, KPRes.NativeLibUse);
+					lvg, KPRes.NativeLibUse);
 
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "MasterKeyOnSecureDesktop",
-				m_lvSecurityOptions, lvg, KPRes.MasterKeyOnSecureDesktop);
+				lvg, KPRes.MasterKeyOnSecureDesktop);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClearKeyCommandLineParams",
-				m_lvSecurityOptions, lvg, KPRes.ClearKeyCmdLineParams);
+				lvg, KPRes.ClearKeyCmdLineParams);
 
 			m_cdxSecurityOptions.UpdateData(false);
 			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width -
@@ -257,18 +262,22 @@ namespace KeePass.Forms
 			string strDisplayDesc)
 		{
 			ListViewItem lvi = m_cdxPolicy.CreateItem(Program.Config.Security.Policy,
-				strPropertyName, m_lvPolicy, null, strDisplayName + "*");
+				strPropertyName, null, strDisplayName + "*");
 			lvi.SubItems.Add(strDisplayDesc);
 		}
 
 		private void LoadPolicyOptions()
 		{
+			m_cdxPolicy = new CheckedLVItemDXList(m_lvPolicy);
+
 			LoadPolicyOption("Plugins", KPRes.Plugins, KPRes.PolicyPluginsDesc);
 			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc);
 			LoadPolicyOption("ExportNoKey", KPRes.Export + " - " + KPRes.NoKeyRepeat,
 				KPRes.PolicyExportNoKeyDesc);
 			LoadPolicyOption("Import", KPRes.Import, KPRes.PolicyImportDesc);
 			LoadPolicyOption("Print", KPRes.Print, KPRes.PolicyPrintDesc);
+			LoadPolicyOption("PrintNoKey", KPRes.Print + " - " + KPRes.NoKeyRepeat,
+				KPRes.PolicyPrintNoKeyDesc);
 			LoadPolicyOption("NewFile", KPRes.NewDatabase, KPRes.PolicyNewDatabaseDesc);
 			LoadPolicyOption("SaveFile", KPRes.SaveDatabase, KPRes.PolicySaveDatabaseDesc);
 			LoadPolicyOption("AutoType", KPRes.AutoType, KPRes.PolicyAutoTypeDesc);
@@ -296,57 +305,80 @@ namespace KeePass.Forms
 			m_lvGuiOptions.Groups.Add(lvg);
 			Debug.Assert(lvg.ListView == m_lvGuiOptions);
 
+			m_cdxGuiOptions = new CheckedLVItemDXList(m_lvGuiOptions);
+
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CloseButtonMinimizesWindow",
-				m_lvGuiOptions, lvg, KPRes.CloseButtonMinimizes);
+				lvg, KPRes.CloseButtonMinimizes);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeToTray",
-				m_lvGuiOptions, lvg, KPRes.MinimizeToTray);
+				lvg, KPRes.MinimizeToTray);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayed",
-				m_lvGuiOptions, lvg, KPRes.ShowTrayOnlyIfTrayed);
+				lvg, KPRes.ShowTrayOnlyIfTrayed);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathInTitle",
-				m_lvGuiOptions, lvg, KPRes.ShowFullPathInTitleBar);
+				lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DropToBackAfterClipboardCopy",
-				m_lvGuiOptions, lvg, KPRes.DropToBackOnCopy);
+				lvg, KPRes.DropToBackOnCopy);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
-				m_lvGuiOptions, lvg, KPRes.MinimizeAfterCopy);
+				lvg, KPRes.MinimizeAfterCopy);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterLocking",
-				m_lvGuiOptions, lvg, KPRes.MinimizeAfterLocking);
+				lvg, KPRes.MinimizeAfterLocking);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterOpeningDatabase",
-				m_lvGuiOptions, lvg, KPRes.MinimizeAfterOpeningDatabase);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindSearchInPasswords",
-				m_lvGuiOptions, lvg, KPRes.QuickSearchInPasswords);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
-				m_lvGuiOptions, lvg, KPRes.QuickSearchExcludeExpired);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
-				m_lvGuiOptions, lvg, KPRes.FocusResultsAfterQuickFind);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
-				m_lvGuiOptions, lvg, KPRes.FocusQuickFindOnUntray);
+				lvg, KPRes.MinimizeAfterOpeningDatabase);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DisableSaveIfNotModified",
-				m_lvGuiOptions, lvg, KPRes.DisableSaveIfNotModified);
+				lvg, KPRes.DisableSaveIfNotModified);
 
 			lvg = new ListViewGroup(KPRes.EntryList);
 			m_lvGuiOptions.Groups.Add(lvg);
 			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowGridLines",
 			//	m_lvGuiOptions, lvg, KPRes.ShowGridLines);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAutoResizeColumns",
-				m_lvGuiOptions, lvg, KPRes.EntryListAutoResizeColumns);
+				lvg, KPRes.EntryListAutoResizeColumns);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAlternatingBgColors",
-				m_lvGuiOptions, lvg, KPRes.AlternatingBgColors);
+				lvg, KPRes.AlternatingBgColors);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CopyUrlsInsteadOfOpening",
-				m_lvGuiOptions, lvg, KPRes.CopyUrlsInsteadOfOpening);
+				lvg, KPRes.CopyUrlsInsteadOfOpening);
+
+			if(!Program.Config.MainWindow.EntryListShowDerefData)
+			{
+				Debug.Assert(!Program.Config.MainWindow.EntryListShowDerefDataAsync);
+				Program.Config.MainWindow.EntryListShowDerefDataAsync = false;
+			}
+			ListViewItem lviDeref = m_cdxGuiOptions.CreateItem(
+				Program.Config.MainWindow, "EntryListShowDerefData",
+				lvg, KPRes.ShowDerefData + " (" + KPRes.Slow + ")");
+			ListViewItem lviDerefAsync = m_cdxGuiOptions.CreateItem(
+				Program.Config.MainWindow, "EntryListShowDerefDataAsync",
+				lvg, KPRes.ShowDerefDataAsync + " (" + KPRes.IncompatibleWithSorting + ")");
+			m_cdxGuiOptions.AddLink(lviDeref, lviDerefAsync, CheckItemLinkType.UncheckedUnchecked);
+			m_cdxGuiOptions.AddLink(lviDerefAsync, lviDeref, CheckItemLinkType.CheckedChecked);
 
 			lvg = new ListViewGroup(KPRes.EntryView);
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow.EntryView, "HideProtectedCustomStrings",
-				m_lvGuiOptions, lvg, KPRes.EntryViewHideProtectedCustomStrings);
+				lvg, KPRes.EntryViewHideProtectedCustomStrings);
+
+			lvg = new ListViewGroup(KPRes.QuickSearchTb);
+			m_lvGuiOptions.Groups.Add(lvg);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindSearchInPasswords",
+				lvg, KPRes.QuickSearchInPwFields);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
+				lvg, KPRes.QuickSearchExclExpired);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindDerefData",
+				lvg, KPRes.QuickSearchDerefData + " (" + KPRes.Slow + ")");
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
+				lvg, KPRes.FocusResultsAfterQuickSearch);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnRestore",
+				lvg, KPRes.FocusQuickFindOnRestore);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
+				lvg, KPRes.FocusQuickFindOnUntray);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "UseCustomToolStripRenderer",
-				m_lvGuiOptions, lvg, KPRes.UseCustomToolStripRenderer);
+				lvg, KPRes.UseCustomToolStripRenderer);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ForceSystemFontUnix",
-				m_lvGuiOptions, lvg, KPRes.ForceSystemFontUnix);
+				lvg, KPRes.ForceSystemFontUnix);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbMntncResultsDialog",
-				m_lvGuiOptions, lvg, KPRes.DbMntncResults);
+				lvg, KPRes.DbMntncResults);
 
 			m_cdxGuiOptions.UpdateData(false);
 			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width -
@@ -388,61 +420,73 @@ namespace KeePass.Forms
 		{
 			m_lvAdvanced.Columns.Add(string.Empty, 200); // Resize below
 
+			m_cdxAdvanced = new CheckedLVItemDXList(m_lvAdvanced);
+
 			ListViewGroup lvg = new ListViewGroup(KPRes.StartAndExit);
 			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.Start, "OpenLastFile",
-				m_lvAdvanced, lvg, KPRes.AutoRememberOpenLastFile);
+				lvg, KPRes.AutoRememberOpenLastFile);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "LimitToSingleInstance",
-				m_lvAdvanced, lvg, KPRes.LimitSingleInstance);
+				lvg, KPRes.LimitSingleInstance);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.Start, "CheckForUpdate",
-				m_lvAdvanced, lvg, KPRes.CheckForUpdAtStart);
+				lvg, KPRes.CheckForUpdAtStart);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.Start, "MinimizedAndLocked",
-				m_lvAdvanced, lvg, KPRes.StartMinimizedAndLocked);
+				lvg, KPRes.StartMinimizedAndLocked);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.FileClosing, "AutoSave",
-				m_lvAdvanced, lvg, KPRes.AutoSaveAtExit);
+				lvg, KPRes.AutoSaveAtExit);
 
 			lvg = new ListViewGroup(KPRes.AfterDatabaseOpen);
 			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.FileOpening, "ShowExpiredEntries",
-				m_lvAdvanced, lvg, KPRes.AutoShowExpiredEntries);
+				lvg, KPRes.AutoShowExpiredEntries);
 			m_cdxAdvanced.CreateItem(Program.Config.Application.FileOpening, "ShowSoonToExpireEntries",
-				m_lvAdvanced, lvg, KPRes.AutoShowSoonToExpireEntries);
+				lvg, KPRes.AutoShowSoonToExpireEntries);
 
 			lvg = new ListViewGroup(KPRes.AutoType);
 			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByTitle",
-				m_lvAdvanced, lvg, KPRes.AutoTypeMatchByTitle);
+				lvg, KPRes.AutoTypeMatchByTitle);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByUrlInTitle",
+				lvg, KPRes.AutoTypeMatchByUrlInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypePrependInitSequenceForIE",
-				m_lvAdvanced, lvg, KPRes.AutoTypePrependInitSeqForIE);
+				lvg, KPRes.AutoTypePrependInitSeqForIE);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeReleaseAltWithKeyPress",
-				m_lvAdvanced, lvg, KPRes.AutoTypeReleaseAltWithKeyPress);
+				lvg, KPRes.AutoTypeReleaseAltWithKeyPress);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnWindowChange",
-				m_lvAdvanced, lvg, KPRes.AutoTypeCancelOnWindowChange);
+				lvg, KPRes.AutoTypeCancelOnWindowChange);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
-			m_cdxAdvanced.CreateItem(Program.Config.Integration, "SearchKeyFiles",
-				m_lvAdvanced, lvg, KPRes.SearchKeyFiles);
-			m_cdxAdvanced.CreateItem(Program.Config.Integration, "SearchKeyFilesOnRemovableMedia",
-				m_lvAdvanced, lvg, KPRes.SearchKeyFilesAlsoOnRemovable);
+
+			if(!Program.Config.Integration.SearchKeyFiles)
+				Program.Config.Integration.SearchKeyFilesOnRemovableMedia = false;
+			ListViewItem lviSearch = m_cdxAdvanced.CreateItem(
+				Program.Config.Integration, "SearchKeyFiles",
+				lvg, KPRes.SearchKeyFiles);
+			ListViewItem lviSearchRmv = m_cdxAdvanced.CreateItem(
+				Program.Config.Integration, "SearchKeyFilesOnRemovableMedia",
+				lvg, KPRes.SearchKeyFilesAlsoOnRemovable);
+			m_cdxAdvanced.AddLink(lviSearch, lviSearchRmv, CheckItemLinkType.UncheckedUnchecked);
+			m_cdxAdvanced.AddLink(lviSearchRmv, lviSearch, CheckItemLinkType.CheckedChecked);
+
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RememberKeySources",
-				m_lvAdvanced, lvg, KPRes.RememberKeySources);
+				lvg, KPRes.RememberKeySources);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
-				m_lvAdvanced, lvg, KPRes.RememberHidingSettings);
+				lvg, KPRes.RememberHidingSettings);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "UnhideButtonAlsoUnhidesSource",
-				m_lvAdvanced, lvg, KPRes.UnhideSourceCharactersToo);
+				lvg, KPRes.UnhideSourceCharactersToo);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "VerifyWrittenFileAfterSaving",
-				m_lvAdvanced, lvg, KPRes.VerifyWrittenFileAfterSave);
+				lvg, KPRes.VerifyWrittenFileAfterSave);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
-				m_lvAdvanced, lvg, KPRes.UseTransactedDatabaseWrites);
+				lvg, KPRes.UseTransactedDatabaseWrites);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "TanExpiresOnUse",
-				m_lvAdvanced, lvg, KPRes.TanExpiresOnUse);
+				lvg, KPRes.TanExpiresOnUse);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RecycleBinCollapse",
-				m_lvAdvanced, lvg, KPRes.RecycleBinCollapse);
+				lvg, KPRes.RecycleBinCollapse);
 			m_cdxAdvanced.CreateItem(Program.Config.UI, "SecureDesktopPlaySound",
-				m_lvAdvanced, lvg, KPRes.SecDeskPlaySound);
+				lvg, KPRes.SecDeskPlaySound);
 			m_cdxAdvanced.CreateItem(Program.Config.UI, "OptimizeForScreenReader",
-				m_lvAdvanced, lvg, KPRes.OptimizeForScreenReader);
+				lvg, KPRes.OptimizeForScreenReader);
 
 			m_cdxAdvanced.UpdateData(false);
 			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width -
@@ -531,6 +575,11 @@ namespace KeePass.Forms
 			int nTab = m_tabMain.SelectedIndex;
 			if((nTab >= 0) && (nTab < m_tabMain.TabPages.Count))
 				Program.Config.Defaults.OptionsTabIndex = (uint)nTab;
+
+			m_cdxSecurityOptions.Release();
+			m_cdxPolicy.Release();
+			m_cdxGuiOptions.Release();
+			m_cdxAdvanced.Release();
 		}
 
 		private static void ChangeHotKey(ref Keys kPrevHK, HotKeyControlEx hkControl,

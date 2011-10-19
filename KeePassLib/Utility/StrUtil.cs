@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Drawing;
+// using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
@@ -1039,6 +1040,86 @@ namespace KeePassLib.Utility
 		{
 			if(x.Length == y.Length) return 0;
 			return ((x.Length > y.Length) ? -1 : 1);
+		}
+
+		/* public static string ImageToDataUri(Image img)
+		{
+			if(img == null) { Debug.Assert(false); return string.Empty; }
+
+			MemoryStream ms = new MemoryStream();
+			img.Save(ms, ImageFormat.Png);
+
+			byte[] pbImage = ms.ToArray();
+			string strImage = Convert.ToBase64String(pbImage);
+
+			ms.Close();
+			return ("data:image/png;base64," + strImage);
+		} */
+
+		public static bool IsDataUri(string strUri)
+		{
+			if(strUri == null) { Debug.Assert(false); return false; }
+
+			return strUri.StartsWith("data:", StrUtil.CaseIgnoreCmp);
+		}
+
+		/// <summary>
+		/// Create a data URI (according to RFC 2397).
+		/// </summary>
+		/// <param name="pbData">Data to encode.</param>
+		/// <param name="strMimeType">Optional MIME type. If <c>null</c>,
+		/// an appropriate type is used.</param>
+		/// <returns>Data URI.</returns>
+		public static string DataToDataUri(byte[] pbData, string strMimeType)
+		{
+			if(pbData == null) throw new ArgumentNullException("pbData");
+
+			if(strMimeType == null) strMimeType = "application/octet-stream";
+
+#if !KeePassLibSD
+			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
+				pbData, Base64FormattingOptions.None));
+#else
+			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
+				pbData));
+#endif
+		}
+
+		/// <summary>
+		/// Convert a data URI (according to RFC 2397) to binary data.
+		/// </summary>
+		/// <param name="strDataUri">Data URI to decode.</param>
+		/// <returns>Decoded binary data.</returns>
+		public static byte[] DataUriToData(string strDataUri)
+		{
+			if(strDataUri == null) throw new ArgumentNullException("strDataUri");
+			if(!strDataUri.StartsWith("data:", StrUtil.CaseIgnoreCmp)) return null;
+
+			int iSep = strDataUri.IndexOf(',');
+			if(iSep < 0) return null;
+
+			string strDesc = strDataUri.Substring(5, iSep - 5);
+			bool bBase64 = strDesc.EndsWith(";base64", StrUtil.CaseIgnoreCmp);
+
+			string strData = strDataUri.Substring(iSep + 1);
+
+			if(bBase64) return Convert.FromBase64String(strData);
+
+			MemoryStream ms = new MemoryStream();
+
+			string[] v = strData.Split('%');
+			byte[] pb = Encoding.ASCII.GetBytes(v[0]);
+			ms.Write(pb, 0, pb.Length);
+			for(int i = 1; i < v.Length; ++i)
+			{
+				ms.WriteByte(Convert.ToByte(v[i].Substring(0, 2), 16));
+				pb = Encoding.ASCII.GetBytes(v[i].Substring(2));
+				ms.Write(pb, 0, pb.Length);
+			}
+
+			pb = ms.ToArray();
+			ms.Close();
+			return pb;
 		}
 	}
 }

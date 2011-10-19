@@ -157,6 +157,7 @@ namespace KeePass.Forms
 
 			SearchParameters sp = SearchParameters.None;
 			sp.SearchString = strSearch;
+			sp.RespectEntrySearchingDisabled = false;
 
 			if(tchField == 'T') sp.SearchInTitles = true;
 			else if(tchField == 'U') sp.SearchInUserNames = true;
@@ -167,7 +168,7 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); return true; }
 
 			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
-			m_pgEntrySource.SearchEntries(sp, l, false);
+			m_pgEntrySource.SearchEntries(sp, l);
 
 			if(l.UCount == 0) { Debug.Assert(false); return false; }
 			else if(l.UCount == 1) return false;
@@ -177,7 +178,7 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			if(!this.CreateResultRef()) this.DialogResult = DialogResult.None;
+			if(!CreateResultRef()) this.DialogResult = DialogResult.None;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -218,7 +219,7 @@ namespace KeePass.Forms
 				sp.SearchInPasswords = true;
 
 				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();
-				m_pgEntrySource.SearchEntries(sp, lResults, true);
+				m_pgEntrySource.SearchEntries(sp, lResults);
 
 				UIUtil.CreateEntryList(m_lvEntries, lResults, m_vColumns, m_ilIcons);
 			}

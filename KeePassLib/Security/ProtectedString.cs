@@ -35,6 +35,9 @@ namespace KeePassLib.Security
 	/// <summary>
 	/// Represents an in-memory encrypted string.
 	/// </summary>
+#if !KeePassLibSD
+	[DebuggerDisplay(@"{ReadString()}")]
+#endif
 	public sealed class ProtectedString
 	{
 		// SecureString objects are supported only on Windows 2000 SP3 and
