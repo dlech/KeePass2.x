@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -541,7 +541,7 @@ namespace KeePass.UI
 		/// Fill a <c>ListView</c> with password entries.
 		/// </summary>
 		public static void CreateEntryList(ListView lv, List<AutoTypeCtx> lCtxs,
-			ImageList ilIcons)
+			AceAutoTypeCtxFlags f, ImageList ilIcons)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(lCtxs == null) throw new ArgumentNullException("lCtxs");
@@ -553,10 +553,20 @@ namespace KeePass.UI
 			lv.ShowGroups = true;
 			lv.SmallImageList = ilIcons;
 
+			Debug.Assert((f & AceAutoTypeCtxFlags.ColTitle) != AceAutoTypeCtxFlags.None);
+			f |= AceAutoTypeCtxFlags.ColTitle; // Enforce title
+
 			lv.Columns.Add(KPRes.Title);
-			lv.Columns.Add(KPRes.UserName);
-			lv.Columns.Add(KPRes.Url);
-			lv.Columns.Add(KPRes.Sequence);
+			if((f & AceAutoTypeCtxFlags.ColUserName) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.UserName);
+			if((f & AceAutoTypeCtxFlags.ColPassword) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.Password);
+			if((f & AceAutoTypeCtxFlags.ColUrl) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.Url);
+			if((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.Notes);
+			if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.Sequence);
 
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
 			DateTime dtNow = DateTime.Now;
@@ -602,11 +612,21 @@ namespace KeePass.UI
 					else { Debug.Assert(false); lvi.ImageIndex = (int)pe.IconId; }
 				}
 
-				lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
-					PwDefs.UserNameField), sprCtx));
-				lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
-					PwDefs.UrlField), sprCtx));
-				lvi.SubItems.Add(ctx.Sequence);
+				if((f & AceAutoTypeCtxFlags.ColUserName) != AceAutoTypeCtxFlags.None)
+					lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
+						PwDefs.UserNameField), sprCtx));
+				if((f & AceAutoTypeCtxFlags.ColPassword) != AceAutoTypeCtxFlags.None)
+					lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
+						PwDefs.PasswordField), sprCtx));
+				if((f & AceAutoTypeCtxFlags.ColUrl) != AceAutoTypeCtxFlags.None)
+					lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
+						PwDefs.UrlField), sprCtx));
+				if((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
+					lvi.SubItems.Add(StrUtil.MultiToSingleLine(SprEngine.Compile(
+						pe.Strings.ReadSafe(PwDefs.NotesField), sprCtx)));
+				if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
+					lvi.SubItems.Add(ctx.Sequence);
+				Debug.Assert(lvi.SubItems.Count == lv.Columns.Count);
 
 				if(!pe.ForegroundColor.IsEmpty)
 					lvi.ForeColor = pe.ForegroundColor;
@@ -627,14 +647,13 @@ namespace KeePass.UI
 				}
 			}
 
-			int nColWidth = (lv.ClientRectangle.Width - GetVScrollBarWidth()) /
-				lv.Columns.Count;
+			lv.EndUpdate();
+
+			int nColWidth = lv.ClientRectangle.Width / lv.Columns.Count;
 			foreach(ColumnHeader ch in lv.Columns)
 			{
 				ch.Width = nColWidth;
 			}
-
-			lv.EndUpdate();
 		}
 
 		public static int GetVScrollBarWidth()
@@ -836,14 +855,45 @@ namespace KeePass.UI
 		{
 			if((tn == null) || (pg == null)) { Debug.Assert(false); return; }
 
-			if(pg.Notes.Length > 0)
-			{
-				string str = pg.Name + MessageService.NewParagraph + pg.Notes;
+			string str = GetPwGroupToolTip(pg);
+			if(str == null) return;
 
-				try { tn.ToolTipText = str; }
-				catch(Exception) { Debug.Assert(false); }
-			}
+			try { tn.ToolTipText = str; }
+			catch(Exception) { Debug.Assert(false); }
 		}
+
+		public static string GetPwGroupToolTip(PwGroup pg)
+		{
+			if(pg == null) { Debug.Assert(false); return null; }
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append(pg.Name);
+
+			string strNotes = pg.Notes.Trim();
+			if(strNotes.Length > 0)
+			{
+				sb.Append(MessageService.NewParagraph);
+				sb.Append(strNotes);
+			}
+			else return null;
+
+			// uint uSubGroups, uEntries;
+			// pg.GetCounts(true, out uSubGroups, out uEntries);
+			// sb.Append(MessageService.NewParagraph);
+			// sb.Append(KPRes.Subgroups); sb.Append(": "); sb.Append(uSubGroups);
+			// sb.Append(MessageService.NewLine);
+			// sb.Append(KPRes.Entries); sb.Append(": "); sb.Append(uEntries);
+
+			return sb.ToString();
+		}
+
+		// public static string GetPwGroupToolTipTN(TreeNode tn)
+		// {
+		//	if(tn == null) { Debug.Assert(false); return null; }
+		//	PwGroup pg = (tn.Tag as PwGroup);
+		//	if(pg == null) { Debug.Assert(false); return null; }
+		//	return GetPwGroupToolTip(pg);
+		// }
 
 		public static Color LightenColor(Color clrBase, double dblFactor)
 		{
@@ -961,7 +1011,6 @@ namespace KeePass.UI
 			if(pb == null) throw new ArgumentNullException("pb");
 
 			MemoryStream ms = new MemoryStream(pb, false);
-
 			try { return Image.FromStream(ms); }
 			catch(Exception)
 			{
@@ -970,14 +1019,15 @@ namespace KeePass.UI
 
 				throw;
 			}
+			finally { ms.Close(); }
 		}
 
 		private static Image TryLoadIco(byte[] pb)
 		{
 			MemoryStream ms = new MemoryStream(pb, false);
-
 			try { return (new Icon(ms)).ToBitmap(); }
 			catch(Exception) { }
+			finally { ms.Close(); }
 
 			return null;
 		}
@@ -1006,12 +1056,32 @@ namespace KeePass.UI
 		public static void ConfigureTbButton(ToolStripItem tb, string strText,
 			string strTooltip)
 		{
+			ConfigureTbButton(tb, strText, strTooltip, null);
+		}
+
+		private static char[] m_vTbTrim = null;
+		public static void ConfigureTbButton(ToolStripItem tb, string strText,
+			string strTooltip, ToolStripMenuItem tsmiEquiv)
+		{
 			if(strText != null) tb.Text = strText;
 
-			if(strTooltip != null)
-				tb.ToolTipText = StrUtil.RemoveAccelerator(strTooltip);
-			else if(strText != null)
-				tb.ToolTipText = StrUtil.RemoveAccelerator(strText);
+			if(m_vTbTrim == null)
+				m_vTbTrim = new char[] { ' ', '\t', '\r', '\n', '.', '\u2026' };
+
+			string strTip = (strTooltip ?? strText);
+			if(strTip == null) return;
+
+			strTip = StrUtil.RemoveAccelerator(strTip);
+			strTip = strTip.Trim(m_vTbTrim);
+
+			if((tsmiEquiv != null) && (strTip.Length > 0))
+			{
+				string strShortcut = tsmiEquiv.ShortcutKeyDisplayString;
+				if(!string.IsNullOrEmpty(strShortcut))
+					strTip += " (" + strShortcut + ")";
+			}
+
+			tb.ToolTipText = strTip;
 		}
 
 		public static void CreateGroupList(PwGroup pgContainer, ComboBox cmb,
@@ -1918,6 +1988,35 @@ namespace KeePass.UI
 				}
 			}
 			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+		}
+
+		private static KeysConverter m_convKeys = null;
+		public static string GetKeysName(Keys k)
+		{
+			if(m_convKeys == null) m_convKeys = new KeysConverter();
+			return m_convKeys.ConvertToString(k);
+		}
+
+		/// <summary>
+		/// Assign shortcut keys to a menu item. This method uses
+		/// custom-translated display strings.
+		/// </summary>
+		public static void AssignShortcut(ToolStripMenuItem tsmi, Keys k)
+		{
+			if(tsmi == null) { Debug.Assert(false); return; }
+
+			tsmi.ShortcutKeys = k;
+
+			string str = string.Empty;
+			if((k & Keys.Control) != Keys.None)
+				str += KPRes.KeyboardKeyCtrl + "+";
+			if((k & Keys.Alt) != Keys.None)
+				str += KPRes.KeyboardKeyAlt + "+";
+			if((k & Keys.Shift) != Keys.None)
+				str += KPRes.KeyboardKeyShift + "+";
+			str += GetKeysName(k & Keys.KeyCode);
+
+			tsmi.ShortcutKeyDisplayString = str;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #pragma warning(push)
 #pragma warning(disable: 4996) // SCL warning
+#include <boost/smart_ptr.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #pragma warning(pop)
 
@@ -197,16 +198,16 @@ std_string FindNGen()
 	if(strRoot.size() == 0) return strNGen;
 	EnsureTerminatingSeparator(strRoot);
 
-	FILETIME ftCreation;
-	ZeroMemory(&ftCreation, sizeof(FILETIME));
-	FindNGenRec(strRoot, strNGen, ftCreation);
+	ULONGLONG ullVersion = 0;
+	FindNGenRec(strRoot, strNGen, ullVersion);
 
 	return strNGen;
 }
 
 #pragma warning(push)
 #pragma warning(disable: 4127) // Conditional expression is constant
-void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& ftCreation)
+void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
+	ULONGLONG& ullVersion)
 {
 	const std_string strSearch = strPath + _T("*.*");
 	const std_string strNGen = _T("ngen.exe");
@@ -221,15 +222,15 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& f
 		if((wfd.cFileName[0] == 0) || (_tcsicmp(wfd.cFileName, _T(".")) == 0) ||
 			(_tcsicmp(wfd.cFileName, _T("..")) == 0)) { }
 		else if((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-			FindNGenRec((strPath + wfd.cFileName) + _T("\\"), strNGenPath, ftCreation);
+			FindNGenRec((strPath + wfd.cFileName) + _T("\\"), strNGenPath, ullVersion);
 		else if(_tcsicmp(wfd.cFileName, strNGen.c_str()) == 0)
 		{
-			if((wfd.ftCreationTime.dwHighDateTime > ftCreation.dwHighDateTime) ||
-				((wfd.ftCreationTime.dwHighDateTime == ftCreation.dwHighDateTime) &&
-				(wfd.ftCreationTime.dwLowDateTime > ftCreation.dwLowDateTime)))
+			const std_string strFullPath = strPath + strNGen;
+			const ULONGLONG ullThisVer = SiuGetFileVersion(strFullPath);
+			if(ullThisVer >= ullVersion)
 			{
-				strNGenPath = strPath + wfd.cFileName;
-				ftCreation = wfd.ftCreationTime;
+				strNGenPath = strFullPath;
+				ullVersion = ullThisVer;
 			}
 		}
 
@@ -239,6 +240,29 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& f
 	FindClose(hFind);
 }
 #pragma warning(pop)
+
+ULONGLONG SiuGetFileVersion(const std_string& strFilePath)
+{
+	DWORD dwDummy = 0;
+	const DWORD dwVerSize = GetFileVersionInfoSize(
+		strFilePath.c_str(), &dwDummy);
+	if(dwVerSize == 0) return 0;
+
+	boost::scoped_array<BYTE> vVerInfo(new BYTE[dwVerSize]);
+	if(vVerInfo.get() == NULL) return 0; // Out of memory
+
+	if(GetFileVersionInfo(strFilePath.c_str(), 0, dwVerSize,
+		vVerInfo.get()) == FALSE) return 0;
+
+	VS_FIXEDFILEINFO* pFileInfo = NULL;
+	UINT uFixedInfoLen = 0;
+	if(VerQueryValue(vVerInfo.get(), _T("\\"), (LPVOID*)&pFileInfo,
+		&uFixedInfoLen) == FALSE) return 0;
+	if(pFileInfo == NULL) return 0;
+
+	return ((static_cast<ULONGLONG>(pFileInfo->dwFileVersionMS) <<
+		32) | static_cast<ULONGLONG>(pFileInfo->dwFileVersionLS));
+}
 
 void CheckDotNetInstalled()
 {

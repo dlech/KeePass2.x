@@ -189,7 +189,6 @@
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 1;
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
-			this.m_cbHidePassword.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
 			// 
 			// m_btnSaveKeyFile
 			// 

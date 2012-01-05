@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,10 +31,11 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.3.4
+	// 2.3.4-2.6.2+
 	internal sealed class PwAgentXml234 : FileFormatProvider
 	{
 		private const string ElemGroup = "group";
@@ -66,8 +67,11 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
+			StreamReader sr = new StreamReader(sInput, Encoding.Default);
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(sInput);
+			xmlDoc.Load(sr);
+			sr.Close();
+			sInput.Close();
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
 
@@ -109,8 +113,8 @@ namespace KeePass.DataExchange.Formats
 						pwStorage.MemoryProtection.ProtectTitle,
 						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryType)
-					pe.IconId = (XmlUtil.SafeInnerText(xmlChild) != "1") ?
-						PwIcon.Key : PwIcon.PaperNew;
+					pe.IconId = ((XmlUtil.SafeInnerText(xmlChild) != "1") ?
+						PwIcon.Key : PwIcon.PaperNew);
 				else if(xmlChild.Name == ElemEntryUser)
 					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectUserName,
@@ -129,21 +133,40 @@ namespace KeePass.DataExchange.Formats
 						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemEntryCreationTime)
 				{
-					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
+					if(ParseDate(xmlChild, out dt))
 						pe.CreationTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryLastModTime)
 				{
-					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
+					if(ParseDate(xmlChild, out dt))
 						pe.LastModificationTime = dt;
 				}
 				else if(xmlChild.Name == ElemEntryExpireTime)
 				{
-					if(DateTime.TryParse(XmlUtil.SafeInnerText(xmlChild), out dt))
+					if(ParseDate(xmlChild, out dt))
+					{
 						pe.ExpiryTime = dt;
+						pe.Expires = true;
+					}
 				}
 				else { Debug.Assert(false); }
 			}
+		}
+
+		private static bool ParseDate(XmlNode xn, out DateTime dtOut)
+		{
+			string strDate = XmlUtil.SafeInnerText(xn);
+			if(strDate.Length == 0)
+			{
+				dtOut = DateTime.Now;
+				return false;
+			}
+
+			if(DateTime.TryParse(strDate, out dtOut)) return true;
+
+			Debug.Assert(false);
+			dtOut = DateTime.Now;
+			return false;
 		}
 	}
 }

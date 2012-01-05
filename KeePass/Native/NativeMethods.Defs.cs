@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -88,6 +88,8 @@ namespace KeePass.Native
 		internal const int GWL_EXSTYLE = -20;
 
 		internal const int WS_VISIBLE = 0x10000000;
+
+		internal const int SW_SHOW = 5;
 
 		internal const int GCLP_HICON = -14;
 		internal const int GCLP_HICONSM = -34;
@@ -214,6 +216,10 @@ namespace KeePass.Native
 		// internal const uint LVGS_SELECTED = 0x00000020;
 		// internal const uint LVGS_SUBSETED = 0x00000040;
 		// internal const uint LVGS_SUBSETLINKFOCUSED = 0x00000080;
+
+		// private const int TTN_FIRST = -520;
+		// internal const int TTN_NEEDTEXTA = TTN_FIRST;
+		// internal const int TTN_NEEDTEXTW = TTN_FIRST - 10;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

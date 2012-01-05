@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -124,6 +124,14 @@ namespace KeePass.App.Configuration
 			set { m_bMatchByUrlInTitle = value; }
 		}
 
+		private bool m_bMatchByUrlHostInTitle = false;
+		[DefaultValue(false)]
+		public bool AutoTypeMatchByUrlHostInTitle
+		{
+			get { return m_bMatchByUrlHostInTitle; }
+			set { m_bMatchByUrlHostInTitle = value; }
+		}
+
 		private bool m_bPrependInitSeqIE = true;
 		[DefaultValue(true)]
 		public bool AutoTypePrependInitSequenceForIE
@@ -138,6 +146,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bSpecialReleaseAlt; }
 			set { m_bSpecialReleaseAlt = value; }
+		}
+
+		private bool m_bAdjustKeybLayout = true;
+		[DefaultValue(true)]
+		public bool AutoTypeAdjustKeyboardLayout
+		{
+			get { return m_bAdjustKeybLayout; }
+			set { m_bAdjustKeybLayout = value; }
 		}
 
 		private bool m_bCancelOnWindowChange = false;

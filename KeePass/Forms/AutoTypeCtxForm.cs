@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -40,8 +41,10 @@ namespace KeePass.Forms
 
 		private string m_strInitialFormRect = string.Empty;
 		private string m_strInitialColWidths = string.Empty;
-
 		private int m_nBannerWidth = -1;
+
+		private ContextMenuStrip m_ctxTools = null;
+		private ToolStripMenuItem m_tsmiColumns = null;
 
 		private AutoTypeCtx m_atcSel = null;
 		public AutoTypeCtx SelectedCtx
@@ -76,18 +79,13 @@ namespace KeePass.Forms
 			this.MinimumSize = new Size(550, 300);
 
 			UIUtil.SetExplorerTheme(m_lvItems.Handle);
-
 			if(UISystemFonts.ListFont != null)
 				m_lvItems.Font = UISystemFonts.ListFont;
 
 			if(m_ilIcons != null) m_lvItems.SmallImageList = m_ilIcons;
 			else { Debug.Assert(false); m_ilIcons = new ImageList(); }
 
-			UIUtil.CreateEntryList(m_lvItems, m_lCtxs, m_ilIcons);
-
-			int nWidth = m_lvItems.ClientRectangle.Width / m_lvItems.Columns.Count;
-			for(int i = 0; i < m_lvItems.Columns.Count; ++i)
-				m_lvItems.Columns[i].Width = nWidth;
+			RecreateEntryList();
 
 			string strColWidths = Program.Config.UI.AutoTypeCtxColumnWidths;
 			if(strColWidths.Length > 0) UIUtil.SetColumnWidths(m_lvItems, strColWidths);
@@ -97,6 +95,13 @@ namespace KeePass.Forms
 			this.BringToFront();
 			this.Activate();
 			UIUtil.SetFocus(m_lvItems, this);
+		}
+
+		private void RecreateEntryList()
+		{
+			long lFlags = Program.Config.UI.AutoTypeCtxFlags;
+			UIUtil.CreateEntryList(m_lvItems, m_lCtxs, (AceAutoTypeCtxFlags)lFlags,
+				m_ilIcons);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -114,6 +119,8 @@ namespace KeePass.Forms
 			string strRect = UIUtil.GetWindowScreenRect(this);
 			if(strRect != m_strInitialFormRect)
 				Program.Config.UI.AutoTypeCtxRect = strRect;
+
+			DestroyToolsContextMenu();
 
 			if(m_ilIcons != null)
 			{
@@ -161,6 +168,87 @@ namespace KeePass.Forms
 		private void OnFormResize(object sender, EventArgs e)
 		{
 			ProcessResize();
+		}
+
+		private void DestroyToolsContextMenu()
+		{
+			if(m_ctxTools == null) return;
+
+			foreach(ToolStripItem tsi in m_tsmiColumns.DropDownItems)
+				tsi.Click -= this.OnToggleColumn;
+
+			m_tsmiColumns = null;
+			m_ctxTools.Dispose();
+			m_ctxTools = null;
+		}
+
+		private void RecreateToolsContextMenu()
+		{
+			DestroyToolsContextMenu();
+
+			m_ctxTools = new ContextMenuStrip();
+			m_tsmiColumns = new ToolStripMenuItem(KPRes.Columns);
+			m_ctxTools.Items.Add(m_tsmiColumns);
+
+			long lFlags = Program.Config.UI.AutoTypeCtxFlags;
+
+			ToolStripMenuItem tsmi = new ToolStripMenuItem(KPRes.Title);
+			tsmi.Checked = true;
+			tsmi.Tag = AceAutoTypeCtxFlags.ColTitle;
+			tsmi.Click += this.OnToggleColumn;
+			tsmi.Enabled = false;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
+			tsmi = new ToolStripMenuItem(KPRes.UserName);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColUserName) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColUserName;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
+			tsmi = new ToolStripMenuItem(KPRes.Password);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColPassword) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColPassword;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
+			tsmi = new ToolStripMenuItem(KPRes.Url);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColUrl) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColUrl;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
+			tsmi = new ToolStripMenuItem(KPRes.Notes);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColNotes) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColNotes;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
+			tsmi = new ToolStripMenuItem(KPRes.Sequence);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColSequence) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColSequence;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+		}
+
+		private void OnToggleColumn(object sender, EventArgs e)
+		{
+			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
+			if(tsmi == null) { Debug.Assert(false); return; }
+
+			AceAutoTypeCtxFlags f = (AceAutoTypeCtxFlags)tsmi.Tag;
+			long lFlags = Program.Config.UI.AutoTypeCtxFlags;
+
+			lFlags ^= (long)f;
+			lFlags |= (long)AceAutoTypeCtxFlags.ColTitle; // Enforce title
+
+			Program.Config.UI.AutoTypeCtxFlags = lFlags;
+			RecreateEntryList();
+		}
+
+		private void OnBtnTools(object sender, EventArgs e)
+		{
+			RecreateToolsContextMenu();
+			m_ctxTools.Show(m_btnTools, 0, m_btnTools.Height);
 		}
 	}
 }

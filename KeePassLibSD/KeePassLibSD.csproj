@@ -230,6 +230,9 @@
     <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
       <Link>Serialization\BinaryReaderEx.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\FileLock.cs">
+      <Link>Serialization\FileLock.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Serialization\FileTransactionEx.cs">
       <Link>Serialization\FileTransactionEx.cs</Link>
     </Compile>

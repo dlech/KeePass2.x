@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ namespace KeePassLib.Cryptography
 
 			TestHmacOtp();
 
-			TestProtectedMemory();
+			TestProtectedObjects();
 			TestStrUtil();
 			TestUrlUtil();
 
@@ -243,7 +243,7 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestProtectedMemory()
+		private static void TestProtectedObjects()
 		{
 #if DEBUG
 			byte[] pbData = Encoding.ASCII.GetBytes("Test Test Test Test");
@@ -259,9 +259,43 @@ namespace KeePassLib.Cryptography
 			byte[] pbData3 = Encoding.ASCII.GetBytes("Test Test Test Test Test");
 			ProtectedBinary pb2 = new ProtectedBinary(true, pbData2);
 			ProtectedBinary pb3 = new ProtectedBinary(true, pbData3);
-			if(!pb.EqualsValue(pb2)) throw new SecurityException("ProtectedBinary-4");
-			if(pb.EqualsValue(pb3)) throw new SecurityException("ProtectedBinary-5");
-			if(pb2.EqualsValue(pb3)) throw new SecurityException("ProtectedBinary-6");
+			if(!pb.Equals(pb2)) throw new SecurityException("ProtectedBinary-4");
+			if(pb.Equals(pb3)) throw new SecurityException("ProtectedBinary-5");
+			if(pb2.Equals(pb3)) throw new SecurityException("ProtectedBinary-6");
+
+			if(pb.GetHashCode() != pb2.GetHashCode())
+				throw new SecurityException("ProtectedBinary-7");
+			if(!((object)pb).Equals((object)pb2))
+				throw new SecurityException("ProtectedBinary-8");
+			if(((object)pb).Equals((object)pb3))
+				throw new SecurityException("ProtectedBinary-9");
+			if(((object)pb2).Equals((object)pb3))
+				throw new SecurityException("ProtectedBinary-10");
+
+			ProtectedString ps = new ProtectedString();
+			if(ps.Length != 0) throw new SecurityException("ProtectedString-1");
+			if(!ps.IsEmpty) throw new SecurityException("ProtectedString-2");
+			if(ps.ReadString().Length != 0)
+				throw new SecurityException("ProtectedString-3");
+
+			ps = new ProtectedString(true, "Test");
+			ProtectedString ps2 = new ProtectedString(true,
+				StrUtil.Utf8.GetBytes("Test"));
+			if(ps.IsEmpty) throw new SecurityException("ProtectedString-4");
+			pbData = ps.ReadUtf8();
+			pbData2 = ps2.ReadUtf8();
+			if(!MemUtil.ArraysEqual(pbData, pbData2))
+				throw new SecurityException("ProtectedString-5");
+			if(pbData.Length != 4)
+				throw new SecurityException("ProtectedString-6");
+			if(ps.ReadString() != ps2.ReadString())
+				throw new SecurityException("ProtectedString-7");
+			pbData = ps.ReadUtf8();
+			pbData2 = ps2.ReadUtf8();
+			if(!MemUtil.ArraysEqual(pbData, pbData2))
+				throw new SecurityException("ProtectedString-8");
+			if(!ps.IsProtected) throw new SecurityException("ProtectedString-9");
+			if(!ps2.IsProtected) throw new SecurityException("ProtectedString-10");
 #endif
 		}
 
@@ -293,12 +327,38 @@ namespace KeePassLib.Cryptography
 			List<string> v3 = StrUtil.SplitWithSep("pqrs", vSeps, false);
 			if(v3.Count != 1) throw new InvalidOperationException("StrUtil-15");
 			if(!v3[0].Equals("pqrs")) throw new InvalidOperationException("StrUtil-16");
+
+			if(StrUtil.VersionToString(0x000F000E000D000CUL) != "15.14.13.12")
+				throw new InvalidOperationException("StrUtil-V1");
+			if(StrUtil.VersionToString(0x00FF000E00010000UL) != "255.14.1")
+				throw new InvalidOperationException("StrUtil-V2");
+			if(StrUtil.VersionToString(0x000F00FF00000000UL) != "15.255")
+				throw new InvalidOperationException("StrUtil-V3");
+			if(StrUtil.VersionToString(0x00FF000000000000UL) != "255")
+				throw new InvalidOperationException("StrUtil-V4");
 #endif
 		}
 
 		private static void TestUrlUtil()
 		{
 #if DEBUG
+			if(UrlUtil.GetHost(@"scheme://domain:port/path?query_string#fragment_id") !=
+				"domain")
+				throw new InvalidOperationException("UrlUtil-H1");
+			if(UrlUtil.GetHost(@"http://example.org:80") != "example.org")
+				throw new InvalidOperationException("UrlUtil-H2");
+			if(UrlUtil.GetHost(@"mailto:bob@example.com") != "example.com")
+				throw new InvalidOperationException("UrlUtil-H3");
+			if(UrlUtil.GetHost(@"ftp://asmith@ftp.example.org") != "ftp.example.org")
+				throw new InvalidOperationException("UrlUtil-H4");
+			if(UrlUtil.GetHost(@"scheme://username:password@domain:port/path?query_string#fragment_id") !=
+				"domain")
+				throw new InvalidOperationException("UrlUtil-H5");
+			if(UrlUtil.GetHost(@"bob@example.com") != "example.com")
+				throw new InvalidOperationException("UrlUtil-H6");
+			if(UrlUtil.GetHost(@"s://u:p@d.tld:p/p?q#f") != "d.tld")
+				throw new InvalidOperationException("UrlUtil-H7");
+
 			if(NativeLib.IsUnix()) return;
 
 			string strBase = "\\\\HOMESERVER\\Apps\\KeePass\\KeePass.exe";
@@ -306,10 +366,10 @@ namespace KeePassLib.Cryptography
 			string strRel = "..\\..\\Documents\\KeePass\\NewDatabase.kdbx";
 
 			string str = UrlUtil.MakeRelativePath(strBase, strDoc);
-			if(!str.Equals(strRel)) throw new InvalidOperationException("UrlUtil-1");
+			if(!str.Equals(strRel)) throw new InvalidOperationException("UrlUtil-R1");
 
 			str = UrlUtil.MakeAbsolutePath(strBase, strRel);
-			if(!str.Equals(strDoc)) throw new InvalidOperationException("UrlUtil-2");
+			if(!str.Equals(strDoc)) throw new InvalidOperationException("UrlUtil-R2");
 #endif
 		}
 	}

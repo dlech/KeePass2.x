@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -182,5 +182,26 @@ namespace KeePassLib
 		/// Compare in-memory protection states.
 		/// </summary>
 		Full
+	}
+
+	[Flags]
+	public enum PwCompareOptions
+	{
+		None = 0x0,
+
+		/// <summary>
+		/// Empty standard string fields are considered to be the
+		/// same as non-existing standard string fields.
+		/// This doesn't affect custom string comparisons.
+		/// </summary>
+		NullEmptyEquivStd = 0x1,
+
+		IgnoreParentGroup = 0x2,
+		IgnoreLastAccess = 0x4,
+		IgnoreLastMod = 0x8,
+		IgnoreHistory = 0x10,
+		IgnoreLastBackup = 0x20,
+
+		IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
 	}
 }

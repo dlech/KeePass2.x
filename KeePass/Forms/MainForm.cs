@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -121,13 +121,13 @@ namespace KeePass.Forms
 			m_splitVertical.InitEx(this.Controls, m_menuMain);
 
 			AssignMenuShortcuts();
-			AssignMenuShortcutsOpt();
 
 			if(NativeLib.IsUnix())
 			{
 				// Workaround for tab bar height bug in Mono
 				// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
-				m_tabMain.Height += 3;
+				// https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
+				m_tabMain.Height += 5;
 			}
 		}
 
@@ -192,29 +192,33 @@ namespace KeePass.Forms
 			InsertToolStripItem(m_menuEdit, m_ctxEntryDelete, new EventHandler(OnEntryDelete), true);
 			InsertToolStripItem(m_menuEdit, m_ctxEntryDuplicate, new EventHandler(OnEntryDuplicate), true);
 			InsertToolStripItem(m_menuEdit, m_ctxEntryEdit, new EventHandler(OnEntryEdit), true);
-			InsertToolStripItem(m_menuEdit, m_ctxEntryAdd, new EventHandler(OnEntryAdd), true);
+			ToolStripMenuItem tsmiAddEntry = InsertToolStripItem(m_menuEdit,
+				m_ctxEntryAdd, new EventHandler(OnEntryAdd), true);
 			m_menuEdit.DropDownItems.Insert(0, new ToolStripSeparator());
 			InsertToolStripItem(m_menuEdit, m_ctxGroupDelete, new EventHandler(OnGroupsDelete), true);
 			InsertToolStripItem(m_menuEdit, m_ctxGroupEdit, new EventHandler(OnGroupsEdit), true);
 			InsertToolStripItem(m_menuEdit, m_ctxGroupAdd, new EventHandler(OnGroupsAdd), true);
 
-			UIUtil.ConfigureTbButton(m_tbNewDatabase, KPRes.ToolBarNew, null);
-			UIUtil.ConfigureTbButton(m_tbOpenDatabase, KPRes.ToolBarOpen, null);
-			UIUtil.ConfigureTbButton(m_tbSaveDatabase, KPRes.Save, null);
-			UIUtil.ConfigureTbButton(m_tbSaveAll, KPRes.ToolBarSaveAll, null);
-			UIUtil.ConfigureTbButton(m_tbAddEntry, KPRes.AddEntry, null);
-			UIUtil.ConfigureTbButton(m_tbAddEntryDefault, KPRes.AddEntryBtn, null);
-			UIUtil.ConfigureTbButton(m_tbCopyUserName, KPRes.CopyUserFull, null);
-			UIUtil.ConfigureTbButton(m_tbCopyPassword, KPRes.CopyPasswordFull, null);
-			UIUtil.ConfigureTbButton(m_tbFind, KPRes.Find + "...", null);
-			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, null, KPRes.ShowEntries);
-			UIUtil.ConfigureTbButton(m_tbViewsShowAll, KPRes.ShowAllEntries, null);
-			UIUtil.ConfigureTbButton(m_tbViewsShowExpired, KPRes.ShowExpiredEntries, null);
-			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null);
+			UIUtil.AssignShortcut(tsmiAddEntry, Keys.Control | Keys.I);
+
+			UIUtil.ConfigureTbButton(m_tbNewDatabase, KPRes.ToolBarNew, null, m_menuFileNew);
+			UIUtil.ConfigureTbButton(m_tbOpenDatabase, KPRes.ToolBarOpen, null, m_menuFileOpenLocal);
+			UIUtil.ConfigureTbButton(m_tbSaveDatabase, KPRes.Save, null, m_menuFileSave);
+			UIUtil.ConfigureTbButton(m_tbSaveAll, KPRes.ToolBarSaveAll, null, null);
+			UIUtil.ConfigureTbButton(m_tbAddEntry, KPRes.AddEntry, null, null);
+			UIUtil.ConfigureTbButton(m_tbCopyUserName, KPRes.CopyUserFull, null, m_ctxEntryCopyUserName);
+			UIUtil.ConfigureTbButton(m_tbCopyPassword, KPRes.CopyPasswordFull, null, m_ctxEntryCopyPassword);
+			UIUtil.ConfigureTbButton(m_tbFind, KPRes.Find + "...", null, m_menuEditFind);
+			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, null, KPRes.ShowEntries, null);
+			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null, m_menuFileLock);
 			UIUtil.ConfigureTbButton(m_tbQuickFind, null, KPRes.SearchQuickPrompt +
-				" (" + KPRes.KeyboardKeyCtrl + "+E)");
+				" (" + KPRes.KeyboardKeyCtrl + "+E)", null);
 			UIUtil.ConfigureTbButton(m_tbCloseTab, StrUtil.RemoveAccelerator(
-				KPRes.CloseButton), null);
+				KPRes.CloseButton), null, m_menuFileClose);
+
+			CopyMenuItemText(m_tbAddEntryDefault, m_ctxEntryAdd);
+			CopyMenuItemText(m_tbViewsShowAll, m_menuEditShowAllEntries);
+			CopyMenuItemText(m_tbViewsShowExpired, m_menuEditShowExpired);
 
 			UIUtil.EnableAutoCompletion(m_tbQuickFind, false);
 
@@ -302,6 +306,8 @@ namespace KeePass.Forms
 				UIUtil.SetExplorerTheme(m_tvGroups.Handle);
 				UIUtil.SetExplorerTheme(m_lvEntries.Handle);
 			}
+
+			// m_tvGroups.QueryToolTip = UIUtil.GetPwGroupToolTipTN;
 
 			m_clrAlternateItemBgColor = UIUtil.GetAlternateColor(m_lvEntries.BackColor);
 
@@ -394,8 +400,10 @@ namespace KeePass.Forms
 					OpenDatabase(ioLastFile, null, false);
 			}
 
+			UpdateCheckEx.EnsureConfigured(this);
 			if(Program.Config.Application.Start.CheckForUpdate)
-				CheckForUpdate.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
+				UpdateCheckEx.Run(false, null);
+			// UpdateCheck.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
 
 			ResetDefaultFocus(null);
 
@@ -712,7 +720,8 @@ namespace KeePass.Forms
 
 		private void OnHelpCheckForUpdate(object sender, EventArgs e)
 		{
-			CheckForUpdate.StartAsync(PwDefs.VersionUrl, null);
+			// UpdateCheck.StartAsync(PwDefs.VersionUrl, null);
+			UpdateCheckEx.Run(true, this);
 		}
 
 		private void OnHelpAbout(object sender, EventArgs e)
@@ -795,13 +804,12 @@ namespace KeePass.Forms
 			PwDatabase pwDb = m_docMgr.ActiveDatabase;
 			PwEntry pwe = new PwEntry(true, true);
 			pwe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-				pwDb.MemoryProtection.ProtectUserName,
-				pwDb.DefaultUserName));
+				pwDb.MemoryProtection.ProtectUserName, pwDb.DefaultUserName));
 
-			ProtectedString psAutoGen = new ProtectedString(
-				pwDb.MemoryProtection.ProtectPassword);
-			PwGenerator.Generate(psAutoGen, Program.Config.PasswordGenerator.AutoGeneratedPasswordsProfile,
+			ProtectedString psAutoGen;
+			PwGenerator.Generate(out psAutoGen, Program.Config.PasswordGenerator.AutoGeneratedPasswordsProfile,
 				null, Program.PwGeneratorPool);
+			psAutoGen = psAutoGen.WithProtection(pwDb.MemoryProtection.ProtectPassword);
 			pwe.Strings.Set(PwDefs.PasswordField, psAutoGen);
 
 			int nExpireDays = Program.Config.Defaults.NewEntryExpiresInDays;
@@ -945,6 +953,8 @@ namespace KeePass.Forms
 				e.Cancel = true;
 				return;
 			}
+
+			GlobalWindowManager.CloseAllWindows();
 
 			CleanUpEx(); // Saves configuration and cleans up all resources
 
@@ -1185,8 +1195,6 @@ namespace KeePass.Forms
 
 				m_mruList.MaxItemCount = Program.Config.Application.MostRecentlyUsed.MaxItemCount;
 				SetListFont(Program.Config.UI.StandardFont);
-
-				AssignMenuShortcutsOpt();
 
 				if(ofDlg.RequiresUIReinitialize) UIUtil.Initialize(true);
 
@@ -1667,7 +1675,11 @@ namespace KeePass.Forms
 					case Keys.C: OnEntryCopyPassword(sender, e); break;
 					case Keys.B: OnEntryCopyUserName(sender, e); break;
 					// case Keys.E: OnEntryEdit(sender, e); break;
-					case Keys.U: PerformDefaultUrlAction(null, false); break;
+					case Keys.U:
+						// PerformDefaultUrlAction(null, false);
+						if(e.Shift) OnEntryCopyURL(sender, e);
+						else OnEntryOpenUrl(sender, e);
+						break;
 					case Keys.V: OnEntryPerformAutoType(sender, e); break;
 					default: bUnhandled = true; break;
 				}
@@ -1783,9 +1795,10 @@ namespace KeePass.Forms
 
 					byte[] pbAdditionalEntropy = EntropyForm.CollectEntropyIfEnabled(
 						pgf.SelectedProfile);
-					ProtectedString psNew = new ProtectedString(pwDb.MemoryProtection.ProtectPassword);
-					PwGenerator.Generate(psNew, pgf.SelectedProfile, pbAdditionalEntropy,
-						Program.PwGeneratorPool);
+					ProtectedString psNew;
+					PwGenerator.Generate(out psNew, pgf.SelectedProfile,
+						pbAdditionalEntropy, Program.PwGeneratorPool);
+					psNew = psNew.WithProtection(pwDb.MemoryProtection.ProtectPassword);
 					pe.Strings.Set(PwDefs.PasswordField, psNew);
 
 					UpdateUI(false, null, false, null, true, null, true);
@@ -1804,7 +1817,7 @@ namespace KeePass.Forms
 
 		private void OnToolsShowExpired(object sender, EventArgs e)
 		{
-			ShowExpiredEntries(false, 0);
+			ShowExpiredEntries(false, true, false);
 		}
 
 		private void OnToolsTanWizard(object sender, EventArgs e)
@@ -2073,9 +2086,10 @@ namespace KeePass.Forms
 						PwEntry pe = new PwEntry(true, true);
 						pg.AddEntry(pe, true);
 
-						ProtectedString psNew = new ProtectedString(pwDb.MemoryProtection.ProtectPassword);
-						PwGenerator.Generate(psNew, pgf.SelectedProfile,
+						ProtectedString psNew;
+						PwGenerator.Generate(out psNew, pgf.SelectedProfile,
 							pbAdditionalEntropy, Program.PwGeneratorPool);
+						psNew = psNew.WithProtection(pwDb.MemoryProtection.ProtectPassword);
 						pe.Strings.Set(PwDefs.PasswordField, psNew);
 					}
 
@@ -2461,7 +2475,8 @@ namespace KeePass.Forms
 			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
 			uint uDeleted = pd.DeleteUnusedCustomIcons();
-			UpdateUIState(uDeleted > 0);
+			UpdateUI(false, null, (uDeleted > 0), null, (uDeleted > 0),
+				null, (uDeleted > 0));
 			SetObjectsDeletedStatus(uDeleted, true);
 		}
 

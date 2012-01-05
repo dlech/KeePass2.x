@@ -25,7 +25,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2011 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -127,7 +127,7 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 <tr><td width="50%">{FIREFOX}</td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
 <tr><td width="50%">{OPERA}</td><td width="50%">Path of Opera, if installed.</td></tr>
 <tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome, if installed.</td></tr>
-<tr><td width="50%">{SAFARI}</td><td width="50%">Path of Safari, if installed. (KeePass &ge; 1.21 and &ge; 2.17)</td></tr>
+<tr><td width="50%">{SAFARI}</td><td width="50%">Path of Safari, if installed.</td></tr>
 </table>
 
 <br />
@@ -283,8 +283,10 @@ in all following placeholders with the same ID.<br />
 Usage examples:<br />
 <br />
 <code>{USERNAME}{TAB}{PICKCHARS:Password:C=5}{ENTER}</code><br />
-Types the user name, presses Tab, allows the user to pick exactly 5 characters
-from the entry password, types these 5 characters, and presses Enter.<br />
+First a dialog is shown in which the user can pick exactly 5 characters
+from the entry password.
+Afterwards KeePass types the user name into the target window, presses Tab,
+types the 5 picked characters and presses Enter.<br />
 <br />
 <a href="http://keepass.info/screenshots/windows_vista/comboboxform_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/comboboxform.png"
@@ -293,13 +295,17 @@ align="right" alt="ComboBox Form" /></a>
 Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=2, C=1, Conv=D,
 Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=3, C=1, Conv=D,
 Conv-Offset=1}{ENTER}</code><br />
-This first types the contents of a custom entry string named &quot;Memorable&quot;,
-and presses Tab. Then the character picking dialog allows to pick exactly
-one character from the password, and this character is converted to
-down arrow keypresses (with one additional keypress, e.g. a '1' is converted
-to two down arrow keypresses), and the focus is switched to the next control
-by pressing Tab. This is repeated two more times
-(the IDs are different, thus the dialog is shown two more times).<br />
+First the character picking dialog is shown three times and each time the user
+can pick exactly one character from the entry password.
+Afterwards the auto-type process starts:
+KeePass types the contents of a custom entry string named &quot;Memorable&quot;
+into the target window.
+The focus is switched to the next control by pressing Tab,
+and the first previously picked character is converted to
+down arrow keypresses (with one additional keypress; e.g. a '1' is converted
+to two down arrow keypresses).
+This is repeated two more times with the other picked characters,
+and finally Enter is pressed.<br />
 <br />
 Note this is not equivalent to picking three characters at once.
 If you'd use <code>{S:Memorable}{TAB}{PICKCHARS:Password:C=3, Conv=D, Conv-Offset=1}</code>,

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,8 +27,21 @@ using KeePass.Native;
 
 namespace KeePass.UI
 {
+	// public delegate string QueryToolTipDelegate(TreeNode tn);
+
 	public sealed class CustomTreeViewEx : TreeView
 	{
+		// private QueryToolTipDelegate m_fnQueryToolTip = null;
+		// /// <summary>
+		// /// This handler will be used to dynamically query tooltip
+		// /// texts for tree nodes.
+		// /// </summary>
+		// public QueryToolTipDelegate QueryToolTip
+		// {
+		//	get { return m_fnQueryToolTip; }
+		//	set { m_fnQueryToolTip = value; }
+		// }
+
 		public CustomTreeViewEx() : base()
 		{
 			// Double-buffering isn't supported by tree views
@@ -65,5 +78,28 @@ namespace KeePass.UI
 			// }
 			// catch(Exception) { }
 		}
+
+		// protected override void WndProc(ref Message m)
+		// {
+		//	if(m.Msg == NativeMethods.WM_NOTIFY)
+		//	{
+		//		NativeMethods.NMHDR nm = (NativeMethods.NMHDR)m.GetLParam(
+		//			typeof(NativeMethods.NMHDR));
+		//		if((nm.code == NativeMethods.TTN_NEEDTEXTA) ||
+		//			(nm.code == NativeMethods.TTN_NEEDTEXTW))
+		//			DynamicAssignNodeToolTip();
+		//	}
+		//	base.WndProc(ref m);
+		// }
+
+		// private void DynamicAssignNodeToolTip()
+		// {
+		//	if(m_fnQueryToolTip == null) return;
+		//	TreeViewHitTestInfo hti = HitTest(PointToClient(Cursor.Position));
+		//	if(hti == null) { Debug.Assert(false); return; }
+		//	TreeNode tn = hti.Node;
+		//	if(tn == null) return;
+		//	tn.ToolTipText = (m_fnQueryToolTip(tn) ?? string.Empty);
+		// }
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -148,7 +148,10 @@ namespace KeePass.Util
 			XmlSerializer xml = new XmlSerializer(typeof(string[]));
 			xml.Serialize(ms, args);
 
-			return Convert.ToBase64String(ms.ToArray(), Base64FormattingOptions.None);
+			string strSerialized = Convert.ToBase64String(ms.ToArray(),
+				Base64FormattingOptions.None);
+			ms.Close();
+			return strSerialized;
 		}
 
 		public static string[] SafeDeserialize(string str)
@@ -161,6 +164,7 @@ namespace KeePass.Util
 
 			try { return (string[])xml.Deserialize(ms); }
 			catch(Exception) { Debug.Assert(false); }
+			finally { ms.Close(); }
 
 			return null;
 		}

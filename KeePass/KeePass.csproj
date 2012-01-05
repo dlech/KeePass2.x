@@ -221,6 +221,9 @@
     <Compile Include="..\KeePassLib\Serialization\BinaryReaderEx.cs">
       <Link>KeePassLib\Serialization\BinaryReaderEx.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\FileLock.cs">
+      <Link>KeePassLib\Serialization\FileLock.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Serialization\FileTransactionEx.cs">
       <Link>KeePassLib\Serialization\FileTransactionEx.cs</Link>
     </Compile>
@@ -638,6 +641,12 @@
     <Compile Include="Forms\TextEncodingForm.Designer.cs">
       <DependentUpon>TextEncodingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\UpdateCheckForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpdateCheckForm.Designer.cs">
+      <DependentUpon>UpdateCheckForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\UrlSchemeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -705,6 +714,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ProtectedDialog.cs" />
+    <Compile Include="UI\PwInputControlGroup.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
     <Compile Include="UI\StatusUtil.cs" />
     <Compile Include="UI\TabControlEx.cs">
@@ -905,6 +915,9 @@
     <EmbeddedResource Include="Forms\TextEncodingForm.resx">
       <DependentUpon>TextEncodingForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UpdateCheckForm.resx">
+      <DependentUpon>UpdateCheckForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UrlSchemeForm.resx">
       <DependentUpon>UrlSchemeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -929,7 +942,6 @@
     <Compile Include="UI\UIUtil.cs" />
     <Compile Include="Util\AppLocator.cs" />
     <Compile Include="Util\AutoType.cs" />
-    <Compile Include="Util\CheckForUpdate.cs" />
     <Compile Include="Util\ClipboardContents.cs" />
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
@@ -976,6 +988,7 @@
     <Compile Include="Util\Spr\SprEngine.PickChars.cs" />
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
+    <Compile Include="Util\UpdateCheckEx.cs" />
     <Compile Include="Util\WinUtil.cs" />
     <Compile Include="Util\XmlUtil.cs" />
   </ItemGroup>

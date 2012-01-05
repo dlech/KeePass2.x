@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,10 +115,11 @@ namespace KeePass.Forms
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			string strUrl = m_tbUrl.Text;
-
-			if(strUrl.IndexOf(@"://") < 0)
+			if(strUrl.IndexOf("://") < 0)
 			{
-				m_ttInvalidUrl.Show(KPRes.InvalidUrl, m_tbUrl);
+				// m_ttInvalidUrl.Show(KPRes.InvalidUrl, m_tbUrl);
+				MessageService.ShowWarning(strUrl, KPRes.InvalidUrl);
+				this.DialogResult = DialogResult.None;
 				return;
 			}
 
@@ -135,7 +136,7 @@ namespace KeePass.Forms
 
 			if(m_bTestConnection && !m_bSave)
 			{
-				if(this.TestConnectionEx() == false)
+				if(!TestConnectionEx())
 					this.DialogResult = DialogResult.None;
 			}
 		}

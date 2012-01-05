@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -469,9 +469,9 @@ namespace KeePass.Forms
 
 			// Main menu
 			m_menuFileSaveAs.Enabled = m_menuFileSaveAsLocal.Enabled =
-				m_menuFileSaveAsUrl.Enabled = m_menuFileDbSettings.Enabled =
-				m_menuFileChangeMasterKey.Enabled = m_menuFilePrint.Enabled =
-				s.DatabaseOpened;
+				m_menuFileSaveAsUrl.Enabled = m_menuFileSaveAsCopy.Enabled =
+				m_menuFileDbSettings.Enabled = m_menuFileChangeMasterKey.Enabled =
+				m_menuFilePrint.Enabled = s.DatabaseOpened;
 
 			m_menuFileClose.Enabled = (s.DatabaseOpened || s.FileLocked);
 
@@ -520,8 +520,10 @@ namespace KeePass.Forms
 			m_tbCopyPassword.Enabled = s.CanCopyPassword;
 
 			m_menuFileLock.Text = s.LockUnlock;
-			m_tbLockWorkspace.Text = m_tbLockWorkspace.ToolTipText =
-				m_ctxTrayLock.Text = StrUtil.RemoveAccelerator(s.LockUnlock);
+			string strLockText = StrUtil.RemoveAccelerator(s.LockUnlock);
+			m_tbLockWorkspace.Text = m_ctxTrayLock.Text = strLockText;
+			m_tbLockWorkspace.ToolTipText = strLockText + " (" +
+				m_menuFileLock.ShortcutKeyDisplayString + ")";
 
 			m_tabMain.Visible = m_tbSaveAll.Visible = m_tbCloseTab.Visible =
 				(m_docMgr.DocumentCount > 1);
@@ -1433,26 +1435,26 @@ namespace KeePass.Forms
 			PwGroup pg = pe.ParentGroup;
 			if(pg != null) rb.Append(pg.Name);
 
+			AceMainWindow mw = Program.Config.MainWindow;
 			EvAppendEntryField(rb, strItemSeparator, KPRes.Title,
-				IsColumnHidden(AceColumnType.Title) ? PwDefs.HiddenPassword :
+				mw.IsColumnHidden(AceColumnType.Title) ? PwDefs.HiddenPassword :
 				pe.Strings.ReadSafe(PwDefs.TitleField), pe);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.UserName,
-				IsColumnHidden(AceColumnType.UserName) ? PwDefs.HiddenPassword :
+				mw.IsColumnHidden(AceColumnType.UserName) ? PwDefs.HiddenPassword :
 				pe.Strings.ReadSafe(PwDefs.UserNameField), pe);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.Password,
-				IsColumnHidden(AceColumnType.Password) ? PwDefs.HiddenPassword :
+				mw.IsColumnHidden(AceColumnType.Password) ? PwDefs.HiddenPassword :
 				pe.Strings.ReadSafe(PwDefs.PasswordField), pe);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.Url,
-				IsColumnHidden(AceColumnType.Url) ? PwDefs.HiddenPassword :
+				mw.IsColumnHidden(AceColumnType.Url) ? PwDefs.HiddenPassword :
 				pe.Strings.ReadSafe(PwDefs.UrlField), pe);
 
-			bool bHideCustom = Program.Config.MainWindow.EntryView.HideProtectedCustomStrings;
 			foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 			{
 				if(PwDefs.IsStandardField(kvp.Key)) continue;
 
-				string strCustomValue = (bHideCustom ? pe.Strings.ReadSafeEx(kvp.Key) :
-					pe.Strings.ReadSafe(kvp.Key));
+				string strCustomValue = (mw.ShouldHideCustomString(kvp.Key,
+					kvp.Value) ? PwDefs.HiddenPassword : kvp.Value.ReadString());
 				EvAppendEntryField(rb, strItemSeparator, kvp.Key, strCustomValue, pe);
 			}
 
@@ -1486,7 +1488,7 @@ namespace KeePass.Forms
 			EvAppendEntryField(rb, strItemSeparator, KPRes.Tags,
 				StrUtil.TagsToString(pe.Tags, true), null);
 
-			string strNotes = (IsColumnHidden(AceColumnType.Notes) ?
+			string strNotes = (mw.IsColumnHidden(AceColumnType.Notes) ?
 				PwDefs.HiddenPassword : pe.Strings.ReadSafe(PwDefs.NotesField));
 			if(strNotes.Length != 0)
 			{
@@ -1797,39 +1799,39 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void ShowExpiredEntries(bool bOnlyIfExists, uint uSkipDays)
+		private void ShowExpiredEntries(bool bOnlyIfExists, bool bShowExpired,
+			bool bShowSoonToExpire)
 		{
-			PwGroup pg = new PwGroup(true, true, KPRes.ExpiredEntries, PwIcon.Expired);
+			if(!bShowExpired && !bShowSoonToExpire) return;
+
+			PwGroup pg = new PwGroup(true, true, string.Empty, PwIcon.Expired);
 			pg.IsVirtual = true;
 
-			DateTime dtLimit = DateTime.Now;
-			if(uSkipDays != 0)
-				dtLimit = dtLimit.Add(new TimeSpan((int)uSkipDays, 0, 0, 0));
+			const int iSkipDays = 7;
+			DateTime dtNow = DateTime.Now;
+			DateTime dtLimit = dtNow.Add(new TimeSpan(iSkipDays, 0, 0, 0));
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
+				if(!pe.Expires) return true;
 				if(PwDefs.IsTanEntry(pe)) return true; // Exclude TANs
-				if(pe.Expires && (pe.ExpiryTime <= dtLimit))
+
+				if((bShowExpired && (pe.ExpiryTime <= dtNow)) ||
+					(bShowSoonToExpire && (pe.ExpiryTime <= dtLimit) &&
+					(pe.ExpiryTime > dtNow)))
 					pg.AddEntry(pe, false);
 				return true;
 			};
 
-			m_docMgr.ActiveDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
-
-			if(uSkipDays != 0) pg.Name = KPRes.SoonToExpireEntries;
+			m_docMgr.ActiveDatabase.RootGroup.TraverseTree(
+				TraversalMethod.PreOrder, null, eh);
 
 			if((pg.Entries.UCount > 0) || !bOnlyIfExists)
 			{
 				UpdateEntryList(pg, false);
 				UpdateUIState(false);
+				ShowSearchResultsStatusMessage();
 			}
-			else
-			{
-				UpdateEntryList(null, false);
-				UpdateUIState(false);
-			}
-
-			ShowSearchResultsStatusMessage();
 		}
 
 		public void PerformExport(PwGroup pgDataSource, bool bExportDeleted)
@@ -1874,6 +1876,28 @@ namespace KeePass.Forms
 			IOConnectionInfo iocResult = dlg.IOConnectionInfo;
 			UIUtil.DestroyForm(dlg);
 			return iocResult;
+		}
+
+		internal IOConnectionInfo CompleteConnectionInfoUsingMru(IOConnectionInfo ioc)
+		{
+			if(ioc == null) { Debug.Assert(false); return null; }
+
+			if(string.IsNullOrEmpty(ioc.UserName) && string.IsNullOrEmpty(ioc.Password))
+			{
+				for(uint u = 0; u < m_mruList.ItemCount; ++u)
+				{
+					IOConnectionInfo iocMru = (m_mruList.GetItem(u).Value as IOConnectionInfo);
+					if(iocMru == null) { Debug.Assert(false); continue; }
+
+					if(iocMru.Path.Equals(ioc.Path, StrUtil.CaseIgnoreCmp))
+					{
+						ioc = iocMru.CloneDeep();
+						break;
+					}
+				}
+			}
+
+			return ioc;
 		}
 
 		private sealed class OdKpfConstructParams
@@ -2100,18 +2124,11 @@ namespace KeePass.Forms
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.OpenedDatabaseFile,
 				pwOpenedDb.IOConnectionInfo.Path);
 
-			if(bCorrectDbActive && pwOpenedDb.IsOpen &&
-				Program.Config.Application.FileOpening.ShowSoonToExpireEntries)
+			if(bCorrectDbActive && pwOpenedDb.IsOpen)
 			{
-				ShowExpiredEntries(true, 7);
-
-				// Avoid view being destroyed by the unlocking routine
-				pwOpenedDb.LastSelectedGroup = PwUuid.Zero;
-			}
-			else if(bCorrectDbActive && pwOpenedDb.IsOpen &&
-				Program.Config.Application.FileOpening.ShowExpiredEntries)
-			{
-				ShowExpiredEntries(true, 0);
+				ShowExpiredEntries(true,
+					Program.Config.Application.FileOpening.ShowExpiredEntries,
+					Program.Config.Application.FileOpening.ShowSoonToExpireEntries);
 
 				// Avoid view being destroyed by the unlocking routine
 				pwOpenedDb.LastSelectedGroup = PwUuid.Zero;
@@ -2188,24 +2205,23 @@ namespace KeePass.Forms
 			return false;
 		}
 
-		// private static void AutoEnableVisualHiding() // Remove static when implementing
+		// private void AutoEnableVisualHiding()
 		// {
-			// KPF 1802197
-
-			// Turn on visual hiding if option is selected
-			// if(m_docMgr.ActiveDatabase.MemoryProtection.AutoEnableVisualHiding)
-			// {
-			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectTitle && !m_viewHideFields.ProtectTitle)
-			//		m_menuViewHideTitles.Checked = m_viewHideFields.ProtectTitle = true;
-			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUserName && !m_viewHideFields.ProtectUserName)
-			//		m_menuViewHideUserNames.Checked = m_viewHideFields.ProtectUserName = true;
-			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectPassword && !m_viewHideFields.ProtectPassword)
-			//		m_menuViewHidePasswords.Checked = m_viewHideFields.ProtectPassword = true;
-			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUrl && !m_viewHideFields.ProtectUrl)
-			//		m_menuViewHideURLs.Checked = m_viewHideFields.ProtectUrl = true;
-			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectNotes && !m_viewHideFields.ProtectNotes)
-			//		m_menuViewHideNotes.Checked = m_viewHideFields.ProtectNotes = true;
-			// }
+		//	// KPF 1802197
+		//	// Turn on visual hiding if option is selected
+		//	if(m_docMgr.ActiveDatabase.MemoryProtection.AutoEnableVisualHiding)
+		//	{
+		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectTitle && !m_viewHideFields.ProtectTitle)
+		//			m_menuViewHideTitles.Checked = m_viewHideFields.ProtectTitle = true;
+		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUserName && !m_viewHideFields.ProtectUserName)
+		//			m_menuViewHideUserNames.Checked = m_viewHideFields.ProtectUserName = true;
+		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectPassword && !m_viewHideFields.ProtectPassword)
+		//			m_menuViewHidePasswords.Checked = m_viewHideFields.ProtectPassword = true;
+		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUrl && !m_viewHideFields.ProtectUrl)
+		//			m_menuViewHideURLs.Checked = m_viewHideFields.ProtectUrl = true;
+		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectNotes && !m_viewHideFields.ProtectNotes)
+		//			m_menuViewHideNotes.Checked = m_viewHideFields.ProtectNotes = true;
+		//	}
 		// }
 
 		private TreeNode GuiFindGroup(PwUuid puSearch, TreeNode tnContainer)
@@ -2264,8 +2280,8 @@ namespace KeePass.Forms
 			UIUtil.ShowDialogAndDestroy(pf);
 		}
 
-		private void InsertToolStripItem(ToolStripMenuItem tsContainer, ToolStripMenuItem tsTemplate, EventHandler ev,
-			bool bPermanentlyLinkToTemplate)
+		private ToolStripMenuItem InsertToolStripItem(ToolStripMenuItem tsContainer,
+			ToolStripMenuItem tsTemplate, EventHandler ev, bool bPermanentlyLinkToTemplate)
 		{
 			ToolStripMenuItem tsmi = new ToolStripMenuItem(tsTemplate.Text, tsTemplate.Image);
 			tsmi.Click += ev;
@@ -2283,6 +2299,7 @@ namespace KeePass.Forms
 					tsTemplate, tsmi));
 
 			tsContainer.DropDownItems.Insert(0, tsmi);
+			return tsmi;
 		}
 
 		/// <summary>
@@ -2696,56 +2713,68 @@ namespace KeePass.Forms
 
 		private void AssignMenuShortcuts()
 		{
-			m_menuFileNew.ShortcutKeys = (Keys.Control | Keys.N);
-			m_menuFileOpenLocal.ShortcutKeys = (Keys.Control | Keys.O);
-			m_menuFileClose.ShortcutKeys = (Keys.Control | Keys.W);
-			m_menuFileSave.ShortcutKeys = (Keys.Control | Keys.S);
-			m_menuFilePrint.ShortcutKeys = (Keys.Control | Keys.P);
-			m_menuFileLock.ShortcutKeys = (Keys.Control | Keys.L);
+			UIUtil.AssignShortcut(m_menuFileNew, Keys.Control | Keys.N);
+			UIUtil.AssignShortcut(m_menuFileOpenLocal, Keys.Control | Keys.O);
+			UIUtil.AssignShortcut(m_menuFileOpenUrl, Keys.Control | Keys.Shift | Keys.O);
+			UIUtil.AssignShortcut(m_menuFileClose, Keys.Control | Keys.W);
+			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
+			UIUtil.AssignShortcut(m_menuFilePrint, Keys.Control | Keys.P);
+			UIUtil.AssignShortcut(m_menuFileSyncFile, Keys.Control | Keys.R);
+			UIUtil.AssignShortcut(m_menuFileSyncUrl, Keys.Control | Keys.Shift | Keys.R);
+			UIUtil.AssignShortcut(m_menuFileLock, Keys.Control | Keys.L);
 
-			m_menuEditFind.ShortcutKeys = (Keys.Control | Keys.F);
-			// m_ctxEntryAdd.ShortcutKeys = Keys.Control | Keys.N;
+			UIUtil.AssignShortcut(m_menuEditFind, Keys.Control | Keys.F);
 
-			// m_menuViewHidePasswords.ShortcutKeys = (Keys.Control | Keys.H);
-			// m_menuViewHideUserNames.ShortcutKeys = (Keys.Control | Keys.J);
+			// UIUtil.AssignShortcut(m_menuViewHidePasswords, Keys.Control | Keys.H);
+			// UIUtil.AssignShortcut(m_menuViewHideUserNames, Keys.Control | Keys.J);
 
-			m_menuHelpContents.ShortcutKeys = Keys.F1;
+			UIUtil.AssignShortcut(m_menuHelpContents, Keys.F1);
 
-			m_ctxGroupFind.ShortcutKeys = (Keys.Control | Keys.Shift | Keys.F);
+			UIUtil.AssignShortcut(m_ctxGroupFind, Keys.Control | Keys.Shift | Keys.F);
 
-			string strCtrl = KPRes.KeyboardKeyCtrl, strAlt = KPRes.KeyboardKeyAlt;
+			string strCtrl = KPRes.KeyboardKeyCtrl + "+", strAlt = KPRes.KeyboardKeyAlt + "+",
+				strShift = KPRes.KeyboardKeyShift + "+";
+			string strCtrlShift = strCtrl + strShift;
 
-			m_ctxEntryCopyUserName.ShortcutKeyDisplayString = strCtrl + "+B";
-			m_ctxEntryCopyPassword.ShortcutKeyDisplayString = strCtrl + "+C";
-			m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = strCtrl + "+V";
-			m_ctxEntryAdd.ShortcutKeyDisplayString = "Ins";
-			m_ctxEntryEdit.ShortcutKeyDisplayString = "Return";
-			m_ctxEntryDelete.ShortcutKeyDisplayString = "Del";
-			m_ctxEntrySelectAll.ShortcutKeyDisplayString = strCtrl + "+A";
+			m_ctxEntryCopyUserName.ShortcutKeyDisplayString = strCtrl + "B";
+			m_ctxEntryCopyPassword.ShortcutKeyDisplayString = strCtrl + "C";
+			m_ctxEntryOpenUrl.ShortcutKeyDisplayString = strCtrl + "U";
+			m_ctxEntryCopyUrl.ShortcutKeyDisplayString = strCtrlShift + "U";
+			m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = strCtrl + "V";
+			m_ctxEntryAdd.ShortcutKeyDisplayString = strCtrl + "I";
+			m_ctxEntryEdit.ShortcutKeyDisplayString = KPRes.KeyboardKeyReturn;
+			m_ctxEntryDelete.ShortcutKeyDisplayString = UIUtil.GetKeysName(Keys.Delete); // "Del"
+			m_ctxEntrySelectAll.ShortcutKeyDisplayString = strCtrl + "A";
 
-			m_ctxEntryMoveToTop.ShortcutKeyDisplayString = strAlt + "+Home";
-			m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = strAlt + "+Up";
-			m_ctxEntryMoveOneDown.ShortcutKeyDisplayString = strAlt + "+Down";
-			m_ctxEntryMoveToBottom.ShortcutKeyDisplayString = strAlt + "+End";
+			m_ctxEntryMoveToTop.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Home); // "Home"
+			m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Up); // "Up"
+			m_ctxEntryMoveOneDown.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Down); // "Down"
+			m_ctxEntryMoveToBottom.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.End); // "End"
 
-			m_ctxGroupDelete.ShortcutKeyDisplayString = "Del";
+			m_ctxGroupDelete.ShortcutKeyDisplayString = UIUtil.GetKeysName(Keys.Delete); // "Del"
 
-			m_ctxGroupMoveToTop.ShortcutKeyDisplayString = strAlt + "+Home";
-			m_ctxGroupMoveOneUp.ShortcutKeyDisplayString = strAlt + "+Up";
-			m_ctxGroupMoveOneDown.ShortcutKeyDisplayString = strAlt + "+Down";
-			m_ctxGroupMoveToBottom.ShortcutKeyDisplayString = strAlt + "+End";
+			m_ctxGroupMoveToTop.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Home); // "Home"
+			m_ctxGroupMoveOneUp.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Up); // "Up"
+			m_ctxGroupMoveOneDown.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.Down); // "Down"
+			m_ctxGroupMoveToBottom.ShortcutKeyDisplayString = strAlt +
+				UIUtil.GetKeysName(Keys.End); // "End"
 		}
 
-		private void AssignMenuShortcutsOpt()
+		private static void CopyMenuItemText(ToolStripMenuItem tsmiTarget,
+			ToolStripMenuItem tsmiCopyFrom)
 		{
-			try
-			{
-				string str = KPRes.KeyboardKeyCtrl + "+U";
-				bool b = Program.Config.MainWindow.CopyUrlsInsteadOfOpening;
-				m_ctxEntryOpenUrl.ShortcutKeyDisplayString = (b ? null : str);
-				m_ctxEntryCopyUrl.ShortcutKeyDisplayString = (b ? str : null);
-			}
-			catch(Exception) { Debug.Assert(false); }
+			tsmiTarget.Text = tsmiCopyFrom.Text;
+
+			string strSh = tsmiCopyFrom.ShortcutKeyDisplayString;
+			if(!string.IsNullOrEmpty(strSh))
+				tsmiTarget.ShortcutKeyDisplayString = strSh;
 		}
 
 		private void SaveDatabaseAs(bool bOnline, object sender, bool bCopy)
@@ -2837,19 +2866,20 @@ namespace KeePass.Forms
 			PerformSelfTest();
 
 			pwDatabase.UseFileTransactions = Program.Config.Application.UseTransactedFileWrites;
+			pwDatabase.UseFileLocks = Program.Config.Application.UseFileLocks;
 
-			AceColumn col = Program.Config.MainWindow.FindColumn(AceColumnType.Title);
-			if((col != null) && !col.HideWithAsterisks)
-				pwDatabase.MemoryProtection.ProtectTitle = false;
-			col = Program.Config.MainWindow.FindColumn(AceColumnType.UserName);
-			if((col != null) && !col.HideWithAsterisks)
-				pwDatabase.MemoryProtection.ProtectUserName = false;
-			col = Program.Config.MainWindow.FindColumn(AceColumnType.Url);
-			if((col != null) && !col.HideWithAsterisks)
-				pwDatabase.MemoryProtection.ProtectUrl = false;
-			col = Program.Config.MainWindow.FindColumn(AceColumnType.Notes);
-			if((col != null) && !col.HideWithAsterisks)
-				pwDatabase.MemoryProtection.ProtectNotes = false;
+			// AceColumn col = Program.Config.MainWindow.FindColumn(AceColumnType.Title);
+			// if((col != null) && !col.HideWithAsterisks)
+			//	pwDatabase.MemoryProtection.ProtectTitle = false;
+			// col = Program.Config.MainWindow.FindColumn(AceColumnType.UserName);
+			// if((col != null) && !col.HideWithAsterisks)
+			//	pwDatabase.MemoryProtection.ProtectUserName = false;
+			// col = Program.Config.MainWindow.FindColumn(AceColumnType.Url);
+			// if((col != null) && !col.HideWithAsterisks)
+			//	pwDatabase.MemoryProtection.ProtectUrl = false;
+			// col = Program.Config.MainWindow.FindColumn(AceColumnType.Notes);
+			// if((col != null) && !col.HideWithAsterisks)
+			//	pwDatabase.MemoryProtection.ProtectNotes = false;
 
 			if(pwDatabase == m_docMgr.ActiveDatabase) SaveWindowState();
 		}
@@ -3073,8 +3103,8 @@ namespace KeePass.Forms
 
 				if(def.EditedBinaryData != null) // User changed the data
 				{
-					pe.Binaries.Set(eba.Name, new ProtectedBinary(false,
-						def.EditedBinaryData));
+					pe.Binaries.Set(eba.Name, new ProtectedBinary(
+						pbData.IsProtected, def.EditedBinaryData));
 					pe.Touch(true, false);
 
 					RefreshEntriesList();
@@ -4055,23 +4085,7 @@ namespace KeePass.Forms
 					Directory.GetCurrentDirectory(), false) + "Sentinel", ioc.Path);
 
 			if(args[AppDefs.CommandLineOptions.IoCredFromRecent] != null)
-			{
-				for(uint u = 0; u < m_mruList.ItemCount; ++u)
-				{
-					KeyValuePair<string, object> kvp = m_mruList.GetItem(u);
-					if(kvp.Value == null) { Debug.Assert(false); continue; }
-					IOConnectionInfo iocMru = (kvp.Value as IOConnectionInfo);
-					if(iocMru == null) { Debug.Assert(false); continue; }
-
-					if(iocMru.Path.Equals(ioc.Path, StrUtil.CaseIgnoreCmp))
-					{
-						ioc.UserName = iocMru.UserName;
-						ioc.Password = iocMru.Password;
-						ioc.CredSaveMode = iocMru.CredSaveMode;
-						break;
-					}
-				}
-			}
+				ioc = CompleteConnectionInfoUsingMru(ioc);
 
 			string strUserName = args[AppDefs.CommandLineOptions.IoCredUserName];
 			if(strUserName != null) ioc.UserName = strUserName;
@@ -4363,19 +4377,6 @@ namespace KeePass.Forms
 			return v[nColID];
 		}
 
-		private static bool IsColumnHidden(AceColumnType t)
-		{
-			List<AceColumn> l = Program.Config.MainWindow.EntryListColumns;
-			bool bHidden = (t == AceColumnType.Password);
-
-			foreach(AceColumn c in l)
-			{
-				if(c.Type == t) { bHidden = c.HideWithAsterisks; break; }
-			}
-
-			return bHidden;
-		}
-
 		private void ToggleFieldAsterisks(AceColumnType colType)
 		{
 			List<AceColumn> l = Program.Config.MainWindow.EntryListColumns;
@@ -4580,14 +4581,14 @@ namespace KeePass.Forms
 		{
 			if(pd == null) { Debug.Assert(false); return; }
 
-			if(sp != null)
-			{
-				if(sp.SearchInTitles) pd.MemoryProtection.ProtectTitle = false;
-				if(sp.SearchInUserNames) pd.MemoryProtection.ProtectUserName = false;
-				// if(sp.SearchInPasswords) pd.MemoryProtection.ProtectPassword = false;
-				if(sp.SearchInUrls) pd.MemoryProtection.ProtectUrl = false;
-				if(sp.SearchInNotes) pd.MemoryProtection.ProtectNotes = false;
-			}
+			// if(sp != null)
+			// {
+			//	if(sp.SearchInTitles) pd.MemoryProtection.ProtectTitle = false;
+			//	if(sp.SearchInUserNames) pd.MemoryProtection.ProtectUserName = false;
+			//	// if(sp.SearchInPasswords) pd.MemoryProtection.ProtectPassword = false;
+			//	if(sp.SearchInUrls) pd.MemoryProtection.ProtectUrl = false;
+			//	if(sp.SearchInNotes) pd.MemoryProtection.ProtectNotes = false;
+			// }
 		}
 
 		private static bool? m_bCachedSelfTestResult = null;

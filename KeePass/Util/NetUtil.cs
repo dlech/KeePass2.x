@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace KeePass.Util
 {
 	public static class NetUtil
 	{
-		public static string GZipUtf8ResultToString(DownloadDataCompletedEventArgs e)
+		/* public static string GZipUtf8ResultToString(DownloadDataCompletedEventArgs e)
 		{
 			if(e.Cancelled || (e.Error != null) || (e.Result == null))
 				return null;
@@ -57,7 +57,7 @@ namespace KeePass.Util
 			msZipped.Close();
 
 			return StrUtil.Utf8.GetString(msUTF8.ToArray());
-		}
+		} */
 
 		public static string WebPageLogin(Uri url, string strPostData,
 			out List<KeyValuePair<string, string>> vCookies)

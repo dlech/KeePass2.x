@@ -101,29 +101,27 @@
             this.m_menuFileSep0,
             this.m_menuFileExit});
 			this.m_menuFile.Name = "m_menuFile";
-			this.m_menuFile.Size = new System.Drawing.Size(35, 20);
+			this.m_menuFile.Size = new System.Drawing.Size(39, 20);
 			this.m_menuFile.Text = "&File";
 			// 
 			// m_menuFileSave
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.m_menuFileSave.Size = new System.Drawing.Size(134, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(131, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.ShortcutKeyDisplayString = "Esc";
-			this.m_menuFileExit.Size = new System.Drawing.Size(134, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileExit.Text = "&Close";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -134,25 +132,25 @@
             this.m_menuViewSep0,
             this.m_menuViewWordWrap});
 			this.m_menuView.Name = "m_menuView";
-			this.m_menuView.Size = new System.Drawing.Size(42, 20);
+			this.m_menuView.Size = new System.Drawing.Size(45, 20);
 			this.m_menuView.Text = "&View";
 			// 
 			// m_menuViewFont
 			// 
 			this.m_menuViewFont.Name = "m_menuViewFont";
-			this.m_menuViewFont.Size = new System.Drawing.Size(129, 22);
+			this.m_menuViewFont.Size = new System.Drawing.Size(135, 22);
 			this.m_menuViewFont.Text = "&Font...";
 			this.m_menuViewFont.Click += new System.EventHandler(this.OnViewFont);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(126, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(132, 6);
 			// 
 			// m_menuViewWordWrap
 			// 
 			this.m_menuViewWordWrap.Name = "m_menuViewWordWrap";
-			this.m_menuViewWordWrap.Size = new System.Drawing.Size(129, 22);
+			this.m_menuViewWordWrap.Size = new System.Drawing.Size(135, 22);
 			this.m_menuViewWordWrap.Text = "Word &Wrap";
 			this.m_menuViewWordWrap.Click += new System.EventHandler(this.OnViewWordWrap);
 			// 

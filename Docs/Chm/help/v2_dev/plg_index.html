@@ -25,7 +25,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2011 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
 
 	<title>Plugin Development - KeePass</title>
 	<base target="_self" />
@@ -53,6 +53,7 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 <li><a href="#tutorial">Step-by-Step Tutorial</a></li>
 <li><a href="#commonops">Common Operations</a></li>
 <li><a href="#conventions">Plugin Conventions</a></li>
+<li><a href="#upd">Update Checking</a></li>
 <li><a href="#unmanagedcpp">Can KeePass 2.x Plugins be written in Unmanaged C++?</a></li>
 <li><a href="#plgx">PLGX Files</a></li>
 </ul>
@@ -286,6 +287,80 @@ you must call the namespace <code>SecretImporter</code>.</p>
 
 <p>The plugin class must be named like the namespace plus &quot;Ext&quot;.
 For the SecretImporter plugin, this would be <code>SecretImporterExt</code>.</p>
+
+<br />
+
+<a name="upd"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_dataexchange.png" class="singleimg" alt="Exchange" />&nbsp;&nbsp;Update
+Checking</h2>
+
+<p>The update check of KeePass &ge; 2.18 can also check for plugin updates.
+Update check support is optional; plugins don't have to support update
+checks.</p>
+
+<p>In order to support update checks, plugin developers need to do the following:</p>
+
+<ul>
+<li><b>Provide version information file.</b>
+When an end-user invokes an update check, KeePass downloads a version information
+file, which specifies the current version numbers of one or more plugins.
+Every plugin author hosts an own version information file.
+The format of the version information file is described in detail below.</li>
+<li><b>Let KeePass know.</b>
+In order to be able to check the plugin's version, KeePass must know where
+your version information file is located. To let KeePass know,
+override the <code>UpdateUrl</code> string property of your plugin class
+(the one derived from <code>Plugin</code>)
+to return the full, absolute URL of your version information file.
+This should be an <code>http://</code> URL, but an <code>ftp://</code> URL
+is also acceptable.</li>
+</ul>
+
+<p>Plugin developers have to update their version information file each time
+they release new versions of their plugins.</p>
+
+<p><b>Version information file format.</b></p>
+<ul>
+<li>The file is a simple text file. It must be encoded using UTF-8 without
+byte order marks (BOM). All line endings are supported.</li>
+<li>The first line of the file must start with a separator character of
+your choice. The separator character may be any character,
+but it must not appear within plugin names and versions.
+Suggested is '<code>:</code>'.</li>
+<li>Each of the following lines specifies a plugin name and its currently
+available version, separated by the separator character that was specified in
+the header line.</li>
+<li>As plugin name, the value of the 'Title' field in the version information
+block of the plugin must be specified.
+For managed plugins, this is the value specified using the
+<code>AssemblyTitle</code> assembly attribute.</li>
+<li>As version number, the value of the file version in the version information
+block of the plugin must be specified.
+For managed plugins, this is the value specified using the
+<code>AssemblyFileVersion</code> assembly attribute.
+Trailing <code>.0</code> may be removed
+(e.g. specify <code>1.3</code> instead of <code>1.3.0.0</code>).</li>
+<li>The file must end with a line containing only the separator character.</li>
+<li>You may optionally compress your version information file using GZip
+(note this is not the same as Zip). The file
+name must then end with &quot;<code>.gz</code>&quot;.</li>
+</ul>
+
+<p>Example. Let's assume you're developing two plugins: <em>MyPlugin1</em>
+(version 1.5) and <em>MyPlugin2</em> (version 1.13.2.17). Then your version
+information file could look as follows:</p>
+<pre>:
+MyPlugin1:1.5
+MyPlugin2:1.13.2.17
+:</pre>
+
+<p>If you've developed multiple plugins, it is recommended to create one
+version information file, list all your plugins in this file and specify
+the URL of the file in all your plugins. When KeePass checks for updates,
+it'll download your version information file only once.
+This reduces network traffic and is faster than downloading a version information
+file for every plugin separately.</p>
 
 <br />
 

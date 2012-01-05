@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ namespace KeePass.Forms
 	{
 		private ProtectedStringDictionary m_vStringDict = null;
 		private string m_strStringName = null;
-		private ProtectedString m_psStringValue = null;
-		private Color m_clrNormalBackground;
+		private ProtectedString m_psStringInitialValue = null;
 		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 		private PwDatabase m_pwContext = null;
 
@@ -59,15 +58,15 @@ namespace KeePass.Forms
 		/// </summary>
 		/// <param name="vStringDict">String container. Must not be <c>null</c>.</param>
 		/// <param name="strStringName">Initial name of the string. May be <c>null</c>.</param>
-		/// <param name="psStringValue">Initial value. May be <c>null</c>.</param>
+		/// <param name="psStringInitialValue">Initial value. May be <c>null</c>.</param>
 		public void InitEx(ProtectedStringDictionary vStringDict, string strStringName,
-			ProtectedString psStringValue, PwDatabase pwContext)
+			ProtectedString psStringInitialValue, PwDatabase pwContext)
 		{
 			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException("vStringDict");
 			m_vStringDict = vStringDict;
 
 			m_strStringName = strStringName;
-			m_psStringValue = psStringValue;
+			m_psStringInitialValue = psStringInitialValue;
 
 			m_pwContext = pwContext;
 		}
@@ -96,16 +95,14 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Font, strTitle, strDesc);
 			this.Icon = Properties.Resources.KeePass;
 
-			m_clrNormalBackground = m_cmbStringName.BackColor;
-
 			UIUtil.EnableAutoCompletion(m_cmbStringName, true);
 			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true, true);
 
 			if(m_strStringName != null) m_cmbStringName.Text = m_strStringName;
-			if(m_psStringValue != null)
+			if(m_psStringInitialValue != null)
 			{
-				m_richStringValue.Text = m_psStringValue.ReadString();
-				m_cbProtect.Checked = m_psStringValue.IsProtected;
+				m_richStringValue.Text = m_psStringInitialValue.ReadString();
+				m_cbProtect.Checked = m_psStringInitialValue.IsProtected;
 			}
 
 			ValidateStringName();
@@ -147,7 +144,7 @@ namespace KeePass.Forms
 			else if(str.Length <= 0)
 			{
 				m_lblValidationInfo.Text = KPRes.FieldNamePrompt;
-				m_cmbStringName.BackColor = m_clrNormalBackground;
+				m_cmbStringName.ResetBackColor();
 				m_btnOK.Enabled = false;
 				return false;
 
@@ -169,7 +166,7 @@ namespace KeePass.Forms
 			else
 			{
 				m_lblValidationInfo.Text = string.Empty;
-				m_cmbStringName.BackColor = m_clrNormalBackground;
+				m_cmbStringName.ResetBackColor();
 				m_btnOK.Enabled = true;
 			}
 			// See ValidateStringNameEx
@@ -196,26 +193,12 @@ namespace KeePass.Forms
 			}
 			else // Edit string field
 			{
-				if(m_strStringName.Equals(strName))
-				{
-					if(m_psStringValue != null)
-					{
-						m_psStringValue.SetString(m_richStringValue.Text);
-						m_psStringValue.EnableProtection(m_cbProtect.Checked);
-					}
-					else
-					{
-						ProtectedString ps = new ProtectedString(m_cbProtect.Checked, m_richStringValue.Text);
-						m_vStringDict.Set(strName, ps);
-					}
-				}
-				else
-				{
+				if(!m_strStringName.Equals(strName))
 					m_vStringDict.Remove(m_strStringName);
 
-					ProtectedString ps = new ProtectedString(m_cbProtect.Checked, m_richStringValue.Text);
-					m_vStringDict.Set(strName, ps);
-				}
+				ProtectedString ps = new ProtectedString(m_cbProtect.Checked,
+					m_richStringValue.Text);
+				m_vStringDict.Set(strName, ps);
 			}
 		}
 

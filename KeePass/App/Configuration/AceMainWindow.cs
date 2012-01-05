@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,10 +26,11 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
 
-using KeePassLib;
-
 using KeePass.Resources;
 using KeePass.UI;
+
+using KeePassLib;
+using KeePassLib.Security;
 
 namespace KeePass.App.Configuration
 {
@@ -364,6 +365,11 @@ namespace KeePass.App.Configuration
 			return null;
 		}
 
+		public bool IsColumnHidden(AceColumnType t)
+		{
+			return IsColumnHidden(t, (t == AceColumnType.Password));
+		}
+
 		public bool IsColumnHidden(AceColumnType t, bool bDefault)
 		{
 			foreach(AceColumn c in m_aceColumns)
@@ -372,6 +378,19 @@ namespace KeePass.App.Configuration
 			}
 
 			return bDefault;
+		}
+
+		public bool ShouldHideCustomString(string strCustomName,
+			ProtectedString psValue)
+		{
+			foreach(AceColumn c in m_aceColumns)
+			{
+				if((c.Type == AceColumnType.CustomString) &&
+					(c.CustomName == strCustomName))
+					return c.HideWithAsterisks;
+			}
+			if(psValue != null) return psValue.IsProtected;
+			return false;
 		}
 	}
 
@@ -389,13 +408,13 @@ namespace KeePass.App.Configuration
 			set { m_bShow = value; }
 		}
 
-		private bool m_bHideProtectedCustomStrings = true;
-		[DefaultValue(true)]
-		public bool HideProtectedCustomStrings
-		{
-			get { return m_bHideProtectedCustomStrings; }
-			set { m_bHideProtectedCustomStrings = value; }
-		}
+		// private bool m_bHideProtectedCustomStrings = true;
+		// [DefaultValue(true)]
+		// public bool HideProtectedCustomStrings
+		// {
+		//	get { return m_bHideProtectedCustomStrings; }
+		//	set { m_bHideProtectedCustomStrings = value; }
+		// }
 	}
 
 	public sealed class AceTanView

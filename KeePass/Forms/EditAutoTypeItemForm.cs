@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -469,8 +469,7 @@ namespace KeePass.Forms
 				@"search --onlyvisible --name '.+' getwindowname %@");
 			if(string.IsNullOrEmpty(strWindows)) return;
 
-			strWindows = strWindows.Replace("\r\n", "\n");
-			strWindows = strWindows.Replace("\r", string.Empty);
+			strWindows = StrUtil.NormalizeNewLines(strWindows, false);
 			string[] vWindows = strWindows.Split(new char[]{ '\n' });
 
 			List<string> vListed = new List<string>();

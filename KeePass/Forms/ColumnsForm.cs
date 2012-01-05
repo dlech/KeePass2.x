@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ namespace KeePass.Forms
 
 	public partial class ColumnsForm : Form
 	{
+		private bool m_bIgnoreHideCheckEvent = false;
+
 		public ColumnsForm()
 		{
 			InitializeComponent();
@@ -68,7 +70,7 @@ namespace KeePass.Forms
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(FillColumnsList));
 
-			EnableControlsEx();
+			UpdateColumnPropInfo();
 		}
 
 		private void AddAceColumnTh(AceColumn c)
@@ -91,8 +93,9 @@ namespace KeePass.Forms
 			}
 
 			ListViewItem lvi = new ListViewItem(c.GetDisplayName());
+			lvi.Tag = c;
 
-			lvi.SubItems.Add(c.HideWithAsterisks ? KPRes.Yes : string.Empty);
+			lvi.SubItems.Add(c.HideWithAsterisks ? KPRes.Yes : KPRes.No);
 
 			if(c.Type == AceColumnType.Password)
 				lvi.SubItems.Add(KPRes.KeyboardKeyCtrl + "+H");
@@ -128,7 +131,6 @@ namespace KeePass.Forms
 			}
 			lvi.Checked = bChecked;
 
-			lvi.Tag = c;
 			lvi.Group = lvgContainer;
 			m_lvColumns.Items.Add(lvi);
 		}
@@ -250,15 +252,34 @@ namespace KeePass.Forms
 					AceColumn c = (lvi.Tag as AceColumn);
 					if(c == null) { Debug.Assert(false); continue; }
 
-					string str = (c.HideWithAsterisks ? KPRes.Yes : string.Empty);
+					string str = (c.HideWithAsterisks ? KPRes.Yes : KPRes.No);
 					lvi.SubItems[1].Text = str;
 				}
 			}
 		}
 
-		private void EnableControlsEx()
+		private void UpdateColumnPropInfo()
 		{
-			m_btnAsterisks.Enabled = (m_lvColumns.SelectedIndices.Count > 0);
+			ListView.SelectedListViewItemCollection lvsic = m_lvColumns.SelectedItems;
+			if((lvsic == null) || (lvsic.Count != 1) || (lvsic[0] == null))
+			{
+				m_grpColumn.Text = KPRes.SelectedColumn + ": (" + KPRes.None + ")";
+				m_cbHide.Checked = false;
+				m_cbHide.Enabled = false;
+			}
+			else
+			{
+				ListViewItem lvi = lvsic[0];
+				AceColumn c = (lvi.Tag as AceColumn);
+				if(c == null) { Debug.Assert(false); return; }
+
+				m_grpColumn.Text = KPRes.SelectedColumn + ": " + c.GetDisplayName();
+				m_cbHide.Enabled = true;
+
+				m_bIgnoreHideCheckEvent = true;
+				UIUtil.SetChecked(m_cbHide, c.HideWithAsterisks);
+				m_bIgnoreHideCheckEvent = false;
+			}
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -286,8 +307,16 @@ namespace KeePass.Forms
 		{
 		}
 
-		private void OnBtnAsterisks(object sender, EventArgs e)
+		private void OnColumnsSelectedIndexChanged(object sender, EventArgs e)
 		{
+			UpdateColumnPropInfo();
+		}
+
+		private void OnHideCheckedChanged(object sender, EventArgs e)
+		{
+			if(m_bIgnoreHideCheckEvent) return;
+
+			bool bChecked = m_cbHide.Checked;
 			foreach(ListViewItem lvi in m_lvColumns.SelectedItems)
 			{
 				AceColumn c = (lvi.Tag as AceColumn);
@@ -297,15 +326,10 @@ namespace KeePass.Forms
 					!AppPolicy.Try(AppPolicyId.UnhidePasswords))
 				{
 				}
-				else c.HideWithAsterisks = !c.HideWithAsterisks;
+				else c.HideWithAsterisks = bChecked;
 			}
 
 			UpdateListEx(false);
-		}
-
-		private void OnColumnsSelectedIndexChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
 		}
 	}
 }

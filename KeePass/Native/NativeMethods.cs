@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -378,5 +378,10 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PlaySound(string pszSound, IntPtr hmod,
 			uint fdwSound);
+
+		[DllImport("Shell32.dll", CharSet = CharSet.Auto)]
+		internal static extern IntPtr ShellExecute(IntPtr hwnd,
+			string lpOperation, string lpFile, string lpParameters,
+			string lpDirectory, int nShowCmd);
 	}
 }

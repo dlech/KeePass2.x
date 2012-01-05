@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -512,6 +512,54 @@ namespace KeePassLib.Utility
 			str = str.Replace('<', '(');
 			str = str.Replace('>', ')');
 			str = str.Replace('|', '-');
+
+			return str;
+		}
+
+		/// <summary>
+		/// Get the host component of an URL.
+		/// This method is faster and more fault-tolerant than creating
+		/// an <code>Uri</code> object and querying its <code>Host</code>
+		/// property.
+		/// </summary>
+		/// <example>
+		/// For the input <code>s://u:p@d.tld:p/p?q#f</code> the return
+		/// value is <code>d.tld</code>.
+		/// </example>
+		public static string GetHost(string strUrl)
+		{
+			if(strUrl == null) { Debug.Assert(false); return string.Empty; }
+
+			StringBuilder sb = new StringBuilder();
+			bool bInExtHost = false;
+			for(int i = 0; i < strUrl.Length; ++i)
+			{
+				char ch = strUrl[i];
+				if(bInExtHost)
+				{
+					if(ch == '/')
+					{
+						if(sb.Length == 0) { } // Ignore leading '/'s
+						else break;
+					}
+					else sb.Append(ch);
+				}
+				else // !bInExtHost
+				{
+					if(ch == ':') bInExtHost = true;
+				}
+			}
+
+			string str = sb.ToString();
+			if(str.Length == 0) str = strUrl;
+
+			// Remove the login part
+			int nLoginLen = str.IndexOf('@');
+			if(nLoginLen >= 0) str = str.Substring(nLoginLen + 1);
+
+			// Remove the port
+			int iPort = str.LastIndexOf(':');
+			if(iPort >= 0) str = str.Substring(0, iPort);
 
 			return str;
 		}

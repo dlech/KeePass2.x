@@ -134,11 +134,6 @@
             Interface to a user key, like a password, key file data, etc.
             </summary>
         </member>
-        <member name="M:KeePassLib.Keys.IUserKey.Clear">
-            <summary>
-            Clear the key and securely erase all security-critical information.
-            </summary>
-        </member>
         <member name="P:KeePassLib.Keys.IUserKey.KeyData">
             <summary>
             Get key data. Querying this property is fast (it returns a
@@ -200,11 +195,6 @@
         <member name="M:KeePassLib.Keys.KcpUserAccount.#ctor">
             <summary>
             Construct a user account key.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Keys.KcpUserAccount.Clear">
-            <summary>
-            Clear the key and securely erase all security-critical information.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KcpUserAccount.KeyData">
@@ -360,17 +350,6 @@
             Construct a new, empty key object.
             </summary>
         </member>
-        <member name="M:KeePassLib.Keys.CompositeKey.Finalize">
-            <summary>
-            Deconstructor, clears up the key.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Keys.CompositeKey.Clear">
-            <summary>
-            Clears the key. This function also erases all previously stored
-            user key data objects.
-            </summary>
-        </member>
         <member name="M:KeePassLib.Keys.CompositeKey.AddUserKey(KeePassLib.Keys.IUserKey)">
             <summary>
             Add a user key.
@@ -457,23 +436,14 @@
         <member name="T:KeePassLib.Security.ProtectedString">
             <summary>
             Represents an in-memory encrypted string.
+            <c>ProtectedString</c> objects are immutable and thread-safe.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor">
             <summary>
             Construct a new protected string object. Protection is
-            disabled by default! You need to call the
-            <c>EnableProtection</c> member function in order to
-            enable the protection, if you wish the string to be protected.
+            disabled.
             </summary>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean)">
-            <summary>
-            Construct a new in-memory encrypted string object.
-            </summary>
-            <param name="bEnableProtection">If this parameter is <c>true</c>,
-            the string will be protected in-memory (encrypted). If it
-            is <c>false</c>, the string will be stored as plain-text.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,System.String)">
             <summary>
@@ -495,17 +465,8 @@
             the string will be protected in-memory (encrypted). If it
             is <c>false</c>, the string will be stored as plain-text.</param>
             <param name="vUtf8Value">The initial string value, encoded as
-            UTF-8 byte array. This parameter won't be modified.</param>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedString.#ctor(KeePassLib.Security.ProtectedString)">
-            <summary>
-            Construct a new protected string. The string is initialized
-            to the value passed in the <c>pbTemplate</c> protected string.
-            </summary>
-            <param name="psTemplate">The initial string value. This
-            parameter won't be modified. Must not be <c>null</c>.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
+            UTF-8 byte array. This parameter won't be modified; the caller
+            is responsible for clearing it.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>
@@ -519,38 +480,11 @@
             <exception cref="T:System.ArgumentNullException">Thrown if the input
             parameter is <c>null</c>.</exception>
         </member>
-        <member name="M:KeePassLib.Security.ProtectedString.Clear">
-            <summary>
-            Clear the string. Doesn't change the protection level.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedString.EnableProtection(System.Boolean)">
-            <summary>
-            Change the protection level (protect or don't protect). Note: you
-            only need to call this function if you really want to change the
-            protection. If you specified the protection flag in the constructor,
-            and don't want to change it, you don't need to call this function.
-            </summary>
-            <param name="bProtect">If <c>true</c>, the string will be protected
-            (encrypted in-memory). Otherwise the string will be stored in
-            plain-text in the process memory.</param>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedString.SetString(System.String)">
-            <summary>
-            Assign a new string value to the object.
-            </summary>
-            <param name="strNewValue">New string. The string must not contain
-            a <c>null</c> terminator.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown if the new string
-            contains a <c>null</c> terminator.</exception>
-        </member>
         <member name="M:KeePassLib.Security.ProtectedString.ReadString">
             <summary>
             Convert the protected string to a normal string object.
             Be careful with this function, the returned string object
-            isn't protected any more and stored in plain-text in the
+            isn't protected anymore and stored in plain-text in the
             process memory.
             </summary>
             <returns>Plain-text string. Is never <c>null</c>.</returns>
@@ -566,12 +500,7 @@
         <member name="M:KeePassLib.Security.ProtectedString.ReadXorredString(KeePassLib.Cryptography.CryptoRandomStream)">
             <summary>
             Read the protected string and return it protected with a sequence
-            of bytes generated by a random stream. The object's data will be
-            invisible in process memory only if the object has been initialized
-            using a <c>XorredBuffer</c>. If no <c>XorredBuffer</c> has been used
-            or the string has been read once already (in plain-text), the
-            operation won't be secure and the protected string will be visible
-            in process memory.
+            of bytes generated by a random stream.
             </summary>
             <param name="crsRandomSource">Random number source.</param>
             <returns>Protected string.</returns>
@@ -580,62 +509,34 @@
         </member>
         <member name="P:KeePassLib.Security.ProtectedString.IsProtected">
             <summary>
-            A flag specifying whether the <c>ProtectedString</c> object has turned on
-            in-memory protection or not.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Security.ProtectedString.IsViewable">
-            <summary>
-            A value specifying whether the <c>ProtectedString</c> object is currently
-            in-memory protected or not. This flag can be different than
-            <c>IsProtected</c>: if a <c>XorredBuffer</c> is used, the <c>IsProtected</c>
-            flag represents the memory protection flag, but not the actual protection.
-            In this case use <c>IsViewable</c>, which returns <c>true</c> if a
-            <c>XorredBuffer</c> is currently in use.
+            A flag specifying whether the <c>ProtectedString</c> object
+            has turned on in-memory protection or not.
             </summary>
         </member>
         <member name="T:KeePassLib.Security.ProtectedBinary">
             <summary>
             Represents a protected binary, i.e. a byte array that is encrypted
-            in-memory.
+            in memory. A <c>ProtectedBinary</c> object is immutable and
+            thread-safe.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor">
             <summary>
             Construct a new, empty protected binary data object. Protection
-            is disabled by default! You need to call the
-            <c>EnableProtection</c> member function to enable the protection
-            manually, if you wish the data to be protected.
+            is disabled.
             </summary>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean)">
-            <summary>
-            Construct a new, empty protected binary data object.
-            </summary>
-            <param name="bEnableProtection">If this parameter is <c>true</c>,
-            the data will be encrypted in-memory. If it is <c>false</c>, the
-            data is stored in plain-text in the process memory.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,System.Byte[])">
             <summary>
             Construct a new protected binary data object.
             </summary>
             <param name="bEnableProtection">If this paremeter is <c>true</c>,
-            the data will be encrypted in-memory. If it is <c>false</c>, the
+            the data will be encrypted in memory. If it is <c>false</c>, the
             data is stored in plain-text in the process memory.</param>
-            <param name="pbInitialValue">Initial value of the protected
-            object. The input parameter is not modified.</param>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(KeePassLib.Security.ProtectedBinary)">
-            <summary>
-            Construct a new protected binary data object. Copy the data from
-            an existing object.
-            </summary>
-            <param name="pbTemplate">Existing <c>ProtectedBinary</c> object,
-            which is used to initialize the new object. This parameter must
-            not be <c>null</c>.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
+            <param name="pbData">Value of the protected object.
+            The input parameter is not modified and
+            <c>ProtectedBinary</c> doesn't take ownership of the data,
+            i.e. the caller is responsible for clearing it.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>
@@ -648,40 +549,12 @@
             <exception cref="T:System.ArgumentNullException">Thrown if the input
             parameter is <c>null</c>.</exception>
         </member>
-        <member name="M:KeePassLib.Security.ProtectedBinary.Clear">
-            <summary>
-            Clear the protected data object. Doesn't change the protection level.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedBinary.EnableProtection(System.Boolean)">
-            <summary>
-            Change the protection level (protect or don't protect). Note: you
-            only need to call this function if you really want to change the
-            protection. If you specified the protection flag in the constructor,
-            and don't want to change it, you don't need to call this function.
-            </summary>
-            <param name="bEnableProtection">If <c>true</c>, the data will be protected
-            (encrypted in-memory). Otherwise the data will be stored in
-            plain-text in the process memory.</param>
-        </member>
-        <member name="M:KeePassLib.Security.ProtectedBinary.SetData(System.Byte[])">
-            <summary>
-            Set protected data. This function also clears the internal
-            <c>XorredBuffer</c> object.
-            </summary>
-            <param name="pbNew">Data to store in the protected object. The input
-            byte array will not be modified, the data is copied to an internal
-            buffer of the protected object. This parameter must not be <c>null</c>;
-            if you want to clear the object, call the <c>Clear</c> member
-            function.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-        </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.ReadData">
             <summary>
-            Get the protected data as a byte array. Please note that the returned
-            byte array is not protected and can therefore been read by any other
-            applications. Make sure that your clear it properly after usage.
+            Get a copy of the protected data as a byte array.
+            Please note that the returned byte array is not protected and
+            can therefore been read by any other application.
+            Make sure that your clear it properly after usage.
             </summary>
             <returns>Unprotected byte array. This is always a copy of the internal
             protected data and can therefore be cleared safely.</returns>
@@ -689,12 +562,7 @@
         <member name="M:KeePassLib.Security.ProtectedBinary.ReadXorredData(KeePassLib.Cryptography.CryptoRandomStream)">
             <summary>
             Read the protected data and return it protected with a sequence
-            of bytes generated by a random stream. The object's data will be
-            invisible in process memory only if the object has been initialized
-            using a <c>XorredBuffer</c>. If no <c>XorredBuffer</c> has been used
-            or the binary has been read once already (in plain-text), the
-            operation won't be secure and the protected string will be visible
-            in process memory.
+            of bytes generated by a random stream.
             </summary>
             <param name="crsRandomSource">Random number source.</param>
             <returns>Protected data.</returns>
@@ -703,18 +571,8 @@
         </member>
         <member name="P:KeePassLib.Security.ProtectedBinary.IsProtected">
             <summary>
-            A flag specifying whether the <c>ProtectedBinary</c> object has turned on
-            in-memory protection or not.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Security.ProtectedBinary.IsViewable">
-            <summary>
-            A value specifying whether the <c>ProtectedString</c> object is currently
-            in-memory protected or not. This flag can be different than
-            <c>IsProtected</c>: if a <c>XorredBuffer</c> is used, the <c>IsProtected</c>
-            flag represents the memory protection flag, but not the actual protection.
-            In this case use <c>IsViewable</c>, which returns <c>true</c> if a
-            <c>XorredBuffer</c> is currently in use.
+            A flag specifying whether the <c>ProtectedBinary</c> object has
+            turned on in-memory protection or not.
             </summary>
         </member>
         <member name="P:KeePassLib.Security.ProtectedBinary.Length">
@@ -823,6 +681,12 @@
             'Failed to load the specified file!'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileLockedWrite">
+            <summary>
+            Look up a localized string similar to
+            'The file is locked, because the following user is currently writing to it:'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.FileNewVerReq">
             <summary>
             Look up a localized string similar to
@@ -911,6 +775,12 @@
             <summary>
             Look up a localized string similar to
             'The selected file appears to be an old format'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.TryAgainSecs">
+            <summary>
+            Look up a localized string similar to
+            'Please try it again in a few seconds.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.UnknownHeaderId">
@@ -1042,11 +912,11 @@
             Convert a hexadecimal string to a byte array. The input string must be
             even (i.e. its length is a multiple of 2).
             </summary>
-            <param name="strHexString">String containing hexadecimal characters.</param>
+            <param name="strHex">String containing hexadecimal characters.</param>
             <returns>Returns a byte array. Returns <c>null</c> if the string parameter
             was <c>null</c> or is an uneven string (i.e. if its length isn't a
             multiple of 2).</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strHexString"/>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="strHex"/>
             is <c>null</c>.</exception>
         </member>
         <member name="M:KeePassLib.Utility.MemUtil.ByteArrayToHexString(System.Byte[])">
@@ -1535,8 +1405,8 @@
         <member name="T:KeePassLib.Security.XorredBuffer">
             <summary>
             Represents an object that is encrypted using a XOR pad until
-            it is read. The key XOR pad can be changed without revealing the
-            protected data in process memory.
+            it is read. <c>XorredBuffer</c> objects are immutable and
+            thread-safe.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.XorredBuffer.#ctor(System.Byte[],System.Byte[])">
@@ -1545,10 +1415,12 @@
             and a XOR pad that decrypts the protected data. The
             <paramref name="pbProtectedData"/> byte array must have the same size
             as the <paramref name="pbXorPad"/> byte array.
+            The <c>XorredBuffer</c> object takes ownership of the two byte
+            arrays, i.e. the caller must not use or modify them afterwards.
             </summary>
             <param name="pbProtectedData">Protected data (XOR pad applied).</param>
-            <param name="pbXorPad">XOR pad that is used to decrypt the
-            <paramref name="pbData"/> parameter.</param>
+            <param name="pbXorPad">XOR pad that can be used to decrypt the
+            <paramref name="pbProtectedData"/> parameter.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if one of the input
             parameters is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentException">Thrown if the byte arrays are
@@ -1556,39 +1428,10 @@
         </member>
         <member name="M:KeePassLib.Security.XorredBuffer.ReadPlainText">
             <summary>
-            Decrypt the buffer. The <c>XorredBuffer</c> protection is useless
-            after you used this method. The object cannot be re-encrypted.
+            Get a copy of the plain-text. The caller is responsible
+            for clearing the byte array safely after using it.
             </summary>
             <returns>Unprotected plain-text byte array.</returns>
-        </member>
-        <member name="M:KeePassLib.Security.XorredBuffer.ChangeKey(System.Byte[])">
-            <summary>
-            Change the protection key for this <c>XorredBuffer</c> object.
-            The data will first be decrypted using the old key and then
-            re-encrypted using the new key. This operation doesn't reveal
-            the plain-text in the process memory.
-            </summary>
-            <param name="pbNewXorPad">New protection pad. Must contain exactly
-            the same number of bytes as the length of the currently protected data.
-            Use the <c>Length</c> property of the <c>XorredBuffer</c> to query
-            the data length and pass a correct number of bytes to <c>ChangeKey</c>.</param>
-            <returns>New protected data (encrypted using the new XOR pad).</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown if the input
-            byte array doesn't have the correct size.</exception>
-        </member>
-        <member name="M:KeePassLib.Security.XorredBuffer.XorArrays(System.Byte[],System.Byte[])">
-            <summary>
-            XOR all bytes in a data buffer with a pad. Both byte arrays must
-            be of the same size.
-            </summary>
-            <param name="pbData">Data to be protected.</param>
-            <param name="pbPad">XOR pad.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the
-            parameters is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown if the length of
-            the data array and the pad aren't equal.</exception>
         </member>
         <member name="P:KeePassLib.Security.XorredBuffer.Length">
             <summary>
@@ -1766,6 +1609,13 @@
         <member name="F:KeePassLib.MemProtCmpMode.Full">
             <summary>
             Compare in-memory protection states.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwCompareOptions.NullEmptyEquivStd">
+            <summary>
+            Empty standard string fields are considered to be the
+            same as non-existing standard string fields.
+            This doesn't affect custom string comparisons.
             </summary>
         </member>
         <member name="T:KeePassLib.PwEntry">
@@ -1988,11 +1838,6 @@
         <member name="T:KeePassLib.Keys.KcpPassword">
             <summary>
             Master password / passphrase as provided by the user.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Keys.KcpPassword.Clear">
-            <summary>
-            Clear the key and securely erase all security-critical information.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KcpPassword.Password">
@@ -2277,11 +2122,6 @@
             Key files as provided by the user.
             </summary>
         </member>
-        <member name="M:KeePassLib.Keys.KcpKeyFile.Clear">
-            <summary>
-            Clear the key and securely erase all security-critical information.
-            </summary>
-        </member>
         <member name="M:KeePassLib.Keys.KcpKeyFile.Create(System.String,System.Byte[])">
             <summary>
             Create a new, random key-file.
@@ -2372,6 +2212,18 @@
             default system directory separator character is used.</param>
             <returns>Path having a directory separator as last character.</returns>
         </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.GetHost(System.String)">
+            <summary>
+            Get the host component of an URL.
+            This method is faster and more fault-tolerant than creating
+            an <code>Uri</code> object and querying its <code>Host</code>
+            property.
+            </summary>
+            <example>
+            For the input <code>s://u:p@d.tld:p/p?q#f</code> the return
+            value is <code>d.tld</code>.
+            </example>
+        </member>
         <member name="T:KeePassLib.Cryptography.HmacOtp">
             <summary>
             Generate HMAC-based one-time passwords as specified in RFC 4226.
@@ -2391,7 +2243,7 @@
             <summary>
             Encrypt a stream.
             </summary>
-            <param name="sPlainText">Stream to read the plain text from.</param>
+            <param name="sPlainText">Stream to read the plain-text from.</param>
             <param name="pbKey">Key to use.</param>
             <param name="pbIV">Initialization vector.</param>
             <returns>Stream, from which the encrypted data can be read.</returns>
@@ -2482,6 +2334,19 @@
             <param name="strText">Source text.</param>
             <returns>Text containing only valid XML characters.</returns>
         </member>
+        <member name="M:KeePassLib.Utility.StrUtil.NormalizeNewLines(System.String,System.Boolean)">
+            <summary>
+            Normalize new line characters in a string. Input strings may
+            contain mixed new line character sequences from all commonly
+            used operating systems (i.e. \r\n from Windows, \n from Unix
+            and \r from Mac OS.
+            </summary>
+            <param name="str">String with mixed new line characters.</param>
+            <param name="bWindows">If <c>true</c>, new line characters
+            are normalized for Windows (\r\n); if <c>false</c>, new line
+            characters are normalized for Unix (\n).</param>
+            <returns>String with normalized new line characters.</returns>
+        </member>
         <member name="M:KeePassLib.Utility.StrUtil.SplitWithSep(System.String,System.String[],System.Boolean)">
             <summary>
             Split a string and include the separators in the splitted array.
@@ -2507,6 +2372,12 @@
             </summary>
             <param name="strDataUri">Data URI to decode.</param>
             <returns>Decoded binary data.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.RemovePlaceholders(System.String)">
+            <summary>
+            Remove placeholders from a string (wrapped in '{' and '}').
+            This doesn't remove environment variables (wrapped in '%').
+            </summary>
         </member>
         <member name="T:KeePassLib.Serialization.Kdb4Format">
             <summary>
@@ -2902,8 +2773,8 @@
         </member>
         <member name="F:KeePassLib.PwDefs.VersionUrl">
             <summary>
-            URL to an XML file that contains information about the latest KeePass
-            available on the website.
+            URL to a TXT file (eventually compressed) that contains information
+            about the latest KeePass version available on the website.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.HelpUrl">
@@ -3093,6 +2964,11 @@
             </summary>
             <param name="dt"><c>DateTime</c> object to convert to a string.</param>
             <returns>String representing the specified <c>DateTime</c> object.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.ParseUSTextDate(System.String)">
+            <summary>
+            Parse a US textual date string, like e.g. "January 02, 2012".
+            </summary>
         </member>
         <member name="F:KeePassLib.Serialization.IOCredSaveMode.NoSave">
             <summary>

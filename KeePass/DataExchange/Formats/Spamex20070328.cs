@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -94,7 +94,6 @@ namespace KeePass.DataExchange.Formats
 
 			RemoteCertificateValidationCallback pPrevCertCb =
 				ServicePointManager.ServerCertificateValidationCallback;
-
 			ServicePointManager.ServerCertificateValidationCallback =
 				delegate(object sender, X509Certificate certificate, X509Chain chain,
 					SslPolicyErrors sslPolicyErrors)
@@ -145,13 +144,10 @@ namespace KeePass.DataExchange.Formats
 					ImportIndex(pwStorage, strSubPage, vCookies, slLogger);
 				}
 			}
-			catch
+			finally
 			{
 				ServicePointManager.ServerCertificateValidationCallback = pPrevCertCb;
-				throw;
 			}
-
-			ServicePointManager.ServerCertificateValidationCallback = pPrevCertCb;
 		}
 
 		private static void ImportIndex(PwDatabase pwStorage, string strIndexPage,

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -108,7 +108,10 @@ namespace KeePass.Forms
 
 			BlockUIEvents(true);
 
-			UIUtil.ConfigureTbButton(m_tbFileSave, KPRes.Save, null);
+			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
+			m_menuFileExit.ShortcutKeyDisplayString = KPRes.KeyboardKeyEsc;
+
+			UIUtil.ConfigureTbButton(m_tbFileSave, KPRes.Save, null, m_menuFileSave);
 			UIUtil.ConfigureTbButton(m_tbEditCut, KPRes.Cut, null);
 			UIUtil.ConfigureTbButton(m_tbEditCopy, KPRes.Copy, null);
 			UIUtil.ConfigureTbButton(m_tbEditPaste, KPRes.Paste, null);
@@ -166,9 +169,11 @@ namespace KeePass.Forms
 				return;
 			}
 
-			InstalledFontCollection c = new InstalledFontCollection();
-			foreach(FontFamily ff in c.Families)
-				m_tbFontCombo.Items.Add(ff.Name);
+			using(InstalledFontCollection c = new InstalledFontCollection())
+			{
+				foreach(FontFamily ff in c.Families)
+					m_tbFontCombo.Items.Add(ff.Name);
+			}
 
 			m_tbFontCombo.ToolTipText = KPRes.Font;
 

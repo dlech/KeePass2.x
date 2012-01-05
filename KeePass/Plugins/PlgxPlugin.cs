@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -524,11 +524,24 @@ namespace KeePass.Plugins
 			CompileEmbeddedRes(plgx);
 			PrepareSourceFiles(plgx);
 
-			string[] vCompilers = new string[] {
-				null, "v3.5",
-				"v4", // Suggested in CodeDomProvider.CreateProvider doc
-				"v4.0" // Apparently works for most people
-			};
+			string[] vCompilers;
+			if(Environment.Version.Major >= 4)
+			{
+				vCompilers = new string[] {
+					null,
+					"v4", // Suggested in CodeDomProvider.CreateProvider doc
+					"v4.0", // Apparently works for most people
+					"v3.5"
+				};
+			}
+			else // <= 3.5
+			{
+				vCompilers = new string[] {
+					null, "v3.5",
+					"v4", // Suggested in CodeDomProvider.CreateProvider doc
+					"v4.0" // Apparently works for most people
+				};
+			}
 
 			CompilerResults cr = null;
 			bool bCompiled = false;

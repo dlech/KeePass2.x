@@ -1,3 +1,88 @@
+2012-01-05: 2.18
+- The update check now also checks for plugin updates (if
+  plugin developers provide version information files)
+- When starting KeePass 2.18 for the first time, it asks
+  whether to enable the automatic update check or not (if not
+  enabled already)
+- When closing the entry editing dialog by closing the window
+  (using [X], Esc, ...) and there are unsaved changes, KeePass
+  now asks whether to save or discard the changes; only when
+  explicitly clicking the 'Cancel' button, KeePass doesn't
+  prompt
+- When not hiding passwords using asterisks, they don't need to
+  be repeated anymore
+- Password repetition boxes now provide instant visual feedback
+  whether the password has been repeated correctly (if
+  incorrect, the background color is changed to light red)
+- When clicking an '***' button to change the visibility of the
+  entered password, KeePass now automatically transfers the
+  input focus into the password box
+- Visibility of columns in the auto-type entry selection dialog
+  can now be customized using the new 'Options' button
+- Added auto-type option 'An entry matches if the host
+  component of its URL is contained in the target window title'
+- Added shortcut keys: Ctrl+Shift+O for 'Open URL',
+  Ctrl+Shift+U for copying URLs to the clipboard, Ctrl+I for
+  'Add Entry', Ctrl+R for synchronizing with a file,
+  Ctrl+Shift+R for synchronizing with a URL
+- Ensuring same keyboard layouts during auto-type is now
+  optional (option enabled by default)
+- Plain text KDB4 XML exports now store the memory protection
+  flag of strings in an attribute 'ProtectInMemory'
+- Added option to use database lock files (intended for storage
+  providers that don't lock files while writing to them, like
+  e.g. some FTP servers); the option is turned off by default
+  (and especially for local files and files on a network share
+  it's recommended to leave it turned off)
+- Added UIFlags bit for disabling the controls to specify after
+  how many days the master key should/must be changed
+- Added support for in-memory protecting strings that are
+  longer than 65536 characters
+- Added workaround for '@' .NET SendKeys issue
+
+- .NET 4.0 is now preferred, if installed
+- PLGX plugins are now preferably compiled using the .NET 4.0
+  compiler, if KeePass is currently running under the 4.0 CLR
+- Automatic update checks are now performed at maximum once per
+  day (you can still check manually as often as you wish)
+- Auto-Type: entry titles and URLs are now Spr-compiled before
+  being compared with the target window title
+- Decoupled the options 'Show expired entries' and 'Show
+  entries that will expire soon'
+- Specifying the data hiding setting (using asterisks) in the
+  column configuration dialog is now done using a checkbox
+- The entry view now preferably uses the hiding settings
+  (asterisks) of the entry list columns
+- Improved entry expiry date calculation
+- Enhanced Password Agent importer to support version 2.6.2
+- Enhanced SplashID importer to import last modification dates
+- Improved locating of system executables
+- Password generator profiles are now sorted by name
+- Separated built-in and user-defined password generator
+  profiles (built-in profiles aren't stored in the
+  configuration file anymore)
+- Improved naming of shortcut keys, and shortcut keys are now
+  displayed in tooltips
+- Internal window manager can now close windows opened in other
+  threads
+- Improved entry touching when closing the entry editing dialog
+  by closing the window (using [X], Esc, ...)
+- Improved behavior when entering an invalid URL in the 'Open
+  URL' dialog
+- Improved workaround for Mono tab bar height bug
+- ShInstUtil: improved Native Image Generator version detection
+- Unified in-memory protection
+- In-memory protection performance improvements
+- Developers: in-memory protected objects are now immutable and
+  thread-safe
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- The cached/temporary custom icons image list is now updated
+  correctly after running the 'Delete unused custom icons'
+  command
+
 2011-10-19: 2.17
 - Multiple auto-type sequences can now be defined for a window
   in one entry

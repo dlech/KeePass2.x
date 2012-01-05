@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ namespace KeePassLib.Utility
 				else
 					strAppend = obj.ToString();
 
-				if((strAppend != null) && (strAppend.Length > 0))
+				if(!string.IsNullOrEmpty(strAppend))
 				{
 					if(bSeparator) sbText.Append(strNewPara);
 					else bSeparator = true;
@@ -369,8 +369,14 @@ namespace KeePassLib.Utility
 		public static void ShowSaveWarning(string strFilePath, Exception ex,
 			bool bCorruptionWarning)
 		{
-			string str = string.Empty;
+			FileLockException fl = (ex as FileLockException);
+			if(fl != null)
+			{
+				ShowWarning(fl.Message);
+				return;
+			}
 
+			string str = string.Empty;
 			if((strFilePath != null) && (strFilePath.Length > 0))
 				str += strFilePath + MessageService.NewParagraph;
 

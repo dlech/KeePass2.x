@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace KeePass.Forms
 	public partial class CharPickerForm : Form
 	{
 		private ProtectedString m_psWord = null;
-		private ProtectedString m_psSelected = new ProtectedString(false);
+		private ProtectedString m_psSelected = ProtectedString.Empty;
 
 		private SecureEdit m_secWord = new SecureEdit();
 		private List<Button> m_lButtons = new List<Button>();

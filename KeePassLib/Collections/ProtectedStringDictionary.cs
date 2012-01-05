@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -82,13 +82,10 @@ namespace KeePassLib.Collections
 		{
 			ProtectedStringDictionary plNew = new ProtectedStringDictionary();
 
-			ProtectedString psNew;
 			foreach(KeyValuePair<string, ProtectedString> kvpStr in m_vStrings)
 			{
-				psNew = new ProtectedString(kvpStr.Value);
-				Debug.Assert(psNew != kvpStr.Value);
-
-				plNew.Set(kvpStr.Key, psNew);
+				// ProtectedString objects are immutable
+				plNew.Set(kvpStr.Key, kvpStr.Value);
 			}
 
 			return plNew;
@@ -97,19 +94,36 @@ namespace KeePassLib.Collections
 		[Obsolete]
 		public bool EqualsDictionary(ProtectedStringDictionary dict)
 		{
-			return EqualsDictionary(dict, MemProtCmpMode.None);
+			return EqualsDictionary(dict, PwCompareOptions.None, MemProtCmpMode.None);
 		}
 
+		[Obsolete]
 		public bool EqualsDictionary(ProtectedStringDictionary dict,
 			MemProtCmpMode mpCompare)
 		{
+			return EqualsDictionary(dict, PwCompareOptions.None, mpCompare);
+		}
+
+		public bool EqualsDictionary(ProtectedStringDictionary dict,
+			PwCompareOptions pwOpt, MemProtCmpMode mpCompare)
+		{
 			if(dict == null) { Debug.Assert(false); return false; }
 
-			if(m_vStrings.Count != dict.m_vStrings.Count) return false;
+			bool bNeEqStd = ((pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
+				PwCompareOptions.None);
+			if(!bNeEqStd)
+			{
+				if(m_vStrings.Count != dict.m_vStrings.Count) return false;
+			}
 
 			foreach(KeyValuePair<string, ProtectedString> kvp in m_vStrings)
 			{
+				bool bStdField = PwDefs.IsStandardField(kvp.Key);
 				ProtectedString ps = dict.Get(kvp.Key);
+
+				if(bNeEqStd && (ps == null) && bStdField)
+					ps = ProtectedString.Empty;
+
 				if(ps == null) return false;
 
 				if(mpCompare == MemProtCmpMode.Full)
@@ -118,11 +132,23 @@ namespace KeePassLib.Collections
 				}
 				else if(mpCompare == MemProtCmpMode.CustomOnly)
 				{
-					if(!PwDefs.IsStandardField(kvp.Key) &&
-						(ps.IsProtected != kvp.Value.IsProtected)) return false;
+					if(!bStdField && (ps.IsProtected != kvp.Value.IsProtected))
+						return false;
 				}
 
 				if(ps.ReadString() != kvp.Value.ReadString()) return false;
+			}
+
+			if(bNeEqStd)
+			{
+				foreach(KeyValuePair<string, ProtectedString> kvp in dict.m_vStrings)
+				{
+					ProtectedString ps = Get(kvp.Key);
+
+					if(ps != null) continue; // Compared previously
+					if(!PwDefs.IsStandardField(kvp.Key)) return false;
+					if(!kvp.Value.IsEmpty) return false;
+				}
 			}
 
 			return true;
@@ -164,7 +190,7 @@ namespace KeePassLib.Collections
 			ProtectedString ps;
 			if(m_vStrings.TryGetValue(strName, out ps)) return ps;
 
-			return new ProtectedString();
+			return ProtectedString.Empty;
 		}
 
 		/// <summary>
@@ -219,7 +245,7 @@ namespace KeePassLib.Collections
 			if(m_vStrings.TryGetValue(strName, out ps))
 			{
 				if(ps.IsProtected) return PwDefs.HiddenPassword;
-				else return ps.ReadString();
+				return ps.ReadString();
 			}
 
 			return string.Empty;
@@ -262,6 +288,19 @@ namespace KeePassLib.Collections
 			foreach(string strKey in m_vStrings.Keys) v.Add(strKey);
 
 			return v;
+		}
+
+		public void EnableProtection(string strField, bool bProtect)
+		{
+			ProtectedString ps = Get(strField);
+			if(ps == null) return; // Nothing to do, no assert
+
+			if(ps.IsProtected != bProtect)
+			{
+				byte[] pbData = ps.ReadUtf8();
+				Set(strField, new ProtectedString(bProtect, pbData));
+				MemUtil.ZeroByteArray(pbData);
+			}
 		}
 	}
 }

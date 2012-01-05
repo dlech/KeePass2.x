@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -82,13 +82,10 @@ namespace KeePassLib.Collections
 		{
 			ProtectedBinaryDictionary plNew = new ProtectedBinaryDictionary();
 
-			ProtectedBinary pbNew;
 			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in m_vBinaries)
 			{
-				pbNew = new ProtectedBinary(kvpBin.Value); // Clone deep
-				Debug.Assert(pbNew != kvpBin.Value);
-
-				plNew.Set(kvpBin.Key, pbNew);
+				// ProtectedBinary objects are immutable
+				plNew.Set(kvpBin.Key, kvpBin.Value);
 			}
 
 			return plNew;
@@ -104,7 +101,7 @@ namespace KeePassLib.Collections
 			{
 				ProtectedBinary pb = dict.Get(kvp.Key);
 				if(pb == null) return false;
-				if(!MemUtil.ArraysEqual(pb.ReadData(), kvp.Value.ReadData())) return false;
+				if(!pb.Equals(kvp.Value)) return false;
 			}
 
 			return true;

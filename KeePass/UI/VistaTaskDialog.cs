@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -186,7 +186,8 @@ namespace KeePass.UI
 
 	public sealed class VistaTaskDialog
 	{
-		private const int VtdConfigSize = 96;
+		private const int VtdConfigSize32 = 96;
+		private const int VtdConfigSize64 = 160;
 
 		private VtdConfig m_cfg = new VtdConfig(true);
 		private int m_iResult = (int)DialogResult.Cancel;
@@ -220,6 +221,12 @@ namespace KeePass.UI
 				if(value) m_cfg.dwFlags |= VtdFlags.UseCommandLinks;
 				else m_cfg.dwFlags &= ~VtdFlags.UseCommandLinks;
 			}
+		}
+
+		public string FooterText
+		{
+			get { return m_cfg.pszFooter; }
+			set { m_cfg.pszFooter = value; }
 		}
 
 		public string VerificationText
@@ -275,6 +282,12 @@ namespace KeePass.UI
 			m_cfg.hMainIcon = hIcon;
 		}
 
+		public void SetFooterIcon(VtdIcon vtdIcon)
+		{
+			m_cfg.dwFlags &= ~VtdFlags.UseHIconFooter;
+			m_cfg.hFooterIcon = new IntPtr((int)vtdIcon);
+		}
+
 		private void ButtonsToPtr()
 		{
 			if(m_vButtons.Count == 0) { m_cfg.pButtons = IntPtr.Zero; return; }
@@ -317,7 +330,10 @@ namespace KeePass.UI
 		private bool InternalShowDialog()
 		{
 			if(IntPtr.Size == 4)
-				{ Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize); }
+				{ Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize32); }
+			else if(IntPtr.Size == 8)
+				{ Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize64); }
+			else { Debug.Assert(false); }
 
 			m_cfg.cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
 

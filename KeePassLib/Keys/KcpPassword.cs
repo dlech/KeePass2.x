@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ namespace KeePassLib.Keys
 	/// </summary>
 	public sealed class KcpPassword : IUserKey
 	{
-		private ProtectedString m_psPassword = null;
-		private ProtectedBinary m_pbKeyData = null;
+		private ProtectedString m_psPassword;
+		private ProtectedBinary m_pbKeyData;
 
 		/// <summary>
 		/// Get the password as protected string.
@@ -75,22 +75,10 @@ namespace KeePassLib.Keys
 			m_pbKeyData = new ProtectedBinary(true, pbRaw);
 		}
 
-		/// <summary>
-		/// Clear the key and securely erase all security-critical information.
-		/// </summary>
-		public void Clear()
-		{
-			if(m_psPassword != null)
-			{
-				m_psPassword.Clear();
-				m_psPassword = null;
-			}
-
-			if(m_pbKeyData != null)
-			{
-				m_pbKeyData.Clear();
-				m_pbKeyData = null;
-			}
-		}
+		// public void Clear()
+		// {
+		//	m_psPassword = null;
+		//	m_pbKeyData = null;
+		// }
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ namespace TrlUtil
 		private string m_strFile = string.Empty;
 
 		private ImageList m_ilStr = new ImageList();
-		private Color m_clrFindBack;
 
 		private const string m_strFileFilter = "KeePass Translation (*.lngx)|*.lngx|All Files (*.*)|*.*";
 
@@ -69,7 +68,6 @@ namespace TrlUtil
 			this.Text += " " + PwDefs.VersionString;
 
 			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
-			m_clrFindBack = m_tbFind.BackColor;
 			m_rtbUnusedText.SimpleTextOnly = true;
 
 			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
@@ -930,7 +928,7 @@ namespace TrlUtil
 
 		private void OnFindTextChanged(object sender, EventArgs e)
 		{
-			m_tbFind.BackColor = m_clrFindBack;
+			m_tbFind.ResetBackColor();
 		}
 
 		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)

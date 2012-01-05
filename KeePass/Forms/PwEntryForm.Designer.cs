@@ -65,7 +65,6 @@
 			this.m_btnStandardExpires = new System.Windows.Forms.Button();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_ttBalloon = new System.Windows.Forms.ToolTip(this.components);
-			this.m_ttValidationError = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEntry = new System.Windows.Forms.TabPage();
 			this.m_rtNotes = new KeePass.UI.CustomRichTextBoxEx();
@@ -304,69 +303,69 @@
             this.m_menuExpireSep2,
             this.m_menuExpire1Year});
 			this.m_ctxDefaultTimes.Name = "m_ctxDefaultTimes";
-			this.m_ctxDefaultTimes.Size = new System.Drawing.Size(119, 176);
+			this.m_ctxDefaultTimes.Size = new System.Drawing.Size(126, 176);
 			// 
 			// m_menuExpireNow
 			// 
 			this.m_menuExpireNow.Name = "m_menuExpireNow";
-			this.m_menuExpireNow.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpireNow.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpireNow.Text = "&Now";
 			this.m_menuExpireNow.Click += new System.EventHandler(this.OnMenuExpireNow);
 			// 
 			// m_menuExpireSep0
 			// 
 			this.m_menuExpireSep0.Name = "m_menuExpireSep0";
-			this.m_menuExpireSep0.Size = new System.Drawing.Size(115, 6);
+			this.m_menuExpireSep0.Size = new System.Drawing.Size(122, 6);
 			// 
 			// m_menuExpire1Week
 			// 
 			this.m_menuExpire1Week.Name = "m_menuExpire1Week";
-			this.m_menuExpire1Week.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire1Week.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire1Week.Text = "&1 Week";
 			this.m_menuExpire1Week.Click += new System.EventHandler(this.OnMenuExpire1Week);
 			// 
 			// m_menuExpire2Weeks
 			// 
 			this.m_menuExpire2Weeks.Name = "m_menuExpire2Weeks";
-			this.m_menuExpire2Weeks.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire2Weeks.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire2Weeks.Text = "&2 Weeks";
 			this.m_menuExpire2Weeks.Click += new System.EventHandler(this.OnMenuExpire2Weeks);
 			// 
 			// m_menuExpireSep1
 			// 
 			this.m_menuExpireSep1.Name = "m_menuExpireSep1";
-			this.m_menuExpireSep1.Size = new System.Drawing.Size(115, 6);
+			this.m_menuExpireSep1.Size = new System.Drawing.Size(122, 6);
 			// 
 			// m_menuExpire1Month
 			// 
 			this.m_menuExpire1Month.Name = "m_menuExpire1Month";
-			this.m_menuExpire1Month.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire1Month.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire1Month.Text = "1 &Month";
 			this.m_menuExpire1Month.Click += new System.EventHandler(this.OnMenuExpire1Month);
 			// 
 			// m_menuExpire3Months
 			// 
 			this.m_menuExpire3Months.Name = "m_menuExpire3Months";
-			this.m_menuExpire3Months.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire3Months.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire3Months.Text = "&3 Months";
 			this.m_menuExpire3Months.Click += new System.EventHandler(this.OnMenuExpire3Months);
 			// 
 			// m_menuExpire6Months
 			// 
 			this.m_menuExpire6Months.Name = "m_menuExpire6Months";
-			this.m_menuExpire6Months.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire6Months.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire6Months.Text = "&6 Months";
 			this.m_menuExpire6Months.Click += new System.EventHandler(this.OnMenuExpire6Months);
 			// 
 			// m_menuExpireSep2
 			// 
 			this.m_menuExpireSep2.Name = "m_menuExpireSep2";
-			this.m_menuExpireSep2.Size = new System.Drawing.Size(115, 6);
+			this.m_menuExpireSep2.Size = new System.Drawing.Size(122, 6);
 			// 
 			// m_menuExpire1Year
 			// 
 			this.m_menuExpire1Year.Name = "m_menuExpire1Year";
-			this.m_menuExpire1Year.Size = new System.Drawing.Size(118, 22);
+			this.m_menuExpire1Year.Size = new System.Drawing.Size(125, 22);
 			this.m_menuExpire1Year.Text = "1 &Year";
 			this.m_menuExpire1Year.Click += new System.EventHandler(this.OnMenuExpire1Year);
 			// 
@@ -428,7 +427,6 @@
 			this.m_cbHidePassword.TabIndex = 8;
 			this.m_cbHidePassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
-			this.m_cbHidePassword.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
 			// 
 			// m_btnStandardExpires
 			// 
@@ -454,13 +452,6 @@
 			this.m_ttBalloon.InitialDelay = 250;
 			this.m_ttBalloon.IsBalloon = true;
 			this.m_ttBalloon.ReshowDelay = 100;
-			// 
-			// m_ttValidationError
-			// 
-			this.m_ttValidationError.AutoPopDelay = 32000;
-			this.m_ttValidationError.InitialDelay = 250;
-			this.m_ttValidationError.ReshowDelay = 100;
-			this.m_ttValidationError.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Warning;
 			// 
 			// m_tabMain
 			// 
@@ -684,13 +675,13 @@
 			this.m_ctxListOperations.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuListCtxCopyFieldValue});
 			this.m_ctxListOperations.Name = "m_ctxListOperations";
-			this.m_ctxListOperations.Size = new System.Drawing.Size(213, 26);
+			this.m_ctxListOperations.Size = new System.Drawing.Size(235, 26);
 			// 
 			// m_menuListCtxCopyFieldValue
 			// 
 			this.m_menuListCtxCopyFieldValue.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_menuListCtxCopyFieldValue.Name = "m_menuListCtxCopyFieldValue";
-			this.m_menuListCtxCopyFieldValue.Size = new System.Drawing.Size(212, 22);
+			this.m_menuListCtxCopyFieldValue.Size = new System.Drawing.Size(234, 22);
 			this.m_menuListCtxCopyFieldValue.Text = "&Copy Field Value to Clipboard";
 			this.m_menuListCtxCopyFieldValue.Click += new System.EventHandler(this.OnCtxCopyFieldValue);
 			// 
@@ -1039,40 +1030,40 @@
             this.m_menuListCtxMoveStandardURL,
             this.m_menuListCtxMoveStandardNotes});
 			this.m_ctxStrMoveToStandard.Name = "m_ctxStrMoveToStandard";
-			this.m_ctxStrMoveToStandard.Size = new System.Drawing.Size(144, 114);
+			this.m_ctxStrMoveToStandard.Size = new System.Drawing.Size(155, 114);
 			// 
 			// m_menuListCtxMoveStandardTitle
 			// 
 			this.m_menuListCtxMoveStandardTitle.Name = "m_menuListCtxMoveStandardTitle";
-			this.m_menuListCtxMoveStandardTitle.Size = new System.Drawing.Size(143, 22);
+			this.m_menuListCtxMoveStandardTitle.Size = new System.Drawing.Size(154, 22);
 			this.m_menuListCtxMoveStandardTitle.Text = "To &Title";
 			this.m_menuListCtxMoveStandardTitle.Click += new System.EventHandler(this.OnCtxMoveToTitle);
 			// 
 			// m_menuListCtxMoveStandardUser
 			// 
 			this.m_menuListCtxMoveStandardUser.Name = "m_menuListCtxMoveStandardUser";
-			this.m_menuListCtxMoveStandardUser.Size = new System.Drawing.Size(143, 22);
+			this.m_menuListCtxMoveStandardUser.Size = new System.Drawing.Size(154, 22);
 			this.m_menuListCtxMoveStandardUser.Text = "To User &Name";
 			this.m_menuListCtxMoveStandardUser.Click += new System.EventHandler(this.OnCtxMoveToUserName);
 			// 
 			// m_menuListCtxMoveStandardPassword
 			// 
 			this.m_menuListCtxMoveStandardPassword.Name = "m_menuListCtxMoveStandardPassword";
-			this.m_menuListCtxMoveStandardPassword.Size = new System.Drawing.Size(143, 22);
+			this.m_menuListCtxMoveStandardPassword.Size = new System.Drawing.Size(154, 22);
 			this.m_menuListCtxMoveStandardPassword.Text = "To &Password";
 			this.m_menuListCtxMoveStandardPassword.Click += new System.EventHandler(this.OnCtxMoveToPassword);
 			// 
 			// m_menuListCtxMoveStandardURL
 			// 
 			this.m_menuListCtxMoveStandardURL.Name = "m_menuListCtxMoveStandardURL";
-			this.m_menuListCtxMoveStandardURL.Size = new System.Drawing.Size(143, 22);
+			this.m_menuListCtxMoveStandardURL.Size = new System.Drawing.Size(154, 22);
 			this.m_menuListCtxMoveStandardURL.Text = "To &URL";
 			this.m_menuListCtxMoveStandardURL.Click += new System.EventHandler(this.OnCtxMoveToURL);
 			// 
 			// m_menuListCtxMoveStandardNotes
 			// 
 			this.m_menuListCtxMoveStandardNotes.Name = "m_menuListCtxMoveStandardNotes";
-			this.m_menuListCtxMoveStandardNotes.Size = new System.Drawing.Size(143, 22);
+			this.m_menuListCtxMoveStandardNotes.Size = new System.Drawing.Size(154, 22);
 			this.m_menuListCtxMoveStandardNotes.Text = "To No&tes";
 			this.m_menuListCtxMoveStandardNotes.Click += new System.EventHandler(this.OnCtxMoveToNotes);
 			// 
@@ -1083,25 +1074,25 @@
             this.m_ctxPwGenSep0,
             this.m_ctxPwGenProfiles});
 			this.m_ctxPwGen.Name = "m_ctxPwGen";
-			this.m_ctxPwGen.Size = new System.Drawing.Size(209, 54);
+			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 54);
 			// 
 			// m_ctxPwGenOpen
 			// 
 			this.m_ctxPwGenOpen.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
 			this.m_ctxPwGenOpen.Name = "m_ctxPwGenOpen";
-			this.m_ctxPwGenOpen.Size = new System.Drawing.Size(208, 22);
+			this.m_ctxPwGenOpen.Size = new System.Drawing.Size(228, 22);
 			this.m_ctxPwGenOpen.Text = "&Open Password Generator...";
 			this.m_ctxPwGenOpen.Click += new System.EventHandler(this.OnPwGenOpen);
 			// 
 			// m_ctxPwGenSep0
 			// 
 			this.m_ctxPwGenSep0.Name = "m_ctxPwGenSep0";
-			this.m_ctxPwGenSep0.Size = new System.Drawing.Size(205, 6);
+			this.m_ctxPwGenSep0.Size = new System.Drawing.Size(225, 6);
 			// 
 			// m_ctxPwGenProfiles
 			// 
 			this.m_ctxPwGenProfiles.Name = "m_ctxPwGenProfiles";
-			this.m_ctxPwGenProfiles.Size = new System.Drawing.Size(208, 22);
+			this.m_ctxPwGenProfiles.Size = new System.Drawing.Size(228, 22);
 			this.m_ctxPwGenProfiles.Text = "Generate Using Profile";
 			// 
 			// m_ctxTools
@@ -1115,26 +1106,26 @@
             this.m_ctxToolsSep1,
             this.m_ctxToolsFieldRefs});
 			this.m_ctxTools.Name = "m_ctxTools";
-			this.m_ctxTools.Size = new System.Drawing.Size(222, 126);
+			this.m_ctxTools.Size = new System.Drawing.Size(242, 126);
 			// 
 			// m_ctxToolsHelp
 			// 
 			this.m_ctxToolsHelp.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_ctxToolsHelp.Name = "m_ctxToolsHelp";
-			this.m_ctxToolsHelp.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsHelp.Size = new System.Drawing.Size(241, 22);
 			this.m_ctxToolsHelp.Text = "&Help";
 			this.m_ctxToolsHelp.Click += new System.EventHandler(this.OnCtxToolsHelp);
 			// 
 			// m_ctxToolsSep0
 			// 
 			this.m_ctxToolsSep0.Name = "m_ctxToolsSep0";
-			this.m_ctxToolsSep0.Size = new System.Drawing.Size(218, 6);
+			this.m_ctxToolsSep0.Size = new System.Drawing.Size(238, 6);
 			// 
 			// m_ctxToolsUrlHelp
 			// 
 			this.m_ctxToolsUrlHelp.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_ctxToolsUrlHelp.Name = "m_ctxToolsUrlHelp";
-			this.m_ctxToolsUrlHelp.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsUrlHelp.Size = new System.Drawing.Size(241, 22);
 			this.m_ctxToolsUrlHelp.Text = "&URL Field: Help";
 			this.m_ctxToolsUrlHelp.Click += new System.EventHandler(this.OnCtxUrlHelp);
 			// 
@@ -1142,7 +1133,7 @@
 			// 
 			this.m_ctxToolsUrlSelApp.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_ctxToolsUrlSelApp.Name = "m_ctxToolsUrlSelApp";
-			this.m_ctxToolsUrlSelApp.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsUrlSelApp.Size = new System.Drawing.Size(241, 22);
 			this.m_ctxToolsUrlSelApp.Text = "URL Field: Select &Application...";
 			this.m_ctxToolsUrlSelApp.Click += new System.EventHandler(this.OnCtxUrlSelApp);
 			// 
@@ -1150,14 +1141,14 @@
 			// 
 			this.m_ctxToolsUrlSelDoc.Image = global::KeePass.Properties.Resources.B16x16_CompFile;
 			this.m_ctxToolsUrlSelDoc.Name = "m_ctxToolsUrlSelDoc";
-			this.m_ctxToolsUrlSelDoc.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsUrlSelDoc.Size = new System.Drawing.Size(241, 22);
 			this.m_ctxToolsUrlSelDoc.Text = "URL Field: Select &Document...";
 			this.m_ctxToolsUrlSelDoc.Click += new System.EventHandler(this.OnCtxUrlSelDoc);
 			// 
 			// m_ctxToolsSep1
 			// 
 			this.m_ctxToolsSep1.Name = "m_ctxToolsSep1";
-			this.m_ctxToolsSep1.Size = new System.Drawing.Size(218, 6);
+			this.m_ctxToolsSep1.Size = new System.Drawing.Size(238, 6);
 			// 
 			// m_ctxToolsFieldRefs
 			// 
@@ -1168,41 +1159,41 @@
             this.m_ctxToolsFieldRefsInUrl,
             this.m_ctxToolsFieldRefsInNotes});
 			this.m_ctxToolsFieldRefs.Name = "m_ctxToolsFieldRefs";
-			this.m_ctxToolsFieldRefs.Size = new System.Drawing.Size(221, 22);
+			this.m_ctxToolsFieldRefs.Size = new System.Drawing.Size(241, 22);
 			this.m_ctxToolsFieldRefs.Text = "Insert Field &Reference";
 			// 
 			// m_ctxToolsFieldRefsInTitle
 			// 
 			this.m_ctxToolsFieldRefsInTitle.Name = "m_ctxToolsFieldRefsInTitle";
-			this.m_ctxToolsFieldRefsInTitle.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInTitle.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxToolsFieldRefsInTitle.Text = "In &Title Field";
 			this.m_ctxToolsFieldRefsInTitle.Click += new System.EventHandler(this.OnFieldRefInTitle);
 			// 
 			// m_ctxToolsFieldRefsInUserName
 			// 
 			this.m_ctxToolsFieldRefsInUserName.Name = "m_ctxToolsFieldRefsInUserName";
-			this.m_ctxToolsFieldRefsInUserName.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInUserName.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxToolsFieldRefsInUserName.Text = "In User &Name Field";
 			this.m_ctxToolsFieldRefsInUserName.Click += new System.EventHandler(this.OnFieldRefInUserName);
 			// 
 			// m_ctxToolsFieldRefsInPassword
 			// 
 			this.m_ctxToolsFieldRefsInPassword.Name = "m_ctxToolsFieldRefsInPassword";
-			this.m_ctxToolsFieldRefsInPassword.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInPassword.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxToolsFieldRefsInPassword.Text = "In &Password Field";
 			this.m_ctxToolsFieldRefsInPassword.Click += new System.EventHandler(this.OnFieldRefInPassword);
 			// 
 			// m_ctxToolsFieldRefsInUrl
 			// 
 			this.m_ctxToolsFieldRefsInUrl.Name = "m_ctxToolsFieldRefsInUrl";
-			this.m_ctxToolsFieldRefsInUrl.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInUrl.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxToolsFieldRefsInUrl.Text = "In &URL Field";
 			this.m_ctxToolsFieldRefsInUrl.Click += new System.EventHandler(this.OnFieldRefInUrl);
 			// 
 			// m_ctxToolsFieldRefsInNotes
 			// 
 			this.m_ctxToolsFieldRefsInNotes.Name = "m_ctxToolsFieldRefsInNotes";
-			this.m_ctxToolsFieldRefsInNotes.Size = new System.Drawing.Size(164, 22);
+			this.m_ctxToolsFieldRefsInNotes.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxToolsFieldRefsInNotes.Text = "In N&otes Field";
 			this.m_ctxToolsFieldRefsInNotes.Click += new System.EventHandler(this.OnFieldRefInNotes);
 			// 
@@ -1280,7 +1271,6 @@
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.ToolTip m_ttBalloon;
-		private System.Windows.Forms.ToolTip m_ttValidationError;
 		private System.Windows.Forms.TabControl m_tabMain;
 		private System.Windows.Forms.TabPage m_tabEntry;
 		private System.Windows.Forms.TabPage m_tabAdvanced;

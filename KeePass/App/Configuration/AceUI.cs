@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -56,7 +56,23 @@ namespace KeePass.App.Configuration
 		None = 0,
 		DisableOptions = 0x1,
 		DisablePlugins = 0x2,
-		DisableTriggers = 0x4
+		DisableTriggers = 0x4,
+		DisableKeyChangeDays = 0x8
+	}
+
+	[Flags]
+	public enum AceAutoTypeCtxFlags : long
+	{
+		None = 0,
+
+		ColTitle = 0x1,
+		ColUserName = 0x2,
+		ColPassword = 0x4,
+		ColUrl = 0x8,
+		ColNotes = 0x10,
+		ColSequence = 0x20,
+
+		Default = (ColTitle | ColUserName | ColUrl | ColSequence)
 	}
 
 	public sealed class AceUI
@@ -209,6 +225,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strAutoTypeCtxRect = value;
 			}
+		}
+
+		private long m_lAutoTypeCtxFlags = (long)AceAutoTypeCtxFlags.Default;
+		[DefaultValue((long)AceAutoTypeCtxFlags.Default)]
+		public long AutoTypeCtxFlags
+		{
+			get { return m_lAutoTypeCtxFlags; }
+			set { m_lAutoTypeCtxFlags = value; }
 		}
 
 		private string m_strAutoTypeCtxColWidths = string.Empty;

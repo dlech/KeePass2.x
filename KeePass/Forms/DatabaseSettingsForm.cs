@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.UI;
 using KeePass.Resources;
 
@@ -119,11 +120,11 @@ namespace KeePass.Forms
 			m_numEncRounds.Maximum = ulong.MaxValue;
 			m_numEncRounds.Value = m_pwDatabase.KeyEncryptionRounds;
 
-			m_lbMemProt.Items.Add(KPRes.Title, m_pwDatabase.MemoryProtection.ProtectTitle);
-			m_lbMemProt.Items.Add(KPRes.UserName, m_pwDatabase.MemoryProtection.ProtectUserName);
-			m_lbMemProt.Items.Add(KPRes.Password, m_pwDatabase.MemoryProtection.ProtectPassword);
-			m_lbMemProt.Items.Add(KPRes.Url, m_pwDatabase.MemoryProtection.ProtectUrl);
-			m_lbMemProt.Items.Add(KPRes.Notes, m_pwDatabase.MemoryProtection.ProtectNotes);
+			// m_lbMemProt.Items.Add(KPRes.Title, m_pwDatabase.MemoryProtection.ProtectTitle);
+			// m_lbMemProt.Items.Add(KPRes.UserName, m_pwDatabase.MemoryProtection.ProtectUserName);
+			// m_lbMemProt.Items.Add(KPRes.Password, m_pwDatabase.MemoryProtection.ProtectPassword);
+			// m_lbMemProt.Items.Add(KPRes.Url, m_pwDatabase.MemoryProtection.ProtectUrl);
+			// m_lbMemProt.Items.Add(KPRes.Notes, m_pwDatabase.MemoryProtection.ProtectNotes);
 
 			// m_cbAutoEnableHiding.Checked = m_pwDatabase.MemoryProtection.AutoEnableVisualHiding;
 			// m_cbAutoEnableHiding.Checked = false;
@@ -201,8 +202,13 @@ namespace KeePass.Forms
 
 			m_numHistoryMaxItems.Enabled = m_cbHistoryMaxItems.Checked;
 			m_numHistoryMaxSize.Enabled = m_cbHistoryMaxSize.Checked;
-			m_numKeyRecDays.Enabled = m_cbKeyRec.Checked;
-			m_numKeyForceDays.Enabled = m_cbKeyForce.Checked;
+
+			bool bEnableDays = ((Program.Config.UI.UIFlags &
+				(ulong)AceUIFlags.DisableKeyChangeDays) == 0);
+			m_numKeyRecDays.Enabled = (bEnableDays && m_cbKeyRec.Checked);
+			m_numKeyForceDays.Enabled = (bEnableDays && m_cbKeyForce.Checked);
+			m_cbKeyRec.Enabled = bEnableDays;
+			m_cbKeyForce.Enabled = bEnableDays;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -241,16 +247,16 @@ namespace KeePass.Forms
 			else if(m_rbGZip.Checked) m_pwDatabase.Compression = PwCompressionAlgorithm.GZip;
 			else { Debug.Assert(false); }
 
-			m_pwDatabase.MemoryProtection.ProtectTitle = UpdateMemoryProtection(0,
-				m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TitleField);
-			m_pwDatabase.MemoryProtection.ProtectUserName = UpdateMemoryProtection(1,
-				m_pwDatabase.MemoryProtection.ProtectUserName, PwDefs.UserNameField);
-			m_pwDatabase.MemoryProtection.ProtectPassword = UpdateMemoryProtection(2,
-				m_pwDatabase.MemoryProtection.ProtectPassword, PwDefs.PasswordField);
-			m_pwDatabase.MemoryProtection.ProtectUrl = UpdateMemoryProtection(3,
-				m_pwDatabase.MemoryProtection.ProtectUrl, PwDefs.UrlField);
-			m_pwDatabase.MemoryProtection.ProtectNotes = UpdateMemoryProtection(4,
-				m_pwDatabase.MemoryProtection.ProtectNotes, PwDefs.NotesField);
+			// m_pwDatabase.MemoryProtection.ProtectTitle = UpdateMemoryProtection(0,
+			//	m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TitleField);
+			// m_pwDatabase.MemoryProtection.ProtectUserName = UpdateMemoryProtection(1,
+			//	m_pwDatabase.MemoryProtection.ProtectUserName, PwDefs.UserNameField);
+			// m_pwDatabase.MemoryProtection.ProtectPassword = UpdateMemoryProtection(2,
+			//	m_pwDatabase.MemoryProtection.ProtectPassword, PwDefs.PasswordField);
+			// m_pwDatabase.MemoryProtection.ProtectUrl = UpdateMemoryProtection(3,
+			//	m_pwDatabase.MemoryProtection.ProtectUrl, PwDefs.UrlField);
+			// m_pwDatabase.MemoryProtection.ProtectNotes = UpdateMemoryProtection(4,
+			//	m_pwDatabase.MemoryProtection.ProtectNotes, PwDefs.NotesField);
 
 			// m_pwDatabase.MemoryProtection.AutoEnableVisualHiding = m_cbAutoEnableHiding.Checked;
 
@@ -312,31 +318,24 @@ namespace KeePass.Forms
 			else m_pwDatabase.MasterKeyChangeForce = (long)m_numKeyForceDays.Value;
 		}
 
-		private bool UpdateMemoryProtection(int nIndex, bool bOldSetting, string strFieldID)
-		{
-			bool bNewProt = m_lbMemProt.GetItemChecked(nIndex);
-
-			if(bNewProt != bOldSetting)
-			{
-				m_pwDatabase.RootGroup.EnableStringFieldProtection(strFieldID, bNewProt);
-			}
-
-#if DEBUG
-			GroupHandler gh = delegate(PwGroup pg)
-			{
-				return true;
-			};
-			EntryHandler eh = delegate(PwEntry pe)
-			{
-				ProtectedString ps = pe.Strings.Get(strFieldID);
-				if(ps != null) { Debug.Assert(ps.IsProtected == bNewProt); }
-				return true;
-			};
-			Debug.Assert(m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh));
-#endif
-
-			return bNewProt;
-		}
+		// private bool UpdateMemoryProtection(int nIndex, bool bOldSetting,
+		//	string strFieldID)
+		// {
+		//	bool bNewProt = m_lbMemProt.GetItemChecked(nIndex);
+		//	if(bNewProt != bOldSetting)
+		//		m_pwDatabase.RootGroup.EnableStringFieldProtection(strFieldID, bNewProt);
+		// #if DEBUG
+		//	EntryHandler eh = delegate(PwEntry pe)
+		//	{
+		//		ProtectedString ps = pe.Strings.Get(strFieldID);
+		//		if(ps != null) { Debug.Assert(ps.IsProtected == bNewProt); }
+		//		return true;
+		//	};
+		//	Debug.Assert(m_pwDatabase.RootGroup.TraverseTree(
+		//		TraversalMethod.PreOrder, null, eh));
+		// #endif
+		//	return bNewProt;
+		// }
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
@@ -349,8 +348,8 @@ namespace KeePass.Forms
 				strSubTopic = AppDefs.HelpTopics.DbSettingsGeneral;
 			else if(m_tabMain.SelectedTab == m_tabSecurity)
 				strSubTopic = AppDefs.HelpTopics.DbSettingsSecurity;
-			else if(m_tabMain.SelectedTab == m_tabProtection)
-				strSubTopic = AppDefs.HelpTopics.DbSettingsProtection;
+			// else if(m_tabMain.SelectedTab == m_tabProtection)
+			//	strSubTopic = AppDefs.HelpTopics.DbSettingsProtection;
 			else if(m_tabMain.SelectedTab == m_tabCompression)
 				strSubTopic = AppDefs.HelpTopics.DbSettingsCompression;
 
@@ -382,10 +381,10 @@ namespace KeePass.Forms
 			EnableControlsEx();
 		}
 
-		private void OnLinkClickedMemProtHelp(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.FaqTech, AppDefs.HelpTopics.FaqTechMemProt);
-		}
+		// private void OnLinkClickedMemProtHelp(object sender, LinkLabelLinkClickedEventArgs e)
+		// {
+		//	AppHelp.ShowHelp(AppDefs.HelpTopics.FaqTech, AppDefs.HelpTopics.FaqTechMemProt);
+		// }
 
 		private void OnHistoryMaxItemsCheckedChanged(object sender, EventArgs e)
 		{

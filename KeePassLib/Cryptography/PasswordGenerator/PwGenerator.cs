@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,27 +39,23 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	/// </summary>
 	public static class PwGenerator
 	{
-		public static PwgError Generate(ProtectedString psOutBuffer,
+		public static PwgError Generate(out ProtectedString psOut,
 			PwProfile pwProfile, byte[] pbUserEntropy,
 			CustomPwGeneratorPool pwAlgorithmPool)
 		{
-			Debug.Assert(psOutBuffer != null);
-			if(psOutBuffer == null) throw new ArgumentNullException("psOutBuffer");
 			Debug.Assert(pwProfile != null);
 			if(pwProfile == null) throw new ArgumentNullException("pwProfile");
-
-			psOutBuffer.Clear();
 
 			CryptoRandomStream crs = CreateCryptoStream(pbUserEntropy);
 			PwgError e = PwgError.Unknown;
 
 			if(pwProfile.GeneratorType == PasswordGeneratorType.CharSet)
-				e = CharSetBasedGenerator.Generate(psOutBuffer, pwProfile, crs);
+				e = CharSetBasedGenerator.Generate(out psOut, pwProfile, crs);
 			else if(pwProfile.GeneratorType == PasswordGeneratorType.Pattern)
-				e = PatternBasedGenerator.Generate(psOutBuffer, pwProfile, crs);
+				e = PatternBasedGenerator.Generate(out psOut, pwProfile, crs);
 			else if(pwProfile.GeneratorType == PasswordGeneratorType.Custom)
-				e = GenerateCustom(psOutBuffer, pwProfile, crs, pwAlgorithmPool);
-			else { Debug.Assert(false); }
+				e = GenerateCustom(out psOut, pwProfile, crs, pwAlgorithmPool);
+			else { Debug.Assert(false); psOut = ProtectedString.Empty; }
 
 			return e;
 		}
@@ -123,10 +119,12 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			}
 		}
 
-		private static PwgError GenerateCustom(ProtectedString psOutBuffer,
+		private static PwgError GenerateCustom(out ProtectedString psOut,
 			PwProfile pwProfile, CryptoRandomStream crs,
 			CustomPwGeneratorPool pwAlgorithmPool)
 		{
+			psOut = ProtectedString.Empty;
+
 			Debug.Assert(pwProfile.GeneratorType == PasswordGeneratorType.Custom);
 			if(pwAlgorithmPool == null) return PwgError.UnknownAlgorithm;
 
@@ -141,7 +139,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			ProtectedString pwd = pwg.Generate(pwProfile.CloneDeep(), crs);
 			if(pwd == null) return PwgError.Unknown;
 
-			psOutBuffer.SetString(pwd.ReadString());
+			psOut = pwd;
 			return PwgError.Success;
 		}
 	}

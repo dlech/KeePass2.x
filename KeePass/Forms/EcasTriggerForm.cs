@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ namespace KeePass.Forms
 			m_lvActions.Columns.Add(string.Empty, nColWidth);
 
 			m_tbName.Text = m_trigger.Name;
-			m_tbComments.Text = StrUtil.ToWindowsString(m_trigger.Comments);
+			m_tbComments.Text = StrUtil.NormalizeNewLines(m_trigger.Comments, true);
 			m_cbEnabled.Checked = m_trigger.Enabled;
 			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
 			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;

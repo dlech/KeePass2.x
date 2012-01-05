@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,6 +53,19 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bHelpUseLocal; }
 			set { m_bHelpUseLocal = value; }
+		}
+
+		// Serialize DateTime with TimeUtil
+		private string m_strLastUpdChk = string.Empty;
+		[DefaultValue("")]
+		public string LastUpdateCheck
+		{
+			get { return m_strLastUpdChk; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strLastUpdChk = value;
+			}
 		}
 
 		private IOConnectionInfo m_ioLastDb = new IOConnectionInfo();
@@ -115,6 +128,14 @@ namespace KeePass.App.Configuration
 			set { m_bTransactedWrites = value; }
 		}
 
+		private bool m_bFileLocks = false;
+		[DefaultValue(false)]
+		public bool UseFileLocks
+		{
+			get { return m_bFileLocks; }
+			set { m_bFileLocks = value; }
+		}
+
 		private AceCloseDb m_fc = new AceCloseDb();
 		public AceCloseDb FileClosing
 		{
@@ -165,11 +186,19 @@ namespace KeePass.App.Configuration
 		}
 
 		private bool m_bCheckForUpdate = false;
-		[DefaultValue(false)]
+		// [DefaultValue(false)] // Avoid user confusion with 'Configured' setting
 		public bool CheckForUpdate
 		{
 			get { return m_bCheckForUpdate; }
 			set { m_bCheckForUpdate = value; }
+		}
+
+		private bool m_bCheckForUpdateCfg = false;
+		[DefaultValue(false)]
+		public bool CheckForUpdateConfigured
+		{
+			get { return m_bCheckForUpdateCfg; }
+			set { m_bCheckForUpdateCfg = value; }
 		}
 
 		private bool m_bMinimizedAndLocked = false;

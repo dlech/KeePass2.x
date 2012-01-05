@@ -10,9 +10,6 @@
 		<Data Name="AddEntry">
 			<Value>Add Entry</Value>
 		</Data>
-		<Data Name="AddEntryBtn">
-			<Value>Add Entry...</Value>
-		</Data>
 		<Data Name="AddEntryDesc">
 			<Value>Create a new password entry.</Value>
 		</Data>
@@ -145,6 +142,9 @@
 		<Data Name="AutoTypeMatchByTitle">
 			<Value>An entry matches if its title is contained in the target window title</Value>
 		</Data>
+		<Data Name="AutoTypeMatchByUrlHostInTitle">
+			<Value>An entry matches if the host component of its URL is contained in the target window title</Value>
+		</Data>
 		<Data Name="AutoTypeMatchByUrlInTitle">
 			<Value>An entry matches if its URL is contained in the target window title</Value>
 		</Data>
@@ -172,6 +172,9 @@
 		<Data Name="AutoTypeXDoToolRequiredGlobalVer">
 			<Value>For global auto-type, the 'xdotool' utility/package is required (version 2.20100818.3004 or higher!).</Value>
 		</Data>
+		<Data Name="Available">
+			<Value>Available</Value>
+		</Data>
 		<Data Name="AvailableLanguages">
 			<Value>Available Languages</Value>
 		</Data>
@@ -189,6 +192,9 @@
 		</Data>
 		<Data Name="Browser">
 			<Value>Browser</Value>
+		</Data>
+		<Data Name="BuiltIn">
+			<Value>built-in</Value>
 		</Data>
 		<Data Name="ButtonBack">
 			<Value>&lt; &amp;Back</Value>
@@ -217,11 +223,8 @@
 		<Data Name="CheckForUpdAtStart">
 			<Value>Check for update at KeePass startup</Value>
 		</Data>
-		<Data Name="ChkForUpdGotLatest">
-			<Value>You have the latest version.</Value>
-		</Data>
-		<Data Name="ChkForUpdNewVersion">
-			<Value>New KeePass version available!</Value>
+		<Data Name="CheckingForUpd">
+			<Value>Checking for updates</Value>
 		</Data>
 		<Data Name="ClearKeyCmdLineParams">
 			<Value>Clear master key command line parameters after using them once</Value>
@@ -253,14 +256,17 @@
 		<Data Name="Column">
 			<Value>Column</Value>
 		</Data>
+		<Data Name="Columns">
+			<Value>Columns</Value>
+		</Data>
 		<Data Name="Company">
 			<Value>Company</Value>
 		</Data>
 		<Data Name="Comparison">
 			<Value>Comparison</Value>
 		</Data>
-		<Data Name="Components">
-			<Value>Components</Value>
+		<Data Name="Component">
+			<Value>Component</Value>
 		</Data>
 		<Data Name="Condition">
 			<Value>Condition</Value>
@@ -466,6 +472,9 @@
 		<Data Name="DialogNoShowAgain">
 			<Value>Do not show this dialog again.</Value>
 		</Data>
+		<Data Name="Disable">
+			<Value>Disable</Value>
+		</Data>
 		<Data Name="Disabled">
 			<Value>Disabled</Value>
 		</Data>
@@ -529,6 +538,9 @@
 		<Data Name="EmptyRecycleBinQuestion">
 			<Value>Are you sure you want to permanently delete the items?</Value>
 		</Data>
+		<Data Name="Enable">
+			<Value>Enable</Value>
+		</Data>
 		<Data Name="Enabled">
 			<Value>Enabled</Value>
 		</Data>
@@ -564,12 +576,6 @@
 		</Data>
 		<Data Name="EntryListAutoResizeColumns">
 			<Value>Automatically resize entry list columns when resizing the main window</Value>
-		</Data>
-		<Data Name="EntryView">
-			<Value>Entry View</Value>
-		</Data>
-		<Data Name="EntryViewHideProtectedCustomStrings">
-			<Value>Hide in-memory protected custom strings using asterisks</Value>
 		</Data>
 		<Data Name="EnvironmentVariable">
 			<Value>Environment variable</Value>
@@ -922,11 +928,11 @@
 		<Data Name="InheritSettingFromParent">
 			<Value>Inherit setting from parent</Value>
 		</Data>
+		<Data Name="Installed">
+			<Value>Installed</Value>
+		</Data>
 		<Data Name="Internet">
 			<Value>Internet</Value>
-		</Data>
-		<Data Name="InvalidFileStructure">
-			<Value>Invalid file structure!</Value>
 		</Data>
 		<Data Name="InvalidKey">
 			<Value>Invalid Key</Value>
@@ -973,8 +979,14 @@
 		<Data Name="KeyboardKeyCtrlLeft">
 			<Value>LCtrl</Value>
 		</Data>
+		<Data Name="KeyboardKeyEsc">
+			<Value>Esc</Value>
+		</Data>
 		<Data Name="KeyboardKeyModifiers">
 			<Value>Key Modifiers</Value>
+		</Data>
+		<Data Name="KeyboardKeyReturn">
+			<Value>Return</Value>
 		</Data>
 		<Data Name="KeyboardKeyShift">
 			<Value>Shift</Value>
@@ -1003,10 +1015,10 @@
 		<Data Name="KeyFileUseExisting">
 			<Value>Use an existing file as key file</Value>
 		</Data>
-		<Data Name="KeyProvWithGuiOnSD">
-			<Value>The selected key provider cannot be used, because it might try to show a dialog and this isn't allowed on a secure desktop.</Value>
+		<Data Name="KeyProvIncmpWithSD">
+			<Value>The selected key provider cannot be used, because it is incompatible with the secure desktop.</Value>
 		</Data>
-		<Data Name="KeyProvWithGuiOnSDHint">
+		<Data Name="KeyProvIncmpWithSDHint">
 			<Value>If you want to use the selected key provider, you have to disable the secure desktop option in 'Tools' -&gt; 'Options' -&gt; tab 'Security'.</Value>
 		</Data>
 		<Data Name="LanguageSelected">
@@ -1125,6 +1137,9 @@
 		</Data>
 		<Data Name="NewState">
 			<Value>New state</Value>
+		</Data>
+		<Data Name="NewVersionAvailable">
+			<Value>New version available</Value>
 		</Data>
 		<Data Name="No">
 			<Value>No</Value>
@@ -1348,6 +1363,9 @@
 		<Data Name="PolicyTriggersEditDesc">
 			<Value>Allow editing triggers.</Value>
 		</Data>
+		<Data Name="PreReleaseVersion">
+			<Value>Pre-release version</Value>
+		</Data>
 		<Data Name="Print">
 			<Value>Print</Value>
 		</Data>
@@ -1371,6 +1389,9 @@
 		</Data>
 		<Data Name="Ready">
 			<Value>Ready.</Value>
+		</Data>
+		<Data Name="Recommended">
+			<Value>recommended</Value>
 		</Data>
 		<Data Name="RecycleBin">
 			<Value>Recycle Bin</Value>
@@ -1398,6 +1419,9 @@
 		</Data>
 		<Data Name="RootDirectory">
 			<Value>Root Directory</Value>
+		</Data>
+		<Data Name="SameKeybLayout">
+			<Value>Ensure same keyboard layouts during auto-type</Value>
 		</Data>
 		<Data Name="SampleEntry">
 			<Value>Sample Entry</Value>
@@ -1477,6 +1501,9 @@
 		<Data Name="SelectDifferentGroup">
 			<Value>Please select a different group.</Value>
 		</Data>
+		<Data Name="SelectedColumn">
+			<Value>Selected column</Value>
+		</Data>
 		<Data Name="SelectedLower">
 			<Value>selected</Value>
 		</Data>
@@ -1498,9 +1525,6 @@
 		<Data Name="Sequence">
 			<Value>Sequence</Value>
 		</Data>
-		<Data Name="ShowAllEntries">
-			<Value>Show All Entries</Value>
-		</Data>
 		<Data Name="ShowDerefData">
 			<Value>Show dereferenced data</Value>
 		</Data>
@@ -1509,9 +1533,6 @@
 		</Data>
 		<Data Name="ShowEntries">
 			<Value>Show Entries</Value>
-		</Data>
-		<Data Name="ShowExpiredEntries">
-			<Value>Show Expired Entries</Value>
 		</Data>
 		<Data Name="ShowFullPathInTitleBar">
 			<Value>Show full path in title bar (instead of file name only)</Value>
@@ -1548,6 +1569,9 @@
 		</Data>
 		<Data Name="StartsWith">
 			<Value>Starts with</Value>
+		</Data>
+		<Data Name="Status">
+			<Value>Status</Value>
 		</Data>
 		<Data Name="Strikeout">
 			<Value>Strikeout</Value>
@@ -1697,7 +1721,7 @@
 			<Value>Unhide Passwords</Value>
 		</Data>
 		<Data Name="UnhidePasswordsDesc">
-			<Value>Allow displaying passwords as plain text.</Value>
+			<Value>Allow displaying passwords as plain-text.</Value>
 		</Data>
 		<Data Name="UnhideSourceCharactersToo">
 			<Value>Unhide button also unhides source characters</Value>
@@ -1708,14 +1732,32 @@
 		<Data Name="UnknownError">
 			<Value>An unknown error occurred.</Value>
 		</Data>
-		<Data Name="UnknownFileVersion">
-			<Value>Unknown file version!</Value>
+		<Data Name="UpdateCheck">
+			<Value>Update Check</Value>
 		</Data>
-		<Data Name="UpdateCheckingFailed">
-			<Value>Update checking failed.</Value>
+		<Data Name="UpdateCheckEnableQ">
+			<Value>Enable automatic update check?</Value>
+		</Data>
+		<Data Name="UpdateCheckFailedNoDl">
+			<Value>Update check failed. Version information file cannot be downloaded.</Value>
+		</Data>
+		<Data Name="UpdateCheckInfo">
+			<Value>KeePass can automatically check for updates on each program start.</Value>
+		</Data>
+		<Data Name="UpdateCheckInfoPriv">
+			<Value>No personal information is sent to the KeePass server. KeePass just downloads a small version information file and compares the available version with the installed version.</Value>
+		</Data>
+		<Data Name="UpdateCheckInfoRes">
+			<Value>Automatic update checks are performed unintrusively in the background. A notification is only displayed when an update is available. Updates are not downloaded or installed automatically.</Value>
+		</Data>
+		<Data Name="UpdateCheckResults">
+			<Value>The results of the update check.</Value>
 		</Data>
 		<Data Name="UpdatedUIState">
 			<Value>User interface state updated</Value>
+		</Data>
+		<Data Name="UpToDate">
+			<Value>Up to date</Value>
 		</Data>
 		<Data Name="Url">
 			<Value>URL</Value>
@@ -1743,6 +1785,9 @@
 		</Data>
 		<Data Name="UseCustomToolStripRenderer">
 			<Value>Use custom ToolStrip renderer</Value>
+		</Data>
+		<Data Name="UseFileLocks">
+			<Value>Use database lock files</Value>
 		</Data>
 		<Data Name="UseTransactedDatabaseWrites">
 			<Value>Use file transactions for writing databases</Value>
@@ -1798,9 +1843,6 @@
 		<Data Name="WebSites">
 			<Value>Web Sites</Value>
 		</Data>
-		<Data Name="WebsiteVisitQuestion">
-			<Value>Do you want to visit the KeePass website now?</Value>
-		</Data>
 		<Data Name="WindowsFavorites">
 			<Value>Windows Favorites</Value>
 		</Data>
@@ -1855,6 +1897,9 @@
 		<Data Name="FileLoadFailed">
 			<Value>Failed to load the specified file!</Value>
 		</Data>
+		<Data Name="FileLockedWrite">
+			<Value>The file is locked, because the following user is currently writing to it:</Value>
+		</Data>
 		<Data Name="FileNewVerReq">
 			<Value>A newer KeePass version is required to open this file.</Value>
 		</Data>
@@ -1899,6 +1944,9 @@
 		</Data>
 		<Data Name="OldFormat">
 			<Value>The selected file appears to be an old format</Value>
+		</Data>
+		<Data Name="TryAgainSecs">
+			<Value>Please try it again in a few seconds.</Value>
 		</Data>
 		<Data Name="UnknownHeaderId">
 			<Value>Unknown header ID!</Value>

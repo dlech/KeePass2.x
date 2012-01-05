@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,10 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 {
 	internal static class CharSetBasedGenerator
 	{
-		public static PwgError Generate(ProtectedString psOutBuffer,
+		internal static PwgError Generate(out ProtectedString psOut,
 			PwProfile pwProfile, CryptoRandomStream crsRandomSource)
 		{
+			psOut = ProtectedString.Empty;
 			if(pwProfile.Length == 0) return PwgError.Success;
 
 			PwCharSet pcs = new PwCharSet(pwProfile.CharSet.ToString());
@@ -53,9 +54,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				vGenerated[nIndex] = ch;
 			}
 
-			byte[] pbUTF8 = StrUtil.Utf8.GetBytes(vGenerated);
-			psOutBuffer.SetString(StrUtil.Utf8.GetString(pbUTF8, 0, pbUTF8.Length));
-			Array.Clear(pbUTF8, 0, pbUTF8.Length);
+			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(vGenerated);
+			psOut = new ProtectedString(true, pbUtf8);
+			MemUtil.ZeroByteArray(pbUtf8);
 			Array.Clear(vGenerated, 0, vGenerated.Length);
 
 			return PwgError.Success;

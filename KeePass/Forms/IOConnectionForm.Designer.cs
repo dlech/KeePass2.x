@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -41,7 +40,6 @@
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_lblCredNote = new System.Windows.Forms.Label();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.m_ttInvalidUrl = new System.Windows.Forms.ToolTip(this.components);
 			this.m_cmbCredSaveMode = new System.Windows.Forms.ComboBox();
 			this.m_lblRemember = new System.Windows.Forms.Label();
 			this.m_lblUrlExamples = new System.Windows.Forms.Label();
@@ -64,7 +62,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(253, 281);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 9;
+			this.m_btnOK.TabIndex = 11;
 			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -75,7 +73,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(334, 281);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 10;
+			this.m_btnCancel.TabIndex = 12;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -102,7 +100,7 @@
 			this.m_lblUserName.Location = new System.Drawing.Point(12, 161);
 			this.m_lblUserName.Name = "m_lblUserName";
 			this.m_lblUserName.Size = new System.Drawing.Size(61, 13);
-			this.m_lblUserName.TabIndex = 2;
+			this.m_lblUserName.TabIndex = 4;
 			this.m_lblUserName.Text = "User name:";
 			// 
 			// m_tbUserName
@@ -110,7 +108,7 @@
 			this.m_tbUserName.Location = new System.Drawing.Point(89, 158);
 			this.m_tbUserName.Name = "m_tbUserName";
 			this.m_tbUserName.Size = new System.Drawing.Size(121, 20);
-			this.m_tbUserName.TabIndex = 3;
+			this.m_tbUserName.TabIndex = 5;
 			// 
 			// m_lblPassword
 			// 
@@ -118,7 +116,7 @@
 			this.m_lblPassword.Location = new System.Drawing.Point(216, 161);
 			this.m_lblPassword.Name = "m_lblPassword";
 			this.m_lblPassword.Size = new System.Drawing.Size(56, 13);
-			this.m_lblPassword.TabIndex = 4;
+			this.m_lblPassword.TabIndex = 6;
 			this.m_lblPassword.Text = "Password:";
 			// 
 			// m_tbPassword
@@ -126,7 +124,7 @@
 			this.m_tbPassword.Location = new System.Drawing.Point(287, 158);
 			this.m_tbPassword.Name = "m_tbPassword";
 			this.m_tbPassword.Size = new System.Drawing.Size(122, 20);
-			this.m_tbPassword.TabIndex = 5;
+			this.m_tbPassword.TabIndex = 7;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
 			// m_lblSeparator
@@ -135,14 +133,14 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 270);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(421, 2);
-			this.m_lblSeparator.TabIndex = 12;
+			this.m_lblSeparator.TabIndex = 13;
 			// 
 			// m_lblCredNote
 			// 
 			this.m_lblCredNote.Location = new System.Drawing.Point(12, 190);
 			this.m_lblCredNote.Name = "m_lblCredNote";
 			this.m_lblCredNote.Size = new System.Drawing.Size(397, 26);
-			this.m_lblCredNote.TabIndex = 6;
+			this.m_lblCredNote.TabIndex = 8;
 			this.m_lblCredNote.Text = "The credentials you enter here are used to authenticate you against the server. D" +
 				"o not enter your KeePass database master password.";
 			// 
@@ -151,17 +149,10 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 281);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 11;
+			this.m_btnHelp.TabIndex = 14;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
-			// 
-			// m_ttInvalidUrl
-			// 
-			this.m_ttInvalidUrl.AutoPopDelay = 32000;
-			this.m_ttInvalidUrl.InitialDelay = 250;
-			this.m_ttInvalidUrl.IsBalloon = true;
-			this.m_ttInvalidUrl.ReshowDelay = 100;
 			// 
 			// m_cmbCredSaveMode
 			// 
@@ -170,7 +161,7 @@
 			this.m_cmbCredSaveMode.Location = new System.Drawing.Point(91, 228);
 			this.m_cmbCredSaveMode.Name = "m_cmbCredSaveMode";
 			this.m_cmbCredSaveMode.Size = new System.Drawing.Size(318, 21);
-			this.m_cmbCredSaveMode.TabIndex = 8;
+			this.m_cmbCredSaveMode.TabIndex = 10;
 			// 
 			// m_lblRemember
 			// 
@@ -178,7 +169,7 @@
 			this.m_lblRemember.Location = new System.Drawing.Point(12, 231);
 			this.m_lblRemember.Name = "m_lblRemember";
 			this.m_lblRemember.Size = new System.Drawing.Size(61, 13);
-			this.m_lblRemember.TabIndex = 7;
+			this.m_lblRemember.TabIndex = 9;
 			this.m_lblRemember.Text = "Remember:";
 			// 
 			// m_lblUrlExamples
@@ -187,7 +178,7 @@
 			this.m_lblUrlExamples.Location = new System.Drawing.Point(86, 131);
 			this.m_lblUrlExamples.Name = "m_lblUrlExamples";
 			this.m_lblUrlExamples.Size = new System.Drawing.Size(284, 13);
-			this.m_lblUrlExamples.TabIndex = 13;
+			this.m_lblUrlExamples.TabIndex = 3;
 			this.m_lblUrlExamples.Text = "Example: ftp://ftp.someserver.com/pub/MyDatabase.kdbx";
 			// 
 			// m_lblUrlHints
@@ -195,7 +186,7 @@
 			this.m_lblUrlHints.Location = new System.Drawing.Point(86, 102);
 			this.m_lblUrlHints.Name = "m_lblUrlHints";
 			this.m_lblUrlHints.Size = new System.Drawing.Size(321, 29);
-			this.m_lblUrlHints.TabIndex = 14;
+			this.m_lblUrlHints.TabIndex = 2;
 			this.m_lblUrlHints.Text = "The complete URL must be specified, including protocol, server and full path to t" +
 				"he file.";
 			// 
@@ -252,7 +243,6 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.Label m_lblCredNote;
 		private System.Windows.Forms.Button m_btnHelp;
-		private System.Windows.Forms.ToolTip m_ttInvalidUrl;
 		private System.Windows.Forms.ComboBox m_cmbCredSaveMode;
 		private System.Windows.Forms.Label m_lblRemember;
 		private System.Windows.Forms.Label m_lblUrlExamples;

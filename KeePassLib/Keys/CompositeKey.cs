@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,25 +60,24 @@ namespace KeePassLib.Keys
 		{
 		}
 
-		/// <summary>
-		/// Deconstructor, clears up the key.
-		/// </summary>
-		~CompositeKey()
-		{
-			this.Clear();
-		}
+		// /// <summary>
+		// /// Deconstructor, clears up the key.
+		// /// </summary>
+		// ~CompositeKey()
+		// {
+		//	Clear();
+		// }
 
-		/// <summary>
-		/// Clears the key. This function also erases all previously stored
-		/// user key data objects.
-		/// </summary>
-		public void Clear()
-		{
-			foreach(IUserKey pKey in m_vUserKeys)
-				pKey.Clear();
-
-			m_vUserKeys.Clear();
-		}
+		// /// <summary>
+		// /// Clears the key. This function also erases all previously stored
+		// /// user key data objects.
+		// /// </summary>
+		// public void Clear()
+		// {
+		//	foreach(IUserKey pKey in m_vUserKeys)
+		//		pKey.Clear();
+		//	m_vUserKeys.Clear();
+		// }
 
 		/// <summary>
 		/// Add a user key.
@@ -163,12 +162,14 @@ namespace KeePassLib.Keys
 				{
 					byte[] pbKeyData = b.ReadData();
 					ms.Write(pbKeyData, 0, pbKeyData.Length);
-					Array.Clear(pbKeyData, 0, pbKeyData.Length);
+					MemUtil.ZeroByteArray(pbKeyData);
 				}
 			}
 
 			SHA256Managed sha256 = new SHA256Managed();
-			return sha256.ComputeHash(ms.ToArray());
+			byte[] pbHash = sha256.ComputeHash(ms.ToArray());
+			ms.Close();
+			return pbHash;
 		}
 
 		public bool EqualsValue(CompositeKey ckOther)
@@ -209,8 +210,8 @@ namespace KeePassLib.Keys
 				{ Debug.Assert(false); return null; }
 
 			ProtectedBinary pbRet = new ProtectedBinary(true, pbTrf32);
-			Array.Clear(pbTrf32, 0, 32);
-			Array.Clear(pbRaw32, 0, 32);
+			MemUtil.ZeroByteArray(pbTrf32);
+			MemUtil.ZeroByteArray(pbRaw32);
 
 			return pbRet;
 		}

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ namespace KeePassLib.Utility
 			str = str.Replace("\"", @"&quot;");
 			str = str.Replace("\'", @"&#39;");
 
-			str = str.Replace("\r", string.Empty);
+			str = NormalizeNewLines(str, false);
 			str = str.Replace("\n", @"<br />");
 
 			return str;
@@ -603,7 +603,6 @@ namespace KeePassLib.Utility
 			for(char ch = 'A'; ch <= 'Z'; ++ch)
 			{
 				string strEnhAcc = @"(&" + ch.ToString() + @")";
-
 				if(str.IndexOf(strEnhAcc) >= 0)
 				{
 					str = str.Replace(@" " + strEnhAcc, string.Empty);
@@ -718,12 +717,50 @@ namespace KeePassLib.Utility
 			return "null";
 		}
 
-		public static string ToWindowsString(string str)
+		/// <summary>
+		/// Normalize new line characters in a string. Input strings may
+		/// contain mixed new line character sequences from all commonly
+		/// used operating systems (i.e. \r\n from Windows, \n from Unix
+		/// and \r from Mac OS.
+		/// </summary>
+		/// <param name="str">String with mixed new line characters.</param>
+		/// <param name="bWindows">If <c>true</c>, new line characters
+		/// are normalized for Windows (\r\n); if <c>false</c>, new line
+		/// characters are normalized for Unix (\n).</param>
+		/// <returns>String with normalized new line characters.</returns>
+		public static string NormalizeNewLines(string str, bool bWindows)
 		{
 			if(string.IsNullOrEmpty(str)) return str;
 
-			string strSingular = str.Replace("\r", string.Empty);
-			return strSingular.Replace("\n", "\r\n");
+			str = str.Replace("\r\n", "\n");
+			str = str.Replace("\r", "\n");
+
+			if(bWindows) str = str.Replace("\n", "\r\n");
+
+			return str;
+		}
+
+		private static char[] m_vNewLineChars = null;
+		public static void NormalizeNewLines(ProtectedStringDictionary dict,
+			bool bWindows)
+		{
+			if(dict == null) { Debug.Assert(false); return; }
+
+			if(m_vNewLineChars == null)
+				m_vNewLineChars = new char[]{ '\r', '\n' };
+
+			List<string> vKeys = dict.GetKeys();
+			foreach(string strKey in vKeys)
+			{
+				ProtectedString ps = dict.Get(strKey);
+				if(ps == null) { Debug.Assert(false); continue; }
+
+				string strValue = ps.ReadString();
+				if(strValue.IndexOfAny(m_vNewLineChars) < 0) continue;
+
+				dict.Set(strKey, new ProtectedString(ps.IsProtected,
+					NormalizeNewLines(strValue, bWindows)));
+			}
 		}
 
 		public static string AlphaNumericOnly(string str)
@@ -771,34 +808,54 @@ namespace KeePassLib.Utility
 		private static readonly char[] m_vVersionSep = new char[]{ '.', ',' };
 		public static ulong GetVersion(string strVersion)
 		{
-			if(string.IsNullOrEmpty(strVersion)) { Debug.Assert(false); return 0; }
+			if(strVersion == null) { Debug.Assert(false); return 0; }
 
-			string[] vVer = strVersion.Split(m_vVersionSep);
+			string[] vVer = strVersion.Trim().Split(m_vVersionSep);
 			if((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
 
 			ushort uPart;
-			StrUtil.TryParseUShort(vVer[0], out uPart);
+			StrUtil.TryParseUShort(vVer[0].Trim(), out uPart);
 			ulong uVer = ((ulong)uPart << 48);
 
 			if(vVer.Length >= 2)
 			{
-				StrUtil.TryParseUShort(vVer[1], out uPart);
+				StrUtil.TryParseUShort(vVer[1].Trim(), out uPart);
 				uVer |= ((ulong)uPart << 32);
 			}
 
 			if(vVer.Length >= 3)
 			{
-				StrUtil.TryParseUShort(vVer[2], out uPart);
+				StrUtil.TryParseUShort(vVer[2].Trim(), out uPart);
 				uVer |= ((ulong)uPart << 16);
 			}
 
 			if(vVer.Length >= 4)
 			{
-				StrUtil.TryParseUShort(vVer[3], out uPart);
+				StrUtil.TryParseUShort(vVer[3].Trim(), out uPart);
 				uVer |= (ulong)uPart;
 			}
 
 			return uVer;
+		}
+
+		public static string VersionToString(ulong uVersion)
+		{
+			string str = string.Empty;
+
+			for(int i = 0; i < 4; ++i)
+			{
+				ushort us = (ushort)(uVersion & 0xFFFFUL);
+
+				if((us != 0) || (str.Length > 0))
+				{
+					if(str.Length > 0) str = "." + str;
+					str = us.ToString() + str;
+				}
+
+				uVersion >>= 16;
+			}
+
+			return str;
 		}
 
 		private static readonly byte[] m_pbOptEnt = { 0xA5, 0x74, 0x2E, 0xEC };
@@ -1002,7 +1059,7 @@ namespace KeePassLib.Utility
 			if(strMulti.Length == 0) return string.Empty;
 
 			string str = strMulti;
-			str = str.Replace("\r\n", "\n");
+			str = str.Replace("\r\n", " ");
 			str = str.Replace("\r", " ");
 			str = str.Replace("\n", " ");
 
@@ -1120,6 +1177,28 @@ namespace KeePassLib.Utility
 			pb = ms.ToArray();
 			ms.Close();
 			return pb;
+		}
+
+		/// <summary>
+		/// Remove placeholders from a string (wrapped in '{' and '}').
+		/// This doesn't remove environment variables (wrapped in '%').
+		/// </summary>
+		public static string RemovePlaceholders(string str)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+
+			while(true)
+			{
+				int iPlhStart = str.IndexOf('{');
+				if(iPlhStart < 0) break;
+
+				int iPlhEnd = str.IndexOf('}', iPlhStart); // '{' might be at end
+				if(iPlhEnd < 0) break;
+
+				str = (str.Substring(0, iPlhStart) + str.Substring(iPlhEnd + 1));
+			}
+
+			return str;
 		}
 	}
 }

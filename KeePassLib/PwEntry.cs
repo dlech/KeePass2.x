@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -370,50 +370,87 @@ namespace KeePassLib
 			return peNew;
 		}
 
+		private static PwCompareOptions BuildCmpOpt(bool bIgnoreParentGroup,
+			bool bIgnoreLastMod, bool bIgnoreLastAccess, bool bIgnoreHistory,
+			bool bIgnoreThisLastBackup)
+		{
+			PwCompareOptions pwOpt = PwCompareOptions.None;
+			if(bIgnoreParentGroup) pwOpt |= PwCompareOptions.IgnoreParentGroup;
+			if(bIgnoreLastMod) pwOpt |= PwCompareOptions.IgnoreLastMod;
+			if(bIgnoreLastAccess) pwOpt |= PwCompareOptions.IgnoreLastAccess;
+			if(bIgnoreHistory) pwOpt |= PwCompareOptions.IgnoreHistory;
+			if(bIgnoreThisLastBackup) pwOpt |= PwCompareOptions.IgnoreLastBackup;
+			return pwOpt;
+		}
+
 		[Obsolete]
 		public bool EqualsEntry(PwEntry pe, bool bIgnoreParentGroup, bool bIgnoreLastMod,
 			bool bIgnoreLastAccess, bool bIgnoreHistory, bool bIgnoreThisLastBackup)
 		{
-			return EqualsEntry(pe, bIgnoreParentGroup, bIgnoreLastMod, bIgnoreLastAccess,
-				bIgnoreHistory, bIgnoreThisLastBackup, MemProtCmpMode.None);
+			return EqualsEntry(pe, BuildCmpOpt(bIgnoreParentGroup, bIgnoreLastMod,
+				bIgnoreLastAccess, bIgnoreHistory, bIgnoreThisLastBackup),
+				MemProtCmpMode.None);
 		}
 
+		[Obsolete]
 		public bool EqualsEntry(PwEntry pe, bool bIgnoreParentGroup, bool bIgnoreLastMod,
 			bool bIgnoreLastAccess, bool bIgnoreHistory, bool bIgnoreThisLastBackup,
 			MemProtCmpMode mpCmpStr)
 		{
+			return EqualsEntry(pe, BuildCmpOpt(bIgnoreParentGroup, bIgnoreLastMod,
+				bIgnoreLastAccess, bIgnoreHistory, bIgnoreThisLastBackup), mpCmpStr);
+		}
+
+		public bool EqualsEntry(PwEntry pe, PwCompareOptions pwOpt,
+			MemProtCmpMode mpCmpStr)
+		{
 			if(pe == null) { Debug.Assert(false); return false; }
 
+			bool bNeEqStd = ((pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
+				PwCompareOptions.None);
+			bool bIgnoreLastAccess = ((pwOpt & PwCompareOptions.IgnoreLastAccess) !=
+				PwCompareOptions.None);
+			bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
+				PwCompareOptions.None);
+
 			if(!m_uuid.EqualsValue(pe.m_uuid)) return false;
-			if(!bIgnoreParentGroup)
+			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
 			{
 				if(m_pParentGroup != pe.m_pParentGroup) return false;
 				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pe.m_tParentGroupLastMod))
 					return false;
 			}
 
-			if(!m_listStrings.EqualsDictionary(pe.m_listStrings, mpCmpStr))
+			if(!m_listStrings.EqualsDictionary(pe.m_listStrings, pwOpt, mpCmpStr))
 				return false;
 			if(!m_listBinaries.EqualsDictionary(pe.m_listBinaries)) return false;
 
 			if(!m_listAutoType.Equals(pe.m_listAutoType)) return false;
 
-			if(!bIgnoreHistory)
+			if((pwOpt & PwCompareOptions.IgnoreHistory) == PwCompareOptions.None)
 			{
-				if(!bIgnoreThisLastBackup && (m_listHistory.UCount != pe.m_listHistory.UCount))
+				bool bIgnoreLastBackup = ((pwOpt & PwCompareOptions.IgnoreLastBackup) !=
+					PwCompareOptions.None);
+
+				if(!bIgnoreLastBackup && (m_listHistory.UCount != pe.m_listHistory.UCount))
 					return false;
-				if(bIgnoreThisLastBackup && (m_listHistory.UCount == 0))
+				if(bIgnoreLastBackup && (m_listHistory.UCount == 0))
 				{
 					Debug.Assert(false);
 					return false;
 				}
-				if(bIgnoreThisLastBackup && ((m_listHistory.UCount - 1) != pe.m_listHistory.UCount))
+				if(bIgnoreLastBackup && ((m_listHistory.UCount - 1) != pe.m_listHistory.UCount))
 					return false;
+
+				PwCompareOptions cmpSub = PwCompareOptions.IgnoreParentGroup;
+				if(bNeEqStd) cmpSub |= PwCompareOptions.NullEmptyEquivStd;
+				if(bIgnoreLastMod) cmpSub |= PwCompareOptions.IgnoreLastMod;
+				if(bIgnoreLastAccess) cmpSub |= PwCompareOptions.IgnoreLastAccess;
+
 				for(uint uHist = 0; uHist < pe.m_listHistory.UCount; ++uHist)
 				{
 					if(!m_listHistory.GetAt(uHist).EqualsEntry(pe.m_listHistory.GetAt(
-						uHist), true, bIgnoreLastMod, bIgnoreLastAccess, false, false,
-						MemProtCmpMode.None))
+						uHist), cmpSub, MemProtCmpMode.None))
 						return false;
 				}
 			}
@@ -592,10 +629,14 @@ namespace KeePassLib
 		{
 			if(peData == null) { Debug.Assert(false); return false; }
 
+			PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
+				PwCompareOptions.IgnoreHistory | PwCompareOptions.NullEmptyEquivStd);
+			if(bIgnoreLastMod) cmpOpt |= PwCompareOptions.IgnoreLastMod;
+			if(bIgnoreLastAccess) cmpOpt |= PwCompareOptions.IgnoreLastAccess;
+
 			foreach(PwEntry pe in m_listHistory)
 			{
-				if(pe.EqualsEntry(peData, true, bIgnoreLastMod, bIgnoreLastAccess,
-					true, false, MemProtCmpMode.None)) return true;
+				if(pe.EqualsEntry(peData, cmpOpt, MemProtCmpMode.None)) return true;
 			}
 
 			return false;

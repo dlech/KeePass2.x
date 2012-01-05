@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -214,6 +214,8 @@ namespace KeePass.Forms
 
 				ClipboardUtil.Copy(StrUtil.Utf8.GetString(ms.ToArray()), false,
 					false, null, null, this.Handle);
+				xw.Close();
+				ms.Close();
 			}
 			catch(Exception excp) { MessageService.ShowWarning(excp.Message); }
 		}
@@ -242,6 +244,7 @@ namespace KeePass.Forms
 				byte[] pbData = StrUtil.Utf8.GetBytes(strData);
 				MemoryStream ms = new MemoryStream(pbData, false);
 				EcasTriggerContainer c = (EcasTriggerContainer)xmls.Deserialize(ms);
+				ms.Close();
 
 				foreach(EcasTrigger t in c.Triggers)
 				{

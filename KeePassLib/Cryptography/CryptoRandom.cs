@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ namespace KeePassLib.Cryptography
 			Random r = new Random();
 			m_uCounter = (uint)r.Next();
 
-			AddEntropy(GetSystemData());
+			AddEntropy(GetSystemData(r));
 			AddEntropy(GetCspData());
 		}
 
@@ -122,14 +122,14 @@ namespace KeePassLib.Cryptography
 				SHA256Managed shaPool = new SHA256Managed();
 #endif
 				m_pbEntropyPool = shaPool.ComputeHash(pbFinal);
-				ms.Close();
 			}
+			ms.Close();
 		}
 
-		private static byte[] GetSystemData()
+		private static byte[] GetSystemData(Random rWeak)
 		{
-			byte[] pb;
 			MemoryStream ms = new MemoryStream();
+			byte[] pb;
 
 			pb = MemUtil.UInt32ToBytes((uint)Environment.TickCount);
 			ms.Write(pb, 0, pb.Length);
@@ -145,8 +145,7 @@ namespace KeePassLib.Cryptography
 			ms.Write(pb, 0, pb.Length);
 #endif
 
-			Random r = new Random();
-			pb = MemUtil.UInt32ToBytes((uint)r.Next());
+			pb = MemUtil.UInt32ToBytes((uint)rWeak.Next());
 			ms.Write(pb, 0, pb.Length);
 
 			pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
@@ -205,7 +204,9 @@ namespace KeePassLib.Cryptography
 			pb = Guid.NewGuid().ToByteArray();
 			ms.Write(pb, 0, pb.Length);
 
-			return ms.ToArray();
+			byte[] pbAll = ms.ToArray();
+			ms.Close();
+			return pbAll;
 		}
 
 		private byte[] GetCspData()
@@ -235,6 +236,7 @@ namespace KeePassLib.Cryptography
 				pbFinal = ms.ToArray();
 				Debug.Assert(pbFinal.Length == (m_pbEntropyPool.Length +
 					pbCounter.Length + pbCspRandom.Length));
+				ms.Close();
 
 				m_uGeneratedBytesCount += 32;
 			}

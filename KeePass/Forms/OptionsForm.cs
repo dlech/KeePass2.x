@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -351,10 +351,10 @@ namespace KeePass.Forms
 			m_cdxGuiOptions.AddLink(lviDeref, lviDerefAsync, CheckItemLinkType.UncheckedUnchecked);
 			m_cdxGuiOptions.AddLink(lviDerefAsync, lviDeref, CheckItemLinkType.CheckedChecked);
 
-			lvg = new ListViewGroup(KPRes.EntryView);
-			m_lvGuiOptions.Groups.Add(lvg);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow.EntryView, "HideProtectedCustomStrings",
-				lvg, KPRes.EntryViewHideProtectedCustomStrings);
+			// lvg = new ListViewGroup(KPRes.EntryView);
+			// m_lvGuiOptions.Groups.Add(lvg);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow.EntryView, "HideProtectedCustomStrings",
+			//	lvg, KPRes.EntryViewHideProtectedCustomStrings);
 
 			lvg = new ListViewGroup(KPRes.QuickSearchTb);
 			m_lvGuiOptions.Groups.Add(lvg);
@@ -448,10 +448,14 @@ namespace KeePass.Forms
 				lvg, KPRes.AutoTypeMatchByTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByUrlInTitle",
 				lvg, KPRes.AutoTypeMatchByUrlInTitle);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByUrlHostInTitle",
+				lvg, KPRes.AutoTypeMatchByUrlHostInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypePrependInitSequenceForIE",
 				lvg, KPRes.AutoTypePrependInitSeqForIE);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeReleaseAltWithKeyPress",
 				lvg, KPRes.AutoTypeReleaseAltWithKeyPress);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeAdjustKeyboardLayout",
+				lvg, KPRes.SameKeybLayout);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnWindowChange",
 				lvg, KPRes.AutoTypeCancelOnWindowChange);
 
@@ -479,6 +483,8 @@ namespace KeePass.Forms
 				lvg, KPRes.VerifyWrittenFileAfterSave);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
 				lvg, KPRes.UseTransactedDatabaseWrites);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",
+				lvg, KPRes.UseFileLocks + " " + KPRes.NotRecommended);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "TanExpiresOnUse",
 				lvg, KPRes.TanExpiresOnUse);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RecycleBinCollapse",

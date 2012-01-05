@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -79,19 +79,11 @@ namespace KeePassLib.Keys
 			m_pbKeyData = new ProtectedBinary(true, pbKey);
 		}
 
-		/// <summary>
-		/// Clear the key and securely erase all security-critical information.
-		/// </summary>
-		public void Clear()
-		{
-			m_strPath = string.Empty;
-
-			if(m_pbKeyData != null)
-			{
-				m_pbKeyData.Clear();
-				m_pbKeyData = null;
-			}
-		}
+		// public void Clear()
+		// {
+		//	m_strPath = string.Empty;
+		//	m_pbKeyData = null;
+		// }
 
 		private static byte[] LoadKeyFile(IOConnectionInfo iocFile)
 		{
@@ -139,12 +131,9 @@ namespace KeePassLib.Keys
 			try
 			{
 				string strHex = Encoding.ASCII.GetString(pbFileData, 0, 64);
-
-				if(StrUtil.IsHexString(strHex, true) == false)
-					return null;
+				if(!StrUtil.IsHexString(strHex, true)) return null;
 
 				byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
-
 				if((pbKey == null) || (pbKey.Length != 32))
 					return null;
 

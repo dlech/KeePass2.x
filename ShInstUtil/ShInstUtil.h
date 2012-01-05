@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -97,7 +97,9 @@ std_string GetNetInstallRoot();
 std_string GetKeePassExePath();
 void EnsureTerminatingSeparator(std_string& strPath);
 std_string FindNGen();
-void FindNGenRec(const std_string& strPath, std_string& strNGenPath, FILETIME& ftCreation);
+void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
+	ULONGLONG& ullVersion);
+ULONGLONG SiuGetFileVersion(const std_string& strFilePath);
 void CheckDotNetInstalled();
 
 #endif // ___SH_INST_UTIL_H___

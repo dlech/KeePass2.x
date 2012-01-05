@@ -37,7 +37,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static class CheckForUpdate
+	/* public static class UpdateCheck
 	{
 		private const string ElemRoot = "KeePass";
 
@@ -53,7 +53,7 @@ namespace KeePass.Util
 			m_tsResultsViewer = tsResultsViewer;
 
 			// Local, but thread will continue to run anyway
-			Thread th = new Thread(new ThreadStart(CheckForUpdate.OnStartCheck));
+			Thread th = new Thread(new ThreadStart(UpdateCheck.OnStartCheck));
 			th.Start();
 		}
 
@@ -98,7 +98,7 @@ namespace KeePass.Util
 					if(m_tsResultsViewer == null)
 						MessageService.ShowWarning(KPRes.UpdateCheckingFailed, e.Error);
 					else if(e.Error.Message != null)
-						CheckForUpdate.SetTsStatus(KPRes.UpdateCheckingFailed + " " +
+						UpdateCheck.SetTsStatus(KPRes.UpdateCheckingFailed + " " +
 							e.Error.Message);
 				}
 				else ReportStatusEx(KPRes.UpdateCheckingFailed, true);
@@ -141,7 +141,7 @@ namespace KeePass.Util
 						WinUtil.OpenUrl(PwDefs.HomepageUrl, null);
 					}
 				}
-				else CheckForUpdate.SetTsStatus(KPRes.ChkForUpdNewVersion);
+				else UpdateCheck.SetTsStatus(KPRes.ChkForUpdNewVersion);
 			}
 			else if(uVersion == PwDefs.Version32)
 				ReportStatusEx(KPRes.ChkForUpdGotLatest, false);
@@ -162,7 +162,7 @@ namespace KeePass.Util
 				if(bIsWarning) MessageService.ShowWarning(strLongText);
 				else MessageService.ShowInfo(strLongText);
 			}
-			else CheckForUpdate.SetTsStatus(strShortText);
+			else UpdateCheck.SetTsStatus(strShortText);
 		}
 
 		private static void StructureFail()
@@ -172,7 +172,7 @@ namespace KeePass.Util
 			if(m_tsResultsViewer == null)
 				MessageService.ShowWarning(KPRes.InvalidFileStructure);
 			else
-				CheckForUpdate.SetTsStatus(KPRes.ChkForUpdGotLatest + " " +
+				UpdateCheck.SetTsStatus(KPRes.ChkForUpdGotLatest + " " +
 					KPRes.InvalidFileStructure);
 		}
 
@@ -186,10 +186,10 @@ namespace KeePass.Util
 				ToolStrip pParent = m_tsResultsViewer.Owner;
 				if((pParent != null) && pParent.InvokeRequired)
 				{
-					pParent.Invoke(new Priv_CfuSsd(CheckForUpdate.SetTsStatusDirect),
+					pParent.Invoke(new Priv_CfuSsd(UpdateCheck.SetTsStatusDirect),
 						new object[] { strText });
 				}
-				else CheckForUpdate.SetTsStatusDirect(strText);
+				else UpdateCheck.SetTsStatusDirect(strText);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -201,5 +201,5 @@ namespace KeePass.Util
 			try { m_tsResultsViewer.Text = strText; }
 			catch(Exception) { Debug.Assert(false); }
 		}
-	}
+	} */
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,27 +40,26 @@ namespace KeePassLib.Utility
 		/// Convert a hexadecimal string to a byte array. The input string must be
 		/// even (i.e. its length is a multiple of 2).
 		/// </summary>
-		/// <param name="strHexString">String containing hexadecimal characters.</param>
+		/// <param name="strHex">String containing hexadecimal characters.</param>
 		/// <returns>Returns a byte array. Returns <c>null</c> if the string parameter
 		/// was <c>null</c> or is an uneven string (i.e. if its length isn't a
 		/// multiple of 2).</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="strHexString" />
+		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="strHex" />
 		/// is <c>null</c>.</exception>
-		public static byte[] HexStringToByteArray(string strHexString)
+		public static byte[] HexStringToByteArray(string strHex)
 		{
-			Debug.Assert(strHexString != null); if(strHexString == null) throw new ArgumentNullException("strHexString");
+			if(strHex == null) { Debug.Assert(false); throw new ArgumentNullException("strHex"); }
 
-			int nStrLen = strHexString.Length;
-			if((nStrLen & 1) != 0) return null; // Only even strings supported
+			int nStrLen = strHex.Length;
+			if((nStrLen & 1) != 0) { Debug.Assert(false); return null; }
 
 			byte[] pb = new byte[nStrLen / 2];
 			byte bt;
 			char ch;
 
-			for(int i = 0; i < nStrLen; ++i)
+			for(int i = 0; i < nStrLen; i += 2)
 			{
-				ch = strHexString[i];
-				if((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n')) continue;
+				ch = strHex[i];
 
 				if((ch >= '0') && (ch <= '9'))
 					bt = (byte)(ch - '0');
@@ -68,20 +67,20 @@ namespace KeePassLib.Utility
 					bt = (byte)(ch - 'a' + 10);
 				else if((ch >= 'A') && (ch <= 'F'))
 					bt = (byte)(ch - 'A' + 10);
-				else bt = 0;
+				else { Debug.Assert(false); bt = 0; }
 
 				bt <<= 4;
-				++i;
 
-				ch = strHexString[i];
+				ch = strHex[i + 1];
 				if((ch >= '0') && (ch <= '9'))
 					bt += (byte)(ch - '0');
 				else if((ch >= 'a') && (ch <= 'f'))
 					bt += (byte)(ch - 'a' + 10);
 				else if((ch >= 'A') && (ch <= 'F'))
 					bt += (byte)(ch - 'A' + 10);
+				else { Debug.Assert(false); }
 
-				pb[i / 2] = bt;
+				pb[i >> 1] = bt;
 			}
 
 			return pb;

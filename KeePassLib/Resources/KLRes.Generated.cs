@@ -34,6 +34,7 @@ namespace KeePassLib.Resources
 			m_strFileCorrupted = TryGetEx(dictNew, "FileCorrupted", m_strFileCorrupted);
 			m_strFileHeaderEndEarly = TryGetEx(dictNew, "FileHeaderEndEarly", m_strFileHeaderEndEarly);
 			m_strFileLoadFailed = TryGetEx(dictNew, "FileLoadFailed", m_strFileLoadFailed);
+			m_strFileLockedWrite = TryGetEx(dictNew, "FileLockedWrite", m_strFileLockedWrite);
 			m_strFileNewVerReq = TryGetEx(dictNew, "FileNewVerReq", m_strFileNewVerReq);
 			m_strFileSaveCorruptionWarning = TryGetEx(dictNew, "FileSaveCorruptionWarning", m_strFileSaveCorruptionWarning);
 			m_strFileSaveFailed = TryGetEx(dictNew, "FileSaveFailed", m_strFileSaveFailed);
@@ -49,6 +50,7 @@ namespace KeePassLib.Resources
 			m_strKeePass1xHint = TryGetEx(dictNew, "KeePass1xHint", m_strKeePass1xHint);
 			m_strMasterSeedLengthInvalid = TryGetEx(dictNew, "MasterSeedLengthInvalid", m_strMasterSeedLengthInvalid);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
+			m_strTryAgainSecs = TryGetEx(dictNew, "TryAgainSecs", m_strTryAgainSecs);
 			m_strUnknownHeaderId = TryGetEx(dictNew, "UnknownHeaderId", m_strUnknownHeaderId);
 			m_strUserAccountKeyError = TryGetEx(dictNew, "UserAccountKeyError", m_strUserAccountKeyError);
 		}
@@ -62,6 +64,7 @@ namespace KeePassLib.Resources
 			"FileCorrupted",
 			"FileHeaderEndEarly",
 			"FileLoadFailed",
+			"FileLockedWrite",
 			"FileNewVerReq",
 			"FileSaveCorruptionWarning",
 			"FileSaveFailed",
@@ -77,6 +80,7 @@ namespace KeePassLib.Resources
 			"KeePass1xHint",
 			"MasterSeedLengthInvalid",
 			"OldFormat",
+			"TryAgainSecs",
 			"UnknownHeaderId",
 			"UserAccountKeyError"
 		};
@@ -172,6 +176,17 @@ namespace KeePassLib.Resources
 		public static string FileLoadFailed
 		{
 			get { return m_strFileLoadFailed; }
+		}
+
+		private static string m_strFileLockedWrite =
+			@"The file is locked, because the following user is currently writing to it:";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The file is locked, because the following user is currently writing to it:'.
+		/// </summary>
+		public static string FileLockedWrite
+		{
+			get { return m_strFileLockedWrite; }
 		}
 
 		private static string m_strFileNewVerReq =
@@ -337,6 +352,17 @@ namespace KeePassLib.Resources
 		public static string OldFormat
 		{
 			get { return m_strOldFormat; }
+		}
+
+		private static string m_strTryAgainSecs =
+			@"Please try it again in a few seconds.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Please try it again in a few seconds.'.
+		/// </summary>
+		public static string TryAgainSecs
+		{
+			get { return m_strTryAgainSecs; }
 		}
 
 		private static string m_strUnknownHeaderId =

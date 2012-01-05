@@ -56,13 +56,6 @@
 			this.m_lblDbName = new System.Windows.Forms.Label();
 			this.m_tabSecurity = new System.Windows.Forms.TabPage();
 			this.m_lblSecIntro = new System.Windows.Forms.Label();
-			this.m_tabProtection = new System.Windows.Forms.TabPage();
-			this.m_lnkMemProtHelp = new System.Windows.Forms.LinkLabel();
-			this.m_lblMemProtEnable = new System.Windows.Forms.Label();
-			this.m_lblMemProtHint = new System.Windows.Forms.Label();
-			this.m_lblMemProtDesc = new System.Windows.Forms.Label();
-			this.m_lbMemProt = new System.Windows.Forms.CheckedListBox();
-			this.m_lblProtIntro = new System.Windows.Forms.Label();
 			this.m_tabCompression = new System.Windows.Forms.TabPage();
 			this.m_lblHeaderCpAlgo = new System.Windows.Forms.Label();
 			this.m_lblCpGZipPerf = new System.Windows.Forms.Label();
@@ -100,7 +93,6 @@
 			this.m_tabMain.SuspendLayout();
 			this.m_tabGeneral.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
-			this.m_tabProtection.SuspendLayout();
 			this.m_tabCompression.SuspendLayout();
 			this.m_tabRecycleBin.SuspendLayout();
 			this.m_tabAdvanced.SuspendLayout();
@@ -263,7 +255,6 @@
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabGeneral);
 			this.m_tabMain.Controls.Add(this.m_tabSecurity);
-			this.m_tabMain.Controls.Add(this.m_tabProtection);
 			this.m_tabMain.Controls.Add(this.m_tabCompression);
 			this.m_tabMain.Controls.Add(this.m_tabRecycleBin);
 			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
@@ -385,79 +376,6 @@
 			this.m_lblSecIntro.Size = new System.Drawing.Size(277, 13);
 			this.m_lblSecIntro.TabIndex = 0;
 			this.m_lblSecIntro.Text = "On this page you can configure file-level security settings.";
-			// 
-			// m_tabProtection
-			// 
-			this.m_tabProtection.Controls.Add(this.m_lnkMemProtHelp);
-			this.m_tabProtection.Controls.Add(this.m_lblMemProtEnable);
-			this.m_tabProtection.Controls.Add(this.m_lblMemProtHint);
-			this.m_tabProtection.Controls.Add(this.m_lblMemProtDesc);
-			this.m_tabProtection.Controls.Add(this.m_lbMemProt);
-			this.m_tabProtection.Controls.Add(this.m_lblProtIntro);
-			this.m_tabProtection.Location = new System.Drawing.Point(4, 22);
-			this.m_tabProtection.Name = "m_tabProtection";
-			this.m_tabProtection.Size = new System.Drawing.Size(455, 294);
-			this.m_tabProtection.TabIndex = 3;
-			this.m_tabProtection.Text = "Protection";
-			this.m_tabProtection.UseVisualStyleBackColor = true;
-			// 
-			// m_lnkMemProtHelp
-			// 
-			this.m_lnkMemProtHelp.AutoSize = true;
-			this.m_lnkMemProtHelp.Location = new System.Drawing.Point(3, 271);
-			this.m_lnkMemProtHelp.Name = "m_lnkMemProtHelp";
-			this.m_lnkMemProtHelp.Size = new System.Drawing.Size(257, 13);
-			this.m_lnkMemProtHelp.TabIndex = 5;
-			this.m_lnkMemProtHelp.TabStop = true;
-			this.m_lnkMemProtHelp.Text = "Help: Automatic reset of in-memory protection options";
-			this.m_lnkMemProtHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClickedMemProtHelp);
-			// 
-			// m_lblMemProtEnable
-			// 
-			this.m_lblMemProtEnable.AutoSize = true;
-			this.m_lblMemProtEnable.Location = new System.Drawing.Point(3, 119);
-			this.m_lblMemProtEnable.Name = "m_lblMemProtEnable";
-			this.m_lblMemProtEnable.Size = new System.Drawing.Size(247, 13);
-			this.m_lblMemProtEnable.TabIndex = 3;
-			this.m_lblMemProtEnable.Text = "Enable in-memory protection for the following fields:";
-			// 
-			// m_lblMemProtHint
-			// 
-			this.m_lblMemProtHint.Location = new System.Drawing.Point(3, 71);
-			this.m_lblMemProtHint.Name = "m_lblMemProtHint";
-			this.m_lblMemProtHint.Size = new System.Drawing.Size(443, 27);
-			this.m_lblMemProtHint.TabIndex = 2;
-			this.m_lblMemProtHint.Text = "It is recommended to turn on memory protection for password fields and leave it d" +
-				"isabled for all others. Process memory protection slows down all operations a bi" +
-				"t.";
-			// 
-			// m_lblMemProtDesc
-			// 
-			this.m_lblMemProtDesc.Location = new System.Drawing.Point(3, 34);
-			this.m_lblMemProtDesc.Name = "m_lblMemProtDesc";
-			this.m_lblMemProtDesc.Size = new System.Drawing.Size(443, 28);
-			this.m_lblMemProtDesc.TabIndex = 1;
-			this.m_lblMemProtDesc.Text = "Fields can be stored encrypted in the process memory. This ensures that no other " +
-				"application can read your data by dumping the memory.";
-			// 
-			// m_lbMemProt
-			// 
-			this.m_lbMemProt.CheckOnClick = true;
-			this.m_lbMemProt.FormattingEnabled = true;
-			this.m_lbMemProt.Location = new System.Drawing.Point(6, 135);
-			this.m_lbMemProt.Name = "m_lbMemProt";
-			this.m_lbMemProt.ScrollAlwaysVisible = true;
-			this.m_lbMemProt.Size = new System.Drawing.Size(440, 124);
-			this.m_lbMemProt.TabIndex = 4;
-			// 
-			// m_lblProtIntro
-			// 
-			this.m_lblProtIntro.Location = new System.Drawing.Point(3, 12);
-			this.m_lblProtIntro.Name = "m_lblProtIntro";
-			this.m_lblProtIntro.Size = new System.Drawing.Size(443, 13);
-			this.m_lblProtIntro.TabIndex = 0;
-			this.m_lblProtIntro.Text = "On this page you can configure run-time memory protection settings for this datab" +
-				"ase.";
 			// 
 			// m_tabCompression
 			// 
@@ -800,8 +718,6 @@
 			this.m_tabGeneral.PerformLayout();
 			this.m_tabSecurity.ResumeLayout(false);
 			this.m_tabSecurity.PerformLayout();
-			this.m_tabProtection.ResumeLayout(false);
-			this.m_tabProtection.PerformLayout();
 			this.m_tabCompression.ResumeLayout(false);
 			this.m_tabCompression.PerformLayout();
 			this.m_tabRecycleBin.ResumeLayout(false);
@@ -841,18 +757,12 @@
 		private System.Windows.Forms.TabControl m_tabMain;
 		private System.Windows.Forms.TabPage m_tabGeneral;
 		private System.Windows.Forms.TabPage m_tabSecurity;
-		private System.Windows.Forms.TabPage m_tabProtection;
 		private System.Windows.Forms.TabPage m_tabCompression;
 		private KeePass.UI.PromptedTextBox m_tbDbDesc;
 		private System.Windows.Forms.Label m_lblDbDesc;
 		private KeePass.UI.PromptedTextBox m_tbDbName;
 		private System.Windows.Forms.Label m_lblDbName;
 		private System.Windows.Forms.Label m_lblSecIntro;
-		private System.Windows.Forms.Label m_lblProtIntro;
-		private System.Windows.Forms.Label m_lblMemProtHint;
-		private System.Windows.Forms.Label m_lblMemProtDesc;
-		private System.Windows.Forms.CheckedListBox m_lbMemProt;
-		private System.Windows.Forms.Label m_lblMemProtEnable;
 		private System.Windows.Forms.RadioButton m_rbGZip;
 		private System.Windows.Forms.RadioButton m_rbNone;
 		private System.Windows.Forms.Label m_lblCpNonePerf;
@@ -879,7 +789,6 @@
 		private System.Windows.Forms.CheckBox m_cbKeyRec;
 		private System.Windows.Forms.NumericUpDown m_numKeyForceDays;
 		private System.Windows.Forms.NumericUpDown m_numKeyRecDays;
-		private System.Windows.Forms.LinkLabel m_lnkMemProtHelp;
 		private System.Windows.Forms.GroupBox m_grpHistory;
 		private System.Windows.Forms.CheckBox m_cbHistoryMaxItems;
 		private System.Windows.Forms.NumericUpDown m_numHistoryMaxSize;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -633,21 +633,25 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
+			bool bProtected = value.IsProtected;
 			if(bIsEntryString)
 			{
+				// Adjust memory protection setting (which might be different
+				// from the database default, e.g. due to an import which
+				// didn't specify the correct setting)
 				if(name == PwDefs.TitleField)
-					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectTitle);
+					bProtected = m_pwDatabase.MemoryProtection.ProtectTitle;
 				else if(name == PwDefs.UserNameField)
-					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUserName);
+					bProtected = m_pwDatabase.MemoryProtection.ProtectUserName;
 				else if(name == PwDefs.PasswordField)
-					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectPassword);
+					bProtected = m_pwDatabase.MemoryProtection.ProtectPassword;
 				else if(name == PwDefs.UrlField)
-					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectUrl);
+					bProtected = m_pwDatabase.MemoryProtection.ProtectUrl;
 				else if(name == PwDefs.NotesField)
-					value.EnableProtection(m_pwDatabase.MemoryProtection.ProtectNotes);
+					bProtected = m_pwDatabase.MemoryProtection.ProtectNotes;
 			}
 
-			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
+			if(bProtected && (m_format != Kdb4Format.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -695,6 +699,9 @@ namespace KeePassLib.Serialization
 
 					strValue = sb.ToString(); // Correct string for current code page
 				}
+
+				if((m_format == Kdb4Format.PlainXml) && bProtected)
+					m_xmlWriter.WriteAttributeString(AttrProtectedInMemPlainXml, ValTrue);
 
 				m_xmlWriter.WriteString(StrUtil.SafeXmlString(strValue));
 			}

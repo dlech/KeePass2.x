@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -177,12 +177,26 @@ namespace KeePass.UI
 				if(kvp.Value == null) continue;
 				else if(kvp.Value.CanCloseWithoutDataLoss)
 				{
-					kvp.Key.DialogResult = DialogResult.Cancel;
-					kvp.Key.Close();
+					if(kvp.Key.InvokeRequired)
+						kvp.Key.Invoke(new CloseFormDelegate(
+							GlobalWindowManager.CloseForm), kvp.Key);
+					else CloseForm(kvp.Key);
 
 					Application.DoEvents();
 				}
 			}
+		}
+
+		private delegate void CloseFormDelegate(Form f);
+
+		private static void CloseForm(Form f)
+		{
+			try
+			{
+				f.DialogResult = DialogResult.Cancel;
+				f.Close();
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static bool HasWindow(IntPtr hWindow)

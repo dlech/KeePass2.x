@@ -35,6 +35,7 @@
 			this.m_pnlTop = new System.Windows.Forms.Panel();
 			this.m_pnlBottom = new System.Windows.Forms.Panel();
 			this.m_pnlMiddle = new System.Windows.Forms.Panel();
+			this.m_btnTools = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_pnlTop.SuspendLayout();
 			this.m_pnlBottom.SuspendLayout();
@@ -56,7 +57,7 @@
 			this.m_lblText.Location = new System.Drawing.Point(9, 11);
 			this.m_lblText.Name = "m_lblText";
 			this.m_lblText.Size = new System.Drawing.Size(561, 30);
-			this.m_lblText.TabIndex = 2;
+			this.m_lblText.TabIndex = 0;
 			this.m_lblText.Text = "<>";
 			// 
 			// m_btnCancel
@@ -66,7 +67,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(492, 6);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 0;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -98,17 +99,18 @@
 			this.m_pnlTop.Name = "m_pnlTop";
 			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(9, 11, 9, 3);
 			this.m_pnlTop.Size = new System.Drawing.Size(579, 44);
-			this.m_pnlTop.TabIndex = 3;
+			this.m_pnlTop.TabIndex = 1;
 			// 
 			// m_pnlBottom
 			// 
+			this.m_pnlBottom.Controls.Add(this.m_btnTools);
 			this.m_pnlBottom.Controls.Add(this.m_btnCancel);
 			this.m_pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.m_pnlBottom.Location = new System.Drawing.Point(0, 323);
 			this.m_pnlBottom.Name = "m_pnlBottom";
 			this.m_pnlBottom.Padding = new System.Windows.Forms.Padding(12, 6, 12, 12);
 			this.m_pnlBottom.Size = new System.Drawing.Size(579, 41);
-			this.m_pnlBottom.TabIndex = 4;
+			this.m_pnlBottom.TabIndex = 2;
 			// 
 			// m_pnlMiddle
 			// 
@@ -118,7 +120,18 @@
 			this.m_pnlMiddle.Name = "m_pnlMiddle";
 			this.m_pnlMiddle.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
 			this.m_pnlMiddle.Size = new System.Drawing.Size(579, 219);
-			this.m_pnlMiddle.TabIndex = 5;
+			this.m_pnlMiddle.TabIndex = 0;
+			// 
+			// m_btnTools
+			// 
+			this.m_btnTools.Dock = System.Windows.Forms.DockStyle.Left;
+			this.m_btnTools.Location = new System.Drawing.Point(12, 6);
+			this.m_btnTools.Name = "m_btnTools";
+			this.m_btnTools.Size = new System.Drawing.Size(75, 23);
+			this.m_btnTools.TabIndex = 1;
+			this.m_btnTools.Text = "&Options";
+			this.m_btnTools.UseVisualStyleBackColor = true;
+			this.m_btnTools.Click += new System.EventHandler(this.OnBtnTools);
 			// 
 			// AutoTypeCtxForm
 			// 
@@ -155,5 +168,6 @@
 		private System.Windows.Forms.Panel m_pnlTop;
 		private System.Windows.Forms.Panel m_pnlBottom;
 		private System.Windows.Forms.Panel m_pnlMiddle;
+		private System.Windows.Forms.Button m_btnTools;
 	}
 }

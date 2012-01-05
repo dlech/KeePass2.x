@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,15 +48,15 @@ namespace KeePassLib
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, 2.15 = 0x02010500, etc.
 		/// </summary>
-		public const uint Version32 = 0x02010700;
-		public const ulong FileVersion64 = 0x0002001100000000UL;
+		public const uint Version32 = 0x02010800;
+		public const ulong FileVersion64 = 0x0002001200000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.17";
+		public const string VersionString = "2.18";
 
-		public const string Copyright = @"Copyright © 2003-2011 Dominik Reichl";
+		public const string Copyright = @"Copyright © 2003-2012 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.
@@ -79,10 +79,10 @@ namespace KeePassLib
 		public const string TranslationsUrl = "http://keepass.info/translations.html";
 
 		/// <summary>
-		/// URL to an XML file that contains information about the latest KeePass
-		/// available on the website.
+		/// URL to a TXT file (eventually compressed) that contains information
+		/// about the latest KeePass version available on the website.
 		/// </summary>
-		public const string VersionUrl = "http://keepass.info/update/version2.xml.gz";
+		public const string VersionUrl = "http://keepass.info/update/version2x.txt.gz";
 
 		/// <summary>
 		/// URL to the root path of the online KeePass help. Terminated by

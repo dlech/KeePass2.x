@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,6 +96,7 @@ namespace KeePassLib
 		private byte[] m_pbHashOfLastIO = null;
 
 		private bool m_bUseFileTransactions = false;
+		private bool m_bUseFileLocks = false;
 
 		private IStatusLogger m_slStatus = null;
 
@@ -436,6 +437,12 @@ namespace KeePassLib
 			set { m_bUseFileTransactions = value; }
 		}
 
+		public bool UseFileLocks
+		{
+			get { return m_bUseFileLocks; }
+			set { m_bUseFileLocks = value; }
+		}
+
 		private string m_strDetachBins = null;
 		/// <summary>
 		/// Detach binaries when opening a file. If this isn't <c>null</c>,
@@ -519,6 +526,7 @@ namespace KeePassLib
 			m_pbHashOfLastIO = null;
 
 			m_bUseFileTransactions = false;
+			m_bUseFileLocks = false;
 		}
 
 		/// <summary>
@@ -604,22 +612,24 @@ namespace KeePassLib
 		{
 			Debug.Assert(ValidateUuidUniqueness());
 
-			// bool bMadeUnhidden = UrlUtil.UnhideFile(m_ioSource.Path);
-			// Stream s = IOConnection.OpenWrite(m_ioSource);
+			FileLock fl = null;
+			if(m_bUseFileLocks) fl = new FileLock(m_ioSource);
+			try
+			{
+				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
+					m_bUseFileTransactions);
+				Stream s = ft.OpenWrite();
 
-			FileTransactionEx ft = new FileTransactionEx(m_ioSource, m_bUseFileTransactions);
-			Stream s = ft.OpenWrite();
+				Kdb4File kdb = new Kdb4File(this);
+				kdb.Save(s, null, Kdb4Format.Default, slLogger);
 
-			Kdb4File kdb = new Kdb4File(this);
-			kdb.Save(s, null, Kdb4Format.Default, slLogger);
+				ft.CommitWrite();
 
-			ft.CommitWrite();
-
-			// if(bMadeUnhidden) UrlUtil.HideFile(m_ioSource.Path, true); // Hide again
-
-			m_pbHashOfLastIO = kdb.HashOfFileOnDisk;
-			m_pbHashOfFileOnDisk = kdb.HashOfFileOnDisk;
-			Debug.Assert(m_pbHashOfFileOnDisk != null);
+				m_pbHashOfLastIO = kdb.HashOfFileOnDisk;
+				m_pbHashOfFileOnDisk = kdb.HashOfFileOnDisk;
+				Debug.Assert(m_pbHashOfFileOnDisk != null);
+			}
+			finally { if(fl != null) fl.Dispose(); }
 
 			m_bModified = false;
 		}
@@ -762,8 +772,10 @@ namespace KeePassLib
 				{
 					Debug.Assert(mm != PwMergeMethod.CreateNewUuids);
 
-					bool bEquals = peLocal.EqualsEntry(pe, true, false, true,
-						true, false, MemProtCmpMode.None);
+					const PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
+						PwCompareOptions.IgnoreLastAccess | PwCompareOptions.IgnoreHistory |
+						PwCompareOptions.NullEmptyEquivStd);
+					bool bEquals = peLocal.EqualsEntry(pe, cmpOpt, MemProtCmpMode.None);
 
 					bool bOrgBackup = !bEquals;
 					if(mm != PwMergeMethod.OverwriteExisting)
@@ -1634,6 +1646,7 @@ namespace KeePassLib
 				ProtectedString psB = b.Strings.Get(kvpA.Key);
 				if(psB == null) return false;
 
+				// Ignore protection setting, compare values only
 				if(!kvpA.Value.ReadString().Equals(psB.ReadString())) return false;
 			}
 
@@ -1654,7 +1667,13 @@ namespace KeePassLib
 				ProtectedBinary pbB = b.Binaries.Get(kvpBin.Key);
 				if(pbB == null) return false;
 
-				if(!kvpBin.Value.EqualsValue(pbB)) return false;
+				// Ignore protection setting, compare values only
+				byte[] pbDataA = kvpBin.Value.ReadData();
+				byte[] pbDataB = pbB.ReadData();
+				bool bBinEq = MemUtil.ArraysEqual(pbDataA, pbDataB);
+				MemUtil.ZeroByteArray(pbDataA);
+				MemUtil.ZeroByteArray(pbDataB);
+				if(!bBinEq) return false;
 			}
 
 			return true;
@@ -1733,6 +1752,7 @@ namespace KeePassLib
 				++uDeleted;
 			}
 
+			if(uDeleted > 0) m_bUINeedsIconUpdate = true;
 			return uDeleted;
 		}
 	}

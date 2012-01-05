@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -182,5 +182,41 @@ namespace KeePassLib.Utility
 
 			return DateTime.Now;
 		}
+
+#if !KeePassLibSD
+		private static string[] m_vUSMonths = null;
+		/// <summary>
+		/// Parse a US textual date string, like e.g. "January 02, 2012".
+		/// </summary>
+		public static DateTime? ParseUSTextDate(string strDate)
+		{
+			if(strDate == null) { Debug.Assert(false); return null; }
+
+			if(m_vUSMonths == null)
+				m_vUSMonths = new string[]{ "January", "February", "March",
+					"April", "May", "June", "July", "August", "September",
+					"October", "November", "December" };
+
+			string str = strDate.Trim();
+			for(int i = 0; i < m_vUSMonths.Length; ++i)
+			{
+				if(str.StartsWith(m_vUSMonths[i], StrUtil.CaseIgnoreCmp))
+				{
+					str = str.Substring(m_vUSMonths[i].Length);
+					string[] v = str.Split(new char[]{ ',', ';' });
+					if((v == null) || (v.Length != 2)) return null;
+
+					string strDay = v[0].Trim().TrimStart('0');
+					int iDay, iYear;
+					if(int.TryParse(strDay, out iDay) &&
+						int.TryParse(v[1].Trim(), out iYear))
+						return new DateTime(iYear, i + 1, iDay);
+					else { Debug.Assert(false); return null; }
+				}
+			}
+
+			return null;
+		}
+#endif
 	}
 }

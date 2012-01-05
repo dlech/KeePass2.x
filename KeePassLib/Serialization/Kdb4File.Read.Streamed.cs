@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -105,7 +105,6 @@ namespace KeePassLib.Serialization
 
 			m_ctxGroups.Clear();
 			m_dictBinPool = new Dictionary<string, ProtectedBinary>();
-			m_dictBinPoolCopyOnRead = new Dictionary<string, ProtectedBinary>();
 
 			KdbContext ctx = KdbContext.Null;
 
@@ -639,10 +638,10 @@ namespace KeePassLib.Serialization
 		private string ReadString(XmlReader xr)
 		{
 			XorredBuffer xb = ProcessNode(xr);
-
 			if(xb != null)
 			{
 				byte[] pb = xb.ReadPlainText();
+				if(pb.Length == 0) return string.Empty;
 				return StrUtil.Utf8.GetString(pb, 0, pb.Length);
 			}
 
@@ -733,7 +732,17 @@ namespace KeePassLib.Serialization
 			XorredBuffer xb = ProcessNode(xr);
 			if(xb != null) return new ProtectedString(true, xb);
 
-			ProtectedString ps = new ProtectedString(false, ReadString(xr));
+			bool bProtect = false;
+			if(m_format == Kdb4Format.PlainXml)
+			{
+				if(xr.MoveToAttribute(AttrProtectedInMemPlainXml))
+				{
+					string strProtect = xr.Value;
+					bProtect = ((strProtect != null) && (strProtect == ValTrue));
+				}
+			}
+
+			ProtectedString ps = new ProtectedString(bProtect, ReadString(xr));
 			return ps;
 		}
 
@@ -763,7 +772,7 @@ namespace KeePassLib.Serialization
 			}
 
 			string strValue = ReadString(xr);
-			if(strValue.Length == 0) return new ProtectedBinary(false);
+			if(strValue.Length == 0) return new ProtectedBinary();
 
 			byte[] pbData = Convert.FromBase64String(strValue);
 			if(bCompressed) pbData = MemUtil.Decompress(pbData);

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -172,6 +172,7 @@ namespace KeePassLib.Serialization
 		private const string AttrId = "ID";
 		private const string AttrRef = "Ref";
 		private const string AttrProtected = "Protected";
+		private const string AttrProtectedInMemPlainXml = "ProtectInMemory";
 		private const string AttrCompressed = "Compressed";
 
 		private const string ElemIsExpanded = "IsExpanded";
@@ -205,8 +206,6 @@ namespace KeePassLib.Serialization
 		private CrsAlgorithm m_craInnerRandomStream = CrsAlgorithm.ArcFourVariant;
 
 		private Dictionary<string, ProtectedBinary> m_dictBinPool =
-			new Dictionary<string, ProtectedBinary>();
-		private Dictionary<string, ProtectedBinary> m_dictBinPoolCopyOnRead =
 			new Dictionary<string, ProtectedBinary>();
 
 		private byte[] m_pbHashOfFileOnDisk = null;
@@ -332,7 +331,7 @@ namespace KeePassLib.Serialization
 
 			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_dictBinPool)
 			{
-				if(pb.EqualsValue(kvp.Value)) return kvp.Key;
+				if(pb.Equals(kvp.Value)) return kvp.Key;
 			}
 
 			return null;
@@ -343,16 +342,7 @@ namespace KeePassLib.Serialization
 			if(strKey == null) { Debug.Assert(false); return null; }
 
 			ProtectedBinary pb;
-			if(m_dictBinPool.TryGetValue(strKey, out pb))
-			{
-				m_dictBinPool.Remove(strKey);
-				m_dictBinPoolCopyOnRead[strKey] = pb;
-
-				return pb;
-			}
-
-			if(m_dictBinPoolCopyOnRead.TryGetValue(strKey, out pb))
-				return new ProtectedBinary(pb);
+			if(m_dictBinPool.TryGetValue(strKey, out pb)) return pb;
 
 			return null;
 		}
@@ -383,7 +373,9 @@ namespace KeePassLib.Serialization
 			while(File.Exists(strPath));
 
 #if !KeePassLibSD
-			File.WriteAllBytes(strPath, pb.ReadData());
+			byte[] pbData = pb.ReadData();
+			File.WriteAllBytes(strPath, pbData);
+			MemUtil.ZeroByteArray(pbData);
 #else
 			FileStream fs = new FileStream(strPath, FileMode.Create,
 				FileAccess.Write, FileShare.None);

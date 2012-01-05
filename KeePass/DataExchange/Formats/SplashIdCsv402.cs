@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,10 +29,11 @@ using KeePass.Resources;
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.02
+	// 4.02-5.3+
 	internal sealed class SplashIdCsv402 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -51,58 +52,68 @@ namespace KeePass.DataExchange.Formats
 
 		private const string StrHeader = "SplashID Export File";
 
-		private static readonly SplashIdMapping[] SplashIdMappings = {
-			new SplashIdMapping("Bank Accts", PwIcon.Homebanking,
-				new string[]{ PwDefs.TitleField, "Account #", PwDefs.PasswordField,
-					PwDefs.UserNameField, "Branch", "Phone #" }),
-			new SplashIdMapping("Birthdays", PwIcon.UserCommunication,
-				new string[]{ PwDefs.TitleField, "Date" }),
-			new SplashIdMapping("Calling Cards", PwIcon.EMail,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-					PwDefs.PasswordField }),
-			new SplashIdMapping("Clothes Size", PwIcon.UserCommunication,
-				new string[]{ PwDefs.TitleField, "Shirt Size", "Pant Size",
-					"Shoe Size", "Dress Size" }),
-			new SplashIdMapping("Combinations", PwIcon.Key,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField }),
-			new SplashIdMapping("Credit Cards", PwIcon.UserKey,
-				new string[]{ PwDefs.TitleField, "Card #", "Expiration Date",
-					PwDefs.UserNameField, PwDefs.PasswordField, "Bank" }),
-			new SplashIdMapping("Email Accts", PwIcon.EMail,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-					PwDefs.PasswordField, "POP3 Host", "SMTP Host" }),
-			new SplashIdMapping("Emergency Info", PwIcon.UserCommunication,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
-			new SplashIdMapping("Frequent Flyer", PwIcon.PaperQ,
-				new string[]{ PwDefs.TitleField, "Number",
-					PwDefs.UserNameField, "Date" }),
-			new SplashIdMapping("Identification", PwIcon.UserKey,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-					PwDefs.UserNameField, "Date" }),
-			new SplashIdMapping("Insurance", PwIcon.ClipboardReady,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-					PwDefs.UserNameField, "Insured", "Date" }),
-			new SplashIdMapping("Memberships", PwIcon.UserKey,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-					PwDefs.UserNameField, "Date" }),
-			new SplashIdMapping("Phone Numbers", PwIcon.UserCommunication,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
-			new SplashIdMapping("Prescriptions", PwIcon.ClipboardReady,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-					PwDefs.UserNameField, "Doctor", "Pharmacy", "Phone #" }),
-			new SplashIdMapping("Serial Numbers", PwIcon.Key,
-				new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-					"Purchase Date", "Reseller" }),
-			new SplashIdMapping("Vehicle Info", PwIcon.PaperReady,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-					PwDefs.PasswordField }),
-			new SplashIdMapping("Voice Mail", PwIcon.IRCommunication,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-					PwDefs.PasswordField }),
-			new SplashIdMapping("Web Logins", PwIcon.UserKey,
-				new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-					PwDefs.PasswordField, PwDefs.UrlField })
-		};
+		private static SplashIdMapping[] m_vMappings = null;
+		private static SplashIdMapping[] SplashIdMappings
+		{
+			get
+			{
+				if(m_vMappings != null) return m_vMappings;
+
+				m_vMappings = new SplashIdMapping[]{
+					new SplashIdMapping("Bank Accts", PwIcon.Homebanking,
+						new string[]{ PwDefs.TitleField, "Account #", PwDefs.PasswordField,
+							PwDefs.UserNameField, "Branch", "Phone #" }),
+					new SplashIdMapping("Birthdays", PwIcon.UserCommunication,
+						new string[]{ PwDefs.TitleField, "Date" }),
+					new SplashIdMapping("Calling Cards", PwIcon.EMail,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField }),
+					new SplashIdMapping("Clothes Size", PwIcon.UserCommunication,
+						new string[]{ PwDefs.TitleField, "Shirt Size", "Pant Size",
+							"Shoe Size", "Dress Size" }),
+					new SplashIdMapping("Combinations", PwIcon.Key,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField }),
+					new SplashIdMapping("Credit Cards", PwIcon.UserKey,
+						new string[]{ PwDefs.TitleField, "Card #", "Expiration Date",
+							PwDefs.UserNameField, PwDefs.PasswordField, "Bank" }),
+					new SplashIdMapping("Email Accts", PwIcon.EMail,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "POP3 Host", "SMTP Host" }),
+					new SplashIdMapping("Emergency Info", PwIcon.UserCommunication,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
+					new SplashIdMapping("Frequent Flyer", PwIcon.PaperQ,
+						new string[]{ PwDefs.TitleField, "Number",
+							PwDefs.UserNameField, "Date" }),
+					new SplashIdMapping("Identification", PwIcon.UserKey,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+							PwDefs.UserNameField, "Date" }),
+					new SplashIdMapping("Insurance", PwIcon.ClipboardReady,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+							PwDefs.UserNameField, "Insured", "Date" }),
+					new SplashIdMapping("Memberships", PwIcon.UserKey,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+							PwDefs.UserNameField, "Date" }),
+					new SplashIdMapping("Phone Numbers", PwIcon.UserCommunication,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
+					new SplashIdMapping("Prescriptions", PwIcon.ClipboardReady,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+							PwDefs.UserNameField, "Doctor", "Pharmacy", "Phone #" }),
+					new SplashIdMapping("Serial Numbers", PwIcon.Key,
+						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+							"Purchase Date", "Reseller" }),
+					new SplashIdMapping("Vehicle Info", PwIcon.PaperReady,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField }),
+					new SplashIdMapping("Voice Mail", PwIcon.IRCommunication,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField }),
+					new SplashIdMapping("Web Logins", PwIcon.UserKey,
+						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, PwDefs.UrlField })
+				};
+				return m_vMappings;
+			}
+		}
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -135,7 +146,7 @@ namespace KeePass.DataExchange.Formats
 			string strGroupName = ParseCsvWord(list[12]) + " - " + strType;
 
 			SplashIdMapping mp = null;
-			foreach(SplashIdMapping mpFind in SplashIdMappings)
+			foreach(SplashIdMapping mpFind in SplashIdCsv402.SplashIdMappings)
 			{
 				if(mpFind.TypeName == strType)
 				{
@@ -180,6 +191,13 @@ namespace KeePass.DataExchange.Formats
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectNotes,
 				ParseCsvWord(list[11])));
+
+			DateTime? dt = TimeUtil.ParseUSTextDate(ParseCsvWord(list[10]));
+			if(dt.HasValue)
+			{
+				pe.LastAccessTime = dt.Value;
+				pe.LastModificationTime = dt.Value;
+			}
 		}
 
 		private static string ParseCsvWord(string strWord)

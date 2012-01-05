@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,8 +47,7 @@ namespace KeePass.Forms
 		private bool m_bCreatingNew = false;
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
 
-		private SecureEdit m_secPassword = new SecureEdit();
-		private SecureEdit m_secRepeat = new SecureEdit();
+		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
 
 		public CompositeKey CompositeKey
 		{
@@ -89,16 +88,14 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
+			m_ttRect.SetToolTip(m_tbRepeatPassword, KPRes.PasswordRepeatHint);
 
 			if(!m_bCreatingNew)
 				m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
 
-			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, true);
-			m_secRepeat.Attach(m_tbRepeatPassword, null, true);
-			m_cbHidePassword.Checked = true;
-
-			m_cbPassword.Checked = true;
-			ProcessTextChangedPassword(sender, e); // Update quality estimation
+			m_icgPassword.Attach(m_tbPassword, m_cbHidePassword, m_lblRepeatPassword,
+				m_tbRepeatPassword, m_lblEstimatedQuality, m_pbPasswordQuality,
+				m_lblQualityBits, this, true, false);
 
 			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
 			foreach(KeyProvider prov in Program.KeyProviderPool)
@@ -106,6 +103,7 @@ namespace KeePass.Forms
 
 			m_cmbKeyFile.SelectedIndex = 0;
 
+			m_cbPassword.Checked = true;
 			UIUtil.ApplyKeyUIFlags(Program.Config.UI.KeyCreationFlags,
 				m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
 
@@ -130,8 +128,7 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
-			m_secPassword.Detach();
-			m_secRepeat.Detach();
+			m_icgPassword.Release();
 		}
 
 		private bool CreateCompositeKey()
@@ -140,13 +137,10 @@ namespace KeePass.Forms
 
 			if(m_cbPassword.Checked) // Use a password
 			{
-				if(m_secPassword.ContentsEqualTo(m_secRepeat) == false)
-				{
-					MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
-					return false;
-				}
+				if(!m_icgPassword.ValidateData(true)) return false;
 
-				if(m_secPassword.TextLength == 0)
+				uint uPwLen = m_icgPassword.PasswordLength;
+				if(uPwLen == 0)
 				{
 					if(!MessageService.AskYesNo(KPRes.EmptyMasterPw +
 						MessageService.NewParagraph + KPRes.EmptyMasterPwHint +
@@ -158,7 +152,7 @@ namespace KeePass.Forms
 				}
 
 				uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;
-				if(m_secPassword.TextLength < uMinLen)
+				if(uPwLen < uMinLen)
 				{
 					string strML = KPRes.MasterPasswordMinLengthFailed;
 					strML = strML.Replace(@"{PARAM}", uMinLen.ToString());
@@ -166,7 +160,7 @@ namespace KeePass.Forms
 					return false;
 				}
 
-				byte[] pb = m_secPassword.ToUtf8();
+				byte[] pb = m_icgPassword.GetPasswordUtf8();
 
 				uint uMinQual = Program.Config.Security.MasterPassword.MinimumQuality;
 				if(QualityEstimation.EstimatePasswordBits(pb) < uMinQual)
@@ -242,12 +236,7 @@ namespace KeePass.Forms
 
 		private void EnableUserControls()
 		{
-			m_tbPassword.Enabled = m_tbRepeatPassword.Enabled =
-				m_lblRepeatPassword.Enabled = m_lblQualityBits.Enabled =
-				m_lblEstimatedQuality.Enabled = m_cbPassword.Checked;
-			if((Program.Config.UI.KeyCreationFlags &
-				(ulong)AceKeyUIFlags.DisableHidePassword) == 0)
-				m_cbHidePassword.Enabled = m_cbPassword.Checked;
+			m_icgPassword.Enabled = m_cbPassword.Checked;
 
 			m_btnOpenKeyFile.Enabled = m_btnSaveKeyFile.Enabled =
 				m_cmbKeyFile.Enabled = m_cbKeyFile.Checked;
@@ -260,17 +249,7 @@ namespace KeePass.Forms
 				m_btnCreate.Enabled = false;
 			else m_btnCreate.Enabled = true;
 
-			SetHidePassword(m_cbHidePassword.Checked, false);
-
 			m_ttRect.SetToolTip(m_cmbKeyFile, strKeyFile);
-		}
-
-		private void SetHidePassword(bool bHide, bool bUpdateCheckBox)
-		{
-			if(bUpdateCheckBox) m_cbHidePassword.Checked = bHide;
-
-			m_secPassword.EnableProtection(bHide);
-			m_secRepeat.EnableProtection(bHide);
 		}
 
 		private void OnCheckedPassword(object sender, EventArgs e)
@@ -285,19 +264,6 @@ namespace KeePass.Forms
 			EnableUserControls();
 		}
 
-		private void OnCheckedHidePassword(object sender, EventArgs e)
-		{
-			bool bHide = m_cbHidePassword.Checked;
-			if(!bHide && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
-			{
-				m_cbHidePassword.Checked = true;
-				return;
-			}
-
-			SetHidePassword(bHide, false);
-			UIUtil.SetFocus(m_tbPassword, this);
-		}
-
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			if(!CreateCompositeKey()) this.DialogResult = DialogResult.None;
@@ -306,18 +272,6 @@ namespace KeePass.Forms
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
 			m_pKey = null;
-		}
-
-		private void ProcessTextChangedPassword(object sender, EventArgs e)
-		{
-			byte[] pbUTF8 = m_secPassword.ToUtf8();
-			uint uBits = QualityEstimation.EstimatePasswordBits(pbUTF8);
-			MemUtil.ZeroByteArray(pbUTF8);
-
-			m_lblQualityBits.Text = uBits.ToString() + " " + KPRes.Bits;
-			int iPos = (int)((100 * uBits) / (256 / 2));
-			if(iPos < 0) iPos = 0; else if(iPos > 100) iPos = 100;
-			m_pbPasswordQuality.Value = iPos;
 		}
 
 		private void OnClickKeyFileCreate(object sender, EventArgs e)

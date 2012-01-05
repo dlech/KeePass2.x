@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -216,6 +216,9 @@ namespace KeePass.Util
 
 			if(!pwe.GetAutoTypeEnabled()) return l;
 
+			SprContext sprCtx = new SprContext(pwe, pdContext,
+				SprCompileFlags.NonActive);
+
 			// Specifically defined sequences must match before the title,
 			// in order to allow selecting the first item as default one
 			foreach(AutoTypeAssociation a in pwe.AutoType.Associations)
@@ -223,11 +226,7 @@ namespace KeePass.Util
 				string strWndSpec = a.WindowName;
 				if(strWndSpec == null) { Debug.Assert(false); continue; }
 
-				strWndSpec = strWndSpec.Trim();
-
-				if(strWndSpec.Length > 0)
-					strWndSpec = SprEngine.Compile(strWndSpec, new SprContext(
-						pwe, pdContext, SprCompileFlags.All));
+				strWndSpec = SprEngine.Compile(strWndSpec.Trim(), sprCtx);
 
 				if(MatchWindows(strWndSpec, strWindow))
 				{
@@ -240,20 +239,38 @@ namespace KeePass.Util
 
 			if(Program.Config.Integration.AutoTypeMatchByTitle)
 			{
-				string strTitle = pwe.Strings.ReadSafe(PwDefs.TitleField);
-				strTitle = strTitle.Trim();
-
+				string strTitle = SprEngine.Compile(pwe.Strings.ReadSafe(
+					PwDefs.TitleField).Trim(), sprCtx);
 				if((strTitle.Length > 0) && (strWindow.IndexOf(strTitle,
 					StrUtil.CaseIgnoreCmp) >= 0))
 					AddSequence(l, pwe.GetAutoTypeSequence());
 			}
 
+			string strCmpUrl = null; // To cache compiled URL
 			if(Program.Config.Integration.AutoTypeMatchByUrlInTitle)
 			{
-				string strUrl = pwe.Strings.ReadSafe(PwDefs.UrlField);
-				strUrl = strUrl.Trim();
+				strCmpUrl = SprEngine.Compile(pwe.Strings.ReadSafe(
+					PwDefs.UrlField).Trim(), sprCtx);
+				if((strCmpUrl.Length > 0) && (strWindow.IndexOf(strCmpUrl,
+					StrUtil.CaseIgnoreCmp) >= 0))
+					AddSequence(l, pwe.GetAutoTypeSequence());
+			}
 
-				if((strUrl.Length > 0) && (strWindow.IndexOf(strUrl,
+			if(Program.Config.Integration.AutoTypeMatchByUrlHostInTitle)
+			{
+				if(strCmpUrl == null)
+					strCmpUrl = SprEngine.Compile(pwe.Strings.ReadSafe(
+						PwDefs.UrlField).Trim(), sprCtx);
+
+				string strCleanUrl = StrUtil.RemovePlaceholders(strCmpUrl);
+				string strHost = UrlUtil.GetHost(strCleanUrl);
+
+				if(strHost.StartsWith("www.", StrUtil.CaseIgnoreCmp) &&
+					(strCleanUrl.StartsWith("http:", StrUtil.CaseIgnoreCmp) ||
+					strCleanUrl.StartsWith("https:", StrUtil.CaseIgnoreCmp)))
+					strHost = strHost.Substring(4);
+
+				if((strHost.Length > 0) && (strWindow.IndexOf(strHost,
 					StrUtil.CaseIgnoreCmp) >= 0))
 					AddSequence(l, pwe.GetAutoTypeSequence());
 			}

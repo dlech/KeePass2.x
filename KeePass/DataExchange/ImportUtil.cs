@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -482,10 +482,14 @@ namespace KeePass.DataExchange
 			bool bProtect = ((pdContext == null) ? false :
 				pdContext.MemoryProtection.GetProtection(strName));
 
-			string strPrev = pe.Strings.ReadSafe(strName);
+			ProtectedString ps = pe.Strings.Get(strName);
+			string strPrev = ((ps != null) ? ps.ReadString() : null);
+			if(ps != null) bProtect = ps.IsProtected;
+
+			strValue = (strValue ?? string.Empty);
 			if(string.IsNullOrEmpty(strPrev))
 				pe.Strings.Set(strName, new ProtectedString(bProtect, strValue));
-			else if(!string.IsNullOrEmpty(strValue))
+			else if(strValue.Length > 0)
 				pe.Strings.Set(strName, new ProtectedString(bProtect,
 					strPrev + @", " + strValue));
 		}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -217,6 +217,9 @@ namespace KeePass.App.Configuration
 					MemoryStream msRead = new MemoryStream(msAsm.ToArray(), false);
 
 					tConfig = (AppConfigEx)xmlSerial.Deserialize(msRead);
+
+					msRead.Close();
+					msAsm.Close();
 				}
 				catch(FileNotFoundException) { }
 				catch(Exception) { Debug.Assert(false); }
@@ -252,9 +255,12 @@ namespace KeePass.App.Configuration
 						MemoryStream msEnf = new MemoryStream();
 						xdEnforced.Save(msEnf);
 						MemoryStream msRead = new MemoryStream(msEnf.ToArray(), false);
-						
+
 						AppConfigEx cfgEnf = (AppConfigEx)xmlSerial.Deserialize(msRead);
 						cfgEnf.OnLoad();
+
+						msRead.Close();
+						msEnf.Close();
 						return cfgEnf;
 					}
 					catch(Exception) { Debug.Assert(false); }

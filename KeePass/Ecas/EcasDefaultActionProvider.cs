@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2011 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -255,22 +255,7 @@ namespace KeePass.Ecas
 			if(!string.IsNullOrEmpty(iocBase.Password))
 				iocBase.CredSaveMode = IOCredSaveMode.SaveCred;
 
-			if(string.IsNullOrEmpty(iocBase.UserName) && string.IsNullOrEmpty(iocBase.Password))
-			{
-				MruList mru = Program.MainForm.FileMruList;
-				for(uint u = 0; u < mru.ItemCount; ++u)
-				{
-					IOConnectionInfo iocMru = (mru.GetItem(u).Value as IOConnectionInfo);
-					if(iocMru == null) { Debug.Assert(false); continue; }
-
-					if(iocMru.Path == iocBase.Path)
-					{
-						iocBase = iocMru.CloneDeep();
-						break;
-					}
-				}
-			}
-
+			iocBase = Program.MainForm.CompleteConnectionInfoUsingMru(iocBase);
 			return MainForm.CompleteConnectionInfo(iocBase, false, true, true, false);
 		}
 
