@@ -973,6 +973,7 @@
     <Compile Include="Util\IpcBroadcast.Fsw.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
+    <Compile Include="Util\MonoWorkarounds.cs" />
     <Compile Include="Util\NetUtil.cs" />
     <Compile Include="Util\PwGeneratorUtil.cs" />
     <Compile Include="Util\SearchUtil.cs" />

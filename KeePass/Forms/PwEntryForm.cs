@@ -1609,7 +1609,16 @@ namespace KeePass.Forms
 			return base.ProcessDialogKey(keyData);
 		}
 
+		private bool m_bClosing = false; // Mono bug workaround
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(m_bClosing) return;
+			m_bClosing = true;
+			HandleFormClosing(e);
+			m_bClosing = false;
+		}
+
+		private void HandleFormClosing(FormClosingEventArgs e)
 		{
 			bool bCancel = false;
 			if(!m_bForceClosing && (m_pwEditMode != PwEditMode.ViewReadOnlyEntry))

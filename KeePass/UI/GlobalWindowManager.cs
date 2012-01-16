@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using KeePass.App;
+using KeePass.Util;
 
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -122,6 +123,8 @@ namespace KeePass.UI
 
 			CustomizeControl(form);
 
+			MonoWorkarounds.ApplyTo(form);
+
 			if(GlobalWindowManager.WindowAdded != null)
 				GlobalWindowManager.WindowAdded(null, new GwmWindowEventArgs(
 					form, wnd));
@@ -147,6 +150,8 @@ namespace KeePass.UI
 					if(GlobalWindowManager.WindowRemoved != null)
 						GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
 							form, m_vWindows[i].Value));
+
+					MonoWorkarounds.Release(form);
 
 					m_vWindows.RemoveAt(i);
 					return;
