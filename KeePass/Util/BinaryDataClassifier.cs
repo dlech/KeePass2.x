@@ -24,6 +24,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
+using KeePass.Resources;
+
+using KeePassLib.Utility;
+
 namespace KeePass.Util
 {
 	public enum BinaryDataClass
@@ -37,14 +41,6 @@ namespace KeePass.Util
 
 	public static class BinaryDataClassifier
 	{
-		public const string BdeAnsi = "ANSI";
-		public const string BdeAscii = "ASCII";
-		public const string BdeUtf7 = "UTF-7";
-		public const string BdeUtf8 = "UTF-8";
-		public const string BdeUtf32 = "UTF-32";
-		public const string BdeUnicodeLE = "Unicode (Little Endian)";
-		public const string BdeUnicodeBE = "Unicode (Big Endian)";
-
 		private static readonly string[] m_vTextExtensions = new string[]{
 			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat"
 		};
@@ -121,61 +117,70 @@ namespace KeePass.Util
 			return ClassifyData(pbData);
 		}
 
-		public static Encoding GetStringEncoding(byte[] pbData, bool bBom,
-			out string strOutEncodingName, out uint uStartOffset)
+		public static StrEncodingInfo GetStringEncoding(byte[] pbData,
+			out uint uStartOffset)
 		{
 			Debug.Assert(pbData != null);
 			if(pbData == null) throw new ArgumentNullException("pbData");
 
-			byte bt1 = ((pbData.Length >= 1) ? pbData[0] : (byte)0);
-			byte bt2 = ((pbData.Length >= 2) ? pbData[1] : (byte)0);
-			byte bt3 = ((pbData.Length >= 3) ? pbData[2] : (byte)0);
-			byte bt4 = ((pbData.Length >= 4) ? pbData[3] : (byte)0);
-
-			if((bt1 == 0xEF) && (bt2 == 0xBB) && (bt3 == 0xBF))
-			{
-				strOutEncodingName = BdeUtf8;
-				uStartOffset = 3;
-				return new UTF8Encoding(bBom);
-			}
-			if((bt1 == 0x00) && (bt2 == 0x00) && (bt3 == 0xFE) && (bt4 == 0xFF))
-			{
-				strOutEncodingName = BdeUtf32;
-				uStartOffset = 4;
-				return new UTF32Encoding(true, bBom);
-			}
-			if((bt1 == 0xFF) && (bt2 == 0xFE) && (bt3 == 0x00) && (bt4 == 0x00))
-			{
-				strOutEncodingName = BdeUtf32;
-				uStartOffset = 4;
-				return new UTF32Encoding(false, bBom);
-			}
-			if((bt1 == 0xFF) && (bt2 == 0xFE))
-			{
-				strOutEncodingName = BdeUnicodeLE;
-				uStartOffset = 2;
-				return new UnicodeEncoding(false, bBom);
-			}
-			if((bt1 == 0xFE) && (bt2 == 0xFF))
-			{
-				strOutEncodingName = BdeUnicodeBE;
-				uStartOffset = 2;
-				return new UnicodeEncoding(true, bBom);
-			}
-
 			uStartOffset = 0;
+
+			List<StrEncodingInfo> lEncs = new List<StrEncodingInfo>(StrUtil.Encodings);
+			lEncs.Sort(BinaryDataClassifier.CompareBySigLengthRev);
+
+			foreach(StrEncodingInfo sei in lEncs)
+			{
+				byte[] pbSig = sei.StartSignature;
+				if((pbSig == null) || (pbSig.Length == 0)) continue;
+				if(pbSig.Length > pbData.Length) continue;
+
+				byte[] pbStart = MemUtil.Mid<byte>(pbData, 0, pbSig.Length);
+				if(MemUtil.ArraysEqual(pbStart, pbSig))
+				{
+					uStartOffset = (uint)pbSig.Length;
+					return sei;
+				}
+			}
+
+			if((pbData.Length % 4) == 0)
+			{
+				byte[] z3 = new byte[] { 0, 0, 0 };
+				int i = MemUtil.IndexOf<byte>(pbData, z3);
+				if((i >= 0) && (i < (pbData.Length - 4))) // Ignore last zero char
+				{
+					if((i % 4) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf32BE);
+					if((i % 4) == 1) return StrUtil.GetEncoding(StrEncodingType.Utf32LE);
+					// Don't assume UTF-32 for other offsets
+				}
+			}
+
+			if((pbData.Length % 2) == 0)
+			{
+				int i = Array.IndexOf<byte>(pbData, 0);
+				if((i >= 0) && (i < (pbData.Length - 2))) // Ignore last zero char
+				{
+					if((i % 2) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf16BE);
+					return StrUtil.GetEncoding(StrEncodingType.Utf16LE);
+				}
+			}
 
 			try
 			{
-				Encoding.UTF8.GetString(pbData);
-
-				strOutEncodingName = BdeUtf8;
-				return new UTF8Encoding(bBom);
+				UTF8Encoding utf8Throw = new UTF8Encoding(false, true);
+				utf8Throw.GetString(pbData);
+				return StrUtil.GetEncoding(StrEncodingType.Utf8);
 			}
 			catch(Exception) { }
 
-			strOutEncodingName = BdeAnsi;
-			return Encoding.Default;
+			return StrUtil.GetEncoding(StrEncodingType.Default);
+		}
+
+		private static int CompareBySigLengthRev(StrEncodingInfo a, StrEncodingInfo b)
+		{
+			int na = 0, nb = 0;
+			if(a.StartSignature != null) na = a.StartSignature.Length;
+			if(b.StartSignature != null) nb = b.StartSignature.Length;
+			return -(na.CompareTo(nb));
 		}
 	}
 }

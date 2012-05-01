@@ -78,9 +78,7 @@ namespace KeePass.Forms
 
 			this.MinimumSize = new Size(550, 300);
 
-			UIUtil.SetExplorerTheme(m_lvItems.Handle);
-			if(UISystemFonts.ListFont != null)
-				m_lvItems.Font = UISystemFonts.ListFont;
+			UIUtil.SetExplorerTheme(m_lvItems, true);
 
 			if(m_ilIcons != null) m_lvItems.SmallImageList = m_ilIcons;
 			else { Debug.Assert(false); m_ilIcons = new ImageList(); }

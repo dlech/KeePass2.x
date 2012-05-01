@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Native
 {
 	/// <summary>
@@ -72,9 +74,10 @@ namespace KeePassLib.Native
 
 			// Mono defines Unix as 128 in early .NET versions
 #if !KeePassLibSD
-			m_bIsUnix = ((p == PlatformID.Unix) || ((int)p == 128));
+			m_bIsUnix = ((p == PlatformID.Unix) || (p == PlatformID.MacOSX) ||
+				((int)p == 128));
 #else
-			m_bIsUnix = (((int)p == 4) || ((int)p == 128));
+			m_bIsUnix = (((int)p == 4) || ((int)p == 6) || ((int)p == 128));
 #endif
 			return m_bIsUnix.Value;
 		}
@@ -85,8 +88,64 @@ namespace KeePassLib.Native
 			if(m_platID.HasValue) return m_platID.Value;
 
 			m_platID = Environment.OSVersion.Platform;
+
+#if !KeePassLibSD
+			// Mono returns PlatformID.Unix on Mac OS X, workaround this
+			if(m_platID.Value == PlatformID.Unix)
+			{
+				if((RunConsoleApp("uname", null) ?? string.Empty).Trim().Equals(
+					"Darwin", StrUtil.CaseIgnoreCmp))
+					m_platID = PlatformID.MacOSX;
+			}
+#endif
+
 			return m_platID.Value;
 		}
+
+#if !KeePassLibSD
+		public static string RunConsoleApp(string strAppPath, string strParams)
+		{
+			return RunConsoleApp(strAppPath, strParams, null);
+		}
+
+		public static string RunConsoleApp(string strAppPath, string strParams,
+			string strStdInput)
+		{
+			if(strAppPath == null) throw new ArgumentNullException("strAppPath");
+			if(strAppPath.Length == 0) throw new ArgumentException("strAppPath");
+
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo();
+
+				psi.CreateNoWindow = true;
+				psi.FileName = strAppPath;
+				psi.WindowStyle = ProcessWindowStyle.Hidden;
+				psi.UseShellExecute = false;
+				psi.RedirectStandardOutput = true;
+
+				if(strStdInput != null) psi.RedirectStandardInput = true;
+
+				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+
+				Process p = Process.Start(psi);
+
+				if(strStdInput != null)
+				{
+					p.StandardInput.Write(strStdInput);
+					p.StandardInput.Close();
+				}
+
+				string strOutput = p.StandardOutput.ReadToEnd();
+				p.WaitForExit();
+
+				return strOutput;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+#endif
 
 		/// <summary>
 		/// Transform a key.

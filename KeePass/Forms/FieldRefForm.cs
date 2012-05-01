@@ -70,9 +70,7 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
-			UIUtil.SetExplorerTheme(m_lvEntries.Handle);
-			if(UISystemFonts.ListFont != null)
-				m_lvEntries.Font = UISystemFonts.ListFont;
+			UIUtil.SetExplorerTheme(m_lvEntries, true);
 
 			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
 			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));

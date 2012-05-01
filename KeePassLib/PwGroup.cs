@@ -1157,8 +1157,13 @@ namespace KeePassLib
 		/// <param name="strTree">Tree string.</param>
 		/// <param name="vSeparators">Separators that delimit groups in the
 		/// <c>strTree</c> parameter.</param>
-		/// <returns></returns>
 		public PwGroup FindCreateSubTree(string strTree, char[] vSeparators)
+		{
+			return FindCreateSubTree(strTree, vSeparators, true);
+		}
+
+		public PwGroup FindCreateSubTree(string strTree, char[] vSeparators,
+			bool bAllowCreate)
 		{
 			Debug.Assert(strTree != null); if(strTree == null) return this;
 			if(strTree.Length == 0) return this;
@@ -1169,8 +1174,7 @@ namespace KeePassLib
 			PwGroup pgContainer = this;
 			for(int nGroup = 0; nGroup < vGroups.Length; ++nGroup)
 			{
-				if((vGroups[nGroup] == null) || (vGroups[nGroup].Length == 0))
-					continue;
+				if(string.IsNullOrEmpty(vGroups[nGroup])) continue;
 
 				bool bFound = false;
 				foreach(PwGroup pg in pgContainer.Groups)
@@ -1185,10 +1189,10 @@ namespace KeePassLib
 
 				if(!bFound)
 				{
+					if(!bAllowCreate) return null;
+
 					PwGroup pg = new PwGroup(true, true, vGroups[nGroup], PwIcon.Folder);
-
 					pgContainer.AddGroup(pg, true);
-
 					pgContainer = pg;
 				}
 			}

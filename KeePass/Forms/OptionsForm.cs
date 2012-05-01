@@ -135,7 +135,12 @@ namespace KeePass.Forms
 
 			CreateDialogBanner(BannerStyle.Default); // Default forces generation
 			m_cmbBannerStyle.SelectedIndex = (int)BannerStyle.Default;
-			if(BannerFactory.CustomGenerator != null) m_cmbBannerStyle.Enabled = false;
+			if((BannerFactory.CustomGenerator != null) ||
+				AppConfigEx.IsOptionEnforced(Program.Config.UI, "BannerStyle"))
+			{
+				m_lblBannerStyle.Enabled = false;
+				m_cmbBannerStyle.Enabled = false;
+			}
 
 			int nWidth = m_lvPolicy.ClientRectangle.Width - UIUtil.GetVScrollBarWidth() - 1;
 			m_lvPolicy.Columns.Add(KPRes.Feature, (nWidth * 10) / 29);
@@ -167,6 +172,13 @@ namespace KeePass.Forms
 				m_cbAutoRun.Enabled = false;
 			}
 
+			UIUtil.SetExplorerTheme(m_lvSecurityOptions, false);
+			UIUtil.SetExplorerTheme(m_lvPolicy, false);
+			UIUtil.SetExplorerTheme(m_lvGuiOptions, false);
+			UIUtil.SetExplorerTheme(m_lvAdvanced, false);
+
+			AppConfigEx.ClearXmlPathCache();
+
 			LoadOptions();
 
 			// if(Program.Config.Meta.IsEnforcedConfiguration)
@@ -190,15 +202,21 @@ namespace KeePass.Forms
 
 		private void LoadSecurityOptions()
 		{
-			uint uLockTime = Program.Config.Security.WorkspaceLocking.LockAfterTime;
+			AceWorkspaceLocking aceWL = Program.Config.Security.WorkspaceLocking;
+
+			uint uLockTime = aceWL.LockAfterTime;
 			bool bLockTime = (uLockTime > 0);
 			m_numLockAfterTime.Value = (bLockTime ? uLockTime : 300);
 			m_cbLockAfterTime.Checked = bLockTime;
+			if(AppConfigEx.IsOptionEnforced(aceWL, "LockAfterTime"))
+				m_cbLockAfterTime.Enabled = false;
 
-			uLockTime = Program.Config.Security.WorkspaceLocking.LockAfterGlobalTime;
+			uLockTime = aceWL.LockAfterGlobalTime;
 			bLockTime = (uLockTime > 0);
 			m_numLockAfterGlobalTime.Value = (bLockTime ? uLockTime : 240);
 			m_cbLockAfterGlobalTime.Checked = bLockTime;
+			if(AppConfigEx.IsOptionEnforced(aceWL, "LockAfterGlobalTime"))
+				m_cbLockAfterGlobalTime.Enabled = false;
 
 			int nDefaultExpireDays = Program.Config.Defaults.NewEntryExpiresInDays;
 			if(nDefaultExpireDays < 0)
@@ -209,6 +227,8 @@ namespace KeePass.Forms
 				try { m_numDefaultExpireDays.Value = nDefaultExpireDays; }
 				catch(Exception) { Debug.Assert(false); }
 			}
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Defaults, "NewEntryExpiresInDays"))
+				m_cbDefaultExpireDays.Enabled = false;
 
 			int nClipClear = Program.Config.Security.ClipboardClearAfterSeconds;
 			if(nClipClear >= 0)
@@ -217,6 +237,8 @@ namespace KeePass.Forms
 				m_numClipClearTime.Value = nClipClear;
 			}
 			else m_cbClipClearTime.Checked = false;
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Security, "ClipboardClearAfterSeconds"))
+				m_cbClipClearTime.Enabled = false;
 
 			m_lvSecurityOptions.Columns.Add(string.Empty, 200); // Resize below
 
@@ -224,20 +246,20 @@ namespace KeePass.Forms
 			m_lvSecurityOptions.Groups.Add(lvg);
 			Debug.Assert(lvg.ListView == m_lvSecurityOptions);
 
-			m_cdxSecurityOptions = new CheckedLVItemDXList(m_lvSecurityOptions);
+			m_cdxSecurityOptions = new CheckedLVItemDXList(m_lvSecurityOptions, true);
 
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnWindowMinimize", lvg, KPRes.LockOnMinimize);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnSessionSwitch", lvg, KPRes.LockOnSessionSwitch);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnSuspend", lvg, KPRes.LockOnSuspend);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"LockOnRemoteControlChange", lvg, KPRes.LockOnRemoteControlChange);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"ExitInsteadOfLockingAfterTime", lvg, KPRes.ExitInsteadOfLockingAfterTime);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security.WorkspaceLocking,
-				"AlwaysExitInsteadOfLocking", lvg, KPRes.ExitInsteadOfLockingAlways);
+			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnWindowMinimize",
+				lvg, KPRes.LockOnMinimize);
+			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSessionSwitch",
+				lvg, KPRes.LockOnSessionSwitch);
+			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSuspend",
+				lvg, KPRes.LockOnSuspend);
+			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnRemoteControlChange",
+				lvg, KPRes.LockOnRemoteControlChange);
+			m_cdxSecurityOptions.CreateItem(aceWL, "ExitInsteadOfLockingAfterTime",
+				lvg, KPRes.ExitInsteadOfLockingAfterTime);
+			m_cdxSecurityOptions.CreateItem(aceWL, "AlwaysExitInsteadOfLocking",
+				lvg, KPRes.ExitInsteadOfLockingAlways);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
 				lvg, KPRes.ClipboardClearOnExit);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
@@ -268,7 +290,7 @@ namespace KeePass.Forms
 
 		private void LoadPolicyOptions()
 		{
-			m_cdxPolicy = new CheckedLVItemDXList(m_lvPolicy);
+			m_cdxPolicy = new CheckedLVItemDXList(m_lvPolicy, true);
 
 			LoadPolicyOption("Plugins", KPRes.Plugins, KPRes.PolicyPluginsDesc);
 			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc);
@@ -305,7 +327,7 @@ namespace KeePass.Forms
 			m_lvGuiOptions.Groups.Add(lvg);
 			Debug.Assert(lvg.ListView == m_lvGuiOptions);
 
-			m_cdxGuiOptions = new CheckedLVItemDXList(m_lvGuiOptions);
+			m_cdxGuiOptions = new CheckedLVItemDXList(m_lvGuiOptions, true);
 
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CloseButtonMinimizesWindow",
 				lvg, KPRes.CloseButtonMinimizes);
@@ -373,6 +395,8 @@ namespace KeePass.Forms
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "RepeatPasswordOnlyWhenHidden",
+				lvg, KPRes.RepeatOnlyWhenHidden);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "UseCustomToolStripRenderer",
 				lvg, KPRes.UseCustomToolStripRenderer);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ForceSystemFontUnix",
@@ -386,6 +410,16 @@ namespace KeePass.Forms
 
 			try { m_numMruCount.Value = Program.Config.Application.MostRecentlyUsed.MaxItemCount; }
 			catch(Exception) { Debug.Assert(false); m_numMruCount.Value = AceMru.DefaultMaxItemCount; }
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Application.MostRecentlyUsed, "MaxItemCount"))
+			{
+				m_lblMruCount.Enabled = false;
+				m_numMruCount.Enabled = false;
+			}
+
+			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "StandardFont"))
+				m_btnSelFont.Enabled = false;
+			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "PasswordFont"))
+				m_btnSelPwFont.Enabled = false;
 		}
 
 		private void LoadIntegrationOptions()
@@ -395,32 +429,46 @@ namespace KeePass.Forms
 			m_hkGlobalAutoType.HotKeyModifiers = (kAT & Keys.Modifiers);
 			m_hkGlobalAutoType.RenderHotKey();
 			m_kPrevATHKKey = (m_hkGlobalAutoType.HotKey | m_hkGlobalAutoType.HotKeyModifiers);
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeyGlobalAutoType"))
+				m_hkGlobalAutoType.Enabled = false;
 
 			Keys kATS = (Keys)Program.Config.Integration.HotKeySelectedAutoType;
 			m_hkSelectedAutoType.HotKey = (kATS & Keys.KeyCode);
 			m_hkSelectedAutoType.HotKeyModifiers = (kATS & Keys.Modifiers);
 			m_hkSelectedAutoType.RenderHotKey();
 			m_kPrevATSHKKey = (m_hkSelectedAutoType.HotKey | m_hkSelectedAutoType.HotKeyModifiers);
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeySelectedAutoType"))
+				m_hkSelectedAutoType.Enabled = false;
 
 			Keys kSW = (Keys)Program.Config.Integration.HotKeyShowWindow;
 			m_hkShowWindow.HotKey = (kSW & Keys.KeyCode);
 			m_hkShowWindow.HotKeyModifiers = (kSW & Keys.Modifiers);
 			m_hkShowWindow.RenderHotKey();
 			m_kPrevSWHKKey = (m_hkShowWindow.HotKey | m_hkShowWindow.HotKeyModifiers);
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeyShowWindow"))
+				m_hkShowWindow.Enabled = false;
 
 			m_cbAutoRun.Checked = ShellUtil.GetStartWithWindows(AppDefs.AutoRunName);
+
 			m_cbSingleClickTrayAction.Checked = Program.Config.UI.TrayIcon.SingleClickDefault;
+			if(AppConfigEx.IsOptionEnforced(Program.Config.UI.TrayIcon, "SingleClickDefault"))
+				m_cbSingleClickTrayAction.Enabled = false;
 
 			string strOverride = Program.Config.Integration.UrlOverride;
 			m_cbUrlOverride.Checked = (strOverride.Length > 0);
 			m_tbUrlOverride.Text = strOverride;
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlOverride"))
+				m_cbUrlOverride.Enabled = false;
+
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlSchemeOverrides"))
+				m_btnSchemeOverrides.Enabled = false;
 		}
 
 		private void LoadAdvancedOptions()
 		{
 			m_lvAdvanced.Columns.Add(string.Empty, 200); // Resize below
 
-			m_cdxAdvanced = new CheckedLVItemDXList(m_lvAdvanced);
+			m_cdxAdvanced = new CheckedLVItemDXList(m_lvAdvanced, true);
 
 			ListViewGroup lvg = new ListViewGroup(KPRes.StartAndExit);
 			m_lvAdvanced.Groups.Add(lvg);
@@ -450,6 +498,8 @@ namespace KeePass.Forms
 				lvg, KPRes.AutoTypeMatchByUrlInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByUrlHostInTitle",
 				lvg, KPRes.AutoTypeMatchByUrlHostInTitle);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByTagInTitle",
+				lvg, KPRes.AutoTypeMatchByTagInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypePrependInitSequenceForIE",
 				lvg, KPRes.AutoTypePrependInitSeqForIE);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeReleaseAltWithKeyPress",
@@ -497,10 +547,18 @@ namespace KeePass.Forms
 			m_cdxAdvanced.UpdateData(false);
 			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width -
 				UIUtil.GetVScrollBarWidth() - 1;
+
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "ProxyType") ||
+				AppConfigEx.IsOptionEnforced(Program.Config.Integration, "ProxyAddress"))
+				m_btnProxy.Enabled = false;
 		}
 
 		private bool ValidateOptions()
 		{
+			m_hkGlobalAutoType.ResetIfModifierOnly();
+			m_hkSelectedAutoType.ResetIfModifierOnly();
+			m_hkShowWindow.ResetIfModifierOnly();
+
 			bool bAltMod = false;
 			bAltMod |= ((m_hkGlobalAutoType.HotKeyModifiers == Keys.Alt) ||
 				(m_hkGlobalAutoType.HotKeyModifiers == (Keys.Alt | Keys.Shift)));
@@ -586,6 +644,8 @@ namespace KeePass.Forms
 			m_cdxPolicy.Release();
 			m_cdxGuiOptions.Release();
 			m_cdxAdvanced.Release();
+
+			AppConfigEx.ClearXmlPathCache();
 		}
 
 		private static void ChangeHotKey(ref Keys kPrevHK, HotKeyControlEx hkControl,
@@ -614,7 +674,8 @@ namespace KeePass.Forms
 			if(m_bBlockUIUpdate) return;
 			m_bBlockUIUpdate = true;
 
-			m_numLockAfterTime.Enabled = m_cbLockAfterTime.Checked;
+			m_numLockAfterTime.Enabled = (m_cbLockAfterTime.Checked &&
+				m_cbLockAfterTime.Enabled);
 
 			if(WinUtil.IsWindows9x || NativeLib.IsUnix())
 			{
@@ -622,12 +683,17 @@ namespace KeePass.Forms
 				m_cbLockAfterGlobalTime.Enabled = false;
 				m_numLockAfterGlobalTime.Enabled = false;
 			}
-			else m_numLockAfterGlobalTime.Enabled = m_cbLockAfterGlobalTime.Checked;
-			
-			m_numDefaultExpireDays.Enabled = m_cbDefaultExpireDays.Checked;
-			m_numClipClearTime.Enabled = m_cbClipClearTime.Checked;
+			else
+				m_numLockAfterGlobalTime.Enabled = (m_cbLockAfterGlobalTime.Checked &&
+					m_cbLockAfterGlobalTime.Enabled);
 
-			m_tbUrlOverride.Enabled = m_cbUrlOverride.Checked;
+			m_numDefaultExpireDays.Enabled = (m_cbDefaultExpireDays.Checked &&
+				m_cbDefaultExpireDays.Enabled);
+			m_numClipClearTime.Enabled = (m_cbClipClearTime.Checked &&
+				m_cbClipClearTime.Enabled);
+
+			m_tbUrlOverride.Enabled = (m_cbUrlOverride.Checked &&
+				m_cbUrlOverride.Enabled);
 
 			m_bBlockUIUpdate = false;
 		}

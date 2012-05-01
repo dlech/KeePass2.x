@@ -146,12 +146,13 @@ div.menubox a:visited, div.menubox a:active, div.menubox a:link {
 
 div.menubox a:hover {
 	border: 1px solid #0A246A;
-	border-radius: 2px;
 	-moz-border-radius: 2px;
+	border-radius: 2px;
 	background-color: #B6BDD2;
-	background-image: linear-gradient(top, #D9E5F9, #B8BED8);
 	background-image: -moz-linear-gradient(top, #D9E5F9, #B8BED8);
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#D9E5F9), to(#B8BED8));
+	background-image: -webkit-linear-gradient(top, #D9E5F9, #B8BED8);
+	background-image: -ms-linear-gradient(top, #D9E5F9, #B8BED8);
+	background-image: linear-gradient(top, #D9E5F9, #B8BED8);
 }
 
 /* --------------------------------------------------------------------- */
@@ -243,15 +244,18 @@ div.tooltipex {
 	background-color: #FFFFE0;
 	padding: 1px 1px 1px 1px;
 	filter: alpha(opacity=90);
-	opacity: 0.9;
 	-moz-opacity: 0.9;
+	opacity: 0.9;
 	border: 1px solid #000000;
 }
 
 /* --------------------------------------------------------------------- */
 
 div.specificbox {
-	border: 1px dashed #808080;
+	border: 1px solid #808080;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 	display: block;
 	background-color: #EEF0FF;
 	padding-top: 1px;
@@ -275,7 +279,10 @@ div.specificbox div.specifictitle {
 
 table.sectionsummary {
 	width: 100%;
-	border: thin dashed #808080;
+	border: thin solid #808080;
+	-moz-box-shadow: 1px 1px 5px #808080;
+	-webkit-box-shadow: 1px 1px 5px #808080;
+	box-shadow: 1px 1px 5px #808080;
 	background-color: #F0F8FF;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;

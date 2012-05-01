@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
+using KeePass.Util.Spr;
+
 using KeePassLib;
 
 namespace KeePass.Util
@@ -70,6 +72,91 @@ namespace KeePass.Util
 		public AutoTypeCtx Clone()
 		{
 			return (AutoTypeCtx)this.MemberwiseClone();
+		}
+	}
+
+	public sealed class SequenceQueriesEventArgs : EventArgs
+	{
+		private readonly int m_iEventID;
+		public int EventID
+		{
+			get { return m_iEventID; }
+		}
+
+		private readonly IntPtr m_h;
+		public IntPtr TargetWindowHandle
+		{
+			get { return m_h; }
+		}
+
+		private readonly string m_strWnd;
+		public string TargetWindowTitle
+		{
+			get { return m_strWnd; }
+		}
+
+		public SequenceQueriesEventArgs(int iEventID, IntPtr hWnd,
+			string strWnd)
+		{
+			m_iEventID = iEventID;
+			m_h = hWnd;
+			m_strWnd = strWnd;
+		}
+	}
+
+	public sealed class SequenceQueryEventArgs : EventArgs
+	{
+		private readonly int m_iEventID;
+		public int EventID
+		{
+			get { return m_iEventID; }
+		}
+
+		private readonly IntPtr m_h;
+		public IntPtr TargetWindowHandle
+		{
+			get { return m_h; }
+		}
+
+		private readonly string m_strWnd;
+		public string TargetWindowTitle
+		{
+			get { return m_strWnd; }
+		}
+
+		private readonly PwEntry m_pe;
+		public PwEntry Entry
+		{
+			get { return m_pe; }
+		}
+
+		private readonly PwDatabase m_pd;
+		public PwDatabase Database
+		{
+			get { return m_pd; }
+		}
+
+		private List<string> m_lSeqs = new List<string>();
+		internal IEnumerable<string> Sequences
+		{
+			get { return m_lSeqs; }
+		}
+
+		public SequenceQueryEventArgs(int iEventID, IntPtr hWnd, string strWnd,
+			PwEntry pe, PwDatabase pd)
+		{
+			m_iEventID = iEventID;
+			m_h = hWnd;
+			m_strWnd = strWnd;
+			m_pe = pe;
+			m_pd = pd;
+		}
+
+		public void AddSequence(string strSeq)
+		{
+			if(strSeq == null) { Debug.Assert(false); return; }
+
+			m_lSeqs.Add(strSeq);
 		}
 	}
 }

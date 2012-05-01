@@ -222,7 +222,12 @@ namespace KeePass.Util
 		// HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command
 		private static string FindChrome()
 		{
-			if(NativeLib.IsUnix()) return FindAppUnix("chromium-browser");
+			if(NativeLib.IsUnix())
+			{
+				string str = FindAppUnix("google-chrome");
+				if(!string.IsNullOrEmpty(str)) return str;
+				return FindAppUnix("chromium-browser");
+			}
 
 			RegistryKey kHtml = Registry.ClassesRoot.OpenSubKey("ChromeHTML", false);
 			RegistryKey kShell = kHtml.OpenSubKey("shell", false);
@@ -292,7 +297,7 @@ namespace KeePass.Util
 
 		public static string FindAppUnix(string strApp)
 		{
-			string str = WinUtil.RunConsoleApp("whereis", "-b " + strApp);
+			string str = NativeLib.RunConsoleApp("whereis", "-b " + strApp);
 			if(str == null) return null;
 
 			str = str.Trim();

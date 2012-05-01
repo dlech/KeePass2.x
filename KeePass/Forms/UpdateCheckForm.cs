@@ -67,7 +67,7 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.UpdateCheck + " - " + PwDefs.ShortProductName;
 
-			// UIUtil.SetExplorerTheme(m_lvInfo.Handle);
+			UIUtil.SetExplorerTheme(m_lvInfo, true);
 
 			int nWidth = m_lvInfo.ClientRectangle.Width - UIUtil.GetVScrollBarWidth();
 			m_lvInfo.Columns.Add(KPRes.Component, (nWidth * 2) / 6);
@@ -123,12 +123,12 @@ namespace KeePass.Forms
 				else lvi.ImageIndex = 0;
 
 				lvi.SubItems.Add(strStatus);
-				lvi.SubItems.Add(StrUtil.VersionToString(uc.VerInstalled));
+				lvi.SubItems.Add(StrUtil.VersionToString(uc.VerInstalled, true));
 
 				if((uc.Status == UpdateComponentStatus.UpToDate) ||
 					(uc.Status == UpdateComponentStatus.NewVerAvailable) ||
 					(uc.Status == UpdateComponentStatus.PreRelease))
-					lvi.SubItems.Add(StrUtil.VersionToString(uc.VerAvailable));
+					lvi.SubItems.Add(StrUtil.VersionToString(uc.VerAvailable, true));
 				else lvi.SubItems.Add("?");
 
 				if(lvg != null) lvi.Group = lvg;

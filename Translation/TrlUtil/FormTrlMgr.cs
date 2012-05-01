@@ -47,6 +47,7 @@ namespace TrlUtil
 			AddForm(l, new AutoTypeCtxForm());
 			AddForm(l, new CharPickerForm());
 			AddForm(l, new ColumnsForm());
+			AddForm(l, new CsvImportForm());
 			AddForm(l, new DatabaseOperationsForm());
 			AddForm(l, new DatabaseSettingsForm());
 			AddForm(l, new DataEditorForm());
@@ -68,7 +69,6 @@ namespace TrlUtil
 			AddForm(l, new GroupForm());
 			AddForm(l, new HelpSourceForm());
 			AddForm(l, new IconPickerForm());
-			AddForm(l, new ImportCsvForm());
 			AddForm(l, new ImportMethodForm());
 			AddForm(l, new InternalBrowserForm());
 			AddForm(l, new IOConnectionForm());

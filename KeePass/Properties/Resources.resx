@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="B15x13_KGPG_Gen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Nuvola_Derived\B15x13_KGPG_Gen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="B16x16_Reload_Page" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_Reload_Page.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -573,5 +570,8 @@
   </data>
   <data name="B16x16_EditCopyLink" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola_Derived\B16x16_EditCopyLink.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Key_New" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola_Derived\B16x16_Key_New.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

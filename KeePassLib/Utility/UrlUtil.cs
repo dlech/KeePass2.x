@@ -226,7 +226,7 @@ namespace KeePassLib.Utility
 			if(strUrl == null) throw new ArgumentNullException("strUrl");
 
 			string str = strUrl;
-			if(str.ToLower().StartsWith(@"file:///"))
+			if(str.StartsWith(@"file:///", StrUtil.CaseIgnoreCmp))
 				str = str.Substring(8, str.Length - 8);
 
 			str = str.Replace('/', Path.DirectorySeparatorChar);
@@ -562,6 +562,31 @@ namespace KeePassLib.Utility
 			if(iPort >= 0) str = str.Substring(0, iPort);
 
 			return str;
+		}
+
+		public static bool AssemblyEquals(string strExt, string strShort)
+		{
+			if((strExt == null) || (strShort == null)) { Debug.Assert(false); return false; }
+
+			if(strExt.Equals(strShort, StrUtil.CaseIgnoreCmp) ||
+				strExt.StartsWith(strShort + ",", StrUtil.CaseIgnoreCmp))
+				return true;
+
+			if(!strShort.EndsWith(".dll", StrUtil.CaseIgnoreCmp))
+			{
+				if(strExt.Equals(strShort + ".dll", StrUtil.CaseIgnoreCmp) ||
+					strExt.StartsWith(strShort + ".dll,", StrUtil.CaseIgnoreCmp))
+					return true;
+			}
+
+			if(!strShort.EndsWith(".exe", StrUtil.CaseIgnoreCmp))
+			{
+				if(strExt.Equals(strShort + ".exe", StrUtil.CaseIgnoreCmp) ||
+					strExt.StartsWith(strShort + ".exe,", StrUtil.CaseIgnoreCmp))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

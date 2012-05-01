@@ -1234,7 +1234,6 @@
             <param name="strTree">Tree string.</param>
             <param name="vSeparators">Separators that delimit groups in the
             <c>strTree</c> parameter.</param>
-            <returns></returns>
         </member>
         <member name="M:KeePassLib.PwGroup.GetLevel">
             <summary>
@@ -2290,6 +2289,17 @@
             Character stream class.
             </summary>
         </member>
+        <member name="P:KeePassLib.Utility.StrEncodingInfo.CodePointSize">
+            <summary>
+            Size of a character in bytes.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Utility.StrEncodingInfo.StartSignature">
+            <summary>
+            Start signature of the text (byte order mark).
+            May be <c>null</c> or empty, if no signature is known.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Utility.StrUtil">
             <summary>
             A class containing various string helper methods.
@@ -2743,7 +2753,16 @@
         <member name="F:KeePassLib.PwDefs.Version32">
             <summary>
             Version, encoded as 32-bit unsigned integer.
-            2.00 = 0x02000000, 2.01 = 0x02000100, 2.15 = 0x02010500, etc.
+            2.00 = 0x02000000, 2.01 = 0x02000100, ..., 2.18 = 0x02010800.
+            As of 2.19, the version is encoded component-wise per byte,
+            e.g. 2.19 = 0x02130000.
+            It is highly recommended to use <c>FileVersion64</c> instead.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.FileVersion64">
+            <summary>
+            Version, encoded as 64-bit unsigned integer
+            (component-wise, 16 bits per component).
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.VersionString">

@@ -132,6 +132,14 @@ namespace KeePass.App.Configuration
 			set { m_bMatchByUrlHostInTitle = value; }
 		}
 
+		private bool m_bMatchByTagInTitle = false;
+		[DefaultValue(false)]
+		public bool AutoTypeMatchByTagInTitle
+		{
+			get { return m_bMatchByTagInTitle; }
+			set { m_bMatchByTagInTitle = value; }
+		}
+
 		private bool m_bPrependInitSeqIE = true;
 		[DefaultValue(true)]
 		public bool AutoTypePrependInitSequenceForIE

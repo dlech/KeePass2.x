@@ -75,8 +75,7 @@ namespace KeePassLib.Serialization
 
 			HashingStreamEx hashedStream = new HashingStreamEx(sSource, false, null);
 
-			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
-
+			UTF8Encoding encNoBom = StrUtil.Utf8;
 			try
 			{
 				BinaryReaderEx br = null;

@@ -100,11 +100,16 @@ namespace KeePass.Forms
 			m_strInitialFormRect = UIUtil.GetWindowScreenRect(this);
 
 			m_bdc = BinaryDataClassifier.Classify(m_strDataDesc, m_pbData);
-			string strEncodingName;
 			uint uStartOffset;
-			Encoding enc = BinaryDataClassifier.GetStringEncoding(m_pbData,
-				false, out strEncodingName, out uStartOffset);
-			string strData = enc.GetString(m_pbData);
+			StrEncodingInfo seiGuess = BinaryDataClassifier.GetStringEncoding(
+				m_pbData, out uStartOffset);
+			string strData;
+			try
+			{
+				strData = (seiGuess.Encoding.GetString(m_pbData, (int)uStartOffset,
+					m_pbData.Length - (int)uStartOffset) ?? string.Empty);
+			}
+			catch(Exception) { Debug.Assert(false); strData = string.Empty; }
 
 			BlockUIEvents(true);
 
@@ -140,7 +145,13 @@ namespace KeePass.Forms
 			bool bSimpleText = true;
 			if(m_bdc == BinaryDataClass.RichText)
 			{
-				try { m_rtbText.Rtf = strData; bSimpleText = false; }
+				try
+				{
+					if(strData.Length > 0) m_rtbText.Rtf = strData;
+					else m_rtbText.Text = string.Empty;
+
+					bSimpleText = false;
+				}
 				catch(Exception) { } // Show as simple text
 			}
 			
@@ -542,8 +553,7 @@ namespace KeePass.Forms
 					try
 					{
 						string strText = enc.GetString(pbData);
-						UTF8Encoding utf8 = new UTF8Encoding(false);
-						return utf8.GetBytes(strText);
+						return StrUtil.Utf8.GetBytes(strText);
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}

@@ -27,6 +27,7 @@ using System.Net.NetworkInformation;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 
 namespace KeePass.Ecas
 {
@@ -58,8 +59,8 @@ namespace KeePass.Ecas
 				0xCB, 0x4A, 0x9E, 0x34, 0x56, 0x8C, 0x4C, 0x95,
 				0xAD, 0x67, 0x4D, 0x1C, 0xA1, 0x04, 0x19, 0xBC }),
 				KPRes.FileExists, PwIcon.PaperReady, new EcasParameter[] {
-					new EcasParameter(KPRes.File, EcasValueType.String, null) },
-				IsMatchFile));
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null) },
+				IsMatchFileExists));
 
 			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
 				0x2A, 0x22, 0x83, 0xA8, 0x9D, 0x13, 0x41, 0xE8,
@@ -109,12 +110,18 @@ namespace KeePass.Ecas
 			return EcasUtil.CompareStrings(str, strValue, uCompareType);
 		}
 
-		private static bool IsMatchFile(EcasCondition c, EcasContext ctx)
+		private static bool IsMatchFileExists(EcasCondition c, EcasContext ctx)
 		{
 			string strFile = EcasUtil.GetParamString(c.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strFile)) return true;
 
-			try { return File.Exists(strFile); }
+			try
+			{
+				// return File.Exists(strFile);
+
+				IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+				return IOConnection.FileExists(ioc);
+			}
 			catch(Exception) { }
 
 			return false;

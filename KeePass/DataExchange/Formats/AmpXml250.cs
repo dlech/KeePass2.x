@@ -145,6 +145,7 @@ namespace KeePass.DataExchange.Formats
 					{
 						DateTime dt = DateTime.Parse(strInner);
 						pe.ExpiryTime = dt;
+						pe.Expires = true;
 					}
 					catch(Exception) { }
 				}

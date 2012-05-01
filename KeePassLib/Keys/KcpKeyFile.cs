@@ -70,13 +70,18 @@ namespace KeePassLib.Keys
 
 		private void Construct(IOConnectionInfo iocFile)
 		{
-			byte[] pbKey = LoadXmlKeyFile(iocFile);
-			if(pbKey == null) pbKey = LoadKeyFile(iocFile);
+			byte[] pbFileData = IOConnection.ReadFile(iocFile);
+			if(pbFileData == null) throw new FileNotFoundException();
+
+			byte[] pbKey = LoadXmlKeyFile(pbFileData);
+			if(pbKey == null) pbKey = LoadKeyFile(pbFileData);
 
 			if(pbKey == null) throw new InvalidOperationException();
 
 			m_strPath = iocFile.Path;
 			m_pbKeyData = new ProtectedBinary(true, pbKey);
+
+			MemUtil.ZeroByteArray(pbKey);
 		}
 
 		// public void Clear()
@@ -85,31 +90,20 @@ namespace KeePassLib.Keys
 		//	m_pbKeyData = null;
 		// }
 
-		private static byte[] LoadKeyFile(IOConnectionInfo iocFile)
+		private static byte[] LoadKeyFile(byte[] pbFileData)
 		{
-			Stream sIn = null;
-			try { sIn = IOConnection.OpenRead(iocFile); }
-			catch(Exception) { }
-			if(sIn == null) return null;
+			if(pbFileData == null) { Debug.Assert(false); return null; }
 
-			long lLength = sIn.Length;
-			BinaryReader br = new BinaryReader(sIn);
-			byte[] pbFileData = br.ReadBytes((int)lLength);
-			br.Close();
-			sIn.Close();
+			int iLength = pbFileData.Length;
 
 			byte[] pbKey = null;
-			if(lLength == 32) pbKey = LoadBinaryKey32(pbFileData);
-			else if(lLength == 64) pbKey = LoadHexKey32(pbFileData);
+			if(iLength == 32) pbKey = LoadBinaryKey32(pbFileData);
+			else if(iLength == 64) pbKey = LoadHexKey32(pbFileData);
 
 			if(pbKey == null)
 			{
-				if(pbFileData.Length == lLength)
-				{
-					SHA256Managed sha256 = new SHA256Managed();
-					pbKey = sha256.ComputeHash(pbFileData);
-				}
-				else { Debug.Assert(false); pbKey = null; }
+				SHA256Managed sha256 = new SHA256Managed();
+				pbKey = sha256.ComputeHash(pbFileData);
 			}
 
 			return pbKey;
@@ -196,19 +190,17 @@ namespace KeePassLib.Keys
 		private const string KeyElementName = "Key";
 		private const string KeyDataElementName = "Data";
 
-		private static byte[] LoadXmlKeyFile(IOConnectionInfo iocFile)
+		private static byte[] LoadXmlKeyFile(byte[] pbFileData)
 		{
-			Debug.Assert(iocFile != null); if(iocFile == null) throw new ArgumentNullException("iocFile");
+			if(pbFileData == null) { Debug.Assert(false); return null; }
 
-			Stream sIn = null;
+			MemoryStream ms = new MemoryStream(pbFileData, false);
 			byte[] pbKeyData = null;
 
 			try
 			{
-				sIn = IOConnection.OpenRead(iocFile);
-
 				XmlDocument doc = new XmlDocument();
-				doc.Load(sIn);
+				doc.Load(ms);
 
 				XmlElement el = doc.DocumentElement;
 				if((el == null) || !el.Name.Equals(RootElementName)) return null;
@@ -231,7 +223,7 @@ namespace KeePassLib.Keys
 				}
 			}
 			catch(Exception) { pbKeyData = null; }
-			finally { if(sIn != null) sIn.Close(); }
+			finally { ms.Close(); }
 
 			return pbKeyData;
 		}
@@ -243,7 +235,7 @@ namespace KeePassLib.Keys
 			Debug.Assert(pbKeyData != null);
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
-			XmlTextWriter xtw = new XmlTextWriter(strFile, new UTF8Encoding(false));
+			XmlTextWriter xtw = new XmlTextWriter(strFile, StrUtil.Utf8);
 
 			xtw.WriteStartDocument();
 			xtw.WriteWhitespace("\r\n");

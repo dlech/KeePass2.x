@@ -28,6 +28,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Diagnostics;
 
+using KeePassLib.Interfaces;
+using KeePassLib.Utility;
+
 #if !KeePassLibSD
 using System.IO.Compression;
 #else
@@ -89,8 +92,11 @@ namespace KeePassLib.Translation
 			}
 		}
 
-		public static void SaveToFile(KPTranslation kpTrl, string strFileName)
+		public static void SaveToFile(KPTranslation kpTrl, string strFileName,
+			IXmlSerializerEx xs)
 		{
+			if(xs == null) throw new ArgumentNullException("xs");
+
 			FileStream fs = new FileStream(strFileName, FileMode.Create,
 				FileAccess.Write, FileShare.None);
 
@@ -102,22 +108,24 @@ namespace KeePassLib.Translation
 
 			XmlWriterSettings xws = new XmlWriterSettings();
 			xws.CheckCharacters = true;
-			xws.Encoding = new UTF8Encoding(false);
+			xws.Encoding = StrUtil.Utf8;
 			xws.Indent = true;
 			xws.IndentChars = "\t";
 
 			XmlWriter xw = XmlWriter.Create(gz, xws);
 
-			XmlSerializer xmlSerial = new XmlSerializer(typeof(KPTranslation));
-			xmlSerial.Serialize(xw, kpTrl);
+			xs.Serialize(xw, kpTrl);
 
 			xw.Close();
 			gz.Close();
 			fs.Close();
 		}
 
-		public static KPTranslation LoadFromFile(string strFile)
+		public static KPTranslation LoadFromFile(string strFile,
+			IXmlSerializerEx xs)
 		{
+			if(xs == null) throw new ArgumentNullException("xs");
+
 			FileStream fs = new FileStream(strFile, FileMode.Open,
 				FileAccess.Read, FileShare.Read);
 
@@ -127,8 +135,7 @@ namespace KeePassLib.Translation
 			GZipInputStream gz = new GZipInputStream(fs);
 #endif
 
-			XmlSerializer xmlSerial = new XmlSerializer(typeof(KPTranslation));
-			KPTranslation kpTrl = (xmlSerial.Deserialize(gz) as KPTranslation);
+			KPTranslation kpTrl = (xs.Deserialize(gz) as KPTranslation);
 
 			gz.Close();
 			fs.Close();

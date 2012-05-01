@@ -42,7 +42,7 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return @"*"; } }
 		public override string ApplicationGroup { get { return KPRes.General; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+		public override bool ImportAppendsToRootGroupOnly { get { return false; } }
 
 		public override Image SmallIcon
 		{
@@ -56,9 +56,9 @@ namespace KeePass.DataExchange.Formats
 			byte[] pbData = br.ReadBytes((int)sInput.Length);
 			br.Close();
 
-			ImportCsvForm csv = new ImportCsvForm();
-			csv.InitEx(pwStorage, pbData);
-			UIUtil.ShowDialogAndDestroy(csv);
+			CsvImportForm dlg = new CsvImportForm();
+			dlg.InitEx(pwStorage, pbData);
+			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 	}
 }

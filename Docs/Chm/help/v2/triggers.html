@@ -9,7 +9,6 @@
 	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
 
 	<meta name="robots" content="index" />
-	<meta name="revisit-after" content="14 days" />
 
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
@@ -137,6 +136,22 @@ This event occurs right after a database file has been saved successfully.
 <li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
 </ul></li>
 
+<li><b>Closing database file (before saving):</b><br />
+This event occurs right before a database file is closed.
+It occurs before KeePass saves the database automatically or asks the
+user whether to save unsaved changes.
+<ul>
+<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+</ul></li>
+
+<li><b>Closing database file (after saving):</b><br />
+This event occurs right before a database file is closed.
+The database file already was saved automatically or unsaved changes were
+saved/discarded depending on the user's choice.
+<ul>
+<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+</ul></li>
+
 <li><b>Copied entry data to clipboard:</b><br />
 This event occurs when entry data (user name, password, ...) is copied
 to the Windows clipboard.
@@ -223,8 +238,9 @@ see: <a href="../base/autourl.html#builtin">Executing Built-In Shell Commands</a
 <ul>
 <li><i>File/URL:</i> The string to be executed by the shell.</li>
 <li><i>Arguments:</i> Optional. If <i>'File/URL'</i> points to an executable
-file, this string is sent to the executable as command line argument(s).
-<br /><br /></li>
+file, this string is sent to the executable as command line argument(s).</li>
+<li><i>Wait for exit:</i> If this option is checked, KeePass waits indefinitely
+for the started process to exit.<br /><br /></li>
 </ul></li>
 
 <li><b>Change trigger on/off state:</b><br />

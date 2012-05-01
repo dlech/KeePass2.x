@@ -513,7 +513,7 @@ namespace KeePass.Util
 				SearchOption.TopDirectoryOnly))
 			{
 				string strVer = di.Name.TrimStart('v', 'V');
-				ulong uVer = StrUtil.GetVersion(strVer);
+				ulong uVer = StrUtil.ParseVersion(strVer);
 				if(uVer > uFrameworkVersion) uFrameworkVersion = uVer;
 			}
 
@@ -541,33 +541,10 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
+		[Obsolete]
 		public static string RunConsoleApp(string strAppPath, string strParams)
 		{
-			if(strAppPath == null) throw new ArgumentNullException("strAppPath");
-			if(strAppPath.Length == 0) throw new ArgumentException("strAppPath");
-
-			try
-			{
-				ProcessStartInfo psi = new ProcessStartInfo();
-
-				psi.CreateNoWindow = true;
-				psi.FileName = strAppPath;
-				psi.WindowStyle = ProcessWindowStyle.Hidden;
-				psi.UseShellExecute = false;
-				psi.RedirectStandardOutput = true;
-
-				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
-
-				Process p = Process.Start(psi);
-
-				string strOutput = p.StandardOutput.ReadToEnd();
-				p.WaitForExit();
-
-				return strOutput;
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return null;
+			return NativeLib.RunConsoleApp(strAppPath, strParams);
 		}
 
 		public static string LocateSystemApp(string strExeName)

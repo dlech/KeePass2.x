@@ -41,7 +41,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsExport { get { return false; } }
 
 		public override string FormatName { get { return "Passphrase Keeper HTML"; } }
-		public override string DefaultExtension { get { return "html"; } }
+		public override string DefaultExtension { get { return @"html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override bool ImportAppendsToRootGroupOnly { get { return true; } }

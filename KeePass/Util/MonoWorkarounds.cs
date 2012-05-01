@@ -145,7 +145,9 @@ namespace KeePass.Util
 
 			EventHandler fnOvr = new EventHandler(MonoWorkarounds.OnButtonClick);
 			m_dictHandlers[btn] = new MwaHandlerInfo(fnClick, fnOvr, dr, fContext);
+
 			btn.DialogResult = DialogResult.None;
+			if(fnClick != null) ehl.RemoveHandler(objClickEvent, fnClick);
 			ehl[objClickEvent] = fnOvr;
 		}
 
@@ -165,9 +167,9 @@ namespace KeePass.Util
 			EventHandlerList ehl = GetEventHandlers(btn, out objClickEvent);
 			if(ehl == null) { Debug.Assert(false); return; }
 
+			ehl.RemoveHandler(objClickEvent, hi.FunctionOverride);
 			if(hi.FunctionOriginal != null)
 				ehl[objClickEvent] = hi.FunctionOriginal;
-			else ehl.RemoveHandler(objClickEvent, hi.FunctionOverride);
 
 			btn.DialogResult = hi.Result;
 			m_dictHandlers.Remove(btn);

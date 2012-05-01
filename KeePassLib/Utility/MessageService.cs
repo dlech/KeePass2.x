@@ -346,6 +346,12 @@ namespace KeePassLib.Utility
 
 		public static void ShowLoadWarning(string strFilePath, Exception ex)
 		{
+			ShowLoadWarning(strFilePath, ex, false);
+		}
+
+		public static void ShowLoadWarning(string strFilePath, Exception ex,
+			bool bFullException)
+		{
 			string str = string.Empty;
 
 			if((strFilePath != null) && (strFilePath.Length > 0))
@@ -354,7 +360,11 @@ namespace KeePassLib.Utility
 			str += KLRes.FileLoadFailed;
 
 			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
-				str += MessageService.NewParagraph + ex.Message;
+			{
+				str += MessageService.NewParagraph;
+				if(!bFullException) str += ex.Message;
+				else str += ObjectsToMessage(new object[] { ex }, true);
+			}
 
 			ShowWarning(str);
 		}
@@ -362,7 +372,7 @@ namespace KeePassLib.Utility
 		public static void ShowLoadWarning(IOConnectionInfo ioConnection, Exception ex)
 		{
 			if(ioConnection != null)
-				ShowLoadWarning(ioConnection.GetDisplayName(), ex);
+				ShowLoadWarning(ioConnection.GetDisplayName(), ex, false);
 			else ShowWarning(ex);
 		}
 

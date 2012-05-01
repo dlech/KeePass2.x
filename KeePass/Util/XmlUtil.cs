@@ -22,7 +22,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Reflection;
 using System.Diagnostics;
+
+using KeePass.Util.XmlSerialization;
 
 namespace KeePass.Util
 {
@@ -147,6 +150,77 @@ namespace KeePass.Util
 				else if(bHasSub) MergeNodes(xd, xnRep, xnOvrChild);
 				else xnRep.InnerText = XmlUtil.SafeInnerText(xnOvrChild);
 			}
+		}
+
+		private sealed class XuopContainer
+		{
+			private object m_o;
+			public object Object { get { return m_o; } }
+
+			public XuopContainer(object o)
+			{
+				m_o = o;
+			}
+		}
+
+		private const string GoxpSep = "/";
+		public static string GetObjectXmlPath(object oContainer, object oNeedle)
+		{
+			if(oContainer == null) { Debug.Assert(false); return null; }
+
+			XuopContainer c = new XuopContainer(oContainer);
+			string strXPath = GetObjectXmlPathRec(c, typeof(XuopContainer),
+				oNeedle, string.Empty);
+			if(string.IsNullOrEmpty(strXPath)) return strXPath;
+
+			if(!strXPath.StartsWith("/Object")) { Debug.Assert(false); return null; }
+			strXPath = strXPath.Substring(7);
+
+			Type tRoot = oContainer.GetType();
+			string strRoot = XmlSerializerEx.GetXmlName(tRoot);
+
+			return (GoxpSep + strRoot + strXPath);
+		}
+
+		private static string GetObjectXmlPathRec(object oContainer, Type tContainer,
+			object oNeedle, string strCurPath)
+		{
+			if(oContainer == null) { Debug.Assert(false); return null; }
+			if(oNeedle == null) { Debug.Assert(false); return null; }
+			Debug.Assert(oContainer.GetType() == tContainer);
+
+			PropertyInfo[] vProps = tContainer.GetProperties();
+			foreach(PropertyInfo pi in vProps)
+			{
+				if((pi == null) || !pi.CanRead) continue;
+
+				object[] vPropAttribs = pi.GetCustomAttributes(true);
+				if(XmlSerializerEx.GetAttribute<XmlIgnoreAttribute>(
+					vPropAttribs) != null) continue;
+
+				object oSub = pi.GetValue(oContainer, null);
+				if(oSub == null) continue;
+
+				string strPropName = XmlSerializerEx.GetXmlName(pi);
+				string strSubPath = strCurPath + GoxpSep + strPropName;
+
+				if(oSub == oNeedle) return strSubPath;
+
+				Type tSub = oSub.GetType();
+				string strPrimarySubType;
+				string strPropTypeCS = XmlSerializerEx.GetFullTypeNameCS(tSub,
+					out strPrimarySubType);
+				if(XmlSerializerEx.TypeIsArray(strPropTypeCS) ||
+					XmlSerializerEx.TypeIsList(strPropTypeCS))
+					continue;
+				if(strPropTypeCS.StartsWith("System.")) continue;
+
+				string strSubFound = GetObjectXmlPathRec(oSub, tSub, oNeedle,
+					strSubPath);
+				if(strSubFound != null) return strSubFound;
+			}
+
+			return null;
 		}
 	}
 }

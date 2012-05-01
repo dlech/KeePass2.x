@@ -69,6 +69,7 @@
     <Compile Include="Cryptography\SelfTest.cs" />
     <Compile Include="Interfaces\IStructureItem.cs" />
     <Compile Include="Interfaces\IUIOperations.cs" />
+    <Compile Include="Interfaces\IXmlSerializerEx.cs" />
     <Compile Include="Keys\KcpCustomKey.cs" />
     <Compile Include="Keys\KeyProvider.cs" />
     <Compile Include="Keys\KeyProviderPool.cs" />

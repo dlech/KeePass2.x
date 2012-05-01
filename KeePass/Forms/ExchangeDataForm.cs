@@ -195,19 +195,19 @@ namespace KeePass.Forms
 			if(!m_fmtCur.RequiresFile) return; // Break on double-click
 
 			string strFormat = m_fmtCur.FormatName;
-			if((strFormat == null) || (strFormat.Length == 0))
-				strFormat = KPRes.Data;
+			if(string.IsNullOrEmpty(strFormat)) strFormat = KPRes.Data;
 
-			string strExt = m_fmtCur.DefaultExtension;
-			if((strExt == null) || (strExt.Length == 0))
-				strExt = "export";
+			string strExts = m_fmtCur.DefaultExtension;
+			if(string.IsNullOrEmpty(strExts)) strExts = "export";
+			string strPriExt = UIUtil.GetPrimaryFileTypeExt(strExts);
+			if(strPriExt.Length == 0) strPriExt = "export"; // In case of "|"
 
-			string strFilter = UIUtil.CreateFileTypeFilter(strExt, strFormat, true);
+			string strFilter = UIUtil.CreateFileTypeFilter(strExts, strFormat, true);
 
 			if(m_bExport == false) // Import
 			{
 				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.Import + ": " +
-					strFormat, strFilter, 1, strExt, true, true);
+					strFormat, strFilter, 1, strPriExt, true, true);
 
 				if(ofd.ShowDialog() != DialogResult.OK) return;
 
@@ -230,7 +230,7 @@ namespace KeePass.Forms
 			else // Export
 			{
 				SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.Export + ": " +
-					strFormat, null, strFilter, 1, strExt, false);
+					strFormat, null, strFilter, 1, strPriExt, false);
 
 				string strSuggestion;
 				if((m_pwDatabaseInfo != null) &&
@@ -241,15 +241,9 @@ namespace KeePass.Forms
 				}
 				else strSuggestion = KPRes.Database;
 
-				if((m_fmtCur != null) && (m_fmtCur.DefaultExtension != null) &&
-					(m_fmtCur.DefaultExtension.Length > 0))
-				{
-					strSuggestion += "." + m_fmtCur.DefaultExtension;
-				}
-				else strSuggestion += ".export";
+				strSuggestion += "." + strPriExt;
 
 				sfd.FileName = strSuggestion;
-
 				if(sfd.ShowDialog() != DialogResult.OK) return;
 
 				m_tbFile.Text = sfd.FileName;

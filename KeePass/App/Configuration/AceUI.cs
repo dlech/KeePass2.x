@@ -103,6 +103,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private bool m_bRepeatPwOnlyWhenHidden = true;
+		[DefaultValue(true)]
+		public bool RepeatPasswordOnlyWhenHidden
+		{
+			get { return m_bRepeatPwOnlyWhenHidden; }
+			set { m_bRepeatPwOnlyWhenHidden = value; }
+		}
+
 		private AceFont m_font = new AceFont();
 		public AceFont StandardFont
 		{

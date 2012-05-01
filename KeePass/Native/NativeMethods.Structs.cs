@@ -246,9 +246,10 @@ namespace KeePass.Native
 			public IntPtr pszSubtitle;
 			public uint cchSubtitle;
 
-			// [MarshalAs(UnmanagedType.LPWStr)]
+			[MarshalAs(UnmanagedType.LPWStr)]
+			public string pszTask;
 			// public StringBuilder pszTask;
-			public IntPtr pszTask;
+			// public IntPtr pszTask;
 			public uint cchTask;
 
 			// [MarshalAs(UnmanagedType.LPWStr)]
@@ -270,6 +271,20 @@ namespace KeePass.Native
 			// public StringBuilder pszSubsetTitle;
 			public IntPtr pszSubsetTitle;
 			public uint cchSubsetTitle;
+
+			[Conditional("DEBUG")]
+			internal void AssertSize()
+			{
+				if(IntPtr.Size == 4)
+				{
+					Debug.Assert(Marshal.SizeOf(this) == 96);
+				}
+				else if(IntPtr.Size == 8)
+				{
+					Debug.Assert(Marshal.SizeOf(this) == 152);
+				}
+				else { Debug.Assert(false); }
+			}
 		} */
 	}
 }

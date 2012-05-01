@@ -399,5 +399,29 @@ namespace KeePassLib.Serialization
 			try { wr.Close(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		public static byte[] ReadFile(IOConnectionInfo ioc)
+		{
+			Stream sIn = null;
+			MemoryStream ms = null;
+			try
+			{
+				sIn = IOConnection.OpenRead(ioc);
+				if(sIn == null) return null;
+
+				ms = new MemoryStream();
+				MemUtil.CopyStream(sIn, ms);
+
+				return ms.ToArray();
+			}
+			catch(Exception) { }
+			finally
+			{
+				if(sIn != null) sIn.Close();
+				if(ms != null) ms.Close();
+			}
+
+			return null;
+		}
 	}
 }

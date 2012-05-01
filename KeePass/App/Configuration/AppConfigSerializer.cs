@@ -23,11 +23,11 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
 
 using KeePass.Resources;
 using KeePass.Util;
+using KeePass.Util.XmlSerialization;
 
 using KeePassLib;
 using KeePassLib.Serialization;
@@ -82,6 +82,12 @@ namespace KeePass.App.Configuration
 				m_strGlobalConfigFile = null;
 				m_strUserConfigFile = null;
 			}
+		}
+
+		private static XmlDocument m_xdEnforced = null;
+		public static XmlDocument EnforcedConfigXml
+		{
+			get { return m_xdEnforced; }
 		}
 
 		private static void GetConfigPaths()
@@ -175,9 +181,11 @@ namespace KeePass.App.Configuration
 			{
 				XmlDocument xmlDoc = new XmlDocument();
 				xmlDoc.Load(m_strEnforcedConfigFile);
+
+				m_xdEnforced = xmlDoc;
 				return xmlDoc;
 			}
-			catch(Exception) { }
+			catch(Exception) { m_xdEnforced = null; }
 
 			return null;
 		}
@@ -188,7 +196,7 @@ namespace KeePass.App.Configuration
 			if(string.IsNullOrEmpty(strFilePath)) return null;
 
 			AppConfigEx tConfig = null;
-			XmlSerializer xmlSerial = new XmlSerializer(typeof(AppConfigEx));
+			XmlSerializerEx xmlSerial = new XmlSerializerEx(typeof(AppConfigEx));
 
 			if(xdEnforced == null)
 			{
@@ -249,7 +257,7 @@ namespace KeePass.App.Configuration
 			{
 				if(xdEnforced != null)
 				{
-					XmlSerializer xmlSerial = new XmlSerializer(typeof(AppConfigEx));
+					XmlSerializerEx xmlSerial = new XmlSerializerEx(typeof(AppConfigEx));
 					try
 					{
 						MemoryStream msEnf = new MemoryStream();
@@ -284,7 +292,7 @@ namespace KeePass.App.Configuration
 		{
 			tConfig.OnSavePre();
 
-			XmlSerializer xmlSerial = new XmlSerializer(typeof(AppConfigEx));
+			XmlSerializerEx xmlSerial = new XmlSerializerEx(typeof(AppConfigEx));
 			bool bResult = true;
 
 			// FileStream fs = null;
@@ -297,7 +305,7 @@ namespace KeePass.App.Configuration
 			if(bRemoveConfigPref) tConfig.Meta.PreferUserConfiguration = false;
 
 			XmlWriterSettings xws = new XmlWriterSettings();
-			xws.Encoding = new UTF8Encoding(false);
+			xws.Encoding = StrUtil.Utf8;
 			xws.Indent = true;
 			xws.IndentChars = "\t";
 

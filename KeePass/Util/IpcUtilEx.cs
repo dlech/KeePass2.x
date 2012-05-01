@@ -27,6 +27,7 @@ using System.Threading;
 
 using KeePass.Forms;
 using KeePass.Native;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Cryptography;
@@ -199,6 +200,10 @@ namespace KeePass.Util
 				mf.UIBlockAutoUnlock(true);
 				mf.EnsureVisibleForegroundWindow(true, true);
 				mf.UIBlockAutoUnlock(false);
+
+				// Don't try to open another database while a dialog
+				// is displayed (3489098)
+				if(GlobalWindowManager.WindowCount > 0) return;
 
 				string[] vArgs = CommandLineArgs.SafeDeserialize(ipcMsg.Param0);
 				if(vArgs == null) { Debug.Assert(false); return; }

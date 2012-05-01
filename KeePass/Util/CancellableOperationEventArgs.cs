@@ -21,6 +21,15 @@ using System;
 
 namespace KeePass.Util
 {
+	/// <summary>
+	/// Structure for a cancellable event.
+	/// The difference between this class and the .NET <c>CancelEventArgs</c>
+	/// class is that in <c>CancellableOperationEventArgs</c> once the
+	/// <c>Cancel</c> property has been set to <c>true</c>, it remains
+	/// <c>true</c>, even when trying to set it to <c>false</c> afterwards;
+	/// this allows passing an instance to multiple recipients and cancel
+	/// if at least one of them wants to (the others can't reset the vote).
+	/// </summary>
 	public class CancellableOperationEventArgs : EventArgs
 	{
 		private bool m_bCancel = false;

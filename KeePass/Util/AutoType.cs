@@ -78,6 +78,17 @@ namespace KeePass.Util
 		public static event EventHandler<AutoTypeEventArgs> FilterSendPre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSend;
 
+		public static event EventHandler<SequenceQueryEventArgs> SequenceQuery;
+
+		public static event EventHandler<SequenceQueriesEventArgs> SequenceQueriesBegin;
+		public static event EventHandler<SequenceQueriesEventArgs> SequenceQueriesEnd;
+
+		private static int m_iEventID = 0;
+		public static int GetNextEventID()
+		{
+			return Interlocked.Increment(ref m_iEventID);
+		}
+
 		internal static void InitStatic()
 		{
 			try
@@ -206,8 +217,28 @@ namespace KeePass.Util
 			return AutoType.Execute(ctxNew);
 		}
 
+		private static SequenceQueriesEventArgs GetSequencesForWindowBegin(
+			IntPtr hWnd, string strWindow)
+		{
+			SequenceQueriesEventArgs e = new SequenceQueriesEventArgs(
+				GetNextEventID(), hWnd, strWindow);
+
+			if(AutoType.SequenceQueriesBegin != null)
+				AutoType.SequenceQueriesBegin(null, e);
+
+			return e;
+		}
+
+		private static void GetSequencesForWindowEnd(SequenceQueriesEventArgs e)
+		{
+			if(AutoType.SequenceQueriesEnd != null)
+				AutoType.SequenceQueriesEnd(null, e);
+		}
+
+		// Multiple calls of this method should be wrapped in
+		// GetSequencesForWindowBegin and GetSequencesForWindowEnd
 		private static List<string> GetSequencesForWindow(PwEntry pwe,
-			string strWindow, PwDatabase pdContext)
+			IntPtr hWnd, string strWindow, PwDatabase pdContext, int iEventID)
 		{
 			List<string> l = new List<string>();
 
@@ -273,6 +304,30 @@ namespace KeePass.Util
 				if((strHost.Length > 0) && (strWindow.IndexOf(strHost,
 					StrUtil.CaseIgnoreCmp) >= 0))
 					AddSequence(l, pwe.GetAutoTypeSequence());
+			}
+
+			if(Program.Config.Integration.AutoTypeMatchByTagInTitle)
+			{
+				foreach(string strTag in pwe.Tags)
+				{
+					if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); continue; }
+
+					if(strWindow.IndexOf(strTag, StrUtil.CaseIgnoreCmp) >= 0)
+					{
+						AddSequence(l, pwe.GetAutoTypeSequence());
+						break;
+					}
+				}
+			}
+
+			if(AutoType.SequenceQuery != null)
+			{
+				SequenceQueryEventArgs e = new SequenceQueryEventArgs(iEventID,
+					hWnd, strWindow, pwe, pdContext);
+				AutoType.SequenceQuery(null, e);
+
+				foreach(string strSeq in e.Sequences)
+					AddSequence(l, strSeq);
 			}
 
 			return l;
@@ -359,6 +414,9 @@ namespace KeePass.Util
 			if(string.IsNullOrEmpty(strWindow)) return false;
 			if(!IsValidAutoTypeWindow(hWnd, true)) return false;
 
+			SequenceQueriesEventArgs evQueries = GetSequencesForWindowBegin(
+				hWnd, strWindow);
+
 			List<AutoTypeCtx> lCtxs = new List<AutoTypeCtx>();
 			PwDatabase pdCurrent = null;
 			DateTime dtNow = DateTime.Now;
@@ -368,7 +426,8 @@ namespace KeePass.Util
 				// Ignore expired entries
 				if(pe.Expires && (pe.ExpiryTime < dtNow)) return true;
 
-				List<string> lSeq = GetSequencesForWindow(pe, strWindow, pdCurrent);
+				List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,
+					pdCurrent, evQueries.EventID);
 				foreach(string strSeq in lSeq)
 				{
 					lCtxs.Add(new AutoTypeCtx(strSeq, pe, pdCurrent));
@@ -383,6 +442,8 @@ namespace KeePass.Util
 				pdCurrent = pwSource;
 				pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 			}
+
+			GetSequencesForWindowEnd(evQueries);
 
 			if(lCtxs.Count == 1)
 				AutoType.PerformInternal(lCtxs[0], strWindow);
@@ -447,13 +508,13 @@ namespace KeePass.Util
 			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
+			IntPtr hWnd;
 			string strWindow;
 			try
 			{
-				IntPtr hDummy;
-				NativeMethods.GetForegroundWindowInfo(out hDummy, out strWindow, true);
+				NativeMethods.GetForegroundWindowInfo(out hWnd, out strWindow, true);
 			}
-			catch(Exception) { strWindow = null; }
+			catch(Exception) { hWnd = IntPtr.Zero; strWindow = null; }
 
 			if(!KeePassLib.Native.NativeLib.IsUnix())
 			{
@@ -463,7 +524,14 @@ namespace KeePass.Util
 
 			Thread.Sleep(100);
 
-			List<string> lSeq = GetSequencesForWindow(pe, strWindow, pdContext);
+			SequenceQueriesEventArgs evQueries = GetSequencesForWindowBegin(
+				hWnd, strWindow);
+
+			List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,
+				pdContext, evQueries.EventID);
+
+			GetSequencesForWindowEnd(evQueries);
+
 			if(lSeq.Count == 0) lSeq.Add(pe.GetAutoTypeSequence());
 
 			AutoTypeCtx ctx = new AutoTypeCtx(lSeq[0], pe, pdContext);

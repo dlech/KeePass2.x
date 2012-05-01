@@ -435,5 +435,45 @@ namespace KeePass.Native
 			SendMessageLVGroup(lv.Handle, LVM_SETGROUPINFO,
 				new IntPtr(iGroupID), ref g);
 		} */
+
+		/* internal static int GetGroupIDByIndex(ListView lv, uint uIndex)
+		{
+			if(lv == null) { Debug.Assert(false); return 0; }
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.AssertSize();
+
+			g.mask = NativeMethods.LVGF_GROUPID;
+
+			if(SendMessageLVGroup(lv.Handle, LVM_GETGROUPINFOBYINDEX,
+				new IntPtr((int)uIndex), ref g) == IntPtr.Zero)
+			{
+				Debug.Assert(false);
+			}
+
+			return g.iGroupId;
+		}
+
+		internal static void SetGroupTask(ListView lv, int iGroupID,
+			string strTask)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.AssertSize();
+
+			g.mask = LVGF_TASK;
+
+			g.pszTask = strTask;
+			g.cchTask = (uint)((strTask != null) ? strTask.Length : 0);
+
+			if(SendMessageLVGroup(lv.Handle, LVM_SETGROUPINFO,
+				new IntPtr(iGroupID), ref g) == (new IntPtr(-1)))
+			{
+				Debug.Assert(false);
+			}
+		} */
 	}
 }

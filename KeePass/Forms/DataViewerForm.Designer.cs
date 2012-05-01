@@ -28,37 +28,28 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_picBox = new System.Windows.Forms.PictureBox();
 			this.m_webBrowser = new System.Windows.Forms.WebBrowser();
+			this.m_pnlImageViewer = new System.Windows.Forms.Panel();
+			this.m_statusMain = new System.Windows.Forms.StatusStrip();
+			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
+			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_toolMain = new KeePass.UI.CustomToolStripEx();
 			this.m_tslViewer = new System.Windows.Forms.ToolStripLabel();
 			this.m_tscViewers = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tssSeparator0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tslEncoding = new System.Windows.Forms.ToolStripLabel();
 			this.m_tscEncoding = new System.Windows.Forms.ToolStripComboBox();
-			this.m_pnlImageViewer = new System.Windows.Forms.Panel();
-			this.m_statusMain = new System.Windows.Forms.StatusStrip();
-			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
+			this.m_tslZoom = new System.Windows.Forms.ToolStripLabel();
+			this.m_tscZoom = new System.Windows.Forms.ToolStripComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_picBox)).BeginInit();
-			this.m_toolMain.SuspendLayout();
 			this.m_pnlImageViewer.SuspendLayout();
 			this.m_statusMain.SuspendLayout();
+			this.m_toolMain.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// m_rtbText
-			// 
-			this.m_rtbText.Location = new System.Drawing.Point(23, 40);
-			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.ReadOnly = true;
-			this.m_rtbText.Size = new System.Drawing.Size(190, 114);
-			this.m_rtbText.TabIndex = 0;
-			this.m_rtbText.Text = "";
-			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnRichTextBoxLinkClicked);
 			// 
 			// m_picBox
 			// 
-			this.m_picBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.m_picBox.Location = new System.Drawing.Point(31, 26);
 			this.m_picBox.Name = "m_picBox";
 			this.m_picBox.Size = new System.Drawing.Size(174, 130);
@@ -74,53 +65,9 @@
 			this.m_webBrowser.Size = new System.Drawing.Size(193, 158);
 			this.m_webBrowser.TabIndex = 2;
 			// 
-			// m_toolMain
-			// 
-			this.m_toolMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_tslViewer,
-            this.m_tscViewers,
-            this.m_tssSeparator0,
-            this.m_tslEncoding,
-            this.m_tscEncoding});
-			this.m_toolMain.Location = new System.Drawing.Point(0, 0);
-			this.m_toolMain.Name = "m_toolMain";
-			this.m_toolMain.Size = new System.Drawing.Size(524, 25);
-			this.m_toolMain.TabIndex = 3;
-			this.m_toolMain.TabStop = true;
-			// 
-			// m_tslViewer
-			// 
-			this.m_tslViewer.Name = "m_tslViewer";
-			this.m_tslViewer.Size = new System.Drawing.Size(19, 22);
-			this.m_tslViewer.Text = "<>";
-			// 
-			// m_tscViewers
-			// 
-			this.m_tscViewers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_tscViewers.Name = "m_tscViewers";
-			this.m_tscViewers.Size = new System.Drawing.Size(140, 25);
-			this.m_tscViewers.SelectedIndexChanged += new System.EventHandler(this.OnViewersSelectedIndexChanged);
-			// 
-			// m_tssSeparator0
-			// 
-			this.m_tssSeparator0.Name = "m_tssSeparator0";
-			this.m_tssSeparator0.Size = new System.Drawing.Size(6, 25);
-			// 
-			// m_tslEncoding
-			// 
-			this.m_tslEncoding.Name = "m_tslEncoding";
-			this.m_tslEncoding.Size = new System.Drawing.Size(19, 22);
-			this.m_tslEncoding.Text = "<>";
-			// 
-			// m_tscEncoding
-			// 
-			this.m_tscEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_tscEncoding.Name = "m_tscEncoding";
-			this.m_tscEncoding.Size = new System.Drawing.Size(150, 25);
-			this.m_tscEncoding.SelectedIndexChanged += new System.EventHandler(this.OnEncodingSelectedIndexChanged);
-			// 
 			// m_pnlImageViewer
 			// 
+			this.m_pnlImageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.m_pnlImageViewer.Controls.Add(this.m_picBox);
 			this.m_pnlImageViewer.Location = new System.Drawing.Point(234, 70);
 			this.m_pnlImageViewer.Name = "m_pnlImageViewer";
@@ -144,6 +91,77 @@
 			this.m_tssStatusMain.Text = "<>";
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// m_rtbText
+			// 
+			this.m_rtbText.Location = new System.Drawing.Point(23, 40);
+			this.m_rtbText.Name = "m_rtbText";
+			this.m_rtbText.ReadOnly = true;
+			this.m_rtbText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+			this.m_rtbText.Size = new System.Drawing.Size(190, 114);
+			this.m_rtbText.TabIndex = 0;
+			this.m_rtbText.Text = "";
+			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnRichTextBoxLinkClicked);
+			// 
+			// m_toolMain
+			// 
+			this.m_toolMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_tslViewer,
+            this.m_tscViewers,
+            this.m_tssSeparator0,
+            this.m_tslEncoding,
+            this.m_tscEncoding,
+            this.m_tslZoom,
+            this.m_tscZoom});
+			this.m_toolMain.Location = new System.Drawing.Point(0, 0);
+			this.m_toolMain.Name = "m_toolMain";
+			this.m_toolMain.Size = new System.Drawing.Size(524, 25);
+			this.m_toolMain.TabIndex = 3;
+			this.m_toolMain.TabStop = true;
+			// 
+			// m_tslViewer
+			// 
+			this.m_tslViewer.Name = "m_tslViewer";
+			this.m_tslViewer.Size = new System.Drawing.Size(21, 22);
+			this.m_tslViewer.Text = "<>";
+			// 
+			// m_tscViewers
+			// 
+			this.m_tscViewers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_tscViewers.Name = "m_tscViewers";
+			this.m_tscViewers.Size = new System.Drawing.Size(140, 25);
+			this.m_tscViewers.SelectedIndexChanged += new System.EventHandler(this.OnViewersSelectedIndexChanged);
+			// 
+			// m_tssSeparator0
+			// 
+			this.m_tssSeparator0.Name = "m_tssSeparator0";
+			this.m_tssSeparator0.Size = new System.Drawing.Size(6, 25);
+			// 
+			// m_tslEncoding
+			// 
+			this.m_tslEncoding.Name = "m_tslEncoding";
+			this.m_tslEncoding.Size = new System.Drawing.Size(21, 22);
+			this.m_tslEncoding.Text = "<>";
+			// 
+			// m_tscEncoding
+			// 
+			this.m_tscEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_tscEncoding.Name = "m_tscEncoding";
+			this.m_tscEncoding.Size = new System.Drawing.Size(200, 25);
+			this.m_tscEncoding.SelectedIndexChanged += new System.EventHandler(this.OnEncodingSelectedIndexChanged);
+			// 
+			// m_tslZoom
+			// 
+			this.m_tslZoom.Name = "m_tslZoom";
+			this.m_tslZoom.Size = new System.Drawing.Size(21, 22);
+			this.m_tslZoom.Text = "<>";
+			// 
+			// m_tscZoom
+			// 
+			this.m_tscZoom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_tscZoom.Name = "m_tscZoom";
+			this.m_tscZoom.Size = new System.Drawing.Size(75, 25);
+			this.m_tscZoom.SelectedIndexChanged += new System.EventHandler(this.OnZoomSelectedIndexChanged);
+			// 
 			// DataViewerForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -163,11 +181,11 @@
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_picBox)).EndInit();
-			this.m_toolMain.ResumeLayout(false);
-			this.m_toolMain.PerformLayout();
 			this.m_pnlImageViewer.ResumeLayout(false);
 			this.m_statusMain.ResumeLayout(false);
 			this.m_statusMain.PerformLayout();
+			this.m_toolMain.ResumeLayout(false);
+			this.m_toolMain.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -187,5 +205,7 @@
 		private System.Windows.Forms.Panel m_pnlImageViewer;
 		private System.Windows.Forms.StatusStrip m_statusMain;
 		private System.Windows.Forms.ToolStripStatusLabel m_tssStatusMain;
+		private System.Windows.Forms.ToolStripLabel m_tslZoom;
+		private System.Windows.Forms.ToolStripComboBox m_tscZoom;
 	}
 }

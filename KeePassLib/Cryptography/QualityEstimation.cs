@@ -34,11 +34,10 @@ namespace KeePassLib.Cryptography
 	{
 		private enum CharSpaceBits : uint
 		{
-			Escape = 60,
+			Control = 32,
 			Alpha = 26,
 			Number = 10,
-			SimpleSpecial = 16,
-			ExtendedSpecial = 17,
+			Special = 33,
 			High = 112
 		}
 
@@ -55,8 +54,7 @@ namespace KeePassLib.Cryptography
 			if(vPasswordChars == null) throw new ArgumentNullException("vPasswordChars");
 
 			bool bChLower = false, bChUpper = false, bChNumber = false;
-			bool bChSimpleSpecial = false, bChExtSpecial = false, bChHigh = false;
-			bool bChEscape = false;
+			bool bChSpecial = false, bChHigh = false, bChControl = false;
 			Dictionary<char, uint> vCharCounts = new Dictionary<char, uint>();
 			Dictionary<int, uint> vDifferences = new Dictionary<int, uint>();
 			double dblEffectiveLength = 0.0;
@@ -65,54 +63,56 @@ namespace KeePassLib.Cryptography
 			{
 				char tch = vPasswordChars[i];
 
-				if(tch < ' ') bChEscape = true;
-				if((tch >= 'A') && (tch <= 'Z')) bChUpper = true;
-				if((tch >= 'a') && (tch <= 'z')) bChLower = true;
-				if((tch >= '0') && (tch <= '9')) bChNumber = true;
-				if((tch >= ' ') && (tch <= '/')) bChSimpleSpecial = true;
-				if((tch >= ':') && (tch <= '@')) bChExtSpecial = true;
-				if((tch >= '[') && (tch <= '`')) bChExtSpecial = true;
-				if((tch >= '{') && (tch <= '~')) bChExtSpecial = true;
-				if(tch > '~') bChHigh = true;
+				if(tch < ' ') bChControl = true;
+				else if((tch >= 'A') && (tch <= 'Z')) bChUpper = true;
+				else if((tch >= 'a') && (tch <= 'z')) bChLower = true;
+				else if((tch >= '0') && (tch <= '9')) bChNumber = true;
+				else if((tch >= ' ') && (tch <= '/')) bChSpecial = true;
+				else if((tch >= ':') && (tch <= '@')) bChSpecial = true;
+				else if((tch >= '[') && (tch <= '`')) bChSpecial = true;
+				else if((tch >= '{') && (tch <= '~')) bChSpecial = true;
+				else if(tch > '~') bChHigh = true;
 
 				double dblDiffFactor = 1.0;
 				if(i >= 1)
 				{
 					int iDiff = (int)tch - (int)vPasswordChars[i - 1];
 
-					if(vDifferences.ContainsKey(iDiff) == false)
-						vDifferences.Add(iDiff, 1);
-					else
+					uint uDiffCount;
+					if(vDifferences.TryGetValue(iDiff, out uDiffCount))
 					{
-						vDifferences[iDiff] = vDifferences[iDiff] + 1;
-						dblDiffFactor /= (double)vDifferences[iDiff];
+						++uDiffCount;
+						vDifferences[iDiff] = uDiffCount;
+						dblDiffFactor /= (double)uDiffCount;
 					}
+					else vDifferences.Add(iDiff, 1);
 				}
 
-				if(vCharCounts.ContainsKey(tch) == false)
+				uint uCharCount;
+				if(vCharCounts.TryGetValue(tch, out uCharCount))
+				{
+					++uCharCount;
+					vCharCounts[tch] = uCharCount;
+					dblEffectiveLength += dblDiffFactor * (1.0 / (double)uCharCount);
+				}
+				else
 				{
 					vCharCounts.Add(tch, 1);
 					dblEffectiveLength += dblDiffFactor;
 				}
-				else
-				{
-					vCharCounts[tch] = vCharCounts[tch] + 1;
-					dblEffectiveLength += dblDiffFactor * (1.0 / (double)vCharCounts[tch]);
-				}
 			}
 
-			uint charSpace = 0;
-			if(bChEscape) charSpace += (uint)CharSpaceBits.Escape;
-			if(bChUpper) charSpace += (uint)CharSpaceBits.Alpha;
-			if(bChLower) charSpace += (uint)CharSpaceBits.Alpha;
-			if(bChNumber) charSpace += (uint)CharSpaceBits.Number;
-			if(bChSimpleSpecial) charSpace += (uint)CharSpaceBits.SimpleSpecial;
-			if(bChExtSpecial) charSpace += (uint)CharSpaceBits.ExtendedSpecial;
-			if(bChHigh) charSpace += (uint)CharSpaceBits.High;
+			uint uCharSpace = 0;
+			if(bChControl) uCharSpace += (uint)CharSpaceBits.Control;
+			if(bChUpper) uCharSpace += (uint)CharSpaceBits.Alpha;
+			if(bChLower) uCharSpace += (uint)CharSpaceBits.Alpha;
+			if(bChNumber) uCharSpace += (uint)CharSpaceBits.Number;
+			if(bChSpecial) uCharSpace += (uint)CharSpaceBits.Special;
+			if(bChHigh) uCharSpace += (uint)CharSpaceBits.High;
 
-			if(charSpace == 0) return 0;
+			if(uCharSpace == 0) return 0;
 
-			double dblBitsPerChar = Math.Log((double)charSpace) / Math.Log(2.0);
+			double dblBitsPerChar = Math.Log((double)uCharSpace) / Math.Log(2.0);
 			double dblRating = dblBitsPerChar * dblEffectiveLength;
 
 #if !KeePassLibSD

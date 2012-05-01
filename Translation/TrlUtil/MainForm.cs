@@ -30,6 +30,7 @@ using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.XmlSerialization;
 
 using KeePassLib;
 using KeePassLib.Resources;
@@ -143,6 +144,9 @@ namespace TrlUtil
 			KPStringTable kpstSM = new KPStringTable();
 			kpstSM.Name = "KeePass.Forms.PwEntryForm.m_ctxStrMoveToStandard";
 			m_trl.StringTables.Add(kpstSM);
+			KPStringTable kpstBA = new KPStringTable();
+			kpstBA.Name = "KeePass.Forms.PwEntryForm.m_ctxBinAttach";
+			m_trl.StringTables.Add(kpstBA);
 			KPStringTable kpstTT = new KPStringTable();
 			kpstTT.Name = "KeePass.Forms.EcasTriggersForm.m_ctxTools";
 			m_trl.StringTables.Add(kpstTT);
@@ -279,6 +283,10 @@ namespace TrlUtil
 			m_lvStrings.Groups.Add(lvg);
 			TrlAddMenuCommands(kpstSM, lvg, ef.StandardStringMovementContextMenu.Items);
 
+			lvg = new ListViewGroup("Entry Attachments Context Menu Commands");
+			m_lvStrings.Groups.Add(lvg);
+			TrlAddMenuCommands(kpstBA, lvg, ef.AttachmentsContextMenu.Items);
+
 			Type tSD = typeof(KSRes);
 			lvg = new ListViewGroup("KeePassLibSD Strings");
 			m_lvStrings.Groups.Add(lvg);
@@ -391,7 +399,11 @@ namespace TrlUtil
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
 			KPTranslation kpTrl = null;
-			try { kpTrl = KPTranslation.LoadFromFile(ofd.FileName); }
+			try
+			{
+				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+				kpTrl = KPTranslation.LoadFromFile(ofd.FileName, xs);
+			}
 			catch(Exception ex)
 			{
 				MessageBox.Show(ex.Message, "TrlUtil", MessageBoxButtons.OK,
@@ -528,7 +540,8 @@ namespace TrlUtil
 
 			try
 			{
-				KPTranslation.SaveToFile(m_trl, m_strFile);
+				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+				KPTranslation.SaveToFile(m_trl, m_strFile, xs);
 				m_bModified = false;
 			}
 			catch(Exception ex)
@@ -638,8 +651,8 @@ namespace TrlUtil
 				if(iIndex < m_lvStrings.Items.Count - 1)
 				{
 					lvsic[0].Selected = false;
-					m_lvStrings.Items[iIndex + 1].Selected = true;
-					m_lvStrings.FocusedItem = m_lvStrings.Items[iIndex + 1];
+					UIUtil.SetFocusedItem(m_lvStrings, m_lvStrings.Items[
+						iIndex + 1], true);
 				}
 
 				m_bModified = true;
@@ -852,7 +865,7 @@ namespace TrlUtil
 				{
 					if(lvsi.Text.IndexOf(strFind, StrUtil.CaseIgnoreCmp) >= 0)
 					{
-						m_lvStrings.FocusedItem = lvi;
+						UIUtil.SetFocusedItem(m_lvStrings, lvi, false);
 						m_lvStrings.SelectedItems.Clear();
 						lvi.Selected = true;
 

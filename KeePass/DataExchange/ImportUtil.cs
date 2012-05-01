@@ -360,16 +360,18 @@ namespace KeePass.DataExchange
 			"service", "servicename", "service name",
 			"head", "heading", "card", "product", "provider", "bank",
 
+			// Non-English names
 			"seite"
 		};
 
 		private static readonly string[] m_vUserNames = {
-			"user", "name", "user name", "username",
+			"user", "name", "user name", "username", "login name",
 			"email", "e-mail", "id", "userid", "user id",
 			"login", "form_loginname", "wpname", "mail",
-			"loginid", "login id", "first name", "last name",
-			"card#",
+			"loginid", "login id", "log",
+			"first name", "last name", "card#",
 
+			// Non-English names
 			"nom"
 		};
 
@@ -379,7 +381,7 @@ namespace KeePass.DataExchange
 			"secret", "secret word",
 			"key", "keyword", "key word", "keyphrase", "key phrase",
 			"form_pw", "wppassword", "pin", "pwd", "pw", "pword",
-			"serial", "serial#",
+			"p", "serial", @"serial#"
 		};
 
 		private static readonly string[] m_vUrls = {
@@ -387,6 +389,7 @@ namespace KeePass.DataExchange
 			"host", "address", "hyper ref", "href",
 			"web", "website", "web site", "site",
 
+			// Non-English names
 			"ort"
 		};
 

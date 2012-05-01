@@ -9,7 +9,6 @@
 	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
 
 	<meta name="robots" content="index" />
-	<meta name="revisit-after" content="14 days" />
 
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
@@ -72,6 +71,7 @@ startup?</a></li>
 
 
 
+<li><a href="#internet">Why does KeePass try to connect to the Internet?</a></li>
 </ul>
 
 Security:
@@ -89,6 +89,7 @@ Usage:
 <ul>
 <li><a href="#editattach">Can I directly edit file attachments?</a></li>
 <li><a href="#rtftext">How to store and work with large amounts of (formatted) text?</a></li>
+<li><a href="#email">Can an e-mail address field be added?</a></li>
 </ul>
 
 <br />
@@ -356,6 +357,25 @@ manually print the document in the application that just opened the file.</p>
 <br />
 
 
+<a name="internet"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
+does KeePass try to connect to the Internet?</h2>
+
+<p>KeePass has an option to automatically check for updates on each program start.
+In order to check for updates, KeePass downloads a small version information
+file and compares the available version with the installed version.
+No personal information is sent to the KeePass web server.</p>
+
+<p>Automatic update checks are performed unintrusively in the background.
+A notification is only displayed when an update is available. Updates are not
+downloaded or installed automatically.</p>
+
+<p>The option is disabled by default. You can enable/disable it in
+'Tools' -&gt; 'Options' -&gt; tab 'Advanced'.</p>
+
+<br />
+
 <a name="autotypelog"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_ktouch.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Is
@@ -595,7 +615,8 @@ to store and work with large amounts of (formatted) text?</h2>
 KeePass has a built-in editor that allows working conveniently with
 large amounts of (formatted) texts.<br />
 <br />
-To add a large text to an entry, import the file as attachment.
+To add a large text to an entry, import the file as attachment
+(or click 'Attach' -&gt; 'Create Empty Attachment').
 The built-in editor supports *.TXT (simple text) and *.RTF (formatted text) files.<br />
 <br />
 In order to edit an attachment, right-click onto the entry in the main window,
@@ -616,6 +637,76 @@ strikeout, text and background colors, align left / center / right, etc.
 alt="Editor screenshot" /></a>
 </td></tr></table>
 
+
+<br /><br />
+
+<a name="email"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Can
+an e-mail address field be added?</h2>
+
+<p>A few times it has been requested that a standard entry field for e-mail addresses
+is added (on the main tab page in the entry editing dialog).
+The short answer: an e-mail address field will not be added
+due to usability reasons. Now the long answer.</p>
+
+<p>First of all, let's assume that most of the entries stored in KeePass
+contain information for logging in to websites.
+When you register an account for a website, you often have to specify a
+user name as well as an e-mail address. When you regularly
+log in later, you usually only need to provide either user name + password
+or e-mail + password (never user name + e-mail + password).
+Here the first part (which is either user name or e-mail) serves as
+identification: you tell the website who you are.
+The second part (password) provides authentication: you prove to the
+website that you're really the one who you claim to be.</p>
+
+<p>There are various methods how KeePass can transfer data to
+other applications. All of these methods by default assume that the content
+of the user name field is used for identification. For example,
+the default <a href="autotype.html#autoseq">auto-type sequence</a> of
+an entry is
+<code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>, the default
+<a href="http://keepass.info/plugins.html#formfiller" target="_blank">KeeForm</a>
+configuration uses the user name, etc.
+Now on the one hand some websites require an e-mail address instead
+of a user name. On the other hand we want the default data transfer configuration
+to work for most websites (such that the work that the user has to put
+into the configuration is kept minimal and only needed for
+websites using special login forms).</p>
+
+<p>The solution is simple: instead of interpreting the 'User Name' field
+strictly as a field containing a user name, users should rather interpret
+it as a field in which the data required for identification is stored.
+This data can consist of a user name, an e-mail address or something else
+(e.g. an account number for an online banking website).
+By handling it like this, the default data transfer configuration will work for most
+websites, i.e. zero amount of work needs to be put into
+the configuration.
+If you had to provide both a user name and an e-mail address at
+registration time, the other information (which isn't required
+on a regular basis) can be stored e.g. in
+the notes field or a custom string field of the KeePass entry.</p>
+
+<p>Now assume a separate e-mail field would be added.
+When users store both a user name and an e-mail address,
+KeePass cannot know which of the two is required for identification.
+So, in order to setup data transfer for the entry, users would be forced
+to choose which of the two fields should be used.</p>
+
+<p>So, adding an e-mail field would be a step back in usability,
+because it forces users to put additional time into data transfer configuration.
+The current system ('User Name' containing identification information,
+without a separate e-mail field) doesn't require this, and thus is
+the better solution.</p>
+
+<p>For users that are willing to manually configure the data transfer for each
+entry, there are multiple ways to get a separate e-mail address field.
+After switching to the 'Advanced' tab in the entry editing dialog,
+an e-mail address field can be added as custom string.
+If the field should appear on the main tab page of the dialog, the
+<a href="http://keepass.info/plugins.html#kpentrytemplates"
+target="_blank">KPEntryTemplates</a> plugin can be used.</p>
 
 </body></html>
 

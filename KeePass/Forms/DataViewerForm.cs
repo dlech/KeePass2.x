@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -47,9 +49,12 @@ namespace KeePass.Forms
 
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
-		public event EventHandler<DvfContextEventArgs> Initializing;
-		public event EventHandler<DvfContextEventArgs> UpdatingDataView;
-		public event EventHandler<DvfContextEventArgs> Uninitializing;
+		private Image m_img = null;
+		private Image m_imgResized = null;
+
+		public event EventHandler<DvfContextEventArgs> DvfInit;
+		public event EventHandler<DvfContextEventArgs> DvfUpdating;
+		public event EventHandler<DvfContextEventArgs> DvfRelease;
 
 		public void InitEx(string strDataDesc, byte[] pbData)
 		{
@@ -73,53 +78,44 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
-			m_tslViewer.Text = KPRes.ShowIn + ":";
-			m_tslEncoding.Text = KPRes.Encoding + ":";
-
 			if(m_strDataDesc.Length > 0)
 				this.Text = m_strDataDesc + " - " + this.Text;
 
 			this.DoubleBuffered = true;
 
-			m_tssStatusMain.Text = KPRes.Ready;
-
-			m_ctxText.Attach(m_rtbText, this);
-
 			m_bInitializing = true;
 
+			m_tssStatusMain.Text = KPRes.Ready;
+			m_ctxText.Attach(m_rtbText, this);
 			m_rtbText.Dock = DockStyle.Fill;
 			m_webBrowser.Dock = DockStyle.Fill;
 			m_pnlImageViewer.Dock = DockStyle.Fill;
 			m_picBox.Dock = DockStyle.Fill;
 
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeAnsi + " (" +
-				KPRes.SystemCodePage + ")");
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeAscii);
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUtf7);
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUtf8);
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUtf32);
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUnicodeLE);
-			m_tscEncoding.Items.Add(BinaryDataClassifier.BdeUnicodeBE);
+			m_tslEncoding.Text = KPRes.Encoding + ":";
 
-			string strEnc;
-			Encoding enc = BinaryDataClassifier.GetStringEncoding(m_pbData,
-				false, out strEnc, out m_uStartOffset);
+			foreach(StrEncodingInfo seiEnum in StrUtil.Encodings)
+			{
+				m_tscEncoding.Items.Add(seiEnum.Name);
+			}
 
-			if(strEnc == BinaryDataClassifier.BdeAnsi)
-				m_tscEncoding.SelectedIndex = 0;
-			else if(strEnc == BinaryDataClassifier.BdeAscii)
-				m_tscEncoding.SelectedIndex = 1;
-			else if(strEnc == BinaryDataClassifier.BdeUtf7)
-				m_tscEncoding.SelectedIndex = 2;
-			else if(strEnc == BinaryDataClassifier.BdeUtf8)
-				m_tscEncoding.SelectedIndex = 3;
-			else if(strEnc == BinaryDataClassifier.BdeUtf32)
-				m_tscEncoding.SelectedIndex = 4;
-			else if(strEnc == BinaryDataClassifier.BdeUnicodeLE)
-				m_tscEncoding.SelectedIndex = 5;
-			else if(strEnc == BinaryDataClassifier.BdeUnicodeBE)
-				m_tscEncoding.SelectedIndex = 6;
-			else m_tscEncoding.SelectedIndex = 0;
+			StrEncodingInfo seiGuess = BinaryDataClassifier.GetStringEncoding(
+				m_pbData, out m_uStartOffset);
+
+			int iSel = 0;
+			if(seiGuess != null)
+				iSel = Math.Max(m_tscEncoding.FindStringExact(seiGuess.Name), 0);
+			m_tscEncoding.SelectedIndex = iSel;
+
+			m_tslZoom.Text = KPRes.Zoom + ":";
+
+			m_tscZoom.Items.Add(KPRes.Auto);
+			int[] vZooms = new int[] { 10, 25, 50, 75, 100, 125, 150, 200, 400 };
+			foreach(int iZoom in vZooms)
+				m_tscZoom.Items.Add(iZoom.ToString() + @"%");
+			m_tscZoom.SelectedIndex = 0;
+
+			m_tslViewer.Text = KPRes.ShowIn + ":";
 
 			m_tscViewers.Items.Add(KPRes.TextViewer);
 			m_tscViewers.Items.Add(KPRes.ImageViewer);
@@ -133,12 +129,12 @@ namespace KeePass.Forms
 			else if(m_bdc == BinaryDataClass.WebDocument) m_tscViewers.SelectedIndex = 2;
 			else m_tscViewers.SelectedIndex = 0;
 
-			if(this.Initializing != null)
-				this.Initializing(this, new DvfContextEventArgs(this,
-					m_pbData, m_strDataDesc, m_tscViewers));
+			if(this.DvfInit != null)
+				this.DvfInit(this, new DvfContextEventArgs(this, m_pbData,
+					m_strDataDesc, m_tscViewers));
 
 			m_bInitializing = false;
-			UpdateDataView(enc);
+			UpdateDataView();
 		}
 
 		private void OnRichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)
@@ -146,37 +142,22 @@ namespace KeePass.Forms
 			WinUtil.OpenUrl(e.LinkText, null);
 		}
 
-		private string BinaryDataToString(Encoding enc)
+		private string BinaryDataToString()
 		{
-			if(enc == null)
+			string strEnc = m_tscEncoding.Text;
+			StrEncodingInfo sei = StrUtil.GetEncoding(strEnc);
+
+			try
 			{
-				string strEnc = m_tscEncoding.Text;
-
-				if(strEnc == (BinaryDataClassifier.BdeAnsi + " (" +
-					KPRes.SystemCodePage + ")"))
-				{
-					enc = Encoding.Default;
-				}
-				else if(strEnc == BinaryDataClassifier.BdeAscii)
-					enc = Encoding.ASCII;
-				else if(strEnc == BinaryDataClassifier.BdeUtf7)
-					enc = Encoding.UTF7;
-				else if(strEnc == BinaryDataClassifier.BdeUtf8)
-					enc = new UTF8Encoding(false);
-				else if(strEnc == BinaryDataClassifier.BdeUtf32)
-					enc = Encoding.UTF32;
-				else if(strEnc == BinaryDataClassifier.BdeUnicodeLE)
-					enc = Encoding.Unicode;
-				else if(strEnc == BinaryDataClassifier.BdeUnicodeBE)
-					enc = Encoding.BigEndianUnicode;
-				else enc = Encoding.Default;
+				return (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
+					m_pbData.Length - (int)m_uStartOffset) ?? string.Empty);
 			}
+			catch(Exception) { }
 
-			return enc.GetString(m_pbData, (int)m_uStartOffset,
-				m_pbData.Length - (int)m_uStartOffset);
+			return string.Empty;
 		}
 
-		private void UpdateDataView(Encoding enc)
+		private void UpdateDataView()
 		{
 			if(m_bInitializing) return;
 
@@ -187,23 +168,29 @@ namespace KeePass.Forms
 
 			string strViewer = m_tscViewers.Text;
 
-			m_tssSeparator0.Visible = m_tslEncoding.Visible =
-				m_tscEncoding.Visible = !(strViewer == KPRes.ImageViewer);
+			bool bText = ((strViewer == KPRes.TextViewer) ||
+				(strViewer == KPRes.WebBrowser));
+			bool bImage = (strViewer == KPRes.ImageViewer);
+
+			m_tssSeparator0.Visible = (bText || bImage);
+			m_tslEncoding.Visible = m_tscEncoding.Visible = bText;
+			m_tslZoom.Visible = m_tscZoom.Visible = bImage;
 
 			try
 			{
-				if(this.UpdatingDataView != null)
+				if(this.DvfUpdating != null)
 				{
 					DvfContextEventArgs args = new DvfContextEventArgs(this,
 						m_pbData, m_strDataDesc, m_tscViewers);
-					this.UpdatingDataView(this, args);
+					this.DvfUpdating(this, args);
 					if(args.Cancel) return;
 				}
 
 				if(strViewer == KPRes.TextViewer)
 				{
-					string strData = BinaryDataToString(enc);
+					string strData = BinaryDataToString();
 
+					m_rtbText.Clear(); // Clear formatting
 					if(m_bdc == BinaryDataClass.RichText) m_rtbText.Rtf = strData;
 					else m_rtbText.Text = strData;
 
@@ -211,17 +198,17 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == KPRes.ImageViewer)
 				{
-					Image img = UIUtil.LoadImage(m_pbData);
-					m_picBox.Image = img;
+					if(m_img == null) m_img = UIUtil.LoadImage(m_pbData);
+					// m_picBox.Image = m_img;
 
 					m_pnlImageViewer.Visible = true;
 					m_picBox.Visible = true;
 
-					OnFormSizeChanged(null, null);
+					UpdateImageView();
 				}
 				else if(strViewer == KPRes.WebBrowser)
 				{
-					string strData = BinaryDataToString(enc);
+					string strData = BinaryDataToString();
 
 					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
 
@@ -233,41 +220,134 @@ namespace KeePass.Forms
 
 		private void OnViewersSelectedIndexChanged(object sender, EventArgs e)
 		{
-			UpdateDataView(null);
+			UpdateDataView();
 		}
 
 		private void OnEncodingSelectedIndexChanged(object sender, EventArgs e)
 		{
-			UpdateDataView(null);
+			UpdateDataView();
 		}
 
 		private void OnFormSizeChanged(object sender, EventArgs e)
 		{
-			Image img = m_picBox.Image;
-			if(img != null)
+			UpdateImageView();
+		}
+
+		private void UpdateImageView()
+		{
+			if(m_img == null) return;
+
+			string strZoom = m_tscZoom.Text;
+			if(string.IsNullOrEmpty(strZoom) || (strZoom == KPRes.Auto))
 			{
-				if((img.Width > m_picBox.ClientSize.Width) ||
-					(img.Height > m_picBox.ClientSize.Height))
+				m_pnlImageViewer.AutoScroll = false;
+				m_picBox.Dock = DockStyle.Fill;
+				m_picBox.Image = m_img;
+
+				if((m_img.Width > m_picBox.ClientSize.Width) ||
+					(m_img.Height > m_picBox.ClientSize.Height))
 				{
 					m_picBox.SizeMode = PictureBoxSizeMode.Zoom;
 				}
 				else m_picBox.SizeMode = PictureBoxSizeMode.CenterImage;
+
+				return;
 			}
+
+			if(!strZoom.EndsWith(@"%")) { Debug.Assert(false); return; }
+
+			int iZoom;
+			if(!int.TryParse(strZoom.Substring(0, strZoom.Length - 1), out iZoom))
+			{
+				Debug.Assert(false);
+				return;
+			}
+
+			int cliW = m_pnlImageViewer.ClientRectangle.Width;
+			int cliH = m_pnlImageViewer.ClientRectangle.Height;
+
+			int dx = (m_img.Width * iZoom) / 100;
+			int dy = (m_img.Height * iZoom) / 100;
+
+			float fScrollX = 0.5f, fScrollY = 0.5f;
+			if(m_pnlImageViewer.AutoScroll)
+			{
+				Point ptOffset = m_pnlImageViewer.AutoScrollPosition;
+				Size sz = m_picBox.ClientSize;
+
+				if(sz.Width > cliW)
+				{
+					fScrollX = Math.Abs((float)ptOffset.X / (float)(sz.Width - cliW));
+					if(fScrollX < 0.0f) { Debug.Assert(false); fScrollX = 0.0f; }
+					if(fScrollX > 1.0f) { Debug.Assert(false); fScrollX = 1.0f; }
+				}
+
+				if(sz.Height > cliH)
+				{
+					fScrollY = Math.Abs((float)ptOffset.Y / (float)(sz.Height - cliH));
+					if(fScrollY < 0.0f) { Debug.Assert(false); fScrollY = 0.0f; }
+					if(fScrollY > 1.0f) { Debug.Assert(false); fScrollY = 1.0f; }
+				}
+			}
+			m_pnlImageViewer.AutoScroll = false;
+
+			m_picBox.Dock = DockStyle.None;
+			m_picBox.SizeMode = PictureBoxSizeMode.AutoSize;
+
+			int x = 0, y = 0;
+			if(dx < cliW) x = (cliW - dx) / 2;
+			if(dy < cliH) y = (cliH - dy) / 2;
+
+			m_picBox.Location = new Point(x, y);
+
+			if((dx == m_img.Width) && (dy == m_img.Height))
+				m_picBox.Image = m_img;
+			else if((m_imgResized != null) && (m_imgResized.Width == dx) &&
+				(m_imgResized.Height == dy))
+				m_picBox.Image = m_imgResized;
+			else
+			{
+				Image imgToDispose = m_imgResized;
+
+				Image img = new Bitmap(dx, dy, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(img))
+				{
+					g.InterpolationMode = InterpolationMode.High;
+					g.SmoothingMode = SmoothingMode.HighQuality;
+					g.DrawImage(m_img, 0, 0, img.Width, img.Height);
+				}
+				m_imgResized = img;
+				m_picBox.Image = m_imgResized;
+
+				if(imgToDispose != null) imgToDispose.Dispose();
+			}
+
+			m_pnlImageViewer.AutoScroll = true;
+
+			int sx = 0, sy = 0;
+			if(dx > cliW) sx = (int)(fScrollX * (float)(dx - cliW));
+			if(dy > cliH) sy = (int)(fScrollY * (float)(dy - cliH));
+			try { m_pnlImageViewer.AutoScrollPosition = new Point(sx, sy); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
-			if(this.Uninitializing != null)
+			if(this.DvfRelease != null)
 			{
 				DvfContextEventArgs args = new DvfContextEventArgs(this,
 					m_pbData, m_strDataDesc, m_tscViewers);
-				this.Uninitializing(sender, args);
+				this.DvfRelease(sender, args);
 				if(args.Cancel)
 				{
 					e.Cancel = true;
 					return;
 				}
 			}
+
+			m_picBox.Image = null;
+			if(m_img != null) { m_img.Dispose(); m_img = null; }
+			if(m_imgResized != null) { m_imgResized.Dispose(); m_imgResized = null; }
 
 			m_ctxText.Detach();
 			GlobalWindowManager.RemoveWindow(this);
@@ -287,9 +367,14 @@ namespace KeePass.Forms
 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
+
+		private void OnZoomSelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateImageView();
+		}
 	}
 
-	public sealed class DvfContextEventArgs : CancelEventArgs
+	public sealed class DvfContextEventArgs : CancellableOperationEventArgs
 	{
 		private DataViewerForm m_form;
 		public DataViewerForm Form { get { return m_form; } }
@@ -304,8 +389,7 @@ namespace KeePass.Forms
 		public ToolStripComboBox ViewersComboBox { get { return m_tscViewers; } }
 
 		public DvfContextEventArgs(DataViewerForm form, byte[] pbData,
-			string strDataDesc, ToolStripComboBox cbViewers) :
-			base(false)
+			string strDataDesc, ToolStripComboBox cbViewers)
 		{
 			m_form = form;
 			m_pbData = pbData;

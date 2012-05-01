@@ -232,10 +232,7 @@ namespace KeePass.UI
 			AddAppByFile(AppLocator.InternetExplorerPath, @"&Internet Explorer");
 			AddAppByFile(AppLocator.FirefoxPath, @"&Firefox");
 			AddAppByFile(AppLocator.OperaPath, @"O&pera");
-
-			AddAppByFile(AppLocator.ChromePath, (NativeLib.IsUnix() ?
-				@"&Google Chromium" : @"&Google Chrome"));
-
+			AddAppByFile(AppLocator.ChromePath, @"&Google Chrome");
 			AddAppByFile(AppLocator.SafariPath, @"&Safari");
 
 			if(NativeLib.IsUnix())

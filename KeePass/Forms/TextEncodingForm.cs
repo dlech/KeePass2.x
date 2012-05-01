@@ -29,6 +29,8 @@ using KeePass.UI;
 using KeePass.Util;
 using KeePass.Resources;
 
+using KeePassLib.Utility;
+
 namespace KeePass.Forms
 {
 	public partial class TextEncodingForm : Form
@@ -37,24 +39,7 @@ namespace KeePass.Forms
 		private byte[] m_pbData = null;
 		private bool m_bInitializing = false;
 		private Encoding m_encSel = null;
-
-		private string[] m_vEncText = new string[] {
-			KPRes.BinaryNoConv,
-			BinaryDataClassifier.BdeAnsi + " (" + KPRes.SystemCodePage + ")",
-			BinaryDataClassifier.BdeAscii,
-			BinaryDataClassifier.BdeUtf7, BinaryDataClassifier.BdeUtf8,
-			BinaryDataClassifier.BdeUtf32,
-			BinaryDataClassifier.BdeUnicodeLE, BinaryDataClassifier.BdeUnicodeBE
-		};
-
-		private Encoding[] m_vEnc = new Encoding[] {
-			null,
-			Encoding.Default,
-			Encoding.ASCII,
-			Encoding.UTF7, new UTF8Encoding(false),
-			Encoding.UTF32,
-			Encoding.Unicode, Encoding.BigEndianUnicode
-		};
+		private uint m_uStartOffset = 0;
 
 		public Encoding SelectedEncoding
 		{
@@ -81,15 +66,17 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_lblContext);
 			m_lblContext.Text = m_strContext;
 
-			foreach(string strEnc in m_vEncText)
-				m_cmbEnc.Items.Add(strEnc);
+			m_cmbEnc.Items.Add(KPRes.BinaryNoConv);
+			foreach(StrEncodingInfo sei in StrUtil.Encodings)
+				m_cmbEnc.Items.Add(sei.Name);
 
-			string strDet;
-			uint uStartOffset;
-			BinaryDataClassifier.GetStringEncoding(m_pbData, false,
-				out strDet, out uStartOffset);
-			int iDet = Array.IndexOf<string>(m_vEncText, strDet);
-			m_cmbEnc.SelectedIndex = ((iDet >= 0) ? iDet : 0);
+			StrEncodingInfo seiGuess = BinaryDataClassifier.GetStringEncoding(
+				m_pbData, out m_uStartOffset);
+
+			int iSel = 0;
+			if(seiGuess != null)
+				iSel = Math.Max(m_cmbEnc.FindStringExact(seiGuess.Name), 0);
+			m_cmbEnc.SelectedIndex = iSel;
 
 			m_bInitializing = false;
 			UpdateTextPreview();
@@ -100,17 +87,24 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
+		private Encoding GetSelEnc()
+		{
+			StrEncodingInfo sei = StrUtil.GetEncoding(m_cmbEnc.Text);
+			return ((sei != null) ? sei.Encoding : null);
+		}
+
 		private void UpdateTextPreview()
 		{
 			if(m_bInitializing) return;
-			if(m_pbData == null) { Debug.Assert(false); return; }
 
+			m_rtbPreview.Clear(); // Clear formatting
 			try
 			{
-				Encoding enc = m_vEnc[m_cmbEnc.SelectedIndex];
-				if(enc == null) enc = new UTF8Encoding(false);
+				Encoding enc = GetSelEnc();
+				if(enc == null) throw new InvalidOperationException();
 
-				m_rtbPreview.Text = enc.GetString(m_pbData);
+				m_rtbPreview.Text = enc.GetString(m_pbData, (int)m_uStartOffset,
+					m_pbData.Length - (int)m_uStartOffset);
 			}
 			catch(Exception) { m_rtbPreview.Text = string.Empty; }
 		}
@@ -122,7 +116,7 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			m_encSel = m_vEnc[m_cmbEnc.SelectedIndex];
+			m_encSel = GetSelEnc();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

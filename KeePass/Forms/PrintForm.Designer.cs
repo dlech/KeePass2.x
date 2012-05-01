@@ -364,9 +364,9 @@
 			this.m_cbExpire.AutoSize = true;
 			this.m_cbExpire.Location = new System.Drawing.Point(360, 42);
 			this.m_cbExpire.Name = "m_cbExpire";
-			this.m_cbExpire.Size = new System.Drawing.Size(94, 17);
+			this.m_cbExpire.Size = new System.Drawing.Size(76, 17);
 			this.m_cbExpire.TabIndex = 8;
-			this.m_cbExpire.Text = "Expiration time";
+			this.m_cbExpire.Text = "Expiry time";
 			this.m_cbExpire.UseVisualStyleBackColor = true;
 			// 
 			// m_cbNotes

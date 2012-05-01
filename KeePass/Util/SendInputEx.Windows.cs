@@ -304,23 +304,39 @@ namespace KeePass.Util
 			}
 		} */
 
+		private static Dictionary<string, char> m_dictNativeChars = null;
+		private static string[] m_vNativeCharKeys = null;
 		private static void OSSendKeysWindows(string strSequence)
 		{
 			// Workaround for ^/& .NET SendKeys bug:
 			// https://connect.microsoft.com/VisualStudio/feedback/details/93922/sendkeys-send-sends-wrong-character
 
-			string[] vSpecial = new string[]{ @"{^}", @"{%}", @"´", @"`", @"@" };
-			List<string> vSend = StrUtil.SplitWithSep(strSequence, vSpecial, true);
+			if(m_dictNativeChars == null)
+			{
+				m_dictNativeChars = new Dictionary<string, char>();
+				m_dictNativeChars[@"{^}"] = '^';
+				m_dictNativeChars[@"{%}"] = '%';
+				m_dictNativeChars[@"´"] = '´';
+				m_dictNativeChars[@"`"] = '`';
+				m_dictNativeChars[@"@"] = '@';
+				m_dictNativeChars[@"°"] = '°';
+				m_dictNativeChars[@"£"] = '£';
+				m_dictNativeChars[@"|"] = '|';
+
+				List<string> lKeys = new List<string>(m_dictNativeChars.Keys);
+				m_vNativeCharKeys = lKeys.ToArray();
+			}
+
+			List<string> vSend = StrUtil.SplitWithSep(strSequence,
+				m_vNativeCharKeys, true);
 
 			foreach(string strSend in vSend)
 			{
 				if(string.IsNullOrEmpty(strSend)) continue;
 
-				if(strSend.Equals(@"{^}")) SendCharNative('^');
-				else if(strSend.Equals(@"{%}")) SendCharNative('%');
-				else if(strSend.Equals(@"´")) SendCharNative('´');
-				else if(strSend.Equals(@"`")) SendCharNative('`');
-				else if(strSend.Equals(@"@")) SendCharNative('@');
+				char chNative;
+				if(m_dictNativeChars.TryGetValue(strSend, out chNative))
+					SendCharNative(chNative);
 				else SendKeys.SendWait(strSend);
 			}
 		}

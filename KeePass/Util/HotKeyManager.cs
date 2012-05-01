@@ -61,7 +61,7 @@ namespace KeePass.Util
 
 		public static bool RegisterHotKey(int nId, Keys kKey)
 		{
-			if(kKey == Keys.None) return false;
+			UnregisterHotKey(nId);
 
 			uint uMod = 0;
 			if((kKey & Keys.Shift) != Keys.None) uMod |= NativeMethods.MOD_SHIFT;
@@ -69,8 +69,7 @@ namespace KeePass.Util
 			if((kKey & Keys.Control) != Keys.None) uMod |= NativeMethods.MOD_CONTROL;
 
 			uint vkCode = (uint)(kKey & Keys.KeyCode);
-
-			UnregisterHotKey(nId);
+			if(vkCode == (uint)Keys.None) return false; // Don't register mod keys only
 
 			try
 			{
@@ -126,20 +125,10 @@ namespace KeePass.Util
 
 		public static void UnregisterAll()
 		{
-			try
-			{
-				foreach(KeyValuePair<int, Keys> kvp in m_vRegKeys)
-				{
-					if(!NativeLib.IsUnix())
-						NativeMethods.UnregisterHotKey(m_fRecvWnd.Handle, kvp.Key);
-					// else // Unix
-					//	NativeMethods.tomboy_keybinder_unbind(
-					//		EggAccKeysToString(kvp.Value), m_hOnHotKey);
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+			List<int> vIDs = new List<int>(m_vRegKeys.Keys);
+			foreach(int nID in vIDs) UnregisterHotKey(nID);
 
-			m_vRegKeys.Clear();
+			Debug.Assert(m_vRegKeys.Count == 0);
 		}
 
 		/* private static void OnHotKey(string strKey, IntPtr lpUserData)

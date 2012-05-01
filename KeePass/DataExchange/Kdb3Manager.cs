@@ -492,7 +492,7 @@ namespace KeePass.DataExchange
 	}
 
 	/// <summary>
-	/// Manager class for Kdb3 files. It can load/save databases, add/change/delete
+	/// Manager class for KDB3 files. It can load/save databases, add/change/delete
 	/// groups and entries, check for KeePassLibC library existence and version, etc.
 	/// </summary>
 	public sealed class Kdb3Manager
@@ -518,8 +518,6 @@ namespace KeePass.DataExchange
 		private static extern UInt32 GetKeePassVersion64();
 		/// <summary>
 		/// Get the KeePass version, which the KeePassLibC library supports.
-		/// Examples: KeePass version 1.05 is encoded as 0x01000501, version
-		/// 1.06 is 0x01000601.
 		/// </summary>
 		public static UInt32 KeePassVersion
 		{

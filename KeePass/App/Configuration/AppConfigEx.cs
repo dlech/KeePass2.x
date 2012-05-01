@@ -20,10 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
+using System.Xml;
 using System.Xml.Serialization;
 using System.Diagnostics;
 
+using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.XmlSerialization;
 
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -59,10 +63,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceLogging m_aceLogging = new AceLogging();
+		private AceLogging m_aceLogging = null;
 		public AceLogging Logging
 		{
-			get { return m_aceLogging; }
+			get
+			{
+				if(m_aceLogging == null) m_aceLogging = new AceLogging();
+				return m_aceLogging;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -81,10 +89,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceUI m_aceUI = new AceUI();
+		private AceUI m_aceUI = null;
 		public AceUI UI
 		{
-			get { return m_aceUI; }
+			get
+			{
+				if(m_aceUI == null) m_aceUI = new AceUI();
+				return m_aceUI;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -92,10 +104,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceSecurity m_sec = new AceSecurity();
+		private AceSecurity m_sec = null;
 		public AceSecurity Security
 		{
-			get { return m_sec; }
+			get
+			{
+				if(m_sec == null) m_sec = new AceSecurity();
+				return m_sec;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -103,10 +119,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceNative m_native =  new AceNative();
+		private AceNative m_native = null;
 		public AceNative Native
 		{
-			get { return m_native; }
+			get
+			{
+				if(m_native == null) m_native = new AceNative();
+				return m_native;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -114,10 +134,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AcePasswordGenerator m_pwGen = new AcePasswordGenerator();
+		private AcePasswordGenerator m_pwGen = null;
 		public AcePasswordGenerator PasswordGenerator
 		{
-			get { return m_pwGen; }
+			get
+			{
+				if(m_pwGen == null) m_pwGen = new AcePasswordGenerator();
+				return m_pwGen;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -289,6 +313,55 @@ namespace KeePass.App.Configuration
 
 			if(bObf) m_int.ProxyPassword = StrUtil.Obfuscate(m_int.ProxyPassword);
 			else m_int.ProxyPassword = StrUtil.Deobfuscate(m_int.ProxyPassword);
+		}
+
+		private static Dictionary<object, string> m_dictXmlPathCache =
+			new Dictionary<object, string>();
+		public static bool IsOptionEnforced(object pContainer, PropertyInfo pi)
+		{
+			if(pContainer == null) { Debug.Assert(false); return false; }
+			if(pi == null) { Debug.Assert(false); return false; }
+
+			XmlDocument xdEnforced = AppConfigSerializer.EnforcedConfigXml;
+			if(xdEnforced == null) return false;
+
+			string strObjPath;
+			if(!m_dictXmlPathCache.TryGetValue(pContainer, out strObjPath))
+			{
+				strObjPath = XmlUtil.GetObjectXmlPath(Program.Config, pContainer);
+				if(string.IsNullOrEmpty(strObjPath)) { Debug.Assert(false); return false; }
+
+				m_dictXmlPathCache[pContainer] = strObjPath;
+			}
+
+			string strProp = XmlSerializerEx.GetXmlName(pi);
+			if(string.IsNullOrEmpty(strProp)) { Debug.Assert(false); return false; }
+
+			string strPre = strObjPath;
+			if(!strPre.EndsWith("/")) strPre += "/";
+			string strXPath = strPre + strProp;
+
+			XmlNode xn = xdEnforced.SelectSingleNode(strXPath);
+			return (xn != null);
+		}
+
+		public static bool IsOptionEnforced(object pContainer, string strPropertyName)
+		{
+			if(pContainer == null) { Debug.Assert(false); return false; }
+			if(string.IsNullOrEmpty(strPropertyName)) { Debug.Assert(false); return false; }
+
+			// To improve performance (avoid type queries), check here, too
+			XmlDocument xdEnforced = AppConfigSerializer.EnforcedConfigXml;
+			if(xdEnforced == null) return false;
+
+			Type tContainer = pContainer.GetType();
+			PropertyInfo pi = tContainer.GetProperty(strPropertyName);
+			return IsOptionEnforced(pContainer, pi);
+		}
+
+		public static void ClearXmlPathCache()
+		{
+			m_dictXmlPathCache.Clear();
 		}
 	}
 

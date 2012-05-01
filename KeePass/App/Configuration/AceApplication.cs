@@ -68,10 +68,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private IOConnectionInfo m_ioLastDb = new IOConnectionInfo();
+		private IOConnectionInfo m_ioLastDb = null;
 		public IOConnectionInfo LastUsedFile
 		{
-			get { return m_ioLastDb; }
+			get
+			{
+				if(m_ioLastDb == null) m_ioLastDb = new IOConnectionInfo();
+				return m_ioLastDb;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -79,10 +83,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceMru m_mru = new AceMru();
+		private AceMru m_mru = null;
 		public AceMru MostRecentlyUsed
 		{
-			get { return m_mru; }
+			get
+			{
+				if(m_mru == null) m_mru = new AceMru();
+				return m_mru;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -90,10 +98,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceStartUp m_su = new AceStartUp();
+		private AceStartUp m_su = null;
 		public AceStartUp Start
 		{
-			get { return m_su; }
+			get
+			{
+				if(m_su == null) m_su = new AceStartUp();
+				return m_su;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -101,10 +113,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceOpenDb m_fo = new AceOpenDb();
+		private AceOpenDb m_fo = null;
 		public AceOpenDb FileOpening
 		{
-			get { return m_fo; }
+			get
+			{
+				if(m_fo == null) m_fo = new AceOpenDb();
+				return m_fo;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");

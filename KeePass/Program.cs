@@ -36,6 +36,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.XmlSerialization;
 using KeePass.Ecas;
 using KeePass.Plugins;
 
@@ -202,40 +203,7 @@ namespace KeePass
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
 
-			int nRandomSeed = (int)DateTime.UtcNow.Ticks;
-			// Prevent overflow (see Random class constructor)
-			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
-			m_rndGlobal = new Random(nRandomSeed);
-
-			InitEnvSecurity();
-
-			try { SelfTest.TestFipsComplianceProblems(); }
-			catch(Exception exFips)
-			{
-				MessageService.ShowWarning(KPRes.SelfTestFailed, exFips);
-				return;
-			}
-
-			// Set global localized strings
-			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
-			Kdb4File.DetermineLanguageId();
-
-			m_appConfig = AppConfigSerializer.Load();
-			if(m_appConfig.Logging.Enabled)
-				AppLogEx.Open(PwDefs.ShortProductName);
-
-			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
-			IOConnection.SetProxy(m_appConfig.Integration.ProxyType,
-				m_appConfig.Integration.ProxyAddress, m_appConfig.Integration.ProxyPort,
-				m_appConfig.Integration.ProxyUserName, m_appConfig.Integration.ProxyPassword);
-
-			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
-			m_ecasTriggers.SetToInitialState();
-
-			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
-			AppHelp.LocalHelpFile = strHelpFile;
-
-			LoadTranslation();
+			if(!CommonInit()) { CommonTerminate(); return; }
 
 			if(m_appConfig.Application.Start.PluginCacheClearOnce)
 			{
@@ -346,6 +314,12 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakeXmlSerializerEx] != null)
+			{
+				XmlSerializerEx.GenerateSerializers(m_cmdLineArgs);
+				MainCleanUp();
+				return;
+			}
 #if (DEBUG && !KeePassLibSD)
 			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
 			{
@@ -438,6 +412,55 @@ namespace KeePass
 			// if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
 		}
 
+		/// <summary>
+		/// Common program initialization function that can also be
+		/// used by applications that use KeePass as a library
+		/// (like e.g. KPScript).
+		/// </summary>
+		public static bool CommonInit()
+		{
+			int nRandomSeed = (int)DateTime.UtcNow.Ticks;
+			// Prevent overflow (see Random class constructor)
+			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
+			m_rndGlobal = new Random(nRandomSeed);
+
+			InitEnvSecurity();
+
+			try { SelfTest.TestFipsComplianceProblems(); }
+			catch(Exception exFips)
+			{
+				MessageService.ShowWarning(KPRes.SelfTestFailed, exFips);
+				return false;
+			}
+
+			// Set global localized strings
+			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
+			Kdb4File.DetermineLanguageId();
+
+			m_appConfig = AppConfigSerializer.Load();
+			if(m_appConfig.Logging.Enabled)
+				AppLogEx.Open(PwDefs.ShortProductName);
+
+			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
+			IOConnection.SetProxy(m_appConfig.Integration.ProxyType,
+				m_appConfig.Integration.ProxyAddress, m_appConfig.Integration.ProxyPort,
+				m_appConfig.Integration.ProxyUserName, m_appConfig.Integration.ProxyPassword);
+
+			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
+			m_ecasTriggers.SetToInitialState();
+
+			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
+			AppHelp.LocalHelpFile = strHelpFile;
+
+			LoadTranslation();
+			return true;
+		}
+
+		public static void CommonTerminate()
+		{
+			AppLogEx.Close();
+		}
+
 		private static void MainCleanUp()
 		{
 			IpcBroadcast.StopServer();
@@ -446,9 +469,9 @@ namespace KeePass
 
 			EntryMenu.Destroy();
 
-			AppLogEx.Close();
-
 			GlobalMutexPool.ReleaseAll();
+
+			CommonTerminate();
 		}
 
 		private static void InitEnvSecurity()
@@ -575,7 +598,7 @@ namespace KeePass
 		private static void LoadTranslation()
 		{
 			string strLangFile = m_appConfig.Application.LanguageFile;
-			if((strLangFile != null) && (strLangFile.Length > 0))
+			if(!string.IsNullOrEmpty(strLangFile))
 			{
 				string[] vLangDirs = new string[]{
 					AppConfigSerializer.AppDataDirectory,
@@ -590,7 +613,8 @@ namespace KeePass
 
 					try
 					{
-						m_kpTranslation = KPTranslation.LoadFromFile(strLangPath);
+						XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+						m_kpTranslation = KPTranslation.LoadFromFile(strLangPath, xs);
 
 						KPRes.SetTranslatedStrings(
 							m_kpTranslation.SafeGetStringTableDictionary(
@@ -607,6 +631,20 @@ namespace KeePass
 					catch(Exception) { Debug.Assert(false); }
 				}
 			}
+		}
+
+		internal static bool IsDevelopmentSnapshot()
+		{
+			try
+			{
+				Assembly asm = Assembly.GetExecutingAssembly();
+				byte[] pk = asm.GetName().GetPublicKeyToken();
+				string strPk = MemUtil.ByteArrayToHexString(pk);
+				return !strPk.Equals("fed2ed7716aecf5c", StrUtil.CaseIgnoreCmp);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 	}
 }

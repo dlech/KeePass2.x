@@ -30,6 +30,7 @@ using KeePass.App.Configuration;
 using KeePass.UI;
 using KeePass.Resources;
 using KeePass.Util;
+using KeePass.Util.XmlSerialization;
 
 using KeePassLib;
 using KeePassLib.Translation;
@@ -88,7 +89,8 @@ namespace KeePass.Forms
 				{
 					string strFullName = fi.FullName;
 
-					if(strFullName.ToLower().EndsWith("." + KPTranslation.FileExtension))
+					if(strFullName.EndsWith("." + KPTranslation.FileExtension,
+						StrUtil.CaseIgnoreCmp))
 					{
 						string strFileName = UrlUtil.GetFileName(strFullName);
 
@@ -105,7 +107,9 @@ namespace KeePass.Forms
 
 						try
 						{
-							KPTranslation kpTrl = KPTranslation.LoadFromFile(strFullName);
+							XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+							KPTranslation kpTrl = KPTranslation.LoadFromFile(
+								strFullName, xs);
 
 							ListViewItem lvi = m_lvLanguages.Items.Add(
 								kpTrl.Properties.NameEnglish, 0);

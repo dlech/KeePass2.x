@@ -95,6 +95,8 @@ namespace KeePass.Util
 
 					if(bFailed) return false;
 				}
+				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+					SetStringM(strData);
 				else // Managed
 				{
 					Clear();
@@ -163,6 +165,9 @@ namespace KeePass.Util
 
 					if(bFailed) return false;
 				}
+				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+					SetStringM(Convert.ToBase64String(pbToCopy,
+						Base64FormattingOptions.None));
 				else // Managed, no encoding
 				{
 					Clear();
@@ -201,6 +206,8 @@ namespace KeePass.Util
 
 					return Convert.FromBase64String(str);
 				}
+				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+					return Convert.FromBase64String(GetStringM());
 				else // Managed, no encoding
 				{
 					return (byte[])Clipboard.GetData(strFormat);
@@ -271,6 +278,11 @@ namespace KeePass.Util
 						bNativeSuccess = true;
 					}
 				}
+				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				{
+					SetStringM(string.Empty);
+					bNativeSuccess = true;
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -302,7 +314,15 @@ namespace KeePass.Util
 		{
 			try
 			{
-				if(Clipboard.ContainsText())
+				if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				{
+					string strData = GetStringM();
+					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
+
+					SHA256Managed sha256 = new SHA256Managed();
+					return sha256.ComputeHash(pbUtf8);
+				}
+				else if(Clipboard.ContainsText())
 				{
 					string strData = Clipboard.GetText();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
@@ -346,6 +366,15 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); }
 
+			if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+			{
+				string str = GetStringM();
+				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
+
+				SHA256Managed sha256 = new SHA256Managed();
+				return sha256.ComputeHash(pbText);
+			}
+
 			try
 			{
 				MemoryStream ms = new MemoryStream();
@@ -359,6 +388,7 @@ namespace KeePass.Util
 					MemUtil.CopyStream(sAudio, ms);
 					sAudio.Close();
 				}
+
 				if(Clipboard.ContainsFileDropList())
 				{
 					StringCollection sc = Clipboard.GetFileDropList();
@@ -368,6 +398,7 @@ namespace KeePass.Util
 						ms.Write(pbStr, 0, pbStr.Length);
 					}
 				}
+
 				if(Clipboard.ContainsImage())
 				{
 					using(Image img = Clipboard.GetImage())
@@ -379,6 +410,7 @@ namespace KeePass.Util
 						msImage.Close();
 					}
 				}
+
 				if(Clipboard.ContainsText())
 				{
 					string str = Clipboard.GetText();

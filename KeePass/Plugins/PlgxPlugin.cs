@@ -230,8 +230,7 @@ namespace KeePass.Plugins
 					if(bContent.HasValue)
 						throw new PlgxException(KLRes.FileCorrupted);
 
-					string strCached = PlgxCache.GetCacheFile(plgx.FileUuid, true,
-						false);
+					string strCached = PlgxCache.GetCacheFile(plgx, true, false);
 					if(!string.IsNullOrEmpty(strCached) && plgx.AllowCached)
 					{
 						strPluginPath = strCached;
@@ -427,14 +426,14 @@ namespace KeePass.Plugins
 			string strKP = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxPrereqKP];
 			if(!string.IsNullOrEmpty(strKP))
 			{
-				ulong uKP = StrUtil.GetVersion(strKP);
+				ulong uKP = StrUtil.ParseVersion(strKP);
 				if(uKP != 0) WriteObject(bw, PlgxPrereqKP, MemUtil.UInt64ToBytes(uKP));
 			}
 
 			string strNet = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxPrereqNet];
 			if(!string.IsNullOrEmpty(strNet))
 			{
-				ulong uNet = StrUtil.GetVersion(strNet);
+				ulong uNet = StrUtil.ParseVersion(strNet);
 				if(uNet != 0) WriteObject(bw, PlgxPrereqNet, MemUtil.UInt64ToBytes(uNet));
 			}
 
@@ -510,9 +509,8 @@ namespace KeePass.Plugins
 			}
 
 			CompilerParameters cp = plgx.CompilerParameters;
-			cp.OutputAssembly = UrlUtil.EnsureTerminatingSeparator(strTmpRoot,
-				false) + UrlUtil.GetFileName(PlgxCache.GetCacheFile(plgx.FileUuid,
-				false, false));
+			cp.OutputAssembly = UrlUtil.EnsureTerminatingSeparator(strTmpRoot, false) +
+				UrlUtil.GetFileName(PlgxCache.GetCacheFile(plgx, false, false));
 			cp.GenerateExecutable = false;
 			cp.GenerateInMemory = false;
 			cp.IncludeDebugInformation = false;
@@ -530,7 +528,8 @@ namespace KeePass.Plugins
 				vCompilers = new string[] {
 					null,
 					"v4", // Suggested in CodeDomProvider.CreateProvider doc
-					"v4.0", // Apparently works for most people
+					"v4.0", // Suggested in community content of the above
+					"v4.0.30319", // Deduced from file system
 					"v3.5"
 				};
 			}
@@ -539,7 +538,8 @@ namespace KeePass.Plugins
 				vCompilers = new string[] {
 					null, "v3.5",
 					"v4", // Suggested in CodeDomProvider.CreateProvider doc
-					"v4.0" // Apparently works for most people
+					"v4.0", // Suggested in community content of the above
+					"v4.0.30319" // Deduced from file system
 				};
 			}
 
@@ -577,6 +577,29 @@ namespace KeePass.Plugins
 		private static bool CompileAssembly(PlgxPluginInfo plgx,
 			ref CompilerResults cr, string strCompilerVersion)
 		{
+			const string StrCoreRef = "System.Core";
+			const string StrCoreDll = "System.Core.dll";
+			bool bHasCore = false, bCoreAdded = false;
+			foreach(string strAsm in plgx.CompilerParameters.ReferencedAssemblies)
+			{
+				if(UrlUtil.AssemblyEquals(strAsm, StrCoreRef))
+				{
+					bHasCore = true;
+					break;
+				}
+			}
+			if((strCompilerVersion != null) && strCompilerVersion.StartsWith(
+				"v", StrUtil.CaseIgnoreCmp))
+			{
+				ulong v = StrUtil.ParseVersion(strCompilerVersion.Substring(1));
+				if(!bHasCore && (v >= 0x0003000500000000UL))
+				{
+					plgx.CompilerParameters.ReferencedAssemblies.Add(StrCoreDll);
+					bCoreAdded = true;
+				}
+			}
+
+			bool bResult = false;
 			try
 			{
 				Dictionary<string, string> dictOpt = new Dictionary<string, string>();
@@ -599,12 +622,15 @@ namespace KeePass.Plugins
 				cr = cdp.CompileAssemblyFromFile(plgx.CompilerParameters,
 					plgx.SourceFiles.ToArray());
 
-				return ((cr.Errors == null) || !cr.Errors.HasErrors);
+				bResult = ((cr.Errors == null) || !cr.Errors.HasErrors);
 			}
 			catch(Exception) { }
 
+			if(bCoreAdded)
+				plgx.CompilerParameters.ReferencedAssemblies.Remove(StrCoreDll);
+
 			// cr = null; // Keep previous results for output
-			return false;
+			return bResult;
 		}
 
 		private static void SaveCompilerResults(PlgxPluginInfo plgx,

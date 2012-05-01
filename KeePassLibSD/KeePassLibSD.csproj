@@ -149,6 +149,9 @@
     <Compile Include="..\KeePassLib\Interfaces\IUIOperations.cs">
       <Link>Interfaces\IUIOperations.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Interfaces\IXmlSerializerEx.cs">
+      <Link>Interfaces\IXmlSerializerEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\CompositeKey.cs">
       <Link>Keys\CompositeKey.cs</Link>
     </Compile>

@@ -163,8 +163,18 @@ namespace KeePass.Util.Spr
 			}
 
 			if((ctx.Flags & SprCompileFlags.Paths) != SprCompileFlags.None)
+			{
 				str = SprEngine.FillIfExists(str, @"{ENV_DIRSEP}", new ProtectedString(
 					false, Path.DirectorySeparatorChar.ToString()), ctx, uRecursionLevel);
+
+				string strPF86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+				if(string.IsNullOrEmpty(strPF86))
+					strPF86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+				if(strPF86 != null)
+					str = SprEngine.FillIfExists(str, @"{ENV_PROGRAMFILES_X86}",
+						new ProtectedString(false, strPF86), ctx, uRecursionLevel);
+				else { Debug.Assert(false); }
+			}
 
 			if((ctx.Flags & SprCompileFlags.AutoType) != SprCompileFlags.None)
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEARFIELD}",

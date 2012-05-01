@@ -121,9 +121,8 @@ namespace KeePass.UI
 					foreach(ListViewItem lviEnum in this.Items)
 						lviEnum.Selected = false;
 
-					lviChangeTo.Selected = true;
-					lviChangeTo.Focused = true;
 					EnsureVisible(lviChangeTo.Index);
+					UIUtil.SetFocusedItem(this, lviChangeTo, true);
 
 					e.Handled = true;
 					return true;

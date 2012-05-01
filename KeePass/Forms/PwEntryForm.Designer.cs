@@ -138,6 +138,10 @@
 			this.m_ctxToolsFieldRefsInPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInNotes = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxBinAttach = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.m_ctxBinImportFile = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxBinSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxBinNew = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxDefaultTimes.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
@@ -152,6 +156,7 @@
 			this.m_ctxStrMoveToStandard.SuspendLayout();
 			this.m_ctxPwGen.SuspendLayout();
 			this.m_ctxTools.SuspendLayout();
+			this.m_ctxBinAttach.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_lblUserName
@@ -287,7 +292,6 @@
 			this.m_dtExpireDateTime.Name = "m_dtExpireDateTime";
 			this.m_dtExpireDateTime.Size = new System.Drawing.Size(335, 20);
 			this.m_dtExpireDateTime.TabIndex = 20;
-			this.m_dtExpireDateTime.ValueChanged += new System.EventHandler(this.OnExpireDateTimeChanged);
 			// 
 			// m_ctxDefaultTimes
 			// 
@@ -408,7 +412,6 @@
 			// 
 			// m_btnGenPw
 			// 
-			this.m_btnGenPw.Image = global::KeePass.Properties.Resources.B15x13_KGPG_Gen;
 			this.m_btnGenPw.Location = new System.Drawing.Point(423, 90);
 			this.m_btnGenPw.Name = "m_btnGenPw";
 			this.m_btnGenPw.Size = new System.Drawing.Size(32, 23);
@@ -551,7 +554,7 @@
 			this.m_btnBinView.Location = new System.Drawing.Point(374, 104);
 			this.m_btnBinView.Name = "m_btnBinView";
 			this.m_btnBinView.Size = new System.Drawing.Size(75, 23);
-			this.m_btnBinView.TabIndex = 4;
+			this.m_btnBinView.TabIndex = 3;
 			this.m_btnBinView.Text = "<>";
 			this.m_btnBinView.UseVisualStyleBackColor = true;
 			this.m_btnBinView.Click += new System.EventHandler(this.OnBtnBinView);
@@ -561,7 +564,7 @@
 			this.m_btnBinSave.Location = new System.Drawing.Point(374, 133);
 			this.m_btnBinSave.Name = "m_btnBinSave";
 			this.m_btnBinSave.Size = new System.Drawing.Size(75, 23);
-			this.m_btnBinSave.TabIndex = 3;
+			this.m_btnBinSave.TabIndex = 4;
 			this.m_btnBinSave.Text = "&Save";
 			this.m_btnBinSave.UseVisualStyleBackColor = true;
 			this.m_btnBinSave.Click += new System.EventHandler(this.OnBtnBinSave);
@@ -589,7 +592,9 @@
 			// m_lvBinaries
 			// 
 			this.m_lvBinaries.FullRowSelect = true;
+			this.m_lvBinaries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvBinaries.HideSelection = false;
+			this.m_lvBinaries.LabelEdit = true;
 			this.m_lvBinaries.Location = new System.Drawing.Point(6, 20);
 			this.m_lvBinaries.Name = "m_lvBinaries";
 			this.m_lvBinaries.ShowItemToolTips = true;
@@ -598,6 +603,7 @@
 			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
 			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
 			this.m_lvBinaries.ItemActivate += new System.EventHandler(this.OnBinariesItemActivate);
+			this.m_lvBinaries.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnBinAfterLabelEdit);
 			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
 			// 
 			// m_grpStringFields
@@ -1074,11 +1080,11 @@
             this.m_ctxPwGenSep0,
             this.m_ctxPwGenProfiles});
 			this.m_ctxPwGen.Name = "m_ctxPwGen";
-			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 54);
+			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 76);
 			// 
 			// m_ctxPwGenOpen
 			// 
-			this.m_ctxPwGenOpen.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
+			this.m_ctxPwGenOpen.Image = global::KeePass.Properties.Resources.B16x16_Key_New;
 			this.m_ctxPwGenOpen.Name = "m_ctxPwGenOpen";
 			this.m_ctxPwGenOpen.Size = new System.Drawing.Size(228, 22);
 			this.m_ctxPwGenOpen.Text = "&Open Password Generator...";
@@ -1197,6 +1203,36 @@
 			this.m_ctxToolsFieldRefsInNotes.Text = "In N&otes Field";
 			this.m_ctxToolsFieldRefsInNotes.Click += new System.EventHandler(this.OnFieldRefInNotes);
 			// 
+			// m_ctxBinAttach
+			// 
+			this.m_ctxBinAttach.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_ctxBinImportFile,
+            this.m_ctxBinSep0,
+            this.m_ctxBinNew});
+			this.m_ctxBinAttach.Name = "m_ctxBinAttach";
+			this.m_ctxBinAttach.Size = new System.Drawing.Size(212, 54);
+			// 
+			// m_ctxBinImportFile
+			// 
+			this.m_ctxBinImportFile.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
+			this.m_ctxBinImportFile.Name = "m_ctxBinImportFile";
+			this.m_ctxBinImportFile.Size = new System.Drawing.Size(211, 22);
+			this.m_ctxBinImportFile.Text = "Attach &File(s)...";
+			this.m_ctxBinImportFile.Click += new System.EventHandler(this.OnCtxBinImport);
+			// 
+			// m_ctxBinSep0
+			// 
+			this.m_ctxBinSep0.Name = "m_ctxBinSep0";
+			this.m_ctxBinSep0.Size = new System.Drawing.Size(208, 6);
+			// 
+			// m_ctxBinNew
+			// 
+			this.m_ctxBinNew.Image = global::KeePass.Properties.Resources.B16x16_FileNew;
+			this.m_ctxBinNew.Name = "m_ctxBinNew";
+			this.m_ctxBinNew.Size = new System.Drawing.Size(211, 22);
+			this.m_ctxBinNew.Text = "&Create Empty Attachment";
+			this.m_ctxBinNew.Click += new System.EventHandler(this.OnCtxBinNew);
+			// 
 			// PwEntryForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -1237,6 +1273,7 @@
 			this.m_ctxStrMoveToStandard.ResumeLayout(false);
 			this.m_ctxPwGen.ResumeLayout(false);
 			this.m_ctxTools.ResumeLayout(false);
+			this.m_ctxBinAttach.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1352,6 +1389,10 @@
 		private System.Windows.Forms.CheckBox m_cbCustomForegroundColor;
 		private System.Windows.Forms.TextBox m_tbTags;
 		private System.Windows.Forms.Label m_lblTags;
+		private System.Windows.Forms.ContextMenuStrip m_ctxBinAttach;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxBinImportFile;
+		private System.Windows.Forms.ToolStripSeparator m_ctxBinSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxBinNew;
 
 	}
 }

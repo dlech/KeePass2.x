@@ -30,6 +30,7 @@ using KeePass.App.Configuration;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.Plugins
@@ -38,29 +39,56 @@ namespace KeePass.Plugins
 	{
 		private const string CacheDirName = "PluginCache";
 
-		private static string m_strAppID = null;
+		private static string m_strAppEnvID = null;
 
-		private static string GetAppID()
+		private static string GetAppEnvID()
 		{
-			if(m_strAppID != null) return m_strAppID;
+			if(m_strAppEnvID != null) return m_strAppEnvID;
 
+			StringBuilder sb = new StringBuilder();
+
+			Assembly asm = null;
+			AssemblyName asmName = null;
 			try
 			{
-				Assembly asm = Assembly.GetExecutingAssembly();
-				AssemblyName n = asm.GetName();
-				m_strAppID = n.Version.ToString(4);
+				asm = Assembly.GetExecutingAssembly();
+				asmName = asm.GetName();
 			}
-			catch(Exception)
-			{
-				Debug.Assert(false);
-				m_strAppID = PwDefs.VersionString;
-			}
+			catch(Exception) { Debug.Assert(false); }
+
+			try { sb.Append(asmName.Version.ToString(4)); }
+			catch(Exception) { Debug.Assert(false); sb.Append(PwDefs.VersionString); }
 
 #if DEBUG
-			m_strAppID += "d";
+			sb.Append("d");
 #endif
 
-			return m_strAppID;
+			sb.Append(",PK=");
+			try
+			{
+				byte[] pk = asmName.GetPublicKeyToken();
+				sb.Append(Convert.ToBase64String(pk, Base64FormattingOptions.None));
+			}
+			catch(Exception) { Debug.Assert(false); sb.Append('?'); }
+
+			sb.Append(",CLR=");
+			sb.Append(Environment.Version.ToString(4));
+			sb.Append(",Ptr=");
+			sb.Append(IntPtr.Size.ToString());
+
+			sb.Append(",OS=");
+			PlatformID p = NativeLib.GetPlatformID();
+			if((p == PlatformID.Win32NT) || (p == PlatformID.Win32S) ||
+				(p == PlatformID.Win32Windows))
+				sb.Append("Win");
+			else if(p == PlatformID.WinCE) sb.Append("WinCE");
+			else if(p == PlatformID.Xbox) sb.Append("Xbox");
+			else if(p == PlatformID.Unix) sb.Append("Unix");
+			else if(p == PlatformID.MacOSX) sb.Append("MacOSX");
+			else sb.Append('?');
+
+			m_strAppEnvID = sb.ToString();
+			return m_strAppEnvID;
 		}
 
 		public static string GetCacheRoot()
@@ -77,7 +105,7 @@ namespace KeePass.Plugins
 				}
 			}
 
-			string strDataDir = AppConfigSerializer.AppDataDirectory;
+			string strDataDir = AppConfigSerializer.LocalAppDataDirectory;
 			// try
 			// {
 			//	DirectoryInfo diAppData = new DirectoryInfo(strDataDir);
@@ -95,15 +123,27 @@ namespace KeePass.Plugins
 			return (strDataDir + Path.DirectorySeparatorChar + CacheDirName);
 		}
 
-		public static string GetCacheDirectory(PwUuid pwPluginUuid, bool bEnsureExists)
+		public static string GetCacheDirectory(PlgxPluginInfo plgx, bool bEnsureExists)
 		{
-			string strPlgID = Convert.ToBase64String(pwPluginUuid.UuidBytes,
-				Base64FormattingOptions.None);
-			strPlgID = StrUtil.AlphaNumericOnly(strPlgID);
-			if(strPlgID.Length > 16) strPlgID = strPlgID.Substring(0, 16);
+			if(plgx == null) { Debug.Assert(false); return null; }
 
-			string strDir = GetCacheRoot() + Path.DirectorySeparatorChar +
-				strPlgID + "_" + GetAppID();
+			StringBuilder sb = new StringBuilder();
+			sb.Append(plgx.BaseFileName);
+			sb.Append(':');
+			sb.Append(Convert.ToBase64String(plgx.FileUuid.UuidBytes,
+				Base64FormattingOptions.None));
+			sb.Append(';');
+			sb.Append(GetAppEnvID());
+
+			byte[] pbID = StrUtil.Utf8.GetBytes(sb.ToString());
+			SHA256Managed sha256 = new SHA256Managed();
+			byte[] pbHash = sha256.ComputeHash(pbID);
+
+			string strHash = Convert.ToBase64String(pbHash, Base64FormattingOptions.None);
+			strHash = StrUtil.AlphaNumericOnly(strHash);
+			if(strHash.Length > 20) strHash = strHash.Substring(0, 20);
+
+			string strDir = GetCacheRoot() + Path.DirectorySeparatorChar + strHash;
 
 			if(bEnsureExists && !Directory.Exists(strDir))
 				Directory.CreateDirectory(strDir);
@@ -111,29 +151,33 @@ namespace KeePass.Plugins
 			return strDir;
 		}
 
-		public static string GetCacheFile(PwUuid pwPluginUuid, bool bMustExist,
+		public static string GetCacheFile(PlgxPluginInfo plgx, bool bMustExist,
 			bool bCreateDirectory)
 		{
-			if(pwPluginUuid == null) return null;
+			if(plgx == null) { Debug.Assert(false); return null; }
 
-			byte[] pbID = new byte[(int)PwUuid.UuidSize];
-			Array.Copy(pwPluginUuid.UuidBytes, 0, pbID, 0, pbID.Length);
-			Array.Reverse(pbID);
-			string strID = Convert.ToBase64String(pbID, Base64FormattingOptions.None);
-			strID = StrUtil.AlphaNumericOnly(strID);
-			if(strID.Length > 8) strID = strID.Substring(0, 8);
+			// byte[] pbID = new byte[(int)PwUuid.UuidSize];
+			// Array.Copy(pwPluginUuid.UuidBytes, 0, pbID, 0, pbID.Length);
+			// Array.Reverse(pbID);
+			// string strID = Convert.ToBase64String(pbID, Base64FormattingOptions.None);
+			// strID = StrUtil.AlphaNumericOnly(strID);
+			// if(strID.Length > 8) strID = strID.Substring(0, 8);
 
-			string strDir = GetCacheDirectory(pwPluginUuid, bCreateDirectory);
-			string strPlugin = strDir + Path.DirectorySeparatorChar + strID + ".dll";
-			bool bExists = File.Exists(strPlugin);
+			string strFileName = StrUtil.AlphaNumericOnly(plgx.BaseFileName);
+			if(strFileName.Length == 0) strFileName = "Plugin";
+			strFileName += ".dll";
+
+			string strDir = GetCacheDirectory(plgx, bCreateDirectory);
+			string strPath = strDir + Path.DirectorySeparatorChar + strFileName;
+			bool bExists = File.Exists(strPath);
 
 			if(bMustExist && bExists)
 			{
-				try { File.SetLastAccessTime(strPlugin, DateTime.Now); }
+				try { File.SetLastAccessTime(strPath, DateTime.Now); }
 				catch(Exception) { } // Might be locked by other KeePass instance
 			}
 
-			if(!bMustExist || bExists) return strPlugin;
+			if(!bMustExist || bExists) return strPath;
 			return null;
 		}
 
@@ -141,7 +185,7 @@ namespace KeePass.Plugins
 		{
 			if(string.IsNullOrEmpty(strAssemblyPath)) { Debug.Assert(false); return null; }
 
-			string strNewFile = GetCacheFile(plgx.FileUuid, false, true);
+			string strNewFile = GetCacheFile(plgx, false, true);
 			File.Copy(strAssemblyPath, strNewFile, true);
 
 			return strNewFile;
@@ -152,7 +196,7 @@ namespace KeePass.Plugins
 			if(string.IsNullOrEmpty(strNormalFile)) { Debug.Assert(false); return null; }
 
 			string strNewFile = UrlUtil.EnsureTerminatingSeparator(GetCacheDirectory(
-				plgx.FileUuid, true), false) + UrlUtil.GetFileName(strNormalFile);
+				plgx, true), false) + UrlUtil.GetFileName(strNormalFile);
 			File.Copy(strNormalFile, strNewFile, true);
 
 			return strNewFile;

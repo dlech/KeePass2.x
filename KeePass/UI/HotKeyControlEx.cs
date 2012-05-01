@@ -169,6 +169,12 @@ namespace KeePass.UI
 			RenderHotKey();
 		}
 
+		public void ResetIfModifierOnly()
+		{
+			if((m_kHotKey == Keys.None) && (m_kModifiers != Keys.None))
+				ResetHotKey();
+		}
+
 		public void RenderHotKey()
 		{
 			if(m_kHotKey == Keys.None)

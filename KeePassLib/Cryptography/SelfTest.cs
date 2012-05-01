@@ -63,11 +63,10 @@ namespace KeePassLib.Cryptography
 			
 			TestNativeKeyTransform();
 			
-			TestGZip();
-
 			TestHmacOtp();
 
 			TestProtectedObjects();
+			TestMemUtil();
 			TestStrUtil();
 			TestUrlUtil();
 
@@ -214,7 +213,7 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestGZip()
+		private static void TestMemUtil()
 		{
 #if DEBUG
 			Random r = new Random();
@@ -224,6 +223,29 @@ namespace KeePassLib.Cryptography
 			byte[] pbCompressed = MemUtil.Compress(pb);
 			if(!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pb))
 				throw new InvalidOperationException("GZip");
+
+			pb = Encoding.ASCII.GetBytes("012345678901234567890a");
+			byte[] pbN = Encoding.ASCII.GetBytes("9012");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 9)
+				throw new InvalidOperationException("MemUtil-1");
+			pbN = Encoding.ASCII.GetBytes("01234567890123");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 0)
+				throw new InvalidOperationException("MemUtil-2");
+			pbN = Encoding.ASCII.GetBytes("a");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 21)
+				throw new InvalidOperationException("MemUtil-3");
+			pbN = Encoding.ASCII.GetBytes("0a");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 20)
+				throw new InvalidOperationException("MemUtil-4");
+			pbN = Encoding.ASCII.GetBytes("1");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 1)
+				throw new InvalidOperationException("MemUtil-5");
+			pbN = Encoding.ASCII.GetBytes("b");
+			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
+				throw new InvalidOperationException("MemUtil-6");
+			pbN = Encoding.ASCII.GetBytes("012b");
+			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
+				throw new InvalidOperationException("MemUtil-7");
 #endif
 		}
 
@@ -336,6 +358,10 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-V3");
 			if(StrUtil.VersionToString(0x00FF000000000000UL) != "255")
 				throw new InvalidOperationException("StrUtil-V4");
+			if(StrUtil.VersionToString(0x00FF000000000000UL, true) != "255.0")
+				throw new InvalidOperationException("StrUtil-V5");
+			if(StrUtil.VersionToString(0x0000000000070000UL, true) != "0.0.7")
+				throw new InvalidOperationException("StrUtil-V6");
 #endif
 		}
 

@@ -102,13 +102,8 @@ namespace KeePass.Forms
 			{
 				m_tvFolders.ShowLines = false;
 
-				UIUtil.SetExplorerTheme(m_tvFolders.Handle);
-				UIUtil.SetExplorerTheme(m_lvFiles.Handle);
-			}
-			if(UISystemFonts.ListFont != null)
-			{
-				m_tvFolders.Font = UISystemFonts.ListFont;
-				m_lvFiles.Font = UISystemFonts.ListFont;
+				UIUtil.SetExplorerTheme(m_tvFolders, true);
+				UIUtil.SetExplorerTheme(m_lvFiles, true);
 			}
 
 			m_btnOK.Text = (m_bSaveMode ? KPRes.SaveCmd : KPRes.OpenCmd);

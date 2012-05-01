@@ -336,10 +336,14 @@ namespace KeePass.App.Configuration
 		//	set { m_bGridLines = value; }
 		// }
 
-		private ListSorter m_pListSorter = new ListSorter();
+		private ListSorter m_pListSorter = null;
 		public ListSorter ListSorting
 		{
-			get { return m_pListSorter; }
+			get
+			{
+				if(m_pListSorter == null) m_pListSorter = new ListSorter();
+				return m_pListSorter;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");

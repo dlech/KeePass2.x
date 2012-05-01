@@ -87,15 +87,28 @@ namespace KeePassLib.Serialization
 			ReadDocumentStreamed(CreateXmlReader(readerStream), sParentStream);
 		}
 
+		internal static XmlReaderSettings CreateStdXmlReaderSettings()
+		{
+			XmlReaderSettings xrs = new XmlReaderSettings();
+
+			xrs.CloseInput = true;
+			xrs.IgnoreComments = true;
+			xrs.IgnoreProcessingInstructions = true;
+			xrs.IgnoreWhitespace = true;
+
+#if !KeePassLibSD
+			xrs.ProhibitDtd = true;
+#endif
+
+			xrs.ValidationType = ValidationType.None;
+
+			return xrs;
+		}
+
 		private static XmlReader CreateXmlReader(Stream readerStream)
 		{
-			XmlReaderSettings xmlSettings = new XmlReaderSettings();
-			xmlSettings.CloseInput = true;
-			xmlSettings.IgnoreComments = true;
-			xmlSettings.IgnoreProcessingInstructions = true;
-			xmlSettings.IgnoreWhitespace = true;
-
-			return XmlReader.Create(readerStream, xmlSettings);
+			XmlReaderSettings xrs = CreateStdXmlReaderSettings();
+			return XmlReader.Create(readerStream, xrs);
 		}
 
 		private void ReadDocumentStreamed(XmlReader xr, Stream sParentStream)
@@ -111,12 +124,14 @@ namespace KeePassLib.Serialization
 			uint uTagCounter = 0;
 
 			bool bSupportsStatus = (m_slLogger != null);
+			long lStreamLength = 1;
 			try
 			{
-				sParentStream.Position.ToString();
-				sParentStream.Length.ToString();
+				sParentStream.Position.ToString(); // Test Position support
+				lStreamLength = sParentStream.Length;
 			}
 			catch(Exception) { bSupportsStatus = false; }
+			if(lStreamLength <= 0) { Debug.Assert(false); lStreamLength = 1; }
 
 			m_bReadNextNode = true;
 
@@ -148,8 +163,17 @@ namespace KeePassLib.Serialization
 
 				++uTagCounter;
 				if(((uTagCounter % 256) == 0) && bSupportsStatus)
-					m_slLogger.SetProgress((uint)((sParentStream.Position * 100) /
-						sParentStream.Length));
+				{
+					Debug.Assert(lStreamLength == sParentStream.Length);
+					uint uPct = (uint)((sParentStream.Position * 100) /
+						lStreamLength);
+
+					// Clip percent value in case the stream reports incorrect
+					// position/length values (M120413)
+					if(uPct > 100) { Debug.Assert(false); uPct = 100; }
+
+					m_slLogger.SetProgress(uPct);
+				}
 			}
 
 			Debug.Assert(ctx == KdbContext.Null);

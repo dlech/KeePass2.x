@@ -40,7 +40,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsExport { get { return true; } }
 
 		public override string FormatName { get { return KPRes.CustomizableHtml; } }
-		public override string DefaultExtension { get { return "html"; } }
+		public override string DefaultExtension { get { return @"html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.General; } }
 
 		public override Image SmallIcon

@@ -130,8 +130,7 @@ namespace KeePass.Plugins
 			if((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
 			string str = xnInc.Value;
 
-			if((str == PwDefs.ShortProductName) || str.StartsWith(
-				PwDefs.ShortProductName + ",", StrUtil.CaseIgnoreCmp))
+			if(UrlUtil.AssemblyEquals(str, PwDefs.ShortProductName))
 				return; // Ignore KeePass references
 
 			foreach(XmlNode xnSub in xn.ChildNodes)

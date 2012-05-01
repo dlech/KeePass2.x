@@ -103,6 +103,9 @@
 		<Data Name="Author">
 			<Value>Author</Value>
 		</Data>
+		<Data Name="Auto">
+			<Value>Auto</Value>
+		</Data>
 		<Data Name="AutoCreateNew">
 			<Value>Automatically create new</Value>
 		</Data>
@@ -138,6 +141,9 @@
 		</Data>
 		<Data Name="AutoTypeGlobalHint">
 			<Value>If you want KeePass to search the active database for a matching entry and auto-type it, use the 'Global auto-type' hot key.</Value>
+		</Data>
+		<Data Name="AutoTypeMatchByTagInTitle">
+			<Value>An entry matches if one of its tags is contained in the target window title</Value>
 		</Data>
 		<Data Name="AutoTypeMatchByTitle">
 			<Value>An entry matches if its title is contained in the target window title</Value>
@@ -252,6 +258,9 @@
 		</Data>
 		<Data Name="CloseButtonMinimizes">
 			<Value>Close button [X] minimizes main window instead of terminating the application</Value>
+		</Data>
+		<Data Name="ClosingDatabaseFile">
+			<Value>Closing database file</Value>
 		</Data>
 		<Data Name="Column">
 			<Value>Column</Value>
@@ -547,9 +556,6 @@
 		<Data Name="Encoding">
 			<Value>Encoding</Value>
 		</Data>
-		<Data Name="EncodingAnsi">
-			<Value>Default ANSI (System)</Value>
-		</Data>
 		<Data Name="EncodingFail">
 			<Value>Selected encoding is invalid. The file cannot be interpreted using the selected encoding.</Value>
 		</Data>
@@ -639,6 +645,9 @@
 		</Data>
 		<Data Name="Feature">
 			<Value>Feature</Value>
+		</Data>
+		<Data Name="Field">
+			<Value>Field</Value>
 		</Data>
 		<Data Name="FieldName">
 			<Value>Field Name</Value>
@@ -1123,6 +1132,9 @@
 		<Data Name="NeverExpires">
 			<Value>Never expires</Value>
 		</Data>
+		<Data Name="New">
+			<Value>New</Value>
+		</Data>
 		<Data Name="NewDatabase">
 			<Value>New Database</Value>
 		</Data>
@@ -1134,6 +1146,9 @@
 		</Data>
 		<Data Name="NewGroup">
 			<Value>New Group</Value>
+		</Data>
+		<Data Name="NewLine">
+			<Value>New line</Value>
 		</Data>
 		<Data Name="NewState">
 			<Value>New state</Value>
@@ -1414,6 +1429,9 @@
 		<Data Name="RepairMode">
 			<Value>Repair Mode</Value>
 		</Data>
+		<Data Name="RepeatOnlyWhenHidden">
+			<Value>Require password repetition only when hiding using asterisks is enabled</Value>
+		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
 		</Data>
@@ -1452,6 +1470,12 @@
 		</Data>
 		<Data Name="SavingDatabaseFile">
 			<Value>Saving database file</Value>
+		</Data>
+		<Data Name="SavingPost">
+			<Value>after saving</Value>
+		</Data>
+		<Data Name="SavingPre">
+			<Value>before saving</Value>
 		</Data>
 		<Data Name="Scheme">
 			<Value>Scheme</Value>
@@ -1745,7 +1769,7 @@
 			<Value>KeePass can automatically check for updates on each program start.</Value>
 		</Data>
 		<Data Name="UpdateCheckInfoPriv">
-			<Value>No personal information is sent to the KeePass server. KeePass just downloads a small version information file and compares the available version with the installed version.</Value>
+			<Value>No personal information is sent to the KeePass web server. KeePass just downloads a small version information file and compares the available version with the installed version.</Value>
 		</Data>
 		<Data Name="UpdateCheckInfoRes">
 			<Value>Automatic update checks are performed unintrusively in the background. A notification is only displayed when an update is available. Updates are not downloaded or installed automatically.</Value>
@@ -1831,6 +1855,9 @@
 		<Data Name="Wait">
 			<Value>Wait</Value>
 		</Data>
+		<Data Name="WaitForExit">
+			<Value>Wait for exit</Value>
+		</Data>
 		<Data Name="Warnings">
 			<Value>Warnings</Value>
 		</Data>
@@ -1869,6 +1896,9 @@
 		</Data>
 		<Data Name="Yes">
 			<Value>Yes</Value>
+		</Data>
+		<Data Name="Zoom">
+			<Value>Zoom</Value>
 		</Data>
 	</StringTable>
 

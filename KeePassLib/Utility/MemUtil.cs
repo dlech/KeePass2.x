@@ -326,5 +326,41 @@ namespace KeePassLib.Utility
 			msData.Close();
 			return pbData;
 		}
+
+		public static int IndexOf<T>(T[] vHaystack, T[] vNeedle)
+			where T : IEquatable<T>
+		{
+			if(vHaystack == null) throw new ArgumentNullException("vHaystack");
+			if(vNeedle == null) throw new ArgumentNullException("vNeedle");
+			if(vNeedle.Length == 0) return 0;
+
+			for(int i = 0; i <= (vHaystack.Length - vNeedle.Length); ++i)
+			{
+				bool bFound = true;
+				for(int m = 0; m < vNeedle.Length; ++m)
+				{
+					if(!vHaystack[i + m].Equals(vNeedle[m]))
+					{
+						bFound = false;
+						break;
+					}
+				}
+				if(bFound) return i;
+			}
+
+			return -1;
+		}
+
+		public static T[] Mid<T>(T[] v, int iOffset, int iLength)
+		{
+			if(v == null) throw new ArgumentNullException("v");
+			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+			if(iLength < 0) throw new ArgumentOutOfRangeException("iLength");
+			if(iOffset + iLength > v.Length) throw new ArgumentException();
+
+			T[] r = new T[iLength];
+			Array.Copy(v, iOffset, r, 0, iLength);
+			return r;
+		}
 	}
 }

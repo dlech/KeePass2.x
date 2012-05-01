@@ -43,6 +43,8 @@ namespace KeePass.Forms
 		private PwIcon m_pwIconIndex = 0;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 
+		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
+
 		public void InitEx(PwGroup pg, ImageList ilClientIcons, PwDatabase pwDatabase)
 		{
 			m_pwGroup = pg;
@@ -71,9 +73,6 @@ namespace KeePass.Forms
 			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
 				Properties.Resources.B16x16_Wizard, true);
 
-			m_dtExpires.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
-				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;
-
 			m_pwIconIndex = m_pwGroup.IconId;
 			m_pwCustomIconID = m_pwGroup.CustomIconUuid;
 			
@@ -94,9 +93,10 @@ namespace KeePass.Forms
 			}
 			else // Does not expire
 			{
-				m_dtExpires.Value = DateTime.Now;
+				m_dtExpires.Value = DateTime.Now.Date;
 				m_cbExpires.Checked = false;
 			}
+			m_cgExpiry.Attach(m_cbExpires, m_dtExpires);
 
 			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableAutoType,
 				m_pwGroup.EnableAutoType, m_pwGroup.GetAutoTypeEnabledInherited());
@@ -137,8 +137,8 @@ namespace KeePass.Forms
 			m_pwGroup.IconId = m_pwIconIndex;
 			m_pwGroup.CustomIconUuid = m_pwCustomIconID;
 
-			m_pwGroup.Expires = m_cbExpires.Checked;
-			m_pwGroup.ExpiryTime = m_dtExpires.Value;
+			m_pwGroup.Expires = m_cgExpiry.Checked;
+			m_pwGroup.ExpiryTime = m_cgExpiry.Value;
 
 			m_pwGroup.EnableAutoType = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableAutoType);
 			m_pwGroup.EnableSearching = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableSearching);
@@ -150,6 +150,11 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
+		}
+
+		private void CleanUpEx()
+		{
+			m_cgExpiry.Release();
 		}
 
 		private void OnBtnIcon(object sender, EventArgs e)
@@ -176,11 +181,6 @@ namespace KeePass.Forms
 			UIUtil.DestroyForm(ipf);
 		}
 
-		private void OnExpiresValueChanged(object sender, EventArgs e)
-		{
-			m_cbExpires.Checked = true;
-		}
-
 		private void OnAutoTypeInheritCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
@@ -194,7 +194,7 @@ namespace KeePass.Forms
 			atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
-			dlg.InitEx(atConfig, new ProtectedStringDictionary(), -1, true);
+			dlg.InitEx(atConfig, -1, true, atConfig.DefaultSequence, null);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 				m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;
@@ -205,6 +205,7 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			CleanUpEx();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 	}

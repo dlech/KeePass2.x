@@ -38,7 +38,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public const string Punctuation = @",.;:";
 		public const string Brackets = @"[]{}()<>";
 
-		public const string PrintableAsciiSpecial = "!\"#$%&'()*+,-./:;<=>?[\\]^_{|}~";
+		public const string PrintableAsciiSpecial = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
 		public const string UpperHex = "0123456789ABCDEF";
 		public const string LowerHex = "0123456789abcdef";

@@ -520,9 +520,7 @@ namespace KeePass.UI
 
 				if(bFirstEntry)
 				{
-					lvi.Selected = true;
-					lvi.Focused = true;
-
+					UIUtil.SetFocusedItem(lv, lvi, true);
 					bFirstEntry = false;
 				}
 			}
@@ -640,9 +638,7 @@ namespace KeePass.UI
 
 				if(bFirstEntry)
 				{
-					lvi.Selected = true;
-					lvi.Focused = true;
-
+					UIUtil.SetFocusedItem(lv, lvi, true);
 					bFirstEntry = false;
 				}
 			}
@@ -664,25 +660,64 @@ namespace KeePass.UI
 			return 18; // Default theme on Windows Vista
 		}
 
+		/// <summary>
+		/// Create a file type filter specification string.
+		/// </summary>
+		/// <param name="strExtension">Default extension(s), without leading
+		/// dot. Multiple extensions must be separated by a '|' (e.g.
+		/// "html|htm", having the same description "HTML Files").</param>
 		public static string CreateFileTypeFilter(string strExtension, string strDescription,
 			bool bIncludeAllFiles)
 		{
-			string str = string.Empty;
+			StringBuilder sb = new StringBuilder();
 
-			if((strExtension != null) && (strExtension.Length > 0) &&
-				(strDescription != null) && (strDescription.Length > 0))
+			if(!string.IsNullOrEmpty(strExtension) && !string.IsNullOrEmpty(
+				strDescription))
 			{
-				str += strDescription + @" (*." + strExtension + @")|*." + strExtension;
+				// str += strDescription + @" (*." + strExtension +
+				//	@")|*." + strExtension;
+
+				string[] vExts = strExtension.Split(new char[]{ '|' },
+					StringSplitOptions.RemoveEmptyEntries);
+				if(vExts.Length > 0)
+				{
+					sb.Append(strDescription);
+					sb.Append(@" (*.");
+
+					for(int i = 0; i < vExts.Length; ++i)
+					{
+						if(i > 0) sb.Append(@", *.");
+						sb.Append(vExts[i]);
+					}
+
+					sb.Append(@")|*.");
+
+					for(int i = 0; i < vExts.Length; ++i)
+					{
+						if(i > 0) sb.Append(@";*.");
+						sb.Append(vExts[i]);
+					}
+				}
 			}
 
 			if(bIncludeAllFiles)
 			{
-				if(str.Length > 0) str += @"|";
-
-				str += KPRes.AllFiles + @" (*.*)|*.*";
+				if(sb.Length > 0) sb.Append(@"|");
+				sb.Append(KPRes.AllFiles);
+				sb.Append(@" (*.*)|*.*");
 			}
 
-			return str;
+			return sb.ToString();
+		}
+
+		public static string GetPrimaryFileTypeExt(string strExtensions)
+		{
+			if(strExtensions == null) { Debug.Assert(false); return string.Empty; }
+
+			int i = strExtensions.IndexOf('|');
+			if(i >= 0) return strExtensions.Substring(0, i);
+
+			return strExtensions; // Single extension
 		}
 
 		public static OpenFileDialog CreateOpenFileDialog(string strTitle, string strFilter,
@@ -972,8 +1007,10 @@ namespace KeePass.UI
 			if(vItemTags == null) throw new ArgumentNullException("vItemTags");
 
 			for(int i = 0; i < lv.Items.Count; ++i)
+			{
 				if(Array.IndexOf<object>(vItemTags, lv.Items[i].Tag) >= 0)
 					lv.Items[i].Selected = true;
+			}
 		}
 
 		public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)
@@ -1004,6 +1041,19 @@ namespace KeePass.UI
 
 			try { NativeMethods.SetWindowTheme(hWnd, "explorer", null); }
 			catch(Exception) { } // Not supported on older operating systems
+		}
+
+		public static void SetExplorerTheme(Control c, bool bUseListFont)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			SetExplorerTheme(c.Handle);
+
+			if(bUseListFont)
+			{
+				if(UISystemFonts.ListFont != null)
+					c.Font = UISystemFonts.ListFont;
+			}
 		}
 
 		public static Image LoadImage(byte[] pb)
@@ -2017,6 +2067,73 @@ namespace KeePass.UI
 			str += GetKeysName(k & Keys.KeyCode);
 
 			tsmi.ShortcutKeyDisplayString = str;
+		}
+
+		/* public static string ImageToDataUri(Image img)
+		{
+			if(img == null) { Debug.Assert(false); return string.Empty; }
+
+			MemoryStream ms = new MemoryStream();
+			img.Save(ms, ImageFormat.Png);
+
+			byte[] pbImage = ms.ToArray();
+			string strImage = Convert.ToBase64String(pbImage);
+
+			ms.Close();
+			return ("data:image/png;base64," + strImage);
+		} */
+
+		public static void SetFocusedItem(ListView lv, ListViewItem lvi,
+			bool bAlsoSelect)
+		{
+			if((lv == null) || (lvi == null)) { Debug.Assert(false); return; }
+
+			if(bAlsoSelect) lvi.Selected = true;
+
+			try { lv.FocusedItem = lvi; } // .NET
+			catch(Exception)
+			{
+				try { lvi.Focused = true; } // Mono
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
+
+		public static Image CreateDropDownImage(Image imgBase)
+		{
+			if(imgBase == null) { Debug.Assert(false); return null; }
+
+			int dx = imgBase.Width, dy = imgBase.Height;
+			if((dx < 8) || (dy < 5)) return new Bitmap(imgBase);
+
+			Bitmap bmp = new Bitmap(dx, dy, PixelFormat.Format32bppArgb);
+			using(Graphics g = Graphics.FromImage(bmp))
+			{
+				g.Clear(Color.Transparent);
+				g.DrawImageUnscaled(imgBase, 0, 0);
+
+				Pen penDark = Pens.Black;
+				g.DrawLine(penDark, dx - 5, dy - 3, dx - 1, dy - 3);
+				g.DrawLine(penDark, dx - 4, dy - 2, dx - 2, dy - 2);
+				// g.DrawLine(penDark, dx - 7, dy - 4, dx - 1, dy - 4);
+				// g.DrawLine(penDark, dx - 6, dy - 3, dx - 2, dy - 3);
+				// g.DrawLine(penDark, dx - 5, dy - 2, dx - 3, dy - 2);
+
+				using(Pen penLight = new Pen(Color.FromArgb(
+					160, 255, 255, 255), 1.0f))
+				{
+					g.DrawLine(penLight, dx - 5, dy - 4, dx - 1, dy - 4);
+					g.DrawLine(penLight, dx - 6, dy - 3, dx - 4, dy - 1);
+					g.DrawLine(penLight, dx - 2, dy - 1, dx - 1, dy - 2);
+					// g.DrawLine(penLight, dx - 7, dy - 5, dx - 1, dy - 5);
+					// g.DrawLine(penLight, dx - 8, dy - 4, dx - 5, dy - 1);
+					// g.DrawLine(penLight, dx - 3, dy - 1, dx - 1, dy - 3);
+				}
+			}
+
+			bmp.SetPixel(dx - 3, dy - 1, Color.Black);
+			// bmp.SetPixel(dx - 4, dy - 1, Color.Black);
+
+			return bmp;
 		}
 	}
 }

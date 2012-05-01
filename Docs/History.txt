@@ -1,3 +1,142 @@
+2012-05-01: 2.19
+- New generic CSV importer (now supports multi-line fields, '\'
+  as escape character, field & record separators and the text
+  qualifier can be specified, white space characters can be
+  removed from the beginning/end of fields, the fields and
+  their order can be defined, supported fields now are group
+  name & standard fields like e.g. title & custom strings &
+  times & ignore column, the first row can be ignored, KeePass
+  initially tries to guess the fields and their order based on
+  the first row)
+- Native master key transformations are now computed in two
+  threads on 64-bit systems, too; on dual/multi core processors
+  this results in almost twice the performance as before (by
+  doubling the amount of rounds you'll get the same waiting
+  time as in 2.18, but the protection against dictionary and
+  guessing attacks is doubled)
+- New XML configuration and translation deserializer to improve
+  the startup performance
+- Added option to require a password repetition only when
+  hiding using asterisks is enabled (enabled by default)
+- Entry attachments can now be renamed using in-place label
+  editing (click on an already selected item to show an edit
+  box)
+- Empty entry attachments can now be created using 'Attach' ->
+  'Create Empty Attachment'
+- Sizes of entry attachments are now shown in a column of the
+  attachments list in the entry editing dialog
+- Added {ENV_PROGRAMFILES_X86} placeholder (this is
+  %ProgramFiles(x86)%, if it exists, otherwise %ProgramFiles%)
+- Added auto-type option 'An entry matches if one of its tags
+  is contained in the target window title'
+- URLs in HTML exports are now linkified
+- Import modules may now specify multiple default/equivalent
+  file extensions (like e.g. 'htm' and 'html')
+- Added support for reading texts encoded using UTF-32 Big
+  Endian
+- Enhanced text encoding detection (now detects UTF-32 LE/BE
+  and UTF-16 LE/BE by zeros, improved UTF-8 detection, ...)
+- Added zoom function for images in internal data viewer
+- Drop-down image buttons in the entry editing dialog are now
+  marked using small black triangle overlays
+- Added support for loading key files from URLs
+- Controls in the options dialog are now disabled when the
+  options are enforced (using an enforced configuration file)
+- If KeePass is started with the '-debug' command line option,
+  KeePass now shows a developer-friendly error message when
+  opening a database file fails
+- Added 'Wait for exit' property in the 'Execute command line /
+  URL' trigger action
+- The 'File exists' trigger condition now also supports URLs
+- Added two file closing trigger events (one raised before and
+  one after saving the database file)
+- Plugins: added file closing events
+- Plugins: added events (AutoType.Sequence*) that allow plugins
+  to provide auto-type sequence suggestions
+- Added workaround to support loading data from version
+  information files even when they have incorrectly been
+  decompressed by a web filter
+- Added workarounds for '°', '|' and '£' .NET SendKeys issues
+- Added workaround for topmost window .NET/Windows issue (the
+  'Always on Top' option now works even when switching to a
+  different window while KeePass is starting up)
+- Added workaround for Mono dialog event ordering bug
+- Added workaround for Mono clipboard bugs on Mac OS X
+- KPScript: added 'MoveEntry', 'GetEntryString' and 'GenPw'
+  commands
+- KPScript: added '-refx-UUID' and '-refx-Tags' entry
+  identification parameters
+
+- When only deleting history entries (without changing any data
+  field of an entry), no backup entry is created anymore
+- Unified text encoding handling for internal data viewer and
+  editor, generic CSV importer and text encoding selection
+  dialog
+- Improved font sizing in HTML exports/printouts
+- Improved encoding of group names in HTML exports/printouts
+- If an entry doesn't expire, 'Never expires' is now shown in
+  the 'Expiry Time' column in HTML exports/printouts
+- The expiry edit control now accepts incomplete edits and the
+  'Expires' checkbox is checked immediately
+- The time component of the default expiry suggestion is now
+  00:00:00
+- The last selected/focused item in the attachments list of the
+  entry editing dialog is now selected/focused after editing an
+  attachment
+- Improved field to standard field mapping function
+- Enhanced RoboForm importer to concatenate values of fields
+  with conflicting names
+- Updated Spamex.com importer
+- Removed KeePass 1.x CSV importer; users should use the new
+  generic CSV importer (which can import more data than the old
+  specialized 1.x CSV importer)
+- When trying to open another database while a dialog is
+  displayed, KeePass now just brings itself to the foreground
+  without attempting to open the second database
+- More list views use the Vista Explorer style
+- Modifier keys without another key aren't registered as global
+  hot key anymore
+- Improved default suggestions for custom sequences in the
+  auto-type sequence editing dialog
+- Improved default focus in the auto-type sequence editing
+  dialog
+- Added {C:Comment} placeholder in the auto-type sequence
+  editing dialog
+- On Unix-like systems, the {GOOGLECHROME} placeholder now
+  first searches for Google Chrome and then (if not found) for
+  Chromium
+- Versions displayed in the update checking dialog now consist
+  of at least two components
+- Added '@' and '`' to the printable 7-bit ASCII character set
+- Merged simple and extended special character spaces to one
+  special character space
+- Reduced control character space from 60 to 32
+- The first sample entry's URL now points to the KeePass
+  website
+- Improved key transformation delay calculation
+- Improved key file loading performance
+- The main menu now isn't a tab stop anymore
+- Some configuration nodes are now allocated only on demand
+- Improved UI update when moving/copying entries to the
+  currently active group or a subgroup of it using drag&drop
+- Improved behavior when closing an inactive database having
+  unsaved changes
+- Changed versioning scheme in file version information blocks
+  from digit- to component-based
+- Development snapshots don't ask anymore whether to enable the
+  automatic update check (only stable releases do)
+- Improved PLGX cache directory naming
+- The PLGX cache directory by default is now located in the
+  local application data folder instead of the roaming one
+- Improved support for PLGX plugins that are using LINQ
+- Various UI improvements
+- Various code optimizations
+- Minor other improvements
+
+- Fixed sorting of items in the most recently used files list
+- Fixed tab order in the 'Advanced' tab of the entry editing
+  dialog
+
 2012-01-05: 2.18
 - The update check now also checks for plugin updates (if
   plugin developers provide version information files)

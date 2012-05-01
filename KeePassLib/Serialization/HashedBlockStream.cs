@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Text;
 
 using KeePassLib.Native;
+using KeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
@@ -102,8 +103,7 @@ namespace KeePassLib.Serialization
 			m_bWriting = bWriting;
 			m_bVerify = bVerify;
 
-			UTF8Encoding utf8 = new UTF8Encoding(false, false);
-
+			UTF8Encoding utf8 = StrUtil.Utf8;
 			if(m_bWriting == false) // Reading mode
 			{
 				if(m_sBaseStream.CanRead == false)

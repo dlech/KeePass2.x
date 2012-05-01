@@ -75,7 +75,7 @@
 			this.m_cmbEnc.Location = new System.Drawing.Point(12, 53);
 			this.m_cmbEnc.MaxDropDownItems = 12;
 			this.m_cmbEnc.Name = "m_cmbEnc";
-			this.m_cmbEnc.Size = new System.Drawing.Size(233, 21);
+			this.m_cmbEnc.Size = new System.Drawing.Size(385, 21);
 			this.m_cmbEnc.TabIndex = 4;
 			this.m_cmbEnc.SelectedIndexChanged += new System.EventHandler(this.OnEncSelectedIndexChanged);
 			// 

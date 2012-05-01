@@ -43,9 +43,10 @@ namespace KeePass.Forms
 	public partial class EditAutoTypeItemForm : Form
 	{
 		private AutoTypeConfig m_atConfig = null;
-		private ProtectedStringDictionary m_vStringDict = null;
-		private int m_iOrgIndex = -1;
+		private int m_iAssocIndex = -1;
 		private bool m_bEditSequenceOnly = false;
+		private string m_strDefaultSeq = string.Empty;
+		private ProtectedStringDictionary m_vStringDict = null;
 
 		// private Color m_clrOriginalForeground = Color.Black;
 		// private Color m_clrOriginalBackground = Color.White;
@@ -55,53 +56,28 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
 		private bool m_bBlockUpdates = false;
 
-		private const string VkcBreak = @"<break />";
-
-		private static string[] SpecialKeyCodes = new string[] {
-			"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
-			"HOME", "END", "PGUP", "PGDN",
-			"INSERT", "DELETE", VkcBreak,
-			"BACKSPACE", "BREAK", "CAPSLOCK",
-			"ESC", "HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
-			"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-			"F13", "F14", "F15", "F16", VkcBreak,
-			"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"
-		};
-
-		private static string[] SpecialPlaceholders = new string[] {
-			"GROUP", "GROUPPATH", "PASSWORD_ENC", "URL:RMVSCM", VkcBreak,
-			"DELAY 1000", "DELAY=200", "VKEY 65",
-			"PICKCHARS", "PICKCHARS:Password:C=3",
-			"NEWPASSWORD", "HMACOTP", "CLEARFIELD", VkcBreak,
-			"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
-			"ENV_DIRSEP", VkcBreak,
-			"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
-			"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
-			"DT_UTC_DAY", "DT_UTC_HOUR", "DT_UTC_MINUTE", "DT_UTC_SECOND"
-		};
-
 		public EditAutoTypeItemForm()
 		{
 			InitializeComponent();
 			Program.Translation.ApplyTo(this);
 		}
 
-		public void InitEx(AutoTypeConfig atConfig, ProtectedStringDictionary vStringDict,
-			int iOrgIndex, bool bEditSequenceOnly)
+		public void InitEx(AutoTypeConfig atConfig, int iAssocIndex, bool bEditSequenceOnly,
+			string strDefaultSeq, ProtectedStringDictionary vStringDict)
 		{
-			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException("vStringDict");
 			Debug.Assert(atConfig != null); if(atConfig == null) throw new ArgumentNullException("atConfig");
 
 			m_atConfig = atConfig;
-			m_vStringDict = vStringDict;
-			m_iOrgIndex = iOrgIndex;
+			m_iAssocIndex = iAssocIndex;
 			m_bEditSequenceOnly = bEditSequenceOnly;
+			m_strDefaultSeq = (strDefaultSeq ?? string.Empty);
+			m_vStringDict = (vStringDict ?? new ProtectedStringDictionary());
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new InvalidOperationException();
 			Debug.Assert(m_atConfig != null); if(m_atConfig == null) throw new InvalidOperationException();
+			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new InvalidOperationException();
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -123,11 +99,80 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 
+			// FontUtil.AssignDefaultBold(m_lblTargetWindow);
+			// FontUtil.AssignDefaultBold(m_rbSeqDefault);
+			// FontUtil.AssignDefaultBold(m_rbSeqCustom);
+
 			UIUtil.EnableAutoCompletion(m_cmbWindow, false);
 
 			// m_clrOriginalForeground = m_lblOpenHint.ForeColor;
 			// m_clrOriginalBackground = m_cmbWindow.BackColor;
 			// m_strOriginalWindowHint = m_lblTargetWindowInfo.Text;
+
+			InitPlaceholdersBox();
+
+			string strInitSeq = m_atConfig.DefaultSequence;
+			if(m_iAssocIndex >= 0)
+			{
+				AutoTypeAssociation asInit = m_atConfig.GetAt(m_iAssocIndex);
+				m_cmbWindow.Text = asInit.WindowName;
+
+				if(!m_bEditSequenceOnly) strInitSeq = asInit.Sequence;
+			}
+			else if(m_bEditSequenceOnly)
+				m_cmbWindow.Text = "(" + KPRes.Default + ")";
+			else strInitSeq = string.Empty;
+
+			bool bSetDefault = false;
+			m_bBlockUpdates = true;
+			if(strInitSeq.Length > 0) m_rbSeqCustom.Checked = true;
+			else
+			{
+				m_rbSeqDefault.Checked = true;
+				bSetDefault = true;
+			}
+			m_bBlockUpdates = false;
+
+			if(bSetDefault) m_rbKeySeq.Text = m_strDefaultSeq;
+			else m_rbKeySeq.Text = strInitSeq;
+
+			try
+			{
+				if(NativeLib.IsUnix()) PopulateWindowsListUnix();
+				else PopulateWindowsListWin();
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			EnableControlsEx();
+		}
+
+		private void InitPlaceholdersBox()
+		{
+			const string VkcBreak = @"<break />";
+
+			string[] vSpecialKeyCodes = new string[] {
+				"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
+				"HOME", "END", "PGUP", "PGDN",
+				"INSERT", "DELETE", VkcBreak,
+				"BACKSPACE", "BREAK", "CAPSLOCK",
+				"ESC", "HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
+				"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+				"F13", "F14", "F15", "F16", VkcBreak,
+				"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"
+			};
+
+			string[] vSpecialPlaceholders = new string[] {
+				"GROUP", "GROUPPATH", "PASSWORD_ENC", "URL:RMVSCM",
+				"C:Comment", VkcBreak,
+				"DELAY 1000", "DELAY=200", "VKEY 65",
+				"PICKCHARS", "PICKCHARS:Password:C=3",
+				"NEWPASSWORD", "HMACOTP", "CLEARFIELD", VkcBreak,
+				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
+				"ENV_DIRSEP", VkcBreak,
+				"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
+				"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
+				"DT_UTC_DAY", "DT_UTC_HOUR", "DT_UTC_MINUTE", "DT_UTC_SECOND"
+			};
 
 			RichTextBuilder rb = new RichTextBuilder();
 			rb.AppendLine(KPRes.StandardFields, FontStyle.Bold, null, null, ":", null);
@@ -168,7 +213,7 @@ namespace KeePass.Forms
 			rb.AppendLine();
 			rb.AppendLine(KPRes.SpecialKeys, FontStyle.Bold, null, null, ":", null);
 			bFirst = true;
-			foreach(string strNav in SpecialKeyCodes)
+			foreach(string strNav in vSpecialKeyCodes)
 			{
 				if(strNav == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
 				else
@@ -183,7 +228,7 @@ namespace KeePass.Forms
 			rb.AppendLine();
 			rb.AppendLine(KPRes.OtherPlaceholders, FontStyle.Bold, null, null, ":", null);
 			bFirst = true;
-			foreach(string strPH in SpecialPlaceholders)
+			foreach(string strPH in vSpecialPlaceholders)
 			{
 				if(strPH == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
 				else
@@ -197,38 +242,16 @@ namespace KeePass.Forms
 			rb.Build(m_rtbPlaceholders);
 
 			LinkifyRtf(m_rtbPlaceholders);
-
-			if(m_iOrgIndex >= 0)
-			{
-				AutoTypeAssociation asInit = m_atConfig.GetAt(m_iOrgIndex);
-				m_cmbWindow.Text = asInit.WindowName;
-
-				if(!m_bEditSequenceOnly)
-					m_rbKeySeq.Text = asInit.Sequence;
-				else
-					m_rbKeySeq.Text = m_atConfig.DefaultSequence;
-			}
-			else if(m_bEditSequenceOnly)
-				m_cmbWindow.Text = "(" + KPRes.Default + ")";
-
-			m_bBlockUpdates = true;
-			if(m_rbKeySeq.Text.Length > 0) m_rbSeqCustom.Checked = true;
-			else m_rbSeqDefault.Checked = true;
-			m_bBlockUpdates = false;
-
-			try
-			{
-				if(NativeLib.IsUnix()) PopulateWindowsListUnix();
-				else PopulateWindowsListWin();
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			EnableControlsEx();
 		}
 
 		private void OnFormShown(object sender, EventArgs e)
 		{
-			UIUtil.SetFocus(m_cmbWindow, this); // Doesn't work in OnFormLoad
+			// Focusing doesn't work in OnFormLoad
+			if(m_cmbWindow.Enabled)
+				UIUtil.SetFocus(m_cmbWindow, this);
+			else if(m_rbKeySeq.Enabled)
+				UIUtil.SetFocus(m_rbKeySeq, this);
+			else UIUtil.SetFocus(m_btnOK, this);
 		}
 
 		private void CleanUpEx()
@@ -254,7 +277,7 @@ namespace KeePass.Forms
 			if(!m_bEditSequenceOnly)
 			{
 				AutoTypeAssociation atAssoc;
-				if(m_iOrgIndex >= 0) atAssoc = m_atConfig.GetAt(m_iOrgIndex);
+				if(m_iAssocIndex >= 0) atAssoc = m_atConfig.GetAt(m_iAssocIndex);
 				else
 				{
 					atAssoc = new AutoTypeAssociation();
@@ -316,13 +339,18 @@ namespace KeePass.Forms
 			//	m_btnOK.Enabled = false;
 			// }
 
-			if(m_bEditSequenceOnly)
-			{
-				m_cmbWindow.Enabled = false;
-				// m_lblTargetWindowInfo.Enabled = false;
-			}
+			m_lblTargetWindow.Enabled = !m_bEditSequenceOnly;
+			m_cmbWindow.Enabled = !m_bEditSequenceOnly;
+			m_lblOpenHint.Enabled = !m_bEditSequenceOnly;
+			m_lnkWildcardRegexHint.Enabled = !m_bEditSequenceOnly;
 
-			m_rbKeySeq.Enabled = m_rbSeqCustom.Checked;
+			// Workaround for disabled link render bug (gray too dark)
+			m_lnkWildcardRegexHint.Visible = !m_bEditSequenceOnly;
+
+			bool bCustom = m_rbSeqCustom.Checked;
+			m_rbKeySeq.Enabled = bCustom;
+			m_lblKeySeqInsertInfo.Enabled = bCustom;
+			m_rtbPlaceholders.Enabled = bCustom;
 
 			m_bBlockUpdates = false;
 		}

@@ -338,7 +338,9 @@ namespace KeePass.Forms
 			UIUtil.SetCueBanner(m_tbQuickFind, strSearchTr);
 
 #if DEBUG
-			Program.Config.CustomConfig.SetBool("TestItem", true);
+			Program.Config.CustomConfig.SetBool("TestItem1", true);
+			Program.Config.CustomConfig.SetULong("TestItem2", 13);
+			Program.Config.CustomConfig.SetString("TestItem3", "TestValue");
 
 			Program.KeyProviderPool.Add(new KeePassLib.Keys.SampleKeyProvider());
 #endif
@@ -499,7 +501,7 @@ namespace KeePass.Forms
 			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
 				KPRes.UserName));
 			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
-				@"http://www.somesite.com/"));
+				PwDefs.HomepageUrl));
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
 				KPRes.Password));
 			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(pd.MemoryProtection.ProtectNotes,
@@ -564,7 +566,7 @@ namespace KeePass.Forms
 
 		private void OnFileClose(object sender, EventArgs e)
 		{
-			CloseDocument(null, false, false);
+			CloseDocument(false, false);
 		}
 
 		private void OnFileSave(object sender, EventArgs e)
@@ -1268,7 +1270,8 @@ namespace KeePass.Forms
 
 		private void OnGroupsListDragDrop(object sender, DragEventArgs e)
 		{
-			TreeViewHitTestInfo tvhi = m_tvGroups.HitTest(m_tvGroups.PointToClient(new Point(e.X, e.Y)));
+			TreeViewHitTestInfo tvhi = m_tvGroups.HitTest(m_tvGroups.PointToClient(
+				new Point(e.X, e.Y)));
 
 			if(tvhi.Node == null) return;
 			PwGroup pgSelected = (tvhi.Node.Tag as PwGroup);
@@ -1279,6 +1282,8 @@ namespace KeePass.Forms
 				PwEntry[] vSelected = GetSelectedEntries();
 				if((vSelected == null) || (vSelected.Length == 0)) return;
 
+				PwGroup pgSafeView = (m_pgActiveAtDragStart ?? new PwGroup());
+				bool bFullUpdateView = false;
 				List<PwEntry> vNowInvisible = new List<PwEntry>();
 
 				if(e.Effect == DragDropEffects.Move)
@@ -1295,7 +1300,8 @@ namespace KeePass.Forms
 
 						pgSelected.AddEntry(pe, true, true);
 
-						vNowInvisible.Add(pe);
+						if(pe.IsContainedIn(pgSafeView)) bFullUpdateView = true;
+						else vNowInvisible.Add(pe);
 					}
 				}
 				else if(e.Effect == DragDropEffects.Copy)
@@ -1306,12 +1312,19 @@ namespace KeePass.Forms
 						peCopy.SetUuid(new PwUuid(true), true); // Create new UUID
 
 						pgSelected.AddEntry(peCopy, true, true);
+
+						if(peCopy.IsContainedIn(pgSafeView)) bFullUpdateView = true;
 					}
 				}
 				else { Debug.Assert(false); }
 
-				RemoveEntriesFromList(vNowInvisible, true);
-				UpdateUI(false, null, true, m_pgActiveAtDragStart, false, null, true);
+				if(!bFullUpdateView)
+				{
+					RemoveEntriesFromList(vNowInvisible, true);
+					UpdateUI(false, null, true, m_pgActiveAtDragStart, false, null, true);
+				}
+				else UpdateUI(false, null, true, m_pgActiveAtDragStart, true, null, true);
+
 				m_pgActiveAtDragStart = null;
 			}
 			else if(e.Data.GetDataPresent(typeof(PwGroup)))
@@ -1346,7 +1359,6 @@ namespace KeePass.Forms
 				else { Debug.Assert(false); }
 
 				pgSelected.AddGroup(pgDragged, true, true);
-
 				pgSelected.IsExpanded = true;
 
 				UpdateUI(false, null, true, pgDragged, true, null, true);
@@ -1450,7 +1462,7 @@ namespace KeePass.Forms
 			bool bTop = m_menuViewAlwaysOnTop.Checked;
 
 			Program.Config.MainWindow.AlwaysOnTop = bTop;
-			this.TopMost = bTop;
+			EnsureAlwaysOnTopOpt();
 		}
 
 		private void OnGroupsPrint(object sender, EventArgs e)
@@ -2333,6 +2345,7 @@ namespace KeePass.Forms
 				if(f != null) f.Activate();
 				// SystemSounds.Beep.Play(); // Do not beep!
 			}
+			// else EnsureAlwaysOnTopOpt();
 		}
 
 		private void OnToolsTriggers(object sender, EventArgs e)
@@ -2352,7 +2365,9 @@ namespace KeePass.Forms
 					{
 						PwDocument pd = (m_tabMain.TabPages[i].Tag as PwDocument);
 						if(pd == null) { Debug.Assert(false); return; }
-						CloseDocument(pd, false, false);
+
+						m_docMgr.ActiveDocument = pd;
+						CloseDocument(false, false);
 						break;
 					}
 				}

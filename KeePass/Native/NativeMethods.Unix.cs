@@ -29,6 +29,8 @@ using KeePass.Util;
 
 using KeePassLib.Utility;
 
+using KeeNativeLib = KeePassLib.Native;
+
 namespace KeePass.Native
 {
 	internal static partial class NativeMethods
@@ -120,7 +122,8 @@ namespace KeePass.Native
 			try
 			{
 				Application.DoEvents(); // E.g. for clipboard updates
-				string strOutput = WinUtil.RunConsoleApp("xdotool", strParams);
+				string strOutput = KeeNativeLib.NativeLib.RunConsoleApp(
+					"xdotool", strParams);
 				Application.DoEvents(); // E.g. for clipboard updates
 				return (strOutput ?? string.Empty);
 			}

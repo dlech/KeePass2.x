@@ -48,7 +48,7 @@ namespace KeePass.App
 		// public const string MruNameValueSplitter = @"/::/";
 
 		/// <summary>
-		/// Hot key IDs (used in WM_HOTKEY window messages).
+		/// Hot key IDs (used in <c>WM_HOTKEY</c> window messages).
 		/// </summary>
 		public static class GlobalHotKeyId
 		{
@@ -154,9 +154,10 @@ namespace KeePass.App
 			public const string PlgxBuildPost = "plgx-build-post";
 
 			public const string Debug = "debug";
+			public const string DebugThrowException = "debug-throwexcp";
 			public const string SavePluginCompileRes = "saveplgxcr";
 			public const string ShowAssemblyInfo = "showasminfo";
-			public const string DebugThrowException = "debug-throwexcp";
+			public const string MakeXmlSerializerEx = "makexmlserializerex";
 
 #if (DEBUG && !KeePassLibSD)
 			public const string MakePopularPasswordTable = "makepopularpasswordtable";

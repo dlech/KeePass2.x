@@ -79,6 +79,9 @@ namespace KeePass.UI
 		{
 			get
 			{
+				if(!Program.Config.UI.RepeatPasswordOnlyWhenHidden)
+					return false;
+
 				if(m_cbHide == null) { Debug.Assert(false); return false; }
 				return !m_cbHide.Checked;
 			}
@@ -243,7 +246,8 @@ namespace KeePass.UI
 			m_secPassword.EnableProtection(bHide);
 			m_secRepeat.EnableProtection(bHide);
 
-			if(bHide && !m_bPrgmCheck)
+			bool bWasAutoRepeat = Program.Config.UI.RepeatPasswordOnlyWhenHidden;
+			if(bHide && !m_bPrgmCheck && bWasAutoRepeat)
 			{
 				++m_uBlockUIUpdate;
 				byte[] pb = GetPasswordUtf8();

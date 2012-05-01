@@ -305,49 +305,68 @@ namespace KeePass.Util
 				ms.Close();
 
 				if(ioc.Path.EndsWith(".gz", StrUtil.CaseIgnoreCmp))
-					pb = MemUtil.Decompress(pb);
-
-				string strData = StrUtil.Utf8.GetString(pb);
-				strData = StrUtil.NormalizeNewLines(strData, false);
-				string[] vLines = strData.Split('\n');
-
-				List<UpdateComponentInfo> l = new List<UpdateComponentInfo>();
-				bool bHeader = true, bFooterFound = false;
-				char chSep = ':'; // Modified by header
-				for(int i = 0; i < vLines.Length; ++i)
 				{
-					string str = vLines[i].Trim();
-					if(str.Length == 0) continue;
-
-					if(bHeader)
+					// Decompress in try-catch, because some web filters
+					// incorrectly pre-decompress the returned data
+					// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4915083
+					try
 					{
-						chSep = str[0];
-						bHeader = false;
+						byte[] pbDec = MemUtil.Decompress(pb);
+						List<UpdateComponentInfo> l = LoadInfoFilePriv(pbDec, ioc);
+						if(l != null) return l;
 					}
-					else if(str[0] == chSep)
-					{
-						bFooterFound = true;
-						break;
-					}
-					else // Component info
-					{
-						string[] vInfo = str.Split(new char[] { chSep });
-						if(vInfo.Length >= 2)
-						{
-							UpdateComponentInfo c = new UpdateComponentInfo(
-								vInfo[0].Trim(), 0, ioc.Path, string.Empty);
-							c.VerAvailable = StrUtil.GetVersion(vInfo[1]);
-
-							AddComponent(l, c);
-						}
-					}
+					catch(Exception) { }
 				}
 
-				return (bFooterFound ? l : null);
+				return LoadInfoFilePriv(pb, ioc);
 			}
 			catch(Exception) { }
 
 			return null;
+		}
+
+		private static List<UpdateComponentInfo> LoadInfoFilePriv(byte[] pbData,
+			IOConnectionInfo iocSource)
+		{
+			if((pbData == null) || (pbData.Length == 0)) return null;
+
+			string strData = StrUtil.Utf8.GetString(pbData);
+			strData = StrUtil.NormalizeNewLines(strData, false);
+			string[] vLines = strData.Split('\n');
+
+			List<UpdateComponentInfo> l = new List<UpdateComponentInfo>();
+			bool bHeader = true, bFooterFound = false;
+			char chSep = ':'; // Modified by header
+			for(int i = 0; i < vLines.Length; ++i)
+			{
+				string str = vLines[i].Trim();
+				if(str.Length == 0) continue;
+
+				if(bHeader)
+				{
+					chSep = str[0];
+					bHeader = false;
+				}
+				else if(str[0] == chSep)
+				{
+					bFooterFound = true;
+					break;
+				}
+				else // Component info
+				{
+					string[] vInfo = str.Split(new char[] { chSep });
+					if(vInfo.Length >= 2)
+					{
+						UpdateComponentInfo c = new UpdateComponentInfo(
+							vInfo[0].Trim(), 0, iocSource.Path, string.Empty);
+						c.VerAvailable = StrUtil.ParseVersion(vInfo[1]);
+
+						AddComponent(l, c);
+					}
+				}
+			}
+
+			return (bFooterFound ? l : null);
 		}
 
 		private static void AddComponent(List<UpdateComponentInfo> l,
@@ -375,7 +394,7 @@ namespace KeePass.Util
 					string.Empty);
 
 				AddComponent(l, new UpdateComponentInfo(pi.Name.Trim(),
-					StrUtil.GetVersion(pi.FileVersion), strUrl.Trim(),
+					StrUtil.ParseVersion(pi.FileVersion), strUrl.Trim(),
 					KPRes.Plugins));
 			}
 
@@ -449,7 +468,8 @@ namespace KeePass.Util
 
 			// If the user has manually enabled the automatic update check
 			// before, there's no need to ask him again
-			if(!Program.Config.Application.Start.CheckForUpdate)
+			if(!Program.Config.Application.Start.CheckForUpdate &&
+				!Program.IsDevelopmentSnapshot())
 			{
 				string strHdr = KPRes.UpdateCheckInfo;
 				string strSub = KPRes.UpdateCheckInfoRes + MessageService.NewParagraph +

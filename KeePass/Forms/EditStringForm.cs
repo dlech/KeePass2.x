@@ -186,20 +186,17 @@ namespace KeePass.Forms
 
 			if(m_strStringName == null) // Add string field
 			{
-				Debug.Assert(m_vStringDict.Exists(strName) == false);
-
-				ProtectedString ps = new ProtectedString(m_cbProtect.Checked, m_richStringValue.Text);
-					m_vStringDict.Set(strName, ps);
+				Debug.Assert(!m_vStringDict.Exists(strName));
 			}
 			else // Edit string field
 			{
 				if(!m_strStringName.Equals(strName))
 					m_vStringDict.Remove(m_strStringName);
-
-				ProtectedString ps = new ProtectedString(m_cbProtect.Checked,
-					m_richStringValue.Text);
-				m_vStringDict.Set(strName, ps);
 			}
+
+			ProtectedString ps = new ProtectedString(m_cbProtect.Checked,
+				m_richStringValue.Text);
+			m_vStringDict.Set(strName, ps);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

@@ -240,7 +240,7 @@ namespace KeePass.Forms
 
 					try
 					{
-						if(File.Exists(strFile) == false)
+						if(!File.Exists(strFile))
 							throw new FileNotFoundException();
 
 						// Image img = Image.FromFile(strFile);

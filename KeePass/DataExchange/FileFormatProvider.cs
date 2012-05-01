@@ -43,6 +43,9 @@ namespace KeePass.DataExchange
 
 		/// <summary>
 		/// Default file name extension, without leading dot.
+		/// If there are multiple default/equivalent extensions
+		/// (like e.g. "html" and "htm"), specify all of them
+		/// separated by a '|' (e.g. "html|htm").
 		/// </summary>
 		public virtual string DefaultExtension
 		{

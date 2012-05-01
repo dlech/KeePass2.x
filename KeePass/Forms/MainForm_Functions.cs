@@ -23,8 +23,8 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -1176,14 +1176,7 @@ namespace KeePass.Forms
 			}
 
 			if(lviFocused != null)
-			{
-				try { m_lvEntries.FocusedItem = lviFocused; } // .NET
-				catch(Exception)
-				{
-					try { lviFocused.Focused = true; } // Mono
-					catch(Exception) { Debug.Assert(false); }
-				}
-			}
+				UIUtil.SetFocusedItem(m_lvEntries, lviFocused, false);
 
 			View view = m_lvEntries.View;
 			if(m_bSimpleTanView)
@@ -2172,7 +2165,8 @@ namespace KeePass.Forms
 			}
 			catch(Exception ex)
 			{
-				MessageService.ShowLoadWarning(ioc.GetDisplayName(), ex);
+				MessageService.ShowLoadWarning(ioc.GetDisplayName(), ex,
+					(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null));
 				pwDb = null;
 			}
 
@@ -3166,20 +3160,26 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void CloseDocument(PwDocument ds, bool bLocking, bool bExiting)
+		private void CloseDocument(bool bLocking, bool bExiting)
 		{
-			if(ds == null) ds = m_docMgr.ActiveDocument;
-
+			PwDocument ds = m_docMgr.ActiveDocument;
 			PwDatabase pd = ds.Database;
-			IOConnectionInfo ioClosing = pd.IOConnectionInfo.CloneDeep();
+
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.ClosingDatabaseFilePre,
+				pd.IOConnectionInfo.Path);
+			if(this.FileClosingPre != null)
+			{
+				FileClosingEventArgs fcea = new FileClosingEventArgs(pd);
+				this.FileClosingPre(null, fcea);
+				if(fcea.Cancel) return;
+			}
 
 			if(pd.Modified) // Implies pd.IsOpen
 			{
+				bool bInvokeSave = false;
+
 				if(Program.Config.Application.FileClosing.AutoSave)
-				{
-					OnFileSave(null, EventArgs.Empty);
-					if(pd.Modified) return;
-				}
+					bInvokeSave = true;
 				else
 				{
 					FileSaveOrigin fso = FileSaveOrigin.Closing;
@@ -3190,14 +3190,27 @@ namespace KeePass.Forms
 						pd.IOConnectionInfo.GetDisplayName(), fso, this.Handle);
 
 					if(dr == DialogResult.Cancel) return;
-					else if(dr == DialogResult.Yes)
-					{
-						OnFileSave(null, EventArgs.Empty);
-						if(pd.Modified) return;
-					}
+					else if(dr == DialogResult.Yes) bInvokeSave = true;
 					else if(dr == DialogResult.No) { } // Changes are lost
 				}
+
+				if(bInvokeSave)
+				{
+					OnFileSave(null, EventArgs.Empty);
+					if(pd.Modified) return;
+				}
 			}
+
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.ClosingDatabaseFilePost,
+				pd.IOConnectionInfo.Path);
+			if(this.FileClosingPost != null)
+			{
+				FileClosingEventArgs fcea = new FileClosingEventArgs(pd);
+				this.FileClosingPost(null, fcea);
+				if(fcea.Cancel) return;
+			}
+
+			IOConnectionInfo ioClosing = pd.IOConnectionInfo.CloneDeep();
 
 			pd.Close();
 			if(!bLocking) m_docMgr.CloseDatabase(pd);
@@ -3209,14 +3222,15 @@ namespace KeePass.Forms
 			{
 				m_docMgr.ActiveDatabase.UINeedsIconUpdate = true;
 				UpdateUI(true, null, true, null, true, null, false);
+				ResetDefaultFocus(null);
 			}
 
 			// NativeMethods.ClearIconicBitmaps(this.Handle);
 
-			if(FileClosed != null)
+			if(this.FileClosed != null)
 			{
 				FileClosedEventArgs fcea = new FileClosedEventArgs(ioClosing);
-				FileClosed(null, fcea);
+				this.FileClosed(null, fcea);
 			}
 		}
 
@@ -3241,15 +3255,13 @@ namespace KeePass.Forms
 			foreach(PwDocument ds in m_docMgr.Documents)
 			{
 				PwDatabase pd = ds.Database;
-
 				if(!pd.IsOpen) continue; // Nothing to lock
 
 				IOConnectionInfo ioIoc = pd.IOConnectionInfo;
 				Debug.Assert(ioIoc != null);
 
 				m_docMgr.ActiveDocument = ds;
-
-				CloseDocument(null, true, false);
+				CloseDocument(true, false);
 				if(pd.IsOpen) return;
 
 				ds.LockedIoc = ioIoc;
@@ -3296,7 +3308,7 @@ namespace KeePass.Forms
 					if(ds.Database.IsOpen)
 					{
 						m_docMgr.ActiveDocument = ds;
-						CloseDocument(null, false, bExiting);
+						CloseDocument(false, bExiting);
 
 						if(ds.Database.IsOpen)
 						{
@@ -3524,10 +3536,7 @@ namespace KeePass.Forms
 		{
 			if((m_lvEntries.Items.Count > 0) &&
 				(m_lvEntries.SelectedIndices.Count == 0))
-			{
-				m_lvEntries.Items[0].Selected = true;
-				m_lvEntries.Items[0].Focused = true;
-			}
+				UIUtil.SetFocusedItem(m_lvEntries, m_lvEntries.Items[0], true);
 		}
 
 		private void SelectEntries(PwObjectList<PwEntry> lEntries,
@@ -3550,7 +3559,8 @@ namespace KeePass.Forms
 
 						if(bFirst && bFocusFirst)
 						{
-							m_lvEntries.Items[i].Focused = true;
+							UIUtil.SetFocusedItem(m_lvEntries,
+								m_lvEntries.Items[i], false);
 							bFirst = false;
 						}
 
@@ -4134,8 +4144,8 @@ namespace KeePass.Forms
 
 				aceMru.Items.Clear();
 				// Count <= max is not guaranteed, therefore take minimum of both
-				for(uint uMru = 0; uMru < Math.Min(m_mruList.MaxItemCount,
-					m_mruList.ItemCount); ++uMru)
+				uint uMax = Math.Min(m_mruList.MaxItemCount, m_mruList.ItemCount);
+				for(uint uMru = 0; uMru < uMax; ++uMru)
 				{
 					KeyValuePair<string, object> kvpMru = m_mruList.GetItem(uMru);
 					IOConnectionInfo ioMru = (kvpMru.Value as IOConnectionInfo);
@@ -4147,10 +4157,10 @@ namespace KeePass.Forms
 			{
 				m_mruList.MaxItemCount = aceMru.MaxItemCount;
 
-				for(int iMru = 0; iMru < Math.Min((int)m_mruList.MaxItemCount,
-					aceMru.Items.Count); ++iMru)
+				int nMax = Math.Min((int)m_mruList.MaxItemCount, aceMru.Items.Count);
+				for(int iMru = 0; iMru < nMax; ++iMru)
 				{
-					IOConnectionInfo ioMru = aceMru.Items[iMru];
+					IOConnectionInfo ioMru = aceMru.Items[nMax - iMru - 1];
 					m_mruList.AddItem(ioMru.GetDisplayName(), ioMru.CloneDeep(), false);
 				}
 
@@ -4736,6 +4746,16 @@ namespace KeePass.Forms
 			SprContext ctx = new SprContext(pe, pd, SprCompileFlags.Deref);
 			ctx.ForcePlainTextPasswords = false;
 			return ctx;
+		}
+
+		private void EnsureAlwaysOnTopOpt()
+		{
+			bool bWish = Program.Config.MainWindow.AlwaysOnTop;
+			if(KeePassLib.Native.NativeLib.IsUnix()) { this.TopMost = bWish; return; }
+
+			// Workaround for issue reported in KPB 3475997
+			this.TopMost = false;
+			if(bWish) this.TopMost = true;
 		}
 	}
 }

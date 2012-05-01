@@ -33,14 +33,14 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.9.82
+	// 6.9.82-7.7.0+
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
 		public override string FormatName { get { return "RoboForm HTML (PassCards)"; } }
-		public override string DefaultExtension { get { return "html"; } }
+		public override string DefaultExtension { get { return @"html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override bool ImportAppendsToRootGroupOnly { get { return false; } }
@@ -127,13 +127,13 @@ namespace KeePass.DataExchange.Formats
 					string strKeyMapped = ImportUtil.MapNameToStandardField(strKey, true);
 					if((strKeyMapped == PwDefs.TitleField) ||
 						(strKeyMapped == PwDefs.UrlField) ||
-						(strKeyMapped.Length == 0) ||
-						(pe.Strings.ReadSafe(strKeyMapped).Length > 0))
+						(strKeyMapped.Length == 0))
 						strKeyMapped = strKey;
 
-					pe.Strings.Set(strKeyMapped, new ProtectedString(
-						pwStorage.MemoryProtection.GetProtection(strKeyMapped),
-						strValue));
+					// pe.Strings.Set(strKeyMapped, new ProtectedString(
+					//	pwStorage.MemoryProtection.GetProtection(strKeyMapped),
+					//	strValue));
+					ImportUtil.AppendToField(pe, strKeyMapped, strValue, pwStorage);
 
 					nOffset = nValueTD + 1;
 				}

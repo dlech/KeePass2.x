@@ -235,8 +235,8 @@ namespace KeePass.Forms
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
 			bool bIsProvKey = Program.KeyProviderPool.IsKeyProvider(strKeyFile);
 
-			if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
-				(bIsProvKey == false))
+			if(m_cbKeyFile.Checked && !strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) &&
+				!bIsProvKey)
 			{
 				if(ValidateKeyFileLocation() == false) return false;
 
@@ -247,8 +247,8 @@ namespace KeePass.Forms
 					return false;
 				}
 			}
-			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
-				(bIsProvKey == true))
+			else if(m_cbKeyFile.Checked && !strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) &&
+				bIsProvKey)
 			{
 				KeyProvider kp = Program.KeyProviderPool.Get(strKeyFile);
 				if((kp != null) && m_bSecureDesktop)
@@ -304,13 +304,14 @@ namespace KeePass.Forms
 
 			bool bSuccess = true;
 
-			if(File.Exists(strKeyFile) == false)
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strKeyFile);
+			if(!IOConnection.FileExists(ioc))
 			{
 				MessageService.ShowWarning(strKeyFile, KPRes.FileNotFoundError);
 				bSuccess = false;
 			}
 
-			if(bSuccess == false)
+			if(!bSuccess)
 			{
 				int nPos = m_cmbKeyFile.Items.IndexOf(strKeyFile);
 				if(nPos >= 0) m_cmbKeyFile.Items.RemoveAt(nPos);

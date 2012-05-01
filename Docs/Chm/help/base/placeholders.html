@@ -9,7 +9,6 @@
 	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
 
 	<meta name="robots" content="index" />
-	<meta name="revisit-after" content="14 days" />
 
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
@@ -126,7 +125,8 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 <tr><td width="50%">{INTERNETEXPLORER}</td><td width="50%">Path of Internet Explorer, if installed.</td></tr>
 <tr><td width="50%">{FIREFOX}</td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
 <tr><td width="50%">{OPERA}</td><td width="50%">Path of Opera, if installed.</td></tr>
-<tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome, if installed.</td></tr>
+<tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome (or Chromium
+on Unix-like systems), if installed.</td></tr>
 <tr><td width="50%">{SAFARI}</td><td width="50%">Path of Safari, if installed.</td></tr>
 </table>
 
@@ -150,6 +150,8 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 <tr><td width="50%">{DB_BASENAME}</td><td width="50%">File name (excluding extension) of the current database.</td></tr>
 <tr><td width="50%">{DB_EXT}</td><td width="50%">File name extension of the current database.</td></tr>
 <tr><td width="50%">{ENV_DIRSEP}</td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
+<tr><td width="50%">{ENV_PROGRAMFILES_X86}</td><td width="50%">This is
+<code>%ProgramFiles(x86)%</code>, if it exists, otherwise <code>%ProgramFiles%</code>.</td></tr>
 <tr><td width="50%">{DT_SIMPLE}</td><td width="50%">Current local date/time as a simple, sortable string.</td></tr>
 <tr><td width="50%">{DT_YEAR}</td><td width="50%">Year component of the current local date/time.</td></tr>
 <tr><td width="50%">{DT_MONTH}</td><td width="50%">Month component of the current local date/time.</td></tr>

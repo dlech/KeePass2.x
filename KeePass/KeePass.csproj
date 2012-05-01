@@ -140,6 +140,9 @@
     <Compile Include="..\KeePassLib\Interfaces\IUIOperations.cs">
       <Link>KeePassLib\Interfaces\IUIOperations.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Interfaces\IXmlSerializerEx.cs">
+      <Link>KeePassLib\Interfaces\IXmlSerializerEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Keys\CompositeKey.cs">
       <Link>KeePassLib\Keys\CompositeKey.cs</Link>
     </Compile>
@@ -306,6 +309,7 @@
     <Compile Include="App\Configuration\AppConfigEx.cs" />
     <Compile Include="App\Configuration\AppConfigSerializer.cs" />
     <Compile Include="DataExchange\CsvStreamReader.cs" />
+    <Compile Include="DataExchange\CsvStreamReaderEx.cs" />
     <Compile Include="DataExchange\ExportUtil.cs" />
     <Compile Include="DataExchange\FileFormatProvider.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
@@ -317,7 +321,6 @@
     <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />
     <Compile Include="DataExchange\Formats\HandySafeTxt512.cs" />
     <Compile Include="DataExchange\Formats\KasperskyPwMgrXml50.cs" />
-    <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
@@ -388,6 +391,12 @@
     </Compile>
     <Compile Include="Forms\ColumnsForm.Designer.cs">
       <DependentUpon>ColumnsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CsvImportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CsvImportForm.Designer.cs">
+      <DependentUpon>CsvImportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DatabaseOperationsForm.cs">
       <SubType>Form</SubType>
@@ -490,12 +499,6 @@
     </Compile>
     <Compile Include="Forms\FileBrowserForm.Designer.cs">
       <DependentUpon>FileBrowserForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ImportCsvForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ImportCsvForm.Designer.cs">
-      <DependentUpon>ImportCsvForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\GroupForm.cs">
       <SubType>Form</SubType>
@@ -696,6 +699,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
+    <Compile Include="UI\ExpiryControlGroup.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
@@ -764,6 +768,9 @@
     <EmbeddedResource Include="Forms\ColumnsForm.resx">
       <DependentUpon>ColumnsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CsvImportForm.resx">
+      <DependentUpon>CsvImportForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DatabaseOperationsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DatabaseOperationsForm.cs</DependentUpon>
@@ -821,10 +828,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FileBrowserForm.resx">
       <DependentUpon>FileBrowserForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ImportCsvForm.resx">
-      <DependentUpon>ImportCsvForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\GroupForm.resx">
       <SubType>Designer</SubType>
@@ -945,6 +948,7 @@
     <Compile Include="Util\ClipboardContents.cs" />
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
+    <Compile Include="Util\ClipboardUtil.MacOSX.cs" />
     <Compile Include="Util\ClipboardUtil.Windows.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
     <Compile Include="Ecas\EcasActionType.cs" />
@@ -991,7 +995,9 @@
     <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\UpdateCheckEx.cs" />
     <Compile Include="Util\WinUtil.cs" />
+    <Compile Include="Util\XmlSerialization\XmlSerializerEx.Gen.cs" />
     <Compile Include="Util\XmlUtil.cs" />
+    <Compile Include="Util\XmlSerialization\XmlSerializerEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />
@@ -1118,6 +1124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola_Derived\B16x16_Key_New.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_EditCopyLink.png" />
     <None Include="Resources\Images\B16x16_Imp_KasperskyPwMgr.png" />
     <None Include="Resources\Images\B16x16_Imp_StickyPw.png" />

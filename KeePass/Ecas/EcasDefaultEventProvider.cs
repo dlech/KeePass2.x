@@ -43,6 +43,14 @@ namespace KeePass.Ecas
 			0xB3, 0xA8, 0xFD, 0xFE, 0x78, 0x13, 0x4A, 0x6A,
 			0x9C, 0x5D, 0xD5, 0xBA, 0x84, 0x3A, 0x9B, 0x8E
 		});
+		public static readonly PwUuid ClosingDatabaseFilePre = new PwUuid(new byte[] {
+			0x8C, 0xEA, 0xDE, 0x9A, 0xA8, 0x17, 0x49, 0x19,
+			0xA3, 0x2F, 0xF4, 0x1E, 0x3B, 0x1D, 0xEC, 0x49
+		});
+		public static readonly PwUuid ClosingDatabaseFilePost = new PwUuid(new byte[] {
+			0x94, 0xFA, 0x70, 0xE5, 0xB1, 0x3F, 0x41, 0x26,
+			0xA6, 0x4E, 0x06, 0x4F, 0xD8, 0xC3, 0x6C, 0x95
+		});
 		public static readonly PwUuid CopiedEntryInfo = new PwUuid(new byte[] {
 			0x3F, 0x7E, 0x5E, 0xC6, 0x2A, 0x54, 0x4C, 0x58,
 			0x95, 0x44, 0x85, 0xFB, 0xF2, 0x6F, 0x56, 0xDC
@@ -99,6 +107,12 @@ namespace KeePass.Ecas
 			m_events.Add(new EcasEventType(EcasEventIDs.SavedDatabaseFile,
 				KPRes.SavedDatabaseFile, PwIcon.Disk, epFileFilter,
 				IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.ClosingDatabaseFilePre,
+				KPRes.ClosingDatabaseFile + " (" + KPRes.SavingPre + ")",
+				PwIcon.PaperQ, epFileFilter, IsMatchTextEvent));
+			m_events.Add(new EcasEventType(EcasEventIDs.ClosingDatabaseFilePost,
+				KPRes.ClosingDatabaseFile + " (" + KPRes.SavingPost + ")",
+				PwIcon.PaperQ, epFileFilter, IsMatchTextEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.CopiedEntryInfo,
 				KPRes.CopiedEntryData, PwIcon.ClipboardReady, epValueFilter,
 				IsMatchTextEvent));

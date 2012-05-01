@@ -57,7 +57,7 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.UrlSchemeOverrides;
 
-			UIUtil.SetExplorerTheme(m_lvOverrides.Handle);
+			UIUtil.SetExplorerTheme(m_lvOverrides, false);
 
 			int nWidth = (m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth()) / 4;
 			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth);

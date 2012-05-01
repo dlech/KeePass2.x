@@ -83,7 +83,7 @@ namespace KeePassLib.Serialization
 
 			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo, true, null);
 
-			UTF8Encoding encNoBom = new UTF8Encoding(false, false);
+			UTF8Encoding encNoBom = StrUtil.Utf8;
 			CryptoRandom cr = CryptoRandom.Instance;
 
 			try
@@ -806,7 +806,7 @@ namespace KeePassLib.Serialization
 			f.m_format = Kdb4Format.PlainXml;
 
 			XmlTextWriter xtw = null;
-			try { xtw = new XmlTextWriter(msOutput, new UTF8Encoding(false)); }
+			try { xtw = new XmlTextWriter(msOutput, StrUtil.Utf8); }
 			catch(Exception) { Debug.Assert(false); return false; }
 			if(xtw == null) { Debug.Assert(false); return false; }
 

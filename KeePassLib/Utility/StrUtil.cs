@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Drawing;
-// using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
@@ -112,6 +111,73 @@ namespace KeePassLib.Utility
 		}
 	}
 
+	public enum StrEncodingType
+	{
+		Unknown = 0,
+		Default,
+		Ascii,
+		Utf7,
+		Utf8,
+		Utf16LE,
+		Utf16BE,
+		Utf32LE,
+		Utf32BE
+	}
+
+	public sealed class StrEncodingInfo
+	{
+		private readonly StrEncodingType m_type;
+		public StrEncodingType Type
+		{
+			get { return m_type; }
+		}
+
+		private readonly string m_strName;
+		public string Name
+		{
+			get { return m_strName; }
+		}
+
+		private readonly Encoding m_enc;
+		public Encoding Encoding
+		{
+			get { return m_enc; }
+		}
+
+		private readonly uint m_cbCodePoint;
+		/// <summary>
+		/// Size of a character in bytes.
+		/// </summary>
+		public uint CodePointSize
+		{
+			get { return m_cbCodePoint; }
+		}
+
+		private readonly byte[] m_vSig;
+		/// <summary>
+		/// Start signature of the text (byte order mark).
+		/// May be <c>null</c> or empty, if no signature is known.
+		/// </summary>
+		public byte[] StartSignature
+		{
+			get { return m_vSig; }
+		}
+
+		public StrEncodingInfo(StrEncodingType t, string strName, Encoding enc,
+			uint cbCodePoint, byte[] vStartSig)
+		{
+			if(strName == null) throw new ArgumentNullException("strName");
+			if(enc == null) throw new ArgumentNullException("enc");
+			if(cbCodePoint <= 0) throw new ArgumentOutOfRangeException("cbCodePoint");
+
+			m_type = t;
+			m_strName = strName;
+			m_enc = enc;
+			m_cbCodePoint = cbCodePoint;
+			m_vSig = vStartSig;
+		}
+	}
+
 	/// <summary>
 	/// A class containing various string helper methods.
 	/// </summary>
@@ -136,8 +202,51 @@ namespace KeePassLib.Utility
 		{
 			get
 			{
-				if(m_encUtf8 == null) m_encUtf8 = new UTF8Encoding(false);
+				if(m_encUtf8 == null) m_encUtf8 = new UTF8Encoding(false, false);
 				return m_encUtf8;
+			}
+		}
+
+		private static List<StrEncodingInfo> m_lEncs = null;
+		public static IEnumerable<StrEncodingInfo> Encodings
+		{
+			get
+			{
+				if(m_lEncs == null)
+				{
+					m_lEncs = new List<StrEncodingInfo>();
+
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Default,
+#if !KeePassLibSD
+						Encoding.Default.EncodingName,
+#else
+						Encoding.Default.WebName,
+#endif
+						Encoding.Default,
+						(uint)Encoding.Default.GetBytes("a").Length, null));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Ascii,
+						"ASCII", Encoding.ASCII, 1, null));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf7,
+						"Unicode (UTF-7)", Encoding.UTF7, 1, null));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf8,
+						"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
+						"Unicode (UTF-16 LE)", new UnicodeEncoding(false, false),
+						2, new byte[] { 0xFF, 0xFE }));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
+						"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
+						2, new byte[] { 0xFE, 0xFF }));
+#if !KeePassLibSD
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
+						"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
+						4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
+					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf32BE,
+						"Unicode (UTF-32 BE)", new UTF32Encoding(true, false),
+						4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
+#endif
+				}
+
+				return m_lEncs;
 			}
 		}
 
@@ -685,7 +794,7 @@ namespace KeePassLib.Utility
 		{
 			if(string.IsNullOrEmpty(str)) return false; // No assert
 
-			string s = str.ToLower().Trim();
+			string s = str.Trim().ToLower();
 			if(s == "true") return true;
 			if(s == "yes") return true;
 			if(s == "1") return true;
@@ -699,7 +808,7 @@ namespace KeePassLib.Utility
 		{
 			if(string.IsNullOrEmpty(str)) return null;
 
-			string s = str.ToLower().Trim();
+			string s = str.Trim().ToLower();
 			if(s == "true") return true;
 			if(s == "false") return false;
 
@@ -806,11 +915,11 @@ namespace KeePassLib.Utility
 		}
 
 		private static readonly char[] m_vVersionSep = new char[]{ '.', ',' };
-		public static ulong GetVersion(string strVersion)
+		public static ulong ParseVersion(string strVersion)
 		{
 			if(strVersion == null) { Debug.Assert(false); return 0; }
 
-			string[] vVer = strVersion.Trim().Split(m_vVersionSep);
+			string[] vVer = strVersion.Split(m_vVersionSep);
 			if((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
 
 			ushort uPart;
@@ -840,7 +949,14 @@ namespace KeePassLib.Utility
 
 		public static string VersionToString(ulong uVersion)
 		{
+			return VersionToString(uVersion, false);
+		}
+
+		public static string VersionToString(ulong uVersion,
+			bool bEnsureAtLeastTwoComp)
+		{
 			string str = string.Empty;
+			bool bMultiComp = false;
 
 			for(int i = 0; i < 4; ++i)
 			{
@@ -848,12 +964,20 @@ namespace KeePassLib.Utility
 
 				if((us != 0) || (str.Length > 0))
 				{
-					if(str.Length > 0) str = "." + str;
+					if(str.Length > 0)
+					{
+						str = "." + str;
+						bMultiComp = true;
+					}
+
 					str = us.ToString() + str;
 				}
 
 				uVersion >>= 16;
 			}
+
+			if(bEnsureAtLeastTwoComp && !bMultiComp && (str.Length > 0))
+				str += ".0";
 
 			return str;
 		}
@@ -1099,20 +1223,6 @@ namespace KeePassLib.Utility
 			return ((x.Length > y.Length) ? -1 : 1);
 		}
 
-		/* public static string ImageToDataUri(Image img)
-		{
-			if(img == null) { Debug.Assert(false); return string.Empty; }
-
-			MemoryStream ms = new MemoryStream();
-			img.Save(ms, ImageFormat.Png);
-
-			byte[] pbImage = ms.ToArray();
-			string strImage = Convert.ToBase64String(pbImage);
-
-			ms.Close();
-			return ("data:image/png;base64," + strImage);
-		} */
-
 		public static bool IsDataUri(string strUri)
 		{
 			if(strUri == null) { Debug.Assert(false); return false; }
@@ -1199,6 +1309,26 @@ namespace KeePassLib.Utility
 			}
 
 			return str;
+		}
+
+		public static StrEncodingInfo GetEncoding(StrEncodingType t)
+		{
+			foreach(StrEncodingInfo sei in StrUtil.Encodings)
+			{
+				if(sei.Type == t) return sei;
+			}
+
+			return null;
+		}
+
+		public static StrEncodingInfo GetEncoding(string strName)
+		{
+			foreach(StrEncodingInfo sei in StrUtil.Encodings)
+			{
+				if(sei.Name == strName) return sei;
+			}
+
+			return null;
 		}
 	}
 }

@@ -9,7 +9,6 @@
 	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
 
 	<meta name="robots" content="index" />
-	<meta name="revisit-after" content="14 days" />
 
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
@@ -33,6 +32,7 @@
 	
 </head>
 <body>
+
 
 
 
@@ -94,13 +94,17 @@ next release of KPScript.</p>
 <ul>
 <li>ListGroups</li>
 <li>ListEntries</li>
+<li>GetEntryString</li>
 <li>AddEntry</li>
 <li>EditEntry</li>
+<li>MoveEntry</li>
 <li>DeleteEntry</li>
+<li>DeleteAllEntries</li>
 <li>Export</li>
 <li>Sync</li>
 <li>ChangeMasterKey</li>
 <li>DetachBins</li>
+<li>GenPw</li>
 </ul>
 
 <hr />
@@ -122,6 +126,21 @@ is not intended to be printed/used directly. Usage example:</p>
 -keyfile:&quot;C:\KeePass\MyDb.key&quot;</code><br />
 Opens the MyDb.kdbx database using 'MyPassword' as password and the MyDb.key file as key file.
 It will output a list of all entries contained in the MyDb.kdbx database file.</p>
+
+<hr />
+<p><b>Command: GetEntryString</b></p>
+
+<p>Retrieves the value of an entry string field. The entry identification
+syntax is exactly the same as in the <code>EditEntry</code> command.
+The field name can be specified using the '<code>-Field</code>' parameter (supported
+field names are e.g. Title, UserName, Password, URL, Notes, etc.).
+Usage example:</p>
+
+<p><code>KPScript -c:GetEntryString &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPassword
+-Field:UserName -ref-Title:&quot;Demo Account&quot;</code><br />
+Opens the MyDb.kdbx database using 'MyPassword' as password.
+It outputs the user names of all entries that have the title
+&quot;Demo Account&quot;.</p>
 
 <hr />
 <p><b>Command: AddEntry</b></p>
@@ -148,12 +167,21 @@ the entry will be created in the root group. Example:</p>
 <hr />
 <p><b>Command: EditEntry</b></p>
 
-<p>This command edits existing entries. To identify the entries to be edited,
-specify string fields to be compared. The syntax is
+<p>This command edits existing entries.</p>
+
+<p>To identify the entries to be edited,
+string fields can be compared. The syntax is
 <code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.
-To specify one or more new entry string values, use the following syntax:
-<code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.
-Usage examples:</p>
+Additionally to comparing string fields, some other entry fields
+can be compared.
+<code>-refx-UUID:</code> can be used to specify the UUID.
+<code>-refx-Tags:</code> can be used to specify tags
+(multiple tags must be separated using commas '<code>,</code>').</p>
+
+<p>To specify one or more new entry string values, use the following syntax:
+<code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.</p>
+
+<p>Usage examples:</p>
 
 <p><code>KPScript -c:EditEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -ref-Title:&quot;Existing
 entry title&quot; -set-UserName:&quot;New user name&quot;</code></p>
@@ -165,10 +193,26 @@ entry title&quot; -set-UserName:&quot;New user name&quot;</code></p>
 first create backups of entries before modifying them.</p>
 
 <hr />
+<p><b>Command: MoveEntry</b></p>
+
+<p>This command moves one or more existing entries. The entry identification
+syntax is exactly the same as in the <code>EditEntry</code> command.</p>
+
+<p>The target group can be specified using the <code>GroupTree</code>
+parameter. '<code>/</code>' must be used as separator
+(e.g. <code>-GroupTree:Internet/eMail</code> moves the specified entries
+to the subgroup 'eMail' of the subgroup 'Internet').</p>
+
+<hr />
 <p><b>Command: DeleteEntry</b></p>
 
 <p>This command deletes one or more existing entries. The entry identification
 syntax is exactly the same as in the <code>EditEntry</code> command.</p>
+
+<hr />
+<p><b>Command: DeleteAllEntries</b></p>
+
+<p>This command deletes all entries (in all subgroups).</p>
 
 <hr />
 <p><b>Command: Export</b></p>
@@ -207,6 +251,23 @@ the current computer. -->
 Usage example:</p>
 
 <p><code>KPScript -c:DetachBins -guikeyprompt &quot;C:\KeePass\MyDb.kdbx&quot;</code></p>
+
+<hr />
+<p><b>Command: GenPw</b></p>
+
+<p>Generates passwords. The number of passwords can be specified using the
+optional <code>-count:</code> parameter.
+A password generator profile can be specified using the optional
+<code>-profile:</code> parameter
+(the names of all available profiles can be found in the password generator
+dialog).
+Usage examples:</p>
+
+<p><code>KPScript -c:GenPw</code><br />
+Generates one password using the default generator profile.</p>
+
+<p><code>KPScript -c:GenPw -count:5 -profile:&quot;128-Bit Hex Key (built-in)&quot;</code><br />
+Generates five 128-bit hex passwords (when no translation is used).</p>
 
 </body></html>
 

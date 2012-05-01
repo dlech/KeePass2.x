@@ -130,6 +130,24 @@ namespace KeePass.Forms
 	}
 
 	/// <summary>
+	/// Event arguments structure for file-closing events.
+	/// </summary>
+	public sealed class FileClosingEventArgs : CancellableOperationEventArgs
+	{
+		private PwDatabase m_pwDatabase;
+
+		public PwDatabase Database { get { return m_pwDatabase; } }
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public FileClosingEventArgs(PwDatabase pwDatabase)
+		{
+			m_pwDatabase = pwDatabase;
+		}
+	}
+
+	/// <summary>
 	/// Event arguments structure for the file-closed event.
 	/// </summary>
 	public sealed class FileClosedEventArgs : EventArgs
@@ -188,6 +206,9 @@ namespace KeePass.Forms
 		/// Event that is fired after a database has been opened.
 		/// </summary>
 		public event EventHandler<FileOpenedEventArgs> FileOpened;
+
+		public event EventHandler<FileClosingEventArgs> FileClosingPre;
+		public event EventHandler<FileClosingEventArgs> FileClosingPost;
 
 		/// <summary>
 		/// Event that is fired after a database has been closed.

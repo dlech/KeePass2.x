@@ -450,7 +450,7 @@ namespace KeePassLib.Cryptography
 
 		public static void MakeList()
 		{
-			string strData = File.ReadAllText("MostPopularPasswords.txt", Encoding.UTF8);
+			string strData = File.ReadAllText("MostPopularPasswords.txt", StrUtil.Utf8);
 			strData += " ";
 			CharStream cs = new CharStream(strData);
 

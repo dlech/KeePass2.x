@@ -66,7 +66,7 @@ namespace KeePass.Forms
 			m_lvColumns.Columns.Add(KPRes.Asterisks + " ***", nWidth);
 			m_lvColumns.Columns.Add(KPRes.Toggle + " ***", nWidth);
 
-			UIUtil.SetExplorerTheme(m_lvColumns.Handle);
+			UIUtil.SetExplorerTheme(m_lvColumns, false);
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(FillColumnsList));
 

@@ -98,7 +98,7 @@ namespace KeePass.DataExchange
 			Debug.Assert(m_vFormats == null);
 			m_vFormats = new List<FileFormatProvider>();
 
-			m_vFormats.Add(new KeePassCsv1x());
+			// m_vFormats.Add(new KeePassCsv1x());
 			m_vFormats.Add(new KeePassKdb1x());
 			m_vFormats.Add(new KeePassKdb2x());
 			m_vFormats.Add(new KeePassKdb2xRepair());

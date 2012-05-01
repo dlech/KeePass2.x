@@ -40,7 +40,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2007-03-28
+	// Originally written on 2007-03-28, updated on 2012-04-15
 	internal sealed class Spamex20070328 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -201,7 +201,7 @@ namespace KeePass.DataExchange.Formats
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectPassword, str));
 
-			str = StrUtil.GetStringBetween(strPage, 0, "Site URL : <b>", "</b>");
+			str = StrUtil.GetStringBetween(strPage, 0, "Site Domain : <b>", "</b>");
 			if(str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
 			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
 				pwStorage.MemoryProtection.ProtectUrl, str));

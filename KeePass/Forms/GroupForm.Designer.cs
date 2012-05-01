@@ -160,7 +160,6 @@
 			this.m_dtExpires.Name = "m_dtExpires";
 			this.m_dtExpires.Size = new System.Drawing.Size(259, 20);
 			this.m_dtExpires.TabIndex = 5;
-			this.m_dtExpires.ValueChanged += new System.EventHandler(this.OnExpiresValueChanged);
 			// 
 			// m_cbExpires
 			// 
@@ -267,7 +266,7 @@
 			// 
 			// m_btnAutoTypeEdit
 			// 
-			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(318, 57);
+			this.m_btnAutoTypeEdit.Location = new System.Drawing.Point(315, 54);
 			this.m_btnAutoTypeEdit.Name = "m_btnAutoTypeEdit";
 			this.m_btnAutoTypeEdit.Size = new System.Drawing.Size(32, 23);
 			this.m_btnAutoTypeEdit.TabIndex = 3;
@@ -299,7 +298,7 @@
 			// 
 			// m_lblAutoTypeDesc
 			// 
-			this.m_lblAutoTypeDesc.Location = new System.Drawing.Point(29, 82);
+			this.m_lblAutoTypeDesc.Location = new System.Drawing.Point(26, 79);
 			this.m_lblAutoTypeDesc.Name = "m_lblAutoTypeDesc";
 			this.m_lblAutoTypeDesc.Size = new System.Drawing.Size(321, 27);
 			this.m_lblAutoTypeDesc.TabIndex = 4;
@@ -308,7 +307,7 @@
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(32, 59);
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(29, 56);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
 			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(280, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 2;

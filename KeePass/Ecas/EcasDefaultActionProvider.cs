@@ -51,7 +51,8 @@ namespace KeePass.Ecas
 				0x9E, 0xEF, 0x2E, 0xBA, 0xCB, 0x6E, 0xE4, 0xC7 }),
 				KPRes.ExecuteCmdLineUrl, PwIcon.Console, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
-					new EcasParameter(KPRes.Arguments, EcasValueType.String, null) },
+					new EcasParameter(KPRes.Arguments, EcasValueType.String, null),
+					new EcasParameter(KPRes.WaitForExit, EcasValueType.Bool, null) },
 				ExecuteShellCmd));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -145,13 +146,28 @@ namespace KeePass.Ecas
 		{
 			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true, true);
 			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
+			bool bWait = StrUtil.StringToBool(EcasUtil.GetParamString(a.Parameters,
+				2, string.Empty));
 
 			if(string.IsNullOrEmpty(strCmd)) return;
 
 			try
 			{
-				if(string.IsNullOrEmpty(strArgs)) Process.Start(strCmd);
-				else Process.Start(strCmd, strArgs);
+				Process p;
+				if(string.IsNullOrEmpty(strArgs)) p = Process.Start(strCmd);
+				else p = Process.Start(strCmd, strArgs);
+
+				if((p != null) && bWait)
+				{
+					Program.MainForm.UIBlockInteraction(true);
+					MessageService.ExternalIncrementMessageCount();
+
+					try { p.WaitForExit(); }
+					catch(Exception) { Debug.Assert(false); }
+
+					MessageService.ExternalDecrementMessageCount();
+					Program.MainForm.UIBlockInteraction(false);
+				}
 			}
 			catch(Exception e)
 			{
