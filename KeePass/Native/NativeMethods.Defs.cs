@@ -160,8 +160,6 @@ namespace KeePass.Native
 
 		internal const int OFN_DONTADDTORECENT = 0x02000000;
 
-		internal const uint DWMWA_DISALLOW_PEEK = 11;
-
 		internal const uint SHGFI_DISPLAYNAME = 0x000000200;
 		internal const uint SHGFI_ICON = 0x000000100;
 		internal const uint SHGFI_TYPENAME = 0x000000400;

@@ -41,6 +41,8 @@ namespace KeePass.Util
 		public uint DefaultDelay = 10;
 
 		public IntPtr TargetHWnd = IntPtr.Zero;
+		public string TargetWindowTitle = string.Empty;
+
 		public uint ThisThreadID = 0;
 		public uint TargetThreadID = 0;
 		public uint TargetProcessID = 0;
@@ -92,7 +94,13 @@ namespace KeePass.Util
 
 			try
 			{
-				si.TargetHWnd = NativeMethods.GetForegroundWindowHandle();
+				IntPtr hWndTarget;
+				string strTargetTitle;
+				NativeMethods.GetForegroundWindowInfo(out hWndTarget,
+					out strTargetTitle, false);
+				si.TargetHWnd = hWndTarget;
+				si.TargetWindowTitle = (strTargetTitle ?? string.Empty);
+
 				si.ThisThreadID = NativeMethods.GetCurrentThreadId();
 				uint uTargetProcessID;
 				si.TargetThreadID = NativeMethods.GetWindowThreadProcessId(
@@ -393,14 +401,26 @@ namespace KeePass.Util
 		{
 			if(siState.Cancelled) return false;
 
-			if(!Program.Config.Integration.AutoTypeCancelOnWindowChange) return true;
 			if(KeePassLib.Native.NativeLib.IsUnix()) return true;
+
+			bool bChkWnd = Program.Config.Integration.AutoTypeCancelOnWindowChange;
+			bool bChkTitle = Program.Config.Integration.AutoTypeCancelOnTitleChange;
+			if(!bChkWnd && !bChkTitle) return true;
 
 			bool bValid = true;
 			try
 			{
-				IntPtr h = NativeMethods.GetForegroundWindowHandle();
-				if(h != siState.TargetHWnd)
+				IntPtr h;
+				string strTitle;
+				NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
+
+				if(bChkWnd && (h != siState.TargetHWnd))
+				{
+					siState.Cancelled = true;
+					bValid = false;
+				}
+
+				if(bChkTitle && ((strTitle ?? string.Empty) != siState.TargetWindowTitle))
 				{
 					siState.Cancelled = true;
 					bValid = false;

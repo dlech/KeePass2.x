@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="AccelKeysCheck.cs" />
     <Compile Include="FormTrlMgr.cs" />
-    <Compile Include="KeePass1xLngImport.cs" />
+    <Compile Include="TrlImport.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -240,17 +240,17 @@
     <Compile Include="..\KeePassLib\Serialization\IOConnectionInfo.cs">
       <Link>KeePassLib\Serialization\IOConnectionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.cs">
-      <Link>KeePassLib\Serialization\Kdb4File.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.cs">
+      <Link>KeePassLib\Serialization\KdbxFile.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.cs">
-      <Link>KeePassLib\Serialization\Kdb4File.Read.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Read.cs">
+      <Link>KeePassLib\Serialization\KdbxFile.Read.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.Streamed.cs">
-      <Link>KeePassLib\Serialization\Kdb4File.Read.Streamed.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Read.Streamed.cs">
+      <Link>KeePassLib\Serialization\KdbxFile.Read.Streamed.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Write.cs">
-      <Link>KeePassLib\Serialization\Kdb4File.Write.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Write.cs">
+      <Link>KeePassLib\Serialization\KdbxFile.Write.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
       <Link>KeePassLib\Serialization\OldFormatException.cs</Link>
@@ -275,6 +275,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\AppLogEx.cs">
       <Link>KeePassLib\Utility\AppLogEx.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\GfxUtil.cs">
+      <Link>KeePassLib\Utility\GfxUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MemUtil.cs">
       <Link>KeePassLib\Utility\MemUtil.cs</Link>
@@ -316,11 +319,13 @@
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
+    <Compile Include="DataExchange\Formats\DesktopKnox32.cs" />
     <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
     <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />
     <Compile Include="DataExchange\Formats\HandySafeTxt512.cs" />
     <Compile Include="DataExchange\Formats\KasperskyPwMgrXml50.cs" />
+    <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
@@ -359,8 +364,8 @@
     <Compile Include="DataExchange\Formats\ZdnPwProTxt314.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
     <Compile Include="DataExchange\Json.cs" />
-    <Compile Include="DataExchange\Kdb3File.cs" />
-    <Compile Include="DataExchange\Kdb3Manager.cs" />
+    <Compile Include="DataExchange\KdbFile.cs" />
+    <Compile Include="DataExchange\KdbManager.cs" />
     <Compile Include="DataExchange\PwExportInfo.cs" />
     <Compile Include="Ecas\EcasContext.cs" />
     <Compile Include="Ecas\EcasEnum.cs" />
@@ -699,6 +704,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
+    <Compile Include="UI\DwmUtil.cs" />
     <Compile Include="UI\ExpiryControlGroup.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\FontUtil.cs" />
@@ -948,7 +954,7 @@
     <Compile Include="Util\ClipboardContents.cs" />
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
-    <Compile Include="Util\ClipboardUtil.MacOSX.cs" />
+    <Compile Include="Util\ClipboardUtil.Unix.cs" />
     <Compile Include="Util\ClipboardUtil.Windows.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
     <Compile Include="Ecas\EcasActionType.cs" />
@@ -1124,6 +1130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_DesktopKnox.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Key_New.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_EditCopyLink.png" />
     <None Include="Resources\Images\B16x16_Imp_KasperskyPwMgr.png" />

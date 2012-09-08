@@ -50,7 +50,7 @@ namespace KeePass.UI
 		private SecureEdit m_secRepeat = null;
 
 		private bool m_bInitializing = false;
-		private bool m_bPrgmCheck = false;
+		private uint m_uPrgmCheck = 0;
 
 		private bool m_bEnabled = true;
 		public bool Enabled
@@ -183,15 +183,15 @@ namespace KeePass.UI
 
 			if((uFlags & (ulong)AceKeyUIFlags.CheckHidePassword) != 0)
 			{
-				m_bPrgmCheck = true;
+				++m_uPrgmCheck;
 				m_cbHide.Checked = true;
-				m_bPrgmCheck = false;
+				--m_uPrgmCheck;
 			}
 			if((uFlags & (ulong)AceKeyUIFlags.UncheckHidePassword) != 0)
 			{
-				m_bPrgmCheck = true;
+				++m_uPrgmCheck;
 				m_cbHide.Checked = false;
-				m_bPrgmCheck = false;
+				--m_uPrgmCheck;
 			}
 
 			bool bAutoRepeat = this.AutoRepeat;
@@ -237,17 +237,22 @@ namespace KeePass.UI
 			if(m_bInitializing) return;
 
 			bool bHide = m_cbHide.Checked;
-			if(!bHide && !m_bPrgmCheck && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
+			if(!bHide && (m_uPrgmCheck == 0))
 			{
-				m_cbHide.Checked = true;
-				return;
+				if(!AppPolicy.Try(AppPolicyId.UnhidePasswords))
+				{
+					++m_uPrgmCheck;
+					m_cbHide.Checked = true;
+					--m_uPrgmCheck;
+					return;
+				}
 			}
 
 			m_secPassword.EnableProtection(bHide);
 			m_secRepeat.EnableProtection(bHide);
 
 			bool bWasAutoRepeat = Program.Config.UI.RepeatPasswordOnlyWhenHidden;
-			if(bHide && !m_bPrgmCheck && bWasAutoRepeat)
+			if(bHide && (m_uPrgmCheck == 0) && bWasAutoRepeat)
 			{
 				++m_uBlockUIUpdate;
 				byte[] pb = GetPasswordUtf8();
@@ -257,7 +262,7 @@ namespace KeePass.UI
 			}
 
 			UpdateUI();
-			if(!m_bPrgmCheck) UIUtil.SetFocus(m_tbPassword, m_fParent);
+			if(m_uPrgmCheck == 0) UIUtil.SetFocus(m_tbPassword, m_fParent);
 		}
 
 		public void SetPassword(byte[] pbUtf8, bool bSetRepeatPw)
@@ -325,7 +330,7 @@ namespace KeePass.UI
 			{
 				if(!VistaTaskDialog.ShowMessageBox(KPRes.PasswordRepeatFailed,
 					KPRes.ValidationFailed, PwDefs.ShortProductName,
-					VtdIcon.Warning, m_fParent.Handle))
+					VtdIcon.Warning, m_fParent))
 					MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
 			}
 

@@ -45,6 +45,19 @@ namespace KeePass.Util.Spr
 
 		// private static readonly char[] m_vPlhEscapes = new char[] { '{', '}', '%' };
 
+		// Important notes for plugin developers subscribing to the following events:
+		// * If possible, prefer subscribing to FilterCompile instead of
+		//   FilterCompilePre.
+		// * If your plugin provides an active transformation (e.g. replacing a
+		//   placeholder that changes some state or requires UI interaction), you
+		//   must only perform the transformation if the ExtActive bit is set in
+		//   args.Context.Flags of the event arguments object args provided to the
+		//   event handler.
+		// * Non-active transformations should only be performed if the ExtNonActive
+		//   bit is set in args.Context.Flags.
+		public static event EventHandler<SprEventArgs> FilterCompilePre;
+		public static event EventHandler<SprEventArgs> FilterCompile;
+
 		private static void InitializeStatic()
 		{
 			m_strAppExePath = WinUtil.GetExecutable();
@@ -92,6 +105,15 @@ namespace KeePass.Util.Spr
 
 			string str = strText;
 
+			bool bExt = ((ctx.Flags & (SprCompileFlags.ExtActive |
+				SprCompileFlags.ExtNonActive)) != SprCompileFlags.None);
+			if(bExt && (SprEngine.FilterCompilePre != null))
+			{
+				SprEventArgs args = new SprEventArgs(str, ctx.Clone());
+				SprEngine.FilterCompilePre(null, args);
+				str = args.Text;
+			}
+
 			if((ctx.Flags & SprCompileFlags.Comments) != SprCompileFlags.None)
 				str = RemoveComments(str);
 
@@ -106,12 +128,14 @@ namespace KeePass.Util.Spr
 				if((ctx.Flags & SprCompileFlags.EntryStrings) != SprCompileFlags.None)
 					str = FillEntryStrings(str, ctx, uRecursionLevel);
 
-				if((ctx.Flags & SprCompileFlags.UrlRmvScm) != SprCompileFlags.None)
+				if((ctx.Flags & SprCompileFlags.EntryStringsSpecial) != SprCompileFlags.None)
 				{
-					ctx.UrlRemoveSchemeOnce = true;
-					str = SprEngine.FillIfExists(str, @"{URL:RMVSCM}",
-						ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctx, uRecursionLevel);
-					Debug.Assert(!ctx.UrlRemoveSchemeOnce);
+					// ctx.UrlRemoveSchemeOnce = true;
+					// str = SprEngine.FillIfExists(str, @"{URL:RMVSCM}",
+					//	ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctx, uRecursionLevel);
+					// Debug.Assert(!ctx.UrlRemoveSchemeOnce);
+
+					str = FillEntryStringsSpecial(str, ctx, uRecursionLevel);
 				}
 
 				if(((ctx.Flags & SprCompileFlags.PasswordEnc) != SprCompileFlags.None) &&
@@ -239,6 +263,13 @@ namespace KeePass.Util.Spr
 			if((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
 				str = ReplacePickChars(str, ctx, uRecursionLevel);
 
+			if(bExt && (SprEngine.FilterCompile != null))
+			{
+				SprEventArgs args = new SprEventArgs(str, ctx.Clone());
+				SprEngine.FilterCompile(null, args);
+				str = args.Text;
+			}
+
 			if(ctx.EncodeAsAutoTypeSequence)
 			{
 				str = StrUtil.NormalizeNewLines(str, false);
@@ -251,14 +282,14 @@ namespace KeePass.Util.Spr
 		private static string FillIfExists(string strData, string strPlaceholder,
 			ProtectedString psParsable, SprContext ctx, uint uRecursionLevel)
 		{
-			// The UrlRemoveSchemeOnce property of ctx must be cleared
-			// before this method returns and before any recursive call
-			bool bRemoveScheme = false;
-			if(ctx != null)
-			{
-				bRemoveScheme = ctx.UrlRemoveSchemeOnce;
-				ctx.UrlRemoveSchemeOnce = false;
-			}
+			// // The UrlRemoveSchemeOnce property of ctx must be cleared
+			// // before this method returns and before any recursive call
+			// bool bRemoveScheme = false;
+			// if(ctx != null)
+			// {
+			//	bRemoveScheme = ctx.UrlRemoveSchemeOnce;
+			//	ctx.UrlRemoveSchemeOnce = false;
+			// }
 
 			if(strData == null) { Debug.Assert(false); return string.Empty; }
 			if(strPlaceholder == null) { Debug.Assert(false); return strData; }
@@ -271,8 +302,8 @@ namespace KeePass.Util.Spr
 					psParsable.ReadString(), ctx.WithoutContentTransformations(),
 					uRecursionLevel + 1);
 
-				if(bRemoveScheme)
-					strReplacement = UrlUtil.RemoveScheme(strReplacement);
+				// if(bRemoveScheme)
+				//	strReplacement = UrlUtil.RemoveScheme(strReplacement);
 
 				return SprEngine.FillPlaceholder(strData, strPlaceholder,
 					strReplacement, ctx);
@@ -347,6 +378,49 @@ namespace KeePass.Util.Spr
 				// (might be a standard field that has been added above)
 				str = SprEngine.FillIfExists(str, strKey, ctx.Entry.Strings.GetSafe(
 					strField), ctx, uRecursionLevel);
+			}
+
+			return str;
+		}
+
+		private const string UrlSpecialRmvScm = @"{URL:RMVSCM}";
+		private const string UrlSpecialScm = @"{URL:SCM}";
+		private const string UrlSpecialHost = @"{URL:HOST}";
+		private const string UrlSpecialPort = @"{URL:PORT}";
+		private const string UrlSpecialPath = @"{URL:PATH}";
+		private const string UrlSpecialQuery = @"{URL:QUERY}";
+		private static string FillEntryStringsSpecial(string str, SprContext ctx,
+			uint uRecursionLevel)
+		{
+			if((str.IndexOf(UrlSpecialRmvScm, SprEngine.ScMethod) >= 0) ||
+				(str.IndexOf(UrlSpecialScm, SprEngine.ScMethod) >= 0) ||
+				(str.IndexOf(UrlSpecialHost, SprEngine.ScMethod) >= 0) ||
+				(str.IndexOf(UrlSpecialPort, SprEngine.ScMethod) >= 0) ||
+				(str.IndexOf(UrlSpecialPath, SprEngine.ScMethod) >= 0) ||
+				(str.IndexOf(UrlSpecialQuery, SprEngine.ScMethod) >= 0))
+			{
+				string strUrl = SprEngine.FillIfExists(@"{URL}", @"{URL}",
+					ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctx, uRecursionLevel);
+
+				str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialRmvScm,
+					UrlUtil.RemoveScheme(strUrl));
+
+				try
+				{
+					Uri uri = new Uri(strUrl);
+
+					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialScm,
+						uri.Scheme);
+					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialHost,
+						uri.Host);
+					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialPort,
+						uri.Port.ToString());
+					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialPath,
+						uri.AbsolutePath);
+					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialQuery,
+						uri.Query);
+				}
+				catch(Exception) { } // Invalid URI
 			}
 
 			return str;

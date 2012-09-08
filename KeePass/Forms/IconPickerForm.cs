@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 
+using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
 
@@ -228,8 +229,8 @@ namespace KeePass.Forms
 			AddFileType(sbFilter, "*.wmf", "Windows Metafile (*.wmf)");
 			sbFilter.Append(@"|" + KPRes.AllFiles + @" (*.*)|*.*");
 
-			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.ImportFileTitle,
-				sbFilter.ToString(), 1, null, true, true);
+			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.ImportFileTitle,
+				sbFilter.ToString(), 1, null, true, AppDefs.FileDialogContext.Import);
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{
@@ -249,17 +250,23 @@ namespace KeePass.Forms
 						// Bitmap img = new Bitmap(strFile);
 						// Image img = Image.FromFile(strFile);
 						byte[] pb = File.ReadAllBytes(strFile);
-						
+
 						// MemoryStream msSource = new MemoryStream(pb, false);
 						// Image img = Image.FromStream(msSource);
 						// msSource.Close();
 
-						Image img = UIUtil.LoadImage(pb);
-
-						Image imgNew = new Bitmap(img, new Size(16, 16));
-
+						Image img = GfxUtil.LoadImage(pb);
 						MemoryStream ms = new MemoryStream();
-						imgNew.Save(ms, ImageFormat.Png);
+						if((img.Width == 16) && (img.Height == 16))
+							img.Save(ms, ImageFormat.Png);
+						else
+						{
+							// Image imgNew = new Bitmap(img, new Size(16, 16));
+							Bitmap imgSc = UIUtil.CreateScaledImage(img, 16, 16);
+							imgSc.Save(ms, ImageFormat.Png);
+							imgSc.Dispose();
+						}
+						img.Dispose();
 
 						PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true),
 							ms.ToArray());
@@ -363,8 +370,9 @@ namespace KeePass.Forms
 				// AddFileType(sbFilter, "*.ico", "Windows Icon (*.ico)");
 				sbFilter.Append(@"|" + KPRes.AllFiles + @" (*.*)|*.*");
 
-				SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.ExportFileTitle,
-					KPRes.Export + ".png", sbFilter.ToString(), 1, null, true);
+				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.ExportFileTitle,
+					KPRes.Export + ".png", sbFilter.ToString(), 1, null,
+					AppDefs.FileDialogContext.Export);
 				if(sfd.ShowDialog() == DialogResult.OK)
 					SaveImageFile(lvsic[0], sfd.FileName);
 			}

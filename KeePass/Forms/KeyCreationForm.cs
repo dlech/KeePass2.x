@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -48,6 +50,7 @@ namespace KeePass.Forms
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
 
 		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
+		private Image m_imgAccWarning = null;
 
 		public CompositeKey CompositeKey
 		{
@@ -84,6 +87,11 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbPassword);
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
+
+			Bitmap bmpBig = SystemIcons.Warning.ToBitmap();
+			m_imgAccWarning = UIUtil.CreateScaledImage(bmpBig, 16, 16);
+			bmpBig.Dispose();
+			m_picAccWarning.Image = m_imgAccWarning;
 
 			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
@@ -128,6 +136,13 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			if(m_imgAccWarning != null)
+			{
+				m_picAccWarning.Image = null;
+				m_imgAccWarning.Dispose();
+				m_imgAccWarning = null;
+			}
+
 			m_icgPassword.Release();
 		}
 
@@ -276,10 +291,10 @@ namespace KeePass.Forms
 
 		private void OnClickKeyFileCreate(object sender, EventArgs e)
 		{
-			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreate,
+			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreate,
 				UrlUtil.StripExtension(UrlUtil.GetFileName(m_ioInfo.Path)) + "." +
 				AppDefs.FileExtension.KeyFile, UIUtil.CreateFileTypeFilter("key",
-				KPRes.KeyFiles, true), 1, "key", true);
+				KPRes.KeyFiles, true), 1, "key", AppDefs.FileDialogContext.KeyFile);
 
 			if(sfd.ShowDialog() == DialogResult.OK)
 			{
@@ -309,9 +324,9 @@ namespace KeePass.Forms
 
 		private void OnClickKeyFileBrowse(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileUseExisting,
+			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileUseExisting,
 				UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true), 2, null,
-				false, true);
+				false, AppDefs.FileDialogContext.KeyFile);
 
 			if(ofd.ShowDialog() == DialogResult.OK)
 			{

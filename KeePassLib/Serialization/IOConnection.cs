@@ -284,14 +284,25 @@ namespace KeePassLib.Serialization
 
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 
+#if !KeePassLibSD
+			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
+			{
+				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
+				if(!b && bThrowErrors) throw new InvalidOperationException();
+				return b;
+			}
+#endif
+
 			try
 			{
 				Stream s = OpenRead(ioc);
 				if(s == null) throw new FileNotFoundException();
 
-				// For FTP clients we called RETR to get the file, but we never
-				// followed-up and downloaded the file; close may produce a
-				// 550 error -- that's okay
+				try { s.ReadByte(); }
+				catch(Exception) { }
+
+				// We didn't download the file completely; close may throw
+				// an exception -- that's okay
 				try { s.Close(); }
 				catch(Exception) { }
 			}
@@ -381,6 +392,21 @@ namespace KeePassLib.Serialization
 			// }
 			// DeleteFile(iocFrom);
 		}
+
+#if !KeePassLibSD
+		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
+		{
+			try
+			{
+				WebRequest req = CreateWebRequest(ioc);
+				req.Method = strMethod;
+				DisposeResponse(req.GetResponse(), true);
+			}
+			catch(Exception) { return false; }
+
+			return true;
+		}
+#endif
 
 		private static void DisposeResponse(WebResponse wr, bool bGetStream)
 		{

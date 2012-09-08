@@ -97,13 +97,14 @@ namespace KeePass.Util
 				}
 				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
 					SetStringM(strData);
-				else // Managed
-				{
-					Clear();
-
-					DataObject doData = CreateProtectedDataObject(strData);
-					Clipboard.SetDataObject(doData);
-				}
+				else if(KeeNativeLib.NativeLib.IsUnix())
+					SetStringU(strData);
+				// else // Managed
+				// {
+				//	Clear();
+				//	DataObject doData = CreateProtectedDataObject(strData);
+				//	Clipboard.SetDataObject(doData);
+				// }
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
 
@@ -168,13 +169,15 @@ namespace KeePass.Util
 				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
 					SetStringM(Convert.ToBase64String(pbToCopy,
 						Base64FormattingOptions.None));
-				else // Managed, no encoding
-				{
-					Clear();
-
-					DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
-					Clipboard.SetDataObject(doData);
-				}
+				else if(KeeNativeLib.NativeLib.IsUnix())
+					SetStringU(Convert.ToBase64String(pbToCopy,
+						Base64FormattingOptions.None));
+				// else // Managed, no encoding
+				// {
+				//	Clear();
+				//	DataObject doData = CreateProtectedDataObject(strFormat, pbToCopy);
+				//	Clipboard.SetDataObject(doData);
+				// }
 			}
 			catch(Exception) { Debug.Assert(false); return false; }
 
@@ -208,10 +211,12 @@ namespace KeePass.Util
 				}
 				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
 					return Convert.FromBase64String(GetStringM());
-				else // Managed, no encoding
-				{
-					return (byte[])Clipboard.GetData(strFormat);
-				}
+				else if(KeeNativeLib.NativeLib.IsUnix())
+					return Convert.FromBase64String(GetStringU());
+				// else // Managed, no encoding
+				// {
+				//	return (byte[])Clipboard.GetData(strFormat);
+				// }
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -283,6 +288,11 @@ namespace KeePass.Util
 					SetStringM(string.Empty);
 					bNativeSuccess = true;
 				}
+				else if(KeeNativeLib.NativeLib.IsUnix())
+				{
+					SetStringU(string.Empty);
+					bNativeSuccess = true;
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -318,17 +328,19 @@ namespace KeePass.Util
 				{
 					string strData = GetStringM();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-
-					SHA256Managed sha256 = new SHA256Managed();
-					return sha256.ComputeHash(pbUtf8);
+					return (new SHA256Managed()).ComputeHash(pbUtf8);
+				}
+				else if(KeeNativeLib.NativeLib.IsUnix())
+				{
+					string strData = GetStringU();
+					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
+					return (new SHA256Managed()).ComputeHash(pbUtf8);
 				}
 				else if(Clipboard.ContainsText())
 				{
 					string strData = Clipboard.GetText();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-
-					SHA256Managed sha256 = new SHA256Managed();
-					return sha256.ComputeHash(pbUtf8);
+					return (new SHA256Managed()).ComputeHash(pbUtf8);
 				}
 				else if(m_strFormat != null)
 				{
@@ -370,9 +382,13 @@ namespace KeePass.Util
 			{
 				string str = GetStringM();
 				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
-
-				SHA256Managed sha256 = new SHA256Managed();
-				return sha256.ComputeHash(pbText);
+				return (new SHA256Managed()).ComputeHash(pbText);
+			}
+			if(KeeNativeLib.NativeLib.IsUnix())
+			{
+				string str = GetStringU();
+				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
+				return (new SHA256Managed()).ComputeHash(pbText);
 			}
 
 			try

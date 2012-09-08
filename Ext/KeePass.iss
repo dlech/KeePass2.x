@@ -8,10 +8,10 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.19"
-#define KeeVersionStrWithMinor "2.19"
-#define KeeVersionStrWithMinorPath "2.19"
-#define KeeVersionWin "2.19.0.0"
+#define KeeVersionStr "2.20"
+#define KeeVersionStrWithMinor "2.20"
+#define KeeVersionStrWithMinorPath "2.20"
+#define KeeVersionWin "2.20.0.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -29,14 +29,14 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 AppCopyright=Copyright (c) {#KeeDevPeriod} {#MyAppPublisher}
-MinVersion=4.1,5.0
+MinVersion=5.0
 DefaultDirName={pf}\{#MyAppNameEx}
 DefaultGroupName={#MyAppNameEx}
 AllowNoIcons=yes
 LicenseFile=..\Docs\License_Install.txt
 OutputDir=..\Build\KeePass_Distrib
 OutputBaseFilename={#MyAppNameShort}-{#KeeVersionStrWithMinorPath}-Setup
-Compression=lzma/ultra
+Compression=lzma2/ultra
 SolidCompression=yes
 InternalCompressLevel=ultra
 UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -68,7 +68,7 @@ Name: norwegian; MessagesFile: compiler:Languages\Norwegian.isl
 Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: portuguese; MessagesFile: compiler:Languages\Portuguese.isl
 Name: russian; MessagesFile: compiler:Languages\Russian.isl
-Name: slovak; MessagesFile: compiler:Languages\Slovak.isl
+; Name: slovak; MessagesFile: compiler:Languages\Slovak.isl
 Name: slovenian; MessagesFile: compiler:Languages\Slovenian.isl
 Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
 
@@ -82,7 +82,7 @@ Name: Core; Description: Core KeePass Application Files; Flags: fixed; Types: fu
 Name: UserDoc; Description: Help Manual; Types: full custom
 Name: KeePassLibC; Description: Native Support Library (KeePass 1.x); Types: full custom
 ; Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: full custom
-Name: XSL; Description: XSL Stylesheets for KDB4 XML Files; Types: full custom
+Name: XSL; Description: XSL Stylesheets for KDBX XML Files; Types: full custom
 Name: NGen; Description: Optimize KeePass Performance; Types: full custom; ExtraDiskSpaceRequired: 1048576
 Name: PreLoad; Description: Optimize KeePass On-Demand Start-Up Performance; Types: full custom; ExtraDiskSpaceRequired: 2048
 ; Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: full custom
@@ -99,11 +99,11 @@ Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Components: 
 Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Components: KeePassLibC
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Components: NativeLib
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Components: NativeLib
-Source: ..\Build\KeePass_Distrib\XSL\KDB4_DetailsFull.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDB4_DetailsLite.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDB4_PasswordsOnly.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDB4_Styles.css; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDB4_Tabular.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLite.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Styles.css; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Tabular.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\TableHeader.gif; DestDir: {app}\XSL; Components: XSL
 
 [Registry]

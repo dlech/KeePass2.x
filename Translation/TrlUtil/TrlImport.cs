@@ -24,16 +24,17 @@ using System.IO;
 using System.Diagnostics;
 
 using KeePassLib.Translation;
+using KeePassLib.Utility;
 
 namespace TrlUtil
 {
-	public static class KeePass1xLngImport
+	public static class TrlImport
 	{
-		public static void Import(KPTranslation kpInto, string strFile)
+		public static void Import1xLng(KPTranslation kpInto, string strFile)
 		{
 			if((strFile == null) || (strFile.Length == 0)) { Debug.Assert(false); return; }
 
-			string strData = File.ReadAllText(strFile, Encoding.UTF8);
+			string strData = File.ReadAllText(strFile, StrUtil.Utf8);
 
 			Dictionary<string, string> dict = new Dictionary<string, string>();
 
@@ -85,34 +86,66 @@ namespace TrlUtil
 			{
 				foreach(KPStringTableItem kpsti in kpst.Strings)
 				{
-					if(kpsti.Value.Length == 0)
-					{
-						string strTrl;
-						if(dict.TryGetValue(kpsti.ValueEnglish, out strTrl))
-							kpsti.Value = strTrl;
-					}
+					string strTrl;
+					if(dict.TryGetValue(kpsti.ValueEnglish, out strTrl))
+						kpsti.Value = strTrl;
 				}
 			}
 
 			foreach(KPFormCustomization kpfc in kpInto.Forms)
 			{
-				if(kpfc.Window.Text.Length == 0)
-				{
-					string strTrlWnd;
-					if(dict.TryGetValue(kpfc.Window.TextEnglish, out strTrlWnd))
-						kpfc.Window.Text = strTrlWnd;
-				}
+				string strTrlWnd;
+				if(dict.TryGetValue(kpfc.Window.TextEnglish, out strTrlWnd))
+					kpfc.Window.Text = strTrlWnd;
 
 				foreach(KPControlCustomization kpcc in kpfc.Controls)
 				{
-					if(kpcc.Text.Length == 0)
+					string strTrlCtrl;
+					if(dict.TryGetValue(kpcc.TextEnglish, out strTrlCtrl))
+						kpcc.Text = strTrlCtrl;
+				}
+			}
+		}
+
+		public static void ImportPo(KPTranslation kpInto, string strFile)
+		{
+			if((strFile == null) || (strFile.Length == 0)) { Debug.Assert(false); return; }
+
+			string strData = File.ReadAllText(strFile, StrUtil.Utf8);
+			strData = StrUtil.NormalizeNewLines(strData, false);
+			string[] vData = strData.Split('\n');
+
+			Dictionary<string, string> dict = new Dictionary<string, string>();
+			string strID = string.Empty;
+			foreach(string strLine in vData)
+			{
+				string str = strLine.Trim();
+				if(str.StartsWith("msgid ", StrUtil.CaseIgnoreCmp))
+					strID = FilterPoValue(str.Substring(6));
+				else if(str.StartsWith("msgstr ", StrUtil.CaseIgnoreCmp))
+				{
+					if(strID.Length > 0)
 					{
-						string strTrlCtrl;
-						if(dict.TryGetValue(kpcc.TextEnglish, out strTrlCtrl))
-							kpcc.Text = strTrlCtrl;
+						dict[strID] = FilterPoValue(str.Substring(7));
+						strID = string.Empty;
 					}
 				}
 			}
+
+			MergeDict(kpInto, dict);
+		}
+
+		private static string FilterPoValue(string str)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+
+			if(str.StartsWith("\"") && str.EndsWith("\"") && (str.Length >= 2))
+				str = str.Substring(1, str.Length - 2);
+			else { Debug.Assert(false); }
+
+			str = str.Replace("\\\"", "\"");
+
+			return str;
 		}
 	}
 }

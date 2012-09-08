@@ -37,7 +37,7 @@ namespace KeePass.Util.Spr
 		AppPaths = 0x1, // Paths to IE, Firefox, Opera, ...
 		PickChars = 0x2,
 		EntryStrings = 0x4,
-		UrlRmvScm = 0x8,
+		EntryStringsSpecial = 0x8, // {URL:RMVSCM}, ...
 		PasswordEnc = 0x10,
 		Group = 0x20,
 		Paths = 0x40, // App-dir, doc-dir, path sep, ...
@@ -49,15 +49,21 @@ namespace KeePass.Util.Spr
 		HmacOtp = 0x1000,
 		Comments = 0x2000,
 
-		All = 0x3FFF,
+		ExtActive = 0x4000, // Active transformations provided by plugins
+		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
+		// Next free: 0x10000
+		All = 0xFFFF,
+
+		// Internal:
 		UIInteractive = SprCompileFlags.PickChars,
 		StateChanging = (SprCompileFlags.NewPassword | SprCompileFlags.HmacOtp),
 
-		Active = (SprCompileFlags.UIInteractive | SprCompileFlags.StateChanging),
+		Active = (SprCompileFlags.UIInteractive | SprCompileFlags.StateChanging |
+			SprCompileFlags.ExtActive),
 		NonActive = (SprCompileFlags.All & ~SprCompileFlags.Active),
 
-		Deref = (SprCompileFlags.EntryStrings | SprCompileFlags.UrlRmvScm |
+		Deref = (SprCompileFlags.EntryStrings | SprCompileFlags.EntryStringsSpecial |
 			SprCompileFlags.References)
 	}
 
@@ -114,15 +120,15 @@ namespace KeePass.Util.Spr
 			get { return m_refsCache; }
 		}
 
-		private bool m_bNoUrlSchemeOnce = false;
-		/// <summary>
-		/// Used internally by <c>SprEngine</c>; don't modify it.
-		/// </summary>
-		internal bool UrlRemoveSchemeOnce
-		{
-			get { return m_bNoUrlSchemeOnce; }
-			set { m_bNoUrlSchemeOnce = value; }
-		}
+		// private bool m_bNoUrlSchemeOnce = false;
+		// /// <summary>
+		// /// Used internally by <c>SprEngine</c>; don't modify it.
+		// /// </summary>
+		// internal bool UrlRemoveSchemeOnce
+		// {
+		//	get { return m_bNoUrlSchemeOnce; }
+		//	set { m_bNoUrlSchemeOnce = value; }
+		// }
 
 		public SprContext() { }
 
@@ -161,12 +167,43 @@ namespace KeePass.Util.Spr
 
 			ctx.m_bMakeAT = false;
 			ctx.m_bMakeCmdQuotes = false;
-			ctx.m_bNoUrlSchemeOnce = false;
+			// ctx.m_bNoUrlSchemeOnce = false;
 
 			Debug.Assert(object.ReferenceEquals(m_pe, ctx.m_pe));
 			Debug.Assert(object.ReferenceEquals(m_pd, ctx.m_pd));
 			Debug.Assert(object.ReferenceEquals(m_refsCache, ctx.m_refsCache));
 			return ctx;
+		}
+	}
+
+	public sealed class SprEventArgs : EventArgs
+	{
+		private string m_str = string.Empty;
+		public string Text
+		{
+			get { return m_str; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_str = value;
+			}
+		}
+
+		private SprContext m_ctx = null;
+		public SprContext Context
+		{
+			get { return m_ctx; }
+		}
+
+		public SprEventArgs() { }
+
+		public SprEventArgs(string strText, SprContext ctx)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+			// ctx == null is allowed
+
+			m_str = strText;
+			m_ctx = ctx;
 		}
 	}
 }

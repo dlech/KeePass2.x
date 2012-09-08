@@ -158,6 +158,16 @@ namespace KeePassLib.Utility
 			return sbText.ToString();
 		}
 
+#if !KeePassLibSD
+		internal static Form GetTopForm()
+		{
+			FormCollection fc = Application.OpenForms;
+			if((fc == null) || (fc.Count == 0)) return null;
+
+			return fc[fc.Count - 1];
+		}
+#endif
+
 		private static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
@@ -167,15 +177,11 @@ namespace KeePassLib.Utility
 			IWin32Window wnd = null;
 			try
 			{
-				FormCollection fc = Application.OpenForms;
-				if((fc != null) && (fc.Count > 0))
-				{
-					Form f = fc[fc.Count - 1];
-					if((f != null) && f.InvokeRequired)
-						return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
-							SafeShowMessageBoxInternal), f, strText, strTitle, mb, mi, mdb);
-					else wnd = f;
-				}
+				Form f = GetTopForm();
+				if((f != null) && f.InvokeRequired)
+					return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
+						SafeShowMessageBoxInternal), f, strText, strTitle, mb, mi, mdb);
+				else wnd = f;
 			}
 			catch(Exception) { Debug.Assert(false); }
 

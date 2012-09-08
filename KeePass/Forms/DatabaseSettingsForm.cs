@@ -35,6 +35,7 @@ using KeePassLib.Delegates;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -98,7 +99,7 @@ namespace KeePass.Forms
 			else this.Text = KPRes.DatabaseSettings;
 
 			m_tbDbName.Text = m_pwDatabase.Name;
-			m_tbDbDesc.Text = m_pwDatabase.Description;
+			UIUtil.SetMultilineText(m_tbDbDesc, m_pwDatabase.Description);
 			m_tbDefaultUser.Text = m_pwDatabase.DefaultUserName;
 
 			m_clr = m_pwDatabase.Color;
@@ -219,9 +220,12 @@ namespace KeePass.Forms
 				m_pwDatabase.NameChanged = DateTime.Now;
 			}
 
-			if(!m_tbDbDesc.Text.Equals(m_pwDatabase.Description))
+			string strNew = m_tbDbDesc.Text;
+			string strOrgFlt = StrUtil.NormalizeNewLines(m_pwDatabase.Description, false);
+			string strNewFlt = StrUtil.NormalizeNewLines(strNew, false);
+			if(!strNewFlt.Equals(strOrgFlt))
 			{
-				m_pwDatabase.Description = m_tbDbDesc.Text;
+				m_pwDatabase.Description = strNew;
 				m_pwDatabase.DescriptionChanged = DateTime.Now;
 			}
 

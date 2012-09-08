@@ -135,8 +135,6 @@ namespace KeePassLib.Cryptography
 			if(m_bWriting) throw new InvalidOperationException();
 
 			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
-
-			// Mono bug workaround (LaunchPad 798910)
 			int nPartialRead = nRead;
 			while((nRead < nCount) && (nPartialRead != 0))
 			{

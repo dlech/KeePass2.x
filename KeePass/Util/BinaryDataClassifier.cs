@@ -97,14 +97,16 @@ namespace KeePass.Util
 			Debug.Assert(pbData != null);
 			if(pbData == null) throw new ArgumentNullException("pbData");
 
-			MemoryStream ms = new MemoryStream(pbData, false);
 			try
 			{
-				Image.FromStream(ms);
-				return BinaryDataClass.Image;
+				Image img = GfxUtil.LoadImage(pbData);
+				if(img != null)
+				{
+					img.Dispose();
+					return BinaryDataClass.Image;
+				}
 			}
 			catch(Exception) { }
-			finally { ms.Close(); }
 
 			return BinaryDataClass.Unknown;
 		}

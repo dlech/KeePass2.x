@@ -168,7 +168,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			m_tbDetails.Text = slvic[0].Text;
+			UIUtil.SetMultilineText(m_tbDetails, slvic[0].Text);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

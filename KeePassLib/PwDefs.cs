@@ -44,6 +44,9 @@ namespace KeePassLib
 		/// </summary>
 		public const string ShortProductName = "KeePass";
 
+		internal const string UnixName = "keepass2";
+		internal const string ResClass = "KeePass2"; // With initial capital
+
 		/// <summary>
 		/// Version, encoded as 32-bit unsigned integer.
 		/// 2.00 = 0x02000000, 2.01 = 0x02000100, ..., 2.18 = 0x02010800.
@@ -51,18 +54,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02130000;
+		public const uint Version32 = 0x02140000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002001300000000UL;
+		public const ulong FileVersion64 = 0x0002001400000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.19";
+		public const string VersionString = "2.20";
 
 		public const string Copyright = @"Copyright © 2003-2012 Dominik Reichl";
 

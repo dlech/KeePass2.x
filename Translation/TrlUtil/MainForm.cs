@@ -34,6 +34,7 @@ using KeePass.Util.XmlSerialization;
 
 using KeePassLib;
 using KeePassLib.Resources;
+using KeePassLib.Serialization;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
 
@@ -58,6 +59,8 @@ namespace TrlUtil
 		private bool m_bModified = false;
 
 		private PreviewForm m_prev = new PreviewForm();
+
+		private delegate void ImportFn(KPTranslation trlInto, IOConnectionInfo ioc);
 
 		public MainForm()
 		{
@@ -393,8 +396,8 @@ namespace TrlUtil
 
 		private void OnFileOpen(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog("Open KeePass Translation",
-				m_strFileFilter, 1, null, false, false);
+			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog("Open KeePass Translation",
+				m_strFileFilter, 1, null, false, AppDefs.FileDialogContext.Attachments);
 
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
@@ -623,7 +626,7 @@ namespace TrlUtil
 			Debug.Assert(kpstItem != null);
 			if(kpstItem == null) return;
 
-			m_tbStrEng.Text = lvsic[0].SubItems[1].Text;
+			UIUtil.SetMultilineText(m_tbStrEng, lvsic[0].SubItems[1].Text);
 			m_tbStrTrl.Text = lvsic[0].SubItems[2].Text;
 		}
 
@@ -667,8 +670,9 @@ namespace TrlUtil
 
 		private void OnFileSaveAs(object sender, EventArgs e)
 		{
-			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog("Save KeePass Translation",
-				m_tbNameEng.Text + ".lngx", m_strFileFilter, 1, "lngx", false);
+			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog("Save KeePass Translation",
+				m_tbNameEng.Text + ".lngx", m_strFileFilter, 1, "lngx",
+				AppDefs.FileDialogContext.Attachments);
 
 			if(sfd.ShowDialog() != DialogResult.OK) return;
 
@@ -694,7 +698,7 @@ namespace TrlUtil
 
 			m_kpccLast = kpcc;
 
-			m_tbCtrlEngText.Text = m_kpccLast.TextEnglish;
+			UIUtil.SetMultilineText(m_tbCtrlEngText, m_kpccLast.TextEnglish);
 			m_tbCtrlTrlText.Text = m_kpccLast.Text;
 
 			m_tbLayoutX.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.X);
@@ -821,12 +825,24 @@ namespace TrlUtil
 
 		private void OnImport1xLng(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = UIUtil.CreateOpenFileDialog("Import KeePass 1.x LNG File",
-				"KeePass 1.x LNG File (*.lng)|*.lng|All Files (*.*)|*.*", 1, "lng", false, true);
+			PerformImport("lng", "KeePass 1.x LNG File", Import1xLng);
+		}
+
+		private static void Import1xLng(KPTranslation trlInto, IOConnectionInfo ioc)
+		{
+			TrlImport.Import1xLng(trlInto, ioc.Path);
+		}
+
+		private void PerformImport(string strFileExt, string strFileDesc, ImportFn f)
+		{
+			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog("Import " + strFileDesc,
+				strFileDesc + " (*." + strFileExt + ")|*." + strFileExt +
+				"|All Files (*.*)|*.*", 1, strFileExt, false,
+				AppDefs.FileDialogContext.Import);
 
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
-			try { KeePass1xLngImport.Import(m_trl, ofd.FileName); }
+			try { f(m_trl, IOConnectionInfo.FromPath(ofd.FileName)); }
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateStringTableUI();
@@ -954,6 +970,16 @@ namespace TrlUtil
 			FormTrlMgr.IgnoreBaseHash = true;
 			OnFileOpen(sender, EventArgs.Empty);
 			FormTrlMgr.IgnoreBaseHash = false;
+		}
+
+		private void OnImportPo(object sender, EventArgs e)
+		{
+			PerformImport("po", "PO File", ImportPo);
+		}
+
+		private static void ImportPo(KPTranslation trlInto, IOConnectionInfo ioc)
+		{
+			TrlImport.ImportPo(trlInto, ioc.Path);
 		}
 	}
 }

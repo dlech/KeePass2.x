@@ -201,10 +201,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strFileSaveCorruptionWarning =
-			@"The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.";
+			@"The target file might be corrupted. Please try saving again. If that fails, save the database to a different location.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.'.
+		/// 'The target file might be corrupted. Please try saving again. If that fails, save the database to a different location.'.
 		/// </summary>
 		public static string FileSaveCorruptionWarning
 		{

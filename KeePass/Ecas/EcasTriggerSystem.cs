@@ -149,9 +149,8 @@ namespace KeePass.Ecas
 			}
 			catch(Exception ex)
 			{
-				if(VistaTaskDialog.ShowMessageBox(ex.Message, KPRes.TriggerExecutionFailed,
-					PwDefs.ShortProductName, VtdIcon.Warning,
-					Program.GetSafeMainWindowHandle()) == false)
+				if(!VistaTaskDialog.ShowMessageBox(ex.Message, KPRes.TriggerExecutionFailed,
+					PwDefs.ShortProductName, VtdIcon.Warning, null))
 				{
 					MessageService.ShowWarning(KPRes.TriggerExecutionFailed + ".", ex);
 				}

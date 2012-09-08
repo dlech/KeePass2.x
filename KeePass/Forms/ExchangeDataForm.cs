@@ -206,8 +206,9 @@ namespace KeePass.Forms
 
 			if(m_bExport == false) // Import
 			{
-				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.Import + ": " +
-					strFormat, strFilter, 1, strPriExt, true, true);
+				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Import +
+					": " + strFormat, strFilter, 1, strPriExt, true,
+					AppDefs.FileDialogContext.Import);
 
 				if(ofd.ShowDialog() != DialogResult.OK) return;
 
@@ -229,8 +230,9 @@ namespace KeePass.Forms
 			}
 			else // Export
 			{
-				SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.Export + ": " +
-					strFormat, null, strFilter, 1, strPriExt, false);
+				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.Export +
+					": " + strFormat, null, strFilter, 1, strPriExt,
+					AppDefs.FileDialogContext.Export);
 
 				string strSuggestion;
 				if((m_pwDatabaseInfo != null) &&

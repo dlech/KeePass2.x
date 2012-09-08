@@ -582,15 +582,15 @@ namespace KeePassLib
 
 				m_bModified = false;
 
-				Kdb4File kdb4 = new Kdb4File(this);
-				kdb4.DetachBinaries = m_strDetachBins;
+				KdbxFile kdbx = new KdbxFile(this);
+				kdbx.DetachBinaries = m_strDetachBins;
 
 				Stream s = IOConnection.OpenRead(ioSource);
-				kdb4.Load(s, Kdb4Format.Default, slLogger);
+				kdbx.Load(s, KdbxFormat.Default, slLogger);
 				s.Close();
 
-				m_pbHashOfLastIO = kdb4.HashOfFileOnDisk;
-				m_pbHashOfFileOnDisk = kdb4.HashOfFileOnDisk;
+				m_pbHashOfLastIO = kdbx.HashOfFileOnDisk;
+				m_pbHashOfFileOnDisk = kdbx.HashOfFileOnDisk;
 				Debug.Assert(m_pbHashOfFileOnDisk != null);
 
 				m_bDatabaseOpened = true;
@@ -620,8 +620,8 @@ namespace KeePassLib
 					m_bUseFileTransactions);
 				Stream s = ft.OpenWrite();
 
-				Kdb4File kdb = new Kdb4File(this);
-				kdb.Save(s, null, Kdb4Format.Default, slLogger);
+				KdbxFile kdb = new KdbxFile(this);
+				kdb.Save(s, null, KdbxFormat.Default, slLogger);
 
 				ft.CommitWrite();
 

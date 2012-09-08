@@ -9,7 +9,7 @@
 <html>
 <head>
 <xsl:apply-templates select="Meta" />
-<link rel="stylesheet" type="text/css" href="KDB4_Styles.css" />
+<link rel="stylesheet" type="text/css" href="KDBX_Styles.css" />
 </head>
 <body>
 <xsl:apply-templates select="Root" />

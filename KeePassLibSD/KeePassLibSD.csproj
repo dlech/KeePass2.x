@@ -248,17 +248,17 @@
     <Compile Include="..\KeePassLib\Serialization\IOConnectionInfo.cs">
       <Link>Serialization\IOConnectionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.cs">
-      <Link>Serialization\Kdb4File.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.cs">
+      <Link>Serialization\KdbxFile.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.cs">
-      <Link>Serialization\Kdb4File.Read.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Read.cs">
+      <Link>Serialization\KdbxFile.Read.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Read.Streamed.cs">
-      <Link>Serialization\Kdb4File.Read.Streamed.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Read.Streamed.cs">
+      <Link>Serialization\KdbxFile.Read.Streamed.cs</Link>
     </Compile>
-    <Compile Include="..\KeePassLib\Serialization\Kdb4File.Write.cs">
-      <Link>Serialization\Kdb4File.Write.cs</Link>
+    <Compile Include="..\KeePassLib\Serialization\KdbxFile.Write.cs">
+      <Link>Serialization\KdbxFile.Write.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Serialization\OldFormatException.cs">
       <Link>Serialization\OldFormatException.cs</Link>
@@ -283,6 +283,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\AppLogEx.cs">
       <Link>Utility\AppLogEx.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\GfxUtil.cs">
+      <Link>Utility\GfxUtil.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MemUtil.cs">
       <Link>Utility\MemUtil.cs</Link>

@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Diagnostics;
 using System.Drawing;
+using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.Util;

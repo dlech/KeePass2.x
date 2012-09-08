@@ -475,8 +475,7 @@ namespace KeePass.Util
 				string strSub = KPRes.UpdateCheckInfoRes + MessageService.NewParagraph +
 					KPRes.UpdateCheckInfoPriv;
 
-				VistaTaskDialog dlg = new VistaTaskDialog((fParent != null) ?
-					fParent.Handle : IntPtr.Zero);
+				VistaTaskDialog dlg = new VistaTaskDialog();
 				dlg.CommandLinks = true;
 				dlg.Content = strHdr;
 				dlg.MainInstruction = KPRes.UpdateCheckEnableQ;
@@ -489,7 +488,7 @@ namespace KeePass.Util
 				dlg.SetFooterIcon(VtdIcon.Information);
 
 				int iResult;
-				if(dlg.ShowDialog()) iResult = dlg.Result;
+				if(dlg.ShowDialog(fParent)) iResult = dlg.Result;
 				else
 				{
 					string strMain = strHdr + MessageService.NewParagraph + strSub;

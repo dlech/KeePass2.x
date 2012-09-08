@@ -297,7 +297,11 @@ namespace KeePass.Util
 
 		public static string FindAppUnix(string strApp)
 		{
-			string str = NativeLib.RunConsoleApp("whereis", "-b " + strApp);
+			string strArgPrefix = "-b ";
+			if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				strArgPrefix = string.Empty; // FR 3535696
+
+			string str = NativeLib.RunConsoleApp("whereis", strArgPrefix + strApp);
 			if(str == null) return null;
 
 			str = str.Trim();

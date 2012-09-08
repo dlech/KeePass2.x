@@ -90,8 +90,9 @@ namespace KeePass.DataExchange
 			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
 			if(bOpenFromUrl == false)
 			{
-				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
-					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true, true);
+				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
+					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true,
+					AppDefs.FileDialogContext.Sync);
 
 				if(ofd.ShowDialog() != DialogResult.OK) return null;
 
@@ -278,8 +279,9 @@ namespace KeePass.DataExchange
 							}
 							else { } // No assert (sync on save)
 
-							Program.MainForm.FileMruList.AddItem(ioc.GetDisplayName(),
-								ioc.CloneDeep(), true);
+							if(Program.MainForm != null) // Null for KPScript
+								Program.MainForm.FileMruList.AddItem(
+									ioc.GetDisplayName(), ioc.CloneDeep(), true);
 						}
 						catch(Exception exSync)
 						{

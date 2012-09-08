@@ -71,7 +71,7 @@ namespace KeePass.DataExchange.Formats
 		{
 			if(jObject.Items.ContainsKey(m_strGroup))
 			{
-				JsonArray jArray = jObject.Items[m_strGroup].Value as JsonArray;
+				JsonArray jArray = (jObject.Items[m_strGroup].Value as JsonArray);
 				if(jArray == null) { Debug.Assert(false); return; }
 
 				PwGroup pgNew;
@@ -88,7 +88,7 @@ namespace KeePass.DataExchange.Formats
 
 				foreach(JsonValue jValue in jArray.Values)
 				{
-					JsonObject objSub = jValue.Value as JsonObject;
+					JsonObject objSub = (jValue.Value as JsonObject);
 					if(objSub != null) AddObject(pgNew, objSub, pwContext, true);
 					else { Debug.Assert(false); }
 				}

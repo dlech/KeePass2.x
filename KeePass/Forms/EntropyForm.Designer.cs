@@ -33,7 +33,6 @@
 			this.m_picRandom = new System.Windows.Forms.PictureBox();
 			this.m_lblHint = new System.Windows.Forms.Label();
 			this.m_lblGeneratedHint = new System.Windows.Forms.Label();
-			this.m_pbGenerated = new KeePass.UI.QualityProgressBar();
 			this.m_lblStatus = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpMouse = new System.Windows.Forms.GroupBox();
@@ -41,6 +40,7 @@
 			this.m_lblKeysDesc = new System.Windows.Forms.Label();
 			this.m_lblKeysIntro = new System.Windows.Forms.Label();
 			this.m_tbEdit = new System.Windows.Forms.TextBox();
+			this.m_pbGenerated = new KeePass.UI.QualityProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.m_picRandom)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpMouse.SuspendLayout();
@@ -50,7 +50,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(462, 383);
+			this.m_btnOK.Location = new System.Drawing.Point(462, 388);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 1;
@@ -61,7 +61,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(543, 383);
+			this.m_btnCancel.Location = new System.Drawing.Point(543, 388);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 2;
@@ -76,6 +76,7 @@
 			this.m_picRandom.Location = new System.Drawing.Point(9, 47);
 			this.m_picRandom.Name = "m_picRandom";
 			this.m_picRandom.Size = new System.Drawing.Size(286, 233);
+			this.m_picRandom.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.m_picRandom.TabIndex = 2;
 			this.m_picRandom.TabStop = false;
 			this.m_picRandom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnRandomMouseMove);
@@ -91,28 +92,16 @@
 			// m_lblGeneratedHint
 			// 
 			this.m_lblGeneratedHint.AutoSize = true;
-			this.m_lblGeneratedHint.Location = new System.Drawing.Point(6, 286);
+			this.m_lblGeneratedHint.Location = new System.Drawing.Point(6, 288);
 			this.m_lblGeneratedHint.Name = "m_lblGeneratedHint";
 			this.m_lblGeneratedHint.Size = new System.Drawing.Size(79, 13);
 			this.m_lblGeneratedHint.TabIndex = 1;
 			this.m_lblGeneratedHint.Text = "Generated bits:";
 			// 
-			// m_pbGenerated
-			// 
-			this.m_pbGenerated.Location = new System.Drawing.Point(91, 286);
-			this.m_pbGenerated.Maximum = 100;
-			this.m_pbGenerated.Minimum = 0;
-			this.m_pbGenerated.Name = "m_pbGenerated";
-			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
-			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbGenerated.TabIndex = 2;
-			this.m_pbGenerated.TabStop = false;
-			this.m_pbGenerated.Value = 0;
-			// 
 			// m_lblStatus
 			// 
 			this.m_lblStatus.AutoSize = true;
-			this.m_lblStatus.Location = new System.Drawing.Point(245, 286);
+			this.m_lblStatus.Location = new System.Drawing.Point(245, 288);
 			this.m_lblStatus.Name = "m_lblStatus";
 			this.m_lblStatus.Size = new System.Drawing.Size(50, 13);
 			this.m_lblStatus.TabIndex = 3;
@@ -137,7 +126,7 @@
 			this.m_grpMouse.Controls.Add(this.m_lblStatus);
 			this.m_grpMouse.Location = new System.Drawing.Point(12, 66);
 			this.m_grpMouse.Name = "m_grpMouse";
-			this.m_grpMouse.Size = new System.Drawing.Size(301, 311);
+			this.m_grpMouse.Size = new System.Drawing.Size(302, 316);
 			this.m_grpMouse.TabIndex = 3;
 			this.m_grpMouse.TabStop = false;
 			this.m_grpMouse.Text = "Random mouse input";
@@ -147,9 +136,9 @@
 			this.m_grpKeyboard.Controls.Add(this.m_lblKeysDesc);
 			this.m_grpKeyboard.Controls.Add(this.m_lblKeysIntro);
 			this.m_grpKeyboard.Controls.Add(this.m_tbEdit);
-			this.m_grpKeyboard.Location = new System.Drawing.Point(319, 66);
+			this.m_grpKeyboard.Location = new System.Drawing.Point(320, 66);
 			this.m_grpKeyboard.Name = "m_grpKeyboard";
-			this.m_grpKeyboard.Size = new System.Drawing.Size(299, 311);
+			this.m_grpKeyboard.Size = new System.Drawing.Size(298, 316);
 			this.m_grpKeyboard.TabIndex = 0;
 			this.m_grpKeyboard.TabStop = false;
 			this.m_grpKeyboard.Text = "Random keyboard input";
@@ -158,7 +147,7 @@
 			// 
 			this.m_lblKeysDesc.Location = new System.Drawing.Point(6, 254);
 			this.m_lblKeysDesc.Name = "m_lblKeysDesc";
-			this.m_lblKeysDesc.Size = new System.Drawing.Size(287, 54);
+			this.m_lblKeysDesc.Size = new System.Drawing.Size(286, 56);
 			this.m_lblKeysDesc.TabIndex = 2;
 			this.m_lblKeysDesc.Text = "Just hack some random keys into the box above. You do not need to remember them. " +
 				"They are only used as a random seed for a cryptographically strong random number" +
@@ -176,12 +165,24 @@
 			// m_tbEdit
 			// 
 			this.m_tbEdit.AcceptsReturn = true;
-			this.m_tbEdit.Location = new System.Drawing.Point(6, 47);
+			this.m_tbEdit.Location = new System.Drawing.Point(7, 47);
 			this.m_tbEdit.Multiline = true;
 			this.m_tbEdit.Name = "m_tbEdit";
 			this.m_tbEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbEdit.Size = new System.Drawing.Size(287, 204);
+			this.m_tbEdit.Size = new System.Drawing.Size(284, 204);
 			this.m_tbEdit.TabIndex = 0;
+			// 
+			// m_pbGenerated
+			// 
+			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
+			this.m_pbGenerated.Maximum = 100;
+			this.m_pbGenerated.Minimum = 0;
+			this.m_pbGenerated.Name = "m_pbGenerated";
+			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
+			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbGenerated.TabIndex = 2;
+			this.m_pbGenerated.TabStop = false;
+			this.m_pbGenerated.Value = 0;
 			// 
 			// EntropyForm
 			// 
@@ -189,7 +190,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(630, 418);
+			this.ClientSize = new System.Drawing.Size(630, 423);
 			this.Controls.Add(this.m_grpKeyboard);
 			this.Controls.Add(this.m_grpMouse);
 			this.Controls.Add(this.m_bannerImage);

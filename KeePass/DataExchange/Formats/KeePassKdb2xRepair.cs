@@ -55,12 +55,12 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			Kdb4File kdb4 = new Kdb4File(pwStorage);
+			KdbxFile kdbx = new KdbxFile(pwStorage);
 			// CappedByteStream s = new CappedByteStream(sInput, 64);
 
-			kdb4.RepairMode = true;
+			kdbx.RepairMode = true;
 
-			try { kdb4.Load(sInput, Kdb4Format.Default, slLogger); }
+			try { kdbx.Load(sInput, KdbxFormat.Default, slLogger); }
 			catch(Exception) { }
 		}
 

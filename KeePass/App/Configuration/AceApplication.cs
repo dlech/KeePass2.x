@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Diagnostics;
 
 using KeePass.Ecas;
 
@@ -95,6 +96,33 @@ namespace KeePass.App.Configuration
 			{
 				if(value == null) throw new ArgumentNullException("value");
 				m_mru = value;
+			}
+		}
+
+		private bool m_bRememberWorkDirs = true;
+		[DefaultValue(true)]
+		public bool RememberWorkingDirectories
+		{
+			get { return m_bRememberWorkDirs; }
+			set { m_bRememberWorkDirs = value; }
+		}
+
+		private Dictionary<string, string> m_dictWorkingDirs =
+			new Dictionary<string, string>();
+
+		/// <summary>
+		/// For serialization only; use the <c>*WorkingDirectory</c>
+		/// methods instead.
+		/// </summary>
+		[XmlArray("WorkingDirectories")]
+		[XmlArrayItem("Item")]
+		public string[] WorkingDirectoriesSerialized
+		{
+			get { return SerializeWorkingDirectories(); }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				DeserializeWorkingDirectories(value);
 			}
 		}
 
@@ -183,6 +211,62 @@ namespace KeePass.App.Configuration
 			{
 				if(value == null) throw new ArgumentNullException("value");
 				m_strPluginCachePath = value;
+			}
+		}
+
+		public string GetWorkingDirectory(string strContext)
+		{
+			// strContext may be null
+
+			if(!m_bRememberWorkDirs) return null;
+
+			string str;
+			m_dictWorkingDirs.TryGetValue(strContext ?? string.Empty, out str);
+			return str;
+		}
+
+		public void SetWorkingDirectory(string strContext, string strDir)
+		{
+			// Both parameters may be null
+
+			// if(!m_bRememberWorkDirs) return;
+
+			if(string.IsNullOrEmpty(strContext)) return;
+			m_dictWorkingDirs[strContext] = (strDir ?? string.Empty);
+		}
+
+		internal List<string> GetWorkingDirectoryContexts()
+		{
+			if(!m_bRememberWorkDirs) return new List<string>();
+
+			return new List<string>(m_dictWorkingDirs.Keys);
+		}
+
+		private string[] SerializeWorkingDirectories()
+		{
+			if(!m_bRememberWorkDirs) return new string[0];
+
+			List<string> l = new List<string>();
+			foreach(KeyValuePair<string, string> kvp in m_dictWorkingDirs)
+				l.Add(kvp.Key + @"@" + kvp.Value);
+			return l.ToArray();
+		}
+
+		private void DeserializeWorkingDirectories(string[] v)
+		{
+			// Do not check m_bRememberWorkDirs, because it might not
+			// have been deserialized yet
+
+			m_dictWorkingDirs.Clear();
+
+			foreach(string str in v)
+			{
+				if(str == null) { Debug.Assert(false); continue; }
+
+				int iSep = str.IndexOf('@');
+				if(iSep <= 0) { Debug.Assert(false); continue; }
+
+				m_dictWorkingDirs[str.Substring(0, iSep)] = str.Substring(iSep + 1);
 			}
 		}
 	}

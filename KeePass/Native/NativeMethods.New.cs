@@ -277,14 +277,6 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows7); }
 		} */
 
-		internal static void EnableWindowPeekPreview(IntPtr hWnd, bool bEnable)
-		{
-			int iNoPeek = (bEnable ? 0 : 1);
-
-			try { DwmSetWindowAttributeInt(hWnd, DWMWA_DISALLOW_PEEK, ref iNoPeek, 4); }
-			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
-		}
-
 		internal static uint? GetLastInputTime()
 		{
 			try

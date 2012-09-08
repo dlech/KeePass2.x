@@ -276,7 +276,7 @@ namespace KeePassLib.Serialization
 			string str = m_strUrl;
 
 			if(m_strUser.Length > 0)
-				str += @": " + m_strUser;
+				str += " (" + m_strUser + ")";
 
 			return str;
 		}
@@ -305,6 +305,7 @@ namespace KeePassLib.Serialization
 
 		public bool IsLocalFile()
 		{
+			// Not just ":/", see e.g. AppConfigEx.ChangePathRelAbs
 			return (m_strUrl.IndexOf(@"://") < 0);
 		}
 

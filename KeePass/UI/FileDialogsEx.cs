@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -41,13 +42,13 @@ namespace KeePass.UI
 	public static class FileDialogsEx
 	{
 		public static DialogResult ShowFileSaveQuestion(string strFile,
-			FileSaveOrigin fsOrigin, IntPtr hParent)
+			FileSaveOrigin fsOrigin)
 		{
 			bool bFile = ((strFile != null) && (strFile.Length > 0));
 
 			if(WinUtil.IsAtLeastWindowsVista)
 			{
-				VistaTaskDialog dlg = new VistaTaskDialog(hParent);
+				VistaTaskDialog dlg = new VistaTaskDialog();
 
 				string strText = KPRes.DatabaseModifiedNoDot;
 				if(bFile) strText += ":\r\n" + strFile;
@@ -102,6 +103,182 @@ namespace KeePass.UI
 				MessageService.NewParagraph + KPRes.SaveBeforeCloseQuestion;
 			return MessageService.Ask(strMessage, KPRes.SaveBeforeCloseTitle,
 				MessageBoxButtons.YesNoCancel);
+		}
+	}
+
+	public abstract class FileDialogEx
+	{
+		private readonly bool m_bSaveMode;
+		private readonly string m_strContext;
+
+		public abstract FileDialog FileDialog
+		{
+			get;
+		}
+
+		public string DefaultExt
+		{
+			get { return this.FileDialog.DefaultExt; }
+			set { this.FileDialog.DefaultExt = value; }
+		}
+
+		public string FileName
+		{
+			get { return this.FileDialog.FileName; }
+			set { this.FileDialog.FileName = value; }
+		}
+
+		public string[] FileNames
+		{
+			get { return this.FileDialog.FileNames; }
+		}
+
+		public string Filter
+		{
+			get { return this.FileDialog.Filter; }
+			set { this.FileDialog.Filter = value; }
+		}
+
+		public int FilterIndex
+		{
+			get { return this.FileDialog.FilterIndex; }
+			set { this.FileDialog.FilterIndex = value; }
+		}
+
+		private string m_strInitialDirectoryOvr = null;
+		public string InitialDirectory
+		{
+			get { return m_strInitialDirectoryOvr; }
+			set { m_strInitialDirectoryOvr = value; }
+		}
+
+		public string Title
+		{
+			get { return this.FileDialog.Title; }
+			set { this.FileDialog.Title = value; }
+		}
+
+		public FileDialogEx(bool bSaveMode, string strContext)
+		{
+			m_bSaveMode = bSaveMode;
+			m_strContext = strContext; // May be null
+		}
+
+		public DialogResult ShowDialog()
+		{
+			string strPrevWorkDir = PreShowDialog();
+			DialogResult dr = this.FileDialog.ShowDialog();
+			PostShowDialog(strPrevWorkDir, dr);
+			return dr;
+		}
+
+		public DialogResult ShowDialog(IWin32Window owner)
+		{
+			string strPrevWorkDir = PreShowDialog();
+			DialogResult dr = this.FileDialog.ShowDialog(owner);
+			PostShowDialog(strPrevWorkDir, dr);
+			return dr;
+		}
+
+		private string PreShowDialog()
+		{
+			string strPrevWorkDir = WinUtil.GetWorkingDirectory();
+
+			string strNew = Program.Config.Application.GetWorkingDirectory(m_strContext);
+			if(!string.IsNullOrEmpty(m_strInitialDirectoryOvr))
+				strNew = m_strInitialDirectoryOvr;
+			WinUtil.SetWorkingDirectory(strNew); // Always, even when no context
+
+			try
+			{
+				string strWD = WinUtil.GetWorkingDirectory();
+				this.FileDialog.InitialDirectory = strWD;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strPrevWorkDir;
+		}
+
+		private void PostShowDialog(string strPrevWorkDir, DialogResult dr)
+		{
+			string strCur = null;
+			// Modern file dialogs (on Windows >= Vista) do not change the
+			// working directory (in contrast to Windows <= XP), thus we
+			// derive the working directory from the first file
+			try
+			{
+				if(dr == DialogResult.OK)
+				{
+					string strFile = null;
+					if(m_bSaveMode) strFile = this.FileDialog.FileName;
+					else if(this.FileDialog.FileNames.Length > 0)
+						strFile = this.FileDialog.FileNames[0];
+
+					if(!string.IsNullOrEmpty(strFile))
+						strCur = UrlUtil.GetFileDirectory(strFile, false, true);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			if(!string.IsNullOrEmpty(strCur))
+				Program.Config.Application.SetWorkingDirectory(m_strContext, strCur);
+
+			WinUtil.SetWorkingDirectory(strPrevWorkDir);
+		}
+	}
+
+	public sealed class OpenFileDialogEx : FileDialogEx
+	{
+		private OpenFileDialog m_dlg = new OpenFileDialog();
+
+		public override FileDialog FileDialog
+		{
+			get { return m_dlg; }
+		}
+
+		public bool Multiselect
+		{
+			get { return m_dlg.Multiselect; }
+			set { m_dlg.Multiselect = value; }
+		}
+
+		public OpenFileDialogEx(string strContext) : base(false, strContext)
+		{
+			m_dlg.CheckFileExists = true;
+			m_dlg.CheckPathExists = true;
+			m_dlg.DereferenceLinks = true;
+			m_dlg.ReadOnlyChecked = false;
+			m_dlg.ShowHelp = false;
+			m_dlg.ShowReadOnly = false;
+			// m_dlg.SupportMultiDottedExtensions = false; // Default
+			m_dlg.ValidateNames = true;
+
+			m_dlg.RestoreDirectory = false; // Want new working directory
+		}
+	}
+
+	public sealed class SaveFileDialogEx : FileDialogEx
+	{
+		private SaveFileDialog m_dlg = new SaveFileDialog();
+
+		public override FileDialog FileDialog
+		{
+			get { return m_dlg; }
+		}
+
+		public SaveFileDialogEx(string strContext) : base(true, strContext)
+		{
+			m_dlg.AddExtension = true;
+			m_dlg.CheckFileExists = false;
+			m_dlg.CheckPathExists = true;
+			m_dlg.CreatePrompt = false;
+			m_dlg.DereferenceLinks = true;
+			m_dlg.OverwritePrompt = true;
+			m_dlg.ShowHelp = false;
+			// m_dlg.SupportMultiDottedExtensions = false; // Default
+			m_dlg.ValidateNames = true;
+
+			m_dlg.RestoreDirectory = false; // Want new working directory
 		}
 	}
 }

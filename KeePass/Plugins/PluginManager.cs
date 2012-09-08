@@ -33,6 +33,7 @@ using KeePass.Plugins;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
 namespace KeePass.Plugins
@@ -126,37 +127,64 @@ namespace KeePass.Plugins
 				}
 				catch(Exception) { continue; }
 
-				bool bShowStandardError = false;
+				Exception exShowStd = null;
 				try
 				{
 					PluginInfo pi = new PluginInfo(fi.FullName, fvi, strDisplayFilePath);
 
 					pi.Interface = CreatePluginInstance(pi.FilePath, strTypeName);
 
-					if(pi.Interface.Initialize(m_host) == false)
+					if(!pi.Interface.Initialize(m_host))
 						continue; // Fail without error
 
 					m_vPlugins.Add(pi);
 				}
-				catch(BadImageFormatException)
+				catch(BadImageFormatException exBif)
 				{
 					if(Is1xPlugin(fi.FullName))
 						MessageService.ShowWarning(KPRes.PluginIncompatible +
 							MessageService.NewLine + fi.FullName + MessageService.NewParagraph +
 							KPRes.Plugin1x + MessageService.NewParagraph + KPRes.Plugin1xHint);
-					else bShowStandardError = true;
+					else exShowStd = exBif;
 				}
 				catch(Exception exLoad)
 				{
 					if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
 						MessageService.ShowWarningExcp(fi.FullName, exLoad);
-					else bShowStandardError = true;
+					else exShowStd = exLoad;
 				}
 
-				if(bShowStandardError)
-					MessageService.ShowWarning(KPRes.PluginIncompatible +
-						MessageService.NewLine + fi.FullName + MessageService.NewParagraph +
-						KPRes.PluginUpdateHint);
+				if(exShowStd != null)
+					ShowLoadError(fi.FullName, exShowStd, null);
+			}
+		}
+
+		internal static void ShowLoadError(string strPath, Exception ex,
+			IStatusLogger slStatus)
+		{
+			if(string.IsNullOrEmpty(strPath)) { Debug.Assert(false); return; }
+
+			if(slStatus != null)
+				slStatus.SetText(KPRes.PluginLoadFailed, LogStatusType.Info);
+
+			bool bShowExcp = (Program.CommandLineArgs[
+				AppDefs.CommandLineOptions.Debug] != null);
+
+			string strMsg = KPRes.PluginIncompatible + MessageService.NewLine +
+				strPath + MessageService.NewParagraph + KPRes.PluginUpdateHint;
+			string strExcp = ((ex != null) ? StrUtil.FormatException(ex).Trim() : null);
+
+			VistaTaskDialog vtd = new VistaTaskDialog();
+			vtd.Content = strMsg;
+			vtd.ExpandedByDefault = ((strExcp != null) && bShowExcp);
+			vtd.ExpandedInformation = strExcp;
+			vtd.WindowTitle = PwDefs.ShortProductName;
+			vtd.SetIcon(VtdIcon.Warning);
+
+			if(!vtd.ShowDialog())
+			{
+				if(!bShowExcp) MessageService.ShowWarning(strMsg);
+				else MessageService.ShowWarningExcp(strPath, ex);
 			}
 		}
 

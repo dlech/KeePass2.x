@@ -1,4 +1,4 @@
-﻿"DeployProject"
+"DeployProject"
 {
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
@@ -240,8 +240,8 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B55F2ABEF9A41A9ABAD006DCEA05841"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDB4_DetailsLite.xsl"
-            "TargetName" = "8:KDB4_DetailsLite.xsl"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDBX_DetailsLite.xsl"
+            "TargetName" = "8:KDBX_DetailsLite.xsl"
             "Tag" = "8:"
             "Folder" = "8:_76A04227854C4619BBADCC3E5C2829AE"
             "Condition" = "8:"
@@ -360,8 +360,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_81BBF30CE4CC438194FC340A84A065C1"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDB4_Styles.css"
-            "TargetName" = "8:KDB4_Styles.css"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDBX_Styles.css"
+            "TargetName" = "8:KDBX_Styles.css"
             "Tag" = "8:"
             "Folder" = "8:_76A04227854C4619BBADCC3E5C2829AE"
             "Condition" = "8:"
@@ -382,7 +382,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.19.0.18206, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.20.0.18622, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_838987B3C51D42C3C7B9BDA1339A5500"
@@ -413,7 +413,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.19.0.18206, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.20.0.18622, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -442,8 +442,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_990FF777EF5740B3B48CB2D0A3D147A3"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDB4_DetailsFull.xsl"
-            "TargetName" = "8:KDB4_DetailsFull.xsl"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDBX_DetailsFull.xsl"
+            "TargetName" = "8:KDBX_DetailsFull.xsl"
             "Tag" = "8:"
             "Folder" = "8:_76A04227854C4619BBADCC3E5C2829AE"
             "Condition" = "8:"
@@ -502,8 +502,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ABF4952D5353474AA85E1471C19D822F"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDB4_PasswordsOnly.xsl"
-            "TargetName" = "8:KDB4_PasswordsOnly.xsl"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDBX_PasswordsOnly.xsl"
+            "TargetName" = "8:KDBX_PasswordsOnly.xsl"
             "Tag" = "8:"
             "Folder" = "8:_76A04227854C4619BBADCC3E5C2829AE"
             "Condition" = "8:"
@@ -564,7 +564,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.19.0.18206, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.20.0.18622, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -593,8 +593,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F99D264600A54E439A43BDD0AD42280C"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDB4_Tabular.xsl"
-            "TargetName" = "8:KDB4_Tabular.xsl"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\KDBX_Tabular.xsl"
+            "TargetName" = "8:KDBX_Tabular.xsl"
             "Tag" = "8:"
             "Folder" = "8:_76A04227854C4619BBADCC3E5C2829AE"
             "Condition" = "8:"
@@ -712,14 +712,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:KeePass"
-        "ProductCode" = "8:{E75AF9CE-09D4-46F2-BF44-9E7D2B4763D9}"
-        "PackageCode" = "8:{3707808B-0F74-4AD0-B136-D80EB2DE377C}"
+        "ProductCode" = "8:{F6B49374-09A3-4B84-BA45-1CA2CD1C793F}"
+        "PackageCode" = "8:{72EA3387-C9B6-433D-B670-E84AEC1CF35C}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.19.0"
+        "ProductVersion" = "8:2.20.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://keepass.info/"

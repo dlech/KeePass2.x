@@ -198,7 +198,7 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == KPRes.ImageViewer)
 				{
-					if(m_img == null) m_img = UIUtil.LoadImage(m_pbData);
+					if(m_img == null) m_img = GfxUtil.LoadImage(m_pbData);
 					// m_picBox.Image = m_img;
 
 					m_pnlImageViewer.Visible = true;

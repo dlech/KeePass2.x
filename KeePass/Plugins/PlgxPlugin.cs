@@ -105,11 +105,7 @@ namespace KeePass.Plugins
 			}
 			catch(Exception exLoad)
 			{
-				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
-					MessageService.ShowWarningExcp(strFilePath, exLoad);
-				else
-					MessageService.ShowWarning(KPRes.PluginIncompatible +
-						MessageService.NewLine + strFilePath, KPRes.PluginUpdateHint);
+				PluginManager.ShowLoadError(strFilePath, exLoad, slStatus);
 			}
 		}
 

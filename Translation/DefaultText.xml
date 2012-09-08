@@ -127,6 +127,9 @@
 		<Data Name="AutoType">
 			<Value>Auto-Type</Value>
 		</Data>
+		<Data Name="AutoTypeCancelOnTitleChange">
+			<Value>Cancel auto-type when the target window title changes</Value>
+		</Data>
 		<Data Name="AutoTypeCancelOnWindowChange">
 			<Value>Cancel auto-type when the target window changes</Value>
 		</Data>
@@ -958,7 +961,7 @@
 		<Data Name="Italic">
 			<Value>Italic</Value>
 		</Data>
-		<Data Name="Kdb3KeePassLibC">
+		<Data Name="KdbKeePassLibC">
 			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
 		</Data>
 		<Data Name="KdbxFiles">
@@ -1422,6 +1425,9 @@
 		</Data>
 		<Data Name="RememberKeySources">
 			<Value>Remember key sources (key file paths, provider names, ...)</Value>
+		</Data>
+		<Data Name="RememberWorkingDirectories">
+			<Value>Remember working directories</Value>
 		</Data>
 		<Data Name="RemoteHostReachable">
 			<Value>Remote host is reachable (ping)</Value>
@@ -1891,8 +1897,8 @@
 		<Data Name="XslSelectFile">
 			<Value>Select XSL Transformation File</Value>
 		</Data>
-		<Data Name="XslStylesheets">
-			<Value>XSL Stylesheets for KDB4 XML</Value>
+		<Data Name="XslStylesheetsKdbx">
+			<Value>XSL Stylesheets for KDBX XML</Value>
 		</Data>
 		<Data Name="Yes">
 			<Value>Yes</Value>
@@ -1934,7 +1940,7 @@
 			<Value>A newer KeePass version is required to open this file.</Value>
 		</Data>
 		<Data Name="FileSaveCorruptionWarning">
-			<Value>The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.</Value>
+			<Value>The target file might be corrupted. Please try saving again. If that fails, save the database to a different location.</Value>
 		</Data>
 		<Data Name="FileSaveFailed">
 			<Value>Failed to save the current database to the specified location!</Value>

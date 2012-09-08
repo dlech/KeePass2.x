@@ -9,7 +9,7 @@
 <html>
 <head>
 <xsl:apply-templates select="Meta" />
-<link rel="stylesheet" type="text/css" href="KDB4_Styles.css" />
+<link rel="stylesheet" type="text/css" href="KDBX_Styles.css" />
 </head>
 <body>
 <xsl:apply-templates select="Root" />
@@ -78,15 +78,8 @@
 </xsl:if>
 </xsl:for-each>
 
-<i>Creation Time: </i><xsl:value-of select="Times/CreationTime" /><br />
-<i>Last Access Time: </i><xsl:value-of select="Times/LastAccessTime" /><br />
-<i>Last Modification Time: </i><xsl:value-of select="Times/LastModificationTime" /><br />
-
 <xsl:if test="Times/Expires = 'True'">
 <i>Expires: </i><xsl:value-of select="Times/ExpiryTime" />
-</xsl:if>
-<xsl:if test="Times/Expires != 'True'">
-<i>Expires: </i>Never expires
 </xsl:if>
 
 </td></tr></table><br />

@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Diagnostics;
 
+using KeePassLib;
 using KeePassLib.Native;
 
 namespace KeePass.Util
@@ -46,6 +47,9 @@ namespace KeePass.Util
 			if(!MonoWorkarounds.IsRequired) return;
 			if(f == null) { Debug.Assert(false); return; }
 
+			f.HandleCreated += MonoWorkarounds.OnFormHandleCreated;
+			SetWmClass(f);
+
 			ApplyToControlsRec(f.Controls, f, MonoWorkarounds.ApplyToControl);
 		}
 
@@ -53,6 +57,8 @@ namespace KeePass.Util
 		{
 			if(!MonoWorkarounds.IsRequired) return;
 			if(f == null) { Debug.Assert(false); return; }
+
+			f.HandleCreated -= MonoWorkarounds.OnFormHandleCreated;
 
 			ApplyToControlsRec(f.Controls, f, MonoWorkarounds.ReleaseControl);
 		}
@@ -202,6 +208,17 @@ namespace KeePass.Util
 			// reset the dialog result
 			if((f != null) && (f.DialogResult == hi.Result))
 				f.DialogResult = hi.Result; // Raises close events
+		}
+
+		private static void SetWmClass(Form f)
+		{
+			KeePass.Native.NativeMethods.SetWmClass(f, PwDefs.UnixName,
+				PwDefs.ResClass);
+		}
+
+		private static void OnFormHandleCreated(object sender, EventArgs e)
+		{
+			SetWmClass(sender as Form);
 		}
 	}
 }

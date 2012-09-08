@@ -36,37 +36,64 @@
             Custom icon. <c>PwCustomIcon</c> objects are immutable.
             </summary>
         </member>
-        <member name="T:KeePassLib.Serialization.Kdb4File">
+        <member name="T:KeePassLib.Serialization.KdbxFile">
             <summary>
-            Serialization to KeePass KDB files.
+            Serialization to KeePass KDBX files.
             </summary>
             <summary>
             Serialization to KeePass KDBX files.
             </summary>
             <summary>
-            Serialization to KeePass KDB files.
+            Serialization to KeePass KDBX files.
+            </summary>
+            <summary>
+            Serialization to KeePass KDBX files.
             </summary>
         </member>
-        <member name="F:KeePassLib.Serialization.Kdb4File.FileSignature1">
+        <member name="F:KeePassLib.Serialization.KdbxFile.FileSignature1">
             <summary>
             File identifier, first 32-bit value.
             </summary>
         </member>
-        <member name="F:KeePassLib.Serialization.Kdb4File.FileSignature2">
+        <member name="F:KeePassLib.Serialization.KdbxFile.FileSignature2">
             <summary>
             File identifier, second 32-bit value.
             </summary>
         </member>
-        <member name="F:KeePassLib.Serialization.Kdb4File.FileVersion32">
+        <member name="F:KeePassLib.Serialization.KdbxFile.FileVersion32">
             <summary>
-            File version of files saved by the current <c>Kdb4File</c> class.
+            File version of files saved by the current <c>KdbxFile</c> class.
             KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
-            2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00.
+            2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00, 2.20 has 3.01.
             The first 2 bytes are critical (i.e. loading will fail, if the
             file version is too high), the last 2 bytes are informational.
             </summary>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.Save(System.IO.Stream,KeePassLib.PwGroup,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
+        <member name="M:KeePassLib.Serialization.KdbxFile.Load(System.String,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Load a KDB file from a file.
+            </summary>
+            <param name="strFilePath">File to load.</param>
+            <param name="kdbFormat">Format specifier.</param>
+            <param name="slLogger">Status logger (optional).</param>
+        </member>
+        <member name="M:KeePassLib.Serialization.KdbxFile.Load(System.IO.Stream,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
+            <summary>
+            Load a KDB file from a stream.
+            </summary>
+            <param name="sSource">Stream to read the data from. Must contain
+            a KDBX stream.</param>
+            <param name="kdbFormat">Format specifier.</param>
+            <param name="slLogger">Status logger (optional).</param>
+        </member>
+        <member name="M:KeePassLib.Serialization.KdbxFile.ReadEntries(System.IO.Stream)">
+            <summary>
+            Read entries from a stream.
+            </summary>
+            <param name="msData">Input stream to read the entries from.</param>
+            <returns>Extracted entries.</returns>
+        </member>
+        <member name="M:KeePassLib.Serialization.KdbxFile.Save(System.IO.Stream,KeePassLib.PwGroup,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Save the contents of the current <c>PwDatabase</c> to a KDBX file.
             </summary>
@@ -77,7 +104,7 @@
             <param name="format">Format of the file to create.</param>
             <param name="slLogger">Logger that recieves status information.</param>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.WriteEntries(System.IO.Stream,KeePassLib.PwEntry[])">
+        <member name="M:KeePassLib.Serialization.KdbxFile.WriteEntries(System.IO.Stream,KeePassLib.PwEntry[])">
             <summary>
             Write entries to a stream.
             </summary>
@@ -86,43 +113,19 @@
             <returns>Returns <c>true</c>, if the entries were written successfully
             to the stream.</returns>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.String,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
-            <summary>
-            Load a KDB file from a file.
-            </summary>
-            <param name="strFilePath">File to load.</param>
-            <param name="kdbFormat">Format specifier.</param>
-            <param name="slLogger">Status logger (optional).</param>
-        </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.Load(System.IO.Stream,KeePassLib.Serialization.Kdb4Format,KeePassLib.Interfaces.IStatusLogger)">
-            <summary>
-            Load a KDB file from a stream.
-            </summary>
-            <param name="sSource">Stream to read the data from. Must contain
-            a KDB4 stream.</param>
-            <param name="kdbFormat">Format specifier.</param>
-            <param name="slLogger">Status logger (optional).</param>
-        </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.ReadEntries(System.IO.Stream)">
-            <summary>
-            Read entries from a stream.
-            </summary>
-            <param name="msData">Input stream to read the entries from.</param>
-            <returns>Extracted entries.</returns>
-        </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.#ctor(KeePassLib.PwDatabase)">
+        <member name="M:KeePassLib.Serialization.KdbxFile.#ctor(KeePassLib.PwDatabase)">
             <summary>
             Default constructor.
             </summary>
             <param name="pwDataStore">The <c>PwDatabase</c> instance that the
             class will load file data into or use to create a KDBX file.</param>
         </member>
-        <member name="M:KeePassLib.Serialization.Kdb4File.DetermineLanguageId">
+        <member name="M:KeePassLib.Serialization.KdbxFile.DetermineLanguageId">
             <summary>
             Call this once to determine the current localization settings.
             </summary>
         </member>
-        <member name="P:KeePassLib.Serialization.Kdb4File.DetachBinaries">
+        <member name="P:KeePassLib.Serialization.KdbxFile.DetachBinaries">
             <summary>
             Detach binaries when opening a file. If this isn't <c>null</c>,
             all binaries are saved to the specified path and are removed
@@ -248,6 +251,22 @@
         <member name="P:KeePassLib.Translation.KPFormCustomization.FullName">
             <summary>
             The fully qualified name of the form.
+            </summary>
+        </member>
+        <member name="T:KeePassLib.Serialization.KdbxFormat">
+            <summary>
+            The <c>KdbxFile</c> class supports saving the data to various
+            formats.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.KdbxFormat.Default">
+            <summary>
+            The default, encrypted file format.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Serialization.KdbxFormat.PlainXml">
+            <summary>
+            Use this flag when exporting data to a plain-text XML file.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KeyProvider.Name">
@@ -696,7 +715,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FileSaveCorruptionWarning">
             <summary>
             Look up a localized string similar to
-            'The target file might be in a corrupted state. Please try saving again, and if that fails, save the database to a different location.'.
+            'The target file might be corrupted. Please try saving again. If that fails, save the database to a different location.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileSaveFailed">
@@ -982,6 +1001,13 @@
             </summary>
             <param name="uValue">64-bit input word.</param>
             <returns>Eight bytes representing the 64-bit value.</returns>
+        </member>
+        <member name="P:KeePassLib.Serialization.BinaryReaderEx.CopyDataTo">
+            <summary>
+            If this property is set to a non-null stream, all data that
+            is read from the input stream is automatically written to
+            the copy stream (before returning the read data).
+            </summary>
         </member>
         <member name="T:KeePassLib.PwGroup">
             <summary>
@@ -2387,22 +2413,6 @@
             <summary>
             Remove placeholders from a string (wrapped in '{' and '}').
             This doesn't remove environment variables (wrapped in '%').
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Serialization.Kdb4Format">
-            <summary>
-            The <c>Kdb4File</c> class supports saving the data to various
-            formats.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Serialization.Kdb4Format.Default">
-            <summary>
-            The default, encrypted file format.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.Serialization.Kdb4Format.PlainXml">
-            <summary>
-            Use this flag when exporting data to a plain-text XML file.
             </summary>
         </member>
         <member name="T:KeePassLib.PwDatabase">

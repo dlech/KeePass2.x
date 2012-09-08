@@ -68,6 +68,7 @@ namespace KeePass.Resources
 			m_strAutoShowExpiredEntries = TryGetEx(dictNew, "AutoShowExpiredEntries", m_strAutoShowExpiredEntries);
 			m_strAutoShowSoonToExpireEntries = TryGetEx(dictNew, "AutoShowSoonToExpireEntries", m_strAutoShowSoonToExpireEntries);
 			m_strAutoType = TryGetEx(dictNew, "AutoType", m_strAutoType);
+			m_strAutoTypeCancelOnTitleChange = TryGetEx(dictNew, "AutoTypeCancelOnTitleChange", m_strAutoTypeCancelOnTitleChange);
 			m_strAutoTypeCancelOnWindowChange = TryGetEx(dictNew, "AutoTypeCancelOnWindowChange", m_strAutoTypeCancelOnWindowChange);
 			m_strAutoTypeEntrySelection = TryGetEx(dictNew, "AutoTypeEntrySelection", m_strAutoTypeEntrySelection);
 			m_strAutoTypeEntrySelectionDescLong = TryGetEx(dictNew, "AutoTypeEntrySelectionDescLong", m_strAutoTypeEntrySelectionDescLong);
@@ -345,7 +346,7 @@ namespace KeePass.Resources
 			m_strInvalidUserPassword = TryGetEx(dictNew, "InvalidUserPassword", m_strInvalidUserPassword);
 			m_strIOConnection = TryGetEx(dictNew, "IOConnection", m_strIOConnection);
 			m_strItalic = TryGetEx(dictNew, "Italic", m_strItalic);
-			m_strKdb3KeePassLibC = TryGetEx(dictNew, "Kdb3KeePassLibC", m_strKdb3KeePassLibC);
+			m_strKdbKeePassLibC = TryGetEx(dictNew, "KdbKeePassLibC", m_strKdbKeePassLibC);
 			m_strKdbxFiles = TryGetEx(dictNew, "KdbxFiles", m_strKdbxFiles);
 			m_strKeePassEditor = TryGetEx(dictNew, "KeePassEditor", m_strKeePassEditor);
 			m_strKeePassLibCLong = TryGetEx(dictNew, "KeePassLibCLong", m_strKeePassLibCLong);
@@ -500,6 +501,7 @@ namespace KeePass.Resources
 			m_strRedo = TryGetEx(dictNew, "Redo", m_strRedo);
 			m_strRememberHidingSettings = TryGetEx(dictNew, "RememberHidingSettings", m_strRememberHidingSettings);
 			m_strRememberKeySources = TryGetEx(dictNew, "RememberKeySources", m_strRememberKeySources);
+			m_strRememberWorkingDirectories = TryGetEx(dictNew, "RememberWorkingDirectories", m_strRememberWorkingDirectories);
 			m_strRemoteHostReachable = TryGetEx(dictNew, "RemoteHostReachable", m_strRemoteHostReachable);
 			m_strRepairMode = TryGetEx(dictNew, "RepairMode", m_strRepairMode);
 			m_strRepeatOnlyWhenHidden = TryGetEx(dictNew, "RepeatOnlyWhenHidden", m_strRepeatOnlyWhenHidden);
@@ -656,7 +658,7 @@ namespace KeePass.Resources
 			m_strXslExporter = TryGetEx(dictNew, "XslExporter", m_strXslExporter);
 			m_strXslFileType = TryGetEx(dictNew, "XslFileType", m_strXslFileType);
 			m_strXslSelectFile = TryGetEx(dictNew, "XslSelectFile", m_strXslSelectFile);
-			m_strXslStylesheets = TryGetEx(dictNew, "XslStylesheets", m_strXslStylesheets);
+			m_strXslStylesheetsKdbx = TryGetEx(dictNew, "XslStylesheetsKdbx", m_strXslStylesheetsKdbx);
 			m_strYes = TryGetEx(dictNew, "Yes", m_strYes);
 			m_strZoom = TryGetEx(dictNew, "Zoom", m_strZoom);
 		}
@@ -704,6 +706,7 @@ namespace KeePass.Resources
 			"AutoShowExpiredEntries",
 			"AutoShowSoonToExpireEntries",
 			"AutoType",
+			"AutoTypeCancelOnTitleChange",
 			"AutoTypeCancelOnWindowChange",
 			"AutoTypeEntrySelection",
 			"AutoTypeEntrySelectionDescLong",
@@ -981,7 +984,7 @@ namespace KeePass.Resources
 			"InvalidUserPassword",
 			"IOConnection",
 			"Italic",
-			"Kdb3KeePassLibC",
+			"KdbKeePassLibC",
 			"KdbxFiles",
 			"KeePassEditor",
 			"KeePassLibCLong",
@@ -1136,6 +1139,7 @@ namespace KeePass.Resources
 			"Redo",
 			"RememberHidingSettings",
 			"RememberKeySources",
+			"RememberWorkingDirectories",
 			"RemoteHostReachable",
 			"RepairMode",
 			"RepeatOnlyWhenHidden",
@@ -1292,7 +1296,7 @@ namespace KeePass.Resources
 			"XslExporter",
 			"XslFileType",
 			"XslSelectFile",
-			"XslStylesheets",
+			"XslStylesheetsKdbx",
 			"Yes",
 			"Zoom"
 		};
@@ -1762,6 +1766,17 @@ namespace KeePass.Resources
 		public static string AutoType
 		{
 			get { return m_strAutoType; }
+		}
+
+		private static string m_strAutoTypeCancelOnTitleChange =
+			@"Cancel auto-type when the target window title changes";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Cancel auto-type when the target window title changes'.
+		/// </summary>
+		public static string AutoTypeCancelOnTitleChange
+		{
+			get { return m_strAutoTypeCancelOnTitleChange; }
 		}
 
 		private static string m_strAutoTypeCancelOnWindowChange =
@@ -4811,15 +4826,15 @@ namespace KeePass.Resources
 			get { return m_strItalic; }
 		}
 
-		private static string m_strKdb3KeePassLibC =
+		private static string m_strKdbKeePassLibC =
 			@"The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.";
 		/// <summary>
 		/// Look up a localized string similar to
 		/// 'The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.'.
 		/// </summary>
-		public static string Kdb3KeePassLibC
+		public static string KdbKeePassLibC
 		{
-			get { return m_strKdb3KeePassLibC; }
+			get { return m_strKdbKeePassLibC; }
 		}
 
 		private static string m_strKdbxFiles =
@@ -6516,6 +6531,17 @@ namespace KeePass.Resources
 			get { return m_strRememberKeySources; }
 		}
 
+		private static string m_strRememberWorkingDirectories =
+			@"Remember working directories";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Remember working directories'.
+		/// </summary>
+		public static string RememberWorkingDirectories
+		{
+			get { return m_strRememberWorkingDirectories; }
+		}
+
 		private static string m_strRemoteHostReachable =
 			@"Remote host is reachable (ping)";
 		/// <summary>
@@ -7782,10 +7808,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strUpdateCheckInfoPriv =
-			@"No personal information is sent to the KeePass server. KeePass just downloads a small version information file and compares the available version with the installed version.";
+			@"No personal information is sent to the KeePass web server. KeePass just downloads a small version information file and compares the available version with the installed version.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'No personal information is sent to the KeePass server. KeePass just downloads a small version information file and compares the available version with the installed version.'.
+		/// 'No personal information is sent to the KeePass web server. KeePass just downloads a small version information file and compares the available version with the installed version.'.
 		/// </summary>
 		public static string UpdateCheckInfoPriv
 		{
@@ -8232,15 +8258,15 @@ namespace KeePass.Resources
 			get { return m_strXslSelectFile; }
 		}
 
-		private static string m_strXslStylesheets =
-			@"XSL Stylesheets for KDB4 XML";
+		private static string m_strXslStylesheetsKdbx =
+			@"XSL Stylesheets for KDBX XML";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'XSL Stylesheets for KDB4 XML'.
+		/// 'XSL Stylesheets for KDBX XML'.
 		/// </summary>
-		public static string XslStylesheets
+		public static string XslStylesheetsKdbx
 		{
-			get { return m_strXslStylesheets; }
+			get { return m_strXslStylesheetsKdbx; }
 		}
 
 		private static string m_strYes =

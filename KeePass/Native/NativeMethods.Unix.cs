@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Diagnostics;
 
 using KeePass.UI;
@@ -35,6 +36,13 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		[StructLayout(LayoutKind.Sequential)]
+		private struct XClassHint
+		{
+			public IntPtr res_name;
+			public IntPtr res_class;
+		}
+
 		/* private const string PathLibDo = "/usr/lib/gnome-do/libdo";
 		private const UnmanagedType NtvStringType = UnmanagedType.LPStr;
 
@@ -70,6 +78,9 @@ namespace KeePass.Native
 			BindKeyHandler lpHandler);
 
 		internal delegate void BindKeyHandler(string strKey, IntPtr lpUserData); */
+
+		[DllImport("libX11")]
+		private static extern int XSetClassHint(IntPtr display, IntPtr window, IntPtr class_hints);
 
 		private static bool LoseFocusUnix(Form fCurrent)
 		{
@@ -130,6 +141,69 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(false); }
 
 			return string.Empty;
+		}
+
+		private static Type m_tXplatUIX11 = null;
+		private static Type GetXplatUIX11Type(bool bThrowOnError)
+		{
+			if(m_tXplatUIX11 == null)
+			{
+				CheckState cs = CheckState.Indeterminate; // In System.Windows.Forms
+				string strTypeCS = cs.GetType().AssemblyQualifiedName;
+				string strTypeX11 = strTypeCS.Replace("CheckState", "XplatUIX11");
+				m_tXplatUIX11 = Type.GetType(strTypeX11, bThrowOnError, true);
+			}
+
+			return m_tXplatUIX11;
+		}
+
+		private static Type m_tHwnd = null;
+		private static Type GetHwndType(bool bThrowOnError)
+		{
+			if(m_tHwnd == null)
+			{
+				CheckState cs = CheckState.Indeterminate; // In System.Windows.Forms
+				string strTypeCS = cs.GetType().AssemblyQualifiedName;
+				string strTypeHwnd = strTypeCS.Replace("CheckState", "Hwnd");
+				m_tHwnd = Type.GetType(strTypeHwnd, bThrowOnError, true);
+			}
+
+			return m_tHwnd;
+		}
+
+		internal static void SetWmClass(Form f, string strName, string strClass)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Type tXplatUIX11 = GetXplatUIX11Type(true);
+				FieldInfo fiDisplayHandle = tXplatUIX11.GetField("DisplayHandle",
+					BindingFlags.NonPublic | BindingFlags.Static);
+				IntPtr hDisplay = (IntPtr)fiDisplayHandle.GetValue(null);
+
+				Type tHwnd = GetHwndType(true);
+				MethodInfo miObjectFromHandle = tHwnd.GetMethod("ObjectFromHandle",
+					BindingFlags.Public | BindingFlags.Static);
+				object oHwnd = miObjectFromHandle.Invoke(null, new object[] { f.Handle });
+
+				FieldInfo fiWholeWindow = tHwnd.GetField("whole_window",
+					BindingFlags.NonPublic | BindingFlags.Instance);
+				IntPtr hWindow = (IntPtr)fiWholeWindow.GetValue(oHwnd);
+
+				XClassHint xch = new XClassHint();
+				xch.res_name = Marshal.StringToCoTaskMemAnsi(strName ?? string.Empty);
+				xch.res_class = Marshal.StringToCoTaskMemAnsi(strClass ?? string.Empty);
+				IntPtr pXch = Marshal.AllocCoTaskMem(Marshal.SizeOf(xch));
+				Marshal.StructureToPtr(xch, pXch, false);
+
+				XSetClassHint(hDisplay, hWindow, pXch);
+
+				Marshal.FreeCoTaskMem(pXch);
+				Marshal.FreeCoTaskMem(xch.res_name);
+				Marshal.FreeCoTaskMem(xch.res_class);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

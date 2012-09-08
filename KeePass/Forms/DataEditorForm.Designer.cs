@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataEditorForm));
-			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_menuMain = new System.Windows.Forms.MenuStrip();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,24 +64,14 @@
 			this.m_tbAlignRight = new System.Windows.Forms.ToolStripButton();
 			this.m_statusMain = new System.Windows.Forms.StatusStrip();
 			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
+			this.m_tbFileSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
+			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_menuMain.SuspendLayout();
 			this.m_toolFile.SuspendLayout();
 			this.m_toolFormat.SuspendLayout();
 			this.m_statusMain.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// m_rtbText
-			// 
-			this.m_rtbText.AcceptsTab = true;
-			this.m_rtbText.HideSelection = false;
-			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
-			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.Size = new System.Drawing.Size(100, 96);
-			this.m_rtbText.TabIndex = 0;
-			this.m_rtbText.Text = "";
-			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
-			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnTextLinkClicked);
-			this.m_rtbText.TextChanged += new System.EventHandler(this.OnTextTextChanged);
 			// 
 			// m_menuMain
 			// 
@@ -108,20 +97,20 @@
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(105, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(102, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(105, 22);
 			this.m_menuFileExit.Text = "&Close";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -164,7 +153,9 @@
             this.m_tbEditPaste,
             this.m_tbFileSep1,
             this.m_tbEditUndo,
-            this.m_tbEditRedo});
+            this.m_tbEditRedo,
+            this.m_tbFileSep2,
+            this.m_tbFind});
 			this.m_toolFile.Location = new System.Drawing.Point(0, 24);
 			this.m_toolFile.Name = "m_toolFile";
 			this.m_toolFile.Size = new System.Drawing.Size(608, 25);
@@ -382,6 +373,32 @@
 			this.m_tssStatusMain.Spring = true;
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// m_tbFileSep2
+			// 
+			this.m_tbFileSep2.Name = "m_tbFileSep2";
+			this.m_tbFileSep2.Size = new System.Drawing.Size(6, 25);
+			// 
+			// m_tbFind
+			// 
+			this.m_tbFind.AcceptsReturn = true;
+			this.m_tbFind.Name = "m_tbFind";
+			this.m_tbFind.Size = new System.Drawing.Size(121, 25);
+			this.m_tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyDown);
+			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyUp);
+			// 
+			// m_rtbText
+			// 
+			this.m_rtbText.AcceptsTab = true;
+			this.m_rtbText.HideSelection = false;
+			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
+			this.m_rtbText.Name = "m_rtbText";
+			this.m_rtbText.Size = new System.Drawing.Size(100, 96);
+			this.m_rtbText.TabIndex = 0;
+			this.m_rtbText.Text = "";
+			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
+			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnTextLinkClicked);
+			this.m_rtbText.TextChanged += new System.EventHandler(this.OnTextTextChanged);
+			// 
 			// DataEditorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -451,5 +468,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewWordWrap;
 		private System.Windows.Forms.ToolStripStatusLabel m_tssStatusMain;
+		private System.Windows.Forms.ToolStripSeparator m_tbFileSep2;
+		private System.Windows.Forms.ToolStripTextBox m_tbFind;
 	}
 }

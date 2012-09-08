@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePassLib.Native;
@@ -37,6 +38,46 @@ namespace KeePass.Util
 		private static void SetStringM(string str)
 		{
 			NativeLib.RunConsoleApp("pbcopy", "-pboard general", str);
+		}
+
+		private static string GetStringU()
+		{
+			// string str = NativeLib.RunConsoleApp("xclip",
+			//	"-out -selection clipboard");
+			// if(str != null) return str;
+
+			string str = NativeLib.RunConsoleApp("xsel",
+				"--output --clipboard");
+			if(str != null) return str;
+
+			if(Clipboard.ContainsText())
+				return (Clipboard.GetText() ?? string.Empty);
+
+			return string.Empty;
+		}
+
+		private static void SetStringU(string str)
+		{
+			// string r = NativeLib.RunConsoleApp("xclip",
+			//	"-in -selection clipboard", str);
+			// if(r != null) return;
+
+			if(string.IsNullOrEmpty(str))
+			{
+				NativeLib.RunConsoleApp("xsel", "--delete --clipboard");
+
+				try { Clipboard.Clear(); }
+				catch(Exception) { Debug.Assert(false); }
+
+				return; // xsel with an empty input can hang
+			}
+
+			string r = NativeLib.RunConsoleApp("xsel",
+				"--input --clipboard", str);
+			if(r != null) return;
+
+			try { Clipboard.SetText(str); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

@@ -10,10 +10,6 @@
 
 	<meta name="robots" content="index" />
 
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="pragma" content="no-cache" />
-
 	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
 	<meta name="DC.Creator" content="Dominik Reichl" />
 	<meta name="DC.Subject" content="Open-Source Password Safe" />
@@ -76,12 +72,12 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field Placeholders</h2>
 <br />
 
 <table class="tablebox75">
-<tr><th width="50%">Field</th><th width="50%">Placeholder</th></tr>
-<tr><td width="50%">Title</td><td width="50%">{TITLE}</td></tr>
-<tr><td width="50%">User Name</td><td width="50%">{USERNAME}</td></tr>
-<tr><td width="50%">URL</td><td width="50%">{URL}</td></tr>
-<tr><td width="50%">Password</td><td width="50%">{PASSWORD}</td></tr>
-<tr><td width="50%">Notes</td><td width="50%">{NOTES}</td></tr>
+<tr><th width="50%">Placeholder</th><th width="50%">Field</th></tr>
+<tr><td width="50%">{TITLE}</td><td width="50%">Title</td></tr>
+<tr><td width="50%">{USERNAME}</td><td width="50%">User name</td></tr>
+<tr><td width="50%">{URL}</td><td width="50%">URL</td></tr>
+<tr><td width="50%">{PASSWORD}</td><td width="50%">Password</td></tr>
+<tr><td width="50%">{NOTES}</td><td width="50%">Notes</td></tr>
 </table>
 
 <br />
@@ -99,7 +95,12 @@ you can use the placeholder <code>{S:eMail}</code>.
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{URL:RMVSCM}</td><td width="50%">Entry URL without scheme specifier.</td></tr>
+<tr><td width="50%">{URL:RMVSCM}</td><td width="50%">Entry URL without scheme name.</td></tr>
+<tr><td width="50%">{URL:SCM}</td><td width="50%">Scheme name of the entry URL.</td></tr>
+<tr><td width="50%">{URL:HOST}</td><td width="50%">Host component of the entry URL.</td></tr>
+<tr><td width="50%">{URL:PORT}</td><td width="50%">Port number of the entry URL.</td></tr>
+<tr><td width="50%">{URL:PATH}</td><td width="50%">Path component of the entry URL.</td></tr>
+<tr><td width="50%">{URL:QUERY}</td><td width="50%">Query information of the entry URL.</td></tr>
 </table>
 
 
@@ -152,7 +153,15 @@ on Unix-like systems), if installed.</td></tr>
 <tr><td width="50%">{ENV_DIRSEP}</td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
 <tr><td width="50%">{ENV_PROGRAMFILES_X86}</td><td width="50%">This is
 <code>%ProgramFiles(x86)%</code>, if it exists, otherwise <code>%ProgramFiles%</code>.</td></tr>
-<tr><td width="50%">{DT_SIMPLE}</td><td width="50%">Current local date/time as a simple, sortable string.</td></tr>
+</table>
+
+
+<br />
+
+<table class="tablebox75">
+<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
+<tr><td width="50%">{DT_SIMPLE}</td><td width="50%">Current local date/time as a simple, sortable string.
+For example, for 2012-07-25 17:05:34 the value is 20120725170534.</td></tr>
 <tr><td width="50%">{DT_YEAR}</td><td width="50%">Year component of the current local date/time.</td></tr>
 <tr><td width="50%">{DT_MONTH}</td><td width="50%">Month component of the current local date/time.</td></tr>
 <tr><td width="50%">{DT_DAY}</td><td width="50%">Day component of the current local date/time.</td></tr>
@@ -167,7 +176,6 @@ on Unix-like systems), if installed.</td></tr>
 <tr><td width="50%">{DT_UTC_MINUTE}</td><td width="50%">Minute component of the current UTC date/time.</td></tr>
 <tr><td width="50%">{DT_UTC_SECOND}</td><td width="50%">Seconds component of the current UTC date/time.</td></tr>
 </table>
-
 
 <br /><br />
 

@@ -48,11 +48,11 @@ using KeePassLib.Utility;
 namespace KeePassLib.Serialization
 {
 	/// <summary>
-	/// Serialization to KeePass KDB files.
+	/// Serialization to KeePass KDBX files.
 	/// </summary>
-	public sealed partial class Kdb4File
+	public sealed partial class KdbxFile
 	{
-		// public void Save(string strFile, PwGroup pgDataSource, Kdb4Format format,
+		// public void Save(string strFile, PwGroup pgDataSource, KdbxFormat format,
 		//	IStatusLogger slLogger)
 		// {
 		//	bool bMadeUnhidden = UrlUtil.UnhideFile(strFile);
@@ -72,7 +72,7 @@ namespace KeePassLib.Serialization
 		/// be written.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(Stream sSaveTo, PwGroup pgDataSource, Kdb4Format format,
+		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
@@ -100,11 +100,9 @@ namespace KeePassLib.Serialization
 				m_pbStreamStartBytes = cr.GetRandomBytes(32);
 
 				Stream writerStream;
-				BinaryWriter bw = null;
-				if(m_format == Kdb4Format.Default)
+				if(m_format == KdbxFormat.Default)
 				{
-					bw = new BinaryWriter(hashedStream, encNoBom);
-					WriteHeader(bw); // Also flushes bw
+					WriteHeader(hashedStream); // Also flushes the stream
 
 					Stream sEncrypted = AttachStreamEncryptor(hashedStream);
 					if((sEncrypted == null) || (sEncrypted == hashedStream))
@@ -119,7 +117,7 @@ namespace KeePassLib.Serialization
 					else
 						writerStream = sHashed;
 				}
-				else if(m_format == Kdb4Format.PlainXml)
+				else if(m_format == KdbxFormat.PlainXml)
 					writerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
@@ -129,8 +127,6 @@ namespace KeePassLib.Serialization
 				m_xmlWriter.Flush();
 				m_xmlWriter.Close();
 				writerStream.Close();
-
-				GC.KeepAlive(bw);
 			}
 			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
 		}
@@ -143,55 +139,62 @@ namespace KeePassLib.Serialization
 			sSaveTo.Close();
 
 			m_xmlWriter = null;
+			m_pbHashOfHeader = null;
 		}
 
-		private void WriteHeader(BinaryWriter bw)
+		private void WriteHeader(Stream s)
 		{
-			Debug.Assert(bw != null);
-			if(bw == null) throw new ArgumentNullException("bw");
+			MemoryStream ms = new MemoryStream();
 
-			bw.Write(MemUtil.UInt32ToBytes(FileSignature1));
-			bw.Write(MemUtil.UInt32ToBytes(FileSignature2));
-			bw.Write(MemUtil.UInt32ToBytes(FileVersion32));
+			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature1));
+			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature2));
+			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileVersion32));
 
-			WriteHeaderField(bw, Kdb4HeaderFieldID.CipherID,
+			WriteHeaderField(ms, KdbxHeaderFieldID.CipherID,
 				m_pwDatabase.DataCipherUuid.UuidBytes);
 
 			int nCprID = (int)m_pwDatabase.Compression;
-			WriteHeaderField(bw, Kdb4HeaderFieldID.CompressionFlags,
+			WriteHeaderField(ms, KdbxHeaderFieldID.CompressionFlags,
 				MemUtil.UInt32ToBytes((uint)nCprID));
 
-			WriteHeaderField(bw, Kdb4HeaderFieldID.MasterSeed, m_pbMasterSeed);
-			WriteHeaderField(bw, Kdb4HeaderFieldID.TransformSeed, m_pbTransformSeed);
-			WriteHeaderField(bw, Kdb4HeaderFieldID.TransformRounds, MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
-			WriteHeaderField(bw, Kdb4HeaderFieldID.EncryptionIV, m_pbEncryptionIV);
-			WriteHeaderField(bw, Kdb4HeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
-			WriteHeaderField(bw, Kdb4HeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
+			WriteHeaderField(ms, KdbxHeaderFieldID.MasterSeed, m_pbMasterSeed);
+			WriteHeaderField(ms, KdbxHeaderFieldID.TransformSeed, m_pbTransformSeed);
+			WriteHeaderField(ms, KdbxHeaderFieldID.TransformRounds,
+				MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
+			WriteHeaderField(ms, KdbxHeaderFieldID.EncryptionIV, m_pbEncryptionIV);
+			WriteHeaderField(ms, KdbxHeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
+			WriteHeaderField(ms, KdbxHeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
 
 			int nIrsID = (int)m_craInnerRandomStream;
-			WriteHeaderField(bw, Kdb4HeaderFieldID.InnerRandomStreamID,
+			WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamID,
 				MemUtil.UInt32ToBytes((uint)nIrsID));
 
-			WriteHeaderField(bw, Kdb4HeaderFieldID.EndOfHeader, new byte[]{ (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
-			bw.Flush();
+			WriteHeaderField(ms, KdbxHeaderFieldID.EndOfHeader, new byte[]{
+				(byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
+
+			byte[] pbHeader = ms.ToArray();
+			ms.Close();
+
+			SHA256Managed sha256 = new SHA256Managed();
+			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
+
+			s.Write(pbHeader, 0, pbHeader.Length);
+			s.Flush();
 		}
 
-		private static void WriteHeaderField(BinaryWriter bwOut,
-			Kdb4HeaderFieldID kdbID, byte[] pbData)
+		private static void WriteHeaderField(Stream s, KdbxHeaderFieldID kdbID,
+			byte[] pbData)
 		{
-			Debug.Assert(bwOut != null);
-			if(bwOut == null) throw new ArgumentNullException("bwOut");
-
-			bwOut.Write((byte)kdbID);
+			s.WriteByte((byte)kdbID);
 
 			if(pbData != null)
 			{
 				ushort uLength = (ushort)pbData.Length;
-				bwOut.Write(uLength);
+				MemUtil.Write(s, MemUtil.UInt16ToBytes(uLength));
 
-				if(uLength > 0) bwOut.Write(pbData);
+				if(uLength > 0) s.Write(pbData, 0, pbData.Length);
 			}
-			else bwOut.Write((ushort)0);
+			else MemUtil.Write(s, MemUtil.UInt16ToBytes((ushort)0));
 		}
 
 		private Stream AttachStreamEncryptor(Stream s)
@@ -314,6 +317,11 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(ElemMeta);
 
 			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName, false); // Generator name
+
+			if(m_pbHashOfHeader != null)
+				WriteObject(ElemHeaderHash, Convert.ToBase64String(
+					m_pbHashOfHeader), false);
+
 			WriteObject(ElemDbName, m_pwDatabase.Name, true);
 			WriteObject(ElemDbNameChanged, m_pwDatabase.NameChanged);
 			WriteObject(ElemDbDesc, m_pwDatabase.Description, true);
@@ -651,7 +659,7 @@ namespace KeePassLib.Serialization
 					bProtected = m_pwDatabase.MemoryProtection.ProtectNotes;
 			}
 
-			if(bProtected && (m_format != Kdb4Format.PlainXml))
+			if(bProtected && (m_format != KdbxFormat.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -700,7 +708,7 @@ namespace KeePassLib.Serialization
 					strValue = sb.ToString(); // Correct string for current code page
 				}
 
-				if((m_format == Kdb4Format.PlainXml) && bProtected)
+				if((m_format == KdbxFormat.PlainXml) && bProtected)
 					m_xmlWriter.WriteAttributeString(AttrProtectedInMemPlainXml, ValTrue);
 
 				m_xmlWriter.WriteString(StrUtil.SafeXmlString(strValue));
@@ -734,7 +742,7 @@ namespace KeePassLib.Serialization
 
 		private void SubWriteValue(ProtectedBinary value)
 		{
-			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
+			if(value.IsProtected && (m_format != KdbxFormat.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -802,8 +810,8 @@ namespace KeePassLib.Serialization
 		/// to the stream.</returns>
 		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
-			/* Kdb4File f = new Kdb4File(pwDatabase);
-			f.m_format = Kdb4Format.PlainXml;
+			/* KdbxFile f = new KdbxFile(pwDatabase);
+			f.m_format = KdbxFormat.PlainXml;
 
 			XmlTextWriter xtw = null;
 			try { xtw = new XmlTextWriter(msOutput, StrUtil.Utf8); }
@@ -835,8 +843,8 @@ namespace KeePassLib.Serialization
 			foreach(PwEntry peCopy in vEntries)
 				pd.RootGroup.AddEntry(peCopy.CloneDeep(), true);
 
-			Kdb4File f = new Kdb4File(pd);
-			f.Save(msOutput, null, Kdb4Format.PlainXml, null);
+			KdbxFile f = new KdbxFile(pd);
+			f.Save(msOutput, null, KdbxFormat.PlainXml, null);
 			return true;
 		}
 	}

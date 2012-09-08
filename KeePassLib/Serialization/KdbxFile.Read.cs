@@ -44,7 +44,7 @@ namespace KeePassLib.Serialization
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
 	/// </summary>
-	public sealed partial class Kdb4File
+	public sealed partial class KdbxFile
 	{
 		/// <summary>
 		/// Load a KDB file from a file.
@@ -52,7 +52,7 @@ namespace KeePassLib.Serialization
 		/// <param name="strFilePath">File to load.</param>
 		/// <param name="kdbFormat">Format specifier.</param>
 		/// <param name="slLogger">Status logger (optional).</param>
-		public void Load(string strFilePath, Kdb4Format kdbFormat, IStatusLogger slLogger)
+		public void Load(string strFilePath, KdbxFormat kdbFormat, IStatusLogger slLogger)
 		{
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
 			Load(IOConnection.OpenRead(ioc), kdbFormat, slLogger);
@@ -62,10 +62,10 @@ namespace KeePassLib.Serialization
 		/// Load a KDB file from a stream.
 		/// </summary>
 		/// <param name="sSource">Stream to read the data from. Must contain
-		/// a KDB4 stream.</param>
+		/// a KDBX stream.</param>
 		/// <param name="kdbFormat">Format specifier.</param>
 		/// <param name="slLogger">Status logger (optional).</param>
-		public void Load(Stream sSource, Kdb4Format kdbFormat, IStatusLogger slLogger)
+		public void Load(Stream sSource, KdbxFormat kdbFormat, IStatusLogger slLogger)
 		{
 			Debug.Assert(sSource != null);
 			if(sSource == null) throw new ArgumentNullException("sSource");
@@ -82,7 +82,7 @@ namespace KeePassLib.Serialization
 				BinaryReaderEx brDecrypted = null;
 				Stream readerStream = null;
 
-				if(kdbFormat == Kdb4Format.Default)
+				if(kdbFormat == KdbxFormat.Default)
 				{
 					br = new BinaryReaderEx(hashedStream, encNoBom, KLRes.FileCorrupted);
 					ReadHeader(br);
@@ -110,11 +110,11 @@ namespace KeePassLib.Serialization
 						readerStream = new GZipStream(sHashed, CompressionMode.Decompress);
 					else readerStream = sHashed;
 				}
-				else if(kdbFormat == Kdb4Format.PlainXml)
+				else if(kdbFormat == KdbxFormat.PlainXml)
 					readerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
-				if(kdbFormat != Kdb4Format.PlainXml) // Is an encrypted format
+				if(kdbFormat != KdbxFormat.PlainXml) // Is an encrypted format
 				{
 					if(m_pbProtectedStreamKey == null)
 					{
@@ -131,8 +131,8 @@ namespace KeePassLib.Serialization
 				// ReadXmlDom(readerStream);
 
 				readerStream.Close();
-				GC.KeepAlive(brDecrypted);
-				GC.KeepAlive(br);
+				// GC.KeepAlive(br);
+				// GC.KeepAlive(brDecrypted);
 			}
 			catch(CryptographicException) // Thrown on invalid padding
 			{
@@ -158,12 +158,15 @@ namespace KeePassLib.Serialization
 			// case a different application has created the KDBX file and ignored
 			// the history maintenance settings)
 			m_pwDatabase.MaintainBackups(); // Don't mark database as modified
+
+			m_pbHashOfHeader = null;
 		}
 
 		private void ReadHeader(BinaryReaderEx br)
 		{
-			Debug.Assert(br != null);
-			if(br == null) throw new ArgumentNullException("br");
+			MemoryStream msHeader = new MemoryStream();
+			Debug.Assert(br.CopyDataTo == null);
+			br.CopyDataTo = msHeader;
 
 			byte[] pbSig1 = br.ReadBytes(4);
 			uint uSig1 = MemUtil.BytesToUInt32(pbSig1);
@@ -190,6 +193,12 @@ namespace KeePassLib.Serialization
 				if(ReadHeaderField(br) == false)
 					break;
 			}
+
+			br.CopyDataTo = null;
+			byte[] pbHeader = msHeader.ToArray();
+			msHeader.Close();
+			SHA256Managed sha256 = new SHA256Managed();
+			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
 		}
 
 		private bool ReadHeaderField(BinaryReaderEx brSource)
@@ -212,49 +221,49 @@ namespace KeePassLib.Serialization
 			}
 
 			bool bResult = true;
-			Kdb4HeaderFieldID kdbID = (Kdb4HeaderFieldID)btFieldID;
+			KdbxHeaderFieldID kdbID = (KdbxHeaderFieldID)btFieldID;
 			switch(kdbID)
 			{
-				case Kdb4HeaderFieldID.EndOfHeader:
+				case KdbxHeaderFieldID.EndOfHeader:
 					bResult = false; // Returning false indicates end of header
 					break;
 
-				case Kdb4HeaderFieldID.CipherID:
+				case KdbxHeaderFieldID.CipherID:
 					SetCipher(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.CompressionFlags:
+				case KdbxHeaderFieldID.CompressionFlags:
 					SetCompressionFlags(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.MasterSeed:
+				case KdbxHeaderFieldID.MasterSeed:
 					m_pbMasterSeed = pbData;
 					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.TransformSeed:
+				case KdbxHeaderFieldID.TransformSeed:
 					m_pbTransformSeed = pbData;
 					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.TransformRounds:
+				case KdbxHeaderFieldID.TransformRounds:
 					m_pwDatabase.KeyEncryptionRounds = MemUtil.BytesToUInt64(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.EncryptionIV:
+				case KdbxHeaderFieldID.EncryptionIV:
 					m_pbEncryptionIV = pbData;
 					break;
 
-				case Kdb4HeaderFieldID.ProtectedStreamKey:
+				case KdbxHeaderFieldID.ProtectedStreamKey:
 					m_pbProtectedStreamKey = pbData;
 					CryptoRandom.Instance.AddEntropy(pbData);
 					break;
 
-				case Kdb4HeaderFieldID.StreamStartBytes:
+				case KdbxHeaderFieldID.StreamStartBytes:
 					m_pbStreamStartBytes = pbData;
 					break;
 
-				case Kdb4HeaderFieldID.InnerRandomStreamID:
+				case KdbxHeaderFieldID.InnerRandomStreamID:
 					SetInnerRandomStreamID(pbData);
 					break;
 
@@ -337,8 +346,8 @@ namespace KeePassLib.Serialization
 		/// <returns>Extracted entries.</returns>
 		public static List<PwEntry> ReadEntries(Stream msData)
 		{
-			/* Kdb4File f = new Kdb4File(pwDatabase);
-			f.m_format = Kdb4Format.PlainXml;
+			/* KdbxFile f = new KdbxFile(pwDatabase);
+			f.m_format = KdbxFormat.PlainXml;
 
 			XmlDocument doc = new XmlDocument();
 			doc.Load(msData);
@@ -366,8 +375,8 @@ namespace KeePassLib.Serialization
 			return vEntries; */
 
 			PwDatabase pd = new PwDatabase();
-			Kdb4File f = new Kdb4File(pd);
-			f.Load(msData, Kdb4Format.PlainXml, null);
+			KdbxFile f = new KdbxFile(pd);
+			f.Load(msData, KdbxFormat.PlainXml, null);
 
 			List<PwEntry> vEntries = new List<PwEntry>();
 			foreach(PwEntry pe in pd.RootGroup.Entries)

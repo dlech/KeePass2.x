@@ -10,10 +10,6 @@
 
 	<meta name="robots" content="index" />
 
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="pragma" content="no-cache" />
-
 	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
 	<meta name="DC.Creator" content="Dominik Reichl" />
 	<meta name="DC.Subject" content="Open-Source Password Safe" />
@@ -235,6 +231,11 @@ and type in <code>mono</code> as custom command.</li>
 or shell script file with this command line (use an absolute path to
 <code>KeePass.exe</code>, if the shortcut / shell script file is in a
 different location).</p>
+
+<p><b>Clipboard:</b><br />
+On some systems, Mono's clipboard routines don't work properly.
+In this case, install the <code>xsel</code> package. If <code>xsel</code>
+is installed, KeePass &ge; 2.20 uses this utility for clipboard operations.</p>
 
 <p><b>Global Auto-Type:</b><br />
 In order to use <a href="../base/autotype.html#autoglobal">global auto-type</a>,

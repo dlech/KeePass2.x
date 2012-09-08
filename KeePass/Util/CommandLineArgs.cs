@@ -98,7 +98,7 @@ namespace KeePass.Util
 			}
 		}
 
-		private static KeyValuePair<string, string> GetParameter(string strCompiled)
+		internal static KeyValuePair<string, string> GetParameter(string strCompiled)
 		{
 			string str = strCompiled;
 

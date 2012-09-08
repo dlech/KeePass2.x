@@ -52,15 +52,15 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			Kdb4File kdb4 = new Kdb4File(pwStorage);
-			kdb4.Load(sInput, Kdb4Format.Default, slLogger);
+			KdbxFile kdbx = new KdbxFile(pwStorage);
+			kdbx.Load(sInput, KdbxFormat.Default, slLogger);
 		}
 
 		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
 			IStatusLogger slLogger)
 		{
-			Kdb4File kdb4 = new Kdb4File(pwExportInfo.ContextDatabase);
-			kdb4.Save(sOutput, pwExportInfo.DataGroup, Kdb4Format.Default, slLogger);
+			KdbxFile kdbx = new KdbxFile(pwExportInfo.ContextDatabase);
+			kdbx.Save(sOutput, pwExportInfo.DataGroup, KdbxFormat.Default, slLogger);
 			return true;
 		}
 	}

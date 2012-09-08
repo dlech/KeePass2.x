@@ -508,6 +508,8 @@ namespace KeePass.Forms
 				lvg, KPRes.SameKeybLayout);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnWindowChange",
 				lvg, KPRes.AutoTypeCancelOnWindowChange);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnTitleChange",
+				lvg, KPRes.AutoTypeCancelOnTitleChange);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
@@ -525,6 +527,8 @@ namespace KeePass.Forms
 
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RememberKeySources",
 				lvg, KPRes.RememberKeySources);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "RememberWorkingDirectories",
+				lvg, KPRes.RememberWorkingDirectories);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
 				lvg, KPRes.RememberHidingSettings);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "UnhideButtonAlsoUnhidesSource",

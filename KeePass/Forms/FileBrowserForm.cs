@@ -31,6 +31,7 @@ using System.Diagnostics;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -42,6 +43,7 @@ namespace KeePass.Forms
 		private bool m_bSaveMode = false;
 		private string m_strTitle = PwDefs.ShortProductName;
 		private string m_strHint = string.Empty;
+		private string m_strContext = null;
 
 		private ImageList m_ilFolders = null;
 		private List<Image> m_vFolderImages = new List<Image>();
@@ -76,11 +78,13 @@ namespace KeePass.Forms
 			get { return m_strSelectedFile; }
 		}
 
-		public void InitEx(bool bSaveMode, string strTitle, string strHint)
+		public void InitEx(bool bSaveMode, string strTitle, string strHint,
+			string strContext)
 		{
 			m_bSaveMode = bSaveMode;
 			if(strTitle != null) m_strTitle = strTitle;
 			if(strHint != null) m_strHint = strHint;
+			m_strContext = strContext;
 		}
 
 		public FileBrowserForm()
@@ -117,7 +121,11 @@ namespace KeePass.Forms
 			m_lvFiles.Columns.Add(KPRes.Size, nWidth / 4, HorizontalAlignment.Right);
 
 			InitialPopulateFolders();
-			BrowseToFolder(Environment.CurrentDirectory);
+
+			string strWorkDir = Program.Config.Application.GetWorkingDirectory(m_strContext);
+			if(string.IsNullOrEmpty(strWorkDir))
+				strWorkDir = WinUtil.GetHomeDirectory();
+			BrowseToFolder(strWorkDir);
 
 			EnableControlsEx();
 		}
@@ -465,6 +473,10 @@ namespace KeePass.Forms
 				else if(File.Exists(str))
 				{
 					m_strSelectedFile = str;
+
+					Program.Config.Application.SetWorkingDirectory(m_strContext,
+						UrlUtil.GetFileDirectory(str, false, true));
+
 					return true;
 				}
 				else { Debug.Assert(false); }

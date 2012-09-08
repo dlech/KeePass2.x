@@ -54,7 +54,9 @@
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
 			this.m_lblWindowsAccDesc2 = new System.Windows.Forms.Label();
+			this.m_picAccWarning = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_picAccWarning)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// m_lblIntro
@@ -284,11 +286,20 @@
 			// 
 			// m_lblWindowsAccDesc2
 			// 
-			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(28, 359);
+			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(53, 359);
 			this.m_lblWindowsAccDesc2.Name = "m_lblWindowsAccDesc2";
-			this.m_lblWindowsAccDesc2.Size = new System.Drawing.Size(476, 55);
+			this.m_lblWindowsAccDesc2.Size = new System.Drawing.Size(451, 55);
 			this.m_lblWindowsAccDesc2.TabIndex = 14;
 			this.m_lblWindowsAccDesc2.Text = resources.GetString("m_lblWindowsAccDesc2.Text");
+			// 
+			// m_picAccWarning
+			// 
+			this.m_picAccWarning.Location = new System.Drawing.Point(31, 359);
+			this.m_picAccWarning.Name = "m_picAccWarning";
+			this.m_picAccWarning.Size = new System.Drawing.Size(16, 16);
+			this.m_picAccWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.m_picAccWarning.TabIndex = 22;
+			this.m_picAccWarning.TabStop = false;
 			// 
 			// KeyCreationForm
 			// 
@@ -297,6 +308,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(519, 464);
+			this.Controls.Add(this.m_picAccWarning);
 			this.Controls.Add(this.m_lblWindowsAccDesc2);
 			this.Controls.Add(this.m_cmbKeyFile);
 			this.Controls.Add(this.m_lblQualityBits);
@@ -332,6 +344,7 @@
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_picAccWarning)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -363,5 +376,6 @@
 		private System.Windows.Forms.Label m_lblQualityBits;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
 		private System.Windows.Forms.Label m_lblWindowsAccDesc2;
+		private System.Windows.Forms.PictureBox m_picAccWarning;
 	}
 }

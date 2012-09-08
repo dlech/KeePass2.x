@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 
 using KeePass.Native;
+using KeePass.Resources;
 
 using KeePassLib.Utility;
 
@@ -223,6 +224,22 @@ namespace KeePass.UI
 			}
 		}
 
+		public string ExpandedInformation
+		{
+			get { return m_cfg.pszExpandedInformation; }
+			set { m_cfg.pszExpandedInformation = value; }
+		}
+
+		public bool ExpandedByDefault
+		{
+			get { return ((m_cfg.dwFlags & VtdFlags.ExpandedByDefault) != VtdFlags.None); }
+			set
+			{
+				if(value) m_cfg.dwFlags |= VtdFlags.ExpandedByDefault;
+				else m_cfg.dwFlags &= ~VtdFlags.ExpandedByDefault;
+			}
+		}
+
 		public string FooterText
 		{
 			get { return m_cfg.pszFooter; }
@@ -245,9 +262,8 @@ namespace KeePass.UI
 			get { return m_bVerification; }
 		}
 
-		public VistaTaskDialog(IntPtr hParent)
+		public VistaTaskDialog()
 		{
-			m_cfg.hwndParent = hParent;
 		}
 
 		public void AddButton(int iResult, string strCommand, string strDescription)
@@ -321,13 +337,39 @@ namespace KeePass.UI
 
 		public bool ShowDialog()
 		{
+			return ShowDialog(null);
+		}
+
+		public bool ShowDialog(Form fParent)
+		{
 			MessageService.ExternalIncrementMessageCount();
-			bool bResult = InternalShowDialog();
+
+			Form f = fParent;
+			if(f == null) f = MessageService.GetTopForm();
+			if(f == null) f = GlobalWindowManager.TopWindow;
+
+#if DEBUG
+			if(GlobalWindowManager.TopWindow != null)
+			{
+				Debug.Assert(f == GlobalWindowManager.TopWindow);
+			}
+			Debug.Assert(f == MessageService.GetTopForm());
+#endif
+
+			bool bResult;
+			if((f == null) || !f.InvokeRequired)
+				bResult = InternalShowDialog(f);
+			else
+				bResult = (bool)f.Invoke(new InternalShowDialogDelegate(
+					this.InternalShowDialog), f);
+
 			MessageService.ExternalDecrementMessageCount();
 			return bResult;
 		}
 
-		private bool InternalShowDialog()
+		private delegate bool InternalShowDialogDelegate(Form fParent);
+
+		private bool InternalShowDialog(Form fParent)
 		{
 			if(IntPtr.Size == 4)
 				{ Debug.Assert(Marshal.SizeOf(typeof(VtdConfig)) == VtdConfigSize32); }
@@ -336,6 +378,21 @@ namespace KeePass.UI
 			else { Debug.Assert(false); }
 
 			m_cfg.cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
+
+			if(fParent == null) m_cfg.hwndParent = IntPtr.Zero;
+			else
+			{
+				try { m_cfg.hwndParent = fParent.Handle; }
+				catch(Exception)
+				{
+					Debug.Assert(false);
+					m_cfg.hwndParent = IntPtr.Zero;
+				}
+			}
+
+			bool bExp = (m_cfg.pszExpandedInformation != null);
+			m_cfg.pszExpandedControlText = (bExp ? KPRes.Details : null);
+			m_cfg.pszCollapsedControlText = (bExp ? KPRes.Details : null);
 
 			int pnButton = 0, pnRadioButton = 0;
 			bool bVerification = false;
@@ -362,9 +419,9 @@ namespace KeePass.UI
 		}
 
 		public static bool ShowMessageBox(string strContent, string strMainInstruction,
-			string strWindowTitle, VtdIcon vtdIcon, IntPtr hParent)
+			string strWindowTitle, VtdIcon vtdIcon, Form fParent)
 		{
-			VistaTaskDialog vtd = new VistaTaskDialog(hParent);
+			VistaTaskDialog vtd = new VistaTaskDialog();
 
 			vtd.CommandLinks = false;
 
@@ -374,7 +431,7 @@ namespace KeePass.UI
 
 			vtd.SetIcon(vtdIcon);
 
-			return vtd.ShowDialog();
+			return vtd.ShowDialog(fParent);
 		}
 	}
 }

@@ -107,10 +107,10 @@
     <Compile Include="Serialization\IOConnection.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Serialization\Kdb4File.cs" />
-    <Compile Include="Serialization\Kdb4File.Read.cs" />
-    <Compile Include="Serialization\Kdb4File.Read.Streamed.cs" />
-    <Compile Include="Serialization\Kdb4File.Write.cs" />
+    <Compile Include="Serialization\KdbxFile.cs" />
+    <Compile Include="Serialization\KdbxFile.Read.cs" />
+    <Compile Include="Serialization\KdbxFile.Read.Streamed.cs" />
+    <Compile Include="Serialization\KdbxFile.Write.cs" />
     <Compile Include="Serialization\IOConnectionInfo.cs" />
     <Compile Include="Serialization\OldFormatException.cs" />
     <Compile Include="Translation\KPControlCustomization.cs" />
@@ -120,6 +120,7 @@
     <Compile Include="Translation\KPTranslation.cs" />
     <Compile Include="Translation\KPTranslationProperties.cs" />
     <Compile Include="Utility\AppLogEx.cs" />
+    <Compile Include="Utility\GfxUtil.cs" />
     <Compile Include="Utility\MemUtil.cs" />
     <Compile Include="Utility\MessageService.cs" />
     <Compile Include="Native\NativeLib.cs" />

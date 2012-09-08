@@ -55,10 +55,10 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(210, 452);
+			this.m_btnOK.Location = new System.Drawing.Point(210, 449);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.TabIndex = 0;
 			this.m_btnOK.Text = "&OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -66,10 +66,10 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(291, 452);
+			this.m_btnCancel.Location = new System.Drawing.Point(291, 449);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "&Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -77,10 +77,10 @@
 			// m_grpFormat
 			// 
 			this.m_grpFormat.Controls.Add(this.m_lvFormats);
-			this.m_grpFormat.Location = new System.Drawing.Point(12, 75);
+			this.m_grpFormat.Location = new System.Drawing.Point(12, 72);
 			this.m_grpFormat.Name = "m_grpFormat";
 			this.m_grpFormat.Size = new System.Drawing.Size(354, 297);
-			this.m_grpFormat.TabIndex = 3;
+			this.m_grpFormat.TabIndex = 2;
 			this.m_grpFormat.TabStop = false;
 			this.m_grpFormat.Text = "Format";
 			// 
@@ -93,7 +93,7 @@
 			this.m_lvFormats.MultiSelect = false;
 			this.m_lvFormats.Name = "m_lvFormats";
 			this.m_lvFormats.Size = new System.Drawing.Size(336, 268);
-			this.m_lvFormats.TabIndex = 1;
+			this.m_lvFormats.TabIndex = 0;
 			this.m_lvFormats.UseCompatibleStateImageBehavior = false;
 			this.m_lvFormats.View = System.Windows.Forms.View.Details;
 			this.m_lvFormats.ItemActivate += new System.EventHandler(this.OnFormatsItemActivate);
@@ -105,10 +105,10 @@
 			this.m_grpFile.Controls.Add(this.m_btnSelFile);
 			this.m_grpFile.Controls.Add(this.m_tbFile);
 			this.m_grpFile.Controls.Add(this.m_lblFile);
-			this.m_grpFile.Location = new System.Drawing.Point(12, 378);
+			this.m_grpFile.Location = new System.Drawing.Point(12, 375);
 			this.m_grpFile.Name = "m_grpFile";
 			this.m_grpFile.Size = new System.Drawing.Size(354, 68);
-			this.m_grpFile.TabIndex = 4;
+			this.m_grpFile.TabIndex = 3;
 			this.m_grpFile.TabStop = false;
 			this.m_grpFile.Text = "File";
 			// 
@@ -118,7 +118,7 @@
 			this.m_lnkFileFormats.Location = new System.Drawing.Point(110, 45);
 			this.m_lnkFileFormats.Name = "m_lnkFileFormats";
 			this.m_lnkFileFormats.Size = new System.Drawing.Size(182, 13);
-			this.m_lnkFileFormats.TabIndex = 4;
+			this.m_lnkFileFormats.TabIndex = 3;
 			this.m_lnkFileFormats.TabStop = true;
 			this.m_lnkFileFormats.Text = "Help: Configuring source applications";
 			this.m_lnkFileFormats.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkFileFormats);
@@ -155,7 +155,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(378, 487);
+			this.ClientSize = new System.Drawing.Size(378, 484);
 			this.Controls.Add(this.m_grpFile);
 			this.Controls.Add(this.m_grpFormat);
 			this.Controls.Add(this.m_btnCancel);

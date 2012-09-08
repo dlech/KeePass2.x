@@ -1,3 +1,70 @@
+2012-09-08: 2.20
+- Header data in KDBX files is now authenticated (to prevent
+  silent data corruption attacks; thanks to P. Gasti and K. B.
+  Rasmussen)
+- Added management of working directories (a separate working
+  directory is remembered for each file dialog context; working
+  directories are remembered relatively to KeePass.exe; the
+  management can be deactivated by turning off the new option
+  'Remember working directories')
+- Added option to cancel auto-type when the target window title
+  changes
+- Added quick search box in the toolbar of the internal text
+  editor
+- Files can now be attached to entries by using drag&drop from
+  Windows Explorer to the attachments list in the entry editing
+  dialog
+- Added '-pw-stdin' command line option to make KeePass read
+  the master password from the StdIn stream
+- Added placeholders to get parts of the entry URL: {URL:SCM},
+  {URL:HOST}, {URL:PORT}, {URL:PATH} and {URL:QUERY}
+- Added a 'Details' button in the plugin load failure message
+  box (when clicked, detailed error information for developers
+  is shown)
+- Added warning icon left of the Windows user account option
+  description in the master key creation dialog
+- Added support for more image file formats (e.g. when
+  importing custom client icons)
+- Added support for importing DesktopKnox 3.2 XML files
+- The generic CSV importer now guesses whether the option to
+  ignore the first row should be enabled or not (the user of
+  course can still specify it manually, too)
+- Added support for exporting to KeePass 1.x CSV files
+- Added support for moving the PLGX cache to a different remote
+  drive
+- The Spr engine is now extensible, i.e. plugins can provide
+  additional transformations/placeholders
+- On Unix-like systems, KeePass now uses the 'xsel' utility for
+  clipboard operations, if 'xsel' is installed (in order to
+  work around Mono clipboard bugs)
+- Added Mono workaround to set the WM_CLASS property
+- Added workaround for Mono splitter bug
+- The 'PrepMonoDev.sh' script now removes the serialization
+  assembly generating post build event
+- TrlUtil: added support for importing PO files
+
+- Improved FTP file existence checking
+- High DPI UI improvements
+- The database is not marked as modified anymore when using in-
+  place label editing to fake-edit a group's name (i.e. when
+  the final new name is the same as the previous one)
+- Password is not auto-repeated anymore when trying to unhide
+  it fails due to the policy 'Unhide Passwords' being disabled
+- Improved menu accelerator and shortcut keys
+- Changed IO connection name display format
+- Improved browser detection on Mac OS X
+- Task dialog thread safety improvements
+- Added UI check during import for KPScript
+- Upgraded and improved installer (now uses Unicode, LZMA2
+  compression, ...)
+- Various UI improvements
+- Various code optimizations
+- Minor other improvements
+
+- On Windows systems, new line sequences in text to be shown in
+  a standard multiline text box are now converted to Windows
+  format
+
 2012-05-01: 2.19
 - New generic CSV importer (now supports multi-line fields, '\'
   as escape character, field & record separators and the text

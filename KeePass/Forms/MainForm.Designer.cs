@@ -285,7 +285,7 @@
 			this.m_ctxGroupEmpty.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
 			this.m_ctxGroupEmpty.Name = "m_ctxGroupEmpty";
 			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(179, 22);
-			this.m_ctxGroupEmpty.Text = "&Empty Recycle Bin";
+			this.m_ctxGroupEmpty.Text = "Empty Recycle &Bin";
 			this.m_ctxGroupEmpty.Click += new System.EventHandler(this.OnGroupsEmpty);
 			// 
 			// m_ctxGroupSep1
@@ -319,7 +319,7 @@
 			this.m_ctxGroupExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxGroupExport.Name = "m_ctxGroupExport";
 			this.m_ctxGroupExport.Size = new System.Drawing.Size(179, 22);
-			this.m_ctxGroupExport.Text = "E&xport...";
+			this.m_ctxGroupExport.Text = "&Export...";
 			this.m_ctxGroupExport.Click += new System.EventHandler(this.OnGroupsExport);
 			// 
 			// m_ctxGroupSep3
@@ -490,7 +490,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(215, 352);
+			this.m_ctxPwList.Size = new System.Drawing.Size(215, 374);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -581,7 +581,7 @@
 			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KRec_Record;
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
 			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(214, 22);
-			this.m_ctxEntryPerformAutoType.Text = "&Perform Auto-Type";
+			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_ctxEntrySep1
@@ -648,7 +648,7 @@
             this.m_ctxEntryColorSep1,
             this.m_ctxEntryColorCustom});
 			this.m_ctxEntrySetColor.Name = "m_ctxEntrySetColor";
-			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(144, 22);
+			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySetColor.Text = "Set &Color";
 			// 
 			// m_ctxEntryColorStandard
@@ -707,21 +707,21 @@
 			// 
 			this.m_ctxEntryMassSetIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_ctxEntryMassSetIcon.Name = "m_ctxEntryMassSetIcon";
-			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(144, 22);
+			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
 			// m_ctxEntrySelectedSep0
 			// 
 			this.m_ctxEntrySelectedSep0.Name = "m_ctxEntrySelectedSep0";
-			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(141, 6);
+			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_ctxEntrySelectedAddTag
 			// 
 			this.m_ctxEntrySelectedAddTag.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxEntrySelectedNewTag});
 			this.m_ctxEntrySelectedAddTag.Name = "m_ctxEntrySelectedAddTag";
-			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(144, 22);
+			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySelectedAddTag.Text = "Add &Tag";
 			this.m_ctxEntrySelectedAddTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedAddTagOpening);
 			// 
@@ -736,20 +736,20 @@
 			// m_ctxEntrySelectedRemoveTag
 			// 
 			this.m_ctxEntrySelectedRemoveTag.Name = "m_ctxEntrySelectedRemoveTag";
-			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(144, 22);
+			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySelectedRemoveTag.Text = "&Remove Tag";
 			this.m_ctxEntrySelectedRemoveTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedRemoveTagOpening);
 			// 
 			// m_ctxEntrySelectedSep1
 			// 
 			this.m_ctxEntrySelectedSep1.Name = "m_ctxEntrySelectedSep1";
-			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(141, 6);
+			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_ctxEntrySelectedPrint
 			// 
 			this.m_ctxEntrySelectedPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxEntrySelectedPrint.Name = "m_ctxEntrySelectedPrint";
-			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(144, 22);
+			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntrySelectedPrint.Text = "&Print...";
 			this.m_ctxEntrySelectedPrint.Click += new System.EventHandler(this.OnEntrySelectedPrint);
 			// 
@@ -757,8 +757,8 @@
 			// 
 			this.m_ctxEntrySelectedExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxEntrySelectedExport.Name = "m_ctxEntrySelectedExport";
-			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(144, 22);
-			this.m_ctxEntrySelectedExport.Text = "E&xport...";
+			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedExport.Text = "&Export...";
 			this.m_ctxEntrySelectedExport.Click += new System.EventHandler(this.OnEntrySelectedExport);
 			// 
 			// m_ctxEntrySelectAll
@@ -903,7 +903,7 @@
 			this.m_menuFileOpenLocal.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpenLocal.Name = "m_menuFileOpenLocal";
 			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(141, 22);
-			this.m_menuFileOpenLocal.Text = "Open File...";
+			this.m_menuFileOpenLocal.Text = "Open &File...";
 			this.m_menuFileOpenLocal.Click += new System.EventHandler(this.OnFileOpen);
 			// 
 			// m_menuFileOpenUrl
@@ -911,7 +911,7 @@
 			this.m_menuFileOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileOpenUrl.Name = "m_menuFileOpenUrl";
 			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(141, 22);
-			this.m_menuFileOpenUrl.Text = "Open URL...";
+			this.m_menuFileOpenUrl.Text = "Open &URL...";
 			this.m_menuFileOpenUrl.Click += new System.EventHandler(this.OnFileOpenUrl);
 			// 
 			// m_menuFileRecent
@@ -1190,7 +1190,7 @@
 			this.m_menuViewShowEntryView.CheckOnClick = true;
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
 			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(222, 22);
-			this.m_menuViewShowEntryView.Text = "&Show Entry View";
+			this.m_menuViewShowEntryView.Text = "Show &Entry View";
 			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
 			// 
 			// m_menuViewWindowLayout
@@ -1207,7 +1207,7 @@
 			this.m_menuViewWindowsStacked.Image = global::KeePass.Properties.Resources.B16x16_Window_2Horz1Vert;
 			this.m_menuViewWindowsStacked.Name = "m_menuViewWindowsStacked";
 			this.m_menuViewWindowsStacked.Size = new System.Drawing.Size(142, 22);
-			this.m_menuViewWindowsStacked.Text = "Stacked";
+			this.m_menuViewWindowsStacked.Text = "&Stacked";
 			this.m_menuViewWindowsStacked.Click += new System.EventHandler(this.OnViewWindowsStacked);
 			// 
 			// m_menuViewWindowsSideBySide
@@ -1215,7 +1215,7 @@
 			this.m_menuViewWindowsSideBySide.Image = global::KeePass.Properties.Resources.B16x16_Window_3Horz;
 			this.m_menuViewWindowsSideBySide.Name = "m_menuViewWindowsSideBySide";
 			this.m_menuViewWindowsSideBySide.Size = new System.Drawing.Size(142, 22);
-			this.m_menuViewWindowsSideBySide.Text = "Side by Side";
+			this.m_menuViewWindowsSideBySide.Text = "Side &by Side";
 			this.m_menuViewWindowsSideBySide.Click += new System.EventHandler(this.OnViewWindowsSideBySide);
 			// 
 			// m_menuViewSep1
@@ -1241,14 +1241,14 @@
 			this.m_menuViewConfigColumns.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_menuViewConfigColumns.Name = "m_menuViewConfigColumns";
 			this.m_menuViewConfigColumns.Size = new System.Drawing.Size(222, 22);
-			this.m_menuViewConfigColumns.Text = "Configure &Columns...";
+			this.m_menuViewConfigColumns.Text = "&Configure Columns...";
 			this.m_menuViewConfigColumns.Click += new System.EventHandler(this.OnViewConfigColumns);
 			// 
 			// m_menuViewSortBy
 			// 
 			this.m_menuViewSortBy.Name = "m_menuViewSortBy";
 			this.m_menuViewSortBy.Size = new System.Drawing.Size(222, 22);
-			this.m_menuViewSortBy.Text = "S&ort By";
+			this.m_menuViewSortBy.Text = "&Sort By";
 			// 
 			// m_menuViewTanOptions
 			// 

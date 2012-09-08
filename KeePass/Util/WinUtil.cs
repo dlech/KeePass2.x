@@ -128,12 +128,11 @@ namespace KeePass.Util
 			// If URL is null, return, do not throw exception.
 			Debug.Assert(strUrlToOpen != null); if(strUrlToOpen == null) return;
 
-			string strPrevWorkDir = Directory.GetCurrentDirectory();
+			string strPrevWorkDir = WinUtil.GetWorkingDirectory();
 			string strThisExe = WinUtil.GetExecutable();
 			
 			string strExeDir = UrlUtil.GetFileDirectory(strThisExe, false, true);
-			try { Directory.SetCurrentDirectory(strExeDir); }
-			catch(Exception) { Debug.Assert(false); }
+			WinUtil.SetWorkingDirectory(strExeDir);
 
 			string strUrlFlt = strUrlToOpen;
 			strUrlFlt = strUrlFlt.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
@@ -194,8 +193,7 @@ namespace KeePass.Util
 			}
 
 			// Restore previous working directory
-			try { Directory.SetCurrentDirectory(strPrevWorkDir); }
-			catch(Exception) { Debug.Assert(false); }
+			WinUtil.SetWorkingDirectory(strPrevWorkDir);
 
 			// SprEngine.Compile might have modified the database
 			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
@@ -345,7 +343,7 @@ namespace KeePass.Util
 				}
 				else bResult = false;
 
-				if(strDir.Length > 0) Directory.SetCurrentDirectory(strDir);
+				if(strDir.Length > 0) WinUtil.SetWorkingDirectory(strDir);
 
 				if(!NativeMethods.CloseHandle(hDevice)) { Debug.Assert(false); }
 			}
@@ -372,7 +370,7 @@ namespace KeePass.Util
 		{
 			try
 			{
-				string strCur = Directory.GetCurrentDirectory();
+				string strCur = WinUtil.GetWorkingDirectory();
 				if((strCur == null) || (strCur.Length < 3)) return string.Empty;
 				if(strCur[1] != ':') return string.Empty;
 				if(strCur[2] != '\\') return string.Empty;
@@ -382,7 +380,7 @@ namespace KeePass.Util
 				if(chPar != chCur) return string.Empty;
 
 				string strTemp = Path.GetTempPath();
-				Directory.SetCurrentDirectory(strTemp);
+				WinUtil.SetWorkingDirectory(strTemp);
 
 				return strCur;
 			}
@@ -579,6 +577,55 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 
 			return strExeName;
+		}
+
+		public static string GetHomeDirectory()
+		{
+			string str = null;
+			try
+			{
+				str = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			if(string.IsNullOrEmpty(str))
+			{
+				try
+				{
+					str = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return string.Empty; }
+
+			return str;
+		}
+
+		public static string GetWorkingDirectory()
+		{
+			string strWorkDir = null;
+			try { strWorkDir = Directory.GetCurrentDirectory(); }
+			catch(Exception) { Debug.Assert(false); }
+
+			return (!string.IsNullOrEmpty(strWorkDir) ? strWorkDir : GetHomeDirectory());
+		}
+
+		public static void SetWorkingDirectory(string strWorkDir)
+		{
+			string str = strWorkDir; // May be null
+
+			if(!string.IsNullOrEmpty(str))
+			{
+				try { if(!Directory.Exists(str)) str = null; }
+				catch(Exception) { Debug.Assert(false); str = null; }
+			}
+
+			if(string.IsNullOrEmpty(str))
+				str = GetHomeDirectory(); // Not app dir
+
+			try { Directory.SetCurrentDirectory(str); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

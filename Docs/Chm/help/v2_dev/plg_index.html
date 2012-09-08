@@ -10,10 +10,6 @@
 
 	<meta name="robots" content="index" />
 
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="pragma" content="no-cache" />
-
 	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
 	<meta name="DC.Creator" content="Dominik Reichl" />
 	<meta name="DC.Subject" content="Open-Source Password Safe" />
@@ -127,7 +123,7 @@ already, which must be followed by all plugins:</p>
 <li>The namespace must be named like the DLL file without extension. Our DLL
 file is named <code>SamplePlugin.dll</code>, therefore the namespace must
 be called <code>SamplePlugin</code>.</li>
-<li>The main plugin class (which KeePass will instanciate when it loads your
+<li>The main plugin class (which KeePass will instantiate when it loads your
 plugin) must be called exactly the same as the namespace plus &quot;Ext&quot;.
 In this case: &quot;SamplePlugin&quot; + &quot;Ext&quot; = &quot;SamplePluginExt&quot;.</li>
 <li>The main plugin class must be derived from the <code>KeePass.Plugins.Plugin</code>

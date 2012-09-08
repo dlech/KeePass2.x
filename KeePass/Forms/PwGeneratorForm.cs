@@ -536,7 +536,7 @@ namespace KeePass.Forms
 			}
 			
 			m_pbPreview.Value = 100;
-			m_tbPreview.Text = sbList.ToString();
+			UIUtil.SetMultilineText(m_tbPreview, sbList.ToString());
 
 			this.Cursor = cNormalCursor;
 		}

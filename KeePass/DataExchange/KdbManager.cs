@@ -18,11 +18,11 @@
 */
 
 #if PocketPC || Smartphone || WindowsCE
-#undef KDB3_ANSI
+#undef KDB_ANSI
 #else
-// If compiling for the ANSI version of KeePassLibC, define KDB3_ANSI.
-// If compiling for the Unicode version of KeePassLibC, do not define KDB3_ANSI.
-#define KDB3_ANSI
+// If compiling for the ANSI version of KeePassLibC, define KDB_ANSI.
+// If compiling for the Unicode version of KeePassLibC, do not define KDB_ANSI.
+#define KDB_ANSI
 #endif
 
 using System;
@@ -41,7 +41,7 @@ namespace KeePass.DataExchange
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
-	public struct Kdb3Group
+	public struct KdbGroup
 	{
 		/// <summary>
 		/// The GroupID of the group.
@@ -58,7 +58,7 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// The Name of the group.
 		/// </summary>
-#if KDB3_ANSI
+#if KDB_ANSI
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Name;
 #else
@@ -69,22 +69,22 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// The creation time of the group.
 		/// </summary>
-		public Kdb3Time CreationTime;
+		public KdbTime CreationTime;
 
 		/// <summary>
 		/// The last modification time of the group.
 		/// </summary>
-		public Kdb3Time LastModificationTime;
+		public KdbTime LastModificationTime;
 
 		/// <summary>
 		/// The last access time of the group.
 		/// </summary>
-		public Kdb3Time LastAccessTime;
+		public KdbTime LastAccessTime;
 
 		/// <summary>
 		/// The expiry time of the group.
 		/// </summary>
-		public Kdb3Time ExpirationTime;
+		public KdbTime ExpirationTime;
 
 		/// <summary>
 		/// Indentation level of the group.
@@ -101,7 +101,7 @@ namespace KeePass.DataExchange
 #endif
 
 		/// <summary>
-		/// Flags of the group (see <c>Kdb3GroupFlags</c>).
+		/// Flags of the group (see <c>KdbGroupFlags</c>).
 		/// </summary>
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 Flags;
@@ -111,7 +111,7 @@ namespace KeePass.DataExchange
 	/// Password group flags.
 	/// </summary>
 	[Flags]
-	public enum Kdb3GroupFlags
+	public enum KdbGroupFlags
 	{
 		/// <summary>
 		/// No special flags.
@@ -132,12 +132,12 @@ namespace KeePass.DataExchange
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
-	public struct Kdb3Entry
+	public struct KdbEntry
 	{
 		/// <summary>
 		/// The UUID of the entry.
 		/// </summary>
-		public Kdb3Uuid Uuid;
+		public KdbUuid Uuid;
 
 		/// <summary>
 		/// The group ID of the enty.
@@ -151,7 +151,7 @@ namespace KeePass.DataExchange
 		[MarshalAs(UnmanagedType.U4)]
 		public UInt32 ImageId;
 
-#if KDB3_ANSI
+#if KDB_ANSI
 		/// <summary>
 		/// The title of the entry.
 		/// </summary>
@@ -228,27 +228,27 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// The creation time of the entry.
 		/// </summary>
-		public Kdb3Time CreationTime;
+		public KdbTime CreationTime;
 
 		/// <summary>
 		/// The last modification time of the entry.
 		/// </summary>
-		public Kdb3Time LastModificationTime;
+		public KdbTime LastModificationTime;
 
 		/// <summary>
 		/// The last access time of the entry.
 		/// </summary>
-		public Kdb3Time LastAccessTime;
+		public KdbTime LastAccessTime;
 
 		/// <summary>
 		/// The expiration time of the entry.
 		/// </summary>
-		public Kdb3Time ExpirationTime;
+		public KdbTime ExpirationTime;
 
 		/// <summary>
 		/// The description of the binary attachment.
 		/// </summary>
-#if KDB3_ANSI
+#if KDB_ANSI
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string BinaryDescription;
 #else
@@ -276,7 +276,7 @@ namespace KeePass.DataExchange
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
-	public struct Kdb3Uuid
+	public struct KdbUuid
 	{
 #pragma warning disable 1591 // Missing XML comments warning
 		public Byte V0; public Byte V1; public Byte V2; public Byte V3;
@@ -322,7 +322,7 @@ namespace KeePass.DataExchange
 #else
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 #endif
-	public struct Kdb3Time
+	public struct KdbTime
 	{
 #pragma warning disable 1591 // Missing XML comments warning
 		[MarshalAs(UnmanagedType.U2)]
@@ -348,7 +348,7 @@ namespace KeePass.DataExchange
 #endif
 
 		/// <summary>
-		/// Construct a <c>Kdb3Time</c> with initial values.
+		/// Construct a <c>KdbTime</c> with initial values.
 		/// </summary>
 		/// <param name="uYear">Year.</param>
 		/// <param name="uMonth">Month.</param>
@@ -356,7 +356,7 @@ namespace KeePass.DataExchange
 		/// <param name="uHour">Hour.</param>
 		/// <param name="uMinute">Minute.</param>
 		/// <param name="uSecond">Second.</param>
-		public Kdb3Time(UInt16 uYear, Byte uMonth, Byte uDay, Byte uHour,
+		public KdbTime(UInt16 uYear, Byte uMonth, Byte uDay, Byte uHour,
 			Byte uMinute, Byte uSecond)
 		{
 			this.Year = uYear;
@@ -372,7 +372,7 @@ namespace KeePass.DataExchange
 		}
 
 		/// <summary>
-		/// Convert the current <c>Kdb3Time</c> object to a <c>DateTime</c> object.
+		/// Convert the current <c>KdbTime</c> object to a <c>DateTime</c> object.
 		/// </summary>
 		/// <returns></returns>
 		public DateTime ToDateTime()
@@ -385,7 +385,7 @@ namespace KeePass.DataExchange
 		}
 
 		/// <summary>
-		/// Copy data from a <c>DateTime object</c> to the current <c>Kdb3Time</c> object.
+		/// Copy data from a <c>DateTime object</c> to the current <c>KdbTime</c> object.
 		/// </summary>
 		/// <param name="dt">Data source.</param>
 		public void Set(DateTime dt)
@@ -399,16 +399,16 @@ namespace KeePass.DataExchange
 		}
 
 		/// <summary>
-		/// A Kdb3Time element that is used to indicate the never expire time.
+		/// A KdbTime element that is used to indicate the never expire time.
 		/// </summary>
-		public static readonly Kdb3Time NeverExpireTime =
-			new Kdb3Time(2999, 12, 28, 23, 59, 59);
+		public static readonly KdbTime NeverExpireTime =
+			new KdbTime(2999, 12, 28, 23, 59, 59);
 	}
 
 	/// <summary>
 	/// Error codes for various functions (<c>OpenDatabase</c>, etc.).
 	/// </summary>
-	public enum Kdb3ErrorCode
+	public enum KdbErrorCode
 	{
 		/// <summary>
 		/// Unknown error occurred.
@@ -492,10 +492,10 @@ namespace KeePass.DataExchange
 	}
 
 	/// <summary>
-	/// Manager class for KDB3 files. It can load/save databases, add/change/delete
+	/// Manager class for KDB files. It can load/save databases, add/change/delete
 	/// groups and entries, check for KeePassLibC library existence and version, etc.
 	/// </summary>
-	public sealed class Kdb3Manager
+	public sealed class KdbManager
 	{
 		private const string DllFile32 = "KeePassLibC32.dll";
 		private const string DllFile64 = "KeePassLibC64.dll";
@@ -503,7 +503,7 @@ namespace KeePass.DataExchange
 		private static readonly bool m_bX64 =
 			(Marshal.SizeOf(typeof(IntPtr)) == 8);
 
-#if KDB3_ANSI
+#if KDB_ANSI
 		private const CharSet DllCharSet = CharSet.Ansi;
 #else
 		private const CharSet DllCharSet = CharSet.Unicode;
@@ -539,7 +539,7 @@ namespace KeePass.DataExchange
 		/// </summary>
 		public static string KeePassVersionString
 		{
-#if KDB3_ANSI
+#if KDB_ANSI
 			get
 			{
 				if(m_bX64) return Marshal.PtrToStringAnsi(GetKeePassVersionString64());
@@ -641,9 +641,9 @@ namespace KeePass.DataExchange
 		[DllImport(DllFile64, EntryPoint = "NewDatabase")]
 		private static extern void NewDatabase64(IntPtr pMgr);
 		/// <summary>
-		/// Construct a new Kdb3 manager instance.
+		/// Construct a new KDB manager instance.
 		/// </summary>
-		public Kdb3Manager()
+		public KdbManager()
 		{
 			if(m_bX64 == false) // Only check 32-bit structures
 			{
@@ -655,45 +655,45 @@ namespace KeePass.DataExchange
 
 				// Static structure layout assertions
 				int nExpectedSize = (bAligned ? 52 : 46);
-				Kdb3Group g = new Kdb3Group();
+				KdbGroup g = new KdbGroup();
 				Debug.Assert(Marshal.SizeOf(g) == nExpectedSize);
 				if(Marshal.SizeOf(g) != nExpectedSize)
-					throw new FormatException("SizeOf(Kdb3Group) invalid!");
+					throw new FormatException("SizeOf(KdbGroup) invalid!");
 
 				nExpectedSize = (bAligned ? 92 : 88);
-				Kdb3Entry e = new Kdb3Entry();
+				KdbEntry e = new KdbEntry();
 				Debug.Assert(Marshal.SizeOf(e) == nExpectedSize);
 				if(Marshal.SizeOf(e) != nExpectedSize)
-					throw new FormatException("SizeOf(Kdb3Entry) invalid!");
+					throw new FormatException("SizeOf(KdbEntry) invalid!");
 
-				Kdb3Uuid u = new Kdb3Uuid();
+				KdbUuid u = new KdbUuid();
 				Debug.Assert(Marshal.SizeOf(u) == 16);
 				if(Marshal.SizeOf(u) != 16)
-					throw new FormatException("SizeOf(Kdb3Uuid) invalid!");
+					throw new FormatException("SizeOf(KdbUuid) invalid!");
 
 				nExpectedSize = (bAligned ? 8 : 7);
-				Kdb3Time t = new Kdb3Time();
+				KdbTime t = new KdbTime();
 				Debug.Assert(Marshal.SizeOf(t) == nExpectedSize);
 				if(Marshal.SizeOf(t) != nExpectedSize)
-					throw new FormatException("SizeOf(Kdb3Time) invalid!");
+					throw new FormatException("SizeOf(KdbTime) invalid!");
 			}
 
-			if(m_bX64) Kdb3Manager.InitManager64(out m_pManager, m_bFirstInstance);
-			else Kdb3Manager.InitManager32(out m_pManager, m_bFirstInstance);
+			if(m_bX64) KdbManager.InitManager64(out m_pManager, m_bFirstInstance);
+			else KdbManager.InitManager32(out m_pManager, m_bFirstInstance);
 
 			m_bFirstInstance = false;
 
 			if(m_pManager == IntPtr.Zero)
 				throw new InvalidOperationException("Failed to initialize manager! DLL installed?");
 
-			if(m_bX64) Kdb3Manager.NewDatabase64(m_pManager);
-			else Kdb3Manager.NewDatabase32(m_pManager);
+			if(m_bX64) KdbManager.NewDatabase64(m_pManager);
+			else KdbManager.NewDatabase32(m_pManager);
 		}
 
 		/// <summary>
-		/// Destructor for Kdb3Manager instance.
+		/// Destructor for KdbManager instance.
 		/// </summary>
-		~Kdb3Manager()
+		~KdbManager()
 		{
 			this.Unload();
 		}
@@ -711,8 +711,8 @@ namespace KeePass.DataExchange
 		{
 			if(m_pManager != IntPtr.Zero)
 			{
-				if(m_bX64) Kdb3Manager.DeleteManager64(m_pManager);
-				else Kdb3Manager.DeleteManager32(m_pManager);
+				if(m_bX64) KdbManager.DeleteManager64(m_pManager);
+				else KdbManager.DeleteManager32(m_pManager);
 
 				m_pManager = IntPtr.Zero;
 			}
@@ -741,18 +741,18 @@ namespace KeePass.DataExchange
 		/// source code).</param>
 		/// <param name="bOverwrite">Indicates if the target file should be overwritten when
 		/// creating a new key file.</param>
-		/// <returns>Error code (see <c>Kdb3ErrorCode</c>).</returns>
-		public Kdb3ErrorCode SetMasterKey(string strMasterKey, bool bDiskDrive,
+		/// <returns>Error code (see <c>KdbErrorCode</c>).</returns>
+		public KdbErrorCode SetMasterKey(string strMasterKey, bool bDiskDrive,
 			string strSecondKey, IntPtr pARI, bool bOverwrite)
 		{
 			Debug.Assert(strMasterKey != null);
 			if(strMasterKey == null) throw new ArgumentNullException("strMasterKey");
 
 			if(m_bX64)
-				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey64(m_pManager,
+				return (KdbErrorCode)KdbManager.SetMasterKey64(m_pManager,
 					strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
 			else
-				return (Kdb3ErrorCode)Kdb3Manager.SetMasterKey32(m_pManager,
+				return (KdbErrorCode)KdbManager.SetMasterKey32(m_pManager,
 					strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
 		}
 
@@ -772,8 +772,8 @@ namespace KeePass.DataExchange
 			Debug.Assert(strGroupName != null);
 			if(strGroupName == null) throw new ArgumentNullException("strGroupName");
 
-			if(m_bX64) return Kdb3Manager.GetNumberOfItemsInGroup64(m_pManager, strGroupName);
-			else return Kdb3Manager.GetNumberOfItemsInGroup32(m_pManager, strGroupName);
+			if(m_bX64) return KdbManager.GetNumberOfItemsInGroup64(m_pManager, strGroupName);
+			else return KdbManager.GetNumberOfItemsInGroup32(m_pManager, strGroupName);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "GetNumberOfItemsInGroupN")]
@@ -791,8 +791,8 @@ namespace KeePass.DataExchange
 			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
-			if(m_bX64) return Kdb3Manager.GetNumberOfItemsInGroupN64(m_pManager, uGroupId);
-			else return Kdb3Manager.GetNumberOfItemsInGroupN32(m_pManager, uGroupId);
+			if(m_bX64) return KdbManager.GetNumberOfItemsInGroupN64(m_pManager, uGroupId);
+			else return KdbManager.GetNumberOfItemsInGroupN32(m_pManager, uGroupId);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "LockEntryPassword")]
@@ -815,23 +815,23 @@ namespace KeePass.DataExchange
 		/// an <c>ArgumentOutOfRangeException</c> is thrown.</param>
 		/// <returns>The requested entry. Note that any modifications to this
 		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntry(uint uIndex)
+		public KdbEntry GetEntry(uint uIndex)
 		{
 			Debug.Assert(uIndex < this.EntryCount);
 
 			IntPtr p;
-			if(m_bX64) p = Kdb3Manager.GetEntry64(m_pManager, uIndex);
-			else p = Kdb3Manager.GetEntry32(m_pManager, uIndex);
+			if(m_bX64) p = KdbManager.GetEntry64(m_pManager, uIndex);
+			else p = KdbManager.GetEntry32(m_pManager, uIndex);
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
 
-			if(m_bX64) Kdb3Manager.UnlockEntryPassword64(m_pManager, p);
-			else Kdb3Manager.UnlockEntryPassword32(m_pManager, p);
+			if(m_bX64) KdbManager.UnlockEntryPassword64(m_pManager, p);
+			else KdbManager.UnlockEntryPassword32(m_pManager, p);
 
-			Kdb3Entry kdbEntry = (Kdb3Entry)Marshal.PtrToStructure(p, typeof(Kdb3Entry));
+			KdbEntry kdbEntry = (KdbEntry)Marshal.PtrToStructure(p, typeof(KdbEntry));
 			
-			if(m_bX64) Kdb3Manager.LockEntryPassword64(m_pManager, p);
-			else Kdb3Manager.LockEntryPassword32(m_pManager, p);
+			if(m_bX64) KdbManager.LockEntryPassword64(m_pManager, p);
+			else KdbManager.LockEntryPassword32(m_pManager, p);
 			
 			return kdbEntry;
 		}
@@ -848,7 +848,7 @@ namespace KeePass.DataExchange
 		/// <param name="uGroupId">ID of the group containing the entry.</param>
 		/// <returns>The requested entry. Note that any modifications to this
 		/// structure won't affect the internal data structures of the manager.</returns>
-		public Kdb3Entry GetEntryByGroup(UInt32 uGroupId, UInt32 uIndex)
+		public KdbEntry GetEntryByGroup(UInt32 uGroupId, UInt32 uIndex)
 		{
 			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
 			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
@@ -862,13 +862,13 @@ namespace KeePass.DataExchange
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
 
-			if(m_bX64) Kdb3Manager.UnlockEntryPassword64(m_pManager, p);
-			else Kdb3Manager.UnlockEntryPassword32(m_pManager, p);
+			if(m_bX64) KdbManager.UnlockEntryPassword64(m_pManager, p);
+			else KdbManager.UnlockEntryPassword32(m_pManager, p);
 
-			Kdb3Entry kdbEntry = (Kdb3Entry)Marshal.PtrToStructure(p, typeof(Kdb3Entry));
+			KdbEntry kdbEntry = (KdbEntry)Marshal.PtrToStructure(p, typeof(KdbEntry));
 
-			if(m_bX64) Kdb3Manager.LockEntryPassword64(m_pManager, p);
-			else Kdb3Manager.LockEntryPassword32(m_pManager, p);
+			if(m_bX64) KdbManager.LockEntryPassword64(m_pManager, p);
+			else KdbManager.LockEntryPassword32(m_pManager, p);
 
 			return kdbEntry;
 		}
@@ -883,17 +883,17 @@ namespace KeePass.DataExchange
 		/// <param name="uIndex">Index of the group. Must be valid, otherwise an
 		/// <c>ArgumentOutOfRangeException</c> is thrown.</param>
 		/// <returns>Group structure.</returns>
-		public Kdb3Group GetGroup(UInt32 uIndex)
+		public KdbGroup GetGroup(UInt32 uIndex)
 		{
 			Debug.Assert(uIndex < this.GroupCount);
 
 			IntPtr p;
-			if(m_bX64) p = Kdb3Manager.GetGroup64(m_pManager, uIndex);
-			else p = Kdb3Manager.GetGroup32(m_pManager, uIndex);
+			if(m_bX64) p = KdbManager.GetGroup64(m_pManager, uIndex);
+			else p = KdbManager.GetGroup32(m_pManager, uIndex);
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
 
-			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
+			return (KdbGroup)Marshal.PtrToStructure(p, typeof(KdbGroup));
 		}
 
 		[DllImport(DllFile32, EntryPoint = "GetGroupById")]
@@ -905,19 +905,19 @@ namespace KeePass.DataExchange
 		/// </summary>
 		/// <param name="uGroupId">ID of the group.</param>
 		/// <returns>Group structure.</returns>
-		public Kdb3Group GetGroupById(UInt32 uGroupId)
+		public KdbGroup GetGroupById(UInt32 uGroupId)
 		{
 			Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
 			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
 			IntPtr p;
-			if(m_bX64) p = Kdb3Manager.GetGroupById64(m_pManager, uGroupId);
-			else p = Kdb3Manager.GetGroupById32(m_pManager, uGroupId);
+			if(m_bX64) p = KdbManager.GetGroupById64(m_pManager, uGroupId);
+			else p = KdbManager.GetGroupById32(m_pManager, uGroupId);
 
 			if(p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uGroupId");
 
-			return (Kdb3Group)Marshal.PtrToStructure(p, typeof(Kdb3Group));
+			return (KdbGroup)Marshal.PtrToStructure(p, typeof(KdbGroup));
 		}
 
 		[DllImport(DllFile32, EntryPoint = "GetGroupByIdN")]
@@ -935,8 +935,8 @@ namespace KeePass.DataExchange
 			if((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
-			if(m_bX64) return Kdb3Manager.GetGroupByIdN64(m_pManager, uGroupId);
-			else return Kdb3Manager.GetGroupByIdN32(m_pManager, uGroupId);
+			if(m_bX64) return KdbManager.GetGroupByIdN64(m_pManager, uGroupId);
+			else return KdbManager.GetGroupByIdN32(m_pManager, uGroupId);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "OpenDatabase")]
@@ -944,20 +944,20 @@ namespace KeePass.DataExchange
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "OpenDatabase")]
 		private static extern Int32 OpenDatabase64(IntPtr pMgr, string pszFile, IntPtr pRepair);
 		/// <summary>
-		/// Open a KDB3 database.
+		/// Open a KDB database.
 		/// </summary>
 		/// <param name="strFile">File path of the database.</param>
 		/// <param name="pRepairInfo">Pointer to a repair information structure. If
-		/// you want to open a KDB3 file normally, set this parameter to
+		/// you want to open a Kdb file normally, set this parameter to
 		/// <c>IntPtr.Zero</c>.</param>
-		/// <returns>Error code (see <c>Kdb3ErrorCode</c>).</returns>
-		public Kdb3ErrorCode OpenDatabase(string strFile, IntPtr pRepairInfo)
+		/// <returns>Error code (see <c>KdbErrorCode</c>).</returns>
+		public KdbErrorCode OpenDatabase(string strFile, IntPtr pRepairInfo)
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 
-			if(m_bX64) return (Kdb3ErrorCode)Kdb3Manager.OpenDatabase64(m_pManager, strFile, pRepairInfo);
-			else return (Kdb3ErrorCode)Kdb3Manager.OpenDatabase32(m_pManager, strFile, pRepairInfo);
+			if(m_bX64) return (KdbErrorCode)KdbManager.OpenDatabase64(m_pManager, strFile, pRepairInfo);
+			else return (KdbErrorCode)KdbManager.OpenDatabase32(m_pManager, strFile, pRepairInfo);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SaveDatabase")]
@@ -965,17 +965,17 @@ namespace KeePass.DataExchange
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "SaveDatabase")]
 		private static extern Int32 SaveDatabase64(IntPtr pMgr, string pszFile);
 		/// <summary>
-		/// Save the current contents of the manager to a KDB3 file on disk.
+		/// Save the current contents of the manager to a KDB file on disk.
 		/// </summary>
 		/// <param name="strFile">File to create.</param>
-		/// <returns>Error code (see <c>Kdb3ErrorCode</c>).</returns>
-		public Kdb3ErrorCode SaveDatabase(string strFile)
+		/// <returns>Error code (see <c>KdbErrorCode</c>).</returns>
+		public KdbErrorCode SaveDatabase(string strFile)
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 
-			if(m_bX64) return (Kdb3ErrorCode)Kdb3Manager.SaveDatabase64(m_pManager, strFile);
-			else return (Kdb3ErrorCode)Kdb3Manager.SaveDatabase32(m_pManager, strFile);
+			if(m_bX64) return (KdbErrorCode)KdbManager.SaveDatabase64(m_pManager, strFile);
+			else return (KdbErrorCode)KdbManager.SaveDatabase32(m_pManager, strFile);
 		}
 
 		/// <summary>
@@ -983,8 +983,8 @@ namespace KeePass.DataExchange
 		/// </summary>
 		public void NewDatabase()
 		{
-			if(m_bX64) Kdb3Manager.NewDatabase64(m_pManager);
-			else Kdb3Manager.NewDatabase32(m_pManager);
+			if(m_bX64) KdbManager.NewDatabase64(m_pManager);
+			else KdbManager.NewDatabase32(m_pManager);
 		}
 
 		/// <summary>
@@ -993,44 +993,44 @@ namespace KeePass.DataExchange
 		/// <returns><c>DateTime</c> object.</returns>
 		public static DateTime GetNeverExpireTime()
 		{
-			return Kdb3Time.NeverExpireTime.ToDateTime();
+			return KdbTime.NeverExpireTime.ToDateTime();
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "AddGroup")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool AddGroup32(IntPtr pMgr, ref Kdb3Group pTemplate);
+		private static extern bool AddGroup32(IntPtr pMgr, ref KdbGroup pTemplate);
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "AddGroup")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool AddGroup64(IntPtr pMgr, ref Kdb3Group pTemplate);
+		private static extern bool AddGroup64(IntPtr pMgr, ref KdbGroup pTemplate);
 		/// <summary>
 		/// Add a new password group.
 		/// </summary>
 		/// <param name="pNewGroup">Template containing new group information.</param>
 		/// <returns>Returns <c>true</c> if the group was created successfully.</returns>
-		public bool AddGroup(ref Kdb3Group pNewGroup)
+		public bool AddGroup(ref KdbGroup pNewGroup)
 		{
-			if(m_bX64) return Kdb3Manager.AddGroup64(m_pManager, ref pNewGroup);
-			else return Kdb3Manager.AddGroup32(m_pManager, ref pNewGroup);
+			if(m_bX64) return KdbManager.AddGroup64(m_pManager, ref pNewGroup);
+			else return KdbManager.AddGroup32(m_pManager, ref pNewGroup);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SetGroup")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetGroup32(IntPtr pMgr, UInt32 dwIndex, ref Kdb3Group pTemplate);
+		private static extern bool SetGroup32(IntPtr pMgr, UInt32 dwIndex, ref KdbGroup pTemplate);
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "SetGroup")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetGroup64(IntPtr pMgr, UInt32 dwIndex, ref Kdb3Group pTemplate);
+		private static extern bool SetGroup64(IntPtr pMgr, UInt32 dwIndex, ref KdbGroup pTemplate);
 		/// <summary>
 		/// Set/change a password group.
 		/// </summary>
 		/// <param name="uIndex">Index of the group to be changed.</param>
 		/// <param name="pNewGroup">Template containing new group information.</param>
 		/// <returns>Returns <c>true</c> if the group was created successfully.</returns>
-		public bool SetGroup(UInt32 uIndex, ref Kdb3Group pNewGroup)
+		public bool SetGroup(UInt32 uIndex, ref KdbGroup pNewGroup)
 		{
 			Debug.Assert(uIndex < this.GroupCount);
 
-			if(m_bX64) return Kdb3Manager.SetGroup64(m_pManager, uIndex, ref pNewGroup);
-			else return Kdb3Manager.SetGroup32(m_pManager, uIndex, ref pNewGroup);
+			if(m_bX64) return KdbManager.SetGroup64(m_pManager, uIndex, ref pNewGroup);
+			else return KdbManager.SetGroup32(m_pManager, uIndex, ref pNewGroup);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "DeleteGroupById")]
@@ -1050,45 +1050,45 @@ namespace KeePass.DataExchange
 			if((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
 				throw new ArgumentException("Invalid group ID!");
 
-			if(m_bX64) return Kdb3Manager.DeleteGroupById64(m_pManager, uGroupID);
-			else return Kdb3Manager.DeleteGroupById32(m_pManager, uGroupID);
+			if(m_bX64) return KdbManager.DeleteGroupById64(m_pManager, uGroupID);
+			else return KdbManager.DeleteGroupById32(m_pManager, uGroupID);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "AddEntry")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool AddEntry32(IntPtr pMgr, ref Kdb3Entry pTemplate);
+		private static extern bool AddEntry32(IntPtr pMgr, ref KdbEntry pTemplate);
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "AddEntry")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool AddEntry64(IntPtr pMgr, ref Kdb3Entry pTemplate);
+		private static extern bool AddEntry64(IntPtr pMgr, ref KdbEntry pTemplate);
 		/// <summary>
 		/// Add a new password entry.
 		/// </summary>
 		/// <param name="peNew">Template containing new entry information.</param>
 		/// <returns>Returns <c>true</c> if the entry was created successfully.</returns>
-		public bool AddEntry(ref Kdb3Entry peNew)
+		public bool AddEntry(ref KdbEntry peNew)
 		{
-			if(m_bX64) return Kdb3Manager.AddEntry64(m_pManager, ref peNew);
-			else return Kdb3Manager.AddEntry32(m_pManager, ref peNew);
+			if(m_bX64) return KdbManager.AddEntry64(m_pManager, ref peNew);
+			else return KdbManager.AddEntry32(m_pManager, ref peNew);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SetEntry")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetEntry32(IntPtr pMgr, UInt32 dwIndex, ref Kdb3Entry pTemplate);
+		private static extern bool SetEntry32(IntPtr pMgr, UInt32 dwIndex, ref KdbEntry pTemplate);
 		[DllImport(DllFile64, CharSet = DllCharSet, EntryPoint = "SetEntry")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetEntry64(IntPtr pMgr, UInt32 dwIndex, ref Kdb3Entry pTemplate);
+		private static extern bool SetEntry64(IntPtr pMgr, UInt32 dwIndex, ref KdbEntry pTemplate);
 		/// <summary>
 		/// Set/change a password entry.
 		/// </summary>
 		/// <param name="uIndex">Index of the entry to be changed.</param>
 		/// <param name="peNew">Template containing new entry information.</param>
 		/// <returns>Returns <c>true</c> if the entry was created successfully.</returns>
-		public bool SetEntry(UInt32 uIndex, ref Kdb3Entry peNew)
+		public bool SetEntry(UInt32 uIndex, ref KdbEntry peNew)
 		{
 			Debug.Assert(uIndex < this.EntryCount);
 
-			if(m_bX64) return Kdb3Manager.SetEntry64(m_pManager, uIndex, ref peNew);
-			else return Kdb3Manager.SetEntry32(m_pManager, uIndex, ref peNew);
+			if(m_bX64) return KdbManager.SetEntry64(m_pManager, uIndex, ref peNew);
+			else return KdbManager.SetEntry32(m_pManager, uIndex, ref peNew);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "DeleteEntry")]
@@ -1106,15 +1106,15 @@ namespace KeePass.DataExchange
 		{
 			Debug.Assert(uIndex < this.EntryCount);
 
-			if(m_bX64) return Kdb3Manager.DeleteEntry64(m_pManager, uIndex);
-			else return Kdb3Manager.DeleteEntry32(m_pManager, uIndex);
+			if(m_bX64) return KdbManager.DeleteEntry64(m_pManager, uIndex);
+			else return KdbManager.DeleteEntry32(m_pManager, uIndex);
 		}
 
 		/// <summary>
 		/// Helper function to extract file attachments.
 		/// </summary>
 		/// <param name="pMemory">Native memory pointer (as stored in the
-		/// <c>BinaryData</c> member of <c>Kdb3Entry</c>.</param>
+		/// <c>BinaryData</c> member of <c>KdbEntry</c>.</param>
 		/// <param name="uSize">Size in bytes of the memory block.</param>
 		/// <returns>Managed byte array.</returns>
 		public static byte[] ReadBinary(IntPtr pMemory, uint uSize)

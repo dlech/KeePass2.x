@@ -10,10 +10,6 @@
 
 	<meta name="robots" content="index" />
 
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="pragma" content="no-cache" />
-
 	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
 	<meta name="DC.Creator" content="Dominik Reichl" />
 	<meta name="DC.Subject" content="Open-Source Password Safe" />
@@ -116,7 +112,8 @@ between backing up the key file and the database, see the
 <a href="http://abp-keepass.sourceforge.net/FAQ.html" target="_blank">ABP FAQ</a>.</li>
 </ul>
 
-<p>The point of a key file is that you <i>have</i> something to
+<p><b>Location.</b>
+The point of a key file is that you <i>have</i> something to
 authenticate with (in contrast to master passwords, where you
 <i>know</i> something), for example a file on a USB stick.
 The key file content (i.e. the key data contained within the key file)
@@ -124,14 +121,14 @@ needs to be kept secret.
 The point is <i>not</i> to keep the location of the key file
 secret &#151; selecting a file out of thousands existing on your hard disk
 basically doesn't increase
-security at all (it's very easy for malware/attackers to find out the
-correct file, for example by observing the last access times of files).
+security at all, because it's very easy for malware/attackers to find out the
+correct file (for example by observing the last access times of files,
+the recently used files list of Windows, malware scanner logs, etc.).
 Trying to keep the key file location secret is security by obscurity,
 i.e. not really effective.</p>
 
-
-
-<p>KeePass can generate key files for you, however you can also use any other,
+<p><b>File Type and Existing Files.</b>
+KeePass can generate key files for you, however you can also use any other,
 already existing file (like JPG image, DOC document, etc.).</p>
 
 

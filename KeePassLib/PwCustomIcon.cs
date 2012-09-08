@@ -22,6 +22,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib
 {
 	/// <summary>
@@ -62,9 +64,10 @@ namespace KeePassLib
 			m_pbImageDataPng = pbImageDataPng;
 
 #if !KeePassLibSD
-			MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
-			m_pCachedImage = Image.FromStream(ms);
-			ms.Close();
+			// MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
+			// m_pCachedImage = Image.FromStream(ms);
+			// ms.Close();
+			m_pCachedImage = GfxUtil.LoadImage(m_pbImageDataPng);
 #else
 			m_pCachedImage = null;
 #endif

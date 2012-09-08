@@ -21,8 +21,8 @@ using System;
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.UI;
 
@@ -281,13 +281,6 @@ namespace KeePass.Native
 			IntPtr lpInBuffer, uint nInBufferSize, IntPtr lpOutBuffer, uint nOutBufferSize,
 			out uint lpBytesReturned, IntPtr lpOverlapped);
 
-		// [DllImport("DwmApi.dll")]
-		// internal static extern Int32 DwmExtendFrameIntoClientArea(IntPtr hWnd,
-		//	ref MARGINS pMarInset);
-
-		// [DllImport("DwmApi.dll")]
-		// internal static extern Int32 DwmIsCompositionEnabled(ref Int32 pfEnabled);
-
 		[DllImport("ComCtl32.dll", CharSet = CharSet.Auto)]
 		internal static extern Int32 TaskDialogIndirect([In] ref VtdConfig pTaskConfig,
 			[Out] out int pnButton, [Out] out int pnRadioButton,
@@ -336,24 +329,9 @@ namespace KeePass.Native
 		// internal extern static uint DrawThemeBackground(IntPtr hTheme, IntPtr hdc,
 		//	int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);	
 
-		// [DllImport("Gdi32.dll")]
-		// [return: MarshalAs(UnmanagedType.Bool)]
-		// internal static extern bool DeleteObject(IntPtr hObject);
-
-		// [DllImport("DwmApi.dll")]
-		// internal static extern int DwmInvalidateIconicBitmaps(IntPtr hWnd);
-
-		[DllImport("DwmApi.dll", EntryPoint = "DwmSetWindowAttribute")]
-		internal static extern int DwmSetWindowAttributeInt(IntPtr hWnd,
-			uint dwAttribute, [In] ref int pvAttribute, uint cbAttribute);
-
-		// [DllImport("DwmApi.dll")]
-		// internal static extern int DwmSetIconicThumbnail(IntPtr hWnd,
-		//	IntPtr hBmp, uint dwSITFlags);
-
-		// [DllImport("DwmApi.dll")]
-		// internal static extern int DwmSetIconicLivePreviewBitmap(IntPtr hWnd,
-		//	IntPtr hBmp, IntPtr pptClient, uint dwSITFlags);
+		[DllImport("Gdi32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DeleteObject(IntPtr hObject);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]

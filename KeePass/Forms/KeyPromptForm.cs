@@ -157,6 +157,17 @@ namespace KeePass.Forms
 					m_tbPassword.Text = StrUtil.DecryptString(str);
 				}
 
+				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PasswordStdIn];
+				if(str != null)
+				{
+					KcpPassword kcpPw = KeyUtil.ReadPasswordStdIn(true);
+					if(kcpPw != null)
+					{
+						m_cbPassword.Checked = true;
+						m_tbPassword.Text = kcpPw.Password.ReadString();
+					}
+				}
+
 				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
 				if(str != null)
 				{
@@ -417,7 +428,8 @@ namespace KeePass.Forms
 			if(m_bSecureDesktop)
 			{
 				FileBrowserForm dlg = new FileBrowserForm();
-				dlg.InitEx(false, KPRes.KeyFileSelect, KPRes.SecDeskFileDialogHint);
+				dlg.InitEx(false, KPRes.KeyFileSelect, KPRes.SecDeskFileDialogHint,
+					AppDefs.FileDialogContext.KeyFile);
 				if(dlg.ShowDialog() == DialogResult.OK)
 					strFile = dlg.SelectedFile;
 				UIUtil.DestroyForm(dlg);
@@ -425,8 +437,8 @@ namespace KeePass.Forms
 			else
 			{
 				string strFilter = UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true);
-				OpenFileDialog ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileSelect,
-					strFilter, 2, null, false, true);
+				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileSelect,
+					strFilter, 2, null, false, AppDefs.FileDialogContext.KeyFile);
 
 				if(ofd.ShowDialog() == DialogResult.OK)
 					strFile = ofd.FileName;

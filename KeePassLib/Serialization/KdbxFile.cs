@@ -39,10 +39,10 @@ using KeePassLib.Utility;
 namespace KeePassLib.Serialization
 {
 	/// <summary>
-	/// The <c>Kdb4File</c> class supports saving the data to various
+	/// The <c>KdbxFile</c> class supports saving the data to various
 	/// formats.
 	/// </summary>
-	public enum Kdb4Format
+	public enum KdbxFormat
 	{
 		/// <summary>
 		/// The default, encrypted file format.
@@ -56,9 +56,9 @@ namespace KeePassLib.Serialization
 	}
 
 	/// <summary>
-	/// Serialization to KeePass KDB files.
+	/// Serialization to KeePass KDBX files.
 	/// </summary>
-	public sealed partial class Kdb4File
+	public sealed partial class KdbxFile
 	{
 		/// <summary>
 		/// File identifier, first 32-bit value.
@@ -71,13 +71,13 @@ namespace KeePassLib.Serialization
 		private const uint FileSignature2 = 0xB54BFB67;
 
 		/// <summary>
-		/// File version of files saved by the current <c>Kdb4File</c> class.
+		/// File version of files saved by the current <c>KdbxFile</c> class.
 		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
-		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00.
+		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00, 2.20 has 3.01.
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00030000;
+		private const uint FileVersion32 = 0x00030001;
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
@@ -95,6 +95,7 @@ namespace KeePassLib.Serialization
 		private const string ElemEntry = "Entry";
 
 		private const string ElemGenerator = "Generator";
+		private const string ElemHeaderHash = "HeaderHash";
 		private const string ElemDbName = "DatabaseName";
 		private const string ElemDbNameChanged = "DatabaseNameChanged";
 		private const string ElemDbDesc = "DatabaseDescription";
@@ -192,7 +193,7 @@ namespace KeePassLib.Serialization
 
 		private XmlTextWriter m_xmlWriter = null;
 		private CryptoRandomStream m_randomStream = null;
-		private Kdb4Format m_format = Kdb4Format.Default;
+		private KdbxFormat m_format = KdbxFormat.Default;
 		private IStatusLogger m_slLogger = null;
 
 		private byte[] m_pbMasterSeed = null;
@@ -208,6 +209,7 @@ namespace KeePassLib.Serialization
 		private Dictionary<string, ProtectedBinary> m_dictBinPool =
 			new Dictionary<string, ProtectedBinary>();
 
+		private byte[] m_pbHashOfHeader = null;
 		private byte[] m_pbHashOfFileOnDisk = null;
 
 		private readonly DateTime m_dtNow = DateTime.Now; // Cache current time
@@ -217,7 +219,7 @@ namespace KeePassLib.Serialization
 		private const uint NeutralLanguageID = NeutralLanguageOffset + NeutralLanguageIDSec;
 		private static bool m_bLocalizedNames = false;
 
-		private enum Kdb4HeaderFieldID : byte
+		private enum KdbxHeaderFieldID : byte
 		{
 			EndOfHeader = 0,
 			Comment = 1,
@@ -261,7 +263,7 @@ namespace KeePassLib.Serialization
 		/// </summary>
 		/// <param name="pwDataStore">The <c>PwDatabase</c> instance that the
 		/// class will load file data into or use to create a KDBX file.</param>
-		public Kdb4File(PwDatabase pwDataStore)
+		public KdbxFile(PwDatabase pwDataStore)
 		{
 			Debug.Assert(pwDataStore != null);
 			if(pwDataStore == null) throw new ArgumentNullException("pwDataStore");

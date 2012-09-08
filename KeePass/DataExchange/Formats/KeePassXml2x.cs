@@ -51,8 +51,8 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			Kdb4File kdb4 = new Kdb4File(pwStorage);
-			kdb4.Load(sInput, Kdb4Format.PlainXml, slLogger);
+			KdbxFile kdbx = new KdbxFile(pwStorage);
+			kdbx.Load(sInput, KdbxFormat.PlainXml, slLogger);
 		}
 
 		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
@@ -67,8 +67,8 @@ namespace KeePass.DataExchange.Formats
 				pd.DeletedObjects.Clear();
 			}
 
-			Kdb4File kdb = new Kdb4File(pd);
-			kdb.Save(sOutput, pwExportInfo.DataGroup, Kdb4Format.PlainXml, slLogger);
+			KdbxFile kdb = new KdbxFile(pd);
+			kdb.Save(sOutput, pwExportInfo.DataGroup, KdbxFormat.PlainXml, slLogger);
 
 			// Restore deleted objects list
 			if(vDel != null) pd.DeletedObjects.Add(vDel);

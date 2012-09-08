@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
@@ -202,6 +203,10 @@ namespace KeePass
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
+
+#if DEBUG
+			string strInitialWorkDir = WinUtil.GetWorkingDirectory();
+#endif
 
 			if(!CommonInit()) { CommonTerminate(); return; }
 
@@ -408,6 +413,11 @@ namespace KeePass
 
 			MainCleanUp();
 
+#if DEBUG
+			string strEndWorkDir = WinUtil.GetWorkingDirectory();
+			Debug.Assert(strEndWorkDir.Equals(strInitialWorkDir, StrUtil.CaseIgnoreCmp));
+#endif
+
 			if(mGlobalNotify != null) { GC.KeepAlive(mGlobalNotify); }
 			// if(mSingleLock != null) { GC.KeepAlive(mSingleLock); }
 		}
@@ -435,7 +445,7 @@ namespace KeePass
 
 			// Set global localized strings
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
-			Kdb4File.DetermineLanguageId();
+			KdbxFile.DetermineLanguageId();
 
 			m_appConfig = AppConfigSerializer.Load();
 			if(m_appConfig.Logging.Enabled)
@@ -557,8 +567,10 @@ namespace KeePass
 				}
 				else
 				{
+					string[] vFlt = KeyUtil.MakeCtxIndependent(args);
+
 					IpcParamEx ipcMsg = new IpcParamEx(IpcUtilEx.CmdOpenDatabase,
-						CommandLineArgs.SafeSerialize(args), null, null, null, null);
+						CommandLineArgs.SafeSerialize(vFlt), null, null, null, null);
 
 					IpcUtilEx.SendGlobalMessage(ipcMsg);
 				}

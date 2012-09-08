@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
 
+using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
 
@@ -54,8 +55,8 @@ namespace KeePass.DataExchange.Formats
 			IStatusLogger slLogger)
 		{
 			string strFilter = UIUtil.CreateFileTypeFilter("xsl", KPRes.XslFileType, true);
-			OpenFileDialog dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
-				strFilter, 1, "xsl", false, false);
+			OpenFileDialogEx dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
+				strFilter, 1, "xsl", false, AppDefs.FileDialogContext.Xsl);
 
 			if(dlgXsl.ShowDialog() != DialogResult.OK) return false;
 
@@ -72,8 +73,8 @@ namespace KeePass.DataExchange.Formats
 			MemoryStream msDataXml = new MemoryStream();
 
 			PwDatabase pd = (pwExportInfo.ContextDatabase ?? new PwDatabase());
-			Kdb4File kdb = new Kdb4File(pd);
-			kdb.Save(msDataXml, pwExportInfo.DataGroup, Kdb4Format.PlainXml, slLogger);
+			KdbxFile kdb = new KdbxFile(pd);
+			kdb.Save(msDataXml, pwExportInfo.DataGroup, KdbxFormat.PlainXml, slLogger);
 
 			byte[] pbData = msDataXml.ToArray();
 			msDataXml.Close();

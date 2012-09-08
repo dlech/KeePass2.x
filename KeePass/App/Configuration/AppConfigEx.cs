@@ -259,13 +259,15 @@ namespace KeePass.App.Configuration
 			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
 				ChangePathRelAbs(iocMru, bMakeAbsolute);
 
+			List<string> lWDKeys = m_aceApp.GetWorkingDirectoryContexts();
+			foreach(string strWDKey in lWDKeys)
+				m_aceApp.SetWorkingDirectory(strWDKey, ChangePathRelAbsStr(
+					m_aceApp.GetWorkingDirectory(strWDKey), bMakeAbsolute));
+
 			foreach(AceKeyAssoc kfp in m_def.KeySources)
 			{
-				if(kfp.DatabasePath.Length > 0)
-					kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
-
-				if(kfp.KeyFilePath.Length > 0)
-					kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
+				kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
+				kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
 			}
 		}
 
@@ -291,6 +293,7 @@ namespace KeePass.App.Configuration
 		private static string ChangePathRelAbsStr(string strPath, bool bMakeAbsolute)
 		{
 			if(strPath == null) { Debug.Assert(false); return string.Empty; }
+			if(strPath.Length == 0) return strPath;
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 			ChangePathRelAbs(ioc, bMakeAbsolute);

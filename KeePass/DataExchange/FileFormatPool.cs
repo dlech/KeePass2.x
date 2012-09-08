@@ -98,7 +98,7 @@ namespace KeePass.DataExchange
 			Debug.Assert(m_vFormats == null);
 			m_vFormats = new List<FileFormatProvider>();
 
-			// m_vFormats.Add(new KeePassCsv1x());
+			m_vFormats.Add(new KeePassCsv1x());
 			m_vFormats.Add(new KeePassKdb1x());
 			m_vFormats.Add(new KeePassKdb2x());
 			m_vFormats.Add(new KeePassKdb2xRepair());
@@ -112,6 +112,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new AnyPwCsv144());
 			m_vFormats.Add(new CodeWalletTxt605());
 			m_vFormats.Add(new DataVaultCsv47());
+			m_vFormats.Add(new DesktopKnox32());
 			m_vFormats.Add(new FlexWalletXml17());
 			m_vFormats.Add(new HandySafeTxt512());
 			m_vFormats.Add(new HandySafeProXml12());

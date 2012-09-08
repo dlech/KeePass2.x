@@ -60,10 +60,10 @@ namespace KeePass.DataExchange.Formats
 			}
 
 			Exception exLib;
-			if(!Kdb3File.IsLibraryInstalled(out exLib))
+			if(!KdbFile.IsLibraryInstalled(out exLib))
 			{
 				MessageService.ShowWarning(KPRes.KeePassLibCNotFound,
-					KPRes.Kdb3KeePassLibC, exLib);
+					KPRes.KdbKeePassLibC, exLib);
 				return false;
 			}
 
@@ -85,8 +85,8 @@ namespace KeePass.DataExchange.Formats
 			br.Close();
 			File.WriteAllBytes(strTempFile, pb);
 
-			Kdb3File kdb3 = new Kdb3File(pwStorage, slLogger);
-			kdb3.Load(strTempFile);
+			KdbFile kdb = new KdbFile(pwStorage, slLogger);
+			kdb.Load(strTempFile);
 
 			Program.TempFilesPool.Delete(strTempFile);
 		}
@@ -100,7 +100,7 @@ namespace KeePass.DataExchange.Formats
 
 			try
 			{
-				Kdb3File kdb = new Kdb3File(pd, slLogger);
+				KdbFile kdb = new KdbFile(pd, slLogger);
 				kdb.Save(strTempFile, pwExportInfo.DataGroup);
 
 				byte[] pbKdb = File.ReadAllBytes(strTempFile);

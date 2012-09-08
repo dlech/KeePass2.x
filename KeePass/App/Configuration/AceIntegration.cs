@@ -172,6 +172,14 @@ namespace KeePass.App.Configuration
 			set { m_bCancelOnWindowChange = value; }
 		}
 
+		private bool m_bCancelOnTitleChange = false;
+		[DefaultValue(false)]
+		public bool AutoTypeCancelOnTitleChange
+		{
+			get { return m_bCancelOnTitleChange; }
+			set { m_bCancelOnTitleChange = value; }
+		}
+
 		private ProxyServerType m_pstProxyType = ProxyServerType.System;
 		public ProxyServerType ProxyType
 		{

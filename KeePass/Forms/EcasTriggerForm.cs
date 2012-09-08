@@ -82,7 +82,7 @@ namespace KeePass.Forms
 			m_lvActions.Columns.Add(string.Empty, nColWidth);
 
 			m_tbName.Text = m_trigger.Name;
-			m_tbComments.Text = StrUtil.NormalizeNewLines(m_trigger.Comments, true);
+			UIUtil.SetMultilineText(m_tbComments, m_trigger.Comments);
 			m_cbEnabled.Checked = m_trigger.Enabled;
 			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
 			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;

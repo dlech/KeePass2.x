@@ -206,6 +206,12 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
+		[Obsolete("Use GfxUtil.LoadImage instead.")]
+		public static Image LoadImage(byte[] pb)
+		{
+			return GfxUtil.LoadImage(pb);
+		}
+
 		public static Image CreateColorBitmap24(int nWidth, int nHeight, Color color)
 		{
 			Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
@@ -433,6 +439,17 @@ namespace KeePass.UI
 				crtb.CtrlEnterAccepts = bCtrlEnterAccepts;
 			}
 			else { Debug.Assert(!bSimpleTextOnly && !bCtrlEnterAccepts); }
+		}
+
+		public static void SetMultilineText(TextBox tb, string str)
+		{
+			if(tb == null) { Debug.Assert(false); return; }
+			if(str == null) str = string.Empty;
+
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+				str = StrUtil.NormalizeNewLines(str, true);
+
+			tb.Text = str;
 		}
 
 		/// <summary>
@@ -720,20 +737,23 @@ namespace KeePass.UI
 			return strExtensions; // Single extension
 		}
 
+		[Obsolete("Use the overload with the strContext parameter.")]
 		public static OpenFileDialog CreateOpenFileDialog(string strTitle, string strFilter,
 			int iFilterIndex, string strDefaultExt, bool bMultiSelect, bool bRestoreDirectory)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
+			return (OpenFileDialog)CreateOpenFileDialog(strTitle, strFilter,
+				iFilterIndex, strDefaultExt, bMultiSelect, string.Empty).FileDialog;
+		}
 
-			ofd.CheckFileExists = true;
-			ofd.CheckPathExists = true;
+		public static OpenFileDialogEx CreateOpenFileDialog(string strTitle, string strFilter,
+			int iFilterIndex, string strDefaultExt, bool bMultiSelect, string strContext)
+		{
+			OpenFileDialogEx ofd = new OpenFileDialogEx(strContext);
 			
-			if((strDefaultExt != null) && (strDefaultExt.Length > 0))
+			if(!string.IsNullOrEmpty(strDefaultExt))
 				ofd.DefaultExt = strDefaultExt;
 
-			ofd.DereferenceLinks = true;
-
-			if((strFilter != null) && (strFilter.Length > 0))
+			if(!string.IsNullOrEmpty(strFilter))
 			{
 				ofd.Filter = strFilter;
 
@@ -741,66 +761,60 @@ namespace KeePass.UI
 			}
 
 			ofd.Multiselect = bMultiSelect;
-			ofd.ReadOnlyChecked = false;
-			ofd.RestoreDirectory = bRestoreDirectory;
-			ofd.ShowHelp = false;
-			ofd.ShowReadOnly = false;
-			// ofd.SupportMultiDottedExtensions = false; // Default
 
-			if((strTitle != null) && (strTitle.Length > 0))
+			if(!string.IsNullOrEmpty(strTitle))
 				ofd.Title = strTitle;
-
-			ofd.ValidateNames = true;
 
 			return ofd;
 		}
 
+		[Obsolete("Use the overload with the strContext parameter.")]
 		public static SaveFileDialog CreateSaveFileDialog(string strTitle,
 			string strSuggestedFileName, string strFilter, int iFilterIndex,
 			string strDefaultExt, bool bRestoreDirectory)
 		{
-			return CreateSaveFileDialog(strTitle, strSuggestedFileName, strFilter,
-				iFilterIndex, strDefaultExt, bRestoreDirectory, false);
+			return (SaveFileDialog)CreateSaveFileDialog(strTitle, strSuggestedFileName,
+				strFilter, iFilterIndex, strDefaultExt, string.Empty).FileDialog;
 		}
 
+		[Obsolete("Use the overload with the strContext parameter.")]
 		public static SaveFileDialog CreateSaveFileDialog(string strTitle,
 			string strSuggestedFileName, string strFilter, int iFilterIndex,
 			string strDefaultExt, bool bRestoreDirectory, bool bIsDatabaseFile)
 		{
-			SaveFileDialog sfd = new SaveFileDialog();
+			return (SaveFileDialog)CreateSaveFileDialog(strTitle, strSuggestedFileName,
+				strFilter, iFilterIndex, strDefaultExt, (bIsDatabaseFile ?
+				AppDefs.FileDialogContext.Database : string.Empty)).FileDialog;
+		}
 
-			sfd.AddExtension = true;
-			sfd.CheckFileExists = false;
-			sfd.CheckPathExists = true;
-			sfd.CreatePrompt = false;
+		public static SaveFileDialogEx CreateSaveFileDialog(string strTitle,
+			string strSuggestedFileName, string strFilter, int iFilterIndex,
+			string strDefaultExt, string strContext)
+		{
+			SaveFileDialogEx sfd = new SaveFileDialogEx(strContext);
 
-			if((strDefaultExt != null) && (strDefaultExt.Length > 0))
+			if(!string.IsNullOrEmpty(strDefaultExt))
 				sfd.DefaultExt = strDefaultExt;
 
-			sfd.DereferenceLinks = true;
-
-			if((strSuggestedFileName != null) && (strSuggestedFileName.Length > 0))
+			if(!string.IsNullOrEmpty(strSuggestedFileName))
 				sfd.FileName = strSuggestedFileName;
 
-			if((strFilter != null) && (strFilter.Length > 0))
+			if(!string.IsNullOrEmpty(strFilter))
 			{
 				sfd.Filter = strFilter;
 
 				if(iFilterIndex > 0) sfd.FilterIndex = iFilterIndex;
 			}
 
-			sfd.OverwritePrompt = true;
-			sfd.RestoreDirectory = bRestoreDirectory;
-			sfd.ShowHelp = false;
-			// sfd.SupportMultiDottedExtensions = false; // Default
-
-			if((strTitle != null) && (strTitle.Length > 0))
+			if(!string.IsNullOrEmpty(strTitle))
 				sfd.Title = strTitle;
 
-			sfd.ValidateNames = true;
-
-			if(bIsDatabaseFile && (Program.Config.Defaults.FileSaveAsDirectory.Length > 0))
-				sfd.InitialDirectory = Program.Config.Defaults.FileSaveAsDirectory;
+			if(strContext != null)
+			{
+				if((strContext == AppDefs.FileDialogContext.Database) &&
+					(Program.Config.Defaults.FileSaveAsDirectory.Length > 0))
+					sfd.InitialDirectory = Program.Config.Defaults.FileSaveAsDirectory;
+			}
 
 			return sfd;
 		}
@@ -1054,32 +1068,6 @@ namespace KeePass.UI
 				if(UISystemFonts.ListFont != null)
 					c.Font = UISystemFonts.ListFont;
 			}
-		}
-
-		public static Image LoadImage(byte[] pb)
-		{
-			if(pb == null) throw new ArgumentNullException("pb");
-
-			MemoryStream ms = new MemoryStream(pb, false);
-			try { return Image.FromStream(ms); }
-			catch(Exception)
-			{
-				Image imgIco = TryLoadIco(pb);
-				if(imgIco != null) return imgIco;
-
-				throw;
-			}
-			finally { ms.Close(); }
-		}
-
-		private static Image TryLoadIco(byte[] pb)
-		{
-			MemoryStream ms = new MemoryStream(pb, false);
-			try { return (new Icon(ms)).ToBitmap(); }
-			catch(Exception) { }
-			finally { ms.Close(); }
-
-			return null;
 		}
 
 		public static void SetShield(Button btn, bool bSetShield)
@@ -1713,7 +1701,7 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		public static Bitmap ExtractVistaIcon(Icon ico)
+		public static Image ExtractVistaIcon(Icon ico)
 		{
 			if(ico == null) { Debug.Assert(false); return null; }
 
@@ -1747,11 +1735,7 @@ namespace KeePass.UI
 						byte[] pbImage = msImage.ToArray();
 						msImage.Close();
 
-						msImage = new MemoryStream(pbImage, false);
-						Bitmap bmp = new Bitmap(msImage);
-						msImage.Close();
-
-						return bmp;
+						return GfxUtil.LoadImage(pbImage);
 					}
 				}
 			}
@@ -1817,11 +1801,11 @@ namespace KeePass.UI
 
 					if(qSize > 32)
 					{
-						Bitmap bmpIco = ExtractVistaIcon(icoBase);
-						if(bmpIco != null)
+						Image imgIco = ExtractVistaIcon(icoBase);
+						if(imgIco != null)
 						{
-							g.DrawImage(bmpIco, 0, 0, bmp.Width, bmp.Height);
-							bmpIco.Dispose();
+							g.DrawImage(imgIco, 0, 0, bmp.Width, bmp.Height);
+							imgIco.Dispose();
 						}
 						else g.DrawIcon(icoBase, new Rectangle(0, 0, bmp.Width, bmp.Height));
 					}
@@ -2132,6 +2116,24 @@ namespace KeePass.UI
 
 			bmp.SetPixel(dx - 3, dy - 1, Color.Black);
 			// bmp.SetPixel(dx - 4, dy - 1, Color.Black);
+
+			return bmp;
+		}
+
+		public static Bitmap CreateScaledImage(Image img, int w, int h)
+		{
+			if(img == null) { Debug.Assert(false); return null; }
+
+			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+			using(Graphics g = Graphics.FromImage(bmp))
+			{
+				g.Clear(Color.Transparent);
+
+				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				g.SmoothingMode = SmoothingMode.HighQuality;
+
+				g.DrawImage(img, 0, 0, w, h);
+			}
 
 			return bmp;
 		}

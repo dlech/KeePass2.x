@@ -77,7 +77,7 @@ namespace KeePass.Forms
 			m_pwCustomIconID = m_pwGroup.CustomIconUuid;
 			
 			m_tbName.Text = m_pwGroup.Name;
-			m_tbNotes.Text = m_pwGroup.Notes;
+			UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
 			if(m_pwCustomIconID != PwUuid.Zero)
 				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(

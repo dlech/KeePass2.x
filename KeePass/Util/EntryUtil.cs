@@ -119,7 +119,7 @@ namespace KeePass.Util
 		{
 			MemoryStream ms = new MemoryStream();
 			GZipStream gz = new GZipStream(ms, CompressionMode.Compress);
-			Kdb4File.WriteEntries(gz, vEntries);
+			KdbxFile.WriteEntries(gz, vEntries);
 
 			byte[] pbFinal;
 			if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
@@ -154,7 +154,7 @@ namespace KeePass.Util
 			MemoryStream ms = new MemoryStream(pbPlain, false);
 			GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
 
-			List<PwEntry> vEntries = Kdb4File.ReadEntries(gz);
+			List<PwEntry> vEntries = KdbxFile.ReadEntries(gz);
 
 			// Adjust protection settings and add entries
 			foreach(PwEntry pe in vEntries)

@@ -67,21 +67,17 @@
 			this.m_ttBalloon = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEntry = new System.Windows.Forms.TabPage();
-			this.m_rtNotes = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_grpAttachments = new System.Windows.Forms.GroupBox();
 			this.m_btnBinView = new System.Windows.Forms.Button();
 			this.m_btnBinSave = new System.Windows.Forms.Button();
 			this.m_btnBinDelete = new System.Windows.Forms.Button();
 			this.m_btnBinAdd = new System.Windows.Forms.Button();
-			this.m_lvBinaries = new KeePass.UI.CustomListViewEx();
 			this.m_grpStringFields = new System.Windows.Forms.GroupBox();
 			this.m_btnStrMove = new System.Windows.Forms.Button();
 			this.m_btnStrAdd = new System.Windows.Forms.Button();
 			this.m_btnStrEdit = new System.Windows.Forms.Button();
 			this.m_btnStrDelete = new System.Windows.Forms.Button();
-			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
 			this.m_ctxListOperations = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
@@ -107,12 +103,10 @@
 			this.m_btnAutoTypeEdit = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeAdd = new System.Windows.Forms.Button();
 			this.m_btnAutoTypeDelete = new System.Windows.Forms.Button();
-			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
 			this.m_btnHistoryDelete = new System.Windows.Forms.Button();
 			this.m_btnHistoryView = new System.Windows.Forms.Button();
 			this.m_btnHistoryRestore = new System.Windows.Forms.Button();
-			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_ctxStrMoveToStandard = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -142,6 +136,12 @@
 			this.m_ctxBinImportFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxBinSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxBinNew = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_rtNotes = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
+			this.m_lvBinaries = new KeePass.UI.CustomListViewEx();
+			this.m_lvStrings = new KeePass.UI.CustomListViewEx();
+			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
+			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_ctxDefaultTimes.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
@@ -501,28 +501,6 @@
 			this.m_tabEntry.Text = "Entry";
 			this.m_tabEntry.UseVisualStyleBackColor = true;
 			// 
-			// m_rtNotes
-			// 
-			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
-			this.m_rtNotes.Name = "m_rtNotes";
-			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_rtNotes.Size = new System.Drawing.Size(374, 140);
-			this.m_rtNotes.TabIndex = 18;
-			this.m_rtNotes.Text = "";
-			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
-			// 
-			// m_pbQuality
-			// 
-			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
-			this.m_pbQuality.Maximum = 100;
-			this.m_pbQuality.Minimum = 0;
-			this.m_pbQuality.Name = "m_pbQuality";
-			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
-			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbQuality.TabIndex = 13;
-			this.m_pbQuality.TabStop = false;
-			this.m_pbQuality.Value = 50;
-			// 
 			// m_tabAdvanced
 			// 
 			this.m_tabAdvanced.Controls.Add(this.m_grpAttachments);
@@ -589,23 +567,6 @@
 			this.m_btnBinAdd.UseVisualStyleBackColor = true;
 			this.m_btnBinAdd.Click += new System.EventHandler(this.OnBtnBinAdd);
 			// 
-			// m_lvBinaries
-			// 
-			this.m_lvBinaries.FullRowSelect = true;
-			this.m_lvBinaries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvBinaries.HideSelection = false;
-			this.m_lvBinaries.LabelEdit = true;
-			this.m_lvBinaries.Location = new System.Drawing.Point(6, 20);
-			this.m_lvBinaries.Name = "m_lvBinaries";
-			this.m_lvBinaries.ShowItemToolTips = true;
-			this.m_lvBinaries.Size = new System.Drawing.Size(362, 135);
-			this.m_lvBinaries.TabIndex = 0;
-			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
-			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
-			this.m_lvBinaries.ItemActivate += new System.EventHandler(this.OnBinariesItemActivate);
-			this.m_lvBinaries.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnBinAfterLabelEdit);
-			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
-			// 
 			// m_grpStringFields
 			// 
 			this.m_grpStringFields.Controls.Add(this.m_btnStrMove);
@@ -659,22 +620,6 @@
 			this.m_btnStrDelete.Text = "&Delete";
 			this.m_btnStrDelete.UseVisualStyleBackColor = true;
 			this.m_btnStrDelete.Click += new System.EventHandler(this.OnBtnStrDelete);
-			// 
-			// m_lvStrings
-			// 
-			this.m_lvStrings.ContextMenuStrip = this.m_ctxListOperations;
-			this.m_lvStrings.FullRowSelect = true;
-			this.m_lvStrings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvStrings.HideSelection = false;
-			this.m_lvStrings.Location = new System.Drawing.Point(6, 20);
-			this.m_lvStrings.Name = "m_lvStrings";
-			this.m_lvStrings.ShowItemToolTips = true;
-			this.m_lvStrings.Size = new System.Drawing.Size(362, 135);
-			this.m_lvStrings.TabIndex = 0;
-			this.m_lvStrings.UseCompatibleStateImageBehavior = false;
-			this.m_lvStrings.View = System.Windows.Forms.View.Details;
-			this.m_lvStrings.ItemActivate += new System.EventHandler(this.OnStringsItemActivate);
-			this.m_lvStrings.SelectedIndexChanged += new System.EventHandler(this.OnStringsSelectedIndexChanged);
 			// 
 			// m_ctxListOperations
 			// 
@@ -932,22 +877,6 @@
 			this.m_btnAutoTypeDelete.UseVisualStyleBackColor = true;
 			this.m_btnAutoTypeDelete.Click += new System.EventHandler(this.OnBtnAutoTypeDelete);
 			// 
-			// m_lvAutoType
-			// 
-			this.m_lvAutoType.ContextMenuStrip = this.m_ctxListOperations;
-			this.m_lvAutoType.FullRowSelect = true;
-			this.m_lvAutoType.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvAutoType.HideSelection = false;
-			this.m_lvAutoType.Location = new System.Drawing.Point(9, 134);
-			this.m_lvAutoType.Name = "m_lvAutoType";
-			this.m_lvAutoType.ShowItemToolTips = true;
-			this.m_lvAutoType.Size = new System.Drawing.Size(367, 170);
-			this.m_lvAutoType.TabIndex = 6;
-			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
-			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
-			this.m_lvAutoType.ItemActivate += new System.EventHandler(this.OnAutoTypeItemActivate);
-			this.m_lvAutoType.SelectedIndexChanged += new System.EventHandler(this.OnAutoTypeSelectedIndexChanged);
-			// 
 			// m_tabHistory
 			// 
 			this.m_tabHistory.Controls.Add(this.m_btnHistoryDelete);
@@ -991,21 +920,6 @@
 			this.m_btnHistoryRestore.Text = "&Restore";
 			this.m_btnHistoryRestore.UseVisualStyleBackColor = true;
 			this.m_btnHistoryRestore.Click += new System.EventHandler(this.OnBtnHistoryRestore);
-			// 
-			// m_lvHistory
-			// 
-			this.m_lvHistory.FullRowSelect = true;
-			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvHistory.HideSelection = false;
-			this.m_lvHistory.Location = new System.Drawing.Point(9, 13);
-			this.m_lvHistory.Name = "m_lvHistory";
-			this.m_lvHistory.ShowItemToolTips = true;
-			this.m_lvHistory.Size = new System.Drawing.Size(447, 288);
-			this.m_lvHistory.TabIndex = 0;
-			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
-			this.m_lvHistory.View = System.Windows.Forms.View.Details;
-			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
-			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
 			// 
 			// m_btnTools
 			// 
@@ -1080,7 +994,7 @@
             this.m_ctxPwGenSep0,
             this.m_ctxPwGenProfiles});
 			this.m_ctxPwGen.Name = "m_ctxPwGen";
-			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 76);
+			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 54);
 			// 
 			// m_ctxPwGenOpen
 			// 
@@ -1232,6 +1146,96 @@
 			this.m_ctxBinNew.Size = new System.Drawing.Size(211, 22);
 			this.m_ctxBinNew.Text = "&Create Empty Attachment";
 			this.m_ctxBinNew.Click += new System.EventHandler(this.OnCtxBinNew);
+			// 
+			// m_rtNotes
+			// 
+			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
+			this.m_rtNotes.Name = "m_rtNotes";
+			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.m_rtNotes.Size = new System.Drawing.Size(374, 140);
+			this.m_rtNotes.TabIndex = 18;
+			this.m_rtNotes.Text = "";
+			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
+			// 
+			// m_pbQuality
+			// 
+			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
+			this.m_pbQuality.Maximum = 100;
+			this.m_pbQuality.Minimum = 0;
+			this.m_pbQuality.Name = "m_pbQuality";
+			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
+			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbQuality.TabIndex = 13;
+			this.m_pbQuality.TabStop = false;
+			this.m_pbQuality.Value = 50;
+			// 
+			// m_lvBinaries
+			// 
+			this.m_lvBinaries.AllowDrop = true;
+			this.m_lvBinaries.FullRowSelect = true;
+			this.m_lvBinaries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvBinaries.HideSelection = false;
+			this.m_lvBinaries.LabelEdit = true;
+			this.m_lvBinaries.Location = new System.Drawing.Point(6, 20);
+			this.m_lvBinaries.Name = "m_lvBinaries";
+			this.m_lvBinaries.ShowItemToolTips = true;
+			this.m_lvBinaries.Size = new System.Drawing.Size(362, 135);
+			this.m_lvBinaries.TabIndex = 0;
+			this.m_lvBinaries.UseCompatibleStateImageBehavior = false;
+			this.m_lvBinaries.View = System.Windows.Forms.View.Details;
+			this.m_lvBinaries.ItemActivate += new System.EventHandler(this.OnBinariesItemActivate);
+			this.m_lvBinaries.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnBinAfterLabelEdit);
+			this.m_lvBinaries.SelectedIndexChanged += new System.EventHandler(this.OnBinariesSelectedIndexChanged);
+			this.m_lvBinaries.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnBinDragDrop);
+			this.m_lvBinaries.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnBinDragEnter);
+			this.m_lvBinaries.DragOver += new System.Windows.Forms.DragEventHandler(this.OnBinDragOver);
+			// 
+			// m_lvStrings
+			// 
+			this.m_lvStrings.ContextMenuStrip = this.m_ctxListOperations;
+			this.m_lvStrings.FullRowSelect = true;
+			this.m_lvStrings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvStrings.HideSelection = false;
+			this.m_lvStrings.Location = new System.Drawing.Point(6, 20);
+			this.m_lvStrings.Name = "m_lvStrings";
+			this.m_lvStrings.ShowItemToolTips = true;
+			this.m_lvStrings.Size = new System.Drawing.Size(362, 135);
+			this.m_lvStrings.TabIndex = 0;
+			this.m_lvStrings.UseCompatibleStateImageBehavior = false;
+			this.m_lvStrings.View = System.Windows.Forms.View.Details;
+			this.m_lvStrings.ItemActivate += new System.EventHandler(this.OnStringsItemActivate);
+			this.m_lvStrings.SelectedIndexChanged += new System.EventHandler(this.OnStringsSelectedIndexChanged);
+			// 
+			// m_lvAutoType
+			// 
+			this.m_lvAutoType.ContextMenuStrip = this.m_ctxListOperations;
+			this.m_lvAutoType.FullRowSelect = true;
+			this.m_lvAutoType.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvAutoType.HideSelection = false;
+			this.m_lvAutoType.Location = new System.Drawing.Point(9, 134);
+			this.m_lvAutoType.Name = "m_lvAutoType";
+			this.m_lvAutoType.ShowItemToolTips = true;
+			this.m_lvAutoType.Size = new System.Drawing.Size(367, 170);
+			this.m_lvAutoType.TabIndex = 6;
+			this.m_lvAutoType.UseCompatibleStateImageBehavior = false;
+			this.m_lvAutoType.View = System.Windows.Forms.View.Details;
+			this.m_lvAutoType.ItemActivate += new System.EventHandler(this.OnAutoTypeItemActivate);
+			this.m_lvAutoType.SelectedIndexChanged += new System.EventHandler(this.OnAutoTypeSelectedIndexChanged);
+			// 
+			// m_lvHistory
+			// 
+			this.m_lvHistory.FullRowSelect = true;
+			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvHistory.HideSelection = false;
+			this.m_lvHistory.Location = new System.Drawing.Point(9, 13);
+			this.m_lvHistory.Name = "m_lvHistory";
+			this.m_lvHistory.ShowItemToolTips = true;
+			this.m_lvHistory.Size = new System.Drawing.Size(447, 288);
+			this.m_lvHistory.TabIndex = 0;
+			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
+			this.m_lvHistory.View = System.Windows.Forms.View.Details;
+			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
+			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
 			// 
 			// PwEntryForm
 			// 

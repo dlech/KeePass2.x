@@ -242,6 +242,8 @@ namespace KeePass.Forms
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppExit);
 
+			MonoWorkarounds.Release(this);
+
 			m_nClipClearCur = -1;
 			if(Program.Config.Security.ClipboardClearOnExit)
 				ClipboardUtil.ClearIfOwner();
@@ -409,7 +411,7 @@ namespace KeePass.Forms
 
 				TaskbarList.SetOverlayIcon(this, Properties.Resources.LockOverlay,
 					KPRes.Locked);
-				NativeMethods.EnableWindowPeekPreview(this.Handle, false);
+				DwmUtil.EnableWindowPeekPreview(this, false);
 			}
 			else if(s.DatabaseOpened == false)
 			{
@@ -423,7 +425,7 @@ namespace KeePass.Forms
 				if(icoDisposable != null) icoDisposable.Dispose();
 
 				TaskbarList.SetOverlayIcon(this, null, string.Empty);
-				NativeMethods.EnableWindowPeekPreview(this.Handle, true);
+				DwmUtil.EnableWindowPeekPreview(this, true);
 			}
 			else // Database open and not locked
 			{
@@ -453,7 +455,7 @@ namespace KeePass.Forms
 				if(icoDisposable != null) icoDisposable.Dispose();
 
 				TaskbarList.SetOverlayIcon(this, null, string.Empty);
-				NativeMethods.EnableWindowPeekPreview(this.Handle, true);
+				DwmUtil.EnableWindowPeekPreview(this, true);
 			}
 
 			// Clip the strings again (it could be that a translator used
@@ -1955,13 +1957,14 @@ namespace KeePass.Forms
 			{
 				if(bOpenLocal)
 				{
-					OpenFileDialog ofdDb = UIUtil.CreateOpenFileDialog(KPRes.OpenDatabaseFile,
+					OpenFileDialogEx ofdDb = UIUtil.CreateOpenFileDialog(KPRes.OpenDatabaseFile,
 						UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.FileExt,
-						KPRes.KdbxFiles, true), 1, null, false, false);
+						KPRes.KdbxFiles, true), 1, null, false,
+						AppDefs.FileDialogContext.Database);
 
-					GlobalWindowManager.AddDialog(ofdDb);
+					GlobalWindowManager.AddDialog(ofdDb.FileDialog);
 					DialogResult dr = ofdDb.ShowDialog();
-					GlobalWindowManager.RemoveDialog(ofdDb);
+					GlobalWindowManager.RemoveDialog(ofdDb.FileDialog);
 					if(dr != DialogResult.OK) return;
 
 					ioc = IOConnectionInfo.FromPath(ofdDb.FileName);
@@ -2526,6 +2529,8 @@ namespace KeePass.Forms
 				UpdateUIState(false, null); // Set overlay icon
 				m_bTaskbarButtonMessage = true;
 			}
+			// else if(m.Msg == DwmUtil.WM_DWMSENDICONICTHUMBNAIL)
+			//	DwmUtil.SetThumbnailIcon(this, Properties.Resources.KeePass, m.LParam);
 
 			base.WndProc(ref m);
 		}
@@ -2800,14 +2805,15 @@ namespace KeePass.Forms
 			}
 			else
 			{
-				SaveFileDialog sfdDb = UIUtil.CreateSaveFileDialog(KPRes.SaveDatabase,
+				SaveFileDialogEx sfdDb = UIUtil.CreateSaveFileDialog(KPRes.SaveDatabase,
 					UrlUtil.GetFileName(pd.IOConnectionInfo.Path),
 					UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.FileExt,
-					KPRes.KdbxFiles, true), 1, AppDefs.FileExtension.FileExt, false, true);
+					KPRes.KdbxFiles, true), 1, AppDefs.FileExtension.FileExt,
+					AppDefs.FileDialogContext.Database);
 
-				GlobalWindowManager.AddDialog(sfdDb);
+				GlobalWindowManager.AddDialog(sfdDb.FileDialog);
 				dr = sfdDb.ShowDialog();
-				GlobalWindowManager.RemoveDialog(sfdDb);
+				GlobalWindowManager.RemoveDialog(sfdDb.FileDialog);
 
 				if(dr == DialogResult.OK)
 					ioc = IOConnectionInfo.FromPath(sfdDb.FileName);
@@ -3187,7 +3193,7 @@ namespace KeePass.Forms
 					if(bExiting) fso = FileSaveOrigin.Exiting;
 
 					DialogResult dr = FileDialogsEx.ShowFileSaveQuestion(
-						pd.IOConnectionInfo.GetDisplayName(), fso, this.Handle);
+						pd.IOConnectionInfo.GetDisplayName(), fso);
 
 					if(dr == DialogResult.Cancel) return;
 					else if(dr == DialogResult.Yes) bInvokeSave = true;
@@ -3674,7 +3680,7 @@ namespace KeePass.Forms
 
 		private DialogResult AskIfSynchronizeInstead(IOConnectionInfo ioc)
 		{
-			VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+			VistaTaskDialog dlg = new VistaTaskDialog();
 
 			string strText = string.Empty;
 			if(ioc.GetDisplayName().Length > 0)
@@ -3845,7 +3851,7 @@ namespace KeePass.Forms
 			{
 				bool bSingle = (vSelected.Length == 1);
 
-				VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+				VistaTaskDialog dlg = new VistaTaskDialog();
 				dlg.CommandLinks = false;
 				dlg.Content = EntryUtil.CreateSummaryList(null, vSelected);
 				dlg.MainInstruction = (bSingle ? KPRes.DeleteEntriesQuestionSingle :
@@ -3924,7 +3930,7 @@ namespace KeePass.Forms
 
 			if(bPermanent)
 			{
-				VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+				VistaTaskDialog dlg = new VistaTaskDialog();
 				dlg.CommandLinks = false;
 				dlg.Content = KPRes.DeleteGroupInfo + EntryUtil.CreateSummaryList(pg, true);
 				dlg.MainInstruction = KPRes.DeleteGroupQuestion;
@@ -3974,7 +3980,7 @@ namespace KeePass.Forms
 			if(pg == null) { Debug.Assert(false); return; }
 			if(pg != GetSelectedGroup()) { Debug.Assert(false); return; }
 
-			VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.CommandLinks = false;
 			dlg.Content = EntryUtil.CreateSummaryList(pg, false);
 			dlg.MainInstruction = KPRes.EmptyRecycleBinQuestion;
@@ -4092,7 +4098,7 @@ namespace KeePass.Forms
 
 			if(ioc.IsLocalFile()) // Expand relative path to absolute
 				ioc.Path = UrlUtil.MakeAbsolutePath(UrlUtil.EnsureTerminatingSeparator(
-					Directory.GetCurrentDirectory(), false) + "Sentinel", ioc.Path);
+					WinUtil.GetWorkingDirectory(), false) + "Sentinel", ioc.Path);
 
 			if(args[AppDefs.CommandLineOptions.IoCredFromRecent] != null)
 				ioc = CompleteConnectionInfoUsingMru(ioc);
@@ -4671,7 +4677,7 @@ namespace KeePass.Forms
 			SetStatusEx(str);
 			if(!bDbMntnc || !Program.Config.UI.ShowDbMntncResultsDialog) return;
 
-			VistaTaskDialog dlg = new VistaTaskDialog(this.Handle);
+			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.CommandLinks = false;
 			dlg.Content = str;
 			dlg.SetIcon(VtdIcon.Information);

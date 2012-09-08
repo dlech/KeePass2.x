@@ -122,7 +122,7 @@ namespace KeePass.Forms
 
 			AssignMenuShortcuts();
 
-			if(NativeLib.IsUnix())
+			if(MonoWorkarounds.IsRequired)
 			{
 				// Workaround for tab bar height bug in Mono
 				// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
@@ -239,7 +239,17 @@ namespace KeePass.Forms
 
 			if((sizeX != AppDefs.InvalidWindowValue) &&
 				(sizeY != AppDefs.InvalidWindowValue) && bWndValid)
+			{
+				if(MonoWorkarounds.IsRequired) // Debian 686017
+				{
+					sizeX = Math.Max(250, sizeX);
+					sizeY = Math.Max(250, sizeY);
+				}
+
 				this.Size = new Size(sizeX, sizeY);
+			}
+			if(MonoWorkarounds.IsRequired) // Debian 686017
+				this.MinimumSize = new Size(250, 250);
 
 			Rectangle rectRestWindow = new Rectangle(wndX, wndY,
 				this.Size.Width, this.Size.Height);
@@ -323,8 +333,14 @@ namespace KeePass.Forms
 			{
 				float fSplitPos = mw.SplitterHorizontalFrac;
 				if(fSplitPos == float.Epsilon) fSplitPos = 0.8333f;
-				m_splitHorizontal.SplitterDistance = (int)Math.Round(fSplitPos *
+				// m_splitHorizontal.SplitterDistance = (int)Math.Round(fSplitPos *
+				//	(double)m_splitHorizontal.Height);
+				int iSplitDist = (int)Math.Round(fSplitPos *
 					(double)m_splitHorizontal.Height);
+				if(MonoWorkarounds.IsRequired) // Debian 686017
+					m_splitHorizontal.SplitterDistance = Math.Max(35, iSplitDist);
+				else
+					m_splitHorizontal.SplitterDistance = iSplitDist;
 
 				fSplitPos = mw.SplitterVerticalFrac;
 				if(fSplitPos == float.Epsilon) fSplitPos = 0.25f;
@@ -387,6 +403,7 @@ namespace KeePass.Forms
 			UpdateTagsMenu(m_dynRemoveTag, false, false, false, false);
 			UpdateUIState(false);
 			ApplyUICustomizations();
+			MonoWorkarounds.ApplyTo(this);
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(OnFormLoadParallelAsync));
 
@@ -433,14 +450,14 @@ namespace KeePass.Forms
 			if(!AppPolicy.Try(AppPolicyId.NewFile)) return;
 			if(!AppPolicy.Try(AppPolicyId.SaveFile)) return;
 
-			SaveFileDialog sfd = UIUtil.CreateSaveFileDialog(KPRes.CreateNewDatabase,
+			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.CreateNewDatabase,
 				KPRes.NewDatabaseFileName, UIUtil.CreateFileTypeFilter(
 				AppDefs.FileExtension.FileExt, KPRes.KdbxFiles, true), 1,
-				AppDefs.FileExtension.FileExt, false, true);
+				AppDefs.FileExtension.FileExt, AppDefs.FileDialogContext.Database);
 
-			GlobalWindowManager.AddDialog(sfd);
+			GlobalWindowManager.AddDialog(sfd.FileDialog);
 			DialogResult dr = sfd.ShowDialog();
-			GlobalWindowManager.RemoveDialog(sfd);
+			GlobalWindowManager.RemoveDialog(sfd.FileDialog);
 
 			string strPath = sfd.FileName;
 
@@ -1392,12 +1409,13 @@ namespace KeePass.Forms
 
 		private void OnGroupsAfterLabelEdit(object sender, NodeLabelEditEventArgs e)
 		{
-			if(e.Node == null) return;
-			PwGroup pg = (e.Node.Tag as PwGroup);
+			if((e == null) || (e.Node == null)) return;
 
-			if((pg != null) && (e.Label != null))
+			PwGroup pg = (e.Node.Tag as PwGroup);
+			string strNew = e.Label;
+			if((pg != null) && (strNew != null) && (pg.Name != strNew))
 			{
-				pg.Name = e.Label;
+				pg.Name = strNew;
 				pg.Touch(true, false);
 				UpdateUIState(true);
 			}

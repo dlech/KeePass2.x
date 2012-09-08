@@ -32,12 +32,16 @@ using KeePassLib.Collections;
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Interfaces;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
 {
-	public sealed partial class Kdb4File
+	/// <summary>
+	/// Serialization to KeePass KDBX files.
+	/// </summary>
+	public sealed partial class KdbxFile
 	{
 		private enum KdbContext
 		{
@@ -206,6 +210,17 @@ namespace KeePassLib.Serialization
 				case KdbContext.Meta:
 					if(xr.Name == ElemGenerator)
 						ReadString(xr); // Ignore
+					else if(xr.Name == ElemHeaderHash)
+					{
+						string strHash = ReadString(xr);
+						if(!string.IsNullOrEmpty(strHash) && (m_pbHashOfHeader != null) &&
+							!m_bRepairMode)
+						{
+							byte[] pbHash = Convert.FromBase64String(strHash);
+							if(!MemUtil.ArraysEqual(pbHash, m_pbHashOfHeader))
+								throw new IOException(KLRes.FileCorrupted);
+						}
+					}
 					else if(xr.Name == ElemDbName)
 						m_pwDatabase.Name = ReadString(xr);
 					else if(xr.Name == ElemDbNameChanged)
@@ -757,7 +772,7 @@ namespace KeePassLib.Serialization
 			if(xb != null) return new ProtectedString(true, xb);
 
 			bool bProtect = false;
-			if(m_format == Kdb4Format.PlainXml)
+			if(m_format == KdbxFormat.PlainXml)
 			{
 				if(xr.MoveToAttribute(AttrProtectedInMemPlainXml))
 				{

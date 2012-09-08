@@ -46,6 +46,7 @@ namespace KeePass.Util
 			CompositeKey cmpKey = new CompositeKey();
 			string strPassword = args[AppDefs.CommandLineOptions.Password];
 			string strPasswordEnc = args[AppDefs.CommandLineOptions.PasswordEncrypted];
+			string strPasswordStdIn = args[AppDefs.CommandLineOptions.PasswordStdIn];
 			string strKeyFile = args[AppDefs.CommandLineOptions.KeyFile];
 			string strUserAcc = args[AppDefs.CommandLineOptions.UserAccount];
 
@@ -53,6 +54,11 @@ namespace KeePass.Util
 				cmpKey.AddUserKey(new KcpPassword(strPassword));
 			else if(strPasswordEnc != null)
 				cmpKey.AddUserKey(new KcpPassword(StrUtil.DecryptString(strPasswordEnc)));
+			else if(strPasswordStdIn != null)
+			{
+				KcpPassword kcpPw = ReadPasswordStdIn(true);
+				if(kcpPw != null) cmpKey.AddUserKey(kcpPw);
+			}
 			
 			if(strKeyFile != null)
 			{
@@ -116,9 +122,74 @@ namespace KeePass.Util
 
 			args.Remove(AppDefs.CommandLineOptions.Password);
 			args.Remove(AppDefs.CommandLineOptions.PasswordEncrypted);
+			args.Remove(AppDefs.CommandLineOptions.PasswordStdIn);
 			args.Remove(AppDefs.CommandLineOptions.KeyFile);
 			args.Remove(AppDefs.CommandLineOptions.PreSelect);
 			args.Remove(AppDefs.CommandLineOptions.UserAccount);
+		}
+
+		private static bool m_bReadPwStdIn = false;
+		private static string m_strReadPwStdIn = null;
+		/// <summary>
+		/// Read a password from StdIn. The password is read only once
+		/// and then cached.
+		/// </summary>
+		internal static KcpPassword ReadPasswordStdIn(bool bFailWithUI)
+		{
+			string strPw = null;
+
+			if(m_bReadPwStdIn) strPw = m_strReadPwStdIn;
+			else
+			{
+				try { strPw = Console.ReadLine(); }
+				catch(Exception exCon)
+				{
+					if(bFailWithUI) MessageService.ShowWarning(exCon);
+				}
+			}
+
+			if(strPw == null)
+			{
+				m_strReadPwStdIn = null;
+				m_bReadPwStdIn = true;
+
+				return null;
+			}
+
+			strPw = strPw.Trim();
+
+			m_strReadPwStdIn = strPw;
+			m_bReadPwStdIn = true;
+
+			return new KcpPassword(strPw);
+		}
+
+		internal static string[] MakeCtxIndependent(string[] vCmdLineArgs)
+		{
+			if(vCmdLineArgs == null) { Debug.Assert(false); return new string[0]; }
+
+			CommandLineArgs cl = new CommandLineArgs(vCmdLineArgs);
+			List<string> lFlt = new List<string>();
+
+			foreach(string strArg in vCmdLineArgs)
+			{
+				KeyValuePair<string, string> kvpArg = CommandLineArgs.GetParameter(strArg);
+				if(kvpArg.Key.Equals(AppDefs.CommandLineOptions.PasswordStdIn, StrUtil.CaseIgnoreCmp))
+				{
+					KcpPassword kcpPw = ReadPasswordStdIn(true);
+
+					if((cl[AppDefs.CommandLineOptions.Password] == null) &&
+						(cl[AppDefs.CommandLineOptions.PasswordEncrypted] == null) &&
+						(kcpPw != null))
+					{
+						lFlt.Add("-" + AppDefs.CommandLineOptions.Password + ":" +
+							kcpPw.Password.ReadString()); // No quote wrapping/encoding
+					}
+				}
+				else lFlt.Add(strArg);
+			}
+
+			return lFlt.ToArray();
 		}
 
 		public static bool ReAskKey(PwDatabase pwDatabase, bool bFailWithUI)

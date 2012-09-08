@@ -39,12 +39,12 @@ namespace KeePass.DataExchange
 	/// <summary>
 	/// Serialization to KeePass KDB files.
 	/// </summary>
-	public sealed class Kdb3File
+	public sealed class KdbFile
 	{
 		private PwDatabase m_pwDatabase = null;
 		private IStatusLogger m_slLogger = null;
 
-		private const string Kdb3Prefix = "KDB3: ";
+		private const string KdbPrefix = "KDB: ";
 
 		private const string AutoTypePrefix = "Auto-Type";
 		private const string AutoTypeWindowPrefix = "Auto-Type-Window";
@@ -61,7 +61,7 @@ namespace KeePass.DataExchange
 		{
 			try
 			{
-				Kdb3Manager mgr = new Kdb3Manager();
+				KdbManager mgr = new KdbManager();
 				mgr.Unload();
 			}
 			catch(Exception exMgr)
@@ -81,7 +81,7 @@ namespace KeePass.DataExchange
 		/// will load file data into or use to create a KDB file. Must not be <c>null</c>.</param>
 		/// <exception cref="System.ArgumentNullException">Thrown if the database
 		/// reference is <c>null</c>.</exception>
-		public Kdb3File(PwDatabase pwDataStore, IStatusLogger slLogger)
+		public KdbFile(PwDatabase pwDataStore, IStatusLogger slLogger)
 		{
 			Debug.Assert(pwDataStore != null);
 			if(pwDataStore == null) throw new ArgumentNullException("pwDataStore");
@@ -90,9 +90,9 @@ namespace KeePass.DataExchange
 			m_slLogger = slLogger;
 		}
 
-		private static Kdb3ErrorCode SetDatabaseKey(Kdb3Manager mgr, CompositeKey pwKey)
+		private static KdbErrorCode SetDatabaseKey(KdbManager mgr, CompositeKey pwKey)
 		{
-			Kdb3ErrorCode e;
+			KdbErrorCode e;
 
 			bool bPassword = pwKey.ContainsType(typeof(KcpPassword));
 			bool bKeyFile = pwKey.ContainsType(typeof(KcpKeyFile));
@@ -123,14 +123,14 @@ namespace KeePass.DataExchange
 			Debug.Assert(strFilePath != null);
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			Kdb3Manager mgr = new Kdb3Manager();
-			Kdb3ErrorCode e;
+			KdbManager mgr = new KdbManager();
+			KdbErrorCode e;
 
-			e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-			if(e != Kdb3ErrorCode.Success) throw new Exception(KLRes.InvalidCompositeKey);
+			e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+			if(e != KdbErrorCode.Success) throw new Exception(KLRes.InvalidCompositeKey);
 
 			e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
-			if(e != Kdb3ErrorCode.Success)
+			if(e != KdbErrorCode.Success)
 			{
 				mgr.Unload();
 				throw new Exception(KLRes.FileLoadFailed);
@@ -146,7 +146,7 @@ namespace KeePass.DataExchange
 			mgr.Unload();
 		}
 
-		private Dictionary<UInt32, PwGroup> ReadGroups(Kdb3Manager mgr)
+		private Dictionary<UInt32, PwGroup> ReadGroups(KdbManager mgr)
 		{
 			uint uGroupCount = mgr.GroupCount;
 			Dictionary<UInt32, PwGroup> dictGroups = new Dictionary<uint, PwGroup>();
@@ -154,11 +154,11 @@ namespace KeePass.DataExchange
 			Stack<PwGroup> vGroupStack = new Stack<PwGroup>();
 			vGroupStack.Push(m_pwDatabase.RootGroup);
 
-			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
+			DateTime dtNeverExpire = KdbManager.GetNeverExpireTime();
 
 			for(uint uGroup = 0; uGroup < uGroupCount; ++uGroup)
 			{
-				Kdb3Group g = mgr.GetGroup(uGroup);
+				KdbGroup g = mgr.GetGroup(uGroup);
 
 				PwGroup pg = new PwGroup(true, false);
 
@@ -172,7 +172,7 @@ namespace KeePass.DataExchange
 
 				pg.Expires = (pg.ExpiryTime != dtNeverExpire);
 
-				pg.IsExpanded = ((g.Flags & (uint)Kdb3GroupFlags.Expanded) != 0);
+				pg.IsExpanded = ((g.Flags & (uint)KdbGroupFlags.Expanded) != 0);
 
 				while(g.Level < (vGroupStack.Count - 1))
 					vGroupStack.Pop();
@@ -188,14 +188,14 @@ namespace KeePass.DataExchange
 			return dictGroups;
 		}
 
-		private void ReadEntries(Kdb3Manager mgr, Dictionary<UInt32, PwGroup> dictGroups)
+		private void ReadEntries(KdbManager mgr, Dictionary<UInt32, PwGroup> dictGroups)
 		{
-			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
+			DateTime dtNeverExpire = KdbManager.GetNeverExpireTime();
 			uint uEntryCount = mgr.EntryCount;
 
 			for(uint uEntry = 0; uEntry < uEntryCount; ++uEntry)
 			{
-				Kdb3Entry e = mgr.GetEntry(uEntry);
+				KdbEntry e = mgr.GetEntry(uEntry);
 
 				PwGroup pgContainer;
 				if(!dictGroups.TryGetValue(e.GroupId, out pgContainer))
@@ -235,7 +235,7 @@ namespace KeePass.DataExchange
 
 				if((e.BinaryDataLength > 0) && (e.BinaryData != IntPtr.Zero))
 				{
-					byte[] pbData = Kdb3Manager.ReadBinary(e.BinaryData, e.BinaryDataLength);
+					byte[] pbData = KdbManager.ReadBinary(e.BinaryData, e.BinaryDataLength);
 					Debug.Assert(pbData.Length == e.BinaryDataLength);
 
 					string strDesc = e.BinaryDescription;
@@ -261,10 +261,10 @@ namespace KeePass.DataExchange
 			Debug.Assert(strSaveToFile != null);
 			if(strSaveToFile == null) throw new ArgumentNullException("strSaveToFile");
 
-			Kdb3Manager mgr = new Kdb3Manager();
+			KdbManager mgr = new KdbManager();
 
-			Kdb3ErrorCode e = Kdb3File.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-			if(e != Kdb3ErrorCode.Success)
+			KdbErrorCode e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+			if(e != KdbErrorCode.Success)
 			{
 				Debug.Assert(false);
 				throw new Exception(KLRes.InvalidCompositeKey);
@@ -273,9 +273,9 @@ namespace KeePass.DataExchange
 			if(m_slLogger != null)
 			{
 				if(m_pwDatabase.Name.Length != 0)
-					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
+					m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
 				if(m_pwDatabase.Description.Length != 0)
-					m_slLogger.SetText(Kdb3Prefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
+					m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
 			}
 
 			// Set properties
@@ -290,18 +290,18 @@ namespace KeePass.DataExchange
 			WriteEntries(mgr, dictGroups, pgRoot);
 
 			e = mgr.SaveDatabase(strSaveToFile);
-			if(e != Kdb3ErrorCode.Success) throw new Exception(KLRes.FileSaveFailed);
+			if(e != KdbErrorCode.Success) throw new Exception(KLRes.FileSaveFailed);
 
 			mgr.Unload();
 		}
 
-		private static Dictionary<PwGroup, UInt32> WriteGroups(Kdb3Manager mgr,
+		private static Dictionary<PwGroup, UInt32> WriteGroups(KdbManager mgr,
 			PwGroup pgRoot)
 		{
 			Dictionary<PwGroup, UInt32> dictGroups = new Dictionary<PwGroup, uint>();
 
 			uint uGroupIndex = 1;
-			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
+			DateTime dtNeverExpire = KdbManager.GetNeverExpireTime();
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
@@ -320,11 +320,11 @@ namespace KeePass.DataExchange
 
 		private static void WriteGroup(PwGroup pg, PwGroup pgRoot, ref uint uGroupIndex,
 			Dictionary<PwGroup, UInt32> dictGroups, DateTime dtNeverExpire,
-			Kdb3Manager mgr, bool bForceLevel0)
+			KdbManager mgr, bool bForceLevel0)
 		{
 			if(pg == pgRoot) return;
 
-			Kdb3Group grp = new Kdb3Group();
+			KdbGroup grp = new KdbGroup();
 
 			grp.GroupId = uGroupIndex;
 			dictGroups[pg] = grp.GroupId;
@@ -341,7 +341,7 @@ namespace KeePass.DataExchange
 
 			grp.Level = (bForceLevel0 ? (ushort)0 : (ushort)(pg.GetLevel() - 1));
 
-			if(pg.IsExpanded) grp.Flags |= (uint)Kdb3GroupFlags.Expanded;
+			if(pg.IsExpanded) grp.Flags |= (uint)KdbGroupFlags.Expanded;
 
 			if(!mgr.AddGroup(ref grp))
 			{
@@ -354,7 +354,7 @@ namespace KeePass.DataExchange
 
 		private static void EnsureParentGroupsExported(PwGroup pgRoot, ref uint uGroupIndex,
 			Dictionary<PwGroup, UInt32> dictGroups, DateTime dtNeverExpires,
-			Kdb3Manager mgr)
+			KdbManager mgr)
 		{
 			bool bHasAtLeastOneGroup = (dictGroups.Count > 0);
 			uint uLocalIndex = uGroupIndex; // Local copy, can't use ref in delegate
@@ -376,18 +376,18 @@ namespace KeePass.DataExchange
 			uGroupIndex = uLocalIndex;
 		}
 
-		private void WriteEntries(Kdb3Manager mgr, Dictionary<PwGroup, uint> dictGroups,
+		private void WriteEntries(KdbManager mgr, Dictionary<PwGroup, uint> dictGroups,
 			PwGroup pgRoot)
 		{
 			bool bWarnedOnce = false;
 			uint uGroupCount, uEntryCount, uEntriesSaved = 0;
 			pgRoot.GetCounts(true, out uGroupCount, out uEntryCount);
 
-			DateTime dtNeverExpire = Kdb3Manager.GetNeverExpireTime();
+			DateTime dtNeverExpire = KdbManager.GetNeverExpireTime();
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				Kdb3Entry e = new Kdb3Entry();
+				KdbEntry e = new KdbEntry();
 
 				e.Uuid.Set(pe.Uuid.UuidBytes);
 
@@ -398,7 +398,7 @@ namespace KeePass.DataExchange
 					e.GroupId = 1;
 					if((m_slLogger != null) && !bWarnedOnce)
 					{
-						m_slLogger.SetText(Kdb3Prefix +
+						m_slLogger.SetText(KdbPrefix +
 							KPRes.FormatNoRootEntries, LogStatusType.Warning);
 						bWarnedOnce = true;
 					}
@@ -452,7 +452,7 @@ namespace KeePass.DataExchange
 					}
 
 					if((pe.Binaries.UCount > 1) && (m_slLogger != null))
-						m_slLogger.SetText(Kdb3Prefix + KPRes.FormatOnlyOneAttachment + "\r\n\r\n" +
+						m_slLogger.SetText(KdbPrefix + KPRes.FormatOnlyOneAttachment + "\r\n\r\n" +
 							KPRes.Entry + ":\r\n" + KPRes.Title + ": " + e.Title + "\r\n" +
 							KPRes.UserName + ": " + e.UserName, LogStatusType.Warning);
 				}

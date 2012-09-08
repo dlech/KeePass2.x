@@ -84,14 +84,14 @@ namespace KeePass.Forms
 		private void GetAppComponents()
 		{
 			ListViewItem lvi = new ListViewItem(KPRes.KeePassLibCLong);
-			if(!Kdb3File.IsLibraryInstalled())
+			if(!KdbFile.IsLibraryInstalled())
 				lvi.SubItems.Add(KPRes.NotInstalled);
-			else lvi.SubItems.Add(Kdb3Manager.KeePassVersionString + " (0x" +
-				Kdb3Manager.LibraryBuild.ToString("X4") + ")");
+			else lvi.SubItems.Add(KdbManager.KeePassVersionString + " (0x" +
+				KdbManager.LibraryBuild.ToString("X4") + ")");
 
 			m_lvComponents.Items.Add(lvi);
 
-			lvi = new ListViewItem(KPRes.XslStylesheets);
+			lvi = new ListViewItem(KPRes.XslStylesheetsKdbx);
 			string strPath = WinUtil.GetExecutable();
 			strPath = UrlUtil.GetFileDirectory(strPath, true, false);
 			strPath += AppDefs.XslFilesDir;

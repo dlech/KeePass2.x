@@ -59,7 +59,7 @@ namespace KeePass.Util.XmlSerialization
 			object oResult = null;
 			if((m_t == typeof(AppConfigEx)) || (m_t == typeof(KPTranslation)))
 			{
-				XmlReaderSettings xrs = Kdb4File.CreateStdXmlReaderSettings();
+				XmlReaderSettings xrs = KdbxFile.CreateStdXmlReaderSettings();
 				XmlReader xr = XmlReader.Create(s, xrs);
 
 				string strRootName = GetXmlName(m_t);

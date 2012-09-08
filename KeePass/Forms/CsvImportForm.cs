@@ -169,7 +169,7 @@ namespace KeePass.Forms
 
 			UpdateTextPreview();
 			UpdateImportPreview();
-			GuessFieldTypes();
+			GuessCsvStructure();
 
 			ProcessResize();
 			EnableControlsEx();
@@ -483,7 +483,7 @@ namespace KeePass.Forms
 			if(bCreatePreview) m_lvImportPreview.BeginUpdate();
 
 			DateTime dtNow = DateTime.Now;
-			DateTime dtNoExpire = Kdb3Time.NeverExpireTime.ToDateTime();
+			DateTime dtNoExpire = KdbTime.NeverExpireTime.ToDateTime();
 			bool bIgnoreFirstRow = m_cbIgnoreFirst.Checked;
 			bool bIsFirstRow = true;
 
@@ -663,24 +663,30 @@ namespace KeePass.Forms
 			EnableControlsEx();
 		}
 
-		private void GuessFieldTypes()
+		private void GuessCsvStructure()
+		{
+			bool bFieldsGuessed = GuessFieldTypes();
+			m_cbIgnoreFirst.Checked = bFieldsGuessed;
+		}
+
+		private bool GuessFieldTypes()
 		{
 			CsvOptions opt = GetCsvOptions();
-			if(opt == null) { Debug.Assert(false); return; }
+			if(opt == null) { Debug.Assert(false); return false; }
 
-			string str = GetDecodedText();
-			CsvStreamReaderEx csv = new CsvStreamReaderEx(str, opt);
+			string strData = GetDecodedText();
+			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
 
 			string[] v;
 			while(true)
 			{
 				v = csv.ReadLine();
-				if(v == null) return;
+				if(v == null) return false;
 				if(v.Length == 0) continue;
 				if((v.Length == 1) && (v[0].Length == 0)) continue;
 				break;
 			}
-			if(v.Length <= 3) return;
+			if(v.Length <= 3) return false;
 
 			CsvFieldInfo[] vFields = new CsvFieldInfo[v.Length];
 			int nDetermined = 0;
@@ -695,11 +701,13 @@ namespace KeePass.Forms
 
 			// Accept the guesses only if at least half of them are
 			// probably correct
-			if(nDetermined < (v.Length + 1) / 2) return;
+			if(nDetermined < (v.Length + 1) / 2) return false;
 
 			m_lvFields.Items.Clear();
 			foreach(CsvFieldInfo fi in vFields)
 				AddCsvField(fi.Type, fi.Name, fi.Format);
+
+			return true;
 		}
 
 		private static CsvFieldInfo GuessFieldType(string strRawName)

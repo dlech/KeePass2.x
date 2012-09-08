@@ -10,10 +10,6 @@
 
 	<meta name="robots" content="index" />
 
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="pragma" content="no-cache" />
-
 	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
 	<meta name="DC.Creator" content="Dominik Reichl" />
 	<meta name="DC.Subject" content="Open-Source Password Safe" />
@@ -58,11 +54,18 @@ The database file location is passed as argument. Only one database file is allo
 If the path contains a space, it must be enclosed in quotes (&quot;).</p>
 
 <p><b>Password.</b>
-Passwords are passed using the <code>-pw:</code> option. In order to
+Passwords can be passed using the <code>-pw:</code> option. In order to
 pass 'abc' as password, you would add the following argument to the command line:
 <code>-pw:abc</code>. Note that there must be no space between the ':' and the
 password. If your password contains a space, you must enclose it in quotes. For
 example: <code>-pw:&quot;my secret password&quot;</code>.</p>
+
+<p>Using the <code>-pw:</code> option is not recommended, because of
+security reasons (the operating system allows reading the command line
+options of other applications).</p>
+
+<p>When passing the <code>-pw-stdin</code> option, KeePass &ge; 1.24 and &ge; 2.20
+read the password from the StdIn stream.</p>
 
 <p><b>Key file.</b>
 For supplying the key file location, the <code>-keyfile:</code> switch
@@ -88,7 +91,8 @@ sets the focus to the password edit window.</p>
 for you and displays the login prompt. In contrast, the <code>keyfile</code> switch
 doesn't prompt you for the (maybe missing) password.</p>
 
-<p>The <code>-minimize</code> command line argument makes KeePass start up minimized.</p>
+<p><b>Other.</b>
+The <code>-minimize</code> command line argument makes KeePass start up minimized.</p>
 
 <p>The <code>-auto-type</code> command line argument makes all previous KeePass
 instances perform a global auto-type.</p>
@@ -202,8 +206,8 @@ in <i>'Tools' - 'Options...' - 'Advanced'</i>.</p>
 it does not show a main window) and will immediately terminate after sending close
 requests to the other instances.</p>
 
-<p>KeePass &ge; 1.17 and &ge; 2.10 support the <code>--lock-all</code> and
-<code>--unlock-all</code> command line options to lock/unlock the workspaces
+<p>The <code>--lock-all</code> and
+<code>--unlock-all</code> command line options lock/unlock the workspaces
 of all other KeePass instances.</p>
 
 </body></html>

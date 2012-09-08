@@ -285,12 +285,50 @@ namespace KeePassLib.Utility
 
 			const int nBufSize = 4096;
 			byte[] pbBuf = new byte[nBufSize];
-			int nRead;
 
-			while((nRead = sSource.Read(pbBuf, 0, nBufSize)) > 0)
+			while(true)
+			{
+				int nRead = sSource.Read(pbBuf, 0, nBufSize);
+				if(nRead == 0) break;
+
 				sTarget.Write(pbBuf, 0, nRead);
+			}
 
 			// Do not close any of the streams
+		}
+
+		public static byte[] Read(Stream s, int nCount)
+		{
+			if(s == null) throw new ArgumentNullException("s");
+			if(nCount < 0) throw new ArgumentOutOfRangeException("nCount");
+
+			byte[] pb = new byte[nCount];
+			int iOffset = 0;
+			while(nCount > 0)
+			{
+				int iRead = s.Read(pb, iOffset, nCount);
+				if(iRead == 0) break;
+
+				iOffset += iRead;
+				nCount -= iRead;
+			}
+
+			if(iOffset != pb.Length)
+			{
+				byte[] pbPart = new byte[iOffset];
+				Array.Copy(pb, pbPart, iOffset);
+				return pbPart;
+			}
+
+			return pb;
+		}
+
+		public static void Write(Stream s, byte[] pbData)
+		{
+			if(s == null) { Debug.Assert(false); return; }
+			if(pbData == null) { Debug.Assert(false); return; }
+
+			s.Write(pbData, 0, pbData.Length);
 		}
 
 		public static byte[] Compress(byte[] pbData)
