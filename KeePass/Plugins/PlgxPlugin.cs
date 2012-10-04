@@ -266,7 +266,7 @@ namespace KeePass.Plugins
 
 		private static string CreateTempDirectory()
 		{
-			string strTmpRoot = Path.GetTempPath();
+			string strTmpRoot = UrlUtil.GetTempPath();
 			strTmpRoot = UrlUtil.EnsureTerminatingSeparator(strTmpRoot, false);
 			strTmpRoot += (new PwUuid(true)).ToHexString();
 

@@ -114,7 +114,7 @@ namespace KeePass.Plugins
 			//	if(di.DriveType == DriveType.Network)
 			//	{
 			//		strDataDir = UrlUtil.EnsureTerminatingSeparator(
-			//			Path.GetTempPath(), false);
+			//			UrlUtil.GetTempPath(), false);
 			//		strDataDir = strDataDir.Substring(0, strDataDir.Length - 1);
 			//	}
 			// }

@@ -46,8 +46,8 @@ namespace KeePass.Util
 				try { kClassesRoot.CreateSubKey("." + strFileExt); }
 				catch(Exception) { }
 				RegistryKey kFileExt = kClassesRoot.OpenSubKey("." + strFileExt, true);
-
 				kFileExt.SetValue(string.Empty, strExtId, RegistryValueKind.String);
+				kFileExt.Close();
 
 				try { kClassesRoot.CreateSubKey(strExtId); }
 				catch(Exception) { }
@@ -58,11 +58,11 @@ namespace KeePass.Util
 				try { kExtInfo.CreateSubKey("DefaultIcon"); }
 				catch(Exception) { }
 				RegistryKey kIcon = kExtInfo.OpenSubKey("DefaultIcon", true);
-
 				if(strAppPath.IndexOfAny(new char[]{ ' ', '\t' }) < 0)
 					kIcon.SetValue(string.Empty, strAppPath + ",0", RegistryValueKind.String);
 				else
 					kIcon.SetValue(string.Empty, "\"" + strAppPath + "\",0", RegistryValueKind.String);
+				kIcon.Close();
 
 				try { kExtInfo.CreateSubKey("shell"); }
 				catch(Exception) { }
@@ -77,8 +77,12 @@ namespace KeePass.Util
 				try { kShellOpen.CreateSubKey("command"); }
 				catch(Exception) { }
 				RegistryKey kShellCommand = kShellOpen.OpenSubKey("command", true);
-
 				kShellCommand.SetValue(string.Empty, "\"" + strAppPath + "\" \"%1\"", RegistryValueKind.String);
+				kShellCommand.Close();
+
+				kShellOpen.Close();
+				kShell.Close();
+				kExtInfo.Close();
 
 				ShChangeNotify();
 
@@ -128,6 +132,7 @@ namespace KeePass.Util
 				{
 					RegistryKey kRun = Registry.CurrentUser.OpenSubKey(AutoRunKey, true);
 					kRun.DeleteValue(strAppName);
+					kRun.Close();
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -138,8 +143,8 @@ namespace KeePass.Util
 			try
 			{
 				string strNotFound = Guid.NewGuid().ToString();
-				string strResult = Registry.GetValue("HKEY_CURRENT_USER\\" + AutoRunKey,
-					strAppName, strNotFound) as string;
+				string strResult = (Registry.GetValue("HKEY_CURRENT_USER\\" + AutoRunKey,
+					strAppName, strNotFound) as string);
 
 				if((strResult != null) && (strResult != strNotFound) &&
 					(strResult.Length > 0))
@@ -171,6 +176,7 @@ namespace KeePass.Util
 				{
 					RegistryKey kRun = Registry.LocalMachine.OpenSubKey(PreLoadKey, true);
 					kRun.DeleteValue(strAppName);
+					kRun.Close();
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }

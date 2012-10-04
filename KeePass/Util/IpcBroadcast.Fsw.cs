@@ -49,7 +49,8 @@ namespace KeePass.Util
 		{
 			if(m_strMsgFilePath != null) return;
 
-			string strDir = UrlUtil.EnsureTerminatingSeparator(Path.GetTempPath(), false);
+			string strDir = UrlUtil.EnsureTerminatingSeparator(
+				UrlUtil.GetTempPath(), false);
 			m_strMsgFileName = IpcUtilEx.IpcMsgFilePreID + GetUserID() +
 				IpcUtilEx.IpcMsgFilePostID;
 			m_strMsgFilePath = strDir + m_strMsgFileName;
@@ -109,7 +110,7 @@ namespace KeePass.Util
 		{
 			FswEnsurePaths();
 
-			m_fsw = new FileSystemWatcher(Path.GetTempPath(), m_strMsgFileName);
+			m_fsw = new FileSystemWatcher(UrlUtil.GetTempPath(), m_strMsgFileName);
 			m_fsw.IncludeSubdirectories = false;
 			m_fsw.NotifyFilter = (NotifyFilters.CreationTime | NotifyFilters.LastWrite);
 

@@ -115,7 +115,7 @@ namespace KeePass.Util
 		{
 			try
 			{
-				string str = Path.GetTempPath();
+				string str = UrlUtil.GetTempPath();
 				str = UrlUtil.EnsureTerminatingSeparator(str, false);
 				
 				return (str + IpcMsgFilePreID + nId.ToString() + ".tmp");

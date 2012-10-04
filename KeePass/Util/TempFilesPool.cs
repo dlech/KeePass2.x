@@ -76,7 +76,7 @@ namespace KeePass.Util
 
 		public string GetTempFileName()
 		{
-			return this.GetTempFileName(true);
+			return GetTempFileName(true);
 		}
 
 		public string GetTempFileName(bool bCreateEmptyFile)

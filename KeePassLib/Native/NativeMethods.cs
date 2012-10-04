@@ -21,6 +21,10 @@ using System;
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Diagnostics;
+
+using KeePassLib.Utility;
 
 namespace KeePassLib.Native
 {
@@ -148,6 +152,27 @@ namespace KeePassLib.Native
 			return x.CompareTo(y);
 #else
 			return StrCmpLogicalW(x, y);
+#endif
+		}
+
+		internal static string GetUserRuntimeDir()
+		{
+#if !KeePassLibSD
+			string strRtDir = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
+			if(string.IsNullOrEmpty(strRtDir))
+				strRtDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			if(string.IsNullOrEmpty(strRtDir))
+			{
+				Debug.Assert(false);
+				return Path.GetTempPath(); // Not UrlUtil (otherwise cyclic)
+			}
+
+			strRtDir = UrlUtil.EnsureTerminatingSeparator(strRtDir, false);
+			strRtDir += PwDefs.ShortProductName;
+
+			return strRtDir;
+#else
+			return Path.GetTempPath();
 #endif
 		}
 	}

@@ -175,6 +175,12 @@ namespace KeePass.Native
 		{
 			if(f == null) { Debug.Assert(false); return; }
 
+			// The following crashes under Mac OS X (SIGSEGV in native code,
+			// not just an exception), thus skip it when we're on Mac OS X
+			// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/5860588
+			if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				return;
+
 			try
 			{
 				Type tXplatUIX11 = GetXplatUIX11Type(true);

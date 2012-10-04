@@ -1,3 +1,25 @@
+2012-10-04: 2.20.1
+- Improved support for images with DPI resolutions different
+  from the DPI resolution of the display device
+- {GOOGLECHROME} placeholder: updated detection code to also
+  support the latest versions of Chrome
+- The option to lock on remote control mode changes now
+  additionally watches for remote connects and disconnects
+- Improved Windows registry accesses
+- Improved behavior when the user deletes the system temporary
+  directory
+- On Unix-like systems, KeePass now stores most of its
+  temporary files in a private temporary directory (preferably
+  in $XDG_RUNTIME_DIR)
+- Added detection support for the following web browsers on
+  Unix-like systems: Rekonq, Midori and Dooble
+- KeePass does not try to set the WM_CLASS property on Mac OS X
+  systems anymore
+- Modified some icons to work around unsupported PNG
+  transparency keys in Mono
+- Various code optimizations
+- Minor other improvements
+
 2012-09-08: 2.20
 - Header data in KDBX files is now authenticated (to prevent
   silent data corruption attacks; thanks to P. Gasti and K. B.

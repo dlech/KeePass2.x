@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics;
 
 using KeePassLib.Native;
 
@@ -587,6 +587,23 @@ namespace KeePassLib.Utility
 			}
 
 			return false;
+		}
+
+		public static string GetTempPath()
+		{
+			string strDir;
+			if(NativeLib.IsUnix())
+				strDir = NativeMethods.GetUserRuntimeDir();
+			else strDir = Path.GetTempPath();
+
+			try
+			{
+				if(Directory.Exists(strDir) == false)
+					Directory.CreateDirectory(strDir);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strDir;
 		}
 	}
 }
