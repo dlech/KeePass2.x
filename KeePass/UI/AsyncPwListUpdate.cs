@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -244,7 +244,6 @@ namespace KeePass.UI
 		internal static string SprCompileFn(string strText, PwListItem li)
 		{
 			string strCmp = null;
-
 			while(strCmp == null)
 			{
 				try
@@ -259,7 +258,9 @@ namespace KeePass.UI
 			}
 
 			if(strCmp == strText) return strText;
-			return (strCmp + " - " + strText);
+
+			return (Program.Config.MainWindow.EntryListShowDerefDataAndRefs ?
+				(strCmp + " - " + strText) : strCmp);
 		}
 	}
 }

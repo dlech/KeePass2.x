@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -84,6 +85,7 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.CreateMasterKey;
 
+			FontUtil.SetDefaultFont(m_cbPassword);
 			FontUtil.AssignDefaultBold(m_cbPassword);
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
@@ -204,9 +206,14 @@ namespace KeePass.Forms
 			bool bIsKeyProv = Program.KeyProviderPool.IsKeyProvider(strKeyFile);
 
 			if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
-				(bIsKeyProv == false))
+				!bIsKeyProv)
 			{
-				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
+				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile, true)); }
+				catch(InvalidDataException exID) // Selected database file
+				{
+					MessageService.ShowWarning(strKeyFile, exID);
+					return false;
+				}
 				catch(Exception exKF)
 				{
 					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKF);
@@ -214,7 +221,7 @@ namespace KeePass.Forms
 				}
 			}
 			else if(m_cbKeyFile.Checked && (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta)) &&
-				(bIsKeyProv == true))
+				bIsKeyProv)
 			{
 				KeyProviderQueryContext ctxKP = new KeyProviderQueryContext(
 					m_ioInfo, true, false);

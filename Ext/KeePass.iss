@@ -8,16 +8,16 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.20.1"
-#define KeeVersionStrWithMinor "2.20.1"
-#define KeeVersionStrWithMinorPath "2.20.1"
-#define KeeVersionWin "2.20.1.0"
+#define KeeVersionStr "2.21"
+#define KeeVersionStrWithMinor "2.21"
+#define KeeVersionStrWithMinorPath "2.21"
+#define KeeVersionWin "2.21.0.0"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2012"
+#define KeeDevPeriod "2003-2013"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -94,11 +94,11 @@ Source: ..\Build\KeePass_Distrib\KeePass.exe.config; DestDir: {app}; Flags: igno
 Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist; Components: Core
 Source: ..\Build\KeePass_Distrib\License.txt; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
-Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Components: UserDoc
-Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Components: KeePassLibC
-Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Components: KeePassLibC
-; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Components: NativeLib
-; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Components: NativeLib
+Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Flags: ignoreversion; Components: UserDoc
+Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
+Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
+; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
+; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLite.xsl; DestDir: {app}\XSL; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly.xsl; DestDir: {app}\XSL; Components: XSL

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -327,6 +327,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bResolveFieldRefsAsync; }
 			set { m_bResolveFieldRefsAsync = value; }
+		}
+
+		private bool m_bDerefDataWithRefs = true;
+		[DefaultValue(true)]
+		public bool EntryListShowDerefDataAndRefs
+		{
+			get { return m_bDerefDataWithRefs; }
+			set { m_bDerefDataWithRefs = value; }
 		}
 
 		// private bool m_bGridLines = false;

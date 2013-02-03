@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ namespace KeePass.Forms
 
 		private bool m_bInitializing = false;
 		private uint m_uStartOffset = 0;
+		private CsvFieldType m_tLastCsvType = CsvFieldType.Count;
 
 		private readonly string StrCharTab = @"{Tab}";
 		private readonly string StrCharNewLine = @"{" + KPRes.NewLine + @"}";
@@ -51,7 +52,7 @@ namespace KeePass.Forms
 		private enum CsvFieldType
 		{
 			Ignore = 0,
-			GroupName,
+			Group,
 			Title,
 			UserName,
 			Password,
@@ -151,18 +152,8 @@ namespace KeePass.Forms
 
 			for(int i = (int)CsvFieldType.First; i < (int)CsvFieldType.Count; ++i)
 				m_cmbFieldType.Items.Add(CsvFieldToString((CsvFieldType)i));
-			m_cmbFieldType.SelectedIndex = (int)CsvFieldType.GroupName;
+			m_cmbFieldType.SelectedIndex = (int)CsvFieldType.Group;
 
-			string[] vFormats = new string[] { @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffzz",
-				@"ddd, dd MMM yyyy HH':'mm':'ss 'GMT'", @"yyyy'-'MM'-'dd'T'HH':'mm':'ss",
-				@"yyyy'-'MM'-'dd HH':'mm':'ss'Z'",
-				@"yyyy/MM/dd HH:mm:ss",
-				@"yyyy/MM/dd", @"MM/dd/yy", @"MMMM dd, yyyy", @"MM/dd/yy H:mm:ss zzz"
-			};
-			foreach(string strFormat in vFormats)
-			{
-				m_cmbFieldFormat.Items.Add(strFormat);
-			}
 			m_cmbFieldFormat.Text = string.Empty;
 
 			m_bInitializing = false;
@@ -193,12 +184,12 @@ namespace KeePass.Forms
 			m_btnFieldMoveDown.Enabled = bSel1Field;
 
 			bool bFieldName, bFieldFormat;
-			GetCsvFieldType(out bFieldName, out bFieldFormat);
+			CsvFieldType t = GetCsvFieldType(out bFieldName, out bFieldFormat);
 			m_lblFieldName.Enabled = bFieldName;
 			m_tbFieldName.Enabled = bFieldName;
 			m_lblFieldFormat.Enabled = bFieldFormat;
 			m_cmbFieldFormat.Enabled = bFieldFormat;
-			m_linkFieldFormat.Enabled = bFieldFormat;
+			m_linkFieldFormat.Enabled = IsTimeField(t);
 
 			int iTab = m_tabMain.SelectedIndex, nTabs = m_tabMain.TabCount;
 			m_btnTabBack.Enabled = (iTab > 0);
@@ -219,6 +210,33 @@ namespace KeePass.Forms
 			bOK &= (iTab == (nTabs - 1));
 			bOK &= (bValidFieldSep && bValidRecSep && bValidTextQual);
 			m_btnOK.Enabled = bOK;
+
+			if(t != m_tLastCsvType)
+			{
+				m_cmbFieldFormat.Items.Clear();
+
+				string[] vItems;
+				if(IsTimeField(t))
+					vItems = new string[] {
+						string.Empty,
+						@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffzz",
+						@"ddd, dd MMM yyyy HH':'mm':'ss 'GMT'", @"yyyy'-'MM'-'dd'T'HH':'mm':'ss",
+						@"yyyy'-'MM'-'dd HH':'mm':'ss'Z'",
+						@"yyyy/MM/dd HH:mm:ss",
+						@"yyyy/MM/dd", @"MM/dd/yy", @"MMMM dd, yyyy", @"MM/dd/yy H:mm:ss zzz"
+					};
+				else if(t == CsvFieldType.Group)
+					vItems = new string[] { string.Empty, ".", "/", "\\" };
+				else vItems = new string[0];
+
+				foreach(string strPre in vItems)
+					m_cmbFieldFormat.Items.Add(strPre);
+
+				if(t == CsvFieldType.Group)
+					m_lblFieldFormat.Text = KPRes.Separator + ":";
+				else m_lblFieldFormat.Text = KPRes.Format + ":";
+			}
+			m_tLastCsvType = t;
 		}
 
 		private string GetDecodedText()
@@ -267,7 +285,7 @@ namespace KeePass.Forms
 		{
 			string strText;
 			if(t == CsvFieldType.Ignore) strText = "(" + KPRes.Ignore + ")";
-			else if(t == CsvFieldType.GroupName) strText = KPRes.Group;
+			else if(t == CsvFieldType.Group) strText = KPRes.Group;
 			else if(t == CsvFieldType.Title) strText = KPRes.Title;
 			else if(t == CsvFieldType.UserName) strText = KPRes.UserName;
 			else if(t == CsvFieldType.Password) strText = KPRes.Password;
@@ -306,6 +324,12 @@ namespace KeePass.Forms
 			lvi.Tag = new CsvFieldInfo(t, strName, strFormat);
 		}
 
+		private CsvFieldType GetCsvFieldType()
+		{
+			bool bName, bFormat;
+			return GetCsvFieldType(out bName, out bFormat);
+		}
+
 		private CsvFieldType GetCsvFieldType(out bool bName, out bool bFormat)
 		{
 			int i = m_cmbFieldType.SelectedIndex;
@@ -319,8 +343,7 @@ namespace KeePass.Forms
 
 			CsvFieldType t = (CsvFieldType)i;
 			bName = (t == CsvFieldType.CustomString);
-			bFormat = ((t == CsvFieldType.CreationTime) || (t == CsvFieldType.LastAccessTime) ||
-				(t == CsvFieldType.LastModTime) || (t == CsvFieldType.ExpiryTime));
+			bFormat = (IsTimeField(t) || (t == CsvFieldType.Group));
 			return t;
 		}
 
@@ -396,12 +419,27 @@ namespace KeePass.Forms
 
 		private void OnFieldTypeSelectedIndexChanged(object sender, EventArgs e)
 		{
+			CsvFieldType t = GetCsvFieldType();
+			if(t != m_tLastCsvType) m_cmbFieldFormat.Text = string.Empty;
+
 			EnableControlsEx();
 		}
 
 		private void OnFieldFormatLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string strUrl = @"http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx";
+			CsvFieldType t = GetCsvFieldType();
+
+			string strUrl = null;
+			if(IsTimeField(t))
+				strUrl = @"http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx";
+			// else if(t == CsvFieldType.Group)
+			// {
+			//	AppHelp.ShowHelp(AppDefs.HelpTopics.ImportExport,
+			//		AppDefs.HelpTopics.ImportExportGenericCsv);
+			//	return;
+			// }
+			else { Debug.Assert(false); return; }
+
 			try { Process.Start(strUrl); }
 			catch(Exception ex) { MessageService.ShowWarning(strUrl, ex.Message); }
 		}
@@ -501,7 +539,7 @@ namespace KeePass.Forms
 				}
 				bIsFirstRow = false;
 
-				PwGroup pgParent = pgStorage;
+				PwGroup pg = pgStorage;
 				PwEntry pe = new PwEntry(true, true);
 
 				ListViewItem lvi = null;
@@ -511,18 +549,9 @@ namespace KeePass.Forms
 					CsvFieldInfo cfi = lFields[i];
 
 					if(cfi.Type == CsvFieldType.Ignore) { }
-					else if(cfi.Type == CsvFieldType.GroupName)
-					{
-						if(!dGroups.ContainsKey(strField))
-						{
-							PwGroup pgNew = new PwGroup(true, true);
-							pgNew.Name = strField;
-							pgStorage.AddGroup(pgNew, true);
-							dGroups[strField] = pgNew;
-						}
-
-						pgParent = dGroups[strField];
-					}
+					else if(cfi.Type == CsvFieldType.Group)
+						pg = FindCreateGroup(strField, pgStorage, dGroups,
+							cfi.Format, opt);
 					else if(cfi.Type == CsvFieldType.Title)
 						ImportUtil.AppendToField(pe, PwDefs.TitleField,
 							strField, m_pwDatabase);
@@ -575,7 +604,7 @@ namespace KeePass.Forms
 					}
 				}
 
-				pgParent.AddEntry(pe, true);
+				pg.AddEntry(pe, true);
 			}
 
 			if(bCreatePreview)
@@ -629,6 +658,50 @@ namespace KeePass.Forms
 			}
 
 			return odt.Value;
+		}
+
+		private static PwGroup FindCreateGroup(string strSpec, PwGroup pgStorage,
+			Dictionary<string, PwGroup> dRootGroups, string strSep, CsvOptions opt)
+		{
+			List<string> l = new List<string>();
+			if(string.IsNullOrEmpty(strSep)) l.Add(strSpec);
+			else
+			{
+				string[] vChain = strSpec.Split(new string[1] { strSep },
+					StringSplitOptions.RemoveEmptyEntries);
+				for(int i = 0; i < vChain.Length; ++i)
+				{
+					string strGrp = vChain[i];
+					if(opt.TrimFields) strGrp = strGrp.Trim();
+					if(strGrp.Length > 0) l.Add(strGrp);
+				}
+				if(l.Count == 0) l.Add(strSpec);
+			}
+
+			string strRootSub = l[0];
+			if(!dRootGroups.ContainsKey(strRootSub))
+			{
+				PwGroup pgNew = new PwGroup(true, true);
+				pgNew.Name = strRootSub;
+				pgStorage.AddGroup(pgNew, true);
+				dRootGroups[strRootSub] = pgNew;
+			}
+			PwGroup pg = dRootGroups[strRootSub];
+
+			if(l.Count > 1)
+			{
+				char chSep = StrUtil.GetUnusedChar(strSpec);
+				StringBuilder sb = new StringBuilder();
+				for(int i = 1; i < l.Count; ++i)
+				{
+					if(i > 1) sb.Append(chSep);
+					sb.Append(l[i]);
+				}
+
+				pg = pg.FindCreateSubTree(sb.ToString(), new char[1] { chSep });
+			}
+
+			return pg;
 		}
 
 		private void OnBtnTabBack(object sender, EventArgs e)
@@ -729,12 +802,12 @@ namespace KeePass.Forms
 				return new CsvFieldInfo(CsvFieldType.Notes, null, null);
 
 			string[] vGroupNames = new string[] {
-				"Password Groups", "Group", "Groups"
+				"Password Groups", "Group", "Groups", "Group Tree"
 			};
 			foreach(string strGroupName in vGroupNames)
 			{
 				if(strName.Equals(strGroupName, StrUtil.CaseIgnoreCmp))
-					return new CsvFieldInfo(CsvFieldType.GroupName, null, null);
+					return new CsvFieldInfo(CsvFieldType.Group, null, null);
 			}
 
 			string[] vCreationNames = new string[] {
@@ -779,6 +852,12 @@ namespace KeePass.Forms
 			}
 
 			return null;
+		}
+
+		private static bool IsTimeField(CsvFieldType t)
+		{
+			return ((t == CsvFieldType.CreationTime) || (t == CsvFieldType.LastAccessTime) ||
+				(t == CsvFieldType.LastModTime) || (t == CsvFieldType.ExpiryTime));
 		}
 	}
 }

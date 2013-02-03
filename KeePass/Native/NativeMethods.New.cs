@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -467,5 +467,85 @@ namespace KeePass.Native
 				Debug.Assert(false);
 			}
 		} */
+
+		private static bool GetDesktopName(IntPtr hDesk, out string strAnsi,
+			out string strUni)
+		{
+			strAnsi = null;
+			strUni = null;
+
+			const uint cbZ = 12; // Minimal number of terminating zeros
+			const uint uBufSize = 64 + cbZ;
+			IntPtr pBuf = Marshal.AllocCoTaskMem((int)uBufSize);
+			byte[] pbZero = new byte[uBufSize];
+			Marshal.Copy(pbZero, 0, pBuf, pbZero.Length);
+
+			try
+			{
+				uint uReqSize = uBufSize - cbZ;
+				bool bSuccess = GetUserObjectInformation(hDesk, 2, pBuf,
+					uBufSize - cbZ, ref uReqSize);
+				if(uReqSize > (uBufSize - cbZ))
+				{
+					Marshal.FreeCoTaskMem(pBuf);
+					pBuf = Marshal.AllocCoTaskMem((int)(uReqSize + cbZ));
+					pbZero = new byte[uReqSize + cbZ];
+					Marshal.Copy(pbZero, 0, pBuf, pbZero.Length);
+
+					bSuccess = GetUserObjectInformation(hDesk, 2, pBuf,
+						uReqSize, ref uReqSize);
+					Debug.Assert((uReqSize + cbZ) == (uint)pbZero.Length);
+				}
+
+				if(bSuccess)
+				{
+					try { strAnsi = Marshal.PtrToStringAnsi(pBuf).Trim(); }
+					catch(Exception) { }
+
+					try { strUni = Marshal.PtrToStringUni(pBuf).Trim(); }
+					catch(Exception) { }
+
+					return true;
+				}
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem(pBuf);
+			}
+
+			Debug.Assert(false);
+			return false;
+		}
+
+		// The GetUserObjectInformation function apparently returns the
+		// desktop name using ANSI encoding even on Windows 7 systems.
+		// As the encoding is not documented, we test both ANSI and
+		// Unicode versions of the name.
+		internal static bool? DesktopNameContains(IntPtr hDesk, string strName)
+		{
+			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
+
+			string strAnsi, strUni;
+			if(!GetDesktopName(hDesk, out strAnsi, out strUni)) return null;
+			if((strAnsi == null) && (strUni == null)) return null;
+
+			try
+			{
+				if((strAnsi != null) && (strAnsi.IndexOf(strName,
+					StringComparison.OrdinalIgnoreCase) >= 0))
+					return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			try
+			{
+				if((strUni != null) && (strUni.IndexOf(strName,
+					StringComparison.OrdinalIgnoreCase) >= 0))
+					return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		}
 	}
 }

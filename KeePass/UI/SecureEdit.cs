@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -110,6 +110,8 @@ namespace KeePass.UI
 
 			// Initialize to zero-length string
 			m_tbPassword.Text = string.Empty;
+			Debug.Assert(m_tbPassword.SelectionStart == 0);
+			Debug.Assert(m_tbPassword.SelectionLength == 0);
 
 			if(m_secString != null) m_secString.Clear();
 			else m_strAlternativeSecString = string.Empty;
@@ -166,7 +168,7 @@ namespace KeePass.UI
 			if(m_tbPassword.UseSystemPasswordChar == bEnable) return;
 			m_tbPassword.UseSystemPasswordChar = bEnable;
 
-			ShowCurrentPassword(m_tbPassword.SelectionStart, m_tbPassword.SelectionLength);
+			ShowCurrentPassword(-1, -1);
 		}
 
 		private void OnPasswordTextChanged(object sender, EventArgs e)
@@ -178,7 +180,7 @@ namespace KeePass.UI
 			int nSelPos = m_tbPassword.SelectionStart;
 			int nSelLen = m_tbPassword.SelectionLength;
 
-			if(m_tbPassword.UseSystemPasswordChar == false)
+			if(!m_tbPassword.UseSystemPasswordChar)
 			{
 				RemoveInsert(0, 0, m_tbPassword.Text);
 				ShowCurrentPassword(nSelPos, nSelLen);
@@ -220,22 +222,24 @@ namespace KeePass.UI
 		{
 			if(m_tbPassword == null) { Debug.Assert(false); return; }
 
-			if(m_tbPassword.UseSystemPasswordChar == false)
-			{
-				m_bBlockTextChanged = true;
-				m_tbPassword.Text = GetAsString();
-				m_bBlockTextChanged = false;
-
-				if(m_evTextChanged != null) m_evTextChanged(m_tbPassword, EventArgs.Empty);
-				return;
-			}
+			if(nSelStart < 0) nSelStart = m_tbPassword.SelectionStart;
+			if(nSelLength < 0) nSelLength = m_tbPassword.SelectionLength;
 
 			m_bBlockTextChanged = true;
-			if(m_secString != null)
+			if(!m_tbPassword.UseSystemPasswordChar)
+				m_tbPassword.Text = GetAsString();
+			else if(m_secString != null)
 				m_tbPassword.Text = new string(m_chPasswordChar, m_secString.Length);
 			else
 				m_tbPassword.Text = new string(m_chPasswordChar, m_strAlternativeSecString.Length);
 			m_bBlockTextChanged = false;
+
+			int nNewTextLen = m_tbPassword.TextLength;
+			if(nSelStart < 0) { Debug.Assert(false); nSelStart = 0; }
+			if(nSelStart > nNewTextLen) nSelStart = nNewTextLen; // Behind last char
+			if(nSelLength < 0) { Debug.Assert(false); nSelLength = 0; }
+			if((nSelStart + nSelLength) > nNewTextLen)
+				nSelLength = nNewTextLen - nSelStart;
 
 			m_tbPassword.SelectionStart = nSelStart;
 			m_tbPassword.SelectionLength = nSelLength;
@@ -354,10 +358,21 @@ namespace KeePass.UI
 		{
 			if(m_tbPassword == null) { Debug.Assert(false); return; }
 
-			if(m_bFirstGotFocus && (m_tbPassword != null))
-				m_tbPassword.SelectAll();
+			if(m_bFirstGotFocus)
+			{
+				m_bFirstGotFocus = false;
 
-			m_bFirstGotFocus = false;
+				// OnGotFocus is not called when the box initially has the
+				// focus; the user can select characters without triggering
+				// OnGotFocus, thus we select all characters only if the
+				// selection is in its original state (0, 0), otherwise
+				// e.g. the selection restoration when hiding/unhiding does
+				// not work the first time (because after restoring the
+				// selection, we would override it here by selecting all)
+				if((m_tbPassword.SelectionStart <= 0) &&
+					(m_tbPassword.SelectionLength <= 0))
+					m_tbPassword.SelectAll();
+			}
 		}
 
 		private void OnDragCheck(object sender, DragEventArgs e)
@@ -371,7 +386,7 @@ namespace KeePass.UI
 		{
 			if(e.Data.GetDataPresent(typeof(string)))
 			{
-				string strData = e.Data.GetData(typeof(string)) as string;
+				string strData = (e.Data.GetData(typeof(string)) as string);
 				if(strData == null) { Debug.Assert(false); return; }
 
 				if(m_tbPassword != null) m_tbPassword.Paste(strData);

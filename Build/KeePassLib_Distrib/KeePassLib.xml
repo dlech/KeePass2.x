@@ -784,6 +784,12 @@
             'In order to import KeePass 1.x KDB files, create a new 2.x database file and click &#39;File&#39; -&gt; &#39;Import&#39; in the main menu. In the import dialog, choose &#39;KeePass KDB (1.x)&#39; as file format.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.KeyFileDbSel">
+            <summary>
+            Look up a localized string similar to
+            'Database files cannot be used as key files.'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.MasterSeedLengthInvalid">
             <summary>
             Look up a localized string similar to
@@ -1643,6 +1649,32 @@
             This doesn't affect custom string comparisons.
             </summary>
         </member>
+        <member name="F:KeePassLib.IOAccessType.Read">
+            <summary>
+            The IO connection is being opened for reading.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.IOAccessType.Write">
+            <summary>
+            The IO connection is being opened for writing.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.IOAccessType.Exists">
+            <summary>
+            The IO connection is being opened for testing
+            whether a file/object exists.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.IOAccessType.Delete">
+            <summary>
+            The IO connection is being opened for deleting a file/object.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.IOAccessType.Move">
+            <summary>
+            The IO connection is being opened for renaming/moving a file/object.
+            </summary>
+        </member>
         <member name="T:KeePassLib.PwEntry">
             <summary>
             A class representing a password entry. A password entry consists of several
@@ -2413,6 +2445,11 @@
             <summary>
             Remove placeholders from a string (wrapped in '{' and '}').
             This doesn't remove environment variables (wrapped in '%').
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.StrUtil.GetUnusedChar(System.String)">
+            <summary>
+            Find a character that does not occur within a given text.
             </summary>
         </member>
         <member name="T:KeePassLib.PwDatabase">

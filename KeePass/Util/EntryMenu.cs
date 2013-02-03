@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -62,7 +62,9 @@ namespace KeePass.Util
 		{
 			ContextMenuStrip ctx = new ContextMenuStrip();
 
-			ctx.ImageList = Program.MainForm.ClientIcons;
+			// Clone the image list in order to prevent event handlers
+			// from the global client icons list to the context menu
+			ctx.ImageList = UIUtil.CloneImageList(Program.MainForm.ClientIcons, true);
 
 			bool bAppendSeparator = false;
 			foreach(PwDocument ds in Program.MainForm.DocumentManager.Documents)

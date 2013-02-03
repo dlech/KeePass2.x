@@ -333,6 +333,7 @@
     <Compile Include="DataExchange\Formats\KeePassXml1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXXml041.cs" />
+    <Compile Include="DataExchange\Formats\LastPassCsv2.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
     <Compile Include="DataExchange\Formats\OnePwProCsv599.cs" />
@@ -974,6 +975,7 @@
     <Compile Include="Ecas\EcasTriggerSystem.cs" />
     <Compile Include="Ecas\EcasUtil.cs" />
     <Compile Include="Ecas\IEcasParameterized.cs" />
+    <Compile Include="Util\CriticalSectionEx.cs" />
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
@@ -1114,9 +1116,6 @@
     <None Include="Resources\Nuvola\B48x48_KGPG_Key2.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Nuvola_Derived\B15x13_KGPG_Gen.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Nuvola\B48x48_Ark.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1130,6 +1129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_LastPass.png" />
     <None Include="Resources\Images\B16x16_Imp_DesktopKnox.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Key_New.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_EditCopyLink.png" />
@@ -1163,8 +1163,6 @@
     <None Include="Resources\Images\B16x16_Imp_OnePwPro.png" />
     <None Include="Resources\Nuvola\B48x48_Make_KDevelop.png" />
     <None Include="Resources\Nuvola\B16x16_Make_KDevelop.png" />
-    <None Include="Resources\Nuvola\B48x48_KArm.png" />
-    <None Include="Resources\Nuvola\B16x16_KArm.png" />
     <None Include="Resources\Images\B16x16_Imp_PassKeeper.png" />
     <None Include="Resources\Images\B16x16_Imp_PwMem2008.png" />
     <None Include="Resources\Nuvola\B16x16_Folder_Outbox.png" />

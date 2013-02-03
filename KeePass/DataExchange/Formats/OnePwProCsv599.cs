@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1Password Pro 5.99 and 1PW 6.15
+	// 1Password Pro 5.99 and 1PW 6.15-7.05+
 	internal sealed class OnePwProCsv599 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -54,7 +54,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
+			StreamReader sr = new StreamReader(sInput, Encoding.Default, true);
 			string strData = sr.ReadToEnd();
 			sr.Close();
 

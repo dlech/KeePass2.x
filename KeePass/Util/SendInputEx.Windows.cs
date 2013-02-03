@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,26 +60,9 @@ namespace KeePass.Util
 
 			if(bDown || IsKeyActive(vKey))
 			{
-				// if(!bDown && ((vKey == NativeMethods.VK_RCONTROL) ||
-				//	(vKey == NativeMethods.VK_CONTROL)))
-				// {
-				//	try
-				//	{
-				//		uint uVk = (uint)vKey;
-				//		uint uScan = NativeMethods.MapVirtualKey(uVk, 0);
-				//		NativeMethods.keybd_event((byte)uVk, (byte)uScan,
-				//			NativeMethods.KEYEVENTF_KEYUP, IntPtr.Zero);
-				//		return true;
-				//	}
-				//	catch(Exception) { Debug.Assert(false); }
-				// }
-
 				if(IntPtr.Size == 4) bRes = SendVKeyNative32(vKey, null, bDown);
 				else if(IntPtr.Size == 8) bRes = SendVKeyNative64(vKey, null, bDown);
 				else { Debug.Assert(false); }
-
-				// if(!bDown && (vKey == NativeMethods.VK_RCONTROL))
-				//	SendKeys.SendWait(@"^()");
 			}
 
 			if(bDown && (vKey != NativeMethods.VK_CAPITAL))
@@ -93,7 +76,7 @@ namespace KeePass.Util
 		private static bool SendCharNative(char ch)
 		{
 			bool bRes = SendCharNative(ch, true);
-			if(!SendCharNative(ch, false)) bRes = false; // Not |= (short-circuit)
+			if(!SendCharNative(ch, false)) bRes = false; // Not &= (short-circuit)
 			return bRes;
 		}
 
@@ -122,14 +105,12 @@ namespace KeePass.Util
 			else // Standard VKey
 			{
 				if(optUnicodeChar.HasValue)
-					vKey = (int)(NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFF);
+					vKey = ((int)NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFF);
 
 				pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
 				pInput[0].KeyboardInput.ScanCode =
-					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFF);
-				pInput[0].KeyboardInput.Flags = ((bDown ? 0 :
-					NativeMethods.KEYEVENTF_KEYUP) | (IsExtendedKeyEx(vKey) ?
-					NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
+					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFFU);
+				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, bDown);
 			}
 
 			pInput[0].KeyboardInput.Time = 0;
@@ -160,13 +141,12 @@ namespace KeePass.Util
 			else // Standard VKey
 			{
 				if(optUnicodeChar.HasValue)
-					vKey = (int)(NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFF);
+					vKey = ((int)NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFF);
 
 				pInput[0].VirtualKeyCode = (ushort)vKey;
 				pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey(
-					(uint)vKey, 0) & 0xFF);
-				pInput[0].Flags = ((bDown ? 0 : NativeMethods.KEYEVENTF_KEYUP) |
-					(IsExtendedKeyEx(vKey) ? NativeMethods.KEYEVENTF_EXTENDEDKEY : 0));
+					(uint)vKey, 0) & 0xFFU);
+				pInput[0].Flags = GetKeyEventFlags(vKey, bDown);
 			}
 
 			pInput[0].Time = 0;
@@ -180,12 +160,52 @@ namespace KeePass.Util
 			return true;
 		}
 
+		private static uint GetKeyEventFlags(int vKey, bool bDown)
+		{
+			uint u = 0;
+			if(!bDown) u |= NativeMethods.KEYEVENTF_KEYUP;
+			if(IsExtendedKeyEx(vKey)) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+			return u;
+		}
+
 		private static bool IsExtendedKeyEx(int vKey)
 		{
-			// if(vKey == NativeMethods.VK_CAPITAL) return true;
+			// http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx
+			// http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_LSHIFT, 0) == 0x2AU);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_RSHIFT, 0) == 0x36U);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_SHIFT, 0) == 0x2AU);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_LCONTROL, 0) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_RCONTROL, 0) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_CONTROL, 0) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_LMENU, 0) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_RMENU, 0) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey((uint)
+				NativeMethods.VK_MENU, 0) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x5BU, 0) == 0x5BU);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x5CU, 0) == 0x5CU);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x5DU, 0) == 0x5DU);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x6AU, 0) == 0x37U);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x6BU, 0) == 0x4EU);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x6DU, 0) == 0x4AU);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x6EU, 0) == 0x53U);
+			Debug.Assert(NativeMethods.MapVirtualKey(0x6FU, 0) == 0x35U);
 
 			if((vKey >= 0x21) && (vKey <= 0x2E)) return true;
-			if((vKey >= 0x6A) && (vKey <= 0x6F)) return true;
+			if((vKey >= 0x5B) && (vKey <= 0x5D)) return true;
+			if(vKey == 0x6F) return true; // VK_DIVIDE
+
+			// RShift is separate; no E0
+			if(vKey == NativeMethods.VK_RCONTROL) return true;
+			if(vKey == NativeMethods.VK_RMENU) return true;
 
 			return false;
 		}

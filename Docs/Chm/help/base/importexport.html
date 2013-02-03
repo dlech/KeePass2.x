@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
 
 	<title>File Formats - KeePass</title>
 	<base target="_self" />
@@ -46,16 +46,16 @@ KeePass supports importing/exporting data from/to various file formats.
 <p>KeePass 2.x supports importing data from <b>CSV files</b> (all),
 <b>KeePass 1.x (KDB, XML and CSV)</b>, <b>KeePass 2.x XML</b>,
 <b>1Password Pro</b>, <b>1PW</b>, <b>Alle meine Passworte</b>,
-<b>Any Password</b>, <b>CodeWallet</b>, <b>DataVault</b>, <b>FlexWallet</b>,
-<b>Handy Safe</b>, <b>Handy Safe Pro</b>,
-<b>Kaspersky Password Manager</b>, <b>KeePassX</b>,
+<b>Any Password</b>, <b>CodeWallet</b>, <b>DataVault</b>, <b>DesktopKnox</b>,
+<b>FlexWallet</b>, <b>Handy Safe</b>, <b>Handy Safe Pro</b>,
+<b>Kaspersky Password Manager</b>, <b>KeePassX</b>, <b>LastPass</b>,
 <b>Mozilla Bookmarks</b>, <b>PassKeeper</b>,
 <b>Passphrase Keeper</b>, <b>Password Agent</b>,
 <b>Password Depot</b>, <b>Password Exporter</b>, <b>Password Gorilla</b>,
 <b>Password Keeper</b>, <b>Password Memory</b>, <b>Password Prompter</b>,
 <b>Password Safe</b>, <b>Passwords Plus</b>, <b>Passwort.Tresor</b>, <b>Personal Vault</b>,
 <b>PINs</b>, <b>Revelation</b>, <b>RoboForm</b>,
-<b>Security TXT</b>, <b>SplashID CSV</b>, <b>Steganos Password Manager 2007</b>,
+<b>Security TXT</b>, <b>SplashID</b>, <b>Steganos Password Manager 2007</b>,
 <b>Sticky Password</b>,
 <b>Whisper 32</b>, <b>ZDNet's Password Pro</b>, and <b>Spamex.com</b>.</p>
 
@@ -80,13 +80,13 @@ add more import capabilities/formats.</p>
 <li>Formats that require custom options/steps in order to be imported:
 
 <ul>
-<li><a href="#imp_cwallet">How to Import CodeWallet TXT 6.05</a></li>
-<li><a href="#imp_pwgorilla">How to Import Password Gorilla CSV 1.42</a></li>
-<li><a href="#imp_pins">How to Import PINs TXT 4.50</a></li>
+<li><a href="#imp_cwallet">How to Import CodeWallet TXT</a></li>
+<li><a href="#imp_pwgorilla">How to Import Password Gorilla CSV</a></li>
+<li><a href="#imp_pins">How to Import PINs TXT</a></li>
 <li><a href="#imp_roboform">How to Import Data from RoboForm</a></li>
 <li><a href="#imp_steganos">How to Import Data from Steganos Password Manager 2007</a></li>
 <li><a href="#imp_passkeeper">How to Import Data from PassKeeper 1.2</a></li>
-<li><a href="#imp_1pwpro">How to Import 1Password Pro CSV</a></li>
+<li><a href="#imp_1pwpro">How to Import 1PW and 1Password Pro CSV</a></li>
 </ul>
 
 </li>
@@ -249,7 +249,7 @@ alt="Generic CSV Importer" /></a>
 <a name="imp_cwallet"></a>
 <h2 class="sectiontitle">
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-CodeWallet TXT 6.05</h2>
+CodeWallet TXT</h2>
 
 <p>CodeWallet is a password manager that supports different card types (fields).
 KeePass cannot know which of the CodeWallet fields correspond to the KeePass
@@ -265,7 +265,7 @@ of the entries dialog.</p>
 <a name="imp_pwgorilla"></a>
 <h2 class="sectiontitle">
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-Password Gorilla CSV 1.42</h2>
+Password Gorilla CSV</h2>
 
 <p>In order to successfully import a Password Gorilla CSV file, you need
 to configure the following settings in <i>'File - Preferences - Export'</i> in
@@ -287,7 +287,7 @@ it into KeePass using <i>'File -&gt; Import'</i> in KeePass 2.x.</p>
 <a name="imp_pins"></a>
 <h2 class="sectiontitle">
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-PINs TXT 4.50</h2>
+PINs TXT</h2>
 
 <p>In order to successfully import a PINs TXT file, you need to do the following:</p>
 
@@ -308,18 +308,25 @@ PINs TXT 4.50</h2>
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
 Data from RoboForm</h2>
 
-<p>First you need to export your passcards to a HTML file. To do this, open
+<ol>
+<li>In RoboForm go <i>'Options'</i> -&gt; tab <i>'User Data'</i> and
+uncheck the option <i>'PrintList shows new dialog'</i>.
+If you cannot find this option (old RoboForm version), simply continue with
+the next step.</li>
+
+<li>Export your logins to a HTML file. To do this, open
 RoboForm's <i>Passcard Editor</i> (<i>'Edit Passcards'</i> or <i>'RoboForm Editor'</i>
 in the Windows start menu)
 and in the editor's main menu go <i>'Passcard'</i> -&gt; <i>'Print List'</i>
 (in newer versions you have to click the <i>'RoboForm'</i> button and go
-<i>'Print List'</i> -&gt; <i>'Passcards'</i>). In the
+<i>'Print List'</i> -&gt; <i>'Logins'</i>). In the
 dialog that opens, click the <i>'Save'</i> button. Choose a location and file name,
-and click <i>'Save'</i>.</p>
+and click <i>'Save'</i>.</li>
 
-<p>Open your KeePass 2.x database file and go <i>'File'</i> -&gt; <i>'Import'</i>.
+<li>Open your KeePass 2.x database file and go <i>'File'</i> -&gt; <i>'Import'</i>.
 Choose <i>'RoboForm HTML'</i> as format and select the HTML file you just exported,
-then click <i>'OK'</i>.</p>
+then click <i>'OK'</i>.</li>
+</ol>
 
 <br />
 
@@ -385,15 +392,15 @@ Steganos Password Manager data. Please read all instructions in
 <a name="imp_1pwpro"></a>
 <h2 class="sectiontitle">
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-1Password Pro CSV</h2>
+1PW and 1Password Pro CSV</h2>
 
-<p>KeePass can import CSV files exported by 1Password Pro. When exporting the
-data, make sure:</p>
+<p>KeePass can import CSV files exported by 1PW and 1Password Pro.
+When exporting the data, make sure:</p>
 
 <ul>
-<li>All fields must be exported, in the original order.</li>
 <li>Choose the tabulator (Tab) as field separator.</li>
 <li>The option for enclosing fields in quotes must be enabled.</li>
+<li>All fields must be exported, in the original order.</li>
 </ul>
 
 </body></html>

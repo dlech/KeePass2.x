@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -98,7 +98,8 @@ namespace KeePass.UI
 			Rectangle rectText = new Rectangle(bRtl ? (rectClip.Left + 1) :
 				(rectClip.Left + dImg + 2 + 1), rectClip.Top + 1,
 				rectClip.Width - dImg - 5, rectClip.Height - 2);
-			TextFormatFlags tff = (TextFormatFlags.EndEllipsis | TextFormatFlags.PreserveGraphicsClipping |
+			TextFormatFlags tff = (TextFormatFlags.PreserveGraphicsClipping |
+				TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix |
 				TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
 			if(bRtl) tff |= (TextFormatFlags.RightToLeft | TextFormatFlags.Right);
 			string strText = string.Empty;

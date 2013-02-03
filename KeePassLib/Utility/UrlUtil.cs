@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,16 @@ namespace KeePassLib.Utility
 	public static class UrlUtil
 	{
 		private static readonly char[] m_vDirSeps = new char[] { '\\', '/',
-			Path.DirectorySeparatorChar };
+			UrlUtil.LocalDirSepChar };
+
+		public static char LocalDirSepChar
+		{
+#if KeePassRT
+			get { return '\\'; }
+#else
+			get { return Path.DirectorySeparatorChar; }
+#endif
+		}
 
 		/// <summary>
 		/// Get the directory (path) of a file name. The returned string is
@@ -148,7 +157,7 @@ namespace KeePassLib.Utility
 			}
 
 			if(bUrl) return (strPath + '/');
-			return (strPath + Path.DirectorySeparatorChar);
+			return (strPath + UrlUtil.LocalDirSepChar);
 		}
 
 		/* /// <summary>
@@ -229,14 +238,14 @@ namespace KeePassLib.Utility
 			if(str.StartsWith(@"file:///", StrUtil.CaseIgnoreCmp))
 				str = str.Substring(8, str.Length - 8);
 
-			str = str.Replace('/', Path.DirectorySeparatorChar);
+			str = str.Replace('/', UrlUtil.LocalDirSepChar);
 
 			return str;
 		}
 
 		public static bool UnhideFile(string strFile)
 		{
-#if KeePassLibSD
+#if (KeePassLibSD || KeePassRT)
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -256,7 +265,7 @@ namespace KeePassLib.Utility
 
 		public static bool HideFile(string strFile, bool bHide)
 		{
-#if KeePassLibSD
+#if (KeePassLibSD || KeePassRT)
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -297,7 +306,9 @@ namespace KeePassLib.Utility
 					return strTargetFile;
 			}
 
+#if (!KeePassLibSD && !KeePassRT)
 			if(NativeLib.IsUnix())
+#endif
 			{
 				bool bBaseUnc = IsUncPath(strBaseFile);
 				bool bTargetUnc = IsUncPath(strTargetFile);
@@ -316,21 +327,19 @@ namespace KeePassLib.Utility
 				StringBuilder sbRel = new StringBuilder();
 				for(int j = i; j < (vBase.Length - 1); ++j)
 				{
-					if(sbRel.Length > 0) sbRel.Append(Path.DirectorySeparatorChar);
+					if(sbRel.Length > 0) sbRel.Append(UrlUtil.LocalDirSepChar);
 					sbRel.Append("..");
 				}
 				for(int k = i; k < vTarget.Length; ++k)
 				{
-					if(sbRel.Length > 0) sbRel.Append(Path.DirectorySeparatorChar);
+					if(sbRel.Length > 0) sbRel.Append(UrlUtil.LocalDirSepChar);
 					sbRel.Append(vTarget[k]);
 				}
 
 				return sbRel.ToString();
 			}
 
-#if KeePassLibSD
-			return strTargetFile;
-#else
+#if (!KeePassLibSD && !KeePassRT)
 			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
@@ -344,7 +353,8 @@ namespace KeePassLib.Utility
 
 				return str;
 			}
-			catch(Exception) { Debug.Assert(false); return strTargetFile; }
+			catch(Exception) { Debug.Assert(false); }
+			return strTargetFile;
 #endif
 		}
 
@@ -420,7 +430,16 @@ namespace KeePassLib.Utility
 			}
 
 			string str;
-			try { str = Path.GetFullPath(strPath); }
+			try
+			{
+#if KeePassRT
+				var dirT = Windows.Storage.StorageFolder.GetFolderFromPathAsync(
+					strPath).AwaitEx();
+				str = dirT.Path;
+#else
+				str = Path.GetFullPath(strPath);
+#endif
+			}
 			catch(Exception) { Debug.Assert(false); return strPath; }
 
 			Debug.Assert(str.IndexOf("\\..\\") < 0);
@@ -476,7 +495,7 @@ namespace KeePassLib.Utility
 
 		public static string ConvertSeparators(string strPath)
 		{
-			return ConvertSeparators(strPath, Path.DirectorySeparatorChar);
+			return ConvertSeparators(strPath, UrlUtil.LocalDirSepChar);
 		}
 
 		public static string ConvertSeparators(string strPath, char chSeparator)
@@ -594,7 +613,11 @@ namespace KeePassLib.Utility
 			string strDir;
 			if(NativeLib.IsUnix())
 				strDir = NativeMethods.GetUserRuntimeDir();
+#if KeePassRT
+			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
+#else
 			else strDir = Path.GetTempPath();
+#endif
 
 			try
 			{

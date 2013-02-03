@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -113,8 +113,12 @@ namespace KeePass.Forms
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.None;
+			DoCancel();
+		}
 
-			if(m_bCancelled) { Debug.Assert(false); return; }
+		private void DoCancel()
+		{
+			if(m_bCancelled) return;
 			if(!m_bCanCancel) return;
 
 			m_bCancelled = true;
@@ -183,6 +187,7 @@ namespace KeePass.Forms
 			{
 				Debug.Assert(e.CloseReason == CloseReason.UserClosing);
 				e.Cancel = true;
+				DoCancel();
 			}
 		}
 	}

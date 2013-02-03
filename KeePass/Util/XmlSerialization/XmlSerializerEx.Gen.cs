@@ -392,6 +392,9 @@ namespace KeePass.Util.XmlSerialization
 					case "EntryListShowDerefDataAsync":
 						o.EntryListShowDerefDataAsync = ReadBoolean(xr);
 						break;
+					case "EntryListShowDerefDataAndRefs":
+						o.EntryListShowDerefDataAndRefs = ReadBoolean(xr);
+						break;
 					case "ListSorting":
 						o.ListSorting = ReadListSorter(xr);
 						break;
@@ -778,6 +781,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "AutoTypeAdjustKeyboardLayout":
 						o.AutoTypeAdjustKeyboardLayout = ReadBoolean(xr);
+						break;
+					case "AutoTypeAllowInterleaved":
+						o.AutoTypeAllowInterleaved = ReadBoolean(xr);
 						break;
 					case "AutoTypeCancelOnWindowChange":
 						o.AutoTypeCancelOnWindowChange = ReadBoolean(xr);

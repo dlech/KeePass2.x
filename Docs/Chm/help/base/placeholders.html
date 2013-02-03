@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -73,11 +73,11 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field Placeholders</h2>
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Field</th></tr>
-<tr><td width="50%">{TITLE}</td><td width="50%">Title</td></tr>
-<tr><td width="50%">{USERNAME}</td><td width="50%">User name</td></tr>
-<tr><td width="50%">{URL}</td><td width="50%">URL</td></tr>
-<tr><td width="50%">{PASSWORD}</td><td width="50%">Password</td></tr>
-<tr><td width="50%">{NOTES}</td><td width="50%">Notes</td></tr>
+<tr><td width="50%"><code>{TITLE}</code></td><td width="50%">Title</td></tr>
+<tr><td width="50%"><code>{USERNAME}</code></td><td width="50%">User name</td></tr>
+<tr><td width="50%"><code>{URL}</code></td><td width="50%">URL</td></tr>
+<tr><td width="50%"><code>{PASSWORD}</code></td><td width="50%">Password</td></tr>
+<tr><td width="50%"><code>{NOTES}</code></td><td width="50%">Notes</td></tr>
 </table>
 
 <br />
@@ -95,12 +95,12 @@ you can use the placeholder <code>{S:eMail}</code>.
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{URL:RMVSCM}</td><td width="50%">Entry URL without scheme name.</td></tr>
-<tr><td width="50%">{URL:SCM}</td><td width="50%">Scheme name of the entry URL.</td></tr>
-<tr><td width="50%">{URL:HOST}</td><td width="50%">Host component of the entry URL.</td></tr>
-<tr><td width="50%">{URL:PORT}</td><td width="50%">Port number of the entry URL.</td></tr>
-<tr><td width="50%">{URL:PATH}</td><td width="50%">Path component of the entry URL.</td></tr>
-<tr><td width="50%">{URL:QUERY}</td><td width="50%">Query information of the entry URL.</td></tr>
+<tr><td width="50%"><code>{URL:RMVSCM}</code></td><td width="50%">Entry URL without scheme name.</td></tr>
+<tr><td width="50%"><code>{URL:SCM}</code></td><td width="50%">Scheme name of the entry URL.</td></tr>
+<tr><td width="50%"><code>{URL:HOST}</code></td><td width="50%">Host component of the entry URL.</td></tr>
+<tr><td width="50%"><code>{URL:PORT}</code></td><td width="50%">Port number of the entry URL.</td></tr>
+<tr><td width="50%"><code>{URL:PATH}</code></td><td width="50%">Path component of the entry URL.</td></tr>
+<tr><td width="50%"><code>{URL:QUERY}</code></td><td width="50%">Query information of the entry URL.</td></tr>
 </table>
 
 
@@ -123,19 +123,19 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{INTERNETEXPLORER}</td><td width="50%">Path of Internet Explorer, if installed.</td></tr>
-<tr><td width="50%">{FIREFOX}</td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
-<tr><td width="50%">{OPERA}</td><td width="50%">Path of Opera, if installed.</td></tr>
-<tr><td width="50%">{GOOGLECHROME}</td><td width="50%">Path of Google Chrome (or Chromium
+<tr><td width="50%"><code>{INTERNETEXPLORER}</code></td><td width="50%">Path of Internet Explorer, if installed.</td></tr>
+<tr><td width="50%"><code>{FIREFOX}</code></td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
+<tr><td width="50%"><code>{OPERA}</code></td><td width="50%">Path of Opera, if installed.</td></tr>
+<tr><td width="50%"><code>{GOOGLECHROME}</code></td><td width="50%">Path of Google Chrome (or Chromium
 on Unix-like systems), if installed.</td></tr>
-<tr><td width="50%">{SAFARI}</td><td width="50%">Path of Safari, if installed.</td></tr>
+<tr><td width="50%"><code>{SAFARI}</code></td><td width="50%">Path of Safari, if installed.</td></tr>
 </table>
 
 <br />
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{APPDIR}</td><td width="50%">KeePass application directory path.</td></tr>
+<tr><td width="50%"><code>{APPDIR}</code></td><td width="50%">KeePass application directory path.</td></tr>
 </table>
 
 <br />
@@ -143,15 +143,15 @@ on Unix-like systems), if installed.</td></tr>
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{GROUP}</td><td width="50%">Name of the entry's parent group.</td></tr>
-<tr><td width="50%">{GROUPPATH}</td><td width="50%">Full group path of the entry.</td></tr>
-<tr><td width="50%">{DB_PATH}</td><td width="50%">Full path of the current database.</td></tr>
-<tr><td width="50%">{DB_DIR}</td><td width="50%">Directory of the current database.</td></tr>
-<tr><td width="50%">{DB_NAME}</td><td width="50%">File name (including extension) of the current database.</td></tr>
-<tr><td width="50%">{DB_BASENAME}</td><td width="50%">File name (excluding extension) of the current database.</td></tr>
-<tr><td width="50%">{DB_EXT}</td><td width="50%">File name extension of the current database.</td></tr>
-<tr><td width="50%">{ENV_DIRSEP}</td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
-<tr><td width="50%">{ENV_PROGRAMFILES_X86}</td><td width="50%">This is
+<tr><td width="50%"><code>{GROUP}</code></td><td width="50%">Name of the entry's parent group.</td></tr>
+<tr><td width="50%"><code>{GROUPPATH}</code></td><td width="50%">Full group path of the entry.</td></tr>
+<tr><td width="50%"><code>{DB_PATH}</code></td><td width="50%">Full path of the current database.</td></tr>
+<tr><td width="50%"><code>{DB_DIR}</code></td><td width="50%">Directory of the current database.</td></tr>
+<tr><td width="50%"><code>{DB_NAME}</code></td><td width="50%">File name (including extension) of the current database.</td></tr>
+<tr><td width="50%"><code>{DB_BASENAME}</code></td><td width="50%">File name (excluding extension) of the current database.</td></tr>
+<tr><td width="50%"><code>{DB_EXT}</code></td><td width="50%">File name extension of the current database.</td></tr>
+<tr><td width="50%"><code>{ENV_DIRSEP}</code></td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
+<tr><td width="50%"><code>{ENV_PROGRAMFILES_X86}</code></td><td width="50%">This is
 <code>%ProgramFiles(x86)%</code>, if it exists, otherwise <code>%ProgramFiles%</code>.</td></tr>
 </table>
 
@@ -160,21 +160,21 @@ on Unix-like systems), if installed.</td></tr>
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%">{DT_SIMPLE}</td><td width="50%">Current local date/time as a simple, sortable string.
-For example, for 2012-07-25 17:05:34 the value is 20120725170534.</td></tr>
-<tr><td width="50%">{DT_YEAR}</td><td width="50%">Year component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_MONTH}</td><td width="50%">Month component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_DAY}</td><td width="50%">Day component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_HOUR}</td><td width="50%">Hour component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_MINUTE}</td><td width="50%">Minute component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_SECOND}</td><td width="50%">Seconds component of the current local date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_SIMPLE}</td><td width="50%">Current UTC date/time as a simple, sortable string.</td></tr>
-<tr><td width="50%">{DT_UTC_YEAR}</td><td width="50%">Year component of the current UTC date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_MONTH}</td><td width="50%">Month component of the current UTC date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_DAY}</td><td width="50%">Day component of the current UTC date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_HOUR}</td><td width="50%">Hour component of the current UTC date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_MINUTE}</td><td width="50%">Minute component of the current UTC date/time.</td></tr>
-<tr><td width="50%">{DT_UTC_SECOND}</td><td width="50%">Seconds component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_SIMPLE}</code></td><td width="50%">Current local date/time as a simple,
+sortable string. For example, for 2012-07-25 17:05:34 the value is 20120725170534.</td></tr>
+<tr><td width="50%"><code>{DT_YEAR}</code></td><td width="50%">Year component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_MONTH}</code></td><td width="50%">Month component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_DAY}</code></td><td width="50%">Day component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_HOUR}</code></td><td width="50%">Hour component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_MINUTE}</code></td><td width="50%">Minute component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_SECOND}</code></td><td width="50%">Seconds component of the current local date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_SIMPLE}</code></td><td width="50%">Current UTC date/time as a simple, sortable string.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_YEAR}</code></td><td width="50%">Year component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_MONTH}</code></td><td width="50%">Month component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_DAY}</code></td><td width="50%">Day component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_HOUR}</code></td><td width="50%">Hour component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_MINUTE}</code></td><td width="50%">Minute component of the current UTC date/time.</td></tr>
+<tr><td width="50%"><code>{DT_UTC_SECOND}</code></td><td width="50%">Seconds component of the current UTC date/time.</td></tr>
 </table>
 
 <br /><br />
@@ -198,19 +198,16 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Other Placeholders</h2>
 
 <table class="tablebox75">
 <tr><th width="50%">Placeholder</th><th width="50%">Action</th></tr>
-<!-- <tr><td width="50%">{PICKPASSWORDCHARS}<br />
-{PICKPASSWORDCHARS<i>n</i>:<i>k</i>}</td><td width="50%">Shows a dialog to pick certain characters from the password.
-See <a href="#pickpasswordchars">below</a>.</td></tr> -->
-<tr><td width="50%">{PICKCHARS}<br />
-{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</td><td width="50%">Shows a dialog to pick certain characters from an entry string.
+<tr><td width="50%"><code>{PICKCHARS}</code><br />
+<code>{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</code></td><td width="50%">Shows a dialog to pick certain characters from an entry string.
 See <a href="#pickchars">below</a>.</td></tr>
-<tr><td width="50%">{NEWPASSWORD}</td><td width="50%">Generates a new password.
+<tr><td width="50%"><code>{NEWPASSWORD}</code></td><td width="50%">Generates a new password.
 See <a href="#newpassword">below</a>.</td></tr>
-<tr><td width="50%">{PASSWORD_ENC}</td><td width="50%">Password in encrypted form.
+<tr><td width="50%"><code>{PASSWORD_ENC}</code></td><td width="50%">Password in encrypted form.
 See <a href="#passwordenc">below</a>.</td></tr>
-<tr><td width="50%">{HMACOTP}</td><td width="50%">Generates a one-time password.
+<tr><td width="50%"><code>{HMACOTP}</code></td><td width="50%">Generates a one-time password.
 See <a href="#hmacotp">below</a>.</td></tr>
-<tr><td width="50%">{C:<i>Comment</i>}</td><td width="50%">Comment; is removed.</td></tr>
+<tr><td width="50%"><code>{C:<i>Comment</i>}</code></td><td width="50%">Comment; is removed.</td></tr>
 </table>
 
 

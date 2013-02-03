@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -59,6 +59,14 @@ namespace KeePass.UI
 		}
 
 		private static Font m_fontDefault = null;
+		/// <summary>
+		/// Get the default UI font. This might be <c>null</c>!
+		/// </summary>
+		public static Font DefaultFont
+		{
+			get { return m_fontDefault; }
+		}
+
 		public static void SetDefaultFont(Control c)
 		{
 			if(c == null) throw new ArgumentNullException("c");

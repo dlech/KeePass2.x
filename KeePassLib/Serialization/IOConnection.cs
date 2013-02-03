@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,12 +22,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 using System.Net.Cache;
 using System.Net.Security;
+#endif
+
+#if !KeePassRT
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 using KeePassLib.Native;
@@ -35,7 +38,7 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
 {
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 	public sealed class IOWebClient : WebClient
 	{
 		protected override WebRequest GetWebRequest(Uri address)
@@ -49,7 +52,7 @@ namespace KeePassLib.Serialization
 
 	public static class IOConnection
 	{
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		private static ProxyServerType m_pstProxyType = ProxyServerType.System;
 		private static string m_strProxyAddr = string.Empty;
 		private static string m_strProxyPort = string.Empty;
@@ -64,7 +67,9 @@ namespace KeePassLib.Serialization
 		// Web request headers
 		public const string WrhMoveFileTo = "MoveFileTo";
 
-#if !KeePassLibSD
+		public static event EventHandler<IOAccessEventArgs> IOAccessPre;
+
+#if (!KeePassLibSD && !KeePassRT)
 		// Allow self-signed certificates, expired certificates, etc.
 		private static bool ValidateServerCertificate(object sender,
 			X509Certificate certificate, X509Chain chain,
@@ -219,6 +224,8 @@ namespace KeePassLib.Serialization
 
 		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
+
 			if(StrUtil.IsDataUri(ioc.Path))
 			{
 				byte[] pbData = StrUtil.DataUriToData(ioc.Path);
@@ -232,6 +239,8 @@ namespace KeePassLib.Serialization
 #else
 		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
+
 			return OpenReadLocal(ioc);
 		}
 #endif
@@ -242,10 +251,12 @@ namespace KeePassLib.Serialization
 				FileShare.Read);
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
 			if(ioc == null) { Debug.Assert(false); return null; }
+
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
 
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
@@ -263,6 +274,8 @@ namespace KeePassLib.Serialization
 #else
 		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
+
 			return OpenWriteLocal(ioc);
 		}
 #endif
@@ -282,9 +295,11 @@ namespace KeePassLib.Serialization
 		{
 			if(ioc == null) { Debug.Assert(false); return false; }
 
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
+
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
 			{
 				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
@@ -317,9 +332,11 @@ namespace KeePassLib.Serialization
 
 		public static void DeleteFile(IOConnectionInfo ioc)
 		{
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
+
 			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(ioc);
 			if(req != null)
 			{
@@ -348,9 +365,11 @@ namespace KeePassLib.Serialization
 		/// <param name="iocTo">Target file path.</param>
 		public static void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
+			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
+
 			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(iocFrom);
 			if(req != null)
 			{
@@ -393,7 +412,7 @@ namespace KeePassLib.Serialization
 			// DeleteFile(iocFrom);
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
 		{
 			try
@@ -448,6 +467,25 @@ namespace KeePassLib.Serialization
 			}
 
 			return null;
+		}
+
+		private static void RaiseIOAccessPreEvent(IOConnectionInfo ioc, IOAccessType t)
+		{
+			RaiseIOAccessPreEvent(ioc, null, t);
+		}
+
+		private static void RaiseIOAccessPreEvent(IOConnectionInfo ioc,
+			IOConnectionInfo ioc2, IOAccessType t)
+		{
+			if(ioc == null) { Debug.Assert(false); return; }
+			// ioc2 may be null
+
+			if(IOConnection.IOAccessPre != null)
+			{
+				IOConnectionInfo ioc2Lcl = ((ioc2 != null) ? ioc2.CloneDeep() : null);
+				IOAccessEventArgs e = new IOAccessEventArgs(ioc.CloneDeep(), ioc2Lcl, t);
+				IOConnection.IOAccessPre(null, e);
+			}
 		}
 	}
 }

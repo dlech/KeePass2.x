@@ -1,3 +1,94 @@
+2013-02-03: 2.21
+- Generic CSV importer: a group separator can be specified now
+  (for importing group trees)
+- Internal data viewer: added hex viewer mode (which is now the
+  default for unknown data types)
+- In the 'Show Entries by Tag' menu, the number of entries
+  having a specific tag is now shown right of the tag
+- In the 'Add Tag' menu, a tag is now disabled if all selected
+  entries already have this tag
+- Auto-Type: added support for right modifier keys
+- Added special key codes: {WIN}, {LWIN}, {RWIN}, {APPS},
+  {NUMPAD0} to {NUMPAD9}
+- Interleaved sending of keys is now prevented by default (if
+  you e.g. have an auto-type sequence that triggers another
+  auto-type, enable the new option 'Allow interleaved sending
+  of keys' in 'Tools' -> 'Options' -> tab 'Advanced')
+- Added '-auto-type-selected' command line option (other
+  running KeePass instances perform auto-type for the currently
+  selected entry)
+- Added option to additionally show references when showing
+  dereferenced data (enabled by default)
+- The selection in a secure edit control is now preserved when
+  unhiding and hiding the content
+- The auto-type association editing dialog now does not hang
+  anymore when a window of any other application hangs
+- When an application switches from the secure desktop to a
+  different desktop, KeePass now shows a warning message box;
+  clicking [OK] switches back to the secure desktop
+- Added 'OK'/'Cancel' buttons in the icon picker dialog
+- Added support for importing LastPass 2.0.2 CSV files
+- KeePass now shows an error message when the user accidentally
+  attempts to use a database file as key file
+- Added support for UTF-16 surrogate pairs
+- Added UTF-8 BOM support for version information files
+- The KeePass version is now also shown in the components list
+  in the 'About' dialog
+- File operations are now context-independent (this e.g. makes
+  it possible to use the 'Activate database' trigger action
+  during locking)
+- Plugins can now register their placeholders to be shown in
+  the auto-type item editing dialog
+- Plugins can now subscribe to IO access events
+- Added workaround for .NET bug 694242; status dialogs now
+  scale properly with the DPI resolution
+- Added workaround for Mono DataGridView.EditMode bug
+- Added workaround for Mono bug 586901; high Unicode characters
+  in rich text boxes are displayed properly now
+
+- When the main window UI is being unblocked, the focus is not
+  reset anymore, if a primary control has the focus
+- When opening the icon picker dialog, KeePass now ensures that
+  the currently selected icon is visible
+- Internal data viewer: improved visibility updating
+- The e-mail box icon by default is not inherited by new
+  entries anymore
+- The database is now marked as modified when auto-typing a TAN
+  entry
+- Enhanced AnyPassword importer to additionally support CSV
+  files exported by AnyPassword Pro 1.07
+- Enhanced Password Safe XML importer (KeePass tries to fix the
+  broken XML files exported by Password Safe 3.29
+  automatically)
+- IO credentials can be loaded over IPC now
+- Enhanced user switch detection
+- Even when an exception occurs, temporary files created during
+  KDB exports are now deleted immediately
+- Improved behavior on Unix-like systems when the operating
+  system does not grant KeePass access to the temporary
+  directory
+- Improved critical sections that are not supposed to be re-
+  entered by the same thread
+- Improved secure desktop name generation
+- When a dialog is closed, references within the global client
+  image list to controls (event handlers) are removed now
+- .NET 4.5 is now preferred, if installed
+- PLGX plugins are now preferably compiled using the .NET 4.5
+  compiler, if KeePass is currently running under the 4.5 CLR
+- Updated KB links
+- Changed naming of translation files
+- The installer now always overwrites the KeePassLibC 1.x
+  support libraries
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- When locking multiple databases and cancelling a 'Save
+  Changes?' dialog, the UI is now updated correctly
+- '&' characters in dynamic menu texts, in dialog banner texts,
+  in image combobox texts, in text box prompts and in tooltips
+  are now displayed properly
+
 2012-10-04: 2.20.1
 - Improved support for images with DPI resolutions different
   from the DPI resolution of the display device

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -114,6 +114,12 @@ namespace KeePass.UI
 			Debug.Assert(m_vWindows.IndexOf(kvp) < 0);
 			m_vWindows.Add(kvp);
 
+			// The control box must be enabled, otherwise DPI scaling
+			// doesn't work due to a .NET bug:
+			// http://connect.microsoft.com/VisualStudio/feedback/details/694242/difference-dpi-let-the-button-cannot-appear-completely-while-remove-the-controlbox-for-the-form
+			// http://social.msdn.microsoft.com/Forums/en-US/winforms/thread/67407313-8cb2-42b4-afb9-8be816f0a601/
+			Debug.Assert(form.ControlBox);
+
 			form.TopMost = Program.Config.MainWindow.AlwaysOnTop;
 			// Form formParent = form.ParentForm;
 			// if(formParent != null) form.TopMost = formParent.TopMost;
@@ -152,6 +158,10 @@ namespace KeePass.UI
 							form, m_vWindows[i].Value));
 
 					MonoWorkarounds.Release(form);
+
+#if DEBUG
+					DebugClose(form);
+#endif
 
 					m_vWindows.RemoveAt(i);
 					return;
@@ -238,5 +248,53 @@ namespace KeePass.UI
 			if(c.ContextMenuStrip != null)
 				CustomizeFont(c.ContextMenuStrip, font);
 		}
+
+#if DEBUG
+		private static void DebugClose(Control c)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			List<ImageList> lInv = new List<ImageList>();
+			lInv.Add(Program.MainForm.ClientIcons);
+
+			ListView lv = (c as ListView);
+			if(lv != null)
+			{
+				// Image list properties must be set to null manually
+				// when closing, otherwise we get a memory leak
+				// (because the image list holds event handlers to
+				// the list)
+				Debug.Assert(!lInv.Contains(lv.LargeImageList));
+				Debug.Assert(!lInv.Contains(lv.SmallImageList));
+			}
+
+			TreeView tv = (c as TreeView);
+			if(tv != null)
+			{
+				Debug.Assert(!lInv.Contains(tv.ImageList)); // See above
+			}
+
+			TabControl tc = (c as TabControl);
+			if(tc != null)
+			{
+				Debug.Assert(!lInv.Contains(tc.ImageList)); // See above
+			}
+
+			ToolStrip ts = (c as ToolStrip);
+			if(ts != null)
+			{
+				Debug.Assert(!lInv.Contains(ts.ImageList)); // See above
+			}
+
+			Button btn = (c as Button);
+			if(btn != null)
+			{
+				Debug.Assert(!lInv.Contains(btn.ImageList)); // See above
+			}
+
+			foreach(Control cc in c.Controls)
+				DebugClose(cc);
+		}
+#endif
 	}
 }

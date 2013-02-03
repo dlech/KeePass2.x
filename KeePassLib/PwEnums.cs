@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -204,4 +204,44 @@ namespace KeePassLib
 
 		IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
 	}
+
+	public enum IOAccessType
+	{
+		None = 0,
+
+		/// <summary>
+		/// The IO connection is being opened for reading.
+		/// </summary>
+		Read = 1,
+
+		/// <summary>
+		/// The IO connection is being opened for writing.
+		/// </summary>
+		Write = 2,
+
+		/// <summary>
+		/// The IO connection is being opened for testing
+		/// whether a file/object exists.
+		/// </summary>
+		Exists = 3,
+
+		/// <summary>
+		/// The IO connection is being opened for deleting a file/object.
+		/// </summary>
+		Delete = 4,
+
+		/// <summary>
+		/// The IO connection is being opened for renaming/moving a file/object.
+		/// </summary>
+		Move = 5
+	}
+
+	// public enum PwLogicalOp
+	// {
+	//	None = 0,
+	//	Or = 1,
+	//	And = 2,
+	//	NOr = 3,
+	//	NAnd = 4
+	// }
 }

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+
+using KeePass.Util;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -49,7 +53,7 @@ namespace KeePass.UI
 				this.Style = fs;
 			}
 
-			private static string GenerateRandomIdCode()
+			internal static string GenerateRandomIdCode()
 			{
 				StringBuilder sb = new StringBuilder(14);
 				for(int i = 0; i < 12; ++i)
@@ -173,9 +177,33 @@ namespace KeePass.UI
 			if(rtb == null) throw new ArgumentNullException("rtb");
 
 			RichTextBox rtbOp = CreateOpRtb();
+			string strText = m_sb.ToString();
 
-			rtbOp.Text = m_sb.ToString();
-			Debug.Assert(rtbOp.Text == m_sb.ToString()); // Test committed
+			Dictionary<char, string> dEnc = new Dictionary<char, string>();
+			// https://bugzilla.novell.com/show_bug.cgi?id=586901
+			if(MonoWorkarounds.IsRequired)
+			{
+				StringBuilder sbEnc = new StringBuilder();
+				for(int i = 0; i < strText.Length; ++i)
+				{
+					char ch = strText[i];
+					if((int)ch <= 255) sbEnc.Append(ch);
+					else
+					{
+						string strCharEnc;
+						if(!dEnc.TryGetValue(ch, out strCharEnc))
+						{
+							strCharEnc = RtfbTag.GenerateRandomIdCode();
+							dEnc[ch] = strCharEnc;
+						}
+						sbEnc.Append(strCharEnc);
+					}
+				}
+				strText = sbEnc.ToString();
+			}
+
+			rtbOp.Text = strText;
+			Debug.Assert(rtbOp.Text == strText); // Test committed
 
 			if(m_fDefault != null)
 			{
@@ -186,8 +214,15 @@ namespace KeePass.UI
 			string strRtf = rtbOp.Rtf;
 			rtbOp.Dispose();
 
+			foreach(KeyValuePair<char, string> kvpEnc in dEnc)
+			{
+				strRtf = strRtf.Replace(kvpEnc.Value,
+					StrUtil.RtfEncodeChar(kvpEnc.Key));
+			}
 			foreach(RtfbTag rTag in m_vTags)
+			{
 				strRtf = strRtf.Replace(rTag.IdCode, rTag.RtfCode);
+			}
 
 			rtb.Rtf = strRtf;
 		}

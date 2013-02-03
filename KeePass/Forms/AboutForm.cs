@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,12 +83,8 @@ namespace KeePass.Forms
 
 		private void GetAppComponents()
 		{
-			ListViewItem lvi = new ListViewItem(KPRes.KeePassLibCLong);
-			if(!KdbFile.IsLibraryInstalled())
-				lvi.SubItems.Add(KPRes.NotInstalled);
-			else lvi.SubItems.Add(KdbManager.KeePassVersionString + " (0x" +
-				KdbManager.LibraryBuild.ToString("X4") + ")");
-
+			ListViewItem lvi = new ListViewItem(PwDefs.ShortProductName);
+			lvi.SubItems.Add(PwDefs.VersionString);
 			m_lvComponents.Items.Add(lvi);
 
 			lvi = new ListViewItem(KPRes.XslStylesheetsKdbx);
@@ -99,10 +95,15 @@ namespace KeePass.Forms
 			bool bInstalled = File.Exists(strPath + AppDefs.XslFileHtmlLite);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlFull);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlTabular);
-
 			if(!bInstalled) lvi.SubItems.Add(KPRes.NotInstalled);
 			else lvi.SubItems.Add(PwDefs.VersionString);
+			m_lvComponents.Items.Add(lvi);
 
+			lvi = new ListViewItem(KPRes.KeePassLibCLong);
+			if(!KdbFile.IsLibraryInstalled())
+				lvi.SubItems.Add(KPRes.NotInstalled);
+			else lvi.SubItems.Add(KdbManager.KeePassVersionString + " (0x" +
+				KdbManager.LibraryBuild.ToString("X4") + ")");
 			m_lvComponents.Items.Add(lvi);
 		}
 

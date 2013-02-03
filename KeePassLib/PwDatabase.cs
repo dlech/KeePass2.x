@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1323,25 +1323,30 @@ namespace KeePassLib
 
 			if((m_slStatus != null) && !m_slStatus.ContinueWork()) return;
 
-			SortedList<DateTime, PwEntry> list = new SortedList<DateTime, PwEntry>();
+			IDictionary<DateTime, PwEntry> dict =
+#if KeePassLibSD
+				new SortedList<DateTime, PwEntry>();
+#else
+				new SortedDictionary<DateTime, PwEntry>();
+#endif
 			foreach(PwEntry peOrg in pe.History)
 			{
-				list[peOrg.LastModificationTime] = peOrg;
+				dict[peOrg.LastModificationTime] = peOrg;
 			}
 
 			foreach(PwEntry peSrc in peSource.History)
 			{
 				DateTime dt = peSrc.LastModificationTime;
-				if(list.ContainsKey(dt))
+				if(dict.ContainsKey(dt))
 				{
 					if(mm == PwMergeMethod.OverwriteExisting)
-						list[dt] = peSrc.CloneDeep();
+						dict[dt] = peSrc.CloneDeep();
 				}
-				else list[dt] = peSrc.CloneDeep();
+				else dict[dt] = peSrc.CloneDeep();
 			}
 
 			pe.History.Clear();
-			foreach(KeyValuePair<DateTime, PwEntry> kvpCur in list)
+			foreach(KeyValuePair<DateTime, PwEntry> kvpCur in dict)
 			{
 				Debug.Assert(kvpCur.Value.Uuid.EqualsValue(pe.Uuid));
 				Debug.Assert(kvpCur.Value.History.UCount == 0);

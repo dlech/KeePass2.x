@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
 
 	<title>Auto-Type - KeePass</title>
 	<base target="_self" />
@@ -151,7 +151,7 @@ work/knowledge, before it can be used.</p>
 <ol>
 <li>Create an entry in KeePass titled <i>Notepad</i> with values for user name and password.</li>
 <li>Start Notepad - under 'Programs' -&gt; 'Accessories'.</li>
-<li>Press <i>LCtrl+Alt+A</i> within Notepad. The user name and
+<li>Press <i>Ctrl+Alt+A</i> within Notepad. The user name and
 password will be typed into Notepad.</li>
 </ol>
 
@@ -165,7 +165,7 @@ this hot key is that you don't need to switch to the KeePass window and
 select the entry. You simply press the hot key while having the target window
 open (i.e. the window which will receive the simulated keypresses).</p>
 
-<p>By default, the global hot key is <i>LCtrl+Alt+A</i> (i.e. hold the left Ctrl and
+<p>By default, the global hot key is <i>Ctrl+Alt+A</i> (i.e. hold the Ctrl and
 Alt keys, press 'A' and release all keys). You can change this hot key
 in the options dialog (main menu - 'Tools' - 'Options', tab
 
@@ -254,34 +254,39 @@ The following codes for special keys are supported:</p>
 
 <table class="tablebox75">
 <tr><th width="50%">Special Key</th><th width="50%">Code</th></tr>
-<tr><td width="50%">Tab</td><td width="50%">{TAB}</td></tr>
-<tr><td width="50%">Enter</td><td width="50%">{ENTER} or ~</td></tr>
-<tr><td width="50%">Arrow Up</td><td width="50%">{UP}</td></tr>
-<tr><td width="50%">Arrow Down</td><td width="50%">{DOWN}</td></tr>
-<tr><td width="50%">Arrow Left</td><td width="50%">{LEFT}</td></tr>
-<tr><td width="50%">Arrow Right</td><td width="50%">{RIGHT}</td></tr>
-<tr><td width="50%">Insert</td><td width="50%">{INSERT} or {INS}</td></tr>
-<tr><td width="50%">Delete</td><td width="50%">{DELETE} or {DEL}</td></tr>
-<tr><td width="50%">Home</td><td width="50%">{HOME}</td></tr>
-<tr><td width="50%">End</td><td width="50%">{END}</td></tr>
-<tr><td width="50%">Page Up</td><td width="50%">{PGUP}</td></tr>
-<tr><td width="50%">Page Down</td><td width="50%">{PGDN}</td></tr>
-<tr><td width="50%">Backspace</td><td width="50%">{BACKSPACE}, {BS} or {BKSP}</td></tr>
-<tr><td width="50%">Break</td><td width="50%">{BREAK}</td></tr>
-<tr><td width="50%">Caps-Lock</td><td width="50%">{CAPSLOCK}</td></tr>
-<tr><td width="50%">Escape</td><td width="50%">{ESC}</td></tr>
-<tr><td width="50%">Help</td><td width="50%">{HELP}</td></tr>
-<tr><td width="50%">Numlock</td><td width="50%">{NUMLOCK}</td></tr>
-<tr><td width="50%">Print Screen</td><td width="50%">{PRTSC}</td></tr>
-<tr><td width="50%">Scroll Lock</td><td width="50%">{SCROLLLOCK}</td></tr>
-<tr><td width="50%">F1 - F16</td><td width="50%">{F1} - {F16}</td></tr>
-<tr><td width="50%">Keypad +</td><td width="50%">{ADD}</td></tr>
-<tr><td width="50%">Keypad -</td><td width="50%">{SUBTRACT}</td></tr>
-<tr><td width="50%">Keypad *</td><td width="50%">{MULTIPLY}</td></tr>
-<tr><td width="50%">Keypad /</td><td width="50%">{DIVIDE}</td></tr>
-<tr><td width="50%">Shift</td><td width="50%">+</td></tr>
-<tr><td width="50%">Ctrl</td><td width="50%">^</td></tr>
-<tr><td width="50%">Alt</td><td width="50%">%</td></tr>
+<tr><td width="50%">Tab</td><td width="50%"><code>{TAB}</code></td></tr>
+<tr><td width="50%">Enter</td><td width="50%"><code>{ENTER}</code> or <code>~</code></td></tr>
+<tr><td width="50%">Arrow Up</td><td width="50%"><code>{UP}</code></td></tr>
+<tr><td width="50%">Arrow Down</td><td width="50%"><code>{DOWN}</code></td></tr>
+<tr><td width="50%">Arrow Left</td><td width="50%"><code>{LEFT}</code></td></tr>
+<tr><td width="50%">Arrow Right</td><td width="50%"><code>{RIGHT}</code></td></tr>
+<tr><td width="50%">Insert</td><td width="50%"><code>{INSERT}</code> or <code>{INS}</code></td></tr>
+<tr><td width="50%">Delete</td><td width="50%"><code>{DELETE}</code> or <code>{DEL}</code></td></tr>
+<tr><td width="50%">Home</td><td width="50%"><code>{HOME}</code></td></tr>
+<tr><td width="50%">End</td><td width="50%"><code>{END}</code></td></tr>
+<tr><td width="50%">Page Up</td><td width="50%"><code>{PGUP}</code></td></tr>
+<tr><td width="50%">Page Down</td><td width="50%"><code>{PGDN}</code></td></tr>
+<tr><td width="50%">Backspace</td><td width="50%"><code>{BACKSPACE}</code>,
+<code>{BS}</code> or <code>{BKSP}</code></td></tr>
+<tr><td width="50%">Break</td><td width="50%"><code>{BREAK}</code></td></tr>
+<tr><td width="50%">Caps-Lock</td><td width="50%"><code>{CAPSLOCK}</code></td></tr>
+<tr><td width="50%">Escape</td><td width="50%"><code>{ESC}</code></td></tr>
+<tr><td width="50%">Windows Key</td><td width="50%"><code>{WIN}</code> (equ. to <code>{LWIN}</code>)</td></tr>
+<tr><td width="50%">Windows Key: left, right</td><td width="50%"><code>{LWIN}</code>, <code>{RWIN}</code></td></tr>
+<tr><td width="50%">Apps / Menu</td><td width="50%"><code>{APPS}</code></td></tr>
+<tr><td width="50%">Help</td><td width="50%"><code>{HELP}</code></td></tr>
+<tr><td width="50%">Numlock</td><td width="50%"><code>{NUMLOCK}</code></td></tr>
+<tr><td width="50%">Print Screen</td><td width="50%"><code>{PRTSC}</code></td></tr>
+<tr><td width="50%">Scroll Lock</td><td width="50%"><code>{SCROLLLOCK}</code></td></tr>
+<tr><td width="50%">F1 - F16</td><td width="50%"><code>{F1}</code> - <code>{F16}</code></td></tr>
+<tr><td width="50%">Numeric Keypad +</td><td width="50%"><code>{ADD}</code></td></tr>
+<tr><td width="50%">Numeric Keypad -</td><td width="50%"><code>{SUBTRACT}</code></td></tr>
+<tr><td width="50%">Numeric Keypad *</td><td width="50%"><code>{MULTIPLY}</code></td></tr>
+<tr><td width="50%">Numeric Keypad /</td><td width="50%"><code>{DIVIDE}</code></td></tr>
+<tr><td width="50%">Numeric Keypad 0 to 9</td><td width="50%"><code>{NUMPAD0}</code> to <code>{NUMPAD9}</code></td></tr>
+<tr><td width="50%">Shift</td><td width="50%"><code>+</code></td></tr>
+<tr><td width="50%">Ctrl</td><td width="50%"><code>^</code></td></tr>
+<tr><td width="50%">Alt</td><td width="50%"><code>%</code></td></tr>
 </table>
 
 <br />
@@ -293,12 +298,12 @@ The following codes for special keys are supported:</p>
 
 <table class="tablebox75">
 <tr><th width="50%">Special Key</th><th width="50%">Code</th></tr>
-<tr><td width="50%">+</td><td width="50%">{+}</td></tr>
-<tr><td width="50%">^</td><td width="50%">{^}</td></tr>
-<tr><td width="50%">%</td><td width="50%">{%}</td></tr>
-<tr><td width="50%">~</td><td width="50%">{~}</td></tr>
-<tr><td width="50%">(, )</td><td width="50%">{(}, {)}</td></tr>
-<tr><td width="50%">{, }</td><td width="50%">{{}, {}}</td></tr>
+<tr><td width="50%">+</td><td width="50%"><code>{+}</code></td></tr>
+<tr><td width="50%">^</td><td width="50%"><code>{^}</code></td></tr>
+<tr><td width="50%">%</td><td width="50%"><code>{%}</code></td></tr>
+<tr><td width="50%">~</td><td width="50%"><code>{~}</code></td></tr>
+<tr><td width="50%">(, )</td><td width="50%"><code>{(}</code>, <code>{)}</code></td></tr>
+<tr><td width="50%">{, }</td><td width="50%"><code>{{}</code>, <code>{}}</code></td></tr>
 </table>
 
 
@@ -306,10 +311,11 @@ The following codes for special keys are supported:</p>
 
 <table class="tablebox75">
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
-<tr><td width="50%">{DELAY <i>X</i>}</td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
-<tr><td width="50%">{CLEARFIELD}</td><td width="50%">Clears the contents of the edit control that currently
-has the focus (only single-line edit controls).</td></tr>
-<tr><td width="50%">{VKEY <i>X</i>}</td><td width="50%">Sends the virtual key of value <i>X</i>.</td></tr>
+<tr><td width="50%"><code>{DELAY <i>X</i>}</code></td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
+<tr><td width="50%"><code>{CLEARFIELD}</code></td><td width="50%">Clears the contents of the
+edit control that currently has the focus (only single-line edit controls).</td></tr>
+<tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the virtual key
+of value <i>X</i>.</td></tr>
 </table>
 
 <br />
@@ -321,7 +327,8 @@ has the focus (only single-line edit controls).</td></tr>
 
 <table class="tablebox75">
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
-<tr><td width="50%">{DELAY=<i>X</i>}</td><td width="50%">Sets the default delay to <i>X</i> milliseconds for all standard keypresses in this sequence.</td></tr>
+<tr><td width="50%"><code>{DELAY=<i>X</i>}</code></td><td width="50%">Sets the default
+delay to <i>X</i> milliseconds for all standard keypresses in this sequence.</td></tr>
 </table>
 
 
@@ -343,7 +350,7 @@ currently selected entry, and presses Enter.</p>
 Presses the Tab key, enters the entry's password and presses Enter.</p>
 
 <p><code>{USERNAME}{TAB}^v{ENTER}</code><br />
-Types the user name, presses Tab, presses Ctrl-v (which pastes data from
+Types the user name, presses Tab, presses Ctrl+v (which pastes data from
 the Windows clipboard in most applications), and presses Enter.</p>
 
 <br />
@@ -453,11 +460,11 @@ target="_blank">test page</a>, and afterwards create a new entry
 in KeePass with title <i>Test Form</i> and a user name and password
 of your choice.</p>
 
-<p>Let's assume the global auto-type hot key is set to <i>LCtrl+Alt+A</i> (the default).
+<p>Let's assume the global auto-type hot key is set to <i>Ctrl+Alt+A</i> (the default).
 KeePass is running in the background, you have opened your database and the workspace is unlocked.</p>
 
 <p>When you now navigate to the test page and are being prompted for your user name and password,
-just click into the user name field and press <i>LCtrl+Alt+A</i>. KeePass enters the
+just click into the user name field and press <i>Ctrl+Alt+A</i>. KeePass enters the
 user name and password for you!</p>
 
 <p>Why did this work? The window title of your browser window was

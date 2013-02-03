@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -85,8 +86,9 @@ namespace KeePass.Util
 		{
 			if(pe == null) { Debug.Assert(false); return; }
 
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(pe.Strings.ReadSafe(
+			string strText = StrUtil.EncodeMenuText(pe.Strings.ReadSafe(
 				PwDefs.TitleField));
+			ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
 			tsmi.Tag = pe;
 			tsmi.Click += OnMenuExecute;
 

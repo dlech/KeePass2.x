@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -56,11 +56,19 @@ namespace KeePass.Util
 	{
 		// private const ushort LangIDGerman = 0x0407;
 
+		private static CriticalSectionEx m_csSending = new CriticalSectionEx();
+
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
-			SiStateEx si = InitSendKeys();
-
 			bool bUnix = KeePassLib.Native.NativeLib.IsUnix();
+			bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
+
+			if(!bInter)
+			{
+				if(!m_csSending.TryEnter()) return;
+			}
+
+			SiStateEx si = InitSendKeys();
 			try
 			{
 				if(!bUnix) { Debug.Assert(GetActiveKeyModifiers().Count == 0); }
@@ -74,13 +82,12 @@ namespace KeePass.Util
 				}
 				else SendKeysWithSpecial(strKeys, si);
 			}
-			catch
+			finally
 			{
 				FinishSendKeys(si);
-				throw;
-			}
 
-			FinishSendKeys(si);
+				if(!bInter) m_csSending.Exit();
+			}
 		}
 
 		private static SiStateEx InitSendKeys()

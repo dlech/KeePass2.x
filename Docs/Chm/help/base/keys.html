@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
 
 	<title>Composite Master Key - KeePass</title>
 	<base target="_self" />
@@ -158,9 +158,8 @@ KeePass can make the database dependent on the current Windows user
 account. If you enable this option, you can only open the database when
 you are logged in as the same Windows user when creating the database.<br />
 <br />
-You can still change the password of the Windows user account freely.
-This does not affect the KeePass database.<br />
-<br />
+<img src="../images/b16x16_warning.png" alt="Warning"
+style="vertical-align: middle; height: 1em;" />
 Be very careful with using this option. If your Windows user account
 gets deleted, you won't be able to open your KeePass database anymore.
 Also, when using this option at home and your computer breaks (hard disk
@@ -174,6 +173,25 @@ Instructions on how to restore a backed up account can be found in a
 Microsoft TechNet article:
 <a href="http://technet.microsoft.com/en-us/library/ee681624%28WS.10%29.aspx"
 target="_blank">How to recover a Vault corrupted by lost DPAPI keys</a>.<br />
+<br />
+You can change the password of the Windows user account freely;
+this does not affect the KeePass database.
+Note that <em>changing</em> the password (e.g. a user using the Control Panel
+or pressing Ctrl+Alt+Del and selecting 'Change Password') and
+<em>resetting</em> it to a new one (e.g. an administrator using a
+<code>NET USER <i>&lt;User&gt;</i> <i>&lt;NewPassword&gt;</i></code>
+command) are two different things.
+After <em>changing</em> your password, you can still open your KeePass database.
+When <em>resetting</em> the password to a new one, access usually is not possible
+anymore (because the user's DPAPI keys are lost), but there are exceptions
+(for example when the user is in a domain, Windows can retrieve the user's DPAPI keys
+from a domain controller, or a home user can use a previously created
+Password Reset Disk).
+Details can be found in the MSDN article
+<a href="http://msdn.microsoft.com/en-us/library/ms995355.aspx"
+target="_blank">Windows Data Protection</a> and in the support article
+<a href="http://support.microsoft.com/kb/309408/en-us"
+target="_blank">How to troubleshoot the Data Protection API (DPAPI)</a>.<br />
 <br />
 If you decide to use this option, it is highly recommended not to rely
 on it exclusively, but to additionally use one of the other two options (password

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,12 +63,12 @@ namespace KeePassLib.Serialization
 		/// <summary>
 		/// File identifier, first 32-bit value.
 		/// </summary>
-		private const uint FileSignature1 = 0x9AA2D903;
+		internal const uint FileSignature1 = 0x9AA2D903;
 
 		/// <summary>
 		/// File identifier, second 32-bit value.
 		/// </summary>
-		private const uint FileSignature2 = 0xB54BFB67;
+		internal const uint FileSignature2 = 0xB54BFB67;
 
 		/// <summary>
 		/// File version of files saved by the current <c>KdbxFile</c> class.
@@ -82,11 +82,11 @@ namespace KeePassLib.Serialization
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
 		// KeePass 1.x signature
-		private const uint FileSignatureOld1 = 0x9AA2D903;
-		private const uint FileSignatureOld2 = 0xB54BFB65;
+		internal const uint FileSignatureOld1 = 0x9AA2D903;
+		internal const uint FileSignatureOld2 = 0xB54BFB65;
 		// KeePass 2.x pre-release (alpha and beta) signature
-		private const uint FileSignaturePreRelease1 = 0x9AA2D903;
-		private const uint FileSignaturePreRelease2 = 0xB54BFB66;
+		internal const uint FileSignaturePreRelease1 = 0x9AA2D903;
+		internal const uint FileSignaturePreRelease2 = 0xB54BFB66;
 
 		private const string ElemDocNode = "KeePassFile";
 		private const string ElemMeta = "Meta";

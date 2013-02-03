@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -162,20 +162,22 @@ namespace KeePass.Forms
 			IconPickerForm ipf = new IconPickerForm();
 			ipf.InitEx(m_ilClientIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwIconIndex, m_pwCustomIconID);
-			ipf.ShowDialog();
 
-			if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
+			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
-					m_pwCustomIconID), true);
-			}
-			else // Standard icon
-			{
-				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
-				m_pwCustomIconID = PwUuid.Zero;
-				UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
-					(int)m_pwIconIndex], true);
+				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
+				{
+					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+					UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
+						m_pwCustomIconID), true);
+				}
+				else // Standard icon
+				{
+					m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
+					m_pwCustomIconID = PwUuid.Zero;
+					UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
+						(int)m_pwIconIndex], true);
+				}
 			}
 
 			UIUtil.DestroyForm(ipf);

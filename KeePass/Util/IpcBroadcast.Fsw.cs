@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace KeePass.Util
 		private static string m_strMsgFilePath = null;
 		private static string m_strMsgFileName = null;
 		private static FileSystemWatcher m_fsw = null;
-		private static object m_objSync = new object();
+		private static CriticalSectionEx m_csProcess = new CriticalSectionEx();
 
 		private static List<IpcMessage> m_vProcessedMsgs = new List<IpcMessage>();
 
@@ -110,7 +110,13 @@ namespace KeePass.Util
 		{
 			FswEnsurePaths();
 
-			m_fsw = new FileSystemWatcher(UrlUtil.GetTempPath(), m_strMsgFileName);
+			try
+			{
+				m_fsw = new FileSystemWatcher(UrlUtil.GetTempPath(),
+					m_strMsgFileName);
+			}
+			catch(Exception) { Debug.Assert(false); return; } // Access denied
+
 			m_fsw.IncludeSubdirectories = false;
 			m_fsw.NotifyFilter = (NotifyFilters.CreationTime | NotifyFilters.LastWrite);
 
@@ -153,7 +159,7 @@ namespace KeePass.Util
 				return;
 			}
 
-			if(!Monitor.TryEnter(m_objSync)) return;
+			if(!m_csProcess.TryEnter()) return;
 
 			for(int r = 0; r < IpcComRetryCount; ++r)
 			{
@@ -164,7 +170,7 @@ namespace KeePass.Util
 			}
 			CleanOldMessages(m_vProcessedMsgs);
 
-			Monitor.Exit(m_objSync);
+			m_csProcess.Exit();
 		}
 
 		private static void ProcessIpcMessagesPriv()

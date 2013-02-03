@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ namespace KeePass.Util
 		Ending = 1,
 		Lock = 2,
 		Suspend = 3,
-		RemoteControlChange = 4
+		RemoteControlChange = 4,
+		UserSwitch = 5
 	}
 
 	public sealed class SessionLockEventArgs : EventArgs
@@ -114,6 +115,8 @@ namespace KeePass.Util
 					r = SessionLockReason.Lock;
 				else if(e.Reason == SessionSwitchReason.SessionLogoff)
 					r = SessionLockReason.Ending;
+				else if(e.Reason == SessionSwitchReason.ConsoleDisconnect)
+					r = SessionLockReason.UserSwitch;
 				else if((e.Reason == SessionSwitchReason.SessionRemoteControl) ||
 					(e.Reason == SessionSwitchReason.RemoteConnect) ||
 					(e.Reason == SessionSwitchReason.RemoteDisconnect))

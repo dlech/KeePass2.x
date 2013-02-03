@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2061,10 +2061,9 @@ namespace KeePass.UI
 			img.Save(ms, ImageFormat.Png);
 
 			byte[] pbImage = ms.ToArray();
-			string strImage = Convert.ToBase64String(pbImage);
-
 			ms.Close();
-			return ("data:image/png;base64," + strImage);
+
+			return StrUtil.DataToDataUri(pbImage, "image/png");
 		} */
 
 		public static void SetFocusedItem(ListView lv, ListViewItem lvi,

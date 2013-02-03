@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -399,8 +399,8 @@ namespace KeePass.Forms
 
 			UpdateTrayIcon();
 			UpdateTagsMenu(m_dynShowEntriesByTagsEditMenu, false, false,
-				false, false); // Ensure popup arrow
-			UpdateTagsMenu(m_dynRemoveTag, false, false, false, false);
+				TagsMenuMode.All); // Ensure popup arrow
+			UpdateTagsMenu(m_dynRemoveTag, false, false, TagsMenuMode.All);
 			UpdateUIState(false);
 			ApplyUICustomizations();
 			MonoWorkarounds.ApplyTo(this);
@@ -533,7 +533,7 @@ namespace KeePass.Forms
 			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
 				"Michael321"));
 			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
-				@"http://keepass.info/help/kb/kb090406_testform.html"));
+				@"http://keepass.info/help/kb/testform.html"));
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
 				"12345"));
 			pe.AutoType.Add(new AutoTypeAssociation("Test Form - KeePass*", string.Empty));
@@ -583,24 +583,24 @@ namespace KeePass.Forms
 
 		private void OnFileClose(object sender, EventArgs e)
 		{
-			CloseDocument(false, false);
+			CloseDocument(null, false, false);
 		}
 
-		private void OnFileSave(object sender, EventArgs e)
+		private void SaveDatabase(PwDatabase pdToSave, object sender)
 		{
-			PwDatabase pd = m_docMgr.ActiveDatabase;
+			PwDatabase pd = (pdToSave ?? m_docMgr.ActiveDatabase);
 
 			if(!pd.IsOpen) return;
 			if(!AppPolicy.Try(AppPolicyId.SaveFile)) return;
 
 			if((pd.IOConnectionInfo == null) || (pd.IOConnectionInfo.Path.Length == 0))
 			{
-				OnFileSaveAs(sender, e);
+				SaveDatabaseAs(pd, false, sender, false);
 				return;
 			}
 
 			UIBlockInteraction(true);
-			if(PreSaveValidate(pd) == false) { UIBlockInteraction(false); return; }
+			if(!PreSaveValidate(pd)) { UIBlockInteraction(false); return; }
 
 			Guid eventGuid = Guid.NewGuid();
 			if(this.FileSaving != null)
@@ -646,9 +646,14 @@ namespace KeePass.Forms
 					pd.IOConnectionInfo.Path);
 		}
 
+		private void OnFileSave(object sender, EventArgs e)
+		{
+			SaveDatabase(null, sender);
+		}
+
 		private void OnFileSaveAs(object sender, EventArgs e)
 		{
-			SaveDatabaseAs(false, sender, false);
+			SaveDatabaseAs(null, false, sender, false);
 		}
 
 		private void OnFileDbSettings(object sender, EventArgs e)
@@ -764,10 +769,10 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			Debug.Assert(pe != null); if(pe == null) return;
 
-			if(EntryUtil.ExpireTanEntryIfOption(pe))
+			if(EntryUtil.ExpireTanEntryIfOption(pe, m_docMgr.ActiveDatabase))
 			{
 				RefreshEntriesList();
-				UpdateUIState(true);
+				UpdateUIState(false); // Modified flag set by expiry method
 			}
 
 			if(ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.PasswordField),
@@ -839,7 +844,7 @@ namespace KeePass.Forms
 			}
 
 			if((pg.IconId != PwIcon.Folder) && (pg.IconId != PwIcon.FolderOpen) &&
-				(pg.IconId != PwIcon.FolderPackage))
+				(pg.IconId != PwIcon.FolderPackage) && (pg.IconId != PwIcon.EMailBox))
 			{
 				pwe.IconId = pg.IconId; // Inherit icon from group
 			}
@@ -967,7 +972,7 @@ namespace KeePass.Forms
 			}
 			m_bForceExitOnce = false; // Reset (flag works once only)
 
-			if(CloseAllDocuments(true) == false)
+			if(!CloseAllDocuments(true))
 			{
 				e.Cancel = true;
 				return;
@@ -1503,9 +1508,6 @@ namespace KeePass.Forms
 				// For default value, also see options dialog
 				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimize)
 				{
-					// if(!IsFileLocked(null)) // Not locked currently
-					//	OnFileLock(sender, e); // Lock
-
 					if(IsAtLeastOneFileOpen())
 					{
 						LockAllDocuments();
@@ -1582,7 +1584,7 @@ namespace KeePass.Forms
 			// even though the user did something within the last second)
 			UpdateGlobalLockTimeout(utcNow);
 
-			if(Monitor.TryEnter(m_objLockTimerSync))
+			if(m_csLockTimer.TryEnter())
 			{
 				if(IsAtLeastOneFileOpen() && GlobalWindowManager.CanCloseAllWindows)
 				{
@@ -1596,7 +1598,7 @@ namespace KeePass.Forms
 				}
 				else NotifyUserActivity(); // Unclosable dialog = activity
 
-				Monitor.Exit(m_objLockTimerSync);
+				m_csLockTimer.Exit();
 			}
 
 			GlobalMutexPool.Refresh();
@@ -1642,25 +1644,28 @@ namespace KeePass.Forms
 			PwEntry[] vEntries = GetSelectedEntries();
 			if((vEntries == null) || (vEntries.Length == 0)) return;
 
+			PwDatabase pd = m_docMgr.ActiveDatabase;
 			IconPickerForm ipf = new IconPickerForm();
-			ipf.InitEx(m_ilCurrentIcons, (uint)PwIcon.Count, m_docMgr.ActiveDatabase,
+			ipf.InitEx(m_ilCurrentIcons, (uint)PwIcon.Count, pd,
 				(uint)vEntries[0].IconId, vEntries[0].CustomIconUuid);
-			ipf.ShowDialog();
 
-			foreach(PwEntry pe in vEntries)
+			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				if(ipf.ChosenCustomIconUuid != PwUuid.Zero)
-					pe.CustomIconUuid = ipf.ChosenCustomIconUuid;
-				else
+				foreach(PwEntry pe in vEntries)
 				{
-					pe.IconId = (PwIcon)ipf.ChosenIconId;
-					pe.CustomIconUuid = PwUuid.Zero;
-				}
+					if(ipf.ChosenCustomIconUuid != PwUuid.Zero)
+						pe.CustomIconUuid = ipf.ChosenCustomIconUuid;
+					else
+					{
+						pe.IconId = (PwIcon)ipf.ChosenIconId;
+						pe.CustomIconUuid = PwUuid.Zero;
+					}
 
-				pe.Touch(true, false);
+					pe.Touch(true, false);
+				}
 			}
 
-			bool bUpdImg = m_docMgr.ActiveDatabase.UINeedsIconUpdate;
+			bool bUpdImg = pd.UINeedsIconUpdate;
 			RefreshEntriesList();
 			UpdateUI(false, null, bUpdImg, null, false, null, true);
 			UIUtil.DestroyForm(ipf);
@@ -2153,7 +2158,7 @@ namespace KeePass.Forms
 
 		private void OnFileSaveAsUrl(object sender, EventArgs e)
 		{
-			SaveDatabaseAs(true, sender, false);
+			SaveDatabaseAs(null, true, sender, false);
 		}
 
 		private void OnFileImport(object sender, EventArgs e)
@@ -2290,7 +2295,7 @@ namespace KeePass.Forms
 
 		private void OnFileSaveAsCopy(object sender, EventArgs e)
 		{
-			SaveDatabaseAs(false, sender, true);
+			SaveDatabaseAs(null, false, sender, true);
 		}
 
 		private void OnEntrySelectedPrint(object sender, EventArgs e)
@@ -2382,10 +2387,9 @@ namespace KeePass.Forms
 					if(m_tabMain.GetTabRect(i).Contains(e.Location))
 					{
 						PwDocument pd = (m_tabMain.TabPages[i].Tag as PwDocument);
-						if(pd == null) { Debug.Assert(false); return; }
+						if(pd == null) { Debug.Assert(false); break; }
 
-						m_docMgr.ActiveDocument = pd;
-						CloseDocument(false, false);
+						CloseDocument(pd, false, false);
 						break;
 					}
 				}
@@ -2404,12 +2408,14 @@ namespace KeePass.Forms
 
 		private void OnEditShowByTagOpening(object sender, EventArgs e)
 		{
-			UpdateTagsMenu(m_dynShowEntriesByTagsEditMenu, false, false, false, false);
+			UpdateTagsMenu(m_dynShowEntriesByTagsEditMenu, false, false,
+				TagsMenuMode.All);
 		}
 
 		private void OnEntryViewsByTagOpening(object sender, EventArgs e)
 		{
-			UpdateTagsMenu(m_dynShowEntriesByTagsToolBar, true, true, false, false);
+			UpdateTagsMenu(m_dynShowEntriesByTagsToolBar, true, true,
+				TagsMenuMode.All);
 		}
 
 		private void OnEntrySelectedNewTag(object sender, EventArgs e)
@@ -2419,12 +2425,12 @@ namespace KeePass.Forms
 
 		private void OnEntrySelectedAddTagOpening(object sender, EventArgs e)
 		{
-			UpdateTagsMenu(m_dynAddTag, true, false, true, false);
+			UpdateTagsMenu(m_dynAddTag, true, false, TagsMenuMode.Add);
 		}
 
 		private void OnEntrySelectedRemoveTagOpening(object sender, EventArgs e)
 		{
-			UpdateTagsMenu(m_dynRemoveTag, false, false, true, true);
+			UpdateTagsMenu(m_dynRemoveTag, false, false, TagsMenuMode.Remove);
 		}
 
 		private void OnCtxEntryClipboardOpening(object sender, EventArgs e)

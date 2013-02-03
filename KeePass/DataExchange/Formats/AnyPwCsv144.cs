@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.44
+	// 1.44 & Pro 1.07
 	internal sealed class AnyPwCsv144 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -57,7 +57,8 @@ namespace KeePass.DataExchange.Formats
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
-			string[] vLines = strData.Split(new char[]{ '\r', '\n' });
+			string[] vLines = strData.Split(new char[]{ '\r', '\n' },
+				StringSplitOptions.RemoveEmptyEntries);
 
 			foreach(string strLine in vLines)
 			{
@@ -68,42 +69,47 @@ namespace KeePass.DataExchange.Formats
 		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
 		{
 			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
-			Debug.Assert(list.Count == 6);
+			Debug.Assert((list.Count == 6) || (list.Count == 7));
+			if(list.Count < 6) return;
+			bool bIsPro = (list.Count >= 7); // Std exports 6 fields only
 
 			PwEntry pe = new PwEntry(true, true);
 			pwStorage.RootGroup.AddEntry(pe, true);
 
-			if(list.Count == 6)
-			{
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle,
-					ParseCsvWord(list[0], false)));
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUserName,
-					ParseCsvWord(list[1], false)));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword,
-					ParseCsvWord(list[2], false)));
-				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUrl,
-					ParseCsvWord(list[3], false)));
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes,
-					ParseCsvWord(list[4], true)));
+			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectTitle,
+				ParseCsvWord(list[0], false)));
+			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectUserName,
+				ParseCsvWord(list[1], false)));
+			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectPassword,
+				ParseCsvWord(list[2], false)));
+			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectUrl,
+				ParseCsvWord(list[3], false)));
 
-				DateTime dt;
-				if(DateTime.TryParse(ParseCsvWord(list[5], false), out dt))
-				{
-					pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime = dt;
-				}
-				else { Debug.Assert(false); }
-			}
-			else throw new FormatException("Invalid field count!");
+			int p = 3;
+			if(bIsPro)
+				pe.Strings.Set(KPRes.Custom, new ProtectedString(false,
+					ParseCsvWord(list[++p], false)));
+
+			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+				pwStorage.MemoryProtection.ProtectNotes,
+				ParseCsvWord(list[++p], true)));
+
+			DateTime dt;
+			if(DateTime.TryParse(ParseCsvWord(list[++p], false), out dt))
+				pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime = dt;
+			else { Debug.Assert(false); }
 		}
 
 		private static string ParseCsvWord(string strWord, bool bFixCodes)
 		{
-			string str = strWord.Trim(new char[]{ '\"' });
+			string str = strWord.Trim();
+
+			if((str.Length >= 2) && str.StartsWith("\"") && str.EndsWith("\""))
+				str = str.Substring(1, str.Length - 2);
 
 			str = str.Replace("\"\"", "\"");
 

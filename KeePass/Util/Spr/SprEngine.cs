@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ namespace KeePass.Util.Spr
 		private const StringComparison ScMethod = StringComparison.OrdinalIgnoreCase;
 
 		private static string m_strAppExePath = string.Empty;
-
 		// private static readonly char[] m_vPlhEscapes = new char[] { '{', '}', '%' };
 
 		// Important notes for plugin developers subscribing to the following events:
@@ -55,8 +54,19 @@ namespace KeePass.Util.Spr
 		//   event handler.
 		// * Non-active transformations should only be performed if the ExtNonActive
 		//   bit is set in args.Context.Flags.
+		// * If your plugin provides a placeholder (like e.g. {EXAMPLE}), you
+		//   should add this placeholder to the FilterPlaceholderHints list
+		//   (e.g. add the string "{EXAMPLE}"). Please remove your strings from
+		//   the list when your plugin is terminated.
 		public static event EventHandler<SprEventArgs> FilterCompilePre;
 		public static event EventHandler<SprEventArgs> FilterCompile;
+
+		private static List<string> m_lFilterPlh = new List<string>();
+		// See the events above
+		public static List<string> FilterPlaceholderHints
+		{
+			get { return m_lFilterPlh; }
+		}
 
 		private static void InitializeStatic()
 		{
@@ -201,8 +211,19 @@ namespace KeePass.Util.Spr
 			}
 
 			if((ctx.Flags & SprCompileFlags.AutoType) != SprCompileFlags.None)
+			{
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEARFIELD}",
 					@"{HOME}+({END}){DEL}{DELAY 50}");
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{WIN}", @"{VKEY 91}");
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{LWIN}", @"{VKEY 91}");
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{RWIN}", @"{VKEY 92}");
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{APPS}", @"{VKEY 93}");
+
+				for(int np = 0; np < 10; ++np)
+					str = StrUtil.ReplaceCaseInsensitive(str, @"{NUMPAD" +
+						Convert.ToString(np, 10) + @"}", @"{VKEY " +
+						Convert.ToString(np + 0x60, 10) + @"}");
+			}
 
 			if((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None)
 			{

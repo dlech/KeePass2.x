@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2012 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
 
 	<title>Single Command Operations - KeePass</title>
 	<base target="_self" />
@@ -225,7 +225,9 @@ KeePass' export dialog). The file to export to is specified using the
 
 <p>This command synchronizes the database with another one.
 The other database path has to be specified using the
-&quot;-File&quot; command line parameter.</p>
+&quot;-File&quot; command line parameter. Usage example:</p>
+
+<p><code>KPScript -c:Sync -guikeyprompt &quot;C:\Path\A.kdbx&quot; -File:&quot;C:\Path\B.kdbx&quot;</code></p>
 
 <hr />
 <p><b>Command: ChangeMasterKey</b></p>

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -211,8 +211,8 @@ namespace KeePass.Util
 				CommandLineArgs args = new CommandLineArgs(vArgs);
 				Program.CommandLineArgs.CopyFrom(args);
 
-				mf.OpenDatabase(IOConnectionInfo.FromPath(args.FileName),
-					KeyUtil.KeyFromCommandLine(Program.CommandLineArgs), true);
+				mf.OpenDatabase(mf.IocFromCommandLine(), KeyUtil.KeyFromCommandLine(
+					Program.CommandLineArgs), true);
 			}
 			else if(ipcMsg.Message == CmdOpenEntryUrl) OpenEntryUrl(ipcMsg, mf);
 			else { Debug.Assert(false); }

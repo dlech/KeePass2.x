@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ namespace KeePass.Forms
 		{
 			string strLvgName = KPRes.StandardFields;
 			if(c.Type == AceColumnType.CustomString) strLvgName = KPRes.CustomFields;
-			else if(c.Type == AceColumnType.PluginExt) strLvgName = KPRes.Plugins;
+			else if(c.Type == AceColumnType.PluginExt) strLvgName = KPRes.PluginProvided;
 			else if((int)c.Type > (int)AceColumnType.PluginExt)
 				strLvgName = KPRes.More;
 
@@ -211,6 +211,12 @@ namespace KeePass.Forms
 				}
 			}
 
+			AddStdAceColumn(l, AceColumnType.Size);
+			AddStdAceColumn(l, AceColumnType.HistoryCount);
+			AddStdAceColumn(l, AceColumnType.OverrideUrl);
+			AddStdAceColumn(l, AceColumnType.Tags);
+			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
+
 			string[] vPlgExtNames = Program.ColumnProviderPool.GetColumnNames();
 			foreach(string strPlgName in vPlgExtNames)
 			{
@@ -230,12 +236,6 @@ namespace KeePass.Forms
 				AddAceColumn(l, new AceColumn(AceColumnType.PluginExt, strPlgName,
 					bHide, nWidth));
 			}
-
-			AddStdAceColumn(l, AceColumnType.Size);
-			AddStdAceColumn(l, AceColumnType.HistoryCount);
-			AddStdAceColumn(l, AceColumnType.OverrideUrl);
-			AddStdAceColumn(l, AceColumnType.Tags);
-			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
 
 			// m_lvColumns.Invoke(new UpdateUIDelegate(UpdateListEx), false);
 		}

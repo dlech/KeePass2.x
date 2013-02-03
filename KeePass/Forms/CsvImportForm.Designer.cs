@@ -219,9 +219,9 @@
 			this.m_lblFieldFormat.AutoSize = true;
 			this.m_lblFieldFormat.Location = new System.Drawing.Point(6, 75);
 			this.m_lblFieldFormat.Name = "m_lblFieldFormat";
-			this.m_lblFieldFormat.Size = new System.Drawing.Size(42, 13);
+			this.m_lblFieldFormat.Size = new System.Drawing.Size(19, 13);
 			this.m_lblFieldFormat.TabIndex = 4;
-			this.m_lblFieldFormat.Text = "Format:";
+			this.m_lblFieldFormat.Text = "<>";
 			// 
 			// m_tbFieldName
 			// 

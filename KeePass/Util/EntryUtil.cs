@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -300,7 +300,13 @@ namespace KeePass.Util
 		[Obsolete]
 		public static void ExpireTanEntry(PwEntry pe)
 		{
-			ExpireTanEntryIfOption(pe);
+			ExpireTanEntryIfOption(pe, null);
+		}
+
+		[Obsolete]
+		public static bool ExpireTanEntryIfOption(PwEntry pe)
+		{
+			return ExpireTanEntryIfOption(pe, null);
 		}
 
 		/// <summary>
@@ -310,9 +316,10 @@ namespace KeePass.Util
 		/// <param name="pe">Entry.</param>
 		/// <returns>If the entry has been modified, the return value is
 		/// <c>true</c>, otherwise <c>false</c>.</returns>
-		public static bool ExpireTanEntryIfOption(PwEntry pe)
+		public static bool ExpireTanEntryIfOption(PwEntry pe, PwDatabase pdContext)
 		{
 			if(pe == null) throw new ArgumentNullException("pe");
+			// pdContext may be null
 			if(!PwDefs.IsTanEntry(pe)) return false; // No assert
 
 			if(Program.Config.Defaults.TanExpiresOnUse)
@@ -320,6 +327,7 @@ namespace KeePass.Util
 				pe.ExpiryTime = DateTime.Now;
 				pe.Expires = true;
 				pe.Touch(true);
+				if(pdContext != null) pdContext.Modified = true;
 				return true;
 			}
 

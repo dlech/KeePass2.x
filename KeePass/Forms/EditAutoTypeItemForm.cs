@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 using System.Diagnostics;
 
 using KeePass.App;
@@ -30,6 +31,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -47,6 +49,13 @@ namespace KeePass.Forms
 		private bool m_bEditSequenceOnly = false;
 		private string m_strDefaultSeq = string.Empty;
 		private ProtectedStringDictionary m_vStringDict = null;
+
+		private object m_objDialogSync = new object();
+		private bool m_bDialogClosed = false;
+#if DEBUG
+		private static Dictionary<string, string> m_dWndTasks =
+			new Dictionary<string, string>();
+#endif
 
 		// private Color m_clrOriginalForeground = Color.Black;
 		// private Color m_clrOriginalBackground = Color.White;
@@ -154,11 +163,14 @@ namespace KeePass.Forms
 				"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
 				"HOME", "END", "PGUP", "PGDN",
 				"INSERT", "DELETE", VkcBreak,
-				"BACKSPACE", "BREAK", "CAPSLOCK",
-				"ESC", "HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
+				"BACKSPACE", "BREAK", "CAPSLOCK", "ESC",
+				"WIN", "LWIN", "RWIN", "APPS",
+				"HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
 				"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
 				"F13", "F14", "F15", "F16", VkcBreak,
-				"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"
+				"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE",
+				"NUMPAD0", "NUMPAD1", "NUMPAD2", "NUMPAD3", "NUMPAD4",
+				"NUMPAD5", "NUMPAD6", "NUMPAD7", "NUMPAD8", "NUMPAD9"
 			};
 
 			string[] vSpecialPlaceholders = new string[] {
@@ -241,6 +253,22 @@ namespace KeePass.Forms
 				}
 			}
 
+			if(SprEngine.FilterPlaceholderHints.Count > 0)
+			{
+				rb.AppendLine();
+				rb.AppendLine();
+				rb.AppendLine(KPRes.PluginProvided, FontStyle.Bold, null, null, ":", null);
+				bFirst = true;
+				foreach(string strP in SprEngine.FilterPlaceholderHints)
+				{
+					if(string.IsNullOrEmpty(strP)) continue;
+
+					if(!bFirst) rb.Append(" ");
+					rb.Append(strP);
+					bFirst = false;
+				}
+			}
+
 			rb.Build(m_rtbPlaceholders);
 
 			LinkifyRtf(m_rtbPlaceholders);
@@ -258,6 +286,8 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			lock(m_objDialogSync) { m_bDialogClosed = true; }
+
 			m_cmbWindow.OrderedImageList = null;
 			foreach(Image img in m_vWndImages)
 			{
@@ -267,6 +297,10 @@ namespace KeePass.Forms
 
 			m_ctxKeyCodes.Detach();
 			m_ctxKeySeq.Detach();
+
+#if DEBUG
+			lock(m_dWndTasks) { Debug.Assert(m_dWndTasks.Count == 0); }
+#endif
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -463,34 +497,107 @@ namespace KeePass.Forms
 			CleanUpEx();
 		}
 
+		private sealed class PwlwInfo
+		{
+			public EditAutoTypeItemForm Form { get; private set; }
+			public IntPtr WindowHandle { get; private set; }
+
+			public PwlwInfo(EditAutoTypeItemForm f, IntPtr h)
+			{
+				this.Form = f;
+				this.WindowHandle = h;
+			}
+		}
+
 		private void PopulateWindowsListWin()
 		{
+			List<IntPtr> lWnds = new List<IntPtr>();
 			NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
 				IntPtr lParam)
 			{
-				// Wrapped in try-catch, because it's passed to native code
-				try
-				{
-					string strName = NativeMethods.GetWindowText(hWnd, true);
-					if(!string.IsNullOrEmpty(strName))
-					{
-						if(((NativeMethods.GetWindowStyle(hWnd) &
-							NativeMethods.WS_VISIBLE) != 0) &&
-							AutoType.IsValidAutoTypeWindow(hWnd, false) &&
-							!NativeMethods.IsTaskBar(hWnd))
-						{
-							m_cmbWindow.Items.Add(strName);
-							m_vWndImages.Add(UIUtil.GetWindowImage(hWnd, true));
-						}
-					}
-				}
-				catch(Exception) { Debug.Assert(false); }
-
+				if(hWnd != IntPtr.Zero) lWnds.Add(hWnd);
 				return true;
 			};
-
 			NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
+
+			foreach(IntPtr hWnd in lWnds)
+				ThreadPool.QueueUserWorkItem(new WaitCallback(
+					EditAutoTypeItemForm.EvalWindowProc), new PwlwInfo(this, hWnd));
+
 			m_cmbWindow.OrderedImageList = m_vWndImages;
+		}
+
+		private static void EvalWindowProc(object objState)
+		{
+#if DEBUG
+			string strTaskID = Guid.NewGuid().ToString();
+			lock(m_dWndTasks) { m_dWndTasks[strTaskID] = @"<<<UNDEFINED>>>"; }
+#endif
+
+			try
+			{
+				PwlwInfo pInfo = (objState as PwlwInfo);
+				IntPtr hWnd = pInfo.WindowHandle;
+
+				uint uSmtoFlags = (NativeMethods.SMTO_NORMAL |
+					NativeMethods.SMTO_ABORTIFHUNG);
+				IntPtr pLen = IntPtr.Zero;
+				IntPtr pSmto = NativeMethods.SendMessageTimeout(hWnd,
+					NativeMethods.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero,
+					uSmtoFlags, 2000, ref pLen);
+				if(pSmto == IntPtr.Zero) return;
+
+				string strName = NativeMethods.GetWindowText(hWnd, true);
+				if(string.IsNullOrEmpty(strName)) return;
+
+#if DEBUG
+				Debug.Assert(strName.Length <= pLen.ToInt64());
+				lock(m_dWndTasks) { m_dWndTasks[strTaskID] = strName; }
+#endif
+
+				if((NativeMethods.GetWindowStyle(hWnd) &
+					NativeMethods.WS_VISIBLE) == 0) return;
+				if(NativeMethods.IsTaskBar(hWnd)) return;
+
+				Image img = UIUtil.GetWindowImage(hWnd, true);
+
+				if(pInfo.Form.InvokeRequired)
+					pInfo.Form.Invoke(new AddWindowProcDelegate(
+						EditAutoTypeItemForm.AddWindowProc), new object[] {
+						pInfo.Form, hWnd, strName, img });
+				else AddWindowProc(pInfo.Form, hWnd, strName, img);
+			}
+			catch(Exception) { Debug.Assert(false); }
+#if DEBUG
+			finally
+			{
+				lock(m_dWndTasks) { m_dWndTasks.Remove(strTaskID); }
+			}
+#endif
+		}
+
+		private delegate void AddWindowProcDelegate(EditAutoTypeItemForm f,
+			IntPtr h, string strWndName, Image img);
+		private static void AddWindowProc(EditAutoTypeItemForm f, IntPtr h,
+			string strWndName, Image img)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+			if(h == IntPtr.Zero) { Debug.Assert(false); return; }
+
+			try
+			{
+				if(!AutoType.IsValidAutoTypeWindow(h, false)) return;
+
+				lock(f.m_objDialogSync)
+				{
+					if(!f.m_bDialogClosed)
+					{
+						f.m_vWndImages.Add(img);
+						f.m_cmbWindow.Items.Add(strWndName);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void PopulateWindowsListUnix()

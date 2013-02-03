@@ -793,6 +793,9 @@
 		<Data Name="ForceSystemFontUnix">
 			<Value>Force using system font (Unix only)</Value>
 		</Data>
+		<Data Name="Format">
+			<Value>Format</Value>
+		</Data>
 		<Data Name="FormatNoDatabaseDesc">
 			<Value>This file format doesn't support database descriptions.</Value>
 		</Data>
@@ -868,6 +871,9 @@
 		<Data Name="HexKey">
 			<Value>{PARAM}-Bit Hex Key</Value>
 		</Data>
+		<Data Name="HexViewer">
+			<Value>Hex Viewer</Value>
+		</Data>
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
 		</Data>
@@ -942,6 +948,9 @@
 		</Data>
 		<Data Name="Installed">
 			<Value>Installed</Value>
+		</Data>
+		<Data Name="InterleavedKeySending">
+			<Value>Allow interleaved sending of keys</Value>
 		</Data>
 		<Data Name="Internet">
 			<Value>Internet</Value>
@@ -1315,6 +1324,9 @@
 		<Data Name="PluginOperatingSystemUnsupported">
 			<Value>The current operating system is unsupported by the plugin.</Value>
 		</Data>
+		<Data Name="PluginProvided">
+			<Value>Provided by Plugins</Value>
+		</Data>
 		<Data Name="Plugins">
 			<Value>Plugins</Value>
 		</Data>
@@ -1519,8 +1531,14 @@
 		<Data Name="SecDeskFileDialogHint">
 			<Value>Note: KeePass shows this simple file browser dialog, because standard Windows file dialogs cannot be shown on the secure desktop for security reasons.</Value>
 		</Data>
+		<Data Name="SecDeskOtherSwitched">
+			<Value>An application has switched from the secure desktop to a different desktop.</Value>
+		</Data>
 		<Data Name="SecDeskPlaySound">
 			<Value>Play UAC sound when switching to secure desktop</Value>
+		</Data>
+		<Data Name="SecDeskSwitchBack">
+			<Value>Click [OK] to switch back to the secure desktop.</Value>
 		</Data>
 		<Data Name="SelectAll">
 			<Value>Select All</Value>
@@ -1552,11 +1570,17 @@
 		<Data Name="SelfTestFailed">
 			<Value>One or more of the KeePass self-tests failed.</Value>
 		</Data>
+		<Data Name="Separator">
+			<Value>Separator</Value>
+		</Data>
 		<Data Name="Sequence">
 			<Value>Sequence</Value>
 		</Data>
 		<Data Name="ShowDerefData">
 			<Value>Show dereferenced data</Value>
+		</Data>
+		<Data Name="ShowDerefDataAndRefs">
+			<Value>When showing dereferenced data, additionally show references</Value>
 		</Data>
 		<Data Name="ShowDerefDataAsync">
 			<Value>Show dereferenced data asynchronously</Value>
@@ -1974,6 +1998,9 @@
 		</Data>
 		<Data Name="KeePass1xHint">
 			<Value>In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -&gt; 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.</Value>
+		</Data>
+		<Data Name="KeyFileDbSel">
+			<Value>Database files cannot be used as key files.</Value>
 		</Data>
 		<Data Name="MasterSeedLengthInvalid">
 			<Value>The length of the master key seed is invalid!</Value>

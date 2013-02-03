@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ namespace KeePassLib.Utility
 
 				Exception exObj = (obj as Exception);
 				string strObj = (obj as string);
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				StringCollection scObj = (obj as StringCollection);
 #endif
 
@@ -129,7 +129,7 @@ namespace KeePassLib.Utility
 					else if((exObj.Message != null) && (exObj.Message.Length > 0))
 						strAppend = exObj.Message;
 				}
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				else if(scObj != null)
 				{
 					StringBuilder sb = new StringBuilder();
@@ -158,7 +158,7 @@ namespace KeePassLib.Utility
 			return sbText.ToString();
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		internal static Form GetTopForm()
 		{
 			FormCollection fc = Application.OpenForms;
@@ -171,7 +171,7 @@ namespace KeePassLib.Utility
 		private static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
-#if KeePassLibSD
+#if (KeePassLibSD || KeePassRT)
 			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
 #else
 			IWin32Window wnd = null;
@@ -206,7 +206,7 @@ namespace KeePassLib.Utility
 #endif
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		internal delegate DialogResult SafeShowMessageBoxInternalDelegate(IWin32Window iParent,
 			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
 			MessageBoxDefaultButton mdb);

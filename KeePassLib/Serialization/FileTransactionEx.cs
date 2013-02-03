@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 using System.Security.AccessControl;
 #endif
 
@@ -91,14 +91,14 @@ namespace KeePassLib.Serialization
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
 
 			if(IOConnection.FileExists(m_iocBase))
 			{
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				if(m_iocBase.IsLocalFile())
 				{
 					try
@@ -120,7 +120,7 @@ namespace KeePassLib.Serialization
 
 			IOConnection.RenameFile(m_iocTemp, m_iocBase);
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			if(m_iocBase.IsLocalFile())
 			{
 				try

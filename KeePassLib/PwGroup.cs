@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -764,9 +764,15 @@ namespace KeePassLib
 			Regex rx = null;
 			if(sp.RegularExpression)
 			{
+#if KeePassRT
+				RegexOptions ro = RegexOptions.None;
+#else
 				RegexOptions ro = RegexOptions.Compiled;
+#endif
 				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
+#if !KeePassRT
 					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||
+#endif
 					(sp.ComparisonMode == StringComparison.OrdinalIgnoreCase))
 				{
 					ro |= RegexOptions.IgnoreCase;
@@ -937,6 +943,30 @@ namespace KeePassLib
 			if(bSort) vTags.Sort(StrUtil.CaseIgnoreComparer);
 			return vTags;
 		}
+
+#if !KeePassLibSD
+		public IDictionary<string, uint> BuildEntryTagsDict(bool bSort)
+		{
+			IDictionary<string, uint> d;
+			if(!bSort) d = new Dictionary<string, uint>(StrUtil.CaseIgnoreComparer);
+			else d = new SortedDictionary<string, uint>(StrUtil.CaseIgnoreComparer);
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				foreach(string strTag in pe.Tags)
+				{
+					uint u;
+					if(d.TryGetValue(strTag, out u)) d[strTag] = u + 1;
+					else d[strTag] = 1;
+				}
+
+				return true;
+			};
+
+			TraverseTree(TraversalMethod.PreOrder, null, eh);
+			return d;
+		}
+#endif
 
 		public void FindEntriesByTag(string strTag, PwObjectList<PwEntry> listStorage,
 			bool bSearchRecursive)

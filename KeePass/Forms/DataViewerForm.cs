@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,6 +46,14 @@ namespace KeePass.Forms
 
 		private uint m_uStartOffset = 0;
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
+
+		private readonly string m_strViewerHex = KPRes.HexViewer;
+		private readonly string m_strViewerText = KPRes.TextViewer;
+		private readonly string m_strViewerImage = KPRes.ImageViewer;
+		private readonly string m_strViewerWeb = KPRes.WebBrowser;
+
+		private readonly string m_strDataExpand = "--- " + KPRes.More + " ---";
+		private bool m_bDataExpanded = false;
 
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
@@ -117,16 +125,17 @@ namespace KeePass.Forms
 
 			m_tslViewer.Text = KPRes.ShowIn + ":";
 
-			m_tscViewers.Items.Add(KPRes.TextViewer);
-			m_tscViewers.Items.Add(KPRes.ImageViewer);
-			m_tscViewers.Items.Add(KPRes.WebBrowser);
+			m_tscViewers.Items.Add(m_strViewerHex);
+			m_tscViewers.Items.Add(m_strViewerText);
+			m_tscViewers.Items.Add(m_strViewerImage);
+			m_tscViewers.Items.Add(m_strViewerWeb);
 
 			m_bdc = BinaryDataClassifier.Classify(m_strDataDesc, m_pbData);
 
 			if((m_bdc == BinaryDataClass.Text) || (m_bdc == BinaryDataClass.RichText))
-				m_tscViewers.SelectedIndex = 0;
-			else if(m_bdc == BinaryDataClass.Image) m_tscViewers.SelectedIndex = 1;
-			else if(m_bdc == BinaryDataClass.WebDocument) m_tscViewers.SelectedIndex = 2;
+				m_tscViewers.SelectedIndex = 1;
+			else if(m_bdc == BinaryDataClass.Image) m_tscViewers.SelectedIndex = 2;
+			else if(m_bdc == BinaryDataClass.WebDocument) m_tscViewers.SelectedIndex = 3;
 			else m_tscViewers.SelectedIndex = 0;
 
 			if(this.DvfInit != null)
@@ -139,7 +148,21 @@ namespace KeePass.Forms
 
 		private void OnRichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			WinUtil.OpenUrl(e.LinkText, null);
+			string strLink = e.LinkText;
+			if(string.IsNullOrEmpty(strLink)) { Debug.Assert(false); return; }
+
+			try
+			{
+				if((strLink == m_strDataExpand) && (m_tscViewers.Text == m_strViewerHex))
+				{
+					m_bDataExpanded = true;
+					UpdateHexView();
+					m_rtbText.Select(m_rtbText.TextLength, 0);
+					m_rtbText.ScrollToCaret();
+				}
+				else WinUtil.OpenUrl(strLink, null);
+			}
+			catch(Exception) { } // ScrollToCaret might throw (but still works)
 		}
 
 		private string BinaryDataToString()
@@ -157,21 +180,140 @@ namespace KeePass.Forms
 			return string.Empty;
 		}
 
+		private void SetRtbData(string strData, bool bRtf, bool bFixedFont)
+		{
+			if(strData == null) { Debug.Assert(false); strData = string.Empty; }
+
+			m_rtbText.Clear(); // Clear formatting (esp. induced by Unicode)
+
+			if(bFixedFont) FontUtil.AssignDefaultMono(m_rtbText, false);
+			else FontUtil.AssignDefault(m_rtbText);
+
+			if(bRtf) m_rtbText.Rtf = strData;
+			else
+			{
+				m_rtbText.Text = strData;
+
+				Font f = (bFixedFont ? FontUtil.MonoFont : FontUtil.DefaultFont);
+				if(f != null)
+				{
+					m_rtbText.SelectAll();
+					m_rtbText.SelectionFont = f;
+					m_rtbText.Select(0, 0);
+				}
+				else { Debug.Assert(false); }
+			}
+		}
+
+		private void UpdateHexView()
+		{
+			int cbData = (m_bDataExpanded ? m_pbData.Length :
+				Math.Min(m_pbData.Length, 16 * 256));
+
+			const int cbGrp = 4;
+			const int cbLine = 16;
+
+			int iMaxAddrWidth = Convert.ToString(Math.Max(cbData - 1, 0), 16).Length;
+
+			int cbDataUp = cbData;
+			if((cbDataUp % cbLine) != 0)
+				cbDataUp = cbDataUp + cbLine - (cbDataUp % cbLine);
+			Debug.Assert(((cbDataUp % cbLine) == 0) && (cbDataUp >= cbData));
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < cbDataUp; ++i)
+			{
+				if((i % cbLine) == 0)
+				{
+					sb.Append(Convert.ToString(i, 16).ToUpper().PadLeft(
+						iMaxAddrWidth, '0'));
+					sb.Append(": ");
+				}
+
+				if(i < cbData)
+				{
+					byte bt = m_pbData[i];
+					byte btHigh = (byte)(bt >> 4);
+					byte btLow = (byte)(bt & 0x0F);
+					if(btHigh >= 10) sb.Append((char)('A' + btHigh - 10));
+					else sb.Append((char)('0' + btHigh));
+					if(btLow >= 10) sb.Append((char)('A' + btLow - 10));
+					else sb.Append((char)('0' + btLow));
+				}
+				else sb.Append("  ");
+
+				if(((i + 1) % cbGrp) == 0)
+					sb.Append(' ');
+
+				if(((i + 1) % cbLine) == 0)
+				{
+					sb.Append(' ');
+					int iStart = i - cbLine + 1;
+					int iEndExcl = Math.Min(iStart + cbLine, cbData);
+					for(int j = iStart; j < iEndExcl; ++j)
+						sb.Append(StrUtil.ByteToSafeChar(m_pbData[j]));
+					sb.AppendLine();
+				}
+			}
+
+			if(cbData < m_pbData.Length)
+				sb.AppendLine(m_strDataExpand);
+
+			SetRtbData(sb.ToString(), false, true);
+
+			if(cbData < m_pbData.Length)
+			{
+				int iLinkStart = m_rtbText.Text.LastIndexOf(m_strDataExpand);
+				if(iLinkStart >= 0)
+				{
+					m_rtbText.Select(iLinkStart, m_strDataExpand.Length);
+					UIUtil.RtfSetSelectionLink(m_rtbText);
+					m_rtbText.Select(0, 0);
+				}
+				else { Debug.Assert(false); }
+			}
+		}
+
+		private void UpdateVisibility(string strViewer, bool bMakeVisible)
+		{
+			if(string.IsNullOrEmpty(strViewer)) { Debug.Assert(false); return; }
+
+			if(!bMakeVisible) // Hide all except strViewer
+			{
+				if((strViewer != m_strViewerHex) && (strViewer != m_strViewerText))
+					m_rtbText.Visible = false;
+				if(strViewer != m_strViewerImage)
+				{
+					m_picBox.Visible = false;
+					m_pnlImageViewer.Visible = false;
+				}
+				if(strViewer != m_strViewerWeb)
+					m_webBrowser.Visible = false;
+			}
+			else // Show strViewer
+			{
+				if((strViewer == m_strViewerHex) || (strViewer == m_strViewerText))
+					m_rtbText.Visible = true;
+				else if(strViewer == m_strViewerImage)
+				{
+					m_pnlImageViewer.Visible = true;
+					m_picBox.Visible = true;
+				}
+				else if(strViewer == m_strViewerWeb)
+					m_webBrowser.Visible = true;
+			}
+		}
+
 		private void UpdateDataView()
 		{
 			if(m_bInitializing) return;
 
-			m_rtbText.Visible = false;
-			m_webBrowser.Visible = false;
-			m_picBox.Visible = false;
-			m_pnlImageViewer.Visible = false;
-
 			string strViewer = m_tscViewers.Text;
+			bool bText = ((strViewer == m_strViewerText) ||
+				(strViewer == m_strViewerWeb));
+			bool bImage = (strViewer == m_strViewerImage);
 
-			bool bText = ((strViewer == KPRes.TextViewer) ||
-				(strViewer == KPRes.WebBrowser));
-			bool bImage = (strViewer == KPRes.ImageViewer);
-
+			UpdateVisibility(strViewer, false);
 			m_tssSeparator0.Visible = (bText || bImage);
 			m_tslEncoding.Visible = m_tscEncoding.Visible = bText;
 			m_tslZoom.Visible = m_tscZoom.Visible = bImage;
@@ -186,36 +328,27 @@ namespace KeePass.Forms
 					if(args.Cancel) return;
 				}
 
-				if(strViewer == KPRes.TextViewer)
+				if(strViewer == m_strViewerHex)
+					UpdateHexView();
+				else if(strViewer == m_strViewerText)
 				{
 					string strData = BinaryDataToString();
-
-					m_rtbText.Clear(); // Clear formatting
-					if(m_bdc == BinaryDataClass.RichText) m_rtbText.Rtf = strData;
-					else m_rtbText.Text = strData;
-
-					m_rtbText.Visible = true;
+					SetRtbData(strData, (m_bdc == BinaryDataClass.RichText), false);
 				}
-				else if(strViewer == KPRes.ImageViewer)
+				else if(strViewer == m_strViewerImage)
 				{
 					if(m_img == null) m_img = GfxUtil.LoadImage(m_pbData);
-					// m_picBox.Image = m_img;
-
-					m_pnlImageViewer.Visible = true;
-					m_picBox.Visible = true;
-
 					UpdateImageView();
 				}
-				else if(strViewer == KPRes.WebBrowser)
+				else if(strViewer == m_strViewerWeb)
 				{
 					string strData = BinaryDataToString();
-
 					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
-
-					m_webBrowser.Visible = true;
 				}
 			}
 			catch(Exception) { }
+
+			UpdateVisibility(strViewer, true);
 		}
 
 		private void OnViewersSelectedIndexChanged(object sender, EventArgs e)

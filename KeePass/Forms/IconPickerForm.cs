@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -95,11 +95,15 @@ namespace KeePass.Forms
 			{
 				m_radioCustom.Checked = true;
 				m_lvCustomIcons.Items[iFoundCustom].Selected = true;
+				m_lvCustomIcons.EnsureVisible(iFoundCustom);
+				UIUtil.SetFocus(m_lvCustomIcons, this);
 			}
 			else if(m_uDefaultIcon < m_uNumberOfStandardIcons)
 			{
 				m_radioStandard.Checked = true;
 				m_lvIcons.Items[(int)m_uDefaultIcon].Selected = true;
+				m_lvIcons.EnsureVisible((int)m_uDefaultIcon);
+				UIUtil.SetFocus(m_lvIcons, this);
 			}
 			else
 			{
@@ -165,7 +169,11 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			// SaveChosenIcon();
+			if(!SaveChosenIcon())
+			{
+				this.DialogResult = DialogResult.None;
+				MessageService.ShowWarning(KPRes.PickIcon);
+			}
 		}
 
 		private bool SaveChosenIcon()
@@ -202,8 +210,16 @@ namespace KeePass.Forms
 			EnableControlsEx();
 		}
 
+		private void CleanUpEx()
+		{
+			// Detach event handlers
+			m_lvIcons.SmallImageList = null;
+			m_lvCustomIcons.SmallImageList = null;
+		}
+
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			CleanUpEx();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -343,19 +359,6 @@ namespace KeePass.Forms
 			OnCustomIconsItemSelectionChanged(sender, null);
 			if(!SaveChosenIcon()) return;
 			this.DialogResult = DialogResult.OK;
-		}
-
-		private void OnFormClosing(object sender, FormClosingEventArgs e)
-		{
-			// if(m_bBlockCancel && (e.CloseReason == CloseReason.UserClosing) &&
-			//	(this.DialogResult != DialogResult.OK))
-			//	e.Cancel = true;
-
-			if(!SaveChosenIcon())
-			{
-				e.Cancel = true;
-				MessageService.ShowWarning(KPRes.PickIcon);
-			}
 		}
 
 		private void OnBtnCustomSave(object sender, EventArgs e)

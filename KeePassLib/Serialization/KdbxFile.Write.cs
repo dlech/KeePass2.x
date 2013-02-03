@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,12 +22,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
-using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
 using System.Drawing;
 using System.Globalization;
-using System.Drawing.Imaging;
+using System.Diagnostics;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -686,7 +685,8 @@ namespace KeePassLib.Serialization
 						// page area
 						if(char.IsSymbol(ch) || char.IsSurrogate(ch))
 						{
-							System.Globalization.UnicodeCategory cat = char.GetUnicodeCategory(ch);
+							System.Globalization.UnicodeCategory cat =
+								CharUnicodeInfo.GetUnicodeCategory(ch);
 							// Map character to correct position in code page
 							chMapped = (char)((int)cat * 32 + ch);
 						}
@@ -698,7 +698,11 @@ namespace KeePassLib.Serialization
 								// in the low ANSI range (up to 255) when calling
 								// ToLower on them with invariant culture (see
 								// http://lists.ximian.com/pipermail/mono-patches/2002-February/086106.html )
-								chMapped = char.ToLower(ch, CultureInfo.InvariantCulture);
+#if !KeePassLibSD
+								chMapped = char.ToLowerInvariant(ch);
+#else
+								chMapped = char.ToLower(ch);
+#endif
 							}
 						}
 

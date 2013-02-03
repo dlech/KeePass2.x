@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -236,10 +236,15 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SwitchDesktop(IntPtr hDesktop);
 
-		// [DllImport("User32.dll", SetLastError = true)]
-		// internal static extern IntPtr OpenInputDesktop(uint dwFlags,
-		//	[MarshalAs(UnmanagedType.Bool)] bool fInherit,
-		//	[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+		[DllImport("User32.dll", SetLastError = true)]
+		internal static extern IntPtr OpenInputDesktop(uint dwFlags,
+			[MarshalAs(UnmanagedType.Bool)] bool fInherit,
+			[MarshalAs(UnmanagedType.U4)] DesktopFlags dwDesiredAccess);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetUserObjectInformation(IntPtr hObj,
+			int nIndex, IntPtr pvInfo, uint nLength, ref uint lpnLengthNeeded);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern IntPtr GetThreadDesktop(uint dwThreadId);
@@ -361,5 +366,9 @@ namespace KeePass.Native
 		internal static extern IntPtr ShellExecute(IntPtr hwnd,
 			string lpOperation, string lpFile, string lpParameters,
 			string lpDirectory, int nShowCmd);
+
+		[DllImport("User32.dll", CharSet = CharSet.Auto)]
+		internal static extern int MessageBox(IntPtr hWnd, string lpText,
+			string lpCaption, [MarshalAs(UnmanagedType.U4)] MessageBoxFlags uType);
 	}
 }

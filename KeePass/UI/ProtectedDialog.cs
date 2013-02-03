@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,8 +26,11 @@ using System.Threading;
 using System.Drawing;
 
 using KeePass.Native;
+using KeePass.Resources;
 using KeePass.Util;
 
+using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -40,7 +43,14 @@ namespace KeePass.UI
 		private UIFormConstructor m_fnConstruct;
 		private UIFormResultBuilder m_fnResultBuilder;
 
-		private sealed class SecureThreadParams
+		private enum SecureThreadState
+		{
+			None = 0,
+			ShowingDialog,
+			Terminated
+		}
+
+		private sealed class SecureThreadInfo
 		{
 			public Bitmap BackgroundBitmap = null;
 			public IntPtr ThreadDesktop = IntPtr.Zero;
@@ -49,6 +59,8 @@ namespace KeePass.UI
 
 			public DialogResult DialogResult = DialogResult.None;
 			public object ResultObject = null;
+
+			public SecureThreadState State = SecureThreadState.None;
 		}
 
 		public ProtectedDialog(UIFormConstructor fnConstruct,
@@ -80,24 +92,30 @@ namespace KeePass.UI
 				IntPtr pOrgDesktop = NativeMethods.GetThreadDesktop(uOrgThreadId);
 
 				string strName = "D" + Convert.ToBase64String(
-					Guid.NewGuid().ToByteArray(), Base64FormattingOptions.None);
+					CryptoRandom.Instance.GetRandomBytes(16),
+					Base64FormattingOptions.None);
 				strName = strName.Replace(@"+", string.Empty);
 				strName = strName.Replace(@"/", string.Empty);
 				strName = strName.Replace(@"=", string.Empty);
+				if(strName.Length > 15) strName = strName.Substring(0, 15);
 
 				NativeMethods.DesktopFlags deskFlags =
-					NativeMethods.DesktopFlags.CreateMenu |
+					(NativeMethods.DesktopFlags.CreateMenu |
 					NativeMethods.DesktopFlags.CreateWindow |
 					NativeMethods.DesktopFlags.ReadObjects |
 					NativeMethods.DesktopFlags.WriteObjects |
-					NativeMethods.DesktopFlags.SwitchDesktop;
+					NativeMethods.DesktopFlags.SwitchDesktop);
 
 				IntPtr pNewDesktop = NativeMethods.CreateDesktop(strName,
 					null, IntPtr.Zero, 0, deskFlags, IntPtr.Zero);
 				if(pNewDesktop == IntPtr.Zero)
 					throw new InvalidOperationException();
 
-				SecureThreadParams stp = new SecureThreadParams();
+				bool bNameSupported = NativeMethods.DesktopNameContains(pNewDesktop,
+					strName).GetValueOrDefault(false);
+				Debug.Assert(bNameSupported);
+
+				SecureThreadInfo stp = new SecureThreadInfo();
 				stp.BackgroundBitmap = bmpBack;
 				stp.ThreadDesktop = pNewDesktop;
 				stp.FormConstructParam = objConstructParam;
@@ -106,13 +124,42 @@ namespace KeePass.UI
 				th.CurrentCulture = Thread.CurrentThread.CurrentCulture;
 				th.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
 				th.Start(stp);
-				th.Join();
+
+				SecureThreadState st = SecureThreadState.None;
+				while(st != SecureThreadState.Terminated)
+				{
+					th.Join(150);
+
+					lock(stp) { st = stp.State; }
+
+					if((st == SecureThreadState.ShowingDialog) && bNameSupported)
+					{
+						IntPtr hCurDesk = NativeMethods.OpenInputDesktop(0,
+							false, NativeMethods.DesktopFlags.ReadObjects);
+						if(hCurDesk == IntPtr.Zero) { Debug.Assert(false); continue; }
+						if(hCurDesk == pNewDesktop)
+						{
+							if(!NativeMethods.CloseDesktop(hCurDesk)) { Debug.Assert(false); }
+							continue;
+						}
+						bool? obOnSec = NativeMethods.DesktopNameContains(hCurDesk, strName);
+						if(!NativeMethods.CloseDesktop(hCurDesk)) { Debug.Assert(false); }
+
+						lock(stp) { st = stp.State; } // Update; might have changed
+
+						if(obOnSec.HasValue && !obOnSec.Value &&
+							(st == SecureThreadState.ShowingDialog))
+							HandleUnexpectedDesktopSwitch(pOrgDesktop, pNewDesktop, stp);
+					}
+				}
 
 				if(!NativeMethods.SwitchDesktop(pOrgDesktop)) { Debug.Assert(false); }
 				NativeMethods.SetThreadDesktop(pOrgDesktop);
 
+				th.Join(); // Ensure thread terminated before closing desktop
+
 				if(!NativeMethods.CloseDesktop(pNewDesktop)) { Debug.Assert(false); }
-				NativeMethods.CloseDesktop(pOrgDesktop);
+				NativeMethods.CloseDesktop(pOrgDesktop); // Optional
 
 				dr = stp.DialogResult;
 				objResult = stp.ResultObject;
@@ -150,11 +197,11 @@ namespace KeePass.UI
 		{
 			BackgroundForm formBack = null;
 
+			SecureThreadInfo stp = (oParam as SecureThreadInfo);
+			if(stp == null) { Debug.Assert(false); return; }
+
 			try
 			{
-				SecureThreadParams stp = (oParam as SecureThreadParams);
-				if(stp == null) { Debug.Assert(false); return; }
-
 				if(!NativeMethods.SetThreadDesktop(stp.ThreadDesktop))
 				{
 					Debug.Assert(false);
@@ -198,6 +245,7 @@ namespace KeePass.UI
 				if(Program.Config.UI.SecureDesktopPlaySound)
 					UIUtil.PlayUacSound();
 
+				lock(stp) { stp.State = SecureThreadState.ShowingDialog; }
 				stp.DialogResult = f.ShowDialog(formBack);
 				stp.ResultObject = m_fnResultBuilder(f);
 
@@ -215,6 +263,41 @@ namespace KeePass.UI
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}
+
+				lock(stp) { stp.State = SecureThreadState.Terminated; }
+			}
+		}
+
+		private static void HandleUnexpectedDesktopSwitch(IntPtr pOrgDesktop,
+			IntPtr pNewDesktop, SecureThreadInfo stp)
+		{
+			NativeMethods.SwitchDesktop(pOrgDesktop);
+			NativeMethods.SetThreadDesktop(pOrgDesktop);
+
+			ProcessMessagesEx();
+
+			// Do not use MessageService.ShowWarning, because
+			// it uses the top form's thread
+			MessageService.ExternalIncrementMessageCount();
+			NativeMethods.MessageBoxFlags mbf =
+				(NativeMethods.MessageBoxFlags.MB_ICONWARNING |
+				NativeMethods.MessageBoxFlags.MB_TASKMODAL |
+				NativeMethods.MessageBoxFlags.MB_SETFOREGROUND |
+				NativeMethods.MessageBoxFlags.MB_TOPMOST);
+			if(StrUtil.RightToLeft)
+				mbf |= (NativeMethods.MessageBoxFlags.MB_RTLREADING |
+					NativeMethods.MessageBoxFlags.MB_RIGHT);
+			NativeMethods.MessageBox(IntPtr.Zero, KPRes.SecDeskOtherSwitched +
+				MessageService.NewParagraph + KPRes.SecDeskSwitchBack,
+				PwDefs.ShortProductName, mbf);
+			MessageService.ExternalDecrementMessageCount();
+
+			SecureThreadState st;
+			lock(stp) { st = stp.State; }
+			if(st != SecureThreadState.Terminated)
+			{
+				NativeMethods.SwitchDesktop(pNewDesktop);
+				ProcessMessagesEx();
 			}
 		}
 

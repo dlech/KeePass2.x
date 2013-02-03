@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -178,13 +178,13 @@ namespace KeePass.Ecas
 			dg.BackgroundColor = clrBack;
 			dg.DefaultCellStyle.SelectionBackColor = clrBack;
 			dg.DefaultCellStyle.SelectionForeColor = dg.DefaultCellStyle.ForeColor;
-			dg.EditMode = DataGridViewEditMode.EditOnEnter;
 			dg.AllowDrop = false;
 			dg.AllowUserToAddRows = false;
 			dg.AllowUserToDeleteRows = false;
 			dg.AllowUserToOrderColumns = false;
 			dg.AllowUserToResizeColumns = false;
 			dg.AllowUserToResizeRows = false;
+			// dg.EditMode: see below
 
 			int nWidth = (dg.ClientSize.Width - UIUtil.GetVScrollBarWidth());
 			dg.Columns.Add("Name", KPRes.FieldName);
@@ -257,6 +257,11 @@ namespace KeePass.Ecas
 				cc[1].Style.BackColor = clrValueBack;
 				cc[1].Style.SelectionBackColor = clrValueBack;
 			}
+
+			// Perform postponed setting of EditMode (cannot set it earlier
+			// due to a Mono bug on FreeBSD);
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/cb8270e2/
+			dg.EditMode = DataGridViewEditMode.EditOnEnter;
 		}
 
 		public static void DataGridViewToParameters(DataGridView dg, IEcasObject objOut,

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@ namespace KeePass.Forms
 		private bool m_bExport = false;
 		private PwDatabase m_pwDatabaseInfo = null;
 		private PwGroup m_pgRootInfo = null;
+
+		private ImageList m_ilFormats = null;
 
 		private FileFormatProvider m_fmtCur = null; // Current selection
 
@@ -123,9 +125,9 @@ namespace KeePass.Forms
 			m_lvFormats.Columns[0].Width = m_lvFormats.ClientRectangle.Width -
 				UIUtil.GetVScrollBarWidth() - 1;
 
-			ImageList ilFormats = new ImageList();
-			ilFormats.ColorDepth = ColorDepth.Depth32Bit;
-			ilFormats.ImageSize = new Size(16, 16);
+			m_ilFormats = new ImageList();
+			m_ilFormats.ColorDepth = ColorDepth.Depth32Bit;
+			m_ilFormats.ImageSize = new Size(16, 16);
 
 			Dictionary<string, FormatGroupEx> dictGroups =
 				new Dictionary<string, FormatGroupEx>();
@@ -158,8 +160,8 @@ namespace KeePass.Forms
 				if(imgSmallIcon == null)
 					imgSmallIcon = Properties.Resources.B16x16_Folder_Inbox;
 
-				ilFormats.Images.Add(imgSmallIcon);
-				lvi.ImageIndex = ilFormats.Images.Count - 1;
+				m_ilFormats.Images.Add(imgSmallIcon);
+				lvi.ImageIndex = m_ilFormats.Images.Count - 1;
 
 				grp.Items.Add(lvi);
 			}
@@ -171,10 +173,20 @@ namespace KeePass.Forms
 					m_lvFormats.Items.Add(lvi);
 			}
 
-			m_lvFormats.SmallImageList = ilFormats;
+			m_lvFormats.SmallImageList = m_ilFormats;
 
 			CustomizeForScreenReader();
 			UpdateUIState();
+		}
+
+		private void CleanUpEx()
+		{
+			if(m_ilFormats != null)
+			{
+				m_lvFormats.SmallImageList = null; // Detach event handlers
+				m_ilFormats.Dispose();
+				m_ilFormats = null;
+			}
 		}
 
 		private void CustomizeForScreenReader()
@@ -303,6 +315,7 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			CleanUpEx();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 

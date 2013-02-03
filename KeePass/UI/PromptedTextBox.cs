@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,11 +47,12 @@ namespace KeePass.UI
 		{
 			base.WndProc(ref m);
 
-			if((m.Msg == WM_PAINT) && (!this.Focused) && (this.Text.Length == 0) &&
+			if((m.Msg == WM_PAINT) && !this.Focused && (this.Text.Length == 0) &&
 				(m_strPrompt.Length > 0))
 			{
-				TextFormatFlags tff = TextFormatFlags.EndEllipsis | TextFormatFlags.Left |
-					TextFormatFlags.Top | TextFormatFlags.NoPadding;
+				TextFormatFlags tff = (TextFormatFlags.EndEllipsis |
+					TextFormatFlags.NoPrefix | TextFormatFlags.Left |
+					TextFormatFlags.Top | TextFormatFlags.NoPadding);
 
 				using(Graphics g = this.CreateGraphics())
 				{

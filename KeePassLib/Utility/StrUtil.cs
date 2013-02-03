@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 
 using KeePassLib.Collections;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Native;
 using KeePassLib.Security;
 using KeePassLib.Resources;
@@ -217,6 +218,9 @@ namespace KeePassLib.Utility
 					m_lEncs = new List<StrEncodingInfo>();
 
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Default,
+#if KeePassRT
+						StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
+#else
 #if !KeePassLibSD
 						Encoding.Default.EncodingName,
 #else
@@ -224,10 +228,13 @@ namespace KeePassLib.Utility
 #endif
 						Encoding.Default,
 						(uint)Encoding.Default.GetBytes("a").Length, null));
+#endif
+#if !KeePassRT
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Ascii,
 						"ASCII", Encoding.ASCII, 1, null));
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf7,
 						"Unicode (UTF-7)", Encoding.UTF7, 1, null));
+#endif
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf8,
 						"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
@@ -236,7 +243,7 @@ namespace KeePassLib.Utility
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
 						"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
 						2, new byte[] { 0xFE, 0xFF }));
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
 						"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
 						4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
@@ -274,15 +281,19 @@ namespace KeePassLib.Utility
 		//	{
 		//		char ch = str[i];
 		//		if((int)ch >= 256)
-		//		{
-		//			sbEncoded.Append("\\u");
-		//			sbEncoded.Append((int)ch);
-		//			sbEncoded.Append('?');
-		//		}
+		//			sbEncoded.Append(StrUtil.RtfEncodeChar(ch));
 		//		else sbEncoded.Append(ch);
 		//	}
 		//	return sbEncoded.ToString();
 		// }
+
+		public static string RtfEncodeChar(char ch)
+		{
+			// Unicode character values must be encoded using
+			// 16-bit numbers (decimal); Unicode values greater
+			// than 32767 must be expressed as negative numbers
+			return ("\\u" + Convert.ToString((short)ch, 10) + "?");
+		}
 
 		/// <summary>
 		/// Convert a string into a valid HTML sequence representing that string.
@@ -482,8 +493,10 @@ namespace KeePassLib.Utility
 			if(excp.StackTrace != null)
 				strText += excp.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
+#if !KeePassRT
 			if(excp.TargetSite != null)
 				strText += excp.TargetSite.ToString() + MessageService.NewLine;
+#endif
 
 			if(excp.Data != null)
 			{
@@ -506,8 +519,10 @@ namespace KeePassLib.Utility
 				if(excp.InnerException.StackTrace != null)
 					strText += excp.InnerException.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
+#if !KeePassRT
 				if(excp.InnerException.TargetSite != null)
 					strText += excp.InnerException.TargetSite.ToString();
+#endif
 
 				if(excp.InnerException.Data != null)
 				{
@@ -636,19 +651,34 @@ namespace KeePassLib.Utility
 			Debug.Assert(strText != null); // No throw
 			if(string.IsNullOrEmpty(strText)) return strText;
 
-			char[] vChars = strText.ToCharArray();
-			StringBuilder sb = new StringBuilder(strText.Length, strText.Length);
-			char ch;
+			int nLength = strText.Length;
+			StringBuilder sb = new StringBuilder(nLength);
 
-			for(int i = 0; i < vChars.Length; ++i)
+			for(int i = 0; i < nLength; ++i)
 			{
-				ch = vChars[i];
+				char ch = strText[i];
 
-				if(((ch >= 0x20) && (ch <= 0xD7FF)) ||
-					(ch == 0x9) || (ch == 0xA) || (ch == 0xD) ||
-					((ch >= 0xE000) && (ch <= 0xFFFD)))
+				if(((ch >= '\u0020') && (ch <= '\uD7FF')) ||
+					(ch == '\u0009') || (ch == '\u000A') || (ch == '\u000D') ||
+					((ch >= '\uE000') && (ch <= '\uFFFD')))
 					sb.Append(ch);
-				// Range ((ch >= 0x10000) && (ch <= 0x10FFFF)) excluded
+				else if((ch >= '\uD800') && (ch <= '\uDBFF')) // High surrogate
+				{
+					if((i + 1) < nLength)
+					{
+						char chLow = strText[i + 1];
+						if((chLow >= '\uDC00') && (chLow <= '\uDFFF')) // Low sur.
+						{
+							sb.Append(ch);
+							sb.Append(chLow);
+							++i;
+						}
+						else { Debug.Assert(false); } // Low sur. invalid
+					}
+					else { Debug.Assert(false); } // Low sur. missing
+				}
+
+				Debug.Assert((ch < '\uDC00') || (ch > '\uDFFF')); // Lonely low sur.
 			}
 
 			return sb.ToString();
@@ -669,7 +699,12 @@ namespace KeePassLib.Utility
 			strY = strY.ToLower();
 
 			if(m_rxNaturalSplit == null)
-				m_rxNaturalSplit = new Regex(@"([0-9]+)", RegexOptions.Compiled);
+				m_rxNaturalSplit = new Regex(@"([0-9]+)",
+#if KeePassRT
+					RegexOptions.None);
+#else
+					RegexOptions.Compiled);
+#endif
 
 			string[] vPartsX = m_rxNaturalSplit.Split(strX);
 			string[] vPartsY = m_rxNaturalSplit.Split(strY);
@@ -722,6 +757,20 @@ namespace KeePassLib.Utility
 			str = str.Replace(@"&", string.Empty);
 
 			return str;
+		}
+
+		public static string EncodeMenuText(string strText)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+
+			return strText.Replace(@"&", @"&&");
+		}
+
+		public static string EncodeToolTipText(string strText)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+
+			return strText.Replace(@"&", @"&&&");
 		}
 
 		public static bool IsHexString(string str, bool bStrict)
@@ -994,7 +1043,7 @@ namespace KeePassLib.Utility
 				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				return Convert.ToBase64String(pbEnc, Base64FormattingOptions.None);
 #else
 				return Convert.ToBase64String(pbEnc);
@@ -1107,7 +1156,7 @@ namespace KeePassLib.Utility
 			Array.Reverse(pb);
 			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			return Convert.ToBase64String(pb, Base64FormattingOptions.None);
 #else
 			return Convert.ToBase64String(pb);
@@ -1243,7 +1292,7 @@ namespace KeePassLib.Utility
 
 			if(strMimeType == null) strMimeType = "application/octet-stream";
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
 				pbData, Base64FormattingOptions.None));
 #else
@@ -1274,13 +1323,19 @@ namespace KeePassLib.Utility
 
 			MemoryStream ms = new MemoryStream();
 
+#if KeePassRT
+			Encoding enc = StrUtil.Utf8;
+#else
+			Encoding enc = Encoding.ASCII;
+#endif
+
 			string[] v = strData.Split('%');
-			byte[] pb = Encoding.ASCII.GetBytes(v[0]);
+			byte[] pb = enc.GetBytes(v[0]);
 			ms.Write(pb, 0, pb.Length);
 			for(int i = 1; i < v.Length; ++i)
 			{
 				ms.WriteByte(Convert.ToByte(v[i].Substring(0, 2), 16));
-				pb = Encoding.ASCII.GetBytes(v[i].Substring(2));
+				pb = enc.GetBytes(v[i].Substring(2));
 				ms.Write(pb, 0, pb.Length);
 			}
 
@@ -1329,6 +1384,55 @@ namespace KeePassLib.Utility
 			}
 
 			return null;
+		}
+
+		private static string[] m_vPrefSepChars = null;
+		/// <summary>
+		/// Find a character that does not occur within a given text.
+		/// </summary>
+		public static char GetUnusedChar(string strText)
+		{
+			if(strText == null) { Debug.Assert(false); return '@'; }
+
+			if(m_vPrefSepChars == null)
+				m_vPrefSepChars = new string[5] {
+					"@!$%#/\\:;,.*-_?",
+					PwCharSet.UpperCase, PwCharSet.LowerCase,
+					PwCharSet.Digits, PwCharSet.PrintableAsciiSpecial
+				};
+
+			for(int i = 0; i < m_vPrefSepChars.Length; ++i)
+			{
+				foreach(char ch in m_vPrefSepChars[i])
+				{
+					if(strText.IndexOf(ch) < 0) return ch;
+				}
+			}
+
+			for(char ch = '\u00C0'; ch < char.MaxValue; ++ch)
+			{
+				if(strText.IndexOf(ch) < 0) return ch;
+			}
+
+			return char.MinValue;
+		}
+
+		public static char ByteToSafeChar(byte bt)
+		{
+			const char chDefault = '.';
+
+			// 00-1F are C0 control chars
+			if(bt < 0x20) return chDefault;
+
+			// 20-7F are basic Latin; 7F is DEL
+			if(bt < 0x7F) return (char)bt;
+
+			// 80-9F are C1 control chars
+			if(bt < 0xA0) return chDefault;
+
+			// A0-FF are Latin-1 supplement; AD is soft hyphen
+			if(bt == 0xAD) return '-';
+			return (char)bt;
 		}
 	}
 }

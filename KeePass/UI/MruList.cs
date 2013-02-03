@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -137,7 +137,8 @@ namespace KeePass.UI
 			if(m_vItems.Count > 0)
 			{
 				foreach(KeyValuePair<string, object> kvp in m_vItems)
-					AddMenuItem(kvp.Key, kvp.Value, false, null, true, ref uAccessKey);
+					AddMenuItem(StrUtil.EncodeMenuText(kvp.Key), kvp.Value,
+						false, null, true, ref uAccessKey);
 
 				m_tsmiContainer.DropDownItems.Add(new ToolStripSeparator());
 				if(m_tsmiContainer2 != null)
@@ -170,10 +171,10 @@ namespace KeePass.UI
 			if(uAccessKey >= 1)
 			{
 				if(uAccessKey < 10)
-					strItem = @"&" + uAccessKey.ToString() + " " + strText;
+					strItem = @"&" + uAccessKey.ToString() + " " + strItem;
 				else if(uAccessKey == 10)
-					strItem = @"1&0 " + strText;
-				else strItem = uAccessKey.ToString() + " " + strText;
+					strItem = @"1&0 " + strItem;
+				else strItem = uAccessKey.ToString() + " " + strItem;
 			}
 
 			ToolStripMenuItem tsi = new ToolStripMenuItem(strItem);
