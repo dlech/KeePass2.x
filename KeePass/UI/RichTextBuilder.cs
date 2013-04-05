@@ -180,8 +180,7 @@ namespace KeePass.UI
 			string strText = m_sb.ToString();
 
 			Dictionary<char, string> dEnc = new Dictionary<char, string>();
-			// https://bugzilla.novell.com/show_bug.cgi?id=586901
-			if(MonoWorkarounds.IsRequired)
+			if(MonoWorkarounds.IsRequired(586901))
 			{
 				StringBuilder sbEnc = new StringBuilder();
 				for(int i = 0; i < strText.Length; ++i)

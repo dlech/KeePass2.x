@@ -56,6 +56,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Text = KPRes.Event;
+			this.Icon = Properties.Resources.KeePass;
 
 			m_lblParamHint.Text = KPRes.ParamDescHelp;
 
@@ -65,7 +66,7 @@ namespace KeePass.Forms
 					m_cmbEvents.Items.Add(t.Name);
 			}
 
-			UpdateDataEx(m_event, false, true);
+			UpdateDataEx(m_event, false, EcasTypeDxMode.Selection);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -73,18 +74,19 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private bool UpdateDataEx(EcasEvent e, bool bGuiToInternal, bool bDxTypeInfo)
+		private bool UpdateDataEx(EcasEvent e, bool bGuiToInternal,
+			EcasTypeDxMode dxType)
 		{
 			m_bBlockTypeSelectionHandler = true;
 			bool bResult = EcasUtil.UpdateDialog(EcasObjectType.Event, m_cmbEvents,
-				m_dgvParams, e, bGuiToInternal, bDxTypeInfo);
+				m_dgvParams, e, bGuiToInternal, dxType);
 			m_bBlockTypeSelectionHandler = false;
 			return bResult;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			if(UpdateDataEx(m_eventInOut, true, true) == false)
+			if(!UpdateDataEx(m_eventInOut, true, EcasTypeDxMode.Selection))
 				this.DialogResult = DialogResult.None;
 		}
 
@@ -96,8 +98,8 @@ namespace KeePass.Forms
 		{
 			if(m_bBlockTypeSelectionHandler) return;
 
-			UpdateDataEx(m_event, true, false);
-			UpdateDataEx(m_event, false, false);
+			UpdateDataEx(m_event, true, EcasTypeDxMode.ParamsTag);
+			UpdateDataEx(m_event, false, EcasTypeDxMode.None);
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)

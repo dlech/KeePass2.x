@@ -37,46 +37,6 @@ namespace KeePass.Util.Spr
 	/// </summary>
 	public static partial class SprEngine
 	{
-		/* private static string ReplacePickPw(string strText, PwEntry pe,
-			SprContentFlags cf)
-		{
-			string str = strText;
-
-			for(int iID = 1; iID < (int.MaxValue - 1); ++iID)
-			{
-				string strPlaceholder = @"{PICKPASSWORDCHARS";
-				if(iID > 1) strPlaceholder += iID.ToString();
-				strPlaceholder += @"}";
-
-				if(str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) >= 0)
-				{
-					ProtectedString ps = pe.Strings.Get(PwDefs.PasswordField);
-					if(ps != null)
-					{
-						byte[] pb = ps.ReadUtf8();
-						bool bNotEmpty = (pb.Length > 0);
-						Array.Clear(pb, 0, pb.Length);
-
-						if(bNotEmpty)
-						{
-							CharPickerForm cpf = new CharPickerForm();
-							cpf.InitEx(ps, true, true, 0);
-
-							if(cpf.ShowDialog() == DialogResult.OK)
-								str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
-									SprEngine.TransformContent(cpf.SelectedCharacters.ReadString(), cf));
-							UIUtil.DestroyForm(cpf);
-						}
-					}
-
-					str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, string.Empty);
-				}
-				else break;
-			}
-
-			return str;
-		} */
-
 		// Legacy, for backward compatibility only; see PickChars
 		private static string ReplacePickPw(string strText, SprContext ctx,
 			uint uRecursionLevel)
@@ -128,14 +88,11 @@ namespace KeePass.Util.Spr
 				if(!string.IsNullOrEmpty(strPick))
 				{
 					ProtectedString psPick = new ProtectedString(false, strPick);
-					CharPickerForm dlg = new CharPickerForm();
-					dlg.InitEx(psPick, true, true, uCharCount, null);
+					string strPicked = (CharPickerForm.ShowAndRestore(psPick,
+						true, true, uCharCount, null) ?? string.Empty);
 
-					if(dlg.ShowDialog() == DialogResult.OK)
-						str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
-							SprEngine.TransformContent(
-							dlg.SelectedCharacters.ReadString(), ctx));
-					UIUtil.DestroyForm(dlg);
+					str = StrUtil.ReplaceCaseInsensitive(str, strPlaceholder,
+						SprEngine.TransformContent(strPicked, ctx));
 				}
 			}
 
@@ -256,16 +213,10 @@ namespace KeePass.Util.Spr
 			// times in case of a cyclic {PICKCHARS})
 			if(string.IsNullOrEmpty(strPick)) return string.Empty;
 
-			CharPickerForm cpf = new CharPickerForm();
-			cpf.InitEx(new ProtectedString(false, strPick), true, true,
-				uCharCount, bInitHide);
-
-			string strResult = string.Empty;
-			if(cpf.ShowDialog() == DialogResult.OK)
-				strResult = cpf.SelectedCharacters.ReadString();
-
-			UIUtil.DestroyForm(cpf);
-			return strResult; // Don't transform here
+			ProtectedString psWord = new ProtectedString(false, strPick);
+			string strPicked = CharPickerForm.ShowAndRestore(psWord,
+				true, true, uCharCount, bInitHide);
+			return (strPicked ?? string.Empty); // Don't transform here
 		}
 
 		private static string ConvertToDownArrows(string str, int iOffset,

@@ -74,19 +74,23 @@ namespace KeePass.Plugins
 
 				DirectoryInfo di = new DirectoryInfo(strPath);
 
-				FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.AllDirectories);
+				FileInfo[] vFiles = UrlUtil.GetFileInfos(di, "*.dll",
+					SearchOption.AllDirectories).ToArray();
 				LoadPlugins(vFiles, null, null, true);
 
-				vFiles = di.GetFiles("*.exe", SearchOption.AllDirectories);
+				vFiles = UrlUtil.GetFileInfos(di, "*.exe",
+					SearchOption.AllDirectories).ToArray();
 				LoadPlugins(vFiles, null, null, true);
 
-				vFiles = di.GetFiles("*." + PlgxPlugin.PlgxExtension, SearchOption.AllDirectories);
+				vFiles = UrlUtil.GetFileInfos(di, "*." + PlgxPlugin.PlgxExtension,
+					SearchOption.AllDirectories).ToArray();
 				if(vFiles.Length > 0)
 				{
 					OnDemandStatusDialog dlgStatus = new OnDemandStatusDialog(true, null);
 					dlgStatus.StartLogging(PwDefs.ShortProductName, false);
 
-					foreach(FileInfo fi in vFiles) PlgxPlugin.Load(fi.FullName, dlgStatus);
+					foreach(FileInfo fi in vFiles)
+						PlgxPlugin.Load(fi.FullName, dlgStatus);
 
 					dlgStatus.EndLogging();
 				}

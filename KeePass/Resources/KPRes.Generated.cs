@@ -111,6 +111,7 @@ namespace KeePass.Resources
 			m_strClipboardClearOnExit = TryGetEx(dictNew, "ClipboardClearOnExit", m_strClipboardClearOnExit);
 			m_strClipboardDataCopied = TryGetEx(dictNew, "ClipboardDataCopied", m_strClipboardDataCopied);
 			m_strClipboardViewerIgnoreFormat = TryGetEx(dictNew, "ClipboardViewerIgnoreFormat", m_strClipboardViewerIgnoreFormat);
+			m_strCloseActiveDatabase = TryGetEx(dictNew, "CloseActiveDatabase", m_strCloseActiveDatabase);
 			m_strCloseButton = TryGetEx(dictNew, "CloseButton", m_strCloseButton);
 			m_strCloseButtonMinimizes = TryGetEx(dictNew, "CloseButtonMinimizes", m_strCloseButtonMinimizes);
 			m_strClosingDatabaseFile = TryGetEx(dictNew, "ClosingDatabaseFile", m_strClosingDatabaseFile);
@@ -500,6 +501,7 @@ namespace KeePass.Resources
 			m_strRandomMacAddress = TryGetEx(dictNew, "RandomMacAddress", m_strRandomMacAddress);
 			m_strReady = TryGetEx(dictNew, "Ready", m_strReady);
 			m_strRecommended = TryGetEx(dictNew, "Recommended", m_strRecommended);
+			m_strRecommendedCmd = TryGetEx(dictNew, "RecommendedCmd", m_strRecommendedCmd);
 			m_strRecycleBin = TryGetEx(dictNew, "RecycleBin", m_strRecycleBin);
 			m_strRecycleBinCollapse = TryGetEx(dictNew, "RecycleBinCollapse", m_strRecycleBinCollapse);
 			m_strRedo = TryGetEx(dictNew, "Redo", m_strRedo);
@@ -757,6 +759,7 @@ namespace KeePass.Resources
 			"ClipboardClearOnExit",
 			"ClipboardDataCopied",
 			"ClipboardViewerIgnoreFormat",
+			"CloseActiveDatabase",
 			"CloseButton",
 			"CloseButtonMinimizes",
 			"ClosingDatabaseFile",
@@ -1146,6 +1149,7 @@ namespace KeePass.Resources
 			"RandomMacAddress",
 			"Ready",
 			"Recommended",
+			"RecommendedCmd",
 			"RecycleBin",
 			"RecycleBinCollapse",
 			"Redo",
@@ -2255,6 +2259,17 @@ namespace KeePass.Resources
 		public static string ClipboardViewerIgnoreFormat
 		{
 			get { return m_strClipboardViewerIgnoreFormat; }
+		}
+
+		private static string m_strCloseActiveDatabase =
+			@"Close active database";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Close active database'.
+		/// </summary>
+		public static string CloseActiveDatabase
+		{
+			get { return m_strCloseActiveDatabase; }
 		}
 
 		private static string m_strCloseButton =
@@ -6534,6 +6549,17 @@ namespace KeePass.Resources
 		public static string Recommended
 		{
 			get { return m_strRecommended; }
+		}
+
+		private static string m_strRecommendedCmd =
+			@"&Recommended";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Recommended'.
+		/// </summary>
+		public static string RecommendedCmd
+		{
+			get { return m_strRecommendedCmd; }
 		}
 
 		private static string m_strRecycleBin =

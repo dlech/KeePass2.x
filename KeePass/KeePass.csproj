@@ -344,7 +344,6 @@
     <Compile Include="DataExchange\Formats\PwAgentXml234.cs" />
     <Compile Include="DataExchange\Formats\PwDepotXml26.cs" />
     <Compile Include="DataExchange\Formats\PwExporterXml105.cs" />
-    <Compile Include="DataExchange\Formats\PwGorillaCsv142.cs" />
     <Compile Include="DataExchange\Formats\PwKeeperCsv70.cs" />
     <Compile Include="DataExchange\Formats\PwMemory2008Xml104.cs" />
     <Compile Include="DataExchange\Formats\PwPrompterDat12.cs" />
@@ -353,16 +352,20 @@
     <Compile Include="DataExchange\Formats\PwTresorXml100.cs" />
     <Compile Include="DataExchange\Formats\RevelationXml04.cs" />
     <Compile Include="DataExchange\Formats\RoboFormHtml69.cs" />
+    <Compile Include="DataExchange\Formats\SafeWalletXml3.cs" />
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
     <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
     <Compile Include="DataExchange\Formats\SplashIdCsv402.cs" />
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
     <Compile Include="DataExchange\Formats\StickyPwXml50.cs" />
+    <Compile Include="DataExchange\Formats\TurboPwsCsv5.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
     <Compile Include="DataExchange\Formats\WinFavorites10.cs" />
     <Compile Include="DataExchange\Formats\XslTransform2x.cs" />
     <Compile Include="DataExchange\Formats\ZdnPwProTxt314.cs" />
+    <Compile Include="DataExchange\GxiImporter.cs" />
+    <Compile Include="DataExchange\GxiProfile.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
     <Compile Include="DataExchange\Json.cs" />
     <Compile Include="DataExchange\KdbFile.cs" />
@@ -716,6 +719,7 @@
     </Compile>
     <Compile Include="UI\KeyboardControl.cs">
     </Compile>
+    <Compile Include="UI\ListViewGroupingMenu.cs" />
     <Compile Include="UI\ListViewSortMenu.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
@@ -1129,6 +1133,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_TurboPws.png" />
+    <None Include="Resources\Images\B16x16_Imp_SafeWallet.png" />
     <None Include="Resources\Images\B16x16_Imp_LastPass.png" />
     <None Include="Resources\Images\B16x16_Imp_DesktopKnox.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Key_New.png" />
@@ -1178,7 +1184,6 @@
     <None Include="Resources\Nuvola\B16x16_Folder_Inbox.png" />
     <None Include="Resources\Images\B16x16_Imp_Security.png" />
     <None Include="Resources\Images\B16x16_Imp_PwSafe.png" />
-    <None Include="Resources\Images\B16x16_Imp_PwGorilla.png" />
     <None Include="Resources\Images\B16x16_Imp_PwDepot.png" />
     <None Include="Resources\Images\B16x16_Imp_PwAgent.png" />
     <None Include="Resources\Images\B16x16_Imp_PVault.png" />

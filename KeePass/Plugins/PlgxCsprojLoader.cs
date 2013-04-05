@@ -51,18 +51,18 @@ namespace KeePass.Plugins
 		{
 			if(plgxOutInfo == null) throw new ArgumentNullException("plgxOutInfo");
 
-			string[] vCsproj = Directory.GetFiles(strDirPath, "*.csproj",
-				SearchOption.AllDirectories);
-			if((vCsproj != null) && (vCsproj.Length == 1))
+			string[] vCsproj = UrlUtil.GetFilePaths(strDirPath, "*.csproj",
+				SearchOption.AllDirectories).ToArray();
+			if(vCsproj.Length == 1)
 			{
 				plgxOutInfo.ProjectType = PlgxProjectType.CSharp;
 				PlgxCsprojLoader.Load(vCsproj[0], plgxOutInfo);
 				return;
 			}
 
-			// string[] vVbproj = Directory.GetFiles(strDirPath, "*.vbproj",
-			//	SearchOption.AllDirectories);
-			// if((vVbproj != null) && (vVbproj.Length == 1))
+			// string[] vVbproj = UrlUtil.GetFilePaths(strDirPath, "*.vbproj",
+			//	SearchOption.AllDirectories).ToArray();
+			// if(vVbproj.Length == 1)
 			// {
 			//	plgxOutInfo.ProjectType = PlgxProjectType.VisualBasic;
 			//	PlgxCsprojLoader.Load(vVbproj[0], plgxOutInfo);

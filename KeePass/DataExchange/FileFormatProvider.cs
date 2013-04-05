@@ -94,6 +94,16 @@ namespace KeePass.DataExchange
 		}
 
 		/// <summary>
+		/// If the importer is implemented as a profile for the generic
+		/// XML importer, return the profile using this property (in
+		/// this case the <c>Import</c> method must not be overridden!).
+		/// </summary>
+		internal virtual GxiProfile XmlProfile
+		{
+			get { return null; }
+		}
+
+		/// <summary>
 		/// Called before the <c>Import</c> method is invoked.
 		/// </summary>
 		/// <returns>Returns <c>true</c>, if the <c>Import</c> method
@@ -117,7 +127,7 @@ namespace KeePass.DataExchange
 
 		/// <summary>
 		/// Import a stream into a database. Throws an exception if an error
-		/// occurs.
+		/// occurs. Do not call the base class method when overriding it.
 		/// </summary>
 		/// <param name="pwStorage">Data storage into which the data will be imported.</param>
 		/// <param name="sInput">Input stream to read the data from.</param>
@@ -125,6 +135,15 @@ namespace KeePass.DataExchange
 		public virtual void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
+			GxiProfile p = this.XmlProfile;
+			if(p != null)
+			{
+				if(pwStorage == null) throw new ArgumentNullException("pwStorage");
+
+				GxiImporter.Import(pwStorage.RootGroup, sInput, p, pwStorage, slLogger);
+				return;
+			}
+
 			throw new NotSupportedException();
 		}
 

@@ -33,18 +33,31 @@ namespace KeePass.Util
 	public static class MonoWorkarounds
 	{
 		private static bool? m_bReq = null;
-		public static bool IsRequired
+		public static bool IsRequired()
 		{
-			get
-			{
-				if(!m_bReq.HasValue) m_bReq = NativeLib.IsUnix();
-				return m_bReq.Value;
-			}
+			if(!m_bReq.HasValue) m_bReq = NativeLib.IsUnix();
+			return m_bReq.Value;
+		}
+
+		// 586901:
+		//   https://bugzilla.novell.com/show_bug.cgi?id=586901
+		// 620618:
+		//   https://bugzilla.novell.com/show_bug.cgi?id=620618
+		// 686017:
+		//   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
+		// 801414:
+		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/801414
+		// 891029:
+		//   https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
+		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
+		public static bool IsRequired(int iBugID)
+		{
+			return MonoWorkarounds.IsRequired();
 		}
 
 		public static void ApplyTo(Form f)
 		{
-			if(!MonoWorkarounds.IsRequired) return;
+			if(!MonoWorkarounds.IsRequired()) return;
 			if(f == null) { Debug.Assert(false); return; }
 
 			f.HandleCreated += MonoWorkarounds.OnFormHandleCreated;
@@ -55,7 +68,7 @@ namespace KeePass.Util
 
 		public static void Release(Form f)
 		{
-			if(!MonoWorkarounds.IsRequired) return;
+			if(!MonoWorkarounds.IsRequired()) return;
 			if(f == null) { Debug.Assert(false); return; }
 
 			f.HandleCreated -= MonoWorkarounds.OnFormHandleCreated;
@@ -219,6 +232,32 @@ namespace KeePass.Util
 		private static void OnFormHandleCreated(object sender, EventArgs e)
 		{
 			SetWmClass(sender as Form);
+		}
+
+		/// <summary>
+		/// Set the value of the private <c>shown_raised</c> member
+		/// variable of a form.
+		/// </summary>
+		/// <returns>Previous <c>shown_raised</c> value.</returns>
+		internal static bool ExchangeFormShownRaised(Form f, bool bNewValue)
+		{
+			if(f == null) { Debug.Assert(false); return true; }
+
+			try
+			{
+				FieldInfo fi = typeof(Form).GetField("shown_raised",
+					BindingFlags.Instance | BindingFlags.NonPublic);
+				if(fi == null) { Debug.Assert(false); return true; }
+
+				bool bPrevious = (bool)fi.GetValue(f);
+
+				fi.SetValue(f, bNewValue);
+
+				return bPrevious;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return true;
 		}
 	}
 }

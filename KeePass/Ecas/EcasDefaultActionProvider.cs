@@ -107,6 +107,12 @@ namespace KeePass.Ecas
 				ExportDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x5B, 0xBF, 0x45, 0x9D, 0x54, 0xBF, 0x49, 0xBD,
+				0x97, 0xFB, 0x2C, 0xEE, 0x5F, 0x99, 0x0A, 0x67 }),
+				KPRes.CloseActiveDatabase, PwIcon.PaperReady, null,
+				CloseDatabaseFile));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x3F, 0xB8, 0x33, 0x2D, 0xD6, 0x16, 0x4E, 0x87,
 				0x99, 0x05, 0x64, 0xDB, 0x16, 0x4C, 0xD6, 0x26 }),
 				KPRes.ActivateDatabaseTab, PwIcon.List, new EcasParameter[] {
@@ -289,6 +295,11 @@ namespace KeePass.Ecas
 			IOConnectionInfo ioc = (!string.IsNullOrEmpty(strPath) ?
 				IOConnectionInfo.FromPath(strPath) : null);
 			ExportUtil.Export(pei, strFormat, ioc);
+		}
+
+		private static void CloseDatabaseFile(EcasAction a, EcasContext ctx)
+		{
+			Program.MainForm.CloseDocument(null, false, false);
 		}
 
 		private static void ActivateDatabaseTab(EcasAction a, EcasContext ctx)

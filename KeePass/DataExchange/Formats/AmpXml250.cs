@@ -34,7 +34,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.50-2.75+
+	// 2.50-3.21+
 	internal sealed class AmpXml250 : FileFormatProvider
 	{
 		private const string ElemRoot = "AmP_FILE";
@@ -51,6 +51,14 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemUrl = "URL_Programm";
 		private const string ElemNotes = "Kommentar";
 
+		private const string ElemCustom = "Benutzerdefinierte_Felder";
+		private const string ElemCustomName = "name";
+		private const string ElemCustomValue = "wert";
+
+		private const string ValueNoData = "n/a";
+		private const string ValueNone = "keins";
+		private const string ValueNever = "nie";
+
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
@@ -60,7 +68,7 @@ namespace KeePass.DataExchange.Formats
 
 		public override Image SmallIcon
 		{
-			get { return KeePass.Properties.Resources.B16x16_Imp_AmP; }
+			get { return Properties.Resources.B16x16_Imp_AmP; }
 		}
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
@@ -70,7 +78,7 @@ namespace KeePass.DataExchange.Formats
 			string strDoc = sr.ReadToEnd();
 			sr.Close();
 
-			strDoc = XmlUtil.DecodeNonStandardEntities(strDoc);
+			strDoc = XmlUtil.DecodeHtmlEntities(strDoc);
 
 			ImportFileString(strDoc, pwStorage, slLogger);
 		}
@@ -114,19 +122,20 @@ namespace KeePass.DataExchange.Formats
 
 			foreach(XmlNode xmlChild in xmlNode)
 			{
-				string strInner = xmlChild.InnerText;
-				if(strInner == @"n/a") strInner = string.Empty;
+				string strInner = XmlUtil.SafeInnerText(xmlChild);
+				if(strInner == ValueNoData) strInner = string.Empty;
 
 				if(xmlChild.Name == ElemCategory)
 				{
-					Debug.Assert(strInner == pg.Name);
+					// strInner may contain special characters, thus
+					// update the group name now
+					pg.Name = strInner;
 				}
 				else if(xmlChild.Name == ElemTitle)
 				{
-					AddEntryIfValid(pg, pe);
+					AddEntryIfValid(pg, ref pe);
 
-					pe = new PwEntry(true, true);
-
+					Debug.Assert(strInner.Length > 0);
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectTitle, strInner));
 				}
@@ -137,17 +146,23 @@ namespace KeePass.DataExchange.Formats
 					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectPassword, strInner));
 				else if(xmlChild.Name == ElemPassword2)
-					pe.Strings.Set(PwDefs.PasswordField + @" 2", new ProtectedString(
-						pwStorage.MemoryProtection.ProtectPassword, strInner));
+				{
+					if((strInner.Length > 0) && (strInner != ValueNone))
+						pe.Strings.Set(PwDefs.PasswordField + @" 2", new ProtectedString(
+							pwStorage.MemoryProtection.ProtectPassword, strInner));
+				}
 				else if(xmlChild.Name == ElemExpiry)
 				{
-					try
+					if((strInner.Length > 0) && (strInner != ValueNever))
 					{
-						DateTime dt = DateTime.Parse(strInner);
-						pe.ExpiryTime = dt;
-						pe.Expires = true;
+						try
+						{
+							DateTime dt = DateTime.Parse(strInner);
+							pe.ExpiryTime = dt;
+							pe.Expires = true;
+						}
+						catch(Exception) { Debug.Assert(false); }
 					}
-					catch(Exception) { }
 				}
 				else if(xmlChild.Name == ElemUrl)
 					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
@@ -155,23 +170,43 @@ namespace KeePass.DataExchange.Formats
 				else if(xmlChild.Name == ElemNotes)
 					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
 						pwStorage.MemoryProtection.ProtectNotes, strInner));
+				else if(xmlChild.Name == ElemCustom)
+					LoadCustomFields(xmlChild, pe, pwStorage);
 				else { Debug.Assert(false); }
 			}
 
-			AddEntryIfValid(pg, pe);
+			AddEntryIfValid(pg, ref pe);
 		}
 
-		private static void AddEntryIfValid(PwGroup pgContainer, PwEntry pe)
+		private static void AddEntryIfValid(PwGroup pgContainer, ref PwEntry pe)
 		{
-			if(pe == null) return;
-
-			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length == 0) &&
-				(pe.Strings.ReadSafe(PwDefs.UserNameField).Length == 0))
+			try
 			{
-				return;
-			}
+				if(pe == null) return;
+				if(pe.Strings.ReadSafe(PwDefs.TitleField).Length == 0) return;
 
-			pgContainer.AddEntry(pe, true);
+				pgContainer.AddEntry(pe, true);
+			}
+			finally { pe = new PwEntry(true, true); }
+		}
+
+		private static void LoadCustomFields(XmlNode xmlNode, PwEntry pe,
+			PwDatabase pwStorage)
+		{
+			string strKey = string.Empty;
+
+			foreach(XmlNode xn in xmlNode.ChildNodes)
+			{
+				if(xn.Name == ElemCustomName)
+					strKey = XmlUtil.SafeInnerText(xn);
+				else if(xn.Name == ElemCustomValue)
+				{
+					if(strKey.Length == 0) { Debug.Assert(false); continue; }
+
+					ImportUtil.AppendToField(pe, strKey, XmlUtil.SafeInnerText(xn),
+						pwStorage);
+				}
+			}
 		}
 	}
 }

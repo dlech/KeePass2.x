@@ -467,6 +467,7 @@ namespace KeePass.UI
 			if(vEntries == null) throw new ArgumentNullException("vEntries");
 			if(vColumns == null) throw new ArgumentNullException("vColumns");
 			if(vColumns.Count == 0) throw new ArgumentException();
+			// ilIcons may be null
 
 			lv.BeginUpdate();
 
@@ -491,7 +492,7 @@ namespace KeePass.UI
 
 				if(pe.ParentGroup != null)
 				{
-					string strGroup = pe.ParentGroup.GetFullPath();
+					string strGroup = pe.ParentGroup.GetFullPath(" - ", false);
 					if(strGroup != lvg.Header)
 					{
 						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
@@ -501,23 +502,26 @@ namespace KeePass.UI
 
 				ListViewItem lvi = new ListViewItem(AppDefs.GetEntryField(pe, vColumns[0].Key));
 
-				if(pe.Expires && (pe.ExpiryTime <= dtNow))
-					lvi.ImageIndex = (int)PwIcon.Expired;
-				else if(pe.CustomIconUuid == PwUuid.Zero)
-					lvi.ImageIndex = (int)pe.IconId;
-				else
+				if(ilIcons != null)
 				{
-					lvi.ImageIndex = (int)pe.IconId;
-
-					foreach(PwDocument ds in dm.Documents)
+					if(pe.Expires && (pe.ExpiryTime <= dtNow))
+						lvi.ImageIndex = (int)PwIcon.Expired;
+					else if(pe.CustomIconUuid == PwUuid.Zero)
+						lvi.ImageIndex = (int)pe.IconId;
+					else
 					{
-						int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
-						if(nInx > -1)
+						lvi.ImageIndex = (int)pe.IconId;
+
+						foreach(PwDocument ds in dm.Documents)
 						{
-							ilIcons.Images.Add(new Bitmap(ds.Database.GetCustomIcon(
-								pe.CustomIconUuid)));
-							lvi.ImageIndex = ilIcons.Images.Count - 1;
-							break;
+							int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
+							if(nInx > -1)
+							{
+								ilIcons.Images.Add(new Bitmap(ds.Database.GetCustomIcon(
+									pe.CustomIconUuid)));
+								lvi.ImageIndex = ilIcons.Images.Count - 1;
+								break;
+							}
 						}
 					}
 				}
@@ -1197,6 +1201,22 @@ namespace KeePass.UI
 			if(tsmi.Checked != bChecked) tsmi.Checked = bChecked;
 		}
 
+		public static void SetRadioChecked(ToolStripMenuItem tsmi, bool bChecked)
+		{
+			if(tsmi == null) { Debug.Assert(false); return; }
+
+			if(bChecked)
+			{
+				tsmi.Image = Properties.Resources.B16x16_MenuRadio;
+				tsmi.CheckState = CheckState.Checked;
+			}
+			else
+			{
+				tsmi.Image = null;
+				tsmi.CheckState = CheckState.Unchecked;
+			}
+		}
+
 		public static void ResizeColumns(ListView lv, bool bBlockUIUpdate)
 		{
 			if(lv == null) { Debug.Assert(false); return; }
@@ -1461,8 +1481,50 @@ namespace KeePass.UI
 			int nRes = -1;
 			try
 			{
-				if((lv.Items.Count > 0) && (lv.TopItem != null))
-					nRes = lv.TopItem.Index;
+				if(lv.Items.Count == 0) return nRes;
+
+				ListViewItem lvi = null;
+				if(!lv.ShowGroups) lvi = lv.TopItem;
+				else
+				{
+					// In grouped mode, the TopItem property does not work;
+					// http://connect.microsoft.com/VisualStudio/feedback/details/642188/listview-control-bug-topitem-property-doesnt-work-with-groups
+					// http://msdn.microsoft.com/en-us/library/windows/desktop/bb761087%28v=vs.85%29.aspx
+
+					int dyHeader = 0;
+					try
+					{
+						if((lv.View == View.Details) && (lv.HeaderStyle !=
+							ColumnHeaderStyle.None) && (lv.Columns.Count > 0) &&
+							!KeePassLib.Native.NativeLib.IsUnix())
+						{
+							IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
+								NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+							if(hHeader != IntPtr.Zero)
+							{
+								NativeMethods.RECT rect = new NativeMethods.RECT();
+								if(NativeMethods.GetWindowRect(hHeader, ref rect))
+									dyHeader = rect.Bottom - rect.Top;
+								else { Debug.Assert(false); }
+							}
+							else { Debug.Assert(false); }
+						}
+					}
+					catch(Exception) { Debug.Assert(false); }
+
+					int yMin = int.MaxValue;
+					foreach(ListViewItem lviEnum in lv.Items)
+					{
+						int yEnum = Math.Abs(lviEnum.Position.Y - dyHeader);
+						if(yEnum < yMin)
+						{
+							yMin = yEnum;
+							lvi = lviEnum;
+						}
+					}
+				}
+
+				if(lvi != null) nRes = lvi.Index;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -2136,5 +2198,54 @@ namespace KeePass.UI
 
 			return bmp;
 		}
+
+		/* public static T DgvGetComboBoxValue<T>(DataGridViewComboBoxCell c,
+			List<KeyValuePair<T, string>> lItems)
+		{
+			if((c == null) || (lItems == null)) { Debug.Assert(false); return default(T); }
+
+			string strValue = ((c.Value as string) ?? string.Empty);
+			foreach(KeyValuePair<T, string> kvp in lItems)
+			{
+				if(kvp.Value == strValue) return kvp.Key;
+			}
+
+			Debug.Assert(false);
+			return default(T);
+		}
+
+		public static void DgvSetComboBoxValue<T>(DataGridViewComboBoxCell c,
+			T tValue, List<KeyValuePair<T, string>> lItems)
+		{
+			if((c == null) || (lItems == null)) { Debug.Assert(false); return; }
+
+			foreach(KeyValuePair<T, string> kvp in lItems)
+			{
+				if(kvp.Key.Equals(tValue))
+				{
+					c.Value = kvp.Value;
+					return;
+				}
+			}
+
+			Debug.Assert(false);
+		}
+
+		public static bool GetChecked(DataGridViewCheckBoxCell c)
+		{
+			if(c == null) { Debug.Assert(false); return false; }
+
+			object o = c.Value;
+			if(o == null) { Debug.Assert(false); return false; }
+
+			return StrUtil.StringToBool(o.ToString());
+		}
+
+		public static void SetChecked(DataGridViewCheckBoxCell c, bool bChecked)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			c.Value = bChecked;
+		} */
 	}
 }

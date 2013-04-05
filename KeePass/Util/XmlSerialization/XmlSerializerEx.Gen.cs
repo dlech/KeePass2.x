@@ -398,6 +398,9 @@ namespace KeePass.Util.XmlSerialization
 					case "ListSorting":
 						o.ListSorting = ReadListSorter(xr);
 						break;
+					case "ListGrouping":
+						o.ListGrouping = ReadInt32(xr);
+						break;
 					case "ShowEntriesOfSubGroups":
 						o.ShowEntriesOfSubGroups = ReadBoolean(xr);
 						break;
@@ -2458,6 +2461,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "KeyProvider":
 						o.KeyProvider = ReadString(xr);
+						break;
+					case "UserAccount":
+						o.UserAccount = ReadBoolean(xr);
 						break;
 					default:
 						Debug.Assert(false);

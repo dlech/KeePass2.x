@@ -140,7 +140,7 @@ namespace KeePass.Forms
 		private FormWindowState m_fwsLast = FormWindowState.Normal;
 		private PwGroup m_pgActiveAtDragStart = null;
 
-		private Stack<Form> m_vRedirectActivation = new Stack<Form>();
+		// private Stack<Form> m_vRedirectActivation = new Stack<Form>();
 
 		public DocumentManagerEx DocumentManager { get { return m_docMgr; } }
 		public PwDatabase ActiveDatabase { get { return m_docMgr.ActiveDatabase; } }
@@ -273,10 +273,11 @@ namespace KeePass.Forms
 			m_ctxEntryPreviewContextMenu.Detach();
 
 			m_lvsmMenu.Release();
+			m_lvgmMenu.Release();
 
 			m_ntfTray.Visible = false;
 
-			Debug.Assert(m_vRedirectActivation.Count == 0);
+			// Debug.Assert(m_vRedirectActivation.Count == 0);
 			Debug.Assert(m_uUIBlocked == 0);
 			Debug.Assert(m_uUnlockAutoBlocked == 0);
 			this.Visible = false;
@@ -458,9 +459,17 @@ namespace KeePass.Forms
 				DwmUtil.EnableWindowPeekPreview(this, true);
 			}
 
+			bool bFormShownRaised = false;
+			if(MonoWorkarounds.IsRequired(801414))
+				bFormShownRaised = MonoWorkarounds.ExchangeFormShownRaised(this, false);
+
 			// Clip the strings again (it could be that a translator used
 			// a string in KPRes that is too long to be displayed)
 			this.Text = StrUtil.CompactString3Dots(strWindowText, 63);
+
+			if(MonoWorkarounds.IsRequired(801414))
+				MonoWorkarounds.ExchangeFormShownRaised(this, bFormShownRaised);
+
 			strNtfText = StrUtil.EncodeToolTipText(strNtfText);
 			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, 63);
 
@@ -883,7 +892,7 @@ namespace KeePass.Forms
 					if(pgContainer != pgLast)
 					{
 						m_lvgLastEntryGroup = new ListViewGroup(
-							pgContainer.GetFullPath());
+							pgContainer.GetFullPath(" - ", false));
 						m_lvgLastEntryGroup.Tag = pgContainer;
 
 						m_lvEntries.Groups.Add(m_lvgLastEntryGroup);
@@ -1122,16 +1131,21 @@ namespace KeePass.Forms
 			m_bEntryGrouping = bSubEntries;
 			if(pg != null)
 			{
+				PwDatabase pd = m_docMgr.ActiveDatabase;
 				if(bOnlyUpdateCurrentlyShown && !m_lvEntries.ShowGroups &&
-					EntryUtil.EntriesHaveSameParent(pwlSource))
+					EntryUtil.EntriesHaveSameParent(pwlSource) && pd.IsOpen)
 				{
 					// Just reorder, don't enable grouping
-					EntryUtil.ReorderEntriesAsInDatabase(pwlSource,
-						m_docMgr.ActiveDatabase);
+					EntryUtil.ReorderEntriesAsInDatabase(pwlSource, pd);
 					peTop = null; // Don't scroll to previous top item
 				}
 				else m_bEntryGrouping |= pg.IsVirtual;
 			}
+			int iLg = Program.Config.MainWindow.ListGrouping;
+			if((iLg & (int)AceListGrouping.Primary) == (int)AceListGrouping.On)
+				m_bEntryGrouping = true;
+			else if((iLg & (int)AceListGrouping.Primary) == (int)AceListGrouping.Off)
+				m_bEntryGrouping = false;
 			m_lvEntries.ShowGroups = m_bEntryGrouping;
 
 			int nTopIndex = -1;
@@ -1232,15 +1246,14 @@ namespace KeePass.Forms
 
 		private PwEntry GetTopEntry()
 		{
-			if(m_lvEntries.Items.Count == 0) return null;
-
 			PwEntry peTop = null;
 			try
 			{
-				ListViewItem lviTop = m_lvEntries.TopItem;
-				if(lviTop != null) peTop = ((PwListItem)lviTop.Tag).Entry;
+				int idxTop = UIUtil.GetTopVisibleItem(m_lvEntries);
+				if(idxTop >= 0)
+					peTop = ((PwListItem)m_lvEntries.Items[idxTop].Tag).Entry;
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			return peTop;
 		}
@@ -1862,7 +1875,7 @@ namespace KeePass.Forms
 		{
 			if(ioc == null) { Debug.Assert(false); return null; }
 			if(!bForceShow && ((ioc.CredSaveMode == IOCredSaveMode.SaveCred) ||
-				ioc.IsLocalFile()))
+				ioc.IsLocalFile() || ioc.IsComplete))
 				return ioc.CloneDeep();
 
 			IOConnectionForm dlg = new IOConnectionForm();
@@ -1949,6 +1962,8 @@ namespace KeePass.Forms
 				UpdateUI(true, ds, true, null, true, null, false);
 				return;
 			}
+
+			SaveWindowState(); // KPF 1093
 
 			IOConnectionInfo ioc;
 			if(ioConnection == null)
@@ -2063,7 +2078,7 @@ namespace KeePass.Forms
 			// AutoEnableVisualHiding();
 
 			SetLastUsedFile(pwOpenedDb.IOConnectionInfo);
-			RememberKeyFilePath(pwOpenedDb);
+			RememberKeySources(pwOpenedDb);
 
 			PwGroup pgRestoreSelect = null;
 			if(bCorrectDbActive)
@@ -2949,7 +2964,7 @@ namespace KeePass.Forms
 				// pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, ehCnt);
 			}
 
-			RememberKeyFilePath(pwDatabase);
+			RememberKeySources(pwDatabase);
 			WinUtil.FlushStorageBuffers(ioc.Path, true);
 		}
 
@@ -3130,7 +3145,9 @@ namespace KeePass.Forms
 			if(tnTop != null)
 			{
 				PwGroup pgTop = (tnTop.Tag as PwGroup);
-				pd.LastTopVisibleGroup = new PwUuid(pgTop.Uuid.UuidBytes);
+				if(pgTop != null)
+					pd.LastTopVisibleGroup = new PwUuid(pgTop.Uuid.UuidBytes);
+				else { Debug.Assert(false); }
 			}
 
 			PwEntry peTop = GetTopEntry();
@@ -3169,7 +3186,7 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void CloseDocument(PwDocument dsToClose, bool bLocking, bool bExiting)
+		internal void CloseDocument(PwDocument dsToClose, bool bLocking, bool bExiting)
 		{
 			PwDocument ds = (dsToClose ?? m_docMgr.ActiveDocument);
 			bool bIsActive = object.ReferenceEquals(ds, m_docMgr.ActiveDocument);
@@ -3549,7 +3566,7 @@ namespace KeePass.Forms
 		private void SelectEntries(PwObjectList<PwEntry> lEntries,
 			bool bDeselectOthers, bool bFocusFirst)
 		{
-			m_bBlockEntrySelectionEvent = true;
+			++m_uBlockEntrySelectionEvent;
 
 			bool bFirst = true;
 			for(int i = 0; i < m_lvEntries.Items.Count; ++i)
@@ -3580,15 +3597,15 @@ namespace KeePass.Forms
 					m_lvEntries.Items[i].Selected = false;
 			}
 
-			m_bBlockEntrySelectionEvent = false;
+			--m_uBlockEntrySelectionEvent;
 		}
 
-		private PwGroup GetCurrentEntries()
+		internal PwGroup GetCurrentEntries()
 		{
 			PwGroup pg = new PwGroup(true, true);
 			pg.IsVirtual = true;
 
-			if(m_lvEntries.ShowGroups == false)
+			if(!m_lvEntries.ShowGroups)
 			{
 				foreach(ListViewItem lvi in m_lvEntries.Items)
 					pg.AddEntry(((PwListItem)lvi.Tag).Entry, false);
@@ -3596,8 +3613,10 @@ namespace KeePass.Forms
 			else // Groups
 			{
 				foreach(ListViewGroup lvg in m_lvEntries.Groups)
+				{
 					foreach(ListViewItem lvi in lvg.Items)
 						pg.AddEntry(((PwListItem)lvi.Tag).Entry, false);
+				}
 			}
 
 			return pg;
@@ -4094,6 +4113,9 @@ namespace KeePass.Forms
 			string strPassword = args[AppDefs.CommandLineOptions.IoCredPassword];
 			if(strPassword != null) ioc.Password = strPassword;
 
+			string strComplete = args[AppDefs.CommandLineOptions.IoCredIsComplete];
+			if(strComplete != null) ioc.IsComplete = true;
+
 			return ioc;
 		}
 
@@ -4107,22 +4129,12 @@ namespace KeePass.Forms
 				Program.Config.Application.LastUsedFile = new IOConnectionInfo();
 		}
 
-		private static void RememberKeyFilePath(PwDatabase pwDb)
+		private static void RememberKeySources(PwDatabase pwDb)
 		{
 			if(pwDb == null) { Debug.Assert(false); return; }
 
-			IUserKey kcpFile = pwDb.MasterKey.GetUserKey(typeof(KcpKeyFile));
-			IUserKey kcpCustom = pwDb.MasterKey.GetUserKey(typeof(KcpCustomKey));
-
-			if(kcpFile != null)
-				Program.Config.Defaults.SetKeySource(pwDb.IOConnectionInfo,
-					((KcpKeyFile)kcpFile).Path, true);
-			else if(kcpCustom != null)
-				Program.Config.Defaults.SetKeySource(pwDb.IOConnectionInfo,
-					((KcpCustomKey)kcpCustom).Name, false);
-			else
-				Program.Config.Defaults.SetKeySource(pwDb.IOConnectionInfo,
-					null, false);
+			Program.Config.Defaults.SetKeySources(pwDb.IOConnectionInfo,
+				pwDb.MasterKey);
 		}
 
 		private void SerializeMruList(bool bStore)
@@ -4159,15 +4171,17 @@ namespace KeePass.Forms
 			}
 		}
 
+		[Obsolete]
 		public void RedirectActivationPush(Form formTarget)
 		{
-			m_vRedirectActivation.Push(formTarget);
+			// m_vRedirectActivation.Push(formTarget);
 		}
 
+		[Obsolete]
 		public void RedirectActivationPop()
 		{
-			if(m_vRedirectActivation.Count == 0) { Debug.Assert(false); return; }
-			m_vRedirectActivation.Pop();
+			// if(m_vRedirectActivation.Count == 0) { Debug.Assert(false); return; }
+			// m_vRedirectActivation.Pop();
 		}
 
 		private bool ChangeMasterKey(PwDatabase pdOf)

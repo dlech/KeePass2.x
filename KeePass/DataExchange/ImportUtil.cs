@@ -353,7 +353,7 @@ namespace KeePass.DataExchange
 		public static bool SetStatus(IStatusLogger slLogger, uint uPercent)
 		{
 			if(slLogger != null) return slLogger.SetProgress(uPercent);
-			else return true;
+			return true;
 		}
 
 		private static readonly string[] m_vTitles = {
@@ -372,7 +372,8 @@ namespace KeePass.DataExchange
 			"email", "e-mail", "id", "userid", "user id",
 			"login", "form_loginname", "wpname", "mail",
 			"loginid", "login id", "log",
-			"first name", "last name", "card#",
+			"first name", "last name", "card#", "account #",
+			"member", "member #",
 
 			// Non-English names
 			"nom"
@@ -384,13 +385,14 @@ namespace KeePass.DataExchange
 			"secret", "secret word",
 			"key", "keyword", "key word", "keyphrase", "key phrase",
 			"form_pw", "wppassword", "pin", "pwd", "pw", "pword",
-			"p", "serial", @"serial#", "license key"
+			"p", "serial", "serial#", "license key", "reg #"
 		};
 
 		private static readonly string[] m_vUrls = {
 			"url", "hyper link", "hyperlink", "link",
 			"host", "hostname", "host name", "server", "address",
 			"hyper ref", "href", "web", "website", "web site", "site",
+			"web-site",
 
 			// Non-English names
 			"ort"

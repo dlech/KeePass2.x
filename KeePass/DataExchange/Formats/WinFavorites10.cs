@@ -215,8 +215,8 @@ namespace KeePass.DataExchange.Formats
 
 			try
 			{
-				string[] vFiles = Directory.GetFiles(strDir, "*.url",
-					SearchOption.AllDirectories);
+				string[] vFiles = UrlUtil.GetFilePaths(strDir, "*.url",
+					SearchOption.AllDirectories).ToArray();
 
 				for(int iFile = 0; iFile < vFiles.Length; ++iFile)
 				{

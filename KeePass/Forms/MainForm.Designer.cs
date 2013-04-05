@@ -218,6 +218,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_menuViewEntryListGrouping = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -490,7 +491,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(215, 374);
+			this.m_ctxPwList.Size = new System.Drawing.Size(215, 352);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -648,7 +649,7 @@
             this.m_ctxEntryColorSep1,
             this.m_ctxEntryColorCustom});
 			this.m_ctxEntrySetColor.Name = "m_ctxEntrySetColor";
-			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntrySetColor.Text = "Set &Color";
 			// 
 			// m_ctxEntryColorStandard
@@ -707,21 +708,21 @@
 			// 
 			this.m_ctxEntryMassSetIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_ctxEntryMassSetIcon.Name = "m_ctxEntryMassSetIcon";
-			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
 			// m_ctxEntrySelectedSep0
 			// 
 			this.m_ctxEntrySelectedSep0.Name = "m_ctxEntrySelectedSep0";
-			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(141, 6);
 			// 
 			// m_ctxEntrySelectedAddTag
 			// 
 			this.m_ctxEntrySelectedAddTag.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxEntrySelectedNewTag});
 			this.m_ctxEntrySelectedAddTag.Name = "m_ctxEntrySelectedAddTag";
-			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntrySelectedAddTag.Text = "Add &Tag";
 			this.m_ctxEntrySelectedAddTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedAddTagOpening);
 			// 
@@ -736,20 +737,20 @@
 			// m_ctxEntrySelectedRemoveTag
 			// 
 			this.m_ctxEntrySelectedRemoveTag.Name = "m_ctxEntrySelectedRemoveTag";
-			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntrySelectedRemoveTag.Text = "&Remove Tag";
 			this.m_ctxEntrySelectedRemoveTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedRemoveTagOpening);
 			// 
 			// m_ctxEntrySelectedSep1
 			// 
 			this.m_ctxEntrySelectedSep1.Name = "m_ctxEntrySelectedSep1";
-			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(149, 6);
+			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(141, 6);
 			// 
 			// m_ctxEntrySelectedPrint
 			// 
 			this.m_ctxEntrySelectedPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxEntrySelectedPrint.Name = "m_ctxEntrySelectedPrint";
-			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntrySelectedPrint.Text = "&Print...";
 			this.m_ctxEntrySelectedPrint.Click += new System.EventHandler(this.OnEntrySelectedPrint);
 			// 
@@ -757,7 +758,7 @@
 			// 
 			this.m_ctxEntrySelectedExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxEntrySelectedExport.Name = "m_ctxEntrySelectedExport";
-			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(144, 22);
 			this.m_ctxEntrySelectedExport.Text = "&Export...";
 			this.m_ctxEntrySelectedExport.Click += new System.EventHandler(this.OnEntrySelectedExport);
 			// 
@@ -1158,6 +1159,7 @@
             this.m_menuViewConfigColumns,
             this.m_menuViewSortBy,
             this.m_menuViewTanOptions,
+            this.m_menuViewEntryListGrouping,
             this.m_menuViewSep3,
             this.m_menuViewShowEntriesOfSubGroups});
 			this.m_menuView.Name = "m_menuView";
@@ -1897,6 +1899,12 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_menuViewEntryListGrouping
+			// 
+			this.m_menuViewEntryListGrouping.Name = "m_menuViewEntryListGrouping";
+			this.m_menuViewEntryListGrouping.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewEntryListGrouping.Text = "&Grouping in Entry List";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2126,6 +2134,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelEmptyGroups;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelUnusedIcons;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayOptions;
+		private System.Windows.Forms.ToolStripMenuItem m_menuViewEntryListGrouping;
 	}
 }
 

@@ -36,6 +36,8 @@ namespace KeePassLib.Utility
 	{
 		private static readonly char[] m_vDirSeps = new char[] { '\\', '/',
 			UrlUtil.LocalDirSepChar };
+		private static readonly char[] m_vPathTrimCharsWs = new char[] {
+			'\"', ' ', '\t', '\r', '\n' };
 
 		public static char LocalDirSepChar
 		{
@@ -628,5 +630,83 @@ namespace KeePassLib.Utility
 
 			return strDir;
 		}
+
+#if !KeePassLibSD
+		// Structurally mostly equivalent to UrlUtil.GetFileInfos
+		public static List<string> GetFilePaths(string strDir, string strPattern,
+			SearchOption opt)
+		{
+			List<string> l = new List<string>();
+			if(strDir == null) { Debug.Assert(false); return l; }
+			if(strPattern == null) { Debug.Assert(false); return l; }
+
+			string[] v = Directory.GetFiles(strDir, strPattern, opt);
+			if(v == null) { Debug.Assert(false); return l; }
+
+			// Only accept files with the correct extension; GetFiles may
+			// return additional files, see GetFiles documentation
+			string strExt = GetExtension(strPattern);
+			if(!string.IsNullOrEmpty(strExt) && (strExt.IndexOf('*') < 0) &&
+				(strExt.IndexOf('?') < 0))
+			{
+				strExt = "." + strExt;
+
+				foreach(string strPathRaw in v)
+				{
+					if(strPathRaw == null) { Debug.Assert(false); continue; }
+					string strPath = strPathRaw.Trim(m_vPathTrimCharsWs);
+					if(strPath.Length == 0) { Debug.Assert(false); continue; }
+					Debug.Assert(strPath == strPathRaw);
+
+					if(!strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+						continue;
+
+					l.Add(strPathRaw);
+				}
+			}
+			else l.AddRange(v);
+
+			return l;
+		}
+
+		// Structurally mostly equivalent to UrlUtil.GetFilePaths
+		public static List<FileInfo> GetFileInfos(DirectoryInfo di, string strPattern,
+			SearchOption opt)
+		{
+			List<FileInfo> l = new List<FileInfo>();
+			if(di == null) { Debug.Assert(false); return l; }
+			if(strPattern == null) { Debug.Assert(false); return l; }
+
+			FileInfo[] v = di.GetFiles(strPattern, opt);
+			if(v == null) { Debug.Assert(false); return l; }
+
+			// Only accept files with the correct extension; GetFiles may
+			// return additional files, see GetFiles documentation
+			string strExt = GetExtension(strPattern);
+			if(!string.IsNullOrEmpty(strExt) && (strExt.IndexOf('*') < 0) &&
+				(strExt.IndexOf('?') < 0))
+			{
+				strExt = "." + strExt;
+
+				foreach(FileInfo fi in v)
+				{
+					if(fi == null) { Debug.Assert(false); continue; }
+					string strPathRaw = fi.FullName;
+					if(strPathRaw == null) { Debug.Assert(false); continue; }
+					string strPath = strPathRaw.Trim(m_vPathTrimCharsWs);
+					if(strPath.Length == 0) { Debug.Assert(false); continue; }
+					Debug.Assert(strPath == strPathRaw);
+
+					if(!strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+						continue;
+
+					l.Add(fi);
+				}
+			}
+			else l.AddRange(v);
+
+			return l;
+		}
+#endif
 	}
 }

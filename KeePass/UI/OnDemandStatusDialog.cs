@@ -142,7 +142,7 @@ namespace KeePass.UI
 			MainForm mfOwner = ((m_fOwner != null) ? (m_fOwner as MainForm) : null);
 			if((m_bUseThread == false) && (mfOwner != null))
 			{
-				mfOwner.RedirectActivationPush(dlg);
+				// mfOwner.RedirectActivationPush(dlg);
 				mfOwner.UIBlockInteraction(true);
 			}
 
@@ -156,7 +156,7 @@ namespace KeePass.UI
 				MainForm mfOwner = ((m_fOwner != null) ? (m_fOwner as MainForm) : null);
 				if((m_bUseThread == false) && (mfOwner != null))
 				{
-					mfOwner.RedirectActivationPop();
+					// mfOwner.RedirectActivationPop();
 					mfOwner.UIBlockInteraction(false);
 				}
 

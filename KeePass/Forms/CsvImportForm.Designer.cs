@@ -30,7 +30,7 @@
 		{
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEnc = new System.Windows.Forms.TabPage();
-			this.m_rtbEncPreview = new System.Windows.Forms.RichTextBox();
+			this.m_rtbEncPreview = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_lblEncPreview = new System.Windows.Forms.Label();
 			this.m_cmbEnc = new System.Windows.Forms.ComboBox();
 			this.m_lblEnc = new System.Windows.Forms.Label();
@@ -66,6 +66,7 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnTabBack = new System.Windows.Forms.Button();
 			this.m_btnTabNext = new System.Windows.Forms.Button();
+			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEnc.SuspendLayout();
 			this.m_tabStructure.SuspendLayout();
@@ -446,7 +447,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(540, 480);
+			this.m_btnOK.Location = new System.Drawing.Point(539, 480);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -457,7 +458,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(621, 480);
+			this.m_btnCancel.Location = new System.Drawing.Point(620, 480);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -466,23 +467,33 @@
 			// 
 			// m_btnTabBack
 			// 
-			this.m_btnTabBack.Location = new System.Drawing.Point(384, 480);
+			this.m_btnTabBack.Location = new System.Drawing.Point(383, 480);
 			this.m_btnTabBack.Name = "m_btnTabBack";
 			this.m_btnTabBack.Size = new System.Drawing.Size(75, 23);
-			this.m_btnTabBack.TabIndex = 3;
+			this.m_btnTabBack.TabIndex = 4;
 			this.m_btnTabBack.Text = "< &Back";
 			this.m_btnTabBack.UseVisualStyleBackColor = true;
 			this.m_btnTabBack.Click += new System.EventHandler(this.OnBtnTabBack);
 			// 
 			// m_btnTabNext
 			// 
-			this.m_btnTabNext.Location = new System.Drawing.Point(459, 480);
+			this.m_btnTabNext.Location = new System.Drawing.Point(458, 480);
 			this.m_btnTabNext.Name = "m_btnTabNext";
 			this.m_btnTabNext.Size = new System.Drawing.Size(75, 23);
-			this.m_btnTabNext.TabIndex = 4;
+			this.m_btnTabNext.TabIndex = 5;
 			this.m_btnTabNext.Text = "&Next >";
 			this.m_btnTabNext.UseVisualStyleBackColor = true;
 			this.m_btnTabNext.Click += new System.EventHandler(this.OnBtnTabNext);
+			// 
+			// m_btnHelp
+			// 
+			this.m_btnHelp.Location = new System.Drawing.Point(11, 480);
+			this.m_btnHelp.Name = "m_btnHelp";
+			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
+			this.m_btnHelp.TabIndex = 3;
+			this.m_btnHelp.Text = "&Help";
+			this.m_btnHelp.UseVisualStyleBackColor = true;
+			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
 			// CsvImportForm
 			// 
@@ -491,6 +502,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(708, 515);
+			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnTabNext);
 			this.Controls.Add(this.m_btnTabBack);
 			this.Controls.Add(this.m_btnCancel);
@@ -530,7 +542,7 @@
 		private System.Windows.Forms.TabPage m_tabPreview;
 		private System.Windows.Forms.ComboBox m_cmbEnc;
 		private System.Windows.Forms.Label m_lblEnc;
-		private System.Windows.Forms.RichTextBox m_rtbEncPreview;
+		private KeePass.UI.CustomRichTextBoxEx m_rtbEncPreview;
 		private System.Windows.Forms.Label m_lblEncPreview;
 		private System.Windows.Forms.ComboBox m_cmbRecSep;
 		private System.Windows.Forms.Label m_lblRecSep;
@@ -560,5 +572,6 @@
 		private System.Windows.Forms.Button m_btnTabBack;
 		private System.Windows.Forms.Button m_btnTabNext;
 		private System.Windows.Forms.CheckBox m_cbIgnoreFirst;
+		private System.Windows.Forms.Button m_btnHelp;
 	}
 }

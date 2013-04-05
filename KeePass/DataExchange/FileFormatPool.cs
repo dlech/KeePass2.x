@@ -123,7 +123,6 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PpKeeperHtml270());
 			m_vFormats.Add(new PwAgentXml234());
 			m_vFormats.Add(new PwDepotXml26());
-			m_vFormats.Add(new PwGorillaCsv142());
 			m_vFormats.Add(new PwKeeperCsv70());
 			m_vFormats.Add(new PwMemory2008Xml104());
 			m_vFormats.Add(new PwPrompterDat12());
@@ -134,10 +133,12 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PinsTxt450());
 			m_vFormats.Add(new RevelationXml04());
 			m_vFormats.Add(new RoboFormHtml69());
+			m_vFormats.Add(new SafeWalletXml3());
 			m_vFormats.Add(new SecurityTxt12());
 			m_vFormats.Add(new SplashIdCsv402());
 			m_vFormats.Add(new SteganosPwManager2007());
 			m_vFormats.Add(new StickyPwXml50());
+			m_vFormats.Add(new TurboPwsCsv5());
 			m_vFormats.Add(new Whisper32Csv116());
 			m_vFormats.Add(new ZdnPwProTxt314());
 

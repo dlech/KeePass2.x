@@ -207,6 +207,7 @@ namespace KeePass.UI
 
 		public PwDatabase SafeFindContainerOf(PwEntry peObj)
 		{
+			// peObj may be null
 			return (FindContainerOf(peObj) ?? m_dsActive.Database);
 		}
 	}

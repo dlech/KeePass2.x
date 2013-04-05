@@ -29,6 +29,7 @@ using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -52,9 +53,11 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			BinaryReader br = new BinaryReader(sInput);
-			byte[] pbData = br.ReadBytes((int)sInput.Length);
-			br.Close();
+			MemoryStream ms = new MemoryStream();
+			MemUtil.CopyStream(sInput, ms);
+			byte[] pbData = ms.ToArray();
+			ms.Close();
+			sInput.Close();
 
 			CsvImportForm dlg = new CsvImportForm();
 			dlg.InitEx(pwStorage, pbData);

@@ -26,6 +26,7 @@ using System.ComponentModel;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -66,6 +67,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strProv = value;
 			}
+		}
+
+		private bool m_bUserAcc = false;
+		[DefaultValue(false)]
+		public bool UserAccount
+		{
+			get { return m_bUserAcc; }
+			set { m_bUserAcc = value; }
 		}
 
 		public AceKeyAssoc() { }
@@ -212,65 +221,82 @@ namespace KeePass.App.Configuration
 			set { m_bCollapseRecycleBin = value; }
 		}
 
-		public void SetKeySource(IOConnectionInfo ioDatabase, string strKeySource,
-			bool bIsKeyFile)
+		private static string GetKeyAssocID(IOConnectionInfo iocDb)
 		{
-			if(ioDatabase == null) throw new ArgumentNullException("ioDatabase");
+			if(iocDb == null) throw new ArgumentNullException("iocDb");
 
-			string strDb = ioDatabase.Path;
-			if((strDb.Length > 0) && ioDatabase.IsLocalFile() &&
+			string strDb = iocDb.Path;
+			if((strDb.Length > 0) && iocDb.IsLocalFile() &&
 				!UrlUtil.IsAbsolutePath(strDb))
 				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
 
-			string strKey = strKeySource;
-			if(bIsKeyFile && !string.IsNullOrEmpty(strKey))
+			return strDb;
+		}
+
+		private int GetKeyAssocIndex(string strID)
+		{
+			for(int i = 0; i < m_vKeySources.Count; ++i)
 			{
-				if(StrUtil.IsDataUri(strKey))
-					strKey = null; // Don't remember data URIs
-				else if(!UrlUtil.IsAbsolutePath(strKey))
-					strKey = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strKey);
+				if(strID.Equals(m_vKeySources[i].DatabasePath, StrUtil.CaseIgnoreCmp))
+					return i;
 			}
 
-			if(!m_bRememberKeySources) strKey = null;
+			return -1;
+		}
 
-			foreach(AceKeyAssoc kfp in m_vKeySources)
+		public void SetKeySources(IOConnectionInfo iocDb, CompositeKey cmpKey)
+		{
+			string strID = GetKeyAssocID(iocDb);
+			int idx = GetKeyAssocIndex(strID);
+
+			if((cmpKey == null) || !m_bRememberKeySources)
 			{
-				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
+				if(idx >= 0) m_vKeySources.RemoveAt(idx);
+				return;
+			}
+
+			AceKeyAssoc a = new AceKeyAssoc();
+			a.DatabasePath = strID;
+
+			IUserKey kcpFile = cmpKey.GetUserKey(typeof(KcpKeyFile));
+			if(kcpFile != null)
+			{
+				string strKeyFile = ((KcpKeyFile)kcpFile).Path;
+				if(!string.IsNullOrEmpty(strKeyFile) && !StrUtil.IsDataUri(strKeyFile))
 				{
-					if(string.IsNullOrEmpty(strKey)) m_vKeySources.Remove(kfp);
-					else
-					{
-						kfp.KeyFilePath = (bIsKeyFile ? strKey : string.Empty);
-						kfp.KeyProvider = (bIsKeyFile ? string.Empty : strKey);
-					}
-					return;
+					if(!UrlUtil.IsAbsolutePath(strKeyFile))
+						strKeyFile = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(),
+							strKeyFile);
+
+					a.KeyFilePath = strKeyFile;
 				}
 			}
 
-			if(string.IsNullOrEmpty(strKey)) return;
+			IUserKey kcpCustom = cmpKey.GetUserKey(typeof(KcpCustomKey));
+			if(kcpCustom != null)
+				a.KeyProvider = ((KcpCustomKey)kcpCustom).Name;
 
-			AceKeyAssoc kfpNew = new AceKeyAssoc();
-			kfpNew.DatabasePath = strDb;
-			if(bIsKeyFile) kfpNew.KeyFilePath = strKey;
-			else kfpNew.KeyProvider = strKey;
-			m_vKeySources.Add(kfpNew);
+			IUserKey kcpUser = cmpKey.GetUserKey(typeof(KcpUserAccount));
+			a.UserAccount = (kcpUser != null);
+
+			bool bAtLeastOne = ((a.KeyFilePath.Length > 0) ||
+				(a.KeyProvider.Length > 0) || a.UserAccount);
+			if(bAtLeastOne)
+			{
+				if(idx >= 0) m_vKeySources[idx] = a;
+				else m_vKeySources.Add(a);
+			}
+			else if(idx >= 0) m_vKeySources.RemoveAt(idx);
 		}
 
-		public string GetKeySource(IOConnectionInfo ioDatabase, bool bGetKeyFile)
+		public AceKeyAssoc GetKeySources(IOConnectionInfo iocDb)
 		{
-			if(ioDatabase == null) throw new ArgumentNullException("ioDatabase");
+			string strID = GetKeyAssocID(iocDb);
+			int idx = GetKeyAssocIndex(strID);
 
-			string strDb = ioDatabase.Path;
-			if((strDb.Length > 0) && ioDatabase.IsLocalFile() &&
-				!UrlUtil.IsAbsolutePath(strDb))
-				strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
+			if(!m_bRememberKeySources) return null;
 
-			foreach(AceKeyAssoc kfp in m_vKeySources)
-			{
-				if(strDb.Equals(kfp.DatabasePath, StrUtil.CaseIgnoreCmp))
-					return (bGetKeyFile ? kfp.KeyFilePath : kfp.KeyProvider);
-			}
-
+			if(idx >= 0) return m_vKeySources[idx];
 			return null;
 		}
 	}

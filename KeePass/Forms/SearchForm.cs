@@ -150,14 +150,14 @@ namespace KeePass.Forms
 			Form fOptDialog;
 			IStatusLogger sl = StatusUtil.CreateStatusDialog(this, out fOptDialog,
 				null, KPRes.SearchingOp + "...", true, false);
-			if(fOptDialog != null) Program.MainForm.RedirectActivationPush(fOptDialog);
+			// if(fOptDialog != null) Program.MainForm.RedirectActivationPush(fOptDialog);
 			this.Enabled = false;
 
 			Exception exFind = null;
 			try { m_pgRoot.SearchEntries(sp, listResults, sl); }
 			catch(Exception ex) { exFind = ex; }
 
-			if(fOptDialog != null) Program.MainForm.RedirectActivationPop();
+			// if(fOptDialog != null) Program.MainForm.RedirectActivationPop();
 			this.Enabled = true;
 			sl.EndLogging();
 

@@ -698,7 +698,7 @@ namespace KeePass.Forms
 					sb.Append(l[i]);
 				}
 
-				pg = pg.FindCreateSubTree(sb.ToString(), new char[1] { chSep });
+				pg = pg.FindCreateSubTree(sb.ToString(), new char[1]{ chSep });
 			}
 
 			return pg;
@@ -858,6 +858,12 @@ namespace KeePass.Forms
 		{
 			return ((t == CsvFieldType.CreationTime) || (t == CsvFieldType.LastAccessTime) ||
 				(t == CsvFieldType.LastModTime) || (t == CsvFieldType.ExpiryTime));
+		}
+
+		private void OnBtnHelp(object sender, EventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.ImportExport,
+				AppDefs.HelpTopics.ImportExportGenericCsv);
 		}
 	}
 }

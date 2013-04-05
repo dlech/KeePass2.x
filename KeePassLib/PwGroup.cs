@@ -398,7 +398,9 @@ namespace KeePassLib
 		{
 			Debug.Assert(pgTemplate != null); if(pgTemplate == null) throw new ArgumentNullException("pgTemplate");
 
-			if(bOnlyIfNewer && (pgTemplate.m_tLastMod < m_tLastMod)) return;
+			if(bOnlyIfNewer && (TimeUtil.Compare(pgTemplate.m_tLastMod, m_tLastMod,
+				true) < 0))
+				return;
 
 			// Template UUID should be the same as the current one
 			Debug.Assert(m_uuid.EqualsValue(pgTemplate.m_uuid));
@@ -1181,6 +1183,7 @@ namespace KeePassLib
 			}
 		}
 
+#if !KeePassLibSD
 		/// <summary>
 		/// Find/create a subtree of groups.
 		/// </summary>
@@ -1195,10 +1198,22 @@ namespace KeePassLib
 		public PwGroup FindCreateSubTree(string strTree, char[] vSeparators,
 			bool bAllowCreate)
 		{
+			if(vSeparators == null) { Debug.Assert(false); vSeparators = new char[0]; }
+
+			string[] v = new string[vSeparators.Length];
+			for(int i = 0; i < vSeparators.Length; ++i)
+				v[i] = new string(vSeparators[i], 1);
+
+			return FindCreateSubTree(strTree, v, bAllowCreate);
+		}
+
+		public PwGroup FindCreateSubTree(string strTree, string[] vSeparators,
+			bool bAllowCreate)
+		{
 			Debug.Assert(strTree != null); if(strTree == null) return this;
 			if(strTree.Length == 0) return this;
 
-			string[] vGroups = strTree.Split(vSeparators);
+			string[] vGroups = strTree.Split(vSeparators, StringSplitOptions.None);
 			if((vGroups == null) || (vGroups.Length == 0)) return this;
 
 			PwGroup pgContainer = this;
@@ -1229,6 +1244,7 @@ namespace KeePassLib
 
 			return pgContainer;
 		}
+#endif
 
 		/// <summary>
 		/// Get the level of the group (i.e. the number of parent groups).

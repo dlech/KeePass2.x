@@ -377,6 +377,11 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-Rtf3");
 			if(StrUtil.RtfEncodeChar('\uFFFF') != "\\u-1?")
 				throw new InvalidOperationException("StrUtil-Rtf4");
+
+			if(!StrUtil.StringToBool(Boolean.TrueString))
+				throw new InvalidOperationException("StrUtil-Bool1");
+			if(StrUtil.StringToBool(Boolean.FalseString))
+				throw new InvalidOperationException("StrUtil-Bool2");
 #endif
 		}
 

@@ -87,7 +87,7 @@ namespace KeePass.App
 			public const string FieldRefs = "base/fieldrefs";
 
 			public const string ImportExport = "base/importexport";
-			// public const string ImportExportGenericCsv = "genericcsv";
+			public const string ImportExportGenericCsv = "genericcsv";
 			public const string ImportExportSteganos = "imp_steganos";
 			public const string ImportExportPassKeeper = "imp_passkeeper";
 
@@ -119,6 +119,7 @@ namespace KeePass.App
 			public const string IoCredUserName = "iousername";
 			public const string IoCredPassword = "iopassword";
 			public const string IoCredFromRecent = "iocredfromrecent";
+			public const string IoCredIsComplete = "ioiscomplete";
 
 			// User-friendly Pascal-case (shown in UAC dialog)
 			public const string FileExtRegister = "RegisterFileExt";

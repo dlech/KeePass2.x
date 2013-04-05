@@ -225,14 +225,33 @@ namespace KeePass.Util
 
 			byte[] pbUuid = MemUtil.HexStringToByteArray(strUuid);
 			if((pbUuid == null) || (pbUuid.Length != PwUuid.UuidSize)) return;
+			PwUuid pwUuid = new PwUuid(pbUuid);
 
-			PwDatabase pdb = mf.ActiveDatabase;
-			if((pdb == null) || !pdb.IsOpen) return;
+			List<PwDocument> lDocs = new List<PwDocument>(mf.DocumentManager.Documents);
+			PwDocument pwDocActive = mf.DocumentManager.ActiveDocument;
+			for(int i = 1; i < lDocs.Count; ++i)
+			{
+				if(object.ReferenceEquals(lDocs[i], pwDocActive))
+				{
+					lDocs.RemoveAt(i);
+					lDocs.Insert(0, pwDocActive);
+					break;
+				}
+			}
 
-			PwEntry pe = pdb.RootGroup.FindEntry(new PwUuid(pbUuid), true);
-			if(pe == null) return;
+			foreach(PwDocument pwDoc in lDocs)
+			{
+				if(pwDoc == null) { Debug.Assert(false); continue; }
 
-			mf.PerformDefaultUrlAction(new PwEntry[]{ pe }, true);
+				PwDatabase pdb = pwDoc.Database;
+				if((pdb == null) || !pdb.IsOpen) continue;
+
+				PwEntry pe = pdb.RootGroup.FindEntry(pwUuid, true);
+				if(pe == null) continue;
+
+				mf.PerformDefaultUrlAction(new PwEntry[]{ pe }, true);
+				break;
+			}
 		}
 	}
 }

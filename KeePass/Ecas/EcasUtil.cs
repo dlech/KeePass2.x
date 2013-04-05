@@ -34,6 +34,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
+	public enum EcasTypeDxMode // Type data exchange modes
+	{
+		None = 0,
+		Selection, // DX with the type UI control (combobox)
+		ParamsTag // Get type from the parameters control
+	}
+
 	public static class EcasUtil
 	{
 		public const uint StdCompareEqual = 0;
@@ -185,12 +192,18 @@ namespace KeePass.Ecas
 			dg.AllowUserToResizeColumns = false;
 			dg.AllowUserToResizeRows = false;
 			// dg.EditMode: see below
+			dg.Tag = p;
 
 			int nWidth = (dg.ClientSize.Width - UIUtil.GetVScrollBarWidth());
 			dg.Columns.Add("Name", KPRes.FieldName);
 			dg.Columns.Add("Value", KPRes.FieldValue);
 			dg.Columns[0].Width = (nWidth / 2);
 			dg.Columns[1].Width = (nWidth / 2);
+
+			bool bUseDefaults = true;
+			if(objDefaults.Type == null) { Debug.Assert(false); } // Optimistic
+			else if(p.Type == null) { Debug.Assert(false); } // Optimistic
+			else if(!objDefaults.Type.EqualsValue(p.Type)) bUseDefaults = false;
 
 			for(int i = 0; i < p.Parameters.Length; ++i)
 			{
@@ -204,9 +217,10 @@ namespace KeePass.Ecas
 				cc[0].Value = ep.Name;
 				cc[0].ReadOnly = true;
 
-				string strParam = EcasUtil.GetParamString(objDefaults.Parameters, i);
-				DataGridViewCell c = null;
+				string strParam = (bUseDefaults ? EcasUtil.GetParamString(
+					objDefaults.Parameters, i) : string.Empty);
 
+				DataGridViewCell c = null;
 				switch(ep.Type)
 				{
 					case EcasValueType.String:
@@ -294,7 +308,8 @@ namespace KeePass.Ecas
 		}
 
 		public static bool UpdateDialog(EcasObjectType objType, ComboBox cmbTypes,
-			DataGridView dgvParams, IEcasObject o, bool bGuiToInternal, bool bDxTypeInfo)
+			DataGridView dgvParams, IEcasObject o, bool bGuiToInternal,
+			EcasTypeDxMode dxType)
 		{
 			bool bResult = true;
 
@@ -304,7 +319,7 @@ namespace KeePass.Ecas
 				{
 					IEcasParameterized eTypeInfo = null;
 
-					if(bDxTypeInfo)
+					if(dxType == EcasTypeDxMode.Selection)
 					{
 						string strSel = (cmbTypes.SelectedItem as string);
 						if(!string.IsNullOrEmpty(strSel))
@@ -327,12 +342,22 @@ namespace KeePass.Ecas
 							else { Debug.Assert(false); }
 						}
 					}
+					else if(dxType == EcasTypeDxMode.ParamsTag)
+					{
+						IEcasParameterized p = (dgvParams.Tag as IEcasParameterized);
+						if((p != null) && (p.Type != null))
+						{
+							eTypeInfo = p;
+							o.Type = eTypeInfo.Type;
+						}
+						else { Debug.Assert(false); }
+					}
 
 					EcasUtil.DataGridViewToParameters(dgvParams, o, eTypeInfo);
 				}
 				else // Internal to GUI
 				{
-					if(bDxTypeInfo)
+					if(dxType == EcasTypeDxMode.Selection)
 					{
 						if(o.Type.EqualsValue(PwUuid.Zero))
 							cmbTypes.SelectedIndex = 0;
@@ -351,6 +376,7 @@ namespace KeePass.Ecas
 							else { Debug.Assert(false); }
 						}
 					}
+					else { Debug.Assert(dxType != EcasTypeDxMode.ParamsTag); }
 
 					IEcasParameterized t = null;
 					if(objType == EcasObjectType.Event)

@@ -96,6 +96,10 @@ namespace KeePass.Native
 		private static extern int GetWindowText(IntPtr hWnd,
 			[Out] StringBuilder lpString, int nMaxCount);
 
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+
 		[DllImport("User32.dll")]
 		private static extern IntPtr GetForegroundWindow(); // Private, is wrapped
 

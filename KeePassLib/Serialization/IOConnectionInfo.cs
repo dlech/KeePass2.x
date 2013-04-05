@@ -23,6 +23,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using System.Diagnostics;
 
 using KeePassLib.Interfaces;
@@ -117,6 +118,14 @@ namespace KeePassLib.Serialization
 		{
 			get { return m_ioCredSaveMode; }
 			set { m_ioCredSaveMode = value; }
+		}
+
+		private bool m_bComplete = false;
+		[XmlIgnore]
+		internal bool IsComplete // Credentials etc. fully specified
+		{
+			get { return m_bComplete; }
+			set { m_bComplete = value; }
 		}
 
 		/* public IOFileFormatHint FileFormatHint

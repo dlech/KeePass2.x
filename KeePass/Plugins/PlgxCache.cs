@@ -208,11 +208,11 @@ namespace KeePass.Plugins
 			if(!Directory.Exists(strRoot)) return 0;
 
 			DirectoryInfo di = new DirectoryInfo(strRoot);
-			FileInfo[] vFiles = di.GetFiles("*", SearchOption.AllDirectories);
-			if(vFiles == null) { Debug.Assert(false); return 0; }
+			List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*",
+				SearchOption.AllDirectories);
 
 			ulong uSize = 0;
-			foreach(FileInfo fi in vFiles) { uSize += (ulong)fi.Length; }
+			foreach(FileInfo fi in lFiles) { uSize += (ulong)fi.Length; }
 
 			return uSize;
 		}
@@ -262,10 +262,14 @@ namespace KeePass.Plugins
 		{
 			if((di.Name == ".") || (di.Name == "..")) return false;
 
-			FileInfo[] vFiles = di.GetFiles("*.dll", SearchOption.TopDirectoryOnly);
+			List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*.dll",
+				SearchOption.TopDirectoryOnly);
 			bool bNew = false;
-			foreach(FileInfo fi in vFiles)
+			foreach(FileInfo fi in lFiles)
+			{
 				bNew |= ((DateTime.Now - fi.LastAccessTime).TotalDays < 62.0);
+				if(bNew) break;
+			}
 
 			return !bNew;
 		}

@@ -83,15 +83,13 @@ namespace KeePass.DataExchange.Formats
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
 			Debug.Assert(xmlRoot.Name == ElemRoot);
 
-			Dictionary<string, PwGroup> dictGroups = new Dictionary<string, PwGroup>();
 			int nNodeCount = xmlRoot.ChildNodes.Count;
-
 			for(int i = 0; i < nNodeCount; ++i)
 			{
 				XmlNode xmlChild = xmlRoot.ChildNodes[i];
 
 				if(xmlChild.Name == ElemEntry)
-					ReadEntry(xmlChild, pwStorage, dictGroups);
+					ReadEntry(xmlChild, pwStorage);
 				else { Debug.Assert(false); }
 
 				if(slLogger != null)
@@ -99,8 +97,7 @@ namespace KeePass.DataExchange.Formats
 			}
 		}
 
-		private static void ReadEntry(XmlNode xmlNode, PwDatabase pwStorage,
-			Dictionary<string, PwGroup> dictGroups)
+		private static void ReadEntry(XmlNode xmlNode, PwDatabase pwStorage)
 		{
 			PwEntry pe = new PwEntry(true, true);
 			PwGroup pg = pwStorage.RootGroup;
@@ -124,7 +121,7 @@ namespace KeePass.DataExchange.Formats
 						strPreTree + "\\" + strLast : strLast);
 
 					pg = pwStorage.RootGroup.FindCreateSubTree(strGroup,
-						new char[] { '\\' });
+						new string[1]{ "\\" }, true);
 				}
 				else if(xmlChild.Name == ElemTitle)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(

@@ -494,7 +494,9 @@ namespace KeePassLib
 		{
 			Debug.Assert(peTemplate != null); if(peTemplate == null) throw new ArgumentNullException("peTemplate");
 
-			if(bOnlyIfNewer && (peTemplate.m_tLastMod < m_tLastMod)) return;
+			if(bOnlyIfNewer && (TimeUtil.Compare(peTemplate.m_tLastMod, m_tLastMod,
+				true) < 0))
+				return;
 
 			// Template UUID should be the same as the current one
 			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
@@ -692,7 +694,7 @@ namespace KeePassLib
 			for(uint u = 0; u < m_listHistory.UCount; ++u)
 			{
 				PwEntry pe = m_listHistory.GetAt(u);
-				if(pe.LastModificationTime < dtMin)
+				if(TimeUtil.Compare(pe.LastModificationTime, dtMin, true) < 0)
 				{
 					idxRemove = u;
 					dtMin = pe.LastModificationTime;

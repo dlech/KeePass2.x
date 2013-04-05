@@ -779,12 +779,12 @@ namespace KeePassLib
 
 					bool bOrgBackup = !bEquals;
 					if(mm != PwMergeMethod.OverwriteExisting)
-						bOrgBackup &= (pe.LastModificationTime > peLocal.LastModificationTime);
+						bOrgBackup &= (TimeUtil.CompareLastMod(pe, peLocal, true) > 0);
 					bOrgBackup &= !pe.HasBackupOfData(peLocal, false, true);
 					if(bOrgBackup) peLocal.CreateBackup(null); // Maintain at end
 
 					bool bSrcBackup = !bEquals && (mm != PwMergeMethod.OverwriteExisting);
-					bSrcBackup &= (peLocal.LastModificationTime > pe.LastModificationTime);
+					bSrcBackup &= (TimeUtil.CompareLastMod(peLocal, pe, true) > 0);
 					bSrcBackup &= !peLocal.HasBackupOfData(pe, false, true);
 					if(bSrcBackup) pe.CreateBackup(null); // Maintain at end
 
@@ -871,8 +871,11 @@ namespace KeePassLib
 				foreach(PwDeletedObject pdo in listDelObjects)
 				{
 					if(pg.Uuid.EqualsValue(pdo.Uuid))
-						if(pg.LastModificationTime < pdo.DeletionTime)
+					{
+						if(TimeUtil.Compare(pg.LastModificationTime,
+							pdo.DeletionTime, true) < 0)
 							listGroupsToDelete.AddLast(pg);
+					}
 				}
 
 				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
@@ -883,8 +886,11 @@ namespace KeePassLib
 				foreach(PwDeletedObject pdo in listDelObjects)
 				{
 					if(pe.Uuid.EqualsValue(pdo.Uuid))
-						if(pe.LastModificationTime < pdo.DeletionTime)
+					{
+						if(TimeUtil.Compare(pe.LastModificationTime,
+							pdo.DeletionTime, true) < 0)
 							listEntriesToDelete.AddLast(pe);
+					}
 				}
 
 				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
@@ -1596,7 +1602,7 @@ namespace KeePassLib
 					PwEntry peB = l.GetAt(j);
 					if(!DupEntriesEqual(peA, peB)) continue;
 
-					bool bDeleteA = (peA.LastModificationTime <= peB.LastModificationTime);
+					bool bDeleteA = (TimeUtil.CompareLastMod(peA, peB, true) <= 0);
 					if(pgRecycleBin != null)
 					{
 						bool bAInBin = peA.IsContainedIn(pgRecycleBin);

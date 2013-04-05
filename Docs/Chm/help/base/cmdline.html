@@ -94,8 +94,8 @@ doesn't prompt you for the (maybe missing) password.</p>
 <p><b>Other.</b>
 The <code>-minimize</code> command line argument makes KeePass start up minimized.</p>
 
-<p>The <code>-auto-type</code> command line argument makes all previous KeePass
-instances perform a global auto-type.</p>
+<p>The <code>-auto-type</code> command line argument makes other already opened
+KeePass instances perform a global auto-type.</p>
 
 
 
@@ -108,14 +108,17 @@ current user account credentials will be used.<br />
 The <code>-iocredfromrecent</code> switch makes KeePass load file
 system credentials (not database key) from the most recently used files list.
 Alternatively, the file system credentials can be specified using the
-<code>-iousername</code> and <code>-iopassword</code> parameters.<br />
+<code>-iousername</code> and <code>-iopassword</code> parameters.
+In KeePass &ge; 2.22, the optional <code>-ioiscomplete</code> switch
+tells KeePass that the path and file system credentials are complete
+(the 'Open URL' dialog will not be displayed then).<br />
 <br />
 The <code>-pw-enc</code> parameter is similar to <code>-pw</code>, but
 it requires the password to be encrypted. Encrypted passwords can be
 generated using the <a href="placeholders.html#passwordenc"><code>{PASSWORD_ENC}</code></a>
 placeholder.<br />
 <br />
-The <code>-entry-url-open</code> option makes other KeePass instances
+The <code>-entry-url-open</code> option makes other already opened KeePass instances
 search for an entry and open its URL. The entry is identified by its UUID,
 which you can pass as <code>-uuid:</code> command line parameter.<br />
 <br />

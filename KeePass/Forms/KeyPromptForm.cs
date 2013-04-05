@@ -48,7 +48,7 @@ namespace KeePass.Forms
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
 		private string m_strCustomTitle = null;
 
-		private bool m_bRedirectActivation = false;
+		// private bool m_bRedirectActivation = false;
 		private bool m_bCanExit = false;
 		private bool m_bHasExited = false;
 
@@ -99,14 +99,14 @@ namespace KeePass.Forms
 			if(ioInfo != null) m_ioInfo = ioInfo;
 
 			m_bCanExit = bCanExit;
-			m_bRedirectActivation = bRedirectActivation;
+			// m_bRedirectActivation = bRedirectActivation;
 			m_strCustomTitle = strCustomTitle;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			GlobalWindowManager.AddWindow(this);
-			if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
+			// if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
 
 			m_bInitializing = true;
 
@@ -506,11 +506,11 @@ namespace KeePass.Forms
 
 					try
 					{
-						FileInfo[] vFiles = di.RootDirectory.GetFiles(@"*." +
-							AppDefs.FileExtension.KeyFile, SearchOption.TopDirectoryOnly);
-						if(vFiles == null) continue;
+						List<FileInfo> lFiles = UrlUtil.GetFileInfos(di.RootDirectory,
+							"*." + AppDefs.FileExtension.KeyFile,
+							SearchOption.TopDirectoryOnly);
 
-						foreach(FileInfo fi in vFiles)
+						foreach(FileInfo fi in lFiles)
 							m_vSuggestions.Add(fi.FullName);
 					}
 					catch(Exception) { Debug.Assert(false); }
@@ -521,35 +521,36 @@ namespace KeePass.Forms
 				m_vSuggestions.Add(prov.Name);
 
 			if(m_cmbKeyFile.InvokeRequired)
-				m_cmbKeyFile.Invoke(new VoidDelegate(this.PresentKeyFileSuggestions));
-			else PresentKeyFileSuggestions();
+				m_cmbKeyFile.Invoke(new VoidDelegate(this.PresentKeySourceSuggestions));
+			else PresentKeySourceSuggestions();
 		}
 
-		private void PresentKeyFileSuggestions()
+		private void PresentKeySourceSuggestions()
 		{
 			foreach(string str in m_vSuggestions)
 				m_cmbKeyFile.Items.Add(str);
-
 			m_vSuggestions.Clear();
 
-			if(m_cmbKeyFile.SelectedIndex == 0)
-			{
-				string strRemKeyFile = Program.Config.Defaults.GetKeySource(
-					m_ioInfo, true);
-				if(!string.IsNullOrEmpty(strRemKeyFile))
-				{
-					m_cmbKeyFile.Items.Add(strRemKeyFile);
-					m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
-				}
+			// E.g. command line options have higher priority
+			bool bCanModKeyFile = (m_cmbKeyFile.SelectedIndex == 0);
 
-				string strRemKeyProv = Program.Config.Defaults.GetKeySource(
-					m_ioInfo, false);
-				if(!string.IsNullOrEmpty(strRemKeyProv))
-				{
-					int iProv = m_cmbKeyFile.FindStringExact(strRemKeyProv);
-					if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
-				}
+			AceKeyAssoc a = Program.Config.Defaults.GetKeySources(m_ioInfo);
+			if(a == null) return;
+
+			if((a.KeyFilePath.Length > 0) && bCanModKeyFile)
+			{
+				m_cmbKeyFile.Items.Add(a.KeyFilePath);
+				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 			}
+
+			if((a.KeyProvider.Length > 0) && bCanModKeyFile)
+			{
+				int iProv = m_cmbKeyFile.FindStringExact(a.KeyProvider);
+				if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
+			}
+
+			if(a.UserAccount && m_cbUserAccount.Enabled)
+				m_cbUserAccount.Checked = true;
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -571,7 +572,7 @@ namespace KeePass.Forms
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
-			if(m_bRedirectActivation) Program.MainForm.RedirectActivationPop();
+			// if(m_bRedirectActivation) Program.MainForm.RedirectActivationPop();
 			CleanUpEx();
 		}
 	}

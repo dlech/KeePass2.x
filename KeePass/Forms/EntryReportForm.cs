@@ -61,14 +61,15 @@ namespace KeePass.Forms
 			m_lvEntries.Columns.Add(KPRes.UserName, nWidth / 5);
 			m_lvEntries.Columns.Add(string.Empty, (nWidth / 5) * 2);
 
-			ListViewGroup lvg = new ListViewGroup(m_pgDataSource.GetFullPath());
+			ListViewGroup lvg = new ListViewGroup(m_pgDataSource.GetFullPath(
+				" - ", true));
 			m_lvEntries.Groups.Add(lvg);
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				if(pg.Entries.UCount != 0)
 				{
-					lvg = new ListViewGroup(pg.GetFullPath());
+					lvg = new ListViewGroup(pg.GetFullPath(" - ", true));
 					m_lvEntries.Groups.Add(lvg);
 				}
 

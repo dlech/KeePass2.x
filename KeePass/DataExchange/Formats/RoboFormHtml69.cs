@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.9.82-7.8.5.7+
+	// 6.9.82-7.8.8.5+
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -54,6 +54,10 @@ namespace KeePass.DataExchange.Formats
 		private const string m_strUrlTD = @"<TD class=subcaption";
 		private const string m_strKeyTD = @"<TD class=field";
 		private const string m_strValueTD = @"<TD class=wordbreakfield";
+
+		// https://sourceforge.net/p/keepass/discussion/329221/thread/7db6283e/
+		private const string m_strKeyTD2 = "<TD width=\"40%\" align=left class=field";
+		private const string m_strValueTD2 = "<TD width=\"55%\" align=left class=wordbreakfield";
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -82,7 +86,7 @@ namespace KeePass.DataExchange.Formats
 					int nLast = strTitle.LastIndexOf('\\');
 					string strTree = strTitle.Substring(0, nLast);
 					pg = pwStorage.RootGroup.FindCreateSubTree(strTree,
-						new char[]{ '\\' });
+						new string[1]{ "\\" }, true);
 
 					strTitle = strTitle.Substring(nLast + 1);
 				}
@@ -99,7 +103,7 @@ namespace KeePass.DataExchange.Formats
 				if((nUrlTD >= 0) && (nUrlTD < nNextTitleTD))
 				{
 					string strUrl = StrUtil.XmlToString(StrUtil.GetStringBetween(
-						strData, nUrlTD, @">", @"</TD>"));
+						strData, nUrlTD, @">", @"</TD>")).Trim().ToLower();
 
 					if(!string.IsNullOrEmpty(strUrl) && (strUrl.IndexOf(':') < 0) &&
 						(strUrl.IndexOf('@') < 0))
@@ -112,9 +116,13 @@ namespace KeePass.DataExchange.Formats
 				while(true)
 				{
 					int nKeyTD = strData.IndexOf(m_strKeyTD, nOffset);
+					if((nKeyTD < 0) || (nKeyTD > nNextTitleTD))
+						nKeyTD = strData.IndexOf(m_strKeyTD2, nOffset);
 					if((nKeyTD < 0) || (nKeyTD > nNextTitleTD)) break;
 
 					int nValueTD = strData.IndexOf(m_strValueTD, nOffset);
+					if((nValueTD < 0) || (nValueTD > nNextTitleTD))
+						nValueTD = strData.IndexOf(m_strValueTD2, nOffset);
 					if((nValueTD < 0) || (nValueTD > nNextTitleTD)) break;
 
 					string strKey = StrUtil.XmlToString(StrUtil.GetStringBetween(

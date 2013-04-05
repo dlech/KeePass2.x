@@ -291,6 +291,7 @@ namespace KeePass.Forms
 						ms.Close();
 
 						m_pwDatabase.UINeedsIconUpdate = true;
+						m_pwDatabase.Modified = true;
 						bSelectLastIcon = true;
 					}
 					catch(ArgumentException)
@@ -341,7 +342,10 @@ namespace KeePass.Forms
 			m_pwDatabase.DeleteCustomIcons(vUuidsToDelete);
 
 			if(vUuidsToDelete.Count > 0)
+			{
 				m_pwDatabase.UINeedsIconUpdate = true;
+				m_pwDatabase.Modified = true;
+			}
 
 			RecreateCustomIconList(false);
 			EnableControlsEx();

@@ -138,8 +138,12 @@ namespace KeePass.Util
 			strUrlFlt = strUrlFlt.TrimStart(new char[]{ ' ', '\t', '\r', '\n' });
 
 			PwDatabase pwDatabase = null;
-			try { pwDatabase = Program.MainForm.PluginHost.Database; }
-			catch(Exception) { Debug.Assert(false); pwDatabase = null; }
+			try
+			{
+				pwDatabase = Program.MainForm.DocumentManager.SafeFindContainerOf(
+					peDataSource);
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrlFlt);
 

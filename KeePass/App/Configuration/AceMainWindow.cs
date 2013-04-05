@@ -40,6 +40,18 @@ namespace KeePass.App.Configuration
 		SideBySide = 1
 	}
 
+	[Flags]
+	public enum AceListGrouping
+	{
+		Auto = 0,
+		On = 1,
+		Off = 2,
+
+		// Additional flags: use value > Primary
+
+		Primary = 0x0F // Auto/On/Off are primary states
+	}
+
 	public sealed class AceMainWindow
 	{
 		public AceMainWindow()
@@ -357,6 +369,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_pListSorter = value;
 			}
+		}
+
+		private int m_iLgMain = (int)AceListGrouping.Auto;
+		[DefaultValue(0)]
+		public int ListGrouping // AceListGrouping
+		{
+			get { return m_iLgMain; }
+			set { m_iLgMain = value; }
 		}
 
 		private bool m_bShowEntriesOfSubGroups = false;

@@ -27,11 +27,11 @@ using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
-using KeePassLib.Native;
 using KeePassLib.Security;
 
 namespace KeePass.Forms
@@ -53,12 +53,39 @@ namespace KeePass.Forms
 		private int m_nBannerWidth = -1;
 
 		private Font m_fontChars = null;
-		private char m_chMaskChar = ((NativeLib.GetPlatformID() ==
+		private char m_chMaskChar = ((KeePassLib.Native.NativeLib.GetPlatformID() ==
 			PlatformID.Win32Windows) ? '\u00D7' : '\u25CF');
 
 		public ProtectedString SelectedCharacters
 		{
 			get { return m_psSelected; }
+		}
+
+		internal static string ShowAndRestore(ProtectedString psWord,
+			bool bCenterScreen, bool bSetForeground, uint uCharCount, bool? bInitHide)
+		{
+			IntPtr h = IntPtr.Zero;
+			try { h = NativeMethods.GetForegroundWindowHandle(); }
+			catch(Exception) { Debug.Assert(false); }
+
+			CharPickerForm dlg = new CharPickerForm();
+			dlg.InitEx(psWord, bCenterScreen, bSetForeground, uCharCount, bInitHide);
+
+			DialogResult dr = dlg.ShowDialog();
+
+			try
+			{
+				if((h != IntPtr.Zero) && NativeMethods.IsWindowEx(h))
+					NativeMethods.SetForegroundWindowEx(h);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			ProtectedString ps = dlg.SelectedCharacters;
+			string strRet = null;
+			if((dr == DialogResult.OK) && (ps != null)) strRet = ps.ReadString();
+
+			UIUtil.DestroyForm(dlg);
+			return strRet;
 		}
 
 		public CharPickerForm()

@@ -60,33 +60,175 @@ namespace KeePass.Util
 			return strInner;
 		}
 
-		private static readonly string[] m_vNonStandardEntitiesTable = new string[]{
-			@"&sect;", @"§", @"&acute;", @"´", @"&szlig;", @"ß",
-			@"&Auml;", @"Ä", @"&Ouml;", @"Ö", @"&Uuml;", @"Ü",
-			@"&auml;", @"ä", @"&ouml;", @"ö", @"&uuml;", @"ü",
-			@"&micro;", @"µ", @"&euro;", @"€", @"&copy;", @"©",
-			@"&reg;", @"®", @"&sup2;", @"²", @"&sup3;", @"³",
-			@"&eacute;", @"é", @"&egrave;", @"è", @"&ecirc;", @"ê",
-			@"&Aacute;", @"Á", @"&Agrave;", @"À", @"&Acirc;", @"Â",
-			@"&aacute;", @"á", @"&agrave;", @"à", @"&acirc;", @"â"
-		};
-
+		private static Dictionary<string, char> m_dHtmlEntities = null;
 		/// <summary>
-		/// Decode most entities except the standard ones (&lt;, &gt;, etc.).
+		/// Decode common HTML entities except the XML ones (&lt;, &gt;, etc.).
 		/// </summary>
-		/// <param name="strToDecode">String to decode.</param>
+		/// <param name="strXml">String to decode.</param>
 		/// <returns>String without non-standard entities.</returns>
-		public static string DecodeNonStandardEntities(string strToDecode)
+		public static string DecodeHtmlEntities(string strXml)
 		{
-			string str = strToDecode;
+			if(strXml == null) { Debug.Assert(false); return string.Empty; }
 
-			Debug.Assert((m_vNonStandardEntitiesTable.Length % 2) == 0); // Static
+			if(m_dHtmlEntities == null)
+			{
+				Dictionary<string, char> d = new Dictionary<string, char>();
 
-			for(int i = 0; i < m_vNonStandardEntitiesTable.Length; i += 2)
-				str = str.Replace(m_vNonStandardEntitiesTable[i],
-					m_vNonStandardEntitiesTable[i + 1]);
+				d["nbsp"] = '\u00A0'; d["iexcl"] = '\u00A1';
+				d["cent"] = '\u00A2'; d["pound"] = '\u00A3';
+				d["curren"] = '\u00A4'; d["yen"] = '\u00A5';
+				d["brvbar"] = '\u00A6'; d["sect"] = '\u00A7';
+				d["uml"] = '\u00A8'; d["copy"] = '\u00A9';
+				d["ordf"] = '\u00AA'; d["laquo"] = '\u00AB';
+				d["not"] = '\u00AC'; d["shy"] = '\u00AD';
+				d["reg"] = '\u00AE'; d["macr"] = '\u00AF';
+				d["deg"] = '\u00B0'; d["plusmn"] = '\u00B1';
+				d["sup2"] = '\u00B2'; d["sup3"] = '\u00B3';
+				d["acute"] = '\u00B4'; d["micro"] = '\u00B5';
+				d["para"] = '\u00B6'; d["middot"] = '\u00B7';
+				d["cedil"] = '\u00B8'; d["sup1"] = '\u00B9';
+				d["ordm"] = '\u00BA'; d["raquo"] = '\u00BB';
+				d["frac14"] = '\u00BC'; d["frac12"] = '\u00BD';
+				d["frac34"] = '\u00BE'; d["iquest"] = '\u00BF';
+				d["Agrave"] = '\u00C0'; d["Aacute"] = '\u00C1';
+				d["Acirc"] = '\u00C2'; d["Atilde"] = '\u00C3';
+				d["Auml"] = '\u00C4'; d["Aring"] = '\u00C5';
+				d["AElig"] = '\u00C6'; d["Ccedil"] = '\u00C7';
+				d["Egrave"] = '\u00C8'; d["Eacute"] = '\u00C9';
+				d["Ecirc"] = '\u00CA'; d["Euml"] = '\u00CB';
+				d["Igrave"] = '\u00CC'; d["Iacute"] = '\u00CD';
+				d["Icirc"] = '\u00CE'; d["Iuml"] = '\u00CF';
+				d["ETH"] = '\u00D0'; d["Ntilde"] = '\u00D1';
+				d["Ograve"] = '\u00D2'; d["Oacute"] = '\u00D3';
+				d["Ocirc"] = '\u00D4'; d["Otilde"] = '\u00D5';
+				d["Ouml"] = '\u00D6'; d["times"] = '\u00D7';
+				d["Oslash"] = '\u00D8'; d["Ugrave"] = '\u00D9';
+				d["Uacute"] = '\u00DA'; d["Ucirc"] = '\u00DB';
+				d["Uuml"] = '\u00DC'; d["Yacute"] = '\u00DD';
+				d["THORN"] = '\u00DE'; d["szlig"] = '\u00DF';
+				d["agrave"] = '\u00E0'; d["aacute"] = '\u00E1';
+				d["acirc"] = '\u00E2'; d["atilde"] = '\u00E3';
+				d["auml"] = '\u00E4'; d["aring"] = '\u00E5';
+				d["aelig"] = '\u00E6'; d["ccedil"] = '\u00E7';
+				d["egrave"] = '\u00E8'; d["eacute"] = '\u00E9';
+				d["ecirc"] = '\u00EA'; d["euml"] = '\u00EB';
+				d["igrave"] = '\u00EC'; d["iacute"] = '\u00ED';
+				d["icirc"] = '\u00EE'; d["iuml"] = '\u00EF';
+				d["eth"] = '\u00F0'; d["ntilde"] = '\u00F1';
+				d["ograve"] = '\u00F2'; d["oacute"] = '\u00F3';
+				d["ocirc"] = '\u00F4'; d["otilde"] = '\u00F5';
+				d["ouml"] = '\u00F6'; d["divide"] = '\u00F7';
+				d["oslash"] = '\u00F8'; d["ugrave"] = '\u00F9';
+				d["uacute"] = '\u00FA'; d["ucirc"] = '\u00FB';
+				d["uuml"] = '\u00FC'; d["yacute"] = '\u00FD';
+				d["thorn"] = '\u00FE'; d["yuml"] = '\u00FF';
+				Debug.Assert(d.Count == (0xFF - 0xA0 + 1));
+				d["circ"] = '\u02C6';
+				d["tilde"] = '\u02DC';
+				d["euro"] = '\u20AC';
 
-			return str;
+				m_dHtmlEntities = d;
+
+#if DEBUG
+				Dictionary<char, bool> dChars = new Dictionary<char, bool>();
+				foreach(KeyValuePair<string, char> kvp in d)
+				{
+					Debug.Assert((kvp.Key.IndexOf('&') < 0) &&
+						(kvp.Key.IndexOf(';') < 0));
+					dChars[kvp.Value] = true;
+				}
+				Debug.Assert(dChars.Count == d.Count); // Injective
+
+				Debug.Assert(DecodeHtmlEntities("&euro; A &ecircZ; B &copy;") ==
+					"\u20AC A &ecircZ; B \u00A9");
+				Debug.Assert(DecodeHtmlEntities(@"&lt;&gt;&amp;&apos;&quot;") ==
+					"&lt;&gt;&amp;&apos;&quot;"); // Do not decode XML entities
+				Debug.Assert(DecodeHtmlEntities(@"<![CDATA[&euro;]]>&euro;<![CDATA[&euro;]]>") ==
+					"<![CDATA[&euro;]]>\u20AC<![CDATA[&euro;]]>");
+#endif
+			}
+
+			StringBuilder sb = new StringBuilder();
+			List<string> lParts = SplitByCData(strXml);
+
+			foreach(string str in lParts)
+			{
+				if(str.StartsWith(@"<![CDATA["))
+				{
+					sb.Append(str);
+					continue;
+				}
+
+				int iOffset = 0;
+				while(iOffset < str.Length)
+				{
+					int pAmp = str.IndexOf('&', iOffset);
+
+					if(pAmp < 0)
+					{
+						sb.Append(str, iOffset, str.Length - iOffset);
+						break;
+					}
+
+					if(pAmp > iOffset)
+						sb.Append(str, iOffset, pAmp - iOffset);
+
+					int pTerm = str.IndexOf(';', pAmp);
+					if(pTerm < 0)
+					{
+						Debug.Assert(false); // At least one entity not terminated
+						sb.Append(str, pAmp, str.Length - pAmp);
+						break;
+					}
+
+					string strEntity = str.Substring(pAmp + 1, pTerm - pAmp - 1);
+					char ch;
+					if(m_dHtmlEntities.TryGetValue(strEntity, out ch))
+						sb.Append(ch);
+					else sb.Append(str, pAmp, pTerm - pAmp + 1);
+
+					iOffset = pTerm + 1;
+				}
+			}
+
+			return sb.ToString();
+		}
+
+		public static List<string> SplitByCData(string str)
+		{
+			List<string> l = new List<string>();
+			if(str == null) { Debug.Assert(false); return l; }
+
+			int iOffset = 0;
+			while(iOffset < str.Length)
+			{
+				int pStart = str.IndexOf(@"<![CDATA[", iOffset);
+
+				if(pStart < 0)
+				{
+					l.Add(str.Substring(iOffset, str.Length - iOffset));
+					break;
+				}
+
+				if(pStart > iOffset)
+					l.Add(str.Substring(iOffset, pStart - iOffset));
+
+				const string strTerm = @"]]>";
+				int pTerm = str.IndexOf(strTerm, pStart);
+				if(pTerm < 0)
+				{
+					Debug.Assert(false); // At least one CDATA not terminated
+					l.Add(str.Substring(pStart, str.Length - pStart));
+					break;
+				}
+
+				l.Add(str.Substring(pStart, pTerm - pStart + strTerm.Length));
+
+				iOffset = pTerm + strTerm.Length;
+			}
+
+			Debug.Assert(l.IndexOf(string.Empty) < 0);
+			return l;
 		}
 
 		public static int GetMultiChildIndex(XmlNodeList xlList, XmlNode xnFind)

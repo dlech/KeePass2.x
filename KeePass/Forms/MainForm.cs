@@ -67,11 +67,12 @@ namespace KeePass.Forms
 		private bool m_bRestart = false;
 		private ListSorter m_pListSorter = new ListSorter();
 		private ListViewSortMenu m_lvsmMenu = null;
+		private ListViewGroupingMenu m_lvgmMenu = null;
 
 		private bool m_bDraggingEntries = false;
 
 		private bool m_bBlockColumnUpdates = false;
-		private bool m_bBlockEntrySelectionEvent = false;
+		private uint m_uBlockEntrySelectionEvent = 0;
 
 		private bool m_bForceExitOnce = false;
 
@@ -122,13 +123,7 @@ namespace KeePass.Forms
 
 			AssignMenuShortcuts();
 
-			if(MonoWorkarounds.IsRequired)
-			{
-				// Workaround for tab bar height bug in Mono
-				// https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
-				// https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
-				m_tabMain.Height += 5;
-			}
+			if(MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -152,8 +147,8 @@ namespace KeePass.Forms
 			m_ntfTray = new NotifyIconEx(this.components);
 			m_ntfTray.ContextMenuStrip = m_ctxTray;
 			m_ntfTray.Visible = true;
-			m_ntfTray.SetHandlers(OnSystemTrayClick, OnSystemTrayDoubleClick,
-				OnSystemTrayMouseDown);
+			m_ntfTray.SetHandlers(this.OnSystemTrayClick, this.OnSystemTrayDoubleClick,
+				this.OnSystemTrayMouseDown);
 
 			m_ctxTrayTray.Font = FontUtil.CreateFont(m_ctxTrayTray.Font, FontStyle.Bold);
 
@@ -240,7 +235,7 @@ namespace KeePass.Forms
 			if((sizeX != AppDefs.InvalidWindowValue) &&
 				(sizeY != AppDefs.InvalidWindowValue) && bWndValid)
 			{
-				if(MonoWorkarounds.IsRequired) // Debian 686017
+				if(MonoWorkarounds.IsRequired(686017))
 				{
 					sizeX = Math.Max(250, sizeX);
 					sizeY = Math.Max(250, sizeY);
@@ -248,7 +243,7 @@ namespace KeePass.Forms
 
 				this.Size = new Size(sizeX, sizeY);
 			}
-			if(MonoWorkarounds.IsRequired) // Debian 686017
+			if(MonoWorkarounds.IsRequired(686017))
 				this.MinimumSize = new Size(250, 250);
 
 			Rectangle rectRestWindow = new Rectangle(wndX, wndY,
@@ -287,6 +282,7 @@ namespace KeePass.Forms
 
 			m_lvsmMenu = new ListViewSortMenu(m_menuViewSortBy, m_lvEntries,
 				new SortCommandHandler(this.SortPasswordList));
+			m_lvgmMenu = new ListViewGroupingMenu(m_menuViewEntryListGrouping, this);
 
 			m_menuViewAlwaysOnTop.Checked = mw.AlwaysOnTop;
 			OnViewAlwaysOnTop(null, null);
@@ -337,7 +333,7 @@ namespace KeePass.Forms
 				//	(double)m_splitHorizontal.Height);
 				int iSplitDist = (int)Math.Round(fSplitPos *
 					(double)m_splitHorizontal.Height);
-				if(MonoWorkarounds.IsRequired) // Debian 686017
+				if(MonoWorkarounds.IsRequired(686017))
 					m_splitHorizontal.SplitterDistance = Math.Max(35, iSplitDist);
 				else
 					m_splitHorizontal.SplitterDistance = iSplitDist;
@@ -435,7 +431,7 @@ namespace KeePass.Forms
 
 		private void OnFormShown(object sender, EventArgs e)
 		{
-			if(NativeLib.IsUnix()) // Workaround for Mono bug 620618
+			if(MonoWorkarounds.IsRequired(620618))
 			{
 				PwGroup pg = GetCurrentEntries();
 				UpdateColumnsEx(false);
@@ -536,7 +532,7 @@ namespace KeePass.Forms
 				@"http://keepass.info/help/kb/testform.html"));
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
 				"12345"));
-			pe.AutoType.Add(new AutoTypeAssociation("Test Form - KeePass*", string.Empty));
+			pe.AutoType.Add(new AutoTypeAssociation("*Test Form - KeePass*", string.Empty));
 			pd.RootGroup.AddEntry(pe, true);
 
 #if DEBUG
@@ -564,7 +560,7 @@ namespace KeePass.Forms
 			}
 
 			pd.CustomData.Set("Sample Custom Data 1", "0123456789");
-			pd.CustomData.Set("Sample Custom Data 2", @"µy data");
+			pd.CustomData.Set("Sample Custom Data 2", "\u00B5y data");
 #endif
 
 			UpdateUI(true, null, true, null, true, null, true);
@@ -868,6 +864,7 @@ namespace KeePass.Forms
 				SelectEntries(vSelect, true, true);
 
 				EnsureVisibleEntry(pwe.Uuid);
+				UpdateUIState(false);
 			}
 			else UpdateUI(false, null, pwDb.UINeedsIconUpdate, null,
 				pwDb.UINeedsIconUpdate, null, false);
@@ -940,12 +937,12 @@ namespace KeePass.Forms
 
 		private void OnEntrySelectAll(object sender, EventArgs e)
 		{
-			m_bBlockEntrySelectionEvent = true;
+			++m_uBlockEntrySelectionEvent;
 			foreach(ListViewItem lvi in m_lvEntries.Items)
 			{
 				lvi.Selected = true;
 			}
-			m_bBlockEntrySelectionEvent = false;
+			--m_uBlockEntrySelectionEvent;
 
 			ResetDefaultFocus(m_lvEntries);
 			UpdateUIState(false);
@@ -1065,7 +1062,7 @@ namespace KeePass.Forms
 
 		private void OnPwListSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockEntrySelectionEvent) return;
+			if(m_uBlockEntrySelectionEvent > 0) return;
 
 			// Always defer deselection updates (to ignore item deselect
 			// and reselect events when clicking on a selected item)
@@ -1649,7 +1646,8 @@ namespace KeePass.Forms
 			ipf.InitEx(m_ilCurrentIcons, (uint)PwIcon.Count, pd,
 				(uint)vEntries[0].IconId, vEntries[0].CustomIconUuid);
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			bool bSetIcons = (ipf.ShowDialog() == DialogResult.OK);
+			if(bSetIcons)
 			{
 				foreach(PwEntry pe in vEntries)
 				{
@@ -1666,8 +1664,9 @@ namespace KeePass.Forms
 			}
 
 			bool bUpdImg = pd.UINeedsIconUpdate;
-			RefreshEntriesList();
-			UpdateUI(false, null, bUpdImg, null, false, null, true);
+			bool bModified = (bSetIcons || bUpdImg);
+			if(bModified) RefreshEntriesList();
+			UpdateUI(false, null, bUpdImg, null, false, null, bModified);
 			UIUtil.DestroyForm(ipf);
 		}
 
@@ -1928,7 +1927,7 @@ namespace KeePass.Forms
 					lSel.Add(peRef);
 					SelectEntries(lSel, true, true);
 					EnsureVisibleSelected(false);
-					ShowEntryDetails(peRef);
+					UpdateUIState(false);
 				}
 			}
 			else WinUtil.OpenUrl(strLink, pe);
@@ -2358,17 +2357,30 @@ namespace KeePass.Forms
 			m_mbLastTrayMouseButtons = e.Button;
 		}
 
+		private bool m_bInActRedir = false;
 		private void OnFormActivated(object sender, EventArgs e)
 		{
 			NotifyUserActivity();
 
-			if(m_vRedirectActivation.Count > 0)
+			// if(m_vRedirectActivation.Count > 0)
+			// {
+			//	Form f = m_vRedirectActivation.Peek();
+			//	if(f != null) f.Activate();
+			//	// SystemSounds.Beep.Play(); // Do not beep!
+			// }
+			// // else EnsureAlwaysOnTopOpt();
+
+			try
 			{
-				Form f = m_vRedirectActivation.Peek();
-				if(f != null) f.Activate();
-				// SystemSounds.Beep.Play(); // Do not beep!
+				Form fTop = GlobalWindowManager.TopWindow;
+				if((fTop != null) && (fTop != this) && !m_bInActRedir)
+				{
+					m_bInActRedir = true;
+					try { fTop.Activate(); }
+					finally { m_bInActRedir = false; }
+				}
 			}
-			// else EnsureAlwaysOnTopOpt();
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void OnToolsTriggers(object sender, EventArgs e)
@@ -2485,12 +2497,12 @@ namespace KeePass.Forms
 			Form fOptDialog;
 			IStatusLogger sl = StatusUtil.CreateStatusDialog(this, out fOptDialog,
 				null, KPRes.Delete + "...", true, false);
-			if(fOptDialog != null) RedirectActivationPush(fOptDialog);
+			// if(fOptDialog != null) RedirectActivationPush(fOptDialog);
 			UIBlockInteraction(true);
 
 			uint uDeleted = pd.DeleteDuplicateEntries(sl);
 
-			if(fOptDialog != null) RedirectActivationPop();
+			// if(fOptDialog != null) RedirectActivationPop();
 			UIBlockInteraction(false);
 			sl.EndLogging();
 

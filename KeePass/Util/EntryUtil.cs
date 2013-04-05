@@ -276,6 +276,7 @@ namespace KeePass.Util
 			PwDatabase pd)
 		{
 			if((v == null) || (pd == null)) { Debug.Assert(false); return; }
+			if(pd.RootGroup == null) { Debug.Assert(false); return; } // DB must be open
 
 			PwObjectList<PwEntry> vRem = v.CloneShallow();
 			v.Clear();

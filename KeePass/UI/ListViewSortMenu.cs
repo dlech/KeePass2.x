@@ -21,10 +21,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Diagnostics;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Resources;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -64,6 +66,13 @@ namespace KeePass.UI
 
 			m_tsmiMenu.DropDownOpening += this.UpdateMenu;
 		}
+
+#if DEBUG
+		~ListViewSortMenu()
+		{
+			Debug.Assert(m_tsmiMenu == null); // Release should have been called
+		}
+#endif
 
 		public void Release()
 		{
@@ -122,7 +131,7 @@ namespace KeePass.UI
 			else m_iCurSortColumn = -1;
 
 			m_tsmiNoSort = new ToolStripMenuItem(KPRes.NoSort);
-			if(m_iCurSortColumn < 0) SetRadioChecked(m_tsmiNoSort);
+			if(m_iCurSortColumn < 0) UIUtil.SetRadioChecked(m_tsmiNoSort, true);
 			m_tsmiNoSort.Click += this.OnNoSort;
 			m_tsmiMenu.DropDownItems.Add(m_tsmiNoSort);
 
@@ -133,10 +142,10 @@ namespace KeePass.UI
 			foreach(ColumnHeader ch in m_lv.Columns)
 			{
 				string strText = (ch.Text ?? string.Empty);
-				strText = strText.Replace(@"&", @"&&");
+				strText = StrUtil.EncodeMenuText(strText);
 
 				ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
-				if(ch.Index == m_iCurSortColumn) SetRadioChecked(tsmi);
+				if(ch.Index == m_iCurSortColumn) UIUtil.SetRadioChecked(tsmi, true);
 				tsmi.Click += this.OnSortColumn;
 
 				m_vColumns.Add(tsmi);
@@ -147,13 +156,15 @@ namespace KeePass.UI
 			m_tsmiMenu.DropDownItems.Add(m_tssSep1);
 
 			m_tsmiAsc = new ToolStripMenuItem(KPRes.Ascending);
-			if((m_iCurSortColumn >= 0) && m_bCurSortAsc) SetRadioChecked(m_tsmiAsc);
+			if((m_iCurSortColumn >= 0) && m_bCurSortAsc)
+				UIUtil.SetRadioChecked(m_tsmiAsc, true);
 			m_tsmiAsc.Click += this.OnSortAscDesc;
 			if(m_iCurSortColumn < 0) m_tsmiAsc.Enabled = false;
 			m_tsmiMenu.DropDownItems.Add(m_tsmiAsc);
 
 			m_tsmiDesc = new ToolStripMenuItem(KPRes.Descending);
-			if((m_iCurSortColumn >= 0) && !m_bCurSortAsc) SetRadioChecked(m_tsmiDesc);
+			if((m_iCurSortColumn >= 0) && !m_bCurSortAsc)
+				UIUtil.SetRadioChecked(m_tsmiDesc, true);
 			m_tsmiDesc.Click += this.OnSortAscDesc;
 			if(m_iCurSortColumn < 0) m_tsmiDesc.Enabled = false;
 			m_tsmiMenu.DropDownItems.Add(m_tsmiDesc);
@@ -198,12 +209,6 @@ namespace KeePass.UI
 				m_h(true, m_iCurSortColumn, SortOrder.Ascending, true);
 			else if((tsmi == m_tsmiDesc) && m_bCurSortAsc)
 				m_h(true, m_iCurSortColumn, SortOrder.Descending, true);
-		}
-
-		private static void SetRadioChecked(ToolStripMenuItem tsmi)
-		{
-			tsmi.Image = Properties.Resources.B16x16_MenuRadio;
-			tsmi.CheckState = CheckState.Checked;
 		}
 	}
 }

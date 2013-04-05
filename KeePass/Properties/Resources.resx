@@ -433,9 +433,6 @@
   <data name="B16x16_Imp_PwDepot" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_PwDepot.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="B16x16_Imp_PwGorilla" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Images\B16x16_Imp_PwGorilla.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="B16x16_Imp_PwSafe" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_PwSafe.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -579,5 +576,11 @@
   </data>
   <data name="B16x16_Imp_LastPass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_LastPass.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Imp_SafeWallet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\B16x16_Imp_SafeWallet.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Imp_TurboPws" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\B16x16_Imp_TurboPws.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

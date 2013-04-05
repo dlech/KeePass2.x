@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.0.2+
+	// 2.0.2-2.0.20+
 	internal sealed class LastPassCsv2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -61,20 +61,16 @@ namespace KeePass.DataExchange.Formats
 
 			CsvStreamReaderEx csr = new CsvStreamReaderEx(strData, opt);
 
-			Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
-			dGroups[string.Empty] = pwStorage.RootGroup;
-
 			while(true)
 			{
 				string[] vLine = csr.ReadLine();
 				if(vLine == null) break;
 
-				AddEntry(vLine, pwStorage, dGroups);
+				AddEntry(vLine, pwStorage);
 			}
 		}
 
-		private static void AddEntry(string[] vLine, PwDatabase pd,
-			IDictionary<string, PwGroup> dGroups)
+		private static void AddEntry(string[] vLine, PwDatabase pd)
 		{
 			Debug.Assert((vLine.Length == 0) || (vLine.Length == 7));
 			if(vLine.Length < 5) return;
@@ -86,18 +82,14 @@ namespace KeePass.DataExchange.Formats
 
 			PwEntry pe = new PwEntry(true, true);
 
-			PwGroup pg = dGroups[string.Empty];
+			PwGroup pg = pd.RootGroup;
 			if(vLine.Length >= 6)
 			{
 				string strGroup = vLine[5];
-				if(!dGroups.TryGetValue(strGroup, out pg))
-				{
-					pg = new PwGroup(true, true, strGroup, PwIcon.Folder);
-					pd.RootGroup.AddGroup(pg, true, true);
-					dGroups[strGroup] = pg;
-				}
+				if(strGroup.Length > 0)
+					pg = pg.FindCreateSubTree(strGroup, new string[1]{ "\\" }, true);
 			}
-			pg.AddEntry(pe, true, true);
+			pg.AddEntry(pe, true);
 
 			ImportUtil.AppendToField(pe, PwDefs.TitleField, vLine[4], pd);
 			ImportUtil.AppendToField(pe, PwDefs.UserNameField, vLine[1], pd);

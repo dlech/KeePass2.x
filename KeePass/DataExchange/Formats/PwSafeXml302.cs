@@ -35,7 +35,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 3.02-3.29+
+	// 3.02-3.30+
 	internal sealed class PwSafeXml302 : FileFormatProvider
 	{
 		private const string AttribLineBreak = "delimiter";
@@ -47,6 +47,7 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemPassword = "password";
 		private const string ElemURL = "url";
 		private const string ElemNotes = "notes";
+		private const string ElemEMail = "email";
 
 		private const string ElemAutoType = "autotype";
 		private const string ElemRunCommand = "runcommand";
@@ -108,7 +109,8 @@ namespace KeePass.DataExchange.Formats
 					StrUtil.CaseIgnoreCmp) && (strData.IndexOf(
 					"WhatSaved=\"Password Safe V3.29\"", StrUtil.CaseIgnoreCmp) >= 0))
 				{
-					// Fix broken XML exported by Password Safe v3.29
+					// Fix broken XML exported by Password Safe 3.29;
+					// this has been fixed in 3.30
 					strData = strData.Replace("<DefaultUsername<![CDATA[",
 						"<DefaultUsername><![CDATA[");
 					strData = strData.Replace("<DefaultSymbols<![CDATA[",
@@ -197,6 +199,9 @@ namespace KeePass.DataExchange.Formats
 					pe.Strings.Set(PwDefs.NotesField,
 						new ProtectedString(pwStorage.MemoryProtection.ProtectNotes,
 						XmlUtil.SafeInnerText(xmlChild, strLineBreak)));
+				else if(xmlChild.Name == ElemEMail)
+					pe.Strings.Set("E-Mail", new ProtectedString(false,
+						XmlUtil.SafeInnerText(xmlChild)));
 				else if(xmlChild.Name == ElemCreationTime)
 					pe.CreationTime = ReadDateTime(xmlChild);
 				else if(xmlChild.Name == ElemLastAccessTime)
@@ -258,7 +263,7 @@ namespace KeePass.DataExchange.Formats
 			PwGroup pgContainer = pwStorage.RootGroup;
 			if(strGroupName.Length != 0)
 				pgContainer = pwStorage.RootGroup.FindCreateSubTree(strGroupName,
-					new char[]{ '.' });
+					new string[1]{ "." }, true);
 			pgContainer.AddEntry(pe, true);
 			pgContainer.IsExpanded = true;
 		}

@@ -557,13 +557,6 @@ namespace KeePass.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap B16x16_Imp_PwGorilla {
-            get {
-                object obj = ResourceManager.GetObject("B16x16_Imp_PwGorilla", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap B16x16_Imp_PwMem2008 {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_PwMem2008", resourceCulture);
@@ -613,6 +606,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_SafeWallet {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_SafeWallet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_Security {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_Security", resourceCulture);
@@ -637,6 +637,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Imp_StickyPw {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_StickyPw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_TurboPws {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_TurboPws", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

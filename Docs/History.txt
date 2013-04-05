@@ -1,3 +1,62 @@
+2013-04-05: 2.22
+- When the option for remembering key sources is enabled,
+  KeePass now also remembers whether the user account is
+  required
+- Added 'View' -> 'Grouping in Entry List' menu
+- Added 'Close active database' trigger action
+- Added '-ioiscomplete' command line option, which tells
+  KeePass that the path and file system credentials are
+  complete (the 'Open URL' dialog will not be displayed then)
+- Added support for importing SafeWallet XML files (3.0.4 and
+  3.0.5)
+- Added support for importing TurboPasswords 5.0.1 CSV files
+- LastPass CSV importer: added support for group trees
+- Alle meine Passworte XML importer: added support for custom
+  fields and group names with special characters
+- Password Safe XML importer: added support for the e-mail
+  field
+- Added 'Help' button in the generic CSV importer dialog
+- Added workaround for .NET bug 642188; top visible list view
+  items are now remembered in details view with groups enabled
+- Added workaround for Mono form title bar text update bug
+  (which e.g. caused bug 801414)
+
+- After closing a character picking dialog, KeePass now
+  explicitly activates the previous window
+- Improved behavior when cancelling the icon picker dialog
+- Main window activation redirection now works with all KeePass
+  dialogs automatically
+- The window state of the current database is now remembered
+  before opening another database
+- Previous parameters are now discarded when switching between
+  different trigger event/condition/action types
+- Unified separators in group paths
+- The UI state is now updated after adding an entry and
+  clicking an entry reference link in the entry view
+- The '-entry-url-open' command line option now searches for
+  matching entries in all open databases
+- Improved database context determination when opening an URL
+- Added support for special values in date/time fields imported
+  from KeePass 1.x
+- Improved HTML entity decoding (support for more entities and
+  CDATA sections, improved performance, ...)
+- RoboForm HTML importer: URLs are converted to lower-case now
+  and support for a special order rotation of attributes has
+  been added
+- Removed Password Gorilla CSV importer; users should use the
+  generic CSV importer (which can import more data than the old
+  specialized CSV importer)
+- Improved file discoveries
+- Improved test form entry auto-type window definition
+- In the MSI package, the version is now included in the
+  product name
+- Native key transformation library: replaced Boost threads by
+  Windows API threads (because Boost threads can result in
+  crashes on restricted Windows 7 x64 systems)
+- Various UI improvements
+- Various code optimizations
+- Minor other improvements
+
 2013-02-03: 2.21
 - Generic CSV importer: a group separator can be specified now
   (for importing group trees)

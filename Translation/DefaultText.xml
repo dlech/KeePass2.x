@@ -256,6 +256,9 @@
 		<Data Name="ClipboardViewerIgnoreFormat">
 			<Value>Use 'Clipboard Viewer Ignore' clipboard format</Value>
 		</Data>
+		<Data Name="CloseActiveDatabase">
+			<Value>Close active database</Value>
+		</Data>
 		<Data Name="CloseButton">
 			<Value>&amp;Close</Value>
 		</Data>
@@ -1422,6 +1425,9 @@
 		</Data>
 		<Data Name="Recommended">
 			<Value>recommended</Value>
+		</Data>
+		<Data Name="RecommendedCmd">
+			<Value>&amp;Recommended</Value>
 		</Data>
 		<Data Name="RecycleBin">
 			<Value>Recycle Bin</Value>
