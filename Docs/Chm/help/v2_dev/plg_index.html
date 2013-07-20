@@ -203,7 +203,7 @@ plugin. A very simple example, which adds a menu item to the <i>Tools</i> menu:<
 	<font color="#008800">// Add menu item 'Do Something'</font>
 	m_tsmiMenuItem = <font color="#0000FF">new</font> <font color="#008888">ToolStripMenuItem</font>();
 	m_tsmiMenuItem.Text = <font color="#880000">"Do Something"</font>;
-	m_tsmiMenuItem.Click += OnMenuDoSomething;
+	m_tsmiMenuItem.Click += <font color="#0000FF">this</font>.OnMenuDoSomething;
 	tsMenu.Add(m_tsmiMenuItem);
 }
 
@@ -211,8 +211,9 @@ plugin. A very simple example, which adds a menu item to the <i>Tools</i> menu:<
 {
 	<font color="#008800">// Remove all of our menu items</font>
 	<font color="#008888">ToolStripItemCollection</font> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
-	tsMenu.Remove(m_tsSeparator);
+	m_tsmiMenuItem.Click -= <font color="#0000FF">this</font>.OnMenuDoSomething;
 	tsMenu.Remove(m_tsmiMenuItem);
+	tsMenu.Remove(m_tsSeparator);
 }
 
 <font color="#0000FF">private void</font> OnMenuDoSomething(<font color="#0000FF">object</font> sender, <font color="#008888">EventArgs</font> e)
@@ -224,14 +225,14 @@ plugin. A very simple example, which adds a menu item to the <i>Tools</i> menu:<
 <p>If you are working with tool strips, you of course have to add a reference
 to <code>System.Windows.Forms</code> of the .NET framework.</p>
 
-<p>It is highly recommended that you remove all menu items created by
-your plugin in the <code>Terminate</code> function (as shown in the example above).
+<p>It is highly recommended that you unlink all event handlers and remove all menu items
+created by your plugin in the <code>Terminate</code> function (as shown in the example above).
 After the <code>Terminate</code> function has been called, everything should
 look like before loading your plugin.</p>
 
 <p>In the example, we created a separator and one menu item. To this menu
 item an event handler for the <code>Click</code> event is attached. There's nothing
-special, this is all standard <i>Windows.Forms</i> stuff.</p>
+special, this is all standard <i>Windows.Forms</i> code.</p>
 
 <p>For examples of adding popup menus, see the <i>SamplePlugin</i> sample
 plugin (obtainable from the KeePass plugins page).</p>

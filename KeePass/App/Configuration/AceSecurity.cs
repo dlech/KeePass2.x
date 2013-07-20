@@ -105,6 +105,14 @@ namespace KeePass.App.Configuration
 			get { return m_bClearKeyCmdLineOpt; }
 			set { m_bClearKeyCmdLineOpt = value; }
 		}
+
+		private bool m_bSslCertsAcceptInvalid = false;
+		[DefaultValue(false)]
+		public bool SslCertsAcceptInvalid
+		{
+			get { return m_bSslCertsAcceptInvalid; }
+			set { m_bSslCertsAcceptInvalid = value; }
+		}
 	}
 
 	public sealed class AceWorkspaceLocking

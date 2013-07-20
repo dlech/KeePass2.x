@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
-using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -51,6 +51,8 @@ using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass
 {
@@ -326,17 +328,17 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-#if (DEBUG && !KeePassLibSD)
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
-			{
-				PopularPasswords.MakeList();
-				MainCleanUp();
-				return;
-			}
-#endif
+			// #if (DEBUG && !KeePassLibSD)
+			// else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
+			// {
+			//	PopularPasswords.MakeList();
+			//	MainCleanUp();
+			//	return;
+			// }
+			// #endif
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
-			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ExitAll] != null)
 			{
@@ -458,9 +460,8 @@ namespace KeePass
 				AppLogEx.Open(PwDefs.ShortProductName);
 
 			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
-			IOConnection.SetProxy(m_appConfig.Integration.ProxyType,
-				m_appConfig.Integration.ProxyAddress, m_appConfig.Integration.ProxyPort,
-				m_appConfig.Integration.ProxyUserName, m_appConfig.Integration.ProxyPassword);
+
+			m_appConfig.Apply(AceApplyFlags.All);
 
 			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
 			m_ecasTriggers.SetToInitialState();
@@ -468,6 +469,7 @@ namespace KeePass
 			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
 			AppHelp.LocalHelpFile = strHelpFile;
 
+			// InitEnvWorkarounds();
 			LoadTranslation();
 			return true;
 		}
@@ -557,7 +559,7 @@ namespace KeePass
 
 		private static void ActivatePreviousInstance(string[] args)
 		{
-			if((m_nAppMessage == 0) && !KeePassLib.Native.NativeLib.IsUnix())
+			if((m_nAppMessage == 0) && !NativeLib.IsUnix())
 			{
 				Debug.Assert(false);
 				return;
@@ -664,5 +666,51 @@ namespace KeePass
 
 			return false;
 		}
+
+		/* private static void InitEnvWorkarounds()
+		{
+			InitFtpWorkaround();
+		} */
+
+		/* private static void InitFtpWorkaround()
+		{
+			// http://support.microsoft.com/kb/2134299
+			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+			try
+			{
+				if((Environment.Version.Major >= 4) && !NativeLib.IsUnix())
+				{
+					Type tFtp = typeof(FtpWebRequest);
+
+					Assembly asm = Assembly.GetAssembly(tFtp);
+					Type tFlags = asm.GetType("System.Net.FtpMethodFlags");
+					Debug.Assert(Enum.GetUnderlyingType(tFlags) == typeof(int));
+					int iAdd = (int)Enum.Parse(tFlags, "MustChangeWorkingDirectoryToPath");
+					Debug.Assert(iAdd == 0x100);
+
+					FieldInfo fiMethod = tFtp.GetField("m_MethodInfo",
+						BindingFlags.Instance | BindingFlags.NonPublic);
+					if(fiMethod == null) { Debug.Assert(false); return; }
+					Type tMethod = fiMethod.FieldType;
+
+					FieldInfo fiKnown = tMethod.GetField("KnownMethodInfo",
+						BindingFlags.Static | BindingFlags.NonPublic);
+					if(fiKnown == null) { Debug.Assert(false); return; }
+					Array arKnown = (Array)fiKnown.GetValue(null);
+
+					FieldInfo fiFlags = tMethod.GetField("Flags",
+						BindingFlags.Instance | BindingFlags.NonPublic);
+					if(fiFlags == null) { Debug.Assert(false); return; }
+
+					foreach(object oKnown in arKnown)
+					{
+						int i = (int)fiFlags.GetValue(oKnown);
+						i |= iAdd;
+						fiFlags.SetValue(oKnown, i);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 	}
 }

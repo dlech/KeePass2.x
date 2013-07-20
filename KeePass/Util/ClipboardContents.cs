@@ -53,7 +53,8 @@ namespace KeePass.Util
 		{
 			if(bSimpleOnly)
 			{
-				if(Clipboard.ContainsText()) m_strText = Clipboard.GetText();
+				if(ClipboardUtil.ContainsText())
+					m_strText = ClipboardUtil.GetText();
 			}
 			else // Advanced backup
 			{

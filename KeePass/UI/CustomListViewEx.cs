@@ -105,6 +105,8 @@ namespace KeePass.UI
 			if(!this.ShowGroups) return false;
 			if(this.MultiSelect) return false;
 
+			if(MonoWorkarounds.IsRequired(836428016)) return false;
+
 			ListViewItem lvi = this.FocusedItem;
 			if(lvi != null)
 			{

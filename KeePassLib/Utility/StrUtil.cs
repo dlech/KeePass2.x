@@ -1274,9 +1274,33 @@ namespace KeePassLib.Utility
 
 		public static bool IsDataUri(string strUri)
 		{
-			if(strUri == null) { Debug.Assert(false); return false; }
+			return IsDataUri(strUri, null);
+		}
 
-			return strUri.StartsWith("data:", StrUtil.CaseIgnoreCmp);
+		public static bool IsDataUri(string strUri, string strReqMimeType)
+		{
+			if(strUri == null) { Debug.Assert(false); return false; }
+			// strReqMimeType may be null
+
+			const string strPrefix = "data:";
+			if(!strUri.StartsWith(strPrefix, StrUtil.CaseIgnoreCmp))
+				return false;
+
+			int iC = strUri.IndexOf(',');
+			if(iC < 0) return false;
+
+			if(!string.IsNullOrEmpty(strReqMimeType))
+			{
+				int iS = strUri.IndexOf(';', 0, iC);
+				int iTerm = ((iS >= 0) ? iS : iC);
+
+				string strMime = strUri.Substring(strPrefix.Length,
+					iTerm - strPrefix.Length);
+				if(!strMime.Equals(strReqMimeType, StrUtil.CaseIgnoreCmp))
+					return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -1433,6 +1457,24 @@ namespace KeePassLib.Utility
 			// A0-FF are Latin-1 supplement; AD is soft hyphen
 			if(bt == 0xAD) return '-';
 			return (char)bt;
+		}
+
+		public static int Count(string str, string strNeedle)
+		{
+			if(str == null) { Debug.Assert(false); return 0; }
+			if(string.IsNullOrEmpty(strNeedle)) { Debug.Assert(false); return 0; }
+
+			int iOffset = 0, iCount = 0;
+			while(iOffset < str.Length)
+			{
+				int p = str.IndexOf(strNeedle, iOffset);
+				if(p < 0) break;
+
+				++iCount;
+				iOffset = p + 1;
+			}
+
+			return iCount;
 		}
 	}
 }

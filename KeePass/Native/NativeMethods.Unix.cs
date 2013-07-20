@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
@@ -28,6 +29,7 @@ using System.Diagnostics;
 using KeePass.UI;
 using KeePass.Util;
 
+using KeePassLib;
 using KeePassLib.Utility;
 
 using KeeNativeLib = KeePassLib.Native;
@@ -211,5 +213,96 @@ namespace KeePass.Native
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		/* private static Dictionary<string, Assembly> m_dAsms = null;
+		internal static Assembly LoadAssembly(string strAsmName, string strFileName)
+		{
+			if(m_dAsms == null) m_dAsms = new Dictionary<string, Assembly>();
+
+			Assembly asm;
+			if(m_dAsms.TryGetValue(strAsmName, out asm))
+				return asm;
+
+			try
+			{
+				asm = Assembly.Load(strAsmName);
+				if(asm != null) { m_dAsms[strAsmName] = asm; return asm; }
+			}
+			catch(Exception) { }
+
+			try
+			{
+				asm = Assembly.LoadFrom(strFileName);
+				if(asm != null) { m_dAsms[strAsmName] = asm; return asm; }
+			}
+			catch(Exception) { }
+
+			for(int d = 0; d < 4; ++d)
+			{
+				string strDir;
+				switch(d)
+				{
+					case 0: strDir = "/usr/lib/mono/gac"; break;
+					case 1: strDir = "/usr/lib/cli"; break;
+					case 2: strDir = "/usr/lib/mono"; break;
+					case 3: strDir = "/lib/mono"; break;
+					default: strDir = null; break;
+				}
+				if(string.IsNullOrEmpty(strDir)) { Debug.Assert(false); continue; }
+
+				try
+				{
+					string[] vFiles = Directory.GetFiles(strDir, strFileName,
+						SearchOption.AllDirectories);
+					if(vFiles == null) continue;
+
+					for(int i = vFiles.Length - 1; i >= 0; --i)
+					{
+						string strFoundName = UrlUtil.GetFileName(vFiles[i]);
+						if(!strFileName.Equals(strFoundName, StrUtil.CaseIgnoreCmp))
+							continue;
+
+						try
+						{
+							asm = Assembly.LoadFrom(vFiles[i]);
+							if(asm != null) { m_dAsms[strAsmName] = asm; return asm; }
+						}
+						catch(Exception) { }
+					}
+				}
+				catch(Exception) { }
+			}
+
+			m_dAsms[strAsmName] = null;
+			return null;
+		}
+
+		private static bool m_bGtkInitialized = false;
+		internal static bool GtkEnsureInit()
+		{
+			if(m_bGtkInitialized) return true;
+
+			try
+			{
+				Assembly asm = LoadAssembly("gtk-sharp", "gtk-sharp.dll");
+				if(asm == null) return false;
+
+				Type tApp = asm.GetType("Gtk.Application", true);
+				MethodInfo miInitCheck = tApp.GetMethod("InitCheck",
+					BindingFlags.Public | BindingFlags.Static);
+				if(miInitCheck == null) { Debug.Assert(false); return false; }
+
+				string[] vArgs = new string[0];
+				bool bResult = (bool)miInitCheck.Invoke(null, new object[] {
+					PwDefs.ShortProductName, vArgs });
+				if(!bResult) return false;
+
+				m_bGtkInitialized = true;
+				return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		} */
 	}
 }

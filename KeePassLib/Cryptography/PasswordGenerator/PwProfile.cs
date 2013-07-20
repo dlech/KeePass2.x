@@ -253,14 +253,15 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				if((ch >= 'A') && (ch <= 'Z')) pcs.Add(PwCharSet.UpperCase);
 				else if((ch >= 'a') && (ch <= 'z')) pcs.Add(PwCharSet.LowerCase);
 				else if((ch >= '0') && (ch <= '9')) pcs.Add(PwCharSet.Digits);
-				else if((@"!#$%&'*+,./:;=?@^").IndexOf(ch) >= 0) pcs.Add(pcs.SpecialChars);
+				else if(PwCharSet.SpecialChars.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.SpecialChars);
 				else if(ch == ' ') pcs.Add(' ');
 				else if(ch == '-') pcs.Add('-');
 				else if(ch == '_') pcs.Add('_');
-				else if(ch == '\"') pcs.Add(pcs.SpecialChars);
-				else if(ch == '\\') pcs.Add(pcs.SpecialChars);
-				else if((@"()[]{}<>").IndexOf(ch) >= 0) pcs.Add(PwCharSet.Brackets);
-				else if((ch >= '~') && (ch <= 255)) pcs.Add(pcs.HighAnsiChars);
+				else if(PwCharSet.Brackets.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.Brackets);
+				else if(PwCharSet.HighAnsiChars.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.HighAnsiChars);
 				else pcs.Add(ch);
 			}
 

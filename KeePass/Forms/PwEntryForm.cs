@@ -1358,7 +1358,7 @@ namespace KeePass.Forms
 			Array.Clear(pbCurPassword, 0, pbCurPassword.Length);
 			PwProfile opt = PwProfile.DeriveFromPassword(ps);
 
-			pgf.InitEx(bAtLeastOneChar ? opt : null, true, false);
+			pgf.InitEx((bAtLeastOneChar ? opt : null), true, false);
 			// pgf.InitEx(null, true, false);
 
 			if(pgf.ShowDialog() == DialogResult.OK)

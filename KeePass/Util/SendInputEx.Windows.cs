@@ -54,14 +54,16 @@ namespace KeePass.Util
 			// si.EnableCaretWorkaround = (uLangID == LangIDGerman);
 		}
 
-		private static bool SendVKeyNative(int vKey, bool bDown)
+		private static bool SendVKeyNative(int vKey, bool? bExtKey, bool bDown)
 		{
 			bool bRes = false;
 
 			if(bDown || IsKeyActive(vKey))
 			{
-				if(IntPtr.Size == 4) bRes = SendVKeyNative32(vKey, null, bDown);
-				else if(IntPtr.Size == 8) bRes = SendVKeyNative64(vKey, null, bDown);
+				if(IntPtr.Size == 4)
+					bRes = SendVKeyNative32(vKey, bExtKey, null, bDown);
+				else if(IntPtr.Size == 8)
+					bRes = SendVKeyNative64(vKey, bExtKey, null, bDown);
 				else { Debug.Assert(false); }
 			}
 
@@ -82,14 +84,17 @@ namespace KeePass.Util
 
 		private static bool SendCharNative(char ch, bool bDown)
 		{
-			if(IntPtr.Size == 4) return SendVKeyNative32(0, ch, bDown);
-			else if(IntPtr.Size == 8) return SendVKeyNative64(0, ch, bDown);
+			if(IntPtr.Size == 4)
+				return SendVKeyNative32(0, null, ch, bDown);
+			else if(IntPtr.Size == 8)
+				return SendVKeyNative64(0, null, ch, bDown);
 			else { Debug.Assert(false); }
 
 			return false;
 		}
 
-		private static bool SendVKeyNative32(int vKey, char? optUnicodeChar, bool bDown)
+		private static bool SendVKeyNative32(int vKey, bool? bExtKey,
+			char? optUnicodeChar, bool bDown)
 		{
 			NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
 
@@ -110,7 +115,7 @@ namespace KeePass.Util
 				pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
 				pInput[0].KeyboardInput.ScanCode =
 					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFFU);
-				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, bDown);
+				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
 			}
 
 			pInput[0].KeyboardInput.Time = 0;
@@ -124,7 +129,8 @@ namespace KeePass.Util
 			return true;
 		}
 
-		private static bool SendVKeyNative64(int vKey, char? optUnicodeChar, bool bDown)
+		private static bool SendVKeyNative64(int vKey, bool? bExtKey,
+			char? optUnicodeChar, bool bDown)
 		{
 			NativeMethods.SpecializedKeyboardINPUT64[] pInput = new
 				NativeMethods.SpecializedKeyboardINPUT64[1];
@@ -146,7 +152,7 @@ namespace KeePass.Util
 				pInput[0].VirtualKeyCode = (ushort)vKey;
 				pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey(
 					(uint)vKey, 0) & 0xFFU);
-				pInput[0].Flags = GetKeyEventFlags(vKey, bDown);
+				pInput[0].Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
 			}
 
 			pInput[0].Time = 0;
@@ -160,11 +166,19 @@ namespace KeePass.Util
 			return true;
 		}
 
-		private static uint GetKeyEventFlags(int vKey, bool bDown)
+		private static uint GetKeyEventFlags(int vKey, bool? bExtKey, bool bDown)
 		{
 			uint u = 0;
+
 			if(!bDown) u |= NativeMethods.KEYEVENTF_KEYUP;
-			if(IsExtendedKeyEx(vKey)) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+
+			if(bExtKey.HasValue)
+			{
+				if(bExtKey.Value) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+			}
+			else if(IsExtendedKeyEx(vKey))
+				u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+
 			return u;
 		}
 
@@ -266,10 +280,10 @@ namespace KeePass.Util
 			{
 				if(vKey == NativeMethods.VK_CAPITAL) // Toggle
 				{
-					SendVKeyNative(vKey, true);
-					SendVKeyNative(vKey, false);
+					SendVKeyNative(vKey, null, true);
+					SendVKeyNative(vKey, null, false);
 				}
-				else SendVKeyNative(vKey, bDown);
+				else SendVKeyNative(vKey, null, bDown);
 			}
 		}
 
@@ -282,13 +296,13 @@ namespace KeePass.Util
 			{
 				if(vKeys.Contains(NativeMethods.VK_LMENU))
 				{
-					SendVKeyNative(NativeMethods.VK_LMENU, true);
-					SendVKeyNative(NativeMethods.VK_LMENU, false);
+					SendVKeyNative(NativeMethods.VK_LMENU, null, true);
+					SendVKeyNative(NativeMethods.VK_LMENU, null, false);
 				}
 				else if(vKeys.Contains(NativeMethods.VK_RMENU))
 				{
-					SendVKeyNative(NativeMethods.VK_RMENU, true);
-					SendVKeyNative(NativeMethods.VK_RMENU, false);
+					SendVKeyNative(NativeMethods.VK_RMENU, null, true);
+					SendVKeyNative(NativeMethods.VK_RMENU, null, false);
 				}
 			}
 		}
@@ -308,8 +322,8 @@ namespace KeePass.Util
 					// if(usCaret != 0xFFFF)
 					// {
 					//	int vkCaret = (int)(usCaret & 0xFF);
-					//	SendVKeyNative(vkCaret, true);
-					//	SendVKeyNative(vkCaret, false);
+					//	SendVKeyNative(vkCaret, null, true);
+					//	SendVKeyNative(vkCaret, null, false);
 					//	Thread.Sleep(20);
 					//	OSSendKeysWindows(@"{+}{BACKSPACE}");
 					// }

@@ -34,6 +34,7 @@ using KeePass.UI;
 using KeePassLib;
 using KeePassLib.Delegates;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -68,9 +69,9 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvColumns, false);
 
-			ThreadPool.QueueUserWorkItem(new WaitCallback(FillColumnsList));
-
 			UpdateColumnPropInfo();
+
+			ThreadPool.QueueUserWorkItem(new WaitCallback(FillColumnsList));
 		}
 
 		private void AddAceColumnTh(AceColumn c)
@@ -175,16 +176,16 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.Uuid);
 			AddStdAceColumn(l, AceColumnType.Attachment);
 
-			List<string> vCustomNames = new List<string>();
+			SortedDictionary<string, AceColumn> dCustom =
+				new SortedDictionary<string, AceColumn>(StrUtil.CaseIgnoreComparer);
 			List<AceColumn> lCur = Program.Config.MainWindow.EntryListColumns;
 			foreach(AceColumn cCur in lCur)
 			{
 				if((cCur.Type == AceColumnType.CustomString) &&
-					!vCustomNames.Contains(cCur.CustomName))
+					!dCustom.ContainsKey(cCur.CustomName))
 				{
-					vCustomNames.Add(cCur.CustomName);
-					AddAceColumn(l, new AceColumn(AceColumnType.CustomString,
-						cCur.CustomName, cCur.HideWithAsterisks, cCur.Width));
+					dCustom[cCur.CustomName] = new AceColumn(AceColumnType.CustomString,
+						cCur.CustomName, cCur.HideWithAsterisks, cCur.Width);
 				}
 			}
 
@@ -197,11 +198,10 @@ namespace KeePass.Forms
 						foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 						{
 							if(PwDefs.IsStandardField(kvp.Key)) continue;
-							if(vCustomNames.Contains(kvp.Key)) continue;
+							if(dCustom.ContainsKey(kvp.Key)) continue;
 
-							vCustomNames.Add(kvp.Key);
-							AddAceColumn(l, new AceColumn(AceColumnType.CustomString,
-								kvp.Key, kvp.Value.IsProtected, -1));
+							dCustom[kvp.Key] = new AceColumn(AceColumnType.CustomString,
+								kvp.Key, kvp.Value.IsProtected, -1);
 						}
 
 						return true;
@@ -211,6 +211,11 @@ namespace KeePass.Forms
 				}
 			}
 
+			foreach(KeyValuePair<string, AceColumn> kvpCustom in dCustom)
+			{
+				AddAceColumn(l, kvpCustom.Value);
+			}
+
 			AddStdAceColumn(l, AceColumnType.Size);
 			AddStdAceColumn(l, AceColumnType.HistoryCount);
 			AddStdAceColumn(l, AceColumnType.OverrideUrl);
@@ -218,6 +223,7 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
 
 			string[] vPlgExtNames = Program.ColumnProviderPool.GetColumnNames();
+			Array.Sort<string>(vPlgExtNames, StrUtil.CaseIgnoreComparer);
 			foreach(string strPlgName in vPlgExtNames)
 			{
 				bool bHide = false;

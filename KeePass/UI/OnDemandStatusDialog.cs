@@ -32,9 +32,10 @@ namespace KeePass.UI
 {
 	public sealed class OnDemandStatusDialog : IStatusLogger
 	{
-		private bool m_bUseThread;
+		private readonly bool m_bUseThread;
+		private readonly Form m_fOwner;
+
 		private Thread m_th = null;
-		private Form m_fOwner;
 		private StatusProgressForm m_dlgModal = null;
 		private object m_objSync = new object();
 

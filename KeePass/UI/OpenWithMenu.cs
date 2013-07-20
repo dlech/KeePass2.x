@@ -74,12 +74,12 @@ namespace KeePass.UI
 
 	public sealed class OpenWithMenu
 	{
-		private ToolStripMenuItem m_tsmiHost;
+		private ToolStripDropDownItem m_tsmiHost;
 		private DynamicMenu m_dynMenu;
 
 		private List<OpenWithItem> m_lOpenWith = null;
 
-		public OpenWithMenu(ToolStripMenuItem tsmiHost)
+		public OpenWithMenu(ToolStripDropDownItem tsmiHost)
 		{
 			if(tsmiHost == null) { Debug.Assert(false); return; }
 

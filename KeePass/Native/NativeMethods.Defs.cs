@@ -331,5 +331,23 @@ namespace KeePass.Native
 			MB_TOPMOST = 0x00040000,
 			MB_SERVICE_NOTIFICATION = 0x00200000
 		}
+
+		// See DialogResult
+		/* internal enum CommandID
+		{
+			None = 0,
+			OK = 1, // IDOK
+			Cancel = 2, // IDCANCEL
+			Abort = 3, // IDABORT
+			Retry = 4, // IDRETRY
+			Ignore = 5, // IDIGNORE
+			Yes = 6, // IDYES
+			No = 7, // IDNO
+			Close = 8, // IDCLOSE
+			Help = 9, // IDHELP
+			TryAgain = 10, // IDTRYAGAIN
+			Continue = 11, // IDCONTINUE
+			TimeOut = 32000 // IDTIMEOUT
+		} */
 	}
 }

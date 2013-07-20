@@ -40,7 +40,7 @@ using KeePassLib;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
-using KeeNativeLib = KeePassLib.Native;
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
@@ -83,7 +83,7 @@ namespace KeePass.Util
 
 			try
 			{
-				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				if(!NativeLib.IsUnix()) // Windows
 				{
 					if(!OpenW(hOwner, true))
 						throw new InvalidOperationException();
@@ -95,9 +95,9 @@ namespace KeePass.Util
 
 					if(bFailed) return false;
 				}
-				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
 					SetStringM(strData);
-				else if(KeeNativeLib.NativeLib.IsUnix())
+				else if(NativeLib.IsUnix())
 					SetStringU(strData);
 				// else // Managed
 				// {
@@ -139,9 +139,14 @@ namespace KeePass.Util
 			if(bIsEntryInfo && !AppPolicy.Try(AppPolicyId.CopyToClipboard))
 				return false;
 
+			string strEnc = null;
 			try
 			{
-				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				if(bEncode || NativeLib.IsUnix())
+					strEnc = StrUtil.DataToDataUri(pbToCopy,
+						ClipFmtToMimeType(strFormat));
+
+				if(!NativeLib.IsUnix()) // Windows
 				{
 					if(!OpenW(hOwner, true))
 						throw new InvalidOperationException();
@@ -157,21 +162,17 @@ namespace KeePass.Util
 					}
 					else // Encode
 					{
-						string strData = Convert.ToBase64String(pbToCopy,
-							Base64FormattingOptions.None);
-						if(!SetDataW(uFormat, strData, false)) bFailed = true;
+						if(!SetDataW(uFormat, strEnc, false)) bFailed = true;
 					}
 
 					CloseW();
 
 					if(bFailed) return false;
 				}
-				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
-					SetStringM(Convert.ToBase64String(pbToCopy,
-						Base64FormattingOptions.None));
-				else if(KeeNativeLib.NativeLib.IsUnix())
-					SetStringU(Convert.ToBase64String(pbToCopy,
-						Base64FormattingOptions.None));
+				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
+					SetStringM(strEnc);
+				else if(NativeLib.IsUnix())
+					SetStringU(strEnc);
 				// else // Managed, no encoding
 				// {
 				//	Clear();
@@ -182,9 +183,12 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); return false; }
 
 			m_strFormat = strFormat;
-			m_bEncoded = bEncode;
+			m_bEncoded = (strEnc != null);
 
 			SHA256Managed sha256 = new SHA256Managed();
+			// if(strEnc != null)
+			//	m_pbDataHash32 = sha256.ComputeHash(StrUtil.Utf8.GetBytes(strEnc));
+			// else
 			m_pbDataHash32 = sha256.ComputeHash(pbToCopy);
 
 			RaiseCopyEvent(bIsEntryInfo, string.Empty);
@@ -196,7 +200,7 @@ namespace KeePass.Util
 		{
 			try
 			{
-				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				if(!NativeLib.IsUnix()) // Windows
 				{
 					if(!OpenW(hOwner, false))
 						throw new InvalidOperationException();
@@ -207,15 +211,15 @@ namespace KeePass.Util
 					if(str == null) return null;
 					if(str.Length == 0) return new byte[0];
 
-					return Convert.FromBase64String(str);
+					return StrUtil.DataUriToData(str);
 				}
-				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
-					return Convert.FromBase64String(GetStringM());
-				else if(KeeNativeLib.NativeLib.IsUnix())
-					return Convert.FromBase64String(GetStringU());
+				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
+					return StrUtil.DataUriToData(GetStringM());
+				else if(NativeLib.IsUnix())
+					return StrUtil.DataUriToData(GetStringU());
 				// else // Managed, no encoding
 				// {
-				//	return (byte[])Clipboard.GetData(strFormat);
+				//	return GetData(strFormat);
 				// }
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -275,7 +279,7 @@ namespace KeePass.Util
 			bool bNativeSuccess = false;
 			try
 			{
-				if(!KeeNativeLib.NativeLib.IsUnix()) // Windows
+				if(!NativeLib.IsUnix()) // Windows
 				{
 					if(OpenW(IntPtr.Zero, true)) // Clears the clipboard
 					{
@@ -283,12 +287,12 @@ namespace KeePass.Util
 						bNativeSuccess = true;
 					}
 				}
-				else if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
 				{
 					SetStringM(string.Empty);
 					bNativeSuccess = true;
 				}
-				else if(KeeNativeLib.NativeLib.IsUnix())
+				else if(NativeLib.IsUnix())
 				{
 					SetStringU(string.Empty);
 					bNativeSuccess = true;
@@ -324,36 +328,37 @@ namespace KeePass.Util
 		{
 			try
 			{
-				if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				SHA256Managed sha256 = new SHA256Managed();
+
+				if(m_strFormat != null)
+				{
+					if(ContainsData(m_strFormat))
+					{
+						byte[] pbData;
+						if(m_bEncoded) pbData = GetEncodedData(m_strFormat, IntPtr.Zero);
+						else pbData = GetData(m_strFormat);
+						if(pbData == null) { Debug.Assert(false); return null; }
+
+						return sha256.ComputeHash(pbData);
+					}
+				}
+				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
 				{
 					string strData = GetStringM();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return (new SHA256Managed()).ComputeHash(pbUtf8);
+					return sha256.ComputeHash(pbUtf8);
 				}
-				else if(KeeNativeLib.NativeLib.IsUnix())
+				else if(NativeLib.IsUnix())
 				{
 					string strData = GetStringU();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return (new SHA256Managed()).ComputeHash(pbUtf8);
+					return sha256.ComputeHash(pbUtf8);
 				}
 				else if(Clipboard.ContainsText())
 				{
 					string strData = Clipboard.GetText();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return (new SHA256Managed()).ComputeHash(pbUtf8);
-				}
-				else if(m_strFormat != null)
-				{
-					if(Clipboard.ContainsData(m_strFormat))
-					{
-						byte[] pbData;
-						if(m_bEncoded) pbData = GetEncodedData(m_strFormat, IntPtr.Zero);
-						else pbData = (byte[])Clipboard.GetData(m_strFormat);
-						if(pbData == null) { Debug.Assert(false); return null; }
-
-						SHA256Managed sha256 = new SHA256Managed();
-						return sha256.ComputeHash(pbData);
-					}
+					return sha256.ComputeHash(pbUtf8);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -378,13 +383,13 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			if(KeeNativeLib.NativeLib.GetPlatformID() == PlatformID.MacOSX)
+			if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
 			{
 				string str = GetStringM();
 				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
 				return (new SHA256Managed()).ComputeHash(pbText);
 			}
-			if(KeeNativeLib.NativeLib.IsUnix())
+			if(NativeLib.IsUnix())
 			{
 				string str = GetStringU();
 				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
@@ -475,13 +480,89 @@ namespace KeePass.Util
 			Debug.Assert(doData != null); if(doData == null) return;
 
 			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return;
-			if(KeeNativeLib.NativeLib.IsUnix()) return; // Not supported on Unix
+			if(NativeLib.IsUnix()) return; // Not supported on Unix
 
 			try
 			{
 				doData.SetData(ClipboardIgnoreFormatName, false, PwDefs.ProductName);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static bool ContainsText()
+		{
+			if(!NativeLib.IsUnix()) return Clipboard.ContainsText();
+			return true;
+		}
+
+		public static bool ContainsData(string strFormat)
+		{
+			if(!NativeLib.IsUnix()) return Clipboard.ContainsData(strFormat);
+
+			if(string.IsNullOrEmpty(strFormat)) { Debug.Assert(false); return false; }
+			if((strFormat == DataFormats.CommaSeparatedValue) ||
+				(strFormat == DataFormats.Html) || (strFormat == DataFormats.OemText) ||
+				(strFormat == DataFormats.Rtf) || (strFormat == DataFormats.Text) ||
+				(strFormat == DataFormats.UnicodeText))
+				return ContainsText();
+
+			string strData = GetText();
+			return StrUtil.IsDataUri(strData, ClipFmtToMimeType(strFormat));
+		}
+
+		public static string GetText()
+		{
+			if(!NativeLib.IsUnix()) // Windows
+				return Clipboard.GetText();
+			if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
+				return GetStringM();
+			if(NativeLib.IsUnix())
+				return GetStringU();
+
+			Debug.Assert(false);
+			return Clipboard.GetText();
+		}
+
+		private static string ClipFmtToMimeType(string strClipFmt)
+		{
+			if(strClipFmt == null)
+			{
+				Debug.Assert(false);
+				return "application/octet-stream";
+			}
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < strClipFmt.Length; ++i)
+			{
+				char ch = strClipFmt[i];
+				if(((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z')) ||
+					((ch >= '0') && (ch <= '9')))
+					sb.Append(ch);
+				else { Debug.Assert(false); }
+			}
+
+			if(sb.Length == 0) return "application/octet-stream";
+
+			return ("application/vnd." + PwDefs.ShortProductName +
+				"." + sb.ToString());
+		}
+
+		public static byte[] GetData(string strFormat)
+		{
+			try
+			{
+				object o = Clipboard.GetData(strFormat);
+				if(o == null) return null;
+
+				byte[] pb = (o as byte[]);
+				if(pb != null) return pb;
+
+				MemoryStream ms = (o as MemoryStream);
+				if(ms != null) return ms.ToArray();
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 	}
 }

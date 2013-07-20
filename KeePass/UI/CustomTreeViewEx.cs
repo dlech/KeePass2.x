@@ -31,6 +31,8 @@ namespace KeePass.UI
 
 	public sealed class CustomTreeViewEx : TreeView
 	{
+		// private TreeNode m_tnReadyForLabelEdit = null;
+
 		// private QueryToolTipDelegate m_fnQueryToolTip = null;
 		// /// <summary>
 		// /// This handler will be used to dynamically query tooltip
@@ -101,5 +103,36 @@ namespace KeePass.UI
 		//	if(tn == null) return;
 		//	tn.ToolTipText = (m_fnQueryToolTip(tn) ?? string.Empty);
 		// }
+
+		/* protected override void OnAfterSelect(TreeViewEventArgs e)
+		{
+			base.OnAfterSelect(e);
+
+			if(!this.Focused) m_tnReadyForLabelEdit = null;
+			else m_tnReadyForLabelEdit = this.SelectedNode;
+		}
+
+		protected override void OnLeave(EventArgs e)
+		{
+			m_tnReadyForLabelEdit = null;
+
+			base.OnLeave(e);
+		}
+
+		protected override void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
+		{
+			if(e != null)
+			{
+				if((m_tnReadyForLabelEdit == null) || (e.Node !=
+					m_tnReadyForLabelEdit))
+				{
+					e.CancelEdit = true;
+					return;
+				}
+			}
+			else { Debug.Assert(false); }
+
+			base.OnBeforeLabelEdit(e); // Call BeforeLabelEdit event
+		} */
 	}
 }

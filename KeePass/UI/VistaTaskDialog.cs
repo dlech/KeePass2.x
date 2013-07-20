@@ -57,7 +57,7 @@ namespace KeePass.UI
 	public enum VtdCommonButtonFlags
 	{
 		None = 0,
-		OkButton = 0x0001, // Return value: IDOK
+		OkButton = 0x0001, // Return value: IDOK = DialogResult.OK
 		YesButton = 0x0002, // Return value: IDYES
 		NoButton = 0x0004, // Return value: IDNO
 		CancelButton = 0x0008, // Return value: IDCANCEL
@@ -421,6 +421,14 @@ namespace KeePass.UI
 		public static bool ShowMessageBox(string strContent, string strMainInstruction,
 			string strWindowTitle, VtdIcon vtdIcon, Form fParent)
 		{
+			return (ShowMessageBoxEx(strContent, strMainInstruction, strWindowTitle,
+				vtdIcon, fParent, null, 0, null, 0) >= 0);
+		}
+
+		public static int ShowMessageBoxEx(string strContent, string strMainInstruction,
+			string strWindowTitle, VtdIcon vtdIcon, Form fParent,
+			string strButton1, int iResult1, string strButton2, int iResult2)
+		{
 			VistaTaskDialog vtd = new VistaTaskDialog();
 
 			vtd.CommandLinks = false;
@@ -431,7 +439,20 @@ namespace KeePass.UI
 
 			vtd.SetIcon(vtdIcon);
 
-			return vtd.ShowDialog(fParent);
+			bool bCustomButton = false;
+			if(!string.IsNullOrEmpty(strButton1))
+			{
+				vtd.AddButton(iResult1, strButton1, null);
+				bCustomButton = true;
+			}
+			if(!string.IsNullOrEmpty(strButton2))
+			{
+				vtd.AddButton(iResult2, strButton2, null);
+				bCustomButton = true;
+			}
+
+			if(!vtd.ShowDialog(fParent)) return -1;
+			return (bCustomButton ? vtd.Result : 0);
 		}
 	}
 }

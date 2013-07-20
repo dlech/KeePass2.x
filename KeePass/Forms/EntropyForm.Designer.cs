@@ -36,11 +36,11 @@
 			this.m_lblStatus = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpMouse = new System.Windows.Forms.GroupBox();
+			this.m_pbGenerated = new KeePass.UI.QualityProgressBar();
 			this.m_grpKeyboard = new System.Windows.Forms.GroupBox();
 			this.m_lblKeysDesc = new System.Windows.Forms.Label();
 			this.m_lblKeysIntro = new System.Windows.Forms.Label();
 			this.m_tbEdit = new System.Windows.Forms.TextBox();
-			this.m_pbGenerated = new KeePass.UI.QualityProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.m_picRandom)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpMouse.SuspendLayout();
@@ -131,6 +131,18 @@
 			this.m_grpMouse.TabStop = false;
 			this.m_grpMouse.Text = "Random mouse input";
 			// 
+			// m_pbGenerated
+			// 
+			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
+			this.m_pbGenerated.Maximum = 100;
+			this.m_pbGenerated.Minimum = 0;
+			this.m_pbGenerated.Name = "m_pbGenerated";
+			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
+			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.m_pbGenerated.TabIndex = 2;
+			this.m_pbGenerated.TabStop = false;
+			this.m_pbGenerated.Value = 0;
+			// 
 			// m_grpKeyboard
 			// 
 			this.m_grpKeyboard.Controls.Add(this.m_lblKeysDesc);
@@ -172,18 +184,6 @@
 			this.m_tbEdit.Size = new System.Drawing.Size(284, 204);
 			this.m_tbEdit.TabIndex = 0;
 			// 
-			// m_pbGenerated
-			// 
-			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
-			this.m_pbGenerated.Maximum = 100;
-			this.m_pbGenerated.Minimum = 0;
-			this.m_pbGenerated.Name = "m_pbGenerated";
-			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
-			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbGenerated.TabIndex = 2;
-			this.m_pbGenerated.TabStop = false;
-			this.m_pbGenerated.Value = 0;
-			// 
 			// EntropyForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -201,7 +201,7 @@
 			this.MinimizeBox = false;
 			this.Name = "EntropyForm";
 			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);

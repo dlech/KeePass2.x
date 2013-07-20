@@ -33,14 +33,16 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 3.0.4-3.0.5.1+
+	// 2.4.1.2-3.0.7.2022+
 	internal sealed class SafeWalletXml3 : FileFormatProvider
 	{
 		private static readonly string[] ElemsVault = new string[] {
 			"T37" // 3.0.5
 		};
 		private static readonly string[] ElemsGroup = new string[] {
-			"T3" // 3.0.5
+			"Folder", // 2.4.1.2
+			"T3", // 3.0.5
+			"T21" // 3.0.7, special group for web entries
 		};
 		private static readonly string[] ElemsEntry = new string[] {
 			"Card", // 3.0.4
@@ -51,8 +53,15 @@ namespace KeePass.DataExchange.Formats
 			"T257", "T258", "T259", "T263", "T264", "T265", // 3.0.5
 			"T266", "T267" // 3.0.5
 		};
+		private static readonly string[] ElemsWebEntry = new string[] {
+			"T22" // 3.0.7
+		};
 
 		private const string AttribCaption = "Caption";
+
+		private const string AttribWebUrl = "URL";
+		private const string AttribWebUserName = "Username";
+		private const string AttribWebPassword = "Password";
 
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
@@ -82,7 +91,9 @@ namespace KeePass.DataExchange.Formats
 			Debug.Assert(xnRoot.Name == "SafeWallet");
 			foreach(XmlNode xn in xnRoot.ChildNodes)
 			{
-				if(Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
+				if(Array.IndexOf<string>(ElemsGroup, xn.Name) >= 0)
+					AddGroup(xn, pwStorage.RootGroup, pwStorage); // 2.4.1.2
+				else if(Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
 					AddEntry(xn, pwStorage.RootGroup, pwStorage); // 3.0.4
 				else if(Array.IndexOf<string>(ElemsVault, xn.Name) >= 0)
 					ImportVault(xn, pwStorage); // 3.0.5
@@ -118,6 +129,28 @@ namespace KeePass.DataExchange.Formats
 			}
 		}
 
+		private static void AddWebEntry(XmlNode xnEntry, PwGroup pg, PwDatabase pd)
+		{
+			PwEntry pe = new PwEntry(true, true);
+			pg.AddEntry(pe, true);
+
+			XmlNode xn = xnEntry.Attributes.GetNamedItem(AttribCaption);
+			string str = ((xn != null) ? xn.Value : string.Empty);
+			ImportUtil.AppendToField(pe, PwDefs.TitleField, str ?? string.Empty, pd);
+
+			xn = xnEntry.Attributes.GetNamedItem(AttribWebUrl);
+			str = ((xn != null) ? xn.Value : string.Empty);
+			ImportUtil.AppendToField(pe, PwDefs.UrlField, str ?? string.Empty, pd);
+
+			xn = xnEntry.Attributes.GetNamedItem(AttribWebUserName);
+			str = ((xn != null) ? xn.Value : string.Empty);
+			ImportUtil.AppendToField(pe, PwDefs.UserNameField, str ?? string.Empty, pd);
+
+			xn = xnEntry.Attributes.GetNamedItem(AttribWebPassword);
+			str = ((xn != null) ? xn.Value : string.Empty);
+			ImportUtil.AppendToField(pe, PwDefs.PasswordField, str ?? string.Empty, pd);
+		}
+
 		private static void ImportVault(XmlNode xnVault, PwDatabase pd)
 		{
 			foreach(XmlNode xn in xnVault.ChildNodes)
@@ -147,6 +180,8 @@ namespace KeePass.DataExchange.Formats
 					AddGroup(xn, pg, pd);
 				else if(Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
 					AddEntry(xn, pg, pd);
+				else if(Array.IndexOf<string>(ElemsWebEntry, xn.Name) >= 0)
+					AddWebEntry(xn, pg, pd);
 				else { Debug.Assert(false); } // Unknown node
 			}
 		}

@@ -1,3 +1,98 @@
+2013-07-20: 2.23
+- New password quality estimation algorithm
+- Added toolbar buttons: 'Open URL(s)', 'Copy URL(s) to
+  Clipboard' and 'Perform Auto-Type'
+- Added 'Generate Password' command in the context menu of the
+  KeePass system tray icon
+- Added 'Copy history' option in the entry duplication dialog
+  (enabled by default)
+- Added 'Duplicate Group' context menu command
+- In the MRU list, currently opened files now have an
+  '[Opened]' suffix and are blue
+- When a dialog is displayed, (double) clicking the KeePass
+  system tray icon now activates the dialog
+- Added {T-REPLACE-RX:...} placeholder, which replaces text
+  using a regular expression
+- Added {VKEY-NX X} and {VKEY-EX X} special key codes
+- Added 'Perform auto-type with selected entry' trigger action
+- Added 'Import into active database' trigger action
+- Mozilla Bookmarks HTML import: added support for groups,
+  bookmark descriptions and icons
+- Mozilla Bookmarks JSON import: bookmark descriptions are now
+  imported into the note fields of entries
+- RoboForm import: added support for the new file format
+- Added support for importing Network Password Manager 4.0 CSV
+  files
+- Enhanced SafeWallet XML importer to additionally support
+  importing web entries and groups from very old export file
+  versions (for newer versions this was already supported)
+- Added database repair mode warning
+- Added option to accept invalid SSL certificates (turned off
+  by default)
+- Added user activity notification event for plugins
+- File transactions for FTP URLs are now always disabled when
+  running under .NET 4.0 in order to workaround .NET bug 621450
+- Added workaround for Mono list view item selection bug
+- Added workaround for Mono bug 649266; minimizing to tray now
+  removes the task bar item and restoring does not result in a
+  broken window anymore
+- Added workaround for Mono bug 5795; text and selections in
+  password boxes are now drawn properly (a monospace font can
+  only be used on Windows due to the bug)
+- Added workaround for Mono bug 12525; dialog banners are now
+  drawn correctly again
+- Added workaround for Mono form loading bug
+- KPScript: added 'Import' command
+- KPScript: the 'ListEntries' command now also outputs
+  date/time fields of entries
+
+- When the option for remembering the last used database is
+  enabled, KeePass now remembers the last active database
+  (instead of the last opened or saved database)
+- The 'Add Group' command and the F2 key in the groups tree
+  view now open the group editing dialog; in-place tree node
+  label editing is disabled
+- Custom string and plugin-provided columns in the 'Configure
+  Columns' dialog are sorted alphabetically now
+- Improved behavior when closing inactive databases
+- Improved support for trigger actions during database closing
+- The 'Special' GUI character set now includes '|' and '~'
+- The 'High ANSI' character set now consists of the range
+  [U+0080, U+00FF] except control and non-printable characters
+- The options dialog is now listed in the task bar when it is
+  opened while KeePass is minimized to the system tray
+- A remembered user account usage state can now be preset even
+  when the user account option is disabled using key prompt
+  configuration flags
+- Improved initial input focus in key creation/prompt dialogs
+  when key creation/prompt configuration flags are specified
+- During synchronization, the status dialog is now closed after
+  all files have been saved
+- Improved behavior of the global KeePass activation hot key
+  when a dialog is displayed
+- Changed auto-type command icon
+- Shortened product name in main window title
+- Improved data URI validation
+- Custom clipboard data is now encoded as data URI (with a
+  vendor-specific MIME type)
+- Improved configuration loading performance
+- Enhanced IO connection problem diagnostics
+- Improved single instance checking on Unix-like systems
+- KeePassLibC DLLs and ShInstUtil are now explicitly marked as
+  DEP- and ASLR-compatible (like the executable file)
+- Various UI improvements
+- Various code optimizations
+- Minor other improvements
+
+- The suffixes to the 'Inherit setting from parent' options on
+  the 'Behavior' tab of the group editing dialog now correctly
+  show the inherited settings of the current group's parent
+- When locked, the main window's title doesn't show the full
+  path of the database anymore when the option 'Show full path
+  in title bar (instead of file name only)' is turned off
+- The status bar is now updated correctly after sorting by a
+  column
+
 2013-04-05: 2.22
 - When the option for remembering key sources is enabled,
   KeePass now also remembers whether the user account is

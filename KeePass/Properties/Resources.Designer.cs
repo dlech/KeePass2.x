@@ -200,6 +200,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_EditCopyUrl {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_EditCopyUrl", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_EditDelete {
             get {
                 object obj = ResourceManager.GetObject("B16x16_EditDelete", resourceCulture);
@@ -301,6 +308,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_FileSaveAs {
             get {
                 object obj = ResourceManager.GetObject("B16x16_FileSaveAs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Folder_2 {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Folder_2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -511,6 +525,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Imp_LastPass {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_LastPass", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_Imp_NetworkPwMgr {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_NetworkPwMgr", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -756,6 +777,13 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_KRec_Record {
             get {
                 object obj = ResourceManager.GetObject("B16x16_KRec_Record", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap B16x16_KTouch {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_KTouch", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1128,6 +1156,13 @@ namespace KeePass.Properties {
             get {
                 object obj = ResourceManager.GetObject("LockOverlay", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static byte[] MostPopularPasswords {
+            get {
+                object obj = ResourceManager.GetObject("MostPopularPasswords", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

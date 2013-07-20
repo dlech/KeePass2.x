@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Security.AccessControl;
 #endif
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
@@ -57,6 +58,13 @@ namespace KeePassLib.Serialization
 
 			m_bTransacted = bTransacted;
 			m_iocBase = iocBaseFile.CloneDeep();
+
+			// Prevent transactions for FTP URLs under .NET 4.0 in order to
+			// avoid/workaround .NET bug 621450:
+			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+			if(m_iocBase.Path.StartsWith("ftp:", StrUtil.CaseIgnoreCmp) &&
+				(Environment.Version.Major >= 4) && !NativeLib.IsUnix())
+				m_bTransacted = false;
 
 			if(m_bTransacted)
 			{

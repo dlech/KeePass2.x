@@ -39,10 +39,18 @@ namespace KeePass.Util
 			return m_bReq.Value;
 		}
 
+		// 5795:
+		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
+		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d23dc88b/
+		// 12525:
+		//   https://bugzilla.xamarin.com/show_bug.cgi?id=12525
+		//   https://sourceforge.net/p/keepass/discussion/329220/thread/54f61e9a/
 		// 586901:
 		//   https://bugzilla.novell.com/show_bug.cgi?id=586901
 		// 620618:
 		//   https://bugzilla.novell.com/show_bug.cgi?id=620618
+		// 649266:
+		//   https://bugzilla.novell.com/show_bug.cgi?id=649266
 		// 686017:
 		//   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
 		// 801414:
@@ -50,7 +58,11 @@ namespace KeePass.Util
 		// 891029:
 		//   https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
-		public static bool IsRequired(int iBugID)
+		// 836428016:
+		//   https://sourceforge.net/p/keepass/discussion/329221/thread/31dae0f0/
+		// 3574233558:
+		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/
+		public static bool IsRequired(uint uBugID)
 		{
 			return MonoWorkarounds.IsRequired();
 		}
@@ -231,7 +243,12 @@ namespace KeePass.Util
 
 		private static void OnFormHandleCreated(object sender, EventArgs e)
 		{
-			SetWmClass(sender as Form);
+			Form f = (sender as Form);
+			if(f == null) { Debug.Assert(false); return; }
+
+			if(!f.IsHandleCreated) return; // Prevent infinite loop
+
+			SetWmClass(f);
 		}
 
 		/// <summary>

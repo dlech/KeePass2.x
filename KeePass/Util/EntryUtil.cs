@@ -104,8 +104,9 @@ namespace KeePass.Util
 			}
 		}
 
-		// Old format name (<= 2.14): "KeePassEntriesCF"
-		public const string ClipFormatEntries = "KeePassEntriesCX";
+		// Old format name (<= 2.14): "KeePassEntriesCF",
+		// old format name (<= 2.22): "KeePassEntriesCX"
+		public const string ClipFormatEntries = "KeePassEntries";
 		private static byte[] AdditionalEntropy = { 0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
 		[Obsolete]
@@ -141,7 +142,7 @@ namespace KeePass.Util
 		private static void PasteEntriesFromClipboardPriv(PwDatabase pwDatabase,
 			PwGroup pgStorage)
 		{
-			if(!Clipboard.ContainsData(ClipFormatEntries)) return;
+			if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
 
 			byte[] pbEnc = ClipboardUtil.GetEncodedData(ClipFormatEntries, IntPtr.Zero);
 			if(pbEnc == null) { Debug.Assert(false); return; }

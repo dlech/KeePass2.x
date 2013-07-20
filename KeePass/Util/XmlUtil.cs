@@ -23,9 +23,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.Util.XmlSerialization;
+
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -58,6 +61,30 @@ namespace KeePass.Util
 			if(strInner == null) return string.Empty;
 
 			return strInner;
+		}
+
+		public static string SafeInnerText(HtmlElement htmlNode)
+		{
+			Debug.Assert(htmlNode != null); if(htmlNode == null) return string.Empty;
+
+			string strInner = htmlNode.InnerText;
+			if(strInner == null) return string.Empty;
+
+			return strInner;
+		}
+
+		public static string SafeAttribute(HtmlElement htmlNode, string strName)
+		{
+			if(htmlNode == null) { Debug.Assert(false); return string.Empty; }
+			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return string.Empty; }
+
+			string strValue = (htmlNode.GetAttribute(strName) ?? string.Empty);
+
+			// http://msdn.microsoft.com/en-us/library/ie/ms536429.aspx
+			if((strValue.Length == 0) && strName.Equals("class", StrUtil.CaseIgnoreCmp))
+				strValue = (htmlNode.GetAttribute("className") ?? string.Empty);
+
+			return strValue;
 		}
 
 		private static Dictionary<string, char> m_dHtmlEntities = null;

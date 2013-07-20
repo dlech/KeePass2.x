@@ -160,13 +160,19 @@ namespace KeePass.Forms
 			}
 			catch(Exception exTest)
 			{
-				string strError = exTest.Message;
-				if((exTest.InnerException != null) &&
-					!string.IsNullOrEmpty(exTest.InnerException.Message))
-					strError += MessageService.NewParagraph +
-						exTest.InnerException.Message;
+				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+					MessageService.ShowWarningExcp(m_ioc.GetDisplayName(), exTest);
+				else
+				{
+					string strError = exTest.Message;
+					if((exTest.InnerException != null) &&
+						!string.IsNullOrEmpty(exTest.InnerException.Message))
+						strError += MessageService.NewParagraph +
+							exTest.InnerException.Message;
 
-				MessageService.ShowWarning(m_ioc.GetDisplayName(), strError);
+					MessageService.ShowWarning(m_ioc.GetDisplayName(), strError);
+				}
+
 				bResult = false;
 			}
 

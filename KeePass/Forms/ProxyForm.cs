@@ -76,8 +76,7 @@ namespace KeePass.Forms
 			ace.ProxyUserName = m_tbUser.Text;
 			ace.ProxyPassword = m_tbPassword.Text;
 
-			IOConnection.SetProxy(pst, ace.ProxyAddress, ace.ProxyPort,
-				ace.ProxyUserName, ace.ProxyPassword);
+			Program.Config.Apply(AceApplyFlags.Proxy);
 		}
 
 		private void EnableControlsEx()

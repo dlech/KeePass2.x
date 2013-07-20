@@ -48,12 +48,13 @@ namespace KeePass.Util.Spr
 		NewPassword = 0x800,
 		HmacOtp = 0x1000,
 		Comments = 0x2000,
+		TextTransforms = 0x10000,
 
 		ExtActive = 0x4000, // Active transformations provided by plugins
 		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
-		// Next free: 0x10000
-		All = 0xFFFF,
+		// Next free: 0x20000
+		All = 0x1FFFF,
 
 		// Internal:
 		UIInteractive = SprCompileFlags.PickChars,

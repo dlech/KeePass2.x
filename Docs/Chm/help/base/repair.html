@@ -49,8 +49,17 @@ KeePass guarantees file integrity; however, KeePass of course can't do anything
 when the data becomes corrupted/unreadable at a later point of time).</p>
 
 <p>In these cases, the database repair functionality might help you.
-Here, KeePass tries to read as much data as possible from the corrupted file,
-without any integrity checks.</p>
+Here, KeePass tries to read as much data as possible from the corrupted file.</p>
+
+<p><img src="../images/b16x16_warning.png" alt="Warning"
+style="vertical-align: middle; height: 1em;" />
+In repair mode, the integrity of the data is not checked
+(in order to rescue as much data as possible).
+When no integrity checks are performed, corrupted/malicious data might
+be incorporated into the database.
+Thus the repair functionality should only be used when there really is no other solution.
+If you use it, afterwards you should thoroughly check your whole
+database for corrupted/malicious data.</p>
 
 
 

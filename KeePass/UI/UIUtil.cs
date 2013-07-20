@@ -1187,6 +1187,18 @@ namespace KeePass.UI
 			if(c.Enabled != bEnabled) c.Enabled = bEnabled;
 		}
 
+		internal static void SetEnabledFast(bool bEnabled, params ToolStripItem[] v)
+		{
+			if(v == null) { Debug.Assert(false); return; }
+
+			foreach(ToolStripItem c in v)
+			{
+				if(c == null) { Debug.Assert(false); continue; }
+
+				c.Enabled = bEnabled;
+			}
+		}
+
 		public static void SetChecked(CheckBox cb, bool bChecked)
 		{
 			if(cb == null) { Debug.Assert(false); return; }

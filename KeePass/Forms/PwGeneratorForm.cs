@@ -52,7 +52,7 @@ namespace KeePass.Forms
 
 		private bool m_bBlockUIUpdate = false;
 		private bool m_bCanAccept = true;
-		private bool m_bForceInTaskbar = false;
+		// private bool m_bForceInTaskbar = false;
 
 		private string m_strAdvControlText = string.Empty;
 
@@ -72,7 +72,12 @@ namespace KeePass.Forms
 		{
 			m_optInitial = pwInitial;
 			m_bCanAccept = bCanAccept;
-			m_bForceInTaskbar = bForceInTaskbar;
+
+			// m_bForceInTaskbar = bForceInTaskbar;
+			// Set ShowInTaskbar immediately, not later, otherwise the form
+			// can disappear:
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/c95b5644/
+			if(bForceInTaskbar) this.ShowInTaskbar = true;
 		}
 
 		public PwGeneratorForm()
@@ -83,6 +88,9 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			// Can be invoked by tray command; don't use CenterParent
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
 			GlobalWindowManager.AddWindow(this);
 
 			m_strAdvControlText = m_tabAdvanced.Text;
@@ -196,8 +204,8 @@ namespace KeePass.Forms
 				m_cbEntropy.Enabled = false;
 			}
 
-			Debug.Assert(this.ShowInTaskbar == false);
-			if(m_bForceInTaskbar) this.ShowInTaskbar = true;
+			// Debug.Assert(this.ShowInTaskbar == false);
+			// if(m_bForceInTaskbar) this.ShowInTaskbar = true;
 
 			CustomizeForScreenReader();
 
@@ -256,7 +264,7 @@ namespace KeePass.Forms
 		{
 			Program.Config.PasswordGenerator.LastUsedProfile = GetGenerationOptions();
 
-			if(m_bForceInTaskbar) this.ShowInTaskbar = false;
+			// if(m_bForceInTaskbar) this.ShowInTaskbar = false;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -288,8 +296,8 @@ namespace KeePass.Forms
 			if(m_cbUpperCase.Checked) opt.CharSet.Add(PwCharSet.UpperCase);
 			if(m_cbLowerCase.Checked) opt.CharSet.Add(PwCharSet.LowerCase);
 			if(m_cbDigits.Checked) opt.CharSet.Add(PwCharSet.Digits);
-			if(m_cbSpecial.Checked) opt.CharSet.Add(opt.CharSet.SpecialChars);
-			if(m_cbHighAnsi.Checked) opt.CharSet.Add(opt.CharSet.HighAnsiChars);
+			if(m_cbSpecial.Checked) opt.CharSet.Add(PwCharSet.SpecialChars);
+			if(m_cbHighAnsi.Checked) opt.CharSet.Add(PwCharSet.HighAnsiChars);
 			if(m_cbMinus.Checked) opt.CharSet.Add('-');
 			if(m_cbUnderline.Checked) opt.CharSet.Add('_');
 			if(m_cbSpace.Checked) opt.CharSet.Add(' ');
@@ -331,8 +339,8 @@ namespace KeePass.Forms
 			m_cbUpperCase.Checked = pcs.RemoveIfAllExist(PwCharSet.UpperCase);
 			m_cbLowerCase.Checked = pcs.RemoveIfAllExist(PwCharSet.LowerCase);
 			m_cbDigits.Checked = pcs.RemoveIfAllExist(PwCharSet.Digits);
-			m_cbSpecial.Checked = pcs.RemoveIfAllExist(pcs.SpecialChars);
-			m_cbHighAnsi.Checked = pcs.RemoveIfAllExist(pcs.HighAnsiChars);
+			m_cbSpecial.Checked = pcs.RemoveIfAllExist(PwCharSet.SpecialChars);
+			m_cbHighAnsi.Checked = pcs.RemoveIfAllExist(PwCharSet.HighAnsiChars);
 			m_cbMinus.Checked = pcs.RemoveIfAllExist("-");
 			m_cbUnderline.Checked = pcs.RemoveIfAllExist("_");
 			m_cbSpace.Checked = pcs.RemoveIfAllExist(" ");

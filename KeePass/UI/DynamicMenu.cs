@@ -59,7 +59,7 @@ namespace KeePass.UI
 		public event EventHandler<DynamicMenuEventArgs> MenuClick;
 
 		// Constructor required by plugins
-		public DynamicMenu(ToolStripMenuItem tsmiHost)
+		public DynamicMenu(ToolStripDropDownItem tsmiHost)
 		{
 			Debug.Assert(tsmiHost != null);
 			if(tsmiHost == null) throw new ArgumentNullException("tsmiHost");

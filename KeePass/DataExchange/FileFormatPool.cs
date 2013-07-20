@@ -119,6 +119,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new KasperskyPwMgrXml50());
 			m_vFormats.Add(new KeePassXXml041());
 			m_vFormats.Add(new LastPassCsv2());
+			m_vFormats.Add(new NetworkPwMgrCsv4());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
 			m_vFormats.Add(new PwAgentXml234());

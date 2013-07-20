@@ -526,8 +526,10 @@ namespace KeePass.Util
 
 		private const string SkcDelay = "DELAY";
 		private const string SkcVKey = "VKEY";
+		private const string SkcVKeyNx = "VKEY-NX";
+		private const string SkcVKeyEx = "VKEY-EX";
 		private static readonly string[] SkcAll = new string[] {
-			SkcDelay, SkcVKey
+			SkcDelay, SkcVKey, SkcVKeyNx, SkcVKeyEx
 		};
 
 		private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
@@ -551,18 +553,30 @@ namespace KeePass.Util
 						if((uDelay <= (uint)int.MaxValue) && !siState.Cancelled)
 							Thread.Sleep((int)uDelay);
 					}
+
 					continue;
 				}
 
+				bool? bExtKey = null;
 				strParam = GetParamIfSpecial(strPart, SkcVKey);
+				if(strParam == null)
+				{
+					bExtKey = false;
+					strParam = GetParamIfSpecial(strPart, SkcVKeyNx);
+				}
+				if(strParam == null)
+				{
+					bExtKey = true;
+					strParam = GetParamIfSpecial(strPart, SkcVKeyEx);
+				}
 				if(strParam != null) // Might be empty (invalid parameter)
 				{
 					int vKey;
 					if(int.TryParse(strParam, out vKey) &&
 						!KeePassLib.Native.NativeLib.IsUnix())
 					{
-						SendVKeyNative(vKey, true);
-						SendVKeyNative(vKey, false);
+						SendVKeyNative(vKey, bExtKey, true);
+						SendVKeyNative(vKey, bExtKey, false);
 						Application.DoEvents();
 					}
 

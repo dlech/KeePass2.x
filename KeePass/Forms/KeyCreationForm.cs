@@ -127,6 +127,17 @@ namespace KeePass.Forms
 
 			CustomizeForScreenReader();
 			EnableUserControls();
+			// UIUtil.SetFocus(m_tbPassword, this); // See OnFormShown
+		}
+
+		private void OnFormShown(object sender, EventArgs e)
+		{
+			// Focusing doesn't always work in OnFormLoad;
+			// https://sourceforge.net/p/keepass/feature-requests/1735/
+			if(m_tbPassword.CanFocus) UIUtil.SetFocus(m_tbPassword, this);
+			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this);
+			else if(m_btnCreate.CanFocus) UIUtil.SetFocus(m_btnCreate, this);
+			else { Debug.Assert(false); }
 		}
 
 		private void CustomizeForScreenReader()

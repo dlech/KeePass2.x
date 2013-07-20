@@ -65,6 +65,8 @@ namespace KeePassLib
 	/// </summary>
 	public enum PwMergeMethod
 	{
+		// Do not change the explicitly assigned values, otherwise
+		// serialization (e.g. of Ecas triggers) breaks
 		None = 0,
 		OverwriteExisting = 1,
 		KeepExisting = 2,

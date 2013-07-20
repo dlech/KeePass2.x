@@ -26,6 +26,8 @@ using System.Diagnostics;
 
 using KeePass.Resources;
 
+using KeePassLib;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -60,14 +62,23 @@ namespace KeePass.UI
 		private ToolStripMenuItem m_tsmiContainer = null;
 		private ToolStripMenuItem m_tsmiContainer2 = null;
 
-		private uint m_uMaxItemCount = 0;
 		private List<KeyValuePair<string, object>> m_vItems =
 			new List<KeyValuePair<string, object>>();
 
+		// private Font m_fItalic = null;
+
+		private uint m_uMaxItemCount = 0;
 		public uint MaxItemCount
 		{
 			get { return m_uMaxItemCount; }
 			set { m_uMaxItemCount = value; }
+		}
+
+		private bool m_bMarkOpened = false;
+		public bool MarkOpened
+		{
+			get { return m_bMarkOpened; }
+			set { m_bMarkOpened = value; }
 		}
 
 		public uint ItemCount
@@ -75,18 +86,20 @@ namespace KeePass.UI
 			get { return (uint)m_vItems.Count; }
 		}
 
-		public MruList()
+		public bool IsValid
 		{
+			get { return (m_handler != null); }
 		}
 
-		public void Clear()
+		public MruList()
 		{
-			m_vItems.Clear();
 		}
 
 		public void Initialize(IMruExecuteHandler handler, ToolStripMenuItem tsmiContainer,
 			ToolStripMenuItem tsmiContainer2)
 		{
+			Release();
+
 			Debug.Assert(handler != null); // No throw
 			Debug.Assert(tsmiContainer != null); // No throw
 			// Debug.Assert(tsmiContainer2 != null); // Is optional
@@ -94,6 +107,28 @@ namespace KeePass.UI
 			m_handler = handler;
 			m_tsmiContainer = tsmiContainer;
 			m_tsmiContainer2 = tsmiContainer2;
+
+			if(m_tsmiContainer != null)
+				m_tsmiContainer.DropDownOpening += this.OnDropDownOpening;
+			if(m_tsmiContainer2 != null)
+				m_tsmiContainer2.DropDownOpening += this.OnDropDownOpening;
+		}
+
+		public void Release()
+		{
+			if(m_tsmiContainer != null)
+				m_tsmiContainer.DropDownOpening -= this.OnDropDownOpening;
+			if(m_tsmiContainer2 != null)
+				m_tsmiContainer2.DropDownOpening -= this.OnDropDownOpening;
+
+			m_handler = null;
+			m_tsmiContainer = null;
+			m_tsmiContainer2 = null;
+		}
+
+		public void Clear()
+		{
+			m_vItems.Clear();
 		}
 
 		public void AddItem(string strDisplayName, object oTag, bool bUpdateMenu)
@@ -181,6 +216,31 @@ namespace KeePass.UI
 			if(oTag != null) tsi.Tag = oTag;
 			if(img != null) tsi.Image = img;
 
+			IOConnectionInfo ioc = (oTag as IOConnectionInfo);
+			if(m_bMarkOpened && (ioc != null) && (Program.MainForm != null))
+			{
+				foreach(PwDatabase pd in Program.MainForm.DocumentManager.GetOpenDatabases())
+				{
+					if(pd.IOConnectionInfo.GetDisplayName().Equals(
+						ioc.GetDisplayName(), StrUtil.CaseIgnoreCmp))
+					{
+						// if(m_fItalic == null)
+						// {
+						//	Font f = tsi.Font;
+						//	if(f != null)
+						//		m_fItalic = FontUtil.CreateFont(f, FontStyle.Italic);
+						//	else { Debug.Assert(false); }
+						// }
+
+						// if(m_fItalic != null) tsi.Font = m_fItalic;
+						// 153, 51, 153
+						tsi.ForeColor = Color.FromArgb(64, 64, 255);
+						tsi.Text += " [" + KPRes.Opened + "]";
+						break;
+					}
+				}
+			}
+
 			if(bClearHandler.HasValue)
 				tsi.Click += (bClearHandler.Value ? new EventHandler(this.ClearHandler) :
 					(b2 ? new EventHandler(this.ClickedHandler2) :
@@ -234,7 +294,7 @@ namespace KeePass.UI
 			string strName = tsi.Text;
 			object oTag = tsi.Tag;
 
-			MoveItemToTop(strName);
+			// MoveItemToTop(strName);
 
 			if(m_handler != null)
 			{
@@ -254,14 +314,21 @@ namespace KeePass.UI
 					m_vItems.RemoveAt(i);
 					m_vItems.Insert(0, t);
 
-					break;
+					return;
 				}
 			}
+
+			Debug.Assert(false);
 		}
 
 		private void ClearHandler(object sender, EventArgs e)
 		{
 			if(m_handler != null) m_handler.OnMruClear();
+		}
+
+		private void OnDropDownOpening(object sender, EventArgs e)
+		{
+			UpdateMenu();
 		}
 	}
 }

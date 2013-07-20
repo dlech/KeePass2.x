@@ -63,8 +63,8 @@ namespace KeePass.UI
 		{
 			get
 			{
-				return (uint)(m_vWindows.Count + m_vDialogs.Count) +
-					MessageService.CurrentMessageCount;
+				return ((uint)(m_vWindows.Count + m_vDialogs.Count) +
+					MessageService.CurrentMessageCount);
 			}
 		}
 
@@ -182,7 +182,7 @@ namespace KeePass.UI
 
 		public static void CloseAllWindows()
 		{
-			Debug.Assert(GlobalWindowManager.CanCloseAllWindows == true);
+			Debug.Assert(GlobalWindowManager.CanCloseAllWindows);
 
 			KeyValuePair<Form, IGwmWindow>[] vWindows = m_vWindows.ToArray();
 			Array.Reverse(vWindows); // Close windows in reverse order
@@ -220,6 +220,21 @@ namespace KeePass.UI
 			{
 				if(kvp.Key.Handle == hWindow) return true;
 			}
+
+			return false;
+		}
+
+		internal static bool ActivateTopWindow()
+		{
+			try
+			{
+				Form f = GlobalWindowManager.TopWindow;
+				if(f == null) return false;
+
+				f.Activate();
+				return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}

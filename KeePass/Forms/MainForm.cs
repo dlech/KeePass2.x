@@ -62,6 +62,7 @@ namespace KeePass.Forms
 		private NotifyIconEx m_ntfTray = null;
 
 		private bool m_bFormLoading = false;
+		private bool m_bFormShown = false;
 		private bool m_bCleanedUp = false;
 
 		private bool m_bRestart = false;
@@ -126,15 +127,19 @@ namespace KeePass.Forms
 			if(MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
 		}
 
+		private bool m_bFormLoadCalled = false;
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			if(m_bFormLoadCalled && MonoWorkarounds.IsRequired(3574233558U)) return;
+			m_bFormLoadCalled = true;
+
 			m_bFormLoading = true;
 			GlobalWindowManager.CustomizeControl(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTray);
 
 			m_strNeverExpiresText = KPRes.NeverExpires;
 
-			this.Text = PwDefs.ProductName;
+			this.Text = PwDefs.ShortProductName;
 			this.Icon = Properties.Resources.KeePass;
 			m_imgFileSaveEnabled = Properties.Resources.B16x16_FileSave;
 			m_imgFileSaveDisabled = Properties.Resources.B16x16_FileSave_Disabled;
@@ -178,6 +183,7 @@ namespace KeePass.Forms
 			m_dynRemoveTag.MenuClick += this.OnRemoveEntryTag;
 
 			m_dynOpenUrl = new OpenWithMenu(m_ctxEntryUrl);
+			m_dynOpenUrlToolBar = new OpenWithMenu(m_tbOpenUrl);
 
 			EntryTemplates.Init(m_tbAddEntry);
 
@@ -203,6 +209,9 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbAddEntry, KPRes.AddEntry, null, null);
 			UIUtil.ConfigureTbButton(m_tbCopyUserName, KPRes.CopyUserFull, null, m_ctxEntryCopyUserName);
 			UIUtil.ConfigureTbButton(m_tbCopyPassword, KPRes.CopyPasswordFull, null, m_ctxEntryCopyPassword);
+			UIUtil.ConfigureTbButton(m_tbOpenUrl, KPRes.OpenUrl, null, m_ctxEntryOpenUrl);
+			UIUtil.ConfigureTbButton(m_tbCopyUrl, KPRes.CopyUrlToClipboard, null, m_ctxEntryCopyUrl);
+			UIUtil.ConfigureTbButton(m_tbAutoType, KPRes.PerformAutoType, null, m_ctxEntryPerformAutoType);
 			UIUtil.ConfigureTbButton(m_tbFind, KPRes.Find + "...", null, m_menuEditFind);
 			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, null, KPRes.ShowEntries, null);
 			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null, m_menuFileLock);
@@ -211,9 +220,10 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbCloseTab, StrUtil.RemoveAccelerator(
 				KPRes.CloseButton), null, m_menuFileClose);
 
-			CopyMenuItemText(m_tbAddEntryDefault, m_ctxEntryAdd);
-			CopyMenuItemText(m_tbViewsShowAll, m_menuEditShowAllEntries);
-			CopyMenuItemText(m_tbViewsShowExpired, m_menuEditShowExpired);
+			CopyMenuItemText(m_tbAddEntryDefault, m_ctxEntryAdd, null);
+			CopyMenuItemText(m_tbOpenUrlDefault, m_ctxEntryOpenUrl, KPRes.OpenUrl);
+			CopyMenuItemText(m_tbViewsShowAll, m_menuEditShowAllEntries, null);
+			CopyMenuItemText(m_tbViewsShowExpired, m_menuEditShowExpired, null);
 
 			UIUtil.EnableAutoCompletion(m_tbQuickFind, false);
 
@@ -288,6 +298,7 @@ namespace KeePass.Forms
 			OnViewAlwaysOnTop(null, null);
 
 			m_mruList.Initialize(this, m_menuFileRecent, m_menuFileSyncRecent);
+			m_mruList.MarkOpened = true;
 			SerializeMruList(false);
 
 			SetListFont(Program.Config.UI.StandardFont);
@@ -431,6 +442,8 @@ namespace KeePass.Forms
 
 		private void OnFormShown(object sender, EventArgs e)
 		{
+			m_bFormShown = true;
+
 			if(MonoWorkarounds.IsRequired(620618))
 			{
 				PwGroup pg = GetCurrentEntries();
@@ -892,24 +905,7 @@ namespace KeePass.Forms
 				PwEntry peNew = pe.CloneDeep();
 				peNew.SetUuid(new PwUuid(true), true); // Create new UUID
 
-				if(dlg.AppendCopyToTitles && (pd != null))
-				{
-					string strTitle = peNew.Strings.ReadSafe(PwDefs.TitleField);
-					peNew.Strings.Set(PwDefs.TitleField, new ProtectedString(
-						pd.MemoryProtection.ProtectTitle, strTitle + " - " +
-						KPRes.CopyOfItem));
-				}
-
-				if(dlg.ReplaceDataByFieldRefs && (pd != null))
-				{
-					string strUser = @"{REF:U@I:" + pe.Uuid.ToHexString() + @"}";
-					peNew.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-						pd.MemoryProtection.ProtectUserName, strUser));
-
-					string strPw = @"{REF:P@I:" + pe.Uuid.ToHexString() + @"}";
-					peNew.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-						pd.MemoryProtection.ProtectPassword, strPw));
-				}
+				dlg.ApplyTo(peNew, pe, pd);
 
 				Debug.Assert(pe.ParentGroup == peNew.ParentGroup);
 				PwGroup pg = (pe.ParentGroup ?? pgSelected);
@@ -969,6 +965,7 @@ namespace KeePass.Forms
 			}
 			m_bForceExitOnce = false; // Reset (flag works once only)
 
+			m_docMgr.RememberActiveDocument();
 			if(!CloseAllDocuments(true))
 			{
 				e.Cancel = true;
@@ -1200,7 +1197,7 @@ namespace KeePass.Forms
 		private void OnToolsOptions(object sender, EventArgs e)
 		{
 			OptionsForm ofDlg = new OptionsForm();
-			ofDlg.InitEx(m_ilCurrentIcons);
+			ofDlg.InitEx(m_ilCurrentIcons, IsTrayed());
 
 			Program.Config.Application.MostRecentlyUsed.MaxItemCount = m_mruList.MaxItemCount;
 
@@ -1409,38 +1406,27 @@ namespace KeePass.Forms
 				e.Effect = DragDropEffects.None;
 		}
 
-		private void OnGroupsAfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-		{
-			if((e == null) || (e.Node == null)) return;
-
-			PwGroup pg = (e.Node.Tag as PwGroup);
-			string strNew = e.Label;
-			if((pg != null) && (strNew != null) && (pg.Name != strNew))
-			{
-				pg.Name = strNew;
-				pg.Touch(true, false);
-				UpdateUIState(true);
-			}
-		}
-
 		private void OnGroupsAdd(object sender, EventArgs e)
 		{
 			TreeNode tn = m_tvGroups.SelectedNode;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
 			PwGroup pgParent;
-
 			if(tn != null) pgParent = (tn.Tag as PwGroup);
-			else pgParent = m_docMgr.ActiveDatabase.RootGroup;
-
+			else pgParent = pd.RootGroup;
 			if(pgParent == null) { Debug.Assert(false); return; }
 
 			PwGroup pgNew = new PwGroup(true, true, KPRes.NewGroup, PwIcon.Folder);
-			pgParent.AddGroup(pgNew, true);
-			pgParent.IsExpanded = true;
+			pgParent.AddGroup(pgNew, true); // Add immediately for correct inheritance
 
-			UpdateUI(false, null, true, pgNew, true, null, true);
+			GroupForm gf = new GroupForm();
+			gf.InitEx(pgNew, true, m_ilCurrentIcons, pd);
 
-			TreeNode tnNew = m_tvGroups.SelectedNode;
-			if(tnNew != null) tnNew.BeginEdit();
+			if(UIUtil.ShowDialogAndDestroy(gf) == DialogResult.OK)
+			{
+				pgParent.IsExpanded = true;
+				UpdateUI(false, null, true, pgNew, true, null, true);
+			}
+			else pgParent.Groups.Remove(pgNew);
 		}
 
 		private void OnGroupsDelete(object sender, EventArgs e)
@@ -1540,6 +1526,7 @@ namespace KeePass.Forms
 
 		private void OnTrayTray(object sender, EventArgs e)
 		{
+			if(GlobalWindowManager.ActivateTopWindow()) return;
 			if(!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
 
 			if((this.WindowState == FormWindowState.Minimized) && !IsTrayed())
@@ -1618,7 +1605,7 @@ namespace KeePass.Forms
 
 			PwDatabase pwDb = m_docMgr.ActiveDatabase;
 			GroupForm gf = new GroupForm();
-			gf.InitEx(pg, m_ilCurrentIcons, pwDb);
+			gf.InitEx(pg, false, m_ilCurrentIcons, pwDb);
 
 			if(UIUtil.ShowDialogAndDestroy(gf) == DialogResult.OK)
 				UpdateUI(false, null, true, null, true, null, true);
@@ -1814,9 +1801,10 @@ namespace KeePass.Forms
 		private void OnToolsPwGenerator(object sender, EventArgs e)
 		{
 			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			PwGeneratorForm pgf = new PwGeneratorForm();
 
+			PwGeneratorForm pgf = new PwGeneratorForm();
 			pgf.InitEx(null, pwDb.IsOpen, IsTrayed());
+
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
 				if(pwDb.IsOpen)
@@ -1872,15 +1860,19 @@ namespace KeePass.Forms
 		private void OnSystemTrayClick(object sender, EventArgs e)
 		{
 			if((m_mbLastTrayMouseButtons & MouseButtons.Left) != MouseButtons.None)
+			{
 				if(Program.Config.UI.TrayIcon.SingleClickDefault)
 					OnTrayTray(sender, e);
+			}
 		}
 
 		private void OnSystemTrayDoubleClick(object sender, EventArgs e)
 		{
 			if((m_mbLastTrayMouseButtons & MouseButtons.Left) != MouseButtons.None)
+			{
 				if(!Program.Config.UI.TrayIcon.SingleClickDefault)
 					OnTrayTray(sender, e);
+			}
 		}
 
 		private void OnEntryViewLinkClicked(object sender, LinkClickedEventArgs e)
@@ -2220,7 +2212,8 @@ namespace KeePass.Forms
 				OnGroupsDelete(sender, e);
 			else if(e.KeyCode == Keys.F2)
 			{
-				if(tn != null) tn.BeginEdit();
+				if(tn != null) // tn.BeginEdit();
+					OnGroupsEdit(sender, e);
 			}
 			else bUnhandled = true;
 
@@ -2449,7 +2442,7 @@ namespace KeePass.Forms
 		{
 			try // Might fail/throw due to clipboard access timeout
 			{
-				m_ctxEntryClipPaste.Enabled = Clipboard.ContainsData(
+				m_ctxEntryClipPaste.Enabled = ClipboardUtil.ContainsData(
 					EntryUtil.ClipFormatEntries);
 			}
 			catch(Exception) { m_ctxEntryClipPaste.Enabled = false; }
@@ -2540,8 +2533,48 @@ namespace KeePass.Forms
 		private void OnTrayOptions(object sender, EventArgs e)
 		{
 			if(!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
-			EnsureVisibleForegroundWindow(false, false); // Parent is main window, not tray
 			OnToolsOptions(sender, e);
+		}
+
+		private void OnTrayGenPw(object sender, EventArgs e)
+		{
+			if(!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
+			OnToolsPwGenerator(sender, e);
+		}
+
+		private void OnGroupsDuplicate(object sender, EventArgs e)
+		{
+			PwGroup pgBase = GetSelectedGroup();
+			if(pgBase == null) { Debug.Assert(false); return; }
+			PwGroup pgParent = pgBase.ParentGroup;
+			if(pgParent == null) { Debug.Assert(false); return; }
+
+			DuplicationForm dlg = new DuplicationForm();
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			PwGroup pg = pgBase.CloneDeep();
+
+			pg.Uuid = new PwUuid(true);
+			pg.CreateNewItemUuids(true, true, true);
+			pg.TakeOwnership(true, true, true);
+
+			pg.ParentGroup = pgParent;
+			int iBase = pgParent.Groups.IndexOf(pgBase);
+			if(iBase < 0) { Debug.Assert(false); iBase = (int)pgParent.Groups.UCount; }
+			else ++iBase;
+			pgParent.Groups.Insert((uint)iBase, pg);
+
+			PwObjectList<PwEntry> lBase = pgBase.GetEntries(true);
+			PwObjectList<PwEntry> lNew = pg.GetEntries(true);
+			if((lBase != null) && (lNew != null) && (lBase.UCount == lNew.UCount))
+			{
+				for(uint u = 0; u < lBase.UCount; ++u)
+					dlg.ApplyTo(lNew.GetAt(u), lBase.GetAt(u), pd);
+			}
+			else { Debug.Assert(false); }
+
+			UpdateUI(false, null, true, pg, true, null, true);
 		}
 	}
 }

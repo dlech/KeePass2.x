@@ -83,13 +83,24 @@ namespace KeePass.Util
 					byte[] pbEnc = File.ReadAllBytes(strPath);
 					byte[] pb = ProtectedData.Unprotect(pbEnc, GmpOptEnt,
 						DataProtectionScope.CurrentUser);
-					if(pb.Length == 8)
+					if(pb.Length == 12)
 					{
 						long lTime = BitConverter.ToInt64(pb, 0);
 						DateTime dt = DateTime.FromBinary(lTime);
 
 						if((DateTime.UtcNow - dt).TotalSeconds < GmpMutexValidSecs)
-							return false; // Actively owned by other process
+						{
+							int pid = BitConverter.ToInt32(pb, 8);
+							try
+							{
+								Process.GetProcessById(pid); // Throws if process is not running
+								return false; // Actively owned by other process
+							}
+							catch(Exception) { }
+						}
+
+						// Release the old mutex since process is not running
+						ReleaseMutexUnix(strName);
 					}
 					else { Debug.Assert(false); }
 				}
@@ -105,7 +116,9 @@ namespace KeePass.Util
 
 		private static void WriteMutexFilePriv(string strPath)
 		{
-			byte[] pb = BitConverter.GetBytes(DateTime.UtcNow.ToBinary());
+			byte[] pb = new byte[12];
+			BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).CopyTo(pb, 0);
+			BitConverter.GetBytes(Process.GetCurrentProcess().Id).CopyTo(pb, 8);
 			byte[] pbEnc = ProtectedData.Protect(pb, GmpOptEnt,
 				DataProtectionScope.CurrentUser);
 			File.WriteAllBytes(strPath, pbEnc);

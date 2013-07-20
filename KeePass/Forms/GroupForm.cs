@@ -37,6 +37,7 @@ namespace KeePass.Forms
 	public partial class GroupForm : Form
 	{
 		private PwGroup m_pwGroup = null;
+		private bool m_bCreatingNew = false;
 		private ImageList m_ilClientIcons = null;
 		private PwDatabase m_pwDatabase = null;
 
@@ -45,9 +46,17 @@ namespace KeePass.Forms
 
 		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
 
+		[Obsolete]
 		public void InitEx(PwGroup pg, ImageList ilClientIcons, PwDatabase pwDatabase)
 		{
+			InitEx(pg, false, ilClientIcons, pwDatabase);
+		}
+
+		public void InitEx(PwGroup pg, bool bCreatingNew, ImageList ilClientIcons,
+			PwDatabase pwDatabase)
+		{
 			m_pwGroup = pg;
+			m_bCreatingNew = bCreatingNew;
 			m_ilClientIcons = ilClientIcons;
 			m_pwDatabase = pwDatabase;
 		}
@@ -65,10 +74,12 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
+			string strTitle = (m_bCreatingNew ? KPRes.AddGroup : KPRes.EditGroup);
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				Properties.Resources.B48x48_Folder_Txt, KPRes.EditGroup,
-				KPRes.EditGroupDesc);
+				Properties.Resources.B48x48_Folder_Txt, strTitle,
+				(m_bCreatingNew ? KPRes.AddGroupDesc : KPRes.EditGroupDesc));
 			this.Icon = Properties.Resources.KeePass;
+			this.Text = strTitle;
 
 			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
 				Properties.Resources.B16x16_Wizard, true);
@@ -98,10 +109,17 @@ namespace KeePass.Forms
 			}
 			m_cgExpiry.Attach(m_cbExpires, m_dtExpires);
 
+			PwGroup pgParent = m_pwGroup.ParentGroup;
+			bool bParentAutoType = ((pgParent != null) ?
+				pgParent.GetAutoTypeEnabledInherited() :
+				PwGroup.DefaultAutoTypeEnabled);
 			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableAutoType,
-				m_pwGroup.EnableAutoType, m_pwGroup.GetAutoTypeEnabledInherited());
+				m_pwGroup.EnableAutoType, bParentAutoType);
+			bool bParentSearching = ((pgParent != null) ?
+				pgParent.GetSearchingEnabledInherited() :
+				PwGroup.DefaultSearchingEnabled);
 			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableSearching,
-				m_pwGroup.EnableSearching, m_pwGroup.GetSearchingEnabledInherited());
+				m_pwGroup.EnableSearching, bParentSearching);
 
 			m_tbDefaultAutoTypeSeq.Text = m_pwGroup.GetAutoTypeSequenceInherited();
 

@@ -25,6 +25,8 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+using KeePass.Util;
+
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -158,11 +160,14 @@ namespace KeePass.UI
 		{
 			if(m_tbPassword == null) { Debug.Assert(false); return; }
 
-			if(bEnable) FontUtil.AssignDefault(m_tbPassword);
-			else
+			if(!MonoWorkarounds.IsRequired(5795))
 			{
-				FontUtil.SetDefaultFont(m_tbPassword);
-				FontUtil.AssignDefaultMono(m_tbPassword, true);
+				if(bEnable) FontUtil.AssignDefault(m_tbPassword);
+				else
+				{
+					FontUtil.SetDefaultFont(m_tbPassword);
+					FontUtil.AssignDefaultMono(m_tbPassword, true);
+				}
 			}
 
 			if(m_tbPassword.UseSystemPasswordChar == bEnable) return;

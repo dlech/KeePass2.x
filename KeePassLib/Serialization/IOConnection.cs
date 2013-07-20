@@ -58,6 +58,13 @@ namespace KeePassLib.Serialization
 		private static string m_strProxyPort = string.Empty;
 		private static string m_strProxyUserName = string.Empty;
 		private static string m_strProxyPassword = string.Empty;
+
+		private static bool m_bSslCertsAcceptInvalid = false;
+		internal static bool SslCertsAcceptInvalid
+		{
+			get { return m_bSslCertsAcceptInvalid; }
+			set { m_bSslCertsAcceptInvalid = value; }
+		}
 #endif
 
 		// Web request methods
@@ -71,14 +78,14 @@ namespace KeePassLib.Serialization
 
 #if (!KeePassLibSD && !KeePassRT)
 		// Allow self-signed certificates, expired certificates, etc.
-		private static bool ValidateServerCertificate(object sender,
+		private static bool AcceptCertificate(object sender,
 			X509Certificate certificate, X509Chain chain,
 			SslPolicyErrors sslPolicyErrors)
 		{
 			return true;
 		}
 
-		public static void SetProxy(ProxyServerType pst, string strAddr,
+		internal static void SetProxy(ProxyServerType pst, string strAddr,
 			string strPort, string strUserName, string strPassword)
 		{
 			m_pstProxyType = pst;
@@ -188,8 +195,11 @@ namespace KeePassLib.Serialization
 
 		private static void PrepareWebAccess()
 		{
-			ServicePointManager.ServerCertificateValidationCallback =
-				ValidateServerCertificate;
+			if(m_bSslCertsAcceptInvalid)
+				ServicePointManager.ServerCertificateValidationCallback =
+					IOConnection.AcceptCertificate;
+			else
+				ServicePointManager.ServerCertificateValidationCallback = null;
 		}
 
 		private static IOWebClient CreateWebClient(IOConnectionInfo ioc)
@@ -381,7 +391,13 @@ namespace KeePassLib.Serialization
 				else if(req is FtpWebRequest)
 				{
 					req.Method = WebRequestMethods.Ftp.Rename;
-					((FtpWebRequest)req).RenameTo = UrlUtil.GetFileName(iocTo.Path);
+					string strTo = UrlUtil.GetFileName(iocTo.Path);
+
+					// We're affected by .NET bug 621450:
+					// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+					// Prepending "./", "%2E/" or "Dummy/../" doesn't work.
+
+					((FtpWebRequest)req).RenameTo = strTo;
 				}
 				else if(req is FileWebRequest)
 				{

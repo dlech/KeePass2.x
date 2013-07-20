@@ -23,6 +23,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App.Configuration;
+
 using KeePassLib;
 using KeePassLib.Delegates;
 using KeePassLib.Serialization;
@@ -127,16 +129,64 @@ namespace KeePass.UI
 			List<PwDatabase> list = new List<PwDatabase>();
 
 			foreach(PwDocument ds in m_vDocs)
+			{
 				if(ds.Database.IsOpen)
 					list.Add(ds.Database);
+			}
 
 			return list;
 		}
 
+		internal List<PwDocument> GetDocuments(int iMoveActive)
+		{
+			List<PwDocument> lDocs = new List<PwDocument>(m_vDocs);
+
+			if(iMoveActive != 0)
+			{
+				for(int i = 0; i < lDocs.Count; ++i)
+				{
+					if(object.ReferenceEquals(lDocs[i], m_dsActive))
+					{
+						lDocs.RemoveAt(i);
+						if(iMoveActive < 0) lDocs.Insert(0, m_dsActive);
+						else lDocs.Add(m_dsActive);
+						break;
+					}
+				}
+			}
+
+			return lDocs;
+		}
+
 		private void NotifyActiveDocumentSelected()
 		{
+			RememberActiveDocument();
+
 			if(this.ActiveDocumentSelected != null)
 				this.ActiveDocumentSelected(null, EventArgs.Empty);
+		}
+
+		internal void RememberActiveDocument()
+		{
+			if(m_dsActive == null) { Debug.Assert(false); return; }
+
+			if(m_dsActive.LockedIoc != null)
+				SetLastUsedFile(m_dsActive.LockedIoc);
+			if(m_dsActive.Database != null)
+				SetLastUsedFile(m_dsActive.Database.IOConnectionInfo);
+		}
+
+		private static void SetLastUsedFile(IOConnectionInfo ioc)
+		{
+			if(ioc == null) { Debug.Assert(false); return; }
+
+			AceApplication aceApp = Program.Config.Application;
+			if(aceApp.Start.OpenLastFile)
+			{
+				if(!string.IsNullOrEmpty(ioc.Path))
+					aceApp.LastUsedFile = ioc.CloneDeep();
+			}
+			else aceApp.LastUsedFile = new IOConnectionInfo();
 		}
 
 		public PwDocument FindDocument(PwDatabase pwDatabase)
@@ -144,7 +194,9 @@ namespace KeePass.UI
 			if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
 
 			foreach(PwDocument ds in m_vDocs)
+			{
 				if(ds.Database == pwDatabase) return ds;
+			}
 
 			return null;
 		}

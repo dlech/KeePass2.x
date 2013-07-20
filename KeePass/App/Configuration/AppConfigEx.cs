@@ -41,10 +41,14 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private AceMeta m_meta = new AceMeta();
+		private AceMeta m_meta = null;
 		public AceMeta Meta
 		{
-			get { return m_meta; }
+			get
+			{
+				if(m_meta == null) m_meta = new AceMeta();
+				return m_meta;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -52,10 +56,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceApplication m_aceApp = new AceApplication();
+		private AceApplication m_aceApp = null;
 		public AceApplication Application
 		{
-			get { return m_aceApp; }
+			get
+			{
+				if(m_aceApp == null) m_aceApp = new AceApplication();
+				return m_aceApp;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -78,10 +86,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceMainWindow m_uiMainWindow = new AceMainWindow();
+		private AceMainWindow m_uiMainWindow = null;
 		public AceMainWindow MainWindow
 		{
-			get { return m_uiMainWindow; }
+			get
+			{
+				if(m_uiMainWindow == null) m_uiMainWindow = new AceMainWindow();
+				return m_uiMainWindow;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -149,10 +161,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceDefaults m_def = new AceDefaults();
+		private AceDefaults m_def = null;
 		public AceDefaults Defaults
 		{
-			get { return m_def; }
+			get
+			{
+				if(m_def == null) m_def = new AceDefaults();
+				return m_def;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -160,10 +176,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceIntegration m_int = new AceIntegration();
+		private AceIntegration m_int = null;
 		public AceIntegration Integration
 		{
-			get { return m_int; }
+			get
+			{
+				if(m_int == null) m_int = new AceIntegration();
+				return m_int;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -171,11 +191,15 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private AceCustomConfig m_cc = new AceCustomConfig();
+		private AceCustomConfig m_cc = null;
 		[XmlIgnore]
 		public AceCustomConfig CustomConfig
 		{
-			get { return m_cc; }
+			get
+			{
+				if(m_cc == null) m_cc = new AceCustomConfig();
+				return m_cc;
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
@@ -187,11 +211,14 @@ namespace KeePass.App.Configuration
 		[XmlArrayItem("Item")]
 		public AceKvp[] CustomSerialized
 		{
-			get { return m_cc.Serialize(); }
+			get
+			{
+				return this.CustomConfig.Serialize(); // m_cc might be null
+			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_cc.Deserialize(value);
+				this.CustomConfig.Deserialize(value); // m_cc might be null
 			}
 		}
 
@@ -202,30 +229,37 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		private void PrepareSave()
 		{
-			m_meta.OmitItemsWithDefaultValues = true;
+			AceMeta aceMeta = this.Meta; // m_meta might be null
+			AceApplication aceApp = this.Application; // m_aceApp might be null
+			AceDefaults aceDef = this.Defaults; // m_def might be null
 
-			m_aceApp.LastUsedFile.ClearCredentials(true);
+			aceMeta.OmitItemsWithDefaultValues = true;
 
-			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+			aceApp.LastUsedFile.ClearCredentials(true);
+
+			foreach(IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
 				iocMru.ClearCredentials(true);
 
-			if(m_def.RememberKeySources == false)
-				m_def.KeySources.Clear();
+			if(aceDef.RememberKeySources == false)
+				aceDef.KeySources.Clear();
 
-			m_aceApp.TriggerSystem = Program.TriggerSystem;
+			aceApp.TriggerSystem = Program.TriggerSystem;
 
-			SearchUtil.PrepareForSerialize(m_def.SearchParameters);
+			SearchUtil.PrepareForSerialize(aceDef.SearchParameters);
 		}
 
 		internal void OnLoad()
 		{
-			// m_int.UrlSchemeOverrides.SetDefaultsIfEmpty();
+			AceMainWindow aceMainWindow = this.MainWindow; // m_uiMainWindow might be null
+			AceDefaults aceDef = this.Defaults; // m_def might be null
+
+			// aceInt.UrlSchemeOverrides.SetDefaultsIfEmpty();
 
 			ObfuscateCred(false);
 			ChangePathsRelAbs(true);
 
 			// Remove invalid columns
-			List<AceColumn> vColumns = m_uiMainWindow.EntryListColumns;
+			List<AceColumn> vColumns = aceMainWindow.EntryListColumns;
 			int i = 0;
 			while(i < vColumns.Count)
 			{
@@ -235,7 +269,7 @@ namespace KeePass.App.Configuration
 				else ++i;
 			}
 
-			SearchUtil.FinishDeserialize(m_def.SearchParameters);
+			SearchUtil.FinishDeserialize(aceDef.SearchParameters);
 		}
 
 		internal void OnSavePre()
@@ -254,17 +288,20 @@ namespace KeePass.App.Configuration
 
 		private void ChangePathsRelAbs(bool bMakeAbsolute)
 		{
-			ChangePathRelAbs(m_aceApp.LastUsedFile, bMakeAbsolute);
+			AceApplication aceApp = this.Application; // m_aceApp might be null
+			AceDefaults aceDef = this.Defaults; // m_def might be null
 
-			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+			ChangePathRelAbs(aceApp.LastUsedFile, bMakeAbsolute);
+
+			foreach(IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
 				ChangePathRelAbs(iocMru, bMakeAbsolute);
 
-			List<string> lWDKeys = m_aceApp.GetWorkingDirectoryContexts();
+			List<string> lWDKeys = aceApp.GetWorkingDirectoryContexts();
 			foreach(string strWDKey in lWDKeys)
-				m_aceApp.SetWorkingDirectory(strWDKey, ChangePathRelAbsStr(
-					m_aceApp.GetWorkingDirectory(strWDKey), bMakeAbsolute));
+				aceApp.SetWorkingDirectory(strWDKey, ChangePathRelAbsStr(
+					aceApp.GetWorkingDirectory(strWDKey), bMakeAbsolute));
 
-			foreach(AceKeyAssoc kfp in m_def.KeySources)
+			foreach(AceKeyAssoc kfp in aceDef.KeySources)
 			{
 				kfp.DatabasePath = ChangePathRelAbsStr(kfp.DatabasePath, bMakeAbsolute);
 				kfp.KeyFilePath = ChangePathRelAbsStr(kfp.KeyFilePath, bMakeAbsolute);
@@ -302,20 +339,23 @@ namespace KeePass.App.Configuration
 
 		private void ObfuscateCred(bool bObf)
 		{
-			if(m_aceApp.LastUsedFile == null) { Debug.Assert(false); }
-			else m_aceApp.LastUsedFile.Obfuscate(bObf);
+			AceApplication aceApp = this.Application; // m_aceApp might be null
+			AceIntegration aceInt = this.Integration; // m_int might be null
 
-			foreach(IOConnectionInfo iocMru in m_aceApp.MostRecentlyUsed.Items)
+			if(aceApp.LastUsedFile == null) { Debug.Assert(false); }
+			else aceApp.LastUsedFile.Obfuscate(bObf);
+
+			foreach(IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
 			{
 				if(iocMru == null) { Debug.Assert(false); }
 				else iocMru.Obfuscate(bObf);
 			}
 
-			if(bObf) m_int.ProxyUserName = StrUtil.Obfuscate(m_int.ProxyUserName);
-			else m_int.ProxyUserName = StrUtil.Deobfuscate(m_int.ProxyUserName);
+			if(bObf) aceInt.ProxyUserName = StrUtil.Obfuscate(aceInt.ProxyUserName);
+			else aceInt.ProxyUserName = StrUtil.Deobfuscate(aceInt.ProxyUserName);
 
-			if(bObf) m_int.ProxyPassword = StrUtil.Obfuscate(m_int.ProxyPassword);
-			else m_int.ProxyPassword = StrUtil.Deobfuscate(m_int.ProxyPassword);
+			if(bObf) aceInt.ProxyPassword = StrUtil.Obfuscate(aceInt.ProxyPassword);
+			else aceInt.ProxyPassword = StrUtil.Deobfuscate(aceInt.ProxyPassword);
 		}
 
 		private static Dictionary<object, string> m_dictXmlPathCache =
@@ -366,6 +406,29 @@ namespace KeePass.App.Configuration
 		{
 			m_dictXmlPathCache.Clear();
 		}
+
+		public void Apply(AceApplyFlags f)
+		{
+			AceSecurity aceSec = this.Security; // m_sec might be null
+			AceIntegration aceInt = this.Integration; // m_int might be null
+
+			if((f & AceApplyFlags.Proxy) != AceApplyFlags.None)
+				IOConnection.SetProxy(aceInt.ProxyType, aceInt.ProxyAddress,
+					aceInt.ProxyPort, aceInt.ProxyUserName, aceInt.ProxyPassword);
+
+			if((f & AceApplyFlags.Ssl) != AceApplyFlags.None)
+				IOConnection.SslCertsAcceptInvalid = aceSec.SslCertsAcceptInvalid;
+		}
+	}
+
+	[Flags]
+	public enum AceApplyFlags
+	{
+		None = 0,
+		Proxy = 0x1,
+		Ssl = 0x2,
+
+		All = 0x7FFF
 	}
 
 	public sealed class AceMeta

@@ -231,5 +231,7 @@ namespace KeePass.Forms
 		public event EventHandler UIStateUpdated;
 
 		public event EventHandler<FocusEventArgs> FocusChanging;
+
+		public event EventHandler UserActivityPost;
 	}
 }

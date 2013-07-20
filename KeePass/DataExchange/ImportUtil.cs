@@ -80,55 +80,6 @@ namespace KeePass.DataExchange
 				false, null, false, fParent);
 		}
 
-		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
-			bool bOpenFromUrl, Form fParent)
-		{
-			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return null;
-			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
-
-			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
-			if(bOpenFromUrl == false)
-			{
-				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
-					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true,
-					AppDefs.FileDialogContext.Sync);
-
-				if(ofd.ShowDialog() != DialogResult.OK) return null;
-
-				foreach(string strSelFile in ofd.FileNames)
-					vConnections.Add(IOConnectionInfo.FromPath(strSelFile));
-			}
-			else // Open URL
-			{
-				IOConnectionForm iocf = new IOConnectionForm();
-				iocf.InitEx(false, new IOConnectionInfo(), true, true);
-
-				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
-
-				vConnections.Add(iocf.IOConnectionInfo);
-				UIUtil.DestroyForm(iocf);
-			}
-
-			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
-				true, uiOps, false, fParent);
-		}
-
-		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
-			IOConnectionInfo iocSyncWith, bool bForceSave, Form fParent)
-		{
-			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
-			if(!pwStorage.IsOpen) return null; // No assert or throw
-			if(iocSyncWith == null) throw new ArgumentNullException("iocSyncWith");
-			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
-
-			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
-			vConnections.Add(iocSyncWith);
-
-			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
-				true, uiOps, bForceSave, fParent);
-		}
-
 		public static bool? Import(PwDatabase pwDatabase, FileFormatProvider fmtImp,
 			IOConnectionInfo[] vConnections, bool bSynchronize, IUIOperations uiOps,
 			bool bForceSave, Form fParent)
@@ -240,8 +191,6 @@ namespace KeePass.DataExchange
 						UIUtil.DestroyForm(imf);
 					}
 
-					// slf.SetText(KPRes.MergingData, LogStatusType.Info);
-
 					try { pwDatabase.MergeIn(pwImp, mm, dlgStatus); }
 					catch(Exception exMerge)
 					{
@@ -254,12 +203,13 @@ namespace KeePass.DataExchange
 				}
 			}
 
-			dlgStatus.EndLogging();
-
 			if(bSynchronize && bAllSuccess)
 			{
 				Debug.Assert(uiOps != null);
 				if(uiOps == null) throw new ArgumentNullException("uiOps");
+
+				dlgStatus.SetText(KPRes.Synchronizing + " (" +
+					KPRes.SavingDatabase + ")", LogStatusType.Info);
 
 				if(uiOps.UIFileSave(bForceSave))
 				{
@@ -267,6 +217,10 @@ namespace KeePass.DataExchange
 					{
 						try
 						{
+							// dlgStatus.SetText(KPRes.Synchronizing + " (" +
+							//	KPRes.SavingDatabase + " " + ioc.GetDisplayName() +
+							//	")", LogStatusType.Info);
+
 							if(ioc.Path != pwDatabase.IOConnectionInfo.Path)
 							{
 								if(pwDatabase.IOConnectionInfo.IsLocalFile() &&
@@ -303,7 +257,84 @@ namespace KeePass.DataExchange
 				}
 			}
 
+			dlgStatus.EndLogging();
 			return bAllSuccess;
+		}
+
+		public static bool? Import(PwDatabase pd, FileFormatProvider fmtImp,
+			IOConnectionInfo iocImp, PwMergeMethod mm, CompositeKey cmpKey)
+		{
+			if(pd == null) { Debug.Assert(false); return false; }
+			if(fmtImp == null) { Debug.Assert(false); return false; }
+			if(iocImp == null) { Debug.Assert(false); return false; }
+			if(cmpKey == null) cmpKey = new CompositeKey();
+
+			if(!AppPolicy.Try(AppPolicyId.Import)) return false;
+			if(!fmtImp.TryBeginImport()) return false;
+
+			PwDatabase pdImp = new PwDatabase();
+			pdImp.New(new IOConnectionInfo(), cmpKey);
+			pdImp.MemoryProtection = pd.MemoryProtection.CloneDeep();
+
+			Stream s = IOConnection.OpenRead(iocImp);
+			if(s == null)
+				throw new FileNotFoundException(iocImp.GetDisplayName() +
+					MessageService.NewLine + KPRes.FileNotFoundError);
+
+			try { fmtImp.Import(pdImp, s, null); }
+			finally { s.Close(); }
+
+			pd.MergeIn(pdImp, mm);
+			return true;
+		}
+
+		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
+			bool bOpenFromUrl, Form fParent)
+		{
+			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
+			if(!pwStorage.IsOpen) return null;
+			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
+
+			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
+			if(bOpenFromUrl == false)
+			{
+				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
+					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true,
+					AppDefs.FileDialogContext.Sync);
+
+				if(ofd.ShowDialog() != DialogResult.OK) return null;
+
+				foreach(string strSelFile in ofd.FileNames)
+					vConnections.Add(IOConnectionInfo.FromPath(strSelFile));
+			}
+			else // Open URL
+			{
+				IOConnectionForm iocf = new IOConnectionForm();
+				iocf.InitEx(false, new IOConnectionInfo(), true, true);
+
+				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
+
+				vConnections.Add(iocf.IOConnectionInfo);
+				UIUtil.DestroyForm(iocf);
+			}
+
+			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
+				true, uiOps, false, fParent);
+		}
+
+		public static bool? Synchronize(PwDatabase pwStorage, IUIOperations uiOps,
+			IOConnectionInfo iocSyncWith, bool bForceSave, Form fParent)
+		{
+			if(pwStorage == null) throw new ArgumentNullException("pwStorage");
+			if(!pwStorage.IsOpen) return null; // No assert or throw
+			if(iocSyncWith == null) throw new ArgumentNullException("iocSyncWith");
+			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
+
+			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
+			vConnections.Add(iocSyncWith);
+
+			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
+				true, uiOps, bForceSave, fParent);
 		}
 
 		public static int CountQuotes(string str, int posMax)
@@ -577,7 +608,7 @@ namespace KeePass.DataExchange
 
 			try
 			{
-				if(Clipboard.ContainsText()) return Clipboard.GetText();
+				if(ClipboardUtil.ContainsText()) return ClipboardUtil.GetText();
 			}
 			catch(Exception) { Debug.Assert(false); } // Opened by other process
 

@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Diagnostics;
 
@@ -126,6 +127,9 @@ namespace KeePass.Util.Spr
 
 			if((ctx.Flags & SprCompileFlags.Comments) != SprCompileFlags.None)
 				str = RemoveComments(str);
+
+			if((ctx.Flags & SprCompileFlags.TextTransforms) != SprCompileFlags.None)
+				str = PerformTextTransforms(str, ctx, uRecursionLevel);
 
 			if((ctx.Flags & SprCompileFlags.AppPaths) != SprCompileFlags.None)
 				str = AppLocator.FillPlaceholders(str, ctx);
@@ -616,6 +620,84 @@ namespace KeePass.Util.Spr
 			// ctx.ForcePlainTextPasswords = false;
 
 			return Compile(str, ctx);
+		}
+
+		/// <summary>
+		/// Parse and remove a placeholder of the form
+		/// <c>{PLH:/Param1/Param2/.../}</c>.
+		/// </summary>
+		private static bool ParseAndRemovePlhWithParams(ref string str,
+			SprContext ctx, uint uRecursionLevel, string strPlhStart,
+			out int iStart, out List<string> lParams, bool bSprCmpParams)
+		{
+			Debug.Assert(strPlhStart.StartsWith(@"{") && !strPlhStart.EndsWith(@"}"));
+
+			iStart = str.IndexOf(strPlhStart, StrUtil.CaseIgnoreCmp);
+			if(iStart < 0) { lParams = null; return false; }
+
+			lParams = new List<string>();
+
+			try
+			{
+				int p = iStart + strPlhStart.Length;
+				if(p >= str.Length) throw new FormatException();
+
+				char chSep = str[p];
+
+				while(true)
+				{
+					if((p + 1) >= str.Length) throw new FormatException();
+
+					if(str[p + 1] == '}') break;
+
+					int q = str.IndexOf(chSep, p + 1);
+					if(q < 0) throw new FormatException();
+
+					lParams.Add(str.Substring(p + 1, q - p - 1));
+					p = q;
+				}
+
+				Debug.Assert(str[p + 1] == '}');
+				str = str.Remove(iStart, (p + 1) - iStart + 1);
+			}
+			catch(Exception)
+			{
+				str = str.Substring(0, strPlhStart.Length);
+			}
+
+			if(bSprCmpParams && (ctx != null))
+			{
+				SprContext ctxSub = ctx.WithoutContentTransformations();
+				for(int i = 0; i < lParams.Count; ++i)
+					lParams[i] = CompileInternal(lParams[i], ctxSub, uRecursionLevel);
+			}
+
+			return true;
+		}
+
+		private static string PerformTextTransforms(string strText, SprContext ctx,
+			uint uRecursionLevel)
+		{
+			string str = strText;
+			int iStart;
+			List<string> lParams;
+
+			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
+				@"{T-REPLACE-RX:", out iStart, out lParams, true))
+			{
+				if(lParams.Count < 2) continue;
+				if(lParams.Count == 2) lParams.Add(string.Empty);
+
+				try
+				{
+					string strNew = Regex.Replace(lParams[0], lParams[1], lParams[2]);
+					strNew = TransformContent(strNew, ctx);
+					str = str.Insert(iStart, strNew);
+				}
+				catch(Exception) { }
+			}
+
+			return str;
 		}
 	}
 }

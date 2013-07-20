@@ -25,6 +25,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Diagnostics;
 
+using KeePass.Util;
+
 namespace KeePass.UI
 {
 	public sealed class CustomRichTextBoxEx : RichTextBox
@@ -127,9 +129,9 @@ namespace KeePass.UI
 			try
 			{
 				if(!m_bSimpleTextOnly) Paste();
-				else if(Clipboard.ContainsData(DataFormats.UnicodeText))
+				else if(ClipboardUtil.ContainsData(DataFormats.UnicodeText))
 					Paste(DataFormats.GetFormat(DataFormats.UnicodeText));
-				else if(Clipboard.ContainsData(DataFormats.Text))
+				else if(ClipboardUtil.ContainsData(DataFormats.Text))
 					Paste(DataFormats.GetFormat(DataFormats.Text));
 			}
 			catch(Exception) { Debug.Assert(false); }

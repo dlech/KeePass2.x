@@ -22,12 +22,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -44,7 +48,7 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return @"html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.Browser; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+		// public override bool ImportAppendsToRootGroupOnly { get { return false; } }
 
 		public override Image SmallIcon
 		{
@@ -64,25 +68,55 @@ namespace KeePass.DataExchange.Formats
 			strContent = strContent.Replace(@"<!DOCTYPE NETSCAPE-Bookmark-file-1>", string.Empty);
 			strContent = strContent.Replace(@"<HR>", string.Empty);
 			strContent = strContent.Replace(@"<p>", string.Empty);
-			strContent = strContent.Replace(@"<DD>", string.Empty);
-			strContent = strContent.Replace(@"<DL>", string.Empty);
-			strContent = strContent.Replace(@"</DL>", string.Empty);
+			// strContent = strContent.Replace(@"<DD>", string.Empty);
+			// strContent = strContent.Replace(@"<DL>", string.Empty);
+			// strContent = strContent.Replace(@"</DL>", string.Empty);
 			strContent = strContent.Replace(@"<DT>", string.Empty);
 
-			int nOffset = strContent.IndexOf('&');
-			while(nOffset >= 0)
-			{
-				string str4 = strContent.Substring(nOffset, 4);
-				string str5 = strContent.Substring(nOffset, 5);
-				string str6 = strContent.Substring(nOffset, 6);
+			// int nOffset = strContent.IndexOf('&');
+			// while(nOffset >= 0)
+			// {
+			//	string str4 = strContent.Substring(nOffset, 4);
+			//	string str5 = strContent.Substring(nOffset, 5);
+			//	string str6 = strContent.Substring(nOffset, 6);
+			//	if((str6 != @"&nbsp;") && (str5 != @"&amp;") && (str4 != @"&lt;") &&
+			//		(str4 != @"&gt;") && (str5 != @"&#39;") && (str6 != @"&quot;"))
+			//	{
+			//		strContent = strContent.Remove(nOffset, 1);
+			//		strContent = strContent.Insert(nOffset, @"&amp;");
+			//	}
+			//	else nOffset = strContent.IndexOf('&', nOffset + 1);
+			// }
 
-				if((str6 != @"&nbsp;") && (str5 != @"&amp;") && (str4 != @"&lt;") &&
-					(str4 != @"&gt;") && (str5 != @"&#39;") && (str6 != @"&quot;"))
-				{
-					strContent = strContent.Remove(nOffset, 1);
-					strContent = strContent.Insert(nOffset, @"&amp;");
-				}
-				else nOffset = strContent.IndexOf('&', nOffset + 1);
+			string[] vPreserve = new string[] { @"&nbsp;", @"&amp;", @"&lt;",
+				@"&gt;", @"&#39;", @"&quot;" };
+			Dictionary<string, string> dPreserve = new Dictionary<string, string>();
+			CryptoRandom cr = CryptoRandom.Instance;
+			foreach(string strPreserve in vPreserve)
+			{
+				string strCode = Convert.ToBase64String(cr.GetRandomBytes(16));
+				Debug.Assert(strCode.IndexOf('&') < 0);
+				dPreserve[strPreserve] = strCode;
+
+				strContent = strContent.Replace(strPreserve, strCode);
+			}
+			strContent = strContent.Replace(@"&", @"&amp;");
+			foreach(KeyValuePair<string, string> kvpPreserve in dPreserve)
+			{
+				strContent = strContent.Replace(kvpPreserve.Value, kvpPreserve.Key);
+			}
+
+			// Terminate <DD>s
+			int iDD = -1;
+			while(true)
+			{
+				iDD = strContent.IndexOf(@"<DD>", iDD + 1);
+				if(iDD < 0) break;
+
+				int iNextTag = strContent.IndexOf('<', iDD + 1);
+				if(iNextTag <= 0) { Debug.Assert(false); break; }
+
+				strContent = strContent.Insert(iNextTag, @"</DD>");
 			}
 
 			strContent = "<RootSentinel>" + strContent + "</META></RootSentinel>";
@@ -98,36 +132,123 @@ namespace KeePass.DataExchange.Formats
 			foreach(XmlNode xmlChild in xmlRoot)
 			{
 				if(xmlChild.Name == "META")
-					ImportLinksFlat(xmlChild, pwStorage);
+					ImportMeta(xmlChild, pwStorage);
 			}
 		}
 
-		private static void ImportLinksFlat(XmlNode xmlNode, PwDatabase pwStorage)
+		private static void ImportMeta(XmlNode xmlNode, PwDatabase pwStorage)
 		{
+			foreach(XmlNode xmlChild in xmlNode)
+			{
+				if(xmlChild.Name == "DL")
+					ImportGroup(xmlChild, pwStorage, pwStorage.RootGroup);
+				else if(xmlChild.Name == "TITLE") { }
+				else if(xmlChild.Name == "H1") { }
+				else { Debug.Assert(false); }
+			}
+		}
+
+		private static void ImportGroup(XmlNode xmlNode, PwDatabase pwStorage,
+			PwGroup pg)
+		{
+			PwGroup pgSub = pg;
+			PwEntry pe = null;
+
 			foreach(XmlNode xmlChild in xmlNode)
 			{
 				if(xmlChild.Name == "A")
 				{
-					try
-					{
-						PwEntry pe = new PwEntry(true, true);
+					pe = new PwEntry(true, true);
+					pg.AddEntry(pe, true);
 
-						pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-							pwStorage.MemoryProtection.ProtectTitle,
-							xmlChild.InnerText));
+					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+						pwStorage.MemoryProtection.ProtectTitle,
+						XmlUtil.SafeInnerText(xmlChild)));
 
+					XmlNode xnUrl = xmlChild.Attributes.GetNamedItem("HREF");
+					if((xnUrl != null) && (xnUrl.Value != null))
 						pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-							pwStorage.MemoryProtection.ProtectUrl,
-							xmlChild.Attributes.GetNamedItem("HREF").Value));
+							pwStorage.MemoryProtection.ProtectUrl, xnUrl.Value));
+					else { Debug.Assert(false); }
 
-						pe.Strings.Set("RDF_ID", new ProtectedString(
-							false, xmlChild.Attributes.GetNamedItem("ID").Value));
+					// pe.Strings.Set("RDF_ID", new ProtectedString(
+					//	false, xmlChild.Attributes.GetNamedItem("ID").Value));
 
-						pwStorage.RootGroup.AddEntry(pe, true);
-					}
-					catch(Exception) { Debug.Assert(false); }
+					ImportIcon(xmlChild, pe, pwStorage);
 				}
+				else if(xmlChild.Name == "DD")
+				{
+					if(pe != null)
+						ImportUtil.AppendToField(pe, PwDefs.NotesField,
+							XmlUtil.SafeInnerText(xmlChild).Trim(), pwStorage,
+							"\r\n", false);
+					else { Debug.Assert(false); }
+				}
+				else if(xmlChild.Name == "H3")
+				{
+					string strGroup = XmlUtil.SafeInnerText(xmlChild);
+					if(strGroup.Length == 0) { Debug.Assert(false); pgSub = pg; }
+					else
+					{
+						pgSub = new PwGroup(true, true, strGroup, PwIcon.Folder);
+						pg.AddGroup(pgSub, true);
+					}
+				}
+				else if(xmlChild.Name == "DL")
+					ImportGroup(xmlChild, pwStorage, pgSub);
+				else { Debug.Assert(false); }
 			}
+		}
+
+		private static void ImportIcon(XmlNode xn, PwEntry pe, PwDatabase pd)
+		{
+			XmlNode xnIcon = xn.Attributes.GetNamedItem("ICON");
+			if(xnIcon == null) return;
+
+			string strIcon = xnIcon.Value;
+			if(!StrUtil.IsDataUri(strIcon)) { Debug.Assert(false); return; }
+
+			try
+			{
+				byte[] pbImage = StrUtil.DataUriToData(strIcon);
+				if((pbImage == null) || (pbImage.Length == 0)) { Debug.Assert(false); return; }
+
+				Image img = GfxUtil.LoadImage(pbImage);
+				if(img == null) { Debug.Assert(false); return; }
+
+				byte[] pbPng;
+				if((img.Width == 16) && (img.Height == 16))
+				{
+					MemoryStream msPng = new MemoryStream();
+					img.Save(msPng, ImageFormat.Png);
+					pbPng = msPng.ToArray();
+					msPng.Close();
+				}
+				else
+				{
+					Bitmap bmp = UIUtil.CreateScaledImage(img, 16, 16);
+					MemoryStream msPng = new MemoryStream();
+					bmp.Save(msPng, ImageFormat.Png);
+					pbPng = msPng.ToArray();
+					msPng.Close();
+
+					bmp.Dispose();
+				}
+				img.Dispose();
+
+				PwUuid pwUuid = null;
+				int iEx = pd.GetCustomIconIndex(pbPng);
+				if(iEx >= 0) pwUuid = pd.CustomIcons[iEx].Uuid;
+				else
+				{
+					pwUuid = new PwUuid(true);
+					pd.CustomIcons.Add(new PwCustomIcon(pwUuid, pbPng));
+					pd.UINeedsIconUpdate = true;
+					pd.Modified = true;
+				}
+				pe.CustomIconUuid = pwUuid;
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

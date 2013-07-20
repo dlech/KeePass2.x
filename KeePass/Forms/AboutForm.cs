@@ -63,7 +63,8 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 
 			m_lvComponents.Columns.Add(KPRes.Component, 100, HorizontalAlignment.Left);
-			m_lvComponents.Columns.Add(KPRes.Version, 100, HorizontalAlignment.Left);
+			m_lvComponents.Columns.Add(KPRes.Status + " / " + KPRes.Version, 100,
+				HorizontalAlignment.Left);
 
 			try { GetAppComponents(); }
 			catch(Exception) { Debug.Assert(false); }
@@ -96,7 +97,7 @@ namespace KeePass.Forms
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlFull);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlTabular);
 			if(!bInstalled) lvi.SubItems.Add(KPRes.NotInstalled);
-			else lvi.SubItems.Add(PwDefs.VersionString);
+			else lvi.SubItems.Add(KPRes.Installed);
 			m_lvComponents.Items.Add(lvi);
 
 			lvi = new ListViewItem(KPRes.KeePassLibCLong);

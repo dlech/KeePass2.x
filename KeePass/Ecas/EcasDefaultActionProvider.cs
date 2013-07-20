@@ -20,13 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.DataExchange;
 using KeePass.Forms;
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -99,6 +101,30 @@ namespace KeePass.Ecas
 				SyncDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x80, 0xE6, 0x7F, 0x4E, 0x72, 0xF1, 0x40, 0x45,
+				0x91, 0x76, 0x1F, 0x2C, 0x23, 0xD8, 0xEC, 0xBE }),
+				KPRes.ImportStc, PwIcon.PaperReady, new EcasParameter[] {
+					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
+					new EcasParameter(KPRes.FileFormatStc, EcasValueType.String, null),
+					new EcasParameter(KPRes.Method, EcasValueType.EnumStrings,
+						new EcasEnum(new EcasEnumItem[] {
+							new EcasEnumItem((uint)PwMergeMethod.None, KPRes.Default),
+							new EcasEnumItem((uint)PwMergeMethod.CreateNewUuids,
+								StrUtil.RemoveAccelerator(KPRes.CreateNewIDs)),
+							new EcasEnumItem((uint)PwMergeMethod.KeepExisting,
+								StrUtil.RemoveAccelerator(KPRes.KeepExisting)),
+							new EcasEnumItem((uint)PwMergeMethod.OverwriteExisting,
+								StrUtil.RemoveAccelerator(KPRes.OverwriteExisting)),
+							new EcasEnumItem((uint)PwMergeMethod.OverwriteIfNewer,
+								StrUtil.RemoveAccelerator(KPRes.OverwriteIfNewer)),
+							new EcasEnumItem((uint)PwMergeMethod.Synchronize,
+								StrUtil.RemoveAccelerator(KPRes.OverwriteIfNewerAndApplyDel)) })),
+					new EcasParameter(KPRes.Password, EcasValueType.String, null),
+					new EcasParameter(KPRes.KeyFile, EcasValueType.String, null),
+					new EcasParameter(KPRes.UserAccount, EcasValueType.Bool, null) },
+				ImportIntoCurrentDatabase));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x0F, 0x9A, 0x6B, 0x5B, 0xCE, 0xD5, 0x46, 0xBE,
 				0xB9, 0x34, 0xED, 0xB1, 0x3F, 0x94, 0x48, 0x22 }),
 				KPRes.ExportStc, PwIcon.Disk, new EcasParameter[] {
@@ -130,6 +156,13 @@ namespace KeePass.Ecas
 				0x40, 0x69, 0xA5, 0x36, 0x57, 0x1B, 0x47, 0x92,
 				0xA9, 0xB3, 0x73, 0x65, 0x30, 0xE0, 0xCF, 0xC3 }),
 				KPRes.PerformGlobalAutoType, PwIcon.Run, null, ExecuteGlobalAutoType));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x31, 0x70, 0x8F, 0xAD, 0x64, 0x93, 0x43, 0xF5,
+				0x94, 0xEE, 0xC8, 0x1A, 0x23, 0x6E, 0x32, 0x4D }),
+				KPRes.PerformSelectedAutoType, PwIcon.Run, new EcasParameter[] {
+					new EcasParameter(KPRes.Sequence, EcasValueType.String, null) },
+				ExecuteSelectedAutoType));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x95, 0x81, 0x8F, 0x45, 0x99, 0x66, 0x49, 0x88,
@@ -216,10 +249,18 @@ namespace KeePass.Ecas
 			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
 			if(ioc == null) return;
 
-			string strPassword = EcasUtil.GetParamString(a.Parameters, 3, true);
-			string strKeyFile = EcasUtil.GetParamString(a.Parameters, 4, true);
+			CompositeKey cmpKey = KeyFromParams(a, 3, 4, 5);
+
+			Program.MainForm.OpenDatabase(ioc, cmpKey, ioc.IsLocalFile());
+		}
+
+		private static CompositeKey KeyFromParams(EcasAction a, int iPassword,
+			int iKeyFile, int iUserAccount)
+		{
+			string strPassword = EcasUtil.GetParamString(a.Parameters, iPassword, true);
+			string strKeyFile = EcasUtil.GetParamString(a.Parameters, iKeyFile, true);
 			bool bUserAccount = StrUtil.StringToBool(EcasUtil.GetParamString(
-				a.Parameters, 5, true));
+				a.Parameters, iUserAccount, true));
 
 			CompositeKey cmpKey = null;
 			if(!string.IsNullOrEmpty(strPassword) || !string.IsNullOrEmpty(strKeyFile) ||
@@ -237,7 +278,7 @@ namespace KeePass.Ecas
 				cmpKey = KeyUtil.KeyFromCommandLine(cmdArgs);
 			}
 
-			Program.MainForm.OpenDatabase(ioc, cmpKey, ioc.IsLocalFile());
+			return cmpKey;
 		}
 
 		private static void SaveDatabaseFile(EcasAction a, EcasContext ctx)
@@ -279,6 +320,51 @@ namespace KeePass.Ecas
 
 			iocBase = Program.MainForm.CompleteConnectionInfoUsingMru(iocBase);
 			return MainForm.CompleteConnectionInfo(iocBase, false, true, true, false);
+		}
+
+		private static void ImportIntoCurrentDatabase(EcasAction a, EcasContext ctx)
+		{
+			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
+			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
+			if(string.IsNullOrEmpty(strPath)) return;
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
+
+			string strFormat = EcasUtil.GetParamString(a.Parameters, 1, true);
+			if(string.IsNullOrEmpty(strFormat)) return;
+			FileFormatProvider ff = Program.FileFormatPool.Find(strFormat);
+			if(ff == null)
+				throw new Exception(KPRes.Unknown + ": " + strFormat);
+
+			uint uMethod = EcasUtil.GetParamUInt(a.Parameters, 2);
+			Type tMM = Enum.GetUnderlyingType(typeof(PwMergeMethod));
+			object oMethod = Convert.ChangeType(uMethod, tMM);
+			PwMergeMethod mm = PwMergeMethod.None;
+			if(Enum.IsDefined(typeof(PwMergeMethod), oMethod))
+				mm = (PwMergeMethod)oMethod;
+			else { Debug.Assert(false); }
+			if(mm == PwMergeMethod.None) mm = PwMergeMethod.CreateNewUuids;
+
+			CompositeKey cmpKey = KeyFromParams(a, 3, 4, 5);
+			if((cmpKey == null) && ff.RequiresKey)
+			{
+				KeyPromptForm kpf = new KeyPromptForm();
+				kpf.InitEx(ioc, false, true);
+
+				if(UIUtil.ShowDialogNotValue(kpf, DialogResult.OK)) return;
+
+				cmpKey = kpf.CompositeKey;
+				UIUtil.DestroyForm(kpf);
+			}
+
+			bool? b = true;
+			try { b = ImportUtil.Import(pd, ff, ioc, mm, cmpKey); }
+			finally
+			{
+				if(b.GetValueOrDefault(false))
+					Program.MainForm.UpdateUI(false, null, true, null, true, null, true);
+			}
 		}
 
 		private static void ExportDatabaseFile(EcasAction a, EcasContext ctx)
@@ -338,6 +424,30 @@ namespace KeePass.Ecas
 		private static void ExecuteGlobalAutoType(EcasAction a, EcasContext ctx)
 		{
 			Program.MainForm.ExecuteGlobalAutoType();
+		}
+
+		private static void ExecuteSelectedAutoType(EcasAction a, EcasContext ctx)
+		{
+			try
+			{
+				// Do not Spr-compile the sequence here; it'll be compiled by
+				// the auto-type engine (and this expects an auto-type sequence
+				// as input, not a data string; compiling it here would e.g.
+				// result in broken '%' characters in passwords)
+				string strSeq = EcasUtil.GetParamString(a.Parameters, 0, false);
+				if(string.IsNullOrEmpty(strSeq)) strSeq = null;
+
+				PwEntry pe = Program.MainForm.GetSelectedEntry(true);
+				if(pe == null) return;
+				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
+
+				IntPtr hFg = NativeMethods.GetForegroundWindowHandle();
+				if(AutoType.IsOwnWindow(hFg))
+					AutoType.PerformIntoPreviousWindow(Program.MainForm, pe,
+						pd, strSeq);
+				else AutoType.PerformIntoCurrentWindow(pe, pd, strSeq);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private static void AddToolBarButton(EcasAction a, EcasContext ctx)

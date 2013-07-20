@@ -34,6 +34,7 @@
 			this.m_ctxGroupAdd = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupEdit = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupDuplicate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupDelete = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupEmpty = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep1 = new System.Windows.Forms.ToolStripSeparator();
@@ -150,6 +151,7 @@
 			this.m_menuViewTanOptions = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewTanSimpleList = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewTanIndices = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuViewEntryListGrouping = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewSep3 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuViewShowEntriesOfSubGroups = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuTools = new System.Windows.Forms.ToolStripMenuItem();
@@ -189,6 +191,10 @@
 			this.m_tbSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbCopyUserName = new System.Windows.Forms.ToolStripButton();
 			this.m_tbCopyPassword = new System.Windows.Forms.ToolStripButton();
+			this.m_tbOpenUrl = new System.Windows.Forms.ToolStripSplitButton();
+			this.m_tbOpenUrlDefault = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_tbCopyUrl = new System.Windows.Forms.ToolStripButton();
+			this.m_tbAutoType = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSep4 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbFind = new System.Windows.Forms.ToolStripButton();
 			this.m_tbEntryViewsDropDown = new System.Windows.Forms.ToolStripDropDownButton();
@@ -207,8 +213,10 @@
 			this.m_ctxTray = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_ctxTrayTray = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTraySep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxTrayOptions = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxTrayGenPw = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTraySep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxTrayOptions = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxTraySep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxTrayLock = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTrayFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_timerMain = new System.Windows.Forms.Timer(this.components);
@@ -218,7 +226,6 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_menuViewEntryListGrouping = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -239,6 +246,7 @@
             this.m_ctxGroupAdd,
             this.m_ctxGroupSep0,
             this.m_ctxGroupEdit,
+            this.m_ctxGroupDuplicate,
             this.m_ctxGroupDelete,
             this.m_ctxGroupEmpty,
             this.m_ctxGroupSep1,
@@ -249,7 +257,7 @@
             this.m_ctxGroupSep3,
             this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(180, 204);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(180, 226);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupAdd
@@ -272,6 +280,14 @@
 			this.m_ctxGroupEdit.Size = new System.Drawing.Size(179, 22);
 			this.m_ctxGroupEdit.Text = "Ed&it Group";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
+			// 
+			// m_ctxGroupDuplicate
+			// 
+			this.m_ctxGroupDuplicate.Image = global::KeePass.Properties.Resources.B16x16_Folder_2;
+			this.m_ctxGroupDuplicate.Name = "m_ctxGroupDuplicate";
+			this.m_ctxGroupDuplicate.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupDuplicate.Text = "Dupli&cate Group";
+			this.m_ctxGroupDuplicate.Click += new System.EventHandler(this.OnGroupsDuplicate);
 			// 
 			// m_ctxGroupDelete
 			// 
@@ -531,7 +547,7 @@
 			// 
 			// m_ctxEntryCopyUrl
 			// 
-			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
+			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopyUrl;
 			this.m_ctxEntryCopyUrl.Name = "m_ctxEntryCopyUrl";
 			this.m_ctxEntryCopyUrl.Size = new System.Drawing.Size(209, 22);
 			this.m_ctxEntryCopyUrl.Text = "&Copy to Clipboard";
@@ -579,7 +595,7 @@
 			// 
 			// m_ctxEntryPerformAutoType
 			// 
-			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KRec_Record;
+			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
 			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(214, 22);
 			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
@@ -1277,6 +1293,12 @@
 			this.m_menuViewTanIndices.Text = "Show TAN &Indices in Entry Titles";
 			this.m_menuViewTanIndices.Click += new System.EventHandler(this.OnViewTanIndicesClick);
 			// 
+			// m_menuViewEntryListGrouping
+			// 
+			this.m_menuViewEntryListGrouping.Name = "m_menuViewEntryListGrouping";
+			this.m_menuViewEntryListGrouping.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewEntryListGrouping.Text = "&Grouping in Entry List";
+			// 
 			// m_menuViewSep3
 			// 
 			this.m_menuViewSep3.Name = "m_menuViewSep3";
@@ -1510,6 +1532,9 @@
             this.m_tbSep1,
             this.m_tbCopyUserName,
             this.m_tbCopyPassword,
+            this.m_tbOpenUrl,
+            this.m_tbCopyUrl,
+            this.m_tbAutoType,
             this.m_tbSep4,
             this.m_tbFind,
             this.m_tbEntryViewsDropDown,
@@ -1606,6 +1631,43 @@
 			this.m_tbCopyPassword.Name = "m_tbCopyPassword";
 			this.m_tbCopyPassword.Size = new System.Drawing.Size(23, 22);
 			this.m_tbCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
+			// 
+			// m_tbOpenUrl
+			// 
+			this.m_tbOpenUrl.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbOpenUrl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_tbOpenUrlDefault});
+			this.m_tbOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
+			this.m_tbOpenUrl.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbOpenUrl.Name = "m_tbOpenUrl";
+			this.m_tbOpenUrl.Size = new System.Drawing.Size(32, 22);
+			this.m_tbOpenUrl.ButtonClick += new System.EventHandler(this.OnEntryOpenUrl);
+			// 
+			// m_tbOpenUrlDefault
+			// 
+			this.m_tbOpenUrlDefault.Image = global::KeePass.Properties.Resources.B16x16_FTP;
+			this.m_tbOpenUrlDefault.Name = "m_tbOpenUrlDefault";
+			this.m_tbOpenUrlDefault.Size = new System.Drawing.Size(88, 22);
+			this.m_tbOpenUrlDefault.Text = "<>";
+			this.m_tbOpenUrlDefault.Click += new System.EventHandler(this.OnEntryOpenUrl);
+			// 
+			// m_tbCopyUrl
+			// 
+			this.m_tbCopyUrl.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopyUrl;
+			this.m_tbCopyUrl.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbCopyUrl.Name = "m_tbCopyUrl";
+			this.m_tbCopyUrl.Size = new System.Drawing.Size(23, 22);
+			this.m_tbCopyUrl.Click += new System.EventHandler(this.OnEntryCopyURL);
+			// 
+			// m_tbAutoType
+			// 
+			this.m_tbAutoType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
+			this.m_tbAutoType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbAutoType.Name = "m_tbAutoType";
+			this.m_tbAutoType.Size = new System.Drawing.Size(23, 22);
+			this.m_tbAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_tbSep4
 			// 
@@ -1732,45 +1794,60 @@
 			this.m_ctxTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxTrayTray,
             this.m_ctxTraySep0,
-            this.m_ctxTrayOptions,
+            this.m_ctxTrayGenPw,
             this.m_ctxTraySep1,
+            this.m_ctxTrayOptions,
+            this.m_ctxTraySep2,
             this.m_ctxTrayLock,
             this.m_ctxTrayFileExit});
 			this.m_ctxTray.Name = "m_ctxTray";
-			this.m_ctxTray.Size = new System.Drawing.Size(142, 104);
+			this.m_ctxTray.Size = new System.Drawing.Size(192, 132);
 			this.m_ctxTray.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxTrayOpening);
 			// 
 			// m_ctxTrayTray
 			// 
 			this.m_ctxTrayTray.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_ctxTrayTray.Name = "m_ctxTrayTray";
-			this.m_ctxTrayTray.Size = new System.Drawing.Size(141, 22);
+			this.m_ctxTrayTray.Size = new System.Drawing.Size(191, 22);
 			this.m_ctxTrayTray.Text = "&Tray / Untray";
 			this.m_ctxTrayTray.Click += new System.EventHandler(this.OnTrayTray);
 			// 
 			// m_ctxTraySep0
 			// 
 			this.m_ctxTraySep0.Name = "m_ctxTraySep0";
-			this.m_ctxTraySep0.Size = new System.Drawing.Size(138, 6);
+			this.m_ctxTraySep0.Size = new System.Drawing.Size(188, 6);
+			// 
+			// m_ctxTrayGenPw
+			// 
+			this.m_ctxTrayGenPw.Image = global::KeePass.Properties.Resources.B16x16_Key_New;
+			this.m_ctxTrayGenPw.Name = "m_ctxTrayGenPw";
+			this.m_ctxTrayGenPw.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayGenPw.Text = "&Generate Password...";
+			this.m_ctxTrayGenPw.Click += new System.EventHandler(this.OnTrayGenPw);
+			// 
+			// m_ctxTraySep1
+			// 
+			this.m_ctxTraySep1.Name = "m_ctxTraySep1";
+			this.m_ctxTraySep1.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_ctxTrayOptions
 			// 
 			this.m_ctxTrayOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
 			this.m_ctxTrayOptions.Name = "m_ctxTrayOptions";
-			this.m_ctxTrayOptions.Size = new System.Drawing.Size(141, 22);
+			this.m_ctxTrayOptions.Size = new System.Drawing.Size(191, 22);
 			this.m_ctxTrayOptions.Text = "&Options...";
 			this.m_ctxTrayOptions.Click += new System.EventHandler(this.OnTrayOptions);
 			// 
-			// m_ctxTraySep1
+			// m_ctxTraySep2
 			// 
-			this.m_ctxTraySep1.Name = "m_ctxTraySep1";
-			this.m_ctxTraySep1.Size = new System.Drawing.Size(138, 6);
+			this.m_ctxTraySep2.Name = "m_ctxTraySep2";
+			this.m_ctxTraySep2.Size = new System.Drawing.Size(188, 6);
 			// 
 			// m_ctxTrayLock
 			// 
 			this.m_ctxTrayLock.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
 			this.m_ctxTrayLock.Name = "m_ctxTrayLock";
-			this.m_ctxTrayLock.Size = new System.Drawing.Size(141, 22);
+			this.m_ctxTrayLock.Size = new System.Drawing.Size(191, 22);
 			this.m_ctxTrayLock.Text = "<>";
 			this.m_ctxTrayLock.Click += new System.EventHandler(this.OnTrayLock);
 			// 
@@ -1778,7 +1855,7 @@
 			// 
 			this.m_ctxTrayFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_ctxTrayFileExit.Name = "m_ctxTrayFileExit";
-			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(141, 22);
+			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(191, 22);
 			this.m_ctxTrayFileExit.Text = "E&xit";
 			this.m_ctxTrayFileExit.Click += new System.EventHandler(this.OnTrayExit);
 			// 
@@ -1844,7 +1921,6 @@
 			this.m_tvGroups.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_tvGroups.HideSelection = false;
 			this.m_tvGroups.HotTracking = true;
-			this.m_tvGroups.LabelEdit = true;
 			this.m_tvGroups.Location = new System.Drawing.Point(0, 0);
 			this.m_tvGroups.Name = "m_tvGroups";
 			this.m_tvGroups.ShowNodeToolTips = true;
@@ -1852,7 +1928,6 @@
 			this.m_tvGroups.Size = new System.Drawing.Size(177, 306);
 			this.m_tvGroups.TabIndex = 0;
 			this.m_tvGroups.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterCollapse);
-			this.m_tvGroups.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.OnGroupsAfterLabelEdit);
 			this.m_tvGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragDrop);
 			this.m_tvGroups.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragEnter);
 			this.m_tvGroups.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnGroupsKeyUp);
@@ -1898,12 +1973,6 @@
 			this.m_richEntryView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyDown);
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
-			// 
-			// m_menuViewEntryListGrouping
-			// 
-			this.m_menuViewEntryListGrouping.Name = "m_menuViewEntryListGrouping";
-			this.m_menuViewEntryListGrouping.Size = new System.Drawing.Size(222, 22);
-			this.m_menuViewEntryListGrouping.Text = "&Grouping in Entry List";
 			// 
 			// MainForm
 			// 
@@ -2135,6 +2204,13 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelUnusedIcons;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayOptions;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewEntryListGrouping;
+		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep2;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayGenPw;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupDuplicate;
+		private System.Windows.Forms.ToolStripSplitButton m_tbOpenUrl;
+		private System.Windows.Forms.ToolStripMenuItem m_tbOpenUrlDefault;
+		private System.Windows.Forms.ToolStripButton m_tbCopyUrl;
+		private System.Windows.Forms.ToolStripButton m_tbAutoType;
 	}
 }
 

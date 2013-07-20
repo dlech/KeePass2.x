@@ -382,6 +382,21 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-Bool1");
 			if(StrUtil.StringToBool(Boolean.FalseString))
 				throw new InvalidOperationException("StrUtil-Bool2");
+
+			if(StrUtil.Count("Abracadabra", "a") != 4)
+				throw new InvalidOperationException("StrUtil-Count1");
+			if(StrUtil.Count("Bla", "U") != 0)
+				throw new InvalidOperationException("StrUtil-Count2");
+			if(StrUtil.Count("AAAAA", "AA") != 4)
+				throw new InvalidOperationException("StrUtil-Count3");
+
+			const string sU = "data:mytype;base64,";
+			if(!StrUtil.IsDataUri(sU))
+				throw new InvalidOperationException("StrUtil-DataUri1");
+			if(!StrUtil.IsDataUri(sU, "mytype"))
+				throw new InvalidOperationException("StrUtil-DataUri2");
+			if(StrUtil.IsDataUri(sU, "notmytype"))
+				throw new InvalidOperationException("StrUtil-DataUri3");
 #endif
 		}
 

@@ -244,7 +244,7 @@ namespace KeePass.Forms
 		{
 			try
 			{
-				string strData = Clipboard.GetText();
+				string strData = ClipboardUtil.GetText();
 				XmlSerializer xmls = new XmlSerializer(typeof(EcasTriggerContainer));
 
 				byte[] pbData = StrUtil.Utf8.GetBytes(strData);

@@ -53,11 +53,11 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, Encoding.UTF8);
+			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
 			string strContent = sr.ReadToEnd();
 			sr.Close();
 
-			if(strContent.Length == 0) return;
+			if(string.IsNullOrEmpty(strContent)) return;
 
 			CharStream cs = new CharStream(strContent);
 
@@ -106,6 +106,33 @@ namespace KeePass.DataExchange.Formats
 				jObject, "uri");
 			SetString(pe, "CharSet", false, jObject, "charset");
 
+			if(jObject.Items.ContainsKey("annos"))
+			{
+				JsonArray vAnnos = (jObject.Items["annos"].Value as JsonArray);
+				if(vAnnos != null)
+				{
+					foreach(JsonValue jv in vAnnos.Values)
+					{
+						if(jv == null) { Debug.Assert(false); continue; }
+						JsonObject jo = (jv.Value as JsonObject);
+						if(jo == null) { Debug.Assert(false); continue; }
+
+						JsonValue jvAnnoName, jvAnnoValue;
+						jo.Items.TryGetValue("name", out jvAnnoName);
+						jo.Items.TryGetValue("value", out jvAnnoValue);
+						if((jvAnnoName == null) || (jvAnnoValue == null)) continue;
+
+						string strAnnoName = jvAnnoName.ToString();
+						string strAnnoValue = jvAnnoValue.ToString();
+						if((strAnnoName == null) || (strAnnoValue == null)) continue;
+
+						if(strAnnoName == "bookmarkProperties/description")
+							pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+								pwContext.MemoryProtection.ProtectNotes, strAnnoValue));
+					}
+				}
+			}
+
 			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length > 0) ||
 				(pe.Strings.ReadSafe(PwDefs.UrlField).Length > 0))
 				pgStorage.AddEntry(pe, true);
@@ -114,13 +141,12 @@ namespace KeePass.DataExchange.Formats
 		private static void SetString(PwEntry pe, string strEntryKey, bool bProtect,
 			JsonObject jObject, string strObjectKey)
 		{
-			if(jObject.Items.ContainsKey(strObjectKey))
-			{
-				object obj = jObject.Items[strObjectKey].Value;
-				if(obj == null) return;
+			if(!jObject.Items.ContainsKey(strObjectKey)) return;
 
-				pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, obj.ToString()));
-			}
+			object obj = jObject.Items[strObjectKey].Value;
+			if(obj == null) return;
+
+			pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, obj.ToString()));
 		}
 	}
 }

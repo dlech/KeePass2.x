@@ -133,6 +133,14 @@ namespace KeePassLib.Collections
 			}
 		}
 
+		public void Insert(uint uIndex, T pwObject)
+		{
+			Debug.Assert(pwObject != null);
+			if(pwObject == null) throw new ArgumentNullException("pwObject");
+
+			m_vObjects.Insert((int)uIndex, pwObject);
+		}
+
 		/// <summary>
 		/// Get an object of the list.
 		/// </summary>

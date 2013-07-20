@@ -377,10 +377,15 @@ namespace KeePass.Util
 			return strSeq;
 		}
 
+		internal static bool IsOwnWindow(IntPtr hWindow)
+		{
+			return ((hWindow == Program.MainForm.Handle) ||
+				GlobalWindowManager.HasWindow(hWindow));
+		}
+
 		public static bool IsValidAutoTypeWindow(IntPtr hWindow, bool bBeepIfNot)
 		{
-			bool bValid = ((hWindow != Program.MainForm.Handle) &&
-				!GlobalWindowManager.HasWindow(hWindow));
+			bool bValid = !IsOwnWindow(hWindow);
 
 			if(!bValid && bBeepIfNot) SystemSounds.Beep.Play();
 
@@ -470,11 +475,17 @@ namespace KeePass.Util
 		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe)
 		{
 			return PerformIntoPreviousWindow(fCurrent, pe,
-				Program.MainForm.DocumentManager.SafeFindContainerOf(pe));
+				Program.MainForm.DocumentManager.SafeFindContainerOf(pe), null);
 		}
 
 		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe,
 			PwDatabase pdContext)
+		{
+			return PerformIntoPreviousWindow(fCurrent, pe, pdContext, null);
+		}
+
+		public static bool PerformIntoPreviousWindow(Form fCurrent, PwEntry pe,
+			PwDatabase pdContext, string strSeq)
 		{
 			if(pe == null) { Debug.Assert(false); return false; }
 			if(!pe.GetAutoTypeEnabled()) return false;
@@ -487,7 +498,7 @@ namespace KeePass.Util
 			{
 				if(!NativeMethods.LoseFocus(fCurrent)) { Debug.Assert(false); }
 
-				return PerformIntoCurrentWindow(pe, pdContext);
+				return PerformIntoCurrentWindow(pe, pdContext, strSeq);
 			}
 			finally
 			{
@@ -499,10 +510,16 @@ namespace KeePass.Util
 		public static bool PerformIntoCurrentWindow(PwEntry pe)
 		{
 			return PerformIntoCurrentWindow(pe,
-				Program.MainForm.DocumentManager.SafeFindContainerOf(pe));
+				Program.MainForm.DocumentManager.SafeFindContainerOf(pe), null);
 		}
 
 		public static bool PerformIntoCurrentWindow(PwEntry pe, PwDatabase pdContext)
+		{
+			return PerformIntoCurrentWindow(pe, pdContext, null);
+		}
+
+		public static bool PerformIntoCurrentWindow(PwEntry pe, PwDatabase pdContext,
+			string strSeq)
 		{
 			if(pe == null) { Debug.Assert(false); return false; }
 			if(!pe.GetAutoTypeEnabled()) return false;
@@ -524,17 +541,21 @@ namespace KeePass.Util
 
 			Thread.Sleep(100);
 
-			SequenceQueriesEventArgs evQueries = GetSequencesForWindowBegin(
-				hWnd, strWindow);
+			if(strSeq == null)
+			{
+				SequenceQueriesEventArgs evQueries = GetSequencesForWindowBegin(
+					hWnd, strWindow);
 
-			List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,
-				pdContext, evQueries.EventID);
+				List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,
+					pdContext, evQueries.EventID);
 
-			GetSequencesForWindowEnd(evQueries);
+				GetSequencesForWindowEnd(evQueries);
 
-			if(lSeq.Count == 0) lSeq.Add(pe.GetAutoTypeSequence());
+				if(lSeq.Count == 0) strSeq = pe.GetAutoTypeSequence();
+				else strSeq = lSeq[0];
+			}
 
-			AutoTypeCtx ctx = new AutoTypeCtx(lSeq[0], pe, pdContext);
+			AutoTypeCtx ctx = new AutoTypeCtx(strSeq, pe, pdContext);
 			return AutoType.PerformInternal(ctx, strWindow);
 		}
 

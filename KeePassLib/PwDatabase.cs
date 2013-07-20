@@ -1396,17 +1396,31 @@ namespace KeePassLib
 		/// <returns>Index of the icon.</returns>
 		public int GetCustomIconIndex(PwUuid pwIconId)
 		{
-			int nIndex = 0;
-
-			foreach(PwCustomIcon pwci in m_vCustomIcons)
+			for(int i = 0; i < m_vCustomIcons.Count; ++i)
 			{
+				PwCustomIcon pwci = m_vCustomIcons[i];
 				if(pwci.Uuid.EqualsValue(pwIconId))
-					return nIndex;
-
-				++nIndex;
+					return i;
 			}
 
 			// Debug.Assert(false); // Do not assert
+			return -1;
+		}
+
+		public int GetCustomIconIndex(byte[] pbPngData)
+		{
+			if(pbPngData == null) { Debug.Assert(false); return -1; }
+
+			for(int i = 0; i < m_vCustomIcons.Count; ++i)
+			{
+				PwCustomIcon pwci = m_vCustomIcons[i];
+				byte[] pbEx = pwci.ImageDataPng;
+				if(pbEx == null) { Debug.Assert(false); continue; }
+
+				if(MemUtil.ArraysEqual(pbEx, pbPngData))
+					return i;
+			}
+
 			return -1;
 		}
 

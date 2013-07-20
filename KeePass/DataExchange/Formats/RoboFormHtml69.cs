@@ -21,10 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -33,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.9.82-7.8.8.5+
+	// 6.9.82-7.8.9.5+
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -43,21 +46,10 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return @"html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return false; } }
-
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_Imp_RoboForm; }
 		}
-
-		private const string m_strTitleTD = @"<TD class=caption";
-		private const string m_strUrlTD = @"<TD class=subcaption";
-		private const string m_strKeyTD = @"<TD class=field";
-		private const string m_strValueTD = @"<TD class=wordbreakfield";
-
-		// https://sourceforge.net/p/keepass/discussion/329221/thread/7db6283e/
-		private const string m_strKeyTD2 = "<TD width=\"40%\" align=left class=field";
-		private const string m_strValueTD2 = "<TD width=\"55%\" align=left class=wordbreakfield";
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -67,84 +59,109 @@ namespace KeePass.DataExchange.Formats
 			sr.Close();
 
 			strData = strData.Replace(@"<WBR>", string.Empty);
+			strData = strData.Replace(@"&shy;", string.Empty);
 
-			int nOffset = 0;
-			while(true)
+			WebBrowser wb = new WebBrowser();
+			try
 			{
+				wb.Visible = false;
+				wb.ScriptErrorsSuppressed = true;
+
+				UIUtil.SetWebBrowserDocument(wb, strData);
+				ImportPriv(pwStorage, wb.Document.Body);
+			}
+			finally { wb.Dispose(); }
+		}
+
+		private static string ParseTitle(string strTitle, PwDatabase pd,
+			out PwGroup pg)
+		{
+			pg = pd.RootGroup;
+
+			if(strTitle.IndexOf('\\') >= 0)
+			{
+				int nLast = strTitle.LastIndexOf('\\');
+				string strTree = strTitle.Substring(0, nLast);
+				pg = pd.RootGroup.FindCreateSubTree(strTree,
+					new string[1] { "\\" }, true);
+
+				return strTitle.Substring(nLast + 1);
+			}
+
+			return strTitle;
+		}
+
+		private static string FixUrl(string strUrl)
+		{
+			strUrl = strUrl.Trim();
+
+			if((strUrl.Length > 0) && (strUrl.IndexOf(':') < 0) &&
+				(strUrl.IndexOf('@') < 0))
+				return ("http://" + strUrl.ToLower());
+
+			return strUrl;
+		}
+
+		private static string MapKey(string strKey)
+		{
+			string s = ImportUtil.MapNameToStandardField(strKey, true);
+			if(string.IsNullOrEmpty(s)) return strKey;
+
+			if((s == PwDefs.TitleField) || (s == PwDefs.UrlField))
+				return strKey;
+
+			return s;			
+		}
+
+		private void ImportPriv(PwDatabase pd, HtmlElement hBody)
+		{
+			foreach(HtmlElement hTable in hBody.GetElementsByTagName("TABLE"))
+			{
+				Debug.Assert(XmlUtil.SafeAttribute(hTable, "width") == "100%");
+				string strRules = XmlUtil.SafeAttribute(hTable, "rules");
+				string strFrame = XmlUtil.SafeAttribute(hTable, "frame");
+				if(strRules.Equals("cols", StrUtil.CaseIgnoreCmp) &&
+					strFrame.Equals("void", StrUtil.CaseIgnoreCmp))
+					continue;
+
 				PwEntry pe = new PwEntry(true, true);
+				PwGroup pg = null;
 
-				int nTitleTD = strData.IndexOf(m_strTitleTD, nOffset);
-				if(nTitleTD < 0) break;
-				nOffset = nTitleTD + 1;
-
-				string strTitle = StrUtil.XmlToString(StrUtil.GetStringBetween(
-					strData, nTitleTD, @">", @"</TD>"));
-
-				PwGroup pg = pwStorage.RootGroup;
-				if(strTitle.IndexOf('\\') > 0)
+				foreach(HtmlElement hTr in hTable.GetElementsByTagName("TR"))
 				{
-					int nLast = strTitle.LastIndexOf('\\');
-					string strTree = strTitle.Substring(0, nLast);
-					pg = pwStorage.RootGroup.FindCreateSubTree(strTree,
-						new string[1]{ "\\" }, true);
+					HtmlElementCollection lTd = hTr.GetElementsByTagName("TD");
+					if(lTd.Count == 1)
+					{
+						HtmlElement e = lTd[0];
+						string strText = XmlUtil.SafeInnerText(e);
+						string strClass = XmlUtil.SafeAttribute(e, "class");
 
-					strTitle = strTitle.Substring(nLast + 1);
+						if(strClass.Equals("caption", StrUtil.CaseIgnoreCmp))
+						{
+							Debug.Assert(pg == null);
+							strText = ParseTitle(strText, pd, out pg);
+							ImportUtil.AppendToField(pe, PwDefs.TitleField, strText, pd);
+						}
+						else if(strClass.Equals("subcaption", StrUtil.CaseIgnoreCmp))
+							ImportUtil.AppendToField(pe, PwDefs.UrlField,
+								FixUrl(strText), pd);
+						else { Debug.Assert(false); }
+					}
+					else if((lTd.Count == 2) || (lTd.Count == 3))
+					{
+						string strKey = XmlUtil.SafeInnerText(lTd[0]);
+						string strValue = XmlUtil.SafeInnerText(lTd[lTd.Count - 1]);
+						if(lTd.Count == 3) { Debug.Assert(string.IsNullOrEmpty(lTd[1].InnerText)); }
+
+						if(!string.IsNullOrEmpty(strKey))
+							ImportUtil.AppendToField(pe, MapKey(strKey), strValue, pd);
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
 				}
 
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle, strTitle));
-
-				pg.AddEntry(pe, true);
-
-				int nNextTitleTD = strData.IndexOf(m_strTitleTD, nOffset);
-				if(nNextTitleTD < 0) nNextTitleTD = strData.Length + 1;
-
-				int nUrlTD = strData.IndexOf(m_strUrlTD, nOffset);
-				if((nUrlTD >= 0) && (nUrlTD < nNextTitleTD))
-				{
-					string strUrl = StrUtil.XmlToString(StrUtil.GetStringBetween(
-						strData, nUrlTD, @">", @"</TD>")).Trim().ToLower();
-
-					if(!string.IsNullOrEmpty(strUrl) && (strUrl.IndexOf(':') < 0) &&
-						(strUrl.IndexOf('@') < 0))
-						strUrl = @"http://" + strUrl;
-
-					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectUrl, strUrl));
-				}
-
-				while(true)
-				{
-					int nKeyTD = strData.IndexOf(m_strKeyTD, nOffset);
-					if((nKeyTD < 0) || (nKeyTD > nNextTitleTD))
-						nKeyTD = strData.IndexOf(m_strKeyTD2, nOffset);
-					if((nKeyTD < 0) || (nKeyTD > nNextTitleTD)) break;
-
-					int nValueTD = strData.IndexOf(m_strValueTD, nOffset);
-					if((nValueTD < 0) || (nValueTD > nNextTitleTD))
-						nValueTD = strData.IndexOf(m_strValueTD2, nOffset);
-					if((nValueTD < 0) || (nValueTD > nNextTitleTD)) break;
-
-					string strKey = StrUtil.XmlToString(StrUtil.GetStringBetween(
-						strData, nKeyTD, @">", @"</TD>")).TrimEnd(new char[]{ '$' });
-					string strValueRaw = StrUtil.GetStringBetween(strData,
-						nValueTD, @">", @"</TD>");
-					strValueRaw = strValueRaw.Replace(@"<BR>", Environment.NewLine);
-					string strValue = StrUtil.XmlToString(strValueRaw);
-
-					string strKeyMapped = ImportUtil.MapNameToStandardField(strKey, true);
-					if((strKeyMapped == PwDefs.TitleField) ||
-						(strKeyMapped == PwDefs.UrlField) ||
-						(strKeyMapped.Length == 0))
-						strKeyMapped = strKey;
-
-					// pe.Strings.Set(strKeyMapped, new ProtectedString(
-					//	pwStorage.MemoryProtection.GetProtection(strKeyMapped),
-					//	strValue));
-					ImportUtil.AppendToField(pe, strKeyMapped, strValue, pwStorage);
-
-					nOffset = nValueTD + 1;
-				}
+				if(pg == null) { Debug.Assert(false); }
+				else pg.AddEntry(pe, true);
 			}
 		}
 	}

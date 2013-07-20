@@ -314,8 +314,9 @@ The following codes for special keys are supported:</p>
 <tr><td width="50%"><code>{DELAY <i>X</i>}</code></td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
 <tr><td width="50%"><code>{CLEARFIELD}</code></td><td width="50%">Clears the contents of the
 edit control that currently has the focus (only single-line edit controls).</td></tr>
-<tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the virtual key
-of value <i>X</i>.</td></tr>
+<tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the
+<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx"
+target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
 </table>
 
 <br />
@@ -329,6 +330,12 @@ of value <i>X</i>.</td></tr>
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
 <tr><td width="50%"><code>{DELAY=<i>X</i>}</code></td><td width="50%">Sets the default
 delay to <i>X</i> milliseconds for all standard keypresses in this sequence.</td></tr>
+<tr><td width="50%"><code>{VKEY-NX <i>X</i>}</code></td><td width="50%">Sends the
+non-extended virtual key of value <i>X</i>.
+If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
+<tr><td width="50%"><code>{VKEY-EX <i>X</i>}</code></td><td width="50%">Sends the
+extended virtual key of value <i>X</i>.
+If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 </table>
 
 
@@ -339,6 +346,11 @@ Keys and special keys (not placeholders or commands) can be repeated by
 appending a number within the code. For example, <code>{TAB 5}</code>
 presses the Tab key 5 times.
 
+
+<p>For details on how to send special keys for which no explicit special
+key codes exist, please see:
+<a href="http://keepass.info/help/kb/faq.html#vkeys"
+target="_blank">How can auto-type send other special keys?</a>.</p>
 
 <p>Finally, some examples:</p>
 
@@ -426,7 +438,7 @@ class="singleimg" alt="Text" />&nbsp;&nbsp;Change Default Auto-Type Sequence</h2
 a custom one) is <code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>. KeePass allows you
 to change this default sequence. Normally you won't need to change it (use
 custom window/sequence definitions instead!), but it is quite useful when some
-other application is interfering KeePass (for example a security software that
+other application is interfering with KeePass (for example a security software that
 always asks you for permission before allowing KeePass to auto-type).</p>
 
 

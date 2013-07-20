@@ -22,13 +22,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.Native;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -50,6 +54,26 @@ namespace KeePass.DataExchange.Formats
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_KeePass; }
+		}
+
+		public override bool TryBeginImport()
+		{
+			string strTitle = KPRes.Warning + "!";
+			string strMsg = KPRes.RepairModeInt + MessageService.NewParagraph +
+				KPRes.RepairModeUse + MessageService.NewParagraph +
+				KPRes.RepairModeQ;
+
+			int iYes = (int)DialogResult.Yes;
+			int iNo = (int)DialogResult.No;
+			int r = VistaTaskDialog.ShowMessageBoxEx(strMsg, strTitle,
+				PwDefs.ShortProductName, VtdIcon.Warning, null,
+				KPRes.Yes, iYes, KPRes.No, iNo);
+			if(r < 0)
+				r = (MessageService.AskYesNo(strTitle + MessageService.NewParagraph +
+					strMsg, PwDefs.ShortProductName, false, MessageBoxIcon.Warning) ?
+					iYes : iNo);
+
+			return ((r == iYes) || (r == (int)DialogResult.OK));
 		}
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,

@@ -163,9 +163,9 @@ namespace KeePass.App
 			public const string ShowAssemblyInfo = "showasminfo";
 			public const string MakeXmlSerializerEx = "makexmlserializerex";
 
-#if (DEBUG && !KeePassLibSD)
-			public const string MakePopularPasswordTable = "makepopularpasswordtable";
-#endif
+			// #if (DEBUG && !KeePassLibSD)
+			// public const string MakePopularPasswordTable = "makepopularpasswordtable";
+			// #endif
 		}
 
 		public static class FileExtension

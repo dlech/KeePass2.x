@@ -59,9 +59,11 @@
 			// 
 			// m_webBrowser
 			// 
+			this.m_webBrowser.AllowWebBrowserDrop = false;
 			this.m_webBrowser.Location = new System.Drawing.Point(23, 160);
 			this.m_webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_webBrowser.Name = "m_webBrowser";
+			this.m_webBrowser.ScriptErrorsSuppressed = true;
 			this.m_webBrowser.Size = new System.Drawing.Size(193, 158);
 			this.m_webBrowser.TabIndex = 2;
 			// 

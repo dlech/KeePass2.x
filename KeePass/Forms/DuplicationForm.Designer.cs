@@ -36,12 +36,13 @@
 			this.m_lblFieldRefs = new System.Windows.Forms.Label();
 			this.m_lblSep = new System.Windows.Forms.Label();
 			this.m_lnkFieldRefs = new System.Windows.Forms.LinkLabel();
+			this.m_cbCopyHistory = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(205, 151);
+			this.m_btnOK.Location = new System.Drawing.Point(205, 174);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -52,7 +53,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(286, 151);
+			this.m_btnCancel.Location = new System.Drawing.Point(286, 174);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -83,17 +84,17 @@
 			// 
 			this.m_lblFieldRefs.Location = new System.Drawing.Point(28, 55);
 			this.m_lblFieldRefs.Name = "m_lblFieldRefs";
-			this.m_lblFieldRefs.Size = new System.Drawing.Size(333, 57);
+			this.m_lblFieldRefs.Size = new System.Drawing.Size(333, 54);
 			this.m_lblFieldRefs.TabIndex = 4;
 			this.m_lblFieldRefs.Text = resources.GetString("m_lblFieldRefs.Text");
 			// 
 			// m_lblSep
 			// 
 			this.m_lblSep.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSep.Location = new System.Drawing.Point(1, 141);
+			this.m_lblSep.Location = new System.Drawing.Point(1, 163);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(372, 2);
-			this.m_lblSep.TabIndex = 6;
+			this.m_lblSep.TabIndex = 7;
 			// 
 			// m_lnkFieldRefs
 			// 
@@ -106,13 +107,24 @@
 			this.m_lnkFieldRefs.Text = "Help: Field References";
 			this.m_lnkFieldRefs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnFieldRefsLinkClicked);
 			// 
+			// m_cbCopyHistory
+			// 
+			this.m_cbCopyHistory.AutoSize = true;
+			this.m_cbCopyHistory.Location = new System.Drawing.Point(12, 134);
+			this.m_cbCopyHistory.Name = "m_cbCopyHistory";
+			this.m_cbCopyHistory.Size = new System.Drawing.Size(83, 17);
+			this.m_cbCopyHistory.TabIndex = 6;
+			this.m_cbCopyHistory.Text = "Copy &history";
+			this.m_cbCopyHistory.UseVisualStyleBackColor = true;
+			// 
 			// DuplicationForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(373, 186);
+			this.ClientSize = new System.Drawing.Size(373, 209);
+			this.Controls.Add(this.m_cbCopyHistory);
 			this.Controls.Add(this.m_lnkFieldRefs);
 			this.Controls.Add(this.m_lblSep);
 			this.Controls.Add(this.m_lblFieldRefs);
@@ -143,5 +155,6 @@
 		private System.Windows.Forms.Label m_lblFieldRefs;
 		private System.Windows.Forms.Label m_lblSep;
 		private System.Windows.Forms.LinkLabel m_lnkFieldRefs;
+		private System.Windows.Forms.CheckBox m_cbCopyHistory;
 	}
 }

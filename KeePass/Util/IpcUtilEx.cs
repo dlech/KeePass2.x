@@ -227,18 +227,7 @@ namespace KeePass.Util
 			if((pbUuid == null) || (pbUuid.Length != PwUuid.UuidSize)) return;
 			PwUuid pwUuid = new PwUuid(pbUuid);
 
-			List<PwDocument> lDocs = new List<PwDocument>(mf.DocumentManager.Documents);
-			PwDocument pwDocActive = mf.DocumentManager.ActiveDocument;
-			for(int i = 1; i < lDocs.Count; ++i)
-			{
-				if(object.ReferenceEquals(lDocs[i], pwDocActive))
-				{
-					lDocs.RemoveAt(i);
-					lDocs.Insert(0, pwDocActive);
-					break;
-				}
-			}
-
+			List<PwDocument> lDocs = mf.DocumentManager.GetDocuments(int.MinValue);
 			foreach(PwDocument pwDoc in lDocs)
 			{
 				if(pwDoc == null) { Debug.Assert(false); continue; }

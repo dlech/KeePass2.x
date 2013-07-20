@@ -32,6 +32,7 @@ using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
@@ -68,24 +69,26 @@ namespace KeePass.Forms
 			get { return Program.Config.UI.UseCustomToolStripRenderer != m_bInitialTsRenderer; }
 		}
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
 		public OptionsForm()
 		{
 			InitializeComponent();
 			Program.Translation.ApplyTo(this);
 		}
 
-		/// <summary>
-		/// Initialize the dialog. This function must be called before the dialog
-		/// is displayed.
-		/// </summary>
-		/// <param name="ilIcons">Image list to use for displaying images.</param>
 		public void InitEx(ImageList ilIcons)
+		{
+			InitEx(ilIcons, false);
+		}
+
+		public void InitEx(ImageList ilIcons, bool bForceInTaskbar)
 		{
 			Debug.Assert(ilIcons != null);
 			m_ilIcons = ilIcons;
+
+			// Set ShowInTaskbar immediately, not later, otherwise the form
+			// can disappear:
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/c95b5644/
+			if(bForceInTaskbar) this.ShowInTaskbar = true;
 		}
 
 		private void CreateDialogBanner(BannerStyle bsStyle)
@@ -516,6 +519,17 @@ namespace KeePass.Forms
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeCancelOnTitleChange",
 				lvg, KPRes.AutoTypeCancelOnTitleChange);
 
+			lvg = new ListViewGroup(KPRes.IOConnectionLong);
+			m_lvAdvanced.Groups.Add(lvg);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "VerifyWrittenFileAfterSaving",
+				lvg, KPRes.VerifyWrittenFileAfterSave);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
+				lvg, KPRes.UseTransactedDatabaseWrites);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",
+				lvg, KPRes.UseFileLocks + " " + KPRes.NotRecommended);
+			m_cdxAdvanced.CreateItem(Program.Config.Security, "SslCertsAcceptInvalid",
+				lvg, KPRes.SslCertsAcceptInvalid);
+
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvAdvanced.Groups.Add(lvg);
 
@@ -538,12 +552,6 @@ namespace KeePass.Forms
 				lvg, KPRes.RememberHidingSettings);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "UnhideButtonAlsoUnhidesSource",
 				lvg, KPRes.UnhideSourceCharactersToo);
-			m_cdxAdvanced.CreateItem(Program.Config.Application, "VerifyWrittenFileAfterSaving",
-				lvg, KPRes.VerifyWrittenFileAfterSave);
-			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
-				lvg, KPRes.UseTransactedDatabaseWrites);
-			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",
-				lvg, KPRes.UseFileLocks + " " + KPRes.NotRecommended);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "TanExpiresOnUse",
 				lvg, KPRes.TanExpiresOnUse);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "RecycleBinCollapse",
@@ -641,6 +649,8 @@ namespace KeePass.Forms
 			m_cdxAdvanced.UpdateData(true);
 
 			Program.Config.Integration.UrlSchemeOverrides = m_aceUrlSchemeOverrides;
+
+			Program.Config.Apply(AceApplyFlags.All);
 		}
 
 		private void CleanUpEx()

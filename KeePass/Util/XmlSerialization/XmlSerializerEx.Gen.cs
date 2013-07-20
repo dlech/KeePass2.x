@@ -558,6 +558,9 @@ namespace KeePass.Util.XmlSerialization
 					case "ClearKeyCommandLineParams":
 						o.ClearKeyCommandLineParams = ReadBoolean(xr);
 						break;
+					case "SslCertsAcceptInvalid":
+						o.SslCertsAcceptInvalid = ReadBoolean(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();

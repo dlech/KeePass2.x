@@ -66,6 +66,9 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			// Can be invoked by tray command; don't use CenterParent
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
 			GlobalWindowManager.AddWindow(this);
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,

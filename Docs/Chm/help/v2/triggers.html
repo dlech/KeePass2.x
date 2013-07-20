@@ -278,6 +278,21 @@ for connecting to the target file system (for example FTP account user name /
 password). These credentials are not used to decrypt the database.<br /><br /></li>
 </ul></li>
 
+<li><b>Import into active database:</b><br />
+Import a file into the currently opened and active database.
+<ul>
+<li><i>File/URL:</i> Path of the source file to import.
+If it is an URL, the protocol (prefix) must be specified.</li>
+<li><i>File format:</i> Specifies the import format (see the import
+dialog for possible values).</li>
+<li><i>Method:</i> Specifies the behavior for groups/entries that exist
+in both the currently active database and the import file.</li>
+<li><i>Password / Key file / User account:</i> Optional credentials that are used
+to decrypt the import file, if required.
+If no credentials are specified, but the import file is encrypted, KeePass
+shows a key prompt dialog.<br /><br /></li>
+</ul></li>
+
 <li><b>Export active database:</b><br />
 Export the currently opened and active database to a file.
 <ul>
@@ -311,6 +326,13 @@ Wait for the specified amount of time.
 Execute global auto-type (like pressing the global auto-type hot key).
 <ul>
 <li><i>Parameters:</i> None.<br /><br /></li>
+</ul></li>
+
+<li><b>Perform auto-type with selected entry:</b><br />
+Executes auto-type with the currently selected entry as context.
+<ul>
+<li><i>Sequence:</i> The keystroke sequence to send. If this field is empty,
+the default sequence is used.<br /><br /></li>
 </ul></li>
 
 <li><b>Add custom toolbar button:</b><br />

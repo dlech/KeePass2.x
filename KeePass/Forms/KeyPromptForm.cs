@@ -56,7 +56,8 @@ namespace KeePass.Forms
 
 		private bool m_bInitializing = false;
 
-		private volatile List<string> m_vSuggestions = new List<string>();
+		private List<string> m_vSuggestions = new List<string>();
+		private bool m_bUaStatePreset = false;
 
 		public CompositeKey CompositeKey
 		{
@@ -196,14 +197,19 @@ namespace KeePass.Forms
 			m_btnExit.Enabled = m_bCanExit;
 			m_btnExit.Visible = m_bCanExit;
 
-			UIUtil.ApplyKeyUIFlags(Program.Config.UI.KeyPromptFlags,
-				m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
+			ulong uKpf = Program.Config.UI.KeyPromptFlags;
+			UIUtil.ApplyKeyUIFlags(uKpf, m_cbPassword, m_cbKeyFile,
+				m_cbUserAccount, m_cbHidePassword);
 
-			if((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.DisableKeyFile) != 0)
+			if((uKpf & (ulong)AceKeyUIFlags.DisableKeyFile) != 0)
 			{
 				UIUtil.SetEnabled(m_cmbKeyFile, m_cbKeyFile.Checked);
 				UIUtil.SetEnabled(m_btnOpenKeyFile, m_cbKeyFile.Checked);
 			}
+
+			if(((uKpf & (ulong)AceKeyUIFlags.CheckUserAccount) != 0) ||
+				((uKpf & (ulong)AceKeyUIFlags.UncheckUserAccount) != 0))
+				m_bUaStatePreset = true;
 
 			CustomizeForScreenReader();
 			EnableUserControls();
@@ -216,7 +222,17 @@ namespace KeePass.Forms
 
 			this.BringToFront();
 			this.Activate();
-			UIUtil.SetFocus(m_tbPassword, this);
+			// UIUtil.SetFocus(m_tbPassword, this); // See OnFormShown
+		}
+
+		private void OnFormShown(object sender, EventArgs e)
+		{
+			// Focusing doesn't always work in OnFormLoad;
+			// https://sourceforge.net/p/keepass/feature-requests/1735/
+			if(m_tbPassword.CanFocus) UIUtil.SetFocus(m_tbPassword, this);
+			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this);
+			else if(m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this);
+			else { Debug.Assert(false); }
 		}
 
 		private void CustomizeForScreenReader()
@@ -549,7 +565,7 @@ namespace KeePass.Forms
 				if(iProv >= 0) m_cmbKeyFile.SelectedIndex = iProv;
 			}
 
-			if(a.UserAccount && m_cbUserAccount.Enabled)
+			if(a.UserAccount && !m_bUaStatePreset)
 				m_cbUserAccount.Checked = true;
 		}
 

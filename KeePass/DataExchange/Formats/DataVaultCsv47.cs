@@ -56,7 +56,6 @@ namespace KeePass.DataExchange.Formats
 			StreamReader sr = new StreamReader(sInput, Encoding.Default);
 			string strData = sr.ReadToEnd();
 			sr.Close();
-			sInput.Close();
 
 			// Fix broken newlines
 			strData = strData.Replace("\r\r\n", "\r\n");

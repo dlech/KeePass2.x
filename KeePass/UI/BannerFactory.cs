@@ -92,6 +92,9 @@ namespace KeePass.UI
 			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
 			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException("strLine");
 
+			if(MonoWorkarounds.IsRequired(12525) && (nHeight > 0))
+				--nHeight;
+
 			string strImageID = nWidth.ToString() + "x" + nHeight.ToString() + ":";
 			if(strTitle != null) strImageID += strTitle;
 			strImageID += ":";

@@ -60,6 +60,12 @@ namespace KeePass.Forms
 
 			this.Text = KPRes.ImportBehavior;
 
+			m_radioCreateNew.Text = KPRes.CreateNewIDs;
+			m_radioKeepExisting.Text = KPRes.KeepExisting;
+			m_radioOverwrite.Text = KPRes.OverwriteExisting;
+			m_radioOverwriteIfNewer.Text = KPRes.OverwriteIfNewer;
+			m_radioSynchronize.Text = KPRes.OverwriteIfNewerAndApplyDel;
+
 			FontUtil.AssignDefaultBold(m_radioCreateNew);
 			FontUtil.AssignDefaultBold(m_radioKeepExisting);
 			FontUtil.AssignDefaultBold(m_radioOverwrite);

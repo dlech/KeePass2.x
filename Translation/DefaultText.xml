@@ -11,7 +11,13 @@
 			<Value>Add Entry</Value>
 		</Data>
 		<Data Name="AddEntryDesc">
-			<Value>Create a new password entry.</Value>
+			<Value>Create a new entry.</Value>
+		</Data>
+		<Data Name="AddGroup">
+			<Value>Add Group</Value>
+		</Data>
+		<Data Name="AddGroupDesc">
+			<Value>Create a new entry group.</Value>
 		</Data>
 		<Data Name="AddStringField">
 			<Value>Add Entry String Field</Value>
@@ -355,6 +361,9 @@
 		<Data Name="CopyUrlsInsteadOfOpening">
 			<Value>Copy URLs to clipboard instead of opening them</Value>
 		</Data>
+		<Data Name="CopyUrlToClipboard">
+			<Value>&amp;Copy URL(s) to Clipboard</Value>
+		</Data>
 		<Data Name="CopyUserFull">
 			<Value>Copy User Name to Clipboard</Value>
 		</Data>
@@ -369,6 +378,9 @@
 		</Data>
 		<Data Name="CreateNewDatabase">
 			<Value>Create New Password Database</Value>
+		</Data>
+		<Data Name="CreateNewIDs">
+			<Value>Create new &amp;IDs</Value>
 		</Data>
 		<Data Name="CreationTime">
 			<Value>Creation Time</Value>
@@ -518,7 +530,7 @@
 			<Value>Edit Entry</Value>
 		</Data>
 		<Data Name="EditEntryDesc">
-			<Value>You're editing an existing password entry.</Value>
+			<Value>You're editing an existing entry.</Value>
 		</Data>
 		<Data Name="EditGroup">
 			<Value>Edit Group</Value>
@@ -943,6 +955,9 @@
 		<Data Name="ImportMustReadQuestion">
 			<Value>Have you understood how the import process works and want to start it now?</Value>
 		</Data>
+		<Data Name="ImportStc">
+			<Value>Import into active database</Value>
+		</Data>
 		<Data Name="IncompatibleWithSorting">
 			<Value>incompatible with sorting</Value>
 		</Data>
@@ -970,6 +985,9 @@
 		<Data Name="IOConnection">
 			<Value>IO Connection</Value>
 		</Data>
+		<Data Name="IOConnectionLong">
+			<Value>File Input/Output Connections</Value>
+		</Data>
 		<Data Name="Italic">
 			<Value>Italic</Value>
 		</Data>
@@ -993,6 +1011,9 @@
 		</Data>
 		<Data Name="KeePassLibCNotWindowsHint">
 			<Value>Please use a different file format for migrating your data.</Value>
+		</Data>
+		<Data Name="KeepExisting">
+			<Value>&amp;Keep existing</Value>
 		</Data>
 		<Data Name="KeyboardKeyAlt">
 			<Value>Alt</Value>
@@ -1111,8 +1132,8 @@
 		<Data Name="Menus">
 			<Value>Menus</Value>
 		</Data>
-		<Data Name="MergingData">
-			<Value>Merging data...</Value>
+		<Data Name="Method">
+			<Value>Method</Value>
 		</Data>
 		<Data Name="MinimizeAfterCopy">
 			<Value>Minimize main window after copying data to the clipboard</Value>
@@ -1231,11 +1252,17 @@
 		<Data Name="OpenDatabaseFileStc">
 			<Value>Open database file</Value>
 		</Data>
+		<Data Name="Opened">
+			<Value>Opened</Value>
+		</Data>
 		<Data Name="OpenedDatabaseFile">
 			<Value>Opened database file</Value>
 		</Data>
 		<Data Name="OpeningDatabase">
 			<Value>Opening password database...</Value>
+		</Data>
+		<Data Name="OpenUrl">
+			<Value>&amp;Open URL(s)</Value>
 		</Data>
 		<Data Name="OpenWith">
 			<Value>Open with {PARAM}</Value>
@@ -1261,8 +1288,17 @@
 		<Data Name="Overwrite">
 			<Value>Overwrite</Value>
 		</Data>
+		<Data Name="OverwriteExisting">
+			<Value>Overwrite &amp;existing</Value>
+		</Data>
 		<Data Name="OverwriteExistingFileQuestion">
 			<Value>Overwrite the existing file?</Value>
+		</Data>
+		<Data Name="OverwriteIfNewer">
+			<Value>Overwrite if &amp;newer</Value>
+		</Data>
+		<Data Name="OverwriteIfNewerAndApplyDel">
+			<Value>Overwrite if newer and apply &amp;deletions</Value>
 		</Data>
 		<Data Name="PackageInstallHint">
 			<Value>Install this package and try again.</Value>
@@ -1294,8 +1330,14 @@
 		<Data Name="Paste">
 			<Value>Paste</Value>
 		</Data>
+		<Data Name="PerformAutoType">
+			<Value>Perform Auto-&amp;Type</Value>
+		</Data>
 		<Data Name="PerformGlobalAutoType">
 			<Value>Perform global auto-type</Value>
+		</Data>
+		<Data Name="PerformSelectedAutoType">
+			<Value>Perform auto-type with selected entry</Value>
 		</Data>
 		<Data Name="PickCharacters">
 			<Value>Pick Characters</Value>
@@ -1382,7 +1424,7 @@
 			<Value>Allow loading plugins to extend KeePass functionality.</Value>
 		</Data>
 		<Data Name="PolicyPrintDesc">
-			<Value>Allow printing password entry lists.</Value>
+			<Value>Allow printing entry lists.</Value>
 		</Data>
 		<Data Name="PolicyPrintNoKeyDesc">
 			<Value>Do not require entering current master key before printing.</Value>
@@ -1452,6 +1494,15 @@
 		</Data>
 		<Data Name="RepairMode">
 			<Value>Repair Mode</Value>
+		</Data>
+		<Data Name="RepairModeInt">
+			<Value>In repair mode, the integrity of the data is not checked (in order to rescue as much data as possible). When no integrity checks are performed, corrupted/malicious data might be incorporated into the database.</Value>
+		</Data>
+		<Data Name="RepairModeQ">
+			<Value>Are you sure you want to attempt to repair the selected file?</Value>
+		</Data>
+		<Data Name="RepairModeUse">
+			<Value>Thus the repair functionality should only be used when there really is no other solution. If you use it, afterwards you should thoroughly check your whole database for corrupted/malicious data.</Value>
 		</Data>
 		<Data Name="RepeatOnlyWhenHidden">
 			<Value>Require password repetition only when hiding using asterisks is enabled</Value>
@@ -1614,6 +1665,9 @@
 		</Data>
 		<Data Name="SpecialKeys">
 			<Value>Special Keys</Value>
+		</Data>
+		<Data Name="SslCertsAcceptInvalid">
+			<Value>Accept invalid SSL certificates (self-signed, expired, ...)</Value>
 		</Data>
 		<Data Name="StandardExpireSelect">
 			<Value>Select one of the standard expire times</Value>
@@ -1886,13 +1940,16 @@
 			<Value>View Entry</Value>
 		</Data>
 		<Data Name="ViewEntryDesc">
-			<Value>You're viewing a password entry.</Value>
+			<Value>You're viewing an entry.</Value>
 		</Data>
 		<Data Name="Wait">
 			<Value>Wait</Value>
 		</Data>
 		<Data Name="WaitForExit">
 			<Value>Wait for exit</Value>
+		</Data>
+		<Data Name="Warning">
+			<Value>Warning</Value>
 		</Data>
 		<Data Name="Warnings">
 			<Value>Warnings</Value>

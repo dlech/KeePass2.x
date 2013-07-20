@@ -96,6 +96,7 @@ next release of KPScript.</p>
 <li>MoveEntry</li>
 <li>DeleteEntry</li>
 <li>DeleteAllEntries</li>
+<li>Import</li>
 <li>Export</li>
 <li>Sync</li>
 <li>ChangeMasterKey</li>
@@ -211,11 +212,33 @@ syntax is exactly the same as in the <code>EditEntry</code> command.</p>
 <p>This command deletes all entries (in all subgroups).</p>
 
 <hr />
+<p><b>Command: Import</b></p>
+
+<p>This command imports a file into the database. The format is specified by
+setting the &quot;-Format&quot; parameter (see names in the
+import dialog of KeePass). The file to import to is specified using the
+&quot;-File&quot; parameter.</p>
+
+<p>The behavior for groups/entries that exist
+in both the current database and the import file can be specified using the
+optional &quot;-MM&quot; parameter. Possible values are
+&quot;CreateNewUuids&quot;,
+&quot;KeepExisting&quot;,
+&quot;OverwriteExisting&quot;,
+&quot;OverwriteIfNewer&quot;, and
+&quot;Sync&quot;.
+By default, new UUIDs are created.</p>
+
+<p>Usage example:</p>
+
+<p><code>KPScript -c:Import &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Format:&quot;KeePass XML (2.x)&quot; -File:SourceFile.xml</code></p>
+
+<hr />
 <p><b>Command: Export</b></p>
 
 <p>This command exports the complete database. The format is specified by
-setting the &quot;-Format&quot; parameter (see names in
-KeePass' export dialog). The file to export to is specified using the
+setting the &quot;-Format&quot; parameter (see names in the
+export dialog of KeePass). The file to export to is specified using the
 &quot;-OutFile&quot; parameter. Usage example:</p>
 
 <p><code>KPScript -c:Export &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Format:&quot;KeePass XML (2.x)&quot; -OutFile:TargetFile.xml</code></p>
