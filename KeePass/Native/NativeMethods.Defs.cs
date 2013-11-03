@@ -185,6 +185,8 @@ namespace KeePass.Native
 		internal const uint SND_FILENAME = 0x00020000;
 		internal const uint SND_NODEFAULT = 0x0002;
 
+		internal const uint ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID = 0x04;
+
 		// internal const uint DI_NORMAL = 0x0003;
 
 		// internal const int LVN_FIRST = -100;
@@ -349,5 +351,19 @@ namespace KeePass.Native
 			Continue = 11, // IDCONTINUE
 			TimeOut = 32000 // IDTIMEOUT
 		} */
+
+		[Flags]
+		internal enum ToolHelpFlags : uint
+		{
+			SnapHeapList = 0x00000001,
+			SnapProcess = 0x00000002,
+			SnapThread = 0x00000004,
+			SnapModule = 0x00000008,
+			SnapModule32 = 0x00000010,
+
+			SnapAll = (SnapHeapList | SnapProcess | SnapThread | SnapModule),
+
+			Inherit = 0x80000000U
+		}
 	}
 }

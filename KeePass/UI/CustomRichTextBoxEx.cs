@@ -63,12 +63,25 @@ namespace KeePass.UI
 		}
 #endif */
 
+		private static bool IsPasteCommand(KeyEventArgs e)
+		{
+			if(e == null) { Debug.Assert(false); return false; }
+
+			// Also check for modifier keys being up;
+			// https://sourceforge.net/p/keepass/bugs/1185/
+			if((e.KeyCode == Keys.V) && e.Control && !e.Alt) // e.Shift arb.
+				return true;
+			if((e.KeyCode == Keys.Insert) && e.Shift && !e.Alt) // e.Control arb.
+				return true;
+
+			return false;
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if(m_bSimpleTextOnly && ((e.Control && (e.KeyCode == Keys.V)) ||
-				(e.Shift && (e.KeyCode == Keys.Insert))))
+			if(m_bSimpleTextOnly && IsPasteCommand(e))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 
 				PasteAcceptable();
 				return;
@@ -77,7 +90,7 @@ namespace KeePass.UI
 			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
 				(e.KeyCode == Keys.Enter)))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 				Debug.Assert(this.Multiline);
 
 				Control p = this;
@@ -107,17 +120,16 @@ namespace KeePass.UI
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if(m_bSimpleTextOnly && ((e.Control && (e.KeyCode == Keys.V)) ||
-				(e.Shift && (e.KeyCode == Keys.Insert))))
+			if(m_bSimpleTextOnly && IsPasteCommand(e))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 				return;
 			}
 
 			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
 				(e.KeyCode == Keys.Enter)))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 				return;
 			}
 

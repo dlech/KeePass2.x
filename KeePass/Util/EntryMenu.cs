@@ -101,7 +101,7 @@ namespace KeePass.Util
 		private static int MenuGetImageIndex(PwDocument ds, PwIcon pwID,
 			PwUuid pwCustomID)
 		{
-			if((pwCustomID != PwUuid.Zero) && (ds ==
+			if(!pwCustomID.Equals(PwUuid.Zero) && (ds ==
 				Program.MainForm.DocumentManager.ActiveDocument))
 			{
 				return (int)PwIcon.Count +

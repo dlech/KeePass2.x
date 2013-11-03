@@ -286,5 +286,47 @@ namespace KeePass.Native
 				else { Debug.Assert(false); }
 			}
 		} */
+
+		internal const uint PROCESSENTRY32SizeUni32 = 556;
+		internal const uint PROCESSENTRY32SizeUni64 = 568;
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		internal struct PROCESSENTRY32
+		{
+			public uint dwSize;
+			public uint cntUsage;
+			public uint th32ProcessID;
+			public UIntPtr th32DefaultHeapID;
+			public uint th32ModuleID;
+			public uint cntThreads;
+			public uint th32ParentProcessID;
+			public int pcPriClassBase;
+			public uint dwFlags;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst =
+				KeePassLib.Native.NativeMethods.MAX_PATH)]
+			public string szExeFile;
+		}
+
+		internal const uint ACTCTXSize32 = 32;
+		internal const uint ACTCTXSize64 = 56;
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		internal struct ACTCTX
+		{
+			public uint cbSize;
+			public uint dwFlags;
+			[MarshalAs(UnmanagedType.LPTStr)] // Not LPWStr, see source code
+			public string lpSource;
+			public ushort wProcessorArchitecture;
+			public ushort wLangId;
+			[MarshalAs(UnmanagedType.LPTStr)]
+			public string lpAssemblyDirectory;
+			[MarshalAs(UnmanagedType.LPTStr)]
+			public string lpResourceName;
+			[MarshalAs(UnmanagedType.LPTStr)]
+			public string lpApplicationName;
+			public IntPtr hModule;
+		}
 	}
 }

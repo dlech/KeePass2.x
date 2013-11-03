@@ -413,7 +413,7 @@ namespace KeePassLib
 			bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
 				PwCompareOptions.None);
 
-			if(!m_uuid.EqualsValue(pe.m_uuid)) return false;
+			if(!m_uuid.Equals(pe.m_uuid)) return false;
 			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
 			{
 				if(m_pParentGroup != pe.m_pParentGroup) return false;
@@ -456,7 +456,7 @@ namespace KeePassLib
 			}
 
 			if(m_pwIcon != pe.m_pwIcon) return false;
-			if(!m_pwCustomIconID.EqualsValue(pe.m_pwCustomIconID)) return false;
+			if(!m_pwCustomIconID.Equals(pe.m_pwCustomIconID)) return false;
 
 			if(m_clrForeground != pe.m_clrForeground) return false;
 			if(m_clrBackground != pe.m_clrBackground) return false;
@@ -499,7 +499,7 @@ namespace KeePassLib
 				return;
 
 			// Template UUID should be the same as the current one
-			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
+			Debug.Assert(m_uuid.Equals(peTemplate.m_uuid));
 			m_uuid = peTemplate.m_uuid;
 
 			if(bAssignLocationChanged)

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading;
 using System.Diagnostics;
 
 using KeePass.App;
@@ -96,6 +97,7 @@ namespace KeePass.UI
 		{
 			Debug.Assert(m_tbPassword == null); // Owner should call Release()
 			Debug.Assert(m_uBlockUIUpdate == 0);
+			Debug.Assert(m_lUqiTasks.Count == 0);
 		}
 #endif
 
@@ -211,14 +213,10 @@ namespace KeePass.UI
 			m_pbQuality.Enabled = m_bEnabled;
 			m_lblQualityBits.Enabled = m_bEnabled;
 
-			uint uBits = QualityEstimation.EstimatePasswordBits(pbUtf8);
-			m_lblQualityBits.Text = uBits.ToString() + " " + KPRes.Bits;
-			int iPos = (int)((100 * uBits) / (256 / 2));
-			if(iPos < 0) iPos = 0; else if(iPos > 100) iPos = 100;
-			m_pbQuality.Value = iPos;
+			UpdateQualityInfo(pbUtf8);
 
-			MemUtil.ZeroByteArray(pbUtf8);
-			MemUtil.ZeroByteArray(pbRepeat);
+			// MemUtil.ZeroByteArray(pbUtf8);
+			// MemUtil.ZeroByteArray(pbRepeat);
 			--m_uBlockUIUpdate;
 		}
 
@@ -335,6 +333,100 @@ namespace KeePass.UI
 			}
 
 			return false;
+		}
+
+		private List<string> m_lUqiTasks = new List<string>();
+		private void UpdateQualityInfo(byte[] pbUtf8)
+		{
+			if(pbUtf8 == null) { Debug.Assert(false); return; }
+			string str = StrUtil.Utf8.GetString(pbUtf8);
+
+#if DEBUG
+			byte[] pbTest = StrUtil.Utf8.GetBytes(str);
+			Debug.Assert(MemUtil.ArraysEqual(pbUtf8, pbTest));
+#endif
+
+			int nTasks;
+			lock(m_lUqiTasks)
+			{
+				if(m_lUqiTasks.Contains(str)) return;
+
+				nTasks = m_lUqiTasks.Count;
+				m_lUqiTasks.Add(str);
+			}
+
+			int nPoolWorkers, nPoolCompletions;
+			ThreadPool.GetAvailableThreads(out nPoolWorkers, out nPoolCompletions);
+
+			if((nTasks <= 3) && (nPoolWorkers >= 2))
+				ThreadPool.QueueUserWorkItem(new WaitCallback(
+					this.UpdateQualityInfoTh), str);
+			else
+			{
+				ParameterizedThreadStart pts = new ParameterizedThreadStart(
+					this.UpdateQualityInfoTh);
+				Thread th = new Thread(pts);
+				th.Start(str);
+			}
+		}
+
+		private void UpdateQualityInfoTh(object oPassword)
+		{
+			string str = (oPassword as string);
+			if(str == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Debug.Assert(m_tbPassword.InvokeRequired);
+				// byte[] pbUtf8 = (m_tbPassword.Invoke(new UqiGetPasswordFn(
+				//	this.UqiGetPassword)) as byte[]);
+				// if(pbUtf8 == null) { Debug.Assert(false); return; }
+				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(str);
+
+				// str = StrUtil.Utf8.GetString(pbUtf8);
+				// lock(m_lUqiTasks) { m_lUqiTasks.Add(str); }
+
+				uint uBits = QualityEstimation.EstimatePasswordBits(pbUtf8);
+
+				TextBox tb = m_tbPassword;
+				if(tb == null) return; // Control disposed in the meanwhile
+
+				byte[] pbNewUtf8 = (tb.Invoke(new UqiGetPasswordDelegate(
+					this.UqiGetPassword)) as byte[]);
+				if(pbNewUtf8 == null) { Debug.Assert(false); return; }
+
+				// Test whether password has changed in the meanwhile
+				if(!MemUtil.ArraysEqual(pbUtf8, pbNewUtf8)) return;
+
+				tb.Invoke(new UqiShowQualityDelegate(this.UqiShowQuality), uBits);
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				lock(m_lUqiTasks) { m_lUqiTasks.Remove(str); }
+			}
+		}
+
+		private delegate byte[] UqiGetPasswordDelegate();
+		private byte[] UqiGetPassword()
+		{
+			try { return m_secPassword.ToUtf8(); }
+			catch(Exception) { Debug.Assert(false); }
+			return null;
+		}
+
+		private delegate void UqiShowQualityDelegate(uint uBits);
+		private void UqiShowQuality(uint uBits)
+		{
+			try
+			{
+				m_lblQualityBits.Text = uBits.ToString() + " " + KPRes.Bits;
+				int iPos = (int)((100 * uBits) / (256 / 2));
+				if(iPos < 0) iPos = 0;
+				else if(iPos > 100) iPos = 100;
+				m_pbQuality.Value = iPos;
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

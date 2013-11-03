@@ -259,22 +259,8 @@ namespace KeePass.Forms
 				return;
 			}
 
-			try
-			{
-				Icon ico = Icon.ExtractAssociatedIcon(strPath);
-				img = new Bitmap(m_nIconDim, m_nIconDim, PixelFormat.Format32bppArgb);
-				using(Graphics g = Graphics.FromImage(img))
-				{
-					g.Clear(Color.Transparent);
-					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					g.SmoothingMode = SmoothingMode.HighQuality;
-					g.DrawIcon(ico, new Rectangle(0, 0, m_nIconDim, m_nIconDim));
-				}
-				ico.Dispose();
-
-				return;
-			}
-			catch(Exception) { }
+			img = UIUtil.GetFileIcon(strPath, m_nIconDim, m_nIconDim);
+			if(img != null) return;
 
 			if(Directory.Exists(strPath))
 			{

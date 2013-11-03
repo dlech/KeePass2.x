@@ -24,12 +24,19 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
 
+using KeePassLib;
 using KeePassLib.Native;
 
 namespace KeePass.Util
 {
 	public static partial class ClipboardUtil
 	{
+		// https://sourceforge.net/p/keepass/patches/84/
+		// https://sourceforge.net/p/keepass/patches/85/
+		private const AppRunFlags XSelFlags = (AppRunFlags.GetStdOutput |
+			AppRunFlags.GCKeepAlive | AppRunFlags.DoEvents |
+			AppRunFlags.DisableForms);
+
 		private static string GetStringM()
 		{
 			// string strGtk = GtkGetString();
@@ -56,7 +63,7 @@ namespace KeePass.Util
 			// if(str != null) return str;
 
 			string str = NativeLib.RunConsoleApp("xsel",
-				"--output --clipboard");
+				"--output --clipboard", null, XSelFlags);
 			if(str != null) return str;
 
 			if(Clipboard.ContainsText())
@@ -75,7 +82,8 @@ namespace KeePass.Util
 
 			if(string.IsNullOrEmpty(str))
 			{
-				NativeLib.RunConsoleApp("xsel", "--delete --clipboard");
+				NativeLib.RunConsoleApp("xsel", "--delete --clipboard",
+					null, XSelFlags);
 
 				try { Clipboard.Clear(); }
 				catch(Exception) { Debug.Assert(false); }
@@ -84,7 +92,7 @@ namespace KeePass.Util
 			}
 
 			string r = NativeLib.RunConsoleApp("xsel",
-				"--input --clipboard", str);
+				"--input --clipboard", str, XSelFlags);
 			if(r != null) return;
 
 			try { Clipboard.SetText(str); }

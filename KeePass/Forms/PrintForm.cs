@@ -260,8 +260,10 @@ namespace KeePass.Forms
 			bool bPassword = m_cbPassword.Checked, bURL = m_cbUrl.Checked;
 			bool bNotes = m_cbNotes.Checked;
 			bool bCreation = m_cbCreation.Checked, bLastMod = m_cbLastMod.Checked;
-			bool bLastAcc = m_cbLastAccess.Checked, bExpire = m_cbExpire.Checked;
+			// bool bLastAcc = m_cbLastAccess.Checked;
+			bool bExpire = m_cbExpire.Checked;
 			bool bAutoType = m_cbAutoType.Checked;
+			bool bTags = m_cbTags.Checked;
 			bool bCustomStrings = m_cbCustomStrings.Checked;
 
 			bool bMonoPasswords = m_cbMonospaceForPasswords.Checked;
@@ -311,9 +313,10 @@ namespace KeePass.Forms
 				if(bURL) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Url) + strHTdExit);
 				if(bNotes) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Notes) + strHTdExit);
 				if(bCreation) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.CreationTime) + strHTdExit);
-				if(bLastAcc) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastAccessTime) + strHTdExit);
+				// if(bLastAcc) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastAccessTime) + strHTdExit);
 				if(bLastMod) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastModificationTime) + strHTdExit);
 				if(bExpire) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.ExpiryTime) + strHTdExit);
+				if(bTags) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Tags) + strHTdExit);
 				sbH.Append("</tr>"); // No terminating \r\n
 
 				strTableInit += sbH.ToString();
@@ -350,12 +353,15 @@ namespace KeePass.Forms
 
 					WriteTabularIf(bCreation, sb, TimeUtil.ToDisplayString(
 						pe.CreationTime), strCellPre, strCellPost);
-					WriteTabularIf(bLastAcc, sb, TimeUtil.ToDisplayString(
-						pe.LastAccessTime), strCellPre, strCellPost);
+					// WriteTabularIf(bLastAcc, sb, TimeUtil.ToDisplayString(
+					//	pe.LastAccessTime), strCellPre, strCellPost);
 					WriteTabularIf(bLastMod, sb, TimeUtil.ToDisplayString(
 						pe.LastModificationTime), strCellPre, strCellPost);
 					WriteTabularIf(bExpire, sb, (pe.Expires ? TimeUtil.ToDisplayString(
 						pe.ExpiryTime) : KPRes.NeverExpires), strCellPre, strCellPost);
+
+					WriteTabularIf(bTags, sb, StrUtil.TagsToString(pe.Tags, true),
+						strCellPre, strCellPost);
 
 					sb.AppendLine("</tr>");
 					return true;
@@ -378,8 +384,8 @@ namespace KeePass.Forms
 					if(bNotes) WriteDetailsLine(sb, KPRes.Notes, pe.Strings.ReadSafe(PwDefs.NotesField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bCreation) WriteDetailsLine(sb, KPRes.CreationTime, TimeUtil.ToDisplayString(
 						pe.CreationTime), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
-					if(bLastAcc) WriteDetailsLine(sb, KPRes.LastAccessTime, TimeUtil.ToDisplayString(
-						pe.LastAccessTime), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+					// if(bLastAcc) WriteDetailsLine(sb, KPRes.LastAccessTime, TimeUtil.ToDisplayString(
+					//	pe.LastAccessTime), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bLastMod) WriteDetailsLine(sb, KPRes.LastModificationTime, TimeUtil.ToDisplayString(
 						pe.LastModificationTime), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bExpire) WriteDetailsLine(sb, KPRes.ExpiryTime, (pe.Expires ? TimeUtil.ToDisplayString(
@@ -392,6 +398,11 @@ namespace KeePass.Forms
 								": " + a.Sequence, bSmallMono, bMonoPasswords,
 								strFontInit, strFontExit);
 					}
+
+					if(bTags)
+						WriteDetailsLine(sb, KPRes.Tags, StrUtil.TagsToString(
+							pe.Tags, true), bSmallMono, bMonoPasswords, strFontInit,
+							strFontExit);
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
@@ -497,6 +508,8 @@ namespace KeePass.Forms
 			string strValue, bool bSmallMono, bool bMonoPasswords, string strFontInit,
 			string strFontExit)
 		{
+			if(string.IsNullOrEmpty(strValue)) return;
+
 			KeyValuePair<string, ProtectedString> kvp = new KeyValuePair<string, ProtectedString>(strIndex,
 				new ProtectedString(false, strValue));
 
@@ -563,8 +576,10 @@ namespace KeePass.Forms
 		{
 			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
 				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
-				m_cbLastAccess.Checked = m_cbLastMod.Checked = m_cbExpire.Checked =
-				m_cbAutoType.Checked = m_cbGroups.Checked = m_cbCustomStrings.Checked = true;
+				// m_cbLastAccess.Checked =
+				m_cbLastMod.Checked = m_cbExpire.Checked =
+				m_cbAutoType.Checked = m_cbTags.Checked = m_cbGroups.Checked =
+				m_cbCustomStrings.Checked = true;
 			UpdateUIState();
 		}
 
@@ -572,8 +587,10 @@ namespace KeePass.Forms
 		{
 			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
 				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
-				m_cbLastAccess.Checked = m_cbLastMod.Checked = m_cbExpire.Checked =
-				m_cbAutoType.Checked = m_cbGroups.Checked = m_cbCustomStrings.Checked = false;
+				// m_cbLastAccess.Checked =
+				m_cbLastMod.Checked = m_cbExpire.Checked =
+				m_cbAutoType.Checked = m_cbTags.Checked = m_cbGroups.Checked =
+				m_cbCustomStrings.Checked = false;
 			UpdateUIState();
 		}
 

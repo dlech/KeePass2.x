@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -592,9 +592,9 @@ namespace KeePassLib.Cryptography
 				case '\u00D1':
 				case '\u00F1': ch = 'n'; break;
 				case '0':
-				case '°':
 				case '*':
-				case '\u00A4':
+				case '\u00A4': // Currency
+				case '\u00B0': // Degree
 				case '\u00D8':
 				case '\u00F8': ch = 'o'; break;
 				case '\u00AE': ch = 'r'; break;

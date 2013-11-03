@@ -138,11 +138,17 @@ namespace KeePassLib.Cryptography
 			ms.Write(pb, 0, pb.Length);
 
 #if (!KeePassLibSD && !KeePassRT)
-			Point pt = Cursor.Position;
-			pb = MemUtil.UInt32ToBytes((uint)pt.X);
-			ms.Write(pb, 0, pb.Length);
-			pb = MemUtil.UInt32ToBytes((uint)pt.Y);
-			ms.Write(pb, 0, pb.Length);
+			// In try-catch for systems without GUI;
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/20335b73/
+			try
+			{
+				Point pt = Cursor.Position;
+				pb = MemUtil.UInt32ToBytes((uint)pt.X);
+				ms.Write(pb, 0, pb.Length);
+				pb = MemUtil.UInt32ToBytes((uint)pt.Y);
+				ms.Write(pb, 0, pb.Length);
+			}
+			catch(Exception) { }
 #endif
 
 			pb = MemUtil.UInt32ToBytes((uint)rWeak.Next());

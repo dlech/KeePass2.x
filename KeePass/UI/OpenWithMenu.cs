@@ -202,24 +202,7 @@ namespace KeePass.UI
 			if(string.IsNullOrEmpty(strName))
 				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(strPath));
 
-			Image img = null;
-			try
-			{
-				Icon ico = Icon.ExtractAssociatedIcon(strPath);
-				if(ico == null) throw new InvalidOperationException();
-
-				img = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
-				using(Graphics g = Graphics.FromImage(img))
-				{
-					g.Clear(Color.Transparent);
-					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					g.SmoothingMode = SmoothingMode.HighQuality;
-					g.DrawIcon(ico, new Rectangle(0, 0, img.Width, img.Height));					
-				}
-
-				ico.Dispose();
-			}
-			catch(Exception) { Debug.Assert(false); }
+			Image img = UIUtil.GetFileIcon(strPath, 16, 16);
 
 			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
 			OpenWithItem owi = OpenWithItem.Create(strPath, strMenuText,

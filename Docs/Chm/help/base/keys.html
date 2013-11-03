@@ -239,26 +239,47 @@ prompt dialogs. These values can be bitwise combinations of one or more of
 the following flags:<br />
 <br />
 <table class="tablebox75">
-<tr><th>Flag (Hex)</th><th>Flag (Dec)</th><th>Description</th></tr>
-<tr><td align="right">0x0</td><td align="right">0</td><td>Don't force any states (default).</td></tr>
-<tr><td align="right">0x1</td><td align="right">1</td><td>Enable password.</td></tr>
-<tr><td align="right">0x2</td><td align="right">2</td><td>Enable key file.</td></tr>
-<tr><td align="right">0x4</td><td align="right">4</td><td>Enable user account.</td></tr>
-<tr><td align="right">0x8</td><td align="right">8</td><td>Enable 'hide password' button.</td></tr>
-<tr><td align="right">0x100</td><td align="right">256</td><td>Disable password.</td></tr>
-<tr><td align="right">0x200</td><td align="right">512</td><td>Disable key file.</td></tr>
-<tr><td align="right">0x400</td><td align="right">1024</td><td>Disable user account.</td></tr>
-<tr><td align="right">0x800</td><td align="right">2048</td><td>Disable 'hide password' button.</td></tr>
-<tr><td align="right">0x10000</td><td align="right">65536</td><td>Check password.</td></tr>
-<tr><td align="right">0x20000</td><td align="right">131072</td><td>Check key file.</td></tr>
-<tr><td align="right">0x40000</td><td align="right">262144</td><td>Check user account.</td></tr>
-<tr><td align="right">0x80000</td><td align="right">524288</td><td>Check 'hide password' option/button.</td></tr>
-<tr><td align="right">0x1000000</td><td align="right">16777216</td><td>Uncheck password.</td></tr>
-<tr><td align="right">0x2000000</td><td align="right">33554432</td><td>Uncheck key file.</td></tr>
-<tr><td align="right">0x4000000</td><td align="right">67108864</td><td>Uncheck user account.</td></tr>
-<tr><td align="right">0x8000000</td><td align="right">134217728</td><td>Uncheck 'hide password' option/button.</td></tr>
+<tr><th style="text-align: right">Flag (Hex)</th><th style="text-align: right">Flag (Dec)</th>
+<th>Description</th></tr>
+<tr><td style="text-align: right">0x0</td><td style="text-align: right">0</td>
+<td>Don't force any states (default).</td></tr>
+<tr><td style="text-align: right">0x1</td><td style="text-align: right">1</td>
+<td>Enable password.</td></tr>
+<tr><td style="text-align: right">0x2</td><td style="text-align: right">2</td>
+<td>Enable key file.</td></tr>
+<tr><td style="text-align: right">0x4</td><td style="text-align: right">4</td>
+<td>Enable user account.</td></tr>
+<tr><td style="text-align: right">0x8</td><td style="text-align: right">8</td>
+<td>Enable 'hide password' button.</td></tr>
+<tr><td style="text-align: right">0x100</td><td style="text-align: right">256</td>
+<td>Disable password.</td></tr>
+<tr><td style="text-align: right">0x200</td><td style="text-align: right">512</td>
+<td>Disable key file.</td></tr>
+<tr><td style="text-align: right">0x400</td><td style="text-align: right">1024</td>
+<td>Disable user account.</td></tr>
+<tr><td style="text-align: right">0x800</td><td style="text-align: right">2048</td>
+<td>Disable 'hide password' button.</td></tr>
+<tr><td style="text-align: right">0x10000</td><td style="text-align: right">65536</td>
+<td>Check password.</td></tr>
+<tr><td style="text-align: right">0x20000</td><td style="text-align: right">131072</td>
+<td>Check key file.</td></tr>
+<tr><td style="text-align: right">0x40000</td><td style="text-align: right">262144</td>
+<td>Check user account.</td></tr>
+<tr><td style="text-align: right">0x80000</td><td style="text-align: right">524288</td>
+<td>Check 'hide password' option/button.</td></tr>
+<tr><td style="text-align: right">0x1000000</td><td style="text-align: right">16777216</td>
+<td>Uncheck password.</td></tr>
+<tr><td style="text-align: right">0x2000000</td><td style="text-align: right">33554432</td>
+<td>Uncheck key file.</td></tr>
+<tr><td style="text-align: right">0x4000000</td><td style="text-align: right">67108864</td>
+<td>Uncheck user account.</td></tr>
+<tr><td style="text-align: right">0x8000000</td><td style="text-align: right">134217728</td>
+<td>Uncheck 'hide password' option/button.</td></tr>
 </table>
 
+<br />
+The values of <code>KeyCreationFlags</code> and <code>KeyPromptFlags</code>
+must be specified in decimal notation.<br />
 <br />
 For example, if you want to enforce using the user account option, you could
 check and disable the control (such that the user can't uncheck it anymore)

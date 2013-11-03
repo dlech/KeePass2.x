@@ -385,7 +385,7 @@ namespace KeePass.Ecas
 
 		private static void CloseDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			Program.MainForm.CloseDocument(null, false, false);
+			Program.MainForm.CloseDocument(null, false, false, true);
 		}
 
 		private static void ActivateDatabaseTab(EcasAction a, EcasContext ctx)

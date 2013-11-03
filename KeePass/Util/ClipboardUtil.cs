@@ -451,7 +451,7 @@ namespace KeePass.Util
 			return null;
 		}
 
-		private static DataObject CreateProtectedDataObject(string strText)
+		/* private static DataObject CreateProtectedDataObject(string strText)
 		{
 			DataObject d = new DataObject();
 			AttachIgnoreFormat(d);
@@ -487,7 +487,7 @@ namespace KeePass.Util
 				doData.SetData(ClipboardIgnoreFormatName, false, PwDefs.ProductName);
 			}
 			catch(Exception) { Debug.Assert(false); }
-		}
+		} */
 
 		public static bool ContainsText()
 		{

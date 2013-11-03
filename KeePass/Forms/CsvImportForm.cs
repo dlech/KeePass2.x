@@ -60,9 +60,10 @@ namespace KeePass.Forms
 			Notes,
 			CustomString,
 			CreationTime,
-			LastAccessTime,
+			// LastAccessTime,
 			LastModTime,
 			ExpiryTime,
+			Tags,
 
 			Count, // Last enum item + 1
 			First = 0
@@ -295,12 +296,14 @@ namespace KeePass.Forms
 				strText = KPRes.String;
 			else if(t == CsvFieldType.CreationTime)
 				strText = KPRes.CreationTime;
-			else if(t == CsvFieldType.LastAccessTime)
-				strText = KPRes.LastAccessTime;
+			// else if(t == CsvFieldType.LastAccessTime)
+			//	strText = KPRes.LastAccessTime;
 			else if(t == CsvFieldType.LastModTime)
 				strText = KPRes.LastModificationTime;
 			else if(t == CsvFieldType.ExpiryTime)
 				strText = KPRes.ExpiryTime;
+			else if(t == CsvFieldType.Tags)
+				strText = KPRes.Tags;
 			else { Debug.Assert(false); strText = KPRes.Unknown; }
 
 			return strText;
@@ -572,8 +575,8 @@ namespace KeePass.Forms
 							PwDefs.NotesField : cfi.Name), strField, m_pwDatabase);
 					else if(cfi.Type == CsvFieldType.CreationTime)
 						pe.CreationTime = ParseDateTime(ref strField, cfi, dtNow);
-					else if(cfi.Type == CsvFieldType.LastAccessTime)
-						pe.LastAccessTime = ParseDateTime(ref strField, cfi, dtNow);
+					// else if(cfi.Type == CsvFieldType.LastAccessTime)
+					//	pe.LastAccessTime = ParseDateTime(ref strField, cfi, dtNow);
 					else if(cfi.Type == CsvFieldType.LastModTime)
 						pe.LastModificationTime = ParseDateTime(ref strField, cfi, dtNow);
 					else if(cfi.Type == CsvFieldType.ExpiryTime)
@@ -582,6 +585,12 @@ namespace KeePass.Forms
 						pe.ExpiryTime = ParseDateTime(ref strField, cfi, dtNow,
 							out bParseSuccess);
 						pe.Expires = (bParseSuccess && (pe.ExpiryTime != dtNoExpire));
+					}
+					else if(cfi.Type == CsvFieldType.Tags)
+					{
+						List<string> lTags = StrUtil.StringToTags(strField);
+						foreach(string strTag in lTags)
+							pe.AddTag(strTag);
 					}
 					else { Debug.Assert(false); }
 
@@ -614,14 +623,14 @@ namespace KeePass.Forms
 			}
 		}
 
-		private DateTime ParseDateTime(ref string strData, CsvFieldInfo cfi,
+		private static DateTime ParseDateTime(ref string strData, CsvFieldInfo cfi,
 			DateTime dtDefault)
 		{
 			bool bDummy;
 			return ParseDateTime(ref strData, cfi, dtDefault, out bDummy);
 		}
 
-		private DateTime ParseDateTime(ref string strData, CsvFieldInfo cfi,
+		private static DateTime ParseDateTime(ref string strData, CsvFieldInfo cfi,
 			DateTime dtDefault, out bool bSuccess)
 		{
 			DateTime? odt = null;
@@ -820,15 +829,15 @@ namespace KeePass.Forms
 					return new CsvFieldInfo(CsvFieldType.CreationTime, null, null);
 			}
 
-			string[] vLastAccess = new string[] {
-				"Last Access", "Last Access Time",
-				KPRes.LastAccessTime
-			};
-			foreach(string strLastAccess in vLastAccess)
-			{
-				if(strName.Equals(strLastAccess, StrUtil.CaseIgnoreCmp))
-					return new CsvFieldInfo(CsvFieldType.LastAccessTime, null, null);
-			}
+			// string[] vLastAccess = new string[] {
+			//	"Last Access", "Last Access Time",
+			//	KPRes.LastAccessTime
+			// };
+			// foreach(string strLastAccess in vLastAccess)
+			// {
+			//	if(strName.Equals(strLastAccess, StrUtil.CaseIgnoreCmp))
+			//		return new CsvFieldInfo(CsvFieldType.LastAccessTime, null, null);
+			// }
 
 			string[] vLastMod = new string[] {
 				"Last Modification", "Last Mod", "Last Modification Time",
@@ -851,12 +860,22 @@ namespace KeePass.Forms
 					return new CsvFieldInfo(CsvFieldType.ExpiryTime, null, null);
 			}
 
+			string[] vTags = new string[] {
+				"Tags", "Tag", KPRes.Tags, KPRes.Tag
+			};
+			foreach(string strTag in vTags)
+			{
+				if(strName.Equals(strTag, StrUtil.CaseIgnoreCmp))
+					return new CsvFieldInfo(CsvFieldType.Tags, null, null);
+			}
+
 			return null;
 		}
 
 		private static bool IsTimeField(CsvFieldType t)
 		{
-			return ((t == CsvFieldType.CreationTime) || (t == CsvFieldType.LastAccessTime) ||
+			return ((t == CsvFieldType.CreationTime) ||
+				// (t == CsvFieldType.LastAccessTime) ||
 				(t == CsvFieldType.LastModTime) || (t == CsvFieldType.ExpiryTime));
 		}
 

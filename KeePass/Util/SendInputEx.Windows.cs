@@ -350,12 +350,23 @@ namespace KeePass.Util
 				m_dictNativeChars = new Dictionary<string, char>();
 				m_dictNativeChars[@"{^}"] = '^';
 				m_dictNativeChars[@"{%}"] = '%';
-				m_dictNativeChars[@"´"] = '´';
-				m_dictNativeChars[@"`"] = '`';
 				m_dictNativeChars[@"@"] = '@';
-				m_dictNativeChars[@"°"] = '°';
-				m_dictNativeChars[@"£"] = '£';
 				m_dictNativeChars[@"|"] = '|';
+				m_dictNativeChars["\u0060"] = '\u0060'; // Grave accent
+				m_dictNativeChars["\u00B4"] = '\u00B4'; // Acute accent
+
+				// https://sourceforge.net/p/keepass/bugs/966/
+				m_dictNativeChars["\u00A3"] = '\u00A3'; // Pound
+				m_dictNativeChars["\u00A8"] = '\u00A8'; // Diaeresis
+				m_dictNativeChars["\u00B0"] = '\u00B0'; // Degree
+
+				// https://sourceforge.net/p/keepass/bugs/1161/
+				m_dictNativeChars[@"#"] = '#';
+				m_dictNativeChars[@"{{}"] = '{';
+				m_dictNativeChars[@"{}}"] = '}';
+				m_dictNativeChars[@"{[}"] = '[';
+				m_dictNativeChars[@"{]}"] = ']';
+				m_dictNativeChars[@"{~}"] = '~';
 
 				List<string> lKeys = new List<string>(m_dictNativeChars.Keys);
 				m_vNativeCharKeys = lKeys.ToArray();

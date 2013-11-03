@@ -54,8 +54,8 @@ namespace KeePassLib
 		{
 			Debug.Assert(pwUuid != null);
 			if(pwUuid == null) throw new ArgumentNullException("pwUuid");
-			Debug.Assert(pwUuid != PwUuid.Zero);
-			if(pwUuid == PwUuid.Zero) throw new ArgumentException("pwUuid == 0");
+			Debug.Assert(!pwUuid.Equals(PwUuid.Zero));
+			if(pwUuid.Equals(PwUuid.Zero)) throw new ArgumentException("pwUuid == 0");
 
 			Debug.Assert(pbImageDataPng != null);
 			if(pbImageDataPng == null) throw new ArgumentNullException("pbImageDataPng");

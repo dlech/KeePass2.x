@@ -203,7 +203,7 @@ namespace KeePass.Ecas
 			bool bUseDefaults = true;
 			if(objDefaults.Type == null) { Debug.Assert(false); } // Optimistic
 			else if(p.Type == null) { Debug.Assert(false); } // Optimistic
-			else if(!objDefaults.Type.EqualsValue(p.Type)) bUseDefaults = false;
+			else if(!objDefaults.Type.Equals(p.Type)) bUseDefaults = false;
 
 			for(int i = 0; i < p.Parameters.Length; ++i)
 			{
@@ -359,7 +359,7 @@ namespace KeePass.Ecas
 				{
 					if(dxType == EcasTypeDxMode.Selection)
 					{
-						if(o.Type.EqualsValue(PwUuid.Zero))
+						if(o.Type.Equals(PwUuid.Zero))
 							cmbTypes.SelectedIndex = 0;
 						else
 						{

@@ -1,3 +1,70 @@
+2013-11-03: 2.24
+- The URL override field in the entry editing dialog is now an
+  editable combo box, where the drop-down list contains
+  suggestions for browser overrides
+- Password quality estimations are now computed in separate
+  threads to improve the UI responsiveness
+- The password generator profile 'Automatically generated
+  passwords for new entries' is now available in the password
+  generator context menu of the entry editing dialog
+- Added UIFlags bit for hiding built-in profiles in the
+  password generator context menu of the entry editing dialog
+- Tags can be included in printouts now
+- Generic CSV importer: added support for importing tags
+- Added support for importing Norton Identity Safe 2013 CSV
+  files
+- Mozilla Bookmarks JSON import: added support for importing
+  tags
+- RoboForm import: URLs are now terminated using a '/', added
+  support for the new file format and for the new note fields
+- Added support for showing modern task dialogs even when no
+  form exists (requiring a theming activation context)
+- KeePass now terminates CtfMon child processes started by
+  .NET/Windows, if they are not terminated automatically
+- Added workarounds for '#', '{', '}', '[', ']', '~' and
+  diaeresis .NET SendKeys issues
+- Added workaround for 'xsel' hanging on Unix-like systems
+- Converted some PNG images as a workaround for a problem in
+  Cairo/LibPNG on Unix-like systems
+- Installer: the version is now shown in the 'Version' field of
+  the item in the Windows 'Programs and Features' dialog
+- TrlUtil: added 'Go to Next Untranslated' command
+- TrlUtil: added shortcut keys
+
+- The 'Open From URL' dialog is now brought to the foreground
+  when trying to perform global auto-type while the database is
+  locked and the main window is minimized to tray
+- Profiles are now shown directly in the password generator
+  context menu of the entry editing dialog
+- After duplicating entries, KeePass now ensures that the
+  copies are visible
+- User names of TAN entries are now dereferenced, if the option
+  for showing dereferenced data in the main window is enabled
+- When creating an entry from a template, the new entry is now
+  selected and focused
+- Empty fields are not included in detailed printouts anymore
+- Enhanced Internet Explorer detection
+- The '-preselect' command line option now works together with
+  relative database file paths
+- Improved quoted app paths parsing
+- Extended culture invariance
+- Improved synchronization performance
+- Improved internal keypress routing
+- Last access times by default are not shown in the UI anymore
+- TrlUtil: improved dialog focusing when showing message boxes
+- KeePassLib/KPScript: improved support for running on systems
+  without any GUI
+- Various code optimizations
+- Minor other improvements
+
+- Fixed a crash that could occur if the option 'Show expired
+  entries (if any)' is enabled and a trigger switches to a
+  different locked database when unlocking a database
+- The tab bar is now updated correctly after closing an
+  inactive database by middle-clicking its tab
+- Column display orders that are unstable with respect to
+  linear auto-adjusting assignment are now restored correctly
+
 2013-07-20: 2.23
 - New password quality estimation algorithm
 - Added toolbar buttons: 'Open URL(s)', 'Copy URL(s) to

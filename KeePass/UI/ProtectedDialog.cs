@@ -79,6 +79,14 @@ namespace KeePass.UI
 
 			ProcessMessagesEx();
 
+			// Creating a window on the new desktop spawns a CtfMon.exe child
+			// process by default. On Windows Vista, this process is terminated
+			// correctly when the desktop is closed. However, on Windows 7 it
+			// isn't terminated (probably a bug); creating multiple desktops
+			// accumulates CtfMon.exe child processes.
+			ChildProcessesSnapshot cpsCtfMons = new ChildProcessesSnapshot(
+				"CtfMon.exe");
+
 			ClipboardEventChainBlocker ccb = new ClipboardEventChainBlocker();
 			byte[] pbClipHash = ClipboardUtil.ComputeHash();
 
@@ -174,6 +182,8 @@ namespace KeePass.UI
 
 			if(bmpBack != null) bmpBack.Dispose();
 
+			cpsCtfMons.TerminateNewChildsAsync(4100);
+
 			// If something failed, show the dialog on the normal desktop
 			if(dr == DialogResult.None)
 			{
@@ -218,15 +228,10 @@ namespace KeePass.UI
 					return;
 				}
 
-				// Creating a window on the new desktop spawns a CtfMon.exe child
-				// process by default. On Windows Vista, this process is terminated
-				// correctly when the desktop is closed. However, on Windows 7 it
-				// isn't terminated (probably a bug); creating multiple desktops
-				// accumulates CtfMon.exe child processes. In order to prevent this,
-				// we simply disable IME for the new desktop thread (CtfMon.exe then
-				// isn't loaded automatically).
-				try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
-				catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
+				// Disabling IME is not required anymore; we terminate
+				// CtfMon.exe child processes manually
+				// try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
+				// catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
 
 				ProcessMessagesEx();
 

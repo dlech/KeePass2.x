@@ -140,8 +140,13 @@ namespace KeePass.Forms
 			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
 			m_cmbKeyFile.SelectedIndex = 0;
 
-			if((Program.CommandLineArgs.FileName != null) &&
-				(m_ioInfo.Path == Program.CommandLineArgs.FileName))
+			// Do not directly compare with Program.CommandLineArgs.FileName,
+			// because this may be a relative path instead of an absolute one
+			string strCmdLineFile = Program.CommandLineArgs.FileName;
+			if((strCmdLineFile != null) && (Program.MainForm != null))
+				strCmdLineFile = Program.MainForm.IocFromCommandLine().Path;
+			if((strCmdLineFile != null) && strCmdLineFile.Equals(m_ioInfo.Path,
+				StrUtil.CaseIgnoreCmp))
 			{
 				string str;
 

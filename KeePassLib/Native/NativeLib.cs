@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Threading;
 using System.Diagnostics;
 
 using KeePassLib.Utility;
@@ -115,39 +117,97 @@ namespace KeePassLib.Native
 		public static string RunConsoleApp(string strAppPath, string strParams,
 			string strStdInput)
 		{
+			return RunConsoleApp(strAppPath, strParams, strStdInput,
+				(AppRunFlags.GetStdOutput | AppRunFlags.WaitForExit));
+		}
+
+		private delegate string RunProcessDelegate();
+
+		public static string RunConsoleApp(string strAppPath, string strParams,
+			string strStdInput, AppRunFlags f)
+		{
 			if(strAppPath == null) throw new ArgumentNullException("strAppPath");
 			if(strAppPath.Length == 0) throw new ArgumentException("strAppPath");
 
-			try
+			bool bStdOut = ((f & AppRunFlags.GetStdOutput) != AppRunFlags.None);
+
+			RunProcessDelegate fnRun = delegate()
 			{
-				ProcessStartInfo psi = new ProcessStartInfo();
-
-				psi.CreateNoWindow = true;
-				psi.FileName = strAppPath;
-				psi.WindowStyle = ProcessWindowStyle.Hidden;
-				psi.UseShellExecute = false;
-				psi.RedirectStandardOutput = true;
-
-				if(strStdInput != null) psi.RedirectStandardInput = true;
-
-				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
-
-				Process p = Process.Start(psi);
-
-				if(strStdInput != null)
+				try
 				{
-					p.StandardInput.Write(strStdInput);
-					p.StandardInput.Close();
+					ProcessStartInfo psi = new ProcessStartInfo();
+
+					psi.CreateNoWindow = true;
+					psi.FileName = strAppPath;
+					psi.WindowStyle = ProcessWindowStyle.Hidden;
+					psi.UseShellExecute = false;
+					psi.RedirectStandardOutput = bStdOut;
+
+					if(strStdInput != null) psi.RedirectStandardInput = true;
+
+					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+
+					Process p = Process.Start(psi);
+
+					if(strStdInput != null)
+					{
+						p.StandardInput.Write(strStdInput);
+						p.StandardInput.Close();
+					}
+
+					string strOutput = string.Empty;
+					if(bStdOut) strOutput = p.StandardOutput.ReadToEnd();
+
+					if((f & AppRunFlags.WaitForExit) != AppRunFlags.None)
+						p.WaitForExit();
+					else if((f & AppRunFlags.GCKeepAlive) != AppRunFlags.None)
+					{
+						Thread th = new Thread(delegate()
+						{
+							try { p.WaitForExit(); }
+							catch(Exception) { Debug.Assert(false); }
+						});
+						th.Start();
+					}
+
+					return strOutput;
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return null;
+			};
+
+			if((f & AppRunFlags.DoEvents) != AppRunFlags.None)
+			{
+				List<Form> lDisabledForms = new List<Form>();
+				if((f & AppRunFlags.DisableForms) != AppRunFlags.None)
+				{
+					foreach(Form form in Application.OpenForms)
+					{
+						if(!form.Enabled) continue;
+
+						lDisabledForms.Add(form);
+						form.Enabled = false;
+					}
 				}
 
-				string strOutput = p.StandardOutput.ReadToEnd();
-				p.WaitForExit();
+				IAsyncResult ar = fnRun.BeginInvoke(null, null);
 
-				return strOutput;
+				while(!ar.AsyncWaitHandle.WaitOne(0))
+				{
+					Application.DoEvents();
+					Thread.Sleep(2);
+				}
+
+				string strRet = fnRun.EndInvoke(ar);
+
+				for(int i = lDisabledForms.Count - 1; i >= 0; --i)
+					lDisabledForms[i].Enabled = true;
+
+				return strRet;
 			}
-			catch(Exception) { Debug.Assert(false); }
 
-			return null;
+			return fnRun();
 		}
 #endif
 

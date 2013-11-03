@@ -179,9 +179,14 @@ namespace KeePass.Util
 
 		private static int CompareBySigLengthRev(StrEncodingInfo a, StrEncodingInfo b)
 		{
+			Debug.Assert((a != null) && (b != null));
+
 			int na = 0, nb = 0;
-			if(a.StartSignature != null) na = a.StartSignature.Length;
-			if(b.StartSignature != null) nb = b.StartSignature.Length;
+			if((a != null) && (a.StartSignature != null))
+				na = a.StartSignature.Length;
+			if((b != null) && (b.StartSignature != null))
+				nb = b.StartSignature.Length;
+
 			return -(na.CompareTo(nb));
 		}
 	}

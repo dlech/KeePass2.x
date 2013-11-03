@@ -40,7 +40,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasConditionType t in m_conditions)
 			{
-				if(t.Type.EqualsValue(uuidType))
+				if(t.Type.Equals(uuidType))
 					return true;
 			}
 
@@ -65,7 +65,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasConditionType t in m_conditions)
 			{
-				if(t.Type.EqualsValue(uuid)) return t;
+				if(t.Type.Equals(uuid)) return t;
 			}
 
 			return null;
@@ -77,7 +77,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasConditionType t in m_conditions)
 			{
-				if(t.Type.EqualsValue(c.Type))
+				if(t.Type.Equals(c.Type))
 					return t.EvaluateMethod(c, ctx);
 			}
 

@@ -62,7 +62,7 @@ namespace KeePassLib.Serialization
 		private static bool m_bSslCertsAcceptInvalid = false;
 		internal static bool SslCertsAcceptInvalid
 		{
-			get { return m_bSslCertsAcceptInvalid; }
+			// get { return m_bSslCertsAcceptInvalid; }
 			set { m_bSslCertsAcceptInvalid = value; }
 		}
 #endif

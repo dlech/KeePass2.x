@@ -100,6 +100,9 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
 
+		// [DllImport("User32.dll")]
+		// internal static extern IntPtr GetActiveWindow();
+
 		[DllImport("User32.dll")]
 		private static extern IntPtr GetForegroundWindow(); // Private, is wrapped
 
@@ -260,9 +263,9 @@ namespace KeePass.Native
 		[DllImport("Kernel32.dll")]
 		internal static extern uint GetCurrentThreadId();
 
-		[DllImport("Imm32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool ImmDisableIME(uint idThread);
+		// [DllImport("Imm32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool ImmDisableIME(uint idThread);
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateFile(string lpFileName,
@@ -338,9 +341,9 @@ namespace KeePass.Native
 		// internal extern static uint DrawThemeBackground(IntPtr hTheme, IntPtr hdc,
 		//	int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);	
 
-		[DllImport("Gdi32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool DeleteObject(IntPtr hObject);
+		// [DllImport("Gdi32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool DeleteObject(IntPtr hObject);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -374,5 +377,39 @@ namespace KeePass.Native
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
 		internal static extern int MessageBox(IntPtr hWnd, string lpText,
 			string lpCaption, [MarshalAs(UnmanagedType.U4)] MessageBoxFlags uType);
+
+		// [DllImport("User32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool SetProcessDPIAware();
+
+		[DllImport("Kernel32.dll")]
+		internal static extern IntPtr CreateToolhelp32Snapshot(
+			[MarshalAs(UnmanagedType.U4)] ToolHelpFlags dwFlags, uint th32ProcessID);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool Process32First(IntPtr hSnapshot,
+			ref PROCESSENTRY32 lppe);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool Process32Next(IntPtr hSnapshot,
+			ref PROCESSENTRY32 lppe);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto)]
+		internal static extern IntPtr CreateActCtx(ref ACTCTX pActCtx);
+
+		[DllImport("Kernel32.dll")]
+		internal static extern void ReleaseActCtx(IntPtr hActCtx);
+
+		[DllImport("Kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool ActivateActCtx(IntPtr hActCtx,
+			ref UIntPtr lpCookie);
+
+		[DllImport("Kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DeactivateActCtx(uint dwFlags,
+			UIntPtr ulCookie);
 	}
 }

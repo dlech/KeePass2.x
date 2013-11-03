@@ -80,6 +80,21 @@ namespace KeePass.UI
 		Question = 1
 	}
 
+	/* internal enum VtdMsg
+	{
+		Created = 0,
+		Navigated = 1,
+		ButtonClicked = 2,
+		HyperlinkClicked = 3,
+		Timer = 4,
+		Destroyed = 5,
+		RadioButtonClicked = 6,
+		DialogConstructed = 7,
+		VerificationClicked = 8,
+		Help = 9,
+		ExpandoButtonClicked = 10
+	} */
+
 	// Pack = 4 required for 64-bit compatibility
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
 	internal struct VtdButton
@@ -147,7 +162,7 @@ namespace KeePass.UI
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string pszFooter;
 
-		public IntPtr pfCallback; // PFTASKDIALOGCALLBACK
+		public TaskDialogCallbackProc pfCallback;
 		public IntPtr lpCallbackData;
 		public uint cxWidth;
 
@@ -179,11 +194,14 @@ namespace KeePass.UI
 			pszCollapsedControlText = null;
 			hFooterIcon = IntPtr.Zero;
 			pszFooter = null;
-			pfCallback = IntPtr.Zero; // PFTASKDIALOGCALLBACK
+			pfCallback = null;
 			lpCallbackData = IntPtr.Zero;
 			cxWidth = 0;
 		}
 	}
+
+	internal delegate int TaskDialogCallbackProc(IntPtr hwnd, uint uNotification,
+		UIntPtr wParam, IntPtr lParam, IntPtr lpRefData);
 
 	public sealed class VistaTaskDialog
 	{
@@ -195,6 +213,8 @@ namespace KeePass.UI
 		private bool m_bVerification = false;
 
 		private List<VtdButton> m_vButtons = new List<VtdButton>();
+
+		// private IntPtr m_hWnd = IntPtr.Zero;
 
 		public string WindowTitle
 		{
@@ -400,16 +420,25 @@ namespace KeePass.UI
 			try { ButtonsToPtr(); }
 			catch(Exception) { Debug.Assert(false); return false; }
 
+			// m_cfg.pfCallback = this.OnTaskDialogCallback;
+
 			try
 			{
-				if(NativeMethods.TaskDialogIndirect(ref m_cfg, out pnButton,
-					out pnRadioButton, out bVerification) != 0)
-					throw new NotSupportedException();
+				using(new EnableThemingInScope(true))
+				{
+					if(NativeMethods.TaskDialogIndirect(ref m_cfg, out pnButton,
+						out pnRadioButton, out bVerification) != 0)
+						throw new NotSupportedException();
+				}
 			}
 			catch(Exception) { return false; }
 			finally
 			{
-				try { FreeButtonsPtr(); }
+				try
+				{
+					// m_cfg.pfCallback = null;
+					FreeButtonsPtr();
+				}
 				catch(Exception) { Debug.Assert(false); }
 			}
 
@@ -417,6 +446,25 @@ namespace KeePass.UI
 			m_bVerification = bVerification;
 			return true;
 		}
+
+		/* private int OnTaskDialogCallback(IntPtr hwnd, uint uNotification,
+			UIntPtr wParam, IntPtr lParam, IntPtr lpRefData)
+		{
+			if((uNotification == (uint)VtdMsg.Created) ||
+				(uNotification == (uint)VtdMsg.DialogConstructed))
+				UpdateHWnd(hwnd);
+			else if(uNotification == (uint)VtdMsg.Destroyed)
+				UpdateHWnd(IntPtr.Zero);
+
+			return 0;
+		}
+
+		private void UpdateHWnd(IntPtr hWnd)
+		{
+			if(hWnd != m_hWnd) { } // Unregister m_hWnd
+			// Register hWnd
+			m_hWnd = hWnd;
+		} */
 
 		public static bool ShowMessageBox(string strContent, string strMainInstruction,
 			string strWindowTitle, VtdIcon vtdIcon, Form fParent)

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -42,12 +42,16 @@ namespace TrlUtil
 {
 	public partial class MainForm : Form
 	{
+		private const string TrlUtilName = "TrlUtil";
+
 		private KPTranslation m_trl = new KPTranslation();
 		private string m_strFile = string.Empty;
 
 		private ImageList m_ilStr = new ImageList();
 
 		private const string m_strFileFilter = "KeePass Translation (*.lngx)|*.lngx|All Files (*.*)|*.*";
+		private static readonly string[] m_vEmpty = new string[2] {
+			@"<DYN>", @"<>" };
 
 		private KPControlCustomization m_kpccLast = null;
 
@@ -169,8 +173,8 @@ namespace TrlUtil
 				MethodInfo mi = pi.GetGetMethod();
 				if(mi.ReturnType != typeof(string))
 				{
-					MessageBox.Show("Return type is not string:\r\n" +
-						strKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "Return type is not string:\r\n" +
+						strKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -178,8 +182,8 @@ namespace TrlUtil
 				string strEng = (mi.Invoke(null, null) as string);
 				if(strEng == null)
 				{
-					MessageBox.Show("English string is null:\r\n" +
-						strKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "English string is null:\r\n" +
+						strKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -208,8 +212,8 @@ namespace TrlUtil
 				MethodInfo mi = pi.GetGetMethod();
 				if(mi.ReturnType != typeof(string))
 				{
-					MessageBox.Show("Return type is not string:\r\n" +
-						strLibKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "Return type is not string:\r\n" +
+						strLibKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -217,8 +221,8 @@ namespace TrlUtil
 				string strEng = (mi.Invoke(null, null) as string);
 				if(strEng == null)
 				{
-					MessageBox.Show("English string is null:\r\n" +
-						strLibKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "English string is null:\r\n" +
+						strLibKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -299,8 +303,8 @@ namespace TrlUtil
 				MethodInfo mi = pi.GetGetMethod();
 				if(mi.ReturnType != typeof(string))
 				{
-					MessageBox.Show("Return type is not string:\r\n" +
-						strLibSDKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "Return type is not string:\r\n" +
+						strLibSDKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -308,8 +312,8 @@ namespace TrlUtil
 				string strEng = (mi.Invoke(null, null) as string);
 				if(strEng == null)
 				{
-					MessageBox.Show("English string is null:\r\n" +
-						strLibSDKey, "TrlUtil: Fatal error!", MessageBoxButtons.OK,
+					MessageBox.Show(this, "English string is null:\r\n" +
+						strLibSDKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
 				}
@@ -377,8 +381,11 @@ namespace TrlUtil
 
 		private void UpdateUIState()
 		{
-			m_tbFind.Enabled = ((m_tabMain.SelectedTab == m_tabStrings) ||
+			bool bTrlTab = ((m_tabMain.SelectedTab == m_tabStrings) ||
 				(m_tabMain.SelectedTab == m_tabDialogs));
+			m_menuEditNextUntrl.Enabled = bTrlTab;
+			m_tbNextUntrl.Enabled = bTrlTab;
+			m_tbFind.Enabled = bTrlTab;
 		}
 
 		private void OnLinkLangCodeClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -389,7 +396,7 @@ namespace TrlUtil
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(ex.Message, "TrlUtil",
+				MessageBox.Show(this, ex.Message, TrlUtilName,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
@@ -409,7 +416,7 @@ namespace TrlUtil
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(ex.Message, "TrlUtil", MessageBoxButtons.OK,
+				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
 			}
@@ -504,7 +511,7 @@ namespace TrlUtil
 				{
 					int iCurrentImage = tn.ImageIndex, iNewImage;
 
-					if((kpcc.TextEnglish == @"<DYN>") || (kpcc.TextEnglish == @"<>"))
+					if(Array.IndexOf<string>(m_vEmpty, kpcc.TextEnglish) >= 0)
 						iNewImage = ((kpcc.Text.Length == 0) ? m_inxOk : m_inxWarning);
 					else if((kpcc.TextEnglish.Length > 0) && (kpcc.Text.Length > 0))
 						iNewImage = m_inxOk;
@@ -549,7 +556,7 @@ namespace TrlUtil
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(ex.Message, "TrlUtil", MessageBoxButtons.OK,
+				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}
 		}
@@ -558,7 +565,7 @@ namespace TrlUtil
 		{
 			m_trl.Properties.Application = PwDefs.ProductName;
 			m_trl.Properties.ApplicationVersion = PwDefs.VersionString;
-			m_trl.Properties.Generator = "TrlUtil";
+			m_trl.Properties.Generator = TrlUtilName;
 
 			PwUuid pwUuid = new PwUuid(true);
 			m_trl.Properties.FileUuid = pwUuid.ToHexString();
@@ -575,8 +582,10 @@ namespace TrlUtil
 				string strAccel = AccelKeysCheck.Validate(m_trl);
 				if(strAccel != null)
 				{
-					MessageService.ShowWarning("Warning! The following accelerator keys collide:",
-						strAccel, "Click OK to continue saving.");
+					MessageBox.Show(this, "Warning! The following accelerator keys collide:" +
+						MessageService.NewParagraph + strAccel + MessageService.NewParagraph +
+						"Click [OK] to continue saving.", TrlUtilName, MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -594,12 +603,15 @@ namespace TrlUtil
 					string strTrl = kpi.Value;
 					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
 
-					bool bEllEn = (strEn.EndsWith(@"...") || strEn.EndsWith(@"…"));
-					bool bEllTrl = (strTrl.EndsWith(@"...") || strTrl.EndsWith(@"…"));
+					bool bEllEn = (strEn.EndsWith(@"...") || strEn.EndsWith(@"â€¦"));
+					bool bEllTrl = (strTrl.EndsWith(@"...") || strTrl.EndsWith(@"â€¦"));
 
 					if(bEllEn && !bEllTrl)
-						MessageService.ShowWarning("Warning! The English string",
-							strEn, "ends with 3 dots, but the translated string does not:", strTrl);
+						MessageBox.Show(this, "Warning! The English string" +
+							MessageService.NewParagraph + strEn + MessageService.NewParagraph +
+							"ends with 3 dots, but the translated string does not:" +
+							MessageService.NewParagraph + strTrl, TrlUtilName,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}
@@ -634,7 +646,7 @@ namespace TrlUtil
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 
 				ListView.SelectedListViewItemCollection lvsic =
 					m_lvStrings.SelectedItems;
@@ -665,7 +677,7 @@ namespace TrlUtil
 		private void OnStrKeyUp(object sender, KeyEventArgs e)
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 		}
 
 		private void OnFileSaveAs(object sender, EventArgs e)
@@ -772,7 +784,7 @@ namespace TrlUtil
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 
 				TreeNode tn = m_tvControls.SelectedNode;
 				if(tn == null) return;
@@ -789,7 +801,7 @@ namespace TrlUtil
 		private void OnCtrlTrlTextKeyUp(object sender, KeyEventArgs e)
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 		}
 
 		private void UpdatePreviewForm()
@@ -843,7 +855,11 @@ namespace TrlUtil
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
 			try { f(m_trl, IOConnectionInfo.FromPath(ofd.FileName)); }
-			catch(Exception ex) { MessageService.ShowWarning(ex); }
+			catch(Exception ex)
+			{
+				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+			}
 
 			UpdateStringTableUI();
 			UpdateControlTree();
@@ -926,10 +942,10 @@ namespace TrlUtil
 
 				vNodes.Add(tn);
 				if(kpfc != null)
-					vValues.Add(kpfc.Window.Name + "©" + kpfc.Window.TextEnglish +
-						"©" + kpfc.Window.Text);
+					vValues.Add(kpfc.Window.Name + "Â©" + kpfc.Window.TextEnglish +
+						"Â©" + kpfc.Window.Text);
 				else if(kpcc != null)
-					vValues.Add(kpcc.Name + "©" + kpcc.TextEnglish + "©" + kpcc.Text);
+					vValues.Add(kpcc.Name + "Â©" + kpcc.TextEnglish + "Â©" + kpcc.Text);
 				else vValues.Add(tn.Text);
 
 				GetControlTreeItems(tn.Nodes, vNodes, vValues);
@@ -940,7 +956,7 @@ namespace TrlUtil
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 				PerformQuickFind();
 				return;
 			}
@@ -950,7 +966,7 @@ namespace TrlUtil
 		{
 			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
 			{
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 				return;
 			}
 		}
@@ -980,6 +996,74 @@ namespace TrlUtil
 		private static void ImportPo(KPTranslation trlInto, IOConnectionInfo ioc)
 		{
 			TrlImport.ImportPo(trlInto, ioc.Path);
+		}
+
+		private void OnEditNextUntrl(object sender, EventArgs e)
+		{
+			if(m_tabMain.SelectedTab == m_tabStrings)
+			{
+				int nItems = m_lvStrings.Items.Count;
+				if(nItems == 0) { Debug.Assert(false); return; }
+
+				ListViewItem lviStart = m_lvStrings.FocusedItem;
+				int iOffset = ((lviStart != null) ? (lviStart.Index + 1) : 0);
+
+				for(int i = 0; i < nItems; ++i)
+				{
+					int j = ((iOffset + i) % nItems);
+					ListViewItem lvi = m_lvStrings.Items[j];
+					KPStringTableItem kpstItem = (lvi.Tag as KPStringTableItem);
+					if(kpstItem == null) { Debug.Assert(false); continue; }
+
+					if(string.IsNullOrEmpty(kpstItem.Value) &&
+						!string.IsNullOrEmpty(kpstItem.ValueEnglish))
+					{
+						m_lvStrings.EnsureVisible(j);
+						lvi.Selected = true;
+						lvi.Focused = true;
+						UIUtil.SetFocus(m_tbStrTrl, this);
+						return;
+					}
+				}
+			}
+			else if(m_tabMain.SelectedTab == m_tabDialogs)
+			{
+				List<TreeNode> vNodes = new List<TreeNode>();
+				List<string> vValues = new List<string>();
+				GetControlTreeItems(m_tvControls.Nodes, vNodes, vValues);
+
+				int iOffset = vNodes.IndexOf(m_tvControls.SelectedNode) + 1;
+
+				for(int i = 0; i < vNodes.Count; ++i)
+				{
+					int j = ((iOffset + i) % vNodes.Count);
+					TreeNode tn = vNodes[j];
+
+					string strEng = null, strText = null;
+					KPControlCustomization kpcc = (tn.Tag as KPControlCustomization);
+					if(kpcc != null)
+					{
+						strEng = kpcc.TextEnglish;
+						strText = kpcc.Text;
+					}
+
+					if(string.IsNullOrEmpty(strEng) || (Array.IndexOf<string>(
+						m_vEmpty, strEng) >= 0))
+						strText = "Dummy";
+
+					if(string.IsNullOrEmpty(strText))
+					{
+						m_tvControls.SelectedNode = tn;
+						UIUtil.SetFocus(m_tbCtrlTrlText, this);
+						return;
+					}
+				}
+			}
+			else { Debug.Assert(false); return; } // Unsupported tab
+
+			// MessageService.ShowInfo("No untranslated strings found on the current tab page.");
+			MessageBox.Show(this, "No untranslated strings found on the current tab page.",
+				TrlUtilName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }

@@ -93,21 +93,21 @@ namespace KeePass.Ecas
 
 			foreach(EcasTrigger t in m_vTriggers)
 			{
-				if(t.Uuid.EqualsValue(pwUuid)) return t;
+				if(t.Uuid.Equals(pwUuid)) return t;
 
 				foreach(EcasEvent e in t.EventCollection)
 				{
-					if(e.Type.EqualsValue(pwUuid)) return e;
+					if(e.Type.Equals(pwUuid)) return e;
 				}
 
 				foreach(EcasCondition c in t.ConditionCollection)
 				{
-					if(c.Type.EqualsValue(pwUuid)) return c;
+					if(c.Type.Equals(pwUuid)) return c;
 				}
 
 				foreach(EcasAction a in t.ActionCollection)
 				{
-					if(a.Type.EqualsValue(pwUuid)) return a;
+					if(a.Type.Equals(pwUuid)) return a;
 				}
 			}
 

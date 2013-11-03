@@ -40,7 +40,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasActionType t in m_actions)
 			{
-				if(t.Type.EqualsValue(uuidType))
+				if(t.Type.Equals(uuidType))
 					return true;
 			}
 
@@ -65,7 +65,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasActionType t in m_actions)
 			{
-				if(t.Type.EqualsValue(uuid)) return t;
+				if(t.Type.Equals(uuid)) return t;
 			}
 
 			return null;
@@ -77,7 +77,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasActionType t in m_actions)
 			{
-				if(t.Type.EqualsValue(a.Type))
+				if(t.Type.Equals(a.Type))
 				{
 					t.ExecuteMethod(a, ctx);
 					return;

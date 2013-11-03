@@ -54,10 +54,13 @@ namespace KeePass.App.Configuration
 	public enum AceUIFlags : ulong
 	{
 		None = 0,
+
 		DisableOptions = 0x1,
 		DisablePlugins = 0x2,
 		DisableTriggers = 0x4,
-		DisableKeyChangeDays = 0x8
+		DisableKeyChangeDays = 0x8,
+
+		HideBuiltInPwGenPrfInEntryDlg = 0x10000
 	}
 
 	[Flags]

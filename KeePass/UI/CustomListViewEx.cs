@@ -126,7 +126,7 @@ namespace KeePass.UI
 					EnsureVisible(lviChangeTo.Index);
 					UIUtil.SetFocusedItem(this, lviChangeTo, true);
 
-					e.Handled = true;
+					UIUtil.SetHandled(e, true);
 					return true;
 				}
 			}

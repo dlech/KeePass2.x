@@ -170,7 +170,7 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.Url);
 			AddStdAceColumn(l, AceColumnType.Notes);
 			AddStdAceColumn(l, AceColumnType.CreationTime);
-			AddStdAceColumn(l, AceColumnType.LastAccessTime);
+			// AddStdAceColumn(l, AceColumnType.LastAccessTime);
 			AddStdAceColumn(l, AceColumnType.LastModificationTime);
 			AddStdAceColumn(l, AceColumnType.ExpiryTime);
 			AddStdAceColumn(l, AceColumnType.Uuid);

@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataEditorForm));
 			this.m_menuMain = new System.Windows.Forms.MenuStrip();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +46,8 @@
 			this.m_tbFileSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbEditUndo = new System.Windows.Forms.ToolStripButton();
 			this.m_tbEditRedo = new System.Windows.Forms.ToolStripButton();
+			this.m_tbFileSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
 			this.m_toolFormat = new System.Windows.Forms.ToolStrip();
 			this.m_tbFontCombo = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tbFontSizeCombo = new System.Windows.Forms.ToolStripComboBox();
@@ -64,8 +65,6 @@
 			this.m_tbAlignRight = new System.Windows.Forms.ToolStripButton();
 			this.m_statusMain = new System.Windows.Forms.StatusStrip();
 			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
-			this.m_tbFileSep2 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
 			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_menuMain.SuspendLayout();
 			this.m_toolFile.SuspendLayout();
@@ -225,6 +224,19 @@
 			this.m_tbEditRedo.Size = new System.Drawing.Size(23, 22);
 			this.m_tbEditRedo.Click += new System.EventHandler(this.OnEditRedo);
 			// 
+			// m_tbFileSep2
+			// 
+			this.m_tbFileSep2.Name = "m_tbFileSep2";
+			this.m_tbFileSep2.Size = new System.Drawing.Size(6, 25);
+			// 
+			// m_tbFind
+			// 
+			this.m_tbFind.AcceptsReturn = true;
+			this.m_tbFind.Name = "m_tbFind";
+			this.m_tbFind.Size = new System.Drawing.Size(121, 25);
+			this.m_tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyDown);
+			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyUp);
+			// 
 			// m_toolFormat
 			// 
 			this.m_toolFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -287,7 +299,7 @@
 			// m_tbFormatUnderline
 			// 
 			this.m_tbFormatUnderline.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.m_tbFormatUnderline.Image = ((System.Drawing.Image)(resources.GetObject("m_tbFormatUnderline.Image")));
+			this.m_tbFormatUnderline.Image = global::KeePass.Properties.Resources.B16x16_FontUnderline;
 			this.m_tbFormatUnderline.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbFormatUnderline.Name = "m_tbFormatUnderline";
 			this.m_tbFormatUnderline.Size = new System.Drawing.Size(23, 22);
@@ -372,19 +384,6 @@
 			this.m_tssStatusMain.Size = new System.Drawing.Size(593, 17);
 			this.m_tssStatusMain.Spring = true;
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// m_tbFileSep2
-			// 
-			this.m_tbFileSep2.Name = "m_tbFileSep2";
-			this.m_tbFileSep2.Size = new System.Drawing.Size(6, 25);
-			// 
-			// m_tbFind
-			// 
-			this.m_tbFind.AcceptsReturn = true;
-			this.m_tbFind.Name = "m_tbFind";
-			this.m_tbFind.Size = new System.Drawing.Size(121, 25);
-			this.m_tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyDown);
-			this.m_tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnTextFindKeyUp);
 			// 
 			// m_rtbText
 			// 

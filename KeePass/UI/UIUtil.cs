@@ -1142,7 +1142,7 @@ namespace KeePass.UI
 				string str = new string(' ', Math.Abs(8 * ((int)pg.GetLevel() - 1)));
 				str += pg.Name;
 
-				if((uuidToSelect != null) && pg.Uuid.EqualsValue(uuidToSelect))
+				if((uuidToSelect != null) && pg.Uuid.Equals(uuidToSelect))
 					iSelectInner = cmb.Items.Count;
 
 				if(outCreatedItems != null)
@@ -1382,6 +1382,39 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); return false; }
 
 			return true;
+		}
+
+		public static void SetDisplayIndices(ListView lv, int[] v)
+		{
+			// Display indices must be assigned in an ordered way (with
+			// respect to the display indices, not the column indices),
+			// otherwise .NET's automatic adjustments result in
+			// different display indices;
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/5e00cffe/
+
+			if(lv == null) { Debug.Assert(false); return; }
+			if(v == null) { Debug.Assert(false); return; }
+
+			int nCols = lv.Columns.Count;
+			int nMin = Math.Min(nCols, v.Length);
+
+			SortedDictionary<int, int> d = new SortedDictionary<int, int>();
+			for(int i = 0; i < nMin; ++i)
+			{
+				int nIdx = v[i];
+				if((nIdx >= 0) && (nIdx < nCols)) d[nIdx] = i;
+			}
+
+			foreach(KeyValuePair<int, int> kvp in d)
+				lv.Columns[kvp.Value].DisplayIndex = kvp.Key;
+
+#if DEBUG
+			int[] vNew = new int[nMin];
+			for(int i = 0; i < nMin; ++i)
+				vNew[i] = lv.Columns[i].DisplayIndex;
+			Debug.Assert(StrUtil.SerializeIntArray(vNew) ==
+				StrUtil.SerializeIntArray(MemUtil.Mid(v, 0, nMin)));
+#endif
 		}
 
 		public static Color ColorToGrayscale(Color clr)
@@ -2197,6 +2230,9 @@ namespace KeePass.UI
 		{
 			if(img == null) { Debug.Assert(false); return null; }
 
+			// Always create a new bitmap (to allow disposing the returned
+			// image without disposing the original source image)
+
 			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
 			using(Graphics g = Graphics.FromImage(bmp))
 			{
@@ -2259,5 +2295,37 @@ namespace KeePass.UI
 
 			c.Value = bChecked;
 		} */
+
+		public static Image GetFileIcon(string strFilePath, int w, int h)
+		{
+			Image img = null;
+			try
+			{
+				Icon ico = Icon.ExtractAssociatedIcon(strFilePath);
+				if(ico == null) return null;
+
+				img = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(img))
+				{
+					g.Clear(Color.Transparent);
+					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					g.SmoothingMode = SmoothingMode.HighQuality;
+					g.DrawIcon(ico, new Rectangle(0, 0, img.Width, img.Height));
+				}
+
+				ico.Dispose();
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return img;
+		}
+
+		public static void SetHandled(KeyEventArgs e, bool bHandled)
+		{
+			if(e == null) { Debug.Assert(false); return; }
+
+			e.Handled = bHandled;
+			e.SuppressKeyPress = bHandled;
+		}
 	}
 }

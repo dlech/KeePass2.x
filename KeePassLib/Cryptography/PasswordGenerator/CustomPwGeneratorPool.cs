@@ -66,7 +66,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			foreach(CustomPwGenerator pwg in m_vGens)
 			{
-				if(uuid.EqualsValue(pwg.Uuid)) return pwg;
+				if(uuid.Equals(pwg.Uuid)) return pwg;
 			}
 
 			return null;
@@ -90,7 +90,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			for(int i = 0; i < m_vGens.Count; ++i)
 			{
-				if(uuid.EqualsValue(m_vGens[i].Uuid)) return i;
+				if(uuid.Equals(m_vGens[i].Uuid)) return i;
 			}
 
 			return -1;

@@ -41,13 +41,13 @@ namespace TrlUtil
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if(e.KeyCode == Keys.Escape) e.Handled = true;
+			if(e.KeyCode == Keys.Escape) UIUtil.SetHandled(e, true);
 			else base.OnKeyDown(e);
 		}
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if(e.KeyCode == Keys.Escape) e.Handled = true;
+			if(e.KeyCode == Keys.Escape) UIUtil.SetHandled(e, true);
 			else base.OnKeyUp(e);
 		}
 

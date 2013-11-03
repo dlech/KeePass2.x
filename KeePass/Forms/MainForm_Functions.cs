@@ -877,7 +877,7 @@ namespace KeePass.Forms
 				if((lviTarget != null) && (lvi.ImageIndex == (int)PwIcon.Expired))
 					lvi.Font = m_lvEntries.Font;
 
-				if(pe.CustomIconUuid.EqualsValue(PwUuid.Zero))
+				if(pe.CustomIconUuid.Equals(PwUuid.Zero))
 					lvi.ImageIndex = (int)pe.IconId;
 				else
 					lvi.ImageIndex = (int)PwIcon.Count +
@@ -925,6 +925,11 @@ namespace KeePass.Forms
 			if(m_bShowTanIndices && m_bOnlyTans)
 			{
 				string strIndex = pe.Strings.ReadSafe(PwDefs.TanIndexField);
+
+				// KPF 1151
+				if(Program.Config.MainWindow.EntryListShowDerefData &&
+					SprEngine.MightDeref(strIndex))
+					strIndex = AsyncPwListUpdate.SprCompileFn(strIndex, pli);
 
 				if(strIndex.Length > 0) lvi.Text = strIndex;
 				else lvi.Text = PwDefs.TanTitle;
@@ -1040,7 +1045,7 @@ namespace KeePass.Forms
 			TreeNode tnRoot = null;
 			if(pwDb.RootGroup != null)
 			{
-				int nIconID = ((!pwDb.RootGroup.CustomIconUuid.EqualsValue(PwUuid.Zero)) ?
+				int nIconID = ((!pwDb.RootGroup.CustomIconUuid.Equals(PwUuid.Zero)) ?
 					((int)PwIcon.Count + pwDb.GetCustomIconIndex(
 					pwDb.RootGroup.CustomIconUuid)) : (int)pwDb.RootGroup.IconId);
 				if(pwDb.RootGroup.Expires && (pwDb.RootGroup.ExpiryTime <= m_dtCachedNow))
@@ -1277,7 +1282,7 @@ namespace KeePass.Forms
 				bool bExpired = (pg.Expires && (pg.ExpiryTime <= m_dtCachedNow));
 				string strName = pg.Name; // + GetGroupSuffixText(pg);
 
-				int nIconID = ((!pg.CustomIconUuid.EqualsValue(PwUuid.Zero)) ?
+				int nIconID = ((!pg.CustomIconUuid.Equals(PwUuid.Zero)) ?
 					((int)PwIcon.Count + pd.GetCustomIconIndex(pg.CustomIconUuid)) :
 					(int)pg.IconId);
 				if(bExpired) nIconID = (int)PwIcon.Expired;
@@ -1286,7 +1291,7 @@ namespace KeePass.Forms
 				tn.Tag = pg;
 				UIUtil.SetGroupNodeToolTip(tn, pg);
 
-				if(pd.RecycleBinEnabled && pg.Uuid.EqualsValue(pd.RecycleBinUuid) &&
+				if(pd.RecycleBinEnabled && pg.Uuid.Equals(pd.RecycleBinUuid) &&
 					(m_fontItalicTree != null))
 					tn.NodeFont = m_fontItalicTree;
 				else if(bExpired && (m_fontExpired != null))
@@ -1474,8 +1479,8 @@ namespace KeePass.Forms
 
 			EvAppendEntryField(rb, strItemSeparator, KPRes.CreationTime,
 				TimeUtil.ToDisplayString(pe.CreationTime), null);
-			EvAppendEntryField(rb, strItemSeparator, KPRes.LastAccessTime,
-				TimeUtil.ToDisplayString(pe.LastAccessTime), null);
+			// EvAppendEntryField(rb, strItemSeparator, KPRes.LastAccessTime,
+			//	TimeUtil.ToDisplayString(pe.LastAccessTime), null);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.LastModificationTime,
 				TimeUtil.ToDisplayString(pe.LastModificationTime), null);
 
@@ -1818,6 +1823,10 @@ namespace KeePass.Forms
 		{
 			if(!bShowExpired && !bShowSoonToExpire) return;
 
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			// https://sourceforge.net/p/keepass/bugs/1150/
+			if(!pd.IsOpen || (pd.RootGroup == null)) return;
+
 			PwGroup pg = new PwGroup(true, true, string.Empty, PwIcon.Expired);
 			pg.IsVirtual = true;
 
@@ -1837,8 +1846,7 @@ namespace KeePass.Forms
 				return true;
 			};
 
-			m_docMgr.ActiveDatabase.RootGroup.TraverseTree(
-				TraversalMethod.PreOrder, null, eh);
+			pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
 			if((pg.Entries.UCount > 0) || !bOnlyIfExists)
 			{
@@ -2250,7 +2258,7 @@ namespace KeePass.Forms
 
 			foreach(TreeNode tn in tnContainer.Nodes)
 			{
-				if(((PwGroup)tn.Tag).Uuid.EqualsValue(puSearch))
+				if(((PwGroup)tn.Tag).Uuid.Equals(puSearch))
 					return tn;
 
 				if(tn != tnContainer)
@@ -2271,7 +2279,7 @@ namespace KeePass.Forms
 
 			foreach(ListViewItem lvi in m_lvEntries.Items)
 			{
-				if(((PwListItem)lvi.Tag).Entry.Uuid.EqualsValue(puSearch))
+				if(((PwListItem)lvi.Tag).Entry.Uuid.Equals(puSearch))
 					return lvi;
 			}
 
@@ -2602,7 +2610,23 @@ namespace KeePass.Forms
 					// The window restoration function above maybe
 					// restored the window already, therefore only
 					// try to unlock if it's locked *now*
-					if(IsFileLocked(null)) OnFileLock(null, EventArgs.Empty);
+					if(IsFileLocked(null))
+					{
+						// https://sourceforge.net/p/keepass/bugs/1163/
+						bool bFirst = true;
+						EventHandler<GwmWindowEventArgs> eh = delegate(object sender,
+							GwmWindowEventArgs e)
+						{
+							if(!bFirst) return;
+							bFirst = false;
+							GlobalWindowManager.ActivateTopWindow();
+						};
+						GlobalWindowManager.WindowAdded += eh;
+
+						OnFileLock(null, EventArgs.Empty);
+
+						GlobalWindowManager.WindowAdded -= eh;
+					}
 
 					NativeMethods.EnsureForegroundWindow(hPrevWnd);
 				}
@@ -3171,7 +3195,7 @@ namespace KeePass.Forms
 		{
 			PwGroup pgSelect = null;
 
-			if(!pd.LastSelectedGroup.EqualsValue(PwUuid.Zero))
+			if(!pd.LastSelectedGroup.Equals(PwUuid.Zero))
 			{
 				pgSelect = pd.RootGroup.FindGroup(pd.LastSelectedGroup, true);
 				UpdateGroupList(pgSelect);
@@ -3198,7 +3222,8 @@ namespace KeePass.Forms
 			}
 		}
 
-		internal void CloseDocument(PwDocument dsToClose, bool bLocking, bool bExiting)
+		internal void CloseDocument(PwDocument dsToClose, bool bLocking,
+			bool bExiting, bool bUpdateUI)
 		{
 			PwDocument ds = (dsToClose ?? m_docMgr.ActiveDocument);
 			bool bIsActive = object.ReferenceEquals(ds, m_docMgr.ActiveDocument);
@@ -3262,10 +3287,11 @@ namespace KeePass.Forms
 				if(!bLocking)
 				{
 					m_docMgr.ActiveDatabase.UINeedsIconUpdate = true;
-					UpdateUI(true, null, true, null, true, null, false);
 					ResetDefaultFocus(null);
 				}
 			}
+			if(bUpdateUI)
+				UpdateUI(true, null, true, null, true, null, false);
 
 			// NativeMethods.ClearIconicBitmaps(this.Handle);
 
@@ -3301,7 +3327,7 @@ namespace KeePass.Forms
 				IOConnectionInfo ioIoc = pd.IOConnectionInfo;
 				Debug.Assert(ioIoc != null);
 
-				CloseDocument(ds, true, false);
+				CloseDocument(ds, true, false, false);
 				if(pd.IsOpen) continue;
 
 				ds.LockedIoc = ioIoc;
@@ -3327,6 +3353,7 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, true, null, false);
 		}
 
+		// Does not update the UI (for performance when exiting)
 		private bool CloseAllDocuments(bool bExiting)
 		{
 			if(UIIsInteractionBlocked()) { Debug.Assert(false); return false; }
@@ -3339,7 +3366,7 @@ namespace KeePass.Forms
 				PwDocument ds = lDocs[0];
 				if((lDocs.Count == 1) && !ds.Database.IsOpen) break;
 
-				CloseDocument(ds, false, bExiting);
+				CloseDocument(ds, false, bExiting, false);
 				if(ds.Database.IsOpen) return false;
 			}
 
@@ -3570,7 +3597,7 @@ namespace KeePass.Forms
 				UIUtil.SetFocusedItem(m_lvEntries, m_lvEntries.Items[0], true);
 		}
 
-		private void SelectEntries(PwObjectList<PwEntry> lEntries,
+		internal void SelectEntries(PwObjectList<PwEntry> lEntries,
 			bool bDeselectOthers, bool bFocusFirst)
 		{
 			++m_uBlockEntrySelectionEvent;
@@ -3705,7 +3732,7 @@ namespace KeePass.Forms
 			return true;
 		}
 
-		private DialogResult AskIfSynchronizeInstead(IOConnectionInfo ioc)
+		private static DialogResult AskIfSynchronizeInstead(IOConnectionInfo ioc)
 		{
 			VistaTaskDialog dlg = new VistaTaskDialog();
 
@@ -3780,7 +3807,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			if(bHandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(bHandled) UIUtil.SetHandled(e, true);
 			return bHandled;
 		}
 
@@ -3845,7 +3872,7 @@ namespace KeePass.Forms
 
 				bGroupListUpdateRequired = true;
 			}
-			else { Debug.Assert(pgRecycleBin.Uuid.EqualsValue(pdContext.RecycleBinUuid)); }
+			else { Debug.Assert(pgRecycleBin.Uuid.Equals(pdContext.RecycleBinUuid)); }
 		}
 
 		private void DeleteSelectedEntries()
@@ -4105,7 +4132,8 @@ namespace KeePass.Forms
 		internal IOConnectionInfo IocFromCommandLine()
 		{
 			CommandLineArgs args = Program.CommandLineArgs;
-			IOConnectionInfo ioc = IOConnectionInfo.FromPath(args.FileName);
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(args.FileName ??
+				string.Empty);
 
 			if(ioc.IsLocalFile()) // Expand relative path to absolute
 				ioc.Path = UrlUtil.MakeAbsolutePath(UrlUtil.EnsureTerminatingSeparator(
@@ -4253,14 +4281,7 @@ namespace KeePass.Forms
 
 				int[] vDisplayIndices = StrUtil.DeserializeIntArray(
 					Program.Config.MainWindow.EntryListColumnDisplayOrder);
-
-				for(int i = 0; i < Math.Min(m_lvEntries.Columns.Count,
-					vDisplayIndices.Length); ++i)
-				{
-					int nIdx = vDisplayIndices[i];
-					if((nIdx >= 0) && (nIdx < m_lvEntries.Columns.Count))
-						m_lvEntries.Columns[i].DisplayIndex = nIdx;
-				}
+				UIUtil.SetDisplayIndices(m_lvEntries, vDisplayIndices);
 
 				m_lvEntries.EndUpdate();
 				UpdateColumnSortingIcons();

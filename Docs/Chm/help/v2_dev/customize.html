@@ -86,14 +86,25 @@ The elements to disable/hide are specified using the <code>UIFlags</code> value 
 the following flags:</p>
 
 <table class="tablebox75">
-<tr><th>Flag (Hex)</th><th>Flag (Dec)</th><th>Description</th></tr>
-<tr><td align="right">0x0</td><td align="right">0</td><td>Don't force any states (default).</td></tr>
-<tr><td align="right">0x1</td><td align="right">1</td><td>Disable 'Tools' -&gt; 'Options' menu item.</td></tr>
-<tr><td align="right">0x2</td><td align="right">2</td><td>Disable 'Tools' -&gt; 'Plugins' menu item.</td></tr>
-<tr><td align="right">0x4</td><td align="right">4</td><td>Disable 'Tools' -&gt; 'Triggers' menu item.</td></tr>
-<tr><td align="right">0x8</td><td align="right">8</td><td>Disable controls to specify after how many
+<tr><th style="text-align: right">Flag (Hex)</th><th style="text-align: right">Flag (Dec)</th>
+<th>Description</th></tr>
+<tr><td style="text-align: right">0x0</td><td style="text-align: right">0</td>
+<td>Don't force any states (default).</td></tr>
+<tr><td style="text-align: right">0x1</td><td style="text-align: right">1</td>
+<td>Disable 'Tools' -&gt; 'Options' menu item.</td></tr>
+<tr><td style="text-align: right">0x2</td><td style="text-align: right">2</td>
+<td>Disable 'Tools' -&gt; 'Plugins' menu item.</td></tr>
+<tr><td style="text-align: right">0x4</td><td style="text-align: right">4</td>
+<td>Disable 'Tools' -&gt; 'Triggers' menu item.</td></tr>
+<tr><td style="text-align: right">0x8</td><td style="text-align: right">8</td>
+<td>Disable controls to specify after how many
 days the master key should/must be changed.</td></tr>
+<tr><td style="text-align: right">0x10000</td><td style="text-align: right">65536</td>
+<td>Hide built-in profiles in the
+password generator context menu of the entry editing dialog.</td></tr>
 </table>
+
+<p>The value of <code>UIFlags</code> must be specified in decimal notation.</p>
 
 <p>For example, if you want to disable the 'Options' and 'Plugins' items in
 the 'Tools' menu, you'd specify 3 as value for the <code>UIFlags</code> node

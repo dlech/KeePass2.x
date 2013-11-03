@@ -133,8 +133,7 @@ namespace KeePass.Forms
 		{
 			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
 			{
-				e.SuppressKeyPress = true;
-				e.Handled = true;
+				UIUtil.SetHandled(e, true);
 
 				OnBtnGo(sender, e);
 			}

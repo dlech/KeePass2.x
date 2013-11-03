@@ -561,7 +561,8 @@ namespace KeePassLib.Serialization
 				return KdbContext.Meta;
 			else if((ctx == KdbContext.CustomIcon) && (xr.Name == ElemCustomIconItem))
 			{
-				if((m_uuidCustomIconID != PwUuid.Zero) && (m_pbCustomIconData != null))
+				if(!m_uuidCustomIconID.Equals(PwUuid.Zero) &&
+					(m_pbCustomIconData != null))
 					m_pwDatabase.CustomIcons.Add(new PwCustomIcon(
 						m_uuidCustomIconID, m_pbCustomIconData));
 				else { Debug.Assert(false); }
@@ -588,7 +589,7 @@ namespace KeePassLib.Serialization
 			}
 			else if((ctx == KdbContext.Group) && (xr.Name == ElemGroup))
 			{
-				if(PwUuid.Zero.EqualsValue(m_ctxGroup.Uuid))
+				if(PwUuid.Zero.Equals(m_ctxGroup.Uuid))
 					m_ctxGroup.Uuid = new PwUuid(true); // No assert (import)
 
 				m_ctxGroups.Pop();
@@ -609,7 +610,7 @@ namespace KeePassLib.Serialization
 			else if((ctx == KdbContext.Entry) && (xr.Name == ElemEntry))
 			{
 				// Create new UUID if absent
-				if(PwUuid.Zero.EqualsValue(m_ctxEntry.Uuid))
+				if(PwUuid.Zero.Equals(m_ctxEntry.Uuid))
 					m_ctxEntry.Uuid = new PwUuid(true); // No assert (import)
 
 				if(m_bEntryInHistory)
@@ -717,6 +718,9 @@ namespace KeePassLib.Serialization
 			string str = ReadString(xr);
 
 			int n;
+			if(StrUtil.TryParseIntInvariant(str, out n)) return n;
+
+			// Backward compatibility
 			if(StrUtil.TryParseInt(str, out n)) return n;
 
 			Debug.Assert(false);
@@ -728,6 +732,9 @@ namespace KeePassLib.Serialization
 			string str = ReadString(xr);
 
 			uint u;
+			if(StrUtil.TryParseUIntInvariant(str, out u)) return u;
+
+			// Backward compatibility
 			if(StrUtil.TryParseUInt(str, out u)) return u;
 
 			Debug.Assert(false);
@@ -739,6 +746,9 @@ namespace KeePassLib.Serialization
 			string str = ReadString(xr);
 
 			long l;
+			if(StrUtil.TryParseLongInvariant(str, out l)) return l;
+
+			// Backward compatibility
 			if(StrUtil.TryParseLong(str, out l)) return l;
 
 			Debug.Assert(false);
@@ -750,6 +760,9 @@ namespace KeePassLib.Serialization
 			string str = ReadString(xr);
 
 			ulong u;
+			if(StrUtil.TryParseULongInvariant(str, out u)) return u;
+
+			// Backward compatibility
 			if(StrUtil.TryParseULong(str, out u)) return u;
 
 			Debug.Assert(false);

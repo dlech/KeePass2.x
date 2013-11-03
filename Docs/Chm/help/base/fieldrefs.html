@@ -106,17 +106,19 @@ password of the entry having 46C9B1FFBD4ABC4BBB260C6190BAD20C as UUID.</p>
 
 Referencing fields of other entries only works with standard fields, not
 with custom user strings.
-You can use the <code>O</code> code to make
-KeePass search custom string fields (to identify the referenced source entry),
-but <code>O</code> cannot be used to retrieve data from custom fields (i.e. the
-code can't be used as <i>WantedField</i>).
 If you want to reference a custom user string, you need
-to place a redirection in a standard field using <code>{S:<i>&lt;Name&gt;</i>}</code>,
+to place a redirection in a standard field of the entry with the custom string,
+using <code>{S:<i>&lt;Name&gt;</i>}</code>,
 and reference the standard field.<br />
 <br />
 Custom strings can locally (i.e. within an entry) be referenced using
 <code>{S:<i>&lt;Name&gt;</i>}</code>,
-see the page <a href="placeholders.html">Placeholders</a> for details.
+see the page <a href="placeholders.html">Placeholders</a> for details.<br />
+<br />
+You can use the <code>O</code> code to make KeePass search the database for
+custom string fields (to identify the referenced source entry),
+but <code>O</code> cannot be used to retrieve data from custom fields (i.e. the
+code can't be used as <i>WantedField</i>).
 
 
 

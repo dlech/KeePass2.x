@@ -51,7 +51,6 @@
 			this.m_linkDeselectAllFields = new System.Windows.Forms.LinkLabel();
 			this.m_linkSelectAllFields = new System.Windows.Forms.LinkLabel();
 			this.m_cbAutoType = new System.Windows.Forms.CheckBox();
-			this.m_cbLastAccess = new System.Windows.Forms.CheckBox();
 			this.m_cbLastMod = new System.Windows.Forms.CheckBox();
 			this.m_cbCreation = new System.Windows.Forms.CheckBox();
 			this.m_cbExpire = new System.Windows.Forms.CheckBox();
@@ -71,6 +70,7 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnConfigPrinter = new System.Windows.Forms.Button();
 			this.m_btnPrintPreview = new System.Windows.Forms.Button();
+			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.m_tabDataLayout.SuspendLayout();
@@ -257,12 +257,12 @@
 			// 
 			// m_grpFields
 			// 
+			this.m_grpFields.Controls.Add(this.m_cbTags);
 			this.m_grpFields.Controls.Add(this.m_cbCustomStrings);
 			this.m_grpFields.Controls.Add(this.m_cbGroups);
 			this.m_grpFields.Controls.Add(this.m_linkDeselectAllFields);
 			this.m_grpFields.Controls.Add(this.m_linkSelectAllFields);
 			this.m_grpFields.Controls.Add(this.m_cbAutoType);
-			this.m_grpFields.Controls.Add(this.m_cbLastAccess);
 			this.m_grpFields.Controls.Add(this.m_cbLastMod);
 			this.m_grpFields.Controls.Add(this.m_cbCreation);
 			this.m_grpFields.Controls.Add(this.m_cbExpire);
@@ -323,22 +323,12 @@
 			// m_cbAutoType
 			// 
 			this.m_cbAutoType.AutoSize = true;
-			this.m_cbAutoType.Location = new System.Drawing.Point(464, 42);
+			this.m_cbAutoType.Location = new System.Drawing.Point(360, 42);
 			this.m_cbAutoType.Name = "m_cbAutoType";
 			this.m_cbAutoType.Size = new System.Drawing.Size(71, 17);
-			this.m_cbAutoType.TabIndex = 9;
+			this.m_cbAutoType.TabIndex = 8;
 			this.m_cbAutoType.Text = "Auto-type";
 			this.m_cbAutoType.UseVisualStyleBackColor = true;
-			// 
-			// m_cbLastAccess
-			// 
-			this.m_cbLastAccess.AutoSize = true;
-			this.m_cbLastAccess.Location = new System.Drawing.Point(244, 42);
-			this.m_cbLastAccess.Name = "m_cbLastAccess";
-			this.m_cbLastAccess.Size = new System.Drawing.Size(105, 17);
-			this.m_cbLastAccess.TabIndex = 7;
-			this.m_cbLastAccess.Text = "Last access time";
-			this.m_cbLastAccess.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastMod
 			// 
@@ -363,10 +353,10 @@
 			// m_cbExpire
 			// 
 			this.m_cbExpire.AutoSize = true;
-			this.m_cbExpire.Location = new System.Drawing.Point(360, 42);
+			this.m_cbExpire.Location = new System.Drawing.Point(244, 42);
 			this.m_cbExpire.Name = "m_cbExpire";
 			this.m_cbExpire.Size = new System.Drawing.Size(76, 17);
-			this.m_cbExpire.TabIndex = 8;
+			this.m_cbExpire.TabIndex = 7;
 			this.m_cbExpire.Text = "Expiry time";
 			this.m_cbExpire.UseVisualStyleBackColor = true;
 			// 
@@ -543,6 +533,16 @@
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
 			// 
+			// m_cbTags
+			// 
+			this.m_cbTags.AutoSize = true;
+			this.m_cbTags.Location = new System.Drawing.Point(464, 42);
+			this.m_cbTags.Name = "m_cbTags";
+			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
+			this.m_cbTags.TabIndex = 9;
+			this.m_cbTags.Text = "Tags";
+			this.m_cbTags.UseVisualStyleBackColor = true;
+			// 
 			// PrintForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -614,7 +614,6 @@
 		private System.Windows.Forms.ImageList m_ilTabIcons;
 		private System.Windows.Forms.CheckBox m_cbExpire;
 		private System.Windows.Forms.CheckBox m_cbAutoType;
-		private System.Windows.Forms.CheckBox m_cbLastAccess;
 		private System.Windows.Forms.CheckBox m_cbLastMod;
 		private System.Windows.Forms.CheckBox m_cbCreation;
 		private System.Windows.Forms.LinkLabel m_linkDeselectAllFields;
@@ -625,5 +624,6 @@
 		private System.Windows.Forms.ComboBox m_cmbSortEntries;
 		private System.Windows.Forms.Label m_lblSortEntries;
 		private System.Windows.Forms.Label m_lblEntrySortHint;
+		private System.Windows.Forms.CheckBox m_cbTags;
 	}
 }

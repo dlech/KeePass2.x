@@ -272,7 +272,7 @@ namespace KeePass.Forms
 			int iRecBinSel = m_cmbRecycleBin.SelectedIndex;
 			if(m_dictRecycleBinGroups.ContainsKey(iRecBinSel))
 			{
-				if(!m_dictRecycleBinGroups[iRecBinSel].EqualsValue(m_pwDatabase.RecycleBinUuid))
+				if(!m_dictRecycleBinGroups[iRecBinSel].Equals(m_pwDatabase.RecycleBinUuid))
 				{
 					m_pwDatabase.RecycleBinUuid = m_dictRecycleBinGroups[iRecBinSel];
 					m_pwDatabase.RecycleBinChanged = DateTime.Now;
@@ -281,7 +281,7 @@ namespace KeePass.Forms
 			else
 			{
 				Debug.Assert(false);
-				if(!PwUuid.Zero.EqualsValue(m_pwDatabase.RecycleBinUuid))
+				if(!PwUuid.Zero.Equals(m_pwDatabase.RecycleBinUuid))
 				{
 					m_pwDatabase.RecycleBinUuid = PwUuid.Zero;
 					m_pwDatabase.RecycleBinChanged = DateTime.Now;
@@ -291,7 +291,7 @@ namespace KeePass.Forms
 			int iTemplSel = m_cmbEntryTemplates.SelectedIndex;
 			if(m_dictEntryTemplateGroups.ContainsKey(iTemplSel))
 			{
-				if(!m_dictEntryTemplateGroups[iTemplSel].EqualsValue(m_pwDatabase.EntryTemplatesGroup))
+				if(!m_dictEntryTemplateGroups[iTemplSel].Equals(m_pwDatabase.EntryTemplatesGroup))
 				{
 					m_pwDatabase.EntryTemplatesGroup = m_dictEntryTemplateGroups[iTemplSel];
 					m_pwDatabase.EntryTemplatesGroupChanged = DateTime.Now;
@@ -300,7 +300,7 @@ namespace KeePass.Forms
 			else
 			{
 				Debug.Assert(false);
-				if(!PwUuid.Zero.EqualsValue(m_pwDatabase.EntryTemplatesGroup))
+				if(!PwUuid.Zero.Equals(m_pwDatabase.EntryTemplatesGroup))
 				{
 					m_pwDatabase.EntryTemplatesGroup = PwUuid.Zero;
 					m_pwDatabase.EntryTemplatesGroupChanged = DateTime.Now;

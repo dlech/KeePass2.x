@@ -1,4 +1,4 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -55,20 +55,20 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02170000;
+		public const uint Version32 = 0x02180000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002001700000000UL;
+		public const ulong FileVersion64 = 0x0002001800000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.23";
+		public const string VersionString = "2.24";
 
-		public const string Copyright = @"Copyright � 2003-2013 Dominik Reichl";
+		public const string Copyright = @"Copyright © 2003-2013 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.

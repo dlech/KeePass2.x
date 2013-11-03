@@ -444,6 +444,9 @@ namespace KeePass
 
 			InitEnvSecurity();
 
+			// try { NativeMethods.SetProcessDPIAware(); }
+			// catch(Exception) { }
+
 			try { SelfTest.TestFipsComplianceProblems(); }
 			catch(Exception exFips)
 			{
@@ -477,6 +480,8 @@ namespace KeePass
 		public static void CommonTerminate()
 		{
 			AppLogEx.Close();
+
+			EnableThemingInScope.StaticDispose();
 		}
 
 		private static void MainCleanUp()

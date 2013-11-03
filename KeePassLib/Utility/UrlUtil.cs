@@ -34,8 +34,8 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class UrlUtil
 	{
-		private static readonly char[] m_vDirSeps = new char[] { '\\', '/',
-			UrlUtil.LocalDirSepChar };
+		private static readonly char[] m_vDirSeps = new char[] {
+			'\\', '/', UrlUtil.LocalDirSepChar };
 		private static readonly char[] m_vPathTrimCharsWs = new char[] {
 			'\"', ' ', '\t', '\r', '\n' };
 
@@ -222,13 +222,22 @@ namespace KeePassLib.Utility
 
 		public static string GetQuotedAppPath(string strPath)
 		{
-			int nFirst = strPath.IndexOf('\"');
-			int nSecond = strPath.IndexOf('\"', nFirst + 1);
+			if(strPath == null) { Debug.Assert(false); return string.Empty; }
 
-			if((nFirst >= 0) && (nSecond >= 0))
-				return strPath.Substring(nFirst + 1, nSecond - nFirst - 1);
+			// int nFirst = strPath.IndexOf('\"');
+			// int nSecond = strPath.IndexOf('\"', nFirst + 1);
+			// if((nFirst >= 0) && (nSecond >= 0))
+			//	return strPath.Substring(nFirst + 1, nSecond - nFirst - 1);
+			// return strPath;
 
-			return strPath;
+			string str = strPath.Trim();
+			if(str.Length <= 1) return str;
+			if(str[0] != '\"') return str;
+
+			int iSecond = str.IndexOf('\"', 1);
+			if(iSecond <= 0) return str;
+
+			return str.Substring(1, iSecond - 1);
 		}
 
 		public static string FileUrlToPath(string strUrl)

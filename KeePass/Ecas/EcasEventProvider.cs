@@ -41,7 +41,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasEventType t in m_events)
 			{
-				if(t.Type.EqualsValue(uuidType))
+				if(t.Type.Equals(uuidType))
 					return true;
 			}
 
@@ -66,7 +66,7 @@ namespace KeePass.Ecas
 
 			foreach(EcasEventType t in m_events)
 			{
-				if(t.Type.EqualsValue(uuid)) return t;
+				if(t.Type.Equals(uuid)) return t;
 			}
 
 			return null;
@@ -77,11 +77,11 @@ namespace KeePass.Ecas
 			if(e == null) throw new ArgumentNullException("e");
 			if(ctx == null) throw new ArgumentNullException("ctx");
 
-			Debug.Assert(e.Type.EqualsValue(ctx.Event.Type));
+			Debug.Assert(e.Type.Equals(ctx.Event.Type));
 
 			foreach(EcasEventType t in m_events)
 			{
-				if(t.Type.EqualsValue(e.Type))
+				if(t.Type.Equals(e.Type))
 					return t.CompareMethod(e, ctx);
 			}
 

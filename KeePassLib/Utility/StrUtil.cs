@@ -20,12 +20,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Globalization;
+using System.Diagnostics;
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography.PasswordGenerator;
@@ -213,47 +214,47 @@ namespace KeePassLib.Utility
 		{
 			get
 			{
-				if(m_lEncs == null)
-				{
-					m_lEncs = new List<StrEncodingInfo>();
+				if(m_lEncs != null) return m_lEncs;
 
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Default,
+				List<StrEncodingInfo> l = new List<StrEncodingInfo>();
+
+				l.Add(new StrEncodingInfo(StrEncodingType.Default,
 #if KeePassRT
-						StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
+					StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
 #else
 #if !KeePassLibSD
-						Encoding.Default.EncodingName,
+					Encoding.Default.EncodingName,
 #else
-						Encoding.Default.WebName,
+					Encoding.Default.WebName,
 #endif
-						Encoding.Default,
-						(uint)Encoding.Default.GetBytes("a").Length, null));
+					Encoding.Default,
+					(uint)Encoding.Default.GetBytes("a").Length, null));
 #endif
 #if !KeePassRT
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Ascii,
-						"ASCII", Encoding.ASCII, 1, null));
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf7,
-						"Unicode (UTF-7)", Encoding.UTF7, 1, null));
+				l.Add(new StrEncodingInfo(StrEncodingType.Ascii,
+					"ASCII", Encoding.ASCII, 1, null));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf7,
+					"Unicode (UTF-7)", Encoding.UTF7, 1, null));
 #endif
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf8,
-						"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
-						"Unicode (UTF-16 LE)", new UnicodeEncoding(false, false),
-						2, new byte[] { 0xFF, 0xFE }));
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
-						"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
-						2, new byte[] { 0xFE, 0xFF }));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf8,
+					"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
+					"Unicode (UTF-16 LE)", new UnicodeEncoding(false, false),
+					2, new byte[] { 0xFF, 0xFE }));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
+					"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
+					2, new byte[] { 0xFE, 0xFF }));
 #if (!KeePassLibSD && !KeePassRT)
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
-						"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
-						4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
-					m_lEncs.Add(new StrEncodingInfo(StrEncodingType.Utf32BE,
-						"Unicode (UTF-32 BE)", new UTF32Encoding(true, false),
-						4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
+					"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
+					4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
+				l.Add(new StrEncodingInfo(StrEncodingType.Utf32BE,
+					"Unicode (UTF-32 BE)", new UTF32Encoding(true, false),
+					4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
 #endif
-				}
 
-				return m_lEncs;
+				m_lEncs = l;
+				return l;
 			}
 		}
 
@@ -292,7 +293,8 @@ namespace KeePassLib.Utility
 			// Unicode character values must be encoded using
 			// 16-bit numbers (decimal); Unicode values greater
 			// than 32767 must be expressed as negative numbers
-			return ("\\u" + Convert.ToString((short)ch, 10) + "?");
+			short sh = (short)ch;
+			return ("\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?");
 		}
 
 		/// <summary>
@@ -553,7 +555,25 @@ namespace KeePassLib.Utility
 			return int.TryParse(str, out n);
 #else
 			try { n = int.Parse(str); return true; }
-			catch(Exception) { n = 0; return false; }
+			catch(Exception) { n = 0; }
+			return false;
+#endif
+		}
+
+		public static bool TryParseIntInvariant(string str, out int n)
+		{
+#if !KeePassLibSD
+			return int.TryParse(str, NumberStyles.Integer,
+				NumberFormatInfo.InvariantInfo, out n);
+#else
+			try
+			{
+				n = int.Parse(str, NumberStyles.Integer,
+					NumberFormatInfo.InvariantInfo);
+				return true;
+			}
+			catch(Exception) { n = 0; }
+			return false;
 #endif
 		}
 
@@ -563,7 +583,25 @@ namespace KeePassLib.Utility
 			return uint.TryParse(str, out u);
 #else
 			try { u = uint.Parse(str); return true; }
-			catch(Exception) { u = 0; return false; }
+			catch(Exception) { u = 0; }
+			return false;
+#endif
+		}
+
+		public static bool TryParseUIntInvariant(string str, out uint u)
+		{
+#if !KeePassLibSD
+			return uint.TryParse(str, NumberStyles.Integer,
+				NumberFormatInfo.InvariantInfo, out u);
+#else
+			try
+			{
+				u = uint.Parse(str, NumberStyles.Integer,
+					NumberFormatInfo.InvariantInfo);
+				return true;
+			}
+			catch(Exception) { u = 0; }
+			return false;
 #endif
 		}
 
@@ -573,7 +611,25 @@ namespace KeePassLib.Utility
 			return long.TryParse(str, out n);
 #else
 			try { n = long.Parse(str); return true; }
-			catch(Exception) { n = 0; return false; }
+			catch(Exception) { n = 0; }
+			return false;
+#endif
+		}
+
+		public static bool TryParseLongInvariant(string str, out long n)
+		{
+#if !KeePassLibSD
+			return long.TryParse(str, NumberStyles.Integer,
+				NumberFormatInfo.InvariantInfo, out n);
+#else
+			try
+			{
+				n = long.Parse(str, NumberStyles.Integer,
+					NumberFormatInfo.InvariantInfo);
+				return true;
+			}
+			catch(Exception) { n = 0; }
+			return false;
 #endif
 		}
 
@@ -583,7 +639,25 @@ namespace KeePassLib.Utility
 			return ulong.TryParse(str, out u);
 #else
 			try { u = ulong.Parse(str); return true; }
-			catch(Exception) { u = 0; return false; }
+			catch(Exception) { u = 0; }
+			return false;
+#endif
+		}
+
+		public static bool TryParseULongInvariant(string str, out ulong u)
+		{
+#if !KeePassLibSD
+			return ulong.TryParse(str, NumberStyles.Integer,
+				NumberFormatInfo.InvariantInfo, out u);
+#else
+			try
+			{
+				u = ulong.Parse(str, NumberStyles.Integer,
+					NumberFormatInfo.InvariantInfo);
+				return true;
+			}
+			catch(Exception) { u = 0; }
+			return false;
 #endif
 		}
 
@@ -1019,7 +1093,7 @@ namespace KeePassLib.Utility
 						bMultiComp = true;
 					}
 
-					str = us.ToString() + str;
+					str = us.ToString(NumberFormatInfo.InvariantInfo) + str;
 				}
 
 				uVersion >>= 16;
@@ -1079,7 +1153,7 @@ namespace KeePassLib.Utility
 			for(int i = 0; i < vNumbers.Length; ++i)
 			{
 				if(i > 0) sb.Append(' ');
-				sb.Append(vNumbers[i]);
+				sb.Append(vNumbers[i].ToString(NumberFormatInfo.InvariantInfo));
 			}
 
 			return sb.ToString();
@@ -1096,7 +1170,7 @@ namespace KeePassLib.Utility
 			for(int i = 0; i < vParts.Length; ++i)
 			{
 				int n;
-				if(!TryParseInt(vParts[i], out n)) { Debug.Assert(false); }
+				if(!TryParseIntInvariant(vParts[i], out n)) { Debug.Assert(false); }
 				v[i] = n;
 			}
 

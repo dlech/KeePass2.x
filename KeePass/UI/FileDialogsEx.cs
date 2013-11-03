@@ -158,7 +158,7 @@ namespace KeePass.UI
 			set { this.FileDialog.Title = value; }
 		}
 
-		public FileDialogEx(bool bSaveMode, string strContext)
+		protected FileDialogEx(bool bSaveMode, string strContext)
 		{
 			m_bSaveMode = bSaveMode;
 			m_strContext = strContext; // May be null

@@ -61,14 +61,45 @@ namespace KeePass.DataExchange.Formats
 
 			CharStream cs = new CharStream(strContent);
 
+			Dictionary<string, List<string>> dTags =
+				new Dictionary<string, List<string>>();
+			List<PwEntry> lCreatedEntries = new List<PwEntry>();
+
 			JsonObject jRoot = new JsonObject(cs);
-			AddObject(pwStorage.RootGroup, jRoot, pwStorage, false);
+			AddObject(pwStorage.RootGroup, jRoot, pwStorage, false, dTags,
+				lCreatedEntries);
 			Debug.Assert(cs.PeekChar(true) == char.MinValue);
+
+			// Assign tags
+			foreach(PwEntry pe in lCreatedEntries)
+			{
+				string strUri = pe.Strings.ReadSafe(PwDefs.UrlField);
+				if(strUri.Length == 0) continue;
+
+				foreach(KeyValuePair<string, List<string>> kvp in dTags)
+				{
+					foreach(string strTagUri in kvp.Value)
+					{
+						if(strUri.Equals(strTagUri, StrUtil.CaseIgnoreCmp))
+							pe.AddTag(kvp.Key);
+					}
+				}
+			}
 		}
 
 		private static void AddObject(PwGroup pgStorage, JsonObject jObject,
-			PwDatabase pwContext, bool bCreateSubGroups)
+			PwDatabase pwContext, bool bCreateSubGroups,
+			Dictionary<string, List<string>> dTags, List<PwEntry> lCreatedEntries)
 		{
+			JsonValue jvRoot;
+			jObject.Items.TryGetValue("root", out jvRoot);
+			string strRoot = (((jvRoot != null) ? jvRoot.ToString() : null) ?? string.Empty);
+			if(strRoot.Equals("tagsFolder", StrUtil.CaseIgnoreCmp))
+			{
+				ImportTags(jObject, dTags);
+				return;
+			}
+
 			if(jObject.Items.ContainsKey(m_strGroup))
 			{
 				JsonArray jArray = (jObject.Items[m_strGroup].Value as JsonArray);
@@ -89,7 +120,8 @@ namespace KeePass.DataExchange.Formats
 				foreach(JsonValue jValue in jArray.Values)
 				{
 					JsonObject objSub = (jValue.Value as JsonObject);
-					if(objSub != null) AddObject(pgNew, objSub, pwContext, true);
+					if(objSub != null)
+						AddObject(pgNew, objSub, pwContext, true, dTags, lCreatedEntries);
 					else { Debug.Assert(false); }
 				}
 
@@ -135,7 +167,10 @@ namespace KeePass.DataExchange.Formats
 
 			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length > 0) ||
 				(pe.Strings.ReadSafe(PwDefs.UrlField).Length > 0))
+			{
 				pgStorage.AddEntry(pe, true);
+				lCreatedEntries.Add(pe);
+			}
 		}
 
 		private static void SetString(PwEntry pe, string strEntryKey, bool bProtect,
@@ -147,6 +182,56 @@ namespace KeePass.DataExchange.Formats
 			if(obj == null) return;
 
 			pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, obj.ToString()));
+		}
+
+		private static void ImportTags(JsonObject jTagsRoot,
+			Dictionary<string, List<string>> dTags)
+		{
+			try
+			{
+				JsonValue jTags = jTagsRoot.Items["children"];
+				if(jTags == null) { Debug.Assert(false); return; }
+				JsonArray arTags = (jTags.Value as JsonArray);
+				if(arTags == null) { Debug.Assert(false); return; }
+
+				foreach(JsonValue jvTag in arTags.Values)
+				{
+					JsonObject jTag = (jvTag.Value as JsonObject);
+					if(jTag == null) { Debug.Assert(false); continue; }
+
+					JsonValue jvName = jTag.Items["title"];
+					if(jvName == null) { Debug.Assert(false); continue; }
+					string strName = jvName.ToString();
+					if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); continue; }
+
+					List<string> lUris;
+					dTags.TryGetValue(strName, out lUris);
+					if(lUris == null)
+					{
+						lUris = new List<string>();
+						dTags[strName] = lUris;
+					}
+
+					JsonValue jvUrls = jTag.Items["children"];
+					if(jvUrls == null) { Debug.Assert(false); continue; }
+					JsonArray arUrls = (jvUrls.Value as JsonArray);
+					if(arUrls == null) { Debug.Assert(false); continue; }
+
+					foreach(JsonValue jvPlace in arUrls.Values)
+					{
+						JsonObject jUrl = (jvPlace.Value as JsonObject);
+						if(jUrl == null) { Debug.Assert(false); continue; }
+
+						JsonValue jvUri = jUrl.Items["uri"];
+						if(jvUri == null) { Debug.Assert(false); continue; }
+
+						string strUri = jvUri.ToString();
+						if(!string.IsNullOrEmpty(strUri))
+							lUris.Add(strUri);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

@@ -42,8 +42,8 @@ namespace KeePassLib.Translation
 
 		private const string m_strControlRelative = @"%c";
 
-		internal const NumberStyles m_nsParser = NumberStyles.AllowLeadingSign |
-			NumberStyles.AllowDecimalPoint;
+		internal const NumberStyles m_nsParser = (NumberStyles.AllowLeadingSign |
+			NumberStyles.AllowDecimalPoint);
 		internal static readonly CultureInfo m_lclInv = CultureInfo.InvariantCulture;
 
 		private string m_strPosX = string.Empty;
@@ -309,8 +309,8 @@ namespace KeePassLib.Translation
 
 			if(c is Form)
 			{
-				WriteCpiParam(sb, c.ClientSize.Width.ToString());
-				WriteCpiParam(sb, c.ClientSize.Height.ToString());
+				WriteCpiParam(sb, c.ClientSize.Width.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.ClientSize.Height.ToString(KpccLayout.m_lclInv));
 			}
 			else // Normal control
 			{

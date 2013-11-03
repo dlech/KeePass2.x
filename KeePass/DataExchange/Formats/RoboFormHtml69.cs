@@ -36,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.9.82-7.8.9.5+
+	// 6.9.82-7.9.2.5+
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -97,7 +97,11 @@ namespace KeePass.DataExchange.Formats
 
 			if((strUrl.Length > 0) && (strUrl.IndexOf(':') < 0) &&
 				(strUrl.IndexOf('@') < 0))
-				return ("http://" + strUrl.ToLower());
+			{
+				string strNew = ("http://" + strUrl.ToLower());
+				if(strUrl.IndexOf('/') < 0) strNew += "/";
+				return strNew;
+			}
 
 			return strUrl;
 		}
@@ -113,8 +117,35 @@ namespace KeePass.DataExchange.Formats
 			return s;			
 		}
 
-		private void ImportPriv(PwDatabase pd, HtmlElement hBody)
+		private static List<HtmlElement> GetElements(HtmlElement hRoot,
+			string strTagName, string strAttribName, string strAttribValue)
 		{
+			List<HtmlElement> l = new List<HtmlElement>();
+			if(hRoot == null) { Debug.Assert(false); return l; }
+			if(string.IsNullOrEmpty(strTagName)) { Debug.Assert(false); return l; }
+
+			foreach(HtmlElement hEl in hRoot.GetElementsByTagName(strTagName))
+			{
+				if(!string.IsNullOrEmpty(strAttribName) && (strAttribValue != null))
+				{
+					string strValue = XmlUtil.SafeAttribute(hEl, strAttribName);
+					if(!strValue.Equals(strAttribValue, StrUtil.CaseIgnoreCmp))
+						continue;
+				}
+
+				l.Add(hEl);
+			}
+
+			return l;
+		}
+
+		private static void ImportPriv(PwDatabase pd, HtmlElement hBody)
+		{
+#if DEBUG
+			bool bHasSpanCaptions = (GetElements(hBody, "SPAN", "class",
+				"caption").Count > 0);
+#endif
+
 			foreach(HtmlElement hTable in hBody.GetElementsByTagName("TABLE"))
 			{
 				Debug.Assert(XmlUtil.SafeAttribute(hTable, "width") == "100%");
@@ -126,9 +157,26 @@ namespace KeePass.DataExchange.Formats
 
 				PwEntry pe = new PwEntry(true, true);
 				PwGroup pg = null;
+				bool bNotesHeaderFound = false;
 
 				foreach(HtmlElement hTr in hTable.GetElementsByTagName("TR"))
 				{
+					// 7.9.1.1+
+					List<HtmlElement> lCaption = GetElements(hTr, "SPAN",
+						"class", "caption");
+					if(lCaption.Count == 0)
+						lCaption = GetElements(hTr, "DIV", "class", "caption");
+					if(lCaption.Count > 0)
+					{
+						string strTitle = ParseTitle(XmlUtil.SafeInnerText(
+							lCaption[0]), pd, out pg);
+						ImportUtil.AppendToField(pe, PwDefs.TitleField, strTitle, pd);
+						continue; // Data is in next TR
+					}
+
+					// 7.9.1.1+
+					if(hTr.GetElementsByTagName("TABLE").Count > 0) continue;
+
 					HtmlElementCollection lTd = hTr.GetElementsByTagName("TD");
 					if(lTd.Count == 1)
 					{
@@ -145,6 +193,15 @@ namespace KeePass.DataExchange.Formats
 						else if(strClass.Equals("subcaption", StrUtil.CaseIgnoreCmp))
 							ImportUtil.AppendToField(pe, PwDefs.UrlField,
 								FixUrl(strText), pd);
+						else if(strClass.Equals("field", StrUtil.CaseIgnoreCmp))
+						{
+							// 7.9.2.5+
+							if(strText.EndsWith(":") && !bNotesHeaderFound)
+								bNotesHeaderFound = true;
+							else
+								ImportUtil.AppendToField(pe, PwDefs.NotesField,
+									strText.Trim(), pd, MessageService.NewLine, false);
+						}
 						else { Debug.Assert(false); }
 					}
 					else if((lTd.Count == 2) || (lTd.Count == 3))
@@ -153,15 +210,20 @@ namespace KeePass.DataExchange.Formats
 						string strValue = XmlUtil.SafeInnerText(lTd[lTd.Count - 1]);
 						if(lTd.Count == 3) { Debug.Assert(string.IsNullOrEmpty(lTd[1].InnerText)); }
 
-						if(!string.IsNullOrEmpty(strKey))
+						if(strKey.EndsWith(":")) // 7.9.1.1+
+							strKey = strKey.Substring(0, strKey.Length - 1);
+
+						if(strKey.Length > 0)
 							ImportUtil.AppendToField(pe, MapKey(strKey), strValue, pd);
 						else { Debug.Assert(false); }
 					}
 					else { Debug.Assert(false); }
 				}
 
-				if(pg == null) { Debug.Assert(false); }
-				else pg.AddEntry(pe, true);
+				if(pg != null) pg.AddEntry(pe, true);
+#if DEBUG
+				else { Debug.Assert(bHasSpanCaptions); }
+#endif
 			}
 		}
 	}

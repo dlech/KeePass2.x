@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.Globalization;
 
 using KeePassLib.Utility;
 
@@ -123,7 +124,7 @@ namespace KeePass.App.Configuration
 		/// <param name="lValue">New value of the configuration item.</param>
 		public void SetLong(string strID, long lValue)
 		{
-			SetString(strID, lValue.ToString());
+			SetString(strID, lValue.ToString(NumberFormatInfo.InvariantInfo));
 		}
 
 		/// <summary>
@@ -137,7 +138,7 @@ namespace KeePass.App.Configuration
 		/// <param name="uValue">New value of the configuration item.</param>
 		public void SetULong(string strID, ulong uValue)
 		{
-			SetString(strID, uValue.ToString());
+			SetString(strID, uValue.ToString(NumberFormatInfo.InvariantInfo));
 		}
 
 		public string GetString(string strID)
@@ -177,7 +178,8 @@ namespace KeePass.App.Configuration
 			if(string.IsNullOrEmpty(strValue)) return lDefault;
 
 			long lValue;
-			if(long.TryParse(strValue, out lValue)) return lValue;
+			if(StrUtil.TryParseLongInvariant(strValue, out lValue))
+				return lValue;
 
 			return lDefault;
 		}
@@ -188,7 +190,8 @@ namespace KeePass.App.Configuration
 			if(string.IsNullOrEmpty(strValue)) return uDefault;
 
 			ulong uValue;
-			if(ulong.TryParse(strValue, out uValue)) return uValue;
+			if(StrUtil.TryParseULongInvariant(strValue, out uValue))
+				return uValue;
 
 			return uDefault;
 		}

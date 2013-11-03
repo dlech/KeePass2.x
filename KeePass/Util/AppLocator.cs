@@ -124,20 +124,38 @@ namespace KeePass.Util
 
 		private static string FindInternetExplorer()
 		{
-			RegistryKey kCommand = Registry.ClassesRoot.OpenSubKey(
-				"Applications\\iexplore.exe\\shell\\open\\command", false);
-			if(kCommand == null) return null;
-
-			string strPath = (kCommand.GetValue(string.Empty) as string);
-			if(!string.IsNullOrEmpty(strPath))
+			for(int i = 0; i < 4; ++i)
 			{
-				strPath = strPath.Trim();
-				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
-			}
-			else { Debug.Assert(false); }
+				RegistryKey k = null;
+				if(i == 0)
+					k = Registry.LocalMachine.OpenSubKey(
+						"SOFTWARE\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command", false);
+				else if(i == 1)
+					k = Registry.LocalMachine.OpenSubKey(
+						"SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command", false);
+				else if(i == 2)
+					k = Registry.ClassesRoot.OpenSubKey(
+						"IE.AssocFile.HTM\\shell\\open\\command", false);
+				else if(i == 3)
+					k = Registry.ClassesRoot.OpenSubKey(
+						"Applications\\iexplore.exe\\shell\\open\\command", false);
 
-			kCommand.Close();
-			return strPath;
+				if(k == null) continue;
+
+				string str = (k.GetValue(string.Empty) as string);
+				k.Close();
+
+				if(str == null) continue;
+
+				str = UrlUtil.GetQuotedAppPath(str).Trim();
+				if(str.Length == 0) continue;
+				// https://sourceforge.net/p/keepass/discussion/329221/thread/6b292ede/
+				if(str.StartsWith("iexplore.exe", StrUtil.CaseIgnoreCmp)) continue;
+
+				return str;
+			}
+
+			return null;
 		}
 
 		private static string FindFirefox()

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
+using System.Globalization;
 
 using KeePassLib.Utility;
 
@@ -58,7 +59,8 @@ namespace KeePassLib.Cryptography
 				uOtp = ((uOtp * 10) + CalculateChecksum(uOtp, uCodeDigits));
 
 			uint uDigits = (bAddChecksum ? (uCodeDigits + 1) : uCodeDigits);
-			return uOtp.ToString().PadLeft((int)uDigits, '0');
+			return uOtp.ToString(NumberFormatInfo.InvariantInfo).PadLeft(
+				(int)uDigits, '0');
 		}
 
 		private static readonly uint[] vDoubleDigits = new uint[]{ 0, 2, 4, 6, 8,

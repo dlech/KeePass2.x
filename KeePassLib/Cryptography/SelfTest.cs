@@ -19,10 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Globalization;
+using System.Diagnostics;
 
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
@@ -397,6 +398,19 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-DataUri2");
 			if(StrUtil.IsDataUri(sU, "notmytype"))
 				throw new InvalidOperationException("StrUtil-DataUri3");
+
+			uint u = 0x7FFFFFFFU;
+			if(u.ToString(NumberFormatInfo.InvariantInfo) != "2147483647")
+				throw new InvalidOperationException("StrUtil-Inv1");
+			if(uint.MaxValue.ToString(NumberFormatInfo.InvariantInfo) !=
+				"4294967295")
+				throw new InvalidOperationException("StrUtil-Inv2");
+			if(long.MinValue.ToString(NumberFormatInfo.InvariantInfo) !=
+				"-9223372036854775808")
+				throw new InvalidOperationException("StrUtil-Inv3");
+			if(short.MinValue.ToString(NumberFormatInfo.InvariantInfo) !=
+				"-32768")
+				throw new InvalidOperationException("StrUtil-Inv4");
 #endif
 		}
 
@@ -431,6 +445,13 @@ namespace KeePassLib.Cryptography
 
 			str = UrlUtil.MakeAbsolutePath(strBase, strRel);
 			if(!str.Equals(strDoc)) throw new InvalidOperationException("UrlUtil-R2");
+
+			str = UrlUtil.GetQuotedAppPath(" \"Test\" \"%1\" ");
+			if(str != "Test") throw new InvalidOperationException("UrlUtil-Q1");
+			str = UrlUtil.GetQuotedAppPath("C:\\Program Files\\Test.exe");
+			if(str != "C:\\Program Files\\Test.exe") throw new InvalidOperationException("UrlUtil-Q2");
+			str = UrlUtil.GetQuotedAppPath("Reg.exe \"Test\" \"Test 2\"");
+			if(str != "Reg.exe \"Test\" \"Test 2\"") throw new InvalidOperationException("UrlUtil-Q3");
 #endif
 		}
 	}

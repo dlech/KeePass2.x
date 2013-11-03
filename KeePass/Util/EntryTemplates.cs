@@ -29,6 +29,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -96,7 +97,7 @@ namespace KeePass.Util
 			PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 			if(pd != null)
 			{
-				if(!pe.CustomIconUuid.EqualsValue(PwUuid.Zero))
+				if(!pe.CustomIconUuid.Equals(PwUuid.Zero))
 					img = pd.GetCustomIcon(pe.CustomIconUuid);
 				if(img == null)
 				{
@@ -135,7 +136,7 @@ namespace KeePass.Util
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
 			if(pd == null) { Debug.Assert(false); return false; }
 			if(pd.IsOpen == false) { Debug.Assert(false); return false; }
-			if(pd.EntryTemplatesGroup.EqualsValue(PwUuid.Zero)) return false;
+			if(pd.EntryTemplatesGroup.Equals(PwUuid.Zero)) return false;
 
 			PwGroup pg = pd.RootGroup.FindGroup(pd.EntryTemplatesGroup, true);
 			if(pg == null) { Debug.Assert(false); return false; }
@@ -208,14 +209,24 @@ namespace KeePass.Util
 			{
 				pgContainer.AddEntry(pe, true, true);
 
+				MainForm mf = Program.MainForm;
+				if(mf != null)
+				{
+					mf.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
+						true, null, true);
+
+					PwObjectList<PwEntry> vSelect = new PwObjectList<PwEntry>();
+					vSelect.Add(pe);
+					mf.SelectEntries(vSelect, true, true);
+
+					mf.EnsureVisibleEntry(pe.Uuid);
+					mf.UpdateUI(false, null, false, null, false, null, false);
+				}
+				else { Debug.Assert(false); }
+
 				if(EntryTemplates.EntryCreated != null)
 					EntryTemplates.EntryCreated(null, new TemplateEntryEventArgs(
 						peTemplate.CloneDeep(), pe));
-
-				// Program.MainForm.UpdateEntryList(null, true);
-				// Program.MainForm.UpdateUIState(true);
-				Program.MainForm.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
-					true, null, true);
 			}
 			else Program.MainForm.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
 				pd.UINeedsIconUpdate, null, false);

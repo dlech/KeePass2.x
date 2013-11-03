@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -560,7 +561,8 @@ namespace KeePass.DataExchange
 				bool bProcessed = false;
 				for(int iIdx = 0; iIdx < 32; ++iIdx)
 				{
-					string s = ((iIdx == 0) ? string.Empty : "-" + iIdx.ToString());
+					string s = ((iIdx == 0) ? string.Empty : ("-" +
+						iIdx.ToString(NumberFormatInfo.InvariantInfo)));
 					string strWndPrefix = (AutoTypeWindowPrefix + s + ":");
 					string strSeqPrefix = (AutoTypePrefix + s + ":");
 
@@ -727,7 +729,8 @@ namespace KeePass.DataExchange
 					bSeparator = true;
 				}
 
-				string strSuffix = ((uIndex > 0) ? ("-" + uIndex.ToString()) : string.Empty);
+				string strSuffix = ((uIndex > 0) ? ("-" + uIndex.ToString(
+					NumberFormatInfo.InvariantInfo)) : string.Empty);
 
 				sbAppend.Append(AutoTypePrefix + strSuffix);
 				sbAppend.Append(@": ");

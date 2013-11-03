@@ -179,11 +179,11 @@ namespace KeePass.DataExchange
 			return (QueryValue(xpBase, strXPath, false) ?? string.Empty);
 		}
 
-		private static string QueryValueSafe(XPathNavigator xpBase, string strXPath,
-			bool bQueryName)
-		{
-			return (QueryValue(xpBase, strXPath, bQueryName) ?? string.Empty);
-		}
+		// private static string QueryValueSafe(XPathNavigator xpBase, string strXPath,
+		//	bool bQueryName)
+		// {
+		//	return (QueryValue(xpBase, strXPath, bQueryName) ?? string.Empty);
+		// }
 
 		private static void ImportObject(XPathNavigator xpBase, GxiProfile p,
 			string strXPath, string strAltXPath, ImportObjectDelegate f,

@@ -592,7 +592,7 @@ namespace KeePass.Forms
 
 		private void OnFileClose(object sender, EventArgs e)
 		{
-			CloseDocument(null, false, false);
+			CloseDocument(null, false, false, true);
 		}
 
 		private void SaveDatabase(PwDatabase pdToSave, object sender)
@@ -917,11 +917,13 @@ namespace KeePass.Forms
 			}
 
 			AddEntriesToList(vNewEntries);
-			SelectEntries(vNewEntries, true, false);
+			SelectEntries(vNewEntries, true, true);
 
-			if(!m_lvEntries.ShowGroups && (m_lvEntries.Items.Count >= 1))
-				m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
-			else EnsureVisibleSelected(true);
+			// if(!m_lvEntries.ShowGroups && (m_lvEntries.Items.Count >= 1))
+			//	m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+			// else EnsureVisibleSelected(true);
+			EnsureVisibleSelected(true); // Show all copies if possible
+			EnsureVisibleSelected(false); // Ensure showing the first
 
 			UpdateUIState(true, m_lvEntries);
 		}
@@ -969,6 +971,7 @@ namespace KeePass.Forms
 			if(!CloseAllDocuments(true))
 			{
 				e.Cancel = true;
+				UpdateUI(true, null, true, null, true, null, false);
 				return;
 			}
 
@@ -1179,7 +1182,7 @@ namespace KeePass.Forms
 			//	bHandled = true;
 			// }
 
-			if(bHandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(bHandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnQuickFindKeyUp(object sender, KeyEventArgs e)
@@ -1191,7 +1194,7 @@ namespace KeePass.Forms
 			// else if(e.KeyCode == Keys.Tab)
 			//	bHandled = true;
 
-			if(bHandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(bHandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnToolsOptions(object sender, EventArgs e)
@@ -1638,7 +1641,7 @@ namespace KeePass.Forms
 			{
 				foreach(PwEntry pe in vEntries)
 				{
-					if(ipf.ChosenCustomIconUuid != PwUuid.Zero)
+					if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero))
 						pe.CustomIconUuid = ipf.ChosenCustomIconUuid;
 					else
 					{
@@ -1726,7 +1729,7 @@ namespace KeePass.Forms
 				OnEntryEdit(sender, e);
 			else bUnhandled = true;
 
-			if(!bUnhandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(!bUnhandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnPwListKeyUp(object sender, KeyEventArgs e)
@@ -1765,7 +1768,7 @@ namespace KeePass.Forms
 			else if(e.KeyCode == Keys.F2) { }
 			else bUnhandled = true;
 
-			if(!bUnhandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(!bUnhandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnGroupsFind(object sender, EventArgs e)
@@ -2217,7 +2220,7 @@ namespace KeePass.Forms
 			}
 			else bUnhandled = true;
 
-			if(!bUnhandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(!bUnhandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnGroupsKeyUp(object sender, KeyEventArgs e)
@@ -2250,7 +2253,7 @@ namespace KeePass.Forms
 			}
 			else bUnhandled = true;
 
-			if(!bUnhandled) { e.Handled = true; e.SuppressKeyPress = true; }
+			if(!bUnhandled) UIUtil.SetHandled(e, true);
 		}
 
 		private void OnEntryUrlOpenInInternal(object sender, EventArgs e)
@@ -2394,7 +2397,7 @@ namespace KeePass.Forms
 						PwDocument pd = (m_tabMain.TabPages[i].Tag as PwDocument);
 						if(pd == null) { Debug.Assert(false); break; }
 
-						CloseDocument(pd, false, false);
+						CloseDocument(pd, false, false, true);
 						break;
 					}
 				}
@@ -2403,6 +2406,8 @@ namespace KeePass.Forms
 
 		private void OnViewConfigColumns(object sender, EventArgs e)
 		{
+			UpdateColumnsEx(true); // Save display indices
+
 			ColumnsForm dlg = new ColumnsForm();
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{

@@ -91,7 +91,7 @@ namespace KeePass.Forms
 
 			int iFoundCustom = RecreateCustomIconList(false);
 
-			if((m_pwDefaultCustomIcon != PwUuid.Zero) && (iFoundCustom >= 0))
+			if(!m_pwDefaultCustomIcon.Equals(PwUuid.Zero) && (iFoundCustom >= 0))
 			{
 				m_radioCustom.Checked = true;
 				m_lvCustomIcons.Items[iFoundCustom].Selected = true;
@@ -151,7 +151,7 @@ namespace KeePass.Forms
 				ListViewItem lvi = m_lvCustomIcons.Items.Add(j.ToString(), j);
 				lvi.Tag = pwci.Uuid;
 
-				if(pwci.Uuid.EqualsValue(m_pwDefaultCustomIcon))
+				if(pwci.Uuid.Equals(m_pwDefaultCustomIcon))
 					iFoundCustom = j;
 
 				++j;

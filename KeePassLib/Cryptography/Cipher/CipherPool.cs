@@ -69,7 +69,7 @@ namespace KeePassLib.Cryptography.Cipher
 
 			// Return if a cipher with that ID is registered already.
 			for(int i = 0; i < m_vCiphers.Count; ++i)
-				if(m_vCiphers[i].CipherUuid.EqualsValue(csEngine.CipherUuid))
+				if(m_vCiphers[i].CipherUuid.Equals(csEngine.CipherUuid))
 					return;
 
 			m_vCiphers.Add(csEngine);
@@ -85,7 +85,7 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			foreach(ICipherEngine iEngine in m_vCiphers)
 			{
-				if(iEngine.CipherUuid.EqualsValue(uuidCipher))
+				if(iEngine.CipherUuid.Equals(uuidCipher))
 					return iEngine;
 			}
 
@@ -103,7 +103,7 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			for(int i = 0; i < m_vCiphers.Count; ++i)
 			{
-				if(m_vCiphers[i].CipherUuid.EqualsValue(uuidCipher))
+				if(m_vCiphers[i].CipherUuid.Equals(uuidCipher))
 					return i;
 			}
 

@@ -324,7 +324,8 @@ namespace KeePassLib.Serialization
 
 			if(BinPoolFind(pb) != null) return; // Exists already
 
-			m_dictBinPool.Add(m_dictBinPool.Count.ToString(), pb);
+			m_dictBinPool.Add(m_dictBinPool.Count.ToString(
+				NumberFormatInfo.InvariantInfo), pb);
 		}
 
 		private string BinPoolFind(ProtectedBinary pb)
@@ -366,7 +367,9 @@ namespace KeePassLib.Serialization
 				string strDesc = UrlUtil.StripExtension(strName);
 
 				strPath += strDesc;
-				if(iTry > 1) strPath += " (" + iTry.ToString() + ")";
+				if(iTry > 1)
+					strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
+						")";
 
 				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 

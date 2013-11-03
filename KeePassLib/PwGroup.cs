@@ -403,7 +403,7 @@ namespace KeePassLib
 				return;
 
 			// Template UUID should be the same as the current one
-			Debug.Assert(m_uuid.EqualsValue(pgTemplate.m_uuid));
+			Debug.Assert(m_uuid.Equals(pgTemplate.m_uuid));
 			m_uuid = pgTemplate.m_uuid;
 
 			if(bAssignLocationChanged)
@@ -1004,7 +1004,7 @@ namespace KeePassLib
 		public PwGroup FindGroup(PwUuid uuid, bool bSearchRecursive)
 		{
 			// Do not assert on PwUuid.Zero
-			if(m_uuid.EqualsValue(uuid)) return this;
+			if(m_uuid.Equals(uuid)) return this;
 
 			if(bSearchRecursive)
 			{
@@ -1019,7 +1019,7 @@ namespace KeePassLib
 			{
 				foreach(PwGroup pg in m_listGroups)
 				{
-					if(pg.m_uuid.EqualsValue(uuid))
+					if(pg.m_uuid.Equals(uuid))
 						return pg;
 				}
 			}
@@ -1083,7 +1083,7 @@ namespace KeePassLib
 		{
 			foreach(PwEntry pe in m_listEntries)
 			{
-				if(pe.Uuid.EqualsValue(uuid)) return pe;
+				if(pe.Uuid.Equals(uuid)) return pe;
 			}
 
 			if(bSearchRecursive)

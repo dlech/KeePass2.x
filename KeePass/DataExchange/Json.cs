@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 using System.Diagnostics;
 
 using KeePassLib.Utility;
@@ -254,12 +255,15 @@ namespace KeePass.DataExchange
 				else break;
 			}
 
-			if(!double.TryParse(sb.ToString(), out m_value)) { Debug.Assert(false); }
+			const NumberStyles ns = (NumberStyles.Integer | NumberStyles.AllowDecimalPoint |
+				NumberStyles.AllowThousands | NumberStyles.AllowExponent);
+			if(!double.TryParse(sb.ToString(), ns, NumberFormatInfo.InvariantInfo,
+				out m_value)) { Debug.Assert(false); }
 		}
 
 		public override string ToString()
 		{
-			return m_value.ToString();
+			return m_value.ToString(NumberFormatInfo.InvariantInfo);
 		}
 	}
 }

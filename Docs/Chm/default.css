@@ -179,14 +179,14 @@ table.tablebox75 {
 
 table.tablebox tr th, table.tablebox75 tr th {
 	background-color: #EEEEEE;
-	font-weight: bold;
 	background: url(./images/grad_v_gw.gif) repeat-x top;
+	font-weight: bold;
 	border-bottom: 1px solid #AFB5CF;
 	border-left: 0px none;
 	border-right: 1px solid #AFB5CF;
 	border-top: 1px solid #AFB5CF;
-	empty-cells: show;
 	padding: 2px 2px 2px 5px;
+	empty-cells: show;
 	white-space: nowrap;
 	text-align: left;
 }

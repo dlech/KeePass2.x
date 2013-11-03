@@ -362,7 +362,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemNotes, pg.Notes, true);
 			WriteObject(ElemIcon, (int)pg.IconId);
 			
-			if(pg.CustomIconUuid != PwUuid.Zero)
+			if(!pg.CustomIconUuid.Equals(PwUuid.Zero))
 				WriteObject(ElemCustomIconID, pg.CustomIconUuid);
 			
 			WriteList(ElemTimes, pg);
@@ -387,7 +387,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUuid, pe.Uuid);
 			WriteObject(ElemIcon, (int)pe.IconId);
 			
-			if(pe.CustomIconUuid != PwUuid.Zero)
+			if(!pe.CustomIconUuid.Equals(PwUuid.Zero))
 				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
 
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
@@ -576,7 +576,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(name != null);
 
 			m_xmlWriter.WriteStartElement(name);
-			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteString(value.ToString(NumberFormatInfo.InvariantInfo));
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -585,7 +585,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(name != null);
 
 			m_xmlWriter.WriteStartElement(name);
-			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteString(value.ToString(NumberFormatInfo.InvariantInfo));
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -594,7 +594,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(name != null);
 
 			m_xmlWriter.WriteStartElement(name);
-			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteString(value.ToString(NumberFormatInfo.InvariantInfo));
 			m_xmlWriter.WriteEndElement();
 		}
 
@@ -603,7 +603,7 @@ namespace KeePassLib.Serialization
 			Debug.Assert(name != null);
 
 			m_xmlWriter.WriteStartElement(name);
-			m_xmlWriter.WriteString(value.ToString());
+			m_xmlWriter.WriteString(value.ToString(NumberFormatInfo.InvariantInfo));
 			m_xmlWriter.WriteEndElement();
 		}
 

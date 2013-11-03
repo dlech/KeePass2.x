@@ -90,7 +90,7 @@ namespace KeePass.Forms
 			m_tbName.Text = m_pwGroup.Name;
 			UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
-			if(m_pwCustomIconID != PwUuid.Zero)
+			if(!m_pwCustomIconID.Equals(PwUuid.Zero))
 				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
 					m_pwCustomIconID), true);
 			else
@@ -183,7 +183,7 @@ namespace KeePass.Forms
 
 			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				if(ipf.ChosenCustomIconUuid != PwUuid.Zero) // Custom icon
+				if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) // Custom icon
 				{
 					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
 					UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
