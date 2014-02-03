@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
 
 	<title>Technical FAQ - KeePass</title>
 	<base target="_self" />
@@ -83,7 +83,6 @@ Security:
 
 Usage:
 <ul>
-<li><a href="#editattach">Can I directly edit file attachments?</a></li>
 <li><a href="#rtftext">How to store and work with large amounts of (formatted) text?</a></li>
 <li><a href="#email">Can an e-mail address field be added?</a></li>
 </ul>
@@ -563,37 +562,6 @@ repetition, the estimated quality can drop.</p>
 <p>Details can be found on the
 <a href="http://keepass.info/help/kb/pw_quality_est.html"
 target="_blank">Password Quality Estimation</a> help page.</p>
-
-<br />
-
-<a name="editattach"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Can
-I directly edit file attachments?</h2>
-
-<p>No, this is not possible
-(exception: text files, see <a href="#rtftext">working with large texts</a>).
-In order to edit attachments, you need to save them to a
-(temporary) file, edit it using an external application, import it back to KeePass as
-attachment, and finally delete the temporary file.</p>
-
-<p>There will no feature be implemented that automates these steps, because of security
-problems. To see the problems, let's assume that KeePass would support editing attachments.
-When you click a button, KeePass would save the attachment to a file and open it using
-its associated external application. When the external application is closed, KeePass would
-import the temporary file and delete it securely. But what happens when KeePass is closed
-before the external application? KeePass cannot delete the file because it's eventually
-locked by the external application. Theoretically KeePass could tell the user this fact
-before closing, but what to do when the computer shuts down? Here, there's no time left to
-ask the user what to do. The temporary file would have been leaked, i.e. left unencryptedly
-on disk, which is obviously very bad.</p>
-
-<p>One could argue that the leakage would only be temporary: at the next start, KeePass
-could scan the temporary directory for remaining files and delete them. Anyway, the
-files would be freely accessible (unencrypted) by all other applications during a complete
-computer shutdown and boot process. If you don't start KeePass on this computer ever again,
-the file is leaked forever. As KeePass is designed to be portable, i.e. may be securely
-used on many computers, this temporary leakage is unacceptable.</p>
 
 <br />
 

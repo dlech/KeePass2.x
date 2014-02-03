@@ -71,7 +71,7 @@
 			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_grpAttachments = new System.Windows.Forms.GroupBox();
-			this.m_btnBinView = new System.Windows.Forms.Button();
+			this.m_btnBinOpen = new KeePass.UI.SplitButtonEx();
 			this.m_btnBinSave = new System.Windows.Forms.Button();
 			this.m_btnBinDelete = new System.Windows.Forms.Button();
 			this.m_btnBinAdd = new System.Windows.Forms.Button();
@@ -535,7 +535,7 @@
 			// 
 			// m_grpAttachments
 			// 
-			this.m_grpAttachments.Controls.Add(this.m_btnBinView);
+			this.m_grpAttachments.Controls.Add(this.m_btnBinOpen);
 			this.m_grpAttachments.Controls.Add(this.m_btnBinSave);
 			this.m_grpAttachments.Controls.Add(this.m_btnBinDelete);
 			this.m_grpAttachments.Controls.Add(this.m_btnBinAdd);
@@ -547,15 +547,15 @@
 			this.m_grpAttachments.TabStop = false;
 			this.m_grpAttachments.Text = "File attachments";
 			// 
-			// m_btnBinView
+			// m_btnBinOpen
 			// 
-			this.m_btnBinView.Location = new System.Drawing.Point(374, 104);
-			this.m_btnBinView.Name = "m_btnBinView";
-			this.m_btnBinView.Size = new System.Drawing.Size(75, 23);
-			this.m_btnBinView.TabIndex = 3;
-			this.m_btnBinView.Text = "<>";
-			this.m_btnBinView.UseVisualStyleBackColor = true;
-			this.m_btnBinView.Click += new System.EventHandler(this.OnBtnBinView);
+			this.m_btnBinOpen.Location = new System.Drawing.Point(374, 104);
+			this.m_btnBinOpen.Name = "m_btnBinOpen";
+			this.m_btnBinOpen.Size = new System.Drawing.Size(75, 23);
+			this.m_btnBinOpen.TabIndex = 3;
+			this.m_btnBinOpen.Text = "O&pen";
+			this.m_btnBinOpen.UseVisualStyleBackColor = true;
+			this.m_btnBinOpen.Click += new System.EventHandler(this.OnBtnBinOpen);
 			// 
 			// m_btnBinSave
 			// 
@@ -1086,7 +1086,7 @@
 			this.m_ctxPwGen.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxPwGenOpen});
 			this.m_ctxPwGen.Name = "m_ctxPwGen";
-			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 48);
+			this.m_ctxPwGen.Size = new System.Drawing.Size(229, 26);
 			// 
 			// m_ctxPwGenOpen
 			// 
@@ -1361,7 +1361,7 @@
 		private System.Windows.Forms.Label m_lblOverrideUrl;
 		private System.Windows.Forms.LinkLabel m_linkAutoTypeObfuscation;
 		private System.Windows.Forms.CheckBox m_cbAutoTypeObfuscation;
-		private System.Windows.Forms.Button m_btnBinView;
+		private KeePass.UI.SplitButtonEx m_btnBinOpen;
 		private System.Windows.Forms.TextBox m_tbUuid;
 		private System.Windows.Forms.Label m_lblUuid;
 		private System.Windows.Forms.ContextMenuStrip m_ctxTools;

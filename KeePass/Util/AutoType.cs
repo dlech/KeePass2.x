@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
 using System.Media;
-using System.Configuration;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Forms;
@@ -44,7 +43,7 @@ namespace KeePass.Util
 {
 	public sealed class AutoTypeEventArgs : EventArgs
 	{
-		private string m_strSeq;
+		private string m_strSeq; // Never null
 		public string Sequence
 		{
 			get { return m_strSeq; }
@@ -93,9 +92,12 @@ namespace KeePass.Util
 		{
 			try
 			{
-				// Enable new SendInput method; see
-				// http://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.aspx
-				ConfigurationManager.AppSettings.Set("SendKeys", "SendInput");
+				// SendKeys is not used anymore, thus the following is
+				// not required:
+
+				// // Enable new SendInput method; see
+				// // http://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.aspx
+				// ConfigurationManager.AppSettings.Set("SendKeys", "SendInput");
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -169,12 +171,13 @@ namespace KeePass.Util
 			args.Sequence = SprEngine.Compile(args.Sequence, new SprContext(
 				pweData, pwDatabase, SprCompileFlags.All, true, false));
 
-			string strError = ValidateAutoTypeSequence(args.Sequence);
-			if(strError != null)
-			{
-				MessageService.ShowWarning(strError);
-				return false;
-			}
+			// string strError = ValidateAutoTypeSequence(args.Sequence);
+			// if(!string.IsNullOrEmpty(strError))
+			// {
+			//	MessageService.ShowWarning(args.Sequence +
+			//		MessageService.NewParagraph + strError);
+			//	return false;
+			// }
 
 			Application.DoEvents();
 
@@ -186,7 +189,8 @@ namespace KeePass.Util
 				try { SendInputEx.SendKeysWait(args.Sequence, args.SendObfuscated); }
 				catch(Exception excpAT)
 				{
-					MessageService.ShowWarning(excpAT);
+					MessageService.ShowWarning(args.Sequence +
+						MessageService.NewParagraph + excpAT.Message);
 				}
 			}
 
@@ -559,7 +563,9 @@ namespace KeePass.Util
 			return AutoType.PerformInternal(ctx, strWindow);
 		}
 
-		private static string ValidateAutoTypeSequence(string strSequence)
+		// ValidateAutoTypeSequence is not required anymore, because
+		// SendInputEx now validates the sequence
+		/* private static string ValidateAutoTypeSequence(string strSequence)
 		{
 			Debug.Assert(strSequence != null);
 
@@ -589,13 +595,13 @@ namespace KeePass.Util
 				{
 					string strValue = m.Value;
 					if(strValue.StartsWith(@"{s:", StrUtil.CaseIgnoreCmp))
-						return KPRes.AutoTypeUnknownPlaceholder +
-							MessageService.NewLine + strValue;
+						return (KPRes.AutoTypeUnknownPlaceholder +
+							MessageService.NewLine + strValue);
 				}
 			}
 			catch(Exception ex) { Debug.Assert(false); return ex.Message; }
 
 			return null;
-		}
+		} */
 	}
 }

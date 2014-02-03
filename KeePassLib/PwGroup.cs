@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ namespace KeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			/// Plugins: use <c>PwGroup.AddGroup</c> instead.
+			// Plugins: use <c>PwGroup.AddGroup</c> instead.
 			internal set { Debug.Assert(value != this); m_pParentGroup = value; }
 		}
 
@@ -352,9 +352,9 @@ namespace KeePassLib
 			pg.m_pwCustomIconID = m_pwCustomIconID;
 
 			pg.m_tCreation = m_tCreation;
-			pg.m_tExpire = m_tExpire;
-			pg.m_tLastAccess = m_tLastAccess;
 			pg.m_tLastMod = m_tLastMod;
+			pg.m_tLastAccess = m_tLastAccess;
+			pg.m_tExpire = m_tExpire;
 			pg.m_bExpires = m_bExpires;
 			pg.m_uUsageCount = m_uUsageCount;
 
@@ -383,6 +383,64 @@ namespace KeePassLib
 				pg.AddEntry(peSub.CloneStructure(), true);
 
 			return pg;
+		}
+
+		public bool EqualsGroup(PwGroup pg, PwCompareOptions pwOpt,
+			MemProtCmpMode mpCmpStr)
+		{
+			if(pg == null) { Debug.Assert(false); return false; }
+
+			bool bIgnoreLastAccess = ((pwOpt & PwCompareOptions.IgnoreLastAccess) !=
+				PwCompareOptions.None);
+			bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
+				PwCompareOptions.None);
+
+			if(!m_uuid.Equals(pg.m_uuid)) return false;
+			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
+			{
+				if(m_pParentGroup != pg.m_pParentGroup) return false;
+				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pg.m_tParentGroupLastMod))
+					return false;
+			}
+
+			if(m_strName != pg.m_strName) return false;
+			if(m_strNotes != pg.m_strNotes) return false;
+
+			if(m_pwIcon != pg.m_pwIcon) return false;
+			if(!m_pwCustomIconID.Equals(pg.m_pwCustomIconID)) return false;
+
+			if(m_tCreation != pg.m_tCreation) return false;
+			if(!bIgnoreLastMod && (m_tLastMod != pg.m_tLastMod)) return false;
+			if(!bIgnoreLastAccess && (m_tLastAccess != pg.m_tLastAccess)) return false;
+			if(m_tExpire != pg.m_tExpire) return false;
+			if(m_bExpires != pg.m_bExpires) return false;
+			if(!bIgnoreLastAccess && (m_uUsageCount != pg.m_uUsageCount)) return false;
+
+			// if(m_bIsExpanded != pg.m_bIsExpanded) return false;
+
+			if(m_strDefaultAutoTypeSequence != pg.m_strDefaultAutoTypeSequence) return false;
+			if(!m_pwLastTopVisibleEntry.Equals(pg.m_pwLastTopVisibleEntry)) return false;
+
+			if((pwOpt & PwCompareOptions.PropertiesOnly) == PwCompareOptions.None)
+			{
+				if(m_listEntries.UCount != pg.m_listEntries.UCount) return false;
+				for(uint u = 0; u < m_listEntries.UCount; ++u)
+				{
+					PwEntry peA = m_listEntries.GetAt(u);
+					PwEntry peB = pg.m_listEntries.GetAt(u);
+					if(!peA.EqualsEntry(peB, pwOpt, mpCmpStr)) return false;
+				}
+
+				if(m_listGroups.UCount != pg.m_listGroups.UCount) return false;
+				for(uint u = 0; u < m_listGroups.UCount; ++u)
+				{
+					PwGroup pgA = m_listGroups.GetAt(u);
+					PwGroup pgB = pg.m_listGroups.GetAt(u);
+					if(!pgA.EqualsGroup(pgB, pwOpt, mpCmpStr)) return false;
+				}
+			}
+
+			return true;
 		}
 
 		/// <summary>

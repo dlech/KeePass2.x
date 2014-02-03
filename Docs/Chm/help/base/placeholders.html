@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -203,6 +203,9 @@ class="singleimg" alt="Text" />&nbsp;&nbsp;Text Transformations</h2>
 <td width="50%">Searches the regular expression <em>Search</em> in <em>Text</em>
 and replaces all matches by <em>Replace</em>.
 See <a href="#replacerx">below</a>.</td></tr>
+<tr><td width="50%"><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code></td>
+<td width="50%">Convert <em>Text</em> to <em>Type</em>.
+See <a href="#conv">below</a>.</td></tr>
 </table>
 
 
@@ -233,6 +236,33 @@ Let the user name field contain the e-mail address '<code>myname@myprovider.net<
 the URL field '<code>{T-REPLACE-RX:!{USERNAME}!.*@(.*)!http://$1!}</code>'.
 When running the URL field, KeePass opens
 '<code>http://myprovider.net</code>'.
+
+
+<br /><br />
+
+<a name="conv"></a>
+
+<b><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code> &#8211; Convert:</b><br />
+This placeholder converts <em>Text</em> to <em>Type</em>.<br />
+<br />
+All parameters are Spr-compiled, i.e. placeholders can be used within them.<br />
+<br />
+Supported types are:
+<ul>
+<li><b>Upper</b> or <b>U</b>:<br />
+Upper-case.</li>
+<li><b>Lower</b> or <b>L</b>:<br />
+Lower-case.</li>
+<li><b>Base64</b>:<br />
+The Base64 encoding of the UTF-8 representation of the text.</li>
+<li><b>Hex</b>:<br />
+The Hex encoding of the UTF-8 representation of the text.</li>
+</ul>
+<em>Usage example.</em>
+Let the user name field contain '<code>Bob</code>' and
+the URL field '<code>http://myprovider.net/?user={T-CONV:/{USERNAME}/L/}</code>'.
+When running the URL field, KeePass opens
+'<code>http://myprovider.net/?user=bob</code>'.
 
 
 <br /><br />

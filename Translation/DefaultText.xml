@@ -79,6 +79,21 @@
 		<Data Name="AttachedExistsAlready">
 			<Value>The following file has already been attached to the current entry:</Value>
 		</Data>
+		<Data Name="AttachExtDiscardDesc">
+			<Value>Discard any changes made to the temporary file and do not modify the current attachment.</Value>
+		</Data>
+		<Data Name="AttachExtImportDesc">
+			<Value>Replace the attachment by the (modified) temporary file.</Value>
+		</Data>
+		<Data Name="AttachExtOpened">
+			<Value>KeePass has extracted the attachment to a (EFS-encrypted) temporary file and opened it using an external application.</Value>
+		</Data>
+		<Data Name="AttachExtOpenedPost">
+			<Value>After viewing/editing and closing the file in the external application, please choose how to continue</Value>
+		</Data>
+		<Data Name="AttachExtSecDel">
+			<Value>In any case, KeePass will securely delete the temporary file afterwards.</Value>
+		</Data>
 		<Data Name="AttachFailed">
 			<Value>Failed to attach file:</Value>
 		</Data>
@@ -454,8 +469,17 @@
 		<Data Name="DatabaseUnsavedChanges">
 			<Value>Active database has unsaved changes</Value>
 		</Data>
+		<Data Name="DataEditor">
+			<Value>Data Editor</Value>
+		</Data>
+		<Data Name="DataViewer">
+			<Value>Data Viewer</Value>
+		</Data>
 		<Data Name="DbMntncResults">
 			<Value>Show results of database maintenance in a dialog</Value>
+		</Data>
+		<Data Name="DbNoModBy">
+			<Value>{PARAM} has not modified the database.</Value>
 		</Data>
 		<Data Name="Default">
 			<Value>Default</Value>
@@ -537,9 +561,6 @@
 		</Data>
 		<Data Name="EditGroupDesc">
 			<Value>Edit properties of the currently selected group.</Value>
-		</Data>
-		<Data Name="EditObject">
-			<Value>Edit {0}</Value>
 		</Data>
 		<Data Name="EditStringField">
 			<Value>Edit Entry String Field</Value>
@@ -657,6 +678,9 @@
 		</Data>
 		<Data Name="ExportToPrompt">
 			<Value>Export to:</Value>
+		</Data>
+		<Data Name="ExternalApp">
+			<Value>External Application</Value>
 		</Data>
 		<Data Name="FatalError">
 			<Value>Fatal Error</Value>
@@ -970,6 +994,12 @@
 		<Data Name="InterleavedKeySending">
 			<Value>Allow interleaved sending of keys</Value>
 		</Data>
+		<Data Name="InternalEditor">
+			<Value>Internal Editor</Value>
+		</Data>
+		<Data Name="InternalViewer">
+			<Value>Internal Viewer</Value>
+		</Data>
 		<Data Name="Internet">
 			<Value>Internet</Value>
 		</Data>
@@ -996,9 +1026,6 @@
 		</Data>
 		<Data Name="KdbxFiles">
 			<Value>KeePass KDBX Files</Value>
-		</Data>
-		<Data Name="KeePassEditor">
-			<Value>KeePass Editor</Value>
 		</Data>
 		<Data Name="KeePassLibCLong">
 			<Value>KeePassLibC (1.x File Support)</Value>
@@ -1239,6 +1266,9 @@
 		</Data>
 		<Data Name="On">
 			<Value>On</Value>
+		</Data>
+		<Data Name="OpAborted">
+			<Value>Operation aborted.</Value>
 		</Data>
 		<Data Name="OpenCmd">
 			<Value>&amp;Open</Value>
@@ -1509,6 +1539,9 @@
 		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
+		</Data>
+		<Data Name="RetryCmd">
+			<Value>&amp;Retry</Value>
 		</Data>
 		<Data Name="RootDirectory">
 			<Value>Root Directory</Value>
@@ -1974,6 +2007,15 @@
 		</Data>
 		<Data Name="WorkspaceLocked">
 			<Value>Workspace Locked</Value>
+		</Data>
+		<Data Name="XmlModInvalid">
+			<Value>The modified XML data is invalid.</Value>
+		</Data>
+		<Data Name="XmlReplace">
+			<Value>XML Replace</Value>
+		</Data>
+		<Data Name="XmlReplaceDesc">
+			<Value>Replace data in the XML representation of the database.</Value>
 		</Data>
 		<Data Name="XslExporter">
 			<Value>Transform using XSL Stylesheet</Value>

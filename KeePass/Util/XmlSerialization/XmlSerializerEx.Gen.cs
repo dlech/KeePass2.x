@@ -2688,8 +2688,8 @@ namespace KeePass.Util.XmlSerialization
 				m_dictAceColumnType["Url"] = KeePass.App.Configuration.AceColumnType.Url;
 				m_dictAceColumnType["Notes"] = KeePass.App.Configuration.AceColumnType.Notes;
 				m_dictAceColumnType["CreationTime"] = KeePass.App.Configuration.AceColumnType.CreationTime;
-				m_dictAceColumnType["LastAccessTime"] = KeePass.App.Configuration.AceColumnType.LastAccessTime;
 				m_dictAceColumnType["LastModificationTime"] = KeePass.App.Configuration.AceColumnType.LastModificationTime;
+				m_dictAceColumnType["LastAccessTime"] = KeePass.App.Configuration.AceColumnType.LastAccessTime;
 				m_dictAceColumnType["ExpiryTime"] = KeePass.App.Configuration.AceColumnType.ExpiryTime;
 				m_dictAceColumnType["Uuid"] = KeePass.App.Configuration.AceColumnType.Uuid;
 				m_dictAceColumnType["Attachment"] = KeePass.App.Configuration.AceColumnType.Attachment;

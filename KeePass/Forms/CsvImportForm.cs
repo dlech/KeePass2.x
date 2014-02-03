@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -178,6 +178,8 @@ namespace KeePass.Forms
 		{
 			if(m_bInitializing) return;
 
+			List<CsvFieldInfo> lFields = GetCsvFieldInfos();
+
 			bool bSelField = (m_lvFields.SelectedIndices.Count >= 1);
 			bool bSel1Field = (m_lvFields.SelectedIndices.Count == 1);
 			m_btnFieldDel.Enabled = bSelField;
@@ -238,6 +240,14 @@ namespace KeePass.Forms
 				else m_lblFieldFormat.Text = KPRes.Format + ":";
 			}
 			m_tLastCsvType = t;
+
+			bool bHasGroup = false;
+			foreach(CsvFieldInfo cfi in lFields)
+			{
+				if(cfi.Type == CsvFieldType.Group) { bHasGroup = true; break; }
+			}
+			if(!bHasGroup) m_cbMergeGroups.Checked = false;
+			m_cbMergeGroups.Enabled = bHasGroup;
 		}
 
 		private string GetDecodedText()
@@ -486,15 +496,23 @@ namespace KeePass.Forms
 			return opt;
 		}
 
-		private void PerformImport(PwGroup pgStorage, bool bCreatePreview)
+		private List<CsvFieldInfo> GetCsvFieldInfos()
 		{
 			List<CsvFieldInfo> lFields = new List<CsvFieldInfo>();
+
 			for(int i = 0; i < m_lvFields.Items.Count; ++i)
 			{
 				CsvFieldInfo cfi = (m_lvFields.Items[i].Tag as CsvFieldInfo);
 				if(cfi == null) { Debug.Assert(false); continue; }
 				lFields.Add(cfi);
 			}
+
+			return lFields;
+		}
+
+		private void PerformImport(PwGroup pgStorage, bool bCreatePreview)
+		{
+			List<CsvFieldInfo> lFields = GetCsvFieldInfos();
 
 			if(bCreatePreview)
 			{
@@ -527,6 +545,7 @@ namespace KeePass.Forms
 			DateTime dtNoExpire = KdbTime.NeverExpireTime.ToDateTime();
 			bool bIgnoreFirstRow = m_cbIgnoreFirst.Checked;
 			bool bIsFirstRow = true;
+			bool bMergeGroups = m_cbMergeGroups.Checked;
 
 			while(true)
 			{
@@ -554,7 +573,7 @@ namespace KeePass.Forms
 					if(cfi.Type == CsvFieldType.Ignore) { }
 					else if(cfi.Type == CsvFieldType.Group)
 						pg = FindCreateGroup(strField, pgStorage, dGroups,
-							cfi.Format, opt);
+							cfi.Format, opt, bMergeGroups);
 					else if(cfi.Type == CsvFieldType.Title)
 						ImportUtil.AppendToField(pe, PwDefs.TitleField,
 							strField, m_pwDatabase);
@@ -669,10 +688,11 @@ namespace KeePass.Forms
 			return odt.Value;
 		}
 
-		private static PwGroup FindCreateGroup(string strSpec, PwGroup pgStorage,
-			Dictionary<string, PwGroup> dRootGroups, string strSep, CsvOptions opt)
+		private static List<string> SplitGroupPath(string strSpec, string strSep,
+			CsvOptions opt)
 		{
 			List<string> l = new List<string>();
+
 			if(string.IsNullOrEmpty(strSep)) l.Add(strSpec);
 			else
 			{
@@ -685,6 +705,37 @@ namespace KeePass.Forms
 					if(strGrp.Length > 0) l.Add(strGrp);
 				}
 				if(l.Count == 0) l.Add(strSpec);
+			}
+
+			return l;
+		}
+
+		private static string AssembleGroupPath(List<string> l, int iOffset,
+			char chSep)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = iOffset; i < l.Count; ++i)
+			{
+				if(i > iOffset) sb.Append(chSep);
+				sb.Append(l[i]);
+			}
+
+			return sb.ToString();
+		}
+
+		private static PwGroup FindCreateGroup(string strSpec, PwGroup pgStorage,
+			Dictionary<string, PwGroup> dRootGroups, string strSep, CsvOptions opt,
+			bool bMergeGroups)
+		{
+			List<string> l = SplitGroupPath(strSpec, strSep, opt);
+
+			if(bMergeGroups)
+			{
+				char chSep = StrUtil.GetUnusedChar(strSpec);
+				string strPath = AssembleGroupPath(l, 0, chSep);
+
+				return pgStorage.FindCreateSubTree(strPath, new char[1] { chSep });
 			}
 
 			string strRootSub = l[0];
@@ -700,14 +751,9 @@ namespace KeePass.Forms
 			if(l.Count > 1)
 			{
 				char chSep = StrUtil.GetUnusedChar(strSpec);
-				StringBuilder sb = new StringBuilder();
-				for(int i = 1; i < l.Count; ++i)
-				{
-					if(i > 1) sb.Append(chSep);
-					sb.Append(l[i]);
-				}
+				string strSubPath = AssembleGroupPath(l, 1, chSep);
 
-				pg = pg.FindCreateSubTree(sb.ToString(), new char[1]{ chSep });
+				pg = pg.FindCreateSubTree(strSubPath, new char[1] { chSep });
 			}
 
 			return pg;
@@ -811,7 +857,7 @@ namespace KeePass.Forms
 				return new CsvFieldInfo(CsvFieldType.Notes, null, null);
 
 			string[] vGroupNames = new string[] {
-				"Password Groups", "Group", "Groups", "Group Tree"
+				"Password Groups", "Group", "Groups", "Group Tree", KPRes.Group
 			};
 			foreach(string strGroupName in vGroupNames)
 			{

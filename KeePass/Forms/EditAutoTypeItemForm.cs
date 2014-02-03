@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ namespace KeePass.Forms
 			string[] vSpecialKeyCodes = new string[] {
 				"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
 				"HOME", "END", "PGUP", "PGDN",
-				"INSERT", "DELETE", VkcBreak,
+				"INSERT", "DELETE", "SPACE", VkcBreak,
 				"BACKSPACE", "BREAK", "CAPSLOCK", "ESC",
 				"WIN", "LWIN", "RWIN", "APPS",
 				"HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
@@ -177,7 +177,7 @@ namespace KeePass.Forms
 				"GROUP", "GROUPPATH", "PASSWORD_ENC",
 				"URL:RMVSCM", "URL:SCM", "URL:HOST", "URL:PORT", "URL:PATH",
 				"URL:QUERY",
-				"T-REPLACE-RX:/T/S/R/",
+				"T-REPLACE-RX:/T/S/R/", "T-CONV:/T/C/",
 				"C:Comment", VkcBreak,
 				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3",
@@ -514,18 +514,45 @@ namespace KeePass.Forms
 
 		private void PopulateWindowsListWin()
 		{
-			List<IntPtr> lWnds = new List<IntPtr>();
+			Dictionary<IntPtr, bool> dWnds = new Dictionary<IntPtr, bool>();
 			NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
 				IntPtr lParam)
 			{
-				if(hWnd != IntPtr.Zero) lWnds.Add(hWnd);
+				try
+				{
+					if(hWnd != IntPtr.Zero) dWnds[hWnd] = true;
+				}
+				catch(Exception) { Debug.Assert(false); }
+
 				return true;
 			};
 			NativeMethods.EnumWindows(procEnum, IntPtr.Zero);
 
-			foreach(IntPtr hWnd in lWnds)
+			// On Windows 8 and higher, EnumWindows does not return Metro
+			// app windows, thus we try to discover these windows using
+			// the FindWindowEx function; we do this in addition to EnumWindows,
+			// because calling FindWindowEx in a loop is less reliable (and
+			// by additionally using EnumWindows we at least get all desktop
+			// windows for sure)
+			if(WinUtil.IsAtLeastWindows8)
+			{
+				int nMax = (dWnds.Count * 2) + 2;
+				IntPtr h = NativeMethods.FindWindowEx(IntPtr.Zero, IntPtr.Zero,
+					null, null);
+				for(int i = 0; i < nMax; ++i)
+				{
+					if(h == IntPtr.Zero) break;
+
+					dWnds[h] = true;
+
+					h = NativeMethods.FindWindowEx(IntPtr.Zero, h, null, null);
+				}
+			}
+
+			foreach(KeyValuePair<IntPtr, bool> kvp in dWnds)
 				ThreadPool.QueueUserWorkItem(new WaitCallback(
-					EditAutoTypeItemForm.EvalWindowProc), new PwlwInfo(this, hWnd));
+					EditAutoTypeItemForm.EvalWindowProc),
+					new PwlwInfo(this, kvp.Key));
 
 			m_cmbWindow.OrderedImageList = m_vWndImages;
 		}
@@ -541,6 +568,7 @@ namespace KeePass.Forms
 			{
 				PwlwInfo pInfo = (objState as PwlwInfo);
 				IntPtr hWnd = pInfo.WindowHandle;
+				if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
 
 				uint uSmtoFlags = (NativeMethods.SMTO_NORMAL |
 					NativeMethods.SMTO_ABORTIFHUNG);

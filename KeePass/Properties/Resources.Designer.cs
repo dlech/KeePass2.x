@@ -473,6 +473,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_Dashlane {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Dashlane", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_DataVault {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_DataVault", resourceCulture);

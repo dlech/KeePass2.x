@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ namespace KeePass.Forms
 			m_dynCustomStrings.MenuClick += this.OnCopyCustomString;
 
 			m_dynCustomBinaries = new DynamicMenu(m_ctxEntryAttachments.DropDownItems);
-			m_dynCustomBinaries.MenuClick += this.OnEntryBinaryView;
+			m_dynCustomBinaries.MenuClick += this.OnEntryBinaryOpen;
 
 			m_dynShowEntriesByTagsEditMenu = new DynamicMenu(m_menuEditShowByTag.DropDownItems);
 			m_dynShowEntriesByTagsEditMenu.MenuClick += this.OnShowEntriesByTag;
@@ -1901,7 +1901,7 @@ namespace KeePass.Forms
 			else if(strEntryUrl == strLink)
 				PerformDefaultUrlAction(null, false);
 			else if(pb != null)
-				ExecuteBinaryEditView(strLink, pb);
+				ExecuteBinaryOpen(pe, strLink);
 			else if(strLink.StartsWith(SprEngine.StrRefStart, StrUtil.CaseIgnoreCmp) &&
 				strLink.EndsWith(SprEngine.StrRefEnd, StrUtil.CaseIgnoreCmp))
 			{
@@ -2045,9 +2045,6 @@ namespace KeePass.Forms
 			}
 			m_ctxEntryCopyCustomString.Visible = (uStrItems > 0);
 
-			LinkedList<KeyValuePair<string, Image>> lEditableBinaries =
-				new LinkedList<KeyValuePair<string, Image>>();
-
 			uint uBinItems = 0;
 			foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 			{
@@ -2063,24 +2060,13 @@ namespace KeePass.Forms
 					imgIcon = Properties.Resources.B16x16_HTML;
 				else imgIcon = Properties.Resources.B16x16_Binary;
 
-				m_dynCustomBinaries.AddItem(kvp.Key, imgIcon);
+				EntryBinaryDataContext ctxBin = new EntryBinaryDataContext();
+				ctxBin.Entry = pe;
+				ctxBin.Name = kvp.Key;
+
+				m_dynCustomBinaries.AddItem(kvp.Key, imgIcon, ctxBin);
 				++uBinItems;
-
-				if(DataEditorForm.SupportsDataType(bdc))
-					lEditableBinaries.AddLast(new KeyValuePair<string, Image>(
-						kvp.Key, imgIcon));
 			}
-
-			if(lEditableBinaries.Count > 0)
-			{
-				m_dynCustomBinaries.AddSeparator();
-
-				foreach(KeyValuePair<string, Image> kvpEdit in lEditableBinaries)
-					m_dynCustomBinaries.AddItem(string.Format(KPRes.EditObject + "...",
-						kvpEdit.Key), kvpEdit.Value, new EditableBinaryAttachment(
-						kvpEdit.Key));
-			}
-
 			m_ctxEntryAttachments.Visible = (uBinItems > 0);
 		}
 
@@ -2580,6 +2566,18 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); }
 
 			UpdateUI(false, null, true, pg, true, null, true);
+		}
+
+		private void OnToolsXmlRep(object sender, EventArgs e)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			XmlReplaceForm dlg = new XmlReplaceForm();
+			dlg.InitEx(pd);
+
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+				UpdateUI(false, null, true, null, true, null, false);
 		}
 	}
 }

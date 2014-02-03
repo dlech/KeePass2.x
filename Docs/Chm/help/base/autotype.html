@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2013 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
 
 	<title>Auto-Type - KeePass</title>
 	<base target="_self" />
@@ -266,6 +266,7 @@ The following codes for special keys are supported:</p>
 <tr><td width="50%">End</td><td width="50%"><code>{END}</code></td></tr>
 <tr><td width="50%">Page Up</td><td width="50%"><code>{PGUP}</code></td></tr>
 <tr><td width="50%">Page Down</td><td width="50%"><code>{PGDN}</code></td></tr>
+<tr><td width="50%">Space</td><td width="50%"><code>{SPACE}</code></td></tr>
 <tr><td width="50%">Backspace</td><td width="50%"><code>{BACKSPACE}</code>,
 <code>{BS}</code> or <code>{BKSP}</code></td></tr>
 <tr><td width="50%">Break</td><td width="50%"><code>{BREAK}</code></td></tr>
@@ -299,8 +300,8 @@ The following codes for special keys are supported:</p>
 <table class="tablebox75">
 <tr><th width="50%">Special Key</th><th width="50%">Code</th></tr>
 <tr><td width="50%">+</td><td width="50%"><code>{+}</code></td></tr>
-<tr><td width="50%">^</td><td width="50%"><code>{^}</code></td></tr>
 <tr><td width="50%">%</td><td width="50%"><code>{%}</code></td></tr>
+<tr><td width="50%">^</td><td width="50%"><code>{^}</code></td></tr>
 <tr><td width="50%">~</td><td width="50%"><code>{~}</code></td></tr>
 <tr><td width="50%">(, )</td><td width="50%"><code>{(}</code>, <code>{)}</code></td></tr>
 <tr><td width="50%">[, ]</td><td width="50%"><code>{[}</code>, <code>{]}</code></td></tr>
@@ -313,6 +314,8 @@ The following codes for special keys are supported:</p>
 <table class="tablebox75">
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
 <tr><td width="50%"><code>{DELAY <i>X</i>}</code></td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
+<tr><td width="50%"><code>{DELAY=<i>X</i>}</code></td><td width="50%">Sets the default
+delay to <i>X</i> milliseconds for all following keypresses.</td></tr>
 <tr><td width="50%"><code>{CLEARFIELD}</code></td><td width="50%">Clears the contents of the
 edit control that currently has the focus (only single-line edit controls).</td></tr>
 <tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the
@@ -329,8 +332,6 @@ target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
 
 <table class="tablebox75">
 <tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
-<tr><td width="50%"><code>{DELAY=<i>X</i>}</code></td><td width="50%">Sets the default
-delay to <i>X</i> milliseconds for all standard keypresses in this sequence.</td></tr>
 <tr><td width="50%"><code>{VKEY-NX <i>X</i>}</code></td><td width="50%">Sends the
 non-extended virtual key of value <i>X</i>.
 If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
@@ -343,8 +344,7 @@ If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 
 
 
-Under Windows (not Unix-like systems),
-keys and special keys (not placeholders or commands) can be repeated by
+Keys and special keys (not placeholders or commands) can be repeated by
 appending a number within the code. For example, <code>{TAB 5}</code>
 presses the Tab key 5 times.
 

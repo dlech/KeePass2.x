@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 
+using KeePassLib;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -207,7 +208,7 @@ namespace KeePass.Forms
 
 			this.Text = (((m_strDataDesc.Length > 0) ? (m_strDataDesc +
 				(m_bModified ? "*" : string.Empty) + " - ") : string.Empty) +
-				KPRes.KeePassEditor);
+				PwDefs.ShortProductName + " " + KPRes.DataEditor);
 
 			m_menuViewFont.Enabled = (m_bdc == BinaryDataClass.Text);
 			m_menuViewWordWrap.Checked = m_rtbText.WordWrap;
@@ -594,5 +595,25 @@ namespace KeePass.Forms
 			int p = m_rtbText.Find(strNeedle, iStart, -1, RichTextBoxFinds.None);
 			if(p < 0) m_rtbText.Find(strNeedle, 0, -1, RichTextBoxFinds.None);
 		}
+
+		/* protected override void WndProc(ref Message m)
+		{
+			if((m.Msg == NativeMethods.WM_KEYDOWN) || (m.Msg == NativeMethods.WM_KEYUP))
+			{
+				long w = m.WParam.ToInt64();
+				ushort usCtrl = NativeMethods.GetKeyState(NativeMethods.VK_CONTROL);
+				bool bCtrl = ((usCtrl & 0x8000U) != 0);
+
+				if(bCtrl && (w == (long)Keys.F))
+				{
+					if(m.Msg == NativeMethods.WM_KEYDOWN)
+						UIUtil.SetFocus(m_tbFind.Control, this);
+
+					return;
+				}
+			}
+
+			base.WndProc(ref m);
+		} */
 	}
 }

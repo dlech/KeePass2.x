@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -85,6 +85,9 @@ namespace KeePass.Forms
 		private Image m_imgPwGen = null;
 		private Image m_imgStdExpire = null;
 		private List<Image> m_lOverrideUrlIcons = new List<Image>();
+
+		private ContextMenuStrip m_ctxBinOpen = null;
+		private DynamicMenu m_dynBinOpen = null;
 
 		private readonly string DeriveFromPrevious = "(" +
 			KPRes.GenPwBasedOnPrevious + ")";
@@ -277,8 +280,10 @@ namespace KeePass.Forms
 			{
 				m_btnStrAdd.Enabled = m_btnStrEdit.Enabled =
 					m_btnStrDelete.Enabled = m_btnStrMove.Enabled =
-					m_btnBinAdd.Enabled = m_btnBinDelete.Enabled =
-					m_btnBinView.Enabled = m_btnBinSave.Enabled = false;
+					m_btnBinAdd.Enabled = m_btnBinDelete.Enabled = false;
+
+				// Always available:
+				// m_btnBinOpen.Enabled = m_btnBinSave.Enabled = false;
 
 				m_lvBinaries.LabelEdit = false;
 			}
@@ -566,6 +571,12 @@ namespace KeePass.Forms
 			m_dynGenProfiles.MenuClick += this.OnProfilesDynamicMenuClick;
 			m_ctxNotes.Attach(m_rtNotes, this);
 
+			m_ctxBinOpen = new ContextMenuStrip();
+			m_ctxBinOpen.Opening += this.OnCtxBinOpenOpening;
+			m_dynBinOpen = new DynamicMenu(m_ctxBinOpen.Items);
+			m_dynBinOpen.MenuClick += this.OnDynBinOpen;
+			m_btnBinOpen.SplitDropDownMenu = m_ctxBinOpen;
+
 			string strTitle = string.Empty, strDesc = string.Empty;
 			if(m_pwEditMode == PwEditMode.AddNewEntry)
 			{
@@ -679,34 +690,15 @@ namespace KeePass.Forms
 			int nStringsSel = m_lvStrings.SelectedItems.Count;
 			int nBinSel = m_lvBinaries.SelectedItems.Count;
 
-			bool bBinEdit = false;
-			if(nBinSel == 1)
-			{
-				string strBin = m_lvBinaries.SelectedItems[0].Text;
-				ProtectedBinary pbSel = m_vBinaries.Get(strBin);
-				if(pbSel != null)
-				{
-					byte[] pbBinData = pbSel.ReadData();
-					BinaryDataClass bdc = BinaryDataClassifier.Classify(
-						strBin, pbBinData);
-					MemUtil.ZeroByteArray(pbBinData);
-					if(DataEditorForm.SupportsDataType(bdc) && (m_pwEditMode !=
-						PwEditMode.ViewReadOnlyEntry))
-						bBinEdit = true;
-				}
-				else { Debug.Assert(false); }
-			}
-			m_btnBinView.Text = (bBinEdit ? StrUtil.RemoveAccelerator(
-				KPRes.EditCmd) : KPRes.ViewCmd);
-
-			m_btnBinView.Enabled = (nBinSel == 1);
+			m_btnBinOpen.Enabled = (nBinSel == 1);
+			m_btnBinSave.Enabled = (nBinSel >= 1);
 
 			if(m_bLockEnabledState) return;
 
 			m_btnStrEdit.Enabled = (nStringsSel == 1);
 			m_btnStrDelete.Enabled = (nStringsSel >= 1);
 
-			m_btnBinSave.Enabled = m_btnBinDelete.Enabled = (nBinSel >= 1);
+			m_btnBinDelete.Enabled = (nBinSel >= 1);
 
 			m_btnPickFgColor.Enabled = m_cbCustomForegroundColor.Checked;
 			m_btnPickBgColor.Enabled = m_cbCustomBackgroundColor.Checked;
@@ -855,6 +847,12 @@ namespace KeePass.Forms
 		{
 			m_dynGenProfiles.MenuClick -= this.OnProfilesDynamicMenuClick;
 			m_dynGenProfiles.Clear();
+
+			m_btnBinOpen.SplitDropDownMenu = null;
+			m_dynBinOpen.MenuClick -= this.OnDynBinOpen;
+			m_dynBinOpen.Clear();
+			m_ctxBinOpen.Opening -= this.OnCtxBinOpenOpening;
+			m_ctxBinOpen.Dispose();
 
 			if(m_pwEditMode != PwEditMode.ViewReadOnlyEntry)
 				Program.Config.UI.Hiding.HideInEntryWindow = m_cbHidePassword.Checked;
@@ -1515,39 +1513,72 @@ namespace KeePass.Forms
 				KPRes.DocumentationHint);
 		}
 
-		private void OnBtnBinView(object sender, EventArgs e)
+		private bool GetSelBin(out string strDataItem, out ProtectedBinary pb)
 		{
+			strDataItem = null;
+			pb = null;
+
 			ListView.SelectedListViewItemCollection lvsic = m_lvBinaries.SelectedItems;
-			if((lvsic == null) || (lvsic.Count != 1)) return;
+			if((lvsic == null) || (lvsic.Count != 1)) return false; // No assert
 
-			string strDataItem = lvsic[0].Text;
-			ProtectedBinary pbinData = m_vBinaries.Get(strDataItem);
-			if(pbinData == null) { Debug.Assert(false); return; }
-			byte[] pbData = pbinData.ReadData();
+			strDataItem = lvsic[0].Text;
+			pb = m_vBinaries.Get(strDataItem);
+			if(pb == null) { Debug.Assert(false); return false; }
 
-			BinaryDataClass bdc = BinaryDataClassifier.Classify(strDataItem, pbData);
-			if(DataEditorForm.SupportsDataType(bdc) && (m_pwEditMode !=
-				PwEditMode.ViewReadOnlyEntry))
+			return true;
+		}
+
+		private void OpenSelBin(BinaryDataOpenOptions optBase)
+		{
+			string strDataItem;
+			ProtectedBinary pb;
+			if(!GetSelBin(out strDataItem, out pb)) return;
+
+			BinaryDataOpenOptions opt = ((optBase != null) ? optBase.CloneDeep() :
+				new BinaryDataOpenOptions());
+			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
-				DataEditorForm def = new DataEditorForm();
-				def.InitEx(strDataItem, pbData);
-				def.ShowDialog();
+				if(optBase == null)
+					opt.Handler = BinaryDataHandler.InternalViewer;
 
-				if(def.EditedBinaryData != null)
-				{
-					m_vBinaries.Set(strDataItem, new ProtectedBinary(
-						pbinData.IsProtected, def.EditedBinaryData));
-					UpdateEntryBinaries(false, true, strDataItem); // Update size
-				}
-
-				UIUtil.DestroyForm(def);
+				opt.ReadOnly = true;
 			}
-			else
+
+			ProtectedBinary pbMod = BinaryDataUtil.Open(strDataItem, pb, opt);
+			if(pbMod != null)
 			{
-				DataViewerForm dvf = new DataViewerForm();
-				dvf.InitEx(strDataItem, pbData);
-				UIUtil.ShowDialogAndDestroy(dvf);
+				m_vBinaries.Set(strDataItem, pbMod);
+				UpdateEntryBinaries(false, true, strDataItem); // Update size
 			}
+		}
+
+		private void OnBtnBinOpen(object sender, EventArgs e)
+		{
+			OpenSelBin(null);
+		}
+
+		private void OnDynBinOpen(object sender, DynamicMenuEventArgs e)
+		{
+			if(e == null) { Debug.Assert(false); return; }
+
+			BinaryDataOpenOptions opt = (e.Tag as BinaryDataOpenOptions);
+			if(opt == null) { Debug.Assert(false); return; }
+
+			OpenSelBin(opt);
+		}
+
+		private void OnCtxBinOpenOpening(object sender, CancelEventArgs e)
+		{
+			string strDataItem;
+			ProtectedBinary pb;
+			if(!GetSelBin(out strDataItem, out pb))
+			{
+				e.Cancel = true;
+				return;
+			}
+
+			BinaryDataUtil.BuildOpenWithMenu(m_dynBinOpen, strDataItem, pb,
+				(m_pwEditMode == PwEditMode.ViewReadOnlyEntry));
 		}
 
 		private void OnBtnTools(object sender, EventArgs e)
@@ -1696,7 +1727,7 @@ namespace KeePass.Forms
 
 		private void OnBinariesItemActivate(object sender, EventArgs e)
 		{
-			OnBtnBinView(sender, e);
+			OnBtnBinOpen(sender, e);
 		}
 
 		private void OnHistoryItemActivate(object sender, EventArgs e)

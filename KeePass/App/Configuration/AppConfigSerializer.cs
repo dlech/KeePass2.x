@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -103,14 +103,14 @@ namespace KeePass.App.Configuration
 				try { strFile = asm.Location; }
 				catch(Exception) { }
 
-				if((strFile == null) || (strFile.Length == 0))
+				if(string.IsNullOrEmpty(strFile))
 					strFile = UrlUtil.FileUrlToPath(asm.GetName().CodeBase);
 #else
 				string strFile = UrlUtil.FileUrlToPath(asm.GetName().CodeBase);
 #endif
 				Debug.Assert(strFile != null); if(strFile == null) return;
 
-				if((m_strBaseName == null) || (m_strBaseName.Length == 0))
+				if(string.IsNullOrEmpty(m_strBaseName))
 				{
 					// Remove assembly extension
 					if(strFile.EndsWith(".exe", StrUtil.CaseIgnoreCmp))
@@ -164,8 +164,7 @@ namespace KeePass.App.Configuration
 
 		private static void EnsureAppDataDirAvailable()
 		{
-			Debug.Assert((m_strCreateDir != null) && (m_strCreateDir.Length > 0));
-			if((m_strCreateDir == null) || (m_strCreateDir.Length == 0)) return;
+			if(string.IsNullOrEmpty(m_strCreateDir)) { Debug.Assert(false); return; }
 
 			try
 			{
@@ -177,15 +176,29 @@ namespace KeePass.App.Configuration
 
 		private static XmlDocument LoadEnforcedConfigFile()
 		{
+#if DEBUG
+			Stopwatch sw = Stopwatch.StartNew();
+#endif
+
+			m_xdEnforced = null;
 			try
 			{
+				// Performance optimization
+				if(!File.Exists(m_strEnforcedConfigFile)) return null;
+
 				XmlDocument xmlDoc = new XmlDocument();
 				xmlDoc.Load(m_strEnforcedConfigFile);
 
 				m_xdEnforced = xmlDoc;
 				return xmlDoc;
 			}
-			catch(Exception) { m_xdEnforced = null; }
+			catch(Exception) { Debug.Assert(false); }
+#if DEBUG
+			finally
+			{
+				sw.Stop();
+			}
+#endif
 
 			return null;
 		}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,6 +66,13 @@ namespace KeePass.Native
 		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern int RegisterWindowMessage(string lpString);
 
+		// [DllImport("User32.dll")]
+		// internal static extern IntPtr GetDesktopWindow();
+
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		internal static extern IntPtr FindWindowEx(IntPtr hwndParent,
+			IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
 		[DllImport("User32.dll")]
 		internal static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
 
@@ -81,6 +88,10 @@ namespace KeePass.Native
 		[DllImport("User32.dll", EntryPoint = "GetClassLongPtr")]
 		private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
 
+		// [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		// private static extern int GetClassName(IntPtr hWnd,
+		//	StringBuilder lpClassName, int nMaxCount);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool IsIconic(IntPtr hWnd);
@@ -94,7 +105,7 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		private static extern int GetWindowText(IntPtr hWnd,
-			[Out] StringBuilder lpString, int nMaxCount);
+			StringBuilder lpString, int nMaxCount);
 
 		[DllImport("User32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -143,7 +154,10 @@ namespace KeePass.Native
 		internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
-		internal static extern ushort VkKeyScan(char ch); // TCHAR
+		internal static extern ushort VkKeyScan(char ch);
+
+		[DllImport("User32.dll", CharSet = CharSet.Auto)]
+		internal static extern ushort VkKeyScanEx(char ch, IntPtr hKL);
 
 		[DllImport("User32.dll")]
 		internal static extern ushort GetKeyState(int vKey);
@@ -266,6 +280,9 @@ namespace KeePass.Native
 		// [DllImport("Imm32.dll")]
 		// [return: MarshalAs(UnmanagedType.Bool)]
 		// internal static extern bool ImmDisableIME(uint idThread);
+
+		// [DllImport("Imm32.dll")]
+		// internal static extern IntPtr ImmAssociateContext(IntPtr hWnd, IntPtr hIMC);
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateFile(string lpFileName,
@@ -395,6 +412,14 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool Process32Next(IntPtr hSnapshot,
 			ref PROCESSENTRY32 lppe);
+
+		// [DllImport("Kernel32.dll", SetLastError = true)]
+		// internal static extern IntPtr OpenProcess(uint dwDesiredAccess,
+		//	[MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, uint dwProcessId);
+
+		// [DllImport("User32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool IsImmersiveProcess(IntPtr hProcess);
 
 		[DllImport("Kernel32.dll", CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateActCtx(ref ACTCTX pActCtx);

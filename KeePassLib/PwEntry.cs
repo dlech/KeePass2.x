@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ namespace KeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			/// Plugins: use <c>PwGroup.AddEntry</c> instead.
+			// Plugins: use <c>PwGroup.AddEntry</c> instead.
 			internal set { m_pParentGroup = value; }
 		}
 
@@ -200,21 +200,21 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// The date/time when this entry was last accessed (read).
-		/// </summary>
-		public DateTime LastAccessTime
-		{
-			get { return m_tLastAccess; }
-			set { m_tLastAccess = value; }
-		}
-
-		/// <summary>
 		/// The date/time when this entry was last modified.
 		/// </summary>
 		public DateTime LastModificationTime
 		{
 			get { return m_tLastMod; }
 			set { m_tLastMod = value; }
+		}
+
+		/// <summary>
+		/// The date/time when this entry was last accessed (read).
+		/// </summary>
+		public DateTime LastAccessTime
+		{
+			get { return m_tLastAccess; }
+			set { m_tLastAccess = value; }
 		}
 
 		/// <summary>

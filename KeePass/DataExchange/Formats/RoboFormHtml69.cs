@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -91,21 +91,6 @@ namespace KeePass.DataExchange.Formats
 			return strTitle;
 		}
 
-		private static string FixUrl(string strUrl)
-		{
-			strUrl = strUrl.Trim();
-
-			if((strUrl.Length > 0) && (strUrl.IndexOf(':') < 0) &&
-				(strUrl.IndexOf('@') < 0))
-			{
-				string strNew = ("http://" + strUrl.ToLower());
-				if(strUrl.IndexOf('/') < 0) strNew += "/";
-				return strNew;
-			}
-
-			return strUrl;
-		}
-
 		private static string MapKey(string strKey)
 		{
 			string s = ImportUtil.MapNameToStandardField(strKey, true);
@@ -192,7 +177,7 @@ namespace KeePass.DataExchange.Formats
 						}
 						else if(strClass.Equals("subcaption", StrUtil.CaseIgnoreCmp))
 							ImportUtil.AppendToField(pe, PwDefs.UrlField,
-								FixUrl(strText), pd);
+								ImportUtil.FixUrl(strText), pd);
 						else if(strClass.Equals("field", StrUtil.CaseIgnoreCmp))
 						{
 							// 7.9.2.5+

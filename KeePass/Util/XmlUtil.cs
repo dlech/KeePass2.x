@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static class XmlUtil
+	public static partial class XmlUtil
 	{
 		public static string SafeInnerText(XmlNode xmlNode)
 		{
@@ -302,6 +302,9 @@ namespace KeePass.Util
 
 			foreach(XmlNode xnOvrChild in xnOverride.ChildNodes)
 			{
+				if(xnOvrChild.NodeType == XmlNodeType.Comment) continue;
+				Debug.Assert(xnOvrChild.NodeType == XmlNodeType.Element);
+
 				int nOvrIndex = GetMultiChildIndex(xnOverride.ChildNodes, xnOvrChild);
 				if(nOvrIndex < 0) { Debug.Assert(false); continue; }
 
@@ -310,6 +313,12 @@ namespace KeePass.Util
 
 				if(xnRep == null)
 				{
+					if(xnOvrChild.NodeType != XmlNodeType.Element)
+					{
+						Debug.Assert(false);
+						continue;
+					}
+
 					XmlNode xnNew = xd.CreateElement(xnOvrChild.Name);
 					xn.AppendChild(xnNew);
 

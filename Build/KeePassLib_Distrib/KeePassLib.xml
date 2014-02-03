@@ -1044,14 +1044,14 @@
             The date/time when the object was created.
             </summary>
         </member>
-        <member name="P:KeePassLib.Interfaces.ITimeLogger.LastAccessTime">
-            <summary>
-            The date/time when the object was last accessed.
-            </summary>
-        </member>
         <member name="P:KeePassLib.Interfaces.ITimeLogger.LastModificationTime">
             <summary>
             The date/time when the object was last modified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Interfaces.ITimeLogger.LastAccessTime">
+            <summary>
+            The date/time when the object was last accessed.
             </summary>
         </member>
         <member name="P:KeePassLib.Interfaces.ITimeLogger.ExpiryTime">
@@ -1855,14 +1855,14 @@
             The date/time when this entry was created.
             </summary>
         </member>
-        <member name="P:KeePassLib.PwEntry.LastAccessTime">
-            <summary>
-            The date/time when this entry was last accessed (read).
-            </summary>
-        </member>
         <member name="P:KeePassLib.PwEntry.LastModificationTime">
             <summary>
             The date/time when this entry was last modified.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwEntry.LastAccessTime">
+            <summary>
+            The date/time when this entry was last accessed (read).
             </summary>
         </member>
         <member name="P:KeePassLib.PwEntry.ExpiryTime">

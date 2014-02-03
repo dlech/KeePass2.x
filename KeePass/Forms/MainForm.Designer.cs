@@ -226,6 +226,8 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_menuToolsDbSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuToolsDbXmlRep = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -1365,7 +1367,9 @@
             this.m_menuToolsDbSep0,
             this.m_menuToolsDbDelDupEntries,
             this.m_menuToolsDbDelEmptyGroups,
-            this.m_menuToolsDbDelUnusedIcons});
+            this.m_menuToolsDbDelUnusedIcons,
+            this.m_menuToolsDbSep1,
+            this.m_menuToolsDbXmlRep});
 			this.m_menuToolsDb.Name = "m_menuToolsDb";
 			this.m_menuToolsDb.Size = new System.Drawing.Size(213, 22);
 			this.m_menuToolsDb.Text = "&Database Tools";
@@ -1974,6 +1978,19 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_menuToolsDbSep1
+			// 
+			this.m_menuToolsDbSep1.Name = "m_menuToolsDbSep1";
+			this.m_menuToolsDbSep1.Size = new System.Drawing.Size(230, 6);
+			// 
+			// m_menuToolsDbXmlRep
+			// 
+			this.m_menuToolsDbXmlRep.Image = global::KeePass.Properties.Resources.B16x16_Binary;
+			this.m_menuToolsDbXmlRep.Name = "m_menuToolsDbXmlRep";
+			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbXmlRep.Text = "&XML Replace...";
+			this.m_menuToolsDbXmlRep.Click += new System.EventHandler(this.OnToolsXmlRep);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2211,6 +2228,8 @@
 		private System.Windows.Forms.ToolStripMenuItem m_tbOpenUrlDefault;
 		private System.Windows.Forms.ToolStripButton m_tbCopyUrl;
 		private System.Windows.Forms.ToolStripButton m_tbAutoType;
+		private System.Windows.Forms.ToolStripSeparator m_menuToolsDbSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbXmlRep;
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,12 @@ namespace KeePass.Native
 
 		internal const int WM_NOTIFY = 0x004E;
 
+		// See Control.ReflectMessageInternal;
+		// http://msdn.microsoft.com/en-us/library/eeah46xd.aspx
+		internal const int WM_REFLECT = 0x2000;
+
+		internal const int WM_NOTIFY_REFLECT = (WM_NOTIFY + WM_REFLECT);
+
 		internal const int WM_GETTEXTLENGTH = 0x000E;
 		internal const int WM_GETICON = 0x007F;
 
@@ -83,6 +89,7 @@ namespace KeePass.Native
 		internal const uint KEYEVENTF_KEYUP = 2;
 		internal const uint KEYEVENTF_UNICODE = 4;
 
+		// internal const uint GW_CHILD = 5;
 		internal const uint GW_HWNDNEXT = 2;
 
 		internal const int GWL_STYLE = -16;
@@ -184,6 +191,8 @@ namespace KeePass.Native
 		internal const uint SND_ASYNC = 0x0001;
 		internal const uint SND_FILENAME = 0x00020000;
 		internal const uint SND_NODEFAULT = 0x0002;
+
+		// internal const uint PROCESS_QUERY_INFORMATION = 0x0400;
 
 		internal const uint ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID = 0x04;
 

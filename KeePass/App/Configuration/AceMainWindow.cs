@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -480,8 +480,8 @@ namespace KeePass.App.Configuration
 		Url,
 		Notes,
 		CreationTime,
-		LastAccessTime,
 		LastModificationTime,
+		LastAccessTime,
 		ExpiryTime,
 		Uuid,
 		Attachment,
@@ -571,8 +571,8 @@ namespace KeePass.App.Configuration
 				case AceColumnType.Url: str = KPRes.Url; break;
 				case AceColumnType.Notes: str = KPRes.Notes; break;
 				case AceColumnType.CreationTime: str = KPRes.CreationTime; break;
-				case AceColumnType.LastAccessTime: str = KPRes.LastAccessTime; break;
 				case AceColumnType.LastModificationTime: str = KPRes.LastModificationTime; break;
+				case AceColumnType.LastAccessTime: str = KPRes.LastAccessTime; break;
 				case AceColumnType.ExpiryTime: str = KPRes.ExpiryTime; break;
 				case AceColumnType.Uuid: str = KPRes.Uuid; break;
 				case AceColumnType.Attachment: str = KPRes.Attachments; break;

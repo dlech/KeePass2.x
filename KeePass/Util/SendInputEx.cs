@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,640 +20,539 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
 
-using KeePass.Native;
+using KeePass.Resources;
+using KeePass.Util.SendInputExt;
 
 using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	internal sealed class SiStateEx
+	internal enum SiEventType
 	{
-		public bool InputBlocked = false;
-
-		public IntPtr OriginalKeyboardLayout = IntPtr.Zero;
-		public IntPtr CurrentKeyboardLayout = IntPtr.Zero;
-
-		public uint DefaultDelay = 10;
-
-		public IntPtr TargetHWnd = IntPtr.Zero;
-		public string TargetWindowTitle = string.Empty;
-
-		public uint ThisThreadID = 0;
-		public uint TargetThreadID = 0;
-		public uint TargetProcessID = 0;
-
-		// public bool ThreadInputAttached = false;
-
-		public bool Cancelled = false;
+		None = 0,
+		Key,
+		KeyModifier,
+		Char,
+		Delay,
+		SetDefaultDelay,
+		ClipboardCopy
 	}
 
-	public static partial class SendInputEx
+	internal sealed class SiEvent
 	{
-		// private const ushort LangIDGerman = 0x0407;
+		public SiEventType Type = SiEventType.None;
 
+		public int VKey = 0;
+		public bool? ExtendedKey = null;
+
+		public Keys KeyModifier = Keys.None;
+
+		public char Char = char.MinValue;
+
+		public bool? Down = null;
+
+		public uint Delay = 0;
+
+		public string Text = null;
+
+#if DEBUG
+		// For debugger display
+		public override string ToString()
+		{
+			string str = Enum.GetName(typeof(SiEventType), this.Type);
+
+			string strSub = null;
+			switch(this.Type)
+			{
+				case SiEventType.Key:
+					strSub = this.VKey.ToString() + " " + this.ExtendedKey.ToString() +
+						" " + this.Down.ToString();
+					break;
+				case SiEventType.KeyModifier:
+					strSub = this.KeyModifier.ToString() + " " + this.Down.ToString();
+					break;
+				case SiEventType.Char:
+					strSub = this.Char.ToString() + " " + this.Down.ToString();
+					break;
+				case SiEventType.Delay:
+				case SiEventType.SetDefaultDelay:
+					strSub = this.Delay.ToString();
+					break;
+				case SiEventType.ClipboardCopy:
+					strSub = this.Text;
+					break;
+				default: break;
+			}
+
+			if(!string.IsNullOrEmpty(strSub)) return (str + ": " + strSub);
+			return str;
+		}
+#endif
+	}
+
+	public static class SendInputEx
+	{
 		private static CriticalSectionEx m_csSending = new CriticalSectionEx();
 
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
-			bool bUnix = KeePassLib.Native.NativeLib.IsUnix();
-			bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
+			if(strKeys == null) { Debug.Assert(false); return; }
 
+			List<SiEvent> l = Parse(strKeys);
+			if(l.Count == 0) return;
+
+			if(bObfuscate) SiObf.Obfuscate(l);
+
+			FixEventSeq(l);
+
+			bool bUnix = KeePassLib.Native.NativeLib.IsUnix();
+			ISiEngine si;
+			if(bUnix) si = new SiEngineUnix();
+			else si = new SiEngineWin();
+
+			bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
 			if(!bInter)
 			{
 				if(!m_csSending.TryEnter()) return;
 			}
 
-			SiStateEx si = InitSendKeys();
 			try
 			{
-				if(!bUnix) { Debug.Assert(GetActiveKeyModifiers().Count == 0); }
-
-				strKeys = ExtractGlobalDelay(strKeys, si); // Before TCATO splitting
-
-				if(bObfuscate)
-				{
-					try { SendObfuscated(strKeys, si); }
-					catch(Exception) { SendKeysWithSpecial(strKeys, si); }
-				}
-				else SendKeysWithSpecial(strKeys, si);
+				si.Init();
+				Send(si, l);
 			}
 			finally
 			{
-				FinishSendKeys(si);
+				try { si.Release(); }
+				catch(Exception) { Debug.Assert(false); }
 
 				if(!bInter) m_csSending.Exit();
 			}
 		}
 
-		private static SiStateEx InitSendKeys()
+		private static List<SiEvent> Parse(string strSequence)
 		{
-			SiStateEx si = new SiStateEx();
-			if(KeePassLib.Native.NativeLib.IsUnix())
-			{
-				si.DefaultDelay /= 3; // Starting external program takes time
-				return si;
-			}
+			CharStream cs = new CharStream(strSequence);
+			List<SiEvent> l = new List<SiEvent>();
+			string strError = KPRes.AutoTypeSequenceInvalid;
 
-			try
-			{
-				IntPtr hWndTarget;
-				string strTargetTitle;
-				NativeMethods.GetForegroundWindowInfo(out hWndTarget,
-					out strTargetTitle, false);
-				si.TargetHWnd = hWndTarget;
-				si.TargetWindowTitle = (strTargetTitle ?? string.Empty);
+			Keys kCurKbMods = Keys.None;
 
-				si.ThisThreadID = NativeMethods.GetCurrentThreadId();
-				uint uTargetProcessID;
-				si.TargetThreadID = NativeMethods.GetWindowThreadProcessId(
-					si.TargetHWnd, out uTargetProcessID);
-				si.TargetProcessID = uTargetProcessID;
-
-				EnsureSameKeyboardLayout(si);
-
-				// Do not use SendKeys.Flush here, use Application.DoEvents
-				// instead; SendKeys.Flush might run into an infinite loop here
-				// if a previous auto-type process failed with throwing an
-				// exception (SendKeys.Flush is waiting in a loop for an internal
-				// queue being empty, however the queue is never processed)
-				Application.DoEvents();
-
-				// if(si.ThisThreadID != si.TargetThreadID)
-				// {
-				//	si.ThreadInputAttached = NativeMethods.AttachThreadInput(
-				//		si.ThisThreadID, si.TargetThreadID, true);
-				//	Debug.Assert(si.ThreadInputAttached);
-				// }
-				// else { Debug.Assert(false); }
-
-				List<int> lMod = GetActiveKeyModifiers();
-				ActivateKeyModifiers(lMod, false);
-				SpecialReleaseModifiers(lMod);
-
-				Debug.Assert(GetActiveKeyModifiers().Count == 0);
-
-				si.InputBlocked = NativeMethods.BlockInput(true);
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return si;
-		}
-
-		private static void FinishSendKeys(SiStateEx si)
-		{
-			if(KeePassLib.Native.NativeLib.IsUnix()) return;
-
-			try
-			{
-				// Do not restore original modifier keys here, otherwise
-				// modifier keys are restored even when the user released
-				// them while KeePass is auto-typing!
-				// ActivateKeyModifiers(lRestore, true);
-
-				if(si.InputBlocked) NativeMethods.BlockInput(false); // Unblock
-
-				// if(si.ThreadInputAttached)
-				//	NativeMethods.AttachThreadInput(si.ThisThreadID,
-				//		si.TargetThreadID, false); // Detach
-
-				if(si.OriginalKeyboardLayout != IntPtr.Zero)
-					NativeMethods.ActivateKeyboardLayout(si.OriginalKeyboardLayout, 0);
-
-				Application.DoEvents();
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
-
-		private static void SendObfuscated(string strKeys, SiStateEx siState)
-		{
-			if(string.IsNullOrEmpty(strKeys)) return;
-
-			ClipboardEventChainBlocker cev = new ClipboardEventChainBlocker();
-			ClipboardContents cnt = new ClipboardContents(true, true);
-			Exception excpInner = null;
-
-			char[] vSpecial = new char[]{ '{', '}', '(', ')', '+', '^', '%',
-				' ', '\t', '\r', '\n' };
-
-			try
-			{
-				List<string> vParts = SplitKeySequence(strKeys);
-				foreach(string strPart in vParts)
-				{
-					if(string.IsNullOrEmpty(strPart)) continue;
-
-					if(strPart.IndexOfAny(vSpecial) >= 0)
-						SendKeysWithSpecial(strPart, siState);
-					else MixedTransfer(strPart, siState);
-				}
-			}
-			catch(Exception ex) { excpInner = ex; }
-
-			cnt.SetData();
-			cev.Release();
-
-			if(excpInner != null) throw excpInner;
-		}
-
-		private static List<string> SplitKeySequence(string strKeys)
-		{
-			List<string> vParts = new List<string>();
-			if(string.IsNullOrEmpty(strKeys)) return vParts;
-
-			CharStream cs = new CharStream(strKeys);
-			StringBuilder sbRawText = new StringBuilder();
+			List<Keys> lMods = new List<Keys>();
+			lMods.Add(Keys.None);
 
 			while(true)
 			{
 				char ch = cs.ReadChar();
 				if(ch == char.MinValue) break;
 
-				switch(ch)
+				if((ch == '+') || (ch == '^') || (ch == '%'))
 				{
-					case ')':
-					case '}':
-						throw new FormatException();
+					if(lMods.Count == 0) { Debug.Assert(false); break; }
+					else if(ch == '+') lMods[lMods.Count - 1] |= Keys.Shift;
+					else if(ch == '^') lMods[lMods.Count - 1] |= Keys.Control;
+					else if(ch == '%') lMods[lMods.Count - 1] |= Keys.Alt;
+					else { Debug.Assert(false); }
 
-					case '(':
-					case '{':
-					case '+':
-					case '^':
-					case '%':
-					case ' ':
-					case '\t':
-						string strBuf = sbRawText.ToString();
-						if(strBuf.IndexOfAny(new char[]{ '+', '^', '%',
-							' ', '\t' }) < 0)
-						{
-							if(strBuf.Length > 0) vParts.Add(strBuf);
-							sbRawText.Remove(0, sbRawText.Length);
-						}
+					continue;
+				}
+				else if(ch == '(')
+				{
+					lMods.Add(Keys.None);
+					continue;
+				}
+				else if(ch == ')')
+				{
+					if(lMods.Count >= 2)
+					{
+						lMods.RemoveAt(lMods.Count - 1);
+						lMods[lMods.Count - 1] = Keys.None;
+					}
+					else throw new FormatException(strError);
 
-						if(ch == '(')
-						{
-							ReadParenthesized(cs, sbRawText);
-							if(sbRawText.Length > 0)
-								vParts.Add(sbRawText.ToString());
-							sbRawText.Remove(0, sbRawText.Length);
-						}
-						else if(ch == '{')
-						{
-							ReadBraced(cs, sbRawText);
-							if(sbRawText.Length > 0)
-								vParts.Add(sbRawText.ToString());
-							sbRawText.Remove(0, sbRawText.Length);
-						}
-						else if(ch == ' ')
-						{
-							vParts.Add(" ");
-							sbRawText.Remove(0, sbRawText.Length);
-						}
-						else if(ch == '\t')
-						{
-							vParts.Add("\t");
-							sbRawText.Remove(0, sbRawText.Length);
-						}
-						else sbRawText.Append(ch);
+					continue;
+				}
+
+				Keys kEffMods = Keys.None;
+				foreach(Keys k in lMods) kEffMods |= k;
+
+				EnsureKeyModifiers(kEffMods, ref kCurKbMods, l);
+
+				if(ch == '{')
+				{
+					List<SiEvent> lSub = ParseSpecial(cs);
+					if(lSub == null) throw new FormatException(strError);
+
+					l.AddRange(lSub);
+				}
+				else if(ch == '}')
+					throw new FormatException(strError);
+				else if(ch == '~')
+				{
+					SiEvent si = new SiEvent();
+					si.Type = SiEventType.Key;
+					si.VKey = (int)Keys.Enter;
+
+					l.Add(si);
+				}
+				else
+				{
+					SiEvent si = new SiEvent();
+					si.Type = SiEventType.Char;
+					si.Char = ch;
+
+					l.Add(si);
+				}
+
+				lMods[lMods.Count - 1] = Keys.None;
+			}
+
+			EnsureKeyModifiers(Keys.None, ref kCurKbMods, l);
+
+			return l;
+		}
+
+		private static void EnsureKeyModifiers(Keys kReqMods, ref Keys kCurKbMods,
+			List<SiEvent> l)
+		{
+			if(kReqMods == kCurKbMods) return;
+
+			if((kReqMods & Keys.Shift) != (kCurKbMods & Keys.Shift))
+			{
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.KeyModifier;
+				si.KeyModifier = Keys.Shift;
+				si.Down = ((kReqMods & Keys.Shift) != Keys.None);
+
+				l.Add(si);
+			}
+
+			if((kReqMods & Keys.Control) != (kCurKbMods & Keys.Control))
+			{
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.KeyModifier;
+				si.KeyModifier = Keys.Control;
+				si.Down = ((kReqMods & Keys.Control) != Keys.None);
+
+				l.Add(si);
+			}
+
+			if((kReqMods & Keys.Alt) != (kCurKbMods & Keys.Alt))
+			{
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.KeyModifier;
+				si.KeyModifier = Keys.Alt;
+				si.Down = ((kReqMods & Keys.Alt) != Keys.None);
+
+				l.Add(si);
+			}
+
+			kCurKbMods = kReqMods;
+		}
+
+		private static List<SiEvent> ParseSpecial(CharStream cs)
+		{
+			// Skip leading white space
+			while(true)
+			{
+				char ch = cs.PeekChar();
+				if(ch == char.MinValue) { Debug.Assert(false); return null; }
+
+				if(!char.IsWhiteSpace(ch)) break;
+				cs.ReadChar();
+			}
+
+			// First char is *always* part of the name (support for "{{}", etc.)
+			char chFirst = cs.ReadChar();
+			if(chFirst == char.MinValue) { Debug.Assert(false); return null; }
+
+			int iPart = 0;
+			string strName = string.Empty, strParam = string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append(chFirst);
+
+			bool bParsed = false;
+			while(!bParsed)
+			{
+				char ch = cs.ReadChar();
+				if(ch == char.MinValue) { Debug.Assert(false); return null; }
+
+				if(ch == '}')
+				{
+					ch = ' '; // Finish current part
+					bParsed = true;
+				}
+
+				if(char.IsWhiteSpace(ch))
+				{
+					if(iPart == 0)
+					{
+						strName = sb.ToString();
+						sb.Remove(0, sb.Length);
+						++iPart;
+					}
+					else if((iPart == 1) && (sb.Length > 0))
+					{
+						strParam = sb.ToString();
+						sb.Remove(0, sb.Length);
+						++iPart;
+					}
+				}
+				else sb.Append(ch);
+			}
+
+			uint? uParam = null;
+			if(strParam.Length > 0)
+			{
+				uint uParamTry;
+				if(uint.TryParse(strParam, out uParamTry)) uParam = uParamTry;
+			}
+
+			List<SiEvent> l = new List<SiEvent>();
+
+			if(strName.Equals("DELAY", StrUtil.CaseIgnoreCmp))
+			{
+				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.Delay;
+				si.Delay = uParam.Value;
+
+				l.Add(si);
+				return l;
+			}
+			else if(strName.StartsWith("DELAY=", StrUtil.CaseIgnoreCmp))
+			{
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.SetDefaultDelay;
+
+				string strDelay = strName.Substring(6).Trim();
+				uint uDelay;
+				if(uint.TryParse(strDelay, out uDelay))
+					si.Delay = uDelay;
+				else { Debug.Assert(false); return null; }
+
+				l.Add(si);
+				return l;
+			}
+			else if(strName.Equals("VKEY", StrUtil.CaseIgnoreCmp))
+			{
+				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.Key;
+				si.VKey = (int)uParam.Value;
+
+				l.Add(si);
+				return l;
+			}
+			else if(strName.Equals("VKEY-NX", StrUtil.CaseIgnoreCmp))
+			{
+				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.Key;
+				si.VKey = (int)uParam.Value;
+				si.ExtendedKey = false;
+
+				l.Add(si);
+				return l;
+			}
+			else if(strName.Equals("VKEY-EX", StrUtil.CaseIgnoreCmp))
+			{
+				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.Key;
+				si.VKey = (int)uParam.Value;
+				si.ExtendedKey = true;
+
+				l.Add(si);
+				return l;
+			}
+
+			SiCode siCode = SiCodes.Get(strName);
+
+			SiEvent siTmpl = new SiEvent();
+			if(siCode != null)
+			{
+				siTmpl.Type = SiEventType.Key;
+				siTmpl.VKey = siCode.VKey;
+				siTmpl.ExtendedKey = siCode.ExtKey;
+			}
+			else if(strName.Length == 1)
+			{
+				siTmpl.Type = SiEventType.Char;
+				siTmpl.Char = strName[0];
+			}
+			else
+			{
+				throw new FormatException(KPRes.AutoTypeUnknownPlaceholder +
+					MessageService.NewLine + @"{" + strName + @"}");
+			}
+
+			uint uRepeat = 1;
+			if(uParam.HasValue) uRepeat = uParam.Value;
+
+			for(uint u = 0; u < uRepeat; ++u)
+			{
+				SiEvent si = new SiEvent();
+				si.Type = siTmpl.Type;
+				si.VKey = siTmpl.VKey;
+				si.ExtendedKey = siTmpl.ExtendedKey;
+				si.Char = siTmpl.Char;
+
+				l.Add(si);
+			}
+
+			return l;
+		}
+
+		private static void FixEventSeq(List<SiEvent> l)
+		{
+			// Convert chars to keys
+			// Keys kMod = Keys.None;
+			for(int i = 0; i < l.Count; ++i)
+			{
+				SiEvent si = l[i];
+				SiEventType t = si.Type;
+
+				// if(t == SiEventType.KeyModifier)
+				// {
+				//	if(!si.Down.HasValue) { Debug.Assert(false); continue; }
+				//	if(si.Down.Value)
+				//	{
+				//		Debug.Assert((kMod & si.KeyModifier) == Keys.None);
+				//		kMod |= si.KeyModifier;
+				//	}
+				//	else
+				//	{
+				//		Debug.Assert((kMod & si.KeyModifier) == si.KeyModifier);
+				//		kMod &= ~si.KeyModifier;
+				//	}
+				// }
+				if(t == SiEventType.Char)
+				{
+					// bool bLightConv = (kMod == Keys.None);
+					int iVKey = SiCodes.CharToVKey(si.Char, true);
+					if(iVKey > 0)
+					{
+						si.Type = SiEventType.Key;
+						si.VKey = iVKey;
+					}
+				}
+			}
+		}
+
+		private static void Send(ISiEngine siEngine, List<SiEvent> l)
+		{
+			bool bHasClipOp = l.Exists(SendInputEx.IsClipboardOp);
+			ClipboardEventChainBlocker cev = null;
+			ClipboardContents cnt = null;
+			if(bHasClipOp)
+			{
+				cev = new ClipboardEventChainBlocker();
+				cnt = new ClipboardContents(true, true);
+			}
+
+			try { SendPriv(siEngine, l); }
+			finally
+			{
+				if(bHasClipOp)
+				{
+					ClipboardUtil.Clear();
+					cnt.SetData();
+					cev.Release();
+				}
+			}
+		}
+
+		private static bool IsClipboardOp(SiEvent si)
+		{
+			if(si == null) { Debug.Assert(false); return false; }
+			return (si.Type == SiEventType.ClipboardCopy);
+		}
+
+		private static void SendPriv(ISiEngine siEngine, List<SiEvent> l)
+		{
+			// For 2000 alphanumeric characters:
+			// * KeePass 1.26: 0:31 min
+			// * KeePass 2.24: 1:58 min
+			// * New engine of KeePass 2.25 with default delay DD:
+			//   * DD =  1: 0:31 min
+			//   * DD = 31: 1:03 min
+			//   * DD = 32: 1:34 min
+			//   * DD = 33: 1:34 min
+			//   * DD = 43: 1:34 min
+			//   * DD = 46: 1:34 min
+			//   * DD = 47: 2:05 min
+			//   * DD = 49: 2:05 min
+			//   * DD = 59: 2:05 min
+			uint uDefaultDelay = 33; // Slice boundary + 1
+
+			// Induced by SiEngineWin.TrySendCharByKeypresses
+			uDefaultDelay += 2;
+
+			bool bFirstInput = true;
+			foreach(SiEvent si in l)
+			{
+				if((si.Type == SiEventType.Key) || (si.Type == SiEventType.Char))
+				{
+					if(!bFirstInput)
+						siEngine.Delay(uDefaultDelay);
+
+					bFirstInput = false;
+				}
+
+				switch(si.Type)
+				{
+					case SiEventType.Key:
+						siEngine.SendKey(si.VKey, si.ExtendedKey, si.Down);
+						break;
+
+					case SiEventType.KeyModifier:
+						if(si.Down.HasValue)
+							siEngine.SetKeyModifier(si.KeyModifier, si.Down.Value);
+						else { Debug.Assert(false); }
+						break;
+
+					case SiEventType.Char:
+						siEngine.SendChar(si.Char, si.Down);
+						break;
+
+					case SiEventType.Delay:
+						siEngine.Delay(si.Delay);
+						break;
+
+					case SiEventType.SetDefaultDelay:
+						uDefaultDelay = si.Delay;
+						break;
+
+					case SiEventType.ClipboardCopy:
+						if(!string.IsNullOrEmpty(si.Text))
+							ClipboardUtil.Copy(si.Text, false, false, null,
+								null, IntPtr.Zero);
+						else if(si.Text != null)
+							ClipboardUtil.Clear();
 						break;
 
 					default:
-						sbRawText.Append(ch);
+						Debug.Assert(false);
 						break;
 				}
-			}
 
-			if(sbRawText.Length > 0) vParts.Add(sbRawText.ToString());
-			return vParts;
-		}
-
-		private static void ReadParenthesized(CharStream csIn, StringBuilder sbBuffer)
-		{
-			sbBuffer.Append('(');
-
-			while(true)
-			{
-				char ch = csIn.ReadChar();
-
-				if((ch == char.MinValue) || (ch == '}'))
-					throw new FormatException();
-				else if(ch == ')')
+				// Extra delay after tabs
+				if(((si.Type == SiEventType.Key) && (si.VKey == (int)Keys.Tab)) ||
+					((si.Type == SiEventType.Char) && (si.Char == '\t')))
 				{
-					sbBuffer.Append(ch);
-					break;
-				}
-				else if(ch == '(')
-					ReadParenthesized(csIn, sbBuffer);
-				else if(ch == '{')
-					ReadBraced(csIn, sbBuffer);
-				else sbBuffer.Append(ch);
-			}
-		}
-
-		private static void ReadBraced(CharStream csIn, StringBuilder sbBuffer)
-		{
-			sbBuffer.Append('{');
-
-			char chFirst = csIn.ReadChar();
-			if(chFirst == char.MinValue)
-				throw new FormatException();
-
-			char chSecond = csIn.ReadChar();
-			if(chSecond == char.MinValue)
-				throw new FormatException();
-
-			if((chFirst == '{') && (chSecond == '}'))
-			{
-				sbBuffer.Append(@"{}");
-				return;
-			}
-			else if((chFirst == '}') && (chSecond == '}'))
-			{
-				sbBuffer.Append(@"}}");
-				return;
-			}
-			else if(chSecond == '}')
-			{
-				sbBuffer.Append(chFirst);
-				sbBuffer.Append(chSecond);
-				return;
-			}
-
-			sbBuffer.Append(chFirst);
-			sbBuffer.Append(chSecond);
-
-			while(true)
-			{
-				char ch = csIn.ReadChar();
-
-				if((ch == char.MinValue) || (ch == ')'))
-					throw new FormatException();
-				else if(ch == '(')
-					ReadParenthesized(csIn, sbBuffer);
-				else if(ch == '{')
-					ReadBraced(csIn, sbBuffer);
-				else if(ch == '}')
-				{
-					sbBuffer.Append(ch);
-					break;
-				}
-				else sbBuffer.Append(ch);
-			}
-		}
-
-		private static void MixedTransfer(string strText, SiStateEx siState)
-		{
-			StringBuilder sbKeys = new StringBuilder();
-			StringBuilder sbClip = new StringBuilder();
-			
-			// The string should be split randomly, but the same each
-			// time this function is called. Otherwise an attacker could
-			// get information by observing different splittings each
-			// time auto-type is performed. Therefore, compute the random
-			// seed based on the string to be auto-typed.
-			Random r = new Random(GetRandomSeed(strText));
-
-			foreach(char ch in strText)
-			{
-				if(r.Next(0, 2) == 0)
-				{
-					sbClip.Append(ch);
-					sbKeys.Append(@"{RIGHT}");
-				}
-				else sbKeys.Append(ch);
-			}
-
-			string strClip = sbClip.ToString();
-			string strKeys = sbKeys.ToString();
-
-			if(strClip.Length > 0)
-			{
-				StringBuilder sbNav = new StringBuilder();
-				sbNav.Append(@"^v");
-				for(int iLeft = 0; iLeft < strClip.Length; ++iLeft)
-					sbNav.Append(@"{LEFT}");
-
-				strKeys = sbNav.ToString() + strKeys;
-			}
-
-			if(strClip.Length > 0)
-				ClipboardUtil.Copy(strClip, false, false, null, null, IntPtr.Zero);
-			else ClipboardUtil.Clear();
-
-			if(strKeys.Length > 0) SendKeysWithSpecial(strKeys, siState);
-
-			ClipboardUtil.Clear();
-		}
-
-		private static int GetRandomSeed(string strText)
-		{
-			int nSeed = 3;
-
-			unchecked
-			{
-				foreach(char ch in strText)
-					nSeed = nSeed * 13 + ch;
-			}
-
-			// Prevent overflow (see Random class constructor)
-			if(nSeed == int.MinValue) nSeed = 13;
-			return nSeed;
-		}
-
-		private static bool ValidateTargetWindow(SiStateEx siState)
-		{
-			if(siState.Cancelled) return false;
-
-			if(KeePassLib.Native.NativeLib.IsUnix()) return true;
-
-			bool bChkWnd = Program.Config.Integration.AutoTypeCancelOnWindowChange;
-			bool bChkTitle = Program.Config.Integration.AutoTypeCancelOnTitleChange;
-			if(!bChkWnd && !bChkTitle) return true;
-
-			bool bValid = true;
-			try
-			{
-				IntPtr h;
-				string strTitle;
-				NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
-
-				if(bChkWnd && (h != siState.TargetHWnd))
-				{
-					siState.Cancelled = true;
-					bValid = false;
-				}
-
-				if(bChkTitle && ((strTitle ?? string.Empty) != siState.TargetWindowTitle))
-				{
-					siState.Cancelled = true;
-					bValid = false;
+					if(uDefaultDelay < 100)
+						siEngine.Delay(uDefaultDelay);
 				}
 			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return bValid;
-		}
-
-		/// <summary>
-		/// This method searches for a <c>{DELAY=X}</c> placeholder,
-		/// removes it from the sequence and sets the global delay in
-		/// <paramref name="siState" /> to X.
-		/// </summary>
-		private static string ExtractGlobalDelay(string strSequence, SiStateEx siState)
-		{
-			if(string.IsNullOrEmpty(strSequence)) return string.Empty;
-
-			const string strDefDelay = @"(\{[Dd][Ee][Ll][Aa][Yy]\s*=\s*)(\d+)(\})";
-			Match mDefDelay = Regex.Match(strSequence, strDefDelay);
-			if(mDefDelay.Success)
-			{
-				string strTime = mDefDelay.Groups[2].Value;
-				strSequence = Regex.Replace(strSequence, strDefDelay, string.Empty);
-
-				uint uTime;
-				if(uint.TryParse(strTime, out uTime)) siState.DefaultDelay = uTime;
-				else { Debug.Assert(false); }
-			}
-
-			return strSequence;
-		}
-
-		private static string ApplyGlobalDelay(string strSequence, SiStateEx siState)
-		{
-			if(string.IsNullOrEmpty(strSequence)) return string.Empty;
-
-			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|.+?)",
-			//	@"{delay " + strTime + @"}$1");
-			// strSequence = Regex.Replace(strSequence, @"(\{.+?\}+?|([\+\^%]\(.+?\))|[\+\^%].+?|.+?)",
-			//	@"{delay " + strTime + @"}$1");
-			if(siState.DefaultDelay > 0)
-			{
-				// const string strRx = @"(\{.+?\}+?|([\+\^%]\(.+?\))|([\+\^%]\{.+?\})|[\+\^%].+?|.+?)";
-				const string strRx = @"(\{.+?\}+?|([\+\^%]+\(.+?\))|([\+\^%]+\{.+?\})|[\+\^%]+.+?|.+?)";
-				strSequence = Regex.Replace(strSequence, strRx, @"{DELAY " +
-					siState.DefaultDelay.ToString() + @"}$1");
-			}
-
-			return strSequence;
-		}
-
-		/* private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
-		{
-			Debug.Assert(strSequence != null);
-			if(string.IsNullOrEmpty(strSequence)) return;
-
-			strSequence = ApplyGlobalDelay(strSequence, siState);
-
-			while(true)
-			{
-				int nDelayStart = strSequence.IndexOf("{DELAY ", StrUtil.CaseIgnoreCmp);
-				if(nDelayStart >= 0)
-				{
-					int nDelayEnd = strSequence.IndexOf('}', nDelayStart);
-					if(nDelayEnd >= 0)
-					{
-						uint uDelay;
-						string strDelay = strSequence.Substring(nDelayStart + 7,
-							nDelayEnd - (nDelayStart + 7));
-						if(uint.TryParse(strDelay, out uDelay))
-						{
-							string strFirstPart = strSequence.Substring(0,
-								nDelayStart);
-							string strSecondPart = strSequence.Substring(
-								nDelayEnd + 1);
-
-							if(!string.IsNullOrEmpty(strFirstPart))
-								OSSendKeys(strFirstPart);
-							SendKeys.Flush();
-							if(uDelay == 0) uDelay = 1;
-							Thread.Sleep((int)uDelay);
-
-							strSequence = strSecondPart;
-						}
-						else { Debug.Assert(false); break; }
-					}
-					else { Debug.Assert(false); break; }
-				}
-				else break;
-			}
-
-			if(!string.IsNullOrEmpty(strSequence)) OSSendKeys(strSequence);
-		} */
-
-		private const string SkcDelay = "DELAY";
-		private const string SkcVKey = "VKEY";
-		private const string SkcVKeyNx = "VKEY-NX";
-		private const string SkcVKeyEx = "VKEY-EX";
-		private static readonly string[] SkcAll = new string[] {
-			SkcDelay, SkcVKey, SkcVKeyNx, SkcVKeyEx
-		};
-
-		private static void SendKeysWithSpecial(string strSequence, SiStateEx siState)
-		{
-			Debug.Assert(strSequence != null);
-			if(string.IsNullOrEmpty(strSequence)) return;
-
-			strSequence = ExtractGlobalDelay(strSequence, siState); // Update
-			strSequence = ApplyGlobalDelay(strSequence, siState);
-			List<string> v = SplitSpecialSequence(strSequence);
-
-			foreach(string strPart in v)
-			{
-				string strParam = GetParamIfSpecial(strPart, SkcDelay);
-				if(strParam != null) // Might be empty (invalid parameter)
-				{
-					uint uDelay;
-					if(uint.TryParse(strParam, out uDelay))
-					{
-						if(uDelay == 0) uDelay = 1;
-						if((uDelay <= (uint)int.MaxValue) && !siState.Cancelled)
-							Thread.Sleep((int)uDelay);
-					}
-
-					continue;
-				}
-
-				bool? bExtKey = null;
-				strParam = GetParamIfSpecial(strPart, SkcVKey);
-				if(strParam == null)
-				{
-					bExtKey = false;
-					strParam = GetParamIfSpecial(strPart, SkcVKeyNx);
-				}
-				if(strParam == null)
-				{
-					bExtKey = true;
-					strParam = GetParamIfSpecial(strPart, SkcVKeyEx);
-				}
-				if(strParam != null) // Might be empty (invalid parameter)
-				{
-					int vKey;
-					if(int.TryParse(strParam, out vKey) &&
-						!KeePassLib.Native.NativeLib.IsUnix())
-					{
-						SendVKeyNative(vKey, bExtKey, true);
-						SendVKeyNative(vKey, bExtKey, false);
-						Application.DoEvents();
-					}
-
-					continue;
-				}
-
-				OSSendKeys(strPart, siState);
-				Application.DoEvents(); // SendKeys.SendWait uses SendKeys.Flush
-
-				if(siState.Cancelled) break;
-			}
-		}
-
-		private static string GetParamIfSpecial(string strSeq, string strSpecialCode)
-		{
-			if(!strSeq.StartsWith(@"{" + strSpecialCode + @" ", StrUtil.CaseIgnoreCmp))
-				return null;
-			if(!strSeq.EndsWith(@"}", StrUtil.CaseIgnoreCmp)) return null;
-
-			string strParam = strSeq.Substring(strSpecialCode.Length + 2);
-			strParam = strParam.Substring(0, strParam.Length - 1); // Remove '}'
-
-			return strParam.Trim();
-		}
-
-		private static List<string> SplitSpecialSequence(string strSeq)
-		{
-			List<string> v = new List<string>();
-			if(string.IsNullOrEmpty(strSeq)) return v;
-
-			v.Add(strSeq);
-
-			bool bModified = true;
-			while(bModified)
-			{
-				bModified = false;
-
-				foreach(string strSplitCode in SkcAll)
-				{
-					List<string> vNew = new List<string>();
-
-					foreach(string str in v)
-					{
-						int l = str.IndexOf(@"{" + strSplitCode + @" ", StrUtil.CaseIgnoreCmp);
-						if(l < 0) { vNew.Add(str); continue; }
-
-						int r = str.IndexOf('}', l);
-						if(r < 0) { Debug.Assert(false); vNew.Add(str); continue; }
-
-						if((l == 0) && (r == (str.Length - 1))) // Is atomic
-						{
-							vNew.Add(str);
-							continue;
-						}
-
-						if(l > 0) vNew.Add(str.Substring(0, l));
-						vNew.Add(str.Substring(l, r - l + 1));
-						if(r < (str.Length - 1)) vNew.Add(str.Substring(r + 1));
-
-						bModified = true;
-					}
-
-					v = vNew;
-				}
-			}
-
-			return v;
-		}
-
-		private static void OSSendKeys(string strSequence, SiStateEx siState)
-		{
-			if(!ValidateTargetWindow(siState)) return;
-
-			if(!KeePassLib.Native.NativeLib.IsUnix())
-				OSSendKeysWindows(strSequence);
-			else // Unix
-				OSSendKeysUnix(strSequence);
 		}
 	}
 }

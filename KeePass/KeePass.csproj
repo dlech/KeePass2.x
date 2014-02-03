@@ -43,7 +43,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -318,6 +317,7 @@
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
+    <Compile Include="DataExchange\Formats\DashlaneCsv2.cs" />
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
     <Compile Include="DataExchange\Formats\DesktopKnox32.cs" />
     <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
@@ -673,6 +673,12 @@
     <Compile Include="Forms\UrlSchemesForm.Designer.cs">
       <DependentUpon>UrlSchemesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\XmlReplaceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\XmlReplaceForm.Designer.cs">
+      <DependentUpon>XmlReplaceForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\NativeMethods.Defs.cs" />
     <Compile Include="Native\NativeMethods.New.cs" />
@@ -734,6 +740,9 @@
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\PwInputControlGroup.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
+    <Compile Include="UI\SplitButtonEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\StatusUtil.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
@@ -745,6 +754,7 @@
     </Compile>
     <Compile Include="Util\AutoTypeCtx.cs" />
     <Compile Include="Util\BinaryDataClassifier.cs" />
+    <Compile Include="Util\BinaryDataUtil.cs" />
     <Compile Include="Util\CancellableOperationEventArgs.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="UI\CheckedLVItemDXList.cs" />
@@ -941,6 +951,9 @@
     <EmbeddedResource Include="Forms\UrlSchemesForm.resx">
       <DependentUpon>UrlSchemesForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\XmlReplaceForm.resx">
+      <DependentUpon>XmlReplaceForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -998,8 +1011,12 @@
     <Compile Include="Util\PwGeneratorUtil.cs" />
     <Compile Include="Util\SearchUtil.cs" />
     <Compile Include="Util\SendInputEx.cs" />
-    <Compile Include="Util\SendInputEx.Unix.cs" />
-    <Compile Include="Util\SendInputEx.Windows.cs" />
+    <Compile Include="Util\SendInputExt\ISiEngine.cs" />
+    <Compile Include="Util\SendInputExt\SiCodes.cs" />
+    <Compile Include="Util\SendInputExt\SiEngineStd.cs" />
+    <Compile Include="Util\SendInputExt\SiEngineUnix.cs" />
+    <Compile Include="Util\SendInputExt\SiEngineWin.cs" />
+    <Compile Include="Util\SendInputExt\SiObf.cs" />
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
@@ -1014,6 +1031,7 @@
     <Compile Include="Util\XmlSerialization\XmlSerializerEx.Gen.cs" />
     <Compile Include="Util\XmlUtil.cs" />
     <Compile Include="Util\XmlSerialization\XmlSerializerEx.cs" />
+    <Compile Include="Util\XmlUtil.XmlReplace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />
@@ -1137,6 +1155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Dashlane.png" />
     <None Include="Resources\Images\B16x16_Imp_NortonIdSafe.png" />
     <None Include="Resources\Data\MostPopularPasswords.txt.gz" />
     <None Include="Resources\Nuvola_Derived\B16x16_EditCopyUrl.png" />

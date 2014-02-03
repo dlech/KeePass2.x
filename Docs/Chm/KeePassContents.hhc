@@ -134,6 +134,10 @@
 			<param name="Name" value="Using Stored Passwords">
 			<param name="Local" value="help\base\usingpws.html">
 			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="XML Replace">
+			<param name="Local" value="help\v2\xml_replace.html">
+			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="User Interface">

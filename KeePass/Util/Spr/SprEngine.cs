@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Globalization;
 using System.Diagnostics;
 
 using KeePass.App.Configuration;
@@ -154,9 +155,14 @@ namespace KeePass.Util.Spr
 
 				if(((ctx.Flags & SprCompileFlags.PasswordEnc) != SprCompileFlags.None) &&
 					(str.IndexOf(@"{PASSWORD_ENC}", SprEngine.ScMethod) >= 0))
-					str = SprEngine.FillIfExists(str, @"{PASSWORD_ENC}", new ProtectedString(false,
-						StrUtil.EncryptString(ctx.Entry.Strings.ReadSafe(PwDefs.PasswordField))),
-						ctx, uRecursionLevel);
+				{
+					string strPwCmp = SprEngine.FillIfExists(@"{PASSWORD}",
+						@"{PASSWORD}", ctx.Entry.Strings.GetSafe(PwDefs.PasswordField),
+						ctx.WithoutContentTransformations(), uRecursionLevel);
+
+					str = SprEngine.FillPlaceholder(str, @"{PASSWORD_ENC}",
+						StrUtil.EncryptString(strPwCmp), ctx);
+				}
 
 				if(((ctx.Flags & SprCompileFlags.Group) != SprCompileFlags.None) &&
 					(ctx.Entry.ParentGroup != null))
@@ -215,19 +221,8 @@ namespace KeePass.Util.Spr
 			}
 
 			if((ctx.Flags & SprCompileFlags.AutoType) != SprCompileFlags.None)
-			{
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEARFIELD}",
 					@"{HOME}+({END}){DEL}{DELAY 50}");
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{WIN}", @"{VKEY 91}");
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{LWIN}", @"{VKEY 91}");
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{RWIN}", @"{VKEY 92}");
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{APPS}", @"{VKEY 93}");
-
-				for(int np = 0; np < 10; ++np)
-					str = StrUtil.ReplaceCaseInsensitive(str, @"{NUMPAD" +
-						Convert.ToString(np, 10) + @"}", @"{VKEY " +
-						Convert.ToString(np + 0x60, 10) + @"}");
-			}
 
 			if((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None)
 			{
@@ -424,26 +419,27 @@ namespace KeePass.Util.Spr
 				(str.IndexOf(UrlSpecialPath, SprEngine.ScMethod) >= 0) ||
 				(str.IndexOf(UrlSpecialQuery, SprEngine.ScMethod) >= 0))
 			{
+				SprContext ctxRaw = ctx.WithoutContentTransformations();
 				string strUrl = SprEngine.FillIfExists(@"{URL}", @"{URL}",
-					ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctx, uRecursionLevel);
+					ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctxRaw, uRecursionLevel);
 
-				str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialRmvScm,
-					UrlUtil.RemoveScheme(strUrl));
+				str = SprEngine.FillPlaceholder(str, UrlSpecialRmvScm,
+					UrlUtil.RemoveScheme(strUrl), ctx);
 
 				try
 				{
 					Uri uri = new Uri(strUrl);
 
-					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialScm,
-						uri.Scheme);
-					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialHost,
-						uri.Host);
-					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialPort,
-						uri.Port.ToString());
-					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialPath,
-						uri.AbsolutePath);
-					str = StrUtil.ReplaceCaseInsensitive(str, UrlSpecialQuery,
-						uri.Query);
+					str = SprEngine.FillPlaceholder(str, UrlSpecialScm,
+						uri.Scheme, ctx);
+					str = SprEngine.FillPlaceholder(str, UrlSpecialHost,
+						uri.Host, ctx);
+					str = SprEngine.FillPlaceholder(str, UrlSpecialPort,
+						uri.Port.ToString(NumberFormatInfo.InvariantInfo), ctx);
+					str = SprEngine.FillPlaceholder(str, UrlSpecialPath,
+						uri.AbsolutePath, ctx);
+					str = SprEngine.FillPlaceholder(str, UrlSpecialQuery,
+						uri.Query, ctx);
 				}
 				catch(Exception) { } // Invalid URI
 			}
@@ -695,6 +691,37 @@ namespace KeePass.Util.Spr
 					str = str.Insert(iStart, strNew);
 				}
 				catch(Exception) { }
+			}
+
+			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
+				@"{T-CONV:", out iStart, out lParams, true))
+			{
+				if(lParams.Count < 2) continue;
+
+				try
+				{
+					string strNew = lParams[0];
+					string strCmd = lParams[1].ToLower();
+
+					if((strCmd == "u") || (strCmd == "upper"))
+						strNew = strNew.ToUpper();
+					else if((strCmd == "l") || (strCmd == "lower"))
+						strNew = strNew.ToLower();
+					else if(strCmd == "base64")
+					{
+						byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strNew);
+						strNew = Convert.ToBase64String(pbUtf8);
+					}
+					else if(strCmd == "hex")
+					{
+						byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strNew);
+						strNew = MemUtil.ByteArrayToHexString(pbUtf8);
+					}
+
+					strNew = TransformContent(strNew, ctx);
+					str = str.Insert(iStart, strNew);
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
 
 			return str;

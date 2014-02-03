@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ namespace KeePass.Util
 		private static bool m_bIsAtLeastWindows2000 = false;
 		private static bool m_bIsAtLeastWindowsVista = false;
 		private static bool m_bIsAtLeastWindows7 = false;
+		private static bool m_bIsAtLeastWindows8 = false;
 
 		private static string m_strExePath = null;
 
@@ -86,6 +87,11 @@ namespace KeePass.Util
 			get { return m_bIsAtLeastWindows7; }
 		}
 
+		public static bool IsAtLeastWindows8
+		{
+			get { return m_bIsAtLeastWindows8; }
+		}
+
 		static WinUtil()
 		{
 			OperatingSystem os = Environment.OSVersion;
@@ -98,6 +104,7 @@ namespace KeePass.Util
 			m_bIsAtLeastWindows2000 = (v.Major >= 5);
 			m_bIsAtLeastWindowsVista = (v.Major >= 6);
 			m_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
+			m_bIsAtLeastWindows8 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 2)));
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)

@@ -1,5 +1,5 @@
 /*
-	Design Copyright (c) 2003-2013 Dominik Reichl
+	Design Copyright (c) 2003-2014 Dominik Reichl
 */
 
 body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {
@@ -189,6 +189,7 @@ table.tablebox tr th, table.tablebox75 tr th {
 	empty-cells: show;
 	white-space: nowrap;
 	text-align: left;
+	vertical-align: top;
 }
 
 table.tablebox tr td, table.tablebox75 tr td {
@@ -201,6 +202,7 @@ table.tablebox tr td, table.tablebox75 tr td {
 	padding: 5px 5px 5px 5px;
 	empty-cells: show;
 	text-align: left;
+	vertical-align: top;
 }
 
 /* --------------------------------------------------------------------- */

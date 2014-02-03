@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -621,7 +621,7 @@ namespace KeePass.DataExchange
 				m_dSeq1xTo2x = new Dictionary<string, string>();
 				m_dSeq1xTo2xBiDir = new Dictionary<string, string>();
 
-				m_dSeq1xTo2x[@"{SPACE}"] = " ";
+				// m_dSeq1xTo2x[@"{SPACE}"] = " ";
 				// m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}+({END}){DEL}";
 
 				m_dSeq1xTo2xBiDir[@"{AT}"] = @"@";

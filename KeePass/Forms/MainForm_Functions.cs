@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -180,17 +180,6 @@ namespace KeePass.Forms
 
 		internal PluginManager PluginManager { get { return m_pluginManager; } }
 
-		private sealed class EditableBinaryAttachment
-		{
-			private string m_strName;
-			public string Name { get { return m_strName; } }
-
-			public EditableBinaryAttachment(string strName)
-			{
-				m_strName = strName;
-			}
-		}
-
 		private struct MainAppState
 		{
 			public bool FileLocked;
@@ -266,7 +255,7 @@ namespace KeePass.Forms
 
 			EntryTemplates.Release();
 
-			m_dynCustomBinaries.MenuClick -= this.OnEntryBinaryView;
+			m_dynCustomBinaries.MenuClick -= this.OnEntryBinaryOpen;
 			m_dynCustomStrings.MenuClick -= this.OnCopyCustomString;
 			m_dynShowEntriesByTagsEditMenu.MenuClick -= this.OnShowEntriesByTag;
 			m_dynShowEntriesByTagsToolBar.MenuClick -= this.OnShowEntriesByTag;
@@ -503,7 +492,7 @@ namespace KeePass.Forms
 				m_menuEditShowByTag);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuToolsDbMaintenance,
 				m_menuToolsDbDelDupEntries, m_menuToolsDbDelEmptyGroups,
-				m_menuToolsDbDelUnusedIcons);
+				m_menuToolsDbDelUnusedIcons, m_menuToolsDbXmlRep);
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileImport, m_menuFileExport);
 
@@ -1479,28 +1468,20 @@ namespace KeePass.Forms
 
 			EvAppendEntryField(rb, strItemSeparator, KPRes.CreationTime,
 				TimeUtil.ToDisplayString(pe.CreationTime), null);
-			// EvAppendEntryField(rb, strItemSeparator, KPRes.LastAccessTime,
-			//	TimeUtil.ToDisplayString(pe.LastAccessTime), null);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.LastModificationTime,
 				TimeUtil.ToDisplayString(pe.LastModificationTime), null);
+
+			if((Program.Config.UI.UIFlags & (ulong)AceUIFlags.ShowLastAccessTime) != 0)
+				EvAppendEntryField(rb, strItemSeparator, KPRes.LastAccessTime,
+					TimeUtil.ToDisplayString(pe.LastAccessTime), null);
 
 			if(pe.Expires)
 				EvAppendEntryField(rb, strItemSeparator, KPRes.ExpiryTime,
 					TimeUtil.ToDisplayString(pe.ExpiryTime), null);
 
 			if(pe.Binaries.UCount > 0)
-			{
-				StringBuilder sbBinaries = new StringBuilder();
-
-				foreach(KeyValuePair<string, ProtectedBinary> kvpBin in pe.Binaries)
-				{
-					if(sbBinaries.Length > 0) sbBinaries.Append(", ");
-					sbBinaries.Append(kvpBin.Key);
-				}
-
 				EvAppendEntryField(rb, strItemSeparator, KPRes.Attachments,
-					sbBinaries.ToString(), null);
-			}
+					pe.Binaries.KeysToString(), null);
 
 			EvAppendEntryField(rb, strItemSeparator, KPRes.UrlOverride,
 				pe.OverrideUrl, pe);
@@ -1620,13 +1601,13 @@ namespace KeePass.Forms
 					bCnt = ClipboardUtil.CopyAndMinimize(TimeUtil.ToDisplayString(
 						pe.CreationTime), true, this, pe, null);
 					break;
-				case AceColumnType.LastAccessTime:
-					bCnt = ClipboardUtil.CopyAndMinimize(TimeUtil.ToDisplayString(
-						pe.LastAccessTime), true, this, pe, null);
-					break;
 				case AceColumnType.LastModificationTime:
 					bCnt = ClipboardUtil.CopyAndMinimize(TimeUtil.ToDisplayString(
 						pe.LastModificationTime), true, this, pe, null);
+					break;
+				case AceColumnType.LastAccessTime:
+					bCnt = ClipboardUtil.CopyAndMinimize(TimeUtil.ToDisplayString(
+						pe.LastAccessTime), true, this, pe, null);
 					break;
 				case AceColumnType.ExpiryTime:
 					if(pe.Expires)
@@ -1713,23 +1694,21 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			if(pe == null) return;
 
-			if(pe.Binaries.UCount == 0) return;
-
 			foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 			{
-				ExecuteBinaryEditView(kvp.Key, kvp.Value);
+				ExecuteBinaryOpen(pe, kvp.Key);
 				break;
 			}
 		}
 
-		private void ExecuteBinaryEditView(string strBinName, ProtectedBinary pb)
+		private void ExecuteBinaryOpen(PwEntry pe, string strBinName)
 		{
-			BinaryDataClass bdc = BinaryDataClassifier.Classify(strBinName,
-				pb.ReadData());
-			DynamicMenuEventArgs args = new DynamicMenuEventArgs(strBinName,
-				DataEditorForm.SupportsDataType(bdc) ?
-				new EditableBinaryAttachment(strBinName) : null);
-			OnEntryBinaryView(null, args);
+			EntryBinaryDataContext ctx = new EntryBinaryDataContext();
+			ctx.Entry = pe;
+			ctx.Name = strBinName;
+
+			DynamicMenuEventArgs args = new DynamicMenuEventArgs(strBinName, ctx);
+			OnEntryBinaryOpen(null, args);
 		}
 
 		private string UrlsToString(PwEntry[] vEntries, bool bActive)
@@ -3132,40 +3111,29 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, true, null, true);
 		}
 
-		private void OnEntryBinaryView(object sender, DynamicMenuEventArgs e)
+		private void OnEntryBinaryOpen(object sender, DynamicMenuEventArgs e)
 		{
-			PwEntry pe = GetSelectedEntry(false);
+			if(e == null) { Debug.Assert(false); return; }
+
+			EntryBinaryDataContext ctx = (e.Tag as EntryBinaryDataContext);
+			if(ctx == null) { Debug.Assert(false); return; }
+
+			PwEntry pe = ctx.Entry;
 			if(pe == null) { Debug.Assert(false); return; }
+			Debug.Assert(object.ReferenceEquals(pe, GetSelectedEntry(false)));
 
-			EditableBinaryAttachment eba = (e.Tag as EditableBinaryAttachment);
+			if(string.IsNullOrEmpty(ctx.Name)) { Debug.Assert(false); return; }
+			ProtectedBinary pb = pe.Binaries.Get(ctx.Name);
+			if(pb == null) { Debug.Assert(false); return; }
 
-			ProtectedBinary pbData = pe.Binaries.Get((eba != null) ? eba.Name :
-				e.ItemName);
-			if(pbData == null) { Debug.Assert(false); return; }
-
-			if(eba == null) // Not editable
+			ProtectedBinary pbMod = BinaryDataUtil.Open(ctx.Name, pb, ctx.Options);
+			if(pbMod != null)
 			{
-				DataViewerForm dvf = new DataViewerForm();
-				dvf.InitEx(e.ItemName, pbData.ReadData());
-				UIUtil.ShowDialogAndDestroy(dvf);
-			}
-			else
-			{
-				DataEditorForm def = new DataEditorForm();
-				def.InitEx(eba.Name, pbData.ReadData());
-				def.ShowDialog();
+				pe.Binaries.Set(ctx.Name, pbMod);
+				pe.Touch(true, false);
 
-				if(def.EditedBinaryData != null) // User changed the data
-				{
-					pe.Binaries.Set(eba.Name, new ProtectedBinary(
-						pbData.IsProtected, def.EditedBinaryData));
-					pe.Touch(true, false);
-
-					RefreshEntriesList();
-					UpdateUIState(true);
-				}
-
-				UIUtil.DestroyForm(def);
+				RefreshEntriesList();
+				UpdateUIState(true);
 			}
 		}
 
@@ -4343,8 +4311,8 @@ namespace KeePass.Forms
 					else str = StrUtil.MultiToSingleLine(pe.Strings.ReadSafe(PwDefs.NotesField));
 					break;
 				case AceColumnType.CreationTime: str = TimeUtil.ToDisplayString(pe.CreationTime); break;
-				case AceColumnType.LastAccessTime: str = TimeUtil.ToDisplayString(pe.LastAccessTime); break;
 				case AceColumnType.LastModificationTime: str = TimeUtil.ToDisplayString(pe.LastModificationTime); break;
+				case AceColumnType.LastAccessTime: str = TimeUtil.ToDisplayString(pe.LastAccessTime); break;
 				case AceColumnType.ExpiryTime:
 					if(pe.Expires) str = TimeUtil.ToDisplayString(pe.ExpiryTime);
 					else str = m_strNeverExpiresText;

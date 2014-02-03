@@ -1,3 +1,52 @@
+2014-02-03: 2.25
+- New auto-type key sending engine (improved support for
+  sending Unicode characters and for sending keypresses into
+  virtual machine/emulator windows; now largely compatible with
+  the Neo keyboard layout; sequence parsing is faster, more
+  flexible and optimizes the sequence; improved behavior for
+  invalid sequences; differential delays, making the auto-type
+  process less susceptible to externally caused delays;
+  automatic cancelling is now more precise up to at most one
+  keypress and also works on Unix-like systems; improved
+  message processing during auto-type)
+- When trying to open an entry attachment that the built-in
+  editor/viewer cannot handle, KeePass now extracts the
+  attachment to a (EFS-encrypted) temporary file and opens it
+  using the default application associated with this file;
+  afterwards the user can choose between importing/discarding
+  changes and KeePass deletes the temporary file securely
+- On Windows Vista and higher, the button in the entry editing
+  dialog to open attachments is now a split button; the drop-
+  down menu allows to choose between the built-in viewer, the
+  built-in editor and an external application
+- Added 'XML Replace' functionality
+- Generic CSV importer: added option to merge imported groups
+  with groups already existing in the database
+- Added support for importing Dashlane 2.3.2 CSV files
+- On Windows 8 and higher, some running Metro apps are now
+  listed in the 'Edit Auto-Type Item' dialog
+- Added {T-CONV:/T/C/} placeholder (to convert text to upper-
+  case, lower-case, or its UTF-8 representation to Base64 or
+  Hex)
+- Added {SPACE} special key code (as alternative for the ' '
+  character, for improved readability of auto-type sequences)
+- XML merge (used e.g. when an enforced configuration file is
+  present): added support for comments in inner nodes
+- Added UIFlags bit for showing last access times
+
+- In the history entry viewing dialog, the 'Open' and 'Save'
+  commands are now available for attachments
+- When replacing the {PASSWORD_ENC} placeholder, KeePass now
+  first Spr-compiles the entry password (i.e. placeholders,
+  environment variables, etc. can be used)
+- Improved configuration loading performance
+- Improved displaying of fatal exceptions
+- Various code optimizations
+- Minor other improvements
+
+- Data inserted by entry URL component placeholders is now
+  encoded correctly
+
 2013-11-03: 2.24
 - The URL override field in the entry editing dialog is now an
   editable combo box, where the drop-down list contains

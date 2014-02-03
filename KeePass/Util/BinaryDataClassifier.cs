@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,21 +41,25 @@ namespace KeePass.Util
 
 	public static class BinaryDataClassifier
 	{
-		private static readonly string[] m_vTextExtensions = new string[]{
+		private static readonly string[] m_vTextExtensions = new string[] {
 			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat"
 		};
 
-		private static readonly string[] m_vRichTextExtensions = new string[]{
+		private static readonly string[] m_vRichTextExtensions = new string[] {
 			"rtf"
 		};
 
-		private static readonly string[] m_vImageExtensions = new string[]{
+		private static readonly string[] m_vImageExtensions = new string[] {
 			"bmp", "emf", "exif", "gif", "ico", "jpeg", "jpe", "jpg",
 			"png", "tiff", "tif", "wmf"
 		};
 
-		private static readonly string[] m_vWebExtensions = new string[]{
-			"htm", "html", "mht", "xml", "xslt"
+		private static readonly string[] m_vWebExtensions = new string[] {
+			"htm", "html"
+
+			// The following types can be displayed by Internet Explorer,
+			// but not by the WebBrowser control
+			// "mht", "xml", "xslt"
 		};
 
 		public static BinaryDataClass ClassifyUrl(string strUrl)

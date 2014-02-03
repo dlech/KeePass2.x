@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="author" content="Dominik Reichl" />
+
+	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+
+	<meta name="robots" content="index" />
+
+	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
+	<meta name="DC.Creator" content="Dominik Reichl" />
+	<meta name="DC.Subject" content="Open-Source Password Safe" />
+	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
+	<meta name="DC.Publisher" content="Dominik Reichl" />
+	<meta name="DC.Contributor" content="Dominik Reichl" />
+	<meta name="DC.Type" content="text" />
+	<meta name="DC.Format" content="text/html" />
+	<meta name="DC.Identifier" content="http://keepass.info/" />
+	<meta name="DC.Language" content="en" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
+
+	<title>XML Replace - KeePass</title>
+	<base target="_self" />
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+	
+</head>
+<body>
+
+
+
+
+<!-- Org Pub: 2013-12-06 -->
+
+<table class="sectionsummary"><tr><td width="68px">
+<img src="../images/b64x64_binary.png" width="64px" height="64px"
+class="singleimg" align="left" alt="People" />
+</td><td valign="middle"><h1>XML Replace</h1><br />
+About the XML replacement functionality.
+</td></tr></table>
+
+<ul>
+<li><a href="#info">General Information</a></li>
+<li><a href="#ex">Usage Examples</a>
+<ul>
+<li><a href="#repstr">Replace text in all entry titles and notes</a></li>
+<li><a href="#tohttps">Replace all HTTP URLs by HTTPS URLs</a></li>
+<li><a href="#repgrpicon">Replace group icons</a></li>
+<li><a href="#delstr">Delete entry strings by name</a></li>
+<li><a href="#delbinext">Delete entry attachments by name extension</a></li>
+<li><a href="#resetbgcolor">Reset background colors</a></li>
+<li><a href="#atdisable">Disable auto-type for entries with empty fields</a></li>
+</ul></li>
+</ul>
+
+<br />
+
+<a name="info"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;General
+Information</h2>
+
+<p>XML Replace is a powerful feature that modifies a database by manipulating
+its XML representation.</p>
+
+<p>KeePass creates a KDBX XML DOM of the current database
+in memory, performs the operation specified by the user
+(e.g. remove nodes or replace text), tries to load the modified XML,
+and merges the current database with the modified database.</p>
+
+<p><img src="../images/b16x16_warning.png" alt="Warning"
+style="vertical-align: middle; height: 1em;" />
+This is a feature for experts. Use with caution!</p>
+
+<p>A few links that might be helpful for working with XPath and
+regular expressions:</p>
+<ul>
+<li>XPath:
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/XPath"
+target="_blank">Wikipedia: XPath</a></li>
+<li><a href="http://msdn.microsoft.com/en-us/library/ms256115.aspx"
+target="_blank">MSDN: XPath Reference</a></li>
+<li><a href="http://msdn.microsoft.com/en-us/library/ms256086.aspx"
+target="_blank">MSDN: XPath Examples</a></li>
+</ul></li>
+<li>Regular expressions:
+<ul>
+<li><a href="http://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+target="_blank">MSDN: Regular Expression Language - Quick Reference</a></li>
+</ul></li>
+</ul>
+
+<p>KeePass protects history entries; XML Replace cannot be used to modify
+these. Furthermore, any changes to database properties
+(database name/description, etc.) may be ignored.</p>
+
+<br />
+
+<a name="ex"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Usage
+Examples</h2>
+
+<br />
+
+<a name="repstr"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Replace text in all entry titles and notes</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String[Key='Title' or Key='Notes']/Value</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code><i>TheTextToFind</i></code></td></tr>
+<tr><td>Replace with:</td><td><code><i>TheReplacement</i></code></td></tr>
+<tr><td colspan="2">Within all entry titles and notes, this
+replaces all occurences of <code><i>TheTextToFind</i></code> by
+<code><i>TheReplacement</i></code>.</td></tr>
+</table>
+
+<br />
+
+<a name="tohttps"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Replace all HTTP URLs by HTTPS URLs</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String[Key='URL']/Value</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>^http:</code></td></tr>
+<tr><td>Replace with:</td><td><code>https:</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Within all entry URL fields, this replaces all
+HTTP URLs by HTTPS URLs.</td></tr>
+</table>
+
+<br />
+
+<a name="repgrpicon"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Replace group icons</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Group/IconID</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>^48$</code></td></tr>
+<tr><td>Replace with:</td><td><code>36</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">This assigns the ZIP package icon to all groups that
+currently have a closed folder as icon.<br />
+<br />
+All icon IDs can be found in the icon picker dialog.</td></tr>
+</table>
+
+<br />
+
+<!-- https://sourceforge.net/p/keepass/discussion/329221/thread/56a33495/ -->
+<a name="delstr"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Delete entry strings by name</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String[Key='<i>TheName</i>']</code></td></tr>
+<tr><td>Action:</td><td>Remove nodes</td></tr>
+<tr><td colspan="2">Removes all entry strings named
+<code><i>TheName</i></code>.</td></tr>
+</table>
+
+<br />
+
+<a name="delbinext"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Delete entry attachments by name extension</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/Binary[substring(Key, string-length(Key) - 3) = '.jpg']</code></td></tr>
+<tr><td>Action:</td><td>Remove nodes</td></tr>
+<tr><td colspan="2">Removes all entry attachments that have a name
+ending in '.jpg'.<br />
+<br />
+The '<code>3</code>' in the node selection XPath expression is the length of
+'<code>.jpg</code>' - 1.
+If you'd e.g. want to search for attachments that have a name ending
+in '<code>.abcde</code>', you'd need to replace the '<code>3</code>' by
+'<code>5</code>'.</td></tr>
+</table>
+
+<br />
+
+<a name="resetbgcolor"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Reset background colors</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/BackgroundColor</code></td></tr>
+<tr><td>Action:</td><td>Remove nodes</td></tr>
+<tr><td colspan="2">Sets the background color of all entries to the
+default (transparent/alternating).</td></tr>
+</table>
+
+<br />
+
+<a name="atdisable"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Disable auto-type for entries with empty fields</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String[(Key='UserName' or Key='Password') and Value='']/../AutoType/Enabled</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>True</code></td></tr>
+<tr><td>Replace with:</td><td><code>False</code></td></tr>
+<tr><td colspan="2">Disables auto-type for all entries that have an empty
+user name field or an empty password field.</td></tr>
+</table>
+
+</body></html>
+

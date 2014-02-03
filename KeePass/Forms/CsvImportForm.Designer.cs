@@ -61,6 +61,7 @@
 			this.m_cmbRecSep = new System.Windows.Forms.ComboBox();
 			this.m_lblRecSep = new System.Windows.Forms.Label();
 			this.m_tabPreview = new System.Windows.Forms.TabPage();
+			this.m_cbMergeGroups = new System.Windows.Forms.CheckBox();
 			this.m_lvImportPreview = new KeePass.UI.CustomListViewEx();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -423,6 +424,7 @@
 			// 
 			// m_tabPreview
 			// 
+			this.m_tabPreview.Controls.Add(this.m_cbMergeGroups);
 			this.m_tabPreview.Controls.Add(this.m_lvImportPreview);
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 22);
 			this.m_tabPreview.Name = "m_tabPreview";
@@ -430,6 +432,16 @@
 			this.m_tabPreview.TabIndex = 2;
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
+			// 
+			// m_cbMergeGroups
+			// 
+			this.m_cbMergeGroups.AutoSize = true;
+			this.m_cbMergeGroups.Location = new System.Drawing.Point(6, 414);
+			this.m_cbMergeGroups.Name = "m_cbMergeGroups";
+			this.m_cbMergeGroups.Size = new System.Drawing.Size(342, 17);
+			this.m_cbMergeGroups.TabIndex = 1;
+			this.m_cbMergeGroups.Text = "&Merge imported groups with groups already existing in the database";
+			this.m_cbMergeGroups.UseVisualStyleBackColor = true;
 			// 
 			// m_lvImportPreview
 			// 
@@ -439,7 +451,7 @@
 			this.m_lvImportPreview.Location = new System.Drawing.Point(6, 13);
 			this.m_lvImportPreview.Name = "m_lvImportPreview";
 			this.m_lvImportPreview.ShowItemToolTips = true;
-			this.m_lvImportPreview.Size = new System.Drawing.Size(662, 416);
+			this.m_lvImportPreview.Size = new System.Drawing.Size(662, 395);
 			this.m_lvImportPreview.TabIndex = 0;
 			this.m_lvImportPreview.UseCompatibleStateImageBehavior = false;
 			this.m_lvImportPreview.View = System.Windows.Forms.View.Details;
@@ -528,6 +540,7 @@
 			this.m_grpSyntax.ResumeLayout(false);
 			this.m_grpSyntax.PerformLayout();
 			this.m_tabPreview.ResumeLayout(false);
+			this.m_tabPreview.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -573,5 +586,6 @@
 		private System.Windows.Forms.Button m_btnTabNext;
 		private System.Windows.Forms.CheckBox m_cbIgnoreFirst;
 		private System.Windows.Forms.Button m_btnHelp;
+		private System.Windows.Forms.CheckBox m_cbMergeGroups;
 	}
 }

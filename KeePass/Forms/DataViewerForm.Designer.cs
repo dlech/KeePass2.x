@@ -178,7 +178,7 @@
 			this.Name = "DataViewerForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "KeePass Data Viewer";
+			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);

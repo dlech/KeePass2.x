@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -411,7 +411,13 @@ namespace KeePass
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
 			}
-			catch(Exception exPrg) { MessageService.ShowFatal(exPrg); }
+			catch(Exception exPrg)
+			{
+				// Catch message box exception;
+				// https://sourceforge.net/p/keepass/patches/86/
+				try { MessageService.ShowFatal(exPrg); }
+				catch(Exception) { Console.Error.WriteLine(exPrg.ToString()); }
+			}
 #endif
 
 			Application.RemoveMessageFilter(nfActivity);
@@ -623,38 +629,40 @@ namespace KeePass
 		private static void LoadTranslation()
 		{
 			string strLangFile = m_appConfig.Application.LanguageFile;
-			if(!string.IsNullOrEmpty(strLangFile))
+			if(string.IsNullOrEmpty(strLangFile)) return;
+
+			string[] vLangDirs = new string[]{
+				AppConfigSerializer.AppDataDirectory,
+				AppConfigSerializer.LocalAppDataDirectory,
+				UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), false, false)
+			};
+
+			foreach(string strLangDir in vLangDirs)
 			{
-				string[] vLangDirs = new string[]{
-					AppConfigSerializer.AppDataDirectory,
-					AppConfigSerializer.LocalAppDataDirectory,
-					UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), false, false)
-				};
+				string strLangPath = UrlUtil.EnsureTerminatingSeparator(
+					strLangDir, false) + strLangFile;
 
-				foreach(string strLangDir in vLangDirs)
+				try
 				{
-					string strLangPath = UrlUtil.EnsureTerminatingSeparator(
-						strLangDir, false) + strLangFile;
+					// Performance optimization
+					if(!File.Exists(strLangPath)) continue;
 
-					try
-					{
-						XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-						m_kpTranslation = KPTranslation.LoadFromFile(strLangPath, xs);
+					XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+					m_kpTranslation = KPTranslation.LoadFromFile(strLangPath, xs);
 
-						KPRes.SetTranslatedStrings(
-							m_kpTranslation.SafeGetStringTableDictionary(
-							"KeePass.Resources.KPRes"));
-						KLRes.SetTranslatedStrings(
-							m_kpTranslation.SafeGetStringTableDictionary(
-							"KeePassLib.Resources.KLRes"));
+					KPRes.SetTranslatedStrings(
+						m_kpTranslation.SafeGetStringTableDictionary(
+						"KeePass.Resources.KPRes"));
+					KLRes.SetTranslatedStrings(
+						m_kpTranslation.SafeGetStringTableDictionary(
+						"KeePassLib.Resources.KLRes"));
 
-						StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
-						break;
-					}
-					catch(DirectoryNotFoundException) { } // Ignore
-					catch(FileNotFoundException) { } // Ignore
-					catch(Exception) { Debug.Assert(false); }
+					StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
+					break;
 				}
+				// catch(DirectoryNotFoundException) { } // Ignore
+				// catch(FileNotFoundException) { } // Ignore
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 

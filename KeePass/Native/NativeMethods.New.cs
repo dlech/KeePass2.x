@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2013 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,6 +48,23 @@ namespace KeePass.Native
 
 			return (bTrim ? strWindow.Trim() : strWindow);
 		}
+
+		/* internal static string GetWindowClassName(IntPtr hWnd)
+		{
+			try
+			{
+				StringBuilder sb = new StringBuilder(260);
+
+				if(GetClassName(hWnd, sb, 258) > 0)
+					return sb.ToString();
+				else { Debug.Assert(false); }
+
+				return string.Empty;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		} */
 
 		internal static IntPtr GetForegroundWindowHandle()
 		{
@@ -172,6 +189,7 @@ namespace KeePass.Native
 
 		internal static bool IsTaskBar(IntPtr hWnd)
 		{
+			Process p = null;
 			try
 			{
 				string strText = GetWindowText(hWnd, true);
@@ -181,15 +199,46 @@ namespace KeePass.Native
 				uint uProcessId;
 				NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
 
-				Process p = Process.GetProcessById((int)uProcessId);
+				p = Process.GetProcessById((int)uProcessId);
 				string strExe = UrlUtil.GetFileName(p.MainModule.FileName).Trim();
 
 				return strExe.Equals("Explorer.exe", StrUtil.CaseIgnoreCmp);
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				try { if(p != null) p.Dispose(); }
+				catch(Exception) { Debug.Assert(false); }
+			}
 
 			return false;
 		}
+
+		/* internal static bool IsMetroWindow(IntPtr hWnd)
+		{
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
+			if(KeePassLib.Native.NativeLib.IsUnix() || !WinUtil.IsAtLeastWindows8)
+				return false;
+
+			try
+			{
+				uint uProcessId;
+				NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
+				if(uProcessId == 0) { Debug.Assert(false); return false; }
+
+				IntPtr h = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_INFORMATION,
+					false, uProcessId);
+				if(h == IntPtr.Zero) return false; // No assert
+
+				bool bRet = NativeMethods.IsImmersiveProcess(h);
+
+				NativeMethods.CloseHandle(h);
+				return bRet;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		} */
 
 		public static bool IsInvalidHandleValue(IntPtr p)
 		{
