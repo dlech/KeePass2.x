@@ -1202,6 +1202,7 @@
             <param name="sp">Specifies the search method.</param>
             <param name="listStorage">Entry list in which the search results will
             be stored.</param>
+            <param name="slStatus">Optional status reporting object.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.FindGroup(KeePassLib.PwUuid,System.Boolean)">
             <summary>
@@ -1251,6 +1252,8 @@
             </summary>
             <param name="strSeparator">String that separates the group
             names.</param>
+            <param name="bIncludeTopMostGroup">Specifies whether the returned
+            path starts with the topmost group.</param>
             <returns>Full path of the group.</returns>
         </member>
         <member name="M:KeePassLib.PwGroup.CreateNewItemUuids(System.Boolean,System.Boolean,System.Boolean)">
@@ -2494,12 +2497,6 @@
             <param name="mm">Merge method.</param>
             <param name="slStatus">Logger to report status messages to.
             May be <c>null</c>.</param>
-        </member>
-        <member name="M:KeePassLib.PwDatabase.ApplyDeletions(KeePassLib.Collections.PwObjectList{KeePassLib.PwDeletedObject},System.Boolean)">
-            <summary>
-            Apply a list of deleted objects.
-            </summary>
-            <param name="listDelObjects">List of deleted objects.</param>
         </member>
         <member name="M:KeePassLib.PwDatabase.ObjectListRequiresReorder``1(KeePassLib.Collections.PwObjectList{``0},KeePassLib.Collections.PwObjectPool,KeePassLib.Collections.PwObjectPool,System.Boolean)">
             <summary>

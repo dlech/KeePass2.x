@@ -124,6 +124,7 @@ namespace KeePass.Resources
 			m_strClosingDatabaseFile = TryGetEx(dictNew, "ClosingDatabaseFile", m_strClosingDatabaseFile);
 			m_strColumn = TryGetEx(dictNew, "Column", m_strColumn);
 			m_strColumns = TryGetEx(dictNew, "Columns", m_strColumns);
+			m_strComments = TryGetEx(dictNew, "Comments", m_strComments);
 			m_strCompany = TryGetEx(dictNew, "Company", m_strCompany);
 			m_strComparison = TryGetEx(dictNew, "Comparison", m_strComparison);
 			m_strComponent = TryGetEx(dictNew, "Component", m_strComponent);
@@ -200,6 +201,7 @@ namespace KeePass.Resources
 			m_strDescription = TryGetEx(dictNew, "Description", m_strDescription);
 			m_strDetails = TryGetEx(dictNew, "Details", m_strDetails);
 			m_strDialogNoShowAgain = TryGetEx(dictNew, "DialogNoShowAgain", m_strDialogNoShowAgain);
+			m_strDialogs = TryGetEx(dictNew, "Dialogs", m_strDialogs);
 			m_strDisable = TryGetEx(dictNew, "Disable", m_strDisable);
 			m_strDisabled = TryGetEx(dictNew, "Disabled", m_strDisabled);
 			m_strDisableSaveIfNotModified = TryGetEx(dictNew, "DisableSaveIfNotModified", m_strDisableSaveIfNotModified);
@@ -433,6 +435,7 @@ namespace KeePass.Resources
 			m_strNewState = TryGetEx(dictNew, "NewState", m_strNewState);
 			m_strNewVersionAvailable = TryGetEx(dictNew, "NewVersionAvailable", m_strNewVersionAvailable);
 			m_strNo = TryGetEx(dictNew, "No", m_strNo);
+			m_strNoCmd = TryGetEx(dictNew, "NoCmd", m_strNoCmd);
 			m_strNoFileAccessRead = TryGetEx(dictNew, "NoFileAccessRead", m_strNoFileAccessRead);
 			m_strNoKeyFileSpecifiedMeta = TryGetEx(dictNew, "NoKeyFileSpecifiedMeta", m_strNoKeyFileSpecifiedMeta);
 			m_strNoKeyRepeat = TryGetEx(dictNew, "NoKeyRepeat", m_strNoKeyRepeat);
@@ -528,6 +531,10 @@ namespace KeePass.Resources
 			m_strRecommendedCmd = TryGetEx(dictNew, "RecommendedCmd", m_strRecommendedCmd);
 			m_strRecycleBin = TryGetEx(dictNew, "RecycleBin", m_strRecycleBin);
 			m_strRecycleBinCollapse = TryGetEx(dictNew, "RecycleBinCollapse", m_strRecycleBinCollapse);
+			m_strRecycleEntryConfirm = TryGetEx(dictNew, "RecycleEntryConfirm", m_strRecycleEntryConfirm);
+			m_strRecycleEntryConfirmSingle = TryGetEx(dictNew, "RecycleEntryConfirmSingle", m_strRecycleEntryConfirmSingle);
+			m_strRecycleGroupConfirm = TryGetEx(dictNew, "RecycleGroupConfirm", m_strRecycleGroupConfirm);
+			m_strRecycleShowConfirm = TryGetEx(dictNew, "RecycleShowConfirm", m_strRecycleShowConfirm);
 			m_strRedo = TryGetEx(dictNew, "Redo", m_strRedo);
 			m_strRememberHidingSettings = TryGetEx(dictNew, "RememberHidingSettings", m_strRememberHidingSettings);
 			m_strRememberKeySources = TryGetEx(dictNew, "RememberKeySources", m_strRememberKeySources);
@@ -585,6 +592,7 @@ namespace KeePass.Resources
 			m_strShowDerefDataAndRefs = TryGetEx(dictNew, "ShowDerefDataAndRefs", m_strShowDerefDataAndRefs);
 			m_strShowDerefDataAsync = TryGetEx(dictNew, "ShowDerefDataAsync", m_strShowDerefDataAsync);
 			m_strShowEntries = TryGetEx(dictNew, "ShowEntries", m_strShowEntries);
+			m_strShowEntriesByTag = TryGetEx(dictNew, "ShowEntriesByTag", m_strShowEntriesByTag);
 			m_strShowFullPathInTitleBar = TryGetEx(dictNew, "ShowFullPathInTitleBar", m_strShowFullPathInTitleBar);
 			m_strShowIn = TryGetEx(dictNew, "ShowIn", m_strShowIn);
 			m_strShowTrayOnlyIfTrayed = TryGetEx(dictNew, "ShowTrayOnlyIfTrayed", m_strShowTrayOnlyIfTrayed);
@@ -703,6 +711,7 @@ namespace KeePass.Resources
 			m_strXslSelectFile = TryGetEx(dictNew, "XslSelectFile", m_strXslSelectFile);
 			m_strXslStylesheetsKdbx = TryGetEx(dictNew, "XslStylesheetsKdbx", m_strXslStylesheetsKdbx);
 			m_strYes = TryGetEx(dictNew, "Yes", m_strYes);
+			m_strYesCmd = TryGetEx(dictNew, "YesCmd", m_strYesCmd);
 			m_strZoom = TryGetEx(dictNew, "Zoom", m_strZoom);
 		}
 
@@ -805,6 +814,7 @@ namespace KeePass.Resources
 			"ClosingDatabaseFile",
 			"Column",
 			"Columns",
+			"Comments",
 			"Company",
 			"Comparison",
 			"Component",
@@ -881,6 +891,7 @@ namespace KeePass.Resources
 			"Description",
 			"Details",
 			"DialogNoShowAgain",
+			"Dialogs",
 			"Disable",
 			"Disabled",
 			"DisableSaveIfNotModified",
@@ -1114,6 +1125,7 @@ namespace KeePass.Resources
 			"NewState",
 			"NewVersionAvailable",
 			"No",
+			"NoCmd",
 			"NoFileAccessRead",
 			"NoKeyFileSpecifiedMeta",
 			"NoKeyRepeat",
@@ -1209,6 +1221,10 @@ namespace KeePass.Resources
 			"RecommendedCmd",
 			"RecycleBin",
 			"RecycleBinCollapse",
+			"RecycleEntryConfirm",
+			"RecycleEntryConfirmSingle",
+			"RecycleGroupConfirm",
+			"RecycleShowConfirm",
 			"Redo",
 			"RememberHidingSettings",
 			"RememberKeySources",
@@ -1266,6 +1282,7 @@ namespace KeePass.Resources
 			"ShowDerefDataAndRefs",
 			"ShowDerefDataAsync",
 			"ShowEntries",
+			"ShowEntriesByTag",
 			"ShowFullPathInTitleBar",
 			"ShowIn",
 			"ShowTrayOnlyIfTrayed",
@@ -1384,6 +1401,7 @@ namespace KeePass.Resources
 			"XslSelectFile",
 			"XslStylesheetsKdbx",
 			"Yes",
+			"YesCmd",
 			"Zoom"
 		};
 
@@ -2470,6 +2488,17 @@ namespace KeePass.Resources
 			get { return m_strColumns; }
 		}
 
+		private static string m_strComments =
+			@"Comments";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Comments'.
+		/// </summary>
+		public static string Comments
+		{
+			get { return m_strComments; }
+		}
+
 		private static string m_strCompany =
 			@"Company";
 		/// <summary>
@@ -3304,6 +3333,17 @@ namespace KeePass.Resources
 		public static string DialogNoShowAgain
 		{
 			get { return m_strDialogNoShowAgain; }
+		}
+
+		private static string m_strDialogs =
+			@"Dialogs";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Dialogs'.
+		/// </summary>
+		public static string Dialogs
+		{
+			get { return m_strDialogs; }
 		}
 
 		private static string m_strDisable =
@@ -5869,6 +5909,17 @@ namespace KeePass.Resources
 			get { return m_strNo; }
 		}
 
+		private static string m_strNoCmd =
+			@"&No";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;No'.
+		/// </summary>
+		public static string NoCmd
+		{
+			get { return m_strNoCmd; }
+		}
+
 		private static string m_strNoFileAccessRead =
 			@"The operating system didn't grant KeePass read access to the specified file.";
 		/// <summary>
@@ -6914,6 +6965,50 @@ namespace KeePass.Resources
 			get { return m_strRecycleBinCollapse; }
 		}
 
+		private static string m_strRecycleEntryConfirm =
+			@"Are you sure you want to move the selected entries to the recycle bin?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Are you sure you want to move the selected entries to the recycle bin?'.
+		/// </summary>
+		public static string RecycleEntryConfirm
+		{
+			get { return m_strRecycleEntryConfirm; }
+		}
+
+		private static string m_strRecycleEntryConfirmSingle =
+			@"Are you sure you want to move the selected entry to the recycle bin?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Are you sure you want to move the selected entry to the recycle bin?'.
+		/// </summary>
+		public static string RecycleEntryConfirmSingle
+		{
+			get { return m_strRecycleEntryConfirmSingle; }
+		}
+
+		private static string m_strRecycleGroupConfirm =
+			@"Are you sure you want to move the selected group to the recycle bin?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Are you sure you want to move the selected group to the recycle bin?'.
+		/// </summary>
+		public static string RecycleGroupConfirm
+		{
+			get { return m_strRecycleGroupConfirm; }
+		}
+
+		private static string m_strRecycleShowConfirm =
+			@"Show confirmation dialog when moving entries/groups to the recycle bin";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show confirmation dialog when moving entries/groups to the recycle bin'.
+		/// </summary>
+		public static string RecycleShowConfirm
+		{
+			get { return m_strRecycleShowConfirm; }
+		}
+
 		private static string m_strRedo =
 			@"Redo";
 		/// <summary>
@@ -7539,6 +7634,17 @@ namespace KeePass.Resources
 		public static string ShowEntries
 		{
 			get { return m_strShowEntries; }
+		}
+
+		private static string m_strShowEntriesByTag =
+			@"Show entries by tag";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show entries by tag'.
+		/// </summary>
+		public static string ShowEntriesByTag
+		{
+			get { return m_strShowEntriesByTag; }
 		}
 
 		private static string m_strShowFullPathInTitleBar =
@@ -8837,6 +8943,17 @@ namespace KeePass.Resources
 		public static string Yes
 		{
 			get { return m_strYes; }
+		}
+
+		private static string m_strYesCmd =
+			@"&Yes";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Yes'.
+		/// </summary>
+		public static string YesCmd
+		{
+			get { return m_strYesCmd; }
 		}
 
 		private static string m_strZoom =

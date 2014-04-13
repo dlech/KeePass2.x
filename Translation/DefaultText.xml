@@ -295,6 +295,9 @@
 		<Data Name="Columns">
 			<Value>Columns</Value>
 		</Data>
+		<Data Name="Comments">
+			<Value>Comments</Value>
+		</Data>
 		<Data Name="Company">
 			<Value>Company</Value>
 		</Data>
@@ -522,6 +525,9 @@
 		</Data>
 		<Data Name="DialogNoShowAgain">
 			<Value>Do not show this dialog again.</Value>
+		</Data>
+		<Data Name="Dialogs">
+			<Value>Dialogs</Value>
 		</Data>
 		<Data Name="Disable">
 			<Value>Disable</Value>
@@ -1222,6 +1228,9 @@
 		<Data Name="No">
 			<Value>No</Value>
 		</Data>
+		<Data Name="NoCmd">
+			<Value>&amp;No</Value>
+		</Data>
 		<Data Name="NoFileAccessRead">
 			<Value>The operating system didn't grant KeePass read access to the specified file.</Value>
 		</Data>
@@ -1507,6 +1516,18 @@
 		<Data Name="RecycleBinCollapse">
 			<Value>Collapse newly-created recycle bin tree node</Value>
 		</Data>
+		<Data Name="RecycleEntryConfirm">
+			<Value>Are you sure you want to move the selected entries to the recycle bin?</Value>
+		</Data>
+		<Data Name="RecycleEntryConfirmSingle">
+			<Value>Are you sure you want to move the selected entry to the recycle bin?</Value>
+		</Data>
+		<Data Name="RecycleGroupConfirm">
+			<Value>Are you sure you want to move the selected group to the recycle bin?</Value>
+		</Data>
+		<Data Name="RecycleShowConfirm">
+			<Value>Show confirmation dialog when moving entries/groups to the recycle bin</Value>
+		</Data>
 		<Data Name="Redo">
 			<Value>Redo</Value>
 		</Data>
@@ -1677,6 +1698,9 @@
 		</Data>
 		<Data Name="ShowEntries">
 			<Value>Show Entries</Value>
+		</Data>
+		<Data Name="ShowEntriesByTag">
+			<Value>Show entries by tag</Value>
 		</Data>
 		<Data Name="ShowFullPathInTitleBar">
 			<Value>Show full path in title bar (instead of file name only)</Value>
@@ -2031,6 +2055,9 @@
 		</Data>
 		<Data Name="Yes">
 			<Value>Yes</Value>
+		</Data>
+		<Data Name="YesCmd">
+			<Value>&amp;Yes</Value>
 		</Data>
 		<Data Name="Zoom">
 			<Value>Zoom</Value>

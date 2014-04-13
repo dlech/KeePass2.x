@@ -41,7 +41,11 @@ namespace KeePass.Util.SendInputExt
 		// private uint m_uTargetProcessID = 0;
 
 		private bool m_bInputBlocked = false;
-		private bool m_bForceUnicodeChars = false;
+
+		// Windows in which Unicode character sending is enforced;
+		// IntPtr.Zero means *every* window
+		private Dictionary<IntPtr, bool> m_dForceUnicodeCharsWnds =
+			new Dictionary<IntPtr, bool>();
 
 		// private bool m_bThreadInputAttached = false;
 
@@ -80,7 +84,31 @@ namespace KeePass.Util.SendInputExt
 
 				m_bInputBlocked = NativeMethods.BlockInput(true);
 
-				ReleaseModifiers(true);
+				uint? tLastInput = NativeMethods.GetLastInputTime();
+				if(tLastInput.HasValue)
+				{
+					int iDiff = Environment.TickCount - (int)tLastInput.Value;
+					Debug.Assert(iDiff >= 0);
+					if(iDiff == 0)
+					{
+						// Enforce delay after pressing the global auto-type
+						// hot key, as a workaround for applications
+						// with broken time-dependent message processing;
+						// https://sourceforge.net/p/keepass/bugs/1213/
+						Thread.Sleep(1);
+						Application.DoEvents();
+					}
+				}
+
+				if(ReleaseModifiers(true) > 0)
+				{
+					// Enforce delay between releasing modifiers and sending
+					// the actual sequence, as a workaround for applications
+					// with broken time-dependent message processing;
+					// https://sourceforge.net/p/keepass/bugs/1213/
+					Thread.Sleep(1);
+					Application.DoEvents();
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -201,6 +229,7 @@ namespace KeePass.Util.SendInputExt
 					try
 					{
 						string strName = p.ProcessName.Trim();
+						bool bEnforceUniForHWnd = false;
 
 						// If the Neo keyboard layout is being used, we must
 						// send Unicode characters; keypresses are converted
@@ -211,12 +240,21 @@ namespace KeePass.Util.SendInputExt
 							FileVersionInfo fvi = p.MainModule.FileVersionInfo;
 							if(((fvi.ProductName ?? string.Empty).Trim().Length == 0) &&
 								((fvi.FileDescription ?? string.Empty).Trim().Length == 0))
-								m_bForceUnicodeChars = true;
+								SetEnforceUnicodeChars(IntPtr.Zero); // All windows
 							else { Debug.Assert(false); }
 						}
 						else if(strName.Equals("KbdNeo_Ahk.exe", StrUtil.CaseIgnoreCmp) ||
 							strName.Equals("KbdNeo_Ahk", StrUtil.CaseIgnoreCmp))
-							m_bForceUnicodeChars = true;
+							SetEnforceUnicodeChars(IntPtr.Zero); // All windows
+						else if(strName.Equals("PuTTY.exe", StrUtil.CaseIgnoreCmp) ||
+							strName.Equals("PuTTY", StrUtil.CaseIgnoreCmp))
+							bEnforceUniForHWnd = true;
+
+						if(bEnforceUniForHWnd)
+						{
+							IntPtr hWnd = p.MainWindowHandle;
+							if(hWnd != IntPtr.Zero) SetEnforceUnicodeChars(hWnd);
+						}
 					}
 					catch(Exception) { Debug.Assert(false); }
 
@@ -488,11 +526,24 @@ namespace KeePass.Util.SendInputExt
 			}
 		}
 
+		private void SetEnforceUnicodeChars(IntPtr hWnd)
+		{
+			m_dForceUnicodeCharsWnds[hWnd] = true;
+		}
+
+		private bool AreUnicodeCharsEnforced(IntPtr hWnd)
+		{
+			bool bEnf;
+			if(m_dForceUnicodeCharsWnds.TryGetValue(hWnd, out bEnf))
+				return bEnf;
+			return false;
+		}
+
 		private static char[] m_vForcedChars = null;
 		private bool TrySendCharByKeypresses(char ch, bool? bDown)
 		{
 			if(ch == char.MinValue) { Debug.Assert(false); return false; }
-			if(m_bForceUnicodeChars) return false;
+			if(AreUnicodeCharsEnforced(IntPtr.Zero)) return false;
 
 			if(m_vForcedChars == null)
 				m_vForcedChars = new char[] {
@@ -514,6 +565,7 @@ namespace KeePass.Util.SendInputExt
 
 			IntPtr hWnd = NativeMethods.GetForegroundWindowHandle();
 			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
+			if(AreUnicodeCharsEnforced(hWnd)) return false;
 
 			uint uTargetProcessID;
 			uint uTargetThreadID = NativeMethods.GetWindowThreadProcessId(

@@ -124,10 +124,11 @@ namespace KeePass.Forms
 
 		private bool m_bIsAutoTyping = false;
 		private bool m_bBlockTabChanged = false;
-		private bool m_bForceSave = false;
+		private uint m_uForceSave = 0;
 		private uint m_uUIBlocked = 0;
 		private uint m_uUnlockAutoBlocked = 0;
 		private MouseButtons m_mbLastTrayMouseButtons = MouseButtons.None;
+		private uint m_uWindowStateAutoBlocked = 0;
 
 		private bool m_bUpdateUIStateOnce = false;
 		private int m_nLastSelChUpdateUIStateTicks = 0;
@@ -496,10 +497,12 @@ namespace KeePass.Forms
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileImport, m_menuFileExport);
 
-			UIUtil.SetEnabledFast((s.DatabaseOpened &&
-				m_docMgr.ActiveDatabase.IOConnectionInfo.IsLocalFile() &&
-				(m_docMgr.ActiveDatabase.IOConnectionInfo.Path.Length > 0)),
-				m_menuFileSync, m_menuFileSyncFile, m_menuFileSyncUrl);
+			// UIUtil.SetEnabledFast((s.DatabaseOpened &&
+			//	m_docMgr.ActiveDatabase.IOConnectionInfo.IsLocalFile() &&
+			//	(m_docMgr.ActiveDatabase.IOConnectionInfo.Path.Length > 0)),
+			//	m_menuFileSync, m_menuFileSyncFile, m_menuFileSyncUrl);
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileSync,
+				m_menuFileSyncFile, m_menuFileSyncUrl, m_menuFileSyncRecent);
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_tbFind, m_tbViewsShowAll,
 				m_tbViewsShowExpired, m_tbEntryViewsDropDown);
@@ -2059,7 +2062,7 @@ namespace KeePass.Forms
 			}
 
 			string strName = pwOpenedDb.IOConnectionInfo.GetDisplayName();
-			m_mruList.AddItem(strName, pwOpenedDb.IOConnectionInfo.CloneDeep(), true);
+			m_mruList.AddItem(strName, pwOpenedDb.IOConnectionInfo.CloneDeep());
 
 			PwDocument dsExisting = m_docMgr.FindDocument(pwOpenedDb);
 			if(dsExisting != null) m_docMgr.ActiveDocument = dsExisting;
@@ -2313,28 +2316,34 @@ namespace KeePass.Forms
 				kvp.Value.Enabled = kvp.Key.Enabled;
 		}
 
-		public void OnMruExecute(string strDisplayName, object oTag)
+		public void OnMruExecute(string strDisplayName, object oTag,
+			ToolStripMenuItem tsmiParent)
 		{
-			Debug.Assert(oTag is IOConnectionInfo);
-			OpenDatabase(oTag as IOConnectionInfo, null, false);
-		}
+			if(tsmiParent == null) { Debug.Assert(false); return; }
 
-		public void OnMruExecute2(string strDisplayName, object oTag)
-		{
-			Debug.Assert(oTag is IOConnectionInfo);
 			IOConnectionInfo ioc = (oTag as IOConnectionInfo);
-			ioc = CompleteConnectionInfo(ioc, false, true, true, false);
-			if(ioc == null) return;
+			if(ioc == null) { Debug.Assert(false); return; }
 
-			bool? b = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, ioc, false, this);
-			UpdateUI(false, null, true, null, true, null, false);
-			if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+			if(tsmiParent == m_menuFileRecent)
+				OpenDatabase(ioc, null, false);
+			else if(tsmiParent == m_menuFileSyncRecent)
+			{
+				PwDatabase pd = m_docMgr.ActiveDatabase;
+				if(!pd.IsOpen) return;
+
+				ioc = CompleteConnectionInfo(ioc, false, true, true, false);
+				if(ioc == null) return;
+
+				bool? b = ImportUtil.Synchronize(pd, this, ioc, false, this);
+				UpdateUI(false, null, true, null, true, null, false);
+				if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+			}
+			else { Debug.Assert(false); }
 		}
 
 		public void OnMruClear()
 		{
 			m_mruList.Clear();
-			m_mruList.UpdateMenu();
 		}
 
 		/// <summary>
@@ -2953,7 +2962,7 @@ namespace KeePass.Forms
 				catch(Exception exVerify) { Debug.Assert(false, exVerify.Message); }
 #endif
 
-				m_mruList.AddItem(ioc.GetDisplayName(), ioc.CloneDeep(), true);
+				m_mruList.AddItem(ioc.GetDisplayName(), ioc.CloneDeep());
 
 				// SetLastUsedFile(ioc);
 
@@ -2987,14 +2996,15 @@ namespace KeePass.Forms
 		{
 			Control cFocus = UIUtil.GetActiveControl(this);
 
-			m_docMgr.ActiveDatabase.Modified = true;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			pd.Modified = true;
 
-			m_bForceSave = bForceSave;
+			if(bForceSave) ++m_uForceSave;
 			OnFileSave(null, EventArgs.Empty);
-			m_bForceSave = false;
+			if(bForceSave) --m_uForceSave;
 
 			if(cFocus != null) ResetDefaultFocus(cFocus);
-			return !m_docMgr.ActiveDatabase.Modified;
+			return !pd.Modified;
 		}
 
 		public void ResetDefaultFocus(Control cExplicit)
@@ -3194,8 +3204,8 @@ namespace KeePass.Forms
 			bool bExiting, bool bUpdateUI)
 		{
 			PwDocument ds = (dsToClose ?? m_docMgr.ActiveDocument);
-			bool bIsActive = object.ReferenceEquals(ds, m_docMgr.ActiveDocument);
 			PwDatabase pd = ds.Database;
+			bool bIsActive = (ds == m_docMgr.ActiveDocument);
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.ClosingDatabaseFilePre,
 				pd.IOConnectionInfo.Path);
@@ -3677,7 +3687,7 @@ namespace KeePass.Forms
 
 		private bool PreSaveValidate(PwDatabase pd)
 		{
-			if(m_bForceSave) return true;
+			if(m_uForceSave > 0) return true;
 
 			byte[] pbOnDisk = WinUtil.HashFile(pd.IOConnectionInfo);
 
@@ -3816,6 +3826,18 @@ namespace KeePass.Forms
 			else { Debug.Assert(false); }
 		}
 
+		public bool UIIsWindowStateAutoBlocked()
+		{
+			return (m_uWindowStateAutoBlocked > 0);
+		}
+
+		public void UIBlockWindowStateAuto(bool bBlock)
+		{
+			if(bBlock) ++m_uWindowStateAutoBlocked;
+			else if(m_uWindowStateAutoBlocked > 0) --m_uWindowStateAutoBlocked;
+			else { Debug.Assert(false); }
+		}
+
 		private static void EnsureRecycleBin(ref PwGroup pgRecycleBin,
 			PwDatabase pdContext, ref bool bGroupListUpdateRequired)
 		{
@@ -3869,13 +3891,14 @@ namespace KeePass.Forms
 				}
 			}
 
+			bool bSingle = (vSelected.Length == 1);
+			string strSummary = EntryUtil.CreateSummaryList(null, vSelected);
+
 			if(bAtLeastOnePermanent)
 			{
-				bool bSingle = (vSelected.Length == 1);
-
 				VistaTaskDialog dlg = new VistaTaskDialog();
 				dlg.CommandLinks = false;
-				dlg.Content = EntryUtil.CreateSummaryList(null, vSelected);
+				dlg.Content = strSummary;
 				dlg.MainInstruction = (bSingle ? KPRes.DeleteEntriesQuestionSingle :
 					KPRes.DeleteEntriesQuestion);
 				dlg.SetIcon(VtdCustomIcon.Question);
@@ -3889,9 +3912,45 @@ namespace KeePass.Forms
 				}
 				else
 				{
-					if(!MessageService.AskYesNo(bSingle ? KPRes.DeleteEntriesQuestionSingle :
-						KPRes.DeleteEntriesQuestion, bSingle ? KPRes.DeleteEntriesTitleSingle :
-						KPRes.DeleteEntriesTitle))
+					string strText = (bSingle ? KPRes.DeleteEntriesQuestionSingle :
+						KPRes.DeleteEntriesQuestion);
+					if(strSummary.Length > 0)
+						strText += MessageService.NewParagraph + strSummary;
+
+					if(!MessageService.AskYesNo(strText, (bSingle ?
+						KPRes.DeleteEntriesTitleSingle : KPRes.DeleteEntriesTitle)))
+						return;
+				}
+			}
+			else if(Program.Config.UI.ShowRecycleConfirmDialog)
+			{
+				VistaTaskDialog dlg = new VistaTaskDialog();
+				dlg.CommandLinks = false;
+				dlg.Content = strSummary;
+				dlg.MainInstruction = (bSingle ? KPRes.RecycleEntryConfirmSingle :
+					KPRes.RecycleEntryConfirm);
+				dlg.SetIcon(VtdCustomIcon.Question);
+				dlg.VerificationText = KPRes.DialogNoShowAgain;
+				dlg.WindowTitle = PwDefs.ShortProductName;
+				dlg.AddButton((int)DialogResult.OK, KPRes.YesCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.NoCmd, null);
+
+				if(dlg.ShowDialog())
+				{
+					if(dlg.Result == (int)DialogResult.Cancel) return;
+
+					if(dlg.ResultVerificationChecked)
+						Program.Config.UI.ShowRecycleConfirmDialog = false;
+				}
+				else
+				{
+					string strText = (bSingle ? KPRes.RecycleEntryConfirmSingle :
+						KPRes.RecycleEntryConfirm);
+					if(strSummary.Length > 0)
+						strText += MessageService.NewParagraph + strSummary;
+
+					if(!MessageService.AskYesNo(strText, (bSingle ?
+						KPRes.DeleteEntriesTitleSingle : KPRes.DeleteEntriesTitle)))
 						return;
 				}
 			}
@@ -3950,11 +4009,16 @@ namespace KeePass.Forms
 			else if(pg.IsContainedIn(pgRecycleBin)) bPermanent = true;
 			else if(pgRecycleBin.IsContainedIn(pg)) bPermanent = true;
 
+			string strContent = EntryUtil.CreateSummaryList(pg, false);
+			if(strContent.Length > 0)
+				strContent = KPRes.DeleteGroupInfo + MessageService.NewParagraph +
+					strContent;
+
 			if(bPermanent)
 			{
 				VistaTaskDialog dlg = new VistaTaskDialog();
 				dlg.CommandLinks = false;
-				dlg.Content = KPRes.DeleteGroupInfo + EntryUtil.CreateSummaryList(pg, true);
+				dlg.Content = strContent;
 				dlg.MainInstruction = KPRes.DeleteGroupQuestion;
 				dlg.SetIcon(VtdCustomIcon.Question);
 				dlg.WindowTitle = PwDefs.ShortProductName;
@@ -3967,8 +4031,39 @@ namespace KeePass.Forms
 				}
 				else
 				{
-					string strText = KPRes.DeleteGroupInfo + MessageService.NewParagraph +
-						KPRes.DeleteGroupQuestion;
+					string strText = KPRes.DeleteGroupQuestion;
+					if(strContent.Length > 0)
+						strText += MessageService.NewParagraph + strContent;
+
+					if(!MessageService.AskYesNo(strText, KPRes.DeleteGroupTitle))
+						return;
+				}
+			}
+			else if(Program.Config.UI.ShowRecycleConfirmDialog)
+			{
+				VistaTaskDialog dlg = new VistaTaskDialog();
+				dlg.CommandLinks = false;
+				dlg.Content = strContent;
+				dlg.MainInstruction = KPRes.RecycleGroupConfirm;
+				dlg.SetIcon(VtdCustomIcon.Question);
+				dlg.VerificationText = KPRes.DialogNoShowAgain;
+				dlg.WindowTitle = PwDefs.ShortProductName;
+				dlg.AddButton((int)DialogResult.OK, KPRes.YesCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.NoCmd, null);
+
+				if(dlg.ShowDialog())
+				{
+					if(dlg.Result == (int)DialogResult.Cancel) return;
+
+					if(dlg.ResultVerificationChecked)
+						Program.Config.UI.ShowRecycleConfirmDialog = false;
+				}
+				else
+				{
+					string strText = KPRes.RecycleGroupConfirm;
+					if(strContent.Length > 0)
+						strText += MessageService.NewParagraph + strContent;
+
 					if(!MessageService.AskYesNo(strText, KPRes.DeleteGroupTitle))
 						return;
 				}
@@ -4002,9 +4097,11 @@ namespace KeePass.Forms
 			if(pg == null) { Debug.Assert(false); return; }
 			if(pg != GetSelectedGroup()) { Debug.Assert(false); return; }
 
+			string strSummary = EntryUtil.CreateSummaryList(pg, false);
+
 			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.CommandLinks = false;
-			dlg.Content = EntryUtil.CreateSummaryList(pg, false);
+			dlg.Content = strSummary;
 			dlg.MainInstruction = KPRes.EmptyRecycleBinQuestion;
 			dlg.SetIcon(VtdCustomIcon.Question);
 			dlg.WindowTitle = PwDefs.ShortProductName;
@@ -4017,7 +4114,11 @@ namespace KeePass.Forms
 			}
 			else
 			{
-				if(!MessageService.AskYesNo(KPRes.EmptyRecycleBinQuestion))
+				string strText = KPRes.EmptyRecycleBinQuestion;
+				if(strSummary.Length > 0)
+					strText += MessageService.NewParagraph + strSummary;
+
+				if(!MessageService.AskYesNo(strText))
 					return;
 			}
 
@@ -4159,10 +4260,8 @@ namespace KeePass.Forms
 				for(int iMru = 0; iMru < nMax; ++iMru)
 				{
 					IOConnectionInfo ioMru = aceMru.Items[nMax - iMru - 1];
-					m_mruList.AddItem(ioMru.GetDisplayName(), ioMru.CloneDeep(), false);
+					m_mruList.AddItem(ioMru.GetDisplayName(), ioMru.CloneDeep());
 				}
-
-				m_mruList.UpdateMenu();
 			}
 		}
 
@@ -4439,12 +4538,17 @@ namespace KeePass.Forms
 
 		private void OnShowEntriesByTag(object sender, DynamicMenuEventArgs e)
 		{
-			string strTag = (e.Tag as string);
+			if(e == null) { Debug.Assert(false); return; }
+			ShowEntriesByTag(e.Tag as string);
+		}
+
+		internal void ShowEntriesByTag(string strTag)
+		{
 			if(strTag == null) { Debug.Assert(false); return; }
 			if(strTag.Length == 0) return; // No assert
 
 			PwDatabase pd = m_docMgr.ActiveDatabase;
-			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+			if((pd == null) || !pd.IsOpen) return; // No assert (call from trigger)
 
 			PwObjectList<PwEntry> vEntries = new PwObjectList<PwEntry>();
 			pd.RootGroup.FindEntriesByTag(strTag, vEntries, true);

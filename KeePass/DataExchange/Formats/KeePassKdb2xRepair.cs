@@ -67,7 +67,7 @@ namespace KeePass.DataExchange.Formats
 			int iNo = (int)DialogResult.No;
 			int r = VistaTaskDialog.ShowMessageBoxEx(strMsg, strTitle,
 				PwDefs.ShortProductName, VtdIcon.Warning, null,
-				KPRes.Yes, iYes, KPRes.No, iNo);
+				KPRes.YesCmd, iYes, KPRes.NoCmd, iNo);
 			if(r < 0)
 				r = (MessageService.AskYesNo(strTitle + MessageService.NewParagraph +
 					strMsg, PwDefs.ShortProductName, false, MessageBoxIcon.Warning) ?

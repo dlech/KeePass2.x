@@ -333,7 +333,14 @@ namespace KeePass.Forms
 			if(bMaximizedSetting)
 			{
 				if((this.WindowState == FormWindowState.Normal) && !IsTrayed())
+				{
+					// bool bVis = this.Visible;
+					// if(bVis) this.Visible = false;
+
 					UIUtil.SetWindowState(this, FormWindowState.Maximized);
+
+					// if(bVis) this.Visible = true;
+				}
 			}
 
 			try
@@ -1140,7 +1147,7 @@ namespace KeePass.Forms
 			for(int i = 0; i < m_tbQuickFind.Items.Count; ++i)
 			{
 				string strItemText = (string)m_tbQuickFind.Items[i];
-				if(strItemText.Equals(strSearch, StringComparison.InvariantCultureIgnoreCase))
+				if(strItemText.Equals(strSearch, StrUtil.CaseIgnoreCmp))
 				{
 					nExistsAlready = i;
 					break;
@@ -1488,11 +1495,13 @@ namespace KeePass.Forms
 		private void OnFormResize(object sender, EventArgs e)
 		{
 			FormWindowState ws = this.WindowState;
+			bool bAuto = !UIIsWindowStateAutoBlocked();
 
 			if(ws == FormWindowState.Minimized)
 			{
 				// For default value, also see options dialog
-				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimize)
+				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimize &&
+					bAuto)
 				{
 					if(IsAtLeastOneFileOpen())
 					{
@@ -1501,7 +1510,7 @@ namespace KeePass.Forms
 					}
 				}
 
-				if(Program.Config.MainWindow.MinimizeToTray)
+				if(Program.Config.MainWindow.MinimizeToTray && bAuto)
 					MinimizeToTray(true);
 			}
 			else if(ws == FormWindowState.Maximized)
@@ -1509,7 +1518,8 @@ namespace KeePass.Forms
 			else if(ws == FormWindowState.Normal)
 				Program.Config.MainWindow.Maximized = false;
 
-			if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
+			if(((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized)) &&
+				bAuto)
 			{
 				if(Program.Config.MainWindow.EntryListAutoResizeColumns &&
 					(m_lvEntries.View == View.Details))
@@ -1826,15 +1836,12 @@ namespace KeePass.Forms
 					psNew = psNew.WithProtection(pwDb.MemoryProtection.ProtectPassword);
 					pe.Strings.Set(PwDefs.PasswordField, psNew);
 
-					UpdateUI(false, null, false, null, true, null, true);
+					UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
 
-					if(m_lvEntries.Items.Count > 0) // Select new entry
-					{
-						m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
-						for(int i = 0; i < (m_lvEntries.Items.Count - 1); ++i)
-							m_lvEntries.Items[i].Selected = false; // Deselect
-						m_lvEntries.Items[m_lvEntries.Items.Count - 1].Selected = true;
-					}
+					PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+					l.Add(pe);
+					SelectEntries(l, true, true);
+					EnsureVisibleSelected(false);
 				}
 			}
 			UIUtil.DestroyForm(pgf);
@@ -2076,8 +2083,8 @@ namespace KeePass.Forms
 			if(!pwDb.IsOpen) return;
 
 			PwGeneratorForm pgf = new PwGeneratorForm();
-
 			pgf.InitEx(null, true, IsTrayed());
+
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
 				PwGroup pg = GetSelectedGroup();
@@ -2096,6 +2103,7 @@ namespace KeePass.Forms
 					byte[] pbAdditionalEntropy = EntropyForm.CollectEntropyIfEnabled(
 						pgf.SelectedProfile);
 
+					PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
 					for(uint i = 0; i < uCount; ++i)
 					{
 						PwEntry pe = new PwEntry(true, true);
@@ -2106,9 +2114,14 @@ namespace KeePass.Forms
 							pbAdditionalEntropy, Program.PwGeneratorPool);
 						psNew = psNew.WithProtection(pwDb.MemoryProtection.ProtectPassword);
 						pe.Strings.Set(PwDefs.PasswordField, psNew);
+
+						l.Add(pe);
 					}
 
-					UpdateUI(false, null, false, null, true, null, true);
+					UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
+
+					SelectEntries(l, true, true);
+					EnsureVisibleSelected(false);
 				}
 				UIUtil.DestroyForm(dlgCount);
 			}

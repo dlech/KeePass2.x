@@ -166,17 +166,32 @@ the entry will be created in the root group. Example:</p>
 
 <p>This command edits existing entries.</p>
 
-<p>To identify the entries to be edited,
-string fields can be compared. The syntax is
-<code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.
-Additionally to comparing string fields, some other entry fields
-can be compared.
-<code>-refx-UUID:</code> can be used to specify the UUID.
-<code>-refx-Tags:</code> can be used to specify tags
-(multiple tags must be separated using commas '<code>,</code>').</p>
+<p>Use one or more of the following parameters to identify the entries
+to be edited; all of the specified conditions must match:</p>
+<ul>
+<li><code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
+The string field <i>FIELDNAME</i> must have the value <i>FIELDVALUE</i>.</li>
+<li><code>-refx-UUID:<i>VALUE</i></code><br />
+The UUID of the entry must be <i>VALUE</i>.</li>
+<li><code>-refx-Tags:<i>VALUE</i></code><br />
+The entry must have the specified tags. Multiple tags can be separated using
+commas '<code>,</code>'.</li>
+<li><code>-refx-All</code><br />
+Matches all entries.</li>
+</ul>
 
-<p>To specify one or more new entry string values, use the following syntax:
-<code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code>.</p>
+<p>Use one or more of the following parameters to specify how the
+entry should be edited:</p>
+<ul>
+<li><code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
+Sets the string field <i>FIELDNAME</i> of the entry to the value
+<i>FIELDVALUE</i>.</li>
+<li><code>-setx-Expires:<i>VALUE</i></code><br />
+Sets whether the entry expires or not. <i>VALUE</i> must be either
+<code>true</code> or <code>false</code>.</li>
+<li><code>-setx-ExpiryTime:<i>VALUE</i></code><br />
+Sets the expiry date/time of the entry.</li>
+</ul>
 
 <p>Usage examples:</p>
 

@@ -108,23 +108,22 @@ namespace KeePass.Forms
 			List<AceColumn> lCur = Program.Config.MainWindow.EntryListColumns;
 			foreach(AceColumn cCur in lCur)
 			{
+				if(cCur.Type != c.Type) continue;
+
 				if((c.Type != AceColumnType.CustomString) &&
-					(cCur.Type != AceColumnType.CustomString) &&
-					(c.Type == cCur.Type))
+					(c.Type != AceColumnType.PluginExt))
 				{
 					bChecked = true;
 					break;
 				}
 				else if((c.Type == AceColumnType.CustomString) &&
-					(cCur.Type == AceColumnType.CustomString) &&
-					(c.CustomName == cCur.CustomName))
+					(cCur.CustomName == c.CustomName))
 				{
 					bChecked = true;
 					break;
 				}
 				else if((c.Type == AceColumnType.PluginExt) &&
-					(cCur.Type == AceColumnType.PluginExt) &&
-					(c.CustomName == cCur.CustomName))
+					(cCur.CustomName == c.CustomName))
 				{
 					bChecked = true;
 					break;

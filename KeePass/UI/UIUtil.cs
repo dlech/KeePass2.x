@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
@@ -584,11 +585,14 @@ namespace KeePass.UI
 				lv.Columns.Add(KPRes.Url);
 			if((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
 				lv.Columns.Add(KPRes.Notes);
+			if((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
+				lv.Columns.Add(KPRes.Sequence + " - " + KPRes.Comments);
 			if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
 				lv.Columns.Add(KPRes.Sequence);
 
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
 			DateTime dtNow = DateTime.Now;
+			Regex rxSeqCmt = null;
 			bool bFirstEntry = true;
 
 			foreach(AutoTypeCtx ctx in lCtxs)
@@ -643,6 +647,38 @@ namespace KeePass.UI
 				if((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
 					lvi.SubItems.Add(StrUtil.MultiToSingleLine(SprEngine.Compile(
 						pe.Strings.ReadSafe(PwDefs.NotesField), sprCtx)));
+				if((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
+				{
+					if(rxSeqCmt == null)
+						rxSeqCmt = new Regex("\\{[Cc]:[^\\}]*\\}");
+
+					string strSeqCmt = string.Empty, strImpSeqCmt = string.Empty;
+					foreach(Match m in rxSeqCmt.Matches(ctx.Sequence))
+					{
+						string strPart = m.Value;
+						if(strPart == null) { Debug.Assert(false); continue; }
+						if(strPart.Length < 4) { Debug.Assert(false); continue; }
+
+						strPart = strPart.Substring(3, strPart.Length - 4).Trim();
+						bool bImp = strPart.StartsWith("!"); // Important comment
+						if(bImp) strPart = strPart.Substring(1);
+						if(strPart.Length == 0) continue;
+
+						if(bImp)
+						{
+							if(strImpSeqCmt.Length > 0) strImpSeqCmt += " - ";
+							strImpSeqCmt += strPart;
+						}
+						else
+						{
+							if(strSeqCmt.Length > 0) strSeqCmt += " - ";
+							strSeqCmt += strPart;
+						}
+					}
+
+					lvi.SubItems.Add((strImpSeqCmt.Length > 0) ? strImpSeqCmt :
+						strSeqCmt);
+				}
 				if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
 					lvi.SubItems.Add(ctx.Sequence);
 				Debug.Assert(lvi.SubItems.Count == lv.Columns.Count);

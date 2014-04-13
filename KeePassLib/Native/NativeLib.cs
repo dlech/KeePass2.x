@@ -19,9 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
+using System.Reflection;
 using System.Diagnostics;
 
 using KeePassLib.Utility;
@@ -151,6 +154,10 @@ namespace KeePassLib.Native
 
 					if(strStdInput != null)
 					{
+						// Workaround for Mono Process StdIn BOM bug;
+						// https://sourceforge.net/p/keepass/bugs/1219/
+						EnsureNoBom(p.StandardInput);
+
 						p.StandardInput.Write(strStdInput);
 						p.StandardInput.Close();
 					}
@@ -208,6 +215,25 @@ namespace KeePassLib.Native
 			}
 
 			return fnRun();
+		}
+
+		private static void EnsureNoBom(StreamWriter sw)
+		{
+			if(sw == null) { Debug.Assert(false); return; }
+			if(!NativeLib.IsUnix()) return;
+
+			try
+			{
+				Encoding enc = sw.Encoding;
+				if(enc == null) { Debug.Assert(false); return; }
+				byte[] pbBom = enc.GetPreamble();
+				if((pbBom == null) || (pbBom.Length == 0)) return;
+
+				FieldInfo fi = typeof(StreamWriter).GetField("preamble_done",
+					BindingFlags.Instance | BindingFlags.NonPublic);
+				if(fi != null) fi.SetValue(sw, true);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 #endif
 

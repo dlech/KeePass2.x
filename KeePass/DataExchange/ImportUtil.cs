@@ -211,6 +211,13 @@ namespace KeePass.DataExchange
 				dlgStatus.SetText(KPRes.Synchronizing + " (" +
 					KPRes.SavingDatabase + ")", LogStatusType.Info);
 
+				MainForm mf = Program.MainForm; // Null for KPScript
+				if(mf != null)
+				{
+					try { mf.DocumentManager.ActiveDatabase = pwDatabase; }
+					catch(Exception) { Debug.Assert(false); }
+				}
+
 				if(uiOps.UIFileSave(bForceSave))
 				{
 					foreach(IOConnectionInfo ioc in vConnections)
@@ -231,11 +238,11 @@ namespace KeePass.DataExchange
 								}
 								else pwDatabase.SaveAs(ioc, false, null);
 							}
-							else { } // No assert (sync on save)
+							// else { } // No assert (sync on save)
 
-							if(Program.MainForm != null) // Null for KPScript
-								Program.MainForm.FileMruList.AddItem(
-									ioc.GetDisplayName(), ioc.CloneDeep(), true);
+							if(mf != null)
+								mf.FileMruList.AddItem(ioc.GetDisplayName(),
+									ioc.CloneDeep());
 						}
 						catch(Exception exSync)
 						{

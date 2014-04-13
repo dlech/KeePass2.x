@@ -105,6 +105,7 @@
 			this.m_menuFileOpenLocal = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpenUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileRecent = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileRecentDummy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileClose = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,6 +127,7 @@
 			this.m_menuFileSyncUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSyncSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileSyncRecent = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileSyncRecentDummy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep4 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileLock = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
@@ -165,6 +167,8 @@
 			this.m_menuToolsDbDelDupEntries = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsDbDelEmptyGroups = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsDbDelUnusedIcons = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsDbSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuToolsDbXmlRep = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsTriggers = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
@@ -226,8 +230,6 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_menuToolsDbSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuToolsDbXmlRep = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -935,9 +937,17 @@
 			// 
 			// m_menuFileRecent
 			// 
+			this.m_menuFileRecent.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuFileRecentDummy});
 			this.m_menuFileRecent.Name = "m_menuFileRecent";
 			this.m_menuFileRecent.Size = new System.Drawing.Size(190, 22);
 			this.m_menuFileRecent.Text = "Open &Recent";
+			// 
+			// m_menuFileRecentDummy
+			// 
+			this.m_menuFileRecentDummy.Name = "m_menuFileRecentDummy";
+			this.m_menuFileRecentDummy.Size = new System.Drawing.Size(88, 22);
+			this.m_menuFileRecentDummy.Text = "<>";
 			// 
 			// m_menuFileClose
 			// 
@@ -1089,9 +1099,17 @@
 			// 
 			// m_menuFileSyncRecent
 			// 
+			this.m_menuFileSyncRecent.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuFileSyncRecentDummy});
 			this.m_menuFileSyncRecent.Name = "m_menuFileSyncRecent";
 			this.m_menuFileSyncRecent.Size = new System.Drawing.Size(203, 22);
 			this.m_menuFileSyncRecent.Text = "&Recent Files";
+			// 
+			// m_menuFileSyncRecentDummy
+			// 
+			this.m_menuFileSyncRecentDummy.Name = "m_menuFileSyncRecentDummy";
+			this.m_menuFileSyncRecentDummy.Size = new System.Drawing.Size(88, 22);
+			this.m_menuFileSyncRecentDummy.Text = "<>";
 			// 
 			// m_menuFileSep4
 			// 
@@ -1410,6 +1428,19 @@
 			this.m_menuToolsDbDelUnusedIcons.Size = new System.Drawing.Size(233, 22);
 			this.m_menuToolsDbDelUnusedIcons.Text = "Delete Unused Custom &Icons";
 			this.m_menuToolsDbDelUnusedIcons.Click += new System.EventHandler(this.OnToolsDelUnusedIcons);
+			// 
+			// m_menuToolsDbSep1
+			// 
+			this.m_menuToolsDbSep1.Name = "m_menuToolsDbSep1";
+			this.m_menuToolsDbSep1.Size = new System.Drawing.Size(230, 6);
+			// 
+			// m_menuToolsDbXmlRep
+			// 
+			this.m_menuToolsDbXmlRep.Image = global::KeePass.Properties.Resources.B16x16_Binary;
+			this.m_menuToolsDbXmlRep.Name = "m_menuToolsDbXmlRep";
+			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbXmlRep.Text = "&XML Replace...";
+			this.m_menuToolsDbXmlRep.Click += new System.EventHandler(this.OnToolsXmlRep);
 			// 
 			// m_menuToolsSep1
 			// 
@@ -1978,19 +2009,6 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
-			// m_menuToolsDbSep1
-			// 
-			this.m_menuToolsDbSep1.Name = "m_menuToolsDbSep1";
-			this.m_menuToolsDbSep1.Size = new System.Drawing.Size(230, 6);
-			// 
-			// m_menuToolsDbXmlRep
-			// 
-			this.m_menuToolsDbXmlRep.Image = global::KeePass.Properties.Resources.B16x16_Binary;
-			this.m_menuToolsDbXmlRep.Name = "m_menuToolsDbXmlRep";
-			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(233, 22);
-			this.m_menuToolsDbXmlRep.Text = "&XML Replace...";
-			this.m_menuToolsDbXmlRep.Click += new System.EventHandler(this.OnToolsXmlRep);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2230,6 +2248,8 @@
 		private System.Windows.Forms.ToolStripButton m_tbAutoType;
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsDbSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbXmlRep;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFileRecentDummy;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncRecentDummy;
 	}
 }
 

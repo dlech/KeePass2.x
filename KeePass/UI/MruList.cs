@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Globalization;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -42,12 +43,8 @@ namespace KeePass.UI
 		/// Function that is called when an MRU item is executed (i.e. when
 		/// the user has clicked the menu item).
 		/// </summary>
-		void OnMruExecute(string strDisplayName, object oTag);
-
-		/// <summary>
-		/// Secondary MRU item click handler.
-		/// </summary>
-		void OnMruExecute2(string strDisplayName, object oTag);
+		void OnMruExecute(string strDisplayName, object oTag,
+			ToolStripMenuItem tsmiParent);
 
 		/// <summary>
 		/// Function to clear the MRU (for example all menu items must be
@@ -58,12 +55,23 @@ namespace KeePass.UI
 
 	public sealed class MruList
 	{
-		private IMruExecuteHandler m_handler = null;
-		private ToolStripMenuItem m_tsmiContainer = null;
-		private ToolStripMenuItem m_tsmiContainer2 = null;
-
 		private List<KeyValuePair<string, object>> m_vItems =
 			new List<KeyValuePair<string, object>>();
+
+		private IMruExecuteHandler m_handler = null;
+		private List<ToolStripMenuItem> m_lContainers =
+			new List<ToolStripMenuItem>();
+
+		private ToolStripMenuItem m_tsmiClear = null;
+		private List<ToolStripMenuItem> m_lMruMenuItems =
+			new List<ToolStripMenuItem>();
+
+		private enum MruMenuItemType
+		{
+			None = 0,
+			Item,
+			Clear
+		}
 
 		// private Font m_fItalic = null;
 
@@ -95,35 +103,54 @@ namespace KeePass.UI
 		{
 		}
 
-		public void Initialize(IMruExecuteHandler handler, ToolStripMenuItem tsmiContainer,
-			ToolStripMenuItem tsmiContainer2)
+		public void Initialize(IMruExecuteHandler handler,
+			params ToolStripMenuItem[] vContainers)
 		{
 			Release();
 
 			Debug.Assert(handler != null); // No throw
-			Debug.Assert(tsmiContainer != null); // No throw
-			// Debug.Assert(tsmiContainer2 != null); // Is optional
-
 			m_handler = handler;
-			m_tsmiContainer = tsmiContainer;
-			m_tsmiContainer2 = tsmiContainer2;
 
-			if(m_tsmiContainer != null)
-				m_tsmiContainer.DropDownOpening += this.OnDropDownOpening;
-			if(m_tsmiContainer2 != null)
-				m_tsmiContainer2.DropDownOpening += this.OnDropDownOpening;
+			if(vContainers != null)
+			{
+				foreach(ToolStripMenuItem tsmi in vContainers)
+				{
+					if(tsmi != null)
+					{
+						m_lContainers.Add(tsmi);
+
+						tsmi.DropDownOpening += this.OnDropDownOpening;
+					}
+				}
+			}
 		}
 
 		public void Release()
 		{
-			if(m_tsmiContainer != null)
-				m_tsmiContainer.DropDownOpening -= this.OnDropDownOpening;
-			if(m_tsmiContainer2 != null)
-				m_tsmiContainer2.DropDownOpening -= this.OnDropDownOpening;
+			ReleaseMenuItems();
+
+			foreach(ToolStripMenuItem tsmi in m_lContainers)
+			{
+				tsmi.DropDownOpening -= this.OnDropDownOpening;
+			}
+			m_lContainers.Clear();
 
 			m_handler = null;
-			m_tsmiContainer = null;
-			m_tsmiContainer2 = null;
+		}
+
+		private void ReleaseMenuItems()
+		{
+			if(m_tsmiClear != null)
+			{
+				m_tsmiClear.Click -= this.ClearHandler;
+				m_tsmiClear = null;
+			}
+
+			foreach(ToolStripMenuItem tsmi in m_lMruMenuItems)
+			{
+				tsmi.Click -= this.ClickHandler;
+			}
+			m_lMruMenuItems.Clear();
 		}
 
 		public void Clear()
@@ -131,12 +158,17 @@ namespace KeePass.UI
 			m_vItems.Clear();
 		}
 
+		[Obsolete]
 		public void AddItem(string strDisplayName, object oTag, bool bUpdateMenu)
+		{
+			AddItem(strDisplayName, oTag);
+		}
+
+		public void AddItem(string strDisplayName, object oTag)
 		{
 			Debug.Assert(strDisplayName != null);
 			if(strDisplayName == null) throw new ArgumentNullException("strDisplayName");
-			Debug.Assert(oTag != null);
-			if(oTag == null) throw new ArgumentNullException("oTag");
+			// oTag may be null
 
 			bool bExists = false;
 			foreach(KeyValuePair<string, object> kvp in m_vItems)
@@ -158,63 +190,105 @@ namespace KeePass.UI
 					m_vItems.RemoveAt(m_vItems.Count - 1);
 			}
 
-			if(bUpdateMenu) UpdateMenu();
+			// if(bUpdateMenu) UpdateMenu();
 		}
 
+		private void MoveItemToTop(string strName)
+		{
+			for(int i = 0; i < m_vItems.Count; ++i)
+			{
+				if(m_vItems[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
+				{
+					KeyValuePair<string, object> t = m_vItems[i];
+					m_vItems.RemoveAt(i);
+					m_vItems.Insert(0, t);
+
+					return;
+				}
+			}
+
+			Debug.Assert(false);
+		}
+
+		[Obsolete]
 		public void UpdateMenu()
 		{
-			if(m_tsmiContainer == null) return;
+		}
 
-			m_tsmiContainer.DropDownItems.Clear();
-			if(m_tsmiContainer2 != null) m_tsmiContainer2.DropDownItems.Clear();
+		private void UpdateMenu(object oContainer)
+		{
+			ToolStripMenuItem tsmiContainer = (oContainer as ToolStripMenuItem);
+			if(tsmiContainer == null) { Debug.Assert(false); return; }
+			if(!m_lContainers.Contains(tsmiContainer)) { Debug.Assert(false); return; }
+
+			tsmiContainer.DropDown.SuspendLayout();
+
+			// Verify that the popup arrow has been drawn (i.e. items existed)
+			Debug.Assert(tsmiContainer.DropDownItems.Count > 0);
+
+			ReleaseMenuItems();
+			tsmiContainer.DropDownItems.Clear();
 
 			uint uAccessKey = 1, uNull = 0;
 			if(m_vItems.Count > 0)
 			{
 				foreach(KeyValuePair<string, object> kvp in m_vItems)
-					AddMenuItem(StrUtil.EncodeMenuText(kvp.Key), kvp.Value,
-						false, null, true, ref uAccessKey);
+				{
+					AddMenuItem(tsmiContainer, MruMenuItemType.Item,
+						StrUtil.EncodeMenuText(kvp.Key), null, kvp.Value,
+						true, ref uAccessKey);
+				}
 
-				m_tsmiContainer.DropDownItems.Add(new ToolStripSeparator());
-				if(m_tsmiContainer2 != null)
-					m_tsmiContainer2.DropDownItems.Add(new ToolStripSeparator());
+				tsmiContainer.DropDownItems.Add(new ToolStripSeparator());
 
-				AddMenuItem(KPRes.ClearMru, null, true,
-					Properties.Resources.B16x16_EditDelete, true, ref uNull);
+				AddMenuItem(tsmiContainer, MruMenuItemType.Clear, KPRes.ClearMru,
+					Properties.Resources.B16x16_EditDelete, null, true, ref uNull);
 			}
-			else AddMenuItem("(" + KPRes.Empty + ")", null, null, null, false, ref uNull);
+			else
+			{
+				AddMenuItem(tsmiContainer, MruMenuItemType.None, "(" +
+					KPRes.Empty + ")", null, null, false, ref uNull);
+			}
+
+			tsmiContainer.DropDown.ResumeLayout(true);
 		}
 
-		private void AddMenuItem(string strText, object oTag, bool? bClearHandler,
-			Image img, bool bEnabled, ref uint uAccessKey)
+		private void AddMenuItem(ToolStripMenuItem tsmiParent, MruMenuItemType t,
+			string strText, Image img, object oTag, bool bEnabled,
+			ref uint uAccessKey)
 		{
-			if(m_tsmiContainer != null)
-				m_tsmiContainer.DropDownItems.Add(CreateMenuItem(strText, oTag,
-					bClearHandler, img, bEnabled, uAccessKey, false));
-			if(m_tsmiContainer2 != null)
-				m_tsmiContainer2.DropDownItems.Add(CreateMenuItem(strText, oTag,
-					bClearHandler, img, bEnabled, uAccessKey, true));
+			ToolStripMenuItem tsmi = CreateMenuItem(t, strText, img, oTag,
+				bEnabled, uAccessKey);
+			tsmiParent.DropDownItems.Add(tsmi);
+
+			if(t == MruMenuItemType.Item)
+				m_lMruMenuItems.Add(tsmi);
+			else if(t == MruMenuItemType.Clear)
+			{
+				Debug.Assert(m_tsmiClear == null);
+				m_tsmiClear = tsmi;
+			}
 
 			if(uAccessKey != 0) ++uAccessKey;
 		}
 
-		private ToolStripMenuItem CreateMenuItem(string strText, object oTag,
-			bool? bClearHandler, Image img, bool bEnabled, uint uAccessKey,
-			bool b2)
+		private ToolStripMenuItem CreateMenuItem(MruMenuItemType t, string strText,
+			Image img, object oTag, bool bEnabled, uint uAccessKey)
 		{
 			string strItem = strText;
 			if(uAccessKey >= 1)
 			{
+				NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
 				if(uAccessKey < 10)
-					strItem = @"&" + uAccessKey.ToString() + " " + strItem;
+					strItem = @"&" + uAccessKey.ToString(nfi) + " " + strItem;
 				else if(uAccessKey == 10)
 					strItem = @"1&0 " + strItem;
-				else strItem = uAccessKey.ToString() + " " + strItem;
+				else strItem = uAccessKey.ToString(nfi) + " " + strItem;
 			}
 
-			ToolStripMenuItem tsi = new ToolStripMenuItem(strItem);
-			if(oTag != null) tsi.Tag = oTag;
-			if(img != null) tsi.Image = img;
+			ToolStripMenuItem tsmi = new ToolStripMenuItem(strItem);
+			if(img != null) tsmi.Image = img;
+			if(oTag != null) tsmi.Tag = oTag;
 
 			IOConnectionInfo ioc = (oTag as IOConnectionInfo);
 			if(m_bMarkOpened && (ioc != null) && (Program.MainForm != null))
@@ -232,22 +306,24 @@ namespace KeePass.UI
 						//	else { Debug.Assert(false); }
 						// }
 
-						// if(m_fItalic != null) tsi.Font = m_fItalic;
+						// if(m_fItalic != null) tsmi.Font = m_fItalic;
 						// 153, 51, 153
-						tsi.ForeColor = Color.FromArgb(64, 64, 255);
-						tsi.Text += " [" + KPRes.Opened + "]";
+						tsmi.ForeColor = Color.FromArgb(64, 64, 255);
+						tsmi.Text += " [" + KPRes.Opened + "]";
 						break;
 					}
 				}
 			}
 
-			if(bClearHandler.HasValue)
-				tsi.Click += (bClearHandler.Value ? new EventHandler(this.ClearHandler) :
-					(b2 ? new EventHandler(this.ClickedHandler2) :
-					new EventHandler(this.ClickedHandler)));
+			if(t == MruMenuItemType.Item)
+				tsmi.Click += this.ClickHandler;
+			else if(t == MruMenuItemType.Clear)
+				tsmi.Click += this.ClearHandler;
+			// t == MruMenuItemType.None needs no handler
 
-			if(bEnabled == false) tsi.Enabled = false;
-			return tsi;
+			if(!bEnabled) tsmi.Enabled = false;
+
+			return tsmi;
 		}
 
 		public KeyValuePair<string, object> GetItem(uint uIndex)
@@ -276,59 +352,35 @@ namespace KeePass.UI
 			return false;
 		}
 
-		private void ClickedHandler(object sender, EventArgs args)
+		private void ClickHandler(object sender, EventArgs args)
 		{
-			ProcessClick(sender, false);
-		}
+			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
+			if(tsmi == null) { Debug.Assert(false); return; }
+			Debug.Assert(m_lMruMenuItems.Contains(tsmi));
 
-		private void ClickedHandler2(object sender, EventArgs args)
-		{
-			ProcessClick(sender, true);
-		}
+			ToolStripMenuItem tsmiParent = (tsmi.OwnerItem as ToolStripMenuItem);
+			if(tsmiParent == null) { Debug.Assert(false); return; }
+			if(!m_lContainers.Contains(tsmiParent)) { Debug.Assert(false); return; }
 
-		private void ProcessClick(object sender, bool b2)
-		{
-			ToolStripMenuItem tsi = (sender as ToolStripMenuItem);
-			if(tsi == null) { Debug.Assert(false); return; }
+			if(m_handler == null) { Debug.Assert(false); return; }
 
-			string strName = tsi.Text;
-			object oTag = tsi.Tag;
+			string strName = tsmi.Text;
+			object oTag = tsmi.Tag;
+
+			m_handler.OnMruExecute(strName, oTag, tsmiParent);
 
 			// MoveItemToTop(strName);
-
-			if(m_handler != null)
-			{
-				if(b2) m_handler.OnMruExecute2(strName, oTag);
-				else m_handler.OnMruExecute(strName, oTag);
-			}
-		}
-
-		private void MoveItemToTop(string strName)
-		{
-			for(int i = 0; i < m_vItems.Count; ++i)
-			{
-				Debug.Assert(m_vItems[i].Key != null);
-				if(m_vItems[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
-				{
-					KeyValuePair<string, object> t = m_vItems[i];
-					m_vItems.RemoveAt(i);
-					m_vItems.Insert(0, t);
-
-					return;
-				}
-			}
-
-			Debug.Assert(false);
 		}
 
 		private void ClearHandler(object sender, EventArgs e)
 		{
 			if(m_handler != null) m_handler.OnMruClear();
+			else { Debug.Assert(false); }
 		}
 
 		private void OnDropDownOpening(object sender, EventArgs e)
 		{
-			UpdateMenu();
+			UpdateMenu(sender);
 		}
 	}
 }

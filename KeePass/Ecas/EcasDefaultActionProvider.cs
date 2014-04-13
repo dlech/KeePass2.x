@@ -165,9 +165,16 @@ namespace KeePass.Ecas
 				ExecuteSelectedAutoType));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
+				0x42, 0xE8, 0x37, 0x81, 0x73, 0xD3, 0x4E, 0xEC,
+				0x81, 0x48, 0x9E, 0x3B, 0x36, 0xAC, 0x83, 0x84 }),
+				KPRes.ShowEntriesByTag, PwIcon.List, new EcasParameter[] {
+					new EcasParameter(KPRes.Tag, EcasValueType.String, null) },
+				ShowEntriesByTag));
+
+			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0x95, 0x81, 0x8F, 0x45, 0x99, 0x66, 0x49, 0x88,
 				0xAB, 0x3E, 0x86, 0xE8, 0x1A, 0x96, 0x68, 0x36 }),
-				KPRes.CustomTbButtonAdd, PwIcon.List, new EcasParameter[] {
+				KPRes.CustomTbButtonAdd, PwIcon.Screen, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null),
 					new EcasParameter(KPRes.Name, EcasValueType.String, null),
 					new EcasParameter(KPRes.Description, EcasValueType.String, null) },
@@ -176,7 +183,7 @@ namespace KeePass.Ecas
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
 				0xD6, 0x6D, 0x41, 0xA2, 0x6C, 0xB2, 0x44, 0xBA,
 				0xA4, 0x48, 0x0A, 0x41, 0xFA, 0x09, 0x48, 0x79 }),
-				KPRes.CustomTbButtonRemove, PwIcon.List, new EcasParameter[] {
+				KPRes.CustomTbButtonRemove, PwIcon.Screen, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
 				RemoveToolBarButton));
 		}
@@ -448,6 +455,12 @@ namespace KeePass.Ecas
 				else AutoType.PerformIntoCurrentWindow(pe, pd, strSeq);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void ShowEntriesByTag(EcasAction a, EcasContext ctx)
+		{
+			string strTag = EcasUtil.GetParamString(a.Parameters, 0, true);
+			Program.MainForm.ShowEntriesByTag(strTag);
 		}
 
 		private static void AddToolBarButton(EcasAction a, EcasContext ctx)

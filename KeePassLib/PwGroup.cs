@@ -731,6 +731,7 @@ namespace KeePassLib
 		/// <param name="sp">Specifies the search method.</param>
 		/// <param name="listStorage">Entry list in which the search results will
 		/// be stored.</param>
+		/// <param name="slStatus">Optional status reporting object.</param>
 		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> listStorage,
 			IStatusLogger slStatus)
 		{
@@ -1171,6 +1172,8 @@ namespace KeePassLib
 		/// </summary>
 		/// <param name="strSeparator">String that separates the group
 		/// names.</param>
+		/// <param name="bIncludeTopMostGroup">Specifies whether the returned
+		/// path starts with the topmost group.</param>
 		/// <returns>Full path of the group.</returns>
 		public string GetFullPath(string strSeparator, bool bIncludeTopMostGroup)
 		{

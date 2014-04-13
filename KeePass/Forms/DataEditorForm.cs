@@ -46,11 +46,11 @@ namespace KeePass.Forms
 
 		private bool m_bModified = false;
 
-		private bool m_bBlockEvents = false;
-		private Stack<bool> m_lBlockStateStack = new Stack<bool>();
+		private uint m_uBlockEvents = 0;
 		private Stack<KeyValuePair<int, int>> m_lSelections =
 			new Stack<KeyValuePair<int, int>>();
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
+		private bool m_bNewLinesWin = true;
 
 		private string m_strInitialFormRect = string.Empty;
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
@@ -112,7 +112,7 @@ namespace KeePass.Forms
 			}
 			catch(Exception) { Debug.Assert(false); strData = string.Empty; }
 
-			BlockUIEvents(true);
+			++m_uBlockEvents;
 
 			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
 			m_menuFileExit.ShortcutKeyDisplayString = KPRes.KeyboardKeyEsc;
@@ -170,10 +170,13 @@ namespace KeePass.Forms
 					m_rtbText.SelectAll();
 					m_rtbText.SelectionFont = Program.Config.UI.DataEditorFont.ToFont();
 				}
+
+				// CR is upgraded to CR+LF
+				m_bNewLinesWin = (StrUtil.GetNewLineSeq(strData) != "\n");
 			}
 
 			m_rtbText.Select(0, 0);
-			BlockUIEvents(false);
+			--m_uBlockEvents;
 			UpdateUIState(false, true);
 		}
 
@@ -203,7 +206,7 @@ namespace KeePass.Forms
 
 		private void UpdateUIState(bool bSetModified, bool bFocusText)
 		{
-			BlockUIEvents(true);
+			++m_uBlockEvents;
 			if(bSetModified) m_bModified = true;
 
 			this.Text = (((m_strDataDesc.Length > 0) ? (m_strDataDesc +
@@ -243,18 +246,8 @@ namespace KeePass.Forms
 			m_tbAlignCenter.Checked = (ha == HorizontalAlignment.Center);
 			m_tbAlignRight.Checked = (ha == HorizontalAlignment.Right);
 
-			BlockUIEvents(false);
+			--m_uBlockEvents;
 			if(bFocusText) UIUtil.SetFocus(m_rtbText, this);
-		}
-
-		private void BlockUIEvents(bool bBlock)
-		{
-			if(bBlock)
-			{
-				m_lBlockStateStack.Push(m_bBlockEvents);
-				m_bBlockEvents = true;
-			}
-			else m_bBlockEvents = m_lBlockStateStack.Pop();
 		}
 
 		private void UISelectAllText(bool bSelect)
@@ -276,7 +269,12 @@ namespace KeePass.Forms
 		{
 			if(m_bdc == BinaryDataClass.RichText)
 				m_pbEditedData = StrUtil.Utf8.GetBytes(m_rtbText.Rtf);
-			else m_pbEditedData = StrUtil.Utf8.GetBytes(m_rtbText.Text);
+			else
+			{
+				string strData = m_rtbText.Text;
+				strData = StrUtil.NormalizeNewLines(strData, m_bNewLinesWin);
+				m_pbEditedData = StrUtil.Utf8.GetBytes(strData);
+			}
 
 			m_bModified = false;
 			UpdateUIState(false, false);
@@ -290,6 +288,8 @@ namespace KeePass.Forms
 					OnFileSave(sender, EventArgs.Empty);
 			}
 
+			Debug.Assert(m_uBlockEvents == 0);
+
 			string strRect = UIUtil.GetWindowScreenRect(this);
 			if(strRect != m_strInitialFormRect)
 				Program.Config.UI.DataEditorRect = strRect;
@@ -300,7 +300,7 @@ namespace KeePass.Forms
 
 		private void ToggleSelectionFormat(FontStyle fs)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Font f = m_rtbText.SelectionFont;
 			if(f == null) return;
@@ -333,7 +333,7 @@ namespace KeePass.Forms
 
 		private void OnTextSelectionChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			UpdateUIState(false, false);
 		}
@@ -350,7 +350,7 @@ namespace KeePass.Forms
 
 		private void OnColorForegroundClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Color clr;
 			if(ShowColorDialog(m_rtbText.SelectionColor, out clr))
@@ -362,7 +362,7 @@ namespace KeePass.Forms
 
 		private void OnColorBackgroundClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Color clr;
 			if(ShowColorDialog(m_rtbText.SelectionBackColor, out clr))
@@ -384,14 +384,14 @@ namespace KeePass.Forms
 
 		private void OnTextTextChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents) return;
+			if(m_uBlockEvents > 0) return;
 
 			UpdateUIState(true, false);
 		}
 
 		private void OnAlignLeftClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			m_rtbText.SelectionAlignment = HorizontalAlignment.Left;
 
@@ -400,7 +400,7 @@ namespace KeePass.Forms
 
 		private void OnAlignCenterClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			m_rtbText.SelectionAlignment = HorizontalAlignment.Center;
 
@@ -409,7 +409,7 @@ namespace KeePass.Forms
 
 		private void OnAlignRightClicked(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			m_rtbText.SelectionAlignment = HorizontalAlignment.Right;
 
@@ -418,7 +418,7 @@ namespace KeePass.Forms
 
 		private void OnFontComboSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Font f = m_rtbText.SelectionFont;
 			try
@@ -433,7 +433,7 @@ namespace KeePass.Forms
 
 		private void OnFontSizeComboSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockEvents || (m_bdc != BinaryDataClass.RichText)) return;
+			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
 			Font f = m_rtbText.SelectionFont;
 			float fSize;

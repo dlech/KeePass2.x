@@ -399,6 +399,13 @@ namespace KeePass.Forms
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
 				lvg, KPRes.FocusQuickFindOnUntray);
 
+			lvg = new ListViewGroup(KPRes.Dialogs);
+			m_lvGuiOptions.Groups.Add(lvg);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowRecycleConfirmDialog",
+				lvg, KPRes.RecycleShowConfirm);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbMntncResultsDialog",
+				lvg, KPRes.DbMntncResults);
+
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "RepeatPasswordOnlyWhenHidden",
@@ -407,8 +414,6 @@ namespace KeePass.Forms
 				lvg, KPRes.UseCustomToolStripRenderer);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ForceSystemFontUnix",
 				lvg, KPRes.ForceSystemFontUnix);
-			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbMntncResultsDialog",
-				lvg, KPRes.DbMntncResults);
 
 			m_cdxGuiOptions.UpdateData(false);
 			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width -
@@ -424,7 +429,8 @@ namespace KeePass.Forms
 
 			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "StandardFont"))
 				m_btnSelFont.Enabled = false;
-			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "PasswordFont"))
+			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "PasswordFont") ||
+				MonoWorkarounds.IsRequired(5795))
 				m_btnSelPwFont.Enabled = false;
 		}
 

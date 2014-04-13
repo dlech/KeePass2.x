@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
 
+using KeePass.Forms;
 using KeePass.UI;
 using KeePass.Util;
 
@@ -94,6 +95,10 @@ namespace KeePass.Native
 				long lCurrent;
 				long.TryParse(strCurrent.Trim(), out lCurrent);
 
+				MainForm mf = Program.MainForm;
+				Debug.Assert(mf == fCurrent);
+				if(mf != null) mf.UIBlockWindowStateAuto(true);
+
 				UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
 
 				int nStart = Environment.TickCount;
@@ -107,6 +112,8 @@ namespace KeePass.Native
 
 					if(lActive != lCurrent) break;
 				}
+
+				if(mf != null) mf.UIBlockWindowStateAuto(false);
 
 				return true;
 			}

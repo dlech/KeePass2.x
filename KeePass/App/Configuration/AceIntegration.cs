@@ -188,6 +188,14 @@ namespace KeePass.App.Configuration
 			set { m_bCancelOnTitleChange = value; }
 		}
 
+		private int m_iInterKeyDelay = -1;
+		[DefaultValue(-1)]
+		public int AutoTypeInterKeyDelay
+		{
+			get { return m_iInterKeyDelay; }
+			set { m_iInterKeyDelay = value; }
+		}
+
 		private ProxyServerType m_pstProxyType = ProxyServerType.System;
 		public ProxyServerType ProxyType
 		{

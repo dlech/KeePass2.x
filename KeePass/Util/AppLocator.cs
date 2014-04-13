@@ -211,20 +211,31 @@ namespace KeePass.Util
 		{
 			if(NativeLib.IsUnix()) return FindAppUnix("opera");
 
-			RegistryKey kCommand = Registry.ClassesRoot.OpenSubKey(
-				"Opera.HTML\\shell\\open\\command", false);
-			if(kCommand == null) return null;
-
-			string strPath = (kCommand.GetValue(string.Empty) as string);
-			if(!string.IsNullOrEmpty(strPath))
+			for(int i = 0; i < 2; ++i)
 			{
-				strPath = strPath.Trim();
-				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
-			}
-			else { Debug.Assert(false); }
+				RegistryKey k = null;
+				if(i == 0) // Opera 20.0.1387.77
+					k = Registry.LocalMachine.OpenSubKey(
+						"SOFTWARE\\Clients\\StartMenuInternet\\OperaStable\\shell\\open\\command", false);
+				// else if(i == 1) // Old
+				//	k = Registry.LocalMachine.OpenSubKey(
+				//		"SOFTWARE\\Clients\\StartMenuInternet\\Opera\\shell\\open\\command", false);
+				else if(i == 1) // Old
+					k = Registry.ClassesRoot.OpenSubKey(
+						"Opera.HTML\\shell\\open\\command", false);
 
-			kCommand.Close();
-			return strPath;
+				if(k == null) continue;
+
+				string strPath = (k.GetValue(string.Empty) as string);
+				if(!string.IsNullOrEmpty(strPath))
+					strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
+				else { Debug.Assert(false); }
+
+				k.Close();
+				if(!string.IsNullOrEmpty(strPath)) return strPath;
+			}
+
+			return null;
 		}
 
 		private static string FindChrome()

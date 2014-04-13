@@ -43,6 +43,7 @@ customize the program's appearance and behavior.
 <li><a href="#start">Preliminaries</a></li>
 <li><a href="#masterpwreq">Minimum Master Password Requirements</a></li>
 <li><a href="#uiflags">Specifying UI Element States</a></li>
+<li><a href="#opt">More Options</a></li>
 </ul>
 
 <br />
@@ -108,8 +109,7 @@ password generator context menu of the entry editing dialog.</td></tr>
 <em>Note:</em> Databases are not marked as modified when a last access time
 changes. Thus, when only last access times are changed and the user closes the
 database (without saving manually first and without a save forced e.g. by a trigger or plugin),
-the changes to the last access times are lost.<br />
-<em>Requirements:</em> This flag is supported by KeePass 2.25 and higher.</td></tr>
+the changes to the last access times are lost.</td></tr>
 </table>
 
 <p>The value of <code>UIFlags</code> must be specified in decimal notation.</p>
@@ -117,6 +117,21 @@ the changes to the last access times are lost.<br />
 <p>For example, if you want to disable the 'Options' and 'Plugins' items in
 the 'Tools' menu, you'd specify 3 as value for the <code>UIFlags</code> node
 (0x1 + 0x2 = 0x3 = 3).</p>
+
+<br />
+
+<a name="opt"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_kcmsystem.png" class="singleimg" alt="Key" />&nbsp;&nbsp;More
+Options</h2>
+
+<ul>
+<li><b>Configuration/Integration/AutoTypeInterKeyDelay</b>:<br />
+Specifies the default delay (in ms) between two keypresses sent by auto-type.
+The minimum is 1 ms.
+Note that very small delays may result in target applications not being able
+to process the keypresses correctly.</li>
+</ul>
 
 </body></html>
 

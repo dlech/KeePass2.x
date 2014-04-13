@@ -222,6 +222,12 @@ namespace KeePass.Forms
 			tsmi.Click += this.OnToggleColumn;
 			m_tsmiColumns.DropDownItems.Add(tsmi);
 
+			tsmi = new ToolStripMenuItem(KPRes.Sequence + " - " + KPRes.Comments);
+			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColSequenceComments) != 0);
+			tsmi.Tag = AceAutoTypeCtxFlags.ColSequenceComments;
+			tsmi.Click += this.OnToggleColumn;
+			m_tsmiColumns.DropDownItems.Add(tsmi);
+
 			tsmi = new ToolStripMenuItem(KPRes.Sequence);
 			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColSequence) != 0);
 			tsmi.Tag = AceAutoTypeCtxFlags.ColSequence;

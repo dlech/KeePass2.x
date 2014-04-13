@@ -75,6 +75,7 @@ namespace KeePass.App.Configuration
 		ColUrl = 0x8,
 		ColNotes = 0x10,
 		ColSequence = 0x20,
+		ColSequenceComments = 0x40,
 
 		Default = (ColTitle | ColUserName | ColUrl | ColSequence)
 	}
@@ -166,6 +167,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bShowDbMntncResDlg; }
 			set { m_bShowDbMntncResDlg = value; }
+		}
+
+		private bool m_bShowRecycleDlg = true;
+		[DefaultValue(true)]
+		public bool ShowRecycleConfirmDialog
+		{
+			get { return m_bShowRecycleDlg; }
+			set { m_bShowRecycleDlg = value; }
 		}
 
 		private bool m_bUseCustomTsRenderer = true;

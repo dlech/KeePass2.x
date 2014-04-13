@@ -221,8 +221,12 @@ namespace KeePass.Util.Spr
 			}
 
 			if((ctx.Flags & SprCompileFlags.AutoType) != SprCompileFlags.None)
+			{
+				// Use Bksp instead of Del (in order to avoid Ctrl+Alt+Del);
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/4f1aa6b8/
 				str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEARFIELD}",
-					@"{HOME}+({END}){DEL}{DELAY 50}");
+					@"{HOME}+({END}){BKSP}{DELAY 50}");
+			}
 
 			if((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None)
 			{
@@ -717,6 +721,8 @@ namespace KeePass.Util.Spr
 						byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strNew);
 						strNew = MemUtil.ByteArrayToHexString(pbUtf8);
 					}
+					else if(strCmd == "uri")
+						strNew = Uri.EscapeDataString(strNew);
 
 					strNew = TransformContent(strNew, ctx);
 					str = str.Insert(iStart, strNew);

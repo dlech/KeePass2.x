@@ -365,10 +365,16 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-V3");
 			if(StrUtil.VersionToString(0x00FF000000000000UL) != "255")
 				throw new InvalidOperationException("StrUtil-V4");
-			if(StrUtil.VersionToString(0x00FF000000000000UL, true) != "255.0")
+			if(StrUtil.VersionToString(0x00FF000000000000UL, 2) != "255.0")
 				throw new InvalidOperationException("StrUtil-V5");
-			if(StrUtil.VersionToString(0x0000000000070000UL, true) != "0.0.7")
+			if(StrUtil.VersionToString(0x0000000000070000UL) != "0.0.7")
 				throw new InvalidOperationException("StrUtil-V6");
+			if(StrUtil.VersionToString(0x0000000000000000UL) != "0")
+				throw new InvalidOperationException("StrUtil-V7");
+			if(StrUtil.VersionToString(0x00000000FFFF0000UL, 4) != "0.0.65535.0")
+				throw new InvalidOperationException("StrUtil-V8");
+			if(StrUtil.VersionToString(0x0000000000000000UL, 4) != "0.0.0.0")
+				throw new InvalidOperationException("StrUtil-V9");
 
 			if(StrUtil.RtfEncodeChar('\u0000') != "\\u0?")
 				throw new InvalidOperationException("StrUtil-Rtf1");

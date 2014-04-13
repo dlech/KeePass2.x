@@ -497,10 +497,21 @@ namespace KeePass.Util
 			// Induced by SiEngineWin.TrySendCharByKeypresses
 			uDefaultDelay += 2;
 
+			int iDefOvr = Program.Config.Integration.AutoTypeInterKeyDelay;
+			if(iDefOvr >= 0)
+			{
+				if(iDefOvr == 0) iDefOvr = 1; // 1 ms is minimum
+				uDefaultDelay = (uint)iDefOvr;
+			}
+
 			bool bFirstInput = true;
 			foreach(SiEvent si in l)
 			{
-				if((si.Type == SiEventType.Key) || (si.Type == SiEventType.Char))
+				// Also delay key modifiers, as a workaround for applications
+				// with broken time-dependent message processing;
+				// https://sourceforge.net/p/keepass/bugs/1213/
+				if((si.Type == SiEventType.Key) || (si.Type == SiEventType.Char) ||
+					(si.Type == SiEventType.KeyModifier))
 				{
 					if(!bFirstInput)
 						siEngine.Delay(uDefaultDelay);

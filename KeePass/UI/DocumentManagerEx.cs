@@ -49,7 +49,7 @@ namespace KeePass.UI
 			get { return m_dsActive; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 
 				for(int i = 0; i < m_vDocs.Count; ++i)
 				{
@@ -69,6 +69,23 @@ namespace KeePass.UI
 		public PwDatabase ActiveDatabase
 		{
 			get { return m_dsActive.Database; }
+			set
+			{
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+
+				for(int i = 0; i < m_vDocs.Count; ++i)
+				{
+					if(m_vDocs[i].Database == value)
+					{
+						m_dsActive = m_vDocs[i];
+
+						NotifyActiveDocumentSelected();
+						return;
+					}
+				}
+
+				throw new ArgumentException();
+			}
 		}
 
 		public uint DocumentCount
@@ -107,21 +124,24 @@ namespace KeePass.UI
 				if(m_vDocs[i].Database == pwDatabase)
 				{
 					iFoundPos = i;
-					m_vDocs.RemoveAt(i);
 					break;
 				}
 			}
+			if(iFoundPos < 0) { Debug.Assert(false); return; }
 
-			if(iFoundPos != -1)
+			bool bClosingActive = (m_vDocs[iFoundPos] == m_dsActive);
+
+			m_vDocs.RemoveAt(iFoundPos);
+			if(m_vDocs.Count == 0)
+				m_vDocs.Add(new PwDocument());
+
+			if(bClosingActive)
 			{
-				if(m_vDocs.Count == 0)
-					m_vDocs.Add(new PwDocument());
-
-				if(iFoundPos == m_vDocs.Count) --iFoundPos;
-				m_dsActive = m_vDocs[iFoundPos];
+				int iNewActive = Math.Min(iFoundPos, m_vDocs.Count - 1);
+				m_dsActive = m_vDocs[iNewActive];
 				NotifyActiveDocumentSelected();
 			}
-			else { Debug.Assert(false); }
+			else { Debug.Assert(m_vDocs.Contains(m_dsActive)); }
 		}
 
 		public List<PwDatabase> GetOpenDatabases()
@@ -145,7 +165,7 @@ namespace KeePass.UI
 			{
 				for(int i = 0; i < lDocs.Count; ++i)
 				{
-					if(object.ReferenceEquals(lDocs[i], m_dsActive))
+					if(lDocs[i] == m_dsActive)
 					{
 						lDocs.RemoveAt(i);
 						if(iMoveActive < 0) lDocs.Insert(0, m_dsActive);

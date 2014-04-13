@@ -852,10 +852,6 @@ namespace KeePassLib
 			}
 		}
 
-		/// <summary>
-		/// Apply a list of deleted objects.
-		/// </summary>
-		/// <param name="listDelObjects">List of deleted objects.</param>
 		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects,
 			bool bCopyDeletionInfoToLocal)
 		{

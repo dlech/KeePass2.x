@@ -248,7 +248,7 @@ and immediately re-encrypts it using the random key.</p>
 needed anymore, i.e. it overwrites these memory areas before releasing them
 (this applies to all security-critical memory, not only the password fields).</p>
 
-<p>KeePass &ge; 1.15 and 2.x use the Windows DPAPI for in-memory encrypting the
+<p>KeePass uses the Windows DPAPI for in-memory encrypting the
 sensitive data. With DPAPI, the key for in-memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
 If DPAPI is not available or disabled (advanced KeePass options, by default

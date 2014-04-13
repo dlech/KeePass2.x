@@ -1,3 +1,68 @@
+2014-04-13: 2.26
+- Added option to show a confirmation dialog when moving
+  entries/groups to the recycle bin
+- Auto-Type: added workaround for applications with broken
+  time-dependent message processing
+- Auto-Type: added workaround for PuTTY's default Ctrl+Alt
+  behavior (which differs from Windows' behavior)
+- Auto-Type: added configuration option to specify the default
+  delay between two keypresses
+- Added optional sequence comments column in the auto-type
+  entry selection dialog (in this column, only {C:...} comments
+  in the sequence are displayed; if a comment starts with '!',
+  only this comment is shown)
+- If the option 'Automatically search key files' is activated,
+  all drives are now scanned in parallel and any key files are
+  added asynchronously (this avoids issues caused by slow
+  network drives)
+- Added trigger action 'Show entries by tag'
+- {OPERA} placeholder: updated detection code to also support
+  the latest versions of Opera
+- {T-CONV:...} placeholder: added 'Uri' type (for converting
+  the string to its URI-escaped representation)
+- Synchronization functions are now available for remote
+  databases, too
+- Enhanced RoboForm importer to additionally support the new
+  file format
+- Summary lists are now also available in delete confirmation
+  dialogs on Unix-like systems and Windows XP and earlier
+- Added workaround for Mono Process StdIn BOM bug
+- KPScript: added 'refx-All' option (matches all entries)
+- KPScript: added optional parameters 'setx-Expires' and
+  'setx-ExpiryTime' for the 'EditEntry' command
+
+- Improved database tab selection after closing an inactive
+  database
+- New just-in-time MRU files list
+- Improved selection of entries created by the password
+  generator
+- The internal text editor now determines the newline sequence
+  that the data is using the most when opening it, and converts
+  all newline sequences to the initial sequence when saving the
+  data
+- Improved realization of the {CLEARFIELD} command (now using
+  Bksp instead of Del, in order to avoid Ctrl+Alt+Del issues on
+  newer Windows systems)
+- The note that deleting a group will also delete all subgroups
+  and entries within this group is now only displayed if the
+  group is not empty
+- Improved GUI thread safety of the update check dialog
+- Improved HTML generation
+- Improved version formatting
+- On Unix-like systems, window state automations are now
+  disabled during initial auto-type target window switches
+- On Unix-like systems, the button to choose a password font is
+  disabled now (because this is unsupported due to Mono bug
+  5795)
+- Various files (e.g. 'History.txt') are now encoded using
+  UTF-8
+- Improved build system
+- Various code optimizations
+- Minor other improvements
+
+- In the 'Configure Columns' dialog, the activation states of
+  plugin-provided columns are now preset correctly
+
 2014-02-03: 2.25
 - New auto-type key sending engine (improved support for
   sending Unicode characters and for sending keypresses into
@@ -506,7 +571,7 @@
 - Added workaround to support loading data from version
   information files even when they have incorrectly been
   decompressed by a web filter
-- Added workarounds for '°', '|' and '£' .NET SendKeys issues
+- Added workarounds for 'Â°', '|' and 'Â£' .NET SendKeys issues
 - Added workaround for topmost window .NET/Windows issue (the
   'Always on Top' option now works even when switching to a
   different window while KeePass is starting up)

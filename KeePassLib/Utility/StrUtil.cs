@@ -313,7 +313,7 @@ namespace KeePassLib.Utility
 			str = str.Replace("\'", @"&#39;");
 
 			str = NormalizeNewLines(str, false);
-			str = str.Replace("\n", @"<br />");
+			str = str.Replace("\n", @"<br />" + MessageService.NewLine);
 
 			return str;
 		}
@@ -995,6 +995,36 @@ namespace KeePassLib.Utility
 			}
 		}
 
+		public static string GetNewLineSeq(string str)
+		{
+			if(str == null) { Debug.Assert(false); return MessageService.NewLine; }
+
+			int n = str.Length, nLf = 0, nCr = 0, nCrLf = 0;
+			char chLast = char.MinValue;
+			for(int i = 0; i < n; ++i)
+			{
+				char ch = str[i];
+
+				if(ch == '\r') ++nCr;
+				else if(ch == '\n')
+				{
+					++nLf;
+					if(chLast == '\r') ++nCrLf;
+				}
+
+				chLast = ch;
+			}
+
+			nCr -= nCrLf;
+			nLf -= nCrLf;
+
+			int nMax = Math.Max(nCrLf, Math.Max(nCr, nLf));
+			if(nMax == 0) return MessageService.NewLine;
+
+			if(nCrLf == nMax) return "\r\n";
+			return ((nLf == nMax) ? "\n" : "\r");
+		}
+
 		public static string AlphaNumericOnly(string str)
 		{
 			if(string.IsNullOrEmpty(str)) return str;
@@ -1072,37 +1102,44 @@ namespace KeePassLib.Utility
 
 		public static string VersionToString(ulong uVersion)
 		{
-			return VersionToString(uVersion, false);
+			return VersionToString(uVersion, 1U);
 		}
 
+		[Obsolete]
 		public static string VersionToString(ulong uVersion,
 			bool bEnsureAtLeastTwoComp)
 		{
-			string str = string.Empty;
-			bool bMultiComp = false;
+			return VersionToString(uVersion, (bEnsureAtLeastTwoComp ? 2U : 1U));
+		}
+
+		public static string VersionToString(ulong uVersion, uint uMinComp)
+		{
+			StringBuilder sb = new StringBuilder();
+			uint uComp = 0;
 
 			for(int i = 0; i < 4; ++i)
 			{
-				ushort us = (ushort)(uVersion & 0xFFFFUL);
+				if(uVersion == 0UL) break;
 
-				if((us != 0) || (str.Length > 0))
-				{
-					if(str.Length > 0)
-					{
-						str = "." + str;
-						bMultiComp = true;
-					}
+				ushort us = (ushort)(uVersion >> 48);
 
-					str = us.ToString(NumberFormatInfo.InvariantInfo) + str;
-				}
+				if(sb.Length > 0) sb.Append('.');
 
-				uVersion >>= 16;
+				sb.Append(us.ToString(NumberFormatInfo.InvariantInfo));
+				++uComp;
+
+				uVersion <<= 16;
 			}
 
-			if(bEnsureAtLeastTwoComp && !bMultiComp && (str.Length > 0))
-				str += ".0";
+			while(uComp < uMinComp)
+			{
+				if(sb.Length > 0) sb.Append('.');
 
-			return str;
+				sb.Append('0');
+				++uComp;
+			}
+
+			return sb.ToString();
 		}
 
 		private static readonly byte[] m_pbOptEnt = { 0xA5, 0x74, 0x2E, 0xEC };

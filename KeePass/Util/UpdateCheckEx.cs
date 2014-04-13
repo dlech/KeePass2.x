@@ -187,11 +187,7 @@ namespace KeePass.Util
 				if(sl != null) { sl.EndLogging(); sl = null; }
 
 				if(bUpdAvail || p.ForceUI)
-				{
-					UpdateCheckForm dlg = new UpdateCheckForm();
-					dlg.InitEx(lInst, p.ForceUI);
-					UIUtil.ShowDialogAndDestroy(dlg);
-				}
+					ShowUpdateDialogAsync(lInst, p.ForceUI);
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally
@@ -199,6 +195,34 @@ namespace KeePass.Util
 				try { if(sl != null) sl.EndLogging(); }
 				catch(Exception) { Debug.Assert(false); }
 			}
+		}
+
+		private static void ShowUpdateDialogAsync(List<UpdateComponentInfo> lInst,
+			bool bModal)
+		{
+			try
+			{
+				MainForm mf = Program.MainForm;
+				if((mf != null) && mf.InvokeRequired)
+					mf.BeginInvoke(new UceShDlgDelegate(ShowUpdateDialogPriv),
+						lInst, bModal);
+				else ShowUpdateDialogPriv(lInst, bModal);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private delegate void UceShDlgDelegate(List<UpdateComponentInfo> lInst,
+			bool bModal);
+		private static void ShowUpdateDialogPriv(List<UpdateComponentInfo> lInst,
+			bool bModal)
+		{
+			try
+			{
+				UpdateCheckForm dlg = new UpdateCheckForm();
+				dlg.InitEx(lInst, bModal);
+				UIUtil.ShowDialogAndDestroy(dlg);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private sealed class UpdateDownloadInfo

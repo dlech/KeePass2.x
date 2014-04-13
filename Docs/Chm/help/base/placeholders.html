@@ -257,6 +257,8 @@ Lower-case.</li>
 The Base64 encoding of the UTF-8 representation of the text.</li>
 <li><b>Hex</b>:<br />
 The Hex encoding of the UTF-8 representation of the text.</li>
+<li><b>Uri</b>:<br />
+The URI-escaped representation of the text.</li>
 </ul>
 <em>Usage example.</em>
 Let the user name field contain '<code>Bob</code>' and
@@ -296,7 +298,7 @@ auto-typing sequence. Use <code>{PICKPASSWORDCHARS}</code> first, then append
 numbers starting with 2, i.e. <code>{PICKPASSWORDCHARS2}</code>,
 <code>{PICKPASSWORDCHARS3}</code>, etc.<br />
 <br />
-In KeePass &ge; 2.08, you can additionally specify the number of characters
+You can additionally specify the number of characters
 to pick. To do this, append <code>:k</code> in the placeholder, where
 <code>k</code> is the number of characters. For example,
 <code>{PICKPASSWORDCHARS2:5}</code> is a placeholder with ID 2 and will

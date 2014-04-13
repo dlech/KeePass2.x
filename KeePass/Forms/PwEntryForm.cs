@@ -1368,16 +1368,14 @@ namespace KeePass.Forms
 
 		private void OnPwGenOpen(object sender, EventArgs e)
 		{
-			PwGeneratorForm pgf = new PwGeneratorForm();
-
 			byte[] pbCurPassword = m_icgPassword.GetPasswordUtf8();
 			bool bAtLeastOneChar = (pbCurPassword.Length > 0);
 			ProtectedString ps = new ProtectedString(true, pbCurPassword);
 			Array.Clear(pbCurPassword, 0, pbCurPassword.Length);
 			PwProfile opt = PwProfile.DeriveFromPassword(ps);
 
+			PwGeneratorForm pgf = new PwGeneratorForm();
 			pgf.InitEx((bAtLeastOneChar ? opt : null), true, false);
-			// pgf.InitEx(null, true, false);
 
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{

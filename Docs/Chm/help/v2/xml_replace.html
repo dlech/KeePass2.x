@@ -51,7 +51,13 @@ About the XML replacement functionality.
 <li><a href="#delstr">Delete entry strings by name</a></li>
 <li><a href="#delbinext">Delete entry attachments by name extension</a></li>
 <li><a href="#resetbgcolor">Reset background colors</a></li>
+<li>Auto-Type:
+<ul>
 <li><a href="#atdisable">Disable auto-type for entries with empty fields</a></li>
+<li><a href="#atdelayupper">Convert <code>{DELAY=</code> to upper-case</a></li>
+<li><a href="#ataddstddelay">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></a></li>
+<li><a href="#atmodstddelay">Change <code>{DELAY=</code> values</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -217,6 +223,69 @@ default (transparent/alternating).</td></tr>
 <tr><td>Replace with:</td><td><code>False</code></td></tr>
 <tr><td colspan="2">Disables auto-type for all entries that have an empty
 user name field or an empty password field.</td></tr>
+</table>
+
+<br />
+
+<a name="atdelayupper"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Convert <code>{DELAY=</code> to upper-case</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>{DELAY=</code></td></tr>
+<tr><td>Replace with:</td><td><code>{DELAY=</code></td></tr>
+<tr><td colspan="2">Converts all <code>{DELAY=</code> codes
+within auto-type sequence overrides and associations to upper-case
+(by default the case sensitivity option is turned off, thus the 'Find what'
+text matches all cases).<br />
+<br />
+In KeePass 2.x, placeholders are case-insensitive. However, this XML Replace operation
+may be useful as preparation for the following example (which matches
+<code>{DELAY=</code> in a case-sensitive way).</td></tr>
+</table>
+
+<br />
+
+<a name="ataddstddelay"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></th></tr>
+<tr><td>Select nodes:</td>
+<td><code>(//DefaultSequence | //KeystrokeSequence)[not(contains(., '{DELAY='))]</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>^(.*)$</code></td></tr>
+<tr><td>Replace with:</td><td><code>{DELAY=50}$1</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Prepends a <code>{DELAY=50}</code> to all auto-type
+sequence overrides and associations that do not contain any
+<code>{DELAY=</code> already.<br />
+<br />
+Note that the node selection is case-sensitive (independent of the data
+case sensitivity option), thus you need to ensure that all
+<code>{DELAY=</code> codes are upper-case before performing this operation.
+This can e.g. be done using the XML Replace operation mentioned
+<a href="#atdelayupper">above</a>.</td></tr>
+</table>
+
+<br />
+
+<a name="atmodstddelay"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Change <code>{DELAY=</code> values</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>\{DELAY=[\d\s]*\}</code></td></tr>
+<tr><td>Replace with:</td><td><code>{DELAY=50}</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Sets the values of all <code>{DELAY=</code> codes
+within auto-type sequence overrides and associations to 50.</td></tr>
 </table>
 
 </body></html>

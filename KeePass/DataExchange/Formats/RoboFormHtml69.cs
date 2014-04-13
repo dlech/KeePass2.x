@@ -54,7 +54,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Unicode);
+			StreamReader sr = new StreamReader(sInput, Encoding.Unicode, true);
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
@@ -78,14 +78,16 @@ namespace KeePass.DataExchange.Formats
 		{
 			pg = pd.RootGroup;
 
-			if(strTitle.IndexOf('\\') >= 0)
-			{
-				int nLast = strTitle.LastIndexOf('\\');
-				string strTree = strTitle.Substring(0, nLast);
-				pg = pd.RootGroup.FindCreateSubTree(strTree,
-					new string[1] { "\\" }, true);
+			// In 7.9.5.9 '/' is used; in earlier versions '\\'
+			char[] vSeps = new char[] { '/', '\\' };
 
-				return strTitle.Substring(nLast + 1);
+			int iLastSep = strTitle.LastIndexOfAny(vSeps);
+			if(iLastSep >= 0)
+			{
+				string strTree = strTitle.Substring(0, iLastSep);
+				pg = pd.RootGroup.FindCreateSubTree(strTree, vSeps, true);
+
+				return strTitle.Substring(iLastSep + 1);
 			}
 
 			return strTitle;

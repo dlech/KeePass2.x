@@ -195,7 +195,7 @@ Splitting the Text</h2>
 
 <p>The text to be sent must first be split intelligently. Not all parts of the
 string can be sent using the clipboard: special key codes and key modifiers must be passed
-unchanged to the <code>SendKeys</code> function. For an example, have a look at the following
+unchanged to the <code>SendInput</code> function. For an example, have a look at the following
 string:</p>
 
 <pre>mymail@myprovider.com{TAB}MyTopSecretPassword{TAB} {TAB}{ENTER}</pre>
@@ -213,7 +213,7 @@ MyTopSecretPassword
 {ENTER}</pre>
 
 <p>For each line, it is checked if the clipboard can be used. If the line contains a '{', '}', '(', ')',
-'+', '^', '%' or whitespace (space), it can only be sent by the <code>SendKeys</code> function
+'+', '^', '%' or whitespace (space), it can only be sent by the <code>SendInput</code> function
 directly. '+' for example presses the Shift key, it should not be copy/pasted as '+' character.
 Spaces can't be copy/pasted either, because they are usually used to toggle checkboxes.</p>
 
@@ -242,8 +242,8 @@ into two parts like two flat intertwining combs:</p>
 <pre>&nbsp;y&nbsp;&nbsp;il&nbsp;m&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;d&nbsp;&nbsp;.c
 m&nbsp;ma&nbsp;&nbsp;@&nbsp;ypr&nbsp;vi&nbsp;er&nbsp;&nbsp;om</pre>
 
-<p>The first string &quot;yilmod.c&quot; is now copied to the clipboard. The string
-sent by the <code>SendKeys</code> is now assembled as follows:</p>
+<p>The first string &quot;yilmod.c&quot; is now copied to the clipboard. The string to be
+sent by the <code>SendInput</code> function is now assembled as follows:</p>
 
 <ul>
 <li>Begin with pasting from the clipboard: <code>^v</code>.</li>
