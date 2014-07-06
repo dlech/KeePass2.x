@@ -105,7 +105,7 @@ namespace KeePass.Forms
 
 			m_icgPassword.Attach(m_tbPassword, m_cbHidePassword, m_lblRepeatPassword,
 				m_tbRepeatPassword, m_lblEstimatedQuality, m_pbPasswordQuality,
-				m_lblQualityBits, this, true, false);
+				m_lblQualityInfo, m_ttRect, this, true, false);
 
 			m_cmbKeyFile.Items.Add(KPRes.NoKeyFileSpecifiedMeta);
 			foreach(KeyProvider prov in Program.KeyProviderPool)

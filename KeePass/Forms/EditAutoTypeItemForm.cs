@@ -176,12 +176,14 @@ namespace KeePass.Forms
 			string[] vSpecialPlaceholders = new string[] {
 				"GROUP", "GROUPPATH", "PASSWORD_ENC",
 				"URL:RMVSCM", "URL:SCM", "URL:HOST", "URL:PORT", "URL:PATH",
-				"URL:QUERY",
+				"URL:QUERY", "URL:USERINFO", "URL:USERNAME", "URL:PASSWORD",
+				// "BASE",
 				"T-REPLACE-RX:/T/S/R/", "T-CONV:/T/C/",
 				"C:Comment", VkcBreak,
 				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3",
-				"NEWPASSWORD", "HMACOTP", "CLEARFIELD", VkcBreak,
+				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
+				"APPACTIVATE " + KPRes.Title, VkcBreak,
 				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 				"ENV_DIRSEP", "ENV_PROGRAMFILES_X86", VkcBreak,
 				// "INTERNETEXPLORER", "FIREFOX", "OPERA", "GOOGLECHROME",
@@ -396,6 +398,18 @@ namespace KeePass.Forms
 
 		private void ColorizeKeySeq()
 		{
+			SprContext ctx = new SprContext();
+			ctx.EncodeAsAutoTypeSequence = true;
+
+			PwEntry pe = new PwEntry(true, true);
+			pe.Strings = m_vStringDict;
+			ctx.Entry = pe;
+
+			SprSyntax.Highlight(m_rbKeySeq, ctx);
+		}
+
+		/* private void ColorizeKeySeq()
+		{
 			string strText = m_rbKeySeq.Text;
 
 			int iSelStart = m_rbKeySeq.SelectionStart, iSelLen = m_rbKeySeq.SelectionLength;
@@ -419,7 +433,7 @@ namespace KeePass.Forms
 
 			m_rbKeySeq.SelectionStart = iSelStart;
 			m_rbKeySeq.SelectionLength = iSelLen;
-		}
+		} */
 
 		private void OnTextChangedKeySeq(object sender, EventArgs e)
 		{

@@ -30,7 +30,7 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class UrlSchemeForm : Form
+	public partial class UrlOverrideForm : Form
 	{
 		private AceUrlSchemeOverride m_ovr = null;
 
@@ -39,7 +39,7 @@ namespace KeePass.Forms
 			m_ovr = ovr;
 		}
 
-		public UrlSchemeForm()
+		public UrlOverrideForm()
 		{
 			InitializeComponent();
 			Program.Translation.ApplyTo(this);
@@ -52,7 +52,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
-			this.Text = KPRes.UrlSchemeOverride;
+			this.Text = KPRes.UrlOverride;
 
 			m_tbScheme.Text = m_ovr.Scheme;
 			m_tbOverride.Text = m_ovr.UrlOverride;

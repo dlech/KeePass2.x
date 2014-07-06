@@ -178,15 +178,15 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.Uuid);
 			AddStdAceColumn(l, AceColumnType.Attachment);
 
-			SortedDictionary<string, AceColumn> dCustom =
+			SortedDictionary<string, AceColumn> d =
 				new SortedDictionary<string, AceColumn>(StrUtil.CaseIgnoreComparer);
 			List<AceColumn> lCur = Program.Config.MainWindow.EntryListColumns;
 			foreach(AceColumn cCur in lCur)
 			{
 				if((cCur.Type == AceColumnType.CustomString) &&
-					!dCustom.ContainsKey(cCur.CustomName))
+					!d.ContainsKey(cCur.CustomName))
 				{
-					dCustom[cCur.CustomName] = new AceColumn(AceColumnType.CustomString,
+					d[cCur.CustomName] = new AceColumn(AceColumnType.CustomString,
 						cCur.CustomName, cCur.HideWithAsterisks, cCur.Width);
 				}
 			}
@@ -200,9 +200,9 @@ namespace KeePass.Forms
 						foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 						{
 							if(PwDefs.IsStandardField(kvp.Key)) continue;
-							if(dCustom.ContainsKey(kvp.Key)) continue;
+							if(d.ContainsKey(kvp.Key)) continue;
 
-							dCustom[kvp.Key] = new AceColumn(AceColumnType.CustomString,
+							d[kvp.Key] = new AceColumn(AceColumnType.CustomString,
 								kvp.Key, kvp.Value.IsProtected, -1);
 						}
 
@@ -213,7 +213,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			foreach(KeyValuePair<string, AceColumn> kvpCustom in dCustom)
+			foreach(KeyValuePair<string, AceColumn> kvpCustom in d)
 			{
 				AddAceColumn(l, kvpCustom.Value);
 			}
@@ -224,25 +224,30 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.Tags);
 			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
 
+			d.Clear();
+			// Add active plugin columns (including those of uninstalled plugins)
+			foreach(AceColumn cCur in lCur)
+			{
+				if(cCur.Type != AceColumnType.PluginExt) continue;
+				if(d.ContainsKey(cCur.CustomName)) { Debug.Assert(false); continue; }
+
+				d[cCur.CustomName] = new AceColumn(AceColumnType.PluginExt,
+					cCur.CustomName, cCur.HideWithAsterisks, cCur.Width);
+			}
+
+			// Add unused plugin columns
 			string[] vPlgExtNames = Program.ColumnProviderPool.GetColumnNames();
-			Array.Sort<string>(vPlgExtNames, StrUtil.CaseIgnoreComparer);
 			foreach(string strPlgName in vPlgExtNames)
 			{
-				bool bHide = false;
-				int nWidth = -1;
-				foreach(AceColumn cCur in lCur)
-				{
-					if((cCur.Type == AceColumnType.PluginExt) &&
-						(cCur.CustomName == strPlgName))
-					{
-						bHide = cCur.HideWithAsterisks;
-						nWidth = cCur.Width;
-						break;
-					}
-				}
+				if(d.ContainsKey(strPlgName)) continue; // Do not overwrite
 
-				AddAceColumn(l, new AceColumn(AceColumnType.PluginExt, strPlgName,
-					bHide, nWidth));
+				d[strPlgName] = new AceColumn(AceColumnType.PluginExt, strPlgName,
+					false, -1);
+			}
+
+			foreach(KeyValuePair<string, AceColumn> kvpExt in d)
+			{
+				AddAceColumn(l, kvpExt.Value);
 			}
 
 			// m_lvColumns.Invoke(new UpdateUIDelegate(UpdateListEx), false);
@@ -333,6 +338,7 @@ namespace KeePass.Forms
 				if((c.Type == AceColumnType.Password) && c.HideWithAsterisks &&
 					!AppPolicy.Try(AppPolicyId.UnhidePasswords))
 				{
+					// Do not change c.HideWithAsterisks
 				}
 				else c.HideWithAsterisks = bChecked;
 			}

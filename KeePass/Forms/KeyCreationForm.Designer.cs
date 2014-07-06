@@ -50,7 +50,7 @@
 			this.m_lblSeparator = new System.Windows.Forms.Label();
 			this.m_pbPasswordQuality = new KeePass.UI.QualityProgressBar();
 			this.m_lblEstimatedQuality = new System.Windows.Forms.Label();
-			this.m_lblQualityBits = new System.Windows.Forms.Label();
+			this.m_lblQualityInfo = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
 			this.m_lblWindowsAccDesc2 = new System.Windows.Forms.Label();
@@ -237,14 +237,11 @@
 			// m_pbPasswordQuality
 			// 
 			this.m_pbPasswordQuality.Location = new System.Drawing.Point(150, 197);
-			this.m_pbPasswordQuality.Maximum = 100;
-			this.m_pbPasswordQuality.Minimum = 0;
 			this.m_pbPasswordQuality.Name = "m_pbPasswordQuality";
-			this.m_pbPasswordQuality.Size = new System.Drawing.Size(262, 14);
+			this.m_pbPasswordQuality.Size = new System.Drawing.Size(269, 16);
 			this.m_pbPasswordQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbPasswordQuality.TabIndex = 5;
 			this.m_pbPasswordQuality.TabStop = false;
-			this.m_pbPasswordQuality.Value = 0;
 			// 
 			// m_lblEstimatedQuality
 			// 
@@ -255,14 +252,14 @@
 			this.m_lblEstimatedQuality.TabIndex = 4;
 			this.m_lblEstimatedQuality.Text = "Estimated quality:";
 			// 
-			// m_lblQualityBits
+			// m_lblQualityInfo
 			// 
-			this.m_lblQualityBits.Location = new System.Drawing.Point(416, 197);
-			this.m_lblQualityBits.Name = "m_lblQualityBits";
-			this.m_lblQualityBits.Size = new System.Drawing.Size(53, 13);
-			this.m_lblQualityBits.TabIndex = 6;
-			this.m_lblQualityBits.Text = "9999 bits";
-			this.m_lblQualityBits.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.m_lblQualityInfo.Location = new System.Drawing.Point(422, 198);
+			this.m_lblQualityInfo.Name = "m_lblQualityInfo";
+			this.m_lblQualityInfo.Size = new System.Drawing.Size(50, 13);
+			this.m_lblQualityInfo.TabIndex = 6;
+			this.m_lblQualityInfo.Text = "0 ch.";
+			this.m_lblQualityInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_bannerImage
 			// 
@@ -311,7 +308,7 @@
 			this.Controls.Add(this.m_picAccWarning);
 			this.Controls.Add(this.m_lblWindowsAccDesc2);
 			this.Controls.Add(this.m_cmbKeyFile);
-			this.Controls.Add(this.m_lblQualityBits);
+			this.Controls.Add(this.m_lblQualityInfo);
 			this.Controls.Add(this.m_lblEstimatedQuality);
 			this.Controls.Add(this.m_pbPasswordQuality);
 			this.Controls.Add(this.m_lblSeparator);
@@ -374,7 +371,7 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private KeePass.UI.QualityProgressBar m_pbPasswordQuality;
 		private System.Windows.Forms.Label m_lblEstimatedQuality;
-		private System.Windows.Forms.Label m_lblQualityBits;
+		private System.Windows.Forms.Label m_lblQualityInfo;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
 		private System.Windows.Forms.Label m_lblWindowsAccDesc2;
 		private System.Windows.Forms.PictureBox m_picAccWarning;

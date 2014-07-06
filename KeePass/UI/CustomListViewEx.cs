@@ -25,7 +25,8 @@ using System.Threading;
 using System.Diagnostics;
 
 using KeePass.Native;
-using KeePass.Util;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {

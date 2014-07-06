@@ -26,16 +26,18 @@ using System.Windows.Forms.VisualStyles;
 using System.Drawing;
 using System.Diagnostics;
 
-// Parts and states:
-// http://msdn.microsoft.com/en-us/library/bb773210%28VS.85%29.aspx
+// Parts and States:
+//   http://msdn.microsoft.com/en-us/library/bb773210.aspx
 // How to Implement a Custom ToolStripRenderer:
-// http://msdn.microsoft.com/en-us/library/ms229720.aspx
+//   http://msdn.microsoft.com/en-us/library/ms229720.aspx
 
 namespace KeePass.UI
 {
-	public sealed class ThemeToolStripRenderer : ToolStripSystemRenderer
+	public sealed class ThemeToolStripRenderer : ToolStripProfessionalRenderer
 	{
 		private const string VsClassMenu = "MENU";
+		private const string VsClassToolBar = "TOOLBAR";
+		private const string VsClassReBar = "REBAR";
 
 		private enum VsMenuPart : int
 		{
@@ -93,138 +95,192 @@ namespace KeePass.UI
 			MsmDisabled = 2
 		};
 
-		private VisualStyleRenderer m_renderer = null;
+		private enum VsReBarPart : int
+		{
+			Gripper = 1,
+			GripperVert = 2,
+			Band = 3,
+			Chevron = 4,
+			ChevronVert = 5,
+			Background = 6,
+			Splitter = 7,
+			SplitterVert = 8
+		}
+
+		private VisualStyleRenderer m_r = null;
+
+		private bool IsSupported
+		{
+			get { return (m_r != null); }
+		}
 
 		public ThemeToolStripRenderer() : base()
 		{
-			m_renderer = new VisualStyleRenderer(VsClassMenu,
-				(int)VsMenuPart.BarBackground, (int)VsMenuState.MbActive);
+			try
+			{
+				if(VisualStyleRenderer.IsSupported)
+					m_r = new VisualStyleRenderer(VsClassMenu,
+						(int)VsMenuPart.BarBackground, (int)VsMenuState.MbActive);
+			}
+			catch(Exception) { }
 		}
 
-		public static void AttachTo(ToolStrip ts)
+		private void DrawBackgroundEx(Graphics g, Rectangle rect, Control c,
+			bool bCanPaintParent)
 		{
-			if(ts == null) throw new ArgumentNullException("ts");
+			if(bCanPaintParent && m_r.IsBackgroundPartiallyTransparent() &&
+				(c != null))
+				m_r.DrawParentBackground(g, rect, c);
 
-			if(!VisualStyleRenderer.IsSupported) return;
+			m_r.DrawBackground(g, rect);
 
-			try { ts.Renderer = new ThemeToolStripRenderer(); }
-			catch(Exception) { Debug.Assert(false); }
+#if DEBUG
+			Color clr = Color.Red;
+			string str = Environment.StackTrace;
+			if(str.IndexOf("OnRenderMenuItemBackground") >= 0) clr = Color.Green;
+			if(str.IndexOf("OnRenderToolStripBackground") >= 0) clr = Color.Blue;
+			if(str.IndexOf("OnRenderToolStripBorder") >= 0) clr = Color.Pink;
+			using(SolidBrush br = new SolidBrush(clr))
+			{
+				using(Pen p = new Pen(UIUtil.LightenColor(clr, 0.5)))
+				{
+					g.FillRectangle(br, rect);
+					g.DrawRectangle(p, rect);
+				}
+			}
+#endif
 		}
 
-		private static VsMenuState GetItemState(ToolStripItem tsi)
+		private void ConfigureForItem(ToolStripItem tsi)
 		{
 			bool bEnabled = tsi.Enabled;
 			bool bPressed = tsi.Pressed;
 			bool bHot = tsi.Selected;
 
-			if(tsi.Owner.IsDropDown)
+			string c = VsClassMenu;
+			if(tsi.IsOnDropDown)
 			{
-				if(bEnabled)
-					return (bHot ? VsMenuState.MpiHot : VsMenuState.MpiNormal);
+				const int p = (int)VsMenuPart.PopupItem;
 
-				return (bHot ? VsMenuState.MpiDisabledHot : VsMenuState.MpiDisabled);
+				if(bEnabled)
+					m_r.SetParameters(c, p, (int)(bHot ? VsMenuState.MpiHot :
+						VsMenuState.MpiNormal));
+				else
+					m_r.SetParameters(c, p, (int)(bHot ? VsMenuState.MpiDisabledHot :
+						VsMenuState.MpiDisabled));
 			}
 			else
 			{
-				if(tsi.Pressed)
-					return (bEnabled ? VsMenuState.MbiPushed : VsMenuState.MbiDisabledPushed);
-	
-				if(bEnabled)
-					return (bHot ? VsMenuState.MbiHot : VsMenuState.MbiNormal);
+				const int p = (int)VsMenuPart.BarItem;
 
-				return (bHot ? VsMenuState.MbiDisabledHot : VsMenuState.MbiDisabled);
+				if(tsi.Pressed)
+					m_r.SetParameters(c, p, (int)(bEnabled ? VsMenuState.MbiPushed :
+						VsMenuState.MbiDisabledPushed));
+				else if(bEnabled)
+					m_r.SetParameters(c, p, (int)(bHot ? VsMenuState.MbiHot :
+						VsMenuState.MbiNormal));
+				else
+					m_r.SetParameters(c, p, (int)(bHot ? VsMenuState.MbiDisabledHot :
+						VsMenuState.MbiDisabled));
 			}
 		}
 
-		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+		private delegate bool TsrBoolDelegate();
+		private delegate void TsrFuncDelegate<T>(T e);
+		private void RenderOrBase<T>(T e, TsrBoolDelegate f, TsrFuncDelegate<T> fBase)
 		{
-			base.OnRenderArrow(e);
+			bool bBase = true;
+			try
+			{
+				if(this.IsSupported) bBase = !f();
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			if(bBase) fBase(e);
 		}
 
-		protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+		private Rectangle GetBackgroundRect(Graphics g, ToolStripItem tsi)
 		{
-			base.OnRenderButtonBackground(e);
+			if(!tsi.IsOnDropDown)
+				return new Rectangle(0, 0, tsi.Width, tsi.Height - 1);
+
+			Rectangle rect = new Rectangle(Point.Empty, tsi.Size);
+			Size szBorder = GetPopupBorderSize(g);
+			rect.Inflate(-szBorder.Width, 0);
+			rect.X += 1;
+			rect.Width -= 1;
+
+			return rect;
 		}
 
-		protected override void OnRenderDropDownButtonBackground(ToolStripItemRenderEventArgs e)
+		private Size GetPopupBorderSize(Graphics g)
 		{
-			base.OnRenderDropDownButtonBackground(e);
-		}
-
-		protected override void OnRenderGrip(ToolStripGripRenderEventArgs e)
-		{
-			base.OnRenderGrip(e);
-		}
-
-		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
-		{
-			base.OnRenderImageMargin(e);
-		}
-
-		protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
-		{
-			base.OnRenderItemCheck(e);
-		}
-
-		protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-		{
-			base.OnRenderItemImage(e);
-		}
-
-		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-		{
-			base.OnRenderItemText(e);
+			Size sz = m_r.GetPartSize(g, ThemeSizeType.Minimum);
+			if(sz.Width < 1) { Debug.Assert(false); sz.Width = 1; }
+			if(sz.Height < 1) { Debug.Assert(false); sz.Height = 1; }
+			return sz;
 		}
 
 		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 		{
-			m_renderer.SetParameters(VsClassMenu, (int)(e.Item.Owner.IsDropDown ?
-				VsMenuPart.PopupItem : VsMenuPart.BarItem), (int)GetItemState(e.Item));
+			TsrBoolDelegate f = delegate()
+			{
+				ConfigureForItem(e.Item);
+				DrawBackgroundEx(e.Graphics, GetBackgroundRect(e.Graphics,
+					e.Item), e.ToolStrip, false);
+				return true;
+			};
 
-			Rectangle rc = e.Item.ContentRectangle;
-			if(!e.Item.Owner.IsDropDown) rc.Inflate(-1, 0);
-
-			m_renderer.DrawBackground(e.Graphics, rc);
-		}
-
-		protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e)
-		{
-			base.OnRenderOverflowButtonBackground(e);
-		}
-
-		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
-		{
-			base.OnRenderSeparator(e);
+			RenderOrBase(e, f, base.OnRenderMenuItemBackground);
 		}
 
 		protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 		{
-			m_renderer.SetParameters(VsClassMenu, (int)VsMenuPart.PopupBackground, 0);
-			m_renderer.DrawBackground(e.Graphics, e.AffectedBounds, e.AffectedBounds);
+			TsrBoolDelegate f = delegate()
+			{
+				Debug.Assert(e.AffectedBounds == e.ToolStrip.ClientRectangle);
+
+				VisualStyleElement vse = VisualStyleElement.CreateElement(VsClassMenu,
+					(int)VsMenuPart.BarBackground, (int)VsMenuState.MbInactive);
+				if(!VisualStyleRenderer.IsElementDefined(vse))
+					vse = VisualStyleElement.CreateElement(VsClassMenu,
+						(int)VsMenuPart.BarBackground, 0);
+				m_r.SetParameters(vse);
+
+				DrawBackgroundEx(e.Graphics, e.ToolStrip.ClientRectangle,
+					e.ToolStrip, true);
+
+				return true;
+			};
+
+			RenderOrBase(e, f, base.OnRenderToolStripBackground);
 		}
 
 		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
 		{
-			m_renderer.SetParameters(VsClassMenu, (int)VsMenuPart.PopupBorders, 0);
-
-			if(e.ToolStrip.IsDropDown)
+			TsrBoolDelegate f = delegate()
 			{
-				Region rOrgClip = e.Graphics.Clip.Clone();
-				e.Graphics.ExcludeClip(m_renderer.GetBackgroundRegion(e.Graphics,
-					e.ToolStrip.ClientRectangle));
-				m_renderer.DrawBackground(e.Graphics, e.ToolStrip.ClientRectangle, e.AffectedBounds);
-				e.Graphics.Clip = rOrgClip;
-			}
-		}
+				Debug.Assert(e.AffectedBounds == e.ToolStrip.ClientRectangle);
 
-		protected override void OnRenderToolStripContentPanelBackground(ToolStripContentPanelRenderEventArgs e)
-		{
-			base.OnRenderToolStripContentPanelBackground(e);
-		}
+				m_r.SetParameters(VsClassMenu, (int)VsMenuPart.PopupBorders, 0);
 
-		protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e)
-		{
-			base.OnRenderToolStripPanelBackground(e);
+				Graphics g = e.Graphics;
+
+				Rectangle rectClient = e.ToolStrip.ClientRectangle;
+				Rectangle rect = rectClient;
+				Size szBorder = GetPopupBorderSize(e.Graphics);
+				rect.Inflate(-szBorder.Width, -szBorder.Height);
+
+				Region rgOrgClip = g.Clip.Clone();
+				g.ExcludeClip(rect);
+
+				DrawBackgroundEx(g, rectClient, e.ToolStrip, false);
+
+				g.Clip = rgOrgClip;
+				return true;
+			};
+
+			RenderOrBase(e, f, base.OnRenderToolStripBorder);
 		}
 	}
 }

@@ -230,19 +230,18 @@ only partially supports protection against dictionary and guessing attacks.</p>
 alt="Application Protection" />&nbsp;&nbsp;Process Memory Protection</h2>
 
 <p>While KeePass is running, sensitive data (like the hash of the master key and
-entry passwords) is stored encrypted in process memory.</p>
-
-<p>This means that even if you would dump the KeePass process memory to disk,
-you couldn't find the passwords.</p>
+entry passwords) is stored encryptedly in process memory.
+This means that even if you would dump the KeePass process memory to disk,
+you couldn't find any sensitive data.</p>
 
 <!-- By default, entry passwords are in-memory protected, the other fields not
 (like in 1.x). However, you can turn on in-memory protection for other fields
 in the database settings dialog (not recommended though, because of
 performance reasons). -->
 
-<p>For example, when you are copying a password to the clipboard, KeePass
+<!-- <p>For example, when you are copying a password to the clipboard, KeePass
 first decrypts the password field, copies it to the clipboard
-and immediately re-encrypts it using the random key.</p>
+and immediately re-encrypts it using the random key.</p> -->
 
 <p>Additionally, KeePass erases all security-critical memory when it's not
 needed anymore, i.e. it overwrites these memory areas before releasing them
@@ -256,6 +255,16 @@ using DPAPI is enabled), KeePass uses the ARC4 encryption algorithm with a rando
 <!-- 12 bytes long --> key. Note that this is less secure than DPAPI, mainly <i>not</i>
 because ARC4 cryptographically isn't that strong, but because the key for in-memory
 encryption is also stored in swappable process memory.</p>
+
+<p>For some operations, KeePass must make sensitive data available
+unencryptedly in process memory. For example, in order to show a password
+in the standard list view control provided by Windows, KeePass must pass
+the cell content (the password) as unencrypted string
+(unless hiding using asterisks is enabled).
+Operations that result in unencrypted data in process memory include,
+but are not limited to: displaying data (not asterisks) in standard controls,
+searching data, replacing placeholders (during auto-type, drag&amp;drop,
+copying to clipboard, ...), and computing password quality estimations.</p>
 
 <br />
 
@@ -272,7 +281,11 @@ to show the master key dialog on a secure desktop
 (supported on Windows &ge; 2000), similar to Windows'
 User Account Control (UAC). Almost no keylogger works on a secure desktop.</p>
 
-<p>The option is disabled by default for compatibility reasons.</p>
+<p>The option is turned off by default for compatibility reasons.</p>
+
+<p>More information can be found on the
+<a href="http://keepass.info/help/kb/sec_desk.html" target="_blank">Secure Desktop</a>
+help page.</p>
 
 
 Note that auto-type can be secured against keyloggers, too, by using

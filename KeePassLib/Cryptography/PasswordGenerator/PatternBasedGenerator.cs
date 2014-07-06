@@ -67,6 +67,17 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 						pcsUsed.Add(ch);
 					}
 				}
+				else if(ch == '^')
+				{
+					ch = csStream.ReadChar();
+					if(ch == char.MinValue) // ^ at the end
+					{
+						vGenerated.AddLast('^');
+						break;
+					}
+
+					if(bInCharSetDef) pcsCustom.Remove(ch);
+				}
 				else if(ch == '[')
 				{
 					pcsCustom.Clear();

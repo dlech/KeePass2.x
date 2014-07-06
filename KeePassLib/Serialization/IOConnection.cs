@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Diagnostics;
 
 #if (!KeePassLibSD && !KeePassRT)
@@ -39,7 +40,7 @@ using KeePassLib.Utility;
 namespace KeePassLib.Serialization
 {
 #if (!KeePassLibSD && !KeePassRT)
-	public sealed class IOWebClient : WebClient
+	internal sealed class IOWebClient : WebClient
 	{
 		protected override WebRequest GetWebRequest(Uri address)
 		{
@@ -49,6 +50,175 @@ namespace KeePassLib.Serialization
 		}
 	}
 #endif
+
+	internal abstract class WrapperStream : Stream
+	{
+		private readonly Stream m_s;
+		protected Stream BaseStream
+		{
+			get { return m_s; }
+		}
+
+		public override bool CanRead
+		{
+			get { return m_s.CanRead; }
+		}
+
+		public override bool CanSeek
+		{
+			get { return m_s.CanSeek; }
+		}
+
+		public override bool CanTimeout
+		{
+			get { return m_s.CanTimeout; }
+		}
+
+		public override bool CanWrite
+		{
+			get { return m_s.CanWrite; }
+		}
+
+		public override long Length
+		{
+			get { return m_s.Length; }
+		}
+
+		public override long Position
+		{
+			get { return m_s.Position; }
+			set { m_s.Position = value; }
+		}
+
+		public override int ReadTimeout
+		{
+			get { return m_s.ReadTimeout; }
+			set { m_s.ReadTimeout = value; }
+		}
+
+		public override int WriteTimeout
+		{
+			get { return m_s.WriteTimeout; }
+			set { m_s.WriteTimeout = value; }
+		}
+
+		public WrapperStream(Stream sBase) : base()
+		{
+			if(sBase == null) throw new ArgumentNullException("sBase");
+
+			m_s = sBase;
+		}
+
+		public override IAsyncResult BeginRead(byte[] buffer, int offset,
+			int count, AsyncCallback callback, object state)
+		{
+			return m_s.BeginRead(buffer, offset, count, callback, state);
+		}
+
+		public override IAsyncResult BeginWrite(byte[] buffer, int offset,
+			int count, AsyncCallback callback, object state)
+		{
+			return BeginWrite(buffer, offset, count, callback, state);
+		}
+
+		public override void Close()
+		{
+			m_s.Close();
+		}
+
+		public override int EndRead(IAsyncResult asyncResult)
+		{
+			return m_s.EndRead(asyncResult);
+		}
+
+		public override void EndWrite(IAsyncResult asyncResult)
+		{
+			m_s.EndWrite(asyncResult);
+		}
+
+		public override void Flush()
+		{
+			m_s.Flush();
+		}
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			return m_s.Read(buffer, offset, count);
+		}
+
+		public override int ReadByte()
+		{
+			return m_s.ReadByte();
+		}
+
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			return m_s.Seek(offset, origin);
+		}
+
+		public override void SetLength(long value)
+		{
+			m_s.SetLength(value);
+		}
+
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			m_s.Write(buffer, offset, count);
+		}
+
+		public override void WriteByte(byte value)
+		{
+			m_s.WriteByte(value);
+		}
+	}
+
+	internal sealed class IocStream : WrapperStream
+	{
+		private readonly bool m_bWrite; // Initially opened for writing
+
+		public IocStream(Stream sBase) : base(sBase)
+		{
+			m_bWrite = sBase.CanWrite;
+		}
+
+		public override void Close()
+		{
+			base.Close();
+
+			if(MonoWorkarounds.IsRequired(10163) && m_bWrite)
+			{
+				try
+				{
+					Stream s = this.BaseStream;
+					Type t = s.GetType();
+					if(t.Name == "WebConnectionStream")
+					{
+						PropertyInfo pi = t.GetProperty("Request",
+							BindingFlags.Instance | BindingFlags.NonPublic);
+						if(pi != null)
+						{
+							WebRequest wr = (pi.GetValue(s, null) as WebRequest);
+							if(wr != null)
+								IOConnection.DisposeResponse(wr.GetResponse(), false);
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
+
+		public static Stream WrapIfRequired(Stream s)
+		{
+			if(s == null) { Debug.Assert(false); return null; }
+
+			if(MonoWorkarounds.IsRequired(10163) && s.CanWrite)
+				return new IocStream(s);
+
+			return s;
+		}
+	}
 
 	public static class IOConnection
 	{
@@ -244,7 +414,8 @@ namespace KeePassLib.Serialization
 
 			if(ioc.IsLocalFile()) return OpenReadLocal(ioc);
 
-			return CreateWebClient(ioc).OpenRead(new Uri(ioc.Path));
+			return IocStream.WrapIfRequired(CreateWebClient(ioc).OpenRead(
+				new Uri(ioc.Path)));
 		}
 #else
 		public static Stream OpenRead(IOConnectionInfo ioc)
@@ -271,15 +442,17 @@ namespace KeePassLib.Serialization
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
 			Uri uri = new Uri(ioc.Path);
+			Stream s;
 
 			// Mono does not set HttpWebRequest.Method to POST for writes,
 			// so one needs to set the method to PUT explicitly
 			if(NativeLib.IsUnix() && (uri.Scheme.Equals(Uri.UriSchemeHttp,
 				StrUtil.CaseIgnoreCmp) || uri.Scheme.Equals(Uri.UriSchemeHttps,
 				StrUtil.CaseIgnoreCmp)))
-				return CreateWebClient(ioc).OpenWrite(uri, WebRequestMethods.Http.Put);
+				s = CreateWebClient(ioc).OpenWrite(uri, WebRequestMethods.Http.Put);
+			else s = CreateWebClient(ioc).OpenWrite(uri);
 
-			return CreateWebClient(ioc).OpenWrite(uri);
+			return IocStream.WrapIfRequired(s);
 		}
 #else
 		public static Stream OpenWrite(IOConnectionInfo ioc)
@@ -443,7 +616,7 @@ namespace KeePassLib.Serialization
 		}
 #endif
 
-		private static void DisposeResponse(WebResponse wr, bool bGetStream)
+		internal static void DisposeResponse(WebResponse wr, bool bGetStream)
 		{
 			if(wr == null) return;
 

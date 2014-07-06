@@ -83,7 +83,7 @@ namespace KeePass.Forms
 		private void UpdateUIState()
 		{
 			int nBits = m_llPool.Count / 8;
-			m_lblStatus.Text = nBits.ToString() + " " + KPRes.Bits;
+			m_lblStatus.Text = nBits.ToString() + " " + KPRes.BitsStc;
 
 			if(nBits > 256) { Debug.Assert(false); m_pbGenerated.Value = 100; }
 			else m_pbGenerated.Value = (nBits * 100) / 256;

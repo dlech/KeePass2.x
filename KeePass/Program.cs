@@ -75,6 +75,11 @@ namespace KeePass
 		private static CustomPwGeneratorPool m_pwGenPool = null;
 		private static ColumnProviderPool m_colProvPool = null;
 
+		private static bool m_bDesignMode = true;
+#if DEBUG
+		private static bool m_bDesignModeQueried = false;
+#endif
+
 		public enum AppMessage
 		{
 			Null = 0,
@@ -197,12 +202,31 @@ namespace KeePass
 			}
 		}
 
+		public static bool DesignMode
+		{
+			get
+			{
+#if DEBUG
+				m_bDesignModeQueried = true;
+#endif
+				return m_bDesignMode;
+			}
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
 		[STAThread]
 		public static void Main(string[] args)
 		{
+#if DEBUG
+			// Program.DesignMode should not be queried before executing
+			// Main (e.g. by a static Control) when running the program
+			// normally
+			Debug.Assert(!m_bDesignModeQueried);
+#endif
+			m_bDesignMode = false; // Designer doesn't call Main method
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
@@ -328,6 +352,13 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.Version] != null)
+			{
+				Console.WriteLine(PwDefs.ShortProductName + " " + PwDefs.VersionString);
+				Console.WriteLine(PwDefs.Copyright);
+				MainCleanUp();
+				return;
+			}
 			// #if (DEBUG && !KeePassLibSD)
 			// else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
 			// {
@@ -376,6 +407,21 @@ namespace KeePass
 			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.UnlockAll] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.Unlock);
+				return;
+			}
+			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent] != null)
+			{
+				string strName = m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent];
+				if(!string.IsNullOrEmpty(strName))
+				{
+					string[] vFlt = KeyUtil.MakeCtxIndependent(args);
+
+					IpcParamEx ipEvent = new IpcParamEx(IpcUtilEx.CmdIpcEvent, strName,
+						CommandLineArgs.SafeSerialize(vFlt), null, null, null);
+					IpcUtilEx.SendGlobalMessage(ipEvent);
+				}
+
+				MainCleanUp();
 				return;
 			}
 
@@ -443,6 +489,8 @@ namespace KeePass
 		/// </summary>
 		public static bool CommonInit()
 		{
+			m_bDesignMode = false; // Again, for the ones not calling Main
+
 			int nRandomSeed = (int)DateTime.UtcNow.Ticks;
 			// Prevent overflow (see Random class constructor)
 			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
@@ -485,6 +533,10 @@ namespace KeePass
 
 		public static void CommonTerminate()
 		{
+#if DEBUG
+			Debug.Assert(ShutdownBlocker.Instance == null);
+#endif
+
 			AppLogEx.Close();
 
 			EnableThemingInScope.StaticDispose();

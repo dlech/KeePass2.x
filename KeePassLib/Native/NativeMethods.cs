@@ -28,9 +28,12 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Native
 {
-	internal static class NativeMethods
+	internal static partial class NativeMethods
 	{
 		internal const int MAX_PATH = 260;
+
+		// internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
+		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
 		/* [DllImport("KeePassNtv32.dll", EntryPoint = "TransformKey")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -99,9 +102,23 @@ namespace KeePassLib.Native
 		{
 			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
 				return TransformKeyBenchmark64(uTimeMs);
-			else
-				return TransformKeyBenchmark32(uTimeMs);
+			return TransformKeyBenchmark32(uTimeMs);
 		}
+
+		/* [DllImport("KeePassLibC32.dll", EntryPoint = "TF_ShowLangBar")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TF_ShowLangBar32(UInt32 dwFlags);
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "TF_ShowLangBar")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TF_ShowLangBar64(UInt32 dwFlags);
+
+		internal static bool TfShowLangBar(uint dwFlags)
+		{
+			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+				return TF_ShowLangBar64(dwFlags);
+			return TF_ShowLangBar32(dwFlags);
+		} */
 
 #if (!KeePassLibSD && !KeePassRT)
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]

@@ -66,14 +66,21 @@ namespace KeePass.UI
 
 		public static void Initialize(bool bReinitialize)
 		{
-			bool bVisualStyles = true;
-			try { bVisualStyles = VisualStyleRenderer.IsSupported; }
-			catch(Exception) { Debug.Assert(false); bVisualStyles = false; }
+			// Various drawing bugs under Mono (gradients too light, incorrect
+			// painting of popup menus, paint method not invoked for disabled
+			// items, ...)
+			bool bMono = MonoWorkarounds.IsRequired();
+
+			// bool bVisualStyles = true;
+			// try { bVisualStyles = VisualStyleRenderer.IsSupported; }
+			// catch(Exception) { Debug.Assert(false); bVisualStyles = false; }
 
 			if(m_tsrOverride != null) ToolStripManager.Renderer = m_tsrOverride;
-			else if(Program.Config.UI.UseCustomToolStripRenderer && bVisualStyles)
+			else if(Program.Config.UI.UseCustomToolStripRenderer &&
+				!bMono) // && bVisualStyles)
 			{
 				ToolStripManager.Renderer = new CustomToolStripRendererEx();
+				// ToolStripManager.Renderer = new ThemeToolStripRenderer();
 				Debug.Assert(ToolStripManager.RenderMode == ToolStripManagerRenderMode.Custom);
 			}
 			else if(bReinitialize)
@@ -1034,11 +1041,18 @@ namespace KeePass.UI
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(vInternalList == null) throw new ArgumentNullException("vInternalList");
 
-			ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
-			int nSelectedCount = lvsic.Count;
-			for(int i = 0; i < nSelectedCount; ++i)
+			ListView.SelectedIndexCollection lvsc = lv.SelectedIndices;
+			int n = lvsc.Count; // Getting Count sends a message
+			if(n == 0) return;
+
+			// LVSIC: one access by index requires O(n) time, thus copy
+			// all to an array (which requires O(1) for each element)
+			int[] v = new int[n];
+			lvsc.CopyTo(v, 0);
+
+			for(int i = 0; i < n; ++i)
 			{
-				int nIndex = lvsic[nSelectedCount - i - 1];
+				int nIndex = v[n - i - 1];
 				if(vInternalList.Remove(lv.Items[nIndex].Tag as T))
 					lv.Items.RemoveAt(nIndex);
 				else { Debug.Assert(false); }
@@ -1049,9 +1063,23 @@ namespace KeePass.UI
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 
-			ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
-			object[] p = new object[lvsic.Count];
-			for(int i = 0; i < lvsic.Count; ++i) p[i] = lvsic[i].Tag;
+			ListView.SelectedListViewItemCollection lvsc = lv.SelectedItems;
+			if(lvsc == null) { Debug.Assert(false); return new object[0]; }
+			int n = lvsc.Count; // Getting Count sends a message
+
+			object[] p = new object[n];
+			int i = 0;
+			// LVSLVIC: one access by index requires O(n) time, thus use
+			// enumerator instead (which requires O(1) for each element)
+			foreach(ListViewItem lvi in lvsc)
+			{
+				if(i >= n) { Debug.Assert(false); break; }
+
+				p[i] = lvi.Tag;
+				++i;
+			}
+			Debug.Assert(i == n);
+
 			return p;
 		}
 
@@ -2012,6 +2040,7 @@ namespace KeePass.UI
 			if(cTab == null) { Debug.Assert(false); return null; }
 
 			int qSize = cTab.ItemSize.Height - 3;
+			if(MonoWorkarounds.IsRequired()) qSize -= 1;
 			if(qSize < 4) { Debug.Assert(false); return null; }
 
 			const int dyTrans = 3;

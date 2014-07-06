@@ -126,19 +126,19 @@
 			// m_menuViewFont
 			// 
 			this.m_menuViewFont.Name = "m_menuViewFont";
-			this.m_menuViewFont.Size = new System.Drawing.Size(135, 22);
+			this.m_menuViewFont.Size = new System.Drawing.Size(152, 22);
 			this.m_menuViewFont.Text = "&Font...";
 			this.m_menuViewFont.Click += new System.EventHandler(this.OnViewFont);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(132, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuViewWordWrap
 			// 
 			this.m_menuViewWordWrap.Name = "m_menuViewWordWrap";
-			this.m_menuViewWordWrap.Size = new System.Drawing.Size(135, 22);
+			this.m_menuViewWordWrap.Size = new System.Drawing.Size(152, 22);
 			this.m_menuViewWordWrap.Text = "Word &Wrap";
 			this.m_menuViewWordWrap.Click += new System.EventHandler(this.OnViewWordWrap);
 			// 

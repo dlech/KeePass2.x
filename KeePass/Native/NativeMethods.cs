@@ -436,5 +436,14 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool DeactivateActCtx(uint dwFlags,
 			UIntPtr ulCookie);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool ShutdownBlockReasonCreate(IntPtr hWnd,
+			[MarshalAs(UnmanagedType.LPWStr)] string pwszReason);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool ShutdownBlockReasonDestroy(IntPtr hWnd);
 	}
 }

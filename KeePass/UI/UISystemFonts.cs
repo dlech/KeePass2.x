@@ -77,41 +77,29 @@ namespace KeePass.UI
 
 		private static void UnixLoadFonts()
 		{
-			string strSession = Environment.GetEnvironmentVariable("DESKTOP_SESSION");
-			if(!string.IsNullOrEmpty(strSession))
-			{
-				if(string.Equals(strSession, "Default", StrUtil.CaseIgnoreCmp))
-				{
-					string strKde = Environment.GetEnvironmentVariable("KDE_FULL_SESSION");
-					if(!string.IsNullOrEmpty(strKde)) { KdeLoadFonts(); return; }
-				}
+			// string strSession = Environment.GetEnvironmentVariable("DESKTOP_SESSION");
+			// "Default", "KDE", "Gnome", "Ubuntu", ...
+			// string strKde = Environment.GetEnvironmentVariable("KDE_FULL_SESSION");
 
-				if(strSession.StartsWith("KDE", StrUtil.CaseIgnoreCmp))
-				{
-					KdeLoadFonts();
-					return;
-				}
+			string strHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			if(string.IsNullOrEmpty(strHome)) { Debug.Assert(false); return; }
+			strHome = UrlUtil.EnsureTerminatingSeparator(strHome, false);
 
-				if(strSession.StartsWith("Gnome", StrUtil.CaseIgnoreCmp))
-				{
-					GnomeLoadFonts();
-					return;
-				}
-			}
+			KdeLoadFonts(strHome);
+			if(m_fontUI == null) GnomeLoadFonts(strHome);
+			if(m_fontUI == null) UbuntuLoadFonts();
 		}
 
-		private static void KdeLoadFonts()
+		private static void KdeLoadFonts(string strHome)
 		{
-			string strHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-
-			string strKdeConfig = strHome + "/.kde/share/config/kdeglobals";
+			string strKdeConfig = strHome + ".kde/share/config/kdeglobals";
 			if(!File.Exists(strKdeConfig))
 			{
-				strKdeConfig = strHome + "/.kde4/share/config/kdeglobals";
+				strKdeConfig = strHome + ".kde4/share/config/kdeglobals";
 				if(!File.Exists(strKdeConfig))
 				{
-					strKdeConfig = strHome + "/.kde3/share/config/kdeglobals";
-					if(!File.Exists(strKdeConfig)) { Debug.Assert(false); return; }
+					strKdeConfig = strHome + ".kde3/share/config/kdeglobals";
+					if(!File.Exists(strKdeConfig)) return;
 				}
 			}
 
@@ -128,7 +116,11 @@ namespace KeePass.UI
 			string[] v = strDef.Split(new char[] { ',' });
 			if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
-			float fSize = float.Parse(v[1]);
+			for(int i = 0; i < v.Length; ++i)
+				v[i] = v[i].Trim();
+
+			float fSize;
+			if(!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
 
 			FontStyle fs = FontStyle.Regular;
 			if(v[4] == "75") fs |= FontStyle.Bold;
@@ -137,11 +129,10 @@ namespace KeePass.UI
 			return FontUtil.CreateFont(v[0], fSize, fs);
 		}
 
-		private static void GnomeLoadFonts()
+		private static void GnomeLoadFonts(string strHome)
 		{
-			string strHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			string strConfig = strHome + @"/.gconf/desktop/gnome/interface/%gconf.xml";
-			if(!File.Exists(strConfig)) { Debug.Assert(false); return; }
+			string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
+			if(!File.Exists(strConfig)) return;
 
 			XmlDocument doc = new XmlDocument();
 			doc.Load(strConfig);
@@ -167,10 +158,16 @@ namespace KeePass.UI
 			float fSize = float.Parse(strDef.Substring(iSep + 1));
 
 			FontStyle fs = FontStyle.Regular;
-			if(strName.EndsWith(" Oblique", StrUtil.CaseIgnoreCmp))
+			// Name can end with "Bold", "Italic", "Bold Italic", ...
+			if(strName.EndsWith(" Oblique", StrUtil.CaseIgnoreCmp)) // Gnome
 			{
 				fs |= FontStyle.Italic;
 				strName = strName.Substring(0, strName.Length - 8);
+			}
+			if(strName.EndsWith(" Italic", StrUtil.CaseIgnoreCmp)) // Ubuntu
+			{
+				fs |= FontStyle.Italic;
+				strName = strName.Substring(0, strName.Length - 7);
 			}
 			if(strName.EndsWith(" Bold", StrUtil.CaseIgnoreCmp))
 			{
@@ -179,6 +176,18 @@ namespace KeePass.UI
 			}
 
 			return FontUtil.CreateFont(strName, fSize, fs);
+		}
+
+		private static void UbuntuLoadFonts()
+		{
+			string strDef = NativeLib.RunConsoleApp("gsettings",
+				"get org.gnome.desktop.interface font-name");
+			if(strDef == null) return;
+
+			strDef = strDef.Trim(new char[] { ' ', '\t', '\r', '\n', '\'', '\"' });
+			if(strDef.Length == 0) return;
+
+			m_fontUI = GnomeCreateFont(strDef);
 		}
 	}
 }

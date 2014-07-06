@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePass.Native;
@@ -39,6 +40,7 @@ namespace KeePass.UI
 		private readonly bool m_bSupported;
 
 		private ContextMenuStrip m_ctx = null;
+		[Browsable(false)]
 		public ContextMenuStrip SplitDropDownMenu
 		{
 			get { return m_ctx; }
@@ -48,7 +50,7 @@ namespace KeePass.UI
 		public SplitButtonEx() : base()
 		{
 			m_bSupported = (WinUtil.IsAtLeastWindowsVista &&
-				!KeePassLib.Native.NativeLib.IsUnix());
+				!KeePassLib.Native.NativeLib.IsUnix() && !Program.DesignMode);
 
 			if(m_bSupported)
 			{

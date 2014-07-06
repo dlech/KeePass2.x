@@ -100,12 +100,11 @@
 			// 
 			// m_lblStatus
 			// 
-			this.m_lblStatus.AutoSize = true;
 			this.m_lblStatus.Location = new System.Drawing.Point(245, 288);
 			this.m_lblStatus.Name = "m_lblStatus";
 			this.m_lblStatus.Size = new System.Drawing.Size(50, 13);
 			this.m_lblStatus.TabIndex = 3;
-			this.m_lblStatus.Text = "9999 bits";
+			this.m_lblStatus.Text = "0 bits";
 			this.m_lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_bannerImage
@@ -134,14 +133,11 @@
 			// m_pbGenerated
 			// 
 			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
-			this.m_pbGenerated.Maximum = 100;
-			this.m_pbGenerated.Minimum = 0;
 			this.m_pbGenerated.Name = "m_pbGenerated";
 			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
 			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbGenerated.TabIndex = 2;
 			this.m_pbGenerated.TabStop = false;
-			this.m_pbGenerated.Value = 0;
 			// 
 			// m_grpKeyboard
 			// 

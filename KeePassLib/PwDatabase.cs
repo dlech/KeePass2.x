@@ -684,15 +684,15 @@ namespace KeePassLib
 			Clear();
 		}
 
-		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm)
+		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm)
 		{
-			MergeIn(pwSource, mm, null);
+			MergeIn(pdSource, mm, null);
 		}
 
 		/// <summary>
 		/// Synchronize the current database with another one.
 		/// </summary>
-		/// <param name="pwSource">Input database to synchronize with. This input
+		/// <param name="pdSource">Input database to synchronize with. This input
 		/// database is used to update the current one, but is not modified! You
 		/// must copy the current object if you want a second instance of the
 		/// synchronized database. The input database must not be seen as valid
@@ -700,27 +700,35 @@ namespace KeePassLib
 		/// <param name="mm">Merge method.</param>
 		/// <param name="slStatus">Logger to report status messages to.
 		/// May be <c>null</c>.</param>
-		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm,
+		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm,
 			IStatusLogger slStatus)
 		{
-			if(pwSource == null) throw new ArgumentNullException("pwSource");
+			if(pdSource == null) throw new ArgumentNullException("pdSource");
 
 			PwGroup pgOrgStructure = m_pgRootGroup.CloneStructure();
-			PwGroup pgSrcStructure = pwSource.m_pgRootGroup.CloneStructure();
+			PwGroup pgSrcStructure = pdSource.m_pgRootGroup.CloneStructure();
 
 			if(mm == PwMergeMethod.CreateNewUuids)
-				pwSource.RootGroup.CreateNewItemUuids(true, true, true);
+				pdSource.RootGroup.CreateNewItemUuids(true, true, true);
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				if(pg == pwSource.m_pgRootGroup) return true;
+				// if(pg == pdSource.m_pgRootGroup) return true;
 
 				PwGroup pgLocal = m_pgRootGroup.FindGroup(pg.Uuid, true);
 				if(pgLocal == null)
 				{
 					PwGroup pgSourceParent = pg.ParentGroup;
 					PwGroup pgLocalContainer;
-					if(pgSourceParent == pwSource.m_pgRootGroup)
+					if(pgSourceParent == null)
+					{
+						// pg is the root group of pdSource, and no corresponding
+						// local group was found; create the group within the
+						// local root group
+						Debug.Assert(pg == pdSource.m_pgRootGroup);
+						pgLocalContainer = m_pgRootGroup;
+					}
+					else if(pgSourceParent == pdSource.m_pgRootGroup)
 						pgLocalContainer = m_pgRootGroup;
 					else
 						pgLocalContainer = m_pgRootGroup.FindGroup(pgSourceParent.Uuid, true);
@@ -756,7 +764,7 @@ namespace KeePassLib
 				{
 					PwGroup pgSourceParent = pe.ParentGroup;
 					PwGroup pgLocalContainer;
-					if(pgSourceParent == pwSource.m_pgRootGroup)
+					if(pgSourceParent == pdSource.m_pgRootGroup)
 						pgLocalContainer = m_pgRootGroup;
 					else
 						pgLocalContainer = m_pgRootGroup.FindGroup(pgSourceParent.Uuid, true);
@@ -803,7 +811,8 @@ namespace KeePassLib
 				return ((slStatus != null) ? slStatus.ContinueWork() : true);
 			};
 
-			if(!pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
+			gh(pdSource.RootGroup);
+			if(!pdSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
 				throw new InvalidOperationException();
 
 			IStatusLogger slPrevStatus = m_slStatus;
@@ -811,7 +820,7 @@ namespace KeePassLib
 
 			if(mm == PwMergeMethod.Synchronize)
 			{
-				ApplyDeletions(pwSource.m_vDeletedObjects, true);
+				ApplyDeletions(pdSource.m_vDeletedObjects, true);
 				ApplyDeletions(m_vDeletedObjects, false);
 
 				PwObjectPool ppOrgGroups = PwObjectPool.FromGroupRecursive(
@@ -832,18 +841,18 @@ namespace KeePassLib
 
 			// Must be called *after* merging groups, because group UUIDs
 			// are required for recycle bin and entry template UUIDs
-			MergeInDbProperties(pwSource, mm);
+			MergeInDbProperties(pdSource, mm);
 
-			MergeInCustomIcons(pwSource);
+			MergeInCustomIcons(pdSource);
 
 			MaintainBackups();
 
 			m_slStatus = slPrevStatus;
 		}
 
-		private void MergeInCustomIcons(PwDatabase pwSource)
+		private void MergeInCustomIcons(PwDatabase pdSource)
 		{
-			foreach(PwCustomIcon pwci in pwSource.CustomIcons)
+			foreach(PwCustomIcon pwci in pdSource.CustomIcons)
 			{
 				if(GetCustomIconIndex(pwci.Uuid) >= 0) continue;
 
@@ -1246,41 +1255,41 @@ namespace KeePassLib
 			return false;
 		}
 
-		private void MergeInDbProperties(PwDatabase pwSource, PwMergeMethod mm)
+		private void MergeInDbProperties(PwDatabase pdSource, PwMergeMethod mm)
 		{
-			if(pwSource == null) { Debug.Assert(false); return; }
+			if(pdSource == null) { Debug.Assert(false); return; }
 			if((mm == PwMergeMethod.KeepExisting) || (mm == PwMergeMethod.None))
 				return;
 
 			bool bForce = (mm == PwMergeMethod.OverwriteExisting);
 
-			if(bForce || (pwSource.m_dtNameChanged > m_dtNameChanged))
+			if(bForce || (pdSource.m_dtNameChanged > m_dtNameChanged))
 			{
-				m_strName = pwSource.m_strName;
-				m_dtNameChanged = pwSource.m_dtNameChanged;
+				m_strName = pdSource.m_strName;
+				m_dtNameChanged = pdSource.m_dtNameChanged;
 			}
 
-			if(bForce || (pwSource.m_dtDescChanged > m_dtDescChanged))
+			if(bForce || (pdSource.m_dtDescChanged > m_dtDescChanged))
 			{
-				m_strDesc = pwSource.m_strDesc;
-				m_dtDescChanged = pwSource.m_dtDescChanged;
+				m_strDesc = pdSource.m_strDesc;
+				m_dtDescChanged = pdSource.m_dtDescChanged;
 			}
 
-			if(bForce || (pwSource.m_dtDefaultUserChanged > m_dtDefaultUserChanged))
+			if(bForce || (pdSource.m_dtDefaultUserChanged > m_dtDefaultUserChanged))
 			{
-				m_strDefaultUserName = pwSource.m_strDefaultUserName;
-				m_dtDefaultUserChanged = pwSource.m_dtDefaultUserChanged;
+				m_strDefaultUserName = pdSource.m_strDefaultUserName;
+				m_dtDefaultUserChanged = pdSource.m_dtDefaultUserChanged;
 			}
 
-			if(bForce) m_clr = pwSource.m_clr;
+			if(bForce) m_clr = pdSource.m_clr;
 
-			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pwSource.m_pwRecycleBin;
-			if(bForce || (pwSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
+			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pdSource.m_pwRecycleBin;
+			if(bForce || (pdSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
 			{
-				pwPrefBin = pwSource.m_pwRecycleBin;
+				pwPrefBin = pdSource.m_pwRecycleBin;
 				pwAltBin = m_pwRecycleBin;
-				m_bUseRecycleBin = pwSource.m_bUseRecycleBin;
-				m_dtRecycleBinChanged = pwSource.m_dtRecycleBinChanged;
+				m_bUseRecycleBin = pdSource.m_bUseRecycleBin;
+				m_dtRecycleBinChanged = pdSource.m_dtRecycleBinChanged;
 			}
 			if(m_pgRootGroup.FindGroup(pwPrefBin, true) != null)
 				m_pwRecycleBin = pwPrefBin;
@@ -1288,12 +1297,12 @@ namespace KeePassLib
 				m_pwRecycleBin = pwAltBin;
 			else m_pwRecycleBin = PwUuid.Zero; // Debug.Assert(false);
 
-			PwUuid pwPrefTmp = m_pwEntryTemplatesGroup, pwAltTmp = pwSource.m_pwEntryTemplatesGroup;
-			if(bForce || (pwSource.m_dtEntryTemplatesChanged > m_dtEntryTemplatesChanged))
+			PwUuid pwPrefTmp = m_pwEntryTemplatesGroup, pwAltTmp = pdSource.m_pwEntryTemplatesGroup;
+			if(bForce || (pdSource.m_dtEntryTemplatesChanged > m_dtEntryTemplatesChanged))
 			{
-				pwPrefTmp = pwSource.m_pwEntryTemplatesGroup;
+				pwPrefTmp = pdSource.m_pwEntryTemplatesGroup;
 				pwAltTmp = m_pwEntryTemplatesGroup;
-				m_dtEntryTemplatesChanged = pwSource.m_dtEntryTemplatesChanged;
+				m_dtEntryTemplatesChanged = pdSource.m_dtEntryTemplatesChanged;
 			}
 			if(m_pgRootGroup.FindGroup(pwPrefTmp, true) != null)
 				m_pwEntryTemplatesGroup = pwPrefTmp;
@@ -1377,12 +1386,12 @@ namespace KeePassLib
 		/// <param name="strFile">Source file.</param>
 		public void Synchronize(string strFile)
 		{
-			PwDatabase pwSource = new PwDatabase();
+			PwDatabase pdSource = new PwDatabase();
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			pwSource.Open(ioc, m_pwUserKey, null);
+			pdSource.Open(ioc, m_pwUserKey, null);
 
-			MergeIn(pwSource, PwMergeMethod.Synchronize);
+			MergeIn(pdSource, PwMergeMethod.Synchronize);
 		} */
 
 		/// <summary>

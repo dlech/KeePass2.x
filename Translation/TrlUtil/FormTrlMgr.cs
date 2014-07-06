@@ -89,8 +89,8 @@ namespace TrlUtil
 			AddForm(l, new TanWizardForm());
 			AddForm(l, new TextEncodingForm());
 			AddForm(l, new UpdateCheckForm());
-			AddForm(l, new UrlSchemeForm());
-			AddForm(l, new UrlSchemesForm());
+			AddForm(l, new UrlOverrideForm());
+			AddForm(l, new UrlOverridesForm());
 			AddForm(l, new XmlReplaceForm());
 
 			return l;

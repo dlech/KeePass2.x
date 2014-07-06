@@ -25,7 +25,6 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using KeePass.App;
-using KeePass.Util;
 
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -239,10 +238,6 @@ namespace KeePass.UI
 			return false;
 		}
 
-		/// <summary>
-		/// Eventually force using the system font.
-		/// </summary>
-		/// <param name="c">Control to customize.</param>
 		public static void CustomizeControl(Control c)
 		{
 			if(NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix)

@@ -25,10 +25,9 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Diagnostics;
 
-using KeePassLib;
 using KeePassLib.Native;
 
-namespace KeePass.Util
+namespace KeePassLib.Utility
 {
 	public static class MonoWorkarounds
 	{
@@ -39,32 +38,65 @@ namespace KeePass.Util
 			return m_bReq.Value;
 		}
 
+		// 1245:
+		//   Key events not raised while Alt is down, and nav keys out of order.
+		//   https://sourceforge.net/p/keepass/bugs/1245/
+		// 1254:
+		//   NumericUpDown bug: text is drawn below up/down buttons.
+		//   https://sourceforge.net/p/keepass/bugs/1254/
 		// 5795:
+		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d23dc88b/
+		// 10163:
+		//   WebRequest GetResponse call missing, breaks WebDAV due to no PUT.
+		//   https://bugzilla.xamarin.com/show_bug.cgi?id=10163
+		//   https://sourceforge.net/p/keepass/bugs/1117/
+		//   https://sourceforge.net/p/keepass/discussion/329221/thread/9422258c/
+		//   https://github.com/mono/mono/commit/8e67b8c2fc7cb66bff7816ebf7c1039fb8cfc43b
+		//   https://bugzilla.xamarin.com/show_bug.cgi?id=1512
+		//   https://sourceforge.net/p/keepass/patches/89/
 		// 12525:
+		//   PictureBox not rendered when bitmap height >= control height.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=12525
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/54f61e9a/
 		// 586901:
+		//   RichTextBox doesn't handle Unicode string correctly.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=586901
 		// 620618:
+		//   ListView column headers not drawn.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=620618
 		// 649266:
+		//   Calling Control.Hide doesn't remove the application from taskbar.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=649266
 		// 686017:
+		//   Minimum sizes must be enforced.
 		//   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
 		// 801414:
+		//   Mono recreates the main window incorrectly.
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/801414
 		// 891029:
+		//   Increase tab control height, otherwise Mono throws exceptions.
 		//   https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
 		// 836428016:
+		//   ListView group header selection unsupported.
 		//   https://sourceforge.net/p/keepass/discussion/329221/thread/31dae0f0/
 		// 3574233558:
+		//   Problems with minimizing windows, no content rendered.
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/
 		public static bool IsRequired(uint uBugID)
 		{
-			return MonoWorkarounds.IsRequired();
+			if(!MonoWorkarounds.IsRequired()) return false;
+
+			ulong v = NativeLib.MonoVersion;
+			if(v != 0)
+			{
+				if(uBugID == 10163)
+					return (v >= 0x0002000B00000000UL); // >= 2.11
+			}
+
+			return true;
 		}
 
 		public static void ApplyTo(Form f)
@@ -72,10 +104,12 @@ namespace KeePass.Util
 			if(!MonoWorkarounds.IsRequired()) return;
 			if(f == null) { Debug.Assert(false); return; }
 
+#if (!KeePassLibSD && !KeePassRT)
 			f.HandleCreated += MonoWorkarounds.OnFormHandleCreated;
 			SetWmClass(f);
 
 			ApplyToControlsRec(f.Controls, f, MonoWorkarounds.ApplyToControl);
+#endif
 		}
 
 		public static void Release(Form f)
@@ -83,11 +117,14 @@ namespace KeePass.Util
 			if(!MonoWorkarounds.IsRequired()) return;
 			if(f == null) { Debug.Assert(false); return; }
 
+#if (!KeePassLibSD && !KeePassRT)
 			f.HandleCreated -= MonoWorkarounds.OnFormHandleCreated;
 
 			ApplyToControlsRec(f.Controls, f, MonoWorkarounds.ReleaseControl);
+#endif
 		}
 
+#if (!KeePassLibSD && !KeePassRT)
 		private delegate void MwaControlHandler(Control c, Form fContext);
 
 		private static void ApplyToControlsRec(Control.ControlCollection cc,
@@ -99,6 +136,19 @@ namespace KeePass.Util
 			{
 				fn(c, fContext);
 				ApplyToControlsRec(c.Controls, fContext, fn);
+			}
+		}
+
+		private static void ApplyToControl(Control c, Form fContext)
+		{
+			Button btn = (c as Button);
+			if(btn != null) ApplyToButton(btn, fContext);
+
+			NumericUpDown nc = (c as NumericUpDown);
+			if((nc != null) && MonoWorkarounds.IsRequired(1254))
+			{
+				if(nc.TextAlign == HorizontalAlignment.Right)
+					nc.TextAlign = HorizontalAlignment.Left;
 			}
 		}
 
@@ -136,12 +186,6 @@ namespace KeePass.Util
 				m_dr = dr;
 				m_fContext = fContext;
 			}
-		}
-
-		private static void ApplyToControl(Control c, Form fContext)
-		{
-			Button btn = (c as Button);
-			if(btn != null) ApplyToButton(btn, fContext);
 		}
 
 		private static EventHandlerList GetEventHandlers(Component c,
@@ -227,7 +271,7 @@ namespace KeePass.Util
 
 			if(hi.FunctionOriginal != null)
 				hi.FunctionOriginal.Method.Invoke(hi.FunctionOriginal.Target,
-					new object[]{ btn, e });
+					new object[] { btn, e });
 
 			// Raise close events, if the click event handler hasn't
 			// reset the dialog result
@@ -237,8 +281,7 @@ namespace KeePass.Util
 
 		private static void SetWmClass(Form f)
 		{
-			KeePass.Native.NativeMethods.SetWmClass(f, PwDefs.UnixName,
-				PwDefs.ResClass);
+			NativeMethods.SetWmClass(f, PwDefs.UnixName, PwDefs.ResClass);
 		}
 
 		private static void OnFormHandleCreated(object sender, EventArgs e)
@@ -276,5 +319,6 @@ namespace KeePass.Util
 
 			return true;
 		}
+#endif
 	}
 }

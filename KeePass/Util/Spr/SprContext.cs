@@ -49,12 +49,13 @@ namespace KeePass.Util.Spr
 		HmacOtp = 0x1000,
 		Comments = 0x2000,
 		TextTransforms = 0x10000,
+		Env = 0x20000, // {BASE}, ...
 
 		ExtActive = 0x4000, // Active transformations provided by plugins
 		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
-		// Next free: 0x20000
-		All = 0x1FFFF,
+		// Next free: 0x40000
+		All = 0x3FFFF,
 
 		// Internal:
 		UIInteractive = SprCompileFlags.PickChars,
@@ -82,6 +83,27 @@ namespace KeePass.Util.Spr
 		{
 			get { return m_pd; }
 			set { m_pd = value; }
+		}
+
+		private string m_strBase = null;
+		/// <summary>
+		/// The parent string, like e.g. the input string before any
+		/// override has been applied.
+		/// </summary>
+		public string Base
+		{
+			get { return m_strBase; }
+			set { m_strBase = value; }
+		}
+
+		private bool m_bBaseIsEnc = false;
+		/// <summary>
+		/// Specifies whether <c>Base</c> has been content-transformed already.
+		/// </summary>
+		public bool BaseIsEncoded
+		{
+			get { return m_bBaseIsEnc; }
+			set { m_bBaseIsEnc = value; }
 		}
 
 		private bool m_bMakeAT = false;

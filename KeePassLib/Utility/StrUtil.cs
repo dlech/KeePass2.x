@@ -833,6 +833,40 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
+		public static string AddAccelerator(string strMenuText,
+			List<char> lAvailKeys)
+		{
+			if(strMenuText == null) { Debug.Assert(false); return null; }
+			if(lAvailKeys == null) { Debug.Assert(false); return strMenuText; }
+
+			int xa = -1, xs = 0;
+			for(int i = 0; i < strMenuText.Length; ++i)
+			{
+				char ch = strMenuText[i];
+
+#if KeePassLibSD
+				char chUpper = char.ToUpper(ch);
+#else
+				char chUpper = char.ToUpperInvariant(ch);
+#endif
+				xa = lAvailKeys.IndexOf(chUpper);
+				if(xa >= 0) { xs = i; break; }
+
+#if KeePassLibSD
+				char chLower = char.ToLower(ch);
+#else
+				char chLower = char.ToLowerInvariant(ch);
+#endif
+				xa = lAvailKeys.IndexOf(chLower);
+				if(xa >= 0) { xs = i; break; }
+			}
+
+			if(xa < 0) return strMenuText;
+
+			lAvailKeys.RemoveAt(xa);
+			return strMenuText.Insert(xs, @"&");
+		}
+
 		public static string EncodeMenuText(string strText)
 		{
 			if(strText == null) throw new ArgumentNullException("strText");

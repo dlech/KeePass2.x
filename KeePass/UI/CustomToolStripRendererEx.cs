@@ -94,8 +94,7 @@ namespace KeePass.UI
 			}
 		}
 
-		public CustomToolStripRendererEx()
-			: base(new CtsrColorTable())
+		public CustomToolStripRendererEx() : base(new CtsrColorTable())
 		{
 		}
 

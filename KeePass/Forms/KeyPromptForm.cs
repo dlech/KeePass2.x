@@ -296,7 +296,7 @@ namespace KeePass.Forms
 			if(m_cbKeyFile.Checked && !strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) &&
 				!bIsProvKey)
 			{
-				if(ValidateKeyFileLocation() == false) return false;
+				if(!ValidateKeyFile()) return false;
 
 				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
 				catch(Exception)
@@ -352,7 +352,7 @@ namespace KeePass.Forms
 			return true;
 		}
 
-		private bool ValidateKeyFileLocation()
+		private bool ValidateKeyFile()
 		{
 			string strKeyFile = m_cmbKeyFile.Text;
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
@@ -369,13 +369,16 @@ namespace KeePass.Forms
 				bSuccess = false;
 			}
 
-			if(!bSuccess)
-			{
-				int nPos = m_cmbKeyFile.Items.IndexOf(strKeyFile);
-				if(nPos >= 0) m_cmbKeyFile.Items.RemoveAt(nPos);
-
-				m_cmbKeyFile.SelectedIndex = 0;
-			}
+			// if(!bSuccess)
+			// {
+			//	int nPos = m_cmbKeyFile.Items.IndexOf(strKeyFile);
+			//	if(nPos >= 0)
+			//	{
+			//		m_cmbKeyFile.Items.RemoveAt(nPos);
+			//		m_lKeyFileNames.RemoveAt(nPos);
+			//	}
+			//	m_cmbKeyFile.SelectedIndex = 0;
+			// }
 
 			return bSuccess;
 		}
@@ -509,14 +512,14 @@ namespace KeePass.Forms
 
 			string strKeyFile = m_cmbKeyFile.Text;
 			Debug.Assert(strKeyFile != null); if(strKeyFile == null) strKeyFile = string.Empty;
-			if(strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) == false)
+			if(!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
 			{
-				if(ValidateKeyFileLocation())
-				{
+				// if(ValidateKeyFile())
+				// {
 					if((Program.Config.UI.KeyPromptFlags &
 						(ulong)AceKeyUIFlags.UncheckKeyFile) == 0)
 						UIUtil.SetChecked(m_cbKeyFile, true);
-				}
+				// }
 			}
 			else if((Program.Config.UI.KeyPromptFlags &
 				(ulong)AceKeyUIFlags.CheckKeyFile) == 0)

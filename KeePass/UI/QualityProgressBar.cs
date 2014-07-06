@@ -24,57 +24,90 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.ComponentModel;
+using System.Diagnostics;
+
+using KeePass.Util;
+
+using KeePassLib.Native;
 
 namespace KeePass.UI
 {
-	public class QualityProgressBar : Control
+	public sealed class QualityProgressBar : Control
 	{
-		private int m_nMinimum = 0, m_nMaximum = 100, m_nPosition = 0;
-		private ProgressBarStyle m_pbsStyle = ProgressBarStyle.Continuous;
-
 		public QualityProgressBar() : base()
 		{
 			this.DoubleBuffered = true;
 		}
 
+		private int m_nMinimum = 0;
+		[DefaultValue(0)]
 		public int Minimum
 		{
 			get { return m_nMinimum; }
 			set { m_nMinimum = value; this.Invalidate(); }
 		}
 
+		private int m_nMaximum = 100;
+		[DefaultValue(100)]
 		public int Maximum
 		{
 			get { return m_nMaximum; }
 			set { m_nMaximum = value; this.Invalidate(); }
 		}
 
+		private int m_nPosition = 0;
+		[DefaultValue(0)]
 		public int Value
 		{
 			get { return m_nPosition; }
 			set { m_nPosition = value; this.Invalidate(); }
 		}
 
+		private ProgressBarStyle m_pbsStyle = ProgressBarStyle.Continuous;
+		[Browsable(false)]
 		public ProgressBarStyle Style
 		{
 			get { return m_pbsStyle; }
-			set { m_pbsStyle = value; }
+			set { m_pbsStyle = value; this.Invalidate(); }
+		}
+
+		private string m_strText = string.Empty;
+		[DefaultValue("")]
+		public string ProgressText
+		{
+			get { return m_strText; }
+			set { m_strText = value; this.Invalidate(); }
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			try { PaintPriv(e); }
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void PaintPriv(PaintEventArgs e)
+		{
 			Graphics g = e.Graphics;
 			if(g == null) { base.OnPaint(e); return; }
 
-			int nNormalizedPos = m_nPosition - m_nMinimum;
-			int nNormalizedMax = m_nMaximum - m_nMinimum;
+			int nNormPos = m_nPosition - m_nMinimum;
+			int nNormMax = m_nMaximum - m_nMinimum;
+			if(nNormMax <= 0) { Debug.Assert(false); nNormMax = 100; }
+			if(nNormPos < 0) { Debug.Assert(false); nNormPos = 0; }
+			if(nNormPos > nNormMax) { Debug.Assert(false); nNormPos = nNormMax; }
 
 			Rectangle rectClient = this.ClientRectangle;
 			Rectangle rectDraw;
-			if(VisualStyleRenderer.IsSupported)
+			VisualStyleElement vse = VisualStyleElement.ProgressBar.Bar.Normal;
+			if(VisualStyleRenderer.IsSupported &&
+				VisualStyleRenderer.IsElementDefined(vse))
 			{
-				VisualStyleRenderer vsr = new VisualStyleRenderer(
-					VisualStyleElement.ProgressBar.Bar.Normal);
+				VisualStyleRenderer vsr = new VisualStyleRenderer(vse);
+
+				if(vsr.IsBackgroundPartiallyTransparent())
+					vsr.DrawParentBackground(g, rectClient, this);
+
 				vsr.DrawBackground(g, rectClient);
 
 				rectDraw = vsr.GetBackgroundContentRectangle(g, rectClient);
@@ -83,30 +116,28 @@ namespace KeePass.UI
 			{
 				g.FillRectangle(SystemBrushes.Control, rectClient);
 
-				g.DrawLine(Pens.Gray, 0, 0, rectClient.Width - 1, 0);
-				g.DrawLine(Pens.Gray, 0, 0, 0, rectClient.Height - 1);
-				g.DrawLine(Pens.White, rectClient.Width - 1, 0,
+				Pen penGray = SystemPens.ControlDark;
+				Pen penWhite = SystemPens.ControlLight;
+				g.DrawLine(penGray, 0, 0, rectClient.Width - 1, 0);
+				g.DrawLine(penGray, 0, 0, 0, rectClient.Height - 1);
+				g.DrawLine(penWhite, rectClient.Width - 1, 0,
 					rectClient.Width - 1, rectClient.Height - 1);
-				g.DrawLine(Pens.White, 0, rectClient.Height - 1,
+				g.DrawLine(penWhite, 0, rectClient.Height - 1,
 					rectClient.Width - 1, rectClient.Height - 1);
 
 				rectDraw = new Rectangle(rectClient.X + 1, rectClient.Y + 1,
 					rectClient.Width - 2, rectClient.Height - 2);
 			}
 
-			Rectangle rectGradient = new Rectangle(rectDraw.X, rectDraw.Y,
-				rectDraw.Width, rectDraw.Height);
-			if((rectGradient.Width & 1) == 0) ++rectGradient.Width;
-
-			int nDrawWidth = (int)((float)rectDraw.Width * ((float)nNormalizedPos /
-				(float)nNormalizedMax));
+			int nDrawWidth = (int)((float)rectDraw.Width * (float)nNormPos /
+				(float)nNormMax);
 
 			Color clrStart = Color.FromArgb(255, 128, 0);
 			Color clrEnd = Color.FromArgb(0, 255, 0);
 			if(!this.Enabled)
 			{
 				clrStart = UIUtil.ColorToGrayscale(SystemColors.ControlDark);
-				clrEnd = UIUtil.ColorToGrayscale(SystemColors.Control);
+				clrEnd = UIUtil.ColorToGrayscale(SystemColors.ControlLight);
 			}
 
 			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
@@ -116,13 +147,65 @@ namespace KeePass.UI
 				clrStart = clrEnd;
 				clrEnd = clrTemp;
 			}
-			
-			using(LinearGradientBrush brush = new LinearGradientBrush(rectGradient,
+
+			// Workaround for Windows <= XP
+			Rectangle rectGrad = new Rectangle(rectDraw.X, rectDraw.Y,
+				rectDraw.Width, rectDraw.Height);
+			if(!WinUtil.IsAtLeastWindowsVista && !NativeLib.IsUnix())
+				rectGrad.Inflate(1, 0);
+
+			using(LinearGradientBrush brush = new LinearGradientBrush(rectGrad,
 				clrStart, clrEnd, LinearGradientMode.Horizontal))
 			{
 				g.FillRectangle(brush, (bRtl ? (rectDraw.Width - nDrawWidth + 1) :
 					rectDraw.Left), rectDraw.Top, nDrawWidth, rectDraw.Height);
 			}
+
+			PaintText(g, rectDraw);
+		}
+
+		private void PaintText(Graphics g, Rectangle rectDraw)
+		{
+			if(string.IsNullOrEmpty(m_strText)) return;
+
+			Font f = (FontUtil.DefaultFont ?? this.Font);
+			Color clrFG = UIUtil.ColorToGrayscale(this.ForeColor);
+			Color clrBG = Color.FromArgb(clrFG.ToArgb() ^ 0x20FFFFFF);
+
+			// Instead of an ellipse, Mono draws a circle, which looks ugly
+			if(!NativeLib.IsUnix())
+			{
+				int dx = rectDraw.X;
+				int dy = rectDraw.Y;
+				int dw = rectDraw.Width;
+				int dh = rectDraw.Height;
+
+				Rectangle rectGlow = rectDraw;
+				rectGlow.Width = TextRenderer.MeasureText(g, m_strText, f).Width;
+				rectGlow.X = ((dw - rectGlow.Width) / 2) + dx;
+				rectGlow.Inflate(rectGlow.Width / 2, rectGlow.Height / 2);
+				using(GraphicsPath gpGlow = new GraphicsPath())
+				{
+					gpGlow.AddEllipse(rectGlow);
+
+					using(PathGradientBrush pgbGlow = new PathGradientBrush(gpGlow))
+					{
+						pgbGlow.CenterPoint = new PointF((dw / 2.0f) + dx,
+							(dh / 2.0f) + dy);
+						pgbGlow.CenterColor = clrBG;
+						pgbGlow.SurroundColors = new Color[] { Color.Transparent };
+
+						Region rgOrgClip = g.Clip;
+						g.SetClip(rectDraw);
+						g.FillPath(pgbGlow, gpGlow);
+						g.Clip = rgOrgClip;
+					}
+				}
+			}
+
+			TextFormatFlags tff = (TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine |
+				TextFormatFlags.VerticalCenter);
+			TextRenderer.DrawText(g, m_strText, f, rectDraw, clrFG, tff);
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs pEvent)

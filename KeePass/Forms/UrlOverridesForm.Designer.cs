@@ -1,6 +1,6 @@
 ﻿namespace KeePass.Forms
 {
-	partial class UrlSchemesForm
+	partial class UrlOverridesForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -35,12 +35,14 @@
 			this.m_btnEdit = new System.Windows.Forms.Button();
 			this.m_btnDelete = new System.Windows.Forms.Button();
 			this.m_lblSep = new System.Windows.Forms.Label();
+			this.m_cbOverrideAll = new System.Windows.Forms.CheckBox();
+			this.m_tbOverrideAll = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(320, 289);
+			this.m_btnOK.Location = new System.Drawing.Point(320, 324);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -51,7 +53,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(401, 289);
+			this.m_btnCancel.Location = new System.Drawing.Point(401, 324);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -106,18 +108,38 @@
 			// m_lblSep
 			// 
 			this.m_lblSep.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSep.Location = new System.Drawing.Point(0, 280);
+			this.m_lblSep.Location = new System.Drawing.Point(0, 315);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(489, 2);
-			this.m_lblSep.TabIndex = 6;
+			this.m_lblSep.TabIndex = 8;
 			// 
-			// UrlSchemesForm
+			// m_cbOverrideAll
+			// 
+			this.m_cbOverrideAll.AutoSize = true;
+			this.m_cbOverrideAll.Location = new System.Drawing.Point(12, 283);
+			this.m_cbOverrideAll.Name = "m_cbOverrideAll";
+			this.m_cbOverrideAll.Size = new System.Drawing.Size(138, 17);
+			this.m_cbOverrideAll.TabIndex = 6;
+			this.m_cbOverrideAll.Text = "Override all entry URLs:";
+			this.m_cbOverrideAll.UseVisualStyleBackColor = true;
+			this.m_cbOverrideAll.CheckedChanged += new System.EventHandler(this.OnOverrideAllCheckedChanged);
+			// 
+			// m_tbOverrideAll
+			// 
+			this.m_tbOverrideAll.Location = new System.Drawing.Point(156, 281);
+			this.m_tbOverrideAll.Name = "m_tbOverrideAll";
+			this.m_tbOverrideAll.Size = new System.Drawing.Size(239, 20);
+			this.m_tbOverrideAll.TabIndex = 7;
+			// 
+			// UrlOverridesForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(488, 324);
+			this.ClientSize = new System.Drawing.Size(488, 359);
+			this.Controls.Add(this.m_tbOverrideAll);
+			this.Controls.Add(this.m_cbOverrideAll);
 			this.Controls.Add(this.m_lblSep);
 			this.Controls.Add(this.m_btnDelete);
 			this.Controls.Add(this.m_btnEdit);
@@ -128,13 +150,14 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "UrlSchemesForm";
+			this.Name = "UrlOverridesForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -147,5 +170,7 @@
 		private System.Windows.Forms.Button m_btnEdit;
 		private System.Windows.Forms.Button m_btnDelete;
 		private System.Windows.Forms.Label m_lblSep;
+		private System.Windows.Forms.CheckBox m_cbOverrideAll;
+		private System.Windows.Forms.TextBox m_tbOverrideAll;
 	}
 }

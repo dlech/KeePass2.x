@@ -43,7 +43,7 @@ About the XML replacement functionality.
 
 <ul>
 <li><a href="#info">General Information</a></li>
-<li><a href="#ex">Usage Examples</a>
+<li><a href="#ex">Usage Examples</a>:
 <ul>
 <li><a href="#repstr">Replace text in all entry titles and notes</a></li>
 <li><a href="#tohttps">Replace all HTTP URLs by HTTPS URLs</a></li>
@@ -57,6 +57,9 @@ About the XML replacement functionality.
 <li><a href="#atdelayupper">Convert <code>{DELAY=</code> to upper-case</a></li>
 <li><a href="#ataddstddelay">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></a></li>
 <li><a href="#atmodstddelay">Change <code>{DELAY=</code> values</a></li>
+<li><a href="#atrmvstddelay">Remove <code>{DELAY=<em>x</em>}</code> from all sequences</a></li>
+<li><a href="#atresetifstddelay">Reset default sequences that contain <code>{DELAY=</code></a></li>
+<li><a href="#ataddassoc">Add an auto-type association to all entries</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -254,7 +257,8 @@ may be useful as preparation for the following example (which matches
 <colgroup><col width="20%" /><col width="80%" /></colgroup>
 <tr><th colspan="2">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></th></tr>
 <tr><td>Select nodes:</td>
-<td><code>(//DefaultSequence | //KeystrokeSequence)[not(contains(., '{DELAY='))]</code></td></tr>
+<td><code>(//DefaultSequence | //KeystrokeSequence)[not(contains(., '{DELAY='))
+and (. != '')]</code></td></tr>
 <tr><td>Action:</td><td>Replace data</td></tr>
 <tr><td>Data:</td><td>Inner text</td></tr>
 <tr><td>Find what:</td><td><code>^(.*)$</code></td></tr>
@@ -262,7 +266,7 @@ may be useful as preparation for the following example (which matches
 <tr><td>Regular expressions:</td><td>Activated</td></tr>
 <tr><td colspan="2">Prepends a <code>{DELAY=50}</code> to all auto-type
 sequence overrides and associations that do not contain any
-<code>{DELAY=</code> already.<br />
+<code>{DELAY=</code> already and are not empty.<br />
 <br />
 Note that the node selection is case-sensitive (independent of the data
 case sensitivity option), thus you need to ensure that all
@@ -286,6 +290,55 @@ This can e.g. be done using the XML Replace operation mentioned
 <tr><td>Regular expressions:</td><td>Activated</td></tr>
 <tr><td colspan="2">Sets the values of all <code>{DELAY=</code> codes
 within auto-type sequence overrides and associations to 50.</td></tr>
+</table>
+
+<br />
+
+<a name="atrmvstddelay"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Remove <code>{DELAY=<em>x</em>}</code> from all sequences</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>\{DELAY=[\d\s]*\}</code></td></tr>
+<tr><td>Replace with:</td><td><em>(Leave empty)</em></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Removes all <code>{DELAY=<em>x</em>}</code> codes from
+all auto-type sequences.</td></tr>
+</table>
+
+<br />
+
+<a name="atresetifstddelay"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Reset default sequences that contain <code>{DELAY=</code></th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//DefaultSequence[contains(., '{DELAY=')]</code></td></tr>
+<tr><td>Action:</td><td>Remove nodes</td></tr>
+<tr><td colspan="2">If a sequence has been specified in the field
+'Override default sequence' (in the entry dialog) and it contains
+<code>{DELAY=</code>, the sequence is reset,
+i.e. the option 'Inherit default auto-type sequence from group' is activated.</td></tr>
+</table>
+
+<br />
+
+<a name="ataddassoc"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Add an auto-type association to all entries</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/AutoType</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Outer XML</td></tr>
+<tr><td>Find what:</td><td><code>&lt;/AutoType&gt;\Z</code></td></tr>
+<tr><td>Replace with:</td><td><code>&lt;Association&gt;&lt;Window&gt;* - Notepad&lt;/Window&gt;&lt;KeystrokeSequence&gt;{PASSWORD}&lt;/KeystrokeSequence&gt;&lt;/Association&gt;&lt;/AutoType&gt;</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Adds an auto-type association to all entries: the window title
+'<code>* - Notepad</code>' is associated with the sequence '<code>{PASSWORD}</code>'.</td></tr>
 </table>
 
 </body></html>

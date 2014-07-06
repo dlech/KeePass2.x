@@ -948,6 +948,11 @@
             array. Returns <c>null</c>, if the input byte array was <c>null</c>. Returns
             an empty string, if the input byte array has length 0.</returns>
         </member>
+        <member name="M:KeePassLib.Utility.MemUtil.ParseBase32(System.String)">
+            <summary>
+            Decode Base32 strings according to RFC 4648.
+            </summary>
+        </member>
         <member name="M:KeePassLib.Utility.MemUtil.ZeroByteArray(System.Byte[])">
             <summary>
             Set all bytes in a byte array to zero.
@@ -1164,8 +1169,6 @@
         <member name="M:KeePassLib.PwGroup.GetFlatGroupList">
             <summary>
             Pack all groups into one flat linked list of references (recursively).
-            Temporary IDs (<c>TemporaryID</c> field) and levels (<c>TemporaryLevel</c>)
-            are assigned automatically.
             </summary>
             <returns>Flat list of all groups.</returns>
         </member>
@@ -2489,7 +2492,7 @@
             <summary>
             Synchronize the current database with another one.
             </summary>
-            <param name="pwSource">Input database to synchronize with. This input
+            <param name="pdSource">Input database to synchronize with. This input
             database is used to update the current one, but is not modified! You
             must copy the current object if you want a second instance of the
             synchronized database. The input database must not be seen as valid
@@ -2752,6 +2755,13 @@
             <summary>
             Get number of objects in this list.
             </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.MonoWorkarounds.ExchangeFormShownRaised(System.Windows.Forms.Form,System.Boolean)">
+            <summary>
+            Set the value of the private <c>shown_raised</c> member
+            variable of a form.
+            </summary>
+            <returns>Previous <c>shown_raised</c> value.</returns>
         </member>
         <member name="T:KeePassLib.PwDefs">
             <summary>

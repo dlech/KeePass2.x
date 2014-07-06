@@ -82,18 +82,28 @@ namespace KeePass.Util
 
 			if(string.IsNullOrEmpty(str))
 			{
-				NativeLib.RunConsoleApp("xsel", "--delete --clipboard",
-					null, XSelFlags);
+				// xsel with an empty input can hang, thus use --clear
+				if(NativeLib.RunConsoleApp("xsel", "--clear --primary",
+					null, XSelFlags) != null)
+				{
+					NativeLib.RunConsoleApp("xsel", "--clear --clipboard",
+						null, XSelFlags);
+					return;
+				}
 
 				try { Clipboard.Clear(); }
 				catch(Exception) { Debug.Assert(false); }
-
-				return; // xsel with an empty input can hang
+				return;
 			}
 
-			string r = NativeLib.RunConsoleApp("xsel",
-				"--input --clipboard", str, XSelFlags);
-			if(r != null) return;
+			// xsel does not support --primary and --clipboard together
+			if(NativeLib.RunConsoleApp("xsel", "--input --primary",
+				str, XSelFlags) != null)
+			{
+				NativeLib.RunConsoleApp("xsel", "--input --clipboard",
+					str, XSelFlags);
+				return;
+			}
 
 			try { Clipboard.SetText(str); }
 			catch(Exception) { Debug.Assert(false); }

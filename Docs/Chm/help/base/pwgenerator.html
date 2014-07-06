@@ -219,10 +219,12 @@ should occur. The <b>{ }</b> operator duplicates placeholders, not generated cha
 
 <p>The <b>[<i>...</i>]</b> notation can be used to define a custom character set, from which
 the password generator will pick one character randomly. All characters between the '<b>[</b>'
-and '<b>]</b>' brackets follow the same rules as the placeholders above. Examples:<br />
+and '<b>]</b>' brackets follow the same rules as the placeholders above.
+The '<b>^</b>' character removes the next character from the character set.
+Examples:<br />
 &raquo; <code>[dp]</code> generates exactly 1 random character out of the set
 digits + punctuation,<br />
-&raquo; <code>[d&#92;m&#92;@]{5}</code> generates 5 characters out of the set &quot;0123456789m@&quot;,<br />
+&raquo; <code>[d&#92;m&#92;@^3]{5}</code> generates 5 characters out of the set &quot;012456789m@&quot;,<br />
 &raquo; <code>[u&#92;_][u&#92;_]</code> generates 2 characters out of the set upper case + '_'.</p>
 
 <p><b>More examples:</b></p>

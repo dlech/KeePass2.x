@@ -148,6 +148,22 @@ namespace KeePass.Native
 			return false;
 		}
 
+		internal static IntPtr FindWindow(string strTitle)
+		{
+			if(strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }
+
+			if(!KeePassLib.Native.NativeLib.IsUnix())
+				return FindWindowEx(IntPtr.Zero, IntPtr.Zero, null, strTitle);
+
+			// Not --onlyvisible (due to not finding minimized windows)
+			string str = RunXDoTool("search --name \"" + strTitle + "\"").Trim();
+			if(str.Length == 0) return IntPtr.Zero;
+
+			long l;
+			if(long.TryParse(str, out l)) return new IntPtr(l);
+			return IntPtr.Zero;
+		}
+
 		internal static bool LoseFocus(Form fCurrent)
 		{
 			if(KeePassLib.Native.NativeLib.IsUnix())

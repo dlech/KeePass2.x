@@ -363,6 +363,9 @@ namespace KeePassLib
 
 			pg.m_strDefaultAutoTypeSequence = m_strDefaultAutoTypeSequence;
 
+			pg.m_bEnableAutoType = m_bEnableAutoType;
+			pg.m_bEnableSearching = m_bEnableSearching;
+
 			pg.m_pwLastTopVisibleEntry = m_pwLastTopVisibleEntry;
 
 			return pg;
@@ -419,6 +422,18 @@ namespace KeePassLib
 			// if(m_bIsExpanded != pg.m_bIsExpanded) return false;
 
 			if(m_strDefaultAutoTypeSequence != pg.m_strDefaultAutoTypeSequence) return false;
+
+			if(m_bEnableAutoType.HasValue != pg.m_bEnableAutoType.HasValue) return false;
+			if(m_bEnableAutoType.HasValue)
+			{
+				if(m_bEnableAutoType.Value != pg.m_bEnableAutoType.Value) return false;
+			}
+			if(m_bEnableSearching.HasValue != pg.m_bEnableSearching.HasValue) return false;
+			if(m_bEnableSearching.HasValue)
+			{
+				if(m_bEnableSearching.Value != pg.m_bEnableSearching.Value) return false;
+			}
+
 			if(!m_pwLastTopVisibleEntry.Equals(pg.m_pwLastTopVisibleEntry)) return false;
 
 			if((pwOpt & PwCompareOptions.PropertiesOnly) == PwCompareOptions.None)
@@ -481,6 +496,9 @@ namespace KeePassLib
 			m_uUsageCount = pgTemplate.m_uUsageCount;
 
 			m_strDefaultAutoTypeSequence = pgTemplate.m_strDefaultAutoTypeSequence;
+
+			m_bEnableAutoType = pgTemplate.m_bEnableAutoType;
+			m_bEnableSearching = pgTemplate.m_bEnableSearching;
 
 			m_pwLastTopVisibleEntry = pgTemplate.m_pwLastTopVisibleEntry;
 		}
@@ -633,8 +651,6 @@ namespace KeePassLib
 
 		/// <summary>
 		/// Pack all groups into one flat linked list of references (recursively).
-		/// Temporary IDs (<c>TemporaryID</c> field) and levels (<c>TemporaryLevel</c>)
-		/// are assigned automatically.
 		/// </summary>
 		/// <returns>Flat list of all groups.</returns>
 		public LinkedList<PwGroup> GetFlatGroupList()
@@ -1528,6 +1544,29 @@ namespace KeePassLib
 				pdContext.DeletedObjects.Add(pdo);
 			}
 			m_listGroups.Clear();
+		}
+
+		internal List<PwGroup> GetTopSearchSkippedGroups()
+		{
+			List<PwGroup> l = new List<PwGroup>();
+
+			if(!GetSearchingEnabledInherited()) l.Add(this);
+			else GetTopSearchSkippedGroupsRec(l);
+
+			return l;
+		}
+
+		private void GetTopSearchSkippedGroupsRec(List<PwGroup> l)
+		{
+			if(m_bEnableSearching.HasValue && !m_bEnableSearching.Value)
+			{
+				l.Add(this);
+				return;
+			}
+			else { Debug.Assert(GetSearchingEnabledInherited()); }
+
+			foreach(PwGroup pgSub in m_listGroups)
+				pgSub.GetTopSearchSkippedGroupsRec(l);
 		}
 	}
 

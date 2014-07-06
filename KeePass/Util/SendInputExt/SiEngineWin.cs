@@ -249,6 +249,9 @@ namespace KeePass.Util.SendInputExt
 						else if(strName.Equals("PuTTY.exe", StrUtil.CaseIgnoreCmp) ||
 							strName.Equals("PuTTY", StrUtil.CaseIgnoreCmp))
 							bEnforceUniForHWnd = true;
+						else if(strName.Equals("MinTTY.exe", StrUtil.CaseIgnoreCmp) ||
+							strName.Equals("MinTTY", StrUtil.CaseIgnoreCmp))
+							bEnforceUniForHWnd = true; // Cygwin window "~"
 
 						if(bEnforceUniForHWnd)
 						{
@@ -580,10 +583,21 @@ namespace KeePass.Util.SendInputExt
 			int vKey = (int)(u & 0xFFU);
 
 			Keys kMod = Keys.None;
-			if((u & 0x100U) != 0U) kMod |= Keys.Shift;
-			if((u & 0x200U) != 0U) kMod |= Keys.Control;
-			if((u & 0x400U) != 0U) kMod |= Keys.Alt;
+			int nMods = 0;
+			if((u & 0x100U) != 0U) { ++nMods; kMod |= Keys.Shift; }
+			if((u & 0x200U) != 0U) { ++nMods; kMod |= Keys.Control; }
+			if((u & 0x400U) != 0U) { ++nMods; kMod |= Keys.Alt; }
 			if((u & 0x800U) != 0U) return false; // Hankaku unsupported
+
+			// Do not send a key combination that is registered as hot key;
+			// https://sourceforge.net/p/keepass/bugs/1235/
+			// Windows shortcut hot keys involve at least 2 modifiers
+			if(nMods >= 2)
+			{
+				Keys kFull = (kMod | (Keys)vKey);
+				if(HotKeyManager.IsHotKeyRegistered(kFull, true))
+					return false;
+			}
 
 			Keys kModDiff = (kMod & ~m_kModCur);
 			if(kModDiff != Keys.None)

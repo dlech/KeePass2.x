@@ -30,13 +30,11 @@ namespace KeePass.Util.SendInputExt
 {
 	internal sealed class SiEngineUnix : SiEngineStd
 	{
-		private bool m_bFirst = true;
-
 		public override void Init()
 		{
 			base.Init();
 
-			m_bFirst = true;
+			ReleaseModifiers();
 		}
 
 		// public override void Release()
@@ -86,18 +84,29 @@ namespace KeePass.Util.SendInputExt
 				NumberFormatInfo.InvariantInfo));
 		}
 
-		private void RunXDoTool(string strVerb, string strParam)
+		private static void ReleaseModifiers()
+		{
+			// '--clearmodifiers' clears the modifiers only for the
+			// current command and restores them afterwards, i.e.
+			// it does not permanently clear the modifiers
+			// str += " --clearmodifiers";
+
+			// Both left and right modifier keys must be released;
+			// releasing only one does not necessarily clear the
+			// modifier state
+			string[] vMods = new string[] {
+				"Shift_L", "Shift_R", "Control_L", "Control_R",
+				"Alt_L", "Alt_R", "Super_L", "Super_R", "Meta_L", "Meta_R"
+			};
+			foreach(string strMod in vMods)
+				RunXDoTool("keyup", strMod);
+		}
+
+		private static void RunXDoTool(string strVerb, string strParam)
 		{
 			if(string.IsNullOrEmpty(strVerb)) { Debug.Assert(false); return; }
 
 			string str = strVerb;
-
-			if(m_bFirst)
-			{
-				str += " --clearmodifiers";
-				m_bFirst = false;
-			}
-
 			if(!string.IsNullOrEmpty(strParam))
 				str += " " + strParam;
 

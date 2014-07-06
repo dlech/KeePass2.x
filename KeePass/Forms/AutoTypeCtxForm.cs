@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
@@ -42,6 +43,7 @@ namespace KeePass.Forms
 		private string m_strInitialFormRect = string.Empty;
 		private string m_strInitialColWidths = string.Empty;
 		private int m_nBannerWidth = -1;
+		private bool m_bCanShowPasswords = true;
 
 		private ContextMenuStrip m_ctxTools = null;
 		private ToolStripMenuItem m_tsmiColumns = null;
@@ -83,6 +85,8 @@ namespace KeePass.Forms
 			if(m_ilIcons != null) m_lvItems.SmallImageList = m_ilIcons;
 			else { Debug.Assert(false); m_ilIcons = new ImageList(); }
 
+			m_bCanShowPasswords = AppPolicy.Current.UnhidePasswords;
+
 			RecreateEntryList();
 
 			string strColWidths = Program.Config.UI.AutoTypeCtxColumnWidths;
@@ -98,6 +102,10 @@ namespace KeePass.Forms
 		private void RecreateEntryList()
 		{
 			long lFlags = Program.Config.UI.AutoTypeCtxFlags;
+
+			if(!m_bCanShowPasswords)
+				lFlags &= ~(long)AceAutoTypeCtxFlags.ColPassword;
+
 			UIUtil.CreateEntryList(m_lvItems, m_lCtxs, (AceAutoTypeCtxFlags)lFlags,
 				m_ilIcons);
 		}
@@ -205,9 +213,11 @@ namespace KeePass.Forms
 			m_tsmiColumns.DropDownItems.Add(tsmi);
 
 			tsmi = new ToolStripMenuItem(KPRes.Password);
-			tsmi.Checked = ((lFlags & (long)AceAutoTypeCtxFlags.ColPassword) != 0);
+			tsmi.Checked = (((lFlags & (long)AceAutoTypeCtxFlags.ColPassword) != 0) &&
+				m_bCanShowPasswords);
 			tsmi.Tag = AceAutoTypeCtxFlags.ColPassword;
 			tsmi.Click += this.OnToggleColumn;
+			if(!m_bCanShowPasswords) tsmi.Enabled = false;
 			m_tsmiColumns.DropDownItems.Add(tsmi);
 
 			tsmi = new ToolStripMenuItem(KPRes.Url);

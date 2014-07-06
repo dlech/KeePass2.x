@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -32,6 +33,7 @@ namespace KeePass.UI
 	public sealed class ImageComboBoxEx : ComboBox
 	{
 		private List<Image> m_vImages = null;
+		[Browsable(false)]
 		public List<Image> OrderedImageList
 		{
 			get { return m_vImages; }
@@ -40,7 +42,7 @@ namespace KeePass.UI
 
 		public ImageComboBoxEx() : base()
 		{
-			if(this.DesignMode) return;
+			if(Program.DesignMode) return;
 			if(NativeLib.IsUnix()) return;
 
 			Debug.Assert(this.DrawMode == DrawMode.Normal);

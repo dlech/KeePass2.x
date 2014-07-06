@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Threading;
@@ -47,6 +48,43 @@ namespace KeePassLib.Native
 		{
 			get { return m_bAllowNative; }
 			set { m_bAllowNative = value; }
+		}
+
+		private static ulong? m_ouMonoVersion = null;
+		public static ulong MonoVersion
+		{
+			get
+			{
+				if(m_ouMonoVersion.HasValue) return m_ouMonoVersion.Value;
+
+				ulong uVersion = 0;
+				try
+				{
+					Type t = Type.GetType("Mono.Runtime");
+					if(t != null)
+					{
+						MethodInfo mi = t.GetMethod("GetDisplayName",
+							BindingFlags.NonPublic | BindingFlags.Static);
+						if(mi != null)
+						{
+							string strName = (mi.Invoke(null, null) as string);
+							if(!string.IsNullOrEmpty(strName))
+							{
+								Match m = Regex.Match(strName, "\\d+(\\.\\d+)+");
+								if(m.Success)
+									uVersion = StrUtil.ParseVersion(m.Value);
+								else { Debug.Assert(false); }
+							}
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				m_ouMonoVersion = uVersion;
+				return uVersion;
+			}
 		}
 
 		/// <summary>

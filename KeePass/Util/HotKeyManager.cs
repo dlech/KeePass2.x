@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 
@@ -129,6 +130,18 @@ namespace KeePass.Util
 			foreach(int nID in vIDs) UnregisterHotKey(nID);
 
 			Debug.Assert(m_vRegKeys.Count == 0);
+		}
+
+		public static bool IsHotKeyRegistered(Keys kKey, bool bGlobal)
+		{
+			if(m_vRegKeys.ContainsValue(kKey)) return true;
+			if(!bGlobal) return false;
+
+			int nID = AppDefs.GlobalHotKeyId.TempRegTest;
+			if(!RegisterHotKey(nID, kKey)) return true;
+
+			UnregisterHotKey(nID);
+			return false;
 		}
 
 		/* private static void OnHotKey(string strKey, IntPtr lpUserData)

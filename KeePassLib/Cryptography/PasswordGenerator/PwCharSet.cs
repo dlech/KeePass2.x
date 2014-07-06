@@ -46,6 +46,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public const string Invalid = "\t\r\n";
 		public const string LookAlike = @"O0l1I|";
 
+		internal const string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;
+
 		private const int CharTabSize = (0x10000 / 8);
 
 		private List<char> m_vChars = new List<char>();

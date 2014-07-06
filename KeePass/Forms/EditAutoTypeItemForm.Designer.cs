@@ -35,13 +35,13 @@
 			this.m_lblTargetWindow = new System.Windows.Forms.Label();
 			this.m_lblKeySeqInsertInfo = new System.Windows.Forms.Label();
 			this.m_lblSeparator = new System.Windows.Forms.Label();
-			this.m_rbKeySeq = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_rtbPlaceholders = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_cmbWindow = new KeePass.UI.ImageComboBoxEx();
 			this.m_lblOpenHint = new System.Windows.Forms.Label();
 			this.m_lnkWildcardRegexHint = new System.Windows.Forms.LinkLabel();
 			this.m_rbSeqDefault = new System.Windows.Forms.RadioButton();
 			this.m_rbSeqCustom = new System.Windows.Forms.RadioButton();
+			this.m_cmbWindow = new KeePass.UI.ImageComboBoxEx();
+			this.m_rtbPlaceholders = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_rbKeySeq = new KeePass.UI.CustomRichTextBoxEx();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -98,7 +98,7 @@
 			// m_lblKeySeqInsertInfo
 			// 
 			this.m_lblKeySeqInsertInfo.AutoSize = true;
-			this.m_lblKeySeqInsertInfo.Location = new System.Drawing.Point(29, 213);
+			this.m_lblKeySeqInsertInfo.Location = new System.Drawing.Point(29, 214);
 			this.m_lblKeySeqInsertInfo.Name = "m_lblKeySeqInsertInfo";
 			this.m_lblKeySeqInsertInfo.Size = new System.Drawing.Size(94, 13);
 			this.m_lblKeySeqInsertInfo.TabIndex = 6;
@@ -111,46 +111,6 @@
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(511, 2);
 			this.m_lblSeparator.TabIndex = 11;
-			// 
-			// m_rbKeySeq
-			// 
-			this.m_rbKeySeq.DetectUrls = false;
-			this.m_rbKeySeq.Font = new System.Drawing.Font("Courier New", 8.25F);
-			this.m_rbKeySeq.HideSelection = false;
-			this.m_rbKeySeq.Location = new System.Drawing.Point(32, 187);
-			this.m_rbKeySeq.Multiline = false;
-			this.m_rbKeySeq.Name = "m_rbKeySeq";
-			this.m_rbKeySeq.Size = new System.Drawing.Size(467, 20);
-			this.m_rbKeySeq.TabIndex = 5;
-			this.m_rbKeySeq.Text = "";
-			this.m_rbKeySeq.TextChanged += new System.EventHandler(this.OnTextChangedKeySeq);
-			// 
-			// m_rtbPlaceholders
-			// 
-			this.m_rtbPlaceholders.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.m_rtbPlaceholders.Location = new System.Drawing.Point(32, 229);
-			this.m_rtbPlaceholders.Name = "m_rtbPlaceholders";
-			this.m_rtbPlaceholders.ReadOnly = true;
-			this.m_rtbPlaceholders.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-			this.m_rtbPlaceholders.Size = new System.Drawing.Size(467, 136);
-			this.m_rtbPlaceholders.TabIndex = 7;
-			this.m_rtbPlaceholders.Text = "";
-			this.m_rtbPlaceholders.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnPlaceholdersLinkClicked);
-			// 
-			// m_cmbWindow
-			// 
-			this.m_cmbWindow.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.m_cmbWindow.DropDownHeight = 218;
-			this.m_cmbWindow.FormattingEnabled = true;
-			this.m_cmbWindow.IntegralHeight = false;
-			this.m_cmbWindow.Location = new System.Drawing.Point(95, 72);
-			this.m_cmbWindow.MaxDropDownItems = 12;
-			this.m_cmbWindow.Name = "m_cmbWindow";
-			this.m_cmbWindow.OrderedImageList = null;
-			this.m_cmbWindow.Size = new System.Drawing.Size(404, 21);
-			this.m_cmbWindow.TabIndex = 0;
-			this.m_cmbWindow.SelectedIndexChanged += new System.EventHandler(this.OnWindowSelectedIndexChanged);
-			this.m_cmbWindow.TextUpdate += new System.EventHandler(this.OnWindowTextUpdate);
 			// 
 			// m_lblOpenHint
 			// 
@@ -195,6 +155,42 @@
 			this.m_rbSeqCustom.Text = "Use custom keystroke sequence:";
 			this.m_rbSeqCustom.UseVisualStyleBackColor = true;
 			this.m_rbSeqCustom.CheckedChanged += new System.EventHandler(this.OnSeqCustomCheckedChanged);
+			// 
+			// m_cmbWindow
+			// 
+			this.m_cmbWindow.IntegralHeight = false;
+			this.m_cmbWindow.Location = new System.Drawing.Point(95, 72);
+			this.m_cmbWindow.Name = "m_cmbWindow";
+			this.m_cmbWindow.OrderedImageList = null;
+			this.m_cmbWindow.Size = new System.Drawing.Size(404, 21);
+			this.m_cmbWindow.TabIndex = 0;
+			this.m_cmbWindow.SelectedIndexChanged += new System.EventHandler(this.OnWindowSelectedIndexChanged);
+			this.m_cmbWindow.TextUpdate += new System.EventHandler(this.OnWindowTextUpdate);
+			// 
+			// m_rtbPlaceholders
+			// 
+			this.m_rtbPlaceholders.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.m_rtbPlaceholders.Location = new System.Drawing.Point(32, 230);
+			this.m_rtbPlaceholders.Name = "m_rtbPlaceholders";
+			this.m_rtbPlaceholders.ReadOnly = true;
+			this.m_rtbPlaceholders.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+			this.m_rtbPlaceholders.Size = new System.Drawing.Size(467, 136);
+			this.m_rtbPlaceholders.TabIndex = 7;
+			this.m_rtbPlaceholders.Text = "";
+			this.m_rtbPlaceholders.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnPlaceholdersLinkClicked);
+			// 
+			// m_rbKeySeq
+			// 
+			this.m_rbKeySeq.DetectUrls = false;
+			this.m_rbKeySeq.Font = new System.Drawing.Font("Courier New", 8.25F);
+			this.m_rbKeySeq.HideSelection = false;
+			this.m_rbKeySeq.Location = new System.Drawing.Point(32, 187);
+			this.m_rbKeySeq.Multiline = false;
+			this.m_rbKeySeq.Name = "m_rbKeySeq";
+			this.m_rbKeySeq.Size = new System.Drawing.Size(467, 21);
+			this.m_rbKeySeq.TabIndex = 5;
+			this.m_rbKeySeq.Text = "";
+			this.m_rbKeySeq.TextChanged += new System.EventHandler(this.OnTextChangedKeySeq);
 			// 
 			// EditAutoTypeItemForm
 			// 

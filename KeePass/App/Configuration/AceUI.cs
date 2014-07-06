@@ -59,6 +59,7 @@ namespace KeePass.App.Configuration
 		DisablePlugins = 0x2,
 		DisableTriggers = 0x4,
 		DisableKeyChangeDays = 0x8,
+		HidePwQuality = 0x10,
 
 		HideBuiltInPwGenPrfInEntryDlg = 0x10000,
 		ShowLastAccessTime = 0x20000

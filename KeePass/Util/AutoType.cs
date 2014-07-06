@@ -195,12 +195,19 @@ namespace KeePass.Util
 			}
 
 			pweData.Touch(false);
-			if(EntryUtil.ExpireTanEntryIfOption(pweData, pwDatabase))
-				Program.MainForm.RefreshEntriesList();
+			EntryUtil.ExpireTanEntryIfOption(pweData, pwDatabase);
 
-			// SprEngine.Compile might have modified the database;
-			// pd.Modified is set by SprEngine
-			Program.MainForm.UpdateUI(false, null, false, null, false, null, false);
+			MainForm mf = Program.MainForm;
+			if(mf != null)
+			{
+				// Always refresh entry list (e.g. {NEWPASSWORD} might
+				// have changed data)
+				mf.RefreshEntriesList();
+
+				// SprEngine.Compile might have modified the database;
+				// pd.Modified is set by SprEngine
+				mf.UpdateUI(false, null, false, null, false, null, false);
+			}
 
 			return true;
 		}

@@ -68,6 +68,23 @@ namespace KeePass.Util
 		}
 	}
 
+	public sealed class IpcEventArgs : EventArgs
+	{
+		private readonly string m_strName;
+		public string Name { get { return m_strName; } }
+
+		private readonly CommandLineArgs m_args;
+		public CommandLineArgs Args { get { return m_args; } }
+
+		public IpcEventArgs(string strName, CommandLineArgs clArgs)
+		{
+			if(strName == null) throw new ArgumentNullException("strName");
+
+			m_strName = strName;
+			m_args = clArgs;
+		}
+	}
+
 	public static class IpcUtilEx
 	{
 		internal const string IpcMsgFilePreID = "KeePassIPC-";
@@ -75,6 +92,14 @@ namespace KeePass.Util
 
 		public const string CmdOpenDatabase = "OpenDatabase";
 		public const string CmdOpenEntryUrl = "OpenEntryUrl";
+		public const string CmdIpcEvent = "IpcEvent";
+
+		/// <summary>
+		/// Event that is raised e.g. when running KeePass with the
+		/// <c>AppDefs.CommandLineOptions.IpcEvent</c> command line parameter.
+		/// </summary>
+		/// <!-- https://sourceforge.net/p/keepass/feature-requests/1870/ -->
+		public static event EventHandler<IpcEventArgs> IpcEvent;
 
 		public static void SendGlobalMessage(IpcParamEx ipcMsg)
 		{
@@ -215,6 +240,25 @@ namespace KeePass.Util
 					Program.CommandLineArgs), true);
 			}
 			else if(ipcMsg.Message == CmdOpenEntryUrl) OpenEntryUrl(ipcMsg, mf);
+			else if(ipcMsg.Message == CmdIpcEvent)
+			{
+				try
+				{
+					if(IpcUtilEx.IpcEvent == null) return;
+
+					string strName = ipcMsg.Param0;
+					if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return; }
+
+					string[] vArgs = CommandLineArgs.SafeDeserialize(ipcMsg.Param1);
+					if(vArgs == null) { Debug.Assert(false); return; }
+
+					CommandLineArgs clArgs = new CommandLineArgs(vArgs);
+
+					IpcEventArgs e = new IpcEventArgs(strName, clArgs);
+					IpcUtilEx.IpcEvent(null, e);
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
 			else { Debug.Assert(false); }
 		}
 

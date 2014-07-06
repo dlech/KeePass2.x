@@ -282,7 +282,11 @@ namespace KeePass.Util.Spr
 				}
 			}
 
-			str = EntryUtil.FillPlaceholders(str, ctx);
+			if((ctx.Flags & SprCompileFlags.Env) != SprCompileFlags.None)
+				str = FillUriSpecial(str, ctx, @"{BASE", (ctx.Base ?? string.Empty),
+					ctx.BaseIsEncoded, uRecursionLevel);
+
+			str = EntryUtil.FillPlaceholders(str, ctx, uRecursionLevel);
 
 			if((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
 				str = ReplacePickChars(str, ctx, uRecursionLevel);
@@ -407,45 +411,89 @@ namespace KeePass.Util.Spr
 			return str;
 		}
 
-		private const string UrlSpecialRmvScm = @"{URL:RMVSCM}";
-		private const string UrlSpecialScm = @"{URL:SCM}";
-		private const string UrlSpecialHost = @"{URL:HOST}";
-		private const string UrlSpecialPort = @"{URL:PORT}";
-		private const string UrlSpecialPath = @"{URL:PATH}";
-		private const string UrlSpecialQuery = @"{URL:QUERY}";
 		private static string FillEntryStringsSpecial(string str, SprContext ctx,
 			uint uRecursionLevel)
 		{
-			if((str.IndexOf(UrlSpecialRmvScm, SprEngine.ScMethod) >= 0) ||
-				(str.IndexOf(UrlSpecialScm, SprEngine.ScMethod) >= 0) ||
-				(str.IndexOf(UrlSpecialHost, SprEngine.ScMethod) >= 0) ||
-				(str.IndexOf(UrlSpecialPort, SprEngine.ScMethod) >= 0) ||
-				(str.IndexOf(UrlSpecialPath, SprEngine.ScMethod) >= 0) ||
-				(str.IndexOf(UrlSpecialQuery, SprEngine.ScMethod) >= 0))
+			return FillUriSpecial(str, ctx, @"{URL", ctx.Entry.Strings.ReadSafe(
+				PwDefs.UrlField), false, uRecursionLevel);
+		}
+
+		private static string FillUriSpecial(string strText, SprContext ctx,
+			string strPlhInit, string strData, bool bDataIsEncoded,
+			uint uRecursionLevel)
+		{
+			Debug.Assert(strPlhInit.StartsWith(@"{") && !strPlhInit.EndsWith(@"}"));
+			Debug.Assert(strData != null);
+
+			string[] vPlhs = new string[] {
+				strPlhInit + @"}",
+				strPlhInit + @":RMVSCM}",
+				strPlhInit + @":SCM}",
+				strPlhInit + @":HOST}",
+				strPlhInit + @":PORT}",
+				strPlhInit + @":PATH}",
+				strPlhInit + @":QUERY}",
+				strPlhInit + @":USERINFO}",
+				strPlhInit + @":USERNAME}",
+				strPlhInit + @":PASSWORD}"
+			};
+
+			string str = strText;
+			string strDataCmp = null;
+			Uri uri = null;
+			for(int i = 0; i < vPlhs.Length; ++i)
 			{
-				SprContext ctxRaw = ctx.WithoutContentTransformations();
-				string strUrl = SprEngine.FillIfExists(@"{URL}", @"{URL}",
-					ctx.Entry.Strings.GetSafe(PwDefs.UrlField), ctxRaw, uRecursionLevel);
+				string strPlh = vPlhs[i];
+				if(str.IndexOf(strPlh, SprEngine.ScMethod) < 0) continue;
 
-				str = SprEngine.FillPlaceholder(str, UrlSpecialRmvScm,
-					UrlUtil.RemoveScheme(strUrl), ctx);
-
-				try
+				if(strDataCmp == null)
 				{
-					Uri uri = new Uri(strUrl);
-
-					str = SprEngine.FillPlaceholder(str, UrlSpecialScm,
-						uri.Scheme, ctx);
-					str = SprEngine.FillPlaceholder(str, UrlSpecialHost,
-						uri.Host, ctx);
-					str = SprEngine.FillPlaceholder(str, UrlSpecialPort,
-						uri.Port.ToString(NumberFormatInfo.InvariantInfo), ctx);
-					str = SprEngine.FillPlaceholder(str, UrlSpecialPath,
-						uri.AbsolutePath, ctx);
-					str = SprEngine.FillPlaceholder(str, UrlSpecialQuery,
-						uri.Query, ctx);
+					SprContext ctxData = (bDataIsEncoded ?
+						ctx.WithoutContentTransformations() : ctx);
+					strDataCmp = SprEngine.CompileInternal(strData, ctxData,
+						uRecursionLevel + 1);
 				}
-				catch(Exception) { } // Invalid URI
+
+				string strRep = null;
+				if(i == 0) strRep = strDataCmp;
+				else if(i == 1) strRep = UrlUtil.RemoveScheme(strDataCmp);
+				else
+				{
+					try
+					{
+						if(uri == null) uri = new Uri(strDataCmp);
+
+						int t;
+						switch(i)
+						{
+							case 2: strRep = uri.Scheme; break;
+							case 3: strRep = uri.Host; break;
+							case 4:
+								strRep = uri.Port.ToString(
+									NumberFormatInfo.InvariantInfo);
+								break;
+							case 5: strRep = uri.AbsolutePath; break;
+							case 6: strRep = uri.Query; break;
+							case 7: strRep = uri.UserInfo; break;
+							case 8:
+								strRep = uri.UserInfo;
+								t = strRep.IndexOf(':');
+								if(t >= 0) strRep = strRep.Substring(0, t);
+								break;
+							case 9:
+								strRep = uri.UserInfo;
+								t = strRep.IndexOf(':');
+								if(t < 0) strRep = string.Empty;
+								else strRep = strRep.Substring(t + 1);
+								break;
+							default: Debug.Assert(false); break;
+						}
+					}
+					catch(Exception) { } // Invalid URI
+				}
+				if(strRep == null) strRep = string.Empty; // No assert
+
+				str = StrUtil.ReplaceCaseInsensitive(str, strPlh, strRep);
 			}
 
 			return str;
@@ -554,6 +602,8 @@ namespace KeePass.Util.Spr
 
 			SearchParameters sp = SearchParameters.None;
 			sp.SearchString = strRef.Substring(4);
+			sp.RespectEntrySearchingDisabled = false;
+
 			if(chScan == 'T') sp.SearchInTitles = true;
 			else if(chScan == 'U') sp.SearchInUserNames = true;
 			else if(chScan == 'A') sp.SearchInUrls = true;
@@ -626,7 +676,7 @@ namespace KeePass.Util.Spr
 		/// Parse and remove a placeholder of the form
 		/// <c>{PLH:/Param1/Param2/.../}</c>.
 		/// </summary>
-		private static bool ParseAndRemovePlhWithParams(ref string str,
+		internal static bool ParseAndRemovePlhWithParams(ref string str,
 			SprContext ctx, uint uRecursionLevel, string strPlhStart,
 			out int iStart, out List<string> lParams, bool bSprCmpParams)
 		{
@@ -662,7 +712,7 @@ namespace KeePass.Util.Spr
 			}
 			catch(Exception)
 			{
-				str = str.Substring(0, strPlhStart.Length);
+				str = str.Substring(0, iStart);
 			}
 
 			if(bSprCmpParams && (ctx != null))
@@ -723,6 +773,8 @@ namespace KeePass.Util.Spr
 					}
 					else if(strCmd == "uri")
 						strNew = Uri.EscapeDataString(strNew);
+					else if(strCmd == "uri-dec")
+						strNew = Uri.UnescapeDataString(strNew);
 
 					strNew = TransformContent(strNew, ctx);
 					str = str.Insert(iStart, strNew);

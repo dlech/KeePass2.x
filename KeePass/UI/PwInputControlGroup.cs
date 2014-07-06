@@ -44,7 +44,8 @@ namespace KeePass.UI
 		private TextBox m_tbRepeat = null;
 		private Label m_lblQualityPrompt = null;
 		private QualityProgressBar m_pbQuality = null;
-		private Label m_lblQualityBits = null;
+		private Label m_lblQualityInfo = null;
+		private ToolTip m_ttHint = null;
 		private Form m_fParent = null;
 
 		private SecureEdit m_secPassword = null;
@@ -103,7 +104,8 @@ namespace KeePass.UI
 
 		public void Attach(TextBox tbPassword, CheckBox cbHide, Label lblRepeat,
 			TextBox tbRepeat, Label lblQualityPrompt, QualityProgressBar pbQuality,
-			Label lblQualityBits, Form fParent, bool bInitialHide, bool bSecureDesktopMode)
+			Label lblQualityInfo, ToolTip ttHint, Form fParent, bool bInitialHide,
+			bool bSecureDesktopMode)
 		{
 			if(tbPassword == null) throw new ArgumentNullException("tbPassword");
 			if(cbHide == null) throw new ArgumentNullException("cbHide");
@@ -111,7 +113,8 @@ namespace KeePass.UI
 			if(tbRepeat == null) throw new ArgumentNullException("tbRepeat");
 			if(lblQualityPrompt == null) throw new ArgumentNullException("lblQualityPrompt");
 			if(pbQuality == null) throw new ArgumentNullException("pbQuality");
-			if(lblQualityBits == null) throw new ArgumentNullException("lblQualityBits");
+			if(lblQualityInfo == null) throw new ArgumentNullException("lblQualityInfo");
+			// ttHint may be null
 			if(fParent == null) throw new ArgumentNullException("fParent");
 
 			Release();
@@ -123,7 +126,8 @@ namespace KeePass.UI
 			m_tbRepeat = tbRepeat;
 			m_lblQualityPrompt = lblQualityPrompt;
 			m_pbQuality = pbQuality;
-			m_lblQualityBits = lblQualityBits;
+			m_lblQualityInfo = lblQualityInfo;
+			m_ttHint = ttHint;
 			m_fParent = fParent;
 
 			m_secPassword = new SecureEdit();
@@ -160,7 +164,8 @@ namespace KeePass.UI
 			m_tbRepeat = null;
 			m_lblQualityPrompt = null;
 			m_pbQuality = null;
-			m_lblQualityBits = null;
+			m_lblQualityInfo = null;
+			m_ttHint = null;
 			m_fParent = null;
 
 			m_secPassword = null;
@@ -211,9 +216,15 @@ namespace KeePass.UI
 
 			m_lblQualityPrompt.Enabled = m_bEnabled;
 			m_pbQuality.Enabled = m_bEnabled;
-			m_lblQualityBits.Enabled = m_bEnabled;
+			m_lblQualityInfo.Enabled = m_bEnabled;
 
-			UpdateQualityInfo(pbUtf8);
+			if((Program.Config.UI.UIFlags & (ulong)AceUIFlags.HidePwQuality) != 0)
+			{
+				m_lblQualityPrompt.Visible = false;
+				m_pbQuality.Visible = false;
+				m_lblQualityInfo.Visible = false;
+			}
+			else UpdateQualityInfo(pbUtf8);
 
 			// MemUtil.ZeroByteArray(pbUtf8);
 			// MemUtil.ZeroByteArray(pbRepeat);
@@ -398,7 +409,8 @@ namespace KeePass.UI
 				// Test whether password has changed in the meanwhile
 				if(!MemUtil.ArraysEqual(pbUtf8, pbNewUtf8)) return;
 
-				tb.Invoke(new UqiShowQualityDelegate(this.UqiShowQuality), uBits);
+				tb.Invoke(new UqiShowQualityDelegate(this.UqiShowQuality),
+					uBits, (uint)str.Length);
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally
@@ -415,16 +427,26 @@ namespace KeePass.UI
 			return null;
 		}
 
-		private delegate void UqiShowQualityDelegate(uint uBits);
-		private void UqiShowQuality(uint uBits)
+		private delegate void UqiShowQualityDelegate(uint uBits, uint uLength);
+		private void UqiShowQuality(uint uBits, uint uLength)
 		{
 			try
 			{
-				m_lblQualityBits.Text = uBits.ToString() + " " + KPRes.Bits;
+				string strBits = uBits.ToString() + " " + KPRes.BitsStc;
+				m_pbQuality.ProgressText = strBits;
+
 				int iPos = (int)((100 * uBits) / (256 / 2));
 				if(iPos < 0) iPos = 0;
 				else if(iPos > 100) iPos = 100;
 				m_pbQuality.Value = iPos;
+
+				string strInfo = uLength.ToString() + " " + KPRes.CharsAbbr;
+				if(Program.Config.UI.OptimizeForScreenReader)
+					strInfo = strBits + ", " + strInfo;
+				m_lblQualityInfo.Text = strInfo;
+				if(m_ttHint != null)
+					m_ttHint.SetToolTip(m_lblQualityInfo, KPRes.PasswordLength +
+						": " + uLength.ToString() + " " + KPRes.CharsStc);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

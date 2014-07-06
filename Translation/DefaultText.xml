@@ -217,6 +217,9 @@
 		<Data Name="Bits">
 			<Value>Bits</Value>
 		</Data>
+		<Data Name="BitsStc">
+			<Value>bits</Value>
+		</Data>
 		<Data Name="Bold">
 			<Value>Bold</Value>
 		</Data>
@@ -249,6 +252,12 @@
 		</Data>
 		<Data Name="ChangeMasterKeyIntroShort">
 			<Value>You are changing the composite master key for the currently-open database.</Value>
+		</Data>
+		<Data Name="CharsAbbr">
+			<Value>ch.</Value>
+		</Data>
+		<Data Name="CharsStc">
+			<Value>characters</Value>
 		</Data>
 		<Data Name="CheckForUpdAtStart">
 			<Value>Check for update at KeePass startup</Value>
@@ -904,6 +913,12 @@
 		<Data Name="GroupCannotStoreEntries">
 			<Value>The selected group cannot store any entries.</Value>
 		</Data>
+		<Data Name="GroupsSkipped">
+			<Value>{PARAM} groups skipped</Value>
+		</Data>
+		<Data Name="GroupsSkipped1">
+			<Value>1 group skipped</Value>
+		</Data>
 		<Data Name="HelpSourceNoLocalOption">
 			<Value>This option is disabled, because local help is not installed.</Value>
 		</Data>
@@ -1348,6 +1363,9 @@
 		<Data Name="Password">
 			<Value>Password</Value>
 		</Data>
+		<Data Name="PasswordLength">
+			<Value>Password length</Value>
+		</Data>
 		<Data Name="PasswordManagers">
 			<Value>Password Managers</Value>
 		</Data>
@@ -1594,6 +1612,9 @@
 		<Data Name="SavedDatabaseFile">
 			<Value>Saved database file</Value>
 		</Data>
+		<Data Name="SaveForceSync">
+			<Value>Do not ask whether to synchronize or overwrite; force synchronization</Value>
+		</Data>
 		<Data Name="SavingDatabase">
 			<Value>Saving database...</Value>
 		</Data>
@@ -1615,14 +1636,17 @@
 		<Data Name="SearchDesc">
 			<Value>Search the password database for entries.</Value>
 		</Data>
+		<Data Name="SearchEntriesFound">
+			<Value>{PARAM} entries found</Value>
+		</Data>
+		<Data Name="SearchEntriesFound1">
+			<Value>1 entry found</Value>
+		</Data>
 		<Data Name="SearchGroupName">
 			<Value>Search Results</Value>
 		</Data>
 		<Data Name="SearchingOp">
 			<Value>Searching</Value>
-		</Data>
-		<Data Name="SearchItemsFoundSmall">
-			<Value>entries found.</Value>
 		</Data>
 		<Data Name="SearchKeyFiles">
 			<Value>Automatically search key files</Value>
@@ -1942,17 +1966,14 @@
 		<Data Name="UrlOverride">
 			<Value>URL Override</Value>
 		</Data>
+		<Data Name="UrlOverrides">
+			<Value>URL Overrides</Value>
+		</Data>
 		<Data Name="UrlSaveDesc">
 			<Value>Save current database on a server.</Value>
 		</Data>
 		<Data Name="UrlSaveTitle">
 			<Value>Save To URL</Value>
-		</Data>
-		<Data Name="UrlSchemeOverride">
-			<Value>Scheme-Specific URL Override</Value>
-		</Data>
-		<Data Name="UrlSchemeOverrides">
-			<Value>Scheme-Specific URL Overrides</Value>
 		</Data>
 		<Data Name="UseCustomToolStripRenderer">
 			<Value>Use custom ToolStrip renderer</Value>

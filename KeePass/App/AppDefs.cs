@@ -56,6 +56,8 @@ namespace KeePass.App
 			public const int AutoTypeSelected = 196;
 			public const int ShowWindow = 226;
 			public const int EntryMenu = 227;
+
+			internal const int TempRegTest = 225;
 		}
 
 		public static class HelpTopics
@@ -138,6 +140,7 @@ namespace KeePass.App
 			public const string OpenEntryUrl = "entry-url-open";
 			public const string LockAll = "lock-all";
 			public const string UnlockAll = "unlock-all";
+			public const string IpcEvent = "e";
 
 			public const string Uuid = "uuid";
 
@@ -164,6 +167,8 @@ namespace KeePass.App
 			public const string SavePluginCompileRes = "saveplgxcr";
 			public const string ShowAssemblyInfo = "showasminfo";
 			public const string MakeXmlSerializerEx = "makexmlserializerex";
+
+			public const string Version = "version";
 
 			// #if (DEBUG && !KeePassLibSD)
 			// public const string MakePopularPasswordTable = "makepopularpasswordtable";

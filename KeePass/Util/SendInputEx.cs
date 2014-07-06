@@ -23,6 +23,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util.SendInputExt;
 
@@ -38,7 +39,8 @@ namespace KeePass.Util
 		Char,
 		Delay,
 		SetDefaultDelay,
-		ClipboardCopy
+		ClipboardCopy,
+		AppActivate
 	}
 
 	internal sealed class SiEvent
@@ -82,6 +84,7 @@ namespace KeePass.Util
 					strSub = this.Delay.ToString();
 					break;
 				case SiEventType.ClipboardCopy:
+				case SiEventType.AppActivate:
 					strSub = this.Text;
 					break;
 				default: break;
@@ -270,62 +273,48 @@ namespace KeePass.Util
 			if(chFirst == char.MinValue) { Debug.Assert(false); return null; }
 
 			int iPart = 0;
-			string strName = string.Empty, strParam = string.Empty;
+			StringBuilder sbName = new StringBuilder(), sbParams =
+				new StringBuilder();
+			sbName.Append(chFirst);
 
-			StringBuilder sb = new StringBuilder();
-			sb.Append(chFirst);
-
-			bool bParsed = false;
-			while(!bParsed)
+			while(true)
 			{
 				char ch = cs.ReadChar();
 				if(ch == char.MinValue) { Debug.Assert(false); return null; }
+				if(ch == '}') break;
 
-				if(ch == '}')
+				if(iPart == 0)
 				{
-					ch = ' '; // Finish current part
-					bParsed = true;
+					if(char.IsWhiteSpace(ch)) ++iPart;
+					else sbName.Append(ch);
 				}
-
-				if(char.IsWhiteSpace(ch))
-				{
-					if(iPart == 0)
-					{
-						strName = sb.ToString();
-						sb.Remove(0, sb.Length);
-						++iPart;
-					}
-					else if((iPart == 1) && (sb.Length > 0))
-					{
-						strParam = sb.ToString();
-						sb.Remove(0, sb.Length);
-						++iPart;
-					}
-				}
-				else sb.Append(ch);
+				else sbParams.Append(ch);
 			}
 
-			uint? uParam = null;
-			if(strParam.Length > 0)
+			string strName = sbName.ToString();
+			string strParams = sbParams.ToString().Trim();
+
+			uint? ouParam = null;
+			if(strParams.Length > 0)
 			{
 				uint uParamTry;
-				if(uint.TryParse(strParam, out uParamTry)) uParam = uParamTry;
+				if(uint.TryParse(strParams, out uParamTry)) ouParam = uParamTry;
 			}
 
 			List<SiEvent> l = new List<SiEvent>();
 
 			if(strName.Equals("DELAY", StrUtil.CaseIgnoreCmp))
 			{
-				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+				if(!ouParam.HasValue) { Debug.Assert(false); return null; }
 
 				SiEvent si = new SiEvent();
 				si.Type = SiEventType.Delay;
-				si.Delay = uParam.Value;
+				si.Delay = ouParam.Value;
 
 				l.Add(si);
 				return l;
 			}
-			else if(strName.StartsWith("DELAY=", StrUtil.CaseIgnoreCmp))
+			if(strName.StartsWith("DELAY=", StrUtil.CaseIgnoreCmp))
 			{
 				SiEvent si = new SiEvent();
 				si.Type = SiEventType.SetDefaultDelay;
@@ -339,37 +328,29 @@ namespace KeePass.Util
 				l.Add(si);
 				return l;
 			}
-			else if(strName.Equals("VKEY", StrUtil.CaseIgnoreCmp))
+			if(strName.Equals("VKEY", StrUtil.CaseIgnoreCmp) ||
+				strName.Equals("VKEY-NX", StrUtil.CaseIgnoreCmp) ||
+				strName.Equals("VKEY-EX", StrUtil.CaseIgnoreCmp))
 			{
-				if(!uParam.HasValue) { Debug.Assert(false); return null; }
+				if(!ouParam.HasValue) { Debug.Assert(false); return null; }
 
 				SiEvent si = new SiEvent();
 				si.Type = SiEventType.Key;
-				si.VKey = (int)uParam.Value;
+				si.VKey = (int)ouParam.Value;
+
+				if(strName.EndsWith("-NX", StrUtil.CaseIgnoreCmp))
+					si.ExtendedKey = false;
+				else if(strName.EndsWith("-EX", StrUtil.CaseIgnoreCmp))
+					si.ExtendedKey = true;
 
 				l.Add(si);
 				return l;
 			}
-			else if(strName.Equals("VKEY-NX", StrUtil.CaseIgnoreCmp))
+			if(strName.Equals("APPACTIVATE", StrUtil.CaseIgnoreCmp))
 			{
-				if(!uParam.HasValue) { Debug.Assert(false); return null; }
-
 				SiEvent si = new SiEvent();
-				si.Type = SiEventType.Key;
-				si.VKey = (int)uParam.Value;
-				si.ExtendedKey = false;
-
-				l.Add(si);
-				return l;
-			}
-			else if(strName.Equals("VKEY-EX", StrUtil.CaseIgnoreCmp))
-			{
-				if(!uParam.HasValue) { Debug.Assert(false); return null; }
-
-				SiEvent si = new SiEvent();
-				si.Type = SiEventType.Key;
-				si.VKey = (int)uParam.Value;
-				si.ExtendedKey = true;
+				si.Type = SiEventType.AppActivate;
+				si.Text = strParams;
 
 				l.Add(si);
 				return l;
@@ -396,7 +377,7 @@ namespace KeePass.Util
 			}
 
 			uint uRepeat = 1;
-			if(uParam.HasValue) uRepeat = uParam.Value;
+			if(ouParam.HasValue) uRepeat = ouParam.Value;
 
 			for(uint u = 0; u < uRepeat; ++u)
 			{
@@ -551,6 +532,10 @@ namespace KeePass.Util
 							ClipboardUtil.Clear();
 						break;
 
+					case SiEventType.AppActivate:
+						AppActivate(si);
+						break;
+
 					default:
 						Debug.Assert(false);
 						break;
@@ -564,6 +549,19 @@ namespace KeePass.Util
 						siEngine.Delay(uDefaultDelay);
 				}
 			}
+		}
+
+		private static void AppActivate(SiEvent si)
+		{
+			try
+			{
+				if(string.IsNullOrEmpty(si.Text)) return;
+
+				IntPtr h = NativeMethods.FindWindow(si.Text);
+				if(h != IntPtr.Zero)
+					NativeMethods.EnsureForegroundWindow(h);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

@@ -55,18 +55,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x021A0000;
+		public const uint Version32 = 0x021B0000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002001A00000000UL;
+		public const ulong FileVersion64 = 0x0002001B00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.26";
+		public const string VersionString = "2.27";
 
 		public const string Copyright = @"Copyright © 2003-2014 Dominik Reichl";
 
@@ -220,7 +220,7 @@ namespace KeePassLib
 		}
 	}
 
-	#pragma warning disable 1591 // Missing XML comments warning
+	// #pragma warning disable 1591 // Missing XML comments warning
 	/// <summary>
 	/// Search parameters for group and entry searches.
 	/// </summary>
@@ -410,9 +410,9 @@ namespace KeePassLib
 			return (SearchParameters)this.MemberwiseClone();
 		}
 	}
-	#pragma warning restore 1591 // Missing XML comments warning
+	// #pragma warning restore 1591 // Missing XML comments warning
 
-	#pragma warning disable 1591 // Missing XML comments warning
+	// #pragma warning disable 1591 // Missing XML comments warning
 	/// <summary>
 	/// Memory protection configuration structure (for default fields).
 	/// </summary>
@@ -442,7 +442,7 @@ namespace KeePassLib
 			return false;
 		}
 	}
-	#pragma warning restore 1591 // Missing XML comments warning
+	// #pragma warning restore 1591 // Missing XML comments warning
 
 	public sealed class ObjectTouchedEventArgs : EventArgs
 	{

@@ -24,8 +24,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
 
-using KeePass.Util;
-
 using KeePassLib.Utility;
 
 namespace KeePass.UI

@@ -127,9 +127,13 @@ namespace KeePass.Util.SendInputExt
 				si.Down = true;
 				lNew.Insert(1, si);
 
+				// Send the 'v' using a virtual key code, not as char;
+				// sending it as char (translated to a keypress) doesn't
+				// work with all keyboard layouts (e.g. Russian);
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/938d06a7/
 				si = new SiEvent();
-				si.Type = SiEventType.Char;
-				si.Char = 'v';
+				si.Type = SiEventType.Key;
+				si.VKey = (int)Keys.V;
 				lNew.Insert(2, si);
 
 				si = new SiEvent();

@@ -139,11 +139,17 @@ namespace KeePassLib.Serialization
 			return (IOConnectionInfo)this.MemberwiseClone();
 		}
 
+#if DEBUG // For debugger display only
+		public override string ToString()
+		{
+			return GetDisplayName();
+		}
+#endif
+
 		/*
 		/// <summary>
 		/// Serialize the current connection info to a string. Credentials
-		/// are only serialized if the <c>SaveCredentials</c> property
-		/// is <c>true</c>.
+		/// are serialized based on the <c>CredSaveMode</c> property.
 		/// </summary>
 		/// <param name="iocToCompile">Input object to be serialized.</param>
 		/// <returns>Serialized object as string.</returns>

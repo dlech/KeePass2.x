@@ -25,8 +25,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using KeePass.Util;
-
 using KeePassLib.Utility;
 
 namespace KeePass.UI

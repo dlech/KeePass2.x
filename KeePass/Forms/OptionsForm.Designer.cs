@@ -58,8 +58,6 @@
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
 			this.m_btnSchemeOverrides = new System.Windows.Forms.Button();
-			this.m_tbUrlOverride = new System.Windows.Forms.TextBox();
-			this.m_cbUrlOverride = new System.Windows.Forms.CheckBox();
 			this.m_cbSingleClickTrayAction = new System.Windows.Forms.CheckBox();
 			this.m_cbAutoRun = new System.Windows.Forms.CheckBox();
 			this.m_grpFileExt = new System.Windows.Forms.GroupBox();
@@ -420,8 +418,6 @@
 			// m_tabIntegration
 			// 
 			this.m_tabIntegration.Controls.Add(this.m_btnSchemeOverrides);
-			this.m_tabIntegration.Controls.Add(this.m_tbUrlOverride);
-			this.m_tabIntegration.Controls.Add(this.m_cbUrlOverride);
 			this.m_tabIntegration.Controls.Add(this.m_cbSingleClickTrayAction);
 			this.m_tabIntegration.Controls.Add(this.m_cbAutoRun);
 			this.m_tabIntegration.Controls.Add(this.m_grpFileExt);
@@ -435,31 +431,13 @@
 			// 
 			// m_btnSchemeOverrides
 			// 
-			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(402, 265);
+			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(435, 279);
 			this.m_btnSchemeOverrides.Name = "m_btnSchemeOverrides";
-			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(145, 23);
-			this.m_btnSchemeOverrides.TabIndex = 6;
-			this.m_btnSchemeOverrides.Text = "URL Scheme Overrides...";
+			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(112, 23);
+			this.m_btnSchemeOverrides.TabIndex = 4;
+			this.m_btnSchemeOverrides.Text = "&URL Overrides...";
 			this.m_btnSchemeOverrides.UseVisualStyleBackColor = true;
-			this.m_btnSchemeOverrides.Click += new System.EventHandler(this.OnBtnUrlSchemeOverrides);
-			// 
-			// m_tbUrlOverride
-			// 
-			this.m_tbUrlOverride.Location = new System.Drawing.Point(124, 239);
-			this.m_tbUrlOverride.Name = "m_tbUrlOverride";
-			this.m_tbUrlOverride.Size = new System.Drawing.Size(422, 20);
-			this.m_tbUrlOverride.TabIndex = 5;
-			// 
-			// m_cbUrlOverride
-			// 
-			this.m_cbUrlOverride.AutoSize = true;
-			this.m_cbUrlOverride.Location = new System.Drawing.Point(6, 241);
-			this.m_cbUrlOverride.Name = "m_cbUrlOverride";
-			this.m_cbUrlOverride.Size = new System.Drawing.Size(112, 17);
-			this.m_cbUrlOverride.TabIndex = 4;
-			this.m_cbUrlOverride.Text = "Override all URLs:";
-			this.m_cbUrlOverride.UseVisualStyleBackColor = true;
-			this.m_cbUrlOverride.CheckedChanged += new System.EventHandler(this.OnOverrideURLsCheckedChanged);
+			this.m_btnSchemeOverrides.Click += new System.EventHandler(this.OnBtnUrlOverrides);
 			// 
 			// m_cbSingleClickTrayAction
 			// 
@@ -618,7 +596,7 @@
 			this.m_btnProxy.Name = "m_btnProxy";
 			this.m_btnProxy.Size = new System.Drawing.Size(75, 23);
 			this.m_btnProxy.TabIndex = 1;
-			this.m_btnProxy.Text = "Proxy...";
+			this.m_btnProxy.Text = "&Proxy...";
 			this.m_btnProxy.UseVisualStyleBackColor = true;
 			this.m_btnProxy.Click += new System.EventHandler(this.OnBtnProxy);
 			// 
@@ -716,8 +694,6 @@
 		private System.Windows.Forms.CheckBox m_cbAutoRun;
 		private System.Windows.Forms.CheckBox m_cbSingleClickTrayAction;
 		private KeePass.UI.CustomListViewEx m_lvAdvanced;
-		private System.Windows.Forms.TextBox m_tbUrlOverride;
-		private System.Windows.Forms.CheckBox m_cbUrlOverride;
 		private KeePass.UI.CustomListViewEx m_lvSecurityOptions;
 		private System.Windows.Forms.NumericUpDown m_numMruCount;
 		private System.Windows.Forms.Label m_lblMruCount;

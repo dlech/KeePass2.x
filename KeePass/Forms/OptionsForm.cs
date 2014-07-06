@@ -62,6 +62,7 @@ namespace KeePass.Forms
 		private Keys m_kPrevSWHKKey = Keys.None;
 
 		private AceUrlSchemeOverrides m_aceUrlSchemeOverrides = null;
+		private string m_strUrlOverrideAll = string.Empty;
 
 		private bool m_bInitialTsRenderer = true;
 		public bool RequiresUIReinitialize
@@ -129,6 +130,7 @@ namespace KeePass.Forms
 				m_tabMain.SelectedTab = m_tabMain.TabPages[(int)uTab];
 
 			m_aceUrlSchemeOverrides = Program.Config.Integration.UrlSchemeOverrides.CloneDeep();
+			m_strUrlOverrideAll = Program.Config.Integration.UrlOverride;
 
 			m_cmbBannerStyle.Items.Add("(" + KPRes.CurrentStyle + ")");
 			m_cmbBannerStyle.Items.Add("WinXP Login");
@@ -465,15 +467,6 @@ namespace KeePass.Forms
 			m_cbSingleClickTrayAction.Checked = Program.Config.UI.TrayIcon.SingleClickDefault;
 			if(AppConfigEx.IsOptionEnforced(Program.Config.UI.TrayIcon, "SingleClickDefault"))
 				m_cbSingleClickTrayAction.Enabled = false;
-
-			string strOverride = Program.Config.Integration.UrlOverride;
-			m_cbUrlOverride.Checked = (strOverride.Length > 0);
-			m_tbUrlOverride.Text = strOverride;
-			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlOverride"))
-				m_cbUrlOverride.Enabled = false;
-
-			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlSchemeOverrides"))
-				m_btnSchemeOverrides.Enabled = false;
 		}
 
 		private void LoadAdvancedOptions()
@@ -533,6 +526,8 @@ namespace KeePass.Forms
 				lvg, KPRes.UseTransactedDatabaseWrites);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",
 				lvg, KPRes.UseFileLocks + " " + KPRes.NotRecommended);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "SaveForceSync",
+				lvg, KPRes.SaveForceSync);
 			m_cdxAdvanced.CreateItem(Program.Config.Security, "SslCertsAcceptInvalid",
 				lvg, KPRes.SslCertsAcceptInvalid);
 
@@ -648,13 +643,10 @@ namespace KeePass.Forms
 
 			Program.Config.UI.TrayIcon.SingleClickDefault = m_cbSingleClickTrayAction.Checked;
 
-			if(m_cbUrlOverride.Checked)
-				Program.Config.Integration.UrlOverride = m_tbUrlOverride.Text;
-			else Program.Config.Integration.UrlOverride = string.Empty;
+			Program.Config.Integration.UrlSchemeOverrides = m_aceUrlSchemeOverrides;
+			Program.Config.Integration.UrlOverride = m_strUrlOverrideAll;
 
 			m_cdxAdvanced.UpdateData(true);
-
-			Program.Config.Integration.UrlSchemeOverrides = m_aceUrlSchemeOverrides;
 
 			Program.Config.Apply(AceApplyFlags.All);
 		}
@@ -719,9 +711,6 @@ namespace KeePass.Forms
 			m_numClipClearTime.Enabled = (m_cbClipClearTime.Checked &&
 				m_cbClipClearTime.Enabled);
 
-			m_tbUrlOverride.Enabled = (m_cbUrlOverride.Checked &&
-				m_cbUrlOverride.Enabled);
-
 			m_bBlockUIUpdate = false;
 		}
 
@@ -757,7 +746,7 @@ namespace KeePass.Forms
 			if(fOld.OverrideUIDefault) dlg.Font = fOld.ToFont();
 			else
 			{
-				try { dlg.Font = m_tbUrlOverride.Font; }
+				try { dlg.Font = m_lvSecurityOptions.Font; }
 				catch(Exception) { Debug.Assert(false); }
 			}
 
@@ -781,7 +770,7 @@ namespace KeePass.Forms
 				try
 				{
 					dlg.Font = new Font(FontFamily.GenericMonospace,
-						m_tbUrlOverride.Font.SizeInPoints);
+						m_lvSecurityOptions.Font.SizeInPoints);
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -837,11 +826,6 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void OnOverrideURLsCheckedChanged(object sender, EventArgs e)
-		{
-			UpdateUIState();
-		}
-
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			CleanUpEx();
@@ -858,11 +842,15 @@ namespace KeePass.Forms
 			UpdateUIState();
 		}
 
-		private void OnBtnUrlSchemeOverrides(object sender, EventArgs e)
+		private void OnBtnUrlOverrides(object sender, EventArgs e)
 		{
-			UrlSchemesForm dlg = new UrlSchemesForm();
-			dlg.InitEx(m_aceUrlSchemeOverrides);
-			UIUtil.ShowDialogAndDestroy(dlg);
+			UrlOverridesForm dlg = new UrlOverridesForm();
+			dlg.InitEx(m_aceUrlSchemeOverrides, m_strUrlOverrideAll);
+
+			if(dlg.ShowDialog() == DialogResult.OK)
+				m_strUrlOverrideAll = dlg.UrlOverrideAll;
+
+			UIUtil.DestroyForm(dlg);
 		}
 
 		private void OnHotKeyHelpLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -316,17 +316,23 @@ namespace KeePass.Ecas
 		private static IOConnectionInfo IOFromParameters(string strPath,
 			string strUser, string strPassword)
 		{
-			IOConnectionInfo iocBase = IOConnectionInfo.FromPath(strPath);
-			if(!string.IsNullOrEmpty(strUser)) iocBase.UserName = strUser;
-			if(!string.IsNullOrEmpty(strPassword)) iocBase.Password = strPassword;
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 
-			if(!string.IsNullOrEmpty(iocBase.UserName))
-				iocBase.CredSaveMode = IOCredSaveMode.UserNameOnly;
-			if(!string.IsNullOrEmpty(iocBase.Password))
-				iocBase.CredSaveMode = IOCredSaveMode.SaveCred;
+			// Set the user name, which acts as a filter for the MRU items
+			if(!string.IsNullOrEmpty(strUser)) ioc.UserName = strUser;
 
-			iocBase = Program.MainForm.CompleteConnectionInfoUsingMru(iocBase);
-			return MainForm.CompleteConnectionInfo(iocBase, false, true, true, false);
+			// Try to complete it using the MRU list; this will especially
+			// retrieve the CredSaveMode of the MRU item (if one exists)
+			ioc = Program.MainForm.CompleteConnectionInfoUsingMru(ioc);
+
+			// Override the password using the trigger value; do not change
+			// the CredSaveMode anymore (otherwise e.g. values retrieved
+			// using field references would be stored in the MRU list)
+			if(!string.IsNullOrEmpty(strPassword)) ioc.Password = strPassword;
+
+			if(ioc.Password.Length > 0) ioc.IsComplete = true;
+
+			return MainForm.CompleteConnectionInfo(ioc, false, true, true, false);
 		}
 
 		private static void ImportIntoCurrentDatabase(EcasAction a, EcasContext ctx)

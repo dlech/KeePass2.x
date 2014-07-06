@@ -181,6 +181,9 @@
     <Compile Include="..\KeePassLib\Native\NativeMethods.cs">
       <Link>KeePassLib\Native\NativeMethods.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeMethods.Unix.cs">
+      <Link>KeePassLib\Native\NativeMethods.Unix.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\PwCustomIcon.cs">
       <Link>KeePassLib\PwCustomIcon.cs</Link>
     </Compile>
@@ -283,6 +286,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MessageService.cs">
       <Link>KeePassLib\Utility\MessageService.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\MonoWorkarounds.cs">
+      <Link>KeePassLib\Utility\MonoWorkarounds.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\StrUtil.cs">
       <Link>KeePassLib\Utility\StrUtil.cs</Link>
@@ -661,17 +667,17 @@
     <Compile Include="Forms\UpdateCheckForm.Designer.cs">
       <DependentUpon>UpdateCheckForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UrlSchemeForm.cs">
+    <Compile Include="Forms\UrlOverrideForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UrlSchemeForm.Designer.cs">
-      <DependentUpon>UrlSchemeForm.cs</DependentUpon>
+    <Compile Include="Forms\UrlOverrideForm.Designer.cs">
+      <DependentUpon>UrlOverrideForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UrlSchemesForm.cs">
+    <Compile Include="Forms\UrlOverridesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UrlSchemesForm.Designer.cs">
-      <DependentUpon>UrlSchemesForm.cs</DependentUpon>
+    <Compile Include="Forms\UrlOverridesForm.Designer.cs">
+      <DependentUpon>UrlOverridesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\XmlReplaceForm.cs">
       <SubType>Form</SubType>
@@ -945,11 +951,11 @@
     <EmbeddedResource Include="Forms\UpdateCheckForm.resx">
       <DependentUpon>UpdateCheckForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UrlSchemeForm.resx">
-      <DependentUpon>UrlSchemeForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\UrlOverrideForm.resx">
+      <DependentUpon>UrlOverrideForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UrlSchemesForm.resx">
-      <DependentUpon>UrlSchemesForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\UrlOverridesForm.resx">
+      <DependentUpon>UrlOverridesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\XmlReplaceForm.resx">
       <DependentUpon>XmlReplaceForm.cs</DependentUpon>
@@ -1006,7 +1012,6 @@
     <Compile Include="Util\IpcBroadcast.Fsw.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
-    <Compile Include="Util\MonoWorkarounds.cs" />
     <Compile Include="Util\NetUtil.cs" />
     <Compile Include="Util\PwGeneratorUtil.cs" />
     <Compile Include="Util\SearchUtil.cs" />
@@ -1020,10 +1025,12 @@
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
+    <Compile Include="Util\ShutdownBlocker.cs" />
     <Compile Include="Util\Spr\SprContext.cs" />
     <Compile Include="Util\Spr\SprEncoding.cs" />
     <Compile Include="Util\Spr\SprEngine.cs" />
     <Compile Include="Util\Spr\SprEngine.PickChars.cs" />
+    <Compile Include="Util\Spr\SprSyntax.cs" />
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\UpdateCheckEx.cs" />

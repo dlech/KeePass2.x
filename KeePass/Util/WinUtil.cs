@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -112,25 +113,33 @@ namespace KeePass.Util
 			Debug.Assert(pe != null);
 			if(pe == null) throw new ArgumentNullException("pe");
 
+			string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
+
 			if(pe.OverrideUrl.Length > 0)
-				WinUtil.OpenUrl(pe.OverrideUrl, pe);
+				WinUtil.OpenUrl(pe.OverrideUrl, pe, true, strUrl);
 			else
 			{
 				string strOverride = Program.Config.Integration.UrlOverride;
 				if(strOverride.Length > 0)
-					WinUtil.OpenUrl(strOverride, pe);
+					WinUtil.OpenUrl(strOverride, pe, true, strUrl);
 				else
-					WinUtil.OpenUrl(pe.Strings.ReadSafe(PwDefs.UrlField), pe);
+					WinUtil.OpenUrl(strUrl, pe, true);
 			}
 		}
 
 		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource)
 		{
-			OpenUrl(strUrlToOpen, peDataSource, true);
+			OpenUrl(strUrlToOpen, peDataSource, true, null);
 		}
 
 		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource,
 			bool bAllowOverride)
+		{
+			OpenUrl(strUrlToOpen, peDataSource, bAllowOverride, null);
+		}
+
+		public static void OpenUrl(string strUrlToOpen, PwEntry peDataSource,
+			bool bAllowOverride, string strBaseRaw)
 		{
 			// If URL is null, return, do not throw exception.
 			Debug.Assert(strUrlToOpen != null); if(strUrlToOpen == null) return;
@@ -154,17 +163,26 @@ namespace KeePass.Util
 
 			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrlFlt);
 
-			string strUrl = SprEngine.Compile(strUrlFlt, new SprContext(
-				peDataSource, pwDatabase, SprCompileFlags.All, false, bCmdQuotes));
+			SprContext ctx = new SprContext(peDataSource, pwDatabase,
+				SprCompileFlags.All, false, bCmdQuotes);
+			ctx.Base = strBaseRaw;
+			ctx.BaseIsEncoded = false;
+
+			string strUrl = SprEngine.Compile(strUrlFlt, ctx);
 
 			string strOvr = Program.Config.Integration.UrlSchemeOverrides.GetOverrideForUrl(
 				strUrl);
 			if(!bAllowOverride) strOvr = null;
 			if(strOvr != null)
 			{
-				bCmdQuotes = WinUtil.IsCommandLineUrl(strOvr);
-				strUrl = SprEngine.Compile(strOvr, new SprContext(
-					peDataSource, pwDatabase, SprCompileFlags.All, false, bCmdQuotes));
+				bool bCmdQuotesOvr = WinUtil.IsCommandLineUrl(strOvr);
+
+				SprContext ctxOvr = new SprContext(peDataSource, pwDatabase,
+					SprCompileFlags.All, false, bCmdQuotesOvr);
+				ctxOvr.Base = strUrl;
+				ctxOvr.BaseIsEncoded = bCmdQuotes;
+
+				strUrl = SprEngine.Compile(strOvr, ctxOvr);
 			}
 
 			if(WinUtil.IsCommandLineUrl(strUrl))

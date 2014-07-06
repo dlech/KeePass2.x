@@ -333,7 +333,7 @@ namespace KeePass.Forms
 
 			foreach(ListViewItem lvi in lvsicSel)
 			{
-				PwUuid uuidIcon = lvi.Tag as PwUuid;
+				PwUuid uuidIcon = (lvi.Tag as PwUuid);
 
 				Debug.Assert(uuidIcon != null);
 				if(uuidIcon != null) vUuidsToDelete.Add(uuidIcon);

@@ -79,6 +79,7 @@
     <Compile Include="Keys\KeyValidatorPool.cs" />
     <Compile Include="Keys\UserKeyType.cs" />
     <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="Native\NativeMethods.Unix.cs" />
     <Compile Include="PwCustomIcon.cs" />
     <Compile Include="Resources\KLRes.Generated.cs" />
     <Compile Include="Resources\KSRes.Generated.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Utility\MessageService.cs" />
     <Compile Include="Native\NativeLib.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwGenerator.cs" />
+    <Compile Include="Utility\MonoWorkarounds.cs" />
     <Compile Include="Utility\StrUtil.cs" />
     <Compile Include="Utility\UrlUtil.cs" />
     <Compile Include="Utility\TimeUtil.cs" />

@@ -167,10 +167,7 @@ namespace KeePassLib.Cryptography
 				ms.Write(pb, 0, pb.Length);
 
 				Version v = Environment.OSVersion.Version;
-				int nv = (v.Major << 28) + (v.MajorRevision << 24) +
-					(v.Minor << 20) + (v.MinorRevision << 16) +
-					(v.Revision << 12) + v.Build;
-				pb = MemUtil.UInt32ToBytes((uint)nv);
+				pb = MemUtil.UInt32ToBytes((uint)v.GetHashCode());
 				ms.Write(pb, 0, pb.Length);
 
 				p = Process.GetCurrentProcess();

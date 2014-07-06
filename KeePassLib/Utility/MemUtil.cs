@@ -188,6 +188,63 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
+		/// Decode Base32 strings according to RFC 4648.
+		/// </summary>
+		public static byte[] ParseBase32(string str)
+		{
+			if((str == null) || ((str.Length % 8) != 0))
+			{
+				Debug.Assert(false);
+				return null;
+			}
+
+			ulong uMaxBits = (ulong)str.Length * 5UL;
+			List<byte> l = new List<byte>((int)(uMaxBits / 8UL) + 1);
+			Debug.Assert(l.Count == 0);
+
+			for(int i = 0; i < str.Length; i += 8)
+			{
+				ulong u = 0;
+				int nBits = 0;
+
+				for(int j = 0; j < 8; ++j)
+				{
+					char ch = str[i + j];
+					if(ch == '=') break;
+
+					ulong uValue;
+					if((ch >= 'A') && (ch <= 'Z'))
+						uValue = (ulong)(ch - 'A');
+					else if((ch >= 'a') && (ch <= 'z'))
+						uValue = (ulong)(ch - 'a');
+					else if((ch >= '2') && (ch <= '7'))
+						uValue = (ulong)(ch - '2') + 26UL;
+					else { Debug.Assert(false); return null; }
+
+					u <<= 5;
+					u += uValue;
+					nBits += 5;
+				}
+
+				int nBitsTooMany = (nBits % 8);
+				u >>= nBitsTooMany;
+				nBits -= nBitsTooMany;
+				Debug.Assert((nBits % 8) == 0);
+
+				int idxNewBytes = l.Count;
+				while(nBits > 0)
+				{
+					l.Add((byte)(u & 0xFF));
+					u >>= 8;
+					nBits -= 8;
+				}
+				l.Reverse(idxNewBytes, l.Count - idxNewBytes);
+			}
+
+			return l.ToArray();
+		}
+
+		/// <summary>
 		/// Set all bytes in a byte array to zero.
 		/// </summary>
 		/// <param name="pbArray">Input array. All bytes of this array will be set

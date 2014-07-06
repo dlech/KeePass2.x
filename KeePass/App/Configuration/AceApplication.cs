@@ -180,6 +180,14 @@ namespace KeePass.App.Configuration
 			set { m_bFileLocks = value; }
 		}
 
+		private bool m_bSaveForceSync = false;
+		[DefaultValue(false)]
+		public bool SaveForceSync
+		{
+			get { return m_bSaveForceSync; }
+			set { m_bSaveForceSync = value; }
+		}
+
 		private AceCloseDb m_fc = new AceCloseDb();
 		public AceCloseDb FileClosing
 		{

@@ -1,6 +1,6 @@
 ﻿namespace KeePass.Forms
 {
-	partial class UrlSchemeForm
+	partial class UrlOverrideForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -89,7 +89,7 @@
 			this.m_tbOverride.Size = new System.Drawing.Size(304, 20);
 			this.m_tbOverride.TabIndex = 2;
 			// 
-			// UrlSchemeForm
+			// UrlOverrideForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -105,7 +105,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "UrlSchemeForm";
+			this.Name = "UrlOverrideForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";

@@ -58,7 +58,7 @@
 			this.m_menuExpire1Year = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_lblQualityBitsText = new System.Windows.Forms.Label();
+			this.m_lblQualityInfo = new System.Windows.Forms.Label();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
 			this.m_btnGenPw = new System.Windows.Forms.Button();
 			this.m_cbHidePassword = new System.Windows.Forms.CheckBox();
@@ -196,7 +196,7 @@
 			// m_lblUrl
 			// 
 			this.m_lblUrl.AutoSize = true;
-			this.m_lblUrl.Location = new System.Drawing.Point(6, 143);
+			this.m_lblUrl.Location = new System.Drawing.Point(6, 144);
 			this.m_lblUrl.Name = "m_lblUrl";
 			this.m_lblUrl.Size = new System.Drawing.Size(32, 13);
 			this.m_lblUrl.TabIndex = 15;
@@ -205,7 +205,7 @@
 			// m_lblNotes
 			// 
 			this.m_lblNotes.AutoSize = true;
-			this.m_lblNotes.Location = new System.Drawing.Point(6, 170);
+			this.m_lblNotes.Location = new System.Drawing.Point(6, 171);
 			this.m_lblNotes.Name = "m_lblNotes";
 			this.m_lblNotes.Size = new System.Drawing.Size(38, 13);
 			this.m_lblNotes.TabIndex = 17;
@@ -268,7 +268,7 @@
 			// 
 			// m_tbUrl
 			// 
-			this.m_tbUrl.Location = new System.Drawing.Point(81, 140);
+			this.m_tbUrl.Location = new System.Drawing.Point(81, 141);
 			this.m_tbUrl.Name = "m_tbUrl";
 			this.m_tbUrl.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUrl.TabIndex = 16;
@@ -393,14 +393,14 @@
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
-			// m_lblQualityBitsText
+			// m_lblQualityInfo
 			// 
-			this.m_lblQualityBitsText.Location = new System.Drawing.Point(367, 118);
-			this.m_lblQualityBitsText.Name = "m_lblQualityBitsText";
-			this.m_lblQualityBitsText.Size = new System.Drawing.Size(53, 13);
-			this.m_lblQualityBitsText.TabIndex = 14;
-			this.m_lblQualityBitsText.Text = "0000 bits";
-			this.m_lblQualityBitsText.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.m_lblQualityInfo.Location = new System.Drawing.Point(370, 119);
+			this.m_lblQualityInfo.Name = "m_lblQualityInfo";
+			this.m_lblQualityInfo.Size = new System.Drawing.Size(50, 13);
+			this.m_lblQualityInfo.TabIndex = 14;
+			this.m_lblQualityInfo.Text = "0 ch.";
+			this.m_lblQualityInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_ttRect
 			// 
@@ -472,7 +472,7 @@
 			this.m_tabEntry.Controls.Add(this.m_lblTitle);
 			this.m_tabEntry.Controls.Add(this.m_rtNotes);
 			this.m_tabEntry.Controls.Add(this.m_cbExpires);
-			this.m_tabEntry.Controls.Add(this.m_lblQualityBitsText);
+			this.m_tabEntry.Controls.Add(this.m_lblQualityInfo);
 			this.m_tabEntry.Controls.Add(this.m_tbUrl);
 			this.m_tabEntry.Controls.Add(this.m_btnGenPw);
 			this.m_tabEntry.Controls.Add(this.m_cbHidePassword);
@@ -501,10 +501,10 @@
 			// 
 			// m_rtNotes
 			// 
-			this.m_rtNotes.Location = new System.Drawing.Point(81, 167);
+			this.m_rtNotes.Location = new System.Drawing.Point(81, 168);
 			this.m_rtNotes.Name = "m_rtNotes";
 			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_rtNotes.Size = new System.Drawing.Size(374, 140);
+			this.m_rtNotes.Size = new System.Drawing.Size(374, 139);
 			this.m_rtNotes.TabIndex = 18;
 			this.m_rtNotes.Text = "";
 			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
@@ -512,14 +512,11 @@
 			// m_pbQuality
 			// 
 			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
-			this.m_pbQuality.Maximum = 100;
-			this.m_pbQuality.Minimum = 0;
 			this.m_pbQuality.Name = "m_pbQuality";
-			this.m_pbQuality.Size = new System.Drawing.Size(283, 16);
+			this.m_pbQuality.Size = new System.Drawing.Size(286, 16);
 			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbQuality.TabIndex = 13;
 			this.m_pbQuality.TabStop = false;
-			this.m_pbQuality.Value = 50;
 			// 
 			// m_tabAdvanced
 			// 
@@ -552,6 +549,7 @@
 			this.m_btnBinOpen.Location = new System.Drawing.Point(374, 104);
 			this.m_btnBinOpen.Name = "m_btnBinOpen";
 			this.m_btnBinOpen.Size = new System.Drawing.Size(75, 23);
+			this.m_btnBinOpen.SplitDropDownMenu = null;
 			this.m_btnBinOpen.TabIndex = 3;
 			this.m_btnBinOpen.Text = "O&pen";
 			this.m_btnBinOpen.UseVisualStyleBackColor = true;
@@ -714,9 +712,6 @@
 			// 
 			// m_cmbOverrideUrl
 			// 
-			this.m_cmbOverrideUrl.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.m_cmbOverrideUrl.DropDownHeight = 218;
-			this.m_cmbOverrideUrl.FormattingEnabled = true;
 			this.m_cmbOverrideUrl.IntegralHeight = false;
 			this.m_cmbOverrideUrl.Location = new System.Drawing.Point(9, 144);
 			this.m_cmbOverrideUrl.MaxDropDownItems = 16;
@@ -1298,7 +1293,7 @@
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.CheckBox m_cbHidePassword;
 		private System.Windows.Forms.Button m_btnGenPw;
-		private System.Windows.Forms.Label m_lblQualityBitsText;
+		private System.Windows.Forms.Label m_lblQualityInfo;
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Label m_lblSeparator;

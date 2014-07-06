@@ -300,33 +300,33 @@ namespace KeePass.App.Configuration
 			m_lBuiltInOverrides.Clear();
 
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(true, "ssh",
-				@"cmd://PuTTY.exe -ssh {USERNAME}@{URL:RMVSCM}", 0x1));
+				@"cmd://PuTTY.exe -ssh {USERNAME}@{BASE:RMVSCM}", 0x1));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{INTERNETEXPLORER} \"{URL}\"", 0x2));
+				"cmd://{INTERNETEXPLORER} \"{BASE}\"", 0x2));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{INTERNETEXPLORER} \"{URL}\"", 0x4));
+				"cmd://{INTERNETEXPLORER} \"{BASE}\"", 0x4));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{FIREFOX} \"{URL}\"", 0x8));
+				"cmd://{FIREFOX} \"{BASE}\"", 0x8));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{FIREFOX} \"{URL}\"", 0x10));
+				"cmd://{FIREFOX} \"{BASE}\"", 0x10));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "chrome",
-				"cmd://{FIREFOX} -chrome \"{URL}\"", 0x20));
+				"cmd://{FIREFOX} -chrome \"{BASE}\"", 0x20));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{OPERA} \"{URL}\"", 0x40));
+				"cmd://{OPERA} \"{BASE}\"", 0x40));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{OPERA} \"{URL}\"", 0x80));
+				"cmd://{OPERA} \"{BASE}\"", 0x80));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{GOOGLECHROME} \"{URL}\"", 0x100));
+				"cmd://{GOOGLECHROME} \"{BASE}\"", 0x100));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{GOOGLECHROME} \"{URL}\"", 0x200));
+				"cmd://{GOOGLECHROME} \"{BASE}\"", 0x200));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
-				"cmd://{SAFARI} \"{URL}\"", 0x400));
+				"cmd://{SAFARI} \"{BASE}\"", 0x400));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
-				"cmd://{SAFARI} \"{URL}\"", 0x800));
+				"cmd://{SAFARI} \"{BASE}\"", 0x800));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
-				"cmd://\"{APPDIR}\\KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
+				"cmd://\"{APPDIR}\\KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
-				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{URL:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
+				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
 
 #if DEBUG
 			ulong u = 0;

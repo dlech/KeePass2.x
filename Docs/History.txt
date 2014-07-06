@@ -1,3 +1,110 @@
+2014-07-06: 2.27
+- The estimated password quality (in bits) is now displayed on
+  the quality progress bar, and right of the quality progress
+  bar the length of the password is displayed
+- Auto-Type: before sending a character using a key combination
+  involving at least two modifiers, KeePass now first tests
+  whether this key combination is a registered system-wide hot
+  key, and, if so, tries to send the character as a Unicode
+  packet instead
+- Auto-Type: added workaround for Cygwin's default Ctrl+Alt
+  behavior (which differs from Windows' behavior)
+- Auto-Type: added {APPACTIVATE ...} command
+- {HMACOTP} placeholder: added support for specifying the
+  shared secret using the entry strings 'HmacOtp-Secret-Hex'
+  (secret as hex string), 'HmacOtp-Secret-Base32' (secret as
+  Base32 string) and 'HmacOtp-Secret-Base64' (secret as Base64
+  string)
+- {T-CONV:...} placeholder: added 'Uri-Dec' type (for
+  converting the string to its URI-unescaped representation)
+- Added placeholders: {URL:USERINFO}, {URL:USERNAME} and
+  {URL:PASSWORD}
+- Added placeholders: {BASE}, {BASE:RMVSCM}, {BASE:SCM},
+  {BASE:HOST}, {BASE:PORT}, {BASE:PATH}, {BASE:QUERY},
+  {BASE:USERINFO}, {BASE:USERNAME}, {BASE:PASSWORD} (within an
+  URL override, each of these placeholders is replaced by the
+  specified part of the string that is being overridden)
+- Added {NEWPASSWORD:/Profile/} placeholder, which generates a
+  new password for the current entry using the specified
+  password generator profile
+- Pattern-based password generator: the '^' character now
+  removes the next character from the current custom character
+  set (for example, [a^y] contains all lower-case alphanumeric
+  characters except 'y')
+- Enhanced syntax highlighting in the sequence field of the
+  'Edit Auto-Type Item' dialog
+- Added option 'Do not ask whether to synchronize or overwrite;
+  force synchronization'
+- Added synchronization support for the group behavior
+  properties 'Auto-Type for entries in this group' and
+  'Searching entries in this group'
+- Root group properties are now synchronized based on the last
+  modification time
+- While saving a database, a shutdown block reason is now
+  specified
+- Added 'Move to Group' menu in the 'Selected Entries' popup of
+  the main entry list context menu
+- Items of dynamic menus (tags, strings, attachments, password
+  generator profiles, ...) now have auto-assigned accelerator
+  keys
+- As alternative to Ctrl+F, pressing F3 in the main window now
+  displays the 'Find' dialog
+- Added UIFlags bit for hiding password quality progress bars
+  and information labels
+- Enhanced system font detection on Unix-like systems
+- When using 'xsel' for clipboard operations on Unix-like
+  systems, text is now copied into both the primary selection
+  and the clipboard
+- Added '--version' command line option (for Unix-like systems)
+- Plugins can now subscribe to an IPC event that is raised when
+  running KeePass with the '-e:' command line parameter
+- Added workaround for .NET AutoWordSelection bug
+- Added workaround for Mono bug 10163; saving files using
+  WebDAV now also works under Mono 2.11 and higher
+- Added workaround for Mono image tabs bug
+- Added workaround for Mono NumericUpDown drawing bug
+
+- Merged the URL scheme overrides and the 'Override all URLs'
+  option into a new dialog 'URL Overrides'
+- Improved autocompletion of IO connection parameters using the
+  MRU list (now treating the user name as filter)
+- Improved interaction of IO connection trigger parameters and
+  the MRU list
+- The master key prompt dialog now validates key files only
+  when clicking [OK], and invalid ones are not removed
+  automatically from the list anymore
+- Improved support for managing columns leftover from
+  uninstalled plugins in the 'Configure Columns' dialog
+- If the 'Unhide Passwords' policy is turned off, the passwords
+  column in the auto-type entry selection dialog is now
+  unavailable
+- The entry list in the main window is now updated immediately
+  after performing auto-type or copying data to the clipboard
+- Various list view performance improvements
+- The 'Searching entries in this group' group behavior
+  properties are now ignored during resolving field references
+- Improved behavior in case of syntax errors in placeholders
+  with parameters
+- Two-channel auto-type obfuscation: improved realization of
+  clipboard paste commands
+- General main window keyboard shortcuts now also work within
+  the quick search box and the database tab bar
+- Pressing Ctrl+Shift+Tab in the main window now always selects
+  the previous database tab (independent of which control has
+  the focus)
+- Changed shortcut keys for moving entries/groups on Unix-like
+  systems, due to Mono's incorrect handling of Alt (preventing
+  key events) and navigation keys (selection updated at the
+  wrong time)
+- Auto-Type: improved modifier key releasing on Unix-like
+  systems
+- Various code optimizations
+- Minor other improvements
+
+- A key-up event to the groups tree in the main window without
+  a corresponding key-down event does not change the entry list
+  anymore
+
 2014-04-13: 2.26
 - Added option to show a confirmation dialog when moving
   entries/groups to the recycle bin

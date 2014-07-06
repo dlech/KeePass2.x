@@ -191,6 +191,9 @@
     <Compile Include="..\KeePassLib\Native\NativeMethods.cs">
       <Link>Native\NativeMethods.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Native\NativeMethods.Unix.cs">
+      <Link>Native\NativeMethods.Unix.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\PwCustomIcon.cs">
       <Link>PwCustomIcon.cs</Link>
     </Compile>
@@ -292,6 +295,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Utility\MessageService.cs">
       <Link>Utility\MessageService.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\MonoWorkarounds.cs">
+      <Link>Utility\MonoWorkarounds.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Utility\StrUtil.cs">
       <Link>Utility\StrUtil.cs</Link>

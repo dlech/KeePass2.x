@@ -217,6 +217,9 @@ namespace KeePass.Util.XmlSerialization
 					case "UseFileLocks":
 						o.UseFileLocks = ReadBoolean(xr);
 						break;
+					case "SaveForceSync":
+						o.SaveForceSync = ReadBoolean(xr);
+						break;
 					case "FileClosing":
 						o.FileClosing = ReadAceCloseDb(xr);
 						break;

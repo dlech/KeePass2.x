@@ -278,12 +278,10 @@ namespace KeePass.DataExchange
 #endif
 	public struct KdbUuid
 	{
-#pragma warning disable 1591 // Missing XML comments warning
 		public Byte V0; public Byte V1; public Byte V2; public Byte V3;
 		public Byte V4; public Byte V5; public Byte V6; public Byte V7;
 		public Byte V8; public Byte V9; public Byte VA; public Byte VB;
 		public Byte VC; public Byte VD; public Byte VE; public Byte VF;
-#pragma warning restore 1591 // Missing XML comments warning
 
 		/// <summary>
 		/// Convert UUID to a byte array of length 16.
@@ -324,7 +322,6 @@ namespace KeePass.DataExchange
 #endif
 	public struct KdbTime
 	{
-#pragma warning disable 1591 // Missing XML comments warning
 		[MarshalAs(UnmanagedType.U2)]
 		public UInt16 Year;
 		[MarshalAs(UnmanagedType.U1)]
@@ -337,7 +334,6 @@ namespace KeePass.DataExchange
 		public Byte Minute;
 		[MarshalAs(UnmanagedType.U1)]
 		public Byte Second;
-#pragma warning restore 1591 // Missing XML comments warning
 
 #if VPF_ALIGN
 		/// <summary>
