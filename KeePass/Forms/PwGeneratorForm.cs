@@ -533,7 +533,12 @@ namespace KeePass.Forms
 			Cursor cNormalCursor = this.Cursor;
 			this.Cursor = Cursors.WaitCursor;
 
-			for(uint i = 0; i < MaxPreviewPasswords; ++i)
+			uint n = MaxPreviewPasswords;
+			if((pwOpt.GeneratorType == PasswordGeneratorType.Custom) &&
+				string.IsNullOrEmpty(pwOpt.CustomAlgorithmUuid))
+				n = 0;
+
+			for(uint i = 0; i < n; ++i)
 			{
 				Application.DoEvents();
 

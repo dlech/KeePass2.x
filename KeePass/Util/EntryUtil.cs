@@ -171,6 +171,8 @@ namespace KeePass.Util
 				pe.Strings.EnableProtection(PwDefs.NotesField,
 					pwDatabase.MemoryProtection.ProtectNotes);
 
+				pe.SetCreatedNow();
+
 				pgStorage.AddEntry(pe, true, true);
 			}
 
@@ -222,7 +224,8 @@ namespace KeePass.Util
 					strGen = GeneratePassword((((lParams != null) &&
 						(lParams.Count > 0)) ? lParams[0] : string.Empty), ctx);
 
-				str = str.Insert(iStart, strGen);
+				string strIns = SprEngine.TransformContent(strGen, ctx);
+				str = str.Insert(iStart, strIns);
 			}
 
 			const string strNewPwPlh = strNewPwStart + @"}";
@@ -230,7 +233,8 @@ namespace KeePass.Util
 			{
 				if(strGen == null) strGen = GeneratePassword(null, ctx);
 
-				str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh, strGen);
+				string strIns = SprEngine.TransformContent(strGen, ctx);
+				str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh, strIns);
 			}
 
 			if(strGen != null)
@@ -276,9 +280,7 @@ namespace KeePass.Util
 				Program.PwGeneratorPool);
 			if((e != PwgError.Success) || (ps == null)) return string.Empty;
 
-			string strGen = ps.ReadString();
-			strGen = SprEngine.TransformContent(strGen, ctx);
-			return strGen;
+			return ps.ReadString();
 		}
 
 		private static string ReplaceHmacOtpPlaceholder(string strText,

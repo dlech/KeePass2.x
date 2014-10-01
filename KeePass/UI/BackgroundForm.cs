@@ -28,9 +28,9 @@ namespace KeePass.UI
 {
 	public sealed class BackgroundForm : Form
 	{
-		public BackgroundForm(Bitmap bmpBackground)
+		public BackgroundForm(Bitmap bmpBackground, Screen sc)
 		{
-			Screen s = Screen.PrimaryScreen;
+			Screen s = (sc ?? Screen.PrimaryScreen);
 
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;

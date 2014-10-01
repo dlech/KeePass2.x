@@ -203,9 +203,28 @@ namespace KeePass.UI
 				}
 			}
 
-			TextFormatFlags tff = (TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine |
-				TextFormatFlags.VerticalCenter);
-			TextRenderer.DrawText(g, m_strText, f, rectDraw, clrFG, tff);
+			// With ClearType on, text drawn using Graphics.DrawString
+			// looks better than TextRenderer.DrawText;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/06ef4466/
+
+			// TextFormatFlags tff = (TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine |
+			//	TextFormatFlags.VerticalCenter);
+			// TextRenderer.DrawText(g, m_strText, f, rectDraw, clrFG, tff);
+
+			using(SolidBrush br = new SolidBrush(clrFG))
+			{
+				StringFormatFlags sff = (StringFormatFlags.FitBlackBox |
+					StringFormatFlags.NoClip);
+				using(StringFormat sf = new StringFormat(sff))
+				{
+					sf.Alignment = StringAlignment.Center;
+					sf.LineAlignment = StringAlignment.Center;
+
+					RectangleF rf = new RectangleF(rectDraw.X, rectDraw.Y,
+						rectDraw.Width, rectDraw.Height);
+					g.DrawString(m_strText, f, br, rf, sf);
+				}
+			}
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs pEvent)

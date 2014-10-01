@@ -68,13 +68,16 @@ namespace KeePass.Forms
 
 			m_cbCacheDeleteOld.Checked = Program.Config.Application.Start.PluginCacheDeleteOld;
 
-			m_lvPlugins.Columns.Add(KPRes.Plugin, 197);
-			m_lvPlugins.Columns.Add(KPRes.Version, 106);
-			m_lvPlugins.Columns.Add(KPRes.Author, 136);
-			m_lvPlugins.Columns.Add(KPRes.Description, 0);
-			m_lvPlugins.Columns.Add(KPRes.File, 119);
+			m_lvPlugins.Columns.Add(KPRes.Plugin);
+			m_lvPlugins.Columns.Add(KPRes.Version);
+			m_lvPlugins.Columns.Add(KPRes.Author);
+			m_lvPlugins.Columns.Add(KPRes.Description);
+			m_lvPlugins.Columns.Add(KPRes.File);
+			UIUtil.ResizeColumns(m_lvPlugins, new int[] {
+				4, 2, 3, 0, 2 }, true);
 
-			m_ilIcons.ImageSize = new Size(16, 16);
+			m_ilIcons.ImageSize = new Size(DpiUtil.ScaleIntX(16),
+				DpiUtil.ScaleIntY(16));
 			m_ilIcons.ColorDepth = ColorDepth.Depth32Bit;
 
 			m_lblCacheSize.Text += " " + StrUtil.FormatDataSize(

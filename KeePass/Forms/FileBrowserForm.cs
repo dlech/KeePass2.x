@@ -50,7 +50,7 @@ namespace KeePass.Forms
 		private ImageList m_ilFiles = null;
 		private List<Image> m_vFileImages = new List<Image>();
 
-		private int m_nIconDim = 16;
+		private int m_nIconDim = DpiUtil.ScaleIntY(16);
 
 		private const string StrDummyNode = "66913D76EA3F4F2A8B1A0899B7322EC3";
 
@@ -116,7 +116,7 @@ namespace KeePass.Forms
 			if(UIUtil.ColorsEqual(m_lblHint.ForeColor, Color.Black))
 				m_lblHint.ForeColor = Color.FromArgb(96, 96, 96);
 
-			int nWidth = m_lvFiles.ClientRectangle.Width - UIUtil.GetVScrollBarWidth();
+			int nWidth = m_lvFiles.ClientSize.Width - UIUtil.GetVScrollBarWidth();
 			m_lvFiles.Columns.Add(KPRes.Name, (nWidth * 3) / 4);
 			m_lvFiles.Columns.Add(KPRes.Size, nWidth / 4, HorizontalAlignment.Right);
 

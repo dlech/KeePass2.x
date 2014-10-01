@@ -168,7 +168,7 @@ namespace KeePassLib.Utility
 		}
 #endif
 
-		private static DialogResult SafeShowMessageBox(string strText, string strTitle,
+		internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
 #if (KeePassLibSD || KeePassRT)

@@ -73,6 +73,8 @@ namespace KeePass.Forms
 			m_lvConditions.SmallImageList = m_ilIcons;
 			m_lvActions.SmallImageList = m_ilIcons;
 
+			Debug.Assert((m_lvEvents.Width == m_lvConditions.Width) &&
+				(m_lvEvents.Width == m_lvActions.Width));
 			int nColWidth = ((m_lvEvents.ClientSize.Width - UIUtil.GetVScrollBarWidth()) / 2);
 			m_lvEvents.Columns.Add(KPRes.Event, nColWidth);
 			m_lvEvents.Columns.Add(string.Empty, nColWidth);
@@ -168,54 +170,84 @@ namespace KeePass.Forms
 		{
 			object[] vSelected = (bRestoreSelected ?
 				UIUtil.GetSelectedItemTags(m_lvEvents) : null);
+			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvEvents, true);
+			List<EcasEvent> lToRemove = new List<EcasEvent>();
 
+			m_lvEvents.BeginUpdate();
 			m_lvEvents.Items.Clear();
 			foreach(EcasEvent e in m_trigger.EventCollection)
 			{
 				EcasEventType t = Program.EcasPool.FindEvent(e.Type);
+				if(t == null) { Debug.Assert(false); lToRemove.Add(e); continue; }
+
 				ListViewItem lvi = m_lvEvents.Items.Add(t.Name);
 				lvi.SubItems.Add(EcasUtil.ParametersToString(e, t.Parameters));
 				lvi.Tag = e;
 				lvi.ImageIndex = (int)t.Icon;
 			}
 
+			foreach(EcasEvent e in lToRemove)
+				m_trigger.EventCollection.Remove(e);
 			if(vSelected != null) UIUtil.SelectItems(m_lvEvents, vSelected);
+
+			UIUtil.Scroll(m_lvEvents, s, true);
+			m_lvEvents.EndUpdate();
 		}
 
 		private void UpdateConditionListEx(bool bRestoreSelected)
 		{
 			object[] vSelected = (bRestoreSelected ?
 				UIUtil.GetSelectedItemTags(m_lvConditions) : null);
+			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvConditions, true);
+			List<EcasCondition> lToRemove = new List<EcasCondition>();
 
+			m_lvConditions.BeginUpdate();
 			m_lvConditions.Items.Clear();
 			foreach(EcasCondition c in m_trigger.ConditionCollection)
 			{
 				EcasConditionType t = Program.EcasPool.FindCondition(c.Type);
+				if(t == null) { Debug.Assert(false); lToRemove.Add(c); continue; }
+
 				ListViewItem lvi = m_lvConditions.Items.Add(t.Name);
 				lvi.SubItems.Add(EcasUtil.ParametersToString(c, t.Parameters));
 				lvi.Tag = c;
 				lvi.ImageIndex = (int)t.Icon;
 			}
 
+			foreach(EcasCondition c in lToRemove)
+				m_trigger.ConditionCollection.Remove(c);
 			if(vSelected != null) UIUtil.SelectItems(m_lvConditions, vSelected);
+
+			UIUtil.Scroll(m_lvConditions, s, true);
+			m_lvConditions.EndUpdate();
 		}
 
 		private void UpdateActionListEx(bool bRestoreSelected)
 		{
 			object[] vSelected = (bRestoreSelected ?
 				UIUtil.GetSelectedItemTags(m_lvActions) : null);
+			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvActions, true);
+			List<EcasAction> lToRemove = new List<EcasAction>();
 
+			m_lvActions.BeginUpdate();
 			m_lvActions.Items.Clear();
 			foreach(EcasAction a in m_trigger.ActionCollection)
 			{
 				EcasActionType t = Program.EcasPool.FindAction(a.Type);
+				if(t == null) { Debug.Assert(false); lToRemove.Add(a); continue; }
+
 				ListViewItem lvi = m_lvActions.Items.Add(t.Name);
 				lvi.SubItems.Add(EcasUtil.ParametersToString(a, t.Parameters));
 				lvi.Tag = a;
 				lvi.ImageIndex = (int)t.Icon;
 			}
 
+			foreach(EcasAction a in lToRemove)
+				m_trigger.ActionCollection.Remove(a);
 			if(vSelected != null) UIUtil.SelectItems(m_lvActions, vSelected);
+
+			UIUtil.Scroll(m_lvActions, s, true);
+			m_lvActions.EndUpdate();
 		}
 
 		private void OnEventsSelectedIndexChanged(object sender, EventArgs e)

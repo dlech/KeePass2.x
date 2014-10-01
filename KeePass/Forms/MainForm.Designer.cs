@@ -30,7 +30,7 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.m_ctxGroupList = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.m_ctxGroupList = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxGroupAdd = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupEdit = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,7 +52,7 @@
 			this.m_ctxGroupSort = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ilClientIcons = new System.Windows.Forms.ImageList(this.components);
-			this.m_ctxPwList = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.m_ctxPwList = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryUrl = new System.Windows.Forms.ToolStripMenuItem();
@@ -216,7 +216,7 @@
 			this.m_statusPartInfo = new System.Windows.Forms.ToolStripStatusLabel();
 			this.m_statusPartProgress = new System.Windows.Forms.ToolStripProgressBar();
 			this.m_statusClipboard = new System.Windows.Forms.ToolStripProgressBar();
-			this.m_ctxTray = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.m_ctxTray = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxTrayTray = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTraySep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxTrayGenPw = new System.Windows.Forms.ToolStripMenuItem();
@@ -1233,7 +1233,6 @@
 			// 
 			// m_menuViewShowToolBar
 			// 
-			this.m_menuViewShowToolBar.CheckOnClick = true;
 			this.m_menuViewShowToolBar.Name = "m_menuViewShowToolBar";
 			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(222, 22);
 			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
@@ -1241,7 +1240,6 @@
 			// 
 			// m_menuViewShowEntryView
 			// 
-			this.m_menuViewShowEntryView.CheckOnClick = true;
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
 			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(222, 22);
 			this.m_menuViewShowEntryView.Text = "Show &Entry View";
@@ -1279,7 +1277,6 @@
 			// 
 			// m_menuViewAlwaysOnTop
 			// 
-			this.m_menuViewAlwaysOnTop.CheckOnClick = true;
 			this.m_menuViewAlwaysOnTop.Name = "m_menuViewAlwaysOnTop";
 			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(222, 22);
 			this.m_menuViewAlwaysOnTop.Text = "&Always on Top";
@@ -1315,7 +1312,6 @@
 			// 
 			// m_menuViewTanSimpleList
 			// 
-			this.m_menuViewTanSimpleList.CheckOnClick = true;
 			this.m_menuViewTanSimpleList.Name = "m_menuViewTanSimpleList";
 			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(303, 22);
 			this.m_menuViewTanSimpleList.Text = "Use &Simple List View for TAN-Only Groups";
@@ -1323,7 +1319,6 @@
 			// 
 			// m_menuViewTanIndices
 			// 
-			this.m_menuViewTanIndices.CheckOnClick = true;
 			this.m_menuViewTanIndices.Name = "m_menuViewTanIndices";
 			this.m_menuViewTanIndices.Size = new System.Drawing.Size(303, 22);
 			this.m_menuViewTanIndices.Text = "Show TAN &Indices in Entry Titles";
@@ -1342,7 +1337,6 @@
 			// 
 			// m_menuViewShowEntriesOfSubGroups
 			// 
-			this.m_menuViewShowEntriesOfSubGroups.CheckOnClick = true;
 			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
 			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(222, 22);
 			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Su&bgroups";
@@ -1791,7 +1785,7 @@
 			// 
 			this.m_tbCloseTab.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.m_tbCloseTab.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.m_tbCloseTab.Image = ((System.Drawing.Image)(resources.GetObject("m_tbCloseTab.Image")));
+			this.m_tbCloseTab.Image = global::KeePass.Properties.Resources.B16x16_File_Close;
 			this.m_tbCloseTab.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbCloseTab.Name = "m_tbCloseTab";
 			this.m_tbCloseTab.Size = new System.Drawing.Size(23, 22);
@@ -1816,15 +1810,15 @@
 			this.m_statusPartSelected.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
 			this.m_statusPartSelected.Name = "m_statusPartSelected";
 			this.m_statusPartSelected.Size = new System.Drawing.Size(140, 17);
-			this.m_statusPartSelected.Text = "<SelectedInfo>";
+			this.m_statusPartSelected.Text = "0 entries";
 			this.m_statusPartSelected.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_statusPartInfo
 			// 
 			this.m_statusPartInfo.Name = "m_statusPartInfo";
-			this.m_statusPartInfo.Size = new System.Drawing.Size(245, 17);
+			this.m_statusPartInfo.Size = new System.Drawing.Size(214, 17);
 			this.m_statusPartInfo.Spring = true;
-			this.m_statusPartInfo.Text = "<StatusInfo>";
+			this.m_statusPartInfo.Text = "Ready.";
 			this.m_statusPartInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_statusPartProgress
@@ -2109,7 +2103,7 @@
 		private System.Windows.Forms.ToolStripStatusLabel m_statusPartInfo;
 		private KeePass.UI.CustomListViewEx m_lvEntries;
 		private System.Windows.Forms.ToolStripButton m_tbSaveDatabase;
-		private System.Windows.Forms.ContextMenuStrip m_ctxPwList;
+		private KeePass.UI.CustomContextMenuStripEx m_ctxPwList;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyUserName;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyPassword;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySaveAttachedFiles;
@@ -2143,7 +2137,7 @@
 		private System.Windows.Forms.ToolStripComboBox m_tbQuickFind;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsOptions;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep1;
-		private System.Windows.Forms.ContextMenuStrip m_ctxGroupList;
+		private KeePass.UI.CustomContextMenuStripEx m_ctxGroupList;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupAdd;
 		private System.Windows.Forms.ToolStripSeparator m_ctxGroupSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupEdit;
@@ -2156,7 +2150,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewConfigColumns;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep3;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileRecent;
-		private System.Windows.Forms.ContextMenuStrip m_ctxTray;
+		private KeePass.UI.CustomContextMenuStripEx m_ctxTray;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayTray;
 		private System.Windows.Forms.Timer m_timerMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsPlugins;

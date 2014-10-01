@@ -113,7 +113,7 @@ namespace KeePassLib.Cryptography
 			{
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbKey32 = sha256.ComputeHash(pbKey);
-				byte[] pbIV = new byte[]{ 0xE8, 0x30, 0x09, 0x4B,
+				byte[] pbIV = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
 					0x97, 0x20, 0x5D, 0x2A }; // Unique constant
 
 				m_salsa20 = new Salsa20Cipher(pbKey32, pbIV);

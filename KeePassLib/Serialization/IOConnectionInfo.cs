@@ -122,7 +122,7 @@ namespace KeePassLib.Serialization
 
 		private bool m_bComplete = false;
 		[XmlIgnore]
-		internal bool IsComplete // Credentials etc. fully specified
+		public bool IsComplete // Credentials etc. fully specified
 		{
 			get { return m_bComplete; }
 			set { m_bComplete = value; }

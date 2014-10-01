@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.UI;
@@ -41,6 +42,8 @@ namespace KeePass.Forms
 
 		private uint uWarnings = 0;
 		private uint uErrors = 0;
+
+		private ImageList m_ilIcons = null;
 
 		public void InitEx(bool bIsModal)
 		{
@@ -130,19 +133,24 @@ namespace KeePass.Forms
 			m_pbProgress.Minimum = 0;
 			m_pbProgress.Maximum = 100;
 
-			int nWidth = m_lvMessages.ClientRectangle.Width - 1;
-			m_lvMessages.Columns.Add("<>", nWidth);
+			List<Image> lImages = new List<Image>();
+			lImages.Add(Properties.Resources.B16x16_MessageBox_Info);
+			lImages.Add(Properties.Resources.B16x16_MessageBox_Warning);
+			lImages.Add(Properties.Resources.B16x16_MessageBox_Critical);
+			lImages.Add(Properties.Resources.B16x16_Transparent);
+
+			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+			m_lvMessages.SmallImageList = m_ilIcons;
+
+			m_lvMessages.Columns.Add(KPRes.Status);
 
 			ProcessResize();
 		}
 
 		private void ProcessResize()
 		{
-			if(m_lvMessages.Columns.Count > 0)
-			{
-				int nColumnWidth = m_lvMessages.ClientRectangle.Width - 2;
-				m_lvMessages.Columns[0].Width = nColumnWidth;
-			}
+			UIUtil.ResizeColumns(m_lvMessages, true);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -173,6 +181,14 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			if(m_ilIcons != null)
+			{
+				m_lvMessages.SmallImageList = null;
+				m_ilIcons.Dispose();
+				m_ilIcons = null;
+			}
+			else { Debug.Assert(false); }
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 	}

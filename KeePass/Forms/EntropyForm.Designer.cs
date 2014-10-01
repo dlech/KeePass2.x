@@ -72,11 +72,9 @@
 			// m_picRandom
 			// 
 			this.m_picRandom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.m_picRandom.Image = global::KeePass.Properties.Resources.B284x231_Random;
-			this.m_picRandom.Location = new System.Drawing.Point(9, 47);
+			this.m_picRandom.Location = new System.Drawing.Point(10, 47);
 			this.m_picRandom.Name = "m_picRandom";
-			this.m_picRandom.Size = new System.Drawing.Size(286, 233);
-			this.m_picRandom.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.m_picRandom.Size = new System.Drawing.Size(282, 233);
 			this.m_picRandom.TabIndex = 2;
 			this.m_picRandom.TabStop = false;
 			this.m_picRandom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnRandomMouseMove);
@@ -92,7 +90,7 @@
 			// m_lblGeneratedHint
 			// 
 			this.m_lblGeneratedHint.AutoSize = true;
-			this.m_lblGeneratedHint.Location = new System.Drawing.Point(6, 288);
+			this.m_lblGeneratedHint.Location = new System.Drawing.Point(6, 289);
 			this.m_lblGeneratedHint.Name = "m_lblGeneratedHint";
 			this.m_lblGeneratedHint.Size = new System.Drawing.Size(79, 13);
 			this.m_lblGeneratedHint.TabIndex = 1;
@@ -100,7 +98,7 @@
 			// 
 			// m_lblStatus
 			// 
-			this.m_lblStatus.Location = new System.Drawing.Point(245, 288);
+			this.m_lblStatus.Location = new System.Drawing.Point(245, 289);
 			this.m_lblStatus.Name = "m_lblStatus";
 			this.m_lblStatus.Size = new System.Drawing.Size(50, 13);
 			this.m_lblStatus.TabIndex = 3;
@@ -132,7 +130,7 @@
 			// 
 			// m_pbGenerated
 			// 
-			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
+			this.m_pbGenerated.Location = new System.Drawing.Point(91, 289);
 			this.m_pbGenerated.Name = "m_pbGenerated";
 			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
 			this.m_pbGenerated.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -173,11 +171,11 @@
 			// m_tbEdit
 			// 
 			this.m_tbEdit.AcceptsReturn = true;
-			this.m_tbEdit.Location = new System.Drawing.Point(7, 47);
+			this.m_tbEdit.Location = new System.Drawing.Point(9, 47);
 			this.m_tbEdit.Multiline = true;
 			this.m_tbEdit.Name = "m_tbEdit";
 			this.m_tbEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbEdit.Size = new System.Drawing.Size(284, 204);
+			this.m_tbEdit.Size = new System.Drawing.Size(279, 204);
 			this.m_tbEdit.TabIndex = 0;
 			// 
 			// EntropyForm

@@ -207,11 +207,10 @@ for the condition to be true.<br /><br /></li>
 <li><i>Host:</i> Host to send the ping to.<br /><br /></li>
 </ul></li>
 
-<li><b>Active database has unsaved changes:</b><br />
-Evaluates to true, if the active database (currently selected database
-tab in the main window) has unsaved changes.
+<li><b>Database has unsaved changes:</b><br />
+Evaluates to true, if the specified database has unsaved changes.
 <ul>
-<li><i>Parameters:</i> None.</li>
+<li><i>Database:</i> The database to check for unsaved changes.</li>
 </ul></li>
 
 </ul>
@@ -313,13 +312,35 @@ Close the currently active database.
 <li><i>File/URL:</i> Path of the database to activate. This may be a
 substring of the actual database path. For example, specifying
 <code>MyDatabase</code> would match a database
-<code>C:\Documents\KeePass\MyDatabase.kdbx</code>.<br /><br /></li>
+<code>C:\Documents\KeePass\MyDatabase.kdbx</code>.</li>
+<li><i>Filter:</i> Specifies the databases that are being
+considered. If 'Triggering' is selected and the 'File/URL' field is empty,
+the database that triggered the event is activated.<br /><br /></li>
 </ul></li>
 
 <li><b>Wait:</b><br />
 Wait for the specified amount of time.
 <ul>
 <li><i>Time span:</i> Number of milliseconds to wait.<br /><br /></li>
+</ul></li>
+
+<li><b>Show message box:</b><br />
+Displays a message box.
+<ul>
+<li><i>Main instruction:</i> First line of the message text
+(which is possibly displayed using a stronger font).</li>
+<li><i>Text:</i> Message text.</li>
+<li><i>Icon:</i> The icon that is displayed next to the message text.</li>
+<li><i>Buttons:</i> Specifies the available buttons.</li>
+<li><i>Default button:</i> The button that initially has the focus.</li>
+<li><i>Action - Condition:</i> Specifies the condition that must be fulfilled
+for the following action to be performed. For example, if 'Button OK/Yes' is
+selected, the action is only performed if the user clicks the 'OK' or
+'Yes' button of the message box.</li>
+<li><i>Action:</i> The action to perform after showing the message box.</li>
+<li><i>Action - Parameters:</i> Parameters for the specified action. For
+example, if executing a command line / URL is specified as action, this field
+must contain the command line / URL.<br /><br /></li>
 </ul></li>
 
 <li><b>Perform global auto-type:</b><br />

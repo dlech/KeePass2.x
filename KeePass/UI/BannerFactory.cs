@@ -68,6 +68,9 @@ namespace KeePass.UI
 
 	public static class BannerFactory
 	{
+		private const int StdHeight = 60; // Standard height for 96 DPI
+		private const int StdIconDim = 48;
+
 		private static Dictionary<string, Image> m_vImageCache =
 			new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
@@ -88,9 +91,11 @@ namespace KeePass.UI
 		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs,
 			Image imgIcon, string strTitle, string strLine, bool bNoCache)
 		{
-			// imgIcon may be null.
+			// imgIcon may be null
 			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
 			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException("strLine");
+
+			Debug.Assert((nHeight == StdHeight) || DpiUtil.ScalingRequired);
 
 			if(MonoWorkarounds.IsRequired(12525) && (nHeight > 0))
 				--nHeight;
@@ -128,6 +133,7 @@ namespace KeePass.UI
 				int xIcon = DpiScaleInt(10, nHeight);
 
 				bool bRtl = Program.Translation.Properties.RightToLeft;
+				Matrix mxTrfOrg = g.Transform;
 				if(bRtl)
 				{
 					g.TranslateTransform(nWidth, 0.0f);
@@ -190,10 +196,14 @@ namespace KeePass.UI
 					}
 				}
 
+				int wIconScaled = StdIconDim;
+				int hIconScaled = StdIconDim;
 				if(imgIcon != null)
 				{
-					int wIconScaled = DpiScaleInt(imgIcon.Width, nHeight);
-					int hIconScaled = DpiScaleInt(imgIcon.Height, nHeight);
+					float fIconRel = (float)imgIcon.Width / (float)imgIcon.Height;
+					wIconScaled = (int)Math.Round(DpiScaleFloat(fIconRel *
+						(float)StdIconDim, nHeight));
+					hIconScaled = DpiScaleInt(StdIconDim, nHeight);
 
 					int yIcon = (nHeight - hIconScaled) / 2;
 					if(hIconScaled == imgIcon.Height)
@@ -216,7 +226,9 @@ namespace KeePass.UI
 				if((bs == BannerStyle.WinXPLogin) || (bs == BannerStyle.WinVistaBlack) ||
 					(bs == BannerStyle.BlueCarbon))
 				{
-					Rectangle rect = new Rectangle(0, nHeight - 2, 0, 2);
+					int sh = DpiUtil.ScaleIntY(20) / 10; // Force floor
+
+					Rectangle rect = new Rectangle(0, nHeight - sh, 0, sh);
 
 					rect.Width = nWidth / 2 + 1;
 					rect.X = nWidth / 2;
@@ -240,12 +252,18 @@ namespace KeePass.UI
 				}
 				else if(bs == BannerStyle.KeePassWin32)
 				{
+					int sh = DpiUtil.ScaleIntY(10) / 10; // Force floor
+
 					// Black separator line
 					using(Pen penBlack = new Pen(Color.Black))
 					{
-						g.DrawLine(penBlack, 0, nHeight - 1, nWidth - 1, nHeight - 1);
+						for(int i = 0; i < sh; ++i)
+							g.DrawLine(penBlack, 0, nHeight - i - 1,
+								nWidth - 1, nHeight - i - 1);
 					}
 				}
+
+				if(bRtl) g.Transform = mxTrfOrg;
 
 				// Brush brush;
 				Color clrText;
@@ -262,20 +280,19 @@ namespace KeePass.UI
 
 				// float fx = 2 * xIcon, fy = 9.0f;
 				int tx = 2 * xIcon, ty = DpiScaleInt(9, nHeight);
-				if(imgIcon != null) tx += DpiScaleInt(imgIcon.Width, nHeight); // fx
+				if(imgIcon != null) tx += wIconScaled; // fx
 
-				TextFormatFlags tff = (TextFormatFlags.PreserveGraphicsClipping |
-					TextFormatFlags.NoPrefix);
-				if(bRtl) tff |= TextFormatFlags.RightToLeft;
+				// TextFormatFlags tff = (TextFormatFlags.PreserveGraphicsClipping |
+				//	TextFormatFlags.NoPrefix);
+				// if(bRtl) tff |= TextFormatFlags.RightToLeft;
 
 				float fFontSize = DpiScaleFloat((12.0f * 96.0f) / g.DpiY, nHeight);
 				Font font = FontUtil.CreateFont(FontFamily.GenericSansSerif,
 					fFontSize, FontStyle.Bold);
-				int txs = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
-					strTitle, font).Width));
+				int txs = (!bRtl ? tx : (nWidth - tx));
+					// - TextRenderer.MeasureText(g, strTitle, font).Width));
 				// g.DrawString(strTitle, font, brush, fx, fy);
-				BannerFactory.DrawText(g, strTitle, font, new Point(txs, ty),
-					clrText, tff, nWidth, nHeight);
+				BannerFactory.DrawText(g, strTitle, txs, ty, font, clrText, bRtl);
 				font.Dispose();
 
 				tx += xIcon; // fx
@@ -284,11 +301,10 @@ namespace KeePass.UI
 				float fFontSizeSm = DpiScaleFloat((9.0f * 96.0f) / g.DpiY, nHeight);
 				Font fontSmall = FontUtil.CreateFont(FontFamily.GenericSansSerif,
 					fFontSizeSm, FontStyle.Regular);
-				int txl = (!bRtl ? tx : (nWidth - tx - TextRenderer.MeasureText(g,
-					strLine, fontSmall).Width));
+				int txl = (!bRtl ? tx : (nWidth - tx));
+					// - TextRenderer.MeasureText(g, strLine, fontSmall).Width));
 				// g.DrawString(strLine, fontSmall, brush, fx, fy);
-				BannerFactory.DrawText(g, strLine, fontSmall, new Point(txl, ty),
-					clrText, tff, nWidth, nHeight);
+				BannerFactory.DrawText(g, strLine, txl, ty, fontSmall, clrText, bRtl);
 				fontSmall.Dispose();
 
 				g.Dispose();
@@ -312,27 +328,43 @@ namespace KeePass.UI
 			return img;
 		}
 
-		private static void DrawText(Graphics g, string strText,
-			Font font, Point pt, Color clrForeground, TextFormatFlags tff,
-			int nWidth, int nHeight)
+		private static void DrawText(Graphics g, string strText, int x,
+			int y, Font font, Color clrForeground, bool bRtl)
 		{
-			// On Windows 2000 the DrawText method taking a Point doesn't
-			// work by design, see MSDN
+			// With ClearType on, text drawn using Graphics.DrawString
+			// looks better than TextRenderer.DrawText;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/06ef4466/
+
+			/* // On Windows 2000 the DrawText method taking a Point doesn't
+			// work by design, see MSDN:
+			// http://msdn.microsoft.com/en-us/library/ms160657.aspx
 			if(WinUtil.IsWindows2000)
 				TextRenderer.DrawText(g, strText, font, new Rectangle(pt.X, pt.Y,
 					nWidth - pt.X - 1, nHeight - pt.Y - 1), clrForeground, tff);
 			else
-				TextRenderer.DrawText(g, strText, font, pt, clrForeground, tff);
+				TextRenderer.DrawText(g, strText, font, pt, clrForeground, tff); */
+
+			using(SolidBrush br = new SolidBrush(clrForeground))
+			{
+				StringFormatFlags sff = (StringFormatFlags.FitBlackBox |
+					StringFormatFlags.NoClip);
+				if(bRtl) sff |= StringFormatFlags.DirectionRightToLeft;
+
+				using(StringFormat sf = new StringFormat(sff))
+				{
+					g.DrawString(strText, font, br, x, y, sf);
+				}
+			}
 		}
 
 		private static int DpiScaleInt(int x, int nBaseHeight)
 		{
-			return (int)Math.Round((double)(x * nBaseHeight) / 60.0);
+			return (int)Math.Round((double)(x * nBaseHeight) / (double)StdHeight);
 		}
 
 		private static float DpiScaleFloat(float x, int nBaseHeight)
 		{
-			return ((x * (float)nBaseHeight) / 60.0f);
+			return ((x * (float)nBaseHeight) / (float)StdHeight);
 		}
 
 		public static void CreateBannerEx(Form f, PictureBox picBox, Image imgIcon,

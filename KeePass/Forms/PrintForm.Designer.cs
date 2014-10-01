@@ -28,8 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PrintForm));
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabPreview = new System.Windows.Forms.TabPage();
 			this.m_wbMain = new System.Windows.Forms.WebBrowser();
@@ -46,6 +44,7 @@
 			this.m_rbSansSerif = new System.Windows.Forms.RadioButton();
 			this.m_rbSerif = new System.Windows.Forms.RadioButton();
 			this.m_grpFields = new System.Windows.Forms.GroupBox();
+			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_cbCustomStrings = new System.Windows.Forms.CheckBox();
 			this.m_cbGroups = new System.Windows.Forms.CheckBox();
 			this.m_linkDeselectAllFields = new System.Windows.Forms.LinkLabel();
@@ -64,13 +63,11 @@
 			this.m_lblTabularInfo = new System.Windows.Forms.Label();
 			this.m_rbDetails = new System.Windows.Forms.RadioButton();
 			this.m_rbTabular = new System.Windows.Forms.RadioButton();
-			this.m_ilTabIcons = new System.Windows.Forms.ImageList(this.components);
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnConfigPrinter = new System.Windows.Forms.Button();
 			this.m_btnPrintPreview = new System.Windows.Forms.Button();
-			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.m_tabDataLayout.SuspendLayout();
@@ -85,7 +82,6 @@
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabPreview);
 			this.m_tabMain.Controls.Add(this.m_tabDataLayout);
-			this.m_tabMain.ImageList = this.m_ilTabIcons;
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -97,7 +93,6 @@
 			// 
 			this.m_tabPreview.Controls.Add(this.m_wbMain);
 			this.m_tabPreview.Controls.Add(this.m_lblPreviewHint);
-			this.m_tabPreview.ImageIndex = 0;
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 23);
 			this.m_tabPreview.Name = "m_tabPreview";
 			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
@@ -136,7 +131,6 @@
 			this.m_tabDataLayout.Controls.Add(this.m_grpFont);
 			this.m_tabDataLayout.Controls.Add(this.m_grpFields);
 			this.m_tabDataLayout.Controls.Add(this.m_grpLayout);
-			this.m_tabDataLayout.ImageIndex = 1;
 			this.m_tabDataLayout.Location = new System.Drawing.Point(4, 23);
 			this.m_tabDataLayout.Name = "m_tabDataLayout";
 			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 436);
@@ -277,6 +271,16 @@
 			this.m_grpFields.TabIndex = 1;
 			this.m_grpFields.TabStop = false;
 			this.m_grpFields.Text = "Fields";
+			// 
+			// m_cbTags
+			// 
+			this.m_cbTags.AutoSize = true;
+			this.m_cbTags.Location = new System.Drawing.Point(464, 42);
+			this.m_cbTags.Name = "m_cbTags";
+			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
+			this.m_cbTags.TabIndex = 9;
+			this.m_cbTags.Text = "Tags";
+			this.m_cbTags.UseVisualStyleBackColor = true;
 			// 
 			// m_cbCustomStrings
 			// 
@@ -473,13 +477,6 @@
 			this.m_rbTabular.UseVisualStyleBackColor = true;
 			this.m_rbTabular.CheckedChanged += new System.EventHandler(this.OnTabularCheckedChanged);
 			// 
-			// m_ilTabIcons
-			// 
-			this.m_ilTabIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ilTabIcons.ImageStream")));
-			this.m_ilTabIcons.TransparentColor = System.Drawing.Color.Transparent;
-			this.m_ilTabIcons.Images.SetKeyName(0, "B16x16_XMag.png");
-			this.m_ilTabIcons.Images.SetKeyName(1, "B16x16_Configure.png");
-			// 
 			// m_bannerImage
 			// 
 			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
@@ -532,16 +529,6 @@
 			this.m_btnPrintPreview.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
-			// 
-			// m_cbTags
-			// 
-			this.m_cbTags.AutoSize = true;
-			this.m_cbTags.Location = new System.Drawing.Point(464, 42);
-			this.m_cbTags.Name = "m_cbTags";
-			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
-			this.m_cbTags.TabIndex = 9;
-			this.m_cbTags.Text = "Tags";
-			this.m_cbTags.UseVisualStyleBackColor = true;
 			// 
 			// PrintForm
 			// 
@@ -611,7 +598,6 @@
 		private System.Windows.Forms.RadioButton m_rbSansSerif;
 		private System.Windows.Forms.RadioButton m_rbSerif;
 		private System.Windows.Forms.CheckBox m_cbSmallMono;
-		private System.Windows.Forms.ImageList m_ilTabIcons;
 		private System.Windows.Forms.CheckBox m_cbExpire;
 		private System.Windows.Forms.CheckBox m_cbAutoType;
 		private System.Windows.Forms.CheckBox m_cbLastMod;

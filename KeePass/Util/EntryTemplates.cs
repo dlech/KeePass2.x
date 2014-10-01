@@ -193,9 +193,7 @@ namespace KeePass.Util
 			PwGroup pgContainer = Program.MainForm.GetSelectedGroup();
 			if(pgContainer == null) pgContainer = pd.RootGroup;
 
-			PwEntry pe = peTemplate.CloneDeep();
-			pe.SetUuid(new PwUuid(true), true);
-			pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = DateTime.Now;
+			PwEntry pe = peTemplate.Duplicate();
 
 			if(EntryTemplates.EntryCreating != null)
 				EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(

@@ -131,6 +131,8 @@ It will output a list of all entries contained in the MyDb.kdbx database file.</
 syntax is exactly the same as in the <code>EditEntry</code> command.
 The field name can be specified using the '<code>-Field</code>' parameter (supported
 field names are e.g. Title, UserName, Password, URL, Notes, etc.).
+If you pass the option '<code>-FailIfNotExists</code>' and the specified
+field does not exist, the operation is aborted and an error is returned.
 Usage example:</p>
 
 <p><code>KPScript -c:GetEntryString &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPassword
@@ -176,6 +178,11 @@ The UUID of the entry must be <i>VALUE</i>.</li>
 <li><code>-refx-Tags:<i>VALUE</i></code><br />
 The entry must have the specified tags. Multiple tags can be separated using
 commas '<code>,</code>'.</li>
+<li><code>-refx-Group:<i>VALUE</i></code><br />
+The name of the parent group of the entry must be <i>VALUE</i>.</li>
+<li><code>-refx-GroupPath:<i>VALUE</i></code><br />
+The full path of the parent group of the entry must be <i>VALUE</i>.
+Use '<code>/</code>' as group separator in the path.</li>
 <li><code>-refx-All</code><br />
 Matches all entries.</li>
 </ul>
@@ -243,6 +250,11 @@ optional &quot;-MM&quot; parameter. Possible values are
 &quot;OverwriteIfNewer&quot;, and
 &quot;Sync&quot;.
 By default, new UUIDs are created.</p>
+
+<p>For encrypted import files, by default the master key of the target database
+is used. However, it is also possible to specify a different master key,
+using the usual key command line parameters with the prefix '<code>imp_</code>'
+(e.g. <code>-imp_pw:ThePassword</code>).</p>
 
 <p>Usage example:</p>
 

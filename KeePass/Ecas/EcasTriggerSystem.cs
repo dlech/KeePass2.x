@@ -114,30 +114,41 @@ namespace KeePass.Ecas
 			return null;
 		}
 
-		public void RaiseEvent(PwUuid eventType, params string[] vParams)
+		public void RaiseEvent(PwUuid eventType)
+		{
+			RaiseEvent(eventType, null);
+		}
+
+		internal void RaiseEvent(PwUuid eventType, string strPropKey,
+			object oPropValue)
+		{
+			EcasPropertyDictionary d = new EcasPropertyDictionary();
+			d.Set(strPropKey, oPropValue);
+
+			RaiseEvent(eventType, d);
+		}
+
+		public void RaiseEvent(PwUuid eventType, EcasPropertyDictionary props)
 		{
 			if(eventType == null) throw new ArgumentNullException("eventType");
-			// if(vParams == null) throw new ArgumentNullException("vParams");
+			// if(props == null) throw new ArgumentNullException("props");
 
-			if(m_bEnabled == false) return;
+			if(!m_bEnabled) return;
 
 			EcasEvent e = new EcasEvent();
 			e.Type = eventType;
 
-			if((vParams != null) && (vParams.Length > 0))
-				e.Parameters.AddRange(vParams);
-
-			RaiseEventObj(e);
+			RaiseEventObj(e, (props ?? new EcasPropertyDictionary()));
 		}
 
-		private void RaiseEventObj(EcasEvent e)
+		private void RaiseEventObj(EcasEvent e, EcasPropertyDictionary props)
 		{
 			// if(e == null) throw new ArgumentNullException("e");
 			// if(m_bEnabled == false) return;
 
 			if(this.RaisingEvent != null)
 			{
-				EcasRaisingEventArgs args = new EcasRaisingEventArgs(e);
+				EcasRaisingEventArgs args = new EcasRaisingEventArgs(e, props);
 				this.RaisingEvent(this, args);
 				if(args.Cancel) return;
 			}
@@ -145,7 +156,7 @@ namespace KeePass.Ecas
 			try
 			{
 				foreach(EcasTrigger t in m_vTriggers)
-					t.RunIfMatching(e);
+					t.RunIfMatching(e, props);
 			}
 			catch(Exception ex)
 			{

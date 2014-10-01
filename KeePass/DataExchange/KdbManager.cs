@@ -412,7 +412,7 @@ namespace KeePass.DataExchange
 		Unknown = 0,
 
 		/// <summary>
-		/// Successfull function call.
+		/// Successful function call.
 		/// </summary>
 		Success,
 
@@ -491,7 +491,7 @@ namespace KeePass.DataExchange
 	/// Manager class for KDB files. It can load/save databases, add/change/delete
 	/// groups and entries, check for KeePassLibC library existence and version, etc.
 	/// </summary>
-	public sealed class KdbManager
+	public sealed class KdbManager : IDisposable
 	{
 		private const string DllFile32 = "KeePassLibC32.dll";
 		private const string DllFile64 = "KeePassLibC64.dll";
@@ -641,7 +641,7 @@ namespace KeePass.DataExchange
 		/// </summary>
 		public KdbManager()
 		{
-			if(m_bX64 == false) // Only check 32-bit structures
+			if(!m_bX64) // Only check 32-bit structures
 			{
 #if VPF_ALIGN
 				bool bAligned = true;
@@ -686,32 +686,40 @@ namespace KeePass.DataExchange
 			else KdbManager.NewDatabase32(m_pManager);
 		}
 
-		/// <summary>
-		/// Destructor for KdbManager instance.
-		/// </summary>
 		~KdbManager()
 		{
-			this.Unload();
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		[DllImport(DllFile32, EntryPoint = "DeleteManager")]
 		private static extern void DeleteManager32(IntPtr pMgr);
 		[DllImport(DllFile64, EntryPoint = "DeleteManager")]
 		private static extern void DeleteManager64(IntPtr pMgr);
-		/// <summary>
-		/// This function clears up all memory associated with the current
-		/// manager instance. You should call this function shortly before
-		/// the object is destroyed (i.e. when you finished working with it).
-		/// </summary>
-		public void Unload()
+		private void Dispose(bool bDisposing)
 		{
 			if(m_pManager != IntPtr.Zero)
 			{
-				if(m_bX64) KdbManager.DeleteManager64(m_pManager);
-				else KdbManager.DeleteManager32(m_pManager);
+				try
+				{
+					if(m_bX64) KdbManager.DeleteManager64(m_pManager);
+					else KdbManager.DeleteManager32(m_pManager);
+				}
+				catch(Exception) { Debug.Assert(false); }
 
 				m_pManager = IntPtr.Zero;
 			}
+		}
+
+		[Obsolete]
+		public void Unload()
+		{
+			Dispose(true);
 		}
 
 		[DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SetMasterKey")]
@@ -722,7 +730,6 @@ namespace KeePass.DataExchange
 		private static extern Int32 SetMasterKey64(IntPtr pMgr, string pszMasterKey,
 			[MarshalAs(UnmanagedType.Bool)] bool bDiskDrive, string pszSecondKey,
 			IntPtr pARI, [MarshalAs(UnmanagedType.Bool)] bool bOverwrite);
-
 		/// <summary>
 		/// Set the master key, which will be used when you call the
 		/// <c>OpenDatabase</c> or <c>SaveDatabase</c> functions.

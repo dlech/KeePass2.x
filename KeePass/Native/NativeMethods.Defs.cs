@@ -28,6 +28,8 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		internal const int WM_SETFOCUS = 0x0007;
+		internal const int WM_KILLFOCUS = 0x0008;
 		internal const int WM_KEYDOWN = 0x0100;
 		internal const int WM_KEYUP = 0x0101;
 		internal const int WM_DRAWCLIPBOARD = 0x0308;
@@ -42,6 +44,7 @@ namespace KeePass.Native
 		internal const int WM_RBUTTONDOWN = 0x0204;
 		internal const int WM_MBUTTONDOWN = 0x0207;
 		// internal const int WM_MOUSEWHEEL = 0x020A;
+		// internal const int WM_ERASEBKGND = 0x0014;
 
 		internal const int WM_NOTIFY = 0x004E;
 
@@ -80,10 +83,10 @@ namespace KeePass.Native
 		internal const int VK_RWIN = 0x5C;
 		internal const int VK_SNAPSHOT = 0x2C;
 
-		internal const int VK_F5 = 0x74;
-		internal const int VK_F6 = 0x75;
-		internal const int VK_F7 = 0x76;
-		internal const int VK_F8 = 0x77;
+		// internal const int VK_F5 = 0x74;
+		// internal const int VK_F6 = 0x75;
+		// internal const int VK_F7 = 0x76;
+		// internal const int VK_F8 = 0x77;
 
 		internal const uint KEYEVENTF_EXTENDEDKEY = 1;
 		internal const uint KEYEVENTF_KEYUP = 2;
@@ -96,6 +99,8 @@ namespace KeePass.Native
 		internal const int GWL_EXSTYLE = -20;
 
 		internal const int WS_VISIBLE = 0x10000000;
+
+		// internal const int WS_EX_COMPOSITED = 0x02000000;
 
 		internal const int SW_SHOW = 5;
 
@@ -133,10 +138,13 @@ namespace KeePass.Native
 		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
 
 		internal const int LVM_FIRST = 0x1000;
-		internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
+		// internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
 		internal const int LVM_SCROLL = LVM_FIRST + 20;
 		// internal const int LVM_SETGROUPINFO = LVM_FIRST + 147; // >= Vista
 		// internal const int LVM_GETGROUPINFOBYINDEX = LVM_FIRST + 153; // >= Vista
+
+		internal const int TV_FIRST = 0x1100;
+		internal const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
 
 		internal const int WM_MOUSEACTIVATE = 0x21;
 		internal const int MA_ACTIVATE = 1;
@@ -191,6 +199,9 @@ namespace KeePass.Native
 		internal const uint SND_ASYNC = 0x0001;
 		internal const uint SND_FILENAME = 0x00020000;
 		internal const uint SND_NODEFAULT = 0x0002;
+
+		internal const int LOGPIXELSX = 88;
+		internal const int LOGPIXELSY = 90;
 
 		// internal const uint PROCESS_QUERY_INFORMATION = 0x0400;
 

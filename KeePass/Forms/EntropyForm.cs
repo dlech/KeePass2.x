@@ -21,10 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 using KeePass.UI;
@@ -40,6 +42,8 @@ namespace KeePass.Forms
 	{
 		private byte[] m_pbEntropy = null;
 		private LinkedList<uint> m_llPool = new LinkedList<uint>();
+
+		private Bitmap m_bmpRandom = null;
 
 		public byte[] GeneratedEntropy
 		{
@@ -76,6 +80,9 @@ namespace KeePass.Forms
 				KPRes.EntropyDesc);
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.EntropyTitle;
+
+			m_bmpRandom = CreateRandomBitmap(m_picRandom.ClientSize);
+			m_picRandom.Image = m_bmpRandom;
 
 			UpdateUIState();
 		}
@@ -133,7 +140,72 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			if(m_bmpRandom != null)
+			{
+				m_picRandom.Image = null;
+
+				m_bmpRandom.Dispose();
+				m_bmpRandom = null;
+			}
+			else { Debug.Assert(false); }
+
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private static Bitmap CreateRandomBitmap(Size sz)
+		{
+			int w = sz.Width;
+			int h = sz.Height;
+			if((w <= 0) || (h <= 0)) { Debug.Assert(false); return null; }
+
+			byte[] pbEndianTest = BitConverter.GetBytes((int)7);
+			bool bLittleEndian = (pbEndianTest[0] == 7);
+
+			byte[] pbBmpData = new byte[w * h * 4];
+			byte[] pbRandomValues = new byte[w * h];
+			Program.GlobalRandom.NextBytes(pbRandomValues);
+			int p = 0;
+			for(int i = 0; i < pbBmpData.Length; i += 4)
+			{
+				byte bt = pbRandomValues[p];
+				++p;
+
+				if(bLittleEndian)
+				{
+					pbBmpData[i] = bt;
+					pbBmpData[i + 3] = 255;
+				}
+				else
+				{
+					pbBmpData[i] = 255;
+					pbBmpData[i + 3] = bt;
+				}
+
+				pbBmpData[i + 1] = bt;
+				pbBmpData[i + 2] = bt;
+			}
+			Debug.Assert(p == (w * h));
+
+			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+
+			Rectangle rect = new Rectangle(0, 0, w, h);
+			BitmapData bd = bmp.LockBits(rect, ImageLockMode.WriteOnly,
+				PixelFormat.Format32bppArgb);
+
+			if(bd.Stride == (w * 4))
+				Marshal.Copy(pbBmpData, 0, bd.Scan0, pbBmpData.Length);
+			else
+			{
+				Debug.Assert(false);
+
+				byte[] pbBlank = new byte[bd.Stride * h];
+				for(int i = 0; i < pbBlank.Length; ++i) pbBlank[i] = 255;
+
+				Marshal.Copy(pbBlank, 0, bd.Scan0, pbBlank.Length);
+			}
+
+			bmp.UnlockBits(bd);
+			return bmp;
 		}
 	}
 }

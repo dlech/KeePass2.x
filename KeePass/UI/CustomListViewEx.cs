@@ -95,15 +95,24 @@ namespace KeePass.UI
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+
 			try { if(SkipGroupHeaderIfRequired(e)) return; }
 			catch(Exception) { Debug.Assert(false); }
 
 			base.OnKeyDown(e);
 		}
 
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+
+			base.OnKeyUp(e);
+		}
+
 		private bool SkipGroupHeaderIfRequired(KeyEventArgs e)
 		{
-			if(!this.ShowGroups) return false;
+			if(!UIUtil.GetGroupsEnabled(this)) return false;
 			if(this.MultiSelect) return false;
 
 			if(MonoWorkarounds.IsRequired(836428016)) return false;

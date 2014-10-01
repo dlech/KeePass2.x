@@ -69,11 +69,10 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvInfo, true);
 
-			int nWidth = m_lvInfo.ClientRectangle.Width - UIUtil.GetVScrollBarWidth();
-			m_lvInfo.Columns.Add(KPRes.Component, (nWidth * 2) / 6);
-			m_lvInfo.Columns.Add(KPRes.Status, (nWidth * 2) / 6);
-			m_lvInfo.Columns.Add(KPRes.Installed, nWidth / 6);
-			m_lvInfo.Columns.Add(KPRes.Available, nWidth / 6);
+			m_lvInfo.Columns.Add(KPRes.Component);
+			m_lvInfo.Columns.Add(KPRes.Status);
+			m_lvInfo.Columns.Add(KPRes.Installed);
+			m_lvInfo.Columns.Add(KPRes.Available);
 
 			List<Image> lImages = new List<Image>();
 			lImages.Add(Properties.Resources.B16x16_Help);
@@ -81,7 +80,8 @@ namespace KeePass.Forms
 			lImages.Add(Properties.Resources.B16x16_Redo);
 			lImages.Add(Properties.Resources.B16x16_History);
 			lImages.Add(Properties.Resources.B16x16_Error);
-			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages, 16, 16);
+			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 
 			m_lvInfo.SmallImageList = m_ilIcons;
 
@@ -135,6 +135,8 @@ namespace KeePass.Forms
 				if(lvg != null) lvi.Group = lvg;
 				m_lvInfo.Items.Add(lvi);
 			}
+
+			UIUtil.ResizeColumns(m_lvInfo, new int[] { 2, 2, 1, 1 }, true);
 		}
 
 		private void CleanUpEx()

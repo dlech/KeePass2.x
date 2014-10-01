@@ -23,6 +23,7 @@ using System.Text;
 
 namespace KeePassLib
 {
+	[Obsolete]
 	public sealed class SecureString
 	{
 		private string m_secString = string.Empty;

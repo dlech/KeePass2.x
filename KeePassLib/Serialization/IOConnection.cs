@@ -524,7 +524,8 @@ namespace KeePassLib.Serialization
 			if(req != null)
 			{
 				if(req is HttpWebRequest) req.Method = "DELETE";
-				else if(req is FtpWebRequest) req.Method = WebRequestMethods.Ftp.DeleteFile;
+				else if(req is FtpWebRequest)
+					req.Method = WebRequestMethods.Ftp.DeleteFile;
 				else if(req is FileWebRequest)
 				{
 					File.Delete(UrlUtil.FileUrlToPath(ioc.Path));

@@ -69,12 +69,8 @@ namespace KeePass.Forms
 			try { GetAppComponents(); }
 			catch(Exception) { Debug.Assert(false); }
 
-			int nWidth = m_lvComponents.ClientRectangle.Width / 2;
-			int nMod = m_lvComponents.ClientRectangle.Width % 2;
-			m_lvComponents.Columns[0].Width = nWidth;
-			m_lvComponents.Columns[1].Width = nWidth + nMod;
-
 			UIUtil.SetExplorerTheme(m_lvComponents, false);
+			UIUtil.ResizeColumns(m_lvComponents, true);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

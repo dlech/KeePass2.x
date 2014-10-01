@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 using System.Diagnostics;
 
 using KeePass.Native;
@@ -98,7 +99,13 @@ namespace KeePass.Util
 
 	public static class SendInputEx
 	{
-		private static CriticalSectionEx m_csSending = new CriticalSectionEx();
+		private static CriticalSectionEx g_csSending = new CriticalSectionEx();
+
+		private static int m_nCurSending = 0;
+		public static bool IsSending
+		{
+			get { return (m_nCurSending != 0); }
+		}
 
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
@@ -119,9 +126,10 @@ namespace KeePass.Util
 			bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
 			if(!bInter)
 			{
-				if(!m_csSending.TryEnter()) return;
+				if(!g_csSending.TryEnter()) return;
 			}
 
+			Interlocked.Increment(ref m_nCurSending);
 			try
 			{
 				si.Init();
@@ -132,7 +140,9 @@ namespace KeePass.Util
 				try { si.Release(); }
 				catch(Exception) { Debug.Assert(false); }
 
-				if(!bInter) m_csSending.Exit();
+				Interlocked.Decrement(ref m_nCurSending);
+
+				if(!bInter) g_csSending.Exit();
 			}
 		}
 
@@ -447,7 +457,7 @@ namespace KeePass.Util
 				{
 					ClipboardUtil.Clear();
 					cnt.SetData();
-					cev.Release();
+					cev.Dispose();
 				}
 			}
 		}

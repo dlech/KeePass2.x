@@ -98,7 +98,7 @@ namespace KeePass.UI
 
 		private ContextMenuStrip CreateContextMenu()
 		{
-			ContextMenuStrip ctx = new ContextMenuStrip();
+			CustomContextMenuStripEx ctx = new CustomContextMenuStripEx();
 			int iPos = -1;
 
 			m_vMenuItems[++iPos] = ctx.Items.Add(KPRes.Undo,

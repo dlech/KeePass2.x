@@ -20,18 +20,34 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Native;
+using KeePass.Util;
 
 namespace KeePass.UI
 {
 	public sealed class CustomToolStripEx : ToolStrip
 	{
+		private CriticalSectionEx m_csSizeAuto = new CriticalSectionEx();
+		private int m_iLockedHeight = 0;
+
 		public CustomToolStripEx() : base()
 		{
 			// ThemeToolStripRenderer.AttachTo(this);
+
+			UIUtil.Configure(this);
 		}
+
+#if DEBUG
+		~CustomToolStripEx()
+		{
+			if(m_csSizeAuto.TryEnter()) m_csSizeAuto.Exit();
+			else { Debug.Assert(false); } // Should have been unlocked
+		}
+#endif
 
 		protected override void WndProc(ref Message m)
 		{
@@ -43,6 +59,39 @@ namespace KeePass.UI
 			{
 				m.Result = (IntPtr)NativeMethods.MA_ACTIVATE;
 			}
+		}
+
+		public void LockHeight(bool bLock)
+		{
+			Debug.Assert(this.Height > 0);
+			m_iLockedHeight = (bLock ? this.Height : 0);
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			if(m_csSizeAuto.TryEnter())
+			{
+				try
+				{
+					Size sz = this.Size;
+					// Ignore zero-size events (which can occur e.g. when
+					// the ToolStrip is being hidden)
+					if((sz.Width > 0) && (sz.Height > 0))
+					{
+						if((m_iLockedHeight > 0) && (sz.Height != m_iLockedHeight))
+						{
+							base.OnSizeChanged(e);
+							this.Height = m_iLockedHeight;
+							Debug.Assert(this.Size.Height == m_iLockedHeight);
+							return;
+						}
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+				finally { m_csSizeAuto.Exit(); }
+			}
+
+			base.OnSizeChanged(e);
 		}
 	}
 }

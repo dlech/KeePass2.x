@@ -91,7 +91,7 @@
 			this.m_lblChars.Location = new System.Drawing.Point(12, 6);
 			this.m_lblChars.Name = "m_lblChars";
 			this.m_lblChars.Size = new System.Drawing.Size(56, 13);
-			this.m_lblChars.TabIndex = 4;
+			this.m_lblChars.TabIndex = 0;
 			this.m_lblChars.Text = "Character:";
 			// 
 			// m_lblIndex
@@ -100,7 +100,7 @@
 			this.m_lblIndex.Location = new System.Drawing.Point(12, 30);
 			this.m_lblIndex.Name = "m_lblIndex";
 			this.m_lblIndex.Size = new System.Drawing.Size(47, 13);
-			this.m_lblIndex.TabIndex = 5;
+			this.m_lblIndex.TabIndex = 1;
 			this.m_lblIndex.Text = "Position:";
 			// 
 			// m_lblSelChars
@@ -109,7 +109,7 @@
 			this.m_lblSelChars.Location = new System.Drawing.Point(12, 15);
 			this.m_lblSelChars.Name = "m_lblSelChars";
 			this.m_lblSelChars.Size = new System.Drawing.Size(36, 13);
-			this.m_lblSelChars.TabIndex = 6;
+			this.m_lblSelChars.TabIndex = 0;
 			this.m_lblSelChars.Text = "Word:";
 			// 
 			// m_tbSelected
@@ -117,17 +117,18 @@
 			this.m_tbSelected.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_tbSelected.Location = new System.Drawing.Point(0, 12);
 			this.m_tbSelected.Name = "m_tbSelected";
-			this.m_tbSelected.Size = new System.Drawing.Size(511, 20);
-			this.m_tbSelected.TabIndex = 7;
+			this.m_tbSelected.Size = new System.Drawing.Size(508, 20);
+			this.m_tbSelected.TabIndex = 0;
 			// 
 			// m_cbHideChars
 			// 
 			this.m_cbHideChars.Appearance = System.Windows.Forms.Appearance.Button;
-			this.m_cbHideChars.Image = global::KeePass.Properties.Resources.B17x05_3BlackDots;
 			this.m_cbHideChars.Location = new System.Drawing.Point(5, 10);
 			this.m_cbHideChars.Name = "m_cbHideChars";
-			this.m_cbHideChars.Size = new System.Drawing.Size(29, 23);
-			this.m_cbHideChars.TabIndex = 8;
+			this.m_cbHideChars.Size = new System.Drawing.Size(32, 23);
+			this.m_cbHideChars.TabIndex = 0;
+			this.m_cbHideChars.Text = "***";
+			this.m_cbHideChars.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.m_cbHideChars.UseVisualStyleBackColor = true;
 			this.m_cbHideChars.CheckedChanged += new System.EventHandler(this.OnHideCharsCheckedChanged);
 			// 
@@ -137,7 +138,7 @@
 			this.m_pnlSelect.Location = new System.Drawing.Point(71, 8);
 			this.m_pnlSelect.Name = "m_pnlSelect";
 			this.m_pnlSelect.Size = new System.Drawing.Size(545, 52);
-			this.m_pnlSelect.TabIndex = 9;
+			this.m_pnlSelect.TabIndex = 1;
 			// 
 			// m_pnlBottom
 			// 
@@ -146,7 +147,7 @@
 			this.m_pnlBottom.Location = new System.Drawing.Point(0, 175);
 			this.m_pnlBottom.Name = "m_pnlBottom";
 			this.m_pnlBottom.Size = new System.Drawing.Size(628, 40);
-			this.m_pnlBottom.TabIndex = 10;
+			this.m_pnlBottom.TabIndex = 2;
 			// 
 			// m_pnlBottomRight
 			// 
@@ -167,7 +168,7 @@
 			this.m_pnlTop.Name = "m_pnlTop";
 			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(0, 8, 12, 8);
 			this.m_pnlTop.Size = new System.Drawing.Size(628, 68);
-			this.m_pnlTop.TabIndex = 11;
+			this.m_pnlTop.TabIndex = 3;
 			// 
 			// m_pnlTopLeft
 			// 
@@ -177,7 +178,7 @@
 			this.m_pnlTopLeft.Location = new System.Drawing.Point(0, 8);
 			this.m_pnlTopLeft.Name = "m_pnlTopLeft";
 			this.m_pnlTopLeft.Size = new System.Drawing.Size(71, 52);
-			this.m_pnlTopLeft.TabIndex = 10;
+			this.m_pnlTopLeft.TabIndex = 0;
 			// 
 			// m_pnlLeft
 			// 
@@ -186,16 +187,16 @@
 			this.m_pnlLeft.Location = new System.Drawing.Point(0, 128);
 			this.m_pnlLeft.Name = "m_pnlLeft";
 			this.m_pnlLeft.Size = new System.Drawing.Size(71, 47);
-			this.m_pnlLeft.TabIndex = 12;
+			this.m_pnlLeft.TabIndex = 4;
 			// 
 			// m_pnlRight
 			// 
 			this.m_pnlRight.Controls.Add(this.m_cbHideChars);
 			this.m_pnlRight.Dock = System.Windows.Forms.DockStyle.Right;
-			this.m_pnlRight.Location = new System.Drawing.Point(582, 128);
+			this.m_pnlRight.Location = new System.Drawing.Point(579, 128);
 			this.m_pnlRight.Name = "m_pnlRight";
-			this.m_pnlRight.Size = new System.Drawing.Size(46, 47);
-			this.m_pnlRight.TabIndex = 13;
+			this.m_pnlRight.Size = new System.Drawing.Size(49, 47);
+			this.m_pnlRight.TabIndex = 1;
 			// 
 			// m_pnlMiddleTopSpacer
 			// 
@@ -204,8 +205,8 @@
 			this.m_pnlMiddleTopSpacer.Location = new System.Drawing.Point(71, 128);
 			this.m_pnlMiddleTopSpacer.Name = "m_pnlMiddleTopSpacer";
 			this.m_pnlMiddleTopSpacer.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
-			this.m_pnlMiddleTopSpacer.Size = new System.Drawing.Size(511, 41);
-			this.m_pnlMiddleTopSpacer.TabIndex = 14;
+			this.m_pnlMiddleTopSpacer.Size = new System.Drawing.Size(508, 41);
+			this.m_pnlMiddleTopSpacer.TabIndex = 0;
 			// 
 			// CharPickerForm
 			// 

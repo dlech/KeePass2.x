@@ -49,9 +49,10 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Get the directory (path) of a file name. The returned string is
+		/// Get the directory (path) of a file name. The returned string may be
 		/// terminated by a directory separator character. Example:
 		/// passing <c>C:\\My Documents\\My File.kdb</c> in <paramref name="strFile" />
+		/// and <c>true</c> to <paramref name="bAppendTerminatingChar"/>
 		/// would produce this string: <c>C:\\My Documents\\</c>.
 		/// </summary>
 		/// <param name="strFile">Full path of a file.</param>
@@ -62,8 +63,7 @@ namespace KeePassLib.Utility
 		/// of <c>X:</c>, overriding <paramref name="bAppendTerminatingChar" />).
 		/// This should only be set to <c>true</c>, if the returned path is directly
 		/// passed to some directory API.</param>
-		/// <returns>Directory of the file. The return value is an empty string
-		/// (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+		/// <returns>Directory of the file.</returns>
 		public static string GetFileDirectory(string strFile, bool bAppendTerminatingChar,
 			bool bEnsureValidDirSpec)
 		{
@@ -71,14 +71,15 @@ namespace KeePassLib.Utility
 			if(strFile == null) throw new ArgumentNullException("strFile");
 
 			int nLastSep = strFile.LastIndexOfAny(m_vDirSeps);
-			if(nLastSep < 0) return strFile; // None
+			if(nLastSep < 0) return string.Empty; // No directory
 
 			if(bEnsureValidDirSpec && (nLastSep == 2) && (strFile[1] == ':') &&
 				(strFile[2] == '\\')) // Length >= 3 and Windows root directory
 				bAppendTerminatingChar = true;
 
 			if(!bAppendTerminatingChar) return strFile.Substring(0, nLastSep);
-			return EnsureTerminatingSeparator(strFile.Substring(0, nLastSep), false);
+			return EnsureTerminatingSeparator(strFile.Substring(0, nLastSep),
+				(strFile[nLastSep] == '/'));
 		}
 
 		/// <summary>

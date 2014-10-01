@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -40,6 +41,8 @@ namespace KeePass.Forms
 {
 	public partial class LanguageForm : Form, IGwmWindow
 	{
+		private ImageList m_ilIcons = null;
+
 		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		public LanguageForm()
@@ -58,11 +61,17 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.SelectLanguage;
 
-			int nWidth = m_lvLanguages.ClientRectangle.Width / 4;
-			m_lvLanguages.Columns.Add(KPRes.AvailableLanguages, nWidth);
-			m_lvLanguages.Columns.Add(KPRes.Version, nWidth);
-			m_lvLanguages.Columns.Add(KPRes.Author, nWidth);
-			m_lvLanguages.Columns.Add(KPRes.Contact, nWidth);
+			List<Image> lImg = new List<Image>();
+			lImg.Add(Properties.Resources.B16x16_Browser);
+
+			m_ilIcons = UIUtil.BuildImageListUnscaled(lImg,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+			m_lvLanguages.SmallImageList = m_ilIcons;
+
+			m_lvLanguages.Columns.Add(KPRes.AvailableLanguages);
+			m_lvLanguages.Columns.Add(KPRes.Version);
+			m_lvLanguages.Columns.Add(KPRes.Author);
+			m_lvLanguages.Columns.Add(KPRes.Contact);
 
 			ListViewItem lvi = m_lvLanguages.Items.Add("English", 0);
 			lvi.SubItems.Add(PwDefs.VersionString);
@@ -76,6 +85,8 @@ namespace KeePass.Forms
 			string strExe = WinUtil.GetExecutable();
 			string strPath = UrlUtil.GetFileDirectory(strExe, false, true);
 			GetAvailableTranslations(strPath, vList);
+
+			UIUtil.ResizeColumns(m_lvLanguages, true);
 		}
 
 		private void GetAvailableTranslations(string strPath, List<string> vList)
@@ -160,6 +171,14 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			if(m_ilIcons != null)
+			{
+				m_lvLanguages.SmallImageList = null;
+				m_ilIcons.Dispose();
+				m_ilIcons = null;
+			}
+			else { Debug.Assert(false); }
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 

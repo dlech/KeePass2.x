@@ -115,6 +115,8 @@ namespace KeePass.UI
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+
 			if(m_bSimpleTextOnly && IsPasteCommand(e))
 			{
 				UIUtil.SetHandled(e, true);
@@ -156,6 +158,8 @@ namespace KeePass.UI
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
+			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+
 			if(m_bSimpleTextOnly && IsPasteCommand(e))
 			{
 				UIUtil.SetHandled(e, true);

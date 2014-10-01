@@ -28,11 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LanguageForm));
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_lvLanguages = new KeePass.UI.CustomListViewEx();
-			this.m_ilLanguages = new System.Windows.Forms.ImageList(this.components);
 			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_btnMore = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
@@ -59,17 +56,10 @@
 			this.m_lvLanguages.Name = "m_lvLanguages";
 			this.m_lvLanguages.ShowItemToolTips = true;
 			this.m_lvLanguages.Size = new System.Drawing.Size(507, 248);
-			this.m_lvLanguages.SmallImageList = this.m_ilLanguages;
 			this.m_lvLanguages.TabIndex = 0;
 			this.m_lvLanguages.UseCompatibleStateImageBehavior = false;
 			this.m_lvLanguages.View = System.Windows.Forms.View.Details;
 			this.m_lvLanguages.ItemActivate += new System.EventHandler(this.OnLanguagesItemActivate);
-			// 
-			// m_ilLanguages
-			// 
-			this.m_ilLanguages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ilLanguages.ImageStream")));
-			this.m_ilLanguages.TransparentColor = System.Drawing.Color.Transparent;
-			this.m_ilLanguages.Images.SetKeyName(0, "B16x16_Browser.png");
 			// 
 			// m_btnClose
 			// 
@@ -112,8 +102,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.ResumeLayout(false);
 
@@ -124,7 +114,6 @@
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private KeePass.UI.CustomListViewEx m_lvLanguages;
 		private System.Windows.Forms.Button m_btnClose;
-		private System.Windows.Forms.ImageList m_ilLanguages;
 		private System.Windows.Forms.Button m_btnMore;
 	}
 }

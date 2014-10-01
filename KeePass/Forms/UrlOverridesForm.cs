@@ -71,14 +71,14 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvOverrides, false);
 
-			int nWidth = (m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth()) / 4;
-			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth);
-			m_lvOverrides.Columns.Add(KPRes.UrlOverride, nWidth * 3);
+			int nWidth = m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth();
+			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth / 4);
+			m_lvOverrides.Columns.Add(KPRes.UrlOverride, (nWidth * 3) / 4);
 
 			m_bEnfSch = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlSchemeOverrides");
 			m_bEnfAll = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlOverride");
 
-			UpdateOverridesList();
+			UpdateOverridesList(false, false);
 
 			m_cbOverrideAll.Checked = (m_strUrlOverrideAll.Length > 0);
 			m_tbOverrideAll.Text = m_strUrlOverrideAll;
@@ -90,8 +90,11 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private void UpdateOverridesList()
+		private void UpdateOverridesList(bool bRestoreView, bool bUpdateState)
 		{
+			UIScrollInfo s = (bRestoreView ? UIUtil.GetScrollInfo(
+				m_lvOverrides, true) : null);
+
 			m_lvOverrides.BeginUpdate();
 			m_lvOverrides.Items.Clear();
 			m_lvOverrides.Groups.Clear();
@@ -118,8 +121,11 @@ namespace KeePass.Forms
 				}
 			}
 
+			if(bRestoreView) UIUtil.Scroll(m_lvOverrides, s, false);
+
 			m_lvOverrides.EndUpdate();
-			EnableControlsEx();
+
+			if(bUpdateState) EnableControlsEx();
 		}
 
 		private void OnOverridesItemChecked(object sender, ItemCheckedEventArgs e)
@@ -171,8 +177,8 @@ namespace KeePass.Forms
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
 				m_aceTmp.CustomOverrides.Add(ovr);
-				UpdateOverridesList();
-				m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
+				UpdateOverridesList(true, true);
+				// m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
 			}
 		}
 
@@ -188,10 +194,7 @@ namespace KeePass.Forms
 			UrlOverrideForm dlg = new UrlOverrideForm();
 			dlg.InitEx(ovr);
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-			{
-				UpdateOverridesList();
-				m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
-			}
+				UpdateOverridesList(true, true);
 		}
 
 		private void OnBtnDelete(object sender, EventArgs e)
@@ -209,8 +212,7 @@ namespace KeePass.Forms
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			UpdateOverridesList();
-			m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
+			UpdateOverridesList(true, true);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

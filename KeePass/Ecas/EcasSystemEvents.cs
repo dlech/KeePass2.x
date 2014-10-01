@@ -31,9 +31,16 @@ namespace KeePass.Ecas
 			get { return m_evt; }
 		}
 
-		public EcasRaisingEventArgs(EcasEvent evt)
+		private EcasPropertyDictionary m_props;
+		public EcasPropertyDictionary Properties
+		{
+			get { return m_props; }
+		}
+
+		public EcasRaisingEventArgs(EcasEvent evt, EcasPropertyDictionary props)
 		{
 			m_evt = evt;
+			m_props = props;
 		}
 	}
 }

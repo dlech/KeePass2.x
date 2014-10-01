@@ -61,7 +61,7 @@ namespace KeePass.Forms
 	{
 		private NotifyIconEx m_ntfTray = null;
 
-		private bool m_bFormLoading = false;
+		private bool m_bFormLoaded = false;
 		private bool m_bFormShown = false;
 		private bool m_bCleanedUp = false;
 
@@ -133,7 +133,7 @@ namespace KeePass.Forms
 			if(m_bFormLoadCalled && MonoWorkarounds.IsRequired(3574233558U)) return;
 			m_bFormLoadCalled = true;
 
-			m_bFormLoading = true;
+			m_bFormLoaded = false;
 			GlobalWindowManager.CustomizeControl(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTray);
 
@@ -232,7 +232,7 @@ namespace KeePass.Forms
 
 			bool bVisible = Program.Config.MainWindow.ToolBar.Show;
 			m_toolMain.Visible = bVisible;
-			m_menuViewShowToolBar.Checked = bVisible;
+			UIUtil.SetChecked(m_menuViewShowToolBar, bVisible);
 
 			// Make a copy of the maximized setting (the configuration item might
 			// get changed when the window's position/size is restored)
@@ -280,13 +280,13 @@ namespace KeePass.Forms
 
 			AceMainWindow mw = Program.Config.MainWindow;
 
-			m_menuViewTanSimpleList.Checked = m_bSimpleTanView =
-				mw.TanView.UseSimpleView;
-			m_menuViewTanIndices.Checked = m_bShowTanIndices =
-				mw.TanView.ShowIndices;
+			m_bSimpleTanView = mw.TanView.UseSimpleView;
+			UIUtil.SetChecked(m_menuViewTanSimpleList, m_bSimpleTanView);
+			m_bShowTanIndices = mw.TanView.ShowIndices;
+			UIUtil.SetChecked(m_menuViewTanIndices, m_bShowTanIndices);
 
-			m_menuViewShowEntriesOfSubGroups.Checked =
-				Program.Config.MainWindow.ShowEntriesOfSubGroups;
+			UIUtil.SetChecked(m_menuViewShowEntriesOfSubGroups,
+				Program.Config.MainWindow.ShowEntriesOfSubGroups);
 
 			m_pListSorter = Program.Config.MainWindow.ListSorting;
 			if((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
@@ -297,8 +297,8 @@ namespace KeePass.Forms
 				new SortCommandHandler(this.SortPasswordList));
 			m_lvgmMenu = new ListViewGroupingMenu(m_menuViewEntryListGrouping, this);
 
-			m_menuViewAlwaysOnTop.Checked = mw.AlwaysOnTop;
-			OnViewAlwaysOnTop(null, null);
+			UIUtil.SetChecked(m_menuViewAlwaysOnTop, mw.AlwaysOnTop);
+			EnsureAlwaysOnTopOpt();
 
 			m_mruList.Initialize(this, m_menuFileRecent, m_menuFileSyncRecent);
 			m_mruList.MarkOpened = true;
@@ -414,6 +414,16 @@ namespace KeePass.Forms
 			m_statusClipboard.Visible = false;
 			UpdateClipboardStatus();
 
+			ToolStripItem[] vSbItems = new ToolStripItem[] {
+				m_statusPartSelected, m_statusPartProgress, m_statusClipboard };
+			int[] vStdSbWidths = new int[] { 140, 150, 100 };
+			DpiUtil.ScaleToolStripItems(vSbItems, vStdSbWidths);
+
+			// Workaround for .NET ToolStrip height bug;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/19e7c256/
+			Debug.Assert((m_toolMain.Height == 25) || DpiUtil.ScalingRequired);
+			m_toolMain.LockHeight(true);
+
 			UpdateTrayIcon();
 			UpdateTagsMenu(m_dynShowEntriesByTagsEditMenu, false, false,
 				TagsMenuMode.EnsurePopupOnly);
@@ -446,7 +456,7 @@ namespace KeePass.Forms
 
 			MinimizeToTrayAtStartIfEnabled(true);
 
-			m_bFormLoading = false;
+			m_bFormLoaded = true;
 			NotifyUserActivity(); // Initialize locking timeout
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppLoadPost);
 		}
@@ -630,7 +640,7 @@ namespace KeePass.Forms
 				if(args.Cancel) { UIBlockInteraction(false); return; }
 			}
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavingDatabaseFile,
-				pd.IOConnectionInfo.Path);
+				EcasProperty.Database, pd);
 
 			ShowWarningsLogger swLogger = CreateShowWarningsLogger();
 			swLogger.StartLogging(KPRes.SavingDatabase, true);
@@ -665,7 +675,7 @@ namespace KeePass.Forms
 			}
 			if(bSuccess)
 				Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile,
-					pd.IOConnectionInfo.Path);
+					EcasProperty.Database, pd);
 		}
 
 		private void OnFileSave(object sender, EventArgs e)
@@ -915,8 +925,7 @@ namespace KeePass.Forms
 			PwObjectList<PwEntry> vNewEntries = new PwObjectList<PwEntry>();
 			foreach(PwEntry pe in vSelected)
 			{
-				PwEntry peNew = pe.CloneDeep();
-				peNew.SetUuid(new PwUuid(true), true); // Create new UUID
+				PwEntry peNew = pe.Duplicate();
 
 				dlg.ApplyTo(peNew, pe, pd);
 
@@ -932,9 +941,6 @@ namespace KeePass.Forms
 			AddEntriesToList(vNewEntries);
 			SelectEntries(vNewEntries, true, true);
 
-			// if(!m_lvEntries.ShowGroups && (m_lvEntries.Items.Count >= 1))
-			//	m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
-			// else EnsureVisibleSelected(true);
 			EnsureVisibleSelected(true); // Show all copies if possible
 			EnsureVisibleSelected(false); // Ensure showing the first
 
@@ -1077,15 +1083,18 @@ namespace KeePass.Forms
 
 		private void OnViewShowToolBar(object sender, EventArgs e)
 		{
-			bool b = m_menuViewShowToolBar.Checked;
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			bool b = !Program.Config.MainWindow.ToolBar.Show;
 
 			Program.Config.MainWindow.ToolBar.Show = b;
 			m_toolMain.Visible = b;
+			UIUtil.SetChecked(m_menuViewShowToolBar, b);
 		}
 
 		private void OnViewShowEntryView(object sender, EventArgs e)
 		{
-			ShowEntryView(m_menuViewShowEntryView.Checked);
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			ShowEntryView(!Program.Config.MainWindow.EntryView.Show);
 		}
 
 		private void OnPwListSelectedIndexChanged(object sender, EventArgs e)
@@ -1198,7 +1207,7 @@ namespace KeePass.Forms
 			m_tbQuickFind.SelectedIndex = 0;
 			m_tbQuickFind.Select(0, strSearch.Length);
 
-			// Asynchronous invokation allows to cleanly process
+			// Asynchronous invocation allows to cleanly process
 			// an Enter keypress before blocking the UI
 			BeginInvoke(new PerformQuickFindDelegate(PerformQuickFind),
 				strSearch, strGroupName, false, true);
@@ -1363,13 +1372,7 @@ namespace KeePass.Forms
 					}
 				}
 				else if(e.Effect == DragDropEffects.Copy)
-				{
-					pgDragged = pgDragged.CloneDeep();
-
-					pgDragged.Uuid = new PwUuid(true);
-					pgDragged.CreateNewItemUuids(true, true, true);
-					pgDragged.TakeOwnership(true, true, true);
-				}
+					pgDragged = pgDragged.Duplicate();
 				else { Debug.Assert(false); }
 
 				pgSelected.AddGroup(pgDragged, true, true);
@@ -1463,9 +1466,11 @@ namespace KeePass.Forms
 
 		private void OnViewAlwaysOnTop(object sender, EventArgs e)
 		{
-			bool bTop = m_menuViewAlwaysOnTop.Checked;
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			bool bTop = !Program.Config.MainWindow.AlwaysOnTop;
 
 			Program.Config.MainWindow.AlwaysOnTop = bTop;
+			UIUtil.SetChecked(m_menuViewAlwaysOnTop, bTop);
 			EnsureAlwaysOnTopOpt();
 		}
 
@@ -1482,8 +1487,18 @@ namespace KeePass.Forms
 
 		private void OnFormResize(object sender, EventArgs e)
 		{
+			// With high DPI, OnFormResize might be called before OnFormLoad;
+			// we must ignore this (otherwise e.g. the maximized state gets
+			// corrupted)
+			if(!m_bFormLoadCalled) { Debug.Assert(DpiUtil.ScalingRequired); return; }
+
 			FormWindowState ws = this.WindowState;
 			bool bAuto = !UIIsWindowStateAutoBlocked();
+
+			if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
+				m_oszClientLast = this.ClientSize;
+
+			DwmUtil.EnableWindowPeekPreview(this);
 
 			if(ws == FormWindowState.Minimized)
 			{
@@ -1528,7 +1543,18 @@ namespace KeePass.Forms
 		private void OnTrayTray(object sender, EventArgs e)
 		{
 			if(GlobalWindowManager.ActivateTopWindow()) return;
-			if(!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
+			if(!IsCommandTypeInvokable(null, AppCommandType.Window))
+			{
+				// If a non-Form window is being displayed, activate it
+				// indirectly by activating the main window
+				if(GlobalWindowManager.WindowCount > 0)
+				{
+					try { this.Activate(); }
+					catch(Exception) { Debug.Assert(false); }
+				}
+
+				return;
+			}
 
 			if((this.WindowState == FormWindowState.Minimized) && !IsTrayed())
 			{
@@ -1545,6 +1571,9 @@ namespace KeePass.Forms
 
 		private void OnTimerMainTick(object sender, EventArgs e)
 		{
+			// Prevent UI automations during auto-type
+			if(SendInputEx.IsSending) return;
+
 			if(m_nClipClearCur > 0)
 			{
 				--m_nClipClearCur;
@@ -1660,22 +1689,22 @@ namespace KeePass.Forms
 
 		private void OnEntryMoveToTop(object sender, EventArgs e)
 		{
-			MoveSelectedEntries(2);
+			MoveSelectedEntries(-2);
 		}
 
 		private void OnEntryMoveOneUp(object sender, EventArgs e)
 		{
-			MoveSelectedEntries(1);
+			MoveSelectedEntries(-1);
 		}
 
 		private void OnEntryMoveOneDown(object sender, EventArgs e)
 		{
-			MoveSelectedEntries(-1);
+			MoveSelectedEntries(1);
 		}
 
 		private void OnEntryMoveToBottom(object sender, EventArgs e)
 		{
-			MoveSelectedEntries(-2);
+			MoveSelectedEntries(2);
 		}
 
 		private void OnPwListColumnClick(object sender, ColumnClickEventArgs e)
@@ -1771,13 +1800,19 @@ namespace KeePass.Forms
 
 		private void OnViewTanSimpleListClick(object sender, EventArgs e)
 		{
-			m_bSimpleTanView = m_menuViewTanSimpleList.Checked;
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			m_bSimpleTanView = !m_bSimpleTanView;
+			UIUtil.SetChecked(m_menuViewTanSimpleList, m_bSimpleTanView);
+
 			UpdateEntryList(null, true);
 		}
 
 		private void OnViewTanIndicesClick(object sender, EventArgs e)
 		{
-			m_bShowTanIndices = m_menuViewTanIndices.Checked;
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			m_bShowTanIndices = !m_bShowTanIndices;
+			UIUtil.SetChecked(m_menuViewTanIndices, m_bShowTanIndices);
+
 			RefreshEntriesList();
 		}
 
@@ -2152,22 +2187,22 @@ namespace KeePass.Forms
 
 		private void OnGroupsMoveToTop(object sender, EventArgs e)
 		{
-			MoveSelectedGroup(2);
+			MoveSelectedGroup(-2);
 		}
 
 		private void OnGroupsMoveOneUp(object sender, EventArgs e)
 		{
-			MoveSelectedGroup(1);
+			MoveSelectedGroup(-1);
 		}
 
 		private void OnGroupsMoveOneDown(object sender, EventArgs e)
 		{
-			MoveSelectedGroup(-1);
+			MoveSelectedGroup(1);
 		}
 
 		private void OnGroupsMoveToBottom(object sender, EventArgs e)
 		{
-			MoveSelectedGroup(-2);
+			MoveSelectedGroup(2);
 		}
 
 		private void OnGroupsKeyDown(object sender, KeyEventArgs e)
@@ -2270,8 +2305,11 @@ namespace KeePass.Forms
 
 		private void OnViewShowEntriesOfSubGroups(object sender, EventArgs e)
 		{
-			Program.Config.MainWindow.ShowEntriesOfSubGroups =
-				m_menuViewShowEntriesOfSubGroups.Checked;
+			Debug.Assert(m_bFormLoaded); // The following toggles!
+			bool b = !Program.Config.MainWindow.ShowEntriesOfSubGroups;
+			Program.Config.MainWindow.ShowEntriesOfSubGroups = b;
+			UIUtil.SetChecked(m_menuViewShowEntriesOfSubGroups, b);
+
 			UpdateUI(false, null, false, null, true, null, false);
 		}
 
@@ -2528,11 +2566,7 @@ namespace KeePass.Forms
 			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
 
 			PwDatabase pd = m_docMgr.ActiveDatabase;
-			PwGroup pg = pgBase.CloneDeep();
-
-			pg.Uuid = new PwUuid(true);
-			pg.CreateNewItemUuids(true, true, true);
-			pg.TakeOwnership(true, true, true);
+			PwGroup pg = pgBase.Duplicate();
 
 			pg.ParentGroup = pgParent;
 			int iBase = pgParent.Groups.IndexOf(pgBase);
@@ -2566,11 +2600,19 @@ namespace KeePass.Forms
 
 		private void OnTabMainKeyDown(object sender, KeyEventArgs e)
 		{
+			// Ignore Tab key, otherwise it is handled twice;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/3c82f94b/
+			if(e.KeyCode == Keys.Tab) return;
+
 			HandleMainWindowKeyMessage(e, true);
 		}
 
 		private void OnTabMainKeyUp(object sender, KeyEventArgs e)
 		{
+			// Ignore Tab key, otherwise it is handled twice;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/3c82f94b/
+			if(e.KeyCode == Keys.Tab) return;
+
 			HandleMainWindowKeyMessage(e, false);
 		}
 

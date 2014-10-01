@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Globalization;
 using System.Diagnostics;
 
 using KeePassLib.Interfaces;
@@ -34,6 +37,11 @@ namespace KeePassLib.Utility
 		/// Length of a compressed <c>PW_TIME</c> structure in bytes.
 		/// </summary>
 		public const int PwTimeLength = 7;
+
+#if !KeePassLibSD
+		private static string m_strDtfStd = null;
+		private static string m_strDtfDate = null;
+#endif
 
 		/// <summary>
 		/// Pack a <c>DateTime</c> object into 5 bytes. Layout: 2 zero bits,
@@ -140,16 +148,117 @@ namespace KeePassLib.Utility
 		{
 			DateTime dt;
 
-#if !KeePassLibSD
-			if(DateTime.TryParse(strDisplay, out dt)) return dt;
-#else
+#if KeePassLibSD
 			try { dt = DateTime.Parse(strDisplay); return dt; }
 			catch(Exception) { }
+#else
+			if(DateTime.TryParse(strDisplay, out dt)) return dt;
+
+			// For some custom formats specified using the Control Panel,
+			// DateTime.ToString returns the correct string, but
+			// DateTime.TryParse fails (e.g. for "//dd/MMM/yyyy");
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/3a225b29/?limit=25&page=1#c6ae
+			if((m_strDtfStd == null) || (m_strDtfDate == null))
+			{
+				DateTime dtUni = new DateTime(2111, 3, 4, 5, 6, 7);
+				m_strDtfStd = DeriveCustomFormat(ToDisplayString(dtUni), dtUni);
+				m_strDtfDate = DeriveCustomFormat(ToDisplayStringDateOnly(dtUni), dtUni);
+			}
+			const DateTimeStyles dts = DateTimeStyles.AllowWhiteSpaces;
+			if(DateTime.TryParseExact(strDisplay, m_strDtfStd, null, dts, out dt))
+				return dt;
+			if(DateTime.TryParseExact(strDisplay, m_strDtfDate, null, dts, out dt))
+				return dt;
 #endif
 
 			Debug.Assert(false);
 			return DateTime.Now;
 		}
+
+#if !KeePassLibSD
+		private static string DeriveCustomFormat(string strDT, DateTime dt)
+		{
+			string[] vPlh = new string[] {
+				// Names, sorted by length
+				"MMMM", "dddd",
+				"MMM", "ddd",
+				"gg", "g",
+
+				// Numbers, the ones with prefix '0' first
+				"yyyy", "yyy", "yy", "y",
+				"MM", "M",
+				"dd", "d",
+				"HH", "hh", "H", "h",
+				"mm", "m",
+				"ss", "s",
+
+				"tt", "t"
+			};
+
+			List<string> lValues = new List<string>();
+			foreach(string strPlh in vPlh)
+			{
+				string strEval = strPlh;
+				if(strEval.Length == 1) strEval = @"%" + strPlh; // Make custom
+
+				lValues.Add(dt.ToString(strEval));
+			}
+
+			StringBuilder sbAll = new StringBuilder();
+			sbAll.Append("dfFghHKmMstyz:/\"\'\\%");
+			sbAll.Append(strDT);
+			foreach(string strVEnum in lValues) { sbAll.Append(strVEnum); }
+
+			List<char> lCodes = new List<char>();
+			for(int i = 0; i < vPlh.Length; ++i)
+			{
+				char ch = StrUtil.GetUnusedChar(sbAll.ToString());
+				lCodes.Add(ch);
+				sbAll.Append(ch);
+			}
+
+			string str = strDT;
+			for(int i = 0; i < vPlh.Length; ++i)
+			{
+				string strValue = lValues[i];
+				if(string.IsNullOrEmpty(strValue)) continue;
+
+				str = str.Replace(strValue, new string(lCodes[i], 1));
+			}
+
+			StringBuilder sbFmt = new StringBuilder();
+			bool bInLiteral = false;
+			foreach(char ch in str)
+			{
+				int iCode = lCodes.IndexOf(ch);
+
+				// The escape character doesn't work correctly (e.g.
+				// "dd\\.MM\\.yyyy\\ HH\\:mm\\:ss" doesn't work, but
+				// "dd'.'MM'.'yyyy' 'HH':'mm':'ss" does); use '' instead
+
+				// if(iCode >= 0) sbFmt.Append(vPlh[iCode]);
+				// else // Literal
+				// {
+				//	sbFmt.Append('\\');
+				//	sbFmt.Append(ch);
+				// }
+
+				if(iCode >= 0)
+				{
+					if(bInLiteral) { sbFmt.Append('\''); bInLiteral = false; }
+					sbFmt.Append(vPlh[iCode]);
+				}
+				else // Literal
+				{
+					if(!bInLiteral) { sbFmt.Append('\''); bInLiteral = true; }
+					sbFmt.Append(ch);
+				}
+			}
+			if(bInLiteral) sbFmt.Append('\'');
+
+			return sbFmt.ToString();
+		}
+#endif
 
 		public static string SerializeUtc(DateTime dt)
 		{

@@ -1,3 +1,94 @@
+2014-10-08: 2.28
+- Enhanced high DPI support
+- Added trigger action 'Show message box' (which can abort the
+  current trigger execution or execute a command line / URL)
+- The 'Database has unsaved changes' trigger condition now
+  supports choosing between the active database and the
+  database that triggered the event
+- Added parameter for the trigger action 'Activate database
+  (select tab)' that allows activating the database that
+  triggered the event
+- Auto-Type: added workaround for KiTTY's default Ctrl+Alt
+  behavior (which differs from Windows' behavior)
+- Auto-Type: added workaround for PuTTYjp's default Ctrl+Alt
+  behavior (which differs from Windows' behavior)
+- Added up/down arrow buttons for reordering auto-type
+  associations in the entry editing dialog
+- While entering the master key on a secure desktop, dimmed
+  screenshots are now also displayed on all non-primary screens
+- Added support for importing VisKeeper 3.3.0 TXT files
+- The group tree view is now saved and restored during most
+  group tree updates
+- In the main entry list, multiple entries can now be moved by
+  one step up/down at once
+- If Caps Lock is on, a balloon tip indicating this is now also
+  displayed for password text boxes immediately after opening a
+  dialog (where the password text box is the initially focused
+  control)
+- In the cases where Windows would display outdated thumbnail
+  and peek preview images for the main window, KeePass now
+  requests Windows to use a static bitmap instead (showing only
+  the KeePass logo)
+- Added fallback method for parsing dates/times (the default
+  parser fails for some custom formats specified in the Control
+  Panel)
+- Added workaround for .NET ToolStrip height bug
+- Added own process memory protection for Unix-like systems (as
+  Mono doesn't provide any effective memory protection method)
+- On Unix-like systems, Shift+F10 (and Ctrl+Alt+5 and
+  Ctrl+NumPad5 on Mac OS X) now shows the context menu in most
+  list/tree view controls and rich text boxes (like on Windows)
+- KPScript: for the 'Import' command, a different master key
+  can now be specified using the standard master key command
+  line parameters with the prefix 'imp_' (e.g. -imp_pw:Secret)
+- KPScript: added option '-FailIfNotExists' for the
+  'GetEntryString' command
+- KPScript: added '-refx-Group' and '-refx-GroupPath' entry
+  identification parameters
+
+- Improved compatibility with ClearType
+- Improved support for high contrast themes
+- When duplicating a group/entry, the creation time and the
+  last access time of the copy are now set to the current time
+- Character picker dialog: initially the text box is now
+  focused, improved tab order, and picked characters are now
+  inserted at the current insertion point (instead of the end)
+- Ctrl+Tab is now handled only once when the database tab bar
+  has the focus
+- When exporting to a KeePass 1.x KDB file, a warning/error is
+  now shown if the master key contains/is a Windows User
+  Account
+- Unknown trigger events/conditions/actions are now ignored by
+  the trigger dialog
+- Reduced group tree view flickering
+- Improved default value for the entry history size limit
+- Improved menu check mark and radio images
+- Improved list view column resizing
+- Improved list view scrolling
+- Secure edit control performance improvements
+- In some cases, double-clicking the tray icon now brings
+  KeePass to the foreground
+- Improved concurrent UI behavior during auto-type
+- Auto-Type: improved compatibility with keyboard layouts with
+  combining apostrophes, quotation marks and tildes
+- Auto-Type: improved virtual key translation on Unix-like
+  systems
+- KPScript: the 'EditEntry' command now also updates the time
+  fields of all affected entries
+- KPScript: the 'DeleteEntry' and 'DeleteAllEntries' commands
+  now create deleted object information (improving
+  synchronization behavior)
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- When auto-typing a sequence containing a {NEWPASSWORD}
+  placeholder, the raw new password is now stored (in the
+  password field of the entry), not its corresponding auto-type
+  sequence
+- Synchronizing two unrelated databases now always works as
+  expected
+
 2014-07-06: 2.27
 - The estimated password quality (in bits) is now displayed on
   the quality progress bar, and right of the quality progress

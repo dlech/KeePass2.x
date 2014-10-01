@@ -142,6 +142,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new SteganosPwManager2007());
 			m_vFormats.Add(new StickyPwXml50());
 			m_vFormats.Add(new TurboPwsCsv5());
+			m_vFormats.Add(new VisKeeperTxt3());
 			m_vFormats.Add(new Whisper32Csv116());
 			m_vFormats.Add(new ZdnPwProTxt314());
 

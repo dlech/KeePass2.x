@@ -33,6 +33,8 @@ using KeePass.Util;
 
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Native
 {
 	internal static partial class NativeMethods
@@ -68,7 +70,7 @@ namespace KeePass.Native
 
 		internal static IntPtr GetForegroundWindowHandle()
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix())
+			if(!NativeLib.IsUnix())
 				return GetForegroundWindow(); // Windows API
 
 			try
@@ -85,7 +87,7 @@ namespace KeePass.Native
 		{
 			hWnd = GetForegroundWindowHandle();
 
-			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
+			if(!NativeLib.IsUnix()) // Windows
 				strWindowText = GetWindowText(hWnd, bTrimWindow);
 			else // Unix
 			{
@@ -100,7 +102,7 @@ namespace KeePass.Native
 
 		internal static bool IsWindowEx(IntPtr hWnd)
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
+			if(!NativeLib.IsUnix()) // Windows
 				return IsWindow(hWnd);
 
 			return true;
@@ -119,7 +121,7 @@ namespace KeePass.Native
 
 		internal static bool SetForegroundWindowEx(IntPtr hWnd)
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix())
+			if(!NativeLib.IsUnix())
 				return SetForegroundWindow(hWnd);
 
 			return (RunXDoTool("windowactivate " +
@@ -152,7 +154,7 @@ namespace KeePass.Native
 		{
 			if(strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }
 
-			if(!KeePassLib.Native.NativeLib.IsUnix())
+			if(!NativeLib.IsUnix())
 				return FindWindowEx(IntPtr.Zero, IntPtr.Zero, null, strTitle);
 
 			// Not --onlyvisible (due to not finding minimized windows)
@@ -166,7 +168,7 @@ namespace KeePass.Native
 
 		internal static bool LoseFocus(Form fCurrent)
 		{
-			if(KeePassLib.Native.NativeLib.IsUnix())
+			if(NativeLib.IsUnix())
 				return LoseFocusUnix(fCurrent);
 
 			try
@@ -233,7 +235,7 @@ namespace KeePass.Native
 		/* internal static bool IsMetroWindow(IntPtr hWnd)
 		{
 			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
-			if(KeePassLib.Native.NativeLib.IsUnix() || !WinUtil.IsAtLeastWindows8)
+			if(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindows8)
 				return false;
 
 			try
@@ -265,6 +267,33 @@ namespace KeePass.Native
 			return false;
 		}
 
+		public static int GetHeaderHeight(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return 0; }
+
+			try
+			{
+				if((lv.View == View.Details) && (lv.HeaderStyle !=
+					ColumnHeaderStyle.None) && (lv.Columns.Count > 0) &&
+					!NativeLib.IsUnix())
+				{
+					IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
+						NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+					if(hHeader != IntPtr.Zero)
+					{
+						NativeMethods.RECT rect = new NativeMethods.RECT();
+						if(NativeMethods.GetWindowRect(hHeader, ref rect))
+							return (rect.Bottom - rect.Top);
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return 0;
+		}
+
 		// Workaround for only partially visible list view items
 		/* public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
 		{
@@ -283,6 +312,8 @@ namespace KeePass.Native
 
 		public static int GetScrollPosY(IntPtr hWnd)
 		{
+			if(NativeLib.IsUnix()) return 0;
+
 			try
 			{
 				SCROLLINFO si = new SCROLLINFO();
@@ -302,6 +333,7 @@ namespace KeePass.Native
 		public static void Scroll(ListView lv, int dx, int dy)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
+			if(NativeLib.IsUnix()) return;
 
 			try { SendMessage(lv.Handle, LVM_SCROLL, (IntPtr)dx, (IntPtr)dy); }
 			catch(Exception) { Debug.Assert(false); }
@@ -355,8 +387,7 @@ namespace KeePass.Native
 			}
 			catch(Exception)
 			{
-				Debug.Assert(KeePassLib.Native.NativeLib.IsUnix() ||
-					WinUtil.IsWindows9x);
+				Debug.Assert(NativeLib.IsUnix() || WinUtil.IsWindows9x);
 			}
 
 			return null;
@@ -415,7 +446,7 @@ namespace KeePass.Native
 			{
 				return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
 			}
-			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
 			// Fallback to .NET method for Unix-like systems
 			try { return File.Exists(strFilePath); }

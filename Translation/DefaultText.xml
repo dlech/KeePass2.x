@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Translation>
 	<StringTable Name="KPRes" Namespace="KeePass.Resources">
+		<Data Name="AbortTrigger">
+			<Value>Abort current trigger execution</Value>
+		</Data>
 		<Data Name="Action">
 			<Value>Action</Value>
 		</Data>
 		<Data Name="ActivateDatabaseTab">
 			<Value>Activate database (select tab)</Value>
+		</Data>
+		<Data Name="Active">
+			<Value>Active</Value>
 		</Data>
 		<Data Name="AddEntry">
 			<Value>Add Entry</Value>
@@ -39,6 +45,9 @@
 		</Data>
 		<Data Name="AlignRight">
 			<Value>Align Right</Value>
+		</Data>
+		<Data Name="All">
+			<Value>All</Value>
 		</Data>
 		<Data Name="AllEntriesTitle">
 			<Value>All Entries</Value>
@@ -229,14 +238,23 @@
 		<Data Name="BuiltIn">
 			<Value>built-in</Value>
 		</Data>
+		<Data Name="Button">
+			<Value>Button</Value>
+		</Data>
 		<Data Name="ButtonBack">
 			<Value>&lt; &amp;Back</Value>
+		</Data>
+		<Data Name="ButtonDefault">
+			<Value>Default button</Value>
 		</Data>
 		<Data Name="ButtonFinish">
 			<Value>&amp;Finish</Value>
 		</Data>
 		<Data Name="ButtonNext">
 			<Value>&amp;Next &gt;</Value>
+		</Data>
+		<Data Name="Buttons">
+			<Value>Buttons</Value>
 		</Data>
 		<Data Name="Cancel">
 			<Value>Cancel</Value>
@@ -460,6 +478,9 @@
 		<Data Name="DatabaseDescPrompt">
 			<Value>Enter a short description of the database or leave it empty.</Value>
 		</Data>
+		<Data Name="DatabaseHasUnsavedChanges">
+			<Value>Database has unsaved changes</Value>
+		</Data>
 		<Data Name="DatabaseMaintenance">
 			<Value>Database Maintenance</Value>
 		</Data>
@@ -477,9 +498,6 @@
 		</Data>
 		<Data Name="DatabaseSettingsDesc">
 			<Value>Here you can configure various database settings.</Value>
-		</Data>
-		<Data Name="DatabaseUnsavedChanges">
-			<Value>Active database has unsaved changes</Value>
 		</Data>
 		<Data Name="DataEditor">
 			<Value>Data Editor</Value>
@@ -642,6 +660,9 @@
 		</Data>
 		<Data Name="EqualsOp">
 			<Value>Equals</Value>
+		</Data>
+		<Data Name="Error">
+			<Value>Error</Value>
 		</Data>
 		<Data Name="ErrorCode">
 			<Value>Error Code</Value>
@@ -955,6 +976,9 @@
 		<Data Name="HotKeyAltOnlyQuestion">
 			<Value>Are you sure you want to use the specified hot keys?</Value>
 		</Data>
+		<Data Name="Icon">
+			<Value>Icon</Value>
+		</Data>
 		<Data Name="Id">
 			<Value>ID</Value>
 		</Data>
@@ -1044,6 +1068,9 @@
 		</Data>
 		<Data Name="KdbKeePassLibC">
 			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
+		</Data>
+		<Data Name="KdbWUA">
+			<Value>KDB files can be encrypted using a master password and/or a key file, not using a Windows User Account.</Value>
 		</Data>
 		<Data Name="KdbxFiles">
 			<Value>KeePass KDBX Files</Value>
@@ -1146,6 +1173,9 @@
 		</Data>
 		<Data Name="LockOnSuspend">
 			<Value>Lock workspace when the computer is about to be suspended</Value>
+		</Data>
+		<Data Name="MainInstruction">
+			<Value>Main instruction</Value>
 		</Data>
 		<Data Name="MainWindow">
 			<Value>Main Window</Value>
@@ -1288,6 +1318,12 @@
 		<Data Name="OfLower">
 			<Value>of</Value>
 		</Data>
+		<Data Name="Ok">
+			<Value>OK</Value>
+		</Data>
+		<Data Name="OkCmd">
+			<Value>&amp;OK</Value>
+		</Data>
 		<Data Name="On">
 			<Value>On</Value>
 		</Data>
@@ -1359,6 +1395,9 @@
 		</Data>
 		<Data Name="ParamDescHelp">
 			<Value>Detailed descriptions of all parameters can be found in the help manual.</Value>
+		</Data>
+		<Data Name="Parameters">
+			<Value>Parameters</Value>
 		</Data>
 		<Data Name="Password">
 			<Value>Password</Value>
@@ -1465,8 +1504,8 @@
 		<Data Name="PolicyDragDropDesc">
 			<Value>Allow sending information to other windows using drag&amp;drop.</Value>
 		</Data>
-		<Data Name="PolicyExportDesc">
-			<Value>Allow exporting entries to (non-encrypted) file formats.</Value>
+		<Data Name="PolicyExportDesc2">
+			<Value>Allow exporting entries.</Value>
 		</Data>
 		<Data Name="PolicyExportNoKeyDesc">
 			<Value>Do not require entering current master key before exporting.</Value>
@@ -1732,6 +1771,9 @@
 		<Data Name="ShowIn">
 			<Value>Show in</Value>
 		</Data>
+		<Data Name="ShowMessageBox">
+			<Value>Show message box</Value>
+		</Data>
 		<Data Name="ShowTrayOnlyIfTrayed">
 			<Value>Show tray icon only if main window has been sent to tray</Value>
 		</Data>
@@ -1831,6 +1873,9 @@
 		<Data Name="TemplatesNotFound">
 			<Value>No templates found</Value>
 		</Data>
+		<Data Name="Text">
+			<Value>Text</Value>
+		</Data>
 		<Data Name="TextColor">
 			<Value>Text Color</Value>
 		</Data>
@@ -1864,6 +1909,9 @@
 		<Data Name="TransformationRounds1SecHint">
 			<Value>Compute the number of rounds that lead to a delay of 1 second on this computer.</Value>
 		</Data>
+		<Data Name="Trigger">
+			<Value>Trigger</Value>
+		</Data>
 		<Data Name="TriggerActionTypeUnknown">
 			<Value>The trigger action type is unknown.</Value>
 		</Data>
@@ -1887,6 +1935,9 @@
 		</Data>
 		<Data Name="TriggerExecutionFailed">
 			<Value>Trigger execution failed</Value>
+		</Data>
+		<Data Name="Triggering">
+			<Value>Triggering</Value>
 		</Data>
 		<Data Name="TriggerName">
 			<Value>Trigger name</Value>

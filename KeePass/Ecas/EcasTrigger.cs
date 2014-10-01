@@ -211,11 +211,12 @@ namespace KeePass.Ecas
 			m_bOn = m_bInitiallyOn;
 		}
 
-		public void RunIfMatching(EcasEvent ctxOccured)
+		public void RunIfMatching(EcasEvent ctxOccured, EcasPropertyDictionary props)
 		{
 			if(!m_bEnabled || !m_bOn) return;
 
-			EcasContext ctx = new EcasContext(Program.TriggerSystem, this, ctxOccured);
+			EcasContext ctx = new EcasContext(Program.TriggerSystem, this,
+				ctxOccured, props);
 
 			bool bEventMatches = false;
 			foreach(EcasEvent e in m_events)
@@ -235,7 +236,11 @@ namespace KeePass.Ecas
 			}
 
 			for(uint iAction = 0; iAction < m_acts.UCount; ++iAction)
+			{
+				if(ctx.Cancel) break;
+
 				Program.EcasPool.ExecuteAction(m_acts.GetAt(iAction), ctx);
+			}
 
 			if(m_bTurnOffAfterAction) m_bOn = false;
 		}

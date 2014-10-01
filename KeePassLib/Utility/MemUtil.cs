@@ -251,7 +251,8 @@ namespace KeePassLib.Utility
 		/// to zero.</param>
 		public static void ZeroByteArray(byte[] pbArray)
 		{
-			Debug.Assert(pbArray != null); if(pbArray == null) throw new ArgumentNullException("pbArray");
+			Debug.Assert(pbArray != null);
+			if(pbArray == null) throw new ArgumentNullException("pbArray");
 
 			// for(int i = 0; i < pbArray.Length; ++i)
 			//	pbArray[i] = 0;

@@ -251,6 +251,7 @@
 			this.m_picWarning.Location = new System.Drawing.Point(9, 71);
 			this.m_picWarning.Name = "m_picWarning";
 			this.m_picWarning.Size = new System.Drawing.Size(16, 16);
+			this.m_picWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.m_picWarning.TabIndex = 10;
 			this.m_picWarning.TabStop = false;
 			// 

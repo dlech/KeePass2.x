@@ -367,6 +367,7 @@
     <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
     <Compile Include="DataExchange\Formats\StickyPwXml50.cs" />
     <Compile Include="DataExchange\Formats\TurboPwsCsv5.cs" />
+    <Compile Include="DataExchange\Formats\VisKeeperTxt3.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
     <Compile Include="DataExchange\Formats\WinFavorites10.cs" />
@@ -382,6 +383,7 @@
     <Compile Include="Ecas\EcasContext.cs" />
     <Compile Include="Ecas\EcasEnum.cs" />
     <Compile Include="Ecas\EcasParameter.cs" />
+    <Compile Include="Ecas\EcasPropertyDictionary.cs" />
     <Compile Include="Ecas\EcasSystemEvents.cs" />
     <Compile Include="Ecas\EcasValueType.cs" />
     <Compile Include="Ecas\IEcasObject.cs" />
@@ -705,6 +707,9 @@
     </Compile>
     <Compile Include="UI\ColumnProvider.cs" />
     <Compile Include="UI\ColumnProviderPool.cs" />
+    <Compile Include="UI\CustomContextMenuStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\CustomListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -722,6 +727,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\DocumentManagerEx.cs" />
+    <Compile Include="UI\DpiUtil.cs" />
     <Compile Include="UI\DwmUtil.cs" />
     <Compile Include="UI\EnableThemingInScope.cs" />
     <Compile Include="UI\ExpiryControlGroup.cs" />
@@ -1003,6 +1009,7 @@
     <Compile Include="Ecas\EcasUtil.cs" />
     <Compile Include="Ecas\IEcasParameterized.cs" />
     <Compile Include="Util\CriticalSectionEx.cs" />
+    <Compile Include="Util\CustomResourceManager.cs" />
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
@@ -1140,9 +1147,6 @@
     <None Include="Resources\Nuvola\B16x16_Folder_Blue_Open.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Images\B17x05_3BlackDots.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Nuvola\B16x16_No.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1162,6 +1166,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola\B16x16_MessageBox_Warning.png" />
+    <None Include="Resources\Nuvola\B16x16_MessageBox_Info.png" />
+    <None Include="Resources\Nuvola\B16x16_MessageBox_Critical.png" />
+    <None Include="Resources\Images\B16x16_Transparent.png" />
+    <None Include="Resources\Images\B19x07_3BlackDots.png" />
+    <None Include="Resources\Images\B16x16_MenuCheck.png" />
+    <None Include="Resources\Images\B16x16_Imp_VisKeeper.png" />
     <None Include="Resources\Images\B16x16_Imp_Dashlane.png" />
     <None Include="Resources\Images\B16x16_Imp_NortonIdSafe.png" />
     <None Include="Resources\Data\MostPopularPasswords.txt.gz" />
@@ -1246,7 +1257,6 @@
     <None Include="Resources\Nuvola\B48x48_KOrganizer.png" />
     <None Include="Resources\Nuvola\B32x32_Trashcan_Full.png" />
     <None Include="Resources\Nuvola\B16x16_View_Detailed.png" />
-    <None Include="Resources\Images\B284x231_Random.png" />
     <None Include="Resources\Images\B16x16_KeePass.png" />
     <None Include="Resources\Nuvola\B16x16_BlockDevice.png" />
     <None Include="Resources\Nuvola\B16x16_File_Locked.png" />

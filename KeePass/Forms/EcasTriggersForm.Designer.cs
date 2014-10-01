@@ -41,7 +41,7 @@
 			this.m_btnMoveUp = new System.Windows.Forms.Button();
 			this.m_btnMoveDown = new System.Windows.Forms.Button();
 			this.m_btnTools = new System.Windows.Forms.Button();
-			this.m_ctxTools = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.m_ctxTools = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxToolsHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxToolsCopyTriggers = new System.Windows.Forms.ToolStripMenuItem();
@@ -271,7 +271,7 @@
 		private System.Windows.Forms.Button m_btnMoveUp;
 		private System.Windows.Forms.Button m_btnMoveDown;
 		private System.Windows.Forms.Button m_btnTools;
-		private System.Windows.Forms.ContextMenuStrip m_ctxTools;
+		private KeePass.UI.CustomContextMenuStripEx m_ctxTools;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsHelp;
 		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsCopyTriggers;

@@ -149,7 +149,7 @@ namespace KeePassLib.Cryptography
 			Salsa20Cipher c = new Salsa20Cipher(pbKey, pbIV);
 			c.Encrypt(pb, pb.Length, false);
 			if(!MemUtil.ArraysEqual(pb, pbExpected))
-				throw new SecurityException("Salsa20.");
+				throw new SecurityException("Salsa20-1");
 
 #if DEBUG
 			// Extended test in debug mode
@@ -166,13 +166,24 @@ namespace KeePassLib.Cryptography
 			int nPos = Salsa20ToPos(c, r, pb.Length, 65536);
 			c.Encrypt(pb, pb.Length, false);
 			if(!MemUtil.ArraysEqual(pb, pbExpected2))
-				throw new SecurityException("Salsa20-2.");
+				throw new SecurityException("Salsa20-2");
 
 			nPos = Salsa20ToPos(c, r, nPos + pb.Length, 131008);
 			Array.Clear(pb, 0, pb.Length);
 			c.Encrypt(pb, pb.Length, true);
 			if(!MemUtil.ArraysEqual(pb, pbExpected3))
-				throw new SecurityException("Salsa20-3.");
+				throw new SecurityException("Salsa20-3");
+
+			Dictionary<string, bool> d = new Dictionary<string, bool>();
+			const int nRounds = 100;
+			for(int i = 0; i < nRounds; ++i)
+			{
+				byte[] z = new byte[32];
+				c = new Salsa20Cipher(z, BitConverter.GetBytes((long)i));
+				c.Encrypt(z, z.Length, true);
+				d[MemUtil.ByteArrayToHexString(z)] = true;
+			}
+			if(d.Count != nRounds) throw new SecurityException("Salsa20-4");
 #endif
 		}
 
@@ -351,6 +362,41 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("ProtectedString-8");
 			if(!ps.IsProtected) throw new SecurityException("ProtectedString-9");
 			if(!ps2.IsProtected) throw new SecurityException("ProtectedString-10");
+
+			Random r = new Random();
+			string str = string.Empty;
+			ps = new ProtectedString();
+			for(int i = 0; i < 100; ++i)
+			{
+				bool bProt = ((r.Next() % 4) != 0);
+				ps = ps.WithProtection(bProt);
+
+				int x = r.Next(str.Length + 1);
+				int c = r.Next(20);
+				char ch = (char)r.Next(1, 256);
+
+				string strIns = new string(ch, c);
+				str = str.Insert(x, strIns);
+				ps = ps.Insert(x, strIns);
+
+				if(ps.IsProtected != bProt)
+					throw new SecurityException("ProtectedString-11");
+				if(ps.ReadString() != str)
+					throw new SecurityException("ProtectedString-12");
+
+				ps = ps.WithProtection(bProt);
+
+				x = r.Next(str.Length);
+				c = r.Next(str.Length - x + 1);
+
+				str = str.Remove(x, c);
+				ps = ps.Remove(x, c);
+
+				if(ps.IsProtected != bProt)
+					throw new SecurityException("ProtectedString-13");
+				if(ps.ReadString() != str)
+					throw new SecurityException("ProtectedString-14");
+			}
 #endif
 		}
 

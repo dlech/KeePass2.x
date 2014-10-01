@@ -846,6 +846,24 @@ namespace KeePassLib
 				}
 			}
 		}
+
+		public void SetCreatedNow()
+		{
+			DateTime dt = DateTime.Now;
+
+			m_tCreation = dt;
+			m_tLastAccess = dt;
+		}
+
+		public PwEntry Duplicate()
+		{
+			PwEntry pe = CloneDeep();
+
+			pe.SetUuid(new PwUuid(true), true);
+			pe.SetCreatedNow();
+
+			return pe;
+		}
 	}
 
 	public sealed class PwEntryComparer : IComparer<PwEntry>

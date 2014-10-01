@@ -250,11 +250,17 @@ needed anymore, i.e. it overwrites these memory areas before releasing them
 <p>KeePass uses the Windows DPAPI for in-memory encrypting the
 sensitive data. With DPAPI, the key for in-memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
-If DPAPI is not available or disabled (advanced KeePass options, by default
-using DPAPI is enabled), KeePass uses the ARC4 encryption algorithm with a random
-<!-- 12 bytes long --> key. Note that this is less secure than DPAPI, mainly <i>not</i>
+DPAPI is available on Windows 2000 and higher.
+KeePass 2.x always uses DPAPI when it's available;
+in KeePass 1.x, this can be disabled (in the advanced options; by default
+using DPAPI is enabled; if it's disabled, KeePass uses the ARC4 encryption
+algorithm with a random key; note that this is less secure than DPAPI, mainly <i>not</i>
 because ARC4 cryptographically isn't that strong, but because the key for in-memory
-encryption is also stored in swappable process memory.</p>
+encryption is also stored in swappable process memory;
+similarly, KeePass 2.x falls back to encrypting the process memory using
+Salsa20, if DPAPI is unavailable).
+On Unix-like systems, KeePass 2.x uses Salsa20, because Mono doesn't provide
+any effective memory protection method.</p>
 
 <p>For some operations, KeePass must make sensitive data available
 unencryptedly in process memory. For example, in order to show a password

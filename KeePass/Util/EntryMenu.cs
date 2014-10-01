@@ -60,7 +60,7 @@ namespace KeePass.Util
 
 		private static ContextMenuStrip Construct()
 		{
-			ContextMenuStrip ctx = new ContextMenuStrip();
+			CustomContextMenuStripEx ctx = new CustomContextMenuStripEx();
 
 			// Clone the image list in order to prevent event handlers
 			// from the global client icons list to the context menu

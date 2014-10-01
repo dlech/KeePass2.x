@@ -218,6 +218,10 @@ namespace KeePass.Util
 		{
 			try
 			{
+				// Do not show the update dialog while auto-typing;
+				// https://sourceforge.net/p/keepass/bugs/1265/
+				if(SendInputEx.IsSending) return;
+
 				UpdateCheckForm dlg = new UpdateCheckForm();
 				dlg.InitEx(lInst, bModal);
 				UIUtil.ShowDialogAndDestroy(dlg);

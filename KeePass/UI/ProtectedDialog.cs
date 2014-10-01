@@ -54,7 +54,7 @@ namespace KeePass.UI
 
 		private sealed class SecureThreadInfo
 		{
-			public Bitmap BackgroundBitmap = null;
+			public List<Bitmap> BackgroundBitmaps = new List<Bitmap>();
 			public IntPtr ThreadDesktop = IntPtr.Zero;
 
 			public object FormConstructParam = null;
@@ -92,8 +92,13 @@ namespace KeePass.UI
 			ClipboardEventChainBlocker ccb = new ClipboardEventChainBlocker();
 			byte[] pbClipHash = ClipboardUtil.ComputeHash();
 
-			Bitmap bmpBack = UIUtil.CreateScreenshot();
-			if(bmpBack != null) UIUtil.DimImage(bmpBack);
+			SecureThreadInfo stp = new SecureThreadInfo();
+			foreach(Screen sc in Screen.AllScreens)
+			{
+				Bitmap bmpBack = UIUtil.CreateScreenshot(sc);
+				if(bmpBack != null) UIUtil.DimImage(bmpBack);
+				stp.BackgroundBitmaps.Add(bmpBack);
+			}
 
 			DialogResult dr = DialogResult.None;
 			try
@@ -125,8 +130,6 @@ namespace KeePass.UI
 					strName).GetValueOrDefault(false);
 				Debug.Assert(bNameSupported);
 
-				SecureThreadInfo stp = new SecureThreadInfo();
-				stp.BackgroundBitmap = bmpBack;
 				stp.ThreadDesktop = pNewDesktop;
 				stp.FormConstructParam = objConstructParam;
 
@@ -180,9 +183,13 @@ namespace KeePass.UI
 			if((pbClipHash != null) && (pbNewClipHash != null) &&
 				!MemUtil.ArraysEqual(pbClipHash, pbNewClipHash))
 				ClipboardUtil.Clear();
-			ccb.Release();
+			ccb.Dispose();
 
-			if(bmpBack != null) bmpBack.Dispose();
+			foreach(Bitmap bmpBack in stp.BackgroundBitmaps)
+			{
+				if(bmpBack != null) bmpBack.Dispose();
+			}
+			stp.BackgroundBitmaps.Clear();
 
 			cpsCtfMons.TerminateNewChildsAsync(4100);
 
@@ -207,11 +214,12 @@ namespace KeePass.UI
 
 		private void SecureDialogThread(object oParam)
 		{
-			BackgroundForm formBack = null;
-			// bool bLangBar = false;
-
 			SecureThreadInfo stp = (oParam as SecureThreadInfo);
 			if(stp == null) { Debug.Assert(false); return; }
+
+			List<BackgroundForm> lBackForms = new List<BackgroundForm>();
+			BackgroundForm formBackPrimary = null;
+			// bool bLangBar = false;
 
 			try
 			{
@@ -238,8 +246,31 @@ namespace KeePass.UI
 
 				ProcessMessagesEx();
 
-				formBack = new BackgroundForm(stp.BackgroundBitmap);
-				formBack.Show();
+				Screen[] vScreens = Screen.AllScreens;
+				Screen scPrimary = Screen.PrimaryScreen;
+				Debug.Assert(vScreens.Length == stp.BackgroundBitmaps.Count);
+				int sMin = Math.Min(vScreens.Length, stp.BackgroundBitmaps.Count);
+				for(int i = sMin - 1; i >= 0; --i)
+				{
+					Bitmap bmpBack = stp.BackgroundBitmaps[i];
+					if(bmpBack == null) continue;
+					Debug.Assert(bmpBack.Size == vScreens[i].Bounds.Size);
+
+					BackgroundForm formBack = new BackgroundForm(bmpBack,
+						vScreens[i]);
+
+					lBackForms.Add(formBack);
+					if(vScreens[i].Equals(scPrimary))
+						formBackPrimary = formBack;
+
+					formBack.Show();
+				}
+				if(formBackPrimary == null)
+				{
+					Debug.Assert(false);
+					if(lBackForms.Count > 0)
+						formBackPrimary = lBackForms[lBackForms.Count - 1];
+				}
 
 				ProcessMessagesEx();
 
@@ -256,7 +287,7 @@ namespace KeePass.UI
 				// bLangBar = ShowLangBar(true);
 
 				lock(stp) { stp.State = SecureThreadState.ShowingDialog; }
-				stp.DialogResult = f.ShowDialog(formBack);
+				stp.DialogResult = f.ShowDialog(formBackPrimary);
 				stp.ResultObject = m_fnResultBuilder(f);
 
 				UIUtil.DestroyForm(f);
@@ -266,7 +297,7 @@ namespace KeePass.UI
 			{
 				// if(bLangBar) ShowLangBar(false);
 
-				if(formBack != null)
+				foreach(BackgroundForm formBack in lBackForms)
 				{
 					try
 					{

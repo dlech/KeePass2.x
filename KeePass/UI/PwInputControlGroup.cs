@@ -138,6 +138,8 @@ namespace KeePass.UI
 			m_secRepeat.SecureDesktopMode = bSecureDesktopMode;
 			m_secRepeat.Attach(m_tbRepeat, this.OnRepeatTextChanged, bInitialHide);
 
+			ConfigureHideButton(m_cbHide, m_ttHint);
+
 			m_cbHide.Checked = bInitialHide;
 			m_cbHide.CheckedChanged += this.OnHideCheckedChanged;
 
@@ -449,6 +451,43 @@ namespace KeePass.UI
 						": " + uLength.ToString() + " " + KPRes.CharsStc);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static Bitmap g_bmpLightDots = null;
+		internal static void ConfigureHideButton(CheckBox cb, ToolTip tt)
+		{
+			if(cb == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(!cb.AutoSize);
+			Debug.Assert(cb.Appearance == Appearance.Button);
+			Debug.Assert(cb.Image == null);
+			Debug.Assert(cb.Text == "***");
+			Debug.Assert(cb.TextAlign == ContentAlignment.MiddleCenter);
+			Debug.Assert(cb.TextImageRelation == TextImageRelation.Overlay);
+			Debug.Assert(cb.UseVisualStyleBackColor);
+			Debug.Assert((cb.Width == 32) || DpiUtil.ScalingRequired);
+			Debug.Assert((cb.Height == 23) || DpiUtil.ScalingRequired);
+
+			// Too much spacing between the dots when using the default font
+			// cb.Text = new string(SecureEdit.PasswordChar, 3);
+			cb.Text = string.Empty;
+
+			Image img = Properties.Resources.B19x07_3BlackDots;
+
+			if(UIUtil.IsDarkTheme)
+			{
+				if(g_bmpLightDots == null)
+					g_bmpLightDots = UIUtil.InvertImage(img);
+
+				if(g_bmpLightDots != null) img = g_bmpLightDots;
+			}
+			else { Debug.Assert(g_bmpLightDots == null); } // Always or never
+
+			cb.Image = img;
+			Debug.Assert(cb.ImageAlign == ContentAlignment.MiddleCenter);
+
+			if(tt != null)
+				tt.SetToolTip(cb, KPRes.TogglePasswordAsterisks);
 		}
 	}
 }

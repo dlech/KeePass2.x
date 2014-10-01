@@ -28,11 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StatusLoggerForm));
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_lvMessages = new KeePass.UI.CustomListViewEx();
-			this.m_ilLogTypes = new System.Windows.Forms.ImageList(this.components);
 			this.m_pbProgress = new System.Windows.Forms.ProgressBar();
 			this.m_tbDetails = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
@@ -56,20 +53,10 @@
 			this.m_lvMessages.MultiSelect = false;
 			this.m_lvMessages.Name = "m_lvMessages";
 			this.m_lvMessages.Size = new System.Drawing.Size(455, 134);
-			this.m_lvMessages.SmallImageList = this.m_ilLogTypes;
 			this.m_lvMessages.TabIndex = 1;
 			this.m_lvMessages.UseCompatibleStateImageBehavior = false;
 			this.m_lvMessages.View = System.Windows.Forms.View.Details;
 			this.m_lvMessages.SelectedIndexChanged += new System.EventHandler(this.OnMessagesSelectedIndexChanged);
-			// 
-			// m_ilLogTypes
-			// 
-			this.m_ilLogTypes.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ilLogTypes.ImageStream")));
-			this.m_ilLogTypes.TransparentColor = System.Drawing.Color.Transparent;
-			this.m_ilLogTypes.Images.SetKeyName(0, "B16x16_MessageBox_Info.png");
-			this.m_ilLogTypes.Images.SetKeyName(1, "B16x16_MessageBox_Warning.png");
-			this.m_ilLogTypes.Images.SetKeyName(2, "B16x16_MessageBox_Critical.png");
-			this.m_ilLogTypes.Images.SetKeyName(3, "C62_Empty.png");
 			// 
 			// m_pbProgress
 			// 
@@ -106,8 +93,8 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "<>";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -119,6 +106,5 @@
 		private KeePass.UI.CustomListViewEx m_lvMessages;
 		private System.Windows.Forms.ProgressBar m_pbProgress;
 		private System.Windows.Forms.TextBox m_tbDetails;
-		private System.Windows.Forms.ImageList m_ilLogTypes;
 	}
 }

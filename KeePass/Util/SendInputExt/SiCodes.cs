@@ -203,8 +203,12 @@ namespace KeePass.Util.SendInputExt
 			Debug.Assert(d['9'] == (int)Keys.D9);
 
 			Debug.Assert((int)Keys.A == (int)'A');
-			for(char ch = 'A'; ch <= 'Z'; ++ch)
-				d[ch] = (int)ch - (int)'A' + (int)Keys.A;
+			// Do not translate upper-case letters;
+			// on Windows, sending VK_A results in 'a', and 'A' with Shift;
+			// on some Linux systems, only Ctrl+'v' pastes, not Ctrl+'V':
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/bce61102/
+			// for(char ch = 'A'; ch <= 'Z'; ++ch)
+			//	d[ch] = (int)ch - (int)'A' + (int)Keys.A;
 			for(char ch = 'a'; ch <= 'z'; ++ch)
 				d[ch] = (int)ch - (int)'a' + (int)Keys.A;
 			Debug.Assert(d['z'] == (int)Keys.Z);

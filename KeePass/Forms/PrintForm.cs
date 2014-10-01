@@ -48,6 +48,8 @@ namespace KeePass.Forms
 		private bool m_bBlockPreviewRefresh = false;
 		private string m_strGeneratedHtml = string.Empty;
 
+		private ImageList m_ilTabIcons = null;
+
 		public string GeneratedHtml
 		{
 			get { return m_strGeneratedHtml; }
@@ -97,6 +99,17 @@ namespace KeePass.Forms
 
 			this.Icon = Properties.Resources.KeePass;
 			CreateDialogBanner();
+
+			List<Image> lTabImg = new List<Image>();
+			lTabImg.Add(Properties.Resources.B16x16_XMag);
+			lTabImg.Add(Properties.Resources.B16x16_Configure);
+
+			m_ilTabIcons = UIUtil.BuildImageListUnscaled(lTabImg,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+			m_tabMain.ImageList = m_ilTabIcons;
+
+			m_tabPreview.ImageIndex = 0;
+			m_tabDataLayout.ImageIndex = 1;
 
 			UIUtil.SetButtonImage(m_btnConfigPrinter,
 				Properties.Resources.B16x16_EditCopy, true);
@@ -596,6 +609,14 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			if(m_ilTabIcons != null)
+			{
+				m_tabMain.ImageList = null;
+				m_ilTabIcons.Dispose();
+				m_ilTabIcons = null;
+			}
+			else { Debug.Assert(false); }
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 	}

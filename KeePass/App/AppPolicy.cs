@@ -303,7 +303,7 @@ namespace KeePass.App
 					str += KPRes.PolicyPluginsDesc;
 					break;
 				case AppPolicyId.Export:
-					str += KPRes.PolicyExportDesc;
+					str += KPRes.PolicyExportDesc2;
 					break;
 				case AppPolicyId.ExportNoKey:
 					str += KPRes.PolicyExportNoKeyDesc;

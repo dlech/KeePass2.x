@@ -1568,6 +1568,46 @@ namespace KeePassLib
 			foreach(PwGroup pgSub in m_listGroups)
 				pgSub.GetTopSearchSkippedGroupsRec(l);
 		}
+
+		public void SetCreatedNow(bool bRecursive)
+		{
+			DateTime dt = DateTime.Now;
+
+			m_tCreation = dt;
+			m_tLastAccess = dt;
+
+			if(!bRecursive) return;
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				pg.m_tCreation = dt;
+				pg.m_tLastAccess = dt;
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				pe.CreationTime = dt;
+				pe.LastAccessTime = dt;
+				return true;
+			};
+
+			TraverseTree(TraversalMethod.PreOrder, gh, eh);
+		}
+
+		public PwGroup Duplicate()
+		{
+			PwGroup pg = CloneDeep();
+
+			pg.Uuid = new PwUuid(true);
+			pg.CreateNewItemUuids(true, true, true);
+
+			pg.SetCreatedNow(true);
+
+			pg.TakeOwnership(true, true, true);
+
+			return pg;
+		}
 	}
 
 	public sealed class PwGroupComparer : IComparer<PwGroup>

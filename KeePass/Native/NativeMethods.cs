@@ -358,9 +358,9 @@ namespace KeePass.Native
 		// internal extern static uint DrawThemeBackground(IntPtr hTheme, IntPtr hdc,
 		//	int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);	
 
-		// [DllImport("Gdi32.dll")]
-		// [return: MarshalAs(UnmanagedType.Bool)]
-		// internal static extern bool DeleteObject(IntPtr hObject);
+		[DllImport("Gdi32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool DeleteObject(IntPtr hObject);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -381,6 +381,15 @@ namespace KeePass.Native
 		//	IntPtr hIcon, int cxWidth, int cyWidth, uint istepIfAniCur,
 		//	IntPtr hbrFlickerFreeDraw, uint diFlags);
 
+		[DllImport("User32.dll")]
+		internal static extern IntPtr GetDC(IntPtr hWnd);
+
+		[DllImport("User32.dll")]
+		internal static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+		[DllImport("Gdi32.dll")]
+		internal static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
 		[DllImport("WinMM.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PlaySound(string pszSound, IntPtr hmod,
@@ -395,9 +404,9 @@ namespace KeePass.Native
 		internal static extern int MessageBox(IntPtr hWnd, string lpText,
 			string lpCaption, [MarshalAs(UnmanagedType.U4)] MessageBoxFlags uType);
 
-		// [DllImport("User32.dll")]
-		// [return: MarshalAs(UnmanagedType.Bool)]
-		// internal static extern bool SetProcessDPIAware();
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SetProcessDPIAware();
 
 		[DllImport("Kernel32.dll")]
 		internal static extern IntPtr CreateToolhelp32Snapshot(

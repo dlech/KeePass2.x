@@ -129,7 +129,9 @@ namespace KeePass.Forms
 		{
 			object[] vSelected = (bRestoreSelected ?
 				UIUtil.GetSelectedItemTags(m_lvTriggers) : null);
+			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvTriggers, true);
 
+			m_lvTriggers.BeginUpdate();
 			m_lvTriggers.Items.Clear();
 			foreach(EcasTrigger t in m_triggers.TriggerCollection)
 			{
@@ -140,6 +142,8 @@ namespace KeePass.Forms
 			}
 
 			if(vSelected != null) UIUtil.SelectItems(m_lvTriggers, vSelected);
+			UIUtil.Scroll(m_lvTriggers, s, true);
+			m_lvTriggers.EndUpdate();
 
 			EnableControlsEx();
 		}

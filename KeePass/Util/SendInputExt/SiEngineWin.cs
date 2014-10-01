@@ -215,6 +215,16 @@ namespace KeePass.Util.SendInputExt
 
 		private void ConfigureForEnv()
 		{
+			string[] vEnforceUniForPrcWnd = new string[] {
+				"PuTTY.exe", "PuTTY",
+				"KiTTY.exe", "KiTTY", "KiTTY_Portable.exe", "KiTTY_Portable",
+				"PuTTYjp.exe", "PuTTYjp",
+				// "mRemoteNG.exe", "mRemoteNG", // No effect
+				// "PuTTYNG.exe", "PuTTYNG", // No effect
+				// "SuperPuTTY.exe", "SuperPuTTY", // No effect
+				"MinTTY.exe", "MinTTY" // Cygwin window "~"
+			};
+
 #if DEBUG
 			Stopwatch sw = Stopwatch.StartNew();
 #endif
@@ -246,12 +256,17 @@ namespace KeePass.Util.SendInputExt
 						else if(strName.Equals("KbdNeo_Ahk.exe", StrUtil.CaseIgnoreCmp) ||
 							strName.Equals("KbdNeo_Ahk", StrUtil.CaseIgnoreCmp))
 							SetEnforceUnicodeChars(IntPtr.Zero); // All windows
-						else if(strName.Equals("PuTTY.exe", StrUtil.CaseIgnoreCmp) ||
-							strName.Equals("PuTTY", StrUtil.CaseIgnoreCmp))
-							bEnforceUniForHWnd = true;
-						else if(strName.Equals("MinTTY.exe", StrUtil.CaseIgnoreCmp) ||
-							strName.Equals("MinTTY", StrUtil.CaseIgnoreCmp))
-							bEnforceUniForHWnd = true; // Cygwin window "~"
+						else
+						{
+							foreach(string strEnf in vEnforceUniForPrcWnd)
+							{
+								if(strName.Equals(strEnf, StrUtil.CaseIgnoreCmp))
+								{
+									bEnforceUniForHWnd = true;
+									break;
+								}
+							}
+						}
 
 						if(bEnforceUniForHWnd)
 						{
@@ -551,6 +566,7 @@ namespace KeePass.Util.SendInputExt
 			if(m_vForcedChars == null)
 				m_vForcedChars = new char[] {
 					// All of the following diacritics are spacing / non-combining
+
 					'\u00B4', // Acute accent
 					'\u02DD', // Double acute accent
 					'\u0060', // Grave accent
@@ -562,7 +578,13 @@ namespace KeePass.Util.SendInputExt
 					'\u00AF', // Macron above, long
 					'\u02C9', // Macron above, modifier, short
 					'\u02CD', // Macron below, modifier, short
-					'\u02DB' // Ogonek
+					'\u02DB', // Ogonek
+
+					// E.g. for US-International;
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/5708e5ef/
+					'\u0027', // Apostrophe
+					'\u0022', // Quotation mark
+					'\u007E' // Tilde
 				};
 			if(Array.IndexOf<char>(m_vForcedChars, ch) >= 0) return false;
 

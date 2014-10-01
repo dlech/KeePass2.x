@@ -26,16 +26,18 @@ using System.Diagnostics;
 
 using KeePass.Native;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Util
 {
-	public sealed class ClipboardEventChainBlocker
+	public sealed class ClipboardEventChainBlocker : IDisposable
 	{
 		private ClipboardBlockerForm m_form = null;
 		private IntPtr m_hChain = IntPtr.Zero;
 
 		public ClipboardEventChainBlocker()
 		{
-			if(KeePassLib.Native.NativeLib.IsUnix()) return; // Unsupported
+			if(NativeLib.IsUnix()) return; // Unsupported
 
 			m_form = new ClipboardBlockerForm();
 
@@ -48,10 +50,16 @@ namespace KeePass.Util
 
 		~ClipboardEventChainBlocker()
 		{
-			Release();
+			Dispose(false);
 		}
 
-		public void Release()
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool bDisposing)
 		{
 			if(m_form != null)
 			{
@@ -70,6 +78,12 @@ namespace KeePass.Util
 			}
 
 			m_hChain = IntPtr.Zero;
+		}
+
+		[Obsolete]
+		public void Release()
+		{
+			Dispose(true);
 		}
 
 		private sealed class ClipboardBlockerForm : Form

@@ -54,7 +54,7 @@ namespace KeePass.Forms
 
 		private SecureEdit m_secPassword = new SecureEdit();
 
-		private bool m_bInitializing = false;
+		private bool m_bInitializing = true;
 		private bool m_bDisposed = false;
 
 		private AceKeyAssoc m_aKeyAssoc = null;
@@ -110,10 +110,10 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
+			m_bInitializing = true;
+
 			GlobalWindowManager.AddWindow(this);
 			// if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
-
-			m_bInitializing = true;
 
 			string strBannerTitle = (!string.IsNullOrEmpty(m_strCustomTitle) ?
 				m_strCustomTitle : KPRes.EnterCompositeKey);
@@ -127,8 +127,10 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
-			m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
+			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
+
+			PwInputControlGroup.ConfigureHideButton(m_cbHidePassword, m_ttRect);
 
 			string strStart = (!string.IsNullOrEmpty(m_strCustomTitle) ?
 				m_strCustomTitle : KPRes.OpenDatabase);
@@ -251,7 +253,7 @@ namespace KeePass.Forms
 		{
 			// Focusing doesn't always work in OnFormLoad;
 			// https://sourceforge.net/p/keepass/feature-requests/1735/
-			if(m_tbPassword.CanFocus) UIUtil.SetFocus(m_tbPassword, this);
+			if(m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this);
 			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this);
 			else if(m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this);
 			else { Debug.Assert(false); }

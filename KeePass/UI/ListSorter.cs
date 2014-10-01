@@ -31,7 +31,7 @@ namespace KeePass.UI
 	public sealed class ListSorter : IComparer
 	{
 		// Cached version of a string representing infinity
-		private string m_strNeverExpires = string.Empty;
+		private readonly string m_strNeverExpires;
 
 		private int m_nColumn = -1;
 		[DefaultValue(-1)]

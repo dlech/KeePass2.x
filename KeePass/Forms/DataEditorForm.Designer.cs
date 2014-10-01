@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_menuMain = new System.Windows.Forms.MenuStrip();
+			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -37,7 +37,7 @@
 			this.m_menuViewFont = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuViewWordWrap = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_toolFile = new System.Windows.Forms.ToolStrip();
+			this.m_toolFile = new KeePass.UI.CustomToolStripEx();
 			this.m_tbFileSave = new System.Windows.Forms.ToolStripButton();
 			this.m_tbFileSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbEditCut = new System.Windows.Forms.ToolStripButton();
@@ -48,7 +48,7 @@
 			this.m_tbEditRedo = new System.Windows.Forms.ToolStripButton();
 			this.m_tbFileSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
-			this.m_toolFormat = new System.Windows.Forms.ToolStrip();
+			this.m_toolFormat = new KeePass.UI.CustomToolStripEx();
 			this.m_tbFontCombo = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tbFontSizeCombo = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tbFormatSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -432,14 +432,14 @@
 		#endregion
 
 		private KeePass.UI.CustomRichTextBoxEx m_rtbText;
-		private System.Windows.Forms.MenuStrip m_menuMain;
+		private KeePass.UI.CustomMenuStripEx m_menuMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSave;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileExit;
-		private System.Windows.Forms.ToolStrip m_toolFile;
+		private KeePass.UI.CustomToolStripEx m_toolFile;
 		private System.Windows.Forms.ToolStripButton m_tbFileSave;
-		private System.Windows.Forms.ToolStrip m_toolFormat;
+		private KeePass.UI.CustomToolStripEx m_toolFormat;
 		private System.Windows.Forms.ToolStripComboBox m_tbFontCombo;
 		private System.Windows.Forms.StatusStrip m_statusMain;
 		private System.Windows.Forms.ToolStripComboBox m_tbFontSizeCombo;

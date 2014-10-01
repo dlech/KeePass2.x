@@ -120,9 +120,7 @@ namespace KeePass.Forms
 
 		private void ProcessResize()
 		{
-			int nWidth = m_lvEntries.ClientRectangle.Width / m_lvEntries.Columns.Count;
-			for(int i = 0; i < m_lvEntries.Columns.Count; ++i)
-				m_lvEntries.Columns[i].Width = nWidth;
+			UIUtil.ResizeColumns(m_lvEntries, true);
 		}
 
 		private bool GetSelectedEntry(bool bSetDialogResult)

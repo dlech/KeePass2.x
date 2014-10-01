@@ -709,7 +709,10 @@ namespace KeePassLib
 			PwGroup pgSrcStructure = pdSource.m_pgRootGroup.CloneStructure();
 
 			if(mm == PwMergeMethod.CreateNewUuids)
+			{
 				pdSource.RootGroup.CreateNewItemUuids(true, true, true);
+				pdSource.RootGroup.Uuid = new PwUuid(true);
+			}
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
@@ -949,7 +952,14 @@ namespace KeePassLib
 				if(ptSrc == null) continue;
 
 				PwGroup pgOrgParent = ptOrg.ParentGroup;
+				// vGroups does not contain the root group, thus pgOrgParent
+				// should not be null
+				if(pgOrgParent == null) { Debug.Assert(false); continue; }
+
 				PwGroup pgSrcParent = ptSrc.ParentGroup;
+				// pgSrcParent may be null (for the source root group)
+				if(pgSrcParent == null) continue;
+
 				if(pgOrgParent.Uuid.Equals(pgSrcParent.Uuid))
 				{
 					pg.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
@@ -1166,7 +1176,16 @@ namespace KeePassLib
 				{
 					uPosMax = u;
 					dtMax = ptOrg.LocationChanged; // No 'continue'
-					vNeighborSrc = ptOrg.ParentGroup.GetObjects(false, bEntries);
+
+					PwGroup pgParent = ptOrg.ParentGroup;
+					if(pgParent != null)
+						vNeighborSrc = pgParent.GetObjects(false, bEntries);
+					else
+					{
+						Debug.Assert(false); // Org root should be excluded
+						vNeighborSrc = new List<IStructureItem>();
+						vNeighborSrc.Add(ptOrg);
+					}
 				}
 
 				// IStructureItem ptSrc = pgSrcStructure.FindObject(pt.Uuid, true, bEntries);
@@ -1175,7 +1194,16 @@ namespace KeePassLib
 				{
 					uPosMax = u;
 					dtMax = ptSrc.LocationChanged; // No 'continue'
-					vNeighborSrc = ptSrc.ParentGroup.GetObjects(false, bEntries);
+
+					PwGroup pgParent = ptSrc.ParentGroup;
+					if(pgParent != null)
+						vNeighborSrc = pgParent.GetObjects(false, bEntries);
+					else
+					{
+						// pgParent may be null (for the source root group)
+						vNeighborSrc = new List<IStructureItem>();
+						vNeighborSrc.Add(ptSrc);
+					}
 				}
 			}
 

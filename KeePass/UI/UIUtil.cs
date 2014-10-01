@@ -47,8 +47,29 @@ using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.UI
 {
+	public sealed class UIScrollInfo
+	{
+		private readonly int m_dx;
+		public int ScrollX { get { return m_dx; } }
+
+		private readonly int m_dy;
+		public int ScrollY { get { return m_dy; } }
+
+		private readonly int m_idxTop;
+		public int TopIndex { get { return m_idxTop; } }
+
+		public UIScrollInfo(int iScrollX, int iScrollY, int iTopIndex)
+		{
+			m_dx = iScrollX;
+			m_dy = iScrollY;
+			m_idxTop = iTopIndex;
+		}
+	}
+
 	public static class UIUtil
 	{
 		private static ToolStripRenderer m_tsrOverride = null;
@@ -64,6 +85,14 @@ namespace KeePass.UI
 			get { return m_bVistaStyleLists; }
 		}
 
+		public static bool IsDarkTheme
+		{
+			get
+			{
+				return (ColorToGrayscale(SystemColors.ControlText).R >= 128);
+			}
+		}
+
 		public static void Initialize(bool bReinitialize)
 		{
 			// Various drawing bugs under Mono (gradients too light, incorrect
@@ -71,13 +100,17 @@ namespace KeePass.UI
 			// items, ...)
 			bool bMono = MonoWorkarounds.IsRequired();
 
+			bool bHighContrast = false;
+			try { bHighContrast = SystemInformation.HighContrast; }
+			catch(Exception) { Debug.Assert(false); }
+
 			// bool bVisualStyles = true;
 			// try { bVisualStyles = VisualStyleRenderer.IsSupported; }
 			// catch(Exception) { Debug.Assert(false); bVisualStyles = false; }
 
 			if(m_tsrOverride != null) ToolStripManager.Renderer = m_tsrOverride;
 			else if(Program.Config.UI.UseCustomToolStripRenderer &&
-				!bMono) // && bVisualStyles)
+				!bMono && !bHighContrast) // && bVisualStyles)
 			{
 				ToolStripManager.Renderer = new CustomToolStripRendererEx();
 				// ToolStripManager.Renderer = new ThemeToolStripRenderer();
@@ -224,12 +257,9 @@ namespace KeePass.UI
 		{
 			Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 
-			using(SolidBrush br = new SolidBrush(color))
+			using(Graphics g = Graphics.FromImage(bmp))
 			{
-				using(Graphics g = Graphics.FromImage(bmp))
-				{
-					g.FillRectangle(br, 0, 0, nWidth, nHeight);
-				}
+				g.Clear(color);
 			}
 
 			return bmp;
@@ -288,8 +318,6 @@ namespace KeePass.UI
 			ilNew.ImageSize = new Size(nWidth, nHeight);
 			ilNew.ColorDepth = ColorDepth.Depth24Bit;
 
-			SolidBrush brushBk = new SolidBrush(clrBack);
-
 			List<Image> vNewImages = new List<Image>();
 			foreach(Image img in vImages)
 			{
@@ -297,7 +325,7 @@ namespace KeePass.UI
 
 				using(Graphics g = Graphics.FromImage(bmpNew))
 				{
-					g.FillRectangle(brushBk, 0, 0, nWidth, nHeight);
+					g.Clear(clrBack);
 
 					if((img.Width == nWidth) && (img.Height == nHeight))
 						g.DrawImageUnscaled(img, 0, 0);
@@ -389,9 +417,14 @@ namespace KeePass.UI
 
 		public static Bitmap CreateScreenshot()
 		{
+			return CreateScreenshot(null);
+		}
+
+		public static Bitmap CreateScreenshot(Screen sc)
+		{
 			try
 			{
-				Screen s = Screen.PrimaryScreen;
+				Screen s = (sc ?? Screen.PrimaryScreen);
 				Bitmap bmp = new Bitmap(s.Bounds.Width, s.Bounds.Height);
 
 				using(Graphics g = Graphics.FromImage(bmp))
@@ -454,7 +487,7 @@ namespace KeePass.UI
 			if(tb == null) { Debug.Assert(false); return; }
 			if(str == null) str = string.Empty;
 
-			if(!KeePassLib.Native.NativeLib.IsUnix())
+			if(!NativeLib.IsUnix())
 				str = StrUtil.NormalizeNewLines(str, true);
 
 			tb.Text = str;
@@ -709,11 +742,9 @@ namespace KeePass.UI
 
 			lv.EndUpdate();
 
-			int nColWidth = lv.ClientRectangle.Width / lv.Columns.Count;
-			foreach(ColumnHeader ch in lv.Columns)
-			{
-				ch.Width = nColWidth;
-			}
+			// Resize columns *after* EndUpdate, otherwise sizing problem
+			// caused by the scrollbar
+			UIUtil.ResizeColumns(lv, true);
 		}
 
 		public static int GetVScrollBarWidth()
@@ -1030,8 +1061,9 @@ namespace KeePass.UI
 
 			int nStart = (bUp ? 0 : (lvsic.Count - 1));
 			int nEnd = (bUp ? lvsic.Count : -1);
-			for(int i = nStart; i != nEnd; i += (bUp ? 1 : -1))
-				v.MoveOne(lvsic[i].Tag as T, bUp);
+			int iStep = (bUp ? 1 : -1);
+			for(int i = nStart; i != nEnd; i += iStep)
+				v.MoveOne((lvsic[i].Tag as T), bUp);
 		}
 
 		public static void DeleteSelectedItems<T>(ListView lv, PwObjectList<T>
@@ -1159,6 +1191,14 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
+		public static void Configure(ToolStrip ts)
+		{
+			if(ts == null) { Debug.Assert(false); return; }
+			if(Program.DesignMode) return;
+
+			DpiUtil.Configure(ts);
+		}
+
 		public static void ConfigureTbButton(ToolStripItem tb, string strText,
 			string strTooltip)
 		{
@@ -1270,57 +1310,177 @@ namespace KeePass.UI
 			if(cb.Checked != bChecked) cb.Checked = bChecked;
 		}
 
+		private static Bitmap GetGlyphBitmap(MenuGlyph mg, Color clrFG)
+		{
+			try
+			{
+				Size sz = new Size(DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+
+				Bitmap bmp = new Bitmap(sz.Width, sz.Height,
+					PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.Clear(Color.Transparent);
+					ControlPaint.DrawMenuGlyph(g, new Rectangle(Point.Empty,
+						sz), mg, clrFG, Color.Transparent);
+				}
+
+				return bmp;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+
+		private static Bitmap g_bmpCheckLight = null;
 		public static void SetChecked(ToolStripMenuItem tsmi, bool bChecked)
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			if(tsmi.Checked != bChecked) tsmi.Checked = bChecked;
+			Image imgCheck = Properties.Resources.B16x16_MenuCheck;
+
+			Color clrFG = tsmi.ForeColor;
+			if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+			{
+				if(g_bmpCheckLight == null)
+					g_bmpCheckLight = GetGlyphBitmap(MenuGlyph.Checkmark,
+						Color.White); // Not clrFG, for consistency
+
+				if(g_bmpCheckLight != null) imgCheck = g_bmpCheckLight;
+			}
+			else { Debug.Assert(g_bmpCheckLight == null); } // Always or never
+
+			Image imgTrans = Properties.Resources.B16x16_Transparent;
+
+			// Assign transparent image instead of null in order to
+			// prevent incorrect menu item heights
+			if((tsmi.Image == null) || (tsmi.Image == imgCheck) ||
+				(tsmi.Image == imgTrans))
+				tsmi.Image = (bChecked ? imgCheck : imgTrans);
+
+			tsmi.Checked = bChecked;
 		}
 
+		private static Bitmap g_bmpRadioLight = null;
 		public static void SetRadioChecked(ToolStripMenuItem tsmi, bool bChecked)
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
 
+			Debug.Assert(!tsmi.CheckOnClick); // Potential to break image
+
 			if(bChecked)
 			{
-				tsmi.Image = Properties.Resources.B16x16_MenuRadio;
+				Image imgCheck = Properties.Resources.B16x16_MenuRadio;
+
+				Color clrFG = tsmi.ForeColor;
+				if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+				{
+					if(g_bmpRadioLight == null)
+						g_bmpRadioLight = GetGlyphBitmap(MenuGlyph.Bullet,
+							Color.White); // Not clrFG, for consistency
+
+					if(g_bmpRadioLight != null) imgCheck = g_bmpRadioLight;
+				}
+				else { Debug.Assert(g_bmpRadioLight == null); } // Always or never
+
+				tsmi.Image = imgCheck;
 				tsmi.CheckState = CheckState.Checked;
 			}
 			else
 			{
-				tsmi.Image = null;
+				// Transparent: see SetChecked method
+				tsmi.Image = Properties.Resources.B16x16_Transparent;
 				tsmi.CheckState = CheckState.Unchecked;
 			}
 		}
 
 		public static void ResizeColumns(ListView lv, bool bBlockUIUpdate)
 		{
+			ResizeColumns(lv, null, bBlockUIUpdate);
+		}
+
+		public static void ResizeColumns(ListView lv, int[] vRelWidths,
+			bool bBlockUIUpdate)
+		{
 			if(lv == null) { Debug.Assert(false); return; }
+			// vRelWidths may be null
 
-			int nColumns = 0;
-			foreach(ColumnHeader ch in lv.Columns)
+			List<int> lCurWidths = new List<int>();
+			foreach(ColumnHeader ch in lv.Columns) { lCurWidths.Add(ch.Width); }
+
+			int n = lCurWidths.Count;
+			if(n == 0) return;
+
+			int[] vRels = new int[n];
+			int nRelSum = 0;
+			for(int i = 0; i < n; ++i)
 			{
-				if(ch.Width > 0) ++nColumns;
-			}
-			if(nColumns == 0) return;
+				if((vRelWidths != null) && (i < vRelWidths.Length))
+				{
+					if(vRelWidths[i] >= 0) vRels[i] = vRelWidths[i];
+					else { Debug.Assert(false); vRels[i] = 0; }
+				}
+				else vRels[i] = 1; // Unit width 1 is default
 
-			int cx = (lv.ClientSize.Width - 1) / nColumns;
-			int cx0 = (lv.ClientSize.Width - 1) - (cx * (nColumns - 1));
-			if((cx0 <= 0) || (cx <= 0)) return;
+				nRelSum += vRels[i];
+			}
+			if(nRelSum == 0) { Debug.Assert(false); return; }
+
+			int w = lv.ClientSize.Width - 1;
+			if(w <= 0) { Debug.Assert(false); return; }
+
+			// The client width might include the width of a vertical
+			// scrollbar or not (unreliable; for example the scrollbar
+			// width is not subtracted during a Form.Load even though
+			// a scrollbar is required); try to detect this situation
+			int cwScroll = UIUtil.GetVScrollBarWidth();
+			if((lv.Width - w) < cwScroll) // Scrollbar not already subtracted
+			{
+				int nItems = lv.Items.Count;
+				if(nItems > 0)
+				{
+#if DEBUG
+					foreach(ListViewItem lvi in lv.Items)
+					{
+						Debug.Assert(lvi.Bounds.Height == lv.Items[0].Bounds.Height);
+					}
+#endif
+
+					if((((long)nItems * (long)lv.Items[0].Bounds.Height) >
+						(long)lv.ClientSize.Height) && (w > cwScroll))
+						w -= cwScroll;
+				}
+			}
+
+			double dx = (double)w / (double)nRelSum;
+
+			int[] vNewWidths = new int[n];
+			int iFirstVisible = -1, wSum = 0;
+			for(int i = 0; i < n; ++i)
+			{
+				int cw = (int)Math.Floor(dx * (double)vRels[i]);
+				vNewWidths[i] = cw;
+
+				wSum += cw;
+				if((iFirstVisible < 0) && (cw > 0)) iFirstVisible = i;
+			}
+
+			if((iFirstVisible >= 0) && (wSum < w))
+				vNewWidths[iFirstVisible] += (w - wSum);
 
 			if(bBlockUIUpdate) lv.BeginUpdate();
 
-			bool bFirst = true;
+			int iCol = 0;
 			foreach(ColumnHeader ch in lv.Columns)
 			{
-				int nCurWidth = ch.Width;
-				if(nCurWidth == 0) continue;
-				if(bFirst && (nCurWidth == cx0)) { bFirst = false; continue; }
-				if(!bFirst && (nCurWidth == cx)) continue;
+				if(iCol >= n) { Debug.Assert(false); break; }
 
-				ch.Width = (bFirst ? cx0 : cx);
-				bFirst = false;
+				if(vNewWidths[iCol] != lCurWidths[iCol])
+					ch.Width = vNewWidths[iCol];
+
+				++iCol;
 			}
+			Debug.Assert(iCol == n);
 
 			if(bBlockUIUpdate) lv.EndUpdate();
 		}
@@ -1347,7 +1507,7 @@ namespace KeePass.UI
 
 			Color clrBg = lv.BackColor;
 
-			if(!lv.ShowGroups || !bAlternate)
+			if(!UIUtil.GetGroupsEnabled(lv) || !bAlternate)
 			{
 				for(int i = 0; i < lv.Items.Count; ++i)
 				{
@@ -1583,43 +1743,51 @@ namespace KeePass.UI
 				UIUtil.SetEnabled(cbHidePassword, false);
 		}
 
+		public static bool GetGroupsEnabled(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return false; }
+
+			// Corresponds almost with the internal GroupsEnabled property
+			return (lv.ShowGroups && (lv.Groups.Count > 0) && !lv.VirtualMode);
+		}
+
+		public static int GetMaxVisibleItemCount(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return 0; }
+
+			int hClient = lv.ClientSize.Height;
+			int hHeader = NativeMethods.GetHeaderHeight(lv);
+			if(hHeader > 0)
+			{
+				if(((lv.Height - hClient) < hHeader) && (hClient > hHeader))
+					hClient -= hHeader;
+			}
+
+			int dy = lv.Items[0].Bounds.Height;
+			if(dy <= 1) { Debug.Assert(false); dy = DpiUtil.ScaleIntY(16) + 1; }
+
+			return (hClient / dy);
+		}
+
 		public static int GetTopVisibleItem(ListView lv)
 		{
 			if(lv == null) { Debug.Assert(false); return -1; }
 
+			// The returned value must be an existing index or -1
 			int nRes = -1;
 			try
 			{
 				if(lv.Items.Count == 0) return nRes;
 
 				ListViewItem lvi = null;
-				if(!lv.ShowGroups) lvi = lv.TopItem;
+				if(!UIUtil.GetGroupsEnabled(lv)) lvi = lv.TopItem;
 				else
 				{
 					// In grouped mode, the TopItem property does not work;
 					// http://connect.microsoft.com/VisualStudio/feedback/details/642188/listview-control-bug-topitem-property-doesnt-work-with-groups
-					// http://msdn.microsoft.com/en-us/library/windows/desktop/bb761087%28v=vs.85%29.aspx
+					// http://msdn.microsoft.com/en-us/library/windows/desktop/bb761087.aspx
 
-					int dyHeader = 0;
-					try
-					{
-						if((lv.View == View.Details) && (lv.HeaderStyle !=
-							ColumnHeaderStyle.None) && (lv.Columns.Count > 0) &&
-							!KeePassLib.Native.NativeLib.IsUnix())
-						{
-							IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
-								NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-							if(hHeader != IntPtr.Zero)
-							{
-								NativeMethods.RECT rect = new NativeMethods.RECT();
-								if(NativeMethods.GetWindowRect(hHeader, ref rect))
-									dyHeader = rect.Bottom - rect.Top;
-								else { Debug.Assert(false); }
-							}
-							else { Debug.Assert(false); }
-						}
-					}
-					catch(Exception) { Debug.Assert(false); }
+					int dyHeader = NativeMethods.GetHeaderHeight(lv);
 
 					int yMin = int.MaxValue;
 					foreach(ListViewItem lviEnum in lv.Items)
@@ -1642,11 +1810,150 @@ namespace KeePass.UI
 
 		public static void SetTopVisibleItem(ListView lv, int iIndex)
 		{
-			if(lv == null) { Debug.Assert(false); return; }
-			if((iIndex < 0) || (iIndex >= lv.Items.Count)) return; // No assert
+			SetTopVisibleItem(lv, iIndex, false);
+		}
 
-			lv.EnsureVisible(lv.Items.Count - 1);
-			lv.EnsureVisible(iIndex);
+		public static void SetTopVisibleItem(ListView lv, int iIndex,
+			bool bEnsureSelectedVisible)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+			if(iIndex < 0) return; // No assert
+
+			int n = lv.Items.Count;
+			if(n <= 0) return;
+
+			if(iIndex >= n) iIndex = n - 1; // No assert
+
+			int iOrgTop = GetTopVisibleItem(lv);
+
+			lv.BeginUpdate(); // Might reduce flicker
+
+			if(iIndex != iOrgTop) // Prevent unnecessary flicker
+			{
+				// Setting lv.TopItem doesn't work properly
+				
+				// lv.EnsureVisible(n - 1);
+				// if(iIndex != (n - 1)) lv.EnsureVisible(iIndex);
+
+#if DEBUG
+				foreach(ListViewItem lvi in lv.Items)
+				{
+					Debug.Assert(lvi.Bounds.Height == lv.Items[0].Bounds.Height);
+				}
+#endif
+
+				if(iIndex < iOrgTop)
+					lv.EnsureVisible(iIndex);
+				else
+				{
+					int nVisItems = GetMaxVisibleItemCount(lv);
+
+					int iNewLast = nVisItems + iIndex - 1;
+					if(iNewLast < 0) { Debug.Assert(false); iNewLast = 0; }
+					iNewLast = Math.Min(iNewLast, n - 1);
+
+					lv.EnsureVisible(iNewLast);
+					
+					int iNewTop = GetTopVisibleItem(lv);
+					if(iNewTop > iIndex) // Scrolled too far
+					{
+						Debug.Assert(false);
+						lv.EnsureVisible(iIndex); // Scroll back
+					}
+					else if(iNewTop == iIndex) { } // Perfect
+					else { Debug.Assert(iNewLast == (n - 1)); }
+
+					// int hItem = lv.Items[0].Bounds.Height;
+					// if(hItem <= 0) { Debug.Assert(false); hItem = DpiUtil.ScaleIntY(16) + 1; }
+					// int hToScroll = (iIndex - iOrgTop) * hItem;
+					// NativeMethods.Scroll(lv, 0, hToScroll);
+					// int iNewTop = GetTopVisibleItem(lv);
+					// if(iNewTop > iIndex) // Scrolled too far
+					// {
+					//	Debug.Assert(false);
+					//	lv.EnsureVisible(iIndex); // Scroll back
+					// }
+					// else if(iNewTop == iIndex) { } // Perfect
+					// else
+					// {
+					//	lv.EnsureVisible(n - 1);
+					//	if(iIndex != (n - 1)) lv.EnsureVisible(iIndex);
+					// }
+				}
+			}
+
+			if(bEnsureSelectedVisible)
+			{
+				ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
+				int nSel = lvsic.Count;
+				if(nSel > 0)
+				{
+					int[] vSel = new int[nSel];
+					lvsic.CopyTo(vSel, 0);
+
+					lv.EnsureVisible(vSel[nSel - 1]);
+					if(nSel >= 2) lv.EnsureVisible(vSel[0]);
+				}
+			}
+
+			lv.EndUpdate();
+		}
+
+		public static UIScrollInfo GetScrollInfo(ListView lv,
+			bool bForRestoreOnly)
+		{
+			if(lv == null) { Debug.Assert(false); return null; }
+
+			int scrY = NativeMethods.GetScrollPosY(lv.Handle);
+			int idxTop = GetTopVisibleItem(lv);
+
+			// Fix index-based scroll position
+			if((scrY == idxTop) && (idxTop > 0))
+			{
+				// Groups imply pixel position
+				Debug.Assert(!UIUtil.GetGroupsEnabled(lv));
+
+				if(!bForRestoreOnly)
+				{
+					int hSum = 0;
+					foreach(ListViewItem lvi in lv.Items)
+					{
+						if(scrY <= 0) break;
+
+						int hItem = lvi.Bounds.Height;
+						if(hItem > 1) hSum += hItem;
+						else { Debug.Assert(false); }
+
+						--scrY;
+					}
+
+					scrY = hSum;
+				}
+				else scrY = 0; // Pixels not required for restoration
+			}
+
+			return new UIScrollInfo(0, scrY, idxTop);
+		}
+
+		public static void Scroll(ListView lv, UIScrollInfo s,
+			bool bEnsureSelectedVisible)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+			if(s == null) { Debug.Assert(false); return; }
+
+			if(UIUtil.GetGroupsEnabled(lv) && !NativeLib.IsUnix())
+			{
+				// Only works correctly when groups are present
+				// (lv.ShowGroups is not sufficient)
+				NativeMethods.Scroll(lv, s.ScrollX, s.ScrollY);
+
+				if(bEnsureSelectedVisible)
+				{
+					Debug.Assert(false); // Unsupported mode combination
+					SetTopVisibleItem(lv, GetTopVisibleItem(lv), true);
+				}
+			}
+			else SetTopVisibleItem(lv, s.TopIndex, bEnsureSelectedVisible);
 		}
 
 		/// <summary>
@@ -1821,6 +2128,47 @@ namespace KeePass.UI
 			{
 				if(c.CanSelect) c.Select();
 				if(c.CanFocus) c.Focus();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static void ResetFocus(Control c, Form fParent)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+			// fParent may be null
+
+			try
+			{
+				Control cPre = null;
+				if(fParent != null) cPre = fParent.ActiveControl;
+
+				bool bStdSetFocus = true;
+				if(c == cPre)
+				{
+					// Special reset for password text boxes that
+					// can show a Caps Lock balloon tip;
+					// https://sourceforge.net/p/keepass/feature-requests/1905/
+					TextBox tb = (c as TextBox);
+					if((tb != null) && !NativeLib.IsUnix())
+					{
+						IntPtr h = tb.Handle;
+						bool bCapsLock = ((NativeMethods.GetKeyState(
+							NativeMethods.VK_CAPITAL) & 1) != 0);
+
+						if((h != IntPtr.Zero) && tb.UseSystemPasswordChar &&
+							!tb.ReadOnly && bCapsLock)
+						{
+							NativeMethods.SendMessage(h, NativeMethods.WM_KILLFOCUS,
+								IntPtr.Zero, IntPtr.Zero);
+							NativeMethods.SendMessage(h, NativeMethods.WM_SETFOCUS,
+								IntPtr.Zero, IntPtr.Zero);
+
+							bStdSetFocus = false;
+						}
+					}
+				}
+
+				if(bStdSetFocus) UIUtil.SetFocus(c, fParent);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -2025,7 +2373,7 @@ namespace KeePass.UI
 				Icon icoResult = (Icon)icoBmp.Clone();
 
 				try { NativeMethods.DestroyIcon(hIcon); }
-				catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 				bmp.Dispose();
 
 				return icoResult;
@@ -2033,6 +2381,42 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return (Icon)icoBase.Clone();
+		}
+
+		public static Bitmap InvertImage(Image img)
+		{
+			try
+			{
+				int w = img.Width, h = img.Height;
+
+				Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.Clear(Color.Transparent);
+
+					g.InterpolationMode = InterpolationMode.NearestNeighbor;
+					g.SmoothingMode = SmoothingMode.None;
+
+					ColorMatrix cm = new ColorMatrix(new float[][] {
+						new float[] { -1, 0, 0, 0, 0 },
+						new float[] { 0, -1, 0, 0, 0 },
+						new float[] { 0, 0, -1, 0, 0 },
+						new float[] { 0, 0, 0, 1, 0 },
+						new float[] { 1, 1, 1, 0, 1 }
+					});
+
+					ImageAttributes a = new ImageAttributes();
+					a.SetColorMatrix(cm);
+
+					g.DrawImage(img, new Rectangle(0, 0, w, h), 0, 0, w, h,
+						GraphicsUnit.Pixel, a);
+				}
+
+				return bmp;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 
 		public static Image CreateTabColorImage(Color clr, TabControl cTab)
@@ -2096,8 +2480,7 @@ namespace KeePass.UI
 			}
 			catch(Exception) { }
 
-			Debug.Assert(KeePassLib.Native.NativeLib.IsUnix() ||
-				!WinUtil.IsAtLeastWindowsVista);
+			Debug.Assert(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindowsVista);
 			// Do not play a standard sound here
 			return false;
 		}
@@ -2193,7 +2576,7 @@ namespace KeePass.UI
 					if(bVisible) f.Visible = true;
 				}
 			}
-			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
 		private static KeysConverter m_convKeys = null;
@@ -2257,8 +2640,16 @@ namespace KeePass.UI
 		{
 			if(imgBase == null) { Debug.Assert(false); return null; }
 
+			// Height of the arrow without the glow effect
+			// int hArrow = (int)Math.Ceiling((double)DpiUtil.ScaleIntY(20) / 8.0);
+			// int hArrow = (int)Math.Ceiling((double)DpiUtil.ScaleIntY(28) / 8.0);
+			int hArrow = DpiUtil.ScaleIntY(3);
+
 			int dx = imgBase.Width, dy = imgBase.Height;
-			if((dx < 8) || (dy < 5)) return new Bitmap(imgBase);
+			if((dx < ((hArrow * 2) + 2)) || (dy < (hArrow + 2)))
+				return new Bitmap(imgBase);
+
+			bool bStdClr = !UIUtil.IsDarkTheme;
 
 			Bitmap bmp = new Bitmap(dx, dy, PixelFormat.Format32bppArgb);
 			using(Graphics g = Graphics.FromImage(bmp))
@@ -2266,27 +2657,45 @@ namespace KeePass.UI
 				g.Clear(Color.Transparent);
 				g.DrawImageUnscaled(imgBase, 0, 0);
 
-				Pen penDark = Pens.Black;
-				g.DrawLine(penDark, dx - 5, dy - 3, dx - 1, dy - 3);
-				g.DrawLine(penDark, dx - 4, dy - 2, dx - 2, dy - 2);
-				// g.DrawLine(penDark, dx - 7, dy - 4, dx - 1, dy - 4);
-				// g.DrawLine(penDark, dx - 6, dy - 3, dx - 2, dy - 3);
-				// g.DrawLine(penDark, dx - 5, dy - 2, dx - 3, dy - 2);
+				// Pen penDark = Pens.Black;
+				// g.DrawLine(penDark, dx - 5, dy - 3, dx - 1, dy - 3);
+				// g.DrawLine(penDark, dx - 4, dy - 2, dx - 2, dy - 2);
+				// // g.DrawLine(penDark, dx - 7, dy - 4, dx - 1, dy - 4);
+				// // g.DrawLine(penDark, dx - 6, dy - 3, dx - 2, dy - 3);
+				// // g.DrawLine(penDark, dx - 5, dy - 2, dx - 3, dy - 2);
+				// using(Pen penLight = new Pen(Color.FromArgb(
+				//	160, 255, 255, 255), 1.0f))
+				// {
+				//	g.DrawLine(penLight, dx - 5, dy - 4, dx - 1, dy - 4);
+				//	g.DrawLine(penLight, dx - 6, dy - 3, dx - 4, dy - 1);
+				//	g.DrawLine(penLight, dx - 2, dy - 1, dx - 1, dy - 2);
+				//	// g.DrawLine(penLight, dx - 7, dy - 5, dx - 1, dy - 5);
+				//	// g.DrawLine(penLight, dx - 8, dy - 4, dx - 5, dy - 1);
+				//	// g.DrawLine(penLight, dx - 3, dy - 1, dx - 1, dy - 3);
+				// }
 
-				using(Pen penLight = new Pen(Color.FromArgb(
-					160, 255, 255, 255), 1.0f))
+				g.SmoothingMode = SmoothingMode.None;
+
+				Pen penDark = (bStdClr ? Pens.Black : Pens.White);
+				for(int i = 1; i < hArrow; ++i)
+					g.DrawLine(penDark, dx - hArrow - i, dy - 1 - i,
+						dx - hArrow + i, dy - 1 - i);
+
+				int c = (bStdClr ? 255 : 0);
+				using(Pen penLight = new Pen(Color.FromArgb(160, c, c, c), 1.0f))
 				{
-					g.DrawLine(penLight, dx - 5, dy - 4, dx - 1, dy - 4);
-					g.DrawLine(penLight, dx - 6, dy - 3, dx - 4, dy - 1);
-					g.DrawLine(penLight, dx - 2, dy - 1, dx - 1, dy - 2);
-					// g.DrawLine(penLight, dx - 7, dy - 5, dx - 1, dy - 5);
-					// g.DrawLine(penLight, dx - 8, dy - 4, dx - 5, dy - 1);
-					// g.DrawLine(penLight, dx - 3, dy - 1, dx - 1, dy - 3);
+					g.DrawLine(penLight, dx - (hArrow * 2) + 1,
+						dy - hArrow - 1, dx - 1, dy - hArrow - 1);
+					g.DrawLine(penLight, dx - (hArrow * 2),
+						dy - hArrow, dx - hArrow - 1, dy - 1);
+					g.DrawLine(penLight, dx - hArrow + 1, dy - 1,
+						dx - 1, dy - hArrow + 1);
 				}
 			}
 
-			bmp.SetPixel(dx - 3, dy - 1, Color.Black);
-			// bmp.SetPixel(dx - 4, dy - 1, Color.Black);
+			// bmp.SetPixel(dx - 3, dy - 1, Color.Black);
+			// // bmp.SetPixel(dx - 4, dy - 1, Color.Black);
+			bmp.SetPixel(dx - hArrow, dy - 1, (bStdClr ? Color.Black : Color.White));
 
 			return bmp;
 		}
@@ -2391,6 +2800,49 @@ namespace KeePass.UI
 
 			e.Handled = bHandled;
 			e.SuppressKeyPress = bHandled;
+		}
+
+		public static bool HandleCommonKeyEvent(KeyEventArgs e, bool bDown,
+			Control cCtx)
+		{
+			if(e == null) { Debug.Assert(false); return false; }
+			if(cCtx == null) { Debug.Assert(false); return false; }
+
+			// On Windows, all of the following is already supported by .NET
+			if(!NativeLib.IsUnix()) return false;
+
+			bool bS = e.Shift;
+			bool bC = e.Control;
+			bool bA = e.Alt;
+			Keys k = e.KeyCode;
+			bool bMac = (NativeLib.GetPlatformID() == PlatformID.MacOSX);
+
+			if(((k == Keys.Apps) && !bA) || // Shift and Control irrelevant
+				((k == Keys.F10) && bS && !bA) || // Control irrelevant
+				(bMac && (k == Keys.D5) && bC && bA) ||
+				(bMac && (k == Keys.NumPad5) && bC))
+			{
+				bool bOp = bDown;
+				if(k == Keys.Apps) bOp = !bDown;
+
+				if(bOp)
+				{
+					ContextMenu cm = cCtx.ContextMenu;
+					ContextMenuStrip cms = cCtx.ContextMenuStrip;
+
+					if(cms != null) cms.Show(Cursor.Position);
+					else if(cm != null)
+					{
+						Point pt = cCtx.PointToClient(Cursor.Position);
+						cm.Show(cCtx, pt);
+					}
+				}
+
+				UIUtil.SetHandled(e, true);
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

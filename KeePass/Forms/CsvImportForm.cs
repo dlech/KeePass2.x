@@ -42,7 +42,7 @@ namespace KeePass.Forms
 		private byte[] m_pbData = null;
 		private PwDatabase m_pwDatabase = null;
 
-		private bool m_bInitializing = false;
+		private bool m_bInitializing = true;
 		private uint m_uStartOffset = 0;
 		private CsvFieldType m_tLastCsvType = CsvFieldType.Count;
 
@@ -286,10 +286,7 @@ namespace KeePass.Forms
 			m_lvFields.Columns[0].Width = dx -
 				UIUtil.GetVScrollBarWidth(); // Add some space for usability
 
-			dx = m_lvImportPreview.ClientRectangle.Width;
-			int nCols = m_lvImportPreview.Columns.Count;
-			for(int c = 0; c < nCols; ++c)
-				m_lvImportPreview.Columns[c].Width = dx / nCols;
+			UIUtil.ResizeColumns(m_lvImportPreview, true);
 		}
 
 		private static string CsvFieldToString(CsvFieldType t)

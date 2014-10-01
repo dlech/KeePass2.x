@@ -231,6 +231,8 @@ namespace KeePass
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
 
+			DpiUtil.ConfigureProcess();
+
 #if DEBUG
 			string strInitialWorkDir = WinUtil.GetWorkingDirectory();
 #endif
@@ -528,6 +530,9 @@ namespace KeePass
 
 			// InitEnvWorkarounds();
 			LoadTranslation();
+
+			CustomResourceManager.Override(typeof(KeePass.Properties.Resources));
+
 			return true;
 		}
 
@@ -535,6 +540,8 @@ namespace KeePass
 		{
 #if DEBUG
 			Debug.Assert(ShutdownBlocker.Instance == null);
+			Debug.Assert(!SendInputEx.IsSending);
+			// GC.Collect(); // Force invocation of destructors
 #endif
 
 			AppLogEx.Close();

@@ -25,6 +25,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -35,18 +36,30 @@ namespace KeePass.UI
 	/// </summary>
 	public sealed class SecureEdit
 	{
-		private static char m_chPasswordChar = '\u25CF';
+		private static char? m_ochPasswordChar = null;
+		internal static char PasswordChar
+		{
+			get
+			{
+				if(m_ochPasswordChar.HasValue) return m_ochPasswordChar.Value;
+
+				// On Windows 98 / ME, an ANSI character must be used as
+				// password char
+				m_ochPasswordChar = ((Environment.OSVersion.Platform ==
+					PlatformID.Win32Windows) ? '\u00D7' : '\u25CF');
+
+				return m_ochPasswordChar.Value;
+			}
+		}
 
 		private TextBox m_tbPassword = null;
 		private EventHandler m_evTextChanged = null;
-		
-		// SecureString objects are supported only on Windows 2000 SP3 and
-		// higher. On all other systems (98 / ME) we use a standard string
-		// object instead of the secure one. This of course decreases the
-		// security of the control, but at least allows the application
-		// to run on older systems, too.
-		private SecureString m_secString = null; // Created in constructor
-		private string m_strAlternativeSecString = string.Empty;
+
+		private static readonly ProtectedString g_psEmpty = new ProtectedString(
+			true, new byte[0]);
+
+		// With ProtectedString.Empty no incremental protection (Remove/Insert)
+		private ProtectedString m_psText = g_psEmpty;
 
 		private bool m_bBlockTextChanged = false;
 
@@ -61,19 +74,7 @@ namespace KeePass.UI
 
 		public uint TextLength
 		{
-			get
-			{
-				if(m_secString != null) return (uint)m_secString.Length;
-				return (uint)m_strAlternativeSecString.Length;
-			}
-		}
-
-		static SecureEdit()
-		{
-			// On Windows 98 / ME, an ANSI character must be used as
-			// password char!
-			if(Environment.OSVersion.Platform == PlatformID.Win32Windows)
-				m_chPasswordChar = '\u00D7';
+			get { return (uint)m_psText.Length; }
 		}
 
 		/// <summary>
@@ -83,13 +84,11 @@ namespace KeePass.UI
 		/// </summary>
 		public SecureEdit()
 		{
-			try { m_secString = new SecureString(); }
-			catch(NotSupportedException) { } // Windows 98 / ME
 		}
 
 		~SecureEdit()
 		{
-			this.Detach();
+			Detach();
 		}
 
 		/// <summary>
@@ -103,7 +102,7 @@ namespace KeePass.UI
 			Debug.Assert(tbPasswordBox != null);
 			if(tbPasswordBox == null) throw new ArgumentNullException("tbPasswordBox");
 
-			this.Detach();
+			Detach();
 
 			m_tbPassword = tbPasswordBox;
 			m_evTextChanged = evTextChanged;
@@ -113,8 +112,7 @@ namespace KeePass.UI
 			Debug.Assert(m_tbPassword.SelectionStart == 0);
 			Debug.Assert(m_tbPassword.SelectionLength == 0);
 
-			if(m_secString != null) m_secString.Clear();
-			else m_strAlternativeSecString = string.Empty;
+			m_psText = g_psEmpty;
 
 			EnableProtection(bHidePassword);
 
@@ -195,9 +193,10 @@ namespace KeePass.UI
 			int inxLeft = -1, inxRight = 0;
 			StringBuilder sbNewPart = new StringBuilder();
 
+			char chPasswordChar = SecureEdit.PasswordChar;
 			for(int i = 0; i < strText.Length; ++i)
 			{
-				if(strText[i] != m_chPasswordChar)
+				if(strText[i] != chPasswordChar)
 				{
 					if(inxLeft == -1) inxLeft = i;
 					inxRight = i;
@@ -231,10 +230,9 @@ namespace KeePass.UI
 			m_bBlockTextChanged = true;
 			if(!m_tbPassword.UseSystemPasswordChar)
 				m_tbPassword.Text = GetAsString();
-			else if(m_secString != null)
-				m_tbPassword.Text = new string(m_chPasswordChar, m_secString.Length);
 			else
-				m_tbPassword.Text = new string(m_chPasswordChar, m_strAlternativeSecString.Length);
+				m_tbPassword.Text = new string(SecureEdit.PasswordChar,
+					m_psText.Length);
 			m_bBlockTextChanged = false;
 
 			int nNewTextLen = m_tbPassword.TextLength;
@@ -252,86 +250,81 @@ namespace KeePass.UI
 
 		public byte[] ToUtf8()
 		{
-			Debug.Assert(sizeof(char) == 2);
+			// Debug.Assert(sizeof(char) == 2);
+			// if(m_secString != null)
+			// {
+			//	char[] vChars = new char[m_secString.Length];
+			//	IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
+			//	for(int i = 0; i < m_secString.Length; ++i)
+			//		vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
+			//	Marshal.ZeroFreeGlobalAllocUnicode(p);
+			//	byte[] pb = StrUtil.Utf8.GetBytes(vChars);
+			//	Array.Clear(vChars, 0, vChars.Length);
+			//	return pb;
+			// }
+			// else return StrUtil.Utf8.GetBytes(m_strAlternativeSecString);
 
-			if(m_secString != null)
-			{
-				char[] vChars = new char[m_secString.Length];
-				IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
-				for(int i = 0; i < m_secString.Length; ++i)
-					vChars[i] = (char)Marshal.ReadInt16(p, i * 2);
-				Marshal.ZeroFreeGlobalAllocUnicode(p);
-
-				byte[] pb = StrUtil.Utf8.GetBytes(vChars);
-				Array.Clear(vChars, 0, vChars.Length);
-
-				return pb;
-			}
-			else return StrUtil.Utf8.GetBytes(m_strAlternativeSecString);
+			return m_psText.ReadUtf8();
 		}
 
 		private string GetAsString()
 		{
-			if(m_secString != null)
-			{
-				IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
-				string str = Marshal.PtrToStringUni(p);
-				Marshal.ZeroFreeGlobalAllocUnicode(p);
+			// if(m_secString != null)
+			// {
+			//	IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(m_secString);
+			//	string str = Marshal.PtrToStringUni(p);
+			//	Marshal.ZeroFreeGlobalAllocUnicode(p);
+			//	return str;
+			// }
+			// else return m_strAlternativeSecString;
 
-				return str;
-			}
-			else return m_strAlternativeSecString;
+			return m_psText.ReadString();
 		}
 
 		private void RemoveInsert(int nLeftRem, int nRightRem, string strInsert)
 		{
 			Debug.Assert(nLeftRem >= 0);
 
-			if(m_secString != null)
+			// if(m_secString != null)
+			// {
+			//	while(m_secString.Length > (nLeftRem + nRightRem))
+			//		m_secString.RemoveAt(nLeftRem);
+			//	for(int i = 0; i < strInsert.Length; ++i)
+			//		m_secString.InsertAt(nLeftRem + i, strInsert[i]);
+			// }
+			// else
+			// {
+			//	StringBuilder sb = new StringBuilder(m_strAlternativeSecString);
+			//	while(sb.Length > (nLeftRem + nRightRem))
+			//		sb.Remove(nLeftRem, 1);
+			//	sb.Insert(nLeftRem, strInsert);
+			//	m_strAlternativeSecString = sb.ToString();
+			// }
+
+			try
 			{
-				while(m_secString.Length > (nLeftRem + nRightRem))
-					m_secString.RemoveAt(nLeftRem);
-
-				for(int i = 0; i < strInsert.Length; ++i)
-					m_secString.InsertAt(nLeftRem + i, strInsert[i]);
+				int cr = m_psText.Length - (nLeftRem + nRightRem);
+				if(cr >= 0) m_psText = m_psText.Remove(nLeftRem, cr);
+				else { Debug.Assert(false); }
+				Debug.Assert(m_psText.Length == (nLeftRem + nRightRem));
 			}
-			else
-			{
-				StringBuilder sb = new StringBuilder(m_strAlternativeSecString);
+			catch(Exception) { Debug.Assert(false); }
 
-				while(sb.Length > (nLeftRem + nRightRem))
-					sb.Remove(nLeftRem, 1);
-
-				sb.Insert(nLeftRem, strInsert);
-
-				m_strAlternativeSecString = sb.ToString();
-			}
+			try { m_psText = m_psText.Insert(nLeftRem, strInsert); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public bool ContentsEqualTo(SecureEdit secOther)
 		{
 			Debug.Assert(secOther != null); if(secOther == null) return false;
 
-			byte[] pbThis = this.ToUtf8();
+			byte[] pbThis = ToUtf8();
 			byte[] pbOther = secOther.ToUtf8();
 
-			bool bEqual = true;
+			bool bEqual = MemUtil.ArraysEqual(pbThis, pbOther);
 
-			if(pbThis.Length != pbOther.Length) bEqual = false;
-			else
-			{
-				for(int i = 0; i < pbThis.Length; ++i)
-				{
-					if(pbThis[i] != pbOther[i])
-					{
-						bEqual = false;
-						break;
-					}
-				}
-			}
-
-			Array.Clear(pbThis, 0, pbThis.Length);
-			Array.Clear(pbOther, 0, pbOther.Length);
+			MemUtil.ZeroByteArray(pbThis);
+			MemUtil.ZeroByteArray(pbOther);
 			return bEqual;
 		}
 
@@ -340,19 +333,19 @@ namespace KeePass.UI
 			Debug.Assert(pbUtf8 != null);
 			if(pbUtf8 == null) throw new ArgumentNullException("pbUtf8");
 
-			if(m_secString != null)
-			{
-				m_secString.Clear();
+			// if(m_secString != null)
+			// {
+			//	m_secString.Clear();
+			//	char[] vChars = StrUtil.Utf8.GetChars(pbUtf8);
+			//	for(int i = 0; i < vChars.Length; ++i)
+			//	{
+			//		m_secString.AppendChar(vChars[i]);
+			//		vChars[i] = char.MinValue;
+			//	}
+			// }
+			// else m_strAlternativeSecString = StrUtil.Utf8.GetString(pbUtf8);
 
-				char[] vChars = StrUtil.Utf8.GetChars(pbUtf8);
-
-				for(int i = 0; i < vChars.Length; ++i)
-				{
-					m_secString.AppendChar(vChars[i]);
-					vChars[i] = char.MinValue;
-				}
-			}
-			else m_strAlternativeSecString = StrUtil.Utf8.GetString(pbUtf8);
+			m_psText = new ProtectedString(true, pbUtf8);
 
 			ShowCurrentPassword(0, 0);
 		}

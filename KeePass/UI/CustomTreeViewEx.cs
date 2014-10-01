@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using KeePass.Native;
+using KeePass.Util;
 
 namespace KeePass.UI
 {
@@ -46,9 +47,10 @@ namespace KeePass.UI
 
 		public CustomTreeViewEx() : base()
 		{
-			// Double-buffering isn't supported by tree views
-			// try { this.DoubleBuffered = true; }
-			// catch(Exception) { Debug.Assert(false); }
+			// Enable default double buffering (must be combined with
+			// TVS_EX_DOUBLEBUFFER, see OnHandleCreated)
+			try { this.DoubleBuffered = true; }
+			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
 
 			// try
 			// {
@@ -134,5 +136,57 @@ namespace KeePass.UI
 
 			base.OnBeforeLabelEdit(e); // Call BeforeLabelEdit event
 		} */
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+
+			try
+			{
+				if(this.DoubleBuffered)
+				{
+					IntPtr p = new IntPtr((int)NativeMethods.TVS_EX_DOUBLEBUFFER);
+					NativeMethods.SendMessage(this.Handle,
+						NativeMethods.TVM_SETEXTENDEDSTYLE, p, p);
+				}
+				else { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		/* protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams cp = base.CreateParams;
+				cp.ExStyle |= NativeMethods.WS_EX_COMPOSITED;
+				return cp;
+			}
+		} */
+
+		/* protected override void WndProc(ref Message m)
+		{
+			if(m.Msg == NativeMethods.WM_ERASEBKGND)
+			{
+				m.Result = IntPtr.Zero;
+				return;
+			}
+
+			base.WndProc(ref m);
+		} */
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+
+			base.OnKeyDown(e);
+		}
+
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+
+			base.OnKeyUp(e);
+		}
 	}
 }

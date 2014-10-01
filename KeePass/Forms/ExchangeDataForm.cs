@@ -121,13 +121,14 @@ namespace KeePass.Forms
 			}
 
 			m_lvFormats.ShowGroups = true;
-			m_lvFormats.Columns.Add(string.Empty);
-			m_lvFormats.Columns[0].Width = m_lvFormats.ClientRectangle.Width -
-				UIUtil.GetVScrollBarWidth() - 1;
+
+			int w = m_lvFormats.ClientSize.Width - UIUtil.GetVScrollBarWidth();
+			m_lvFormats.Columns.Add(string.Empty, w - 1);
 
 			m_ilFormats = new ImageList();
 			m_ilFormats.ColorDepth = ColorDepth.Depth32Bit;
-			m_ilFormats.ImageSize = new Size(16, 16);
+			m_ilFormats.ImageSize = new Size(DpiUtil.ScaleIntX(16),
+				DpiUtil.ScaleIntY(16));
 
 			Dictionary<string, FormatGroupEx> dictGroups =
 				new Dictionary<string, FormatGroupEx>();

@@ -269,7 +269,8 @@ namespace KeePass.Util
 		{
 			if(bIsEntryInfo == false) return;
 
-			Program.TriggerSystem.RaiseEvent(EcasEventIDs.CopiedEntryInfo, strDesc);
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.CopiedEntryInfo,
+				EcasProperty.Text, strDesc);
 		}
 
 		/// <summary>

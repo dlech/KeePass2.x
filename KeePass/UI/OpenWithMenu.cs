@@ -202,7 +202,8 @@ namespace KeePass.UI
 			if(string.IsNullOrEmpty(strName))
 				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(strPath));
 
-			Image img = UIUtil.GetFileIcon(strPath, 16, 16);
+			Image img = UIUtil.GetFileIcon(strPath, DpiUtil.ScaleIntX(16),
+				DpiUtil.ScaleIntY(16));
 
 			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
 			OpenWithItem owi = OpenWithItem.Create(strPath, strMenuText,

@@ -61,11 +61,11 @@ namespace KeePass.Forms
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.ConfigureColumns;
 
-			int nWidth = (m_lvColumns.ClientRectangle.Width -
-				UIUtil.GetVScrollBarWidth()) / 5;
-			m_lvColumns.Columns.Add(KPRes.Column, nWidth * 3);
-			m_lvColumns.Columns.Add(KPRes.Asterisks + " ***", nWidth);
-			m_lvColumns.Columns.Add(KPRes.Toggle + " ***", nWidth);
+			float fWidth = (float)(m_lvColumns.ClientRectangle.Width -
+				UIUtil.GetVScrollBarWidth()) / 5.0f;
+			m_lvColumns.Columns.Add(KPRes.Column, (int)(fWidth * 3.0f));
+			m_lvColumns.Columns.Add(KPRes.Asterisks + " ***", (int)fWidth);
+			m_lvColumns.Columns.Add(KPRes.Toggle + " ***", (int)fWidth);
 
 			UIUtil.SetExplorerTheme(m_lvColumns, false);
 

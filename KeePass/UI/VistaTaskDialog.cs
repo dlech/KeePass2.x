@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -228,6 +229,11 @@ namespace KeePass.UI
 			set { m_cfg.pszMainInstruction = value; }
 		}
 
+		internal ReadOnlyCollection<VtdButton> Buttons
+		{
+			get { return m_vButtons.AsReadOnly(); }
+		}
+
 		public string Content
 		{
 			get { return m_cfg.pszContent; }
@@ -242,6 +248,12 @@ namespace KeePass.UI
 				if(value) m_cfg.dwFlags |= VtdFlags.UseCommandLinks;
 				else m_cfg.dwFlags &= ~VtdFlags.UseCommandLinks;
 			}
+		}
+
+		public int DefaultButtonID
+		{
+			get { return m_cfg.nDefaultButton; }
+			set { m_cfg.nDefaultButton = value; }
 		}
 
 		public string ExpandedInformation

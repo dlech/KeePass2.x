@@ -110,7 +110,7 @@ that it can read those files.</p>
 
 <p>This help page details the expected CSV and XML file formats. Knowing the formats which
 KeePass expects, you can reformat CSV and XML files exported by other password managers to
-match the KeePass formats. CSV files can be reformatted using e.g. <i>OpenOffice Calc</i>
+match the KeePass formats. CSV files can be reformatted using e.g. <i>LibreOffice Calc</i>
 (see below).
 XML files can be reformatted using an XML editor.</p>
 
@@ -123,10 +123,10 @@ other password managers; you can directly import the exported files.</p>
 
 <p>If no import plugin exists for importing data from your previous password manager,
 feel free to post a request for it in the
-<a href="https://sourceforge.net/tracker/?group_id=95013&amp;atid=609911"
+<a href="https://sourceforge.net/p/keepass/feature-requests/"
 target="_blank">KeePass Feature Requests Tracker</a>
 and/or in the
-<a href="https://sourceforge.net/projects/keepass/forums/forum/329220" target="_blank">Open
+<a href="https://sourceforge.net/p/keepass/discussion/329220/" target="_blank">Open
 Discussion</a> forum.</p>
 
 <br />
@@ -163,9 +163,9 @@ Backslashes (\) are encoded as <code>\\</code>.</li>
 by <code>\n</code> is not supported.</li>
 </ul>
 
-<p>Microsoft Excel by default does not enclose fields in quotes (&quot;).
+<p>Microsoft Excel by default does not enclose fields in quotes (<code>&quot;</code>).
 It is recommended that you use
-OpenOffice Calc
+LibreOffice Calc
 to create a correct CSV file (see below), or use the <a href="#genericcsv">Generic CSV Importer</a>
 of KeePass 2.x (import your CSV file into KeePass 2.x, then export the data to a
 KeePass 1.x KDB file), or fix the CSV file by manually adding the quotes using a text editor.</p>
@@ -176,19 +176,21 @@ Do not export additional fields or uncheck any options, otherwise
 KeePass will not be able to re-import the CSV file, because it does not comply to the
 specification above any more.</p>
 
-<p><b>Using <i>OpenOffice Calc</i> to create a CSV file:</b><br />
-<a href="http://www.openoffice.org/product/calc.html" target="_blank">OpenOffice Calc</a>
+<p><b>Using <i>LibreOffice Calc</i> to create a CSV file:</b><br />
+<a href="http://www.libreoffice.org/discover/calc/" target="_blank">LibreOffice Calc</a>
 can be used to create CSV files that can be imported correctly into KeePass. Follow these steps:</p>
 
 <ul>
 <li>Make sure you got 5 columns as described above.</li>
 <li>Select everything, right-click and select <i>'Format Cells'</i>. In the dialog, choose <i>Text</i>
 as category. Click [OK].</li>
-<li>Go <i>'File' -&gt; 'Save As...'</i>, choose a location and make sure that the check box
+<li>Go <i>'File' -&gt; 'Save As...'</i>, choose a location and the
+'Text CSV' file type, and make sure that the check box
 <i>'Edit Filter Settings'</i> is enabled. Click the <i>'Save'</i> button.</li>
 <li>Choose <i>'Unicode (UTF-8)'</i> as character set. The field separator must be set to a comma.
-The text separator must be <code>&quot;</code>. Make sure that the <i>Fixed Column Width</i>
-box is not checked. Click [OK].</li>
+The text separator must be <code>&quot;</code>. Make sure that the
+<i>'Quote all text cells'</i> option is checked, and that the <i>'Fixed column width'</i>
+option is not checked. Click [OK].</li>
 </ul>
 
 <br />

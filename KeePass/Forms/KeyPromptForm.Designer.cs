@@ -130,11 +130,12 @@
 			// m_cbHidePassword
 			// 
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;
-			this.m_cbHidePassword.Image = global::KeePass.Properties.Resources.B17x05_3BlackDots;
 			this.m_cbHidePassword.Location = new System.Drawing.Point(373, 72);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 1;
+			this.m_cbHidePassword.Text = "***";
+			this.m_cbHidePassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
 			this.m_cbHidePassword.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
 			// 

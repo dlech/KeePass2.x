@@ -43,7 +43,7 @@ namespace KeePass.Forms
 		private string m_strDataDesc = string.Empty;
 		private byte[] m_pbData = null;
 
-		private bool m_bInitializing = false;
+		private bool m_bInitializing = true;
 
 		private uint m_uStartOffset = 0;
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
@@ -89,6 +89,8 @@ namespace KeePass.Forms
 			Debug.Assert(m_pbData != null);
 			if(m_pbData == null) throw new InvalidOperationException();
 
+			m_bInitializing = true;
+
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
@@ -99,8 +101,6 @@ namespace KeePass.Forms
 			this.Text = strTitle;
 
 			this.DoubleBuffered = true;
-
-			m_bInitializing = true;
 
 			m_tssStatusMain.Text = KPRes.Ready;
 			m_ctxText.Attach(m_rtbText, this);

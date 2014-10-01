@@ -56,10 +56,9 @@ namespace KeePass.Forms
 			if(!string.IsNullOrEmpty(m_strTitle)) this.Text = m_strTitle;
 			else m_strTitle = PwDefs.ShortProductName;
 
-			int nWidth = m_lvEntries.ClientSize.Width - UIUtil.GetVScrollBarWidth();
-			m_lvEntries.Columns.Add(KPRes.Title, (nWidth / 5) * 2);
-			m_lvEntries.Columns.Add(KPRes.UserName, nWidth / 5);
-			m_lvEntries.Columns.Add(string.Empty, (nWidth / 5) * 2);
+			m_lvEntries.Columns.Add(KPRes.Title);
+			m_lvEntries.Columns.Add(KPRes.UserName);
+			m_lvEntries.Columns.Add(string.Empty);
 
 			ListViewGroup lvg = new ListViewGroup(m_pgDataSource.GetFullPath(
 				" - ", true));
@@ -89,6 +88,8 @@ namespace KeePass.Forms
 			};
 
 			m_pgDataSource.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+
+			UIUtil.ResizeColumns(m_lvEntries, new int[] { 2, 1, 2 }, true);
 		}
 	}
 }

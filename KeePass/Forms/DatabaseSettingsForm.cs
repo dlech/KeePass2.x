@@ -54,7 +54,7 @@ namespace KeePass.Forms
 
 		private Dictionary<int, PwUuid> m_dictEntryTemplateGroups = new Dictionary<int, PwUuid>();
 
-		private bool m_bInitializing = false;
+		private bool m_bInitializing = true;
 
 		public DatabaseSettingsForm()
 		{
@@ -74,14 +74,14 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
 
+			m_bInitializing = true;
+
 			GlobalWindowManager.AddWindow(this);
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings,
 				KPRes.DatabaseSettingsDesc);
 			this.Icon = Properties.Resources.KeePass;
-
-			m_bInitializing = true;
 
 			FontUtil.AssignDefaultItalic(m_lblHeaderCpAlgo);
 			FontUtil.AssignDefaultItalic(m_lblHeaderCp);
@@ -178,8 +178,8 @@ namespace KeePass.Forms
 			m_numHistoryMaxSize.Minimum = 0;
 			m_numHistoryMaxSize.Maximum = long.MaxValue / (1024 * 1024);
 			bool bHistMaxSize = (m_pwDatabase.HistoryMaxSize >= 0);
-			m_numHistoryMaxSize.Value = (bHistMaxSize ? m_pwDatabase.HistoryMaxSize /
-				(1024 * 1024) : PwDatabase.DefaultHistoryMaxSize);
+			m_numHistoryMaxSize.Value = (bHistMaxSize ? m_pwDatabase.HistoryMaxSize :
+				PwDatabase.DefaultHistoryMaxSize) / (1024 * 1024);
 			m_cbHistoryMaxSize.Checked = bHistMaxSize;
 
 			m_numKeyRecDays.Minimum = 0;

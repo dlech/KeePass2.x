@@ -26,6 +26,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Utility;
+using KeePassLib.Serialization;
 
 namespace KeePass.Ecas
 {
@@ -100,19 +101,19 @@ namespace KeePass.Ecas
 				KPRes.ApplicationExit, PwIcon.ProgramIcons, null, null));
 			m_events.Add(new EcasEventType(EcasEventIDs.OpenedDatabaseFile,
 				KPRes.OpenedDatabaseFile, PwIcon.FolderOpen, epFileFilter,
-				IsMatchTextEvent));
+				IsMatchIocDbEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.SavingDatabaseFile,
 				KPRes.SavingDatabaseFile, PwIcon.Disk, epFileFilter,
-				IsMatchTextEvent));
+				IsMatchIocDbEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.SavedDatabaseFile,
 				KPRes.SavedDatabaseFile, PwIcon.Disk, epFileFilter,
-				IsMatchTextEvent));
+				IsMatchIocDbEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.ClosingDatabaseFilePre,
 				KPRes.ClosingDatabaseFile + " (" + KPRes.SavingPre + ")",
-				PwIcon.PaperQ, epFileFilter, IsMatchTextEvent));
+				PwIcon.PaperQ, epFileFilter, IsMatchIocDbEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.ClosingDatabaseFilePost,
 				KPRes.ClosingDatabaseFile + " (" + KPRes.SavingPost + ")",
-				PwIcon.PaperQ, epFileFilter, IsMatchTextEvent));
+				PwIcon.PaperQ, epFileFilter, IsMatchIocDbEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.CopiedEntryInfo,
 				KPRes.CopiedEntryData, PwIcon.ClipboardReady, epValueFilter,
 				IsMatchTextEvent));
@@ -121,7 +122,32 @@ namespace KeePass.Ecas
 			m_events.Add(new EcasEventType(EcasEventIDs.CustomTbButtonClicked,
 				KPRes.CustomTbButtonClicked, PwIcon.Star, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
-				IsMatchCustomTbButton));
+				IsMatchIdEvent));
+		}
+
+		private static bool IsMatchIocDbEvent(EcasEvent e, EcasContext ctx)
+		{
+			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
+				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
+
+			string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
+			if(string.IsNullOrEmpty(strFilter)) return true;
+
+			// Must prefer IOC (e.g. for SavingDatabaseFile)
+			IOConnectionInfo ioc = ctx.Properties.Get<IOConnectionInfo>(
+				EcasProperty.IOConnectionInfo);
+			if(ioc == null)
+			{
+				PwDatabase pd = ctx.Properties.Get<PwDatabase>(EcasProperty.Database);
+				if(pd == null) { Debug.Assert(false); return false; }
+
+				ioc = pd.IOConnectionInfo;
+			}
+			if(ioc == null) { Debug.Assert(false); return false; }
+			string strCurFile = ioc.Path;
+			if(string.IsNullOrEmpty(strCurFile)) return false;
+
+			return EcasUtil.CompareStrings(strCurFile, strFilter, uCompareType);
 		}
 
 		private static bool IsMatchTextEvent(EcasEvent e, EcasContext ctx)
@@ -132,18 +158,18 @@ namespace KeePass.Ecas
 			string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFilter)) return true;
 
-			string strCurFile = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
-			if(string.IsNullOrEmpty(strCurFile)) return false;
+			string str = ctx.Properties.Get<string>(EcasProperty.Text);
+			if(str == null) { Debug.Assert(false); return false; }
 
-			return EcasUtil.CompareStrings(strCurFile, strFilter, uCompareType);
+			return EcasUtil.CompareStrings(str, strFilter, uCompareType);
 		}
 
-		private static bool IsMatchCustomTbButton(EcasEvent e, EcasContext ctx)
+		private static bool IsMatchIdEvent(EcasEvent e, EcasContext ctx)
 		{
 			string strIdRef = EcasUtil.GetParamString(e.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strIdRef)) return true;
 
-			string strIdCur = EcasUtil.GetParamString(ctx.Event.Parameters, 0);
+			string strIdCur = ctx.Properties.Get<string>(EcasProperty.CommandID);
 			if(string.IsNullOrEmpty(strIdCur)) return false;
 
 			return strIdRef.Equals(strIdCur, StrUtil.CaseIgnoreCmp);

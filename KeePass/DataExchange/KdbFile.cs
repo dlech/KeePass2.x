@@ -42,8 +42,8 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public sealed class KdbFile
 	{
-		private PwDatabase m_pwDatabase = null;
-		private IStatusLogger m_slLogger = null;
+		private PwDatabase m_pwDatabase;
+		private IStatusLogger m_slLogger;
 
 		private const string KdbPrefix = "KDB: ";
 
@@ -63,7 +63,7 @@ namespace KeePass.DataExchange
 			try
 			{
 				KdbManager mgr = new KdbManager();
-				mgr.Unload();
+				mgr.Dispose();
 			}
 			catch(Exception exMgr)
 			{
@@ -109,7 +109,9 @@ namespace KeePass.DataExchange
 				e = mgr.SetMasterKey(strPassword, false, null, IntPtr.Zero, false);
 			else if(!bPassword && bKeyFile)
 				e = mgr.SetMasterKey(strKeyFile, true, null, IntPtr.Zero, false);
-			else { Debug.Assert(false); throw new Exception(KLRes.InvalidCompositeKey); }
+			else if(pwKey.ContainsType(typeof(KcpUserAccount)))
+				throw new Exception(KPRes.KdbWUA);
+			else throw new Exception(KLRes.InvalidCompositeKey);
 
 			return e;
 		}
@@ -124,27 +126,25 @@ namespace KeePass.DataExchange
 			Debug.Assert(strFilePath != null);
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			KdbManager mgr = new KdbManager();
-			KdbErrorCode e;
-
-			e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-			if(e != KdbErrorCode.Success) throw new Exception(KLRes.InvalidCompositeKey);
-
-			e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
-			if(e != KdbErrorCode.Success)
+			using(KdbManager mgr = new KdbManager())
 			{
-				mgr.Unload();
-				throw new Exception(KLRes.FileLoadFailed);
+				KdbErrorCode e;
+
+				e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+				if(e != KdbErrorCode.Success)
+					throw new Exception(KLRes.InvalidCompositeKey);
+
+				e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
+				if(e != KdbErrorCode.Success)
+					throw new Exception(KLRes.FileLoadFailed);
+
+				// Copy properties
+				m_pwDatabase.KeyEncryptionRounds = mgr.KeyTransformationRounds;
+
+				// Read groups and entries
+				Dictionary<UInt32, PwGroup> dictGroups = ReadGroups(mgr);
+				ReadEntries(mgr, dictGroups);
 			}
-
-			// Copy properties
-			m_pwDatabase.KeyEncryptionRounds = mgr.KeyTransformationRounds;
-
-			// Read groups and entries
-			Dictionary<UInt32, PwGroup> dictGroups = ReadGroups(mgr);
-			ReadEntries(mgr, dictGroups);
-
-			mgr.Unload();
 		}
 
 		private Dictionary<UInt32, PwGroup> ReadGroups(KdbManager mgr)
@@ -262,38 +262,41 @@ namespace KeePass.DataExchange
 			Debug.Assert(strSaveToFile != null);
 			if(strSaveToFile == null) throw new ArgumentNullException("strSaveToFile");
 
-			KdbManager mgr = new KdbManager();
-
-			KdbErrorCode e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
-			if(e != KdbErrorCode.Success)
+			using(KdbManager mgr = new KdbManager())
 			{
-				Debug.Assert(false);
-				throw new Exception(KLRes.InvalidCompositeKey);
+				KdbErrorCode e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
+				if(e != KdbErrorCode.Success)
+				{
+					Debug.Assert(false);
+					throw new Exception(KLRes.InvalidCompositeKey);
+				}
+
+				if(m_slLogger != null)
+				{
+					if(m_pwDatabase.MasterKey.ContainsType(typeof(KcpUserAccount)))
+						m_slLogger.SetText(KPRes.KdbWUA, LogStatusType.Warning);
+
+					if(m_pwDatabase.Name.Length != 0)
+						m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
+					if(m_pwDatabase.Description.Length != 0)
+						m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
+				}
+
+				// Set properties
+				if(m_pwDatabase.KeyEncryptionRounds >= (ulong)UInt32.MaxValue)
+					mgr.KeyTransformationRounds = 0xFFFFFFFEU;
+				else mgr.KeyTransformationRounds = (uint)m_pwDatabase.KeyEncryptionRounds;
+
+				PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
+
+				// Write groups and entries
+				Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr, pgRoot);
+				WriteEntries(mgr, dictGroups, pgRoot);
+
+				e = mgr.SaveDatabase(strSaveToFile);
+				if(e != KdbErrorCode.Success)
+					throw new Exception(KLRes.FileSaveFailed);
 			}
-
-			if(m_slLogger != null)
-			{
-				if(m_pwDatabase.Name.Length != 0)
-					m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
-				if(m_pwDatabase.Description.Length != 0)
-					m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
-			}
-
-			// Set properties
-			if(m_pwDatabase.KeyEncryptionRounds >= (ulong)UInt32.MaxValue)
-				mgr.KeyTransformationRounds = unchecked(uint.MaxValue - 1);
-			else mgr.KeyTransformationRounds = (uint)m_pwDatabase.KeyEncryptionRounds;
-
-			PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
-
-			// Write groups and entries
-			Dictionary<PwGroup, UInt32> dictGroups = WriteGroups(mgr, pgRoot);
-			WriteEntries(mgr, dictGroups, pgRoot);
-
-			e = mgr.SaveDatabase(strSaveToFile);
-			if(e != KdbErrorCode.Success) throw new Exception(KLRes.FileSaveFailed);
-
-			mgr.Unload();
 		}
 
 		private static Dictionary<PwGroup, UInt32> WriteGroups(KdbManager mgr,
@@ -597,6 +600,7 @@ namespace KeePass.DataExchange
 			}
 
 			strNotes = sb.ToString();
+			// peStorage.AutoType.Sort();
 		}
 
 		private static string FindPrefixedLine(string[] vLines, string strPrefix)
@@ -666,7 +670,7 @@ namespace KeePass.DataExchange
 				if(iStart < 0) break;
 
 				int iEnd = str.IndexOf('}', iStart);
-				if(iEnd < 0) { Debug.Assert(false); break; }
+				if(iEnd < 0) break; // No assert (user data)
 
 				string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
 

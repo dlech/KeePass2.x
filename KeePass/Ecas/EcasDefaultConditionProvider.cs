@@ -20,14 +20,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Diagnostics;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
@@ -72,7 +75,11 @@ namespace KeePass.Ecas
 			m_conditions.Add(new EcasConditionType(new PwUuid(new byte[] {
 				0xD3, 0xCA, 0xFA, 0xEF, 0x28, 0x2A, 0x46, 0x4A,
 				0x99, 0x90, 0xD8, 0x65, 0xFC, 0xE0, 0x16, 0xED }),
-				KPRes.DatabaseUnsavedChanges, PwIcon.PaperFlag, null,
+				KPRes.DatabaseHasUnsavedChanges, PwIcon.PaperFlag, new EcasParameter[] {
+					new EcasParameter(KPRes.Database, EcasValueType.EnumStrings,
+						new EcasEnum(new EcasEnumItem[] {
+							new EcasEnumItem(0, KPRes.Active),
+							new EcasEnumItem(1, KPRes.Triggering) })) },
 				IsDatabaseModified));
 		}
 
@@ -156,7 +163,15 @@ namespace KeePass.Ecas
 
 		private static bool IsDatabaseModified(EcasCondition c, EcasContext ctx)
 		{
-			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			PwDatabase pd = null;
+
+			uint uSel = EcasUtil.GetParamUInt(c.Parameters, 0, 0);
+			if(uSel == 0)
+				pd = Program.MainForm.ActiveDatabase;
+			else if(uSel == 1)
+				pd = ctx.Properties.Get<PwDatabase>(EcasProperty.Database);
+			else { Debug.Assert(false); }
+
 			if((pd == null) || !pd.IsOpen) return false;
 			return pd.Modified;
 		}

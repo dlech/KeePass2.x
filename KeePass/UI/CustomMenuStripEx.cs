@@ -31,6 +31,8 @@ namespace KeePass.UI
 		public CustomMenuStripEx() : base()
 		{
 			// ThemeToolStripRenderer.AttachTo(this);
+
+			UIUtil.Configure(this);
 		}
 
 		protected override void WndProc(ref Message m)

@@ -147,7 +147,7 @@ namespace KeePass.Forms
 				m_cmbBannerStyle.Enabled = false;
 			}
 
-			int nWidth = m_lvPolicy.ClientRectangle.Width - UIUtil.GetVScrollBarWidth() - 1;
+			int nWidth = m_lvPolicy.ClientSize.Width - UIUtil.GetVScrollBarWidth();
 			m_lvPolicy.Columns.Add(KPRes.Feature, (nWidth * 10) / 29);
 			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 19) / 29);
 
@@ -245,7 +245,7 @@ namespace KeePass.Forms
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Security, "ClipboardClearAfterSeconds"))
 				m_cbClipClearTime.Enabled = false;
 
-			m_lvSecurityOptions.Columns.Add(string.Empty, 200); // Resize below
+			m_lvSecurityOptions.Columns.Add(string.Empty); // Resize below
 
 			ListViewGroup lvg = new ListViewGroup(KPRes.Options);
 			m_lvSecurityOptions.Groups.Add(lvg);
@@ -281,8 +281,7 @@ namespace KeePass.Forms
 				lvg, KPRes.ClearKeyCmdLineParams);
 
 			m_cdxSecurityOptions.UpdateData(false);
-			m_lvSecurityOptions.Columns[0].Width = m_lvSecurityOptions.ClientRectangle.Width -
-				UIUtil.GetVScrollBarWidth() - 1;
+			UIUtil.ResizeColumns(m_lvSecurityOptions, true);
 		}
 
 		private void LoadPolicyOption(string strPropertyName, string strDisplayName,
@@ -298,7 +297,7 @@ namespace KeePass.Forms
 			m_cdxPolicy = new CheckedLVItemDXList(m_lvPolicy, true);
 
 			LoadPolicyOption("Plugins", KPRes.Plugins, KPRes.PolicyPluginsDesc);
-			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc);
+			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc2);
 			LoadPolicyOption("ExportNoKey", KPRes.Export + " - " + KPRes.NoKeyRepeat,
 				KPRes.PolicyExportNoKeyDesc);
 			LoadPolicyOption("Import", KPRes.Import, KPRes.PolicyImportDesc);
@@ -326,7 +325,7 @@ namespace KeePass.Forms
 		{
 			m_bInitialTsRenderer = Program.Config.UI.UseCustomToolStripRenderer;
 
-			m_lvGuiOptions.Columns.Add(KPRes.Options, 200); // Resize below
+			m_lvGuiOptions.Columns.Add(KPRes.Options); // Resize below
 
 			ListViewGroup lvg = new ListViewGroup(KPRes.MainWindow);
 			m_lvGuiOptions.Groups.Add(lvg);
@@ -418,8 +417,7 @@ namespace KeePass.Forms
 				lvg, KPRes.ForceSystemFontUnix);
 
 			m_cdxGuiOptions.UpdateData(false);
-			m_lvGuiOptions.Columns[0].Width = m_lvGuiOptions.ClientRectangle.Width -
-				UIUtil.GetVScrollBarWidth() - 1;
+			UIUtil.ResizeColumns(m_lvGuiOptions, true);
 
 			try { m_numMruCount.Value = Program.Config.Application.MostRecentlyUsed.MaxItemCount; }
 			catch(Exception) { Debug.Assert(false); m_numMruCount.Value = AceMru.DefaultMaxItemCount; }
@@ -471,7 +469,7 @@ namespace KeePass.Forms
 
 		private void LoadAdvancedOptions()
 		{
-			m_lvAdvanced.Columns.Add(string.Empty, 200); // Resize below
+			m_lvAdvanced.Columns.Add(string.Empty); // Resize below
 
 			m_cdxAdvanced = new CheckedLVItemDXList(m_lvAdvanced, true);
 
@@ -563,8 +561,7 @@ namespace KeePass.Forms
 				lvg, KPRes.OptimizeForScreenReader);
 
 			m_cdxAdvanced.UpdateData(false);
-			m_lvAdvanced.Columns[0].Width = m_lvAdvanced.ClientRectangle.Width -
-				UIUtil.GetVScrollBarWidth() - 1;
+			UIUtil.ResizeColumns(m_lvAdvanced, true);
 
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "ProxyType") ||
 				AppConfigEx.IsOptionEnforced(Program.Config.Integration, "ProxyAddress"))

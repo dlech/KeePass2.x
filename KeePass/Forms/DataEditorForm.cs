@@ -214,7 +214,7 @@ namespace KeePass.Forms
 				PwDefs.ShortProductName + " " + KPRes.DataEditor);
 
 			m_menuViewFont.Enabled = (m_bdc == BinaryDataClass.Text);
-			m_menuViewWordWrap.Checked = m_rtbText.WordWrap;
+			UIUtil.SetChecked(m_menuViewWordWrap, m_rtbText.WordWrap);
 
 			m_tbFileSave.Image = (m_bModified ? Properties.Resources.B16x16_FileSave :
 				Properties.Resources.B16x16_FileSave_Disabled);
