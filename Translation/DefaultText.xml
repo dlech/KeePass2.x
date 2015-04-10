@@ -259,9 +259,6 @@
 		<Data Name="Cancel">
 			<Value>Cancel</Value>
 		</Data>
-		<Data Name="CancelCmd">
-			<Value>&amp;Cancel</Value>
-		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
 			<Value>Cannot move entries because they aren't stored in the same group.</Value>
 		</Data>
@@ -414,6 +411,9 @@
 		</Data>
 		<Data Name="CopyWholeEntries">
 			<Value>Copy Whole Entries</Value>
+		</Data>
+		<Data Name="CorruptionByExt">
+			<Value>Such a corruption is usually caused by a plugin or a KeePass port. Please try to find out which plugin/port is causing it and report the issue to the corresponding developer.</Value>
 		</Data>
 		<Data Name="Count">
 			<Value>Count</Value>
@@ -714,6 +714,9 @@
 		</Data>
 		<Data Name="ExportToPrompt">
 			<Value>Export to:</Value>
+		</Data>
+		<Data Name="External">
+			<Value>External</Value>
 		</Data>
 		<Data Name="ExternalApp">
 			<Value>External Application</Value>
@@ -1321,9 +1324,6 @@
 		<Data Name="Ok">
 			<Value>OK</Value>
 		</Data>
-		<Data Name="OkCmd">
-			<Value>&amp;OK</Value>
-		</Data>
 		<Data Name="On">
 			<Value>On</Value>
 		</Data>
@@ -1599,6 +1599,9 @@
 		</Data>
 		<Data Name="RemoteHostReachable">
 			<Value>Remote host is reachable (ping)</Value>
+		</Data>
+		<Data Name="RepairCmd">
+			<Value>&amp;Repair</Value>
 		</Data>
 		<Data Name="RepairMode">
 			<Value>Repair Mode</Value>
@@ -2046,6 +2049,12 @@
 		</Data>
 		<Data Name="Uuid">
 			<Value>UUID</Value>
+		</Data>
+		<Data Name="UuidDupInDb">
+			<Value>The database contains duplicate UUIDs.</Value>
+		</Data>
+		<Data Name="UuidFix">
+			<Value>When closing this dialog, KeePass will fix the problem (by generating new UUIDs for duplicates) and continue.</Value>
 		</Data>
 		<Data Name="ValidationFailed">
 			<Value>Validation failed</Value>

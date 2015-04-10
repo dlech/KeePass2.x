@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -414,7 +414,8 @@ namespace KeePass.App.Configuration
 
 			if((f & AceApplyFlags.Proxy) != AceApplyFlags.None)
 				IOConnection.SetProxy(aceInt.ProxyType, aceInt.ProxyAddress,
-					aceInt.ProxyPort, aceInt.ProxyUserName, aceInt.ProxyPassword);
+					aceInt.ProxyPort, aceInt.ProxyAuthType, aceInt.ProxyUserName,
+					aceInt.ProxyPassword);
 
 			if((f & AceApplyFlags.Ssl) != AceApplyFlags.None)
 				IOConnection.SslCertsAcceptInvalid = aceSec.SslCertsAcceptInvalid;

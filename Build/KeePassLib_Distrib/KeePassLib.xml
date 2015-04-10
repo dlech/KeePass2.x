@@ -36,6 +36,18 @@
             Custom icon. <c>PwCustomIcon</c> objects are immutable.
             </summary>
         </member>
+        <member name="M:KeePassLib.PwCustomIcon.GetImage">
+            <summary>
+            Get the icon as an <c>Image</c> (original size).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.PwCustomIcon.GetImage(System.Int32,System.Int32)">
+            <summary>
+            Get the icon as an <c>Image</c> (with the specified size).
+            </summary>
+            <param name="w">Width of the returned image.</param>
+            <param name="h">Height of the returned image.</param>
+        </member>
         <member name="T:KeePassLib.Serialization.KdbxFile">
             <summary>
             Serialization to KeePass KDBX files.
@@ -642,6 +654,18 @@
             </summary>
             <param name="uRequestedCount">Number of random bytes to retrieve.</param>
             <returns>Returns <paramref name="uRequestedCount" /> random bytes.</returns>
+        </member>
+        <member name="M:KeePassLib.Utility.GfxUtil.ScaleImage(System.Drawing.Image,System.Int32,System.Int32,KeePassLib.ScaleTransformFlags)">
+            <summary>
+            Resize an image.
+            </summary>
+            <param name="img">Image to resize.</param>
+            <param name="w">Width of the returned image.</param>
+            <param name="h">Height of the returned image.</param>
+            <param name="f">Flags to customize scaling behavior.</param>
+            <returns>Resized image. This object is always different
+            from <paramref name="img" /> (i.e. they can be
+            disposed separately).</returns>
         </member>
         <member name="T:KeePassLib.Resources.KLRes">
             <summary>
@@ -1622,6 +1646,19 @@
             Virtual identifier -- represents the number of icons.
             </summary>
         </member>
+        <member name="F:KeePassLib.ProxyAuthType.Default">
+            <summary>
+            Use default user credentials (provided by the system).
+            </summary>
+        </member>
+        <member name="F:KeePassLib.ProxyAuthType.Auto">
+            <summary>
+            <c>Default</c> or <c>Manual</c>, depending on whether
+            manual credentials are available.
+            This type exists for supporting upgrading from KeePass
+            2.28 to 2.29; the user cannot select this type.
+            </summary>
+        </member>
         <member name="T:KeePassLib.MemProtCmpMode">
             <summary>
             Comparison modes for in-memory protected objects.
@@ -1675,6 +1712,20 @@
         <member name="F:KeePassLib.IOAccessType.Move">
             <summary>
             The IO connection is being opened for renaming/moving a file/object.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.AppRunFlags.GCKeepAlive">
+            <summary>
+            This flag prevents any handles being garbage-collected
+            before the started process has terminated, without
+            blocking the current thread.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.ScaleTransformFlags.UIIcon">
+            <summary>
+            <c>UIIcon</c> indicates that the returned image is going
+            to be displayed as icon in the UI and that it is not
+            subject to future changes in size.
             </summary>
         </member>
         <member name="T:KeePassLib.PwEntry">
@@ -2511,13 +2562,16 @@
             <param name="pwIconId">ID of the icon.</param>
             <returns>Index of the icon.</returns>
         </member>
-        <member name="M:KeePassLib.PwDatabase.GetCustomIcon(KeePassLib.PwUuid)">
+        <member name="M:KeePassLib.PwDatabase.GetCustomIcon(KeePassLib.PwUuid,System.Int32,System.Int32)">
             <summary>
-            Get a custom icon. This function can return <c>null</c>, if
-            no cached image of the icon is available.
+            Get a custom icon. This method can return <c>null</c>,
+            e.g. if no cached image of the icon is available.
             </summary>
             <param name="pwIconId">ID of the icon.</param>
-            <returns>Image data.</returns>
+            <param name="w">Width of the returned image. If this is
+            negative, the image is returned in its original size.</param>
+            <param name="h">Height of the returned image. If this is
+            negative, the image is returned in its original size.</param>
         </member>
         <member name="P:KeePassLib.PwDatabase.RootGroup">
             <summary>

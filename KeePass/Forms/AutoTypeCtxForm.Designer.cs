@@ -34,8 +34,8 @@
 			this.m_lvItems = new KeePass.UI.CustomListViewEx();
 			this.m_pnlTop = new System.Windows.Forms.Panel();
 			this.m_pnlBottom = new System.Windows.Forms.Panel();
-			this.m_pnlMiddle = new System.Windows.Forms.Panel();
 			this.m_btnTools = new System.Windows.Forms.Button();
+			this.m_pnlMiddle = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_pnlTop.SuspendLayout();
 			this.m_pnlBottom.SuspendLayout();
@@ -68,7 +68,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 0;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// m_lvItems
@@ -112,16 +112,6 @@
 			this.m_pnlBottom.Size = new System.Drawing.Size(579, 41);
 			this.m_pnlBottom.TabIndex = 2;
 			// 
-			// m_pnlMiddle
-			// 
-			this.m_pnlMiddle.Controls.Add(this.m_lvItems);
-			this.m_pnlMiddle.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_pnlMiddle.Location = new System.Drawing.Point(0, 104);
-			this.m_pnlMiddle.Name = "m_pnlMiddle";
-			this.m_pnlMiddle.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
-			this.m_pnlMiddle.Size = new System.Drawing.Size(579, 219);
-			this.m_pnlMiddle.TabIndex = 0;
-			// 
 			// m_btnTools
 			// 
 			this.m_btnTools.Dock = System.Windows.Forms.DockStyle.Left;
@@ -132,6 +122,16 @@
 			this.m_btnTools.Text = "&Options";
 			this.m_btnTools.UseVisualStyleBackColor = true;
 			this.m_btnTools.Click += new System.EventHandler(this.OnBtnTools);
+			// 
+			// m_pnlMiddle
+			// 
+			this.m_pnlMiddle.Controls.Add(this.m_lvItems);
+			this.m_pnlMiddle.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_pnlMiddle.Location = new System.Drawing.Point(0, 104);
+			this.m_pnlMiddle.Name = "m_pnlMiddle";
+			this.m_pnlMiddle.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
+			this.m_pnlMiddle.Size = new System.Drawing.Size(579, 219);
+			this.m_pnlMiddle.TabIndex = 0;
 			// 
 			// AutoTypeCtxForm
 			// 

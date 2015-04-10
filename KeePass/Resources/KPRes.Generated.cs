@@ -112,7 +112,6 @@ namespace KeePass.Resources
 			m_strButtonNext = TryGetEx(dictNew, "ButtonNext", m_strButtonNext);
 			m_strButtons = TryGetEx(dictNew, "Buttons", m_strButtons);
 			m_strCancel = TryGetEx(dictNew, "Cancel", m_strCancel);
-			m_strCancelCmd = TryGetEx(dictNew, "CancelCmd", m_strCancelCmd);
 			m_strCannotMoveEntriesBcsGroup = TryGetEx(dictNew, "CannotMoveEntriesBcsGroup", m_strCannotMoveEntriesBcsGroup);
 			m_strChangeMasterKey = TryGetEx(dictNew, "ChangeMasterKey", m_strChangeMasterKey);
 			m_strChangeMasterKeyIntroShort = TryGetEx(dictNew, "ChangeMasterKeyIntroShort", m_strChangeMasterKeyIntroShort);
@@ -164,6 +163,7 @@ namespace KeePass.Resources
 			m_strCopyUrlToClipboard = TryGetEx(dictNew, "CopyUrlToClipboard", m_strCopyUrlToClipboard);
 			m_strCopyUserFull = TryGetEx(dictNew, "CopyUserFull", m_strCopyUserFull);
 			m_strCopyWholeEntries = TryGetEx(dictNew, "CopyWholeEntries", m_strCopyWholeEntries);
+			m_strCorruptionByExt = TryGetEx(dictNew, "CorruptionByExt", m_strCorruptionByExt);
 			m_strCount = TryGetEx(dictNew, "Count", m_strCount);
 			m_strCreateMasterKey = TryGetEx(dictNew, "CreateMasterKey", m_strCreateMasterKey);
 			m_strCreateNewDatabase = TryGetEx(dictNew, "CreateNewDatabase", m_strCreateNewDatabase);
@@ -264,6 +264,7 @@ namespace KeePass.Resources
 			m_strExportingStatusMsg = TryGetEx(dictNew, "ExportingStatusMsg", m_strExportingStatusMsg);
 			m_strExportStc = TryGetEx(dictNew, "ExportStc", m_strExportStc);
 			m_strExportToPrompt = TryGetEx(dictNew, "ExportToPrompt", m_strExportToPrompt);
+			m_strExternal = TryGetEx(dictNew, "External", m_strExternal);
 			m_strExternalApp = TryGetEx(dictNew, "ExternalApp", m_strExternalApp);
 			m_strFatalError = TryGetEx(dictNew, "FatalError", m_strFatalError);
 			m_strFeature = TryGetEx(dictNew, "Feature", m_strFeature);
@@ -466,7 +467,6 @@ namespace KeePass.Resources
 			m_strOff = TryGetEx(dictNew, "Off", m_strOff);
 			m_strOfLower = TryGetEx(dictNew, "OfLower", m_strOfLower);
 			m_strOk = TryGetEx(dictNew, "Ok", m_strOk);
-			m_strOkCmd = TryGetEx(dictNew, "OkCmd", m_strOkCmd);
 			m_strOn = TryGetEx(dictNew, "On", m_strOn);
 			m_strOpAborted = TryGetEx(dictNew, "OpAborted", m_strOpAborted);
 			m_strOpenCmd = TryGetEx(dictNew, "OpenCmd", m_strOpenCmd);
@@ -559,6 +559,7 @@ namespace KeePass.Resources
 			m_strRememberKeySources = TryGetEx(dictNew, "RememberKeySources", m_strRememberKeySources);
 			m_strRememberWorkingDirectories = TryGetEx(dictNew, "RememberWorkingDirectories", m_strRememberWorkingDirectories);
 			m_strRemoteHostReachable = TryGetEx(dictNew, "RemoteHostReachable", m_strRemoteHostReachable);
+			m_strRepairCmd = TryGetEx(dictNew, "RepairCmd", m_strRepairCmd);
 			m_strRepairMode = TryGetEx(dictNew, "RepairMode", m_strRepairMode);
 			m_strRepairModeInt = TryGetEx(dictNew, "RepairModeInt", m_strRepairModeInt);
 			m_strRepairModeQ = TryGetEx(dictNew, "RepairModeQ", m_strRepairModeQ);
@@ -708,6 +709,8 @@ namespace KeePass.Resources
 			m_strUserName = TryGetEx(dictNew, "UserName", m_strUserName);
 			m_strUserNamePrompt = TryGetEx(dictNew, "UserNamePrompt", m_strUserNamePrompt);
 			m_strUuid = TryGetEx(dictNew, "Uuid", m_strUuid);
+			m_strUuidDupInDb = TryGetEx(dictNew, "UuidDupInDb", m_strUuidDupInDb);
+			m_strUuidFix = TryGetEx(dictNew, "UuidFix", m_strUuidFix);
 			m_strValidationFailed = TryGetEx(dictNew, "ValidationFailed", m_strValidationFailed);
 			m_strValue = TryGetEx(dictNew, "Value", m_strValue);
 			m_strVerifyWrittenFileAfterSave = TryGetEx(dictNew, "VerifyWrittenFileAfterSave", m_strVerifyWrittenFileAfterSave);
@@ -826,7 +829,6 @@ namespace KeePass.Resources
 			"ButtonNext",
 			"Buttons",
 			"Cancel",
-			"CancelCmd",
 			"CannotMoveEntriesBcsGroup",
 			"ChangeMasterKey",
 			"ChangeMasterKeyIntroShort",
@@ -878,6 +880,7 @@ namespace KeePass.Resources
 			"CopyUrlToClipboard",
 			"CopyUserFull",
 			"CopyWholeEntries",
+			"CorruptionByExt",
 			"Count",
 			"CreateMasterKey",
 			"CreateNewDatabase",
@@ -978,6 +981,7 @@ namespace KeePass.Resources
 			"ExportingStatusMsg",
 			"ExportStc",
 			"ExportToPrompt",
+			"External",
 			"ExternalApp",
 			"FatalError",
 			"Feature",
@@ -1180,7 +1184,6 @@ namespace KeePass.Resources
 			"Off",
 			"OfLower",
 			"Ok",
-			"OkCmd",
 			"On",
 			"OpAborted",
 			"OpenCmd",
@@ -1273,6 +1276,7 @@ namespace KeePass.Resources
 			"RememberKeySources",
 			"RememberWorkingDirectories",
 			"RemoteHostReachable",
+			"RepairCmd",
 			"RepairMode",
 			"RepairModeInt",
 			"RepairModeQ",
@@ -1422,6 +1426,8 @@ namespace KeePass.Resources
 			"UserName",
 			"UserNamePrompt",
 			"Uuid",
+			"UuidDupInDb",
+			"UuidFix",
 			"ValidationFailed",
 			"Value",
 			"VerifyWrittenFileAfterSave",
@@ -2404,17 +2410,6 @@ namespace KeePass.Resources
 			get { return m_strCancel; }
 		}
 
-		private static string m_strCancelCmd =
-			@"&Cancel";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// '&amp;Cancel'.
-		/// </summary>
-		public static string CancelCmd
-		{
-			get { return m_strCancelCmd; }
-		}
-
 		private static string m_strCannotMoveEntriesBcsGroup =
 			@"Cannot move entries because they aren't stored in the same group.";
 		/// <summary>
@@ -2974,6 +2969,17 @@ namespace KeePass.Resources
 		public static string CopyWholeEntries
 		{
 			get { return m_strCopyWholeEntries; }
+		}
+
+		private static string m_strCorruptionByExt =
+			@"Such a corruption is usually caused by a plugin or a KeePass port. Please try to find out which plugin/port is causing it and report the issue to the corresponding developer.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Such a corruption is usually caused by a plugin or a KeePass port. Please try to find out which plugin/port is causing it and report the issue to the corresponding developer.'.
+		/// </summary>
+		public static string CorruptionByExt
+		{
+			get { return m_strCorruptionByExt; }
 		}
 
 		private static string m_strCount =
@@ -4074,6 +4080,17 @@ namespace KeePass.Resources
 		public static string ExportToPrompt
 		{
 			get { return m_strExportToPrompt; }
+		}
+
+		private static string m_strExternal =
+			@"External";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'External'.
+		/// </summary>
+		public static string External
+		{
+			get { return m_strExternal; }
 		}
 
 		private static string m_strExternalApp =
@@ -6298,17 +6315,6 @@ namespace KeePass.Resources
 			get { return m_strOk; }
 		}
 
-		private static string m_strOkCmd =
-			@"&OK";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// '&amp;OK'.
-		/// </summary>
-		public static string OkCmd
-		{
-			get { return m_strOkCmd; }
-		}
-
 		private static string m_strOn =
 			@"On";
 		/// <summary>
@@ -7319,6 +7325,17 @@ namespace KeePass.Resources
 		public static string RemoteHostReachable
 		{
 			get { return m_strRemoteHostReachable; }
+		}
+
+		private static string m_strRepairCmd =
+			@"&Repair";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Repair'.
+		/// </summary>
+		public static string RepairCmd
+		{
+			get { return m_strRepairCmd; }
 		}
 
 		private static string m_strRepairMode =
@@ -8958,6 +8975,28 @@ namespace KeePass.Resources
 		public static string Uuid
 		{
 			get { return m_strUuid; }
+		}
+
+		private static string m_strUuidDupInDb =
+			@"The database contains duplicate UUIDs.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The database contains duplicate UUIDs.'.
+		/// </summary>
+		public static string UuidDupInDb
+		{
+			get { return m_strUuidDupInDb; }
+		}
+
+		private static string m_strUuidFix =
+			@"When closing this dialog, KeePass will fix the problem (by generating new UUIDs for duplicates) and continue.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'When closing this dialog, KeePass will fix the problem (by generating new UUIDs for duplicates) and continue.'.
+		/// </summary>
+		public static string UuidFix
+		{
+			get { return m_strUuidFix; }
 		}
 
 		private static string m_strValidationFailed =

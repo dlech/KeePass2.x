@@ -105,7 +105,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 5;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -173,7 +173,7 @@
 			// m_cbTurnOffAfterAction
 			// 
 			this.m_cbTurnOffAfterAction.AutoSize = true;
-			this.m_cbTurnOffAfterAction.Location = new System.Drawing.Point(9, 264);
+			this.m_cbTurnOffAfterAction.Location = new System.Drawing.Point(9, 263);
 			this.m_cbTurnOffAfterAction.Name = "m_cbTurnOffAfterAction";
 			this.m_cbTurnOffAfterAction.Size = new System.Drawing.Size(224, 17);
 			this.m_cbTurnOffAfterAction.TabIndex = 8;

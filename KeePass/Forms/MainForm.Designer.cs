@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.m_ctxGroupList = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxGroupAdd = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -51,7 +50,6 @@
 			this.m_ctxGroupRearrSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupSort = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ilClientIcons = new System.Windows.Forms.ImageList(this.components);
 			this.m_ctxPwList = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyPassword = new System.Windows.Forms.ToolStripMenuItem();
@@ -183,7 +181,7 @@
 			this.m_menuHelpWebsite = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpDonate = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuHelpCheckForUpdate = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuHelpCheckForUpdates = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuHelpSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_toolMain = new KeePass.UI.CustomToolStripEx();
@@ -268,7 +266,7 @@
 			// 
 			// m_ctxGroupAdd
 			// 
-			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_Sent_Mail;
+			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_New_Ex;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
 			this.m_ctxGroupAdd.Size = new System.Drawing.Size(179, 22);
 			this.m_ctxGroupAdd.Text = "Add &Group";
@@ -416,80 +414,6 @@
 			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(202, 22);
 			this.m_ctxGroupSortRec.Text = "So&rt Subgroup Tree";
 			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
-			// 
-			// m_ilClientIcons
-			// 
-			this.m_ilClientIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ilClientIcons.ImageStream")));
-			this.m_ilClientIcons.TransparentColor = System.Drawing.Color.Transparent;
-			this.m_ilClientIcons.Images.SetKeyName(0, "C00_Password.png");
-			this.m_ilClientIcons.Images.SetKeyName(1, "C01_Package_Network.png");
-			this.m_ilClientIcons.Images.SetKeyName(2, "C02_MessageBox_Warning.png");
-			this.m_ilClientIcons.Images.SetKeyName(3, "C03_Server.png");
-			this.m_ilClientIcons.Images.SetKeyName(4, "C04_Klipper.png");
-			this.m_ilClientIcons.Images.SetKeyName(5, "C05_Edu_Languages.png");
-			this.m_ilClientIcons.Images.SetKeyName(6, "C06_KCMDF.png");
-			this.m_ilClientIcons.Images.SetKeyName(7, "C07_Kate.png");
-			this.m_ilClientIcons.Images.SetKeyName(8, "C08_Socket.png");
-			this.m_ilClientIcons.Images.SetKeyName(9, "C09_Identity.png");
-			this.m_ilClientIcons.Images.SetKeyName(10, "C10_Kontact.png");
-			this.m_ilClientIcons.Images.SetKeyName(11, "C11_Camera.png");
-			this.m_ilClientIcons.Images.SetKeyName(12, "C12_IRKickFlash.png");
-			this.m_ilClientIcons.Images.SetKeyName(13, "C13_KGPG_Key3.png");
-			this.m_ilClientIcons.Images.SetKeyName(14, "C14_Laptop_Power.png");
-			this.m_ilClientIcons.Images.SetKeyName(15, "C15_Scanner.png");
-			this.m_ilClientIcons.Images.SetKeyName(16, "C16_Mozilla_Firebird.png");
-			this.m_ilClientIcons.Images.SetKeyName(17, "C17_CDROM_Unmount.png");
-			this.m_ilClientIcons.Images.SetKeyName(18, "C18_Display.png");
-			this.m_ilClientIcons.Images.SetKeyName(19, "C19_Mail_Generic.png");
-			this.m_ilClientIcons.Images.SetKeyName(20, "C20_Misc.png");
-			this.m_ilClientIcons.Images.SetKeyName(21, "C21_KOrganizer.png");
-			this.m_ilClientIcons.Images.SetKeyName(22, "C22_ASCII.png");
-			this.m_ilClientIcons.Images.SetKeyName(23, "C23_Icons.png");
-			this.m_ilClientIcons.Images.SetKeyName(24, "C24_Connect_Established.png");
-			this.m_ilClientIcons.Images.SetKeyName(25, "C25_Folder_Mail.png");
-			this.m_ilClientIcons.Images.SetKeyName(26, "C26_FileSave.png");
-			this.m_ilClientIcons.Images.SetKeyName(27, "C27_NFS_Unmount.png");
-			this.m_ilClientIcons.Images.SetKeyName(28, "C28_QuickTime.png");
-			this.m_ilClientIcons.Images.SetKeyName(29, "C29_KGPG_Term.png");
-			this.m_ilClientIcons.Images.SetKeyName(30, "C30_Konsole.png");
-			this.m_ilClientIcons.Images.SetKeyName(31, "C31_FilePrint.png");
-			this.m_ilClientIcons.Images.SetKeyName(32, "C32_FSView.png");
-			this.m_ilClientIcons.Images.SetKeyName(33, "C33_Run.png");
-			this.m_ilClientIcons.Images.SetKeyName(34, "C34_Configure.png");
-			this.m_ilClientIcons.Images.SetKeyName(35, "C35_KRFB.png");
-			this.m_ilClientIcons.Images.SetKeyName(36, "C36_Ark.png");
-			this.m_ilClientIcons.Images.SetKeyName(37, "C37_KPercentage.png");
-			this.m_ilClientIcons.Images.SetKeyName(38, "C38_Samba_Unmount.png");
-			this.m_ilClientIcons.Images.SetKeyName(39, "C39_History.png");
-			this.m_ilClientIcons.Images.SetKeyName(40, "C40_Mail_Find.png");
-			this.m_ilClientIcons.Images.SetKeyName(41, "C41_VectorGfx.png");
-			this.m_ilClientIcons.Images.SetKeyName(42, "C42_KCMMemory.png");
-			this.m_ilClientIcons.Images.SetKeyName(43, "C43_EditTrash.png");
-			this.m_ilClientIcons.Images.SetKeyName(44, "C44_KNotes.png");
-			this.m_ilClientIcons.Images.SetKeyName(45, "C45_Cancel.png");
-			this.m_ilClientIcons.Images.SetKeyName(46, "C46_Help.png");
-			this.m_ilClientIcons.Images.SetKeyName(47, "C47_KPackage.png");
-			this.m_ilClientIcons.Images.SetKeyName(48, "C48_Folder.png");
-			this.m_ilClientIcons.Images.SetKeyName(49, "C49_Folder_Blue_Open.png");
-			this.m_ilClientIcons.Images.SetKeyName(50, "C50_Folder_Tar.png");
-			this.m_ilClientIcons.Images.SetKeyName(51, "C51_Decrypted.png");
-			this.m_ilClientIcons.Images.SetKeyName(52, "C52_Encrypted.png");
-			this.m_ilClientIcons.Images.SetKeyName(53, "C53_Apply.png");
-			this.m_ilClientIcons.Images.SetKeyName(54, "C54_Signature.png");
-			this.m_ilClientIcons.Images.SetKeyName(55, "C55_Thumbnail.png");
-			this.m_ilClientIcons.Images.SetKeyName(56, "C56_KAddressBook.png");
-			this.m_ilClientIcons.Images.SetKeyName(57, "C57_View_Text.png");
-			this.m_ilClientIcons.Images.SetKeyName(58, "C58_KGPG.png");
-			this.m_ilClientIcons.Images.SetKeyName(59, "C59_Package_Development.png");
-			this.m_ilClientIcons.Images.SetKeyName(60, "C60_KFM_Home.png");
-			this.m_ilClientIcons.Images.SetKeyName(61, "C61_Services.png");
-			this.m_ilClientIcons.Images.SetKeyName(62, "C62_Tux.png");
-			this.m_ilClientIcons.Images.SetKeyName(63, "C63_Feather.png");
-			this.m_ilClientIcons.Images.SetKeyName(64, "C64_Apple.png");
-			this.m_ilClientIcons.Images.SetKeyName(65, "C65_W.png");
-			this.m_ilClientIcons.Images.SetKeyName(66, "C66_Money.png");
-			this.m_ilClientIcons.Images.SetKeyName(67, "C67_Certificate.png");
-			this.m_ilClientIcons.Images.SetKeyName(68, "C68_BlackBerry.png");
 			// 
 			// m_ctxPwList
 			// 
@@ -1495,7 +1419,7 @@
             this.m_menuHelpWebsite,
             this.m_menuHelpDonate,
             this.m_menuHelpSep1,
-            this.m_menuHelpCheckForUpdate,
+            this.m_menuHelpCheckForUpdates,
             this.m_menuHelpSep2,
             this.m_menuHelpAbout});
 			this.m_menuHelp.Name = "m_menuHelp";
@@ -1506,7 +1430,7 @@
 			// 
 			this.m_menuHelpContents.Image = global::KeePass.Properties.Resources.B16x16_Toggle_Log;
 			this.m_menuHelpContents.Name = "m_menuHelpContents";
-			this.m_menuHelpContents.Size = new System.Drawing.Size(170, 22);
+			this.m_menuHelpContents.Size = new System.Drawing.Size(174, 22);
 			this.m_menuHelpContents.Text = "&Help Contents";
 			this.m_menuHelpContents.Click += new System.EventHandler(this.OnHelpContents);
 			// 
@@ -1514,20 +1438,20 @@
 			// 
 			this.m_menuHelpSelectSource.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
 			this.m_menuHelpSelectSource.Name = "m_menuHelpSelectSource";
-			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(170, 22);
+			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(174, 22);
 			this.m_menuHelpSelectSource.Text = "Help &Source...";
 			this.m_menuHelpSelectSource.Click += new System.EventHandler(this.OnHelpSelectSource);
 			// 
 			// m_menuHelpSep0
 			// 
 			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
-			this.m_menuHelpSep0.Size = new System.Drawing.Size(167, 6);
+			this.m_menuHelpSep0.Size = new System.Drawing.Size(171, 6);
 			// 
 			// m_menuHelpWebsite
 			// 
 			this.m_menuHelpWebsite.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
 			this.m_menuHelpWebsite.Name = "m_menuHelpWebsite";
-			this.m_menuHelpWebsite.Size = new System.Drawing.Size(170, 22);
+			this.m_menuHelpWebsite.Size = new System.Drawing.Size(174, 22);
 			this.m_menuHelpWebsite.Text = "KeePass &Website";
 			this.m_menuHelpWebsite.Click += new System.EventHandler(this.OnHelpHomepage);
 			// 
@@ -1535,33 +1459,33 @@
 			// 
 			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
 			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
-			this.m_menuHelpDonate.Size = new System.Drawing.Size(170, 22);
+			this.m_menuHelpDonate.Size = new System.Drawing.Size(174, 22);
 			this.m_menuHelpDonate.Text = "&Donate...";
 			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
 			// 
 			// m_menuHelpSep1
 			// 
 			this.m_menuHelpSep1.Name = "m_menuHelpSep1";
-			this.m_menuHelpSep1.Size = new System.Drawing.Size(167, 6);
+			this.m_menuHelpSep1.Size = new System.Drawing.Size(171, 6);
 			// 
-			// m_menuHelpCheckForUpdate
+			// m_menuHelpCheckForUpdates
 			// 
-			this.m_menuHelpCheckForUpdate.Image = global::KeePass.Properties.Resources.B16x16_FTP;
-			this.m_menuHelpCheckForUpdate.Name = "m_menuHelpCheckForUpdate";
-			this.m_menuHelpCheckForUpdate.Size = new System.Drawing.Size(170, 22);
-			this.m_menuHelpCheckForUpdate.Text = "&Check for Update";
-			this.m_menuHelpCheckForUpdate.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
+			this.m_menuHelpCheckForUpdates.Image = global::KeePass.Properties.Resources.B16x16_FTP;
+			this.m_menuHelpCheckForUpdates.Name = "m_menuHelpCheckForUpdates";
+			this.m_menuHelpCheckForUpdates.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpCheckForUpdates.Text = "&Check for Updates";
+			this.m_menuHelpCheckForUpdates.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
 			// 
 			// m_menuHelpSep2
 			// 
 			this.m_menuHelpSep2.Name = "m_menuHelpSep2";
-			this.m_menuHelpSep2.Size = new System.Drawing.Size(167, 6);
+			this.m_menuHelpSep2.Size = new System.Drawing.Size(171, 6);
 			// 
 			// m_menuHelpAbout
 			// 
 			this.m_menuHelpAbout.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_menuHelpAbout.Name = "m_menuHelpAbout";
-			this.m_menuHelpAbout.Size = new System.Drawing.Size(170, 22);
+			this.m_menuHelpAbout.Size = new System.Drawing.Size(174, 22);
 			this.m_menuHelpAbout.Text = "&About KeePass...";
 			this.m_menuHelpAbout.Click += new System.EventHandler(this.OnHelpAbout);
 			// 
@@ -1650,7 +1574,7 @@
 			// 
 			this.m_tbAddEntryDefault.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_tbAddEntryDefault.Name = "m_tbAddEntryDefault";
-			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(88, 22);
+			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(152, 22);
 			this.m_tbAddEntryDefault.Text = "<>";
 			this.m_tbAddEntryDefault.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
@@ -1816,7 +1740,7 @@
 			// m_statusPartInfo
 			// 
 			this.m_statusPartInfo.Name = "m_statusPartInfo";
-			this.m_statusPartInfo.Size = new System.Drawing.Size(214, 17);
+			this.m_statusPartInfo.Size = new System.Drawing.Size(245, 17);
 			this.m_statusPartInfo.Spring = true;
 			this.m_statusPartInfo.Text = "Ready.";
 			this.m_statusPartInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2088,7 +2012,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuHelpSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpContents;
 		private System.Windows.Forms.ToolStripSeparator m_menuHelpSep1;
-		private System.Windows.Forms.ToolStripMenuItem m_menuHelpCheckForUpdate;
+		private System.Windows.Forms.ToolStripMenuItem m_menuHelpCheckForUpdates;
 		private System.Windows.Forms.ToolStripSeparator m_menuHelpSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuHelpAbout;
 		private KeePass.UI.CustomToolStripEx m_toolMain;
@@ -2122,7 +2046,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveOneUp;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveOneDown;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveToBottom;
-		private System.Windows.Forms.ImageList m_ilClientIcons;
 		private System.Windows.Forms.ToolStripMenuItem m_menuChangeLanguage;
 		private System.Windows.Forms.ToolStripSeparator m_tbSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEditFind;

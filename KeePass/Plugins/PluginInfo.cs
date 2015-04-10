@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@ namespace KeePass.Plugins
 {
 	internal sealed class PluginInfo
 	{
-		private string m_strFilePath;
-		private string m_strDisplayFilePath;
+		private readonly string m_strFilePath;
+		private readonly string m_strDisplayFilePath; // May be null
 		private Plugin m_pluginInterface = null;
 
-		private string m_strFileVersion = string.Empty;
+		private readonly string m_strFileVersion;
 
-		private string m_strName = string.Empty;
-		private string m_strDescription = string.Empty;
-		private string m_strAuthor = string.Empty;
+		private readonly string m_strName;
+		private readonly string m_strDescription;
+		private readonly string m_strAuthor;
 
 		public string FilePath
 		{
@@ -85,15 +85,25 @@ namespace KeePass.Plugins
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 			Debug.Assert(fvi != null);
 			if(fvi == null) throw new ArgumentNullException("fvi");
+			// strDisplayFilePath may be null
 
 			m_strFilePath = strFilePath;
 			m_strDisplayFilePath = strDisplayFilePath;
 
-			if(fvi.FileVersion != null) m_strFileVersion = fvi.FileVersion;
+			m_strFileVersion = (fvi.FileVersion ?? string.Empty).Trim();
 
-			if(fvi.FileDescription != null) m_strName = fvi.FileDescription;
-			if(fvi.Comments != null) m_strDescription = fvi.Comments;
-			if(fvi.CompanyName != null) m_strAuthor = fvi.CompanyName;
+			string strName = (fvi.FileDescription ?? string.Empty).Trim();
+			m_strDescription = (fvi.Comments ?? string.Empty).Trim();
+			m_strAuthor = (fvi.CompanyName ?? string.Empty).Trim();
+
+			// Workaround for Mono not storing the AssemblyTitle in
+			// the file version information block when compiling an
+			// assembly (PLGX plugin)
+			if(strName.Length == 0)
+				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(
+					strFilePath));
+
+			m_strName = strName;
 		}
 	}
 }

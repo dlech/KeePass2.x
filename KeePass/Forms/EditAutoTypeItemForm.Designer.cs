@@ -61,7 +61,7 @@
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 8;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -72,7 +72,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 9;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -161,7 +161,6 @@
 			this.m_cmbWindow.IntegralHeight = false;
 			this.m_cmbWindow.Location = new System.Drawing.Point(95, 72);
 			this.m_cmbWindow.Name = "m_cmbWindow";
-			this.m_cmbWindow.OrderedImageList = null;
 			this.m_cmbWindow.Size = new System.Drawing.Size(404, 21);
 			this.m_cmbWindow.TabIndex = 0;
 			this.m_cmbWindow.SelectedIndexChanged += new System.EventHandler(this.OnWindowSelectedIndexChanged);

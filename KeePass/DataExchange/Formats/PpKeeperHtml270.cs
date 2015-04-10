@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.50 and 2.70
+	// 2.50, 2.60 and 2.70
 	internal sealed class PpKeeperHtml270 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -75,21 +75,20 @@ namespace KeePass.DataExchange.Formats
 			strData = strData.Replace("<td class=\"c5\" nowrap>", m_strStartTd);
 			strData = strData.Replace("<td class=\"c6\" nowrap>", m_strStartTd);
 
-			// Additionally support the old version 2.50
-			string[] vRepl = new string[4]{
-				@"<td nowrap align=""(center|right)"" bgcolor=""#[0-9a-fA-F]{6}""><font color=""#[0-9a-fA-F]{6}"">",
-				@"<td nowrap bgcolor=""#[0-9a-fA-F]{6}""><font color=""#[0-9a-fA-F]{6}"">",
-				@"<td nowrap align=""(center|right)"" bgcolor=""#[0-9a-fA-F]{6}""><b>",
-				@"<td nowrap bgcolor=""#[0-9a-fA-F]{6}""><b>"
-			};
-			MatchCollection mc = Regex.Matches(strData, vRepl[2]);
-			if((mc != null) && (mc.Count > 0))
-			{
-				foreach(string strRepl in vRepl)
-					strData = Regex.Replace(strData, strRepl, m_strStartTd);
+			// Additionally support old versions
+			string[] vRepl = new string[5] {
+				// 2.60
+				"<td nowrap align=\"center\" bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\" face=\"[^\"]*\">",
 
-				strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
-			}
+				// 2.50 and 2.60
+				"<td nowrap align=\"(center|right)\" bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\"\\s*>",
+				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\"\\s*>",
+				"<td nowrap align=\"(center|right)\" bgcolor=\"#[0-9a-fA-F]{6}\"><b>",
+				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><b>"
+			};
+			foreach(string strRepl in vRepl)
+				strData = Regex.Replace(strData, strRepl, m_strStartTd);
+			strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
 
 			int nOffset = 0;
 

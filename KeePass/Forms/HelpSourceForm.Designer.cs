@@ -56,7 +56,7 @@
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -67,7 +67,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -79,7 +79,7 @@
 			this.m_radioLocal.Size = new System.Drawing.Size(90, 17);
 			this.m_radioLocal.TabIndex = 3;
 			this.m_radioLocal.TabStop = true;
-			this.m_radioLocal.Text = "Local help file";
+			this.m_radioLocal.Text = "&Local help file";
 			this.m_radioLocal.UseVisualStyleBackColor = true;
 			// 
 			// m_radioOnline
@@ -90,7 +90,7 @@
 			this.m_radioOnline.Size = new System.Drawing.Size(111, 17);
 			this.m_radioOnline.TabIndex = 5;
 			this.m_radioOnline.TabStop = true;
-			this.m_radioOnline.Text = "Online help center";
+			this.m_radioOnline.Text = "&Online help center";
 			this.m_radioOnline.UseVisualStyleBackColor = true;
 			// 
 			// m_lblLocal

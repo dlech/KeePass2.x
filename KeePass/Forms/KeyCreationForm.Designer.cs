@@ -158,7 +158,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 18;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -170,7 +170,7 @@
 			this.m_btnCreate.Name = "m_btnCreate";
 			this.m_btnCreate.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCreate.TabIndex = 17;
-			this.m_btnCreate.Text = "&OK";
+			this.m_btnCreate.Text = "OK";
 			this.m_btnCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCreate.UseVisualStyleBackColor = true;
 			this.m_btnCreate.Click += new System.EventHandler(this.OnBtnOK);
@@ -200,7 +200,7 @@
 			this.m_btnSaveKeyFile.Name = "m_btnSaveKeyFile";
 			this.m_btnSaveKeyFile.Size = new System.Drawing.Size(80, 23);
 			this.m_btnSaveKeyFile.TabIndex = 9;
-			this.m_btnSaveKeyFile.Text = " C&reate...";
+			this.m_btnSaveKeyFile.Text = " &Create...";
 			this.m_btnSaveKeyFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnSaveKeyFile.UseVisualStyleBackColor = true;
 			this.m_btnSaveKeyFile.Click += new System.EventHandler(this.OnClickKeyFileCreate);
@@ -240,7 +240,6 @@
 			this.m_pbPasswordQuality.Location = new System.Drawing.Point(150, 197);
 			this.m_pbPasswordQuality.Name = "m_pbPasswordQuality";
 			this.m_pbPasswordQuality.Size = new System.Drawing.Size(269, 16);
-			this.m_pbPasswordQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbPasswordQuality.TabIndex = 5;
 			this.m_pbPasswordQuality.TabStop = false;
 			// 

@@ -259,9 +259,6 @@
   <data name="B16x16_EditCopy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_EditCopy.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="B16x16_Folder_Sent_Mail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Nuvola\B16x16_Folder_Sent_Mail.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="B16x16_Folder_Txt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_Folder_Txt.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -499,15 +496,6 @@
   <data name="B16x16_Color_Fill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_Color_Fill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="B16x16_TextAlignCenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Images\B16x16_TextAlignCenter.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="B16x16_TextAlignLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Images\B16x16_TextAlignLeft.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="B16x16_TextAlignRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Images\B16x16_TextAlignRight.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="B16x16_Redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_Redo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -618,5 +606,26 @@
   </data>
   <data name="B16x16_MessageBox_Warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nuvola\B16x16_MessageBox_Warning.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Images_App_HighRes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data\Images_App_HighRes.bin;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Images_Client_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data\Images_Client_16.bin;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Images_Client_HighRes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data\Images_Client_HighRes.bin;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B16x16_TextAlignCenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola_Derived\B16x16_TextAlignCenter.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_TextAlignLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola_Derived\B16x16_TextAlignLeft.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_TextAlignRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola_Derived\B16x16_TextAlignRight.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B16x16_Folder_New_Ex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nuvola_Derived\B16x16_Folder_New_Ex.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

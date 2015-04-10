@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Util;
+
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -193,7 +195,13 @@ namespace KeePass.UI
 					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
-					g.DrawImage(img, iImgX, iImgY, iImgW, iImgH);
+					RectangleF rSource = new RectangleF(0.0f, 0.0f,
+						img.Width, img.Height);
+					RectangleF rDest = new RectangleF(iImgX, iImgY, iImgW, iImgH);
+					GfxUtil.AdjustScaleRects(ref rSource, ref rDest);
+
+					// g.DrawImage(img, iImgX, iImgY, iImgW, iImgH);
+					g.DrawImage(img, rDest, rSource, GraphicsUnit.Pixel);
 				}
 
 				hBmp = bmp.GetHbitmap();

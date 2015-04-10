@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 using System.Windows.Forms;
+using System.Reflection;
 using System.Diagnostics;
+
+using KeePassLib.Native;
 
 namespace KeePass.UI
 {
@@ -32,6 +36,92 @@ namespace KeePass.UI
 
 		private Control m_cFocused = null;
 		private Control m_cLastKnown = null;
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public double SplitterDistanceFrac
+		{
+			get
+			{
+				bool bVert = (this.Orientation == Orientation.Vertical);
+
+				int m = (bVert ? this.Width : this.Height);
+				if(m <= 0) { Debug.Assert(false); return 0.0; }
+
+				int d = this.SplitterDistance;
+				if(d < 0) { Debug.Assert(false); return 0.0; }
+				if(d == 0) return 0.0; // Avoid fExact infinity
+
+				double f = (double)d / (double)m;
+
+				try
+				{
+					FieldInfo fi = GetRatioField(bVert);
+					if(fi != null)
+					{
+						double fExact = (double)fi.GetValue(this);
+						if(fExact > double.Epsilon)
+						{
+							fExact = 1.0 / fExact;
+
+							// Test whether fExact makes sense and if so,
+							// use it instead of f; 1/m as boundary is
+							// slightly too strict
+							if(Math.Abs(fExact - f) <= (1.5 / (double)m))
+								return fExact;
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return f;
+			}
+
+			set
+			{
+				if((value < 0.0) || (value > 1.0)) { Debug.Assert(false); return; }
+
+				bool bVert = (this.Orientation == Orientation.Vertical);
+
+				int m = (bVert ? this.Width : this.Height);
+				if(m <= 0) { Debug.Assert(false); return; }
+
+				int d = (int)Math.Round(value * (double)m);
+				if(d < 0) { Debug.Assert(false); d = 0; }
+				if(d > m) { Debug.Assert(false); d = m; }
+
+				this.SplitterDistance = d;
+				if(d == 0) return; // Avoid infinity / division by zero
+
+				// If the position was auto-adjusted (e.g. due to
+				// minimum size constraints), skip the rest
+				if(this.SplitterDistance != d) return;
+
+				try
+				{
+					FieldInfo fi = GetRatioField(bVert);
+					if(fi != null)
+					{
+						double fEst = (double)fi.GetValue(this);
+						if(fEst <= double.Epsilon) { Debug.Assert(false); return; }
+						fEst = 1.0 / fEst; // m/d -> d/m
+
+						// Test whether fEst makes sense and if so,
+						// overwrite it with the exact value;
+						// we must test for 1.5/m, not 1/m, because .NET
+						// uses Math.Floor and we use Math.Round
+						if(Math.Abs(fEst - value) <= (1.5 / (double)m))
+							fi.SetValue(this, 1.0 / value); // d/m -> m/d
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
 
 		public CustomSplitContainerEx() : base()
 		{
@@ -89,6 +179,15 @@ namespace KeePass.UI
 				if(m_cLastKnown != null) UIUtil.SetFocus(m_cLastKnown, null);
 				else if(m_cDefault != null) UIUtil.SetFocus(m_cDefault, null);
 			}
+		}
+
+		private static FieldInfo GetRatioField(bool bVert)
+		{
+			// Both .NET and Mono store 'max/pos', not 'pos/max'
+			return typeof(SplitContainer).GetField(
+				(NativeLib.IsUnix() ? "fixed_none_ratio" :
+				(bVert ? "ratioWidth" : "ratioHeight")),
+				(BindingFlags.Instance | BindingFlags.NonPublic));
 		}
 	}
 }

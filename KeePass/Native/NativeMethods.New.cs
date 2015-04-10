@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -130,9 +130,9 @@ namespace KeePass.Native
 
 		internal static bool EnsureForegroundWindow(IntPtr hWnd)
 		{
-			if(IsWindowEx(hWnd) == false) return false;
+			if(!IsWindowEx(hWnd)) return false;
 
-			if(SetForegroundWindowEx(hWnd) == false)
+			if(!SetForegroundWindowEx(hWnd))
 			{
 				Debug.Assert(false);
 				return false;

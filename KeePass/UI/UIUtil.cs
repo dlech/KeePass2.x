@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -299,13 +299,20 @@ namespace KeePass.UI
 
 			foreach(PwCustomIcon pwci in vImages)
 			{
-				Image imgNew = pwci.Image;
-				if(imgNew == null) { Debug.Assert(false); continue; }
+				Image img = pwci.GetImage(nWidth, nHeight);
+				if(img == null)
+				{
+					Debug.Assert(false);
+					img = UIUtil.CreateColorBitmap24(nWidth, nHeight, Color.White);
+				}
 
-				if((imgNew.Width != nWidth) || (imgNew.Height != nHeight))
-					imgNew = new Bitmap(imgNew, new Size(nWidth, nHeight));
+				if((img.Width != nWidth) || (img.Height != nHeight))
+				{
+					Debug.Assert(false);
+					img = new Bitmap(img, new Size(nWidth, nHeight));
+				}
 
-				lImages.Add(imgNew);
+				lImages.Add(img);
 			}
 
 			return lImages;
@@ -558,8 +565,8 @@ namespace KeePass.UI
 							int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
 							if(nInx > -1)
 							{
-								ilIcons.Images.Add(new Bitmap(ds.Database.GetCustomIcon(
-									pe.CustomIconUuid)));
+								ilIcons.Images.Add(new Bitmap(DpiUtil.GetIcon(
+									ds.Database, pe.CustomIconUuid)));
 								lvi.ImageIndex = ilIcons.Images.Count - 1;
 								break;
 							}
@@ -668,8 +675,8 @@ namespace KeePass.UI
 					int nInx = pd.GetCustomIconIndex(pe.CustomIconUuid);
 					if(nInx > -1)
 					{
-						ilIcons.Images.Add(new Bitmap(pd.GetCustomIcon(
-							pe.CustomIconUuid)));
+						ilIcons.Images.Add(new Bitmap(DpiUtil.GetIcon(
+							pd, pe.CustomIconUuid)));
 						lvi.ImageIndex = ilIcons.Images.Count - 1;
 					}
 					else { Debug.Assert(false); lvi.ImageIndex = (int)pe.IconId; }
@@ -1332,31 +1339,77 @@ namespace KeePass.UI
 			return null;
 		}
 
+		private static Bitmap g_bmpCheck = null;
 		private static Bitmap g_bmpCheckLight = null;
+		private static Bitmap g_bmpTrans = null;
 		public static void SetChecked(ToolStripMenuItem tsmi, bool bChecked)
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			Image imgCheck = Properties.Resources.B16x16_MenuCheck;
+			const string strIDCheck = "guid:5EAEA440-02AA-4E62-B57E-724A6F89B1EE";
+			const string strIDTrans = "guid:38DDF11D-F101-468A-A006-9810A95F34F4";
 
-			Color clrFG = tsmi.ForeColor;
-			if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+			// The image references may change, thus use the Tag instead;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/e1950e60/
+			bool bSetImage = false;
+			Image imgCur = tsmi.Image;
+			if(imgCur == null) bSetImage = true;
+			else
 			{
-				if(g_bmpCheckLight == null)
-					g_bmpCheckLight = GetGlyphBitmap(MenuGlyph.Checkmark,
-						Color.White); // Not clrFG, for consistency
-
-				if(g_bmpCheckLight != null) imgCheck = g_bmpCheckLight;
+				string strID = (imgCur.Tag as string);
+				if(strID == null) { } // Unknown image, don't overwrite
+				else if((strID == strIDCheck) || (strID == strIDTrans))
+					bSetImage = true;
 			}
-			else { Debug.Assert(g_bmpCheckLight == null); } // Always or never
 
-			Image imgTrans = Properties.Resources.B16x16_Transparent;
+			if(bSetImage)
+			{
+				Image img = null;
 
-			// Assign transparent image instead of null in order to
-			// prevent incorrect menu item heights
-			if((tsmi.Image == null) || (tsmi.Image == imgCheck) ||
-				(tsmi.Image == imgTrans))
-				tsmi.Image = (bChecked ? imgCheck : imgTrans);
+				if(bChecked)
+				{
+					if(g_bmpCheck == null)
+					{
+						g_bmpCheck = new Bitmap(Properties.Resources.B16x16_MenuCheck);
+						g_bmpCheck.Tag = strIDCheck;
+					}
+
+					img = g_bmpCheck;
+
+					Color clrFG = tsmi.ForeColor;
+					if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+					{
+						if(g_bmpCheckLight == null)
+						{
+							g_bmpCheckLight = GetGlyphBitmap(MenuGlyph.Checkmark,
+								Color.White); // Not clrFG, for consistency
+
+							if(g_bmpCheckLight != null)
+							{
+								Debug.Assert(g_bmpCheckLight.Tag == null);
+								g_bmpCheckLight.Tag = strIDCheck;
+							}
+						}
+
+						if(g_bmpCheckLight != null) img = g_bmpCheckLight;
+					}
+					else { Debug.Assert(g_bmpCheckLight == null); } // Always or never
+				}
+				else
+				{
+					if(g_bmpTrans == null)
+					{
+						g_bmpTrans = new Bitmap(Properties.Resources.B16x16_Transparent);
+						g_bmpTrans.Tag = strIDTrans;
+					}
+
+					// Assign transparent image instead of null in order to
+					// prevent incorrect menu item heights
+					img = g_bmpTrans;
+				}
+
+				tsmi.Image = img;
+			}
 
 			tsmi.Checked = bChecked;
 		}
@@ -2071,23 +2124,8 @@ namespace KeePass.UI
 			if(img == null) { Debug.Assert(false); return; }
 
 			if(b16To15 && (btn.Height == 23) && (img.Height == 16))
-			{
-				Bitmap bmp = new Bitmap(img.Width, 15, PixelFormat.Format32bppArgb);
-				using(Graphics g = Graphics.FromImage(bmp))
-				{
-					using(SolidBrush sb = new SolidBrush(Color.Transparent))
-					{
-						g.FillRectangle(sb, 0, 0, img.Width, 15);
-					}
-
-					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					g.SmoothingMode = SmoothingMode.HighQuality;
-
-					g.DrawImage(img, 0, 0, img.Width, 15);
-				}
-
-				btn.Image = bmp;
-			}
+				btn.Image = GfxUtil.ScaleImage(img, img.Width, 15,
+					ScaleTransformFlags.UIIcon);
 			else btn.Image = img;
 		}
 
@@ -2224,41 +2262,16 @@ namespace KeePass.UI
 		{
 			if(ico == null) { Debug.Assert(false); return null; }
 
+			MemoryStream ms = new MemoryStream();
 			try
 			{
-				MemoryStream ms = new MemoryStream();
 				ico.Save(ms);
 				byte[] pb = ms.ToArray();
-				ms.Close();
 
-				const int SizeICONDIR = 6;
-				const int SizeICONDIRENTRY = 16;
-
-				int nImages = BitConverter.ToInt16(pb, 4);
-				for(int i = 0; i < nImages; ++i)
-				{
-					int iWidth = pb[SizeICONDIR + (i * SizeICONDIRENTRY)];
-					int iHeight = pb[SizeICONDIR + (i * SizeICONDIRENTRY) + 1];
-					int iBitCount = BitConverter.ToInt16(pb, SizeICONDIR +
-						(i * SizeICONDIRENTRY) + 6);
-
-					if((iWidth == 0) && (iHeight == 0) && (iBitCount == 32))
-					{
-						int iImageSize = BitConverter.ToInt32(pb, SizeICONDIR +
-							(i * SizeICONDIRENTRY) + 8);
-						int iImageOffset = BitConverter.ToInt32(pb, SizeICONDIR +
-							(i * SizeICONDIRENTRY) + 12);
-
-						MemoryStream msImage = new MemoryStream();
-						msImage.Write(pb, iImageOffset, iImageSize);
-						byte[] pbImage = msImage.ToArray();
-						msImage.Close();
-
-						return GfxUtil.LoadImage(pbImage);
-					}
-				}
+				return GfxUtil.LoadImage(pb); // Extracts best image from ICO
 			}
 			catch { Debug.Assert(false); }
+			finally { ms.Close(); }
 
 			return null;
 		}
@@ -2700,24 +2713,13 @@ namespace KeePass.UI
 			return bmp;
 		}
 
+		[Obsolete("Use GfxUtil.ScaleImage instead.")]
 		public static Bitmap CreateScaledImage(Image img, int w, int h)
 		{
 			if(img == null) { Debug.Assert(false); return null; }
 
-			// Always create a new bitmap (to allow disposing the returned
-			// image without disposing the original source image)
-
-			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
-			using(Graphics g = Graphics.FromImage(bmp))
-			{
-				g.Clear(Color.Transparent);
-
-				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				g.SmoothingMode = SmoothingMode.HighQuality;
-
-				g.DrawImage(img, 0, 0, w, h);
-			}
-
+			Bitmap bmp = (GfxUtil.ScaleImage(img, w, h) as Bitmap);
+			Debug.Assert(bmp != null);
 			return bmp;
 		}
 

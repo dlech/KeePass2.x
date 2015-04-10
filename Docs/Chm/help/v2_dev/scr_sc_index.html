@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2015 Dominik Reichl" />
 
 	<title>Single Command Operations - KeePass</title>
 	<base target="_self" />
@@ -102,6 +102,7 @@ next release of KPScript.</p>
 <li>ChangeMasterKey</li>
 <li>DetachBins</li>
 <li>GenPw</li>
+<li>EstimateQuality</li>
 </ul>
 
 <hr />
@@ -316,6 +317,16 @@ Generates one password using the default generator profile.</p>
 
 <p><code>KPScript -c:GenPw -count:5 -profile:&quot;128-Bit Hex Key (built-in)&quot;</code><br />
 Generates five 128-bit hex passwords (when no translation is used).</p>
+
+<hr />
+<p><b>Command: EstimateQuality</b></p>
+
+<p>Estimates the <a href="http://keepass.info/help/kb/pw_quality_est.html"
+target="_blank">quality</a> (in bits) of the password specified via the
+<code>-text:</code> parameter.
+Usage example:</p>
+
+<p><code>KPScript -c:EstimateQuality -text:MyTopSecretPassword</code></p>
 
 <br />
 

@@ -8,17 +8,17 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.28"
-#define KeeVersionStrWithMinor "2.28"
-#define KeeVersionStrWithMinorPath "2.28"
-#define KeeVersionWin "2.28.0.0"
-#define KeeVersionWinShort "2.28"
+#define KeeVersionStr "2.29"
+#define KeeVersionStrWithMinor "2.29"
+#define KeeVersionStrWithMinorPath "2.29"
+#define KeeVersionWin "2.29.0.0"
+#define KeeVersionWinShort "2.29"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2014"
+#define KeeDevPeriod "2003-2015"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -114,7 +114,7 @@ Root: HKCR; Subkey: .kdbx; Flags: uninsdeletekey; Tasks: not FileAssoc
 Root: HKCR; Subkey: kdbxfile; Flags: uninsdeletekey; Tasks: not FileAssoc
 ; Register .kdbx association at install, and unregister at uninstall
 Root: HKCR; Subkey: .kdbx; ValueType: string; ValueData: kdbxfile; Flags: uninsdeletekey; Tasks: FileAssoc
-Root: HKCR; Subkey: kdbxfile; ValueType: string; ValueData: KeePass Password Database; Flags: uninsdeletekey; Tasks: FileAssoc
+Root: HKCR; Subkey: kdbxfile; ValueType: string; ValueData: KeePass Database; Flags: uninsdeletekey; Tasks: FileAssoc
 Root: HKCR; Subkey: kdbxfile; ValueType: string; ValueName: AlwaysShowExt; Flags: uninsdeletekey; Tasks: FileAssoc
 Root: HKCR; Subkey: kdbxfile\DefaultIcon; ValueType: string; ValueData: """{app}\{#MyAppExeName}"",0"; Flags: uninsdeletekey; Tasks: FileAssoc
 Root: HKCR; Subkey: kdbxfile\shell\open; ValueType: string; ValueData: &Open with {#MyAppName}; Flags: uninsdeletekey; Tasks: FileAssoc

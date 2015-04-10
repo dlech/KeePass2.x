@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -157,6 +157,16 @@ namespace KeePass.App.Configuration
 				m_strCreateDirLocal = strUserDirLocal + strBaseDirName;
 				m_strUserConfigFile = m_strCreateDir + Path.DirectorySeparatorChar +
 					strBaseDirName + ".config.xml";
+			}
+
+			string strLocalOvr = Program.CommandLineArgs[
+				AppDefs.CommandLineOptions.ConfigPathLocal];
+			if(!string.IsNullOrEmpty(strLocalOvr))
+			{
+				string strWD = UrlUtil.EnsureTerminatingSeparator(
+					WinUtil.GetWorkingDirectory(), false);
+				m_strUserConfigFile = UrlUtil.MakeAbsolutePath(strWD +
+					"Sentinel.txt", strLocalOvr);
 			}
 
 			Debug.Assert(!string.IsNullOrEmpty(m_strCreateDir));

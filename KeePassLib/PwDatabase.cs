@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -610,7 +610,7 @@ namespace KeePassLib
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void Save(IStatusLogger slLogger)
 		{
-			Debug.Assert(ValidateUuidUniqueness());
+			Debug.Assert(!HasDuplicateUuids());
 
 			FileLock fl = null;
 			if(m_bUseFileLocks) fl = new FileLock(m_ioSource);
@@ -839,7 +839,8 @@ namespace KeePassLib
 				ReorderGroups(ppOrgGroups, ppSrcGroups);
 				RelocateEntries(ppOrgEntries, ppSrcEntries);
 				ReorderEntries(ppOrgEntries, ppSrcEntries);
-				Debug.Assert(ValidateUuidUniqueness());
+
+				Debug.Assert(!HasDuplicateUuids());
 			}
 
 			// Must be called *after* merging groups, because group UUIDs
@@ -1457,19 +1458,37 @@ namespace KeePassLib
 			return -1;
 		}
 
+#if !KeePassLibSD
+		[Obsolete("Additionally specify the size.")]
+		public Image GetCustomIcon(PwUuid pwIconId)
+		{
+			return GetCustomIcon(pwIconId, 16, 16); // Backward compatibility
+		}
+
 		/// <summary>
-		/// Get a custom icon. This function can return <c>null</c>, if
-		/// no cached image of the icon is available.
+		/// Get a custom icon. This method can return <c>null</c>,
+		/// e.g. if no cached image of the icon is available.
 		/// </summary>
 		/// <param name="pwIconId">ID of the icon.</param>
-		/// <returns>Image data.</returns>
-		public Image GetCustomIcon(PwUuid pwIconId)
+		/// <param name="w">Width of the returned image. If this is
+		/// negative, the image is returned in its original size.</param>
+		/// <param name="h">Height of the returned image. If this is
+		/// negative, the image is returned in its original size.</param>
+		public Image GetCustomIcon(PwUuid pwIconId, int w, int h)
 		{
 			int nIndex = GetCustomIconIndex(pwIconId);
 
-			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
-			else { Debug.Assert(false); return null; }
+			if(nIndex >= 0)
+			{
+				if((w >= 0) && (h >= 0))
+					return m_vCustomIcons[nIndex].GetImage(w, h);
+				else return m_vCustomIcons[nIndex].GetImage(); // No assert
+			}
+			else { Debug.Assert(false); }
+
+			return null;
 		}
+#endif // !KeePassLibSD
 
 		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
 		{
@@ -1534,33 +1553,97 @@ namespace KeePassLib
 				RemoveCustomIconUuid(peHistory, vToDelete);
 		}
 
-		private bool ValidateUuidUniqueness()
+		private int GetTotalObjectUuidCount()
 		{
-#if DEBUG
-			List<PwUuid> l = new List<PwUuid>();
-			bool bAllUnique = true;
+			uint uGroups, uEntries;
+			m_pgRootGroup.GetCounts(true, out uGroups, out uEntries);
+
+			uint uTotal = uGroups + uEntries + 1; // 1 for root group
+			if(uTotal > 0x7FFFFFFFU) { Debug.Assert(false); return 0x7FFFFFFF; }
+			return (int)uTotal;
+		}
+
+		internal bool HasDuplicateUuids()
+		{
+			int nTotal = GetTotalObjectUuidCount();
+			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+			bool bDupFound = false;
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				foreach(PwUuid u in l)
-					bAllUnique &= !pg.Uuid.Equals(u);
-				l.Add(pg.Uuid);
-				return bAllUnique;
+				PwUuid pu = pg.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					bDupFound = true;
+					return false;
+				}
+
+				d.Add(pu, null);
+				Debug.Assert(d.ContainsKey(pu));
+				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				foreach(PwUuid u in l)
-					bAllUnique &= !pe.Uuid.Equals(u);
-				l.Add(pe.Uuid);
-				return bAllUnique;
+				PwUuid pu = pe.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					bDupFound = true;
+					return false;
+				}
+
+				d.Add(pu, null);
+				Debug.Assert(d.ContainsKey(pu));
+				return true;
 			};
 
+			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
-			return bAllUnique;
-#else
-			return true;
-#endif
+
+			Debug.Assert(bDupFound || (d.Count == nTotal));
+			return bDupFound;
+		}
+
+		internal void FixDuplicateUuids()
+		{
+			int nTotal = GetTotalObjectUuidCount();
+			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				PwUuid pu = pg.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					pu = new PwUuid(true);
+					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
+
+					pg.Uuid = pu;
+				}
+
+				d.Add(pu, null);
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				PwUuid pu = pe.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					pu = new PwUuid(true);
+					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
+
+					pe.SetUuid(pu, true);
+				}
+
+				d.Add(pu, null);
+				return true;
+			};
+
+			gh(m_pgRootGroup);
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+
+			Debug.Assert(d.Count == nTotal);
+			Debug.Assert(!HasDuplicateUuids());
 		}
 
 		/* public void CreateBackupFile(IStatusLogger sl)

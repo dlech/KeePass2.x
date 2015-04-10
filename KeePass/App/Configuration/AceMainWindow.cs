@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -94,18 +94,18 @@ namespace KeePass.App.Configuration
 			set { m_bMax = value; }
 		}
 
-		private float m_fSplitterHorz = float.Epsilon;
-		public float SplitterHorizontalFrac
+		private double m_dSplitterHorz = double.Epsilon;
+		public double SplitterHorizontalFrac
 		{
-			get { return m_fSplitterHorz; }
-			set { m_fSplitterHorz = value; }
+			get { return m_dSplitterHorz; }
+			set { m_dSplitterHorz = value; }
 		}
 
-		private float m_fSplitterVert = float.Epsilon;
-		public float SplitterVerticalFrac
+		private double m_dSplitterVert = double.Epsilon;
+		public double SplitterVerticalFrac
 		{
-			get { return m_fSplitterVert; }
-			set { m_fSplitterVert = value; }
+			get { return m_dSplitterVert; }
+			set { m_dSplitterVert = value; }
 		}
 
 		private AceMainWindowLayout m_layout = AceMainWindowLayout.Default;
@@ -495,6 +495,7 @@ namespace KeePass.App.Configuration
 		ExpiryTimeDateOnly,
 		Size,
 		HistoryCount,
+		AttachmentCount,
 
 		Count // Virtual identifier representing the number of types
 	}
@@ -582,8 +583,10 @@ namespace KeePass.App.Configuration
 				case AceColumnType.Tags: str = KPRes.Tags; break;
 				case AceColumnType.ExpiryTimeDateOnly: str = KPRes.ExpiryTimeDateOnly; break;
 				case AceColumnType.Size: str = KPRes.Size; break;
-				case AceColumnType.HistoryCount: str = KPRes.History + " (" +
-					KPRes.Count + ")"; break;
+				case AceColumnType.HistoryCount: str = KPRes.History +
+					" (" + KPRes.Count + ")"; break;
+				case AceColumnType.AttachmentCount: str = KPRes.Attachments +
+					" (" + KPRes.Count + ")"; break;
 				default: Debug.Assert(false); break;
 			};
 
@@ -605,7 +608,8 @@ namespace KeePass.App.Configuration
 
 		public static HorizontalAlignment GetTextAlign(AceColumnType t)
 		{
-			if((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount))
+			if((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount) ||
+				(t == AceColumnType.AttachmentCount))
 				return HorizontalAlignment.Right;
 
 			return HorizontalAlignment.Left;

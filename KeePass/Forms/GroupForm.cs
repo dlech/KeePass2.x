@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -91,8 +91,8 @@ namespace KeePass.Forms
 			UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
 			if(!m_pwCustomIconID.Equals(PwUuid.Zero))
-				UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
-					m_pwCustomIconID), true);
+				UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
+					m_pwDatabase, m_pwCustomIconID), true);
 			else
 				UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
 					(int)m_pwIconIndex], true);
@@ -186,8 +186,8 @@ namespace KeePass.Forms
 				if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) // Custom icon
 				{
 					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					UIUtil.SetButtonImage(m_btnIcon, m_pwDatabase.GetCustomIcon(
-						m_pwCustomIconID), true);
+					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
+						m_pwDatabase, m_pwCustomIconID), true);
 				}
 				else // Standard icon
 				{

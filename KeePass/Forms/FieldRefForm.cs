@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,20 +39,23 @@ namespace KeePass.Forms
 	{
 		private PwGroup m_pgEntrySource = null;
 		private ImageList m_ilIcons = null;
-		private string m_strResultRef = string.Empty;
+		private string m_strDefaultRef = string.Empty;
 
 		private List<KeyValuePair<string, string>> m_vColumns =
 			new List<KeyValuePair<string, string>>();
 
+		private string m_strResultRef = string.Empty;
 		public string ResultReference
 		{
 			get { return m_strResultRef; }
 		}
 
-		public void InitEx(PwGroup pgEntrySource, ImageList ilClientIcons)
+		public void InitEx(PwGroup pgEntrySource, ImageList ilClientIcons,
+			string strDefaultRef)
 		{
 			m_pgEntrySource = pgEntrySource;
 			m_ilIcons = ilClientIcons;
+			m_strDefaultRef = (strDefaultRef ?? string.Empty);
 		}
 
 		public FieldRefForm()
@@ -81,7 +84,18 @@ namespace KeePass.Forms
 			UIUtil.CreateEntryList(m_lvEntries, vEntries, m_vColumns, m_ilIcons);
 
 			m_radioIdUuid.Checked = true;
-			m_radioRefPassword.Checked = true;
+
+			if(m_strDefaultRef == PwDefs.TitleField)
+				m_radioRefTitle.Checked = true;
+			else if(m_strDefaultRef == PwDefs.UserNameField)
+				m_radioRefUserName.Checked = true;
+			// else if(m_strDefaultRef == PwDefs.PasswordField)
+			//	m_radioRefPassword.Checked = true;
+			else if(m_strDefaultRef == PwDefs.UrlField)
+				m_radioRefUrl.Checked = true;
+			else if(m_strDefaultRef == PwDefs.NotesField)
+				m_radioRefNotes.Checked = true;
+			else m_radioRefPassword.Checked = true;
 		}
 
 		private void CleanUpEx()

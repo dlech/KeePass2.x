@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -212,9 +212,7 @@ namespace KeePass.Forms
 				//	m_btnIcon.Image = m_ilIcons.Images[nInx];
 				// else m_btnIcon.Image = m_ilIcons.Images[(int)m_pwEntryIcon];
 
-				Image imgCustom = m_pwDatabase.GetCustomIcon(m_pwCustomIconID);
-				if(imgCustom != null)
-					imgCustom = DpiUtil.ScaleImage(imgCustom, false);
+				Image imgCustom = DpiUtil.GetIcon(m_pwDatabase, m_pwCustomIconID);
 				// m_btnIcon.Image = (imgCustom ?? m_ilIcons.Images[(int)m_pwEntryIcon]);
 				UIUtil.SetButtonImage(m_btnIcon, (imgCustom ?? m_ilIcons.Images[
 					(int)m_pwEntryIcon]), true);
@@ -1298,8 +1296,8 @@ namespace KeePass.Forms
 				if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) // Custom icon
 				{
 					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
-					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.ScaleImage(
-						m_pwDatabase.GetCustomIcon(m_pwCustomIconID), false), true);
+					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
+						m_pwDatabase, m_pwCustomIconID), true);
 				}
 				else // Standard icon
 				{
@@ -1709,13 +1707,14 @@ namespace KeePass.Forms
 			SelectFileAsUrl(null);
 		}
 
-		private string CreateFieldReference()
+		private string CreateFieldReference(string strDefaultRef)
 		{
 			FieldRefForm dlg = new FieldRefForm();
-			dlg.InitEx(m_pwDatabase.RootGroup, m_ilIcons);
+			dlg.InitEx(m_pwDatabase.RootGroup, m_ilIcons, strDefaultRef);
 
 			string strResult = string.Empty;
-			if(dlg.ShowDialog() == DialogResult.OK) strResult = dlg.ResultReference;
+			if(dlg.ShowDialog() == DialogResult.OK)
+				strResult = dlg.ResultReference;
 
 			UIUtil.DestroyForm(dlg);
 			return strResult;
@@ -1723,17 +1722,17 @@ namespace KeePass.Forms
 
 		private void OnFieldRefInTitle(object sender, EventArgs e)
 		{
-			m_tbTitle.Text += CreateFieldReference();
+			m_tbTitle.Text += CreateFieldReference(PwDefs.TitleField);
 		}
 
 		private void OnFieldRefInUserName(object sender, EventArgs e)
 		{
-			m_tbUserName.Text += CreateFieldReference();
+			m_tbUserName.Text += CreateFieldReference(PwDefs.UserNameField);
 		}
 
 		private void OnFieldRefInPassword(object sender, EventArgs e)
 		{
-			string strRef = CreateFieldReference();
+			string strRef = CreateFieldReference(PwDefs.PasswordField);
 			if(strRef.Length == 0) return;
 
 			string strPw = m_icgPassword.GetPassword();
@@ -1743,12 +1742,12 @@ namespace KeePass.Forms
 
 		private void OnFieldRefInUrl(object sender, EventArgs e)
 		{
-			m_tbUrl.Text += CreateFieldReference();
+			m_tbUrl.Text += CreateFieldReference(PwDefs.UrlField);
 		}
 
 		private void OnFieldRefInNotes(object sender, EventArgs e)
 		{
-			string strRef = CreateFieldReference();
+			string strRef = CreateFieldReference(PwDefs.NotesField);
 
 			if(m_rtNotes.Text.Length == 0) m_rtNotes.Text = strRef;
 			else m_rtNotes.Text += "\r\n" + strRef;
@@ -2024,8 +2023,8 @@ namespace KeePass.Forms
 			if(str.Length > 0) img = UIUtil.GetFileIcon(str, w, h);
 
 			if(img == null)
-				img = UIUtil.CreateScaledImage(m_ilIcons.Images[
-					(int)PwIcon.Console], w, h);
+				img = GfxUtil.ScaleImage(m_ilIcons.Images[
+					(int)PwIcon.Console], w, h, ScaleTransformFlags.UIIcon);
 
 			l.Add(new KeyValuePair<string, Image>(strOverride, img));
 		}

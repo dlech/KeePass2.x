@@ -380,7 +380,7 @@
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(80, 23);
 			this.m_btnOK.TabIndex = 1;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -391,7 +391,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(80, 23);
 			this.m_btnCancel.TabIndex = 2;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -515,7 +515,6 @@
 			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
 			this.m_pbQuality.Name = "m_pbQuality";
 			this.m_pbQuality.Size = new System.Drawing.Size(286, 16);
-			this.m_pbQuality.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.m_pbQuality.TabIndex = 13;
 			this.m_pbQuality.TabStop = false;
 			// 
@@ -550,7 +549,6 @@
 			this.m_btnBinOpen.Location = new System.Drawing.Point(374, 104);
 			this.m_btnBinOpen.Name = "m_btnBinOpen";
 			this.m_btnBinOpen.Size = new System.Drawing.Size(75, 23);
-			this.m_btnBinOpen.SplitDropDownMenu = null;
 			this.m_btnBinOpen.TabIndex = 3;
 			this.m_btnBinOpen.Text = "O&pen";
 			this.m_btnBinOpen.UseVisualStyleBackColor = true;
@@ -717,7 +715,6 @@
 			this.m_cmbOverrideUrl.Location = new System.Drawing.Point(9, 144);
 			this.m_cmbOverrideUrl.MaxDropDownItems = 16;
 			this.m_cmbOverrideUrl.Name = "m_cmbOverrideUrl";
-			this.m_cmbOverrideUrl.OrderedImageList = null;
 			this.m_cmbOverrideUrl.Size = new System.Drawing.Size(447, 21);
 			this.m_cmbOverrideUrl.TabIndex = 7;
 			// 

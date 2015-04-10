@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Archive;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -112,6 +113,7 @@ namespace KeePass.Forms
 		private Image m_imgFileSaveDisabled = null;
 		// private Image m_imgFileSaveAllEnabled = null;
 		// private Image m_imgFileSaveAllDisabled = null;
+		private List<Image> m_lStdClientImages = null;
 		private ImageList m_ilCurrentIcons = null;
 
 		private KeyValuePair<Color, Icon> m_kvpIcoMain =
@@ -181,16 +183,6 @@ namespace KeePass.Forms
 		public NotifyIcon MainNotifyIcon { get { return m_ntfTray.NotifyIcon; } }
 
 		public MruList FileMruList { get { return m_mruList; } }
-
-		/// <summary>
-		/// Get a reference to the plugin host. This should not be used by plugins.
-		/// Plugins should directly use the reference they get in the initialization
-		/// function.
-		/// </summary>
-		public IPluginHost PluginHost
-		{
-			get { return m_pluginDefaultHost; }
-		}
 
 		internal PluginManager PluginManager { get { return m_pluginManager; } }
 
@@ -332,6 +324,8 @@ namespace KeePass.Forms
 
 		private void SaveWindowPositionAndSize()
 		{
+			if(!m_bFormLoadCalled) { Debug.Assert(false); return; }
+
 			FormWindowState ws = this.WindowState;
 
 			if(ws == FormWindowState.Normal)
@@ -345,11 +339,9 @@ namespace KeePass.Forms
 			if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
 			{
 				Program.Config.MainWindow.SplitterHorizontalFrac =
-					(float)m_splitHorizontal.SplitterDistance /
-					(float)m_splitHorizontal.Height;
+					m_splitHorizontal.SplitterDistanceFrac;
 				Program.Config.MainWindow.SplitterVerticalFrac =
-					(float)m_splitVertical.SplitterDistance /
-					(float)m_splitVertical.Width;
+					m_splitVertical.SplitterDistanceFrac;
 			}
 
 			// Program.Config.MainWindow.Maximized = (ws == FormWindowState.Maximized);
@@ -372,6 +364,10 @@ namespace KeePass.Forms
 
 		private void UpdateUIState(bool bSetModified, Control cOptFocus)
 		{
+			// For instance when running "START /MIN KeePass.exe",
+			// we can get called before OnFormLoad has been called
+			if(!m_bFormLoadCalled) return;
+
 			NotifyUserActivity();
 			m_bUpdateUIStateOnce = false; // We do it now
 
@@ -1057,7 +1053,7 @@ namespace KeePass.Forms
 			m_tvGroups.BeginUpdate();
 			m_tvGroups.Nodes.Clear();
 
-			UpdateImageLists();
+			UpdateImageLists(false);
 
 			m_dtCachedNow = DateTime.Now;
 
@@ -1127,7 +1123,7 @@ namespace KeePass.Forms
 		{
 			NotifyUserActivity();
 
-			UpdateImageLists();
+			UpdateImageLists(false);
 
 			PwEntry peTop = GetTopEntry(), peFocused = GetSelectedEntry(false);
 			PwEntry[] vSelected = GetSelectedEntries();
@@ -1261,7 +1257,7 @@ namespace KeePass.Forms
 		/// </summary>
 		public void RefreshEntriesList()
 		{
-			UpdateImageLists(); // Important
+			UpdateImageLists(false); // Important
 
 			m_lvEntries.BeginUpdate();
 			m_dtCachedNow = DateTime.Now;
@@ -1652,6 +1648,7 @@ namespace KeePass.Forms
 							true, this, pe, null);
 					break;
 				case AceColumnType.Attachment:
+				case AceColumnType.AttachmentCount:
 					PerformDefaultAttachmentAction();
 					break;
 				case AceColumnType.Uuid:
@@ -2155,6 +2152,9 @@ namespace KeePass.Forms
 					MessageService.NewParagraph + KPRes.MasterKeyChangeQ))
 					UpdateUIState(ChangeMasterKey(pwOpenedDb));
 			}
+
+			if(FixDuplicateUuids(pwOpenedDb, pwOpenedDb.IOConnectionInfo))
+				UpdateUIState(false); // Already marked as modified
 
 			if(this.FileOpened != null)
 			{
@@ -2877,6 +2877,9 @@ namespace KeePass.Forms
 			m_ctxEntryDelete.ShortcutKeyDisplayString = UIUtil.GetKeysName(Keys.Delete); // "Del"
 			m_ctxEntrySelectAll.ShortcutKeyDisplayString = strCtrl + "A";
 
+			m_ctxEntryClipCopy.ShortcutKeyDisplayString = strCtrl + strShift + "C";
+			m_ctxEntryClipPaste.ShortcutKeyDisplayString = strCtrl + strShift + "V";
+
 			m_ctxEntryMoveToTop.ShortcutKeyDisplayString = strMoveMod +
 				UIUtil.GetKeysName(bMonoMove ? Keys.F5 : Keys.Home);
 			m_ctxEntryMoveOneUp.ShortcutKeyDisplayString = strMoveMod +
@@ -2969,7 +2972,7 @@ namespace KeePass.Forms
 				bool bSuccess = true;
 				try
 				{
-					PreSavingEx(pd);
+					PreSavingEx(pd, ioc);
 					pd.SaveAs(ioc, !bCopy, swLogger);
 					PostSavingEx(!bCopy, pd, ioc, swLogger);
 				}
@@ -2999,27 +3002,29 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void PreSavingEx(PwDatabase pwDatabase)
+		private void PreSavingEx(PwDatabase pd, IOConnectionInfo ioc)
 		{
 			PerformSelfTest();
 
-			pwDatabase.UseFileTransactions = Program.Config.Application.UseTransactedFileWrites;
-			pwDatabase.UseFileLocks = Program.Config.Application.UseFileLocks;
+			FixDuplicateUuids(pd, ioc);
+
+			pd.UseFileTransactions = Program.Config.Application.UseTransactedFileWrites;
+			pd.UseFileLocks = Program.Config.Application.UseFileLocks;
 
 			// AceColumn col = Program.Config.MainWindow.FindColumn(AceColumnType.Title);
 			// if((col != null) && !col.HideWithAsterisks)
-			//	pwDatabase.MemoryProtection.ProtectTitle = false;
+			//	pd.MemoryProtection.ProtectTitle = false;
 			// col = Program.Config.MainWindow.FindColumn(AceColumnType.UserName);
 			// if((col != null) && !col.HideWithAsterisks)
-			//	pwDatabase.MemoryProtection.ProtectUserName = false;
+			//	pd.MemoryProtection.ProtectUserName = false;
 			// col = Program.Config.MainWindow.FindColumn(AceColumnType.Url);
 			// if((col != null) && !col.HideWithAsterisks)
-			//	pwDatabase.MemoryProtection.ProtectUrl = false;
+			//	pd.MemoryProtection.ProtectUrl = false;
 			// col = Program.Config.MainWindow.FindColumn(AceColumnType.Notes);
 			// if((col != null) && !col.HideWithAsterisks)
-			//	pwDatabase.MemoryProtection.ProtectNotes = false;
+			//	pd.MemoryProtection.ProtectNotes = false;
 
-			if(pwDatabase == m_docMgr.ActiveDatabase) SaveWindowState();
+			if(pd == m_docMgr.ActiveDatabase) SaveWindowState();
 		}
 
 		private void PostSavingEx(bool bPrimary, PwDatabase pwDatabase,
@@ -3145,26 +3150,34 @@ namespace KeePass.Forms
 			return false;
 		}
 
-		private void UpdateImageLists()
+		private void UpdateImageLists(bool bForce)
 		{
-			if(!m_docMgr.ActiveDatabase.UINeedsIconUpdate) return;
-			m_docMgr.ActiveDatabase.UINeedsIconUpdate = false;
+			if(!bForce)
+			{
+				if(!m_docMgr.ActiveDatabase.UINeedsIconUpdate) return;
+				m_docMgr.ActiveDatabase.UINeedsIconUpdate = false;
+			}
 
 			int cx = DpiUtil.ScaleIntX(16);
 			int cy = DpiUtil.ScaleIntY(16);
 
-			ImageList imgList = new ImageList();
-			imgList.ImageSize = new Size(cx, cy);
-			imgList.ColorDepth = ColorDepth.Depth32Bit;
+			// // foreach(Image img in m_ilClientIcons.Images) imgList.Images.Add(img);
+			// List<Image> lStdImages = new List<Image>();
+			// foreach(Image imgStd in m_ilClientIcons.Images)
+			// {
+			//	// Plugins may supply DPI-scaled images by changing m_ilClientIcons
+			//	bool bStd = (imgStd.Height == 16);
+			//	lStdImages.Add(bStd ? DpiUtil.ScaleImage(imgStd, false) : imgStd);
+			// }
 
-			// foreach(Image img in m_ilClientIcons.Images) imgList.Images.Add(img);
-			List<Image> lStdImages = new List<Image>();
-			foreach(Image imgStd in m_ilClientIcons.Images)
+			if(m_lStdClientImages == null)
 			{
-				// Plugins may supply DPI-scaled images by changing m_ilClientIcons
-				bool bStd = (imgStd.Height == 16);
-				Debug.Assert(bStd || (imgStd.Size == imgList.ImageSize));
-				lStdImages.Add(bStd ? DpiUtil.ScaleImage(imgStd, false) : imgStd);
+				ImageArchive arStd = new ImageArchive();
+				arStd.Load(DpiUtil.ScalingRequired ?
+					Properties.Resources.Images_Client_HighRes :
+					Properties.Resources.Images_Client_16);
+
+				m_lStdClientImages = arStd.GetImages(cx, cy, true);
 			}
 
 			// ImageList imgListCustom = UIUtil.BuildImageList(
@@ -3174,8 +3187,12 @@ namespace KeePass.Forms
 			List<Image> lCustom = UIUtil.BuildImageListEx(
 				m_docMgr.ActiveDatabase.CustomIcons, cx, cy);
 
-			List<Image> lAll = new List<Image>(lStdImages);
+			List<Image> lAll = new List<Image>(m_lStdClientImages);
 			lAll.AddRange(lCustom);
+
+			ImageList imgList = new ImageList();
+			imgList.ImageSize = new Size(cx, cy);
+			imgList.ColorDepth = ColorDepth.Depth32Bit;
 
 			imgList.Images.AddRange(lAll.ToArray());
 			Debug.Assert(imgList.Images.Count == ((int)PwIcon.Count + lCustom.Count));
@@ -3583,7 +3600,7 @@ namespace KeePass.Forms
 			if(dsSelect != null) m_docMgr.ActiveDocument = dsSelect;
 			SelectUITab();
 
-			UpdateImageLists();
+			UpdateImageLists(false);
 
 			if(bUpdateGroupList) UpdateGroupList(pgSelect);
 
@@ -3879,7 +3896,7 @@ namespace KeePass.Forms
 			dlg.MainInstruction = KPRes.OverwriteExistingFileQuestion;
 			dlg.AddButton((int)DialogResult.Yes, KPRes.Synchronize, KPRes.FileChangedSync);
 			dlg.AddButton((int)DialogResult.No, KPRes.Overwrite, KPRes.FileChangedOverwrite);
-			dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, KPRes.FileSaveQOpCancel);
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, KPRes.FileSaveQOpCancel);
 
 			DialogResult dr;
 			if(dlg.ShowDialog()) dr = (DialogResult)dlg.Result;
@@ -3913,7 +3930,9 @@ namespace KeePass.Forms
 
 			bool bHandled = false;
 
-			if(e.Control)
+			// Enforce that Alt is up (e.g. on Polish systems AltGr+E,
+			// i.e. Ctrl+Alt+E, is used to enter a character)
+			if(e.Control && !e.Alt)
 			{
 				if(e.KeyCode == Keys.Tab)
 				{
@@ -3937,7 +3956,7 @@ namespace KeePass.Forms
 					bHandled = true;
 				}
 			}
-			else if(e.KeyCode == Keys.F3)
+			else if((e.KeyCode == Keys.F3) && !e.Control && !e.Alt)
 			{
 				if(bDown) OnPwListFind(null, e);
 				bHandled = true;
@@ -4094,7 +4113,7 @@ namespace KeePass.Forms
 				dlg.SetIcon(VtdCustomIcon.Question);
 				dlg.WindowTitle = PwDefs.ShortProductName;
 				dlg.AddButton((int)DialogResult.OK, KPRes.DeleteCmd, null);
-				dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
 
 				if(dlg.ShowDialog())
 				{
@@ -4213,7 +4232,7 @@ namespace KeePass.Forms
 				dlg.SetIcon(VtdCustomIcon.Question);
 				dlg.WindowTitle = PwDefs.ShortProductName;
 				dlg.AddButton((int)DialogResult.OK, KPRes.DeleteCmd, null);
-				dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
 
 				if(dlg.ShowDialog())
 				{
@@ -4296,7 +4315,7 @@ namespace KeePass.Forms
 			dlg.SetIcon(VtdCustomIcon.Question);
 			dlg.WindowTitle = PwDefs.ShortProductName;
 			dlg.AddButton((int)DialogResult.OK, KPRes.DeleteCmd, null);
-			dlg.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, null);
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
 
 			if(dlg.ShowDialog())
 			{
@@ -4632,6 +4651,9 @@ namespace KeePass.Forms
 					break;
 				case AceColumnType.HistoryCount:
 					str = pe.History.UCount.ToString();
+					break;
+				case AceColumnType.AttachmentCount:
+					str = pe.Binaries.UCount.ToString();
 					break;
 				default: Debug.Assert(false); str = string.Empty; break;
 			}
@@ -5213,6 +5235,34 @@ namespace KeePass.Forms
 
 			m_pgActiveAtDragStart = GetSelectedGroup();
 			MoveOrCopySelectedEntries(pgTo, DragDropEffects.Move);
+		}
+
+		private bool FixDuplicateUuids(PwDatabase pd, IOConnectionInfo ioc)
+		{
+			if(pd == null) { Debug.Assert(false); return false; }
+
+			if(!pd.HasDuplicateUuids()) return false;
+
+			string str = string.Empty;
+			if(ioc != null)
+			{
+				string strFile = ioc.GetDisplayName();
+				if(!string.IsNullOrEmpty(strFile))
+					str += strFile + MessageService.NewParagraph;
+			}
+
+			str += KPRes.UuidDupInDb + MessageService.NewParagraph +
+				KPRes.CorruptionByExt + MessageService.NewParagraph +
+				KPRes.UuidFix;
+
+			if(VistaTaskDialog.ShowMessageBoxEx(str, null,
+				PwDefs.ShortProductName, VtdIcon.Warning, null,
+				KPRes.RepairCmd, (int)DialogResult.Cancel, null, 0) < 0)
+				MessageService.ShowWarning(str);
+
+			pd.FixDuplicateUuids();
+			pd.Modified = true;
+			return true;
 		}
 	}
 }

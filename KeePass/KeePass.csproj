@@ -764,6 +764,8 @@
     <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>
+    <Compile Include="Util\Archive\ImageArchive.cs" />
+    <Compile Include="Util\Archive\XspArchive.cs" />
     <Compile Include="Util\AutoTypeCtx.cs" />
     <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\BinaryDataUtil.cs" />
@@ -1166,6 +1168,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola_Derived\B16x16_Folder_New_Ex.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_TextAlignRight.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_TextAlignLeft.png" />
+    <None Include="Resources\Nuvola_Derived\B16x16_TextAlignCenter.png" />
+    <None Include="Resources\Data\ImageArchive.bin" />
+    <None Include="Resources\Data\Images.bin" />
+    <None Include="Resources\Data\Images_App_HighRes.bin" />
+    <None Include="Resources\Data\Images_Client_16.bin" />
+    <None Include="Resources\Data\Images_Client_HighRes.bin" />
     <None Include="Resources\Nuvola\B16x16_MessageBox_Warning.png" />
     <None Include="Resources\Nuvola\B16x16_MessageBox_Info.png" />
     <None Include="Resources\Nuvola\B16x16_MessageBox_Critical.png" />

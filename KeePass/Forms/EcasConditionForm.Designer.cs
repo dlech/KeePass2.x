@@ -47,7 +47,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 6;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
@@ -58,7 +58,7 @@
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 5;
-			this.m_btnOK.Text = "&OK";
+			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
@@ -88,7 +88,7 @@
 			this.m_cbNegate.Name = "m_cbNegate";
 			this.m_cbNegate.Size = new System.Drawing.Size(202, 17);
 			this.m_cbNegate.TabIndex = 7;
-			this.m_cbNegate.Text = "Not (negate result of condition below)";
+			this.m_cbNegate.Text = "&Not (negate result of condition below)";
 			this.m_cbNegate.UseVisualStyleBackColor = true;
 			// 
 			// m_dgvParams

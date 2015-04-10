@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,16 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace KeePass.UI
 {
 	public sealed class PromptedTextBox : TextBox
 	{
-		private string m_strPrompt = string.Empty;
-
 		private const int WM_PAINT = 0x000F;
 
+		private string m_strPrompt = string.Empty;
+		[DefaultValue("")]
 		public string PromptText
 		{
 			get { return m_strPrompt; }

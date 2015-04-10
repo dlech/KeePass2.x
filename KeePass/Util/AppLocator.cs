@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -164,15 +164,15 @@ namespace KeePass.Util
 
 			try
 			{
-				string strPath = FindFirefoxPr(false);
+				string strPath = FindFirefoxWin(false);
 				if(!string.IsNullOrEmpty(strPath)) return strPath;
 			}
 			catch(Exception) { }
 
-			return FindFirefoxPr(true);
+			return FindFirefoxWin(true);
 		}
 
-		private static string FindFirefoxPr(bool bWowNode)
+		private static string FindFirefoxWin(bool bWowNode)
 		{
 			RegistryKey kFirefox = Registry.LocalMachine.OpenSubKey(bWowNode ?
 				"SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox" :
@@ -182,8 +182,23 @@ namespace KeePass.Util
 			string strCurVer = (kFirefox.GetValue("CurrentVersion") as string);
 			if(string.IsNullOrEmpty(strCurVer))
 			{
-				kFirefox.Close();
-				return null;
+				// The ESR version stores the 'CurrentVersion' value under
+				// 'Mozilla Firefox ESR', but the version-specific info
+				// under 'Mozilla Firefox\\<Version>' (without 'ESR')
+				RegistryKey kESR = Registry.LocalMachine.OpenSubKey(bWowNode ?
+					"SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox ESR" :
+					"SOFTWARE\\Mozilla\\Mozilla Firefox ESR", false);
+				if(kESR != null)
+				{
+					strCurVer = (kESR.GetValue("CurrentVersion") as string);
+					kESR.Close();
+				}
+
+				if(string.IsNullOrEmpty(strCurVer))
+				{
+					kFirefox.Close();
+					return null;
+				}
 			}
 
 			RegistryKey kMain = kFirefox.OpenSubKey(strCurVer + "\\Main", false);

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,10 +41,25 @@ namespace KeePass.UI
 
 		private ContextMenuStrip m_ctx = null;
 		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ContextMenuStrip SplitDropDownMenu
 		{
 			get { return m_ctx; }
 			set { m_ctx = value; }
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams cp = base.CreateParams;
+
+				if(m_bSupported) cp.Style |= BS_SPLITBUTTON;
+
+				return cp;
+			}
 		}
 
 		public SplitButtonEx() : base()
@@ -55,18 +70,6 @@ namespace KeePass.UI
 			if(m_bSupported)
 			{
 				this.FlatStyle = FlatStyle.System;
-			}
-		}
-
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				CreateParams cp = base.CreateParams;
-
-				if(m_bSupported) cp.Style |= BS_SPLITBUTTON;
-
-				return cp;
 			}
 		}
 

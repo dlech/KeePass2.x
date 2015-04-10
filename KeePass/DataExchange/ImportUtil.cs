@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -228,15 +228,26 @@ namespace KeePass.DataExchange
 							//	KPRes.SavingDatabase + " " + ioc.GetDisplayName() +
 							//	")", LogStatusType.Info);
 
-							if(ioc.Path != pwDatabase.IOConnectionInfo.Path)
+							string strSource = pwDatabase.IOConnectionInfo.Path;
+							if(ioc.Path != strSource)
 							{
+								bool bSaveAs = true;
+
 								if(pwDatabase.IOConnectionInfo.IsLocalFile() &&
 									ioc.IsLocalFile())
 								{
-									File.Copy(pwDatabase.IOConnectionInfo.Path,
-										ioc.Path, true);
+									// Do not try to copy an encrypted file;
+									// https://sourceforge.net/p/keepass/discussion/329220/thread/9c9eb989/
+									// https://msdn.microsoft.com/en-us/library/windows/desktop/aa363851.aspx
+									if((long)(File.GetAttributes(strSource) &
+										FileAttributes.Encrypted) == 0)
+									{
+										File.Copy(strSource, ioc.Path, true);
+										bSaveAs = false;
+									}
 								}
-								else pwDatabase.SaveAs(ioc, false, null);
+
+								if(bSaveAs) pwDatabase.SaveAs(ioc, false, null);
 							}
 							// else { } // No assert (sync on save)
 

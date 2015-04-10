@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+
+using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -183,7 +186,8 @@ namespace KeePass.UI
 
 				if((img != null) && (r.Size != img.Size))
 				{
-					img = UIUtil.CreateScaledImage(img, r.Width, r.Height);
+					img = GfxUtil.ScaleImage(img, r.Width, r.Height,
+						ScaleTransformFlags.UIIcon);
 					imgToDispose = img;
 				}
 
@@ -232,8 +236,8 @@ namespace KeePass.UI
 					//	g.DrawImage(img, r);
 					// else
 					// {
-					//	Image imgScaled = UIUtil.CreateScaledImage(img,
-					//		r.Width, r.Height);
+					//	Image imgScaled = GfxUtil.ScaleImage(img,
+					//		r.Width, r.Height, ScaleTransformFlags.UIIcon);
 					//	g.DrawImage(imgScaled, r);
 					//	imgScaled.Dispose();
 					// }
@@ -248,8 +252,8 @@ namespace KeePass.UI
 					// This should only happen on high DPI
 					Debug.Assert(DpiUtil.ScalingRequired);
 
-					Image imgScaled = UIUtil.CreateScaledImage(img,
-						r.Width, r.Height);
+					Image imgScaled = GfxUtil.ScaleImage(img,
+						r.Width, r.Height, ScaleTransformFlags.UIIcon);
 					// Image imgScaled = new Bitmap(r.Width, r.Height,
 					//	PixelFormat.Format32bppArgb);
 					// using(Graphics gScaled = Graphics.FromImage(imgScaled))

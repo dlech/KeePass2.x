@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Media;
 using System.Diagnostics;
 
 using KeePass.Native;
@@ -41,7 +42,8 @@ namespace KeePass.Util
 		Delay,
 		SetDefaultDelay,
 		ClipboardCopy,
-		AppActivate
+		AppActivate,
+		Beep
 	}
 
 	internal sealed class SiEvent
@@ -86,6 +88,7 @@ namespace KeePass.Util
 					break;
 				case SiEventType.ClipboardCopy:
 				case SiEventType.AppActivate:
+				case SiEventType.Beep:
 					strSub = this.Text;
 					break;
 				default: break;
@@ -365,6 +368,15 @@ namespace KeePass.Util
 				l.Add(si);
 				return l;
 			}
+			if(strName.Equals("BEEP", StrUtil.CaseIgnoreCmp))
+			{
+				SiEvent si = new SiEvent();
+				si.Type = SiEventType.Beep;
+				si.Text = strParams;
+
+				l.Add(si);
+				return l;
+			}
 
 			SiCode siCode = SiCodes.Get(strName);
 
@@ -546,6 +558,10 @@ namespace KeePass.Util
 						AppActivate(si);
 						break;
 
+					case SiEventType.Beep:
+						Beep(si);
+						break;
+
 					default:
 						Debug.Assert(false);
 						break;
@@ -570,6 +586,32 @@ namespace KeePass.Util
 				IntPtr h = NativeMethods.FindWindow(si.Text);
 				if(h != IntPtr.Zero)
 					NativeMethods.EnsureForegroundWindow(h);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void Beep(SiEvent si)
+		{
+			try
+			{
+				string str = si.Text;
+				if(string.IsNullOrEmpty(str))
+				{
+					SystemSounds.Beep.Play();
+					return;
+				}
+
+				string[] v = str.Split(new char[] { ' ', '\t' },
+					StringSplitOptions.RemoveEmptyEntries);
+
+				int f = 800, d = 200; // Defaults of Console.Beep()
+				if(v.Length >= 1) int.TryParse(v[0], out f);
+				if(v.Length >= 2) int.TryParse(v[1], out d);
+
+				f = Math.Min(Math.Max(f, 37), 32767);
+				if(d <= 0) return;
+
+				Console.Beep(f, d); // Throws on a server
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

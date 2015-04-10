@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ namespace KeePass.Forms
 				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3",
 				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
-				"APPACTIVATE " + KPRes.Title, VkcBreak,
+				"APPACTIVATE " + KPRes.Title, "BEEP 800 200", VkcBreak,
 				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 				"ENV_DIRSEP", "ENV_PROGRAMFILES_X86", VkcBreak,
 				// "INTERNETEXPLORER", "FIREFOX", "OPERA", "GOOGLECHROME",

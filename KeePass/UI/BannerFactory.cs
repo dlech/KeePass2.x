@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ namespace KeePass.UI
 {
 	public enum BannerStyle
 	{
-		// [Browsable(false)]
 		Default = 0,
 
 		WinXPLogin = 1,
@@ -148,6 +147,8 @@ namespace KeePass.UI
 				{
 					fAngle = fVert;
 
+					g.Clear(Color.Black); // Area from 3/8 to 1/2 height
+
 					clrStart = Color.LightGray;
 					clrEnd = Color.Black;
 
@@ -158,14 +159,25 @@ namespace KeePass.UI
 						g.FillRectangle(brCarbonT, rect);
 					}
 
-					clrStart = Color.FromArgb(0, 0, 32);
-					clrEnd = Color.FromArgb(192, 192, 255);
+					// clrStart = Color.FromArgb(0, 0, 32);
+					clrStart = Color.FromArgb(0, 0, 28);
+					// clrEnd = Color.FromArgb(192, 192, 255);
+					clrEnd = Color.FromArgb(155, 155, 214);
 
-					rect = new Rectangle(0, nHeight / 2, nWidth, (nHeight * 5) / 8);
+					// rect = new Rectangle(0, nHeight / 2, nWidth, (nHeight * 5) / 8);
+					int hMid = nHeight / 2;
+					rect = new Rectangle(0, hMid - 1, nWidth, nHeight - hMid);
 					using(LinearGradientBrush brCarbonB = new LinearGradientBrush(
 						rect, clrStart, clrEnd, fAngle, true))
 					{
 						g.FillRectangle(brCarbonB, rect);
+					}
+
+					// Workaround gradient drawing bug (e.g. occuring on
+					// Windows 8.1 with 150% DPI)
+					using(Pen pen = new Pen(Color.Black))
+					{
+						g.DrawLine(pen, 0, hMid - 1, nWidth - 1, hMid - 1);
 					}
 				}
 				else

@@ -93,10 +93,10 @@
 			// 
 			this.m_tabPreview.Controls.Add(this.m_wbMain);
 			this.m_tabPreview.Controls.Add(this.m_lblPreviewHint);
-			this.m_tabPreview.Location = new System.Drawing.Point(4, 23);
+			this.m_tabPreview.Location = new System.Drawing.Point(4, 22);
 			this.m_tabPreview.Name = "m_tabPreview";
 			this.m_tabPreview.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabPreview.Size = new System.Drawing.Size(593, 436);
+			this.m_tabPreview.Size = new System.Drawing.Size(593, 437);
 			this.m_tabPreview.TabIndex = 0;
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
@@ -110,7 +110,7 @@
 			this.m_wbMain.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_wbMain.Name = "m_wbMain";
 			this.m_wbMain.ScriptErrorsSuppressed = true;
-			this.m_wbMain.Size = new System.Drawing.Size(587, 411);
+			this.m_wbMain.Size = new System.Drawing.Size(587, 412);
 			this.m_wbMain.TabIndex = 1;
 			this.m_wbMain.WebBrowserShortcutsEnabled = false;
 			// 
@@ -131,9 +131,9 @@
 			this.m_tabDataLayout.Controls.Add(this.m_grpFont);
 			this.m_tabDataLayout.Controls.Add(this.m_grpFields);
 			this.m_tabDataLayout.Controls.Add(this.m_grpLayout);
-			this.m_tabDataLayout.Location = new System.Drawing.Point(4, 23);
+			this.m_tabDataLayout.Location = new System.Drawing.Point(4, 22);
 			this.m_tabDataLayout.Name = "m_tabDataLayout";
-			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 436);
+			this.m_tabDataLayout.Size = new System.Drawing.Size(593, 437);
 			this.m_tabDataLayout.TabIndex = 2;
 			this.m_tabDataLayout.Text = "Layout";
 			this.m_tabDataLayout.UseVisualStyleBackColor = true;
@@ -504,7 +504,7 @@
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
-			this.m_btnCancel.Text = "&Cancel";
+			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 

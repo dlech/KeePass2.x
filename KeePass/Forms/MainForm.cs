@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -145,7 +145,9 @@ namespace KeePass.Forms
 			m_imgFileSaveDisabled = Properties.Resources.B16x16_FileSave_Disabled;
 			// m_imgFileSaveAllEnabled = Properties.Resources.B16x16_File_SaveAll;
 			// m_imgFileSaveAllDisabled = Properties.Resources.B16x16_File_SaveAll_Disabled;
-			m_ilCurrentIcons = m_ilClientIcons;
+
+			// m_ilCurrentIcons = m_ilClientIcons;
+			UpdateImageLists(true);
 
 			m_ctxEntryOpenUrl.Text = KPRes.OpenCmd;
 
@@ -348,21 +350,23 @@ namespace KeePass.Forms
 
 			try
 			{
-				float fSplitPos = mw.SplitterHorizontalFrac;
-				if(fSplitPos == float.Epsilon) fSplitPos = 0.8333f;
-				// m_splitHorizontal.SplitterDistance = (int)Math.Round(fSplitPos *
+				double dSplitPos = mw.SplitterHorizontalFrac;
+				if(dSplitPos == double.Epsilon) dSplitPos = 0.8333;
+				// m_splitHorizontal.SplitterDistance = (int)Math.Round(dSplitPos *
 				//	(double)m_splitHorizontal.Height);
-				int iSplitDist = (int)Math.Round(fSplitPos *
-					(double)m_splitHorizontal.Height);
 				if(MonoWorkarounds.IsRequired(686017))
+				{
+					int iSplitDist = (int)Math.Round(dSplitPos *
+						(double)m_splitHorizontal.Height);
 					m_splitHorizontal.SplitterDistance = Math.Max(35, iSplitDist);
-				else
-					m_splitHorizontal.SplitterDistance = iSplitDist;
+				}
+				else m_splitHorizontal.SplitterDistanceFrac = dSplitPos;
 
-				fSplitPos = mw.SplitterVerticalFrac;
-				if(fSplitPos == float.Epsilon) fSplitPos = 0.25f;
-				m_splitVertical.SplitterDistance = (int)Math.Round(fSplitPos *
-					(double)m_splitVertical.Width);
+				dSplitPos = mw.SplitterVerticalFrac;
+				if(dSplitPos == double.Epsilon) dSplitPos = 0.25;
+				// m_splitVertical.SplitterDistance = (int)Math.Round(dSplitPos *
+				//	(double)m_splitVertical.Width);
+				m_splitVertical.SplitterDistanceFrac = dSplitPos;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -649,7 +653,7 @@ namespace KeePass.Forms
 			bool bSuccess = true;
 			try
 			{
-				PreSavingEx(pd);
+				PreSavingEx(pd, pd.IOConnectionInfo);
 				pd.Save(swLogger);
 				PostSavingEx(true, pd, pd.IOConnectionInfo, swLogger);
 			}
@@ -1487,10 +1491,10 @@ namespace KeePass.Forms
 
 		private void OnFormResize(object sender, EventArgs e)
 		{
-			// With high DPI, OnFormResize might be called before OnFormLoad;
-			// we must ignore this (otherwise e.g. the maximized state gets
-			// corrupted)
-			if(!m_bFormLoadCalled) { Debug.Assert(DpiUtil.ScalingRequired); return; }
+			// OnFormResize may be called before OnFormLoad (e.g. on high
+			// DPI or when running "START /MIN KeePass.exe"); we must ignore
+			// this (otherwise e.g. the maximized state gets corrupted)
+			if(!m_bFormLoadCalled) return;
 
 			FormWindowState ws = this.WindowState;
 			bool bAuto = !UIIsWindowStateAutoBlocked();
@@ -1724,7 +1728,11 @@ namespace KeePass.Forms
 				switch(e.KeyCode)
 				{
 					case Keys.A: OnEntrySelectAll(sender, e); break;
-					case Keys.C: OnEntryCopyPassword(sender, e); break;
+					case Keys.C:
+					case Keys.Insert:
+						if(e.Shift) OnEntryClipCopy(sender, e);
+						else OnEntryCopyPassword(sender, e);
+						break;
 					case Keys.B: OnEntryCopyUserName(sender, e); break;
 					// case Keys.E: OnEntryEdit(sender, e); break;
 					case Keys.U:
@@ -1732,7 +1740,10 @@ namespace KeePass.Forms
 						if(e.Shift) OnEntryCopyURL(sender, e);
 						else OnEntryOpenUrl(sender, e);
 						break;
-					case Keys.V: OnEntryPerformAutoType(sender, e); break;
+					case Keys.V:
+						if(e.Shift) OnEntryClipPaste(sender, e);
+						else OnEntryPerformAutoType(sender, e);
+						break;
 					default: bUnhandled = true; break;
 				}
 			}
@@ -1742,7 +1753,10 @@ namespace KeePass.Forms
 			else if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
 				OnEntryEdit(sender, e);
 			else if(e.KeyCode == Keys.Insert)
-				OnEntryAdd(sender, e);
+			{
+				if(e.Shift) OnEntryClipPaste(sender, e);
+				else OnEntryAdd(sender, e);
+			}
 			else if(e.KeyCode == Keys.F2)
 				OnEntryEdit(sender, e);
 			else bUnhandled = true;
@@ -1763,6 +1777,7 @@ namespace KeePass.Forms
 				{
 					case Keys.A: break;
 					case Keys.C: break;
+					case Keys.Insert: break;
 					case Keys.B: break;
 					// case Keys.E: break;
 					case Keys.U: break;

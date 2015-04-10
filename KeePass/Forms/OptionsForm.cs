@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -170,6 +170,10 @@ namespace KeePass.Forms
 				Program.Config.Integration.HotKeyGlobalAutoType = (ulong)Keys.None;
 				Program.Config.Integration.HotKeySelectedAutoType = (ulong)Keys.None;
 				Program.Config.Integration.HotKeyShowWindow = (ulong)Keys.None;
+
+				m_hkGlobalAutoType.TextNone = KPRes.External;
+				m_hkSelectedAutoType.TextNone = KPRes.External;
+				m_hkShowWindow.TextNone = KPRes.External;
 
 				m_hkGlobalAutoType.Enabled = m_hkSelectedAutoType.Enabled =
 					m_hkShowWindow.Enabled = false;

@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2015 Dominik Reichl" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -375,7 +375,13 @@ If the combobox contains values 0-9A-Z (i.e. first all ten digits, immediately f
 by all characters from A to Z), specify <code>Conv=D, Conv-Fmt=0A</code>.
 Similarly, if it contains values A-Z0-9, specify <code>Conv=D, Conv-Fmt=A0</code>.
 If digits start with 1 instead of 0 (i.e. the 0 appears after the 9), use
-<code>1A</code> and <code>A1</code> instead of <code>0A</code> and <code>A0</code>.</li>
+<code>1A</code> and <code>A1</code> instead of <code>0A</code> and <code>A0</code>.
+If the combobox contains values 0-9A-Za-z (i.e. case-sensitive characters),
+specify <code>0Aa</code>. All combinations of '<code>0</code>', '<code>A</code>',
+'<code>a</code>' and '<code>?</code>' are supported.
+If '<code>A</code>' and '<code>a</code>' are not specified both,
+characters are treated as case-insensitive.
+'<code>?</code>' skips a combobox item.</li>
 </ul></li>
 </ul>
 If you want to show the character picking dialog multiple times within one sequence,

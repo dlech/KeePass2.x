@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -193,6 +193,13 @@ namespace KeePass.UI
 		public ListViewItem CreateItem(object pContainer, string strPropertyName,
 			ListViewGroup lvgContainer, string strDisplayString)
 		{
+			return CreateItem(pContainer, strPropertyName, lvgContainer,
+				strDisplayString, null);
+		}
+
+		public ListViewItem CreateItem(object pContainer, string strPropertyName,
+			ListViewGroup lvgContainer, string strDisplayString, bool? obReadOnly)
+		{
 			if(pContainer == null) throw new ArgumentNullException("pContainer");
 			if(strPropertyName == null) throw new ArgumentNullException("strPropertyName");
 			if(strPropertyName.Length == 0) throw new ArgumentException("strPropertyName");
@@ -202,7 +209,9 @@ namespace KeePass.UI
 
 			ListViewItem lvi = new ListViewItem(strDisplayString);
 			ClviInfo clvi = new ClviInfo(pContainer, strPropertyName, lvi);
-			DetermineReadOnlyState(clvi);
+
+			if(obReadOnly.HasValue) clvi.ReadOnly = obReadOnly.Value;
+			else DetermineReadOnlyState(clvi);
 
 			if(lvgContainer != null)
 			{

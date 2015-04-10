@@ -1,3 +1,63 @@
+2015-04-10: 2.29
+- Added high resolution icons
+- Added support for high resolution custom icons
+- Added option in the proxy configuration dialog to use the
+  user's default credentials (provided by the system)
+- {FIREFOX} placeholder: if no regular Firefox is installed,
+  KeePass now looks for Firefox ESR
+- {PICKCHARS} placeholder: the Conv-Fmt option now supports all
+  combinations of '0', 'A', 'a' and '?'; '?' skips a combobox
+  item
+- Added {BEEP X Y} auto-type command (where X is the frequency
+  in hertz and Y the duration in milliseconds)
+- Added optional 'Attachments (Count)' entry list column
+- Added Ctrl+Insert shortcut as alternative for Ctrl+C in the
+  entry list of the main window
+- Added shortcut keys for 'Copy Entries' (Ctrl+Shift+C) and
+  'Paste Entries' (Ctrl+Shift+V)
+- Added some access keys in various dialogs
+- In the field reference dialog, the field in which the
+  reference will be inserted is now selected as source field by
+  default
+- Added UUID uniqueness check
+- Added support for importing Passphrase Keeper 2.60 HTML files
+  (in addition to the already supported 2.50 and 2.70 formats)
+- The path of the local configuration file can now be changed
+  using the '-cfg-local:' command line parameter
+- Plugins can now access the KeePass resources (images, icons,
+  etc.) through the IPluginHost interface
+- Added a few workarounds for external window manipulations
+  before the main window has been fully constructed
+- Added workaround for .NET gradient drawing bug; 'Blue Carbon'
+  dialog banners are now drawn correctly on high DPI
+- Added workaround for Mono file version information block
+  generation bug
+- KPScript: added 'EstimateQuality' command (to estimate the
+  quality of a specified password)
+- All KeePass program binaries are now digitally signed (thanks
+  to Certum/Unizeto)
+
+- In the master key creation dialog, the 'Create' and 'Browse'
+  buttons are now disabled when a key provider is selected
+- Changed behavior of the 'Use system proxy settings' option
+  (KeePass now directly gets the system proxy settings, not the
+  .NET default proxy settings)
+- Improved focus restoration after closing the character
+  picking dialog
+- Removed 'O' and 'C' access keys from 'OK' and 'Cancel'
+  buttons (instead, press Enter for 'OK' and Esc for 'Cancel')
+- Improved remembering of splitter positions
+- Improved assignments of check mark images to menu items
+- Improved behavior when synchronizing a local EFS-encrypted
+  database file with a local database file
+- On Unix-like systems, hot key boxes now show 'External'
+  instead of 'None'
+- Various code optimizations
+- Minor other improvements
+
+- AltGr+E (i.e. Ctrl+Alt+E) does not focus the quick search box
+  anymore
+
 2014-10-08: 2.28
 - Enhanced high DPI support
 - Added trigger action 'Show message box' (which can abort the

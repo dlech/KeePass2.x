@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2014 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2015 Dominik Reichl" />
 
 	<title>Security - KeePass</title>
 	<base target="_self" />
@@ -48,6 +48,7 @@ Detailed information about the security of KeePass.
 <li><a href="#secmemprot">Process Memory Protection</a></li>
 <li><a href="#secdesktop">Enter Master Key on Secure Desktop (Protection against Keyloggers)</a></li>
 <li><a href="#seclocking">Locking the Workspace</a></li>
+<li><a href="#secattach">Viewing/Editing Attachments</a></li>
 <li><a href="#secplugins">Plugins</a></li>
 <li><a href="#secselftests">Self-Tests</a></li>
 <li><a href="#secspecattacks">Specialized Spyware</a></li>
@@ -276,14 +277,14 @@ copying to clipboard, ...), and computing password quality estimations.</p>
 
 <a name="secdesktop"></a>
 <h2 class="sectiontitle">
-<img src="../images/b16x16_desktop.png" class="singleimg" alt="Desktop" />&nbsp;&nbsp;Enter
+<img src="../images/b16x16_kgpg.png" class="singleimg" alt="User Key" />&nbsp;&nbsp;Enter
 Master Key on Secure Desktop (Protection against Keyloggers)</h2>
 
 <p><i>Note: KeePass was one of the first (maybe even the first) password
-manager that allows entering the master key on a secure desktop!</i></p>
+manager that allows entering the master key on a different/secure desktop!</i></p>
 
 <p>KeePass 2.x has an option (in 'Tools' -&gt; 'Options' -&gt; tab 'Security')
-to show the master key dialog on a secure desktop
+to show the master key dialog on a different/secure desktop
 (supported on Windows &ge; 2000), similar to Windows'
 User Account Control (UAC). Almost no keylogger works on a secure desktop.</p>
 
@@ -302,8 +303,8 @@ Note that auto-type can be secured against keyloggers, too, by using
 
 <a name="seclocking"></a>
 <h2 class="sectiontitle">
-<img src="../images/b16x16_password.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Locking
-the Workspace</h2>
+<img src="../images/b16x16_file_locked.png" class="singleimg"
+alt="Application Protection" />&nbsp;&nbsp;Locking the Workspace</h2>
 
 <p>When locking the workspace, KeePass closes the database file and
 only remembers its path.</p>
@@ -312,6 +313,29 @@ only remembers its path.</p>
 workspace is as hard as opening the database file the normal way. Also, it prevents
 data loss (the computer can crash while KeePass is locked, without doing any damage
 to the database).</p>
+
+<br />
+
+<a name="secattach"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_desktop.png" class="singleimg" alt="Desktop" />&nbsp;&nbsp;Viewing/Editing
+Attachments</h2>
+
+<p>KeePass 2.x has an internal viewer/editor for attachments.
+For details how to use it for working with texts, see
+'<a href="faq_tech.html#rtftext">How to store and work with large amounts of
+(formatted) text?</a>'.</p>
+
+<p>The internal viewer/editor works with the data in main memory.
+It does not extract/store the data onto disk.</p>
+
+<p>When trying to open an attachment that the internal viewer/editor cannot handle
+(e.g. a PDF file), KeePass extracts the attachment to a (EFS-encrypted)
+temporary file and opens it using the default application associated with this file type.
+After finishing viewing/editing, the user can choose between importing
+or discarding any changes made to the temporary file.
+In any case, KeePass afterwards securely deletes the temporary file
+(including overwriting it).</p>
 
 <br />
 

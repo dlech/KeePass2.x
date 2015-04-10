@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,12 +21,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Threading;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.IO;
 using System.Reflection;
+using System.Resources;
 using System.Diagnostics;
 
 using KeePass.App;
@@ -37,6 +40,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Archive;
 using KeePass.Util.XmlSerialization;
 using KeePass.Ecas;
 using KeePass.Plugins;
@@ -96,7 +100,12 @@ namespace KeePass
 		{
 			get
 			{
-				if(m_cmdLineArgs == null) m_cmdLineArgs = new CommandLineArgs(null);
+				if(m_cmdLineArgs == null)
+				{
+					Debug.Assert(false);
+					m_cmdLineArgs = new CommandLineArgs(null);
+				}
+
 				return m_cmdLineArgs;
 			}
 		}
@@ -202,6 +211,11 @@ namespace KeePass
 			}
 		}
 
+		public static ResourceManager Resources
+		{
+			get { return KeePass.Properties.Resources.ResourceManager; }
+		}
+
 		public static bool DesignMode
 		{
 			get
@@ -231,6 +245,8 @@ namespace KeePass
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.DoEvents(); // Required
 
+			m_cmdLineArgs = new CommandLineArgs(args);
+
 			DpiUtil.ConfigureProcess();
 
 #if DEBUG
@@ -246,8 +262,6 @@ namespace KeePass
 				AppConfigSerializer.Save(Program.Config);
 			}
 
-			m_cmdLineArgs = new CommandLineArgs(args);
-
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
 			{
 				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
@@ -255,13 +269,13 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtUnregister] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtUnregister] != null)
 			{
 				ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId);
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoad] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoad] != null)
 			{
 				// All important .NET assemblies are in memory now already
 				try { SelfTest.Perform(); }
@@ -269,7 +283,7 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			/* else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadRegister] != null)
+			/* if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadRegister] != null)
 			{
 				string strPreLoadPath = WinUtil.GetExecutable().Trim();
 				if(strPreLoadPath.StartsWith("\"") == false)
@@ -279,21 +293,21 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadUnregister] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadUnregister] != null)
 			{
 				ShellUtil.RegisterPreLoad(AppDefs.PreLoadName, string.Empty,
 					string.Empty, false);
 				MainCleanUp();
 				return;
 			} */
-			else if((m_cmdLineArgs[AppDefs.CommandLineOptions.Help] != null) ||
+			if((m_cmdLineArgs[AppDefs.CommandLineOptions.Help] != null) ||
 				(m_cmdLineArgs[AppDefs.CommandLineOptions.HelpLong] != null))
 			{
 				AppHelp.ShowHelp(AppDefs.HelpTopics.CommandLine, null);
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetUrlOverride] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetUrlOverride] != null)
 			{
 				Program.Config.Integration.UrlOverride = m_cmdLineArgs[
 					AppDefs.CommandLineOptions.ConfigSetUrlOverride];
@@ -301,14 +315,14 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigClearUrlOverride] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigClearUrlOverride] != null)
 			{
 				Program.Config.Integration.UrlOverride = string.Empty;
 				AppConfigSerializer.Save(Program.Config);
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigGetUrlOverride] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigGetUrlOverride] != null)
 			{
 				try
 				{
@@ -322,7 +336,7 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetLanguageFile] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetLanguageFile] != null)
 			{
 				Program.Config.Application.LanguageFile = m_cmdLineArgs[
 					AppDefs.CommandLineOptions.ConfigSetLanguageFile];
@@ -330,39 +344,61 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreate] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreate] != null)
 			{
 				PlgxPlugin.CreateFromCommandLine();
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreateInfo] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreateInfo] != null)
 			{
 				PlgxPlugin.CreateInfoFile(m_cmdLineArgs.FileName);
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.ShowAssemblyInfo] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ShowAssemblyInfo] != null)
 			{
 				MessageService.ShowInfo(Assembly.GetExecutingAssembly().ToString());
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakeXmlSerializerEx] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakeXmlSerializerEx] != null)
 			{
 				XmlSerializerEx.GenerateSerializers(m_cmdLineArgs);
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.Version] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakeXspFile] != null)
+			{
+				XspArchive.CreateFile(m_cmdLineArgs.FileName, m_cmdLineArgs["d"]);
+				MainCleanUp();
+				return;
+			}
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.Version] != null)
 			{
 				Console.WriteLine(PwDefs.ShortProductName + " " + PwDefs.VersionString);
 				Console.WriteLine(PwDefs.Copyright);
 				MainCleanUp();
 				return;
 			}
+#if DEBUG
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.TestGfx] != null)
+			{
+				List<Image> lImg = new List<Image>();
+				lImg.Add(Properties.Resources.B16x16_Browser);
+				lImg.Add(Properties.Resources.B48x48_Keyboard_Layout);
+				ImageArchive aHighRes = new ImageArchive();
+				aHighRes.Load(Properties.Resources.Images_Client_HighRes);
+				lImg.Add(aHighRes.GetForObject("C12_IRKickFlash"));
+				if(File.Exists("Test.png"))
+					lImg.Add(Image.FromFile("Test.png"));
+				Image img = GfxUtil.ScaleTest(lImg.ToArray());
+				img.Save("GfxScaleTest.png", ImageFormat.Png);
+				return;
+			}
+#endif
 			// #if (DEBUG && !KeePassLibSD)
-			// else if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
+			// if(m_cmdLineArgs[AppDefs.CommandLineOptions.MakePopularPasswordTable] != null)
 			// {
 			//	PopularPasswords.MakeList();
 			//	MainCleanUp();
@@ -378,17 +414,17 @@ namespace KeePass
 				BroadcastAppMessageAndCleanUp(AppMessage.Exit);
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoType] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoType] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.AutoType);
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoTypeSelected] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoTypeSelected] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.AutoTypeSelected);
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.OpenEntryUrl] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.OpenEntryUrl] != null)
 			{
 				string strEntryUuid = m_cmdLineArgs[AppDefs.CommandLineOptions.Uuid];
 				if(!string.IsNullOrEmpty(strEntryUuid))
@@ -401,17 +437,17 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.LockAll] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.LockAll] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.Lock);
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.UnlockAll] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.UnlockAll] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.Unlock);
 				return;
 			}
-			else if(m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent] != null)
 			{
 				string strName = m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent];
 				if(!string.IsNullOrEmpty(strName))

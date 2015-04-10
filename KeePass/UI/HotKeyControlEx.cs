@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Diagnostics;
 
 using KeePass.Resources;
@@ -40,12 +41,16 @@ namespace KeePass.UI
 
 		private ContextMenu m_ctxNone = new ContextMenu();
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Keys HotKey
 		{
 			get { return m_kHotKey; }
 			set { m_kHotKey = value; }
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Keys HotKeyModifiers
 		{
 			get { return m_kModifiers; }
@@ -53,12 +58,28 @@ namespace KeePass.UI
 		}
 
 		private bool m_bNoRightModKeys = false;
+		[DefaultValue(false)]
 		public bool NoRightModKeys
 		{
 			get { return m_bNoRightModKeys; }
 			set { m_bNoRightModKeys = value; }
 		}
 
+		private string m_strTextNone = KPRes.None;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public string TextNone
+		{
+			get { return m_strTextNone; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strTextNone = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ContextMenu ContextMenu
 		{
 			get { return m_ctxNone; }
@@ -66,6 +87,8 @@ namespace KeePass.UI
 		}
 
 		// Hot key control is single-line
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override bool Multiline
 		{
 			get { return base.Multiline; }
@@ -75,7 +98,7 @@ namespace KeePass.UI
 		public HotKeyControlEx()
 		{
 			this.ContextMenu = m_ctxNone; // No context menu available
-			this.Text = KPRes.None;
+			this.Text = m_strTextNone;
 
 			this.KeyPress += new KeyPressEventHandler(this.OnKeyPressEx);
 			this.KeyUp += new KeyEventHandler(this.OnKeyUpEx);
@@ -179,7 +202,7 @@ namespace KeePass.UI
 		{
 			if(m_kHotKey == Keys.None)
 			{
-				this.Text = KPRes.None;
+				this.Text = m_strTextNone;
 				return;
 			}
 
@@ -219,7 +242,7 @@ namespace KeePass.UI
 			{
 				if(m_kHotKey == Keys.None)
 				{
-					this.Text = KPRes.None;
+					this.Text = m_strTextNone;
 					return;
 				}
 				else

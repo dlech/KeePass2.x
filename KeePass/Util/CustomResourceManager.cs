@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@ using System.Reflection;
 using System.Diagnostics;
 
 using KeePass.UI;
+using KeePass.Util.Archive;
+
+using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -82,6 +86,8 @@ namespace KeePass.Util
 		private Dictionary<string, object> m_dOverrides =
 			new Dictionary<string, object>();
 
+		private ImageArchive m_iaAppHighRes = new ImageArchive();
+
 		public CustomResourceManager(ResourceManager rmBase)
 		{
 			if(rmBase == null) throw new ArgumentNullException("rmBase");
@@ -90,6 +96,9 @@ namespace KeePass.Util
 
 			if(m_lInsts.Count < 1000) m_lInsts.Add(this);
 			else { Debug.Assert(false); }
+
+			try { m_iaAppHighRes.Load(Properties.Resources.Images_App_HighRes); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public override object GetObject(string name)
@@ -121,13 +130,32 @@ namespace KeePass.Util
 				{
 					Debug.Assert(!(o is Icon));
 
-					Image imgScaled = DpiUtil.ScaleImage(img, false);
-					if(imgScaled != null)
+					Image imgOvr = m_iaAppHighRes.GetForObject(name);
+					if(imgOvr != null)
 					{
-						m_dOverrides[name] = imgScaled;
-						return imgScaled;
+						int wOvr = imgOvr.Width;
+						int hOvr = imgOvr.Height;
+						int wBase = img.Width;
+						int hBase = img.Height;
+						int wReq = DpiUtil.ScaleIntX(wBase);
+						int hReq = DpiUtil.ScaleIntY(hBase);
+
+						if((wBase > wOvr) || (hBase > hOvr))
+						{
+							Debug.Assert(false); // Base has higher resolution
+							imgOvr = img;
+							wOvr = wBase;
+							hOvr = hBase;
+						}
+
+						if((wReq != wOvr) || (hReq != hOvr))
+							imgOvr = GfxUtil.ScaleImage(imgOvr, wReq, hReq,
+								ScaleTransformFlags.UIIcon);
 					}
-					else { Debug.Assert(false); }
+					else imgOvr = DpiUtil.ScaleImage(img, false);
+
+					m_dOverrides[name] = imgOvr;
+					return imgOvr;
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }

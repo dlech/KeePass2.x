@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -577,8 +577,8 @@ namespace KeePass.Ecas
 			bool bCanCancel = false;
 			if(uBtns == (uint)MessageBoxButtons.OKCancel)
 			{
-				vtd.AddButton((int)DialogResult.OK, KPRes.OkCmd, null);
-				vtd.AddButton((int)DialogResult.Cancel, KPRes.CancelCmd, null);
+				vtd.AddButton((int)DialogResult.OK, KPRes.Ok, null);
+				vtd.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
 				bCanCancel = true;
 			}
 			else if(uBtns == (uint)MessageBoxButtons.YesNo)
@@ -587,7 +587,7 @@ namespace KeePass.Ecas
 				vtd.AddButton((int)DialogResult.Cancel, KPRes.NoCmd, null);
 				bCanCancel = true;
 			}
-			else vtd.AddButton((int)DialogResult.OK, KPRes.OkCmd, null);
+			else vtd.AddButton((int)DialogResult.OK, KPRes.Ok, null);
 
 			uint uDef = EcasUtil.GetParamUInt(a.Parameters, 4, 0);
 			ReadOnlyCollection<VtdButton> lButtons = vtd.Buttons;
