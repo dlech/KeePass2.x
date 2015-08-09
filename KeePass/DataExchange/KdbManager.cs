@@ -370,18 +370,42 @@ namespace KeePass.DataExchange
 		/// <summary>
 		/// Convert the current <c>KdbTime</c> object to a <c>DateTime</c> object.
 		/// </summary>
-		/// <returns></returns>
 		public DateTime ToDateTime()
 		{
 			if((this.Year == 0) || (this.Month == 0) || (this.Day == 0))
 				return DateTime.Now;
 
-			return new DateTime((int)this.Year, (int)this.Month, (int)this.Day,
-				(int)this.Hour, (int)this.Minute, (int)this.Second);
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/07599afd/
+			try
+			{
+				int dy = (int)this.Year;
+				if(dy > 2999) { Debug.Assert(false); dy = 2999; }
+
+				int dm = (int)this.Month;
+				if(dm > 12) { Debug.Assert(false); dm = 12; }
+
+				int dd = (int)this.Day;
+				if(dd > 31) { Debug.Assert(false); dd = 28; }
+				// Day might not exist in month
+
+				int th = (int)this.Hour;
+				if(th > 23) { Debug.Assert(false); th = 23; }
+
+				int tm = (int)this.Minute;
+				if(tm > 59) { Debug.Assert(false); tm = 59; }
+
+				int ts = (int)this.Second;
+				if(ts > 59) { Debug.Assert(false); ts = 59; }
+
+				return new DateTime(dy, dm, dd, th, tm, ts);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return DateTime.Now;
 		}
 
 		/// <summary>
-		/// Copy data from a <c>DateTime object</c> to the current <c>KdbTime</c> object.
+		/// Copy data from a <c>DateTime</c> object to the current <c>KdbTime</c> object.
 		/// </summary>
 		/// <param name="dt">Data source.</param>
 		public void Set(DateTime dt)

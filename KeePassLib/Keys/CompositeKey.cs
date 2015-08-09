@@ -161,21 +161,32 @@ namespace KeePassLib.Keys
 			ValidateUserKeys();
 
 			// Concatenate user key data
-			MemoryStream ms = new MemoryStream();
+			List<byte[]> lData = new List<byte[]>();
+			int cbData = 0;
 			foreach(IUserKey pKey in m_vUserKeys)
 			{
 				ProtectedBinary b = pKey.KeyData;
 				if(b != null)
 				{
 					byte[] pbKeyData = b.ReadData();
-					ms.Write(pbKeyData, 0, pbKeyData.Length);
-					MemUtil.ZeroByteArray(pbKeyData);
+					lData.Add(pbKeyData);
+					cbData += pbKeyData.Length;
 				}
 			}
 
+			byte[] pbAllData = new byte[cbData];
+			int p = 0;
+			foreach(byte[] pbData in lData)
+			{
+				Array.Copy(pbData, 0, pbAllData, p, pbData.Length);
+				p += pbData.Length;
+				MemUtil.ZeroByteArray(pbData);
+			}
+			Debug.Assert(p == cbData);
+
 			SHA256Managed sha256 = new SHA256Managed();
-			byte[] pbHash = sha256.ComputeHash(ms.ToArray());
-			ms.Close();
+			byte[] pbHash = sha256.ComputeHash(pbAllData);
+			MemUtil.ZeroByteArray(pbAllData);
 			return pbHash;
 		}
 
@@ -186,8 +197,8 @@ namespace KeePassLib.Keys
 			byte[] pbThis = CreateRawCompositeKey32();
 			byte[] pbOther = ckOther.CreateRawCompositeKey32();
 			bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
-			Array.Clear(pbOther, 0, pbOther.Length);
-			Array.Clear(pbThis, 0, pbThis.Length);
+			MemUtil.ZeroByteArray(pbOther);
+			MemUtil.ZeroByteArray(pbThis);
 
 			return bResult;
 		}
@@ -263,15 +274,18 @@ namespace KeePassLib.Keys
 			byte[] pbNewKey = new byte[32];
 			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
 
-			// Try to use the native library first
-			if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+			try
+			{
+				// Try to use the native library first
+				if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+					return (new SHA256Managed()).ComputeHash(pbNewKey);
+
+				if(!TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds))
+					return null;
+
 				return (new SHA256Managed()).ComputeHash(pbNewKey);
-
-			if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds) == false)
-				return null;
-
-			SHA256Managed sha256 = new SHA256Managed();
-			return sha256.ComputeHash(pbNewKey);
+			}
+			finally { MemUtil.ZeroByteArray(pbNewKey); }
 		}
 
 		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,

@@ -106,6 +106,8 @@ you can use the placeholder <code>{S:eMail}</code>.
 <tr><td width="50%"><code>{URL:USERNAME}</code></td><td width="50%">User name of the entry URL.</td></tr>
 <tr><td width="50%"><code>{URL:PASSWORD}</code></td><td width="50%">Password of the entry URL.</td></tr>
 </table>
+<br />
+An example can be found <a href="#url">below</a>.
 
 
 <br /><br />
@@ -134,6 +136,15 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholde
 on Unix-like systems), if installed.</td></tr>
 <tr><td width="50%"><code>{SAFARI}</code></td><td width="50%">Path of Safari, if installed.</td></tr>
 </table>
+
+<p><b>Microsoft Edge.</b>
+There exists no placeholder for Edge, because Edge is an app
+that cannot be started like a regular Windows application.
+In order to open an URL using Edge, prefix the URL with '<code>microsoft-edge:</code>'.
+For example, in order to open the URL
+<a href="http://keepass.info/" target="_blank">http://keepass.info/</a>
+using Edge, use the URL
+<a href="microsoft-edge:http://keepass.info/" target="_blank">microsoft-edge:http://keepass.info/</a>.</p>
 
 <br />
 
@@ -305,7 +316,8 @@ See <a href="#hmacotp">below</a>.</td></tr>
 <code>{BASE:USERNAME}</code><br />
 <code>{BASE:PASSWORD}</code></td><td width="50%">Within an URL override,
 each of these placeholders is replaced by the specified part of the string that is
-being overridden.</td></tr>
+being overridden.
+See <a href="#url">below</a>.</td></tr>
 </table>
 
 
@@ -502,6 +514,50 @@ Each time you perform such an action, KeePass updates the counter value.
 With the secret key and counter values above, the following OTPs
 are generated: 755224, 287082, 359152, 969429, 338314, ...
 (more generated OTPs can be found in the example in RFC 4226).
+
+
+<br /><br />
+
+<a name="url"></a>
+
+<b><code>{URL:...}</code> and <code>{BASE:...}</code>:</b><br />
+The <code>{URL:...}</code> placeholder is replaced by the specified part
+of the current entry's URL; this typically is useful in an
+entry-specific URL override (defined on the 'Properties' tab of the entry dialog).
+The <code>{BASE:...}</code> placeholder is replaced by the specified part
+of the URL being overridden; this typically is useful in a
+global URL override (defined in 'Tools' -&gt; 'Options' -&gt; tab 'Integration' -&gt;
+button 'URL Overrides'), because there no entry context may be available.<br />
+<br />
+<i>Example.</i> For the entry URL
+<code>http://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code>,
+the placeholders return the following values:<br />
+<br />
+<table class="tablebox75">
+<tr><th width="25%">Placeholder</th><th width="75%">Value</th></tr>
+<tr><td width="25%"><code>{URL}</code></td>
+<td width="75%"><code>http://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
+<tr><td width="25%"><code>{URL:RMVSCM}</code></td>
+<td width="75%"><code>user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
+<tr><td width="25%"><code>{URL:SCM}</code></td>
+<td width="75%"><code>http</code></td></tr>
+<tr><td width="25%"><code>{URL:HOST}</code></td>
+<td width="75%"><code>keepass.info</code></td></tr>
+<tr><td width="25%"><code>{URL:PORT}</code></td>
+<td width="75%"><code>80</code></td></tr>
+<tr><td width="25%"><code>{URL:PATH}</code></td>
+<td width="75%"><code>/path/example.php</code></td></tr>
+<tr><td width="25%"><code>{URL:QUERY}</code></td>
+<td width="75%"><code>?q=e&amp;s=t</code></td></tr>
+<tr><td width="25%"><code>{URL:USERINFO}</code></td>
+<td width="75%"><code>user:pw</code></td></tr>
+<tr><td width="25%"><code>{URL:USERNAME}</code></td>
+<td width="75%"><code>user</code></td></tr>
+<tr><td width="25%"><code>{URL:PASSWORD}</code></td>
+<td width="75%"><code>pw</code></td></tr>
+</table>
+<br />
+<code>{BASE}</code> supports exactly the same parts as <code>{URL}</code>.
 
 
 </body></html>

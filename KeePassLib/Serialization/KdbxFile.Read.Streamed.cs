@@ -807,7 +807,19 @@ namespace KeePassLib.Serialization
 				if(strRef != null)
 				{
 					ProtectedBinary pb = BinPoolGet(strRef);
-					if(pb != null) return pb;
+					if(pb != null)
+					{
+						// https://sourceforge.net/p/keepass/feature-requests/2023/
+						xr.MoveToElement();
+#if DEBUG
+						string strInner = ReadStringRaw(xr);
+						Debug.Assert(string.IsNullOrEmpty(strInner));
+#else
+						ReadStringRaw(xr);
+#endif
+
+						return pb;
+					}
 					else { Debug.Assert(false); }
 				}
 				else { Debug.Assert(false); }

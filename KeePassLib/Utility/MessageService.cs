@@ -356,6 +356,26 @@ namespace KeePassLib.Utility
 			return AskYesNo(strText, null, true, m_mbiQuestion);
 		}
 
+		internal static string GetLoadWarningMessage(string strFilePath,
+			Exception ex, bool bFullException)
+		{
+			string str = string.Empty;
+
+			if(!string.IsNullOrEmpty(strFilePath))
+				str += strFilePath + MessageService.NewParagraph;
+
+			str += KLRes.FileLoadFailed;
+
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+			{
+				str += MessageService.NewParagraph;
+				if(!bFullException) str += ex.Message;
+				else str += ObjectsToMessage(new object[] { ex }, true);
+			}
+
+			return str;
+		}
+
 		public static void ShowLoadWarning(string strFilePath, Exception ex)
 		{
 			ShowLoadWarning(strFilePath, ex, false);
@@ -364,21 +384,7 @@ namespace KeePassLib.Utility
 		public static void ShowLoadWarning(string strFilePath, Exception ex,
 			bool bFullException)
 		{
-			string str = string.Empty;
-
-			if((strFilePath != null) && (strFilePath.Length > 0))
-				str += strFilePath + MessageService.NewParagraph;
-
-			str += KLRes.FileLoadFailed;
-
-			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
-			{
-				str += MessageService.NewParagraph;
-				if(!bFullException) str += ex.Message;
-				else str += ObjectsToMessage(new object[] { ex }, true);
-			}
-
-			ShowWarning(str);
+			ShowWarning(GetLoadWarningMessage(strFilePath, ex, bFullException));
 		}
 
 		public static void ShowLoadWarning(IOConnectionInfo ioConnection, Exception ex)

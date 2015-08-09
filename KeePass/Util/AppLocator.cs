@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Diagnostics;
 
 using Microsoft.Win32;
@@ -40,6 +41,7 @@ namespace KeePass.Util
 		private const int BrwOpera = 2;
 		private const int BrwChrome = 3;
 		private const int BrwSafari = 4;
+		private const int BrwEdge = 5;
 
 		private static Dictionary<int, string> m_dictPaths =
 			new Dictionary<int, string>();
@@ -67,6 +69,39 @@ namespace KeePass.Util
 		public static string SafariPath
 		{
 			get { return GetPath(BrwSafari, FindSafari); }
+		}
+
+		/// <summary>
+		/// Edge executable cannot be run normally.
+		/// </summary>
+		public static string EdgePath
+		{
+			get { return GetPath(BrwEdge, FindEdge); }
+		}
+
+		private static bool? m_obEdgeProtocol = null;
+		public static bool EdgeProtocolSupported
+		{
+			get
+			{
+				if(m_obEdgeProtocol.HasValue)
+					return m_obEdgeProtocol.Value;
+
+				bool b = false;
+				RegistryKey rk = null;
+				try
+				{
+					rk = Registry.ClassesRoot.OpenSubKey(
+						"microsoft-edge", false);
+					if(rk != null)
+						b = (rk.GetValue("URL Protocol") != null);
+				}
+				catch(Exception) { Debug.Assert(false); }
+				finally { if(rk != null) rk.Close(); }
+
+				m_obEdgeProtocol = b;
+				return b;
+			}
 		}
 
 		private delegate string FindAppDelegate();
@@ -101,6 +136,7 @@ namespace KeePass.Util
 				AppLocator.ChromePath, ctx);
 			str = AppLocator.ReplacePath(str, @"{SAFARI}",
 				AppLocator.SafariPath, ctx);
+			// Edge executable cannot be run normally
 
 			return str;
 		}
@@ -344,6 +380,30 @@ namespace KeePass.Util
 
 			kSafari.Close();
 			return strPath;
+		}
+
+		private static string FindEdge()
+		{
+			string strSys = Environment.SystemDirectory.TrimEnd(
+				UrlUtil.LocalDirSepChar);
+			if(strSys.EndsWith("32"))
+				strSys = strSys.Substring(0, strSys.Length - 2);
+			strSys += "Apps";
+
+			if(!Directory.Exists(strSys)) return null;
+
+			string[] vEdgeDirs = Directory.GetDirectories(strSys,
+				"Microsoft.MicrosoftEdge*", SearchOption.TopDirectoryOnly);
+			if(vEdgeDirs == null) { Debug.Assert(false); return null; }
+
+			foreach(string strEdgeDir in vEdgeDirs)
+			{
+				string strExe = UrlUtil.EnsureTerminatingSeparator(
+					strEdgeDir, false) + "MicrosoftEdge.exe";
+				if(File.Exists(strExe)) return strExe;
+			}
+
+			return null;
 		}
 
 		public static string FindAppUnix(string strApp)

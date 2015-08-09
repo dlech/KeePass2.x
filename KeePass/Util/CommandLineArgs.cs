@@ -75,21 +75,18 @@ namespace KeePass.Util
 		}
 
 		/// <summary>
-		/// Get the value of a command-line parameter. Returns <c>null</c>
+		/// Get the value of a command line parameter. Returns <c>null</c>
 		/// if no key-value pair with the specified key exists.
 		/// </summary>
-		/// <param name="strParam">Key name.</param>
-		/// <returns>Value of the specified key or <c>null</c>.</returns>
 		public string this[string strKey]
 		{
 			get
 			{
-				if((strKey == null) || (strKey.Length == 0))
+				if(string.IsNullOrEmpty(strKey))
 					return this.FileName;
 				else
 				{
 					string strValue;
-
 					if(m_vParams.TryGetValue(strKey.ToLower(), out strValue))
 						return strValue;
 				}

@@ -2033,6 +2033,49 @@ namespace KeePass.UI
 			return false;
 		}
 
+		public static void EnsureInsideScreen(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				if(!f.Visible) return; // No assert
+				if(f.WindowState != FormWindowState.Normal) return;
+
+				int x = f.Location.X;
+				int y = f.Location.Y;
+				int w = f.Size.Width;
+				int h = f.Size.Height;
+
+				Debug.Assert((x != -32000) && (x != -64000));
+				Debug.Assert(x != AppDefs.InvalidWindowValue);
+				Debug.Assert((y != -32000) && (y != -64000));
+				Debug.Assert(y != AppDefs.InvalidWindowValue);
+				Debug.Assert(w != AppDefs.InvalidWindowValue);
+				Debug.Assert(h != AppDefs.InvalidWindowValue);
+
+				Rectangle rect = new Rectangle(x, y, w, h);
+				if(IsScreenAreaVisible(rect)) return;
+
+				Screen scr = Screen.PrimaryScreen;
+				Rectangle rectScr = scr.Bounds;
+				BoundsSpecified bs = BoundsSpecified.Location;
+
+				if((w > rectScr.Width) || (h > rectScr.Height))
+				{
+					w = Math.Min(w, rectScr.Width);
+					h = Math.Min(h, rectScr.Height);
+					bs |= BoundsSpecified.Size;
+				}
+
+				x = rectScr.X + ((rectScr.Width - w) / 2);
+				y = rectScr.Y + ((rectScr.Height - h) / 2);
+
+				f.SetBounds(x, y, w, h, bs);				
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		public static string GetWindowScreenRect(Form f)
 		{
 			if(f == null) { Debug.Assert(false); return string.Empty; }

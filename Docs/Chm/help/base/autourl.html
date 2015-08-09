@@ -184,9 +184,9 @@ Mozilla Firefox, Opera and Google Chrome).</p>
 <p>URL scheme overrides can also be used to define new protocols. For example,
 if you want to define a protocol <code>kdbx://</code> that opens another KeePass database,
 specify the following as override for the kdbx scheme (on Windows):<br />
-<code>cmd://&quot;{APPDIR}\KeePass.exe&quot; &quot;{URL:RMVSCM}&quot; -pw-enc:&quot;{PASSWORD_ENC}&quot;</code><br />
+<code>cmd://&quot;{APPDIR}\KeePass.exe&quot; &quot;{BASE:RMVSCM}&quot; -pw-enc:&quot;{PASSWORD_ENC}&quot;</code><br />
 or on Unix-like systems (Mono):<br />
-<code>cmd://mono &quot;{APPDIR}/KeePass.exe&quot; &quot;{URL:RMVSCM}&quot; -pw-enc:&quot;{PASSWORD_ENC}&quot;</code><br />
+<code>cmd://mono &quot;{APPDIR}/KeePass.exe&quot; &quot;{BASE:RMVSCM}&quot; -pw-enc:&quot;{PASSWORD_ENC}&quot;</code><br />
 If an entry now has an URL looking like <code>kdbx://<i>PathToYourDatabase.kdbx</i></code>
 and the master password for this database in the password field,
 double-clicking the URL of the entry in the main window opens the other database.

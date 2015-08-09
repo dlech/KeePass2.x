@@ -31,8 +31,8 @@ using KeePassLib.Utility;
 namespace KeePassLib.Cryptography
 {
 	/// <summary>
-	/// Cryptographically strong random number generator. The returned values
-	/// are unpredictable and cannot be reproduced.
+	/// Cryptographically strong random number generator. The returned
+	/// values are unpredictable and cannot be reproduced.
 	/// <c>CryptoRandom</c> is a singleton class.
 	/// </summary>
 	public sealed class CryptoRandom
@@ -42,6 +42,7 @@ namespace KeePassLib.Cryptography
 		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
 		private ulong m_uGeneratedBytesCount = 0;
 
+		private static object g_oSyncRoot = new object();
 		private object m_oSyncRoot = new object();
 
 		private static CryptoRandom m_pInstance = null;
@@ -49,10 +50,18 @@ namespace KeePassLib.Cryptography
 		{
 			get
 			{
-				if(m_pInstance != null) return m_pInstance;
+				CryptoRandom cr;
+				lock(g_oSyncRoot)
+				{
+					cr = m_pInstance;
+					if(cr == null)
+					{
+						cr = new CryptoRandom();
+						m_pInstance = cr;
+					}
+				}
 
-				m_pInstance = new CryptoRandom();
-				return m_pInstance;
+				return cr;
 			}
 		}
 

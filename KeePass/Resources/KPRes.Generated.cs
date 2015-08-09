@@ -172,6 +172,7 @@ namespace KeePass.Resources
 			m_strCredSaveAll = TryGetEx(dictNew, "CredSaveAll", m_strCredSaveAll);
 			m_strCredSaveNone = TryGetEx(dictNew, "CredSaveNone", m_strCredSaveNone);
 			m_strCredSaveUserOnly = TryGetEx(dictNew, "CredSaveUserOnly", m_strCredSaveUserOnly);
+			m_strCredSpecifyDifferent = TryGetEx(dictNew, "CredSpecifyDifferent", m_strCredSpecifyDifferent);
 			m_strCsprojCountError = TryGetEx(dictNew, "CsprojCountError", m_strCsprojCountError);
 			m_strCsvTextFile = TryGetEx(dictNew, "CsvTextFile", m_strCsvTextFile);
 			m_strCurrentStyle = TryGetEx(dictNew, "CurrentStyle", m_strCurrentStyle);
@@ -686,6 +687,7 @@ namespace KeePass.Resources
 			m_strUnhideSourceCharactersToo = TryGetEx(dictNew, "UnhideSourceCharactersToo", m_strUnhideSourceCharactersToo);
 			m_strUnknown = TryGetEx(dictNew, "Unknown", m_strUnknown);
 			m_strUnknownError = TryGetEx(dictNew, "UnknownError", m_strUnknownError);
+			m_strUnsupportedByMono = TryGetEx(dictNew, "UnsupportedByMono", m_strUnsupportedByMono);
 			m_strUpdateCheck = TryGetEx(dictNew, "UpdateCheck", m_strUpdateCheck);
 			m_strUpdateCheckEnableQ = TryGetEx(dictNew, "UpdateCheckEnableQ", m_strUpdateCheckEnableQ);
 			m_strUpdateCheckFailedNoDl = TryGetEx(dictNew, "UpdateCheckFailedNoDl", m_strUpdateCheckFailedNoDl);
@@ -889,6 +891,7 @@ namespace KeePass.Resources
 			"CredSaveAll",
 			"CredSaveNone",
 			"CredSaveUserOnly",
+			"CredSpecifyDifferent",
 			"CsprojCountError",
 			"CsvTextFile",
 			"CurrentStyle",
@@ -1403,6 +1406,7 @@ namespace KeePass.Resources
 			"UnhideSourceCharactersToo",
 			"Unknown",
 			"UnknownError",
+			"UnsupportedByMono",
 			"UpdateCheck",
 			"UpdateCheckEnableQ",
 			"UpdateCheckFailedNoDl",
@@ -3068,6 +3072,17 @@ namespace KeePass.Resources
 		public static string CredSaveUserOnly
 		{
 			get { return m_strCredSaveUserOnly; }
+		}
+
+		private static string m_strCredSpecifyDifferent =
+			@"&Specify different server credentials";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Specify different server credentials'.
+		/// </summary>
+		public static string CredSpecifyDifferent
+		{
+			get { return m_strCredSpecifyDifferent; }
 		}
 
 		private static string m_strCsprojCountError =
@@ -8722,6 +8737,17 @@ namespace KeePass.Resources
 		public static string UnknownError
 		{
 			get { return m_strUnknownError; }
+		}
+
+		private static string m_strUnsupportedByMono =
+			@"unsupported by Mono";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'unsupported by Mono'.
+		/// </summary>
+		public static string UnsupportedByMono
+		{
+			get { return m_strUnsupportedByMono; }
 		}
 
 		private static string m_strUpdateCheck =

@@ -8,11 +8,11 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.29"
-#define KeeVersionStrWithMinor "2.29"
-#define KeeVersionStrWithMinorPath "2.29"
-#define KeeVersionWin "2.29.0.0"
-#define KeeVersionWinShort "2.29"
+#define KeeVersionStr "2.30"
+#define KeeVersionStrWithMinor "2.30"
+#define KeeVersionStrWithMinorPath "2.30"
+#define KeeVersionWin "2.30.0.0"
+#define KeeVersionWinShort "2.30"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -43,6 +43,7 @@ SolidCompression=yes
 InternalCompressLevel=ultra
 UninstallDisplayIcon={app}\{#MyAppExeName}
 AppMutex=KeePassAppMutex,Global\KeePassAppMutexEx
+SetupMutex=KeePassSetupMutex2
 VersionInfoVersion={#KeeVersionWin}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} {#KeeVersionStr} Setup

@@ -21,8 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -247,25 +248,24 @@ namespace KeePassLib.Utility
 		/// <summary>
 		/// Set all bytes in a byte array to zero.
 		/// </summary>
-		/// <param name="pbArray">Input array. All bytes of this array will be set
-		/// to zero.</param>
+		/// <param name="pbArray">Input array. All bytes of this array
+		/// will be set to zero.</param>
+#if KeePassLibSD
+		[MethodImpl(MethodImplOptions.NoInlining)]
+#else
+		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+#endif
 		public static void ZeroByteArray(byte[] pbArray)
 		{
 			Debug.Assert(pbArray != null);
 			if(pbArray == null) throw new ArgumentNullException("pbArray");
 
-			// for(int i = 0; i < pbArray.Length; ++i)
-			//	pbArray[i] = 0;
-
 			Array.Clear(pbArray, 0, pbArray.Length);
 		}
 
 		/// <summary>
-		/// Convert 2 bytes to a 16-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Convert 2 bytes to a 16-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="pb">Input bytes. Array must contain at least 2 bytes.</param>
-		/// <returns>16-bit unsigned integer.</returns>
 		public static ushort BytesToUInt16(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 2));
@@ -276,44 +276,35 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert 4 bytes to a 32-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Convert 4 bytes to a 32-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="pb">Input bytes.</param>
-		/// <returns>32-bit unsigned integer.</returns>
 		public static uint BytesToUInt32(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 4));
 			if(pb == null) throw new ArgumentNullException("pb");
-			if(pb.Length != 4) throw new ArgumentException("Input array must contain 4 bytes!");
+			if(pb.Length != 4) throw new ArgumentException();
 
-			return (uint)pb[0] | ((uint)pb[1] << 8) | ((uint)pb[2] << 16) |
-				((uint)pb[3] << 24);
+			return ((uint)pb[0] | ((uint)pb[1] << 8) | ((uint)pb[2] << 16) |
+				((uint)pb[3] << 24));
 		}
 
 		/// <summary>
-		/// Convert 8 bytes to a 64-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Convert 8 bytes to a 64-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="pb">Input bytes.</param>
-		/// <returns>64-bit unsigned integer.</returns>
 		public static ulong BytesToUInt64(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 8));
 			if(pb == null) throw new ArgumentNullException("pb");
 			if(pb.Length != 8) throw new ArgumentException();
 
-			return (ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
+			return ((ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
 				((ulong)pb[3] << 24) | ((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
-				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
+				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56));
 		}
 
 		/// <summary>
-		/// Convert a 16-bit unsigned integer to 2 bytes using Little-Endian
-		/// encoding.
+		/// Convert a 16-bit unsigned integer to 2 bytes (little-endian).
 		/// </summary>
-		/// <param name="uValue">16-bit input word.</param>
-		/// <returns>Two bytes representing the 16-bit value.</returns>
 		public static byte[] UInt16ToBytes(ushort uValue)
 		{
 			byte[] pb = new byte[2];
@@ -328,11 +319,8 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a 32-bit unsigned integer to 4 bytes using Little-Endian
-		/// encoding.
+		/// Convert a 32-bit unsigned integer to 4 bytes (little-endian).
 		/// </summary>
-		/// <param name="uValue">32-bit input word.</param>
-		/// <returns>Four bytes representing the 32-bit value.</returns>
 		public static byte[] UInt32ToBytes(uint uValue)
 		{
 			byte[] pb = new byte[4];
@@ -349,11 +337,8 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a 64-bit unsigned integer to 8 bytes using Little-Endian
-		/// encoding.
+		/// Convert a 64-bit unsigned integer to 8 bytes (little-endian).
 		/// </summary>
-		/// <param name="uValue">64-bit input word.</param>
-		/// <returns>Eight bytes representing the 64-bit value.</returns>
 		public static byte[] UInt64ToBytes(ulong uValue)
 		{
 			byte[] pb = new byte[8];

@@ -352,20 +352,12 @@ namespace KeePass.Forms
 			{
 				double dSplitPos = mw.SplitterHorizontalFrac;
 				if(dSplitPos == double.Epsilon) dSplitPos = 0.8333;
-				// m_splitHorizontal.SplitterDistance = (int)Math.Round(dSplitPos *
-				//	(double)m_splitHorizontal.Height);
 				if(MonoWorkarounds.IsRequired(686017))
-				{
-					int iSplitDist = (int)Math.Round(dSplitPos *
-						(double)m_splitHorizontal.Height);
-					m_splitHorizontal.SplitterDistance = Math.Max(35, iSplitDist);
-				}
-				else m_splitHorizontal.SplitterDistanceFrac = dSplitPos;
+					m_splitHorizontal.Panel1MinSize = 35;
+				m_splitHorizontal.SplitterDistanceFrac = dSplitPos;
 
 				dSplitPos = mw.SplitterVerticalFrac;
 				if(dSplitPos == double.Epsilon) dSplitPos = 0.25;
-				// m_splitVertical.SplitterDistance = (int)Math.Round(dSplitPos *
-				//	(double)m_splitVertical.Width);
 				m_splitVertical.SplitterDistanceFrac = dSplitPos;
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -1922,6 +1914,10 @@ namespace KeePass.Forms
 				(pe.ParentGroup.Name == strLink))
 			{
 				UpdateUI(false, null, true, pe.ParentGroup, true, null, false);
+
+				TreeNode tnSel = m_tvGroups.SelectedNode;
+				if(tnSel != null) tnSel.EnsureVisible();
+
 				EnsureVisibleSelected(false);
 				ResetDefaultFocus(m_lvEntries);
 			}

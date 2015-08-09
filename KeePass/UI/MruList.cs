@@ -181,10 +181,11 @@ namespace KeePass.UI
 				}
 			}
 
-			if(bExists) MoveItemToTop(strDisplayName);
+			if(bExists) MoveItemToTop(strDisplayName, oTag);
 			else
 			{
-				m_vItems.Insert(0, new KeyValuePair<string, object>(strDisplayName, oTag));
+				m_vItems.Insert(0, new KeyValuePair<string, object>(
+					strDisplayName, oTag));
 
 				if(m_vItems.Count > m_uMaxItemCount)
 					m_vItems.RemoveAt(m_vItems.Count - 1);
@@ -193,16 +194,17 @@ namespace KeePass.UI
 			// if(bUpdateMenu) UpdateMenu();
 		}
 
-		private void MoveItemToTop(string strName)
+		private void MoveItemToTop(string strName, object oNewTag)
 		{
 			for(int i = 0; i < m_vItems.Count; ++i)
 			{
 				if(m_vItems[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
 				{
-					KeyValuePair<string, object> t = m_vItems[i];
+					KeyValuePair<string, object> t =
+						new KeyValuePair<string, object>(strName, oNewTag);
+
 					m_vItems.RemoveAt(i);
 					m_vItems.Insert(0, t);
-
 					return;
 				}
 			}

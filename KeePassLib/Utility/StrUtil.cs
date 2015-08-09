@@ -356,9 +356,9 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Split up a command-line into application and argument.
+		/// Split up a command line into application and argument.
 		/// </summary>
-		/// <param name="strCmdLine">Command-line to split.</param>
+		/// <param name="strCmdLine">Command line to split.</param>
 		/// <param name="strApp">Application path.</param>
 		/// <param name="strArgs">Arguments.</param>
 		public static void SplitCommandLine(string strCmdLine, out string strApp, out string strArgs)

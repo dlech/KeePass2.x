@@ -283,11 +283,7 @@ namespace KeePassLib.Collections
 
 		public List<string> GetKeys()
 		{
-			List<string> v = new List<string>();
-
-			foreach(string strKey in m_vStrings.Keys) v.Add(strKey);
-
-			return v;
+			return new List<string>(m_vStrings.Keys);
 		}
 
 		public void EnableProtection(string strField, bool bProtect)
@@ -299,7 +295,8 @@ namespace KeePassLib.Collections
 			{
 				byte[] pbData = ps.ReadUtf8();
 				Set(strField, new ProtectedString(bProtect, pbData));
-				MemUtil.ZeroByteArray(pbData);
+
+				if(bProtect) MemUtil.ZeroByteArray(pbData);
 			}
 		}
 	}

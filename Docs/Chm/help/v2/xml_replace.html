@@ -61,6 +61,7 @@ About the XML replacement functionality.
 <li><a href="#atresetifstddelay">Reset default sequences that contain <code>{DELAY=</code></a></li>
 <li><a href="#ataddassoc">Add an auto-type association to all entries</a></li>
 </ul></li>
+<li><a href="#copytitles">Copy entry titles into empty user name fields</a></li>
 </ul></li>
 </ul>
 
@@ -82,6 +83,9 @@ and merges the current database with the modified database.</p>
 <p><img src="../images/b16x16_warning.png" alt="Warning"
 style="vertical-align: middle; height: 1em;" />
 This is a feature for experts. Use with caution!</p>
+
+<p>XML Replace can be invoked via 'Tools' -&gt; 'Database Tools' -&gt;
+'XML Replace'.</p>
 
 <p>A few links that might be helpful for working with XPath and
 regular expressions:</p>
@@ -339,6 +343,24 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 <tr><td>Regular expressions:</td><td>Activated</td></tr>
 <tr><td colspan="2">Adds an auto-type association to all entries: the window title
 '<code>* - Notepad</code>' is associated with the sequence '<code>{PASSWORD}</code>'.</td></tr>
+</table>
+
+<br />
+
+<a name="copytitles"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Copy entry titles into empty user name fields</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String[Key='UserName' and Value='']/..</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner XML</td></tr>
+<tr><td>Find what:</td><td><code>(?s)(&lt;Key&gt;Title&lt;/Key&gt;\s*?&lt;Value&gt;)(.*?)(&lt;/Value&gt;.+?&lt;Key&gt;UserName&lt;/Key&gt;\s*?)&lt;Value /&gt;</code></td></tr>
+<tr><td>Replace with:</td><td><code>$1$2$3&lt;Value&gt;$2&lt;/Value&gt;</code></td></tr>
+<tr><td>Case-sensitive:</td><td>Activated</td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Copies the entry title into the user name field of the
+entry, if this field is empty.</td></tr>
 </table>
 
 </body></html>

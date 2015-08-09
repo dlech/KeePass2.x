@@ -40,7 +40,7 @@ namespace KeePassLib.Cryptography
 			uint uCodeDigits, bool bAddChecksum, int iTruncationOffset)
 		{
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
-			Array.Reverse(pbText); // Big-Endian
+			Array.Reverse(pbText); // To big-endian
 
 			HMACSHA1 hsha1 = new HMACSHA1(pbSecret);
 			byte[] pbHash = hsha1.ComputeHash(pbText);

@@ -40,6 +40,8 @@ namespace KeePass.DataExchange.Formats
 {
 	internal sealed class XslTransform2x : FileFormatProvider
 	{
+		private const string ParamXslFile = "XslFile";
+
 		public override bool SupportsImport { get { return false; } }
 		public override bool SupportsExport { get { return true; } }
 
@@ -54,13 +56,31 @@ namespace KeePass.DataExchange.Formats
 		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
 			IStatusLogger slLogger)
 		{
+			string strXslFile;
+			pwExportInfo.Parameters.TryGetValue(ParamXslFile, out strXslFile);
+
+			if(string.IsNullOrEmpty(strXslFile))
+				strXslFile = UIGetXslFile();
+			if(string.IsNullOrEmpty(strXslFile))
+				return false;
+
+			return ExportEx(pwExportInfo, sOutput, slLogger, strXslFile);
+		}
+
+		private static string UIGetXslFile()
+		{
 			string strFilter = UIUtil.CreateFileTypeFilter("xsl", KPRes.XslFileType, true);
 			OpenFileDialogEx dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
 				strFilter, 1, "xsl", false, AppDefs.FileDialogContext.Xsl);
 
-			if(dlgXsl.ShowDialog() != DialogResult.OK) return false;
+			if(dlgXsl.ShowDialog() != DialogResult.OK) return null;
 
-			string strXslFile = dlgXsl.FileName;
+			return dlgXsl.FileName;
+		}
+
+		private bool ExportEx(PwExportInfo pwExportInfo, Stream sOutput,
+			IStatusLogger slLogger, string strXslFile)
+		{
 			XslCompiledTransform xsl = new XslCompiledTransform();
 
 			try { xsl.Load(strXslFile); }

@@ -317,7 +317,8 @@ namespace KeePass.DataExchange
 			if(bOpenFromUrl == false)
 			{
 				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Synchronize,
-					UIUtil.CreateFileTypeFilter(null, null, true), 1, null, true,
+					UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.FileExt,
+					KPRes.KdbxFiles, true), 1, null, true,
 					AppDefs.FileDialogContext.Sync);
 
 				if(ofd.ShowDialog() != DialogResult.OK) return null;

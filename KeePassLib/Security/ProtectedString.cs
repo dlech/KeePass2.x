@@ -150,7 +150,8 @@ namespace KeePassLib.Security
 
 			byte[] pb = xbProtected.ReadPlainText();
 			Init(bEnableProtection, pb);
-			MemUtil.ZeroByteArray(pb);
+
+			if(bEnableProtection) MemUtil.ZeroByteArray(pb);
 		}
 
 		private void Init(bool bEnableProtection, string str)
@@ -242,7 +243,8 @@ namespace KeePassLib.Security
 
 			byte[] pb = ReadUtf8();
 			ProtectedString ps = new ProtectedString(bProtect, pb);
-			MemUtil.ZeroByteArray(pb);
+
+			if(bProtect) MemUtil.ZeroByteArray(pb);
 			return ps;
 		}
 

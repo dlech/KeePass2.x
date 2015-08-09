@@ -439,6 +439,9 @@
 		<Data Name="CredSaveUserOnly">
 			<Value>Remember user name only</Value>
 		</Data>
+		<Data Name="CredSpecifyDifferent">
+			<Value>&amp;Specify different server credentials</Value>
+		</Data>
 		<Data Name="CsprojCountError">
 			<Value>There must be exactly one .csproj or .vbproj file.</Value>
 		</Data>
@@ -1980,6 +1983,9 @@
 		</Data>
 		<Data Name="UnknownError">
 			<Value>An unknown error occurred.</Value>
+		</Data>
+		<Data Name="UnsupportedByMono">
+			<Value>unsupported by Mono</Value>
 		</Data>
 		<Data Name="UpdateCheck">
 			<Value>Update Check</Value>

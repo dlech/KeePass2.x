@@ -212,7 +212,7 @@ namespace KeePassLib.Utility
 			const int SizeICONDIRENTRY = 16;
 
 			Debug.Assert(BitConverter.ToInt32(new byte[] { 1, 2, 3, 4 },
-				0) == 0x04030201); // Little-Endian
+				0) == 0x04030201); // Little-endian
 
 			if(pb.Length < SizeICONDIR) return null;
 			if(BitConverter.ToUInt16(pb, 0) != 0) return null; // Reserved, 0

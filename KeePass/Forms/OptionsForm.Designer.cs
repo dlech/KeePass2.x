@@ -130,7 +130,6 @@
 			this.m_tabMain.Controls.Add(this.m_tabIntegration);
 			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
-			this.m_tabMain.Multiline = true;
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(562, 337);

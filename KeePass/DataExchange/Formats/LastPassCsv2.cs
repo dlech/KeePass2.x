@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.0.2-2.0.20+
+	// 2.0.2-3.1.95+
 	internal sealed class LastPassCsv2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }

@@ -77,7 +77,9 @@ namespace KeePass.Util
 		public static event EventHandler<AutoTypeEventArgs> FilterSendPre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSend;
 
+		public static event EventHandler<SequenceQueryEventArgs> SequenceQueryPre;
 		public static event EventHandler<SequenceQueryEventArgs> SequenceQuery;
+		public static event EventHandler<SequenceQueryEventArgs> SequenceQueryPost;
 
 		public static event EventHandler<SequenceQueriesEventArgs> SequenceQueriesBegin;
 		public static event EventHandler<SequenceQueriesEventArgs> SequenceQueriesEnd;
@@ -246,7 +248,7 @@ namespace KeePass.Util
 				AutoType.SequenceQueriesEnd(null, e);
 		}
 
-		// Multiple calls of this method should be wrapped in
+		// Multiple calls of this method are wrapped in
 		// GetSequencesForWindowBegin and GetSequencesForWindowEnd
 		private static List<string> GetSequencesForWindow(PwEntry pwe,
 			IntPtr hWnd, string strWindow, PwDatabase pdContext, int iEventID)
@@ -260,6 +262,9 @@ namespace KeePass.Util
 
 			SprContext sprCtx = new SprContext(pwe, pdContext,
 				SprCompileFlags.NonActive);
+
+			RaiseSequenceQueryEvent(AutoType.SequenceQueryPre, iEventID,
+				hWnd, strWindow, pwe, pdContext, l);
 
 			// Specifically defined sequences must match before the title,
 			// in order to allow selecting the first item as default one
@@ -278,6 +283,9 @@ namespace KeePass.Util
 					AddSequence(l, strSeq);
 				}
 			}
+
+			RaiseSequenceQueryEvent(AutoType.SequenceQuery, iEventID,
+				hWnd, strWindow, pwe, pdContext, l);
 
 			if(Program.Config.Integration.AutoTypeMatchByTitle)
 			{
@@ -331,21 +339,31 @@ namespace KeePass.Util
 				}
 			}
 
-			if(AutoType.SequenceQuery != null)
-			{
-				SequenceQueryEventArgs e = new SequenceQueryEventArgs(iEventID,
-					hWnd, strWindow, pwe, pdContext);
-				AutoType.SequenceQuery(null, e);
-
-				foreach(string strSeq in e.Sequences)
-					AddSequence(l, strSeq);
-			}
+			RaiseSequenceQueryEvent(AutoType.SequenceQueryPost, iEventID,
+				hWnd, strWindow, pwe, pdContext, l);
 
 			return l;
 		}
 
+		private static void RaiseSequenceQueryEvent(
+			EventHandler<SequenceQueryEventArgs> f, int iEventID, IntPtr hWnd,
+			string strWindow, PwEntry pwe, PwDatabase pdContext,
+			List<string> lSeq)
+		{
+			if(f == null) return;
+
+			SequenceQueryEventArgs e = new SequenceQueryEventArgs(iEventID,
+				hWnd, strWindow, pwe, pdContext);
+			f(null, e);
+
+			foreach(string strSeq in e.Sequences)
+				AddSequence(lSeq, strSeq);
+		}
+
 		private static void AddSequence(List<string> lSeq, string strSeq)
 		{
+			if(strSeq == null) { Debug.Assert(false); return; }
+
 			string strCanSeq = CanonicalizeSeq(strSeq);
 
 			for(int i = 0; i < lSeq.Count; ++i)

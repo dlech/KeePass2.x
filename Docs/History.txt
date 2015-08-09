@@ -1,3 +1,65 @@
+2015-08-09: 2.30
+- When opening a database via an URL fails, the error message
+  dialog now has a button 'Specify different server
+  credentials' (on Windows Vista and higher)
+- Added support for opening entry URLs with Microsoft Edge via
+  the context menu -> 'URL(s)' -> 'Open with Edge'
+- Added URL override suggestion for Microsoft Edge in the URL
+  override suggestions drop-down list in the entry dialog
+- Added optional built-in global URL overrides for opening
+  HTTP/HTTPS URLs with Microsoft Edge
+- When clicking on a group link in the entry view, KeePass now
+  ensures that the group is visible in the group tree
+- The main window is now moved onto the primary screen when it
+  is restored outside all screens
+- KDBX loader: added support for non-empty protected binary
+  value reference elements
+- Plugins: added two auto-type sequence query events
+- Added workaround for Mono drawing bug when scrolling a rich
+  text box
+- When running under Mono, some automatic locking options are
+  now disabled (because Mono doesn't implement the required
+  events)
+- The installer now prevents running the installer while it is
+  already running
+- KPScript: added '-GroupPath:' parameter (for specifying the
+  full path of a group)
+- KPScript: the 'MoveEntry' command now also supports the
+  '-GroupName:' parameter (as alternative to '-GroupPath:')
+- KPScript: added support for specifying the path of an XSL
+  stylesheet file using the command line parameter '-XslFile:'
+- KPScript: the 'ListGroups' command now also outputs the
+  parent group UUID for each group
+- KPScript: the parameters for specifying new field data (for
+  the 'AddEntry' and the 'EditEntry' command) now support
+  escape sequences (e.g. '\n' is replaced by a new-line
+  character)
+
+- The 'Synchronize' file dialog now shows only KDBX files by
+  default
+- In the 'Attachments (Count)' column, only non-zero counts are
+  shown now
+- Improved MRU item refreshes
+- The entry string dialog now supports changing the case of a
+  string name
+- The entry string dialog now does not allow adding a string
+  whose name differs from another existing string name in this
+  entry only by case
+- The entry view in the main window is now updated immediately
+  after pressing Ctrl+H or Ctrl+J
+- The KDB import module now tries to round any invalid
+  date/time to the nearest valid date/time
+- XML serializers are now loaded/created at KeePass startup in
+  order to avoid a problem when shutting down Windows and
+  KeePass.XmlSerializers.dll not being present
+- Changed tab bar behavior in the options dialog to avoid a tab
+  content cropping issue caused by plugins
+- Improved workaround for Mono splitter bug
+- Upgraded installer
+- Various performance improvements
+- Various code optimizations
+- Minor other improvements
+
 2015-04-10: 2.29
 - Added high resolution icons
 - Added support for high resolution custom icons

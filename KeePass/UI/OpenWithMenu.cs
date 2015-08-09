@@ -38,10 +38,28 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
+	internal enum OwFilePathType
+	{
+		/// <summary>
+		/// Path to an executable file that is invoked with
+		/// the target URI as command line parameter.
+		/// </summary>
+		Executable = 0,
+
+		/// <summary>
+		/// Shell path (e.g. URI) in which a placeholder is
+		/// replaced by the target URI.
+		/// </summary>
+		ShellExpand
+	}
+
 	internal sealed class OpenWithItem
 	{
 		private string m_strPath;
 		public string FilePath { get { return m_strPath; } }
+
+		private OwFilePathType m_tPath;
+		public OwFilePathType FilePathType { get { return m_tPath; } }
 
 		private string m_strMenuText;
 		// public string MenuText { get { return m_strMenuText; } }
@@ -52,10 +70,11 @@ namespace KeePass.UI
 		private ToolStripMenuItem m_tsmi;
 		public ToolStripMenuItem MenuItem { get { return m_tsmi; } }
 
-		private OpenWithItem(string strFilePath, string strMenuText,
-			Image imgIcon, DynamicMenu dynMenu)
+		public OpenWithItem(string strFilePath, OwFilePathType tPath,
+			string strMenuText, Image imgIcon, DynamicMenu dynMenu)
 		{
 			m_strPath = strFilePath;
+			m_tPath = tPath;
 			m_strMenuText = strMenuText;
 			m_imgIcon = imgIcon;
 
@@ -63,12 +82,6 @@ namespace KeePass.UI
 
 			try { m_tsmi.ToolTipText = m_strPath; }
 			catch(Exception) { } // Too long?
-		}
-
-		public static OpenWithItem Create(string strFilePath, string strMenuText,
-			Image imgIcon, DynamicMenu dynMenu)
-		{
-			return new OpenWithItem(strFilePath, strMenuText, imgIcon, dynMenu);
 		}
 	}
 
@@ -78,6 +91,8 @@ namespace KeePass.UI
 		private DynamicMenu m_dynMenu;
 
 		private List<OpenWithItem> m_lOpenWith = null;
+
+		private const string PlhTargetUri = @"{OW_URI}";
 
 		public OpenWithMenu(ToolStripDropDownItem tsmiHost)
 		{
@@ -169,6 +184,8 @@ namespace KeePass.UI
 			OpenWithItem it = (e.Tag as OpenWithItem);
 			if(it == null) { Debug.Assert(false); return; }
 
+			string strApp = it.FilePath;
+
 			PwEntry[] v = Program.MainForm.GetSelectedEntries();
 			if(v == null) { Debug.Assert(false); return; }
 
@@ -177,7 +194,14 @@ namespace KeePass.UI
 				string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
 				if(string.IsNullOrEmpty(strUrl)) continue;
 
-				WinUtil.OpenUrlWithApp(strUrl, pe, it.FilePath);
+				if(it.FilePathType == OwFilePathType.Executable)
+					WinUtil.OpenUrlWithApp(strUrl, pe, strApp);
+				else if(it.FilePathType == OwFilePathType.ShellExpand)
+				{
+					string str = strApp.Replace(PlhTargetUri, strUrl);
+					WinUtil.OpenUrl(str, pe, false);
+				}
+				else { Debug.Assert(false); }
 			}
 		}
 
@@ -206,14 +230,38 @@ namespace KeePass.UI
 				DpiUtil.ScaleIntY(16));
 
 			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
-			OpenWithItem owi = OpenWithItem.Create(strPath, strMenuText,
-				img, m_dynMenu);
+			OpenWithItem owi = new OpenWithItem(strPath, OwFilePathType.Executable,
+				strMenuText, img, m_dynMenu);
+			m_lOpenWith.Add(owi);
+		}
+
+		private void AddAppByShellExpand(string strShell, string strName,
+			string strIconExe)
+		{
+			if(string.IsNullOrEmpty(strShell)) return;
+
+			if(string.IsNullOrEmpty(strName))
+				strName = strShell;
+
+			Image img = null;
+			if(!string.IsNullOrEmpty(strIconExe))
+				img = UIUtil.GetFileIcon(strIconExe, DpiUtil.ScaleIntX(16),
+					DpiUtil.ScaleIntY(16));
+
+			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
+			OpenWithItem owi = new OpenWithItem(strShell, OwFilePathType.ShellExpand,
+				strMenuText, img, m_dynMenu);
 			m_lOpenWith.Add(owi);
 		}
 
 		private void FindAppsByKnown()
 		{
 			AddAppByFile(AppLocator.InternetExplorerPath, @"&Internet Explorer");
+
+			if(AppLocator.EdgeProtocolSupported)
+				AddAppByShellExpand("microsoft-edge:" + PlhTargetUri, @"&Edge",
+					AppLocator.EdgePath);
+
 			AddAppByFile(AppLocator.FirefoxPath, @"&Firefox");
 			AddAppByFile(AppLocator.OperaPath, @"O&pera");
 			AddAppByFile(AppLocator.ChromePath, @"&Google Chrome");

@@ -192,8 +192,6 @@ namespace KeePassLib.Native
 
 					if(strStdInput != null)
 					{
-						// Workaround for Mono Process StdIn BOM bug;
-						// https://sourceforge.net/p/keepass/bugs/1219/
 						EnsureNoBom(p.StandardInput);
 
 						p.StandardInput.Write(strStdInput);
@@ -258,7 +256,7 @@ namespace KeePassLib.Native
 		private static void EnsureNoBom(StreamWriter sw)
 		{
 			if(sw == null) { Debug.Assert(false); return; }
-			if(!NativeLib.IsUnix()) return;
+			if(!MonoWorkarounds.IsRequired(1219)) return;
 
 			try
 			{
@@ -267,9 +265,24 @@ namespace KeePassLib.Native
 				byte[] pbBom = enc.GetPreamble();
 				if((pbBom == null) || (pbBom.Length == 0)) return;
 
-				FieldInfo fi = typeof(StreamWriter).GetField("preamble_done",
+				// For Mono >= 4.0 (using Microsoft's reference source)
+				try
+				{
+					FieldInfo fi = typeof(StreamWriter).GetField("haveWrittenPreamble",
+						BindingFlags.Instance | BindingFlags.NonPublic);
+					if(fi != null)
+					{
+						fi.SetValue(sw, true);
+						return;
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				// For Mono < 4.0
+				FieldInfo fiPD = typeof(StreamWriter).GetField("preamble_done",
 					BindingFlags.Instance | BindingFlags.NonPublic);
-				if(fi != null) fi.SetValue(sw, true);
+				if(fiPD != null) fiPD.SetValue(sw, true);
+				else { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

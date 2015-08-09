@@ -23,17 +23,18 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Threading;
+using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.UI;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Security;
-using KeePassLib.Collections;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -45,7 +46,10 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 		private PwDatabase m_pwContext = null;
 
-		private volatile List<string> m_vSuggestedNames = new List<string>();
+		private List<string> m_lSuggestedNames = new List<string>();
+
+		private List<string> m_lStdNames = PwDefs.GetStandardFields();
+		private char[] m_vInvalidChars = new char[] { '{', '}' };
 
 		public EditStringForm()
 		{
@@ -105,72 +109,80 @@ namespace KeePass.Forms
 				m_cbProtect.Checked = m_psStringInitialValue.IsProtected;
 			}
 
-			ValidateStringName();
+			ValidateStringNameUI();
 
 			PopulateNamesComboBox();
 			// UIUtil.SetFocus(m_cmbStringName, this); // See PopulateNamesComboBox
 		}
 
-		private bool ValidateStringNameEx(string str)
+		private bool ValidateStringNameUI()
 		{
-			if(str == null) { Debug.Assert(false); return false; }
+			string strResult;
+			bool bError;
+			bool b = ValidateStringName(m_cmbStringName.Text, out strResult,
+				out bError);
 
-			if(PwDefs.IsStandardField(str)) return false;
-			if(str.Length <= 0) return false;
+			m_lblValidationInfo.Text = strResult;
+			if(bError) m_cmbStringName.BackColor = AppDefs.ColorEditError;
+			else m_cmbStringName.ResetBackColor();
 
-			char[] vInvalidChars = new char[] { '{', '}' };
-			if(str.IndexOfAny(vInvalidChars) >= 0) return false;
-
-			string strStart = (m_strStringName != null) ? m_strStringName : string.Empty;
-			if(!strStart.Equals(str) && m_vStringDict.Exists(str)) return false;
-			// See ValidateStringName
-
-			return true;
+			m_btnOK.Enabled = b;
+			return b;			
 		}
 
-		private bool ValidateStringName()
+		private bool ValidateStringName(string str)
 		{
-			string str = m_cmbStringName.Text;
-			string strStart = (m_strStringName != null) ? m_strStringName : string.Empty;
-			char[] vInvalidChars = new char[]{ '{', '}' };
+			string strResult;
+			bool bError;
+			return ValidateStringName(str, out strResult, out bError);
+		}
 
-			if(PwDefs.IsStandardField(str))
-			{
-				m_lblValidationInfo.Text = KPRes.FieldNameInvalid;
-				m_cmbStringName.BackColor = AppDefs.ColorEditError;
-				m_btnOK.Enabled = false;
-				return false;
-			}
-			else if(str.Length <= 0)
-			{
-				m_lblValidationInfo.Text = KPRes.FieldNamePrompt;
-				m_cmbStringName.ResetBackColor();
-				m_btnOK.Enabled = false;
-				return false;
+		private bool ValidateStringName(string str, out string strResult,
+			out bool bError)
+		{
+			strResult = KPRes.FieldNameInvalid;
+			bError = true;
 
-			}
-			else if(str.IndexOfAny(vInvalidChars) >= 0)
+			if(str == null) { Debug.Assert(false); return false; }
+
+			if(str.Length == 0)
 			{
-				m_lblValidationInfo.Text = KPRes.FieldNameInvalid;
-				m_cmbStringName.BackColor = AppDefs.ColorEditError;
-				m_btnOK.Enabled = false;
+				strResult = KPRes.FieldNamePrompt;
+				bError = false; // Name not acceptable, but no error
 				return false;
 			}
-			else if(!strStart.Equals(str) && m_vStringDict.Exists(str))
+
+			if(str == m_strStringName) // Case-sensitive
 			{
-				m_lblValidationInfo.Text = KPRes.FieldNameExistsAlready;
-				m_cmbStringName.BackColor = AppDefs.ColorEditError;
-				m_btnOK.Enabled = false;
-				return false;
+				strResult = string.Empty;
+				bError = false;
+				return true;
 			}
+
+			foreach(string strStd in m_lStdNames)
+			{
+				if(str.Equals(strStd, StrUtil.CaseIgnoreCmp))
+					return false;
+			}
+
+			if(str.IndexOfAny(m_vInvalidChars) >= 0) return false;
+
+			if(str.Equals(m_strStringName, StrUtil.CaseIgnoreCmp) &&
+				!m_vStringDict.Exists(str)) { } // Just changing case
 			else
 			{
-				m_lblValidationInfo.Text = string.Empty;
-				m_cmbStringName.ResetBackColor();
-				m_btnOK.Enabled = true;
+				foreach(string strExisting in m_vStringDict.GetKeys())
+				{
+					if(str.Equals(strExisting, StrUtil.CaseIgnoreCmp))
+					{
+						strResult = KPRes.FieldNameExistsAlready;
+						return false;
+					}
+				}
 			}
-			// See ValidateStringNameEx
 
+			strResult = string.Empty;
+			bError = false;
 			return true;
 		}
 
@@ -178,7 +190,7 @@ namespace KeePass.Forms
 		{
 			string strName = m_cmbStringName.Text;
 
-			if(!ValidateStringName())
+			if(!ValidateStringNameUI())
 			{
 				this.DialogResult = DialogResult.None;
 				return;
@@ -217,6 +229,12 @@ namespace KeePass.Forms
 
 		private void PopulateNamesCollectFunc()
 		{
+			try { PopulateNamesCollectFuncPriv(); }
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void PopulateNamesCollectFuncPriv()
+		{
 			if(m_pwContext == null) { Debug.Assert(false); return; }
 
 			EntryHandler eh = delegate(PwEntry pe)
@@ -225,10 +243,14 @@ namespace KeePass.Forms
 
 				foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 				{
-					if(ValidateStringNameEx(kvp.Key) &&
-						!m_vSuggestedNames.Contains(kvp.Key))
+					if(ValidateStringName(kvp.Key) &&
+						!m_lSuggestedNames.Contains(kvp.Key))
 					{
-						m_vSuggestedNames.Add(kvp.Key);
+						// Do not suggest any case-insensitive variant of the
+						// initial string, otherwise the string case cannot
+						// be changed (due to auto-completion resetting it)
+						if(!kvp.Key.Equals(m_strStringName, StrUtil.CaseIgnoreCmp))
+							m_lSuggestedNames.Add(kvp.Key);
 					}
 				}
 
@@ -237,16 +259,16 @@ namespace KeePass.Forms
 
 			m_pwContext.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
-			m_vSuggestedNames.Sort();
+			m_lSuggestedNames.Sort();
 
 			if(m_cmbStringName.InvokeRequired)
 				m_cmbStringName.Invoke(new VoidDelegate(this.PopulateNamesAddFunc));
-			else this.PopulateNamesAddFunc();
+			else PopulateNamesAddFunc();
 		}
 
 		private void PopulateNamesAddFunc()
 		{
-			foreach(string str in m_vSuggestedNames)
+			foreach(string str in m_lSuggestedNames)
 				m_cmbStringName.Items.Add(str);
 
 			UIUtil.SetFocus(m_cmbStringName, this);
@@ -264,7 +286,7 @@ namespace KeePass.Forms
 
 		private void OnNameTextChanged(object sender, EventArgs e)
 		{
-			ValidateStringName();
+			ValidateStringNameUI();
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData)

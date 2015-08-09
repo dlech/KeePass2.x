@@ -38,12 +38,22 @@ namespace KeePassLib.Utility
 			return m_bReq.Value;
 		}
 
+		// 1219:
+		//   Mono prepends byte order mark (BOM) to StdIn.
+		//   https://sourceforge.net/p/keepass/bugs/1219/
 		// 1245:
 		//   Key events not raised while Alt is down, and nav keys out of order.
 		//   https://sourceforge.net/p/keepass/bugs/1245/
 		// 1254:
 		//   NumericUpDown bug: text is drawn below up/down buttons.
 		//   https://sourceforge.net/p/keepass/bugs/1254/
+		// 1366:
+		//   Drawing bug when scrolling a RichTextBox.
+		//   https://sourceforge.net/p/keepass/bugs/1366/
+		// 1378:
+		//   Mono doesn't implement Microsoft.Win32.SystemEvents events.
+		//   https://sourceforge.net/p/keepass/bugs/1378/
+		//   https://github.com/mono/mono/blob/master/mcs/class/System/Microsoft.Win32/SystemEvents.cs
 		// 5795:
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795

@@ -313,6 +313,10 @@ namespace KeePass.App.Configuration
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{INTERNETEXPLORER} \"{BASE}\"", 0x4));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"microsoft-edge:{BASE}", 0x4000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"microsoft-edge:{BASE}", 0x8000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
 				"cmd://{FIREFOX} \"{BASE}\"", 0x8));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{FIREFOX} \"{BASE}\"", 0x10));
@@ -334,6 +338,7 @@ namespace KeePass.App.Configuration
 				"cmd://\"{APPDIR}\\KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
 				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
+			// Free: 0x10000
 
 #if DEBUG
 			ulong u = 0;

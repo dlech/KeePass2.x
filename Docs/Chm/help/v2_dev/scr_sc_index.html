@@ -158,7 +158,10 @@ Usage examples:</p>
 <p>The <code>-GroupName:</code> parameter can be used to specify the group in which the
 entry is created. For searching, KPScript performs a pre-order traversal and uses the
 first matching group (the name is case-sensitive). If no group with the specified name is
-found, it will be created in the root group. If you do not specify a group name,
+found, it will be created in the root group.
+Alternatively, the full path of the group can be specified using the
+<code>-GroupPath:</code> parameter (use '<code>/</code>' as separator).
+If you do not specify a group name or path,
 the entry will be created in the root group. Example:</p>
 
 <p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:&quot;My Provider&quot;
@@ -218,10 +221,12 @@ first create backups of entries before modifying them.</p>
 <p>This command moves one or more existing entries. The entry identification
 syntax is exactly the same as in the <code>EditEntry</code> command.</p>
 
-<p>The target group can be specified using the <code>GroupTree</code>
+<p>The target group can be specified using the <code>-GroupPath:</code>
 parameter. '<code>/</code>' must be used as separator
-(e.g. <code>-GroupTree:Internet/eMail</code> moves the specified entries
-to the subgroup 'eMail' of the subgroup 'Internet').</p>
+(e.g. <code>-GroupPath:Internet/eMail</code> moves the specified entries
+to the subgroup 'eMail' of the subgroup 'Internet').
+Alternatively, the <code>-GroupName:</code> parameter can be used
+(see the 'AddEntry' command for details).</p>
 
 <hr />
 <p><b>Command: DeleteEntry</b></p>
@@ -270,6 +275,9 @@ export dialog of KeePass). The file to export to is specified using the
 &quot;-OutFile&quot; parameter. Usage example:</p>
 
 <p><code>KPScript -c:Export &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Format:&quot;KeePass XML (2.x)&quot; -OutFile:TargetFile.xml</code></p>
+
+<p>For the XSL transformation export module, the path of the XSL file
+can be passed using the &quot;-XslFile&quot; parameter.</p>
 
 <hr />
 <p><b>Command: Sync</b></p>

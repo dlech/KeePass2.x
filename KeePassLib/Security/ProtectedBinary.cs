@@ -195,7 +195,8 @@ namespace KeePassLib.Security
 
 			byte[] pb = xbProtected.ReadPlainText();
 			Init(bEnableProtection, pb);
-			MemUtil.ZeroByteArray(pb);
+
+			if(bEnableProtection) MemUtil.ZeroByteArray(pb);
 		}
 
 		private void Init(bool bEnableProtection, byte[] pbData)

@@ -1689,8 +1689,8 @@ namespace KeePass.Forms
 			if(strFilter != null) strFlt += strFilter;
 			strFlt += KPRes.AllFiles + @" (*.*)|*.*";
 
-			OpenFileDialogEx dlg = UIUtil.CreateOpenFileDialog(null, strFlt, 1, null,
-				false, AppDefs.FileDialogContext.Attachments);
+			OpenFileDialogEx dlg = UIUtil.CreateOpenFileDialog(null, strFlt, 1,
+				null, false, AppDefs.FileDialogContext.Attachments);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 				m_tbUrl.Text = "cmd://\"" + dlg.FileName + "\"";
@@ -1981,6 +1981,8 @@ namespace KeePass.Forms
 
 			AddOverrideUrlItem(l, "cmd://{INTERNETEXPLORER} \"{URL}\"",
 				AppLocator.InternetExplorerPath);
+			AddOverrideUrlItem(l, "microsoft-edge:{URL}",
+				AppLocator.EdgePath);
 			AddOverrideUrlItem(l, "cmd://{FIREFOX} \"{URL}\"",
 				AppLocator.FirefoxPath);
 			AddOverrideUrlItem(l, "cmd://{OPERA} \"{URL}\"",

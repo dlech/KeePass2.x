@@ -36,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.9.82-7.9.2.5+
+	// 6.9.82-7.9.13.5+
 	internal sealed class RoboFormHtml69 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }

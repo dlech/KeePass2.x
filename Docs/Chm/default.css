@@ -5,8 +5,8 @@
 body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {
 	font-family: Verdana, Arial, sans-serif;
 	font-size: 13px;
-	color: #000000;
 	font-weight: normal;
+	color: #000000;
 }
 
 /* --------------------------------------------------------------------- */
@@ -381,3 +381,19 @@ div.tipdiv {
 .spr-m-feed-s     { background-position:  -19px -158px; width: 16px; height: 16px; }
 .spr-m-w3valid-b  { background-position:   -1px -176px; width: 80px; height: 15px; }
 .spr-m-kp-b       { background-position:  -83px -176px; width: 80px; height: 15px; }
+
+/* --------------------------------------------------------------------- */
+
+.cc_message, .cc_more_info, .cc_btn {
+	font-family: Verdana, Arial, sans-serif !important;
+	font-size: 13px !important;
+}
+
+.cc_message {
+	color: #FFFFFF !important;
+}
+
+.cc_container {
+	background-color: rgba(0, 0, 0, 0.92) !important;
+	padding: 5px 5px 5px 10px !important;
+}

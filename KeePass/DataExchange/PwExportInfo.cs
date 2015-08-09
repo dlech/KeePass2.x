@@ -56,6 +56,13 @@ namespace KeePass.DataExchange
 			get { return m_bExpDel; }
 		}
 
+		private Dictionary<string, string> m_dictParams =
+			new Dictionary<string, string>();
+		public Dictionary<string, string> Parameters
+		{
+			get { return m_dictParams; }
+		}
+
 		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo)
 		{
 			ConstructEx(pgDataSource, pwContextInfo, null);
@@ -71,7 +78,7 @@ namespace KeePass.DataExchange
 			bool? bExportDeleted)
 		{
 			if(pgDataSource == null) throw new ArgumentNullException("pgDataSource");
-			// pwContextInfo may be null.
+			// pwContextInfo may be null
 
 			m_pg = pgDataSource;
 			m_pd = pwContextInfo;

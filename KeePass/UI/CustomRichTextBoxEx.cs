@@ -27,10 +27,14 @@ using System.Diagnostics;
 
 using KeePass.Util;
 
+using KeePassLib.Utility;
+
 namespace KeePass.UI
 {
 	public sealed class CustomRichTextBoxEx : RichTextBox
 	{
+		private static bool? m_bForceRedrawOnScroll = null;
+
 		private bool m_bSimpleTextOnly = false;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -421,5 +425,27 @@ namespace KeePass.UI
 
 			return true;
 		} */
+
+		protected override void OnHScroll(EventArgs e)
+		{
+			base.OnHScroll(e);
+
+			MonoRedrawOnScroll();
+		}
+
+		protected override void OnVScroll(EventArgs e)
+		{
+			base.OnVScroll(e);
+
+			MonoRedrawOnScroll();
+		}
+
+		private void MonoRedrawOnScroll()
+		{
+			if(!m_bForceRedrawOnScroll.HasValue)
+				m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
+
+			if(m_bForceRedrawOnScroll.Value) Invalidate();
+		}
 	}
 }

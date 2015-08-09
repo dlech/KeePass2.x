@@ -109,6 +109,11 @@ namespace KeePass.Forms
 			// Can be invoked by tray command; don't use CenterParent
 			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
 
+			// When multiline is enabled, tabs added by plugins can result
+			// in multiple tab rows, cropping the tab content at the bottom;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/a17a2734/
+			Debug.Assert(!m_tabMain.Multiline);
+
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = Properties.Resources.KeePass;
@@ -257,14 +262,26 @@ namespace KeePass.Forms
 
 			m_cdxSecurityOptions = new CheckedLVItemDXList(m_lvSecurityOptions, true);
 
+			bool? obNoSEv = null; // Allow read-only by enforced config
+			string strSEvSuffix = string.Empty;
+			if(MonoWorkarounds.IsRequired(1378))
+			{
+				aceWL.LockOnSessionSwitch = false;
+				aceWL.LockOnSuspend = false;
+				aceWL.LockOnRemoteControlChange = false;
+
+				obNoSEv = true;
+				strSEvSuffix = " (" + KPRes.UnsupportedByMono + ")";
+			}
+
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnWindowMinimize",
 				lvg, KPRes.LockOnMinimize);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSessionSwitch",
-				lvg, KPRes.LockOnSessionSwitch);
+				lvg, KPRes.LockOnSessionSwitch + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSuspend",
-				lvg, KPRes.LockOnSuspend);
+				lvg, KPRes.LockOnSuspend + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnRemoteControlChange",
-				lvg, KPRes.LockOnRemoteControlChange);
+				lvg, KPRes.LockOnRemoteControlChange + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "ExitInsteadOfLockingAfterTime",
 				lvg, KPRes.ExitInsteadOfLockingAfterTime);
 			m_cdxSecurityOptions.CreateItem(aceWL, "AlwaysExitInsteadOfLocking",
@@ -279,8 +296,16 @@ namespace KeePass.Forms
 				m_cdxSecurityOptions.CreateItem(Program.Config.Native, "NativeKeyTransformations",
 					lvg, KPRes.NativeLibUse);
 
+			bool? obNoWin = null; // Allow read-only by enforced config
+			if(NativeLib.IsUnix())
+			{
+				Program.Config.Security.MasterKeyOnSecureDesktop = false;
+
+				obNoWin = true;
+			}
+
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "MasterKeyOnSecureDesktop",
-				lvg, KPRes.MasterKeyOnSecureDesktop);
+				lvg, KPRes.MasterKeyOnSecureDesktop, obNoWin);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClearKeyCommandLineParams",
 				lvg, KPRes.ClearKeyCmdLineParams);
 

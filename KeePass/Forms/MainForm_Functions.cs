@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Xml.Serialization;
 using System.Diagnostics;
 
 using KeePass.App;
@@ -2032,6 +2033,7 @@ namespace KeePass.Forms
 			if(OpenDatabaseRestoreIfOpened(ioc)) return;
 
 			PwDatabase pwOpenedDb = null;
+			bool bAbort;
 			if(cmpKey == null)
 			{
 				for(int iTry = 0; iTry < 3; ++iTry)
@@ -2079,13 +2081,14 @@ namespace KeePass.Forms
 						return;
 					}
 
-					pwOpenedDb = OpenDatabaseInternal(ioc, kpfResult.Key);
-					if(pwOpenedDb != null) break;
+					pwOpenedDb = OpenDatabaseInternal(ioc, kpfResult.Key,
+						out bAbort);
+					if((pwOpenedDb != null) || bAbort) break;
 				}
 			}
 			else // cmpKey != null
 			{
-				pwOpenedDb = OpenDatabaseInternal(ioc, cmpKey);
+				pwOpenedDb = OpenDatabaseInternal(ioc, cmpKey, out bAbort);
 			}
 
 			if((pwOpenedDb == null) || !pwOpenedDb.IsOpen)
@@ -2180,8 +2183,11 @@ namespace KeePass.Forms
 			ResetDefaultFocus(null);
 		}
 
-		private PwDatabase OpenDatabaseInternal(IOConnectionInfo ioc, CompositeKey cmpKey)
+		private PwDatabase OpenDatabaseInternal(IOConnectionInfo ioc,
+			CompositeKey cmpKey, out bool bAbort)
 		{
+			bAbort = false;
+
 			PerformSelfTest();
 
 			ShowWarningsLogger swLogger = CreateShowWarningsLogger();
@@ -2201,6 +2207,7 @@ namespace KeePass.Forms
 			if(ds == null) pwDb = m_docMgr.CreateNewDocument(true).Database;
 			else pwDb = ds.Database;
 
+			Exception ex = null;
 			try
 			{
 				pwDb.Open(ioc, cmpKey, swLogger);
@@ -2210,10 +2217,9 @@ namespace KeePass.Forms
 				Debug.Assert(MemUtil.ArraysEqual(pbDiskDirect, pwDb.HashOfFileOnDisk));
 #endif
 			}
-			catch(Exception ex)
+			catch(Exception exLoad)
 			{
-				MessageService.ShowLoadWarning(ioc.GetDisplayName(), ex,
-					(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null));
+				ex = exLoad;
 				pwDb = null;
 			}
 
@@ -2222,6 +2228,52 @@ namespace KeePass.Forms
 			if(pwDb == null)
 			{
 				if(ds == null) m_docMgr.CloseDatabase(m_docMgr.ActiveDatabase);
+			}
+
+			if(ex != null)
+			{
+				string strMsg = MessageService.GetLoadWarningMessage(
+					ioc.GetDisplayName(), ex,
+					(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null));
+
+				bool bShowStd = true;
+				if(!ioc.IsLocalFile())
+				{
+					VistaTaskDialog vtd = new VistaTaskDialog();
+					vtd.CommandLinks = false;
+					vtd.Content = strMsg;
+					vtd.DefaultButtonID = (int)DialogResult.Cancel;
+					// vtd.VerificationText = KPRes.CredSpecifyDifferent;
+					vtd.WindowTitle = PwDefs.ShortProductName;
+
+					vtd.SetIcon(VtdIcon.Warning);
+					vtd.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+					vtd.AddButton((int)DialogResult.Retry,
+						KPRes.CredSpecifyDifferent, null);
+
+					if(vtd.ShowDialog(this))
+					{
+						bShowStd = false;
+
+						// if(vtd.ResultVerificationChecked)
+						if(vtd.Result == (int)DialogResult.Retry)
+						{
+							IOConnectionInfo iocNew = ioc.CloneDeep();
+							// iocNew.ClearCredentials(false);
+							iocNew.CredSaveMode = IOCredSaveMode.NoSave;
+							iocNew.IsComplete = false;
+							// iocNew.Password = string.Empty;
+
+							OpenDatabase(iocNew, null, false);
+
+							bAbort = true;
+						}
+					}
+				}
+
+				if(bShowStd) MessageService.ShowWarning(strMsg);
+				// MessageService.ShowLoadWarning(ioc.GetDisplayName(), ex,
+				//	(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null));
 			}
 
 			return pwDb;
@@ -2752,6 +2804,8 @@ namespace KeePass.Forms
 
 			if(bRestoreWindow && (this.WindowState == FormWindowState.Minimized))
 				UIUtil.SetWindowState(this, FormWindowState.Normal);
+
+			UIUtil.EnsureInsideScreen(this);
 
 			try
 			{
@@ -4653,7 +4707,8 @@ namespace KeePass.Forms
 					str = pe.History.UCount.ToString();
 					break;
 				case AceColumnType.AttachmentCount:
-					str = pe.Binaries.UCount.ToString();
+					uint uc = pe.Binaries.UCount;
+					str = ((uc > 0) ? uc.ToString() : string.Empty);
 					break;
 				default: Debug.Assert(false); str = string.Empty; break;
 			}
@@ -4710,6 +4765,7 @@ namespace KeePass.Forms
 			}
 
 			RefreshEntriesList();
+			UpdateUIState(false); // Update entry view
 		}
 
 		private void EditSelectedEntry(bool bSwitchToHistoryTab)
@@ -5055,6 +5111,13 @@ namespace KeePass.Forms
 				WinUtil.RemoveZoneIdentifier(WinUtil.GetExecutable());
 				WinUtil.RemoveZoneIdentifier(AppHelp.LocalHelpFile);
 				WinUtil.RemoveZoneIdentifier(strShInstUtil);
+
+				// http://stackoverflow.com/questions/26256917/how-can-i-prevent-my-application-from-causing-a-0xc0000142-error-in-csc-exe
+				XmlSerializer xs = new XmlSerializer(typeof(IpcParamEx));
+				IpcParamEx ipc = new IpcParamEx();
+				MemoryStream ms = new MemoryStream();
+				xs.Serialize(ms, ipc);
+				ms.Close();
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

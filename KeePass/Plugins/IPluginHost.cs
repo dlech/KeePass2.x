@@ -51,7 +51,7 @@ namespace KeePass.Plugins
 		PwDatabase Database { get; }
 
 		/// <summary>
-		/// Reference to the command-line arguments.
+		/// Reference to the command line arguments.
 		/// </summary>
 		CommandLineArgs CommandLineArgs { get; }
 

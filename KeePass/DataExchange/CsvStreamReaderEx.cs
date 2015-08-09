@@ -144,8 +144,10 @@ namespace KeePass.DataExchange
 						if(chNum4 != char.MinValue) // Implies the others
 						{
 							StringBuilder sbNum = new StringBuilder();
-							sbNum.Append(chNum3); sbNum.Append(chNum4); // Little
-							sbNum.Append(chNum1); sbNum.Append(chNum2); // Endian
+							sbNum.Append(chNum3); // Little-endian
+							sbNum.Append(chNum4);
+							sbNum.Append(chNum1);
+							sbNum.Append(chNum2);
 
 							byte[] pbNum = MemUtil.HexStringToByteArray(sbNum.ToString());
 							ushort usNum = MemUtil.BytesToUInt16(pbNum);
