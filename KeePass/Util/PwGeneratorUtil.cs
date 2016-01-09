@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,11 @@ using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Resources;
+using KeePass.Util.Spr;
 
+using KeePassLib;
 using KeePassLib.Cryptography.PasswordGenerator;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -123,6 +126,56 @@ namespace KeePass.Util
 			if(b == null) { Debug.Assert(false); return 1; }
 
 			return StrUtil.CompareNaturally(a.Name, b.Name);
+		}
+
+		internal static ProtectedString GenerateAcceptable(PwProfile prf,
+			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx)
+		{
+			bool b = false;
+			return GenerateAcceptable(prf, pbUserEntropy, peOptCtx, pdOptCtx, ref b);
+		}
+
+		internal static ProtectedString GenerateAcceptable(PwProfile prf,
+			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
+			ref bool bAcceptAlways)
+		{
+			ProtectedString ps = ProtectedString.Empty;
+			SprContext ctx = new SprContext(peOptCtx, pdOptCtx,
+				SprCompileFlags.NonActive, false, false);
+
+			bool bAcceptable = false;
+			while(!bAcceptable)
+			{
+				bAcceptable = true;
+
+				PwGenerator.Generate(out ps, prf, pbUserEntropy, Program.PwGeneratorPool);
+				if(ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
+
+				if(bAcceptAlways) { }
+				else
+				{
+					string str = ps.ReadString();
+					string strCmp = SprEngine.Compile(str, ctx);
+
+					if(str != strCmp)
+					{
+						if(prf.GeneratorType == PasswordGeneratorType.CharSet)
+							bAcceptable = false; // Silently try again
+						else
+						{
+							string strText = str + MessageService.NewParagraph +
+								KPRes.GenPwSprVariant + MessageService.NewParagraph +
+								KPRes.GenPwAccept;
+
+							if(!MessageService.AskYesNo(strText, null, false))
+								bAcceptable = false;
+							else bAcceptAlways = true;
+						}
+					}
+				}
+			}
+
+			return ps;
 		}
 	}
 }

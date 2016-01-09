@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -203,9 +203,14 @@ namespace KeePass.Native
 		internal const int LOGPIXELSX = 88;
 		internal const int LOGPIXELSY = 90;
 
+		// internal const int SM_CXSMICON = 49;
+		// internal const int SM_CYSMICON = 50;
+
 		// internal const uint PROCESS_QUERY_INFORMATION = 0x0400;
 
 		internal const uint ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID = 0x04;
+
+		internal const int INFOTIPSIZE = 1024;
 
 		// internal const uint DI_NORMAL = 0x0003;
 
@@ -384,6 +389,20 @@ namespace KeePass.Native
 			SnapAll = (SnapHeapList | SnapProcess | SnapThread | SnapModule),
 
 			Inherit = 0x80000000U
+		}
+
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/aa380337.aspx
+		[Flags]
+		internal enum STGM : uint
+		{
+			Read = 0x00000000,
+			Write = 0x00000001,
+			ReadWrite = 0x00000002,
+
+			ShareDenyNone = 0x00000040,
+			ShareDenyRead = 0x00000030,
+			ShareDenyWrite = 0x00000020,
+			ShareExclusive = 0x00000010
 		}
 	}
 }

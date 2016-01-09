@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ namespace KeePass.UI
 	{
 		private NotifyIcon m_ntf = null;
 
+		private Icon m_ico = null; // Property value
+		private Icon m_icoShell = null; // Private copy
+
 		public NotifyIcon NotifyIcon { get { return m_ntf; } }
 
 		public ContextMenuStrip ContextMenuStrip
@@ -70,14 +73,33 @@ namespace KeePass.UI
 
 		public Icon Icon
 		{
-			get
-			{
-				try { return m_ntf.Icon; }
-				catch(Exception) { Debug.Assert(false); return null; }
-			}
+			get { return m_ico; }
 			set
 			{
-				try { m_ntf.Icon = value; }
+				try
+				{
+					m_ico = value;
+
+					Icon icoToDispose = m_icoShell;
+					try
+					{
+						if(m_ico != null)
+						{
+							Size sz = SystemInformation.SmallIconSize;
+							m_icoShell = new Icon(m_ico, sz);
+
+							m_ntf.Icon = m_icoShell;
+						}
+						else m_ntf.Icon = null;
+					}
+					catch(Exception)
+					{
+						Debug.Assert(false);
+						m_ntf.Icon = m_ico;
+					}
+
+					if(icoToDispose != null) icoToDispose.Dispose();
+				}
 				catch(Exception) { Debug.Assert(false); }
 			}
 		}

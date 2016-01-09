@@ -280,6 +280,9 @@
 		<Data Name="CheckingForUpd">
 			<Value>Checking for updates</Value>
 		</Data>
+		<Data Name="ClassicAdj">
+			<Value>Classic</Value>
+		</Data>
 		<Data Name="ClearKeyCmdLineParams">
 			<Value>Clear master key command line parameters after using them once</Value>
 		</Data>
@@ -931,8 +934,17 @@
 		<Data Name="GenProfileSaveDescLong">
 			<Value>Please enter a name for the new password generator profile, or select an existing profile name to overwrite it:</Value>
 		</Data>
+		<Data Name="GenPwAccept">
+			<Value>Accept this password?</Value>
+		</Data>
 		<Data Name="GenPwBasedOnPrevious">
 			<Value>Derive from previous password</Value>
+		</Data>
+		<Data Name="GenPwSprVariant">
+			<Value>The generated password contains a placeholder. When using this password (e.g. by copying it to the clipboard or auto-typing it), the placeholder will be replaced, i.e. effectively a different password might be used.</Value>
+		</Data>
+		<Data Name="Gradient">
+			<Value>Gradient</Value>
 		</Data>
 		<Data Name="Group">
 			<Value>Group</Value>
@@ -1032,6 +1044,9 @@
 		</Data>
 		<Data Name="ImportStc">
 			<Value>Import into active database</Value>
+		</Data>
+		<Data Name="IncompatibleEnv">
+			<Value>incompatible with current environment</Value>
 		</Data>
 		<Data Name="IncompatibleWithSorting">
 			<Value>incompatible with sorting</Value>
@@ -1546,6 +1561,12 @@
 		<Data Name="PrintDesc">
 			<Value>Print password entries.</Value>
 		</Data>
+		<Data Name="Private">
+			<Value>Private</Value>
+		</Data>
+		<Data Name="Professional">
+			<Value>Professional</Value>
+		</Data>
 		<Data Name="QuickSearchExclExpired">
 			<Value>Exclude expired entries in quick searches</Value>
 		</Data>
@@ -2034,9 +2055,6 @@
 		</Data>
 		<Data Name="UrlSaveTitle">
 			<Value>Save To URL</Value>
-		</Data>
-		<Data Name="UseCustomToolStripRenderer">
-			<Value>Use custom ToolStrip renderer</Value>
 		</Data>
 		<Data Name="UseFileLocks">
 			<Value>Use database lock files</Value>

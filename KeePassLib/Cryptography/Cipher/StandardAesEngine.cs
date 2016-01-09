@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,15 +24,8 @@ using System.IO;
 using System.Security;
 using System.Diagnostics;
 
-#if !KeePassRT
+#if !KeePassUAP
 using System.Security.Cryptography;
-#else
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.IO;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Paddings;
-using Org.BouncyCastle.Crypto.Parameters;
 #endif
 
 using KeePassLib.Resources;
@@ -44,7 +37,7 @@ namespace KeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !KeePassRT
+#if !KeePassUAP
 		private const CipherMode m_rCipherMode = CipherMode.CBC;
 		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
 #endif
@@ -60,11 +53,9 @@ namespace KeePassLib.Cryptography.Cipher
 			get
 			{
 				if(m_uuidAes == null)
-				{
 					m_uuidAes = new PwUuid(new byte[]{
 						0x31, 0xC1, 0xF2, 0xE6, 0xBF, 0x71, 0x43, 0x50,
 						0xBE, 0x58, 0x05, 0x21, 0x6A, 0xFC, 0x5A, 0xFF });
-				}
 
 				return m_uuidAes;
 			}
@@ -98,12 +89,12 @@ namespace KeePassLib.Cryptography.Cipher
 			if(bEncrypt)
 			{
 				Debug.Assert(stream.CanWrite);
-				if(stream.CanWrite == false) throw new ArgumentException("Stream must be writable!");
+				if(!stream.CanWrite) throw new ArgumentException("Stream must be writable!");
 			}
 			else // Decrypt
 			{
 				Debug.Assert(stream.CanRead);
-				if(stream.CanRead == false) throw new ArgumentException("Encrypted stream must be readable!");
+				if(!stream.CanRead) throw new ArgumentException("Encrypted stream must be readable!");
 			}
 		}
 
@@ -117,7 +108,9 @@ namespace KeePassLib.Cryptography.Cipher
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
 
-#if !KeePassRT
+#if KeePassUAP
+			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbLocalKey, pbLocalIV);
+#else
 			RijndaelManaged r = new RijndaelManaged();
 			if(r.BlockSize != 128) // AES block size
 			{
@@ -137,18 +130,6 @@ namespace KeePassLib.Cryptography.Cipher
 
 			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
 				CryptoStreamMode.Read);
-#else
-			AesEngine aes = new AesEngine();
-			CbcBlockCipher cbc = new CbcBlockCipher(aes);
-			PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
-				new Pkcs7Padding());
-			KeyParameter kp = new KeyParameter(pbLocalKey);
-			ParametersWithIV prmIV = new ParametersWithIV(kp, pbLocalIV);
-			bc.Init(bEncrypt, prmIV);
-
-			IBufferedCipher cpRead = (bEncrypt ? null : bc);
-			IBufferedCipher cpWrite = (bEncrypt ? bc : null);
-			return new CipherStream(s, cpRead, cpWrite);
 #endif
 		}
 

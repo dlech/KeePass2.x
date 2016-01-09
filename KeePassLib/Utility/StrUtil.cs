@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,12 +21,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Globalization;
 using System.Diagnostics;
+
+#if KeePassUAP
+using Windows.UI;
+#else
+using System.Drawing;
+#endif
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography.PasswordGenerator;
@@ -219,7 +224,7 @@ namespace KeePassLib.Utility
 				List<StrEncodingInfo> l = new List<StrEncodingInfo>();
 
 				l.Add(new StrEncodingInfo(StrEncodingType.Default,
-#if KeePassRT
+#if KeePassUAP
 					StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
 #else
 #if !KeePassLibSD
@@ -230,12 +235,11 @@ namespace KeePassLib.Utility
 					Encoding.Default,
 					(uint)Encoding.Default.GetBytes("a").Length, null));
 #endif
-#if !KeePassRT
+
 				l.Add(new StrEncodingInfo(StrEncodingType.Ascii,
 					"ASCII", Encoding.ASCII, 1, null));
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf7,
 					"Unicode (UTF-7)", Encoding.UTF7, 1, null));
-#endif
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf8,
 					"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
@@ -244,7 +248,8 @@ namespace KeePassLib.Utility
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
 					"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
 					2, new byte[] { 0xFE, 0xFF }));
-#if (!KeePassLibSD && !KeePassRT)
+
+#if !KeePassLibSD
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
 					"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
 					4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
@@ -495,7 +500,7 @@ namespace KeePassLib.Utility
 			if(excp.StackTrace != null)
 				strText += excp.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
-#if !KeePassRT
+#if !KeePassUAP
 			if(excp.TargetSite != null)
 				strText += excp.TargetSite.ToString() + MessageService.NewLine;
 #endif
@@ -521,7 +526,7 @@ namespace KeePassLib.Utility
 				if(excp.InnerException.StackTrace != null)
 					strText += excp.InnerException.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
-#if !KeePassRT
+#if !KeePassUAP
 				if(excp.InnerException.TargetSite != null)
 					strText += excp.InnerException.TargetSite.ToString();
 #endif
@@ -758,7 +763,7 @@ namespace KeePassLib.Utility
 			return sb.ToString();
 		}
 
-		private static Regex m_rxNaturalSplit = null;
+		private static Regex g_rxNaturalSplit = null;
 		public static int CompareNaturally(string strX, string strY)
 		{
 			Debug.Assert(strX != null);
@@ -772,16 +777,11 @@ namespace KeePassLib.Utility
 			strX = strX.ToLower(); // Case-insensitive comparison
 			strY = strY.ToLower();
 
-			if(m_rxNaturalSplit == null)
-				m_rxNaturalSplit = new Regex(@"([0-9]+)",
-#if KeePassRT
-					RegexOptions.None);
-#else
-					RegexOptions.Compiled);
-#endif
+			if(g_rxNaturalSplit == null)
+				g_rxNaturalSplit = new Regex(@"([0-9]+)", RegexOptions.Compiled);
 
-			string[] vPartsX = m_rxNaturalSplit.Split(strX);
-			string[] vPartsY = m_rxNaturalSplit.Split(strY);
+			string[] vPartsX = g_rxNaturalSplit.Split(strX);
+			string[] vPartsY = g_rxNaturalSplit.Split(strY);
 
 			for(int i = 0; i < Math.Min(vPartsX.Length, vPartsY.Length); ++i)
 			{

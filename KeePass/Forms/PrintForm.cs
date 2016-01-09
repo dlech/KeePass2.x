@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -35,6 +36,7 @@ using KeePassLib.Collections;
 using KeePassLib.Security;
 using KeePassLib.Delegates;
 using KeePassLib.Resources;
+using KeePassLib.Translation;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -213,7 +215,11 @@ namespace KeePass.Forms
 			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
 			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 
-			sb.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\" ");
+			string strLang = Program.Translation.Properties.Iso6391Code;
+			if(string.IsNullOrEmpty(strLang)) strLang = "en";
+			sb.AppendLine("lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\">");
+
 			sb.AppendLine("<head>");
 			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
 			sb.Append("<title>");
@@ -226,22 +232,47 @@ namespace KeePass.Forms
 			sb.AppendLine("<style type=\"text/css\"><!--");
 
 			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
-			sb.AppendLine("\tfont-family: Tahoma, MS Sans Serif, Sans Serif, Verdana, sans-serif;");
+			sb.AppendLine("\tfont-family: \"Tahoma\", \"MS Sans Serif\", \"Sans Serif\", \"Verdana\", sans-serif;");
 			sb.AppendLine("\tfont-size: 10pt;");
 			sb.AppendLine("}");
+
 			sb.AppendLine("span.fserif {");
-			sb.AppendLine("\tfont-family: Times New Roman, serif;");
+			sb.AppendLine("\tfont-family: \"Times New Roman\", serif;");
 			sb.AppendLine("}");
+
 			sb.AppendLine("h1 { font-size: 2em; }");
-			sb.AppendLine("h2 { font-size: 1.5em; }");
-			sb.AppendLine("h3 { font-size: 1.2em; }");
+			sb.AppendLine("h2 {");
+			sb.AppendLine("\tfont-size: 1.5em;");
+			sb.AppendLine("\tcolor: #000000;");
+			sb.AppendLine("\tbackground-color: #D0D0D0;");
+			sb.AppendLine("\tpadding-left: 2pt;");
+			sb.AppendLine("}");
+			sb.AppendLine("h3 {");
+			sb.AppendLine("\tfont-size: 1.2em;");
+			sb.AppendLine("\tcolor: #000000;");
+			sb.AppendLine("\tbackground-color: #D0D0D0;");
+			sb.AppendLine("\tpadding-left: 2pt;");
+			sb.AppendLine("}");
 			sb.AppendLine("h4 { font-size: 1em; }");
 			sb.AppendLine("h5 { font-size: 0.89em; }");
 			sb.AppendLine("h6 { font-size: 0.6em; }");
+
+			sb.AppendLine("table {");
+			sb.AppendLine("\twidth: 100%;");
+			sb.AppendLine("\ttable-layout: fixed;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("th {");
+			sb.AppendLine("\ttext-align: left;");
+			sb.AppendLine("\tvertical-align: top;");
+			sb.AppendLine("\tfont-weight: bold;");
+			sb.AppendLine("}");
+
 			sb.AppendLine("td {");
 			sb.AppendLine("\ttext-align: left;");
 			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("}");
+
 			sb.AppendLine("a:visited {");
 			sb.AppendLine("\ttext-decoration: none;");
 			sb.AppendLine("\tcolor: #0000DD;");
@@ -257,6 +288,18 @@ namespace KeePass.Forms
 			sb.AppendLine("a:hover {");
 			sb.AppendLine("\ttext-decoration: underline;");
 			sb.AppendLine("\tcolor: #6699FF;");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".field_name {");
+			sb.AppendLine("\t-webkit-hyphens: auto;");
+			sb.AppendLine("\t-moz-hyphens: auto;");
+			sb.AppendLine("\t-ms-hyphens: auto;");
+			sb.AppendLine("\thyphens: auto;");
+			sb.AppendLine("}");
+			sb.AppendLine(".field_data {");
+			// sb.AppendLine("\tword-break: break-all;");
+			sb.AppendLine("\toverflow-wrap: break-word;");
+			sb.AppendLine("\tword-wrap: break-word;");
 			sb.AppendLine("}");
 
 			sb.AppendLine("--></style>");
@@ -278,6 +321,7 @@ namespace KeePass.Forms
 			bool bAutoType = m_cbAutoType.Checked;
 			bool bTags = m_cbTags.Checked;
 			bool bCustomStrings = m_cbCustomStrings.Checked;
+			bool bUuid = m_cbUuid.Checked;
 
 			bool bMonoPasswords = m_cbMonospaceForPasswords.Checked;
 			if(m_rbMonospace.Checked) bMonoPasswords = false; // Monospaced anyway
@@ -303,18 +347,34 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
-			string strTableInit = "<table width=\"100%\">";
+			string strTableInit = "<table>";
+			PwGroup pgLast = null;
 
 			if(m_rbTabular.Checked)
 			{
-				// int nFieldCount = (bTitle ? 1 : 0) + (bUserName ? 1 : 0);
-				// nFieldCount += (bPassword ? 1 : 0) + (bURL ? 1 : 0) + (bNotes ? 1 : 0);
+				int nFieldCount = 0;
+				if(bGroup) ++nFieldCount;
+				if(bTitle) ++nFieldCount;
+				if(bUserName) ++nFieldCount;
+				if(bPassword) ++nFieldCount;
+				if(bURL) ++nFieldCount;
+				if(bNotes) ++nFieldCount;
+				if(bCreation) ++nFieldCount;
+				// if(bLastAcc) ++nFieldCount;
+				if(bLastMod) ++nFieldCount;
+				if(bExpire) ++nFieldCount;
+				if(bTags) ++nFieldCount;
+				if(bUuid) ++nFieldCount;
+				if(nFieldCount == 0) nFieldCount = 1;
 
-				string strCellPre = "<td>" + strFontInit;
+				string strColWidth = (100.0f / (float)nFieldCount).ToString(
+					"F2", NumberFormatInfo.InvariantInfo);
+				string strHTdInit = "<th class=\"field_name\" style=\"width: " +
+					strColWidth + "%;\">";
+				string strHTdExit = "</th>";
+
+				string strCellPre = "<td class=\"field_data\">" + strFontInit;
 				string strCellPost = strFontExit + "</td>";
-
-				string strHTdInit = "<td><b>";
-				string strHTdExit = "</b></td>";
 
 				StringBuilder sbH = new StringBuilder();
 				sbH.AppendLine();
@@ -330,6 +390,7 @@ namespace KeePass.Forms
 				if(bLastMod) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastModificationTime) + strHTdExit);
 				if(bExpire) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.ExpiryTime) + strHTdExit);
 				if(bTags) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Tags) + strHTdExit);
+				if(bUuid) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Uuid) + strHTdExit);
 				sbH.Append("</tr>"); // No terminating \r\n
 
 				strTableInit += sbH.ToString();
@@ -346,7 +407,8 @@ namespace KeePass.Forms
 					if(bPassword)
 					{
 						if(bMonoPasswords)
-							sb.Append(bSmallMono ? "<td><code><small>" : "<td><code>");
+							sb.Append("<td class=\"field_data\">" + (bSmallMono ?
+								"<code><small>" : "<code>"));
 						else sb.Append(strCellPre);
 
 						string strInner = StrUtil.StringToHtml(pe.Strings.ReadSafe(PwDefs.PasswordField));
@@ -364,17 +426,20 @@ namespace KeePass.Forms
 
 					WriteTabularIf(bNotes, sb, pe, PwDefs.NotesField, strCellPre, strCellPost);
 
-					WriteTabularIf(bCreation, sb, TimeUtil.ToDisplayString(
-						pe.CreationTime), strCellPre, strCellPost);
-					// WriteTabularIf(bLastAcc, sb, TimeUtil.ToDisplayString(
-					//	pe.LastAccessTime), strCellPre, strCellPost);
-					WriteTabularIf(bLastMod, sb, TimeUtil.ToDisplayString(
-						pe.LastModificationTime), strCellPre, strCellPost);
-					WriteTabularIf(bExpire, sb, (pe.Expires ? TimeUtil.ToDisplayString(
-						pe.ExpiryTime) : KPRes.NeverExpires), strCellPre, strCellPost);
-
-					WriteTabularIf(bTags, sb, StrUtil.TagsToString(pe.Tags, true),
+					WriteTabularIf(bCreation, sb, StrUtil.StringToHtml(
+						TimeUtil.ToDisplayString(pe.CreationTime)), strCellPre, strCellPost);
+					// WriteTabularIf(bLastAcc, sb, StrUtil.StringToHtml(
+					//	TimeUtil.ToDisplayString(pe.LastAccessTime)), strCellPre, strCellPost);
+					WriteTabularIf(bLastMod, sb, StrUtil.StringToHtml(
+						TimeUtil.ToDisplayString(pe.LastModificationTime)), strCellPre, strCellPost);
+					WriteTabularIf(bExpire, sb, StrUtil.StringToHtml(pe.Expires ?
+						TimeUtil.ToDisplayString(pe.ExpiryTime) : KPRes.NeverExpires),
 						strCellPre, strCellPost);
+
+					WriteTabularIf(bTags, sb, StrUtil.StringToHtml(StrUtil.TagsToString(
+						pe.Tags, true)), strCellPre, strCellPost);
+
+					WriteTabularIf(bUuid, sb, pe.Uuid.ToHexString(), strCellPre, strCellPost);
 
 					sb.AppendLine("</tr>");
 					return true;
@@ -389,6 +454,9 @@ namespace KeePass.Forms
 
 				eh = delegate(PwEntry pe)
 				{
+					if((pgLast != null) && (pgLast == pe.ParentGroup))
+						sb.AppendLine("<tr><td colspan=\"2\"><hr /></td></tr>");
+
 					if(bGroup) WriteDetailsLine(sb, KPRes.Group, pe.ParentGroup.Name, bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 					if(bTitle) WriteDetailsLine(sb, KPRes.Title, pe.Strings.ReadSafe(PwDefs.TitleField), bSmallMono, bMonoPasswords, strFontInit + "<b>", "</b>" + strFontExit);
 					if(bUserName) WriteDetailsLine(sb, KPRes.UserName, pe.Strings.ReadSafe(PwDefs.UserNameField), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
@@ -412,10 +480,10 @@ namespace KeePass.Forms
 								strFontInit, strFontExit);
 					}
 
-					if(bTags)
-						WriteDetailsLine(sb, KPRes.Tags, StrUtil.TagsToString(
-							pe.Tags, true), bSmallMono, bMonoPasswords, strFontInit,
-							strFontExit);
+					if(bTags) WriteDetailsLine(sb, KPRes.Tags, StrUtil.TagsToString(
+						pe.Tags, true), bSmallMono, bMonoPasswords, strFontInit, strFontExit);
+					if(bUuid) WriteDetailsLine(sb, KPRes.Uuid, pe.Uuid.ToHexString(),
+						bSmallMono, bMonoPasswords, strFontInit, strFontExit);
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
@@ -424,8 +492,7 @@ namespace KeePass.Forms
 								strFontInit, strFontExit);
 					}
 
-					sb.AppendLine(@"<tr><td>&nbsp;</td></tr>");
-
+					pgLast = pe.ParentGroup;
 					return true;
 				};
 			}
@@ -435,7 +502,7 @@ namespace KeePass.Forms
 			{
 				if(pg.Entries.UCount == 0) return true;
 
-				sb.Append("</table><br /><hr /><h3>");
+				sb.Append("</table><br /><br /><h3>"); // "</table><br /><hr /><h3>"
 				sb.Append(StrUtil.StringToHtml(pg.GetFullPath(" - ", false)));
 				sb.AppendLine("</h3>");
 				sb.AppendLine(strTableInit);
@@ -491,11 +558,11 @@ namespace KeePass.Forms
 			KeyValuePair<string, ProtectedString> kvp, bool bSmallMono,
 			bool bMonoPasswords, string strFontInit, string strFontExit)
 		{
-			sb.Append("<tr><td><i>");
+			sb.Append("<tr><td class=\"field_name\" style=\"width: 20%;\"><i>");
 			sb.Append(StrUtil.StringToHtml(kvp.Key));
 			sb.AppendLine(":</i></td>");
 
-			sb.Append("<td>");
+			sb.Append("<td class=\"field_data\" style=\"width: 80%;\">");
 
 			if(bMonoPasswords && (kvp.Key == PwDefs.PasswordField))
 				sb.Append(bSmallMono ? "<code><small>" : "<code>");
@@ -585,25 +652,25 @@ namespace KeePass.Forms
 			UpdateUIState();
 		}
 
+		private CheckBox[] GetAllFields()
+		{
+			return new CheckBox[] {
+				m_cbTitle, m_cbUser, m_cbPassword, m_cbUrl, m_cbNotes,
+				m_cbCreation, m_cbLastMod, m_cbExpire, // m_cbLastAccess
+				m_cbAutoType, m_cbTags,
+				m_cbGroups, m_cbCustomStrings, m_cbUuid
+			};
+		}
+
 		private void OnLinkSelectAllFields(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
-				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
-				// m_cbLastAccess.Checked =
-				m_cbLastMod.Checked = m_cbExpire.Checked =
-				m_cbAutoType.Checked = m_cbTags.Checked = m_cbGroups.Checked =
-				m_cbCustomStrings.Checked = true;
+			foreach(CheckBox cb in GetAllFields()) { cb.Checked = true; }
 			UpdateUIState();
 		}
 
 		private void OnLinkDeselectAllFields(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_cbTitle.Checked = m_cbUser.Checked = m_cbPassword.Checked =
-				m_cbUrl.Checked = m_cbNotes.Checked = m_cbCreation.Checked =
-				// m_cbLastAccess.Checked =
-				m_cbLastMod.Checked = m_cbExpire.Checked =
-				m_cbAutoType.Checked = m_cbTags.Checked = m_cbGroups.Checked =
-				m_cbCustomStrings.Checked = false;
+			foreach(CheckBox cb in GetAllFields()) { cb.Checked = false; }
 			UpdateUIState();
 		}
 

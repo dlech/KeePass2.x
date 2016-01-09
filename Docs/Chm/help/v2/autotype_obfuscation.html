@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2015 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
 
 	<title>Two-Channel Auto-Type Obfuscation - KeePass</title>
 	<base target="_self" />
@@ -54,7 +54,7 @@ Description of the Two-Channel Auto-Type Obfuscation feature in KeePass 2.x.
 
 <ul>
 <li><a href="#tech">Technical Overview</a></li>
-<li><a href="#clipblock">Clipboard Event Blocker</a></li>
+<!-- <li><a href="#clipblock">Clipboard Event Blocker</a></li> -->
 <li><a href="#splittext">Intelligently Splitting the Text</a></li>
 <li><a href="#splitsecret">Splitting the Secrets</a></li>
 </ul>
@@ -153,7 +153,7 @@ Overview</h2>
 auto-type does), obfuscated auto-type does the following:</p>
 
 <ul>
-<li>Enable clipboard event blocker.</li>
+<!-- <li>Enable clipboard event blocker.</li> -->
 <li>Backup the current clipboard contents.</li>
 <li>Intelligently split the text into parts.</li>
 <li>For each part: check if the clipboard can be used.
@@ -166,14 +166,14 @@ flat intertwining combs). Copy/paste the first part, merge the rest by sending k
 
 </li>
 <li>Restore previous clipboard contents.</li>
-<li>Disable clipboard event blocker.</li>
+<!-- <li>Disable clipboard event blocker.</li> -->
 </ul>
 
 <p>These steps are described in detail below.</p>
 
 <br />
 
-<a name="clipblock"></a>
+<!-- <a name="clipblock"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_file_locked.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Clipboard
 Event Blocker</h2>
@@ -187,7 +187,7 @@ clipboard event handler chain. This window simply throws away all clipboard
 change messages it receives, practically blocking all other applications
 from receiving any events.</p>
 
-<br />
+<br /> -->
 
 <a name="splittext"></a>
 <h2 class="sectiontitle">
@@ -228,14 +228,15 @@ be sent using the clipboard.</p>
 <img src="../images/b16x16_kmultiple.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Splitting
 the Secrets</h2>
 
-<p>Let's transfer &quot;mymail@myprovider.com&quot; to the target application using the clipboard
-now. KeePass could simply copy it to the clipboard and send a Ctrl+V keypress to the target
+<p>Let's transfer &quot;mymail@myprovider.com&quot; to the target application using
+TCATO.<!--
+the clipboard now. KeePass could simply copy it to the clipboard and send a Ctrl+V keypress to the target
 application, making it paste the clipboard contents. This would be perfectly secure against keyloggers
 because they only see the Ctrl+V keypress but not the actual contents pasted. But there's
 still a problem: a malicious application could monitor the clipboard based on time intervals
 (i.e. not using the events - we've blocked those). Although the duration of the complete
 copy/paste operation is only a few milliseconds, there's still a small chance that an attacker
-could get the data in the clipboard. Therefore, the secrets are split.</p>
+could get the data in the clipboard. Therefore, the secrets are split. --></p>
 
 <p>First, the secret string &quot;mymail@myprovider.com&quot; is randomly split character-wise
 into two parts like two flat intertwining combs:</p>

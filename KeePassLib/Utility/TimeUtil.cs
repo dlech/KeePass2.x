@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,21 @@ namespace KeePassLib.Utility
 		private static string m_strDtfStd = null;
 		private static string m_strDtfDate = null;
 #endif
+
+		private static DateTime? m_odtUnixRoot = null;
+		public static DateTime UnixRoot
+		{
+			get
+			{
+				if(m_odtUnixRoot.HasValue) return m_odtUnixRoot.Value;
+
+				DateTime dtRoot = (new DateTime(1970, 1, 1, 0, 0, 0, 0,
+					DateTimeKind.Utc)).ToLocalTime();
+
+				m_odtUnixRoot = dtRoot;
+				return dtRoot;
+			}
+		}
 
 		/// <summary>
 		/// Pack a <c>DateTime</c> object into 5 bytes. Layout: 2 zero bits,
@@ -278,17 +293,14 @@ namespace KeePassLib.Utility
 			return bResult;
 		}
 
-		private static DateTime? m_dtUnixRoot = null;
+		public static double SerializeUnix(DateTime dt)
+		{
+			return (dt - TimeUtil.UnixRoot).TotalSeconds;
+		}
+
 		public static DateTime ConvertUnixTime(double dtUnix)
 		{
-			try
-			{
-				if(!m_dtUnixRoot.HasValue)
-					m_dtUnixRoot = (new DateTime(1970, 1, 1, 0, 0, 0, 0,
-						DateTimeKind.Utc)).ToLocalTime();
-
-				return m_dtUnixRoot.Value.AddSeconds(dtUnix);
-			}
+			try { return TimeUtil.UnixRoot.AddSeconds(dtUnix); }
 			catch(Exception) { Debug.Assert(false); }
 
 			return DateTime.Now;

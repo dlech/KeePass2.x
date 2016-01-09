@@ -49,6 +49,8 @@
 			this.m_lblPolicyRestart = new System.Windows.Forms.Label();
 			this.m_lblPolicyIntro = new System.Windows.Forms.Label();
 			this.m_tabGui = new System.Windows.Forms.TabPage();
+			this.m_cmbMenuStyle = new System.Windows.Forms.ComboBox();
+			this.m_lblMenuStyle = new System.Windows.Forms.Label();
 			this.m_btnSelPwFont = new System.Windows.Forms.Button();
 			this.m_numMruCount = new System.Windows.Forms.NumericUpDown();
 			this.m_lblMruCount = new System.Windows.Forms.Label();
@@ -326,6 +328,8 @@
 			// 
 			// m_tabGui
 			// 
+			this.m_tabGui.Controls.Add(this.m_cmbMenuStyle);
+			this.m_tabGui.Controls.Add(this.m_lblMenuStyle);
 			this.m_tabGui.Controls.Add(this.m_btnSelPwFont);
 			this.m_tabGui.Controls.Add(this.m_numMruCount);
 			this.m_tabGui.Controls.Add(this.m_lblMruCount);
@@ -340,9 +344,27 @@
 			this.m_tabGui.Text = "Interface";
 			this.m_tabGui.UseVisualStyleBackColor = true;
 			// 
+			// m_cmbMenuStyle
+			// 
+			this.m_cmbMenuStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbMenuStyle.FormattingEnabled = true;
+			this.m_cmbMenuStyle.Location = new System.Drawing.Point(157, 226);
+			this.m_cmbMenuStyle.Name = "m_cmbMenuStyle";
+			this.m_cmbMenuStyle.Size = new System.Drawing.Size(195, 21);
+			this.m_cmbMenuStyle.TabIndex = 2;
+			// 
+			// m_lblMenuStyle
+			// 
+			this.m_lblMenuStyle.AutoSize = true;
+			this.m_lblMenuStyle.Location = new System.Drawing.Point(3, 229);
+			this.m_lblMenuStyle.Name = "m_lblMenuStyle";
+			this.m_lblMenuStyle.Size = new System.Drawing.Size(117, 13);
+			this.m_lblMenuStyle.TabIndex = 1;
+			this.m_lblMenuStyle.Text = "Menu and toolbar style:";
+			// 
 			// m_btnSelPwFont
 			// 
-			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 279);
+			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 252);
 			this.m_btnSelPwFont.Name = "m_btnSelPwFont";
 			this.m_btnSelPwFont.Size = new System.Drawing.Size(133, 23);
 			this.m_btnSelPwFont.TabIndex = 6;
@@ -360,7 +382,7 @@
             0});
 			this.m_numMruCount.Name = "m_numMruCount";
 			this.m_numMruCount.Size = new System.Drawing.Size(53, 20);
-			this.m_numMruCount.TabIndex = 5;
+			this.m_numMruCount.TabIndex = 8;
 			this.m_numMruCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// m_lblMruCount
@@ -369,12 +391,12 @@
 			this.m_lblMruCount.Location = new System.Drawing.Point(3, 282);
 			this.m_lblMruCount.Name = "m_lblMruCount";
 			this.m_lblMruCount.Size = new System.Drawing.Size(148, 13);
-			this.m_lblMruCount.TabIndex = 4;
+			this.m_lblMruCount.TabIndex = 7;
 			this.m_lblMruCount.Text = "Remember recently used files:";
 			// 
 			// m_btnSelFont
 			// 
-			this.m_btnSelFont.Location = new System.Drawing.Point(414, 252);
+			this.m_btnSelFont.Location = new System.Drawing.Point(414, 225);
 			this.m_btnSelFont.Name = "m_btnSelFont";
 			this.m_btnSelFont.Size = new System.Drawing.Size(133, 23);
 			this.m_btnSelFont.TabIndex = 3;
@@ -390,7 +412,7 @@
 			this.m_lvGuiOptions.Location = new System.Drawing.Point(6, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
 			this.m_lvGuiOptions.ShowItemToolTips = true;
-			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 230);
+			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 207);
 			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvGuiOptions.View = System.Windows.Forms.View.Details;
@@ -401,7 +423,7 @@
 			this.m_lblBannerStyle.Location = new System.Drawing.Point(3, 256);
 			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
 			this.m_lblBannerStyle.Size = new System.Drawing.Size(100, 13);
-			this.m_lblBannerStyle.TabIndex = 1;
+			this.m_lblBannerStyle.TabIndex = 4;
 			this.m_lblBannerStyle.Text = "Dialog banner style:";
 			// 
 			// m_cmbBannerStyle
@@ -410,8 +432,8 @@
 			this.m_cmbBannerStyle.FormattingEnabled = true;
 			this.m_cmbBannerStyle.Location = new System.Drawing.Point(157, 253);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
-			this.m_cmbBannerStyle.Size = new System.Drawing.Size(193, 21);
-			this.m_cmbBannerStyle.TabIndex = 2;
+			this.m_cmbBannerStyle.Size = new System.Drawing.Size(195, 21);
+			this.m_cmbBannerStyle.TabIndex = 5;
 			this.m_cmbBannerStyle.SelectedValueChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
 			// 
 			// m_tabIntegration
@@ -704,5 +726,7 @@
 		private System.Windows.Forms.CheckBox m_cbLockAfterGlobalTime;
 		private System.Windows.Forms.NumericUpDown m_numLockAfterGlobalTime;
 		private System.Windows.Forms.Button m_btnProxy;
+		private System.Windows.Forms.ComboBox m_cmbMenuStyle;
+		private System.Windows.Forms.Label m_lblMenuStyle;
 	}
 }

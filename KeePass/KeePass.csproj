@@ -693,6 +693,7 @@
     <Compile Include="Native\NativeMethods.Structs.cs" />
     <Compile Include="Native\NativeMethods.Unix.cs" />
     <Compile Include="Native\NativeProgressDialog.cs" />
+    <Compile Include="Native\ShellLinkEx.cs" />
     <Compile Include="Plugins\PlgxCache.cs" />
     <Compile Include="Plugins\PlgxCsprojLoader.cs" />
     <Compile Include="Plugins\PlgxPluginInfo.cs" />
@@ -722,7 +723,6 @@
     <Compile Include="UI\CustomToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\CustomToolStripRendererEx.cs" />
     <Compile Include="UI\CustomTreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -759,7 +759,14 @@
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="UI\TaskbarList.cs" />
-    <Compile Include="UI\ThemeToolStripRenderer.cs" />
+    <Compile Include="UI\ToolStripRendering\ProExtTsr.cs" />
+    <Compile Include="UI\ToolStripRendering\SystemTsr.cs" />
+    <Compile Include="UI\ToolStripRendering\TsrFactory.cs" />
+    <Compile Include="UI\ToolStripRendering\KeePassTsr.cs" />
+    <Compile Include="UI\ToolStripRendering\TsrPool.cs" />
+    <Compile Include="UI\ToolStripRendering\VisualStyleTsr.cs" />
+    <Compile Include="UI\ToolStripRendering\Win10Tsr.cs" />
+    <Compile Include="UI\ToolStripRendering\Win81Tsr.cs" />
     <Compile Include="UI\UISystemFonts.cs" />
     <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
@@ -1031,6 +1038,7 @@
     <Compile Include="Util\SendInputExt\SiEngineUnix.cs" />
     <Compile Include="Util\SendInputExt\SiEngineWin.cs" />
     <Compile Include="Util\SendInputExt\SiObf.cs" />
+    <Compile Include="Util\SendInputExt\SiWindowInfo.cs" />
     <Compile Include="Util\SessionLockNotifier.cs" />
     <Compile Include="Util\HotKeyManager.cs" />
     <Compile Include="Util\ShellUtil.cs" />
@@ -1316,6 +1324,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_33430356D8D7D1B8 /compiler:/delaysign-</PostBuildEvent>
+    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_27A70973F3FC3787 /compiler:/delaysign-</PostBuildEvent>
   </PropertyGroup>
 </Project>

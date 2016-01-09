@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,19 +33,18 @@ namespace KeePass.Util.SendInputExt
 {
 	internal sealed class SiEngineWin : SiEngineStd
 	{
-		private IntPtr m_pOriginalKeyboardLayout = IntPtr.Zero;
-		// private IntPtr m_pCurrentKeyboardLayout = IntPtr.Zero;
+		private static Dictionary<string, SiSendMethod> g_dProcessSendMethods =
+			new Dictionary<string, SiSendMethod>();
 
-		// private uint m_uThisThreadID = 0;
-		private uint m_uTargetThreadID = 0;
-		// private uint m_uTargetProcessID = 0;
+		private IntPtr m_hklOriginal = IntPtr.Zero;
+		private IntPtr m_hklCurrent = IntPtr.Zero;
 
 		private bool m_bInputBlocked = false;
 
-		// Windows in which Unicode character sending is enforced;
-		// IntPtr.Zero means *every* window
-		private Dictionary<IntPtr, bool> m_dForceUnicodeCharsWnds =
-			new Dictionary<IntPtr, bool>();
+		private SiSendMethod? m_osmEnforced = null;
+
+		private Dictionary<IntPtr, SiWindowInfo> m_dWindowInfos =
+			new Dictionary<IntPtr, SiWindowInfo>();
 
 		// private bool m_bThreadInputAttached = false;
 
@@ -57,15 +56,8 @@ namespace KeePass.Util.SendInputExt
 
 			try
 			{
-				// m_uThisThreadID = NativeMethods.GetCurrentThreadId();
-				uint uTargetProcessID;
-				m_uTargetThreadID = NativeMethods.GetWindowThreadProcessId(
-					this.TargetHWnd, out uTargetProcessID);
-				// m_uTargetProcessID = uTargetProcessID;
-
-				ConfigureForEnv();
-
-				EnsureSameKeyboardLayout();
+				InitProcessSendMethods();
+				InitForEnv();
 
 				// Do not use SendKeys.Flush here, use Application.DoEvents
 				// instead; SendKeys.Flush might run into an infinite loop here
@@ -128,7 +120,7 @@ namespace KeePass.Util.SendInputExt
 				Debug.Assert(GetActiveKeyModifiers().Count == 0);
 				// Do not restore original modifier keys here, otherwise
 				// modifier keys are restored even when the user released
-				// them while KeePass is auto-typing!
+				// them while KeePass is auto-typing
 				// ActivateKeyModifiers(lRestore, true);
 				ReleaseModifiers(false);
 
@@ -136,10 +128,16 @@ namespace KeePass.Util.SendInputExt
 				//	NativeMethods.AttachThreadInput(m_uThisThreadID,
 				//		m_uTargetThreadID, false); // Detach
 
-				if(m_pOriginalKeyboardLayout != IntPtr.Zero)
+				Debug.Assert(NativeMethods.GetKeyboardLayout(0) == m_hklCurrent);
+				if((m_hklCurrent != m_hklOriginal) && (m_hklOriginal != IntPtr.Zero))
 				{
-					NativeMethods.ActivateKeyboardLayout(m_pOriginalKeyboardLayout, 0);
-					m_pOriginalKeyboardLayout = IntPtr.Zero;
+					if(NativeMethods.ActivateKeyboardLayout(m_hklOriginal, 0) !=
+						m_hklCurrent)
+					{
+						Debug.Assert(false);
+					}
+
+					m_hklCurrent = m_hklOriginal;
 				}
 
 				Application.DoEvents();
@@ -151,7 +149,7 @@ namespace KeePass.Util.SendInputExt
 
 		public override void SendKeyImpl(int iVKey, bool? bExtKey, bool? bDown)
 		{
-			// IntPtr hWnd = NativeMethods.GetForegroundWindowHandle();
+			PrepareSend();
 
 			// Disable IME (only required for sending VKeys, not for chars);
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/5da4bd14/
@@ -169,6 +167,8 @@ namespace KeePass.Util.SendInputExt
 
 		public override void SetKeyModifierImpl(Keys kMod, bool bDown)
 		{
+			PrepareSend();
+
 			if((kMod & Keys.Shift) != Keys.None)
 				SendVKeyNative((int)Keys.ShiftKey, null, bDown);
 			if((kMod & Keys.Control) != Keys.None)
@@ -182,7 +182,9 @@ namespace KeePass.Util.SendInputExt
 
 		public override void SendCharImpl(char ch, bool? bDown)
 		{
-			if(TrySendCharByKeypresses(ch, bDown)) return;
+			SiWindowInfo swi = PrepareSend();
+
+			if(TrySendCharByKeypresses(ch, bDown, swi)) return;
 
 			if(bDown.HasValue)
 			{
@@ -194,85 +196,76 @@ namespace KeePass.Util.SendInputExt
 			SendCharNative(ch, false);
 		}
 
-		private void EnsureSameKeyboardLayout()
+		private static void InitProcessSendMethods()
 		{
-			IntPtr hklSelf = NativeMethods.GetKeyboardLayout(0);
-			IntPtr hklTarget = NativeMethods.GetKeyboardLayout(m_uTargetThreadID);
+			Dictionary<string, SiSendMethod> d = g_dProcessSendMethods;
+			if(d.Count > 0) return; // Init once is sufficient
 
-			// m_pCurrentKeyboardLayout = hklSelf;
+			string[] vEnfUni = new string[] {
+				"PuTTY",
+				"KiTTY", "KiTTY_Portable", "KiTTY_NoTrans", "KiTTY_NoHyperlink",
+				"KiTTY_NoCompress",
+				"PuTTYjp",
+				// "mRemoteNG", // No effect
+				// "PuTTYNG", // No effect
 
-			if(!Program.Config.Integration.AutoTypeAdjustKeyboardLayout) return;
+				// SuperPuTTY spawns PuTTY processes whose windows are
+				// displayed embedded in the SuperPuTTY window (without
+				// window borders), thus the definition "PuTTY" also
+				// fixes SuperPuTTY; no "SuperPuTTY" required
+				// "SuperPuTTY",
 
-			if(hklSelf != hklTarget)
+				"MinTTY" // Cygwin window "~"
+			};
+			foreach(string strEnfUni in vEnfUni)
 			{
-				m_pOriginalKeyboardLayout = NativeMethods.ActivateKeyboardLayout(
-					hklTarget, 0);
-				// m_pCurrentKeyboardLayout = hklTarget;
+				d[strEnfUni] = SiSendMethod.UnicodePacket;
+			}
 
-				Debug.Assert(m_pOriginalKeyboardLayout == hklSelf);
+			string[] vEnfKey = new string[] {
+				"MSTSC", // Remote Desktop Connection client
+				"VirtualBox" // VirtualBox does not support VK_PACKET
+			};
+			foreach(string strEnfKey in vEnfKey)
+			{
+				d[strEnfKey] = SiSendMethod.KeyEvent;
 			}
 		}
 
-		private void ConfigureForEnv()
+		private void InitForEnv()
 		{
-			string[] vEnforceUniForPrcWnd = new string[] {
-				"PuTTY.exe", "PuTTY",
-				"KiTTY.exe", "KiTTY", "KiTTY_Portable.exe", "KiTTY_Portable",
-				"PuTTYjp.exe", "PuTTYjp",
-				// "mRemoteNG.exe", "mRemoteNG", // No effect
-				// "PuTTYNG.exe", "PuTTYNG", // No effect
-				// "SuperPuTTY.exe", "SuperPuTTY", // No effect
-				"MinTTY.exe", "MinTTY" // Cygwin window "~"
-			};
-
 #if DEBUG
 			Stopwatch sw = Stopwatch.StartNew();
 #endif
 
 			try
 			{
-				Process[] v = Process.GetProcesses();
-				foreach(Process p in v)
+				m_hklCurrent = NativeMethods.GetKeyboardLayout(0);
+				m_hklOriginal = m_hklCurrent;
+				Debug.Assert(m_hklOriginal != IntPtr.Zero);
+
+				Process[] vProcesses = Process.GetProcesses();
+				foreach(Process p in vProcesses)
 				{
 					if(p == null) { Debug.Assert(false); continue; }
 
 					try
 					{
-						string strName = p.ProcessName.Trim();
-						bool bEnforceUniForHWnd = false;
+						string strName = GetProcessName(p);
 
 						// If the Neo keyboard layout is being used, we must
 						// send Unicode characters; keypresses are converted
 						// and thus do not lead to the expected result
-						if(strName.Equals("Neo20.exe", StrUtil.CaseIgnoreCmp) ||
-							strName.Equals("Neo20", StrUtil.CaseIgnoreCmp))
+						if(ProcessNameMatches(strName, "Neo20"))
 						{
 							FileVersionInfo fvi = p.MainModule.FileVersionInfo;
 							if(((fvi.ProductName ?? string.Empty).Trim().Length == 0) &&
 								((fvi.FileDescription ?? string.Empty).Trim().Length == 0))
-								SetEnforceUnicodeChars(IntPtr.Zero); // All windows
+								m_osmEnforced = SiSendMethod.UnicodePacket;
 							else { Debug.Assert(false); }
 						}
-						else if(strName.Equals("KbdNeo_Ahk.exe", StrUtil.CaseIgnoreCmp) ||
-							strName.Equals("KbdNeo_Ahk", StrUtil.CaseIgnoreCmp))
-							SetEnforceUnicodeChars(IntPtr.Zero); // All windows
-						else
-						{
-							foreach(string strEnf in vEnforceUniForPrcWnd)
-							{
-								if(strName.Equals(strEnf, StrUtil.CaseIgnoreCmp))
-								{
-									bEnforceUniForHWnd = true;
-									break;
-								}
-							}
-						}
-
-						if(bEnforceUniForHWnd)
-						{
-							IntPtr hWnd = p.MainWindowHandle;
-							if(hWnd != IntPtr.Zero) SetEnforceUnicodeChars(hWnd);
-						}
+						else if(ProcessNameMatches(strName, "KbdNeo_Ahk"))
+							m_osmEnforced = SiSendMethod.UnicodePacket;
 					}
 					catch(Exception) { Debug.Assert(false); }
 
@@ -544,27 +537,16 @@ namespace KeePass.Util.SendInputExt
 			}
 		}
 
-		private void SetEnforceUnicodeChars(IntPtr hWnd)
-		{
-			m_dForceUnicodeCharsWnds[hWnd] = true;
-		}
-
-		private bool AreUnicodeCharsEnforced(IntPtr hWnd)
-		{
-			bool bEnf;
-			if(m_dForceUnicodeCharsWnds.TryGetValue(hWnd, out bEnf))
-				return bEnf;
-			return false;
-		}
-
-		private static char[] m_vForcedChars = null;
-		private bool TrySendCharByKeypresses(char ch, bool? bDown)
+		private static char[] m_vForcedUniChars = null;
+		private bool TrySendCharByKeypresses(char ch, bool? bDown, SiWindowInfo swi)
 		{
 			if(ch == char.MinValue) { Debug.Assert(false); return false; }
-			if(AreUnicodeCharsEnforced(IntPtr.Zero)) return false;
 
-			if(m_vForcedChars == null)
-				m_vForcedChars = new char[] {
+			SiSendMethod sm = GetSendMethod(swi);
+			if(sm == SiSendMethod.UnicodePacket) return false;
+
+			if(m_vForcedUniChars == null)
+				m_vForcedUniChars = new char[] {
 					// All of the following diacritics are spacing / non-combining
 
 					'\u00B4', // Acute accent
@@ -586,18 +568,12 @@ namespace KeePass.Util.SendInputExt
 					'\u0022', // Quotation mark
 					'\u007E' // Tilde
 				};
-			if(Array.IndexOf<char>(m_vForcedChars, ch) >= 0) return false;
+			if(sm != SiSendMethod.KeyEvent) // If Unicode packets allowed
+			{
+				if(Array.IndexOf<char>(m_vForcedUniChars, ch) >= 0) return false;
+			}
 
-			IntPtr hWnd = NativeMethods.GetForegroundWindowHandle();
-			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
-			if(AreUnicodeCharsEnforced(hWnd)) return false;
-
-			uint uTargetProcessID;
-			uint uTargetThreadID = NativeMethods.GetWindowThreadProcessId(
-				hWnd, out uTargetProcessID);
-
-			IntPtr hKL = NativeMethods.GetKeyboardLayout(uTargetThreadID);
-
+			IntPtr hKL = swi.KeyboardLayout;
 			ushort u = ((hKL == IntPtr.Zero) ? NativeMethods.VkKeyScan(ch) :
 				NativeMethods.VkKeyScanEx(ch, hKL));
 			if(u == 0xFFFFU) return false;
@@ -641,6 +617,103 @@ namespace KeePass.Util.SendInputExt
 			}
 
 			return true;
+		}
+
+		private SiSendMethod GetSendMethod(SiWindowInfo swi)
+		{
+			if(m_osmEnforced.HasValue) return m_osmEnforced.Value;
+
+			return swi.SendMethod;
+		}
+
+		private SiWindowInfo GetWindowInfo(IntPtr hWnd)
+		{
+			SiWindowInfo swi;
+			if(m_dWindowInfos.TryGetValue(hWnd, out swi)) return swi;
+
+			swi = new SiWindowInfo(hWnd);
+
+			Process p = null;
+			try
+			{
+				uint uPID;
+				uint uTID = NativeMethods.GetWindowThreadProcessId(hWnd, out uPID);
+
+				swi.KeyboardLayout = NativeMethods.GetKeyboardLayout(uTID);
+
+				p = Process.GetProcessById((int)uPID);
+				string strName = GetProcessName(p);
+
+				foreach(KeyValuePair<string, SiSendMethod> kvp in g_dProcessSendMethods)
+				{
+					if(ProcessNameMatches(strName, kvp.Key))
+					{
+						swi.SendMethod = kvp.Value;
+						break;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				try { if(p != null) p.Dispose(); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			m_dWindowInfos[hWnd] = swi;
+			return swi;
+		}
+
+		private SiWindowInfo PrepareSend()
+		{
+			IntPtr hWnd = NativeMethods.GetForegroundWindowHandle();
+			SiWindowInfo swi = GetWindowInfo(hWnd);
+
+			EnsureSameKeyboardLayout(swi);
+
+			return swi;
+		}
+
+		private void EnsureSameKeyboardLayout(SiWindowInfo swi)
+		{
+			if(!Program.Config.Integration.AutoTypeAdjustKeyboardLayout) return;
+
+			IntPtr hklTarget = swi.KeyboardLayout;
+			Debug.Assert(hklTarget != IntPtr.Zero);
+			Debug.Assert(NativeMethods.GetKeyboardLayout(0) == m_hklCurrent);
+
+			if((m_hklCurrent != hklTarget) && (hklTarget != IntPtr.Zero))
+			{
+				if(NativeMethods.ActivateKeyboardLayout(hklTarget, 0) != m_hklCurrent)
+				{
+					Debug.Assert(false);
+				}
+				m_hklCurrent = hklTarget;
+
+				Thread.Sleep(1);
+				Application.DoEvents();
+			}
+		}
+
+		private static string GetProcessName(Process p)
+		{
+			if(p == null) { Debug.Assert(false); return string.Empty; }
+
+			try { return (p.ProcessName ?? string.Empty).Trim(); }
+			catch(Exception) { Debug.Assert(false); }
+			return string.Empty;
+		}
+
+		private static bool ProcessNameMatches(string strUnk, string strPattern)
+		{
+			if(strUnk == null) { Debug.Assert(false); return false; }
+			if(strPattern == null) { Debug.Assert(false); return false; }
+			Debug.Assert(strUnk.Trim() == strUnk);
+			Debug.Assert(strPattern.Trim() == strPattern);
+			Debug.Assert(!strPattern.EndsWith(".exe", StrUtil.CaseIgnoreCmp));
+
+			return (strUnk.Equals(strPattern, StrUtil.CaseIgnoreCmp) ||
+				strUnk.Equals(strPattern + ".exe", StrUtil.CaseIgnoreCmp));
 		}
 	}
 

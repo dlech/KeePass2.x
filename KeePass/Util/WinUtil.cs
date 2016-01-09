@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 
+using Microsoft.Win32;
+
 using KeePass.App;
 using KeePass.Native;
 using KeePass.Resources;
@@ -53,6 +55,7 @@ namespace KeePass.Util
 		private static bool m_bIsAtLeastWindowsVista = false;
 		private static bool m_bIsAtLeastWindows7 = false;
 		private static bool m_bIsAtLeastWindows8 = false;
+		private static bool m_bIsAtLeastWindows10 = false;
 
 		private static string m_strExePath = null;
 
@@ -93,6 +96,11 @@ namespace KeePass.Util
 			get { return m_bIsAtLeastWindows8; }
 		}
 
+		public static bool IsAtLeastWindows10
+		{
+			get { return m_bIsAtLeastWindows10; }
+		}
+
 		static WinUtil()
 		{
 			OperatingSystem os = Environment.OSVersion;
@@ -106,6 +114,27 @@ namespace KeePass.Util
 			m_bIsAtLeastWindowsVista = (v.Major >= 6);
 			m_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
 			m_bIsAtLeastWindows8 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 2)));
+
+			// Environment.OSVersion is reliable only up to version 6.2;
+			// https://msdn.microsoft.com/library/windows/desktop/ms724832.aspx
+			RegistryKey rk = null;
+			try
+			{
+				rk = Registry.LocalMachine.OpenSubKey(
+					"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", false);
+				if(rk != null)
+				{
+					string str = rk.GetValue("CurrentMajorVersionNumber",
+						string.Empty).ToString();
+					uint u;
+					if(uint.TryParse(str, out u))
+						m_bIsAtLeastWindows10 = (u >= 10);
+					else { Debug.Assert(string.IsNullOrEmpty(str)); }
+				}
+				else { Debug.Assert(NativeLib.IsUnix()); }
+			}
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			finally { if(rk != null) rk.Close(); }
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)
@@ -517,17 +546,83 @@ namespace KeePass.Util
 		{
 			if(m_uFrameworkVersion != 0) return m_uFrameworkVersion;
 
-			try
-			{
-				m_uFrameworkVersion = GetNetVersion();
-				return m_uFrameworkVersion;
-			}
+			try { m_uFrameworkVersion = GetMaxNetVersionPriv(); }
 			catch(Exception) { Debug.Assert(false); }
 
-			return 0;
+			if(m_uFrameworkVersion == 0)
+			{
+				Version v = Environment.Version;
+				if(v.Major > 0) m_uFrameworkVersion |= (uint)v.Major;
+				m_uFrameworkVersion <<= 16;
+				if(v.Minor > 0) m_uFrameworkVersion |= (uint)v.Minor;
+				m_uFrameworkVersion <<= 16;
+				if(v.Build > 0) m_uFrameworkVersion |= (uint)v.Build;
+				m_uFrameworkVersion <<= 16;
+				if(v.Revision > 0) m_uFrameworkVersion |= (uint)v.Revision;
+			}
+
+			return m_uFrameworkVersion;
 		}
 
-		private static ulong GetNetVersion()
+		private static ulong GetMaxNetVersionPriv()
+		{
+			RegistryKey kNdp = Registry.LocalMachine.OpenSubKey(
+				"SOFTWARE\\Microsoft\\NET Framework Setup\\NDP", false);
+			if(kNdp == null) { Debug.Assert(false); return 0; }
+
+			ulong uMaxVer = 0;
+
+			string[] vInNdp = kNdp.GetSubKeyNames();
+			foreach(string strInNdp in vInNdp)
+			{
+				if(strInNdp == null) { Debug.Assert(false); continue; }
+				if(!strInNdp.StartsWith("v", StrUtil.CaseIgnoreCmp)) continue;
+
+				RegistryKey kVer = kNdp.OpenSubKey(strInNdp, false);
+				if(kVer != null)
+				{
+					UpdateNetVersionFromRegKey(kVer, ref uMaxVer);
+
+					string[] vProfiles = kVer.GetSubKeyNames();
+					foreach(string strProfile in vProfiles)
+					{
+						if(string.IsNullOrEmpty(strProfile)) { Debug.Assert(false); continue; }
+
+						RegistryKey kPro = kVer.OpenSubKey(strProfile, false);
+						UpdateNetVersionFromRegKey(kPro, ref uMaxVer);
+						if(kPro != null) kPro.Close();
+					}
+
+					kVer.Close();
+				}
+				else { Debug.Assert(false); }
+			}
+
+			kNdp.Close();
+			return uMaxVer;
+		}
+
+		private static void UpdateNetVersionFromRegKey(RegistryKey k, ref ulong uMaxVer)
+		{
+			if(k == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				// https://msdn.microsoft.com/en-us/library/hh925568.aspx
+				string strInstall = k.GetValue("Install", string.Empty).ToString();
+				if((strInstall.Length > 0) && (strInstall != "1")) return;
+
+				string strVer = k.GetValue("Version", string.Empty).ToString();
+				if(strVer.Length > 0)
+				{
+					ulong uVer = StrUtil.ParseVersion(strVer);
+					if(uVer > uMaxVer) uMaxVer = uVer;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		/* private static ulong GetMaxNetVersionPriv()
 		{
 			string strSysRoot = Environment.GetEnvironmentVariable("SystemRoot");
 			string strFrameworks = UrlUtil.EnsureTerminatingSeparator(strSysRoot,
@@ -545,7 +640,7 @@ namespace KeePass.Util
 			}
 
 			return uFrameworkVersion;
-		}
+		} */
 
 		public static string GetOSStr()
 		{

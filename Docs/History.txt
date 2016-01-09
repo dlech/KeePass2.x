@@ -1,3 +1,100 @@
+2016-01-09: 2.31
+- Added menu/toolbar styles, freely selectable in 'Tools' ->
+  'Options' -> tab 'Interface'; available styles are 'Windows
+  10', 'Windows 8.1', 'KeePass - Gradient', '.NET/Office -
+  Professional' and 'System - Classic'; by default KeePass uses
+  the style most similar to the one of the current operating
+  system
+- Refined application icons (thanks to Victor Andreyenkov)
+- Auto-Type: new target window classification method, which
+  improves compatibility with target windows hosted within
+  other windows (e.g. a PuTTY window within SuperPuTTY/MTPuTTY)
+- Auto-Type: added workaround for the default Ctrl+Alt behavior
+  of KiTTY variants (which differs from Windows' behavior)
+- Before clearing the clipboard, KeePass now first copies a
+  non-sensitive text into it; this ensures that no sensitive
+  information remains in the clipboard even when clearing is
+  prevented by the environment (e.g. when running in a virtual
+  machine, when using a clipboard extension utility, ...)
+- Added support for opening entry URLs with Internet Explorer
+  or Google Chrome in private mode via the context menu ->
+  'URL(s)' -> 'Open with ... (Private)'
+- Added URL override suggestions for Internet Explorer and
+  Google Chrome in private mode in the URL override suggestions
+  drop-down list in the entry dialog
+- Added optional built-in global URL overrides for opening
+  HTTP/HTTPS URLs with Internet Explorer or Google Chrome in
+  private mode
+- Added Ctrl+K shortcut for the 'Duplicate Entry' command
+- Mozilla Bookmarks HTML import: added support for importing
+  tags
+- Added support for exporting to Mozilla Bookmarks HTML files
+- Windows/IE favorites export: entry fields are Spr-compiled
+  now, and entries with cmd:// URLs are now exported as LNK
+  files
+- HTML export/printing: added support for UUIDs, added
+  horizontal lines between entries in details mode, added
+  background color for group headings, long field names are
+  hyphenated now, and long field data now breaks and wraps onto
+  the next line
+- Plugins: added possibility to configure file transactions for
+  each URI scheme
+- Plugins: added possibility to provide custom 'Save As'
+  dialogs more easily
+- Converted some PNG images as a workaround for a problem in
+  Cairo/LibPNG on Unix-like systems
+- As a workaround for a weakness in Mono's FileDialog, before
+  showing such a dialog on Unix-like systems KeePass now tries
+  to load the file '~/.recently-used' and deletes it, if it is
+  not a valid XML file
+- KPScript: added support for specifying the master password in
+  encrypted form using the '-pw-enc:' command line parameter
+  (exactly like in KeePass, compatible with the {PASSWORD_ENC}
+  placeholder)
+- KPScript: the 'Export' command now supports the optional
+  '-GroupPath:' parameter (to export a specific group instead
+  of the whole database)
+- KPScript: the 'GetEntryString' command now supports the
+  '-FailIfNoEntry' option
+- KPScript: added '-refx-Expires' and '-refx-Expired' entry
+  identification parameters
+- KPScript: the 'Import' command now prints more specific error
+  messages
+- All KeePass program binaries are now dual signed using SHA-1
+  and SHA-256
+
+- Auto-Type: improved keyboard layout handling when the target
+  window changes during an auto-type process
+- Auto-Type: improved compatibility with Remote Desktop
+  Connection client and VirtualBox
+- Improved icon recoloring
+- Improved printing of dates/times and tags
+- The password generator based on a character set now ensures
+  that the generated password is Spr-invariant
+- Password generator based on a pattern or a custom algorithm:
+  when a Spr-variant password is generated, a confirmation
+  dialog for accepting this password is displayed
+- If the 'Save Database' policy prevents saving, the auto-save
+  option is now ignored
+- Improved .NET Framework version detection
+- PLGX debugging: when the command line option '-debug' is
+  passed and a PLGX plugin fails to compile, the output of all
+  tried compilers is saved to a temporary file
+- Improved file transaction creation time handling on Unix-like
+  systems
+- Improved compatibility with Mono on BSD systems
+- Enhanced PrepMonoDev.sh script for compatibility with Mono
+  4.x
+- Removed KeePassLibSD sub-project (a KeePass library for
+  Pocket PC / Windows Mobile) from the main solution
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- When running under Mono (Linux, Mac OS X, ...), two options
+  related to window minimization are disabled now (because they
+  do not work properly due to a Mono bug)
+
 2015-08-09: 2.30
 - When opening a database via an URL fails, the error message
   dialog now has a button 'Specify different server

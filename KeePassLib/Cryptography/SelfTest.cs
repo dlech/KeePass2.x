@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,18 +19,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
-using System.Globalization;
 using System.Diagnostics;
+using System.Globalization;
+using System.Security;
+using System.Text;
+
+#if KeePassUAP
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
+#else
+using System.Security.Cryptography;
+#endif
 
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
 using KeePassLib.Native;
-using KeePassLib.Utility;
 using KeePassLib.Resources;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
 {
@@ -76,24 +83,23 @@ namespace KeePassLib.Cryptography
 
 		internal static void TestFipsComplianceProblems()
 		{
-#if !KeePassRT
+#if !KeePassUAP
 			try { new RijndaelManaged(); }
 			catch(Exception exAes)
 			{
 				throw new SecurityException("AES/Rijndael: " + exAes.Message);
 			}
+#endif
 
 			try { new SHA256Managed(); }
 			catch(Exception exSha256)
 			{
 				throw new SecurityException("SHA-256: " + exSha256.Message);
 			}
-#endif
 		}
 
 		private static void TestRijndael()
 		{
-#if !KeePassRT
 			// Test vector (official ECB test vector #356)
 			byte[] pbIV = new byte[16];
 			byte[] pbTestKey = new byte[32];
@@ -108,6 +114,13 @@ namespace KeePassLib.Cryptography
 			for(i = 0; i < 16; ++i) pbTestData[i] = 0;
 			pbTestData[0] = 0x04;
 
+#if KeePassUAP
+			AesEngine r = new AesEngine();
+			r.Init(true, new KeyParameter(pbTestKey));
+			if(r.GetBlockSize() != pbTestData.Length)
+				throw new SecurityException(KLRes.EncAlgorithmAes + " (BS).");
+			r.ProcessBlock(pbTestData, 0, pbTestData, 0);
+#else
 			RijndaelManaged r = new RijndaelManaged();
 
 			if(r.BlockSize != 128) // AES block size
@@ -123,10 +136,10 @@ namespace KeePassLib.Cryptography
 			ICryptoTransform iCrypt = r.CreateEncryptor();
 
 			iCrypt.TransformBlock(pbTestData, 0, 16, pbTestData, 0);
+#endif
 
 			if(!MemUtil.ArraysEqual(pbTestData, pbReferenceCT))
 				throw new SecurityException(KLRes.EncAlgorithmAes + ".");
-#endif
 		}
 
 		private static void TestSalsa20()
@@ -294,7 +307,7 @@ namespace KeePassLib.Cryptography
 
 		private static void TestHmacOtp()
 		{
-#if (DEBUG && !KeePassLibSD && !KeePassRT)
+#if (DEBUG && !KeePassLibSD)
 			byte[] pbSecret = StrUtil.Utf8.GetBytes("12345678901234567890");
 			string[] vExp = new string[]{ "755224", "287082", "359152",
 				"969429", "338314", "254676", "287922", "162583", "399871",

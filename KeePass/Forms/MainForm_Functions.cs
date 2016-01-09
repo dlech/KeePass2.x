@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -398,6 +398,7 @@ namespace KeePass.Forms
 
 			string strWindowText = PwDefs.ShortProductName;
 			string strNtfText = PwDefs.ShortProductName;
+			int qSmall = SystemInformation.SmallIconSize.Width;
 
 			if(s.FileLocked)
 			{
@@ -424,7 +425,7 @@ namespace KeePass.Forms
 				strNtfText = strNtfPre + strFileDesc;
 
 				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadLocked, false,
+				CreateColorizedIcon(Properties.Resources.QuadLocked, qSmall,
 					ref m_kvpIcoTrayLocked, out icoAssignable, out icoDisposable);
 				m_ntfTray.Icon = icoAssignable;
 				if(icoDisposable != null) icoDisposable.Dispose();
@@ -435,7 +436,7 @@ namespace KeePass.Forms
 			else if(s.DatabaseOpened == false)
 			{
 				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadNormal, false,
+				CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
 					ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
 				m_ntfTray.Icon = icoAssignable;
 				if(icoDisposable != null) icoDisposable.Dispose();
@@ -458,7 +459,7 @@ namespace KeePass.Forms
 					m_docMgr.ActiveDatabase.IOConnectionInfo.Path, 63 - strNtfPre.Length);
 
 				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadNormal, false,
+				CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
 					ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
 				m_ntfTray.Icon = icoAssignable;
 				if(icoDisposable != null) icoDisposable.Dispose();
@@ -483,7 +484,7 @@ namespace KeePass.Forms
 			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, 63);
 
 			Icon icoToDispose, icoToAssign;
-			if(CreateColorizedIcon(Properties.Resources.KeePass, true,
+			if(CreateColorizedIcon(Properties.Resources.KeePass, 0,
 				ref m_kvpIcoMain, out icoToAssign, out icoToDispose))
 				this.Icon = icoToAssign;
 			if(icoToDispose != null) icoToDispose.Dispose();
@@ -2928,6 +2929,7 @@ namespace KeePass.Forms
 			m_ctxEntryPerformAutoType.ShortcutKeyDisplayString = strCtrl + "V";
 			m_ctxEntryAdd.ShortcutKeyDisplayString = strCtrl + "I";
 			m_ctxEntryEdit.ShortcutKeyDisplayString = KPRes.KeyboardKeyReturn;
+			m_ctxEntryDuplicate.ShortcutKeyDisplayString = strCtrl + "K";
 			m_ctxEntryDelete.ShortcutKeyDisplayString = UIUtil.GetKeysName(Keys.Delete); // "Del"
 			m_ctxEntrySelectAll.ShortcutKeyDisplayString = strCtrl + "A";
 
@@ -2965,8 +2967,9 @@ namespace KeePass.Forms
 				tsmiTarget.ShortcutKeyDisplayString = strSh;
 		}
 
-		private void SaveDatabaseAs(PwDatabase pdToSave, bool bOnline,
-			object sender, bool bCopy)
+		// Public for plugins
+		public void SaveDatabaseAs(PwDatabase pdToSave, IOConnectionInfo iocTo,
+			bool bOnline, object sender, bool bCopy)
 		{
 			PwDatabase pd = (pdToSave ?? m_docMgr.ActiveDatabase);
 
@@ -2982,9 +2985,13 @@ namespace KeePass.Forms
 			}
 
 			DialogResult dr;
-			IOConnectionInfo ioc = new IOConnectionInfo();
+			IOConnectionInfo ioc = iocTo;
 
-			if(bOnline)
+			if((ioc != null) && (ioc.Path.Length > 0))
+			{
+				dr = DialogResult.OK; // Caller (plugin) specified target file
+			}
+			else if(bOnline)
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(true, pd.IOConnectionInfo.CloneDeep(), true, true);
@@ -3388,7 +3395,10 @@ namespace KeePass.Forms
 			{
 				bool bInvokeSave = false;
 
-				if(Program.Config.Application.FileClosing.AutoSave)
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/c3c823c6/
+				bool bCanAutoSave = AppPolicy.Current.SaveFile;
+
+				if(Program.Config.Application.FileClosing.AutoSave && bCanAutoSave)
 					bInvokeSave = true;
 				else
 				{
@@ -5032,7 +5042,7 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, false, null, true);
 		}
 
-		private bool CreateColorizedIcon(Icon icoBase, bool bLargeIcon,
+		private bool CreateColorizedIcon(Icon icoBase, int qSize,
 			ref KeyValuePair<Color, Icon> kvpStore, out Icon icoAssignable,
 			out Icon icoDisposable)
 		{
@@ -5057,8 +5067,7 @@ namespace KeePass.Forms
 			else
 			{
 				kvpStore = new KeyValuePair<Color, Icon>(clrNew,
-					UIUtil.CreateColorizedIcon(icoBase, clrNew,
-						bLargeIcon ? 0 : 32));
+					UIUtil.CreateColorizedIcon(icoBase, clrNew, qSize));
 				icoAssignable = kvpStore.Value;
 			}
 

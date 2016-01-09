@@ -2,7 +2,7 @@ RMDIR /S /Q KeePass
 RMDIR /S /Q KeePass_Distrib
 RMDIR /S /Q KeePassLib
 RMDIR /S /Q KeePassLibDoc
-RMDIR /S /Q KeePassLibSD
+REM RMDIR /S /Q KeePassLibSD
 REM RMDIR /S /Q KeePassNtv
 RMDIR /S /Q ShInstUtil
 
@@ -14,8 +14,8 @@ DEL ..\KeePass\KeePass.csproj.user
 RMDIR /S /Q ..\KeePassLib\obj
 DEL ..\KeePassLib\KeePassLib.csproj.user
 
-RMDIR /S /Q ..\KeePassLibSD\obj
-DEL ..\KeePassLibSD\KeePassLibSD.csproj.user
+REM RMDIR /S /Q ..\KeePassLibSD\obj
+REM DEL ..\KeePassLibSD\KeePassLibSD.csproj.user
 
 REM RMDIR /S /Q ..\ShInstUtil\obj
 REM DEL ..\ShInstUtil\ShInstUtil.csproj.user

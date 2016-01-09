@@ -469,8 +469,8 @@ namespace KeePass.Util.XmlSerialization
 					case "ShowRecycleConfirmDialog":
 						o.ShowRecycleConfirmDialog = ReadBoolean(xr);
 						break;
-					case "UseCustomToolStripRenderer":
-						o.UseCustomToolStripRenderer = ReadBoolean(xr);
+					case "ToolStripRenderer":
+						o.ToolStripRenderer = ReadString(xr);
 						break;
 					case "OptimizeForScreenReader":
 						o.OptimizeForScreenReader = ReadBoolean(xr);

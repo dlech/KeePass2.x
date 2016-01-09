@@ -68,6 +68,7 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnConfigPrinter = new System.Windows.Forms.Button();
 			this.m_btnPrintPreview = new System.Windows.Forms.Button();
+			this.m_cbUuid = new System.Windows.Forms.CheckBox();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabPreview.SuspendLayout();
 			this.m_tabDataLayout.SuspendLayout();
@@ -251,6 +252,7 @@
 			// 
 			// m_grpFields
 			// 
+			this.m_grpFields.Controls.Add(this.m_cbUuid);
 			this.m_grpFields.Controls.Add(this.m_cbTags);
 			this.m_grpFields.Controls.Add(this.m_cbCustomStrings);
 			this.m_grpFields.Controls.Add(this.m_cbGroups);
@@ -308,7 +310,7 @@
 			this.m_linkDeselectAllFields.Location = new System.Drawing.Point(63, 91);
 			this.m_linkDeselectAllFields.Name = "m_linkDeselectAllFields";
 			this.m_linkDeselectAllFields.Size = new System.Drawing.Size(63, 13);
-			this.m_linkDeselectAllFields.TabIndex = 13;
+			this.m_linkDeselectAllFields.TabIndex = 14;
 			this.m_linkDeselectAllFields.TabStop = true;
 			this.m_linkDeselectAllFields.Text = "Deselect All";
 			this.m_linkDeselectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkDeselectAllFields);
@@ -319,7 +321,7 @@
 			this.m_linkSelectAllFields.Location = new System.Drawing.Point(6, 91);
 			this.m_linkSelectAllFields.Name = "m_linkSelectAllFields";
 			this.m_linkSelectAllFields.Size = new System.Drawing.Size(51, 13);
-			this.m_linkSelectAllFields.TabIndex = 12;
+			this.m_linkSelectAllFields.TabIndex = 13;
 			this.m_linkSelectAllFields.TabStop = true;
 			this.m_linkSelectAllFields.Text = "Select All";
 			this.m_linkSelectAllFields.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkSelectAllFields);
@@ -329,9 +331,9 @@
 			this.m_cbAutoType.AutoSize = true;
 			this.m_cbAutoType.Location = new System.Drawing.Point(360, 42);
 			this.m_cbAutoType.Name = "m_cbAutoType";
-			this.m_cbAutoType.Size = new System.Drawing.Size(71, 17);
+			this.m_cbAutoType.Size = new System.Drawing.Size(75, 17);
 			this.m_cbAutoType.TabIndex = 8;
-			this.m_cbAutoType.Text = "Auto-type";
+			this.m_cbAutoType.Text = "Auto-Type";
 			this.m_cbAutoType.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastMod
@@ -530,6 +532,16 @@
 			this.m_btnPrintPreview.UseVisualStyleBackColor = true;
 			this.m_btnPrintPreview.Click += new System.EventHandler(this.OnBtnPrintPreview);
 			// 
+			// m_cbUuid
+			// 
+			this.m_cbUuid.AutoSize = true;
+			this.m_cbUuid.Location = new System.Drawing.Point(244, 65);
+			this.m_cbUuid.Name = "m_cbUuid";
+			this.m_cbUuid.Size = new System.Drawing.Size(53, 17);
+			this.m_cbUuid.TabIndex = 12;
+			this.m_cbUuid.Text = "UUID";
+			this.m_cbUuid.UseVisualStyleBackColor = true;
+			// 
 			// PrintForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -611,5 +623,6 @@
 		private System.Windows.Forms.Label m_lblSortEntries;
 		private System.Windows.Forms.Label m_lblEntrySortHint;
 		private System.Windows.Forms.CheckBox m_cbTags;
+		private System.Windows.Forms.CheckBox m_cbUuid;
 	}
 }

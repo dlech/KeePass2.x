@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -256,15 +256,54 @@ namespace KeePass.UI
 
 		private void FindAppsByKnown()
 		{
-			AddAppByFile(AppLocator.InternetExplorerPath, @"&Internet Explorer");
+			string strIE = AppLocator.InternetExplorerPath;
+			if(!string.IsNullOrEmpty(strIE))
+			{
+				AddAppByFile(strIE, @"&Internet Explorer");
+
+				// https://msdn.microsoft.com/en-us/library/hh826025.aspx
+				AddAppByShellExpand("cmd://\"" + strIE + "\" -private \"" +
+					PlhTargetUri + "\"", "Internet Explorer (" + KPRes.Private + ")", strIE);
+			}
 
 			if(AppLocator.EdgeProtocolSupported)
 				AddAppByShellExpand("microsoft-edge:" + PlhTargetUri, @"&Edge",
 					AppLocator.EdgePath);
 
-			AddAppByFile(AppLocator.FirefoxPath, @"&Firefox");
-			AddAppByFile(AppLocator.OperaPath, @"O&pera");
-			AddAppByFile(AppLocator.ChromePath, @"&Google Chrome");
+			string strFF = AppLocator.FirefoxPath;
+			if(!string.IsNullOrEmpty(strFF))
+			{
+				AddAppByFile(strFF, @"&Firefox");
+
+				// The command line options -private and -private-window do not work;
+				// https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=856839
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=829180
+				// AddAppByShellExpand("cmd://\"" + strFF + "\" -private-window \"" +
+				//	PlhTargetUri + "\"", "Firefox (" + KPRes.Private + ")", strFF);
+			}
+
+			string strCh = AppLocator.ChromePath;
+			if(!string.IsNullOrEmpty(strCh))
+			{
+				AddAppByFile(strCh, @"&Google Chrome");
+
+				// https://www.chromium.org/developers/how-tos/run-chromium-with-flags
+				// http://peter.sh/examples/?/chromium-switches.html
+				AddAppByShellExpand("cmd://\"" + strCh + "\" --incognito \"" +
+					PlhTargetUri + "\"", "Google Chrome (" + KPRes.Private + ")", strCh);
+			}
+
+			string strOp = AppLocator.OperaPath;
+			if(!string.IsNullOrEmpty(strOp))
+			{
+				AddAppByFile(strOp, @"O&pera");
+
+				// Doesn't work with Opera 34.0.2036.25:
+				// AddAppByShellExpand("cmd://\"" + strOp + "\" -newprivatetab \"" +
+				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+			}
+
 			AddAppByFile(AppLocator.SafariPath, @"&Safari");
 
 			if(NativeLib.IsUnix())

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -444,11 +444,13 @@ namespace KeePass.Native
 
 			try
 			{
-				return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
+				// https://sourceforge.net/p/keepass/discussion/329221/thread/65244cc9/
+				if(!NativeLib.IsUnix())
+					return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
 			}
-			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(false); }
 
-			// Fallback to .NET method for Unix-like systems
+			// Fallback to .NET method (for Unix-like systems)
 			try { return File.Exists(strFilePath); }
 			catch(Exception) { Debug.Assert(false); } // Invalid path
 
@@ -562,6 +564,53 @@ namespace KeePass.Native
 			{
 				Debug.Assert(false);
 			}
+		} */
+
+		/* internal static void SetListViewGroupInfo(ListView lv, int iGroupID,
+			string strTask, bool? obCollapsible)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+			if(!WinUtil.IsAtLeastWindowsVista) return;
+
+			LVGROUP g = new LVGROUP();
+			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.AssertSize();
+
+			if(strTask != null)
+			{
+				g.mask |= LVGF_TASK;
+
+				g.pszTask = strTask;
+				g.cchTask = (uint)strTask.Length;
+			}
+
+			if(obCollapsible.HasValue)
+			{
+				g.mask |= LVGF_STATE;
+
+				g.stateMask = LVGS_COLLAPSIBLE;
+				g.state = (obCollapsible.Value ? LVGS_COLLAPSIBLE : 0);
+			}
+
+			if(g.mask == 0) return;
+			if(SendMessageLVGroup(lv.Handle, LVM_SETGROUPINFO,
+				new IntPtr(iGroupID), ref g) == (new IntPtr(-1)))
+			{
+				Debug.Assert(false);
+			}
+		}
+
+		internal static int GetListViewGroupID(ListViewGroup lvg)
+		{
+			if(lvg == null) { Debug.Assert(false); return -1; }
+
+			Type t = typeof(ListViewGroup);
+			PropertyInfo pi = t.GetProperty("ID", (BindingFlags.Instance |
+				BindingFlags.NonPublic));
+			if(pi == null) { Debug.Assert(false); return -1; }
+			if(pi.PropertyType != typeof(int)) { Debug.Assert(false); return -1; }
+
+			return (int)pi.GetValue(lvg, null);
 		} */
 
 		private static bool GetDesktopName(IntPtr hDesk, out string strAnsi,

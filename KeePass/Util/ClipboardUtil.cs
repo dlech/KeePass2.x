@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ namespace KeePass.Util
 		private static byte[] m_pbDataHash32 = null;
 		private static string m_strFormat = null;
 		private static bool m_bEncoded = false;
+
+		private static CriticalSectionEx g_csClearing = new CriticalSectionEx();
 
 		private const string ClipboardIgnoreFormatName = "Clipboard Viewer Ignore";
 
@@ -283,6 +285,16 @@ namespace KeePass.Util
 		/// </summary>
 		public static void Clear()
 		{
+			// Ensure that there's no infinite recursion
+			if(!g_csClearing.TryEnter()) { Debug.Assert(false); return; }
+
+			// In some situations (e.g. when running in a VM, when using
+			// a clipboard extension utility, ...) the clipboard cannot
+			// be cleared; for this case we first overwrite the clipboard
+			// with a non-sensitive text
+			try { Copy("--", false, false, null, null, IntPtr.Zero); }
+			catch(Exception) { Debug.Assert(false); }
+
 			bool bNativeSuccess = false;
 			try
 			{
@@ -306,6 +318,8 @@ namespace KeePass.Util
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
+
+			g_csClearing.Exit();
 
 			if(bNativeSuccess) return;
 

@@ -119,6 +119,7 @@ namespace KeePass.Resources
 			m_strCharsStc = TryGetEx(dictNew, "CharsStc", m_strCharsStc);
 			m_strCheckForUpdAtStart = TryGetEx(dictNew, "CheckForUpdAtStart", m_strCheckForUpdAtStart);
 			m_strCheckingForUpd = TryGetEx(dictNew, "CheckingForUpd", m_strCheckingForUpd);
+			m_strClassicAdj = TryGetEx(dictNew, "ClassicAdj", m_strClassicAdj);
 			m_strClearKeyCmdLineParams = TryGetEx(dictNew, "ClearKeyCmdLineParams", m_strClearKeyCmdLineParams);
 			m_strClearMru = TryGetEx(dictNew, "ClearMru", m_strClearMru);
 			m_strClipboard = TryGetEx(dictNew, "Clipboard", m_strClipboard);
@@ -336,7 +337,10 @@ namespace KeePass.Resources
 			m_strGenProfileSave = TryGetEx(dictNew, "GenProfileSave", m_strGenProfileSave);
 			m_strGenProfileSaveDesc = TryGetEx(dictNew, "GenProfileSaveDesc", m_strGenProfileSaveDesc);
 			m_strGenProfileSaveDescLong = TryGetEx(dictNew, "GenProfileSaveDescLong", m_strGenProfileSaveDescLong);
+			m_strGenPwAccept = TryGetEx(dictNew, "GenPwAccept", m_strGenPwAccept);
 			m_strGenPwBasedOnPrevious = TryGetEx(dictNew, "GenPwBasedOnPrevious", m_strGenPwBasedOnPrevious);
+			m_strGenPwSprVariant = TryGetEx(dictNew, "GenPwSprVariant", m_strGenPwSprVariant);
+			m_strGradient = TryGetEx(dictNew, "Gradient", m_strGradient);
 			m_strGroup = TryGetEx(dictNew, "Group", m_strGroup);
 			m_strGroupCannotStoreEntries = TryGetEx(dictNew, "GroupCannotStoreEntries", m_strGroupCannotStoreEntries);
 			m_strGroupsSkipped = TryGetEx(dictNew, "GroupsSkipped", m_strGroupsSkipped);
@@ -370,6 +374,7 @@ namespace KeePass.Resources
 			m_strImportMustRead = TryGetEx(dictNew, "ImportMustRead", m_strImportMustRead);
 			m_strImportMustReadQuestion = TryGetEx(dictNew, "ImportMustReadQuestion", m_strImportMustReadQuestion);
 			m_strImportStc = TryGetEx(dictNew, "ImportStc", m_strImportStc);
+			m_strIncompatibleEnv = TryGetEx(dictNew, "IncompatibleEnv", m_strIncompatibleEnv);
 			m_strIncompatibleWithSorting = TryGetEx(dictNew, "IncompatibleWithSorting", m_strIncompatibleWithSorting);
 			m_strInheritSettingFromParent = TryGetEx(dictNew, "InheritSettingFromParent", m_strInheritSettingFromParent);
 			m_strInstalled = TryGetEx(dictNew, "Installed", m_strInstalled);
@@ -541,6 +546,8 @@ namespace KeePass.Resources
 			m_strPreReleaseVersion = TryGetEx(dictNew, "PreReleaseVersion", m_strPreReleaseVersion);
 			m_strPrint = TryGetEx(dictNew, "Print", m_strPrint);
 			m_strPrintDesc = TryGetEx(dictNew, "PrintDesc", m_strPrintDesc);
+			m_strPrivate = TryGetEx(dictNew, "Private", m_strPrivate);
+			m_strProfessional = TryGetEx(dictNew, "Professional", m_strProfessional);
 			m_strQuickSearchExclExpired = TryGetEx(dictNew, "QuickSearchExclExpired", m_strQuickSearchExclExpired);
 			m_strQuickSearchInPwFields = TryGetEx(dictNew, "QuickSearchInPwFields", m_strQuickSearchInPwFields);
 			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
@@ -704,7 +711,6 @@ namespace KeePass.Resources
 			m_strUrlOverrides = TryGetEx(dictNew, "UrlOverrides", m_strUrlOverrides);
 			m_strUrlSaveDesc = TryGetEx(dictNew, "UrlSaveDesc", m_strUrlSaveDesc);
 			m_strUrlSaveTitle = TryGetEx(dictNew, "UrlSaveTitle", m_strUrlSaveTitle);
-			m_strUseCustomToolStripRenderer = TryGetEx(dictNew, "UseCustomToolStripRenderer", m_strUseCustomToolStripRenderer);
 			m_strUseFileLocks = TryGetEx(dictNew, "UseFileLocks", m_strUseFileLocks);
 			m_strUseTransactedDatabaseWrites = TryGetEx(dictNew, "UseTransactedDatabaseWrites", m_strUseTransactedDatabaseWrites);
 			m_strUserAccount = TryGetEx(dictNew, "UserAccount", m_strUserAccount);
@@ -838,6 +844,7 @@ namespace KeePass.Resources
 			"CharsStc",
 			"CheckForUpdAtStart",
 			"CheckingForUpd",
+			"ClassicAdj",
 			"ClearKeyCmdLineParams",
 			"ClearMru",
 			"Clipboard",
@@ -1055,7 +1062,10 @@ namespace KeePass.Resources
 			"GenProfileSave",
 			"GenProfileSaveDesc",
 			"GenProfileSaveDescLong",
+			"GenPwAccept",
 			"GenPwBasedOnPrevious",
+			"GenPwSprVariant",
+			"Gradient",
 			"Group",
 			"GroupCannotStoreEntries",
 			"GroupsSkipped",
@@ -1089,6 +1099,7 @@ namespace KeePass.Resources
 			"ImportMustRead",
 			"ImportMustReadQuestion",
 			"ImportStc",
+			"IncompatibleEnv",
 			"IncompatibleWithSorting",
 			"InheritSettingFromParent",
 			"Installed",
@@ -1260,6 +1271,8 @@ namespace KeePass.Resources
 			"PreReleaseVersion",
 			"Print",
 			"PrintDesc",
+			"Private",
+			"Professional",
 			"QuickSearchExclExpired",
 			"QuickSearchInPwFields",
 			"QuickSearchDerefData",
@@ -1423,7 +1436,6 @@ namespace KeePass.Resources
 			"UrlOverrides",
 			"UrlSaveDesc",
 			"UrlSaveTitle",
-			"UseCustomToolStripRenderer",
 			"UseFileLocks",
 			"UseTransactedDatabaseWrites",
 			"UserAccount",
@@ -2489,6 +2501,17 @@ namespace KeePass.Resources
 		public static string CheckingForUpd
 		{
 			get { return m_strCheckingForUpd; }
+		}
+
+		private static string m_strClassicAdj =
+			@"Classic";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Classic'.
+		/// </summary>
+		public static string ClassicAdj
+		{
+			get { return m_strClassicAdj; }
 		}
 
 		private static string m_strClearKeyCmdLineParams =
@@ -4878,6 +4901,17 @@ namespace KeePass.Resources
 			get { return m_strGenProfileSaveDescLong; }
 		}
 
+		private static string m_strGenPwAccept =
+			@"Accept this password?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Accept this password?'.
+		/// </summary>
+		public static string GenPwAccept
+		{
+			get { return m_strGenPwAccept; }
+		}
+
 		private static string m_strGenPwBasedOnPrevious =
 			@"Derive from previous password";
 		/// <summary>
@@ -4887,6 +4921,28 @@ namespace KeePass.Resources
 		public static string GenPwBasedOnPrevious
 		{
 			get { return m_strGenPwBasedOnPrevious; }
+		}
+
+		private static string m_strGenPwSprVariant =
+			@"The generated password contains a placeholder. When using this password (e.g. by copying it to the clipboard or auto-typing it), the placeholder will be replaced, i.e. effectively a different password might be used.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The generated password contains a placeholder. When using this password (e.g. by copying it to the clipboard or auto-typing it), the placeholder will be replaced, i.e. effectively a different password might be used.'.
+		/// </summary>
+		public static string GenPwSprVariant
+		{
+			get { return m_strGenPwSprVariant; }
+		}
+
+		private static string m_strGradient =
+			@"Gradient";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Gradient'.
+		/// </summary>
+		public static string Gradient
+		{
+			get { return m_strGradient; }
 		}
 
 		private static string m_strGroup =
@@ -5250,6 +5306,17 @@ namespace KeePass.Resources
 		public static string ImportStc
 		{
 			get { return m_strImportStc; }
+		}
+
+		private static string m_strIncompatibleEnv =
+			@"incompatible with current environment";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'incompatible with current environment'.
+		/// </summary>
+		public static string IncompatibleEnv
+		{
+			get { return m_strIncompatibleEnv; }
 		}
 
 		private static string m_strIncompatibleWithSorting =
@@ -7133,6 +7200,28 @@ namespace KeePass.Resources
 			get { return m_strPrintDesc; }
 		}
 
+		private static string m_strPrivate =
+			@"Private";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Private'.
+		/// </summary>
+		public static string Private
+		{
+			get { return m_strPrivate; }
+		}
+
+		private static string m_strProfessional =
+			@"Professional";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Professional'.
+		/// </summary>
+		public static string Professional
+		{
+			get { return m_strProfessional; }
+		}
+
 		private static string m_strQuickSearchExclExpired =
 			@"Exclude expired entries in quick searches";
 		/// <summary>
@@ -8924,17 +9013,6 @@ namespace KeePass.Resources
 		public static string UrlSaveTitle
 		{
 			get { return m_strUrlSaveTitle; }
-		}
-
-		private static string m_strUseCustomToolStripRenderer =
-			@"Use custom ToolStrip renderer";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Use custom ToolStrip renderer'.
-		/// </summary>
-		public static string UseCustomToolStripRenderer
-		{
-			get { return m_strUseCustomToolStripRenderer; }
 		}
 
 		private static string m_strUseFileLocks =

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Diagnostics;
@@ -29,6 +30,7 @@ using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.XmlSerialization;
 
+using KeePassLib.Native;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -270,6 +272,30 @@ namespace KeePass.App.Configuration
 			}
 
 			SearchUtil.FinishDeserialize(aceDef.SearchParameters);
+
+			if(NativeLib.IsUnix())
+			{
+				this.Security.MasterKeyOnSecureDesktop = false;
+
+				AceIntegration aceInt = this.Integration;
+				aceInt.HotKeyGlobalAutoType = (ulong)Keys.None;
+				aceInt.HotKeySelectedAutoType = (ulong)Keys.None;
+				aceInt.HotKeyShowWindow = (ulong)Keys.None;
+			}
+
+			if(MonoWorkarounds.IsRequired(1378))
+			{
+				AceWorkspaceLocking aceWL = this.Security.WorkspaceLocking;
+				aceWL.LockOnSessionSwitch = false;
+				aceWL.LockOnSuspend = false;
+				aceWL.LockOnRemoteControlChange = false;
+			}
+
+			if(MonoWorkarounds.IsRequired(1418))
+			{
+				aceMainWindow.MinimizeAfterOpeningDatabase = false;
+				this.Application.Start.MinimizedAndLocked = false;
+			}
 		}
 
 		internal void OnSavePre()

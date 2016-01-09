@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,16 @@ using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 
+using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -40,6 +44,8 @@ namespace KeePass.DataExchange.Formats
 
 		private const string IniTypeKey = "Type";
 		private const string IniTypeValue = "WinFav-Export 1.0";
+
+		private const string LnkDescSuffix = (@" [" + PwDefs.ShortProductName + @"]");
 
 		public override bool SupportsImport { get { return false; } }
 		public override bool SupportsExport { get { return true; } }
@@ -114,13 +120,13 @@ namespace KeePass.DataExchange.Formats
 				}
 
 				ExportGroup(pwExportInfo.DataGroup, strFavsSub, slLogger,
-					uTotalEntries, ref uEntriesProcessed);
+					uTotalEntries, ref uEntriesProcessed, pwExportInfo);
 			}
 			else // In root
 			{
 				DeletePreviousExport(strFavsRoot, slLogger);
 				ExportGroup(pwExportInfo.DataGroup, strFavsRoot, slLogger,
-					uTotalEntries, ref uEntriesProcessed);
+					uTotalEntries, ref uEntriesProcessed, pwExportInfo);
 			}
 
 			Debug.Assert(uEntriesProcessed == uTotalEntries);
@@ -128,11 +134,11 @@ namespace KeePass.DataExchange.Formats
 		}
 
 		private static void ExportGroup(PwGroup pg, string strDir, IStatusLogger slLogger,
-			uint uTotalEntries, ref uint uEntriesProcessed)
+			uint uTotalEntries, ref uint uEntriesProcessed, PwExportInfo pxi)
 		{
 			foreach(PwEntry pe in pg.Entries)
 			{
-				ExportEntry(pe, strDir);
+				ExportEntry(pe, strDir, pxi);
 
 				++uEntriesProcessed;
 				if(slLogger != null)
@@ -146,20 +152,40 @@ namespace KeePass.DataExchange.Formats
 				string strSub = (UrlUtil.EnsureTerminatingSeparator(strDir, false) +
 					(!string.IsNullOrEmpty(strGroup) ? strGroup : KPRes.Group));
 
-				ExportGroup(pgSub, strSub, slLogger, uTotalEntries, ref uEntriesProcessed);
+				ExportGroup(pgSub, strSub, slLogger, uTotalEntries,
+					ref uEntriesProcessed, pxi);
 			}
 		}
 
-		private static void ExportEntry(PwEntry pe, string strDir)
+		private static void ExportEntry(PwEntry pe, string strDir, PwExportInfo pxi)
 		{
-			string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
+			PwDatabase pd = ((pxi != null) ? pxi.ContextDatabase : null);
+			SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive, false, false);
+
+			KeyValuePair<string, string>? okvpCmd = null;
+			string strUrl = SprEngine.Compile(pe.Strings.ReadSafe(PwDefs.UrlField), ctx);
+			if(WinUtil.IsCommandLineUrl(strUrl))
+			{
+				strUrl = WinUtil.GetCommandLineFromUrl(strUrl);
+
+				if(!NativeLib.IsUnix()) // LNKs only supported on Windows
+				{
+					string strApp, strArgs;
+					StrUtil.SplitCommandLine(strUrl, out strApp, out strArgs);
+
+					if(!string.IsNullOrEmpty(strApp))
+						okvpCmd = new KeyValuePair<string, string>(strApp, strArgs);
+				}
+			}
 			if(string.IsNullOrEmpty(strUrl)) return;
+			bool bLnk = okvpCmd.HasValue;
 
-			string strTitle = pe.Strings.ReadSafe(PwDefs.TitleField);
-			if(string.IsNullOrEmpty(strTitle)) strTitle = KPRes.Entry;
-			strTitle = Program.Config.Defaults.WinFavsFileNamePrefix + strTitle;
+			string strTitleCmp = SprEngine.Compile(pe.Strings.ReadSafe(PwDefs.TitleField), ctx);
+			if(string.IsNullOrEmpty(strTitleCmp)) strTitleCmp = KPRes.Entry;
+			string strTitle = Program.Config.Defaults.WinFavsFileNamePrefix + strTitleCmp;
 
-			string strSuffix = Program.Config.Defaults.WinFavsFileNameSuffix + ".url";
+			string strSuffix = Program.Config.Defaults.WinFavsFileNameSuffix +
+				(bLnk ? ".lnk" : ".url");
 			strSuffix = UrlUtil.FilterFileName(strSuffix);
 
 			string strFileBase = (UrlUtil.EnsureTerminatingSeparator(strDir,
@@ -172,13 +198,6 @@ namespace KeePass.DataExchange.Formats
 				++iFind;
 			}
 
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(@"[InternetShortcut]");
-			sb.AppendLine(@"URL=" + strUrl); // No additional line break
-			sb.AppendLine(@"[" + PwDefs.ShortProductName + @"]");
-			sb.AppendLine(IniTypeKey + @"=" + IniTypeValue);
-			// Terminating line break is important
-
 			if(!Directory.Exists(strDir))
 			{
 				try { Directory.CreateDirectory(strDir); }
@@ -190,7 +209,30 @@ namespace KeePass.DataExchange.Formats
 				WaitForDirCommit(strDir, true);
 			}
 
-			try { File.WriteAllText(strFile, sb.ToString(), Encoding.Default); }
+			try
+			{
+				if(bLnk)
+				{
+					int ccMaxDesc = NativeMethods.INFOTIPSIZE - 1 - LnkDescSuffix.Length;
+					string strDesc = StrUtil.CompactString3Dots(strUrl, ccMaxDesc) +
+						LnkDescSuffix;
+
+					ShellLinkEx sl = new ShellLinkEx(okvpCmd.Value.Key,
+						okvpCmd.Value.Value, strDesc);
+					sl.Save(strFile);
+				}
+				else
+				{
+					StringBuilder sb = new StringBuilder();
+					sb.AppendLine(@"[InternetShortcut]");
+					sb.AppendLine(@"URL=" + strUrl); // No additional line break
+					sb.AppendLine(@"[" + PwDefs.ShortProductName + @"]");
+					sb.AppendLine(IniTypeKey + @"=" + IniTypeValue);
+					// Terminating line break is important
+
+					File.WriteAllText(strFile, sb.ToString(), Encoding.Default);
+				}
+			}
 			catch(Exception exWrite)
 			{
 				throw new Exception(strFile + MessageService.NewParagraph + exWrite.Message);
@@ -215,17 +257,38 @@ namespace KeePass.DataExchange.Formats
 
 			try
 			{
-				string[] vFiles = UrlUtil.GetFilePaths(strDir, "*.url",
-					SearchOption.AllDirectories).ToArray();
+				List<string> lUrlFiles = UrlUtil.GetFilePaths(strDir, "*.url",
+					SearchOption.AllDirectories);
+				List<string> lLnkFiles = UrlUtil.GetFilePaths(strDir, "*.lnk",
+					SearchOption.AllDirectories);
 
-				for(int iFile = 0; iFile < vFiles.Length; ++iFile)
+				List<string> lFiles = new List<string>();
+				lFiles.AddRange(lUrlFiles);
+				lFiles.AddRange(lLnkFiles);
+
+				for(int iFile = 0; iFile < lFiles.Count; ++iFile)
 				{
-					string strFile = vFiles[iFile];
+					string strFile = lFiles[iFile];
 					try
 					{
-						IniFile ini = IniFile.Read(strFile, Encoding.Default);
-						string strType = ini.Get(PwDefs.ShortProductName, IniTypeKey);
-						if((strType != null) && (strType == IniTypeValue))
+						bool bDelete = false;
+
+						if(strFile.EndsWith(".url", StrUtil.CaseIgnoreCmp))
+						{
+							IniFile ini = IniFile.Read(strFile, Encoding.Default);
+							string strType = ini.Get(PwDefs.ShortProductName, IniTypeKey);
+							bDelete = ((strType != null) && (strType == IniTypeValue));
+						}
+						else if(strFile.EndsWith(".lnk", StrUtil.CaseIgnoreCmp))
+						{
+							ShellLinkEx sl = ShellLinkEx.Load(strFile);
+							if(sl != null)
+								bDelete = ((sl.Description != null) &&
+									sl.Description.EndsWith(LnkDescSuffix));
+						}
+						else { Debug.Assert(false); }
+
+						if(bDelete)
 						{
 							File.Delete(strFile);
 
@@ -237,7 +300,7 @@ namespace KeePass.DataExchange.Formats
 					catch(Exception) { Debug.Assert(false); }
 
 					if(slLogger != null)
-						slLogger.SetProgress(((uint)iFile * 50U) / (uint)vFiles.Length);
+						slLogger.SetProgress(((uint)iFile * 50U) / (uint)lFiles.Count);
 				}
 
 				bool bDeleted = true;
@@ -249,7 +312,7 @@ namespace KeePass.DataExchange.Formats
 					{
 						try
 						{
-							Directory.Delete(vDirsToDelete[i]);
+							Directory.Delete(vDirsToDelete[i], false);
 							WaitForDirCommit(vDirsToDelete[i], false);
 
 							vDirsToDelete.RemoveAt(i);

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Security.Cryptography;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
@@ -472,15 +471,21 @@ namespace KeePassLib.Utility
 			if(pbData == null) throw new ArgumentNullException("pbData");
 			if(pbData.Length == 0) return pbData;
 
-			MemoryStream msCompressed = new MemoryStream();
-			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Compress);
-			MemoryStream msSource = new MemoryStream(pbData, false);
-			MemUtil.CopyStream(msSource, gz);
-			gz.Close();
-			msSource.Close();
+			byte[] pbCompressed;
+			using(MemoryStream msSource = new MemoryStream(pbData, false))
+			{
+				using(MemoryStream msCompressed = new MemoryStream())
+				{
+					using(GZipStream gz = new GZipStream(msCompressed,
+						CompressionMode.Compress))
+					{
+						MemUtil.CopyStream(msSource, gz);
+					}
 
-			byte[] pbCompressed = msCompressed.ToArray();
-			msCompressed.Close();
+					pbCompressed = msCompressed.ToArray();
+				}
+			}
+
 			return pbCompressed;
 		}
 
@@ -489,15 +494,21 @@ namespace KeePassLib.Utility
 			if(pbCompressed == null) throw new ArgumentNullException("pbCompressed");
 			if(pbCompressed.Length == 0) return pbCompressed;
 
-			MemoryStream msCompressed = new MemoryStream(pbCompressed, false);
-			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Decompress);
-			MemoryStream msData = new MemoryStream();
-			MemUtil.CopyStream(gz, msData);
-			gz.Close();
-			msCompressed.Close();
+			byte[] pbData;
+			using(MemoryStream msData = new MemoryStream())
+			{
+				using(MemoryStream msCompressed = new MemoryStream(pbCompressed, false))
+				{
+					using(GZipStream gz = new GZipStream(msCompressed,
+						CompressionMode.Decompress))
+					{
+						MemUtil.CopyStream(gz, msData);
+					}
+				}
 
-			byte[] pbData = msData.ToArray();
-			msData.Close();
+				pbData = msData.ToArray();
+			}
+
 			return pbData;
 		}
 

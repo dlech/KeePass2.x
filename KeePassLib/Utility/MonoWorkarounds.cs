@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.IO;
+using System.Xml;
 using System.Reflection;
 using System.Diagnostics;
 
@@ -47,6 +49,9 @@ namespace KeePassLib.Utility
 		// 1254:
 		//   NumericUpDown bug: text is drawn below up/down buttons.
 		//   https://sourceforge.net/p/keepass/bugs/1254/
+		// 1358:
+		//   FileDialog crashes when ~/.recently-used is invalid.
+		//   https://sourceforge.net/p/keepass/bugs/1358/
 		// 1366:
 		//   Drawing bug when scrolling a RichTextBox.
 		//   https://sourceforge.net/p/keepass/bugs/1366/
@@ -54,6 +59,9 @@ namespace KeePassLib.Utility
 		//   Mono doesn't implement Microsoft.Win32.SystemEvents events.
 		//   https://sourceforge.net/p/keepass/bugs/1378/
 		//   https://github.com/mono/mono/blob/master/mcs/class/System/Microsoft.Win32/SystemEvents.cs
+		// 1418:
+		//   Minimizing a form while loading it doesn't work.
+		//   https://sourceforge.net/p/keepass/bugs/1418/
 		// 5795:
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
@@ -330,5 +338,38 @@ namespace KeePassLib.Utility
 			return true;
 		}
 #endif
+
+		/// <summary>
+		/// Ensure that the file ~/.recently-used is valid (in order to
+		/// prevent Mono's FileDialog from crashing).
+		/// </summary>
+		internal static void EnsureRecentlyUsedValid()
+		{
+			if(!MonoWorkarounds.IsRequired(1358)) return;
+
+			try
+			{
+				string strFile = Environment.GetFolderPath(
+					Environment.SpecialFolder.Personal);
+				strFile = UrlUtil.EnsureTerminatingSeparator(strFile, false);
+				strFile += ".recently-used";
+
+				if(File.Exists(strFile))
+				{
+					try
+					{
+						// Mono's WriteRecentlyUsedFiles method also loads the
+						// XML file using XmlDocument
+						XmlDocument xd = new XmlDocument();
+						xd.Load(strFile);
+					}
+					catch(Exception) // The XML file is invalid
+					{
+						File.Delete(strFile);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 	}
 }

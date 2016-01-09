@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2015 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
 */
 
 using System;
-using System.Security;
-using System.Security.Cryptography;
-using System.IO;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.IO;
+
+#if !KeePassUAP
 using System.Drawing;
+using System.Security.Cryptography;
+using System.Windows.Forms;
+#endif
 
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -109,10 +111,10 @@ namespace KeePassLib.Cryptography
 			byte[] pbNewData = pbEntropy;
 			if(pbEntropy.Length >= 64)
 			{
-#if !KeePassLibSD
-				SHA512Managed shaNew = new SHA512Managed();
-#else
+#if KeePassLibSD
 				SHA256Managed shaNew = new SHA256Managed();
+#else
+				SHA512Managed shaNew = new SHA512Managed();
 #endif
 				pbNewData = shaNew.ComputeHash(pbEntropy);
 			}
@@ -124,11 +126,11 @@ namespace KeePassLib.Cryptography
 				ms.Write(pbNewData, 0, pbNewData.Length);
 
 				byte[] pbFinal = ms.ToArray();
-#if !KeePassLibSD
+#if KeePassLibSD
+				SHA256Managed shaPool = new SHA256Managed();
+#else
 				Debug.Assert(pbFinal.Length == (64 + pbNewData.Length));
 				SHA512Managed shaPool = new SHA512Managed();
-#else
-				SHA256Managed shaPool = new SHA256Managed();
 #endif
 				m_pbEntropyPool = shaPool.ComputeHash(pbFinal);
 			}
@@ -146,7 +148,7 @@ namespace KeePassLib.Cryptography
 			pb = TimeUtil.PackTime(DateTime.Now);
 			ms.Write(pb, 0, pb.Length);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 			// In try-catch for systems without GUI;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/20335b73/
 			try
@@ -166,19 +168,33 @@ namespace KeePassLib.Cryptography
 			pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
 			ms.Write(pb, 0, pb.Length);
 
-#if (!KeePassLibSD && !KeePassRT)
-			Process p = null;
 			try
 			{
 				pb = MemUtil.UInt32ToBytes((uint)Environment.ProcessorCount);
 				ms.Write(pb, 0, pb.Length);
-				pb = MemUtil.UInt64ToBytes((ulong)Environment.WorkingSet);
-				ms.Write(pb, 0, pb.Length);
 
+#if KeePassUAP
+				Version v = EnvironmentExt.OSVersion;
+#else
 				Version v = Environment.OSVersion.Version;
+#endif
 				pb = MemUtil.UInt32ToBytes((uint)v.GetHashCode());
 				ms.Write(pb, 0, pb.Length);
 
+#if !KeePassUAP
+				pb = MemUtil.UInt64ToBytes((ulong)Environment.WorkingSet);
+				ms.Write(pb, 0, pb.Length);
+#endif
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+#if KeePassUAP
+			pb = DiagnosticsExt.GetProcessEntropy();
+			ms.Write(pb, 0, pb.Length);
+#elif !KeePassLibSD
+			Process p = null;
+			try
+			{
 				p = Process.GetCurrentProcess();
 
 				pb = MemUtil.UInt64ToBytes((ulong)p.Handle.ToInt64());
@@ -212,7 +228,7 @@ namespace KeePassLib.Cryptography
 				// pb = MemUtil.UInt32ToBytes((uint)p.SessionId);
 				// ms.Write(pb, 0, pb.Length);
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 			finally
 			{
 				try { if(p != null) p.Dispose(); }
@@ -285,7 +301,7 @@ namespace KeePassLib.Cryptography
 
 				long lCopy = (long)((uRequestedBytes < 32) ? uRequestedBytes : 32);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 				Array.Copy(pbRandom256, 0, pbRes, lPos, lCopy);
 #else
 				Array.Copy(pbRandom256, 0, pbRes, (int)lPos, (int)lCopy);

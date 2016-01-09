@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2015 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
 
 	<title>Plugin Development - KeePass</title>
 	<base target="_self" />
@@ -414,7 +414,7 @@ plugin developers create/ship PLGX files, not DLLs.
 
 <p><b>Creating PLGX files.</b>
 PLGX files can be created from plugin sources by calling <code>KeePass.exe</code>
-with the <code>--plgx-create</code> command line parameter. If you additionally
+with the <code>--plgx-create</code> command line option. If you additionally
 pass a path to the plugin sources directory (without terminating separator),
 KeePass will use this one; otherwise
 it'll show a folder browser dialog to allow you selecting the directory. If
@@ -444,8 +444,8 @@ the <code>.csproj</code> file.</li>
 located in the plugin source code directory (or any subdirectory of it).</li>
 <li>ResX support. <code>.resx</code> files are automatically compiled to
 binary <code>.resources</code> files.</li>
-<li>.NET 3.5 support (if the default compiler, which is the one of .NET 2.0,
-can't compile the code, KeePass tries using the .NET 3.5 compiler).</li>
+<!-- <li>.NET 3.5 support (if the default compiler, which is the one of .NET 2.0,
+can't compile the code, KeePass tries using the .NET 3.5 compiler).</li> -->
 <li>PLGX cache. PLGX files are compiled once and the generated assembly is stored in a cache.
 For all following KeePass starts, no compiling is required.</li>
 <li>PLGX cache maintenance. The size of the PLGX cache can be seen in the KeePass plugins dialog.
@@ -514,6 +514,11 @@ commands (typically it is useful to pass the directory locations as arguments
 to your building executable), for example:<br />
 <code>KeePass.exe --plgx-create C:\YourPluginDir
 --plgx-build-post:&quot;{PLGX_TEMP_DIR}MyBuild.exe {PLGX_TEMP_DIR} {PLGX_CACHE_DIR}&quot;</code></p>
+
+<p><b>PLGX debugging.</b>
+When the command line option <code>--debug</code> is
+passed and a PLGX plugin fails to compile, the output of all
+tried compilers is saved to a temporary file.</p>
 
 </body></html>
 
