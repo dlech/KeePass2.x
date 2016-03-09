@@ -96,7 +96,7 @@ namespace KeePass.Util
 					if(rk != null)
 						b = (rk.GetValue("URL Protocol") != null);
 				}
-				catch(Exception) { Debug.Assert(false); }
+				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 				finally { if(rk != null) rk.Close(); }
 
 				m_obEdgeProtocol = b;
@@ -160,19 +160,26 @@ namespace KeePass.Util
 
 		private static string FindInternetExplorer()
 		{
-			for(int i = 0; i < 4; ++i)
+			const string strIEDef = "SOFTWARE\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command";
+			const string strIEWow = "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command";
+
+			for(int i = 0; i < 6; ++i)
 			{
 				RegistryKey k = null;
+
+				// https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
 				if(i == 0)
-					k = Registry.LocalMachine.OpenSubKey(
-						"SOFTWARE\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command", false);
+					k = Registry.CurrentUser.OpenSubKey(strIEDef, false);
 				else if(i == 1)
-					k = Registry.LocalMachine.OpenSubKey(
-						"SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\IEXPLORE.EXE\\shell\\open\\command", false);
+					k = Registry.CurrentUser.OpenSubKey(strIEWow, false);
 				else if(i == 2)
+					k = Registry.LocalMachine.OpenSubKey(strIEDef, false);
+				else if(i == 3)
+					k = Registry.LocalMachine.OpenSubKey(strIEWow, false);
+				else if(i == 4)
 					k = Registry.ClassesRoot.OpenSubKey(
 						"IE.AssocFile.HTM\\shell\\open\\command", false);
-				else if(i == 3)
+				else
 					k = Registry.ClassesRoot.OpenSubKey(
 						"Applications\\iexplore.exe\\shell\\open\\command", false);
 
@@ -262,16 +269,25 @@ namespace KeePass.Util
 		{
 			if(NativeLib.IsUnix()) return FindAppUnix("opera");
 
-			for(int i = 0; i < 2; ++i)
+			// Old Opera versions
+			const string strOp12 = "SOFTWARE\\Clients\\StartMenuInternet\\Opera\\shell\\open\\command";
+			// Opera >= 20.0.1387.77
+			const string strOp20 = "SOFTWARE\\Clients\\StartMenuInternet\\OperaStable\\shell\\open\\command";
+
+			for(int i = 0; i < 5; ++i)
 			{
 				RegistryKey k = null;
-				if(i == 0) // Opera 20.0.1387.77
-					k = Registry.LocalMachine.OpenSubKey(
-						"SOFTWARE\\Clients\\StartMenuInternet\\OperaStable\\shell\\open\\command", false);
-				// else if(i == 1) // Old
-				//	k = Registry.LocalMachine.OpenSubKey(
-				//		"SOFTWARE\\Clients\\StartMenuInternet\\Opera\\shell\\open\\command", false);
-				else if(i == 1) // Old
+
+				// https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
+				if(i == 0)
+					k = Registry.CurrentUser.OpenSubKey(strOp20, false);
+				else if(i == 1)
+					k = Registry.CurrentUser.OpenSubKey(strOp12, false);
+				else if(i == 2)
+					k = Registry.LocalMachine.OpenSubKey(strOp20, false);
+				else if(i == 3)
+					k = Registry.LocalMachine.OpenSubKey(strOp12, false);
+				else // Old Opera versions
 					k = Registry.ClassesRoot.OpenSubKey(
 						"Opera.HTML\\shell\\open\\command", false);
 

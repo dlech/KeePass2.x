@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Utility;

@@ -19,12 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Security;
-using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
+
+#if !KeePassUAP
+using System.Security.Cryptography;
+#endif
 
 #if !KeePassLibSD
 using System.IO.Compression;

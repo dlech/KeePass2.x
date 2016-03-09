@@ -167,6 +167,11 @@ namespace KeePass.Util.SendInputExt
 
 		public override void SetKeyModifierImpl(Keys kMod, bool bDown)
 		{
+			SetKeyModifierImplEx(kMod, bDown, false);
+		}
+
+		private void SetKeyModifierImplEx(Keys kMod, bool bDown, bool bRAlt)
+		{
 			PrepareSend();
 
 			if((kMod & Keys.Shift) != Keys.None)
@@ -174,7 +179,10 @@ namespace KeePass.Util.SendInputExt
 			if((kMod & Keys.Control) != Keys.None)
 				SendVKeyNative((int)Keys.ControlKey, null, bDown);
 			if((kMod & Keys.Alt) != Keys.None)
-				SendVKeyNative((int)Keys.Menu, null, bDown);
+			{
+				int vk = (int)(bRAlt ? Keys.RMenu : Keys.Menu);
+				SendVKeyNative(vk, null, bDown);
+			}
 
 			if(bDown) m_kModCur |= kMod;
 			else m_kModCur &= ~kMod;
@@ -600,7 +608,9 @@ namespace KeePass.Util.SendInputExt
 			Keys kModDiff = (kMod & ~m_kModCur);
 			if(kModDiff != Keys.None)
 			{
-				SetKeyModifierImpl(kModDiff, true);
+				// Send RAlt for better AltGr compatibility;
+				// https://sourceforge.net/p/keepass/bugs/1475/
+				SetKeyModifierImplEx(kModDiff, true, true);
 
 				Thread.Sleep(1);
 				Application.DoEvents();
@@ -613,7 +623,7 @@ namespace KeePass.Util.SendInputExt
 				Thread.Sleep(1);
 				Application.DoEvents();
 
-				SetKeyModifierImpl(kModDiff, false);
+				SetKeyModifierImplEx(kModDiff, false, true);
 			}
 
 			return true;

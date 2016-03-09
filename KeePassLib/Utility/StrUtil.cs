@@ -20,24 +20,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Security.Cryptography;
-using System.Globalization;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
-#if KeePassUAP
-using Windows.UI;
-#else
+#if !KeePassUAP
 using System.Drawing;
+using System.Security.Cryptography;
 #endif
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Native;
 using KeePassLib.Security;
-using KeePassLib.Resources;
 
 namespace KeePassLib.Utility
 {
@@ -225,7 +222,7 @@ namespace KeePassLib.Utility
 
 				l.Add(new StrEncodingInfo(StrEncodingType.Default,
 #if KeePassUAP
-					StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
+					"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
 #else
 #if !KeePassLibSD
 					Encoding.Default.EncodingName,
@@ -1188,7 +1185,7 @@ namespace KeePassLib.Utility
 				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 				return Convert.ToBase64String(pbEnc, Base64FormattingOptions.None);
 #else
 				return Convert.ToBase64String(pbEnc);
@@ -1248,7 +1245,7 @@ namespace KeePassLib.Utility
 			return v;
 		}
 
-		private static readonly char[] m_vTagSep = new char[]{ ',', ';', ':' };
+		private static readonly char[] m_vTagSep = new char[] { ',', ';', ':' };
 		public static string TagsToString(List<string> vTags, bool bForDisplay)
 		{
 			if(vTags == null) throw new ArgumentNullException("vTags");
@@ -1301,7 +1298,7 @@ namespace KeePassLib.Utility
 			Array.Reverse(pb);
 			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 			return Convert.ToBase64String(pb, Base64FormattingOptions.None);
 #else
 			return Convert.ToBase64String(pb);
@@ -1461,7 +1458,7 @@ namespace KeePassLib.Utility
 
 			if(strMimeType == null) strMimeType = "application/octet-stream";
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
 				pbData, Base64FormattingOptions.None));
 #else
@@ -1491,12 +1488,7 @@ namespace KeePassLib.Utility
 			if(bBase64) return Convert.FromBase64String(strData);
 
 			MemoryStream ms = new MemoryStream();
-
-#if KeePassRT
-			Encoding enc = StrUtil.Utf8;
-#else
 			Encoding enc = Encoding.ASCII;
-#endif
 
 			string[] v = strData.Split('%');
 			byte[] pb = enc.GetBytes(v[0]);

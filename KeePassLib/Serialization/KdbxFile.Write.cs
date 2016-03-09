@@ -19,19 +19,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Security;
-using System.Security.Cryptography;
-using System.Drawing;
-using System.Globalization;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Security;
+using System.Text;
+using System.Xml;
 
-#if !KeePassLibSD
-using System.IO.Compression;
-#else
+#if !KeePassUAP
+using System.Drawing;
+using System.Security.Cryptography;
+#endif
+
+#if KeePassLibSD
 using KeePassLibSD;
+#else
+using System.IO.Compression;
 #endif
 
 using KeePassLib.Collections;
@@ -120,7 +123,24 @@ namespace KeePassLib.Serialization
 					writerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
-				m_xmlWriter = new XmlTextWriter(writerStream, encNoBom);
+#if KeePassUAP
+				XmlWriterSettings xws = new XmlWriterSettings();
+				xws.Encoding = encNoBom;
+				xws.Indent = true;
+				xws.IndentChars = "\t";
+				xws.NewLineOnAttributes = false;
+
+				XmlWriter xw = XmlWriter.Create(writerStream, xws);
+#else
+				XmlTextWriter xw = new XmlTextWriter(writerStream, encNoBom);
+
+				xw.Formatting = Formatting.Indented;
+				xw.IndentChar = '\t';
+				xw.Indentation = 1;
+#endif
+
+				m_xmlWriter = xw;
+
 				WriteDocument(pgDataSource);
 
 				m_xmlWriter.Flush();
@@ -239,10 +259,6 @@ namespace KeePassLib.Serialization
 			pgRoot.GetCounts(true, out uNumGroups, out uNumEntries);
 
 			BinPoolBuild(pgRoot);
-
-			m_xmlWriter.Formatting = Formatting.Indented;
-			m_xmlWriter.IndentChar = '\t';
-			m_xmlWriter.Indentation = 1;
 
 			m_xmlWriter.WriteStartDocument(true);
 			m_xmlWriter.WriteStartElement(ElemDocNode);

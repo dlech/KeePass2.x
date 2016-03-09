@@ -110,6 +110,9 @@
     <Compile Include="Serialization\IOConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Serialization\IocProperties.cs" />
+    <Compile Include="Serialization\IocPropertyInfo.cs" />
+    <Compile Include="Serialization\IocPropertyInfoPool.cs" />
     <Compile Include="Serialization\KdbxFile.cs" />
     <Compile Include="Serialization\KdbxFile.Read.cs" />
     <Compile Include="Serialization\KdbxFile.Read.Streamed.cs" />

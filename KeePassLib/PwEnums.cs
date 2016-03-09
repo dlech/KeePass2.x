@@ -302,4 +302,18 @@ namespace KeePassLib
 		/// </summary>
 		UIIcon = 1
 	}
+
+	public enum DesktopType
+	{
+		None = 0,
+		Windows,
+		Gnome,
+		Kde,
+		Unity,
+		Lxde,
+		Xfce,
+		Mate,
+		Cinnamon,
+		Pantheon
+	}
 }

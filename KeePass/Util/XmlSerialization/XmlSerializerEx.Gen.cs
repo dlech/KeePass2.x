@@ -785,6 +785,12 @@ namespace KeePass.Util.XmlSerialization
 					case "AutoTypeMatchByTagInTitle":
 						o.AutoTypeMatchByTagInTitle = ReadBoolean(xr);
 						break;
+					case "AutoTypeExpiredCanMatch":
+						o.AutoTypeExpiredCanMatch = ReadBoolean(xr);
+						break;
+					case "AutoTypeAlwaysShowSelDialog":
+						o.AutoTypeAlwaysShowSelDialog = ReadBoolean(xr);
+						break;
 					case "AutoTypePrependInitSequenceForIE":
 						o.AutoTypePrependInitSequenceForIE = ReadBoolean(xr);
 						break;
@@ -1027,6 +1033,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "CredSaveMode":
 						o.CredSaveMode = ReadIOCredSaveMode(xr);
+						break;
+					case "PropertiesEx":
+						o.PropertiesEx = ReadString(xr);
 						break;
 					default:
 						Debug.Assert(false);

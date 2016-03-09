@@ -508,6 +508,12 @@
             'An extended error report has been copied to the clipboard.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.Expect100Continue">
+            <summary>
+            Look up a localized string similar to
+            'Expect 100-Continue responses'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.FatalError">
             <summary>
             Look up a localized string similar to
@@ -598,6 +604,12 @@
             'The .NET framework/runtime under which KeePass is currently running does not support this operation.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.General">
+            <summary>
+            Look up a localized string similar to
+            'General'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.InvalidCompositeKey">
             <summary>
             Look up a localized string similar to
@@ -640,6 +652,24 @@
             'The selected file appears to be an old format'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.Passive">
+            <summary>
+            Look up a localized string similar to
+            'Passive'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.PreAuth">
+            <summary>
+            Look up a localized string similar to
+            'Pre-authenticate'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.Timeout">
+            <summary>
+            Look up a localized string similar to
+            'Timeout'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.TryAgainSecs">
             <summary>
             Look up a localized string similar to
@@ -656,6 +686,12 @@
             <summary>
             Look up a localized string similar to
             'The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.UserAgent">
+            <summary>
+            Look up a localized string similar to
+            'User agent'.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.CrsAlgorithm">
@@ -956,6 +992,11 @@
         <member name="F:KeePassLib.Serialization.IOCredSaveMode.SaveCred">
             <summary>
             Save both user name and password.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Serialization.IOConnectionInfo.PropertiesEx">
+            <summary>
+            For serialization only; use <c>Properties</c> in code.
             </summary>
         </member>
         <member name="T:KeePassLib.Interfaces.LogStatusType">
@@ -1490,6 +1531,11 @@
             <summary>
             If this property is set to <c>true</c>, the native library is used.
             If it is <c>false</c>, all calls to functions in this class will fail.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Native.NativeLib.PointerSize">
+            <summary>
+            Size of a native pointer (in bytes).
             </summary>
         </member>
         <member name="M:KeePassLib.Utility.GfxUtil.ScaleImage(System.Drawing.Image,System.Int32,System.Int32,KeePassLib.ScaleTransformFlags)">

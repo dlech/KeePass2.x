@@ -33,6 +33,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Native;
 using KeePassLib.Security;
 using KeePassLib.Delegates;
 using KeePassLib.Resources;
@@ -520,7 +521,7 @@ namespace KeePass.Forms
 			sb.AppendLine("</body></html>");
 
 			try { UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString()); }
-			catch(Exception) { } // Throws in Mono 2.0+
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
 			try { m_wbMain.AllowNavigation = false; }
 			catch(Exception) { Debug.Assert(false); }
 

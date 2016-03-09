@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Resources;
@@ -154,13 +154,15 @@ namespace KeePassLib.Serialization
 					byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
 					string strTime = TimeUtil.SerializeUtc(DateTime.Now);
 
-#if (!KeePassLibSD && !KeePassRT)
 					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
+#if KeePassUAP
+						EnvironmentExt.UserName, EnvironmentExt.MachineName,
+						EnvironmentExt.UserDomainName);
+#elif KeePassLibSD
+						string.Empty, string.Empty, string.Empty);
+#else
 						Environment.UserName, Environment.MachineName,
 						Environment.UserDomainName);
-#else
-					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
-						string.Empty, string.Empty, string.Empty);
 #endif
 
 					StringBuilder sb = new StringBuilder();

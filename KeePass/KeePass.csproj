@@ -242,6 +242,15 @@
     <Compile Include="..\KeePassLib\Serialization\IOConnectionInfo.cs">
       <Link>KeePassLib\Serialization\IOConnectionInfo.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\IocProperties.cs">
+      <Link>KeePassLib\Serialization\IocProperties.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\IocPropertyInfo.cs">
+      <Link>KeePassLib\Serialization\IocPropertyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Serialization\IocPropertyInfoPool.cs">
+      <Link>KeePassLib\Serialization\IocPropertyInfoPool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Serialization\KdbxFile.cs">
       <Link>KeePassLib\Serialization\KdbxFile.cs</Link>
     </Compile>
@@ -344,6 +353,7 @@
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
     <Compile Include="DataExchange\Formats\NetworkPwMgrCsv4.cs" />
     <Compile Include="DataExchange\Formats\NortonIdSafeCsv2013.cs" />
+    <Compile Include="DataExchange\Formats\NPasswordNpw102.cs" />
     <Compile Include="DataExchange\Formats\OnePwProCsv599.cs" />
     <Compile Include="DataExchange\Formats\PassKeeper12.cs" />
     <Compile Include="DataExchange\Formats\PinsTxt450.cs" />
@@ -1176,6 +1186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_NPassword.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Folder_New_Ex.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignRight.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignLeft.png" />

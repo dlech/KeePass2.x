@@ -19,10 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml.Serialization;
+
+#if !KeePassUAP
 using System.Windows.Forms;
-using System.Diagnostics;
+#endif
 
 namespace KeePassLib.Translation
 {
@@ -66,7 +69,7 @@ namespace KeePassLib.Translation
 			return dict;
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		public void ApplyTo(ToolStripItemCollection tsic)
 		{
 			if(tsic == null) throw new ArgumentNullException("tsic");

@@ -329,7 +329,7 @@ namespace KeePass.DataExchange
 			else // Open URL
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
-				iocf.InitEx(false, new IOConnectionInfo(), true, true);
+				iocf.InitEx(false, null, true, true);
 
 				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
 

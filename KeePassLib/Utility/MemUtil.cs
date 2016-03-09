@@ -19,15 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
+using System.Text;
 
-#if !KeePassLibSD
-using System.IO.Compression;
-#else
+#if KeePassLibSD
 using KeePassLibSD;
+#else
+using System.IO.Compression;
 #endif
 
 namespace KeePassLib.Utility

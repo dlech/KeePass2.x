@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml;
+
+#if !KeePassUAP
 using System.Drawing;
+#endif
 
 using KeePassLib.Collections;
 using KeePassLib.Interfaces;
@@ -889,12 +891,7 @@ namespace KeePassLib
 
 			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strA, strB);
 
-#if KeePassRT
-			return string.Compare(strA, strB, m_bCaseInsensitive ?
-				StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
-#else
 			return string.Compare(strA, strB, m_bCaseInsensitive);
-#endif
 		}
 	}
 }

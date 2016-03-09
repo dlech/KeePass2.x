@@ -18,11 +18,10 @@
 */
 
 using System;
-using System.Text;
-using System.Security;
-using System.Runtime.InteropServices;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 using KeePassLib.Utility;
 
@@ -86,7 +85,7 @@ namespace KeePassLib.Native
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
-			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+			if(NativeLib.PointerSize == 8)
 				return TransformKey64(pBuf256, pKey256, uRounds);
 			else
 				return TransformKey32(pBuf256, pKey256, uRounds);
@@ -100,7 +99,7 @@ namespace KeePassLib.Native
 
 		internal static UInt64 TransformKeyBenchmark(UInt32 uTimeMs)
 		{
-			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+			if(NativeLib.PointerSize == 8)
 				return TransformKeyBenchmark64(uTimeMs);
 			return TransformKeyBenchmark32(uTimeMs);
 		}
@@ -120,11 +119,15 @@ namespace KeePassLib.Native
 			return TF_ShowLangBar32(dwFlags);
 		} */
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
 		internal static extern int StrCmpLogicalW(string x, string y);
 
+#if KeePassUAP
+		[DllImport("ShlWApi.dll")]
+#else
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
+#endif
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PathRelativePathTo([Out] StringBuilder pszPath,
 			[In] string pszFrom, [In] uint dwAttrFrom, [In] string pszTo,
@@ -135,7 +138,7 @@ namespace KeePassLib.Native
 
 		private static void TestNaturalComparisonsSupport()
 		{
-#if (KeePassLibSD || KeePassRT)
+#if KeePassLibSD
 #warning No native natural comparisons supported.
 			m_bSupportsLogicalCmp = false;
 #else
@@ -161,10 +164,10 @@ namespace KeePassLib.Native
 
 		internal static int StrCmpNaturally(string x, string y)
 		{
-			if(m_bSupportsLogicalCmp.HasValue == false) TestNaturalComparisonsSupport();
-			if(m_bSupportsLogicalCmp.Value == false) return 0;
+			if(!m_bSupportsLogicalCmp.HasValue) TestNaturalComparisonsSupport();
+			if(!m_bSupportsLogicalCmp.Value) return 0;
 
-#if (KeePassLibSD || KeePassRT)
+#if KeePassLibSD
 #warning No native natural comparisons supported.
 			return x.CompareTo(y);
 #else
@@ -175,8 +178,8 @@ namespace KeePassLib.Native
 		internal static string GetUserRuntimeDir()
 		{
 #if !KeePassLibSD
-#if KeePassRT
-			string strRtDir = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+#if KeePassUAP
+			string strRtDir = EnvironmentExt.AppDataLocalFolderPath;
 #else
 			string strRtDir = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
 			if(string.IsNullOrEmpty(strRtDir))

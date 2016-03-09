@@ -18,12 +18,15 @@
 */
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Security;
-using System.Security.Cryptography;
 using System.Diagnostics;
+using System.IO;
+using System.Security;
+using System.Text;
+using System.Xml;
+
+#if !KeePassUAP
+using System.Security.Cryptography;
+#endif
 
 using KeePassLib.Cryptography;
 using KeePassLib.Resources;
@@ -267,7 +270,15 @@ namespace KeePassLib.Keys
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
 			Stream sOut = IOConnection.OpenWrite(ioc);
 
+#if KeePassUAP
+			XmlWriterSettings xws = new XmlWriterSettings();
+			xws.Encoding = StrUtil.Utf8;
+			xws.Indent = false;
+
+			XmlWriter xtw = XmlWriter.Create(sOut, xws);
+#else
 			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
+#endif
 
 			xtw.WriteStartDocument();
 			xtw.WriteWhitespace("\r\n");

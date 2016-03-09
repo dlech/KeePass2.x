@@ -21,7 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+
+#if !KeePassUAP
 using System.Drawing;
+#endif
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography;
@@ -1458,7 +1461,17 @@ namespace KeePassLib
 			return -1;
 		}
 
-#if !KeePassLibSD
+#if KeePassUAP
+		public Image GetCustomIcon(PwUuid pwIconId)
+		{
+			int nIndex = GetCustomIconIndex(pwIconId);
+			if(nIndex >= 0)
+				return m_vCustomIcons[nIndex].GetImage();
+			else { Debug.Assert(false); }
+
+			return null;
+		}
+#elif !KeePassLibSD
 		[Obsolete("Additionally specify the size.")]
 		public Image GetCustomIcon(PwUuid pwIconId)
 		{
@@ -1477,7 +1490,6 @@ namespace KeePassLib
 		public Image GetCustomIcon(PwUuid pwIconId, int w, int h)
 		{
 			int nIndex = GetCustomIconIndex(pwIconId);
-
 			if(nIndex >= 0)
 			{
 				if((w >= 0) && (h >= 0))
@@ -1488,7 +1500,7 @@ namespace KeePassLib
 
 			return null;
 		}
-#endif // !KeePassLibSD
+#endif
 
 		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
 		{

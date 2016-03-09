@@ -19,18 +19,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
+
+#if !KeePassUAP
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Diagnostics;
+#endif
 
 namespace KeePassLib.Utility
 {
 	public static class GfxUtil
 	{
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassUAP)
 		private sealed class GfxImage
 		{
 			public byte[] Data;
@@ -53,9 +56,9 @@ namespace KeePassLib.Utility
 			}
 #endif
 		}
-#endif // !KeePassLibSD
+#endif
 
-#if KeePassRT
+#if KeePassUAP
 		public static Image LoadImage(byte[] pb)
 		{
 			if(pb == null) throw new ArgumentNullException("pb");
@@ -374,6 +377,13 @@ namespace KeePassLib.Utility
 				rSource.X = rSource.X - 0.5f;
 			if(rDest.Height > rSource.Height)
 				rSource.Y = rSource.Y - 0.5f;
+
+			// When shrinking, apply a +0.5 offset, such that the
+			// scaled image is less cropped on the bottom/right side
+			if(rDest.Width < rSource.Width)
+				rSource.X = rSource.X + 0.5f;
+			if(rDest.Height < rSource.Height)
+				rSource.Y = rSource.Y + 0.5f;
 		}
 
 #if DEBUG
@@ -412,8 +422,8 @@ namespace KeePassLib.Utility
 
 			return bmp;
 		}
-#endif
+#endif // DEBUG
 #endif // !KeePassLibSD
-#endif // KeePassRT
+#endif // KeePassUAP
 	}
 }

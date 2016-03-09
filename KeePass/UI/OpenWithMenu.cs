@@ -320,15 +320,23 @@ namespace KeePass.UI
 
 		private void FindAppsByRegistry()
 		{
-			try { FindAppsByRegistryPriv("SOFTWARE\\Clients\\StartMenuInternet"); }
-			catch(Exception) { }
-			try { FindAppsByRegistryPriv("SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet"); }
-			catch(Exception) { }
+			const string strSmiDef = "SOFTWARE\\Clients\\StartMenuInternet";
+			const string strSmiWow = "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet";
+
+			// https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
+			try { FindAppsByRegistryPriv(Registry.CurrentUser, strSmiDef); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			try { FindAppsByRegistryPriv(Registry.CurrentUser, strSmiWow); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			try { FindAppsByRegistryPriv(Registry.LocalMachine, strSmiDef); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			try { FindAppsByRegistryPriv(Registry.LocalMachine, strSmiWow); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
-		private void FindAppsByRegistryPriv(string strRootSubKey)
+		private void FindAppsByRegistryPriv(RegistryKey kBase, string strRootSubKey)
 		{
-			RegistryKey kRoot = Registry.LocalMachine.OpenSubKey(strRootSubKey, false);
+			RegistryKey kRoot = kBase.OpenSubKey(strRootSubKey, false);
 			if(kRoot == null) return; // No assert, key might not exist
 			string[] vAppSubKeys = kRoot.GetSubKeyNames();
 

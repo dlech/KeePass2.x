@@ -261,27 +261,27 @@
             this.m_ctxGroupSep3,
             this.m_ctxGroupRearrange});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(180, 226);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(178, 226);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupAdd
 			// 
 			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_New_Ex;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
-			this.m_ctxGroupAdd.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupAdd.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupAdd.Text = "Add &Group";
 			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
 			// 
 			// m_ctxGroupSep0
 			// 
 			this.m_ctxGroupSep0.Name = "m_ctxGroupSep0";
-			this.m_ctxGroupSep0.Size = new System.Drawing.Size(176, 6);
+			this.m_ctxGroupSep0.Size = new System.Drawing.Size(174, 6);
 			// 
 			// m_ctxGroupEdit
 			// 
 			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
 			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
-			this.m_ctxGroupEdit.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupEdit.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupEdit.Text = "Ed&it Group";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
 			// 
@@ -289,7 +289,7 @@
 			// 
 			this.m_ctxGroupDuplicate.Image = global::KeePass.Properties.Resources.B16x16_Folder_2;
 			this.m_ctxGroupDuplicate.Name = "m_ctxGroupDuplicate";
-			this.m_ctxGroupDuplicate.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupDuplicate.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupDuplicate.Text = "Dupli&cate Group";
 			this.m_ctxGroupDuplicate.Click += new System.EventHandler(this.OnGroupsDuplicate);
 			// 
@@ -297,7 +297,7 @@
 			// 
 			this.m_ctxGroupDelete.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
-			this.m_ctxGroupDelete.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupDelete.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupDelete.Text = "Dele&te Group";
 			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
 			// 
@@ -305,33 +305,33 @@
 			// 
 			this.m_ctxGroupEmpty.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
 			this.m_ctxGroupEmpty.Name = "m_ctxGroupEmpty";
-			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupEmpty.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupEmpty.Text = "Empty Recycle &Bin";
 			this.m_ctxGroupEmpty.Click += new System.EventHandler(this.OnGroupsEmpty);
 			// 
 			// m_ctxGroupSep1
 			// 
 			this.m_ctxGroupSep1.Name = "m_ctxGroupSep1";
-			this.m_ctxGroupSep1.Size = new System.Drawing.Size(176, 6);
+			this.m_ctxGroupSep1.Size = new System.Drawing.Size(174, 6);
 			// 
 			// m_ctxGroupFind
 			// 
 			this.m_ctxGroupFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_ctxGroupFind.Name = "m_ctxGroupFind";
-			this.m_ctxGroupFind.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupFind.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupFind.Text = "&Find in this Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnGroupsFind);
 			// 
 			// m_ctxGroupSep2
 			// 
 			this.m_ctxGroupSep2.Name = "m_ctxGroupSep2";
-			this.m_ctxGroupSep2.Size = new System.Drawing.Size(176, 6);
+			this.m_ctxGroupSep2.Size = new System.Drawing.Size(174, 6);
 			// 
 			// m_ctxGroupPrint
 			// 
 			this.m_ctxGroupPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxGroupPrint.Name = "m_ctxGroupPrint";
-			this.m_ctxGroupPrint.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupPrint.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupPrint.Text = "&Print Group...";
 			this.m_ctxGroupPrint.Click += new System.EventHandler(this.OnGroupsPrint);
 			// 
@@ -339,14 +339,14 @@
 			// 
 			this.m_ctxGroupExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxGroupExport.Name = "m_ctxGroupExport";
-			this.m_ctxGroupExport.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupExport.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupExport.Text = "&Export...";
 			this.m_ctxGroupExport.Click += new System.EventHandler(this.OnGroupsExport);
 			// 
 			// m_ctxGroupSep3
 			// 
 			this.m_ctxGroupSep3.Name = "m_ctxGroupSep3";
-			this.m_ctxGroupSep3.Size = new System.Drawing.Size(176, 6);
+			this.m_ctxGroupSep3.Size = new System.Drawing.Size(174, 6);
 			// 
 			// m_ctxGroupRearrange
 			// 
@@ -359,14 +359,14 @@
             this.m_ctxGroupSort,
             this.m_ctxGroupSortRec});
 			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
-			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupRearrange.Text = "&Rearrange";
 			// 
 			// m_ctxGroupMoveToTop
 			// 
 			this.m_ctxGroupMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
-			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupMoveToTop.Text = "Move Group to &Top";
 			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
 			// 
@@ -374,7 +374,7 @@
 			// 
 			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
-			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupMoveOneUp.Text = "Move Group &One Up";
 			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
 			// 
@@ -382,7 +382,7 @@
 			// 
 			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
-			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupMoveOneDown.Text = "Mo&ve Group One Down";
 			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
 			// 
@@ -390,20 +390,20 @@
 			// 
 			this.m_ctxGroupMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxGroupMoveToBottom.Name = "m_ctxGroupMoveToBottom";
-			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupMoveToBottom.Text = "Move Group to &Bottom";
 			this.m_ctxGroupMoveToBottom.Click += new System.EventHandler(this.OnGroupsMoveToBottom);
 			// 
 			// m_ctxGroupRearrSep0
 			// 
 			this.m_ctxGroupRearrSep0.Name = "m_ctxGroupRearrSep0";
-			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(199, 6);
+			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(196, 6);
 			// 
 			// m_ctxGroupSort
 			// 
 			this.m_ctxGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSort.Name = "m_ctxGroupSort";
-			this.m_ctxGroupSort.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupSort.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupSort.Text = "&Sort Direct Subgroups";
 			this.m_ctxGroupSort.Click += new System.EventHandler(this.OnGroupsSort);
 			// 
@@ -411,7 +411,7 @@
 			// 
 			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
-			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupSortRec.Text = "So&rt Subgroup Tree";
 			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
 			// 
@@ -437,14 +437,14 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(215, 352);
+			this.m_ctxPwList.Size = new System.Drawing.Size(209, 352);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
 			// 
 			this.m_ctxEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
 			this.m_ctxEntryCopyUserName.Name = "m_ctxEntryCopyUserName";
-			this.m_ctxEntryCopyUserName.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryCopyUserName.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryCopyUserName.Text = "Copy User &Name";
 			this.m_ctxEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
 			// 
@@ -452,7 +452,7 @@
 			// 
 			this.m_ctxEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
 			this.m_ctxEntryCopyPassword.Name = "m_ctxEntryCopyPassword";
-			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryCopyPassword.Text = "<COPYPW>";
 			this.m_ctxEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
@@ -464,14 +464,14 @@
             this.m_ctxEntryUrlSep0,
             this.m_ctxEntryUrlOpenInInternal});
 			this.m_ctxEntryUrl.Name = "m_ctxEntryUrl";
-			this.m_ctxEntryUrl.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryUrl.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryUrl.Text = "&URL(s)";
 			// 
 			// m_ctxEntryOpenUrl
 			// 
 			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
-			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(209, 22);
+			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxEntryOpenUrl.Text = "<>";
 			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
 			// 
@@ -479,21 +479,21 @@
 			// 
 			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopyUrl;
 			this.m_ctxEntryCopyUrl.Name = "m_ctxEntryCopyUrl";
-			this.m_ctxEntryCopyUrl.Size = new System.Drawing.Size(209, 22);
+			this.m_ctxEntryCopyUrl.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxEntryCopyUrl.Text = "&Copy to Clipboard";
 			this.m_ctxEntryCopyUrl.Click += new System.EventHandler(this.OnEntryCopyURL);
 			// 
 			// m_ctxEntryUrlSep0
 			// 
 			this.m_ctxEntryUrlSep0.Name = "m_ctxEntryUrlSep0";
-			this.m_ctxEntryUrlSep0.Size = new System.Drawing.Size(206, 6);
+			this.m_ctxEntryUrlSep0.Size = new System.Drawing.Size(201, 6);
 			this.m_ctxEntryUrlSep0.Visible = false;
 			// 
 			// m_ctxEntryUrlOpenInInternal
 			// 
 			this.m_ctxEntryUrlOpenInInternal.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_ctxEntryUrlOpenInInternal.Name = "m_ctxEntryUrlOpenInInternal";
-			this.m_ctxEntryUrlOpenInInternal.Size = new System.Drawing.Size(209, 22);
+			this.m_ctxEntryUrlOpenInInternal.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxEntryUrlOpenInInternal.Text = "Open in Internal Browser";
 			this.m_ctxEntryUrlOpenInInternal.Visible = false;
 			this.m_ctxEntryUrlOpenInInternal.Click += new System.EventHandler(this.OnEntryUrlOpenInInternal);
@@ -501,46 +501,46 @@
 			// m_ctxEntryCopyString
 			// 
 			this.m_ctxEntryCopyString.Name = "m_ctxEntryCopyString";
-			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryCopyString.Text = "Copy &String";
 			// 
 			// m_ctxEntryAttachments
 			// 
 			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
-			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryAttachments.Text = "Attach&ments";
 			// 
 			// m_ctxEntrySaveAttachedFiles
 			// 
 			this.m_ctxEntrySaveAttachedFiles.Image = global::KeePass.Properties.Resources.B16x16_Attach;
 			this.m_ctxEntrySaveAttachedFiles.Name = "m_ctxEntrySaveAttachedFiles";
-			this.m_ctxEntrySaveAttachedFiles.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntrySaveAttachedFiles.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntrySaveAttachedFiles.Text = "Save Attached &File(s) To...";
 			this.m_ctxEntrySaveAttachedFiles.Click += new System.EventHandler(this.OnEntrySaveAttachments);
 			// 
 			// m_ctxEntrySep0
 			// 
 			this.m_ctxEntrySep0.Name = "m_ctxEntrySep0";
-			this.m_ctxEntrySep0.Size = new System.Drawing.Size(211, 6);
+			this.m_ctxEntrySep0.Size = new System.Drawing.Size(205, 6);
 			// 
 			// m_ctxEntryPerformAutoType
 			// 
 			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
 			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
-			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_ctxEntrySep1
 			// 
 			this.m_ctxEntrySep1.Name = "m_ctxEntrySep1";
-			this.m_ctxEntrySep1.Size = new System.Drawing.Size(211, 6);
+			this.m_ctxEntrySep1.Size = new System.Drawing.Size(205, 6);
 			// 
 			// m_ctxEntryAdd
 			// 
 			this.m_ctxEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_ctxEntryAdd.Name = "m_ctxEntryAdd";
-			this.m_ctxEntryAdd.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryAdd.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryAdd.Text = "&Add Entry...";
 			this.m_ctxEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
@@ -548,7 +548,7 @@
 			// 
 			this.m_ctxEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_ctxEntryEdit.Name = "m_ctxEntryEdit";
-			this.m_ctxEntryEdit.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryEdit.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryEdit.Text = "&Edit/View Entry...";
 			this.m_ctxEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
 			// 
@@ -556,7 +556,7 @@
 			// 
 			this.m_ctxEntryDuplicate.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
 			this.m_ctxEntryDuplicate.Name = "m_ctxEntryDuplicate";
-			this.m_ctxEntryDuplicate.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryDuplicate.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryDuplicate.Text = "Dupli&cate Entry";
 			this.m_ctxEntryDuplicate.Click += new System.EventHandler(this.OnEntryDuplicate);
 			// 
@@ -564,7 +564,7 @@
 			// 
 			this.m_ctxEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_ctxEntryDelete.Name = "m_ctxEntryDelete";
-			this.m_ctxEntryDelete.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryDelete.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryDelete.Text = "&Delete Entry";
 			this.m_ctxEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
 			// 
@@ -582,7 +582,7 @@
             this.m_ctxEntrySelectedSep2,
             this.m_ctxEntryMoveToGroup});
 			this.m_ctxEntryMassModify.Name = "m_ctxEntryMassModify";
-			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryMassModify.Text = "Selected Entr&ies";
 			// 
 			// m_ctxEntrySetColor
@@ -603,52 +603,52 @@
 			// m_ctxEntryColorStandard
 			// 
 			this.m_ctxEntryColorStandard.Name = "m_ctxEntryColorStandard";
-			this.m_ctxEntryColorStandard.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorStandard.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorStandard.Text = "&Standard";
 			this.m_ctxEntryColorStandard.Click += new System.EventHandler(this.OnEntryColorStandard);
 			// 
 			// m_ctxEntryColorSep0
 			// 
 			this.m_ctxEntryColorSep0.Name = "m_ctxEntryColorSep0";
-			this.m_ctxEntryColorSep0.Size = new System.Drawing.Size(199, 6);
+			this.m_ctxEntryColorSep0.Size = new System.Drawing.Size(197, 6);
 			// 
 			// m_ctxEntryColorLightRed
 			// 
 			this.m_ctxEntryColorLightRed.Name = "m_ctxEntryColorLightRed";
-			this.m_ctxEntryColorLightRed.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorLightRed.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorLightRed.Text = "Light &Red";
 			this.m_ctxEntryColorLightRed.Click += new System.EventHandler(this.OnEntryColorLightRed);
 			// 
 			// m_ctxEntryColorLightGreen
 			// 
 			this.m_ctxEntryColorLightGreen.Name = "m_ctxEntryColorLightGreen";
-			this.m_ctxEntryColorLightGreen.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorLightGreen.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorLightGreen.Text = "Light &Green";
 			this.m_ctxEntryColorLightGreen.Click += new System.EventHandler(this.OnEntryColorLightGreen);
 			// 
 			// m_ctxEntryColorLightBlue
 			// 
 			this.m_ctxEntryColorLightBlue.Name = "m_ctxEntryColorLightBlue";
-			this.m_ctxEntryColorLightBlue.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorLightBlue.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorLightBlue.Text = "Light &Blue";
 			this.m_ctxEntryColorLightBlue.Click += new System.EventHandler(this.OnEntryColorLightBlue);
 			// 
 			// m_ctxEntryColorLightYellow
 			// 
 			this.m_ctxEntryColorLightYellow.Name = "m_ctxEntryColorLightYellow";
-			this.m_ctxEntryColorLightYellow.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorLightYellow.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorLightYellow.Text = "Light &Yellow";
 			this.m_ctxEntryColorLightYellow.Click += new System.EventHandler(this.OnEntryColorLightYellow);
 			// 
 			// m_ctxEntryColorSep1
 			// 
 			this.m_ctxEntryColorSep1.Name = "m_ctxEntryColorSep1";
-			this.m_ctxEntryColorSep1.Size = new System.Drawing.Size(199, 6);
+			this.m_ctxEntryColorSep1.Size = new System.Drawing.Size(197, 6);
 			// 
 			// m_ctxEntryColorCustom
 			// 
 			this.m_ctxEntryColorCustom.Name = "m_ctxEntryColorCustom";
-			this.m_ctxEntryColorCustom.Size = new System.Drawing.Size(202, 22);
+			this.m_ctxEntryColorCustom.Size = new System.Drawing.Size(200, 22);
 			this.m_ctxEntryColorCustom.Text = "&Choose Custom Color...";
 			this.m_ctxEntryColorCustom.Click += new System.EventHandler(this.OnEntryColorCustom);
 			// 
@@ -678,7 +678,7 @@
 			// 
 			this.m_ctxEntrySelectedNewTag.Image = global::KeePass.Properties.Resources.B16x16_KNotes;
 			this.m_ctxEntrySelectedNewTag.Name = "m_ctxEntrySelectedNewTag";
-			this.m_ctxEntrySelectedNewTag.Size = new System.Drawing.Size(132, 22);
+			this.m_ctxEntrySelectedNewTag.Size = new System.Drawing.Size(129, 22);
 			this.m_ctxEntrySelectedNewTag.Text = "&New Tag...";
 			this.m_ctxEntrySelectedNewTag.Click += new System.EventHandler(this.OnEntrySelectedNewTag);
 			// 
@@ -725,14 +725,14 @@
 			// m_ctxEntrySelectAll
 			// 
 			this.m_ctxEntrySelectAll.Name = "m_ctxEntrySelectAll";
-			this.m_ctxEntrySelectAll.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntrySelectAll.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntrySelectAll.Text = "Se&lect All";
 			this.m_ctxEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
 			// 
 			// m_ctxEntrySep2
 			// 
 			this.m_ctxEntrySep2.Name = "m_ctxEntrySep2";
-			this.m_ctxEntrySep2.Size = new System.Drawing.Size(211, 6);
+			this.m_ctxEntrySep2.Size = new System.Drawing.Size(205, 6);
 			// 
 			// m_ctxEntryClipboard
 			// 
@@ -740,7 +740,7 @@
             this.m_ctxEntryClipCopy,
             this.m_ctxEntryClipPaste});
 			this.m_ctxEntryClipboard.Name = "m_ctxEntryClipboard";
-			this.m_ctxEntryClipboard.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryClipboard.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryClipboard.Text = "Clip&board";
 			this.m_ctxEntryClipboard.DropDownOpening += new System.EventHandler(this.OnCtxEntryClipboardOpening);
 			// 
@@ -748,7 +748,7 @@
 			// 
 			this.m_ctxEntryClipCopy.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxEntryClipCopy.Name = "m_ctxEntryClipCopy";
-			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(146, 22);
+			this.m_ctxEntryClipCopy.Size = new System.Drawing.Size(140, 22);
 			this.m_ctxEntryClipCopy.Text = "&Copy Entries";
 			this.m_ctxEntryClipCopy.Click += new System.EventHandler(this.OnEntryClipCopy);
 			// 
@@ -756,7 +756,7 @@
 			// 
 			this.m_ctxEntryClipPaste.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_ctxEntryClipPaste.Name = "m_ctxEntryClipPaste";
-			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(146, 22);
+			this.m_ctxEntryClipPaste.Size = new System.Drawing.Size(140, 22);
 			this.m_ctxEntryClipPaste.Text = "&Paste Entries";
 			this.m_ctxEntryClipPaste.Click += new System.EventHandler(this.OnEntryClipPaste);
 			// 
@@ -768,14 +768,14 @@
             this.m_ctxEntryMoveOneDown,
             this.m_ctxEntryMoveToBottom});
 			this.m_ctxEntryRearrangePopup.Name = "m_ctxEntryRearrangePopup";
-			this.m_ctxEntryRearrangePopup.Size = new System.Drawing.Size(214, 22);
+			this.m_ctxEntryRearrangePopup.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryRearrangePopup.Text = "&Rearrange";
 			// 
 			// m_ctxEntryMoveToTop
 			// 
 			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
 			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
-			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(195, 22);
+			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(193, 22);
 			this.m_ctxEntryMoveToTop.Text = "Move Entry to &Top";
 			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
 			// 
@@ -783,7 +783,7 @@
 			// 
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
-			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(195, 22);
+			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(193, 22);
 			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
 			// 
@@ -791,7 +791,7 @@
 			// 
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
-			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(195, 22);
+			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(193, 22);
 			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
@@ -799,7 +799,7 @@
 			// 
 			this.m_ctxEntryMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
 			this.m_ctxEntryMoveToBottom.Name = "m_ctxEntryMoveToBottom";
-			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(195, 22);
+			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(193, 22);
 			this.m_ctxEntryMoveToBottom.Text = "Move Entry to &Bottom";
 			this.m_ctxEntryMoveToBottom.Click += new System.EventHandler(this.OnEntryMoveToBottom);
 			// 
@@ -839,14 +839,14 @@
             this.m_menuFileLock,
             this.m_menuFileExit});
 			this.m_menuFile.Name = "m_menuFile";
-			this.m_menuFile.Size = new System.Drawing.Size(39, 20);
+			this.m_menuFile.Size = new System.Drawing.Size(37, 20);
 			this.m_menuFile.Text = "&File";
 			// 
 			// m_menuFileNew
 			// 
 			this.m_menuFileNew.Image = global::KeePass.Properties.Resources.B16x16_FileNew;
 			this.m_menuFileNew.Name = "m_menuFileNew";
-			this.m_menuFileNew.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileNew.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileNew.Text = "&New...";
 			this.m_menuFileNew.Click += new System.EventHandler(this.OnFileNew);
 			// 
@@ -856,14 +856,14 @@
             this.m_menuFileOpenLocal,
             this.m_menuFileOpenUrl});
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
-			this.m_menuFileOpen.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileOpen.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileOpen.Text = "&Open";
 			// 
 			// m_menuFileOpenLocal
 			// 
 			this.m_menuFileOpenLocal.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpenLocal.Name = "m_menuFileOpenLocal";
-			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(141, 22);
+			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(136, 22);
 			this.m_menuFileOpenLocal.Text = "Open &File...";
 			this.m_menuFileOpenLocal.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -871,7 +871,7 @@
 			// 
 			this.m_menuFileOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileOpenUrl.Name = "m_menuFileOpenUrl";
-			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(141, 22);
+			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(136, 22);
 			this.m_menuFileOpenUrl.Text = "Open &URL...";
 			this.m_menuFileOpenUrl.Click += new System.EventHandler(this.OnFileOpenUrl);
 			// 
@@ -880,33 +880,33 @@
 			this.m_menuFileRecent.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileRecentDummy});
 			this.m_menuFileRecent.Name = "m_menuFileRecent";
-			this.m_menuFileRecent.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileRecent.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileRecent.Text = "Open &Recent";
 			// 
 			// m_menuFileRecentDummy
 			// 
 			this.m_menuFileRecentDummy.Name = "m_menuFileRecentDummy";
-			this.m_menuFileRecentDummy.Size = new System.Drawing.Size(88, 22);
+			this.m_menuFileRecentDummy.Size = new System.Drawing.Size(90, 22);
 			this.m_menuFileRecentDummy.Text = "<>";
 			// 
 			// m_menuFileClose
 			// 
 			this.m_menuFileClose.Image = global::KeePass.Properties.Resources.B16x16_File_Close;
 			this.m_menuFileClose.Name = "m_menuFileClose";
-			this.m_menuFileClose.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileClose.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileClose.Text = "&Close";
 			this.m_menuFileClose.Click += new System.EventHandler(this.OnFileClose);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(187, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(182, 6);
 			// 
 			// m_menuFileSave
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
@@ -918,14 +918,14 @@
             this.m_menuFileSaveAsSep0,
             this.m_menuFileSaveAsCopy});
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			this.m_menuFileSaveAs.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileSaveAs.Text = "Save &As";
 			// 
 			// m_menuFileSaveAsLocal
 			// 
 			this.m_menuFileSaveAsLocal.Image = global::KeePass.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAsLocal.Name = "m_menuFileSaveAsLocal";
-			this.m_menuFileSaveAsLocal.Size = new System.Drawing.Size(176, 22);
+			this.m_menuFileSaveAsLocal.Size = new System.Drawing.Size(173, 22);
 			this.m_menuFileSaveAsLocal.Text = "Save to &File...";
 			this.m_menuFileSaveAsLocal.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
@@ -933,33 +933,33 @@
 			// 
 			this.m_menuFileSaveAsUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileSaveAsUrl.Name = "m_menuFileSaveAsUrl";
-			this.m_menuFileSaveAsUrl.Size = new System.Drawing.Size(176, 22);
+			this.m_menuFileSaveAsUrl.Size = new System.Drawing.Size(173, 22);
 			this.m_menuFileSaveAsUrl.Text = "Save to &URL...";
 			this.m_menuFileSaveAsUrl.Click += new System.EventHandler(this.OnFileSaveAsUrl);
 			// 
 			// m_menuFileSaveAsSep0
 			// 
 			this.m_menuFileSaveAsSep0.Name = "m_menuFileSaveAsSep0";
-			this.m_menuFileSaveAsSep0.Size = new System.Drawing.Size(173, 6);
+			this.m_menuFileSaveAsSep0.Size = new System.Drawing.Size(170, 6);
 			// 
 			// m_menuFileSaveAsCopy
 			// 
 			this.m_menuFileSaveAsCopy.Image = global::KeePass.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAsCopy.Name = "m_menuFileSaveAsCopy";
-			this.m_menuFileSaveAsCopy.Size = new System.Drawing.Size(176, 22);
+			this.m_menuFileSaveAsCopy.Size = new System.Drawing.Size(173, 22);
 			this.m_menuFileSaveAsCopy.Text = "Save &Copy to File...";
 			this.m_menuFileSaveAsCopy.Click += new System.EventHandler(this.OnFileSaveAsCopy);
 			// 
 			// m_menuFileSep1
 			// 
 			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			this.m_menuFileSep1.Size = new System.Drawing.Size(187, 6);
+			this.m_menuFileSep1.Size = new System.Drawing.Size(182, 6);
 			// 
 			// m_menuFileDbSettings
 			// 
 			this.m_menuFileDbSettings.Image = global::KeePass.Properties.Resources.B16x16_Package_Development;
 			this.m_menuFileDbSettings.Name = "m_menuFileDbSettings";
-			this.m_menuFileDbSettings.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileDbSettings.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileDbSettings.Text = "&Database Settings...";
 			this.m_menuFileDbSettings.Click += new System.EventHandler(this.OnFileDbSettings);
 			// 
@@ -967,33 +967,33 @@
 			// 
 			this.m_menuFileChangeMasterKey.Image = global::KeePass.Properties.Resources.B16x16_File_Locked;
 			this.m_menuFileChangeMasterKey.Name = "m_menuFileChangeMasterKey";
-			this.m_menuFileChangeMasterKey.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileChangeMasterKey.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileChangeMasterKey.Text = "Change &Master Key...";
 			this.m_menuFileChangeMasterKey.Click += new System.EventHandler(this.OnFileChangeMasterKey);
 			// 
 			// m_menuFileSep2
 			// 
 			this.m_menuFileSep2.Name = "m_menuFileSep2";
-			this.m_menuFileSep2.Size = new System.Drawing.Size(187, 6);
+			this.m_menuFileSep2.Size = new System.Drawing.Size(182, 6);
 			// 
 			// m_menuFilePrint
 			// 
 			this.m_menuFilePrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_menuFilePrint.Name = "m_menuFilePrint";
-			this.m_menuFilePrint.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFilePrint.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFilePrint.Text = "&Print...";
 			this.m_menuFilePrint.Click += new System.EventHandler(this.OnFilePrint);
 			// 
 			// m_menuFileSep3
 			// 
 			this.m_menuFileSep3.Name = "m_menuFileSep3";
-			this.m_menuFileSep3.Size = new System.Drawing.Size(187, 6);
+			this.m_menuFileSep3.Size = new System.Drawing.Size(182, 6);
 			// 
 			// m_menuFileImport
 			// 
 			this.m_menuFileImport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Inbox;
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			this.m_menuFileImport.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileImport.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileImport.Text = "&Import...";
 			this.m_menuFileImport.Click += new System.EventHandler(this.OnFileImport);
 			// 
@@ -1001,7 +1001,7 @@
 			// 
 			this.m_menuFileExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_menuFileExport.Name = "m_menuFileExport";
-			this.m_menuFileExport.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileExport.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileExport.Text = "&Export...";
 			this.m_menuFileExport.Click += new System.EventHandler(this.OnFileExport);
 			// 
@@ -1013,14 +1013,14 @@
             this.m_menuFileSyncSep0,
             this.m_menuFileSyncRecent});
 			this.m_menuFileSync.Name = "m_menuFileSync";
-			this.m_menuFileSync.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileSync.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileSync.Text = "S&ynchronize";
 			// 
 			// m_menuFileSyncFile
 			// 
 			this.m_menuFileSyncFile.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncFile.Name = "m_menuFileSyncFile";
-			this.m_menuFileSyncFile.Size = new System.Drawing.Size(203, 22);
+			this.m_menuFileSyncFile.Size = new System.Drawing.Size(197, 22);
 			this.m_menuFileSyncFile.Text = "Synchronize with &File...";
 			this.m_menuFileSyncFile.Click += new System.EventHandler(this.OnFileSynchronize);
 			// 
@@ -1028,39 +1028,39 @@
 			// 
 			this.m_menuFileSyncUrl.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncUrl.Name = "m_menuFileSyncUrl";
-			this.m_menuFileSyncUrl.Size = new System.Drawing.Size(203, 22);
+			this.m_menuFileSyncUrl.Size = new System.Drawing.Size(197, 22);
 			this.m_menuFileSyncUrl.Text = "Synchronize with &URL...";
 			this.m_menuFileSyncUrl.Click += new System.EventHandler(this.OnFileSynchronizeUrl);
 			// 
 			// m_menuFileSyncSep0
 			// 
 			this.m_menuFileSyncSep0.Name = "m_menuFileSyncSep0";
-			this.m_menuFileSyncSep0.Size = new System.Drawing.Size(200, 6);
+			this.m_menuFileSyncSep0.Size = new System.Drawing.Size(194, 6);
 			// 
 			// m_menuFileSyncRecent
 			// 
 			this.m_menuFileSyncRecent.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileSyncRecentDummy});
 			this.m_menuFileSyncRecent.Name = "m_menuFileSyncRecent";
-			this.m_menuFileSyncRecent.Size = new System.Drawing.Size(203, 22);
+			this.m_menuFileSyncRecent.Size = new System.Drawing.Size(197, 22);
 			this.m_menuFileSyncRecent.Text = "&Recent Files";
 			// 
 			// m_menuFileSyncRecentDummy
 			// 
 			this.m_menuFileSyncRecentDummy.Name = "m_menuFileSyncRecentDummy";
-			this.m_menuFileSyncRecentDummy.Size = new System.Drawing.Size(88, 22);
+			this.m_menuFileSyncRecentDummy.Size = new System.Drawing.Size(90, 22);
 			this.m_menuFileSyncRecentDummy.Text = "<>";
 			// 
 			// m_menuFileSep4
 			// 
 			this.m_menuFileSep4.Name = "m_menuFileSep4";
-			this.m_menuFileSep4.Size = new System.Drawing.Size(187, 6);
+			this.m_menuFileSep4.Size = new System.Drawing.Size(182, 6);
 			// 
 			// m_menuFileLock
 			// 
 			this.m_menuFileLock.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
 			this.m_menuFileLock.Name = "m_menuFileLock";
-			this.m_menuFileLock.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileLock.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileLock.Text = "&Lock Workspace";
 			this.m_menuFileLock.Click += new System.EventHandler(this.OnFileLock);
 			// 
@@ -1068,7 +1068,7 @@
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(190, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileExit.Text = "E&xit";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -1081,7 +1081,7 @@
             this.m_menuEditSep0,
             this.m_menuEditFind});
 			this.m_menuEdit.Name = "m_menuEdit";
-			this.m_menuEdit.Size = new System.Drawing.Size(40, 20);
+			this.m_menuEdit.Size = new System.Drawing.Size(39, 20);
 			this.m_menuEdit.Text = "&Edit";
 			this.m_menuEdit.DropDownOpening += new System.EventHandler(this.OnMenuEditOpening);
 			// 
@@ -1089,7 +1089,7 @@
 			// 
 			this.m_menuEditShowAllEntries.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_menuEditShowAllEntries.Name = "m_menuEditShowAllEntries";
-			this.m_menuEditShowAllEntries.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEditShowAllEntries.Size = new System.Drawing.Size(199, 22);
 			this.m_menuEditShowAllEntries.Text = "&Show All Entries";
 			this.m_menuEditShowAllEntries.Click += new System.EventHandler(this.OnShowAllEntries);
 			// 
@@ -1097,27 +1097,27 @@
 			// 
 			this.m_menuEditShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExpired.Name = "m_menuEditShowExpired";
-			this.m_menuEditShowExpired.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEditShowExpired.Size = new System.Drawing.Size(199, 22);
 			this.m_menuEditShowExpired.Text = "Show All E&xpired Entries";
 			this.m_menuEditShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
 			// 
 			// m_menuEditShowByTag
 			// 
 			this.m_menuEditShowByTag.Name = "m_menuEditShowByTag";
-			this.m_menuEditShowByTag.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEditShowByTag.Size = new System.Drawing.Size(199, 22);
 			this.m_menuEditShowByTag.Text = "Show Entries &by Tag";
 			this.m_menuEditShowByTag.DropDownOpening += new System.EventHandler(this.OnEditShowByTagOpening);
 			// 
 			// m_menuEditSep0
 			// 
 			this.m_menuEditSep0.Name = "m_menuEditSep0";
-			this.m_menuEditSep0.Size = new System.Drawing.Size(204, 6);
+			this.m_menuEditSep0.Size = new System.Drawing.Size(196, 6);
 			// 
 			// m_menuEditFind
 			// 
 			this.m_menuEditFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_menuEditFind.Name = "m_menuEditFind";
-			this.m_menuEditFind.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEditFind.Size = new System.Drawing.Size(199, 22);
 			this.m_menuEditFind.Text = "&Find...";
 			this.m_menuEditFind.Click += new System.EventHandler(this.OnPwListFind);
 			// 
@@ -1139,33 +1139,33 @@
             this.m_menuViewSep3,
             this.m_menuViewShowEntriesOfSubGroups});
 			this.m_menuView.Name = "m_menuView";
-			this.m_menuView.Size = new System.Drawing.Size(45, 20);
+			this.m_menuView.Size = new System.Drawing.Size(44, 20);
 			this.m_menuView.Text = "&View";
 			// 
 			// m_menuChangeLanguage
 			// 
 			this.m_menuChangeLanguage.Image = global::KeePass.Properties.Resources.B16x16_Keyboard_Layout;
 			this.m_menuChangeLanguage.Name = "m_menuChangeLanguage";
-			this.m_menuChangeLanguage.Size = new System.Drawing.Size(222, 22);
+			this.m_menuChangeLanguage.Size = new System.Drawing.Size(215, 22);
 			this.m_menuChangeLanguage.Text = "Change &Language...";
 			this.m_menuChangeLanguage.Click += new System.EventHandler(this.OnMenuChangeLanguage);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(219, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_menuViewShowToolBar
 			// 
 			this.m_menuViewShowToolBar.Name = "m_menuViewShowToolBar";
-			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewShowToolBar.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
 			this.m_menuViewShowToolBar.Click += new System.EventHandler(this.OnViewShowToolBar);
 			// 
 			// m_menuViewShowEntryView
 			// 
 			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
-			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewShowEntryView.Text = "Show &Entry View";
 			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
 			// 
@@ -1175,14 +1175,14 @@
             this.m_menuViewWindowsStacked,
             this.m_menuViewWindowsSideBySide});
 			this.m_menuViewWindowLayout.Name = "m_menuViewWindowLayout";
-			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewWindowLayout.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewWindowLayout.Text = "&Window Layout";
 			// 
 			// m_menuViewWindowsStacked
 			// 
 			this.m_menuViewWindowsStacked.Image = global::KeePass.Properties.Resources.B16x16_Window_2Horz1Vert;
 			this.m_menuViewWindowsStacked.Name = "m_menuViewWindowsStacked";
-			this.m_menuViewWindowsStacked.Size = new System.Drawing.Size(142, 22);
+			this.m_menuViewWindowsStacked.Size = new System.Drawing.Size(137, 22);
 			this.m_menuViewWindowsStacked.Text = "&Stacked";
 			this.m_menuViewWindowsStacked.Click += new System.EventHandler(this.OnViewWindowsStacked);
 			// 
@@ -1190,39 +1190,39 @@
 			// 
 			this.m_menuViewWindowsSideBySide.Image = global::KeePass.Properties.Resources.B16x16_Window_3Horz;
 			this.m_menuViewWindowsSideBySide.Name = "m_menuViewWindowsSideBySide";
-			this.m_menuViewWindowsSideBySide.Size = new System.Drawing.Size(142, 22);
+			this.m_menuViewWindowsSideBySide.Size = new System.Drawing.Size(137, 22);
 			this.m_menuViewWindowsSideBySide.Text = "Side &by Side";
 			this.m_menuViewWindowsSideBySide.Click += new System.EventHandler(this.OnViewWindowsSideBySide);
 			// 
 			// m_menuViewSep1
 			// 
 			this.m_menuViewSep1.Name = "m_menuViewSep1";
-			this.m_menuViewSep1.Size = new System.Drawing.Size(219, 6);
+			this.m_menuViewSep1.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_menuViewAlwaysOnTop
 			// 
 			this.m_menuViewAlwaysOnTop.Name = "m_menuViewAlwaysOnTop";
-			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewAlwaysOnTop.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewAlwaysOnTop.Text = "&Always on Top";
 			this.m_menuViewAlwaysOnTop.Click += new System.EventHandler(this.OnViewAlwaysOnTop);
 			// 
 			// m_menuViewSep2
 			// 
 			this.m_menuViewSep2.Name = "m_menuViewSep2";
-			this.m_menuViewSep2.Size = new System.Drawing.Size(219, 6);
+			this.m_menuViewSep2.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_menuViewConfigColumns
 			// 
 			this.m_menuViewConfigColumns.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_menuViewConfigColumns.Name = "m_menuViewConfigColumns";
-			this.m_menuViewConfigColumns.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewConfigColumns.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewConfigColumns.Text = "&Configure Columns...";
 			this.m_menuViewConfigColumns.Click += new System.EventHandler(this.OnViewConfigColumns);
 			// 
 			// m_menuViewSortBy
 			// 
 			this.m_menuViewSortBy.Name = "m_menuViewSortBy";
-			this.m_menuViewSortBy.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewSortBy.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewSortBy.Text = "&Sort By";
 			// 
 			// m_menuViewTanOptions
@@ -1231,38 +1231,38 @@
             this.m_menuViewTanSimpleList,
             this.m_menuViewTanIndices});
 			this.m_menuViewTanOptions.Name = "m_menuViewTanOptions";
-			this.m_menuViewTanOptions.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewTanOptions.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewTanOptions.Text = "TAN &View Options";
 			// 
 			// m_menuViewTanSimpleList
 			// 
 			this.m_menuViewTanSimpleList.Name = "m_menuViewTanSimpleList";
-			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(303, 22);
+			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(296, 22);
 			this.m_menuViewTanSimpleList.Text = "Use &Simple List View for TAN-Only Groups";
 			this.m_menuViewTanSimpleList.Click += new System.EventHandler(this.OnViewTanSimpleListClick);
 			// 
 			// m_menuViewTanIndices
 			// 
 			this.m_menuViewTanIndices.Name = "m_menuViewTanIndices";
-			this.m_menuViewTanIndices.Size = new System.Drawing.Size(303, 22);
+			this.m_menuViewTanIndices.Size = new System.Drawing.Size(296, 22);
 			this.m_menuViewTanIndices.Text = "Show TAN &Indices in Entry Titles";
 			this.m_menuViewTanIndices.Click += new System.EventHandler(this.OnViewTanIndicesClick);
 			// 
 			// m_menuViewEntryListGrouping
 			// 
 			this.m_menuViewEntryListGrouping.Name = "m_menuViewEntryListGrouping";
-			this.m_menuViewEntryListGrouping.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewEntryListGrouping.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewEntryListGrouping.Text = "&Grouping in Entry List";
 			// 
 			// m_menuViewSep3
 			// 
 			this.m_menuViewSep3.Name = "m_menuViewSep3";
-			this.m_menuViewSep3.Size = new System.Drawing.Size(219, 6);
+			this.m_menuViewSep3.Size = new System.Drawing.Size(212, 6);
 			// 
 			// m_menuViewShowEntriesOfSubGroups
 			// 
 			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
-			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(222, 22);
+			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(215, 22);
 			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Su&bgroups";
 			this.m_menuViewShowEntriesOfSubGroups.Click += new System.EventHandler(this.OnViewShowEntriesOfSubGroups);
 			// 
@@ -1280,14 +1280,14 @@
             this.m_menuToolsSep2,
             this.m_menuToolsOptions});
 			this.m_menuTools.Name = "m_menuTools";
-			this.m_menuTools.Size = new System.Drawing.Size(49, 20);
+			this.m_menuTools.Size = new System.Drawing.Size(47, 20);
 			this.m_menuTools.Text = "&Tools";
 			// 
 			// m_menuToolsPwGenerator
 			// 
 			this.m_menuToolsPwGenerator.Image = global::KeePass.Properties.Resources.B16x16_Key_New;
 			this.m_menuToolsPwGenerator.Name = "m_menuToolsPwGenerator";
-			this.m_menuToolsPwGenerator.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsPwGenerator.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsPwGenerator.Text = "&Generate Password...";
 			this.m_menuToolsPwGenerator.Click += new System.EventHandler(this.OnToolsPwGenerator);
 			// 
@@ -1295,20 +1295,20 @@
 			// 
 			this.m_menuToolsGeneratePwList.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
 			this.m_menuToolsGeneratePwList.Name = "m_menuToolsGeneratePwList";
-			this.m_menuToolsGeneratePwList.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsGeneratePwList.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsGeneratePwList.Text = "Generate Password &List...";
 			this.m_menuToolsGeneratePwList.Click += new System.EventHandler(this.OnToolsGeneratePasswordList);
 			// 
 			// m_menuToolsSep0
 			// 
 			this.m_menuToolsSep0.Name = "m_menuToolsSep0";
-			this.m_menuToolsSep0.Size = new System.Drawing.Size(210, 6);
+			this.m_menuToolsSep0.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_menuToolsTanWizard
 			// 
 			this.m_menuToolsTanWizard.Image = global::KeePass.Properties.Resources.B16x16_Wizard;
 			this.m_menuToolsTanWizard.Name = "m_menuToolsTanWizard";
-			this.m_menuToolsTanWizard.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsTanWizard.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsTanWizard.Text = "&TAN Wizard...";
 			this.m_menuToolsTanWizard.Click += new System.EventHandler(this.OnToolsTanWizard);
 			// 
@@ -1323,27 +1323,27 @@
             this.m_menuToolsDbSep1,
             this.m_menuToolsDbXmlRep});
 			this.m_menuToolsDb.Name = "m_menuToolsDb";
-			this.m_menuToolsDb.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsDb.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsDb.Text = "&Database Tools";
 			// 
 			// m_menuToolsDbMaintenance
 			// 
 			this.m_menuToolsDbMaintenance.Image = global::KeePass.Properties.Resources.B16x16_Package_Settings;
 			this.m_menuToolsDbMaintenance.Name = "m_menuToolsDbMaintenance";
-			this.m_menuToolsDbMaintenance.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbMaintenance.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbMaintenance.Text = "Database &Maintenance...";
 			this.m_menuToolsDbMaintenance.Click += new System.EventHandler(this.OnToolsDbMaintenance);
 			// 
 			// m_menuToolsDbSep0
 			// 
 			this.m_menuToolsDbSep0.Name = "m_menuToolsDbSep0";
-			this.m_menuToolsDbSep0.Size = new System.Drawing.Size(230, 6);
+			this.m_menuToolsDbSep0.Size = new System.Drawing.Size(223, 6);
 			// 
 			// m_menuToolsDbDelDupEntries
 			// 
 			this.m_menuToolsDbDelDupEntries.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_menuToolsDbDelDupEntries.Name = "m_menuToolsDbDelDupEntries";
-			this.m_menuToolsDbDelDupEntries.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbDelDupEntries.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbDelDupEntries.Text = "Delete &Duplicate Entries";
 			this.m_menuToolsDbDelDupEntries.Click += new System.EventHandler(this.OnToolsDelDupEntries);
 			// 
@@ -1351,7 +1351,7 @@
 			// 
 			this.m_menuToolsDbDelEmptyGroups.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
 			this.m_menuToolsDbDelEmptyGroups.Name = "m_menuToolsDbDelEmptyGroups";
-			this.m_menuToolsDbDelEmptyGroups.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbDelEmptyGroups.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbDelEmptyGroups.Text = "Delete Empty &Groups";
 			this.m_menuToolsDbDelEmptyGroups.Click += new System.EventHandler(this.OnToolsDelEmptyGroups);
 			// 
@@ -1359,33 +1359,33 @@
 			// 
 			this.m_menuToolsDbDelUnusedIcons.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
 			this.m_menuToolsDbDelUnusedIcons.Name = "m_menuToolsDbDelUnusedIcons";
-			this.m_menuToolsDbDelUnusedIcons.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbDelUnusedIcons.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbDelUnusedIcons.Text = "Delete Unused Custom &Icons";
 			this.m_menuToolsDbDelUnusedIcons.Click += new System.EventHandler(this.OnToolsDelUnusedIcons);
 			// 
 			// m_menuToolsDbSep1
 			// 
 			this.m_menuToolsDbSep1.Name = "m_menuToolsDbSep1";
-			this.m_menuToolsDbSep1.Size = new System.Drawing.Size(230, 6);
+			this.m_menuToolsDbSep1.Size = new System.Drawing.Size(223, 6);
 			// 
 			// m_menuToolsDbXmlRep
 			// 
 			this.m_menuToolsDbXmlRep.Image = global::KeePass.Properties.Resources.B16x16_Binary;
 			this.m_menuToolsDbXmlRep.Name = "m_menuToolsDbXmlRep";
-			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(233, 22);
+			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbXmlRep.Text = "&XML Replace...";
 			this.m_menuToolsDbXmlRep.Click += new System.EventHandler(this.OnToolsXmlRep);
 			// 
 			// m_menuToolsSep1
 			// 
 			this.m_menuToolsSep1.Name = "m_menuToolsSep1";
-			this.m_menuToolsSep1.Size = new System.Drawing.Size(210, 6);
+			this.m_menuToolsSep1.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_menuToolsTriggers
 			// 
 			this.m_menuToolsTriggers.Image = global::KeePass.Properties.Resources.B16x16_Make_KDevelop;
 			this.m_menuToolsTriggers.Name = "m_menuToolsTriggers";
-			this.m_menuToolsTriggers.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsTriggers.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsTriggers.Text = "T&riggers...";
 			this.m_menuToolsTriggers.Click += new System.EventHandler(this.OnToolsTriggers);
 			// 
@@ -1393,20 +1393,20 @@
 			// 
 			this.m_menuToolsPlugins.Image = global::KeePass.Properties.Resources.B16x16_BlockDevice;
 			this.m_menuToolsPlugins.Name = "m_menuToolsPlugins";
-			this.m_menuToolsPlugins.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsPlugins.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsPlugins.Text = "&Plugins...";
 			this.m_menuToolsPlugins.Click += new System.EventHandler(this.OnToolsPlugins);
 			// 
 			// m_menuToolsSep2
 			// 
 			this.m_menuToolsSep2.Name = "m_menuToolsSep2";
-			this.m_menuToolsSep2.Size = new System.Drawing.Size(210, 6);
+			this.m_menuToolsSep2.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_menuToolsOptions
 			// 
 			this.m_menuToolsOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
 			this.m_menuToolsOptions.Name = "m_menuToolsOptions";
-			this.m_menuToolsOptions.Size = new System.Drawing.Size(213, 22);
+			this.m_menuToolsOptions.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsOptions.Text = "&Options...";
 			this.m_menuToolsOptions.Click += new System.EventHandler(this.OnToolsOptions);
 			// 
@@ -1423,14 +1423,14 @@
             this.m_menuHelpSep2,
             this.m_menuHelpAbout});
 			this.m_menuHelp.Name = "m_menuHelp";
-			this.m_menuHelp.Size = new System.Drawing.Size(45, 20);
+			this.m_menuHelp.Size = new System.Drawing.Size(44, 20);
 			this.m_menuHelp.Text = "&Help";
 			// 
 			// m_menuHelpContents
 			// 
 			this.m_menuHelpContents.Image = global::KeePass.Properties.Resources.B16x16_Toggle_Log;
 			this.m_menuHelpContents.Name = "m_menuHelpContents";
-			this.m_menuHelpContents.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpContents.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpContents.Text = "&Help Contents";
 			this.m_menuHelpContents.Click += new System.EventHandler(this.OnHelpContents);
 			// 
@@ -1438,20 +1438,20 @@
 			// 
 			this.m_menuHelpSelectSource.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
 			this.m_menuHelpSelectSource.Name = "m_menuHelpSelectSource";
-			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpSelectSource.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpSelectSource.Text = "Help &Source...";
 			this.m_menuHelpSelectSource.Click += new System.EventHandler(this.OnHelpSelectSource);
 			// 
 			// m_menuHelpSep0
 			// 
 			this.m_menuHelpSep0.Name = "m_menuHelpSep0";
-			this.m_menuHelpSep0.Size = new System.Drawing.Size(171, 6);
+			this.m_menuHelpSep0.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpWebsite
 			// 
 			this.m_menuHelpWebsite.Image = global::KeePass.Properties.Resources.B16x16_Folder_Home;
 			this.m_menuHelpWebsite.Name = "m_menuHelpWebsite";
-			this.m_menuHelpWebsite.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpWebsite.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpWebsite.Text = "KeePass &Website";
 			this.m_menuHelpWebsite.Click += new System.EventHandler(this.OnHelpHomepage);
 			// 
@@ -1459,33 +1459,33 @@
 			// 
 			this.m_menuHelpDonate.Image = global::KeePass.Properties.Resources.B16x16_Identity;
 			this.m_menuHelpDonate.Name = "m_menuHelpDonate";
-			this.m_menuHelpDonate.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpDonate.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpDonate.Text = "&Donate...";
 			this.m_menuHelpDonate.Click += new System.EventHandler(this.OnHelpDonate);
 			// 
 			// m_menuHelpSep1
 			// 
 			this.m_menuHelpSep1.Name = "m_menuHelpSep1";
-			this.m_menuHelpSep1.Size = new System.Drawing.Size(171, 6);
+			this.m_menuHelpSep1.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpCheckForUpdates
 			// 
 			this.m_menuHelpCheckForUpdates.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_menuHelpCheckForUpdates.Name = "m_menuHelpCheckForUpdates";
-			this.m_menuHelpCheckForUpdates.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpCheckForUpdates.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpCheckForUpdates.Text = "&Check for Updates";
 			this.m_menuHelpCheckForUpdates.Click += new System.EventHandler(this.OnHelpCheckForUpdate);
 			// 
 			// m_menuHelpSep2
 			// 
 			this.m_menuHelpSep2.Name = "m_menuHelpSep2";
-			this.m_menuHelpSep2.Size = new System.Drawing.Size(171, 6);
+			this.m_menuHelpSep2.Size = new System.Drawing.Size(168, 6);
 			// 
 			// m_menuHelpAbout
 			// 
 			this.m_menuHelpAbout.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_menuHelpAbout.Name = "m_menuHelpAbout";
-			this.m_menuHelpAbout.Size = new System.Drawing.Size(174, 22);
+			this.m_menuHelpAbout.Size = new System.Drawing.Size(171, 22);
 			this.m_menuHelpAbout.Text = "&About KeePass...";
 			this.m_menuHelpAbout.Click += new System.EventHandler(this.OnHelpAbout);
 			// 
@@ -1574,7 +1574,7 @@
 			// 
 			this.m_tbAddEntryDefault.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_tbAddEntryDefault.Name = "m_tbAddEntryDefault";
-			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(152, 22);
+			this.m_tbAddEntryDefault.Size = new System.Drawing.Size(90, 22);
 			this.m_tbAddEntryDefault.Text = "<>";
 			this.m_tbAddEntryDefault.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
@@ -1616,7 +1616,7 @@
 			// 
 			this.m_tbOpenUrlDefault.Image = global::KeePass.Properties.Resources.B16x16_FTP;
 			this.m_tbOpenUrlDefault.Name = "m_tbOpenUrlDefault";
-			this.m_tbOpenUrlDefault.Size = new System.Drawing.Size(88, 22);
+			this.m_tbOpenUrlDefault.Size = new System.Drawing.Size(90, 22);
 			this.m_tbOpenUrlDefault.Text = "<>";
 			this.m_tbOpenUrlDefault.Click += new System.EventHandler(this.OnEntryOpenUrl);
 			// 
@@ -1770,53 +1770,53 @@
             this.m_ctxTrayLock,
             this.m_ctxTrayFileExit});
 			this.m_ctxTray.Name = "m_ctxTray";
-			this.m_ctxTray.Size = new System.Drawing.Size(192, 132);
+			this.m_ctxTray.Size = new System.Drawing.Size(184, 132);
 			this.m_ctxTray.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxTrayOpening);
 			// 
 			// m_ctxTrayTray
 			// 
 			this.m_ctxTrayTray.Image = global::KeePass.Properties.Resources.B16x16_View_Detailed;
 			this.m_ctxTrayTray.Name = "m_ctxTrayTray";
-			this.m_ctxTrayTray.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayTray.Size = new System.Drawing.Size(183, 22);
 			this.m_ctxTrayTray.Text = "&Tray / Untray";
 			this.m_ctxTrayTray.Click += new System.EventHandler(this.OnTrayTray);
 			// 
 			// m_ctxTraySep0
 			// 
 			this.m_ctxTraySep0.Name = "m_ctxTraySep0";
-			this.m_ctxTraySep0.Size = new System.Drawing.Size(188, 6);
+			this.m_ctxTraySep0.Size = new System.Drawing.Size(180, 6);
 			// 
 			// m_ctxTrayGenPw
 			// 
 			this.m_ctxTrayGenPw.Image = global::KeePass.Properties.Resources.B16x16_Key_New;
 			this.m_ctxTrayGenPw.Name = "m_ctxTrayGenPw";
-			this.m_ctxTrayGenPw.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayGenPw.Size = new System.Drawing.Size(183, 22);
 			this.m_ctxTrayGenPw.Text = "&Generate Password...";
 			this.m_ctxTrayGenPw.Click += new System.EventHandler(this.OnTrayGenPw);
 			// 
 			// m_ctxTraySep1
 			// 
 			this.m_ctxTraySep1.Name = "m_ctxTraySep1";
-			this.m_ctxTraySep1.Size = new System.Drawing.Size(188, 6);
+			this.m_ctxTraySep1.Size = new System.Drawing.Size(180, 6);
 			// 
 			// m_ctxTrayOptions
 			// 
 			this.m_ctxTrayOptions.Image = global::KeePass.Properties.Resources.B16x16_Misc;
 			this.m_ctxTrayOptions.Name = "m_ctxTrayOptions";
-			this.m_ctxTrayOptions.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayOptions.Size = new System.Drawing.Size(183, 22);
 			this.m_ctxTrayOptions.Text = "&Options...";
 			this.m_ctxTrayOptions.Click += new System.EventHandler(this.OnTrayOptions);
 			// 
 			// m_ctxTraySep2
 			// 
 			this.m_ctxTraySep2.Name = "m_ctxTraySep2";
-			this.m_ctxTraySep2.Size = new System.Drawing.Size(188, 6);
+			this.m_ctxTraySep2.Size = new System.Drawing.Size(180, 6);
 			// 
 			// m_ctxTrayLock
 			// 
 			this.m_ctxTrayLock.Image = global::KeePass.Properties.Resources.B16x16_LockWorkspace;
 			this.m_ctxTrayLock.Name = "m_ctxTrayLock";
-			this.m_ctxTrayLock.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayLock.Size = new System.Drawing.Size(183, 22);
 			this.m_ctxTrayLock.Text = "<>";
 			this.m_ctxTrayLock.Click += new System.EventHandler(this.OnTrayLock);
 			// 
@@ -1824,7 +1824,7 @@
 			// 
 			this.m_ctxTrayFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_ctxTrayFileExit.Name = "m_ctxTrayFileExit";
-			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(191, 22);
+			this.m_ctxTrayFileExit.Size = new System.Drawing.Size(183, 22);
 			this.m_ctxTrayFileExit.Text = "E&xit";
 			this.m_ctxTrayFileExit.Click += new System.EventHandler(this.OnTrayExit);
 			// 
@@ -1899,6 +1899,7 @@
 			this.m_tvGroups.Size = new System.Drawing.Size(177, 306);
 			this.m_tvGroups.TabIndex = 0;
 			this.m_tvGroups.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.OnGroupsAfterCollapse);
+			this.m_tvGroups.DragLeave += new System.EventHandler(this.OnGroupsListDragLeave);
 			this.m_tvGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragDrop);
 			this.m_tvGroups.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnGroupsListDragEnter);
 			this.m_tvGroups.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnGroupsKeyUp);

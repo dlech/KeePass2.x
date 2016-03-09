@@ -18,15 +18,16 @@
 */
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Security.Cryptography;
+using System.Text;
 
-#if KeePassRT
+#if KeePassUAP
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
+#else
+using System.Security.Cryptography;
 #endif
 
 using KeePassLib.Native;
@@ -108,7 +109,6 @@ namespace KeePassLib.Keys
 			return m_vUserKeys.Remove(pKey);
 		}
 
-#if !KeePassRT
 		/// <summary>
 		/// Test whether the composite key contains a specific type of
 		/// user keys (password, key file, ...). If at least one user
@@ -124,8 +124,15 @@ namespace KeePassLib.Keys
 
 			foreach(IUserKey pKey in m_vUserKeys)
 			{
+				if(pKey == null) { Debug.Assert(false); continue; }
+
+#if KeePassUAP
+				if(pKey.GetType() == tUserKeyType)
+					return true;
+#else
 				if(tUserKeyType.IsInstanceOfType(pKey))
 					return true;
+#endif
 			}
 
 			return false;
@@ -144,13 +151,19 @@ namespace KeePassLib.Keys
 
 			foreach(IUserKey pKey in m_vUserKeys)
 			{
+				if(pKey == null) { Debug.Assert(false); continue; }
+
+#if KeePassUAP
+				if(pKey.GetType() == tUserKeyType)
+					return pKey;
+#else
 				if(tUserKeyType.IsInstanceOfType(pKey))
 					return pKey;
+#endif
 			}
 
 			return null;
 		}
-#endif
 
 		/// <summary>
 		/// Creates the composite key from the supplied user key sources (password,
@@ -291,7 +304,7 @@ namespace KeePassLib.Keys
 		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
 		{
-#if KeePassRT
+#if KeePassUAP
 			KeyParameter kp = new KeyParameter(pbKeySeed32);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
@@ -366,7 +379,7 @@ namespace KeePassLib.Keys
 				pbNewKey[i] = (byte)i;
 			}
 
-#if KeePassRT
+#if KeePassUAP
 			KeyParameter kp = new KeyParameter(pbKey);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
@@ -404,7 +417,7 @@ namespace KeePassLib.Keys
 			{
 				for(ulong j = 0; j < uStep; ++j)
 				{
-#if KeePassRT
+#if KeePassUAP
 					aes.ProcessBlock(pbNewKey, 0, pbNewKey, 0);
 					aes.ProcessBlock(pbNewKey, 16, pbNewKey, 16);
 #else

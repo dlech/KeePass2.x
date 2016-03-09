@@ -19,6 +19,7 @@
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
@@ -389,6 +390,15 @@ namespace KeePass.Forms
 				m_tvGroups.BackColor = AppDefs.ColorControlNormal;
 			}
 
+			PwGroup pgInitial = GetSelectedGroup();
+			PwEntry pe = s.SelectedEntry;
+			if(pe != null)
+			{
+				PwGroup pgToSel = pe.ParentGroup;
+				if((pgToSel != null) && (pgToSel != pgInitial))
+					SetSelectedGroup(pgToSel, true);
+			}
+
 			m_lvEntries.Enabled = s.DatabaseOpened;
 
 			m_statusPartSelected.Text = s.EntriesSelected.ToString() +
@@ -398,7 +408,7 @@ namespace KeePass.Forms
 
 			string strWindowText = PwDefs.ShortProductName;
 			string strNtfText = PwDefs.ShortProductName;
-			int qSmall = SystemInformation.SmallIconSize.Width;
+			int qSmall = UIUtil.GetSmallIconSize(32, 32).Width;
 
 			if(s.FileLocked)
 			{
@@ -535,7 +545,6 @@ namespace KeePass.Forms
 
 			m_tbAddEntry.Enabled = s.DatabaseOpened;
 
-			PwEntry pe = s.SelectedEntry;
 			ShowEntryDetails(pe);
 
 			m_tbCopyUserName.Enabled = s.CanCopyUserName;
@@ -851,6 +860,20 @@ namespace KeePass.Forms
 			TreeNode tn = m_tvGroups.SelectedNode;
 			if(tn == null) return null;
 			return (tn.Tag as PwGroup);
+		}
+
+		internal void SetSelectedGroup(PwGroup pg, bool bEnsureVisible)
+		{
+			if(pg == null) { Debug.Assert(false); return; }
+
+			TreeNode tn = GuiFindGroup(pg.Uuid, null);
+			if(tn != null)
+			{
+				m_tvGroups.SelectedNode = tn;
+
+				if(bEnsureVisible) tn.EnsureVisible();
+			}
+			else { Debug.Assert(false); }
 		}
 
 		/// <summary>
@@ -1571,10 +1594,13 @@ namespace KeePass.Forms
 		}
 
 		private void EvAppendEntryField(RichTextBuilder rb,
-			string strItemSeparator, string strName, string strValue,
+			string strItemSeparator, string strName, string strRawValue,
 			PwEntry peSprCompile)
 		{
-			if(string.IsNullOrEmpty(strValue)) return;
+			if(strRawValue == null) { Debug.Assert(false); return; }
+
+			string strValue = strRawValue.Trim();
+			if(strValue.Length == 0) return;
 
 			rb.Append(strName, FontStyle.Bold, strItemSeparator, null, ":", " ");
 
@@ -1588,7 +1614,7 @@ namespace KeePass.Forms
 				if(strCmp == strValue) rb.Append(strValue);
 				else
 				{
-					rb.Append(strCmp + " - ");
+					rb.Append(strCmp.Trim() + " - ");
 					rb.Append(strValue, FontStyle.Italic);
 				}
 			}
@@ -1786,7 +1812,28 @@ namespace KeePass.Forms
 			pg.IsVirtual = true;
 
 			SearchParameters sp = new SearchParameters();
-			sp.SearchString = strSearch;
+
+			if(strSearch.StartsWith(@"//") && strSearch.EndsWith(@"//") &&
+				(strSearch.Length > 4))
+			{
+				string strRegex = strSearch.Substring(2, strSearch.Length - 4);
+
+				try // Validate regular expression
+				{
+					Regex rx = new Regex(strRegex, RegexOptions.IgnoreCase);
+					rx.IsMatch("ABCD");
+				}
+				catch(Exception exReg)
+				{
+					MessageService.ShowWarning(exReg.Message);
+					return;
+				}
+
+				sp.SearchString = strRegex;
+				sp.RegularExpression = true;
+			}
+			else sp.SearchString = strSearch;
+
 			sp.SearchInTitles = sp.SearchInUserNames =
 				sp.SearchInUrls = sp.SearchInNotes = sp.SearchInOther =
 				sp.SearchInUuids = sp.SearchInGroupNames = sp.SearchInTags = true;
@@ -1908,7 +1955,7 @@ namespace KeePass.Forms
 				return ioc.CloneDeep();
 
 			IOConnectionForm dlg = new IOConnectionForm();
-			dlg.InitEx(bSave, ioc.CloneDeep(), bCanRememberCred, bTestConnection);
+			dlg.InitEx(bSave, ioc, bCanRememberCred, bTestConnection);
 			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
 
 			IOConnectionInfo iocResult = dlg.IOConnectionInfo;
@@ -2320,22 +2367,27 @@ namespace KeePass.Forms
 
 		private TreeNode GuiFindGroup(PwUuid puSearch, TreeNode tnContainer)
 		{
-			Debug.Assert(puSearch != null);
-			if(puSearch == null) return null;
+			if(puSearch == null) { Debug.Assert(false); return null; }
 
-			if(m_tvGroups.Nodes.Count == 0) return null;
+			if(tnContainer == null)
+			{
+				if(m_tvGroups.Nodes.Count == 0) return null;
+				tnContainer = m_tvGroups.Nodes[0];
+			}
 
-			if(tnContainer == null) tnContainer = m_tvGroups.Nodes[0];
+			PwGroup pg = (tnContainer.Tag as PwGroup);
+			if(pg != null)
+			{
+				if(pg.Uuid.Equals(puSearch)) return tnContainer;
+			}
+			else { Debug.Assert(false); }
 
 			foreach(TreeNode tn in tnContainer.Nodes)
 			{
-				if(((PwGroup)tn.Tag).Uuid.Equals(puSearch))
-					return tn;
-
 				if(tn != tnContainer)
 				{
-					TreeNode tnSub = GuiFindGroup(puSearch, tn);
-					if(tnSub != null) return tnSub;
+					TreeNode tnRet = GuiFindGroup(puSearch, tn);
+					if(tnRet != null) return tnRet;
 				}
 				else { Debug.Assert(false); }
 			}
@@ -2994,7 +3046,7 @@ namespace KeePass.Forms
 			else if(bOnline)
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
-				iocf.InitEx(true, pd.IOConnectionInfo.CloneDeep(), true, true);
+				iocf.InitEx(true, pd.IOConnectionInfo, true, true);
 
 				dr = iocf.ShowDialog();
 				ioc = iocf.IOConnectionInfo;

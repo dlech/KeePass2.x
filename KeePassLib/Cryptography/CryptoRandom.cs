@@ -174,7 +174,7 @@ namespace KeePassLib.Cryptography
 				ms.Write(pb, 0, pb.Length);
 
 #if KeePassUAP
-				Version v = EnvironmentExt.OSVersion;
+				Version v = EnvironmentExt.OSVersion.Version;
 #else
 				Version v = Environment.OSVersion.Version;
 #endif

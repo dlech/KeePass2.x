@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 using System.Security.AccessControl;
 #endif
 
@@ -64,6 +64,7 @@ namespace KeePassLib.Serialization
 
 			string strPath = m_iocBase.Path;
 
+#if !KeePassUAP
 			// Prevent transactions for FTP URLs under .NET 4.0 in order to
 			// avoid/workaround .NET bug 621450:
 			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
@@ -72,6 +73,7 @@ namespace KeePassLib.Serialization
 				m_bTransacted = false;
 			else
 			{
+#endif
 				foreach(KeyValuePair<string, bool> kvp in g_dEnabled)
 				{
 					if(strPath.StartsWith(kvp.Key, StrUtil.CaseIgnoreCmp))
@@ -80,7 +82,9 @@ namespace KeePassLib.Serialization
 						break;
 					}
 				}
+#if !KeePassUAP
 			}
+#endif
 
 			if(m_bTransacted)
 			{
@@ -115,26 +119,28 @@ namespace KeePassLib.Serialization
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
 
 			if(IOConnection.FileExists(m_iocBase))
 			{
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 				if(m_iocBase.IsLocalFile())
 				{
 					try
 					{
+#if !KeePassUAP
 						FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
 						bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
-
+#endif
 						DateTime tCreation = File.GetCreationTime(m_iocBase.Path);
 						File.SetCreationTime(m_iocTemp.Path, tCreation);
-
+#if !KeePassUAP
 						// May throw with Mono
 						bkSecurity = File.GetAccessControl(m_iocBase.Path);
+#endif
 					}
 					catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 				}
@@ -145,7 +151,7 @@ namespace KeePassLib.Serialization
 
 			IOConnection.RenameFile(m_iocTemp, m_iocBase);
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 			if(m_iocBase.IsLocalFile())
 			{
 				try

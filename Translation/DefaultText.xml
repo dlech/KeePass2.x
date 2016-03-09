@@ -157,6 +157,9 @@
 		<Data Name="AutoType">
 			<Value>Auto-Type</Value>
 		</Data>
+		<Data Name="AutoTypeAlwaysShowSelDialog">
+			<Value>Always show global auto-type entry selection dialog</Value>
+		</Data>
 		<Data Name="AutoTypeCancelOnTitleChange">
 			<Value>Cancel auto-type when the target window title changes</Value>
 		</Data>
@@ -166,8 +169,8 @@
 		<Data Name="AutoTypeEntrySelection">
 			<Value>Auto-Type Entry Selection</Value>
 		</Data>
-		<Data Name="AutoTypeEntrySelectionDescLong">
-			<Value>Multiple entries have been found for the currently active window. Please select the entry, which you want to auto-type into the active window.</Value>
+		<Data Name="AutoTypeEntrySelectionDescLong2">
+			<Value>The following entries have been found for the currently active target window. Please select the entry that you want to auto-type into the target window.</Value>
 		</Data>
 		<Data Name="AutoTypeEntrySelectionDescShort">
 			<Value>Multiple entries exist for the current window.</Value>
@@ -690,6 +693,9 @@
 		</Data>
 		<Data Name="ExpiredEntries">
 			<Value>Expired Entries</Value>
+		</Data>
+		<Data Name="ExpiredEntriesCanMatch">
+			<Value>Expired entries can match</Value>
 		</Data>
 		<Data Name="ExpiryTime">
 			<Value>Expiry Time</Value>
@@ -1297,6 +1303,9 @@
 		<Data Name="NoCmd">
 			<Value>&amp;No</Value>
 		</Data>
+		<Data Name="NoEncNoCompress">
+			<Value>Make sure that it is not encrypted and not compressed.</Value>
+		</Data>
 		<Data Name="NoFileAccessRead">
 			<Value>The operating system didn't grant KeePass read access to the specified file.</Value>
 		</Data>
@@ -1771,6 +1780,9 @@
 		<Data Name="SelfTestFailed">
 			<Value>One or more of the KeePass self-tests failed.</Value>
 		</Data>
+		<Data Name="SendingNoun">
+			<Value>Sending</Value>
+		</Data>
 		<Data Name="Separator">
 			<Value>Separator</Value>
 		</Data>
@@ -2179,6 +2191,9 @@
 		<Data Name="ErrorInClipboard">
 			<Value>An extended error report has been copied to the clipboard.</Value>
 		</Data>
+		<Data Name="Expect100Continue">
+			<Value>Expect 100-Continue responses</Value>
+		</Data>
 		<Data Name="FatalError">
 			<Value>Fatal Error</Value>
 		</Data>
@@ -2224,6 +2239,9 @@
 		<Data Name="FrameworkNotImplExcp">
 			<Value>The .NET framework/runtime under which KeePass is currently running does not support this operation.</Value>
 		</Data>
+		<Data Name="General">
+			<Value>General</Value>
+		</Data>
 		<Data Name="InvalidCompositeKey">
 			<Value>The composite key is invalid!</Value>
 		</Data>
@@ -2245,6 +2263,15 @@
 		<Data Name="OldFormat">
 			<Value>The selected file appears to be an old format</Value>
 		</Data>
+		<Data Name="Passive">
+			<Value>Passive</Value>
+		</Data>
+		<Data Name="PreAuth">
+			<Value>Pre-authenticate</Value>
+		</Data>
+		<Data Name="Timeout">
+			<Value>Timeout</Value>
+		</Data>
 		<Data Name="TryAgainSecs">
 			<Value>Please try it again in a few seconds.</Value>
 		</Data>
@@ -2253,6 +2280,9 @@
 		</Data>
 		<Data Name="UserAccountKeyError">
 			<Value>The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.</Value>
+		</Data>
+		<Data Name="UserAgent">
+			<Value>User agent</Value>
 		</Data>
 	</StringTable>
 </Translation>
