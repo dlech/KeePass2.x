@@ -19,17 +19,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+
+#if !KeePassUAP
+using System.Windows.Forms;
+#endif
 
 namespace KeePassLib.Native
 {
 	internal static partial class NativeMethods
 	{
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		[StructLayout(LayoutKind.Sequential)]
 		private struct XClassHint
 		{

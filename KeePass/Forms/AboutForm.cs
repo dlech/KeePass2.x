@@ -55,6 +55,7 @@ namespace KeePass.Forms
 
 			string strTitle = PwDefs.ProductName;
 			string strDesc = KPRes.Version + " " + PwDefs.VersionString;
+			if(Program.IsDevelopmentSnapshot()) strDesc += " (Dev)";
 
 			Icon icoNew = new Icon(Properties.Resources.KeePass, 48, 48);
 

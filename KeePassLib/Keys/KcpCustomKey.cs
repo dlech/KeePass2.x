@@ -19,12 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
+
+#if !KeePassUAP
 using System.Security.Cryptography;
+#endif
 
 using KeePassLib.Security;
-using KeePassLib.Utility;
 
 namespace KeePassLib.Keys
 {

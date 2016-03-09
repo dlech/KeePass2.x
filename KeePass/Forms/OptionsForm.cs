@@ -559,6 +559,13 @@ namespace KeePass.Forms
 				lvg, KPRes.AutoTypeMatchByUrlHostInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByTagInTitle",
 				lvg, KPRes.AutoTypeMatchByTagInTitle);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeExpiredCanMatch",
+				lvg, KPRes.ExpiredEntriesCanMatch);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeAlwaysShowSelDialog",
+				lvg, KPRes.AutoTypeAlwaysShowSelDialog);
+
+			lvg = new ListViewGroup(KPRes.AutoType + " - " + KPRes.SendingNoun);
+			m_lvAdvanced.Groups.Add(lvg);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypePrependInitSequenceForIE",
 				lvg, KPRes.AutoTypePrependInitSeqForIE);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeReleaseAltWithKeyPress",
@@ -849,7 +856,7 @@ namespace KeePass.Forms
 		{
 			// ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
 			//	KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
-			WinUtil.RunElevated(WinUtil.GetExecutable(), "/" +
+			WinUtil.RunElevated(WinUtil.GetExecutable(), "-" +
 				AppDefs.CommandLineOptions.FileExtRegister, false);
 		}
 
@@ -857,7 +864,7 @@ namespace KeePass.Forms
 		{
 			// ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt,
 			//	AppDefs.FileExtension.ExtId);
-			WinUtil.RunElevated(WinUtil.GetExecutable(), "/" +
+			WinUtil.RunElevated(WinUtil.GetExecutable(), "-" +
 				AppDefs.CommandLineOptions.FileExtUnregister, false);
 		}
 

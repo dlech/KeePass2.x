@@ -18,9 +18,12 @@
 */
 
 using System;
-using System.Security.Cryptography;
-using System.Threading;
 using System.Diagnostics;
+using System.Threading;
+
+#if !KeePassUAP
+using System.Security.Cryptography;
+#endif
 
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
@@ -79,7 +82,7 @@ namespace KeePassLib.Security
 
 		// ProtectedMemory is supported only on Windows 2000 SP3 and higher
 #if !KeePassLibSD
-		private static bool? g_bProtectedMemorySupported = null;
+		private static bool? g_obProtectedMemorySupported = null;
 #endif
 		private static bool ProtectedMemorySupported
 		{
@@ -88,14 +91,14 @@ namespace KeePassLib.Security
 #if KeePassLibSD
 				return false;
 #else
-				bool? ob = g_bProtectedMemorySupported;
+				bool? ob = g_obProtectedMemorySupported;
 				if(ob.HasValue) return ob.Value;
 
 				// Mono does not implement any encryption for ProtectedMemory;
 				// https://sourceforge.net/p/keepass/feature-requests/1907/
 				if(NativeLib.IsUnix())
 				{
-					g_bProtectedMemorySupported = false;
+					g_obProtectedMemorySupported = false;
 					return false;
 				}
 
@@ -116,7 +119,7 @@ namespace KeePassLib.Security
 				}
 				catch(Exception) { } // Windows 98 / ME
 
-				g_bProtectedMemorySupported = ob;
+				g_obProtectedMemorySupported = ob;
 				return ob.Value;
 #endif
 			}

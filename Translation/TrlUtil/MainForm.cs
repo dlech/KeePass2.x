@@ -412,7 +412,7 @@ namespace TrlUtil
 			try
 			{
 				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-				kpTrl = KPTranslation.LoadFromFile(ofd.FileName, xs);
+				kpTrl = KPTranslation.Load(ofd.FileName, xs);
 			}
 			catch(Exception ex)
 			{
@@ -551,7 +551,7 @@ namespace TrlUtil
 			try
 			{
 				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-				KPTranslation.SaveToFile(m_trl, m_strFile, xs);
+				KPTranslation.Save(m_trl, m_strFile, xs);
 				m_bModified = false;
 			}
 			catch(Exception ex)

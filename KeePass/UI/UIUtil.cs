@@ -113,6 +113,7 @@ namespace KeePass.UI
 
 		public static void RtfSetSelectionLink(RichTextBox richTextBox)
 		{
+			IntPtr pCF = IntPtr.Zero;
 			try
 			{
 				NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
@@ -122,15 +123,14 @@ namespace KeePass.UI
 				cf.dwEffects = NativeMethods.CFE_LINK;
 
 				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
-				IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
-				Marshal.StructureToPtr(cf, lParam, false);
+				pCF = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+				Marshal.StructureToPtr(cf, pCF, false);
 
 				NativeMethods.SendMessage(richTextBox.Handle,
-					NativeMethods.EM_SETCHARFORMAT, wParam, lParam);
-
-				Marshal.FreeCoTaskMem(lParam);
+					NativeMethods.EM_SETCHARFORMAT, wParam, pCF);
 			}
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			finally { if(pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
 		}
 
 		private static NativeMethods.CHARFORMAT2 RtfGetCharFormat(RichTextBox rtb)
@@ -2380,14 +2380,19 @@ namespace KeePass.UI
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
 					bool bDrawDefault = true;
-					if(qSize > 32)
+					if((qSize != 16) && (qSize != 32))
 					{
 						Image imgIco = ExtractVistaIcon(icoBase);
 						if(imgIco != null)
 						{
-							g.DrawImage(imgIco, 0, 0, bmp.Width, bmp.Height);
-							imgIco.Dispose();
+							// g.DrawImage(imgIco, 0, 0, bmp.Width, bmp.Height);
+							using(Image imgSc = GfxUtil.ScaleImage(imgIco,
+								bmp.Width, bmp.Height, ScaleTransformFlags.UIIcon))
+							{
+								g.DrawImageUnscaled(imgSc, 0, 0);
+							}
 
+							imgIco.Dispose();
 							bDrawDefault = false;
 						}
 					}
@@ -2858,7 +2863,7 @@ namespace KeePass.UI
 
 				ico.Dispose();
 			}
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
 			return img;
 		}
@@ -2912,6 +2917,16 @@ namespace KeePass.UI
 			}
 
 			return false;
+		}
+
+		internal static Size GetSmallIconSize(int wDefault, int hDefault)
+		{
+			// Throws under Mono 4.2.1 on Mac OS X;
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/7c096cfc/
+			try { return SystemInformation.SmallIconSize; }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+
+			return new Size(wDefault, hDefault);
 		}
 	}
 }

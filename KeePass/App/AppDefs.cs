@@ -147,6 +147,8 @@ namespace KeePass.App
 			public const string Help = @"?";
 			public const string HelpLong = "help";
 
+			public const string WorkaroundDisable = "wa-disable";
+
 			public const string ConfigPathLocal = "cfg-local";
 
 			public const string ConfigSetUrlOverride = "set-urloverride";
@@ -175,7 +177,7 @@ namespace KeePass.App
 			public const string TestGfx = "testgfx";
 #endif
 
-			public const string Version = "version";
+			public const string Version = "version"; // For Unix
 
 			// #if (DEBUG && !KeePassLibSD)
 			// public const string MakePopularPasswordTable = "makepopularpasswordtable";

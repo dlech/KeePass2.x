@@ -112,7 +112,7 @@ namespace KeePass.Forms
 			ValidateStringNameUI();
 
 			PopulateNamesComboBox();
-			// UIUtil.SetFocus(m_cmbStringName, this); // See PopulateNamesComboBox
+			// UIUtil.SetFocus(..., this); // See PopulateNamesComboBox
 		}
 
 		private bool ValidateStringNameUI()
@@ -271,7 +271,9 @@ namespace KeePass.Forms
 			foreach(string str in m_lSuggestedNames)
 				m_cmbStringName.Items.Add(str);
 
-			UIUtil.SetFocus(m_cmbStringName, this);
+			if(m_strStringName == null)
+				UIUtil.SetFocus(m_cmbStringName, this);
+			else UIUtil.SetFocus(m_richStringValue, this);
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)

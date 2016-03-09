@@ -760,6 +760,13 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap B16x16_Imp_NPassword {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_NPassword", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>

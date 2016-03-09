@@ -1317,11 +1317,11 @@ namespace KeePass.Forms
 				}
 			}
 
-			m_pgActiveAtDragStart = GetSelectedGroup();
-
 			PwDatabase pd = m_docMgr.SafeFindContainerOf(pe);
 			string strToTransfer = SprEngine.Compile(strText, new SprContext(
 				pe, pd, SprCompileFlags.All));
+
+			m_pgActiveAtDragStart = GetSelectedGroup();
 
 			m_bDraggingEntries = true;
 			this.DoDragDrop(strToTransfer, DragDropEffects.Copy | DragDropEffects.Move);
@@ -1342,6 +1342,7 @@ namespace KeePass.Forms
 			if(pg == m_docMgr.ActiveDatabase.RootGroup) return;
 			if(pg.ParentGroup == null) return;
 
+			m_pgActiveAtDragStart = pg;
 			this.DoDragDrop(pg, DragDropEffects.Copy | DragDropEffects.Move);
 			pg.Touch(false);
 		}
@@ -1412,6 +1413,11 @@ namespace KeePass.Forms
 			}
 			else // No known format
 				e.Effect = DragDropEffects.None;
+		}
+
+		private void OnGroupsListDragLeave(object sender, EventArgs e)
+		{
+			SetSelectedGroup(m_pgActiveAtDragStart, true);
 		}
 
 		private void OnGroupsAdd(object sender, EventArgs e)

@@ -247,6 +247,12 @@ namespace KeePass
 
 			m_cmdLineArgs = new CommandLineArgs(args);
 
+			// Before loading the configuration
+			string strWaDisable = m_cmdLineArgs[
+				AppDefs.CommandLineOptions.WorkaroundDisable];
+			if(!string.IsNullOrEmpty(strWaDisable))
+				MonoWorkarounds.SetEnabled(strWaDisable, false);
+
 			DpiUtil.ConfigureProcess();
 
 #if DEBUG
@@ -743,7 +749,7 @@ namespace KeePass
 					if(!File.Exists(strLangPath)) continue;
 
 					XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-					m_kpTranslation = KPTranslation.LoadFromFile(strLangPath, xs);
+					m_kpTranslation = KPTranslation.Load(strLangPath, xs);
 
 					KPRes.SetTranslatedStrings(
 						m_kpTranslation.SafeGetStringTableDictionary(

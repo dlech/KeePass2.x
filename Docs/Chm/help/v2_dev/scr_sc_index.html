@@ -217,7 +217,11 @@ the entry will be created in the root group.</li>
 to be edited; all of the specified conditions must match:</p>
 <ul>
 <li><code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
-The string field <i>FIELDNAME</i> must have the value <i>FIELDVALUE</i>.</li>
+The string field <i>FIELDNAME</i> must have the value <i>FIELDVALUE</i>.<br />
+If the value is enclosed in '<code>//</code>', it is treated as a regular
+expression, which must occur in the entry field for the entry to match.
+For example, <code>-ref-Title://Test\d\d//</code> matches all entries
+whose titles contain 'Test' followed by at least two digits.</li>
 <li><code>-refx-UUID:<i>VALUE</i></code><br />
 The UUID of the entry must be <i>VALUE</i>.</li>
 <li><code>-refx-Tags:<i>VALUE</i></code><br />

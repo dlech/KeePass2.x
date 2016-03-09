@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 using KeePassLib.Native;
 
@@ -41,11 +40,7 @@ namespace KeePassLib.Utility
 
 		public static char LocalDirSepChar
 		{
-#if KeePassRT
-			get { return '\\'; }
-#else
 			get { return Path.DirectorySeparatorChar; }
-#endif
 		}
 
 		/// <summary>
@@ -257,7 +252,7 @@ namespace KeePassLib.Utility
 
 		public static bool UnhideFile(string strFile)
 		{
-#if (KeePassLibSD || KeePassRT)
+#if KeePassLibSD
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -277,7 +272,7 @@ namespace KeePassLib.Utility
 
 		public static bool HideFile(string strFile, bool bHide)
 		{
-#if (KeePassLibSD || KeePassRT)
+#if KeePassLibSD
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -318,7 +313,7 @@ namespace KeePassLib.Utility
 					return strTargetFile;
 			}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 			if(NativeLib.IsUnix())
 #endif
 			{
@@ -351,7 +346,7 @@ namespace KeePassLib.Utility
 				return sbRel.ToString();
 			}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
@@ -442,16 +437,7 @@ namespace KeePassLib.Utility
 			}
 
 			string str;
-			try
-			{
-#if KeePassRT
-				var dirT = Windows.Storage.StorageFolder.GetFolderFromPathAsync(
-					strPath).AwaitEx();
-				str = dirT.Path;
-#else
-				str = Path.GetFullPath(strPath);
-#endif
-			}
+			try { str = Path.GetFullPath(strPath); }
 			catch(Exception) { Debug.Assert(false); return strPath; }
 
 			Debug.Assert(str.IndexOf("\\..\\") < 0);
@@ -625,7 +611,7 @@ namespace KeePassLib.Utility
 			string strDir;
 			if(NativeLib.IsUnix())
 				strDir = NativeMethods.GetUserRuntimeDir();
-#if KeePassRT
+#if KeePassUAP
 			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 #else
 			else strDir = Path.GetTempPath();
@@ -633,8 +619,7 @@ namespace KeePassLib.Utility
 
 			try
 			{
-				if(Directory.Exists(strDir) == false)
-					Directory.CreateDirectory(strDir);
+				if(!Directory.Exists(strDir)) Directory.CreateDirectory(strDir);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

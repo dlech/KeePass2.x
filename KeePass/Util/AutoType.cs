@@ -73,6 +73,8 @@ namespace KeePass.Util
 
 	public static class AutoType
 	{
+		private const int TargetActivationDelay = 100;
+
 		public static event EventHandler<AutoTypeEventArgs> FilterCompilePre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSendPre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSend;
@@ -453,12 +455,13 @@ namespace KeePass.Util
 
 			List<AutoTypeCtx> lCtxs = new List<AutoTypeCtx>();
 			PwDatabase pdCurrent = null;
+			bool bExpCanMatch = Program.Config.Integration.AutoTypeExpiredCanMatch;
 			DateTime dtNow = DateTime.Now;
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				// Ignore expired entries
-				if(pe.Expires && (pe.ExpiryTime < dtNow)) return true;
+				if(!bExpCanMatch && pe.Expires && (pe.ExpiryTime < dtNow))
+					return true; // Ignore expired entries
 
 				List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,
 					pdCurrent, evQueries.EventID);
@@ -479,23 +482,33 @@ namespace KeePass.Util
 
 			GetSequencesForWindowEnd(evQueries);
 
-			if(lCtxs.Count == 1)
-				AutoType.PerformInternal(lCtxs[0], strWindow);
-			else if(lCtxs.Count > 1)
+			bool bForceDlg = Program.Config.Integration.AutoTypeAlwaysShowSelDialog;
+
+			if((lCtxs.Count >= 2) || bForceDlg)
 			{
 				AutoTypeCtxForm dlg = new AutoTypeCtxForm();
 				dlg.InitEx(lCtxs, ilIcons);
 
-				if(dlg.ShowDialog() == DialogResult.OK)
+				bool bOK = (dlg.ShowDialog() == DialogResult.OK);
+				AutoTypeCtx ctx = (bOK ? dlg.SelectedCtx : null);
+				UIUtil.DestroyForm(dlg);
+
+				if(ctx != null)
 				{
 					try { NativeMethods.EnsureForegroundWindow(hWnd); }
 					catch(Exception) { Debug.Assert(false); }
 
-					if(dlg.SelectedCtx != null)
-						AutoType.PerformInternal(dlg.SelectedCtx, strWindow);
+					// Allow target window to handle its activation;
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/3681f343/
+					Application.DoEvents();
+					Thread.Sleep(TargetActivationDelay);
+					Application.DoEvents();
+
+					AutoType.PerformInternal(ctx, strWindow);
 				}
-				UIUtil.DestroyForm(dlg);
 			}
+			else if(lCtxs.Count == 1)
+				AutoType.PerformInternal(lCtxs[0], strWindow);
 
 			return true;
 		}
@@ -554,6 +567,8 @@ namespace KeePass.Util
 			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
+			Thread.Sleep(TargetActivationDelay);
+
 			IntPtr hWnd;
 			string strWindow;
 			try
@@ -567,8 +582,6 @@ namespace KeePass.Util
 				if(strWindow == null) { Debug.Assert(false); return false; }
 			}
 			else strWindow = string.Empty;
-
-			Thread.Sleep(100);
 
 			if(strSeq == null)
 			{

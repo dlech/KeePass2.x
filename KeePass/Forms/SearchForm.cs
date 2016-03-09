@@ -125,9 +125,13 @@ namespace KeePass.Forms
 		{
 			SearchParameters sp = GetSearchParameters(true);
 
-			if(sp.RegularExpression) // Validate regular expression
+			if(sp.RegularExpression)
 			{
-				try { new Regex(sp.SearchString); }
+				try // Validate regular expression
+				{
+					Regex rx = new Regex(sp.SearchString);
+					rx.IsMatch("ABCD");
+				}
 				catch(Exception exReg)
 				{
 					MessageService.ShowWarning(exReg.Message);

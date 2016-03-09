@@ -19,14 +19,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Threading;
+
+#if !KeePassUAP
 using System.IO;
-using System.Reflection;
-using System.Diagnostics;
+using System.Threading;
+using System.Windows.Forms;
+#endif
 
 using KeePassLib.Utility;
 
@@ -48,6 +51,24 @@ namespace KeePassLib.Native
 		{
 			get { return m_bAllowNative; }
 			set { m_bAllowNative = value; }
+		}
+
+		private static int? g_oiPointerSize = null;
+		/// <summary>
+		/// Size of a native pointer (in bytes).
+		/// </summary>
+		public static int PointerSize
+		{
+			get
+			{
+				if(!g_oiPointerSize.HasValue)
+#if KeePassUAP
+					g_oiPointerSize = Marshal.SizeOf<IntPtr>();
+#else
+					g_oiPointerSize = Marshal.SizeOf(typeof(IntPtr));
+#endif
+				return g_oiPointerSize.Value;
+			}
 		}
 
 		private static ulong? m_ouMonoVersion = null;
@@ -130,13 +151,13 @@ namespace KeePassLib.Native
 		{
 			if(m_platID.HasValue) return m_platID.Value;
 
-#if KeePassRT
-			m_platID = PlatformID.Win32NT;
+#if KeePassUAP
+			m_platID = EnvironmentExt.OSVersion.Platform;
 #else
 			m_platID = Environment.OSVersion.Platform;
 #endif
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 			// Mono returns PlatformID.Unix on Mac OS X, workaround this
 			if(m_platID.Value == PlatformID.Unix)
 			{
@@ -149,7 +170,55 @@ namespace KeePassLib.Native
 			return m_platID.Value;
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+		private static DesktopType? m_tDesktop = null;
+		public static DesktopType GetDesktopType()
+		{
+			if(!m_tDesktop.HasValue)
+			{
+				DesktopType t = DesktopType.None;
+				if(!IsUnix()) t = DesktopType.Windows;
+				else
+				{
+					try
+					{
+						string strXdg = (Environment.GetEnvironmentVariable(
+							"XDG_CURRENT_DESKTOP") ?? string.Empty).Trim();
+						string strGdm = (Environment.GetEnvironmentVariable(
+							"GDMSESSION") ?? string.Empty).Trim();
+						StringComparison sc = StrUtil.CaseIgnoreCmp;
+
+						if(strXdg.Equals("Unity", sc))
+							t = DesktopType.Unity;
+						else if(strXdg.Equals("LXDE", sc))
+							t = DesktopType.Lxde;
+						else if(strXdg.Equals("XFCE", sc))
+							t = DesktopType.Xfce;
+						else if(strXdg.Equals("MATE", sc))
+							t = DesktopType.Mate;
+						else if(strXdg.Equals("X-Cinnamon", sc))
+							t = DesktopType.Cinnamon;
+						else if(strXdg.Equals("Pantheon", sc)) // Elementary OS
+							t = DesktopType.Pantheon;
+						else if(strXdg.Equals("KDE", sc) || // Mint 16
+							strGdm.Equals("kde-plasma", sc)) // Ubuntu 12.04
+							t = DesktopType.Kde;
+						else if(strXdg.Equals("GNOME", sc))
+						{
+							if(strGdm.Equals("cinnamon", sc)) // Mint 13
+								t = DesktopType.Cinnamon;
+							else t = DesktopType.Gnome;
+						}
+					}
+					catch(Exception) { Debug.Assert(false); }
+				}
+
+				m_tDesktop = t;
+			}
+
+			return m_tDesktop.Value;
+		}
+
+#if (!KeePassLibSD && !KeePassUAP)
 		public static string RunConsoleApp(string strAppPath, string strParams)
 		{
 			return RunConsoleApp(strAppPath, strParams, null);
@@ -311,7 +380,7 @@ namespace KeePassLib.Native
 
 			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
-			NativeLib.FreeArrays(kvp);
+			FreeArrays(kvp);
 			return bResult;
 		}
 
@@ -325,7 +394,7 @@ namespace KeePassLib.Native
 		{
 			puRounds = 0;
 
-			if(m_bAllowNative == false) return false;
+			if(!m_bAllowNative) return false;
 
 			try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
 			catch(Exception) { return false; }

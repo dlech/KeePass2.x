@@ -26,6 +26,8 @@ using System.Diagnostics;
 using KeePass.Native;
 using KeePass.Util;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.UI
 {
 	// public delegate string QueryToolTipDelegate(TreeNode tn);
@@ -151,7 +153,7 @@ namespace KeePass.UI
 				}
 				else { Debug.Assert(!WinUtil.IsAtLeastWindowsVista); }
 			}
-			catch(Exception) { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
 		/* protected override CreateParams CreateParams

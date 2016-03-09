@@ -841,13 +841,9 @@ namespace KeePassLib
 			Regex rx = null;
 			if(sp.RegularExpression)
 			{
-#if KeePassRT
-				RegexOptions ro = RegexOptions.None;
-#else
 				RegexOptions ro = RegexOptions.Compiled;
-#endif
 				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
-#if !KeePassRT
+#if !KeePassUAP
 					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||
 #endif
 					(sp.ComparisonMode == StringComparison.OrdinalIgnoreCase))

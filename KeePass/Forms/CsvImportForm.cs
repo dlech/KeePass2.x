@@ -109,6 +109,9 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
+			// Callable from KPScript without parent form
+			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
 			this.Icon = Properties.Resources.KeePass;
 			this.Text = KPRes.GenericCsvImporter + " - " + PwDefs.ShortProductName;
 

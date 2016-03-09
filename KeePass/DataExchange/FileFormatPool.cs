@@ -20,10 +20,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePass.DataExchange.Formats;
+
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange
 {
@@ -127,6 +129,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new LastPassCsv2());
 			m_vFormats.Add(new NetworkPwMgrCsv4());
 			m_vFormats.Add(new NortonIdSafeCsv2013());
+			m_vFormats.Add(new NPasswordNpw102());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
 			m_vFormats.Add(new PwAgentXml234());
@@ -156,6 +159,22 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PwExporterXml105());
 
 			m_vFormats.Add(new Spamex20070328());
+
+#if DEBUG
+			// Ensure name uniqueness
+			for(int i = 0; i < m_vFormats.Count; ++i)
+			{
+				FileFormatProvider pi = m_vFormats[i];
+				for(int j = i + 1; j < m_vFormats.Count; ++j)
+				{
+					FileFormatProvider pj = m_vFormats[j];
+					Debug.Assert(!string.Equals(pi.FormatName, pj.FormatName, StrUtil.CaseIgnoreCmp));
+					Debug.Assert(!string.Equals(pi.FormatName, pj.DisplayName, StrUtil.CaseIgnoreCmp));
+					Debug.Assert(!string.Equals(pi.DisplayName, pj.FormatName, StrUtil.CaseIgnoreCmp));
+					Debug.Assert(!string.Equals(pi.DisplayName, pj.DisplayName, StrUtil.CaseIgnoreCmp));
+				}
+			}
+#endif
 		}
 
 		public void Add(FileFormatProvider prov)
@@ -184,9 +203,19 @@ namespace KeePass.DataExchange
 
 			EnsurePoolInitialized();
 
+			// Format and display names may differ (e.g. the Generic
+			// CSV Importer has a different format name)
+
 			foreach(FileFormatProvider f in m_vFormats)
 			{
-				if(f.FormatName == strFormatName) return f;
+				if(string.Equals(strFormatName, f.DisplayName, StrUtil.CaseIgnoreCmp))
+					return f;
+			}
+
+			foreach(FileFormatProvider f in m_vFormats)
+			{
+				if(string.Equals(strFormatName, f.FormatName, StrUtil.CaseIgnoreCmp))
+					return f;
 			}
 
 			return null;

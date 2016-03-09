@@ -140,6 +140,22 @@ namespace KeePass.App.Configuration
 			set { m_bMatchByTagInTitle = value; }
 		}
 
+		private bool m_bExpiredCanMatch = false;
+		[DefaultValue(false)]
+		public bool AutoTypeExpiredCanMatch
+		{
+			get { return m_bExpiredCanMatch; }
+			set { m_bExpiredCanMatch = value; }
+		}
+
+		private bool m_bAutoTypeAlwaysShowSelDlg = false;
+		[DefaultValue(false)]
+		public bool AutoTypeAlwaysShowSelDialog
+		{
+			get { return m_bAutoTypeAlwaysShowSelDlg; }
+			set { m_bAutoTypeAlwaysShowSelDlg = value; }
+		}
+
 		private bool m_bPrependInitSeqIE = true;
 		[DefaultValue(true)]
 		public bool AutoTypePrependInitSequenceForIE

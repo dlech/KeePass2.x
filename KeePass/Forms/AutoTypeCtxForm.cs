@@ -74,7 +74,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			m_lblText.Text = KPRes.AutoTypeEntrySelectionDescLong;
+			m_lblText.Text = KPRes.AutoTypeEntrySelectionDescLong2;
 			this.Text = KPRes.AutoTypeEntrySelection;
 			this.Icon = Properties.Resources.KeePass;
 
@@ -140,9 +140,20 @@ namespace KeePass.Forms
 
 		private void ProcessResize()
 		{
+			if(m_lCtxs == null) return; // TrlUtil or design mode
+
+			string strSub = KPRes.AutoTypeEntrySelectionDescShort;
+			int n = m_lCtxs.Count;
+			if(n == 1) strSub = KPRes.SearchEntriesFound1 + ".";
+			else if(n <= 0)
+			{
+				strSub = KPRes.SearchEntriesFound + ".";
+				strSub = strSub.Replace(@"{PARAM}", "0");
+			}
+
 			BannerFactory.UpdateBanner(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Key2, KPRes.AutoTypeEntrySelection,
-				KPRes.AutoTypeEntrySelectionDescShort, ref m_nBannerWidth);
+				strSub, ref m_nBannerWidth);
 		}
 
 		private bool GetSelectedEntry()

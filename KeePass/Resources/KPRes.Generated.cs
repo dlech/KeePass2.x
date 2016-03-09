@@ -78,10 +78,11 @@ namespace KeePass.Resources
 			m_strAutoShowExpiredEntries = TryGetEx(dictNew, "AutoShowExpiredEntries", m_strAutoShowExpiredEntries);
 			m_strAutoShowSoonToExpireEntries = TryGetEx(dictNew, "AutoShowSoonToExpireEntries", m_strAutoShowSoonToExpireEntries);
 			m_strAutoType = TryGetEx(dictNew, "AutoType", m_strAutoType);
+			m_strAutoTypeAlwaysShowSelDialog = TryGetEx(dictNew, "AutoTypeAlwaysShowSelDialog", m_strAutoTypeAlwaysShowSelDialog);
 			m_strAutoTypeCancelOnTitleChange = TryGetEx(dictNew, "AutoTypeCancelOnTitleChange", m_strAutoTypeCancelOnTitleChange);
 			m_strAutoTypeCancelOnWindowChange = TryGetEx(dictNew, "AutoTypeCancelOnWindowChange", m_strAutoTypeCancelOnWindowChange);
 			m_strAutoTypeEntrySelection = TryGetEx(dictNew, "AutoTypeEntrySelection", m_strAutoTypeEntrySelection);
-			m_strAutoTypeEntrySelectionDescLong = TryGetEx(dictNew, "AutoTypeEntrySelectionDescLong", m_strAutoTypeEntrySelectionDescLong);
+			m_strAutoTypeEntrySelectionDescLong2 = TryGetEx(dictNew, "AutoTypeEntrySelectionDescLong2", m_strAutoTypeEntrySelectionDescLong2);
 			m_strAutoTypeEntrySelectionDescShort = TryGetEx(dictNew, "AutoTypeEntrySelectionDescShort", m_strAutoTypeEntrySelectionDescShort);
 			m_strAutoTypeGlobalHint = TryGetEx(dictNew, "AutoTypeGlobalHint", m_strAutoTypeGlobalHint);
 			m_strAutoTypeMatchByTagInTitle = TryGetEx(dictNew, "AutoTypeMatchByTagInTitle", m_strAutoTypeMatchByTagInTitle);
@@ -256,6 +257,7 @@ namespace KeePass.Resources
 			m_strExitInsteadOfLockingAfterTime = TryGetEx(dictNew, "ExitInsteadOfLockingAfterTime", m_strExitInsteadOfLockingAfterTime);
 			m_strExitInsteadOfLockingAlways = TryGetEx(dictNew, "ExitInsteadOfLockingAlways", m_strExitInsteadOfLockingAlways);
 			m_strExpiredEntries = TryGetEx(dictNew, "ExpiredEntries", m_strExpiredEntries);
+			m_strExpiredEntriesCanMatch = TryGetEx(dictNew, "ExpiredEntriesCanMatch", m_strExpiredEntriesCanMatch);
 			m_strExpiryTime = TryGetEx(dictNew, "ExpiryTime", m_strExpiryTime);
 			m_strExpiryTimeDateOnly = TryGetEx(dictNew, "ExpiryTimeDateOnly", m_strExpiryTimeDateOnly);
 			m_strExport = TryGetEx(dictNew, "Export", m_strExport);
@@ -458,6 +460,7 @@ namespace KeePass.Resources
 			m_strNewVersionAvailable = TryGetEx(dictNew, "NewVersionAvailable", m_strNewVersionAvailable);
 			m_strNo = TryGetEx(dictNew, "No", m_strNo);
 			m_strNoCmd = TryGetEx(dictNew, "NoCmd", m_strNoCmd);
+			m_strNoEncNoCompress = TryGetEx(dictNew, "NoEncNoCompress", m_strNoEncNoCompress);
 			m_strNoFileAccessRead = TryGetEx(dictNew, "NoFileAccessRead", m_strNoFileAccessRead);
 			m_strNoKeyFileSpecifiedMeta = TryGetEx(dictNew, "NoKeyFileSpecifiedMeta", m_strNoKeyFileSpecifiedMeta);
 			m_strNoKeyRepeat = TryGetEx(dictNew, "NoKeyRepeat", m_strNoKeyRepeat);
@@ -616,6 +619,7 @@ namespace KeePass.Resources
 			m_strSelectLanguage = TryGetEx(dictNew, "SelectLanguage", m_strSelectLanguage);
 			m_strSelectLanguageDesc = TryGetEx(dictNew, "SelectLanguageDesc", m_strSelectLanguageDesc);
 			m_strSelfTestFailed = TryGetEx(dictNew, "SelfTestFailed", m_strSelfTestFailed);
+			m_strSendingNoun = TryGetEx(dictNew, "SendingNoun", m_strSendingNoun);
 			m_strSeparator = TryGetEx(dictNew, "Separator", m_strSeparator);
 			m_strSequence = TryGetEx(dictNew, "Sequence", m_strSequence);
 			m_strShowDerefData = TryGetEx(dictNew, "ShowDerefData", m_strShowDerefData);
@@ -803,10 +807,11 @@ namespace KeePass.Resources
 			"AutoShowExpiredEntries",
 			"AutoShowSoonToExpireEntries",
 			"AutoType",
+			"AutoTypeAlwaysShowSelDialog",
 			"AutoTypeCancelOnTitleChange",
 			"AutoTypeCancelOnWindowChange",
 			"AutoTypeEntrySelection",
-			"AutoTypeEntrySelectionDescLong",
+			"AutoTypeEntrySelectionDescLong2",
 			"AutoTypeEntrySelectionDescShort",
 			"AutoTypeGlobalHint",
 			"AutoTypeMatchByTagInTitle",
@@ -981,6 +986,7 @@ namespace KeePass.Resources
 			"ExitInsteadOfLockingAfterTime",
 			"ExitInsteadOfLockingAlways",
 			"ExpiredEntries",
+			"ExpiredEntriesCanMatch",
 			"ExpiryTime",
 			"ExpiryTimeDateOnly",
 			"Export",
@@ -1183,6 +1189,7 @@ namespace KeePass.Resources
 			"NewVersionAvailable",
 			"No",
 			"NoCmd",
+			"NoEncNoCompress",
 			"NoFileAccessRead",
 			"NoKeyFileSpecifiedMeta",
 			"NoKeyRepeat",
@@ -1341,6 +1348,7 @@ namespace KeePass.Resources
 			"SelectLanguage",
 			"SelectLanguageDesc",
 			"SelfTestFailed",
+			"SendingNoun",
 			"Separator",
 			"Sequence",
 			"ShowDerefData",
@@ -2052,6 +2060,17 @@ namespace KeePass.Resources
 			get { return m_strAutoType; }
 		}
 
+		private static string m_strAutoTypeAlwaysShowSelDialog =
+			@"Always show global auto-type entry selection dialog";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Always show global auto-type entry selection dialog'.
+		/// </summary>
+		public static string AutoTypeAlwaysShowSelDialog
+		{
+			get { return m_strAutoTypeAlwaysShowSelDialog; }
+		}
+
 		private static string m_strAutoTypeCancelOnTitleChange =
 			@"Cancel auto-type when the target window title changes";
 		/// <summary>
@@ -2085,15 +2104,15 @@ namespace KeePass.Resources
 			get { return m_strAutoTypeEntrySelection; }
 		}
 
-		private static string m_strAutoTypeEntrySelectionDescLong =
-			@"Multiple entries have been found for the currently active window. Please select the entry, which you want to auto-type into the active window.";
+		private static string m_strAutoTypeEntrySelectionDescLong2 =
+			@"The following entries have been found for the currently active target window. Please select the entry that you want to auto-type into the target window.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Multiple entries have been found for the currently active window. Please select the entry, which you want to auto-type into the active window.'.
+		/// 'The following entries have been found for the currently active target window. Please select the entry that you want to auto-type into the target window.'.
 		/// </summary>
-		public static string AutoTypeEntrySelectionDescLong
+		public static string AutoTypeEntrySelectionDescLong2
 		{
-			get { return m_strAutoTypeEntrySelectionDescLong; }
+			get { return m_strAutoTypeEntrySelectionDescLong2; }
 		}
 
 		private static string m_strAutoTypeEntrySelectionDescShort =
@@ -4008,6 +4027,17 @@ namespace KeePass.Resources
 		public static string ExpiredEntries
 		{
 			get { return m_strExpiredEntries; }
+		}
+
+		private static string m_strExpiredEntriesCanMatch =
+			@"Expired entries can match";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Expired entries can match'.
+		/// </summary>
+		public static string ExpiredEntriesCanMatch
+		{
+			get { return m_strExpiredEntriesCanMatch; }
 		}
 
 		private static string m_strExpiryTime =
@@ -6232,6 +6262,17 @@ namespace KeePass.Resources
 			get { return m_strNoCmd; }
 		}
 
+		private static string m_strNoEncNoCompress =
+			@"Make sure that it is not encrypted and not compressed.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Make sure that it is not encrypted and not compressed.'.
+		/// </summary>
+		public static string NoEncNoCompress
+		{
+			get { return m_strNoEncNoCompress; }
+		}
+
 		private static string m_strNoFileAccessRead =
 			@"The operating system didn't grant KeePass read access to the specified file.";
 		/// <summary>
@@ -7968,6 +8009,17 @@ namespace KeePass.Resources
 		public static string SelfTestFailed
 		{
 			get { return m_strSelfTestFailed; }
+		}
+
+		private static string m_strSendingNoun =
+			@"Sending";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Sending'.
+		/// </summary>
+		public static string SendingNoun
+		{
+			get { return m_strSendingNoun; }
 		}
 
 		private static string m_strSeparator =

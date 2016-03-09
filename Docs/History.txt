@@ -1,3 +1,71 @@
+2016-03-09: 2.32
+- The quick search box (in the toolbar of the main window) now
+  supports searching using a regular expression; in order to
+  indicate that the search text is a regular expression,
+  enclose it in '//'; for example, performing a quick search
+  for '//Michael|Adam//' shows all entries containing 'Michael'
+  or 'Adam'
+- Added 'Advanced' tab in the 'Open From URL' dialog (easily
+  extensible by plugins); added options: timeout, pre-
+  authenticate, HTTP/HTTPS/WebDAV user agent and 100-Continue
+  behavior, FTP passive mode
+- Added per-user Start Menu Internet Application detection
+- When selecting an entry in the main entry list, its parent
+  group is now selected automatically in the group tree view
+- Auto-Type matching: added option 'Expired entries can match'
+  (turned off by default, i.e. expired entries are ignored)
+- Added option 'Always show global auto-type entry selection
+  dialog' (to show the dialog even when no or one entry is
+  found for the currently active target window; turned off by
+  default)
+- Added {GROUP_NOTES} placeholder
+- Added support for importing nPassword 1.0.2.41 NPW files
+- In triggers and KPScript, an import/export module can now be
+  specified both using its display name and its format name
+- When running under .NET 4.5 or higher, secure connections
+  (e.g. for WebDAV) now support TLS 1.1 and TLS 1.2 (in
+  addition to SSL 3 and TLS 1.0)
+- Added Mono workaround: when running on the Unity or Pantheon
+  desktop, KeePass now does not try to instantiate a tray icon
+  anymore; if you want a tray icon on Unity/Pantheon, use the
+  application indicator plugin
+- Added workaround for Mono not implementing the property
+  SystemInformation.SmallIconSize for Mac OS X systems
+- Added command line parameter '-wa-disable:' for disabling
+  specific Mono workarounds (IDs separated by commas)
+- KPScript: if the value of a '-ref-*:' parameter is enclosed
+  in '//', it is now treated as a regular expression, which
+  must occur in the entry field for an entry to match
+- KPScript: .NET 4.0/4.5 is now preferred, if installed
+- KPScript: enhanced high DPI support
+
+- Auto-Type: improved compatibility with target windows that
+  handle activation slowly and ignore any input until being
+  ready (like Microsoft Edge)
+- Auto-Type: improved sending of characters that are typically
+  realized with the AltGr key
+- When editing a custom entry string, the value text box now
+  has the initial focus
+- Improved image/icon shrinking
+- Improved icon recoloring on high DPI resolutions
+- Changed some ICO files such that higher resolution images are
+  used
+- Changed some PNG files to workaround the image DPI scaling
+  behavior on Windows XP
+- Improved new-line filtering in the main entry view
+- When trying to use the Windows user account as part of a
+  composite master key fails, a more detailed error message is
+  displayed now
+- The 'About' dialog now indicates whether the current build is
+  a development snapshot
+- Changed code signing certificate
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- After an incomplete drag&drop operation over the group tree
+  view, the previous group selection is now restored
+
 2016-01-09: 2.31
 - Added menu/toolbar styles, freely selectable in 'Tools' ->
   'Options' -> tab 'Interface'; available styles are 'Windows

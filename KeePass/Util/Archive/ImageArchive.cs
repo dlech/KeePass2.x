@@ -59,6 +59,8 @@ namespace KeePass.Util.Archive
 					try
 					{
 						Image img = GfxUtil.LoadImage(m_pbData);
+						DpiUtil.AssertUIImage(img);
+
 						m_imgOrg = img;
 						return img;
 					}

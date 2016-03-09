@@ -38,15 +38,12 @@ namespace KeePass.Util
 		{
 			Debug.Assert(xmlNode != null); if(xmlNode == null) return string.Empty;
 
-			string strInner = xmlNode.InnerText;
-			if(strInner == null) return string.Empty;
-
-			return strInner;
+			return (xmlNode.InnerText ?? string.Empty);
 		}
 
 		public static string SafeInnerText(XmlNode xmlNode, string strNewLineCode)
 		{
-			if((strNewLineCode == null) || (strNewLineCode.Length == 0))
+			if(string.IsNullOrEmpty(strNewLineCode))
 				return SafeInnerText(xmlNode);
 
 			string strInner = SafeInnerText(xmlNode);
@@ -57,20 +54,14 @@ namespace KeePass.Util
 		{
 			Debug.Assert(xmlNode != null); if(xmlNode == null) return string.Empty;
 
-			string strInner = xmlNode.InnerXml;
-			if(strInner == null) return string.Empty;
-
-			return strInner;
+			return (xmlNode.InnerXml ?? string.Empty);
 		}
 
 		public static string SafeInnerText(HtmlElement htmlNode)
 		{
 			Debug.Assert(htmlNode != null); if(htmlNode == null) return string.Empty;
 
-			string strInner = htmlNode.InnerText;
-			if(strInner == null) return string.Empty;
-
-			return strInner;
+			return (htmlNode.InnerText ?? string.Empty);
 		}
 
 		public static string SafeAttribute(HtmlElement htmlNode, string strName)

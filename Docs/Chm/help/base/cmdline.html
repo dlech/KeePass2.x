@@ -56,7 +56,7 @@ If the path contains a space, it must be enclosed in quotes (&quot;).</p>
 <p><b>Password.</b>
 Passwords can be passed using the <code>-pw:</code> option. In order to
 pass 'abc' as password, you would add the following argument to the command line:
-<code>-pw:abc</code>. Note that there must be no space between the ':' and the
+<code>-pw:abc</code>. Note that there must be no space between the '<code>:</code>' and the
 password. If your password contains a space, you must enclose it in quotes. For
 example: <code>-pw:&quot;my secret password&quot;</code>.</p>
 
@@ -84,11 +84,11 @@ look like this:</p>
 
 <p>KeePass would then show a prompt for the password for the database, but in
 the key file list, the <code>C:\pwsafe.key</code> file is selected already. When using the
-<code>preselect</code> switch, KeePass by default activates the key file switch and
+<code>-preselect:</code> switch, KeePass by default activates the key file switch and
 sets the focus to the password edit window.</p>
 
-<p>Note the difference! The <code>preselect</code> switch just pre-selects the key file
-for you and displays the login prompt. In contrast, the <code>keyfile</code> switch
+<p>Note the difference! The <code>-preselect:</code> switch just pre-selects the key file
+for you and displays the login prompt. In contrast, the <code>-keyfile:</code> switch
 doesn't prompt you for the (maybe missing) password.</p>
 
 <p><b>Other.</b>
@@ -108,12 +108,12 @@ current user account credentials will be used.<br />
 The <code>-iocredfromrecent</code> switch makes KeePass load file
 system credentials (not database key) from the most recently used files list.
 Alternatively, the file system credentials can be specified using the
-<code>-iousername</code> and <code>-iopassword</code> parameters.
+<code>-iousername:</code> and <code>-iopassword:</code> parameters.
 The optional <code>-ioiscomplete</code> switch
 tells KeePass that the path and file system credentials are complete
 (the 'Open URL' dialog will not be displayed then).<br />
 <br />
-The <code>-pw-enc</code> parameter is similar to <code>-pw</code>, but
+The <code>-pw-enc:</code> parameter is similar to <code>-pw:</code>, but
 it requires the password to be encrypted. Encrypted passwords can be
 generated using the <a href="placeholders.html#passwordenc"><code>{PASSWORD_ENC}</code></a>
 placeholder.<br />
@@ -123,7 +123,10 @@ search for an entry and open its URL. The entry is identified by its UUID,
 which you can pass as <code>-uuid:</code> command line parameter.<br />
 <br />
 Analogously to the <code>-auto-type</code> option, <code>-auto-type-selected</code>
-performs auto-type for the currently selected entry.
+performs auto-type for the currently selected entry.<br />
+<br />
+The path of the local <a href="configuration.html">configuration</a> file can be changed
+using the <code>-cfg-local:</code> command line parameter.
 
 
 <p>The order of the arguments is arbitrary.</p>
@@ -206,7 +209,7 @@ KeePass using a Batch File</h2>
 KeePass will ask you whether you want to save or not. If you wish to save in
 any case (i.e. a forced exit without any confirmation dialog), enable the
 <i>'Automatically save database on exit and workspace locking'</i> option
-in <i>'Tools' - 'Options...' - 'Advanced'</i>.</p>
+in <i>'Tools' -&gt; 'Options' -&gt; tab 'Advanced'</i>.</p>
 
 <p>The KeePass instance that has been created by the command above is not visible (i.e.
 it does not show a main window) and will immediately terminate after sending close

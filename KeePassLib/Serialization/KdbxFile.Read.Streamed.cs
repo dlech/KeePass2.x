@@ -19,18 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Security;
-using System.Security.Cryptography;
-using System.Drawing;
-using System.Xml;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Xml;
+
+#if !KeePassUAP
+using System.Drawing;
+#endif
 
 using KeePassLib;
 using KeePassLib.Collections;
-using KeePassLib.Cryptography;
-using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Interfaces;
 using KeePassLib.Resources;
 using KeePassLib.Security;
@@ -100,7 +99,9 @@ namespace KeePassLib.Serialization
 			xrs.IgnoreProcessingInstructions = true;
 			xrs.IgnoreWhitespace = true;
 
-#if !KeePassRT
+#if KeePassUAP
+			xrs.DtdProcessing = DtdProcessing.Prohibit;
+#else
 #if !KeePassLibSD
 			xrs.ProhibitDtd = true; // Obsolete in .NET 4, but still there
 			// xrs.DtdProcessing = DtdProcessing.Prohibit; // .NET 4 only

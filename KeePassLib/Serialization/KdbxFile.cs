@@ -19,15 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Text;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Diagnostics;
-
-#if !KeePassLibSD
-using System.IO.Compression;
-#endif
+using System.Text;
+using System.Xml;
 
 using KeePassLib.Collections;
 using KeePassLib.Cryptography;
@@ -191,7 +187,7 @@ namespace KeePassLib.Serialization
 
 		private PwDatabase m_pwDatabase; // Not null, see constructor
 
-		private XmlTextWriter m_xmlWriter = null;
+		private XmlWriter m_xmlWriter = null;
 		private CryptoRandomStream m_randomStream = null;
 		private KdbxFormat m_format = KdbxFormat.Default;
 		private IStatusLogger m_slLogger = null;

@@ -245,5 +245,30 @@ namespace KeePass.UI
 
 			return pd.GetCustomIcon(pwUuid, w, h);
 		}
+
+		[Conditional("DEBUG")]
+		internal static void AssertUIImage(Image img)
+		{
+#if DEBUG
+			if(img == null) { Debug.Assert(false); return; }
+
+			EnsureInitialized();
+
+			try
+			{
+				// Windows XP scales images based on the DPI resolution
+				// specified in the image file; thus ensure that the
+				// image file does not specify a DPI resolution;
+				// https://sourceforge.net/p/keepass/bugs/1487/
+
+				int d = (int)Math.Round(img.HorizontalResolution);
+				Debug.Assert((d == 0) || (d == m_nDpiX));
+
+				d = (int)Math.Round(img.VerticalResolution);
+				Debug.Assert((d == 0) || (d == m_nDpiY));
+			}
+			catch(Exception) { Debug.Assert(false); }
+#endif
+		}
 	}
 }

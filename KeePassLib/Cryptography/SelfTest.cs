@@ -39,6 +39,10 @@ using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
+#if (KeePassUAP && KeePassLibSD)
+#error KeePassUAP and KeePassLibSD are mutually exclusive.
+#endif
+
 namespace KeePassLib.Cryptography
 {
 	/* /// <summary>
@@ -502,12 +506,22 @@ namespace KeePassLib.Cryptography
 			if(short.MinValue.ToString(NumberFormatInfo.InvariantInfo) !=
 				"-32768")
 				throw new InvalidOperationException("StrUtil-Inv4");
+
+			if(!string.Equals("abcd", "aBcd", StrUtil.CaseIgnoreCmp))
+				throw new InvalidOperationException("StrUtil-Case1");
+			if(string.Equals(@"a<b", @"a>b", StrUtil.CaseIgnoreCmp))
+				throw new InvalidOperationException("StrUtil-Case2");
 #endif
 		}
 
 		private static void TestUrlUtil()
 		{
 #if DEBUG
+#if !KeePassUAP
+			Debug.Assert(Uri.UriSchemeHttp.Equals("http", StrUtil.CaseIgnoreCmp));
+			Debug.Assert(Uri.UriSchemeHttps.Equals("https", StrUtil.CaseIgnoreCmp));
+#endif
+
 			if(UrlUtil.GetHost(@"scheme://domain:port/path?query_string#fragment_id") !=
 				"domain")
 				throw new InvalidOperationException("UrlUtil-H1");

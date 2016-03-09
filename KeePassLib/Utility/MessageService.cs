@@ -20,9 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Text;
+
+#if !KeePassUAP
+using System.Windows.Forms;
+#endif
 
 using KeePassLib.Resources;
 using KeePassLib.Serialization;
@@ -94,7 +97,9 @@ namespace KeePassLib.Utility
 			get { return m_uCurrentMessageCount; }
 		}
 
+#if !KeePassUAP
 		public static event EventHandler<MessageServiceEventArgs> MessageShowing;
+#endif
 
 		private static string ObjectsToMessage(object[] vLines)
 		{
@@ -118,7 +123,7 @@ namespace KeePassLib.Utility
 
 				Exception exObj = (obj as Exception);
 				string strObj = (obj as string);
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 				StringCollection scObj = (obj as StringCollection);
 #endif
 
@@ -129,7 +134,7 @@ namespace KeePassLib.Utility
 					else if((exObj.Message != null) && (exObj.Message.Length > 0))
 						strAppend = exObj.Message;
 				}
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 				else if(scObj != null)
 				{
 					StringBuilder sb = new StringBuilder();
@@ -158,7 +163,7 @@ namespace KeePassLib.Utility
 			return sbText.ToString();
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		internal static Form GetTopForm()
 		{
 			FormCollection fc = Application.OpenForms;
@@ -168,10 +173,11 @@ namespace KeePassLib.Utility
 		}
 #endif
 
+#if !KeePassUAP
 		internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
-#if (KeePassLibSD || KeePassRT)
+#if KeePassLibSD
 			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
 #else
 			IWin32Window wnd = null;
@@ -206,7 +212,7 @@ namespace KeePassLib.Utility
 #endif
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 		internal delegate DialogResult SafeShowMessageBoxInternalDelegate(IWin32Window iParent,
 			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
 			MessageBoxDefaultButton mdb);
@@ -283,11 +289,13 @@ namespace KeePassLib.Utility
 
 			try
 			{
-#if !KeePassLibSD
-				Clipboard.Clear();
-				Clipboard.SetText(ObjectsToMessage(vLines, true));
+				string strDetails = ObjectsToMessage(vLines, true);
+
+#if KeePassLibSD
+				Clipboard.SetDataObject(strDetails);
 #else
-				Clipboard.SetDataObject(ObjectsToMessage(vLines, true));
+				Clipboard.Clear();
+				Clipboard.SetText(strDetails);
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -356,26 +364,6 @@ namespace KeePassLib.Utility
 			return AskYesNo(strText, null, true, m_mbiQuestion);
 		}
 
-		internal static string GetLoadWarningMessage(string strFilePath,
-			Exception ex, bool bFullException)
-		{
-			string str = string.Empty;
-
-			if(!string.IsNullOrEmpty(strFilePath))
-				str += strFilePath + MessageService.NewParagraph;
-
-			str += KLRes.FileLoadFailed;
-
-			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
-			{
-				str += MessageService.NewParagraph;
-				if(!bFullException) str += ex.Message;
-				else str += ObjectsToMessage(new object[] { ex }, true);
-			}
-
-			return str;
-		}
-
 		public static void ShowLoadWarning(string strFilePath, Exception ex)
 		{
 			ShowLoadWarning(strFilePath, ex, false);
@@ -404,18 +392,7 @@ namespace KeePassLib.Utility
 				return;
 			}
 
-			string str = string.Empty;
-			if((strFilePath != null) && (strFilePath.Length > 0))
-				str += strFilePath + MessageService.NewParagraph;
-
-			str += KLRes.FileSaveFailed;
-
-			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
-				str += MessageService.NewParagraph + ex.Message;
-
-			if(bCorruptionWarning)
-				str += MessageService.NewParagraph + KLRes.FileSaveCorruptionWarning;
-
+			string str = GetSaveWarningMessage(strFilePath, ex, bCorruptionWarning);
 			ShowWarning(str);
 		}
 
@@ -425,6 +402,45 @@ namespace KeePassLib.Utility
 			if(ioConnection != null)
 				ShowSaveWarning(ioConnection.GetDisplayName(), ex, bCorruptionWarning);
 			else ShowWarning(ex);
+		}
+#endif // !KeePassUAP
+
+		internal static string GetLoadWarningMessage(string strFilePath,
+			Exception ex, bool bFullException)
+		{
+			string str = string.Empty;
+
+			if(!string.IsNullOrEmpty(strFilePath))
+				str += strFilePath + MessageService.NewParagraph;
+
+			str += KLRes.FileLoadFailed;
+
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+			{
+				str += MessageService.NewParagraph;
+				if(!bFullException) str += ex.Message;
+				else str += ObjectsToMessage(new object[] { ex }, true);
+			}
+
+			return str;
+		}
+
+		internal static string GetSaveWarningMessage(string strFilePath,
+			Exception ex, bool bCorruptionWarning)
+		{
+			string str = string.Empty;
+			if(!string.IsNullOrEmpty(strFilePath))
+				str += strFilePath + MessageService.NewParagraph;
+
+			str += KLRes.FileSaveFailed;
+
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+				str += MessageService.NewParagraph + ex.Message;
+
+			if(bCorruptionWarning)
+				str += MessageService.NewParagraph + KLRes.FileSaveCorruptionWarning;
+
+			return str;
 		}
 
 		public static void ExternalIncrementMessageCount()

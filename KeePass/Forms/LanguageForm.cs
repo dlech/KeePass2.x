@@ -119,8 +119,7 @@ namespace KeePass.Forms
 						try
 						{
 							XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-							KPTranslation kpTrl = KPTranslation.LoadFromFile(
-								strFullName, xs);
+							KPTranslation kpTrl = KPTranslation.Load(strFullName, xs);
 
 							ListViewItem lvi = m_lvLanguages.Items.Add(
 								kpTrl.Properties.NameEnglish, 0);

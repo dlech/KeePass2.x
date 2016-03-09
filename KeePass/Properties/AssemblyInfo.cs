@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("02020c52-c0da-47c0-9f3f-a6fe76cee400")]
 
 // Assembly version information
-[assembly: AssemblyVersion("2.31.0.*")]
-[assembly: AssemblyFileVersion("2.31.0.0")]
+[assembly: AssemblyVersion("2.32.0.*")]
+[assembly: AssemblyFileVersion("2.32.0.0")]
