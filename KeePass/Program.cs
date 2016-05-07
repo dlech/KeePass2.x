@@ -241,10 +241,6 @@ namespace KeePass
 #endif
 			m_bDesignMode = false; // Designer doesn't call Main method
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.DoEvents(); // Required
-
 			m_cmdLineArgs = new CommandLineArgs(args);
 
 			// Before loading the configuration
@@ -254,6 +250,9 @@ namespace KeePass
 				MonoWorkarounds.SetEnabled(strWaDisable, false);
 
 			DpiUtil.ConfigureProcess();
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.DoEvents(); // Required
 
 #if DEBUG
 			string strInitialWorkDir = WinUtil.GetWorkingDirectory();

@@ -240,6 +240,14 @@ namespace KeePass.App.Configuration
 			set { m_bCopyUrls = value; }
 		}
 
+		private bool m_bEntrySelGroupSel = true;
+		[DefaultValue(true)]
+		public bool EntrySelGroupSel
+		{
+			get { return m_bEntrySelGroupSel; }
+			set { m_bEntrySelGroupSel = value; }
+		}
+
 		private bool m_bDisableSaveIfNotModified = false;
 		/// <summary>
 		/// Disable 'Save' button (instead of graying it out) if the database

@@ -19,12 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
-using KeePass.App;
 using KeePass.Resources;
+
+#if !KeePassUAP
 using KeePass.Util.Spr;
+#endif
 
 using KeePassLib;
 using KeePassLib.Cryptography.PasswordGenerator;
@@ -62,7 +64,7 @@ namespace KeePass.Util
 
 			AddStdPattern(KPRes.RandomMacAddress, @"HH\-HH\-HH\-HH\-HH\-HH");
 
-			string strHex = KPRes.HexKey;
+			string strHex = KPRes.HexKeyEx;
 			AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"h{10}");
 			AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"h{32}");
 			AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"h{64}");
@@ -128,6 +130,7 @@ namespace KeePass.Util
 			return StrUtil.CompareNaturally(a.Name, b.Name);
 		}
 
+#if !KeePassUAP
 		internal static ProtectedString GenerateAcceptable(PwProfile prf,
 			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx)
 		{
@@ -177,5 +180,6 @@ namespace KeePass.Util
 
 			return ps;
 		}
+#endif
 	}
 }

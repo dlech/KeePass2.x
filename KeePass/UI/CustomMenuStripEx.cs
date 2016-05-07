@@ -46,5 +46,11 @@ namespace KeePass.UI
 				m.Result = (IntPtr)NativeMethods.MA_ACTIVATE;
 			}
 		}
+
+		// protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
+		// {
+		//	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
+		//	base.OnItemClicked(e);
+		// }
 	}
 }

@@ -28,6 +28,7 @@ using System.Security.AccessControl;
 #endif
 
 using KeePassLib.Native;
+using KeePassLib.Resources;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
@@ -44,6 +45,13 @@ namespace KeePassLib.Serialization
 
 		private static Dictionary<string, bool> g_dEnabled =
 			new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
+
+		private static bool g_bExtraSafe = false;
+		internal static bool ExtraSafe
+		{
+			get { return g_bExtraSafe; }
+			set { g_bExtraSafe = value; }
+		}
 
 		public FileTransactionEx(IOConnectionInfo iocBaseFile)
 		{
@@ -123,6 +131,13 @@ namespace KeePassLib.Serialization
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
+
+			if(g_bExtraSafe)
+			{
+				if(!IOConnection.FileExists(m_iocTemp))
+					throw new FileNotFoundException(m_iocTemp.Path +
+						MessageService.NewLine + KLRes.FileSaveFailed);
+			}
 
 			if(IOConnection.FileExists(m_iocBase))
 			{

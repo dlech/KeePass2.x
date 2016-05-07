@@ -214,6 +214,9 @@ namespace KeePass.Util.XmlSerialization
 					case "UseTransactedFileWrites":
 						o.UseTransactedFileWrites = ReadBoolean(xr);
 						break;
+					case "FileTxExtra":
+						o.FileTxExtra = ReadBoolean(xr);
+						break;
 					case "UseFileLocks":
 						o.UseFileLocks = ReadBoolean(xr);
 						break;
@@ -364,6 +367,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "CopyUrlsInsteadOfOpening":
 						o.CopyUrlsInsteadOfOpening = ReadBoolean(xr);
+						break;
+					case "EntrySelGroupSel":
+						o.EntrySelGroupSel = ReadBoolean(xr);
 						break;
 					case "DisableSaveIfNotModified":
 						o.DisableSaveIfNotModified = ReadBoolean(xr);
@@ -548,6 +554,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "MasterPassword":
 						o.MasterPassword = ReadAceMasterPassword(xr);
+						break;
+					case "MasterKeyTries":
+						o.MasterKeyTries = ReadInt32(xr);
 						break;
 					case "MasterKeyOnSecureDesktop":
 						o.MasterKeyOnSecureDesktop = ReadBoolean(xr);

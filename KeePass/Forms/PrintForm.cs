@@ -353,25 +353,30 @@ namespace KeePass.Forms
 
 			if(m_rbTabular.Checked)
 			{
-				int nFieldCount = 0;
-				if(bGroup) ++nFieldCount;
-				if(bTitle) ++nFieldCount;
-				if(bUserName) ++nFieldCount;
-				if(bPassword) ++nFieldCount;
-				if(bURL) ++nFieldCount;
-				if(bNotes) ++nFieldCount;
-				if(bCreation) ++nFieldCount;
-				// if(bLastAcc) ++nFieldCount;
-				if(bLastMod) ++nFieldCount;
-				if(bExpire) ++nFieldCount;
-				if(bTags) ++nFieldCount;
-				if(bUuid) ++nFieldCount;
-				if(nFieldCount == 0) nFieldCount = 1;
+				int nEquiCols = 0;
+				if(bGroup) ++nEquiCols;
+				if(bTitle) ++nEquiCols;
+				if(bUserName) ++nEquiCols;
+				if(bPassword) ++nEquiCols;
+				if(bURL) ++nEquiCols;
+				if(bNotes) nEquiCols += 2;
+				if(bCreation) ++nEquiCols;
+				// if(bLastAcc) ++nEquiCols;
+				if(bLastMod) ++nEquiCols;
+				if(bExpire) ++nEquiCols;
+				if(bTags) ++nEquiCols;
+				if(bUuid) ++nEquiCols;
+				if(nEquiCols == 0) nEquiCols = 1;
 
-				string strColWidth = (100.0f / (float)nFieldCount).ToString(
+				string strColWidth = (100.0f / (float)nEquiCols).ToString(
 					"F2", NumberFormatInfo.InvariantInfo);
+				string strColWidth2 = (200.0f / (float)nEquiCols).ToString(
+					"F2", NumberFormatInfo.InvariantInfo);
+
 				string strHTdInit = "<th class=\"field_name\" style=\"width: " +
 					strColWidth + "%;\">";
+				string strHTdInit2 = "<th class=\"field_name\" style=\"width: " +
+					strColWidth2 + "%;\">";
 				string strHTdExit = "</th>";
 
 				string strCellPre = "<td class=\"field_data\">" + strFontInit;
@@ -385,7 +390,7 @@ namespace KeePass.Forms
 				if(bUserName) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.UserName) + strHTdExit);
 				if(bPassword) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Password) + strHTdExit);
 				if(bURL) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Url) + strHTdExit);
-				if(bNotes) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.Notes) + strHTdExit);
+				if(bNotes) sbH.AppendLine(strHTdInit2 + StrUtil.StringToHtml(KPRes.Notes) + strHTdExit);
 				if(bCreation) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.CreationTime) + strHTdExit);
 				// if(bLastAcc) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastAccessTime) + strHTdExit);
 				if(bLastMod) sbH.AppendLine(strHTdInit + StrUtil.StringToHtml(KPRes.LastModificationTime) + strHTdExit);

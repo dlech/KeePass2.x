@@ -26,6 +26,7 @@ namespace KeePass.Resources
 		{
 			if(dictNew == null) throw new ArgumentNullException("dictNew");
 
+			m_strAbort = TryGetEx(dictNew, "Abort", m_strAbort);
 			m_strAbortTrigger = TryGetEx(dictNew, "AbortTrigger", m_strAbortTrigger);
 			m_strAction = TryGetEx(dictNew, "Action", m_strAction);
 			m_strActivateDatabaseTab = TryGetEx(dictNew, "ActivateDatabaseTab", m_strActivateDatabaseTab);
@@ -247,6 +248,7 @@ namespace KeePass.Resources
 			m_strEntry = TryGetEx(dictNew, "Entry", m_strEntry);
 			m_strEntryList = TryGetEx(dictNew, "EntryList", m_strEntryList);
 			m_strEntryListAutoResizeColumns = TryGetEx(dictNew, "EntryListAutoResizeColumns", m_strEntryListAutoResizeColumns);
+			m_strEntrySelGroupSel = TryGetEx(dictNew, "EntrySelGroupSel", m_strEntrySelGroupSel);
 			m_strEnvironmentVariable = TryGetEx(dictNew, "EnvironmentVariable", m_strEnvironmentVariable);
 			m_strEqualsOp = TryGetEx(dictNew, "EqualsOp", m_strEqualsOp);
 			m_strError = TryGetEx(dictNew, "Error", m_strError);
@@ -310,6 +312,7 @@ namespace KeePass.Resources
 			m_strFileSaveQOpYesClosing = TryGetEx(dictNew, "FileSaveQOpYesClosing", m_strFileSaveQOpYesClosing);
 			m_strFileSaveQOpYesExiting = TryGetEx(dictNew, "FileSaveQOpYesExiting", m_strFileSaveQOpYesExiting);
 			m_strFileSaveQOpYesLocking = TryGetEx(dictNew, "FileSaveQOpYesLocking", m_strFileSaveQOpYesLocking);
+			m_strFileTxExtra = TryGetEx(dictNew, "FileTxExtra", m_strFileTxExtra);
 			m_strFileVerifyHashFail = TryGetEx(dictNew, "FileVerifyHashFail", m_strFileVerifyHashFail);
 			m_strFileVerifyHashFailRec = TryGetEx(dictNew, "FileVerifyHashFailRec", m_strFileVerifyHashFailRec);
 			m_strFilter = TryGetEx(dictNew, "Filter", m_strFilter);
@@ -350,7 +353,7 @@ namespace KeePass.Resources
 			m_strHelpSourceNoLocalOption = TryGetEx(dictNew, "HelpSourceNoLocalOption", m_strHelpSourceNoLocalOption);
 			m_strHelpSourceSelection = TryGetEx(dictNew, "HelpSourceSelection", m_strHelpSourceSelection);
 			m_strHelpSourceSelectionDesc = TryGetEx(dictNew, "HelpSourceSelectionDesc", m_strHelpSourceSelectionDesc);
-			m_strHexKey = TryGetEx(dictNew, "HexKey", m_strHexKey);
+			m_strHexKeyEx = TryGetEx(dictNew, "HexKeyEx", m_strHexKeyEx);
 			m_strHexViewer = TryGetEx(dictNew, "HexViewer", m_strHexViewer);
 			m_strHideUsingAsterisks = TryGetEx(dictNew, "HideUsingAsterisks", m_strHideUsingAsterisks);
 			m_strHistory = TryGetEx(dictNew, "History", m_strHistory);
@@ -577,6 +580,7 @@ namespace KeePass.Resources
 			m_strRepairModeUse = TryGetEx(dictNew, "RepairModeUse", m_strRepairModeUse);
 			m_strRepeatOnlyWhenHidden = TryGetEx(dictNew, "RepeatOnlyWhenHidden", m_strRepeatOnlyWhenHidden);
 			m_strRestartKeePassQuestion = TryGetEx(dictNew, "RestartKeePassQuestion", m_strRestartKeePassQuestion);
+			m_strRetry = TryGetEx(dictNew, "Retry", m_strRetry);
 			m_strRetryCmd = TryGetEx(dictNew, "RetryCmd", m_strRetryCmd);
 			m_strRootDirectory = TryGetEx(dictNew, "RootDirectory", m_strRootDirectory);
 			m_strSameKeybLayout = TryGetEx(dictNew, "SameKeybLayout", m_strSameKeybLayout);
@@ -755,6 +759,7 @@ namespace KeePass.Resources
 		}
 
 		private static readonly string[] m_vKeyNames = {
+			"Abort",
 			"AbortTrigger",
 			"Action",
 			"ActivateDatabaseTab",
@@ -976,6 +981,7 @@ namespace KeePass.Resources
 			"Entry",
 			"EntryList",
 			"EntryListAutoResizeColumns",
+			"EntrySelGroupSel",
 			"EnvironmentVariable",
 			"EqualsOp",
 			"Error",
@@ -1039,6 +1045,7 @@ namespace KeePass.Resources
 			"FileSaveQOpYesClosing",
 			"FileSaveQOpYesExiting",
 			"FileSaveQOpYesLocking",
+			"FileTxExtra",
 			"FileVerifyHashFail",
 			"FileVerifyHashFailRec",
 			"Filter",
@@ -1079,7 +1086,7 @@ namespace KeePass.Resources
 			"HelpSourceNoLocalOption",
 			"HelpSourceSelection",
 			"HelpSourceSelectionDesc",
-			"HexKey",
+			"HexKeyEx",
 			"HexViewer",
 			"HideUsingAsterisks",
 			"History",
@@ -1306,6 +1313,7 @@ namespace KeePass.Resources
 			"RepairModeUse",
 			"RepeatOnlyWhenHidden",
 			"RestartKeePassQuestion",
+			"Retry",
 			"RetryCmd",
 			"RootDirectory",
 			"SameKeybLayout",
@@ -1486,6 +1494,17 @@ namespace KeePass.Resources
 		public static string[] GetKeyNames()
 		{
 			return m_vKeyNames;
+		}
+
+		private static string m_strAbort =
+			@"Abort";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Abort'.
+		/// </summary>
+		public static string Abort
+		{
+			get { return m_strAbort; }
 		}
 
 		private static string m_strAbortTrigger =
@@ -3919,6 +3938,17 @@ namespace KeePass.Resources
 			get { return m_strEntryListAutoResizeColumns; }
 		}
 
+		private static string m_strEntrySelGroupSel =
+			@"When selecting an entry, automatically select its parent group, too";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'When selecting an entry, automatically select its parent group, too'.
+		/// </summary>
+		public static string EntrySelGroupSel
+		{
+			get { return m_strEntrySelGroupSel; }
+		}
+
 		private static string m_strEnvironmentVariable =
 			@"Environment variable";
 		/// <summary>
@@ -4612,6 +4642,17 @@ namespace KeePass.Resources
 			get { return m_strFileSaveQOpYesLocking; }
 		}
 
+		private static string m_strFileTxExtra =
+			@"Extra-safe file transactions";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Extra-safe file transactions'.
+		/// </summary>
+		public static string FileTxExtra
+		{
+			get { return m_strFileTxExtra; }
+		}
+
 		private static string m_strFileVerifyHashFail =
 			@"The new file's content does not match the data that KeePass has written, i.e. writing to the file has failed and it might be corrupted now.";
 		/// <summary>
@@ -5052,15 +5093,15 @@ namespace KeePass.Resources
 			get { return m_strHelpSourceSelectionDesc; }
 		}
 
-		private static string m_strHexKey =
-			@"{PARAM}-Bit Hex Key";
+		private static string m_strHexKeyEx =
+			@"Hex Key - {PARAM}-Bit";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// '{PARAM}-Bit Hex Key'.
+		/// 'Hex Key - {PARAM}-Bit'.
 		/// </summary>
-		public static string HexKey
+		public static string HexKeyEx
 		{
-			get { return m_strHexKey; }
+			get { return m_strHexKeyEx; }
 		}
 
 		private static string m_strHexViewer =
@@ -7547,6 +7588,17 @@ namespace KeePass.Resources
 		public static string RestartKeePassQuestion
 		{
 			get { return m_strRestartKeePassQuestion; }
+		}
+
+		private static string m_strRetry =
+			@"Retry";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Retry'.
+		/// </summary>
+		public static string Retry
+		{
+			get { return m_strRetry; }
 		}
 
 		private static string m_strRetryCmd =

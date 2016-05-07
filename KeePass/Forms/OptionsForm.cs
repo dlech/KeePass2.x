@@ -415,6 +415,8 @@ namespace KeePass.Forms
 				lvg, KPRes.AlternatingBgColors);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CopyUrlsInsteadOfOpening",
 				lvg, KPRes.CopyUrlsInsteadOfOpening);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntrySelGroupSel",
+				lvg, KPRes.EntrySelGroupSel);
 
 			if(!Program.Config.MainWindow.EntryListShowDerefData)
 			{
@@ -585,6 +587,8 @@ namespace KeePass.Forms
 				lvg, KPRes.VerifyWrittenFileAfterSave);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
 				lvg, KPRes.UseTransactedDatabaseWrites);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "FileTxExtra",
+				lvg, KPRes.FileTxExtra + " (" + KPRes.Slow + ")");
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",
 				lvg, KPRes.UseFileLocks + " " + KPRes.NotRecommended);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "SaveForceSync",

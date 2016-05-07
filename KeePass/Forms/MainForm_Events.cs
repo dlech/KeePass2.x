@@ -226,6 +226,8 @@ namespace KeePass.Forms
 		/// </summary>
 		public event EventHandler<FileSavedEventArgs> FileSaved;
 
+		public event EventHandler FormLoadPost;
+
 		public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
 
 		public event EventHandler UIStateUpdated;

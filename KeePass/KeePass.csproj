@@ -1186,6 +1186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Nuvola\B16x16_Folder.png" />
     <None Include="Resources\Images\B16x16_Imp_NPassword.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Folder_New_Ex.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignRight.png" />

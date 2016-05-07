@@ -1,3 +1,52 @@
+2016-05-07: 2.33
+- Added commands in the group context menu (under 'Rearrange'):
+  'Expand Recursively' and 'Collapse Recursively'
+- Added option 'When selecting an entry, automatically select
+  its parent group, too' (turned on by default)
+- Added placeholders for data of the group that is currently
+  selected in the main window: {GROUP_SEL}, {GROUP_SEL_PATH}
+  and {GROUP_SEL_NOTES}
+- While importing/synchronizing, indeterminate progress is now
+  displayed on the taskbar button (on Windows 7 and higher)
+- Added optional parameters 'Filter - Group' and 'Filter - Tag'
+  for the 'Export active database' trigger action
+- Pressing the Escape key in the main window now locks the
+  workspace (independent of the current database locking state,
+  in contrast to Ctrl+L)
+- Added option 'Extra-safe file transactions' in 'Tools' ->
+  'Options' -> tab 'Advanced'
+- Added customization option to specify how often the master
+  key dialog appears when entering incorrect master keys
+- Plugins: added event 'FormLoadPost' for the main window
+- KPScript: the 'GetEntryString' command now supports the
+  '-Spr' option, which causes KPScript to Spr-compile the field
+  value (i.e. placeholders are replaced, field references are
+  resolved, environment variables are inserted, etc.)
+
+- Improved database synchronization performance
+- Improved object reordering during a database synchronization
+  for new and relocated groups/entries
+- Improved synchronization of deleted objects information
+- Improved database synchronization to prevent implicit object
+  deletions
+- HTML export/printing: the notes column now is twice as wide
+  as the other columns
+- When entering a Spr-variant password in the entry dialog, the
+  quality estimation is now disabled
+- Group tooltips are now displayed for about 30 seconds
+- The root group is now always expanded when opening a database
+- Improved private mode browser detection
+- Improved DPI awareness declaration (on Windows 10 and higher)
+- Improved regular expression searching performance in usual
+  use cases
+- Improved natural string comparison performance (on Unix-like
+  systems)
+- Improved mnemonic characters in the 'Rearrange' menus
+- Upgraded installer
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
 2016-03-09: 2.32
 - The quick search box (in the toolbar of the main window) now
   supports searching using a regular expression; in order to

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Translation>
 	<StringTable Name="KPRes" Namespace="KeePass.Resources">
+		<Data Name="Abort">
+			<Value>Abort</Value>
+		</Data>
 		<Data Name="AbortTrigger">
 			<Value>Abort current trigger execution</Value>
 		</Data>
@@ -664,6 +667,9 @@
 		<Data Name="EntryListAutoResizeColumns">
 			<Value>Automatically resize entry list columns when resizing the main window</Value>
 		</Data>
+		<Data Name="EntrySelGroupSel">
+			<Value>When selecting an entry, automatically select its parent group, too</Value>
+		</Data>
 		<Data Name="EnvironmentVariable">
 			<Value>Environment variable</Value>
 		</Data>
@@ -853,6 +859,9 @@
 		<Data Name="FileSaveQOpYesLocking">
 			<Value>Save all changes made to the database and lock the KeePass workspace.</Value>
 		</Data>
+		<Data Name="FileTxExtra">
+			<Value>Extra-safe file transactions</Value>
+		</Data>
 		<Data Name="FileVerifyHashFail">
 			<Value>The new file's content does not match the data that KeePass has written, i.e. writing to the file has failed and it might be corrupted now.</Value>
 		</Data>
@@ -973,8 +982,8 @@
 		<Data Name="HelpSourceSelectionDesc">
 			<Value>Choose between local help and online help center.</Value>
 		</Data>
-		<Data Name="HexKey">
-			<Value>{PARAM}-Bit Hex Key</Value>
+		<Data Name="HexKeyEx">
+			<Value>Hex Key - {PARAM}-Bit</Value>
 		</Data>
 		<Data Name="HexViewer">
 			<Value>Hex Viewer</Value>
@@ -1653,6 +1662,9 @@
 		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
+		</Data>
+		<Data Name="Retry">
+			<Value>Retry</Value>
 		</Data>
 		<Data Name="RetryCmd">
 			<Value>&amp;Retry</Value>

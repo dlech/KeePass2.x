@@ -43,6 +43,8 @@ using KeePassLib.Delegates;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Forms
 {
 	public enum PwEditMode
@@ -228,6 +230,9 @@ namespace KeePass.Forms
 			m_icgPassword.Attach(m_tbPassword, m_cbHidePassword, m_lblPasswordRepeat,
 				m_tbRepeatPassword, m_lblQuality, m_pbQuality, m_lblQualityInfo,
 				m_ttRect, this, bHideInitial, false);
+			m_icgPassword.ContextDatabase = m_pwDatabase;
+			m_icgPassword.ContextEntry = m_pwEntry;
+			m_icgPassword.IsSprVariant = true;
 
 			if(m_pwEntry.Expires)
 			{
@@ -899,7 +904,7 @@ namespace KeePass.Forms
 				ushort usEsc = NativeMethods.GetAsyncKeyState((int)Keys.Escape);
 				if((usEsc & 0x8000) != 0) m_bForceClosing = false;
 			}
-			catch(Exception) { Debug.Assert(KeePassLib.Native.NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
 		private void CleanUpEx()

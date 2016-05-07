@@ -87,7 +87,9 @@ namespace KeePass.DataExchange.Formats
 				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><b>"
 			};
 			foreach(string strRepl in vRepl)
+			{
 				strData = Regex.Replace(strData, strRepl, m_strStartTd);
+			}
 			strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
 
 			int nOffset = 0;

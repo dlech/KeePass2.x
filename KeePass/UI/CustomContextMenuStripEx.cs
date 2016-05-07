@@ -39,5 +39,11 @@ namespace KeePass.UI
 		{
 			UIUtil.Configure(this);
 		}
+
+		// protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
+		// {
+		//	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
+		//	base.OnItemClicked(e);
+		// }
 	}
 }

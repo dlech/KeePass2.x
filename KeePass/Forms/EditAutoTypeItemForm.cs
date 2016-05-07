@@ -174,7 +174,9 @@ namespace KeePass.Forms
 			};
 
 			string[] vSpecialPlaceholders = new string[] {
-				"GROUP", "GROUP_PATH", "GROUP_NOTES", "PASSWORD_ENC",
+				"GROUP", "GROUP_PATH", "GROUP_NOTES",
+				"GROUP_SEL", "GROUP_SEL_PATH", "GROUP_SEL_NOTES",
+				"PASSWORD_ENC",
 				"URL:RMVSCM", "URL:SCM", "URL:HOST", "URL:PORT", "URL:PATH",
 				"URL:QUERY", "URL:USERINFO", "URL:USERNAME", "URL:PASSWORD",
 				// "BASE",
