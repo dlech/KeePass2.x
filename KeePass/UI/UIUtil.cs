@@ -1195,6 +1195,16 @@ namespace KeePass.UI
 			DpiUtil.Configure(ts);
 		}
 
+		// internal static void ConfigureToolStripItem(ToolStripItem ts)
+		// {
+		//	if(ts == null) { Debug.Assert(false); return; }
+		//	if(Program.DesignMode) return;
+		//	// Disable separators such that clicking on them
+		//	// does not close the menu
+		//	ToolStripSeparator tsSep = (ts as ToolStripSeparator);
+		//	if(tsSep != null) tsSep.Enabled = false;
+		// }
+
 		public static void ConfigureTbButton(ToolStripItem tb, string strText,
 			string strTooltip)
 		{
@@ -2928,5 +2938,16 @@ namespace KeePass.UI
 
 			return new Size(wDefault, hDefault);
 		}
+
+		/* internal static bool HasClickedSeparator(ToolStripItemClickedEventArgs e)
+		{
+			if(e == null) { Debug.Assert(false); return false; }
+
+			ToolStripSeparator ts = (e.ClickedItem as ToolStripSeparator);
+			if(ts == null) return false;
+
+			Debug.Assert(!(e.ClickedItem is ToolStripMenuItem));
+			return true;
+		} */
 	}
 }

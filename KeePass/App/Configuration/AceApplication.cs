@@ -172,6 +172,14 @@ namespace KeePass.App.Configuration
 			set { m_bTransactedWrites = value; }
 		}
 
+		private bool m_bFileTxExtra = false;
+		[DefaultValue(false)]
+		public bool FileTxExtra
+		{
+			get { return m_bFileTxExtra; }
+			set { m_bFileTxExtra = value; }
+		}
+
 		private bool m_bFileLocks = false;
 		[DefaultValue(false)]
 		public bool UseFileLocks

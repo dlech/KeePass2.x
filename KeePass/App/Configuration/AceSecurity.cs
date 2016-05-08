@@ -63,6 +63,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private int m_nMasterKeyTries = 3;
+		[DefaultValue(3)]
+		public int MasterKeyTries
+		{
+			get { return m_nMasterKeyTries; }
+			set { m_nMasterKeyTries = value; }
+		}
+
 		private bool m_bSecureDesktop = false;
 		[DefaultValue(false)]
 		public bool MasterKeyOnSecureDesktop

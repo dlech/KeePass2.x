@@ -72,6 +72,7 @@ namespace KeePassLib.Native
 				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
 		} */
 
+#if !KeePassUAP
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey32(IntPtr pBuf256,
@@ -103,6 +104,7 @@ namespace KeePassLib.Native
 				return TransformKeyBenchmark64(uTimeMs);
 			return TransformKeyBenchmark32(uTimeMs);
 		}
+#endif
 
 		/* [DllImport("KeePassLibC32.dll", EntryPoint = "TF_ShowLangBar")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -119,65 +121,64 @@ namespace KeePassLib.Native
 			return TF_ShowLangBar32(dwFlags);
 		} */
 
-#if !KeePassLibSD
-		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-		internal static extern int StrCmpLogicalW(string x, string y);
-
-#if KeePassUAP
-		[DllImport("ShlWApi.dll")]
-#else
+#if (!KeePassLibSD && !KeePassUAP)
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
-#endif
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool PathRelativePathTo([Out] StringBuilder pszPath,
-			[In] string pszFrom, [In] uint dwAttrFrom, [In] string pszTo,
-			[In] uint dwAttrTo);
-#endif
+			[In] string pszFrom, uint dwAttrFrom, [In] string pszTo, uint dwAttrTo);
 
-		private static bool? m_bSupportsLogicalCmp = null;
+		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+		private static extern int StrCmpLogicalW(string x, string y);
+
+		private static bool? m_obSupportsLogicalCmp = null;
 
 		private static void TestNaturalComparisonsSupport()
 		{
-#if KeePassLibSD
-#warning No native natural comparisons supported.
-			m_bSupportsLogicalCmp = false;
-#else
 			try
 			{
 				StrCmpLogicalW("0", "0"); // Throws exception if unsupported
-				m_bSupportsLogicalCmp = true;
+				m_obSupportsLogicalCmp = true;
 			}
-			catch(Exception) { m_bSupportsLogicalCmp = false; }
-#endif
+			catch(Exception) { m_obSupportsLogicalCmp = false; }
 		}
+#endif
 
 		internal static bool SupportsStrCmpNaturally
 		{
 			get
 			{
-				if(m_bSupportsLogicalCmp.HasValue == false)
+#if (!KeePassLibSD && !KeePassUAP)
+				if(!m_obSupportsLogicalCmp.HasValue)
 					TestNaturalComparisonsSupport();
 
-				return m_bSupportsLogicalCmp.Value;
+				return m_obSupportsLogicalCmp.Value;
+#else
+				return false;
+#endif
 			}
 		}
 
 		internal static int StrCmpNaturally(string x, string y)
 		{
-			if(!m_bSupportsLogicalCmp.HasValue) TestNaturalComparisonsSupport();
-			if(!m_bSupportsLogicalCmp.Value) return 0;
+#if (!KeePassLibSD && !KeePassUAP)
+			if(!NativeMethods.SupportsStrCmpNaturally)
+			{
+				Debug.Assert(false);
+				return string.Compare(x, y, true);
+			}
 
-#if KeePassLibSD
-#warning No native natural comparisons supported.
-			return x.CompareTo(y);
-#else
 			return StrCmpLogicalW(x, y);
+#else
+			Debug.Assert(false);
+			return string.Compare(x, y, true);
 #endif
 		}
 
 		internal static string GetUserRuntimeDir()
 		{
-#if !KeePassLibSD
+#if KeePassLibSD
+			return Path.GetTempPath();
+#else
 #if KeePassUAP
 			string strRtDir = EnvironmentExt.AppDataLocalFolderPath;
 #else
@@ -195,8 +196,6 @@ namespace KeePassLib.Native
 			strRtDir += PwDefs.ShortProductName;
 
 			return strRtDir;
-#else
-			return Path.GetTempPath();
 #endif
 		}
 	}

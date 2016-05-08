@@ -191,9 +191,9 @@
 			this.m_lblDelObjInfoWarning.Name = "m_lblDelObjInfoWarning";
 			this.m_lblDelObjInfoWarning.Size = new System.Drawing.Size(367, 41);
 			this.m_lblDelObjInfoWarning.TabIndex = 3;
-			this.m_lblDelObjInfoWarning.Text = "Warning! After removing this information, database synchronization will not work " +
-				"correctly anymore. Only remove it, if you\'re sure that you won\'t use the synchro" +
-				"nization feature.";
+			this.m_lblDelObjInfoWarning.Text = "Warning! After removing this information, deleted objects (groups, entries, ...) " +
+				"may reappear when synchronizing the current database with another one (which sti" +
+				"ll contains the objects).";
 			// 
 			// m_btnRemoveDelObjInfo
 			// 

@@ -178,6 +178,12 @@ namespace KeePassLib.Serialization
 			// the history maintenance settings)
 			m_pwDatabase.MaintainBackups(); // Don't mark database as modified
 
+			// Expand the root group, such that in case the user accidently
+			// collapses the root group he can simply reopen the database
+			PwGroup pgRoot = m_pwDatabase.RootGroup;
+			if(pgRoot != null) pgRoot.IsExpanded = true;
+			else { Debug.Assert(false); }
+
 			m_pbHashOfHeader = null;
 		}
 

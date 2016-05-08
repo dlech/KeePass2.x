@@ -35,6 +35,8 @@ using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Collections;
+using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -137,7 +139,9 @@ namespace KeePass.Ecas
 				0xB9, 0x34, 0xED, 0xB1, 0x3F, 0x94, 0x48, 0x22 }),
 				KPRes.ExportStc, PwIcon.Disk, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
-					new EcasParameter(KPRes.FileFormatStc, EcasValueType.String, null) },
+					new EcasParameter(KPRes.FileFormatStc, EcasValueType.String, null),
+					new EcasParameter(KPRes.Filter + " - " + KPRes.Group, EcasValueType.String, null),
+					new EcasParameter(KPRes.Filter + " - " + KPRes.Tag, EcasValueType.String, null) },
 				ExportDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -438,11 +442,46 @@ namespace KeePass.Ecas
 			// if(string.IsNullOrEmpty(strPath)) return; // Allow no-file exports
 			string strFormat = EcasUtil.GetParamString(a.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFormat)) return;
+			string strGroup = EcasUtil.GetParamString(a.Parameters, 2, true);
+			string strTag = EcasUtil.GetParamString(a.Parameters, 3, true);
 
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
 
-			PwExportInfo pei = new PwExportInfo(pd.RootGroup, pd, true);
+			PwGroup pg = pd.RootGroup;
+			if(!string.IsNullOrEmpty(strGroup))
+			{
+				char chSep = strGroup[0];
+				PwGroup pgSub = pg.FindCreateSubTree(strGroup.Substring(1),
+					new char[] { chSep }, false);
+				pg = (pgSub ?? (new PwGroup(true, true, KPRes.Group, PwIcon.Folder)));
+			}
+
+			if(!string.IsNullOrEmpty(strTag))
+			{
+				// Do not use pg.Duplicate, because this method
+				// creates new UUIDs
+				pg = pg.CloneDeep();
+				pg.TakeOwnership(true, true, true);
+
+				GroupHandler gh = delegate(PwGroup pgSub)
+				{
+					PwObjectList<PwEntry> l = pgSub.Entries;
+					long n = (long)l.UCount;
+					for(long i = n - 1; i >= 0; --i)
+					{
+						if(!l.GetAt((uint)i).HasTag(strTag))
+							l.RemoveAt((uint)i);
+					}
+
+					return true;
+				};
+
+				gh(pg);
+				pg.TraverseTree(TraversalMethod.PreOrder, gh, null);
+			}
+
+			PwExportInfo pei = new PwExportInfo(pg, pd, true);
 			IOConnectionInfo ioc = (!string.IsNullOrEmpty(strPath) ?
 				IOConnectionInfo.FromPath(strPath) : null);
 			ExportUtil.Export(pei, strFormat, ioc);

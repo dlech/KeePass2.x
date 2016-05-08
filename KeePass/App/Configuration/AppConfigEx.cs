@@ -435,6 +435,7 @@ namespace KeePass.App.Configuration
 
 		public void Apply(AceApplyFlags f)
 		{
+			AceApplication aceApp = this.Application; // m_aceApp might be null
 			AceSecurity aceSec = this.Security; // m_sec might be null
 			AceIntegration aceInt = this.Integration; // m_int might be null
 
@@ -445,6 +446,9 @@ namespace KeePass.App.Configuration
 
 			if((f & AceApplyFlags.Ssl) != AceApplyFlags.None)
 				IOConnection.SslCertsAcceptInvalid = aceSec.SslCertsAcceptInvalid;
+
+			if((f & AceApplyFlags.FileTransactions) != AceApplyFlags.None)
+				FileTransactionEx.ExtraSafe = aceApp.FileTxExtra;
 		}
 	}
 
@@ -454,6 +458,7 @@ namespace KeePass.App.Configuration
 		None = 0,
 		Proxy = 0x1,
 		Ssl = 0x2,
+		FileTransactions = 0x4,
 
 		All = 0x7FFF
 	}

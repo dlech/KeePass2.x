@@ -329,6 +329,14 @@ namespace KeePassLib
 			m_pwIcon = pwIcon;
 		}
 
+#if DEBUG
+		// For display in debugger
+		public override string ToString()
+		{
+			return (@"PwGroup '" + m_strName + @"'");
+		}
+#endif
+
 		/// <summary>
 		/// Deeply clone the current group. The returned group will be an exact
 		/// value copy of the current object (including UUID, etc.).
@@ -841,7 +849,7 @@ namespace KeePassLib
 			Regex rx = null;
 			if(sp.RegularExpression)
 			{
-				RegexOptions ro = RegexOptions.Compiled;
+				RegexOptions ro = RegexOptions.None; // RegexOptions.Compiled
 				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
 #if !KeePassUAP
 					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||

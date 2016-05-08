@@ -322,6 +322,14 @@ namespace KeePassLib
 			}
 		}
 
+#if DEBUG
+		// For display in debugger
+		public override string ToString()
+		{
+			return (@"PwEntry '" + m_listStrings.ReadSafe(PwDefs.TitleField) + @"'");
+		}
+#endif
+
 		/// <summary>
 		/// Clone the current entry. The returned entry is an exact value copy
 		/// of the current entry (including UUID and parent group reference).

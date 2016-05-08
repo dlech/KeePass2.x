@@ -153,10 +153,16 @@ namespace KeePass.Forms
 		{
 			SetProgressGlobal(strOperation, -1);
 			m_bCanClose = false;
+
+			if((m_fOwner != null) && (m_fOwner is MainForm))
+				TaskbarList.SetProgressState(m_fOwner, TbpFlag.Indeterminate);
 		}
 
 		public void EndLogging()
 		{
+			if((m_fOwner != null) && (m_fOwner is MainForm))
+				TaskbarList.SetProgressState(m_fOwner, TbpFlag.NoProgress);
+
 			m_bCanClose = true;
 		}
 

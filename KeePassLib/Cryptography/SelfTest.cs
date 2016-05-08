@@ -83,6 +83,10 @@ namespace KeePassLib.Cryptography
 			Debug.Assert((int)PwIcon.World == 1);
 			Debug.Assert((int)PwIcon.Warning == 2);
 			Debug.Assert((int)PwIcon.BlackBerry == 68);
+
+#if KeePassUAP
+			SelfTestEx.Perform();
+#endif
 		}
 
 		internal static void TestFipsComplianceProblems()
@@ -231,12 +235,12 @@ namespace KeePassLib.Cryptography
 
 			byte[] pbManaged = new byte[32];
 			Array.Copy(pbOrgKey, pbManaged, 32);
-			if(CompositeKey.TransformKeyManaged(pbManaged, pbSeed, uRounds) == false)
+			if(!CompositeKey.TransformKeyManaged(pbManaged, pbSeed, uRounds))
 				throw new SecurityException("Managed transform.");
 
 			byte[] pbNative = new byte[32];
 			Array.Copy(pbOrgKey, pbNative, 32);
-			if(NativeLib.TransformKey256(pbNative, pbSeed, uRounds) == false)
+			if(!NativeLib.TransformKey256(pbNative, pbSeed, uRounds))
 				return; // Native library not available ("success")
 
 			if(!MemUtil.ArraysEqual(pbManaged, pbNative))

@@ -454,6 +454,9 @@ namespace KeePass.Forms
 
 			m_bFormLoaded = true;
 			NotifyUserActivity(); // Initialize locking timeout
+
+			if(this.FormLoadPost != null)
+				this.FormLoadPost(this, EventArgs.Empty);
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppLoadPost);
 		}
 
@@ -1448,26 +1451,25 @@ namespace KeePass.Forms
 			DeleteSelectedGroup();
 		}
 
-		private void OnGroupsAfterCollapse(object sender, TreeViewEventArgs e)
+		private static void HandleGroupExpandCollapse(TreeViewEventArgs e, bool bExpand)
 		{
+			if(e == null) { Debug.Assert(false); return; }
 			TreeNode tn = e.Node;
-			if(tn == null) return;
-
-			PwGroup pg = tn.Tag as PwGroup;
+			if(tn == null) { Debug.Assert(false); return; }
+			PwGroup pg = (tn.Tag as PwGroup);
 			if(pg == null) { Debug.Assert(false); return; }
 
-			pg.IsExpanded = false;
+			pg.IsExpanded = bExpand;
+		}
+
+		private void OnGroupsAfterCollapse(object sender, TreeViewEventArgs e)
+		{
+			HandleGroupExpandCollapse(e, false);
 		}
 
 		private void OnGroupsAfterExpand(object sender, TreeViewEventArgs e)
 		{
-			TreeNode tn = e.Node;
-			if(tn == null) return;
-
-			PwGroup pg = (tn.Tag as PwGroup);
-			if(pg == null) { Debug.Assert(false); return; }
-
-			pg.IsExpanded = true;
+			HandleGroupExpandCollapse(e, true);
 		}
 
 		private void OnFileSynchronize(object sender, EventArgs e)
@@ -2649,6 +2651,39 @@ namespace KeePass.Forms
 		private void OnEntryMoveToGroupOpening(object sender, EventArgs e)
 		{
 			UpdateEntryMoveMenu(false);
+		}
+
+		private void OnGroupsExpand(object sender, EventArgs e)
+		{
+			TreeNode tn = m_tvGroups.SelectedNode;
+			if(tn == null) { Debug.Assert(false); return; }
+
+			TreeNode tnTop = m_tvGroups.TopNode;
+			m_tvGroups.BeginUpdate();
+
+			tn.ExpandAll();
+
+			if(tnTop != null) m_tvGroups.TopNode = tnTop;
+			m_tvGroups.EndUpdate();
+		}
+
+		private void OnGroupsCollapse(object sender, EventArgs e)
+		{
+			TreeNode tn = m_tvGroups.SelectedNode;
+			if(tn == null) { Debug.Assert(false); return; }
+
+			TreeNode tnTop = m_tvGroups.TopNode;
+			m_tvGroups.BeginUpdate();
+
+			if(tn.Parent != null) tn.Collapse(false);
+			else
+			{
+				foreach(TreeNode tnSub in tn.Nodes)
+					tnSub.Collapse(false);
+			}
+
+			if(tnTop != null) m_tvGroups.TopNode = tnTop;
+			m_tvGroups.EndUpdate();
 		}
 	}
 }

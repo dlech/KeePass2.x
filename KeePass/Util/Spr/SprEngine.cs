@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Diagnostics;
 
 using KeePass.App.Configuration;
+using KeePass.Forms;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -116,6 +117,7 @@ namespace KeePass.Util.Spr
 			}
 
 			string str = strText;
+			MainForm mf = Program.MainForm;
 
 			bool bExt = ((ctx.Flags & (SprCompileFlags.ExtActive |
 				SprCompileFlags.ExtNonActive)) != SprCompileFlags.None);
@@ -167,26 +169,22 @@ namespace KeePass.Util.Spr
 				PwGroup pg = ctx.Entry.ParentGroup;
 				if(((ctx.Flags & SprCompileFlags.Group) != SprCompileFlags.None) &&
 					(pg != null))
-				{
-					str = SprEngine.FillIfExists(str, @"{GROUP}", new ProtectedString(
-						false, pg.Name), ctx, uRecursionLevel);
-
-					ProtectedString psGroupPath = new ProtectedString(false,
-						pg.GetFullPath());
-					str = SprEngine.FillIfExists(str, @"{GROUP_PATH}", psGroupPath,
-						ctx, uRecursionLevel);
-					str = SprEngine.FillIfExists(str, @"{GROUPPATH}", psGroupPath,
-						ctx, uRecursionLevel); // Obsolete; for backward compatibility
-
-					str = SprEngine.FillIfExists(str, @"{GROUP_NOTES}", new ProtectedString(
-						false, pg.Notes), ctx, uRecursionLevel);
-				}
+					str = FillGroupPlh(str, @"{GROUP", pg, ctx, uRecursionLevel);
 			}
 
 			if((ctx.Flags & SprCompileFlags.Paths) != SprCompileFlags.None)
+			{
+				if(mf != null)
+				{
+					PwGroup pgSel = mf.GetSelectedGroup();
+					if(pgSel != null)
+						str = FillGroupPlh(str, @"{GROUP_SEL", pgSel, ctx, uRecursionLevel);
+				}
+
 				str = SprEngine.FillIfExists(str, @"{APPDIR}", new ProtectedString(
 					false, UrlUtil.GetFileDirectory(m_strAppExePath, false, false)),
 					ctx, uRecursionLevel);
+			}
 
 			if(ctx.Database != null)
 			{
@@ -658,6 +656,27 @@ namespace KeePass.Util.Spr
 		//	return (strText.IndexOfAny(m_vPlhEscapes) >= 0);
 		// }
 
+		internal static bool MightChange(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			int iBStart = str.IndexOf('{');
+			if(iBStart >= 0)
+			{
+				int iBEnd = str.LastIndexOf('}');
+				if(iBStart < iBEnd) return true;
+			}
+
+			int iPFirst = str.IndexOf('%');
+			if(iPFirst >= 0)
+			{
+				int iPLast = str.LastIndexOf('%');
+				if(iPFirst < iPLast) return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Fast probabilistic test whether a string might be
 		/// changed when compiling with <c>SprCompileFlags.Deref</c>.
@@ -789,6 +808,30 @@ namespace KeePass.Util.Spr
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
+
+			return str;
+		}
+
+		private static string FillGroupPlh(string strData, string strPlhPrefix,
+			PwGroup pg, SprContext ctx, uint uRecursionLevel)
+		{
+			Debug.Assert(strPlhPrefix.StartsWith("{"));
+			Debug.Assert(!strPlhPrefix.EndsWith("_"));
+			Debug.Assert(!strPlhPrefix.EndsWith("}"));
+
+			string str = strData;
+
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"}",
+				new ProtectedString(false, pg.Name), ctx, uRecursionLevel);
+
+			ProtectedString psGroupPath = new ProtectedString(false, pg.GetFullPath());
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"_PATH}", psGroupPath,
+				ctx, uRecursionLevel);
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"PATH}", psGroupPath,
+				ctx, uRecursionLevel); // Obsolete; for backward compatibility
+
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"_NOTES}",
+				new ProtectedString(false, pg.Notes), ctx, uRecursionLevel);
 
 			return str;
 		}

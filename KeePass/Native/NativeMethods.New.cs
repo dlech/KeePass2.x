@@ -692,5 +692,12 @@ namespace KeePass.Native
 
 			return false;
 		}
+
+		internal static bool? IsKeyDownMessage(ref Message m)
+		{
+			if(m.Msg == NativeMethods.WM_KEYDOWN) return true;
+			if(m.Msg == NativeMethods.WM_KEYUP) return false;
+			return null;
+		}
 	}
 }

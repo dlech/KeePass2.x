@@ -50,6 +50,9 @@
 			this.m_ctxGroupRearrSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxGroupSort = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupRearrSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxGroupExpand = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxGroupCollapse = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxPwList = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyPassword = new System.Windows.Forms.ToolStripMenuItem();
@@ -357,7 +360,10 @@
             this.m_ctxGroupMoveToBottom,
             this.m_ctxGroupRearrSep0,
             this.m_ctxGroupSort,
-            this.m_ctxGroupSortRec});
+            this.m_ctxGroupSortRec,
+            this.m_ctxGroupRearrSep1,
+            this.m_ctxGroupExpand,
+            this.m_ctxGroupCollapse});
 			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
 			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(177, 22);
 			this.m_ctxGroupRearrange.Text = "&Rearrange";
@@ -375,7 +381,7 @@
 			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
 			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveOneUp.Text = "Move Group &One Up";
+			this.m_ctxGroupMoveOneUp.Text = "Move Group One &Up";
 			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
 			// 
 			// m_ctxGroupMoveOneDown
@@ -383,7 +389,7 @@
 			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
 			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveOneDown.Text = "Mo&ve Group One Down";
+			this.m_ctxGroupMoveOneDown.Text = "Move Group One &Down";
 			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
 			// 
 			// m_ctxGroupMoveToBottom
@@ -412,8 +418,29 @@
 			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
 			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupSortRec.Text = "So&rt Subgroup Tree";
+			this.m_ctxGroupSortRec.Text = "Sort &Recursively";
 			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
+			// 
+			// m_ctxGroupRearrSep1
+			// 
+			this.m_ctxGroupRearrSep1.Name = "m_ctxGroupRearrSep1";
+			this.m_ctxGroupRearrSep1.Size = new System.Drawing.Size(196, 6);
+			// 
+			// m_ctxGroupExpand
+			// 
+			this.m_ctxGroupExpand.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
+			this.m_ctxGroupExpand.Name = "m_ctxGroupExpand";
+			this.m_ctxGroupExpand.Size = new System.Drawing.Size(199, 22);
+			this.m_ctxGroupExpand.Text = "&Expand Recursively";
+			this.m_ctxGroupExpand.Click += new System.EventHandler(this.OnGroupsExpand);
+			// 
+			// m_ctxGroupCollapse
+			// 
+			this.m_ctxGroupCollapse.Image = global::KeePass.Properties.Resources.B16x16_Folder;
+			this.m_ctxGroupCollapse.Name = "m_ctxGroupCollapse";
+			this.m_ctxGroupCollapse.Size = new System.Drawing.Size(199, 22);
+			this.m_ctxGroupCollapse.Text = "&Collapse Recursively";
+			this.m_ctxGroupCollapse.Click += new System.EventHandler(this.OnGroupsCollapse);
 			// 
 			// m_ctxPwList
 			// 
@@ -437,7 +464,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(209, 352);
+			this.m_ctxPwList.Size = new System.Drawing.Size(209, 374);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -784,7 +811,7 @@
 			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
 			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
 			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveOneUp.Text = "Move Entry &One Up";
+			this.m_ctxEntryMoveOneUp.Text = "Move Entry One &Up";
 			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
 			// 
 			// m_ctxEntryMoveOneDown
@@ -792,7 +819,7 @@
 			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
 			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
 			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveOneDown.Text = "Mo&ve Entry One Down";
+			this.m_ctxEntryMoveOneDown.Text = "Move Entry One &Down";
 			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
 			// 
 			// m_ctxEntryMoveToBottom
@@ -2189,6 +2216,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncRecentDummy;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySelectedSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveToGroup;
+		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupExpand;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupCollapse;
 	}
 }
 

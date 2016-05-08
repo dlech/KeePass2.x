@@ -1523,7 +1523,7 @@
             <summary>
             Benchmark key transformation.
             </summary>
-            <param name="uTimeMs">Number of seconds to perform the benchmark.</param>
+            <param name="uTimeMs">Number of milliseconds to perform the benchmark.</param>
             <param name="puRounds">Number of transformations done.</param>
             <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
         </member>
@@ -1782,26 +1782,6 @@
             <summary>
             Closes the currently opened database. No confirmation message is shown
             before closing. Unsaved changes will be lost.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.PwDatabase.MergeIn(KeePassLib.PwDatabase,KeePassLib.PwMergeMethod,KeePassLib.Interfaces.IStatusLogger)">
-            <summary>
-            Synchronize the current database with another one.
-            </summary>
-            <param name="pdSource">Input database to synchronize with. This input
-            database is used to update the current one, but is not modified! You
-            must copy the current object if you want a second instance of the
-            synchronized database. The input database must not be seen as valid
-            database any more after calling <c>Synchronize</c>.</param>
-            <param name="mm">Merge method.</param>
-            <param name="slStatus">Logger to report status messages to.
-            May be <c>null</c>.</param>
-        </member>
-        <member name="M:KeePassLib.PwDatabase.ObjectListRequiresReorder``1(KeePassLib.Collections.PwObjectList{``0},KeePassLib.Collections.PwObjectPool,KeePassLib.Collections.PwObjectPool,System.Boolean)">
-            <summary>
-            Method to check whether a reordering is required. This fast test
-            allows to skip the reordering routine, resulting in a large
-            performance increase.
             </summary>
         </member>
         <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">

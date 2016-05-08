@@ -61,7 +61,7 @@ namespace KeePass.DataExchange.Formats
 			PwDatabase pd = (pwExportInfo.ContextDatabase ?? new PwDatabase());
 
 			PwObjectList<PwDeletedObject> vDel = null;
-			if(pwExportInfo.ExportDeletedObjects == false)
+			if(!pwExportInfo.ExportDeletedObjects)
 			{
 				vDel = pd.DeletedObjects.CloneShallow();
 				pd.DeletedObjects.Clear();

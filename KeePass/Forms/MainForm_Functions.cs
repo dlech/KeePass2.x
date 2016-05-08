@@ -390,10 +390,10 @@ namespace KeePass.Forms
 				m_tvGroups.BackColor = AppDefs.ColorControlNormal;
 			}
 
-			PwGroup pgInitial = GetSelectedGroup();
 			PwEntry pe = s.SelectedEntry;
-			if(pe != null)
+			if(Program.Config.MainWindow.EntrySelGroupSel && (pe != null))
 			{
+				PwGroup pgInitial = GetSelectedGroup();
 				PwGroup pgToSel = pe.ParentGroup;
 				if((pgToSel != null) && (pgToSel != pgInitial))
 					SetSelectedGroup(pgToSel, true);
@@ -618,6 +618,9 @@ namespace KeePass.Forms
 
 			m_ctxGroupSort.Enabled = ((pg != null) && (pg.Groups.UCount > 1));
 			m_ctxGroupSortRec.Enabled = (uSubGroups > 1);
+
+			m_ctxGroupExpand.Enabled = (uSubGroups > 0);
+			m_ctxGroupCollapse.Enabled = (uSubGroups > 0);
 
 			bool bShowEmpty = false, bEnableEmpty = false;
 			if((pd != null) && pd.RecycleBinEnabled)
@@ -1347,8 +1350,8 @@ namespace KeePass.Forms
 
 				if(tn.Nodes.Count > 0)
 				{
-					if((tn.IsExpanded) && (!pg.IsExpanded)) tn.Collapse();
-					else if((!tn.IsExpanded) && (pg.IsExpanded)) tn.Expand();
+					if(tn.IsExpanded && !pg.IsExpanded) tn.Collapse();
+					else if(!tn.IsExpanded && pg.IsExpanded) tn.Expand();
 				}
 
 				if(pg == pgFind) tnFound = tn;
@@ -2084,7 +2087,7 @@ namespace KeePass.Forms
 			bool bAbort;
 			if(cmpKey == null)
 			{
-				for(int iTry = 0; iTry < 3; ++iTry)
+				for(int iTry = 0; iTry < Program.Config.Security.MasterKeyTries; ++iTry)
 				{
 					OdKpfConstructParams kpfParams = new OdKpfConstructParams();
 					kpfParams.IOConnectionInfo = ioc;
@@ -4038,6 +4041,21 @@ namespace KeePass.Forms
 			if(n > 1)
 				m_tabMain.SelectedIndex = ((m_tabMain.SelectedIndex +
 					iDir + n) % n);
+		}
+
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if(keyData == Keys.Escape)
+			{
+				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
+				if(obKeyDown.HasValue)
+				{
+					if(obKeyDown.Value) LockAllDocuments();
+					return true;
+				}
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		private bool HandleMainWindowKeyMessage(KeyEventArgs e, bool bDown)

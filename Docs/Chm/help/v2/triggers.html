@@ -298,7 +298,15 @@ Export the currently opened and active database to a file.
 <li><i>File/URL:</i> Path of the target file to export to.
 If it is an URL, the protocol (prefix) must be specified.</li>
 <li><i>File format:</i> Specifies the export format (see the export
-dialog for possible values).<br /><br /></li>
+dialog for possible values).</li>
+<li><i>Filter - Group:</i> Specifies the path of the group to export
+(optional; an empty string means the whole database).
+The path must start with the character used as separator, and the
+name of the root group of the database must not be specified.
+For example, to export a group 'B' that is a subgroup of the group
+'A', specify <code>/A/B</code> as group path.</li>
+<li><i>Filter - Tag:</i> Export only the entries that have the
+specified tag (optional parameter).<br /><br /></li>
 </ul></li>
 
 <li><b>Close active database:</b><br />

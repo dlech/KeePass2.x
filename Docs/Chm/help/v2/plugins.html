@@ -84,8 +84,7 @@ into the KeePass directory.</p>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_file_locked.png" class="singleimg" alt="Locked" />&nbsp;&nbsp;Security</h2>
 
-<p><i>What about the security of plugins? Can't malicious
-spyware plugins
+<p><i>What about the security of plugins? Can't malicious plugins
 'inject' themselves into KeePass?</i></p>
 
 <p>If plugins can register themselves
@@ -93,17 +92,18 @@ spyware plugins
 replace the whole <i>KeePass.exe</i>. It's rather a problem of file access
 rights, not the plugin system.</p>
 
-<p>If you worry about this, you can do the following:</p>
+<p>If you worry about this,
+install KeePass as administrator into the program files directory
+(which is the default, typically in a folder in 'C:\Program Files (x86)').
+Afterwards, run KeePass and other applications only as normal user
+(without administrator privileges).</p>
 
-<ol>
-<li>Install KeePass as administrator.</li>
-<li>Write-protect the KeePass directory. Nobody must have write access.</li>
-<li>Log on as normal user (with no administrator privileges).</li>
-</ol>
-
-<p>This will solve the problem above. Since the KeePass directory is write-protected,
-no other program can copy files into it. KeePass requires the plugins to
+<p>This solves the problem above. As the KeePass directory is write-protected
+for normal users, no other program can copy files into it. KeePass requires the plugins to
 be in the application directory. Therefore, plugins cannot inject themselves anymore.</p>
+
+<p>If you use the portable package of KeePass or installed it into a different
+directory, you need to adjust the directory permissions yourself.</p>
 
 <br />
 

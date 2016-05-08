@@ -760,7 +760,7 @@ namespace KeePassLib.Utility
 			return sb.ToString();
 		}
 
-		private static Regex g_rxNaturalSplit = null;
+		/* private static Regex g_rxNaturalSplit = null;
 		public static int CompareNaturally(string strX, string strY)
 		{
 			Debug.Assert(strX != null);
@@ -771,34 +771,31 @@ namespace KeePassLib.Utility
 			if(NativeMethods.SupportsStrCmpNaturally)
 				return NativeMethods.StrCmpNaturally(strX, strY);
 
-			strX = strX.ToLower(); // Case-insensitive comparison
-			strY = strY.ToLower();
-
 			if(g_rxNaturalSplit == null)
 				g_rxNaturalSplit = new Regex(@"([0-9]+)", RegexOptions.Compiled);
 
 			string[] vPartsX = g_rxNaturalSplit.Split(strX);
 			string[] vPartsY = g_rxNaturalSplit.Split(strY);
 
-			for(int i = 0; i < Math.Min(vPartsX.Length, vPartsY.Length); ++i)
+			int n = Math.Min(vPartsX.Length, vPartsY.Length);
+			for(int i = 0; i < n; ++i)
 			{
 				string strPartX = vPartsX[i], strPartY = vPartsY[i];
 				int iPartCompare;
 
 #if KeePassLibSD
-				ulong uX = 0, uY = 0;
 				try
 				{
-					uX = ulong.Parse(strPartX);
-					uY = ulong.Parse(strPartY);
+					ulong uX = ulong.Parse(strPartX);
+					ulong uY = ulong.Parse(strPartY);
 					iPartCompare = uX.CompareTo(uY);
 				}
-				catch(Exception) { iPartCompare = strPartX.CompareTo(strPartY); }
+				catch(Exception) { iPartCompare = string.Compare(strPartX, strPartY, true); }
 #else
 				ulong uX, uY;
 				if(ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
 					iPartCompare = uX.CompareTo(uY);
-				else iPartCompare = strPartX.CompareTo(strPartY);
+				else iPartCompare = string.Compare(strPartX, strPartY, true);
 #endif
 
 				if(iPartCompare != 0) return iPartCompare;
@@ -806,6 +803,106 @@ namespace KeePassLib.Utility
 
 			if(vPartsX.Length == vPartsY.Length) return 0;
 			if(vPartsX.Length < vPartsY.Length) return -1;
+			return 1;
+		} */
+
+		public static int CompareNaturally(string strX, string strY)
+		{
+			Debug.Assert(strX != null);
+			if(strX == null) throw new ArgumentNullException("strX");
+			Debug.Assert(strY != null);
+			if(strY == null) throw new ArgumentNullException("strY");
+
+			if(NativeMethods.SupportsStrCmpNaturally)
+				return NativeMethods.StrCmpNaturally(strX, strY);
+
+			int cX = strX.Length;
+			int cY = strY.Length;
+			if(cX == 0) return ((cY == 0) ? 0 : -1);
+			if(cY == 0) return 1;
+
+			char chFirstX = strX[0];
+			char chFirstY = strY[0];
+			bool bExpNum = ((chFirstX >= '0') && (chFirstX <= '9'));
+			bool bExpNumY = ((chFirstY >= '0') && (chFirstY <= '9'));
+			if(bExpNum != bExpNumY) return string.Compare(strX, strY, true);
+
+			int pX = 0;
+			int pY = 0;
+			while((pX < cX) && (pY < cY))
+			{
+				Debug.Assert(((strX[pX] >= '0') && (strX[pX] <= '9')) == bExpNum);
+				Debug.Assert(((strY[pY] >= '0') && (strY[pY] <= '9')) == bExpNum);
+
+				int pExclX = pX + 1;
+				while(pExclX < cX)
+				{
+					char ch = strX[pExclX];
+					bool bChNum = ((ch >= '0') && (ch <= '9'));
+					if(bChNum != bExpNum) break;
+					++pExclX;
+				}
+
+				int pExclY = pY + 1;
+				while(pExclY < cY)
+				{
+					char ch = strY[pExclY];
+					bool bChNum = ((ch >= '0') && (ch <= '9'));
+					if(bChNum != bExpNum) break;
+					++pExclY;
+				}
+
+				string strPartX = strX.Substring(pX, pExclX - pX);
+				string strPartY = strY.Substring(pY, pExclY - pY);
+
+				bool bStrCmp = true;
+				if(bExpNum)
+				{
+					// 2^64 - 1 = 18446744073709551615 has length 20
+					if((strPartX.Length <= 19) && (strPartY.Length <= 19))
+					{
+						ulong uX, uY;
+						if(ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
+						{
+							if(uX < uY) return -1;
+							if(uX > uY) return 1;
+
+							bStrCmp = false;
+						}
+						else { Debug.Assert(false); }
+					}
+					else
+					{
+						double dX, dY;
+						if(double.TryParse(strPartX, out dX) && double.TryParse(strPartY, out dY))
+						{
+							if(dX < dY) return -1;
+							if(dX > dY) return 1;
+
+							bStrCmp = false;
+						}
+						else { Debug.Assert(false); }
+					}
+				}
+				if(bStrCmp)
+				{
+					int c = string.Compare(strPartX, strPartY, true);
+					if(c != 0) return c;
+				}
+
+				bExpNum = !bExpNum;
+				pX = pExclX;
+				pY = pExclY;
+			}
+
+			if(pX >= cX)
+			{
+				Debug.Assert(pX == cX);
+				if(pY >= cY) { Debug.Assert(pY == cY); return 0; }
+				return -1;
+			}
+
+			Debug.Assert(pY == cY);
 			return 1;
 		}
 

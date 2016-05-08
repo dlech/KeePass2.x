@@ -408,6 +408,10 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SetProcessDPIAware();
 
+		[DllImport("ShCore.dll")]
+		internal static extern int SetProcessDpiAwareness(
+			[MarshalAs(UnmanagedType.U4)] ProcessDpiAwareness a);
+
 		[DllImport("Kernel32.dll")]
 		internal static extern IntPtr CreateToolhelp32Snapshot(
 			[MarshalAs(UnmanagedType.U4)] ToolHelpFlags dwFlags, uint th32ProcessID);

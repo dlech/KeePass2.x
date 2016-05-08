@@ -205,23 +205,23 @@ namespace KeePass.UI
 			}
 		}
 
-		private void AddAppByFile(string strAppCmdLine, string strName)
+		private bool AddAppByFile(string strAppCmdLine, string strName)
 		{
-			if(string.IsNullOrEmpty(strAppCmdLine)) return; // No assert
+			if(string.IsNullOrEmpty(strAppCmdLine)) return false; // No assert
 
 			string strPath = UrlUtil.GetShortestAbsolutePath(
 				UrlUtil.GetQuotedAppPath(strAppCmdLine).Trim());
-			if(strPath.Length == 0) { Debug.Assert(false); return; }
+			if(strPath.Length == 0) { Debug.Assert(false); return false; }
 
 			foreach(OpenWithItem it in m_lOpenWith)
 			{
 				if(it.FilePath.Equals(strPath, StrUtil.CaseIgnoreCmp))
-					return; // Already have an item for this
+					return false; // Already have an item for this
 			}
 
 			// Filter non-existing/legacy applications
-			try { if(!File.Exists(strPath)) return; }
-			catch(Exception) { Debug.Assert(false); return; }
+			try { if(!File.Exists(strPath)) return false; }
+			catch(Exception) { Debug.Assert(false); return false; }
 
 			if(string.IsNullOrEmpty(strName))
 				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(strPath));
@@ -233,6 +233,7 @@ namespace KeePass.UI
 			OpenWithItem owi = new OpenWithItem(strPath, OwFilePathType.Executable,
 				strMenuText, img, m_dynMenu);
 			m_lOpenWith.Add(owi);
+			return true;
 		}
 
 		private void AddAppByShellExpand(string strShell, string strName,
@@ -257,10 +258,8 @@ namespace KeePass.UI
 		private void FindAppsByKnown()
 		{
 			string strIE = AppLocator.InternetExplorerPath;
-			if(!string.IsNullOrEmpty(strIE))
+			if(AddAppByFile(strIE, @"&Internet Explorer"))
 			{
-				AddAppByFile(strIE, @"&Internet Explorer");
-
 				// https://msdn.microsoft.com/en-us/library/hh826025.aspx
 				AddAppByShellExpand("cmd://\"" + strIE + "\" -private \"" +
 					PlhTargetUri + "\"", "Internet Explorer (" + KPRes.Private + ")", strIE);
@@ -271,10 +270,8 @@ namespace KeePass.UI
 					AppLocator.EdgePath);
 
 			string strFF = AppLocator.FirefoxPath;
-			if(!string.IsNullOrEmpty(strFF))
+			if(AddAppByFile(strFF, @"&Firefox"))
 			{
-				AddAppByFile(strFF, @"&Firefox");
-
 				// The command line options -private and -private-window do not work;
 				// https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=856839
@@ -284,10 +281,8 @@ namespace KeePass.UI
 			}
 
 			string strCh = AppLocator.ChromePath;
-			if(!string.IsNullOrEmpty(strCh))
+			if(AddAppByFile(strCh, @"&Google Chrome"))
 			{
-				AddAppByFile(strCh, @"&Google Chrome");
-
 				// https://www.chromium.org/developers/how-tos/run-chromium-with-flags
 				// http://peter.sh/examples/?/chromium-switches.html
 				AddAppByShellExpand("cmd://\"" + strCh + "\" --incognito \"" +
@@ -295,12 +290,14 @@ namespace KeePass.UI
 			}
 
 			string strOp = AppLocator.OperaPath;
-			if(!string.IsNullOrEmpty(strOp))
+			if(AddAppByFile(strOp, @"O&pera"))
 			{
-				AddAppByFile(strOp, @"O&pera");
-
 				// Doesn't work with Opera 34.0.2036.25:
 				// AddAppByShellExpand("cmd://\"" + strOp + "\" -newprivatetab \"" +
+				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+
+				// Doesn't work with Opera 36.0.2130.65:
+				// AddAppByShellExpand("cmd://\"" + strOp + "\" --incognito \"" +
 				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
 			}
 

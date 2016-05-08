@@ -367,7 +367,10 @@ namespace KeePassLib.Native
 		public static bool TransformKey256(byte[] pBuf256, byte[] pKey256,
 			ulong uRounds)
 		{
-			if(m_bAllowNative == false) return false;
+#if KeePassUAP
+			return false;
+#else
+			if(!m_bAllowNative) return false;
 
 			KeyValuePair<IntPtr, IntPtr> kvp = PrepareArrays256(pBuf256, pKey256);
 			bool bResult = false;
@@ -382,24 +385,29 @@ namespace KeePassLib.Native
 
 			FreeArrays(kvp);
 			return bResult;
+#endif
 		}
 
 		/// <summary>
 		/// Benchmark key transformation.
 		/// </summary>
-		/// <param name="uTimeMs">Number of seconds to perform the benchmark.</param>
+		/// <param name="uTimeMs">Number of milliseconds to perform the benchmark.</param>
 		/// <param name="puRounds">Number of transformations done.</param>
 		/// <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
 		public static bool TransformKeyBenchmark256(uint uTimeMs, out ulong puRounds)
 		{
 			puRounds = 0;
 
+#if KeePassUAP
+			return false;
+#else
 			if(!m_bAllowNative) return false;
 
 			try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
 			catch(Exception) { return false; }
 
 			return true;
+#endif
 		}
 
 		private static KeyValuePair<IntPtr, IntPtr> PrepareArrays256(byte[] pBuf256,

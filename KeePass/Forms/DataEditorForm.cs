@@ -528,12 +528,12 @@ namespace KeePass.Forms
 		{
 			if(keyData == Keys.Escape)
 			{
-				if(msg.Msg == NativeMethods.WM_KEYDOWN)
+				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
+				if(obKeyDown.HasValue)
 				{
-					this.Close();
+					if(obKeyDown.Value) this.Close();
 					return true;
 				}
-				else if(msg.Msg == NativeMethods.WM_KEYUP) return true;
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);

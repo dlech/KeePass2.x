@@ -313,10 +313,10 @@ namespace KeePassLib.Utility
 					return strTargetFile;
 			}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassUAP)
 			if(NativeLib.IsUnix())
-#endif
 			{
+#endif
 				bool bBaseUnc = IsUncPath(strBaseFile);
 				bool bTargetUnc = IsUncPath(strTargetFile);
 				if((!bBaseUnc && bTargetUnc) || (bBaseUnc && !bTargetUnc))
@@ -344,9 +344,9 @@ namespace KeePassLib.Utility
 				}
 
 				return sbRel.ToString();
+#if (!KeePassLibSD && !KeePassUAP)
 			}
 
-#if !KeePassLibSD
 			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
