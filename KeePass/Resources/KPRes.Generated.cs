@@ -254,6 +254,7 @@ namespace KeePass.Resources
 			m_strError = TryGetEx(dictNew, "Error", m_strError);
 			m_strErrorCode = TryGetEx(dictNew, "ErrorCode", m_strErrorCode);
 			m_strErrors = TryGetEx(dictNew, "Errors", m_strErrors);
+			m_strEscMinimizesToTray = TryGetEx(dictNew, "EscMinimizesToTray", m_strEscMinimizesToTray);
 			m_strEvent = TryGetEx(dictNew, "Event", m_strEvent);
 			m_strExecuteCmdLineUrl = TryGetEx(dictNew, "ExecuteCmdLineUrl", m_strExecuteCmdLineUrl);
 			m_strExitInsteadOfLockingAfterTime = TryGetEx(dictNew, "ExitInsteadOfLockingAfterTime", m_strExitInsteadOfLockingAfterTime);
@@ -425,7 +426,8 @@ namespace KeePass.Resources
 			m_strLocked = TryGetEx(dictNew, "Locked", m_strLocked);
 			m_strLockMenuLock = TryGetEx(dictNew, "LockMenuLock", m_strLockMenuLock);
 			m_strLockMenuUnlock = TryGetEx(dictNew, "LockMenuUnlock", m_strLockMenuUnlock);
-			m_strLockOnMinimize = TryGetEx(dictNew, "LockOnMinimize", m_strLockOnMinimize);
+			m_strLockOnMinimizeTaskbar = TryGetEx(dictNew, "LockOnMinimizeTaskbar", m_strLockOnMinimizeTaskbar);
+			m_strLockOnMinimizeTray = TryGetEx(dictNew, "LockOnMinimizeTray", m_strLockOnMinimizeTray);
 			m_strLockOnRemoteControlChange = TryGetEx(dictNew, "LockOnRemoteControlChange", m_strLockOnRemoteControlChange);
 			m_strLockOnSessionSwitch = TryGetEx(dictNew, "LockOnSessionSwitch", m_strLockOnSessionSwitch);
 			m_strLockOnSuspend = TryGetEx(dictNew, "LockOnSuspend", m_strLockOnSuspend);
@@ -987,6 +989,7 @@ namespace KeePass.Resources
 			"Error",
 			"ErrorCode",
 			"Errors",
+			"EscMinimizesToTray",
 			"Event",
 			"ExecuteCmdLineUrl",
 			"ExitInsteadOfLockingAfterTime",
@@ -1158,7 +1161,8 @@ namespace KeePass.Resources
 			"Locked",
 			"LockMenuLock",
 			"LockMenuUnlock",
-			"LockOnMinimize",
+			"LockOnMinimizeTaskbar",
+			"LockOnMinimizeTray",
 			"LockOnRemoteControlChange",
 			"LockOnSessionSwitch",
 			"LockOnSuspend",
@@ -4004,6 +4008,17 @@ namespace KeePass.Resources
 			get { return m_strErrors; }
 		}
 
+		private static string m_strEscMinimizesToTray =
+			@"Esc minimizes to tray instead of locking the workspace";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Esc minimizes to tray instead of locking the workspace'.
+		/// </summary>
+		public static string EscMinimizesToTray
+		{
+			get { return m_strEscMinimizesToTray; }
+		}
+
 		private static string m_strEvent =
 			@"Event";
 		/// <summary>
@@ -5885,15 +5900,26 @@ namespace KeePass.Resources
 			get { return m_strLockMenuUnlock; }
 		}
 
-		private static string m_strLockOnMinimize =
-			@"Lock workspace when minimizing main window";
+		private static string m_strLockOnMinimizeTaskbar =
+			@"Lock workspace when minimizing main window to taskbar";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Lock workspace when minimizing main window'.
+		/// 'Lock workspace when minimizing main window to taskbar'.
 		/// </summary>
-		public static string LockOnMinimize
+		public static string LockOnMinimizeTaskbar
 		{
-			get { return m_strLockOnMinimize; }
+			get { return m_strLockOnMinimizeTaskbar; }
+		}
+
+		private static string m_strLockOnMinimizeTray =
+			@"Lock workspace when minimizing main window to tray";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Lock workspace when minimizing main window to tray'.
+		/// </summary>
+		public static string LockOnMinimizeTray
+		{
+			get { return m_strLockOnMinimizeTray; }
 		}
 
 		private static string m_strLockOnRemoteControlChange =

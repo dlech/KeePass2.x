@@ -61,7 +61,9 @@ About the XML replacement functionality.
 <li><a href="#atresetifstddelay">Reset default sequences that contain <code>{DELAY=</code></a></li>
 <li><a href="#ataddassoc">Add an auto-type association to all entries</a></li>
 </ul></li>
+<li><a href="#copyurls">Copy entry URLs into title fields</a></li>
 <li><a href="#copytitles">Copy entry titles into empty user name fields</a></li>
+<li><a href="#firstnotempty">Ensure first line is not empty</a></li>
 </ul></li>
 </ul>
 
@@ -347,6 +349,24 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 
 <br />
 
+<a name="copyurls"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Copy entry URLs into title fields</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner XML</td></tr>
+<tr><td>Find what:</td><td><code>(?s)(&lt;Key&gt;Title&lt;/Key&gt;\s*)(&lt;Value&gt;.*?&lt;/Value&gt;|&lt;Value\s*/&gt;)(.*?&lt;Key&gt;URL&lt;/Key&gt;\s*)(&lt;Value&gt;.*?&lt;/Value&gt;|&lt;Value\s*/&gt;)</code></td></tr>
+<tr><td>Replace with:</td><td><code>$1$4$3$4</code></td></tr>
+<tr><td>Case-sensitive:</td><td>Activated</td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">Copies the entry URL into the title field of the
+entry (overwriting any existing data in the title field).</td></tr>
+</table>
+
+<br />
+
 <a name="copytitles"></a>
 <table class="tablebox">
 <colgroup><col width="20%" /><col width="80%" /></colgroup>
@@ -361,6 +381,35 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 <tr><td>Regular expressions:</td><td>Activated</td></tr>
 <tr><td colspan="2">Copies the entry title into the user name field of the
 entry, if this field is empty.</td></tr>
+</table>
+
+<br />
+
+<a name="firstnotempty"></a>
+<table class="tablebox">
+<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<tr><th colspan="2">Ensure first line is not empty</th></tr>
+<tr><td>Select nodes:</td>
+<td><code>//Entry/String/Value</code></td></tr>
+<tr><td>Action:</td><td>Replace data</td></tr>
+<tr><td>Data:</td><td>Inner text</td></tr>
+<tr><td>Find what:</td><td><code>(?s)^(\r?\n)</code></td></tr>
+<tr><td>Replace with:</td><td><code>--$1</code></td></tr>
+<tr><td>Regular expressions:</td><td>Activated</td></tr>
+<tr><td colspan="2">For all multi-line fields,
+this inserts '<code>--</code>' into the first line of the field value,
+if this line is empty and the value has at least two lines.
+For example,<br />
+<br />
+<div style="font-family: monospace; background-color: #C6C6C6; display: block;"><br />
+<br />
+Sample data</div>
+<br />
+is replaced by<br />
+<br />
+<div style="font-family: monospace; background-color: #C6C6C6; display: block;">--<br />
+<br />
+Sample data</div></td></tr>
 </table>
 
 </body></html>

@@ -20,14 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Media;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Globalization;
-using System.Diagnostics;
-using System.Security;
-using System.Media;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -385,8 +386,43 @@ namespace KeePass.Forms
 
 			m_pluginManager.UnloadAllPlugins();
 			if(AppPolicy.Current.Plugins)
-				m_pluginManager.LoadAllPlugins(UrlUtil.GetFileDirectory(
-					WinUtil.GetExecutable(), false, true));
+			{
+				string[] vExclNames = new string[] {
+					AppDefs.FileNames.Program, AppDefs.FileNames.XmlSerializers,
+					AppDefs.FileNames.NativeLib32, AppDefs.FileNames.NativeLib64,
+					AppDefs.FileNames.ShInstUtil
+				};
+
+				string strPlgRoot = UrlUtil.GetFileDirectory(
+					WinUtil.GetExecutable(), false, true);
+				m_pluginManager.LoadAllPlugins(strPlgRoot, SearchOption.TopDirectoryOnly,
+					vExclNames);
+
+				if(!NativeLib.IsUnix())
+				{
+					string strPlgSub = UrlUtil.EnsureTerminatingSeparator(strPlgRoot,
+						false) + AppDefs.PluginsDir;
+					m_pluginManager.LoadAllPlugins(strPlgSub, SearchOption.AllDirectories,
+						vExclNames);
+				}
+				else // Unix
+				{
+					try
+					{
+						DirectoryInfo diPlgRoot = new DirectoryInfo(strPlgRoot);
+						foreach(DirectoryInfo diSub in diPlgRoot.GetDirectories())
+						{
+							if(diSub == null) { Debug.Assert(false); continue; }
+
+							if(string.Equals(diSub.Name, AppDefs.PluginsDir,
+								StrUtil.CaseIgnoreCmp))
+								m_pluginManager.LoadAllPlugins(diSub.FullName,
+									SearchOption.AllDirectories, vExclNames);
+						}
+					}
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
 
 			// Delete old files *after* loading plugins (when timestamps
 			// of loaded plugins have been updated already)

@@ -8,11 +8,11 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.33"
-#define KeeVersionStrWithMinor "2.33"
-#define KeeVersionStrWithMinorPath "2.33"
-#define KeeVersionWin "2.33.0.0"
-#define KeeVersionWinShort "2.33"
+#define KeeVersionStr "2.34"
+#define KeeVersionStrWithMinor "2.34"
+#define KeeVersionStrWithMinorPath "2.34"
+#define KeeVersionWin "2.34.0.0"
+#define KeeVersionWinShort "2.34"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -89,6 +89,9 @@ Name: XSL; Description: XSL Stylesheets for KDBX XML Files; Types: full custom
 Name: NGen; Description: Optimize KeePass Performance; Types: full custom; ExtraDiskSpaceRequired: 1048576
 Name: PreLoad; Description: Optimize KeePass On-Demand Start-Up Performance; Types: full custom; ExtraDiskSpaceRequired: 2048
 ; Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: full custom
+
+[Dirs]
+Name: "{app}\Plugins"; Flags: uninsalwaysuninstall
 
 [Files]
 Source: ..\Build\KeePass_Distrib\KeePass.exe; DestDir: {app}; Flags: ignoreversion; Components: Core

@@ -154,6 +154,14 @@ namespace KeePass.Forms
 				m_lblPreviewHint.Visible = false;
 			}
 
+			if(!NativeLib.IsUnix())
+			{
+				// MSHTML may create and forget temporary files under
+				// C:\\Users\\USER\\AppData\\Local\\Temp\\*.htm
+				// (e.g. when printing fails); we delete these later
+				Program.TempFilesPool.AddContent("*.htm", false);
+			}
+
 			UpdateHtmlDocument();
 			UpdateUIState();
 		}
@@ -303,8 +311,12 @@ namespace KeePass.Forms
 			sb.AppendLine("\tword-wrap: break-word;");
 			sb.AppendLine("}");
 
-			sb.AppendLine("--></style>");
+			// Add the temporary content identifier
+			sb.AppendLine("." + Program.TempFilesPool.TempContentTag + " {");
+			sb.AppendLine("\tfont-size: 10pt;");
+			sb.AppendLine("}");
 
+			sb.AppendLine("--></style>");
 			sb.AppendLine("</head><body>");
 
 			sb.AppendLine("<h2>" + StrUtil.StringToHtml(pgDataSource.Name) + "</h2>");

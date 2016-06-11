@@ -1,3 +1,33 @@
+2016-06-11: 2.34
+- The version information file (which the optional update check
+  downloads to see if there exists a newer version) is now
+  digitally signed (using RSA-4096 / SHA-512); furthermore, it
+  is downloaded over HTTPS
+- Added option 'Lock workspace when minimizing main window to
+  tray'
+- Added option 'Esc minimizes to tray instead of locking the
+  workspace'
+- Added Ctrl+Q shortcut for closing KeePass (as alternative to
+  Alt+F4)
+- Added UIFlags bit for disabling the 'Check for Updates' menu
+  item
+- The installers (regular and MSI) now create an empty
+  'Plugins' folder in the application directory, and the
+  portable package now also contains such a folder
+- Plugins: added support for digitally signed version
+  information files
+
+- Plugins are now loaded only directly from the application
+  directory and from any subdirectory of the 'Plugins' folder
+  in the application directory
+- Improved startup performance (by filtering plugin candidates)
+- When closing a database, KeePass now searches and deletes any
+  temporary files that may have been created and forgotten by
+  MSHTML when printing failed
+- CHM help file: improved high DPI support
+- Various code optimizations
+- Minor other improvements
+
 2016-05-07: 2.33
 - Added commands in the group context menu (under 'Rearrange'):
   'Expand Recursively' and 'Collapse Recursively'

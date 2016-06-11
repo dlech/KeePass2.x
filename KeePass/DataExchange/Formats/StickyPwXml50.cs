@@ -39,7 +39,7 @@ namespace KeePass.DataExchange.Formats
 {
 	// KasperskyPwMgrXml50 derives from this
 
-	// 5.0.4.232
+	// 5.0.4.232-8.0.7.78+
 	internal class StickyPwXml50 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }

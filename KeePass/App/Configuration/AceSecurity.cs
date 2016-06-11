@@ -137,6 +137,14 @@ namespace KeePass.App.Configuration
 			set { m_bOnMinimize = value; }
 		}
 
+		private bool m_bOnMinimizeToTray = false;
+		[DefaultValue(false)]
+		public bool LockOnWindowMinimizeToTray
+		{
+			get { return m_bOnMinimizeToTray; }
+			set { m_bOnMinimizeToTray = value; }
+		}
+
 		private bool m_bOnSessionSwitch = false;
 		[DefaultValue(false)]
 		public bool LockOnSessionSwitch

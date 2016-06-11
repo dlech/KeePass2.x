@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2C4BB99BDFFD6AD5EE75AB32CB4E08F4"
+        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3CC719213A464E2A86E5E00FB7ABF68E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -53,12 +59,6 @@
         {
         "MsmKey" = "8:_81BBF30CE4CC438194FC340A84A065C1"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_838987B3C51D42C3C7B9BDA1339A5500"
-        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -118,7 +118,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_838987B3C51D42C3C7B9BDA1339A5500"
+        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -130,7 +130,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
+        "OwnerKey" = "8:_2C4BB99BDFFD6AD5EE75AB32CB4E08F4"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -298,6 +298,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2C4BB99BDFFD6AD5EE75AB32CB4E08F4"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.34.0.15991, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_2C4BB99BDFFD6AD5EE75AB32CB4E08F4"
+                    {
+                    "Name" = "8:KeePass.EXE"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:KeePass.EXE"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3CC719213A464E2A86E5E00FB7ABF68E"
             {
             "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\XSL\\TableHeader.gif"
@@ -378,42 +409,11 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_838987B3C51D42C3C7B9BDA1339A5500"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.33.0.17030, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_838987B3C51D42C3C7B9BDA1339A5500"
-                    {
-                    "Name" = "8:KeePass.EXE"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:KeePass.EXE"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8C05ADB649434D7892E36709EBDED4CC"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.33.0.17030, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.34.0.15991, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -564,7 +564,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.33.0.17030, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.34.0.15991, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -661,6 +661,17 @@
                         {
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_F7FA774F4B0E4A3FB0F1FA4743CF06C8"
+                    {
+                    "Name" = "8:Plugins"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_83A2FA647E5D4F68A9F210FC7878D245"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_8285FAA6D5774714AB190FF7FA5604FB"
@@ -711,15 +722,15 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.33"
-        "ProductCode" = "8:{E0493447-D92D-46B5-B3F9-18A642588915}"
-        "PackageCode" = "8:{05264D3D-1E04-4DEA-8B20-261905A044F7}"
+        "ProductName" = "8:KeePass 2.34"
+        "ProductCode" = "8:{36F0005F-4042-4768-8736-8F95CC3B742C}"
+        "PackageCode" = "8:{83DF0CF5-A5D5-40BE-9FDE-1761A38C6E00}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.33.0"
+        "ProductVersion" = "8:2.34.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://keepass.info/"

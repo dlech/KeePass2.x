@@ -2,9 +2,9 @@
 	Design Copyright (c) 2003-2016 Dominik Reichl
 */
 
-body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {
+body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a, kbd kbd {
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 13px;
+	font-size: 9.75pt;
 	font-weight: normal;
 	color: #000000;
 }
@@ -28,32 +28,32 @@ ul {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 15.00pt;
 	font-weight: bold;
 }
 
 h2 {
-	font-size: 18px;
+	font-size: 13.50pt;
 	font-weight: bold;
 }
 
 h3 {
-	font-size: 15px;
+	font-size: 11.25pt;
 	font-weight: bold;
 }
 
 h4 {
-	font-size: 13px;
+	font-size: 9.75pt;
 	font-weight: bold;
 }
 
 h5 {
-	font-size: 12px;
+	font-size: 9.00pt;
 	font-weight: bold;
 }
 
 h6 {
-	font-size: 10px;
+	font-size: 7.50pt;
 	font-weight: normal;
 }
 
@@ -68,9 +68,24 @@ hr {
 pre {
 	font-family: monospace;
 	background-color: #E6E6E6;
-	font-size: 11px;
+	font-size: 8.25pt;
 	overflow: auto;
 	display: block;
+}
+
+kbd kbd {
+	padding: 0px 4px 1px 4px;
+	border: 1px solid #808080;
+	border-collapse: collapse;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	box-shadow: 0.1em 0.15em 0.2em #C5C5C5;
+	color: #000000;
+	background-color: #EEEEEE;
+	background-image: -webkit-linear-gradient(top, #EEEEEE, #FAFAFA, #EEEEEE);
+	background-image: -moz-linear-gradient(top, #EEEEEE, #FAFAFA, #EEEEEE);
+	background-image: -ms-linear-gradient(top, #EEEEEE, #FAFAFA, #EEEEEE);
+	background-image: linear-gradient(to bottom, #EEEEEE, #FAFAFA, #EEEEEE);
 }
 
 /* --------------------------------------------------------------------- */
@@ -110,7 +125,7 @@ div.menubox div.menutitle {
 	background: url(./images/grad_h_gw.gif) repeat-y;
 	display: block;
 	font-weight: bold;
-	font-size: 10px;
+	font-size: 7.50pt;
 	padding: 1px 1px 1px 6px;
 	vertical-align: middle;
 	color: #005101;
@@ -122,7 +137,7 @@ div.menubox div.menutitlewide {
 	background: url(./images/grad_h_gw_186.gif) repeat-y;
 	display: block;
 	font-weight: bold;
-	font-size: 10px;
+	font-size: 7.50pt;
 	padding: 1px 1px 1px 6px;
 	vertical-align: middle;
 	color: #005101;
@@ -134,7 +149,7 @@ div.menubox a {
 	padding: 1px 1px 1px 1px;
 	border-collapse: collapse;
 	text-decoration: none;
-	font-size: 11px;
+	font-size: 8.25pt;
 	color: #000000;
 	vertical-align: middle;
 }
@@ -157,7 +172,7 @@ div.menubox a:hover {
 /* --------------------------------------------------------------------- */
 
 table.tablebox, table.tablebox75 {
-	background-color: #AFB5CF;
+	background-color: #EEEEEE;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	border-left: 1px solid #AFB5CF;
@@ -229,7 +244,7 @@ input.sansedit:hover, input.sansedit:focus, textarea.fixededit:hover, textarea.f
 
 input.sansedit {
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 13px;
+	font-size: 9.75pt;
 }
 
 textarea.fixededit {
@@ -265,7 +280,7 @@ div.specificbox {
 }
 
 div.specificbox div.specifictitle {
-	font-size: 10px;
+	font-size: 7.50pt;
 	font-weight: bold;
 	border-left: 0px none;
 	border-right: 0px none;
@@ -291,7 +306,7 @@ table.sectionsummary {
 table.sectionsummary tr td {
 	border: 0px;
 	vertical-align: middle;
-	font-size: 10px;
+	font-size: 7.50pt;
 	font-weight: normal;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
@@ -300,7 +315,7 @@ table.sectionsummary tr td {
 
 table.sectionsummary tr td h1 {
 	display: inline;
-	font-size: 20px;
+	font-size: 15.00pt;
 	font-weight: normal;
 }
 
@@ -308,13 +323,13 @@ table.sectionsummary tr td h1 {
 
 h2.sectiontitle {
 	display: block;
-	font-size: 13px;
+	font-size: 9.75pt;
 	font-weight: bold;
 	color: #000000;
 	background: url(./images/grad_v_dlb_tall_light.png) repeat-x top;
 	border: 1px solid #AFB5CF;
 	color: #005101;
-	min-height: 19px;
+	min-height: 14.25pt;
 	vertical-align: middle;
 	margin: 0px 0px 0px 0px;
 	padding: 2px 0px 0px 6px;
@@ -351,7 +366,7 @@ div.tipdiv {
 /* --------------------------------------------------------------------- */
 
 .il-m {
-	background: transparent url('./images/il_main_v01.png') no-repeat;
+	background: transparent url('./images/il_main_v02.png') no-repeat;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	border: 0px none;
@@ -369,13 +384,13 @@ div.tipdiv {
 .spr-m-lang-mh    { background-position: -111px  -47px; width: 31px; height: 21px; }
 .spr-m-ext-mh     { background-position: -144px   -1px; width: 31px; height: 21px; }
 .spr-m-write-mh   { background-position: -144px  -24px; width: 31px; height: 21px; }
-.spr-m-help-ml    { background-position: -177px   -1px; width: 31px; height: 16px; }
-.spr-m-info-ml    { background-position: -177px  -19px; width: 31px; height: 16px; }
-.spr-m-sec-ml     { background-position: -177px  -37px; width: 31px; height: 16px; }
-.spr-m-award-ml   { background-position: -210px   -1px; width: 31px; height: 16px; }
-.spr-m-links-ml   { background-position: -210px  -19px; width: 31px; height: 16px; }
-.spr-m-xmag-ml    { background-position: -210px  -37px; width: 31px; height: 16px; }
-.spr-m-donate-ml  { background-position:   -1px  -78px; width: 31px; height: 16px; }
+.spr-m-help-ml    { background-position: -177px   -1px; width: 31px; height: 18px; }
+.spr-m-info-ml    { background-position: -177px  -21px; width: 31px; height: 18px; }
+.spr-m-sec-ml     { background-position: -177px  -41px; width: 31px; height: 18px; }
+.spr-m-donate-ml  { background-position: -177px  -61px; width: 31px; height: 18px; }
+.spr-m-award-ml   { background-position: -210px   -1px; width: 31px; height: 18px; }
+.spr-m-links-ml   { background-position: -210px  -21px; width: 31px; height: 18px; }
+.spr-m-xmag-ml    { background-position: -210px  -41px; width: 31px; height: 18px; }
 .spr-m-osi-h      { background-position:   -1px  -96px; width: 72px; height: 60px; }
 .spr-m-award-s    { background-position:   -1px -158px; width: 16px; height: 16px; }
 .spr-m-feed-s     { background-position:  -19px -158px; width: 16px; height: 16px; }

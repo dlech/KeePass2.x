@@ -685,6 +685,9 @@
 		<Data Name="Errors">
 			<Value>Errors</Value>
 		</Data>
+		<Data Name="EscMinimizesToTray">
+			<Value>Esc minimizes to tray instead of locking the workspace</Value>
+		</Data>
 		<Data Name="Event">
 			<Value>Event</Value>
 		</Data>
@@ -1198,8 +1201,11 @@
 		<Data Name="LockMenuUnlock">
 			<Value>Un&amp;lock Workspace</Value>
 		</Data>
-		<Data Name="LockOnMinimize">
-			<Value>Lock workspace when minimizing main window</Value>
+		<Data Name="LockOnMinimizeTaskbar">
+			<Value>Lock workspace when minimizing main window to taskbar</Value>
+		</Data>
+		<Data Name="LockOnMinimizeTray">
+			<Value>Lock workspace when minimizing main window to tray</Value>
 		</Data>
 		<Data Name="LockOnRemoteControlChange">
 			<Value>Lock workspace when the remote control mode changes</Value>
