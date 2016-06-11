@@ -59,37 +59,34 @@ namespace KeePass.Plugins
 			return m_vPlugins.GetEnumerator();
 		}
 
-		public void LoadAllPlugins(string strDirectory)
+		public void LoadAllPlugins(string strDirectory, SearchOption so,
+			string[] vExclNames)
 		{
 			Debug.Assert(m_host != null);
 
 			try
 			{
 				string strPath = strDirectory;
-				if(Directory.Exists(strPath) == false)
-				{
-					Debug.Assert(false);
-					return;
-				}
+				if(!Directory.Exists(strPath)) return; // No assert
 
 				DirectoryInfo di = new DirectoryInfo(strPath);
 
-				FileInfo[] vFiles = UrlUtil.GetFileInfos(di, "*.dll",
-					SearchOption.AllDirectories).ToArray();
-				LoadPlugins(vFiles, null, null, true);
+				List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*.dll", so);
+				FilterList(lFiles, vExclNames);
+				LoadPlugins(lFiles, null, null, true);
 
-				vFiles = UrlUtil.GetFileInfos(di, "*.exe",
-					SearchOption.AllDirectories).ToArray();
-				LoadPlugins(vFiles, null, null, true);
+				lFiles = UrlUtil.GetFileInfos(di, "*.exe", so);
+				FilterList(lFiles, vExclNames);
+				LoadPlugins(lFiles, null, null, true);
 
-				vFiles = UrlUtil.GetFileInfos(di, "*." + PlgxPlugin.PlgxExtension,
-					SearchOption.AllDirectories).ToArray();
-				if(vFiles.Length > 0)
+				lFiles = UrlUtil.GetFileInfos(di, "*." + PlgxPlugin.PlgxExtension, so);
+				FilterList(lFiles, vExclNames);
+				if(lFiles.Count > 0)
 				{
 					OnDemandStatusDialog dlgStatus = new OnDemandStatusDialog(true, null);
 					dlgStatus.StartLogging(PwDefs.ShortProductName, false);
 
-					foreach(FileInfo fi in vFiles)
+					foreach(FileInfo fi in lFiles)
 						PlgxPlugin.Load(fi.FullName, dlgStatus);
 
 					dlgStatus.EndLogging();
@@ -103,16 +100,18 @@ namespace KeePass.Plugins
 		{
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			LoadPlugins(new FileInfo[] { new FileInfo(strFilePath) }, strTypeName,
-				strDisplayFilePath, bSkipCacheFile);
+			List<FileInfo> l = new List<FileInfo>();
+			l.Add(new FileInfo(strFilePath));
+
+			LoadPlugins(l, strTypeName, strDisplayFilePath, bSkipCacheFile);
 		}
 
-		private void LoadPlugins(FileInfo[] vFiles, string strTypeName,
+		private void LoadPlugins(List<FileInfo> lFiles, string strTypeName,
 			string strDisplayFilePath, bool bSkipCacheFiles)
 		{
 			string strCacheRoot = PlgxCache.GetCacheRoot();
 
-			foreach(FileInfo fi in vFiles)
+			foreach(FileInfo fi in lFiles)
 			{
 				if(bSkipCacheFiles && fi.FullName.StartsWith(strCacheRoot,
 					StrUtil.CaseIgnoreCmp))
@@ -243,6 +242,27 @@ namespace KeePass.Plugins
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
+		}
+
+		private static void FilterList(List<FileInfo> l, string[] vExclNames)
+		{
+			if((l == null) || (vExclNames == null)) { Debug.Assert(false); return; }
+
+			for(int i = l.Count - 1; i >= 0; --i)
+			{
+				string strName = UrlUtil.GetFileName(l[i].FullName);
+
+				foreach(string strExcl in vExclNames)
+				{
+					if(string.IsNullOrEmpty(strExcl)) { Debug.Assert(false); continue; }
+
+					if(string.Equals(strName, strExcl, StrUtil.CaseIgnoreCmp))
+					{
+						l.RemoveAt(i);
+						break;
+					}
+				}
+			}
 		}
 	}
 }

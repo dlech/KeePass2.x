@@ -131,6 +131,14 @@ namespace KeePass.App.Configuration
 			set { m_bCloseMin = value; }
 		}
 
+		private bool m_bEscMin = false;
+		[DefaultValue(false)]
+		public bool EscMinimizesToTray
+		{
+			get { return m_bEscMin; }
+			set { m_bEscMin = value; }
+		}
+
 		private bool m_bMinToTray = false;
 		[DefaultValue(false)]
 		public bool MinimizeToTray

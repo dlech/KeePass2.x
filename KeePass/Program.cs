@@ -587,14 +587,18 @@ namespace KeePass
 
 			AppLogEx.Close();
 
+			if(m_tempFilesPool != null)
+			{
+				m_tempFilesPool.Clear(TempClearFlags.All);
+				m_tempFilesPool.WaitForThreads();
+			}
+
 			EnableThemingInScope.StaticDispose();
 		}
 
 		private static void MainCleanUp()
 		{
 			IpcBroadcast.StopServer();
-
-			if(m_tempFilesPool != null) m_tempFilesPool.Clear();
 
 			EntryMenu.Destroy();
 

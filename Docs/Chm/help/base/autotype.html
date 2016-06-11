@@ -71,11 +71,11 @@ simulated keypresses can be sent to any other currently open window of your choi
 login dialogs, ...).</p>
 
 <p>By default, the sent keystroke sequence is <code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>,
-i.e. it first types the user name of the selected entry, then presses the <code>Tab</code> key,
-then types the password of the entry and finally presses the <code>Enter</code> key.</p>
+i.e. it first types the user name of the selected entry, then presses the <kbd><kbd>Tab</kbd></kbd> key,
+then types the password of the entry and finally presses the <kbd><kbd>Enter</kbd></kbd> key.</p>
 
 <p>For <a href="tans.html">TAN entries</a>, the default sequence is <code>{PASSWORD}</code>,
-i.e. it just types the TAN into the target window, without pressing <code>Enter</code>.</p>
+i.e. it just types the TAN into the target window, without pressing <kbd><kbd>Enter</kbd></kbd>.</p>
 
 
 
@@ -106,8 +106,8 @@ There are three different methods to invoke auto-type:</p>
 <ul>
 <li>Invoke auto-type for an entry by using the
 context menu command <i>Perform Auto-Type</i> while the entry is selected.</li>
-<li>Select the entry and press <i>Ctrl+V</i> (that's
-the menu shortcut for the context menu command above).</li>
+<li>Select the entry and press <kbd><kbd>Ctrl</kbd>+<kbd>V</kbd></kbd>
+(that's the menu shortcut for the context menu command above).</li>
 <li>Using the system-wide auto-type hot key. KeePass will
 search all entries in the currently opened database for matching sequences.</li>
 </ul>
@@ -133,7 +133,8 @@ the simpler one, but it has the disadvantage that you need to select the entry
 in KeePass which you want to auto-type.</p>
 
 <p>The method is simple: right-click on an entry of your currently opened database
-and click '<i>Perform Auto-Type</i>' (or alternatively press the <i>Ctrl+V</i>
+and click '<i>Perform Auto-Type</i>' (or alternatively press the
+<kbd><kbd>Ctrl</kbd>+<kbd>V</kbd></kbd>
 shortcut for this command). The window that previously got the focus
 (i.e. the one in which you worked before switching to KeePass) will be brought
 to the foreground and KeePass auto-types into this window.</p>
@@ -158,8 +159,8 @@ work/knowledge, before it can be used.</p>
 <ol>
 <li>Create an entry in KeePass titled <i>Notepad</i> with values for user name and password.</li>
 <li>Start Notepad - under 'Programs' -&gt; 'Accessories'.</li>
-<li>Press <i>Ctrl+Alt+A</i> within Notepad. The user name and
-password will be typed into Notepad.</li>
+<li>Press <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd> within Notepad.
+The user name and password will be typed into Notepad.</li>
 </ol>
 
 <p>The KeePass entry title <i>Notepad</i> is matched with the window title of
@@ -172,9 +173,12 @@ this hot key is that you don't need to switch to the KeePass window and
 select the entry. You simply press the hot key while having the target window
 open (i.e. the window which will receive the simulated keypresses).</p>
 
-<p>By default, the global hot key is <i>Ctrl+Alt+A</i> (i.e. hold the Ctrl and
-Alt keys, press 'A' and release all keys). You can change this hot key
-in the options dialog (main menu - 'Tools' - 'Options', tab
+<p>By default, the global hot key is
+<kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>
+(i.e. hold the <kbd><kbd>Ctrl</kbd></kbd> and <kbd><kbd>Alt</kbd></kbd> keys,
+press <kbd><kbd>A</kbd></kbd> and release all keys).
+You can change this hot key in the options dialog
+(main menu - 'Tools' - 'Options', tab
 
 
 
@@ -348,12 +352,12 @@ If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 </table>
 
 
-
+<br />
 
 
 Keys and special keys (not placeholders or commands) can be repeated by
 appending a number within the code. For example, <code>{TAB 5}</code>
-presses the Tab key 5 times.
+presses the <kbd><kbd>Tab</kbd></kbd> key 5 times.
 
 
 <p>For details on how to send special keys for which no explicit special
@@ -364,17 +368,20 @@ target="_blank">How can auto-type send other special keys?</a>.</p>
 <p>Finally, some examples:</p>
 
 <p><code>{TITLE}{TAB}{USERNAME}{TAB}{PASSWORD}{ENTER}</code><br />
-Types the entry's title, a Tab, the user name, a Tab, the password of the
-currently selected entry, and presses Enter.</p>
+Types the entry's title, a <kbd><kbd>Tab</kbd></kbd>, the user name,
+a <kbd><kbd>Tab</kbd></kbd>, the password of the
+currently selected entry, and presses <kbd><kbd>Enter</kbd></kbd>.</p>
 
 <p><code>{TAB}{PASSWORD}{ENTER}</code><br />
-Presses the Tab key, enters the entry's password and presses Enter.</p>
+Presses the <kbd><kbd>Tab</kbd></kbd> key, enters the entry's password and
+presses <kbd><kbd>Enter</kbd></kbd>.</p>
 
 <p><code>{USERNAME}{TAB}^v{ENTER}</code><br />
-Types the user name, presses Tab, presses Ctrl+v (which pastes data from
-the Windows clipboard in most applications), and presses Enter.</p>
-
-<br />
+Types the user name, presses <kbd><kbd>Tab</kbd></kbd>, presses
+<kbd><kbd>Ctrl</kbd>+<kbd>V</kbd></kbd> (which pastes data from the Windows
+clipboard in most applications), and presses <kbd><kbd>Enter</kbd></kbd>.
+<br /><br />
+</p>
 
 <p><b>Toggling Checkboxes:</b><br />
 Sometimes you find checkboxes on websites (<i>&quot;Stay logged in on this computer&quot;</i> for example).
@@ -465,9 +472,7 @@ to the <i>'Auto-Type'</i> tab.
 <br />
 
 
-
-
-<br />
+<br /><br />
 
 <a name="autoexample"></a>
 <h2 class="sectiontitle"><img src="../images/movepaper.gif"
@@ -481,12 +486,14 @@ target="_blank">test page</a>, and afterwards create a new entry
 in KeePass with title <i>Test Form</i> and a user name and password
 of your choice.</p>
 
-<p>Let's assume the global auto-type hot key is set to <i>Ctrl+Alt+A</i> (the default).
+<p>Let's assume the global auto-type hot key is set to
+<kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd> (the default).
 KeePass is running in the background, you have opened your database and the workspace is unlocked.</p>
 
 <p>When you now navigate to the test page and are being prompted for your user name and password,
-just click into the user name field and press <i>Ctrl+Alt+A</i>. KeePass enters the
-user name and password for you!</p>
+just click into the user name field and press
+<kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>.
+KeePass enters the user name and password for you!</p>
 
 <p>Why did this work? The window title of your browser window was
 <i>&quot;Test Form - KeePass - Internet Explorer&quot;</i> or

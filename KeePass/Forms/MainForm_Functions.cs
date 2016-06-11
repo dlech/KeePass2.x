@@ -2960,6 +2960,7 @@ namespace KeePass.Forms
 			UIUtil.AssignShortcut(m_menuFileSyncFile, Keys.Control | Keys.R);
 			UIUtil.AssignShortcut(m_menuFileSyncUrl, Keys.Control | Keys.Shift | Keys.R);
 			UIUtil.AssignShortcut(m_menuFileLock, Keys.Control | Keys.L);
+			UIUtil.AssignShortcut(m_menuFileExit, Keys.Control | Keys.Q);
 
 			UIUtil.AssignShortcut(m_menuEditFind, Keys.Control | Keys.F);
 
@@ -3505,6 +3506,7 @@ namespace KeePass.Forms
 				UpdateUI(true, null, true, null, true, null, false);
 
 			// NativeMethods.ClearIconicBitmaps(this.Handle);
+			Program.TempFilesPool.Clear(TempClearFlags.ContentTaggedFiles);
 
 			if(this.FileClosed != null)
 			{
@@ -3797,7 +3799,13 @@ namespace KeePass.Forms
 				// if(MonoWorkarounds.IsRequired(649266)) this.ShowInTaskbar = true;
 			}
 
-			if(!bMinimize) // Restore
+			if(bMinimize)
+			{
+				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimizeToTray &&
+					!IsFileLocked(null) && IsCommandTypeInvokable(null, AppCommandType.Lock))
+					OnFileLock(null, EventArgs.Empty);
+			}
+			else // Restore
 			{
 				// EnsureVisibleForegroundWindow(false, false); // Don't!
 
@@ -4050,7 +4058,16 @@ namespace KeePass.Forms
 				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
 				if(obKeyDown.HasValue)
 				{
-					if(obKeyDown.Value) LockAllDocuments();
+					if(obKeyDown.Value)
+					{
+						if(Program.Config.MainWindow.EscMinimizesToTray)
+						{
+							if(IsCommandTypeInvokable(null, AppCommandType.Window))
+								MinimizeToTray(true);
+						}
+						else LockAllDocuments();
+					}
+
 					return true;
 				}
 			}
@@ -5174,6 +5191,8 @@ namespace KeePass.Forms
 				m_menuToolsPlugins.Enabled = false;
 			if((u & (ulong)AceUIFlags.DisableTriggers) != 0)
 				m_menuToolsTriggers.Enabled = false;
+			if((u & (ulong)AceUIFlags.DisableUpdateCheck) != 0)
+				m_menuHelpCheckForUpdates.Enabled = false;
 		}
 
 		private static void OnFormLoadParallelAsync(object stateInfo)
@@ -5183,7 +5202,7 @@ namespace KeePass.Forms
 				PopularPasswords.Add(Properties.Resources.MostPopularPasswords, true);
 
 				string strShInstUtil = UrlUtil.GetFileDirectory(
-					WinUtil.GetExecutable(), true, false) + AppDefs.ShInstUtil;
+					WinUtil.GetExecutable(), true, false) + AppDefs.FileNames.ShInstUtil;
 
 				// Unblock the application such that the user isn't
 				// prompted next time anymore

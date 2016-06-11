@@ -301,7 +301,9 @@ namespace KeePass.Forms
 			}
 
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnWindowMinimize",
-				lvg, KPRes.LockOnMinimize);
+				lvg, KPRes.LockOnMinimizeTaskbar);
+			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnWindowMinimizeToTray",
+				lvg, KPRes.LockOnMinimizeTray);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSessionSwitch",
 				lvg, KPRes.LockOnSessionSwitch + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSuspend",
@@ -386,14 +388,10 @@ namespace KeePass.Forms
 
 			m_cdxGuiOptions = new CheckedLVItemDXList(m_lvGuiOptions, true);
 
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CloseButtonMinimizesWindow",
-				lvg, KPRes.CloseButtonMinimizes);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeToTray",
 				lvg, KPRes.MinimizeToTray);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayed",
 				lvg, KPRes.ShowTrayOnlyIfTrayed);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathInTitle",
-				lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DropToBackAfterClipboardCopy",
 				lvg, KPRes.DropToBackOnCopy);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
@@ -402,6 +400,12 @@ namespace KeePass.Forms
 				lvg, KPRes.MinimizeAfterLocking);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterOpeningDatabase",
 				lvg, KPRes.MinimizeAfterOpeningDatabase, obNoMin);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CloseButtonMinimizesWindow",
+				lvg, KPRes.CloseButtonMinimizes);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EscMinimizesToTray",
+				lvg, KPRes.EscMinimizesToTray);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathInTitle",
+				lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DisableSaveIfNotModified",
 				lvg, KPRes.DisableSaveIfNotModified);
 

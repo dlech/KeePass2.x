@@ -38,8 +38,7 @@ namespace KeePassLib.Utility
 
 		public static void Open(string strPrefix)
 		{
-			return; // Logging is not enabled in normal builds of KeePass!
-
+			// Logging is not enabled in normal builds of KeePass!
 			/*
 			AppLogEx.Close();
 

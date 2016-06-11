@@ -329,6 +329,9 @@ namespace KeePass.Util.XmlSerialization
 					case "CloseButtonMinimizesWindow":
 						o.CloseButtonMinimizesWindow = ReadBoolean(xr);
 						break;
+					case "EscMinimizesToTray":
+						o.EscMinimizesToTray = ReadBoolean(xr);
+						break;
 					case "MinimizeToTray":
 						o.MinimizeToTray = ReadBoolean(xr);
 						break;
@@ -1672,6 +1675,9 @@ namespace KeePass.Util.XmlSerialization
 				{
 					case "LockOnWindowMinimize":
 						o.LockOnWindowMinimize = ReadBoolean(xr);
+						break;
+					case "LockOnWindowMinimizeToTray":
+						o.LockOnWindowMinimizeToTray = ReadBoolean(xr);
 						break;
 					case "LockOnSessionSwitch":
 						o.LockOnSessionSwitch = ReadBoolean(xr);

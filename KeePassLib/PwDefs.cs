@@ -55,18 +55,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02210000;
+		public const uint Version32 = 0x02220000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002002100000000UL;
+		public const ulong FileVersion64 = 0x0002002200000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.33";
+		public const string VersionString = "2.34";
 
 		public const string Copyright = @"Copyright © 2003-2016 Dominik Reichl";
 
@@ -94,7 +94,8 @@ namespace KeePassLib
 		/// URL to a TXT file (eventually compressed) that contains information
 		/// about the latest KeePass version available on the website.
 		/// </summary>
-		public const string VersionUrl = "http://keepass.info/update/version2x.txt.gz";
+		public const string VersionUrl = "https://sslsites.de/keepass.info/update/version2x.txt.gz";
+		// public const string VersionUrl = "http://keepass.info/update/version2x.txt.gz";
 
 		/// <summary>
 		/// URL to the root path of the online KeePass help. Terminated by

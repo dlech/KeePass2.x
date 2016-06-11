@@ -72,7 +72,7 @@ namespace KeePass.DataExchange.Formats
 
 		public override bool TryBeginExport()
 		{
-			return this.TryBeginImport();
+			return TryBeginImport();
 		}
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
