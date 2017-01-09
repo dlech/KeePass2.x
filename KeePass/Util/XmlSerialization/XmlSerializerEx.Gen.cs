@@ -232,6 +232,9 @@ namespace KeePass.Util.XmlSerialization
 					case "PluginCachePath":
 						o.PluginCachePath = ReadString(xr);
 						break;
+					case "ExpirySoonDays":
+						o.ExpirySoonDays = ReadInt32(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();
@@ -377,6 +380,9 @@ namespace KeePass.Util.XmlSerialization
 					case "DisableSaveIfNotModified":
 						o.DisableSaveIfNotModified = ReadBoolean(xr);
 						break;
+					case "HideCloseDatabaseButton":
+						o.HideCloseDatabaseButton = ReadBoolean(xr);
+						break;
 					case "ToolBar":
 						o.ToolBar = ReadAceToolBar(xr);
 						break;
@@ -397,6 +403,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "EntryListAlternatingBgColors":
 						o.EntryListAlternatingBgColors = ReadBoolean(xr);
+						break;
+					case "EntryListAlternatingBgColor":
+						o.EntryListAlternatingBgColor = ReadInt32(xr);
 						break;
 					case "EntryListShowDerefData":
 						o.EntryListShowDerefData = ReadBoolean(xr);
@@ -513,6 +522,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "KeyPromptFlags":
 						o.KeyPromptFlags = ReadUInt64(xr);
+						break;
+					case "ShowAdvAutoTypeCommands":
+						o.ShowAdvAutoTypeCommands = ReadBoolean(xr);
 						break;
 					case "SecureDesktopPlaySound":
 						o.SecureDesktopPlaySound = ReadBoolean(xr);
@@ -769,6 +781,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "HotKeyEntryMenu":
 						o.HotKeyEntryMenu = ReadUInt64(xr);
+						break;
+					case "CheckHotKeys":
+						o.CheckHotKeys = ReadBoolean(xr);
 						break;
 					case "UrlOverride":
 						o.UrlOverride = ReadString(xr);
@@ -2519,6 +2534,9 @@ namespace KeePass.Util.XmlSerialization
 				{
 					case "DatabasePath":
 						o.DatabasePath = ReadString(xr);
+						break;
+					case "Password":
+						o.Password = ReadBoolean(xr);
 						break;
 					case "KeyFilePath":
 						o.KeyFilePath = ReadString(xr);

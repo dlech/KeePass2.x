@@ -55,6 +55,9 @@
     <Compile Include="..\KeePassLib\Collections\ProtectedBinaryDictionary.cs">
       <Link>KeePassLib\Collections\ProtectedBinaryDictionary.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\ProtectedBinarySet.cs">
+      <Link>KeePassLib\Collections\ProtectedBinarySet.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Collections\ProtectedStringDictionary.cs">
       <Link>KeePassLib\Collections\ProtectedStringDictionary.cs</Link>
     </Compile>
@@ -67,8 +70,20 @@
     <Compile Include="..\KeePassLib\Collections\StringDictionaryEx.cs">
       <Link>KeePassLib\Collections\StringDictionaryEx.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Collections\VariantDictionary.cs">
+      <Link>KeePassLib\Collections\VariantDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Cipher\ChaCha20Cipher.cs">
+      <Link>KeePassLib\Cryptography\Cipher\ChaCha20Cipher.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Cipher\ChaCha20Engine.cs">
+      <Link>KeePassLib\Cryptography\Cipher\ChaCha20Engine.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\CipherPool.cs">
       <Link>KeePassLib\Cryptography\Cipher\CipherPool.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Cipher\CtrBlockCipher.cs">
+      <Link>KeePassLib\Cryptography\Cipher\CtrBlockCipher.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\Cipher\ICipherEngine.cs">
       <Link>KeePassLib\Cryptography\Cipher\ICipherEngine.cs</Link>
@@ -85,11 +100,35 @@
     <Compile Include="..\KeePassLib\Cryptography\CryptoRandomStream.cs">
       <Link>KeePassLib\Cryptography\CryptoRandomStream.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\CryptoUtil.cs">
+      <Link>KeePassLib\Cryptography\CryptoUtil.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\HashingStreamEx.cs">
       <Link>KeePassLib\Cryptography\HashingStreamEx.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\Hash\Blake2b.cs">
+      <Link>KeePassLib\Cryptography\Hash\Blake2b.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\HmacOtp.cs">
       <Link>KeePassLib\Cryptography\HmacOtp.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\AesKdf.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\AesKdf.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.Core.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.Core.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\KdfEngine.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\KdfEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\KdfParameters.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\KdfParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\KdfPool.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\KdfPool.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs">
       <Link>KeePassLib\Cryptography\PasswordGenerator\CharSetBasedGenerator.cs</Link>
@@ -235,6 +274,9 @@
     <Compile Include="..\KeePassLib\Serialization\HashedBlockStream.cs">
       <Link>KeePassLib\Serialization\HashedBlockStream.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Serialization\HmacBlockStream.cs">
+      <Link>KeePassLib\Serialization\HmacBlockStream.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Serialization\IOConnection.cs">
       <Link>KeePassLib\Serialization\IOConnection.cs</Link>
       <SubType>Component</SubType>
@@ -334,7 +376,8 @@
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\DashlaneCsv2.cs" />
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
-    <Compile Include="DataExchange\Formats\DesktopKnox32.cs" />
+    <Compile Include="DataExchange\Formats\DesktopKnoxXml32.cs" />
+    <Compile Include="DataExchange\Formats\EnpassTxt5.cs" />
     <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
     <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />
@@ -351,6 +394,7 @@
     <Compile Include="DataExchange\Formats\LastPassCsv2.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
+    <Compile Include="DataExchange\Formats\MSecureCsv355.cs" />
     <Compile Include="DataExchange\Formats\NetworkPwMgrCsv4.cs" />
     <Compile Include="DataExchange\Formats\NortonIdSafeCsv2013.cs" />
     <Compile Include="DataExchange\Formats\NPasswordNpw102.cs" />
@@ -366,6 +410,7 @@
     <Compile Include="DataExchange\Formats\PwMemory2008Xml104.cs" />
     <Compile Include="DataExchange\Formats\PwPrompterDat12.cs" />
     <Compile Include="DataExchange\Formats\PwSafeXml302.cs" />
+    <Compile Include="DataExchange\Formats\PwSaverXml412.cs" />
     <Compile Include="DataExchange\Formats\PwsPlusCsv1007.cs" />
     <Compile Include="DataExchange\Formats\PwTresorXml100.cs" />
     <Compile Include="DataExchange\Formats\RevelationXml04.cs" />
@@ -516,6 +561,12 @@
     </Compile>
     <Compile Include="Forms\EntryReportForm.Designer.cs">
       <DependentUpon>EntryReportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FieldPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FieldPickerForm.Designer.cs">
+      <DependentUpon>FieldPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FieldRefForm.cs">
       <SubType>Form</SubType>
@@ -727,6 +778,7 @@
     <Compile Include="UI\CustomMenuStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\CustomMessageFilterEx.cs" />
     <Compile Include="UI\CustomRichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -778,7 +830,6 @@
     <Compile Include="UI\ToolStripRendering\Win10Tsr.cs" />
     <Compile Include="UI\ToolStripRendering\Win81Tsr.cs" />
     <Compile Include="UI\UISystemFonts.cs" />
-    <Compile Include="UI\UserActivityNotifyFilter.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>
     <Compile Include="Util\Archive\ImageArchive.cs" />
@@ -877,6 +928,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EntryReportForm.resx">
       <DependentUpon>EntryReportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FieldPickerForm.resx">
+      <DependentUpon>FieldPickerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FieldRefForm.resx">
       <DependentUpon>FieldRefForm.cs</DependentUpon>
@@ -1186,6 +1240,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Enpass.png" />
+    <None Include="Resources\Images\B16x16_Imp_MSecure.png" />
+    <None Include="Resources\Images\B16x16_Imp_PwSaver.png" />
     <None Include="Resources\Nuvola\B16x16_Folder.png" />
     <None Include="Resources\Images\B16x16_Imp_NPassword.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_Folder_New_Ex.png" />

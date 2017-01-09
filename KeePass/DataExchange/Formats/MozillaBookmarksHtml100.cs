@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -236,21 +236,22 @@ namespace KeePass.DataExchange.Formats
 				int hMax = PwCustomIcon.MaxHeight;
 				if((img.Width <= wMax) && (img.Height <= hMax))
 				{
-					MemoryStream msPng = new MemoryStream();
-					img.Save(msPng, ImageFormat.Png);
-					pbPng = msPng.ToArray();
-					msPng.Close();
+					using(MemoryStream msPng = new MemoryStream())
+					{
+						img.Save(msPng, ImageFormat.Png);
+						pbPng = msPng.ToArray();
+					}
 				}
 				else
 				{
-					Image imgSc = GfxUtil.ScaleImage(img, wMax, hMax);
-
-					MemoryStream msPng = new MemoryStream();
-					imgSc.Save(msPng, ImageFormat.Png);
-					pbPng = msPng.ToArray();
-					msPng.Close();
-
-					imgSc.Dispose();
+					using(Image imgSc = GfxUtil.ScaleImage(img, wMax, hMax))
+					{
+						using(MemoryStream msPng = new MemoryStream())
+						{
+							imgSc.Save(msPng, ImageFormat.Png);
+							pbPng = msPng.ToArray();
+						}
+					}
 				}
 				img.Dispose();
 

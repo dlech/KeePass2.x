@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,6 +96,7 @@ namespace KeePass.Forms
 			bmpBig.Dispose();
 			m_picAccWarning.Image = m_imgAccWarning;
 
+			UIUtil.ConfigureToolTip(m_ttRect);
 			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
@@ -197,7 +198,7 @@ namespace KeePass.Forms
 					string strMQ = KPRes.MasterPasswordMinQualityFailed;
 					strMQ = strMQ.Replace(@"{PARAM}", uMinQual.ToString());
 					MessageService.ShowWarning(strMQ);
-					Array.Clear(pb, 0, pb.Length);
+					MemUtil.ZeroByteArray(pb);
 					return false;
 				}
 
@@ -206,12 +207,12 @@ namespace KeePass.Forms
 				if(strValRes != null)
 				{
 					MessageService.ShowWarning(strValRes);
-					Array.Clear(pb, 0, pb.Length);
+					MemUtil.ZeroByteArray(pb);
 					return false;
 				}
 
 				m_pKey.AddUserKey(new KcpPassword(pb));
-				Array.Clear(pb, 0, pb.Length);
+				MemUtil.ZeroByteArray(pb);
 			}
 
 			string strKeyFile = m_cmbKeyFile.Text;
@@ -250,7 +251,7 @@ namespace KeePass.Forms
 						return false;
 					}
 
-					Array.Clear(pbCustomKey, 0, pbCustomKey.Length);
+					MemUtil.ZeroByteArray(pbCustomKey);
 				}
 				else return false; // Provider has shown error message
 			}

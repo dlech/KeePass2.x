@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -570,9 +570,11 @@ namespace TrlUtil
 			PwUuid pwUuid = new PwUuid(true);
 			m_trl.Properties.FileUuid = pwUuid.ToHexString();
 
-			m_trl.Properties.LastModified = DateTime.Now.ToString("u");
+			m_trl.Properties.LastModified = DateTime.UtcNow.ToString("u");
 
 			m_trl.UnusedText = m_rtbUnusedText.Text;
+			if(!string.IsNullOrEmpty(m_trl.UnusedText))
+				ShowValidationWarning(@"It is recommended to clear the 'Unused Text' tab.");
 
 			try { Validate3Dots(); }
 			catch(Exception) { Debug.Assert(false); }
@@ -581,14 +583,23 @@ namespace TrlUtil
 			{
 				string strAccel = AccelKeysCheck.Validate(m_trl);
 				if(strAccel != null)
-				{
-					MessageBox.Show(this, "Warning! The following accelerator keys collide:" +
-						MessageService.NewParagraph + strAccel + MessageService.NewParagraph +
-						"Click [OK] to continue saving.", TrlUtilName, MessageBoxButtons.OK,
-						MessageBoxIcon.Warning);
-				}
+					ShowValidationWarning("The following accelerator keys collide:" +
+						MessageService.NewParagraph + strAccel);
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void ShowValidationWarning(string strText)
+		{
+			if(string.IsNullOrEmpty(strText)) { Debug.Assert(false); return; }
+
+			const string strContinue = @"Click [OK] to continue saving.";
+			string str = strText + MessageService.NewParagraph + strContinue;
+
+			if(!VistaTaskDialog.ShowMessageBox(str, "Validation Warning",
+				TrlUtilName, VtdIcon.Warning, this))
+				MessageBox.Show(this, "Validation Warning!" + MessageService.NewParagraph +
+					str, TrlUtilName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		private void Validate3Dots()
@@ -603,15 +614,14 @@ namespace TrlUtil
 					string strTrl = kpi.Value;
 					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
 
-					bool bEllEn = (strEn.EndsWith(@"...") || strEn.EndsWith(@"…"));
-					bool bEllTrl = (strTrl.EndsWith(@"...") || strTrl.EndsWith(@"…"));
+					bool bEllEn = (strEn.EndsWith("...") || strEn.EndsWith(@"…"));
+					bool bEllTrl = (strTrl.EndsWith("...") || strTrl.EndsWith(@"…"));
 
 					if(bEllEn && !bEllTrl)
-						MessageBox.Show(this, "Warning! The English string" +
+						ShowValidationWarning("The English string" +
 							MessageService.NewParagraph + strEn + MessageService.NewParagraph +
 							"ends with 3 dots, but the translated string does not:" +
-							MessageService.NewParagraph + strTrl, TrlUtilName,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+							MessageService.NewParagraph + strTrl);
 				}
 			}
 		}

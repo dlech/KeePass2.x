@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.02-5.3+
+	// 3.4-5.3+, types from web 2016-12 (version 8.1.1.925)
 	internal sealed class SplashIdCsv402 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -59,56 +59,81 @@ namespace KeePass.DataExchange.Formats
 			{
 				if(m_vMappings != null) return m_vMappings;
 
-				m_vMappings = new SplashIdMapping[]{
+				m_vMappings = new SplashIdMapping[] {
+					new SplashIdMapping("Addresses", PwIcon.UserCommunication,
+						new string[] { PwDefs.TitleField, // Name
+							PwDefs.NotesField, // Address
+							PwDefs.NotesField, // Address 2
+							PwDefs.NotesField, // City
+							PwDefs.NotesField, // State
+							PwDefs.NotesField, // Zip Code
+							PwDefs.NotesField, // Country
+							PwDefs.UserNameField, // Email
+							PwDefs.NotesField }), // Phone
+					new SplashIdMapping("Bank Accounts", PwIcon.Homebanking,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "Name", "Branch", "Phone #" }),
 					new SplashIdMapping("Bank Accts", PwIcon.Homebanking,
-						new string[]{ PwDefs.TitleField, "Account #", PwDefs.PasswordField,
-							PwDefs.UserNameField, "Branch", "Phone #" }),
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "Name", "Branch", "Phone #" }),
 					new SplashIdMapping("Birthdays", PwIcon.UserCommunication,
-						new string[]{ PwDefs.TitleField, "Date" }),
-					new SplashIdMapping("Calling Cards", PwIcon.EMail,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField }),
+					new SplashIdMapping("Calling Cards", PwIcon.UserKey,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
 							PwDefs.PasswordField }),
 					new SplashIdMapping("Clothes Size", PwIcon.UserCommunication,
-						new string[]{ PwDefs.TitleField, "Shirt Size", "Pant Size",
-							"Shoe Size", "Dress Size" }),
+						new string[] { PwDefs.TitleField, "Shirt Size", "Pant Size",
+							"Shoe Size", "Dress Size", "Ring Size" }),
 					new SplashIdMapping("Combinations", PwIcon.Key,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField }),
-					new SplashIdMapping("Credit Cards", PwIcon.UserKey,
-						new string[]{ PwDefs.TitleField, "Card #", "Expiration Date",
-							PwDefs.UserNameField, PwDefs.PasswordField, "Bank" }),
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField }),
+					new SplashIdMapping("Credit Cards", PwIcon.Money,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							"Expiry Date", "Name", PwDefs.PasswordField, "Bank" }),
+					new SplashIdMapping("Email Accounts", PwIcon.EMail,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "POP3 Host", "SMTP Host" }),
 					new SplashIdMapping("Email Accts", PwIcon.EMail,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
 							PwDefs.PasswordField, "POP3 Host", "SMTP Host" }),
 					new SplashIdMapping("Emergency Info", PwIcon.UserCommunication,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
-					new SplashIdMapping("Frequent Flyer", PwIcon.PaperQ,
-						new string[]{ PwDefs.TitleField, "Number",
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField }),
+					new SplashIdMapping("Files", PwIcon.PaperNew,
+						new string[] { PwDefs.TitleField, PwDefs.NotesField,
 							PwDefs.UserNameField, "Date" }),
+					new SplashIdMapping("Frequent Flyer", PwIcon.PaperQ,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							"Name", "Date" }),
 					new SplashIdMapping("Identification", PwIcon.UserKey,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField,
 							PwDefs.UserNameField, "Date" }),
 					new SplashIdMapping("Insurance", PwIcon.ClipboardReady,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-							PwDefs.UserNameField, "Insured", "Date" }),
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField,
+							PwDefs.UserNameField, "Insured", "Date", "Phone #" }),
 					new SplashIdMapping("Memberships", PwIcon.UserKey,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField,
 							PwDefs.UserNameField, "Date" }),
 					new SplashIdMapping("Phone Numbers", PwIcon.UserCommunication,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField }),
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField }),
 					new SplashIdMapping("Prescriptions", PwIcon.ClipboardReady,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField,
 							PwDefs.UserNameField, "Doctor", "Pharmacy", "Phone #" }),
 					new SplashIdMapping("Serial Numbers", PwIcon.Key,
-						new string[]{ PwDefs.TitleField, PwDefs.PasswordField,
-							"Purchase Date", "Reseller" }),
+						new string[] { PwDefs.TitleField, PwDefs.PasswordField,
+							"Date", "Reseller" }),
+					new SplashIdMapping("Servers", PwIcon.NetworkServer,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, PwDefs.UrlField }),
 					new SplashIdMapping("Vehicle Info", PwIcon.PaperReady,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
-							PwDefs.PasswordField }),
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "Insurance", "Year" }),
+					new SplashIdMapping("Vehicles", PwIcon.PaperReady,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
+							PwDefs.PasswordField, "Insurance", "Year" }),
 					new SplashIdMapping("Voice Mail", PwIcon.IRCommunication,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
 							PwDefs.PasswordField }),
-					new SplashIdMapping("Web Logins", PwIcon.UserKey,
-						new string[]{ PwDefs.TitleField, PwDefs.UserNameField,
+					new SplashIdMapping("Web Logins", PwIcon.Key,
+						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
 							PwDefs.PasswordField, PwDefs.UrlField })
 				};
 				return m_vMappings;
@@ -118,32 +143,54 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
+			StreamReader sr = new StreamReader(sInput, Encoding.Default, true);
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
-			string[] vLines = strData.Split(new char[]{ '\r', '\n' });
+			CsvOptions o = new CsvOptions();
+			o.BackslashIsEscape = false;
+
+			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, o);
+
 			SortedDictionary<string, PwGroup> dictGroups =
 				new SortedDictionary<string, PwGroup>();
-
-			foreach(string strLine in vLines)
+			while(true)
 			{
-				if(strLine.Length > 0)
-					ProcessCsvLine(strLine, pwStorage, dictGroups);
+				string[] vLine = csv.ReadLine();
+				if(vLine == null) break;
+				if(vLine.Length == 0) continue;
+
+				if(vLine.Length == 1)
+				{
+					Debug.Assert(vLine[0] == StrHeader);
+					continue;
+				}
+
+				// Support old version 3.4
+				if(vLine.Length == 9)
+				{
+					string[] v = new string[13];
+					for(int i = 0; i < 7; ++i) v[i] = vLine[i];
+					for(int i = 7; i < 11; ++i) v[i] = string.Empty;
+					v[11] = vLine[7];
+					v[12] = vLine[8];
+
+					vLine = v;
+				}
+
+				if(vLine.Length == 13)
+					ProcessCsvLine(vLine, pwStorage, dictGroups);
+				else { Debug.Assert(false); }
 			}
 		}
 
-		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage,
+		private static void ProcessCsvLine(string[] vLine, PwDatabase pwStorage,
 			SortedDictionary<string, PwGroup> dictGroups)
 		{
-			if(strLine == StrHeader) return; // Skip header
+			string strType = ParseCsvWord(vLine[0]);
 
-			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
-			Debug.Assert(list.Count == 13);
-			if(list.Count != 13) return;
-
-			string strType = ParseCsvWord(list[0]);
-			string strGroupName = ParseCsvWord(list[12]) + " - " + strType;
+			string strGroupName = ParseCsvWord(vLine[12]); // + " - " + strType;
+			if(strGroupName.Length == 0) strGroupName = strType;
 
 			SplashIdMapping mp = null;
 			foreach(SplashIdMapping mpFind in SplashIdCsv402.SplashIdMappings)
@@ -162,12 +209,15 @@ namespace KeePass.DataExchange.Formats
 				pg = dictGroups[strGroupName];
 			else
 			{
-				PwIcon pwGroupIcon = ((pwIcon == PwIcon.Key) ?
-					PwIcon.FolderOpen : pwIcon);
+				// PwIcon pwGroupIcon = ((pwIcon == PwIcon.Key) ?
+				//	PwIcon.FolderOpen : pwIcon);
+				// pg = new PwGroup(true, true, strGroupName, pwGroupIcon);
 
-				pg = new PwGroup(true, true, strGroupName, pwGroupIcon);
+				pg = new PwGroup(true, true);
+				pg.Name = strGroupName;
+
 				pwStorage.RootGroup.AddGroup(pg, true);
-				dictGroups.Add(strGroupName, pg);
+				dictGroups[strGroupName] = pg;
 			}
 
 			PwEntry pe = new PwEntry(true, true);
@@ -175,53 +225,54 @@ namespace KeePass.DataExchange.Formats
 
 			pe.IconId = pwIcon;
 
+			List<string> vTags = StrUtil.StringToTags(strType);
+			foreach(string strTag in vTags) { pe.AddTag(strTag); }
+
 			for(int iField = 0; iField < 9; ++iField)
 			{
-				string strData = ParseCsvWord(list[iField + 1]);
+				string strData = ParseCsvWord(vLine[iField + 1]);
 				if(strData.Length == 0) continue;
 
 				string strLookup = ((mp != null) ? mp.FieldNames[iField] :
 					null);
 				string strField = (strLookup ?? ("Field " + (iField + 1).ToString()));
 
-				pe.Strings.Set(strField, new ProtectedString(false,
-					strData));
+				string strSep = ((strField != PwDefs.NotesField) ? ", " : "\r\n");
+				ImportUtil.AppendToField(pe, strField, strData, pwStorage, strSep, false);
 			}
 
-			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectNotes,
-				ParseCsvWord(list[11])));
+			ImportUtil.AppendToField(pe, PwDefs.NotesField, ParseCsvWord(vLine[11]),
+				pwStorage, "\r\n", false);
 
-			DateTime? dt = TimeUtil.ParseUSTextDate(ParseCsvWord(list[10]));
-			if(dt.HasValue)
+			DateTime? odt = TimeUtil.ParseUSTextDate(ParseCsvWord(vLine[10]),
+				DateTimeKind.Local);
+			if(odt.HasValue)
 			{
-				pe.LastAccessTime = dt.Value;
-				pe.LastModificationTime = dt.Value;
+				DateTime dt = TimeUtil.ToUtc(odt.Value, false);
+				pe.LastAccessTime = dt;
+				pe.LastModificationTime = dt;
 			}
 		}
 
 		private static string ParseCsvWord(string strWord)
 		{
-			string str = strWord.Trim(new char[]{ '\"' });
+			if(strWord == null) { Debug.Assert(false); return string.Empty; }
 
-			str = str.Replace("\"\"", "\""); // Unescape quotes
-
-			str = str.Replace((char)0x0B, '\n'); // 0x0B = new line
-			str = str.Replace("\r", string.Empty);
-			str = str.Replace("\n", "\r\n"); // To Windows new lines
-
+			string str = strWord;
+			str = str.Replace('\u000B', '\n'); // 0x0B = new line
+			str = StrUtil.NormalizeNewLines(str, true);
 			return str;
 		}
 
 		private sealed class SplashIdMapping
 		{
-			private string m_strTypeName;
+			private readonly string m_strTypeName;
 			public string TypeName
 			{
 				get { return m_strTypeName; }
 			}
 
-			private PwIcon m_pwIcon;
+			private readonly PwIcon m_pwIcon;
 			public PwIcon Icon
 			{
 				get { return m_pwIcon; }
@@ -244,7 +295,8 @@ namespace KeePass.DataExchange.Formats
 				m_strTypeName = strTypeName;
 				m_pwIcon = pwIcon;
 
-				for(int i = 0; i < Math.Min(m_vFieldNames.Length, vFieldNames.Length); ++i)
+				int nMin = Math.Min(m_vFieldNames.Length, vFieldNames.Length);
+				for(int i = 0; i < nMin; ++i)
 					m_vFieldNames[i] = vFieldNames[i];
 			}
 		}

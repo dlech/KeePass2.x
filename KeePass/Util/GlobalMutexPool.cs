@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -85,12 +85,12 @@ namespace KeePass.Util
 						DataProtectionScope.CurrentUser);
 					if(pb.Length == 12)
 					{
-						long lTime = BitConverter.ToInt64(pb, 0);
+						long lTime = MemUtil.BytesToInt64(pb, 0);
 						DateTime dt = DateTime.FromBinary(lTime);
 
 						if((DateTime.UtcNow - dt).TotalSeconds < GmpMutexValidSecs)
 						{
-							int pid = BitConverter.ToInt32(pb, 8);
+							int pid = MemUtil.BytesToInt32(pb, 8);
 							try
 							{
 								Process.GetProcessById(pid); // Throws if process is not running
@@ -117,8 +117,8 @@ namespace KeePass.Util
 		private static void WriteMutexFilePriv(string strPath)
 		{
 			byte[] pb = new byte[12];
-			BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).CopyTo(pb, 0);
-			BitConverter.GetBytes(Process.GetCurrentProcess().Id).CopyTo(pb, 8);
+			MemUtil.Int64ToBytes(DateTime.UtcNow.ToBinary()).CopyTo(pb, 0);
+			MemUtil.Int32ToBytes(Process.GetCurrentProcess().Id).CopyTo(pb, 8);
 			byte[] pbEnc = ProtectedData.Protect(pb, GmpOptEnt,
 				DataProtectionScope.CurrentUser);
 			File.WriteAllBytes(strPath, pbEnc);

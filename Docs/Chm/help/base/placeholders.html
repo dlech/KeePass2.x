@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -241,8 +241,8 @@ See <a href="#conv">below</a>.</td></tr>
 <b><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code> &#8211; Replace
 Using Regular Expression:</b><br />
 This placeholder
-searches the <a href="http://msdn.microsoft.com/en-us/library/az24scfc.aspx"
-target="_blank" rel="nofollow">regular expression</a> <em>Search</em> in <em>Text</em>
+searches the <a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+target="_blank">regular expression</a> <em>Search</em> in <em>Text</em>
 and replaces all matches by <em>Replace</em>.<br />
 <br />
 All parameters are Spr-compiled, i.e. placeholders can be used within them.<br />
@@ -308,6 +308,8 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Other Placeholders</h2>
 <tr><td width="50%"><code>{PICKCHARS}</code><br />
 <code>{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</code></td><td width="50%">Shows a dialog to pick certain characters from an entry string.
 See <a href="#pickchars">below</a>.</td></tr>
+<tr><td width="50%"><code>{PICKFIELD}</code></td><td width="50%">Shows a dialog to pick a field
+whose value will be inserted.</td></tr>
 <tr><td width="50%"><code>{NEWPASSWORD}</code><br />
 <code>{NEWPASSWORD:/<em>Profile</em>/}</code></td><td width="50%">Generates a new password.
 See <a href="#newpassword">below</a>.</td></tr>

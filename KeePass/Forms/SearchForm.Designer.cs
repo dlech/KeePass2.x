@@ -48,6 +48,7 @@
 			this.m_cbExcludeExpired = new System.Windows.Forms.CheckBox();
 			this.m_cbCaseSensitive = new System.Windows.Forms.CheckBox();
 			this.m_cbRegEx = new System.Windows.Forms.CheckBox();
+			this.m_lblHints = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpSearchIn.SuspendLayout();
 			this.m_grpOptions.SuspendLayout();
@@ -65,10 +66,10 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(183, 314);
+			this.m_btnOK.Location = new System.Drawing.Point(183, 346);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 5;
+			this.m_btnOK.TabIndex = 6;
 			this.m_btnOK.Text = "&Find";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -76,10 +77,10 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(264, 314);
+			this.m_btnCancel.Location = new System.Drawing.Point(264, 346);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 6;
+			this.m_btnCancel.TabIndex = 7;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -111,10 +112,10 @@
 			this.m_grpSearchIn.Controls.Add(this.m_cbPassword);
 			this.m_grpSearchIn.Controls.Add(this.m_cbUserName);
 			this.m_grpSearchIn.Controls.Add(this.m_cbTitle);
-			this.m_grpSearchIn.Location = new System.Drawing.Point(12, 118);
+			this.m_grpSearchIn.Location = new System.Drawing.Point(12, 150);
 			this.m_grpSearchIn.Name = "m_grpSearchIn";
 			this.m_grpSearchIn.Size = new System.Drawing.Size(327, 89);
-			this.m_grpSearchIn.TabIndex = 3;
+			this.m_grpSearchIn.TabIndex = 4;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
 			// 
@@ -213,10 +214,10 @@
 			this.m_grpOptions.Controls.Add(this.m_cbDerefData);
 			this.m_grpOptions.Controls.Add(this.m_cbExcludeExpired);
 			this.m_grpOptions.Controls.Add(this.m_cbCaseSensitive);
-			this.m_grpOptions.Location = new System.Drawing.Point(12, 212);
+			this.m_grpOptions.Location = new System.Drawing.Point(12, 244);
 			this.m_grpOptions.Name = "m_grpOptions";
 			this.m_grpOptions.Size = new System.Drawing.Size(327, 92);
-			this.m_grpOptions.TabIndex = 4;
+			this.m_grpOptions.TabIndex = 5;
 			this.m_grpOptions.TabStop = false;
 			this.m_grpOptions.Text = "Options";
 			// 
@@ -259,6 +260,16 @@
 			this.m_cbRegEx.TabIndex = 2;
 			this.m_cbRegEx.Text = "&Regular expression";
 			this.m_cbRegEx.UseVisualStyleBackColor = true;
+			this.m_cbRegEx.CheckedChanged += new System.EventHandler(this.OnRegExCheckedChanged);
+			// 
+			// m_lblHints
+			// 
+			this.m_lblHints.Location = new System.Drawing.Point(71, 115);
+			this.m_lblHints.Name = "m_lblHints";
+			this.m_lblHints.Size = new System.Drawing.Size(268, 29);
+			this.m_lblHints.TabIndex = 3;
+			this.m_lblHints.Text = "Separate multiple terms using spaces \' \'. To exclude a term, prepend a minus sign" +
+				" \'-\' to it.";
 			// 
 			// SearchForm
 			// 
@@ -266,7 +277,8 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(351, 349);
+			this.ClientSize = new System.Drawing.Size(351, 381);
+			this.Controls.Add(this.m_lblHints);
 			this.Controls.Add(this.m_cbRegEx);
 			this.Controls.Add(this.m_grpOptions);
 			this.Controls.Add(this.m_grpSearchIn);
@@ -316,5 +328,6 @@
 		private System.Windows.Forms.CheckBox m_cbUuid;
 		private System.Windows.Forms.CheckBox m_cbTags;
 		private System.Windows.Forms.CheckBox m_cbDerefData;
+		private System.Windows.Forms.Label m_lblHints;
 	}
 }

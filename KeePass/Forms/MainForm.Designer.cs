@@ -91,6 +91,7 @@
 			this.m_ctxEntrySelectedExport = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySelectedSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryMoveToGroup = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntryShowParentGroup = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySelectAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryClipboard = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,8 +136,20 @@
 			this.m_menuFileLock = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEdit = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuEditShowAllEntries = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuEditShowExpired = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowEntries = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowAll = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditShowExp = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp2 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp3 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp7 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp14 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp28 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExp56 = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowExpInF = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditShowParentGroup = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowByTag = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEditFind = new System.Windows.Forms.ToolStripMenuItem();
@@ -233,6 +246,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_ctxEntryAutoTypeAdv = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -453,6 +467,7 @@
             this.m_ctxEntrySaveAttachedFiles,
             this.m_ctxEntrySep0,
             this.m_ctxEntryPerformAutoType,
+            this.m_ctxEntryAutoTypeAdv,
             this.m_ctxEntrySep1,
             this.m_ctxEntryAdd,
             this.m_ctxEntryEdit,
@@ -464,7 +479,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(209, 374);
+			this.m_ctxPwList.Size = new System.Drawing.Size(209, 396);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -607,7 +622,8 @@
             this.m_ctxEntrySelectedPrint,
             this.m_ctxEntrySelectedExport,
             this.m_ctxEntrySelectedSep2,
-            this.m_ctxEntryMoveToGroup});
+            this.m_ctxEntryMoveToGroup,
+            this.m_ctxEntryShowParentGroup});
 			this.m_ctxEntryMassModify.Name = "m_ctxEntryMassModify";
 			this.m_ctxEntryMassModify.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryMassModify.Text = "Selected Entr&ies";
@@ -624,7 +640,7 @@
             this.m_ctxEntryColorSep1,
             this.m_ctxEntryColorCustom});
 			this.m_ctxEntrySetColor.Name = "m_ctxEntrySetColor";
-			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntrySetColor.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntrySetColor.Text = "Set &Color";
 			// 
 			// m_ctxEntryColorStandard
@@ -683,21 +699,21 @@
 			// 
 			this.m_ctxEntryMassSetIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_ctxEntryMassSetIcon.Name = "m_ctxEntryMassSetIcon";
-			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntryMassSetIcon.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntryMassSetIcon.Text = "Set &Icons...";
 			this.m_ctxEntryMassSetIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
 			// m_ctxEntrySelectedSep0
 			// 
 			this.m_ctxEntrySelectedSep0.Name = "m_ctxEntrySelectedSep0";
-			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(151, 6);
+			this.m_ctxEntrySelectedSep0.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntrySelectedAddTag
 			// 
 			this.m_ctxEntrySelectedAddTag.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxEntrySelectedNewTag});
 			this.m_ctxEntrySelectedAddTag.Name = "m_ctxEntrySelectedAddTag";
-			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntrySelectedAddTag.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntrySelectedAddTag.Text = "Add &Tag";
 			this.m_ctxEntrySelectedAddTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedAddTagOpening);
 			// 
@@ -712,20 +728,20 @@
 			// m_ctxEntrySelectedRemoveTag
 			// 
 			this.m_ctxEntrySelectedRemoveTag.Name = "m_ctxEntrySelectedRemoveTag";
-			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntrySelectedRemoveTag.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntrySelectedRemoveTag.Text = "&Remove Tag";
 			this.m_ctxEntrySelectedRemoveTag.DropDownOpening += new System.EventHandler(this.OnEntrySelectedRemoveTagOpening);
 			// 
 			// m_ctxEntrySelectedSep1
 			// 
 			this.m_ctxEntrySelectedSep1.Name = "m_ctxEntrySelectedSep1";
-			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(151, 6);
+			this.m_ctxEntrySelectedSep1.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntrySelectedPrint
 			// 
 			this.m_ctxEntrySelectedPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
 			this.m_ctxEntrySelectedPrint.Name = "m_ctxEntrySelectedPrint";
-			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntrySelectedPrint.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntrySelectedPrint.Text = "&Print...";
 			this.m_ctxEntrySelectedPrint.Click += new System.EventHandler(this.OnEntrySelectedPrint);
 			// 
@@ -733,21 +749,29 @@
 			// 
 			this.m_ctxEntrySelectedExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
 			this.m_ctxEntrySelectedExport.Name = "m_ctxEntrySelectedExport";
-			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntrySelectedExport.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntrySelectedExport.Text = "&Export...";
 			this.m_ctxEntrySelectedExport.Click += new System.EventHandler(this.OnEntrySelectedExport);
 			// 
 			// m_ctxEntrySelectedSep2
 			// 
 			this.m_ctxEntrySelectedSep2.Name = "m_ctxEntrySelectedSep2";
-			this.m_ctxEntrySelectedSep2.Size = new System.Drawing.Size(151, 6);
+			this.m_ctxEntrySelectedSep2.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntryMoveToGroup
 			// 
 			this.m_ctxEntryMoveToGroup.Name = "m_ctxEntryMoveToGroup";
-			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(154, 22);
+			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(176, 22);
 			this.m_ctxEntryMoveToGroup.Text = "Move to &Group";
 			this.m_ctxEntryMoveToGroup.DropDownOpening += new System.EventHandler(this.OnEntryMoveToGroupOpening);
+			// 
+			// m_ctxEntryShowParentGroup
+			// 
+			this.m_ctxEntryShowParentGroup.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
+			this.m_ctxEntryShowParentGroup.Name = "m_ctxEntryShowParentGroup";
+			this.m_ctxEntryShowParentGroup.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryShowParentGroup.Text = "&Show Parent Group";
+			this.m_ctxEntryShowParentGroup.Click += new System.EventHandler(this.OnEditShowParentGroup);
 			// 
 			// m_ctxEntrySelectAll
 			// 
@@ -1102,8 +1126,7 @@
 			// m_menuEdit
 			// 
 			this.m_menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuEditShowAllEntries,
-            this.m_menuEditShowExpired,
+            this.m_menuEditShowEntries,
             this.m_menuEditShowByTag,
             this.m_menuEditSep0,
             this.m_menuEditFind});
@@ -1112,39 +1135,141 @@
 			this.m_menuEdit.Text = "&Edit";
 			this.m_menuEdit.DropDownOpening += new System.EventHandler(this.OnMenuEditOpening);
 			// 
-			// m_menuEditShowAllEntries
+			// m_menuEditShowEntries
 			// 
-			this.m_menuEditShowAllEntries.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
-			this.m_menuEditShowAllEntries.Name = "m_menuEditShowAllEntries";
-			this.m_menuEditShowAllEntries.Size = new System.Drawing.Size(199, 22);
-			this.m_menuEditShowAllEntries.Text = "&Show All Entries";
-			this.m_menuEditShowAllEntries.Click += new System.EventHandler(this.OnShowAllEntries);
+			this.m_menuEditShowEntries.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuEditShowAll,
+            this.m_menuEditShowSep0,
+            this.m_menuEditShowExp,
+            this.m_menuEditShowExp1,
+            this.m_menuEditShowExp2,
+            this.m_menuEditShowExp3,
+            this.m_menuEditShowExp7,
+            this.m_menuEditShowExp14,
+            this.m_menuEditShowExp28,
+            this.m_menuEditShowExp56,
+            this.m_menuEditShowExpInF,
+            this.m_menuEditShowSep1,
+            this.m_menuEditShowParentGroup});
+			this.m_menuEditShowEntries.Name = "m_menuEditShowEntries";
+			this.m_menuEditShowEntries.Size = new System.Drawing.Size(179, 22);
+			this.m_menuEditShowEntries.Text = "&Show Entries";
 			// 
-			// m_menuEditShowExpired
+			// m_menuEditShowAll
 			// 
-			this.m_menuEditShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
-			this.m_menuEditShowExpired.Name = "m_menuEditShowExpired";
-			this.m_menuEditShowExpired.Size = new System.Drawing.Size(199, 22);
-			this.m_menuEditShowExpired.Text = "Show All E&xpired Entries";
-			this.m_menuEditShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
+			this.m_menuEditShowAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
+			this.m_menuEditShowAll.Name = "m_menuEditShowAll";
+			this.m_menuEditShowAll.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowAll.Text = "&All";
+			this.m_menuEditShowAll.Click += new System.EventHandler(this.OnEditShowAll);
+			// 
+			// m_menuEditShowSep0
+			// 
+			this.m_menuEditShowSep0.Name = "m_menuEditShowSep0";
+			this.m_menuEditShowSep0.Size = new System.Drawing.Size(189, 6);
+			// 
+			// m_menuEditShowExp
+			// 
+			this.m_menuEditShowExp.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp.Name = "m_menuEditShowExp";
+			this.m_menuEditShowExp.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp.Text = "E&xpired";
+			this.m_menuEditShowExp.Click += new System.EventHandler(this.OnEditShowExp);
+			// 
+			// m_menuEditShowExp1
+			// 
+			this.m_menuEditShowExp1.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp1.Name = "m_menuEditShowExp1";
+			this.m_menuEditShowExp1.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp1.Text = "Expiring in &1 Day";
+			this.m_menuEditShowExp1.Click += new System.EventHandler(this.OnEditShowExp1);
+			// 
+			// m_menuEditShowExp2
+			// 
+			this.m_menuEditShowExp2.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp2.Name = "m_menuEditShowExp2";
+			this.m_menuEditShowExp2.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp2.Text = "Expiring in &2 Days";
+			this.m_menuEditShowExp2.Click += new System.EventHandler(this.OnEditShowExp2);
+			// 
+			// m_menuEditShowExp3
+			// 
+			this.m_menuEditShowExp3.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp3.Name = "m_menuEditShowExp3";
+			this.m_menuEditShowExp3.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp3.Text = "Expiring in &3 Days";
+			this.m_menuEditShowExp3.Click += new System.EventHandler(this.OnEditShowExp3);
+			// 
+			// m_menuEditShowExp7
+			// 
+			this.m_menuEditShowExp7.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp7.Name = "m_menuEditShowExp7";
+			this.m_menuEditShowExp7.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp7.Text = "Expiring in 1 &Week";
+			this.m_menuEditShowExp7.Click += new System.EventHandler(this.OnEditShowExp7);
+			// 
+			// m_menuEditShowExp14
+			// 
+			this.m_menuEditShowExp14.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp14.Name = "m_menuEditShowExp14";
+			this.m_menuEditShowExp14.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp14.Text = "Expiring in 2 W&eeks";
+			this.m_menuEditShowExp14.Click += new System.EventHandler(this.OnEditShowExp14);
+			// 
+			// m_menuEditShowExp28
+			// 
+			this.m_menuEditShowExp28.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp28.Name = "m_menuEditShowExp28";
+			this.m_menuEditShowExp28.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp28.Text = "Expiring in 4 Wee&ks";
+			this.m_menuEditShowExp28.Click += new System.EventHandler(this.OnEditShowExp28);
+			// 
+			// m_menuEditShowExp56
+			// 
+			this.m_menuEditShowExp56.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExp56.Name = "m_menuEditShowExp56";
+			this.m_menuEditShowExp56.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp56.Text = "Expiring in 8 Week&s";
+			this.m_menuEditShowExp56.Click += new System.EventHandler(this.OnEditShowExp56);
+			// 
+			// m_menuEditShowExpInF
+			// 
+			this.m_menuEditShowExpInF.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
+			this.m_menuEditShowExpInF.Name = "m_menuEditShowExpInF";
+			this.m_menuEditShowExpInF.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExpInF.Text = "Expiring in the &Future";
+			this.m_menuEditShowExpInF.Click += new System.EventHandler(this.OnEditShowExpInF);
+			// 
+			// m_menuEditShowSep1
+			// 
+			this.m_menuEditShowSep1.Name = "m_menuEditShowSep1";
+			this.m_menuEditShowSep1.Size = new System.Drawing.Size(189, 6);
+			// 
+			// m_menuEditShowParentGroup
+			// 
+			this.m_menuEditShowParentGroup.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
+			this.m_menuEditShowParentGroup.Name = "m_menuEditShowParentGroup";
+			this.m_menuEditShowParentGroup.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowParentGroup.Text = "Selected Entry\'s Group";
+			this.m_menuEditShowParentGroup.Click += new System.EventHandler(this.OnEditShowParentGroup);
 			// 
 			// m_menuEditShowByTag
 			// 
 			this.m_menuEditShowByTag.Name = "m_menuEditShowByTag";
-			this.m_menuEditShowByTag.Size = new System.Drawing.Size(199, 22);
+			this.m_menuEditShowByTag.Size = new System.Drawing.Size(179, 22);
 			this.m_menuEditShowByTag.Text = "Show Entries &by Tag";
 			this.m_menuEditShowByTag.DropDownOpening += new System.EventHandler(this.OnEditShowByTagOpening);
 			// 
 			// m_menuEditSep0
 			// 
 			this.m_menuEditSep0.Name = "m_menuEditSep0";
-			this.m_menuEditSep0.Size = new System.Drawing.Size(196, 6);
+			this.m_menuEditSep0.Size = new System.Drawing.Size(176, 6);
 			// 
 			// m_menuEditFind
 			// 
 			this.m_menuEditFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_menuEditFind.Name = "m_menuEditFind";
-			this.m_menuEditFind.Size = new System.Drawing.Size(199, 22);
+			this.m_menuEditFind.Size = new System.Drawing.Size(179, 22);
 			this.m_menuEditFind.Text = "&Find...";
 			this.m_menuEditFind.Click += new System.EventHandler(this.OnPwListFind);
 			// 
@@ -1696,14 +1821,14 @@
 			this.m_tbViewsShowAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_tbViewsShowAll.Name = "m_tbViewsShowAll";
 			this.m_tbViewsShowAll.Size = new System.Drawing.Size(67, 22);
-			this.m_tbViewsShowAll.Click += new System.EventHandler(this.OnShowAllEntries);
+			this.m_tbViewsShowAll.Click += new System.EventHandler(this.OnEditShowAll);
 			// 
 			// m_tbViewsShowExpired
 			// 
 			this.m_tbViewsShowExpired.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_tbViewsShowExpired.Name = "m_tbViewsShowExpired";
 			this.m_tbViewsShowExpired.Size = new System.Drawing.Size(67, 22);
-			this.m_tbViewsShowExpired.Click += new System.EventHandler(this.OnToolsShowExpired);
+			this.m_tbViewsShowExpired.Click += new System.EventHandler(this.OnEditShowExp);
 			// 
 			// m_tbSep2
 			// 
@@ -1973,6 +2098,12 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_ctxEntryAutoTypeAdv
+			// 
+			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
+			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(208, 22);
+			this.m_ctxEntryAutoTypeAdv.Text = "Perform Auto-Type";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2117,8 +2248,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsPwGenerator;
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsTanWizard;
-		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowAllEntries;
-		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExpired;
 		private System.Windows.Forms.ToolStripSeparator m_menuEditSep0;
 		private System.Windows.Forms.ToolStripProgressBar m_statusClipboard;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryClipboard;
@@ -2219,6 +2348,22 @@
 		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupExpand;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupCollapse;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowEntries;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowAll;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditShowSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp1;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp2;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp3;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp7;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp14;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp28;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExpInF;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowExp56;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditShowSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowParentGroup;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryShowParentGroup;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAutoTypeAdv;
 	}
 }
 

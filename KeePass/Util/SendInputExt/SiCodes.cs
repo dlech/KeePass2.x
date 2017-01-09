@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -50,6 +50,24 @@ namespace KeePass.Util.SendInputExt
 			this.VKey = (int)k;
 			this.XKeySym = strXKeySym;
 		}
+	}
+
+	internal enum SiDiacritic
+	{
+		None = 0,
+		Grave,
+		Acute,
+		Circumflex,
+		Tilde,
+		Diaeresis, // Umlaut
+		Ring, // Ring above
+		Cedilla,
+		Macron,
+		Breve,
+		Ogonek,
+		DotAbove,
+		Caron,
+		AcuteDouble
 	}
 
 	internal static class SiCodes
@@ -238,6 +256,203 @@ namespace KeePass.Util.SendInputExt
 			}
 
 			return char.MinValue;
+		}
+
+		private static Dictionary<char, string> m_dChToXKeySym = null;
+		public static string CharToXKeySym(char ch)
+		{
+			if(m_dChToXKeySym == null)
+			{
+				Dictionary<char, string> d = new Dictionary<char, string>();
+
+				// XDoTool sends some characters in the wrong case;
+				// a workaround is to specify the keypress as an
+				// XKeySym combination;
+				// https://sourceforge.net/p/keepass/bugs/1532/
+				// https://github.com/jordansissel/xdotool/issues/41
+
+				AddDiacritic(d, 'A', '\u00C0', '\u00E0', SiDiacritic.Grave);
+				AddDiacritic(d, 'A', '\u00C1', '\u00E1', SiDiacritic.Acute);
+				AddDiacritic(d, 'A', '\u00C2', '\u00E2', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'A', '\u00C3', '\u00E3', SiDiacritic.Tilde);
+				AddDiacritic(d, 'A', '\u00C4', '\u00E4', SiDiacritic.Diaeresis);
+				AddDiacritic(d, 'A', '\u00C5', '\u00E5', SiDiacritic.Ring);
+
+				AddDiacritic(d, 'C', '\u00C7', '\u00E7', SiDiacritic.Cedilla);
+
+				AddDiacritic(d, 'E', '\u00C8', '\u00E8', SiDiacritic.Grave);
+				AddDiacritic(d, 'E', '\u00C9', '\u00E9', SiDiacritic.Acute);
+				AddDiacritic(d, 'E', '\u00CA', '\u00EA', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'E', '\u00CB', '\u00EB', SiDiacritic.Diaeresis);
+
+				AddDiacritic(d, 'I', '\u00CC', '\u00EC', SiDiacritic.Grave);
+				AddDiacritic(d, 'I', '\u00CD', '\u00ED', SiDiacritic.Acute);
+				AddDiacritic(d, 'I', '\u00CE', '\u00EE', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'I', '\u00CF', '\u00EF', SiDiacritic.Diaeresis);
+
+				AddDiacritic(d, 'N', '\u00D1', '\u00F1', SiDiacritic.Tilde);
+
+				AddDiacritic(d, 'O', '\u00D2', '\u00F2', SiDiacritic.Grave);
+				AddDiacritic(d, 'O', '\u00D3', '\u00F3', SiDiacritic.Acute);
+				AddDiacritic(d, 'O', '\u00D4', '\u00F4', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'O', '\u00D5', '\u00F5', SiDiacritic.Tilde);
+				AddDiacritic(d, 'O', '\u00D6', '\u00F6', SiDiacritic.Diaeresis);
+
+				AddDiacritic(d, 'U', '\u00D9', '\u00F9', SiDiacritic.Grave);
+				AddDiacritic(d, 'U', '\u00DA', '\u00FA', SiDiacritic.Acute);
+				AddDiacritic(d, 'U', '\u00DB', '\u00FB', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'U', '\u00DC', '\u00FC', SiDiacritic.Diaeresis);
+
+				AddDiacritic(d, 'Y', '\u00DD', '\u00FD', SiDiacritic.Acute);
+				AddDiacritic(d, 'Y', '\u0178', '\u00FF', SiDiacritic.Diaeresis);
+
+				AddDiacritic(d, 'A', '\u0100', '\u0101', SiDiacritic.Macron);
+				AddDiacritic(d, 'A', '\u0102', '\u0103', SiDiacritic.Breve);
+				AddDiacritic(d, 'A', '\u0104', '\u0105', SiDiacritic.Ogonek);
+
+				AddDiacritic(d, 'C', '\u0106', '\u0107', SiDiacritic.Acute);
+				AddDiacritic(d, 'C', '\u0108', '\u0109', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'C', '\u010A', '\u010B', SiDiacritic.DotAbove);
+				AddDiacritic(d, 'C', '\u010C', '\u010D', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'D', '\u010E', '\u010F', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'E', '\u0112', '\u0113', SiDiacritic.Macron);
+				AddDiacritic(d, 'E', '\u0114', '\u0115', SiDiacritic.Breve);
+				AddDiacritic(d, 'E', '\u0116', '\u0117', SiDiacritic.DotAbove);
+				AddDiacritic(d, 'E', '\u0118', '\u0119', SiDiacritic.Ogonek);
+				AddDiacritic(d, 'E', '\u011A', '\u011B', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'G', '\u011C', '\u011D', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'G', '\u011E', '\u011F', SiDiacritic.Breve);
+				AddDiacritic(d, 'G', '\u0120', '\u0121', SiDiacritic.DotAbove);
+				AddDiacritic(d, 'G', '\u0122', '\u0123', SiDiacritic.Cedilla);
+
+				AddDiacritic(d, 'H', '\u0124', '\u0125', SiDiacritic.Circumflex);
+
+				AddDiacritic(d, 'I', '\u0128', '\u0129', SiDiacritic.Tilde);
+				AddDiacritic(d, 'I', '\u012A', '\u012B', SiDiacritic.Macron);
+				AddDiacritic(d, 'I', '\u012C', '\u012D', SiDiacritic.Breve);
+				AddDiacritic(d, 'I', '\u012E', '\u012F', SiDiacritic.Ogonek);
+				AddDiacritic(d, 'I', '\u0130', '\0', SiDiacritic.DotAbove);
+
+				AddDiacritic(d, 'J', '\u0134', '\u0135', SiDiacritic.Circumflex);
+
+				AddDiacritic(d, 'K', '\u0136', '\u0137', SiDiacritic.Cedilla);
+
+				AddDiacritic(d, 'L', '\u0139', '\u013A', SiDiacritic.Acute);
+				AddDiacritic(d, 'L', '\u013B', '\u013C', SiDiacritic.Cedilla);
+				AddDiacritic(d, 'L', '\u013D', '\u013E', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'N', '\u0143', '\u0144', SiDiacritic.Acute);
+				AddDiacritic(d, 'N', '\u0145', '\u0146', SiDiacritic.Cedilla);
+				AddDiacritic(d, 'N', '\u0147', '\u0148', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'O', '\u014C', '\u014D', SiDiacritic.Macron);
+				AddDiacritic(d, 'O', '\u014E', '\u014F', SiDiacritic.Breve);
+				AddDiacritic(d, 'O', '\u0150', '\u0151', SiDiacritic.AcuteDouble);
+
+				AddDiacritic(d, 'R', '\u0154', '\u0155', SiDiacritic.Acute);
+				AddDiacritic(d, 'R', '\u0156', '\u0157', SiDiacritic.Cedilla);
+				AddDiacritic(d, 'R', '\u0158', '\u0159', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'S', '\u015A', '\u015B', SiDiacritic.Acute);
+				AddDiacritic(d, 'S', '\u015C', '\u015D', SiDiacritic.Circumflex);
+				AddDiacritic(d, 'S', '\u015E', '\u015F', SiDiacritic.Cedilla);
+				AddDiacritic(d, 'S', '\u0160', '\u0161', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'T', '\u0162', '\u0163', SiDiacritic.Cedilla);
+				AddDiacritic(d, 'T', '\u0164', '\u0165', SiDiacritic.Caron);
+
+				AddDiacritic(d, 'U', '\u0168', '\u0169', SiDiacritic.Tilde);
+				AddDiacritic(d, 'U', '\u016A', '\u016B', SiDiacritic.Macron);
+				AddDiacritic(d, 'U', '\u016C', '\u016D', SiDiacritic.Breve);
+				AddDiacritic(d, 'U', '\u016E', '\u016F', SiDiacritic.Ring);
+				AddDiacritic(d, 'U', '\u0170', '\u0171', SiDiacritic.AcuteDouble);
+				AddDiacritic(d, 'U', '\u0172', '\u0173', SiDiacritic.Ogonek);
+
+				AddDiacritic(d, 'W', '\u0174', '\u0175', SiDiacritic.Circumflex);
+
+				AddDiacritic(d, 'Y', '\u0176', '\u0177', SiDiacritic.Circumflex);
+
+				AddDiacritic(d, 'Z', '\u0179', '\u017A', SiDiacritic.Acute);
+				AddDiacritic(d, 'Z', '\u017B', '\u017C', SiDiacritic.DotAbove);
+				AddDiacritic(d, 'Z', '\u017D', '\u017E', SiDiacritic.Caron);
+
+				m_dChToXKeySym = d;
+			}
+
+			string str;
+			if(m_dChToXKeySym.TryGetValue(ch, out str)) return str;
+
+			// Unicode is supported; codes are 'UHHHH' with 'HHHH' being
+			// the Unicode value; see header of 'keysymdef.h'
+			return ("U" + ((int)ch).ToString("X4", NumberFormatInfo.InvariantInfo));
+		}
+
+		private static void AddDiacritic(Dictionary<char, string> d,
+			char chBase, char chDiaU, char chDiaL, SiDiacritic dc)
+		{
+			if(d == null) { Debug.Assert(false); return; }
+
+			string strPrefix = string.Empty;
+			switch(dc)
+			{
+				case SiDiacritic.Grave:
+					strPrefix = "dead_grave ";
+					break;
+				case SiDiacritic.Acute:
+					strPrefix = "dead_acute ";
+					break;
+				case SiDiacritic.Circumflex:
+					strPrefix = "dead_circumflex ";
+					break;
+				case SiDiacritic.Tilde:
+					strPrefix = "dead_tilde ";
+					break;
+				case SiDiacritic.Diaeresis:
+					strPrefix = "dead_diaeresis ";
+					break;
+				case SiDiacritic.Ring:
+					strPrefix = "dead_abovering ";
+					break;
+				case SiDiacritic.Cedilla:
+					strPrefix = "dead_cedilla ";
+					break;
+				case SiDiacritic.Macron:
+					strPrefix = "dead_macron ";
+					break;
+				case SiDiacritic.Breve:
+					strPrefix = "dead_breve ";
+					break;
+				case SiDiacritic.Ogonek:
+					strPrefix = "dead_ogonek ";
+					break;
+				case SiDiacritic.DotAbove:
+					strPrefix = "dead_abovedot ";
+					break;
+				case SiDiacritic.Caron:
+					strPrefix = "dead_caron ";
+					break;
+				case SiDiacritic.AcuteDouble:
+					strPrefix = "dead_doubleacute ";
+					break;
+				default:
+					Debug.Assert(dc == SiDiacritic.None);
+					break;
+			}
+			Debug.Assert((strPrefix.Length == 0) || strPrefix.EndsWith(" "));
+
+			if(chDiaU != '\0')
+			{
+				Debug.Assert(!d.ContainsKey(chDiaU));
+				d[chDiaU] = (strPrefix + char.ToUpperInvariant(chBase));
+			}
+			if(chDiaL != '\0')
+			{
+				Debug.Assert(!d.ContainsKey(chDiaL));
+				d[chDiaL] = (strPrefix + char.ToLowerInvariant(chBase));
+			}
 		}
 	}
 }

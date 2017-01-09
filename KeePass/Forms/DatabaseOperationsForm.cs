@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ using KeePass.UI;
 using KeePass.Resources;
 
 using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Delegates;
 
 namespace KeePass.Forms
@@ -37,6 +38,8 @@ namespace KeePass.Forms
 	{
 		private PwDatabase m_pwDatabase = null;
 		private bool m_bModified = false;
+
+		private StringDictionaryEx m_sdCustomData = null;
 
 		public bool CanCloseWithoutDataLoss { get { return true; } }
 		public bool HasModifiedDatabase { get { return m_bModified; } }
@@ -66,12 +69,29 @@ namespace KeePass.Forms
 
 			m_numHistoryDays.Value = m_pwDatabase.MaintenanceHistoryDays;
 
+			m_sdCustomData = m_pwDatabase.CustomData.CloneDeep();
+			UIUtil.StrDictListInit(m_lvCustomData);
+			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData);
+
 			m_pbStatus.Visible = false;
+			EnableControlsEx();
 		}
 
 		private void OnBtnClose(object sender, EventArgs e)
 		{
 			m_pwDatabase.MaintenanceHistoryDays = (uint)m_numHistoryDays.Value;
+
+			if(m_sdCustomData.Count != m_pwDatabase.CustomData.Count)
+			{
+				m_pwDatabase.CustomData = m_sdCustomData;
+				m_bModified = true;
+			}
+			else { Debug.Assert(m_sdCustomData.Equals(m_pwDatabase.CustomData)); }
+		}
+
+		private void EnableControlsEx()
+		{
+			m_btnCDDel.Enabled = (m_lvCustomData.SelectedItems.Count > 0);
 		}
 
 		private void EnableStatusMsgEx(bool bEnable)
@@ -97,7 +117,7 @@ namespace KeePass.Forms
 		{
 			EnableStatusMsgEx(true);
 
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 			TimeSpan tsSpan = new TimeSpan((int)m_numHistoryDays.Value, 0, 0, 0);
 
 			uint uNumGroups, uNumEntries;
@@ -145,6 +165,18 @@ namespace KeePass.Forms
 			}
 
 			EnableStatusMsgEx(false); // Database is set modified by parent
+		}
+
+		private void OnCustomDataSelectedIndexChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnBtnCDDel(object sender, EventArgs e)
+		{
+			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData);
+			UIUtil.SetFocus(m_lvCustomData, this);
+			EnableControlsEx();
 		}
 	}
 }

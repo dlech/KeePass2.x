@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -43,6 +44,7 @@ namespace KeePass.Forms
 
 		private PwIcon m_pwIconIndex = 0;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
+		private StringDictionaryEx m_sdCustomData = null;
 
 		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
 
@@ -99,7 +101,7 @@ namespace KeePass.Forms
 
 			if(m_pwGroup.Expires)
 			{
-				m_dtExpires.Value = m_pwGroup.ExpiryTime;
+				m_dtExpires.Value = TimeUtil.ToLocal(m_pwGroup.ExpiryTime, true);
 				m_cbExpires.Checked = true;
 			}
 			else // Does not expire
@@ -127,6 +129,10 @@ namespace KeePass.Forms
 				m_rbAutoTypeInherit.Checked = true;
 			else m_rbAutoTypeOverride.Checked = true;
 
+			m_sdCustomData = m_pwGroup.CustomData.CloneDeep();
+			UIUtil.StrDictListInit(m_lvCustomData);
+			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData);
+
 			CustomizeForScreenReader();
 			EnableControlsEx();
 			UIUtil.SetFocus(m_tbName, this);
@@ -144,6 +150,8 @@ namespace KeePass.Forms
 		{
 			m_tbDefaultAutoTypeSeq.Enabled = m_btnAutoTypeEdit.Enabled =
 				!m_rbAutoTypeInherit.Checked;
+
+			m_btnCDDel.Enabled = (m_lvCustomData.SelectedItems.Count > 0);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -164,6 +172,8 @@ namespace KeePass.Forms
 			if(m_rbAutoTypeInherit.Checked)
 				m_pwGroup.DefaultAutoTypeSequence = string.Empty;
 			else m_pwGroup.DefaultAutoTypeSequence = m_tbDefaultAutoTypeSeq.Text;
+
+			m_pwGroup.CustomData = m_sdCustomData;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -227,6 +237,18 @@ namespace KeePass.Forms
 		{
 			CleanUpEx();
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnCustomDataSelectedIndexChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnBtnCDDel(object sender, EventArgs e)
+		{
+			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData);
+			UIUtil.SetFocus(m_lvCustomData, this);
+			EnableControlsEx();
 		}
 	}
 }

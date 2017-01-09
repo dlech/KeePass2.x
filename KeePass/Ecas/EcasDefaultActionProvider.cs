@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,11 @@ namespace KeePass.Ecas
 {
 	internal sealed class EcasDefaultActionProvider : EcasActionProvider
 	{
+		private const uint IdWindowNormal = 0;
+		private const uint IdWindowHidden = 1;
+		private const uint IdWindowMin = 2;
+		private const uint IdWindowMax = 3;
+
 		private const uint IdTriggerOff = 0;
 		private const uint IdTriggerOn = 1;
 		private const uint IdTriggerToggle = 2;
@@ -64,7 +69,14 @@ namespace KeePass.Ecas
 				KPRes.ExecuteCmdLineUrl, PwIcon.Console, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
 					new EcasParameter(KPRes.Arguments, EcasValueType.String, null),
-					new EcasParameter(KPRes.WaitForExit, EcasValueType.Bool, null) },
+					new EcasParameter(KPRes.WaitForExit, EcasValueType.Bool, null),
+					new EcasParameter(KPRes.WindowStyle, EcasValueType.EnumStrings,
+						new EcasEnum(new EcasEnumItem[] {
+							new EcasEnumItem(IdWindowNormal, KPRes.Normal),
+							new EcasEnumItem(IdWindowHidden, KPRes.Hidden),
+							new EcasEnumItem(IdWindowMin, KPRes.Minimized),
+							new EcasEnumItem(IdWindowMax, KPRes.Maximized) })),
+					new EcasParameter(KPRes.Verb, EcasValueType.String, null) },
 				ExecuteShellCmd));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -250,14 +262,45 @@ namespace KeePass.Ecas
 			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
 			bool bWait = StrUtil.StringToBool(EcasUtil.GetParamString(a.Parameters,
 				2, string.Empty));
+			uint uWindowStyle = EcasUtil.GetParamUInt(a.Parameters, 3);
+			string strVerb = EcasUtil.GetParamString(a.Parameters, 4, true);
 
 			if(string.IsNullOrEmpty(strCmd)) return;
 
 			try
 			{
-				Process p;
-				if(string.IsNullOrEmpty(strArgs)) p = Process.Start(strCmd);
-				else p = Process.Start(strCmd, strArgs);
+				ProcessStartInfo psi = new ProcessStartInfo(strCmd);
+				if(!string.IsNullOrEmpty(strArgs))
+					psi.Arguments = strArgs;
+
+				bool bShEx = true;
+				if(!string.IsNullOrEmpty(strVerb)) { } // Need ShellExecute
+				else if((uWindowStyle == IdWindowMin) ||
+					(uWindowStyle == IdWindowMax)) { } // Need ShellExecute
+				else
+				{
+					string strCmdFlt = strCmd.TrimEnd(new char[] { '\"', '\'',
+						' ', '\t', '\r', '\n' });
+					if(strCmdFlt.EndsWith(".exe", StrUtil.CaseIgnoreCmp) ||
+						strCmdFlt.EndsWith(".com", StrUtil.CaseIgnoreCmp))
+						bShEx = false;
+				}
+				psi.UseShellExecute = bShEx;
+
+				if(uWindowStyle == IdWindowHidden)
+				{
+					psi.CreateNoWindow = true;
+					psi.WindowStyle = ProcessWindowStyle.Hidden;
+				}
+				else if(uWindowStyle == IdWindowMin)
+					psi.WindowStyle = ProcessWindowStyle.Minimized;
+				else if(uWindowStyle == IdWindowMax)
+					psi.WindowStyle = ProcessWindowStyle.Maximized;
+
+				if(!string.IsNullOrEmpty(strVerb))
+					psi.Verb = strVerb;
+
+				Process p = Process.Start(psi);
 
 				if((p != null) && bWait)
 				{
@@ -489,7 +532,7 @@ namespace KeePass.Ecas
 
 		private static void CloseDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			Program.MainForm.CloseDocument(null, false, false, true);
+			Program.MainForm.CloseDocument(null, false, false, true, true);
 		}
 
 		private static void ActivateDatabaseTab(EcasAction a, EcasContext ctx)

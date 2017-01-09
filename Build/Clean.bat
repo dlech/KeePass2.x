@@ -63,6 +63,7 @@ DEL ..\Translation\KeePass.pdb
 DEL ..\Translation\KeePass.config.xml
 
 DEL /A:H ..\Ext\KeePassMsi\KeePassMsi.suo
+RMDIR /S /Q ..\Ext\KeePassMsi\.vs
 RMDIR /S /Q KeePassMsi
 
 RMDIR /S /Q KPScript

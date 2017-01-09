@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -188,6 +188,23 @@ namespace KeePass.Forms
 			m_dynMoveToGroup = new DynamicMenu(m_ctxEntryMoveToGroup.DropDownItems);
 			m_dynMoveToGroup.MenuClick += this.OnEntryMoveToGroup;
 
+			m_dynAutoTypeAdv = new DynamicMenu(m_ctxEntryAutoTypeAdv.DropDownItems);
+			m_dynAutoTypeAdv.MenuClick += this.OnEntryPerformAutoTypeAdv;
+
+			string[] vAdvSeq = new string[] {
+				@"{USERNAME}", @"{USERNAME}{ENTER}",
+				@"{PASSWORD}", @"{PASSWORD}{ENTER}",
+				@"{USERNAME}{TAB}{PASSWORD}",
+				@"{USERNAME}{TAB}{PASSWORD}{ENTER}",
+				@"{USERNAME}{TAB}{TAB}{PASSWORD}",
+				@"{USERNAME}{TAB}{TAB}{PASSWORD}{ENTER}"
+			};
+			Bitmap bmpAutoType = Properties.Resources.B16x16_KTouch;
+			foreach(string strAdvSeq in vAdvSeq)
+			{
+				m_dynAutoTypeAdv.AddItem(strAdvSeq, bmpAutoType);
+			}
+
 			m_dynOpenUrl = new OpenWithMenu(m_ctxEntryUrl);
 			m_dynOpenUrlToolBar = new OpenWithMenu(m_tbOpenUrl);
 
@@ -206,7 +223,11 @@ namespace KeePass.Forms
 			InsertToolStripItem(m_menuEdit, m_ctxGroupEdit, new EventHandler(OnGroupsEdit), true);
 			InsertToolStripItem(m_menuEdit, m_ctxGroupAdd, new EventHandler(OnGroupsAdd), true);
 
-			UIUtil.AssignShortcut(tsmiAddEntry, Keys.Control | Keys.I);
+			// Under .NET, we assign the shortcut keys directly (to avoid a
+			// beep when pressing them); under Mono, this doesn't work, thus
+			// we handle it in HandleMainWindowKeyMessage instead
+			if(!MonoWorkarounds.IsRequired(2139))
+				UIUtil.AssignShortcut(tsmiAddEntry, Keys.Control | Keys.I);
 
 			UIUtil.ConfigureTbButton(m_tbNewDatabase, KPRes.ToolBarNew, null, m_menuFileNew);
 			UIUtil.ConfigureTbButton(m_tbOpenDatabase, KPRes.ToolBarOpen, null, m_menuFileOpenLocal);
@@ -228,8 +249,8 @@ namespace KeePass.Forms
 
 			CopyMenuItemText(m_tbAddEntryDefault, m_ctxEntryAdd, null);
 			CopyMenuItemText(m_tbOpenUrlDefault, m_ctxEntryOpenUrl, KPRes.OpenUrl);
-			CopyMenuItemText(m_tbViewsShowAll, m_menuEditShowAllEntries, null);
-			CopyMenuItemText(m_tbViewsShowExpired, m_menuEditShowExpired, null);
+			CopyMenuItemText(m_tbViewsShowAll, m_menuEditShowAll, null);
+			CopyMenuItemText(m_tbViewsShowExpired, m_menuEditShowExp, null);
 
 			UIUtil.EnableAutoCompletion(m_tbQuickFind, false);
 
@@ -332,7 +353,7 @@ namespace KeePass.Forms
 
 			// m_tvGroups.QueryToolTip = UIUtil.GetPwGroupToolTipTN;
 
-			m_clrAlternateItemBgColor = UIUtil.GetAlternateColor(m_lvEntries.BackColor);
+			UpdateAlternatingBgColor();
 
 			m_statusPartProgress.Visible = false;
 
@@ -467,6 +488,8 @@ namespace KeePass.Forms
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(OnFormLoadParallelAsync));
 
+			HotKeyManager.CheckCtrlAltA(this);
+
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppInitPost);
 
 			if(Program.CommandLineArgs.FileName != null)
@@ -560,6 +583,7 @@ namespace KeePass.Forms
 			// AutoEnableVisualHiding();
 
 			PwGroup pg = new PwGroup(true, true, KPRes.General, PwIcon.Folder);
+			// for(int i = 0; i < 30; ++i) pg.CustomData.Set("Test" + i.ToString("D2"), "12345");
 			pd.RootGroup.AddGroup(pg, true);
 
 			pg = new PwGroup(true, true, KPRes.WindowsOS, PwIcon.DriveWindows);
@@ -569,6 +593,7 @@ namespace KeePass.Forms
 			pd.RootGroup.AddGroup(pg, true);
 
 			pg = new PwGroup(true, true, KPRes.Internet, PwIcon.World);
+			// pg.CustomData.Set("GroupTestItem", "TestValue");
 			pd.RootGroup.AddGroup(pg, true);
 
 			pg = new PwGroup(true, true, KPRes.EMail, PwIcon.EMail);
@@ -590,6 +615,7 @@ namespace KeePass.Forms
 				KPRes.Notes));
 			pe.AutoType.Add(new AutoTypeAssociation(KPRes.TargetWindow,
 				@"{USERNAME}{TAB}{PASSWORD}{TAB}{ENTER}"));
+			// for(int i = 0; i < 30; ++i) pe.CustomData.Set("Test" + i.ToString("D2"), "12345");
 			pd.RootGroup.AddEntry(pe, true);
 
 			pe = new PwEntry(true, true);
@@ -606,22 +632,46 @@ namespace KeePass.Forms
 
 #if DEBUG
 			Random r = Program.GlobalRandom;
+			long lTimeMin = (new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).ToBinary();
+			long lTimeMax = (new DateTime(2030, 11, 25, 11, 58, 58, DateTimeKind.Utc)).ToBinary();
+			Debug.Assert(lTimeMin < lTimeMax);
+			PwProfile prf = new PwProfile();
+			prf.CharSet = new PwCharSet(PwCharSet.UpperCase + PwCharSet.LowerCase +
+				PwCharSet.Digits + PwCharSet.PrintableAsciiSpecial);
+			prf.GeneratorType = PasswordGeneratorType.CharSet;
 			for(uint iSamples = 0; iSamples < 1500; ++iSamples)
 			{
 				pg = pd.RootGroup.Groups.GetAt(iSamples % 5);
 
 				pe = new PwEntry(true, true);
 
+				ProtectedString ps;
+				PwGenerator.Generate(out ps, prf, null, null);
 				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(pd.MemoryProtection.ProtectTitle,
-					Guid.NewGuid().ToString()));
+					ps.ReadString()));
+				PwGenerator.Generate(out ps, prf, null, null);
 				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
-					Guid.NewGuid().ToString()));
+					ps.ReadString()));
+				PwGenerator.Generate(out ps, prf, null, null);
 				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
-					Guid.NewGuid().ToString()));
+					ps.ReadString()));
+				PwGenerator.Generate(out ps, prf, null, null);
 				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
-					Guid.NewGuid().ToString()));
+					ps.ReadString()));
+				PwGenerator.Generate(out ps, prf, null, null);
 				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(pd.MemoryProtection.ProtectNotes,
-					Guid.NewGuid().ToString()));
+					ps.ReadString()));
+
+				pe.CreationTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
+					(lTimeMax - lTimeMin)));
+				pe.LastModificationTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
+					(lTimeMax - lTimeMin)));
+				pe.LastAccessTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
+					(lTimeMax - lTimeMin)));
+				pe.ExpiryTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
+					(lTimeMax - lTimeMin)));
+				pe.LocationChanged = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
+					(lTimeMax - lTimeMin)));
 
 				pe.IconId = (PwIcon)r.Next(0, (int)PwIcon.Count);
 
@@ -630,6 +680,8 @@ namespace KeePass.Forms
 
 			pd.CustomData.Set("Sample Custom Data 1", "0123456789");
 			pd.CustomData.Set("Sample Custom Data 2", "\u00B5y data");
+
+			// pd.PublicCustomData.SetString("Sample Custom Data", "Sample Value");
 #endif
 
 			UpdateUI(true, null, true, null, true, null, true);
@@ -648,7 +700,7 @@ namespace KeePass.Forms
 
 		private void OnFileClose(object sender, EventArgs e)
 		{
-			CloseDocument(null, false, false, true);
+			CloseDocument(null, false, false, false, true);
 		}
 
 		// Public for plugins
@@ -666,9 +718,17 @@ namespace KeePass.Forms
 			}
 
 			UIBlockInteraction(true);
-			if(!PreSaveValidate(pd)) { UIBlockInteraction(false); return; }
 
 			Guid eventGuid = Guid.NewGuid();
+			if(this.FileSavingPre != null)
+			{
+				FileSavingEventArgs args = new FileSavingEventArgs(false, false, pd, eventGuid);
+				this.FileSavingPre(sender, args);
+				if(args.Cancel) { UIBlockInteraction(false); return; }
+			}
+
+			if(!PreSaveValidate(pd)) { UIBlockInteraction(false); return; }
+
 			if(this.FileSaving != null)
 			{
 				FileSavingEventArgs args = new FileSavingEventArgs(false, false, pd, eventGuid);
@@ -869,16 +929,7 @@ namespace KeePass.Forms
 
 		private void OnEntryPerformAutoType(object sender, EventArgs e)
 		{
-			PwEntry pe = GetSelectedEntry(false);
-			if(pe != null)
-			{
-				try
-				{
-					AutoType.PerformIntoPreviousWindow(this, pe,
-						m_docMgr.SafeFindContainerOf(pe));
-				}
-				catch(Exception ex) { MessageService.ShowWarning(ex); }
-			}
+			PerformAutoType(null);
 		}
 
 		private void OnEntryAdd(object sender, EventArgs e)
@@ -908,7 +959,7 @@ namespace KeePass.Forms
 			if(nExpireDays >= 0)
 			{
 				pwe.Expires = true;
-				pwe.ExpiryTime = DateTime.Now.AddDays(nExpireDays);
+				pwe.ExpiryTime = DateTime.UtcNow.AddDays(nExpireDays);
 			}
 
 			if((pg.IconId != PwIcon.Folder) && (pg.IconId != PwIcon.FolderOpen) &&
@@ -1085,11 +1136,6 @@ namespace KeePass.Forms
 					OnFileExit(sender, e);
 				}
 			}
-		}
-
-		private void OnShowAllEntries(object sender, EventArgs e)
-		{
-			PerformQuickFind(string.Empty, KPRes.AllEntriesTitle, true, false);
 		}
 
 		private void OnPwListFind(object sender, EventArgs e)
@@ -1299,6 +1345,7 @@ namespace KeePass.Forms
 
 				// m_lvEntries.GridLines = Program.Config.MainWindow.ShowGridLines;
 
+				UpdateAlternatingBgColor();
 				UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
 					Program.Config.MainWindow.EntryListAlternatingBgColors);
 
@@ -1553,7 +1600,6 @@ namespace KeePass.Forms
 
 			if(ws == FormWindowState.Minimized)
 			{
-				// For default value, also see options dialog
 				if(Program.Config.Security.WorkspaceLocking.LockOnWindowMinimize &&
 					bAuto)
 				{
@@ -1656,9 +1702,14 @@ namespace KeePass.Forms
 					long lCurTicks = utcNow.Ticks;
 					if((lCurTicks >= m_lLockAtTicks) || (lCurTicks >= m_lLockAtGlobalTicks))
 					{
+						bool bBlock = MonoWorkarounds.IsRequired(1527);
+						if(bBlock) BlockMainTimer(true);
+
 						if(Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
 							OnFileExit(sender, e);
 						else LockAllDocuments(); // Might exit instead of locking
+
+						if(bBlock) BlockMainTimer(false);
 					}
 				}
 				else NotifyUserActivity(); // Unclosable dialog = activity
@@ -1915,11 +1966,6 @@ namespace KeePass.Forms
 			UIUtil.DestroyForm(pgf);
 		}
 
-		private void OnToolsShowExpired(object sender, EventArgs e)
-		{
-			ShowExpiredEntries(false, true, false);
-		}
-
 		private void OnToolsTanWizard(object sender, EventArgs e)
 		{
 			PwDatabase pwDb = m_docMgr.ActiveDatabase;
@@ -1969,12 +2015,7 @@ namespace KeePass.Forms
 			if((pe != null) && (pe.ParentGroup != null) &&
 				(pe.ParentGroup.Name == strLink))
 			{
-				UpdateUI(false, null, true, pe.ParentGroup, true, null, false);
-
-				TreeNode tnSel = m_tvGroups.SelectedNode;
-				if(tnSel != null) tnSel.EnsureVisible();
-
-				EnsureVisibleSelected(false);
+				ShowSelectedEntryParentGroup();
 				ResetDefaultFocus(m_lvEntries);
 			}
 			else if(strEntryUrl == strLink)
@@ -2020,9 +2061,9 @@ namespace KeePass.Forms
 				EntryUtil.CopyEntriesToClipboard(m_docMgr.ActiveDatabase, vSelected,
 					this.Handle);
 			}
-			catch(Exception exCopy)
+			catch(Exception ex)
 			{
-				MessageService.ShowWarning(exCopy);
+				MessageService.ShowWarning(ex);
 			}
 
 			StartClipboardCountdown();
@@ -2473,7 +2514,7 @@ namespace KeePass.Forms
 						PwDocument pd = (m_tabMain.TabPages[i].Tag as PwDocument);
 						if(pd == null) { Debug.Assert(false); break; }
 
-						CloseDocument(pd, false, false, true);
+						CloseDocument(pd, false, false, false, true);
 						break;
 					}
 				}
@@ -2720,6 +2761,61 @@ namespace KeePass.Forms
 
 			if(tnTop != null) m_tvGroups.TopNode = tnTop;
 			m_tvGroups.EndUpdate();
+		}
+
+		private void OnEditShowAll(object sender, EventArgs e)
+		{
+			PerformQuickFind(string.Empty, KPRes.AllEntriesTitle, true, false);
+		}
+
+		private void OnEditShowExp(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, true, 0);
+		}
+
+		private void OnEditShowExp1(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 1);
+		}
+
+		private void OnEditShowExp2(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 2);
+		}
+
+		private void OnEditShowExp3(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 3);
+		}
+
+		private void OnEditShowExp7(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 7);
+		}
+
+		private void OnEditShowExp14(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 14);
+		}
+
+		private void OnEditShowExp28(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 28);
+		}
+
+		private void OnEditShowExp56(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, 56);
+		}
+
+		private void OnEditShowExpInF(object sender, EventArgs e)
+		{
+			ShowExpiredEntries(false, false, int.MaxValue);
+		}
+
+		private void OnEditShowParentGroup(object sender, EventArgs e)
+		{
+			ShowSelectedEntryParentGroup();
 		}
 	}
 }

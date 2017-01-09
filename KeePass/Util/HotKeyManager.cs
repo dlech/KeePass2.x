@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,9 +27,13 @@ using System.Diagnostics;
 using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
+using KeePass.Resources;
+using KeePass.UI;
+
+using KeePassLib;
+using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
-using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -207,5 +211,70 @@ namespace KeePass.Util
 			sb.Append((k & Keys.KeyCode).ToString());
 			return sb.ToString();
 		} */
+
+		internal static void CheckCtrlAltA(Form fParent)
+		{
+			try
+			{
+				if(!Program.Config.Integration.CheckHotKeys) return;
+				if(NativeLib.IsUnix()) return;
+
+				// Check for a conflict only in the very specific case of
+				// Ctrl+Alt+A; in all other cases we assume that the user
+				// is aware of a possible conflict and intentionally wants
+				// to override any system key combination
+				if(Program.Config.Integration.HotKeyGlobalAutoType !=
+					(ulong)(Keys.Control | Keys.Alt | Keys.A)) return;
+
+				// Check for a conflict only on Polish systems; other
+				// languages typically don't use Ctrl+Alt+A frequently
+				// and a conflict warning would just be confusing for
+				// most users
+				IntPtr hKL = NativeMethods.GetKeyboardLayout(0);
+				ushort uLangID = (ushort)(hKL.ToInt64() & 0xFFFFL);
+				ushort uPriLangID = NativeMethods.GetPrimaryLangID(uLangID);
+				if(uPriLangID != NativeMethods.LANG_POLISH) return;
+
+				int vk = (int)Keys.A;
+
+				// We actually check for RAlt (which maps to Ctrl+Alt)
+				// instead of LCtrl+LAlt
+				byte[] pbState = new byte[256];
+				pbState[NativeMethods.VK_CONTROL] = 0x80;
+				pbState[NativeMethods.VK_LCONTROL] = 0x80;
+				pbState[NativeMethods.VK_MENU] = 0x80;
+				pbState[NativeMethods.VK_RMENU] = 0x80;
+				pbState[NativeMethods.VK_NUMLOCK] = 0x01; // Toggled
+				// pbState[vk] = 0x80;
+
+				string strUni = NativeMethods.ToUnicode3(vk, pbState, IntPtr.Zero);
+				if(string.IsNullOrEmpty(strUni)) return;
+				if(strUni.EndsWith("a") || strUni.EndsWith("A")) return;
+
+				if(char.IsControl(strUni, 0)) { Debug.Assert(false); strUni = "?"; }
+
+				string str = KPRes.CtrlAltAConflict.Replace(@"{PARAM}", strUni) +
+					MessageService.NewParagraph + KPRes.CtrlAltAConflictHint;
+
+				VistaTaskDialog dlg = new VistaTaskDialog();
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+				dlg.CommandLinks = false;
+				dlg.Content = str;
+				dlg.DefaultButtonID = (int)DialogResult.Cancel;
+				dlg.MainInstruction = KPRes.KeyboardKeyCtrl + "+" +
+					KPRes.KeyboardKeyAlt + "+A - " + KPRes.Warning;
+				dlg.SetIcon(VtdIcon.Warning);
+				dlg.VerificationText = KPRes.DialogNoShowAgain;
+				dlg.WindowTitle = PwDefs.ShortProductName;
+
+				if(dlg.ShowDialog(fParent))
+				{
+					if(dlg.ResultVerificationChecked)
+						Program.Config.Integration.CheckHotKeys = false;
+				}
+				else MessageService.ShowWarning(str);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 	}
 }

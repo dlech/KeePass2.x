@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace KeePass.Util.Spr
 		None = 0,
 
 		AppPaths = 0x1, // Paths to IE, Firefox, Opera, ...
-		PickChars = 0x2,
+		PickChars = 0x2, // {PICKCHARS}, {PICKFIELD}
 		EntryStrings = 0x4,
 		EntryStringsSpecial = 0x8, // {URL:RMVSCM}, ...
 		PasswordEnc = 0x10,

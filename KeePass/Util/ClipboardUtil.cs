@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,14 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Security.Cryptography;
-using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Ecas;
@@ -38,6 +37,7 @@ using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -114,8 +114,7 @@ namespace KeePass.Util
 			m_strFormat = null;
 
 			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-			SHA256Managed sha256 = new SHA256Managed();
-			m_pbDataHash32 = sha256.ComputeHash(pbUtf8);
+			m_pbDataHash32 = CryptoUtil.HashSha256(pbUtf8);
 
 			RaiseCopyEvent(bIsEntryInfo, strData);
 
@@ -193,11 +192,10 @@ namespace KeePass.Util
 			m_strFormat = strFormat;
 			m_bEncoded = (strEnc != null);
 
-			SHA256Managed sha256 = new SHA256Managed();
 			// if(strEnc != null)
-			//	m_pbDataHash32 = sha256.ComputeHash(StrUtil.Utf8.GetBytes(strEnc));
+			//	m_pbDataHash32 = CryptoUtil.HashSha256(StrUtil.Utf8.GetBytes(strEnc));
 			// else
-			m_pbDataHash32 = sha256.ComputeHash(pbToCopy);
+			m_pbDataHash32 = CryptoUtil.HashSha256(pbToCopy);
 
 			RaiseCopyEvent(bIsEntryInfo, string.Empty);
 
@@ -217,7 +215,7 @@ namespace KeePass.Util
 					CloseW();
 
 					if(str == null) return null;
-					if(str.Length == 0) return new byte[0];
+					if(str.Length == 0) return MemUtil.EmptyByteArray;
 
 					return StrUtil.DataUriToData(str);
 				}
@@ -329,6 +327,26 @@ namespace KeePass.Util
 
 		public static void ClearIfOwner()
 		{
+			// Handle-based detection doesn't work well, because a control
+			// or dialog that stored the data may not exist anymore and
+			// thus GetClipboardOwner returns null
+			/* bool bOwnHandle = false;
+			try
+			{
+				if(!NativeLib.IsUnix())
+				{
+					IntPtr h = NativeMethods.GetClipboardOwner();
+					if(h != IntPtr.Zero)
+					{
+						MainForm mf = Program.MainForm;
+						if(((mf != null) && (h == mf.Handle)) ||
+							GlobalWindowManager.HasWindow(h))
+							bOwnHandle = true;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); } */
+
 			// If we didn't copy anything or cleared it already: do nothing
 			if(m_pbDataHash32 == null) return;
 			if(m_pbDataHash32.Length != 32) { Debug.Assert(false); return; }
@@ -349,8 +367,6 @@ namespace KeePass.Util
 		{
 			try
 			{
-				SHA256Managed sha256 = new SHA256Managed();
-
 				if(m_strFormat != null)
 				{
 					if(ContainsData(m_strFormat))
@@ -360,26 +376,26 @@ namespace KeePass.Util
 						else pbData = GetData(m_strFormat);
 						if(pbData == null) { Debug.Assert(false); return null; }
 
-						return sha256.ComputeHash(pbData);
+						return CryptoUtil.HashSha256(pbData);
 					}
 				}
 				else if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
 				{
 					string strData = GetStringM();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return sha256.ComputeHash(pbUtf8);
+					return CryptoUtil.HashSha256(pbUtf8);
 				}
 				else if(NativeLib.IsUnix())
 				{
 					string strData = GetStringU();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return sha256.ComputeHash(pbUtf8);
+					return CryptoUtil.HashSha256(pbUtf8);
 				}
 				else if(Clipboard.ContainsText())
 				{
 					string strData = Clipboard.GetText();
 					byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strData);
-					return sha256.ComputeHash(pbUtf8);
+					return CryptoUtil.HashSha256(pbUtf8);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -399,8 +415,7 @@ namespace KeePass.Util
 
 				if(u == 0) throw new UnauthorizedAccessException();
 
-				SHA256Managed sha256 = new SHA256Managed();
-				return sha256.ComputeHash(MemUtil.UInt32ToBytes(u));
+				return CryptoUtil.HashSha256(MemUtil.UInt32ToBytes(u));
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -408,13 +423,13 @@ namespace KeePass.Util
 			{
 				string str = GetStringM();
 				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
-				return (new SHA256Managed()).ComputeHash(pbText);
+				return CryptoUtil.HashSha256(pbText);
 			}
 			if(NativeLib.IsUnix())
 			{
 				string str = GetStringU();
 				byte[] pbText = StrUtil.Utf8.GetBytes("pb" + str);
-				return (new SHA256Managed()).ComputeHash(pbText);
+				return CryptoUtil.HashSha256(pbText);
 			}
 
 			try
@@ -461,8 +476,7 @@ namespace KeePass.Util
 				}
 
 				byte[] pbData = ms.ToArray();
-				SHA256Managed sha256 = new SHA256Managed();
-				byte[] pbHash = sha256.ComputeHash(pbData);
+				byte[] pbHash = CryptoUtil.HashSha256(pbData);
 				ms.Close();
 
 				return pbHash;

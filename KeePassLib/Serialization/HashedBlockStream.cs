@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-#if !KeePassUAP
-using System.Security.Cryptography;
-#endif
-
+using KeePassLib.Cryptography;
 using KeePassLib.Native;
 using KeePassLib.Utility;
 
@@ -37,7 +34,7 @@ namespace KeePassLib.Serialization
 {
 	public sealed class HashedBlockStream : Stream
 	{
-		private const int m_nDefaultBufferSize = 1024 * 1024; // 1 MB
+		private const int NbDefaultBufferSize = 1024 * 1024; // 1 MB
 
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
@@ -50,7 +47,7 @@ namespace KeePassLib.Serialization
 		private byte[] m_pbBuffer;
 		private int m_nBufferPos = 0;
 
-		private uint m_uBufferIndex = 0;
+		private uint m_uBlockIndex = 0;
 
 		public override bool CanRead
 		{
@@ -69,13 +66,13 @@ namespace KeePassLib.Serialization
 
 		public override long Length
 		{
-			get { throw new NotSupportedException(); }
+			get { Debug.Assert(false); throw new NotSupportedException(); }
 		}
 
 		public override long Position
 		{
-			get { throw new NotSupportedException(); }
-			set { throw new NotSupportedException(); }
+			get { Debug.Assert(false); throw new NotSupportedException(); }
+			set { Debug.Assert(false); throw new NotSupportedException(); }
 		}
 
 		public HashedBlockStream(Stream sBaseStream, bool bWriting)
@@ -100,7 +97,7 @@ namespace KeePassLib.Serialization
 			if(sBaseStream == null) throw new ArgumentNullException("sBaseStream");
 			if(nBufferSize < 0) throw new ArgumentOutOfRangeException("nBufferSize");
 
-			if(nBufferSize == 0) nBufferSize = m_nDefaultBufferSize;
+			if(nBufferSize == 0) nBufferSize = NbDefaultBufferSize;
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
@@ -114,7 +111,7 @@ namespace KeePassLib.Serialization
 
 				m_brInput = new BinaryReader(sBaseStream, utf8);
 
-				m_pbBuffer = new byte[0];
+				m_pbBuffer = MemUtil.EmptyByteArray;
 			}
 			else // Writing mode
 			{
@@ -127,22 +124,11 @@ namespace KeePassLib.Serialization
 			}
 		}
 
-		public override void Flush()
-		{
-			if(m_bWriting) m_bwOutput.Flush();
-		}
-
-#if KeePassUAP
 		protected override void Dispose(bool disposing)
 		{
-			if(!disposing) return;
-#else
-		public override void Close()
-		{
-#endif
-			if(m_sBaseStream != null)
+			if(disposing && (m_sBaseStream != null))
 			{
-				if(m_bWriting == false) // Reading mode
+				if(!m_bWriting) // Reading mode
 				{
 					m_brInput.Close();
 					m_brInput = null;
@@ -165,6 +151,13 @@ namespace KeePassLib.Serialization
 				m_sBaseStream.Close();
 				m_sBaseStream = null;
 			}
+
+			base.Dispose(disposing);
+		}
+
+		public override void Flush()
+		{
+			if(m_bWriting) m_bwOutput.Flush();
 		}
 
 		public override long Seek(long lOffset, SeekOrigin soOrigin)
@@ -209,9 +202,9 @@ namespace KeePassLib.Serialization
 
 			m_nBufferPos = 0;
 
-			if(m_brInput.ReadUInt32() != m_uBufferIndex)
+			if(m_brInput.ReadUInt32() != m_uBlockIndex)
 				throw new InvalidDataException();
-			++m_uBufferIndex;
+			++m_uBlockIndex;
 
 			byte[] pbStoredHash = m_brInput.ReadBytes(32);
 			if((pbStoredHash == null) || (pbStoredHash.Length != 32))
@@ -236,7 +229,7 @@ namespace KeePassLib.Serialization
 				}
 
 				m_bEos = true;
-				m_pbBuffer = new byte[0];
+				m_pbBuffer = MemUtil.EmptyByteArray;
 				return false;
 			}
 
@@ -246,16 +239,12 @@ namespace KeePassLib.Serialization
 
 			if(m_bVerify)
 			{
-				SHA256Managed sha256 = new SHA256Managed();
-				byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
+				byte[] pbComputedHash = CryptoUtil.HashSha256(m_pbBuffer);
 				if((pbComputedHash == null) || (pbComputedHash.Length != 32))
 					throw new InvalidOperationException();
 
-				for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
-				{
-					if(pbStoredHash[iHashPos] != pbComputedHash[iHashPos])
-						throw new InvalidDataException();
-				}
+				if(!MemUtil.ArraysEqual(pbStoredHash, pbComputedHash))
+					throw new InvalidDataException();
 			}
 
 			return true;
@@ -283,26 +272,24 @@ namespace KeePassLib.Serialization
 
 		private void WriteHashedBlock()
 		{
-			m_bwOutput.Write(m_uBufferIndex);
-			++m_uBufferIndex;
+			m_bwOutput.Write(m_uBlockIndex);
+			++m_uBlockIndex;
 
 			if(m_nBufferPos > 0)
 			{
-				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbHash = CryptoUtil.HashSha256(m_pbBuffer, 0, m_nBufferPos);
 
-#if !KeePassLibSD
-				byte[] pbHash = sha256.ComputeHash(m_pbBuffer, 0, m_nBufferPos);
-#else
-				byte[] pbHash;
-				if(m_nBufferPos == m_pbBuffer.Length)
-					pbHash = sha256.ComputeHash(m_pbBuffer);
-				else
-				{
-					byte[] pbData = new byte[m_nBufferPos];
-					Array.Copy(m_pbBuffer, 0, pbData, 0, m_nBufferPos);
-					pbHash = sha256.ComputeHash(pbData);
-				}
-#endif
+				// For KeePassLibSD:
+				// SHA256Managed sha256 = new SHA256Managed();
+				// byte[] pbHash;
+				// if(m_nBufferPos == m_pbBuffer.Length)
+				//	pbHash = sha256.ComputeHash(m_pbBuffer);
+				// else
+				// {
+				//	byte[] pbData = new byte[m_nBufferPos];
+				//	Array.Copy(m_pbBuffer, 0, pbData, 0, m_nBufferPos);
+				//	pbHash = sha256.ComputeHash(pbData);
+				// }
 
 				m_bwOutput.Write(pbHash);
 			}

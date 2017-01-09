@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ namespace KeePass.DataExchange.Formats
 
 		private sealed class DatePasswordPair
 		{
-			public DateTime Time = DateTime.Now;
+			public DateTime Time = DateTime.UtcNow;
 			public string Password = string.Empty;
 		}
 
@@ -157,7 +157,7 @@ namespace KeePass.DataExchange.Formats
 					{
 						pwStorage.DefaultUserName = XmlUtil.SafeInnerText(xn);
 						if(pwStorage.DefaultUserName.Length > 0)
-							pwStorage.DefaultUserNameChanged = DateTime.Now;
+							pwStorage.DefaultUserNameChanged = DateTime.UtcNow;
 					}
 				}
 			}
@@ -270,7 +270,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static DateTime ReadDateTime(XmlNode xmlNode)
 		{
-			Debug.Assert(xmlNode != null); if(xmlNode == null) return DateTime.Now;
+			Debug.Assert(xmlNode != null); if(xmlNode == null) return DateTime.UtcNow;
 
 			int[] vTimeParts = new int[6];
 			DateTime dtTemp;
@@ -297,17 +297,21 @@ namespace KeePass.DataExchange.Formats
 				else { Debug.Assert(false); }
 			}
 
-			return new DateTime(vTimeParts[0], vTimeParts[1], vTimeParts[2],
-				vTimeParts[3], vTimeParts[4], vTimeParts[5]);
+			return (new DateTime(vTimeParts[0], vTimeParts[1], vTimeParts[2],
+				vTimeParts[3], vTimeParts[4], vTimeParts[5],
+				DateTimeKind.Local)).ToUniversalTime();
 		}
 
 		private static DateTime ReadDateTimeX(XmlNode xmlNode)
 		{
 			string strDate = XmlUtil.SafeInnerText(xmlNode);
+
 			DateTime dt;
-			if(StrUtil.TryParseDateTime(strDate, out dt)) return dt;
+			if(StrUtil.TryParseDateTime(strDate, out dt))
+				return TimeUtil.ToUtc(dt, false);
+
 			Debug.Assert(false);
-			return DateTime.Now;
+			return DateTime.UtcNow;
 		}
 
 		private static List<DatePasswordPair> ReadEntryHistory(XmlNode xmlNode)

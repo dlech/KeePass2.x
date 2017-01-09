@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -258,8 +258,9 @@ namespace KeePass.Forms
 			StrEncodingInfo sei = StrUtil.GetEncoding(m_cmbEnc.Text);
 			try
 			{
-				return (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
+				string str = (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
 					m_pbData.Length - (int)m_uStartOffset) ?? string.Empty);
+				return StrUtil.ReplaceNulls(str);
 			}
 			catch(Exception) { }
 
@@ -541,7 +542,7 @@ namespace KeePass.Forms
 
 			if(bCreatePreview) m_lvImportPreview.BeginUpdate();
 
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 			DateTime dtNoExpire = KdbTime.NeverExpireTime.ToDateTime();
 			bool bIgnoreFirstRow = m_cbIgnoreFirst.Checked;
 			bool bIsFirstRow = true;
@@ -662,14 +663,14 @@ namespace KeePass.Forms
 				DateTime dtExact;
 				if(DateTime.TryParseExact(strData, cfi.Format, null, dts,
 					out dtExact))
-					odt = dtExact;
+					odt = TimeUtil.ToUtc(dtExact, false);
 			}
 
 			if(!odt.HasValue)
 			{
 				DateTime dtStd;
 				if(DateTime.TryParse(strData, out dtStd))
-					odt = dtStd;
+					odt = TimeUtil.ToUtc(dtStd, false);
 			}
 
 			if(odt.HasValue)

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -233,7 +233,7 @@ namespace KeePass.UI
 
 			bool bAutoRepeat = this.AutoRepeat;
 			if(bAutoRepeat && (m_secRepeat.TextLength > 0))
-				m_secRepeat.SetPassword(new byte[0]);
+				m_secRepeat.SetPassword(MemUtil.EmptyByteArray);
 
 			byte[] pbRepeat = m_secRepeat.ToUtf8();
 			if(!MemUtil.ArraysEqual(pbUtf8, pbRepeat) && !bAutoRepeat)

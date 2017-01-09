@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
 
 	<title>Customization (2.x) - KeePass</title>
 	<base target="_self" />
@@ -103,6 +103,8 @@ the following flags:</p>
 days the master key should/must be changed.</td></tr>
 <tr><td style="text-align: right">0x10</td><td style="text-align: right">16</td>
 <td>Hide password quality progress bars and information labels.</td></tr>
+<tr><td style="text-align: right">0x20</td><td style="text-align: right">32</td>
+<td>Disable 'Help' -&gt; 'Check for Updates' menu item.</td></tr>
 <tr><td style="text-align: right">0x10000</td><td style="text-align: right">65536</td>
 <td>Hide built-in profiles in the
 password generator context menu of the entry editing dialog.</td></tr>
@@ -149,6 +151,10 @@ to process the keypresses correctly.</li>
 <li><b>Configuration/Security/MasterKeyTries</b>:<br />
 Specifies how often the master key dialog appears when entering incorrect
 master keys. The default value is 3.</li>
+
+<li><b>Configuration/Application/ExpirySoonDays</b>:<br />
+Specifies the number of days within which entries are considered
+to expire &quot;soon&quot;. The default value is 7.</li>
 </ul>
 
 </body></html>

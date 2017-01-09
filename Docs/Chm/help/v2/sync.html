@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
 
 	<title>Synchronization - KeePass</title>
 	<base target="_self" />
@@ -43,6 +43,7 @@ Merge changes made in multiple copies of a database.
 <li><a href="#intro">Introduction and Requirements</a></li>
 <li><a href="#invoke">Invoking a Synchronization</a></li>
 <li><a href="#tech">Technical Details</a></li>
+<li><a href="#adv">Advanced Synchronization Schemes</a></li>
 </ul>
 
 <br />
@@ -159,6 +160,25 @@ entry E in a database A, make a copy B of A, change E in B, change E in A,
 and synchronize A and B, then E in A is treated as current and the changes
 made to E in B are stored as a history version of E (see tab 'History' in
 the entry dialog), i.e. the changes made in B aren't lost.</li>
+</ul>
+
+<br />
+
+<a name="adv"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_dataexchange.png" class="singleimg" alt="Synchronization" />&nbsp;&nbsp;Advanced
+Synchronization Schemes</h2>
+
+<ul>
+<li><a href="http://keepass.info/help/kb/trigger_examples.html#dbsync"
+target="_blank">Local&harr;Master Synchronization</a><br />
+A synchronization scheme that prevents data loss when database files are
+overwritten by other applications (e.g. cloud storage service software),
+using a trigger.</li>
+<li><a href="https://sourceforge.net/p/keepass/discussion/329220/thread/be5d5787/"
+target="_blank">Hybrid Master&#8652;Scratch&harr;Working Synchronization</a><br />
+A synchronization scheme that keeps a smaller database consisting of subset
+of entries synchronized with a larger database.</li>
 </ul>
 
 </body></html>

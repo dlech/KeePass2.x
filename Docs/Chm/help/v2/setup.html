@@ -20,7 +20,7 @@
 	<meta name="DC.Format" content="text/html" />
 	<meta name="DC.Identifier" content="http://keepass.info/" />
 	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2016 Dominik Reichl" />
+	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
 
 	<title>Setup - KeePass</title>
 	<base target="_self" />
@@ -46,7 +46,8 @@ KeePass 2.x installation, uninstallation, portability and updates.
 <!-- <li>Other operating systems than Windows:
 <ul> -->
 <li><a href="#mono">Running KeePass under Mono (Linux, Mac OS X, BSD, ...)</a></li>
-<li><a href="#monoportable">Portable KeePass using Mono</a></li>
+<li><a href="#wine">Running KeePass under Wine (Linux, Mac OS X, BSD, ...)</a></li>
+<!-- <li><a href="#monoportable">Portable KeePass using Mono</a></li> -->
 <!-- </ul>
 </li> -->
 </ul>
@@ -324,11 +325,16 @@ as hot key, you'd enter <code>&lt;Control&gt;&lt;Alt&gt;a</code>.</li>
 must be 2.20100818.3004 or higher! If your distribution only offers an
 older version, you can download and install the latest version of the
 package manually, see the <a href="http://www.semicomplete.com/projects/xdotool/"
-target="_blank" rel="nofollow"><code>xdotool</code> website</a>.</p>
+target="_blank"><code>xdotool</code></a> website.</p>
+
+<p><b>Plugins:</b><br />
+On some Linux systems, the <code>mono-complete</code> package may be
+required for plugins to work properly.</p>
 </li>
 </ul>
 
-<!-- <br />
+<br />
+
 <a name="wine"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_package_system.png" class="singleimg" alt="Setup" />&nbsp;&nbsp;Running
@@ -337,30 +343,39 @@ KeePass under Wine (Linux, Mac OS X, BSD, ...)</h2>
 <p>Although you can run KeePass 2.x more or less natively on Unix-like systems
 using Mono (see above), the user interface doesn't always look pretty.
 Some users therefore
-prefer running KeePass 2.x under Wine, which works perfectly, too.</p>
+prefer running KeePass 2.x under Wine, which works fine, too.</p>
 
 <p>In order to run KeePass 2.x under Wine, follow these steps:</p>
 
 <ol>
-<li>Make sure Wine is installed. Typically the package to install is called <code>wine</code>.</li>
-<li>Make sure .NET Framework 4.0 is installed. For details how to install it,
-see <a href="https://appdb.winehq.org/objectManager.php?sClass=version&amp;iId=17886"
-target="_blank" rel="nofollow">WineHQ AppDB: .NET Framework 4.0</a>.
-We recommend to use the '<code>winetricks</code>' script for installing the
-.NET Framework
-(instructions can be found on the Wine page above).</li>
-<li>By default, Wine uses the classic Windows theme. If you prefer some other
+<li>Make sure that Wine is installed.
+Typically the package to install is called <code>wine</code>.</li>
+<li>Make sure that .NET Framework 4.5 or higher is installed in Wine, see
+<a href="https://appdb.winehq.org/objectManager.php?sClass=application&amp;iId=2586"
+target="_blank">WineHQ AppDB: .NET Framework</a>.<br />
+For installing .NET Framework 4.5, <code>winetricks</code> can be used, see
+<a href="https://appdb.winehq.org/objectManager.php?sClass=version&amp;iId=25478"
+target="_blank">WineHQ AppDB: .NET Framework 4.5</a>.</li>
+<li>Download the latest portable package of KeePass 2.x (ZIP file) and unpack it
+into some directory of your choice.</li>
+<li>Run <code>wine KeePass.exe</code>.</li>
+</ol>
+
+<p><strong>Theme.</strong>
+By default, Wine uses the classic Windows theme. If you prefer some other
 theme, you can install it in 'Applications' -&gt; 'Wine' -&gt; 'Configure Wine' -&gt;
 tab 'Desktop Integration'.
-Links to themes can e.g. be found on
-<a href="http://en.wikipedia.org/wiki/Windows_XP_visual_styles"
-target="_blank">Wikipedia: Windows XP visual styles</a>.</li>
-<li>Download the latest portable package of KeePass 2.x (ZIP file) and unpack it into some
-directory of your choice.</li>
-<li>Run <code>wine KeePass.exe</code>.</li>
-</ol> -->
+Links to themes can for instance be found on
+<a href="https://en.wikipedia.org/wiki/Windows_XP_visual_styles"
+target="_blank">Wikipedia: Windows XP visual styles</a>.</p>
 
-<br />
+<!-- <p><strong>Mac OS X.</strong>
+In order to make a Mac application bundle wrapper, you can use
+<a href="http://wineskin.urgesoftware.com/" target="_blank">Wineskin</a>.
+In the wrapper settings, we recommend to go to 'Screen Options' and turn on
+the option 'Use Mac Driver instead of X11'.</p> -->
+
+<!-- <br />
 
 <a name="monoportable"></a>
 <h2 class="sectiontitle">
@@ -409,6 +424,7 @@ the USB stick and run the batch file.</p>
 <p>The approach above should be seen as the very last
 possibility to run KeePass 2.x. Installing .NET support (either the .NET
 Framework or Mono) is highly recommended instead!</p>
+-->
 
 </body></html>
 

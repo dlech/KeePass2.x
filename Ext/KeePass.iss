@@ -8,17 +8,17 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.34"
-#define KeeVersionStrWithMinor "2.34"
-#define KeeVersionStrWithMinorPath "2.34"
-#define KeeVersionWin "2.34.0.0"
-#define KeeVersionWinShort "2.34"
+#define KeeVersionStr "2.35"
+#define KeeVersionStrWithMinor "2.35"
+#define KeeVersionStrWithMinorPath "2.35"
+#define KeeVersionWin "2.35.0.0"
+#define KeeVersionWinShort "2.35"
 
 #define MyAppURL "http://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2016"
+#define KeeDevPeriod "2003-2017"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -105,12 +105,11 @@ Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Flags: ignor
 Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLite.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_Styles.css; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_Tabular.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\TableHeader.gif; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Common.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull_HTML.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLight_HTML.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly_TXT.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Tabular_HTML.xsl; DestDir: {app}\XSL; Components: XSL
 
 [Registry]
 ; Always unregister .kdbx association at uninstall
@@ -151,6 +150,12 @@ Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; WorkingDir: {app}; F
 ; Delete old files when upgrading
 [InstallDelete]
 Name: {app}\{#MyAppUrlName}; Type: files
+Name: {app}\XSL\KDBX_DetailsFull.xsl; Type: files
+Name: {app}\XSL\KDBX_DetailsLite.xsl; Type: files
+Name: {app}\XSL\KDBX_PasswordsOnly.xsl; Type: files
+Name: {app}\XSL\KDBX_Styles.css; Type: files
+Name: {app}\XSL\KDBX_Tabular.xsl; Type: files
+Name: {app}\XSL\TableHeader.gif; Type: files
 Name: {group}\{#MyAppName}.lnk; Type: files
 Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}.lnk; Type: files
 Name: {group}\Help.lnk; Type: files

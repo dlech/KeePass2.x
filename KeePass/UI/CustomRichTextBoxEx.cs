@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Diagnostics;
 
 using KeePass.Util;
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -67,7 +68,7 @@ namespace KeePass.UI
 			// this.AllowDrop = true;
 
 			// The following is intended to set a default value;
-			// also see OnHandleCreated
+			// see also OnHandleCreated
 			this.AutoWordSelection = false;
 		}
 
@@ -159,6 +160,8 @@ namespace KeePass.UI
 				return;
 			}
 
+			if(HandleAltX(e, true)) return;
+
 			base.OnKeyDown(e);
 		}
 
@@ -179,6 +182,8 @@ namespace KeePass.UI
 				return;
 			}
 
+			if(HandleAltX(e, false)) return;
+
 			base.OnKeyUp(e);
 		}
 
@@ -193,6 +198,120 @@ namespace KeePass.UI
 					Paste(DataFormats.GetFormat(DataFormats.Text));
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		// http://www.fileformat.info/tip/microsoft/enter_unicode.htm
+		// https://sourceforge.net/p/keepass/feature-requests/2180/
+		private bool HandleAltX(KeyEventArgs e, bool bDown)
+		{
+			// Rich text boxes of Windows already support Alt+X
+			if(!NativeLib.IsUnix()) return false;
+
+			if(!e.Control && e.Alt && (e.KeyCode == Keys.X)) { }
+			else return false;
+
+			UIUtil.SetHandled(e, true);
+			if(!bDown) return true;
+
+			try
+			{
+				string strSel = (this.SelectedText ?? string.Empty);
+				int iSel = this.SelectionStart;
+				Debug.Assert(this.SelectionLength == strSel.Length);
+
+				if(e.Shift) // Character -> code
+				{
+					string strChar = strSel;
+					if(strSel.Length >= 2) // Work with leftmost character
+					{
+						if(char.IsSurrogatePair(strSel, 0))
+							strChar = strSel.Substring(0, 2);
+						else strChar = strSel.Substring(0, 1);
+					}
+					else if(strSel.Length == 0) // Work with char. to the left
+					{
+						int p = iSel - 1;
+						string strText = this.Text;
+						if((p < 0) || (p >= strText.Length)) return true;
+
+						char ch = strText[p];
+
+						if(!char.IsSurrogate(ch)) strChar = new string(ch, 1);
+						else if(p >= 1)
+						{
+							if(char.IsSurrogatePair(strText, p - 1))
+								strChar = strText.Substring(p - 1, 2);
+						}
+					}
+					else // strSel.Length == 1
+					{
+						if(char.IsSurrogate(strSel[0]))
+						{
+							Debug.Assert(false); // Half surrogate
+							return true;
+						}
+					}
+					if(strChar.Length == 0) { Debug.Assert(false); return true; }
+
+					int uc = char.ConvertToUtf32(strChar, 0);
+					string strRep = Convert.ToString(uc, 16).ToUpperInvariant();
+
+					if(strSel.Length >= 2)
+						this.Select(iSel, strChar.Length);
+					else if(strSel.Length == 0)
+					{
+						this.Select(iSel - strChar.Length, strChar.Length);
+						iSel -= strChar.Length;
+					}
+					this.SelectedText = strRep;
+					this.Select(iSel, strRep.Length);
+				}
+				else // Code -> character
+				{
+					const uint ucMax = 0x10FFFF; // Max. using surrogates
+					const int ccHexMax = 6; // See e.g. WordPad
+
+					string strHex = strSel;
+					if(strSel.Length == 0)
+					{
+						int p = iSel - 1;
+						string strText = this.Text;
+						while((p >= 0) && (p < strText.Length))
+						{
+							char ch = strText[p];
+							if(((ch >= '0') && (ch <= '9')) ||
+								((ch >= 'a') && (ch <= 'f')) ||
+								((ch >= 'A') && (ch <= 'F')))
+							{
+								strHex = (new string(ch, 1)) + strHex;
+								if(strHex.Length == ccHexMax) break;
+							}
+							else break;
+
+							--p;
+						}
+					}
+					if((strHex.Length == 0) || !StrUtil.IsHexString(strHex, true))
+						return true;
+
+					string strHexTr = strHex.TrimStart('0');
+					if(strHexTr.Length > ccHexMax) return true;
+
+					uint uc = Convert.ToUInt32(strHexTr, 16);
+					if(uc > ucMax) return true;
+
+					string strRep = char.ConvertFromUtf32((int)uc);
+					if(string.IsNullOrEmpty(strRep)) { Debug.Assert(false); return true; }
+					if(char.IsControl(strRep, 0) && (strRep[0] != '\t')) return true;
+
+					if(strSel.Length == 0)
+						this.Select(iSel - strHex.Length, strHex.Length);
+					this.SelectedText = strRep;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return true;
 		}
 
 		// //////////////////////////////////////////////////////////////////

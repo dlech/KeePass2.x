@@ -141,10 +141,6 @@
 			// 
 			// m_ttRect
 			// 
-			this.m_ttRect.AutomaticDelay = 250;
-			this.m_ttRect.AutoPopDelay = 2500;
-			this.m_ttRect.InitialDelay = 250;
-			this.m_ttRect.ReshowDelay = 50;
 			this.m_ttRect.StripAmpersands = true;
 			// 
 			// m_btnHelp

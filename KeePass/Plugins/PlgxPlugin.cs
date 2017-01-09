@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -360,7 +360,7 @@ namespace KeePass.Plugins
 				strRootDir + "Sentinel.txt", strSourceFile), '/');
 			WriteObject(bwFile, PlgxfPath, StrUtil.Utf8.GetBytes(strRel));
 
-			byte[] pbData = (File.ReadAllBytes(strSourceFile) ?? new byte[0]);
+			byte[] pbData = (File.ReadAllBytes(strSourceFile) ?? MemUtil.EmptyByteArray);
 			if(pbData.LongLength >= (long)(int.MaxValue / 2)) // Max 1 GB
 				throw new OutOfMemoryException();
 
@@ -413,7 +413,7 @@ namespace KeePass.Plugins
 			WriteObject(bw, PlgxBaseFileName, StrUtil.Utf8.GetBytes(
 				plgx.BaseFileName));
 			WriteObject(bw, PlgxCreationTime, StrUtil.Utf8.GetBytes(
-				TimeUtil.SerializeUtc(DateTime.Now)));
+				TimeUtil.SerializeUtc(DateTime.UtcNow)));
 			WriteObject(bw, PlgxGeneratorName, StrUtil.Utf8.GetBytes(
 				PwDefs.ShortProductName));
 			WriteObject(bw, PlgxGeneratorVersion, MemUtil.UInt64ToBytes(

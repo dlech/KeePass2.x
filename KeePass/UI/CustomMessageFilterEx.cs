@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,13 +18,16 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 
 using KeePass.Native;
+using KeePass.Util;
 
 namespace KeePass.UI
 {
-	public sealed class UserActivityNotifyFilter : IMessageFilter
+	internal sealed class CustomMessageFilterEx : IMessageFilter
 	{
 		public bool PreFilterMessage(ref Message m)
 		{
@@ -32,6 +35,18 @@ namespace KeePass.UI
 				(m.Msg == NativeMethods.WM_RBUTTONDOWN) || (m.Msg == NativeMethods.WM_MBUTTONDOWN))
 			{
 				Program.NotifyUserActivity();
+			}
+
+			// Workaround for .NET 4.6 overflow bug in InputLanguage.Culture
+			// (handle casted to Int32 without the 'unchecked' keyword);
+			// https://sourceforge.net/p/keepass/bugs/1598/
+			// https://stackoverflow.com/questions/25619831/arithmetic-operation-resulted-in-an-overflow-in-inputlanguagechangingeventargs
+			// https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/InputLanguage.cs
+			if(m.Msg == NativeMethods.WM_INPUTLANGCHANGEREQUEST)
+			{
+				long l = m.LParam.ToInt64();
+				if((l < (long)int.MinValue) || (l > (long)int.MaxValue))
+					return true; // Ignore it (better than an exception)
 			}
 
 			return false;

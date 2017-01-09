@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Globalization;
 using System.Diagnostics;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -48,7 +49,7 @@ namespace KeePass.UI
 		{
 			get
 			{
-				if(m_dtp == null) { Debug.Assert(false); return DateTime.Now; }
+				if(m_dtp == null) { Debug.Assert(false); return DateTime.UtcNow; }
 
 				// Force validation/update of incomplete edit
 				// (workaround for KPB 3505269)
@@ -58,13 +59,13 @@ namespace KeePass.UI
 					m_dtp.Visible = true;
 				}
 
-				return m_dtp.Value;
+				return TimeUtil.ToUtc(m_dtp.Value, false);
 			}
 
 			set
 			{
 				if(m_dtp == null) { Debug.Assert(false); return; }
-				m_dtp.Value = value;
+				m_dtp.Value = TimeUtil.ToLocal(value, true);
 			}
 		}
 
