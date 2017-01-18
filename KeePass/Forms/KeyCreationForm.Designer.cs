@@ -175,13 +175,6 @@
 			this.m_btnCreate.UseVisualStyleBackColor = true;
 			this.m_btnCreate.Click += new System.EventHandler(this.OnBtnOK);
 			// 
-			// m_ttRect
-			// 
-			this.m_ttRect.AutomaticDelay = 250;
-			this.m_ttRect.AutoPopDelay = 5000;
-			this.m_ttRect.InitialDelay = 250;
-			this.m_ttRect.ReshowDelay = 50;
-			// 
 			// m_cbHidePassword
 			// 
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;

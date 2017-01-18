@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,49 +111,65 @@ namespace KeePass.UI
 				(Environment.Version.Major >= 2));
 		}
 
-		public static void RtfSetSelectionLink(RichTextBox richTextBox)
+		internal static NativeMethods.CHARFORMAT2 RtfGetCharFormat(RichTextBox rtb)
 		{
+			NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
+			cf.cbSize = (uint)Marshal.SizeOf(cf);
+
+			if(NativeLib.IsUnix()) return cf;
+
 			IntPtr pCF = IntPtr.Zero;
 			try
 			{
-				NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
-				cf.cbSize = (uint)Marshal.SizeOf(cf);
-
-				cf.dwMask = NativeMethods.CFM_LINK;
-				cf.dwEffects = NativeMethods.CFE_LINK;
-
-				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
 				pCF = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
 				Marshal.StructureToPtr(cf, pCF, false);
 
-				NativeMethods.SendMessage(richTextBox.Handle,
+				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
+				NativeMethods.SendMessage(rtb.Handle,
+					NativeMethods.EM_GETCHARFORMAT, wParam, pCF);
+
+				cf = (NativeMethods.CHARFORMAT2)Marshal.PtrToStructure(pCF,
+					typeof(NativeMethods.CHARFORMAT2));
+			}
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			finally { if(pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
+
+			return cf;
+		}
+
+		internal static void RtfSetCharFormat(RichTextBox rtb, NativeMethods.CHARFORMAT2 cf)
+		{
+			if(NativeLib.IsUnix()) return;
+
+			if(cf.cbSize != (uint)Marshal.SizeOf(cf))
+			{
+				Debug.Assert(false);
+				cf.cbSize = (uint)Marshal.SizeOf(cf);
+			}
+
+			IntPtr pCF = IntPtr.Zero;
+			try
+			{
+				pCF = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+				Marshal.StructureToPtr(cf, pCF, false);
+
+				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
+				NativeMethods.SendMessage(rtb.Handle,
 					NativeMethods.EM_SETCHARFORMAT, wParam, pCF);
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 			finally { if(pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
 		}
 
-		private static NativeMethods.CHARFORMAT2 RtfGetCharFormat(RichTextBox rtb)
+		public static void RtfSetSelectionLink(RichTextBox rtb)
 		{
 			NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
 			cf.cbSize = (uint)Marshal.SizeOf(cf);
 
-			try
-			{
-				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
-				IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
-				Marshal.StructureToPtr(cf, lParam, false);
+			cf.dwMask = NativeMethods.CFM_LINK;
+			cf.dwEffects = NativeMethods.CFE_LINK;
 
-				NativeMethods.SendMessage(rtb.Handle,
-					NativeMethods.EM_GETCHARFORMAT, wParam, lParam);
-
-				cf = (NativeMethods.CHARFORMAT2)Marshal.PtrToStructure(lParam,
-					typeof(NativeMethods.CHARFORMAT2));
-				Marshal.FreeCoTaskMem(lParam);
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return cf;
+			RtfSetCharFormat(rtb, cf);
 		}
 
 		public static bool RtfIsFirstCharLink(RichTextBox rtb)
@@ -235,6 +251,17 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
+		internal static void RtfSetFontSize(RichTextBox rtb, float fSizeInPt)
+		{
+			NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
+			cf.cbSize = (uint)Marshal.SizeOf(cf);
+
+			cf.dwMask = NativeMethods.CFM_SIZE;
+			cf.yHeight = (int)(fSizeInPt * 20.0f);
+
+			RtfSetCharFormat(rtb, cf);
+		}
+
 		[Obsolete("Use GfxUtil.LoadImage instead.")]
 		public static Image LoadImage(byte[] pb)
 		{
@@ -248,9 +275,18 @@ namespace KeePass.UI
 			using(Graphics g = Graphics.FromImage(bmp))
 			{
 				g.Clear(color);
+				// g.DrawRectangle(Pens.Black, 0, 0, nWidth - 1, nHeight - 1);
 			}
 
 			return bmp;
+		}
+
+		public static Image CreateColorBitmap24(Button btnTarget, Color clr)
+		{
+			if(btnTarget == null) { Debug.Assert(false); return null; }
+
+			Rectangle rect = btnTarget.ClientRectangle;
+			return CreateColorBitmap24(rect.Width - 8, rect.Height - 8, clr);
 		}
 
 		public static ImageList BuildImageListUnscaled(List<Image> lImages,
@@ -520,7 +556,7 @@ namespace KeePass.UI
 
 			DocumentManagerEx dm = Program.MainForm.DocumentManager;
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 			bool bFirstEntry = true;
 
 			foreach(PwEntry pe in vEntries)
@@ -627,7 +663,7 @@ namespace KeePass.UI
 				lv.Columns.Add(KPRes.Sequence);
 
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 			Regex rxSeqCmt = null;
 			bool bFirstEntry = true;
 
@@ -1236,6 +1272,21 @@ namespace KeePass.UI
 			tb.ToolTipText = strTip;
 		}
 
+		public static void ConfigureToolTip(ToolTip tt)
+		{
+			if(tt == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				tt.AutoPopDelay = 32000;
+				tt.InitialDelay = 250;
+				tt.ReshowDelay = 50;
+
+				Debug.Assert(tt.AutoPopDelay == 32000);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		public static void CreateGroupList(PwGroup pgContainer, ComboBox cmb,
 			Dictionary<int, PwUuid> outCreatedItems, PwUuid uuidToSelect,
 			out int iSelectIndex)
@@ -1345,8 +1396,8 @@ namespace KeePass.UI
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			const string strIDCheck = "guid:5EAEA440-02AA-4E62-B57E-724A6F89B1EE";
-			const string strIDTrans = "guid:38DDF11D-F101-468A-A006-9810A95F34F4";
+			string strIDCheck = "guid:5EAEA440-02AA-4E62-B57E-724A6F89B1EE";
+			string strIDTrans = "guid:38DDF11D-F101-468A-A006-9810A95F34F4";
 
 			// The image references may change, thus use the Tag instead;
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/e1950e60/
@@ -1550,6 +1601,14 @@ namespace KeePass.UI
 			float b = clrBase.GetBrightness();
 			if(b >= 0.5) return UIUtil.DarkenColor(clrBase, 0.1);
 			return UIUtil.LightenColor(clrBase, 0.25);
+		}
+
+		public static Color GetAlternateColorEx(Color clrBase)
+		{
+			int c = Program.Config.MainWindow.EntryListAlternatingBgColor;
+			if(c != 0) return Color.FromArgb(c);
+
+			return GetAlternateColor(clrBase);
 		}
 
 		public static void SetAlternatingBgColors(ListView lv, Color clrAlternate,
@@ -2176,15 +2235,59 @@ namespace KeePass.UI
 				lv.Columns[i].Width = vSizes[i];
 		}
 
-		public static void SetButtonImage(Button btn, Image img, bool b16To15)
+		public static Image SetButtonImage(Button btn, Image img, bool b16To15)
 		{
-			if(btn == null) { Debug.Assert(false); return; }
-			if(img == null) { Debug.Assert(false); return; }
+			if(btn == null) { Debug.Assert(false); return null; }
+			if(img == null) { Debug.Assert(false); return null; }
 
 			if(b16To15 && (btn.Height == 23) && (img.Height == 16))
-				btn.Image = GfxUtil.ScaleImage(img, img.Width, 15,
+			{
+				Image imgSc = GfxUtil.ScaleImage(img, img.Width, 15,
 					ScaleTransformFlags.UIIcon);
-			else btn.Image = img;
+				btn.Image = imgSc;
+				return imgSc;
+			}
+
+			btn.Image = img;
+			return img;
+		}
+
+		public static void OverwriteButtonImage(Button btn, ref Image imgCur,
+			Image imgNew)
+		{
+			if(btn == null) { Debug.Assert(false); return; }
+			// imgNew may be null
+
+			Debug.Assert(object.ReferenceEquals(btn.Image, imgCur));
+
+			Image imgPrev = imgCur;
+
+			btn.Image = imgNew;
+			imgCur = imgNew;
+
+			if(imgPrev != null) imgPrev.Dispose();
+		}
+
+		public static void DisposeButtonImage(Button btn, ref Image imgCur)
+		{
+			if(btn == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(object.ReferenceEquals(btn.Image, imgCur));
+
+			if(imgCur != null)
+			{
+				btn.Image = null;
+				imgCur.Dispose();
+				imgCur = null;
+			}
+		}
+
+		internal static void OverwriteIfNotEqual(ref Image imgCur, Image imgNew)
+		{
+			if(object.ReferenceEquals(imgCur, imgNew)) return;
+
+			if(imgCur != null) imgCur.Dispose();
+			imgCur = imgNew;
 		}
 
 		public static void EnableAutoCompletion(ComboBox cb, bool bAlsoAutoAppend)
@@ -2949,5 +3052,125 @@ namespace KeePass.UI
 			Debug.Assert(!(e.ClickedItem is ToolStripMenuItem));
 			return true;
 		} */
+
+		public static void RemoveBannerIfNecessary(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Screen s = Screen.FromControl(f);
+				if(s == null) { Debug.Assert(false); return; }
+
+				int hForm = f.Height;
+				if(s.WorkingArea.Height >= hForm) return;
+
+				PictureBox pbBanner = null;
+				foreach(Control c in f.Controls)
+				{
+					if(c == null) { Debug.Assert(false); continue; }
+
+#if DEBUG
+					if(c.Name == "m_bannerImage")
+					{
+						Debug.Assert(c is PictureBox);
+						Debug.Assert(c.Dock == DockStyle.Top);
+						Debug.Assert(c.Visible);
+					}
+#endif
+
+					PictureBox pb = (c as PictureBox);
+					if(pb != null)
+					{
+						if(pb.Dock != DockStyle.Top) continue;
+
+						// Check whether there are multiple picture
+						// boxes that could be the dialog banner
+						if(pbBanner != null) { Debug.Assert(false); return; }
+
+						pbBanner = pb;
+						// No break
+					}
+				}
+				if(pbBanner == null) return; // No assert
+				Debug.Assert(pbBanner.Name == "m_bannerImage");
+
+				int dy = pbBanner.Height;
+				if((dy <= 0) || (dy >= hForm)) { Debug.Assert(false); return; }
+
+				f.SuspendLayout();
+				try
+				{
+					pbBanner.Visible = false;
+
+					foreach(Control c in f.Controls)
+					{
+						if(c == null) { Debug.Assert(false); }
+						else if(c != pbBanner)
+						{
+							Point pt = c.Location;
+							c.Location = new Point(pt.X, pt.Y - dy);
+						}
+					}
+
+					f.Height = hForm - dy;
+				}
+				catch(Exception) { Debug.Assert(false); }
+				finally { f.ResumeLayout(); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		internal static void StrDictListInit(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			int w = (lv.ClientSize.Width - GetVScrollBarWidth()) / 2;
+			lv.Columns.Add(KPRes.Name, w);
+			lv.Columns.Add(KPRes.Value, w);
+		}
+
+		internal static void StrDictListUpdate(ListView lv, StringDictionaryEx sd)
+		{
+			if((lv == null) || (sd == null)) { Debug.Assert(false); return; }
+
+			UIScrollInfo si = GetScrollInfo(lv, true);
+			lv.BeginUpdate();
+			lv.Items.Clear();
+
+			foreach(KeyValuePair<string, string> kvp in sd)
+			{
+				if(kvp.Key == null) { Debug.Assert(false); continue; }
+
+				string strValue = StrUtil.MultiToSingleLine(StrUtil.CompactString3Dots(
+					kvp.Value ?? string.Empty, 1024));
+
+				ListViewItem lvi = lv.Items.Add(kvp.Key);
+				lvi.SubItems.Add(strValue);
+			}
+
+			Scroll(lv, si, true);
+			lv.EndUpdate();
+		}
+
+		internal static void StrDictListDeleteSel(ListView lv, StringDictionaryEx sd)
+		{
+			if((lv == null) || (sd == null)) { Debug.Assert(false); return; }
+
+			ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
+			if((lvsic == null) || (lvsic.Count <= 0)) return;
+
+			foreach(ListViewItem lvi in lvsic)
+			{
+				if(lvi == null) { Debug.Assert(false); continue; }
+
+				string strName = lvi.Text;
+				if(strName == null) { Debug.Assert(false); continue; }
+
+				if(!sd.Remove(strName)) { Debug.Assert(false); }
+			}
+
+			StrDictListUpdate(lv, sd);
+		}
 	}
 }

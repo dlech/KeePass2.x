@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -135,15 +135,18 @@ namespace KeePass.Forms
 	public sealed class FileClosingEventArgs : CancellableOperationEventArgs
 	{
 		private PwDatabase m_pwDatabase;
+		private FileEventFlags m_f;
 
 		public PwDatabase Database { get { return m_pwDatabase; } }
+		public FileEventFlags Flags { get { return m_f; } }
 
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public FileClosingEventArgs(PwDatabase pwDatabase)
+		public FileClosingEventArgs(PwDatabase pwDatabase, FileEventFlags f)
 		{
 			m_pwDatabase = pwDatabase;
+			m_f = f;
 		}
 	}
 
@@ -153,15 +156,18 @@ namespace KeePass.Forms
 	public sealed class FileClosedEventArgs : EventArgs
 	{
 		private IOConnectionInfo m_ioClosed;
+		private FileEventFlags m_f;
 
 		public IOConnectionInfo IOConnectionInfo { get { return m_ioClosed; } }
+		public FileEventFlags Flags { get { return m_f; } }
 
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public FileClosedEventArgs(IOConnectionInfo ioClosed)
+		public FileClosedEventArgs(IOConnectionInfo ioClosed, FileEventFlags f)
 		{
 			m_ioClosed = ioClosed;
+			m_f = f;
 		}
 	}
 
@@ -195,6 +201,15 @@ namespace KeePass.Forms
 		}
 	}
 
+	[Flags]
+	public enum FileEventFlags
+	{
+		None = 0,
+		Exiting = 1,
+		Locking = 2,
+		Ecas = 4
+	}
+
 	public partial class MainForm : Form
 	{
 		/// <summary>
@@ -216,8 +231,13 @@ namespace KeePass.Forms
 		public event EventHandler<FileClosedEventArgs> FileClosed;
 
 		/// <summary>
+		/// If possible, use the FileSaving event instead.
+		/// </summary>
+		public event EventHandler<FileSavingEventArgs> FileSavingPre;
+
+		/// <summary>
 		/// Event that is fired before a database is being saved. By handling this
-		/// event, you can abort the file-saving operation.
+		/// event, you can abort the file saving operation.
 		/// </summary>
 		public event EventHandler<FileSavingEventArgs> FileSaving;
 

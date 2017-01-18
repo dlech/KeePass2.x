@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -118,18 +118,20 @@ namespace KeePass.Util
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
 			IntPtr hOwner)
 		{
-			MemoryStream ms = new MemoryStream();
-			GZipStream gz = new GZipStream(ms, CompressionMode.Compress);
-			KdbxFile.WriteEntries(gz, vEntries);
+			using(MemoryStream ms = new MemoryStream())
+			{
+				using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+				{
+					KdbxFile.WriteEntries(gz, pwDatabase, vEntries);
 
-			byte[] pbFinal;
-			if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
-			else pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy,
-				DataProtectionScope.CurrentUser);
+					byte[] pbFinal;
+					if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
+					else pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy,
+						DataProtectionScope.CurrentUser);
 
-			ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
-
-			gz.Close(); ms.Close();
+					ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
+				}
+			}
 		}
 
 		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
@@ -152,31 +154,32 @@ namespace KeePass.Util
 			else pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy,
 				DataProtectionScope.CurrentUser);
 
-			MemoryStream ms = new MemoryStream(pbPlain, false);
-			GZipStream gz = new GZipStream(ms, CompressionMode.Decompress);
-
-			List<PwEntry> vEntries = KdbxFile.ReadEntries(gz);
-
-			// Adjust protection settings and add entries
-			foreach(PwEntry pe in vEntries)
+			using(MemoryStream ms = new MemoryStream(pbPlain, false))
 			{
-				pe.Strings.EnableProtection(PwDefs.TitleField,
-					pwDatabase.MemoryProtection.ProtectTitle);
-				pe.Strings.EnableProtection(PwDefs.UserNameField,
-					pwDatabase.MemoryProtection.ProtectUserName);
-				pe.Strings.EnableProtection(PwDefs.PasswordField,
-					pwDatabase.MemoryProtection.ProtectPassword);
-				pe.Strings.EnableProtection(PwDefs.UrlField,
-					pwDatabase.MemoryProtection.ProtectUrl);
-				pe.Strings.EnableProtection(PwDefs.NotesField,
-					pwDatabase.MemoryProtection.ProtectNotes);
+				using(GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
+				{
+					List<PwEntry> vEntries = KdbxFile.ReadEntries(gz, pwDatabase, true);
 
-				pe.SetCreatedNow();
+					// Adjust protection settings and add entries
+					foreach(PwEntry pe in vEntries)
+					{
+						pe.Strings.EnableProtection(PwDefs.TitleField,
+							pwDatabase.MemoryProtection.ProtectTitle);
+						pe.Strings.EnableProtection(PwDefs.UserNameField,
+							pwDatabase.MemoryProtection.ProtectUserName);
+						pe.Strings.EnableProtection(PwDefs.PasswordField,
+							pwDatabase.MemoryProtection.ProtectPassword);
+						pe.Strings.EnableProtection(PwDefs.UrlField,
+							pwDatabase.MemoryProtection.ProtectUrl);
+						pe.Strings.EnableProtection(PwDefs.NotesField,
+							pwDatabase.MemoryProtection.ProtectNotes);
 
-				pgStorage.AddEntry(pe, true, true);
+						pe.SetCreatedNow();
+
+						pgStorage.AddEntry(pe, true, true);
+					}
+				}
 			}
-
-			gz.Close(); ms.Close();
 		}
 
 		[Obsolete]
@@ -197,6 +200,9 @@ namespace KeePass.Util
 
 			if((ctx.Flags & SprCompileFlags.HmacOtp) != SprCompileFlags.None)
 				str = ReplaceHmacOtpPlaceholder(str, ctx);
+
+			if((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
+				str = ReplacePickField(str, ctx);
 
 			return str;
 		}
@@ -329,7 +335,7 @@ namespace KeePass.Util
 					}
 				}
 				catch(Exception) { Debug.Assert(false); }
-				if(pbSecret == null) pbSecret = new byte[0];
+				if(pbSecret == null) pbSecret = MemUtil.EmptyByteArray;
 
 				string strCounter = pe.Strings.ReadSafe(strCounterField);
 				ulong uCounter;
@@ -340,9 +346,91 @@ namespace KeePass.Util
 
 				pe.Strings.Set(strCounterField, new ProtectedString(false,
 					(uCounter + 1).ToString()));
+
+				pe.Touch(true, false);
 				pd.Modified = true;
 
 				str = StrUtil.ReplaceCaseInsensitive(str, strHmacOtpPlh, strValue);
+			}
+
+			return str;
+		}
+
+		private static string ReplacePickField(string strText, SprContext ctx)
+		{
+			string str = strText;
+			PwEntry pe = ((ctx != null) ? ctx.Entry : null);
+			PwDatabase pd = ((ctx != null) ? ctx.Database : null);
+
+			while(true)
+			{
+				const string strPlh = @"{PICKFIELD}";
+				int p = str.IndexOf(strPlh, StrUtil.CaseIgnoreCmp);
+				if(p < 0) break;
+
+				string strRep = string.Empty;
+
+				List<FpField> l = new List<FpField>();
+				string strGroup;
+
+				if(pe != null)
+				{
+					strGroup = KPRes.Entry + " - " + KPRes.StandardFields;
+
+					Debug.Assert(PwDefs.GetStandardFields().Count == 5);
+					l.Add(new FpField(KPRes.Title, pe.Strings.GetSafe(PwDefs.TitleField),
+						strGroup));
+					l.Add(new FpField(KPRes.UserName, pe.Strings.GetSafe(PwDefs.UserNameField),
+						strGroup));
+					l.Add(new FpField(KPRes.Password, pe.Strings.GetSafe(PwDefs.PasswordField),
+						strGroup));
+					l.Add(new FpField(KPRes.Url, pe.Strings.GetSafe(PwDefs.UrlField),
+						strGroup));
+					l.Add(new FpField(KPRes.Notes, pe.Strings.GetSafe(PwDefs.NotesField),
+						strGroup));
+
+					strGroup = KPRes.Entry + " - " + KPRes.CustomFields;
+					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
+					{
+						if(PwDefs.IsStandardField(kvp.Key)) continue;
+
+						l.Add(new FpField(kvp.Key, kvp.Value, strGroup));
+					}
+
+					PwGroup pg = pe.ParentGroup;
+					if(pg != null)
+					{
+						strGroup = KPRes.Group;
+
+						l.Add(new FpField(KPRes.Name, new ProtectedString(
+							false, pg.Name), strGroup));
+
+						if(pg.Notes.Length > 0)
+							l.Add(new FpField(KPRes.Notes, new ProtectedString(
+								false, pg.Notes), strGroup));
+					}
+				}
+
+				if(pd != null)
+				{
+					strGroup = KPRes.Database;
+
+					if(pd.Name.Length > 0)
+						l.Add(new FpField(KPRes.Name, new ProtectedString(
+							false, pd.Name), strGroup));
+					l.Add(new FpField(KPRes.FileOrUrl, new ProtectedString(
+						false, pd.IOConnectionInfo.Path), strGroup));
+				}
+
+				FpField fpf = FieldPickerForm.ShowAndRestore(KPRes.PickField,
+					KPRes.PickFieldDesc, l);
+				if(fpf != null) strRep = fpf.Value.ReadString();
+
+				strRep = SprEngine.Compile(strRep, ctx.WithoutContentTransformations());
+				strRep = SprEngine.TransformContent(strRep, ctx);
+
+				str = str.Remove(p, strPlh.Length);
+				str = str.Insert(p, strRep);
 			}
 
 			return str;
@@ -415,7 +503,7 @@ namespace KeePass.Util
 
 			if(Program.Config.Defaults.TanExpiresOnUse)
 			{
-				pe.ExpiryTime = DateTime.Now;
+				pe.ExpiryTime = DateTime.UtcNow;
 				pe.Expires = true;
 				pe.Touch(true);
 				if(pdContext != null) pdContext.Modified = true;

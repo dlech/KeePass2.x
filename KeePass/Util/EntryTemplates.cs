@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -194,6 +194,7 @@ namespace KeePass.Util
 			if(pgContainer == null) pgContainer = pd.RootGroup;
 
 			PwEntry pe = peTemplate.Duplicate();
+			pe.History.Clear();
 
 			if(EntryTemplates.EntryCreating != null)
 				EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(

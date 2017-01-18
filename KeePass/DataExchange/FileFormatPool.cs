@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,6 +104,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new KeePassKdb1x());
 			m_vFormats.Add(new KeePassKdb2x());
 			m_vFormats.Add(new KeePassKdb2xRepair());
+			m_vFormats.Add(new KeePassKdb2x3());
 			m_vFormats.Add(new KeePassXml1x());
 			m_vFormats.Add(new KeePassXml2x());
 
@@ -120,13 +121,15 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new CodeWalletTxt605());
 			m_vFormats.Add(new DashlaneCsv2());
 			m_vFormats.Add(new DataVaultCsv47());
-			m_vFormats.Add(new DesktopKnox32());
+			m_vFormats.Add(new DesktopKnoxXml32());
+			m_vFormats.Add(new EnpassTxt5());
 			m_vFormats.Add(new FlexWalletXml17());
 			m_vFormats.Add(new HandySafeTxt512());
 			m_vFormats.Add(new HandySafeProXml12());
 			m_vFormats.Add(new KasperskyPwMgrXml50());
 			m_vFormats.Add(new KeePassXXml041());
 			m_vFormats.Add(new LastPassCsv2());
+			m_vFormats.Add(new MSecureCsv355());
 			m_vFormats.Add(new NetworkPwMgrCsv4());
 			m_vFormats.Add(new NortonIdSafeCsv2013());
 			m_vFormats.Add(new NPasswordNpw102());
@@ -138,6 +141,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new PwMemory2008Xml104());
 			m_vFormats.Add(new PwPrompterDat12());
 			m_vFormats.Add(new PwSafeXml302());
+			m_vFormats.Add(new PwSaverXml412());
 			m_vFormats.Add(new PwsPlusCsv1007());
 			m_vFormats.Add(new PwTresorXml100());
 			m_vFormats.Add(new PVaultTxt14());

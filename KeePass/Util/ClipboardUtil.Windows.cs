@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ namespace KeePass.Util
 			if(h == IntPtr.Zero) return null;
 
 			UIntPtr pSize = NativeMethods.GlobalSize(h);
-			if(pSize == UIntPtr.Zero) return new byte[0];
+			if(pSize == UIntPtr.Zero) return MemUtil.EmptyByteArray;
 
 			IntPtr hMem = NativeMethods.GlobalLock(h);
 			if(hMem == IntPtr.Zero) { Debug.Assert(false); return null; }

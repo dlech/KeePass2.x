@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,10 +45,15 @@ namespace KeePass.Util.SendInputExt
 
 		private Dictionary<IntPtr, SiWindowInfo> m_dWindowInfos =
 			new Dictionary<IntPtr, SiWindowInfo>();
+		private SiWindowInfo m_swiCurrent = new SiWindowInfo(IntPtr.Zero);
 
 		// private bool m_bThreadInputAttached = false;
 
 		private Keys m_kModCur = Keys.None;
+
+		private static readonly int[] g_vToggleKeys = new int[] {
+			NativeMethods.VK_CAPITAL // Caps Lock
+		};
 
 		public override void Init()
 		{
@@ -92,6 +97,7 @@ namespace KeePass.Util.SendInputExt
 					}
 				}
 
+				PrepareSend();
 				if(ReleaseModifiers(true) > 0)
 				{
 					// Enforce delay between releasing modifiers and sending
@@ -109,7 +115,7 @@ namespace KeePass.Util.SendInputExt
 		{
 			try
 			{
-				Debug.Assert(m_kModCur == Keys.None);
+				PrepareSend(); // For releasing modifiers
 
 				if(m_bInputBlocked)
 				{
@@ -117,12 +123,11 @@ namespace KeePass.Util.SendInputExt
 					m_bInputBlocked = false;
 				}
 
-				Debug.Assert(GetActiveKeyModifiers().Count == 0);
+				Debug.Assert(m_kModCur == Keys.None);
 				// Do not restore original modifier keys here, otherwise
 				// modifier keys are restored even when the user released
 				// them while KeePass is auto-typing
-				// ActivateKeyModifiers(lRestore, true);
-				ReleaseModifiers(false);
+				if(ReleaseModifiers(false) != 0) { Debug.Assert(false); }
 
 				// if(m_bThreadInputAttached)
 				//	NativeMethods.AttachThreadInput(m_uThisThreadID,
@@ -190,9 +195,9 @@ namespace KeePass.Util.SendInputExt
 
 		public override void SendCharImpl(char ch, bool? bDown)
 		{
-			SiWindowInfo swi = PrepareSend();
+			PrepareSend();
 
-			if(TrySendCharByKeypresses(ch, bDown, swi)) return;
+			if(TrySendCharByKeypresses(ch, bDown)) return;
 
 			if(bDown.HasValue)
 			{
@@ -289,7 +294,7 @@ namespace KeePass.Util.SendInputExt
 #endif
 		}
 
-		private static bool SendVKeyNative(int vKey, bool? bExtKey, bool bDown)
+		private bool SendVKeyNative(int vKey, bool? bExtKey, bool bDown)
 		{
 			bool bRes = false;
 
@@ -309,7 +314,7 @@ namespace KeePass.Util.SendInputExt
 			return bRes;
 		}
 
-		private static bool SendCharNative(char ch, bool bDown)
+		private bool SendCharNative(char ch, bool bDown)
 		{
 			if(IntPtr.Size == 4)
 				return SendVKeyNative32(0, null, ch, bDown);
@@ -320,8 +325,8 @@ namespace KeePass.Util.SendInputExt
 			return false;
 		}
 
-		private static bool SendVKeyNative32(int vKey, bool? bExtKey,
-			char? optUnicodeChar, bool bDown)
+		private bool SendVKeyNative32(int vKey, bool? bExtKey, char? optUnicodeChar,
+			bool bDown)
 		{
 			NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
 
@@ -336,12 +341,16 @@ namespace KeePass.Util.SendInputExt
 			}
 			else
 			{
+				IntPtr hKL = m_swiCurrent.KeyboardLayout;
+
 				if(optUnicodeChar.HasValue)
-					vKey = (int)(NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFFU);
+					vKey = (int)(NativeMethods.VkKeyScan3(optUnicodeChar.Value,
+						hKL) & 0xFFU);
 
 				pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
 				pInput[0].KeyboardInput.ScanCode =
-					(ushort)(NativeMethods.MapVirtualKey((uint)vKey, 0) & 0xFFU);
+					(ushort)(NativeMethods.MapVirtualKey3((uint)vKey,
+					NativeMethods.MAPVK_VK_TO_VSC, hKL) & 0xFFU);
 				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
 			}
 
@@ -356,8 +365,8 @@ namespace KeePass.Util.SendInputExt
 			return true;
 		}
 
-		private static bool SendVKeyNative64(int vKey, bool? bExtKey,
-			char? optUnicodeChar, bool bDown)
+		private bool SendVKeyNative64(int vKey, bool? bExtKey, char? optUnicodeChar,
+			bool bDown)
 		{
 			NativeMethods.SpecializedKeyboardINPUT64[] pInput = new
 				NativeMethods.SpecializedKeyboardINPUT64[1];
@@ -373,12 +382,15 @@ namespace KeePass.Util.SendInputExt
 			}
 			else
 			{
+				IntPtr hKL = m_swiCurrent.KeyboardLayout;
+
 				if(optUnicodeChar.HasValue)
-					vKey = (int)(NativeMethods.VkKeyScan(optUnicodeChar.Value) & 0xFFU);
+					vKey = (int)(NativeMethods.VkKeyScan3(optUnicodeChar.Value,
+						hKL) & 0xFFU);
 
 				pInput[0].VirtualKeyCode = (ushort)vKey;
-				pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey(
-					(uint)vKey, 0) & 0xFFU);
+				pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey3(
+					(uint)vKey, NativeMethods.MAPVK_VK_TO_VSC, hKL) & 0xFFU);
 				pInput[0].Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
 			}
 
@@ -411,34 +423,38 @@ namespace KeePass.Util.SendInputExt
 
 		private static bool IsExtendedKeyEx(int vKey)
 		{
+#if DEBUG
 			// http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx
 			// http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_LSHIFT, 0) == 0x2AU);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_RSHIFT, 0) == 0x36U);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_SHIFT, 0) == 0x2AU);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_LCONTROL, 0) == 0x1DU);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_RCONTROL, 0) == 0x1DU);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_CONTROL, 0) == 0x1DU);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_LMENU, 0) == 0x38U);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_RMENU, 0) == 0x38U);
-			Debug.Assert(NativeMethods.MapVirtualKey((uint)
-				NativeMethods.VK_MENU, 0) == 0x38U);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x5BU, 0) == 0x5BU);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x5CU, 0) == 0x5CU);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x5DU, 0) == 0x5DU);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x6AU, 0) == 0x37U);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x6BU, 0) == 0x4EU);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x6DU, 0) == 0x4AU);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x6EU, 0) == 0x53U);
-			Debug.Assert(NativeMethods.MapVirtualKey(0x6FU, 0) == 0x35U);
+			const uint m = NativeMethods.MAPVK_VK_TO_VSC;
+			IntPtr h = IntPtr.Zero;
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_LSHIFT, m, h) == 0x2AU);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_RSHIFT, m, h) == 0x36U);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_SHIFT, m, h) == 0x2AU);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_LCONTROL, m, h) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_RCONTROL, m, h) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_CONTROL, m, h) == 0x1DU);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_LMENU, m, h) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_RMENU, m, h) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
+				NativeMethods.VK_MENU, m, h) == 0x38U);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x5BU, m, h) == 0x5BU);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x5CU, m, h) == 0x5CU);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x5DU, m, h) == 0x5DU);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x6AU, m, h) == 0x37U);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x6BU, m, h) == 0x4EU);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x6DU, m, h) == 0x4AU);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x6EU, m, h) == 0x53U);
+			Debug.Assert(NativeMethods.MapVirtualKey3(0x6FU, m, h) == 0x35U);
+#endif
 
 			if((vKey >= 0x21) && (vKey <= 0x2E)) return true;
 			if((vKey >= 0x5B) && (vKey <= 0x5D)) return true;
@@ -451,86 +467,81 @@ namespace KeePass.Util.SendInputExt
 			return false;
 		}
 
-		private static int ReleaseModifiers(bool bWithSpecial)
+		private int ReleaseModifiers(bool bWithSpecial)
 		{
-			List<int> lMod = GetActiveKeyModifiers();
-			ActivateKeyModifiers(lMod, false);
+			List<int> lMods = new List<int>();
+			lMods.AddRange(new int[] {
+				NativeMethods.VK_LWIN, NativeMethods.VK_RWIN,
+				NativeMethods.VK_LSHIFT, NativeMethods.VK_RSHIFT,
+				NativeMethods.VK_SHIFT,
+				NativeMethods.VK_LCONTROL, NativeMethods.VK_RCONTROL,
+				NativeMethods.VK_CONTROL,
+				NativeMethods.VK_LMENU, NativeMethods.VK_RMENU,
+				NativeMethods.VK_MENU
+			});
+			lMods.AddRange(g_vToggleKeys);
 
-			if(bWithSpecial) SpecialReleaseModifiers(lMod);
+			List<int> lReleased = new List<int>();
 
-			Debug.Assert(GetActiveKeyModifiers().Count == 0);
-			return lMod.Count;
-		}
+			foreach(int vKey in lMods)
+			{
+				if(IsKeyActive(vKey))
+				{
+					// The generic modifiers should not be activated,
+					// when the left and right keys are up
+					Debug.Assert(vKey != NativeMethods.VK_SHIFT);
+					Debug.Assert(vKey != NativeMethods.VK_CONTROL);
+					Debug.Assert(vKey != NativeMethods.VK_MENU);
 
-		private static List<int> GetActiveKeyModifiers()
-		{
-			List<int> lSet = new List<int>();
+					ActivateOrToggleKey(vKey, false);
+					lReleased.Add(vKey);
 
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LSHIFT);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RSHIFT);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_SHIFT);
+					Application.DoEvents();
+				}
+			}
 
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LCONTROL);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RCONTROL);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_CONTROL);
+			if(bWithSpecial)
+				ReleaseModifiersSpecialPost(lReleased);
 
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LMENU);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RMENU);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_MENU);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_LWIN);
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_RWIN);
-
-			AddKeyModifierIfSet(lSet, NativeMethods.VK_CAPITAL);
-
-			return lSet;
-		}
-
-		private static void AddKeyModifierIfSet(List<int> lList, int vKey)
-		{
-			if(IsKeyActive(vKey)) lList.Add(vKey);
+			return lReleased.Count;
 		}
 
 		private static bool IsKeyActive(int vKey)
 		{
-			if(vKey == NativeMethods.VK_CAPITAL)
+			if(Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0)
 			{
-				ushort usCap = NativeMethods.GetKeyState(vKey);
-				return ((usCap & 1) != 0);
+				ushort us = NativeMethods.GetKeyState(vKey);
+				return ((us & 1) != 0);
 			}
 
 			ushort usState = NativeMethods.GetAsyncKeyState(vKey);
 			return ((usState & 0x8000) != 0);
 
 			// For GetKeyState:
-			// if(vKey == NativeMethods.VK_CAPITAL)
+			// if(Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0)
 			//	return ((usState & 1) != 0);
 			// else
 			//	return ((usState & 0x8000) != 0);
 		}
 
-		private static void ActivateKeyModifiers(List<int> vKeys, bool bDown)
+		private void ActivateOrToggleKey(int vKey, bool bDown)
 		{
-			Debug.Assert(vKeys != null);
-			if(vKeys == null) throw new ArgumentNullException("vKeys");
-
-			foreach(int vKey in vKeys)
+			if(Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0)
 			{
-				if(vKey == NativeMethods.VK_CAPITAL) // Toggle
-				{
-					SendVKeyNative(vKey, null, true);
-					SendVKeyNative(vKey, null, false);
-				}
-				else SendVKeyNative(vKey, null, bDown);
+				SendVKeyNative(vKey, null, true);
+				SendVKeyNative(vKey, null, false);
 			}
+			else SendVKeyNative(vKey, null, bDown);
 		}
 
-		private static void SpecialReleaseModifiers(List<int> vKeys)
+		private void ReleaseModifiersSpecialPost(List<int> vKeys)
 		{
+			if(vKeys.Count == 0) return;
+
 			// Get out of a menu bar that was focused when only
 			// using Alt as hot key modifier
 			if(Program.Config.Integration.AutoTypeReleaseAltWithKeyPress &&
-				(vKeys.Count == 2) && vKeys.Contains(NativeMethods.VK_MENU))
+				vKeys.TrueForAll(SiEngineWin.IsAltOrToggle))
 			{
 				if(vKeys.Contains(NativeMethods.VK_LMENU))
 				{
@@ -545,45 +556,66 @@ namespace KeePass.Util.SendInputExt
 			}
 		}
 
+		private static bool IsAltOrToggle(int vKey)
+		{
+			if(vKey == NativeMethods.VK_LMENU) return true;
+			if(vKey == NativeMethods.VK_RMENU) return true;
+			if(vKey == NativeMethods.VK_MENU) return true;
+
+			if(Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0) return true;
+
+			return false;
+		}
+
 		private static char[] m_vForcedUniChars = null;
-		private bool TrySendCharByKeypresses(char ch, bool? bDown, SiWindowInfo swi)
+		private bool TrySendCharByKeypresses(char ch, bool? bDown)
 		{
 			if(ch == char.MinValue) { Debug.Assert(false); return false; }
 
-			SiSendMethod sm = GetSendMethod(swi);
+			SiSendMethod sm = GetSendMethod(m_swiCurrent);
 			if(sm == SiSendMethod.UnicodePacket) return false;
 
 			if(m_vForcedUniChars == null)
 				m_vForcedUniChars = new char[] {
 					// All of the following diacritics are spacing / non-combining
 
-					'\u00B4', // Acute accent
-					'\u02DD', // Double acute accent
-					'\u0060', // Grave accent
-					'\u02D8', // Breve
-					'\u00B8', // Cedilla
 					'\u005E', // Circumflex ^
+					'\u0060', // Grave accent
 					'\u00A8', // Diaeresis
-					'\u02D9', // Dot above
 					'\u00AF', // Macron above, long
-					'\u02C9', // Macron above, modifier, short
-					'\u02CD', // Macron below, modifier, short
-					'\u02DB', // Ogonek
+					'\u00B0', // Degree (e.g. for Czech)
+					'\u00B4', // Acute accent
+					'\u00B8', // Cedilla
 
 					// E.g. for US-International;
 					// https://sourceforge.net/p/keepass/discussion/329220/thread/5708e5ef/
-					'\u0027', // Apostrophe
 					'\u0022', // Quotation mark
+					'\u0027', // Apostrophe
 					'\u007E' // Tilde
+
+					// Spacing Modifier Letters; see below
+					// '\u02C7', // Caron (e.g. for Canadian Multilingual)
+					// '\u02C9', // Macron above, modifier, short
+					// '\u02CD', // Macron below, modifier, short
+					// '\u02D8', // Breve
+					// '\u02D9', // Dot above
+					// '\u02DA', // Ring above
+					// '\u02DB', // Ogonek
+					// '\u02DC', // Small tilde
+					// '\u02DD', // Double acute accent
 				};
 			if(sm != SiSendMethod.KeyEvent) // If Unicode packets allowed
 			{
 				if(Array.IndexOf<char>(m_vForcedUniChars, ch) >= 0) return false;
+
+				// U+02B0 to U+02FF are Spacing Modifier Letters;
+				// http://www.unicode.org/charts/PDF/U02B0.pdf
+				// https://en.wikipedia.org/wiki/Spacing_Modifier_Letters
+				if((ch >= '\u02B0') && (ch <= '\u02FF')) return false;
 			}
 
-			IntPtr hKL = swi.KeyboardLayout;
-			ushort u = ((hKL == IntPtr.Zero) ? NativeMethods.VkKeyScan(ch) :
-				NativeMethods.VkKeyScanEx(ch, hKL));
+			IntPtr hKL = m_swiCurrent.KeyboardLayout;
+			ushort u = NativeMethods.VkKeyScan3(ch, hKL);
 			if(u == 0xFFFFU) return false;
 
 			int vKey = (int)(u & 0xFFU);
@@ -605,13 +637,70 @@ namespace KeePass.Util.SendInputExt
 					return false;
 			}
 
+			// Windows' GetKeyboardState function does not return the
+			// current virtual key array (especially not after changing
+			// them below), thus we build the array on our own
+			byte[] pbState = new byte[256];
+			if((kMod & Keys.Shift) != Keys.None)
+			{
+				pbState[NativeMethods.VK_SHIFT] = 0x80;
+				pbState[NativeMethods.VK_LSHIFT] = 0x80;
+			}
+			if((kMod & Keys.Control) != Keys.None)
+			{
+				pbState[NativeMethods.VK_CONTROL] = 0x80;
+				pbState[NativeMethods.VK_LCONTROL] = 0x80;
+			}
+			if((kMod & Keys.Alt) != Keys.None)
+			{
+				pbState[NativeMethods.VK_MENU] = 0x80;
+				pbState[NativeMethods.VK_RMENU] = 0x80; // See below
+			}
+			pbState[NativeMethods.VK_NUMLOCK] = 0x01; // Toggled
+
+			bool bCapsLock = false;
+
+			// The keypress that VkKeyScan returns may require a specific
+			// state of toggle keys, on which it provides no information;
+			// thus we now check whether the keypress will really result
+			// in the character that we expect;
+			// https://sourceforge.net/p/keepass/bugs/1594/
+			string strUni = NativeMethods.ToUnicode3(vKey, pbState, hKL);
+			if((strUni != null) && (strUni.Length == 0)) { } // Dead key
+			else if(string.IsNullOrEmpty(strUni) || (strUni[strUni.Length - 1] != ch))
+			{
+				// Among the keyboard layouts that were tested, the
+				// Czech one was the only one where the translation
+				// may fail (due to dependency on the Caps Lock state)
+				Debug.Assert(NativeMethods.GetPrimaryLangID((ushort)(hKL.ToInt64() &
+					0xFFFFL)) == NativeMethods.LANG_CZECH);
+
+				// Test whether Caps Lock is required
+				pbState[NativeMethods.VK_CAPITAL] = 0x01;
+				strUni = NativeMethods.ToUnicode3(vKey, pbState, hKL);
+				if((strUni != null) && (strUni.Length == 0)) { } // Dead key
+				else if(string.IsNullOrEmpty(strUni) || (strUni[strUni.Length - 1] != ch))
+				{
+					Debug.Assert(false); // An unknown key modifier is required
+					return false;
+				}
+
+				bCapsLock = true;
+			}
+
+			if(bCapsLock)
+			{
+				SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
+				Thread.Sleep(1);
+				Application.DoEvents();
+			}
+
 			Keys kModDiff = (kMod & ~m_kModCur);
 			if(kModDiff != Keys.None)
 			{
 				// Send RAlt for better AltGr compatibility;
 				// https://sourceforge.net/p/keepass/bugs/1475/
 				SetKeyModifierImplEx(kModDiff, true, true);
-
 				Thread.Sleep(1);
 				Application.DoEvents();
 			}
@@ -622,8 +711,14 @@ namespace KeePass.Util.SendInputExt
 			{
 				Thread.Sleep(1);
 				Application.DoEvents();
-
 				SetKeyModifierImplEx(kModDiff, false, true);
+			}
+
+			if(bCapsLock)
+			{
+				Thread.Sleep(1);
+				Application.DoEvents();
+				SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
 			}
 
 			return true;
@@ -674,21 +769,19 @@ namespace KeePass.Util.SendInputExt
 			return swi;
 		}
 
-		private SiWindowInfo PrepareSend()
+		private void PrepareSend()
 		{
 			IntPtr hWnd = NativeMethods.GetForegroundWindowHandle();
-			SiWindowInfo swi = GetWindowInfo(hWnd);
+			m_swiCurrent = GetWindowInfo(hWnd);
 
-			EnsureSameKeyboardLayout(swi);
-
-			return swi;
+			EnsureSameKeyboardLayout();
 		}
 
-		private void EnsureSameKeyboardLayout(SiWindowInfo swi)
+		private void EnsureSameKeyboardLayout()
 		{
 			if(!Program.Config.Integration.AutoTypeAdjustKeyboardLayout) return;
 
-			IntPtr hklTarget = swi.KeyboardLayout;
+			IntPtr hklTarget = m_swiCurrent.KeyboardLayout;
 			Debug.Assert(hklTarget != IntPtr.Zero);
 			Debug.Assert(NativeMethods.GetKeyboardLayout(0) == m_hklCurrent);
 

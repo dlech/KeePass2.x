@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Diagnostics;
-using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 using KeePass.App.Configuration;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Native;
 using KeePassLib.Utility;
 
@@ -136,8 +136,7 @@ namespace KeePass.Plugins
 			sb.Append(GetAppEnvID());
 
 			byte[] pbID = StrUtil.Utf8.GetBytes(sb.ToString());
-			SHA256Managed sha256 = new SHA256Managed();
-			byte[] pbHash = sha256.ComputeHash(pbID);
+			byte[] pbHash = CryptoUtil.HashSha256(pbID);
 
 			string strHash = Convert.ToBase64String(pbHash, Base64FormattingOptions.None);
 			strHash = StrUtil.AlphaNumericOnly(strHash);
@@ -173,7 +172,7 @@ namespace KeePass.Plugins
 
 			if(bMustExist && bExists)
 			{
-				try { File.SetLastAccessTime(strPath, DateTime.Now); }
+				try { File.SetLastAccessTimeUtc(strPath, DateTime.UtcNow); }
 				catch(Exception) { } // Might be locked by other KeePass instance
 			}
 
@@ -264,14 +263,15 @@ namespace KeePass.Plugins
 
 			List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*.dll",
 				SearchOption.TopDirectoryOnly);
-			bool bNew = false;
+			DateTime dtNow = DateTime.UtcNow;
+
 			foreach(FileInfo fi in lFiles)
 			{
-				bNew |= ((DateTime.Now - fi.LastAccessTime).TotalDays < 62.0);
-				if(bNew) break;
+				if((dtNow - fi.LastAccessTimeUtc).TotalDays < 62.0)
+					return false;
 			}
 
-			return !bNew;
+			return true;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -151,13 +151,31 @@ namespace KeePass.Native
 		//	IntPtr dwExtraInfo);
 
 		[DllImport("User32.dll")]
-		internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
+		private static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+		[DllImport("User32.dll")]
+		private static extern uint MapVirtualKeyEx(uint uCode, uint uMapType,
+			IntPtr hKL);
 
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
-		internal static extern ushort VkKeyScan(char ch);
+		private static extern ushort VkKeyScan(char ch);
 
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
-		internal static extern ushort VkKeyScanEx(char ch, IntPtr hKL);
+		private static extern ushort VkKeyScanEx(char ch, IntPtr hKL);
+
+		[DllImport("User32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+		private static extern int ToUnicode(uint wVirtKey, uint wScanCode,
+			IntPtr lpKeyState, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder sbBuff,
+			int cchBuff, uint wFlags);
+
+		[DllImport("User32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+		private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode,
+			IntPtr lpKeyState, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder sbBuff,
+			int cchBuff, uint wFlags, IntPtr hKL);
+
+		// [DllImport("User32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// private static extern bool GetKeyboardState(IntPtr lpKeyState);
 
 		[DllImport("User32.dll")]
 		internal static extern ushort GetKeyState(int vKey);
@@ -206,6 +224,9 @@ namespace KeePass.Native
 
 		[DllImport("User32.dll")]
 		internal static extern uint GetClipboardSequenceNumber();
+
+		// [DllImport("User32.dll")]
+		// internal static extern IntPtr GetClipboardOwner();
 
 		[DllImport("Kernel32.dll")]
 		internal static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);

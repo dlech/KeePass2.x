@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using KeePass.App;
+using KeePass.Forms;
 
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -54,16 +55,23 @@ namespace KeePass.UI
 
 	public static class GlobalWindowManager
 	{
-		private static List<KeyValuePair<Form, IGwmWindow>> m_vWindows =
+		private static List<KeyValuePair<Form, IGwmWindow>> g_vWindows =
 			new List<KeyValuePair<Form, IGwmWindow>>();
-		private static List<CommonDialog> m_vDialogs = new List<CommonDialog>();
+		private static List<CommonDialog> g_vDialogs = new List<CommonDialog>();
+
+		private static object g_oSyncRoot = new object();
 
 		public static uint WindowCount
 		{
 			get
 			{
-				return ((uint)(m_vWindows.Count + m_vDialogs.Count) +
-					MessageService.CurrentMessageCount);
+				uint u;
+				lock(g_oSyncRoot)
+				{
+					u = ((uint)(g_vWindows.Count + g_vDialogs.Count) +
+						MessageService.CurrentMessageCount);
+				}
+				return u;
 			}
 		}
 
@@ -71,14 +79,17 @@ namespace KeePass.UI
 		{
 			get
 			{
-				if(m_vDialogs.Count > 0) return false;
-				if(MessageService.CurrentMessageCount > 0) return false;
-
-				foreach(KeyValuePair<Form, IGwmWindow> kvp in m_vWindows)
+				lock(g_oSyncRoot)
 				{
-					if(kvp.Value == null) return false;
-					else if(!kvp.Value.CanCloseWithoutDataLoss)
-						return false;
+					if(g_vDialogs.Count > 0) return false;
+					if(MessageService.CurrentMessageCount > 0) return false;
+
+					foreach(KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
+					{
+						if(kvp.Value == null) return false;
+						else if(!kvp.Value.CanCloseWithoutDataLoss)
+							return false;
+					}
 				}
 
 				return true;
@@ -89,8 +100,13 @@ namespace KeePass.UI
 		{
 			get
 			{
-				if(m_vWindows.Count == 0) return null;
-				return m_vWindows[m_vWindows.Count - 1].Key;
+				lock(g_oSyncRoot)
+				{
+					int n = g_vWindows.Count;
+					if(n > 0) return g_vWindows[n - 1].Key;
+				}
+
+				return null;
 			}
 		}
 
@@ -110,8 +126,11 @@ namespace KeePass.UI
 			KeyValuePair<Form, IGwmWindow> kvp = new KeyValuePair<Form, IGwmWindow>(
 				form, wnd);
 
-			Debug.Assert(m_vWindows.IndexOf(kvp) < 0);
-			m_vWindows.Add(kvp);
+			lock(g_oSyncRoot)
+			{
+				Debug.Assert(g_vWindows.IndexOf(kvp) < 0);
+				g_vWindows.Add(kvp);
+			}
 
 			// The control box must be enabled, otherwise DPI scaling
 			// doesn't work due to a .NET bug:
@@ -126,7 +145,7 @@ namespace KeePass.UI
 
 			// form.Font = new System.Drawing.Font(System.Drawing.SystemFonts.MessageBoxFont.Name, 12.0f);
 
-			CustomizeControl(form);
+			CustomizeForm(form);
 
 			MonoWorkarounds.ApplyTo(form);
 
@@ -140,7 +159,7 @@ namespace KeePass.UI
 			Debug.Assert(dlg != null);
 			if(dlg == null) throw new ArgumentNullException("dlg");
 
-			m_vDialogs.Add(dlg);
+			lock(g_oSyncRoot) { g_vDialogs.Add(dlg); }
 		}
 
 		public static void RemoveWindow(Form form)
@@ -148,26 +167,29 @@ namespace KeePass.UI
 			Debug.Assert(form != null);
 			if(form == null) throw new ArgumentNullException("form");
 
-			for(int i = 0; i < m_vWindows.Count; ++i)
+			lock(g_oSyncRoot)
 			{
-				if(m_vWindows[i].Key == form)
+				for(int i = 0; i < g_vWindows.Count; ++i)
 				{
-					if(GlobalWindowManager.WindowRemoved != null)
-						GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
-							form, m_vWindows[i].Value));
+					if(g_vWindows[i].Key == form)
+					{
+						if(GlobalWindowManager.WindowRemoved != null)
+							GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
+								form, g_vWindows[i].Value));
 
-					MonoWorkarounds.Release(form);
+						MonoWorkarounds.Release(form);
 
 #if DEBUG
-					DebugClose(form);
+						DebugClose(form);
 #endif
 
-					m_vWindows.RemoveAt(i);
-					return;
+						g_vWindows.RemoveAt(i);
+						return;
+					}
 				}
 			}
 
-			Debug.Assert(false); // Window not found!
+			Debug.Assert(false); // Window not found
 		}
 
 		public static void RemoveDialog(CommonDialog dlg)
@@ -175,15 +197,19 @@ namespace KeePass.UI
 			Debug.Assert(dlg != null);
 			if(dlg == null) throw new ArgumentNullException("dlg");
 
-			Debug.Assert(m_vDialogs.IndexOf(dlg) >= 0);
-			m_vDialogs.Remove(dlg);
+			lock(g_oSyncRoot)
+			{
+				Debug.Assert(g_vDialogs.IndexOf(dlg) >= 0);
+				g_vDialogs.Remove(dlg);
+			}
 		}
 
 		public static void CloseAllWindows()
 		{
 			Debug.Assert(GlobalWindowManager.CanCloseAllWindows);
 
-			KeyValuePair<Form, IGwmWindow>[] vWindows = m_vWindows.ToArray();
+			KeyValuePair<Form, IGwmWindow>[] vWindows;
+			lock(g_oSyncRoot) { vWindows = g_vWindows.ToArray(); }
 			Array.Reverse(vWindows); // Close windows in reverse order
 
 			foreach(KeyValuePair<Form, IGwmWindow> kvp in vWindows)
@@ -215,13 +241,26 @@ namespace KeePass.UI
 
 		public static bool HasWindow(IntPtr hWindow)
 		{
-			foreach(KeyValuePair<Form, IGwmWindow> kvp in m_vWindows)
+			lock(g_oSyncRoot)
 			{
-				if(kvp.Key.Handle == hWindow) return true;
+				foreach(KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
+				{
+					if(kvp.Key.Handle == hWindow) return true;
+				}
 			}
 
 			return false;
 		}
+
+		/* internal static bool HasWindowMW(IntPtr hWindow)
+		{
+			if(HasWindow(hWindow)) return true;
+
+			MainForm mf = Program.MainForm;
+			if((mf != null) && (mf.Handle == hWindow)) return true;
+
+			return false;
+		} */
 
 		internal static bool ActivateTopWindow()
 		{
@@ -236,6 +275,22 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
+		}
+
+		public static void CustomizeForm(Form f)
+		{
+			CustomizeControl(f);
+
+			try
+			{
+				const string strForms = "KeePass.Forms.";
+				Debug.Assert(typeof(PwEntryForm).FullName.StartsWith(strForms));
+
+				if(f.GetType().FullName.StartsWith(strForms) &&
+					(f.FormBorderStyle == FormBorderStyle.FixedDialog))
+					UIUtil.RemoveBannerIfNecessary(f);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void CustomizeControl(Control c)

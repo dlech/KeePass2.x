@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -78,10 +78,7 @@ namespace KeePass.Util.SendInputExt
 			string strVerb = "key";
 			if(bDown.HasValue) strVerb = (bDown.Value ? "keydown" : "keyup");
 
-			// Unicode is supported; codes are 'UHHHH' with 'HHHH' being
-			// the Unicode value; see header of 'keysymdef.h'
-			RunXDoTool(strVerb, "U" + ((int)ch).ToString("X4",
-				NumberFormatInfo.InvariantInfo));
+			RunXDoTool(strVerb, SiCodes.CharToXKeySym(ch));
 		}
 
 		private static void ReleaseModifiers()

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ namespace KeePass.Util
 			List<string> l = new List<string>();
 
 			if(pwe == null) { Debug.Assert(false); return l; }
-			if(strWindow == null) { Debug.Assert(false); return l; }
+			if(strWindow == null) { Debug.Assert(false); return l; } // May be empty
 
 			if(!pwe.GetAutoTypeEnabled()) return l;
 
@@ -447,7 +447,8 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); hWnd = IntPtr.Zero; strWindow = null; }
 
-			if(string.IsNullOrEmpty(strWindow)) return false;
+			// if(string.IsNullOrEmpty(strWindow)) return false;
+			if(strWindow == null) { Debug.Assert(false); return false; }
 			if(!IsValidAutoTypeWindow(hWnd, true)) return false;
 
 			SequenceQueriesEventArgs evQueries = GetSequencesForWindowBegin(
@@ -456,11 +457,11 @@ namespace KeePass.Util
 			List<AutoTypeCtx> lCtxs = new List<AutoTypeCtx>();
 			PwDatabase pdCurrent = null;
 			bool bExpCanMatch = Program.Config.Integration.AutoTypeExpiredCanMatch;
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				if(!bExpCanMatch && pe.Expires && (pe.ExpiryTime < dtNow))
+				if(!bExpCanMatch && pe.Expires && (pe.ExpiryTime <= dtNow))
 					return true; // Ignore expired entries
 
 				List<string> lSeq = GetSequencesForWindow(pe, hWnd, strWindow,

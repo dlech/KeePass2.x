@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.UI;
@@ -55,7 +55,18 @@ namespace KeePass.Forms
 
 			string strTitle = PwDefs.ProductName;
 			string strDesc = KPRes.Version + " " + PwDefs.VersionString;
-			if(Program.IsDevelopmentSnapshot()) strDesc += " (Dev)";
+			if(Program.IsDevelopmentSnapshot())
+			{
+				strDesc += " (Dev.";
+				try
+				{
+					string strExe = WinUtil.GetExecutable();
+					FileInfo fi = new FileInfo(strExe);
+					strDesc += " " + fi.LastWriteTimeUtc.ToString("yyMMdd");
+				}
+				catch(Exception) { Debug.Assert(false); }
+				strDesc += ")";
+			}
 
 			Icon icoNew = new Icon(Properties.Resources.KeePass, 48, 48);
 
@@ -90,8 +101,8 @@ namespace KeePass.Forms
 			strPath = UrlUtil.GetFileDirectory(strPath, true, false);
 			strPath += AppDefs.XslFilesDir;
 			strPath = UrlUtil.EnsureTerminatingSeparator(strPath, false);
-			bool bInstalled = File.Exists(strPath + AppDefs.XslFileHtmlLite);
-			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlFull);
+			bool bInstalled = File.Exists(strPath + AppDefs.XslFileHtmlFull);
+			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlLight);
 			bInstalled &= File.Exists(strPath + AppDefs.XslFileHtmlTabular);
 			if(!bInstalled) lvi.SubItems.Add(KPRes.NotInstalled);
 			else lvi.SubItems.Add(KPRes.Installed);

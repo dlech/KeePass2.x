@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -236,23 +236,7 @@ namespace KeePass.Util.Spr
 
 			if((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None)
 			{
-				DateTime dtNow = DateTime.Now; // Local time
-				str = SprEngine.FillIfExists(str, @"{DT_YEAR}", new ProtectedString(
-					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_MONTH}", new ProtectedString(
-					false, dtNow.Month.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_DAY}", new ProtectedString(
-					false, dtNow.Day.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_HOUR}", new ProtectedString(
-					false, dtNow.Hour.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_MINUTE}", new ProtectedString(
-					false, dtNow.Minute.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_SECOND}", new ProtectedString(
-					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_SIMPLE}", new ProtectedString(
-					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
-
-				dtNow = dtNow.ToUniversalTime();
+				DateTime dtNow = DateTime.UtcNow;
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_YEAR}", new ProtectedString(
 					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_MONTH}", new ProtectedString(
@@ -266,6 +250,22 @@ namespace KeePass.Util.Spr
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_SECOND}", new ProtectedString(
 					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_SIMPLE}", new ProtectedString(
+					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
+
+				dtNow = dtNow.ToLocalTime();
+				str = SprEngine.FillIfExists(str, @"{DT_YEAR}", new ProtectedString(
+					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_MONTH}", new ProtectedString(
+					false, dtNow.Month.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_DAY}", new ProtectedString(
+					false, dtNow.Day.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_HOUR}", new ProtectedString(
+					false, dtNow.Hour.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_MINUTE}", new ProtectedString(
+					false, dtNow.Minute.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_SECOND}", new ProtectedString(
+					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_SIMPLE}", new ProtectedString(
 					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
 			}
 

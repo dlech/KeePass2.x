@@ -53,12 +53,16 @@
 			this.m_rbAutoTypeInherit = new System.Windows.Forms.RadioButton();
 			this.m_lblAutoTypeDesc = new System.Windows.Forms.Label();
 			this.m_tbDefaultAutoTypeSeq = new System.Windows.Forms.TextBox();
+			this.m_tabCustomData = new System.Windows.Forms.TabPage();
+			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
+			this.m_btnCDDel = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabGeneral.SuspendLayout();
 			this.m_tabNotes.SuspendLayout();
 			this.m_tabBehavior.SuspendLayout();
 			this.m_tabAutoType.SuspendLayout();
+			this.m_tabCustomData.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_lblName
@@ -132,6 +136,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabNotes);
 			this.m_tabMain.Controls.Add(this.m_tabBehavior);
 			this.m_tabMain.Controls.Add(this.m_tabAutoType);
+			this.m_tabMain.Controls.Add(this.m_tabCustomData);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -312,6 +317,41 @@
 			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(280, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 2;
 			// 
+			// m_tabCustomData
+			// 
+			this.m_tabCustomData.Controls.Add(this.m_btnCDDel);
+			this.m_tabCustomData.Controls.Add(this.m_lvCustomData);
+			this.m_tabCustomData.Location = new System.Drawing.Point(4, 22);
+			this.m_tabCustomData.Name = "m_tabCustomData";
+			this.m_tabCustomData.Size = new System.Drawing.Size(356, 140);
+			this.m_tabCustomData.TabIndex = 4;
+			this.m_tabCustomData.Text = "Plugin Data";
+			this.m_tabCustomData.UseVisualStyleBackColor = true;
+			// 
+			// m_lvCustomData
+			// 
+			this.m_lvCustomData.FullRowSelect = true;
+			this.m_lvCustomData.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.m_lvCustomData.HideSelection = false;
+			this.m_lvCustomData.Location = new System.Drawing.Point(6, 10);
+			this.m_lvCustomData.Name = "m_lvCustomData";
+			this.m_lvCustomData.ShowItemToolTips = true;
+			this.m_lvCustomData.Size = new System.Drawing.Size(341, 93);
+			this.m_lvCustomData.TabIndex = 0;
+			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
+			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
+			this.m_lvCustomData.SelectedIndexChanged += new System.EventHandler(this.OnCustomDataSelectedIndexChanged);
+			// 
+			// m_btnCDDel
+			// 
+			this.m_btnCDDel.Location = new System.Drawing.Point(273, 109);
+			this.m_btnCDDel.Name = "m_btnCDDel";
+			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCDDel.TabIndex = 1;
+			this.m_btnCDDel.Text = "&Delete";
+			this.m_btnCDDel.UseVisualStyleBackColor = true;
+			this.m_btnCDDel.Click += new System.EventHandler(this.OnBtnCDDel);
+			// 
 			// GroupForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -342,6 +382,7 @@
 			this.m_tabBehavior.PerformLayout();
 			this.m_tabAutoType.ResumeLayout(false);
 			this.m_tabAutoType.PerformLayout();
+			this.m_tabCustomData.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -373,5 +414,8 @@
 		private System.Windows.Forms.ComboBox m_cmbEnableSearching;
 		private System.Windows.Forms.ComboBox m_cmbEnableAutoType;
 		private System.Windows.Forms.Label m_lblNotesHint;
+		private System.Windows.Forms.TabPage m_tabCustomData;
+		private System.Windows.Forms.Button m_btnCDDel;
+		private KeePass.UI.CustomListViewEx m_lvCustomData;
 	}
 }

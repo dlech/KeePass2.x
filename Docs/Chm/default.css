@@ -1,5 +1,5 @@
 /*
-	Design Copyright (c) 2003-2016 Dominik Reichl
+	Design Copyright (c) 2003-2017 Dominik Reichl
 */
 
 body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a, kbd kbd {
@@ -361,6 +361,10 @@ div.tipdiv {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
+}
+
+.withspc > li + li {
+	margin-top: 0.75em;
 }
 
 /* --------------------------------------------------------------------- */

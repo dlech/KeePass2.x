@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -421,7 +421,7 @@ namespace KeePass.DataExchange
 			"user", "name", "user name", "username", "login name",
 			"email", "e-mail", "id", "userid", "user id",
 			"login", "form_loginname", "wpname", "mail",
-			"loginid", "login id", "log",
+			"loginid", "login id", "log", "uin",
 			"first name", "last name", "card#", "account #",
 			"member", "member #",
 
@@ -438,7 +438,7 @@ namespace KeePass.DataExchange
 			"p", "serial", "serial#", "license key", "reg #",
 
 			// Non-English names
-			"passwort"
+			"passwort", "kennwort"
 		};
 
 		private static readonly string[] m_vUrls = {
@@ -448,7 +448,7 @@ namespace KeePass.DataExchange
 			"web-site",
 
 			// Non-English names
-			"ort", "adresse"
+			"ort", "adresse", "webseite"
 		};
 
 		private static readonly string[] m_vNotes = {

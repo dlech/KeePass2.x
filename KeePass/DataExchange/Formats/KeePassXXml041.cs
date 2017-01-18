@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -200,14 +200,15 @@ namespace KeePass.DataExchange.Formats
 
 		private static DateTime ParseTime(string str)
 		{
-			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return DateTime.Now; }
-			if(str == "0000-00-00T00:00:00") return DateTime.Now;
+			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return DateTime.UtcNow; }
+			if(str == "0000-00-00T00:00:00") return DateTime.UtcNow;
 
 			DateTime dt;
-			if(DateTime.TryParse(str, out dt)) return dt;
+			if(DateTime.TryParse(str, out dt))
+				return TimeUtil.ToUtc(dt, false);
 
 			Debug.Assert(false);
-			return DateTime.Now;
+			return DateTime.UtcNow;
 		}
 
 		private static string FilterSpecial(string strData)

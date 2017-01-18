@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,7 +75,8 @@ namespace KeePass.Native
 
 			try
 			{
-				return new IntPtr(int.Parse(RunXDoTool("getactivewindow")));
+				return new IntPtr(long.Parse(RunXDoTool(
+					"getactivewindow").Trim()));
 			}
 			catch(Exception) { Debug.Assert(false); }
 			return IntPtr.Zero;
@@ -697,6 +698,94 @@ namespace KeePass.Native
 		{
 			if(m.Msg == NativeMethods.WM_KEYDOWN) return true;
 			if(m.Msg == NativeMethods.WM_KEYUP) return false;
+			return null;
+		}
+
+		/// <summary>
+		/// PRIMARYLANGID macro.
+		/// </summary>
+		internal static ushort GetPrimaryLangID(ushort uLangID)
+		{
+			return (ushort)(uLangID & 0x3FFU);
+		}
+
+		internal static uint MapVirtualKey3(uint uCode, uint uMapType, IntPtr hKL)
+		{
+			if(hKL == IntPtr.Zero) return MapVirtualKey(uCode, uMapType);
+			return MapVirtualKeyEx(uCode, uMapType, hKL);
+		}
+
+		internal static ushort VkKeyScan3(char ch, IntPtr hKL)
+		{
+			if(hKL == IntPtr.Zero) return VkKeyScan(ch);
+			return VkKeyScanEx(ch, hKL);
+		}
+
+		/// <returns>
+		/// Null, if there exists no translation or an error occured.
+		/// An empty string, if the key is a dead key.
+		/// Otherwise, the generated Unicode string (typically 1 character,
+		/// but can be more when a dead key is stored in the keyboard layout).
+		/// </returns>
+		internal static string ToUnicode3(int vKey, byte[] pbKeyState, IntPtr hKL)
+		{
+			const int cbState = 256;
+			IntPtr pState = IntPtr.Zero;
+			try
+			{
+				uint uScanCode = MapVirtualKey3((uint)vKey, MAPVK_VK_TO_VSC, hKL);
+
+				pState = Marshal.AllocHGlobal(cbState);
+				if(pState == IntPtr.Zero) { Debug.Assert(false); return null; }
+
+				if(pbKeyState != null)
+				{
+					if(pbKeyState.Length == cbState)
+						Marshal.Copy(pbKeyState, 0, pState, cbState);
+					else { Debug.Assert(false); return null; }
+				}
+				else
+				{
+					// Windows' GetKeyboardState function does not return
+					// the current virtual key array; as a workaround,
+					// calling GetKeyState is mentioned sometimes, but
+					// this doesn't work reliably either;
+					// http://pinvoke.net/default.aspx/user32/GetKeyboardState.html
+
+					// GetKeyState(VK_SHIFT);
+					// if(!GetKeyboardState(pState)) { Debug.Assert(false); return null; }
+
+					Debug.Assert(false);
+					return null;
+				}
+
+				const int cchUni = 30;
+				StringBuilder sbUni = new StringBuilder(cchUni + 2);
+
+				int r;
+				if(hKL == IntPtr.Zero)
+					r = ToUnicode((uint)vKey, uScanCode, pState, sbUni,
+						cchUni, 0);
+				else
+					r = ToUnicodeEx((uint)vKey, uScanCode, pState, sbUni,
+						cchUni, 0, hKL);
+
+				if(r < 0) return string.Empty; // Dead key
+				if(r == 0) return null; // No translation
+
+				string str = sbUni.ToString();
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return null; }
+
+				// Extra characters may be returned, but are invalid
+				// and should be ignored;
+				// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646320.aspx
+				if(r < str.Length) str = str.Substring(0, r);
+
+				return str;
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally { if(pState != IntPtr.Zero) Marshal.FreeHGlobal(pState); }
+
 			return null;
 		}
 	}

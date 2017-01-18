@@ -49,6 +49,8 @@
 			this.m_lblPolicyRestart = new System.Windows.Forms.Label();
 			this.m_lblPolicyIntro = new System.Windows.Forms.Label();
 			this.m_tabGui = new System.Windows.Forms.TabPage();
+			this.m_btnCustomAltColor = new System.Windows.Forms.Button();
+			this.m_cbCustomAltColor = new System.Windows.Forms.CheckBox();
 			this.m_cmbMenuStyle = new System.Windows.Forms.ComboBox();
 			this.m_lblMenuStyle = new System.Windows.Forms.Label();
 			this.m_btnSelPwFont = new System.Windows.Forms.Button();
@@ -187,7 +189,7 @@
 			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 115);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
 			this.m_lvSecurityOptions.ShowItemToolTips = true;
-			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 188);
+			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 187);
 			this.m_lvSecurityOptions.TabIndex = 8;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
@@ -328,6 +330,8 @@
 			// 
 			// m_tabGui
 			// 
+			this.m_tabGui.Controls.Add(this.m_btnCustomAltColor);
+			this.m_tabGui.Controls.Add(this.m_cbCustomAltColor);
 			this.m_tabGui.Controls.Add(this.m_cmbMenuStyle);
 			this.m_tabGui.Controls.Add(this.m_lblMenuStyle);
 			this.m_tabGui.Controls.Add(this.m_btnSelPwFont);
@@ -344,19 +348,39 @@
 			this.m_tabGui.Text = "Interface";
 			this.m_tabGui.UseVisualStyleBackColor = true;
 			// 
+			// m_btnCustomAltColor
+			// 
+			this.m_btnCustomAltColor.Location = new System.Drawing.Point(499, 280);
+			this.m_btnCustomAltColor.Name = "m_btnCustomAltColor";
+			this.m_btnCustomAltColor.Size = new System.Drawing.Size(48, 23);
+			this.m_btnCustomAltColor.TabIndex = 10;
+			this.m_btnCustomAltColor.UseVisualStyleBackColor = true;
+			this.m_btnCustomAltColor.Click += new System.EventHandler(this.OnBtnCustomAltColor);
+			// 
+			// m_cbCustomAltColor
+			// 
+			this.m_cbCustomAltColor.AutoSize = true;
+			this.m_cbCustomAltColor.Location = new System.Drawing.Point(366, 284);
+			this.m_cbCustomAltColor.Name = "m_cbCustomAltColor";
+			this.m_cbCustomAltColor.Size = new System.Drawing.Size(129, 17);
+			this.m_cbCustomAltColor.TabIndex = 9;
+			this.m_cbCustomAltColor.Text = "Custom alt. item color:";
+			this.m_cbCustomAltColor.UseVisualStyleBackColor = true;
+			this.m_cbCustomAltColor.CheckedChanged += new System.EventHandler(this.OnCustomAltColorCheckedChanged);
+			// 
 			// m_cmbMenuStyle
 			// 
 			this.m_cmbMenuStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbMenuStyle.FormattingEnabled = true;
-			this.m_cmbMenuStyle.Location = new System.Drawing.Point(157, 226);
+			this.m_cmbMenuStyle.Location = new System.Drawing.Point(157, 227);
 			this.m_cmbMenuStyle.Name = "m_cmbMenuStyle";
-			this.m_cmbMenuStyle.Size = new System.Drawing.Size(195, 21);
+			this.m_cmbMenuStyle.Size = new System.Drawing.Size(162, 21);
 			this.m_cmbMenuStyle.TabIndex = 2;
 			// 
 			// m_lblMenuStyle
 			// 
 			this.m_lblMenuStyle.AutoSize = true;
-			this.m_lblMenuStyle.Location = new System.Drawing.Point(3, 229);
+			this.m_lblMenuStyle.Location = new System.Drawing.Point(3, 230);
 			this.m_lblMenuStyle.Name = "m_lblMenuStyle";
 			this.m_lblMenuStyle.Size = new System.Drawing.Size(117, 13);
 			this.m_lblMenuStyle.TabIndex = 1;
@@ -364,7 +388,7 @@
 			// 
 			// m_btnSelPwFont
 			// 
-			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 252);
+			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 253);
 			this.m_btnSelPwFont.Name = "m_btnSelPwFont";
 			this.m_btnSelPwFont.Size = new System.Drawing.Size(133, 23);
 			this.m_btnSelPwFont.TabIndex = 6;
@@ -374,7 +398,7 @@
 			// 
 			// m_numMruCount
 			// 
-			this.m_numMruCount.Location = new System.Drawing.Point(157, 280);
+			this.m_numMruCount.Location = new System.Drawing.Point(157, 281);
 			this.m_numMruCount.Maximum = new decimal(new int[] {
             120,
             0,
@@ -388,7 +412,7 @@
 			// m_lblMruCount
 			// 
 			this.m_lblMruCount.AutoSize = true;
-			this.m_lblMruCount.Location = new System.Drawing.Point(3, 282);
+			this.m_lblMruCount.Location = new System.Drawing.Point(3, 283);
 			this.m_lblMruCount.Name = "m_lblMruCount";
 			this.m_lblMruCount.Size = new System.Drawing.Size(148, 13);
 			this.m_lblMruCount.TabIndex = 7;
@@ -396,7 +420,7 @@
 			// 
 			// m_btnSelFont
 			// 
-			this.m_btnSelFont.Location = new System.Drawing.Point(414, 225);
+			this.m_btnSelFont.Location = new System.Drawing.Point(414, 226);
 			this.m_btnSelFont.Name = "m_btnSelFont";
 			this.m_btnSelFont.Size = new System.Drawing.Size(133, 23);
 			this.m_btnSelFont.TabIndex = 3;
@@ -412,7 +436,7 @@
 			this.m_lvGuiOptions.Location = new System.Drawing.Point(6, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
 			this.m_lvGuiOptions.ShowItemToolTips = true;
-			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 207);
+			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 209);
 			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvGuiOptions.View = System.Windows.Forms.View.Details;
@@ -420,7 +444,7 @@
 			// m_lblBannerStyle
 			// 
 			this.m_lblBannerStyle.AutoSize = true;
-			this.m_lblBannerStyle.Location = new System.Drawing.Point(3, 256);
+			this.m_lblBannerStyle.Location = new System.Drawing.Point(3, 257);
 			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
 			this.m_lblBannerStyle.Size = new System.Drawing.Size(100, 13);
 			this.m_lblBannerStyle.TabIndex = 4;
@@ -430,9 +454,9 @@
 			// 
 			this.m_cmbBannerStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbBannerStyle.FormattingEnabled = true;
-			this.m_cmbBannerStyle.Location = new System.Drawing.Point(157, 253);
+			this.m_cmbBannerStyle.Location = new System.Drawing.Point(157, 254);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
-			this.m_cmbBannerStyle.Size = new System.Drawing.Size(195, 21);
+			this.m_cmbBannerStyle.Size = new System.Drawing.Size(162, 21);
 			this.m_cmbBannerStyle.TabIndex = 5;
 			this.m_cmbBannerStyle.SelectedValueChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
 			// 
@@ -452,7 +476,7 @@
 			// 
 			// m_btnSchemeOverrides
 			// 
-			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(435, 279);
+			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(435, 280);
 			this.m_btnSchemeOverrides.Name = "m_btnSchemeOverrides";
 			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(112, 23);
 			this.m_btnSchemeOverrides.TabIndex = 4;
@@ -613,7 +637,7 @@
 			// 
 			// m_btnProxy
 			// 
-			this.m_btnProxy.Location = new System.Drawing.Point(472, 279);
+			this.m_btnProxy.Location = new System.Drawing.Point(472, 280);
 			this.m_btnProxy.Name = "m_btnProxy";
 			this.m_btnProxy.Size = new System.Drawing.Size(75, 23);
 			this.m_btnProxy.TabIndex = 1;
@@ -629,7 +653,7 @@
 			this.m_lvAdvanced.Location = new System.Drawing.Point(6, 12);
 			this.m_lvAdvanced.Name = "m_lvAdvanced";
 			this.m_lvAdvanced.ShowItemToolTips = true;
-			this.m_lvAdvanced.Size = new System.Drawing.Size(540, 261);
+			this.m_lvAdvanced.Size = new System.Drawing.Size(540, 262);
 			this.m_lvAdvanced.TabIndex = 0;
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
@@ -728,5 +752,7 @@
 		private System.Windows.Forms.Button m_btnProxy;
 		private System.Windows.Forms.ComboBox m_cmbMenuStyle;
 		private System.Windows.Forms.Label m_lblMenuStyle;
+		private System.Windows.Forms.Button m_btnCustomAltColor;
+		private System.Windows.Forms.CheckBox m_cbCustomAltColor;
 	}
 }

@@ -457,6 +457,12 @@
 		<Data Name="CsvTextFile">
 			<Value>CSV / Text File</Value>
 		</Data>
+		<Data Name="CtrlAltAConflict">
+			<Value>KeePass' global auto-type hot key Ctrl+Alt+A is in conflict with a system key combination that is producing '{PARAM}'.</Value>
+		</Data>
+		<Data Name="CtrlAltAConflictHint">
+			<Value>You can change the global auto-type hot key to a different key combination in 'Tools' -&gt; 'Options' -&gt; tab 'Integration'.</Value>
+		</Data>
 		<Data Name="CurrentStyle">
 			<Value>Current Style</Value>
 		</Data>
@@ -892,6 +898,9 @@
 		<Data Name="Font">
 			<Value>Font</Value>
 		</Data>
+		<Data Name="FontDefault">
+			<Value>Default &amp;Font</Value>
+		</Data>
 		<Data Name="ForceSystemFontUnix">
 			<Value>Force using system font (Unix only)</Value>
 		</Data>
@@ -990,6 +999,12 @@
 		</Data>
 		<Data Name="HexViewer">
 			<Value>Hex Viewer</Value>
+		</Data>
+		<Data Name="Hidden">
+			<Value>Hidden</Value>
+		</Data>
+		<Data Name="HideCloseDatabaseTb">
+			<Value>Hide 'Close Database' toolbar button when at most one database is opened</Value>
 		</Data>
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
@@ -1105,6 +1120,9 @@
 		<Data Name="Italic">
 			<Value>Italic</Value>
 		</Data>
+		<Data Name="Iterations">
+			<Value>Iterations</Value>
+		</Data>
 		<Data Name="KdbKeePassLibC">
 			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
 		</Data>
@@ -1113,6 +1131,12 @@
 		</Data>
 		<Data Name="KdbxFiles">
 			<Value>KeePass KDBX Files</Value>
+		</Data>
+		<Data Name="KdfAdjust">
+			<Value>The value of a key derivation function parameter lies outside the range of valid values. KeePass adjusts the value to the nearest valid value.</Value>
+		</Data>
+		<Data Name="KdfParams1Sec">
+			<Value>Compute parameters that lead to a delay of 1 second on this computer.</Value>
 		</Data>
 		<Data Name="KeePassLibCLong">
 			<Value>KeePassLibC (1.x File Support)</Value>
@@ -1223,7 +1247,7 @@
 			<Value>Main Window</Value>
 		</Data>
 		<Data Name="MasterKeyChanged">
-			<Value>Composite master key has been changed!</Value>
+			<Value>The master key has been changed!</Value>
 		</Data>
 		<Data Name="MasterKeyChangedSavePrompt">
 			<Value>Save the database now in order to get the new key applied.</Value>
@@ -1249,6 +1273,12 @@
 		<Data Name="MasterPasswordMinQualityFailed">
 			<Value>The estimated quality of the master password must be at least {PARAM} bits!</Value>
 		</Data>
+		<Data Name="Maximized">
+			<Value>Maximized</Value>
+		</Data>
+		<Data Name="Memory">
+			<Value>Memory</Value>
+		</Data>
 		<Data Name="Menus">
 			<Value>Menus</Value>
 		</Data>
@@ -1263,6 +1293,9 @@
 		</Data>
 		<Data Name="MinimizeAfterOpeningDatabase">
 			<Value>Minimize main window after opening a database</Value>
+		</Data>
+		<Data Name="Minimized">
+			<Value>Minimized</Value>
 		</Data>
 		<Data Name="MinimizeToTray">
 			<Value>Minimize to tray instead of taskbar</Value>
@@ -1333,6 +1366,9 @@
 		<Data Name="None">
 			<Value>None</Value>
 		</Data>
+		<Data Name="Normal">
+			<Value>Normal</Value>
+		</Data>
 		<Data Name="NoSort">
 			<Value>&amp;No Sort</Value>
 		</Data>
@@ -1365,6 +1401,9 @@
 		</Data>
 		<Data Name="Ok">
 			<Value>OK</Value>
+		</Data>
+		<Data Name="OldFormat">
+			<Value>Old Format</Value>
 		</Data>
 		<Data Name="On">
 			<Value>On</Value>
@@ -1435,6 +1474,9 @@
 		<Data Name="PackageInstallHint">
 			<Value>Install this package and try again.</Value>
 		</Data>
+		<Data Name="Parallelism">
+			<Value>Parallelism</Value>
+		</Data>
 		<Data Name="ParamDescHelp">
 			<Value>Detailed descriptions of all parameters can be found in the help manual.</Value>
 		</Data>
@@ -1482,6 +1524,12 @@
 		</Data>
 		<Data Name="PickCharactersDesc">
 			<Value>Select the requested character positions.</Value>
+		</Data>
+		<Data Name="PickField">
+			<Value>Pick Field</Value>
+		</Data>
+		<Data Name="PickFieldDesc">
+			<Value>Choose a field whose value will be inserted.</Value>
 		</Data>
 		<Data Name="PickIcon">
 			<Value>Pick an icon.</Value>
@@ -1687,6 +1735,9 @@
 		<Data Name="Save">
 			<Value>Save</Value>
 		</Data>
+		<Data Name="SaveBeforeCloseEntry">
+			<Value>Do you want to save the changes you have made to this entry?</Value>
+		</Data>
 		<Data Name="SaveBeforeCloseQuestion">
 			<Value>Do you want to save the changes before closing?</Value>
 		</Data>
@@ -1806,6 +1857,9 @@
 		</Data>
 		<Data Name="Sequence">
 			<Value>Sequence</Value>
+		</Data>
+		<Data Name="ShowAdvAutoTypeCommands">
+			<Value>Show additional auto-type menu commands</Value>
 		</Data>
 		<Data Name="ShowDerefData">
 			<Value>Show dereferenced data</Value>
@@ -1930,6 +1984,9 @@
 		<Data Name="TemplatesNotFound">
 			<Value>No templates found</Value>
 		</Data>
+		<Data Name="TestSuccess">
+			<Value>Test succeeded!</Value>
+		</Data>
 		<Data Name="Text">
 			<Value>Text</Value>
 		</Data>
@@ -1963,8 +2020,8 @@
 		<Data Name="TooManyFilesError">
 			<Value>Too many files have been selected. Select smaller groups and repeat the current procedure a few times.</Value>
 		</Data>
-		<Data Name="TransformationRounds1SecHint">
-			<Value>Compute the number of rounds that lead to a delay of 1 second on this computer.</Value>
+		<Data Name="TransformTime">
+			<Value>The key transformation took {PARAM} seconds.</Value>
 		</Data>
 		<Data Name="Trigger">
 			<Value>Trigger</Value>
@@ -2116,6 +2173,9 @@
 		<Data Name="Value">
 			<Value>Value</Value>
 		</Data>
+		<Data Name="Verb">
+			<Value>Verb</Value>
+		</Data>
 		<Data Name="VerifyWrittenFileAfterSave">
 			<Value>Verify written file after saving a database</Value>
 		</Data>
@@ -2161,6 +2221,9 @@
 		<Data Name="WindowsOS">
 			<Value>Windows</Value>
 		</Data>
+		<Data Name="WindowStyle">
+			<Value>Window style</Value>
+		</Data>
 		<Data Name="WithoutContext">
 			<Value>Without Context</Value>
 		</Data>
@@ -2203,8 +2266,8 @@
 		<Data Name="CryptoStreamFailed">
 			<Value>Failed to initialize encryption/decryption stream!</Value>
 		</Data>
-		<Data Name="EncAlgorithmAes">
-			<Value>AES/Rijndael (256-Bit Key)</Value>
+		<Data Name="EncDataTooLarge">
+			<Value>The data is too large to be encrypted/decrypted securely using {PARAM}.</Value>
 		</Data>
 		<Data Name="ErrorInClipboard">
 			<Value>An extended error report has been copied to the clipboard.</Value>
@@ -2221,14 +2284,23 @@
 		<Data Name="FileCorrupted">
 			<Value>The file is corrupted.</Value>
 		</Data>
-		<Data Name="FileHeaderEndEarly">
-			<Value>The file header is corrupted! Some header data was declared but is not present.</Value>
+		<Data Name="FileHeaderCorrupted">
+			<Value>The file header is corrupted.</Value>
+		</Data>
+		<Data Name="FileIncomplete">
+			<Value>Data is missing at the end of the file, i.e. the file is incomplete.</Value>
+		</Data>
+		<Data Name="FileIncompleteExpc">
+			<Value>Less data than expected could be read from the file.</Value>
 		</Data>
 		<Data Name="FileLoadFailed">
 			<Value>Failed to load the specified file!</Value>
 		</Data>
 		<Data Name="FileLockedWrite">
 			<Value>The file is locked, because the following user is currently writing to it:</Value>
+		</Data>
+		<Data Name="FileNewVerOrPlgReq">
+			<Value>A newer KeePass version or a plugin is required to open this file.</Value>
 		</Data>
 		<Data Name="FileNewVerReq">
 			<Value>A newer KeePass version is required to open this file.</Value>
@@ -2272,6 +2344,9 @@
 		<Data Name="KeePass1xHint">
 			<Value>In order to import KeePass 1.x KDB files, create a new 2.x database file and click 'File' -&gt; 'Import' in the main menu. In the import dialog, choose 'KeePass KDB (1.x)' as file format.</Value>
 		</Data>
+		<Data Name="KeyBits">
+			<Value>{PARAM}-bit key</Value>
+		</Data>
 		<Data Name="KeyFileDbSel">
 			<Value>Database files cannot be used as key files.</Value>
 		</Data>
@@ -2295,6 +2370,9 @@
 		</Data>
 		<Data Name="UnknownHeaderId">
 			<Value>Unknown header ID!</Value>
+		</Data>
+		<Data Name="UnknownKdf">
+			<Value>Unknown key derivation function!</Value>
 		</Data>
 		<Data Name="UserAccountKeyError">
 			<Value>The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.</Value>

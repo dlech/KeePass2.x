@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -196,8 +196,9 @@ namespace KeePass.DataExchange.Formats
 					pe.Expires = StrUtil.StringToBool(strValue);
 				else if(xmlChild.Name == ElemEntryExpiryTime)
 				{
-					DateTime dt = TimeUtil.FromDisplayString(strValue);
-					if(dt != DateTime.Now) odtExpiry = dt;
+					DateTime dt;
+					if(TimeUtil.FromDisplayStringEx(strValue, out dt))
+						odtExpiry = TimeUtil.ToUtc(dt, false);
 					else { Debug.Assert(false); }
 				}
 				else if(xmlChild.Name == ElemAutoType)
