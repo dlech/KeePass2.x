@@ -1,5 +1,5 @@
 # KeePass2.x
-This is a hand-maintined mirror of the offical KeePass2.x source code.
+This is a hand-maintained mirror of the offical KeePass2.x source code.
 
 ## Branches
 
