@@ -20,12 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Text;
-using System.IO;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -37,8 +37,8 @@ using KeePassLib;
 using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Native;
-using KeePassLib.Utility;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -121,7 +121,7 @@ namespace KeePass.Forms
 			string strBannerDesc = WinUtil.CompactPath(m_ioInfo.Path, 45);
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Key2, strBannerTitle, strBannerDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			FontUtil.SetDefaultFont(m_cbPassword);
 			FontUtil.AssignDefaultBold(m_cbPassword);

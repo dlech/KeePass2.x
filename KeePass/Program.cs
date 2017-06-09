@@ -534,10 +534,7 @@ namespace KeePass
 		{
 			m_bDesignMode = false; // Again, for the ones not calling Main
 
-			int nRandomSeed = (int)DateTime.UtcNow.Ticks;
-			// Prevent overflow (see Random class constructor)
-			if(nRandomSeed == int.MinValue) nRandomSeed = 17;
-			m_rndGlobal = new Random(nRandomSeed);
+			m_rndGlobal = CryptoRandom.NewWeakRandom();
 
 			InitEnvSecurity();
 			MonoWorkarounds.Initialize();

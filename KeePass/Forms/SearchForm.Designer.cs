@@ -34,6 +34,7 @@
 			this.m_tbSearch = new System.Windows.Forms.TextBox();
 			this.m_lblSearchFor = new System.Windows.Forms.Label();
 			this.m_grpSearchIn = new System.Windows.Forms.GroupBox();
+			this.m_cbStringName = new System.Windows.Forms.CheckBox();
 			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
 			this.m_cbUuid = new System.Windows.Forms.CheckBox();
@@ -66,7 +67,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(183, 346);
+			this.m_btnOK.Location = new System.Drawing.Point(183, 368);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 6;
@@ -77,7 +78,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(264, 346);
+			this.m_btnCancel.Location = new System.Drawing.Point(264, 368);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 7;
@@ -103,6 +104,7 @@
 			// 
 			// m_grpSearchIn
 			// 
+			this.m_grpSearchIn.Controls.Add(this.m_cbStringName);
 			this.m_grpSearchIn.Controls.Add(this.m_cbTags);
 			this.m_grpSearchIn.Controls.Add(this.m_cbGroupName);
 			this.m_grpSearchIn.Controls.Add(this.m_cbUuid);
@@ -114,10 +116,20 @@
 			this.m_grpSearchIn.Controls.Add(this.m_cbTitle);
 			this.m_grpSearchIn.Location = new System.Drawing.Point(12, 150);
 			this.m_grpSearchIn.Name = "m_grpSearchIn";
-			this.m_grpSearchIn.Size = new System.Drawing.Size(327, 89);
+			this.m_grpSearchIn.Size = new System.Drawing.Size(327, 112);
 			this.m_grpSearchIn.TabIndex = 4;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
+			// 
+			// m_cbStringName
+			// 
+			this.m_cbStringName.AutoSize = true;
+			this.m_cbStringName.Location = new System.Drawing.Point(9, 65);
+			this.m_cbStringName.Name = "m_cbStringName";
+			this.m_cbStringName.Size = new System.Drawing.Size(82, 17);
+			this.m_cbStringName.TabIndex = 6;
+			this.m_cbStringName.Text = "String na&me";
+			this.m_cbStringName.UseVisualStyleBackColor = true;
 			// 
 			// m_cbTags
 			// 
@@ -132,20 +144,20 @@
 			// m_cbGroupName
 			// 
 			this.m_cbGroupName.AutoSize = true;
-			this.m_cbGroupName.Location = new System.Drawing.Point(217, 65);
+			this.m_cbGroupName.Location = new System.Drawing.Point(9, 88);
 			this.m_cbGroupName.Name = "m_cbGroupName";
 			this.m_cbGroupName.Size = new System.Drawing.Size(84, 17);
-			this.m_cbGroupName.TabIndex = 8;
+			this.m_cbGroupName.TabIndex = 9;
 			this.m_cbGroupName.Text = "&Group name";
 			this.m_cbGroupName.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUuid
 			// 
 			this.m_cbUuid.AutoSize = true;
-			this.m_cbUuid.Location = new System.Drawing.Point(9, 65);
+			this.m_cbUuid.Location = new System.Drawing.Point(217, 65);
 			this.m_cbUuid.Name = "m_cbUuid";
 			this.m_cbUuid.Size = new System.Drawing.Size(53, 17);
-			this.m_cbUuid.TabIndex = 6;
+			this.m_cbUuid.TabIndex = 8;
 			this.m_cbUuid.Text = "UU&ID";
 			this.m_cbUuid.UseVisualStyleBackColor = true;
 			// 
@@ -214,9 +226,9 @@
 			this.m_grpOptions.Controls.Add(this.m_cbDerefData);
 			this.m_grpOptions.Controls.Add(this.m_cbExcludeExpired);
 			this.m_grpOptions.Controls.Add(this.m_cbCaseSensitive);
-			this.m_grpOptions.Location = new System.Drawing.Point(12, 244);
+			this.m_grpOptions.Location = new System.Drawing.Point(12, 268);
 			this.m_grpOptions.Name = "m_grpOptions";
-			this.m_grpOptions.Size = new System.Drawing.Size(327, 92);
+			this.m_grpOptions.Size = new System.Drawing.Size(327, 89);
 			this.m_grpOptions.TabIndex = 5;
 			this.m_grpOptions.TabStop = false;
 			this.m_grpOptions.Text = "Options";
@@ -277,7 +289,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(351, 381);
+			this.ClientSize = new System.Drawing.Size(351, 403);
 			this.Controls.Add(this.m_lblHints);
 			this.Controls.Add(this.m_cbRegEx);
 			this.Controls.Add(this.m_grpOptions);
@@ -329,5 +341,6 @@
 		private System.Windows.Forms.CheckBox m_cbTags;
 		private System.Windows.Forms.CheckBox m_cbDerefData;
 		private System.Windows.Forms.Label m_lblHints;
+		private System.Windows.Forms.CheckBox m_cbStringName;
 	}
 }

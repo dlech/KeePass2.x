@@ -58,21 +58,24 @@ namespace KeePassLib.Cryptography
 		/// </summary>
 		public static void Perform()
 		{
+			Random r = CryptoRandom.NewWeakRandom();
+
 			TestFipsComplianceProblems(); // Must be the first test
 
 			TestRijndael();
-			TestSalsa20();
-			TestChaCha20();
-			TestBlake2b();
+			TestSalsa20(r);
+			TestChaCha20(r);
+			TestBlake2b(r);
 			TestArgon2();
 			TestHmac();
 
-			TestNativeKeyTransform();
+			TestKeyTransform(r);
+			TestNativeKeyTransform(r);
 			
 			TestHmacOtp();
 
-			TestProtectedObjects();
-			TestMemUtil();
+			TestProtectedObjects(r);
+			TestMemUtil(r);
 			TestStrUtil();
 			TestUrlUtil();
 
@@ -146,7 +149,7 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("AES");
 		}
 
-		private static void TestSalsa20()
+		private static void TestSalsa20(Random r)
 		{
 #if DEBUG
 			// Test values from official set 6, vector 3
@@ -179,7 +182,6 @@ namespace KeePassLib.Cryptography
 				0x28, 0xF5, 0x67, 0x91, 0xD5, 0xB7, 0xCE, 0x23
 			};
 
-			Random r = new Random();
 			int nPos = Salsa20ToPos(c, r, pb.Length, 65536);
 			Array.Clear(pb, 0, pb.Length);
 			c.Encrypt(pb, 0, pb.Length);
@@ -223,7 +225,7 @@ namespace KeePassLib.Cryptography
 		}
 #endif
 
-		private static void TestChaCha20()
+		private static void TestChaCha20(Random r)
 		{
 			// ======================================================
 			// Test vector from RFC 7539, section 2.3.2
@@ -328,7 +330,6 @@ namespace KeePassLib.Cryptography
 				"98CED759C3FF9B6477338F3DA4F9CD8514EA9982CCAFB341B2384DD902F3D1AB" +
 				"7AC61DD29C6F21BA5B862F3730E37CFDC4FD806C22F221");
 
-			Random r = new Random();
 			using(MemoryStream msEnc = new MemoryStream())
 			{
 				using(ChaCha20Stream c = new ChaCha20Stream(msEnc, true, pbKey, pbIV))
@@ -418,7 +419,7 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestBlake2b()
+		private static void TestBlake2b(Random r)
 		{
 #if DEBUG
 			Blake2b h = new Blake2b();
@@ -479,7 +480,6 @@ namespace KeePassLib.Cryptography
 				0x3F, 0x08, 0x8A, 0x93, 0xF8, 0x75, 0x91, 0xB0
 			};
 
-			Random r = new Random();
 			int p = 0;
 			while(p < pbData.Length)
 			{
@@ -701,12 +701,45 @@ namespace KeePassLib.Cryptography
 		}
 #endif
 
-		private static void TestNativeKeyTransform()
+		private static void TestKeyTransform(Random r)
+		{
+#if DEBUG
+			// Up to KeePass 2.34, the OtpKeyProv plugin used the public
+			// CompositeKey.TransformKeyManaged method (and a finalizing
+			// SHA-256 computation), which became an internal method of
+			// the AesKdf class in KeePass 2.35, thus OtpKeyProv now
+			// uses the AesKdf class; here we ensure that the results
+			// are the same
+
+			byte[] pbKey = new byte[32];
+			r.NextBytes(pbKey);
+			byte[] pbSeed = new byte[32];
+			r.NextBytes(pbSeed);
+			ulong uRounds = (ulong)r.Next(1, 0x7FFF);
+
+			byte[] pbMan = new byte[pbKey.Length];
+			Array.Copy(pbKey, pbMan, pbKey.Length);
+			if(!AesKdf.TransformKeyManaged(pbMan, pbSeed, uRounds))
+				throw new SecurityException("AES-KDF-1");
+			pbMan = CryptoUtil.HashSha256(pbMan);
+
+			AesKdf kdf = new AesKdf();
+			KdfParameters p = kdf.GetDefaultParameters();
+			p.SetUInt64(AesKdf.ParamRounds, uRounds);
+			p.SetByteArray(AesKdf.ParamSeed, pbSeed);
+			byte[] pbKdf = kdf.Transform(pbKey, p);
+
+			if(!MemUtil.ArraysEqual(pbMan, pbKdf))
+				throw new SecurityException("AES-KDF-2");
+#endif
+		}
+
+		private static void TestNativeKeyTransform(Random r)
 		{
 #if DEBUG
 			byte[] pbOrgKey = CryptoRandom.Instance.GetRandomBytes(32);
 			byte[] pbSeed = CryptoRandom.Instance.GetRandomBytes(32);
-			ulong uRounds = (ulong)((new Random()).Next(1, 0x3FFF));
+			ulong uRounds = (ulong)r.Next(1, 0x3FFF);
 
 			byte[] pbManaged = new byte[32];
 			Array.Copy(pbOrgKey, pbManaged, 32);
@@ -723,10 +756,9 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestMemUtil()
+		private static void TestMemUtil(Random r)
 		{
 #if DEBUG
-			Random r = new Random();
 			byte[] pb = CryptoRandom.Instance.GetRandomBytes((uint)r.Next(
 				0, 0x2FFFF));
 
@@ -813,7 +845,7 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestProtectedObjects()
+		private static void TestProtectedObjects(Random r)
 		{
 #if DEBUG
 			Encoding enc = StrUtil.Utf8;
@@ -868,7 +900,6 @@ namespace KeePassLib.Cryptography
 			if(!ps.IsProtected) throw new SecurityException("ProtectedString-9");
 			if(!ps2.IsProtected) throw new SecurityException("ProtectedString-10");
 
-			Random r = new Random();
 			string str = string.Empty;
 			ps = new ProtectedString();
 			for(int i = 0; i < 100; ++i)

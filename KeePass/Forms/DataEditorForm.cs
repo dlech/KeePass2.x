@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -95,12 +95,11 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.DoubleBuffered = true;
 
-			string strRect = Program.Config.UI.DataEditorRect;
-			if(strRect.Length > 0) UIUtil.SetWindowScreenRect(this, strRect);
-			m_strInitialFormRect = UIUtil.GetWindowScreenRect(this);
+			m_strInitialFormRect = UIUtil.SetWindowScreenRectEx(this,
+				Program.Config.UI.DataEditorRect);
 
 			m_bdc = BinaryDataClassifier.Classify(m_strDataDesc, m_pbData);
 			uint uStartOffset;
@@ -299,7 +298,7 @@ namespace KeePass.Forms
 			Debug.Assert(m_uBlockEvents == 0);
 
 			string strRect = UIUtil.GetWindowScreenRect(this);
-			if(strRect != m_strInitialFormRect)
+			if(strRect != m_strInitialFormRect) // Don't overwrite ""
 				Program.Config.UI.DataEditorRect = strRect;
 
 			m_ctxText.Detach();

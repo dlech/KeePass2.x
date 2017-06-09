@@ -24,8 +24,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePass.UI;
+using KeePass.App;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Delegates;
@@ -51,7 +52,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			if(!string.IsNullOrEmpty(m_strTitle)) this.Text = m_strTitle;
 			else m_strTitle = PwDefs.ShortProductName;

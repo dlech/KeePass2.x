@@ -20,15 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using System.Threading;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.UI;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -97,7 +97,7 @@ namespace KeePass.Forms
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Font, strTitle, strDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			UIUtil.EnableAutoCompletion(m_cmbStringName, true);
 			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true, true);
@@ -122,6 +122,7 @@ namespace KeePass.Forms
 			bool b = ValidateStringName(m_cmbStringName.Text, out strResult,
 				out bError);
 
+			Debug.Assert(!m_lblValidationInfo.AutoSize); // For RTL support
 			m_lblValidationInfo.Text = strResult;
 			if(bError) m_cmbStringName.BackColor = AppDefs.ColorEditError;
 			else m_cmbStringName.ResetBackColor();

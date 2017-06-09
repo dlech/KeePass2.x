@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePassLib.Interfaces;
 
@@ -38,7 +38,9 @@ namespace KeePass.UI
 		~StatusBarLogger()
 		{
 			Debug.Assert(m_bEndedLogging);
-			if(!m_bEndedLogging) EndLogging();
+
+			try { if(!m_bEndedLogging) EndLogging(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public void SetControls(ToolStripStatusLabel sbText, ToolStripProgressBar pbProgress)

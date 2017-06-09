@@ -20,14 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
-using KeePass.UI;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
@@ -98,7 +98,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Gen, KPRes.PasswordOptions,
 				KPRes.PasswordOptionsDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			UIUtil.SetButtonImage(m_btnProfileAdd,
 				Properties.Resources.B16x16_FileSaveAs, false);
@@ -116,18 +116,25 @@ namespace KeePass.Forms
 
 			m_bBlockUIUpdate = true;
 
-			m_cbUpperCase.Text += @" (A, B, C, ...)";
-			m_cbLowerCase.Text += @" (a, b, c, ...)";
-			m_cbDigits.Text += @" (0, 1, 2, ...)";
-			m_cbMinus.Text += @" (-)";
-			m_cbUnderline.Text += @" (_)";
-			m_cbSpace.Text += @" ( )";
-			m_cbSpecial.Text += @" (!, $, %, &&, ...)";
-			m_cbBrackets.Text += @" ([, ], {, }, (, ), <, >)";
-			m_cbNoRepeat.Text += @" *";
-			m_cbExcludeLookAlike.Text += @" (l|1I, O0) *";
-			m_lblExcludeChars.Text += @" *";
-			m_lblSecRedInfo.Text = @"* " + m_lblSecRedInfo.Text;
+			using(RtlAwareResizeScope r = new RtlAwareResizeScope(
+				m_cbUpperCase, m_cbLowerCase, m_cbDigits, m_cbMinus,
+				m_cbUnderline, m_cbSpace, m_cbSpecial, m_cbBrackets,
+				m_cbNoRepeat, m_cbExcludeLookAlike, m_lblExcludeChars,
+				m_lblSecRedInfo))
+			{
+				m_cbUpperCase.Text += @" (A, B, C, ...)";
+				m_cbLowerCase.Text += @" (a, b, c, ...)";
+				m_cbDigits.Text += @" (0, 1, 2, ...)";
+				m_cbMinus.Text += @" (-)";
+				m_cbUnderline.Text += @" (_)";
+				m_cbSpace.Text += @" ( )";
+				m_cbSpecial.Text += @" (!, $, %, &&, ...)";
+				m_cbBrackets.Text += @" ([, ], {, }, (, ), <, >)";
+				m_cbNoRepeat.Text += @" *";
+				m_cbExcludeLookAlike.Text += @" (l|1I, O0) *";
+				m_lblExcludeChars.Text += @" *";
+				m_lblSecRedInfo.Text = @"* " + m_lblSecRedInfo.Text;
+			}
 
 			m_cmbCustomAlgo.Items.Add(NoCustomAlgo);
 			foreach(CustomPwGenerator pwg in Program.PwGeneratorPool)

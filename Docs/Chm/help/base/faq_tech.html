@@ -77,7 +77,7 @@ Security:
 <li><a href="#encryptionalgo">Could you add the ... encryption algorithm to KeePass?</a></li>
 <li><a href="#noautolock">Why doesn't KeePass lock when Windows locks and a KeePass sub-dialog is open?</a></li>
 <li><a href="#printtempfile">Printing creates a temporary file. Will it be erased securely?</a></li>
-<!-- <li><a href="#memprot">Why KeePass 2.x resets in-memory protection options?</a></li> -->
+<!-- <li><a href="#memprot">Why KeePass 2.x resets process memory protection options?</a></li> -->
 <li><a href="#qualest">Why the estimated quality of a password suddenly drops?</a></li>
 </ul>
 
@@ -428,11 +428,13 @@ you add the ... encryption algorithm to KeePass?</h2>
 
 
 
-Only Rijndael (AES) is supported, but KeePass supports additional algorithms
-through <i>encryption plugins</i>. You can find encryption plugins on the
-<a href="http://keepass.info/plugins.html" target="_blank">plugins page</a>.<br />
+AES (Rijndael) and ChaCha20 are supported.
+There exist various
+<a href="http://keepass.info/plugins.html" target="_blank">plugins</a>
+that provide support for additional encryption algorithms,
+including but not limited to Twofish, Serpent and GOST.<br />
 <br />
-If you'd like to implement an algorithm, have a look at the <i>ArcFourCipher</i> sample plugin.
+If you'd like to implement an algorithm, have a look at the <em>ArcFourCipher</em> sample plugin.
 
 
 <br /><br />
@@ -457,12 +459,13 @@ workstation locks. What should KeePass do now? Obviously, it's too late to ask t
 what to do (the workstation is locked already and no window can't be displayed),
 consequently KeePass must make an automatic decision. There are several possibilities:</p>
 
-<ul>
-<li><i>Do not save the database and lock.</i><br />
+<ul class="withspc">
+<li><em>Do not save the database and lock.</em><br />
 In this case, all unsaved data of the database would be lost. This not only applies to
 the data entered in the current dialog, but to all other entries that have been modified
 previously.</li>
-<li><i>Save the database and lock.</i><br />
+
+<li><em>Save the database and lock.</em><br />
 In this case, possibly unwanted changes are saved. Often you open files, try something,
 having in mind that you can just close the file without saving the changes.
 KeePass has an option 'Automatically save database when KeePass closes or the workspace
@@ -470,7 +473,8 @@ is locked'. If this option is enabled and no sub-dialog is open, it's clear what
 try to save the database and if successful: lock the workspace. But what to do with
 the unsaved changes in the sub-dialog? Should it be saved automatically, taking away the
 possibility of pressing the 'Cancel' button?</li>
-<li><i>Save to a temporary location and lock.</i><br />
+
+<li><em>Save to a temporary location and lock.</em><br />
 While this sounds the best alternative at first glance, there are several problems with
 it, too. First of all, saving to a temporary location could fail (for example there could be too
 few disk space or some other program like virus scanner could have blocked it).
@@ -497,7 +501,7 @@ state of the program.</p>
 <p>Security consequence: the database is left open when Windows locks.
 Normally, you are the only one who can log back in to Windows. When someone else logs in
 (like administrator), he can't use your programs anyway. By default, KeePass keeps
-in-memory passwords encrypted, therefore it does not matter if Windows caches the process
+in-memory passwords encrypted, therefore it does not matter if Windows dumps the process
 to disk at some time. So, your passwords are pretty safe anyway.</p>
 
 <p><b>Note.</b> On Windows &le; XP, the <i>'Terminal Services'</i>
@@ -530,20 +534,20 @@ target="_blank">KeePass 2.x Plugin Development</a>.</p>
 <!-- <a name="memprot"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-KeePass 2.x resets in-memory protection options?</h2>
+KeePass 2.x resets process memory protection options?</h2>
 
-<p><i>Important: the following describes a behavior related to in-memory protection,
+<p><i>Important: the following describes a behavior related to process memory protection,
 which has nothing to do with database encryption. All database fields are
 encrypted; see the <a href="security.html">Security</a> page for details.</i></p>
 
-<p>For all fields except the password field, in-memory protection is turned
+<p>For all fields except the password field, process memory protection is turned
 off automatically when the fields are searched or displayed as plain text.</p>
 
-<p>If you want data to be in-memory protected,
+<p>If you want data to be protected in memory,
 you additionally must turn on hiding by asterisks for the column and
-never search this field type. In-memory protection is useless otherwise.
+never search this field type. Process memory protection is useless otherwise.
 If you don't hide by asterisks or search, your data is clear in memory, no
-matter whether the in-memory protection is on or off.</p>
+matter whether the process memory protection is on or off.</p>
 
 <br /> -->
 

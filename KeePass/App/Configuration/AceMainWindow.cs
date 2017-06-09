@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml.Serialization;
 
 using KeePass.Resources;
 using KeePass.UI;
@@ -528,6 +528,7 @@ namespace KeePass.App.Configuration
 		Size,
 		HistoryCount,
 		AttachmentCount,
+		LastPasswordModTime,
 
 		Count // Virtual identifier representing the number of types
 	}
@@ -615,10 +616,11 @@ namespace KeePass.App.Configuration
 				case AceColumnType.Tags: str = KPRes.Tags; break;
 				case AceColumnType.ExpiryTimeDateOnly: str = KPRes.ExpiryTimeDateOnly; break;
 				case AceColumnType.Size: str = KPRes.Size; break;
-				case AceColumnType.HistoryCount: str = KPRes.History +
-					" (" + KPRes.Count + ")"; break;
-				case AceColumnType.AttachmentCount: str = KPRes.Attachments +
-					" (" + KPRes.Count + ")"; break;
+				case AceColumnType.HistoryCount:
+					str = KPRes.History + " (" + KPRes.Count + ")"; break;
+				case AceColumnType.AttachmentCount:
+					str = KPRes.Attachments + " (" + KPRes.Count + ")"; break;
+				case AceColumnType.LastPasswordModTime: str = KPRes.LastModTimePwHist; break;
 				default: Debug.Assert(false); break;
 			};
 
@@ -633,9 +635,29 @@ namespace KeePass.App.Configuration
 
 		public static bool IsTimeColumn(AceColumnType t)
 		{
-			return ((t == AceColumnType.CreationTime) || (t == AceColumnType.LastAccessTime) ||
-				(t == AceColumnType.LastModificationTime) || (t == AceColumnType.ExpiryTime) ||
-				(t == AceColumnType.ExpiryTimeDateOnly));
+			return ((t == AceColumnType.CreationTime) ||
+				(t == AceColumnType.LastModificationTime) ||
+				(t == AceColumnType.LastAccessTime) ||
+				(t == AceColumnType.ExpiryTime) ||
+				(t == AceColumnType.ExpiryTimeDateOnly) ||
+				(t == AceColumnType.LastPasswordModTime));
+
+			/* bool bTime = false;
+			switch(t)
+			{
+				case AceColumnType.CreationTime:
+				case AceColumnType.LastModificationTime:
+				case AceColumnType.LastAccessTime:
+				case AceColumnType.ExpiryTime:
+				case AceColumnType.ExpiryTimeDateOnly:
+				case AceColumnType.LastPasswordModTime:
+					bTime = true;
+					break;
+				default:
+					break;
+			}
+
+			return bTime; */
 		}
 
 		public static HorizontalAlignment GetTextAlign(AceColumnType t)

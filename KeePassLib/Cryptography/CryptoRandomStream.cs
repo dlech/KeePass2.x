@@ -67,6 +67,7 @@ namespace KeePassLib.Cryptography
 	public sealed class CryptoRandomStream : IDisposable
 	{
 		private readonly CrsAlgorithm m_crsAlgorithm;
+		private bool m_bDisposed = false;
 
 		private byte[] m_pbState = null;
 		private byte m_i = 0;
@@ -170,6 +171,8 @@ namespace KeePassLib.Cryptography
 					m_j = 0;
 				}
 				else { Debug.Assert(false); }
+
+				m_bDisposed = true;
 			}
 		}
 
@@ -180,8 +183,9 @@ namespace KeePassLib.Cryptography
 		/// <returns>Returns <paramref name="uRequestedCount" /> random bytes.</returns>
 		public byte[] GetRandomBytes(uint uRequestedCount)
 		{
-			if(uRequestedCount == 0) return MemUtil.EmptyByteArray;
+			if(m_bDisposed) throw new ObjectDisposedException(null);
 
+			if(uRequestedCount == 0) return MemUtil.EmptyByteArray;
 			if(uRequestedCount > (uint)int.MaxValue)
 				throw new ArgumentOutOfRangeException("uRequestedCount");
 			int cb = (int)uRequestedCount;

@@ -28,6 +28,8 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	public abstract class CtrBlockCipher : IDisposable
 	{
+		private bool m_bDisposed = false;
+
 		private byte[] m_pBlock;
 		private int m_iBlockPos;
 
@@ -57,6 +59,8 @@ namespace KeePassLib.Cryptography.Cipher
 			{
 				MemUtil.ZeroByteArray(m_pBlock);
 				m_iBlockPos = m_pBlock.Length;
+
+				m_bDisposed = true;
 			}
 		}
 
@@ -69,6 +73,7 @@ namespace KeePassLib.Cryptography.Cipher
 
 		public void Encrypt(byte[] m, int iOffset, int cb)
 		{
+			if(m_bDisposed) throw new ObjectDisposedException(null);
 			if(m == null) throw new ArgumentNullException("m");
 			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
 			if(cb < 0) throw new ArgumentOutOfRangeException("cb");

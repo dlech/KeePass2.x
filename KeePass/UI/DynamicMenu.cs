@@ -77,7 +77,8 @@ namespace KeePass.UI
 
 		~DynamicMenu()
 		{
-			Clear();
+			try { Clear(); } // Throws under Mono
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public void Clear()

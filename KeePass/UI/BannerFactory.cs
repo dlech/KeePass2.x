@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Util;
@@ -129,15 +129,6 @@ namespace KeePass.UI
 			{
 				img = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 				Graphics g = Graphics.FromImage(img);
-				int xIcon = DpiScaleInt(10, nHeight);
-
-				bool bRtl = Program.Translation.Properties.RightToLeft;
-				Matrix mxTrfOrg = g.Transform;
-				if(bRtl)
-				{
-					g.TranslateTransform(nWidth, 0.0f);
-					g.ScaleTransform(-1.0f, 1.0f);
-				}
 
 				Color clrStart = Color.White;
 				Color clrEnd = Color.LightBlue;
@@ -208,6 +199,15 @@ namespace KeePass.UI
 					}
 				}
 
+				bool bRtl = Program.Translation.Properties.RightToLeft;
+				// Matrix mxTrfOrg = g.Transform;
+				// if(bRtl)
+				// {
+				//	g.TranslateTransform(nWidth, 0.0f);
+				//	g.ScaleTransform(-1.0f, 1.0f);
+				// }
+
+				int xIcon = DpiScaleInt(10, nHeight);
 				int wIconScaled = StdIconDim;
 				int hIconScaled = StdIconDim;
 				if(imgIcon != null)
@@ -217,11 +217,12 @@ namespace KeePass.UI
 						(float)StdIconDim, nHeight));
 					hIconScaled = DpiScaleInt(StdIconDim, nHeight);
 
-					int yIcon = (nHeight - hIconScaled) / 2;
+					int xIconR = (bRtl ? (nWidth - xIcon - wIconScaled) : xIcon);
+					int yIconR = (nHeight - hIconScaled) / 2;
 					if(hIconScaled == imgIcon.Height)
-						g.DrawImageUnscaled(imgIcon, xIcon, yIcon);
+						g.DrawImageUnscaled(imgIcon, xIconR, yIconR);
 					else
-						g.DrawImage(imgIcon, xIcon, yIcon, wIconScaled, hIconScaled);
+						g.DrawImage(imgIcon, xIconR, yIconR, wIconScaled, hIconScaled);
 
 					ColorMatrix cm = new ColorMatrix();
 					cm.Matrix33 = 0.1f;
@@ -229,7 +230,8 @@ namespace KeePass.UI
 					ia.SetColorMatrix(cm);
 
 					int w = wIconScaled * 3, h = hIconScaled * 3;
-					int x = nWidth - w - xIcon, y = (nHeight - h) / 2;
+					int x = (bRtl ? xIcon : (nWidth - w - xIcon));
+					int y = (nHeight - h) / 2;
 					Rectangle rectDest = new Rectangle(x, y, w, h);
 					g.DrawImage(imgIcon, rectDest, 0, 0, imgIcon.Width, imgIcon.Height,
 						GraphicsUnit.Pixel, ia);
@@ -275,7 +277,7 @@ namespace KeePass.UI
 					}
 				}
 
-				if(bRtl) g.Transform = mxTrfOrg;
+				// if(bRtl) g.Transform = mxTrfOrg;
 
 				// Brush brush;
 				Color clrText;
@@ -301,10 +303,10 @@ namespace KeePass.UI
 				float fFontSize = DpiScaleFloat((12.0f * 96.0f) / g.DpiY, nHeight);
 				Font font = FontUtil.CreateFont(FontFamily.GenericSansSerif,
 					fFontSize, FontStyle.Bold);
-				int txs = (!bRtl ? tx : (nWidth - tx));
+				int txT = (!bRtl ? tx : (nWidth - tx));
 					// - TextRenderer.MeasureText(g, strTitle, font).Width));
 				// g.DrawString(strTitle, font, brush, fx, fy);
-				BannerFactory.DrawText(g, strTitle, txs, ty, font, clrText, bRtl);
+				BannerFactory.DrawText(g, strTitle, txT, ty, font, clrText, bRtl);
 				font.Dispose();
 
 				tx += xIcon; // fx
@@ -313,10 +315,10 @@ namespace KeePass.UI
 				float fFontSizeSm = DpiScaleFloat((9.0f * 96.0f) / g.DpiY, nHeight);
 				Font fontSmall = FontUtil.CreateFont(FontFamily.GenericSansSerif,
 					fFontSizeSm, FontStyle.Regular);
-				int txl = (!bRtl ? tx : (nWidth - tx));
+				int txL = (!bRtl ? tx : (nWidth - tx));
 					// - TextRenderer.MeasureText(g, strLine, fontSmall).Width));
 				// g.DrawString(strLine, fontSmall, brush, fx, fy);
-				BannerFactory.DrawText(g, strLine, txl, ty, fontSmall, clrText, bRtl);
+				BannerFactory.DrawText(g, strLine, txL, ty, fontSmall, clrText, bRtl);
 				fontSmall.Dispose();
 
 				g.Dispose();

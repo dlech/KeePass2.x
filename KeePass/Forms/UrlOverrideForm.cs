@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
@@ -51,7 +52,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.UrlOverride;
 
 			m_tbScheme.Text = m_ovr.Scheme;

@@ -19,7 +19,7 @@ namespace KeePass.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -1773,6 +1773,36 @@ namespace KeePass.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon KeePass_G {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_G", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon KeePass_R {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_R", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon KeePass_Y {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_Y", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon LockOverlay {
             get {
                 object obj = ResourceManager.GetObject("LockOverlay", resourceCulture);
@@ -1806,6 +1836,36 @@ namespace KeePass.Properties {
         internal static System.Drawing.Icon QuadNormal {
             get {
                 object obj = ResourceManager.GetObject("QuadNormal", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon QuadNormal_G {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_G", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon QuadNormal_R {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_R", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon QuadNormal_Y {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_Y", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

@@ -238,7 +238,7 @@ namespace KeePass.Util
 		private sealed class UpdateDownloadInfo
 		{
 			public readonly string Url; // Never null
-			public object SyncObj = new object();
+			public readonly object SyncObj = new object();
 			public bool Ready = false;
 			public List<UpdateComponentInfo> ComponentInfo = null;
 

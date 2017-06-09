@@ -58,6 +58,21 @@ namespace KeePass.UI
 			return new Font(fBase, fBase.Style); // Clone
 		}
 
+		private static void Assign(Control c, Font f)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				using(RtlAwareResizeScope r = new RtlAwareResizeScope(c))
+				{
+					c.Font = f;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		private static Font m_fontDefault = null;
 		/// <summary>
 		/// Get the default UI font. This might be <c>null</c>!
@@ -69,22 +84,21 @@ namespace KeePass.UI
 
 		public static void SetDefaultFont(Control c)
 		{
-			if(c == null) throw new ArgumentNullException("c");
+			if(c == null) { Debug.Assert(false); return; }
 
+			// Allow specifying the default font once only
 			if(m_fontDefault == null) m_fontDefault = c.Font;
 		}
 
 		public static void AssignDefault(Control c)
 		{
-			if(c == null) throw new ArgumentNullException("c");
-
-			if(m_fontDefault != null) c.Font = m_fontDefault;
+			Assign(c, m_fontDefault);
 		}
 
 		private static Font m_fontBold = null;
 		public static void AssignDefaultBold(Control c)
 		{
-			if(c == null) throw new ArgumentNullException("c");
+			if(c == null) { Debug.Assert(false); return; }
 
 			if(m_fontBold == null)
 			{
@@ -92,13 +106,13 @@ namespace KeePass.UI
 				catch(Exception) { Debug.Assert(false); m_fontBold = c.Font; }
 			}
 
-			if(m_fontBold != null) c.Font = m_fontBold;
+			Assign(c, m_fontBold);
 		}
 
 		private static Font m_fontItalic = null;
 		public static void AssignDefaultItalic(Control c)
 		{
-			if(c == null) throw new ArgumentNullException("c");
+			if(c == null) { Debug.Assert(false); return; }
 
 			if(m_fontItalic == null)
 			{
@@ -106,7 +120,7 @@ namespace KeePass.UI
 				catch(Exception) { Debug.Assert(false); m_fontItalic = c.Font; }
 			}
 
-			if(m_fontItalic != null) c.Font = m_fontItalic;
+			Assign(c, m_fontItalic);
 		}
 
 		private static Font m_fontMono = null;
@@ -120,7 +134,7 @@ namespace KeePass.UI
 
 		public static void AssignDefaultMono(Control c, bool bIsPasswordBox)
 		{
-			if(c == null) throw new ArgumentNullException("c");
+			if(c == null) { Debug.Assert(false); return; }
 
 			if(m_fontMono == null)
 			{
@@ -135,8 +149,8 @@ namespace KeePass.UI
 			}
 
 			if(bIsPasswordBox && Program.Config.UI.PasswordFont.OverrideUIDefault)
-				c.Font = Program.Config.UI.PasswordFont.ToFont();
-			else if(m_fontMono != null) c.Font = m_fontMono;
+				Assign(c, Program.Config.UI.PasswordFont.ToFont());
+			else Assign(c, m_fontMono);
 		}
 
 		/* private const string FontPartsSeparator = @"/:/";

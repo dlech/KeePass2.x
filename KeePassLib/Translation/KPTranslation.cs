@@ -224,11 +224,40 @@ namespace KeePassLib.Translation
 					((TrackBar)c).RightToLeftLayout = true;
 				else if(c is TreeView)
 					((TreeView)c).RightToLeftLayout = true;
-				else if(c is ToolStrip)
-					RtlApplyToToolStripItems(((ToolStrip)c).Items);
+				// else if(c is ToolStrip)
+				//	RtlApplyToToolStripItems(((ToolStrip)c).Items);
+				/* else if(c is Button) // Also see Label
+				{
+					Button btn = (c as Button);
+					Image img = btn.Image;
+					if(img != null)
+					{
+						Image imgNew = (Image)img.Clone();
+						imgNew.RotateFlip(RotateFlipType.RotateNoneFlipX);
+						btn.Image = imgNew;
+					}
+				}
+				else if(c is Label) // Also see Button
+				{
+					Label lbl = (c as Label);
+					Image img = lbl.Image;
+					if(img != null)
+					{
+						Image imgNew = (Image)img.Clone();
+						imgNew.RotateFlip(RotateFlipType.RotateNoneFlipX);
+						lbl.Image = imgNew;
+					}
+				} */
 
-				if((c is GroupBox) || (c is Panel)) RtlMoveChildControls(c);
+				if(IsRtlMoveChildsRequired(c)) RtlMoveChildControls(c);
 			}
+		}
+
+		internal static bool IsRtlMoveChildsRequired(Control c)
+		{
+			if(c == null) { Debug.Assert(false); return false; }
+
+			return ((c is GroupBox) || (c is Panel));
 		}
 
 		private static void RtlMoveChildControls(Control cParent)
@@ -237,18 +266,34 @@ namespace KeePassLib.Translation
 
 			foreach(Control c in cParent.Controls)
 			{
-				Point ptCur = c.Location;
-				c.Location = new Point(nParentWidth - c.Size.Width - ptCur.X, ptCur.Y);
+				DockStyle ds = c.Dock;
+				if(ds == DockStyle.Left)
+					c.Dock = DockStyle.Right;
+				else if(ds == DockStyle.Right)
+					c.Dock = DockStyle.Left;
+				else
+				{
+					Point ptCur = c.Location;
+					c.Location = new Point(nParentWidth - c.Size.Width - ptCur.X, ptCur.Y);
+				}
 			}
 		}
 
+		/* private static readonly string[] g_vRtlMirrorItemNames = new string[] { };
 		private static void RtlApplyToToolStripItems(ToolStripItemCollection tsic)
 		{
 			foreach(ToolStripItem tsi in tsic)
 			{
-				tsi.RightToLeftAutoMirrorImage = true;
+				if(tsi == null) { Debug.Assert(false); continue; }
+
+				if(Array.IndexOf<string>(g_vRtlMirrorItemNames, tsi.Name) >= 0)
+					tsi.RightToLeftAutoMirrorImage = true;
+
+				ToolStripDropDownItem tsdd = (tsi as ToolStripDropDownItem);
+				if(tsdd != null)
+					RtlApplyToToolStripItems(tsdd.DropDownItems);
 			}
-		}
+		} */
 
 		public void ApplyTo(string strTableName, ToolStripItemCollection tsic)
 		{

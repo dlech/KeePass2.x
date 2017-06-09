@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Resources;
@@ -62,7 +62,7 @@ namespace KeePass.Forms
 				KeePass.Properties.Resources.B48x48_Binary, KPRes.XmlReplace,
 				KPRes.XmlReplaceDesc);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.XmlReplace;
 
 			Bitmap bmpBig = SystemIcons.Warning.ToBitmap();

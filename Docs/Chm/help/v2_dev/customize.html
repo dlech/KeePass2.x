@@ -129,7 +129,7 @@ the 'Tools' menu, you'd specify 3 as value for the <code>UIFlags</code> node
 <img src="../images/b16x16_kcmsystem.png" class="singleimg" alt="Key" />&nbsp;&nbsp;More
 Options</h2>
 
-<ul>
+<ul class="withspc">
 <li><b>Configuration/Defaults/WinFavsBaseFolderName</b>:<br />
 For the 'Windows Favorites' export:
 name of the root folder; the default value is 'KeePass'.</li>
@@ -147,6 +147,18 @@ Specifies the default delay (in ms) between two keypresses sent by auto-type.
 The minimum is 1 ms.
 Note that very small delays may result in target applications not being able
 to process the keypresses correctly.</li>
+
+<li><b>Configuration/Integration/AutoTypeAbortOnWindows</b>:<br />
+This node may contain one or more <code>Window</code> nodes that
+specify disallowed auto-type target windows (the value of each node must
+be a <a href="../base/autotype.html#autowindows">target window filter</a>).
+
+<p>For example, the following configuration disallows auto-typing into
+WordPad and LibreOffice Writer:</p>
+<pre>&lt;AutoTypeAbortOnWindows&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;Window&gt;* - WordPad&lt;/Window&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;Window&gt;* - LibreOffice Writer&lt;/Window&gt;
+&lt;/AutoTypeAbortOnWindows&gt;</pre></li>
 
 <li><b>Configuration/Security/MasterKeyTries</b>:<br />
 Specifies how often the master key dialog appears when entering incorrect

@@ -1,15 +1,62 @@
-cp -f ../Ext/Icons_04_CB/Finals2/plockb.ico ../KeePass/KeePass.ico
-cp -f ../Ext/Icons_04_CB/Finals2/plockb.ico ../KeePass/Resources/Images/KeePass.ico
+#!/bin/sh
 
-sed 's!<SignAssembly>true</SignAssembly>!<SignAssembly>false</SignAssembly>!g' ../KeePass/KeePass.csproj > ../KeePass/KeePass.csproj.new
-sed 's! ToolsVersion="3.5"!!g' ../KeePass/KeePass.csproj.new > ../KeePass/KeePass.csproj.new2
-cat ../KeePass/KeePass.csproj.new2 | grep -v 'sgen\.exe' > ../KeePass/KeePass.csproj
-rm -f ../KeePass/KeePass.csproj.new2
-rm -f ../KeePass/KeePass.csproj.new
+kpBuild="$(pwd)"
+kpRoot="${kpBuild}/.."
 
-sed 's!<SignAssembly>true</SignAssembly>!<SignAssembly>false</SignAssembly>!g' ../KeePassLib/KeePassLib.csproj > ../KeePassLib/KeePassLib.csproj.new
-sed 's! ToolsVersion="3.5"!!g' ../KeePassLib/KeePassLib.csproj.new > ../KeePassLib/KeePassLib.csproj
-rm -f ../KeePassLib/KeePassLib.csproj.new
+# Mono's resource compiler/linker doesn't support ICO files
+# containing high resolution images (in PNG format)
+kpIco="${kpRoot}/Ext/Icons_15_VA/LowResIcons/KeePass_LR.ico"
+kpIcoG="${kpRoot}/Ext/Icons_15_VA/LowResIcons/KeePass_LR_G.ico"
+kpIcoR="${kpRoot}/Ext/Icons_15_VA/LowResIcons/KeePass_LR_R.ico"
+kpIcoY="${kpRoot}/Ext/Icons_15_VA/LowResIcons/KeePass_LR_Y.ico"
 
-# cat ../KeePass.sln | grep -v 'DC15F71A-2117-4DEF-8C10-AA355B5E5979' | uniq > ../KeePass.sln.new
-# mv -f ../KeePass.sln.new ../KeePass.sln
+fnPrepSolution()
+{
+	cd "${kpRoot}"
+	local kpSln="KeePass.sln"
+
+	# Update solution format to 11 (this targets Mono 4 rather than 3.5)
+	sed -i 's!Format Version 10\.00!Format Version 11\.00!g' "${kpSln}"
+}
+
+fnPrepKeePass()
+{
+	cd "${kpRoot}/KeePass"
+	local kpCsProj="KeePass.csproj"
+
+	sed -i 's! ToolsVersion="3\.5"!!g' "${kpCsProj}"
+	sed -i 's!<SignAssembly>true</SignAssembly>!<SignAssembly>false</SignAssembly>!g' "${kpCsProj}"
+	sed -i '/sgen\.exe/d' "${kpCsProj}"
+
+	cp -f "${kpIco}" KeePass.ico
+	cp -f "${kpIco}" Resources/Icons/KeePass.ico
+	cp -f "${kpIcoG}" Resources/Icons/KeePass_G.ico
+	cp -f "${kpIcoR}" Resources/Icons/KeePass_R.ico
+	cp -f "${kpIcoY}" Resources/Icons/KeePass_Y.ico
+}
+
+fnPrepKeePassLib()
+{
+	cd "${kpRoot}/KeePassLib"
+	local kpCsProj="KeePassLib.csproj"
+
+	sed -i 's! ToolsVersion="3\.5"!!g' "${kpCsProj}"
+	sed -i 's!<SignAssembly>true</SignAssembly>!<SignAssembly>false</SignAssembly>!g' "${kpCsProj}"
+}
+
+fnPrepTrlUtil()
+{
+	cd "${kpRoot}/Translation/TrlUtil"
+	local kpCsProj="TrlUtil.csproj"
+
+	sed -i 's! ToolsVersion="3\.5"!!g' "${kpCsProj}"
+
+	cp -f "${kpIco}" Resources/KeePass.ico
+}
+
+fnPrepSolution
+fnPrepKeePass
+fnPrepKeePassLib
+fnPrepTrlUtil
+
+cd "${kpBuild}"

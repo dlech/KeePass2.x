@@ -79,6 +79,18 @@ namespace KeePass.App.Configuration
 			set { m_bSecureDesktop = value; }
 		}
 
+		private string m_strMasterKeyExpiryRec = string.Empty;
+		[DefaultValue("")]
+		public string MasterKeyExpiryRec
+		{
+			get { return m_strMasterKeyExpiryRec; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strMasterKeyExpiryRec = value;
+			}
+		}
+
 		private bool m_bClipClearOnExit = true;
 		[DefaultValue(true)]
 		public bool ClipboardClearOnExit

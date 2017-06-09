@@ -20,16 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.Resources;
 using KeePass.UI;
 using KeePass.UI.ToolStripRendering;
-using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
@@ -121,7 +121,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			Debug.Assert(m_ilIcons != null);
 			if(m_ilIcons != null)
@@ -392,8 +392,6 @@ namespace KeePass.Forms
 
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeToTray",
 				lvg, KPRes.MinimizeToTray);
-			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayed",
-				lvg, KPRes.ShowTrayOnlyIfTrayed);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DropToBackAfterClipboardCopy",
 				lvg, KPRes.DropToBackOnCopy);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "MinimizeAfterClipboardCopy",
@@ -465,6 +463,15 @@ namespace KeePass.Forms
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
 				lvg, KPRes.FocusQuickFindOnUntray);
 
+			lvg = new ListViewGroup(KPRes.TrayIcon);
+			m_lvGuiOptions.Groups.Add(lvg);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayed",
+				lvg, KPRes.ShowTrayOnlyIfTrayed);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "GrayIcon",
+				lvg, KPRes.TrayIconGray);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "SingleClickDefault",
+				lvg, KPRes.TrayIconSingleClick);
+
 			lvg = new ListViewGroup(KPRes.Dialogs);
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowRecycleConfirmDialog",
@@ -531,9 +538,9 @@ namespace KeePass.Forms
 
 			m_cbAutoRun.Checked = ShellUtil.GetStartWithWindows(AppDefs.AutoRunName);
 
-			m_cbSingleClickTrayAction.Checked = Program.Config.UI.TrayIcon.SingleClickDefault;
-			if(AppConfigEx.IsOptionEnforced(Program.Config.UI.TrayIcon, "SingleClickDefault"))
-				m_cbSingleClickTrayAction.Enabled = false;
+			// m_cbSingleClickTrayAction.Checked = Program.Config.UI.TrayIcon.SingleClickDefault;
+			// if(AppConfigEx.IsOptionEnforced(Program.Config.UI.TrayIcon, "SingleClickDefault"))
+			//	m_cbSingleClickTrayAction.Enabled = false;
 		}
 
 		private void LoadAdvancedOptions()
@@ -726,7 +733,7 @@ namespace KeePass.Forms
 			ChangeHotKey(ref m_kPrevSWHKKey, m_hkShowWindow,
 				AppDefs.GlobalHotKeyId.ShowWindow);
 
-			Program.Config.UI.TrayIcon.SingleClickDefault = m_cbSingleClickTrayAction.Checked;
+			// Program.Config.UI.TrayIcon.SingleClickDefault = m_cbSingleClickTrayAction.Checked;
 
 			Program.Config.Integration.UrlSchemeOverrides = m_aceUrlSchemeOverrides;
 			Program.Config.Integration.UrlOverride = m_strUrlOverrideAll;

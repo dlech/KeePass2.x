@@ -59,7 +59,7 @@ namespace KeePass.UI
 			new List<KeyValuePair<Form, IGwmWindow>>();
 		private static List<CommonDialog> g_vDialogs = new List<CommonDialog>();
 
-		private static object g_oSyncRoot = new object();
+		private static readonly object g_oSyncRoot = new object();
 
 		public static uint WindowCount
 		{

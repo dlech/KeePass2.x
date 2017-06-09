@@ -18,12 +18,12 @@
 */
 
 using System;
-using System.Windows.Forms;
-using System.Security;
 using System.Diagnostics;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -88,7 +88,8 @@ namespace KeePass.UI
 
 		~SecureEdit()
 		{
-			Detach();
+			try { Detach(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		/// <summary>

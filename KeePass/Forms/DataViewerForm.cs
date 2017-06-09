@@ -20,14 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
 
+using KeePass.App;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
@@ -56,6 +57,7 @@ namespace KeePass.Forms
 		private readonly string m_strDataExpand = "--- " + KPRes.More + " ---";
 		private bool m_bDataExpanded = false;
 
+		private string m_strInitialFormRect = string.Empty;
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
 		private Image m_img = null;
@@ -93,14 +95,16 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
+			this.DoubleBuffered = true;
 
 			string strTitle = PwDefs.ShortProductName + " " + KPRes.DataViewer;
 			if(m_strDataDesc.Length > 0)
 				strTitle = m_strDataDesc + " - " + strTitle;
 			this.Text = strTitle;
 
-			this.DoubleBuffered = true;
+			m_strInitialFormRect = UIUtil.SetWindowScreenRectEx(this,
+				Program.Config.UI.DataViewerRect);
 
 			m_tssStatusMain.Text = KPRes.Ready;
 			m_ctxText.Attach(m_rtbText, this);
@@ -481,6 +485,10 @@ namespace KeePass.Forms
 					return;
 				}
 			}
+
+			string strRect = UIUtil.GetWindowScreenRect(this);
+			if(strRect != m_strInitialFormRect) // Don't overwrite ""
+				Program.Config.UI.DataViewerRect = strRect;
 
 			m_picBox.Image = null;
 			if(m_img != null) { m_img.Dispose(); m_img = null; }

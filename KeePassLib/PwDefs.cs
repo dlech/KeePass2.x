@@ -55,18 +55,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02230000;
+		public const uint Version32 = 0x02240000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002002300000000UL;
+		public const ulong FileVersion64 = 0x0002002400000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.35";
+		public const string VersionString = "2.36";
 
 		public const string Copyright = @"Copyright © 2003-2017 Dominik Reichl";
 
@@ -296,6 +296,22 @@ namespace KeePassLib
 			set { m_bSearchInOther = value; }
 		}
 
+		private bool m_bSearchInStringNames = false;
+		[DefaultValue(false)]
+		public bool SearchInStringNames
+		{
+			get { return m_bSearchInStringNames; }
+			set { m_bSearchInStringNames = value; }
+		}
+
+		private bool m_bSearchInTags = true;
+		[DefaultValue(true)]
+		public bool SearchInTags
+		{
+			get { return m_bSearchInTags; }
+			set { m_bSearchInTags = value; }
+		}
+
 		private bool m_bSearchInUuids = false;
 		[DefaultValue(false)]
 		public bool SearchInUuids
@@ -310,14 +326,6 @@ namespace KeePassLib
 		{
 			get { return m_bSearchInGroupNames; }
 			set { m_bSearchInGroupNames = value; }
-		}
-
-		private bool m_bSearchInTags = true;
-		[DefaultValue(true)]
-		public bool SearchInTags
-		{
-			get { return m_bSearchInTags; }
-			set { m_bSearchInTags = value; }
 		}
 
 #if KeePassUAP
@@ -381,20 +389,21 @@ namespace KeePassLib
 			{
 				SearchParameters sp = new SearchParameters();
 
-				// sp.m_strText = string.Empty;
-				// sp.m_bRegex = false;
+				Debug.Assert(sp.m_strText.Length == 0);
+				Debug.Assert(!sp.m_bRegex);
 				sp.m_bSearchInTitles = false;
 				sp.m_bSearchInUserNames = false;
-				// sp.m_bSearchInPasswords = false;
+				Debug.Assert(!sp.m_bSearchInPasswords);
 				sp.m_bSearchInUrls = false;
 				sp.m_bSearchInNotes = false;
 				sp.m_bSearchInOther = false;
-				// sp.m_bSearchInUuids = false;
-				// sp.SearchInGroupNames = false;
+				Debug.Assert(!sp.m_bSearchInStringNames);
 				sp.m_bSearchInTags = false;
-				// sp.m_scType = StringComparison.InvariantCultureIgnoreCase;
-				// sp.m_bExcludeExpired = false;
-				// m_bRespectEntrySearchingDisabled = true;
+				Debug.Assert(!sp.m_bSearchInUuids);
+				Debug.Assert(!sp.m_bSearchInGroupNames);
+				// Debug.Assert(sp.m_scType == StringComparison.InvariantCultureIgnoreCase);
+				Debug.Assert(!sp.m_bExcludeExpired);
+				Debug.Assert(sp.m_bRespectEntrySearchingDisabled);
 
 				return sp;
 			}

@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
 
 using KeePass.App;
 using KeePass.DataExchange;
@@ -100,13 +100,13 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Folder_Download);
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				bmpBanner, strWndTitle, strWndDesc);
-			this.Icon = Properties.Resources.KeePass;
 
+			this.Icon = AppIcons.Default;
 			this.Text = strWndTitle;
 
 			if(m_bExport)
 			{
-				m_lblFile.Text = KPRes.ExportToPrompt;
+				UIUtil.SetText(m_lblFile, KPRes.ExportToPrompt);
 				UIUtil.SetButtonImage(m_btnSelFile,
 					Properties.Resources.B16x16_FileSaveAs, false);
 
@@ -115,7 +115,7 @@ namespace KeePass.Forms
 			}
 			else // Import mode
 			{
-				m_lblFile.Text = KPRes.ImportFilesPrompt;
+				UIUtil.SetText(m_lblFile, KPRes.ImportFilesPrompt);
 				UIUtil.SetButtonImage(m_btnSelFile,
 					Properties.Resources.B16x16_Folder_Yellow_Open, false);
 			}

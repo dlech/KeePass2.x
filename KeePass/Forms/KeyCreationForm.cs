@@ -20,13 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Text;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -82,7 +82,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
 				m_ioInfo.GetDisplayName());
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.CreateMasterKey;
 
 			FontUtil.SetDefaultFont(m_cbPassword);
@@ -102,6 +102,7 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
 			m_ttRect.SetToolTip(m_tbRepeatPassword, KPRes.PasswordRepeatHint);
 
+			Debug.Assert(!m_lblIntro.AutoSize); // For RTL support
 			if(!m_bCreatingNew)
 				m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
 

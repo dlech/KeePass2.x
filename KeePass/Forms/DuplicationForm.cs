@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.Resources;
@@ -100,7 +100,7 @@ namespace KeePass.Forms
 		{
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			FontUtil.AssignDefaultBold(m_cbAppendCopy);
 			FontUtil.AssignDefaultBold(m_cbFieldRefs);

@@ -94,7 +94,7 @@ namespace KeePass.Util.Spr
 			SprEngine.InitializeStatic();
 
 			if(ctx == null) ctx = new SprContext();
-			ctx.RefsCache.Clear();
+			ctx.RefCache.Clear();
 
 			string str = SprEngine.CompileInternal(strText, ctx, 0);
 
@@ -131,8 +131,13 @@ namespace KeePass.Util.Spr
 			if((ctx.Flags & SprCompileFlags.Comments) != SprCompileFlags.None)
 				str = RemoveComments(str);
 
+			// The following realizes {T-CONV:/Text/Raw/}, which should be
+			// one of the first transformations (except comments)
 			if((ctx.Flags & SprCompileFlags.TextTransforms) != SprCompileFlags.None)
 				str = PerformTextTransforms(str, ctx, uRecursionLevel);
+
+			if((ctx.Flags & SprCompileFlags.Run) != SprCompileFlags.None)
+				str = RunCommands(str, ctx, uRecursionLevel);
 
 			if((ctx.Flags & SprCompileFlags.AppPaths) != SprCompileFlags.None)
 				str = AppLocator.FillPlaceholders(str, ctx);
@@ -536,7 +541,7 @@ namespace KeePass.Util.Spr
 			int nOffset = 0;
 			for(int iLoop = 0; iLoop < 20; ++iLoop)
 			{
-				str = SprEngine.FillRefsUsingCache(str, ctx);
+				str = ctx.RefCache.Fill(str, ctx);
 
 				int nStart = str.IndexOf(StrRefStart, nOffset, SprEngine.ScMethod);
 				if(nStart < 0) break;
@@ -576,8 +581,8 @@ namespace KeePass.Util.Spr
 					strInnerContent = SprEngine.TransformContent(strInnerContent, ctx);
 
 					// str = str.Substring(0, nStart) + strInnerContent + str.Substring(nEnd + 1);
-					SprEngine.AddRefToCache(strFullRef, strInnerContent, ctx);
-					str = SprEngine.FillRefsUsingCache(str, ctx);
+					ctx.RefCache.Add(strFullRef, strInnerContent, ctx);
+					str = ctx.RefCache.Fill(str, ctx);
 				}
 				else { nOffset = nStart + 1; continue; }
 			}
@@ -623,31 +628,6 @@ namespace KeePass.Util.Spr
 			ctx.Database.RootGroup.SearchEntries(sp, lFound);
 
 			return ((lFound.UCount > 0) ? lFound.GetAt(0) : null);
-		}
-
-		private static string FillRefsUsingCache(string strText, SprContext ctx)
-		{
-			string str = strText;
-
-			foreach(KeyValuePair<string, string> kvp in ctx.RefsCache)
-			{
-				// str = str.Replace(kvp.Key, kvp.Value);
-				str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
-			}
-
-			return str;
-		}
-
-		private static void AddRefToCache(string strRef, string strValue,
-			SprContext ctx)
-		{
-			if(strRef == null) { Debug.Assert(false); return; }
-			if(strValue == null) { Debug.Assert(false); return; }
-			if(ctx == null) { Debug.Assert(false); return; }
-
-			// Only add if not exists, do not overwrite
-			if(!ctx.RefsCache.ContainsKey(strRef))
-				ctx.RefsCache.Add(strRef, strValue);
 		}
 
 		// internal static bool MightChange(string strText)
@@ -759,20 +739,7 @@ namespace KeePass.Util.Spr
 			int iStart;
 			List<string> lParams;
 
-			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
-				@"{T-REPLACE-RX:", out iStart, out lParams, true))
-			{
-				if(lParams.Count < 2) continue;
-				if(lParams.Count == 2) lParams.Add(string.Empty);
-
-				try
-				{
-					string strNew = Regex.Replace(lParams[0], lParams[1], lParams[2]);
-					strNew = TransformContent(strNew, ctx);
-					str = str.Insert(iStart, strNew);
-				}
-				catch(Exception) { }
-			}
+			// {T-CONV:/Text/Raw/} should be the first transformation
 
 			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
 				@"{T-CONV:", out iStart, out lParams, true))
@@ -802,11 +769,29 @@ namespace KeePass.Util.Spr
 						strNew = Uri.EscapeDataString(strNew);
 					else if(strCmd == "uri-dec")
 						strNew = Uri.UnescapeDataString(strNew);
+					// "raw": no modification
 
-					strNew = TransformContent(strNew, ctx);
+					if(strCmd != "raw")
+						strNew = TransformContent(strNew, ctx);
+
 					str = str.Insert(iStart, strNew);
 				}
 				catch(Exception) { Debug.Assert(false); }
+			}
+
+			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
+				@"{T-REPLACE-RX:", out iStart, out lParams, true))
+			{
+				if(lParams.Count < 2) continue;
+				if(lParams.Count == 2) lParams.Add(string.Empty);
+
+				try
+				{
+					string strNew = Regex.Replace(lParams[0], lParams[1], lParams[2]);
+					strNew = TransformContent(strNew, ctx);
+					str = str.Insert(iStart, strNew);
+				}
+				catch(Exception) { }
 			}
 
 			return str;
@@ -834,6 +819,124 @@ namespace KeePass.Util.Spr
 				new ProtectedString(false, pg.Notes), ctx, uRecursionLevel);
 
 			return str;
+		}
+
+		private static string RunCommands(string strText, SprContext ctx,
+			uint uRecursionLevel)
+		{
+			string str = strText;
+			int iStart;
+			List<string> lParams;
+
+			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
+				@"{CMD:", out iStart, out lParams, true))
+			{
+				if(lParams.Count == 0) continue;
+				string strCmd = lParams[0];
+				if(string.IsNullOrEmpty(strCmd)) continue;
+
+				try
+				{
+					const StringComparison sc = StrUtil.CaseIgnoreCmp;
+
+					string strOpt = ((lParams.Count >= 2) ? lParams[1] :
+						string.Empty);
+					Dictionary<string, string> d = SplitParams(strOpt);
+
+					ProcessStartInfo psi = new ProcessStartInfo();
+
+					string strApp, strArgs;
+					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs);
+					if(string.IsNullOrEmpty(strApp)) continue;
+					psi.FileName = strApp;
+					if(!string.IsNullOrEmpty(strArgs))
+						psi.Arguments = strArgs;
+
+					string strMethod = GetParam(d, "m", "s");
+					bool bShellExec = !strMethod.Equals("c", sc);
+					psi.UseShellExecute = bShellExec;
+
+					string strO = GetParam(d, "o", (bShellExec ? "0" : "1"));
+					bool bStdOut = strO.Equals("1", sc);
+					if(bStdOut) psi.RedirectStandardOutput = true;
+
+					string strWS = GetParam(d, "ws", "n");
+					if(strWS.Equals("h", sc))
+					{
+						psi.CreateNoWindow = true;
+						psi.WindowStyle = ProcessWindowStyle.Hidden;
+					}
+					else if(strWS.Equals("min", sc))
+						psi.WindowStyle = ProcessWindowStyle.Minimized;
+					else if(strWS.Equals("max", sc))
+						psi.WindowStyle = ProcessWindowStyle.Maximized;
+					else { Debug.Assert(psi.WindowStyle == ProcessWindowStyle.Normal); }
+
+					string strVerb = GetParam(d, "v", null);
+					if(!string.IsNullOrEmpty(strVerb))
+						psi.Verb = strVerb;
+
+					bool bWait = GetParam(d, "w", "1").Equals("1", sc);
+
+					Process p = Process.Start(psi);
+					if(p == null) { Debug.Assert(false); continue; }
+
+					if(bStdOut)
+					{
+						string strOut = p.StandardOutput.ReadToEnd();
+						strOut = TransformContent(strOut, ctx);
+						str = str.Insert(iStart, strOut);
+					}
+
+					if(bWait) p.WaitForExit();
+				}
+				catch(Exception ex)
+				{
+					string strMsg = strCmd + MessageService.NewParagraph + ex.Message;
+					MessageService.ShowWarning(strMsg);
+				}
+			}
+
+			return str;
+		}
+
+		private static Dictionary<string, string> SplitParams(string str)
+		{
+			Dictionary<string, string> d = new Dictionary<string, string>();
+			if(string.IsNullOrEmpty(str)) return d;
+
+			char[] vSplitPrm = new char[] { ',' };
+			char[] vSplitKvp = new char[] { '=' };
+
+			string[] v = str.Split(vSplitPrm);
+			foreach(string strOption in v)
+			{
+				if(string.IsNullOrEmpty(strOption)) continue;
+
+				string[] vKvp = strOption.Split(vSplitKvp);
+				if(vKvp.Length != 2) continue;
+
+				string strKey = (vKvp[0] ?? string.Empty).Trim().ToLower();
+				string strValue = (vKvp[1] ?? string.Empty).Trim();
+
+				d[strKey] = strValue;
+			}
+
+			return d;
+		}
+
+		private static string GetParam(Dictionary<string, string> d,
+			string strName, string strDefaultValue)
+		{
+			if(d == null) { Debug.Assert(false); return strDefaultValue; }
+			if(strName == null) { Debug.Assert(false); return strDefaultValue; }
+
+			Debug.Assert(strName == strName.ToLower());
+
+			string strValue;
+			if(d.TryGetValue(strName, out strValue)) return strValue;
+
+			return strDefaultValue;
 		}
 	}
 }

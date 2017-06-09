@@ -19,19 +19,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Diagnostics;
-using System.Reflection;
 
 using KeePass.UI;
+
+using KeePassLib.Cryptography;
 
 namespace TrlUtil
 {
 	public sealed class PreviewForm : Form
 	{
-		private static Random m_rand = new Random();
+		private static Random m_rand = CryptoRandom.NewWeakRandom();
 
 		public PreviewForm()
 		{
@@ -84,7 +86,7 @@ namespace TrlUtil
 				else if(t == typeof(Label))
 				{
 					cCopy = new Label();
-					(cCopy as Label).AutoSize = (c as Label).AutoSize;
+					// (cCopy as Label).AutoSize = (c as Label).AutoSize;
 				}
 				else if(t == typeof(CheckBox)) cCopy = new CheckBox();
 				else if(t == typeof(RadioButton)) cCopy = new RadioButton();
@@ -129,15 +131,21 @@ namespace TrlUtil
 				cCopy.BackColor = clr;
 				cCopy.Text = c.Text;
 
-				Type tCopy = cCopy.GetType();
-				PropertyInfo piAutoSizeSrc = t.GetProperty("AutoSize", typeof(bool));
-				PropertyInfo piAutoSizeDst = tCopy.GetProperty("AutoSize", typeof(bool));
-				if((piAutoSizeSrc != null) && (piAutoSizeDst != null))
-				{
-					MethodInfo miSrc = piAutoSizeSrc.GetGetMethod();
-					MethodInfo miDst = piAutoSizeDst.GetSetMethod();
-					miDst.Invoke(cCopy, new object[] { miSrc.Invoke(c, null) });
-				}
+				// Type tCopy = cCopy.GetType();
+				// PropertyInfo piAutoSizeSrc = t.GetProperty("AutoSize", typeof(bool));
+				// PropertyInfo piAutoSizeDst = tCopy.GetProperty("AutoSize", typeof(bool));
+				// if((piAutoSizeSrc != null) && (piAutoSizeDst != null))
+				// {
+				//	MethodInfo miSrc = piAutoSizeSrc.GetGetMethod();
+				//	MethodInfo miDst = piAutoSizeDst.GetSetMethod();
+				//	miDst.Invoke(cCopy, new object[] { miSrc.Invoke(c, null) });
+				// }
+				cCopy.AutoSize = c.AutoSize;
+
+				cCopy.Location = c.Location;
+				cCopy.Size = c.Size;
+				// Debug.Assert(cCopy.ClientSize == c.ClientSize);
+				if(c.Dock != DockStyle.None) cCopy.Dock = c.Dock;
 
 				try
 				{
@@ -146,13 +154,6 @@ namespace TrlUtil
 					if(bCopyChilds) CopyChildControls(cCopy, c);
 				}
 				catch(Exception) { Debug.Assert(false); }
-
-				cCopy.Left = c.Left;
-				cCopy.Top = c.Top;
-				cCopy.Width = c.Width;
-				cCopy.Height = c.Height;
-				cCopy.ClientSize = c.ClientSize;
-				if(c.Dock != DockStyle.None) cCopy.Dock = c.Dock;
 			}
 		}
 	}

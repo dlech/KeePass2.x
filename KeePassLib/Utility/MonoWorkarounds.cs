@@ -37,15 +37,17 @@ namespace KeePassLib.Utility
 {
 	public static class MonoWorkarounds
 	{
-		private static Dictionary<uint, bool> m_dForceReq = new Dictionary<uint, bool>();
-		private static Thread m_thFixClip = null;
-		// private static Predicate<IntPtr> m_fOwnWindow = null;
+		private const string AppXDoTool = "xdotool";
 
-		private static bool? m_bReq = null;
+		private static Dictionary<uint, bool> g_dForceReq = new Dictionary<uint, bool>();
+		private static Thread g_thFixClip = null;
+		// private static Predicate<IntPtr> g_fOwnWindow = null;
+
+		private static bool? g_bReq = null;
 		public static bool IsRequired()
 		{
-			if(!m_bReq.HasValue) m_bReq = NativeLib.IsUnix();
-			return m_bReq.Value;
+			if(!g_bReq.HasValue) g_bReq = NativeLib.IsUnix();
+			return g_bReq.Value;
 		}
 
 		// 1219:
@@ -84,6 +86,9 @@ namespace KeePassLib.Utility
 		//   Finalizer of NotifyIcon throws on Mac OS X.
 		//   See also 1354.
 		//   https://sourceforge.net/p/keepass/bugs/1574/
+		// 1632:
+		//   RichTextBox rendering bug for bold/italic text.
+		//   https://sourceforge.net/p/keepass/bugs/1632/
 		// 2139:
 		//   Shortcut keys are ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2139/
@@ -136,7 +141,7 @@ namespace KeePassLib.Utility
 			if(!MonoWorkarounds.IsRequired()) return false;
 
 			bool bForce;
-			if(m_dForceReq.TryGetValue(uBugID, out bForce)) return bForce;
+			if(g_dForceReq.TryGetValue(uBugID, out bForce)) return bForce;
 
 			ulong v = NativeLib.MonoVersion;
 			if(v != 0)
@@ -159,7 +164,7 @@ namespace KeePassLib.Utility
 
 				uint uID;
 				if(StrUtil.TryParseUInt(strID.Trim(), out uID))
-					m_dForceReq[uID] = bEnabled;
+					g_dForceReq[uID] = bEnabled;
 			}
 		}
 
@@ -167,15 +172,15 @@ namespace KeePassLib.Utility
 		{
 			Terminate();
 
-			// m_fOwnWindow = fOwnWindow;
+			// g_fOwnWindow = fOwnWindow;
 
 			if(IsRequired(1530))
 			{
 				try
 				{
 					ThreadStart ts = new ThreadStart(MonoWorkarounds.FixClipThread);
-					m_thFixClip = new Thread(ts);
-					m_thFixClip.Start();
+					g_thFixClip = new Thread(ts);
+					g_thFixClip.Start();
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -183,12 +188,12 @@ namespace KeePassLib.Utility
 
 		internal static void Terminate()
 		{
-			if(m_thFixClip != null)
+			if(g_thFixClip != null)
 			{
-				try { m_thFixClip.Abort(); }
+				try { g_thFixClip.Abort(); }
 				catch(Exception) { Debug.Assert(false); }
 
-				m_thFixClip = null;
+				g_thFixClip = null;
 			}
 		}
 
@@ -198,25 +203,43 @@ namespace KeePassLib.Utility
 			{
 #if !KeePassUAP
 				const string strXSel = "xsel";
+				const string strXSelR = "--output --clipboard";
+				const string strXSelW = "--input --clipboard --nodetach";
 				const AppRunFlags rfW = AppRunFlags.WaitForExit;
+				const int msDelay = 250;
+
+				// XSel is required
+				string strTest = NativeLib.RunConsoleApp(strXSel, strXSelR);
+				if(strTest == null) return; // XSel not installed
+
+				// Without XDoTool, the workaround would be applied to
+				// all applications, which may corrupt the clipboard
+				// when it doesn't contain simple text only;
+				// https://sourceforge.net/p/keepass/bugs/1603/#a113
+				strTest = (NativeLib.RunConsoleApp(AppXDoTool,
+					"help") ?? string.Empty).Trim();
+				if(strTest.Length == 0) return;
+
+				Thread.Sleep(msDelay);
 
 				string strLast = null;
 				while(true)
 				{
-					string str = NativeLib.RunConsoleApp(strXSel,
-						"--output --clipboard");
-					if(str == null) return; // 'xsel' not installed
-
-					if(str != strLast)
+					string str = NativeLib.RunConsoleApp(strXSel, strXSelR);
+					if(str == null) { Debug.Assert(false); }
+					else if(str != strLast)
 					{
 						if(NeedClipboardWorkaround())
-							NativeLib.RunConsoleApp(strXSel,
-								"--input --clipboard", str, rfW);
+						{
+							// Use --nodetach to prevent clipboard corruption;
+							// https://sourceforge.net/p/keepass/bugs/1603/
+							NativeLib.RunConsoleApp(strXSel, strXSelW, str, rfW);
+						}
 
 						strLast = str;
 					}
 
-					Thread.Sleep(250);
+					Thread.Sleep(msDelay);
 				}
 #endif
 			}
@@ -226,18 +249,17 @@ namespace KeePassLib.Utility
 				catch(Exception) { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
-			finally { m_thFixClip = null; }
+			finally { g_thFixClip = null; }
 		}
 
+#if !KeePassUAP
 		private static bool NeedClipboardWorkaround()
 		{
-			const bool bDef = true;
-
 			try
 			{
-				string strHandle = (NativeLib.RunConsoleApp("xdotool",
+				string strHandle = (NativeLib.RunConsoleApp(AppXDoTool,
 					"getactivewindow") ?? string.Empty).Trim();
-				if(strHandle.Length == 0) return bDef;
+				if(strHandle.Length == 0) { Debug.Assert(false); return false; }
 
 				// IntPtr h = new IntPtr(long.Parse(strHandle));
 				long.Parse(strHandle); // Validate
@@ -245,7 +267,7 @@ namespace KeePassLib.Utility
 				// Detection of own windows based on Form.Handle
 				// comparisons doesn't work reliably (Mono's handles
 				// are usually off by 1)
-				// Predicate<IntPtr> fOwnWindow = m_fOwnWindow;
+				// Predicate<IntPtr> fOwnWindow = g_fOwnWindow;
 				// if(fOwnWindow != null)
 				// {
 				//	if(fOwnWindow(h)) return true;
@@ -257,20 +279,15 @@ namespace KeePassLib.Utility
 
 				if(strWmClass.IndexOf("\"" + PwDefs.ResClass + "\"",
 					StrUtil.CaseIgnoreCmp) >= 0) return true;
-
-				// Workaround for Remmina
 				if(strWmClass.IndexOf("\"Remmina\"",
 					StrUtil.CaseIgnoreCmp) >= 0) return true;
-
-				return false;
 			}
 			catch(ThreadAbortException) { throw; }
 			catch(Exception) { Debug.Assert(false); }
 
-			return bDef;
+			return false;
 		}
 
-#if !KeePassUAP
 		public static void ApplyTo(Form f)
 		{
 			if(!MonoWorkarounds.IsRequired()) return;

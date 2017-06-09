@@ -34,7 +34,8 @@ namespace KeePass.Util.Spr
 	public static class SprSyntax
 	{
 		private static readonly string[] m_vDynSepPlh = new string[] {
-			@"{NEWPASSWORD:", @"{T-REPLACE-RX:", @"{T-CONV:"
+			@"{NEWPASSWORD:", @"{T-REPLACE-RX:", @"{T-CONV:",
+			@"{CMD:"
 		};
 
 		private static readonly SprStyle SprStyleOK = new SprStyle(

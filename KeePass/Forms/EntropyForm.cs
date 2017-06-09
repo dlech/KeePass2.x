@@ -28,8 +28,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePass.UI;
+using KeePass.App;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.PasswordGenerator;
@@ -77,7 +78,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Binary, KPRes.EntropyTitle,
 				KPRes.EntropyDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.EntropyTitle;
 
 			m_bmpRandom = CreateRandomBitmap(m_picRandom.ClientSize);
@@ -89,6 +90,7 @@ namespace KeePass.Forms
 		private void UpdateUIState()
 		{
 			int nBits = m_llPool.Count / 8;
+			Debug.Assert(!m_lblStatus.AutoSize); // For RTL support
 			m_lblStatus.Text = nBits.ToString() + " " + KPRes.BitsStc;
 
 			if(nBits > 256) { Debug.Assert(false); m_pbGenerated.Value = 100; }

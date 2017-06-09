@@ -126,19 +126,19 @@
 			// m_menuViewFont
 			// 
 			this.m_menuViewFont.Name = "m_menuViewFont";
-			this.m_menuViewFont.Size = new System.Drawing.Size(152, 22);
+			this.m_menuViewFont.Size = new System.Drawing.Size(134, 22);
 			this.m_menuViewFont.Text = "&Font...";
 			this.m_menuViewFont.Click += new System.EventHandler(this.OnViewFont);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(131, 6);
 			// 
 			// m_menuViewWordWrap
 			// 
 			this.m_menuViewWordWrap.Name = "m_menuViewWordWrap";
-			this.m_menuViewWordWrap.Size = new System.Drawing.Size(152, 22);
+			this.m_menuViewWordWrap.Size = new System.Drawing.Size(134, 22);
 			this.m_menuViewWordWrap.Text = "Word &Wrap";
 			this.m_menuViewWordWrap.Click += new System.EventHandler(this.OnViewWordWrap);
 			// 
@@ -212,6 +212,7 @@
 			this.m_tbEditUndo.Image = global::KeePass.Properties.Resources.B16x16_Undo;
 			this.m_tbEditUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbEditUndo.Name = "m_tbEditUndo";
+			this.m_tbEditUndo.RightToLeftAutoMirrorImage = true;
 			this.m_tbEditUndo.Size = new System.Drawing.Size(23, 22);
 			this.m_tbEditUndo.Click += new System.EventHandler(this.OnEditUndo);
 			// 
@@ -221,6 +222,7 @@
 			this.m_tbEditRedo.Image = global::KeePass.Properties.Resources.B16x16_Redo;
 			this.m_tbEditRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbEditRedo.Name = "m_tbEditRedo";
+			this.m_tbEditRedo.RightToLeftAutoMirrorImage = true;
 			this.m_tbEditRedo.Size = new System.Drawing.Size(23, 22);
 			this.m_tbEditRedo.Click += new System.EventHandler(this.OnEditRedo);
 			// 

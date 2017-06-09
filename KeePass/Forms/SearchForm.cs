@@ -20,12 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.Spr;
@@ -92,9 +93,9 @@ namespace KeePass.Forms
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
-			m_cbDerefData.Text = m_cbDerefData.Text + " (" + KPRes.Slow + ")";
+			UIUtil.SetText(m_cbDerefData, m_cbDerefData.Text + " (" + KPRes.Slow + ")");
 
 			SearchParameters sp = Program.Config.Defaults.SearchParameters;
 			m_cbTitle.Checked = sp.SearchInTitles;
@@ -103,9 +104,10 @@ namespace KeePass.Forms
 			m_cbPassword.Checked = sp.SearchInPasswords;
 			m_cbNotes.Checked = sp.SearchInNotes;
 			m_cbOtherFields.Checked = sp.SearchInOther;
+			m_cbStringName.Checked = sp.SearchInStringNames;
+			m_cbTags.Checked = sp.SearchInTags;
 			m_cbUuid.Checked = sp.SearchInUuids;
 			m_cbGroupName.Checked = sp.SearchInGroupNames;
-			m_cbTags.Checked = sp.SearchInTags;
 
 			StringComparison sc = sp.ComparisonMode;
 			m_cbCaseSensitive.Checked = ((sc != StringComparison.CurrentCultureIgnoreCase) &&
@@ -198,9 +200,10 @@ namespace KeePass.Forms
 			sp.SearchInUrls = m_cbURL.Checked;
 			sp.SearchInNotes = m_cbNotes.Checked;
 			sp.SearchInOther = m_cbOtherFields.Checked;
+			sp.SearchInStringNames = m_cbStringName.Checked;
+			sp.SearchInTags = m_cbTags.Checked;
 			sp.SearchInUuids = m_cbUuid.Checked;
 			sp.SearchInGroupNames = m_cbGroupName.Checked;
-			sp.SearchInTags = m_cbTags.Checked;
 
 			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
 				StringComparison.InvariantCulture :

@@ -237,7 +237,8 @@ namespace KeePass.Util.SendInputExt
 
 			string[] vEnfKey = new string[] {
 				"MSTSC", // Remote Desktop Connection client
-				"VirtualBox" // VirtualBox does not support VK_PACKET
+				"VirtualBox", // VirtualBox does not support VK_PACKET
+				"VpxClient" // VMware vSphere client
 			};
 			foreach(string strEnfKey in vEnfKey)
 			{

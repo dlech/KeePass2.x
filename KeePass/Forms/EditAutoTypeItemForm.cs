@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using System.Threading;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Native;
@@ -34,8 +34,8 @@ using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
-using KeePassLib.Security;
 using KeePassLib.Collections;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
@@ -50,11 +50,13 @@ namespace KeePass.Forms
 		private string m_strDefaultSeq = string.Empty;
 		private ProtectedStringDictionary m_vStringDict = null;
 
-		private object m_objDialogSync = new object();
+		private readonly object m_objDialogSync = new object();
 		private bool m_bDialogClosed = false;
+
 #if DEBUG
 		private static Dictionary<string, string> m_dWndTasks =
 			new Dictionary<string, string>();
+		private static readonly object m_oWndTasksSync = new object();
 #endif
 
 		// private Color m_clrOriginalForeground = Color.Black;
@@ -106,7 +108,7 @@ namespace KeePass.Forms
 					KPRes.ConfigureKeystrokeSeqDesc);
 			}
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			// FontUtil.AssignDefaultBold(m_lblTargetWindow);
 			// FontUtil.AssignDefaultBold(m_rbSeqDefault);
@@ -163,11 +165,14 @@ namespace KeePass.Forms
 				"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
 				"HOME", "END", "PGUP", "PGDN",
 				"INSERT", "DELETE", "SPACE", VkcBreak,
+
 				"BACKSPACE", "BREAK", "CAPSLOCK", "ESC",
 				"WIN", "LWIN", "RWIN", "APPS",
 				"HELP", "NUMLOCK", "PRTSC", "SCROLLLOCK", VkcBreak,
+
 				"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
 				"F13", "F14", "F15", "F16", VkcBreak,
+
 				"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE",
 				"NUMPAD0", "NUMPAD1", "NUMPAD2", "NUMPAD3", "NUMPAD4",
 				"NUMPAD5", "NUMPAD6", "NUMPAD7", "NUMPAD8", "NUMPAD9"
@@ -182,14 +187,19 @@ namespace KeePass.Forms
 				// "BASE",
 				"T-REPLACE-RX:/T/S/R/", "T-CONV:/T/C/",
 				"C:Comment", VkcBreak,
+
 				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3", "PICKFIELD",
 				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
-				"APPACTIVATE " + KPRes.Title, "BEEP 800 200", VkcBreak,
+				"APPACTIVATE " + KPRes.Title, "BEEP 800 200",
+				"CMD:/C/O/", VkcBreak,
+
 				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 				"ENV_DIRSEP", "ENV_PROGRAMFILES_X86", VkcBreak,
+
 				// "INTERNETEXPLORER", "FIREFOX", "OPERA", "GOOGLECHROME",
 				// "SAFARI", VkcBreak,
+
 				"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
 				"DT_SECOND", "DT_UTC_SIMPLE", "DT_UTC_YEAR", "DT_UTC_MONTH",
 				"DT_UTC_DAY", "DT_UTC_HOUR", "DT_UTC_MINUTE", "DT_UTC_SECOND"
@@ -306,7 +316,7 @@ namespace KeePass.Forms
 			m_ctxKeySeq.Detach();
 
 #if DEBUG
-			lock(m_dWndTasks) { Debug.Assert(m_dWndTasks.Count == 0); }
+			lock(m_oWndTasksSync) { Debug.Assert(m_dWndTasks.Count == 0); }
 #endif
 		}
 
@@ -578,7 +588,7 @@ namespace KeePass.Forms
 		{
 #if DEBUG
 			string strTaskID = Guid.NewGuid().ToString();
-			lock(m_dWndTasks) { m_dWndTasks[strTaskID] = @"<<<UNDEFINED>>>"; }
+			lock(m_oWndTasksSync) { m_dWndTasks[strTaskID] = @"<<<UNDEFINED>>>"; }
 #endif
 
 			try
@@ -600,7 +610,7 @@ namespace KeePass.Forms
 
 #if DEBUG
 				Debug.Assert(strName.Length <= pLen.ToInt64());
-				lock(m_dWndTasks) { m_dWndTasks[strTaskID] = strName; }
+				lock(m_oWndTasksSync) { m_dWndTasks[strTaskID] = strName; }
 #endif
 
 				if((NativeMethods.GetWindowStyle(hWnd) &
@@ -619,7 +629,7 @@ namespace KeePass.Forms
 #if DEBUG
 			finally
 			{
-				lock(m_dWndTasks) { m_dWndTasks.Remove(strTaskID); }
+				lock(m_oWndTasksSync) { m_dWndTasks.Remove(strTaskID); }
 			}
 #endif
 		}

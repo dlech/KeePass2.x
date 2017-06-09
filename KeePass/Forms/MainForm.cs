@@ -45,11 +45,11 @@ using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.PasswordGenerator;
-using KeePassLib.Interfaces;
-using KeePassLib.Utility;
-using KeePassLib.Security;
 using KeePassLib.Delegates;
+using KeePassLib.Interfaces;
+using KeePassLib.Security;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 
@@ -141,7 +141,7 @@ namespace KeePass.Forms
 			m_strNeverExpiresText = KPRes.NeverExpires;
 
 			this.Text = PwDefs.ShortProductName;
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			m_imgFileSaveEnabled = Properties.Resources.B16x16_FileSave;
 			m_imgFileSaveDisabled = Properties.Resources.B16x16_FileSave_Disabled;
 			// m_imgFileSaveAllEnabled = Properties.Resources.B16x16_File_SaveAll;
@@ -477,7 +477,7 @@ namespace KeePass.Forms
 			Debug.Assert((m_toolMain.Height == 25) || DpiUtil.ScalingRequired);
 			m_toolMain.LockHeight(true);
 
-			UpdateTrayIcon();
+			UpdateTrayIcon(false);
 			UpdateTagsMenu(m_dynShowEntriesByTagsEditMenu, false, false,
 				TagsMenuMode.EnsurePopupOnly);
 			UpdateTagsMenu(m_dynRemoveTag, false, false, TagsMenuMode.EnsurePopupOnly);
@@ -1365,7 +1365,7 @@ namespace KeePass.Forms
 				}
 
 				AppConfigSerializer.Save(Program.Config);
-				UpdateTrayIcon();
+				UpdateTrayIcon(true);
 			}
 			UIUtil.DestroyForm(ofDlg);
 
@@ -2816,6 +2816,29 @@ namespace KeePass.Forms
 		private void OnEditShowParentGroup(object sender, EventArgs e)
 		{
 			ShowSelectedEntryParentGroup();
+		}
+
+		private void OnEditFindDupPasswords(object sender, EventArgs e)
+		{
+			if(CreateAndShowEntryList(EntryUtil.FindDuplicatePasswords,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
+				KPRes.DuplicatePasswords, KPRes.DuplicatePasswordsList, null, false) == 0)
+				MessageService.ShowInfo(KPRes.DuplicatePasswordsNone);
+		}
+
+		private void OnEditFindSimPasswords(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindSimilarPasswords,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
+				KPRes.SimilarPasswords, KPRes.SimilarPasswordsList,
+				KPRes.SimilarPasswordsNoDup, true);
+		}
+
+		private void OnEditPwQualityReport(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.CreatePwQualityList,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KOrganizer,
+				KPRes.PasswordQuality, KPRes.PasswordQualityReport, null, true);
 		}
 	}
 }

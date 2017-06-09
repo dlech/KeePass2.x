@@ -38,6 +38,14 @@ namespace KeePass.App.Configuration
 			set { m_bOnlyIfTrayed = value; }
 		}
 
+		private bool m_bGrayIcon = false;
+		[DefaultValue(false)]
+		public bool GrayIcon
+		{
+			get { return m_bGrayIcon; }
+			set { m_bGrayIcon = value; }
+		}
+
 		private bool m_bSingleClickDefault = false;
 		[DefaultValue(false)]
 		public bool SingleClickDefault

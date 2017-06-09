@@ -20,15 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
-using KeePass.UI;
-using KeePass.Resources;
 using KeePass.Ecas;
+using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -67,7 +67,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Run, strTitle, strDesc);
 			this.Text = strTitle;
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			m_lvEvents.SmallImageList = m_ilIcons;
 			m_lvConditions.SmallImageList = m_ilIcons;

@@ -281,7 +281,7 @@ namespace KeePassLib.Cryptography
 			}
 		}
 
-		private static object m_objSyncInit = new object();
+		private static readonly object m_objSyncInit = new object();
 		private static List<QeCharType> m_lCharTypes = null;
 
 		private static void EnsureInitialized()

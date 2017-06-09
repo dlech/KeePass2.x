@@ -207,6 +207,18 @@ namespace KeePass.App.Configuration
 			set { m_bOptScreenReader = value; }
 		}
 
+		private string m_strDataViewerRect = string.Empty;
+		[DefaultValue("")]
+		public string DataViewerRect
+		{
+			get { return m_strDataViewerRect; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strDataViewerRect = value;
+			}
+		}
+
 		private string m_strDataEditorRect = string.Empty;
 		[DefaultValue("")]
 		public string DataEditorRect
