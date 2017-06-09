@@ -62,7 +62,6 @@
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
 			this.m_btnSchemeOverrides = new System.Windows.Forms.Button();
-			this.m_cbSingleClickTrayAction = new System.Windows.Forms.CheckBox();
 			this.m_cbAutoRun = new System.Windows.Forms.CheckBox();
 			this.m_grpFileExt = new System.Windows.Forms.GroupBox();
 			this.m_btnFileExtRemove = new System.Windows.Forms.Button();
@@ -463,7 +462,6 @@
 			// m_tabIntegration
 			// 
 			this.m_tabIntegration.Controls.Add(this.m_btnSchemeOverrides);
-			this.m_tabIntegration.Controls.Add(this.m_cbSingleClickTrayAction);
 			this.m_tabIntegration.Controls.Add(this.m_cbAutoRun);
 			this.m_tabIntegration.Controls.Add(this.m_grpFileExt);
 			this.m_tabIntegration.Controls.Add(this.m_grpHotKeys);
@@ -479,20 +477,10 @@
 			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(435, 280);
 			this.m_btnSchemeOverrides.Name = "m_btnSchemeOverrides";
 			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(112, 23);
-			this.m_btnSchemeOverrides.TabIndex = 4;
+			this.m_btnSchemeOverrides.TabIndex = 3;
 			this.m_btnSchemeOverrides.Text = "&URL Overrides...";
 			this.m_btnSchemeOverrides.UseVisualStyleBackColor = true;
 			this.m_btnSchemeOverrides.Click += new System.EventHandler(this.OnBtnUrlOverrides);
-			// 
-			// m_cbSingleClickTrayAction
-			// 
-			this.m_cbSingleClickTrayAction.AutoSize = true;
-			this.m_cbSingleClickTrayAction.Location = new System.Drawing.Point(6, 218);
-			this.m_cbSingleClickTrayAction.Name = "m_cbSingleClickTrayAction";
-			this.m_cbSingleClickTrayAction.Size = new System.Drawing.Size(314, 17);
-			this.m_cbSingleClickTrayAction.TabIndex = 3;
-			this.m_cbSingleClickTrayAction.Text = "Single click instead of double click for default tray icon action";
-			this.m_cbSingleClickTrayAction.UseVisualStyleBackColor = true;
 			// 
 			// m_cbAutoRun
 			// 
@@ -737,7 +725,6 @@
 		private System.Windows.Forms.Button m_btnFileExtCreate;
 		private System.Windows.Forms.Label m_lblFileExtHint;
 		private System.Windows.Forms.CheckBox m_cbAutoRun;
-		private System.Windows.Forms.CheckBox m_cbSingleClickTrayAction;
 		private KeePass.UI.CustomListViewEx m_lvAdvanced;
 		private KeePass.UI.CustomListViewEx m_lvSecurityOptions;
 		private System.Windows.Forms.NumericUpDown m_numMruCount;

@@ -62,13 +62,13 @@
 			this.m_menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileExit});
 			this.m_menuFile.Name = "m_menuFile";
-			this.m_menuFile.Size = new System.Drawing.Size(35, 20);
+			this.m_menuFile.Size = new System.Drawing.Size(37, 20);
 			this.m_menuFile.Text = "&File";
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(91, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(92, 22);
 			this.m_menuFileExit.Text = "E&xit";
 			// 
 			// m_statusMain
@@ -144,6 +144,7 @@
 			this.m_btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_btnReload.Name = "m_btnReload";
 			this.m_btnReload.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this.m_btnReload.RightToLeftAutoMirrorImage = true;
 			this.m_btnReload.Size = new System.Drawing.Size(23, 22);
 			this.m_btnReload.Text = "&Reload";
 			this.m_btnReload.Click += new System.EventHandler(this.OnBtnReload);

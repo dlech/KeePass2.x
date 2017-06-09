@@ -24,16 +24,20 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
 	public partial class ProxyForm : Form
 	{
+		private SecureEdit m_secPassword = new SecureEdit();
+
 		public ProxyForm()
 		{
 			InitializeComponent();
@@ -44,7 +48,9 @@ namespace KeePass.Forms
 		{
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
+
+			m_secPassword.Attach(m_tbPassword, null, true);
 
 			ProxyServerType pst = Program.Config.Integration.ProxyType;
 			if(pst == ProxyServerType.None) m_rbNoProxy.Checked = true;
@@ -70,13 +76,15 @@ namespace KeePass.Forms
 			else m_rbAuthDefault.Checked = true;
 
 			m_tbUser.Text = strUserName;
-			m_tbPassword.Text = strPassword;
+			m_secPassword.SetPassword(StrUtil.Utf8.GetBytes(strPassword));
 
 			EnableControlsEx();
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			m_secPassword.Detach();
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -96,7 +104,7 @@ namespace KeePass.Forms
 			ace.ProxyPort = m_tbPort.Text;
 			ace.ProxyAuthType = pat;
 			ace.ProxyUserName = m_tbUser.Text;
-			ace.ProxyPassword = m_tbPassword.Text;
+			ace.ProxyPassword = StrUtil.Utf8.GetString(m_secPassword.ToUtf8());
 
 			Program.Config.Apply(AceApplyFlags.Proxy);
 		}

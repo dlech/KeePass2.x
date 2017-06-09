@@ -265,8 +265,8 @@ entry passwords) is stored encryptedly in process memory.
 This means that even if you would dump the KeePass process memory to disk,
 you could not find any sensitive data.</p>
 
-<!-- By default, entry passwords are in-memory protected, the other fields not
-(like in 1.x). However, you can turn on in-memory protection for other fields
+<!-- By default, entry passwords are encrypted in memory, the other fields not
+(like in 1.x). However, you can turn on memory protection for other fields
 in the database settings dialog (not recommended though, because of
 performance reasons). -->
 
@@ -277,20 +277,20 @@ and immediately re-encrypts it using the random key.</p> -->
 <p>Furthermore, KeePass erases all security-critical memory when it is not
 needed anymore, i.e. it overwrites these memory areas before releasing them.</p>
 
-<p>KeePass uses the Windows DPAPI for in-memory encrypting sensitive data
+<p>KeePass uses the Windows DPAPI for encrypting sensitive data in memory
 (via <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa380262.aspx"
 target="_blank">CryptProtectMemory</a> /
 <a href="https://msdn.microsoft.com/en-us/library/system.security.cryptography.protectedmemory.aspx"
 target="_blank">ProtectedMemory</a>).
-With DPAPI, the key for in-memory encryption is stored in a
+With DPAPI, the key for the memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
 DPAPI is available on Windows 2000 and higher.
 KeePass 2.x always uses DPAPI when it is available;
 in KeePass 1.x, this can be disabled (in the advanced options; by default
-using DPAPI is enabled; if it is disabled, KeePass uses the ARC4 encryption
+using DPAPI is enabled; if it is disabled, KeePass 1.x uses the ARC4 encryption
 algorithm with a random key; note that this is less secure than DPAPI, mainly <i>not</i>
-because ARC4 cryptographically is not that strong, but because the key for in-memory
-encryption is also stored in swappable process memory;
+because ARC4 cryptographically is not that strong, but because the key for
+the memory encryption is also stored in swappable process memory;
 similarly, KeePass 2.x falls back to encrypting the process memory using
 ChaCha20, if DPAPI is unavailable).
 On Unix-like systems, KeePass 2.x uses ChaCha20, because Mono does not provide

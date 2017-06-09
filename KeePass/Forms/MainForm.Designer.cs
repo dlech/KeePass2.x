@@ -66,6 +66,7 @@
 			this.m_ctxEntrySaveAttachedFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryPerformAutoType = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxEntryAutoTypeAdv = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryAdd = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryEdit = new System.Windows.Forms.ToolStripMenuItem();
@@ -138,6 +139,7 @@
 			this.m_menuEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowEntries = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowAll = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowParentGroup = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEditShowExp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowExp1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -149,7 +151,8 @@
 			this.m_menuEditShowExp56 = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowExpInF = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_menuEditShowParentGroup = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditFindDupPasswords = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditPwQualityReport = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowByTag = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEditFind = new System.Windows.Forms.ToolStripMenuItem();
@@ -246,7 +249,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_ctxEntryAutoTypeAdv = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditFindSimPasswords = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -286,7 +289,7 @@
 			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_New_Ex;
 			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
 			this.m_ctxGroupAdd.Size = new System.Drawing.Size(177, 22);
-			this.m_ctxGroupAdd.Text = "Add &Group";
+			this.m_ctxGroupAdd.Text = "Add &Group...";
 			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
 			// 
 			// m_ctxGroupSep0
@@ -299,7 +302,7 @@
 			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
 			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
 			this.m_ctxGroupEdit.Size = new System.Drawing.Size(177, 22);
-			this.m_ctxGroupEdit.Text = "Ed&it Group";
+			this.m_ctxGroupEdit.Text = "Ed&it Group...";
 			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
 			// 
 			// m_ctxGroupDuplicate
@@ -423,6 +426,7 @@
 			// 
 			this.m_ctxGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSort.Name = "m_ctxGroupSort";
+			this.m_ctxGroupSort.RightToLeftAutoMirrorImage = true;
 			this.m_ctxGroupSort.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupSort.Text = "&Sort Direct Subgroups";
 			this.m_ctxGroupSort.Click += new System.EventHandler(this.OnGroupsSort);
@@ -431,6 +435,7 @@
 			// 
 			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
 			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
+			this.m_ctxGroupSortRec.RightToLeftAutoMirrorImage = true;
 			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(199, 22);
 			this.m_ctxGroupSortRec.Text = "Sort &Recursively";
 			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
@@ -479,7 +484,7 @@
             this.m_ctxEntryClipboard,
             this.m_ctxEntryRearrangePopup});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(209, 396);
+			this.m_ctxPwList.Size = new System.Drawing.Size(209, 374);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryCopyUserName
@@ -572,6 +577,12 @@
 			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(208, 22);
 			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
+			// 
+			// m_ctxEntryAutoTypeAdv
+			// 
+			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
+			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(208, 22);
+			this.m_ctxEntryAutoTypeAdv.Text = "Perform Auto-Type";
 			// 
 			// m_ctxEntrySep1
 			// 
@@ -1071,6 +1082,7 @@
 			// 
 			this.m_menuFileSyncFile.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncFile.Name = "m_menuFileSyncFile";
+			this.m_menuFileSyncFile.RightToLeftAutoMirrorImage = true;
 			this.m_menuFileSyncFile.Size = new System.Drawing.Size(197, 22);
 			this.m_menuFileSyncFile.Text = "Synchronize with &File...";
 			this.m_menuFileSyncFile.Click += new System.EventHandler(this.OnFileSynchronize);
@@ -1079,6 +1091,7 @@
 			// 
 			this.m_menuFileSyncUrl.Image = global::KeePass.Properties.Resources.B16x16_Reload_Page;
 			this.m_menuFileSyncUrl.Name = "m_menuFileSyncUrl";
+			this.m_menuFileSyncUrl.RightToLeftAutoMirrorImage = true;
 			this.m_menuFileSyncUrl.Size = new System.Drawing.Size(197, 22);
 			this.m_menuFileSyncUrl.Text = "Synchronize with &URL...";
 			this.m_menuFileSyncUrl.Click += new System.EventHandler(this.OnFileSynchronizeUrl);
@@ -1139,6 +1152,7 @@
 			// 
 			this.m_menuEditShowEntries.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuEditShowAll,
+            this.m_menuEditShowParentGroup,
             this.m_menuEditShowSep0,
             this.m_menuEditShowExp,
             this.m_menuEditShowExp1,
@@ -1150,7 +1164,9 @@
             this.m_menuEditShowExp56,
             this.m_menuEditShowExpInF,
             this.m_menuEditShowSep1,
-            this.m_menuEditShowParentGroup});
+            this.m_menuEditFindDupPasswords,
+            this.m_menuEditFindSimPasswords,
+            this.m_menuEditPwQualityReport});
 			this.m_menuEditShowEntries.Name = "m_menuEditShowEntries";
 			this.m_menuEditShowEntries.Size = new System.Drawing.Size(179, 22);
 			this.m_menuEditShowEntries.Text = "&Show Entries";
@@ -1159,20 +1175,28 @@
 			// 
 			this.m_menuEditShowAll.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key3;
 			this.m_menuEditShowAll.Name = "m_menuEditShowAll";
-			this.m_menuEditShowAll.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowAll.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowAll.Text = "&All";
 			this.m_menuEditShowAll.Click += new System.EventHandler(this.OnEditShowAll);
+			// 
+			// m_menuEditShowParentGroup
+			// 
+			this.m_menuEditShowParentGroup.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
+			this.m_menuEditShowParentGroup.Name = "m_menuEditShowParentGroup";
+			this.m_menuEditShowParentGroup.Size = new System.Drawing.Size(217, 22);
+			this.m_menuEditShowParentGroup.Text = "Selected Entry\'s Group";
+			this.m_menuEditShowParentGroup.Click += new System.EventHandler(this.OnEditShowParentGroup);
 			// 
 			// m_menuEditShowSep0
 			// 
 			this.m_menuEditShowSep0.Name = "m_menuEditShowSep0";
-			this.m_menuEditShowSep0.Size = new System.Drawing.Size(189, 6);
+			this.m_menuEditShowSep0.Size = new System.Drawing.Size(214, 6);
 			// 
 			// m_menuEditShowExp
 			// 
 			this.m_menuEditShowExp.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp.Name = "m_menuEditShowExp";
-			this.m_menuEditShowExp.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp.Text = "E&xpired";
 			this.m_menuEditShowExp.Click += new System.EventHandler(this.OnEditShowExp);
 			// 
@@ -1180,7 +1204,7 @@
 			// 
 			this.m_menuEditShowExp1.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp1.Name = "m_menuEditShowExp1";
-			this.m_menuEditShowExp1.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp1.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp1.Text = "Expiring in &1 Day";
 			this.m_menuEditShowExp1.Click += new System.EventHandler(this.OnEditShowExp1);
 			// 
@@ -1188,7 +1212,7 @@
 			// 
 			this.m_menuEditShowExp2.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp2.Name = "m_menuEditShowExp2";
-			this.m_menuEditShowExp2.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp2.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp2.Text = "Expiring in &2 Days";
 			this.m_menuEditShowExp2.Click += new System.EventHandler(this.OnEditShowExp2);
 			// 
@@ -1196,7 +1220,7 @@
 			// 
 			this.m_menuEditShowExp3.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp3.Name = "m_menuEditShowExp3";
-			this.m_menuEditShowExp3.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp3.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp3.Text = "Expiring in &3 Days";
 			this.m_menuEditShowExp3.Click += new System.EventHandler(this.OnEditShowExp3);
 			// 
@@ -1204,7 +1228,7 @@
 			// 
 			this.m_menuEditShowExp7.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp7.Name = "m_menuEditShowExp7";
-			this.m_menuEditShowExp7.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp7.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp7.Text = "Expiring in 1 &Week";
 			this.m_menuEditShowExp7.Click += new System.EventHandler(this.OnEditShowExp7);
 			// 
@@ -1212,7 +1236,7 @@
 			// 
 			this.m_menuEditShowExp14.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp14.Name = "m_menuEditShowExp14";
-			this.m_menuEditShowExp14.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp14.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp14.Text = "Expiring in 2 W&eeks";
 			this.m_menuEditShowExp14.Click += new System.EventHandler(this.OnEditShowExp14);
 			// 
@@ -1220,7 +1244,7 @@
 			// 
 			this.m_menuEditShowExp28.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp28.Name = "m_menuEditShowExp28";
-			this.m_menuEditShowExp28.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp28.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp28.Text = "Expiring in 4 Wee&ks";
 			this.m_menuEditShowExp28.Click += new System.EventHandler(this.OnEditShowExp28);
 			// 
@@ -1228,7 +1252,7 @@
 			// 
 			this.m_menuEditShowExp56.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExp56.Name = "m_menuEditShowExp56";
-			this.m_menuEditShowExp56.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExp56.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExp56.Text = "Expiring in 8 Week&s";
 			this.m_menuEditShowExp56.Click += new System.EventHandler(this.OnEditShowExp56);
 			// 
@@ -1236,22 +1260,30 @@
 			// 
 			this.m_menuEditShowExpInF.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEditShowExpInF.Name = "m_menuEditShowExpInF";
-			this.m_menuEditShowExpInF.Size = new System.Drawing.Size(192, 22);
+			this.m_menuEditShowExpInF.Size = new System.Drawing.Size(217, 22);
 			this.m_menuEditShowExpInF.Text = "Expiring in the &Future";
 			this.m_menuEditShowExpInF.Click += new System.EventHandler(this.OnEditShowExpInF);
 			// 
 			// m_menuEditShowSep1
 			// 
 			this.m_menuEditShowSep1.Name = "m_menuEditShowSep1";
-			this.m_menuEditShowSep1.Size = new System.Drawing.Size(189, 6);
+			this.m_menuEditShowSep1.Size = new System.Drawing.Size(214, 6);
 			// 
-			// m_menuEditShowParentGroup
+			// m_menuEditFindDupPasswords
 			// 
-			this.m_menuEditShowParentGroup.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
-			this.m_menuEditShowParentGroup.Name = "m_menuEditShowParentGroup";
-			this.m_menuEditShowParentGroup.Size = new System.Drawing.Size(192, 22);
-			this.m_menuEditShowParentGroup.Text = "Selected Entry\'s Group";
-			this.m_menuEditShowParentGroup.Click += new System.EventHandler(this.OnEditShowParentGroup);
+			this.m_menuEditFindDupPasswords.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
+			this.m_menuEditFindDupPasswords.Name = "m_menuEditFindDupPasswords";
+			this.m_menuEditFindDupPasswords.Size = new System.Drawing.Size(217, 22);
+			this.m_menuEditFindDupPasswords.Text = "Find &Duplicate Passwords...";
+			this.m_menuEditFindDupPasswords.Click += new System.EventHandler(this.OnEditFindDupPasswords);
+			// 
+			// m_menuEditPwQualityReport
+			// 
+			this.m_menuEditPwQualityReport.Image = global::KeePass.Properties.Resources.B16x16_KOrganizer;
+			this.m_menuEditPwQualityReport.Name = "m_menuEditPwQualityReport";
+			this.m_menuEditPwQualityReport.Size = new System.Drawing.Size(217, 22);
+			this.m_menuEditPwQualityReport.Text = "Password &Quality Report...";
+			this.m_menuEditPwQualityReport.Click += new System.EventHandler(this.OnEditPwQualityReport);
 			// 
 			// m_menuEditShowByTag
 			// 
@@ -1906,6 +1938,7 @@
 			// 
 			// m_statusClipboard
 			// 
+			this.m_statusClipboard.AutoSize = false;
 			this.m_statusClipboard.Name = "m_statusClipboard";
 			this.m_statusClipboard.Size = new System.Drawing.Size(100, 16);
 			this.m_statusClipboard.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -2098,11 +2131,13 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
-			// m_ctxEntryAutoTypeAdv
+			// m_menuEditFindSimPasswords
 			// 
-			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
-			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryAutoTypeAdv.Text = "Perform Auto-Type";
+			this.m_menuEditFindSimPasswords.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
+			this.m_menuEditFindSimPasswords.Name = "m_menuEditFindSimPasswords";
+			this.m_menuEditFindSimPasswords.Size = new System.Drawing.Size(217, 22);
+			this.m_menuEditFindSimPasswords.Text = "F&ind Similar Passwords...";
+			this.m_menuEditFindSimPasswords.Click += new System.EventHandler(this.OnEditFindSimPasswords);
 			// 
 			// MainForm
 			// 
@@ -2364,6 +2399,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEditShowParentGroup;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryShowParentGroup;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAutoTypeAdv;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditFindDupPasswords;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditPwQualityReport;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditFindSimPasswords;
 	}
 }
 

@@ -20,16 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
-using KeePass.UI;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.XmlSerialization;
 
@@ -58,7 +58,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Keyboard_Layout,
 				KPRes.SelectLanguage, KPRes.SelectLanguageDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.SelectLanguage;
 
 			List<Image> lImg = new List<Image>();

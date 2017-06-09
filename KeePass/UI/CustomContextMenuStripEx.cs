@@ -19,10 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 namespace KeePass.UI
 {
@@ -38,6 +39,22 @@ namespace KeePass.UI
 			base(container)
 		{
 			UIUtil.Configure(this);
+		}
+
+		public void ShowEx(Control cParent)
+		{
+			if(cParent == null) Show(Cursor.Position);
+			else
+			{
+				int dx = 0;
+				if(cParent.RightToLeft == RightToLeft.Yes)
+				{
+					this.RightToLeft = RightToLeft.Yes;
+					dx = cParent.Width;
+				}
+
+				Show(cParent, dx, cParent.Height);
+			}
 		}
 
 		// protected override void OnItemClicked(ToolStripItemClickedEventArgs e)

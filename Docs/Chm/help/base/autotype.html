@@ -127,6 +127,13 @@ rights as the target application. Especially, if the target application
 is running with administrative rights, KeePass must be running with
 administrative rights, too.</p>
 
+<p><b>Remote Desktops and Virtual Machines:</b><br />
+KeePass does not know the keyboard layout that has been selected in
+a remote desktop or virtual machine window.
+If you want to auto-type into such a window, you must ensure
+that the local and the remote/virtual system are using the same
+keyboard layout.</p>
+
 <br />
 
 <a name="autoctx"></a>
@@ -336,7 +343,7 @@ delay to <i>X</i> milliseconds for all following keypresses.</td></tr>
 <tr><td width="50%"><code>{CLEARFIELD}</code></td><td width="50%">Clears the contents of the
 edit control that currently has the focus (only single-line edit controls).</td></tr>
 <tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the
-<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx"
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx"
 target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
 <tr><td width="50%"><code>{APPACTIVATE <i>WindowTitle</i>}</code></td><td width="50%">Activates
 the window &quot;<i>WindowTitle</i>&quot;.</td></tr>

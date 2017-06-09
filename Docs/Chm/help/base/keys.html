@@ -173,7 +173,7 @@ Detailed instructions how to recover a Windows user account can be found here:
 <a href="https://sourceforge.net/p/keepass/wiki/Recover%20Windows%20User%20Account%20Credentials/"
 target="_blank">Recover Windows User Account Credentials</a>
 (a short technical tutorial can be found in a Microsoft TechNet article:
-<a href="http://technet.microsoft.com/en-us/library/ee681624%28WS.10%29.aspx"
+<a href="https://technet.microsoft.com/en-us/library/ee681624.aspx"
 target="_blank">How to recover a Vault corrupted by lost DPAPI keys</a>).<br />
 <br />
 You can change the password of the Windows user account freely;
@@ -191,7 +191,7 @@ anymore (because the user's DPAPI keys are lost), but there are exceptions
 from a domain controller, or a home user can use a previously created
 Password Reset Disk).
 Details can be found in the MSDN article
-<a href="http://msdn.microsoft.com/en-us/library/ms995355.aspx"
+<a href="https://msdn.microsoft.com/en-us/library/ms995355.aspx"
 target="_blank">Windows Data Protection</a> and in the support article
 <a href="https://support.microsoft.com/en-us/kb/309408"
 target="_blank">How to troubleshoot the Data Protection API (DPAPI)</a>.<br />
@@ -223,17 +223,23 @@ appropriate definitions in the
 
 
 
-The contents of the <code>MinimumLength</code> node in
-<code>Security/MasterPassword</code> can contain
-the minimum master password length in characters. For example, by setting
-the contents to <code>10</code>, KeePass will only accept
-master passwords that have at least 10 characters.<br />
+The value of the
+<code>Security/MasterPassword/MinimumLength</code> node specifies
+the minimum master password length (in characters). For example, by setting
+it to <code>10</code>, KeePass will only accept
+master passwords that consist of at least 10 characters.<br />
 <br />
-The contents of the <code>MinimumQuality</code> node in
-<code>Security/MasterPassword</code> can contain
-the minimum estimated quality in bits that master passwords must have. For example,
-by setting the contents to <code>32</code>, only master passwords
-with an estimated quality of at least 32 bits will be accepted.<br />
+The value of the
+<code>Security/MasterPassword/MinimumQuality</code> node specifies
+the minimum estimated quality (in bits) that master passwords must have.
+For example, by setting it to <code>80</code>, only master passwords
+with an estimated quality of at least 80 bits will be accepted.<br />
+<br />
+The <code>Security/MasterKeyExpiryRec</code> node can be set to an
+<a href="https://www.w3schools.com/xml/schema_dtypes_date.asp"
+target="_blank">XSD date</a>.
+If the master key has not been changed since the specified date,
+KeePass recommends to change it.<br />
 <br />
 By specifying <code>KeyCreationFlags</code> and/or <code>KeyPromptFlags</code>
 (in the <code>UI</code> node), you can force states (enabled, disabled,

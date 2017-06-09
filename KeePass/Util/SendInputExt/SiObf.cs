@@ -165,7 +165,7 @@ namespace KeePass.Util.SendInputExt
 					nSeed = nSeed * 13 + l[iOffset + i].Char;
 			}
 
-			// Prevent overflow (see Random class constructor)
+			// Prevent overflow (see .NET 2.0 Random class constructor)
 			if(nSeed == int.MinValue) nSeed = 13;
 			return nSeed;
 		}

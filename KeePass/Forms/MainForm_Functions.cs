@@ -18,16 +18,17 @@
 */
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.IO;
-using System.Threading;
-using System.Xml.Serialization;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -48,9 +49,9 @@ using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
-using KeePassLib.Utility;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -119,12 +120,12 @@ namespace KeePass.Forms
 		private List<Image> m_lStdClientImages = null;
 		private ImageList m_ilCurrentIcons = null;
 
-		private KeyValuePair<Color, Icon> m_kvpIcoMain =
-			new KeyValuePair<Color, Icon>(Color.Empty, null);
-		private KeyValuePair<Color, Icon> m_kvpIcoTrayNormal =
-			new KeyValuePair<Color, Icon>(Color.Empty, null);
-		private KeyValuePair<Color, Icon> m_kvpIcoTrayLocked =
-			new KeyValuePair<Color, Icon>(Color.Empty, null);
+		// private KeyValuePair<Color, Icon> m_kvpIcoMain =
+		//	new KeyValuePair<Color, Icon>(Color.Empty, null);
+		// private KeyValuePair<Color, Icon> m_kvpIcoTrayNormal =
+		//	new KeyValuePair<Color, Icon>(Color.Empty, null);
+		// private KeyValuePair<Color, Icon> m_kvpIcoTrayLocked =
+		//	new KeyValuePair<Color, Icon>(Color.Empty, null);
 
 		private List<Image> m_lTabImages = new List<Image>();
 		private ImageList m_ilTabImages = null;
@@ -411,7 +412,7 @@ namespace KeePass.Forms
 
 			string strWindowText = PwDefs.ShortProductName;
 			string strNtfText = PwDefs.ShortProductName;
-			int qSmall = UIUtil.GetSmallIconSize(32, 32).Width;
+			// int qSmall = UIUtil.GetSmallIconSize().Width;
 
 			if(s.FileLocked)
 			{
@@ -437,22 +438,24 @@ namespace KeePass.Forms
 				else { Debug.Assert(false); }
 				strNtfText = strNtfPre + strFileDesc;
 
-				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadLocked, qSmall,
-					ref m_kvpIcoTrayLocked, out icoAssignable, out icoDisposable);
-				m_ntfTray.Icon = icoAssignable;
-				if(icoDisposable != null) icoDisposable.Dispose();
+				// Icon icoDisposable, icoAssignable;
+				// CreateColorizedIcon(Properties.Resources.QuadLocked, qSmall,
+				//	ref m_kvpIcoTrayLocked, out icoAssignable, out icoDisposable);
+				// m_ntfTray.Icon = icoAssignable;
+				// if(icoDisposable != null) icoDisposable.Dispose();
+				m_ntfTray.Icon = CreateColorizedIcon(AppIconType.QuadLocked, true);
 
 				TaskbarList.SetOverlayIcon(this, Properties.Resources.LockOverlay,
 					KPRes.Locked);
 			}
-			else if(s.DatabaseOpened == false)
+			else if(!s.DatabaseOpened)
 			{
-				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
-					ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
-				m_ntfTray.Icon = icoAssignable;
-				if(icoDisposable != null) icoDisposable.Dispose();
+				// Icon icoDisposable, icoAssignable;
+				// CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
+				//	ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
+				// m_ntfTray.Icon = icoAssignable;
+				// if(icoDisposable != null) icoDisposable.Dispose();
+				m_ntfTray.Icon = CreateColorizedIcon(AppIconType.QuadNormal, true);
 
 				TaskbarList.SetOverlayIcon(this, null, string.Empty);
 			}
@@ -471,11 +474,12 @@ namespace KeePass.Forms
 				strNtfText = strNtfPre + WinUtil.CompactPath(
 					m_docMgr.ActiveDatabase.IOConnectionInfo.Path, 63 - strNtfPre.Length);
 
-				Icon icoDisposable, icoAssignable;
-				CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
-					ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
-				m_ntfTray.Icon = icoAssignable;
-				if(icoDisposable != null) icoDisposable.Dispose();
+				// Icon icoDisposable, icoAssignable;
+				// CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
+				//	ref m_kvpIcoTrayNormal, out icoAssignable, out icoDisposable);
+				// m_ntfTray.Icon = icoAssignable;
+				// if(icoDisposable != null) icoDisposable.Dispose();
+				m_ntfTray.Icon = CreateColorizedIcon(AppIconType.QuadNormal, true);
 
 				TaskbarList.SetOverlayIcon(this, null, string.Empty);
 			}
@@ -496,11 +500,12 @@ namespace KeePass.Forms
 			strNtfText = StrUtil.EncodeToolTipText(strNtfText);
 			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, 63);
 
-			Icon icoToDispose, icoToAssign;
-			if(CreateColorizedIcon(Properties.Resources.KeePass, 0,
-				ref m_kvpIcoMain, out icoToAssign, out icoToDispose))
-				this.Icon = icoToAssign;
-			if(icoToDispose != null) icoToDispose.Dispose();
+			// Icon icoToDispose, icoToAssign;
+			// if(CreateColorizedIcon(Properties.Resources.KeePass, 0,
+			//	ref m_kvpIcoMain, out icoToAssign, out icoToDispose))
+			//	this.Icon = icoToAssign;
+			// if(icoToDispose != null) icoToDispose.Dispose();
+			this.Icon = CreateColorizedIcon(AppIconType.Main, false);
 
 			// Main menu
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileSaveAs,
@@ -519,6 +524,8 @@ namespace KeePass.Forms
 				m_menuEditShowExp2, m_menuEditShowExp3, m_menuEditShowExp7,
 				m_menuEditShowExp14, m_menuEditShowExp28, m_menuEditShowExp56,
 				m_menuEditShowExpInF);
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEditFindDupPasswords,
+				m_menuEditFindSimPasswords, m_menuEditPwQualityReport);
 			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuEditShowParentGroup);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuToolsDbMaintenance,
 				m_menuToolsDbDelDupEntries, m_menuToolsDbDelEmptyGroups,
@@ -536,18 +543,22 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_tbFind, m_tbViewsShowAll,
 				m_tbViewsShowExpired, m_tbEntryViewsDropDown);
 
+			Image imgSave;
+			bool bEnableSave;
 			if(Program.Config.MainWindow.DisableSaveIfNotModified)
 			{
-				m_tbSaveDatabase.Image = m_imgFileSaveEnabled;
-				UIUtil.SetEnabledFast((s.DatabaseOpened && m_docMgr.ActiveDatabase.Modified),
-					m_menuFileSave, m_tbSaveDatabase);
+				imgSave = m_imgFileSaveEnabled;
+				bEnableSave = (s.DatabaseOpened && m_docMgr.ActiveDatabase.Modified);
 			}
 			else
 			{
-				m_tbSaveDatabase.Image = (m_docMgr.ActiveDatabase.Modified ?
+				imgSave = (m_docMgr.ActiveDatabase.Modified ?
 					m_imgFileSaveEnabled : m_imgFileSaveDisabled);
-				UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileSave, m_tbSaveDatabase);
+				bEnableSave = s.DatabaseOpened;
 			}
+			m_menuFileSave.Image = imgSave;
+			m_tbSaveDatabase.Image = imgSave;
+			UIUtil.SetEnabledFast(bEnableSave, m_menuFileSave, m_tbSaveDatabase);
 
 			m_tbQuickFind.Enabled = s.DatabaseOpened;
 
@@ -1741,6 +1752,10 @@ namespace KeePass.Forms
 				case AceColumnType.HistoryCount:
 					EditSelectedEntry(true);
 					break;
+				case AceColumnType.LastPasswordModTime:
+					bCnt = ClipboardUtil.CopyAndMinimize(TimeUtil.ToDisplayString(
+						EntryUtil.GetLastPasswordModTime(pe)), true, this, pe, null);
+					break;
 				default:
 					Debug.Assert(false);
 					break;
@@ -1938,6 +1953,7 @@ namespace KeePass.Forms
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				if(!pe.Expires) return true;
+				if(!pe.GetSearchingEnabled()) return true;
 				if(PwDefs.IsTanEntry(pe)) return true; // Exclude TANs
 
 				int iRelNow = pe.ExpiryTime.CompareTo(dtNow);
@@ -1945,7 +1961,7 @@ namespace KeePass.Forms
 				if((bExpInP && (iRelNow <= 0)) ||
 					(bExpInD && (pe.ExpiryTime <= dtLimit) && (iRelNow > 0)) ||
 					(bExpInF && (iRelNow > 0)))
-					pg.AddEntry(pe, false);
+					pg.AddEntry(pe, false, false);
 				return true;
 			};
 
@@ -2217,9 +2233,30 @@ namespace KeePass.Forms
 			}
 			UpdateColumnSortingIcons();
 
-			if(((pwOpenedDb.MasterKeyChangeForce >= 0) &&
-				((DateTime.UtcNow - pwOpenedDb.MasterKeyChanged).Days >=
-				pwOpenedDb.MasterKeyChangeForce)) || pwOpenedDb.MasterKeyChangeForceOnce)
+			long lMkDays = (DateTime.UtcNow - pwOpenedDb.MasterKeyChanged).Days;
+			bool bMkChangeForce = ((pwOpenedDb.MasterKeyChangeForce >= 0) &&
+				(lMkDays >= pwOpenedDb.MasterKeyChangeForce));
+			bMkChangeForce |= pwOpenedDb.MasterKeyChangeForceOnce;
+
+			bool bMkChangeRec = ((pwOpenedDb.MasterKeyChangeRec >= 0) &&
+				(lMkDays >= pwOpenedDb.MasterKeyChangeRec));
+			string strMkExpiry = Program.Config.Security.MasterKeyExpiryRec;
+			if(!string.IsNullOrEmpty(strMkExpiry))
+			{
+				try
+				{
+					DateTime dtExpiry = XmlConvert.ToDateTime(strMkExpiry,
+						XmlDateTimeSerializationMode.Utc);
+					bMkChangeRec |= (pwOpenedDb.MasterKeyChanged < dtExpiry);
+				}
+				catch(Exception exDate)
+				{
+					MessageService.ShowWarning("Configuration/Security/MasterKeyExpiryRec:",
+						exDate.Message);
+				}
+			}
+
+			if(bMkChangeForce)
 			{
 				// Updating the UI might trigger an auto-save
 				pwOpenedDb.MasterKeyChangeForceOnce = false;
@@ -2237,9 +2274,7 @@ namespace KeePass.Forms
 					if(!AppPolicy.Current.ChangeMasterKey) break; // Prevent endless loop
 				}
 			}
-			else if((pwOpenedDb.MasterKeyChangeRec >= 0) &&
-				((DateTime.UtcNow - pwOpenedDb.MasterKeyChanged).Days >=
-				pwOpenedDb.MasterKeyChangeRec))
+			else if(bMkChangeRec)
 			{
 				if(MessageService.AskYesNo(pwOpenedDb.IOConnectionInfo.GetDisplayName() +
 					MessageService.NewParagraph + KPRes.MasterKeyChangeRec +
@@ -2531,10 +2566,13 @@ namespace KeePass.Forms
 			m_mruList.Clear();
 		}
 
-		/// <summary>
-		/// Function to update the tray icon based on the current window state.
-		/// </summary>
+		// For plugins
 		public void UpdateTrayIcon()
+		{
+			UpdateTrayIcon(true);
+		}
+
+		private void UpdateTrayIcon(bool bRefreshIcon)
 		{
 			if(m_ntfTray == null) { Debug.Assert(false); return; } // Required
 
@@ -2545,6 +2583,8 @@ namespace KeePass.Forms
 				m_ntfTray.Visible = !bWindowVisible;
 			else if(bWindowVisible && !bTrayVisible)
 				m_ntfTray.Visible = true;
+
+			if(bRefreshIcon) m_ntfTray.RefreshShellIcon();
 		}
 
 		private void OnSessionLock(object sender, SessionLockEventArgs e)
@@ -2637,7 +2677,9 @@ namespace KeePass.Forms
 			DateTime dtNow = DateTime.UtcNow;
 			foreach(PwEntry peUpd in vEntries) peUpd.LocationChanged = dtNow;
 
-			m_lvEntries.BeginUpdate();
+			// Blocking prevents correct scrolling when groups are enabled
+			// and the scroll position is near the end
+			// m_lvEntries.BeginUpdate();
 
 			bool bScrollOne = ((Math.Abs(iMove) == 1) &&
 				!UIUtil.GetGroupsEnabled(m_lvEntries));
@@ -2686,7 +2728,7 @@ namespace KeePass.Forms
 			UpdateEntryList(null, false);
 			EnsureVisibleSelected(iMove > 0); // In all cases
 
-			m_lvEntries.EndUpdate();
+			// m_lvEntries.EndUpdate();
 			UpdateUIState(true);
 		}
 
@@ -2771,12 +2813,12 @@ namespace KeePass.Forms
 			}
 			else if(m.Msg == DwmUtil.WM_DWMSENDICONICTHUMBNAIL)
 			{
-				DwmUtil.SetIconicThumbnail(this, Properties.Resources.KeePass, ref m);
+				DwmUtil.SetIconicThumbnail(this, AppIcons.Default, ref m);
 				return;
 			}
 			else if(m.Msg == DwmUtil.WM_DWMSENDICONICLIVEPREVIEWBITMAP)
 			{
-				DwmUtil.SetIconicPreview(this, Properties.Resources.KeePass, ref m);
+				DwmUtil.SetIconicPreview(this, AppIcons.Default, ref m);
 				return;
 			}
 
@@ -3875,7 +3917,7 @@ namespace KeePass.Forms
 					ResetDefaultFocus(null);
 			}
 
-			UpdateTrayIcon();
+			UpdateTrayIcon(false);
 		}
 
 		private bool GetStartMinimized()
@@ -4875,6 +4917,9 @@ namespace KeePass.Forms
 					uint uc = pe.Binaries.UCount;
 					str = ((uc > 0) ? uc.ToString() : string.Empty);
 					break;
+				case AceColumnType.LastPasswordModTime:
+					str = TimeUtil.ToDisplayString(EntryUtil.GetLastPasswordModTime(pe));
+					break;
 				default: Debug.Assert(false); str = string.Empty; break;
 			}
 
@@ -5197,7 +5242,7 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, false, null, true);
 		}
 
-		private bool CreateColorizedIcon(Icon icoBase, int qSize,
+		/* private bool CreateColorizedIcon(Icon icoBase, int qSize,
 			ref KeyValuePair<Color, Icon> kvpStore, out Icon icoAssignable,
 			out Icon icoDisposable)
 		{
@@ -5227,6 +5272,18 @@ namespace KeePass.Forms
 			}
 
 			return true;
+		} */
+
+		private Icon CreateColorizedIcon(AppIconType t, bool bSmall)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			Color clr = Color.Empty;
+			if((pd == null) || !pd.IsOpen || pd.Color.IsEmpty || (pd.Color.A < 255)) { }
+			else clr = pd.Color;
+
+			Size sz = (bSmall ? UIUtil.GetSmallIconSize() : UIUtil.GetIconSize());
+
+			return AppIcons.Get(t, sz, clr);
 		}
 
 		private void SetObjectsDeletedStatus(uint uDeleted, bool bDbMntnc)
@@ -5554,6 +5611,63 @@ namespace KeePass.Forms
 		private void UpdateAlternatingBgColor()
 		{
 			m_clrAlternateItemBgColor = UIUtil.GetAlternateColorEx(m_lvEntries.BackColor);
+		}
+
+		private int CreateAndShowEntryList(EntryReportDelegate f, string strStatus,
+			Image imgIcon, string strTitle, string strSubTitle, string strNote,
+			bool bForceDialog)
+		{
+			if(f == null) { Debug.Assert(false); return -1; }
+
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return -1; }
+
+			Form fOptDialog;
+			IStatusLogger sl = StatusUtil.CreateStatusDialog(this, out fOptDialog,
+				null, (strStatus ?? "..."), true, false);
+			UIBlockInteraction(true);
+
+			Action<ListView> fInit = null;
+			List<object> l = null;
+
+			string strExcp = null;
+			try { l = f(pd, sl, out fInit); }
+			catch(Exception ex) { strExcp = ex.Message; }
+
+			UIBlockInteraction(false);
+			sl.EndLogging();
+
+			if(!string.IsNullOrEmpty(strExcp))
+				MessageService.ShowWarning(strExcp);
+
+			if(l == null) return -1;
+			if((l.Count == 0) && !bForceDialog) return 0;
+
+			ListViewForm dlg = new ListViewForm();
+			dlg.InitEx(strTitle, strSubTitle, strNote, imgIcon, l,
+				m_ilCurrentIcons, fInit);
+			UIUtil.ShowDialogAndDestroy(dlg);
+
+			PwGroup pg = (dlg.ResultGroup as PwGroup);
+			PwEntry pe = (dlg.ResultItem as PwEntry);
+			if((pg != null) || (pe != null))
+			{
+				if(pg != null)
+					UpdateUI(false, null, false, null, true, pg, false, m_lvEntries);
+				else
+					UpdateUI(false, null, true, pe.ParentGroup, true, null, false, m_lvEntries);
+
+				if(pe != null)
+				{
+					PwObjectList<PwEntry> lSel = new PwObjectList<PwEntry>();
+					lSel.Add(pe);
+
+					SelectEntries(lSel, true, true);
+					EnsureVisibleSelected(false);
+				}
+			}
+
+			return l.Count;
 		}
 	}
 }

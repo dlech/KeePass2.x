@@ -107,7 +107,8 @@ namespace KeePass.UI
 
 		~OpenWithMenu()
 		{
-			Destroy();
+			try { Destroy(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public void Destroy()

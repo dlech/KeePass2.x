@@ -42,7 +42,8 @@ namespace KeePass.Util
 	public static class BinaryDataClassifier
 	{
 		private static readonly string[] m_vTextExtensions = new string[] {
-			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat"
+			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat",
+			"ps1"
 		};
 
 		private static readonly string[] m_vRichTextExtensions = new string[] {

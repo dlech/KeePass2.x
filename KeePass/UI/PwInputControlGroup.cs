@@ -410,12 +410,13 @@ namespace KeePass.UI
 		}
 
 		private List<string> m_lUqiTasks = new List<string>();
+		private readonly object m_oUqiTasksSync = new object();
 		private void UpdateQualityInfo(string str)
 		{
 			if(str == null) { Debug.Assert(false); return; }
 
 			int nTasks;
-			lock(m_lUqiTasks)
+			lock(m_oUqiTasksSync)
 			{
 				if(m_lUqiTasks.Contains(str)) return;
 
@@ -452,7 +453,7 @@ namespace KeePass.UI
 				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(str);
 
 				// str = StrUtil.Utf8.GetString(pbUtf8);
-				// lock(m_lUqiTasks) { m_lUqiTasks.Add(str); }
+				// lock(m_oUqiTasksSync) { m_lUqiTasks.Add(str); }
 
 				uint uBits = QualityEstimation.EstimatePasswordBits(pbUtf8);
 
@@ -472,7 +473,7 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 			finally
 			{
-				lock(m_lUqiTasks) { m_lUqiTasks.Remove(str); }
+				lock(m_oUqiTasksSync) { m_lUqiTasks.Remove(str); }
 			}
 		}
 
@@ -505,7 +506,7 @@ namespace KeePass.UI
 				string strInfo = strLength + " " + KPRes.CharsAbbr;
 				if(Program.Config.UI.OptimizeForScreenReader)
 					strInfo = strBits + ", " + strInfo;
-				m_lblQualityInfo.Text = strInfo;
+				UIUtil.SetText(m_lblQualityInfo, strInfo);
 				if(m_ttHint != null)
 					m_ttHint.SetToolTip(m_lblQualityInfo, KPRes.PasswordLength +
 						": " + strLength + " " + KPRes.CharsStc);

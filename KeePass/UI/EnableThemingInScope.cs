@@ -37,7 +37,7 @@ namespace KeePass.UI
 	{
 		private UIntPtr? m_nuCookie = null;
 
-		private static object m_oSync = new object();
+		private static readonly object m_oSync = new object();
 		private static IntPtr? m_nhCtx = null;
 
 		public EnableThemingInScope(bool bEnable)

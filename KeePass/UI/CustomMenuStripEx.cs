@@ -52,5 +52,12 @@ namespace KeePass.UI
 		//	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
 		//	base.OnItemClicked(e);
 		// }
+
+		// protected override void OnMouseUp(MouseEventArgs mea)
+		// {
+		//	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
+		//	if(s != null) return;
+		//	base.OnMouseUp(mea);
+		// }
 	}
 }

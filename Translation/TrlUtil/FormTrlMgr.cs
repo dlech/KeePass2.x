@@ -61,7 +61,6 @@ namespace TrlUtil
 			AddForm(l, new EditAutoTypeItemForm());
 			AddForm(l, new EditStringForm());
 			AddForm(l, new EntropyForm());
-			AddForm(l, new EntryListForm());
 			AddForm(l, new EntryReportForm());
 			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new FieldPickerForm());
@@ -76,6 +75,7 @@ namespace TrlUtil
 			AddForm(l, new KeyCreationForm());
 			AddForm(l, new KeyPromptForm());
 			AddForm(l, new LanguageForm());
+			AddForm(l, new ListViewForm());
 			AddForm(l, new KeePass.Forms.MainForm());
 			AddForm(l, new OptionsForm());
 			AddForm(l, new PluginsForm());
@@ -92,6 +92,7 @@ namespace TrlUtil
 			AddForm(l, new UpdateCheckForm());
 			AddForm(l, new UrlOverrideForm());
 			AddForm(l, new UrlOverridesForm());
+			AddForm(l, new WebDocForm());
 			AddForm(l, new XmlReplaceForm());
 
 			return l;

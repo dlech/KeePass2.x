@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -33,10 +33,10 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Collections;
-using KeePassLib.Native;
-using KeePassLib.Security;
 using KeePassLib.Delegates;
+using KeePassLib.Native;
 using KeePassLib.Resources;
+using KeePassLib.Security;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
 
@@ -100,7 +100,7 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			CreateDialogBanner();
 
 			List<Image> lTabImg = new List<Image>();
@@ -219,15 +219,19 @@ namespace KeePass.Forms
 			if(strSortFieldName != null)
 				SortGroupEntriesRecursive(pgDataSource, strSortFieldName);
 
+			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
+
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
 			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 
-			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\" ");
+			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
 			string strLang = Program.Translation.Properties.Iso6391Code;
 			if(string.IsNullOrEmpty(strLang)) strLang = "en";
-			sb.AppendLine("lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\">");
+			sb.Append(" lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\"");
+			if(bRtl) sb.Append(" dir=\"rtl\"");
+			sb.AppendLine(">");
 
 			sb.AppendLine("<head>");
 			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
@@ -255,12 +259,14 @@ namespace KeePass.Forms
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
 			sb.AppendLine("\tpadding-left: 2pt;");
+			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
 			sb.AppendLine("}");
 			sb.AppendLine("h3 {");
 			sb.AppendLine("\tfont-size: 1.2em;");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
 			sb.AppendLine("\tpadding-left: 2pt;");
+			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
 			sb.AppendLine("}");
 			sb.AppendLine("h4 { font-size: 1em; }");
 			sb.AppendLine("h5 { font-size: 0.89em; }");
@@ -272,13 +278,13 @@ namespace KeePass.Forms
 			sb.AppendLine("}");
 
 			sb.AppendLine("th {");
-			sb.AppendLine("\ttext-align: left;");
+			sb.AppendLine("\ttext-align: " + (bRtl ? "right;" : "left;"));
 			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("\tfont-weight: bold;");
 			sb.AppendLine("}");
 
 			sb.AppendLine("td {");
-			sb.AppendLine("\ttext-align: left;");
+			sb.AppendLine("\ttext-align: " + (bRtl ? "right;" : "left;"));
 			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("}");
 

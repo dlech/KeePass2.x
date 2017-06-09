@@ -1257,6 +1257,27 @@ namespace KeePass.Properties {
             }
         }
         
+        internal static System.Drawing.Icon KeePass_G {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_G", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon KeePass_R {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_R", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon KeePass_Y {
+            get {
+                object obj = ResourceManager.GetObject("KeePass_Y", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon LockOverlay {
             get {
                 object obj = ResourceManager.GetObject("LockOverlay", resourceCulture);
@@ -1281,6 +1302,27 @@ namespace KeePass.Properties {
         internal static System.Drawing.Icon QuadNormal {
             get {
                 object obj = ResourceManager.GetObject("QuadNormal", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon QuadNormal_G {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_G", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon QuadNormal_R {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_R", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon QuadNormal_Y {
+            get {
+                object obj = ResourceManager.GetObject("QuadNormal_Y", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

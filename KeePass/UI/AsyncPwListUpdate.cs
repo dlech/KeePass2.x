@@ -64,14 +64,14 @@ namespace KeePass.UI
 	{
 		private readonly ListView m_lv;
 
-		private object m_objListEditSync = new object();
+		private readonly object m_objListEditSync = new object();
 		public object ListEditSyncObject
 		{
 			get { return m_objListEditSync; }
 		}
 
 		private Dictionary<long, bool> m_dValidIDs = new Dictionary<long, bool>();
-		private object m_objValidIDsSync = new object();
+		private readonly object m_objValidIDsSync = new object();
 
 		private sealed class LviUpdInfo
 		{

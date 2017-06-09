@@ -48,6 +48,7 @@ namespace KeePass.Forms
 		private bool m_bCanRememberCred = true;
 		private bool m_bTestConnection = false;
 
+		private SecureEdit m_secPassword = new SecureEdit();
 		private List<KeyValuePair<IocPropertyInfo, Control>> m_lProps =
 			new List<KeyValuePair<IocPropertyInfo, Control>>();
 
@@ -85,7 +86,7 @@ namespace KeePass.Forms
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				KeePass.Properties.Resources.B48x48_WWW, strTitle, strDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = strTitle;
 
 			FontUtil.AssignDefaultBold(m_lblUrl);
@@ -93,9 +94,11 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_lblPassword);
 			FontUtil.AssignDefaultBold(m_lblRemember);
 
+			m_secPassword.Attach(m_tbPassword, null, true);
+
 			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Path);
 			m_tbUserName.Text = m_ioc.UserName;
-			m_tbPassword.Text = m_ioc.Password;
+			m_secPassword.SetPassword(StrUtil.Utf8.GetBytes(m_ioc.Password));
 
 			m_cmbCredSaveMode.Items.Add(KPRes.CredSaveNone);
 			m_cmbCredSaveMode.Items.Add(KPRes.CredSaveUserOnly);
@@ -134,7 +137,7 @@ namespace KeePass.Forms
 
 			m_ioc.Path = strUrl;
 			m_ioc.UserName = m_tbUserName.Text;
-			m_ioc.Password = m_tbPassword.Text;
+			m_ioc.Password = StrUtil.Utf8.GetString(m_secPassword.ToUtf8());
 
 			if(m_cmbCredSaveMode.SelectedIndex == 1)
 				m_ioc.CredSaveMode = IOCredSaveMode.UserNameOnly;
@@ -262,6 +265,8 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			m_secPassword.Detach();
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -316,6 +321,14 @@ namespace KeePass.Forms
 			int wCell = (wPanel - (3 * d)) / 2;
 			int xText = d - 1;
 			int xInput = d + wCell + d - 1;
+			int xGroup = xText;
+
+			if(this.RightToLeft == RightToLeft.Yes)
+			{
+				int iTemp = xText;
+				xText = xInput;
+				xInput = iTemp;
+			}
 
 			int y = 1;
 			int iID = 0;
@@ -333,7 +346,7 @@ namespace KeePass.Forms
 				lblGroup.AutoEllipsis = true;
 				lblGroup.AutoSize = false;
 				lblGroup.Dock = DockStyle.None;
-				lblGroup.Location = new Point(xText, y);
+				lblGroup.Location = new Point(xGroup, y);
 				lblGroup.Size = new Size(wGroup, hLabel);
 				lblGroup.Text = strGroup;
 				lblGroup.TextAlign = ContentAlignment.MiddleLeft;

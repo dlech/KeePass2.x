@@ -79,6 +79,7 @@ namespace KeePass.Resources
 			m_strAutoShowExpiredEntries = TryGetEx(dictNew, "AutoShowExpiredEntries", m_strAutoShowExpiredEntries);
 			m_strAutoShowSoonToExpireEntries = TryGetEx(dictNew, "AutoShowSoonToExpireEntries", m_strAutoShowSoonToExpireEntries);
 			m_strAutoType = TryGetEx(dictNew, "AutoType", m_strAutoType);
+			m_strAutoTypeAbortedOnWindow = TryGetEx(dictNew, "AutoTypeAbortedOnWindow", m_strAutoTypeAbortedOnWindow);
 			m_strAutoTypeAlwaysShowSelDialog = TryGetEx(dictNew, "AutoTypeAlwaysShowSelDialog", m_strAutoTypeAlwaysShowSelDialog);
 			m_strAutoTypeCancelOnTitleChange = TryGetEx(dictNew, "AutoTypeCancelOnTitleChange", m_strAutoTypeCancelOnTitleChange);
 			m_strAutoTypeCancelOnWindowChange = TryGetEx(dictNew, "AutoTypeCancelOnWindowChange", m_strAutoTypeCancelOnWindowChange);
@@ -224,6 +225,10 @@ namespace KeePass.Resources
 			m_strDocumentationHint = TryGetEx(dictNew, "DocumentationHint", m_strDocumentationHint);
 			m_strDragDrop = TryGetEx(dictNew, "DragDrop", m_strDragDrop);
 			m_strDropToBackOnCopy = TryGetEx(dictNew, "DropToBackOnCopy", m_strDropToBackOnCopy);
+			m_strDuplicatePasswords = TryGetEx(dictNew, "DuplicatePasswords", m_strDuplicatePasswords);
+			m_strDuplicatePasswordsGroup = TryGetEx(dictNew, "DuplicatePasswordsGroup", m_strDuplicatePasswordsGroup);
+			m_strDuplicatePasswordsList = TryGetEx(dictNew, "DuplicatePasswordsList", m_strDuplicatePasswordsList);
+			m_strDuplicatePasswordsNone = TryGetEx(dictNew, "DuplicatePasswordsNone", m_strDuplicatePasswordsNone);
 			m_strDuplicateStringFieldName = TryGetEx(dictNew, "DuplicateStringFieldName", m_strDuplicateStringFieldName);
 			m_strEditCmd = TryGetEx(dictNew, "EditCmd", m_strEditCmd);
 			m_strEditEntry = TryGetEx(dictNew, "EditEntry", m_strEditEntry);
@@ -430,6 +435,7 @@ namespace KeePass.Resources
 			m_strLanguageSelected = TryGetEx(dictNew, "LanguageSelected", m_strLanguageSelected);
 			m_strLastAccessTime = TryGetEx(dictNew, "LastAccessTime", m_strLastAccessTime);
 			m_strLastModificationTime = TryGetEx(dictNew, "LastModificationTime", m_strLastModificationTime);
+			m_strLastModTimePwHist = TryGetEx(dictNew, "LastModTimePwHist", m_strLastModTimePwHist);
 			m_strLimitSingleInstance = TryGetEx(dictNew, "LimitSingleInstance", m_strLimitSingleInstance);
 			m_strLocked = TryGetEx(dictNew, "Locked", m_strLocked);
 			m_strLockMenuLock = TryGetEx(dictNew, "LockMenuLock", m_strLockMenuLock);
@@ -526,6 +532,8 @@ namespace KeePass.Resources
 			m_strPasswordOptions = TryGetEx(dictNew, "PasswordOptions", m_strPasswordOptions);
 			m_strPasswordOptionsDesc = TryGetEx(dictNew, "PasswordOptionsDesc", m_strPasswordOptionsDesc);
 			m_strPasswordPrompt = TryGetEx(dictNew, "PasswordPrompt", m_strPasswordPrompt);
+			m_strPasswordQuality = TryGetEx(dictNew, "PasswordQuality", m_strPasswordQuality);
+			m_strPasswordQualityReport = TryGetEx(dictNew, "PasswordQualityReport", m_strPasswordQualityReport);
 			m_strPasswordRepeatFailed = TryGetEx(dictNew, "PasswordRepeatFailed", m_strPasswordRepeatFailed);
 			m_strPasswordRepeatHint = TryGetEx(dictNew, "PasswordRepeatHint", m_strPasswordRepeatHint);
 			m_strPaste = TryGetEx(dictNew, "Paste", m_strPaste);
@@ -572,6 +580,7 @@ namespace KeePass.Resources
 			m_strPrintDesc = TryGetEx(dictNew, "PrintDesc", m_strPrintDesc);
 			m_strPrivate = TryGetEx(dictNew, "Private", m_strPrivate);
 			m_strProfessional = TryGetEx(dictNew, "Professional", m_strProfessional);
+			m_strQuality = TryGetEx(dictNew, "Quality", m_strQuality);
 			m_strQuickSearchExclExpired = TryGetEx(dictNew, "QuickSearchExclExpired", m_strQuickSearchExclExpired);
 			m_strQuickSearchInPwFields = TryGetEx(dictNew, "QuickSearchInPwFields", m_strQuickSearchInPwFields);
 			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
@@ -655,6 +664,10 @@ namespace KeePass.Resources
 			m_strShowIn = TryGetEx(dictNew, "ShowIn", m_strShowIn);
 			m_strShowMessageBox = TryGetEx(dictNew, "ShowMessageBox", m_strShowMessageBox);
 			m_strShowTrayOnlyIfTrayed = TryGetEx(dictNew, "ShowTrayOnlyIfTrayed", m_strShowTrayOnlyIfTrayed);
+			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
+			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
+			m_strSimilarPasswordsList = TryGetEx(dictNew, "SimilarPasswordsList", m_strSimilarPasswordsList);
+			m_strSimilarPasswordsNoDup = TryGetEx(dictNew, "SimilarPasswordsNoDup", m_strSimilarPasswordsNoDup);
 			m_strSize = TryGetEx(dictNew, "Size", m_strSize);
 			m_strSlow = TryGetEx(dictNew, "Slow", m_strSlow);
 			m_strSoonToExpireEntries = TryGetEx(dictNew, "SoonToExpireEntries", m_strSoonToExpireEntries);
@@ -700,6 +713,9 @@ namespace KeePass.Resources
 			m_strToolBarSaveAll = TryGetEx(dictNew, "ToolBarSaveAll", m_strToolBarSaveAll);
 			m_strTooManyFilesError = TryGetEx(dictNew, "TooManyFilesError", m_strTooManyFilesError);
 			m_strTransformTime = TryGetEx(dictNew, "TransformTime", m_strTransformTime);
+			m_strTrayIcon = TryGetEx(dictNew, "TrayIcon", m_strTrayIcon);
+			m_strTrayIconGray = TryGetEx(dictNew, "TrayIconGray", m_strTrayIconGray);
+			m_strTrayIconSingleClick = TryGetEx(dictNew, "TrayIconSingleClick", m_strTrayIconSingleClick);
 			m_strTrigger = TryGetEx(dictNew, "Trigger", m_strTrigger);
 			m_strTriggerActionTypeUnknown = TryGetEx(dictNew, "TriggerActionTypeUnknown", m_strTriggerActionTypeUnknown);
 			m_strTriggerAdd = TryGetEx(dictNew, "TriggerAdd", m_strTriggerAdd);
@@ -835,6 +851,7 @@ namespace KeePass.Resources
 			"AutoShowExpiredEntries",
 			"AutoShowSoonToExpireEntries",
 			"AutoType",
+			"AutoTypeAbortedOnWindow",
 			"AutoTypeAlwaysShowSelDialog",
 			"AutoTypeCancelOnTitleChange",
 			"AutoTypeCancelOnWindowChange",
@@ -980,6 +997,10 @@ namespace KeePass.Resources
 			"DocumentationHint",
 			"DragDrop",
 			"DropToBackOnCopy",
+			"DuplicatePasswords",
+			"DuplicatePasswordsGroup",
+			"DuplicatePasswordsList",
+			"DuplicatePasswordsNone",
 			"DuplicateStringFieldName",
 			"EditCmd",
 			"EditEntry",
@@ -1186,6 +1207,7 @@ namespace KeePass.Resources
 			"LanguageSelected",
 			"LastAccessTime",
 			"LastModificationTime",
+			"LastModTimePwHist",
 			"LimitSingleInstance",
 			"Locked",
 			"LockMenuLock",
@@ -1282,6 +1304,8 @@ namespace KeePass.Resources
 			"PasswordOptions",
 			"PasswordOptionsDesc",
 			"PasswordPrompt",
+			"PasswordQuality",
+			"PasswordQualityReport",
 			"PasswordRepeatFailed",
 			"PasswordRepeatHint",
 			"Paste",
@@ -1328,6 +1352,7 @@ namespace KeePass.Resources
 			"PrintDesc",
 			"Private",
 			"Professional",
+			"Quality",
 			"QuickSearchExclExpired",
 			"QuickSearchInPwFields",
 			"QuickSearchDerefData",
@@ -1411,6 +1436,10 @@ namespace KeePass.Resources
 			"ShowIn",
 			"ShowMessageBox",
 			"ShowTrayOnlyIfTrayed",
+			"SimilarPasswords",
+			"SimilarPasswordsGroup",
+			"SimilarPasswordsList",
+			"SimilarPasswordsNoDup",
 			"Size",
 			"Slow",
 			"SoonToExpireEntries",
@@ -1456,6 +1485,9 @@ namespace KeePass.Resources
 			"ToolBarSaveAll",
 			"TooManyFilesError",
 			"TransformTime",
+			"TrayIcon",
+			"TrayIconGray",
+			"TrayIconSingleClick",
 			"Trigger",
 			"TriggerActionTypeUnknown",
 			"TriggerAdd",
@@ -2125,6 +2157,17 @@ namespace KeePass.Resources
 			get { return m_strAutoType; }
 		}
 
+		private static string m_strAutoTypeAbortedOnWindow =
+			@"Auto-Type has been aborted, because the target window is disallowed by the application policy (defined by your administrator).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Auto-Type has been aborted, because the target window is disallowed by the application policy (defined by your administrator).'.
+		/// </summary>
+		public static string AutoTypeAbortedOnWindow
+		{
+			get { return m_strAutoTypeAbortedOnWindow; }
+		}
+
 		private static string m_strAutoTypeAlwaysShowSelDialog =
 			@"Always show global auto-type entry selection dialog";
 		/// <summary>
@@ -2247,10 +2290,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strAutoTypeObfuscationHint =
-			@"Auto-type obfuscation may not work with all windows.";
+			@"Auto-Type obfuscation may not work with all windows.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Auto-type obfuscation may not work with all windows.'.
+		/// 'Auto-Type obfuscation may not work with all windows.'.
 		/// </summary>
 		public static string AutoTypeObfuscationHint
 		{
@@ -3718,6 +3761,50 @@ namespace KeePass.Resources
 		public static string DropToBackOnCopy
 		{
 			get { return m_strDropToBackOnCopy; }
+		}
+
+		private static string m_strDuplicatePasswords =
+			@"Duplicate Passwords";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Duplicate Passwords'.
+		/// </summary>
+		public static string DuplicatePasswords
+		{
+			get { return m_strDuplicatePasswords; }
+		}
+
+		private static string m_strDuplicatePasswordsGroup =
+			@"Entries using the same password:";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Entries using the same password:'.
+		/// </summary>
+		public static string DuplicatePasswordsGroup
+		{
+			get { return m_strDuplicatePasswordsGroup; }
+		}
+
+		private static string m_strDuplicatePasswordsList =
+			@"List of entries that are using the same passwords.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'List of entries that are using the same passwords.'.
+		/// </summary>
+		public static string DuplicatePasswordsList
+		{
+			get { return m_strDuplicatePasswordsList; }
+		}
+
+		private static string m_strDuplicatePasswordsNone =
+			@"No duplicate passwords have been found.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'No duplicate passwords have been found.'.
+		/// </summary>
+		public static string DuplicatePasswordsNone
+		{
+			get { return m_strDuplicatePasswordsNone; }
 		}
 
 		private static string m_strDuplicateStringFieldName =
@@ -5986,6 +6073,17 @@ namespace KeePass.Resources
 			get { return m_strLastModificationTime; }
 		}
 
+		private static string m_strLastModTimePwHist =
+			@"Last Password Modification Time (Based on History)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Last Password Modification Time (Based on History)'.
+		/// </summary>
+		public static string LastModTimePwHist
+		{
+			get { return m_strLastModTimePwHist; }
+		}
+
 		private static string m_strLimitSingleInstance =
 			@"Limit to single instance";
 		/// <summary>
@@ -7042,6 +7140,28 @@ namespace KeePass.Resources
 			get { return m_strPasswordPrompt; }
 		}
 
+		private static string m_strPasswordQuality =
+			@"Password Quality";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Password Quality'.
+		/// </summary>
+		public static string PasswordQuality
+		{
+			get { return m_strPasswordQuality; }
+		}
+
+		private static string m_strPasswordQualityReport =
+			@"Estimated quality of the entry passwords.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Estimated quality of the entry passwords.'.
+		/// </summary>
+		public static string PasswordQualityReport
+		{
+			get { return m_strPasswordQualityReport; }
+		}
+
 		private static string m_strPasswordRepeatFailed =
 			@"Password and repeated password aren't identical!";
 		/// <summary>
@@ -7546,6 +7666,17 @@ namespace KeePass.Resources
 		public static string Professional
 		{
 			get { return m_strProfessional; }
+		}
+
+		private static string m_strQuality =
+			@"Quality";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Quality'.
+		/// </summary>
+		public static string Quality
+		{
+			get { return m_strQuality; }
 		}
 
 		private static string m_strQuickSearchExclExpired =
@@ -8461,6 +8592,50 @@ namespace KeePass.Resources
 			get { return m_strShowTrayOnlyIfTrayed; }
 		}
 
+		private static string m_strSimilarPasswords =
+			@"Similar Passwords";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Similar Passwords'.
+		/// </summary>
+		public static string SimilarPasswords
+		{
+			get { return m_strSimilarPasswords; }
+		}
+
+		private static string m_strSimilarPasswordsGroup =
+			@"Entries using similar passwords (similarity: {PARAM}):";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Entries using similar passwords (similarity: {PARAM}):'.
+		/// </summary>
+		public static string SimilarPasswordsGroup
+		{
+			get { return m_strSimilarPasswordsGroup; }
+		}
+
+		private static string m_strSimilarPasswordsList =
+			@"List of entries that are using similar passwords.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'List of entries that are using similar passwords.'.
+		/// </summary>
+		public static string SimilarPasswordsList
+		{
+			get { return m_strSimilarPasswordsList; }
+		}
+
+		private static string m_strSimilarPasswordsNoDup =
+			@"The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the 'Find Duplicate Passwords' command (in the main menu).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the &#39;Find Duplicate Passwords&#39; command (in the main menu).'.
+		/// </summary>
+		public static string SimilarPasswordsNoDup
+		{
+			get { return m_strSimilarPasswordsNoDup; }
+		}
+
 		private static string m_strSize =
 			@"Size";
 		/// <summary>
@@ -8954,6 +9129,39 @@ namespace KeePass.Resources
 		public static string TransformTime
 		{
 			get { return m_strTransformTime; }
+		}
+
+		private static string m_strTrayIcon =
+			@"Tray Icon";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Tray Icon'.
+		/// </summary>
+		public static string TrayIcon
+		{
+			get { return m_strTrayIcon; }
+		}
+
+		private static string m_strTrayIconGray =
+			@"Use gray tray icon";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Use gray tray icon'.
+		/// </summary>
+		public static string TrayIconGray
+		{
+			get { return m_strTrayIconGray; }
+		}
+
+		private static string m_strTrayIconSingleClick =
+			@"Single click instead of double click for default tray icon action";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Single click instead of double click for default tray icon action'.
+		/// </summary>
+		public static string TrayIconSingleClick
+		{
+			get { return m_strTrayIconSingleClick; }
 		}
 
 		private static string m_strTrigger =

@@ -1,3 +1,69 @@
+2017-06-09: 2.36
+- Added commands 'Find Duplicate Passwords' and 'Find Similar
+  Passwords' (in 'Edit' -> 'Show Entries'), which show entries
+  that are using the same or similar passwords
+- Added command 'Password Quality Report' (in 'Edit' -> 'Show
+  Entries'), which shows all entries and the estimated quality
+  of their passwords
+- Added option 'String name' in the 'Edit' -> 'Find' dialog
+  (for searching entries that have a specific custom string
+  field)
+- Added option for using a gray tray icon
+- Added {CMD:/.../} placeholder, which runs a command line
+- Added {T-CONV:/.../Raw/} placeholder, which inserts a text
+  without encoding it for the current context
+- Added optional 'Last Password Modification Time (Based on
+  History)' entry list column
+- The internal text editor now supports editing PS1 files
+- The position and size of the internal data viewer is now
+  remembered and restored
+- For various dialogs, the maximized state is now remembered
+  and restored
+- Added configuration option for specifying an expiry date for
+  master keys
+- Added configuration option for specifying disallowed
+  auto-type target windows
+- Added workaround for Edge throwing away all keyboard input
+  for a short time after its activation
+- Added workaround for Mono not properly rendering bold and
+  italic text in rich text boxes
+- TrlUtil now performs a case-sensitive word validation
+
+- The password input controls in the IO connection dialog and
+  the proxy dialog now are secure edit controls
+- The icon of the 'Save' command in the main menu is now grayed
+  out when there are no database changes (like the toolbar
+  button)
+- Auto-Type: improved support for target applications that
+  redirect the focus immediately
+- Auto-Type: improved compatibility with VMware vSphere client
+- When an error occurs during auto-type, KeePass is now brought
+  to the foreground before showing an error message box
+- Entries in groups where searching is disabled (e.g. the
+  recycle bin group) are now ignored by the commands that show
+  expired entries
+- Improved scrolling when moving entries while grouping in the
+  entry list is on
+- Improved support for right-to-left writing systems
+- Improved application and system tray icon handling
+- Updated low resolution ICO files (for Mono development)
+- Moved single-click tray icon action option from the
+  'Integration' tab to the 'Interface' tab of the options
+  dialog
+- Synchronization file path comparisons are case-insensitive
+  now
+- Improved workaround for Mono clipboard bug (improved
+  performance and window detection; the workaround is now
+  applied only if 'xsel' and 'xdotool' are installed)
+- Enhanced PrepMonoDev.sh script
+- KPScript: times in group and entry lists now contain a time
+  zone identifier (typically 'Z' for UTC)
+- Various code optimizations
+- Minor other improvements
+
+- The drop-down menu commands in the entry editing dialog for
+  setting the expiry date now work as expected
+
 2017-01-09: 2.35
 - New KDBX 4 file format, which supports various new features
   (listed below; e.g. Argon2)

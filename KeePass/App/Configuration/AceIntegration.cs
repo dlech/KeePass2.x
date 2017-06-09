@@ -220,6 +220,18 @@ namespace KeePass.App.Configuration
 			set { m_iInterKeyDelay = value; }
 		}
 
+		private List<string> m_lAbortWindows = new List<string>();
+		[XmlArrayItem("Window")]
+		public List<string> AutoTypeAbortOnWindows
+		{
+			get { return m_lAbortWindows; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_lAbortWindows = value;
+			}
+		}
+
 		private ProxyServerType m_pstProxyType = ProxyServerType.System;
 		public ProxyServerType ProxyType
 		{

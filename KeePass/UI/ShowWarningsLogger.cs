@@ -62,7 +62,9 @@ namespace KeePass.UI
 		~ShowWarningsLogger()
 		{
 			Debug.Assert(m_bEndedLogging);
-			if(!m_bEndedLogging) EndLogging();
+
+			try { if(!m_bEndedLogging) EndLogging(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)

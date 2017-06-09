@@ -48,6 +48,7 @@ namespace KeePass.Util
 			new List<KeyValuePair<string, bool>>();
 
 		private Dictionary<string, bool> m_dContentLoc = new Dictionary<string, bool>();
+		private readonly object m_oContentLocSync = new object();
 
 		private long m_nThreads = 0;
 
@@ -159,7 +160,7 @@ namespace KeePass.Util
 		{
 			if(string.IsNullOrEmpty(strFilePattern)) { Debug.Assert(false); return; }
 
-			lock(m_dContentLoc)
+			lock(m_oContentLocSync)
 			{
 				if(m_dContentLoc.ContainsKey(strFilePattern) && !bRecursive)
 					return; // Do not overwrite recursive with non-recursive
@@ -210,7 +211,7 @@ namespace KeePass.Util
 
 		private void ClearContentAsync()
 		{
-			lock(m_dContentLoc)
+			lock(m_oContentLocSync)
 			{
 				if(m_dContentLoc.Count == 0) return;
 			}
@@ -240,7 +241,7 @@ namespace KeePass.Util
 				string strTempPath = UrlUtil.GetTempPath();
 
 				Dictionary<string, bool> dToDo;
-				lock(m_dContentLoc)
+				lock(m_oContentLocSync)
 				{
 					dToDo = new Dictionary<string, bool>(m_dContentLoc);
 					m_dContentLoc.Clear();
@@ -258,7 +259,7 @@ namespace KeePass.Util
 
 					if(!bSuccess)
 					{
-						lock(m_dContentLoc)
+						lock(m_oContentLocSync)
 						{
 							m_dContentLoc[kvp.Key] = kvp.Value; // Try again next time
 						}

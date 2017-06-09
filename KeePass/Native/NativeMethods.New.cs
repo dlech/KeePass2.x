@@ -133,6 +133,8 @@ namespace KeePass.Native
 		{
 			if(!IsWindowEx(hWnd)) return false;
 
+			IntPtr hWndInit = GetForegroundWindowHandle();
+
 			if(!SetForegroundWindowEx(hWnd))
 			{
 				Debug.Assert(false);
@@ -144,6 +146,13 @@ namespace KeePass.Native
 			{
 				IntPtr h = GetForegroundWindowHandle();
 				if(h == hWnd) return true;
+
+				// Some applications (like Microsoft Edge) have multiple
+				// windows and automatically redirect the focus to other
+				// windows, thus also break when a different window gets
+				// focused (except when h is zero, which can occur while
+				// the focus transfer occurs)
+				if((h != IntPtr.Zero) && (h != hWndInit)) return true;
 
 				Application.DoEvents();
 			}

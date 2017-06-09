@@ -37,7 +37,7 @@ namespace KeePass.UI
 
 		private Thread m_th = null;
 		private StatusProgressForm m_dlgModal = null;
-		private object m_objSync = new object();
+		private readonly object m_objSync = new object();
 
 		private const uint InitialProgress = 0;
 		private const string InitialStatus = null;

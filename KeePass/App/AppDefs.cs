@@ -36,6 +36,9 @@ namespace KeePass.App
 		public static readonly Color ColorControlDisabled = SystemColors.Control;
 		public static readonly Color ColorEditError = Color.FromArgb(255, 192, 192);
 
+		public static readonly Color ColorQualityLow = Color.FromArgb(255, 128, 0);
+		public static readonly Color ColorQualityHigh = Color.FromArgb(0, 255, 0);
+
 		public const string XslFilesDir = "XSL";
 		public const string XslFileHtmlFull = "KDBX_DetailsFull_HTML.xsl";
 		public const string XslFileHtmlLight = "KDBX_DetailsLight_HTML.xsl";

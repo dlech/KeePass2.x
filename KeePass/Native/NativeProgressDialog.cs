@@ -73,7 +73,8 @@ namespace KeePass.Native
 
 		~NativeProgressDialog()
 		{
-			EndLogging();
+			try { EndLogging(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)

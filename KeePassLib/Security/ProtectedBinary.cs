@@ -139,7 +139,7 @@ namespace KeePassLib.Security
 
 		private PbMemProt m_mp = PbMemProt.None; // Actual protection
 
-		private object m_objSync = new object();
+		private readonly object m_objSync = new object();
 
 		private static byte[] g_pbKey32 = null;
 

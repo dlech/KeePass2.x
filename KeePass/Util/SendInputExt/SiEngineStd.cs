@@ -19,12 +19,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Native;
+using KeePass.Resources;
+
+using KeePassLib.Utility;
 
 namespace KeePass.Util.SendInputExt
 {
@@ -131,32 +135,57 @@ namespace KeePass.Util.SendInputExt
 		{
 			if(this.Cancelled) return false;
 
-			bool bChkWnd = Program.Config.Integration.AutoTypeCancelOnWindowChange;
-			bool bChkTitle = Program.Config.Integration.AutoTypeCancelOnTitleChange;
-			if(!bChkWnd && !bChkTitle) return true;
+			List<string> lAbortWindows = Program.Config.Integration.AutoTypeAbortOnWindows;
 
-			bool bValid = true;
-			try
+			bool bChkWndCh = Program.Config.Integration.AutoTypeCancelOnWindowChange;
+			bool bChkTitleCh = Program.Config.Integration.AutoTypeCancelOnTitleChange;
+			bool bChkTitleFx = (lAbortWindows.Count != 0);
+
+			if(bChkWndCh || bChkTitleCh || bChkTitleFx)
 			{
-				IntPtr h;
-				string strTitle;
-				NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
-
-				if(bChkWnd && (h != this.TargetHWnd))
+				IntPtr h = IntPtr.Zero;
+				string strTitle = null;
+				bool bHasInfo = true;
+				try
 				{
-					this.Cancelled = true;
-					bValid = false;
+					NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
 				}
+				catch(Exception) { Debug.Assert(false); bHasInfo = false; }
+				if(strTitle == null) strTitle = string.Empty;
 
-				if(bChkTitle && ((strTitle ?? string.Empty) != this.TargetWindowTitle))
+				if(bHasInfo)
 				{
-					this.Cancelled = true;
-					bValid = false;
+					if(bChkWndCh && (h != this.TargetHWnd))
+					{
+						this.Cancelled = true;
+						return false;
+					}
+
+					if(bChkTitleCh && (strTitle != this.TargetWindowTitle))
+					{
+						this.Cancelled = true;
+						return false;
+					}
+
+					if(bChkTitleFx)
+					{
+						foreach(string strWnd in lAbortWindows)
+						{
+							if(string.IsNullOrEmpty(strWnd)) continue;
+
+							if(AutoType.MatchWindows(strWnd, strTitle))
+							{
+								this.Cancelled = true;
+								throw new SecurityException(KPRes.AutoTypeAbortedOnWindow +
+									MessageService.NewParagraph + KPRes.TargetWindow +
+									@": '" + strTitle + @"'.");
+							}
+						}
+					}
 				}
 			}
-			catch(Exception) { Debug.Assert(false); }
 
-			return bValid;
+			return true;
 		}
 	}
 }

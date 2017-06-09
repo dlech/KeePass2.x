@@ -277,7 +277,12 @@ Supported types are:
 <li><b>Upper</b> or <b>U</b>:<br />
 Upper-case.</li>
 <li><b>Lower</b> or <b>L</b>:<br />
-Lower-case.</li>
+Lower-case.<br />
+<em>Example.</em>
+Let the user name of an entry be '<code>Bob</code>' and
+the URL '<code>http://myprovider.net/?user={T-CONV:/{USERNAME}/L/}</code>'.
+When running the URL, KeePass opens
+'<code>http://myprovider.net/?user=bob</code>'.</li>
 <li><b>Base64</b>:<br />
 The Base64 encoding of the UTF-8 representation of the text.</li>
 <li><b>Hex</b>:<br />
@@ -286,12 +291,19 @@ The Hex encoding of the UTF-8 representation of the text.</li>
 The URI-escaped representation of the text.</li>
 <li><b>Uri-Dec</b>:<br />
 The URI-unescaped representation of the text.</li>
+<li><b>Raw</b>:<br />
+Spr-compiles <em>Text</em> without encoding the result for the current context.<br />
+<em>Example.</em>
+Let the user name of an entry be '<code>+</code>'.
+The auto-type sequence '<code>{USERNAME}a</code>' results in the text
+'<code>+a</code>', whereas the auto-type sequence
+'<code>{T-CONV:/{USERNAME}/Raw/}a</code>' results in the text
+'<code>A</code>'
+(because this placeholder inserts '<code>+</code>' into the auto-type
+sequence without encoding it, and
+'<code>+a</code>' means to press <kbd><kbd>Shift</kbd>+<kbd>A</kbd></kbd>,
+which results in the text '<code>A</code>').</li>
 </ul>
-<em>Usage example.</em>
-Let the user name field contain '<code>Bob</code>' and
-the URL field '<code>http://myprovider.net/?user={T-CONV:/{USERNAME}/L/}</code>'.
-When running the URL field, KeePass opens
-'<code>http://myprovider.net/?user=bob</code>'.
 
 
 <br /><br />
@@ -331,6 +343,8 @@ See <a href="#hmacotp">below</a>.</td></tr>
 each of these placeholders is replaced by the specified part of the string that is
 being overridden.
 See <a href="#url">below</a>.</td></tr>
+<tr><td width="50%"><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code></td>
+<td width="50%">Runs a command line. See <a href="#cmd">below</a>.</td></tr>
 </table>
 
 
@@ -416,7 +430,7 @@ and the placeholders are the same),
 KeePass shows the character picking dialog once and reuses the picked characters
 in all following placeholders with the same ID.<br />
 <br />
-Usage examples:<br />
+<em>Usage examples</em>:<br />
 <br />
 <code>{USERNAME}{TAB}{PICKCHARS:Password:C=5}{ENTER}</code><br />
 First a dialog is shown in which the user can pick exactly 5 characters
@@ -515,7 +529,7 @@ entry string fields:
 <code>HmacOtp-Secret-Base64</code> (secret as Base64 string).
 The counter is stored in decimal form in the <code>HmacOtp-Counter</code> field.<br />
 <br />
-<i>Usage example.</i>
+<em>Usage example.</em>
 Create a new entry, set its password to the <code>{HMACOTP}</code>
 placeholder, switch to the 'Advanced' tab, add a string named
 <code>HmacOtp-Secret</code> with value 12345678901234567890,
@@ -542,7 +556,7 @@ of the URL being overridden; this typically is useful in a
 global URL override (defined in 'Tools' -&gt; 'Options' -&gt; tab 'Integration' -&gt;
 button 'URL Overrides'), because there no entry context may be available.<br />
 <br />
-<i>Example.</i> For the entry URL
+<em>Usage example.</em> For the entry URL
 <code>http://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code>,
 the placeholders return the following values:<br />
 <br />
@@ -571,6 +585,100 @@ the placeholders return the following values:<br />
 </table>
 <br />
 <code>{BASE}</code> supports exactly the same parts as <code>{URL}</code>.
+
+
+<br /><br />
+
+<a name="cmd"></a>
+
+<b><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code> &#8211; Running a command line:</b><br />
+The <code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code> placeholder
+runs the specified command line.<br />
+<br />
+A command line consists of a path to an executable file or a document
+and command line parameters.
+If the path contains spaces, it must be enclosed in quotes (<code>&quot;</code>).<br />
+<br />
+The character after the first '<code>:</code>' specifies the separator
+character. It can be chosen freely (except '<code>{</code>' and '<code>}</code>'),
+but it must not occur in the command line or any of the options.
+For example, <code>{CMD:/Notepad.exe/W=0/}</code> and
+<code>{CMD:!Notepad.exe!W=0!}</code> are equivalent.
+The separator character at the end (before the '<code>}</code>') is mandatory.<br />
+<br />
+An option is a key-value pair, separated by '<code>=</code>'.
+Multiple options must be separated using commas '<code>,</code>'.<br />
+<br />
+Options:
+<ul>
+<li><strong><code>M</code></strong>:
+Specifies the method for running/opening the executable/document.<br />
+The default value is <code>S</code>.
+<ul>
+<li><strong><code>S</code></strong>:
+Use the system shell (via <code>ShellExecute</code>).
+With this, executable files are executed and documents are opened
+using their associated applications.
+However, no standard input/output is supported.</li>
+<li><strong><code>C</code></strong>:
+Run an executable file (EXE or COM, via <code>CreateProcess</code>);
+documents are not supported.
+Standard input/output is supported.</li>
+</ul>
+</li>
+
+<li><strong><code>O</code></strong>:
+Specifies what to do with the standard output of the executed application.<br />
+The default value is <code>1</code>.
+<ul>
+<li><strong><code>0</code></strong>:
+Ignore the standard output. The placeholder is replaced by an empty string.</li>
+<li><strong><code>1</code></strong>:
+Replace the placeholder by the standard output.</li>
+</ul>
+</li>
+
+<li><strong><code>W</code></strong>:
+Specifies whether to wait for the termination of the executed application.<br />
+The default value is <code>1</code>.
+<ul>
+<li><strong><code>0</code></strong>:
+Do not wait.</li>
+<li><strong><code>1</code></strong>:
+Wait.</li>
+</ul>
+</li>
+
+<li><strong><code>WS</code></strong>:
+Specifies the window style. Not all applications support this option.<br />
+The default value is <code>N</code>.
+<ul>
+<li><strong><code>N</code></strong>:
+Normal.</li>
+<li><strong><code>H</code></strong>:
+Hidden.</li>
+<li><strong><code>Min</code></strong>:
+Minimized.</li>
+<li><strong><code>Max</code></strong>:
+Maximized.</li>
+</ul>
+</li>
+
+<li><strong><code>V</code></strong>:
+Specifies the verb (action to be performed),
+e.g. 'Open' or 'Print'.
+When using the verb 'RunAs', the application is executed with administrative
+rights (this may require a confirmation via the UAC dialog).</li>
+</ul>
+
+<em>Usage examples:</em>
+<ul>
+<li><code>{CMD:/Notepad.exe/W=0/}</code><br />
+Runs Notepad and continues immediately.</li>
+<li><code>{CMD:/PowerShell.exe -Command &quot;(Get-FileHash '%SYSTEMROOT%\Win.ini'
+-Algorithm SHA256).Hash&quot;/M=C,WS=H/}</code><br />
+The placeholder is replaced by the SHA-256 hash of Windows' Win.ini file.</li>
+</ul>
 
 
 </body></html>

@@ -73,6 +73,9 @@ namespace KeePass.UI
 
 	public static class UIUtil
 	{
+		private const int FwsNormal = 0;
+		private const int FwsMaximized = 2; // Compatible with FormWindowState
+
 		private static bool m_bVistaStyleLists = false;
 		public static bool VistaStyleListsSupported
 		{
@@ -1228,6 +1231,9 @@ namespace KeePass.UI
 			if(ts == null) { Debug.Assert(false); return; }
 			if(Program.DesignMode) return;
 
+			// if(Program.Translation.Properties.RightToLeft)
+			//	ts.RightToLeft = RightToLeft.Yes;
+
 			DpiUtil.Configure(ts);
 		}
 
@@ -1590,8 +1596,9 @@ namespace KeePass.UI
 
 		public static bool ColorsEqual(Color c1, Color c2)
 		{
-			return ((c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B) &&
-				(c1.A == c2.A));
+			// return ((c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B) &&
+			//	(c1.A == c2.A));
+			return (c1.ToArgb() == c2.ToArgb());
 		}
 
 		public static Color GetAlternateColor(Color clrBase)
@@ -2154,61 +2161,76 @@ namespace KeePass.UI
 		{
 			if(f == null) { Debug.Assert(false); return string.Empty; }
 
-			StringBuilder sb = new StringBuilder();
+			List<int> l = new List<int>();
 
-			Point ptLocation = f.Location;
-			sb.Append(ptLocation.X);
-			sb.Append(", ");
-			sb.Append(ptLocation.Y);
+			Point pt = f.Location;
+			l.Add(pt.X);
+			l.Add(pt.Y);
 
-			if((f.FormBorderStyle == FormBorderStyle.Sizable) ||
-				(f.FormBorderStyle == FormBorderStyle.SizableToolWindow))
+			FormBorderStyle s = f.FormBorderStyle;
+			if((s == FormBorderStyle.Sizable) || (s == FormBorderStyle.SizableToolWindow))
 			{
-				Size szSize = f.Size;
-				sb.Append(", ");
-				sb.Append(szSize.Width);
-				sb.Append(", ");
-				sb.Append(szSize.Height);
+				Size sz = f.Size;
+				l.Add(sz.Width);
+				l.Add(sz.Height);
+
+				if(f.WindowState == FormWindowState.Maximized) l.Add(FwsMaximized);
 			}
 
-			return sb.ToString();
+			return StrUtil.SerializeIntArray(l.ToArray());
 		}
 
-		public static void SetWindowScreenRect(Form f, string strScreenRect)
+		public static void SetWindowScreenRect(Form f, string strRect)
 		{
-			if((f == null) || (strScreenRect == null)) { Debug.Assert(false); return; }
+			if((f == null) || (strRect == null)) { Debug.Assert(false); return; }
 
-			string[] v = strScreenRect.Split(new char[] { ',', ' ' },
-				StringSplitOptions.RemoveEmptyEntries);
+			try
+			{
+				// Backward compatibility (", " as separator)
+				Debug.Assert(StrUtil.SerializeIntArray(new int[] {
+					12, 34, 56 }) == "12 34 56"); // Should not use ','
+				string str = strRect.Replace(",", string.Empty);
+				if(str.Length == 0) return; // No assert
 
-			if(v.Length == 4)
-			{
-				int x, y, w, h;
-				if(int.TryParse(v[0], out x) && int.TryParse(v[1], out y) &&
-					int.TryParse(v[2], out w) && int.TryParse(v[3], out h))
+				int[] v = StrUtil.DeserializeIntArray(str);
+				if((v == null) || (v.Length < 2)) { Debug.Assert(false); return; }
+
+				FormBorderStyle s = f.FormBorderStyle;
+				bool bSizable = ((s == FormBorderStyle.Sizable) ||
+					(s == FormBorderStyle.SizableToolWindow));
+
+				int ws = ((v.Length <= 4) ? FwsNormal : v[4]);
+				if(ws == FwsMaximized)
 				{
-					Rectangle rect = new Rectangle(x, y, w, h);
-					if(UIUtil.IsScreenAreaVisible(rect))
-					{
-						f.Location = new Point(x, y);
-						f.Size = new Size(w, h);
-					}
+					if(bSizable && f.MaximizeBox)
+						f.WindowState = FormWindowState.Maximized;
+					else { Debug.Assert(false); }
+
+					return; // Ignore the saved size; restore to default
 				}
-				else { Debug.Assert(false); }
-			}
-			else if(v.Length == 2)
-			{
-				int x, y;
-				if(int.TryParse(v[0], out x) && int.TryParse(v[1], out y))
+				else if(ws != FwsNormal) { Debug.Assert(false); return; }
+
+				bool bSize = ((v.Length >= 4) && (v[2] > 0) && (v[3] > 0) && bSizable);
+
+				Rectangle rect = new Rectangle();
+				rect.X = v[0];
+				rect.Y = v[1];
+				if(bSize) rect.Size = new Size(v[2], v[3]);
+				else rect.Size = f.Size;
+
+				if(UIUtil.IsScreenAreaVisible(rect))
 				{
-					Size sz = f.Size;
-					Rectangle rect = new Rectangle(x, y, sz.Width, sz.Height);
-					if(UIUtil.IsScreenAreaVisible(rect))
-						f.Location = new Point(x, y);
+					f.Location = rect.Location;
+					if(bSize) f.Size = rect.Size;
 				}
-				else { Debug.Assert(false); }
 			}
-			else { Debug.Assert(false); }
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		public static string SetWindowScreenRectEx(Form f, string strRect)
+		{
+			SetWindowScreenRect(f, strRect);
+			return GetWindowScreenRect(f);
 		}
 
 		public static string GetColumnWidths(ListView lv)
@@ -2240,16 +2262,22 @@ namespace KeePass.UI
 			if(btn == null) { Debug.Assert(false); return null; }
 			if(img == null) { Debug.Assert(false); return null; }
 
-			if(b16To15 && (btn.Height == 23) && (img.Height == 16))
-			{
-				Image imgSc = GfxUtil.ScaleImage(img, img.Width, 15,
+			Image imgNew = img;
+			if(b16To15 && (btn.Height == 23) && (imgNew.Height == 16))
+				imgNew = GfxUtil.ScaleImage(imgNew, imgNew.Width, 15,
 					ScaleTransformFlags.UIIcon);
-				btn.Image = imgSc;
-				return imgSc;
-			}
 
-			btn.Image = img;
-			return img;
+			// if(btn.RightToLeft == RightToLeft.Yes)
+			// {
+			//	// Dispose scaled image only
+			//	Image imgToDispose = ((imgNew != img) ? imgNew : null);
+			//	imgNew = (Image)imgNew.Clone();
+			//	imgNew.RotateFlip(RotateFlipType.RotateNoneFlipX);
+			//	if(imgToDispose != null) imgToDispose.Dispose();
+			// }
+
+			btn.Image = imgNew;
+			return imgNew;
 		}
 
 		public static void OverwriteButtonImage(Button btn, ref Image imgCur,
@@ -2476,15 +2504,67 @@ namespace KeePass.UI
 			return Color.Transparent;
 		}
 
-		public static Icon CreateColorizedIcon(Icon icoBase, Color clr, int qSize)
+		public static Bitmap IconToBitmap(Icon ico, int w, int h)
+		{
+			if(ico == null) { Debug.Assert(false); return null; }
+
+			if(w < 0) w = ico.Width;
+			if(h < 0) h = ico.Height;
+
+			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+			using(Icon icoBest = new Icon(ico, w, h))
+			{
+				using(Graphics g = Graphics.FromImage(bmp))
+				{
+					g.Clear(Color.Transparent);
+
+					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
+					g.DrawIcon(icoBest, new Rectangle(0, 0, w, h));
+				}
+			}
+
+			return bmp;
+		}
+
+		public static Icon BitmapToIcon(Bitmap bmp)
+		{
+			if(bmp == null) { Debug.Assert(false); return null; }
+
+			Icon ico = null;
+			IntPtr hIcon = IntPtr.Zero;
+			try
+			{
+				hIcon = bmp.GetHicon();
+				using(Icon icoNoOwn = Icon.FromHandle(hIcon))
+				{
+					ico = (Icon)icoNoOwn.Clone();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				if(hIcon != IntPtr.Zero)
+				{
+					try { NativeMethods.DestroyIcon(hIcon); }
+					catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+				}
+			}
+
+			return ico;
+		}
+
+		/* public static Icon CreateColorizedIcon(Icon icoBase, Color clr, int qSize)
 		{
 			if(icoBase == null) { Debug.Assert(false); return null; }
 
 			if(qSize <= 0) qSize = 48; // Large shell icon size
 
+			Bitmap bmp = null;
 			try
 			{
-				Bitmap bmp = new Bitmap(qSize, qSize, PixelFormat.Format32bppArgb);
+				bmp = new Bitmap(qSize, qSize, PixelFormat.Format32bppArgb);
 				using(Graphics g = Graphics.FromImage(bmp))
 				{
 					g.Clear(Color.Transparent);
@@ -2565,24 +2645,19 @@ namespace KeePass.UI
 				Marshal.Copy(pbArgb, 0, bd.Scan0, nBytes);
 				bmp.UnlockBits(bd);
 
-				IntPtr hIcon = bmp.GetHicon();
-				Icon icoBmp = Icon.FromHandle(hIcon);
-
-				Icon icoResult = (Icon)icoBmp.Clone();
-
-				try { NativeMethods.DestroyIcon(hIcon); }
-				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-				bmp.Dispose();
-
-				return icoResult;
+				return BitmapToIcon(bmp);
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally { if(bmp != null) bmp.Dispose(); }
 
 			return (Icon)icoBase.Clone();
-		}
+		} */
 
-		public static Bitmap InvertImage(Image img)
+		private static Bitmap CloneWithColorMatrix(Image img, ColorMatrix cm)
 		{
+			if(img == null) { Debug.Assert(false); return null; }
+			if(cm == null) { Debug.Assert(false); return null; }
+
 			try
 			{
 				int w = img.Width, h = img.Height;
@@ -2594,14 +2669,6 @@ namespace KeePass.UI
 
 					g.InterpolationMode = InterpolationMode.NearestNeighbor;
 					g.SmoothingMode = SmoothingMode.None;
-
-					ColorMatrix cm = new ColorMatrix(new float[][] {
-						new float[] { -1, 0, 0, 0, 0 },
-						new float[] { 0, -1, 0, 0, 0 },
-						new float[] { 0, 0, -1, 0, 0 },
-						new float[] { 0, 0, 0, 1, 0 },
-						new float[] { 1, 1, 1, 0, 1 }
-					});
 
 					ImageAttributes a = new ImageAttributes();
 					a.SetColorMatrix(cm);
@@ -2615,6 +2682,32 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		public static Bitmap InvertImage(Image img)
+		{
+			ColorMatrix cm = new ColorMatrix(new float[][] {
+				new float[] { -1, 0, 0, 0, 0 },
+				new float[] { 0, -1, 0, 0, 0 },
+				new float[] { 0, 0, -1, 0, 0 },
+				new float[] { 0, 0, 0, 1, 0 },
+				new float[] { 1, 1, 1, 0, 1 }
+			});
+
+			return CloneWithColorMatrix(img, cm);
+		}
+
+		public static Bitmap CreateGrayImage(Image img)
+		{
+			ColorMatrix cm = new ColorMatrix(new float[][] {
+				new float[] { 0.30f, 0.30f, 0.30f, 0, 0 },
+				new float[] { 0.59f, 0.59f, 0.59f, 0, 0 },
+				new float[] { 0.11f, 0.11f, 0.11f, 0, 0 },
+				new float[] { 0, 0, 0, 1, 0 },
+				new float[] { 0, 0, 0, 0, 1 }
+			});
+
+			return CloneWithColorMatrix(img, cm);
 		}
 
 		public static Image CreateTabColorImage(Color clr, TabControl cTab)
@@ -2847,6 +2940,7 @@ namespace KeePass.UI
 			if((dx < ((hArrow * 2) + 2)) || (dy < (hArrow + 2)))
 				return new Bitmap(imgBase);
 
+			bool bRtl = Program.Translation.Properties.RightToLeft;
 			bool bStdClr = !UIUtil.IsDarkTheme;
 
 			Bitmap bmp = new Bitmap(dx, dy, PixelFormat.Format32bppArgb);
@@ -2874,6 +2968,12 @@ namespace KeePass.UI
 
 				g.SmoothingMode = SmoothingMode.None;
 
+				if(bRtl)
+				{
+					g.ScaleTransform(-1, 1);
+					g.TranslateTransform(-dx + 1, 0);
+				}
+
 				Pen penDark = (bStdClr ? Pens.Black : Pens.White);
 				for(int i = 1; i < hArrow; ++i)
 					g.DrawLine(penDark, dx - hArrow - i, dy - 1 - i,
@@ -2893,7 +2993,8 @@ namespace KeePass.UI
 
 			// bmp.SetPixel(dx - 3, dy - 1, Color.Black);
 			// // bmp.SetPixel(dx - 4, dy - 1, Color.Black);
-			bmp.SetPixel(dx - hArrow, dy - 1, (bStdClr ? Color.Black : Color.White));
+			bmp.SetPixel((bRtl ? (hArrow - 1) : (dx - hArrow)), dy - 1,
+				(bStdClr ? Color.Black : Color.White));
 
 			return bmp;
 		}
@@ -3032,14 +3133,38 @@ namespace KeePass.UI
 			return false;
 		}
 
-		internal static Size GetSmallIconSize(int wDefault, int hDefault)
+		public static Size GetIconSize()
 		{
+#if DEBUG
+			if(!NativeLib.IsUnix())
+			{
+				Debug.Assert(SystemInformation.IconSize.Width == DpiUtil.ScaleIntX(32));
+				Debug.Assert(SystemInformation.IconSize.Height == DpiUtil.ScaleIntY(32));
+			}
+#endif
+
+			try { return SystemInformation.IconSize; }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+
+			return new Size(DpiUtil.ScaleIntX(32), DpiUtil.ScaleIntY(32));
+		}
+
+		public static Size GetSmallIconSize()
+		{
+#if DEBUG
+			if(!NativeLib.IsUnix())
+			{
+				Debug.Assert(SystemInformation.SmallIconSize.Width == DpiUtil.ScaleIntX(16));
+				Debug.Assert(SystemInformation.SmallIconSize.Height == DpiUtil.ScaleIntY(16));
+			}
+#endif
+
 			// Throws under Mono 4.2.1 on Mac OS X;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/7c096cfc/
 			try { return SystemInformation.SmallIconSize; }
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
-			return new Size(wDefault, hDefault);
+			return new Size(DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 		}
 
 		/* internal static bool HasClickedSeparator(ToolStripItemClickedEventArgs e)
@@ -3171,6 +3296,36 @@ namespace KeePass.UI
 			}
 
 			StrDictListUpdate(lv, sd);
+		}
+
+		public static void SetText(Control c, string strText)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+			if(strText == null) { Debug.Assert(false); strText = string.Empty; }
+
+			using(RtlAwareResizeScope r = new RtlAwareResizeScope(c))
+			{
+				c.Text = strText;
+			}
+		}
+
+		internal static int GetEntryIconIndex(PwDatabase pd, PwEntry pe,
+			DateTime dtNow)
+		{
+			if(pe == null) { Debug.Assert(false); return (int)PwIcon.Key; }
+
+			if(pe.Expires && (pe.ExpiryTime <= dtNow))
+				return (int)PwIcon.Expired;
+
+			if(pe.CustomIconUuid == PwUuid.Zero)
+				return (int)pe.IconId;
+
+			int i = -1;
+			if(pd != null) i = pd.GetCustomIconIndex(pe.CustomIconUuid);
+			else { Debug.Assert(false); }
+			if(i >= 0) return ((int)PwIcon.Count + i);
+			Debug.Assert(false);
+			return (int)pe.IconId;
 		}
 	}
 }

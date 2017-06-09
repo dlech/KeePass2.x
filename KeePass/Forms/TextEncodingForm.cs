@@ -20,14 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePass.App;
+using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
-using KeePass.Resources;
 
 using KeePassLib.Utility;
 
@@ -68,7 +69,10 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			m_bInitializing = true;
+			this.Icon = AppIcons.Default;
+
 			FontUtil.AssignDefaultBold(m_lblContext);
+			Debug.Assert(!m_lblContext.AutoSize); // For RTL support
 			m_lblContext.Text = m_strContext;
 
 			m_cmbEnc.Items.Add(KPRes.BinaryNoConv);

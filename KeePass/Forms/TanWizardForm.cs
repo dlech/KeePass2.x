@@ -20,11 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.UI;
 using KeePass.Resources;
 
@@ -61,10 +62,11 @@ namespace KeePass.Forms
 				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TanWizard,
 				KPRes.TanWizardDesc);
 			
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.TanWizard;
 
-			if((m_pgStorage.Name != null) && (m_pgStorage.Name.Length > 0))
+			Debug.Assert(!m_lblToGroup.AutoSize); // For RTL support
+			if(!string.IsNullOrEmpty(m_pgStorage.Name))
 				m_lblToGroup.Text += ": " + m_pgStorage.Name + ".";
 			else
 				m_lblToGroup.Text += ".";

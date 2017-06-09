@@ -33,7 +33,7 @@ namespace KeePass.Util
 {
 	public static class EntryMenu
 	{
-		private static ContextMenuStrip m_ctx = null;
+		private static CustomContextMenuStripEx m_ctx = null;
 
 		public static void Show()
 		{
@@ -58,7 +58,7 @@ namespace KeePass.Util
 			}
 		}
 
-		private static ContextMenuStrip Construct()
+		private static CustomContextMenuStripEx Construct()
 		{
 			CustomContextMenuStripEx ctx = new CustomContextMenuStripEx();
 

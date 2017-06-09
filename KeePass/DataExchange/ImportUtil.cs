@@ -229,7 +229,7 @@ namespace KeePass.DataExchange
 							//	")", LogStatusType.Info);
 
 							string strSource = pwDatabase.IOConnectionInfo.Path;
-							if(ioc.Path != strSource)
+							if(!string.Equals(ioc.Path, strSource, StrUtil.CaseIgnoreCmp))
 							{
 								bool bSaveAs = true;
 

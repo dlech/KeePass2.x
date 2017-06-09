@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Reflection;
 
 using KeePass.App;
 using KeePass.Resources;
@@ -576,7 +576,7 @@ namespace TrlUtil
 			if(!string.IsNullOrEmpty(m_trl.UnusedText))
 				ShowValidationWarning(@"It is recommended to clear the 'Unused Text' tab.");
 
-			try { Validate3Dots(); }
+			try { ValidateTranslation(); }
 			catch(Exception) { Debug.Assert(false); }
 
 			try
@@ -602,9 +602,11 @@ namespace TrlUtil
 					str, TrlUtilName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
-		private void Validate3Dots()
+		private void ValidateTranslation()
 		{
-			if(m_trl.Properties.RightToLeft) return; // Check doesn't support RTL
+			string[] vCaseSensWords = new string[] { PwDefs.ShortProductName };
+
+			bool bRtl = m_trl.Properties.RightToLeft;
 
 			foreach(KPStringTable kpst in m_trl.StringTables)
 			{
@@ -614,10 +616,27 @@ namespace TrlUtil
 					string strTrl = kpi.Value;
 					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
 
+					// Check case-sensitive words
+					foreach(string strWord in vCaseSensWords)
+					{
+						bool bWordEn = (strEn.IndexOf(strWord) >= 0);
+						if(!bWordEn)
+						{
+							Debug.Assert(strEn.IndexOf(strWord, StrUtil.CaseIgnoreCmp) < 0);
+						}
+						if(bWordEn && (strTrl.IndexOf(strWord) < 0) &&
+							(strTrl.IndexOf(strWord, StrUtil.CaseIgnoreCmp) >= 0))
+							ShowValidationWarning("The English string" +
+								MessageService.NewParagraph + strEn + MessageService.NewParagraph +
+								@"contains the case-sensitive word '" + strWord +
+								@"', but the translated string does not:" +
+								MessageService.NewParagraph + strTrl);
+					}
+
+					// Check 3 dots
 					bool bEllEn = (strEn.EndsWith("...") || strEn.EndsWith(@"…"));
 					bool bEllTrl = (strTrl.EndsWith("...") || strTrl.EndsWith(@"…"));
-
-					if(bEllEn && !bEllTrl)
+					if(bEllEn && !bEllTrl && !bRtl) // Check doesn't support RTL
 						ShowValidationWarning("The English string" +
 							MessageService.NewParagraph + strEn + MessageService.NewParagraph +
 							"ends with 3 dots, but the translated string does not:" +

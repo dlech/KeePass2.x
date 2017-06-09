@@ -675,7 +675,8 @@ namespace KeePassLib
 					if(!groupHandler(pg)) return false;
 				}
 
-				pg.PreOrderTraverseTree(groupHandler, entryHandler);
+				if(!pg.PreOrderTraverseTree(groupHandler, entryHandler))
+					return false;
 			}
 
 			return true;
@@ -878,9 +879,10 @@ namespace KeePassLib
 			bool bUrl = sp.SearchInUrls;
 			bool bNotes = sp.SearchInNotes;
 			bool bOther = sp.SearchInOther;
+			bool bStringName = sp.SearchInStringNames;
+			bool bTags = sp.SearchInTags;
 			bool bUuids = sp.SearchInUuids;
 			bool bGroupName = sp.SearchInGroupNames;
-			bool bTags = sp.SearchInTags;
 			// bool bExcludeExpired = sp.ExcludeExpired;
 			// bool bRespectEntrySearchingDisabled = sp.RespectEntrySearchingDisabled;
 
@@ -958,12 +960,15 @@ namespace KeePassLib
 						if(lResults.UCount != uInitialResults) break;
 					}
 
-					if(bUuids && (lResults.UCount == uInitialResults))
-						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, lResults);
+					if(bStringName)
+					{
+						foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
+						{
+							if(lResults.UCount != uInitialResults) break;
 
-					if(bGroupName && (lResults.UCount == uInitialResults) &&
-						(pe.ParentGroup != null))
-						SearchEvalAdd(sp, pe.ParentGroup.Name, rx, pe, lResults);
+							SearchEvalAdd(sp, kvp.Key, rx, pe, lResults);
+						}
+					}
 
 					if(bTags)
 					{
@@ -974,6 +979,13 @@ namespace KeePassLib
 							SearchEvalAdd(sp, strTag, rx, pe, lResults);
 						}
 					}
+
+					if(bUuids && (lResults.UCount == uInitialResults))
+						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, lResults);
+
+					if(bGroupName && (lResults.UCount == uInitialResults) &&
+						(pe.ParentGroup != null))
+						SearchEvalAdd(sp, pe.ParentGroup.Name, rx, pe, lResults);
 				}
 			}
 

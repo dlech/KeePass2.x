@@ -141,20 +141,9 @@ namespace KeePass.Util.Spr
 					string strOptions = string.Empty;
 					if(vParams.Length >= 2) strOptions = (vParams[1] ?? string.Empty);
 
-					Dictionary<string, string> dOptions = new Dictionary<string, string>();
-					string[] vOptions = strOptions.Split(new char[] { ',' },
-						StringSplitOptions.RemoveEmptyEntries);
-					foreach(string strOption in vOptions)
-					{
-						string[] vKvp = strOption.Split(new char[] { '=' },
-							StringSplitOptions.None);
-						if(vKvp.Length != 2) continue;
+					Dictionary<string, string> dOptions = SplitParams(strOptions);
 
-						dOptions[vKvp[0].Trim().ToLower()] = vKvp[1].Trim();
-					}
-
-					string strID = string.Empty;
-					if(dOptions.ContainsKey("id")) strID = dOptions["id"].ToLower();
+					string strID = GetParam(dOptions, "id", string.Empty).ToLower();
 
 					uint uCharCount = 0;
 					if(dOptions.ContainsKey("c"))
@@ -182,11 +171,9 @@ namespace KeePass.Util.Spr
 						if(dOptions.ContainsKey("conv-offset"))
 							int.TryParse(dOptions["conv-offset"], out iOffset);
 
-						string strConvFmt = string.Empty;
-						if(dOptions.ContainsKey("conv-fmt"))
-							strConvFmt = dOptions["conv-fmt"];
+						string strConvFmt = GetParam(dOptions, "conv-fmt", string.Empty);
 
-						string strConv = dOptions["conv"];
+						string strConv = dOptions["conv"]; // Exists, see above
 						if(strConv.Equals("d", StrUtil.CaseIgnoreCmp))
 						{
 							strRep = ConvertToDownArrows(strRep, iOffset, strConvFmt);

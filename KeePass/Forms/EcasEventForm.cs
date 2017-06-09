@@ -20,15 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
-using KeePass.UI;
-using KeePass.Resources;
 using KeePass.Ecas;
+using KeePass.Resources;
+using KeePass.UI;
 
 namespace KeePass.Forms
 {
@@ -56,8 +56,9 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Text = KPRes.Event;
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
+			Debug.Assert(!m_lblParamHint.AutoSize); // For RTL support
 			m_lblParamHint.Text = KPRes.ParamDescHelp;
 
 			foreach(EcasEventProvider ep in Program.EcasPool.EventProviders)

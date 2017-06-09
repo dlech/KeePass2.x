@@ -19,14 +19,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.ComponentModel;
-using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.Util;
 
 using KeePassLib.Native;
@@ -133,8 +134,8 @@ namespace KeePass.UI
 			int nDrawWidth = (int)((float)rectDraw.Width * (float)nNormPos /
 				(float)nNormMax);
 
-			Color clrStart = Color.FromArgb(255, 128, 0);
-			Color clrEnd = Color.FromArgb(0, 255, 0);
+			Color clrStart = AppDefs.ColorQualityLow;
+			Color clrEnd = AppDefs.ColorQualityHigh;
 			if(!this.Enabled)
 			{
 				clrStart = UIUtil.ColorToGrayscale(SystemColors.ControlDark);

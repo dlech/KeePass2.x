@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePassLib.Utility;
 
@@ -53,16 +53,32 @@ namespace KeePass.UI
 
 			internal static string GenerateRandomIdCode()
 			{
-				StringBuilder sb = new StringBuilder(14);
+				StringBuilder sb = new StringBuilder(15); // 1 + 12 + 2
+				Random r = Program.GlobalRandom;
+
+				// On Hebrew systems, IDs starting with digits break
+				// the RTF generation; for safety, we do not use
+				// digits at all
+				sb.Append((char)('A' + r.Next(26)));
 				for(int i = 0; i < 12; ++i)
 				{
-					int n = Program.GlobalRandom.Next(62);
+					int n = r.Next(52); // 62
 					if(n < 26) sb.Append((char)('A' + n));
-					else if(n < 52) sb.Append((char)('a' + (n - 26)));
-					else sb.Append((char)('0' + (n - 52)));
+					// else if(n < 52)
+					else sb.Append((char)('a' + (n - 26)));
+					// else sb.Append((char)('0' + (n - 52)));
 				}
+
 				return sb.ToString();
 			}
+
+#if DEBUG
+			// For debugger display
+			public override string ToString()
+			{
+				return (this.IdCode + " => " + (this.RtfCode ?? string.Empty));
+			}
+#endif
 		}
 
 		private Font m_fDefault = null;
@@ -81,11 +97,21 @@ namespace KeePass.UI
 		{
 			if(m_vTags != null) return;
 
+			// When running under Mono, replace bold and italic text
+			// by underlined text, which is rendered correctly (in
+			// contrast to bold and italic text)
+			string strOvrS = null, strOvrE = null;
+			if(MonoWorkarounds.IsRequired(1632))
+			{
+				strOvrS = "\\ul ";
+				strOvrE = "\\ul0 ";
+			}
+
 			List<RtfbTag> l = new List<RtfbTag>();
-			l.Add(new RtfbTag(null, "\\b ", true, FontStyle.Bold));
-			l.Add(new RtfbTag(null, "\\b0 ", false, FontStyle.Bold));
-			l.Add(new RtfbTag(null, "\\i ", true, FontStyle.Italic));
-			l.Add(new RtfbTag(null, "\\i0 ", false, FontStyle.Italic));
+			l.Add(new RtfbTag(null, (strOvrS ?? "\\b "), true, FontStyle.Bold));
+			l.Add(new RtfbTag(null, (strOvrE ?? "\\b0 "), false, FontStyle.Bold));
+			l.Add(new RtfbTag(null, (strOvrS ?? "\\i "), true, FontStyle.Italic));
+			l.Add(new RtfbTag(null, (strOvrE ?? "\\i0 "), false, FontStyle.Italic));
 			l.Add(new RtfbTag(null, "\\ul ", true, FontStyle.Underline));
 			l.Add(new RtfbTag(null, "\\ul0 ", false, FontStyle.Underline));
 			l.Add(new RtfbTag(null, "\\strike ", true, FontStyle.Strikeout));
@@ -158,14 +184,24 @@ namespace KeePass.UI
 			m_sb.AppendLine();
 		}
 
-		private static RichTextBox CreateOpRtb()
+		private static RichTextBox CreateOpRtb(RichTextBox rtbUI)
 		{
 			RichTextBox rtbOp = new RichTextBox();
-			rtbOp.Visible = false; // Ensure invisibility
+			rtbOp.Visible = false;
 			rtbOp.DetectUrls = false;
 			rtbOp.HideSelection = true;
 			rtbOp.Multiline = true;
 			rtbOp.WordWrap = false;
+
+			// rtbOp.BorderStyle = rtbUI.BorderStyle;
+			// rtbOp.ScrollBars = rtbUI.ScrollBars;
+			rtbOp.Size = rtbUI.Size;
+
+			if(rtbUI.RightToLeft == RightToLeft.Yes)
+			{
+				rtbOp.RightToLeft = RightToLeft.Yes;
+				// rtbOp.SelectionAlignment = HorizontalAlignment.Right;
+			}
 
 			return rtbOp;
 		}
@@ -174,7 +210,7 @@ namespace KeePass.UI
 		{
 			if(rtb == null) throw new ArgumentNullException("rtb");
 
-			RichTextBox rtbOp = CreateOpRtb();
+			RichTextBox rtbOp = CreateOpRtb(rtb);
 			string strText = m_sb.ToString();
 
 			Dictionary<char, string> dEnc = new Dictionary<char, string>();
@@ -204,7 +240,7 @@ namespace KeePass.UI
 
 			if(m_fDefault != null)
 			{
-				rtbOp.Select(0, rtbOp.TextLength);
+				rtbOp.SelectAll();
 				rtbOp.SelectionFont = m_fDefault;
 			}
 

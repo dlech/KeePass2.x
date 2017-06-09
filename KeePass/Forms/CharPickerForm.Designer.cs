@@ -88,7 +88,7 @@
 			// m_lblChars
 			// 
 			this.m_lblChars.AutoSize = true;
-			this.m_lblChars.Location = new System.Drawing.Point(12, 6);
+			this.m_lblChars.Location = new System.Drawing.Point(0, 6);
 			this.m_lblChars.Name = "m_lblChars";
 			this.m_lblChars.Size = new System.Drawing.Size(56, 13);
 			this.m_lblChars.TabIndex = 0;
@@ -97,7 +97,7 @@
 			// m_lblIndex
 			// 
 			this.m_lblIndex.AutoSize = true;
-			this.m_lblIndex.Location = new System.Drawing.Point(12, 30);
+			this.m_lblIndex.Location = new System.Drawing.Point(0, 30);
 			this.m_lblIndex.Name = "m_lblIndex";
 			this.m_lblIndex.Size = new System.Drawing.Size(47, 13);
 			this.m_lblIndex.TabIndex = 1;
@@ -166,7 +166,7 @@
 			this.m_pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_pnlTop.Location = new System.Drawing.Point(0, 60);
 			this.m_pnlTop.Name = "m_pnlTop";
-			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(0, 8, 12, 8);
+			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
 			this.m_pnlTop.Size = new System.Drawing.Size(628, 68);
 			this.m_pnlTop.TabIndex = 3;
 			// 
@@ -175,9 +175,9 @@
 			this.m_pnlTopLeft.Controls.Add(this.m_lblChars);
 			this.m_pnlTopLeft.Controls.Add(this.m_lblIndex);
 			this.m_pnlTopLeft.Dock = System.Windows.Forms.DockStyle.Left;
-			this.m_pnlTopLeft.Location = new System.Drawing.Point(0, 8);
+			this.m_pnlTopLeft.Location = new System.Drawing.Point(12, 8);
 			this.m_pnlTopLeft.Name = "m_pnlTopLeft";
-			this.m_pnlTopLeft.Size = new System.Drawing.Size(71, 52);
+			this.m_pnlTopLeft.Size = new System.Drawing.Size(59, 52);
 			this.m_pnlTopLeft.TabIndex = 0;
 			// 
 			// m_pnlLeft

@@ -13,7 +13,7 @@ body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a, kbd kbd {
 
 body {
 	background-color: #FFFFFF;
-	background-image: url(./images/back.gif);
+	background-image: url('./images/back.gif');
 	background-repeat: repeat;
 	background-attachment: fixed;
 }
@@ -122,7 +122,7 @@ div.menubox {
 
 div.menubox div.menutitle {
 	background-color: #C5C5C5;
-	background: url(./images/grad_h_gw.gif) repeat-y;
+	background: url('./images/grad_h_gw.gif') repeat-y;
 	display: block;
 	font-weight: bold;
 	font-size: 7.50pt;
@@ -134,7 +134,7 @@ div.menubox div.menutitle {
 
 div.menubox div.menutitlewide {
 	background-color: #C5C5C5;
-	background: url(./images/grad_h_gw_186.gif) repeat-y;
+	background: url('./images/grad_h_gw_186.gif') repeat-y;
 	display: block;
 	font-weight: bold;
 	font-size: 7.50pt;
@@ -194,7 +194,7 @@ table.tablebox75 {
 
 table.tablebox tr th, table.tablebox75 tr th {
 	background-color: #EEEEEE;
-	background: url(./images/grad_v_gw.gif) repeat-x top;
+	background: url('./images/grad_v_gw.gif') repeat-x top;
 	font-weight: bold;
 	border-bottom: 1px solid #AFB5CF;
 	border-left: 0px none;
@@ -326,7 +326,7 @@ h2.sectiontitle {
 	font-size: 9.75pt;
 	font-weight: bold;
 	color: #000000;
-	background: url(./images/grad_v_dlb_tall_light.png) repeat-x top;
+	background: url('./images/grad_v_dlb_tall_light.png') repeat-x top;
 	border: 1px solid #AFB5CF;
 	color: #005101;
 	min-height: 14.25pt;
@@ -338,7 +338,7 @@ h2.sectiontitle {
 /* --------------------------------------------------------------------- */
 
 td.helptopheader {
-	background-image: url(./help/images/b32x68_headerbg.png);
+	background-image: url('./help/images/b32x68_headerbg.png');
 	background-repeat: repeat-x;
 }
 

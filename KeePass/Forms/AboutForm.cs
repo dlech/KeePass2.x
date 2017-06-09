@@ -27,10 +27,10 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.UI;
-using KeePass.Resources;
-using KeePass.Util;
 using KeePass.DataExchange;
+using KeePass.Resources;
+using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -51,6 +51,7 @@ namespace KeePass.Forms
 		{
 			GlobalWindowManager.AddWindow(this, this);
 
+			Debug.Assert(!m_lblCopyright.AutoSize); // For RTL support
 			m_lblCopyright.Text = PwDefs.Copyright + ".";
 
 			string strTitle = PwDefs.ProductName;
@@ -68,11 +69,11 @@ namespace KeePass.Forms
 				strDesc += ")";
 			}
 
-			Icon icoNew = new Icon(Properties.Resources.KeePass, 48, 48);
-
-			BannerFactory.CreateBannerEx(this, m_bannerImage, icoNew.ToBitmap(),
+			Icon icoSc = AppIcons.Get(AppIconType.Main, new Size(
+				DpiUtil.ScaleIntX(48), DpiUtil.ScaleIntY(48)), Color.Empty);
+			BannerFactory.CreateBannerEx(this, m_bannerImage, icoSc.ToBitmap(),
 				strTitle, strDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			m_lvComponents.Columns.Add(KPRes.Component, 100, HorizontalAlignment.Left);
 			m_lvComponents.Columns.Add(KPRes.Status + " / " + KPRes.Version, 100,

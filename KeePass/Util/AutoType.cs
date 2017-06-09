@@ -19,12 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Media;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Threading;
-using System.Media;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Forms;
@@ -106,7 +107,7 @@ namespace KeePass.Util
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		private static bool MatchWindows(string strFilter, string strWindow)
+		internal static bool MatchWindows(string strFilter, string strWindow)
 		{
 			Debug.Assert(strFilter != null); if(strFilter == null) return false;
 			Debug.Assert(strWindow != null); if(strWindow == null) return false;
@@ -190,11 +191,26 @@ namespace KeePass.Util
 
 			if(args.Sequence.Length > 0)
 			{
+				string strError = null;
 				try { SendInputEx.SendKeysWait(args.Sequence, args.SendObfuscated); }
-				catch(Exception excpAT)
+				catch(SecurityException exSec) { strError = exSec.Message; }
+				catch(Exception ex)
 				{
-					MessageService.ShowWarning(args.Sequence +
-						MessageService.NewParagraph + excpAT.Message);
+					strError = args.Sequence + MessageService.NewParagraph +
+						ex.Message;
+				}
+
+				if(!string.IsNullOrEmpty(strError))
+				{
+					try
+					{
+						MainForm mfP = Program.MainForm;
+						if(mfP != null)
+							mfP.EnsureVisibleForegroundWindow(false, false);
+					}
+					catch(Exception) { Debug.Assert(false); }
+
+					MessageService.ShowWarning(strError);
 				}
 			}
 
@@ -499,10 +515,24 @@ namespace KeePass.Util
 					try { NativeMethods.EnsureForegroundWindow(hWnd); }
 					catch(Exception) { Debug.Assert(false); }
 
-					// Allow target window to handle its activation;
+					int nActDelayMS = TargetActivationDelay;
+					string strWindowT = strWindow.Trim();
+
 					// https://sourceforge.net/p/keepass/discussion/329220/thread/3681f343/
+					// This apparently is only required here (after showing the
+					// auto-type entry selection dialog), not when using the
+					// context menu command in the main window
+					if(strWindowT.EndsWith("Microsoft Edge", StrUtil.CaseIgnoreCmp))
+					{
+						// 700 skips the first 1-2 characters,
+						// 750 sometimes skips the first character
+						nActDelayMS = 1000;
+					}
+
+					// Allow target window to handle its activation
+					// (required by some applications, e.g. Edge)
 					Application.DoEvents();
-					Thread.Sleep(TargetActivationDelay);
+					Thread.Sleep(nActDelayMS);
 					Application.DoEvents();
 
 					AutoType.PerformInternal(ctx, strWindow);

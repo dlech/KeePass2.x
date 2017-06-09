@@ -20,11 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
@@ -64,7 +65,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_WWW, KPRes.UpdateCheck,
 				KPRes.UpdateCheckResults);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 			this.Text = KPRes.UpdateCheck + " - " + PwDefs.ShortProductName;
 
 			UIUtil.SetExplorerTheme(m_lvInfo, true);

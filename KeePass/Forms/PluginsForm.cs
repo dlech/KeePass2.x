@@ -20,11 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePass.App;
 using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
@@ -64,7 +65,7 @@ namespace KeePass.Forms
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_BlockDevice, KPRes.Plugins,
 				KPRes.PluginsDesc);
-			this.Icon = Properties.Resources.KeePass;
+			this.Icon = AppIcons.Default;
 
 			m_cbCacheDeleteOld.Checked = Program.Config.Application.Start.PluginCacheDeleteOld;
 
@@ -80,6 +81,7 @@ namespace KeePass.Forms
 				DpiUtil.ScaleIntY(16));
 			m_ilIcons.ColorDepth = ColorDepth.Depth32Bit;
 
+			Debug.Assert(!m_lblCacheSize.AutoSize); // For RTL support
 			m_lblCacheSize.Text += " " + StrUtil.FormatDataSize(
 				PlgxCache.GetUsedCacheSize()) + ".";
 
@@ -142,6 +144,8 @@ namespace KeePass.Forms
 
 		private void UpdatePluginDescription()
 		{
+			Debug.Assert(!m_lblSelectedPluginDesc.AutoSize); // For RTL support
+
 			ListView.SelectedListViewItemCollection lvsic = m_lvPlugins.SelectedItems;
 			if(lvsic.Count == 0)
 			{

@@ -160,6 +160,9 @@
 		<Data Name="AutoType">
 			<Value>Auto-Type</Value>
 		</Data>
+		<Data Name="AutoTypeAbortedOnWindow">
+			<Value>Auto-Type has been aborted, because the target window is disallowed by the application policy (defined by your administrator).</Value>
+		</Data>
 		<Data Name="AutoTypeAlwaysShowSelDialog">
 			<Value>Always show global auto-type entry selection dialog</Value>
 		</Data>
@@ -194,7 +197,7 @@
 			<Value>An entry matches if its URL is contained in the target window title</Value>
 		</Data>
 		<Data Name="AutoTypeObfuscationHint">
-			<Value>Auto-type obfuscation may not work with all windows.</Value>
+			<Value>Auto-Type obfuscation may not work with all windows.</Value>
 		</Data>
 		<Data Name="AutoTypePrependInitSeqForIE">
 			<Value>Prepend special initialization sequence for Internet Explorer windows</Value>
@@ -594,6 +597,18 @@
 		</Data>
 		<Data Name="DropToBackOnCopy">
 			<Value>Drop to background after copying data to the clipboard</Value>
+		</Data>
+		<Data Name="DuplicatePasswords">
+			<Value>Duplicate Passwords</Value>
+		</Data>
+		<Data Name="DuplicatePasswordsGroup">
+			<Value>Entries using the same password:</Value>
+		</Data>
+		<Data Name="DuplicatePasswordsList">
+			<Value>List of entries that are using the same passwords.</Value>
+		</Data>
+		<Data Name="DuplicatePasswordsNone">
+			<Value>No duplicate passwords have been found.</Value>
 		</Data>
 		<Data Name="DuplicateStringFieldName">
 			<Value>The string field name you specified already exists. String field names must be unique for each entry.</Value>
@@ -1213,6 +1228,9 @@
 		<Data Name="LastModificationTime">
 			<Value>Last Modification Time</Value>
 		</Data>
+		<Data Name="LastModTimePwHist">
+			<Value>Last Password Modification Time (Based on History)</Value>
+		</Data>
 		<Data Name="LimitSingleInstance">
 			<Value>Limit to single instance</Value>
 		</Data>
@@ -1501,6 +1519,12 @@
 		<Data Name="PasswordPrompt">
 			<Value>Enter the password:</Value>
 		</Data>
+		<Data Name="PasswordQuality">
+			<Value>Password Quality</Value>
+		</Data>
+		<Data Name="PasswordQualityReport">
+			<Value>Estimated quality of the entry passwords.</Value>
+		</Data>
 		<Data Name="PasswordRepeatFailed">
 			<Value>Password and repeated password aren't identical!</Value>
 		</Data>
@@ -1638,6 +1662,9 @@
 		</Data>
 		<Data Name="Professional">
 			<Value>Professional</Value>
+		</Data>
+		<Data Name="Quality">
+			<Value>Quality</Value>
 		</Data>
 		<Data Name="QuickSearchExclExpired">
 			<Value>Exclude expired entries in quick searches</Value>
@@ -1888,6 +1915,18 @@
 		<Data Name="ShowTrayOnlyIfTrayed">
 			<Value>Show tray icon only if main window has been sent to tray</Value>
 		</Data>
+		<Data Name="SimilarPasswords">
+			<Value>Similar Passwords</Value>
+		</Data>
+		<Data Name="SimilarPasswordsGroup">
+			<Value>Entries using similar passwords (similarity: {PARAM}):</Value>
+		</Data>
+		<Data Name="SimilarPasswordsList">
+			<Value>List of entries that are using similar passwords.</Value>
+		</Data>
+		<Data Name="SimilarPasswordsNoDup">
+			<Value>The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the 'Find Duplicate Passwords' command (in the main menu).</Value>
+		</Data>
 		<Data Name="Size">
 			<Value>Size</Value>
 		</Data>
@@ -2022,6 +2061,15 @@
 		</Data>
 		<Data Name="TransformTime">
 			<Value>The key transformation took {PARAM} seconds.</Value>
+		</Data>
+		<Data Name="TrayIcon">
+			<Value>Tray Icon</Value>
+		</Data>
+		<Data Name="TrayIconGray">
+			<Value>Use gray tray icon</Value>
+		</Data>
+		<Data Name="TrayIconSingleClick">
+			<Value>Single click instead of double click for default tray icon action</Value>
 		</Data>
 		<Data Name="Trigger">
 			<Value>Trigger</Value>
