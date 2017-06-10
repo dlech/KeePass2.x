@@ -249,11 +249,6 @@ namespace KeePass
 			if(!string.IsNullOrEmpty(strWaDisable))
 				MonoWorkarounds.SetEnabled(strWaDisable, false);
 
-			DpiUtil.ConfigureProcess();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.DoEvents(); // Required
-
 #if DEBUG
 			string strInitialWorkDir = WinUtil.GetWorkingDirectory();
 #endif
@@ -410,6 +405,11 @@ namespace KeePass
 			//	return;
 			// }
 			// #endif
+
+			DpiUtil.ConfigureProcess();
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.DoEvents(); // Required
 
 			try { m_nAppMessage = NativeMethods.RegisterWindowMessage(m_strWndMsgID); }
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
