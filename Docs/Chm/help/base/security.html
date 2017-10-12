@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="Security - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>Security - KeePass</title>
 	<base target="_self" />
@@ -28,7 +27,6 @@
 	
 </head>
 <body>
-
 
 
 
@@ -75,7 +73,7 @@ notes, etc.</p>
 
 <tr><td align="left">Advanced Encryption Standard (AES / Rijndael)</td>
 <td align="left">256 bits</td>
-<td align="left"><a href="http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
+<td align="left"><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
 target="_blank">NIST FIPS 197</a></td></tr>
 
 <tr><td align="left">Twofish</td>
@@ -92,7 +90,7 @@ target="_blank">Info</a></td></tr>
 
 <tr><td align="left">Advanced Encryption Standard (AES / Rijndael)</td>
 <td align="left">256 bits</td>
-<td align="left"><a href="http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
+<td align="left"><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
 target="_blank">NIST FIPS 197</a></td></tr>
 
 <tr><td align="left">ChaCha20</td>
@@ -101,7 +99,7 @@ target="_blank">NIST FIPS 197</a></td></tr>
 target="_blank">RFC 7539</a></td></tr>
 
 <tr><td align="left" colspan="3">There exist various
-<a href="http://keepass.info/plugins.html" target="_blank">plugins</a>
+<a href="https://keepass.info/plugins.html" target="_blank">plugins</a>
 that provide support for additional encryption algorithms,
 including but not limited to Twofish, Serpent and GOST.</td></tr>
 </table></center>
@@ -126,6 +124,8 @@ target="_blank">initialization vector</a> (IV) is generated
 <a href="#secrandom">randomly</a> each time
 a database is saved. Thus, multiple databases encrypted with the same
 master key (e.g. backups) are no problem.</p>
+
+<p>Data authenticity and integrity:</p>
 
 
 
@@ -153,7 +153,7 @@ and/or a key provided by a plugin) to a 256-bit key <em>K</em>.</p>
 <p>SHA-256 is a cryptographic hash function that is considered to be
 very secure. It <!-- has been designed by the National Security Agency (NSA),
 and -->has been standardized in
-<a href="http://dx.doi.org/10.6028/NIST.FIPS.180-4"
+<a href="https://dx.doi.org/10.6028/NIST.FIPS.180-4"
 target="_blank">NIST FIPS 180-4</a>.
 The <a href="https://www.schneier.com/blog/archives/2005/02/cryptanalysis_o.html"
 target="_blank">attack against SHA-1</a> discovered in 2005 does not affect
@@ -217,7 +217,7 @@ The parallelism parameter can be used to specify how many threads
 should be used.</li>
 
 <!-- <li><strong>Plugins</strong> (KeePass 2.x only):<br />
-<a href="http://keepass.info/plugins.html" target="_blank">Plugins</a>
+<a href="https://keepass.info/plugins.html" target="_blank">Plugins</a>
 can provide additional key derivation functions.</li> -->
 </ul>
 
@@ -321,7 +321,7 @@ User Account Control (UAC). Almost no keylogger works on a secure desktop.</p>
 <p>The option is turned off by default for compatibility reasons.</p>
 
 <p>More information can be found on the
-<a href="http://keepass.info/help/kb/sec_desk.html" target="_blank">Secure Desktop</a>
+<a href="https://keepass.info/help/kb/sec_desk.html" target="_blank">Secure Desktop</a>
 help page.</p>
 
 
@@ -427,10 +427,10 @@ program running on the system that is specialized on attacking KeePass.</p>
 
 <p>In this situation, the best security features will fail.
 This is law #1 of the
-<!-- http://technet.microsoft.com/en-us/library/cc722487.aspx -->
+<!-- https://technet.microsoft.com/en-us/library/cc722487.aspx -->
 <a href="https://technet.microsoft.com/en-us/library/hh278941.aspx"
 target="_blank">Ten Immutable Laws of Security</a>
-(Microsoft TechNet article; also see the
+(Microsoft TechNet article; see also the
 Microsoft TechNet article
 <a href="https://technet.microsoft.com/en-us/library/2008.10.securitywatch.aspx"
 target="_blank">Revisiting the 10 Immutable Laws of Security, Part 1</a>):<br />
@@ -458,7 +458,7 @@ do not open unknown e-mail attachments, etc.</p>
 Issues</h2>
 
 <p>For a list of security issues, their status and clarifications, please see the page
-<a href="http://keepass.info/help/kb/sec_issues.html"
+<a href="https://keepass.info/help/kb/sec_issues.html"
 target="_blank">Security Issues</a>.</p>
 
 </body></html>

@@ -105,7 +105,7 @@ namespace KeePass.Forms
 			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
 			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;
 
-			if(m_bCreatingNew) this.Text = KPRes.ConfigureOnNewDatabase;
+			if(m_bCreatingNew) this.Text = KPRes.ConfigureOnNewDatabase2;
 			else this.Text = KPRes.DatabaseSettings;
 
 			m_tbDbName.Text = m_pwDatabase.Name;

@@ -48,6 +48,14 @@ namespace KeePass.UI
 			get { EnsureInitialized(); return m_fontList; }
 		}
 
+		internal static bool OverrideUIFont
+		{
+			get
+			{
+				return (NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix);
+			}
+		}
+
 		private static void EnsureInitialized()
 		{
 			if(m_bInitialized) return;

@@ -474,7 +474,8 @@ namespace KeePass.Forms
 
 			// Workaround for .NET ToolStrip height bug;
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/19e7c256/
-			Debug.Assert((m_toolMain.Height == 25) || DpiUtil.ScalingRequired);
+			Debug.Assert((m_toolMain.Height == 25) || DpiUtil.ScalingRequired ||
+				MonoWorkarounds.IsRequired(100001));
 			m_toolMain.LockHeight(true);
 
 			UpdateTrayIcon(false);
@@ -538,6 +539,13 @@ namespace KeePass.Forms
 			if(!AppPolicy.Try(AppPolicyId.NewFile)) return;
 			if(!AppPolicy.Try(AppPolicyId.SaveFile)) return;
 
+			bool bInfoDialogs = ((Program.Config.UI.UIFlags &
+				(ulong)AceUIFlags.HideNewDbInfoDialogs) == 0);
+			if(bInfoDialogs)
+			{
+				if(!FileDialogsEx.ShowNewDatabaseIntro(this)) return;
+			}
+
 			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.CreateNewDatabase,
 				KPRes.NewDatabaseFileName, UIUtil.CreateFileTypeFilter(
 				AppDefs.FileExtension.FileExt, KPRes.KdbxFiles, true), 1,
@@ -546,10 +554,9 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddDialog(sfd.FileDialog);
 			DialogResult dr = sfd.ShowDialog();
 			GlobalWindowManager.RemoveDialog(sfd.FileDialog);
+			if(dr != DialogResult.OK) return;
 
 			string strPath = sfd.FileName;
-
-			if(dr != DialogResult.OK) return;
 
 			KeyCreationForm kcf = new KeyCreationForm();
 			kcf.InitEx(IOConnectionInfo.FromPath(strPath), true);
@@ -624,7 +631,7 @@ namespace KeePass.Forms
 			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
 				"Michael321"));
 			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
-				@"http://keepass.info/help/kb/testform.html"));
+				PwDefs.HelpUrl + "kb/testform.html"));
 			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
 				"12345"));
 			pe.AutoType.Add(new AutoTypeAssociation("*Test Form - KeePass*", string.Empty));
@@ -684,6 +691,7 @@ namespace KeePass.Forms
 			// pd.PublicCustomData.SetString("Sample Custom Data", "Sample Value");
 #endif
 
+			EmergencySheet.AskCreate(pd);
 			UpdateUI(true, null, true, null, true, null, true);
 
 			if(this.FileCreated != null)
@@ -807,7 +815,7 @@ namespace KeePass.Forms
 
 		private void OnFileChangeMasterKey(object sender, EventArgs e)
 		{
-			UpdateUIState(ChangeMasterKey(null));
+			ChangeMasterKey(null);
 		}
 
 		private void OnFilePrint(object sender, EventArgs e)
@@ -2822,23 +2830,37 @@ namespace KeePass.Forms
 		{
 			if(CreateAndShowEntryList(EntryUtil.FindDuplicatePasswords,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
-				KPRes.DuplicatePasswords, KPRes.DuplicatePasswordsList, null, false) == 0)
+				KPRes.DuplicatePasswords, KPRes.DuplicatePasswordsList, null,
+				false, false) == 0)
 				MessageService.ShowInfo(KPRes.DuplicatePasswordsNone);
 		}
 
-		private void OnEditFindSimPasswords(object sender, EventArgs e)
+		private void OnEditFindSimPasswordsP(object sender, EventArgs e)
 		{
-			CreateAndShowEntryList(EntryUtil.FindSimilarPasswords,
+			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsP,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
 				KPRes.SimilarPasswords, KPRes.SimilarPasswordsList,
-				KPRes.SimilarPasswordsNoDup, true);
+				KPRes.SimilarPasswordsNoDup, true, false);
+		}
+
+		private void OnEditFindSimPasswordsC(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsC,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
+				KPRes.SimilarPasswords, KPRes.ClusterCenters,
+				KPRes.ClusterCentersDesc, true, true);
 		}
 
 		private void OnEditPwQualityReport(object sender, EventArgs e)
 		{
 			CreateAndShowEntryList(EntryUtil.CreatePwQualityList,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KOrganizer,
-				KPRes.PasswordQuality, KPRes.PasswordQualityReport, null, true);
+				KPRes.PasswordQuality, KPRes.PasswordQualityReport, null, true, false);
+		}
+
+		private void OnToolsPrintEmSheet(object sender, EventArgs e)
+		{
+			EmergencySheet.Print(m_docMgr.ActiveDatabase);
 		}
 	}
 }

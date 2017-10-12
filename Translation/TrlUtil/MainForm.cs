@@ -392,7 +392,7 @@ namespace TrlUtil
 		{
 			try
 			{
-				Process.Start(@"http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes");
+				Process.Start("https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes");
 			}
 			catch(Exception ex)
 			{

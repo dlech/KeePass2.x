@@ -445,7 +445,7 @@ namespace KeePass.Forms
 
 			string strUrl = null;
 			if(IsTimeField(t))
-				strUrl = @"http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx";
+				strUrl = "https://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx";
 			// else if(t == CsvFieldType.Group)
 			// {
 			//	AppHelp.ShowHelp(AppDefs.HelpTopics.ImportExport,

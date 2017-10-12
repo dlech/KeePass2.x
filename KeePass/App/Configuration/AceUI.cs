@@ -63,7 +63,8 @@ namespace KeePass.App.Configuration
 		DisableUpdateCheck = 0x20,
 
 		HideBuiltInPwGenPrfInEntryDlg = 0x10000,
-		ShowLastAccessTime = 0x20000
+		ShowLastAccessTime = 0x20000,
+		HideNewDbInfoDialogs = 0x40000
 	}
 
 	[Flags]
@@ -177,6 +178,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bShowRecycleDlg; }
 			set { m_bShowRecycleDlg = value; }
+		}
+
+		private bool m_bShowEmSheetDlg = true;
+		[DefaultValue(true)]
+		public bool ShowEmSheetDialog
+		{
+			get { return m_bShowEmSheetDlg; }
+			set { m_bShowEmSheetDlg = value; }
 		}
 
 		// private bool m_bUseCustomTsRenderer = true;

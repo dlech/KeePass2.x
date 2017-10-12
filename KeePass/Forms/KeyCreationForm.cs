@@ -51,7 +51,9 @@ namespace KeePass.Forms
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
 
 		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
+		private Image m_imgKeyFileWarning = null;
 		private Image m_imgAccWarning = null;
+		// private uint m_uBlockUpdate = 0;
 
 		public CompositeKey CompositeKey
 		{
@@ -90,10 +92,13 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
-			Bitmap bmpBig = SystemIcons.Warning.ToBitmap();
-			m_imgAccWarning = GfxUtil.ScaleImage(bmpBig, DpiUtil.ScaleIntX(16),
-				DpiUtil.ScaleIntY(16), ScaleTransformFlags.UIIcon);
-			bmpBig.Dispose();
+			using(Bitmap bmp = SystemIcons.Warning.ToBitmap())
+			{
+				m_imgAccWarning = GfxUtil.ScaleImage(bmp, DpiUtil.ScaleIntX(16),
+					DpiUtil.ScaleIntY(16), ScaleTransformFlags.UIIcon);
+				m_imgKeyFileWarning = (Image)m_imgAccWarning.Clone();
+			}
+			m_picKeyFileWarning.Image = m_imgKeyFileWarning;
 			m_picAccWarning.Image = m_imgAccWarning;
 
 			UIUtil.ConfigureToolTip(m_ttRect);
@@ -152,6 +157,13 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			if(m_imgKeyFileWarning != null)
+			{
+				m_picKeyFileWarning.Image = null;
+				m_imgKeyFileWarning.Dispose();
+				m_imgKeyFileWarning = null;
+			}
+
 			if(m_imgAccWarning != null)
 			{
 				m_picAccWarning.Image = null;
@@ -272,25 +284,57 @@ namespace KeePass.Forms
 
 		private void EnableUserControls()
 		{
+			// Must support recursive call, see m_cbExpert.Checked
+			// if(m_uBlockUpdate != 0) return;
+			// ++m_uBlockUpdate;
+
 			m_icgPassword.Enabled = m_cbPassword.Checked;
 
 			bool bKeyFile = m_cbKeyFile.Checked;
 			m_cmbKeyFile.Enabled = bKeyFile;
 
 			string strKeyFile = m_cmbKeyFile.Text;
-
 			bool bKeyProv = (!strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta) &&
 				Program.KeyProviderPool.IsKeyProvider(strKeyFile));
 			m_btnOpenKeyFile.Enabled = m_btnSaveKeyFile.Enabled =
 				(bKeyFile && !bKeyProv);
 
-			if(!m_cbPassword.Checked && !m_cbKeyFile.Checked && !m_cbUserAccount.Checked)
+			bool bUserAccount = m_cbUserAccount.Checked;
+			if(!m_cbPassword.Checked && !bKeyFile && !bUserAccount)
 				m_btnCreate.Enabled = false;
-			else if(m_cbKeyFile.Checked && strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
+			else if(bKeyFile && strKeyFile.Equals(KPRes.NoKeyFileSpecifiedMeta))
 				m_btnCreate.Enabled = false;
 			else m_btnCreate.Enabled = true;
 
 			m_ttRect.SetToolTip(m_cmbKeyFile, strKeyFile);
+
+			bool bExpert = m_cbExpert.Checked;
+			bool bShowKF = (bExpert || bKeyFile);
+			bool bShowUA = (bExpert || bUserAccount);
+
+			Control[] vKeyFile = new Control[] {
+				m_cbKeyFile, m_cmbKeyFile, m_btnOpenKeyFile, m_btnSaveKeyFile,
+				m_lblKeyFileInfo, m_picKeyFileWarning, m_lblKeyFileWarning,
+				m_lnkKeyFile
+			};
+			foreach(Control c in vKeyFile) c.Visible = bShowKF;
+
+			Control[] vUserAccount = new Control[] {
+				m_cbUserAccount, m_lblWindowsAccDesc, m_picAccWarning,
+				m_lblWindowsAccDesc2, m_lnkUserAccount
+			};
+			foreach(Control c in vUserAccount) c.Visible = bShowUA;
+
+			if(bKeyFile || bUserAccount)
+			{
+				if(!m_cbExpert.Checked)
+					m_cbExpert.Checked = true; // Recursive, once
+
+				m_cbExpert.Enabled = false;
+			}
+			else m_cbExpert.Enabled = true;
+
+			// --m_uBlockUpdate;
 		}
 
 		private void OnCheckedPassword(object sender, EventArgs e)
@@ -401,6 +445,23 @@ namespace KeePass.Forms
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			CleanUpEx();
+		}
+
+		private void OnKeyFileLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources,
+				AppDefs.HelpTopics.KeySourcesKeyFile);
+		}
+
+		private void OnUserAccountLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources,
+				AppDefs.HelpTopics.KeySourcesUserAccount);
+		}
+
+		private void OnExpertCheckedChanged(object sender, EventArgs e)
+		{
+			EnableUserControls();
 		}
 	}
 }

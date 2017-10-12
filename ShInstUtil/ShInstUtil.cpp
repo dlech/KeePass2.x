@@ -290,7 +290,7 @@ void CheckDotNetInstalled()
 			ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
 			sei.cbSize = sizeof(SHELLEXECUTEINFO);
 			sei.lpVerb = _T("open");
-			sei.lpFile = _T("http://msdn.microsoft.com/en-us/netframework/aa569263.aspx");
+			sei.lpFile = _T("https://msdn.microsoft.com/en-us/netframework/aa569263.aspx");
 			sei.nShow = SW_SHOW;
 			ShellExecuteEx(&sei);
 		}

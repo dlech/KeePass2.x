@@ -20,12 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 #if !KeePassUAP
 using System.Security.Cryptography;
 #endif
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
@@ -124,6 +126,41 @@ namespace KeePassLib.Cryptography
 #endif
 			MemUtil.ZeroByteArray(pbHash);
 			return pbRet;
+		}
+
+		private static bool? g_obAesCsp = null;
+		internal static SymmetricAlgorithm CreateAes()
+		{
+			if(g_obAesCsp.HasValue)
+				return (g_obAesCsp.Value ? CreateAesCsp() : new RijndaelManaged());
+
+			SymmetricAlgorithm a = CreateAesCsp();
+			g_obAesCsp = (a != null);
+			return (a ?? new RijndaelManaged());
+		}
+
+		private static SymmetricAlgorithm CreateAesCsp()
+		{
+			try
+			{
+				// On Windows, the CSP implementation is only minimally
+				// faster (and for key derivations it's not used anyway,
+				// as KeePass uses a native implementation based on
+				// CNG/BCrypt, which is much faster)
+				if(!NativeLib.IsUnix()) return null;
+
+				string strFqn = Assembly.CreateQualifiedName(
+					"System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+					"System.Security.Cryptography.AesCryptoServiceProvider");
+
+				Type t = Type.GetType(strFqn);
+				if(t == null) return null;
+
+				return (Activator.CreateInstance(t) as SymmetricAlgorithm);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 	}
 }

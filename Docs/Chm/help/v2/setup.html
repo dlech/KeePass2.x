@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="Setup - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>Setup - KeePass</title>
 	<base target="_self" />
@@ -50,6 +49,7 @@ KeePass 2.x installation, uninstallation, portability and updates.
 <!-- <li><a href="#monoportable">Portable KeePass using Mono</a></li> -->
 <!-- </ul>
 </li> -->
+<li><a href="#mig1x">Migrating from KeePass 1.x to 2.x</a></li>
 </ul>
 
 <br />
@@ -68,12 +68,12 @@ information</h2>
 
 <p>The installer and the portable version are described in detail below.</p>
 
-<p>The source code package contains everything you need to compile KeePass. It includes
-the C#/C++ source code and header files, resource files,
+<p>The source code package contains everything you need to compile KeePass.
+It includes the C#/C++ source code and header files, resource files,
 sources for building the installer, etc.</p>
 
-<p>Both installed and portable KeePass versions require a .NET framework,
-see the downloads page for details.</p>
+<!-- <p>Both installed and portable KeePass versions require a .NET framework,
+see the downloads page for details.</p> -->
 
 <p><b>Updating KeePass:</b><br />
 When a new KeePass version has been released, you can update your existing KeePass
@@ -82,7 +82,7 @@ depending on which package you are using (installer or portable), see below.</p>
 
 <p>Translations should also be updated when you install a new KeePass version.
 You can find the latest translation files here:
-<a href="http://keepass.info/translations.html" target="_blank">KeePass Translations</a>.</p>
+<a href="https://keepass.info/translations.html" target="_blank">KeePass Translations</a>.</p>
 
 <br />
 <a name="installer"></a>
@@ -146,7 +146,7 @@ display the destination path selection page again.</p>
 
 <p><b>Options/Components:</b><br />
 The installation options/components are explained in detail here:
-<a href="http://keepass.info/help/kb/faq.html#instopt2x" target="_blank">What
+<a href="https://keepass.info/help/kb/faq.html#instopt2x" target="_blank">What
 do the 2.x installation options/components mean in detail?</a>.</p>
 
 <br />
@@ -158,7 +158,7 @@ version (KeePass-2.xx.zip file)</h2>
 
 <p>The portable version can be carried around on portable devices (like USB
 sticks) and runs on any computer directly from the device, without any
-installation (provided that a .NET framework is installed).
+installation<!-- (provided that a .NET framework is installed) -->.
 It doesn't store anything on your system (in contrast to
 the setup package, see above). KeePass doesn't create any new
 registry keys and it doesn't create any configuration files in your Windows
@@ -198,9 +198,8 @@ KeePass under Mono (Linux, Mac OS X, BSD, ...)</h2>
 <p>In addition to Windows, KeePass 2.x runs under Mono,
 i.e. Linux, Mac OS X, BSD, etc.</p>
 
-<p>Links to all supported packages can be found on the KeePass downloads page:
-<a href="http://keepass.info/download.html"
-target="_blank">http://keepass.info/download.html</a>.</p>
+<p>Links to all supported packages can be found on the
+<a href="https://keepass.info/download.html" target="_blank">Downloads</a> page.</p>
 
 <ul>
 <li><strong>Debian/Ubuntu Linux:</strong><br />
@@ -329,10 +328,10 @@ as hot key, you'd enter <code>&lt;Control&gt;&lt;Alt&gt;a</code>.</li>
 <p>Important: for global auto-type, the version of the <code>xdotool</code> package
 must be 2.20100818.3004 or higher! If your distribution only offers an
 older version, you can download and install the latest version of the
-package manually, see the <a href="http://www.semicomplete.com/projects/xdotool/"
+package manually, see the <a href="https://www.semicomplete.com/projects/xdotool/"
 target="_blank"><code>xdotool</code></a> website.</p>
 
-<p><b>Plugins:</b><br />
+<p><strong>Plugins:</strong><br />
 On some Linux systems, the <code>mono-complete</code> package may be
 required for plugins to work properly.</p>
 </li>
@@ -430,6 +429,30 @@ the USB stick and run the batch file.</p>
 possibility to run KeePass 2.x. Installing .NET support (either the .NET
 Framework or Mono) is highly recommended instead!</p>
 -->
+
+<br />
+
+<a name="mig1x"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_package_system.png" class="singleimg" alt="Setup" />&nbsp;&nbsp;Migrating
+from KeePass 1.x to 2.x</h2>
+
+<p>In order to migrate from KeePass 1.x to 2.x, follow these steps:</p>
+
+<ol>
+<li>Install KeePass 2.x.<br />
+If you're using the installer, make sure that the component
+'Native Support Library (KeePass 1.x)' is being installed
+(by default this component is enabled).</li>
+<li>Run KeePass 2.x and create a new KDBX database file (via 'File' -&gt;
+'New').</li>
+<li>Import your old KDB database file into your new KDBX database file
+(via 'File' -&gt; 'Import', file format 'KeePass KDB (1.x)').</li>
+</ol>
+
+<p>If everything works fine, you can delete your old KeePass 1.x
+installation. The old KDB database file also isn't required anymore,
+but you may want to keep it as a backup.</p>
 
 </body></html>
 

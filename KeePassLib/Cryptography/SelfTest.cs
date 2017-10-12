@@ -62,7 +62,7 @@ namespace KeePassLib.Cryptography
 
 			TestFipsComplianceProblems(); // Must be the first test
 
-			TestRijndael();
+			TestAes();
 			TestSalsa20(r);
 			TestChaCha20(r);
 			TestBlake2b(r);
@@ -105,7 +105,7 @@ namespace KeePassLib.Cryptography
 			}
 		}
 
-		private static void TestRijndael()
+		private static void TestAes()
 		{
 			// Test vector (official ECB test vector #356)
 			byte[] pbIV = new byte[16];
@@ -128,19 +128,18 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("AES (BC)");
 			r.ProcessBlock(pbTestData, 0, pbTestData, 0);
 #else
-			RijndaelManaged r = new RijndaelManaged();
-
-			if(r.BlockSize != 128) // AES block size
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
-				r.BlockSize = 128;
+				a.BlockSize = 128;
 			}
 
-			r.IV = pbIV;
-			r.KeySize = 256;
-			r.Key = pbTestKey;
-			r.Mode = CipherMode.ECB;
-			ICryptoTransform iCrypt = r.CreateEncryptor();
+			a.IV = pbIV;
+			a.KeySize = 256;
+			a.Key = pbTestKey;
+			a.Mode = CipherMode.ECB;
+			ICryptoTransform iCrypt = a.CreateEncryptor();
 
 			iCrypt.TransformBlock(pbTestData, 0, 16, pbTestData, 0);
 #endif
@@ -1044,7 +1043,7 @@ namespace KeePassLib.Cryptography
 			if(UrlUtil.GetHost(@"scheme://domain:port/path?query_string#fragment_id") !=
 				"domain")
 				throw new InvalidOperationException("UrlUtil-H1");
-			if(UrlUtil.GetHost(@"http://example.org:80") != "example.org")
+			if(UrlUtil.GetHost(@"https://example.org:443") != "example.org")
 				throw new InvalidOperationException("UrlUtil-H2");
 			if(UrlUtil.GetHost(@"mailto:bob@example.com") != "example.com")
 				throw new InvalidOperationException("UrlUtil-H3");

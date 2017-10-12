@@ -286,7 +286,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			rb.Build(m_rtbPlaceholders);
+			rb.Build(m_rtbPlaceholders, true);
 
 			LinkifyRtf(m_rtbPlaceholders);
 		}

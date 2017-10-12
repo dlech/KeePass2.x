@@ -719,7 +719,7 @@ namespace KeePassLib.Utility
 
 		/// <summary>
 		/// Removes all characters that are not valid XML characters,
-		/// according to http://www.w3.org/TR/xml/#charsets .
+		/// according to https://www.w3.org/TR/xml/#charsets .
 		/// </summary>
 		/// <param name="strText">Source text.</param>
 		/// <returns>Text containing only valid XML characters.</returns>

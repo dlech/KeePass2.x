@@ -18,7 +18,7 @@
 */
 
 // This control is based on the following article:
-// http://www.codeproject.com/useritems/hotkeycontrol.asp
+// https://www.codeproject.com/useritems/hotkeycontrol.asp
 
 using System;
 using System.Collections.Generic;

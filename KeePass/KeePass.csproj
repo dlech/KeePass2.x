@@ -115,6 +115,9 @@
     <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\AesKdf.cs">
       <Link>KeePassLib\Cryptography\KeyDerivation\AesKdf.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\AesKdf.GCrypt.cs">
+      <Link>KeePassLib\Cryptography\KeyDerivation\AesKdf.GCrypt.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.Core.cs">
       <Link>KeePassLib\Cryptography\KeyDerivation\Argon2Kdf.Core.cs</Link>
     </Compile>
@@ -213,6 +216,9 @@
     </Compile>
     <Compile Include="..\KeePassLib\Keys\UserKeyType.cs">
       <Link>KeePassLib\Keys\UserKeyType.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Native\ClipboardU.cs">
+      <Link>KeePassLib\Native\ClipboardU.cs</Link>
     </Compile>
     <Compile Include="..\KeePassLib\Native\NativeLib.cs">
       <Link>KeePassLib\Native\NativeLib.cs</Link>
@@ -1097,6 +1103,7 @@
     <Compile Include="Ecas\IEcasParameterized.cs" />
     <Compile Include="Util\CriticalSectionEx.cs" />
     <Compile Include="Util\CustomResourceManager.cs" />
+    <Compile Include="Util\EmergencySheet.cs" />
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
@@ -1107,6 +1114,7 @@
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
+    <Compile Include="Util\PrintUtil.cs" />
     <Compile Include="Util\PwGeneratorUtil.cs" />
     <Compile Include="Util\SearchUtil.cs" />
     <Compile Include="Util\SendInputEx.cs" />
@@ -1255,6 +1263,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />
     <None Include="Resources\Icons\QuadNormal_Y.ico" />
     <None Include="Resources\Icons\QuadNormal_R.ico" />

@@ -1884,17 +1884,14 @@ namespace KeePass.Forms
 			{
 				if(string.IsNullOrEmpty(strFile)) { Debug.Assert(false); continue; }
 
-				byte[] vBytes = null;
-				string strMsg, strItem = UrlUtil.GetFileName(strFile);
-
+				string strItem = UrlUtil.GetFileName(strFile);
 				if(m_vBinaries.Get(strItem) != null)
 				{
-					strMsg = KPRes.AttachedExistsAlready + MessageService.NewLine +
+					string strMsg = KPRes.AttachedExistsAlready + MessageService.NewLine +
 						strItem + MessageService.NewParagraph + KPRes.AttachNewRename +
 						MessageService.NewParagraph + KPRes.AttachNewRenameRemarks0 +
 						MessageService.NewLine + KPRes.AttachNewRenameRemarks1 +
 						MessageService.NewLine + KPRes.AttachNewRenameRemarks2;
-
 					DialogResult dr = MessageService.Ask(strMsg, null,
 						MessageBoxButtons.YesNoCancel);
 
@@ -1921,7 +1918,11 @@ namespace KeePass.Forms
 
 				try
 				{
-					vBytes = File.ReadAllBytes(strFile);
+					if(!FileDialogsEx.CheckAttachmentSize(strFile, KPRes.AttachFailed +
+						MessageService.NewParagraph + strFile))
+						continue;
+
+					byte[] vBytes = File.ReadAllBytes(strFile);
 					vBytes = DataEditorForm.ConvertAttachment(strItem, vBytes);
 
 					if(vBytes != null)
@@ -2046,7 +2047,8 @@ namespace KeePass.Forms
 			AddOverrideUrlItem(l, "cmd://{SAFARI} \"{URL}\"",
 				AppLocator.SafariPath);
 
-			Debug.Assert(m_cmbOverrideUrl.InvokeRequired);
+			Debug.Assert(m_cmbOverrideUrl.InvokeRequired ||
+				MonoWorkarounds.IsRequired(373134));
 			VoidDelegate f = delegate()
 			{
 				try

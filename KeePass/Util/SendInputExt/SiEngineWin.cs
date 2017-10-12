@@ -425,8 +425,8 @@ namespace KeePass.Util.SendInputExt
 		private static bool IsExtendedKeyEx(int vKey)
 		{
 #if DEBUG
-			// http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx
-			// http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
+			// https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx
+			// https://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
 			const uint m = NativeMethods.MAPVK_VK_TO_VSC;
 			IntPtr h = IntPtr.Zero;
 			Debug.Assert(NativeMethods.MapVirtualKey3((uint)
@@ -610,7 +610,7 @@ namespace KeePass.Util.SendInputExt
 				if(Array.IndexOf<char>(m_vForcedUniChars, ch) >= 0) return false;
 
 				// U+02B0 to U+02FF are Spacing Modifier Letters;
-				// http://www.unicode.org/charts/PDF/U02B0.pdf
+				// https://www.unicode.org/charts/PDF/U02B0.pdf
 				// https://en.wikipedia.org/wiki/Spacing_Modifier_Letters
 				if((ch >= '\u02B0') && (ch <= '\u02FF')) return false;
 			}
@@ -758,6 +758,20 @@ namespace KeePass.Util.SendInputExt
 						break;
 					}
 				}
+
+				// The workaround attempt for Edge below doesn't work;
+				// Edge simply ignores Unicode packets for '@', Euro sign, etc.
+				/* if(swi.SendMethod == SiSendMethod.Default)
+				{
+					string strTitle = NativeMethods.GetWindowText(hWnd, true);
+
+					// Workaround for Edge;
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/fd3a6776/
+					// The window title is:
+					// Page name + Space + U+200E (left-to-right mark) + "- Microsoft Edge"
+					if(strTitle.EndsWith("- Microsoft Edge", StrUtil.CaseIgnoreCmp))
+						swi.SendMethod = SiSendMethod.UnicodePacket;
+				} */
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally

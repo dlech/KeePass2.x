@@ -229,6 +229,15 @@
 		<Data Name="BackgroundColor">
 			<Value>Background Color</Value>
 		</Data>
+		<Data Name="BackupDatabase">
+			<Value>You should regularly create a backup of the database file (onto an independent data storage device).</Value>
+		</Data>
+		<Data Name="BackupFile">
+			<Value>You should create a backup of this file.</Value>
+		</Data>
+		<Data Name="BackupLocation">
+			<Value>Backups are stored here:</Value>
+		</Data>
 		<Data Name="BinaryNoConv">
 			<Value>Binary (no conversion)</Value>
 		</Data>
@@ -275,7 +284,7 @@
 			<Value>Change Master Key</Value>
 		</Data>
 		<Data Name="ChangeMasterKeyIntroShort">
-			<Value>You are changing the composite master key for the currently-open database.</Value>
+			<Value>You are changing the composite master key for the currently opened database.</Value>
 		</Data>
 		<Data Name="CharsAbbr">
 			<Value>ch.</Value>
@@ -324,6 +333,12 @@
 		</Data>
 		<Data Name="ClosingDatabaseFile">
 			<Value>Closing database file</Value>
+		</Data>
+		<Data Name="ClusterCenters">
+			<Value>Clusters of similar passwords.</Value>
+		</Data>
+		<Data Name="ClusterCentersDesc">
+			<Value>Each entry in the list below is the center of a cluster of entries that have similar, but not identical passwords. Click on an entry to see the cluster (list of entries with descending similarity).</Value>
 		</Data>
 		<Data Name="Column">
 			<Value>Column</Value>
@@ -379,8 +394,8 @@
 		<Data Name="ConfigureKeystrokeSeqDesc">
 			<Value>Define a default keystroke sequence.</Value>
 		</Data>
-		<Data Name="ConfigureOnNewDatabase">
-			<Value>Create New Password Database - Step 2</Value>
+		<Data Name="ConfigureOnNewDatabase2">
+			<Value>Create New Database - Step 3</Value>
 		</Data>
 		<Data Name="Contact">
 			<Value>Contact</Value>
@@ -499,6 +514,15 @@
 		<Data Name="DatabaseDescPrompt">
 			<Value>Enter a short description of the database or leave it empty.</Value>
 		</Data>
+		<Data Name="DatabaseFile">
+			<Value>Database file</Value>
+		</Data>
+		<Data Name="DatabaseFileIntro">
+			<Value>Your data will be stored in a KeePass database file, which is a regular file. After clicking [OK], you will be prompted to specify the location where KeePass should save this file.</Value>
+		</Data>
+		<Data Name="DatabaseFileRem">
+			<Value>It is important that you remember where the database file is stored.</Value>
+		</Data>
 		<Data Name="DatabaseHasUnsavedChanges">
 			<Value>Database has unsaved changes</Value>
 		</Data>
@@ -522,6 +546,9 @@
 		</Data>
 		<Data Name="DataEditor">
 			<Value>Data Editor</Value>
+		</Data>
+		<Data Name="DataLoss">
+			<Value>If you lose the database file or any of the master key components (or forget the composition), all data stored in the database is lost. KeePass does not have any built-in file backup functionality. There is no backdoor and no universal key that can open your database.</Value>
 		</Data>
 		<Data Name="DataViewer">
 			<Value>Data Viewer</Value>
@@ -636,6 +663,24 @@
 		</Data>
 		<Data Name="EMail">
 			<Value>eMail</Value>
+		</Data>
+		<Data Name="EmergencySheet">
+			<Value>Emergency Sheet</Value>
+		</Data>
+		<Data Name="EmergencySheetAsk">
+			<Value>Ask whether to create an emergency sheet</Value>
+		</Data>
+		<Data Name="EmergencySheetInfo">
+			<Value>A KeePass emergency sheet contains all important information that is required to open your database. It should be printed, filled out and stored in a secure location, where only you and possibly a few other people that you trust have access to.</Value>
+		</Data>
+		<Data Name="EmergencySheetPrintInfo">
+			<Value>KeePass will print an emergency sheet, which you can then fill out.</Value>
+		</Data>
+		<Data Name="EmergencySheetQ">
+			<Value>Do you want to print an emergency sheet now?</Value>
+		</Data>
+		<Data Name="EmergencySheetRec">
+			<Value>It is recommended that you create an emergency sheet for your database.</Value>
 		</Data>
 		<Data Name="Empty">
 			<Value>Empty</Value>
@@ -844,6 +889,9 @@
 		<Data Name="Files">
 			<Value>Files</Value>
 		</Data>
+		<Data Name="FileSaveQ">
+			<Value>Do you want to save the database now?</Value>
+		</Data>
 		<Data Name="FileSaveQClosing">
 			<Value>Save database changes before closing the file?</Value>
 		</Data>
@@ -882,6 +930,9 @@
 		</Data>
 		<Data Name="FileSaveQOpYesLocking">
 			<Value>Save all changes made to the database and lock the KeePass workspace.</Value>
+		</Data>
+		<Data Name="FileTooLarge">
+			<Value>The file is too large.</Value>
 		</Data>
 		<Data Name="FileTxExtra">
 			<Value>Extra-safe file transactions</Value>
@@ -1105,6 +1156,9 @@
 		<Data Name="Installed">
 			<Value>Installed</Value>
 		</Data>
+		<Data Name="InstrAndGenInfo">
+			<Value>Instructions and General Information</Value>
+		</Data>
 		<Data Name="InterleavedKeySending">
 			<Value>Allow interleaved sending of keys</Value>
 		</Data>
@@ -1192,9 +1246,6 @@
 		<Data Name="KeyboardKeyShiftLeft">
 			<Value>LShift</Value>
 		</Data>
-		<Data Name="KeyChanged">
-			<Value>Key Changed</Value>
-		</Data>
 		<Data Name="KeyFile">
 			<Value>Key file</Value>
 		</Data>
@@ -1213,6 +1264,9 @@
 		<Data Name="KeyFileUseExisting">
 			<Value>Use an existing file as key file</Value>
 		</Data>
+		<Data Name="KeyProvider">
+			<Value>Key provider</Value>
+		</Data>
 		<Data Name="KeyProvIncmpWithSD">
 			<Value>The selected key provider cannot be used, because it is incompatible with the secure desktop.</Value>
 		</Data>
@@ -1230,6 +1284,9 @@
 		</Data>
 		<Data Name="LastModTimePwHist">
 			<Value>Last Password Modification Time (Based on History)</Value>
+		</Data>
+		<Data Name="LatestVersionWeb">
+			<Value>The latest KeePass version can be found on the KeePass website</Value>
 		</Data>
 		<Data Name="LimitSingleInstance">
 			<Value>Limit to single instance</Value>
@@ -1264,11 +1321,17 @@
 		<Data Name="MainWindow">
 			<Value>Main Window</Value>
 		</Data>
+		<Data Name="MasterKey">
+			<Value>Master Key</Value>
+		</Data>
 		<Data Name="MasterKeyChanged">
 			<Value>The master key has been changed!</Value>
 		</Data>
-		<Data Name="MasterKeyChangedSavePrompt">
-			<Value>Save the database now in order to get the new key applied.</Value>
+		<Data Name="MasterKeyChangedSave">
+			<Value>In order to apply the new master key, the database must be saved.</Value>
+		</Data>
+		<Data Name="MasterKeyChangedShort">
+			<Value>Master key changed</Value>
 		</Data>
 		<Data Name="MasterKeyChangeForce">
 			<Value>The master key for this database has been used for quite a while and must be changed now.</Value>
@@ -1282,14 +1345,23 @@
 		<Data Name="MasterKeyChangeRec">
 			<Value>The master key for this database has been used for quite a while and it is recommended to change it now.</Value>
 		</Data>
+		<Data Name="MasterKeyComponents">
+			<Value>The master key for this database file consists of the following components:</Value>
+		</Data>
 		<Data Name="MasterKeyOnSecureDesktop">
 			<Value>Enter master key on secure desktop</Value>
+		</Data>
+		<Data Name="MasterPassword">
+			<Value>Master password</Value>
 		</Data>
 		<Data Name="MasterPasswordMinLengthFailed">
 			<Value>The master password must be at least {PARAM} characters long!</Value>
 		</Data>
 		<Data Name="MasterPasswordMinQualityFailed">
 			<Value>The estimated quality of the master password must be at least {PARAM} bits!</Value>
+		</Data>
+		<Data Name="MaxAttachmentSize">
+			<Value>The maximum supported attachment size is {PARAM}.</Value>
 		</Data>
 		<Data Name="Maximized">
 			<Value>Maximized</Value>
@@ -1392,6 +1464,9 @@
 		</Data>
 		<Data Name="Not">
 			<Value>Not</Value>
+		</Data>
+		<Data Name="NotNow">
+			<Value>Not now</Value>
 		</Data>
 		<Data Name="NotRecommended">
 			<Value>(not recommended)</Value>
@@ -1930,6 +2005,9 @@
 		<Data Name="Size">
 			<Value>Size</Value>
 		</Data>
+		<Data Name="Skip">
+			<Value>Skip</Value>
+		</Data>
 		<Data Name="Slow">
 			<Value>slow</Value>
 		</Data>
@@ -2197,14 +2275,14 @@
 		<Data Name="UseTransactedDatabaseWrites">
 			<Value>Use file transactions for writing databases</Value>
 		</Data>
-		<Data Name="UserAccount">
-			<Value>User account</Value>
-		</Data>
 		<Data Name="UserName">
 			<Value>User Name</Value>
 		</Data>
 		<Data Name="UserNamePrompt">
 			<Value>Enter the user name:</Value>
+		</Data>
+		<Data Name="UserNameStc">
+			<Value>User name</Value>
 		</Data>
 		<Data Name="Uuid">
 			<Value>UUID</Value>
@@ -2271,6 +2349,12 @@
 		</Data>
 		<Data Name="WindowStyle">
 			<Value>Window style</Value>
+		</Data>
+		<Data Name="WindowsUserAccount">
+			<Value>Windows user account</Value>
+		</Data>
+		<Data Name="WindowsUserAccountBackup">
+			<Value>You should create a complete backup of your Windows user account.</Value>
 		</Data>
 		<Data Name="WithoutContext">
 			<Value>Without Context</Value>

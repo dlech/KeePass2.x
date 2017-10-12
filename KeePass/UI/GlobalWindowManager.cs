@@ -134,8 +134,8 @@ namespace KeePass.UI
 
 			// The control box must be enabled, otherwise DPI scaling
 			// doesn't work due to a .NET bug:
-			// http://connect.microsoft.com/VisualStudio/feedback/details/694242/difference-dpi-let-the-button-cannot-appear-completely-while-remove-the-controlbox-for-the-form
-			// http://social.msdn.microsoft.com/Forums/en-US/winforms/thread/67407313-8cb2-42b4-afb9-8be816f0a601/
+			// https://connect.microsoft.com/VisualStudio/feedback/details/694242/difference-dpi-let-the-button-cannot-appear-completely-while-remove-the-controlbox-for-the-form
+			// https://social.msdn.microsoft.com/Forums/en-US/winforms/thread/67407313-8cb2-42b4-afb9-8be816f0a601/
 			Debug.Assert(form.ControlBox);
 
 			form.TopMost = Program.Config.MainWindow.AlwaysOnTop;
@@ -295,7 +295,7 @@ namespace KeePass.UI
 
 		public static void CustomizeControl(Control c)
 		{
-			if(NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix)
+			if(UISystemFonts.OverrideUIFont)
 			{
 				Font font = UISystemFonts.DefaultFont;
 				if(font != null) CustomizeFont(c, font);

@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -103,6 +103,49 @@ namespace KeePass.UI
 				MessageService.NewParagraph + KPRes.SaveBeforeCloseQuestion;
 			return MessageService.Ask(strMessage, KPRes.SaveBeforeCloseTitle,
 				MessageBoxButtons.YesNoCancel);
+		}
+
+		public static bool ShowNewDatabaseIntro(Form fParent)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendLine(KPRes.DatabaseFileIntro);
+			sb.AppendLine();
+			sb.AppendLine(KPRes.DatabaseFileRem);
+			sb.AppendLine();
+			sb.AppendLine(KPRes.BackupDatabase);
+
+			string str = sb.ToString();
+
+			int r = VistaTaskDialog.ShowMessageBoxEx(str, KPRes.NewDatabase,
+				PwDefs.ShortProductName, VtdIcon.Information, fParent, KPRes.Ok,
+				(int)DialogResult.OK, KPRes.Cancel, (int)DialogResult.Cancel);
+			if(r >= 0) return (r == (int)DialogResult.OK);
+
+			MessageService.ShowInfo(str);
+			return true;
+		}
+
+		internal static bool CheckAttachmentSize(long lSize, string strOp)
+		{
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/42ddc71a/
+			const long cbMax = 512 * 1024 * 1024;
+
+			if(lSize > cbMax)
+			{
+				MessageService.ShowWarning(strOp, KPRes.FileTooLarge +
+					" " + KPRes.MaxAttachmentSize.Replace(@"{PARAM}",
+					StrUtil.FormatDataSize((ulong)cbMax)));
+				return false;
+			}
+
+			return true;
+		}
+
+		internal static bool CheckAttachmentSize(string strPath, string strOp)
+		{
+			FileInfo fi = new FileInfo(strPath);
+			return CheckAttachmentSize(fi.Length, strOp);
 		}
 	}
 

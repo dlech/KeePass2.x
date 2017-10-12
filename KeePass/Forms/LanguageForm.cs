@@ -61,6 +61,8 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.Text = KPRes.SelectLanguage;
 
+			UIUtil.SetExplorerTheme(m_lvLanguages, true);
+
 			List<Image> lImg = new List<Image>();
 			lImg.Add(Properties.Resources.B16x16_Browser);
 
@@ -77,63 +79,67 @@ namespace KeePass.Forms
 			lvi.SubItems.Add(PwDefs.VersionString);
 			lvi.SubItems.Add(AppDefs.DefaultTrlAuthor);
 			lvi.SubItems.Add(AppDefs.DefaultTrlContact);
+			lvi.Tag = string.Empty;
+			// UIUtil.SetFocusedItem(m_lvLanguages, lvi, true);
 
-			List<string> vList = new List<string>();
-			GetAvailableTranslations(AppConfigSerializer.AppDataDirectory, vList);
-			GetAvailableTranslations(AppConfigSerializer.LocalAppDataDirectory, vList);
+			// The configuration stores the file name only; filter duplicates
+			List<string> lNames = new List<string>();
+
+			GetAvailableTranslations(AppConfigSerializer.AppDataDirectory, lNames);
+			GetAvailableTranslations(AppConfigSerializer.LocalAppDataDirectory, lNames);
 
 			string strExe = WinUtil.GetExecutable();
 			string strPath = UrlUtil.GetFileDirectory(strExe, false, true);
-			GetAvailableTranslations(strPath, vList);
+			GetAvailableTranslations(strPath, lNames);
 
 			UIUtil.ResizeColumns(m_lvLanguages, true);
+			UIUtil.SetFocus(m_lvLanguages, this);
 		}
 
-		private void GetAvailableTranslations(string strPath, List<string> vList)
+		private void GetAvailableTranslations(string strPath, List<string> lNames)
 		{
 			try
 			{
-				DirectoryInfo di = new DirectoryInfo(strPath);
-				FileInfo[] vFiles = di.GetFiles();
+				List<string> lFiles = UrlUtil.GetFilePaths(strPath, "*." +
+					KPTranslation.FileExtension, SearchOption.TopDirectoryOnly);
+				lFiles.Sort(StrUtil.CaseIgnoreComparer);
 
-				foreach(FileInfo fi in vFiles)
+				foreach(string strFilePath in lFiles)
 				{
-					string strFullName = fi.FullName;
+					string strFileName = UrlUtil.GetFileName(strFilePath);
 
-					if(strFullName.EndsWith("." + KPTranslation.FileExtension,
-						StrUtil.CaseIgnoreCmp))
+					bool bFound = false;
+					foreach(string strExisting in lNames)
 					{
-						string strFileName = UrlUtil.GetFileName(strFullName);
-
-						bool bFound = false;
-						foreach(string strExisting in vList)
+						if(strExisting.Equals(strFileName, StrUtil.CaseIgnoreCmp))
 						{
-							if(strExisting.Equals(strFileName, StrUtil.CaseIgnoreCmp))
-							{
-								bFound = true;
-								break;
-							}
+							bFound = true;
+							break;
 						}
-						if(bFound) continue;
+					}
+					if(bFound) continue;
 
-						try
-						{
-							XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-							KPTranslation kpTrl = KPTranslation.Load(strFullName, xs);
+					try
+					{
+						XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+						KPTranslation kpTrl = KPTranslation.Load(strFilePath, xs);
 
-							ListViewItem lvi = m_lvLanguages.Items.Add(
-								kpTrl.Properties.NameEnglish, 0);
-							lvi.SubItems.Add(kpTrl.Properties.ApplicationVersion);
-							lvi.SubItems.Add(kpTrl.Properties.AuthorName);
-							lvi.SubItems.Add(kpTrl.Properties.AuthorContact);
-							lvi.Tag = strFileName;
+						ListViewItem lvi = m_lvLanguages.Items.Add(
+							kpTrl.Properties.NameEnglish, 0);
+						lvi.SubItems.Add(kpTrl.Properties.ApplicationVersion);
+						lvi.SubItems.Add(kpTrl.Properties.AuthorName);
+						lvi.SubItems.Add(kpTrl.Properties.AuthorContact);
+						lvi.Tag = strFileName;
 
-							vList.Add(strFileName);
-						}
-						catch(Exception ex)
-						{
-							MessageService.ShowWarning(ex.Message);
-						}
+						lNames.Add(strFileName);
+
+						// if(strFileName.Equals(Program.Config.Application.LanguageFile,
+						//	StrUtil.CaseIgnoreCmp))
+						//	UIUtil.SetFocusedItem(m_lvLanguages, lvi, true);
+					}
+					catch(Exception ex)
+					{
+						MessageService.ShowWarning(ex.Message);
 					}
 				}
 			}
@@ -149,21 +155,12 @@ namespace KeePass.Forms
 			ListView.SelectedListViewItemCollection lvic = m_lvLanguages.SelectedItems;
 			if((lvic == null) || (lvic.Count != 1)) return;
 
-			if(lvic[0].Index == 0) // First item selected = English
-			{
-				if(Program.Config.Application.LanguageFile.Length == 0)
-					return; // Is English already
+			string strSel = ((lvic[0].Tag as string) ?? string.Empty);
+			if(strSel.Equals(Program.Config.Application.LanguageFile,
+				StrUtil.CaseIgnoreCmp))
+				return; // Is active already, do not close the dialog
 
-				Program.Config.Application.LanguageFile = string.Empty;
-			}
-			else
-			{
-				string strSelID = (lvic[0].Tag as string);
-				if(strSelID == Program.Config.Application.LanguageFile) return;
-
-				Program.Config.Application.LanguageFile = strSelID;
-			}
-
+			Program.Config.Application.LanguageFile = strSel;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

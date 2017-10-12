@@ -1918,8 +1918,8 @@ namespace KeePass.UI
 				else
 				{
 					// In grouped mode, the TopItem property does not work;
-					// http://connect.microsoft.com/VisualStudio/feedback/details/642188/listview-control-bug-topitem-property-doesnt-work-with-groups
-					// http://msdn.microsoft.com/en-us/library/windows/desktop/bb761087.aspx
+					// https://connect.microsoft.com/VisualStudio/feedback/details/642188/listview-control-bug-topitem-property-doesnt-work-with-groups
+					// https://msdn.microsoft.com/en-us/library/windows/desktop/bb761087.aspx
 
 					int dyHeader = NativeMethods.GetHeaderHeight(lv);
 
@@ -2899,19 +2899,6 @@ namespace KeePass.UI
 			tsmi.ShortcutKeyDisplayString = str;
 		}
 
-		/* public static string ImageToDataUri(Image img)
-		{
-			if(img == null) { Debug.Assert(false); return string.Empty; }
-
-			MemoryStream ms = new MemoryStream();
-			img.Save(ms, ImageFormat.Png);
-
-			byte[] pbImage = ms.ToArray();
-			ms.Close();
-
-			return StrUtil.DataToDataUri(pbImage, "image/png");
-		} */
-
 		public static void SetFocusedItem(ListView lv, ListViewItem lvi,
 			bool bAlsoSelect)
 		{
@@ -3326,6 +3313,13 @@ namespace KeePass.UI
 			if(i >= 0) return ((int)PwIcon.Count + i);
 			Debug.Assert(false);
 			return (int)pe.IconId;
+		}
+
+		internal static void SetView(ListView lv, View v)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			if(lv.View != v) lv.View = v;
 		}
 	}
 }

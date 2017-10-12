@@ -69,7 +69,7 @@ namespace KeePass.Plugins
 
 		/// <summary>
 		/// URL of a version information file. See
-		/// http://keepass.info/help/v2_dev/plg_index.html#upd
+		/// https://keepass.info/help/v2_dev/plg_index.html#upd
 		/// </summary>
 		public virtual string UpdateUrl
 		{

@@ -68,6 +68,7 @@
     <Compile Include="Cryptography\Hash\Blake2b.cs" />
     <Compile Include="Cryptography\HmacOtp.cs" />
     <Compile Include="Cryptography\KeyDerivation\AesKdf.cs" />
+    <Compile Include="Cryptography\KeyDerivation\AesKdf.GCrypt.cs" />
     <Compile Include="Cryptography\KeyDerivation\Argon2Kdf.Core.cs" />
     <Compile Include="Cryptography\KeyDerivation\Argon2Kdf.cs" />
     <Compile Include="Cryptography\KeyDerivation\KdfParameters.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Keys\KeyValidator.cs" />
     <Compile Include="Keys\KeyValidatorPool.cs" />
     <Compile Include="Keys\UserKeyType.cs" />
+    <Compile Include="Native\ClipboardU.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\NativeMethods.Unix.cs" />
     <Compile Include="PwCustomIcon.cs" />

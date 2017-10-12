@@ -36,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography.KeyDerivation
 {
-	public sealed class AesKdf : KdfEngine
+	public sealed partial class AesKdf : KdfEngine
 	{
 		private static readonly PwUuid g_uuid = new PwUuid(new byte[] {
 			0xC9, 0xD9, 0xF3, 0x9A, 0x62, 0x8A, 0x44, 0x60,
@@ -44,6 +44,8 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 		public const string ParamRounds = "R"; // UInt64
 		public const string ParamSeed = "S"; // Byte[32]
+
+		private const ulong BenchStep = 3001;
 
 		public override PwUuid Uuid
 		{
@@ -123,6 +125,9 @@ namespace KeePassLib.Cryptography.KeyDerivation
 				if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
 
+				if(TransformKeyGCrypt(pbNewKey, pbKeySeed32, uNumRounds))
+					return CryptoUtil.HashSha256(pbNewKey);
+
 				if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
 			}
@@ -148,18 +153,18 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);
 
-			RijndaelManaged r = new RijndaelManaged();
-			if(r.BlockSize != 128) // AES block size
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
-				r.BlockSize = 128;
+				a.BlockSize = 128;
 			}
 
-			r.IV = pbIV;
-			r.Mode = CipherMode.ECB;
-			r.KeySize = 256;
-			r.Key = pbKeySeed32;
-			ICryptoTransform iCrypt = r.CreateEncryptor();
+			a.IV = pbIV;
+			a.Mode = CipherMode.ECB;
+			a.KeySize = 256;
+			a.Key = pbKeySeed32;
+			ICryptoTransform iCrypt = a.CreateEncryptor();
 
 			// !iCrypt.CanReuseTransform -- doesn't work with Mono
 			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
@@ -183,13 +188,17 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 		public override KdfParameters GetBestParameters(uint uMilliseconds)
 		{
-			const ulong uStep = 3001;
-			ulong uRounds;
-
 			KdfParameters p = GetDefaultParameters();
+			ulong uRounds;
 
 			// Try native method
 			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
+			{
+				p.SetUInt64(ParamRounds, uRounds);
+				return p;
+			}
+
+			if(TransformKeyBenchmarkGCrypt(uMilliseconds, out uRounds))
 			{
 				p.SetUInt64(ParamRounds, uRounds);
 				return p;
@@ -211,18 +220,18 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);
 
-			RijndaelManaged r = new RijndaelManaged();
-			if(r.BlockSize != 128) // AES block size
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
-				r.BlockSize = 128;
+				a.BlockSize = 128;
 			}
 
-			r.IV = pbIV;
-			r.Mode = CipherMode.ECB;
-			r.KeySize = 256;
-			r.Key = pbKey;
-			ICryptoTransform iCrypt = r.CreateEncryptor();
+			a.IV = pbIV;
+			a.Mode = CipherMode.ECB;
+			a.KeySize = 256;
+			a.Key = pbKey;
+			ICryptoTransform iCrypt = a.CreateEncryptor();
 
 			// !iCrypt.CanReuseTransform -- doesn't work with Mono
 			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
@@ -241,7 +250,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			int tStart = Environment.TickCount;
 			while(true)
 			{
-				for(ulong j = 0; j < uStep; ++j)
+				for(ulong j = 0; j < BenchStep; ++j)
 				{
 #if KeePassUAP
 					aes.ProcessBlock(pbNewKey, 0, pbNewKey, 0);
@@ -252,8 +261,8 @@ namespace KeePassLib.Cryptography.KeyDerivation
 #endif
 				}
 
-				uRounds += uStep;
-				if(uRounds < uStep) // Overflow check
+				uRounds += BenchStep;
+				if(uRounds < BenchStep) // Overflow check
 				{
 					uRounds = ulong.MaxValue;
 					break;

@@ -94,7 +94,8 @@ namespace KeePass.UI
 			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
 			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException("strLine");
 
-			Debug.Assert((nHeight == StdHeight) || DpiUtil.ScalingRequired);
+			Debug.Assert((nHeight == StdHeight) || DpiUtil.ScalingRequired ||
+				UISystemFonts.OverrideUIFont);
 
 			if(MonoWorkarounds.IsRequired(12525) && (nHeight > 0))
 				--nHeight;
@@ -351,7 +352,7 @@ namespace KeePass.UI
 
 			/* // On Windows 2000 the DrawText method taking a Point doesn't
 			// work by design, see MSDN:
-			// http://msdn.microsoft.com/en-us/library/ms160657.aspx
+			// https://msdn.microsoft.com/en-us/library/ms160657.aspx
 			if(WinUtil.IsWindows2000)
 				TextRenderer.DrawText(g, strText, font, new Rectangle(pt.X, pt.Y,
 					nWidth - pt.X - 1, nHeight - pt.Y - 1), clrForeground, tff);

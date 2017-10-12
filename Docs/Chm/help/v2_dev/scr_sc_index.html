@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="Single Command Operations - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>Single Command Operations - KeePass</title>
 	<base target="_self" />
@@ -28,7 +27,6 @@
 	
 </head>
 <body>
-
 
 
 
@@ -189,7 +187,7 @@ Usage examples:</p>
 <p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:&quot;New entry title&quot;</code></p>
 
 <p><code>KPScript -c:AddEntry &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPw -Title:SomeWebsite
--UserName:Don -Password:pao5j3eg -URL:http://website.com</code></p>
+-UserName:Don -Password:pao5j3eg -URL:https://example.com/</code></p>
 
 <p>Additional command line parameters:</p>
 <ul>
@@ -223,10 +221,12 @@ to be edited; all of the specified conditions must match:</p>
 <ul>
 <li><code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
 The string field <i>FIELDNAME</i> must have the value <i>FIELDVALUE</i>.<br />
-If the value is enclosed in '<code>//</code>', it is treated as a regular
-expression, which must occur in the entry field for the entry to match.
-For example, <code>-ref-Title://Test\d\d//</code> matches all entries
-whose titles contain 'Test' followed by at least two digits.</li>
+If the value is enclosed in '<code>//</code>', it is treated as a
+<a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+target="_blank">regular expression</a>,
+which must occur in the entry field for the entry to match.
+For example, <code>-ref-Title:&quot;//Test\d\d//&quot;</code> matches every entry
+whose title contains 'Test' followed by at least two digits.</li>
 <li><code>-refx-UUID:<i>VALUE</i></code><br />
 The UUID of the entry must be <i>VALUE</i>.</li>
 <li><code>-refx-Tags:<i>VALUE</i></code><br />
@@ -449,7 +449,7 @@ Generates five 128-bit hex passwords (when no translation is used).</p>
 <a name="estimatequality"></a>
 <p><b>Command: EstimateQuality</b></p>
 
-<p>Estimates the <a href="http://keepass.info/help/kb/pw_quality_est.html"
+<p>Estimates the <a href="https://keepass.info/help/kb/pw_quality_est.html"
 target="_blank">quality</a> (in bits) of the password specified via the
 <code>-text:</code> parameter.
 Usage example:</p>
@@ -464,7 +464,7 @@ Usage example:</p>
 Character Encoding</h2>
 
 <p>If you observe garbled special characters in the output, please read the page
-<a href="http://keepass.info/help/kb/console_encoding.html">Console
+<a href="https://keepass.info/help/kb/console_encoding.html" target="_blank">Console
 Character Encoding</a>.</p>
 
 </body></html>
