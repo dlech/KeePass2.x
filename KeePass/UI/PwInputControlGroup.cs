@@ -526,8 +526,10 @@ namespace KeePass.UI
 			Debug.Assert(cb.TextAlign == ContentAlignment.MiddleCenter);
 			Debug.Assert(cb.TextImageRelation == TextImageRelation.Overlay);
 			Debug.Assert(cb.UseVisualStyleBackColor);
-			Debug.Assert((cb.Width == 32) || DpiUtil.ScalingRequired);
-			Debug.Assert((cb.Height == 23) || DpiUtil.ScalingRequired);
+			Debug.Assert((cb.Width == 32) || DpiUtil.ScalingRequired ||
+				MonoWorkarounds.IsRequired(100001));
+			Debug.Assert((cb.Height == 23) || DpiUtil.ScalingRequired ||
+				MonoWorkarounds.IsRequired(100001));
 
 			// Too much spacing between the dots when using the default font
 			// cb.Text = new string(SecureEdit.PasswordChar, 3);

@@ -71,7 +71,7 @@ namespace KeePass.Util
 
 			string strValue = (htmlNode.GetAttribute(strName) ?? string.Empty);
 
-			// http://msdn.microsoft.com/en-us/library/ie/ms536429.aspx
+			// https://msdn.microsoft.com/en-us/library/ie/ms536429.aspx
 			if((strValue.Length == 0) && strName.Equals("class", StrUtil.CaseIgnoreCmp))
 				strValue = (htmlNode.GetAttribute("className") ?? string.Empty);
 

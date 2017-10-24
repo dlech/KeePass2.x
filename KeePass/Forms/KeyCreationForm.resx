@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="m_lblMultiInfo.Text" xml:space="preserve">
-    <value>A composite master key consists of one or more of the following key sources. All sources you specify will be required to open the database.  If you lose one source, you will not be able to open the database.</value>
+    <value>A composite master key consists of one or more of the following key sources. All sources you specify will be required to open the database. If you lose one source, you will not be able to open the database anymore.</value>
   </data>
   <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <data name="m_lblWindowsAccDesc2.Text" xml:space="preserve">
-    <value>If the Windows account is lost, it will not be enough to create a new account with the same user name and password. A complete backup of the user account is required. Creating and restoring such a backup is not a simple task. If you don't know how to do this, don't enable this option.</value>
+    <value>If the Windows user account is lost, it will not be enough to create a new account with the same user name and password. A complete backup of the account is required. Creating and restoring such a backup is a very complicated task. If you don't know how to do this, don't enable this option.</value>
   </data>
 </root>

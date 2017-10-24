@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="URL Field Capabilities - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>URL Field Capabilities - KeePass</title>
 	<base target="_self" />
@@ -28,7 +27,6 @@
 	
 </head>
 <body>
-
 
 
 
@@ -62,10 +60,10 @@ Usage Tips &amp; Tricks:
 <img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Standard
 Capabilities</h2>
 
-<p>The URL field can execute any valid URL, for which you have defined a protocol handler. On most
-systems at least the <code>http://</code>, <code>ftp://</code> and <code>mailto:</code>
-protocols are defined. KeePass supports
-all registered protocols that Internet Explorer supports.</p>
+<p>The URL field can execute any valid URL for which a protocol handler is defined.
+On most systems at least the <code>http://</code>, <code>https://</code>,
+<code>ftp://</code> and <code>mailto:</code> protocols are defined.
+KeePass supports all protocols that Windows supports.</p>
 
 <p>For example, if you globally (i.e. using the Windows Explorer) register PuTTY for <code>ssh://</code> URLs,
 KeePass will automatically use PuTTY for <code>ssh://</code> URLs, too.</p>
@@ -116,7 +114,7 @@ supported, i.e. do not need to be prefixed with <code>cmd://</code>.</p>
 <p>In the URL field, you can use several placeholders that will get automatically replaced
 when the URL is executed. For example:</p>
 
-<pre>http://www.yoursite.com/default.php?user={USERNAME}&amp;pass={PASSWORD}</pre>
+<pre>https://www.example.com/default.php?user={USERNAME}&amp;pass={PASSWORD}</pre>
 
 <p>For this entry, KeePass will replace {USERNAME} by the data of the username field and {PASSWORD}
 by the data in the password field when you execute the link.</p>
@@ -133,11 +131,11 @@ If you would like to start a new KeePass instance, you could set the URL to:</p>
 <pre>cmd://&quot;{APPDIR}\KeePass.exe&quot;</pre>
 
 <p>To use different browsers for entries, you can use URLs like the following:<br />
-<code>cmd://{INTERNETEXPLORER} &quot;http://www.yoursite.com&quot;</code><br />
-<code>cmd://{FIREFOX} &quot;http://www.yoursite.com&quot;</code><br />
-<code>cmd://{OPERA} &quot;http://www.yoursite.com&quot;</code><br />
-<code>cmd://{GOOGLECHROME} &quot;http://www.yoursite.com&quot;</code><br />
-<code>cmd://{SAFARI} &quot;http://www.yoursite.com&quot;</code><br />
+<code>cmd://{INTERNETEXPLORER} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{FIREFOX} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{OPERA} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{GOOGLECHROME} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{SAFARI} &quot;https://www.example.com/&quot;</code><br />
 The browser placeholder will be replaced by the browser's executable path (if the
 browser is installed).</p>
 

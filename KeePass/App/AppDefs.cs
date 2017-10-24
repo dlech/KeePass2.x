@@ -95,6 +95,9 @@ namespace KeePass.App
 			public const string EntryHistory = "history";
 
 			public const string KeySources = "base/keys";
+			public const string KeySourcesKeyFile = "keyfiles";
+			public const string KeySourcesUserAccount = "winuser";
+
 			public const string PwGenerator = "base/pwgenerator";
 			public const string IOConnections = "v2/ioconnect";
 			public const string UrlField = "base/autourl";
@@ -237,7 +240,7 @@ namespace KeePass.App
 		}
 
 		public const string DefaultTrlAuthor = "Dominik Reichl";
-		public const string DefaultTrlContact = @"http://www.dominik-reichl.de/";
+		public const string DefaultTrlContact = "https://www.dominik-reichl.de/";
 
 		// public const string LanguageInfoFileName = "LanguageInfo.xml";
 

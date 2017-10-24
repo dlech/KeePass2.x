@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="Placeholders - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -28,7 +27,6 @@
 	
 </head>
 <body>
-
 
 
 
@@ -69,6 +67,11 @@ Placeholders are case-insensitive.
 An <em>Spr-compiled</em> field is a field where placeholders are replaced
 when performing an action with this field (like copying it to the
 clipboard, sending it using auto-type, etc.).</p>
+
+<p>References in a field to (parts of) the field itself are
+unsupported. For example, the <code>{URL:HOST}</code> placeholder
+cannot be used in the URL field (but it can be used in the
+'Override URL' field).</p>
 
 <br />
 
@@ -148,10 +151,10 @@ There exists no placeholder for Edge, because Edge is an app
 that cannot be started like a regular Windows application.
 In order to open an URL using Edge, prefix the URL with '<code>microsoft-edge:</code>'.
 For example, in order to open the URL
-<a href="http://keepass.info/" target="_blank">http://keepass.info/</a>
+<a href="https://keepass.info/" target="_blank">https://keepass.info/</a>
 using Edge, use the URL
-<a href="microsoft-edge:http://keepass.info/" target="_blank"
-rel="nofollow">microsoft-edge:http://keepass.info/</a>.</p>
+<a href="microsoft-edge:https://keepass.info/" target="_blank"
+rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p>
 
 <br />
 
@@ -257,10 +260,10 @@ For example,
 The last separator character (before the '<code>}</code>') is required.<br />
 <br />
 <em>Usage example.</em>
-Let the user name field contain the e-mail address '<code>myname@myprovider.net</code>' and
-the URL field '<code>{T-REPLACE-RX:!{USERNAME}!.*@(.*)!http://$1!}</code>'.
+Let the user name field contain the e-mail address '<code>myname@example.com</code>' and
+the URL field '<code>{T-REPLACE-RX:!{USERNAME}!.*@(.*)!https://$1!}</code>'.
 When running the URL field, KeePass opens
-'<code>http://myprovider.net</code>'.
+'<code>https://example.com</code>'.
 
 
 <br /><br />
@@ -280,9 +283,9 @@ Upper-case.</li>
 Lower-case.<br />
 <em>Example.</em>
 Let the user name of an entry be '<code>Bob</code>' and
-the URL '<code>http://myprovider.net/?user={T-CONV:/{USERNAME}/L/}</code>'.
+the URL '<code>https://example.com/?user={T-CONV:/{USERNAME}/L/}</code>'.
 When running the URL, KeePass opens
-'<code>http://myprovider.net/?user=bob</code>'.</li>
+'<code>https://example.com/?user=bob</code>'.</li>
 <li><b>Base64</b>:<br />
 The Base64 encoding of the UTF-8 representation of the text.</li>
 <li><b>Hex</b>:<br />
@@ -368,7 +371,7 @@ i.e. you don't need to click [OK] anymore. -->
 <a name="pickchars"></a>
 
 <b><code>{PICKCHARS}</code> &#8211; Picking Characters:</b><br />
-<a href="http://keepass.info/screenshots/windows_vista/pickchars_big.png"
+<a href="https://keepass.info/screenshots/windows_vista/pickchars_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/pickchars.png"
 align="right" alt="Character Picking Dialog" /></a>
 The <code>{PICKCHARS}</code> placeholder shows a dialog, in which you can
@@ -438,7 +441,7 @@ from the entry password.
 Afterwards KeePass types the user name into the target window, presses Tab,
 types the 5 picked characters and presses Enter.<br />
 <br />
-<a href="http://keepass.info/screenshots/windows_vista/comboboxform_big.png"
+<a href="https://keepass.info/screenshots/windows_vista/comboboxform_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/comboboxform.png"
 align="right" alt="ComboBox Form" /></a>
 <code>{S:Memorable}{TAB}{PICKCHARS:Password:ID=1, C=1, Conv=D,
@@ -557,17 +560,17 @@ global URL override (defined in 'Tools' -&gt; 'Options' -&gt; tab 'Integration' 
 button 'URL Overrides'), because there no entry context may be available.<br />
 <br />
 <em>Usage example.</em> For the entry URL
-<code>http://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code>,
+<code>https://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code>,
 the placeholders return the following values:<br />
 <br />
 <table class="tablebox75">
 <tr><th width="25%">Placeholder</th><th width="75%">Value</th></tr>
 <tr><td width="25%"><code>{URL}</code></td>
-<td width="75%"><code>http://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
+<td width="75%"><code>https://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
 <tr><td width="25%"><code>{URL:RMVSCM}</code></td>
 <td width="75%"><code>user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
 <tr><td width="25%"><code>{URL:SCM}</code></td>
-<td width="75%"><code>http</code></td></tr>
+<td width="75%"><code>https</code></td></tr>
 <tr><td width="25%"><code>{URL:HOST}</code></td>
 <td width="75%"><code>keepass.info</code></td></tr>
 <tr><td width="25%"><code>{URL:PORT}</code></td>

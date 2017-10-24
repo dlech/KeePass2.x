@@ -19,15 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Text;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 using Microsoft.Win32;
 
@@ -46,8 +47,6 @@ namespace KeePass.Util
 {
 	public static class WinUtil
 	{
-		private const int ERROR_ACCESS_DENIED = 5;
-
 		private static bool m_bIsWindows9x = false;
 		private static bool m_bIsWindows2000 = false;
 		private static bool m_bIsWindowsXP = false;
@@ -56,6 +55,7 @@ namespace KeePass.Util
 		private static bool m_bIsAtLeastWindows7 = false;
 		private static bool m_bIsAtLeastWindows8 = false;
 		private static bool m_bIsAtLeastWindows10 = false;
+		private static bool m_bIsAppX = false;
 
 		private static string m_strExePath = null;
 
@@ -101,6 +101,11 @@ namespace KeePass.Util
 			get { return m_bIsAtLeastWindows10; }
 		}
 
+		public static bool IsAppX
+		{
+			get { return m_bIsAppX; }
+		}
+
 		static WinUtil()
 		{
 			OperatingSystem os = Environment.OSVersion;
@@ -135,6 +140,19 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 			finally { if(rk != null) rk.Close(); }
+
+			try
+			{
+				string strDir = UrlUtil.GetFileDirectory(GetExecutable(), false, false);
+				if(strDir.IndexOf("\\WindowsApps\\", StrUtil.CaseIgnoreCmp) >= 0)
+				{
+					Regex rx = new Regex("\\\\WindowsApps\\\\.*?_\\d+(\\.\\d+)*_",
+						RegexOptions.IgnoreCase);
+					m_bIsAppX = rx.IsMatch(strDir);
+				}
+				else { Debug.Assert(!m_bIsAppX); } // No AppX by default
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void OpenEntryUrl(PwEntry pe)

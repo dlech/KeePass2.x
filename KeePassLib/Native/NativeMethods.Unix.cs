@@ -111,5 +111,106 @@ namespace KeePassLib.Native
 			catch(Exception) { Debug.Assert(false); }
 		}
 #endif
+
+		// =============================================================
+		// LibGCrypt 1.8.1
+
+		private const string LibGCrypt = "libgcrypt.so.20";
+
+		internal const int GCRY_CIPHER_AES256 = 9;
+		internal const int GCRY_CIPHER_MODE_ECB = 1;
+
+		[DllImport(LibGCrypt)]
+		internal static extern IntPtr gcry_check_version(IntPtr lpReqVersion);
+
+		[DllImport(LibGCrypt)]
+		internal static extern uint gcry_cipher_open(ref IntPtr ph, int nAlgo,
+			int nMode, uint uFlags);
+
+		[DllImport(LibGCrypt)]
+		internal static extern void gcry_cipher_close(IntPtr h);
+
+		[DllImport(LibGCrypt)]
+		internal static extern uint gcry_cipher_setkey(IntPtr h, IntPtr pbKey,
+			IntPtr cbKey); // cbKey is size_t
+
+		[DllImport(LibGCrypt)]
+		internal static extern uint gcry_cipher_encrypt(IntPtr h, IntPtr pbOut,
+			IntPtr cbOut, IntPtr pbIn, IntPtr cbIn); // cb* are size_t
+
+		/* internal static IntPtr Utf8ZFromString(string str)
+		{
+			byte[] pb = StrUtil.Utf8.GetBytes(str ?? string.Empty);
+
+			IntPtr p = Marshal.AllocCoTaskMem(pb.Length + 1);
+			if(p != IntPtr.Zero)
+			{
+				Marshal.Copy(pb, 0, p, pb.Length);
+				Marshal.WriteByte(p, pb.Length, 0);
+			}
+			else { Debug.Assert(false); }
+
+			return p;
+		}
+
+		internal static string Utf8ZToString(IntPtr p)
+		{
+			if(p == IntPtr.Zero) { Debug.Assert(false); return null; }
+
+			List<byte> l = new List<byte>();
+			for(int i = 0; i < int.MaxValue; ++i)
+			{
+				byte bt = Marshal.ReadByte(p, i);
+				if(bt == 0) break;
+
+				l.Add(bt);
+			}
+
+			return StrUtil.Utf8.GetString(l.ToArray());
+		}
+
+		internal static void Utf8ZFree(IntPtr p)
+		{
+			if(p != IntPtr.Zero) Marshal.FreeCoTaskMem(p);
+		} */
+
+		/* // =============================================================
+		// LibGLib 2
+
+		private const string LibGLib = "libglib-2.0.so.0";
+
+		internal const int G_FALSE = 0;
+
+		// https://developer.gnome.org/glib/stable/glib-Memory-Allocation.html
+		[DllImport(LibGLib)]
+		internal static extern void g_free(IntPtr pMem); // pMem may be null
+
+		// =============================================================
+		// LibGTK 3 (3.22.11 / 3.22.24)
+
+		private const string LibGtk = "libgtk-3.so.0";
+
+		internal static readonly IntPtr GDK_SELECTION_PRIMARY = new IntPtr(1);
+		internal static readonly IntPtr GDK_SELECTION_CLIPBOARD = new IntPtr(69);
+
+		[DllImport(LibGtk)]
+		internal static extern int gtk_init_check(IntPtr pArgc, IntPtr pArgv);
+
+		[DllImport(LibGtk)]
+		// The returned handle is owned by GTK and must not be freed
+		internal static extern IntPtr gtk_clipboard_get(IntPtr pSelection);
+
+		[DllImport(LibGtk)]
+		internal static extern void gtk_clipboard_clear(IntPtr hClipboard);
+
+		[DllImport(LibGtk)]
+		internal static extern IntPtr gtk_clipboard_wait_for_text(IntPtr hClipboard);
+
+		[DllImport(LibGtk)]
+		internal static extern void gtk_clipboard_set_text(IntPtr hClipboard,
+			IntPtr lpText, int cbLen);
+
+		[DllImport(LibGtk)]
+		internal static extern void gtk_clipboard_store(IntPtr hClipboard); */
 	}
 }

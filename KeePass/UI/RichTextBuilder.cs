@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using KeePassLib.Utility;
@@ -208,6 +209,11 @@ namespace KeePass.UI
 
 		public void Build(RichTextBox rtb)
 		{
+			Build(rtb, false);
+		}
+
+		internal void Build(RichTextBox rtb, bool bBracesBalanced)
+		{
 			if(rtb == null) throw new ArgumentNullException("rtb");
 
 			RichTextBox rtbOp = CreateOpRtb(rtb);
@@ -256,6 +262,10 @@ namespace KeePass.UI
 			{
 				strRtf = strRtf.Replace(rTag.IdCode, rTag.RtfCode);
 			}
+
+			if(bBracesBalanced && MonoWorkarounds.IsRequired(2449941153U))
+				strRtf = Regex.Replace(strRtf,
+					@"(\\)(\{[\u0020-\u005B\u005D-z\w\s]*?)(\})", "$1$2$1$3");
 
 			rtb.Rtf = strRtf;
 		}

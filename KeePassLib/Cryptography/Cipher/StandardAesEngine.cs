@@ -122,22 +122,22 @@ namespace KeePassLib.Cryptography.Cipher
 #if KeePassUAP
 			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbLocalKey, pbLocalIV);
 #else
-			RijndaelManaged r = new RijndaelManaged();
-			if(r.BlockSize != 128) // AES block size
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
-				r.BlockSize = 128;
+				a.BlockSize = 128;
 			}
 
-			r.IV = pbLocalIV;
-			r.KeySize = 256;
-			r.Key = pbLocalKey;
-			r.Mode = m_rCipherMode;
-			r.Padding = m_rCipherPadding;
+			a.IV = pbLocalIV;
+			a.KeySize = 256;
+			a.Key = pbLocalKey;
+			a.Mode = m_rCipherMode;
+			a.Padding = m_rCipherPadding;
 
-			ICryptoTransform iTransform = (bEncrypt ? r.CreateEncryptor() : r.CreateDecryptor());
+			ICryptoTransform iTransform = (bEncrypt ? a.CreateEncryptor() : a.CreateDecryptor());
 			Debug.Assert(iTransform != null);
-			if(iTransform == null) throw new SecurityException("Unable to create Rijndael transform!");
+			if(iTransform == null) throw new SecurityException("Unable to create AES transform!");
 
 			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
 				CryptoStreamMode.Read);

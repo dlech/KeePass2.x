@@ -17,6 +17,10 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if DEBUG
+// #define DEBUG_BREAKONFAIL
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,6 +46,10 @@ namespace KeePassLib.Utility
 		private static Dictionary<uint, bool> g_dForceReq = new Dictionary<uint, bool>();
 		private static Thread g_thFixClip = null;
 		// private static Predicate<IntPtr> g_fOwnWindow = null;
+
+#if DEBUG_BREAKONFAIL
+		private static DebugBreakTraceListener g_tlBreak = null;
+#endif
 
 		private static bool? g_bReq = null;
 		public static bool IsRequired()
@@ -76,6 +84,10 @@ namespace KeePassLib.Utility
 		// 1418:
 		//   Minimizing a form while loading it doesn't work.
 		//   https://sourceforge.net/p/keepass/bugs/1418/
+		// 1468:
+		//   Use LibGCrypt for AES-KDF, because Mono's implementations
+		//   of RijndaelManaged and AesCryptoServiceProvider are slow.
+		//   https://sourceforge.net/p/keepass/bugs/1468/
 		// 1527:
 		//   Timer causes 100% CPU load.
 		//   https://sourceforge.net/p/keepass/bugs/1527/
@@ -111,6 +123,12 @@ namespace KeePassLib.Utility
 		//   PictureBox not rendered when bitmap height >= control height.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=12525
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/54f61e9a/
+		// 100001:
+		//   Control locations/sizes are invalid/unexpected.
+		//   [NoRef]
+		// 373134:
+		//   Control.InvokeRequired doesn't always return the correct value.
+		//   https://bugzilla.novell.com/show_bug.cgi?id=373134
 		// 586901:
 		//   RichTextBox doesn't handle Unicode string correctly.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=586901
@@ -122,17 +140,23 @@ namespace KeePassLib.Utility
 		//   https://bugzilla.novell.com/show_bug.cgi?id=649266
 		// 686017:
 		//   Minimum sizes must be enforced.
-		//   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
+		//   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
 		// 801414:
 		//   Mono recreates the main window incorrectly.
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/801414
 		// 891029:
-		//   Increase tab control height, otherwise Mono throws exceptions.
+		//   Increase tab control height and don't use images on tabs.
 		//   https://sourceforge.net/projects/keepass/forums/forum/329221/topic/4519750
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/891029
+		//   https://sourceforge.net/p/keepass/bugs/1256/
+		//   https://sourceforge.net/p/keepass/bugs/1566/
+		//   https://sourceforge.net/p/keepass/bugs/1634/
 		// 836428016:
 		//   ListView group header selection unsupported.
 		//   https://sourceforge.net/p/keepass/discussion/329221/thread/31dae0f0/
+		// 2449941153:
+		//   RichTextBox doesn't properly escape '}' when generating RTF data.
+		//   https://sourceforge.net/p/keepass/discussion/329221/thread/920722a1/
 		// 3574233558:
 		//   Problems with minimizing windows, no content rendered.
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/
@@ -184,6 +208,14 @@ namespace KeePassLib.Utility
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
+
+#if DEBUG_BREAKONFAIL
+			if(IsRequired() && (g_tlBreak == null))
+			{
+				g_tlBreak = new DebugBreakTraceListener();
+				Debug.Listeners.Add(g_tlBreak);
+			}
+#endif
 		}
 
 		internal static void Terminate()
@@ -202,15 +234,10 @@ namespace KeePassLib.Utility
 			try
 			{
 #if !KeePassUAP
-				const string strXSel = "xsel";
-				const string strXSelR = "--output --clipboard";
-				const string strXSelW = "--input --clipboard --nodetach";
-				const AppRunFlags rfW = AppRunFlags.WaitForExit;
 				const int msDelay = 250;
 
-				// XSel is required
-				string strTest = NativeLib.RunConsoleApp(strXSel, strXSelR);
-				if(strTest == null) return; // XSel not installed
+				string strTest = ClipboardU.GetText();
+				if(strTest == null) return; // No clipboard support
 
 				// Without XDoTool, the workaround would be applied to
 				// all applications, which may corrupt the clipboard
@@ -225,16 +252,12 @@ namespace KeePassLib.Utility
 				string strLast = null;
 				while(true)
 				{
-					string str = NativeLib.RunConsoleApp(strXSel, strXSelR);
+					string str = ClipboardU.GetText();
 					if(str == null) { Debug.Assert(false); }
 					else if(str != strLast)
 					{
 						if(NeedClipboardWorkaround())
-						{
-							// Use --nodetach to prevent clipboard corruption;
-							// https://sourceforge.net/p/keepass/bugs/1603/
-							NativeLib.RunConsoleApp(strXSel, strXSelW, str, rfW);
-						}
+							ClipboardU.SetText(str, true);
 
 						strLast = str;
 					}
@@ -543,5 +566,23 @@ namespace KeePassLib.Utility
 			catch(Exception) { Debug.Assert(false); }
 		}
 #endif // !KeePassUAP
+
+#if DEBUG_BREAKONFAIL
+		private sealed class DebugBreakTraceListener : TraceListener
+		{
+			public override void Fail(string message)
+			{
+				Debugger.Break();
+			}
+
+			public override void Fail(string message, string detailMessage)
+			{
+				Debugger.Break();
+			}
+
+			public override void Write(string message) { }
+			public override void WriteLine(string message) { }
+		}
+#endif
 	}
 }

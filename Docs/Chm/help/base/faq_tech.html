@@ -2,25 +2,24 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
 	<meta name="author" content="Dominik Reichl" />
 
-	<meta name="description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="keywords" content="KeePass, Password, Safe, Security, Database, Encryption, Secure, Manager, Open, Source, Free, Code, Key, Master, Disk, Dominik, Reichl" />
+	
+	
 
-	<meta name="robots" content="index" />
+	<meta name="DC.title" content="Technical FAQ - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
 
-	<meta name="DC.Title" content="KeePass - The Open Source Password Manager" />
-	<meta name="DC.Creator" content="Dominik Reichl" />
-	<meta name="DC.Subject" content="Open-Source Password Safe" />
-	<meta name="DC.Description" content="KeePass is an open source password manager. Passwords can be stored in highly-encrypted databases, which can be unlocked with one master password or key file." />
-	<meta name="DC.Publisher" content="Dominik Reichl" />
-	<meta name="DC.Contributor" content="Dominik Reichl" />
-	<meta name="DC.Type" content="text" />
-	<meta name="DC.Format" content="text/html" />
-	<meta name="DC.Identifier" content="http://keepass.info/" />
-	<meta name="DC.Language" content="en" />
-	<meta name="DC.Rights" content="Copyright (c) 2003-2017 Dominik Reichl" />
+	<meta name="robots" content="index, follow" />
 
 	<title>Technical FAQ - KeePass</title>
 	<base target="_self" />
@@ -28,7 +27,6 @@
 	
 </head>
 <body>
-
 
 
 
@@ -75,7 +73,7 @@ Security:
 <li><a href="#autotypelog">Is <i>Auto-Type</i> keylogger-safe?</a></li>
 <li><a href="#autotypetarget">Can <i>Auto-Type</i> locate child controls?</a></li>
 <li><a href="#encryptionalgo">Could you add the ... encryption algorithm to KeePass?</a></li>
-<li><a href="#noautolock">Why doesn't KeePass lock when Windows locks and a KeePass sub-dialog is open?</a></li>
+<li><a href="#noautolock">Why doesn't KeePass lock while a sub-dialog is open?</a></li>
 <li><a href="#printtempfile">Printing creates a temporary file. Will it be erased securely?</a></li>
 <!-- <li><a href="#memprot">Why KeePass 2.x resets process memory protection options?</a></li> -->
 <li><a href="#qualest">Why the estimated quality of a password suddenly drops?</a></li>
@@ -121,7 +119,7 @@ an error message like the following is displayed:<br />
 
 <p><b>Resolution:</b> Install Microsoft .NET Framework 2.0 or higher.
 It is available as a free download from the Microsoft website:
-<a href="http://msdn.microsoft.com/en-us/netframework/aa569263.aspx"
+<a href="https://msdn.microsoft.com/en-us/netframework/aa569263.aspx"
 target="_blank">Microsoft .NET Framework download</a>. Alternatively,
 you can install it through
 Windows Update (the framework is an optional component).</p>
@@ -152,12 +150,12 @@ Configure the security policy to allow running .NET applications from
 network drives/shares. Ask your administrator to do this (administrative
 rights are required). If you have administrative rights and want to do
 it yourself, you can use the
-<a href="http://msdn.microsoft.com/en-us/library/cb6t8dtz.aspx"
+<a href="https://msdn.microsoft.com/en-us/library/cb6t8dtz.aspx"
 target="_blank">Code Access Security Policy Tool (Caspol.exe)</a>
 that ships with the .NET framework (helpful instructions can be found
-<a href="http://blogs.msdn.com/shawnfa/archive/2004/12/30/344554.aspx"
+<a href="https://blogs.msdn.com/shawnfa/archive/2004/12/30/344554.aspx"
 target="_blank">here</a> and
-<a href="http://blogs.msdn.com/shawnfa/archive/2005/07/27/443975.aspx"
+<a href="https://blogs.msdn.com/shawnfa/archive/2005/07/27/443975.aspx"
 target="_blank">here</a>).</p>
 
 <br />
@@ -189,7 +187,7 @@ hashing, and signing'</i> to <i>'Disabled'</i>.</p>
 
 <p><b>Alternative resolution:</b> Download and run the following
 Windows registry file:
-<a href="http://keepass.info/help/download/FipsDisable.reg"
+<a href="https://keepass.info/help/download/FipsDisable.reg"
 target="_blank">FipsDisable.reg</a>.
 By running this file (i.e. importing the modifications in this file
 into the registry), FIPS compliance enforcement is disabled.</p>
@@ -232,12 +230,12 @@ Windows shortcuts and/or as file association icons. The KeePass executable
 contains various application icons which can be used for these purposes.<br />
 <br />
 Additional application icons are available from the &quot;<code>Ext/Icons_*</code>&quot;
-directories of the KeePass source code <a href="http://keepass.info/download.html"
+directories of the KeePass source code <a href="https://keepass.info/download.html"
 target="_blank">package</a>.
 Most of them, shown at right, are slight variations of the main KeePass icon.<br />
 <br />
 Even more, contributed icons (by users) can be found on the
-<a href="http://keepass.info/plugins.html#appicons"
+<a href="https://keepass.info/plugins.html#appicons"
 target="_blank">plugins page</a>.<br />
 <br />
 If you have multiple KeePass databases, you can use differently colored KeePass
@@ -430,7 +428,7 @@ you add the ... encryption algorithm to KeePass?</h2>
 
 AES (Rijndael) and ChaCha20 are supported.
 There exist various
-<a href="http://keepass.info/plugins.html" target="_blank">plugins</a>
+<a href="https://keepass.info/plugins.html" target="_blank">plugins</a>
 that provide support for additional encryption algorithms,
 including but not limited to Twofish, Serpent and GOST.<br />
 <br />
@@ -442,28 +440,31 @@ If you'd like to implement an algorithm, have a look at the <em>ArcFourCipher</e
 <a name="noautolock"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't KeePass lock when Windows locks and a KeePass sub-dialog is open?</h2>
+doesn't KeePass lock while a sub-dialog is open?</h2>
 
-<p>KeePass automatically tries to lock its workspace when Windows is locked, with one
-exception: when a KeePass sub-dialog (like the <i>'Edit Entry'</i> window) is currently opened,
-the workspace is not locked.</p>
+<p>KeePass has various options to lock its workspace automatically
+(after some time of inactivity, when the computer gets locked or the user
+is switched, when the computer gets suspended, etc.).
+However, the workspace is not locked automatically while a sub-dialog
+(like the 'Edit Entry' dialog) is open.</p>
 
 <p>To understand why this behavior makes sense, it is first important to know what happens
-when the workspace is locked. When locking, KeePass completely closes the database
+when the workspace gets locked. When locking, KeePass completely closes the database
 and only remembers several view parameters, like the last selected group, the top visible
-entry, selected entries, etc. From a security point of view, this achieves best
+entry, selected entries, etc. From a security point of view, this achieves the best
 security possible: breaking a locked workspace is equal to breaking the database itself.</p>
 
-<p>Now back to the original question. Let's assume an edit dialog is open and the
-workstation locks. What should KeePass do now? Obviously, it's too late to ask the user
-what to do (the workstation is locked already and no window can't be displayed),
-consequently KeePass must make an automatic decision. There are several possibilities:</p>
+<p>Now back to the original question. Let's assume a sub-dialog is open and
+one of the events occurs that should automatically lock the workspace.
+What should KeePass do now?
+In this situation, KeePass cannot ask the user what to do,
+and must make an automatic decision. There are several possibilities:</p>
 
 <ul class="withspc">
 <li><em>Do not save the database and lock.</em><br />
 In this case, all unsaved data of the database would be lost. This not only applies to
-the data entered in the current dialog, but to all other entries that have been modified
-previously.</li>
+the data entered in the current dialog, but to all other entries and groups
+that have been modified previously.</li>
 
 <li><em>Save the database and lock.</em><br />
 In this case, possibly unwanted changes are saved. Often you open files, try something,
@@ -474,38 +475,43 @@ try to save the database and if successful: lock the workspace. But what to do w
 the unsaved changes in the sub-dialog? Should it be saved automatically, taking away the
 possibility of pressing the 'Cancel' button?</li>
 
-<li><em>Save to a temporary location and lock.</em><br />
-While this sounds the best alternative at first glance, there are several problems with
-it, too. First of all, saving to a temporary location could fail (for example there could be too
-few disk space or some other program like virus scanner could have blocked it).
-Secondly, saving to a temporary location isn't uncritical from a security point of view.
-When having to choose such a location, mostly the user's temporary directory on the hard
+<li><em>Save to a temporary file and lock.</em><br />
+This appears to be the best alternative at first glance, but there are several problems with
+it, too. First of all, saving to a temporary file could fail (for example, there could be too
+few free disk space, or some other program like a virus scanner could block it).
+Secondly, saving to a temporary file isn't uncritical from a security point of view.
+When having to choose a location, typically the user's temporary directory on the hard
 disk is chosen (because it likely has enough free space, required rights for access, etc.).
-Therefore, KeePass databases could be leaked and accumulated there.
-It's not clear what should happen if the computer is shutdown or crashes while being
+KeePass databases could be leaked and accumulated there.
+It's not clear what should happen when the computer is being shutdown or crashes while being
 locked. When the database is opened the next time, should it use the database stored in
 the temporary directory instead? What should happen if the 'real' database has been modified
-in the meanwhile (quite a realistic situation if you're carrying your database on an USB stick)?
-</li>
+in the meanwhile (a quite realistic situation if you're carrying your database on an
+USB stick)?</li>
 </ul>
 
-<p>Obviously, none of these alternatives is satisfactory. Therefore, KeePass implements the
-following simple and easy to understand behavior:</p>
+<p>Obviously, none of these alternatives is satisfactory.
+Therefore, KeePass implements the following simple and easy to understand behavior:</p>
 
-<p><i>When Windows is locked and a KeePass sub-dialog is opened, the KeePass workspace
-is not locked.</i></p>
+<p><em>KeePass doesn't lock while a sub-dialog is open.</em></p>
 
-<p>This simple concept avoids all the problems above. The user is responsible for the
+<p>This simple concept avoids the problems above. The user is responsible for the
 state of the program.</p>
 
-<p>Security consequence: the database is left open when Windows locks.
+<!-- <p>Security consequence: the database is left open when Windows locks.
 Normally, you are the only one who can log back in to Windows. When someone else logs in
 (like administrator), he can't use your programs anyway. By default, KeePass keeps
 in-memory passwords encrypted, therefore it does not matter if Windows dumps the process
-to disk at some time. So, your passwords are pretty safe anyway.</p>
+to disk at some time. So, your passwords are pretty safe anyway.</p> -->
 
-<p><b>Note.</b> On Windows &le; XP, the <i>'Terminal Services'</i>
-Windows service should be enabled. If this service is disabled, locking KeePass
+<p>Note that opening a sub-dialog is typically only required for
+<em>editing</em> something; it is not required for <em>using</em>
+entries, as the main window provides
+<a href="usingpws.html">various methods</a> for this.</p>
+
+<p><strong>Locking when Windows locks.</strong>
+On Windows &le; XP, the Windows service <em>'Terminal Services'</em>
+should be enabled. If this service is disabled, locking KeePass
 when Windows locks might not work. This service isn't required on newer
 operating systems.</p>
 
@@ -526,7 +532,7 @@ that the printing application blocks KeePass from deleting the file.</p>
 <p>There is no way around the temporary file in the current printing system.
 If you want to write a plugin that directly sends the data to the printer, you can
 find a plugin development tutorial here:
-<a href="http://keepass.info/help/v2_dev/plg_index.html"
+<a href="https://keepass.info/help/v2_dev/plg_index.html"
 target="_blank">KeePass 2.x Plugin Development</a>.</p>
 
 <br />
@@ -563,7 +569,7 @@ common passwords and checks for patterns. When completing a common password or a
 repetition, the estimated quality can drop.</p>
 
 <p>Details can be found on the
-<a href="http://keepass.info/help/kb/pw_quality_est.html"
+<a href="https://keepass.info/help/kb/pw_quality_est.html"
 target="_blank">Password Quality Estimation</a> help page.</p>
 
 <br />
@@ -637,7 +643,7 @@ of the user name field is used for identification. For example,
 the default <a href="autotype.html#autoseq">auto-type sequence</a> of
 an entry is
 <code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>, the default
-<a href="http://keepass.info/plugins.html#formfiller" target="_blank">KeeForm</a>
+<a href="https://keepass.info/plugins.html#formfiller" target="_blank">KeeForm</a>
 configuration uses the user name, etc.
 Now on the one hand some websites require an e-mail address instead
 of a user name. On the other hand we want the default data transfer configuration
@@ -675,7 +681,7 @@ entry, there are multiple ways to get a separate e-mail address field.
 After switching to the 'Advanced' tab in the entry editing dialog,
 an e-mail address field can be added as custom string.
 If the field should appear on the main tab page of the dialog, the
-<a href="http://keepass.info/plugins.html#kpentrytemplates"
+<a href="https://keepass.info/plugins.html#kpentrytemplates"
 target="_blank">KPEntryTemplates</a> plugin can be used.</p>
 
 </body></html>

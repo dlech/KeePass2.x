@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -169,6 +170,17 @@ namespace KeePass.Util
 			}
 		}
 
+		public void AddWebBrowserPrintContent()
+		{
+			if(!NativeLib.IsUnix())
+			{
+				// MSHTML may create and forget temporary files under
+				// C:\\Users\\USER\\AppData\\Local\\Temp\\*.htm
+				// (e.g. when printing fails)
+				AddContent("*.htm", false);
+			}
+		}
+
 		public string GetTempFileName()
 		{
 			return GetTempFileName(true);
@@ -186,6 +198,38 @@ namespace KeePass.Util
 			}
 
 			return strFile;
+		}
+
+		public string GetTempFileName(string strFileExt)
+		{
+			if(string.IsNullOrEmpty(strFileExt))
+				return GetTempFileName();
+
+			try
+			{
+				while(true)
+				{
+					string str = UrlUtil.EnsureTerminatingSeparator(
+						UrlUtil.GetTempPath(), false);
+					str += "Temp_";
+
+					byte[] pbRandom = new byte[9];
+					Program.GlobalRandom.NextBytes(pbRandom);
+					str += StrUtil.AlphaNumericOnly(Convert.ToBase64String(
+						pbRandom, Base64FormattingOptions.None));
+
+					str += "." + strFileExt;
+
+					if(!File.Exists(str))
+					{
+						m_vFiles.Add(str);
+						return str;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return GetTempFileName();
 		}
 
 		public bool Delete(string strTempFile)
@@ -273,11 +317,11 @@ namespace KeePass.Util
 		private bool ClearContentPriv(string strTempPath, string strFilePattern,
 			bool bRecursive, byte[] pbTagA, byte[] pbTagW)
 		{
-			string[] vFiles = Directory.GetFiles(strTempPath, strFilePattern,
+			List<string> lFiles = UrlUtil.GetFilePaths(strTempPath, strFilePattern,
 				(bRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
 			bool bSuccess = true;
 
-			foreach(string strFile in vFiles)
+			foreach(string strFile in lFiles)
 			{
 				if(string.IsNullOrEmpty(strFile)) continue;
 				if((strFile == ".") || (strFile == "..")) continue;

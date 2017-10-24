@@ -74,6 +74,12 @@
             value is <code>d.tld</code>.
             </example>
         </member>
+        <member name="M:KeePassLib.Utility.UrlUtil.ExpandShellVariables(System.String,System.String[])">
+            <summary>
+            Expand shell variables in a string.
+            <paramref name="vParams" />[0] is the value of <c>%1</c>, etc.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Translation.KPFormCustomization.FullName">
             <summary>
             The fully qualified name of the form.
@@ -210,9 +216,9 @@
             Product website URL. Terminated by a forward slash.
             </summary>
         </member>
-        <member name="F:KeePassLib.PwDefs.DonationsUrl">
+        <member name="F:KeePassLib.PwDefs.TranslationsUrl">
             <summary>
-            Product donations URL.
+            URL to the online translations page.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.PluginsUrl">
@@ -220,21 +226,21 @@
             URL to the online plugins page.
             </summary>
         </member>
-        <member name="F:KeePassLib.PwDefs.TranslationsUrl">
+        <member name="F:KeePassLib.PwDefs.DonationsUrl">
             <summary>
-            URL to the online translations page.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.VersionUrl">
-            <summary>
-            URL to a TXT file (eventually compressed) that contains information
-            about the latest KeePass version available on the website.
+            Product donations URL.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.HelpUrl">
             <summary>
             URL to the root path of the online KeePass help. Terminated by
             a forward slash.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.VersionUrl">
+            <summary>
+            URL to a TXT file (eventually compressed) that contains information
+            about the latest KeePass version available on the website.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.DefaultKeyEncryptionRounds">
@@ -823,7 +829,7 @@
         <member name="M:KeePassLib.Utility.StrUtil.SafeXmlString(System.String)">
             <summary>
             Removes all characters that are not valid XML characters,
-            according to http://www.w3.org/TR/xml/#charsets .
+            according to https://www.w3.org/TR/xml/#charsets .
             </summary>
             <param name="strText">Source text.</param>
             <returns>Text containing only valid XML characters.</returns>

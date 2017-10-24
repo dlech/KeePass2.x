@@ -55,53 +55,52 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02240000;
+		public const uint Version32 = 0x02250000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002002400000000UL;
+		public const ulong FileVersion64 = 0x0002002500000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.36";
+		public const string VersionString = "2.37";
 
 		public const string Copyright = @"Copyright © 2003-2017 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.
 		/// </summary>
-		public const string HomepageUrl = "http://keepass.info/";
-
-		/// <summary>
-		/// Product donations URL.
-		/// </summary>
-		public const string DonationsUrl = "http://keepass.info/donate.html";
-
-		/// <summary>
-		/// URL to the online plugins page.
-		/// </summary>
-		public const string PluginsUrl = "http://keepass.info/plugins.html";
+		public const string HomepageUrl = "https://keepass.info/";
 
 		/// <summary>
 		/// URL to the online translations page.
 		/// </summary>
-		public const string TranslationsUrl = "http://keepass.info/translations.html";
+		public const string TranslationsUrl = "https://keepass.info/translations.html";
 
 		/// <summary>
-		/// URL to a TXT file (eventually compressed) that contains information
-		/// about the latest KeePass version available on the website.
+		/// URL to the online plugins page.
 		/// </summary>
-		public const string VersionUrl = "https://sslsites.de/keepass.info/update/version2x.txt.gz";
-		// public const string VersionUrl = "http://keepass.info/update/version2x.txt.gz";
+		public const string PluginsUrl = "https://keepass.info/plugins.html";
+
+		/// <summary>
+		/// Product donations URL.
+		/// </summary>
+		public const string DonationsUrl = "https://keepass.info/donate.html";
 
 		/// <summary>
 		/// URL to the root path of the online KeePass help. Terminated by
 		/// a forward slash.
 		/// </summary>
-		public const string HelpUrl = "http://keepass.info/help/";
+		public const string HelpUrl = "https://keepass.info/help/";
+
+		/// <summary>
+		/// URL to a TXT file (eventually compressed) that contains information
+		/// about the latest KeePass version available on the website.
+		/// </summary>
+		public const string VersionUrl = "https://www.dominik-reichl.de/update/version2x.txt.gz";
 
 		/// <summary>
 		/// A <c>DateTime</c> object that represents the time when the assembly
@@ -113,7 +112,7 @@ namespace KeePassLib
 		/// Default number of master key encryption/transformation rounds
 		/// (making dictionary attacks harder).
 		/// </summary>
-		public const ulong DefaultKeyEncryptionRounds = 6000;
+		public const ulong DefaultKeyEncryptionRounds = 60000;
 
 		/// <summary>
 		/// Default identifier string for the title field. Should not contain

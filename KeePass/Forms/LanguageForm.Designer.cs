@@ -48,7 +48,6 @@
 			// 
 			this.m_lvLanguages.Activation = System.Windows.Forms.ItemActivation.OneClick;
 			this.m_lvLanguages.FullRowSelect = true;
-			this.m_lvLanguages.GridLines = true;
 			this.m_lvLanguages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvLanguages.HideSelection = false;
 			this.m_lvLanguages.Location = new System.Drawing.Point(13, 67);
@@ -86,7 +85,6 @@
 			// 
 			// LanguageForm
 			// 
-			this.AcceptButton = this.m_btnClose;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnClose;

@@ -154,13 +154,7 @@ namespace KeePass.Forms
 				m_lblPreviewHint.Visible = false;
 			}
 
-			if(!NativeLib.IsUnix())
-			{
-				// MSHTML may create and forget temporary files under
-				// C:\\Users\\USER\\AppData\\Local\\Temp\\*.htm
-				// (e.g. when printing fails); we delete these later
-				Program.TempFilesPool.AddContent("*.htm", false);
-			}
+			Program.TempFilesPool.AddWebBrowserPrintContent();
 
 			UpdateHtmlDocument();
 			UpdateUIState();
@@ -229,6 +223,7 @@ namespace KeePass.Forms
 			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
 			string strLang = Program.Translation.Properties.Iso6391Code;
 			if(string.IsNullOrEmpty(strLang)) strLang = "en";
+			strLang = StrUtil.StringToHtml(strLang);
 			sb.Append(" lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\"");
 			if(bRtl) sb.Append(" dir=\"rtl\"");
 			sb.AppendLine(">");

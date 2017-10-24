@@ -284,7 +284,11 @@ namespace KeePassLib.Native
 
 					return strOutput;
 				}
-				catch(Exception) { Debug.Assert(false); }
+#if DEBUG
+				catch(Exception ex) { Debug.Assert(ex is ThreadAbortException); }
+#else
+				catch(Exception) { }
+#endif
 
 				return null;
 			};

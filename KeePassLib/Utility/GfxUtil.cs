@@ -423,5 +423,19 @@ namespace KeePassLib.Utility
 #endif // DEBUG
 #endif // !KeePassLibSD
 #endif // KeePassUAP
+
+		internal static string ImageToDataUri(Image img)
+		{
+			if(img == null) { Debug.Assert(false); return string.Empty; }
+
+			byte[] pb = null;
+			using(MemoryStream ms = new MemoryStream())
+			{
+				img.Save(ms, ImageFormat.Png);
+				pb = ms.ToArray();
+			}
+
+			return StrUtil.DataToDataUri(pb, "image/png");
+		}
 	}
 }

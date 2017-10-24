@@ -478,6 +478,8 @@ namespace KeePass.Forms
 				lvg, KPRes.RecycleShowConfirm);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbMntncResultsDialog",
 				lvg, KPRes.DbMntncResults);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowEmSheetDialog",
+				lvg, KPRes.EmergencySheetAsk);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);

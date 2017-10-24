@@ -1,3 +1,45 @@
+2017-10-12: 2.37
+- When creating a new database, KeePass now offers to print a
+  KeePass emergency sheet (which can then be filled out and
+  stored in a secure location, where only the user and possibly
+  a few other people that the user trusts have access to); an
+  emergency sheet can also be created via 'Tools' -> 'Database
+  Tools' -> 'Print Emergency Sheet'
+- Added database file information dialog that is displayed when
+  creating a new database
+- Added function to search similar password clusters ('Edit' ->
+  'Show Entries' -> 'Find Similar Passwords (Clusters)')
+- On Unix-like systems: if the library 'libgcrypt.so.20' is
+  available, KeePass uses it for AES-KDF transformations
+- Enhanced PrepMonoDev.sh script to upgrade a DTD processing
+  definition
+- Added workaround for .NET/Windows column header drawing bug
+  when switching to TAN-only entry list mode
+- Added workaround for Mono tab switching bug
+- Added workaround for Mono '}' character RTF encoding bug
+- TrlUtil: added support for .NET 4.*
+
+- Improved dialog for changing the master key (key file and
+  user account are now expert options, added more information
+  and links to help page sections)
+- KeePass now directly offers to save the database after
+  changing the master key, and it asks whether to print a new
+  emergency sheet
+- Various improvements in the translation selection dialog (the
+  selected translation can now be activated by pressing Return,
+  the list view now uses the Explorer style, ...)
+- KeePass now refuses to attach files that are larger than 512
+  MB (as larger files can result in serialization problems)
+- Increased default number of AES-KDF rounds
+- On Unix-like systems, KeePass now uses the CSP implementation
+  of the AES algorithm for encrypting data, which is a bit
+  faster
+- Improved tool strip checkmark rendering on Unix-like systems
+- Updated links (to the website, help pages, etc.)
+- The MSI file is now built using Visual Studio 2017
+- Various code optimizations
+- Minor other improvements
+
 2017-06-09: 2.36
 - Added commands 'Find Duplicate Passwords' and 'Find Similar
   Passwords' (in 'Edit' -> 'Show Entries'), which show entries

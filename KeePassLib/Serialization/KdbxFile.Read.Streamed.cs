@@ -111,6 +111,7 @@ namespace KeePassLib.Serialization
 			xrs.DtdProcessing = DtdProcessing.Prohibit;
 #else
 #if !KeePassLibSD
+			// Also see PrepMonoDev.sh script
 			xrs.ProhibitDtd = true; // Obsolete in .NET 4, but still there
 			// xrs.DtdProcessing = DtdProcessing.Prohibit; // .NET 4 only
 #endif
@@ -782,6 +783,55 @@ namespace KeePassLib.Serialization
 			return xr.ReadElementString();
 		}
 
+		private byte[] ReadBase64(XmlReader xr, bool bRaw)
+		{
+			// if(bRaw) return ReadBase64RawInChunks(xr);
+
+			string str = (bRaw ? ReadStringRaw(xr) : ReadString(xr));
+			if(string.IsNullOrEmpty(str)) return MemUtil.EmptyByteArray;
+
+			return Convert.FromBase64String(str);
+		}
+
+		/* private byte[] m_pbBase64ReadBuf = new byte[1024 * 1024 * 3];
+		private byte[] ReadBase64RawInChunks(XmlReader xr)
+		{
+			xr.MoveToContent();
+
+			List<byte[]> lParts = new List<byte[]>();
+			byte[] pbBuf = m_pbBase64ReadBuf;
+			while(true)
+			{
+				int cb = xr.ReadElementContentAsBase64(pbBuf, 0, pbBuf.Length);
+				if(cb == 0) break;
+
+				byte[] pb = new byte[cb];
+				Array.Copy(pbBuf, 0, pb, 0, cb);
+				lParts.Add(pb);
+
+				// No break when cb < pbBuf.Length, because ReadElementContentAsBase64
+				// moves to the next XML node only when returning 0
+			}
+			m_bReadNextNode = false;
+
+			if(lParts.Count == 0) return MemUtil.EmptyByteArray;
+			if(lParts.Count == 1) return lParts[0];
+
+			long cbRes = 0;
+			for(int i = 0; i < lParts.Count; ++i)
+				cbRes += lParts[i].Length;
+
+			byte[] pbRes = new byte[cbRes];
+			int cbCur = 0;
+			for(int i = 0; i < lParts.Count; ++i)
+			{
+				Array.Copy(lParts[i], 0, pbRes, cbCur, lParts[i].Length);
+				cbCur += lParts[i].Length;
+			}
+
+			return pbRes;
+		} */
+
 		private bool ReadBool(XmlReader xr, bool bDefault)
 		{
 			string str = ReadString(xr);
@@ -794,9 +844,9 @@ namespace KeePassLib.Serialization
 
 		private PwUuid ReadUuid(XmlReader xr)
 		{
-			string str = ReadString(xr);
-			if(string.IsNullOrEmpty(str)) return PwUuid.Zero;
-			return new PwUuid(Convert.FromBase64String(str));
+			byte[] pb = ReadBase64(xr, false);
+			if(pb.Length == 0) return PwUuid.Zero;
+			return new PwUuid(pb);
 		}
 
 		private int ReadInt(XmlReader xr, int nDefault)
@@ -863,8 +913,7 @@ namespace KeePassLib.Serialization
 				// long l = ReadLong(xr, -1);
 				// if(l != -1) return DateTime.FromBinary(l);
 
-				string str = ReadString(xr);
-				byte[] pb = Convert.FromBase64String(str);
+				byte[] pb = ReadBase64(xr, false);
 				if(pb.Length != 8)
 				{
 					Debug.Assert(false);
@@ -957,10 +1006,9 @@ namespace KeePassLib.Serialization
 				return new ProtectedBinary(true, xb);
 			}
 
-			string strValue = ReadString(xr);
-			if(strValue.Length == 0) return new ProtectedBinary();
+			byte[] pbData = ReadBase64(xr, true);
+			if(pbData.Length == 0) return new ProtectedBinary();
 
-			byte[] pbData = Convert.FromBase64String(strValue);
 			if(bCompressed) pbData = MemUtil.Decompress(pbData);
 			return new ProtectedBinary(false, pbData);
 		}
@@ -997,13 +1045,8 @@ namespace KeePassLib.Serialization
 					if(xr.Value == ValTrue)
 					{
 						xr.MoveToElement();
-						string strEncrypted = ReadStringRaw(xr);
 
-						byte[] pbEncrypted;
-						if(strEncrypted.Length > 0)
-							pbEncrypted = Convert.FromBase64String(strEncrypted);
-						else pbEncrypted = MemUtil.EmptyByteArray;
-
+						byte[] pbEncrypted = ReadBase64(xr, true);
 						byte[] pbPad = m_randomStream.GetRandomBytes((uint)pbEncrypted.Length);
 
 						xb = new XorredBuffer(pbEncrypted, pbPad);

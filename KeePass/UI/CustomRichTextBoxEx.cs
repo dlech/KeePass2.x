@@ -200,7 +200,7 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		// http://www.fileformat.info/tip/microsoft/enter_unicode.htm
+		// https://www.fileformat.info/tip/microsoft/enter_unicode.htm
 		// https://sourceforge.net/p/keepass/feature-requests/2180/
 		private bool HandleAltX(KeyEventArgs e, bool bDown)
 		{

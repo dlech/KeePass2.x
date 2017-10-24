@@ -102,7 +102,7 @@ namespace KeePass.Ecas
 						EcasValueType.String, null),
 					new EcasParameter(KPRes.Password, EcasValueType.String, null),
 					new EcasParameter(KPRes.KeyFile, EcasValueType.String, null),
-					new EcasParameter(KPRes.UserAccount, EcasValueType.Bool, null) },
+					new EcasParameter(KPRes.WindowsUserAccount, EcasValueType.Bool, null) },
 				OpenDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -143,7 +143,7 @@ namespace KeePass.Ecas
 								StrUtil.RemoveAccelerator(KPRes.OverwriteIfNewerAndApplyDel)) })),
 					new EcasParameter(KPRes.Password, EcasValueType.String, null),
 					new EcasParameter(KPRes.KeyFile, EcasValueType.String, null),
-					new EcasParameter(KPRes.UserAccount, EcasValueType.Bool, null) },
+					new EcasParameter(KPRes.WindowsUserAccount, EcasValueType.Bool, null) },
 				ImportIntoCurrentDatabase));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {

@@ -39,9 +39,13 @@ fnPrepKeePassLib()
 {
 	cd "${kpRoot}/KeePassLib"
 	local kpCsProj="KeePassLib.csproj"
+	local kpKdbxRS="Serialization/KdbxFile.Read.Streamed.cs"
 
 	sed -i 's! ToolsVersion="3\.5"!!g' "${kpCsProj}"
 	sed -i 's!<SignAssembly>true</SignAssembly>!<SignAssembly>false</SignAssembly>!g' "${kpCsProj}"
+
+	sed -i -E 's!(xrs\.ProhibitDtd = true;)!// \1!g' "${kpKdbxRS}"
+	sed -i -E 's!// (xrs\.DtdProcessing = DtdProcessing\.Prohibit;)!\1!g' "${kpKdbxRS}"
 }
 
 fnPrepTrlUtil()

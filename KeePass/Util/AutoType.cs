@@ -101,7 +101,7 @@ namespace KeePass.Util
 				// not required:
 
 				// // Enable new SendInput method; see
-				// // http://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.aspx
+				// // https://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.aspx
 				// ConfigurationManager.AppSettings.Set("SendKeys", "SendInput");
 			}
 			catch(Exception) { Debug.Assert(false); }

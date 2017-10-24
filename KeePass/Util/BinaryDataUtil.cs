@@ -138,7 +138,11 @@ namespace KeePass.Util
 
 			if((pbModData != null) && !MemUtil.ArraysEqual(pbData, pbModData) &&
 				!opt.ReadOnly)
-				return new ProtectedBinary(pb.IsProtected, pbModData);
+			{
+				if(FileDialogsEx.CheckAttachmentSize(pbModData.LongLength,
+					KPRes.AttachFailed + MessageService.NewParagraph + strName))
+					return new ProtectedBinary(pb.IsProtected, pbModData);
+			}
 			return null;
 		}
 
@@ -252,8 +256,7 @@ namespace KeePass.Util
 					sb.AppendLine();
 					sb.AppendLine(KPRes.AttachExtSecDel);
 
-					bImport = MessageService.AskYesNo(sb.ToString(),
-						PwDefs.ShortProductName);
+					bImport = MessageService.AskYesNo(sb.ToString());
 				}
 
 				if(bImport && !opt.ReadOnly)

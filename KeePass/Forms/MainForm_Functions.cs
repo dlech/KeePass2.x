@@ -525,11 +525,12 @@ namespace KeePass.Forms
 				m_menuEditShowExp14, m_menuEditShowExp28, m_menuEditShowExp56,
 				m_menuEditShowExpInF);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEditFindDupPasswords,
-				m_menuEditFindSimPasswords, m_menuEditPwQualityReport);
+				m_menuEditFindSimPasswordsP, m_menuEditFindSimPasswordsC,
+				m_menuEditPwQualityReport);
 			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuEditShowParentGroup);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuToolsDbMaintenance,
 				m_menuToolsDbDelDupEntries, m_menuToolsDbDelEmptyGroups,
-				m_menuToolsDbDelUnusedIcons, m_menuToolsDbXmlRep);
+				m_menuToolsDbDelUnusedIcons, m_menuToolsDbXmlRep, m_menuToolsPrintEmSheet);
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileImport, m_menuFileExport);
 
@@ -1280,26 +1281,13 @@ namespace KeePass.Forms
 			if(lviFocused != null)
 				UIUtil.SetFocusedItem(m_lvEntries, lviFocused, false);
 
-			View view = m_lvEntries.View;
-			if(m_bSimpleTanView)
-			{
-				if(m_lvEntries.Items.Count == 0)
-					m_lvEntries.View = View.Details;
-				else if(m_bOnlyTans && (view != View.List))
-				{
-					// SortPasswordList(false, 0, false);
-					m_lvEntries.View = View.List;
-				}
-				else if(!m_bOnlyTans && (view != View.Details))
-					m_lvEntries.View = View.Details;
-			}
-			else // m_bSimpleTanView == false
-			{
-				if(view != View.Details)
-					m_lvEntries.View = View.Details;
-			}
-
 			m_lvEntries.EndUpdate();
+
+			// Switch the view *after* EndUpdate, otherwise drawing bug;
+			// https://sourceforge.net/p/keepass/bugs/1651/
+			if(m_bSimpleTanView && (m_lvEntries.Items.Count != 0))
+				UIUtil.SetView(m_lvEntries, (m_bOnlyTans ? View.List : View.Details));
+			else UIUtil.SetView(m_lvEntries, View.Details);
 
 			// Resize columns *after* EndUpdate, otherwise sizing problem
 			// caused by the scrollbar
@@ -2266,11 +2254,7 @@ namespace KeePass.Forms
 					MessageService.ShowInfo(pwOpenedDb.IOConnectionInfo.GetDisplayName() +
 						MessageService.NewParagraph + KPRes.MasterKeyChangeForce +
 						MessageService.NewParagraph + KPRes.MasterKeyChangeInfo);
-					if(ChangeMasterKey(pwOpenedDb))
-					{
-						UpdateUIState(true);
-						break;
-					}
+					if(ChangeMasterKey(pwOpenedDb)) break;
 					if(!AppPolicy.Current.ChangeMasterKey) break; // Prevent endless loop
 				}
 			}
@@ -2279,7 +2263,7 @@ namespace KeePass.Forms
 				if(MessageService.AskYesNo(pwOpenedDb.IOConnectionInfo.GetDisplayName() +
 					MessageService.NewParagraph + KPRes.MasterKeyChangeRec +
 					MessageService.NewParagraph + KPRes.MasterKeyChangeQ))
-					UpdateUIState(ChangeMasterKey(pwOpenedDb));
+					ChangeMasterKey(pwOpenedDb);
 			}
 
 			if(FixDuplicateUuids(pwOpenedDb, pwOpenedDb.IOConnectionInfo))
@@ -3691,9 +3675,15 @@ namespace KeePass.Forms
 			m_tabMain.TabPages.Clear();
 
 			m_tabMain.ImageList = null;
-			if(m_ilTabImages != null) m_ilTabImages.Dispose();
+			if(m_ilTabImages != null)
+			{
+				m_ilTabImages.Dispose();
+				m_ilTabImages = null;
+			}
 			foreach(Image img in m_lTabImages) img.Dispose();
 			m_lTabImages.Clear();
+
+			bool bImgs = !MonoWorkarounds.IsRequired(891029);
 
 			List<TabPage> lPages = new List<TabPage>();
 			for(int i = 0; i < m_docMgr.Documents.Count; ++i)
@@ -3705,25 +3695,31 @@ namespace KeePass.Forms
 
 				string strName, strTip;
 				GetTabText(ds, out strName, out strTip);
-
 				tb.Text = strName;
 				tb.ToolTipText = strTip;
 
 				if((ds == null) || (ds.Database == null) || !ds.Database.IsOpen ||
 					UIUtil.ColorsEqual(ds.Database.Color, Color.Empty)) { }
-				else
+				else if(bImgs)
 				{
-					m_lTabImages.Add(UIUtil.CreateTabColorImage(ds.Database.Color,
-						m_tabMain));
-					tb.ImageIndex = m_lTabImages.Count - 1;
+					Image img = UIUtil.CreateTabColorImage(ds.Database.Color, m_tabMain);
+					if(img != null)
+					{
+						m_lTabImages.Add(img);
+						tb.ImageIndex = m_lTabImages.Count - 1;
+					}
+					else { Debug.Assert(false); }
 				}
 
 				lPages.Add(tb);
 			}
 
-			int qSize = ((m_lTabImages.Count > 0) ? m_lTabImages[0].Height : 15);
-			m_ilTabImages = UIUtil.BuildImageListUnscaled(m_lTabImages, qSize, qSize);
-			m_tabMain.ImageList = m_ilTabImages;
+			if(m_lTabImages.Count > 0)
+			{
+				int qSize = m_lTabImages[0].Height;
+				m_ilTabImages = UIUtil.BuildImageListUnscaled(m_lTabImages, qSize, qSize);
+				m_tabMain.ImageList = m_ilTabImages;
+			}
 
 			m_tabMain.TabPages.AddRange(lPages.ToArray());
 
@@ -3793,8 +3789,8 @@ namespace KeePass.Forms
 			foreach(TabPage tb in m_tabMain.TabPages)
 			{
 				PwDocument ds = (PwDocument)tb.Tag;
-				string strName, strTip;
 
+				string strName, strTip;
 				GetTabText(ds, out strName, out strTip);
 
 				tb.Text = strName;
@@ -4759,17 +4755,46 @@ namespace KeePass.Forms
 			KeyCreationForm kcf = new KeyCreationForm();
 			kcf.InitEx(pd.IOConnectionInfo, false);
 
-			if(UIUtil.ShowDialogNotValue(kcf, DialogResult.OK)) return false; // No UI update
+			if(UIUtil.ShowDialogNotValue(kcf, DialogResult.OK)) return false;
 
 			pd.MasterKey = kcf.CompositeKey;
 			pd.MasterKeyChanged = DateTime.UtcNow;
 			// pd.MasterKeyChangeForceOnce = false;
-
-			MessageService.ShowInfoEx(PwDefs.ShortProductName + " - " +
-				KPRes.KeyChanged, KPRes.MasterKeyChanged, KPRes.MasterKeyChangedSavePrompt);
+			pd.Modified = true;
 
 			UIUtil.DestroyForm(kcf);
-			return true; // No UI update
+			UpdateUIState(false); // Show modified state in the UI
+
+			string str = KPRes.MasterKeyChanged + MessageService.NewParagraph +
+				KPRes.MasterKeyChangedSave + MessageService.NewParagraph +
+				KPRes.FileSaveQ;
+
+			VistaTaskDialog dlg = new VistaTaskDialog();
+			dlg.CommandLinks = false;
+			dlg.Content = str;
+			dlg.DefaultButtonID = (int)DialogResult.OK;
+			dlg.MainInstruction = KPRes.MasterKeyChangedShort;
+			dlg.WindowTitle = PwDefs.ShortProductName;
+
+			dlg.SetIcon(VtdCustomIcon.Question);
+			dlg.AddButton((int)DialogResult.OK, KPRes.Save, null);
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.NotNow, null);
+
+			bool b;
+			if(dlg.ShowDialog(this)) b = (dlg.Result == (int)DialogResult.OK);
+			else b = MessageService.AskYesNo(str);
+
+			if(b)
+			{
+				SaveDatabase(pd, null);
+
+				// Show emergency sheet creation prompt only when the
+				// database was saved successfully, otherwise the sheet
+				// could contain incorrect information
+				if(!pd.Modified) EmergencySheet.AskCreate(pd);
+			}
+
+			return true;
 		}
 
 		private void UpdateColumnsEx(bool bGuiToInternal)
@@ -5335,7 +5360,7 @@ namespace KeePass.Forms
 				WinUtil.RemoveZoneIdentifier(AppHelp.LocalHelpFile);
 				WinUtil.RemoveZoneIdentifier(strShInstUtil);
 
-				// http://stackoverflow.com/questions/26256917/how-can-i-prevent-my-application-from-causing-a-0xc0000142-error-in-csc-exe
+				// https://stackoverflow.com/questions/26256917/how-can-i-prevent-my-application-from-causing-a-0xc0000142-error-in-csc-exe
 				XmlSerializer xs = new XmlSerializer(typeof(IpcParamEx));
 				IpcParamEx ipc = new IpcParamEx();
 				using(MemoryStream ms = new MemoryStream())
@@ -5615,7 +5640,7 @@ namespace KeePass.Forms
 
 		private int CreateAndShowEntryList(EntryReportDelegate f, string strStatus,
 			Image imgIcon, string strTitle, string strSubTitle, string strNote,
-			bool bForceDialog)
+			bool bForceDialog, bool bDisableSorting)
 		{
 			if(f == null) { Debug.Assert(false); return -1; }
 
@@ -5650,12 +5675,17 @@ namespace KeePass.Forms
 
 			PwGroup pg = (dlg.ResultGroup as PwGroup);
 			PwEntry pe = (dlg.ResultItem as PwEntry);
+			if((pg == null) && (pe == null))
+				pg = (dlg.ResultItem as PwGroup);
+
 			if((pg != null) || (pe != null))
 			{
 				if(pg != null)
 					UpdateUI(false, null, false, null, true, pg, false, m_lvEntries);
 				else
 					UpdateUI(false, null, true, pe.ParentGroup, true, null, false, m_lvEntries);
+
+				if(bDisableSorting) SortPasswordList(false, 0, null, true);
 
 				if(pe != null)
 				{
@@ -5665,6 +5695,7 @@ namespace KeePass.Forms
 					SelectEntries(lSel, true, true);
 					EnsureVisibleSelected(false);
 				}
+				else SelectFirstEntryIfNoneSelected();
 			}
 
 			return l.Count;
