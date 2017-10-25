@@ -1499,12 +1499,7 @@ namespace KeePass.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-<<<<<<< HEAD
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-=======
+
         internal static System.Drawing.Bitmap B48x35_WritingHand {
             get {
                 object obj = ResourceManager.GetObject("B48x35_WritingHand", resourceCulture);
@@ -1512,7 +1507,9 @@ namespace KeePass.Properties {
             }
         }
         
->>>>>>> official
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B48x48_Ark {
             get {
                 object obj = ResourceManager.GetObject("B48x48_Ark", resourceCulture);
