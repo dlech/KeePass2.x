@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -59,6 +59,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_hkEntryMenu; }
 			set { m_hkEntryMenu = value; }
+		}
+
+		private bool m_bCheckHotKeys = true;
+		[DefaultValue(true)]
+		public bool CheckHotKeys
+		{
+			get { return m_bCheckHotKeys; }
+			set { m_bCheckHotKeys = value; }
 		}
 
 		private string m_strUrlOverride = string.Empty;
@@ -340,6 +348,10 @@ namespace KeePass.App.Configuration
 				"cmd://{FIREFOX} \"{BASE}\"", 0x8));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{FIREFOX} \"{BASE}\"", 0x10));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{FIREFOX} -private-window \"{BASE}\"", 0x100000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{FIREFOX} -private-window \"{BASE}\"", 0x200000));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "chrome",
 				"cmd://{FIREFOX} -chrome \"{BASE}\"", 0x20));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
@@ -355,6 +367,10 @@ namespace KeePass.App.Configuration
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{OPERA} \"{BASE}\"", 0x80));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
+				"cmd://{OPERA} --private \"{BASE}\"", 0x400000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
+				"cmd://{OPERA} --private \"{BASE}\"", 0x800000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
 				"cmd://{SAFARI} \"{BASE}\"", 0x400));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",
 				"cmd://{SAFARI} \"{BASE}\"", 0x800));
@@ -362,7 +378,7 @@ namespace KeePass.App.Configuration
 				"cmd://\"{APPDIR}\\KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
 				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
-			// Free: 0x100000
+			// Free: 0x1000000
 
 #if DEBUG
 			ulong u = 0;

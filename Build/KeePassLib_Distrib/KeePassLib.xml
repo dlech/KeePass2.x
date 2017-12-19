@@ -114,27 +114,30 @@
         </member>
         <member name="M:KeePassLib.Serialization.KdbxFile.Load(System.String,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Load a KDB file from a file.
+            Load a KDBX file.
             </summary>
             <param name="strFilePath">File to load.</param>
-            <param name="kdbFormat">Format specifier.</param>
+            <param name="fmt">Format.</param>
             <param name="slLogger">Status logger (optional).</param>
         </member>
         <member name="M:KeePassLib.Serialization.KdbxFile.Load(System.IO.Stream,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Load a KDB file from a stream.
+            Load a KDBX file from a stream.
             </summary>
             <param name="sSource">Stream to read the data from. Must contain
             a KDBX stream.</param>
-            <param name="kdbFormat">Format specifier.</param>
+            <param name="fmt">Format.</param>
             <param name="slLogger">Status logger (optional).</param>
         </member>
-        <member name="M:KeePassLib.Serialization.KdbxFile.ReadEntries(System.IO.Stream)">
+        <member name="M:KeePassLib.Serialization.KdbxFile.ReadEntries(System.IO.Stream,KeePassLib.PwDatabase,System.Boolean)">
             <summary>
             Read entries from a stream.
             </summary>
             <param name="msData">Input stream to read the entries from.</param>
-            <returns>Extracted entries.</returns>
+            <param name="pdContext">Context database (e.g. for storing icons).</param>
+            <param name="bCopyIcons">If <c>true</c>, custom icons required by
+            the loaded entries are copied to the context database.</param>
+            <returns>Loaded entries.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.KdbxFile.Save(System.IO.Stream,KeePassLib.PwGroup,KeePassLib.Serialization.KdbxFormat,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
@@ -144,17 +147,8 @@
             <param name="pgDataSource">Group containing all groups and
             entries to write. If <c>null</c>, the complete database will
             be written.</param>
-            <param name="format">Format of the file to create.</param>
+            <param name="fmt">Format of the file to create.</param>
             <param name="slLogger">Logger that recieves status information.</param>
-        </member>
-        <member name="M:KeePassLib.Serialization.KdbxFile.WriteEntries(System.IO.Stream,KeePassLib.PwEntry[])">
-            <summary>
-            Write entries to a stream.
-            </summary>
-            <param name="msOutput">Output stream to which the entries will be written.</param>
-            <param name="vEntries">Entries to serialize.</param>
-            <returns>Returns <c>true</c>, if the entries were written successfully
-            to the stream.</returns>
         </member>
         <member name="M:KeePassLib.Serialization.KdbxFile.#ctor(KeePassLib.PwDatabase)">
             <summary>
@@ -245,7 +239,8 @@
         </member>
         <member name="F:KeePassLib.PwDefs.DefaultKeyEncryptionRounds">
             <summary>
-            Default number of master key encryption/transformation rounds (making dictionary attacks harder).
+            Default number of master key encryption/transformation rounds
+            (making dictionary attacks harder).
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.TitleField">
@@ -496,10 +491,10 @@
             'Failed to initialize encryption/decryption stream!'.
             </summary>
         </member>
-        <member name="P:KeePassLib.Resources.KLRes.EncAlgorithmAes">
+        <member name="P:KeePassLib.Resources.KLRes.EncDataTooLarge">
             <summary>
             Look up a localized string similar to
-            'AES/Rijndael (256-Bit Key)'.
+            'The data is too large to be encrypted/decrypted securely using {PARAM}.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.ErrorInClipboard">
@@ -532,10 +527,22 @@
             'The file is corrupted.'.
             </summary>
         </member>
-        <member name="P:KeePassLib.Resources.KLRes.FileHeaderEndEarly">
+        <member name="P:KeePassLib.Resources.KLRes.FileHeaderCorrupted">
             <summary>
             Look up a localized string similar to
-            'The file header is corrupted! Some header data was declared but is not present.'.
+            'The file header is corrupted.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileIncomplete">
+            <summary>
+            Look up a localized string similar to
+            'Data is missing at the end of the file, i.e. the file is incomplete.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileIncompleteExpc">
+            <summary>
+            Look up a localized string similar to
+            'Less data than expected could be read from the file.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileLoadFailed">
@@ -548,6 +555,12 @@
             <summary>
             Look up a localized string similar to
             'The file is locked, because the following user is currently writing to it:'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.FileNewVerOrPlgReq">
+            <summary>
+            Look up a localized string similar to
+            'A newer KeePass version or a plugin is required to open this file.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FileNewVerReq">
@@ -634,6 +647,12 @@
             'In order to import KeePass 1.x KDB files, create a new 2.x database file and click &#39;File&#39; -&gt; &#39;Import&#39; in the main menu. In the import dialog, choose &#39;KeePass KDB (1.x)&#39; as file format.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.KeyBits">
+            <summary>
+            Look up a localized string similar to
+            '{PARAM}-bit key'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.KeyFileDbSel">
             <summary>
             Look up a localized string similar to
@@ -682,6 +701,12 @@
             'Unknown header ID!'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.UnknownKdf">
+            <summary>
+            Look up a localized string similar to
+            'Unknown key derivation function!'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.UserAccountKeyError">
             <summary>
             Look up a localized string similar to
@@ -707,11 +732,17 @@
         <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ArcFourVariant">
             <summary>
             A variant of the ARCFour algorithm (RC4 incompatible).
+            Insecure; for backward compatibility only.
             </summary>
         </member>
         <member name="F:KeePassLib.Cryptography.CrsAlgorithm.Salsa20">
             <summary>
             Salsa20 stream cipher algorithm.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ChaCha20">
+            <summary>
+            ChaCha20 stream cipher algorithm.
             </summary>
         </member>
         <member name="T:KeePassLib.Cryptography.CryptoRandomStream">
@@ -726,14 +757,9 @@
             <summary>
             Construct a new cryptographically secure random stream object.
             </summary>
-            <param name="genAlgorithm">Algorithm to use.</param>
+            <param name="a">Algorithm to use.</param>
             <param name="pbKey">Initialization key. Must not be <c>null</c> and
             must contain at least 1 byte.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if the
-            <paramref name="pbKey"/> parameter is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown if the
-            <paramref name="pbKey"/> parameter contains no bytes or the
-            algorithm is unknown.</exception>
         </member>
         <member name="M:KeePassLib.Cryptography.CryptoRandomStream.GetRandomBytes(System.UInt32)">
             <summary>
@@ -852,6 +878,11 @@
             Find a character that does not occur within a given text.
             </summary>
         </member>
+        <member name="M:KeePassLib.Cryptography.KeyDerivation.KdfEngine.Randomize(KeePassLib.Cryptography.KeyDerivation.KdfParameters)">
+            <summary>
+            Generate random seeds and store them in <paramref name="p" />.
+            </summary>
+        </member>
         <member name="M:KeePassLib.Utility.MonoWorkarounds.ExchangeFormShownRaised(System.Windows.Forms.Form,System.Boolean)">
             <summary>
             Set the value of the private <c>shown_raised</c> member
@@ -920,8 +951,8 @@
             Delete a string.
             </summary>
             <param name="strField">Name of the string field to delete.</param>
-            <returns>Returns <c>true</c> if the field has been successfully
-            removed, otherwise the return value is <c>false</c>.</returns>
+            <returns>Returns <c>true</c>, if the field has been successfully
+            removed. Otherwise, the return value is <c>false</c>.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown if the input
             parameter is <c>null</c>.</exception>
         </member>
@@ -942,8 +973,6 @@
             year 12 bits, month 4 bits, day 5 bits, hour 5 bits, minute 6
             bits, second 6 bits.
             </summary>
-            <param name="dt"></param>
-            <returns></returns>
         </member>
         <member name="M:KeePassLib.Utility.TimeUtil.UnpackTime(System.Byte[])">
             <summary>
@@ -974,7 +1003,7 @@
             <param name="dt"><c>DateTime</c> object to convert to a string.</param>
             <returns>String representing the specified <c>DateTime</c> object.</returns>
         </member>
-        <member name="M:KeePassLib.Utility.TimeUtil.ParseUSTextDate(System.String)">
+        <member name="M:KeePassLib.Utility.TimeUtil.ParseUSTextDate(System.String,System.DateTimeKind)">
             <summary>
             Parse a US textual date string, like e.g. "January 02, 2012".
             </summary>
@@ -1240,6 +1269,12 @@
             <returns>Character at the specified position. If the index is invalid,
             an <c>ArgumentOutOfRangeException</c> is thrown.</returns>
         </member>
+        <member name="M:KeePassLib.Cryptography.CryptoUtil.ResizeKey(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Create a cryptographic key of length <paramref name="cbOut" />
+            (in bytes) from <paramref name="pbIn" />.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Cryptography.PasswordGenerator.PwGenerator">
             <summary>
             Utility functions for generating random passwords.
@@ -1366,6 +1401,34 @@
             so you usually won't override this property.
             </summary>
         </member>
+        <member name="T:KeePassLib.Cryptography.Cipher.ChaCha20Cipher">
+            <summary>
+            Implementation of the ChaCha20 cipher with a 96-bit nonce,
+            as specified in RFC 7539.
+            https://tools.ietf.org/html/rfc7539
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.Cipher.ChaCha20Cipher.#ctor(System.Byte[],System.Byte[],System.Boolean)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="pbKey32">Key (32 bytes).</param>
+            <param name="pbIV12">Nonce (12 bytes).</param>
+            <param name="bLargeCounter">If <c>false</c>, the RFC 7539 version
+            of ChaCha20 is used. In this case, only 256 GB of data can be
+            encrypted securely (because the block counter is a 32-bit variable);
+            an attempt to encrypt more data throws an exception.
+            If <paramref name="bLargeCounter" /> is <c>true</c>, the 32-bit
+            counter overflows to another 32-bit variable (i.e. the counter
+            effectively is a 64-bit variable), like in the original ChaCha20
+            specification by D. J. Bernstein (which has a 64-bit counter and a
+            64-bit nonce). To be compatible with this version, the 64-bit nonce
+            must be stored in the last 8 bytes of <paramref name="pbIV12" />
+            and the first 4 bytes must be 0.
+            If the IV was generated randomly, a 12-byte IV and a large counter
+            can be used to securely encrypt more than 256 GB of data (but note
+            this is incompatible with RFC 7539 and the original specification).</param>
+        </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
             List of objects that implement <c>IDeepCloneable</c>,
@@ -1463,8 +1526,8 @@
         </member>
         <member name="T:KeePassLib.Cryptography.CryptoRandom">
             <summary>
-            Cryptographically strong random number generator. The returned
-            values are unpredictable and cannot be reproduced.
+            Cryptographically secure pseudo-random number generator.
+            The returned values are unpredictable and cannot be reproduced.
             <c>CryptoRandom</c> is a singleton class.
             </summary>
         </member>
@@ -1588,7 +1651,18 @@
             <param name="pbArray">Input array. All bytes of this array
             will be set to zero.</param>
         </member>
+        <member name="M:KeePassLib.Utility.MemUtil.ZeroArray``1(``0[])">
+            <summary>
+            Set all elements of an array to the default value.
+            </summary>
+            <param name="v">Input array.</param>
+        </member>
         <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt16(System.Byte[])">
+            <summary>
+            Convert 2 bytes to a 16-bit unsigned integer (little-endian).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt16(System.Byte[],System.Int32)">
             <summary>
             Convert 2 bytes to a 16-bit unsigned integer (little-endian).
             </summary>
@@ -1598,7 +1672,17 @@
             Convert 4 bytes to a 32-bit unsigned integer (little-endian).
             </summary>
         </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt32(System.Byte[],System.Int32)">
+            <summary>
+            Convert 4 bytes to a 32-bit unsigned integer (little-endian).
+            </summary>
+        </member>
         <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt64(System.Byte[])">
+            <summary>
+            Convert 8 bytes to a 64-bit unsigned integer (little-endian).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.BytesToUInt64(System.Byte[],System.Int32)">
             <summary>
             Convert 8 bytes to a 64-bit unsigned integer (little-endian).
             </summary>
@@ -1613,7 +1697,17 @@
             Convert a 32-bit unsigned integer to 4 bytes (little-endian).
             </summary>
         </member>
+        <member name="M:KeePassLib.Utility.MemUtil.UInt32ToBytesEx(System.UInt32,System.Byte[],System.Int32)">
+            <summary>
+            Convert a 32-bit unsigned integer to 4 bytes (little-endian).
+            </summary>
+        </member>
         <member name="M:KeePassLib.Utility.MemUtil.UInt64ToBytes(System.UInt64)">
+            <summary>
+            Convert a 64-bit unsigned integer to 8 bytes (little-endian).
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.MemUtil.UInt64ToBytesEx(System.UInt64,System.Byte[],System.Int32)">
             <summary>
             Convert a 64-bit unsigned integer to 8 bytes (little-endian).
             </summary>
@@ -1865,12 +1959,6 @@
             Compression algorithm used to encrypt the data part of the database.
             </summary>
         </member>
-        <member name="P:KeePassLib.PwDatabase.KeyEncryptionRounds">
-            <summary>
-            Number of key transformation rounds (in order to make dictionary
-            attacks harder).
-            </summary>
-        </member>
         <member name="P:KeePassLib.PwDatabase.MemoryProtection">
             <summary>
             Memory protection configuration (for default fields).
@@ -1902,6 +1990,21 @@
             <summary>
             Custom data container that can be used by plugins to store
             own data in KeePass databases.
+            The data is stored in the encrypted part of encrypted
+            database files.
+            Use unique names for your items, e.g. "PluginName_ItemName".
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwDatabase.PublicCustomData">
+            <summary>
+            Custom data container that can be used by plugins to store
+            own data in KeePass databases.
+            The data is stored in the *unencrypted* part of database files,
+            and it is not supported by all file formats (e.g. supported by KDBX,
+            unsupported by XML).
+            It is highly recommended to use <c>CustomData</c> instead,
+            if possible.
+            Use unique names for your items, e.g. "PluginName_ItemName".
             </summary>
         </member>
         <member name="P:KeePassLib.PwDatabase.HashOfFileOnDisk">
@@ -1921,6 +2024,28 @@
         <member name="P:KeePassLib.PwDatabase.LocalizedAppName">
             <summary>
             Localized application name.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Collections.VariantDictionary.Clone">
+            <summary>
+            Create a deep copy.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Cryptography.KeyDerivation.KdfParameters.Clone">
+            <summary>
+            Unsupported.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine2.KeyLength">
+            <summary>
+            Length of an encryption key in bytes.
+            The base <c>ICipherEngine</c> assumes 32.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine2.IVLength">
+            <summary>
+            Length of the initialization vector in bytes.
+            The base <c>ICipherEngine</c> assumes 16.
             </summary>
         </member>
         <member name="T:KeePassLib.Keys.CompositeKey">
@@ -1972,41 +2097,10 @@
             key file, user account, computer ID, etc.).
             </summary>
         </member>
-        <member name="M:KeePassLib.Keys.CompositeKey.GenerateKey32(System.Byte[],System.UInt64)">
+        <member name="M:KeePassLib.Keys.CompositeKey.GenerateKey32(KeePassLib.Cryptography.KeyDerivation.KdfParameters)">
             <summary>
-            Generate a 32-bit wide key out of the composite key.
+            Generate a 32-byte (256-bit) key from the composite key.
             </summary>
-            <param name="pbKeySeed32">Seed used in the key transformation
-            rounds. Must be a byte array containing exactly 32 bytes; must
-            not be null.</param>
-            <param name="uNumRounds">Number of key transformation rounds.</param>
-            <returns>Returns a protected binary object that contains the
-            resulting 32-bit wide key.</returns>
-        </member>
-        <member name="M:KeePassLib.Keys.CompositeKey.TransformKey(System.Byte[],System.Byte[],System.UInt64)">
-            <summary>
-            Transform the current key <c>uNumRounds</c> times.
-            </summary>
-            <param name="pbOriginalKey32">The original key which will be transformed.
-            This parameter won't be modified.</param>
-            <param name="pbKeySeed32">Seed used for key transformations. Must not
-            be <c>null</c>. This parameter won't be modified.</param>
-            <param name="uNumRounds">Transformation count.</param>
-            <returns>256-bit transformed key.</returns>
-        </member>
-        <member name="M:KeePassLib.Keys.CompositeKey.TransformKeyBenchmark(System.UInt32,System.UInt64)">
-            <summary>
-            Benchmark the <c>TransformKey</c> method. Within
-            <paramref name="uMilliseconds"/> ms, random keys will be transformed
-            and the number of performed transformations are returned.
-            </summary>
-            <param name="uMilliseconds">Test duration in ms.</param>
-            <param name="uStep">Stepping.
-            <paramref name="uStep" /> should be a prime number. For fast processors
-            (PCs) a value of <c>3001</c> is recommended, for slower processors (PocketPC)
-            a value of <c>401</c> is recommended.</param>
-            <returns>Number of transformations performed in the specified
-            amount of time. Maximum value is <c>uint.MaxValue</c>.</returns>
         </member>
         <member name="P:KeePassLib.Keys.CompositeKey.UserKeys">
             <summary>
@@ -2137,17 +2231,17 @@
             <summary>
             Search this group and all subgroups for entries.
             </summary>
-            <param name="sp">Specifies the search method.</param>
-            <param name="listStorage">Entry list in which the search results will
-            be stored.</param>
+            <param name="sp">Specifies the search parameters.</param>
+            <param name="lResults">Entry list in which the search results
+            will be stored.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.SearchEntries(KeePassLib.SearchParameters,KeePassLib.Collections.PwObjectList{KeePassLib.PwEntry},KeePassLib.Interfaces.IStatusLogger)">
             <summary>
             Search this group and all subgroups for entries.
             </summary>
-            <param name="sp">Specifies the search method.</param>
-            <param name="listStorage">Entry list in which the search results will
-            be stored.</param>
+            <param name="sp">Specifies the search parameters.</param>
+            <param name="lResults">Entry list in which the search results
+            will be stored.</param>
             <param name="slStatus">Optional status reporting object.</param>
         </member>
         <member name="M:KeePassLib.PwGroup.FindGroup(KeePassLib.PwUuid,System.Boolean)">
@@ -2382,6 +2476,15 @@
             Default auto-type keystroke sequence for all entries in
             this group. This property can be an empty string, which
             means that the value should be inherited from the parent.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.CustomData">
+            <summary>
+            Custom data container that can be used by plugins to store
+            own data in KeePass groups.
+            The data is stored in the encrypted part of encrypted
+            database files.
+            Use unique names for your items, e.g. "PluginName_ItemName".
             </summary>
         </member>
         <member name="T:KeePassLib.Resources.KSRes">
@@ -2859,6 +2962,15 @@
             List of tags associated with this entry.
             </summary>
         </member>
+        <member name="P:KeePassLib.PwEntry.CustomData">
+            <summary>
+            Custom data container that can be used by plugins to store
+            own data in KeePass entries.
+            The data is stored in the encrypted part of encrypted
+            database files.
+            Use unique names for your items, e.g. "PluginName_ItemName".
+            </summary>
+        </member>
         <member name="T:KeePassLib.Security.ProtectedString">
             <summary>
             Represents an in-memory encrypted string.
@@ -2958,6 +3070,20 @@
             The input parameter is not modified and
             <c>ProtectedBinary</c> doesn't take ownership of the data,
             i.e. the caller is responsible for clearing it.</param>
+        </member>
+        <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Construct a new protected binary data object.
+            </summary>
+            <param name="bEnableProtection">If this paremeter is <c>true</c>,
+            the data will be encrypted in memory. If it is <c>false</c>, the
+            data is stored in plain-text in the process memory.</param>
+            <param name="pbData">Value of the protected object.
+            The input parameter is not modified and
+            <c>ProtectedBinary</c> doesn't take ownership of the data,
+            i.e. the caller is responsible for clearing it.</param>
+            <param name="iOffset">Offset for <paramref name="pbData" />.</param>
+            <param name="cbSize">Size for <paramref name="pbData" />.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>

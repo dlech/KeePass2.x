@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -180,6 +180,9 @@ namespace KeePass.Forms
 			ProcessItemSelection();
 		}
 
+		// The item activation handler has a slight delay when clicking an
+		// item, thus as a performance optimization we additionally handle
+		// item clicks
 		private void OnListClick(object sender, EventArgs e)
 		{
 			ProcessItemSelection();

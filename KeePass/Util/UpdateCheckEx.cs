@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ namespace KeePass.Util
 
 		public static void Run(bool bForceUI, Form fOptParent)
 		{
-			DateTime dtNow = DateTime.Now, dtLast;
+			DateTime dtNow = DateTime.UtcNow, dtLast;
 			string strLast = Program.Config.Application.LastUpdateCheck;
 			if(!bForceUI && (strLast.Length > 0) && TimeUtil.TryDeserializeUtc(
 				strLast, out dtLast))
@@ -150,6 +150,7 @@ namespace KeePass.Util
 
 		private static int CompareDates(DateTime a, DateTime b)
 		{
+			Debug.Assert(a.Kind == b.Kind);
 			if(a.Year != b.Year) return ((a.Year < b.Year) ? -1 : 1);
 			if(a.Month != b.Month) return ((a.Month < b.Month) ? -1 : 1);
 			if(a.Day != b.Day) return ((a.Day < b.Day) ? -1 : 1);

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,14 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
-using System.Windows.Forms;
-using System.Security.Cryptography;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.UI;
 using KeePass.Resources;
@@ -127,10 +126,9 @@ namespace KeePass.Forms
 
 			byte[] pbColl = ms.ToArray();
 
-			SHA256Managed sha256 = new SHA256Managed();
-			m_pbEntropy = sha256.ComputeHash(pbColl);
+			m_pbEntropy = CryptoUtil.HashSha256(pbColl);
 
-			CryptoRandom.Instance.AddEntropy(pbColl); // Will be hashed using SHA-512
+			CryptoRandom.Instance.AddEntropy(pbColl);
 			ms.Close();
 		}
 
@@ -158,31 +156,39 @@ namespace KeePass.Forms
 			int h = sz.Height;
 			if((w <= 0) || (h <= 0)) { Debug.Assert(false); return null; }
 
-			byte[] pbEndianTest = BitConverter.GetBytes((int)7);
+			byte[] pbEndianTest = BitConverter.GetBytes((int)519);
 			bool bLittleEndian = (pbEndianTest[0] == 7);
+			Debug.Assert(bLittleEndian == BitConverter.IsLittleEndian);
 
 			byte[] pbBmpData = new byte[w * h * 4];
 			byte[] pbRandomValues = new byte[w * h];
 			Program.GlobalRandom.NextBytes(pbRandomValues);
 			int p = 0;
-			for(int i = 0; i < pbBmpData.Length; i += 4)
+			if(bLittleEndian)
 			{
-				byte bt = pbRandomValues[p];
-				++p;
-
-				if(bLittleEndian)
+				for(int i = 0; i < pbBmpData.Length; i += 4)
 				{
+					byte bt = pbRandomValues[p];
+					++p;
+
 					pbBmpData[i] = bt;
+					pbBmpData[i + 1] = bt;
+					pbBmpData[i + 2] = bt;
 					pbBmpData[i + 3] = 255;
 				}
-				else
+			}
+			else // Big-endian
+			{
+				for(int i = 0; i < pbBmpData.Length; i += 4)
 				{
+					byte bt = pbRandomValues[p];
+					++p;
+
 					pbBmpData[i] = 255;
+					pbBmpData[i + 1] = bt;
+					pbBmpData[i + 2] = bt;
 					pbBmpData[i + 3] = bt;
 				}
-
-				pbBmpData[i + 1] = bt;
-				pbBmpData[i + 2] = bt;
 			}
 			Debug.Assert(p == (w * h));
 

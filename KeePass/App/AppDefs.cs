@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ namespace KeePass.App
 		public static readonly Color ColorEditError = Color.FromArgb(255, 192, 192);
 
 		public const string XslFilesDir = "XSL";
-		public const string XslFileHtmlLite = "KDBX_DetailsLite.xsl";
-		public const string XslFileHtmlFull = "KDBX_DetailsFull.xsl";
-		public const string XslFileHtmlTabular = "KDBX_Tabular.xsl";
+		public const string XslFileHtmlFull = "KDBX_DetailsFull_HTML.xsl";
+		public const string XslFileHtmlLight = "KDBX_DetailsLight_HTML.xsl";
+		public const string XslFileHtmlTabular = "KDBX_Tabular_HTML.xsl";
 
 		public const string PluginsDir = "Plugins";
 		public const string PluginProductName = "KeePass Plugin";
@@ -260,8 +260,10 @@ namespace KeePass.App
 			else if(strFieldId == AppDefs.ColumnIdnLastAccessTime)
 				return TimeUtil.ToDisplayString(pe.LastAccessTime);
 			else if(strFieldId == AppDefs.ColumnIdnExpiryTime)
-				return (pe.Expires ? TimeUtil.ToDisplayString(pe.ExpiryTime) :
-					KPRes.NeverExpires);
+			{
+				if(!pe.Expires) return KPRes.NeverExpires;
+				return TimeUtil.ToDisplayString(pe.ExpiryTime);
+			}
 			else if(strFieldId == AppDefs.ColumnIdnUuid)
 				return pe.Uuid.ToHexString();
 			else if(strFieldId == AppDefs.ColumnIdnAttachment)

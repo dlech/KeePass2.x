@@ -420,6 +420,9 @@ namespace KeePass.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_Folder {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Folder", resourceCulture);
@@ -690,6 +693,16 @@ namespace KeePass.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Imp_Enpass {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Enpass", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_Imp_FlexWallet {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_FlexWallet", resourceCulture);
@@ -750,6 +763,16 @@ namespace KeePass.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Imp_MSecure {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_MSecure", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_Imp_NetworkPwMgr {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_NetworkPwMgr", resourceCulture);
@@ -767,6 +790,9 @@ namespace KeePass.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_Imp_NPassword {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_NPassword", resourceCulture);
@@ -860,6 +886,16 @@ namespace KeePass.Properties {
         internal static System.Drawing.Bitmap B16x16_Imp_PwSafe {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_PwSafe", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Imp_PwSaver {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_PwSaver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ namespace KeePass.Forms
 		private bool m_bCanModKeyFile = false;
 		private List<string> m_lKeyFileNames = new List<string>();
 		// private List<Image> m_lKeyFileImages = new List<Image>();
+		private bool m_bPwStatePreset = false;
 		private bool m_bUaStatePreset = false;
 
 		public CompositeKey CompositeKey
@@ -127,6 +128,7 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
+			UIUtil.ConfigureToolTip(m_ttRect);
 			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
 
@@ -214,6 +216,9 @@ namespace KeePass.Forms
 				UIUtil.SetEnabled(m_btnOpenKeyFile, m_cbKeyFile.Checked);
 			}
 
+			if(((uKpf & (ulong)AceKeyUIFlags.CheckPassword) != 0) ||
+				((uKpf & (ulong)AceKeyUIFlags.UncheckPassword) != 0))
+				m_bPwStatePreset = true;
 			if(((uKpf & (ulong)AceKeyUIFlags.CheckUserAccount) != 0) ||
 				((uKpf & (ulong)AceKeyUIFlags.UncheckUserAccount) != 0))
 				m_bUaStatePreset = true;
@@ -229,6 +234,9 @@ namespace KeePass.Forms
 			m_aKeyAssoc = Program.Config.Defaults.GetKeySources(m_ioInfo);
 			if(m_aKeyAssoc != null)
 			{
+				if(m_aKeyAssoc.Password && !m_bPwStatePreset)
+					m_cbPassword.Checked = true;
+
 				if(m_aKeyAssoc.KeyFilePath.Length > 0)
 					AddKeyFileSuggPriv(m_aKeyAssoc.KeyFilePath, null);
 
@@ -288,7 +296,7 @@ namespace KeePass.Forms
 			{
 				byte[] pb = m_secPassword.ToUtf8();
 				m_pKey.AddUserKey(new KcpPassword(pb));
-				Array.Clear(pb, 0, pb.Length);
+				MemUtil.ZeroByteArray(pb);
 			}
 
 			string strKeyFile = m_cmbKeyFile.Text;
@@ -336,7 +344,7 @@ namespace KeePass.Forms
 						return false;
 					}
 
-					Array.Clear(pbProvKey, 0, pbProvKey.Length);
+					MemUtil.ZeroByteArray(pbProvKey);
 				}
 				else return false; // Provider has shown error message
 			}

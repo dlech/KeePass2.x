@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -107,11 +108,12 @@ namespace KeePass.DataExchange.Formats
 
 			DateTime dt;
 			if((vParts[6].Length > 0) && DateTime.TryParse(vParts[6], out dt))
-				pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime = dt;
+				pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime =
+					TimeUtil.ToUtc(dt, false);
 
 			if((vParts[7].Length > 0) && DateTime.TryParse(vParts[7], out dt))
 			{
-				pe.ExpiryTime = dt;
+				pe.ExpiryTime = TimeUtil.ToUtc(dt, false);
 				pe.Expires = true;
 			}
 

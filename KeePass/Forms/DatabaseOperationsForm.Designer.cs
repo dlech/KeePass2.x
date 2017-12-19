@@ -44,6 +44,9 @@
 			this.m_btnRemoveDelObjInfo = new System.Windows.Forms.Button();
 			this.m_lblTrashIcon2 = new System.Windows.Forms.Label();
 			this.m_lblDelObjInfoIntro = new System.Windows.Forms.Label();
+			this.m_tabCustomData = new System.Windows.Forms.TabPage();
+			this.m_btnCDDel = new System.Windows.Forms.Button();
+			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
 			this.m_pbStatus = new System.Windows.Forms.ProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpHistoryDelete.SuspendLayout();
@@ -51,6 +54,7 @@
 			this.m_tabMain.SuspendLayout();
 			this.m_tabCleanUp.SuspendLayout();
 			this.m_grpDeletedObjectsInfo.SuspendLayout();
+			this.m_tabCustomData.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_btnClose
@@ -154,6 +158,7 @@
 			// m_tabMain
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabCleanUp);
+			this.m_tabMain.Controls.Add(this.m_tabCustomData);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -222,6 +227,41 @@
 			this.m_lblDelObjInfoIntro.Text = "KeePass keeps some information about deleted objects. This information can be rem" +
 				"oved in order to reduce the size of the database.";
 			// 
+			// m_tabCustomData
+			// 
+			this.m_tabCustomData.Controls.Add(this.m_btnCDDel);
+			this.m_tabCustomData.Controls.Add(this.m_lvCustomData);
+			this.m_tabCustomData.Location = new System.Drawing.Point(4, 22);
+			this.m_tabCustomData.Name = "m_tabCustomData";
+			this.m_tabCustomData.Size = new System.Drawing.Size(431, 250);
+			this.m_tabCustomData.TabIndex = 1;
+			this.m_tabCustomData.Text = "Plugin Data";
+			this.m_tabCustomData.UseVisualStyleBackColor = true;
+			// 
+			// m_btnCDDel
+			// 
+			this.m_btnCDDel.Location = new System.Drawing.Point(349, 220);
+			this.m_btnCDDel.Name = "m_btnCDDel";
+			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCDDel.TabIndex = 1;
+			this.m_btnCDDel.Text = "&Delete";
+			this.m_btnCDDel.UseVisualStyleBackColor = true;
+			this.m_btnCDDel.Click += new System.EventHandler(this.OnBtnCDDel);
+			// 
+			// m_lvCustomData
+			// 
+			this.m_lvCustomData.FullRowSelect = true;
+			this.m_lvCustomData.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvCustomData.HideSelection = false;
+			this.m_lvCustomData.Location = new System.Drawing.Point(6, 12);
+			this.m_lvCustomData.Name = "m_lvCustomData";
+			this.m_lvCustomData.ShowItemToolTips = true;
+			this.m_lvCustomData.Size = new System.Drawing.Size(417, 202);
+			this.m_lvCustomData.TabIndex = 0;
+			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
+			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
+			this.m_lvCustomData.SelectedIndexChanged += new System.EventHandler(this.OnCustomDataSelectedIndexChanged);
+			// 
 			// m_pbStatus
 			// 
 			this.m_pbStatus.Location = new System.Drawing.Point(12, 359);
@@ -257,6 +297,7 @@
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabCleanUp.ResumeLayout(false);
 			this.m_grpDeletedObjectsInfo.ResumeLayout(false);
+			this.m_tabCustomData.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -280,5 +321,8 @@
 		private System.Windows.Forms.Label m_lblDelObjInfoIntro;
 		private System.Windows.Forms.Label m_lblDelObjInfoWarning;
 		private System.Windows.Forms.Button m_btnRemoveDelObjInfo;
+		private System.Windows.Forms.TabPage m_tabCustomData;
+		private KeePass.UI.CustomListViewEx m_lvCustomData;
+		private System.Windows.Forms.Button m_btnCDDel;
 	}
 }

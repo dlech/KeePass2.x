@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ namespace KeePass.Native
 		internal const int WM_MBUTTONDOWN = 0x0207;
 		// internal const int WM_MOUSEWHEEL = 0x020A;
 		// internal const int WM_ERASEBKGND = 0x0014;
+		internal const int WM_INPUTLANGCHANGEREQUEST = 0x0050;
 
 		internal const int WM_NOTIFY = 0x004E;
 
@@ -72,9 +73,10 @@ namespace KeePass.Native
 		internal const int VK_SHIFT = 0x10;
 		internal const int VK_CONTROL = 0x11;
 		internal const int VK_MENU = 0x12;
-		internal const int VK_CAPITAL = 0x14;
+		internal const int VK_CAPITAL = 0x14; // Caps Lock
 		// internal const int VK_ESCAPE = 0x1B;
 		// internal const int VK_SPACE = 0x20;
+		internal const int VK_NUMLOCK = 0x90;
 		internal const int VK_LSHIFT = 0xA0;
 		internal const int VK_RSHIFT = 0xA1;
 		internal const int VK_LCONTROL = 0xA2;
@@ -90,9 +92,14 @@ namespace KeePass.Native
 		// internal const int VK_F7 = 0x76;
 		// internal const int VK_F8 = 0x77;
 
+		internal const uint MAPVK_VK_TO_VSC = 0;
+
 		internal const uint KEYEVENTF_EXTENDEDKEY = 1;
 		internal const uint KEYEVENTF_KEYUP = 2;
 		internal const uint KEYEVENTF_UNICODE = 4;
+
+		internal const ushort LANG_CZECH = 0x05;
+		internal const ushort LANG_POLISH = 0x15;
 
 		// internal const uint GW_CHILD = 5;
 		internal const uint GW_HWNDNEXT = 2;
@@ -120,8 +127,18 @@ namespace KeePass.Native
 
 		internal const int SCF_SELECTION = 0x0001;
 
+		internal const uint CFM_BOLD = 0x00000001;
+		internal const uint CFM_ITALIC = 0x00000002;
+		internal const uint CFM_UNDERLINE = 0x00000004;
+		internal const uint CFM_STRIKEOUT = 0x00000008;
 		internal const uint CFM_LINK = 0x00000020;
-		internal const uint CFE_LINK = 0x00000020;
+		internal const uint CFM_SIZE = 0x80000000;
+
+		internal const uint CFE_BOLD = 0x0001;
+		internal const uint CFE_ITALIC = 0x0002;
+		internal const uint CFE_UNDERLINE = 0x0004;
+		internal const uint CFE_STRIKEOUT = 0x0008;
+		internal const uint CFE_LINK = 0x0020;
 
 		internal const int SC_MINIMIZE = 0xF020;
 		internal const int SC_MAXIMIZE = 0xF030;

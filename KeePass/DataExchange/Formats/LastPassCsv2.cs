@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.0.2-3.2.40+
+	// 2.0.2-4.1.35+
 	internal sealed class LastPassCsv2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -55,6 +55,13 @@ namespace KeePass.DataExchange.Formats
 			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
 			string strData = sr.ReadToEnd();
 			sr.Close();
+
+			// The Chrome extension of LastPass 4.1.35 encodes some
+			// special characters as XML entities; the web version and
+			// the Firefox extension do not do this
+			strData = strData.Replace(@"&lt;", @"<");
+			strData = strData.Replace(@"&gt;", @">");
+			strData = strData.Replace(@"&amp;", @"&");
 
 			CsvOptions opt = new CsvOptions();
 			opt.BackslashIsEscape = false;

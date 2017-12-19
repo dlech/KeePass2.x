@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -272,12 +272,13 @@ namespace KeePass.UI
 			string strFF = AppLocator.FirefoxPath;
 			if(AddAppByFile(strFF, @"&Firefox"))
 			{
-				// The command line options -private and -private-window do not work;
+				// The command line options -private and -private-window work
+				// correctly with Firefox 49.0.1 (before, they did not);
 				// https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=856839
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=829180
-				// AddAppByShellExpand("cmd://\"" + strFF + "\" -private-window \"" +
-				//	PlhTargetUri + "\"", "Firefox (" + KPRes.Private + ")", strFF);
+				AddAppByShellExpand("cmd://\"" + strFF + "\" -private-window \"" +
+					PlhTargetUri + "\"", "Firefox (" + KPRes.Private + ")", strFF);
 			}
 
 			string strCh = AppLocator.ChromePath;
@@ -299,6 +300,10 @@ namespace KeePass.UI
 				// Doesn't work with Opera 36.0.2130.65:
 				// AddAppByShellExpand("cmd://\"" + strOp + "\" --incognito \"" +
 				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+
+				// Works with Opera 40.0.2308.81:
+				AddAppByShellExpand("cmd://\"" + strOp + "\" --private \"" +
+					PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
 			}
 
 			AddAppByFile(AppLocator.SafariPath, @"&Safari");

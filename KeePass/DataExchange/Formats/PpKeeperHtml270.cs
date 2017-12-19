@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -178,22 +178,22 @@ namespace KeePass.DataExchange.Formats
 
 		private static DateTime ReadModified(string strValue)
 		{
-			if(strValue == null) { Debug.Assert(false); return DateTime.Now; }
-			if(strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.Now;
+			if(strValue == null) { Debug.Assert(false); return DateTime.UtcNow; }
+			if(strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.UtcNow;
 
-			string[] vParts = strValue.Split(new char[]{ ' ', ':', '/' },
+			string[] vParts = strValue.Split(new char[] { ' ', ':', '/' },
 				StringSplitOptions.RemoveEmptyEntries);
-			if(vParts.Length != 6) { Debug.Assert(false); return DateTime.Now; }
+			if(vParts.Length != 6) { Debug.Assert(false); return DateTime.UtcNow; }
 
 			try
 			{
-				return new DateTime(int.Parse(vParts[2]), int.Parse(vParts[0]),
+				return (new DateTime(int.Parse(vParts[2]), int.Parse(vParts[0]),
 					int.Parse(vParts[1]), int.Parse(vParts[3]), int.Parse(vParts[4]),
-					int.Parse(vParts[5]));
+					int.Parse(vParts[5]), DateTimeKind.Local)).ToUniversalTime();
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return DateTime.Now;
+			return DateTime.UtcNow;
 		}
 	}
 }

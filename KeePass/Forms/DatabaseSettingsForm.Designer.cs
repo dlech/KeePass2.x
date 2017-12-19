@@ -35,12 +35,21 @@
 			this.m_grpEncAlgo = new System.Windows.Forms.GroupBox();
 			this.m_lblEncAlgoDesc = new System.Windows.Forms.Label();
 			this.m_cmbEncAlgo = new System.Windows.Forms.ComboBox();
-			this.m_lblTransIntro = new System.Windows.Forms.Label();
-			this.m_lblTransNum = new System.Windows.Forms.Label();
-			this.m_lblTransInfo = new System.Windows.Forms.Label();
+			this.m_lblKdfIntro = new System.Windows.Forms.Label();
+			this.m_lblKdfIt = new System.Windows.Forms.Label();
+			this.m_lblKdfInfo = new System.Windows.Forms.Label();
 			this.m_grpKeyTrans = new System.Windows.Forms.GroupBox();
-			this.m_lnkCompute1SecDelay = new System.Windows.Forms.LinkLabel();
-			this.m_numEncRounds = new System.Windows.Forms.NumericUpDown();
+			this.m_lblKdfPar = new System.Windows.Forms.Label();
+			this.m_numKdfPar = new System.Windows.Forms.NumericUpDown();
+			this.m_btnKdfTest = new System.Windows.Forms.Button();
+			this.m_numKdfMem = new System.Windows.Forms.NumericUpDown();
+			this.m_pbKdf = new System.Windows.Forms.ProgressBar();
+			this.m_btnKdf1Sec = new System.Windows.Forms.Button();
+			this.m_lblKdfMem = new System.Windows.Forms.Label();
+			this.m_cmbKdfMem = new System.Windows.Forms.ComboBox();
+			this.m_cmbKdf = new System.Windows.Forms.ComboBox();
+			this.m_lblKdf = new System.Windows.Forms.Label();
+			this.m_numKdfIt = new System.Windows.Forms.NumericUpDown();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
 			this.m_lblCompressionIntro = new System.Windows.Forms.Label();
@@ -78,6 +87,7 @@
 			this.m_cbHistoryMaxSize = new System.Windows.Forms.CheckBox();
 			this.m_cbHistoryMaxItems = new System.Windows.Forms.CheckBox();
 			this.m_grpMasterKey = new System.Windows.Forms.GroupBox();
+			this.m_cbKeyForceOnce = new System.Windows.Forms.CheckBox();
 			this.m_cbKeyForce = new System.Windows.Forms.CheckBox();
 			this.m_cbKeyRec = new System.Windows.Forms.CheckBox();
 			this.m_numKeyForceDays = new System.Windows.Forms.NumericUpDown();
@@ -86,10 +96,13 @@
 			this.m_cmbEntryTemplates = new System.Windows.Forms.ComboBox();
 			this.m_lblTemplatesHint = new System.Windows.Forms.Label();
 			this.m_lblEntryTemplatesGroup = new System.Windows.Forms.Label();
+			this.m_btnCancelOp = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpEncAlgo.SuspendLayout();
 			this.m_grpKeyTrans.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_numEncRounds)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfPar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfMem)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfIt)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabGeneral.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -117,10 +130,10 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(318, 399);
+			this.m_btnOK.Location = new System.Drawing.Point(318, 425);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.TabIndex = 2;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -128,10 +141,10 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(399, 399);
+			this.m_btnCancel.Location = new System.Drawing.Point(399, 425);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 3;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -165,83 +178,166 @@
 			this.m_cmbEncAlgo.Size = new System.Drawing.Size(219, 21);
 			this.m_cmbEncAlgo.TabIndex = 1;
 			// 
-			// m_lblTransIntro
+			// m_lblKdfIntro
 			// 
-			this.m_lblTransIntro.Location = new System.Drawing.Point(6, 16);
-			this.m_lblTransIntro.Name = "m_lblTransIntro";
-			this.m_lblTransIntro.Size = new System.Drawing.Size(428, 40);
-			this.m_lblTransIntro.TabIndex = 0;
-			this.m_lblTransIntro.Text = "The composite master key is transformed several times before being used as encryp" +
-				"tion key for the database. This adds a constant time factor and makes dictionary" +
-				" and guessing attacks harder.";
+			this.m_lblKdfIntro.Location = new System.Drawing.Point(6, 18);
+			this.m_lblKdfIntro.Name = "m_lblKdfIntro";
+			this.m_lblKdfIntro.Size = new System.Drawing.Size(428, 28);
+			this.m_lblKdfIntro.TabIndex = 0;
+			this.m_lblKdfIntro.Text = "The composite master key is transformed using a key derivation function. This add" +
+				"s a work factor and makes dictionary and guessing attacks harder.";
 			// 
-			// m_lblTransNum
+			// m_lblKdfIt
 			// 
-			this.m_lblTransNum.AutoSize = true;
-			this.m_lblTransNum.Location = new System.Drawing.Point(6, 63);
-			this.m_lblTransNum.Name = "m_lblTransNum";
-			this.m_lblTransNum.Size = new System.Drawing.Size(183, 13);
-			this.m_lblTransNum.TabIndex = 1;
-			this.m_lblTransNum.Text = "Number of key transformation rounds:";
+			this.m_lblKdfIt.AutoSize = true;
+			this.m_lblKdfIt.Location = new System.Drawing.Point(6, 80);
+			this.m_lblKdfIt.Name = "m_lblKdfIt";
+			this.m_lblKdfIt.Size = new System.Drawing.Size(53, 13);
+			this.m_lblKdfIt.TabIndex = 3;
+			this.m_lblKdfIt.Text = "Iterations:";
 			// 
-			// m_lblTransInfo
+			// m_lblKdfInfo
 			// 
-			this.m_lblTransInfo.Location = new System.Drawing.Point(6, 103);
-			this.m_lblTransInfo.Name = "m_lblTransInfo";
-			this.m_lblTransInfo.Size = new System.Drawing.Size(428, 28);
-			this.m_lblTransInfo.TabIndex = 4;
-			this.m_lblTransInfo.Text = "The higher this number the harder are dictionary attacks. But also database loadi" +
-				"ng/saving takes more time.";
+			this.m_lblKdfInfo.Location = new System.Drawing.Point(6, 155);
+			this.m_lblKdfInfo.Name = "m_lblKdfInfo";
+			this.m_lblKdfInfo.Size = new System.Drawing.Size(428, 28);
+			this.m_lblKdfInfo.TabIndex = 10;
+			this.m_lblKdfInfo.Text = "The more iterations, the harder are dictionary and guessing attacks, but also dat" +
+				"abase loading/saving takes more time.";
 			// 
 			// m_grpKeyTrans
 			// 
-			this.m_grpKeyTrans.Controls.Add(this.m_lnkCompute1SecDelay);
-			this.m_grpKeyTrans.Controls.Add(this.m_numEncRounds);
-			this.m_grpKeyTrans.Controls.Add(this.m_lblTransIntro);
-			this.m_grpKeyTrans.Controls.Add(this.m_lblTransInfo);
-			this.m_grpKeyTrans.Controls.Add(this.m_lblTransNum);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdfPar);
+			this.m_grpKeyTrans.Controls.Add(this.m_numKdfPar);
+			this.m_grpKeyTrans.Controls.Add(this.m_btnKdfTest);
+			this.m_grpKeyTrans.Controls.Add(this.m_numKdfMem);
+			this.m_grpKeyTrans.Controls.Add(this.m_pbKdf);
+			this.m_grpKeyTrans.Controls.Add(this.m_btnKdf1Sec);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdfMem);
+			this.m_grpKeyTrans.Controls.Add(this.m_cmbKdfMem);
+			this.m_grpKeyTrans.Controls.Add(this.m_cmbKdf);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdf);
+			this.m_grpKeyTrans.Controls.Add(this.m_numKdfIt);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdfIntro);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdfInfo);
+			this.m_grpKeyTrans.Controls.Add(this.m_lblKdfIt);
 			this.m_grpKeyTrans.Location = new System.Drawing.Point(6, 96);
 			this.m_grpKeyTrans.Name = "m_grpKeyTrans";
-			this.m_grpKeyTrans.Size = new System.Drawing.Size(440, 140);
+			this.m_grpKeyTrans.Size = new System.Drawing.Size(440, 218);
 			this.m_grpKeyTrans.TabIndex = 2;
 			this.m_grpKeyTrans.TabStop = false;
 			this.m_grpKeyTrans.Text = "Key transformation";
 			// 
-			// m_lnkCompute1SecDelay
+			// m_lblKdfPar
 			// 
-			this.m_lnkCompute1SecDelay.AutoSize = true;
-			this.m_lnkCompute1SecDelay.Location = new System.Drawing.Point(208, 84);
-			this.m_lnkCompute1SecDelay.Name = "m_lnkCompute1SecDelay";
-			this.m_lnkCompute1SecDelay.Size = new System.Drawing.Size(79, 13);
-			this.m_lnkCompute1SecDelay.TabIndex = 3;
-			this.m_lnkCompute1SecDelay.TabStop = true;
-			this.m_lnkCompute1SecDelay.Text = "1 second delay";
-			this.m_lnkCompute1SecDelay.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked1SecondDelayRounds);
+			this.m_lblKdfPar.AutoSize = true;
+			this.m_lblKdfPar.Location = new System.Drawing.Point(6, 132);
+			this.m_lblKdfPar.Name = "m_lblKdfPar";
+			this.m_lblKdfPar.Size = new System.Drawing.Size(59, 13);
+			this.m_lblKdfPar.TabIndex = 8;
+			this.m_lblKdfPar.Text = "Parallelism:";
 			// 
-			// m_numEncRounds
+			// m_numKdfPar
 			// 
-			this.m_numEncRounds.Location = new System.Drawing.Point(211, 61);
-			this.m_numEncRounds.Name = "m_numEncRounds";
-			this.m_numEncRounds.Size = new System.Drawing.Size(219, 20);
-			this.m_numEncRounds.TabIndex = 2;
-			this.m_numEncRounds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.m_numKdfPar.Location = new System.Drawing.Point(211, 131);
+			this.m_numKdfPar.Name = "m_numKdfPar";
+			this.m_numKdfPar.Size = new System.Drawing.Size(219, 20);
+			this.m_numKdfPar.TabIndex = 9;
+			this.m_numKdfPar.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_btnKdfTest
+			// 
+			this.m_btnKdfTest.Location = new System.Drawing.Point(356, 186);
+			this.m_btnKdfTest.Name = "m_btnKdfTest";
+			this.m_btnKdfTest.Size = new System.Drawing.Size(75, 23);
+			this.m_btnKdfTest.TabIndex = 13;
+			this.m_btnKdfTest.Text = "&Test";
+			this.m_btnKdfTest.UseVisualStyleBackColor = true;
+			this.m_btnKdfTest.Click += new System.EventHandler(this.OnBtnKdfTest);
+			// 
+			// m_numKdfMem
+			// 
+			this.m_numKdfMem.Location = new System.Drawing.Point(211, 105);
+			this.m_numKdfMem.Name = "m_numKdfMem";
+			this.m_numKdfMem.Size = new System.Drawing.Size(160, 20);
+			this.m_numKdfMem.TabIndex = 6;
+			this.m_numKdfMem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_pbKdf
+			// 
+			this.m_pbKdf.Location = new System.Drawing.Point(9, 190);
+			this.m_pbKdf.Name = "m_pbKdf";
+			this.m_pbKdf.Size = new System.Drawing.Size(195, 15);
+			this.m_pbKdf.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+			this.m_pbKdf.TabIndex = 11;
+			this.m_pbKdf.Visible = false;
+			// 
+			// m_btnKdf1Sec
+			// 
+			this.m_btnKdf1Sec.Location = new System.Drawing.Point(210, 186);
+			this.m_btnKdf1Sec.Name = "m_btnKdf1Sec";
+			this.m_btnKdf1Sec.Size = new System.Drawing.Size(140, 23);
+			this.m_btnKdf1Sec.TabIndex = 12;
+			this.m_btnKdf1Sec.Text = "1 Second &Delay";
+			this.m_btnKdf1Sec.UseVisualStyleBackColor = true;
+			this.m_btnKdf1Sec.Click += new System.EventHandler(this.OnBtnKdf1Sec);
+			// 
+			// m_lblKdfMem
+			// 
+			this.m_lblKdfMem.AutoSize = true;
+			this.m_lblKdfMem.Location = new System.Drawing.Point(6, 106);
+			this.m_lblKdfMem.Name = "m_lblKdfMem";
+			this.m_lblKdfMem.Size = new System.Drawing.Size(47, 13);
+			this.m_lblKdfMem.TabIndex = 5;
+			this.m_lblKdfMem.Text = "Memory:";
+			// 
+			// m_cmbKdfMem
+			// 
+			this.m_cmbKdfMem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbKdfMem.FormattingEnabled = true;
+			this.m_cmbKdfMem.Location = new System.Drawing.Point(377, 104);
+			this.m_cmbKdfMem.MaxDropDownItems = 16;
+			this.m_cmbKdfMem.Name = "m_cmbKdfMem";
+			this.m_cmbKdfMem.Size = new System.Drawing.Size(53, 21);
+			this.m_cmbKdfMem.TabIndex = 7;
+			// 
+			// m_cmbKdf
+			// 
+			this.m_cmbKdf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbKdf.FormattingEnabled = true;
+			this.m_cmbKdf.Location = new System.Drawing.Point(211, 51);
+			this.m_cmbKdf.MaxDropDownItems = 16;
+			this.m_cmbKdf.Name = "m_cmbKdf";
+			this.m_cmbKdf.Size = new System.Drawing.Size(219, 21);
+			this.m_cmbKdf.TabIndex = 2;
+			this.m_cmbKdf.SelectedIndexChanged += new System.EventHandler(this.OnKdfSelectedIndexChanged);
+			// 
+			// m_lblKdf
+			// 
+			this.m_lblKdf.AutoSize = true;
+			this.m_lblKdf.Location = new System.Drawing.Point(6, 54);
+			this.m_lblKdf.Name = "m_lblKdf";
+			this.m_lblKdf.Size = new System.Drawing.Size(118, 13);
+			this.m_lblKdf.TabIndex = 1;
+			this.m_lblKdf.Text = "Key derivation function:";
+			// 
+			// m_numKdfIt
+			// 
+			this.m_numKdfIt.Location = new System.Drawing.Point(211, 78);
+			this.m_numKdfIt.Name = "m_numKdfIt";
+			this.m_numKdfIt.Size = new System.Drawing.Size(219, 20);
+			this.m_numKdfIt.TabIndex = 4;
+			this.m_numKdfIt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(11, 399);
+			this.m_btnHelp.Location = new System.Drawing.Point(11, 425);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 3;
+			this.m_btnHelp.TabIndex = 4;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
-			// 
-			// m_ttRect
-			// 
-			this.m_ttRect.AutomaticDelay = 250;
-			this.m_ttRect.AutoPopDelay = 2500;
-			this.m_ttRect.InitialDelay = 250;
-			this.m_ttRect.ReshowDelay = 50;
 			// 
 			// m_lblCompressionIntro
 			// 
@@ -261,7 +357,7 @@
 			this.m_tabMain.Location = new System.Drawing.Point(12, 67);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.Size = new System.Drawing.Size(463, 320);
+			this.m_tabMain.Size = new System.Drawing.Size(463, 346);
 			this.m_tabMain.TabIndex = 0;
 			// 
 			// m_tabGeneral
@@ -277,7 +373,7 @@
 			this.m_tabGeneral.Location = new System.Drawing.Point(4, 22);
 			this.m_tabGeneral.Name = "m_tabGeneral";
 			this.m_tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabGeneral.Size = new System.Drawing.Size(455, 294);
+			this.m_tabGeneral.Size = new System.Drawing.Size(455, 320);
 			this.m_tabGeneral.TabIndex = 0;
 			this.m_tabGeneral.Text = "General";
 			this.m_tabGeneral.UseVisualStyleBackColor = true;
@@ -285,7 +381,7 @@
 			// m_cbColor
 			// 
 			this.m_cbColor.AutoSize = true;
-			this.m_cbColor.Location = new System.Drawing.Point(6, 269);
+			this.m_cbColor.Location = new System.Drawing.Point(6, 295);
 			this.m_cbColor.Name = "m_cbColor";
 			this.m_cbColor.Size = new System.Drawing.Size(137, 17);
 			this.m_cbColor.TabIndex = 6;
@@ -295,7 +391,7 @@
 			// 
 			// m_btnColor
 			// 
-			this.m_btnColor.Location = new System.Drawing.Point(176, 265);
+			this.m_btnColor.Location = new System.Drawing.Point(176, 291);
 			this.m_btnColor.Name = "m_btnColor";
 			this.m_btnColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnColor.TabIndex = 7;
@@ -304,7 +400,7 @@
 			// 
 			// m_tbDefaultUser
 			// 
-			this.m_tbDefaultUser.Location = new System.Drawing.Point(177, 239);
+			this.m_tbDefaultUser.Location = new System.Drawing.Point(177, 265);
 			this.m_tbDefaultUser.Name = "m_tbDefaultUser";
 			this.m_tbDefaultUser.Size = new System.Drawing.Size(269, 20);
 			this.m_tbDefaultUser.TabIndex = 5;
@@ -312,7 +408,7 @@
 			// m_lblDefaultUser
 			// 
 			this.m_lblDefaultUser.AutoSize = true;
-			this.m_lblDefaultUser.Location = new System.Drawing.Point(3, 242);
+			this.m_lblDefaultUser.Location = new System.Drawing.Point(3, 268);
 			this.m_lblDefaultUser.Name = "m_lblDefaultUser";
 			this.m_lblDefaultUser.Size = new System.Drawing.Size(168, 13);
 			this.m_lblDefaultUser.TabIndex = 4;
@@ -325,7 +421,7 @@
 			this.m_tbDbDesc.Multiline = true;
 			this.m_tbDbDesc.Name = "m_tbDbDesc";
 			this.m_tbDbDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbDbDesc.Size = new System.Drawing.Size(440, 176);
+			this.m_tbDbDesc.Size = new System.Drawing.Size(440, 201);
 			this.m_tbDbDesc.TabIndex = 3;
 			// 
 			// m_lblDbDesc
@@ -361,7 +457,7 @@
 			this.m_tabSecurity.Location = new System.Drawing.Point(4, 22);
 			this.m_tabSecurity.Name = "m_tabSecurity";
 			this.m_tabSecurity.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabSecurity.Size = new System.Drawing.Size(455, 294);
+			this.m_tabSecurity.Size = new System.Drawing.Size(455, 320);
 			this.m_tabSecurity.TabIndex = 1;
 			this.m_tabSecurity.Text = "Security";
 			this.m_tabSecurity.UseVisualStyleBackColor = true;
@@ -389,7 +485,7 @@
 			this.m_tabCompression.Controls.Add(this.m_lblCompressionIntro);
 			this.m_tabCompression.Location = new System.Drawing.Point(4, 22);
 			this.m_tabCompression.Name = "m_tabCompression";
-			this.m_tabCompression.Size = new System.Drawing.Size(455, 294);
+			this.m_tabCompression.Size = new System.Drawing.Size(455, 320);
 			this.m_tabCompression.TabIndex = 2;
 			this.m_tabCompression.Text = "Compression";
 			this.m_tabCompression.UseVisualStyleBackColor = true;
@@ -488,7 +584,7 @@
 			this.m_tabRecycleBin.Location = new System.Drawing.Point(4, 22);
 			this.m_tabRecycleBin.Name = "m_tabRecycleBin";
 			this.m_tabRecycleBin.Padding = new System.Windows.Forms.Padding(3);
-			this.m_tabRecycleBin.Size = new System.Drawing.Size(455, 294);
+			this.m_tabRecycleBin.Size = new System.Drawing.Size(455, 320);
 			this.m_tabRecycleBin.TabIndex = 4;
 			this.m_tabRecycleBin.Text = "Recycle Bin";
 			this.m_tabRecycleBin.UseVisualStyleBackColor = true;
@@ -538,7 +634,7 @@
 			this.m_tabAdvanced.Controls.Add(this.m_grpTemplates);
 			this.m_tabAdvanced.Location = new System.Drawing.Point(4, 22);
 			this.m_tabAdvanced.Name = "m_tabAdvanced";
-			this.m_tabAdvanced.Size = new System.Drawing.Size(455, 294);
+			this.m_tabAdvanced.Size = new System.Drawing.Size(455, 320);
 			this.m_tabAdvanced.TabIndex = 5;
 			this.m_tabAdvanced.Text = "Advanced";
 			this.m_tabAdvanced.UseVisualStyleBackColor = true;
@@ -551,7 +647,7 @@
 			this.m_grpHistory.Controls.Add(this.m_cbHistoryMaxItems);
 			this.m_grpHistory.Location = new System.Drawing.Point(6, 117);
 			this.m_grpHistory.Name = "m_grpHistory";
-			this.m_grpHistory.Size = new System.Drawing.Size(440, 75);
+			this.m_grpHistory.Size = new System.Drawing.Size(440, 74);
 			this.m_grpHistory.TabIndex = 1;
 			this.m_grpHistory.TabStop = false;
 			this.m_grpHistory.Text = "Automatic entry history maintenance";
@@ -596,25 +692,36 @@
 			// 
 			// m_grpMasterKey
 			// 
+			this.m_grpMasterKey.Controls.Add(this.m_cbKeyForceOnce);
 			this.m_grpMasterKey.Controls.Add(this.m_cbKeyForce);
 			this.m_grpMasterKey.Controls.Add(this.m_cbKeyRec);
 			this.m_grpMasterKey.Controls.Add(this.m_numKeyForceDays);
 			this.m_grpMasterKey.Controls.Add(this.m_numKeyRecDays);
-			this.m_grpMasterKey.Location = new System.Drawing.Point(6, 198);
+			this.m_grpMasterKey.Location = new System.Drawing.Point(6, 197);
 			this.m_grpMasterKey.Name = "m_grpMasterKey";
-			this.m_grpMasterKey.Size = new System.Drawing.Size(440, 75);
+			this.m_grpMasterKey.Size = new System.Drawing.Size(440, 99);
 			this.m_grpMasterKey.TabIndex = 2;
 			this.m_grpMasterKey.TabStop = false;
 			this.m_grpMasterKey.Text = "Master key";
+			// 
+			// m_cbKeyForceOnce
+			// 
+			this.m_cbKeyForceOnce.AutoSize = true;
+			this.m_cbKeyForceOnce.Location = new System.Drawing.Point(9, 69);
+			this.m_cbKeyForceOnce.Name = "m_cbKeyForceOnce";
+			this.m_cbKeyForceOnce.Size = new System.Drawing.Size(268, 17);
+			this.m_cbKeyForceOnce.TabIndex = 4;
+			this.m_cbKeyForceOnce.Text = "Force changing the master key the next time (once)";
+			this.m_cbKeyForceOnce.UseVisualStyleBackColor = true;
 			// 
 			// m_cbKeyForce
 			// 
 			this.m_cbKeyForce.AutoSize = true;
 			this.m_cbKeyForce.Location = new System.Drawing.Point(9, 44);
 			this.m_cbKeyForce.Name = "m_cbKeyForce";
-			this.m_cbKeyForce.Size = new System.Drawing.Size(172, 17);
+			this.m_cbKeyForce.Size = new System.Drawing.Size(206, 17);
 			this.m_cbKeyForce.TabIndex = 2;
-			this.m_cbKeyForce.Text = "Force changing the key (days):";
+			this.m_cbKeyForce.Text = "Force changing the master key (days):";
 			this.m_cbKeyForce.UseVisualStyleBackColor = true;
 			this.m_cbKeyForce.CheckedChanged += new System.EventHandler(this.OnKeyForceCheckedChanged);
 			// 
@@ -623,9 +730,9 @@
 			this.m_cbKeyRec.AutoSize = true;
 			this.m_cbKeyRec.Location = new System.Drawing.Point(9, 19);
 			this.m_cbKeyRec.Name = "m_cbKeyRec";
-			this.m_cbKeyRec.Size = new System.Drawing.Size(205, 17);
+			this.m_cbKeyRec.Size = new System.Drawing.Size(239, 17);
 			this.m_cbKeyRec.TabIndex = 0;
-			this.m_cbKeyRec.Text = "Recommend changing the key (days):";
+			this.m_cbKeyRec.Text = "Recommend changing the master key (days):";
 			this.m_cbKeyRec.UseVisualStyleBackColor = true;
 			this.m_cbKeyRec.CheckedChanged += new System.EventHandler(this.OnKeyRecCheckedChanged);
 			// 
@@ -684,13 +791,24 @@
 			this.m_lblEntryTemplatesGroup.TabIndex = 0;
 			this.m_lblEntryTemplatesGroup.Text = "Entry templates group:";
 			// 
+			// m_btnCancelOp
+			// 
+			this.m_btnCancelOp.Location = new System.Drawing.Point(180, 425);
+			this.m_btnCancelOp.Name = "m_btnCancelOp";
+			this.m_btnCancelOp.Size = new System.Drawing.Size(132, 23);
+			this.m_btnCancelOp.TabIndex = 1;
+			this.m_btnCancelOp.Text = "&Cancel Operation";
+			this.m_btnCancelOp.UseVisualStyleBackColor = true;
+			this.m_btnCancelOp.Click += new System.EventHandler(this.OnBtnCancelOp);
+			// 
 			// DatabaseSettingsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(486, 434);
+			this.ClientSize = new System.Drawing.Size(486, 460);
+			this.Controls.Add(this.m_btnCancelOp);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_bannerImage);
@@ -710,7 +828,9 @@
 			this.m_grpEncAlgo.PerformLayout();
 			this.m_grpKeyTrans.ResumeLayout(false);
 			this.m_grpKeyTrans.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_numEncRounds)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfPar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfMem)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_numKdfIt)).EndInit();
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabGeneral.ResumeLayout(false);
 			this.m_tabGeneral.PerformLayout();
@@ -743,13 +863,12 @@
 		private System.Windows.Forms.GroupBox m_grpEncAlgo;
 		private System.Windows.Forms.ComboBox m_cmbEncAlgo;
 		private System.Windows.Forms.Label m_lblEncAlgoDesc;
-		private System.Windows.Forms.Label m_lblTransNum;
-		private System.Windows.Forms.Label m_lblTransIntro;
-		private System.Windows.Forms.Label m_lblTransInfo;
+		private System.Windows.Forms.Label m_lblKdfIt;
+		private System.Windows.Forms.Label m_lblKdfIntro;
+		private System.Windows.Forms.Label m_lblKdfInfo;
 		private System.Windows.Forms.GroupBox m_grpKeyTrans;
-		private System.Windows.Forms.NumericUpDown m_numEncRounds;
+		private System.Windows.Forms.NumericUpDown m_numKdfIt;
 		private System.Windows.Forms.Button m_btnHelp;
-		private System.Windows.Forms.LinkLabel m_lnkCompute1SecDelay;
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Label m_lblCompressionIntro;
 		private System.Windows.Forms.TabControl m_tabMain;
@@ -794,5 +913,17 @@
 		private System.Windows.Forms.CheckBox m_cbHistoryMaxSize;
 		private System.Windows.Forms.Button m_btnColor;
 		private System.Windows.Forms.CheckBox m_cbColor;
+		private System.Windows.Forms.ComboBox m_cmbKdf;
+		private System.Windows.Forms.Label m_lblKdf;
+		private System.Windows.Forms.Button m_btnKdf1Sec;
+		private System.Windows.Forms.Label m_lblKdfMem;
+		private System.Windows.Forms.ComboBox m_cmbKdfMem;
+		private System.Windows.Forms.ProgressBar m_pbKdf;
+		private System.Windows.Forms.NumericUpDown m_numKdfMem;
+		private System.Windows.Forms.Button m_btnKdfTest;
+		private System.Windows.Forms.Button m_btnCancelOp;
+		private System.Windows.Forms.Label m_lblKdfPar;
+		private System.Windows.Forms.NumericUpDown m_numKdfPar;
+		private System.Windows.Forms.CheckBox m_cbKeyForceOnce;
 	}
 }

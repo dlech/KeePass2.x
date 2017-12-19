@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 
@@ -175,7 +176,7 @@ namespace KeePass.Forms
 		{
 			byte[] pbUtf8 = m_secWord.ToUtf8();
 			m_psSelected = new ProtectedString(true, pbUtf8);
-			Array.Clear(pbUtf8, 0, pbUtf8.Length);
+			MemUtil.ZeroByteArray(pbUtf8);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

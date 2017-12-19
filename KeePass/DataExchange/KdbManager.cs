@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,9 +26,11 @@
 #endif
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange
 {
@@ -373,7 +375,7 @@ namespace KeePass.DataExchange
 		public DateTime ToDateTime()
 		{
 			if((this.Year == 0) || (this.Month == 0) || (this.Day == 0))
-				return DateTime.Now;
+				return DateTime.UtcNow;
 
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/07599afd/
 			try
@@ -397,11 +399,12 @@ namespace KeePass.DataExchange
 				int ts = (int)this.Second;
 				if(ts > 59) { Debug.Assert(false); ts = 59; }
 
-				return new DateTime(dy, dm, dd, th, tm, ts);
+				return (new DateTime(dy, dm, dd, th, tm, ts,
+					DateTimeKind.Local)).ToUniversalTime();
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return DateTime.Now;
+			return DateTime.UtcNow;
 		}
 
 		/// <summary>
@@ -410,12 +413,14 @@ namespace KeePass.DataExchange
 		/// <param name="dt">Data source.</param>
 		public void Set(DateTime dt)
 		{
-			this.Year = (UInt16)dt.Year;
-			this.Month = (Byte)dt.Month;
-			this.Day = (Byte)dt.Day;
-			this.Hour = (Byte)dt.Hour;
-			this.Minute = (Byte)dt.Minute;
-			this.Second = (Byte)dt.Second;
+			DateTime dtLocal = TimeUtil.ToLocal(dt, true);
+
+			this.Year = (UInt16)dtLocal.Year;
+			this.Month = (Byte)dtLocal.Month;
+			this.Day = (Byte)dtLocal.Day;
+			this.Hour = (Byte)dtLocal.Hour;
+			this.Minute = (Byte)dtLocal.Minute;
+			this.Second = (Byte)dtLocal.Second;
 		}
 
 		/// <summary>

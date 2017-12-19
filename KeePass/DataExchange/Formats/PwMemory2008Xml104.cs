@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -52,11 +52,11 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			string str = PwMemory2008Xml104.Preprocess(sInput);
+			string str = Preprocess(sInput);
 			MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(str), false);
 
-			XmlSerializer xs = new XmlSerializer(typeof(Priv_PwMem2008XmlFile));
-			Priv_PwMem2008XmlFile f = (Priv_PwMem2008XmlFile)xs.Deserialize(ms);
+			XmlSerializer xs = new XmlSerializer(typeof(PwMem2008XmlFile_Priv));
+			PwMem2008XmlFile_Priv f = (PwMem2008XmlFile_Priv)xs.Deserialize(ms);
 			ms.Close();
 
 			if((f == null) || (f.Cells == null)) return;
@@ -102,6 +102,7 @@ namespace KeePass.DataExchange.Formats
 		{
 			StreamReader sr = new StreamReader(sInput, Encoding.UTF8);
 			string str = sr.ReadToEnd();
+			sr.Close();
 
 			const string strStartTag = "<IMAGE";
 			const string strEndTag = "</IMAGE>";
@@ -121,7 +122,7 @@ namespace KeePass.DataExchange.Formats
 	}
 
 	[XmlRoot("CACHE")]
-	public sealed class Priv_PwMem2008XmlFile
+	public sealed class PwMem2008XmlFile_Priv
 	{
 		[XmlElement("TITLE")]
 		public string Title { get; set; }

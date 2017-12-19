@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2016 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -43,6 +43,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strDb = value;
 			}
+		}
+
+		private bool m_bPassword = false;
+		[DefaultValue(false)]
+		public bool Password
+		{
+			get { return m_bPassword; }
+			set { m_bPassword = value; }
 		}
 
 		private string m_strKey = string.Empty;
@@ -258,6 +266,9 @@ namespace KeePass.App.Configuration
 			AceKeyAssoc a = new AceKeyAssoc();
 			a.DatabasePath = strID;
 
+			IUserKey kcpPassword = cmpKey.GetUserKey(typeof(KcpPassword));
+			a.Password = (kcpPassword != null);
+
 			IUserKey kcpFile = cmpKey.GetUserKey(typeof(KcpKeyFile));
 			if(kcpFile != null)
 			{
@@ -279,7 +290,7 @@ namespace KeePass.App.Configuration
 			IUserKey kcpUser = cmpKey.GetUserKey(typeof(KcpUserAccount));
 			a.UserAccount = (kcpUser != null);
 
-			bool bAtLeastOne = ((a.KeyFilePath.Length > 0) ||
+			bool bAtLeastOne = (a.Password || (a.KeyFilePath.Length > 0) ||
 				(a.KeyProvider.Length > 0) || a.UserAccount);
 			if(bAtLeastOne)
 			{
