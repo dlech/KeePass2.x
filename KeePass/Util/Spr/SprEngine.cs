@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -371,11 +371,11 @@ namespace KeePass.Util.Spr
 
 			if(ctx != null)
 			{
-				if(ctx.EncodeQuotesForCommandLine)
-					str = SprEncoding.MakeCommandQuotes(str);
+				if(ctx.EncodeForCommandLine)
+					str = SprEncoding.EncodeForCommandLine(str);
 
 				if(ctx.EncodeAsAutoTypeSequence)
-					str = SprEncoding.MakeAutoTypeSequence(str);
+					str = SprEncoding.EncodeAsAutoTypeSequence(str);
 			}
 
 			return str;
@@ -636,7 +636,7 @@ namespace KeePass.Util.Spr
 		//	return (strText.IndexOfAny(m_vPlhEscapes) >= 0);
 		// }
 
-		internal static bool MightChange(string str)
+		/* internal static bool MightChange(string str)
 		{
 			if(str == null) { Debug.Assert(false); return false; }
 
@@ -651,6 +651,27 @@ namespace KeePass.Util.Spr
 			if(iPFirst >= 0)
 			{
 				int iPLast = str.LastIndexOf('%');
+				if(iPFirst < iPLast) return true;
+			}
+
+			return false;
+		} */
+
+		internal static bool MightChange(char[] v)
+		{
+			if(v == null) { Debug.Assert(false); return false; }
+
+			int iBStart = Array.IndexOf<char>(v, '{');
+			if(iBStart >= 0)
+			{
+				int iBEnd = Array.LastIndexOf<char>(v, '}');
+				if(iBStart < iBEnd) return true;
+			}
+
+			int iPFirst = Array.IndexOf<char>(v, '%');
+			if(iPFirst >= 0)
+			{
+				int iPLast = Array.LastIndexOf<char>(v, '%');
 				if(iPFirst < iPLast) return true;
 			}
 

@@ -149,6 +149,12 @@ namespace KeePass.Util.XmlSerialization
 					case "OmitItemsWithDefaultValues":
 						o.OmitItemsWithDefaultValues = ReadBoolean(xr);
 						break;
+					case "DpiFactorX":
+						o.DpiFactorX = ReadDouble(xr);
+						break;
+					case "DpiFactorY":
+						o.DpiFactorY = ReadDouble(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();
@@ -1040,6 +1046,12 @@ namespace KeePass.Util.XmlSerialization
 			return XmlConvert.ToBoolean(strValue);
 		}
 
+		private static System.Double ReadDouble(XmlReader xr)
+		{
+			string strValue = xr.ReadElementString();
+			return XmlConvert.ToDouble(strValue);
+		}
+
 		private static KeePassLib.Serialization.IOConnectionInfo ReadIOConnectionInfo(XmlReader xr)
 		{
 			KeePassLib.Serialization.IOConnectionInfo o = new KeePassLib.Serialization.IOConnectionInfo();
@@ -1320,12 +1332,6 @@ namespace KeePass.Util.XmlSerialization
 		{
 			string strValue = xr.ReadElementString();
 			return XmlConvert.ToInt32(strValue);
-		}
-
-		private static System.Double ReadDouble(XmlReader xr)
-		{
-			string strValue = xr.ReadElementString();
-			return XmlConvert.ToDouble(strValue);
 		}
 
 		private static Dictionary<string, KeePass.App.Configuration.AceMainWindowLayout> m_dictAceMainWindowLayout = null;

@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>File Formats - KeePass</title>
 	<base target="_self" />
@@ -31,8 +32,8 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_dataexchange.png" width="64px" height="64px"
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_dataexchange.png" width="64" height="64"
 class="singleimg" align="left" alt="Help" />
 </td><td valign="middle"><h1>Import / Export</h1><br />
 KeePass supports importing/exporting data from/to various file formats.
@@ -44,20 +45,20 @@ KeePass supports importing/exporting data from/to various file formats.
 <p>KeePass 2.x supports importing data from <b>CSV files</b> (all),
 <b>KeePass 1.x (KDB, XML and CSV)</b>, <b>KeePass 2.x XML</b>,
 <b>1Password Pro</b>, <b>1PW</b>, <b>Alle meine Passworte</b>,
-<b>Any Password</b>, <b>CodeWallet</b>, <b>DataVault</b>, <b>DesktopKnox</b>,
-<b>Enpass</b>,
+<b>Any Password</b>, <b>CodeWallet</b>, <b>Dashlane</b>,
+<b>DataVault</b>, <b>DesktopKnox</b>, <b>Enpass</b>,
 <b>FlexWallet</b>, <b>Handy Safe</b>, <b>Handy Safe Pro</b>,
 <b>Kaspersky Password Manager</b>, <b>KeePassX</b>, <b>LastPass</b>,
 <b>Mozilla Bookmarks</b>, <b>mSecure</b>, <b>Network Password Manager</b>,
 <b>Norton Identity Safe</b>, <b>nPassword</b>, <b>PassKeeper</b>,
 <b>Passphrase Keeper</b>, <b>Password Agent</b>,
-<b>Password Depot</b>, <b>Password Exporter</b>, <b>Password Gorilla</b>,
+<b>Password Depot</b>, <b>Password Exporter</b>, <!-- <b>Password Gorilla</b>, -->
 <b>Password Keeper</b>, <b>Password Memory</b>, <b>Password Prompter</b>,
 <b>Password Safe</b>, <b>Password Saver</b>, <b>Passwords Plus</b>,
 <b>Passwort.Tresor</b>, <b>Personal Vault</b>,
 <b>PINs</b>, <b>Revelation</b>, <b>RoboForm</b>, <b>SafeWallet</b>,
 <b>Security TXT</b>, <b>SplashID</b>, <b>Steganos Password Manager 2007</b>,
-<b>Sticky Password</b>, <b>TurboPasswords</b>,
+<b>Sticky Password</b>, <b>TurboPasswords</b>, <b>VisKeeper</b>,
 <b>Whisper 32</b>, <b>ZDNet's Password Pro</b>, and <b>Spamex.com</b>.</p>
 
 <p>For both KeePass 1.x and 2.x, there are importer plugins available, which
@@ -184,7 +185,7 @@ can be used to create CSV files that can be imported correctly into KeePass. Fol
 <li>Make sure you got 5 columns as described above.</li>
 <li>Select everything, right-click and select <i>'Format Cells'</i>. In the dialog, choose <i>Text</i>
 as category. Click [OK].</li>
-<li>Go <i>'File' -&gt; 'Save As...'</i>, choose a location and the
+<li>Go <i>'File' &rarr; 'Save As...'</i>, choose a location and the
 'Text CSV' file type, and make sure that the check box
 <i>'Edit Filter Settings'</i> is enabled. Click the <i>'Save'</i> button.</li>
 <li>Choose <i>'Unicode (UTF-8)'</i> as character set. The field separator must be set to a comma.
@@ -238,7 +239,7 @@ This tool can import almost all CSV formats. The CSV
 files are loaded and you can manually specify the encoding / character set, assign columns
 to data fields, and specify how the low-level structure looks like (usage of quotes, etc.).</p>
 
-<p>To start the generic CSV file importer, click <i>'File' -&gt; 'Import'</i> and
+<p>To start the generic CSV file importer, click <i>'File' &rarr; 'Import'</i> and
 choose <i>'Generic CSV Importer'</i>.</p>
 
 <center>
@@ -288,7 +289,7 @@ Password Gorilla:</p>
 </ul>
 
 <p>When you carefully set these options, export the data to a CSV file and import
-it into KeePass using <i>'File -&gt; Import'</i> in KeePass 2.x.</p>
+it into KeePass using <i>'File &rarr; Import'</i> in KeePass 2.x.</p>
 
 <br /> -->
 
@@ -307,7 +308,7 @@ PINs TXT</h2>
 </ul>
 
 <p>After exporting a TXT file using the settings above, import it using
-<i>'File -&gt; Import'</i> in KeePass 2.x.</p>
+<i>'File &rarr; Import'</i> in KeePass 2.x.</p>
 
 <br />
 
@@ -317,20 +318,20 @@ PINs TXT</h2>
 Data from RoboForm</h2>
 
 <ol>
-<!-- <li>In RoboForm go <i>'Options'</i> -&gt; tab <i>'User Data'</i> and
+<!-- <li>In RoboForm go <i>'Options'</i> &rarr; tab <i>'User Data'</i> and
 uncheck the option <i>'PrintList shows new dialog'</i>.
 If you cannot find this option (old RoboForm version), simply continue with
 the next step.</li> -->
 <li>Export your logins to a HTML file. To do this, open
 RoboForm's <i>Passcard Editor</i> (<i>'Edit Passcards'</i> or <i>'RoboForm Editor'</i>
 in the Windows start menu)
-and in the editor's main menu go <i>'Passcard'</i> -&gt; <i>'Print List'</i>
+and in the editor's main menu go <i>'Passcard'</i> &rarr; <i>'Print List'</i>
 (in newer versions you have to click the <i>'RoboForm'</i> button and go
-<i>'Print List'</i> -&gt; <i>'Logins'</i>). In the
+<i>'Print List'</i> &rarr; <i>'Logins'</i>). In the
 dialog that opens, click the <i>'Save'</i> button. Choose a location and file name,
 and click <i>'Save'</i>.</li>
 
-<li>Open your KeePass 2.x database file and go <i>'File'</i> -&gt; <i>'Import'</i>.
+<li>Open your KeePass 2.x database file and go <i>'File'</i> &rarr; <i>'Import'</i>.
 Choose <i>'RoboForm HTML'</i> as format and select the HTML file you just exported,
 then click <i>'OK'</i>.</li>
 </ol>
@@ -359,7 +360,7 @@ your items in the middle of the screen, and got toolbar-like buttons at the top)
 sure that <i>all</i> your items are displayed in the list (select the correct filter in
 the combobox above the item list).</p>
 
-<p>Now switch to KeePass 2.x and open your KeePass database. Go <i>File -&gt; Import</i> and
+<p>Now switch to KeePass 2.x and open your KeePass database. Go <i>File &rarr; Import</i> and
 choose <i>Steganos Password Manager 2007</i>. Click [OK]. Now read the rest before continuing.</p>
 
 <p>After pressing the [Yes] button in the KeePass import confirmation dialog, you got

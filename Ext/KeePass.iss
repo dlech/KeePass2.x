@@ -8,17 +8,17 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.37"
-#define KeeVersionStrWithMinor "2.37"
-#define KeeVersionStrWithMinorPath "2.37"
-#define KeeVersionWin "2.37.0.0"
-#define KeeVersionWinShort "2.37"
+#define KeeVersionStr "2.38"
+#define KeeVersionStrWithMinor "2.38"
+#define KeeVersionStrWithMinorPath "2.38"
+#define KeeVersionWin "2.38.0.0"
+#define KeeVersionWinShort "2.38"
 
 #define MyAppURL "https://keepass.info/"
 #define MyAppExeName "KeePass.exe"
 #define MyAppUrlName "KeePass.url"
 #define MyAppHelpName "KeePass.chm"
-#define KeeDevPeriod "2003-2017"
+#define KeeDevPeriod "2003-2018"
 #define MyAppId "KeePassPasswordSafe2"
 
 [Setup]
@@ -91,6 +91,7 @@ Name: PreLoad; Description: Optimize KeePass On-Demand Start-Up Performance; Typ
 ; Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: full custom
 
 [Dirs]
+Name: "{app}\Languages"; Flags: uninsalwaysuninstall
 Name: "{app}\Plugins"; Flags: uninsalwaysuninstall
 
 [Files]

@@ -797,7 +797,7 @@
         </member>
         <member name="M:KeePassLib.Utility.StrUtil.StringToHtml(System.String)">
             <summary>
-            Convert a string into a valid HTML sequence representing that string.
+            Convert a string to a HTML sequence representing that string.
             </summary>
             <param name="str">String to convert.</param>
             <returns>String, HTML-encoded.</returns>
@@ -2531,7 +2531,7 @@
             <summary>
             Estimate the quality of a password.
             </summary>
-            <param name="vPasswordChars">Password to check.</param>
+            <param name="vPassword">Password to check.</param>
             <returns>Estimated bit-strength of the password.</returns>
         </member>
         <member name="M:KeePassLib.Cryptography.QualityEstimation.EstimatePasswordBits(System.Byte[])">

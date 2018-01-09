@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,23 @@ namespace KeePassLib.Delegates
 	public delegate bool EntryHandler(PwEntry pe);
 
 	public delegate void VoidDelegate();
-
 	public delegate string StrPwEntryDelegate(string str, PwEntry pe);
+
+	// Action<...> with 0 or >= 2 parameters has been introduced in .NET 3.5
+	public delegate void GAction();
+	public delegate void GAction<T>(T o);
+	public delegate void GAction<T1, T2>(T1 o1, T2 o2);
+	public delegate void GAction<T1, T2, T3>(T1 o1, T2 o2, T3 o3);
+	public delegate void GAction<T1, T2, T3, T4>(T1 o1, T2 o2, T3 o3, T4 o4);
+	public delegate void GAction<T1, T2, T3, T4, T5>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
+	public delegate void GAction<T1, T2, T3, T4, T5, T6>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
+
+	// Func<...> has been introduced in .NET 3.5
+	public delegate TResult GFunc<TResult>();
+	public delegate TResult GFunc<T, TResult>(T o);
+	public delegate TResult GFunc<T1, T2, TResult>(T1 o1, T2 o2);
+	public delegate TResult GFunc<T1, T2, T3, TResult>(T1 o1, T2 o2, T3 o3);
+	public delegate TResult GFunc<T1, T2, T3, T4, TResult>(T1 o1, T2 o2, T3 o3, T4 o4);
+	public delegate TResult GFunc<T1, T2, T3, T4, T5, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
+	public delegate TResult GFunc<T1, T2, T3, T4, T5, T6, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
 }

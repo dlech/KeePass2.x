@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,20 +20,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using System.Runtime.Remoting;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Runtime.Remoting;
+using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.Plugins;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.Plugins
@@ -42,6 +45,12 @@ namespace KeePass.Plugins
 	{
 		private List<PluginInfo> m_vPlugins = new List<PluginInfo>();
 		private IPluginHost m_host = null;
+
+		private static string g_strUserDir = string.Empty;
+		internal static string UserDirectory
+		{
+			get { return g_strUserDir; }
+		}
 
 		public void Initialize(IPluginHost host)
 		{
@@ -57,6 +66,58 @@ namespace KeePass.Plugins
 		public IEnumerator<PluginInfo> GetEnumerator()
 		{
 			return m_vPlugins.GetEnumerator();
+		}
+
+		internal void LoadAllPlugins()
+		{
+			string[] vExclNames = new string[] {
+				AppDefs.FileNames.Program, AppDefs.FileNames.XmlSerializers,
+				AppDefs.FileNames.NativeLib32, AppDefs.FileNames.NativeLib64,
+				AppDefs.FileNames.ShInstUtil
+			};
+
+			string strAppDir = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(),
+				false, true);
+			LoadAllPlugins(strAppDir, SearchOption.TopDirectoryOnly, vExclNames);
+			g_strUserDir = strAppDir; // Preliminary, see below
+
+			if(WinUtil.IsAppX)
+			{
+				string str = UrlUtil.EnsureTerminatingSeparator(
+					AppConfigSerializer.AppDataDirectory, false) + AppDefs.PluginsDir;
+				LoadAllPlugins(str, SearchOption.AllDirectories, vExclNames);
+
+				g_strUserDir = str;
+			}
+			else if(!NativeLib.IsUnix())
+			{
+				string str = UrlUtil.EnsureTerminatingSeparator(strAppDir,
+					false) + AppDefs.PluginsDir;
+				LoadAllPlugins(str, SearchOption.AllDirectories, vExclNames);
+
+				g_strUserDir = str;
+			}
+			else // Unix
+			{
+				try
+				{
+					DirectoryInfo diPlgRoot = new DirectoryInfo(strAppDir);
+					foreach(DirectoryInfo diSub in diPlgRoot.GetDirectories())
+					{
+						if(diSub == null) { Debug.Assert(false); continue; }
+
+						if(string.Equals(diSub.Name, AppDefs.PluginsDir,
+							StrUtil.CaseIgnoreCmp))
+						{
+							LoadAllPlugins(diSub.FullName, SearchOption.AllDirectories,
+								vExclNames);
+
+							g_strUserDir = diSub.FullName;
+						}
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
 		}
 
 		public void LoadAllPlugins(string strDirectory, SearchOption so,

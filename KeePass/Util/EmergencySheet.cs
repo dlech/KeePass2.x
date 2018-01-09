@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using KeePass.UI;
 using KeePass.Util.Archive;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -86,11 +87,10 @@ namespace KeePass.Util
 			}
 		}
 
-		private delegate string StrToStrDelegate(string str);
 		private static string GenerateHtml(PwDatabase pd, string strName)
 		{
-			StrToStrDelegate h = new StrToStrDelegate(StrUtil.StringToHtml);
-			StrToStrDelegate ne = delegate(string str)
+			GFunc<string, string> h = new GFunc<string, string>(StrUtil.StringToHtml);
+			GFunc<string, string> ne = delegate(string str)
 			{
 				if(string.IsNullOrEmpty(str)) return "&nbsp;";
 				return str;
@@ -119,7 +119,8 @@ namespace KeePass.Util
 			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
 			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
 
-			sb.AppendLine("<style type=\"text/css\"><!--");
+			sb.AppendLine("<style type=\"text/css\">");
+			sb.AppendLine("/* <![CDATA[ */");
 
 			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
 			sb.AppendLine("\tfont-family: \"Arial\", \"Tahoma\", \"Verdana\", sans-serif;");
@@ -242,7 +243,8 @@ namespace KeePass.Util
 			sb.AppendLine("\tfont-size: 12pt;");
 			sb.AppendLine("}");
 
-			sb.AppendLine("--></style>");
+			sb.AppendLine("/* ]]> */");
+			sb.AppendLine("</style>");
 			sb.AppendLine("</head><body>");
 
 			ImageArchive ia = new ImageArchive();

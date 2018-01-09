@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Drawing;
 
 using KeePass.Resources;
 
@@ -35,7 +35,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.0.5
+	// 1.0.5-1.3.4+
 	internal sealed class PwExporterXml105 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -72,6 +72,7 @@ namespace KeePass.DataExchange.Formats
 			string strDoc = sr.ReadToEnd();
 			sr.Close();
 
+			// Fix '<' characters, for version 1.0.5
 			int nIndex = strDoc.IndexOf('<');
 			while(nIndex >= 0)
 			{
@@ -86,12 +87,10 @@ namespace KeePass.DataExchange.Formats
 				nIndex = strDoc.IndexOf('<', nIndex + 1);
 			}
 
+			// Fix '>' characters, for version 1.0.5
 			nIndex = strDoc.IndexOf('>');
 			while(nIndex >= 0)
 			{
-				if(nIndex <= 3)
-					throw new FormatException("Invalid header!");
-
 				char chPrev = strDoc[nIndex - 1];
 				string strPrev4 = strDoc.Substring(nIndex - 3, 4);
 
@@ -104,10 +103,10 @@ namespace KeePass.DataExchange.Formats
 				nIndex = strDoc.IndexOf('>', nIndex + 1);
 			}
 
-			MemoryStream msXml = new MemoryStream(StrUtil.Utf8.GetBytes(strDoc), false);
+			MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(strDoc), false);
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(msXml);
-			msXml.Close();
+			xmlDoc.Load(ms);
+			ms.Close();
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
 			if(xmlRoot.Name != ElemRoot)
@@ -142,28 +141,44 @@ namespace KeePass.DataExchange.Formats
 			XmlNode xmlAttrib;
 			xmlAttrib = col.GetNamedItem(AttrUser);
 			if(xmlAttrib != null) pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUserName, xmlAttrib.Value));
+				pwStorage.MemoryProtection.ProtectUserName, PctDecode(xmlAttrib.Value)));
 			else { Debug.Assert(false); }
 
 			xmlAttrib = col.GetNamedItem(AttrPassword);
 			if(xmlAttrib != null) pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectPassword, xmlAttrib.Value));
+				pwStorage.MemoryProtection.ProtectPassword, PctDecode(xmlAttrib.Value)));
 			else { Debug.Assert(false); }
 
 			xmlAttrib = col.GetNamedItem(AttrURL);
 			if(xmlAttrib != null) pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUrl, xmlAttrib.Value));
+				pwStorage.MemoryProtection.ProtectUrl, PctDecode(xmlAttrib.Value)));
 			else { Debug.Assert(false); }
 
 			xmlAttrib = col.GetNamedItem(AttrUserFieldName);
 			if(xmlAttrib != null) pe.Strings.Set(DbUserFieldName, new ProtectedString(
-				false, xmlAttrib.Value));
+				false, PctDecode(xmlAttrib.Value)));
 			else { Debug.Assert(false); }
 
 			xmlAttrib = col.GetNamedItem(AttrPasswordFieldName);
 			if(xmlAttrib != null) pe.Strings.Set(DbPasswordFieldName, new ProtectedString(
-				false, xmlAttrib.Value));
+				false, PctDecode(xmlAttrib.Value)));
 			else { Debug.Assert(false); }
+		}
+
+		// For version 1.3.4
+		private static string PctDecode(string strText)
+		{
+			if(string.IsNullOrEmpty(strText)) return string.Empty;
+
+			string str = strText;
+
+			str = str.Replace("%3C", "<");
+			str = str.Replace("%3E", ">");
+			str = str.Replace("%22", "\"");
+			str = str.Replace("%26", "&");
+			str = str.Replace("%25", "%"); // Must be last
+
+			return str;
 		}
 	}
 }

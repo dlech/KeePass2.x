@@ -1,3 +1,55 @@
+2018-01-09: 2.38
+- The installers (regular and MSI) now create an empty
+  'Languages' folder in the application directory, and the
+  portable package now also contains such a folder; language
+  files should now be stored in this folder
+- Added button 'Open Folder' in the language selection dialog,
+  which opens the 'Languages' folder
+- Added button 'Open Folder' in the plugins dialog, which opens
+  the 'Plugins' folder
+- Added a runtime activation policy setting (to improve
+  compatibility with Microsoft User Experience Virtualization)
+- Added option 'Icon' and an option for specifying the
+  placeholder behavior (replace or not, or both forms) in the
+  'Print' / HTML export dialog
+- Printing / HTML export: the notes of a group are now
+  displayed below the group name
+- Enhanced the Password Exporter import module to support XML
+  files created by version 1.3.4
+- Added workaround for Microsoft Office breaking the 'Print'
+  shell verb for HTML files
+- Added workaround for Mono list view item deletion bug
+- Added workaround for Mono command line argument encoding bug
+- KPScript: the 'AddEntry' and 'EditEntry' commands now support
+  the '-setx-Icon' and '-setx-CustomIcon' parameters, which set
+  the icon of the entry
+- KPScript: the 'ChangeMasterKey' command now supports the
+  '-newpw-enc' parameter (for specifying the new master
+  password in encrypted form, compatible with the
+  {PASSWORD_ENC} placeholder)
+- KPScript: the 'ListEntries' command now supports all '-ref-*'
+  and '-refx-*' parameters
+
+- Password quality estimation: improved compatibility with
+  process memory protection
+- Improved UI scaling when using KeePass on multiple systems
+  with different DPI values
+- Printing / HTML export: improved embedding of CSS
+- Printing / HTML export: spaces in passwords are now encoded
+  as non-breaking spaces
+- Improved UI updating in the 'Print' / HTML export dialog
+- Enhanced KDE system font detection
+- Improved fatal error handling
+- Various improvements in the language selection dialog
+- KPScript: improved behavior of '-ref-*' parameters when
+  combined with the '-refx-All' option
+- Various code optimizations
+- Minor other improvements
+
+- Fixed HTML generation bug: when the option 'Use monospace
+  font for passwords' was turned off, a generated HTML file in
+  'Details' mode could contain invalid end tags
+
 2017-10-12: 2.37
 - When creating a new database, KeePass now offers to print a
   KeePass emergency sheet (which can then be filled out and

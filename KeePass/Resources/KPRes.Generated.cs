@@ -100,7 +100,6 @@ namespace KeePass.Resources
 			m_strAutoTypeXDoToolRequired = TryGetEx(dictNew, "AutoTypeXDoToolRequired", m_strAutoTypeXDoToolRequired);
 			m_strAutoTypeXDoToolRequiredGlobalVer = TryGetEx(dictNew, "AutoTypeXDoToolRequiredGlobalVer", m_strAutoTypeXDoToolRequiredGlobalVer);
 			m_strAvailable = TryGetEx(dictNew, "Available", m_strAvailable);
-			m_strAvailableLanguages = TryGetEx(dictNew, "AvailableLanguages", m_strAvailableLanguages);
 			m_strBackgroundColor = TryGetEx(dictNew, "BackgroundColor", m_strBackgroundColor);
 			m_strBackupDatabase = TryGetEx(dictNew, "BackupDatabase", m_strBackupDatabase);
 			m_strBackupFile = TryGetEx(dictNew, "BackupFile", m_strBackupFile);
@@ -109,8 +108,10 @@ namespace KeePass.Resources
 			m_strBits = TryGetEx(dictNew, "Bits", m_strBits);
 			m_strBitsStc = TryGetEx(dictNew, "BitsStc", m_strBitsStc);
 			m_strBold = TryGetEx(dictNew, "Bold", m_strBold);
+			m_strBothForms = TryGetEx(dictNew, "BothForms", m_strBothForms);
 			m_strBrowser = TryGetEx(dictNew, "Browser", m_strBrowser);
 			m_strBuiltIn = TryGetEx(dictNew, "BuiltIn", m_strBuiltIn);
+			m_strBuiltInU = TryGetEx(dictNew, "BuiltInU", m_strBuiltInU);
 			m_strButton = TryGetEx(dictNew, "Button", m_strButton);
 			m_strButtonBack = TryGetEx(dictNew, "ButtonBack", m_strButtonBack);
 			m_strButtonDefault = TryGetEx(dictNew, "ButtonDefault", m_strButtonDefault);
@@ -411,6 +412,7 @@ namespace KeePass.Resources
 			m_strIncompatibleWithSorting = TryGetEx(dictNew, "IncompatibleWithSorting", m_strIncompatibleWithSorting);
 			m_strInheritSettingFromParent = TryGetEx(dictNew, "InheritSettingFromParent", m_strInheritSettingFromParent);
 			m_strInstalled = TryGetEx(dictNew, "Installed", m_strInstalled);
+			m_strInstalledLanguages = TryGetEx(dictNew, "InstalledLanguages", m_strInstalledLanguages);
 			m_strInstrAndGenInfo = TryGetEx(dictNew, "InstrAndGenInfo", m_strInstrAndGenInfo);
 			m_strInterleavedKeySending = TryGetEx(dictNew, "InterleavedKeySending", m_strInterleavedKeySending);
 			m_strInternalEditor = TryGetEx(dictNew, "InternalEditor", m_strInternalEditor);
@@ -456,6 +458,9 @@ namespace KeePass.Resources
 			m_strLastModTimePwHist = TryGetEx(dictNew, "LastModTimePwHist", m_strLastModTimePwHist);
 			m_strLatestVersionWeb = TryGetEx(dictNew, "LatestVersionWeb", m_strLatestVersionWeb);
 			m_strLimitSingleInstance = TryGetEx(dictNew, "LimitSingleInstance", m_strLimitSingleInstance);
+			m_strLngInAppDir = TryGetEx(dictNew, "LngInAppDir", m_strLngInAppDir);
+			m_strLngInAppDirNote = TryGetEx(dictNew, "LngInAppDirNote", m_strLngInAppDirNote);
+			m_strLngInAppDirQ = TryGetEx(dictNew, "LngInAppDirQ", m_strLngInAppDirQ);
 			m_strLocked = TryGetEx(dictNew, "Locked", m_strLocked);
 			m_strLockMenuLock = TryGetEx(dictNew, "LockMenuLock", m_strLockMenuLock);
 			m_strLockMenuUnlock = TryGetEx(dictNew, "LockMenuUnlock", m_strLockMenuUnlock);
@@ -631,6 +636,8 @@ namespace KeePass.Resources
 			m_strRepairModeQ = TryGetEx(dictNew, "RepairModeQ", m_strRepairModeQ);
 			m_strRepairModeUse = TryGetEx(dictNew, "RepairModeUse", m_strRepairModeUse);
 			m_strRepeatOnlyWhenHidden = TryGetEx(dictNew, "RepeatOnlyWhenHidden", m_strRepeatOnlyWhenHidden);
+			m_strReplace = TryGetEx(dictNew, "Replace", m_strReplace);
+			m_strReplaceNo = TryGetEx(dictNew, "ReplaceNo", m_strReplaceNo);
 			m_strRestartKeePassQuestion = TryGetEx(dictNew, "RestartKeePassQuestion", m_strRestartKeePassQuestion);
 			m_strRetry = TryGetEx(dictNew, "Retry", m_strRetry);
 			m_strRetryCmd = TryGetEx(dictNew, "RetryCmd", m_strRetryCmd);
@@ -900,7 +907,6 @@ namespace KeePass.Resources
 			"AutoTypeXDoToolRequired",
 			"AutoTypeXDoToolRequiredGlobalVer",
 			"Available",
-			"AvailableLanguages",
 			"BackgroundColor",
 			"BackupDatabase",
 			"BackupFile",
@@ -909,8 +915,10 @@ namespace KeePass.Resources
 			"Bits",
 			"BitsStc",
 			"Bold",
+			"BothForms",
 			"Browser",
 			"BuiltIn",
+			"BuiltInU",
 			"Button",
 			"ButtonBack",
 			"ButtonDefault",
@@ -1211,6 +1219,7 @@ namespace KeePass.Resources
 			"IncompatibleWithSorting",
 			"InheritSettingFromParent",
 			"Installed",
+			"InstalledLanguages",
 			"InstrAndGenInfo",
 			"InterleavedKeySending",
 			"InternalEditor",
@@ -1256,6 +1265,9 @@ namespace KeePass.Resources
 			"LastModTimePwHist",
 			"LatestVersionWeb",
 			"LimitSingleInstance",
+			"LngInAppDir",
+			"LngInAppDirNote",
+			"LngInAppDirQ",
 			"Locked",
 			"LockMenuLock",
 			"LockMenuUnlock",
@@ -1431,6 +1443,8 @@ namespace KeePass.Resources
 			"RepairModeQ",
 			"RepairModeUse",
 			"RepeatOnlyWhenHidden",
+			"Replace",
+			"ReplaceNo",
 			"RestartKeePassQuestion",
 			"Retry",
 			"RetryCmd",
@@ -2444,17 +2458,6 @@ namespace KeePass.Resources
 			get { return m_strAvailable; }
 		}
 
-		private static string m_strAvailableLanguages =
-			@"Available Languages";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Available Languages'.
-		/// </summary>
-		public static string AvailableLanguages
-		{
-			get { return m_strAvailableLanguages; }
-		}
-
 		private static string m_strBackgroundColor =
 			@"Background Color";
 		/// <summary>
@@ -2543,6 +2546,17 @@ namespace KeePass.Resources
 			get { return m_strBold; }
 		}
 
+		private static string m_strBothForms =
+			@"Both forms";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Both forms'.
+		/// </summary>
+		public static string BothForms
+		{
+			get { return m_strBothForms; }
+		}
+
 		private static string m_strBrowser =
 			@"Browser";
 		/// <summary>
@@ -2563,6 +2577,17 @@ namespace KeePass.Resources
 		public static string BuiltIn
 		{
 			get { return m_strBuiltIn; }
+		}
+
+		private static string m_strBuiltInU =
+			@"Built-in";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Built-in'.
+		/// </summary>
+		public static string BuiltInU
+		{
+			get { return m_strBuiltInU; }
 		}
 
 		private static string m_strButton =
@@ -5865,6 +5890,17 @@ namespace KeePass.Resources
 			get { return m_strInstalled; }
 		}
 
+		private static string m_strInstalledLanguages =
+			@"Installed Languages";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Installed Languages'.
+		/// </summary>
+		public static string InstalledLanguages
+		{
+			get { return m_strInstalledLanguages; }
+		}
+
 		private static string m_strInstrAndGenInfo =
 			@"Instructions and General Information";
 		/// <summary>
@@ -6358,6 +6394,39 @@ namespace KeePass.Resources
 		public static string LimitSingleInstance
 		{
 			get { return m_strLimitSingleInstance; }
+		}
+
+		private static string m_strLngInAppDir =
+			@"One or more language files have been found in the KeePass application directory.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'One or more language files have been found in the KeePass application directory.'.
+		/// </summary>
+		public static string LngInAppDir
+		{
+			get { return m_strLngInAppDir; }
+		}
+
+		private static string m_strLngInAppDirNote =
+			@"Loading language files directly from the application directory is not supported. Language files should instead be stored in the 'Languages' folder of the application directory.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Loading language files directly from the application directory is not supported. Language files should instead be stored in the &#39;Languages&#39; folder of the application directory.'.
+		/// </summary>
+		public static string LngInAppDirNote
+		{
+			get { return m_strLngInAppDirNote; }
+		}
+
+		private static string m_strLngInAppDirQ =
+			@"Do you want to open the application directory (in order to move or delete language files)?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do you want to open the application directory (in order to move or delete language files)?'.
+		/// </summary>
+		public static string LngInAppDirQ
+		{
+			get { return m_strLngInAppDirQ; }
 		}
 
 		private static string m_strLocked =
@@ -8285,6 +8354,28 @@ namespace KeePass.Resources
 			get { return m_strRepeatOnlyWhenHidden; }
 		}
 
+		private static string m_strReplace =
+			@"Replace";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Replace'.
+		/// </summary>
+		public static string Replace
+		{
+			get { return m_strReplace; }
+		}
+
+		private static string m_strReplaceNo =
+			@"Do not replace";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do not replace'.
+		/// </summary>
+		public static string ReplaceNo
+		{
+			get { return m_strReplaceNo; }
+		}
+
 		private static string m_strRestartKeePassQuestion =
 			@"Do you wish to restart KeePass now?";
 		/// <summary>
@@ -8759,10 +8850,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strSelectLanguageDesc =
-			@"Here you can select a different user interface language.";
+			@"Here you can change the user interface language.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Here you can select a different user interface language.'.
+		/// 'Here you can change the user interface language.'.
 		/// </summary>
 		public static string SelectLanguageDesc
 		{

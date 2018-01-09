@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Plugin Development - KeePass</title>
 	<base target="_self" />
@@ -31,8 +32,8 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_blockdevice.png" width="64px" height="64px"
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_blockdevice.png" width="64" height="64"
 class="singleimg" align="left" alt="Settings" />
 </td><td valign="middle"><h1>Plugin Development</h1><br />
 How to develop plugins for KeePass 2.x.
@@ -62,13 +63,12 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 prerequisites:</p>
 
 <ul>
-<li>Latest KeePass source code package. You can get it from the
+<li>Latest portable KeePass ZIP package. You can get it from the
 <a href="https://keepass.info/download.html" target="_blank">KeePass website</a>.</li>
-<li>A C# 2.0 development IDE
-(<a href="https://www.visualstudio.com/" target="_blank">Microsoft
-Visual Studio</a>,
-<a href="http://www.icsharpcode.net/" target="_blank">SharpDevelop</a>
-or any other IDE).</li>
+<li>A C# (&ge; 2.0) development IDE
+(e.g. <a href="https://www.visualstudio.com/" target="_blank">Microsoft
+Visual Studio</a> or
+<a href="http://www.icsharpcode.net/" target="_blank">SharpDevelop</a>).</li>
 </ul>
 
 <br />
@@ -78,35 +78,36 @@ or any other IDE).</li>
 <img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Step-by-Step
 Tutorial</h2>
 
-<p>Start your favorite IDE and create a new <i>C# Class Library</i> project.
-In this tutorial the example plugin we're developing is called <code>SamplePlugin</code>.
-The
-first thing you need to do now is to add a <i>reference</i> to KeePass: go
-to the references dialog and select the <code>KeePass.exe</code> file. After
-you added the reference, the namespaces <code>KeePass</code> and <code>KeePassLib</code>
-should be available.</p>
+<p>Start your favorite IDE and create a new <em>C# Class Library</em> project
+(for the .NET Framework, not .NET Standard/Core).
+In this tutorial, the example plugin we're developing is called <code>SamplePlugin</code>.
+The first thing you need to do now is to add a <em>reference</em> to KeePass:
+go to the references dialog and select the <code>KeePass.exe</code> file
+(from the portable ZIP package).
+After you added the reference, the namespaces <code>KeePass</code> and
+<code>KeePassLib</code> should be available.</p>
 
-<p>KeePass plugins all need to derive from a base KeePass plugin class (<code>Plugin</code> in
-the <code>KeePass.Plugins</code> namespace).
-By overriding methods of this class, you can customize the behaviour of your plugin.</p>
+<p>KeePass plugins all need to derive from a base KeePass plugin class
+(<code>Plugin</code> in the <code>KeePass.Plugins</code> namespace).
+By overriding methods of this class, you can customize the behavior of your plugin.</p>
 
 <p>A minimal plugin looks like this:</p>
 
-<pre><font color="#0000FF">using</font> System;
-<font color="#0000FF">using</font> System.Collections.Generic;
+<pre><span class="codekw">using</span> System;
+<span class="codekw">using</span> System.Collections.Generic;
 
-<font color="#0000FF">using</font> KeePass.Plugins;
+<span class="codekw">using</span> KeePass.Plugins;
 
-<font color="#0000FF">namespace</font> SamplePlugin
+<span class="codekw">namespace</span> SamplePlugin
 {
-	<font color="#0000FF">public sealed class</font> <font color="#008888">SamplePluginExt</font> : <font color="#008888">Plugin</font>
+	<span class="codekw">public sealed class</span> <span class="codetp">SamplePluginExt</span> : <span class="codetp">Plugin</span>
 	{
-		<font color="#0000FF">private</font> <font color="#008888">IPluginHost</font> m_host = <font color="#0000FF">null</font>;
+		<span class="codekw">private</span> <span class="codetp">IPluginHost</span> m_host = <span class="codekw">null</span>;
 
-		<font color="#0000FF">public override bool</font> Initialize(<font color="#008888">IPluginHost</font> host)
+		<span class="codekw">public override bool</span> Initialize(<span class="codetp">IPluginHost</span> host)
 		{
 			m_host = host;
-			<font color="#0000FF">return true</font>;
+			<span class="codekw">return true</span>;
 		}
 	}
 }</pre>
@@ -141,7 +142,7 @@ you return <code>false</code>, KeePass will immediately unload your plugin.</p>
 <p>A second function that you will need very often is the <code>Terminate</code>
 function:</p>
 
-<pre><font color="#0000FF">public override void</font> Terminate()
+<pre><span class="codekw">public override void</span> Terminate()
 {
 }</pre>
 
@@ -184,41 +185,40 @@ use the <code>IPluginHost</code> interface, which you received in the <code>Init
 function. Then you can use standard tool strip operations to add a new menu item for your
 plugin. A very simple example, which adds a menu item to the <i>Tools</i> menu:</p>
 
-<pre><font color="#0000FF">private</font> <font color="#008888">ToolStripSeparator</font> m_tsSeparator = <font color="#0000FF">null</font>;
-<font color="#0000FF">private</font> <font color="#008888">ToolStripMenuItem</font> m_tsmiMenuItem = <font color="#0000FF">null</font>;
+<pre><span class="codekw">private</span> <span class="codetp">ToolStripSeparator</span> m_tsSeparator = <span class="codekw">null</span>;
+<span class="codekw">private</span> <span class="codetp">ToolStripMenuItem</span> m_tsmiMenuItem = <span class="codekw">null</span>;
 
-<font color="#0000FF">public override bool</font> Initialize(<font color="#008888">IPluginHost</font> host)
+<span class="codekw">public override bool</span> Initialize(<span class="codetp">IPluginHost</span> host)
 {
 	m_host = host;
 
-	<font color="#008800">// Get a reference to the 'Tools' menu item container</font>
-	<font color="#008888">ToolStripItemCollection</font> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
+	<span class="codecm">// Get a reference to the 'Tools' menu item container</span>
+	<span class="codetp">ToolStripItemCollection</span> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
 
-	<font color="#008800">// Add a separator at the bottom</font>
-	m_tsSeparator = <font color="#0000FF">new</font> <font color="#008888">ToolStripSeparator</font>();
+	<span class="codecm">// Add a separator at the bottom</span>
+	m_tsSeparator = <span class="codekw">new</span> <span class="codetp">ToolStripSeparator</span>();
 	tsMenu.Add(m_tsSeparator);
 
-	<font color="#008800">// Add menu item 'Do Something'</font>
-	m_tsmiMenuItem = <font color="#0000FF">new</font> <font color="#008888">ToolStripMenuItem</font>();
-	m_tsmiMenuItem.Text = <font color="#880000">"Do Something"</font>;
-	m_tsmiMenuItem.Click += <font color="#0000FF">this</font>.OnMenuDoSomething;
+	<span class="codecm">// Add menu item 'Do Something'</span>
+	m_tsmiMenuItem = <span class="codekw">new</span> <span class="codetp">ToolStripMenuItem</span>();
+	m_tsmiMenuItem.Text = <span class="codest">"Do Something"</span>;
+	m_tsmiMenuItem.Click += <span class="codekw">this</span>.OnMenuDoSomething;
 	tsMenu.Add(m_tsmiMenuItem);
 }
 
-<font color="#0000FF">public override void</font> Terminate()
+<span class="codekw">public override void</span> Terminate()
 {
-	<font color="#008800">// Remove all of our menu items</font>
-	<font color="#008888">ToolStripItemCollection</font> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
-	m_tsmiMenuItem.Click -= <font color="#0000FF">this</font>.OnMenuDoSomething;
+	<span class="codecm">// Remove all of our menu items</span>
+	<span class="codetp">ToolStripItemCollection</span> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
+	m_tsmiMenuItem.Click -= <span class="codekw">this</span>.OnMenuDoSomething;
 	tsMenu.Remove(m_tsmiMenuItem);
 	tsMenu.Remove(m_tsSeparator);
 }
 
-<font color="#0000FF">private void</font> OnMenuDoSomething(<font color="#0000FF">object</font> sender, <font color="#008888">EventArgs</font> e)
+<span class="codekw">private void</span> OnMenuDoSomething(<span class="codekw">object</span> sender, <span class="codetp">EventArgs</span> e)
 {
-	<font color="#008800">// Called when the menu item is clicked</font>
-}
-</pre>
+	<span class="codecm">// Called when the menu item is clicked</span>
+}</pre>
 
 <p>If you are working with tool strips, you of course have to add a reference
 to <code>System.Windows.Forms</code> of the .NET framework.</p>
@@ -364,13 +364,15 @@ file for every plugin separately.</p>
 <p><b>Signing.</b> Since KeePass 2.34,
 you can <em>optionally</em> digitally sign your version information file using RSA / SHA-512.</p>
 <ul>
-<li>An RSA key pair can for instance be generated like the following:<br />
-<code>using(RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(4096))<br />
-{<br />
-&nbsp;&nbsp;&nbsp;&nbsp;rsa.PersistKeyInCsp = false;<br />
-&nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(&quot;Private key: &quot; + rsa.ToXmlString(true));<br />
-&nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(&quot;Public key: &quot; + rsa.ToXmlString(false));<br />
-}</code><br />
+<li>An RSA key pair can for instance be generated like the following:
+
+<pre><span class="codekw">using</span>(<span class="codetp">RSACryptoServiceProvider</span> rsa = <span class="codekw">new</span> <span class="codetp">RSACryptoServiceProvider</span>(4096))
+{
+	rsa.PersistKeyInCsp = <span class="codekw">false</span>;
+	<span class="codetp">Console</span>.WriteLine(<span class="codest">&quot;Private key: &quot;</span> + rsa.ToXmlString(<span class="codekw">true</span>));
+	<span class="codetp">Console</span>.WriteLine(<span class="codest">&quot;Public key: &quot;</span> + rsa.ToXmlString(<span class="codekw">false</span>));
+}</pre>
+
 All key lengths supported by <code>RSACryptoServiceProvider</code>
 are supported by KeePass (up to .NET 4.5 that is 384 to 16384 bits in 8 bit steps).
 We recommend at least 2048 bits; the main version information file
@@ -432,7 +434,7 @@ DLL assembly, you ship the PLGX.</p>
 <p>For users, nothing changes. Instead of putting the plugin DLL assembly into
 the KeePass application directory, the PLGX file needs to be put there.</p>
 
-<center><table width="75%" border="1px" cellspacing="1px" bgcolor="#808080">
+<center><table width="75%" border="1" cellspacing="1" bgcolor="#808080">
 <tr><td width="100%" bgcolor="#FFFFC8">
 KeePass &ge; 2.14 also loads older plugin DLLs.
 However, an API within KeePass might have changed and .NET detects this

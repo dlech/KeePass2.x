@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -112,11 +112,11 @@ namespace KeePass.Util.Spr
 			set { m_bMakeAT = value; }
 		}
 
-		private bool m_bMakeCmdQuotes = false;
-		public bool EncodeQuotesForCommandLine
+		private bool m_bMakeCmd = false;
+		public bool EncodeForCommandLine
 		{
-			get { return m_bMakeCmdQuotes; }
-			set { m_bMakeCmdQuotes = value; }
+			get { return m_bMakeCmd; }
+			set { m_bMakeCmd = value; }
 		}
 
 		private bool m_bForcePlainTextPasswords = true;
@@ -160,18 +160,18 @@ namespace KeePass.Util.Spr
 		}
 
 		public SprContext(PwEntry pe, PwDatabase pd, SprCompileFlags fl,
-			bool bEncodeAsAutoTypeSequence, bool bEncodeQuotesForCommandLine)
+			bool bEncodeAsAutoTypeSequence, bool bEncodeForCommandLine)
 		{
-			Init(pe, pd, bEncodeAsAutoTypeSequence, bEncodeQuotesForCommandLine, fl);
+			Init(pe, pd, bEncodeAsAutoTypeSequence, bEncodeForCommandLine, fl);
 		}
 
-		private void Init(PwEntry pe, PwDatabase pd, bool bAT, bool bCmdQuotes,
+		private void Init(PwEntry pe, PwDatabase pd, bool bAT, bool bCmd,
 			SprCompileFlags fl)
 		{
 			m_pe = pe;
 			m_pd = pd;
 			m_bMakeAT = bAT;
-			m_bMakeCmdQuotes = bCmdQuotes;
+			m_bMakeCmd = bCmd;
 			m_flags = fl;
 		}
 
@@ -188,7 +188,7 @@ namespace KeePass.Util.Spr
 			SprContext ctx = Clone();
 
 			ctx.m_bMakeAT = false;
-			ctx.m_bMakeCmdQuotes = false;
+			ctx.m_bMakeCmd = false;
 			// ctx.m_bNoUrlSchemeOnce = false;
 
 			Debug.Assert(object.ReferenceEquals(m_pe, ctx.m_pe));

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -406,44 +406,7 @@ namespace KeePass.Forms
 			m_pluginManager.Initialize(m_pluginDefaultHost);
 
 			m_pluginManager.UnloadAllPlugins();
-			if(AppPolicy.Current.Plugins)
-			{
-				string[] vExclNames = new string[] {
-					AppDefs.FileNames.Program, AppDefs.FileNames.XmlSerializers,
-					AppDefs.FileNames.NativeLib32, AppDefs.FileNames.NativeLib64,
-					AppDefs.FileNames.ShInstUtil
-				};
-
-				string strPlgRoot = UrlUtil.GetFileDirectory(
-					WinUtil.GetExecutable(), false, true);
-				m_pluginManager.LoadAllPlugins(strPlgRoot, SearchOption.TopDirectoryOnly,
-					vExclNames);
-
-				if(!NativeLib.IsUnix())
-				{
-					string strPlgSub = UrlUtil.EnsureTerminatingSeparator(strPlgRoot,
-						false) + AppDefs.PluginsDir;
-					m_pluginManager.LoadAllPlugins(strPlgSub, SearchOption.AllDirectories,
-						vExclNames);
-				}
-				else // Unix
-				{
-					try
-					{
-						DirectoryInfo diPlgRoot = new DirectoryInfo(strPlgRoot);
-						foreach(DirectoryInfo diSub in diPlgRoot.GetDirectories())
-						{
-							if(diSub == null) { Debug.Assert(false); continue; }
-
-							if(string.Equals(diSub.Name, AppDefs.PluginsDir,
-								StrUtil.CaseIgnoreCmp))
-								m_pluginManager.LoadAllPlugins(diSub.FullName,
-									SearchOption.AllDirectories, vExclNames);
-						}
-					}
-					catch(Exception) { Debug.Assert(false); }
-				}
-			}
+			if(AppPolicy.Current.Plugins) m_pluginManager.LoadAllPlugins();
 
 			// Delete old files *after* loading plugins (when timestamps
 			// of loaded plugins have been updated already)
@@ -1133,6 +1096,8 @@ namespace KeePass.Forms
 		private void OnMenuChangeLanguage(object sender, EventArgs e)
 		{
 			LanguageForm lf = new LanguageForm();
+			if(!lf.InitEx()) return;
+
 			if(UIUtil.ShowDialogAndDestroy(lf) == DialogResult.OK)
 			{
 				string str = KPRes.LanguageSelected + MessageService.NewParagraph +

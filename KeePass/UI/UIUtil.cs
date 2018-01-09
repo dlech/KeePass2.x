@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,18 +19,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Threading;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 using Microsoft.Win32;
 
@@ -2231,6 +2231,33 @@ namespace KeePass.UI
 		{
 			SetWindowScreenRect(f, strRect);
 			return GetWindowScreenRect(f);
+		}
+
+		internal static string ScaleWindowScreenRect(string strRect, double sX, double sY)
+		{
+			if(string.IsNullOrEmpty(strRect)) return strRect;
+
+			try
+			{
+				string str = strRect.Replace(",", string.Empty); // Backward compat.
+
+				int[] v = StrUtil.DeserializeIntArray(str);
+				if((v == null) || (v.Length < 2)) { Debug.Assert(false); return strRect; }
+
+				v[0] = (int)Math.Round((double)v[0] * sX); // X
+				v[1] = (int)Math.Round((double)v[1] * sY); // Y
+
+				if(v.Length >= 4)
+				{
+					v[2] = (int)Math.Round((double)v[2] * sX); // Width
+					v[3] = (int)Math.Round((double)v[3] * sY); // Height
+				}
+
+				return StrUtil.SerializeIntArray(v);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strRect;
 		}
 
 		public static string GetColumnWidths(ListView lv)

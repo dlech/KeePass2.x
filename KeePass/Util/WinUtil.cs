@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -208,10 +208,10 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			bool bCmdQuotes = WinUtil.IsCommandLineUrl(strUrlFlt);
+			bool bEncCmd = WinUtil.IsCommandLineUrl(strUrlFlt);
 
 			SprContext ctx = new SprContext(peDataSource, pwDatabase,
-				SprCompileFlags.All, false, bCmdQuotes);
+				SprCompileFlags.All, false, bEncCmd);
 			ctx.Base = strBaseRaw;
 			ctx.BaseIsEncoded = false;
 
@@ -222,12 +222,12 @@ namespace KeePass.Util
 			if(!bAllowOverride) strOvr = null;
 			if(strOvr != null)
 			{
-				bool bCmdQuotesOvr = WinUtil.IsCommandLineUrl(strOvr);
+				bool bEncCmdOvr = WinUtil.IsCommandLineUrl(strOvr);
 
 				SprContext ctxOvr = new SprContext(peDataSource, pwDatabase,
-					SprCompileFlags.All, false, bCmdQuotesOvr);
+					SprCompileFlags.All, false, bEncCmdOvr);
 				ctxOvr.Base = strUrl;
-				ctxOvr.BaseIsEncoded = bCmdQuotes;
+				ctxOvr.BaseIsEncoded = bEncCmd;
 
 				strUrl = SprEngine.Compile(strOvr, ctxOvr);
 			}

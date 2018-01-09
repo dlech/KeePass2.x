@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Technical FAQ - KeePass</title>
 	<base target="_self" />
@@ -31,8 +32,8 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_help.png" width="64px" height="64px"
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_help.png" width="64" height="64"
 class="singleimg" align="left" alt="Help" />
 </td><td valign="middle"><h1>Technical FAQ</h1><br />
 Frequently Asked Questions about the usage of KeePass.
@@ -179,8 +180,8 @@ error message.</p>
 
 <p><b>Resolution:</b> Configure the local security policy of the
 system to allow FIPS non-compliant algorithm implementations. To
-do this, go to <i>Control Panel</i> -&gt; <i>Administrative Tools</i> -&gt;
-<i>Local Security Policy</i>, open <i>Local Policies</i> -&gt;
+do this, go to <i>Control Panel</i> &rarr; <i>Administrative Tools</i> &rarr;
+<i>Local Security Policy</i>, open <i>Local Policies</i> &rarr;
 <i>Security Options</i>, and change the option
 <i>'System cryptography: Use FIPS compliant algorithms for encryption,
 hashing, and signing'</i> to <i>'Disabled'</i>.</p>
@@ -223,7 +224,7 @@ Security Bulletin MS05-026</a>.</p>
 can I find more <i>application icons</i> for Windows shortcuts?</h2>
 
 <br />
-<table border="0px" width="100%" cellpadding="0px" cellspacing="0px">
+<table class="laytable" cellpadding="0" cellspacing="0">
 <tr><td align="left" valign="top">
 Application icons are icons in Windows ICO format. They can be used in
 Windows shortcuts and/or as file association icons. The KeePass executable
@@ -244,7 +245,7 @@ application icons in order to distinguish them.<br />
 These icons are not included in the binary distribution because this would make
 the application file too large.<br /><br />
 </td>
-<td width="154px" align="right" valign="top">
+<td width="154" align="right" valign="top">
 <img src="../images/appicons.png" alt="Application Icons" />
 </td></tr></table>
 
@@ -256,7 +257,7 @@ the application file too large.<br /><br />
 can I add more <i>client icons</i> for password entries?</h2>
 
 <br />
-<table border="0px" width="100%" cellpadding="0px" cellspacing="0px">
+<table class="laytable" cellpadding="0" cellspacing="0">
 <tr><td align="left" valign="top">
 Client icons are the icons used for password entries and groups within KeePass.
 Each entry can be assigned its own icon.<br />
@@ -271,7 +272,7 @@ Supported formats are BMP, EMF, GIF, ICO, JPEG, PNG, TIFF and WMF.
 
 <br />
 </td>
-<td width="154px" align="right" valign="top">
+<td width="154" align="right" valign="top">
 <img src="../images/clienticons.gif" alt="Application Icons" />
 </td></tr></table>
 
@@ -344,7 +345,7 @@ files to print the password list. If this application doesn't support the
 application that supports the &quot;print&quot; shell verb (like Internet Explorer).</p>
 
 <p><b>Alternative Resolution / Workaround:</b>
-Click <i>'File' -&gt; 'Print Preview'</i> in KeePass 1.x and
+Click <i>'File' &rarr; 'Print Preview'</i> in KeePass 1.x and
 manually print the document in the application that just opened the file.</p>
 
 <br />
@@ -365,7 +366,7 @@ A notification is only displayed when an update is available. Updates are not
 downloaded or installed automatically.</p>
 
 <p>The option is disabled by default. You can enable/disable it in
-'Tools' -&gt; 'Options' -&gt; tab 'Advanced'.</p>
+'Tools' &rarr; 'Options' &rarr; tab 'Advanced'.</p>
 
 <br />
 
@@ -586,21 +587,21 @@ to store and work with large amounts of (formatted) text?</h2>
 
 
 
-<table border="0px" width="100%" cellpadding="0px" cellspacing="0px">
+<table class="laytable" cellpadding="0" cellspacing="0">
 <tr><td align="left" valign="top">
 KeePass has a built-in editor that allows working conveniently with
 large amounts of (formatted) texts.<br />
 <br />
 To add a large text to an entry, import the file as attachment
-(or click 'Attach' -&gt; 'Create Empty Attachment').
+(or click 'Attach' &rarr; 'Create Empty Attachment').
 The built-in editor supports *.TXT (simple text) and *.RTF (formatted text) files.<br />
 <br />
 In order to edit an attachment, right-click onto the entry in the main window,
 point on 'Attachments' and click '<i>YourFile.*</i>'. Alternatively,
 if the text file
 is the only attachment, you can even open it by just double-clicking onto
-it in the main window (enable showing the attachment column in 'View' -&gt;
-'Show Columns' -&gt; 'Attachments'). Alternatively, it's also possible to click the name of
+it in the main window (enable showing the attachment column in 'View' &rarr;
+'Show Columns' &rarr; 'Attachments'). Alternatively, it's also possible to click the name of
 the attachment in the entry details view in the main window.<br />
 <br />
 For TXT files, the built-in editor supports standard operations like cut,
@@ -608,7 +609,7 @@ copy, paste, undo, word wrap, etc. For RTF files, additionally standard formatti
 commands are available: choosing the font, font size, bold, italic, underline,
 strikeout, text and background colors, align left / center / right, etc.
 </td>
-<td width="154px" align="right" valign="top">
+<td width="154" align="right" valign="top">
 <a href="../images/rtfeditor.png"><img src="../images/rtfeditor_small.png"
 alt="Editor screenshot" /></a>
 </td></tr></table>

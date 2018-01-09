@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -300,19 +300,26 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a string into a valid HTML sequence representing that string.
+		/// Convert a string to a HTML sequence representing that string.
 		/// </summary>
 		/// <param name="str">String to convert.</param>
 		/// <returns>String, HTML-encoded.</returns>
 		public static string StringToHtml(string str)
 		{
+			return StringToHtml(str, false);
+		}
+
+		internal static string StringToHtml(string str, bool bNbsp)
+		{
 			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
 
-			str = str.Replace(@"&", @"&amp;");
+			str = str.Replace(@"&", @"&amp;"); // Must be first
 			str = str.Replace(@"<", @"&lt;");
 			str = str.Replace(@">", @"&gt;");
 			str = str.Replace("\"", @"&quot;");
 			str = str.Replace("\'", @"&#39;");
+
+			if(bNbsp) str = str.Replace(" ", @"&nbsp;"); // Before <br />
 
 			str = NormalizeNewLines(str, false);
 			str = str.Replace("\n", @"<br />" + MessageService.NewLine);

@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Repairing Databases - KeePass</title>
 	<base target="_self" />
@@ -30,8 +31,9 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_kcmdrkonqi.png" class="singleimg" align="left" alt="Help" />
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_kcmdrkonqi.png" width="64" height="64"
+class="singleimg" align="left" alt="Repair" />
 </td><td valign="middle"><h1>Repairing Databases</h1><br />
 KeePass can repair corrupted databases in some cases.
 </td></tr></table>
@@ -65,7 +67,7 @@ database for corrupted/malicious data.</p>
 
 
 In order to use the repair functionality in KeePass 2.x, first
-create a new database file. Then, go <i>'File'</i> -&gt; <i>'Import'</i> and import
+create a new database file. Then, go <i>'File'</i> &rarr; <i>'Import'</i> and import
 the corrupted database file, using <i>'KeePass KDBX (2.x) (Repair Mode)'</i>
 as format.
 
@@ -81,6 +83,31 @@ backups of your databases is much better and has to be preferred.
 Backups have <i>no</i> cryptographic security implications.
 There are plugins that automate the backup process, see the
 KeePass plugins page.</p>
+
+<br />
+
+<a name="hdr"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_kcmdrkonqi.png" class="singleimg" alt="Repair" />&nbsp;&nbsp;File
+Header/Signature</h2>
+
+<p>If your database file has been deleted and you want to try recovering
+it using a tool that supports a file header/signature detection:
+below you can find the first bytes (in hex notation) with which all
+database files begin.</p>
+
+<ul class="withspc">
+<li>KeePass 1.x KDB File:<br />
+<code>03 D9 A2 9A 65 FB 4B B5</code></li>
+<li>KeePass 2.x KDBX File:<br />
+<code>03 D9 A2 9A 67 FB 4B B5</code></li>
+</ul>
+
+<p>The file header does not contain a field that specifies the length
+of the file. If the length cannot be determined from the file system,
+try to recover sufficiently much data (i.e. the database file data and
+maybe some subsequent, unnecessary data) and use the
+repair functionality above, which will simply ignore any subsequent data.</p>
 
 </body></html>
 

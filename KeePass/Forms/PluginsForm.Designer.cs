@@ -34,11 +34,12 @@
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpPluginDesc = new System.Windows.Forms.GroupBox();
 			this.m_lblSelectedPluginDesc = new System.Windows.Forms.Label();
-			this.m_linkPlugins = new System.Windows.Forms.LinkLabel();
 			this.m_grpCache = new System.Windows.Forms.GroupBox();
 			this.m_cbCacheDeleteOld = new System.Windows.Forms.CheckBox();
 			this.m_btnClearCache = new System.Windows.Forms.Button();
 			this.m_lblCacheSize = new System.Windows.Forms.Label();
+			this.m_btnMore = new System.Windows.Forms.Button();
+			this.m_btnOpenFolder = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpPluginDesc.SuspendLayout();
 			this.m_grpCache.SuspendLayout();
@@ -103,17 +104,6 @@
 			this.m_lblSelectedPluginDesc.TabIndex = 0;
 			this.m_lblSelectedPluginDesc.Text = "<>";
 			// 
-			// m_linkPlugins
-			// 
-			this.m_linkPlugins.AutoSize = true;
-			this.m_linkPlugins.Location = new System.Drawing.Point(9, 436);
-			this.m_linkPlugins.Name = "m_linkPlugins";
-			this.m_linkPlugins.Size = new System.Drawing.Size(95, 13);
-			this.m_linkPlugins.TabIndex = 5;
-			this.m_linkPlugins.TabStop = true;
-			this.m_linkPlugins.Text = "Get more plugins...";
-			this.m_linkPlugins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPluginsLinkClicked);
-			// 
 			// m_grpCache
 			// 
 			this.m_grpCache.Controls.Add(this.m_cbCacheDeleteOld);
@@ -154,6 +144,26 @@
 			this.m_lblCacheSize.TabIndex = 0;
 			this.m_lblCacheSize.Text = "Data in cache (size):";
 			// 
+			// m_btnMore
+			// 
+			this.m_btnMore.Location = new System.Drawing.Point(12, 431);
+			this.m_btnMore.Name = "m_btnMore";
+			this.m_btnMore.Size = new System.Drawing.Size(115, 23);
+			this.m_btnMore.TabIndex = 5;
+			this.m_btnMore.Text = "Get More &Plugins...";
+			this.m_btnMore.UseVisualStyleBackColor = true;
+			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
+			// 
+			// m_btnOpenFolder
+			// 
+			this.m_btnOpenFolder.Location = new System.Drawing.Point(133, 431);
+			this.m_btnOpenFolder.Name = "m_btnOpenFolder";
+			this.m_btnOpenFolder.Size = new System.Drawing.Size(83, 23);
+			this.m_btnOpenFolder.TabIndex = 6;
+			this.m_btnOpenFolder.Text = "Open &Folder";
+			this.m_btnOpenFolder.UseVisualStyleBackColor = true;
+			this.m_btnOpenFolder.Click += new System.EventHandler(this.OnBtnOpenFolder);
+			// 
 			// PluginsForm
 			// 
 			this.AcceptButton = this.m_btnClose;
@@ -161,8 +171,9 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnClose;
 			this.ClientSize = new System.Drawing.Size(619, 466);
+			this.Controls.Add(this.m_btnOpenFolder);
+			this.Controls.Add(this.m_btnMore);
 			this.Controls.Add(this.m_grpCache);
-			this.Controls.Add(this.m_linkPlugins);
 			this.Controls.Add(this.m_grpPluginDesc);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lvPlugins);
@@ -183,7 +194,6 @@
 			this.m_grpCache.ResumeLayout(false);
 			this.m_grpCache.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -195,10 +205,11 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.GroupBox m_grpPluginDesc;
 		private System.Windows.Forms.Label m_lblSelectedPluginDesc;
-		private System.Windows.Forms.LinkLabel m_linkPlugins;
 		private System.Windows.Forms.GroupBox m_grpCache;
 		private System.Windows.Forms.Button m_btnClearCache;
 		private System.Windows.Forms.Label m_lblCacheSize;
 		private System.Windows.Forms.CheckBox m_cbCacheDeleteOld;
+		private System.Windows.Forms.Button m_btnMore;
+		private System.Windows.Forms.Button m_btnOpenFolder;
 	}
 }

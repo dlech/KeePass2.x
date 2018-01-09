@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,14 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
+using System.Xml.Serialization;
 
 using KeePass.Ecas;
+using KeePass.Util;
 
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
@@ -238,6 +240,77 @@ namespace KeePass.App.Configuration
 			set { m_iExpirySoonDays = value; }
 		}
 
+		internal static string GetLanguagesDir(AceDir d, bool bTermSep)
+		{
+			string str;
+
+			if(d == AceDir.App)
+				str = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(),
+					true, false) + AppDefs.LanguagesDir;
+			else if(d == AceDir.User)
+				str = UrlUtil.EnsureTerminatingSeparator(
+					AppConfigSerializer.AppDataDirectory, false) +
+					AppDefs.LanguagesDir;
+			else { Debug.Assert(false); return string.Empty; }
+
+			if(bTermSep) str = UrlUtil.EnsureTerminatingSeparator(str, false);
+
+			return str;
+		}
+
+		private const string LngPrefixUser = "UL::";
+
+		internal string GetLanguageFilePath()
+		{
+			string str = m_strLanguageFile;
+			if(str.Length == 0) return string.Empty;
+
+			string strDir, strName;
+			if(str.StartsWith(LngPrefixUser, StrUtil.CaseIgnoreCmp))
+			{
+				strDir = GetLanguagesDir(AceDir.User, true);
+				strName = str.Substring(LngPrefixUser.Length);
+			}
+			else
+			{
+				strDir = GetLanguagesDir(AceDir.App, true);
+				strName = str;
+			}
+
+			// File name must not contain a directory separator
+			// (language files must be directly in the directory,
+			// not any subdirectory of it or somewhere else)
+			if(UrlUtil.GetFileName(strName) != strName)
+			{
+				Debug.Assert(false);
+				return string.Empty;
+			}
+
+			return (strDir + strName);
+		}
+
+		internal void SetLanguageFilePath(string strPath)
+		{
+			m_strLanguageFile = string.Empty;
+			if(string.IsNullOrEmpty(strPath)) return;
+
+			string str = GetLanguagesDir(AceDir.App, true);
+			if(strPath.StartsWith(str, StrUtil.CaseIgnoreCmp))
+			{
+				m_strLanguageFile = strPath.Substring(str.Length);
+				return;
+			}
+
+			str = GetLanguagesDir(AceDir.User, true);
+			if(strPath.StartsWith(str, StrUtil.CaseIgnoreCmp))
+			{
+				m_strLanguageFile = LngPrefixUser + strPath.Substring(str.Length);
+				return;
+			}
+
+			Debug.Assert(false);
+		}
+
 		public string GetWorkingDirectory(string strContext)
 		{
 			// strContext may be null
@@ -293,6 +366,12 @@ namespace KeePass.App.Configuration
 				m_dictWorkingDirs[str.Substring(0, iSep)] = str.Substring(iSep + 1);
 			}
 		}
+	}
+
+	internal enum AceDir
+	{
+		App = 0,
+		User
 	}
 
 	public sealed class AceStartUp

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -232,6 +232,16 @@ namespace KeePass
 		/// </summary>
 		[STAThread]
 		public static void Main(string[] args)
+		{
+#if DEBUG
+			MainPriv(args);
+#else
+			try { MainPriv(args); }
+			catch(Exception ex) { ShowFatal(ex); }
+#endif
+		}
+
+		private static void MainPriv(string[] args)
 		{
 #if DEBUG
 			// Program.DesignMode should not be queried before executing
@@ -500,13 +510,7 @@ namespace KeePass
 				m_formMain = new MainForm();
 				Application.Run(m_formMain);
 			}
-			catch(Exception exPrg)
-			{
-				// Catch message box exception;
-				// https://sourceforge.net/p/keepass/patches/86/
-				try { MessageService.ShowFatal(exPrg); }
-				catch(Exception) { Console.Error.WriteLine(exPrg.ToString()); }
-			}
+			catch(Exception exPrg) { ShowFatal(exPrg); }
 #endif
 
 			Application.RemoveMessageFilter(cmfx);
@@ -543,7 +547,10 @@ namespace KeePass
 			// catch(Exception) { }
 
 			// Do not run as AppX, because of compatibility problems
-			if(WinUtil.IsAppX) return false;
+			// (unless we're a special compatibility build)
+			if(WinUtil.IsAppX && !IsBuildType(
+				"CDE75CF0D4CA04D577A5A2E6BF5D19BFD5DDBBCF89D340FBBB0E4592C04496F1"))
+				return false;
 
 			try { SelfTest.TestFipsComplianceProblems(); }
 			catch(Exception exFips)
@@ -607,6 +614,16 @@ namespace KeePass
 			GlobalMutexPool.ReleaseAll();
 
 			CommonTerminate();
+		}
+
+		private static void ShowFatal(Exception ex)
+		{
+			if(ex == null) { Debug.Assert(false); return; }
+
+			// Catch message box exception;
+			// https://sourceforge.net/p/keepass/patches/86/
+			try { MessageService.ShowFatal(ex); }
+			catch(Exception) { Console.Error.WriteLine(ex.ToString()); }
 		}
 
 		private static void InitEnvSecurity()
@@ -734,42 +751,29 @@ namespace KeePass
 
 		private static void LoadTranslation()
 		{
-			string strLangFile = m_appConfig.Application.LanguageFile;
-			if(string.IsNullOrEmpty(strLangFile)) return;
+			string strPath = m_appConfig.Application.GetLanguageFilePath();
+			if(string.IsNullOrEmpty(strPath)) return;
 
-			string[] vLangDirs = new string[]{
-				AppConfigSerializer.AppDataDirectory,
-				AppConfigSerializer.LocalAppDataDirectory,
-				UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), false, false)
-			};
-
-			foreach(string strLangDir in vLangDirs)
+			try
 			{
-				string strLangPath = UrlUtil.EnsureTerminatingSeparator(
-					strLangDir, false) + strLangFile;
+				// Performance optimization
+				if(!File.Exists(strPath)) return;
 
-				try
-				{
-					// Performance optimization
-					if(!File.Exists(strLangPath)) continue;
+				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
+				m_kpTranslation = KPTranslation.Load(strPath, xs);
 
-					XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
-					m_kpTranslation = KPTranslation.Load(strLangPath, xs);
+				KPRes.SetTranslatedStrings(
+					m_kpTranslation.SafeGetStringTableDictionary(
+					"KeePass.Resources.KPRes"));
+				KLRes.SetTranslatedStrings(
+					m_kpTranslation.SafeGetStringTableDictionary(
+					"KeePassLib.Resources.KLRes"));
 
-					KPRes.SetTranslatedStrings(
-						m_kpTranslation.SafeGetStringTableDictionary(
-						"KeePass.Resources.KPRes"));
-					KLRes.SetTranslatedStrings(
-						m_kpTranslation.SafeGetStringTableDictionary(
-						"KeePassLib.Resources.KLRes"));
-
-					StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
-					break;
-				}
-				// catch(DirectoryNotFoundException) { } // Ignore
-				// catch(FileNotFoundException) { } // Ignore
-				catch(Exception) { Debug.Assert(false); }
+				StrUtil.RightToLeft = m_kpTranslation.Properties.RightToLeft;
 			}
+			// catch(DirectoryNotFoundException) { } // Ignore
+			// catch(FileNotFoundException) { } // Ignore
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		internal static bool IsDevelopmentSnapshot()
@@ -780,6 +784,27 @@ namespace KeePass
 				byte[] pk = asm.GetName().GetPublicKeyToken();
 				string strPk = MemUtil.ByteArrayToHexString(pk);
 				return !strPk.Equals("fed2ed7716aecf5c", StrUtil.CaseIgnoreCmp);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		}
+
+		private static bool IsBuildType(string str)
+		{
+			try
+			{
+				string strFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(),
+					true, false) + "Application.ini";
+				if(!File.Exists(strFile)) return false;
+
+				IniFile f = IniFile.Read(strFile, StrUtil.Utf8);
+				string strType = f.Get("Application", "Type");
+				if(string.IsNullOrEmpty(strType)) return false;
+
+				byte[] pb = CryptoUtil.HashSha256(StrUtil.Utf8.GetBytes(strType.Trim()));
+				return string.Equals(MemUtil.ByteArrayToHexString(pb),
+					str, StrUtil.CaseIgnoreCmp);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

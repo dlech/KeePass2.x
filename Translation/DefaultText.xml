@@ -223,9 +223,6 @@
 		<Data Name="Available">
 			<Value>Available</Value>
 		</Data>
-		<Data Name="AvailableLanguages">
-			<Value>Available Languages</Value>
-		</Data>
 		<Data Name="BackgroundColor">
 			<Value>Background Color</Value>
 		</Data>
@@ -250,11 +247,17 @@
 		<Data Name="Bold">
 			<Value>Bold</Value>
 		</Data>
+		<Data Name="BothForms">
+			<Value>Both forms</Value>
+		</Data>
 		<Data Name="Browser">
 			<Value>Browser</Value>
 		</Data>
 		<Data Name="BuiltIn">
 			<Value>built-in</Value>
+		</Data>
+		<Data Name="BuiltInU">
+			<Value>Built-in</Value>
 		</Data>
 		<Data Name="Button">
 			<Value>Button</Value>
@@ -1156,6 +1159,9 @@
 		<Data Name="Installed">
 			<Value>Installed</Value>
 		</Data>
+		<Data Name="InstalledLanguages">
+			<Value>Installed Languages</Value>
+		</Data>
 		<Data Name="InstrAndGenInfo">
 			<Value>Instructions and General Information</Value>
 		</Data>
@@ -1290,6 +1296,15 @@
 		</Data>
 		<Data Name="LimitSingleInstance">
 			<Value>Limit to single instance</Value>
+		</Data>
+		<Data Name="LngInAppDir">
+			<Value>One or more language files have been found in the KeePass application directory.</Value>
+		</Data>
+		<Data Name="LngInAppDirNote">
+			<Value>Loading language files directly from the application directory is not supported. Language files should instead be stored in the 'Languages' folder of the application directory.</Value>
+		</Data>
+		<Data Name="LngInAppDirQ">
+			<Value>Do you want to open the application directory (in order to move or delete language files)?</Value>
 		</Data>
 		<Data Name="Locked">
 			<Value>Locked</Value>
@@ -1816,6 +1831,12 @@
 		<Data Name="RepeatOnlyWhenHidden">
 			<Value>Require password repetition only when hiding using asterisks is enabled</Value>
 		</Data>
+		<Data Name="Replace">
+			<Value>Replace</Value>
+		</Data>
+		<Data Name="ReplaceNo">
+			<Value>Do not replace</Value>
+		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
 		</Data>
@@ -1946,7 +1967,7 @@
 			<Value>Select Language</Value>
 		</Data>
 		<Data Name="SelectLanguageDesc">
-			<Value>Here you can select a different user interface language.</Value>
+			<Value>Here you can change the user interface language.</Value>
 		</Data>
 		<Data Name="SelfTestFailed">
 			<Value>One or more of the KeePass self-tests failed.</Value>
