@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -207,11 +207,12 @@ namespace KeePass.UI
 				uFlags = Program.Config.UI.KeyCreationFlags;
 
 			byte[] pbUtf8 = m_secPassword.ToUtf8();
-			string str = StrUtil.Utf8.GetString(pbUtf8);
+			char[] v = StrUtil.Utf8.GetChars(pbUtf8);
 
 #if DEBUG
-			byte[] pbTest = StrUtil.Utf8.GetBytes(str);
+			byte[] pbTest = StrUtil.Utf8.GetBytes(v);
 			Debug.Assert(MemUtil.ArraysEqual(pbUtf8, pbTest));
+			MemUtil.ZeroByteArray(pbTest);
 #endif
 
 			m_tbPassword.Enabled = m_bEnabled;
@@ -247,13 +248,14 @@ namespace KeePass.UI
 			bool bQuality = m_bEnabled;
 			if(m_bSprVar && bQuality)
 			{
-				if(SprEngine.MightChange(str)) // Perf. opt.
+				if(SprEngine.MightChange(v)) // Perf. opt.
 				{
 					// {S:...} and {REF:...} may reference the entry that
 					// is currently being edited and SprEngine will not see
 					// the current data entered in the dialog; thus we
 					// disable quality estimation for all strings containing
 					// one of these placeholders
+					string str = new string(v);
 					if((str.IndexOf(@"{S:", StrUtil.CaseIgnoreCmp) >= 0) ||
 						(str.IndexOf(@"{REF:", StrUtil.CaseIgnoreCmp) >= 0))
 						bQuality = false;
@@ -268,6 +270,7 @@ namespace KeePass.UI
 #if DEBUG
 				else
 				{
+					string str = new string(v);
 					SprContext ctx = new SprContext(m_ctxEntry, m_ctxDatabase,
 						SprCompileFlags.NonActive, false, false);
 					string strCmp = SprEngine.Compile(str, ctx);
@@ -286,11 +289,12 @@ namespace KeePass.UI
 				m_pbQuality.Visible = false;
 				m_lblQualityInfo.Visible = false;
 			}
-			else if(bQuality || !m_bSprVar) UpdateQualityInfo(str);
+			else if(bQuality || !m_bSprVar) UpdateQualityInfo(v);
 			else UqiShowQuality(0, 0);
 
-			// MemUtil.ZeroByteArray(pbUtf8);
-			// MemUtil.ZeroByteArray(pbRepeat);
+			MemUtil.ZeroByteArray(pbUtf8);
+			MemUtil.ZeroByteArray(pbRepeat);
+			MemUtil.ZeroArray<char>(v);
 			--m_uBlockUIUpdate;
 		}
 
@@ -409,79 +413,94 @@ namespace KeePass.UI
 			return false;
 		}
 
+		private static string GetUqiTaskID(char[] v)
+		{
+			byte[] pb = StrUtil.Utf8.GetBytes(v);
+			byte[] pbHash = CryptoUtil.HashSha256(pb);
+			MemUtil.ZeroByteArray(pb);
+			return Convert.ToBase64String(pbHash);
+		}
+
 		private List<string> m_lUqiTasks = new List<string>();
 		private readonly object m_oUqiTasksSync = new object();
-		private void UpdateQualityInfo(string str)
+		private void UpdateQualityInfo(char[] v)
 		{
-			if(str == null) { Debug.Assert(false); return; }
+			if(v == null) { Debug.Assert(false); return; }
 
 			int nTasks;
 			lock(m_oUqiTasksSync)
 			{
-				if(m_lUqiTasks.Contains(str)) return;
+				string strTask = GetUqiTaskID(v);
+				if(m_lUqiTasks.Contains(strTask)) return;
 
 				nTasks = m_lUqiTasks.Count;
-				m_lUqiTasks.Add(str);
+				m_lUqiTasks.Add(strTask);
 			}
+
+			char[] vForTh = new char[v.Length]; // Will be cleared by thread
+			Array.Copy(v, vForTh, v.Length);
 
 			int nPoolWorkers, nPoolCompletions;
 			ThreadPool.GetAvailableThreads(out nPoolWorkers, out nPoolCompletions);
 
 			if((nTasks <= 3) && (nPoolWorkers >= 2))
 				ThreadPool.QueueUserWorkItem(new WaitCallback(
-					this.UpdateQualityInfoTh), str);
+					this.UpdateQualityInfoTh), vForTh);
 			else
 			{
 				ParameterizedThreadStart pts = new ParameterizedThreadStart(
 					this.UpdateQualityInfoTh);
 				Thread th = new Thread(pts);
-				th.Start(str);
+				th.Start(vForTh);
 			}
 		}
 
 		private void UpdateQualityInfoTh(object oPassword)
 		{
-			string str = (oPassword as string);
-			if(str == null) { Debug.Assert(false); return; }
+			char[] v = (oPassword as char[]);
+			if(v == null) { Debug.Assert(false); return; }
 
+			char[] vNew = null;
 			try
 			{
 				Debug.Assert(m_tbPassword.InvokeRequired);
-				// byte[] pbUtf8 = (m_tbPassword.Invoke(new UqiGetPasswordFn(
-				//	this.UqiGetPassword)) as byte[]);
-				// if(pbUtf8 == null) { Debug.Assert(false); return; }
-				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(str);
 
-				// str = StrUtil.Utf8.GetString(pbUtf8);
-				// lock(m_oUqiTasksSync) { m_lUqiTasks.Add(str); }
-
-				uint uBits = QualityEstimation.EstimatePasswordBits(pbUtf8);
+				uint uBits = QualityEstimation.EstimatePasswordBits(v);
 
 				TextBox tb = m_tbPassword;
 				if(tb == null) return; // Control disposed in the meanwhile
 
-				byte[] pbNewUtf8 = (tb.Invoke(new UqiGetPasswordDelegate(
-					this.UqiGetPassword)) as byte[]);
-				if(pbNewUtf8 == null) { Debug.Assert(false); return; }
-
-				// Test whether password has changed in the meanwhile
-				if(!MemUtil.ArraysEqual(pbUtf8, pbNewUtf8)) return;
+				// Test whether the password has changed in the meanwhile
+				vNew = (tb.Invoke(new UqiGetPasswordDelegate(
+					this.UqiGetPassword)) as char[]);
+				if(!MemUtil.ArrayHelperExOfChar.Equals(v, vNew)) return;
 
 				tb.Invoke(new UqiShowQualityDelegate(this.UqiShowQuality),
-					uBits, (uint)str.Length);
+					uBits, (uint)v.Length);
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally
 			{
-				lock(m_oUqiTasksSync) { m_lUqiTasks.Remove(str); }
+				string strTask = GetUqiTaskID(v);
+				lock(m_oUqiTasksSync) { m_lUqiTasks.Remove(strTask); }
+
+				MemUtil.ZeroArray<char>(v);
+				if(vNew != null) MemUtil.ZeroArray<char>(vNew);
 			}
 		}
 
-		private delegate byte[] UqiGetPasswordDelegate();
-		private byte[] UqiGetPassword()
+		private delegate char[] UqiGetPasswordDelegate();
+		private char[] UqiGetPassword()
 		{
-			try { return m_secPassword.ToUtf8(); }
+			byte[] pb = null;
+			try
+			{
+				pb = m_secPassword.ToUtf8();
+				return StrUtil.Utf8.GetChars(pb);
+			}
 			catch(Exception) { Debug.Assert(false); }
+			finally { if(pb != null) MemUtil.ZeroByteArray(pb); }
+
 			return null;
 		}
 

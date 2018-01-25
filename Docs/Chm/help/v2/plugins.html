@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Plugins - KeePass</title>
 	<base target="_self" />
@@ -30,10 +31,10 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_blockdevice.png" width="64px" height="64px"
-class="singleimg" align="left" alt="Settings" />
-</td><td valign="middle"><h1>KeePass 2.x Plugins</h1><br />
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_blockdevice.png" width="64" height="64"
+class="singleimg" align="left" alt="Plugin" />
+</td><td valign="middle"><h1>KeePass Plugins</h1><br />
 Installation, uninstallation and security of KeePass plugins.
 </td></tr></table>
 
@@ -61,21 +62,20 @@ Resources</h2>
 <img src="../images/b16x16_package_system.png" class="singleimg" alt="Computer" />&nbsp;&nbsp;Plugin
 Installation and Uninstallation</h2>
 
-<p>If the plugin doesn't provide explicit instructions how to install it,
+<p>If there are no explicit instructions how to install the plugin,
 follow these steps:</p>
 
 <ol>
 <li>Download the plugin from the page above and unpack the ZIP file to a
 new folder.</li>
-<li>In the KeePass application directory (where the <i>KeePass.exe</i> file is),
-there is a folder called 'Plugins'.
-Move the new folder (containing the plugin files) into the
-'Plugins' folder<!-- (or any subdirectory of it) -->.</li>
+<li>In KeePass, click 'Tools' &rarr; 'Plugins' &rarr; button
+'Open Folder'; KeePass now opens a folder called 'Plugins'.
+Move the new folder (containing the plugin files) into the 'Plugins' folder.</li>
 <li>Restart KeePass in order to load the new plugin.</li>
 </ol>
 
-<p>In short, to install a plugin you simply need to unpack it
-somewhere into the 'Plugins' folder.</p>
+<!-- <p>In short, to install a plugin you simply need to unpack it
+somewhere into the 'Plugins' folder.</p> -->
 
 <p>To uninstall a plugin, delete the plugin files.</p>
 
@@ -93,7 +93,7 @@ required for plugins to work properly.</p>
 
 <p>If plugins can register themselves
 (i.e. have write access to the KeePass directory), they could also just
-replace the whole <i>KeePass.exe</i>. It's rather a problem of file access
+replace the whole 'KeePass.exe' file. It's a problem of file access
 rights, not the plugin system.</p>
 
 <p>If you worry about this,

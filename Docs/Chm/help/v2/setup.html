@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Setup - KeePass</title>
 	<base target="_self" />
@@ -32,8 +33,9 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_package_system.png" class="singleimg" align="left" alt="System" />
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_package_system.png" width="64" height="64"
+class="singleimg" align="left" alt="System" />
 </td><td valign="middle"><h1>Installation / Portability</h1><br />
 KeePass 2.x installation, uninstallation, portability and updates.
 </td></tr></table>
@@ -290,8 +292,8 @@ for different operating systems:</p>
 <ul>
 <li><b>KDE.</b>
 On Linux systems with KDE, the hot key can be created in <i>Computer</i>
--&gt; <i>System Settings</i> -&gt; <i>Shortcuts and Gestures</i>:
-in this dialog, go <i>Edit</i> -&gt; <i>New</i> -&gt; <i>Global Shortcut</i> -&gt;
+&rarr; <i>System Settings</i> &rarr; <i>Shortcuts and Gestures</i>:
+in this dialog, go <i>Edit</i> &rarr; <i>New</i> &rarr; <i>Global Shortcut</i> &rarr;
 <i>Command/URL</i>, specify the shortcut on the <i>Trigger</i> tab
 and enter<br />
 <code>mono /<i>YourPathToKeePass</i>/KeePass.exe --auto-type</code><br />
@@ -311,7 +313,7 @@ press <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>, and close the dial
 <li><b>Ubuntu Linux &le; 10.10 (GNOME).</b>
 <ol>
 <li>Press Alt-F2, enter <code>gconf-editor</code> and click [OK].</li>
-<li>Navigate to <code>apps</code> -&gt; <code>metacity</code> -&gt; <code>keybinding_commands</code>.</li>
+<li>Navigate to <code>apps</code> &rarr; <code>metacity</code> &rarr; <code>keybinding_commands</code>.</li>
 <li>Double-click one of the <code>command_<i>i</i></code> items, enter<br />
 <code>mono /<i>YourPathToKeePass</i>/KeePass.exe --auto-type</code><br />
 and click [OK].</li>
@@ -367,7 +369,7 @@ into some directory of your choice.</li>
 
 <p><strong>Theme.</strong>
 By default, Wine uses the classic Windows theme. If you prefer some other
-theme, you can install it in 'Applications' -&gt; 'Wine' -&gt; 'Configure Wine' -&gt;
+theme, you can install it in 'Applications' &rarr; 'Wine' &rarr; 'Configure Wine' &rarr;
 tab 'Desktop Integration'.
 Links to themes can for instance be found on
 <a href="https://en.wikipedia.org/wiki/Windows_XP_visual_styles"
@@ -444,10 +446,10 @@ from KeePass 1.x to 2.x</h2>
 If you're using the installer, make sure that the component
 'Native Support Library (KeePass 1.x)' is being installed
 (by default this component is enabled).</li>
-<li>Run KeePass 2.x and create a new KDBX database file (via 'File' -&gt;
+<li>Run KeePass 2.x and create a new KDBX database file (via 'File' &rarr;
 'New').</li>
 <li>Import your old KDB database file into your new KDBX database file
-(via 'File' -&gt; 'Import', file format 'KeePass KDB (1.x)').</li>
+(via 'File' &rarr; 'Import', file format 'KeePass KDB (1.x)').</li>
 </ol>
 
 <p>If everything works fine, you can delete your old KeePass 1.x

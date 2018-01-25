@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,14 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
+
+using KeePassLib.Native;
+using KeePassLib.Utility;
 
 namespace KeePass.Util.Spr
 {
 	internal static class SprEncoding
 	{
-		internal static string MakeAutoTypeSequence(string str)
+		internal static string EncodeAsAutoTypeSequence(string str)
 		{
 			if(str == null) { Debug.Assert(false); return string.Empty; }
 
@@ -64,12 +67,32 @@ namespace KeePass.Util.Spr
 			return str;
 		}
 
-		internal static string MakeCommandQuotes(string str)
+		internal static string EncodeForCommandLine(string strRaw)
 		{
-			if(str == null) { Debug.Assert(false); return string.Empty; }
+			if(strRaw == null) { Debug.Assert(false); return string.Empty; }
+
+			if(MonoWorkarounds.IsRequired(3471228285U) && NativeLib.IsUnix())
+			{
+				string str = strRaw;
+
+				str = str.Replace("\\", "\\\\");
+				str = str.Replace("\"", "\\\"");
+				str = str.Replace("\'", "\\\'");
+				str = str.Replace("\u0060", "\\\u0060"); // Grave accent
+				str = str.Replace("$", "\\$");
+				str = str.Replace("&", "\\&");
+				str = str.Replace("<", "\\<");
+				str = str.Replace(">", "\\>");
+				str = str.Replace("|", "\\|");
+				str = str.Replace(";", "\\;");
+				str = str.Replace("(", "\\(");
+				str = str.Replace(")", "\\)");
+
+				return str;
+			}
 
 			// See SHELLEXECUTEINFO structure documentation
-			return str.Replace("\"", "\"\"\"");
+			return strRaw.Replace("\"", "\"\"\"");
 		}
 	}
 }

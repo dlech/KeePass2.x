@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Application Policy - KeePass</title>
 	<base target="_self" />
@@ -30,8 +31,8 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_file_locked.png" width="64px" height="64px"
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_file_locked.png" width="64" height="64"
 class="singleimg" align="left" alt="Settings" />
 </td><td valign="middle"><h1>Application Policy</h1><br />
 Details about the application policy system within KeePass.
@@ -59,7 +60,7 @@ for Users</h2>
 to prevent you from accidently compromising the security
 system of your company.</p>
 
-<p>Operations like exporting password entries to non-encrypted
+<p>Operations like exporting entries to non-encrypted
 files or printing for example can be prevented effectively
 using the application policy.</p>
 
@@ -70,8 +71,7 @@ accidental leakage of sensitive information.</p>
 
 <p>In order to prevent changing the policy after it has
 been specified, it is recommended to use an
-<a href="../base/configuration.html">enforced configuration
-file</a>.</p>
+<a href="../base/configuration.html">enforced configuration file</a>.</p>
 
 <br />
 
@@ -82,7 +82,7 @@ for Administrators</h2>
 
 <p>KeePass can be installed on a network drive and a policy
 can be enforced (like not permitting users to print the
-password list).</p>
+entry list).</p>
 
 <p>The application policy enforcement is based on
 the mechanism how KeePass stores configuration settings. You
@@ -102,28 +102,19 @@ a policy can be enforced.</p>
 <p>In order to create such an installation, follow these steps:</p>
 
 <ol>
+<li>Copy KeePass to a shared network drive that supports file
+access rights (like NTFS).</li>
 
-<li>Copy KeePass to a common network drive, which supports
-file permissions (like NTFS). All users must have access to
-it.</li>
+<li>Create an enforced configuration file that enforces the
+application policy settings that you wish.</li>
 
-<li>Adjust the file permissions: allow users only to read and
-execute all KeePass files, don't allow write access.</li>
-
-<li>Adjust the file permissions for <code>KeePass.exe</code>:
-only <i>Execute</i> must be allowed, all other permissions
-should be disabled (including <i>Read</i> access).</li>
-
-<li>Start KeePass. Open the <i>Options</i> dialog, switch to
-the <i>Policy</i> tab and configure the policy. Exit KeePass.</li>
-
-<li>Rename the <i>KeePass.config.xml</i> file to <i>KeePass.config.enforced.xml</i>.</li>
-
+<li>Adjust the file access rights: allow users only to read and
+execute all KeePass files, no write access.</li>
 </ol>
 
-<p>That's it. You created a policy that is enforced on all computers,
+<!-- <p>That's it. You created a policy that is enforced on all computers,
 including your own one (until you change the enforced configuration file
-on the network drive).</p>
+on the network drive).</p> -->
 
 <br />
 
@@ -134,8 +125,8 @@ Security</h2>
 
 <p>Recall what the policy mechanism looks like: KeePass and the
 configuration file are stored on the network drive. If you
-grant your users free access to the internet or allow them
-to insert CD-ROMs/DVDs/USB-Sticks, nothing prevents
+grant your users free access to the Internet or allow them
+to insert CD-ROMs/DVDs/USB-sticks, nothing prevents
 a user to download a fresh copy of KeePass and run it. In
 this case the policy isn't enforced, as the downloaded KeePass
 doesn't know anything of the enforced configuration file on the network

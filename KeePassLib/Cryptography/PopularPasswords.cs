@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Utility;
 
@@ -28,8 +28,8 @@ namespace KeePassLib.Cryptography
 {
 	public static class PopularPasswords
 	{
-		private static Dictionary<int, Dictionary<string, bool>> m_dicts =
-			new Dictionary<int, Dictionary<string, bool>>();
+		private static Dictionary<int, Dictionary<char[], bool>> m_dicts =
+			new Dictionary<int, Dictionary<char[], bool>>();
 
 		internal static int MaxLength
 		{
@@ -49,7 +49,7 @@ namespace KeePassLib.Cryptography
 
 		internal static bool ContainsLength(int nLength)
 		{
-			Dictionary<string, bool> dDummy;
+			Dictionary<char[], bool> dDummy;
 			return m_dicts.TryGetValue(nLength, out dDummy);
 		}
 
@@ -64,28 +64,30 @@ namespace KeePassLib.Cryptography
 			if(vPassword == null) throw new ArgumentNullException("vPassword");
 			if(vPassword.Length == 0) { uDictSize = 0; return false; }
 
-			string str = new string(vPassword);
+#if DEBUG
+			Array.ForEach(vPassword, ch => Debug.Assert(ch == char.ToLower(ch)));
+#endif
 
-			try { return IsPopularPasswordPriv(str, out uDictSize); }
+			try { return IsPopularPasswordPriv(vPassword, out uDictSize); }
 			catch(Exception) { Debug.Assert(false); }
 
 			uDictSize = 0;
 			return false;
 		}
 
-		private static bool IsPopularPasswordPriv(string str, out ulong uDictSize)
+		private static bool IsPopularPasswordPriv(char[] vPassword, out ulong uDictSize)
 		{
 			Debug.Assert(m_dicts.Count > 0); // Should be initialized with data
 
-			Dictionary<string, bool> d;
-			if(!m_dicts.TryGetValue(str.Length, out d))
+			Dictionary<char[], bool> d;
+			if(!m_dicts.TryGetValue(vPassword.Length, out d))
 			{
 				uDictSize = 0;
 				return false;
 			}
 
 			uDictSize = (ulong)d.Count;
-			return d.ContainsKey(str);
+			return d.ContainsKey(vPassword);
 		}
 
 		public static void Add(byte[] pbData, bool bGZipped)
@@ -98,30 +100,27 @@ namespace KeePassLib.Cryptography
 				string strData = StrUtil.Utf8.GetString(pbData, 0, pbData.Length);
 				if(string.IsNullOrEmpty(strData)) { Debug.Assert(false); return; }
 
-				if(!char.IsWhiteSpace(strData[strData.Length - 1]))
-					strData += "\n";
-
 				StringBuilder sb = new StringBuilder();
-				for(int i = 0; i < strData.Length; ++i)
+				for(int i = 0; i <= strData.Length; ++i)
 				{
-					char ch = strData[i];
+					char ch = ((i == strData.Length) ? ' ' : strData[i]);
 
 					if(char.IsWhiteSpace(ch))
 					{
 						int cc = sb.Length;
 						if(cc > 0)
 						{
-							string strWord = sb.ToString();
-							Debug.Assert(strWord.Length == cc);
+							char[] vWord = new char[cc];
+							sb.CopyTo(0, vWord, 0, cc);
 
-							Dictionary<string, bool> d;
+							Dictionary<char[], bool> d;
 							if(!m_dicts.TryGetValue(cc, out d))
 							{
-								d = new Dictionary<string, bool>();
+								d = new Dictionary<char[], bool>(MemUtil.ArrayHelperExOfChar);
 								m_dicts[cc] = d;
 							}
 
-							d[strWord] = true;
+							d[vWord] = true;
 							sb.Remove(0, cc);
 						}
 					}

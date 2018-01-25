@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -106,6 +106,8 @@ namespace KeePass.Util
 	{
 		private static Dictionary<string, string> g_dFileSigKeys =
 			new Dictionary<string, string>();
+
+		private const string CompMain = PwDefs.ShortProductName;
 
 		private sealed class UpdateCheckParams
 		{
@@ -461,9 +463,9 @@ namespace KeePass.Util
 			}
 
 			// Add KeePass at the end to override any buggy plugin names
-			AddComponent(l, new UpdateComponentInfo(PwDefs.ShortProductName,
-				PwDefs.FileVersion64, PwDefs.VersionUrl, PwDefs.ShortProductName));
-			
+			AddComponent(l, new UpdateComponentInfo(CompMain, PwDefs.FileVersion64,
+				PwDefs.VersionUrl, PwDefs.ShortProductName));
+
 			l.Sort(UpdateCheckEx.CompareComponents);
 			return l;
 		}
@@ -472,8 +474,8 @@ namespace KeePass.Util
 			UpdateComponentInfo b)
 		{
 			if(a.Name == b.Name) return 0;
-			if(a.Name == PwDefs.ShortProductName) return -1;
-			if(b.Name == PwDefs.ShortProductName) return 1;
+			if(a.Name == CompMain) return -1;
+			if(b.Name == CompMain) return 1;
 
 			return a.Name.CompareTo(b.Name);
 		}
@@ -504,6 +506,15 @@ namespace KeePass.Util
 		{
 			if(uc == null) { Debug.Assert(false); return false; }
 			if(lAvail == null) return false; // No assert
+
+			if((uc.Name == CompMain) && WinUtil.IsAppX)
+			{
+				// The user's AppX may be old; do not claim it's up-to-date
+				// uc.VerAvailable = uc.VerInstalled;
+				// uc.Status = UpdateComponentStatus.UpToDate;
+				uc.Status = UpdateComponentStatus.Unknown;
+				return true;
+			}
 
 			foreach(UpdateComponentInfo ucAvail in lAvail)
 			{

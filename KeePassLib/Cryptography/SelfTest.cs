@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -825,6 +825,21 @@ namespace KeePassLib.Cryptography
 				throw new Exception("MemUtil-9");
 			if(MemUtil.BytesToInt32(pbRes) != i)
 				throw new Exception("MemUtil-10");
+
+			ArrayHelperEx<char> ah = MemUtil.ArrayHelperExOfChar;
+			for(int j = 0; j < 30; ++j)
+			{
+				string strA = r.Next(30).ToString();
+				string strB = r.Next(30).ToString();
+				char[] vA = strA.ToCharArray();
+				char[] vB = strB.ToCharArray();
+
+				if(ah.Equals(vA, vB) != string.Equals(strA, strB))
+					throw new Exception("MemUtil-11");
+				if((vA.Length == vB.Length) && (Math.Sign(ah.Compare(vA, vB)) !=
+					Math.Sign(string.CompareOrdinal(strA, strB))))
+					throw new Exception("MemUtil-12");
+			}
 #endif
 		}
 

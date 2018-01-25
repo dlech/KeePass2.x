@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -101,6 +101,9 @@ namespace KeePassLib.Utility
 		// 1632:
 		//   RichTextBox rendering bug for bold/italic text.
 		//   https://sourceforge.net/p/keepass/bugs/1632/
+		// 1690:
+		//   Removing items from a list view doesn't work properly.
+		//   https://sourceforge.net/p/keepass/bugs/1690/
 		// 2139:
 		//   Shortcut keys are ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2139/
@@ -157,6 +160,9 @@ namespace KeePassLib.Utility
 		// 2449941153:
 		//   RichTextBox doesn't properly escape '}' when generating RTF data.
 		//   https://sourceforge.net/p/keepass/discussion/329221/thread/920722a1/
+		// 3471228285:
+		//   Mono requires command line arguments to be encoded differently.
+		//   https://sourceforge.net/p/keepass/discussion/329221/thread/cee6bd7d/
 		// 3574233558:
 		//   Problems with minimizing windows, no content rendered.
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/

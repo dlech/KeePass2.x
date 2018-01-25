@@ -17,9 +17,10 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2017 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
 
 	<title>Single Command Operations - KeePass</title>
 	<base target="_self" />
@@ -31,8 +32,8 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68px">
-<img src="../images/b64x64_konsole.png" width="64px" height="64px"
+<table class="sectionsummary"><tr><td width="68">
+<img src="../images/b64x64_konsole.png" width="64" height="64"
 class="singleimg" align="left" alt="Console" />
 </td><td valign="middle"><h1>Single Command Operations</h1><br />
 How to use KPScript with single command operations to perform simple
@@ -202,6 +203,12 @@ The full path of the group can be specified using the
 <code>-GroupPath:</code> parameter (use '<code>/</code>' as separator).
 If you do not specify a group name or path,
 the entry will be created in the root group.</li>
+
+<li><code>-setx-Icon:<i>ID</i></code><br />
+Set the icon of the entry to the standard icon having index <i>ID</i>.</li>
+
+<li><code>-setx-CustomIcon:<i>ID</i></code><br />
+Set the icon of the entry to the custom icon having index <i>ID</i>.</li>
 </ul>
 
 <p>Example:</p>
@@ -255,6 +262,10 @@ entry should be edited:</p>
 <li><code>-set-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
 Sets the string field <i>FIELDNAME</i> of the entry to the value
 <i>FIELDVALUE</i>.</li>
+<li><code>-setx-Icon:<i>ID</i></code><br />
+Set the icon of the entry to the standard icon having index <i>ID</i>.</li>
+<li><code>-setx-CustomIcon:<i>ID</i></code><br />
+Set the icon of the entry to the custom icon having index <i>ID</i>.</li>
 <li><code>-setx-Expires:<i>VALUE</i></code><br />
 Sets whether the entry expires or not. <i>VALUE</i> must be either
 <code>true</code> or <code>false</code>.</li>

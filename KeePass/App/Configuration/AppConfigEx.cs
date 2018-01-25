@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Diagnostics;
 
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.XmlSerialization;
 
+using KeePassLib.Delegates;
 using KeePassLib.Native;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -236,6 +239,8 @@ namespace KeePass.App.Configuration
 			AceDefaults aceDef = this.Defaults; // m_def might be null
 
 			aceMeta.OmitItemsWithDefaultValues = true;
+			aceMeta.DpiFactorX = DpiUtil.FactorX; // For new (not loaded) cfgs.
+			aceMeta.DpiFactorY = DpiUtil.FactorY;
 
 			aceApp.LastUsedFile.ClearCredentials(true);
 
@@ -272,6 +277,7 @@ namespace KeePass.App.Configuration
 			}
 
 			SearchUtil.FinishDeserialize(aceDef.SearchParameters);
+			DpiScale();
 
 			if(NativeLib.IsUnix())
 			{
@@ -384,6 +390,88 @@ namespace KeePass.App.Configuration
 			else aceInt.ProxyPassword = StrUtil.Deobfuscate(aceInt.ProxyPassword);
 		}
 
+		private void DpiScale()
+		{
+			AceMeta aceMeta = this.Meta; // m_meta might be null
+			double dCfgX = aceMeta.DpiFactorX, dCfgY = aceMeta.DpiFactorY;
+			double dScrX = DpiUtil.FactorX, dScrY = DpiUtil.FactorY;
+
+			if((dScrX == dCfgX) && (dScrY == dCfgY)) return;
+
+			// When this method returns, all positions and sizes are in pixels
+			// for the current screen DPI
+			aceMeta.DpiFactorX = dScrX;
+			aceMeta.DpiFactorY = dScrY;
+
+			// Backward compatibility; configuration files created by KeePass
+			// 2.37 and earlier do not contain DpiFactor* values, they default
+			// to 0.0 and all positions and sizes are in pixels for the current
+			// screen DPI; so, do not perform any DPI scaling in this case
+			if((dCfgX == 0.0) || (dCfgY == 0.0)) return;
+
+			double sX = dScrX / dCfgX, sY = dScrY / dCfgY;
+			GFunc<int, int> fX = delegate(int x)
+			{
+				return (int)Math.Round((double)x * sX);
+			};
+			GFunc<int, int> fY = delegate(int y)
+			{
+				return (int)Math.Round((double)y * sY);
+			};
+			GFunc<string, string> fWsr = delegate(string strRect)
+			{
+				return UIUtil.ScaleWindowScreenRect(strRect, sX, sY);
+			};
+			GFunc<string, string> fVX = delegate(string strArray)
+			{
+				if(string.IsNullOrEmpty(strArray)) return strArray;
+
+				try
+				{
+					int[] v = StrUtil.DeserializeIntArray(strArray);
+					if(v == null) { Debug.Assert(false); return strArray; }
+
+					for(int i = 0; i < v.Length; ++i)
+						v[i] = (int)Math.Round((double)v[i] * sX);
+
+					return StrUtil.SerializeIntArray(v);
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return strArray;
+			};
+			GAction<AceFont> fFont = delegate(AceFont f)
+			{
+				if(f == null) { Debug.Assert(false); return; }
+
+				if(f.GraphicsUnit == GraphicsUnit.Pixel)
+					f.Size = (float)(f.Size * sY);
+			};
+
+			AceMainWindow mw = this.MainWindow;
+			AceUI ui = this.UI;
+
+			if(mw.X != AppDefs.InvalidWindowValue) mw.X = fX(mw.X);
+			if(mw.Y != AppDefs.InvalidWindowValue) mw.Y = fY(mw.Y);
+			if(mw.Width != AppDefs.InvalidWindowValue) mw.Width = fX(mw.Width);
+			if(mw.Height != AppDefs.InvalidWindowValue) mw.Height = fY(mw.Height);
+
+			foreach(AceColumn c in mw.EntryListColumns)
+			{
+				if(c.Width >= 0) c.Width = fX(c.Width);
+			}
+
+			ui.DataViewerRect = fWsr(ui.DataViewerRect);
+			ui.DataEditorRect = fWsr(ui.DataEditorRect);
+			ui.CharPickerRect = fWsr(ui.CharPickerRect);
+			ui.AutoTypeCtxRect = fWsr(ui.AutoTypeCtxRect);
+			ui.AutoTypeCtxColumnWidths = fVX(ui.AutoTypeCtxColumnWidths);
+
+			fFont(ui.StandardFont);
+			fFont(ui.PasswordFont);
+			fFont(ui.DataEditorFont);
+		}
+
 		private static Dictionary<object, string> m_dictXmlPathCache =
 			new Dictionary<object, string>();
 		public static bool IsOptionEnforced(object pContainer, PropertyInfo pi)
@@ -493,6 +581,22 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bOmitDefaultValues; }
 			set { m_bOmitDefaultValues = value; }
+		}
+
+		private double m_dDpiFactorX = 0.0; // See AppConfigEx.DpiScale()
+		[DefaultValue(0.0)]
+		public double DpiFactorX
+		{
+			get { return m_dDpiFactorX; }
+			set { m_dDpiFactorX = value; }
+		}
+
+		private double m_dDpiFactorY = 0.0; // See AppConfigEx.DpiScale()
+		[DefaultValue(0.0)]
+		public double DpiFactorY
+		{
+			get { return m_dDpiFactorY; }
+			set { m_dDpiFactorY = value; }
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2485,7 +2485,7 @@ namespace KeePass.Forms
 			}
 
 			PrintForm pf = new PrintForm();
-			pf.InitEx(pg, true, m_pListSorter.Column);
+			pf.InitEx(pg, pd, m_ilCurrentIcons, true, m_pListSorter.Column);
 			UIUtil.ShowDialogAndDestroy(pf);
 		}
 
@@ -4051,6 +4051,10 @@ namespace KeePass.Forms
 			Debug.Assert(vEntries != null); if(vEntries == null) return;
 			if(vEntries.Length == 0) return;
 
+			if(MonoWorkarounds.IsRequired(1690) && (m_lvEntries.Items.Count != 0))
+				m_lvEntries.Items[0].Focused = true;
+
+			++m_uBlockEntrySelectionEvent;
 			if(bLockUIUpdate) m_lvEntries.BeginUpdate();
 
 			lock(m_asyncListUpdate.ListEditSyncObject)
@@ -4070,6 +4074,7 @@ namespace KeePass.Forms
 				Program.Config.MainWindow.EntryListAlternatingBgColors);
 
 			if(bLockUIUpdate) m_lvEntries.EndUpdate();
+			--m_uBlockEntrySelectionEvent;
 		}
 
 		private bool PreSaveValidate(PwDatabase pd)

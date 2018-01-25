@@ -1,5 +1,5 @@
 /*
-	Design Copyright (c) 2003-2017 Dominik Reichl
+	Copyright (c) 2003-2018 Dominik Reichl.
 */
 
 body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a, kbd kbd {
@@ -170,6 +170,11 @@ div.menubox a:hover {
 }
 
 /* --------------------------------------------------------------------- */
+
+table.laytable {
+	width: 100%;
+	border: 0px none;
+}
 
 table.tablebox, table.tablebox75 {
 	background-color: #EEEEEE;
@@ -366,6 +371,11 @@ div.tipdiv {
 .withspc > li + li {
 	margin-top: 0.75em;
 }
+
+.codekw { color: #0000FF; }
+.codetp { color: #008888; }
+.codecm { color: #008800; }
+.codest { color: #880000; }
 
 /* --------------------------------------------------------------------- */
 

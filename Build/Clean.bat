@@ -51,16 +51,18 @@ DEL /Q ..\Plugins\SamplePluginCpp\*.user
 DEL /Q ..\Plugins\SamplePluginCpp\*.ncb
 DEL /A:H ..\Plugins\SamplePluginCpp\SamplePluginCpp.suo
 
-RMDIR /S /Q ..\Translation\TrlUtil\obj
 RMDIR /S /Q ..\Translation\TrlUtil\Build
+RMDIR /S /Q ..\Translation\TrlUtil\obj
+DEL ..\Translation\KeePass.config.xml
+DEL ..\Translation\KeePass.exe
+DEL ..\Translation\KeePass.exe.config
+DEL ..\Translation\KeePass.pdb
+DEL ..\Translation\KeePass.XmlSerializers.dll
 DEL ..\Translation\TrlUtil.exe
+DEL ..\Translation\TrlUtil.exe.config
 DEL ..\Translation\TrlUtil.pdb
 DEL ..\Translation\TrlUtil.vshost.exe
 DEL ..\Translation\TrlUtil.vshost.exe.manifest
-DEL ..\Translation\KeePass.exe
-DEL ..\Translation\KeePass.XmlSerializers.dll
-DEL ..\Translation\KeePass.pdb
-DEL ..\Translation\KeePass.config.xml
 
 DEL /A:H ..\Ext\KeePassMsi\KeePassMsi.suo
 RMDIR /S /Q ..\Ext\KeePassMsi\.vs

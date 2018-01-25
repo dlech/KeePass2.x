@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@ namespace KeePass.Util
 
 				string str = (k.GetValue(string.Empty) as string);
 				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return false; }
+				str = FixPrintCommandLine(str);
 
 				string strPath = Program.TempFilesPool.GetTempFileName("html");
 
@@ -78,6 +79,24 @@ namespace KeePass.Util
 			finally { if(k != null) k.Close(); }
 
 			return false;
+		}
+
+		private static string FixPrintCommandLine(string strCmd)
+		{
+			string str = strCmd;
+
+			// Workaround for Microsoft Office breaking the 'Print' shell verb;
+			// https://sourceforge.net/p/keepass/bugs/1675/
+			// https://support.microsoft.com/en-us/help/274527/cannot-print-file-with--htm-extension-from-windows-explorer-by-right-c
+			if(str.IndexOf("\\msohtmed.exe", StrUtil.CaseIgnoreCmp) >= 0)
+			{
+				string strSys = UrlUtil.EnsureTerminatingSeparator(
+					Environment.SystemDirectory, false);
+				str = "\"" + strSys + "rundll32.exe\" \"" + strSys +
+					"mshtml.dll\",PrintHTML \"%1\"";
+			}
+
+			return str;
 		}
 
 		private static bool PrintHtmlWB(string strHtml)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ namespace KeePassLib.Utility
 	public static class MemUtil
 	{
 		internal static readonly byte[] EmptyByteArray = new byte[0];
+
+		internal static readonly ArrayHelperEx<char> ArrayHelperExOfChar =
+			new ArrayHelperEx<char>();
 
 		private static readonly uint[] m_vSBox = new uint[256] {
 			0xCD2FACB3, 0xE78A7F5C, 0x6F0803FC, 0xBCF6E230,
@@ -785,6 +788,80 @@ namespace KeePassLib.Utility
 			}
 
 			yield break;
+		}
+	}
+
+	internal sealed class ArrayHelperEx<T> : IEqualityComparer<T[]>, IComparer<T[]>
+		where T : IEquatable<T>, IComparable<T>
+	{
+		public int GetHashCode(T[] obj)
+		{
+			if(obj == null) throw new ArgumentNullException("obj");
+
+			uint h = 0xC17962B7U;
+			unchecked
+			{
+				int n = obj.Length;
+				for(int i = 0; i < n; ++i)
+				{
+					h += (uint)obj[i].GetHashCode();
+					h = MemUtil.RotateLeft32(h * 0x5FC34C67U, 13);
+				}
+			}
+
+			return (int)h;
+		}
+
+		/* internal ulong GetHashCodeEx(T[] obj)
+		{
+			if(obj == null) throw new ArgumentNullException("obj");
+
+			ulong h = 0x207CAC8E509A3FC9UL;
+			unchecked
+			{
+				int n = obj.Length;
+				for(int i = 0; i < n; ++i)
+				{
+					h += (uint)obj[i].GetHashCode();
+					h = MemUtil.RotateLeft64(h * 0x54724D3EA2860CBBUL, 29);
+				}
+			}
+
+			return h;
+		} */
+
+		public bool Equals(T[] x, T[] y)
+		{
+			if(object.ReferenceEquals(x, y)) return true;
+			if((x == null) || (y == null)) return false;
+
+			int n = x.Length;
+			if(n != y.Length) return false;
+
+			for(int i = 0; i < n; ++i)
+			{
+				if(!x[i].Equals(y[i])) return false;
+			}
+
+			return true;
+		}
+
+		public int Compare(T[] x, T[] y)
+		{
+			if(object.ReferenceEquals(x, y)) return 0;
+			if(x == null) return -1;
+			if(y == null) return 1;
+
+			int n = x.Length, m = y.Length;
+			if(n != m) return ((n < m) ? -1 : 1);
+
+			for(int i = 0; i < n; ++i)
+			{
+				T tX = x[i], tY = y[i];
+				if(!tX.Equals(tY)) return tX.CompareTo(tY);
+			}
+
+			return 0;
 		}
 	}
 }
