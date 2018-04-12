@@ -44,7 +44,6 @@ namespace KeePass.Forms
 		private ProtectedString m_psWord = null;
 		private ProtectedString m_psSelected = ProtectedString.Empty;
 
-		private SecureEdit m_secWord = new SecureEdit();
 		private List<Button> m_lButtons = new List<Button>();
 		private List<Label> m_lLabels = new List<Label>();
 		private bool m_bFormLoaded = false;
@@ -93,6 +92,8 @@ namespace KeePass.Forms
 		public CharPickerForm()
 		{
 			InitializeComponent();
+
+			SecureTextBoxEx.InitEx(ref m_tbSelected);
 			Program.Translation.ApplyTo(this);
 		}
 
@@ -137,7 +138,8 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.Text = KPRes.PickCharacters + " - " + PwDefs.ShortProductName;
 
-			m_secWord.Attach(m_tbSelected, OnSelectedTextChangedEx, true);
+			// Must be set manually due to possible object override
+			m_tbSelected.TextChanged += this.OnSelectedTextChangedEx;
 
 			PwInputControlGroup.ConfigureHideButton(m_cbHideChars, null);
 
@@ -173,9 +175,7 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			byte[] pbUtf8 = m_secWord.ToUtf8();
-			m_psSelected = new ProtectedString(true, pbUtf8);
-			MemUtil.ZeroByteArray(pbUtf8);
+			m_psSelected = m_tbSelected.TextEx;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -188,7 +188,7 @@ namespace KeePass.Forms
 			if(strRect != m_strInitialFormRect) // Don't overwrite ""
 				Program.Config.UI.CharPickerRect = strRect;
 
-			m_secWord.Detach();
+			m_tbSelected.TextChanged -= this.OnSelectedTextChangedEx;
 
 			RemoveAllCharButtons();
 			m_fontChars.Dispose();
@@ -233,14 +233,14 @@ namespace KeePass.Forms
 
 			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
 
-			string strWord = ((m_psWord != null) ? m_psWord.ReadString() : string.Empty);
-			if(strWord.Length >= 1)
+			char[] vWord = ((m_psWord != null) ? m_psWord.ReadChars() : new char[0]);
+			if(vWord.Length >= 1)
 			{
 				int x = 0;
 				int nPnlWidth = m_pnlSelect.Width, nPnlHeight = m_pnlSelect.Height;
-				for(int i = 0; i < strWord.Length; ++i)
+				for(int i = 0; i < vWord.Length; ++i)
 				{
-					int w = ((nPnlWidth * (i + 1)) / strWord.Length) - x;
+					int w = ((nPnlWidth * (i + 1)) / vWord.Length) - x;
 
 					int rx = (bRtl ? (nPnlWidth - x - w) : x);
 
@@ -248,7 +248,7 @@ namespace KeePass.Forms
 					btn.Location = new Point(rx, 0);
 					btn.Size = new Size(w, nPnlHeight / 2 - 1);
 					btn.Font = m_fontChars;
-					btn.Tag = strWord[i];
+					btn.Tag = vWord[i];
 					btn.Click += this.OnSelectCharacter;
 
 					m_lButtons.Add(btn);
@@ -266,6 +266,7 @@ namespace KeePass.Forms
 					x += w;
 				}
 			}
+			MemUtil.ZeroArray<char>(vWord);
 
 			OnHideCharsCheckedChanged(null, EventArgs.Empty);
 		}
@@ -279,9 +280,9 @@ namespace KeePass.Forms
 				return;
 			}
 
-			m_secWord.EnableProtection(bHide);
+			m_tbSelected.EnableProtection(bHide);
 
-			string strHiddenChar = new string(SecureEdit.PasswordChar, 1);
+			string strHiddenChar = new string(SecureTextBoxEx.PasswordCharEx, 1);
 
 			bool bHideBtns = bHide;
 			bHideBtns |= !Program.Config.UI.Hiding.UnhideButtonAlsoUnhidesSource;
@@ -335,7 +336,7 @@ namespace KeePass.Forms
 
 		private void OnSelectedTextChangedEx(object sender, EventArgs e)
 		{
-			if((m_uCharCount > 0) && (m_secWord.TextLength == m_uCharCount))
+			if((m_uCharCount > 0) && (m_tbSelected.TextLength == (int)m_uCharCount))
 			{
 				// m_btnOK.Visible = true;
 				m_btnOK.Enabled = true;

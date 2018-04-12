@@ -78,7 +78,7 @@ namespace KeePass.Plugins
 
 			plgxOutInfo.CsprojFilePath = strFilePath;
 
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 			doc.Load(strFilePath);
 
 			ReadProject(doc.DocumentElement, plgxOutInfo);

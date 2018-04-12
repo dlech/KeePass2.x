@@ -378,6 +378,7 @@ namespace KeePass.Forms
 			m_bUpdateUIStateOnce = false; // We do it now
 
 			MainAppState s = GetMainAppState();
+			ulong uif = Program.Config.UI.UIFlags;
 
 			if(s.DatabaseOpened && bSetModified)
 				m_docMgr.ActiveDatabase.Modified = true;
@@ -526,11 +527,13 @@ namespace KeePass.Forms
 				m_menuEditShowExpInF);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEditFindDupPasswords,
 				m_menuEditFindSimPasswordsP, m_menuEditFindSimPasswordsC,
-				m_menuEditPwQualityReport);
+				m_menuEditPwQualityReport, m_menuEditFindLarge, m_menuEditFindLastMod);
 			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuEditShowParentGroup);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuToolsDbMaintenance,
 				m_menuToolsDbDelDupEntries, m_menuToolsDbDelEmptyGroups,
-				m_menuToolsDbDelUnusedIcons, m_menuToolsDbXmlRep, m_menuToolsPrintEmSheet);
+				m_menuToolsDbDelUnusedIcons, m_menuToolsPrintEmSheet);
+			UIUtil.SetEnabledFast(s.DatabaseOpened && ((uif &
+				(ulong)AceUIFlags.DisableXmlReplace) == 0), m_menuToolsDbXmlRep);
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileImport, m_menuFileExport);
 
@@ -609,7 +612,7 @@ namespace KeePass.Forms
 			if(cOptFocus != null) ResetDefaultFocus(cOptFocus);
 
 			if(this.UIStateUpdated != null) this.UIStateUpdated(this, EventArgs.Empty);
-			Program.TriggerSystem.RaiseEvent(EcasEventIDs.UpdatedUIState);
+			// Program.TriggerSystem.RaiseEvent(EcasEventIDs.UpdatedUIState);
 		}
 
 		private MainAppState UpdateUIGroupCtxState(MainAppState? stOpt)
@@ -1206,6 +1209,9 @@ namespace KeePass.Forms
 
 			m_asyncListUpdate.CancelPendingUpdatesAsync();
 
+			// https://sourceforge.net/p/keepass/bugs/1698/
+			++m_uBlockEntrySelectionEvent;
+
 			m_lvEntries.BeginUpdate();
 			lock(m_asyncListUpdate.ListEditSyncObject)
 			{
@@ -1282,6 +1288,7 @@ namespace KeePass.Forms
 				UIUtil.SetFocusedItem(m_lvEntries, lviFocused, false);
 
 			m_lvEntries.EndUpdate();
+			--m_uBlockEntrySelectionEvent;
 
 			// Switch the view *after* EndUpdate, otherwise drawing bug;
 			// https://sourceforge.net/p/keepass/bugs/1651/
@@ -2591,7 +2598,7 @@ namespace KeePass.Forms
 		}
 
 		/// <summary>
-		/// This function resets the internal user-inactivity timer.
+		/// Reset the internal user inactivity timers.
 		/// </summary>
 		public void NotifyUserActivity()
 		{
@@ -2604,6 +2611,8 @@ namespace KeePass.Forms
 				utcLockAt = utcLockAt.AddSeconds((double)m_nLockTimerMax);
 				m_lLockAtTicks = utcLockAt.Ticks;
 			}
+
+			Program.TriggerSystem.NotifyUserActivity();
 
 			if(this.UserActivityPost != null)
 				this.UserActivityPost(null, EventArgs.Empty);
@@ -5020,19 +5029,16 @@ namespace KeePass.Forms
 
 			pForm.InitSwitchToHistoryTab = bSwitchToHistoryTab;
 
-			if(pForm.ShowDialog() == DialogResult.OK)
-			{
-				bool bUpdImg = pwDb.UINeedsIconUpdate;
-				RefreshEntriesList(); // Update entry
-				UpdateUI(false, null, bUpdImg, null, false, null, pForm.HasModifiedEntry);
-			}
-			else
-			{
-				bool bUpdImg = pwDb.UINeedsIconUpdate;
-				RefreshEntriesList(); // Update last access time
-				UpdateUI(false, null, bUpdImg, null, false, null, false);
-			}
+			DialogResult dr = pForm.ShowDialog();
+			bool bMod = ((dr == DialogResult.OK) && pForm.HasModifiedEntry);
 			UIUtil.DestroyForm(pForm);
+
+			bool bUpdImg = pwDb.UINeedsIconUpdate;
+			RefreshEntriesList(); // Update entry / last access time
+			UpdateUI(false, null, bUpdImg, null, false, null, bMod);
+
+			if(Program.Config.Application.AutoSaveAfterEntryEdit && bMod)
+				SaveDatabase(pwDb, null);
 		}
 
 		private static bool ListContainsOnlyTans(PwObjectList<PwEntry> vEntries)
@@ -5372,6 +5378,8 @@ namespace KeePass.Forms
 				{
 					xs.Serialize(ms, ipc);
 				}
+
+				FileTransactionEx.ClearOld();
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -5701,6 +5709,8 @@ namespace KeePass.Forms
 					EnsureVisibleSelected(false);
 				}
 				else SelectFirstEntryIfNoneSelected();
+
+				UpdateUIState(false); // For selected entry
 			}
 
 			return l.Count;

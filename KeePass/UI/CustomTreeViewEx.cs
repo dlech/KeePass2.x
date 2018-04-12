@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Native;
 using KeePass.Util;
@@ -49,6 +49,8 @@ namespace KeePass.UI
 
 		public CustomTreeViewEx() : base()
 		{
+			if(Program.DesignMode) return;
+
 			// Enable default double buffering (must be combined with
 			// TVS_EX_DOUBLEBUFFER, see OnHandleCreated)
 			try { this.DoubleBuffered = true; }
@@ -83,6 +85,13 @@ namespace KeePass.UI
 			//	}
 			// }
 			// catch(Exception) { }
+
+			ApplyOptions();
+		}
+
+		internal void ApplyOptions()
+		{
+			this.ShowLines = Program.Config.UI.TreeViewShowLines;
 		}
 
 		// protected override void WndProc(ref Message m)
@@ -142,6 +151,7 @@ namespace KeePass.UI
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+			if(Program.DesignMode) return;
 
 			try
 			{

@@ -59,16 +59,11 @@ namespace KeePass.DataExchange
 					if(dlg.ResultFiles[0].Length == 0) { Debug.Assert(false); goto ExpZRet; }
 				}
 
-				Application.DoEvents(); // Redraw parent window
-
 				IOConnectionInfo iocOutput = (ffp.RequiresFile ? IOConnectionInfo.FromPath(
 					dlg.ResultFiles[0]) : null);
 
-				try
-				{
-					bResult = Export(pwExportInfo, dlg.ResultFormat, iocOutput, slLogger);
-				}
-				catch(Exception ex) { MessageService.ShowWarning(ex); }
+				Application.DoEvents(); // Redraw parent window
+				bResult = Export(pwExportInfo, ffp, iocOutput, slLogger);
 			}
 
 		ExpZRet:
@@ -102,22 +97,21 @@ namespace KeePass.DataExchange
 			if(!fileFormat.SupportsExport) return false;
 			if(!fileFormat.TryBeginExport()) return false;
 
-			// bool bExistedAlready = File.Exists(strOutputFile);
-			bool bExistedAlready = (fileFormat.RequiresFile ? IOConnection.FileExists(
-				iocOutput) : false);
-
-			// FileStream fsOut = new FileStream(strOutputFile, FileMode.Create,
-			//	FileAccess.Write, FileShare.None);
-			Stream sOut = (fileFormat.RequiresFile ? IOConnection.OpenWrite(
-				iocOutput) : null);
-
+			bool bExistedAlready = true; // No deletion by default
 			bool bResult = false;
-			try { bResult = fileFormat.Export(pwExportInfo, sOut, slLogger); }
+			try
+			{
+				bExistedAlready = (fileFormat.RequiresFile ? IOConnection.FileExists(
+					iocOutput) : false);
+				Stream s = (fileFormat.RequiresFile ? IOConnection.OpenWrite(
+					iocOutput) : null);
+
+				try { bResult = fileFormat.Export(pwExportInfo, s, slLogger); }
+				finally { if(s != null) s.Close(); }
+			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
-			if(sOut != null) sOut.Close();
-
-			if(fileFormat.RequiresFile && (bResult == false) && (bExistedAlready == false))
+			if(fileFormat.RequiresFile && !bResult && !bExistedAlready)
 			{
 				try { IOConnection.DeleteFile(iocOutput); }
 				catch(Exception) { }

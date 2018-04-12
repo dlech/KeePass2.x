@@ -48,7 +48,6 @@ namespace KeePass.Forms
 		private bool m_bCanRememberCred = true;
 		private bool m_bTestConnection = false;
 
-		private SecureEdit m_secPassword = new SecureEdit();
 		private List<KeyValuePair<IocPropertyInfo, Control>> m_lProps =
 			new List<KeyValuePair<IocPropertyInfo, Control>>();
 
@@ -69,6 +68,8 @@ namespace KeePass.Forms
 		public IOConnectionForm()
 		{
 			InitializeComponent();
+
+			SecureTextBoxEx.InitEx(ref m_tbPassword);
 			Program.Translation.ApplyTo(this);
 		}
 
@@ -94,11 +95,9 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_lblPassword);
 			FontUtil.AssignDefaultBold(m_lblRemember);
 
-			m_secPassword.Attach(m_tbPassword, null, true);
-
 			m_tbUrl.Text = (m_ioc.IsLocalFile() ? string.Empty : m_ioc.Path);
 			m_tbUserName.Text = m_ioc.UserName;
-			m_secPassword.SetPassword(StrUtil.Utf8.GetBytes(m_ioc.Password));
+			m_tbPassword.Text = m_ioc.Password;
 
 			m_cmbCredSaveMode.Items.Add(KPRes.CredSaveNone);
 			m_cmbCredSaveMode.Items.Add(KPRes.CredSaveUserOnly);
@@ -137,7 +136,7 @@ namespace KeePass.Forms
 
 			m_ioc.Path = strUrl;
 			m_ioc.UserName = m_tbUserName.Text;
-			m_ioc.Password = StrUtil.Utf8.GetString(m_secPassword.ToUtf8());
+			m_ioc.Password = m_tbPassword.TextEx.ReadString();
 
 			if(m_cmbCredSaveMode.SelectedIndex == 1)
 				m_ioc.CredSaveMode = IOCredSaveMode.UserNameOnly;
@@ -265,8 +264,6 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
-			m_secPassword.Detach();
-
 			GlobalWindowManager.RemoveWindow(this);
 		}
 

@@ -514,17 +514,9 @@ namespace KeePassLib.Serialization
 			}
 			while(File.Exists(strPath));
 
-#if !KeePassLibSD
 			byte[] pbData = pb.ReadData();
-			File.WriteAllBytes(strPath, pbData);
-			MemUtil.ZeroByteArray(pbData);
-#else
-			FileStream fs = new FileStream(strPath, FileMode.Create,
-				FileAccess.Write, FileShare.None);
-			byte[] pbData = pb.ReadData();
-			fs.Write(pbData, 0, pbData.Length);
-			fs.Close();
-#endif
+			try { File.WriteAllBytes(strPath, pbData); }
+			finally { if(pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
 		}
 	}
 }

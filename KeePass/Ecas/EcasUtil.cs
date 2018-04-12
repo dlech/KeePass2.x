@@ -130,6 +130,12 @@ namespace KeePass.Ecas
 			return vParams[iIndex];
 		}
 
+		public static bool GetParamBool(List<string> vParams, int iIndex)
+		{
+			string str = GetParamString(vParams, iIndex, string.Empty);
+			return StrUtil.StringToBool(str);
+		}
+
 		public static uint GetParamUInt(List<string> vParams, int iIndex)
 		{
 			return GetParamUInt(vParams, iIndex, 0);

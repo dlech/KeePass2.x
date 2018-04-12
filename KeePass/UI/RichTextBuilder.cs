@@ -267,7 +267,7 @@ namespace KeePass.UI
 				strRtf = Regex.Replace(strRtf,
 					@"(\\)(\{[\u0020-\u005B\u005D-z\w\s]*?)(\})", "$1$2$1$3");
 
-			rtb.Rtf = strRtf;
+			rtb.Rtf = StrUtil.RtfFix(strRtf);
 		}
 	}
 }

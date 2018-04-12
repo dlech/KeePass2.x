@@ -78,7 +78,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(sInput);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;

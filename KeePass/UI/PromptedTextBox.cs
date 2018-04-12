@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 namespace KeePass.UI
 {
@@ -48,7 +48,7 @@ namespace KeePass.UI
 		{
 			base.WndProc(ref m);
 
-			if((m.Msg == WM_PAINT) && !this.Focused && (this.Text.Length == 0) &&
+			if((m.Msg == WM_PAINT) && !this.Focused && (this.TextLength == 0) &&
 				(m_strPrompt.Length > 0))
 			{
 				TextFormatFlags tff = (TextFormatFlags.EndEllipsis |

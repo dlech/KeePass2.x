@@ -38,6 +38,8 @@ namespace KeePass.UI
 	{
 		public QualityProgressBar() : base()
 		{
+			if(Program.DesignMode) return;
+
 			this.DoubleBuffered = true;
 		}
 
@@ -73,6 +75,7 @@ namespace KeePass.UI
 			get { return m_pbsStyle; }
 			set { m_pbsStyle = value; this.Invalidate(); }
 		}
+		public bool ShouldSerializeStyle() { return false; }
 
 		private string m_strText = string.Empty;
 		[DefaultValue("")]

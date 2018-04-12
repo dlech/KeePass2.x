@@ -113,7 +113,7 @@ namespace KeePass.DataExchange.Formats
 			ms = new MemoryStream(pbDataUtf8, false);
 			StreamReader sr = new StreamReader(ms, StrUtil.Utf8);
 
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(sr);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;

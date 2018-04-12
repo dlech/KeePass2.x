@@ -373,8 +373,14 @@
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>KeePassLib\Utility\TimeUtil.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Utility\TypeOverridePool.cs">
+      <Link>KeePassLib\Utility\TypeOverridePool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>KeePassLib\Utility\UrlUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\XmlUtilEx.cs">
+      <Link>KeePassLib\Utility\XmlUtilEx.cs</Link>
     </Compile>
     <Compile Include="App\AppDefs.cs" />
     <Compile Include="App\AppHelp.cs" />
@@ -849,6 +855,9 @@
     <Compile Include="UI\PwInputControlGroup.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
     <Compile Include="UI\RtlAwareResizeScope.cs" />
+    <Compile Include="UI\SecureTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\SplitButtonEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -887,8 +896,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\RichTextBoxContextMenu.cs" />
-    <Compile Include="UI\SecureEdit.cs">
-    </Compile>
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\IPluginHost.cs" />
     <Compile Include="Plugins\DefaultPluginHost.cs" />

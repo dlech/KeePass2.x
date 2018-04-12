@@ -239,6 +239,9 @@ namespace KeePass.Util.SendInputExt
 				"MSTSC", // Remote Desktop Connection client
 				"VirtualBox", // VirtualBox does not support VK_PACKET
 				"VpxClient" // VMware vSphere client
+
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/b77448e4/
+				// "vmware-vmx" // VMware Workstation 14 (?)
 			};
 			foreach(string strEnfKey in vEnfKey)
 			{

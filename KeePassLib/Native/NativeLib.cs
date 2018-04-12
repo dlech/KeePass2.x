@@ -53,24 +53,6 @@ namespace KeePassLib.Native
 			set { m_bAllowNative = value; }
 		}
 
-		private static int? g_oiPointerSize = null;
-		/// <summary>
-		/// Size of a native pointer (in bytes).
-		/// </summary>
-		public static int PointerSize
-		{
-			get
-			{
-				if(!g_oiPointerSize.HasValue)
-#if KeePassUAP
-					g_oiPointerSize = Marshal.SizeOf<IntPtr>();
-#else
-					g_oiPointerSize = Marshal.SizeOf(typeof(IntPtr));
-#endif
-				return g_oiPointerSize.Value;
-			}
-		}
-
 		private static ulong? m_ouMonoVersion = null;
 		public static ulong MonoVersion
 		{

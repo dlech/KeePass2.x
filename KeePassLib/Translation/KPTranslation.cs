@@ -111,23 +111,17 @@ namespace KeePassLib.Translation
 			if(xs == null) throw new ArgumentNullException("xs");
 
 #if !KeePassLibSD
-			GZipStream gz = new GZipStream(sOut, CompressionMode.Compress);
+			using(GZipStream gz = new GZipStream(sOut, CompressionMode.Compress))
 #else
-			GZipOutputStream gz = new GZipOutputStream(sOut);
+			using(GZipOutputStream gz = new GZipOutputStream(sOut))
 #endif
+			{
+				using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(gz))
+				{
+					xs.Serialize(xw, kpTrl);
+				}
+			}
 
-			XmlWriterSettings xws = new XmlWriterSettings();
-			xws.CheckCharacters = true;
-			xws.Encoding = StrUtil.Utf8;
-			xws.Indent = true;
-			xws.IndentChars = "\t";
-
-			XmlWriter xw = XmlWriter.Create(gz, xws);
-
-			xs.Serialize(xw, kpTrl);
-
-			xw.Close();
-			gz.Close();
 			sOut.Close();
 		}
 
@@ -148,15 +142,17 @@ namespace KeePassLib.Translation
 		{
 			if(xs == null) throw new ArgumentNullException("xs");
 
+			KPTranslation kpTrl = null;
+
 #if !KeePassLibSD
-			GZipStream gz = new GZipStream(s, CompressionMode.Decompress);
+			using(GZipStream gz = new GZipStream(s, CompressionMode.Decompress))
 #else
-			GZipInputStream gz = new GZipInputStream(s);
+			using(GZipInputStream gz = new GZipInputStream(s))
 #endif
+			{
+				kpTrl = (xs.Deserialize(gz) as KPTranslation);
+			}
 
-			KPTranslation kpTrl = (xs.Deserialize(gz) as KPTranslation);
-
-			gz.Close();
 			s.Close();
 			return kpTrl;
 		}

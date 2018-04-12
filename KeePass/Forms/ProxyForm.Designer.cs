@@ -42,7 +42,7 @@
 			this.m_rbAuthManual = new System.Windows.Forms.RadioButton();
 			this.m_rbAuthDefault = new System.Windows.Forms.RadioButton();
 			this.m_rbAuthNone = new System.Windows.Forms.RadioButton();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_lblPassword = new System.Windows.Forms.Label();
 			this.m_tbUser = new System.Windows.Forms.TextBox();
 			this.m_lblUser = new System.Windows.Forms.Label();
@@ -277,7 +277,7 @@
 		private System.Windows.Forms.RadioButton m_rbSystemProxy;
 		private System.Windows.Forms.RadioButton m_rbNoProxy;
 		private System.Windows.Forms.GroupBox m_grpAuth;
-		private System.Windows.Forms.TextBox m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
 		private System.Windows.Forms.Label m_lblPassword;
 		private System.Windows.Forms.TextBox m_tbUser;
 		private System.Windows.Forms.Label m_lblUser;

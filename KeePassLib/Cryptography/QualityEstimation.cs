@@ -420,11 +420,12 @@ namespace KeePassLib.Cryptography
 		{
 			if(pbUnprotectedUtf8 == null) { Debug.Assert(false); return 0; }
 
-			char[] vChars = StrUtil.Utf8.GetChars(pbUnprotectedUtf8);
-			uint uResult = EstimatePasswordBits(vChars);
-			MemUtil.ZeroArray<char>(vChars);
+			char[] v = StrUtil.Utf8.GetChars(pbUnprotectedUtf8);
+			uint r;
+			try { r = EstimatePasswordBits(v); }
+			finally { MemUtil.ZeroArray<char>(v); }
 
-			return uResult;
+			return r;
 		}
 
 		private static QeCharType GetCharType(char ch)

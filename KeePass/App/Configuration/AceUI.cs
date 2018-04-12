@@ -61,6 +61,7 @@ namespace KeePass.App.Configuration
 		DisableKeyChangeDays = 0x8,
 		HidePwQuality = 0x10,
 		DisableUpdateCheck = 0x20,
+		DisableXmlReplace = 0x40,
 
 		HideBuiltInPwGenPrfInEntryDlg = 0x10000,
 		ShowLastAccessTime = 0x20000,
@@ -206,6 +207,14 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strToolStripRenderer = value;
 			}
+		}
+
+		private bool m_bTreeViewShowLines = false;
+		[DefaultValue(false)]
+		public bool TreeViewShowLines
+		{
+			get { return m_bTreeViewShowLines; }
+			set { m_bTreeViewShowLines = value; }
 		}
 
 		private bool m_bOptScreenReader = false;

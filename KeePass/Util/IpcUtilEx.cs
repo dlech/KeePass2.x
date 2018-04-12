@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
-using System.Xml.Serialization;
+using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 
 using KeePass.Forms;
 using KeePass.Native;
@@ -157,14 +157,12 @@ namespace KeePass.Util
 
 			try
 			{
-				XmlSerializer xml = new XmlSerializer(typeof(IpcParamEx));
-				FileStream fs = new FileStream(strPath, FileMode.Create, FileAccess.Write,
-					FileShare.None);
+				using(FileStream fs = new FileStream(strPath, FileMode.Create,
+					FileAccess.Write, FileShare.None))
+				{
+					XmlUtilEx.Serialize<IpcParamEx>(fs, ipcMsg);
+				}
 
-				try { xml.Serialize(fs, ipcMsg); }
-				catch(Exception) { Debug.Assert(false); }
-
-				fs.Close();
 				return true;
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -195,16 +193,13 @@ namespace KeePass.Util
 			IpcParamEx ipcParam = null;
 			try
 			{
-				XmlSerializer xml = new XmlSerializer(typeof(IpcParamEx));
-				FileStream fs = new FileStream(strPath, FileMode.Open,
-					FileAccess.Read, FileShare.Read);
-
-				try { ipcParam = (IpcParamEx)xml.Deserialize(fs); }
-				catch(Exception) { Debug.Assert(false); }
-
-				fs.Close();
+				using(FileStream fs = new FileStream(strPath, FileMode.Open,
+					FileAccess.Read, FileShare.Read))
+				{
+					ipcParam = XmlUtilEx.Deserialize<IpcParamEx>(fs);
+				}
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(!File.Exists(strPath)); }
 
 			RemoveIpcInfoFile(nId);
 

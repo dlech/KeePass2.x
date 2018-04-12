@@ -67,6 +67,9 @@ namespace KeePass.Forms
 		public KeyCreationForm()
 		{
 			InitializeComponent();
+
+			SecureTextBoxEx.InitEx(ref m_tbPassword);
+			SecureTextBoxEx.InitEx(ref m_tbRepeatPassword);
 			Program.Translation.ApplyTo(this);
 		}
 
@@ -182,7 +185,7 @@ namespace KeePass.Forms
 			{
 				if(!m_icgPassword.ValidateData(true)) return false;
 
-				uint uPwLen = m_icgPassword.PasswordLength;
+				uint uPwLen = (uint)m_tbPassword.TextLength;
 				if(uPwLen == 0)
 				{
 					if(!MessageService.AskYesNo(KPRes.EmptyMasterPw +

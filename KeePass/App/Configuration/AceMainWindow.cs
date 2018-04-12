@@ -171,6 +171,14 @@ namespace KeePass.App.Configuration
 			set { m_bMinAfterCopy = value; }
 		}
 
+		private bool m_bMinAfterAutoType = false;
+		[DefaultValue(false)]
+		public bool MinimizeAfterAutoType
+		{
+			get { return m_bMinAfterAutoType; }
+			set { m_bMinAfterAutoType = value; }
+		}
+
 		private bool m_bMinAfterLocking = true;
 		[DefaultValue(true)]
 		public bool MinimizeAfterLocking

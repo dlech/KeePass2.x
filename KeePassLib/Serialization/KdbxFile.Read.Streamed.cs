@@ -95,36 +95,10 @@ namespace KeePassLib.Serialization
 
 		private void ReadXmlStreamed(Stream sXml, Stream sParent)
 		{
-			ReadDocumentStreamed(CreateXmlReader(sXml), sParent);
-		}
-
-		internal static XmlReaderSettings CreateStdXmlReaderSettings()
-		{
-			XmlReaderSettings xrs = new XmlReaderSettings();
-
-			xrs.CloseInput = true;
-			xrs.IgnoreComments = true;
-			xrs.IgnoreProcessingInstructions = true;
-			xrs.IgnoreWhitespace = true;
-
-#if KeePassUAP
-			xrs.DtdProcessing = DtdProcessing.Prohibit;
-#else
-#if !KeePassLibSD
-			// Also see PrepMonoDev.sh script
-			xrs.ProhibitDtd = true; // Obsolete in .NET 4, but still there
-			// xrs.DtdProcessing = DtdProcessing.Prohibit; // .NET 4 only
-#endif
-			xrs.ValidationType = ValidationType.None;
-#endif
-
-			return xrs;
-		}
-
-		private static XmlReader CreateXmlReader(Stream readerStream)
-		{
-			XmlReaderSettings xrs = CreateStdXmlReaderSettings();
-			return XmlReader.Create(readerStream, xrs);
+			using(XmlReader xr = XmlUtilEx.CreateXmlReader(sXml))
+			{
+				ReadDocumentStreamed(xr, sParent);
+			}
 		}
 
 		private void ReadDocumentStreamed(XmlReader xr, Stream sParentStream)

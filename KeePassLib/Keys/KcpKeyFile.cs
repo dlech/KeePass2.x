@@ -231,7 +231,7 @@ namespace KeePassLib.Keys
 
 			try
 			{
-				XmlDocument doc = new XmlDocument();
+				XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 				doc.Load(ms);
 
 				XmlElement el = doc.DocumentElement;
@@ -268,49 +268,31 @@ namespace KeePassLib.Keys
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			Stream sOut = IOConnection.OpenWrite(ioc);
+			using(Stream s = IOConnection.OpenWrite(ioc))
+			{
+				using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(s))
+				{
+					xw.WriteStartDocument();
+					xw.WriteStartElement(RootElementName); // <KeyFile>
 
-#if KeePassUAP
-			XmlWriterSettings xws = new XmlWriterSettings();
-			xws.Encoding = StrUtil.Utf8;
-			xws.Indent = false;
+					xw.WriteStartElement(MetaElementName); // <Meta>
+					xw.WriteStartElement(VersionElementName); // <Version>
+					xw.WriteString("1.00");
+					xw.WriteEndElement(); // </Version>
+					xw.WriteEndElement(); // </Meta>
 
-			XmlWriter xtw = XmlWriter.Create(sOut, xws);
-#else
-			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
-#endif
+					xw.WriteStartElement(KeyElementName); // <Key>
 
-			xtw.WriteStartDocument();
-			xtw.WriteWhitespace("\r\n");
-			xtw.WriteStartElement(RootElementName); // KeyFile
-			xtw.WriteWhitespace("\r\n\t");
+					xw.WriteStartElement(KeyDataElementName); // <Data>
+					xw.WriteString(Convert.ToBase64String(pbKeyData));
+					xw.WriteEndElement(); // </Data>
 
-			xtw.WriteStartElement(MetaElementName); // Meta
-			xtw.WriteWhitespace("\r\n\t\t");
-			xtw.WriteStartElement(VersionElementName); // Version
-			xtw.WriteString("1.00");
-			xtw.WriteEndElement(); // End Version
-			xtw.WriteWhitespace("\r\n\t");
-			xtw.WriteEndElement(); // End Meta
-			xtw.WriteWhitespace("\r\n\t");
+					xw.WriteEndElement(); // </Key>
 
-			xtw.WriteStartElement(KeyElementName); // Key
-			xtw.WriteWhitespace("\r\n\t\t");
-
-			xtw.WriteStartElement(KeyDataElementName); // Data
-			xtw.WriteString(Convert.ToBase64String(pbKeyData));
-			xtw.WriteEndElement(); // End Data
-			xtw.WriteWhitespace("\r\n\t");
-
-			xtw.WriteEndElement(); // End Key
-			xtw.WriteWhitespace("\r\n");
-
-			xtw.WriteEndElement(); // RootElementName
-			xtw.WriteWhitespace("\r\n");
-			xtw.WriteEndDocument(); // End KeyFile
-			xtw.Close();
-
-			sOut.Close();
+					xw.WriteEndElement(); // </KeyFile>
+					xw.WriteEndDocument();
+				}
+			}
 		}
 	}
 }
