@@ -136,14 +136,17 @@ namespace KeePass.Util
 				pbModData = OpenExternal(strName, pbData, opt);
 			else { Debug.Assert(false); }
 
+			ProtectedBinary r = null;
 			if((pbModData != null) && !MemUtil.ArraysEqual(pbData, pbModData) &&
 				!opt.ReadOnly)
 			{
 				if(FileDialogsEx.CheckAttachmentSize(pbModData.LongLength,
 					KPRes.AttachFailed + MessageService.NewParagraph + strName))
-					return new ProtectedBinary(pb.IsProtected, pbModData);
+					r = new ProtectedBinary(pb.IsProtected, pbModData);
 			}
-			return null;
+
+			if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
+			return r;
 		}
 
 		private static BinaryDataHandler ChooseHandler(string strName,
@@ -361,10 +364,7 @@ namespace KeePass.Util
 			if(string.IsNullOrEmpty(strItem)) { Debug.Assert(false); return; }
 			if(pb == null) { Debug.Assert(false); return; }
 
-			byte[] pbData = pb.ReadData();
-			if(pbData == null) { Debug.Assert(false); return; }
-
-			BinaryDataClass bdc = BinaryDataClassifier.Classify(strItem, pbData);
+			BinaryDataClass bdc = BinaryDataClassifier.Classify(strItem, pb);
 
 			BinaryDataOpenOptions oo = new BinaryDataOpenOptions();
 			oo.Handler = BinaryDataHandler.InternalViewer;

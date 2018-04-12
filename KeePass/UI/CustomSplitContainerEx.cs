@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Reflection;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePassLib.Native;
 
@@ -122,9 +122,11 @@ namespace KeePass.UI
 				catch(Exception) { Debug.Assert(false); }
 			}
 		}
+		public bool ShouldSerializeSplitterDistanceFrac() { return false; }
 
 		public CustomSplitContainerEx() : base()
 		{
+			// if(Program.DesignMode) return;
 		}
 
 		public void InitEx(ControlCollection cc, Control cDefault)

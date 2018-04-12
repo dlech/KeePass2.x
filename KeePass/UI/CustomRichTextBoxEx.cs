@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Drawing;
-using System.Diagnostics;
 
 using KeePass.Util;
 
@@ -58,6 +58,8 @@ namespace KeePass.UI
 
 		public CustomRichTextBoxEx() : base()
 		{
+			if(Program.DesignMode) return;
+
 			// We cannot use EnableAutoDragDrop, because moving some text
 			// using drag&drop can remove the selected text from the box
 			// (even when read-only is enabled!), which is usually not a
@@ -76,6 +78,7 @@ namespace KeePass.UI
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+			if(Program.DesignMode) return;
 
 			// The following operations should not recreate the handle
 			if(m_csAutoProps.TryEnter())

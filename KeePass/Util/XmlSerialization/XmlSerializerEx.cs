@@ -19,17 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Reflection;
-using System.Diagnostics;
 
 using KeePass.App.Configuration;
 
 using KeePassLib.Interfaces;
-using KeePassLib.Serialization;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
 
@@ -57,27 +56,28 @@ namespace KeePass.Util.XmlSerialization
 		public object Deserialize(Stream s)
 		{
 			object oResult = null;
-			if((m_t == typeof(AppConfigEx)) || (m_t == typeof(KPTranslation)))
+			using(XmlReader xr = XmlUtilEx.CreateXmlReader(s))
 			{
-				XmlReaderSettings xrs = KdbxFile.CreateStdXmlReaderSettings();
-				XmlReader xr = XmlReader.Create(s, xrs);
+				if((m_t == typeof(AppConfigEx)) || (m_t == typeof(KPTranslation)))
+				{
+					string strRootName = GetXmlName(m_t);
+					bool bRootFound = SkipToRoot(xr, strRootName);
 
-				string strRootName = GetXmlName(m_t);
-				bool bRootFound = SkipToRoot(xr, strRootName);
-
-				if(!bRootFound) { Debug.Assert(false); }
-				else if(m_t == typeof(AppConfigEx))
-					oResult = ReadAppConfigEx(xr);
-				else if(m_t == typeof(KPTranslation))
-					oResult = ReadKPTranslation(xr);
-				else { Debug.Assert(false); } // See top-level 'if'
-
-				xr.Close();
+					if(!bRootFound) { Debug.Assert(false); }
+					else if(m_t == typeof(AppConfigEx))
+						oResult = ReadAppConfigEx(xr);
+					else if(m_t == typeof(KPTranslation))
+						oResult = ReadKPTranslation(xr);
+					else { Debug.Assert(false); } // See top-level 'if'
+				}
+				else
+				{
+					XmlSerializer xs = new XmlSerializer(m_t);
+					oResult = xs.Deserialize(xr);
+				}
 			}
-			if(oResult != null) return oResult;
 
-			XmlSerializer xs = new XmlSerializer(m_t);
-			return xs.Deserialize(s);
+			return oResult;
 		}
 
 		private static bool SkipToRoot(XmlReader xr, string strRootName)

@@ -231,15 +231,15 @@ namespace KeePass.Ecas
 
 			foreach(EcasCondition c in m_conds)
 			{
-				if(Program.EcasPool.EvaluateCondition(c, ctx) == false)
+				if(!Program.EcasPool.EvaluateCondition(c, ctx))
 					return;
 			}
 
-			for(uint iAction = 0; iAction < m_acts.UCount; ++iAction)
+			foreach(EcasAction a in m_acts)
 			{
 				if(ctx.Cancel) break;
 
-				Program.EcasPool.ExecuteAction(m_acts.GetAt(iAction), ctx);
+				Program.EcasPool.ExecuteAction(a, ctx);
 			}
 
 			if(m_bTurnOffAfterAction) m_bOn = false;

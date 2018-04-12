@@ -155,6 +155,8 @@
 			this.m_menuEditFindSimPasswordsP = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditFindSimPasswordsC = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditPwQualityReport = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditShowSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditFindLarge = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditShowByTag = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEditFind = new System.Windows.Forms.ToolStripMenuItem();
@@ -253,6 +255,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_menuEditFindLastMod = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -1170,7 +1173,10 @@
             this.m_menuEditFindDupPasswords,
             this.m_menuEditFindSimPasswordsP,
             this.m_menuEditFindSimPasswordsC,
-            this.m_menuEditPwQualityReport});
+            this.m_menuEditPwQualityReport,
+            this.m_menuEditShowSep2,
+            this.m_menuEditFindLarge,
+            this.m_menuEditFindLastMod});
 			this.m_menuEditShowEntries.Name = "m_menuEditShowEntries";
 			this.m_menuEditShowEntries.Size = new System.Drawing.Size(179, 22);
 			this.m_menuEditShowEntries.Text = "&Show Entries";
@@ -1304,6 +1310,19 @@
 			this.m_menuEditPwQualityReport.Size = new System.Drawing.Size(256, 22);
 			this.m_menuEditPwQualityReport.Text = "Password &Quality Report...";
 			this.m_menuEditPwQualityReport.Click += new System.EventHandler(this.OnEditPwQualityReport);
+			// 
+			// m_menuEditShowSep2
+			// 
+			this.m_menuEditShowSep2.Name = "m_menuEditShowSep2";
+			this.m_menuEditShowSep2.Size = new System.Drawing.Size(253, 6);
+			// 
+			// m_menuEditFindLarge
+			// 
+			this.m_menuEditFindLarge.Image = global::KeePass.Properties.Resources.B16x16_HwInfo;
+			this.m_menuEditFindLarge.Name = "m_menuEditFindLarge";
+			this.m_menuEditFindLarge.Size = new System.Drawing.Size(256, 22);
+			this.m_menuEditFindLarge.Text = "&Large Entries...";
+			this.m_menuEditFindLarge.Click += new System.EventHandler(this.OnEditFindLarge);
 			// 
 			// m_menuEditShowByTag
 			// 
@@ -2166,6 +2185,14 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_menuEditFindLastMod
+			// 
+			this.m_menuEditFindLastMod.Image = global::KeePass.Properties.Resources.B16x16_History;
+			this.m_menuEditFindLastMod.Name = "m_menuEditFindLastMod";
+			this.m_menuEditFindLastMod.Size = new System.Drawing.Size(256, 22);
+			this.m_menuEditFindLastMod.Text = "Last &Modified Entries...";
+			this.m_menuEditFindLastMod.Click += new System.EventHandler(this.OnEditFindLastMod);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2432,6 +2459,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEditFindSimPasswordsC;
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsDbSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsPrintEmSheet;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditShowSep2;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditFindLarge;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditFindLastMod;
 	}
 }
 

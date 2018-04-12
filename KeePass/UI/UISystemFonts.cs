@@ -142,7 +142,7 @@ namespace KeePass.UI
 			string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
 			if(!File.Exists(strConfig)) return;
 
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 			doc.Load(strConfig);
 
 			foreach(XmlNode xn in doc.DocumentElement.ChildNodes)

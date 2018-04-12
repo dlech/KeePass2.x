@@ -33,9 +33,9 @@
 			this.m_lblIntro = new System.Windows.Forms.Label();
 			this.m_lblMultiInfo = new System.Windows.Forms.Label();
 			this.m_cbPassword = new System.Windows.Forms.CheckBox();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_lblRepeatPassword = new System.Windows.Forms.Label();
-			this.m_tbRepeatPassword = new System.Windows.Forms.TextBox();
+			this.m_tbRepeatPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_cbKeyFile = new System.Windows.Forms.CheckBox();
 			this.m_cbUserAccount = new System.Windows.Forms.CheckBox();
 			this.m_lblWindowsAccDesc = new System.Windows.Forms.Label();
@@ -410,9 +410,9 @@
 		private System.Windows.Forms.Label m_lblIntro;
 		private System.Windows.Forms.Label m_lblMultiInfo;
 		private System.Windows.Forms.CheckBox m_cbPassword;
-		private System.Windows.Forms.TextBox m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
 		private System.Windows.Forms.Label m_lblRepeatPassword;
-		private System.Windows.Forms.TextBox m_tbRepeatPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbRepeatPassword;
 		private System.Windows.Forms.CheckBox m_cbKeyFile;
 		private System.Windows.Forms.Button m_btnOpenKeyFile;
 		private System.Windows.Forms.Button m_btnSaveKeyFile;

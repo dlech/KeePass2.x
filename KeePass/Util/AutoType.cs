@@ -227,6 +227,9 @@ namespace KeePass.Util
 				// SprEngine.Compile might have modified the database;
 				// pd.Modified is set by SprEngine
 				mf.UpdateUI(false, null, false, null, false, null, false);
+
+				if(Program.Config.MainWindow.MinimizeAfterAutoType)
+					UIUtil.SetWindowState(mf, FormWindowState.Minimized);
 			}
 
 			return true;

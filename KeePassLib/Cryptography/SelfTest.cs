@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
@@ -58,6 +59,25 @@ namespace KeePassLib.Cryptography
 		/// </summary>
 		public static void Perform()
 		{
+#if KeePassUAP
+			Debug.Assert(Marshal.SizeOf<int>() == 4);
+			Debug.Assert(Marshal.SizeOf<uint>() == 4);
+			Debug.Assert(Marshal.SizeOf<long>() == 8);
+			Debug.Assert(Marshal.SizeOf<ulong>() == 8);
+			Debug.Assert(Marshal.SizeOf<IntPtr>() == IntPtr.Size);
+#else
+			Debug.Assert(Marshal.SizeOf(typeof(int)) == 4);
+			Debug.Assert(Marshal.SizeOf(typeof(uint)) == 4);
+			Debug.Assert(Marshal.SizeOf(typeof(long)) == 8);
+			Debug.Assert(Marshal.SizeOf(typeof(ulong)) == 8);
+			Debug.Assert(Marshal.SizeOf(typeof(IntPtr)) == IntPtr.Size);
+#endif
+			Debug.Assert((IntPtr.Size == 4) || (IntPtr.Size == 8));
+
+			Debug.Assert((int)PwIcon.World == 1);
+			Debug.Assert((int)PwIcon.Warning == 2);
+			Debug.Assert((int)PwIcon.BlackBerry == 68);
+
 			Random r = CryptoRandom.NewWeakRandom();
 
 			TestFipsComplianceProblems(); // Must be the first test
@@ -78,10 +98,6 @@ namespace KeePassLib.Cryptography
 			TestMemUtil(r);
 			TestStrUtil();
 			TestUrlUtil();
-
-			Debug.Assert((int)PwIcon.World == 1);
-			Debug.Assert((int)PwIcon.Warning == 2);
-			Debug.Assert((int)PwIcon.BlackBerry == 68);
 
 #if KeePassUAP
 			SelfTestEx.Perform();
@@ -947,6 +963,14 @@ namespace KeePassLib.Cryptography
 				if(ps.ReadString() != str)
 					throw new SecurityException("ProtectedString-14");
 			}
+
+			ps = new ProtectedString(false, "ABCD");
+			ps2 = new ProtectedString(true, "EFG");
+			ps += (ps2 + "HI");
+			if(!ps.Equals(new ProtectedString(true, "ABCDEFGHI"), true))
+				throw new SecurityException("ProtectedString-15");
+			if(!ps.Equals(new ProtectedString(false, "ABCDEFGHI"), false))
+				throw new SecurityException("ProtectedString-16");
 #endif
 		}
 
@@ -1044,6 +1068,30 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-Case1");
 			if(string.Equals(@"a<b", @"a>b", StrUtil.CaseIgnoreCmp))
 				throw new InvalidOperationException("StrUtil-Case2");
+
+			const string strNL = "\n01\r23\n45\r\n67\r";
+			string strW = StrUtil.NormalizeNewLines(strNL, true);
+			string strL = StrUtil.NormalizeNewLines(strNL, false);
+			if(strW != "\r\n01\r\n23\r\n45\r\n67\r\n")
+				throw new InvalidOperationException("StrUtil-NewLine1");
+			if(strL != "\n01\n23\n45\n67\n")
+				throw new InvalidOperationException("StrUtil-NewLine2");
+			if(StrUtil.IsNewLineNormalized(strNL.ToCharArray(), true))
+				throw new InvalidOperationException("StrUtil-NewLine3");
+			if(StrUtil.IsNewLineNormalized(strNL.ToCharArray(), false))
+				throw new InvalidOperationException("StrUtil-NewLine4");
+			if(!StrUtil.IsNewLineNormalized(strW.ToCharArray(), true))
+				throw new InvalidOperationException("StrUtil-NewLine5");
+			if(StrUtil.IsNewLineNormalized(strW.ToCharArray(), false))
+				throw new InvalidOperationException("StrUtil-NewLine6");
+			if(StrUtil.IsNewLineNormalized(strL.ToCharArray(), true))
+				throw new InvalidOperationException("StrUtil-NewLine7");
+			if(!StrUtil.IsNewLineNormalized(strL.ToCharArray(), false))
+				throw new InvalidOperationException("StrUtil-NewLine8");
+			if(!StrUtil.IsNewLineNormalized(string.Empty.ToCharArray(), true))
+				throw new InvalidOperationException("StrUtil-NewLine9");
+			if(!StrUtil.IsNewLineNormalized(string.Empty.ToCharArray(), false))
+				throw new InvalidOperationException("StrUtil-NewLine10");
 #endif
 		}
 

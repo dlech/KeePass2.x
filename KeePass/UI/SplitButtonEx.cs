@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Native;
 using KeePass.Util;
@@ -49,6 +49,7 @@ namespace KeePass.UI
 			get { return m_ctx; }
 			set { m_ctx = value; }
 		}
+		public bool ShouldSerializeSplitDropDownMenu() { return false; }
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

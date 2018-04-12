@@ -59,7 +59,7 @@ namespace TrlUtil
 				StreamWriter swOut = new StreamWriter(strFile + ".lng.xml",
 					false, new UTF8Encoding(false));
 
-				XmlDocument xmlIn = new XmlDocument();
+				XmlDocument xmlIn = XmlUtilEx.CreateXmlDocument();
 				xmlIn.Load(strFile);
 
 				foreach(XmlNode xmlChild in xmlIn.DocumentElement.ChildNodes)
@@ -87,7 +87,7 @@ namespace TrlUtil
 			} */
 			else if(strCmd == "src_from_xml")
 			{
-				XmlDocument xmlIn = new XmlDocument();
+				XmlDocument xmlIn = XmlUtilEx.CreateXmlDocument();
 				xmlIn.Load(strFile);
 
 				foreach(XmlNode xmlTable in xmlIn.DocumentElement.SelectNodes("StringTable"))

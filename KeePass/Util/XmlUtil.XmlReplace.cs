@@ -19,13 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
-using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Forms;
 using KeePass.Resources;
@@ -179,7 +179,7 @@ namespace KeePass.Util
 			msOrg.Close();
 			string strXml = StrUtil.Utf8.GetString(pbXml);
 
-			XmlDocument xd = new XmlDocument();
+			XmlDocument xd = XmlUtilEx.CreateXmlDocument();
 			xd.LoadXml(strXml);
 
 			XPathNavigator xpNavRoot = xd.CreateNavigator();
@@ -203,13 +203,10 @@ namespace KeePass.Util
 			}
 
 			MemoryStream msMod = new MemoryStream();
-			XmlWriterSettings xws = new XmlWriterSettings();
-			xws.Encoding = StrUtil.Utf8;
-			xws.Indent = true;
-			xws.IndentChars = "\t";
-			XmlWriter xw = XmlWriter.Create(msMod, xws);
-			xd.Save(xw);
-
+			using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(msMod))
+			{
+				xd.Save(xw);
+			}
 			byte[] pbMod = msMod.ToArray();
 			msMod.Close();
 

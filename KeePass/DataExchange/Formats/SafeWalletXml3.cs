@@ -19,17 +19,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Xml;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
@@ -84,7 +85,7 @@ namespace KeePass.DataExchange.Formats
 			string strDoc = sr.ReadToEnd();
 			sr.Close();
 
-			XmlDocument xd = new XmlDocument();
+			XmlDocument xd = XmlUtilEx.CreateXmlDocument();
 			xd.LoadXml(strDoc);
 
 			XmlNode xnRoot = xd.DocumentElement;

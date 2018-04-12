@@ -52,8 +52,6 @@ namespace KeePass.Forms
 		private bool m_bCanExit = false;
 		private bool m_bHasExited = false;
 
-		private SecureEdit m_secPassword = new SecureEdit();
-
 		private bool m_bInitializing = true;
 		private bool m_bDisposed = false;
 
@@ -90,6 +88,8 @@ namespace KeePass.Forms
 		public KeyPromptForm()
 		{
 			InitializeComponent();
+
+			SecureTextBoxEx.InitEx(ref m_tbPassword);
 			Program.Translation.ApplyTo(this);
 		}
 
@@ -141,9 +141,8 @@ namespace KeePass.Forms
 				this.Text = strStart + " - " + strNameEx;
 			else this.Text = strStart;
 
-			m_tbPassword.Text = string.Empty;
-			m_secPassword.SecureDesktopMode = m_bSecureDesktop;
-			m_secPassword.Attach(m_tbPassword, ProcessTextChangedPassword, true);
+			// Must be set manually due to possible object override
+			m_tbPassword.TextChanged += this.ProcessTextChangedPassword;
 
 			// m_cmbKeyFile.OrderedImageList = m_lKeyFileImages;
 			AddKeyFileSuggPriv(KPRes.NoKeyFileSpecifiedMeta, true);
@@ -179,7 +178,7 @@ namespace KeePass.Forms
 					if(kcpPw != null)
 					{
 						m_cbPassword.Checked = true;
-						m_tbPassword.Text = kcpPw.Password.ReadString();
+						m_tbPassword.TextEx = kcpPw.Password;
 					}
 				}
 
@@ -285,7 +284,7 @@ namespace KeePass.Forms
 			// m_cmbKeyFile.OrderedImageList = null;
 			// m_lKeyFileImages.Clear();
 
-			m_secPassword.Detach();
+			m_tbPassword.TextChanged -= this.ProcessTextChangedPassword;
 		}
 
 		private bool CreateCompositeKey()
@@ -294,9 +293,9 @@ namespace KeePass.Forms
 
 			if(m_cbPassword.Checked) // Use a password
 			{
-				byte[] pb = m_secPassword.ToUtf8();
-				m_pKey.AddUserKey(new KcpPassword(pb));
-				MemUtil.ZeroByteArray(pb);
+				byte[] pb = m_tbPassword.TextEx.ReadUtf8();
+				try { m_pKey.AddUserKey(new KcpPassword(pb)); }
+				finally { MemUtil.ZeroByteArray(pb); }
 			}
 
 			string strKeyFile = m_cmbKeyFile.Text;
@@ -445,7 +444,7 @@ namespace KeePass.Forms
 		{
 			if(((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.CheckPassword) == 0) &&
 				((Program.Config.UI.KeyPromptFlags & (ulong)AceKeyUIFlags.UncheckPassword) == 0))
-				UIUtil.SetChecked(m_cbPassword, m_tbPassword.TextLength > 0);
+				UIUtil.SetChecked(m_cbPassword, (m_tbPassword.TextLength > 0));
 		}
 
 		private void OnCheckedHidePassword(object sender, EventArgs e)
@@ -457,7 +456,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			m_secPassword.EnableProtection(bHide);
+			m_tbPassword.EnableProtection(bHide);
 
 			if(!m_bInitializing) UIUtil.SetFocus(m_tbPassword, this);
 		}

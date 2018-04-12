@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 using KeePass.Util;
@@ -140,40 +140,43 @@ namespace KeePass.App
 
 		private static void ShowHelpOnline(string strTopic, string strSection)
 		{
-			string strCmd = PwDefs.HelpUrl;
-
-			if(strTopic != null) strCmd += strTopic + ".html";
-			if(strSection != null)
-			{
-				Debug.Assert(strTopic != null); // Topic must be present for section
-				strCmd += @"#" + strSection;
-			}
+			string strUrl = GetOnlineUrl(strTopic, strSection);
 
 			try
 			{
 				ParameterizedThreadStart pts = new ParameterizedThreadStart(AppHelp.RunCommandAsync);
 				Thread th = new Thread(pts); // Local, but thread will continue to run anyway
-				th.Start(strCmd);
+				th.Start(strUrl);
 			}
-			catch(Exception exThread)
+			catch(Exception ex)
 			{
-				MessageService.ShowWarning(strCmd, exThread);
+				MessageService.ShowWarning(strUrl, ex);
 			}
+		}
+
+		internal static string GetOnlineUrl(string strTopic, string strSection)
+		{
+			string str = PwDefs.HelpUrl;
+
+			if(strTopic != null) str += strTopic + ".html";
+			if(strSection != null)
+			{
+				Debug.Assert(strTopic != null); // Topic must be present for section
+				str += "#" + strSection;
+			}
+
+			return str;
 		}
 
 		private static void RunCommandAsync(object pData)
 		{
-			Debug.Assert(pData != null);
-			if(pData == null) throw new ArgumentNullException("pData");
+			string strCmd = (pData as string);
+			if(strCmd == null) { Debug.Assert(false); return; }
 
-			string strCommand = (pData as string);
-			Debug.Assert(strCommand != null);
-			if(strCommand == null) throw new ArgumentException();
-
-			try { Process.Start(strCommand); }
-			catch(Exception exStart)
+			try { Process.Start(strCmd); }
+			catch(Exception ex)
 			{
-				MessageService.ShowWarning(strCommand, exStart);
+				MessageService.ShowWarning(strCmd, ex);
 			}
 		}
 	}

@@ -299,6 +299,29 @@ namespace KeePassLib.Utility
 			return ("\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?");
 		}
 
+		public static string RtfFix(string strRtf)
+		{
+			if(strRtf == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strRtf;
+
+			// Workaround for .NET bug: the Rtf property of a RichTextBox
+			// can return an RTF text starting with "{\\urtf", but
+			// setting such an RTF text throws an exception (the setter
+			// checks for the RTF text to start with "{\\rtf");
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/7788872f/
+			// https://www.microsoft.com/en-us/download/details.aspx?id=10725
+			// https://msdn.microsoft.com/en-us/library/windows/desktop/bb774284.aspx
+			// https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/RichTextBox.cs
+			// If \\ansicpg is present (i.e. the encoding is defined
+			// explicitly), \\urtf probably can be replaced by \\rtf
+			const string strSt = "{\\urtf1\\ansi\\ansicpg"; // 65001 for UTF-8
+			if(str.StartsWith(strSt))
+				str = "{\\rtf1\\ansi\\ansicpg" + str.Substring(strSt.Length);
+
+			return str;
+		}
+
 		/// <summary>
 		/// Convert a string to a HTML sequence representing that string.
 		/// </summary>
@@ -1130,27 +1153,53 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
-		private static char[] m_vNewLineChars = null;
 		public static void NormalizeNewLines(ProtectedStringDictionary dict,
 			bool bWindows)
 		{
 			if(dict == null) { Debug.Assert(false); return; }
 
-			if(m_vNewLineChars == null)
-				m_vNewLineChars = new char[]{ '\r', '\n' };
-
-			List<string> vKeys = dict.GetKeys();
-			foreach(string strKey in vKeys)
+			List<string> lKeys = dict.GetKeys();
+			foreach(string strKey in lKeys)
 			{
 				ProtectedString ps = dict.Get(strKey);
 				if(ps == null) { Debug.Assert(false); continue; }
 
-				string strValue = ps.ReadString();
-				if(strValue.IndexOfAny(m_vNewLineChars) < 0) continue;
-
-				dict.Set(strKey, new ProtectedString(ps.IsProtected,
-					NormalizeNewLines(strValue, bWindows)));
+				char[] v = ps.ReadChars();
+				if(!IsNewLineNormalized(v, bWindows))
+					dict.Set(strKey, new ProtectedString(ps.IsProtected,
+						NormalizeNewLines(ps.ReadString(), bWindows)));
+				MemUtil.ZeroArray<char>(v);
 			}
+		}
+
+		public static bool IsNewLineNormalized(char[] v, bool bWindows)
+		{
+			if(v == null) { Debug.Assert(false); return true; }
+
+			if(bWindows)
+			{
+				int iFreeCr = -2; // Must be < -1 (for test "!= (i - 1)")
+
+				for(int i = 0; i < v.Length; ++i)
+				{
+					char ch = v[i];
+
+					if(ch == '\r')
+					{
+						if(iFreeCr >= 0) return false;
+						iFreeCr = i;
+					}
+					else if(ch == '\n')
+					{
+						if(iFreeCr != (i - 1)) return false;
+						iFreeCr = -2; // Consume \r
+					}
+				}
+
+				return (iFreeCr < 0); // Ensure no \r at end
+			}
+
+			return (Array.IndexOf<char>(v, '\r') < 0);
 		}
 
 		public static string GetNewLineSeq(string str)

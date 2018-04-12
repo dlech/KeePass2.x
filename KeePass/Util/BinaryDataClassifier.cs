@@ -19,13 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 
 using KeePass.Resources;
 
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -116,12 +117,26 @@ namespace KeePass.Util
 			return BinaryDataClass.Unknown;
 		}
 
+		// Cf. other overload
 		public static BinaryDataClass Classify(string strUrl, byte[] pbData)
 		{
 			BinaryDataClass bdc = ClassifyUrl(strUrl);
 			if(bdc != BinaryDataClass.Unknown) return bdc;
 
 			return ClassifyData(pbData);
+		}
+
+		// Cf. other overload
+		public static BinaryDataClass Classify(string strUrl, ProtectedBinary pb)
+		{
+			BinaryDataClass bdc = ClassifyUrl(strUrl);
+			if(bdc != BinaryDataClass.Unknown) return bdc;
+
+			if(pb == null) throw new ArgumentNullException("pb");
+			byte[] pbData = pb.ReadData();
+			try { bdc = ClassifyData(pbData); }
+			finally { if(pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
+			return bdc;
 		}
 
 		public static StrEncodingInfo GetStringEncoding(byte[] pbData,

@@ -186,7 +186,7 @@ namespace KeePass.Ecas
 			if(e == null) throw new ArgumentNullException("e");
 			if(ctx == null) throw new ArgumentNullException("ctx");
 
-			if(e.Type.Equals(ctx.Event.Type) == false) return false;
+			if(!e.Type.Equals(ctx.Event.Type)) return false;
 
 			foreach(EcasEventProvider p in m_vEventProviders)
 			{

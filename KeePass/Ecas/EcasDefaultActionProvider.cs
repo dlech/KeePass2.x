@@ -260,8 +260,7 @@ namespace KeePass.Ecas
 		{
 			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true, true);
 			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
-			bool bWait = StrUtil.StringToBool(EcasUtil.GetParamString(a.Parameters,
-				2, string.Empty));
+			bool bWait = EcasUtil.GetParamBool(a.Parameters, 2);
 			uint uWindowStyle = EcasUtil.GetParamUInt(a.Parameters, 3);
 			string strVerb = EcasUtil.GetParamString(a.Parameters, 4, true);
 
@@ -365,8 +364,7 @@ namespace KeePass.Ecas
 		{
 			string strPassword = EcasUtil.GetParamString(a.Parameters, iPassword, true);
 			string strKeyFile = EcasUtil.GetParamString(a.Parameters, iKeyFile, true);
-			bool bUserAccount = StrUtil.StringToBool(EcasUtil.GetParamString(
-				a.Parameters, iUserAccount, true));
+			bool bUserAccount = EcasUtil.GetParamBool(a.Parameters, iUserAccount);
 
 			CompositeKey cmpKey = null;
 			if(!string.IsNullOrEmpty(strPassword) || !string.IsNullOrEmpty(strKeyFile) ||

@@ -36,11 +36,11 @@ namespace KeePass.Forms
 {
 	public partial class ProxyForm : Form
 	{
-		private SecureEdit m_secPassword = new SecureEdit();
-
 		public ProxyForm()
 		{
 			InitializeComponent();
+
+			SecureTextBoxEx.InitEx(ref m_tbPassword);
 			Program.Translation.ApplyTo(this);
 		}
 
@@ -49,8 +49,6 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = AppIcons.Default;
-
-			m_secPassword.Attach(m_tbPassword, null, true);
 
 			ProxyServerType pst = Program.Config.Integration.ProxyType;
 			if(pst == ProxyServerType.None) m_rbNoProxy.Checked = true;
@@ -76,15 +74,13 @@ namespace KeePass.Forms
 			else m_rbAuthDefault.Checked = true;
 
 			m_tbUser.Text = strUserName;
-			m_secPassword.SetPassword(StrUtil.Utf8.GetBytes(strPassword));
+			m_tbPassword.Text = strPassword;
 
 			EnableControlsEx();
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
-			m_secPassword.Detach();
-
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -104,7 +100,7 @@ namespace KeePass.Forms
 			ace.ProxyPort = m_tbPort.Text;
 			ace.ProxyAuthType = pat;
 			ace.ProxyUserName = m_tbUser.Text;
-			ace.ProxyPassword = StrUtil.Utf8.GetString(m_secPassword.ToUtf8());
+			ace.ProxyPassword = m_tbPassword.TextEx.ReadString();
 
 			Program.Config.Apply(AceApplyFlags.Proxy);
 		}

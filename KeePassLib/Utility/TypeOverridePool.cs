@@ -1,4 +1,4 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
   Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
@@ -19,31 +19,47 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 
-namespace KeePass.UI
+using KeePassLib.Delegates;
+
+namespace KeePassLib.Utility
 {
-	public sealed class BackgroundForm : Form
+	public static class TypeOverridePool
 	{
-		public BackgroundForm(Bitmap bmpBackground, Screen sc)
+		private static Dictionary<Type, GFunc<object>> g_d =
+			new Dictionary<Type, GFunc<object>>();
+
+		public static void Register(Type t, GFunc<object> f)
 		{
-			Screen s = (sc ?? Screen.PrimaryScreen);
+			if(t == null) throw new ArgumentNullException("t");
+			if(f == null) throw new ArgumentNullException("f");
 
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.FormBorderStyle = FormBorderStyle.None;
+			g_d[t] = f;
+		}
 
-			this.StartPosition = FormStartPosition.Manual;
-			this.Location = s.Bounds.Location;
-			this.Size = s.Bounds.Size;
+		public static void Unregister(Type t)
+		{
+			if(t == null) throw new ArgumentNullException("t");
 
-			this.DoubleBuffered = true;
-			this.BackColor = Color.Black;
+			g_d.Remove(t);
+		}
 
-			if(bmpBackground != null) this.BackgroundImage = bmpBackground;
+		public static bool IsRegistered(Type t)
+		{
+			if(t == null) throw new ArgumentNullException("t");
+
+			return g_d.ContainsKey(t);
+		}
+
+		public static T CreateInstance<T>()
+			where T : new()
+		{
+			GFunc<object> f;
+			if(g_d.TryGetValue(typeof(T), out f))
+				return (T)(f());
+
+			return new T();
 		}
 	}
 }

@@ -35,6 +35,7 @@ using KeePass.Util.Spr;
 using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
+using KeePassLib.Interfaces;
 using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Security;
@@ -83,6 +84,8 @@ namespace KeePass.Forms
 			public PwDatabase Database = null;
 			public ImageList ClientIcons = null;
 			public SprContext SprContext = null;
+
+			public DateTime Now = DateTime.UtcNow;
 
 			public PfOptions() { }
 
@@ -610,8 +613,8 @@ namespace KeePass.Forms
 					if(bTitle)
 					{
 						PfOptions pSub = p.CloneShallow();
-						pSub.FontInit = MakeIconImg(pe.IconId, pe.CustomIconUuid, p) +
-							pSub.FontInit + "<b>";
+						pSub.FontInit = MakeIconImg(pe.IconId, pe.CustomIconUuid, pe,
+							p) + pSub.FontInit + "<b>";
 						pSub.FontExit = "</b>" + pSub.FontExit;
 
 						WriteDetailsLine(sb, KPRes.Title, pe.Strings.ReadSafe(
@@ -662,7 +665,7 @@ namespace KeePass.Forms
 				if(pg.Entries.UCount == 0) return true;
 
 				sb.Append("</table><br /><br /><h3>"); // "</table><br /><hr /><h3>"
-				// sb.Append(MakeIconImg(pg.IconId, pg.CustomIconUuid, p));
+				// sb.Append(MakeIconImg(pg.IconId, pg.CustomIconUuid, pg, p));
 				sb.Append(h(pg.GetFullPath(" - ", false)));
 				sb.AppendLine("</h3>");
 				WriteGroupNotes(sb, pg);
@@ -727,7 +730,7 @@ namespace KeePass.Forms
 			string str = CompileText(pe.Strings.ReadSafe(strField), p, true, false);
 
 			if(strField == PwDefs.TitleField)
-				str = MakeIconImg(pe.IconId, pe.CustomIconUuid, p) + str;
+				str = MakeIconImg(pe.IconId, pe.CustomIconUuid, pe, p) + str;
 
 			WriteTabularIf(bCondition, sb, str, p);
 		}
@@ -786,11 +789,17 @@ namespace KeePass.Forms
 			WriteDetailsLine(sb, kvp, p);
 		}
 
-		private static string MakeIconImg(PwIcon i, PwUuid ci, PfOptions p)
+		private static string MakeIconImg(PwIcon i, PwUuid ci, ITimeLogger tl, PfOptions p)
 		{
 			if(p.ClientIcons == null) return string.Empty;
 
 			Image img = null;
+
+			if((tl != null) && tl.Expires && (tl.ExpiryTime <= p.Now))
+			{
+				i = PwIcon.Expired;
+				ci = null;
+			}
 
 			PwDatabase pd = p.Database;
 			if((ci != null) && !ci.Equals(PwUuid.Zero) && (pd != null))

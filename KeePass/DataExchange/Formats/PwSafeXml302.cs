@@ -122,7 +122,7 @@ namespace KeePass.DataExchange.Formats
 			catch(Exception) { Debug.Assert(false); }
 
 			ms = new MemoryStream(pbData, false);
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(ms);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;

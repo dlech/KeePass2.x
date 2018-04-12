@@ -3348,5 +3348,45 @@ namespace KeePass.UI
 
 			if(lv.View != v) lv.View = v;
 		}
+
+		public static void PerformOverride<T>(ref T o)
+			where T : Control, new()
+		{
+			if(!TypeOverridePool.IsRegistered(typeof(T))) return;
+
+			T d = TypeOverridePool.CreateInstance<T>();
+
+			if((o != null) && (d != null))
+			{
+				d.Dock = o.Dock;
+				d.Location = o.Location;
+				d.Name = o.Name;
+				d.Size = o.Size;
+				d.TabIndex = o.TabIndex;
+				d.Text = o.Text;
+
+				TextBox tbO = (o as TextBox), tbD = (d as TextBox);
+				if(tbO != null)
+					tbD.UseSystemPasswordChar = tbO.UseSystemPasswordChar;
+
+				Control p = o.Parent;
+				if(p != null)
+				{
+					int i = p.Controls.IndexOf(o);
+					if(i >= 0)
+					{
+						p.SuspendLayout();
+						p.Controls.RemoveAt(i);
+						p.Controls.Add(d);
+						p.Controls.SetChildIndex(d, i);
+						p.ResumeLayout();
+					}
+					else { Debug.Assert(false); }
+				}
+				else { Debug.Assert(false); }
+			}
+
+			o = d;
+		}
 	}
 }

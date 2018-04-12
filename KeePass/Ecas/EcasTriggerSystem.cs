@@ -19,10 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml.Serialization;
 
+using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
 
@@ -144,7 +146,7 @@ namespace KeePass.Ecas
 		private void RaiseEventObj(EcasEvent e, EcasPropertyDictionary props)
 		{
 			// if(e == null) throw new ArgumentNullException("e");
-			// if(m_bEnabled == false) return;
+			// if(!m_bEnabled) return;
 
 			if(this.RaisingEvent != null)
 			{
@@ -165,6 +167,57 @@ namespace KeePass.Ecas
 				{
 					MessageService.ShowWarning(KPRes.TriggerExecutionFailed + ".", ex);
 				}
+			}
+		}
+
+		internal void NotifyUserActivity()
+		{
+			// if(!m_bEnabled) return;
+
+			foreach(EcasTrigger t in m_vTriggers)
+			{
+				foreach(EcasEvent e in t.EventCollection)
+				{
+					if(!e.Type.Equals(EcasEventIDs.TimePeriodic)) continue;
+
+					if(EcasUtil.GetParamBool(e.Parameters, 1))
+						e.RestartTimer();
+				}
+			}
+		}
+
+		internal void CheckTriggers()
+		{
+			bool bUIStateUpd = false;
+
+			foreach(EcasTrigger t in m_vTriggers)
+			{
+				foreach(EcasEvent e in t.EventCollection)
+				{
+					if(e.Type.Equals(EcasEventIDs.UpdatedUIState)) bUIStateUpd = true;
+				}
+			}
+
+			if(bUIStateUpd)
+			{
+				string str = KPRes.Event + ": '" + KPRes.UpdatedUIState + "'." +
+					MessageService.NewParagraph + KPRes.TriggerEventTypeUnknown +
+					MessageService.NewParagraph + KPRes.MoreInfo + ":" +
+					MessageService.NewLine;
+				string strUrl = AppHelp.GetOnlineUrl(AppDefs.HelpTopics.TriggerUIStateUpd, null);
+
+				string strVtd = str + VistaTaskDialog.CreateLink(strUrl, strUrl);
+
+				VistaTaskDialog vtd = new VistaTaskDialog();
+				vtd.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+				vtd.Content = strVtd;
+				vtd.DefaultButtonID = (int)DialogResult.Cancel;
+				vtd.EnableHyperlinks = true;
+				vtd.SetIcon(VtdIcon.Warning);
+				vtd.WindowTitle = PwDefs.ShortProductName;
+
+				if(!vtd.ShowDialog())
+					MessageService.ShowWarning(str + strUrl);
 			}
 		}
 	}

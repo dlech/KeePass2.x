@@ -525,8 +525,7 @@ namespace KeePass.DataExchange
 		private const string DllFile32 = "KeePassLibC32.dll";
 		private const string DllFile64 = "KeePassLibC64.dll";
 
-		private static readonly bool m_bX64 =
-			(Marshal.SizeOf(typeof(IntPtr)) == 8);
+		private static readonly bool m_bX64 = (IntPtr.Size == 8);
 
 #if KDB_ANSI
 		private const CharSet DllCharSet = CharSet.Ansi;

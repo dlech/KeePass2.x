@@ -1,3 +1,41 @@
+YYYY-MM-DD: 2.39
+- KeePass now uses Transactional NTFS (TxF) for writing
+  database and configuration files, if possible; this improves
+  the compatibility with other programs that are watching these
+  files (e.g. file synchronization services)
+- Added command 'Edit' -> 'Show Entries' -> 'Large Entries'
+- Added command 'Edit' -> 'Show Entries' -> 'Last Modified
+  Entries'
+- Added option 'Automatically save after modifying an entry
+  using the entry editing dialog' (turned off by default)
+- Added option 'Minimize main window after performing
+  auto-type' (turned off by default)
+- Added option 'Show lines between nodes in tree views' (turned
+  off by default)
+- Added trigger event 'Time - Periodic', which is raised at
+  user-defined intervals
+- Added UIFlags bit for disabling the 'XML Replace' menu item
+- Added workaround for .NET 'urtf' RTF round-trip bug
+- Secure edit controls are now extensible by plugins
+
+- In printouts and HTML exports, expired entries now have a red
+  'X' icon (if the option 'Icon' is turned on)
+- Improved and optimized process memory protection, especially
+  for the entry editing dialog
+- Secure edit control improvements
+- Improved entry size calculation
+- Improved XML serialization
+- Stream disposal improvements in exceptional situations
+- Removed trigger event 'User interface state updated'
+  (consider using the new event 'Time - Periodic' instead)
+- Various code optimizations
+- Minor other improvements
+
+- The 'View' button on the 'History' tab of the entry editing
+  dialog is now disabled when multiple items are selected
+- The main window state is now updated after closing an entry
+  report dialog
+
 2018-01-09: 2.38
 - The installers (regular and MSI) now create an empty
   'Languages' folder in the application directory, and the

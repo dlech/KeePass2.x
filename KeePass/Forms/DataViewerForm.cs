@@ -204,7 +204,7 @@ namespace KeePass.Forms
 			if(bFixedFont) FontUtil.AssignDefaultMono(m_rtbText, false);
 			else FontUtil.AssignDefault(m_rtbText);
 
-			if(bRtf) m_rtbText.Rtf = strData;
+			if(bRtf) m_rtbText.Rtf = StrUtil.RtfFix(strData);
 			else
 			{
 				m_rtbText.Text = strData;

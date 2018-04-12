@@ -177,6 +177,9 @@ namespace KeePass.Forms
 		{
 			InitializeComponent();
 
+			SecureTextBoxEx.InitEx(ref m_tbPassword);
+			SecureTextBoxEx.InitEx(ref m_tbRepeatPassword);
+
 			Program.Translation.ApplyTo(this);
 			Program.Translation.ApplyTo("KeePass.Forms.PwEntryForm.m_ctxTools", m_ctxTools.Items);
 			Program.Translation.ApplyTo("KeePass.Forms.PwEntryForm.m_ctxDefaultTimes", m_ctxDefaultTimes.Items);
@@ -316,29 +319,24 @@ namespace KeePass.Forms
 		{
 			if(bGuiToInternal)
 			{
-				m_vStrings.Set(PwDefs.TitleField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectTitle,
-					m_tbTitle.Text));
-				m_vStrings.Set(PwDefs.UserNameField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUserName,
-					m_tbUserName.Text));
-
-				byte[] pb = m_icgPassword.GetPasswordUtf8();
-				m_vStrings.Set(PwDefs.PasswordField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectPassword,
-					pb));
-				MemUtil.ZeroByteArray(pb);
-
-				m_vStrings.Set(PwDefs.UrlField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectUrl,
-					m_tbUrl.Text));
-				m_vStrings.Set(PwDefs.NotesField, new ProtectedString(m_pwDatabase.MemoryProtection.ProtectNotes,
-					m_rtNotes.Text));
+				m_vStrings.Set(PwDefs.TitleField, new ProtectedString(
+					m_pwDatabase.MemoryProtection.ProtectTitle, m_tbTitle.Text));
+				m_vStrings.Set(PwDefs.UserNameField, new ProtectedString(
+					m_pwDatabase.MemoryProtection.ProtectUserName, m_tbUserName.Text));
+				m_vStrings.Set(PwDefs.PasswordField, m_tbPassword.TextEx.WithProtection(
+					m_pwDatabase.MemoryProtection.ProtectPassword));
+				m_vStrings.Set(PwDefs.UrlField, new ProtectedString(
+					m_pwDatabase.MemoryProtection.ProtectUrl, m_tbUrl.Text));
+				m_vStrings.Set(PwDefs.NotesField, new ProtectedString(
+					m_pwDatabase.MemoryProtection.ProtectNotes, m_rtNotes.Text));
 			}
 			else // Internal to GUI
 			{
 				m_tbTitle.Text = m_vStrings.ReadSafe(PwDefs.TitleField);
 				m_tbUserName.Text = m_vStrings.ReadSafe(PwDefs.UserNameField);
 
-				byte[] pb = m_vStrings.GetSafe(PwDefs.PasswordField).ReadUtf8();
-				m_icgPassword.SetPassword(pb, bSetRepeatPw);
-				MemUtil.ZeroByteArray(pb);
+				ProtectedString ps = m_vStrings.GetSafe(PwDefs.PasswordField);
+				m_icgPassword.SetPassword(ps, bSetRepeatPw);
 
 				m_tbUrl.Text = m_vStrings.ReadSafe(PwDefs.UrlField);
 				m_rtNotes.Text = m_vStrings.ReadSafe(PwDefs.NotesField);
@@ -806,8 +804,8 @@ namespace KeePass.Forms
 			m_menuListCtxCopyFieldValue.Enabled = (nAccumSel != 0);
 
 			int nHistorySel = m_lvHistory.SelectedIndices.Count;
-			m_btnHistoryRestore.Enabled = (nHistorySel == 1);
-			m_btnHistoryDelete.Enabled = m_btnHistoryView.Enabled = (nHistorySel >= 1);
+			m_btnHistoryRestore.Enabled = m_btnHistoryView.Enabled = (nHistorySel == 1);
+			m_btnHistoryDelete.Enabled = (nHistorySel >= 1);
 
 			m_menuListCtxMoveStandardTitle.Enabled = m_menuListCtxMoveStandardUser.Enabled =
 				m_menuListCtxMoveStandardPassword.Enabled = m_menuListCtxMoveStandardURL.Enabled =
@@ -1099,7 +1097,7 @@ namespace KeePass.Forms
 			{
 				MessageService.ShowWarning(strFileName, exWrite);
 			}
-			MemUtil.ZeroByteArray(pbData);
+			if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
 		}
 
 		private void OnBtnAutoTypeAdd(object sender, EventArgs e)
@@ -1410,15 +1408,15 @@ namespace KeePass.Forms
 			}
 			else if(strStandardField == PwDefs.PasswordField)
 			{
-				string strPw = m_icgPassword.GetPassword();
-				if((strPw.Length > 0) && (strText.Length > 0)) strPw += ", ";
-				strPw += strText;
+				ProtectedString psP = m_icgPassword.GetPasswordEx();
+				if(!psP.IsEmpty && (strText.Length > 0)) psP += ", ";
+				psP += strText;
 
-				string strRep = m_icgPassword.GetRepeat();
-				if((strRep.Length > 0) && (strText.Length > 0)) strRep += ", ";
-				strRep += strText;
+				ProtectedString psR = m_icgPassword.GetRepeatEx();
+				if(!psR.IsEmpty && (strText.Length > 0)) psR += ", ";
+				psR += strText;
 
-				m_icgPassword.SetPasswords(strPw, strRep);
+				m_icgPassword.SetPasswords(psP, psR);
 			}
 			else if(strStandardField == PwDefs.UrlField)
 			{
@@ -1466,23 +1464,18 @@ namespace KeePass.Forms
 
 		private void OnPwGenOpen(object sender, EventArgs e)
 		{
-			byte[] pbCurPassword = m_icgPassword.GetPasswordUtf8();
-			bool bAtLeastOneChar = (pbCurPassword.Length > 0);
-			ProtectedString ps = new ProtectedString(true, pbCurPassword);
-			MemUtil.ZeroByteArray(pbCurPassword);
+			ProtectedString ps = m_icgPassword.GetPasswordEx();
 			PwProfile opt = PwProfile.DeriveFromPassword(ps);
 
 			PwGeneratorForm pgf = new PwGeneratorForm();
-			pgf.InitEx((bAtLeastOneChar ? opt : null), true, false);
+			pgf.InitEx((!ps.IsEmpty ? opt : null), true, false);
 
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
 				byte[] pbEntropy = EntropyForm.CollectEntropyIfEnabled(pgf.SelectedProfile);
 				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
 					pgf.SelectedProfile, pbEntropy, m_pwEntry, m_pwDatabase);
-				byte[] pbNew = psNew.ReadUtf8();
-				m_icgPassword.SetPassword(pbNew, true);
-				MemUtil.ZeroByteArray(pbNew);
+				m_icgPassword.SetPassword(psNew, true);
 			}
 			UIUtil.DestroyForm(pgf);
 
@@ -1497,9 +1490,7 @@ namespace KeePass.Forms
 			PwProfile pwp = null;
 			if(strProfile == DeriveFromPrevious)
 			{
-				byte[] pbCur = m_icgPassword.GetPasswordUtf8();
-				ProtectedString psCur = new ProtectedString(true, pbCur);
-				MemUtil.ZeroByteArray(pbCur);
+				ProtectedString psCur = m_icgPassword.GetPasswordEx();
 				pwp = PwProfile.DeriveFromPassword(psCur);
 			}
 			else if(strProfile == AutoGenProfile)
@@ -1520,9 +1511,7 @@ namespace KeePass.Forms
 			{
 				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
 					pwp, null, m_pwEntry, m_pwDatabase);
-				byte[] pbNew = psNew.ReadUtf8();
-				m_icgPassword.SetPassword(pbNew, true);
-				MemUtil.ZeroByteArray(pbNew);
+				m_icgPassword.SetPassword(psNew, true);
 			}
 			else { Debug.Assert(false); }
 		}
@@ -1762,9 +1751,9 @@ namespace KeePass.Forms
 			string strRef = CreateFieldReference(PwDefs.PasswordField);
 			if(strRef.Length == 0) return;
 
-			string strPw = m_icgPassword.GetPassword();
-			string strRep = m_icgPassword.GetRepeat();
-			m_icgPassword.SetPasswords(strPw + strRef, strRep + strRef);
+			ProtectedString psP = m_icgPassword.GetPasswordEx();
+			ProtectedString psR = m_icgPassword.GetRepeatEx();
+			m_icgPassword.SetPasswords(psP + strRef, psR + strRef);
 		}
 
 		private void OnFieldRefInUrl(object sender, EventArgs e)

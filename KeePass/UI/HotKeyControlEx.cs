@@ -22,10 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Resources;
 
@@ -48,6 +48,7 @@ namespace KeePass.UI
 			get { return m_kHotKey; }
 			set { m_kHotKey = value; }
 		}
+		public bool ShouldSerializeHotKey() { return false; }
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -56,8 +57,11 @@ namespace KeePass.UI
 			get { return m_kModifiers; }
 			set { m_kModifiers = value; }
 		}
+		public bool ShouldSerializeHotKeyModifiers() { return false; }
 
 		private bool m_bNoRightModKeys = false;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
 		public bool NoRightModKeys
 		{
@@ -77,6 +81,7 @@ namespace KeePass.UI
 				m_strTextNone = value;
 			}
 		}
+		public bool ShouldSerializeTextNone() { return false; }
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -85,6 +90,7 @@ namespace KeePass.UI
 			get { return m_ctxNone; }
 			set { base.ContextMenu = m_ctxNone; }
 		}
+		public bool ShouldSerializeContextMenu() { return false; }
 
 		// Hot key control is single-line
 		[Browsable(false)]
@@ -94,15 +100,14 @@ namespace KeePass.UI
 			get { return base.Multiline; }
 			set { base.Multiline = false; }
 		}
+		public bool ShouldSerializeMultiline() { return false; }
 
 		public HotKeyControlEx()
 		{
+			if(Program.DesignMode) return;
+
 			this.ContextMenu = m_ctxNone; // No context menu available
 			this.Text = m_strTextNone;
-
-			this.KeyPress += new KeyPressEventHandler(this.OnKeyPressEx);
-			this.KeyUp += new KeyEventHandler(this.OnKeyUpEx);
-			this.KeyDown += new KeyEventHandler(this.OnKeyDownEx);
 
 			if(m_vNeedNonShiftModifier.Count == 0)
 				PopulateModifierLists();
@@ -139,14 +144,10 @@ namespace KeePass.UI
 				m_vNeedNonAltGrModifier.Add(k);
 		}
 
-		public new void Clear()
+		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			m_kHotKey = Keys.None;
-			m_kModifiers = Keys.None;
-		}
+			base.OnKeyDown(e);
 
-		private void OnKeyDownEx(object sender, KeyEventArgs e)
-		{
 			if((e.KeyCode == Keys.Back) || (e.KeyCode == Keys.Delete))
 				ResetHotKey();
 			else
@@ -155,16 +156,24 @@ namespace KeePass.UI
 				m_kModifiers = e.Modifiers;
 				RenderHotKey();
 			}
+
+			UIUtil.SetHandled(e, true);
 		}
 
-		private void OnKeyUpEx(object sender, KeyEventArgs e)
+		protected override void OnKeyUp(KeyEventArgs e)
 		{
+			base.OnKeyUp(e);
+
 			if((m_kHotKey == Keys.None) && (Control.ModifierKeys == Keys.None))
 				ResetHotKey();
+
+			UIUtil.SetHandled(e, true);
 		}
 
-		private void OnKeyPressEx(object sender, KeyPressEventArgs e)
+		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
+			base.OnKeyPress(e);
+
 			e.Handled = true;
 		}
 
@@ -225,7 +234,7 @@ namespace KeePass.UI
 				else
 				{
 					m_kHotKey = Keys.None;
-					this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.InvalidKey;
+					this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.KeyboardKeyInvalid;
 					return;
 				}
 			}
@@ -234,7 +243,7 @@ namespace KeePass.UI
 				m_vNeedNonAltGrModifier.Contains(m_kHotKey))
 			{
 				m_kHotKey = Keys.None;
-				this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.InvalidKey;
+				this.Text = ModifiersToString(m_kModifiers) + " + " + KPRes.KeyboardKeyInvalid;
 				return;
 			}
 

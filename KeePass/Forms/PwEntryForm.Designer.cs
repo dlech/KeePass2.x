@@ -40,8 +40,8 @@
 			this.m_btnIcon = new System.Windows.Forms.Button();
 			this.m_lblIcon = new System.Windows.Forms.Label();
 			this.m_tbUserName = new System.Windows.Forms.TextBox();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
-			this.m_tbRepeatPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
+			this.m_tbRepeatPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_tbUrl = new System.Windows.Forms.TextBox();
 			this.m_cbExpires = new System.Windows.Forms.CheckBox();
 			this.m_dtExpireDateTime = new System.Windows.Forms.DateTimePicker();
@@ -1331,8 +1331,8 @@
 		private System.Windows.Forms.Button m_btnIcon;
 		private System.Windows.Forms.Label m_lblIcon;
 		private System.Windows.Forms.TextBox m_tbUserName;
-		private System.Windows.Forms.TextBox m_tbPassword;
-		private System.Windows.Forms.TextBox m_tbRepeatPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbRepeatPassword;
 		private KeePass.UI.QualityProgressBar m_pbQuality;
 		private System.Windows.Forms.TextBox m_tbUrl;
 		private KeePass.UI.CustomRichTextBoxEx m_rtNotes;
@@ -1436,6 +1436,5 @@
 		private System.Windows.Forms.Label m_lblCustomData;
 		private System.Windows.Forms.Button m_btnCDDel;
 		private KeePass.UI.CustomListViewEx m_lvCustomData;
-
 	}
 }

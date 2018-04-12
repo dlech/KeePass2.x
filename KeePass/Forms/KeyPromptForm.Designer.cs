@@ -32,7 +32,7 @@
 			this.m_cbUserAccount = new System.Windows.Forms.CheckBox();
 			this.m_btnOpenKeyFile = new System.Windows.Forms.Button();
 			this.m_cbKeyFile = new System.Windows.Forms.CheckBox();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_cbPassword = new System.Windows.Forms.CheckBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -224,7 +224,7 @@
 		private System.Windows.Forms.CheckBox m_cbUserAccount;
 		private System.Windows.Forms.Button m_btnOpenKeyFile;
 		private System.Windows.Forms.CheckBox m_cbKeyFile;
-		private System.Windows.Forms.TextBox m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
 		private System.Windows.Forms.CheckBox m_cbPassword;
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;

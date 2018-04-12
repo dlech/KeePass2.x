@@ -36,7 +36,7 @@
 			this.m_lblUserName = new System.Windows.Forms.Label();
 			this.m_tbUserName = new System.Windows.Forms.TextBox();
 			this.m_lblPassword = new System.Windows.Forms.Label();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_lblCredNote = new System.Windows.Forms.Label();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_cmbCredSaveMode = new System.Windows.Forms.ComboBox();
@@ -280,7 +280,7 @@
 		private System.Windows.Forms.Label m_lblUserName;
 		private System.Windows.Forms.TextBox m_tbUserName;
 		private System.Windows.Forms.Label m_lblPassword;
-		private System.Windows.Forms.TextBox m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
 		private System.Windows.Forms.Label m_lblCredNote;
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.ComboBox m_cmbCredSaveMode;

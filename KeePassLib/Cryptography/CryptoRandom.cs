@@ -214,48 +214,43 @@ namespace KeePassLib.Cryptography
 			pb = DiagnosticsExt.GetProcessEntropy();
 			MemUtil.Write(ms, pb);
 #elif !KeePassLibSD
-			Process p = null;
 			try
 			{
-				p = Process.GetCurrentProcess();
+				using(Process p = Process.GetCurrentProcess())
+				{
+					pb = MemUtil.Int64ToBytes(p.Handle.ToInt64());
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int32ToBytes(p.HandleCount);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int32ToBytes(p.Id);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.NonpagedSystemMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PagedMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PagedSystemMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PeakPagedMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PeakVirtualMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PeakWorkingSet64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.PrivateMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.StartTime.ToBinary());
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.VirtualMemorySize64);
+					MemUtil.Write(ms, pb);
+					pb = MemUtil.Int64ToBytes(p.WorkingSet64);
+					MemUtil.Write(ms, pb);
 
-				pb = MemUtil.Int64ToBytes(p.Handle.ToInt64());
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int32ToBytes(p.HandleCount);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int32ToBytes(p.Id);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.NonpagedSystemMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PagedMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PagedSystemMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PeakPagedMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PeakVirtualMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PeakWorkingSet64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.PrivateMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.StartTime.ToBinary());
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.VirtualMemorySize64);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int64ToBytes(p.WorkingSet64);
-				MemUtil.Write(ms, pb);
-
-				// Not supported in Mono 1.2.6:
-				// pb = MemUtil.UInt32ToBytes((uint)p.SessionId);
-				// MemUtil.Write(ms, pb);
+					// Not supported in Mono 1.2.6:
+					// pb = MemUtil.UInt32ToBytes((uint)p.SessionId);
+					// MemUtil.Write(ms, pb);
+				}
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-			finally
-			{
-				try { if(p != null) p.Dispose(); }
-				catch(Exception) { Debug.Assert(false); }
-			}
 #endif
 
 			try

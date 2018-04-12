@@ -76,7 +76,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static void ImportFileString(string strXmlDoc, PwDatabase pwStorage)
 		{
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 			doc.LoadXml(strXmlDoc);
 
 			XmlElement xmlRoot = doc.DocumentElement;

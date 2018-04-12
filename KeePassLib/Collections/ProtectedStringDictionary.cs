@@ -136,7 +136,7 @@ namespace KeePassLib.Collections
 						return false;
 				}
 
-				if(ps.ReadString() != kvp.Value.ReadString()) return false;
+				if(!ps.Equals(kvp.Value, false)) return false;
 			}
 
 			if(bNeEqStd)
@@ -292,12 +292,7 @@ namespace KeePassLib.Collections
 			if(ps == null) return; // Nothing to do, no assert
 
 			if(ps.IsProtected != bProtect)
-			{
-				byte[] pbData = ps.ReadUtf8();
-				Set(strField, new ProtectedString(bProtect, pbData));
-
-				if(bProtect) MemUtil.ZeroByteArray(pbData);
-			}
+				Set(strField, ps.WithProtection(bProtect));
 		}
 	}
 }
