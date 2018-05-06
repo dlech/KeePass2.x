@@ -114,10 +114,10 @@ namespace KeePass.Native
 			return GetWindowLong(hWnd, GWL_STYLE);
 		}
 
-		internal static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
+		internal static IntPtr GetClassLongPtrEx(IntPtr hWnd, int nIndex)
 		{
-			if(IntPtr.Size > 4) return GetClassLongPtr64(hWnd, nIndex);
-			return GetClassLongPtr32(hWnd, nIndex);
+			if(IntPtr.Size == 4) return GetClassLong(hWnd, nIndex);
+			return GetClassLongPtr(hWnd, nIndex);
 		}
 
 		internal static bool SetForegroundWindowEx(IntPtr hWnd)

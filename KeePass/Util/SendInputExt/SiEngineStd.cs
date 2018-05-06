@@ -32,12 +32,12 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util.SendInputExt
 {
-	public abstract class SiEngineStd : ISiEngine
+	internal abstract class SiEngineStd : ISiEngine
 	{
-		public IntPtr TargetHWnd = IntPtr.Zero;
-		public string TargetWindowTitle = string.Empty;
+		protected IntPtr TargetHWnd = IntPtr.Zero;
+		protected string TargetWindowTitle = string.Empty;
 
-		public bool Cancelled = false;
+		protected bool Cancelled = false;
 
 		private Stopwatch m_swLastEvent = new Stopwatch();
 #if DEBUG

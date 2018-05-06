@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.UI;
@@ -59,11 +59,14 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			XPathDocument xpDoc = new XPathDocument(sInput);
-			XPathNavigator xpNav = xpDoc.CreateNavigator();
+			using(XmlReader xr = XmlUtilEx.CreateXmlReader(sInput))
+			{
+				XPathDocument xpDoc = new XPathDocument(xr);
+				XPathNavigator xpNav = xpDoc.CreateNavigator();
 
-			ImportLogins(xpNav, pwStorage);
-			ImportMemos(xpNav, pwStorage);
+				ImportLogins(xpNav, pwStorage);
+				ImportMemos(xpNav, pwStorage);
+			}
 		}
 
 		private static void ImportLogins(XPathNavigator xpNav, PwDatabase pd)

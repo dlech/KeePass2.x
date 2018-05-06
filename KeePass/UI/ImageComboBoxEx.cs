@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePassLib.Native;
 
@@ -40,6 +40,7 @@ namespace KeePass.UI
 			get { return m_vImages; }
 			set { m_vImages = value; } // Null allowed
 		}
+		public bool ShouldSerializeOrderedImageList() { return false; }
 
 		public ImageComboBoxEx() : base()
 		{

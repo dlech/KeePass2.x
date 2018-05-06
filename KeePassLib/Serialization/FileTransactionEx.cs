@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -27,21 +28,27 @@ using System.Text;
 using System.Security.AccessControl;
 #endif
 
+using KeePassLib.Cryptography;
 using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Serialization
 {
-	public sealed class FileTransactionEx
+	public sealed class FileTransactionEx : IDisposable
 	{
 		private bool m_bTransacted;
-		private IOConnectionInfo m_iocBase;
+		private IOConnectionInfo m_iocBase; // Null means disposed
 		private IOConnectionInfo m_iocTemp;
+		private IOConnectionInfo m_iocTxfMidFallback = null; // Null <=> TxF not used
 
 		private bool m_bMadeUnhidden = false;
 
+		private List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
+
 		private const string StrTempSuffix = ".tmp";
+		private const string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
+		private const string StrTxfTempSuffix = ".tmp";
 
 		private static Dictionary<string, bool> g_dEnabled =
 			new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
@@ -53,22 +60,20 @@ namespace KeePassLib.Serialization
 			set { g_bExtraSafe = value; }
 		}
 
-		public FileTransactionEx(IOConnectionInfo iocBaseFile)
+		public FileTransactionEx(IOConnectionInfo iocBaseFile) :
+			this(iocBaseFile, true)
 		{
-			Initialize(iocBaseFile, true);
 		}
 
 		public FileTransactionEx(IOConnectionInfo iocBaseFile, bool bTransacted)
 		{
-			Initialize(iocBaseFile, bTransacted);
-		}
-
-		private void Initialize(IOConnectionInfo iocBaseFile, bool bTransacted)
-		{
 			if(iocBaseFile == null) throw new ArgumentNullException("iocBaseFile");
 
 			m_bTransacted = bTransacted;
+
 			m_iocBase = iocBaseFile.CloneDeep();
+			if(m_iocBase.IsLocalFile())
+				m_iocBase.Path = UrlUtil.GetShortestAbsolutePath(m_iocBase.Path);
 
 			string strPath = m_iocBase.Path;
 
@@ -115,40 +120,65 @@ namespace KeePassLib.Serialization
 			{
 				m_iocTemp = m_iocBase.CloneDeep();
 				m_iocTemp.Path += StrTempSuffix;
+
+				TxfPrepare(); // Adjusts m_iocTemp
 			}
 			else m_iocTemp = m_iocBase;
 		}
 
+		~FileTransactionEx()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool bDisposing)
+		{
+			m_iocBase = null;
+			if(!bDisposing) return;
+
+			try
+			{
+				foreach(IOConnectionInfo ioc in m_lToDelete)
+				{
+					if(IOConnection.FileExists(ioc, false))
+						IOConnection.DeleteFile(ioc);
+				}
+
+				m_lToDelete.Clear();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		public Stream OpenWrite()
 		{
-			if(!m_bTransacted) m_bMadeUnhidden = UrlUtil.UnhideFile(m_iocTemp.Path);
-			else // m_bTransacted
-			{
-				try { IOConnection.DeleteFile(m_iocTemp); }
-				catch(Exception) { }
-			}
+			if(m_iocBase == null) { Debug.Assert(false); throw new ObjectDisposedException(null); }
+
+			if(!m_bTransacted) m_bMadeUnhidden |= UrlUtil.UnhideFile(m_iocTemp.Path);
 
 			return IOConnection.OpenWrite(m_iocTemp);
 		}
 
 		public void CommitWrite()
 		{
-			if(m_bTransacted) CommitWriteTransaction();
-			else // !m_bTransacted
+			if(m_iocBase == null) { Debug.Assert(false); throw new ObjectDisposedException(null); }
+
+			if(!m_bTransacted)
 			{
-				if(m_bMadeUnhidden) UrlUtil.HideFile(m_iocTemp.Path, true); // Hide again
+				if(m_bMadeUnhidden) UrlUtil.HideFile(m_iocTemp.Path, true);
 			}
+			else CommitWriteTransaction();
+
+			m_iocBase = null; // Dispose
 		}
 
 		private void CommitWriteTransaction()
 		{
-			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
-
-#if (!KeePassLibSD && !KeePassUAP)
-			FileSecurity bkSecurity = null;
-			bool bEfsEncrypted = false;
-#endif
-
 			if(g_bExtraSafe)
 			{
 				if(!IOConnection.FileExists(m_iocTemp))
@@ -156,52 +186,67 @@ namespace KeePassLib.Serialization
 						MessageService.NewLine + KLRes.FileSaveFailed);
 			}
 
-			if(IOConnection.FileExists(m_iocBase))
-			{
-#if !KeePassLibSD
-				if(m_iocBase.IsLocalFile())
-				{
-					try
-					{
+			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
+
 #if !KeePassUAP
-						FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
-						bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
+			bool bEfsEncrypted = false;
+			FileSecurity bkSecurity = null;
 #endif
-						DateTime tCreation = File.GetCreationTimeUtc(m_iocBase.Path);
-						File.SetCreationTimeUtc(m_iocTemp.Path, tCreation);
-#if !KeePassUAP
-						// May throw with Mono
-						bkSecurity = File.GetAccessControl(m_iocBase.Path);
-#endif
-					}
-					catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-				}
-#endif
+			DateTime? otCreation = null;
 
-				IOConnection.DeleteFile(m_iocBase);
-			}
-
-			IOConnection.RenameFile(m_iocTemp, m_iocBase);
-
-#if (!KeePassLibSD && !KeePassUAP)
-			if(m_iocBase.IsLocalFile())
+			bool bBaseExists = IOConnection.FileExists(m_iocBase);
+			if(bBaseExists && m_iocBase.IsLocalFile())
 			{
+				// FileAttributes faBase = FileAttributes.Normal;
 				try
 				{
-					if(bEfsEncrypted)
-					{
-						try { File.Encrypt(m_iocBase.Path); }
-						catch(Exception) { Debug.Assert(false); }
-					}
-
-					if(bkSecurity != null)
-						File.SetAccessControl(m_iocBase.Path, bkSecurity);
-				}
-				catch(Exception) { Debug.Assert(false); }
-			}
+#if !KeePassUAP
+					FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
+					bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
+					try { if(bEfsEncrypted) File.Decrypt(m_iocBase.Path); } // For TxF
+					catch(Exception) { Debug.Assert(false); }
 #endif
+					otCreation = File.GetCreationTimeUtc(m_iocBase.Path);
+#if !KeePassUAP
+					// May throw with Mono
+					bkSecurity = File.GetAccessControl(m_iocBase.Path);
+#endif
+				}
+				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
-			if(bMadeUnhidden) UrlUtil.HideFile(m_iocBase.Path, true); // Hide again
+				// if((long)(faBase & FileAttributes.ReadOnly) != 0)
+				//	throw new UnauthorizedAccessException();
+			}
+
+			if(!TxfMove())
+			{
+				if(bBaseExists) IOConnection.DeleteFile(m_iocBase);
+				IOConnection.RenameFile(m_iocTemp, m_iocBase);
+			}
+
+			try
+			{
+				// If File.GetCreationTimeUtc fails, it may return a
+				// date with year 1601, and Unix times start in 1970,
+				// so testing for 1971 should ensure validity;
+				// https://msdn.microsoft.com/en-us/library/system.io.file.getcreationtimeutc.aspx
+				if(otCreation.HasValue && (otCreation.Value.Year >= 1971))
+					File.SetCreationTimeUtc(m_iocBase.Path, otCreation.Value);
+
+#if !KeePassUAP
+				if(bEfsEncrypted)
+				{
+					try { File.Encrypt(m_iocBase.Path); }
+					catch(Exception) { Debug.Assert(false); }
+				}
+
+				if(bkSecurity != null)
+					File.SetAccessControl(m_iocBase.Path, bkSecurity);
+#endif
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			if(bMadeUnhidden) UrlUtil.HideFile(m_iocBase.Path, true);
 		}
 
 		// For plugins
@@ -212,6 +257,153 @@ namespace KeePassLib.Serialization
 			if(obTransacted.HasValue)
 				g_dEnabled[strPrefix] = obTransacted.Value;
 			else g_dEnabled.Remove(strPrefix);
+		}
+
+		private static bool TxfIsSupported(char chDriveLetter)
+		{
+			if(chDriveLetter == '\0') return false;
+
+			try
+			{
+				string strRoot = (new string(chDriveLetter, 1)) + ":\\";
+
+				const int cch = NativeMethods.MAX_PATH + 1;
+				StringBuilder sbName = new StringBuilder(cch + 1);
+				uint uSerial = 0, cchMaxComp = 0, uFlags = 0;
+				StringBuilder sbFileSystem = new StringBuilder(cch + 1);
+
+				if(!NativeMethods.GetVolumeInformation(strRoot, sbName, (uint)cch,
+					ref uSerial, ref cchMaxComp, ref uFlags, sbFileSystem, (uint)cch))
+				{
+					Debug.Assert(false, (new Win32Exception()).Message);
+					return false;
+				}
+
+				return ((uFlags & NativeMethods.FILE_SUPPORTS_TRANSACTIONS) != 0);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		}
+
+		private void TxfPrepare()
+		{
+			try
+			{
+				if(NativeLib.IsUnix()) return;
+				if(!m_iocBase.IsLocalFile()) return;
+
+				string strID = StrUtil.AlphaNumericOnly(Convert.ToBase64String(
+					CryptoRandom.Instance.GetRandomBytes(16)));
+				string strTempDir = UrlUtil.GetTempPath();
+				// See also ClearOld method
+				string strTemp = UrlUtil.EnsureTerminatingSeparator(strTempDir,
+					false) + StrTxfTempPrefix + strID + StrTxfTempSuffix;
+
+				char chB = UrlUtil.GetDriveLetter(m_iocBase.Path);
+				char chT = UrlUtil.GetDriveLetter(strTemp);
+				if(!TxfIsSupported(chB)) return;
+				if((chT != chB) && !TxfIsSupported(chT)) return;
+
+				m_iocTxfMidFallback = m_iocTemp;
+				m_iocTemp = IOConnectionInfo.FromPath(strTemp);
+
+				m_lToDelete.Add(m_iocTemp);
+			}
+			catch(Exception) { Debug.Assert(false); m_iocTxfMidFallback = null; }
+		}
+
+		private bool TxfMove()
+		{
+			if(m_iocTxfMidFallback == null) return false;
+
+			if(TxfMoveWithTx()) return true;
+
+			// Move the temporary file onto the base file's drive first,
+			// such that it cannot happen that both the base file and
+			// the temporary file are deleted/corrupted
+			const uint f = (NativeMethods.MOVEFILE_COPY_ALLOWED |
+				NativeMethods.MOVEFILE_REPLACE_EXISTING);
+			bool b = NativeMethods.MoveFileEx(m_iocTemp.Path, m_iocTxfMidFallback.Path, f);
+			if(b) b = NativeMethods.MoveFileEx(m_iocTxfMidFallback.Path, m_iocBase.Path, f);
+			if(!b) throw new Win32Exception();
+
+			Debug.Assert(!File.Exists(m_iocTemp.Path));
+			Debug.Assert(!File.Exists(m_iocTxfMidFallback.Path));
+			return true;
+		}
+
+		private bool TxfMoveWithTx()
+		{
+			IntPtr hTx = new IntPtr((int)NativeMethods.INVALID_HANDLE_VALUE);
+			Debug.Assert(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE);
+			try
+			{
+				string strTx = PwDefs.ShortProductName + " TxF - " +
+					StrUtil.AlphaNumericOnly(Convert.ToBase64String(
+					CryptoRandom.Instance.GetRandomBytes(16)));
+				const int mchTx = NativeMethods.MAX_TRANSACTION_DESCRIPTION_LENGTH;
+				if(strTx.Length >= mchTx) strTx = strTx.Substring(0, mchTx - 1);
+
+				hTx = NativeMethods.CreateTransaction(IntPtr.Zero,
+					IntPtr.Zero, 0, 0, 0, 0, strTx);
+				if(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE)
+				{
+					Debug.Assert(false, (new Win32Exception()).Message);
+					return false;
+				}
+
+				if(!NativeMethods.MoveFileTransacted(m_iocTemp.Path, m_iocBase.Path,
+					IntPtr.Zero, IntPtr.Zero, (NativeMethods.MOVEFILE_COPY_ALLOWED |
+					NativeMethods.MOVEFILE_REPLACE_EXISTING), hTx))
+				{
+					Debug.Assert(false, (new Win32Exception()).Message);
+					return false;
+				}
+
+				if(!NativeMethods.CommitTransaction(hTx))
+				{
+					Debug.Assert(false, (new Win32Exception()).Message);
+					return false;
+				}
+
+				Debug.Assert(!File.Exists(m_iocTemp.Path));
+				return true;
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				if(hTx.ToInt64() != NativeMethods.INVALID_HANDLE_VALUE)
+				{
+					try { if(!NativeMethods.CloseHandle(hTx)) { Debug.Assert(false); } }
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
+
+			return false;
+		}
+
+		internal static void ClearOld()
+		{
+			try
+			{
+				// See also TxfPrepare method
+				DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
+				List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
+					"*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
+
+				foreach(FileInfo fi in l)
+				{
+					if(fi == null) { Debug.Assert(false); continue; }
+					if(!fi.Name.StartsWith(StrTxfTempPrefix, StrUtil.CaseIgnoreCmp) ||
+						!fi.Name.EndsWith(StrTxfTempSuffix, StrUtil.CaseIgnoreCmp))
+						continue;
+
+					if((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalDays > 1.0)
+						fi.Delete();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

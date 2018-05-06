@@ -34,7 +34,7 @@
 
 <table class="sectionsummary"><tr><td width="68">
 <img src="../images/b64x64_winprops.png" width="64" height="64"
-class="singleimg" align="left" alt="Triggers" />
+class="singleimg" align="left" alt="Trigger" />
 </td><td valign="middle"><h1>Triggers</h1><br />
 Automate workflows using the trigger system.
 </td></tr></table>
@@ -75,8 +75,8 @@ i.e. triggers can turn themselves and other triggers on and off, which allows
 to define a complex state-dependent system of triggers.</p>
 
 <p>Most strings in the trigger system are Spr-compiled, i.e.
-<a href="../base/placeholders.html">placeholders</a>,
-environment variables, etc. can be used.</p>
+<a href="../base/placeholders.html">placeholders</a>
+(except state-changing ones), environment variables, etc. can be used.</p>
 
 <p><strong>IO Connection Properties.</strong>
 Most trigger actions having a file path/URL parameter only allow
@@ -96,27 +96,27 @@ from the corresponding item (same path/URL) in the 'Open Recent' file list.</p>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_make_kdevelop.png" class="singleimg" alt="Triggers" />&nbsp;&nbsp;Events</h2>
 
-<ul>
+<ul class="withspc">
 
 <li><b>Application initialized:</b><br />
 This event occurs when KeePass has finished initializing, but didn't perform
 any main window automations (like opening a default database) yet.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Application started and ready:</b><br />
 This event occurs when KeePass has started up, performed main window
 automations (like opening a default database) and is ready for user actions.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Application exit:</b><br />
 This event occurs when KeePass is about to exit. Databases have been closed
 already, but resources (like fonts, ...) are still valid.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Opened database file:</b><br />
@@ -127,20 +127,19 @@ This event occurs right after a database file has been opened successfully.
 is only evaluated, if the filter matches the actual database file path.
 For example, if you enter <i>F:\</i> as filter string and specify
 <i>'Starts with'</i> as comparison method, the trigger will only be evaluated,
-if the database (that has just been opened) path starts with <i>F:\</i>.
-<br /><br /></li>
+if the database (that has just been opened) path starts with <i>F:\</i>.</li>
 </ul></li>
 
 <li><b>Saving database file:</b><br />
 This event occurs right before a database file is saved.
 <ul>
-<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
 </ul></li>
 
 <li><b>Saved database file:</b><br />
 This event occurs right after a database file has been saved successfully.
 <ul>
-<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
 </ul></li>
 
 <li><b>Closing database file (before saving):</b><br />
@@ -148,7 +147,7 @@ This event occurs right before a database file is closed.
 It occurs before KeePass saves the database automatically or asks the
 user whether to save unsaved changes.
 <ul>
-<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
 </ul></li>
 
 <li><b>Closing database file (after saving):</b><br />
@@ -156,22 +155,35 @@ This event occurs right before a database file is closed.
 The database file already was saved automatically or unsaved changes were
 saved/discarded depending on the user's choice.
 <ul>
-<li><i>Parameters:</i> See 'Opened database file' event.<br /><br /></li>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
 </ul></li>
 
 <li><b>Copied entry data to clipboard:</b><br />
 This event occurs when entry data (user name, password, ...) is copied
 to the Windows clipboard.
 <ul>
-<li><i>Value:</i> An optional value (copied data) filter.<br /><br /></li>
+<li><i>Value:</i> An optional value (copied data) filter.</li>
 </ul></li>
 
-<li><b>User interface state updated:</b><br />
+<!-- <li><b>User interface state updated:</b><br />
 This event occurs when KeePass has finished updating the state of the
 user interface (menus, toolbar, ...). The user interface state is updated
 after most user actions, like adding / editing / deleting entries and groups, etc.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
+</ul></li> -->
+
+<li><b>Time - Periodic:</b><br />
+This event occurs at user-defined intervals.
+The event is raised only if KeePass is not occupied
+with a different task (like showing a subdialog).
+<ul>
+<li><i>Interval:</i> Time span between the events, in seconds.</li>
+<li><i>Restart timer on KeePass activity:</i>
+If this option is turned on, a KeePass activity
+(user interaction, automation, subdialog, plugin activity, ...)
+causes a restart of the timer, i.e. one full interval must
+pass for the next event.</li>
 </ul></li>
 
 <li><b>Custom toolbar button clicked:</b><br />
@@ -190,14 +202,14 @@ trigger action.
 <h2 class="sectiontitle">
 <img src="../images/b16x16_make_kdevelop.png" class="singleimg" alt="Triggers" />&nbsp;&nbsp;Conditions</h2>
 
-<ul>
+<ul class="withspc">
 
 <li><b>Environment variable:</b><br />
 <ul>
 <li><i>Name:</i> Name of the environment variable to check. The name must <i>not</i>
 be enclosed in percent (<code>%</code>) characters.</li>
 <li><i>Value:</i> The value that the specified environment variable must have
-for the condition to be true.<br /><br /></li>
+for the condition to be true.</li>
 </ul></li>
 
 <li><b>String:</b><br />
@@ -205,17 +217,17 @@ for the condition to be true.<br /><br /></li>
 <li><i>String:</i> A string (KeePass Spr-compiles this, i.e. you can e.g. use
 <a href="../base/placeholders.html">placeholders</a>).</li>
 <li><i>Value:</i> The value that the specified, evaluated string must have
-for the condition to be true.<br /><br /></li>
+for the condition to be true.</li>
 </ul></li>
 
 <li><b>File exists:</b><br />
 <ul>
-<li><i>File:</i> The file that must exist in order for the condition to be true.<br /><br /></li>
+<li><i>File:</i> The file that must exist in order for the condition to be true.</li>
 </ul></li>
 
 <li><b>Remote host is reachable (ping):</b><br />
 <ul>
-<li><i>Host:</i> Host to send the ping to.<br /><br /></li>
+<li><i>Host:</i> Host to send the ping to.</li>
 </ul></li>
 
 <li><b>Database has unsaved changes:</b><br />
@@ -232,7 +244,7 @@ Evaluates to true, if the specified database has unsaved changes.
 <h2 class="sectiontitle">
 <img src="../images/b16x16_make_kdevelop.png" class="singleimg" alt="Triggers" />&nbsp;&nbsp;Actions</h2>
 
-<ul>
+<ul class="withspc">
 
 <li><b>Execute command line / URL:</b><br />
 The file/URL and arguments are parsed by the Spr engine before they
@@ -254,7 +266,7 @@ to use the default verb. Some applications support additional verbs (e.g.
 &quot;Print&quot; to print the specified document).
 When using the verb &quot;RunAs&quot;, the application is executed with
 administrative rights (this may require a confirmation via the UAC
-dialog).<br /><br /></li>
+dialog).</li>
 </ul></li>
 
 <li><b>Change trigger on/off state:</b><br />
@@ -262,7 +274,7 @@ dialog).<br /><br /></li>
 <li><i>Trigger name:</i> Name of the target trigger whose on/off state
 should be changed. If this field is left empty, the target trigger is
 the current one.</li>
-<li><i>New state:</i> Specifies the new state of the target trigger.<br /><br /></li>
+<li><i>New state:</i> Specifies the new state of the target trigger.</li>
 </ul></li>
 
 <li><b>Open database file:</b><br />
@@ -275,7 +287,7 @@ the protocol (prefix) must be specified.</li>
 for connecting to the target file system (for example FTP account user name /
 password). These credentials are not used to decrypt the database.</li>
 <li><i>Password / Key file / User account:</i> Optional credentials that are used
-to decrypt the database file.<br /><br /></li>
+to decrypt the database file.</li>
 </ul></li>
 
 <li><b>Save active database:</b><br />
@@ -283,7 +295,7 @@ Save the currently active database. This action always saves the database,
 even if there are no unsaved changes. To only save if there are unsaved changes,
 use the 'Active database has unsaved changes' trigger condition.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Synchronize active database with a file/URL:</b><br />
@@ -293,7 +305,7 @@ Synchronize the currently opened and active database with a file.
 If it is an URL, the protocol (prefix) must be specified.</li>
 <li><i>IO Connection - User Name / Password:</i> Optional credentials that are used
 for connecting to the target file system (for example FTP account user name /
-password). These credentials are not used to decrypt the database.<br /><br /></li>
+password). These credentials are not used to decrypt the database.</li>
 </ul></li>
 
 <li><b>Import into active database:</b><br />
@@ -308,7 +320,7 @@ in both the currently active database and the import file.</li>
 <li><i>Password / Key file / User account:</i> Optional credentials that are used
 to decrypt the import file, if required.
 If no credentials are specified, but the import file is encrypted, KeePass
-shows a key prompt dialog.<br /><br /></li>
+shows a key prompt dialog.</li>
 </ul></li>
 
 <li><b>Export active database:</b><br />
@@ -325,13 +337,13 @@ name of the root group of the database must not be specified.
 For example, to export a group 'B' that is a subgroup of the group
 'A', specify <code>/A/B</code> as group path.</li>
 <li><i>Filter - Tag:</i> Export only the entries that have the
-specified tag (optional parameter).<br /><br /></li>
+specified tag (optional parameter).</li>
 </ul></li>
 
 <li><b>Close active database:</b><br />
 Close the currently active database.
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Activate database (select tab):</b><br />
@@ -342,13 +354,13 @@ substring of the actual database path. For example, specifying
 <code>C:\Documents\KeePass\MyDatabase.kdbx</code>.</li>
 <li><i>Filter:</i> Specifies the databases that are being
 considered. If 'Triggering' is selected and the 'File/URL' field is empty,
-the database that triggered the event is activated.<br /><br /></li>
+the database that triggered the event is activated.</li>
 </ul></li>
 
 <li><b>Wait:</b><br />
 Wait for the specified amount of time.
 <ul>
-<li><i>Time span:</i> Number of milliseconds to wait.<br /><br /></li>
+<li><i>Time span:</i> Number of milliseconds to wait.</li>
 </ul></li>
 
 <li><b>Show message box:</b><br />
@@ -367,27 +379,27 @@ selected, the action is only performed if the user clicks the 'OK' or
 <li><i>Action:</i> The action to perform after showing the message box.</li>
 <li><i>Action - Parameters:</i> Parameters for the specified action. For
 example, if executing a command line / URL is specified as action, this field
-must contain the command line / URL.<br /><br /></li>
+must contain the command line / URL.</li>
 </ul></li>
 
 <li><b>Perform global auto-type:</b><br />
 Execute global auto-type (like pressing the global auto-type hot key).
 <ul>
-<li><i>Parameters:</i> None.<br /><br /></li>
+<li><i>Parameters:</i> None.</li>
 </ul></li>
 
 <li><b>Perform auto-type with selected entry:</b><br />
 Executes auto-type with the currently selected entry as context.
 <ul>
 <li><i>Sequence:</i> The keystroke sequence to send. If this field is empty,
-the default sequence is used.<br /><br /></li>
+the default sequence is used.</li>
 </ul></li>
 
 <li><b>Show entries by tag:</b><br />
 Search all entries having the specified tag and show them in the
 entry list of the main window.
 <ul>
-<li><i>Tag:</i> Tag that the entries must have.<br /><br /></li>
+<li><i>Tag:</i> Tag that the entries must have.</li>
 </ul></li>
 
 <li><b>Add custom toolbar button:</b><br />
@@ -395,7 +407,7 @@ Add a custom button to the toolbar in the main window.
 <ul>
 <li><i>ID:</i> ID of the toolbar button (see the event handler).</li>
 <li><i>Name:</i> Text that is shown on the toolbar button.</li>
-<li><i>Description:</i> Text that is shown in the tooltip of the button.<br /><br /></li>
+<li><i>Description:</i> Text that is shown in the tooltip of the button.</li>
 </ul></li>
 
 <li><b>Remove custom toolbar button:</b><br />

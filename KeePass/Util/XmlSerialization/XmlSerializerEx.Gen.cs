@@ -229,6 +229,9 @@ namespace KeePass.Util.XmlSerialization
 					case "SaveForceSync":
 						o.SaveForceSync = ReadBoolean(xr);
 						break;
+					case "AutoSaveAfterEntryEdit":
+						o.AutoSaveAfterEntryEdit = ReadBoolean(xr);
+						break;
 					case "FileClosing":
 						o.FileClosing = ReadAceCloseDb(xr);
 						break;
@@ -352,6 +355,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "MinimizeAfterClipboardCopy":
 						o.MinimizeAfterClipboardCopy = ReadBoolean(xr);
+						break;
+					case "MinimizeAfterAutoType":
+						o.MinimizeAfterAutoType = ReadBoolean(xr);
 						break;
 					case "MinimizeAfterLocking":
 						o.MinimizeAfterLocking = ReadBoolean(xr);
@@ -499,6 +505,9 @@ namespace KeePass.Util.XmlSerialization
 					case "ToolStripRenderer":
 						o.ToolStripRenderer = ReadString(xr);
 						break;
+					case "TreeViewShowLines":
+						o.TreeViewShowLines = ReadBoolean(xr);
+						break;
 					case "OptimizeForScreenReader":
 						o.OptimizeForScreenReader = ReadBoolean(xr);
 						break;
@@ -605,6 +614,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "SslCertsAcceptInvalid":
 						o.SslCertsAcceptInvalid = ReadBoolean(xr);
+						break;
+					case "ProtectProcessWithDacl":
+						o.ProtectProcessWithDacl = ReadBoolean(xr);
 						break;
 					default:
 						Debug.Assert(false);

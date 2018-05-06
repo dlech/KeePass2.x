@@ -57,17 +57,17 @@ namespace KeePass.Util
 					NativeMethods.PROCESSENTRY32));
 				if(WinUtil.IsAtLeastWindows2000) // Unicode
 				{
-					int p = Marshal.SizeOf(typeof(IntPtr));
-					if(p == 4)
+					if(IntPtr.Size == 4)
 					{
 						Debug.Assert(uEntrySize ==
 							NativeMethods.PROCESSENTRY32SizeUni32);
 					}
-					else if(p == 8)
+					else if(IntPtr.Size == 8)
 					{
 						Debug.Assert(uEntrySize ==
 							NativeMethods.PROCESSENTRY32SizeUni64);
 					}
+					else { Debug.Assert(false); }
 				}
 
 				IntPtr hSnap = NativeMethods.CreateToolhelp32Snapshot(

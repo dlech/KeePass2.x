@@ -133,6 +133,15 @@ namespace KeePass.App.Configuration
 			get { return m_bSslCertsAcceptInvalid; }
 			set { m_bSslCertsAcceptInvalid = value; }
 		}
+
+		// https://keepass.info/help/v2_dev/customize.html#opt
+		private bool m_bProtectProcessWithDacl = false;
+		[DefaultValue(false)]
+		public bool ProtectProcessWithDacl
+		{
+			get { return m_bProtectProcessWithDacl; }
+			set { m_bProtectProcessWithDacl = value; }
+		}
 	}
 
 	public sealed class AceWorkspaceLocking

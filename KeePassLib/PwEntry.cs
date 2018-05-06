@@ -784,45 +784,49 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Approximate the total size of this entry in bytes (including
-		/// strings, binaries and history entries).
+		/// Approximate the total size (in process memory) of this entry
+		/// in bytes (including strings, binaries and history entries).
 		/// </summary>
 		/// <returns>Size in bytes.</returns>
 		public ulong GetSize()
 		{
-			ulong uSize = 128; // Approx fixed length data
+			// This method assumes 64-bit pointers/references and Unicode
+			// strings (i.e. 2 bytes per character)
 
+			ulong cb = 248; // Number of bytes; approx. fixed length data
+			ulong cc = 0; // Number of characters
+
+			cb += (ulong)m_listStrings.UCount * 40;
 			foreach(KeyValuePair<string, ProtectedString> kvpStr in m_listStrings)
-			{
-				uSize += (ulong)kvpStr.Key.Length;
-				uSize += (ulong)kvpStr.Value.Length;
-			}
+				cc += (ulong)kvpStr.Key.Length + (ulong)kvpStr.Value.Length;
 
+			cb += (ulong)m_listBinaries.UCount * 65;
 			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in m_listBinaries)
 			{
-				uSize += (ulong)kvpBin.Key.Length;
-				uSize += kvpBin.Value.Length;
+				cc += (ulong)kvpBin.Key.Length;
+				cb += (ulong)kvpBin.Value.Length;
 			}
 
-			uSize += (ulong)m_listAutoType.DefaultSequence.Length;
+			cc += (ulong)m_listAutoType.DefaultSequence.Length;
+			cb += (ulong)m_listAutoType.AssociationsCount * 24;
 			foreach(AutoTypeAssociation a in m_listAutoType.Associations)
-			{
-				uSize += (ulong)a.WindowName.Length;
-				uSize += (ulong)a.Sequence.Length;
-			}
+				cc += (ulong)a.WindowName.Length + (ulong)a.Sequence.Length;
 
+			cb += (ulong)m_listHistory.UCount * 8;
 			foreach(PwEntry peHistory in m_listHistory)
-				uSize += peHistory.GetSize();
+				cb += peHistory.GetSize();
 
-			uSize += (ulong)m_strOverrideUrl.Length;
+			cc += (ulong)m_strOverrideUrl.Length;
 
+			cb += (ulong)m_vTags.Count * 8;
 			foreach(string strTag in m_vTags)
-				uSize += (ulong)strTag.Length;
+				cc += (ulong)strTag.Length;
 
+			cb += (ulong)m_dCustomData.Count * 16;
 			foreach(KeyValuePair<string, string> kvp in m_dCustomData)
-				uSize += (ulong)kvp.Key.Length + (ulong)kvp.Value.Length;
+				cc += (ulong)kvp.Key.Length + (ulong)kvp.Value.Length;
 
-			return uSize;
+			return (cb + (cc << 1));
 		}
 
 		public bool HasTag(string strTag)

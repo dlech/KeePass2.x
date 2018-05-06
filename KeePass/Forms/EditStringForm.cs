@@ -43,13 +43,13 @@ namespace KeePass.Forms
 		private ProtectedStringDictionary m_vStringDict = null;
 		private string m_strStringName = null;
 		private ProtectedString m_psStringInitialValue = null;
-		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 		private PwDatabase m_pwContext = null;
 
 		private List<string> m_lSuggestedNames = new List<string>();
-
 		private List<string> m_lStdNames = PwDefs.GetStandardFields();
 		private char[] m_vInvalidChars = new char[] { '{', '}' };
+
+		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 
 		public EditStringForm()
 		{
@@ -105,7 +105,8 @@ namespace KeePass.Forms
 			if(m_strStringName != null) m_cmbStringName.Text = m_strStringName;
 			if(m_psStringInitialValue != null)
 			{
-				m_richStringValue.Text = m_psStringInitialValue.ReadString();
+				m_richStringValue.Text = StrUtil.NormalizeNewLines(
+					m_psStringInitialValue.ReadString(), true);
 				m_cbProtect.Checked = m_psStringInitialValue.IsProtected;
 			}
 
@@ -207,8 +208,20 @@ namespace KeePass.Forms
 					m_vStringDict.Remove(m_strStringName);
 			}
 
-			ProtectedString ps = new ProtectedString(m_cbProtect.Checked,
-				m_richStringValue.Text);
+			string strValue = StrUtil.NormalizeNewLines(m_richStringValue.Text, true);
+			if(m_psStringInitialValue != null)
+			{
+				string strValueIn = m_psStringInitialValue.ReadString();
+
+				// If the initial and the new value differ only by
+				// new-line encoding, use the initial value to avoid
+				// unnecessary changes
+				if(StrUtil.NormalizeNewLines(strValue, false) ==
+					StrUtil.NormalizeNewLines(strValueIn, false))
+					strValue = strValueIn;
+			}
+
+			ProtectedString ps = new ProtectedString(m_cbProtect.Checked, strValue);
 			m_vStringDict.Set(strName, ps);
 		}
 

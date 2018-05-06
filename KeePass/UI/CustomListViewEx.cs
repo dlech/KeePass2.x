@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.Native;
 
@@ -34,6 +34,8 @@ namespace KeePass.UI
 	{
 		public CustomListViewEx() : base()
 		{
+			if(Program.DesignMode) return;
+
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }
 		}

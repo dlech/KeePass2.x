@@ -220,6 +220,9 @@ namespace KeePass.Util
 
 					mf.EnsureVisibleEntry(pe.Uuid);
 					mf.UpdateUI(false, null, false, null, false, null, false);
+
+					if(Program.Config.Application.AutoSaveAfterEntryEdit)
+						mf.SaveDatabase(pd, null);
 				}
 				else { Debug.Assert(false); }
 

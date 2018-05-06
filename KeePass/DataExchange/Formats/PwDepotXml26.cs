@@ -97,7 +97,7 @@ namespace KeePass.DataExchange.Formats
 			// Remove vertical tabulators
 			strData = strData.Replace("\u000B", string.Empty);
 
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.LoadXml(strData);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;

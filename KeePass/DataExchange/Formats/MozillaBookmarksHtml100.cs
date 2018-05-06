@@ -128,7 +128,7 @@ namespace KeePass.DataExchange.Formats
 			byte[] pbFixedData = StrUtil.Utf8.GetBytes(strContent);
 			MemoryStream msFixed = new MemoryStream(pbFixedData, false);
 
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(msFixed);
 			msFixed.Close();
 

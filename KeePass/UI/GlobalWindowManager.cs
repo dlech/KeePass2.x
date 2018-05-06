@@ -254,10 +254,10 @@ namespace KeePass.UI
 
 		/* internal static bool HasWindowMW(IntPtr hWindow)
 		{
-			if(HasWindow(hWindow)) return true;
+			IntPtr hMW = Program.GetSafeMainWindowHandle();
+			if((hMW != IntPtr.Zero) && (hMW == hWindow)) return true;
 
-			MainForm mf = Program.MainForm;
-			if((mf != null) && (mf.Handle == hWindow)) return true;
+			if(HasWindow(hWindow)) return true;
 
 			return false;
 		} */

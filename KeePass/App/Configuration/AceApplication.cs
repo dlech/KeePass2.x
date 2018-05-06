@@ -198,6 +198,14 @@ namespace KeePass.App.Configuration
 			set { m_bSaveForceSync = value; }
 		}
 
+		private bool m_bAutoSaveAfterEntryEdit = false;
+		[DefaultValue(false)]
+		public bool AutoSaveAfterEntryEdit
+		{
+			get { return m_bAutoSaveAfterEntryEdit; }
+			set { m_bAutoSaveAfterEntryEdit = value; }
+		}
+
 		private AceCloseDb m_fc = new AceCloseDb();
 		public AceCloseDb FileClosing
 		{

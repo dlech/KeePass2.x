@@ -82,11 +82,11 @@ namespace KeePass.Native
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-		[DllImport("User32.dll", EntryPoint = "GetClassLong")]
-		private static extern IntPtr GetClassLongPtr32(IntPtr hWnd, int nIndex);
+		[DllImport("User32.dll", ExactSpelling = false)]
+		private static extern IntPtr GetClassLong(IntPtr hWnd, int nIndex);
 
-		[DllImport("User32.dll", EntryPoint = "GetClassLongPtr")]
-		private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
+		[DllImport("User32.dll", ExactSpelling = false)]
+		private static extern IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex);
 
 		// [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		// private static extern int GetClassName(IntPtr hWnd,

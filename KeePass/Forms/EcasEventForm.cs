@@ -89,6 +89,7 @@ namespace KeePass.Forms
 		{
 			if(!UpdateDataEx(m_eventInOut, true, EcasTypeDxMode.Selection))
 				this.DialogResult = DialogResult.None;
+			else m_eventInOut.RunAtTicks = -1;
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

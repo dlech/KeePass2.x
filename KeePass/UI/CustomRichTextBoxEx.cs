@@ -19,11 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Drawing;
-using System.Diagnostics;
 
 using KeePass.Util;
 
@@ -58,6 +59,8 @@ namespace KeePass.UI
 
 		public CustomRichTextBoxEx() : base()
 		{
+			if(Program.DesignMode) return;
+
 			// We cannot use EnableAutoDragDrop, because moving some text
 			// using drag&drop can remove the selected text from the box
 			// (even when read-only is enabled!), which is usually not a
@@ -76,6 +79,7 @@ namespace KeePass.UI
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+			if(Program.DesignMode) return;
 
 			// The following operations should not recreate the handle
 			if(m_csAutoProps.TryEnter())
@@ -565,6 +569,36 @@ namespace KeePass.UI
 				m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
 
 			if(m_bForceRedrawOnScroll.Value) Invalidate();
+		}
+
+		protected override void OnLinkClicked(LinkClickedEventArgs e)
+		{
+			try
+			{
+				string str = e.LinkText;
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
+
+				// Open the URL if no handler has been associated with
+				// the LinkClicked event;
+				// if(this.LinkClicked == null) WinUtil.OpenUrl(str, null);
+				string strEv = (MonoWorkarounds.IsRequired() ? "LinkClickedEvent" :
+					"EVENT_LINKACTIVATE");
+				FieldInfo fi = typeof(RichTextBox).GetField(strEv,
+					BindingFlags.NonPublic | BindingFlags.Static);
+				object oEv = ((fi != null) ? fi.GetValue(null) : null);
+				if(oEv != null)
+				{
+					if(this.Events[oEv] == null) // No event handler associated
+					{
+						WinUtil.OpenUrl(str, null);
+						return;
+					}
+				}
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			base.OnLinkClicked(e);
 		}
 	}
 }

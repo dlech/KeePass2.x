@@ -104,7 +104,7 @@ namespace KeePass.DataExchange.Formats
 			}
 
 			MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(strDoc), false);
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(ms);
 			ms.Close();
 

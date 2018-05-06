@@ -353,8 +353,14 @@
     <Compile Include="..\KeePassLib\Utility\TimeUtil.cs">
       <Link>KeePassLib\Utility\TimeUtil.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Utility\TypeOverridePool.cs">
+      <Link>KeePassLib\Utility\TypeOverridePool.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Utility\UrlUtil.cs">
       <Link>KeePassLib\Utility\UrlUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\KeePassLib\Utility\XmlUtilEx.cs">
+      <Link>KeePassLib\Utility\XmlUtilEx.cs</Link>
     </Compile>
     <Compile Include="App\AppDefs.cs" />
     <Compile Include="App\AppHelp.cs" />
@@ -380,6 +386,7 @@
     <Compile Include="DataExchange\FileFormatProvider.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
+    <Compile Include="DataExchange\Formats\ChromeCsv66.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\DashlaneCsv2.cs" />
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
@@ -562,12 +569,6 @@
     </Compile>
     <Compile Include="Forms\ListViewForm.Designer.cs">
       <DependentUpon>ListViewForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\EntryReportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\EntryReportForm.Designer.cs">
-      <DependentUpon>EntryReportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FieldPickerForm.cs">
       <SubType>Form</SubType>
@@ -831,6 +832,9 @@
     <Compile Include="UI\PwInputControlGroup.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
     <Compile Include="UI\RtlAwareResizeScope.cs" />
+    <Compile Include="UI\SecureTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\SplitButtonEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -869,8 +873,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\RichTextBoxContextMenu.cs" />
-    <Compile Include="UI\SecureEdit.cs">
-    </Compile>
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\IPluginHost.cs" />
     <Compile Include="Plugins\DefaultPluginHost.cs" />
@@ -942,9 +944,6 @@
     <EmbeddedResource Include="Forms\ListViewForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ListViewForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EntryReportForm.resx">
-      <DependentUpon>EntryReportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FieldPickerForm.resx">
       <DependentUpon>FieldPickerForm.cs</DependentUpon>
@@ -1111,6 +1110,7 @@
     <Compile Include="Util\IniFile.cs" />
     <Compile Include="Util\IpcBroadcast.cs" />
     <Compile Include="Util\IpcBroadcast.Fsw.cs" />
+    <Compile Include="Util\IpcBroadcast.Tcp.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
@@ -1263,6 +1263,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Chrome.png" />
     <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />
     <None Include="Resources\Icons\QuadNormal_Y.ico" />

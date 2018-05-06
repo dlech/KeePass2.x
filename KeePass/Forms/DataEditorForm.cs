@@ -156,7 +156,7 @@ namespace KeePass.Forms
 				{
 					if(strData.Length > 0)
 					{
-						m_rtbText.Rtf = strData;
+						m_rtbText.Rtf = StrUtil.RtfFix(strData);
 						bDefaultFont = false;
 					}
 					else m_rtbText.Text = string.Empty;
@@ -275,7 +275,7 @@ namespace KeePass.Forms
 		private void OnFileSave(object sender, EventArgs e)
 		{
 			if(m_bdc == BinaryDataClass.RichText)
-				m_pbEditedData = StrUtil.Utf8.GetBytes(m_rtbText.Rtf);
+				m_pbEditedData = StrUtil.Utf8.GetBytes(StrUtil.RtfFix(m_rtbText.Rtf));
 			else
 			{
 				string strData = m_rtbText.Text;
@@ -407,11 +407,6 @@ namespace KeePass.Forms
 				m_rtbText.SelectionBackColor = clr;
 				UpdateUIState(true, true);
 			}
-		}
-
-		private void OnTextLinkClicked(object sender, LinkClickedEventArgs e)
-		{
-			WinUtil.OpenUrl(e.LinkText, null);
 		}
 
 		private void OnFileExit(object sender, EventArgs e)

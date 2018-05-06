@@ -34,6 +34,42 @@ namespace KeePassLib.Cryptography
 {
 	public static class CryptoUtil
 	{
+		private static bool? g_obProtData = null;
+		public static bool IsProtectedDataSupported
+		{
+			get
+			{
+				if(g_obProtData.HasValue) return g_obProtData.Value;
+
+				bool b = false;
+				try
+				{
+					Random r = CryptoRandom.NewWeakRandom();
+
+					byte[] pbData = new byte[137];
+					r.NextBytes(pbData);
+
+					byte[] pbEnt = new byte[41];
+					r.NextBytes(pbEnt);
+
+					byte[] pbEnc = ProtectedData.Protect(pbData, pbEnt,
+						DataProtectionScope.CurrentUser);
+					if((pbEnc != null) && !MemUtil.ArraysEqual(pbEnc, pbData))
+					{
+						byte[] pbDec = ProtectedData.Unprotect(pbEnc, pbEnt,
+							DataProtectionScope.CurrentUser);
+						if((pbDec != null) && MemUtil.ArraysEqual(pbDec, pbData))
+							b = true;
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				Debug.Assert(b); // Should be supported on all systems
+				g_obProtData = b;
+				return b;
+			}
+		}
+
 		public static byte[] HashSha256(byte[] pbData)
 		{
 			if(pbData == null) throw new ArgumentNullException("pbData");
@@ -161,6 +197,39 @@ namespace KeePassLib.Cryptography
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		public static byte[] ProtectData(byte[] pb, byte[] pbOptEntropy,
+			DataProtectionScope s)
+		{
+			return ProtectDataPriv(pb, true, pbOptEntropy, s);
+		}
+
+		public static byte[] UnprotectData(byte[] pb, byte[] pbOptEntropy,
+			DataProtectionScope s)
+		{
+			return ProtectDataPriv(pb, false, pbOptEntropy, s);
+		}
+
+		private static byte[] ProtectDataPriv(byte[] pb, bool bProtect,
+			byte[] pbOptEntropy, DataProtectionScope s)
+		{
+			if(pb == null) throw new ArgumentNullException("pb");
+
+			if((pbOptEntropy != null) && (pbOptEntropy.Length == 0))
+				pbOptEntropy = null;
+
+			if(CryptoUtil.IsProtectedDataSupported)
+			{
+				if(bProtect)
+					return ProtectedData.Protect(pb, pbOptEntropy, s);
+				return ProtectedData.Unprotect(pb, pbOptEntropy, s);
+			}
+
+			Debug.Assert(false);
+			byte[] pbCopy = new byte[pb.Length];
+			Array.Copy(pb, pbCopy, pb.Length);
+			return pbCopy;
 		}
 	}
 }

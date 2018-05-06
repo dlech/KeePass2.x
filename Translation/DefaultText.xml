@@ -148,6 +148,9 @@
 		<Data Name="AutoRememberOpenLastFile">
 			<Value>Remember and automatically open last used database on startup</Value>
 		</Data>
+		<Data Name="AutoSaveAfterEntryEdit">
+			<Value>Automatically save after modifying an entry using the entry editing dialog</Value>
+		</Data>
 		<Data Name="AutoSaveAtExit">
 			<Value>Automatically save when closing/locking the database</Value>
 		</Data>
@@ -1177,8 +1180,8 @@
 		<Data Name="Internet">
 			<Value>Internet</Value>
 		</Data>
-		<Data Name="InvalidKey">
-			<Value>Invalid Key</Value>
+		<Data Name="Interval">
+			<Value>Interval</Value>
 		</Data>
 		<Data Name="InvalidUrl">
 			<Value>The specified URL is invalid.</Value>
@@ -1240,6 +1243,9 @@
 		<Data Name="KeyboardKeyEsc">
 			<Value>Esc</Value>
 		</Data>
+		<Data Name="KeyboardKeyInvalid">
+			<Value>Invalid Key</Value>
+		</Data>
 		<Data Name="KeyboardKeyModifiers">
 			<Value>Key Modifiers</Value>
 		</Data>
@@ -1282,11 +1288,23 @@
 		<Data Name="LanguageSelected">
 			<Value>The selected language has been activated. KeePass must be restarted in order to load the language.</Value>
 		</Data>
+		<Data Name="LargeEntries">
+			<Value>Large Entries</Value>
+		</Data>
+		<Data Name="LargeEntriesList">
+			<Value>List of entries that require a lot of memory.</Value>
+		</Data>
 		<Data Name="LastAccessTime">
 			<Value>Last Access Time</Value>
 		</Data>
 		<Data Name="LastModificationTime">
 			<Value>Last Modification Time</Value>
+		</Data>
+		<Data Name="LastModified">
+			<Value>Last Modified</Value>
+		</Data>
+		<Data Name="LastModifiedEntriesList">
+			<Value>List of entries that have been modified recently.</Value>
 		</Data>
 		<Data Name="LastModTimePwHist">
 			<Value>Last Password Modification Time (Based on History)</Value>
@@ -1390,6 +1408,9 @@
 		<Data Name="Method">
 			<Value>Method</Value>
 		</Data>
+		<Data Name="MinimizeAfterAutoType">
+			<Value>Minimize main window after performing auto-type</Value>
+		</Data>
 		<Data Name="MinimizeAfterCopy">
 			<Value>Minimize main window after copying data to the clipboard</Value>
 		</Data>
@@ -1410,6 +1431,9 @@
 		</Data>
 		<Data Name="MoreEntries">
 			<Value>{PARAM} more entries</Value>
+		</Data>
+		<Data Name="MoreInfo">
+			<Value>More information</Value>
 		</Data>
 		<Data Name="Name">
 			<Value>Name</Value>
@@ -1632,6 +1656,9 @@
 		</Data>
 		<Data Name="PerformSelectedAutoType">
 			<Value>Perform auto-type with selected entry</Value>
+		</Data>
+		<Data Name="Periodic">
+			<Value>Periodic</Value>
 		</Data>
 		<Data Name="PickCharacters">
 			<Value>Pick Characters</Value>
@@ -2134,6 +2161,12 @@
 		<Data Name="TextViewer">
 			<Value>Text Viewer</Value>
 		</Data>
+		<Data Name="Time">
+			<Value>Time</Value>
+		</Data>
+		<Data Name="TimerRestartOnActivity">
+			<Value>Restart timer on KeePass activity</Value>
+		</Data>
 		<Data Name="TimeSpan">
 			<Value>Time span</Value>
 		</Data>
@@ -2169,6 +2202,9 @@
 		</Data>
 		<Data Name="TrayIconSingleClick">
 			<Value>Single click instead of double click for default tray icon action</Value>
+		</Data>
+		<Data Name="TreeViewShowLines">
+			<Value>Show lines between nodes in tree views</Value>
 		</Data>
 		<Data Name="Trigger">
 			<Value>Trigger</Value>

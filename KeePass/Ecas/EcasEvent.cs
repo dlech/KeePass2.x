@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -64,6 +65,14 @@ namespace KeePass.Ecas
 			}
 		}
 
+		private long m_lRunAtTicks = -1;
+		[XmlIgnore]
+		internal long RunAtTicks
+		{
+			get { return m_lRunAtTicks; }
+			set { m_lRunAtTicks = value; }
+		}
+
 		public EcasEvent()
 		{
 		}
@@ -78,6 +87,26 @@ namespace KeePass.Ecas
 				e.m_params.Add(m_params[i]);
 
 			return e;
+		}
+
+		internal bool RestartTimer()
+		{
+			if(!m_type.Equals(EcasEventIDs.TimePeriodic)) { Debug.Assert(false); return false; }
+
+			uint s = EcasUtil.GetParamUInt(m_params, 0);
+			if(s == 0) return false;
+
+#if DEBUG
+			// StackTrace st = new StackTrace(false);
+			// Trace.WriteLine("[" + (Environment.TickCount / 1000).ToString() +
+			//	"] Restarting timer... (" + st.GetFrame(3).GetMethod().Name +
+			//	" -> " + st.GetFrame(2).GetMethod().Name +
+			//	" -> " + st.GetFrame(1).GetMethod().Name + ").");
+#endif
+
+			DateTime dtNow = DateTime.UtcNow;
+			m_lRunAtTicks = dtNow.AddSeconds((double)s - 0.45).Ticks;
+			return true;
 		}
 	}
 }

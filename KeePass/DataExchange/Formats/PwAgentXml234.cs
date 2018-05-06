@@ -68,7 +68,7 @@ namespace KeePass.DataExchange.Formats
 			IStatusLogger slLogger)
 		{
 			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(sr);
 			sr.Close();
 			sInput.Close();

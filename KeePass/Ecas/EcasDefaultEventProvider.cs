@@ -72,7 +72,13 @@ namespace KeePass.Ecas
 			0x47, 0x47, 0x59, 0x92, 0x97, 0xA7, 0x43, 0xA2,
 			0xB9, 0x68, 0x1F, 0x1F, 0xC2, 0xF7, 0x9B, 0x92
 		});
-		public static readonly PwUuid UpdatedUIState = new PwUuid(new byte[] {
+		public static readonly PwUuid TimePeriodic = new PwUuid(new byte[] {
+			0x6C, 0x44, 0xBB, 0x5D, 0xF1, 0x8B, 0x4C, 0x0D,
+			0x88, 0xCE, 0x65, 0xE6, 0xE9, 0xAD, 0x29, 0x8A
+		});
+
+		// Obsolete
+		internal static readonly PwUuid UpdatedUIState = new PwUuid(new byte[] {
 			0x8D, 0x12, 0xD4, 0x9A, 0xF2, 0xCB, 0x4F, 0xF7,
 			0xA8, 0xEF, 0xCF, 0xDA, 0xAC, 0x62, 0x68, 0x99
 		});
@@ -117,8 +123,13 @@ namespace KeePass.Ecas
 			m_events.Add(new EcasEventType(EcasEventIDs.CopiedEntryInfo,
 				KPRes.CopiedEntryData, PwIcon.ClipboardReady, epValueFilter,
 				IsMatchTextEvent));
-			m_events.Add(new EcasEventType(EcasEventIDs.UpdatedUIState,
-				KPRes.UpdatedUIState, PwIcon.PaperReady, null, null));
+			// m_events.Add(new EcasEventType(EcasEventIDs.UpdatedUIState,
+			//	KPRes.UpdatedUIState, PwIcon.PaperReady, null, null));
+			m_events.Add(new EcasEventType(EcasEventIDs.TimePeriodic,
+				KPRes.Time + " - " + KPRes.Periodic, PwIcon.Clock, new EcasParameter[] {
+					new EcasParameter(KPRes.Interval + " [s]", EcasValueType.UInt64, null),
+					new EcasParameter(KPRes.TimerRestartOnActivity, EcasValueType.Bool, null) },
+				IsMatchTimePeriodicEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.CustomTbButtonClicked,
 				KPRes.CustomTbButtonClicked, PwIcon.Star, new EcasParameter[] {
 					new EcasParameter(KPRes.Id, EcasValueType.String, null) },
@@ -173,6 +184,27 @@ namespace KeePass.Ecas
 			if(string.IsNullOrEmpty(strIdCur)) return false;
 
 			return strIdRef.Equals(strIdCur, StrUtil.CaseIgnoreCmp);
+		}
+
+		private static bool IsMatchTimePeriodicEvent(EcasEvent e, EcasContext ctx)
+		{
+			long lRun = e.RunAtTicks;
+			bool bRestart = true, bRun = false;
+
+			if(lRun >= 0)
+			{
+				DateTime dtNow = DateTime.UtcNow;
+
+				if(dtNow.Ticks >= lRun) bRun = true;
+				else bRestart = false;
+			}
+
+			if(bRestart)
+			{
+				if(!e.RestartTimer()) return false;
+			}
+
+			return bRun;
 		}
 	}
 }

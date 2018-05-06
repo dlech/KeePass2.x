@@ -352,6 +352,13 @@ namespace KeePassLib.Collections
 			m_vObjects.Sort(tComparer);
 		}
 
+		public void Sort(Comparison<T> tComparison)
+		{
+			if(tComparison == null) throw new ArgumentNullException("tComparison");
+
+			m_vObjects.Sort(tComparison);
+		}
+
 		public static PwObjectList<T> FromArray(T[] tArray)
 		{
 			if(tArray == null) throw new ArgumentNullException("tArray");

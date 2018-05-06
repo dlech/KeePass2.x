@@ -131,7 +131,7 @@ namespace KeePassLib.Utility
 				{
 					if(bFullExceptions)
 						strAppend = StrUtil.FormatException(exObj);
-					else if((exObj.Message != null) && (exObj.Message.Length > 0))
+					else if(!string.IsNullOrEmpty(exObj.Message))
 						strAppend = exObj.Message;
 				}
 #if !KeePassLibSD

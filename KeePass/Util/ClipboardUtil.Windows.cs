@@ -48,7 +48,7 @@ namespace KeePass.Util
 					Form f = GlobalWindowManager.TopWindow;
 					h = ((f != null) ? f.Handle : IntPtr.Zero);
 
-					if(h == IntPtr.Zero) h = Program.MainForm.Handle;
+					if(h == IntPtr.Zero) h = Program.GetSafeMainWindowHandle();
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}

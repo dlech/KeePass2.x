@@ -118,6 +118,8 @@ namespace KeePass.App
 			public const string TriggersConditions = "conditions";
 			public const string TriggersActions = "actions";
 
+			public const string TriggerUIStateUpd = "kb/trigger_uistateupd";
+
 			public const string Setup = "v2/setup";
 			public const string SetupMono = "mono";
 

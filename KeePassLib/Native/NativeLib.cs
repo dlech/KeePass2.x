@@ -53,24 +53,6 @@ namespace KeePassLib.Native
 			set { m_bAllowNative = value; }
 		}
 
-		private static int? g_oiPointerSize = null;
-		/// <summary>
-		/// Size of a native pointer (in bytes).
-		/// </summary>
-		public static int PointerSize
-		{
-			get
-			{
-				if(!g_oiPointerSize.HasValue)
-#if KeePassUAP
-					g_oiPointerSize = Marshal.SizeOf<IntPtr>();
-#else
-					g_oiPointerSize = Marshal.SizeOf(typeof(IntPtr));
-#endif
-				return g_oiPointerSize.Value;
-			}
-		}
-
 		private static ulong? m_ouMonoVersion = null;
 		public static ulong MonoVersion
 		{
@@ -195,19 +177,21 @@ namespace KeePassLib.Native
 							t = DesktopType.Xfce;
 						else if(strXdg.Equals("MATE", sc))
 							t = DesktopType.Mate;
-						else if(strXdg.Equals("X-Cinnamon", sc))
+						else if(strXdg.Equals("X-Cinnamon", sc)) // Mint 18.3
 							t = DesktopType.Cinnamon;
 						else if(strXdg.Equals("Pantheon", sc)) // Elementary OS
 							t = DesktopType.Pantheon;
-						else if(strXdg.Equals("KDE", sc) || // Mint 16
+						else if(strXdg.Equals("KDE", sc) || // Mint 16, Kubuntu 17.10
 							strGdm.Equals("kde-plasma", sc)) // Ubuntu 12.04
 							t = DesktopType.Kde;
 						else if(strXdg.Equals("GNOME", sc))
 						{
 							if(strGdm.Equals("cinnamon", sc)) // Mint 13
 								t = DesktopType.Cinnamon;
-							else t = DesktopType.Gnome;
+							else t = DesktopType.Gnome; // Fedora 27
 						}
+						else if(strXdg.Equals("ubuntu:GNOME", sc))
+							t = DesktopType.Gnome;
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}
@@ -243,6 +227,7 @@ namespace KeePassLib.Native
 
 			RunProcessDelegate fnRun = delegate()
 			{
+				Process pToDispose = null;
 				try
 				{
 					ProcessStartInfo psi = new ProcessStartInfo();
@@ -258,6 +243,7 @@ namespace KeePassLib.Native
 					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
 
 					Process p = Process.Start(psi);
+					pToDispose = p;
 
 					if(strStdInput != null)
 					{
@@ -274,9 +260,11 @@ namespace KeePassLib.Native
 						p.WaitForExit();
 					else if((f & AppRunFlags.GCKeepAlive) != AppRunFlags.None)
 					{
+						pToDispose = null; // Thread disposes it
+
 						Thread th = new Thread(delegate()
 						{
-							try { p.WaitForExit(); }
+							try { p.WaitForExit(); p.Dispose(); }
 							catch(Exception) { Debug.Assert(false); }
 						});
 						th.Start();
@@ -289,6 +277,11 @@ namespace KeePassLib.Native
 #else
 				catch(Exception) { }
 #endif
+				finally
+				{
+					try { if(pToDispose != null) pToDispose.Dispose(); }
+					catch(Exception) { Debug.Assert(false); }
+				}
 
 				return null;
 			};

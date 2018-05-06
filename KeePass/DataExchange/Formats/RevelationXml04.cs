@@ -56,7 +56,7 @@ namespace KeePass.DataExchange.Formats
 			string strDoc = sr.ReadToEnd();
 			sr.Close();
 
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 			doc.LoadXml(strDoc);
 
 			ProcessEntries(pwStorage, pwStorage.RootGroup,

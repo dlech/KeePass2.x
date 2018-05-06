@@ -84,7 +84,7 @@ namespace KeePass
 		private static bool m_bDesignModeQueried = false;
 #endif
 
-		public enum AppMessage
+		public enum AppMessage // int
 		{
 			Null = 0,
 			RestoreWindow = 1,
@@ -569,6 +569,9 @@ namespace KeePass
 
 			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
 
+			if(m_appConfig.Security.ProtectProcessWithDacl)
+				KeePassLib.Native.NativeMethods.ProtectProcessWithDacl();
+
 			m_appConfig.Apply(AceApplyFlags.All);
 
 			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
@@ -723,14 +726,17 @@ namespace KeePass
 		// For plugins
 		public static void NotifyUserActivity()
 		{
-			if(Program.m_formMain != null) Program.m_formMain.NotifyUserActivity();
+			MainForm mf = m_formMain;
+			if(mf != null) mf.NotifyUserActivity();
 		}
 
 		public static IntPtr GetSafeMainWindowHandle()
 		{
-			if(m_formMain == null) return IntPtr.Zero;
-
-			try { return m_formMain.Handle; }
+			try
+			{
+				MainForm mf = m_formMain;
+				if(mf != null) return mf.Handle;
+			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return IntPtr.Zero;

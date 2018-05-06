@@ -31,6 +31,14 @@ namespace KeePassLib.Native
 	{
 		internal const int MAX_PATH = 260;
 
+		internal const long INVALID_HANDLE_VALUE = -1;
+
+		internal const uint MOVEFILE_REPLACE_EXISTING = 0x00000001;
+		internal const uint MOVEFILE_COPY_ALLOWED = 0x00000002;
+
+		internal const uint FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
+		internal const int MAX_TRANSACTION_DESCRIPTION_LENGTH = 64;
+
 		// internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
 		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
@@ -47,10 +55,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
-			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
-				return TransformKey64(pBuf256, pKey256, uRounds);
-			else
+			if(IntPtr.Size == 4)
 				return TransformKey32(pBuf256, pKey256, uRounds);
+			return TransformKey64(pBuf256, pKey256, uRounds);
 		}
 
 		[DllImport("KeePassNtv32.dll", EntryPoint = "TransformKeyTimed")]
@@ -66,10 +73,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKeyTimed(IntPtr pBuf256, IntPtr pKey256,
 			ref UInt64 puRounds, UInt32 uSeconds)
 		{
-			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
-				return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
-			else
+			if(IntPtr.Size == 4)
 				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
+			return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
 		} */
 
 #if !KeePassUAP
@@ -86,10 +92,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
-			if(NativeLib.PointerSize == 8)
-				return TransformKey64(pBuf256, pKey256, uRounds);
-			else
+			if(IntPtr.Size == 4)
 				return TransformKey32(pBuf256, pKey256, uRounds);
+			return TransformKey64(pBuf256, pKey256, uRounds);
 		}
 
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKeyBenchmark256")]
@@ -100,9 +105,9 @@ namespace KeePassLib.Native
 
 		internal static UInt64 TransformKeyBenchmark(UInt32 uTimeMs)
 		{
-			if(NativeLib.PointerSize == 8)
-				return TransformKeyBenchmark64(uTimeMs);
-			return TransformKeyBenchmark32(uTimeMs);
+			if(IntPtr.Size == 4)
+				return TransformKeyBenchmark32(uTimeMs);
+			return TransformKeyBenchmark64(uTimeMs);
 		}
 #endif
 
@@ -116,10 +121,63 @@ namespace KeePassLib.Native
 
 		internal static bool TfShowLangBar(uint dwFlags)
 		{
-			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
-				return TF_ShowLangBar64(dwFlags);
-			return TF_ShowLangBar32(dwFlags);
+			if(IntPtr.Size == 4) return TF_ShowLangBar32(dwFlags);
+			return TF_ShowLangBar64(dwFlags);
 		} */
+
+		[DllImport("KeePassLibC32.dll", EntryPoint = "ProtectProcessWithDacl")]
+		private static extern void ProtectProcessWithDacl32();
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "ProtectProcessWithDacl")]
+		private static extern void ProtectProcessWithDacl64();
+
+		internal static void ProtectProcessWithDacl()
+		{
+			try
+			{
+				if(NativeLib.IsUnix()) return;
+
+				if(IntPtr.Size == 4) ProtectProcessWithDacl32();
+				else ProtectProcessWithDacl64();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto, ExactSpelling = false,
+			SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetVolumeInformation(string lpRootPathName,
+			StringBuilder lpVolumeNameBuffer, UInt32 nVolumeNameSize,
+			ref UInt32 lpVolumeSerialNumber, ref UInt32 lpMaximumComponentLength,
+			ref UInt32 lpFileSystemFlags, StringBuilder lpFileSystemNameBuffer,
+			UInt32 nFileSystemNameSize);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto, ExactSpelling = false,
+			SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool MoveFileEx(string lpExistingFileName,
+			string lpNewFileName, UInt32 dwFlags);
+
+		[DllImport("KtmW32.dll", CharSet = CharSet.Unicode, ExactSpelling = true,
+			SetLastError = true)]
+		internal static extern IntPtr CreateTransaction(IntPtr lpTransactionAttributes,
+			IntPtr lpUOW, UInt32 dwCreateOptions, UInt32 dwIsolationLevel,
+			UInt32 dwIsolationFlags, UInt32 dwTimeout, string lpDescription);
+
+		[DllImport("KtmW32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool CommitTransaction(IntPtr hTransaction);
+
+		[DllImport("Kernel32.dll", CharSet = CharSet.Auto, ExactSpelling = false,
+			SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool MoveFileTransacted(string lpExistingFileName,
+			string lpNewFileName, IntPtr lpProgressRoutine, IntPtr lpData,
+			UInt32 dwFlags, IntPtr hTransaction);
 
 #if (!KeePassLibSD && !KeePassUAP)
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]

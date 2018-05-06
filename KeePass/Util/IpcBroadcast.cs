@@ -19,15 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 // using System.Runtime.Remoting;
 // using System.Runtime.Remoting.Channels;
 // using System.Runtime.Remoting.Channels.Ipc;
 using System.Security.Cryptography;
+using System.Text;
 
 using KeePass.Native;
 
 using KeePassLib.Utility;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
@@ -42,14 +44,14 @@ namespace KeePass.Util
 		public static void Send(Program.AppMessage msg, int lParam,
 			bool bWaitWithTimeout)
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix()) // Windows
+			if(!NativeLib.IsUnix()) // Windows
 			{
 				if(bWaitWithTimeout)
 				{
-					IntPtr pResult = new IntPtr(0);
+					IntPtr pResult = IntPtr.Zero;
 					NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST,
-						Program.ApplicationMessage, (IntPtr)msg,
-						(IntPtr)lParam, NativeMethods.SMTO_ABORTIFHUNG, 5000, ref pResult);
+						Program.ApplicationMessage, (IntPtr)msg, (IntPtr)lParam,
+						NativeMethods.SMTO_ABORTIFHUNG, 5000, ref pResult);
 				}
 				else
 					NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST,
@@ -71,7 +73,8 @@ namespace KeePass.Util
 				// }
 				// catch(Exception) { } // Server might not exist
 
-				FswSend(msg, lParam);
+				// FswSend(msg, lParam);
+				TcpSend(msg, lParam);
 			}
 		}
 
@@ -80,25 +83,26 @@ namespace KeePass.Util
 		//	return (IpcServerPortName + "-" + GetUserID());
 		// }
 
-		private static string m_strUserID = null;
+		private static string g_strUserID = null;
 		internal static string GetUserID()
 		{
-			if(m_strUserID != null) return m_strUserID;
+			if(g_strUserID != null) return g_strUserID;
 
-			string strID = (Environment.UserName ?? string.Empty) + @" @ " +
+			string strID = (Environment.UserName ?? string.Empty) + " @ " +
 				(Environment.MachineName ?? string.Empty);
 			byte[] pbID = StrUtil.Utf8.GetBytes(strID);
 
-			SHA1Managed sha1 = new SHA1Managed();
-			byte[] pbHash = sha1.ComputeHash(pbID);
+			byte[] pbHash;
+			using(SHA1Managed h = new SHA1Managed())
+			{
+				pbHash = h.ComputeHash(pbID);
+			}
 
-			string strShort = Convert.ToBase64String(pbHash,
-				Base64FormattingOptions.None);
-			strShort = strShort.Replace(@"+", string.Empty);
-			strShort = strShort.Replace(@"/", string.Empty);
+			string strShort = Convert.ToBase64String(pbHash);
+			strShort = StrUtil.AlphaNumericOnly(strShort);
 			if(strShort.Length > 8) strShort = strShort.Substring(0, 8);
 
-			m_strUserID = strShort;
+			g_strUserID = strShort;
 			return strShort;
 		}
 
@@ -106,7 +110,7 @@ namespace KeePass.Util
 		{
 			StopServer();
 
-			if(!KeePassLib.Native.NativeLib.IsUnix()) return; // Windows
+			if(!NativeLib.IsUnix()) return; // Windows
 
 			// IDictionary dOpt = new Hashtable();
 			// dOpt["portName"] = GetPortName();
@@ -118,12 +122,13 @@ namespace KeePass.Util
 			//	IpcBroadcastSingleton), IpcObjectName,
 			//	WellKnownObjectMode.SingleCall);
 
-			FswStartServer();
+			// FswStartServer();
+			TcpStartServer();
 		}
 
 		public static void StopServer()
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix()) return; // Windows
+			if(!NativeLib.IsUnix()) return; // Windows
 
 			// if(m_chClient != null)
 			// {
@@ -136,7 +141,8 @@ namespace KeePass.Util
 			//	m_chServer = null;
 			// }
 
-			FswStopServer();
+			// FswStopServer();
+			TcpStopServer();
 		}
 	}
 

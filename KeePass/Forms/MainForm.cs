@@ -71,6 +71,7 @@ namespace KeePass.Forms
 		private ListViewSortMenu m_lvsmMenu = null;
 		private ListViewGroupingMenu m_lvgmMenu = null;
 
+		private bool m_bDraggingGroup = false;
 		private bool m_bDraggingEntries = false;
 
 		private bool m_bBlockColumnUpdates = false;
@@ -321,6 +322,12 @@ namespace KeePass.Forms
 				new SortCommandHandler(this.SortPasswordList));
 			m_lvgmMenu = new ListViewGroupingMenu(m_menuViewEntryListGrouping, this);
 
+			if(MonoWorkarounds.IsRequired(1716) && (NativeLib.GetDesktopType() ==
+				DesktopType.Cinnamon))
+			{
+				mw.AlwaysOnTop = false;
+				UIUtil.SetEnabledFast(false, m_menuViewAlwaysOnTop);
+			}
 			UIUtil.SetChecked(m_menuViewAlwaysOnTop, mw.AlwaysOnTop);
 			EnsureAlwaysOnTopOpt();
 
@@ -339,13 +346,12 @@ namespace KeePass.Forms
 			m_ctxEntryColorLightYellow.Image = UIUtil.CreateColorBitmap24(16, 16,
 				AppDefs.NamedEntryColor.LightYellow);
 
+			Debug.Assert(!m_tvGroups.ShowRootLines); // See designer
 			// m_lvEntries.GridLines = mw.ShowGridLines;
 			if(UIUtil.VistaStyleListsSupported)
 			{
 				// m_tvGroups.ItemHeight += 1;
-
-				m_tvGroups.ShowRootLines = false;
-				m_tvGroups.ShowLines = false;
+				// m_tvGroups.ShowLines = false; // Option-dep., see CustomTreeViewEx
 
 				UIUtil.SetExplorerTheme(m_tvGroups.Handle);
 				UIUtil.SetExplorerTheme(m_lvEntries.Handle);
@@ -454,6 +460,7 @@ namespace KeePass.Forms
 
 			HotKeyManager.CheckCtrlAltA(this);
 
+			Program.TriggerSystem.CheckTriggers();
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppInitPost);
 
 			if(Program.CommandLineArgs.FileName != null)
@@ -617,20 +624,20 @@ namespace KeePass.Forms
 
 				ProtectedString ps;
 				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(pd.MemoryProtection.ProtectTitle,
-					ps.ReadString()));
+				pe.Strings.Set(PwDefs.TitleField, ps.WithProtection(
+					pd.MemoryProtection.ProtectTitle));
 				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(pd.MemoryProtection.ProtectUserName,
-					ps.ReadString()));
+				pe.Strings.Set(PwDefs.UserNameField, ps.WithProtection(
+					pd.MemoryProtection.ProtectUserName));
 				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(pd.MemoryProtection.ProtectUrl,
-					ps.ReadString()));
+				pe.Strings.Set(PwDefs.UrlField, ps.WithProtection(
+					pd.MemoryProtection.ProtectUrl));
 				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(pd.MemoryProtection.ProtectPassword,
-					ps.ReadString()));
+				pe.Strings.Set(PwDefs.PasswordField, ps.WithProtection(
+					pd.MemoryProtection.ProtectPassword));
 				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(pd.MemoryProtection.ProtectNotes,
-					ps.ReadString()));
+				pe.Strings.Set(PwDefs.NotesField, ps.WithProtection(
+					pd.MemoryProtection.ProtectNotes));
 
 				pe.CreationTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
 					(lTimeMax - lTimeMin)));
@@ -733,7 +740,7 @@ namespace KeePass.Forms
 			// be closed and UpdateUIState might crash, if the order of the
 			// two methods is swapped; so first update state, then unblock
 			UpdateUIState(false);
-			UIBlockInteraction(false); // Calls Application.DoEvents()
+			UIBlockInteraction(false);
 
 			if(this.FileSaved != null)
 			{
@@ -959,6 +966,9 @@ namespace KeePass.Forms
 
 				EnsureVisibleEntry(pwe.Uuid);
 				UpdateUIState(false);
+
+				if(Program.Config.Application.AutoSaveAfterEntryEdit)
+					SaveDatabase(pwDb, sender);
 			}
 			else UpdateUI(false, null, pwDb.UINeedsIconUpdate, null,
 				pwDb.UINeedsIconUpdate, null, false);
@@ -1316,6 +1326,7 @@ namespace KeePass.Forms
 				m_nLockTimerMax = (int)Program.Config.Security.WorkspaceLocking.LockAfterTime;
 				m_nClipClearMax = Program.Config.Security.ClipboardClearAfterSeconds;
 
+				m_tvGroups.ApplyOptions();
 				// m_lvEntries.GridLines = Program.Config.MainWindow.ShowGridLines;
 
 				UpdateAlternatingBgColor();
@@ -1402,7 +1413,11 @@ namespace KeePass.Forms
 			if(pg.ParentGroup == null) return;
 
 			m_pgActiveAtDragStart = pg;
+
+			m_bDraggingGroup = true;
 			this.DoDragDrop(pg, DragDropEffects.Copy | DragDropEffects.Move);
+			m_bDraggingGroup = false;
+
 			pg.Touch(false);
 		}
 
@@ -1670,7 +1685,12 @@ namespace KeePass.Forms
 
 			if(m_csLockTimer.TryEnter())
 			{
-				if(IsAtLeastOneFileOpen() && GlobalWindowManager.CanCloseAllWindows)
+				bool bAuto = (m_bFormShown && !m_bDraggingGroup && !m_bDraggingEntries &&
+					!UIIsInteractionBlocked());
+
+				if(!bAuto || !GlobalWindowManager.CanCloseAllWindows)
+					NotifyUserActivity(); // Unclosable dialog = activity
+				else if(IsAtLeastOneFileOpen())
 				{
 					long lCurTicks = utcNow.Ticks;
 					if((lCurTicks >= m_lLockAtTicks) || (lCurTicks >= m_lLockAtGlobalTicks))
@@ -1685,7 +1705,9 @@ namespace KeePass.Forms
 						if(bBlock) BlockMainTimer(false);
 					}
 				}
-				else NotifyUserActivity(); // Unclosable dialog = activity
+
+				if(bAuto && (GlobalWindowManager.WindowCount == 0))
+					Program.TriggerSystem.RaiseEvent(EcasEventIDs.TimePeriodic);
 
 				m_csLockTimer.Exit();
 			}
@@ -1893,6 +1915,7 @@ namespace KeePass.Forms
 			UIUtil.SetChecked(m_menuViewTanSimpleList, m_bSimpleTanView);
 
 			UpdateEntryList(null, true);
+			UpdateUIState(false);
 		}
 
 		private void OnViewTanIndicesClick(object sender, EventArgs e)
@@ -2033,13 +2056,9 @@ namespace KeePass.Forms
 			{
 				EntryUtil.CopyEntriesToClipboard(m_docMgr.ActiveDatabase, vSelected,
 					this.Handle);
+				StartClipboardCountdown();
 			}
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(ex);
-			}
-
-			StartClipboardCountdown();
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
 		private void OnEntryClipPaste(object sender, EventArgs e)
@@ -2049,10 +2068,7 @@ namespace KeePass.Forms
 			if(pg == null) return;
 
 			try { EntryUtil.PasteEntriesFromClipboard(m_docMgr.ActiveDatabase, pg); }
-			catch(Exception exPaste)
-			{
-				MessageService.ShowWarning(exPaste);
-			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUI(false, null, false, null, true, null, true);
 		}
@@ -2826,6 +2842,20 @@ namespace KeePass.Forms
 		private void OnToolsPrintEmSheet(object sender, EventArgs e)
 		{
 			EmergencySheet.Print(m_docMgr.ActiveDatabase);
+		}
+
+		private void OnEditFindLarge(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindLargeEntries,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_Ark,
+				KPRes.LargeEntries, KPRes.LargeEntriesList, null, true, false);
+		}
+
+		private void OnEditFindLastMod(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindLastModEntries,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Sign,
+				KPRes.LastModified, KPRes.LastModifiedEntriesList, null, true, false);
 		}
 	}
 }

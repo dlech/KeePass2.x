@@ -137,7 +137,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception exReg)
 				{
-					MessageService.ShowWarning(exReg.Message);
+					MessageService.ShowWarning(sp.SearchString, exReg);
 					this.DialogResult = DialogResult.None;
 					return;
 				}

@@ -40,8 +40,8 @@
 			this.m_btnIcon = new System.Windows.Forms.Button();
 			this.m_lblIcon = new System.Windows.Forms.Label();
 			this.m_tbUserName = new System.Windows.Forms.TextBox();
-			this.m_tbPassword = new System.Windows.Forms.TextBox();
-			this.m_tbRepeatPassword = new System.Windows.Forms.TextBox();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
+			this.m_tbRepeatPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_tbUrl = new System.Windows.Forms.TextBox();
 			this.m_cbExpires = new System.Windows.Forms.CheckBox();
 			this.m_dtExpireDateTime = new System.Windows.Forms.DateTimePicker();
@@ -85,6 +85,9 @@
 			this.m_ctxListOperations = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
+			this.m_lblCustomData = new System.Windows.Forms.Label();
+			this.m_btnCDDel = new System.Windows.Forms.Button();
+			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
 			this.m_cmbOverrideUrl = new KeePass.UI.ImageComboBoxEx();
 			this.m_tbTags = new System.Windows.Forms.TextBox();
 			this.m_lblTags = new System.Windows.Forms.Label();
@@ -142,9 +145,6 @@
 			this.m_ctxBinImportFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxBinSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxBinNew = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
-			this.m_btnCDDel = new System.Windows.Forms.Button();
-			this.m_lblCustomData = new System.Windows.Forms.Label();
 			this.m_ctxDefaultTimes.SuspendLayout();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
@@ -502,7 +502,6 @@
 			this.m_rtNotes.Size = new System.Drawing.Size(374, 139);
 			this.m_rtNotes.TabIndex = 18;
 			this.m_rtNotes.Text = "";
-			this.m_rtNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnNotesLinkClicked);
 			// 
 			// m_pbQuality
 			// 
@@ -705,6 +704,39 @@
 			this.m_tabProperties.TabIndex = 4;
 			this.m_tabProperties.Text = "Properties";
 			this.m_tabProperties.UseVisualStyleBackColor = true;
+			// 
+			// m_lblCustomData
+			// 
+			this.m_lblCustomData.AutoSize = true;
+			this.m_lblCustomData.Location = new System.Drawing.Point(6, 175);
+			this.m_lblCustomData.Name = "m_lblCustomData";
+			this.m_lblCustomData.Size = new System.Drawing.Size(63, 13);
+			this.m_lblCustomData.TabIndex = 8;
+			this.m_lblCustomData.Text = "Plugin data:";
+			// 
+			// m_btnCDDel
+			// 
+			this.m_btnCDDel.Location = new System.Drawing.Point(381, 192);
+			this.m_btnCDDel.Name = "m_btnCDDel";
+			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
+			this.m_btnCDDel.TabIndex = 10;
+			this.m_btnCDDel.Text = "&Delete";
+			this.m_btnCDDel.UseVisualStyleBackColor = true;
+			this.m_btnCDDel.Click += new System.EventHandler(this.OnBtnCDDel);
+			// 
+			// m_lvCustomData
+			// 
+			this.m_lvCustomData.FullRowSelect = true;
+			this.m_lvCustomData.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.m_lvCustomData.HideSelection = false;
+			this.m_lvCustomData.Location = new System.Drawing.Point(9, 193);
+			this.m_lvCustomData.Name = "m_lvCustomData";
+			this.m_lvCustomData.ShowItemToolTips = true;
+			this.m_lvCustomData.Size = new System.Drawing.Size(366, 101);
+			this.m_lvCustomData.TabIndex = 9;
+			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
+			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
+			this.m_lvCustomData.SelectedIndexChanged += new System.EventHandler(this.OnCustomDataSelectedIndexChanged);
 			// 
 			// m_cmbOverrideUrl
 			// 
@@ -1240,39 +1272,6 @@
 			this.m_ctxBinNew.Text = "&Create Empty Attachment";
 			this.m_ctxBinNew.Click += new System.EventHandler(this.OnCtxBinNew);
 			// 
-			// m_lvCustomData
-			// 
-			this.m_lvCustomData.FullRowSelect = true;
-			this.m_lvCustomData.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.m_lvCustomData.HideSelection = false;
-			this.m_lvCustomData.Location = new System.Drawing.Point(9, 193);
-			this.m_lvCustomData.Name = "m_lvCustomData";
-			this.m_lvCustomData.ShowItemToolTips = true;
-			this.m_lvCustomData.Size = new System.Drawing.Size(366, 101);
-			this.m_lvCustomData.TabIndex = 9;
-			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
-			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
-			this.m_lvCustomData.SelectedIndexChanged += new System.EventHandler(this.OnCustomDataSelectedIndexChanged);
-			// 
-			// m_btnCDDel
-			// 
-			this.m_btnCDDel.Location = new System.Drawing.Point(381, 192);
-			this.m_btnCDDel.Name = "m_btnCDDel";
-			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCDDel.TabIndex = 10;
-			this.m_btnCDDel.Text = "&Delete";
-			this.m_btnCDDel.UseVisualStyleBackColor = true;
-			this.m_btnCDDel.Click += new System.EventHandler(this.OnBtnCDDel);
-			// 
-			// m_lblCustomData
-			// 
-			this.m_lblCustomData.AutoSize = true;
-			this.m_lblCustomData.Location = new System.Drawing.Point(6, 175);
-			this.m_lblCustomData.Name = "m_lblCustomData";
-			this.m_lblCustomData.Size = new System.Drawing.Size(63, 13);
-			this.m_lblCustomData.TabIndex = 8;
-			this.m_lblCustomData.Text = "Plugin data:";
-			// 
 			// PwEntryForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -1331,8 +1330,8 @@
 		private System.Windows.Forms.Button m_btnIcon;
 		private System.Windows.Forms.Label m_lblIcon;
 		private System.Windows.Forms.TextBox m_tbUserName;
-		private System.Windows.Forms.TextBox m_tbPassword;
-		private System.Windows.Forms.TextBox m_tbRepeatPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbPassword;
+		private KeePass.UI.SecureTextBoxEx m_tbRepeatPassword;
 		private KeePass.UI.QualityProgressBar m_pbQuality;
 		private System.Windows.Forms.TextBox m_tbUrl;
 		private KeePass.UI.CustomRichTextBoxEx m_rtNotes;
@@ -1436,6 +1435,5 @@
 		private System.Windows.Forms.Label m_lblCustomData;
 		private System.Windows.Forms.Button m_btnCDDel;
 		private KeePass.UI.CustomListViewEx m_lvCustomData;
-
 	}
 }

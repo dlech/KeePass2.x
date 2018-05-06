@@ -113,8 +113,11 @@ namespace KeePass.Ecas
 
 				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 
+				// The trigger system does not update the UI itself,
+				// thus ignore state-changing placeholders
 				str = SprEngine.Compile(str, new SprContext(pe, pd,
-					SprCompileFlags.All, false, bSprForCommandLine));
+					(SprCompileFlags.All & ~SprCompileFlags.StateChanging),
+					false, bSprForCommandLine));
 			}
 
 			return str;
@@ -128,6 +131,12 @@ namespace KeePass.Ecas
 			if(iIndex >= vParams.Count) return strDefault; // No assert
 
 			return vParams[iIndex];
+		}
+
+		public static bool GetParamBool(List<string> vParams, int iIndex)
+		{
+			string str = GetParamString(vParams, iIndex, string.Empty);
+			return StrUtil.StringToBool(str);
 		}
 
 		public static uint GetParamUInt(List<string> vParams, int iIndex)

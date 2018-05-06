@@ -427,7 +427,7 @@ namespace KeePassLib.Serialization
 					string strInfo = m_strProxyAddr;
 					if(m_strProxyPort.Length > 0)
 						strInfo += ":" + m_strProxyPort;
-					MessageService.ShowWarning(strInfo, ex.Message);
+					MessageService.ShowWarning(strInfo, ex);
 				}
 #endif
 

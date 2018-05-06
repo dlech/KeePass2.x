@@ -1,3 +1,69 @@
+2018-05-06: 2.39
+- KeePass now uses Transactional NTFS (TxF) for writing
+  database and configuration files, if possible; this improves
+  the compatibility with other programs that are watching these
+  files (e.g. file synchronization services)
+- Added command 'Edit' -> 'Show Entries' -> 'Large Entries'
+- Added command 'Edit' -> 'Show Entries' -> 'Last Modified
+  Entries'
+- Added option 'Automatically save after modifying an entry
+  using the entry editing dialog' (turned off by default)
+- Added option 'Minimize main window after performing
+  auto-type' (turned off by default)
+- Added option 'Show lines between nodes in tree views' (turned
+  off by default)
+- Added support for importing Google Chrome 66 password CSV
+  files
+- Added trigger event 'Time - Periodic', which is raised at
+  user-defined intervals
+- Links in the entry string editing dialog are clickable now
+- Added UIFlags bit for disabling the 'XML Replace' menu item
+- Added UIFlags bit for hiding auto-type obfuscation
+  compatibility information dialogs
+- Added workaround for .NET 'urtf' RTF round-trip bug
+- Secure edit controls are now extensible by plugins
+- KPScript: the 'AddEntry' command now supports the
+  '-setx-Expires' and '-setx-ExpiryTime' parameters
+
+- In printouts and HTML exports, expired entries now have a red
+  'X' icon (if the option 'Icon' is turned on)
+- Improved string normalization in the entry and string editing
+  dialogs
+- Improved and optimized process memory protection, especially
+  in the entry editing dialog
+- Secure edit control improvements
+- Improved behavior when moving a custom string to a standard
+  field
+- Improved entry size calculation
+- URL overrides are now used also for application URLs
+- Improved input focus restoration
+- When trying to toggle the auto-start option and
+  creating/deleting the registry value fails, KeePass now shows
+  a detailed error message
+- Improved XML serialization
+- Stream disposal improvements in exceptional situations
+- Process object disposal improvements
+- Extended inter-process communication (IPC) messages are
+  compressed and encrypted now
+- New IPC mechanism on Unix-like systems
+- Enhanced desktop type detection on Unix-like systems
+- On the Cinnamon desktop, the 'Always on Top' option is now
+  disabled (because it is not supported properly by the
+  environment)
+- KeePass now ignores hidden Git and Visual Studio directories
+  when building a PLGX file
+- The trigger system now ignores state-changing placeholders in
+  most places
+- Removed trigger event 'User interface state updated'
+  (consider using the new event 'Time - Periodic' instead)
+- Various code optimizations
+- Minor other improvements
+
+- The 'View' button on the 'History' tab of the entry editing
+  dialog is now disabled when multiple items are selected
+- The main window state is now updated after closing an entry
+  report dialog
+
 2018-01-09: 2.38
 - The installers (regular and MSI) now create an empty
   'Languages' folder in the application directory, and the

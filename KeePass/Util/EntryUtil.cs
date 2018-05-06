@@ -98,13 +98,14 @@ namespace KeePass.Util
 						else continue; // DialogResult.No
 					}
 
-					byte[] pbData = kvp.Value.ReadData();
+					ProtectedBinary pb = kvp.Value;
+					byte[] pbData = pb.ReadData();
 					try { File.WriteAllBytes(strFile, pbData); }
 					catch(Exception exWrite)
 					{
 						MessageService.ShowWarning(strFile, exWrite);
 					}
-					MemUtil.ZeroByteArray(pbData);
+					if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
 				}
 				if(bCancel) break;
 			}
@@ -129,14 +130,11 @@ namespace KeePass.Util
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
 				{
 					KdbxFile.WriteEntries(gz, pwDatabase, vEntries);
-
-					byte[] pbFinal;
-					if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
-					else pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy,
-						DataProtectionScope.CurrentUser);
-
-					ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
 				}
+
+				byte[] pbFinal = CryptoUtil.ProtectData(ms.ToArray(),
+					AdditionalEntropy, DataProtectionScope.CurrentUser);
+				ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
 			}
 		}
 
@@ -155,10 +153,8 @@ namespace KeePass.Util
 			byte[] pbEnc = ClipboardUtil.GetEncodedData(ClipFormatEntries, IntPtr.Zero);
 			if(pbEnc == null) { Debug.Assert(false); return; }
 
-			byte[] pbPlain;
-			if(WinUtil.IsWindows9x) pbPlain = pbEnc;
-			else pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy,
-				DataProtectionScope.CurrentUser);
+			byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc,
+				AdditionalEntropy, DataProtectionScope.CurrentUser);
 
 			using(MemoryStream ms = new MemoryStream(pbPlain, false))
 			{
@@ -1262,6 +1258,111 @@ namespace KeePass.Util
 			l.Sort(fCompare);
 
 			return l;
+		}
+
+		internal static List<object> FindLargeEntries(PwDatabase pd,
+			IStatusLogger sl, out Action<ListView> fInit)
+		{
+			fInit = delegate(ListView lv)
+			{
+				int w = lv.ClientSize.Width - UIUtil.GetVScrollBarWidth();
+				int wf = w / 5;
+
+				lv.Columns.Add(KPRes.Title, wf * 2);
+				lv.Columns.Add(KPRes.UserName, wf);
+				lv.Columns.Add(KPRes.Size, wf, HorizontalAlignment.Right);
+				lv.Columns.Add(KPRes.Group, wf);
+
+				UIUtil.SetDisplayIndices(lv, new int[] { 1, 2, 3, 0 });
+			};
+
+			PwObjectList<PwEntry> lEntries = pd.RootGroup.GetEntries(true);
+			List<KeyValuePair<ulong, PwEntry>> l = new List<KeyValuePair<ulong, PwEntry>>();
+			foreach(PwEntry pe in lEntries)
+			{
+				l.Add(new KeyValuePair<ulong, PwEntry>(pe.GetSize(), pe));
+			}
+			l.Sort(EntryUtil.CompareKvpBySize);
+
+			List<object> lResults = new List<object>();
+			DateTime dtNow = DateTime.UtcNow;
+
+			foreach(KeyValuePair<ulong, PwEntry> kvp in l)
+			{
+				PwEntry pe = kvp.Value;
+
+				string strGroup = string.Empty;
+				if(pe.ParentGroup != null)
+					strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+
+				ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
+					PwDefs.TitleField));
+				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
+				lvi.SubItems.Add(StrUtil.FormatDataSizeKB(kvp.Key));
+				lvi.SubItems.Add(strGroup);
+
+				lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
+				lvi.Tag = pe;
+				lResults.Add(lvi);
+			}
+
+			return lResults;
+		}
+
+		private static int CompareKvpBySize(KeyValuePair<ulong, PwEntry> a,
+			KeyValuePair<ulong, PwEntry> b)
+		{
+			return b.Key.CompareTo(a.Key); // Descending
+		}
+
+		internal static List<object> FindLastModEntries(PwDatabase pd,
+			IStatusLogger sl, out Action<ListView> fInit)
+		{
+			fInit = delegate(ListView lv)
+			{
+				int w = lv.ClientSize.Width - UIUtil.GetVScrollBarWidth();
+				int wfS = (w * 2) / 9, wfL = w / 3;
+				int dr = w - wfL - (3 * wfS);
+				int ds = DpiUtil.ScaleIntX(12);
+
+				lv.Columns.Add(KPRes.Title, wfL + dr - ds);
+				lv.Columns.Add(KPRes.UserName, wfS);
+				lv.Columns.Add(KPRes.LastModificationTime, wfS + ds);
+				lv.Columns.Add(KPRes.Group, wfS);
+
+				UIUtil.SetDisplayIndices(lv, new int[] { 1, 2, 3, 0 });
+			};
+
+			PwObjectList<PwEntry> lEntries = pd.RootGroup.GetEntries(true);
+			lEntries.Sort(EntryUtil.CompareByLastModTime);
+
+			List<object> lResults = new List<object>();
+			DateTime dtNow = DateTime.UtcNow;
+
+			foreach(PwEntry pe in lEntries)
+			{
+				string strGroup = string.Empty;
+				if(pe.ParentGroup != null)
+					strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+
+				ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
+					PwDefs.TitleField));
+				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
+				lvi.SubItems.Add(TimeUtil.ToDisplayString(pe.LastModificationTime));
+				// lvi.SubItems.Add("12/30/2020 02:45 AM"); // Max. width
+				lvi.SubItems.Add(strGroup);
+
+				lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
+				lvi.Tag = pe;
+				lResults.Add(lvi);
+			}
+
+			return lResults;
+		}
+
+		private static int CompareByLastModTime(PwEntry a, PwEntry b)
+		{
+			return TimeUtil.CompareLastMod(b, a, true); // Descending
 		}
 	}
 }

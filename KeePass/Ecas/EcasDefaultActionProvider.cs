@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.IO;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.DataExchange;
@@ -258,17 +258,23 @@ namespace KeePass.Ecas
 
 		private static void ExecuteShellCmd(EcasAction a, EcasContext ctx)
 		{
-			string strCmd = EcasUtil.GetParamString(a.Parameters, 0, true, true);
+			string strCmd = EcasUtil.GetParamString(a.Parameters, 0);
 			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
-			bool bWait = StrUtil.StringToBool(EcasUtil.GetParamString(a.Parameters,
-				2, string.Empty));
+			bool bWait = EcasUtil.GetParamBool(a.Parameters, 2);
 			uint uWindowStyle = EcasUtil.GetParamUInt(a.Parameters, 3);
 			string strVerb = EcasUtil.GetParamString(a.Parameters, 4, true);
 
 			if(string.IsNullOrEmpty(strCmd)) return;
 
+			Process p = null;
 			try
 			{
+				PwEntry pe = null;
+				try { pe = Program.MainForm.GetSelectedEntry(false); }
+				catch(Exception) { Debug.Assert(false); }
+
+				strCmd = WinUtil.CompileUrl(strCmd, pe, true, null);
+
 				ProcessStartInfo psi = new ProcessStartInfo(strCmd);
 				if(!string.IsNullOrEmpty(strArgs))
 					psi.Arguments = strArgs;
@@ -300,7 +306,7 @@ namespace KeePass.Ecas
 				if(!string.IsNullOrEmpty(strVerb))
 					psi.Verb = strVerb;
 
-				Process p = Process.Start(psi);
+				p = Process.Start(psi);
 
 				if((p != null) && bWait)
 				{
@@ -314,9 +320,14 @@ namespace KeePass.Ecas
 					Program.MainForm.UIBlockInteraction(false);
 				}
 			}
-			catch(Exception e)
+			catch(Exception ex)
 			{
-				throw new Exception(strCmd + MessageService.NewParagraph + e.Message);
+				throw new Exception(strCmd + MessageService.NewParagraph + ex.Message);
+			}
+			finally
+			{
+				try { if(p != null) p.Dispose(); }
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 
@@ -365,8 +376,7 @@ namespace KeePass.Ecas
 		{
 			string strPassword = EcasUtil.GetParamString(a.Parameters, iPassword, true);
 			string strKeyFile = EcasUtil.GetParamString(a.Parameters, iKeyFile, true);
-			bool bUserAccount = StrUtil.StringToBool(EcasUtil.GetParamString(
-				a.Parameters, iUserAccount, true));
+			bool bUserAccount = EcasUtil.GetParamBool(a.Parameters, iUserAccount);
 
 			CompositeKey cmpKey = null;
 			if(!string.IsNullOrEmpty(strPassword) || !string.IsNullOrEmpty(strKeyFile) ||

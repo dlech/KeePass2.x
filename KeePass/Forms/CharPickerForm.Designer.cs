@@ -34,7 +34,7 @@
 			this.m_lblChars = new System.Windows.Forms.Label();
 			this.m_lblIndex = new System.Windows.Forms.Label();
 			this.m_lblSelChars = new System.Windows.Forms.Label();
-			this.m_tbSelected = new System.Windows.Forms.TextBox();
+			this.m_tbSelected = new KeePass.UI.SecureTextBoxEx();
 			this.m_cbHideChars = new System.Windows.Forms.CheckBox();
 			this.m_pnlSelect = new System.Windows.Forms.Panel();
 			this.m_pnlBottom = new System.Windows.Forms.Panel();
@@ -254,7 +254,7 @@
 		private System.Windows.Forms.Label m_lblChars;
 		private System.Windows.Forms.Label m_lblIndex;
 		private System.Windows.Forms.Label m_lblSelChars;
-		private System.Windows.Forms.TextBox m_tbSelected;
+		private KeePass.UI.SecureTextBoxEx m_tbSelected;
 		private System.Windows.Forms.CheckBox m_cbHideChars;
 		private System.Windows.Forms.Panel m_pnlSelect;
 		private System.Windows.Forms.Panel m_pnlBottom;

@@ -1602,11 +1602,6 @@
             If it is <c>false</c>, all calls to functions in this class will fail.
             </summary>
         </member>
-        <member name="P:KeePassLib.Native.NativeLib.PointerSize">
-            <summary>
-            Size of a native pointer (in bytes).
-            </summary>
-        </member>
         <member name="M:KeePassLib.Utility.GfxUtil.ScaleImage(System.Drawing.Image,System.Int32,System.Int32,KeePassLib.ScaleTransformFlags)">
             <summary>
             Resize an image.
@@ -2864,8 +2859,8 @@
         </member>
         <member name="M:KeePassLib.PwEntry.GetSize">
             <summary>
-            Approximate the total size of this entry in bytes (including
-            strings, binaries and history entries).
+            Approximate the total size (in process memory) of this entry
+            in bytes (including strings, binaries and history entries).
             </summary>
             <returns>Size in bytes.</returns>
         </member>
@@ -2979,7 +2974,7 @@
         </member>
         <member name="T:KeePassLib.Security.ProtectedString">
             <summary>
-            Represents an in-memory encrypted string.
+            A string that is protected in process memory.
             <c>ProtectedString</c> objects are immutable and thread-safe.
             </summary>
         </member>
@@ -3023,18 +3018,27 @@
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.ReadString">
             <summary>
-            Convert the protected string to a normal string object.
-            Be careful with this function, the returned string object
+            Convert the protected string to a standard string object.
+            Be careful with this function, as the returned string object
             isn't protected anymore and stored in plain-text in the
             process memory.
             </summary>
             <returns>Plain-text string. Is never <c>null</c>.</returns>
         </member>
+        <member name="M:KeePassLib.Security.ProtectedString.ReadChars">
+            <summary>
+            Read out the string and return it as a char array.
+            The returned array is not protected and should be cleared by
+            the caller.
+            </summary>
+            <returns>Plain-text char array.</returns>
+        </member>
         <member name="M:KeePassLib.Security.ProtectedString.ReadUtf8">
             <summary>
             Read out the string and return a byte array that contains the
-            string encoded using UTF-8. The returned string is not protected
-            anymore!
+            string encoded using UTF-8.
+            The returned array is not protected and should be cleared by
+            the caller.
             </summary>
             <returns>Plain-text UTF-8 byte array.</returns>
         </member>
@@ -3046,17 +3050,31 @@
             <param name="crsRandomSource">Random number source.</param>
             <returns>Protected string.</returns>
         </member>
+        <member name="P:KeePassLib.Security.ProtectedString.Empty">
+            <summary>
+            Get an empty <c>ProtectedString</c> object, without protection.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Security.ProtectedString.EmptyEx">
+            <summary>
+            Get an empty <c>ProtectedString</c> object, with protection turned on.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Security.ProtectedString.IsProtected">
             <summary>
             A flag specifying whether the <c>ProtectedString</c> object
             has turned on memory protection or not.
             </summary>
         </member>
+        <member name="P:KeePassLib.Security.ProtectedString.Length">
+            <summary>
+            Length of the protected string, in characters.
+            </summary>
+        </member>
         <member name="T:KeePassLib.Security.ProtectedBinary">
             <summary>
-            Represents a protected binary, i.e. a byte array that is encrypted
-            in memory. A <c>ProtectedBinary</c> object is immutable and
-            thread-safe.
+            A protected binary, i.e. a byte array that is encrypted in memory.
+            A <c>ProtectedBinary</c> object is immutable and thread-safe.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor">

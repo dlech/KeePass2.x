@@ -48,9 +48,8 @@ namespace KeePassLib.Security
 		long lID);
 
 	/// <summary>
-	/// Represents a protected binary, i.e. a byte array that is encrypted
-	/// in memory. A <c>ProtectedBinary</c> object is immutable and
-	/// thread-safe.
+	/// A protected binary, i.e. a byte array that is encrypted in memory.
+	/// A <c>ProtectedBinary</c> object is immutable and thread-safe.
 	/// </summary>
 	public sealed class ProtectedBinary : IEquatable<ProtectedBinary>
 	{
@@ -75,7 +74,7 @@ namespace KeePassLib.Security
 		private enum PbMemProt
 		{
 			None = 0,
-			ProtectedMemory,
+			ProtectedMemory, // DPAPI on Windows
 			ChaCha20,
 			ExtCrypt
 		}
@@ -94,7 +93,8 @@ namespace KeePassLib.Security
 				bool? ob = g_obProtectedMemorySupported;
 				if(ob.HasValue) return ob.Value;
 
-				// Mono does not implement any encryption for ProtectedMemory;
+				// Mono does not implement any encryption for ProtectedMemory
+				// on Linux (Mono uses DPAPI on Windows);
 				// https://sourceforge.net/p/keepass/feature-requests/1907/
 				if(NativeLib.IsUnix())
 				{
@@ -181,7 +181,7 @@ namespace KeePassLib.Security
 		/// i.e. the caller is responsible for clearing it.</param>
 		public ProtectedBinary(bool bEnableProtection, byte[] pbData)
 		{
-			if(pbData == null) throw new ArgumentNullException("pbData");
+			if(pbData == null) throw new ArgumentNullException("pbData"); // For .Length
 
 			Init(bEnableProtection, pbData, 0, pbData.Length);
 		}
@@ -217,9 +217,8 @@ namespace KeePassLib.Security
 			if(xbProtected == null) throw new ArgumentNullException("xbProtected");
 
 			byte[] pb = xbProtected.ReadPlainText();
-			Init(bEnableProtection, pb, 0, pb.Length);
-
-			if(bEnableProtection) MemUtil.ZeroByteArray(pb);
+			try { Init(bEnableProtection, pb, 0, pb.Length); }
+			finally { if(bEnableProtection) MemUtil.ZeroByteArray(pb); }
 		}
 
 		private void Init(bool bEnableProtection, byte[] pbData, int iOffset,
@@ -378,7 +377,7 @@ namespace KeePassLib.Security
 				for(int i = 0; i < pb.Length; ++i)
 					h = (h << 3) + h + (int)pb[i];
 			}
-			MemUtil.ZeroByteArray(pb);
+			if(m_bProtected) MemUtil.ZeroByteArray(pb);
 
 			m_hash = h;
 			return h;
@@ -386,25 +385,36 @@ namespace KeePassLib.Security
 
 		public override bool Equals(object obj)
 		{
-			return Equals(obj as ProtectedBinary);
+			return this.Equals(obj as ProtectedBinary, true);
 		}
 
 		public bool Equals(ProtectedBinary other)
 		{
-			if(other == null) return false; // No assert
+			return this.Equals(other, true);
+		}
 
-			if(m_bProtected != other.m_bProtected) return false;
+		public bool Equals(ProtectedBinary other, bool bCheckProtEqual)
+		{
+			if(other == null) return false; // No assert
+			if(object.ReferenceEquals(this, other)) return true; // Perf. opt.
+
+			if(bCheckProtEqual && (m_bProtected != other.m_bProtected))
+				return false;
+
 			if(m_uDataLen != other.m_uDataLen) return false;
 
-			byte[] pbL = ReadData();
-			byte[] pbR = other.ReadData();
-			bool bEq = MemUtil.ArraysEqual(pbL, pbR);
-			MemUtil.ZeroByteArray(pbL);
-			MemUtil.ZeroByteArray(pbR);
-
-#if DEBUG
-			if(bEq) { Debug.Assert(GetHashCode() == other.GetHashCode()); }
-#endif
+			byte[] pbL = ReadData(), pbR = null;
+			bool bEq;
+			try
+			{
+				pbR = other.ReadData();
+				bEq = MemUtil.ArraysEqual(pbL, pbR);
+			}
+			finally
+			{
+				if(m_bProtected) MemUtil.ZeroByteArray(pbL);
+				if(other.m_bProtected && (pbR != null)) MemUtil.ZeroByteArray(pbR);
+			}
 
 			return bEq;
 		}

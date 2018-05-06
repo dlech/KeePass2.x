@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
-using System.Xml.Serialization;
+using System.Text;
 
 using KeePassLib.Native;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -140,14 +140,14 @@ namespace KeePass.Util
 		{
 			if(args == null) throw new ArgumentNullException("args");
 
-			MemoryStream ms = new MemoryStream();
+			string strSerialized = null;
+			using(MemoryStream ms = new MemoryStream())
+			{
+				XmlUtilEx.Serialize<string[]>(ms, args);
+				strSerialized = Convert.ToBase64String(ms.ToArray(),
+					Base64FormattingOptions.None);
+			}
 
-			XmlSerializer xml = new XmlSerializer(typeof(string[]));
-			xml.Serialize(ms, args);
-
-			string strSerialized = Convert.ToBase64String(ms.ToArray(),
-				Base64FormattingOptions.None);
-			ms.Close();
 			return strSerialized;
 		}
 
@@ -155,13 +155,15 @@ namespace KeePass.Util
 		{
 			if(str == null) throw new ArgumentNullException("str");
 
-			byte[] pb = Convert.FromBase64String(str);
-			MemoryStream ms = new MemoryStream(pb, false);
-			XmlSerializer xml = new XmlSerializer(typeof(string[]));
-
-			try { return (string[])xml.Deserialize(ms); }
+			try
+			{
+				byte[] pb = Convert.FromBase64String(str);
+				using(MemoryStream ms = new MemoryStream(pb, false))
+				{
+					return XmlUtilEx.Deserialize<string[]>(ms);
+				}
+			}
 			catch(Exception) { Debug.Assert(false); }
-			finally { ms.Close(); }
 
 			return null;
 		}

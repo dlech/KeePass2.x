@@ -61,7 +61,6 @@ namespace TrlUtil
 			AddForm(l, new EditAutoTypeItemForm());
 			AddForm(l, new EditStringForm());
 			AddForm(l, new EntropyForm());
-			AddForm(l, new EntryReportForm());
 			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new FieldPickerForm());
 			AddForm(l, new FieldRefForm());
@@ -135,19 +134,20 @@ namespace TrlUtil
 
 			if(t == typeof(TabControl)) bAdd = true;
 			else if(t == typeof(ProgressBar)) bAdd = true;
+			else if(t == typeof(QualityProgressBar)) bAdd = true;
 			else if(t == typeof(TextBox)) bAdd = true;
 			else if(t == typeof(PromptedTextBox)) bAdd = true;
+			else if(t == typeof(SecureTextBoxEx)) bAdd = true;
 			else if(t == typeof(RichTextBox)) bAdd = true;
-			else if(t == typeof(KeePass.UI.CustomRichTextBoxEx)) bAdd = true;
+			else if(t == typeof(CustomRichTextBoxEx)) bAdd = true;
 			else if(t == typeof(ComboBox)) bAdd = true;
-			else if(t == typeof(KeePass.UI.ImageComboBoxEx)) bAdd = true;
+			else if(t == typeof(ImageComboBoxEx)) bAdd = true;
 			else if(t == typeof(Label)) bAdd = true;
 			else if(t == typeof(ListView)) bAdd = true;
 			else if(t == typeof(CustomListViewEx)) bAdd = true;
-			else if(t == typeof(Button)) bAdd = true;
-			else if(t == typeof(KeePass.UI.QualityProgressBar)) bAdd = true;
-			else if(t == typeof(DateTimePicker)) bAdd = true;
 			else if(t == typeof(CheckedListBox)) bAdd = true;
+			else if(t == typeof(Button)) bAdd = true;
+			else if(t == typeof(DateTimePicker)) bAdd = true;
 
 			if(bAdd && (c.Name.Length > 0))
 			{

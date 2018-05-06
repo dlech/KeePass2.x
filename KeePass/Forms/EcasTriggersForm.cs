@@ -211,23 +211,15 @@ namespace KeePass.Forms
 				for(int iTrigger = 0; iTrigger < vTriggers.Length; ++iTrigger)
 					v.Triggers.Add(vTriggers[iTrigger].Tag as EcasTrigger);
 
-				XmlWriterSettings xws = new XmlWriterSettings();
-				xws.Encoding = new UTF8Encoding(false);
-				xws.Indent = true;
-				xws.IndentChars = "\t";
+				using(MemoryStream ms = new MemoryStream())
+				{
+					XmlUtilEx.Serialize<EcasTriggerContainer>(ms, v);
 
-				MemoryStream ms = new MemoryStream();
-				XmlWriter xw = XmlWriter.Create(ms, xws);
-
-				XmlSerializer xmls = new XmlSerializer(typeof(EcasTriggerContainer));
-				xmls.Serialize(xw, v);
-
-				ClipboardUtil.Copy(StrUtil.Utf8.GetString(ms.ToArray()), false,
-					false, null, null, this.Handle);
-				xw.Close();
-				ms.Close();
+					ClipboardUtil.Copy(StrUtil.Utf8.GetString(ms.ToArray()), false,
+						false, null, null, this.Handle);
+				}
 			}
-			catch(Exception excp) { MessageService.ShowWarning(excp.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
 		private void OnCtxToolsCopyTriggers(object sender, EventArgs e)
@@ -249,11 +241,10 @@ namespace KeePass.Forms
 			try
 			{
 				string strData = ClipboardUtil.GetText();
-				XmlSerializer xmls = new XmlSerializer(typeof(EcasTriggerContainer));
 
 				byte[] pbData = StrUtil.Utf8.GetBytes(strData);
 				MemoryStream ms = new MemoryStream(pbData, false);
-				EcasTriggerContainer c = (EcasTriggerContainer)xmls.Deserialize(ms);
+				EcasTriggerContainer c = XmlUtilEx.Deserialize<EcasTriggerContainer>(ms);
 				ms.Close();
 
 				foreach(EcasTrigger t in c.Triggers)
@@ -264,7 +255,7 @@ namespace KeePass.Forms
 					m_triggers.TriggerCollection.Add(t);
 				}
 			}
-			catch(Exception excp) { MessageService.ShowWarning(excp.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateTriggerListEx(true);
 		}

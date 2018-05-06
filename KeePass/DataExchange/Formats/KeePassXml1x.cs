@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Diagnostics;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -77,7 +77,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			XmlDocument xmlDoc = new XmlDocument();
+			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
 			xmlDoc.Load(sInput);
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
@@ -121,7 +121,7 @@ namespace KeePass.DataExchange.Formats
 						strPreTree + "\\" + strLast : strLast);
 
 					pg = pwStorage.RootGroup.FindCreateSubTree(strGroup,
-						new string[1]{ "\\" }, true);
+						new string[1] { "\\" }, true);
 				}
 				else if(xmlChild.Name == ElemTitle)
 					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(

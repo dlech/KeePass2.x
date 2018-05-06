@@ -151,7 +151,8 @@ namespace KeePass.Util
 				}
 			}
 
-			Process.Start(psi);
+			Process p = Process.Start(psi);
+			if(p != null) p.Dispose();
 		}
 	}
 }

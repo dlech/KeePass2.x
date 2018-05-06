@@ -393,11 +393,10 @@
 			this.m_rtbText.HideSelection = false;
 			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
 			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.Size = new System.Drawing.Size(100, 96);
+			this.m_rtbText.Size = new System.Drawing.Size(331, 177);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";
 			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
-			this.m_rtbText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnTextLinkClicked);
 			this.m_rtbText.TextChanged += new System.EventHandler(this.OnTextTextChanged);
 			// 
 			// DataEditorForm

@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 using KeePass.Util;
@@ -121,60 +121,45 @@ namespace KeePass.App
 			string strCmd = "\"ms-its:" + m_strLocalHelpFile;
 
 			if(strTopic != null)
-				strCmd += @"::/help/" + strTopic + ".html";
+				strCmd += "::/help/" + strTopic + ".html";
 
 			if(strSection != null)
 			{
 				Debug.Assert(strTopic != null); // Topic must be present for section
-				strCmd += @"#" + strSection;
+				strCmd += "#" + strSection;
 			}
 
 			strCmd += "\"";
 
-			try { Process.Start(WinUtil.LocateSystemApp("hh.exe"), strCmd); }
-			catch(Exception exStart)
+			try
 			{
-				MessageService.ShowWarning(@"hh.exe " + strCmd, exStart);
+				Process p = Process.Start(WinUtil.LocateSystemApp("hh.exe"), strCmd);
+				if(p != null) p.Dispose();
+			}
+			catch(Exception ex)
+			{
+				MessageService.ShowWarning("HH.exe " + strCmd, ex);
 			}
 		}
 
 		private static void ShowHelpOnline(string strTopic, string strSection)
 		{
-			string strCmd = PwDefs.HelpUrl;
+			string strUrl = GetOnlineUrl(strTopic, strSection);
+			WinUtil.OpenUrl(strUrl, null);
+		}
 
-			if(strTopic != null) strCmd += strTopic + ".html";
+		internal static string GetOnlineUrl(string strTopic, string strSection)
+		{
+			string str = PwDefs.HelpUrl;
+
+			if(strTopic != null) str += strTopic + ".html";
 			if(strSection != null)
 			{
 				Debug.Assert(strTopic != null); // Topic must be present for section
-				strCmd += @"#" + strSection;
+				str += "#" + strSection;
 			}
 
-			try
-			{
-				ParameterizedThreadStart pts = new ParameterizedThreadStart(AppHelp.RunCommandAsync);
-				Thread th = new Thread(pts); // Local, but thread will continue to run anyway
-				th.Start(strCmd);
-			}
-			catch(Exception exThread)
-			{
-				MessageService.ShowWarning(strCmd, exThread);
-			}
-		}
-
-		private static void RunCommandAsync(object pData)
-		{
-			Debug.Assert(pData != null);
-			if(pData == null) throw new ArgumentNullException("pData");
-
-			string strCommand = (pData as string);
-			Debug.Assert(strCommand != null);
-			if(strCommand == null) throw new ArgumentException();
-
-			try { Process.Start(strCommand); }
-			catch(Exception exStart)
-			{
-				MessageService.ShowWarning(strCommand, exStart);
-			}
+			return str;
 		}
 	}
 }

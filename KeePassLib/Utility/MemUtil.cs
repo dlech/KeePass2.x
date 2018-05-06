@@ -501,9 +501,19 @@ namespace KeePassLib.Utility
 			return UInt32ToBytes((uint)iValue);
 		}
 
+		public static void Int32ToBytesEx(int iValue, byte[] pb, int iOffset)
+		{
+			UInt32ToBytesEx((uint)iValue, pb, iOffset);
+		}
+
 		public static byte[] Int64ToBytes(long lValue)
 		{
 			return UInt64ToBytes((ulong)lValue);
+		}
+
+		public static void Int64ToBytesEx(long lValue, byte[] pb, int iOffset)
+		{
+			UInt64ToBytesEx((ulong)lValue, pb, iOffset);
 		}
 
 		public static uint RotateLeft32(uint u, int nBits)

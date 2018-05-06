@@ -105,8 +105,6 @@ namespace KeePass.Forms
 
 			if(UIUtil.VistaStyleListsSupported)
 			{
-				m_tvFolders.ShowLines = false;
-
 				UIUtil.SetExplorerTheme(m_tvFolders, true);
 				UIUtil.SetExplorerTheme(m_lvFiles, true);
 			}

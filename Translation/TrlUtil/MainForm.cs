@@ -390,15 +390,7 @@ namespace TrlUtil
 
 		private void OnLinkLangCodeClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			try
-			{
-				Process.Start("https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes");
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(this, ex.Message, TrlUtilName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+			WinUtil.OpenUrl("https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes", null);
 		}
 
 		private void OnFileOpen(object sender, EventArgs e)
@@ -1048,8 +1040,7 @@ namespace TrlUtil
 						!string.IsNullOrEmpty(kpstItem.ValueEnglish))
 					{
 						m_lvStrings.EnsureVisible(j);
-						lvi.Selected = true;
-						lvi.Focused = true;
+						UIUtil.SetFocusedItem(m_lvStrings, lvi, true);
 						UIUtil.SetFocus(m_tbStrTrl, this);
 						return;
 					}

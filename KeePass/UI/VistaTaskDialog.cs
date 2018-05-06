@@ -20,14 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Native;
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib.Utility;
 
@@ -55,7 +56,7 @@ namespace KeePass.UI
 	}
 
 	[Flags]
-	public enum VtdCommonButtonFlags
+	internal enum VtdCommonButtonFlags
 	{
 		None = 0,
 		OkButton = 0x0001, // Return value: IDOK = DialogResult.OK
@@ -81,7 +82,7 @@ namespace KeePass.UI
 		Question = 1
 	}
 
-	/* internal enum VtdMsg
+	internal enum VtdNtf
 	{
 		Created = 0,
 		Navigated = 1,
@@ -94,7 +95,7 @@ namespace KeePass.UI
 		VerificationClicked = 8,
 		Help = 9,
 		ExpandoButtonClicked = 10
-	} */
+	}
 
 	// Pack = 4 required for 64-bit compatibility
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
@@ -256,6 +257,16 @@ namespace KeePass.UI
 			set { m_cfg.nDefaultButton = value; }
 		}
 
+		public bool EnableHyperlinks
+		{
+			get { return ((m_cfg.dwFlags & VtdFlags.EnableHyperlinks) != VtdFlags.None); }
+			set
+			{
+				if(value) m_cfg.dwFlags |= VtdFlags.EnableHyperlinks;
+				else m_cfg.dwFlags &= ~VtdFlags.EnableHyperlinks;
+			}
+		}
+
 		public string ExpandedInformation
 		{
 			get { return m_cfg.pszExpandedInformation; }
@@ -293,6 +304,8 @@ namespace KeePass.UI
 		{
 			get { return m_bVerification; }
 		}
+
+		public event EventHandler<LinkClickedEventArgs> LinkClicked;
 
 		public VistaTaskDialog()
 		{
@@ -435,7 +448,7 @@ namespace KeePass.UI
 			try { ButtonsToPtr(); }
 			catch(Exception) { Debug.Assert(false); return false; }
 
-			// m_cfg.pfCallback = this.OnTaskDialogCallback;
+			m_cfg.pfCallback = this.OnTaskDialogCallback;
 
 			try
 			{
@@ -451,7 +464,7 @@ namespace KeePass.UI
 			{
 				try
 				{
-					// m_cfg.pfCallback = null;
+					m_cfg.pfCallback = null;
 					FreeButtonsPtr();
 				}
 				catch(Exception) { Debug.Assert(false); }
@@ -462,24 +475,54 @@ namespace KeePass.UI
 			return true;
 		}
 
-		/* private int OnTaskDialogCallback(IntPtr hwnd, uint uNotification,
+		private int OnTaskDialogCallback(IntPtr hwnd, uint uNotification,
 			UIntPtr wParam, IntPtr lParam, IntPtr lpRefData)
 		{
-			if((uNotification == (uint)VtdMsg.Created) ||
-				(uNotification == (uint)VtdMsg.DialogConstructed))
-				UpdateHWnd(hwnd);
-			else if(uNotification == (uint)VtdMsg.Destroyed)
-				UpdateHWnd(IntPtr.Zero);
+			try
+			{
+				// if((uNotification == (uint)VtdNtf.Created) ||
+				//	(uNotification == (uint)VtdNtf.DialogConstructed))
+				//	UpdateHWnd(hwnd);
+				// else if(uNotification == (uint)VtdNtf.Destroyed)
+				//	UpdateHWnd(IntPtr.Zero);
+
+				if((uNotification == (uint)VtdNtf.HyperlinkClicked) && this.EnableHyperlinks &&
+					(lParam != IntPtr.Zero))
+				{
+					string str = Marshal.PtrToStringUni(lParam);
+					if(str != null)
+					{
+						if(str.StartsWith("http:", StrUtil.CaseIgnoreCmp) ||
+							str.StartsWith("https:", StrUtil.CaseIgnoreCmp))
+							WinUtil.OpenUrl(str, null);
+						else if(this.LinkClicked != null)
+						{
+							LinkClickedEventArgs e = new LinkClickedEventArgs(str);
+							this.LinkClicked(this, e);
+						}
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return 0;
 		}
 
-		private void UpdateHWnd(IntPtr hWnd)
+		/* private void UpdateHWnd(IntPtr hWnd)
 		{
 			if(hWnd != m_hWnd) { } // Unregister m_hWnd
 			// Register hWnd
 			m_hWnd = hWnd;
 		} */
+
+		public static string CreateLink(string strHRef, string strText)
+		{
+			string strH = (strHRef ?? string.Empty);
+			string strT = (strText ?? string.Empty);
+			return ("<A HREF=\"" + strH + "\">" + strT + "</A>");
+		}
 
 		public static bool ShowMessageBox(string strContent, string strMainInstruction,
 			string strWindowTitle, VtdIcon vtdIcon, Form fParent)
