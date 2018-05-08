@@ -747,7 +747,7 @@ namespace KeePass.Resources
 			m_strTextColor = TryGetEx(dictNew, "TextColor", m_strTextColor);
 			m_strTextViewer = TryGetEx(dictNew, "TextViewer", m_strTextViewer);
 			m_strTime = TryGetEx(dictNew, "Time", m_strTime);
-			m_strTimerRestartOnUserActivity = TryGetEx(dictNew, "TimerRestartOnUserActivity", m_strTimerRestartOnUserActivity);
+			m_strTimerRestartOnActivity = TryGetEx(dictNew, "TimerRestartOnActivity", m_strTimerRestartOnActivity);
 			m_strTimeSpan = TryGetEx(dictNew, "TimeSpan", m_strTimeSpan);
 			m_strTitle = TryGetEx(dictNew, "Title", m_strTitle);
 			m_strToggle = TryGetEx(dictNew, "Toggle", m_strToggle);
@@ -1566,7 +1566,7 @@ namespace KeePass.Resources
 			"TextColor",
 			"TextViewer",
 			"Time",
-			"TimerRestartOnUserActivity",
+			"TimerRestartOnActivity",
 			"TimeSpan",
 			"Title",
 			"Toggle",
@@ -9599,15 +9599,15 @@ namespace KeePass.Resources
 			get { return m_strTime; }
 		}
 
-		private static string m_strTimerRestartOnUserActivity =
-			@"Restart timer on user activity";
+		private static string m_strTimerRestartOnActivity =
+			@"Restart timer on KeePass activity";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Restart timer on user activity'.
+		/// 'Restart timer on KeePass activity'.
 		/// </summary>
-		public static string TimerRestartOnUserActivity
+		public static string TimerRestartOnActivity
 		{
-			get { return m_strTimerRestartOnUserActivity; }
+			get { return m_strTimerRestartOnActivity; }
 		}
 
 		private static string m_strTimeSpan =

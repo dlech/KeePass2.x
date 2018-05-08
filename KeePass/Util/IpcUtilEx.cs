@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
@@ -88,11 +89,15 @@ namespace KeePass.Util
 	public static class IpcUtilEx
 	{
 		internal const string IpcMsgFilePreID = "KeePassIPC-";
-		internal const string IpcMsgFilePostID = "-Msgs.tmp";
+		// internal const string IpcMsgFilePostID = "-Msgs.tmp";
 
 		public const string CmdOpenDatabase = "OpenDatabase";
 		public const string CmdOpenEntryUrl = "OpenEntryUrl";
 		public const string CmdIpcEvent = "IpcEvent";
+
+		private static readonly byte[] IpcOptEnt = new byte[] {
+			0x51, 0xE4, 0xCA, 0x4B, 0xBB, 0x63, 0x57, 0x21
+		};
 
 		/// <summary>
 		/// Event that is raised e.g. when running KeePass with the
@@ -108,7 +113,7 @@ namespace KeePass.Util
 			int nId = (int)(MemUtil.BytesToUInt32(CryptoRandom.Instance.GetRandomBytes(
 				4)) & 0x7FFFFFFF);
 
-			if(WriteIpcInfoFile(nId, ipcMsg) == false) return;
+			if(!WriteIpcInfoFile(nId, ipcMsg)) return;
 
 			try
 			{
@@ -157,10 +162,16 @@ namespace KeePass.Util
 
 			try
 			{
-				using(FileStream fs = new FileStream(strPath, FileMode.Create,
-					FileAccess.Write, FileShare.None))
+				using(MemoryStream ms = new MemoryStream())
 				{
-					XmlUtilEx.Serialize<IpcParamEx>(fs, ipcMsg);
+					XmlUtilEx.Serialize<IpcParamEx>(ms, ipcMsg);
+
+					byte[] pb = ms.ToArray();
+					byte[] pbCmp = MemUtil.Compress(pb);
+					byte[] pbEnc = CryptoUtil.ProtectData(pbCmp, IpcOptEnt,
+						DataProtectionScope.CurrentUser);
+
+					File.WriteAllBytes(strPath, pbEnc);
 				}
 
 				return true;
@@ -193,10 +204,14 @@ namespace KeePass.Util
 			IpcParamEx ipcParam = null;
 			try
 			{
-				using(FileStream fs = new FileStream(strPath, FileMode.Open,
-					FileAccess.Read, FileShare.Read))
+				byte[] pbEnc = File.ReadAllBytes(strPath);
+				byte[] pbCmp = CryptoUtil.UnprotectData(pbEnc, IpcOptEnt,
+					DataProtectionScope.CurrentUser);
+				byte[] pb = MemUtil.Decompress(pbCmp);
+
+				using(MemoryStream ms = new MemoryStream(pb, false))
 				{
-					ipcParam = XmlUtilEx.Deserialize<IpcParamEx>(fs);
+					ipcParam = XmlUtilEx.Deserialize<IpcParamEx>(ms);
 				}
 			}
 			catch(Exception) { Debug.Assert(!File.Exists(strPath)); }
@@ -277,7 +292,7 @@ namespace KeePass.Util
 				PwEntry pe = pdb.RootGroup.FindEntry(pwUuid, true);
 				if(pe == null) continue;
 
-				mf.PerformDefaultUrlAction(new PwEntry[]{ pe }, true);
+				mf.PerformDefaultUrlAction(new PwEntry[] { pe }, true);
 				break;
 			}
 		}

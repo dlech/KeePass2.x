@@ -615,6 +615,9 @@ namespace KeePass.Util.XmlSerialization
 					case "SslCertsAcceptInvalid":
 						o.SslCertsAcceptInvalid = ReadBoolean(xr);
 						break;
+					case "ProtectProcessWithDacl":
+						o.ProtectProcessWithDacl = ReadBoolean(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();

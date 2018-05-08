@@ -91,8 +91,7 @@ namespace KeePass.Util
 				RegistryKey rk = null;
 				try
 				{
-					rk = Registry.ClassesRoot.OpenSubKey(
-						"microsoft-edge", false);
+					rk = Registry.ClassesRoot.OpenSubKey("microsoft-edge", false);
 					if(rk != null)
 						b = (rk.GetValue("URL Protocol") != null);
 				}

@@ -104,6 +104,9 @@ namespace KeePassLib.Utility
 		// 1690:
 		//   Removing items from a list view doesn't work properly.
 		//   https://sourceforge.net/p/keepass/bugs/1690/
+		// 1716:
+		//   'Always on Top' doesn't work properly on the Cinnamon desktop.
+		//   https://sourceforge.net/p/keepass/bugs/1716/
 		// 2139:
 		//   Shortcut keys are ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2139/

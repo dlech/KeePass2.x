@@ -566,6 +566,7 @@
 			// 
 			// m_rtbUnusedText
 			// 
+			this.m_rtbUnusedText.DetectUrls = false;
 			this.m_rtbUnusedText.Location = new System.Drawing.Point(6, 6);
 			this.m_rtbUnusedText.Name = "m_rtbUnusedText";
 			this.m_rtbUnusedText.Size = new System.Drawing.Size(585, 394);
@@ -594,7 +595,7 @@
             this.m_menuFileSep1,
             this.m_menuFileExit});
 			this.m_menuFile.Name = "m_menuFile";
-			this.m_menuFile.Size = new System.Drawing.Size(39, 20);
+			this.m_menuFile.Size = new System.Drawing.Size(37, 20);
 			this.m_menuFile.Text = "&File";
 			// 
 			// m_menuFileOpen
@@ -602,7 +603,7 @@
 			this.m_menuFileOpen.Image = global::TrlUtil.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
 			this.m_menuFileOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.m_menuFileOpen.Size = new System.Drawing.Size(154, 22);
+			this.m_menuFileOpen.Size = new System.Drawing.Size(155, 22);
 			this.m_menuFileOpen.Text = "&Open...";
 			this.m_menuFileOpen.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -611,7 +612,7 @@
 			this.m_menuFileSave.Image = global::TrlUtil.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
 			this.m_menuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.m_menuFileSave.Size = new System.Drawing.Size(154, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(155, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
@@ -619,14 +620,14 @@
 			// 
 			this.m_menuFileSaveAs.Image = global::TrlUtil.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			this.m_menuFileSaveAs.Size = new System.Drawing.Size(154, 22);
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(155, 22);
 			this.m_menuFileSaveAs.Text = "Save &As...";
 			this.m_menuFileSaveAs.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(151, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(152, 6);
 			// 
 			// m_menuFileImport
 			// 
@@ -636,44 +637,44 @@
             this.m_menuFileImportSep0,
             this.m_menuFileImport2xNoChecks});
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			this.m_menuFileImport.Size = new System.Drawing.Size(154, 22);
+			this.m_menuFileImport.Size = new System.Drawing.Size(155, 22);
 			this.m_menuFileImport.Text = "&Import";
 			// 
 			// m_menuFileImportLng
 			// 
 			this.m_menuFileImportLng.Name = "m_menuFileImportLng";
-			this.m_menuFileImportLng.Size = new System.Drawing.Size(311, 22);
+			this.m_menuFileImportLng.Size = new System.Drawing.Size(291, 22);
 			this.m_menuFileImportLng.Text = "KeePass &1.x LNG File...";
 			this.m_menuFileImportLng.Click += new System.EventHandler(this.OnImport1xLng);
 			// 
 			// m_menuFileImportPo
 			// 
 			this.m_menuFileImportPo.Name = "m_menuFileImportPo";
-			this.m_menuFileImportPo.Size = new System.Drawing.Size(311, 22);
+			this.m_menuFileImportPo.Size = new System.Drawing.Size(291, 22);
 			this.m_menuFileImportPo.Text = "&PO File...";
 			this.m_menuFileImportPo.Click += new System.EventHandler(this.OnImportPo);
 			// 
 			// m_menuFileImportSep0
 			// 
 			this.m_menuFileImportSep0.Name = "m_menuFileImportSep0";
-			this.m_menuFileImportSep0.Size = new System.Drawing.Size(308, 6);
+			this.m_menuFileImportSep0.Size = new System.Drawing.Size(288, 6);
 			// 
 			// m_menuFileImport2xNoChecks
 			// 
 			this.m_menuFileImport2xNoChecks.Name = "m_menuFileImport2xNoChecks";
-			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(311, 22);
+			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(291, 22);
 			this.m_menuFileImport2xNoChecks.Text = "KeePass &2.x LNGX File (No Base Checks)...";
 			this.m_menuFileImport2xNoChecks.Click += new System.EventHandler(this.OnImport2xNoChecks);
 			// 
 			// m_menuFileSep1
 			// 
 			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			this.m_menuFileSep1.Size = new System.Drawing.Size(151, 6);
+			this.m_menuFileSep1.Size = new System.Drawing.Size(152, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(154, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(155, 22);
 			this.m_menuFileExit.Text = "&Exit";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -682,7 +683,7 @@
 			this.m_menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuEditNextUntrl});
 			this.m_menuEdit.Name = "m_menuEdit";
-			this.m_menuEdit.Size = new System.Drawing.Size(40, 20);
+			this.m_menuEdit.Size = new System.Drawing.Size(39, 20);
 			this.m_menuEdit.Text = "&Edit";
 			// 
 			// m_menuEditNextUntrl
@@ -690,7 +691,7 @@
 			this.m_menuEditNextUntrl.Image = global::TrlUtil.Properties.Resources.B16x16_Down;
 			this.m_menuEditNextUntrl.Name = "m_menuEditNextUntrl";
 			this.m_menuEditNextUntrl.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(245, 22);
+			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(242, 22);
 			this.m_menuEditNextUntrl.Text = "Go to Next &Untranslated";
 			this.m_menuEditNextUntrl.Click += new System.EventHandler(this.OnEditNextUntrl);
 			// 

@@ -130,14 +130,11 @@ namespace KeePass.Util
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
 				{
 					KdbxFile.WriteEntries(gz, pwDatabase, vEntries);
-
-					byte[] pbFinal;
-					if(WinUtil.IsWindows9x) pbFinal = ms.ToArray();
-					else pbFinal = ProtectedData.Protect(ms.ToArray(), AdditionalEntropy,
-						DataProtectionScope.CurrentUser);
-
-					ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
 				}
+
+				byte[] pbFinal = CryptoUtil.ProtectData(ms.ToArray(),
+					AdditionalEntropy, DataProtectionScope.CurrentUser);
+				ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
 			}
 		}
 
@@ -156,10 +153,8 @@ namespace KeePass.Util
 			byte[] pbEnc = ClipboardUtil.GetEncodedData(ClipFormatEntries, IntPtr.Zero);
 			if(pbEnc == null) { Debug.Assert(false); return; }
 
-			byte[] pbPlain;
-			if(WinUtil.IsWindows9x) pbPlain = pbEnc;
-			else pbPlain = ProtectedData.Unprotect(pbEnc, AdditionalEntropy,
-				DataProtectionScope.CurrentUser);
+			byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc,
+				AdditionalEntropy, DataProtectionScope.CurrentUser);
 
 			using(MemoryStream ms = new MemoryStream(pbPlain, false))
 			{

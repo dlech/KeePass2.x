@@ -322,6 +322,12 @@ namespace KeePass.Forms
 				new SortCommandHandler(this.SortPasswordList));
 			m_lvgmMenu = new ListViewGroupingMenu(m_menuViewEntryListGrouping, this);
 
+			if(MonoWorkarounds.IsRequired(1716) && (NativeLib.GetDesktopType() ==
+				DesktopType.Cinnamon))
+			{
+				mw.AlwaysOnTop = false;
+				UIUtil.SetEnabledFast(false, m_menuViewAlwaysOnTop);
+			}
 			UIUtil.SetChecked(m_menuViewAlwaysOnTop, mw.AlwaysOnTop);
 			EnsureAlwaysOnTopOpt();
 
@@ -345,7 +351,7 @@ namespace KeePass.Forms
 			if(UIUtil.VistaStyleListsSupported)
 			{
 				// m_tvGroups.ItemHeight += 1;
-				// m_tvGroups.ShowLines = false; // Optional, see CustomTreeViewEx
+				// m_tvGroups.ShowLines = false; // Option-dep., see CustomTreeViewEx
 
 				UIUtil.SetExplorerTheme(m_tvGroups.Handle);
 				UIUtil.SetExplorerTheme(m_lvEntries.Handle);
@@ -734,7 +740,7 @@ namespace KeePass.Forms
 			// be closed and UpdateUIState might crash, if the order of the
 			// two methods is swapped; so first update state, then unblock
 			UpdateUIState(false);
-			UIBlockInteraction(false); // Calls Application.DoEvents()
+			UIBlockInteraction(false);
 
 			if(this.FileSaved != null)
 			{
@@ -2050,13 +2056,9 @@ namespace KeePass.Forms
 			{
 				EntryUtil.CopyEntriesToClipboard(m_docMgr.ActiveDatabase, vSelected,
 					this.Handle);
+				StartClipboardCountdown();
 			}
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(ex);
-			}
-
-			StartClipboardCountdown();
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
 		private void OnEntryClipPaste(object sender, EventArgs e)
@@ -2066,10 +2068,7 @@ namespace KeePass.Forms
 			if(pg == null) return;
 
 			try { EntryUtil.PasteEntriesFromClipboard(m_docMgr.ActiveDatabase, pg); }
-			catch(Exception exPaste)
-			{
-				MessageService.ShowWarning(exPaste);
-			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUI(false, null, false, null, true, null, true);
 		}

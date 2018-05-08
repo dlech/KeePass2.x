@@ -284,6 +284,7 @@ namespace KeePassLib.Security
 		public bool Equals(ProtectedString ps, bool bCheckProtEqual)
 		{
 			if(ps == null) throw new ArgumentNullException("ps");
+			if(object.ReferenceEquals(this, ps)) return true; // Perf. opt.
 
 			bool bPA = m_bIsProtected, bPB = ps.m_bIsProtected;
 			if(bCheckProtEqual && (bPA != bPB)) return false;

@@ -96,6 +96,14 @@ namespace KeePass.Ecas
 			uint s = EcasUtil.GetParamUInt(m_params, 0);
 			if(s == 0) return false;
 
+#if DEBUG
+			// StackTrace st = new StackTrace(false);
+			// Trace.WriteLine("[" + (Environment.TickCount / 1000).ToString() +
+			//	"] Restarting timer... (" + st.GetFrame(3).GetMethod().Name +
+			//	" -> " + st.GetFrame(2).GetMethod().Name +
+			//	" -> " + st.GetFrame(1).GetMethod().Name + ").");
+#endif
+
 			DateTime dtNow = DateTime.UtcNow;
 			m_lRunAtTicks = dtNow.AddSeconds((double)s - 0.45).Ticks;
 			return true;

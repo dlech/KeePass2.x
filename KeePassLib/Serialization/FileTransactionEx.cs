@@ -295,9 +295,7 @@ namespace KeePassLib.Serialization
 
 				string strID = StrUtil.AlphaNumericOnly(Convert.ToBase64String(
 					CryptoRandom.Instance.GetRandomBytes(16)));
-				string strTempDir = Path.GetTempPath();
-				if(!Directory.Exists(strTempDir))
-					Directory.CreateDirectory(strTempDir);
+				string strTempDir = UrlUtil.GetTempPath();
 				// See also ClearOld method
 				string strTemp = UrlUtil.EnsureTerminatingSeparator(strTempDir,
 					false) + StrTxfTempPrefix + strID + StrTxfTempSuffix;
@@ -390,7 +388,7 @@ namespace KeePassLib.Serialization
 			try
 			{
 				// See also TxfPrepare method
-				DirectoryInfo di = new DirectoryInfo(Path.GetTempPath());
+				DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
 				List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
 					"*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
 

@@ -168,7 +168,7 @@ namespace KeePass.Forms
 
 		private void OpenUrl(string strUrl)
 		{
-			if(!KeePassLib.Native.NativeLib.IsUnix())
+			/* if(!KeePassLib.Native.NativeLib.IsUnix())
 			{
 				// Process.Start has a considerable delay when opening URLs
 				// here (different thread, etc.), therefore try the native
@@ -184,8 +184,14 @@ namespace KeePass.Forms
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			try { Process.Start(strUrl); }
-			catch(Exception) { Debug.Assert(false); }
+			try
+			{
+				Process p = Process.Start(strUrl);
+				if(p != null) p.Dispose();
+			}
+			catch(Exception) { Debug.Assert(false); } */
+
+			WinUtil.OpenUrl(strUrl, null); // Thread-safe
 		}
 
 		private void OnInfoItemActivate(object sender, EventArgs e)

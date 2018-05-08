@@ -55,9 +55,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
-			if(IntPtr.Size == 8)
-				return TransformKey64(pBuf256, pKey256, uRounds);
-			return TransformKey32(pBuf256, pKey256, uRounds);
+			if(IntPtr.Size == 4)
+				return TransformKey32(pBuf256, pKey256, uRounds);
+			return TransformKey64(pBuf256, pKey256, uRounds);
 		}
 
 		[DllImport("KeePassNtv32.dll", EntryPoint = "TransformKeyTimed")]
@@ -73,9 +73,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKeyTimed(IntPtr pBuf256, IntPtr pKey256,
 			ref UInt64 puRounds, UInt32 uSeconds)
 		{
-			if(IntPtr.Size == 8)
-				return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
-			return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
+			if(IntPtr.Size == 4)
+				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
+			return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
 		} */
 
 #if !KeePassUAP
@@ -92,9 +92,9 @@ namespace KeePassLib.Native
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
-			if(IntPtr.Size == 8)
-				return TransformKey64(pBuf256, pKey256, uRounds);
-			return TransformKey32(pBuf256, pKey256, uRounds);
+			if(IntPtr.Size == 4)
+				return TransformKey32(pBuf256, pKey256, uRounds);
+			return TransformKey64(pBuf256, pKey256, uRounds);
 		}
 
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKeyBenchmark256")]
@@ -105,9 +105,9 @@ namespace KeePassLib.Native
 
 		internal static UInt64 TransformKeyBenchmark(UInt32 uTimeMs)
 		{
-			if(IntPtr.Size == 8)
-				return TransformKeyBenchmark64(uTimeMs);
-			return TransformKeyBenchmark32(uTimeMs);
+			if(IntPtr.Size == 4)
+				return TransformKeyBenchmark32(uTimeMs);
+			return TransformKeyBenchmark64(uTimeMs);
 		}
 #endif
 
@@ -121,9 +121,27 @@ namespace KeePassLib.Native
 
 		internal static bool TfShowLangBar(uint dwFlags)
 		{
-			if(IntPtr.Size == 8) return TF_ShowLangBar64(dwFlags);
-			return TF_ShowLangBar32(dwFlags);
+			if(IntPtr.Size == 4) return TF_ShowLangBar32(dwFlags);
+			return TF_ShowLangBar64(dwFlags);
 		} */
+
+		[DllImport("KeePassLibC32.dll", EntryPoint = "ProtectProcessWithDacl")]
+		private static extern void ProtectProcessWithDacl32();
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "ProtectProcessWithDacl")]
+		private static extern void ProtectProcessWithDacl64();
+
+		internal static void ProtectProcessWithDacl()
+		{
+			try
+			{
+				if(NativeLib.IsUnix()) return;
+
+				if(IntPtr.Size == 4) ProtectProcessWithDacl32();
+				else ProtectProcessWithDacl64();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

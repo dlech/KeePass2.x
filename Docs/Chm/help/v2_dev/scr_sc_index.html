@@ -133,7 +133,9 @@ This will list all groups contained in the MyDb.kdbx database file.</p>
 <p><b>Command: ListEntries</b></p>
 
 <p>This command lists all entries in a format that easily machine-readable. The output
-is not intended to be printed/used directly. Usage example:</p>
+is not intended to be printed/used directly. The entry identification
+syntax is exactly the same as in the <a href="#editentry">EditEntry</a> command.
+Usage example:</p>
 
 <p><code>KPScript -c:ListEntries &quot;C:\KeePass\MyDb.kdbx&quot; -pw:MyPassword
 -keyfile:&quot;C:\KeePass\MyDb.key&quot;</code><br />
@@ -206,9 +208,13 @@ the entry will be created in the root group.</li>
 
 <li><code>-setx-Icon:<i>ID</i></code><br />
 Set the icon of the entry to the standard icon having index <i>ID</i>.</li>
-
 <li><code>-setx-CustomIcon:<i>ID</i></code><br />
 Set the icon of the entry to the custom icon having index <i>ID</i>.</li>
+<li><code>-setx-Expires:<i>VALUE</i></code><br />
+Sets whether the entry expires or not. <i>VALUE</i> must be either
+<code>true</code> or <code>false</code>.</li>
+<li><code>-setx-ExpiryTime:<i>VALUE</i></code><br />
+Sets the expiry date/time of the entry.</li>
 </ul>
 
 <p>Example:</p>

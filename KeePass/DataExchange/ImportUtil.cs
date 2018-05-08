@@ -112,7 +112,7 @@ namespace KeePass.DataExchange
 				try { fmtImp.Import(pwDatabase, null, dlgStatus); }
 				catch(Exception exSingular)
 				{
-					if((exSingular.Message != null) && (exSingular.Message.Length > 0))
+					if(!string.IsNullOrEmpty(exSingular.Message))
 					{
 						// slf.SetText(exSingular.Message, LogStatusType.Warning);
 						MessageService.ShowWarning(exSingular);

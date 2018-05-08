@@ -492,14 +492,14 @@ namespace KeePass.UI
 					string str = Marshal.PtrToStringUni(lParam);
 					if(str != null)
 					{
-						if(this.LinkClicked != null)
+						if(str.StartsWith("http:", StrUtil.CaseIgnoreCmp) ||
+							str.StartsWith("https:", StrUtil.CaseIgnoreCmp))
+							WinUtil.OpenUrl(str, null);
+						else if(this.LinkClicked != null)
 						{
 							LinkClickedEventArgs e = new LinkClickedEventArgs(str);
 							this.LinkClicked(this, e);
 						}
-						else if(str.StartsWith("http:", StrUtil.CaseIgnoreCmp) ||
-							str.StartsWith("https:", StrUtil.CaseIgnoreCmp))
-							WinUtil.OpenUrl(str, null);
 						else { Debug.Assert(false); }
 					}
 					else { Debug.Assert(false); }

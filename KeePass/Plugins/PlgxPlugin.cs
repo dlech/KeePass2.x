@@ -18,17 +18,17 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.IO.Compression;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Resources;
 using System.Security.Cryptography;
+using System.Text;
+using System.Windows.Forms;
 
 using Microsoft.CSharp;
 // using Microsoft.VisualBasic;
@@ -470,7 +470,9 @@ namespace KeePass.Plugins
 		private static void RecursiveFileAdd(BinaryWriter bw, string strRootDir,
 			DirectoryInfo di)
 		{
+			if(di.Name.Equals(".git", StrUtil.CaseIgnoreCmp)) return; // Skip Git
 			if(di.Name.Equals(".svn", StrUtil.CaseIgnoreCmp)) return; // Skip SVN
+			if(di.Name.Equals(".vs", StrUtil.CaseIgnoreCmp)) return; // Skip VS
 
 			foreach(FileInfo fi in di.GetFiles())
 			{
@@ -790,18 +792,23 @@ namespace KeePass.Plugins
 			string strApp, strArgs;
 			StrUtil.SplitCommandLine(str, out strApp, out strArgs);
 
+			Process p = null;
 			try
 			{
-				if((strArgs != null) && (strArgs.Length > 0))
-					Process.Start(strApp, strArgs);
-				else
-					Process.Start(strApp);
+				if(!string.IsNullOrEmpty(strArgs))
+					p = Process.Start(strApp, strArgs);
+				else p = Process.Start(strApp);
 			}
-			catch(Exception exRun)
+			catch(Exception ex)
 			{
 				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
-					throw new PlgxException(exRun.Message);
+					throw new PlgxException(ex.Message);
 				throw;
+			}
+			finally
+			{
+				try { if(p != null) p.Dispose(); }
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 	}

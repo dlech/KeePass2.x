@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -568,6 +569,36 @@ namespace KeePass.UI
 				m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
 
 			if(m_bForceRedrawOnScroll.Value) Invalidate();
+		}
+
+		protected override void OnLinkClicked(LinkClickedEventArgs e)
+		{
+			try
+			{
+				string str = e.LinkText;
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
+
+				// Open the URL if no handler has been associated with
+				// the LinkClicked event;
+				// if(this.LinkClicked == null) WinUtil.OpenUrl(str, null);
+				string strEv = (MonoWorkarounds.IsRequired() ? "LinkClickedEvent" :
+					"EVENT_LINKACTIVATE");
+				FieldInfo fi = typeof(RichTextBox).GetField(strEv,
+					BindingFlags.NonPublic | BindingFlags.Static);
+				object oEv = ((fi != null) ? fi.GetValue(null) : null);
+				if(oEv != null)
+				{
+					if(this.Events[oEv] == null) // No event handler associated
+					{
+						WinUtil.OpenUrl(str, null);
+						return;
+					}
+				}
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			base.OnLinkClicked(e);
 		}
 	}
 }

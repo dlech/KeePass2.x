@@ -19,11 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Threading;
-using System.Security.Cryptography;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+
+using KeePass.App;
+using KeePass.Forms;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Utility;
@@ -32,7 +35,7 @@ namespace KeePass.Util
 {
 	public static partial class IpcBroadcast
 	{
-		private static string m_strMsgFilePath = null;
+		/* private static string m_strMsgFilePath = null;
 		private static string m_strMsgFileName = null;
 		private static FileSystemWatcher m_fsw = null;
 		private static CriticalSectionEx m_csProcess = new CriticalSectionEx();
@@ -70,6 +73,7 @@ namespace KeePass.Util
 			// Send just to others, not to own
 			m_vProcessedMsgs.Add(ipcMsg);
 
+			bool bSuccess = false;
 			for(int r = 0; r < IpcComRetryCount; ++r)
 			{
 				try
@@ -78,29 +82,43 @@ namespace KeePass.Util
 					CleanOldMessages(l);
 					l.Add(ipcMsg);
 
-					MemoryStream ms = new MemoryStream();
-					BinaryWriter bw = new BinaryWriter(ms);
-					bw.Write(IpcFileSig);
-					bw.Write((uint)l.Count);
-					for(int j = 0; j < l.Count; ++j)
-						IpcMessage.Serialize(bw, l[j]);
-					byte[] pbPlain = ms.ToArray();
-					bw.Close();
-					ms.Close();
+					byte[] pbPlain = null;
+					using(MemoryStream ms = new MemoryStream())
+					{
+						using(BinaryWriter bw = new BinaryWriter(ms))
+						{
+							bw.Write(IpcFileSig);
+							bw.Write((uint)l.Count);
+							for(int j = 0; j < l.Count; ++j)
+								IpcMessage.Serialize(bw, l[j]);
 
-					byte[] pbFile = ProtectedData.Protect(pbPlain, IpcOptEnt,
-						DataProtectionScope.CurrentUser);
+							pbPlain = ms.ToArray();
+						}
+					}
 
-					FileStream fsWrite = new FileStream(m_strMsgFilePath,
-						FileMode.Create, FileAccess.Write, FileShare.None);
-					fsWrite.Write(pbFile, 0, pbFile.Length);
-					fsWrite.Close();
+					byte[] pbFile = CryptoUtil.ProtectData(pbPlain,
+						IpcOptEnt, DataProtectionScope.CurrentUser);
 
+					using(FileStream fs = new FileStream(m_strMsgFilePath,
+						FileMode.Create, FileAccess.Write, FileShare.None))
+					{
+						fs.Write(pbFile, 0, pbFile.Length);
+					}
+
+					bSuccess = true;
 					break;
 				}
 				catch(Exception) { }
 
 				Thread.Sleep(IpcComRetryDelay);
+			}
+
+			if(!bSuccess)
+			{
+				Debug.Assert(false);
+				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+					Console.WriteLine("Failed to broadcast message " +
+						((long)msg).ToString() + " (" + lParam.ToString() + ")!");
 			}
 
 			CleanOldMessages(m_vProcessedMsgs);
@@ -115,7 +133,17 @@ namespace KeePass.Util
 				m_fsw = new FileSystemWatcher(UrlUtil.GetTempPath(),
 					m_strMsgFileName);
 			}
-			catch(Exception) { Debug.Assert(false); return; } // Access denied
+			catch(Exception ex) // Access denied?
+			{
+				Debug.Assert(false);
+				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+				{
+					Console.WriteLine(UrlUtil.EnsureTerminatingSeparator(
+						UrlUtil.GetTempPath(), false) + m_strMsgFileName);
+					Console.WriteLine(ex.Message.Trim());
+				}
+				return;
+			}
 
 			m_fsw.IncludeSubdirectories = false;
 			m_fsw.NotifyFilter = (NotifyFilters.CreationTime | NotifyFilters.LastWrite);
@@ -178,6 +206,9 @@ namespace KeePass.Util
 			List<IpcMessage> l = ReadMessagesPriv();
 			CleanOldMessages(l);
 
+			MainForm mf = Program.MainForm;
+			if(mf == null) { Debug.Assert(false); return; }
+
 			foreach(IpcMessage msg in l)
 			{
 				bool bProcessed = false;
@@ -189,8 +220,7 @@ namespace KeePass.Util
 
 				m_vProcessedMsgs.Add(msg);
 
-				Program.MainForm.Invoke(new CallPrivDelegate(CallPriv),
-					(int)msg.Message, msg.LParam);
+				mf.Invoke(new CallPrivDelegate(CallPriv), (int)msg.Message, msg.LParam);
 			}
 		}
 
@@ -206,20 +236,22 @@ namespace KeePass.Util
 			if(!File.Exists(m_strMsgFilePath)) return l;
 
 			byte[] pbEnc = File.ReadAllBytes(m_strMsgFilePath);
-			byte[] pb = ProtectedData.Unprotect(pbEnc, IpcOptEnt,
+			byte[] pb = CryptoUtil.UnprotectData(pbEnc, IpcOptEnt,
 				DataProtectionScope.CurrentUser);
 
-			MemoryStream ms = new MemoryStream(pb, false);
-			BinaryReader br = new BinaryReader(ms);
-			ulong uSig = br.ReadUInt64();
-			if(uSig != IpcFileSig) { Debug.Assert(false); return l; }
-			uint uMessages = br.ReadUInt32();
+			using(MemoryStream ms = new MemoryStream(pb, false))
+			{
+				using(BinaryReader br = new BinaryReader(ms))
+				{
+					ulong uSig = br.ReadUInt64();
+					if(uSig != IpcFileSig) { Debug.Assert(false); return l; }
 
-			for(uint u = 0; u < uMessages; ++u)
-				l.Add(IpcMessage.Deserialize(br));
+					uint uMessages = br.ReadUInt32();
+					for(uint u = 0; u < uMessages; ++u)
+						l.Add(IpcMessage.Deserialize(br));
+				}
+			}
 
-			br.Close();
-			ms.Close();
 			return l;
 		}
 
@@ -265,6 +297,6 @@ namespace KeePass.Util
 
 				return msg;
 			}
-		}
+		} */
 	}
 }

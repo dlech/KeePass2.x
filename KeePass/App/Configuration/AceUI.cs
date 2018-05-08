@@ -65,7 +65,8 @@ namespace KeePass.App.Configuration
 
 		HideBuiltInPwGenPrfInEntryDlg = 0x10000,
 		ShowLastAccessTime = 0x20000,
-		HideNewDbInfoDialogs = 0x40000
+		HideNewDbInfoDialogs = 0x40000,
+		HideAutoTypeObfInfo = 0x80000
 	}
 
 	[Flags]

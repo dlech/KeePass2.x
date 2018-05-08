@@ -141,7 +141,7 @@ namespace KeePass.Forms
 			catch(Exception ex)
 			{
 				this.Enabled = true;
-				MessageService.ShowWarning(ex.Message);
+				MessageService.ShowWarning(ex);
 				this.DialogResult = DialogResult.None;
 			}
 		}

@@ -2164,8 +2164,8 @@
 		<Data Name="Time">
 			<Value>Time</Value>
 		</Data>
-		<Data Name="TimerRestartOnUserActivity">
-			<Value>Restart timer on user activity</Value>
+		<Data Name="TimerRestartOnActivity">
+			<Value>Restart timer on KeePass activity</Value>
 		</Data>
 		<Data Name="TimeSpan">
 			<Value>Time span</Value>

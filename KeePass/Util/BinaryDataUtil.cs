@@ -310,10 +310,7 @@ namespace KeePass.Util
 					}
 				}
 			}
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(ex.Message);
-			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			return pbResult;
 		}
@@ -346,11 +343,12 @@ namespace KeePass.Util
 				// Let the main thread finish showing the message box
 				Thread.Sleep(200);
 
-				Process.Start(psi);
+				Process p = Process.Start(psi);
+				if(p != null) p.Dispose();
 			}
 			catch(Exception ex)
 			{
-				try { MessageService.ShowWarning(ex.Message); }
+				try { MessageService.ShowWarning(ex); }
 				catch(Exception) { Debug.Assert(false); }
 			}
 		}

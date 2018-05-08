@@ -209,7 +209,7 @@ namespace KeePass.Forms
 
 				WinUtil.OpenUrl("cmd://\"" + str + "\"", null, false);
 			}
-			catch(Exception ex) { MessageService.ShowWarning(ex.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 	}
 }

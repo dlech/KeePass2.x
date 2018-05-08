@@ -396,6 +396,7 @@ namespace KeePassLib.Security
 		public bool Equals(ProtectedBinary other, bool bCheckProtEqual)
 		{
 			if(other == null) return false; // No assert
+			if(object.ReferenceEquals(this, other)) return true; // Perf. opt.
 
 			if(bCheckProtEqual && (m_bProtected != other.m_bProtected))
 				return false;

@@ -1830,7 +1830,7 @@ namespace KeePass.UI
 
 				ContainerControl ccSub = (c as ContainerControl);
 				if(ccSub != null) return GetActiveControl(ccSub);
-				else return c;
+				return c;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -2381,7 +2381,9 @@ namespace KeePass.UI
 			try
 			{
 				if(c.CanSelect) c.Select();
-				if(c.CanFocus) c.Focus();
+
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/045940bf/
+				// if(c.CanFocus) c.Focus();
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -2394,7 +2396,7 @@ namespace KeePass.UI
 			try
 			{
 				Control cPre = null;
-				if(fParent != null) cPre = fParent.ActiveControl;
+				if(fParent != null) cPre = GetActiveControl(fParent);
 
 				bool bStdSetFocus = true;
 				if(c == cPre)
@@ -2820,7 +2822,7 @@ namespace KeePass.UI
 					NativeMethods.ICON_BIG), IntPtr.Zero);
 				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
 
-				hIcon = NativeMethods.GetClassLongPtr(hWnd, bPrefSmall ?
+				hIcon = NativeMethods.GetClassLongPtrEx(hWnd, bPrefSmall ?
 					NativeMethods.GCLP_HICONSM : NativeMethods.GCLP_HICON);
 				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
 
@@ -2829,7 +2831,7 @@ namespace KeePass.UI
 					IntPtr.Zero);
 				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
 
-				hIcon = NativeMethods.GetClassLongPtr(hWnd, bPrefSmall ?
+				hIcon = NativeMethods.GetClassLongPtrEx(hWnd, bPrefSmall ?
 					NativeMethods.GCLP_HICON : NativeMethods.GCLP_HICONSM);
 				if(hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
 

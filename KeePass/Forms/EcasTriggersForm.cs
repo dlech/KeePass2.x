@@ -219,7 +219,7 @@ namespace KeePass.Forms
 						false, null, null, this.Handle);
 				}
 			}
-			catch(Exception excp) { MessageService.ShowWarning(excp.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
 		private void OnCtxToolsCopyTriggers(object sender, EventArgs e)
@@ -255,7 +255,7 @@ namespace KeePass.Forms
 					m_triggers.TriggerCollection.Add(t);
 				}
 			}
-			catch(Exception excp) { MessageService.ShowWarning(excp.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateTriggerListEx(true);
 		}

@@ -61,7 +61,6 @@ namespace TrlUtil
 			AddForm(l, new EditAutoTypeItemForm());
 			AddForm(l, new EditStringForm());
 			AddForm(l, new EntropyForm());
-			AddForm(l, new EntryReportForm());
 			AddForm(l, new ExchangeDataForm());
 			AddForm(l, new FieldPickerForm());
 			AddForm(l, new FieldRefForm());

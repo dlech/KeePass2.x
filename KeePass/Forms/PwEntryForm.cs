@@ -204,6 +204,8 @@ namespace KeePass.Forms
 			m_bSelectFullTitle = bSelectFullTitle;
 
 			m_vStrings = m_pwEntry.Strings.CloneDeep();
+			NormalizeStrings(m_vStrings, pwDatabase);
+
 			m_vBinaries = m_pwEntry.Binaries.CloneDeep();
 			m_atConfig = m_pwEntry.AutoType.CloneDeep();
 			m_vHistory = m_pwEntry.History.CloneDeep();
@@ -329,6 +331,8 @@ namespace KeePass.Forms
 					m_pwDatabase.MemoryProtection.ProtectUrl, m_tbUrl.Text));
 				m_vStrings.Set(PwDefs.NotesField, new ProtectedString(
 					m_pwDatabase.MemoryProtection.ProtectNotes, m_rtNotes.Text));
+
+				NormalizeStrings(m_vStrings, m_pwDatabase);
 			}
 			else // Internal to GUI
 			{
@@ -619,7 +623,7 @@ namespace KeePass.Forms
 			GlobalWindowManager.CustomizeControl(m_ctxStrMoveToStandard);
 
 			m_pwInitialEntry = m_pwEntry.CloneDeep();
-			StrUtil.NormalizeNewLines(m_pwInitialEntry.Strings, true);
+			NormalizeStrings(m_pwInitialEntry.Strings, m_pwDatabase);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
 			m_ttRect.SetToolTip(m_btnIcon, KPRes.SelectIcon);
@@ -819,7 +823,9 @@ namespace KeePass.Forms
 
 			if(bValidate && !m_icgPassword.ValidateData(true)) return false;
 
-			if(this.EntrySaving != null)
+			bool bPri = object.ReferenceEquals(peTarget, m_pwEntry);
+
+			if((this.EntrySaving != null) && bPri)
 			{
 				CancellableOperationEventArgs eaCancel = new CancellableOperationEventArgs();
 				this.EntrySaving(this, eaCancel);
@@ -866,9 +872,7 @@ namespace KeePass.Forms
 			peTarget.AutoType = m_atConfig;
 
 			peTarget.Touch(true, false); // Touch *after* backup
-			if(object.ReferenceEquals(peTarget, m_pwEntry)) m_bTouchedOnce = true;
-
-			StrUtil.NormalizeNewLines(peTarget.Strings, true);
+			if(bPri) m_bTouchedOnce = true;
 
 			bool bUndoBackup = false;
 			PwCompareOptions cmpOpt = m_cmpOpt;
@@ -891,7 +895,8 @@ namespace KeePass.Forms
 
 			peTarget.MaintainBackups(m_pwDatabase);
 
-			if(this.EntrySaved != null) this.EntrySaved(this, EventArgs.Empty);
+			if((this.EntrySaved != null) && bPri)
+				this.EntrySaved(this, EventArgs.Empty);
 
 			return true;
 		}
@@ -1386,65 +1391,63 @@ namespace KeePass.Forms
 			MoveSelectedStringTo(PwDefs.NotesField);
 		}
 
-		private void MoveSelectedStringTo(string strStandardField)
+		private void MoveSelectedStringTo(string strFieldTo)
 		{
 			ListView.SelectedListViewItemCollection lvsic = m_lvStrings.SelectedItems;
-			Debug.Assert(lvsic.Count == 1); if(lvsic.Count != 1) return;
+			if(lvsic.Count != 1) { Debug.Assert(false); return; }
 
-			ListViewItem lvi = lvsic[0];
-			string strText = m_vStrings.ReadSafe(lvi.Text);
+			string strFieldFrom = lvsic[0].Text;
+			string strValue = m_vStrings.ReadSafe(strFieldFrom);
 
-			if(strStandardField == PwDefs.TitleField)
+			if(PwDefs.IsStandardField(strFieldTo) && (strFieldTo != PwDefs.NotesField))
+				strValue = StrUtil.MultiToSingleLine(strValue).Trim();
+
+			if(strFieldTo == PwDefs.TitleField)
 			{
-				if((m_tbTitle.TextLength > 0) && (strText.Length > 0))
-					m_tbTitle.Text += ", ";
-				m_tbTitle.Text += strText;
+				if((m_tbTitle.TextLength > 0) && (strValue.Length > 0))
+					strValue = ", " + strValue;
+				m_tbTitle.Text += strValue;
 			}
-			else if(strStandardField == PwDefs.UserNameField)
+			else if(strFieldTo == PwDefs.UserNameField)
 			{
-				if((m_tbUserName.TextLength > 0) && (strText.Length > 0))
-					m_tbUserName.Text += ", ";
-				m_tbUserName.Text += strText;
+				if((m_tbUserName.TextLength > 0) && (strValue.Length > 0))
+					strValue = ", " + strValue;
+				m_tbUserName.Text += strValue;
 			}
-			else if(strStandardField == PwDefs.PasswordField)
+			else if(strFieldTo == PwDefs.PasswordField)
 			{
 				ProtectedString psP = m_icgPassword.GetPasswordEx();
-				if(!psP.IsEmpty && (strText.Length > 0)) psP += ", ";
-				psP += strText;
+				if(!psP.IsEmpty && (strValue.Length > 0)) psP += ", ";
+				psP += strValue;
 
 				ProtectedString psR = m_icgPassword.GetRepeatEx();
-				if(!psR.IsEmpty && (strText.Length > 0)) psR += ", ";
-				psR += strText;
+				if(!psR.IsEmpty && (strValue.Length > 0)) psR += ", ";
+				psR += strValue;
 
 				m_icgPassword.SetPasswords(psP, psR);
 			}
-			else if(strStandardField == PwDefs.UrlField)
+			else if(strFieldTo == PwDefs.UrlField)
 			{
-				if((m_tbUrl.TextLength > 0) && (strText.Length > 0))
-					m_tbUrl.Text += ", ";
-				m_tbUrl.Text += strText;
+				if((m_tbUrl.TextLength > 0) && (strValue.Length > 0))
+					strValue = ", " + strValue;
+				m_tbUrl.Text += strValue;
 			}
-			else if(strStandardField == PwDefs.NotesField)
+			else if(strFieldTo == PwDefs.NotesField)
 			{
-				if((m_rtNotes.TextLength > 0) && (strText.Length > 0))
-					m_rtNotes.Text += MessageService.NewParagraph;
-				m_rtNotes.Text += strText;
+				if((m_rtNotes.TextLength > 0) && (strValue.Length > 0))
+					strValue = MessageService.NewParagraph + strValue;
+				m_rtNotes.Text += strValue;
 			}
 			else { Debug.Assert(false); }
 
 			UpdateEntryStrings(true, false, false);
-			m_vStrings.Remove(lvi.Text);
+			m_vStrings.Remove(strFieldFrom);
 			UpdateEntryStrings(false, false, true);
 		}
 
 		private void OnBtnStrMove(object sender, EventArgs e)
 		{
 			m_ctxStrMoveToStandard.ShowEx(m_btnStrMove);
-		}
-
-		private void OnNotesLinkClicked(object sender, LinkClickedEventArgs e)
-		{
-			WinUtil.OpenUrl(e.LinkText, m_pwEntry);
 		}
 
 		private void OnAutoTypeSelectedIndexChanged(object sender, EventArgs e)
@@ -1602,8 +1605,9 @@ namespace KeePass.Forms
 		private void OnAutoTypeObfuscationCheckedChanged(object sender, EventArgs e)
 		{
 			if(m_bInitializing) return;
-
-			if(m_cbAutoTypeObfuscation.Checked == false) return;
+			if(!m_cbAutoTypeObfuscation.Checked) return;
+			if((Program.Config.UI.UIFlags & (ulong)AceUIFlags.HideAutoTypeObfInfo) != 0)
+				return;
 
 			MessageService.ShowInfo(KPRes.AutoTypeObfuscationHint,
 				KPRes.DocumentationHint);
@@ -2137,6 +2141,21 @@ namespace KeePass.Forms
 			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData);
 			UIUtil.SetFocus(m_lvCustomData, this);
 			EnableControlsEx();
+		}
+
+		private static void NormalizeStrings(ProtectedStringDictionary d,
+			PwDatabase pd)
+		{
+			if(d == null) { Debug.Assert(false); return; }
+
+			MemoryProtectionConfig mp = ((pd != null) ? pd.MemoryProtection :
+				(new MemoryProtectionConfig()));
+
+			string str = d.ReadSafe(PwDefs.NotesField);
+			d.Set(PwDefs.NotesField, new ProtectedString(mp.ProtectNotes,
+				StrUtil.NormalizeNewLines(str, true)));
+
+			// Custom strings are normalized by the string editing form
 		}
 	}
 }

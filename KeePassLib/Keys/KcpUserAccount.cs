@@ -63,11 +63,8 @@ namespace KeePassLib.Keys
 		/// </summary>
 		public KcpUserAccount()
 		{
-			// Test if ProtectedData is supported -- throws an exception
-			// when running on an old system (Windows 98 / ME).
-			byte[] pbDummyData = new byte[128];
-			ProtectedData.Protect(pbDummyData, m_pbEntropy,
-				DataProtectionScope.CurrentUser);
+			if(!CryptoUtil.IsProtectedDataSupported)
+				throw new PlatformNotSupportedException(); // Windows 98/ME
 
 			byte[] pbKey = LoadUserKey(false);
 			if(pbKey == null) pbKey = CreateUserKey();
@@ -115,7 +112,7 @@ namespace KeePassLib.Keys
 				string strFilePath = GetUserKeyFilePath(false);
 				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
 
-				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+				pbKey = CryptoUtil.UnprotectData(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
 			}
 			catch(Exception)
@@ -136,7 +133,7 @@ namespace KeePassLib.Keys
 			string strFilePath = GetUserKeyFilePath(true);
 
 			byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
-			byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
+			byte[] pbProtectedKey = CryptoUtil.ProtectData(pbRandomKey,
 				m_pbEntropy, DataProtectionScope.CurrentUser);
 
 			File.WriteAllBytes(strFilePath, pbProtectedKey);

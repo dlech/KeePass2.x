@@ -113,8 +113,11 @@ namespace KeePass.Ecas
 
 				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 
+				// The trigger system does not update the UI itself,
+				// thus ignore state-changing placeholders
 				str = SprEngine.Compile(str, new SprContext(pe, pd,
-					SprCompileFlags.All, false, bSprForCommandLine));
+					(SprCompileFlags.All & ~SprCompileFlags.StateChanging),
+					false, bSprForCommandLine));
 			}
 
 			return str;

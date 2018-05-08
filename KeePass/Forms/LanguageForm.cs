@@ -181,10 +181,7 @@ namespace KeePass.Forms
 								strFilePath, t));
 						else { Debug.Assert(false); }
 					}
-					catch(Exception ex)
-					{
-						MessageService.ShowWarning(ex.Message);
-					}
+					catch(Exception ex) { MessageService.ShowWarning(ex); }
 				}
 			}
 			catch(Exception) { } // Directory might not exist or cause access violation
@@ -270,7 +267,7 @@ namespace KeePass.Forms
 				WinUtil.OpenUrl("cmd://\"" + str + "\"", null, false);
 				this.DialogResult = DialogResult.Cancel;
 			}
-			catch(Exception ex) { MessageService.ShowWarning(ex.Message); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 	}
 }

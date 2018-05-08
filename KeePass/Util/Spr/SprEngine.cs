@@ -20,11 +20,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.Globalization;
-using System.Diagnostics;
 
 using KeePass.App.Configuration;
 using KeePass.Forms;
@@ -856,6 +856,7 @@ namespace KeePass.Util.Spr
 				string strCmd = lParams[0];
 				if(string.IsNullOrEmpty(strCmd)) continue;
 
+				Process p = null;
 				try
 				{
 					const StringComparison sc = StrUtil.CaseIgnoreCmp;
@@ -868,6 +869,8 @@ namespace KeePass.Util.Spr
 
 					string strApp, strArgs;
 					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs);
+					strApp = WinUtil.CompileUrl((strApp ?? string.Empty),
+						((ctx != null) ? ctx.Entry : null), true, null);
 					if(string.IsNullOrEmpty(strApp)) continue;
 					psi.FileName = strApp;
 					if(!string.IsNullOrEmpty(strArgs))
@@ -899,7 +902,7 @@ namespace KeePass.Util.Spr
 
 					bool bWait = GetParam(d, "w", "1").Equals("1", sc);
 
-					Process p = Process.Start(psi);
+					p = Process.Start(psi);
 					if(p == null) { Debug.Assert(false); continue; }
 
 					if(bStdOut)
@@ -915,6 +918,11 @@ namespace KeePass.Util.Spr
 				{
 					string strMsg = strCmd + MessageService.NewParagraph + ex.Message;
 					MessageService.ShowWarning(strMsg);
+				}
+				finally
+				{
+					try { if(p != null) p.Dispose(); }
+					catch(Exception) { Debug.Assert(false); }
 				}
 			}
 

@@ -161,6 +161,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new MozillaBookmarksHtml100());
 			m_vFormats.Add(new MozillaBookmarksJson100());
 			m_vFormats.Add(new PwExporterXml105());
+			m_vFormats.Add(new ChromeCsv66());
 
 			m_vFormats.Add(new Spamex20070328());
 

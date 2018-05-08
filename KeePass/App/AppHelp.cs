@@ -121,37 +121,31 @@ namespace KeePass.App
 			string strCmd = "\"ms-its:" + m_strLocalHelpFile;
 
 			if(strTopic != null)
-				strCmd += @"::/help/" + strTopic + ".html";
+				strCmd += "::/help/" + strTopic + ".html";
 
 			if(strSection != null)
 			{
 				Debug.Assert(strTopic != null); // Topic must be present for section
-				strCmd += @"#" + strSection;
+				strCmd += "#" + strSection;
 			}
 
 			strCmd += "\"";
 
-			try { Process.Start(WinUtil.LocateSystemApp("hh.exe"), strCmd); }
-			catch(Exception exStart)
+			try
 			{
-				MessageService.ShowWarning(@"hh.exe " + strCmd, exStart);
+				Process p = Process.Start(WinUtil.LocateSystemApp("hh.exe"), strCmd);
+				if(p != null) p.Dispose();
+			}
+			catch(Exception ex)
+			{
+				MessageService.ShowWarning("HH.exe " + strCmd, ex);
 			}
 		}
 
 		private static void ShowHelpOnline(string strTopic, string strSection)
 		{
 			string strUrl = GetOnlineUrl(strTopic, strSection);
-
-			try
-			{
-				ParameterizedThreadStart pts = new ParameterizedThreadStart(AppHelp.RunCommandAsync);
-				Thread th = new Thread(pts); // Local, but thread will continue to run anyway
-				th.Start(strUrl);
-			}
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(strUrl, ex);
-			}
+			WinUtil.OpenUrl(strUrl, null);
 		}
 
 		internal static string GetOnlineUrl(string strTopic, string strSection)
@@ -166,18 +160,6 @@ namespace KeePass.App
 			}
 
 			return str;
-		}
-
-		private static void RunCommandAsync(object pData)
-		{
-			string strCmd = (pData as string);
-			if(strCmd == null) { Debug.Assert(false); return; }
-
-			try { Process.Start(strCmd); }
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(strCmd, ex);
-			}
 		}
 	}
 }

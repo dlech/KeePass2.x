@@ -161,11 +161,11 @@ namespace KeePass.Forms
 
 		private void OnRichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			string strLink = e.LinkText;
-			if(string.IsNullOrEmpty(strLink)) { Debug.Assert(false); return; }
-
 			try
 			{
+				string strLink = e.LinkText;
+				if(string.IsNullOrEmpty(strLink)) { Debug.Assert(false); return; }
+
 				if((strLink == m_strDataExpand) && (m_tscViewers.Text == m_strViewerHex))
 				{
 					m_bDataExpanded = true;

@@ -128,7 +128,7 @@ namespace KeePass.Ecas
 			m_events.Add(new EcasEventType(EcasEventIDs.TimePeriodic,
 				KPRes.Time + " - " + KPRes.Periodic, PwIcon.Clock, new EcasParameter[] {
 					new EcasParameter(KPRes.Interval + " [s]", EcasValueType.UInt64, null),
-					new EcasParameter(KPRes.TimerRestartOnUserActivity, EcasValueType.Bool, null) },
+					new EcasParameter(KPRes.TimerRestartOnActivity, EcasValueType.Bool, null) },
 				IsMatchTimePeriodicEvent));
 			m_events.Add(new EcasEventType(EcasEventIDs.CustomTbButtonClicked,
 				KPRes.CustomTbButtonClicked, PwIcon.Star, new EcasParameter[] {

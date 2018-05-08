@@ -53,6 +53,8 @@ using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Forms
 {
 	public partial class MainForm : Form
@@ -1417,8 +1419,7 @@ namespace KeePass.Forms
 					m_lvEntries.ListViewItemSorter = m_pListSorter;
 
 					// Workaround for XP bug
-					if(bUpdateEntryList && !KeePassLib.Native.NativeLib.IsUnix() &&
-						WinUtil.IsWindowsXP)
+					if(bUpdateEntryList && !NativeLib.IsUnix() && WinUtil.IsWindowsXP)
 						UpdateEntryList(null, true); // Only required on XP
 				}
 				else
@@ -1455,7 +1456,7 @@ namespace KeePass.Forms
 			string strAsc = "  \u2191"; // Must have same length
 			string strDsc = "  \u2193"; // Must have same length
 			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
-				KeePassLib.Native.NativeLib.IsUnix())
+				NativeLib.IsUnix())
 			{
 				strAsc = @"  ^";
 				strDsc = @"  v";
@@ -1858,7 +1859,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception exReg)
 				{
-					MessageService.ShowWarning(exReg.Message);
+					MessageService.ShowWarning(strRegex, exReg);
 					return;
 				}
 
@@ -2145,8 +2146,7 @@ namespace KeePass.Forms
 					OdKpfResult kpfResult;
 
 					if(Program.Config.Security.MasterKeyOnSecureDesktop &&
-						WinUtil.IsAtLeastWindows2000 &&
-						!KeePassLib.Native.NativeLib.IsUnix())
+						WinUtil.IsAtLeastWindows2000 && !NativeLib.IsUnix())
 					{
 						kpfParams.SecureDesktopMode = true;
 
@@ -2247,7 +2247,7 @@ namespace KeePass.Forms
 				catch(Exception exDate)
 				{
 					MessageService.ShowWarning("Configuration/Security/MasterKeyExpiryRec:",
-						exDate.Message);
+						exDate);
 				}
 			}
 
@@ -3192,7 +3192,7 @@ namespace KeePass.Forms
 				// be closed and UpdateUIState might crash, if the order of the
 				// two methods is swapped; so first update state, then unblock
 				UpdateUIState(false);
-				UIBlockInteraction(false); // Calls Application.DoEvents()
+				UIBlockInteraction(false);
 
 				if(this.FileSaved != null)
 				{
@@ -4061,7 +4061,7 @@ namespace KeePass.Forms
 			if(vEntries.Length == 0) return;
 
 			if(MonoWorkarounds.IsRequired(1690) && (m_lvEntries.Items.Count != 0))
-				m_lvEntries.Items[0].Focused = true;
+				UIUtil.SetFocusedItem(m_lvEntries, m_lvEntries.Items[0], false);
 
 			++m_uBlockEntrySelectionEvent;
 			if(bLockUIUpdate) m_lvEntries.BeginUpdate();
@@ -4283,8 +4283,13 @@ namespace KeePass.Forms
 				try { if(!IsPrimaryControlFocused()) ResetDefaultFocus(null); }
 				catch(Exception) { Debug.Assert(false); }
 			}
-
-			Application.DoEvents(); // Allow controls update/redraw
+			else // Blocked
+			{
+				// Redraw the UI, but only when the UI is blocked (otherwise
+				// the Application.DoEvents call could indirectly run
+				// triggers/automations now, which could result in problems)
+				Application.DoEvents();
+			}
 		}
 
 		public bool UIIsAutoUnlockBlocked()
@@ -5424,7 +5429,7 @@ namespace KeePass.Forms
 		private void EnsureAlwaysOnTopOpt()
 		{
 			bool bWish = Program.Config.MainWindow.AlwaysOnTop;
-			if(KeePassLib.Native.NativeLib.IsUnix()) { this.TopMost = bWish; return; }
+			if(NativeLib.IsUnix()) { this.TopMost = bWish; return; }
 
 			// Workaround for issue reported in KPB 3475997
 			this.TopMost = false;
@@ -5435,10 +5440,17 @@ namespace KeePass.Forms
 		{
 			try
 			{
-				return (m_lvEntries.Focused || m_tvGroups.Focused ||
-					m_richEntryView.Focused || m_tbQuickFind.Focused);
+				// return (m_lvEntries.Focused || m_tvGroups.Focused ||
+				//	m_richEntryView.Focused || m_tbQuickFind.Focused);
+
+				Control c = UIUtil.GetActiveControl(this);
+				if(c == null) return false;
+
+				return ((c == m_lvEntries) || (c == m_tvGroups) ||
+					(c == m_richEntryView) || (c == m_tbQuickFind.Control));
 			}
 			catch(Exception) { Debug.Assert(false); }
+
 			return false;
 		}
 

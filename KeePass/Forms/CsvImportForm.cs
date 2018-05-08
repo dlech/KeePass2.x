@@ -454,8 +454,7 @@ namespace KeePass.Forms
 			// }
 			else { Debug.Assert(false); return; }
 
-			try { Process.Start(strUrl); }
-			catch(Exception ex) { MessageService.ShowWarning(strUrl, ex.Message); }
+			WinUtil.OpenUrl(strUrl, null);
 		}
 
 		private void OnBtnFieldAdd(object sender, EventArgs e)

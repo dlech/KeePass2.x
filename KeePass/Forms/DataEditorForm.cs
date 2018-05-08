@@ -409,11 +409,6 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void OnTextLinkClicked(object sender, LinkClickedEventArgs e)
-		{
-			WinUtil.OpenUrl(e.LinkText, null);
-		}
-
 		private void OnFileExit(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.OK;

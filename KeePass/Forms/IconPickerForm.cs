@@ -413,10 +413,7 @@ namespace KeePass.Forms
 
 							SaveImageFile(lvi, strFile);
 						}
-						catch(Exception ex)
-						{
-							MessageService.ShowWarning(ex.Message);
-						}
+						catch(Exception ex) { MessageService.ShowWarning(ex); }
 					}
 				}
 			}
@@ -439,10 +436,7 @@ namespace KeePass.Forms
 
 				img.Save(strFile, fmt);
 			}
-			catch(Exception ex)
-			{
-				MessageService.ShowWarning(ex.Message);
-			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 	}
 }

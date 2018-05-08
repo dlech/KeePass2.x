@@ -406,6 +406,7 @@
     <Compile Include="DataExchange\FileFormatProvider.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
+    <Compile Include="DataExchange\Formats\ChromeCsv66.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\DashlaneCsv2.cs" />
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
@@ -588,12 +589,6 @@
     </Compile>
     <Compile Include="Forms\ListViewForm.Designer.cs">
       <DependentUpon>ListViewForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\EntryReportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\EntryReportForm.Designer.cs">
-      <DependentUpon>EntryReportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FieldPickerForm.cs">
       <SubType>Form</SubType>
@@ -968,9 +963,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ListViewForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EntryReportForm.resx">
-      <DependentUpon>EntryReportForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FieldPickerForm.resx">
       <DependentUpon>FieldPickerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1136,6 +1128,7 @@
     <Compile Include="Util\IniFile.cs" />
     <Compile Include="Util\IpcBroadcast.cs" />
     <Compile Include="Util\IpcBroadcast.Fsw.cs" />
+    <Compile Include="Util\IpcBroadcast.Tcp.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
     <Compile Include="Util\NetUtil.cs" />
@@ -1170,7 +1163,9 @@
     <Compile Include="Util\XmlUtil.XmlReplace.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1289,6 +1284,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Chrome.png" />
     <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />
     <None Include="Resources\Icons\QuadNormal_Y.ico" />

@@ -429,7 +429,7 @@ namespace KeePass.Util
 
 		internal static bool IsOwnWindow(IntPtr hWindow)
 		{
-			return ((hWindow == Program.MainForm.Handle) ||
+			return ((hWindow == Program.GetSafeMainWindowHandle()) ||
 				GlobalWindowManager.HasWindow(hWindow));
 		}
 
