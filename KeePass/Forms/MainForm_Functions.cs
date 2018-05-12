@@ -193,7 +193,7 @@ namespace KeePass.Forms
 
 		internal PluginManager PluginManager { get { return m_pluginManager; } }
 
-		private struct MainAppState
+		internal struct MainAppState
 		{
 			public bool FileLocked;
 			public bool DatabaseOpened;
@@ -210,7 +210,7 @@ namespace KeePass.Forms
 			public string LockUnlock;
 		}
 
-		private enum AppCommandType
+		internal enum AppCommandType
 		{
 			Window = 0,
 			Lock = 1
@@ -5389,7 +5389,7 @@ namespace KeePass.Forms
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		private bool IsCommandTypeInvokable(MainAppState? sContext, AppCommandType t)
+		internal bool IsCommandTypeInvokable(MainAppState? sContext, AppCommandType t)
 		{
 			MainAppState s = (sContext.HasValue ? sContext.Value : GetMainAppState());
 

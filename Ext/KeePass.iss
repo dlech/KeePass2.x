@@ -8,11 +8,11 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.39"
-#define KeeVersionStrWithMinor "2.39"
-#define KeeVersionStrWithMinorPath "2.39"
-#define KeeVersionWin "2.39.0.0"
-#define KeeVersionWinShort "2.39"
+#define KeeVersionStr "2.39.1"
+#define KeeVersionStrWithMinor "2.39.1"
+#define KeeVersionStrWithMinorPath "2.39.1"
+#define KeeVersionWin "2.39.1.0"
+#define KeeVersionWinShort "2.39.1"
 
 #define MyAppURL "https://keepass.info/"
 #define MyAppExeName "KeePass.exe"

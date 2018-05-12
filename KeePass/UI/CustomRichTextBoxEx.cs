@@ -33,7 +33,8 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
-	public sealed class CustomRichTextBoxEx : RichTextBox
+	// Non-sealed for plugins
+	public class CustomRichTextBoxEx : RichTextBox
 	{
 		private static bool? m_bForceRedrawOnScroll = null;
 

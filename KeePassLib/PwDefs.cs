@@ -55,18 +55,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public const uint Version32 = 0x02270000;
+		public const uint Version32 = 0x02270100;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public const ulong FileVersion64 = 0x0002002700000000UL;
+		public const ulong FileVersion64 = 0x0002002700010000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public const string VersionString = "2.39";
+		public const string VersionString = "2.39.1";
 
 		public const string Copyright = @"Copyright © 2003-2018 Dominik Reichl";
 
@@ -218,6 +218,15 @@ namespace KeePassLib
 			Debug.Assert(pe != null); if(pe == null) return false;
 
 			return (pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle);
+		}
+
+		internal static string GetTranslationDisplayVersion(string strFileVersion)
+		{
+			if(strFileVersion == null) { Debug.Assert(false); return string.Empty; }
+
+			if(strFileVersion == "2.39") return "2.39 / 2.39.1";
+
+			return strFileVersion;
 		}
 	}
 
