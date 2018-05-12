@@ -1,3 +1,14 @@
+2018-05-12: 2.39.1
+- File transactions: improved access control list (ACL)
+  restoration
+- File transactions are not used anymore when attempting to
+  write to a local file that does not exist yet (to ensure a
+  correct default ACL)
+- The option to minimize the main window after performing
+  auto-type is now ignored while displaying a subdialog
+- Plugins can now implement classes derived from KeePass'
+  custom rich text boxes
+
 2018-05-06: 2.39
 - KeePass now uses Transactional NTFS (TxF) for writing
   database and configuration files, if possible; this improves

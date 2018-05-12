@@ -54,6 +54,7 @@ namespace KeePass.Forms
 		private readonly string m_strViewerImage = KPRes.ImageViewer;
 		private readonly string m_strViewerWeb = KPRes.WebBrowser;
 
+		private readonly string m_strZoomAuto = KPRes.Auto;
 		private readonly string m_strDataExpand = "--- " + KPRes.More + " ---";
 		private bool m_bDataExpanded = false;
 
@@ -130,10 +131,13 @@ namespace KeePass.Forms
 
 			m_tslZoom.Text = KPRes.Zoom + ":";
 
-			m_tscZoom.Items.Add(KPRes.Auto);
+			// Required for mouse wheel handling
+			Debug.Assert(m_tscZoom.DropDownStyle == ComboBoxStyle.DropDownList);
+
+			m_tscZoom.Items.Add(m_strZoomAuto);
 			int[] vZooms = new int[] { 10, 25, 50, 75, 100, 125, 150, 200, 400 };
 			foreach(int iZoom in vZooms)
-				m_tscZoom.Items.Add(iZoom.ToString() + @"%");
+				m_tscZoom.Items.Add(iZoom.ToString() + "%");
 			m_tscZoom.SelectedIndex = 0;
 
 			m_tslViewer.Text = KPRes.ShowIn + ":";
@@ -154,6 +158,8 @@ namespace KeePass.Forms
 			if(this.DvfInit != null)
 				this.DvfInit(this, new DvfContextEventArgs(this, m_pbData,
 					m_strDataDesc, m_tscViewers));
+
+			// m_picBox.MouseWheel += this.OnPicBoxMouseWheel;
 
 			m_bInitializing = false;
 			UpdateDataView();
@@ -386,7 +392,7 @@ namespace KeePass.Forms
 			if(m_img == null) return;
 
 			string strZoom = m_tscZoom.Text;
-			if(string.IsNullOrEmpty(strZoom) || (strZoom == KPRes.Auto))
+			if(string.IsNullOrEmpty(strZoom) || (strZoom == m_strZoomAuto))
 			{
 				m_pnlImageViewer.AutoScroll = false;
 				m_picBox.Dock = DockStyle.Fill;
@@ -402,7 +408,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			if(!strZoom.EndsWith(@"%")) { Debug.Assert(false); return; }
+			if(!strZoom.EndsWith("%")) { Debug.Assert(false); return; }
 
 			int iZoom;
 			if(!int.TryParse(strZoom.Substring(0, strZoom.Length - 1), out iZoom))
@@ -490,6 +496,8 @@ namespace KeePass.Forms
 			if(strRect != m_strInitialFormRect) // Don't overwrite ""
 				Program.Config.UI.DataViewerRect = strRect;
 
+			// m_picBox.MouseWheel -= this.OnPicBoxMouseWheel;
+
 			m_picBox.Image = null;
 			if(m_img != null) { m_img.Dispose(); m_img = null; }
 			if(m_imgResized != null) { m_imgResized.Dispose(); m_imgResized = null; }
@@ -517,6 +525,30 @@ namespace KeePass.Forms
 		{
 			UpdateImageView();
 		}
+
+		/* private void OnPicBoxMouseWheel(object sender, MouseEventArgs e)
+		{
+			if(e == null) { Debug.Assert(false); return; }
+			if(m_img == null) { Debug.Assert(false); return; }
+			if((Control.ModifierKeys & Keys.Control) == Keys.None) return;
+
+			int iCur = m_tscZoom.SelectedIndex, cMax = m_tscZoom.Items.Count;
+			if((iCur < 0) || (iCur >= cMax)) { Debug.Assert(false); return; }
+
+			int iAuto = m_tscZoom.Items.IndexOf(m_strZoomAuto);
+			if((iAuto < 0) || (iAuto >= cMax)) { Debug.Assert(false); return; }
+
+			if(iCur == iAuto)
+			{
+				iCur = m_tscZoom.Items.IndexOf("100%");
+				if((iCur < 0) || (iCur >= cMax)) { Debug.Assert(false); return; }
+			}
+
+			int d = e.Delta / 120; // See Control.MouseWheel event
+			int iNew = Math.Min(Math.Max(iCur + d, 0), cMax - 1);
+
+			if((iNew != iCur) && (iNew != iAuto)) m_tscZoom.SelectedIndex = iNew;
+		} */
 	}
 
 	public sealed class DvfContextEventArgs : CancellableOperationEventArgs

@@ -94,6 +94,18 @@ namespace KeePassLib.Serialization
 						if((long)(fa & FileAttributes.ReparsePoint) != 0)
 							m_bTransacted = false;
 					}
+					else
+					{
+						// If the base and the temporary file are in different
+						// folders and the base file doesn't exist (i.e. we can't
+						// backup the ACL), a transaction would cause the new file
+						// to have the default ACL of the temporary folder instead
+						// of the one of the base folder; therefore, we don't use
+						// a transaction when the base file doesn't exist (this
+						// also results in other applications monitoring the folder
+						// to see one file creation only)
+						m_bTransacted = false;
+					}
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -189,8 +201,14 @@ namespace KeePassLib.Serialization
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
 #if !KeePassUAP
+			// 'All' includes 'Audit' (SACL), which requires SeSecurityPrivilege,
+			// which we usually don't have and therefore get an exception;
+			// trying to set 'Owner' or 'Group' can result in an
+			// UnauthorizedAccessException; thus we restore 'Access' (DACL) only
+			const AccessControlSections acs = AccessControlSections.Access;
+
 			bool bEfsEncrypted = false;
-			FileSecurity bkSecurity = null;
+			byte[] pbSec = null;
 #endif
 			DateTime? otCreation = null;
 
@@ -209,7 +227,8 @@ namespace KeePassLib.Serialization
 					otCreation = File.GetCreationTimeUtc(m_iocBase.Path);
 #if !KeePassUAP
 					// May throw with Mono
-					bkSecurity = File.GetAccessControl(m_iocBase.Path);
+					FileSecurity sec = File.GetAccessControl(m_iocBase.Path, acs);
+					if(sec != null) pbSec = sec.GetSecurityDescriptorBinaryForm();
 #endif
 				}
 				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
@@ -223,6 +242,7 @@ namespace KeePassLib.Serialization
 				if(bBaseExists) IOConnection.DeleteFile(m_iocBase);
 				IOConnection.RenameFile(m_iocTemp, m_iocBase);
 			}
+			else { Debug.Assert(pbSec != null); } // TxF success => NTFS => has ACL
 
 			try
 			{
@@ -240,8 +260,19 @@ namespace KeePassLib.Serialization
 					catch(Exception) { Debug.Assert(false); }
 				}
 
-				if(bkSecurity != null)
-					File.SetAccessControl(m_iocBase.Path, bkSecurity);
+				// File.SetAccessControl(m_iocBase.Path, secPrev);
+				// Directly calling File.SetAccessControl with the previous
+				// FileSecurity object does not work; the binary form
+				// indirection is required;
+				// https://sourceforge.net/p/keepass/bugs/1738/
+				// https://msdn.microsoft.com/en-us/library/system.io.file.setaccesscontrol.aspx
+				if((pbSec != null) && (pbSec.Length != 0))
+				{
+					FileSecurity sec = new FileSecurity();
+					sec.SetSecurityDescriptorBinaryForm(pbSec, acs);
+
+					File.SetAccessControl(m_iocBase.Path, sec);
+				}
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }
