@@ -18,15 +18,15 @@
 */
 
 using System;
-using System.Text;
-using System.Security;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.UI;
 using KeePass.Util;
@@ -41,12 +41,47 @@ namespace KeePass.Native
 	{
 		internal static string GetWindowText(IntPtr hWnd, bool bTrim)
 		{
-			int nLength = GetWindowTextLength(hWnd);
-			if(nLength <= 0) return string.Empty;
+			// cc may be greater than the actual length;
+			// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
+			int cc = GetWindowTextLength(hWnd);
+			if(cc <= 0) return string.Empty;
 
-			StringBuilder sb = new StringBuilder(nLength + 1);
-			GetWindowText(hWnd, sb, sb.Capacity);
-			string strWindow = sb.ToString();
+			// StringBuilder sb = new StringBuilder(cc + 2);
+			// int ccReal = GetWindowText(hWnd, sb, cc + 1);
+			// if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
+			// // The text isn't always NULL-terminated; trim garbage
+			// if(ccReal < sb.Length)
+			//	sb.Remove(ccReal, sb.Length - ccReal);
+			// string strWindow = sb.ToString();
+
+			string strWindow;
+			IntPtr p = IntPtr.Zero;
+			try
+			{
+				int cbChar = Marshal.SystemDefaultCharSize;
+				int cb = (cc + 2) * cbChar;
+				p = Marshal.AllocCoTaskMem(cb);
+				if(p == IntPtr.Zero) { Debug.Assert(false); return string.Empty; }
+
+				byte[] pbZero = new byte[cb];
+				Marshal.Copy(pbZero, 0, p, cb);
+
+				int ccReal = GetWindowText(hWnd, p, cc + 1);
+				if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
+
+				if(ccReal <= cc)
+				{
+					// Ensure correct termination (in case GetWindowText
+					// copied too much)
+					int ibZero = ccReal * cbChar;
+					for(int i = 0; i < cbChar; ++i)
+						Marshal.WriteByte(p, ibZero + i, 0);
+				}
+				else { Debug.Assert(false); return string.Empty; }
+
+				strWindow = (Marshal.PtrToStringAuto(p) ?? string.Empty);
+			}
+			finally { if(p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
 
 			return (bTrim ? strWindow.Trim() : strWindow);
 		}
@@ -663,10 +698,7 @@ namespace KeePass.Native
 					return true;
 				}
 			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(pBuf);
-			}
+			finally { Marshal.FreeCoTaskMem(pBuf); }
 
 			Debug.Assert(false);
 			return false;

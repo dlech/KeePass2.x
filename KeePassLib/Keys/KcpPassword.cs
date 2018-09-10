@@ -28,15 +28,16 @@ using KeePassLib.Utility;
 namespace KeePassLib.Keys
 {
 	/// <summary>
-	/// Master password / passphrase as provided by the user.
+	/// Master password/passphrase as provided by the user.
 	/// </summary>
 	public sealed class KcpPassword : IUserKey
 	{
-		private ProtectedString m_psPassword;
+		private ProtectedString m_psPassword = null; // Optional
 		private ProtectedBinary m_pbKeyData;
 
 		/// <summary>
-		/// Get the password as protected string.
+		/// Get the password as protected string. This is <c>null</c>
+		/// unless remembering the password has been turned on.
 		/// </summary>
 		public ProtectedString Password
 		{
@@ -55,15 +56,22 @@ namespace KeePassLib.Keys
 
 		public KcpPassword(byte[] pbPasswordUtf8)
 		{
-			SetKey(pbPasswordUtf8);
+			SetKey(pbPasswordUtf8, true);
+		}
+
+		public KcpPassword(byte[] pbPasswordUtf8, bool bRememberPassword)
+		{
+			SetKey(pbPasswordUtf8, bRememberPassword);
 		}
 
 		public KcpPassword(string strPassword)
 		{
-			SetKey(StrUtil.Utf8.GetBytes(strPassword));
+			byte[] pb = StrUtil.Utf8.GetBytes(strPassword);
+			try { SetKey(pb, true); }
+			finally { MemUtil.ZeroByteArray(pb); }
 		}
 
-		private void SetKey(byte[] pbPasswordUtf8)
+		private void SetKey(byte[] pbPasswordUtf8, bool bRememberPassword)
 		{
 			Debug.Assert(pbPasswordUtf8 != null);
 			if(pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
@@ -73,9 +81,11 @@ namespace KeePassLib.Keys
 #endif
 
 			byte[] pbRaw = CryptoUtil.HashSha256(pbPasswordUtf8);
+			try { m_pbKeyData = new ProtectedBinary(true, pbRaw); }
+			finally { MemUtil.ZeroByteArray(pbRaw); }
 
-			m_psPassword = new ProtectedString(true, pbPasswordUtf8);
-			m_pbKeyData = new ProtectedBinary(true, pbRaw);
+			if(bRememberPassword)
+				m_psPassword = new ProtectedString(true, pbPasswordUtf8);
 		}
 
 		// public void Clear()

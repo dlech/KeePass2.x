@@ -240,6 +240,18 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private List<string> m_lPluginCompat = new List<string>();
+		[XmlArrayItem("Item")]
+		public List<string> PluginCompatibility
+		{
+			get { return m_lPluginCompat; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_lPluginCompat = value;
+			}
+		}
+
 		private int m_iExpirySoonDays = 7;
 		[DefaultValue(7)]
 		public int ExpirySoonDays
@@ -374,6 +386,25 @@ namespace KeePass.App.Configuration
 				m_dictWorkingDirs[str.Substring(0, iSep)] = str.Substring(iSep + 1);
 			}
 		}
+
+		internal bool IsPluginCompat(string strHash)
+		{
+			if(string.IsNullOrEmpty(strHash)) { Debug.Assert(false); return false; }
+
+			string str = "@" + strHash + "@" + WinUtil.GetAssemblyVersion() + "@1";
+
+			return m_lPluginCompat.Contains(str);
+		}
+
+		internal void SetPluginCompat(string strHash)
+		{
+			if(string.IsNullOrEmpty(strHash)) { Debug.Assert(false); return; }
+
+			string str = "@" + strHash + "@" + WinUtil.GetAssemblyVersion() + "@1";
+
+			if(m_lPluginCompat.Contains(str)) { Debug.Assert(false); return; }
+			m_lPluginCompat.Insert(0, str); // See auto. maintenance
+		}
 	}
 
 	internal enum AceDir
@@ -477,7 +508,7 @@ namespace KeePass.App.Configuration
 
 	public sealed class AceMru
 	{
-		public const uint DefaultMaxItemCount = 12;
+		public static readonly uint DefaultMaxItemCount = 12;
 
 		public AceMru()
 		{

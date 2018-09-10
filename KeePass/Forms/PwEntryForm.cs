@@ -299,10 +299,10 @@ namespace KeePass.Forms
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
-				m_btnStrAdd.Enabled = m_btnStrEdit.Enabled =
-					m_btnStrDelete.Enabled = m_btnStrMove.Enabled =
-					m_btnBinAdd.Enabled = m_btnBinDelete.Enabled = false;
-
+				m_btnStrAdd.Enabled = m_btnStrDelete.Enabled =
+					m_btnStrMove.Enabled = m_btnBinAdd.Enabled =
+					m_btnBinDelete.Enabled = false;
+				m_btnStrEdit.Text = KPRes.ViewCmd;
 				// Always available:
 				// m_btnBinOpen.Enabled = m_btnBinSave.Enabled = false;
 
@@ -352,12 +352,13 @@ namespace KeePass.Forms
 				{
 					if(!PwDefs.IsStandardField(kvpStr.Key))
 					{
-						PwIcon pwIcon = (kvpStr.Value.IsProtected ? m_pwObjectProtected :
+						bool bProt = kvpStr.Value.IsProtected;
+						PwIcon pwIcon = (bProt ? m_pwObjectProtected :
 							m_pwObjectPlainText);
 
 						ListViewItem lvi = m_lvStrings.Items.Add(kvpStr.Key, (int)pwIcon);
 
-						if(kvpStr.Value.IsProtected)
+						if(bProt)
 							lvi.SubItems.Add(PwDefs.HiddenPassword);
 						else
 						{
@@ -435,6 +436,10 @@ namespace KeePass.Forms
 
 			m_cbCustomForegroundColor.Checked = (m_clrForeground != Color.Empty);
 			m_cbCustomBackgroundColor.Checked = (m_clrBackground != Color.Empty);
+
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
+			if(Program.Translation.Properties.RightToLeft)
+				m_cmbOverrideUrl.RightToLeft = RightToLeft.No;
 
 			m_cmbOverrideUrl.Text = m_pwEntry.OverrideUrl;
 			m_tbTags.Text = StrUtil.TagsToString(m_pwEntry.Tags, true);
@@ -657,7 +662,7 @@ namespace KeePass.Forms
 			}
 			else if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
-				strTitle = KPRes.ViewEntry;
+				strTitle = KPRes.ViewEntryReadOnly;
 				strDesc = KPRes.ViewEntryDesc;
 			}
 			else { Debug.Assert(false); }
@@ -727,7 +732,16 @@ namespace KeePass.Forms
 
 			ThreadPool.QueueUserWorkItem(delegate(object state)
 			{
-				try { InitOverridesBox(); }
+				try
+				{
+					InitUserNameSuggestions();
+					InitOverridesBox();
+
+					string[] vSeq = m_pwDatabase.RootGroup.GetAutoTypeSequences(true);
+					// Do not append, because long suggestions hide the start
+					UIUtil.EnableAutoCompletion(m_tbDefaultAutoTypeSeq,
+						false, vSeq); // Invokes
+				}
 				catch(Exception) { Debug.Assert(false); }
 			});
 
@@ -767,12 +781,13 @@ namespace KeePass.Forms
 			int nStringsSel = m_lvStrings.SelectedItems.Count;
 			int nBinSel = m_lvBinaries.SelectedItems.Count;
 
+			m_btnStrEdit.Enabled = (nStringsSel == 1);
+
 			m_btnBinOpen.Enabled = (nBinSel == 1);
 			m_btnBinSave.Enabled = (nBinSel >= 1);
 
 			if(m_bLockEnabledState) return;
 
-			m_btnStrEdit.Enabled = (nStringsSel == 1);
 			m_btnStrDelete.Enabled = (nStringsSel >= 1);
 
 			m_btnBinDelete.Enabled = (nBinSel >= 1);
@@ -970,7 +985,7 @@ namespace KeePass.Forms
 
 		private void OnBtnStrAdd(object sender, EventArgs e)
 		{
-			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
+			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) { Debug.Assert(false); return; }
 
 			UpdateEntryStrings(true, false, false);
 
@@ -986,8 +1001,6 @@ namespace KeePass.Forms
 
 		private void OnBtnStrEdit(object sender, EventArgs e)
 		{
-			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
-
 			ListView.SelectedListViewItemCollection vSel = m_lvStrings.SelectedItems;
 			if(vSel.Count <= 0) return;
 
@@ -995,10 +1008,12 @@ namespace KeePass.Forms
 
 			string strName = vSel[0].Text;
 			ProtectedString psValue = m_vStrings.Get(strName);
-			Debug.Assert(psValue != null);
+			if(psValue == null) { Debug.Assert(false); return; }
 
 			EditStringForm esf = new EditStringForm();
 			esf.InitEx(m_vStrings, strName, psValue, m_pwDatabase);
+			esf.ReadOnlyEx = (m_pwEditMode == PwEditMode.ViewReadOnlyEntry);
+
 			if(UIUtil.ShowDialogAndDestroy(esf) == DialogResult.OK)
 				UpdateEntryStrings(false, false, true);
 		}
@@ -1773,14 +1788,6 @@ namespace KeePass.Forms
 			else m_rtNotes.Text += "\r\n" + strRef;
 		}
 
-		protected override bool ProcessDialogKey(Keys keyData)
-		{
-			if(((keyData == Keys.Return) || (keyData == Keys.Enter)) && m_rtNotes.Focused)
-				return false; // Forward to RichTextBox
-
-			return base.ProcessDialogKey(keyData);
-		}
-
 		private bool m_bClosing = false; // Mono bug workaround
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -1805,7 +1812,7 @@ namespace KeePass.Forms
 				if(bModified)
 				{
 					string strTitle = pe.Strings.ReadSafe(PwDefs.TitleField).Trim();
-					string strHdr = ((strTitle.Length == 0) ? (KPRes.Save + "?") :
+					string strHdr = ((strTitle.Length == 0) ? string.Empty :
 						(KPRes.Entry + @" '" + strTitle + @"'"));
 
 					VistaTaskDialog dlg = new VistaTaskDialog();
@@ -2156,6 +2163,22 @@ namespace KeePass.Forms
 				StrUtil.NormalizeNewLines(str, true)));
 
 			// Custom strings are normalized by the string editing form
+		}
+
+		private void InitUserNameSuggestions()
+		{
+			try
+			{
+				GFunc<PwEntry, string> f = delegate(PwEntry pe)
+				{
+					string str = pe.Strings.ReadSafe(PwDefs.UserNameField);
+					return ((str.Length != 0) ? str : null);
+				};
+
+				string[] v = m_pwDatabase.RootGroup.CollectEntryStrings(f, true);
+				UIUtil.EnableAutoCompletion(m_tbUserName, true, v); // Invokes
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

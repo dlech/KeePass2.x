@@ -70,7 +70,7 @@ namespace KeePass.Forms
 			m_btnCancel.Text = KPRes.CloseButton;
 			m_bCloseMode = true;
 
-			this.SetText(string.Empty, LogStatusType.AdditionalInfo);
+			SetText(string.Empty, LogStatusType.AdditionalInfo);
 
 			string strFinish = KPRes.Ready + " " + uErrors.ToString() + " " + KPRes.Errors +
 				", " + uWarnings.ToString() + " " + KPRes.Warnings + ".";

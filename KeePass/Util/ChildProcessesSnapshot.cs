@@ -55,7 +55,7 @@ namespace KeePass.Util
 
 				uint uEntrySize = (uint)Marshal.SizeOf(typeof(
 					NativeMethods.PROCESSENTRY32));
-				if(WinUtil.IsAtLeastWindows2000) // Unicode
+				if(Marshal.SystemDefaultCharSize >= 2)
 				{
 					if(IntPtr.Size == 4)
 					{

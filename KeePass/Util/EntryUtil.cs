@@ -113,8 +113,9 @@ namespace KeePass.Util
 
 		// Old format name (<= 2.14): "KeePassEntriesCF",
 		// old format name (<= 2.22): "KeePassEntriesCX"
-		public const string ClipFormatEntries = "KeePassEntries";
-		private static byte[] AdditionalEntropy = { 0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
+		public static readonly string ClipFormatEntries = "KeePassEntries";
+		private static readonly byte[] AdditionalEntropy = new byte[] {
+			0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
 		[Obsolete]
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries)
@@ -1194,7 +1195,7 @@ namespace KeePass.Util
 
 				ulong q = (kvp.Value >> 32);
 				ListViewItem.ListViewSubItem lvsi = lvi.SubItems.Add(
-					q.ToString() + " " + KPRes.BitsStc);
+					KPRes.BitsEx.Replace(@"{PARAM}", q.ToString()));
 
 				try
 				{

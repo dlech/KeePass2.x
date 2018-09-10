@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Resources;
 
@@ -113,10 +113,7 @@ namespace KeePass.DataExchange.Formats
 
 				return false;
 			}
-			finally
-			{
-				Program.TempFilesPool.Delete(strTempFile);
-			}
+			finally { Program.TempFilesPool.Delete(strTempFile); }
 
 			return true;
 		}

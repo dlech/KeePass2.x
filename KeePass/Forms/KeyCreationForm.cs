@@ -145,9 +145,9 @@ namespace KeePass.Forms
 		{
 			// Focusing doesn't always work in OnFormLoad;
 			// https://sourceforge.net/p/keepass/feature-requests/1735/
-			if(m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this);
-			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this);
-			else if(m_btnCreate.CanFocus) UIUtil.SetFocus(m_btnCreate, this);
+			if(m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this, true);
+			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
+			else if(m_btnCreate.CanFocus) UIUtil.SetFocus(m_btnCreate, this, true);
 			else { Debug.Assert(false); }
 		}
 
@@ -226,7 +226,8 @@ namespace KeePass.Forms
 						return false;
 					}
 
-					m_pKey.AddUserKey(new KcpPassword(pb));
+					m_pKey.AddUserKey(new KcpPassword(pb,
+						Program.Config.Security.MasterPassword.RememberWhileOpen));
 				}
 				finally { MemUtil.ZeroByteArray(pb); }
 			}

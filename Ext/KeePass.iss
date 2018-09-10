@@ -8,11 +8,11 @@
 #define MyAppNameEx "KeePass Password Safe 2"
 #define MyAppPublisher "Dominik Reichl"
 
-#define KeeVersionStr "2.39.1"
-#define KeeVersionStrWithMinor "2.39.1"
-#define KeeVersionStrWithMinorPath "2.39.1"
-#define KeeVersionWin "2.39.1.0"
-#define KeeVersionWinShort "2.39.1"
+#define KeeVersionStr "2.40"
+#define KeeVersionStrWithMinor "2.40"
+#define KeeVersionStrWithMinorPath "2.40"
+#define KeeVersionWin "2.40.0.0"
+#define KeeVersionWinShort "2.40"
 
 #define MyAppURL "https://keepass.info/"
 #define MyAppExeName "KeePass.exe"
@@ -83,7 +83,7 @@ Name: QuickLaunchIcon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription
 [Components]
 Name: Core; Description: Core KeePass Application Files; Flags: fixed; Types: full compact custom
 Name: UserDoc; Description: Help Manual; Types: full custom
-Name: KeePassLibC; Description: Native Support Library (KeePass 1.x); Types: full custom
+Name: KeePassLibC; Description: Native Support Library; Types: full custom
 ; Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: full custom
 Name: XSL; Description: XSL Stylesheets for KDBX XML Files; Types: full custom
 Name: NGen; Description: Optimize KeePass Performance; Types: full custom; ExtraDiskSpaceRequired: 1048576

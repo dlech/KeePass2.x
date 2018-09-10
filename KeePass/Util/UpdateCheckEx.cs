@@ -107,7 +107,7 @@ namespace KeePass.Util
 		private static Dictionary<string, string> g_dFileSigKeys =
 			new Dictionary<string, string>();
 
-		private const string CompMain = PwDefs.ShortProductName;
+		private static readonly string CompMain = PwDefs.ShortProductName;
 
 		private sealed class UpdateCheckParams
 		{

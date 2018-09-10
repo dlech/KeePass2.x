@@ -32,7 +32,7 @@ namespace KeePass.Util
 	{
 		private List<string> m_vFileNames = new List<string>();
 		private SortedDictionary<string, string> m_vParams =
-			new SortedDictionary<string, string>();
+			new SortedDictionary<string, string>(StrUtil.CaseIgnoreComparer);
 
 		/// <summary>
 		/// Get the primary file name.
@@ -65,7 +65,7 @@ namespace KeePass.Util
 
 			foreach(string str in vArgs)
 			{
-				if((str == null) || (str.Length < 1)) continue;
+				if(string.IsNullOrEmpty(str)) continue;
 
 				KeyValuePair<string, string> kvp = GetParameter(str);
 
@@ -87,7 +87,7 @@ namespace KeePass.Util
 				else
 				{
 					string strValue;
-					if(m_vParams.TryGetValue(strKey.ToLower(), out strValue))
+					if(m_vParams.TryGetValue(strKey, out strValue))
 						return strValue;
 				}
 
@@ -109,15 +109,15 @@ namespace KeePass.Util
 			int posEq = str.IndexOf('=');
 
 			if((posDbl < 0) && (posEq < 0))
-				return new KeyValuePair<string, string>(str.ToLower(), string.Empty);
+				return new KeyValuePair<string, string>(str, string.Empty);
 
 			int posMin = Math.Min(posDbl, posEq);
 			if(posMin < 0) posMin = ((posDbl < 0) ? posEq : posDbl);
 
 			if(posMin <= 0)
-				return new KeyValuePair<string, string>(str.ToLower(), string.Empty);
+				return new KeyValuePair<string, string>(str, string.Empty);
 
-			string strKey = str.Substring(0, posMin).ToLower();
+			string strKey = str.Substring(0, posMin);
 			string strValue = str.Remove(0, posMin + 1);
 			return new KeyValuePair<string, string>(strKey, strValue);
 		}
@@ -126,29 +126,25 @@ namespace KeePass.Util
 		{
 			if(strParamName == null) { Debug.Assert(false); return false; }
 
-			string strKey = strParamName.ToLower();
-			if(m_vParams.ContainsKey(strKey))
-			{
-				if(m_vParams.Remove(strKey)) return true;
-				else { Debug.Assert(false); }
-			}
-
-			return false; // No assert when not found
+			return m_vParams.Remove(strParamName);
 		}
 
 		public static string SafeSerialize(string[] args)
 		{
 			if(args == null) throw new ArgumentNullException("args");
 
-			string strSerialized = null;
-			using(MemoryStream ms = new MemoryStream())
+			try
 			{
-				XmlUtilEx.Serialize<string[]>(ms, args);
-				strSerialized = Convert.ToBase64String(ms.ToArray(),
-					Base64FormattingOptions.None);
+				using(MemoryStream ms = new MemoryStream())
+				{
+					XmlUtilEx.Serialize<string[]>(ms, args);
+					return Convert.ToBase64String(ms.ToArray(),
+						Base64FormattingOptions.None);
+				}
 			}
+			catch(Exception) { Debug.Assert(false); }
 
-			return strSerialized;
+			return null;
 		}
 
 		public static string[] SafeDeserialize(string str)
@@ -183,6 +179,7 @@ namespace KeePass.Util
 			{
 				if(!string.IsNullOrEmpty(kvp.Key))
 					m_vParams[kvp.Key] = kvp.Value;
+				else { Debug.Assert(false); }
 			}
 		}
 	}

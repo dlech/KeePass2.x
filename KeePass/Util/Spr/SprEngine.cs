@@ -859,7 +859,7 @@ namespace KeePass.Util.Spr
 				Process p = null;
 				try
 				{
-					const StringComparison sc = StrUtil.CaseIgnoreCmp;
+					StringComparison sc = StrUtil.CaseIgnoreCmp;
 
 					string strOpt = ((lParams.Count >= 2) ? lParams[1] :
 						string.Empty);

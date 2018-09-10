@@ -19,21 +19,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App;
+using KeePass.Forms;
 using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Keys;
 using KeePassLib.Resources;
-using KeePassLib.Utility;
+using KeePassLib.Security;
 using KeePassLib.Serialization;
-
-using KeePass.Forms;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -50,16 +50,34 @@ namespace KeePass.Util
 			string strKeyFile = args[AppDefs.CommandLineOptions.KeyFile];
 			string strUserAcc = args[AppDefs.CommandLineOptions.UserAccount];
 
+			Action<byte[]> fAddPwB = delegate(byte[] pbPw)
+			{
+				cmpKey.AddUserKey(new KcpPassword(pbPw,
+					Program.Config.Security.MasterPassword.RememberWhileOpen));
+			};
+
+			Action<string> fAddPwS = delegate(string strPw)
+			{
+				byte[] pb = StrUtil.Utf8.GetBytes(strPw);
+				try { fAddPwB(pb); }
+				finally { MemUtil.ZeroByteArray(pb); }
+			};
+
 			if(strPassword != null)
-				cmpKey.AddUserKey(new KcpPassword(strPassword));
+				fAddPwS(strPassword);
 			else if(strPasswordEnc != null)
-				cmpKey.AddUserKey(new KcpPassword(StrUtil.DecryptString(strPasswordEnc)));
+				fAddPwS(StrUtil.DecryptString(strPasswordEnc));
 			else if(strPasswordStdIn != null)
 			{
-				KcpPassword kcpPw = ReadPasswordStdIn(true);
-				if(kcpPw != null) cmpKey.AddUserKey(kcpPw);
+				ProtectedString ps = ReadPasswordStdIn(true);
+				if(ps != null)
+				{
+					byte[] pb = ps.ReadUtf8();
+					try { fAddPwB(pb); }
+					finally { MemUtil.ZeroByteArray(pb); }
+				}
 			}
-			
+
 			if(strKeyFile != null)
 			{
 				if(Program.KeyProviderPool.IsKeyProvider(strKeyFile))
@@ -128,40 +146,29 @@ namespace KeePass.Util
 			args.Remove(AppDefs.CommandLineOptions.UserAccount);
 		}
 
-		private static bool m_bReadPwStdIn = false;
-		private static string m_strReadPwStdIn = null;
+		private static bool g_bReadPwStdIn = false;
+		private static ProtectedString g_psReadPwStdIn = null;
 		/// <summary>
 		/// Read a password from StdIn. The password is read only once
 		/// and then cached.
 		/// </summary>
-		internal static KcpPassword ReadPasswordStdIn(bool bFailWithUI)
+		internal static ProtectedString ReadPasswordStdIn(bool bFailWithUI)
 		{
-			string strPw = null;
+			if(g_bReadPwStdIn) return g_psReadPwStdIn;
 
-			if(m_bReadPwStdIn) strPw = m_strReadPwStdIn;
-			else
+			try
 			{
-				try { strPw = Console.ReadLine(); }
-				catch(Exception exCon)
-				{
-					if(bFailWithUI) MessageService.ShowWarning(exCon);
-				}
+				string str = Console.ReadLine();
+				if(str != null)
+					g_psReadPwStdIn = new ProtectedString(true, str.Trim());
+			}
+			catch(Exception ex)
+			{
+				if(bFailWithUI) MessageService.ShowWarning(ex);
 			}
 
-			if(strPw == null)
-			{
-				m_strReadPwStdIn = null;
-				m_bReadPwStdIn = true;
-
-				return null;
-			}
-
-			strPw = strPw.Trim();
-
-			m_strReadPwStdIn = strPw;
-			m_bReadPwStdIn = true;
-
-			return new KcpPassword(strPw);
+			g_bReadPwStdIn = true;
+			return g_psReadPwStdIn;
 		}
 
 		internal static string[] MakeCtxIndependent(string[] vCmdLineArgs)
@@ -176,14 +183,14 @@ namespace KeePass.Util
 				KeyValuePair<string, string> kvpArg = CommandLineArgs.GetParameter(strArg);
 				if(kvpArg.Key.Equals(AppDefs.CommandLineOptions.PasswordStdIn, StrUtil.CaseIgnoreCmp))
 				{
-					KcpPassword kcpPw = ReadPasswordStdIn(true);
+					ProtectedString ps = ReadPasswordStdIn(true);
 
 					if((cl[AppDefs.CommandLineOptions.Password] == null) &&
 						(cl[AppDefs.CommandLineOptions.PasswordEncrypted] == null) &&
-						(kcpPw != null))
+						(ps != null))
 					{
 						lFlt.Add("-" + AppDefs.CommandLineOptions.Password + ":" +
-							kcpPw.Password.ReadString()); // No quote wrapping/encoding
+							ps.ReadString()); // No quote wrapping/encoding
 					}
 				}
 				else lFlt.Add(strArg);

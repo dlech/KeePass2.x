@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -173,6 +173,12 @@ namespace KeePass.UI
 	{
 		private MainForm m_mf;
 
+		private string m_strText = string.Empty;
+		private int m_tLastAnim = Environment.TickCount;
+		private int m_cDots = 1;
+
+		private readonly char[] m_vDots = new char[] { '.', '\u2026' };
+
 		public UIBlockerStatusLogger(Form fParent)
 		{
 			m_mf = (fParent as MainForm);
@@ -180,36 +186,69 @@ namespace KeePass.UI
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
-			if(m_mf != null) m_mf.UIBlockInteraction(true);
+			if(m_mf != null)
+			{
+				TaskbarList.SetProgressState(m_mf, TbpFlag.Indeterminate);
+				m_mf.UIBlockInteraction(true);
+			}
 		}
 
 		public void EndLogging()
 		{
-			if(m_mf != null) m_mf.UIBlockInteraction(false);
+			if(m_mf != null)
+			{
+				m_mf.UIBlockInteraction(false);
+				TaskbarList.SetProgressState(m_mf, TbpFlag.NoProgress);
+			}
 		}
 
 		public bool SetProgress(uint uPercent)
 		{
+			Animate();
 			return true;
 		}
 
 		public bool SetText(string strNewText, LogStatusType lsType)
 		{
-			if(m_mf != null)
+			if((m_mf != null) && !string.IsNullOrEmpty(strNewText))
 			{
-				if(!string.IsNullOrEmpty(strNewText))
-				{
-					m_mf.SetStatusEx(strNewText);
-					Application.DoEvents();
-				}
+				m_strText = strNewText;
+				m_mf.SetStatusEx(strNewText);
+
+				UIUtil.DoEventsByTime(true);
 			}
+			else UIUtil.DoEventsByTime(false);
 
 			return true;
 		}
 
 		public bool ContinueWork()
 		{
+			Animate();
 			return true;
+		}
+
+		private void Animate()
+		{
+			int t = Environment.TickCount, tLast = m_tLastAnim;
+			int d = t - tLast;
+
+			if(d >= 1000)
+			{
+				m_tLastAnim = t;
+
+				if(m_mf != null)
+				{
+					string strDots = new string('.', m_cDots);
+					m_mf.SetStatusEx(m_strText.TrimEnd(m_vDots) + strDots);
+					m_cDots = (m_cDots % 5) + 1; // At least one dot
+
+					UIUtil.DoEventsByTime(true);
+					return;
+				}
+			}
+
+			UIUtil.DoEventsByTime(false);
 		}
 	}
 }

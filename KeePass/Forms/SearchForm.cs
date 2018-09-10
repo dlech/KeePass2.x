@@ -52,6 +52,8 @@ namespace KeePass.Forms
 		private PwGroup m_pgRoot = null;
 		private PwGroup m_pgResultsGroup = null;
 
+		private bool m_bUpdating = false;
+
 		public bool CanCloseWithoutDataLoss { get { return true; } }
 
 		/// <summary>
@@ -95,6 +97,8 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc);
 			this.Icon = AppIcons.Default;
 
+			m_bUpdating = true;
+
 			UIUtil.SetText(m_cbDerefData, m_cbDerefData.Text + " (" + KPRes.Slow + ")");
 
 			SearchParameters sp = Program.Config.Defaults.SearchParameters;
@@ -107,6 +111,7 @@ namespace KeePass.Forms
 			m_cbStringName.Checked = sp.SearchInStringNames;
 			m_cbTags.Checked = sp.SearchInTags;
 			m_cbUuid.Checked = sp.SearchInUuids;
+			m_cbGroupPath.Checked = sp.SearchInGroupPaths;
 			m_cbGroupName.Checked = sp.SearchInGroupNames;
 
 			StringComparison sc = sp.ComparisonMode;
@@ -119,6 +124,8 @@ namespace KeePass.Forms
 
 			string strTrf = SearchUtil.GetTransformation(sp);
 			m_cbDerefData.Checked = (strTrf == SearchUtil.StrTrfDeref);
+
+			m_bUpdating = false;
 
 			EnableControlsEx();
 			UIUtil.SetFocus(m_tbSearch, this);
@@ -203,6 +210,7 @@ namespace KeePass.Forms
 			sp.SearchInStringNames = m_cbStringName.Checked;
 			sp.SearchInTags = m_cbTags.Checked;
 			sp.SearchInUuids = m_cbUuid.Checked;
+			sp.SearchInGroupPaths = m_cbGroupPath.Checked;
 			sp.SearchInGroupNames = m_cbGroupName.Checked;
 
 			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
@@ -219,10 +227,24 @@ namespace KeePass.Forms
 
 		private void EnableControlsEx()
 		{
+			if(m_bUpdating) return;
+			m_bUpdating = true;
+
 			m_lblHints.Enabled = !m_cbRegEx.Checked;
+
+			bool bGroupPath = m_cbGroupPath.Checked;
+			m_cbGroupName.Enabled = !bGroupPath;
+			if(bGroupPath) m_cbGroupName.Checked = true;
+
+			m_bUpdating = false;
 		}
 
 		private void OnRegExCheckedChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnGroupPathCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
 		}

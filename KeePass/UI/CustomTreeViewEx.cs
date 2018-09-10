@@ -192,7 +192,9 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		/* protected override CreateParams CreateParams
+		/* [Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		protected override CreateParams CreateParams
 		{
 			get
 			{

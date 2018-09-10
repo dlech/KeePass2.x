@@ -773,6 +773,7 @@
     <Compile Include="Plugins\PlgxCsprojLoader.cs" />
     <Compile Include="Plugins\PlgxPluginInfo.cs" />
     <Compile Include="Plugins\PlgxPlugin.cs" />
+    <Compile Include="Resources\KPRes.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
     <Compile Include="UI\AsyncPwListUpdate.cs" />
     <Compile Include="UI\BackgroundForm.cs">

@@ -19,36 +19,36 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 namespace KeePassLib.Cryptography.PasswordGenerator
 {
 	public sealed class PwCharSet
 	{
-		public const string UpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		public const string LowerCase = "abcdefghijklmnopqrstuvwxyz";
-		public const string Digits = "0123456789";
+		public static readonly string UpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		public static readonly string LowerCase = "abcdefghijklmnopqrstuvwxyz";
+		public static readonly string Digits = "0123456789";
 
-		public const string UpperConsonants = "BCDFGHJKLMNPQRSTVWXYZ";
-		public const string LowerConsonants = "bcdfghjklmnpqrstvwxyz";
-		public const string UpperVowels = "AEIOU";
-		public const string LowerVowels = "aeiou";
+		public static readonly string UpperConsonants = "BCDFGHJKLMNPQRSTVWXYZ";
+		public static readonly string LowerConsonants = "bcdfghjklmnpqrstvwxyz";
+		public static readonly string UpperVowels = "AEIOU";
+		public static readonly string LowerVowels = "aeiou";
 
-		public const string Punctuation = @",.;:";
-		public const string Brackets = @"[]{}()<>";
+		public static readonly string Punctuation = @",.;:";
+		public static readonly string Brackets = @"[]{}()<>";
 
-		public const string PrintableAsciiSpecial = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+		public static readonly string PrintableAsciiSpecial = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
-		public const string UpperHex = "0123456789ABCDEF";
-		public const string LowerHex = "0123456789abcdef";
+		public static readonly string UpperHex = "0123456789ABCDEF";
+		public static readonly string LowerHex = "0123456789abcdef";
 
-		public const string Invalid = "\t\r\n";
-		public const string LookAlike = @"O0l1I|";
+		public static readonly string Invalid = "\t\r\n";
+		public static readonly string LookAlike = @"O0l1I|";
 
-		internal const string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;
+		internal static readonly string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;
 
-		private const int CharTabSize = (0x10000 / 8);
+		private const int CharTabSize = 0x10000 / 8;
 
 		private List<char> m_vChars = new List<char>();
 		private byte[] m_vTab = new byte[CharTabSize];

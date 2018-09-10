@@ -29,21 +29,21 @@ namespace KeePassLib.Serialization
 {
 	public static class IocKnownProtocols
 	{
-		public const string Http = "HTTP";
-		public const string Https = "HTTPS";
-		public const string WebDav = "WebDAV";
-		public const string Ftp = "FTP";
+		public static readonly string Http = "HTTP";
+		public static readonly string Https = "HTTPS";
+		public static readonly string WebDav = "WebDAV";
+		public static readonly string Ftp = "FTP";
 	}
 
 	public static class IocKnownProperties
 	{
-		public const string Timeout = "Timeout";
-		public const string PreAuth = "PreAuth";
+		public static readonly string Timeout = "Timeout";
+		public static readonly string PreAuth = "PreAuth";
 
-		public const string UserAgent = "UserAgent";
-		public const string Expect100Continue = "Expect100Continue";
+		public static readonly string UserAgent = "UserAgent";
+		public static readonly string Expect100Continue = "Expect100Continue";
 
-		public const string Passive = "Passive";
+		public static readonly string Passive = "Passive";
 	}
 
 	public static class IocPropertyInfoPool

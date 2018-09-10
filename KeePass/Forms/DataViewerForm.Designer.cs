@@ -42,6 +42,8 @@
 			this.m_tscEncoding = new System.Windows.Forms.ToolStripComboBox();
 			this.m_tslZoom = new System.Windows.Forms.ToolStripLabel();
 			this.m_tscZoom = new System.Windows.Forms.ToolStripComboBox();
+			this.m_tsbZoomOut = new System.Windows.Forms.ToolStripButton();
+			this.m_tsbZoomIn = new System.Windows.Forms.ToolStripButton();
 			((System.ComponentModel.ISupportInitialize)(this.m_picBox)).BeginInit();
 			this.m_pnlImageViewer.SuspendLayout();
 			this.m_statusMain.SuspendLayout();
@@ -80,15 +82,15 @@
 			// 
 			this.m_statusMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_tssStatusMain});
-			this.m_statusMain.Location = new System.Drawing.Point(0, 366);
+			this.m_statusMain.Location = new System.Drawing.Point(0, 394);
 			this.m_statusMain.Name = "m_statusMain";
-			this.m_statusMain.Size = new System.Drawing.Size(524, 22);
+			this.m_statusMain.Size = new System.Drawing.Size(608, 22);
 			this.m_statusMain.TabIndex = 4;
 			// 
 			// m_tssStatusMain
 			// 
 			this.m_tssStatusMain.Name = "m_tssStatusMain";
-			this.m_tssStatusMain.Size = new System.Drawing.Size(509, 17);
+			this.m_tssStatusMain.Size = new System.Drawing.Size(593, 17);
 			this.m_tssStatusMain.Spring = true;
 			this.m_tssStatusMain.Text = "<>";
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -113,17 +115,19 @@
             this.m_tslEncoding,
             this.m_tscEncoding,
             this.m_tslZoom,
-            this.m_tscZoom});
+            this.m_tscZoom,
+            this.m_tsbZoomOut,
+            this.m_tsbZoomIn});
 			this.m_toolMain.Location = new System.Drawing.Point(0, 0);
 			this.m_toolMain.Name = "m_toolMain";
-			this.m_toolMain.Size = new System.Drawing.Size(524, 25);
+			this.m_toolMain.Size = new System.Drawing.Size(608, 25);
 			this.m_toolMain.TabIndex = 3;
 			this.m_toolMain.TabStop = true;
 			// 
 			// m_tslViewer
 			// 
 			this.m_tslViewer.Name = "m_tslViewer";
-			this.m_tslViewer.Size = new System.Drawing.Size(21, 22);
+			this.m_tslViewer.Size = new System.Drawing.Size(23, 22);
 			this.m_tslViewer.Text = "<>";
 			// 
 			// m_tscViewers
@@ -141,7 +145,7 @@
 			// m_tslEncoding
 			// 
 			this.m_tslEncoding.Name = "m_tslEncoding";
-			this.m_tslEncoding.Size = new System.Drawing.Size(21, 22);
+			this.m_tslEncoding.Size = new System.Drawing.Size(23, 22);
 			this.m_tslEncoding.Text = "<>";
 			// 
 			// m_tscEncoding
@@ -154,7 +158,7 @@
 			// m_tslZoom
 			// 
 			this.m_tslZoom.Name = "m_tslZoom";
-			this.m_tslZoom.Size = new System.Drawing.Size(21, 22);
+			this.m_tslZoom.Size = new System.Drawing.Size(23, 22);
 			this.m_tslZoom.Text = "<>";
 			// 
 			// m_tscZoom
@@ -164,11 +168,29 @@
 			this.m_tscZoom.Size = new System.Drawing.Size(75, 25);
 			this.m_tscZoom.SelectedIndexChanged += new System.EventHandler(this.OnZoomSelectedIndexChanged);
 			// 
+			// m_tsbZoomOut
+			// 
+			this.m_tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.m_tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tsbZoomOut.Name = "m_tsbZoomOut";
+			this.m_tsbZoomOut.Size = new System.Drawing.Size(23, 22);
+			this.m_tsbZoomOut.Text = "-";
+			this.m_tsbZoomOut.Click += new System.EventHandler(this.OnViewerZoomOut);
+			// 
+			// m_tsbZoomIn
+			// 
+			this.m_tsbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.m_tsbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tsbZoomIn.Name = "m_tsbZoomIn";
+			this.m_tsbZoomIn.Size = new System.Drawing.Size(23, 22);
+			this.m_tsbZoomIn.Text = "+";
+			this.m_tsbZoomIn.Click += new System.EventHandler(this.OnViewerZoomIn);
+			// 
 			// DataViewerForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(524, 388);
+			this.ClientSize = new System.Drawing.Size(608, 416);
 			this.Controls.Add(this.m_webBrowser);
 			this.Controls.Add(this.m_pnlImageViewer);
 			this.Controls.Add(this.m_rtbText);
@@ -209,5 +231,7 @@
 		private System.Windows.Forms.ToolStripStatusLabel m_tssStatusMain;
 		private System.Windows.Forms.ToolStripLabel m_tslZoom;
 		private System.Windows.Forms.ToolStripComboBox m_tscZoom;
+		private System.Windows.Forms.ToolStripButton m_tsbZoomOut;
+		private System.Windows.Forms.ToolStripButton m_tsbZoomIn;
 	}
 }

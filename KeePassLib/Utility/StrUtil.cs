@@ -188,7 +188,7 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class StrUtil
 	{
-		public const StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
+		public static readonly StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
 		public static StringComparer CaseIgnoreComparer
 		{
@@ -1799,6 +1799,21 @@ namespace KeePassLib.Utility
 			// Replacing null characters by spaces is the
 			// behavior of Notepad (on Windows 10)
 			return str.Replace('\0', ' ');
+		}
+
+		// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
+		internal static string EnsureLtrPath(string strPath)
+		{
+			if(strPath == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strPath;
+
+			// U+200E = left-to-right mark
+			str = str.Replace("\\", "\\\u200E");
+			str = str.Replace("/", "/\u200E");
+			str = str.Replace("\u200E\u200E", "\u200E"); // Remove duplicates
+
+			return str;
 		}
 	}
 }

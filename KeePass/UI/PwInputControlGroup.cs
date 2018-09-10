@@ -499,8 +499,8 @@ namespace KeePass.UI
 			{
 				bool bUnknown = (m_bSprVar && !m_pbQuality.Enabled);
 
-				string strBits = (bUnknown ? "?" : uBits.ToString()) +
-					" " + KPRes.BitsStc;
+				string strBits = KPRes.BitsEx.Replace(@"{PARAM}",
+					(bUnknown ? "?" : uBits.ToString()));
 				m_pbQuality.ProgressText = (bUnknown ? string.Empty : strBits);
 
 				int iPos = (int)((100 * uBits) / (256 / 2));

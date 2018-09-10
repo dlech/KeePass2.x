@@ -166,10 +166,10 @@ namespace KeePass.UI
 					rectDraw.Left), rectDraw.Top, nDrawWidth, rectDraw.Height);
 			}
 
-			PaintText(g, rectDraw);
+			PaintText(g, rectDraw, bRtl);
 		}
 
-		private void PaintText(Graphics g, Rectangle rectDraw)
+		private void PaintText(Graphics g, Rectangle rectDraw, bool bRtl)
 		{
 			if(string.IsNullOrEmpty(m_strText)) return;
 
@@ -220,6 +220,8 @@ namespace KeePass.UI
 			{
 				StringFormatFlags sff = (StringFormatFlags.FitBlackBox |
 					StringFormatFlags.NoClip);
+				if(bRtl) sff |= StringFormatFlags.DirectionRightToLeft;
+
 				using(StringFormat sf = new StringFormat(sff))
 				{
 					sf.Alignment = StringAlignment.Center;

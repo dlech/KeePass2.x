@@ -19,18 +19,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 namespace KeePass.Ecas
 {
 	public static class EcasProperty
 	{
 		// Triggering objects
-		public const string Database = "Database"; // PwDatabase
-		public const string IOConnectionInfo = "IOConnectionInfo"; // IOConnectionInfo
-		public const string Text = "Text"; // String
-		public const string CommandID = "CommandID"; // String
+		public static readonly string Database = "Database"; // PwDatabase
+		public static readonly string IOConnectionInfo = "IOConnectionInfo"; // IOConnectionInfo
+		public static readonly string Text = "Text"; // String
+		public static readonly string CommandID = "CommandID"; // String
 	}
 
 	public sealed class EcasPropertyDictionary

@@ -9,7 +9,7 @@ namespace KeePassLib.Resources
 	/// <summary>
 	/// A strongly-typed resource class, for looking up localized strings, etc.
 	/// </summary>
-	public static class KSRes
+	public static partial class KSRes
 	{
 		private static string TryGetEx(Dictionary<string, string> dictNew,
 			string strName, string strDefault)

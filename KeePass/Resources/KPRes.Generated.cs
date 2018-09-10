@@ -9,7 +9,7 @@ namespace KeePass.Resources
 	/// <summary>
 	/// A strongly-typed resource class, for looking up localized strings, etc.
 	/// </summary>
-	public static class KPRes
+	public static partial class KPRes
 	{
 		private static string TryGetEx(Dictionary<string, string> dictNew,
 			string strName, string strDefault)
@@ -107,7 +107,7 @@ namespace KeePass.Resources
 			m_strBackupLocation = TryGetEx(dictNew, "BackupLocation", m_strBackupLocation);
 			m_strBinaryNoConv = TryGetEx(dictNew, "BinaryNoConv", m_strBinaryNoConv);
 			m_strBits = TryGetEx(dictNew, "Bits", m_strBits);
-			m_strBitsStc = TryGetEx(dictNew, "BitsStc", m_strBitsStc);
+			m_strBitsEx = TryGetEx(dictNew, "BitsEx", m_strBitsEx);
 			m_strBold = TryGetEx(dictNew, "Bold", m_strBold);
 			m_strBothForms = TryGetEx(dictNew, "BothForms", m_strBothForms);
 			m_strBrowser = TryGetEx(dictNew, "Browser", m_strBrowser);
@@ -209,9 +209,9 @@ namespace KeePass.Resources
 			m_strDatabaseNamePrompt = TryGetEx(dictNew, "DatabaseNamePrompt", m_strDatabaseNamePrompt);
 			m_strDatabaseSettings = TryGetEx(dictNew, "DatabaseSettings", m_strDatabaseSettings);
 			m_strDatabaseSettingsDesc = TryGetEx(dictNew, "DatabaseSettingsDesc", m_strDatabaseSettingsDesc);
-			m_strDataEditor = TryGetEx(dictNew, "DataEditor", m_strDataEditor);
+			m_strDataEditorKP = TryGetEx(dictNew, "DataEditorKP", m_strDataEditorKP);
 			m_strDataLoss = TryGetEx(dictNew, "DataLoss", m_strDataLoss);
-			m_strDataViewer = TryGetEx(dictNew, "DataViewer", m_strDataViewer);
+			m_strDataViewerKP = TryGetEx(dictNew, "DataViewerKP", m_strDataViewerKP);
 			m_strDbMntncResults = TryGetEx(dictNew, "DbMntncResults", m_strDbMntncResults);
 			m_strDbNoModBy = TryGetEx(dictNew, "DbNoModBy", m_strDbNoModBy);
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
@@ -490,6 +490,7 @@ namespace KeePass.Resources
 			m_strMasterPassword = TryGetEx(dictNew, "MasterPassword", m_strMasterPassword);
 			m_strMasterPasswordMinLengthFailed = TryGetEx(dictNew, "MasterPasswordMinLengthFailed", m_strMasterPasswordMinLengthFailed);
 			m_strMasterPasswordMinQualityFailed = TryGetEx(dictNew, "MasterPasswordMinQualityFailed", m_strMasterPasswordMinQualityFailed);
+			m_strMasterPasswordRmbWhileOpen = TryGetEx(dictNew, "MasterPasswordRmbWhileOpen", m_strMasterPasswordRmbWhileOpen);
 			m_strMaxAttachmentSize = TryGetEx(dictNew, "MaxAttachmentSize", m_strMaxAttachmentSize);
 			m_strMaximized = TryGetEx(dictNew, "Maximized", m_strMaximized);
 			m_strMemory = TryGetEx(dictNew, "Memory", m_strMemory);
@@ -511,7 +512,6 @@ namespace KeePass.Resources
 			m_strNeverExpires = TryGetEx(dictNew, "NeverExpires", m_strNeverExpires);
 			m_strNew = TryGetEx(dictNew, "New", m_strNew);
 			m_strNewDatabase = TryGetEx(dictNew, "NewDatabase", m_strNewDatabase);
-			m_strNewDatabaseFileName = TryGetEx(dictNew, "NewDatabaseFileName", m_strNewDatabaseFileName);
 			m_strNewerNetRequired = TryGetEx(dictNew, "NewerNetRequired", m_strNewerNetRequired);
 			m_strNewGroup = TryGetEx(dictNew, "NewGroup", m_strNewGroup);
 			m_strNewLine = TryGetEx(dictNew, "NewLine", m_strNewLine);
@@ -550,6 +550,7 @@ namespace KeePass.Resources
 			m_strOpenUrl = TryGetEx(dictNew, "OpenUrl", m_strOpenUrl);
 			m_strOpenWith = TryGetEx(dictNew, "OpenWith", m_strOpenWith);
 			m_strOptimizeForScreenReader = TryGetEx(dictNew, "OptimizeForScreenReader", m_strOptimizeForScreenReader);
+			m_strOptionReqOn = TryGetEx(dictNew, "OptionReqOn", m_strOptionReqOn);
 			m_strOptions = TryGetEx(dictNew, "Options", m_strOptions);
 			m_strOptionsDesc = TryGetEx(dictNew, "OptionsDesc", m_strOptionsDesc);
 			m_strOtherPlaceholders = TryGetEx(dictNew, "OtherPlaceholders", m_strOtherPlaceholders);
@@ -816,10 +817,11 @@ namespace KeePass.Resources
 			m_strVersion = TryGetEx(dictNew, "Version", m_strVersion);
 			m_strView = TryGetEx(dictNew, "View", m_strView);
 			m_strViewCmd = TryGetEx(dictNew, "ViewCmd", m_strViewCmd);
-			m_strViewEntry = TryGetEx(dictNew, "ViewEntry", m_strViewEntry);
 			m_strViewEntryDesc = TryGetEx(dictNew, "ViewEntryDesc", m_strViewEntryDesc);
+			m_strViewEntryReadOnly = TryGetEx(dictNew, "ViewEntryReadOnly", m_strViewEntryReadOnly);
 			m_strWait = TryGetEx(dictNew, "Wait", m_strWait);
 			m_strWaitForExit = TryGetEx(dictNew, "WaitForExit", m_strWaitForExit);
+			m_strWaitPlease = TryGetEx(dictNew, "WaitPlease", m_strWaitPlease);
 			m_strWarning = TryGetEx(dictNew, "Warning", m_strWarning);
 			m_strWarnings = TryGetEx(dictNew, "Warnings", m_strWarnings);
 			m_strWebBrowser = TryGetEx(dictNew, "WebBrowser", m_strWebBrowser);
@@ -926,7 +928,7 @@ namespace KeePass.Resources
 			"BackupLocation",
 			"BinaryNoConv",
 			"Bits",
-			"BitsStc",
+			"BitsEx",
 			"Bold",
 			"BothForms",
 			"Browser",
@@ -1028,9 +1030,9 @@ namespace KeePass.Resources
 			"DatabaseNamePrompt",
 			"DatabaseSettings",
 			"DatabaseSettingsDesc",
-			"DataEditor",
+			"DataEditorKP",
 			"DataLoss",
-			"DataViewer",
+			"DataViewerKP",
 			"DbMntncResults",
 			"DbNoModBy",
 			"Default",
@@ -1309,6 +1311,7 @@ namespace KeePass.Resources
 			"MasterPassword",
 			"MasterPasswordMinLengthFailed",
 			"MasterPasswordMinQualityFailed",
+			"MasterPasswordRmbWhileOpen",
 			"MaxAttachmentSize",
 			"Maximized",
 			"Memory",
@@ -1330,7 +1333,6 @@ namespace KeePass.Resources
 			"NeverExpires",
 			"New",
 			"NewDatabase",
-			"NewDatabaseFileName",
 			"NewerNetRequired",
 			"NewGroup",
 			"NewLine",
@@ -1369,6 +1371,7 @@ namespace KeePass.Resources
 			"OpenUrl",
 			"OpenWith",
 			"OptimizeForScreenReader",
+			"OptionReqOn",
 			"Options",
 			"OptionsDesc",
 			"OtherPlaceholders",
@@ -1635,10 +1638,11 @@ namespace KeePass.Resources
 			"Version",
 			"View",
 			"ViewCmd",
-			"ViewEntry",
 			"ViewEntryDesc",
+			"ViewEntryReadOnly",
 			"Wait",
 			"WaitForExit",
+			"WaitPlease",
 			"Warning",
 			"Warnings",
 			"WebBrowser",
@@ -2559,15 +2563,15 @@ namespace KeePass.Resources
 			get { return m_strBits; }
 		}
 
-		private static string m_strBitsStc =
-			@"bits";
+		private static string m_strBitsEx =
+			@"{PARAM} bits";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'bits'.
+		/// '{PARAM} bits'.
 		/// </summary>
-		public static string BitsStc
+		public static string BitsEx
 		{
-			get { return m_strBitsStc; }
+			get { return m_strBitsEx; }
 		}
 
 		private static string m_strBold =
@@ -3681,15 +3685,15 @@ namespace KeePass.Resources
 			get { return m_strDatabaseSettingsDesc; }
 		}
 
-		private static string m_strDataEditor =
-			@"Data Editor";
+		private static string m_strDataEditorKP =
+			@"KeePass Data Editor";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Data Editor'.
+		/// 'KeePass Data Editor'.
 		/// </summary>
-		public static string DataEditor
+		public static string DataEditorKP
 		{
-			get { return m_strDataEditor; }
+			get { return m_strDataEditorKP; }
 		}
 
 		private static string m_strDataLoss =
@@ -3703,15 +3707,15 @@ namespace KeePass.Resources
 			get { return m_strDataLoss; }
 		}
 
-		private static string m_strDataViewer =
-			@"Data Viewer";
+		private static string m_strDataViewerKP =
+			@"KeePass Data Viewer";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Data Viewer'.
+		/// 'KeePass Data Viewer'.
 		/// </summary>
-		public static string DataViewer
+		public static string DataViewerKP
 		{
-			get { return m_strDataViewer; }
+			get { return m_strDataViewerKP; }
 		}
 
 		private static string m_strDbMntncResults =
@@ -6772,6 +6776,17 @@ namespace KeePass.Resources
 			get { return m_strMasterPasswordMinQualityFailed; }
 		}
 
+		private static string m_strMasterPasswordRmbWhileOpen =
+			@"Remember master password (in encrypted form) of a database while it is open";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Remember master password (in encrypted form) of a database while it is open'.
+		/// </summary>
+		public static string MasterPasswordRmbWhileOpen
+		{
+			get { return m_strMasterPasswordRmbWhileOpen; }
+		}
+
 		private static string m_strMaxAttachmentSize =
 			@"The maximum supported attachment size is {PARAM}.";
 		/// <summary>
@@ -7001,17 +7016,6 @@ namespace KeePass.Resources
 		public static string NewDatabase
 		{
 			get { return m_strNewDatabase; }
-		}
-
-		private static string m_strNewDatabaseFileName =
-			@"NewDatabase.kdbx";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'NewDatabase.kdbx'.
-		/// </summary>
-		public static string NewDatabaseFileName
-		{
-			get { return m_strNewDatabaseFileName; }
 		}
 
 		private static string m_strNewerNetRequired =
@@ -7430,6 +7434,17 @@ namespace KeePass.Resources
 		public static string OptimizeForScreenReader
 		{
 			get { return m_strOptimizeForScreenReader; }
+		}
+
+		private static string m_strOptionReqOn =
+			@"For this operation, the following option must be turned on:";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'For this operation, the following option must be turned on:'.
+		/// </summary>
+		public static string OptionReqOn
+		{
+			get { return m_strOptionReqOn; }
 		}
 
 		private static string m_strOptions =
@@ -10358,17 +10373,6 @@ namespace KeePass.Resources
 			get { return m_strViewCmd; }
 		}
 
-		private static string m_strViewEntry =
-			@"View Entry";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'View Entry'.
-		/// </summary>
-		public static string ViewEntry
-		{
-			get { return m_strViewEntry; }
-		}
-
 		private static string m_strViewEntryDesc =
 			@"You're viewing an entry.";
 		/// <summary>
@@ -10378,6 +10382,17 @@ namespace KeePass.Resources
 		public static string ViewEntryDesc
 		{
 			get { return m_strViewEntryDesc; }
+		}
+
+		private static string m_strViewEntryReadOnly =
+			@"View Entry (Read-Only)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'View Entry (Read-Only)'.
+		/// </summary>
+		public static string ViewEntryReadOnly
+		{
+			get { return m_strViewEntryReadOnly; }
 		}
 
 		private static string m_strWait =
@@ -10400,6 +10415,17 @@ namespace KeePass.Resources
 		public static string WaitForExit
 		{
 			get { return m_strWaitForExit; }
+		}
+
+		private static string m_strWaitPlease =
+			@"Please wait";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Please wait'.
+		/// </summary>
+		public static string WaitPlease
+		{
+			get { return m_strWaitPlease; }
 		}
 
 		private static string m_strWarning =

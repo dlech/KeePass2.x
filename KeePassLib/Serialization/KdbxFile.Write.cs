@@ -420,8 +420,10 @@ namespace KeePassLib.Serialization
 
 				++uCurEntry;
 				if(m_slLogger != null)
+				{
 					if(!m_slLogger.SetProgress((100 * uCurEntry) / uNumEntries))
 						return false;
+				}
 
 				return true;
 			};

@@ -82,11 +82,16 @@ namespace KeePass.UI
 			int nIdx = e.Index;
 			Rectangle rectClip = e.Bounds;
 			int dImg = rectClip.Height - 2;
-			bool bRtl = Program.Translation.Properties.RightToLeft;
+
+			// Don't use RTL property of translation, as the parent (form)
+			// may explicitly turn off the RTL mode
+			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
 
 			Graphics g = e.Graphics;
-			SolidBrush brBack = new SolidBrush(clrBack);
-			g.FillRectangle(brBack, rectClip);
+			using(SolidBrush brBack = new SolidBrush(clrBack))
+			{
+				g.FillRectangle(brBack, rectClip);
+			}
 
 			Rectangle rectImg = new Rectangle(bRtl ? (rectClip.Right - dImg - 1) :
 				(rectClip.Left + 1), rectClip.Top + 1, dImg, dImg);
@@ -114,8 +119,6 @@ namespace KeePass.UI
 			if(((e.State & DrawItemState.Focus) != DrawItemState.None) &&
 				((e.State & DrawItemState.NoFocusRect) == DrawItemState.None))
 				e.DrawFocusRectangle();
-
-			brBack.Dispose();
 		}
 	}
 }

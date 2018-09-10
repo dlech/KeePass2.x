@@ -45,13 +45,18 @@ namespace KeePassLib.Translation
 	[XmlRoot("Translation")]
 	public sealed class KPTranslation
 	{
-		public const string FileExtension = "lngx";
+		public static readonly string FileExtension = "lngx";
 
 		private KPTranslationProperties m_props = new KPTranslationProperties();
 		public KPTranslationProperties Properties
 		{
 			get { return m_props; }
-			set { m_props = value; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				m_props = value;
+			}
 		}
 
 		private List<KPStringTable> m_vStringTables = new List<KPStringTable>();
@@ -308,5 +313,13 @@ namespace KeePassLib.Translation
 			if(kpst != null) kpst.ApplyTo(tsic);
 		}
 #endif
+
+		internal bool IsFor(string strIso6391Code)
+		{
+			if(strIso6391Code == null) { Debug.Assert(false); return false; }
+
+			return string.Equals(strIso6391Code, m_props.Iso6391Code,
+				StrUtil.CaseIgnoreCmp);
+		}
 	}
 }

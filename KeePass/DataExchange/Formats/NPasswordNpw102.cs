@@ -60,7 +60,7 @@ namespace KeePass.DataExchange.Formats
 
 		private const string ElemUnsupp0 = "settings";
 
-		private const string Password2Key = PwDefs.PasswordField + " 2";
+		private static readonly string Password2Key = PwDefs.PasswordField + " 2";
 
 		private static Dictionary<string, string> m_dAutoTypeConv = null;
 

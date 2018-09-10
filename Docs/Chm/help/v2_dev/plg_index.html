@@ -447,6 +447,30 @@ incompatibility message to the user. Therefore, it is recommended that
 plugin developers create/ship PLGX files, not DLLs.
 </td></tr></table></center>
 
+<!-- <p><b>Comparison.</b></p>
+<table class="tablebox75" align="center">
+<tr><th>&nbsp;</th><th>DLL</th><th>PLGX</th></tr>
+<tr><td>Compatibility check</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> (Weak)</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> (Strong)</td></tr>
+
+<tr><td>Authenticode signing support</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+
+<tr><td>No compilation on the user's system</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+
+<tr><td>No plugin cache</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+
+<tr><td>Linux compatibility</td>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
+</table> -->
+
 <p><b>Creating PLGX files.</b>
 PLGX files can be created from plugin sources by calling <code>KeePass.exe</code>
 with the <code>--plgx-create</code> command line option. If you additionally
@@ -464,7 +488,7 @@ that you compiled yourself. Temporary files by the IDE
 (like <code>.suo</code> and <code>.user</code> files) 
 can also be deleted.</p>
 
-<p><b>PLGX features:</b></p>
+<p><b>PLGX features.</b></p>
 <ul>
 <li>Extensible, object-oriented file format.</li>
 <li>Compression support (data files are compressed using GZip).</li>
@@ -489,7 +513,7 @@ is started the next time). An option to automatically delete old files from the
 cache is supported and enabled by default.</li>
 </ul>
 
-<p><b>PLGX limitations:</b></p>
+<p><b>PLGX limitations.</b></p>
 <ul>
 <li>Currently only C# is supported (not Visual Basic or any other .NET language).</li>
 <li>Linked resources (in different assemblies) are unsupported.</li>

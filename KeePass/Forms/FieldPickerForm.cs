@@ -142,7 +142,7 @@ namespace KeePass.Forms
 			this.Activate();
 			if(m_lvFields.Items.Count > 0)
 				UIUtil.SetFocusedItem(m_lvFields, m_lvFields.Items[0], true);
-			UIUtil.SetFocus(m_lvFields, this);
+			UIUtil.SetFocus(m_lvFields, this, true);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

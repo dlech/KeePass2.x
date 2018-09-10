@@ -413,26 +413,31 @@ namespace KeePass.UI
 
 		private static void SetCueBanner(IntPtr hWnd, string strText)
 		{
-			Debug.Assert(strText != null); if(strText == null) throw new ArgumentNullException("strText");
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+			if(strText == null) { Debug.Assert(false); strText = string.Empty; }
 
-			IntPtr pText = IntPtr.Zero;
+			IntPtr p = IntPtr.Zero;
 			try
 			{
-				pText = Marshal.StringToHGlobalUni(strText);
+				p = Marshal.StringToCoTaskMemUni(strText);
 				NativeMethods.SendMessage(hWnd, NativeMethods.EM_SETCUEBANNER,
-					IntPtr.Zero, pText);
+					IntPtr.Zero, p);
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-			finally { if(pText != IntPtr.Zero) Marshal.FreeHGlobal(pText); }
+			finally { if(p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
 		}
 
 		public static void SetCueBanner(TextBox tb, string strText)
 		{
+			if(tb == null) { Debug.Assert(false); return; }
+
 			SetCueBanner(tb.Handle, strText);
 		}
 
 		public static void SetCueBanner(ToolStripTextBox tb, string strText)
 		{
+			if(tb == null) { Debug.Assert(false); return; }
+
 			SetCueBanner(tb.TextBox, strText);
 		}
 
@@ -491,22 +496,21 @@ namespace KeePass.UI
 		public static void PrepareStandardMultilineControl(RichTextBox rtb,
 			bool bSimpleTextOnly, bool bCtrlEnterAccepts)
 		{
-			Debug.Assert(rtb != null); if(rtb == null) throw new ArgumentNullException("rtb");
+			if(rtb == null) { Debug.Assert(false); return; }
 
-			try
-			{
-				int nStyle = NativeMethods.GetWindowStyle(rtb.Handle);
-
-				if((nStyle & NativeMethods.ES_WANTRETURN) == 0)
-				{
-					NativeMethods.SetWindowLong(rtb.Handle, NativeMethods.GWL_STYLE,
-						nStyle | NativeMethods.ES_WANTRETURN);
-
-					Debug.Assert((NativeMethods.GetWindowStyle(rtb.Handle) &
-						NativeMethods.ES_WANTRETURN) != 0);
-				}
-			}
-			catch(Exception) { }
+			// See CustomRichTextBoxEx.CreateParams
+			// try
+			// {
+			//	int nStyle = NativeMethods.GetWindowStyle(rtb.Handle);
+			//	if((nStyle & NativeMethods.ES_WANTRETURN) == 0)
+			//	{
+			//		NativeMethods.SetWindowLong(rtb.Handle, NativeMethods.GWL_STYLE,
+			//			nStyle | NativeMethods.ES_WANTRETURN);
+			//		Debug.Assert((NativeMethods.GetWindowStyle(rtb.Handle) &
+			//			NativeMethods.ES_WANTRETURN) != 0);
+			//	}
+			// }
+			// catch(Exception) { }
 
 			CustomRichTextBoxEx crtb = (rtb as CustomRichTextBoxEx);
 			if(crtb != null)
@@ -1684,8 +1688,7 @@ namespace KeePass.UI
 				IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
 					NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
 
-				bool bUnicode = (WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
-					WinUtil.IsAtLeastWindowsVista);
+				bool bUnicode = (Marshal.SystemDefaultCharSize >= 2);
 				int nGetMsg = (bUnicode ? NativeMethods.HDM_GETITEMW :
 					NativeMethods.HDM_GETITEMA);
 				int nSetMsg = (bUnicode ? NativeMethods.HDM_SETITEMW :
@@ -2367,7 +2370,49 @@ namespace KeePass.UI
 			cb.AutoCompleteSource = AutoCompleteSource.ListItems;
 		}
 
+		public static void EnableAutoCompletion(TextBox tb, bool bAlsoAutoAppend,
+			string[] vItems)
+		{
+			if((tb == null) || (vItems == null)) { Debug.Assert(false); return; }
+			if(vItems.Length == 0) return;
+
+			try
+			{
+				foreach(string str in vItems)
+				{
+					if(str == null) { Debug.Assert(false); return; }
+				}
+
+				// The system/framework sorts the auto-completion list
+
+				VoidDelegate f = delegate()
+				{
+					try
+					{
+						AutoCompleteStringCollection c = new AutoCompleteStringCollection();
+						c.AddRange(vItems);
+
+						tb.AutoCompleteCustomSource = c;
+						tb.AutoCompleteSource = AutoCompleteSource.CustomSource;
+						tb.AutoCompleteMode = (bAlsoAutoAppend ?
+							AutoCompleteMode.SuggestAppend : AutoCompleteMode.Suggest);
+					}
+					catch(Exception) { Debug.Assert(false); }
+				};
+
+				if(tb.InvokeRequired || MonoWorkarounds.IsRequired(373134))
+					tb.Invoke(f);
+				else f();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		public static void SetFocus(Control c, Form fParent)
+		{
+			SetFocus(c, fParent, false);
+		}
+
+		public static void SetFocus(Control c, Form fParent, bool bToForegroundAndFocus)
 		{
 			if(c == null) { Debug.Assert(false); return; }
 			// fParent may be null
@@ -2383,12 +2428,18 @@ namespace KeePass.UI
 				if(c.CanSelect) c.Select();
 
 				// https://sourceforge.net/p/keepass/discussion/329220/thread/045940bf/
-				// if(c.CanFocus) c.Focus();
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/6834e222/
+				if(bToForegroundAndFocus && c.CanFocus) c.Focus();
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void ResetFocus(Control c, Form fParent)
+		{
+			ResetFocus(c, fParent, false);
+		}
+
+		public static void ResetFocus(Control c, Form fParent, bool bToForegroundAndFocus)
 		{
 			if(c == null) { Debug.Assert(false); return; }
 			// fParent may be null
@@ -2424,7 +2475,7 @@ namespace KeePass.UI
 					}
 				}
 
-				if(bStdSetFocus) UIUtil.SetFocus(c, fParent);
+				if(bStdSetFocus) UIUtil.SetFocus(c, fParent, bToForegroundAndFocus);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -3389,6 +3440,19 @@ namespace KeePass.UI
 			}
 
 			o = d;
+		}
+
+		private static int g_tLastDoEvents = 0;
+		internal static void DoEventsByTime(bool bForce)
+		{
+			int t = Environment.TickCount, tLast = g_tLastDoEvents;
+			int d = t - tLast;
+
+			if((d >= 50) || bForce || (tLast == 0))
+			{
+				g_tLastDoEvents = t;
+				Application.DoEvents();
+			}
 		}
 	}
 }

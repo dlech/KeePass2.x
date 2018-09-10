@@ -83,6 +83,14 @@ somewhere into the 'Plugins' folder.</p> -->
 On some Linux systems, the <code>mono-complete</code> package may be
 required for plugins to work properly.</p>
 
+<p><strong>Portability:</strong><br />
+PLGX plugins are compiled by KeePass and the generated files are stored
+in a <a href="#cache">plugin cache</a>, which by default is located in the
+user's application data directory (so, running a PLGX plugin by default
+creates files outside the KeePass application directory).
+These plugin cache files do not need to be copied to other systems though,
+because they are generated on each system and do not contain any user data.</p>
+
 <br />
 
 <h2 class="sectiontitle">
@@ -111,6 +119,7 @@ directory, you need to adjust the directory permissions yourself.</p>
 
 <br />
 
+<a name="cache"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_package_system.png" class="singleimg" alt="Computer" />&nbsp;&nbsp;Plugin
 Cache</h2>
@@ -118,7 +127,8 @@ Cache</h2>
 <p>PLGX plugins are compiled and stored in a plugin cache directory on the
 user's system. This cache highly improves the startup performance of KeePass.
 Old files are normally deleted from the cache
-automatically (this can be disabled in the plugins dialog).</p>
+automatically (this can be disabled in the plugins dialog).
+The cache does not contain any user data.</p>
 
 <p>By default, the plugin cache is located in the user's application data
 directory. However, this can be overridden using the

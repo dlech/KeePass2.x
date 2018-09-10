@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Drawing;
-using System.Threading;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Threading;
 
 using KeePass.Native;
 using KeePass.Resources;
@@ -45,7 +45,8 @@ namespace KeePass.DataExchange.Formats
 		private const string IniTypeKey = "Type";
 		private const string IniTypeValue = "WinFav-Export 1.0";
 
-		private const string LnkDescSuffix = (@" [" + PwDefs.ShortProductName + @"]");
+		private static readonly string LnkDescSuffix = " [" +
+			PwDefs.ShortProductName + "]";
 
 		public override bool SupportsImport { get { return false; } }
 		public override bool SupportsExport { get { return true; } }

@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccelKeysCheck.cs" />
+    <Compile Include="App\Configuration\TceApplication.cs" />
+    <Compile Include="App\Configuration\TceConfig.cs" />
+    <Compile Include="App\TuDefs.cs" />
     <Compile Include="FormTrlMgr.cs" />
     <Compile Include="TrlImport.cs" />
     <Compile Include="MainForm.cs">

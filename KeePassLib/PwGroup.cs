@@ -882,9 +882,12 @@ namespace KeePassLib
 			bool bStringName = sp.SearchInStringNames;
 			bool bTags = sp.SearchInTags;
 			bool bUuids = sp.SearchInUuids;
+			bool bGroupPath = sp.SearchInGroupPaths;
 			bool bGroupName = sp.SearchInGroupNames;
 			// bool bExcludeExpired = sp.ExcludeExpired;
 			// bool bRespectEntrySearchingDisabled = sp.RespectEntrySearchingDisabled;
+
+			if(bGroupPath) bGroupName = false; // Name is included in path
 
 			Regex rx = null;
 			if(sp.RegularExpression)
@@ -982,6 +985,11 @@ namespace KeePassLib
 
 					if(bUuids && (lResults.UCount == uInitialResults))
 						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, lResults);
+
+					if(bGroupPath && (lResults.UCount == uInitialResults) &&
+						(pe.ParentGroup != null))
+						SearchEvalAdd(sp, pe.ParentGroup.GetFullPath("\n", true),
+							rx, pe, lResults);
 
 					if(bGroupName && (lResults.UCount == uInitialResults) &&
 						(pe.ParentGroup != null))
@@ -1647,6 +1655,84 @@ namespace KeePassLib
 			pg.TakeOwnership(true, true, true);
 
 			return pg;
+		}
+
+		internal string[] CollectEntryStrings(GFunc<PwEntry, string> f, bool bSort)
+		{
+			if(f == null) { Debug.Assert(false); return new string[0]; }
+
+			Dictionary<string, bool> d = new Dictionary<string, bool>();
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				string str = f(pe);
+				if(str != null) d[str] = true;
+
+				return true;
+			};
+			TraverseTree(TraversalMethod.PreOrder, null, eh);
+
+			string[] v = new string[d.Count];
+			if(d.Count != 0)
+			{
+				d.Keys.CopyTo(v, 0);
+				if(bSort) Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
+			}
+
+			return v;
+		}
+
+		internal string[] GetAutoTypeSequences(bool bWithStd)
+		{
+			try
+			{
+				Dictionary<string, bool> d = new Dictionary<string, bool>();
+
+				GAction<string> fAdd = delegate(string str)
+				{
+					if(!string.IsNullOrEmpty(str)) d[str] = true;
+				};
+
+				if(bWithStd)
+				{
+					fAdd(PwDefs.DefaultAutoTypeSequence);
+					fAdd(PwDefs.DefaultAutoTypeSequenceTan);
+				}
+
+				GroupHandler gh = delegate(PwGroup pg)
+				{
+					fAdd(pg.DefaultAutoTypeSequence);
+					return true;
+				};
+
+				EntryHandler eh = delegate(PwEntry pe)
+				{
+					AutoTypeConfig c = pe.AutoType;
+
+					fAdd(c.DefaultSequence);
+					foreach(AutoTypeAssociation a in c.Associations)
+					{
+						fAdd(a.Sequence);
+					}
+
+					return true;
+				};
+
+				gh(this);
+				TraverseTree(TraversalMethod.PreOrder, gh, eh);
+
+				string[] v = new string[d.Count];
+				if(d.Count != 0)
+				{
+					d.Keys.CopyTo(v, 0);
+					Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
+				}
+
+				return v;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return new string[0];
 		}
 	}
 

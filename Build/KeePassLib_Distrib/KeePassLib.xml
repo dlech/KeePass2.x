@@ -180,6 +180,36 @@
             Contains KeePassLib-global definitions and enums.
             </summary>
         </member>
+        <member name="F:KeePassLib.PwDefs.TitleField">
+            <summary>
+            Default identifier string for the title field.
+            Should not contain spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.UserNameField">
+            <summary>
+            Default identifier string for the user name field.
+            Should not contain spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.PasswordField">
+            <summary>
+            Default identifier string for the password field.
+            Should not contain spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.UrlField">
+            <summary>
+            Default identifier string for the URL field.
+            Should not contain spaces, tabs or other whitespace.
+            </summary>
+        </member>
+        <member name="F:KeePassLib.PwDefs.NotesField">
+            <summary>
+            Default identifier string for the notes field.
+            Should not contain spaces, tabs or other whitespace.
+            </summary>
+        </member>
         <member name="F:KeePassLib.PwDefs.ProductName">
             <summary>
             The product name.
@@ -243,40 +273,16 @@
             about the latest KeePass version available on the website.
             </summary>
         </member>
+        <member name="F:KeePassLib.PwDefs.DtDefaultNow">
+            <summary>
+            A <c>DateTime</c> object that represents the time when the assembly
+            was loaded.
+            </summary>
+        </member>
         <member name="F:KeePassLib.PwDefs.DefaultKeyEncryptionRounds">
             <summary>
             Default number of master key encryption/transformation rounds
             (making dictionary attacks harder).
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.TitleField">
-            <summary>
-            Default identifier string for the title field. Should not contain
-            spaces, tabs or other whitespace.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.UserNameField">
-            <summary>
-            Default identifier string for the user name field. Should not contain
-            spaces, tabs or other whitespace.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.PasswordField">
-            <summary>
-            Default identifier string for the password field. Should not contain
-            spaces, tabs or other whitespace.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.UrlField">
-            <summary>
-            Default identifier string for the URL field. Should not contain
-            spaces, tabs or other whitespace.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.NotesField">
-            <summary>
-            Default identifier string for the notes field. Should not contain
-            spaces, tabs or other whitespace.
             </summary>
         </member>
         <member name="F:KeePassLib.PwDefs.TanIndexField">
@@ -309,12 +315,6 @@
             <summary>
             Default auto-type keystroke sequence for TAN entries. If no custom
             sequence is specified, this sequence is used.
-            </summary>
-        </member>
-        <member name="F:KeePassLib.PwDefs.DtDefaultNow">
-            <summary>
-            A <c>DateTime</c> object that represents the time when the assembly
-            was loaded.
             </summary>
         </member>
         <member name="M:KeePassLib.PwDefs.IsStandardField(System.String)">
@@ -3195,12 +3195,13 @@
         </member>
         <member name="T:KeePassLib.Keys.KcpPassword">
             <summary>
-            Master password / passphrase as provided by the user.
+            Master password/passphrase as provided by the user.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KcpPassword.Password">
             <summary>
-            Get the password as protected string.
+            Get the password as protected string. This is <c>null</c>
+            unless remembering the password has been turned on.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KcpPassword.KeyData">

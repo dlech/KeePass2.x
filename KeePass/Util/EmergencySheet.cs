@@ -89,16 +89,22 @@ namespace KeePass.Util
 
 		private static string GenerateHtml(PwDatabase pd, string strName)
 		{
+			bool bRtl = Program.Translation.Properties.RightToLeft;
+			string strLogLeft = (bRtl ? "right" : "left");
+			string strLogRight = (bRtl ? "left" : "right");
+
 			GFunc<string, string> h = new GFunc<string, string>(StrUtil.StringToHtml);
 			GFunc<string, string> ne = delegate(string str)
 			{
 				if(string.IsNullOrEmpty(str)) return "&nbsp;";
 				return str;
 			};
+			GFunc<string, string> ltrPath = delegate(string str)
+			{
+				return (bRtl ? StrUtil.EnsureLtrPath(str) : str);
+			};
 
 			StringBuilder sb = new StringBuilder();
-			bool bRtl = Program.Translation.Properties.RightToLeft;
-
 			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
 			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 
@@ -122,8 +128,13 @@ namespace KeePass.Util
 			sb.AppendLine("<style type=\"text/css\">");
 			sb.AppendLine("/* <![CDATA[ */");
 
+			string strFont = "\"Arial\", \"Tahoma\", \"Verdana\", sans-serif;";
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
+			if(Program.Translation.IsFor("fa"))
+				strFont = "\"Tahoma\", \"Arial\", \"Verdana\", sans-serif;";
+
 			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
-			sb.AppendLine("\tfont-family: \"Arial\", \"Tahoma\", \"Verdana\", sans-serif;");
+			sb.AppendLine("\tfont-family: " + strFont);
 			sb.AppendLine("\tfont-size: 12pt;");
 			sb.AppendLine("}");
 
@@ -251,7 +262,7 @@ namespace KeePass.Util
 			ia.Load(Properties.Resources.Images_App_HighRes);
 
 			sb.AppendLine("<table class=\"docheader\" cellspacing=\"0\" cellpadding=\"0\"><tr>");
-			sb.AppendLine("<td style=\"text-align: left;\">");
+			sb.AppendLine("<td style=\"text-align: " + strLogLeft + ";\">");
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
 				"KeePass")) + "\" width=\"48\" height=\"48\" alt=\"" +
 				h(PwDefs.ShortProductName) + "\" /></td>");
@@ -259,27 +270,33 @@ namespace KeePass.Util
 			sb.AppendLine("<h1>" + h(PwDefs.ShortProductName) + "</h1>");
 			sb.AppendLine("<h2>" + h(KPRes.EmergencySheet) + "</h2>");
 			sb.AppendLine("</td>");
-			sb.AppendLine("<td style=\"text-align: right;\">");
+			sb.AppendLine("<td style=\"text-align: " + strLogRight + ";\">");
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
 				"KOrganizer")) + "\" width=\"48\" height=\"48\" alt=\"" +
 				h(KPRes.EmergencySheet) + "\" /></td>");
 			sb.AppendLine("</tr></table>");
 
-			sb.AppendLine("<p style=\"text-align: right;\">" + h(
-				TimeUtil.ToDisplayStringDateOnly(DateTime.Now)) + "</p>");
+			sb.AppendLine("<p style=\"text-align: " + strLogRight + ";\">" +
+				h(TimeUtil.ToDisplayStringDateOnly(DateTime.Now)) + "</p>");
 
 			const string strFillInit = "<table class=\"fillinline\"><tr><td>";
+			const string strFillInitLtr = "<table class=\"fillinline\"><tr><td dir=\"ltr\">";
 			const string strFillEnd = "</td></tr></table>";
 			string strFillSym = "<img src=\"" + GfxUtil.ImageToDataUri(
 				Properties.Resources.B48x35_WritingHand) +
-				"\" style=\"width: 1.3714em; height: 1em;\" alt=\"&#x270D;\" />";
+				"\" style=\"width: 1.3714em; height: 1em;" +
+				(bRtl ? " transform: scaleX(-1);" : string.Empty) +
+				"\" alt=\"&#x270D;\" />";
 			string strFill = strFillInit + ne(string.Empty) +
 				// "</td><td style=\"text-align: right;\"><span class=\"fillinlinesym\">&#x270D;</span>" +
-				"</td><td style=\"text-align: right;\">" + strFillSym + strFillEnd;
+				"</td><td style=\"text-align: " + strLogRight + ";\">" +
+				strFillSym + strFillEnd;
+
+			string strFillInitEx = (bRtl ? strFillInitLtr : strFillInit);
 
 			IOConnectionInfo ioc = pd.IOConnectionInfo;
 			sb.AppendLine("<p><strong>" + h(KPRes.DatabaseFile) + ":</strong></p>");
-			sb.AppendLine(strFillInit + ne(h(ioc.Path)) + strFillEnd);
+			sb.AppendLine(strFillInitEx + ne(h(ltrPath(ioc.Path))) + strFillEnd);
 
 			// if(pd.Name.Length > 0)
 			//	sb.AppendLine("<p><strong>" + h(KPRes.Name) + ":</strong> " +
@@ -317,7 +334,7 @@ namespace KeePass.Util
 					{
 						sb.AppendLine("<li><p><strong>" + h(KPRes.KeyFile) +
 							":</strong></p>");
-						sb.AppendLine(strFillInit + ne(h(kf.Path)) + strFillEnd);
+						sb.AppendLine(strFillInitEx + ne(h(ltrPath(kf.Path))) + strFillEnd);
 
 						sb.AppendLine("<p>" + h(KPRes.BackupFile) + " " +
 							h(KPRes.BackupLocation) + "</p>");
@@ -329,11 +346,11 @@ namespace KeePass.Util
 					{
 						sb.AppendLine("<li><p><strong>" + h(KPRes.WindowsUserAccount) +
 							":</strong></p>");
-						sb.Append(strFillInit);
+						sb.Append(strFillInitEx);
 						try
 						{
-							sb.Append(ne(h(Environment.UserDomainName + "\\" +
-								Environment.UserName)));
+							sb.Append(ne(h(ltrPath(Environment.UserDomainName +
+								"\\" + Environment.UserName))));
 						}
 						catch(Exception) { Debug.Assert(false); sb.Append(ne(string.Empty)); }
 						sb.AppendLine(strFillEnd);
@@ -346,7 +363,7 @@ namespace KeePass.Util
 					{
 						sb.AppendLine("<li><p><strong>" + h(KPRes.KeyProvider) +
 							":</strong></p>");
-						sb.AppendLine(strFillInit + ne(h(c.Name)) + strFillEnd);
+						sb.AppendLine(strFillInitEx + ne(h(ltrPath(c.Name))) + strFillEnd);
 
 						sb.AppendLine("</li>");
 					}

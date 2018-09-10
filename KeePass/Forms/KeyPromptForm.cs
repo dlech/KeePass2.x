@@ -37,6 +37,7 @@ using KeePassLib;
 using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Native;
+using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -174,11 +175,11 @@ namespace KeePass.Forms
 				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PasswordStdIn];
 				if(str != null)
 				{
-					KcpPassword kcpPw = KeyUtil.ReadPasswordStdIn(true);
-					if(kcpPw != null)
+					ProtectedString ps = KeyUtil.ReadPasswordStdIn(true);
+					if(ps != null)
 					{
 						m_cbPassword.Checked = true;
-						m_tbPassword.TextEx = kcpPw.Password;
+						m_tbPassword.TextEx = ps;
 					}
 				}
 
@@ -260,9 +261,9 @@ namespace KeePass.Forms
 		{
 			// Focusing doesn't always work in OnFormLoad;
 			// https://sourceforge.net/p/keepass/feature-requests/1735/
-			if(m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this);
-			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this);
-			else if(m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this);
+			if(m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this, true);
+			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
+			else if(m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this, true);
 			else { Debug.Assert(false); }
 		}
 
@@ -294,7 +295,11 @@ namespace KeePass.Forms
 			if(m_cbPassword.Checked) // Use a password
 			{
 				byte[] pb = m_tbPassword.TextEx.ReadUtf8();
-				try { m_pKey.AddUserKey(new KcpPassword(pb)); }
+				try
+				{
+					m_pKey.AddUserKey(new KcpPassword(pb,
+						Program.Config.Security.MasterPassword.RememberWhileOpen));
+				}
 				finally { MemUtil.ZeroByteArray(pb); }
 			}
 

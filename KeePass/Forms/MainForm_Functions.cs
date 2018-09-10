@@ -110,7 +110,8 @@ namespace KeePass.Forms
 		private int m_nClipClearMax = 0;
 		private int m_nClipClearCur = -1;
 
-		private string m_strNeverExpiresText = string.Empty;
+		private readonly string m_strNeverExpiresText = KPRes.NeverExpires;
+		private readonly string m_strStatusReady = KPRes.Ready;
 
 		private bool m_bSimpleTanView = true;
 		private bool m_bShowTanIndices = true;
@@ -757,7 +758,7 @@ namespace KeePass.Forms
 		/// <param name="strStatusText">New status bar text.</param>
 		public void SetStatusEx(string strStatusText)
 		{
-			if(strStatusText == null) m_statusPartInfo.Text = KPRes.Ready;
+			if(strStatusText == null) m_statusPartInfo.Text = m_strStatusReady;
 			else m_statusPartInfo.Text = strStatusText;
 		}
 
@@ -1868,9 +1869,10 @@ namespace KeePass.Forms
 			}
 			else sp.SearchString = strSearch;
 
-			sp.SearchInTitles = sp.SearchInUserNames =
-				sp.SearchInUrls = sp.SearchInNotes = sp.SearchInOther =
-				sp.SearchInUuids = sp.SearchInGroupNames = sp.SearchInTags = true;
+			sp.SearchInTitles = sp.SearchInUserNames = sp.SearchInUrls =
+				sp.SearchInNotes = sp.SearchInOther = sp.SearchInUuids =
+				sp.SearchInGroupPaths = sp.SearchInGroupNames =
+				sp.SearchInTags = true;
 			sp.SearchInPasswords = Program.Config.MainWindow.QuickFindSearchInPasswords;
 			sp.RespectEntrySearchingDisabled = bRespectEntrySearchingDisabled;
 
@@ -2077,12 +2079,20 @@ namespace KeePass.Forms
 		}
 
 		/// <summary>
-		/// Open a database. This function opens the specified database and updates
-		/// the user interface.
+		/// Open a database. This function opens the specified database and
+		/// updates the user interface.
 		/// </summary>
 		public void OpenDatabase(IOConnectionInfo ioConnection, CompositeKey cmpKey,
 			bool bOpenLocal)
 		{
+			if((ioConnection != null) && (ioConnection.Path.Length > 0) &&
+				ioConnection.IsLocalFile() && !UrlUtil.IsAbsolutePath(ioConnection.Path))
+			{
+				ioConnection = ioConnection.CloneDeep();
+				ioConnection.Path = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(),
+					ioConnection.Path);
+			}
+
 			if(!m_bFormLoaded && Program.Config.Application.Start.MinimizedAndLocked &&
 				(ioConnection != null) && (ioConnection.Path.Length > 0))
 			{
@@ -2746,33 +2756,22 @@ namespace KeePass.Forms
 
 		internal void HandleHotKey(int wParam)
 		{
-			switch(wParam)
+			if(wParam == AppDefs.GlobalHotKeyId.AutoType)
+				ExecuteGlobalAutoType();
+			else if(wParam == AppDefs.GlobalHotKeyId.AutoTypeSelected)
+				ExecuteEntryAutoType();
+			else if(wParam == AppDefs.GlobalHotKeyId.ShowWindow)
 			{
-				case AppDefs.GlobalHotKeyId.AutoType:
-					ExecuteGlobalAutoType();
-					break;
-
-				case AppDefs.GlobalHotKeyId.AutoTypeSelected:
-					ExecuteEntryAutoType();
-					break;
-
-				case AppDefs.GlobalHotKeyId.ShowWindow:
-					bool bWndVisible = ((this.WindowState != FormWindowState.Minimized) &&
-						!IsTrayed());
-					EnsureVisibleForegroundWindow(true, true);
-					if(bWndVisible && IsFileLocked(null) && IsCommandTypeInvokable(
-						null, AppCommandType.Lock))
-						OnFileLock(null, EventArgs.Empty); // Unlock
-					break;
-
-				case AppDefs.GlobalHotKeyId.EntryMenu:
-					EntryMenu.Show();
-					break;
-
-				default:
-					Debug.Assert(false);
-					break;
+				bool bWndVisible = ((this.WindowState != FormWindowState.Minimized) &&
+					!IsTrayed());
+				EnsureVisibleForegroundWindow(true, true);
+				if(bWndVisible && IsFileLocked(null) && IsCommandTypeInvokable(
+					null, AppCommandType.Lock))
+					OnFileLock(null, EventArgs.Empty); // Unlock
 			}
+			else if(wParam == AppDefs.GlobalHotKeyId.EntryMenu)
+				EntryMenu.Show();
+			else { Debug.Assert(false); }
 		}
 
 		protected override void WndProc(ref Message m)
@@ -4288,7 +4287,7 @@ namespace KeePass.Forms
 				// Redraw the UI, but only when the UI is blocked (otherwise
 				// the Application.DoEvents call could indirectly run
 				// triggers/automations now, which could result in problems)
-				Application.DoEvents();
+				UIUtil.DoEventsByTime(true);
 			}
 		}
 

@@ -163,7 +163,7 @@ namespace KeePass.Forms
 				this.Activate();
 			}
 
-			UIUtil.SetFocus(m_tbSelected, this);
+			UIUtil.SetFocus(m_tbSelected, this, m_bSetForeground);
 			m_bFormLoaded = true;
 		}
 
