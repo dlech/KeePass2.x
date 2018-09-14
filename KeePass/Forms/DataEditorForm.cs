@@ -218,7 +218,7 @@ namespace KeePass.Forms
 
 			this.Text = (((m_strDataDesc.Length > 0) ? (m_strDataDesc +
 				(m_bModified ? "*" : string.Empty) + " - ") : string.Empty) +
-				PwDefs.ShortProductName + " " + KPRes.DataEditor);
+				KPRes.DataEditorKP);
 
 			// m_menuViewFont.Enabled = (m_bdc == BinaryDataClass.Text);
 			UIUtil.SetChecked(m_menuViewWordWrap, m_rtbText.WordWrap);
@@ -504,14 +504,20 @@ namespace KeePass.Forms
 
 		private void OnFontComboKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			if(e.KeyCode == Keys.Return) // Return == Enter
+			{
+				UIUtil.SetHandled(e, true);
 				OnFontComboSelectedIndexChanged(sender, e);
+			}
 		}
 
 		private void OnFontSizeComboKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			if(e.KeyCode == Keys.Return) // Return == Enter
+			{
+				UIUtil.SetHandled(e, true);
 				OnFontSizeComboSelectedIndexChanged(sender, e);
+			}
 		}
 
 		private void OnEditCut(object sender, EventArgs e)
@@ -625,17 +631,16 @@ namespace KeePass.Forms
 
 		private void OnTextFindKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
-
 				OnTextFind();
 			}
 		}
 
 		private void OnTextFindKeyUp(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 				UIUtil.SetHandled(e, true);
 		}
 

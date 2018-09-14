@@ -134,7 +134,7 @@ namespace KeePass.UI
 			m_vNeedNonShiftModifier.Add(Keys.Subtract);
 			m_vNeedNonShiftModifier.Add(Keys.Divide);
 			m_vNeedNonShiftModifier.Add(Keys.Decimal);
-			m_vNeedNonShiftModifier.Add(Keys.Return);
+			m_vNeedNonShiftModifier.Add(Keys.Return); // Return == Enter
 			m_vNeedNonShiftModifier.Add(Keys.Escape);
 			m_vNeedNonShiftModifier.Add(Keys.NumLock);
 			m_vNeedNonShiftModifier.Add(Keys.Scroll);

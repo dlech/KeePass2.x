@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -640,6 +641,30 @@ namespace KeePass.App.Configuration
 			if(m_nWidth >= 0) return m_nWidth;
 			return nDefaultWidth;
 		}
+
+		internal string GetTypeNameEx()
+		{
+			try
+			{
+				string str = m_type.ToString();
+
+				if(!string.IsNullOrEmpty(m_strCustomName))
+					str += " - " + m_strCustomName;
+
+				return str;
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return ((long)m_type).ToString(NumberFormatInfo.InvariantInfo);
+		}
+
+#if DEBUG
+		public override string ToString()
+		{
+			return (GetTypeNameEx() + ", Width: " + m_nWidth.ToString() +
+				", Hide: " + m_bHide.ToString());
+		}
+#endif
 
 		public static bool IsTimeColumn(AceColumnType t)
 		{

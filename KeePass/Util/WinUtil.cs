@@ -47,6 +47,43 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
+	public sealed class OpenUrlEventArgs : EventArgs
+	{
+		private string m_strUrl;
+		public string Url
+		{
+			get { return m_strUrl; }
+			set { m_strUrl = value; }
+		}
+
+		private readonly PwEntry m_pe;
+		public PwEntry Entry
+		{
+			get { return m_pe; }
+		}
+
+		private readonly bool m_bAllowOverride;
+		public bool AllowOverride
+		{
+			get { return m_bAllowOverride; }
+		}
+
+		private readonly string m_strBaseRaw;
+		public string BaseRaw
+		{
+			get { return m_strBaseRaw; }
+		}
+
+		public OpenUrlEventArgs(string strUrlToOpen, PwEntry peDataSource,
+			bool bAllowOverride, string strBaseRaw)
+		{
+			m_strUrl = strUrlToOpen;
+			m_pe = peDataSource;
+			m_bAllowOverride = bAllowOverride;
+			m_strBaseRaw = strBaseRaw;
+		}
+	}
+
 	public static class WinUtil
 	{
 		private static bool m_bIsWindows9x = false;
@@ -62,6 +99,8 @@ namespace KeePass.Util
 		private static string m_strExePath = null;
 
 		private static ulong m_uFrameworkVersion = 0;
+
+		public static event EventHandler<OpenUrlEventArgs> OpenUrlPre;
 
 		public static bool IsWindows9x
 		{
@@ -204,7 +243,17 @@ namespace KeePass.Util
 		private static void OpenUrlPriv(string strUrlToOpen, PwEntry peDataSource,
 			bool bAllowOverride, string strBaseRaw)
 		{
-			if(strUrlToOpen == null) { Debug.Assert(false); return; }
+			if(string.IsNullOrEmpty(strUrlToOpen)) { Debug.Assert(false); return; }
+
+			if(WinUtil.OpenUrlPre != null)
+			{
+				OpenUrlEventArgs e = new OpenUrlEventArgs(strUrlToOpen, peDataSource,
+					bAllowOverride, strBaseRaw);
+				WinUtil.OpenUrlPre(null, e);
+				strUrlToOpen = e.Url;
+
+				if(string.IsNullOrEmpty(strUrlToOpen)) return;
+			}
 
 			string strPrevWorkDir = WinUtil.GetWorkingDirectory();
 			string strThisExe = WinUtil.GetExecutable();
@@ -369,6 +418,25 @@ namespace KeePass.Util
 			}
 
 			return m_strExePath;
+		}
+
+		private static string g_strAsmVersion = null;
+		internal static string GetAssemblyVersion()
+		{
+			if(g_strAsmVersion == null)
+			{
+				try
+				{
+					Version v = typeof(WinUtil).Assembly.GetName().Version;
+					g_strAsmVersion = v.ToString(4);
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				if(g_strAsmVersion == null)
+					g_strAsmVersion = StrUtil.VersionToString(PwDefs.FileVersion64, 4);
+			}
+
+			return g_strAsmVersion;
 		}
 
 		/// <summary>

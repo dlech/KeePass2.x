@@ -260,11 +260,11 @@ namespace KeePassLib.Serialization
 #endif
 
 		// Web request methods
-		public const string WrmDeleteFile = "DELETEFILE";
-		public const string WrmMoveFile = "MOVEFILE";
+		public static readonly string WrmDeleteFile = "DELETEFILE";
+		public static readonly string WrmMoveFile = "MOVEFILE";
 
 		// Web request headers
-		public const string WrhMoveFileTo = "MoveFileTo";
+		public static readonly string WrhMoveFileTo = "MoveFileTo";
 
 		public static event EventHandler<IOAccessEventArgs> IOAccessPre;
 

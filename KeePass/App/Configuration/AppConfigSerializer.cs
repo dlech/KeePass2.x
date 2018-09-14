@@ -76,9 +76,9 @@ namespace KeePass.App.Configuration
 			{
 				m_strBaseName = value;
 
-				m_strCreateDir = null;
+				m_strCreateDir = null; // Invalidate paths
 				m_strCreateDirLocal = null;
-				m_strEnforcedConfigFile = null; // Invalidate paths
+				m_strEnforcedConfigFile = null;
 				m_strGlobalConfigFile = null;
 				m_strUserConfigFile = null;
 			}
@@ -155,8 +155,8 @@ namespace KeePass.App.Configuration
 
 				m_strCreateDir = strUserDir + strBaseDirName;
 				m_strCreateDirLocal = strUserDirLocal + strBaseDirName;
-				m_strUserConfigFile = m_strCreateDir + Path.DirectorySeparatorChar +
-					strBaseDirName + ".config.xml";
+				m_strUserConfigFile = UrlUtil.EnsureTerminatingSeparator(
+					m_strCreateDir, false) + strBaseDirName + ".config.xml";
 			}
 
 			string strLocalOvr = Program.CommandLineArgs[
@@ -167,18 +167,24 @@ namespace KeePass.App.Configuration
 					WinUtil.GetWorkingDirectory(), false);
 				m_strUserConfigFile = UrlUtil.MakeAbsolutePath(strWD +
 					"Sentinel.txt", strLocalOvr);
+				// Do not change m_strCreateDir, as it's returned from
+				// the AppDataDirectory property
 			}
 
 			Debug.Assert(!string.IsNullOrEmpty(m_strCreateDir));
 		}
 
-		private static void EnsureAppDataDirAvailable()
+		private static void EnsureAppDataDirAvailable(string strForFile)
 		{
+			if(string.IsNullOrEmpty(strForFile)) { Debug.Assert(false); return; }
 			if(string.IsNullOrEmpty(m_strCreateDir)) { Debug.Assert(false); return; }
+
+			string strPre = UrlUtil.EnsureTerminatingSeparator(m_strCreateDir, false);
+			if(!strForFile.StartsWith(strPre, StrUtil.CaseIgnoreCmp)) return;
 
 			try
 			{
-				if(Directory.Exists(m_strCreateDir) == false)
+				if(!Directory.Exists(m_strCreateDir))
 					Directory.CreateDirectory(m_strCreateDir);
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -366,7 +372,7 @@ namespace KeePass.App.Configuration
 
 			if(bPreferUser)
 			{
-				EnsureAppDataDirAvailable();
+				EnsureAppDataDirAvailable(m_strUserConfigFile);
 				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
 
 				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
@@ -375,7 +381,7 @@ namespace KeePass.App.Configuration
 			{
 				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
 
-				EnsureAppDataDirAvailable();
+				EnsureAppDataDirAvailable(m_strUserConfigFile);
 				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
 			}
 

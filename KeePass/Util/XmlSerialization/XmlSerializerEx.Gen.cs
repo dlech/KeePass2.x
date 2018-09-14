@@ -241,6 +241,9 @@ namespace KeePass.Util.XmlSerialization
 					case "PluginCachePath":
 						o.PluginCachePath = ReadString(xr);
 						break;
+					case "PluginCompatibility":
+						o.PluginCompatibility = ReadListOfString(xr);
+						break;
 					case "ExpirySoonDays":
 						o.ExpirySoonDays = ReadInt32(xr);
 						break;
@@ -1340,6 +1343,33 @@ namespace KeePass.Util.XmlSerialization
 			return o;
 		}
 
+		private static System.Collections.Generic.List<System.String> ReadListOfString(XmlReader xr)
+		{
+			System.Collections.Generic.List<System.String> o = new System.Collections.Generic.List<System.String>();
+
+			if(SkipEmptyElement(xr)) return o;
+
+			Debug.Assert(xr.NodeType == XmlNodeType.Element);
+			xr.ReadStartElement();
+			xr.MoveToContent();
+
+			while(true)
+			{
+				XmlNodeType nt = xr.NodeType;
+				if((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+				if(nt != XmlNodeType.Element) { Debug.Assert(false); continue; }
+
+				System.String oElem = ReadString(xr);
+				o.Add(oElem);
+
+				xr.MoveToContent();
+			}
+
+			Debug.Assert(xr.NodeType == XmlNodeType.EndElement);
+			xr.ReadEndElement();
+			return o;
+		}
+
 		private static System.Int32 ReadInt32(XmlReader xr)
 		{
 			string strValue = xr.ReadElementString();
@@ -1869,6 +1899,9 @@ namespace KeePass.Util.XmlSerialization
 					case "MinimumQuality":
 						o.MinimumQuality = ReadUInt32(xr);
 						break;
+					case "RememberWhileOpen":
+						o.RememberWhileOpen = ReadBoolean(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();
@@ -2038,6 +2071,9 @@ namespace KeePass.Util.XmlSerialization
 					case "SearchInUuids":
 						o.SearchInUuids = ReadBoolean(xr);
 						break;
+					case "SearchInGroupPaths":
+						o.SearchInGroupPaths = ReadBoolean(xr);
+						break;
 					case "SearchInGroupNames":
 						o.SearchInGroupNames = ReadBoolean(xr);
 						break;
@@ -2123,33 +2159,6 @@ namespace KeePass.Util.XmlSerialization
 						xr.Skip();
 						break;
 				}
-
-				xr.MoveToContent();
-			}
-
-			Debug.Assert(xr.NodeType == XmlNodeType.EndElement);
-			xr.ReadEndElement();
-			return o;
-		}
-
-		private static System.Collections.Generic.List<System.String> ReadListOfString(XmlReader xr)
-		{
-			System.Collections.Generic.List<System.String> o = new System.Collections.Generic.List<System.String>();
-
-			if(SkipEmptyElement(xr)) return o;
-
-			Debug.Assert(xr.NodeType == XmlNodeType.Element);
-			xr.ReadStartElement();
-			xr.MoveToContent();
-
-			while(true)
-			{
-				XmlNodeType nt = xr.NodeType;
-				if((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
-				if(nt != XmlNodeType.Element) { Debug.Assert(false); continue; }
-
-				System.String oElem = ReadString(xr);
-				o.Add(oElem);
 
 				xr.MoveToContent();
 			}

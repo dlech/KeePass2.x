@@ -94,22 +94,26 @@ namespace KeePass.DataExchange
 
 		private static KdbErrorCode SetDatabaseKey(KdbManager mgr, CompositeKey pwKey)
 		{
+			string strPassword = null;
+			if(pwKey.ContainsType(typeof(KcpPassword)))
+			{
+				KcpPassword p = (pwKey.GetUserKey(typeof(KcpPassword)) as KcpPassword);
+				ProtectedString ps = ((p != null) ? p.Password : null);
+				if(ps == null)
+					throw new Exception(KPRes.OptionReqOn + @" '" +
+						KPRes.MasterPasswordRmbWhileOpen + @"'.");
+				strPassword = ps.ReadString();
+			}
+
+			string strKeyFile = null;
+			if(pwKey.ContainsType(typeof(KcpKeyFile)))
+				strKeyFile = (pwKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).Path;
+
 			KdbErrorCode e;
-
-			bool bPassword = pwKey.ContainsType(typeof(KcpPassword));
-			bool bKeyFile = pwKey.ContainsType(typeof(KcpKeyFile));
-
-			string strPassword = (bPassword ? (pwKey.GetUserKey(
-				typeof(KcpPassword)) as KcpPassword).Password.ReadString() : string.Empty);
-			string strKeyFile = (bKeyFile ? (pwKey.GetUserKey(
-				typeof(KcpKeyFile)) as KcpKeyFile).Path : string.Empty);
-
-			if(bPassword && bKeyFile)
+			if(!string.IsNullOrEmpty(strKeyFile))
 				e = mgr.SetMasterKey(strKeyFile, true, strPassword, IntPtr.Zero, false);
-			else if(bPassword && !bKeyFile)
+			else if(strPassword != null)
 				e = mgr.SetMasterKey(strPassword, false, null, IntPtr.Zero, false);
-			else if(!bPassword && bKeyFile)
-				e = mgr.SetMasterKey(strKeyFile, true, null, IntPtr.Zero, false);
 			else if(pwKey.ContainsType(typeof(KcpUserAccount)))
 				throw new Exception(KPRes.KdbWUA);
 			else throw new Exception(KLRes.InvalidCompositeKey);

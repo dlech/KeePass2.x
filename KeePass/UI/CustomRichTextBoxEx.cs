@@ -26,10 +26,12 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.Native;
 using KeePass.Util;
 
-using KeePassLib.Native;
 using KeePassLib.Utility;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.UI
 {
@@ -56,6 +58,28 @@ namespace KeePass.UI
 		{
 			get { return m_bCtrlEnterAccepts; }
 			set { m_bCtrlEnterAccepts = value; }
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams cp = base.CreateParams;
+
+				if(!Program.DesignMode)
+				{
+					// Mono throws an exception when trying to get the
+					// Multiline property while constructing the object
+					if(!MonoWorkarounds.IsRequired())
+					{
+						if(this.Multiline) cp.Style |= NativeMethods.ES_WANTRETURN;
+					}
+				}
+
+				return cp;
+			}
 		}
 
 		public CustomRichTextBoxEx() : base()
@@ -137,8 +161,8 @@ namespace KeePass.UI
 				return;
 			}
 
-			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
-				(e.KeyCode == Keys.Enter)))
+			// Return == Enter
+			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
 			{
 				UIUtil.SetHandled(e, true);
 				Debug.Assert(this.Multiline);
@@ -180,8 +204,8 @@ namespace KeePass.UI
 				return;
 			}
 
-			if(m_bCtrlEnterAccepts && e.Control && ((e.KeyCode == Keys.Return) ||
-				(e.KeyCode == Keys.Enter)))
+			// Return == Enter
+			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
 			{
 				UIUtil.SetHandled(e, true);
 				return;
@@ -317,6 +341,18 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			return true;
+		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			Keys k = (keyData & Keys.KeyCode);
+
+			Debug.Assert(Keys.Return == Keys.Enter);
+			if((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
+				Keys.None) && this.Multiline)
+				return false; // New line in rich text box
+
+			return base.ProcessDialogKey(keyData);
 		}
 
 		// //////////////////////////////////////////////////////////////////

@@ -64,7 +64,7 @@ namespace KeePass.UI
 			m_pbProgress.Visible = true;
 
 			m_bStartedLogging = true;
-			this.SetText(strOperation, LogStatusType.Info);
+			SetText(strOperation, LogStatusType.Info);
 		}
 
 		public void EndLogging()
@@ -85,12 +85,16 @@ namespace KeePass.UI
 		{
 			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
 
-			if((m_pbProgress != null) && (uPercent != m_uLastPercent))
+			if(m_pbProgress != null)
 			{
-				m_pbProgress.Value = (int)uPercent;
-				m_uLastPercent = uPercent;
+				if(uPercent != m_uLastPercent)
+				{
+					m_pbProgress.Value = (int)uPercent;
+					m_uLastPercent = uPercent;
 
-				Application.DoEvents();
+					UIUtil.DoEventsByTime(true);
+				}
+				else UIUtil.DoEventsByTime(false);
 			}
 
 			return true;
@@ -103,7 +107,8 @@ namespace KeePass.UI
 			if((m_sbText != null) && (lsType == LogStatusType.Info))
 			{
 				m_sbText.Text = strNewText;
-				Application.DoEvents();
+
+				UIUtil.DoEventsByTime(true);
 			}
 
 			return true;
@@ -112,6 +117,8 @@ namespace KeePass.UI
 		public bool ContinueWork()
 		{
 			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
+
+			UIUtil.DoEventsByTime(false);
 			return true;
 		}
 	}

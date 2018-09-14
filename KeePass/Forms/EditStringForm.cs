@@ -51,6 +51,16 @@ namespace KeePass.Forms
 
 		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 
+		private bool m_bReadOnly = false;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(false)]
+		public bool ReadOnlyEx
+		{
+			get { return m_bReadOnly; }
+			set { m_bReadOnly = value; }
+		}
+
 		public EditStringForm()
 		{
 			InitializeComponent();
@@ -111,8 +121,16 @@ namespace KeePass.Forms
 			}
 
 			ValidateStringNameUI();
-
 			PopulateNamesComboBox();
+
+			if(m_bReadOnly)
+			{
+				m_cmbStringName.Enabled = false;
+				m_richStringValue.ReadOnly = true;
+				m_cbProtect.Enabled = false;
+				// m_btnOK.Enabled = false; // See ValidateStringNameUI
+			}
+
 			// UIUtil.SetFocus(..., this); // See PopulateNamesComboBox
 		}
 
@@ -128,6 +146,7 @@ namespace KeePass.Forms
 			if(bError) m_cmbStringName.BackColor = AppDefs.ColorEditError;
 			else m_cmbStringName.ResetBackColor();
 
+			b &= !m_bReadOnly;
 			m_btnOK.Enabled = b;
 			return b;			
 		}
@@ -190,6 +209,8 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
+			if(m_bReadOnly) { Debug.Assert(false); return; }
+
 			string strName = m_cmbStringName.Text;
 
 			if(!ValidateStringNameUI())
@@ -286,8 +307,8 @@ namespace KeePass.Forms
 				m_cmbStringName.Items.Add(str);
 
 			if(m_strStringName == null)
-				UIUtil.SetFocus(m_cmbStringName, this);
-			else UIUtil.SetFocus(m_richStringValue, this);
+				UIUtil.SetFocus(m_cmbStringName, this, true);
+			else UIUtil.SetFocus(m_richStringValue, this, true);
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)
@@ -303,14 +324,6 @@ namespace KeePass.Forms
 		private void OnNameTextChanged(object sender, EventArgs e)
 		{
 			ValidateStringNameUI();
-		}
-
-		protected override bool ProcessDialogKey(Keys keyData)
-		{
-			if(((keyData == Keys.Return) || (keyData == Keys.Enter)) && m_richStringValue.Focused)
-				return false; // Forward to RichTextBox
-
-			return base.ProcessDialogKey(keyData);
 		}
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -38,12 +39,12 @@ using KeePassLib.Serialization;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
 
+using TrlUtil.App;
+
 namespace TrlUtil
 {
 	public partial class MainForm : Form
 	{
-		private const string TrlUtilName = "TrlUtil";
-
 		private KPTranslation m_trl = new KPTranslation();
 		private string m_strFile = string.Empty;
 
@@ -174,8 +175,8 @@ namespace TrlUtil
 				if(mi.ReturnType != typeof(string))
 				{
 					MessageBox.Show(this, "Return type is not string:\r\n" +
-						strKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -183,8 +184,8 @@ namespace TrlUtil
 				if(strEng == null)
 				{
 					MessageBox.Show(this, "English string is null:\r\n" +
-						strKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -213,8 +214,8 @@ namespace TrlUtil
 				if(mi.ReturnType != typeof(string))
 				{
 					MessageBox.Show(this, "Return type is not string:\r\n" +
-						strLibKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strLibKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -222,8 +223,8 @@ namespace TrlUtil
 				if(strEng == null)
 				{
 					MessageBox.Show(this, "English string is null:\r\n" +
-						strLibKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strLibKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -304,8 +305,8 @@ namespace TrlUtil
 				if(mi.ReturnType != typeof(string))
 				{
 					MessageBox.Show(this, "Return type is not string:\r\n" +
-						strLibSDKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strLibSDKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -313,8 +314,8 @@ namespace TrlUtil
 				if(strEng == null)
 				{
 					MessageBox.Show(this, "English string is null:\r\n" +
-						strLibSDKey, TrlUtilName + ": Fatal Error!", MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+						strLibSDKey, TuDefs.ProductName + ": Fatal Error!",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -393,10 +394,31 @@ namespace TrlUtil
 			WinUtil.OpenUrl("https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes", null);
 		}
 
+		private void SetCurrentFile(string strFilePath)
+		{
+			if(strFilePath == null) { Debug.Assert(false); strFilePath = string.Empty; }
+
+			m_strFile = strFilePath;
+			Program.Config.Application.LastUsedFile = IOConnectionInfo.FromPath(strFilePath);
+		}
+
+		private static void InitFileDialog(FileDialogEx dlg)
+		{
+			if(dlg == null) { Debug.Assert(false); return; }
+
+			IOConnectionInfo ioDir = Program.Config.Application.LastUsedFile;
+			if(!string.IsNullOrEmpty(ioDir.Path) && ioDir.IsLocalFile())
+			{
+				string strDir = UrlUtil.GetFileDirectory(ioDir.Path, false, true);
+				if(Directory.Exists(strDir)) dlg.InitialDirectory = strDir;
+			}
+		}
+
 		private void OnFileOpen(object sender, EventArgs e)
 		{
 			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog("Open KeePass Translation",
-				m_strFileFilter, 1, null, false, AppDefs.FileDialogContext.Attachments);
+				m_strFileFilter, 1, null, false, string.Empty);
+			InitFileDialog(ofd);
 
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
@@ -408,12 +430,12 @@ namespace TrlUtil
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
-					MessageBoxIcon.Warning);
+				MessageBox.Show(this, ex.Message, TuDefs.ProductName,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			m_strFile = ofd.FileName;
+			SetCurrentFile(ofd.FileName);
 
 			StringBuilder sbUnusedText = new StringBuilder();
 			if(kpTrl.UnusedText.Length > 0)
@@ -548,8 +570,8 @@ namespace TrlUtil
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
-					MessageBoxIcon.Warning);
+				MessageBox.Show(this, ex.Message, TuDefs.ProductName,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -557,7 +579,7 @@ namespace TrlUtil
 		{
 			m_trl.Properties.Application = PwDefs.ProductName;
 			m_trl.Properties.ApplicationVersion = PwDefs.VersionString;
-			m_trl.Properties.Generator = TrlUtilName;
+			m_trl.Properties.Generator = TuDefs.ProductName;
 
 			PwUuid pwUuid = new PwUuid(true);
 			m_trl.Properties.FileUuid = pwUuid.ToHexString();
@@ -589,9 +611,9 @@ namespace TrlUtil
 			string str = strText + MessageService.NewParagraph + strContinue;
 
 			if(!VistaTaskDialog.ShowMessageBox(str, "Validation Warning",
-				TrlUtilName, VtdIcon.Warning, this))
+				TuDefs.ProductName, VtdIcon.Warning, this))
 				MessageBox.Show(this, "Validation Warning!" + MessageService.NewParagraph +
-					str, TrlUtilName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					str, TuDefs.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		private void ValidateTranslation()
@@ -665,7 +687,7 @@ namespace TrlUtil
 
 		private void OnStrKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
 
@@ -681,7 +703,7 @@ namespace TrlUtil
 				}
 
 				kpstItem.Value = StrUtil.SafeXmlString(m_tbStrTrl.Text);
-				this.UpdateStringTableUI();
+				UpdateStringTableUI();
 
 				int iIndex = lvsic[0].Index;
 				if(iIndex < m_lvStrings.Items.Count - 1)
@@ -697,19 +719,19 @@ namespace TrlUtil
 
 		private void OnStrKeyUp(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 				UIUtil.SetHandled(e, true);
 		}
 
 		private void OnFileSaveAs(object sender, EventArgs e)
 		{
 			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog("Save KeePass Translation",
-				m_tbNameEng.Text + ".lngx", m_strFileFilter, 1, "lngx",
-				AppDefs.FileDialogContext.Attachments);
+				m_tbNameEng.Text + ".lngx", m_strFileFilter, 1, "lngx", string.Empty);
+			InitFileDialog(sfd);
 
 			if(sfd.ShowDialog() != DialogResult.OK) return;
 
-			m_strFile = sfd.FileName;
+			SetCurrentFile(sfd.FileName);
 
 			OnFileSave(sender, e);
 		}
@@ -803,7 +825,7 @@ namespace TrlUtil
 
 		private void OnCtrlTrlTextKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
 
@@ -821,7 +843,7 @@ namespace TrlUtil
 
 		private void OnCtrlTrlTextKeyUp(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 				UIUtil.SetHandled(e, true);
 		}
 
@@ -878,8 +900,8 @@ namespace TrlUtil
 			try { f(m_trl, IOConnectionInfo.FromPath(ofd.FileName)); }
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, TrlUtilName, MessageBoxButtons.OK,
-					MessageBoxIcon.Warning);
+				MessageBox.Show(this, ex.Message, TuDefs.ProductName,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 
 			UpdateStringTableUI();
@@ -975,7 +997,7 @@ namespace TrlUtil
 
 		private void OnFindKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
 				PerformQuickFind();
@@ -985,11 +1007,8 @@ namespace TrlUtil
 
 		private void OnFindKeyUp(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
-			{
+			if(e.KeyCode == Keys.Return) // Return == Enter
 				UIUtil.SetHandled(e, true);
-				return;
-			}
 		}
 
 		private void OnFindTextChanged(object sender, EventArgs e)
@@ -1083,7 +1102,7 @@ namespace TrlUtil
 
 			// MessageService.ShowInfo("No untranslated strings found on the current tab page.");
 			MessageBox.Show(this, "No untranslated strings found on the current tab page.",
-				TrlUtilName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				TuDefs.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }

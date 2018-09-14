@@ -34,6 +34,7 @@
 			this.m_tbSearch = new System.Windows.Forms.TextBox();
 			this.m_lblSearchFor = new System.Windows.Forms.Label();
 			this.m_grpSearchIn = new System.Windows.Forms.GroupBox();
+			this.m_cbGroupPath = new System.Windows.Forms.CheckBox();
 			this.m_cbStringName = new System.Windows.Forms.CheckBox();
 			this.m_cbTags = new System.Windows.Forms.CheckBox();
 			this.m_cbGroupName = new System.Windows.Forms.CheckBox();
@@ -104,6 +105,7 @@
 			// 
 			// m_grpSearchIn
 			// 
+			this.m_grpSearchIn.Controls.Add(this.m_cbGroupPath);
 			this.m_grpSearchIn.Controls.Add(this.m_cbStringName);
 			this.m_grpSearchIn.Controls.Add(this.m_cbTags);
 			this.m_grpSearchIn.Controls.Add(this.m_cbGroupName);
@@ -120,6 +122,17 @@
 			this.m_grpSearchIn.TabIndex = 4;
 			this.m_grpSearchIn.TabStop = false;
 			this.m_grpSearchIn.Text = "Search in";
+			// 
+			// m_cbGroupPath
+			// 
+			this.m_cbGroupPath.AutoSize = true;
+			this.m_cbGroupPath.Location = new System.Drawing.Point(9, 88);
+			this.m_cbGroupPath.Name = "m_cbGroupPath";
+			this.m_cbGroupPath.Size = new System.Drawing.Size(79, 17);
+			this.m_cbGroupPath.TabIndex = 9;
+			this.m_cbGroupPath.Text = "Group pat&h";
+			this.m_cbGroupPath.UseVisualStyleBackColor = true;
+			this.m_cbGroupPath.CheckedChanged += new System.EventHandler(this.OnGroupPathCheckedChanged);
 			// 
 			// m_cbStringName
 			// 
@@ -144,10 +157,10 @@
 			// m_cbGroupName
 			// 
 			this.m_cbGroupName.AutoSize = true;
-			this.m_cbGroupName.Location = new System.Drawing.Point(9, 88);
+			this.m_cbGroupName.Location = new System.Drawing.Point(113, 88);
 			this.m_cbGroupName.Name = "m_cbGroupName";
 			this.m_cbGroupName.Size = new System.Drawing.Size(84, 17);
-			this.m_cbGroupName.TabIndex = 9;
+			this.m_cbGroupName.TabIndex = 10;
 			this.m_cbGroupName.Text = "&Group name";
 			this.m_cbGroupName.UseVisualStyleBackColor = true;
 			// 
@@ -342,5 +355,6 @@
 		private System.Windows.Forms.CheckBox m_cbDerefData;
 		private System.Windows.Forms.Label m_lblHints;
 		private System.Windows.Forms.CheckBox m_cbStringName;
+		private System.Windows.Forms.CheckBox m_cbGroupPath;
 	}
 }

@@ -253,6 +253,10 @@ namespace KeePass.App.Configuration
 			aceApp.TriggerSystem = Program.TriggerSystem;
 
 			SearchUtil.PrepareForSerialize(aceDef.SearchParameters);
+
+			const int m = 64; // Maximum number of compatibility items
+			List<string> l = aceApp.PluginCompatibility;
+			if(l.Count > m) l.RemoveRange(m, l.Count - m); // See reg.
 		}
 
 		internal void OnLoad()

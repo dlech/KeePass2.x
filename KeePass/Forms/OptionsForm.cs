@@ -333,6 +333,8 @@ namespace KeePass.Forms
 				lvg, KPRes.MasterKeyOnSecureDesktop, obNoWin);
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClearKeyCommandLineParams",
 				lvg, KPRes.ClearKeyCmdLineParams);
+			m_cdxSecurityOptions.CreateItem(Program.Config.Security.MasterPassword,
+				"RememberWhileOpen", lvg, KPRes.MasterPasswordRmbWhileOpen);
 
 			m_cdxSecurityOptions.UpdateData(false);
 			UIUtil.ResizeColumns(m_lvSecurityOptions, true);

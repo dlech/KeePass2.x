@@ -43,12 +43,12 @@ namespace KeePass.Ecas
 
 	public static class EcasUtil
 	{
-		public const uint StdCompareEqual = 0;
-		public const uint StdCompareNotEqual = 1;
-		public const uint StdCompareLesser = 2;
-		public const uint StdCompareLesserEqual = 3;
-		public const uint StdCompareGreater = 4;
-		public const uint StdCompareGreaterEqual = 5;
+		public static readonly uint StdCompareEqual = 0;
+		public static readonly uint StdCompareNotEqual = 1;
+		public static readonly uint StdCompareLesser = 2;
+		public static readonly uint StdCompareLesserEqual = 3;
+		public static readonly uint StdCompareGreater = 4;
+		public static readonly uint StdCompareGreaterEqual = 5;
 
 		private static EcasEnum m_enumCompare = null;
 		public static EcasEnum StdCompare
@@ -68,10 +68,10 @@ namespace KeePass.Ecas
 			}
 		}
 
-		public const uint StdStringCompareEquals = 0;
-		public const uint StdStringCompareContains = 1;
-		public const uint StdStringCompareStartsWith = 2;
-		public const uint StdStringCompareEndsWith = 3;
+		public static readonly uint StdStringCompareEquals = 0;
+		public static readonly uint StdStringCompareContains = 1;
+		public static readonly uint StdStringCompareStartsWith = 2;
+		public static readonly uint StdStringCompareEndsWith = 3;
 
 		private static EcasEnum m_enumStringCompare = null;
 		public static EcasEnum StdStringCompare

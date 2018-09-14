@@ -35,19 +35,19 @@ namespace KeePassLib.Cryptography
 	{
 		private static class PatternID
 		{
-			public const char LowerAlpha = 'L';
-			public const char UpperAlpha = 'U';
-			public const char Digit = 'D';
-			public const char Special = 'S';
-			public const char High = 'H';
-			public const char Other = 'X';
+			internal const char LowerAlpha = 'L';
+			internal const char UpperAlpha = 'U';
+			internal const char Digit = 'D';
+			internal const char Special = 'S';
+			internal const char High = 'H';
+			internal const char Other = 'X';
 
-			public const char Dictionary = 'W';
-			public const char Repetition = 'R';
-			public const char Number = 'N';
-			public const char DiffSeq = 'C';
+			internal const char Dictionary = 'W';
+			internal const char Repetition = 'R';
+			internal const char Number = 'N';
+			internal const char DiffSeq = 'C';
 
-			public const string All = "LUDSHXWRNC";
+			internal const string All = "LUDSHXWRNC";
 		}
 
 		// private static class CharDistrib

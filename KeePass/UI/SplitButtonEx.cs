@@ -28,6 +28,8 @@ using System.Windows.Forms;
 using KeePass.Native;
 using KeePass.Util;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.UI
 {
 	public sealed class SplitButtonEx : Button
@@ -75,12 +77,9 @@ namespace KeePass.UI
 		public SplitButtonEx() : base()
 		{
 			m_bSupported = (WinUtil.IsAtLeastWindowsVista &&
-				!KeePassLib.Native.NativeLib.IsUnix() && !Program.DesignMode);
+				!NativeLib.IsUnix() && !Program.DesignMode);
 
-			if(m_bSupported)
-			{
-				this.FlatStyle = FlatStyle.System;
-			}
+			if(m_bSupported) this.FlatStyle = FlatStyle.System;
 		}
 
 		protected override void WndProc(ref Message m)

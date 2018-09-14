@@ -43,11 +43,10 @@ namespace KeePassLib.Serialization
 		private IOConnectionInfo m_iocTxfMidFallback = null; // Null <=> TxF not used
 
 		private bool m_bMadeUnhidden = false;
-
 		private List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
 
 		private const string StrTempSuffix = ".tmp";
-		private const string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
+		private static readonly string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
 		private const string StrTxfTempSuffix = ".tmp";
 
 		private static Dictionary<string, bool> g_dEnabled =

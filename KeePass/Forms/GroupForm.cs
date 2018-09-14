@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using KeePass.App;
@@ -136,6 +137,19 @@ namespace KeePass.Forms
 
 			CustomizeForScreenReader();
 			EnableControlsEx();
+
+			ThreadPool.QueueUserWorkItem(delegate(object state)
+			{
+				try
+				{
+					string[] vSeq = m_pwDatabase.RootGroup.GetAutoTypeSequences(true);
+					// Do not append, because long suggestions hide the start
+					UIUtil.EnableAutoCompletion(m_tbDefaultAutoTypeSeq,
+						false, vSeq); // Invokes
+				}
+				catch(Exception) { Debug.Assert(false); }
+			});
+
 			UIUtil.SetFocus(m_tbName, this);
 		}
 

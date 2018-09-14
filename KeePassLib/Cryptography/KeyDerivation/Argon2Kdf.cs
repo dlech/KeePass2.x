@@ -30,13 +30,13 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			0xEF, 0x63, 0x6D, 0xDF, 0x8C, 0x29, 0x44, 0x4B,
 			0x91, 0xF7, 0xA9, 0xA4, 0x03, 0xE3, 0x0A, 0x0C });
 
-		public const string ParamSalt = "S"; // Byte[]
-		public const string ParamParallelism = "P"; // UInt32
-		public const string ParamMemory = "M"; // UInt64
-		public const string ParamIterations = "I"; // UInt64
-		public const string ParamVersion = "V"; // UInt32
-		public const string ParamSecretKey = "K"; // Byte[]
-		public const string ParamAssocData = "A"; // Byte[]
+		public static readonly string ParamSalt = "S"; // Byte[]
+		public static readonly string ParamParallelism = "P"; // UInt32
+		public static readonly string ParamMemory = "M"; // UInt64
+		public static readonly string ParamIterations = "I"; // UInt64
+		public static readonly string ParamVersion = "V"; // UInt32
+		public static readonly string ParamSecretKey = "K"; // Byte[]
+		public static readonly string ParamAssocData = "A"; // Byte[]
 
 		private const uint MinVersion = 0x10;
 		private const uint MaxVersion = 0x13;

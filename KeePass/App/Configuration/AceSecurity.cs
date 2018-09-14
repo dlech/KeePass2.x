@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 
 namespace KeePass.App.Configuration
 {
@@ -239,6 +239,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_uMinQuality; }
 			set { m_uMinQuality = value; }
+		}
+
+		private bool m_bRememberWhileOpen = true;
+		[DefaultValue(true)]
+		public bool RememberWhileOpen
+		{
+			get { return m_bRememberWhileOpen; }
+			set { m_bRememberWhileOpen = value; }
 		}
 	}
 }

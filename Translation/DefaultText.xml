@@ -244,8 +244,8 @@
 		<Data Name="Bits">
 			<Value>Bits</Value>
 		</Data>
-		<Data Name="BitsStc">
-			<Value>bits</Value>
+		<Data Name="BitsEx">
+			<Value>{PARAM} bits</Value>
 		</Data>
 		<Data Name="Bold">
 			<Value>Bold</Value>
@@ -550,14 +550,14 @@
 		<Data Name="DatabaseSettingsDesc">
 			<Value>Here you can configure various database settings.</Value>
 		</Data>
-		<Data Name="DataEditor">
-			<Value>Data Editor</Value>
+		<Data Name="DataEditorKP">
+			<Value>KeePass Data Editor</Value>
 		</Data>
 		<Data Name="DataLoss">
 			<Value>If you lose the database file or any of the master key components (or forget the composition), all data stored in the database is lost. KeePass does not have any built-in file backup functionality. There is no backdoor and no universal key that can open your database.</Value>
 		</Data>
-		<Data Name="DataViewer">
-			<Value>Data Viewer</Value>
+		<Data Name="DataViewerKP">
+			<Value>KeePass Data Viewer</Value>
 		</Data>
 		<Data Name="DbMntncResults">
 			<Value>Show results of database maintenance in a dialog</Value>
@@ -1393,6 +1393,9 @@
 		<Data Name="MasterPasswordMinQualityFailed">
 			<Value>The estimated quality of the master password must be at least {PARAM} bits!</Value>
 		</Data>
+		<Data Name="MasterPasswordRmbWhileOpen">
+			<Value>Remember master password (in encrypted form) of a database while it is open</Value>
+		</Data>
 		<Data Name="MaxAttachmentSize">
 			<Value>The maximum supported attachment size is {PARAM}.</Value>
 		</Data>
@@ -1455,9 +1458,6 @@
 		</Data>
 		<Data Name="NewDatabase">
 			<Value>New Database</Value>
-		</Data>
-		<Data Name="NewDatabaseFileName">
-			<Value>NewDatabase.kdbx</Value>
 		</Data>
 		<Data Name="NewerNetRequired">
 			<Value>A newer .NET Framework is required.</Value>
@@ -1572,6 +1572,9 @@
 		</Data>
 		<Data Name="OptimizeForScreenReader">
 			<Value>Optimize for screen reader (only enable if you're using a screen reader)</Value>
+		</Data>
+		<Data Name="OptionReqOn">
+			<Value>For this operation, the following option must be turned on:</Value>
 		</Data>
 		<Data Name="Options">
 			<Value>Options</Value>
@@ -2371,17 +2374,20 @@
 		<Data Name="ViewCmd">
 			<Value>&amp;View</Value>
 		</Data>
-		<Data Name="ViewEntry">
-			<Value>View Entry</Value>
-		</Data>
 		<Data Name="ViewEntryDesc">
 			<Value>You're viewing an entry.</Value>
+		</Data>
+		<Data Name="ViewEntryReadOnly">
+			<Value>View Entry (Read-Only)</Value>
 		</Data>
 		<Data Name="Wait">
 			<Value>Wait</Value>
 		</Data>
 		<Data Name="WaitForExit">
 			<Value>Wait for exit</Value>
+		</Data>
+		<Data Name="WaitPlease">
+			<Value>Please wait</Value>
 		</Data>
 		<Data Name="Warning">
 			<Value>Warning</Value>

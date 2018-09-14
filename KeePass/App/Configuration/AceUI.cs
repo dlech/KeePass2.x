@@ -158,8 +158,8 @@ namespace KeePass.App.Configuration
 			set { m_bannerStyle = value; }
 		}
 
-		private bool m_bShowImportStatusDlg = true;
-		[DefaultValue(true)]
+		private bool m_bShowImportStatusDlg = false;
+		[DefaultValue(false)]
 		public bool ShowImportStatusDialog
 		{
 			get { return m_bShowImportStatusDlg; }

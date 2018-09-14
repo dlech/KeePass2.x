@@ -91,9 +91,9 @@ namespace KeePass.Util
 		internal const string IpcMsgFilePreID = "KeePassIPC-";
 		// internal const string IpcMsgFilePostID = "-Msgs.tmp";
 
-		public const string CmdOpenDatabase = "OpenDatabase";
-		public const string CmdOpenEntryUrl = "OpenEntryUrl";
-		public const string CmdIpcEvent = "IpcEvent";
+		public static readonly string CmdOpenDatabase = "OpenDatabase";
+		public static readonly string CmdOpenEntryUrl = "OpenEntryUrl";
+		public static readonly string CmdIpcEvent = "IpcEvent";
 
 		private static readonly byte[] IpcOptEnt = new byte[] {
 			0x51, 0xE4, 0xCA, 0x4B, 0xBB, 0x63, 0x57, 0x21

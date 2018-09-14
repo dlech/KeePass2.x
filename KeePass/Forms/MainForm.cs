@@ -139,8 +139,6 @@ namespace KeePass.Forms
 			GlobalWindowManager.CustomizeControl(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTray);
 
-			m_strNeverExpiresText = KPRes.NeverExpires;
-
 			this.Text = PwDefs.ShortProductName;
 			this.Icon = AppIcons.Default;
 			m_imgFileSaveEnabled = Properties.Resources.B16x16_FileSave;
@@ -516,10 +514,11 @@ namespace KeePass.Forms
 				if(!FileDialogsEx.ShowNewDatabaseIntro(this)) return;
 			}
 
-			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.CreateNewDatabase,
-				KPRes.NewDatabaseFileName, UIUtil.CreateFileTypeFilter(
-				AppDefs.FileExtension.FileExt, KPRes.KdbxFiles, true), 1,
-				AppDefs.FileExtension.FileExt, AppDefs.FileDialogContext.Database);
+			string strExt = AppDefs.FileExtension.FileExt;
+			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(
+				KPRes.CreateNewDatabase, KPRes.Database + "." + strExt,
+				UIUtil.CreateFileTypeFilter(strExt, KPRes.KdbxFiles, true),
+				1, strExt, AppDefs.FileDialogContext.Database);
 
 			GlobalWindowManager.AddDialog(sfd.FileDialog);
 			DialogResult dr = sfd.ShowDialog();
@@ -1286,7 +1285,7 @@ namespace KeePass.Forms
 
 			bool bHandled = false;
 
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				OnQuickFindSelectedIndexChanged(sender, e);
 				bHandled = true;
@@ -1306,7 +1305,7 @@ namespace KeePass.Forms
 
 			bool bHandled = false;
 
-			if((e.KeyCode == Keys.Return) || (e.KeyCode == Keys.Enter))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 				bHandled = true;
 			// else if(e.KeyCode == Keys.Tab)
 			//	bHandled = true;
@@ -1579,7 +1578,7 @@ namespace KeePass.Forms
 			if(!m_bFormLoadCalled) return;
 
 			FormWindowState ws = this.WindowState;
-			bool bAuto = !UIIsWindowStateAutoBlocked();
+			bool bAuto = (!UIIsWindowStateAutoBlocked() && !UIIsInteractionBlocked());
 
 			if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
 				m_oszClientLast = this.ClientSize;
@@ -1636,8 +1635,25 @@ namespace KeePass.Forms
 				{
 					try { this.Activate(); }
 					catch(Exception) { Debug.Assert(false); }
+					return;
 				}
 
+				try // Show error notification
+				{
+					NotifyIcon ni = this.MainNotifyIcon;
+					if(ni != null)
+					{
+						string str = (m_statusPartInfo.Text ?? string.Empty);
+						if(str == m_strStatusReady) str = string.Empty;
+						if(str.Length != 0) str += MessageService.NewLine;
+						str += KPRes.WaitPlease + "...";
+						str = StrUtil.CompactString3Dots(str, 255);
+
+						ni.ShowBalloonTip(15000, PwDefs.ShortProductName,
+							str, ToolTipIcon.Warning);
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
 				return;
 			}
 
@@ -1844,7 +1860,7 @@ namespace KeePass.Forms
 			else if(e.Alt) bUnhandled = true;
 			else if(e.KeyCode == Keys.Delete)
 				OnEntryDelete(sender, e);
-			else if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			else if(e.KeyCode == Keys.Return) // Return == Enter
 				OnEntryEdit(sender, e);
 			else if(e.KeyCode == Keys.Insert)
 			{
@@ -1882,7 +1898,7 @@ namespace KeePass.Forms
 			}
 			else if(e.Alt) bUnhandled = true;
 			else if(e.KeyCode == Keys.Delete) { }
-			else if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return)) { }
+			else if(e.KeyCode == Keys.Return) { } // Return == Enter
 			else if(e.KeyCode == Keys.Insert) { }
 			else if(e.KeyCode == Keys.F2) { }
 			else bUnhandled = true;

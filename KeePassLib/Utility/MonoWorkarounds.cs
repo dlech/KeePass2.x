@@ -104,6 +104,9 @@ namespace KeePassLib.Utility
 		// 1690:
 		//   Removing items from a list view doesn't work properly.
 		//   https://sourceforge.net/p/keepass/bugs/1690/
+		// 1710:
+		//   Mono doesn't always raise the FormClosed event properly.
+		//   https://sourceforge.net/p/keepass/bugs/1710/
 		// 1716:
 		//   'Always on Top' doesn't work properly on the Cinnamon desktop.
 		//   https://sourceforge.net/p/keepass/bugs/1716/
@@ -117,6 +120,9 @@ namespace KeePassLib.Utility
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d23dc88b/
+		// 9604:
+		//   Trying to resolve a non-existing metadata token crashes Mono.
+		//   https://github.com/mono/mono/issues/9604
 		// 10163:
 		//   WebRequest GetResponse call missing, breaks WebDAV due to no PUT.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=10163

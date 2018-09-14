@@ -132,10 +132,9 @@ namespace KeePass.Forms
 
 		private void OnTbUrlKeyDown(object sender, KeyEventArgs e)
 		{
-			if((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
-
 				OnBtnGo(sender, e);
 			}
 		}

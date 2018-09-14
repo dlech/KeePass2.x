@@ -99,7 +99,7 @@ namespace KeePass.Forms
 			ProcessResize();
 			this.BringToFront();
 			this.Activate();
-			UIUtil.SetFocus(m_lvItems, this);
+			UIUtil.SetFocus(m_lvItems, this, true);
 		}
 
 		private void RecreateEntryList()

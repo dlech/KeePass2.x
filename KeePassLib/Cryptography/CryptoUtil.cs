@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 
@@ -100,6 +101,22 @@ namespace KeePassLib.Cryptography
 			byte[] pbZero = new byte[32];
 			Debug.Assert(!MemUtil.ArraysEqual(pbHash, pbZero));
 #endif
+
+			return pbHash;
+		}
+
+		internal static byte[] HashSha256(string strFilePath)
+		{
+			byte[] pbHash = null;
+
+			using(FileStream fs = new FileStream(strFilePath, FileMode.Open,
+				FileAccess.Read, FileShare.Read))
+			{
+				using(SHA256Managed h = new SHA256Managed())
+				{
+					pbHash = h.ComputeHash(fs);
+				}
+			}
 
 			return pbHash;
 		}

@@ -17,26 +17,24 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-// General assembly properties
-[assembly: AssemblyTitle("KeePassLib")]
-[assembly: AssemblyDescription("KeePass Password Management Library")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Dominik Reichl")]
-[assembly: AssemblyProduct("KeePassLib")]
-[assembly: AssemblyCopyright("Copyright © 2003-2018 Dominik Reichl")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+using KeePass.App;
 
-// COM settings
-[assembly: ComVisible(false)]
-
-// Assembly GUID
-[assembly: Guid("395f6eec-a1e0-4438-aa82-b75099348134")]
-
-// Assembly version information
-[assembly: AssemblyVersion("2.40.0.*")]
-[assembly: AssemblyFileVersion("2.40.0.0")]
+namespace KeePass.Resources
+{
+	public static partial class KPRes
+	{
+		// For backward compatibility with plugins
+		[Obsolete]
+		public static string NewDatabaseFileName
+		{
+			get
+			{
+				return (KPRes.Database + "." + AppDefs.FileExtension.FileExt);
+			}
+		}
+	}
+}

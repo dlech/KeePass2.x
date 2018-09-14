@@ -99,7 +99,7 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.DoubleBuffered = true;
 
-			string strTitle = PwDefs.ShortProductName + " " + KPRes.DataViewer;
+			string strTitle = KPRes.DataViewerKP;
 			if(m_strDataDesc.Length > 0)
 				strTitle = m_strDataDesc + " - " + strTitle;
 			this.Text = strTitle;
@@ -140,6 +140,12 @@ namespace KeePass.Forms
 				m_tscZoom.Items.Add(iZoom.ToString() + "%");
 			m_tscZoom.SelectedIndex = 0;
 
+			KeysConverter kc = new KeysConverter();
+			m_tsbZoomOut.ToolTipText = KPRes.Zoom + " - (" + KPRes.KeyboardKeyCtrl +
+				"+" + kc.ConvertToString(Keys.Subtract) + ")";
+			m_tsbZoomIn.ToolTipText = KPRes.Zoom + " + (" + KPRes.KeyboardKeyCtrl +
+				"+" + kc.ConvertToString(Keys.Add) + ")";
+
 			m_tslViewer.Text = KPRes.ShowIn + ":";
 
 			m_tscViewers.Items.Add(m_strViewerHex);
@@ -159,7 +165,7 @@ namespace KeePass.Forms
 				this.DvfInit(this, new DvfContextEventArgs(this, m_pbData,
 					m_strDataDesc, m_tscViewers));
 
-			// m_picBox.MouseWheel += this.OnPicBoxMouseWheel;
+			m_picBox.MouseWheel += this.OnPicBoxMouseWheel;
 
 			m_bInitializing = false;
 			UpdateDataView();
@@ -337,7 +343,8 @@ namespace KeePass.Forms
 			UpdateVisibility(strViewer, false);
 			m_tssSeparator0.Visible = (bText || bImage);
 			m_tslEncoding.Visible = m_tscEncoding.Visible = bText;
-			m_tslZoom.Visible = m_tscZoom.Visible = bImage;
+			m_tslZoom.Visible = m_tscZoom.Visible = m_tsbZoomOut.Visible =
+				m_tsbZoomIn.Visible = bImage;
 
 			try
 			{
@@ -496,7 +503,7 @@ namespace KeePass.Forms
 			if(strRect != m_strInitialFormRect) // Don't overwrite ""
 				Program.Config.UI.DataViewerRect = strRect;
 
-			// m_picBox.MouseWheel -= this.OnPicBoxMouseWheel;
+			m_picBox.MouseWheel -= this.OnPicBoxMouseWheel;
 
 			m_picBox.Image = null;
 			if(m_img != null) { m_img.Dispose(); m_img = null; }
@@ -508,7 +515,7 @@ namespace KeePass.Forms
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if(keyData == Keys.Escape)
+			if(keyData == Keys.Escape) // No modifiers
 			{
 				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
 				if(obKeyDown.HasValue)
@@ -516,6 +523,14 @@ namespace KeePass.Forms
 					if(obKeyDown.Value) this.Close();
 					return true;
 				}
+			}
+
+			Keys k = (keyData & Keys.KeyCode);
+			if(m_tscZoom.Visible && ((k == Keys.Add) || (k == Keys.Subtract)) &&
+				((keyData & Keys.Control) != Keys.None))
+			{
+				PerformZoom((k == Keys.Add) ? 1 : -1);
+				return true;
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
@@ -526,11 +541,9 @@ namespace KeePass.Forms
 			UpdateImageView();
 		}
 
-		/* private void OnPicBoxMouseWheel(object sender, MouseEventArgs e)
+		private void PerformZoom(int d)
 		{
-			if(e == null) { Debug.Assert(false); return; }
-			if(m_img == null) { Debug.Assert(false); return; }
-			if((Control.ModifierKeys & Keys.Control) == Keys.None) return;
+			if(!m_tscZoom.Visible) { Debug.Assert(false); return; }
 
 			int iCur = m_tscZoom.SelectedIndex, cMax = m_tscZoom.Items.Count;
 			if((iCur < 0) || (iCur >= cMax)) { Debug.Assert(false); return; }
@@ -540,15 +553,70 @@ namespace KeePass.Forms
 
 			if(iCur == iAuto)
 			{
-				iCur = m_tscZoom.Items.IndexOf("100%");
+				iCur = GetNearestFixedZoomItemIndex();
 				if((iCur < 0) || (iCur >= cMax)) { Debug.Assert(false); return; }
 			}
 
-			int d = e.Delta / 120; // See Control.MouseWheel event
 			int iNew = Math.Min(Math.Max(iCur + d, 0), cMax - 1);
-
 			if((iNew != iCur) && (iNew != iAuto)) m_tscZoom.SelectedIndex = iNew;
-		} */
+		}
+
+		private void OnPicBoxMouseWheel(object sender, MouseEventArgs e)
+		{
+			if(e == null) { Debug.Assert(false); return; }
+			if((Control.ModifierKeys & Keys.Control) == Keys.None) return;
+
+			int d = e.Delta / 120; // See Control.MouseWheel event
+			PerformZoom(d);
+		}
+
+		private void OnViewerZoomOut(object sender, EventArgs e)
+		{
+			PerformZoom(-1);
+		}
+
+		private void OnViewerZoomIn(object sender, EventArgs e)
+		{
+			PerformZoom(1);
+		}
+
+		private int GetNearestFixedZoomItemIndex()
+		{
+			if(m_img == null) { Debug.Assert(false); return -1; }
+
+			int iW = m_img.Width, iH = m_img.Height;
+			if((iW <= 0) || (iH <= 0)) { Debug.Assert(false); return -1; }
+
+			int cW = m_picBox.ClientSize.Width, cH = m_picBox.ClientSize.Height;
+			if((cW <= 0) || (cH <= 0)) { Debug.Assert(false); return -1; }
+
+			int z = 100;
+			if((iW > cW) || (iH > cH))
+			{
+				int zW = (int)Math.Round(100.0 * (double)cW / (double)iW);
+				int zH = (int)Math.Round(100.0 * (double)cH / (double)iH);
+				z = Math.Min(zW, zH);
+			}
+
+			int dMin = int.MaxValue;
+			int iBest = -1;
+			for(int i = 0; i < m_tscZoom.Items.Count; ++i)
+			{
+				string str = (m_tscZoom.Items[i] as string);
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); continue; }
+
+				if(!str.EndsWith("%")) continue;
+				str = str.Substring(0, str.Length - 1);
+
+				int zItem = 0;
+				if(!int.TryParse(str, out zItem)) { Debug.Assert(false); continue; }
+
+				int d = Math.Abs(z - zItem);
+				if(d < dMin) { iBest = i; dMin = d; }
+			}
+
+			return iBest;
+		}
 	}
 
 	public sealed class DvfContextEventArgs : CancellableOperationEventArgs

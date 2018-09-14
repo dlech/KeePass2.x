@@ -67,7 +67,7 @@ namespace KeePass.Plugins
 
 	public static class PlgxPlugin
 	{
-		public const string PlgxExtension = "plgx";
+		public static readonly string PlgxExtension = "plgx";
 
 		private const uint PlgxSignature1 = 0x65D90719;
 		private const uint PlgxSignature2 = 0x3DDD0503;

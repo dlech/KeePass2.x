@@ -19,33 +19,55 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 
 using KeePassLib.Utility;
+
+using TrlUtil.App;
+using TrlUtil.App.Configuration;
 
 namespace TrlUtil
 {
 	public static class Program
 	{
+		private static TceConfig m_cfg = null;
+		public static TceConfig Config
+		{
+			get
+			{
+				if(m_cfg == null) { Debug.Assert(false); m_cfg = new TceConfig(); }
+				return m_cfg;
+			}
+		}
+
 		[STAThread]
 		public static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
+			m_cfg = (TceConfig.Load() ?? new TceConfig());
+
+			try { MainPriv(args); }
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message, TuDefs.ProductName,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+
+			TceConfig.Save(m_cfg);
+		}
+
+		private static void MainPriv(string[] args)
+		{
 			if((args != null) && (args.Length == 2))
 			{
-				try { ExecuteCmd(args[0], args[1]); }
-				catch(Exception exCmd)
-				{
-					MessageBox.Show(exCmd.Message, "TrlUtil",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
-
+				ExecuteCmd(args[0], args[1]);
 				return;
 			}
 
@@ -106,7 +128,7 @@ namespace TrlUtil
 					swOut.WriteLine("\t/// <summary>");
 					swOut.WriteLine("\t/// A strongly-typed resource class, for looking up localized strings, etc.");
 					swOut.WriteLine("\t/// </summary>");
-					swOut.WriteLine("\tpublic static class " + xmlTable.Attributes["Name"].Value);
+					swOut.WriteLine("\tpublic static partial class " + xmlTable.Attributes["Name"].Value);
 					swOut.WriteLine("\t{");
 
 					swOut.WriteLine("\t\tprivate static string TryGetEx(Dictionary<string, string> dictNew,");

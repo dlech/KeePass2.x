@@ -1,3 +1,61 @@
+2018-09-10: 2.40
+- Added automatic completion support for the user name box in
+  the entry editing dialog and the auto-type sequence boxes in
+  the entry/group editing dialogs (suggesting user names and
+  auto-type sequences that are used in other entries/groups)
+- Added automatic completion support for the URL and user name
+  boxes in the 'Open From URL' dialog (suggesting URLs and user
+  names of items in the list of most recently used database
+  files)
+- Added option 'Group path' in the 'Find' dialog (enabled by
+  default for quick searches)
+- Added read-only mode for the entry string dialog, which is
+  used by the entry dialog when viewing a history entry
+- The internal data viewer now supports zooming images using
+  Ctrl+Add, Ctrl+Subtract and the mouse wheel with Ctrl;
+  furthermore, there are now '+' and '-' buttons right of the
+  zoom selection box in the toolbar
+- Added option 'Remember master password (in encrypted form) of
+  a database while it is open' (which is the default; turning
+  off this option prevents the usage of certain features)
+- Enhanced compatibility check for DLL plugins
+- Added URL opening event for plugins
+- On Unix-like systems: added support for opening the local
+  help file with KChmViewer
+- Added workaround for initial input focus problem in the
+  master key prompt dialog
+- Added workaround for Mono not always raising the FormClosed
+  event properly
+- TrlUtil now remembers the last translation file directory
+
+- The 'Configure Columns' dialog now computes a display order
+  for the new columns, taking the previous display order into
+  account
+- While importing/synchronizing, no status dialog is displayed
+  anymore (the status is displayed in the main window)
+- Improved UI responsiveness during long operations
+- When hiding/restoring the main window via the system tray
+  icon fails, KeePass now shows a notification
+- Improved Return key handling in text boxes
+- Improved initial input focus in some dialogs
+- Enhanced database file path unification
+- The configuration system does not create a KeePass folder in
+  the user's application data folder anymore when the target
+  configuration file location is outside this folder
+- Improved window text query method
+- Improved Unicode environment detection
+- Various improvements for right-to-left writing systems
+- Improved support for case-sensitive command line parameter
+  names (for plugins and KPScript)
+- If a plugin is available both as a DLL and as a PLGX (in the
+  same folder), KeePass now loads either the DLL or the PLGX
+- For plugins: most public definitions are now static
+- KPScript: improved parsing of escape sequences
+- Renamed native support library item in the installer
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
 2018-05-12: 2.39.1
 - File transactions: improved access control list (ACL)
   restoration

@@ -63,7 +63,7 @@ namespace KeePass.UI
 				if(m_dlg == null) { Debug.Assert(false); return; }
 
 				m_dlg.EndLogging();
-				m_dlg.Close();
+				m_dlg.CloseEx();
 				UIUtil.DestroyForm(m_dlg);
 				m_dlg = null;
 			}

@@ -17,6 +17,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// #define KP_DEVSNAP
+#if KP_DEVSNAP
+#warning KP_DEVSNAP is defined!
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -82,6 +87,10 @@ namespace KeePass
 		private static bool m_bDesignMode = true;
 #if DEBUG
 		private static bool m_bDesignModeQueried = false;
+#endif
+
+#if KP_DEVSNAP
+		private static bool m_bAsmResReg = false;
 #endif
 
 		public enum AppMessage // int
@@ -577,13 +586,19 @@ namespace KeePass
 			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
 			m_ecasTriggers.SetToInitialState();
 
-			string strHelpFile = UrlUtil.StripExtension(WinUtil.GetExecutable()) + ".chm";
-			AppHelp.LocalHelpFile = strHelpFile;
-
 			// InitEnvWorkarounds();
 			LoadTranslation();
 
 			CustomResourceManager.Override(typeof(KeePass.Properties.Resources));
+
+#if KP_DEVSNAP
+			if(!m_bAsmResReg)
+			{
+				AppDomain.CurrentDomain.AssemblyResolve += Program.AssemblyResolve;
+				m_bAsmResReg = true;
+			}
+			else { Debug.Assert(false); }
+#endif
 
 			return true;
 		}
@@ -606,6 +621,15 @@ namespace KeePass
 
 			EnableThemingInScope.StaticDispose();
 			MonoWorkarounds.Terminate();
+
+#if KP_DEVSNAP
+			if(m_bAsmResReg)
+			{
+				AppDomain.CurrentDomain.AssemblyResolve -= Program.AssemblyResolve;
+				m_bAsmResReg = false;
+			}
+			else { Debug.Assert(false); }
+#endif
 		}
 
 		private static void MainCleanUp()
@@ -782,18 +806,28 @@ namespace KeePass
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		internal static bool IsDevelopmentSnapshot()
+		internal static bool IsStableAssembly()
 		{
 			try
 			{
-				Assembly asm = Assembly.GetExecutingAssembly();
+				Assembly asm = typeof(Program).Assembly;
 				byte[] pk = asm.GetName().GetPublicKeyToken();
 				string strPk = MemUtil.ByteArrayToHexString(pk);
-				return !strPk.Equals("fed2ed7716aecf5c", StrUtil.CaseIgnoreCmp);
+				Debug.Assert(strPk.Length == 16);
+				return string.Equals(strPk, "fed2ed7716aecf5c", StrUtil.CaseIgnoreCmp);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
+		}
+
+		internal static bool IsDevelopmentSnapshot()
+		{
+#if KP_DEVSNAP
+			return true;
+#else
+			return !IsStableAssembly();
+#endif
 		}
 
 		private static bool IsBuildType(string str)
@@ -862,5 +896,31 @@ namespace KeePass
 			}
 			catch(Exception) { Debug.Assert(false); }
 		} */
+
+#if KP_DEVSNAP
+		private static Assembly AssemblyResolve(object sender, ResolveEventArgs e)
+		{
+			string str = ((e != null) ? e.Name : null);
+			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return null; }
+
+			try
+			{
+				AssemblyName n = new AssemblyName(str);
+				if(string.Equals(n.Name, "KeePass", StrUtil.CaseIgnoreCmp))
+					return typeof(KeePass.Program).Assembly;
+			}
+			catch(Exception)
+			{
+				Debug.Assert(false);
+
+				if(str.Equals("KeePass", StrUtil.CaseIgnoreCmp) ||
+					str.StartsWith("KeePass,", StrUtil.CaseIgnoreCmp))
+					return typeof(KeePass.Program).Assembly;
+			}
+
+			Debug.Assert(false);
+			return null;
+		}
+#endif
 	}
 }

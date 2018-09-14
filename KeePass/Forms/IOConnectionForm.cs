@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -115,6 +116,12 @@ namespace KeePass.Forms
 				m_cmbCredSaveMode.SelectedIndex = 0;
 				m_cmbCredSaveMode.Enabled = false;
 			}
+
+			ThreadPool.QueueUserWorkItem(delegate(object state)
+			{
+				try { InitAutoCompletions(); }
+				catch(Exception) { Debug.Assert(false); }
+			});
 
 			if((m_tbUrl.TextLength > 0) && (m_tbUserName.TextLength > 0))
 				UIUtil.SetFocus(m_tbPassword, this);
@@ -436,6 +443,44 @@ namespace KeePass.Forms
 			}
 
 			m_pnlAdv.ResumeLayout(true);
+		}
+
+		private static void InitAutoCompletion(TextBox tb, Dictionary<string, bool> d)
+		{
+			if(d.Count == 0) return;
+
+			string[] v = new string[d.Count];
+			d.Keys.CopyTo(v, 0);
+			Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
+
+			// Do not append, because long suggestions hide the start
+			UIUtil.EnableAutoCompletion(tb, false, v); // Invokes
+		}
+
+		private void InitAutoCompletions()
+		{
+			Dictionary<string, bool> dUrls = new Dictionary<string, bool>();
+			Dictionary<string, bool> dUsers = new Dictionary<string, bool>();
+
+			MainForm mf = Program.MainForm;
+			MruList l = ((mf != null) ? mf.FileMruList : null);
+			if(l == null) { Debug.Assert(false); return; }
+
+			for(uint u = 0; u < l.ItemCount; ++u)
+			{
+				IOConnectionInfo ioc = (l.GetItem(u).Value as IOConnectionInfo);
+				if(ioc == null) { Debug.Assert(false); continue; }
+				if(ioc.IsLocalFile()) continue;
+
+				string str = ioc.Path;
+				if(!string.IsNullOrEmpty(str)) dUrls[str] = true;
+
+				str = ioc.UserName;
+				if(!string.IsNullOrEmpty(str)) dUsers[str] = true;
+			}
+
+			InitAutoCompletion(m_tbUrl, dUrls);
+			InitAutoCompletion(m_tbUserName, dUsers);
 		}
 	}
 }

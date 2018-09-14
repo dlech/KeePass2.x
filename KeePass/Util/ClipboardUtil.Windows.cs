@@ -92,7 +92,8 @@ namespace KeePass.Util
 
 		private static string GetStringW(string strFormat, bool? bForceUni)
 		{
-			bool bUni = (bForceUni.HasValue ? bForceUni.Value : WinUtil.IsAtLeastWindows2000);
+			bool bUni = (bForceUni.HasValue ? bForceUni.Value :
+				(Marshal.SystemDefaultCharSize >= 2));
 
 			uint uFormat = (bUni ? NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT);
 			if(!string.IsNullOrEmpty(strFormat))
@@ -154,7 +155,8 @@ namespace KeePass.Util
 		{
 			if(strData == null) { Debug.Assert(false); return false; }
 
-			bool bUni = (bForceUni.HasValue ? bForceUni.Value : WinUtil.IsAtLeastWindows2000);
+			bool bUni = (bForceUni.HasValue ? bForceUni.Value :
+				(Marshal.SystemDefaultCharSize >= 2));
 
 			uint uFmt = (uFormat.HasValue ? uFormat.Value : (bUni ?
 				NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT));
