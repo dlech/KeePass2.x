@@ -310,6 +310,8 @@ namespace KeePass.Forms
 				lvg, KPRes.LockOnSessionSwitch + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnSuspend",
 				lvg, KPRes.LockOnSuspend + strSEvSuffix, obNoSEv);
+            m_cdxSecurityOptions.CreateItem(aceWL, "LockEvenOnDataLoss",
+                lvg, KPRes.LockEvenOnDataLoss + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnRemoteControlChange",
 				lvg, KPRes.LockOnRemoteControlChange + strSEvSuffix, obNoSEv);
 			m_cdxSecurityOptions.CreateItem(aceWL, "ExitInsteadOfLockingAfterTime",

@@ -219,6 +219,14 @@ namespace KeePass.App.Configuration
 			get { return m_bAlwaysExitInsteadOfLocking; }
 			set { m_bAlwaysExitInsteadOfLocking = value; }
 		}
+
+        private bool m_bLockEvenOnDataLoss = false;
+        [DefaultValue(false)]
+        public bool LockEvenOnDataLoss
+        {
+            get { return m_bLockEvenOnDataLoss; }
+            set { m_bLockEvenOnDataLoss = value; }
+        }
 	}
 
 	public sealed class AceMasterPassword

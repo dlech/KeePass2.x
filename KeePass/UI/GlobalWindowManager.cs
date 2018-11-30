@@ -83,6 +83,7 @@ namespace KeePass.UI
 				{
 					if(g_vDialogs.Count > 0) return false;
 					if(MessageService.CurrentMessageCount > 0) return false;
+                    if (Program.Config.Security.WorkspaceLocking.LockEvenOnDataLoss) return true;
 
 					foreach(KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
 					{
@@ -214,8 +215,12 @@ namespace KeePass.UI
 
 			foreach(KeyValuePair<Form, IGwmWindow> kvp in vWindows)
 			{
-				if(kvp.Value == null) continue;
-				else if(kvp.Value.CanCloseWithoutDataLoss)
+                bool ignoreDataLoss = Program.Config.Security.WorkspaceLocking.LockEvenOnDataLoss;
+                if(!ignoreDataLoss)
+                {
+                    if (kvp.Value == null || !kvp.Value.CanCloseWithoutDataLoss) continue;
+                }
+                else
 				{
 					if(kvp.Key.InvokeRequired)
 						kvp.Key.Invoke(new CloseFormDelegate(
@@ -224,7 +229,8 @@ namespace KeePass.UI
 
 					Application.DoEvents();
 				}
-			}
+                
+            }
 		}
 
 		private delegate void CloseFormDelegate(Form f);

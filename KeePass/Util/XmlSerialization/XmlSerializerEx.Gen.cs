@@ -1778,6 +1778,9 @@ namespace KeePass.Util.XmlSerialization
 					case "AlwaysExitInsteadOfLocking":
 						o.AlwaysExitInsteadOfLocking = ReadBoolean(xr);
 						break;
+                    case "LockEvenOnDataLoss":
+                        o.LockEvenOnDataLoss = ReadBoolean(xr);
+                        break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();

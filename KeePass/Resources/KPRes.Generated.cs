@@ -475,6 +475,7 @@ namespace KeePass.Resources
 			m_strLockOnRemoteControlChange = TryGetEx(dictNew, "LockOnRemoteControlChange", m_strLockOnRemoteControlChange);
 			m_strLockOnSessionSwitch = TryGetEx(dictNew, "LockOnSessionSwitch", m_strLockOnSessionSwitch);
 			m_strLockOnSuspend = TryGetEx(dictNew, "LockOnSuspend", m_strLockOnSuspend);
+            m_strLockEvenOnDataLoss = TryGetEx(dictNew, "LockEvenOnDataLoss", m_strLockEvenOnDataLoss);
 			m_strMainInstruction = TryGetEx(dictNew, "MainInstruction", m_strMainInstruction);
 			m_strMainWindow = TryGetEx(dictNew, "MainWindow", m_strMainWindow);
 			m_strMasterKey = TryGetEx(dictNew, "MasterKey", m_strMasterKey);
@@ -6611,7 +6612,18 @@ namespace KeePass.Resources
 			get { return m_strLockOnSuspend; }
 		}
 
-		private static string m_strMainInstruction =
+        private static string m_strLockEvenOnDataLoss =
+            @"Lock workspace even if data will be lost after it";
+        /// <summary>
+        /// Look up a localized string similar to
+        /// 'Lock workspace even if data will be lost after it'.
+        /// </summary>
+        public static string LockEvenOnDataLoss
+        {
+            get { return m_strLockEvenOnDataLoss; }
+        }
+
+        private static string m_strMainInstruction =
 			@"Main instruction";
 		/// <summary>
 		/// Look up a localized string similar to
