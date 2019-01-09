@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ namespace KeePass.Forms
 
 			string strBannerTitle = (!string.IsNullOrEmpty(m_strCustomTitle) ?
 				m_strCustomTitle : KPRes.EnterCompositeKey);
-			string strBannerDesc = WinUtil.CompactPath(m_ioInfo.Path, 45);
+			string strBannerDesc = m_ioInfo.GetDisplayName(); // Compacted by banner
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KGPG_Key2, strBannerTitle, strBannerDesc);
 			this.Icon = AppIcons.Default;

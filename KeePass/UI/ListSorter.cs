@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,12 @@
 
 using System;
 using System.Collections;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 using KeePass.Resources;
+
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -31,7 +32,7 @@ namespace KeePass.UI
 	public sealed class ListSorter : IComparer
 	{
 		// Cached version of a string representing infinity
-		private readonly string m_strNeverExpires;
+		private readonly string m_strNeverExpires = KPRes.NeverExpires;
 
 		private int m_nColumn = -1;
 		[DefaultValue(-1)]
@@ -74,14 +75,11 @@ namespace KeePass.UI
 
 		public ListSorter()
 		{
-			m_strNeverExpires = KPRes.NeverExpires;
 		}
 
 		public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareNaturally,
 			bool bCompareTimes)
 		{
-			m_strNeverExpires = KPRes.NeverExpires;
-
 			m_nColumn = nColumn;
 
 			Debug.Assert(sortOrder != SortOrder.None);
@@ -96,8 +94,8 @@ namespace KeePass.UI
 			bool bSwap = (m_oSort != SortOrder.Ascending);
 			ListViewItem lviX = (bSwap ? (ListViewItem)y : (ListViewItem)x);
 			ListViewItem lviY = (bSwap ? (ListViewItem)x : (ListViewItem)y);
-			string strL, strR;
 
+			string strL, strR;
 			Debug.Assert(lviX.SubItems.Count == lviY.SubItems.Count);
 			if((m_nColumn <= 0) || (lviX.SubItems.Count <= m_nColumn) ||
 				(lviY.SubItems.Count <= m_nColumn))
@@ -114,7 +112,7 @@ namespace KeePass.UI
 			if(m_bCompareTimes)
 			{
 				if((strL == m_strNeverExpires) || (strR == m_strNeverExpires))
-					return strL.CompareTo(strR);
+					return string.Compare(strL, strR, true);
 
 				DateTime dtL = TimeUtil.FromDisplayString(strL);
 				DateTime dtR = TimeUtil.FromDisplayString(strR);

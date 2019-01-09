@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@ namespace KeePassLib.Utility
 			return g_bReq.Value;
 		}
 
+		// 106:
+		//   Mono throws exceptions when no X server is running.
+		//   https://sourceforge.net/p/keepass/patches/106/
 		// 1219:
 		//   Mono prepends byte order mark (BOM) to StdIn.
 		//   https://sourceforge.net/p/keepass/bugs/1219/
@@ -110,6 +113,9 @@ namespace KeePassLib.Utility
 		// 1716:
 		//   'Always on Top' doesn't work properly on the Cinnamon desktop.
 		//   https://sourceforge.net/p/keepass/bugs/1716/
+		// 1760:
+		//   Input focus is not restored when activating a form.
+		//   https://sourceforge.net/p/keepass/bugs/1760/
 		// 2139:
 		//   Shortcut keys are ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2139/

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -830,9 +830,9 @@ namespace KeePassLib.Serialization
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
-				byte[] pbEncoded = value.ReadXorredString(m_randomStream);
-				if(pbEncoded.Length > 0)
-					m_xmlWriter.WriteBase64(pbEncoded, 0, pbEncoded.Length);
+				byte[] pbEnc = value.ReadXorredString(m_randomStream);
+				if(pbEnc.Length > 0)
+					m_xmlWriter.WriteBase64(pbEnc, 0, pbEnc.Length);
 			}
 			else
 			{
@@ -922,9 +922,9 @@ namespace KeePassLib.Serialization
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
-				byte[] pbEncoded = value.ReadXorredData(m_randomStream);
-				if(pbEncoded.Length > 0)
-					m_xmlWriter.WriteBase64(pbEncoded, 0, pbEncoded.Length);
+				byte[] pbEnc = value.ReadXorredData(m_randomStream);
+				if(pbEnc.Length > 0)
+					m_xmlWriter.WriteBase64(pbEnc, 0, pbEnc.Length);
 			}
 			else
 			{

@@ -131,15 +131,19 @@ namespace KeePass.Resources
 			m_strClearKeyCmdLineParams = TryGetEx(dictNew, "ClearKeyCmdLineParams", m_strClearKeyCmdLineParams);
 			m_strClearMru = TryGetEx(dictNew, "ClearMru", m_strClearMru);
 			m_strClipboard = TryGetEx(dictNew, "Clipboard", m_strClipboard);
+			m_strClipboardClearDesc = TryGetEx(dictNew, "ClipboardClearDesc", m_strClipboardClearDesc);
 			m_strClipboardClearInSeconds = TryGetEx(dictNew, "ClipboardClearInSeconds", m_strClipboardClearInSeconds);
 			m_strClipboardClearOnExit = TryGetEx(dictNew, "ClipboardClearOnExit", m_strClipboardClearOnExit);
 			m_strClipboardDataCopied = TryGetEx(dictNew, "ClipboardDataCopied", m_strClipboardDataCopied);
+			m_strClipboardMain = TryGetEx(dictNew, "ClipboardMain", m_strClipboardMain);
+			m_strClipboardNoPersist = TryGetEx(dictNew, "ClipboardNoPersist", m_strClipboardNoPersist);
+			m_strClipboardOptionME = TryGetEx(dictNew, "ClipboardOptionME", m_strClipboardOptionME);
 			m_strClipboardViewerIgnoreFormat = TryGetEx(dictNew, "ClipboardViewerIgnoreFormat", m_strClipboardViewerIgnoreFormat);
 			m_strCloseActiveDatabase = TryGetEx(dictNew, "CloseActiveDatabase", m_strCloseActiveDatabase);
 			m_strCloseButton = TryGetEx(dictNew, "CloseButton", m_strCloseButton);
 			m_strCloseButtonMinimizes = TryGetEx(dictNew, "CloseButtonMinimizes", m_strCloseButtonMinimizes);
 			m_strClosingDatabaseFile = TryGetEx(dictNew, "ClosingDatabaseFile", m_strClosingDatabaseFile);
-			m_strClusterCenters = TryGetEx(dictNew, "ClusterCenters", m_strClusterCenters);
+			m_strClusterCenters2 = TryGetEx(dictNew, "ClusterCenters2", m_strClusterCenters2);
 			m_strClusterCentersDesc = TryGetEx(dictNew, "ClusterCentersDesc", m_strClusterCentersDesc);
 			m_strColumn = TryGetEx(dictNew, "Column", m_strColumn);
 			m_strColumns = TryGetEx(dictNew, "Columns", m_strColumns);
@@ -278,9 +282,9 @@ namespace KeePass.Resources
 			m_strError = TryGetEx(dictNew, "Error", m_strError);
 			m_strErrorCode = TryGetEx(dictNew, "ErrorCode", m_strErrorCode);
 			m_strErrors = TryGetEx(dictNew, "Errors", m_strErrors);
-			m_strEscMinimizesToTray = TryGetEx(dictNew, "EscMinimizesToTray", m_strEscMinimizesToTray);
 			m_strEvent = TryGetEx(dictNew, "Event", m_strEvent);
 			m_strExecuteCmdLineUrl = TryGetEx(dictNew, "ExecuteCmdLineUrl", m_strExecuteCmdLineUrl);
+			m_strExit = TryGetEx(dictNew, "Exit", m_strExit);
 			m_strExitInsteadOfLockingAfterTime = TryGetEx(dictNew, "ExitInsteadOfLockingAfterTime", m_strExitInsteadOfLockingAfterTime);
 			m_strExitInsteadOfLockingAlways = TryGetEx(dictNew, "ExitInsteadOfLockingAlways", m_strExitInsteadOfLockingAlways);
 			m_strExpiredEntries = TryGetEx(dictNew, "ExpiredEntries", m_strExpiredEntries);
@@ -475,6 +479,7 @@ namespace KeePass.Resources
 			m_strLockOnRemoteControlChange = TryGetEx(dictNew, "LockOnRemoteControlChange", m_strLockOnRemoteControlChange);
 			m_strLockOnSessionSwitch = TryGetEx(dictNew, "LockOnSessionSwitch", m_strLockOnSessionSwitch);
 			m_strLockOnSuspend = TryGetEx(dictNew, "LockOnSuspend", m_strLockOnSuspend);
+			m_strLockWorkspace = TryGetEx(dictNew, "LockWorkspace", m_strLockWorkspace);
 			m_strMainInstruction = TryGetEx(dictNew, "MainInstruction", m_strMainInstruction);
 			m_strMainWindow = TryGetEx(dictNew, "MainWindow", m_strMainWindow);
 			m_strMasterKey = TryGetEx(dictNew, "MasterKey", m_strMasterKey);
@@ -496,12 +501,14 @@ namespace KeePass.Resources
 			m_strMemory = TryGetEx(dictNew, "Memory", m_strMemory);
 			m_strMenus = TryGetEx(dictNew, "Menus", m_strMenus);
 			m_strMethod = TryGetEx(dictNew, "Method", m_strMethod);
+			m_strMinimize = TryGetEx(dictNew, "Minimize", m_strMinimize);
 			m_strMinimizeAfterAutoType = TryGetEx(dictNew, "MinimizeAfterAutoType", m_strMinimizeAfterAutoType);
 			m_strMinimizeAfterCopy = TryGetEx(dictNew, "MinimizeAfterCopy", m_strMinimizeAfterCopy);
 			m_strMinimizeAfterLocking = TryGetEx(dictNew, "MinimizeAfterLocking", m_strMinimizeAfterLocking);
 			m_strMinimizeAfterOpeningDatabase = TryGetEx(dictNew, "MinimizeAfterOpeningDatabase", m_strMinimizeAfterOpeningDatabase);
 			m_strMinimized = TryGetEx(dictNew, "Minimized", m_strMinimized);
 			m_strMinimizeToTray = TryGetEx(dictNew, "MinimizeToTray", m_strMinimizeToTray);
+			m_strMinimizeToTrayStc = TryGetEx(dictNew, "MinimizeToTrayStc", m_strMinimizeToTrayStc);
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
 			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strMoreInfo = TryGetEx(dictNew, "MoreInfo", m_strMoreInfo);
@@ -572,7 +579,7 @@ namespace KeePass.Resources
 			m_strPasswordOptionsDesc = TryGetEx(dictNew, "PasswordOptionsDesc", m_strPasswordOptionsDesc);
 			m_strPasswordPrompt = TryGetEx(dictNew, "PasswordPrompt", m_strPasswordPrompt);
 			m_strPasswordQuality = TryGetEx(dictNew, "PasswordQuality", m_strPasswordQuality);
-			m_strPasswordQualityReport = TryGetEx(dictNew, "PasswordQualityReport", m_strPasswordQualityReport);
+			m_strPasswordQualityReport2 = TryGetEx(dictNew, "PasswordQualityReport2", m_strPasswordQualityReport2);
 			m_strPasswordRepeatFailed = TryGetEx(dictNew, "PasswordRepeatFailed", m_strPasswordRepeatFailed);
 			m_strPasswordRepeatHint = TryGetEx(dictNew, "PasswordRepeatHint", m_strPasswordRepeatHint);
 			m_strPaste = TryGetEx(dictNew, "Paste", m_strPaste);
@@ -708,7 +715,7 @@ namespace KeePass.Resources
 			m_strShowTrayOnlyIfTrayed = TryGetEx(dictNew, "ShowTrayOnlyIfTrayed", m_strShowTrayOnlyIfTrayed);
 			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
 			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
-			m_strSimilarPasswordsList = TryGetEx(dictNew, "SimilarPasswordsList", m_strSimilarPasswordsList);
+			m_strSimilarPasswordsList2 = TryGetEx(dictNew, "SimilarPasswordsList2", m_strSimilarPasswordsList2);
 			m_strSimilarPasswordsNoDup = TryGetEx(dictNew, "SimilarPasswordsNoDup", m_strSimilarPasswordsNoDup);
 			m_strSize = TryGetEx(dictNew, "Size", m_strSize);
 			m_strSkip = TryGetEx(dictNew, "Skip", m_strSkip);
@@ -802,6 +809,9 @@ namespace KeePass.Resources
 			m_strUrlOverrides = TryGetEx(dictNew, "UrlOverrides", m_strUrlOverrides);
 			m_strUrlSaveDesc = TryGetEx(dictNew, "UrlSaveDesc", m_strUrlSaveDesc);
 			m_strUrlSaveTitle = TryGetEx(dictNew, "UrlSaveTitle", m_strUrlSaveTitle);
+			m_strURtfCheck = TryGetEx(dictNew, "URtfCheck", m_strURtfCheck);
+			m_strURtfProblem = TryGetEx(dictNew, "URtfProblem", m_strURtfProblem);
+			m_strURtfSuggestion = TryGetEx(dictNew, "URtfSuggestion", m_strURtfSuggestion);
 			m_strUseFileLocks = TryGetEx(dictNew, "UseFileLocks", m_strUseFileLocks);
 			m_strUseTransactedDatabaseWrites = TryGetEx(dictNew, "UseTransactedDatabaseWrites", m_strUseTransactedDatabaseWrites);
 			m_strUserName = TryGetEx(dictNew, "UserName", m_strUserName);
@@ -952,15 +962,19 @@ namespace KeePass.Resources
 			"ClearKeyCmdLineParams",
 			"ClearMru",
 			"Clipboard",
+			"ClipboardClearDesc",
 			"ClipboardClearInSeconds",
 			"ClipboardClearOnExit",
 			"ClipboardDataCopied",
+			"ClipboardMain",
+			"ClipboardNoPersist",
+			"ClipboardOptionME",
 			"ClipboardViewerIgnoreFormat",
 			"CloseActiveDatabase",
 			"CloseButton",
 			"CloseButtonMinimizes",
 			"ClosingDatabaseFile",
-			"ClusterCenters",
+			"ClusterCenters2",
 			"ClusterCentersDesc",
 			"Column",
 			"Columns",
@@ -1099,9 +1113,9 @@ namespace KeePass.Resources
 			"Error",
 			"ErrorCode",
 			"Errors",
-			"EscMinimizesToTray",
 			"Event",
 			"ExecuteCmdLineUrl",
+			"Exit",
 			"ExitInsteadOfLockingAfterTime",
 			"ExitInsteadOfLockingAlways",
 			"ExpiredEntries",
@@ -1296,6 +1310,7 @@ namespace KeePass.Resources
 			"LockOnRemoteControlChange",
 			"LockOnSessionSwitch",
 			"LockOnSuspend",
+			"LockWorkspace",
 			"MainInstruction",
 			"MainWindow",
 			"MasterKey",
@@ -1317,12 +1332,14 @@ namespace KeePass.Resources
 			"Memory",
 			"Menus",
 			"Method",
+			"Minimize",
 			"MinimizeAfterAutoType",
 			"MinimizeAfterCopy",
 			"MinimizeAfterLocking",
 			"MinimizeAfterOpeningDatabase",
 			"Minimized",
 			"MinimizeToTray",
+			"MinimizeToTrayStc",
 			"More",
 			"MoreEntries",
 			"MoreInfo",
@@ -1393,7 +1410,7 @@ namespace KeePass.Resources
 			"PasswordOptionsDesc",
 			"PasswordPrompt",
 			"PasswordQuality",
-			"PasswordQualityReport",
+			"PasswordQualityReport2",
 			"PasswordRepeatFailed",
 			"PasswordRepeatHint",
 			"Paste",
@@ -1529,7 +1546,7 @@ namespace KeePass.Resources
 			"ShowTrayOnlyIfTrayed",
 			"SimilarPasswords",
 			"SimilarPasswordsGroup",
-			"SimilarPasswordsList",
+			"SimilarPasswordsList2",
 			"SimilarPasswordsNoDup",
 			"Size",
 			"Skip",
@@ -1623,6 +1640,9 @@ namespace KeePass.Resources
 			"UrlOverrides",
 			"UrlSaveDesc",
 			"UrlSaveTitle",
+			"URtfCheck",
+			"URtfProblem",
+			"URtfSuggestion",
 			"UseFileLocks",
 			"UseTransactedDatabaseWrites",
 			"UserName",
@@ -2827,6 +2847,17 @@ namespace KeePass.Resources
 			get { return m_strClipboard; }
 		}
 
+		private static string m_strClipboardClearDesc =
+			@"Copying sensitive data to the clipboard starts a countdown. After the specified time, the clipboard is cleared.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copying sensitive data to the clipboard starts a countdown. After the specified time, the clipboard is cleared.'.
+		/// </summary>
+		public static string ClipboardClearDesc
+		{
+			get { return m_strClipboardClearDesc; }
+		}
+
 		private static string m_strClipboardClearInSeconds =
 			@"Clipboard will be cleared in [PARAM] seconds";
 		/// <summary>
@@ -2858,6 +2889,39 @@ namespace KeePass.Resources
 		public static string ClipboardDataCopied
 		{
 			get { return m_strClipboardDataCopied; }
+		}
+
+		private static string m_strClipboardMain =
+			@"Clipboard (Main Entry List)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Clipboard (Main Entry List)'.
+		/// </summary>
+		public static string ClipboardMain
+		{
+			get { return m_strClipboardMain; }
+		}
+
+		private static string m_strClipboardNoPersist =
+			@"Do not store data in the Windows clipboard history and the cloud clipboard";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do not store data in the Windows clipboard history and the cloud clipboard'.
+		/// </summary>
+		public static string ClipboardNoPersist
+		{
+			get { return m_strClipboardNoPersist; }
+		}
+
+		private static string m_strClipboardOptionME =
+			@"This option applies to entry clipboard commands in the main window (like 'Copy User Name' and 'Copy Password').";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'This option applies to entry clipboard commands in the main window (like &#39;Copy User Name&#39; and &#39;Copy Password&#39;).'.
+		/// </summary>
+		public static string ClipboardOptionME
+		{
+			get { return m_strClipboardOptionME; }
 		}
 
 		private static string m_strClipboardViewerIgnoreFormat =
@@ -2915,15 +2979,15 @@ namespace KeePass.Resources
 			get { return m_strClosingDatabaseFile; }
 		}
 
-		private static string m_strClusterCenters =
-			@"Clusters of similar passwords.";
+		private static string m_strClusterCenters2 =
+			@"Clusters of similar passwords (excluding TANs).";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Clusters of similar passwords.'.
+		/// 'Clusters of similar passwords (excluding TANs).'.
 		/// </summary>
-		public static string ClusterCenters
+		public static string ClusterCenters2
 		{
-			get { return m_strClusterCenters; }
+			get { return m_strClusterCenters2; }
 		}
 
 		private static string m_strClusterCentersDesc =
@@ -3455,10 +3519,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strCurrentStyle =
-			@"Current Style";
+			@"Current style";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Current Style'.
+		/// 'Current style'.
 		/// </summary>
 		public static string CurrentStyle
 		{
@@ -4444,17 +4508,6 @@ namespace KeePass.Resources
 			get { return m_strErrors; }
 		}
 
-		private static string m_strEscMinimizesToTray =
-			@"Esc minimizes to tray instead of locking the workspace";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Esc minimizes to tray instead of locking the workspace'.
-		/// </summary>
-		public static string EscMinimizesToTray
-		{
-			get { return m_strEscMinimizesToTray; }
-		}
-
 		private static string m_strEvent =
 			@"Event";
 		/// <summary>
@@ -4475,6 +4528,17 @@ namespace KeePass.Resources
 		public static string ExecuteCmdLineUrl
 		{
 			get { return m_strExecuteCmdLineUrl; }
+		}
+
+		private static string m_strExit =
+			@"Exit";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Exit'.
+		/// </summary>
+		public static string Exit
+		{
+			get { return m_strExit; }
 		}
 
 		private static string m_strExitInsteadOfLockingAfterTime =
@@ -6611,6 +6675,17 @@ namespace KeePass.Resources
 			get { return m_strLockOnSuspend; }
 		}
 
+		private static string m_strLockWorkspace =
+			@"Lock workspace";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Lock workspace'.
+		/// </summary>
+		public static string LockWorkspace
+		{
+			get { return m_strLockWorkspace; }
+		}
+
 		private static string m_strMainInstruction =
 			@"Main instruction";
 		/// <summary>
@@ -6842,6 +6917,17 @@ namespace KeePass.Resources
 			get { return m_strMethod; }
 		}
 
+		private static string m_strMinimize =
+			@"Minimize";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Minimize'.
+		/// </summary>
+		public static string Minimize
+		{
+			get { return m_strMinimize; }
+		}
+
 		private static string m_strMinimizeAfterAutoType =
 			@"Minimize main window after performing auto-type";
 		/// <summary>
@@ -6906,6 +6992,17 @@ namespace KeePass.Resources
 		public static string MinimizeToTray
 		{
 			get { return m_strMinimizeToTray; }
+		}
+
+		private static string m_strMinimizeToTrayStc =
+			@"Minimize to tray";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Minimize to tray'.
+		/// </summary>
+		public static string MinimizeToTrayStc
+		{
+			get { return m_strMinimizeToTrayStc; }
 		}
 
 		private static string m_strMore =
@@ -7678,15 +7775,15 @@ namespace KeePass.Resources
 			get { return m_strPasswordQuality; }
 		}
 
-		private static string m_strPasswordQualityReport =
-			@"Estimated quality of the entry passwords.";
+		private static string m_strPasswordQualityReport2 =
+			@"Estimated quality of the entry passwords (excluding TANs).";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Estimated quality of the entry passwords.'.
+		/// 'Estimated quality of the entry passwords (excluding TANs).'.
 		/// </summary>
-		public static string PasswordQualityReport
+		public static string PasswordQualityReport2
 		{
-			get { return m_strPasswordQualityReport; }
+			get { return m_strPasswordQualityReport2; }
 		}
 
 		private static string m_strPasswordRepeatFailed =
@@ -9174,15 +9271,15 @@ namespace KeePass.Resources
 			get { return m_strSimilarPasswordsGroup; }
 		}
 
-		private static string m_strSimilarPasswordsList =
-			@"List of entries that are using similar passwords.";
+		private static string m_strSimilarPasswordsList2 =
+			@"List of entries that are using similar passwords (excluding TANs).";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'List of entries that are using similar passwords.'.
+		/// 'List of entries that are using similar passwords (excluding TANs).'.
 		/// </summary>
-		public static string SimilarPasswordsList
+		public static string SimilarPasswordsList2
 		{
-			get { return m_strSimilarPasswordsList; }
+			get { return m_strSimilarPasswordsList2; }
 		}
 
 		private static string m_strSimilarPasswordsNoDup =
@@ -10206,6 +10303,39 @@ namespace KeePass.Resources
 		public static string UrlSaveTitle
 		{
 			get { return m_strUrlSaveTitle; }
+		}
+
+		private static string m_strURtfCheck =
+			@"It is recommended to reopen the text and check it carefully.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'It is recommended to reopen the text and check it carefully.'.
+		/// </summary>
+		public static string URtfCheck
+		{
+			get { return m_strURtfCheck; }
+		}
+
+		private static string m_strURtfProblem =
+			@"KeePass has detected that certain characters in your text may have been corrupted (due to a bug in Windows).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'KeePass has detected that certain characters in your text may have been corrupted (due to a bug in Windows).'.
+		/// </summary>
+		public static string URtfProblem
+		{
+			get { return m_strURtfProblem; }
+		}
+
+		private static string m_strURtfSuggestion =
+			@"In order to avoid text corruptions, turn off the Windows option 'Use Unicode UTF-8 for worldwide language support'.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'In order to avoid text corruptions, turn off the Windows option &#39;Use Unicode UTF-8 for worldwide language support&#39;.'.
+		/// </summary>
+		public static string URtfSuggestion
+		{
+			get { return m_strURtfSuggestion; }
 		}
 
 		private static string m_strUseFileLocks =

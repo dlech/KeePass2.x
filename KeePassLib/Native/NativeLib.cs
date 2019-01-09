@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -444,6 +444,14 @@ namespace KeePassLib.Native
 
 			if(kvpPointers.Value != IntPtr.Zero)
 				Marshal.FreeHGlobal(kvpPointers.Value);
+		}
+
+		internal static Type GetUwpType(string strType)
+		{
+			if(string.IsNullOrEmpty(strType)) { Debug.Assert(false); return null; }
+
+			// https://referencesource.microsoft.com/#mscorlib/system/runtime/interopservices/windowsruntime/winrtclassactivator.cs
+			return Type.GetType(strType + ", Windows, ContentType=WindowsRuntime", false);
 		}
 	}
 }

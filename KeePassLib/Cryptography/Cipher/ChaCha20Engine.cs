@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ namespace KeePassLib.Cryptography.Cipher
 			0xD6, 0x03, 0x8A, 0x2B, 0x8B, 0x6F, 0x4C, 0xB5,
 			0xA5, 0x24, 0x33, 0x9A, 0x31, 0xDB, 0xB5, 0x9A
 		});
-
 		public PwUuid CipherUuid
 		{
 			get { return m_uuid; }
@@ -58,14 +57,14 @@ namespace KeePassLib.Cryptography.Cipher
 			get { return 12; } // 96 bits
 		}
 
-		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
+		public Stream EncryptStream(Stream s, byte[] pbKey, byte[] pbIV)
 		{
-			return new ChaCha20Stream(sPlainText, true, pbKey, pbIV);
+			return new ChaCha20Stream(s, true, pbKey, pbIV);
 		}
 
-		public Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV)
+		public Stream DecryptStream(Stream s, byte[] pbKey, byte[] pbIV)
 		{
-			return new ChaCha20Stream(sEncrypted, false, pbKey, pbIV);
+			return new ChaCha20Stream(s, false, pbKey, pbIV);
 		}
 	}
 

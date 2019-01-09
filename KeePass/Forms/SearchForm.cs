@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -64,6 +64,12 @@ namespace KeePass.Forms
 			get { return m_pgResultsGroup; }
 		}
 
+		internal SearchParameters SearchResultParameters
+		{
+			// See GetSearchParameters
+			get { return Program.Config.Defaults.SearchParameters; }
+		}
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -121,6 +127,7 @@ namespace KeePass.Forms
 
 			m_cbRegEx.Checked = sp.RegularExpression;
 			m_cbExcludeExpired.Checked = sp.ExcludeExpired;
+			m_cbIgnoreGroupSettings.Checked = !sp.RespectEntrySearchingDisabled;
 
 			string strTrf = SearchUtil.GetTransformation(sp);
 			m_cbDerefData.Checked = (strTrf == SearchUtil.StrTrfDeref);
@@ -218,6 +225,7 @@ namespace KeePass.Forms
 				StringComparison.InvariantCultureIgnoreCase);
 
 			sp.ExcludeExpired = m_cbExcludeExpired.Checked;
+			sp.RespectEntrySearchingDisabled = !m_cbIgnoreGroupSettings.Checked;
 
 			SearchUtil.SetTransformation(sp, (m_cbDerefData.Checked ?
 				SearchUtil.StrTrfDeref : string.Empty));

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -85,6 +85,7 @@ namespace KeePassLib.Cryptography
 			TestAes();
 			TestSalsa20(r);
 			TestChaCha20(r);
+			TestSha256(r);
 			TestBlake2b(r);
 			TestArgon2();
 			TestHmac();
@@ -124,43 +125,40 @@ namespace KeePassLib.Cryptography
 		private static void TestAes()
 		{
 			// Test vector (official ECB test vector #356)
+			byte[] pbKey = new byte[32];
 			byte[] pbIV = new byte[16];
-			byte[] pbTestKey = new byte[32];
-			byte[] pbTestData = new byte[16];
-			byte[] pbReferenceCT = new byte[16] {
+			byte[] pbData = new byte[16];
+			pbData[0] = 0x04;
+			byte[] pbRefCT = new byte[16] {
 				0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
 				0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7 };
-			int i;
-
-			for(i = 0; i < 16; ++i) pbIV[i] = 0;
-			for(i = 0; i < 32; ++i) pbTestKey[i] = 0;
-			for(i = 0; i < 16; ++i) pbTestData[i] = 0;
-			pbTestData[0] = 0x04;
 
 #if KeePassUAP
-			AesEngine r = new AesEngine();
-			r.Init(true, new KeyParameter(pbTestKey));
-			if(r.GetBlockSize() != pbTestData.Length)
+			AesEngine aes = new AesEngine();
+			aes.Init(true, new KeyParameter(pbKey));
+			if(aes.GetBlockSize() != pbData.Length)
 				throw new SecurityException("AES (BC)");
-			r.ProcessBlock(pbTestData, 0, pbTestData, 0);
+			aes.ProcessBlock(pbData, 0, pbData, 0);
+			aes.Reset();
 #else
-			SymmetricAlgorithm a = CryptoUtil.CreateAes();
-			if(a.BlockSize != 128) // AES block size
+			using(SymmetricAlgorithm a = CryptoUtil.CreateAes())
 			{
-				Debug.Assert(false);
-				a.BlockSize = 128;
+				if(a.BlockSize != 128) // AES block size
+				{
+					Debug.Assert(false);
+					a.BlockSize = 128;
+				}
+				a.KeySize = 256;
+				a.Mode = CipherMode.ECB;
+
+				using(ICryptoTransform t = a.CreateEncryptor(pbKey, pbIV))
+				{
+					t.TransformBlock(pbData, 0, 16, pbData, 0);
+				}
 			}
-
-			a.IV = pbIV;
-			a.KeySize = 256;
-			a.Key = pbTestKey;
-			a.Mode = CipherMode.ECB;
-			ICryptoTransform iCrypt = a.CreateEncryptor();
-
-			iCrypt.TransformBlock(pbTestData, 0, 16, pbTestData, 0);
 #endif
 
-			if(!MemUtil.ArraysEqual(pbTestData, pbReferenceCT))
+			if(!MemUtil.ArraysEqual(pbData, pbRefCT))
 				throw new SecurityException("AES");
 		}
 
@@ -434,6 +432,37 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
+		private static void TestSha256(Random r)
+		{
+#if DEBUG
+			byte[] pbData = new byte[517];
+			r.NextBytes(pbData);
+
+			byte[] pbH1;
+			using(SHA256Managed h1 = new SHA256Managed())
+			{
+				int i = 0;
+				while(i != pbData.Length)
+				{
+					int cb = r.Next(pbData.Length - i) + 1;
+					h1.TransformBlock(pbData, i, cb, pbData, i);
+					i += cb;
+				}
+				h1.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+				pbH1 = h1.Hash;
+			}
+
+			byte[] pbH2;
+			using(SHA256Managed h2 = new SHA256Managed())
+			{
+				pbH2 = h2.ComputeHash(pbData);
+			}
+
+			if(!MemUtil.ArraysEqual(pbH1, pbH2))
+				throw new SecurityException("SHA-256");
+#endif
+		}
+
 		private static void TestBlake2b(Random r)
 		{
 #if DEBUG
@@ -498,7 +527,7 @@ namespace KeePassLib.Cryptography
 			int p = 0;
 			while(p < pbData.Length)
 			{
-				int cb = r.Next(1, pbData.Length - p + 1);
+				int cb = r.Next(pbData.Length - p) + 1;
 				h.TransformBlock(pbData, p, cb, pbData, p);
 				p += cb;
 			}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,48 +19,47 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 namespace KeePass.Plugins
 {
 	/// <summary>
-	/// KeePass plugin base class. All KeePass plugins must derive from
-	/// this class.
+	/// KeePass plugin base class. All KeePass plugins must derive
+	/// from this class.
 	/// </summary>
 	public abstract class Plugin
 	{
 		/// <summary>
-		/// The <c>Initialize</c> function is called by KeePass when
-		/// you should initialize your plugin (create menu items, etc.).
+		/// The <c>Initialize</c> method is called by KeePass when
+		/// you should initialize your plugin.
 		/// </summary>
-		/// <param name="host">Plugin host interface. By using this
-		/// interface, you can access the KeePass main window and the
-		/// currently opened database.</param>
+		/// <param name="host">Plugin host interface. Through this
+		/// interface you can access the KeePass main window, the
+		/// currently opened database, etc.</param>
 		/// <returns>You must return <c>true</c> in order to signal
 		/// successful initialization. If you return <c>false</c>,
 		/// KeePass unloads your plugin (without calling the
-		/// <c>Terminate</c> function of your plugin).</returns>
+		/// <c>Terminate</c> method of your plugin).</returns>
 		public virtual bool Initialize(IPluginHost host)
 		{
 			return (host != null);
 		}
 
 		/// <summary>
-		/// The <c>Terminate</c> function is called by KeePass when
-		/// you should free all resources, close open files/streams,
-		/// etc. It is also recommended that you remove all your
-		/// plugin menu items from the KeePass menu.
+		/// The <c>Terminate</c> method is called by KeePass when
+		/// you should free all resources, close files/streams,
+		/// remove event handlers, etc.
 		/// </summary>
 		public virtual void Terminate()
 		{
 		}
 
 		/// <summary>
-		/// Get a handle to a 16x16 icon representing the plugin.
-		/// This icon is shown in the plugin management window of
-		/// KeePass for example.
+		/// Get a small icon representing the plugin.
+		/// The image's width should be <c>DpiUtil.ScaleIntX(16)</c>,
+		/// and its height should be <c>DpiUtil.ScaleIntY(16)</c>.
 		/// </summary>
 		public virtual Image SmallIcon
 		{
@@ -68,12 +67,50 @@ namespace KeePass.Plugins
 		}
 
 		/// <summary>
-		/// URL of a version information file. See
+		/// Get the URL of a version information file. See
 		/// https://keepass.info/help/v2_dev/plg_index.html#upd
 		/// </summary>
 		public virtual string UpdateUrl
 		{
 			get { return null; }
 		}
+
+		/// <summary>
+		/// Get a menu item of the plugin. See
+		/// https://keepass.info/help/v2_dev/plg_index.html#co_menuitem
+		/// </summary>
+		/// <param name="t">Type of the menu that the plugin should
+		/// return an item for.</param>
+		public virtual ToolStripMenuItem GetMenuItem(PluginMenuType t)
+		{
+			return null;
+		}
+	}
+
+	public enum PluginMenuType
+	{
+		/// <summary>
+		/// Main menu item of the plugin, which KeePass typically
+		/// shows in the 'Tools' menu.
+		/// </summary>
+		Main = 0,
+
+		/// <summary>
+		/// Group menu item of the plugin, which KeePass typically
+		/// shows in the context menu of a group.
+		/// </summary>
+		Group,
+
+		/// <summary>
+		/// Entry menu item of the plugin, which KeePass typically
+		/// shows in the context menu of an entry.
+		/// </summary>
+		Entry,
+
+		/// <summary>
+		/// Tray menu item of the plugin, which KeePass typically
+		/// shows in the context menu of its system tray icon.
+		/// </summary>
+		Tray
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -140,11 +140,10 @@ namespace KeePass.Forms
 				m_tscZoom.Items.Add(iZoom.ToString() + "%");
 			m_tscZoom.SelectedIndex = 0;
 
-			KeysConverter kc = new KeysConverter();
 			m_tsbZoomOut.ToolTipText = KPRes.Zoom + " - (" + KPRes.KeyboardKeyCtrl +
-				"+" + kc.ConvertToString(Keys.Subtract) + ")";
+				"+-)";
 			m_tsbZoomIn.ToolTipText = KPRes.Zoom + " + (" + KPRes.KeyboardKeyCtrl +
-				"+" + kc.ConvertToString(Keys.Add) + ")";
+				"++)";
 
 			m_tslViewer.Text = KPRes.ShowIn + ":";
 
@@ -515,7 +514,7 @@ namespace KeePass.Forms
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if(keyData == Keys.Escape) // No modifiers
+			if(keyData == Keys.Escape) // keyData comp. => no modifiers
 			{
 				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
 				if(obKeyDown.HasValue)
@@ -525,12 +524,19 @@ namespace KeePass.Forms
 				}
 			}
 
-			Keys k = (keyData & Keys.KeyCode);
-			if(m_tscZoom.Visible && ((k == Keys.Add) || (k == Keys.Subtract)) &&
-				((keyData & Keys.Control) != Keys.None))
+			if(m_tscZoom.Visible && ((keyData & Keys.Control) != Keys.None))
 			{
-				PerformZoom((k == Keys.Add) ? 1 : -1);
-				return true;
+				Keys k = (keyData & Keys.KeyCode);
+				if((k == Keys.Add) || (k == Keys.Subtract))
+				{
+					PerformZoom((k == Keys.Add) ? 1 : -1);
+					return true;
+				}
+				if((k == Keys.Oemplus) || (k == Keys.OemMinus))
+				{
+					PerformZoom((k == Keys.Oemplus) ? 1 : -1);
+					return true;
+				}
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);

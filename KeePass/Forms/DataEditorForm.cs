@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ namespace KeePass.Forms
 		private byte[] m_pbEditedData = null;
 
 		private bool m_bModified = false;
+		private bool m_bURtfWithHighChar = false;
 
 		private uint m_uBlockEvents = 0;
 		private Stack<KeyValuePair<int, int>> m_lSelections =
@@ -275,7 +276,15 @@ namespace KeePass.Forms
 		private void OnFileSave(object sender, EventArgs e)
 		{
 			if(m_bdc == BinaryDataClass.RichText)
-				m_pbEditedData = StrUtil.Utf8.GetBytes(StrUtil.RtfFix(m_rtbText.Rtf));
+			{
+				string strRtf = m_rtbText.Rtf;
+
+				if(StrUtil.RtfIsURtf(strRtf))
+					m_bURtfWithHighChar = StrUtil.ContainsHighChar(m_rtbText.Text);
+				else m_bURtfWithHighChar = false;
+
+				m_pbEditedData = StrUtil.Utf8.GetBytes(StrUtil.RtfFix(strRtf));
+			}
 			else
 			{
 				string strData = m_rtbText.Text;
@@ -293,6 +302,30 @@ namespace KeePass.Forms
 			{
 				if(MessageService.AskYesNo(KPRes.SaveBeforeCloseQuestion))
 					OnFileSave(sender, EventArgs.Empty);
+			}
+
+			if(m_bURtfWithHighChar && (m_pbEditedData != null) &&
+				!MemUtil.ArraysEqual(m_pbEditedData, m_pbData))
+			{
+				string strUrl = AppHelp.GetOnlineUrl(AppDefs.HelpTopics.KbFaq,
+					AppDefs.HelpTopics.KbFaqURtf);
+				string strLink = VistaTaskDialog.CreateLink(strUrl, strUrl);
+				string strMsg = KPRes.URtfProblem + MessageService.NewParagraph +
+					KPRes.URtfCheck + MessageService.NewParagraph +
+					KPRes.URtfSuggestion + MessageService.NewParagraph +
+					KPRes.MoreInfo + ":" + MessageService.NewLine;
+
+				VistaTaskDialog dlg = new VistaTaskDialog();
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+				dlg.CommandLinks = false;
+				dlg.Content = strMsg + strLink;
+				dlg.DefaultButtonID = (int)DialogResult.Cancel;
+				dlg.EnableHyperlinks = true;
+				dlg.SetIcon(VtdIcon.Warning);
+				dlg.WindowTitle = PwDefs.ShortProductName;
+
+				if(!dlg.ShowDialog())
+					MessageService.ShowWarning(strMsg + strUrl);
 			}
 
 			Debug.Assert(m_uBlockEvents == 0);

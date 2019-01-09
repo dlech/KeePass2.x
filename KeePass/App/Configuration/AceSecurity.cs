@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -105,6 +105,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_nClipClearSeconds; }
 			set { m_nClipClearSeconds = value; }
+		}
+
+		private bool m_bClipNoPersist = true;
+		[DefaultValue(true)]
+		public bool ClipboardNoPersist
+		{
+			get { return m_bClipNoPersist; }
+			set { m_bClipNoPersist = value; }
 		}
 
 		// Disabled by default, because Office's clipboard tools

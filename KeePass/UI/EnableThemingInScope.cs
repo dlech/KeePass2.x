@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Native;
 using KeePass.Util;
@@ -76,10 +76,10 @@ namespace KeePass.UI
 
 		private void Dispose(bool bDisposing)
 		{
-			if(!m_nuCookie.HasValue) return;
-
 			try
 			{
+				if(!m_nuCookie.HasValue) return;
+
 				if(NativeMethods.DeactivateActCtx(0, m_nuCookie.Value))
 					m_nuCookie = null;
 				else { Debug.Assert(false); }
@@ -89,10 +89,10 @@ namespace KeePass.UI
 
 		public static void StaticDispose()
 		{
-			if(!m_nhCtx.HasValue) return;
-
 			try
 			{
+				if(!m_nhCtx.HasValue) return;
+
 				NativeMethods.ReleaseActCtx(m_nhCtx.Value);
 				m_nhCtx = null;
 			}

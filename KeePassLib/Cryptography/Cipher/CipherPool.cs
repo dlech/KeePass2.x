@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace KeePassLib.Cryptography.Cipher
 {
@@ -30,12 +30,9 @@ namespace KeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class CipherPool
 	{
-		private List<ICipherEngine> m_vCiphers = new List<ICipherEngine>();
-		private static CipherPool m_poolGlobal = null;
+		private List<ICipherEngine> m_lCiphers = new List<ICipherEngine>();
 
-		/// <summary>
-		/// Reference to the global cipher pool.
-		/// </summary>
+		private static CipherPool m_poolGlobal = null;
 		public static CipherPool GlobalPool
 		{
 			get
@@ -59,24 +56,25 @@ namespace KeePassLib.Cryptography.Cipher
 		/// </summary>
 		public void Clear()
 		{
-			m_vCiphers.Clear();
+			m_lCiphers.Clear();
 		}
 
 		/// <summary>
 		/// Add a cipher engine to the pool.
 		/// </summary>
-		/// <param name="csEngine">Cipher engine to add. Must not be <c>null</c>.</param>
-		public void AddCipher(ICipherEngine csEngine)
+		/// <param name="c">Cipher engine to add. Must not be <c>null</c>.</param>
+		public void AddCipher(ICipherEngine c)
 		{
-			Debug.Assert(csEngine != null);
-			if(csEngine == null) throw new ArgumentNullException("csEngine");
+			if(c == null) { Debug.Assert(false); throw new ArgumentNullException("c"); }
 
-			// Return if a cipher with that ID is registered already.
-			for(int i = 0; i < m_vCiphers.Count; ++i)
-				if(m_vCiphers[i].CipherUuid.Equals(csEngine.CipherUuid))
+			// Return if a cipher with that ID is registered already
+			foreach(ICipherEngine cEx in m_lCiphers)
+			{
+				if(cEx.CipherUuid.Equals(c.CipherUuid))
 					return;
+			}
 
-			m_vCiphers.Add(csEngine);
+			m_lCiphers.Add(c);
 		}
 
 		/// <summary>
@@ -87,10 +85,10 @@ namespace KeePassLib.Cryptography.Cipher
 		/// not found, <c>null</c> is returned.</returns>
 		public ICipherEngine GetCipher(PwUuid uuidCipher)
 		{
-			foreach(ICipherEngine iEngine in m_vCiphers)
+			foreach(ICipherEngine c in m_lCiphers)
 			{
-				if(iEngine.CipherUuid.Equals(uuidCipher))
-					return iEngine;
+				if(c.CipherUuid.Equals(uuidCipher))
+					return c;
 			}
 
 			return null;
@@ -105,9 +103,9 @@ namespace KeePassLib.Cryptography.Cipher
 		/// the specified cipher is not found.</returns>
 		public int GetCipherIndex(PwUuid uuidCipher)
 		{
-			for(int i = 0; i < m_vCiphers.Count; ++i)
+			for(int i = 0; i < m_lCiphers.Count; ++i)
 			{
-				if(m_vCiphers[i].CipherUuid.Equals(uuidCipher))
+				if(m_lCiphers[i].CipherUuid.Equals(uuidCipher))
 					return i;
 			}
 
@@ -126,9 +124,11 @@ namespace KeePassLib.Cryptography.Cipher
 		/// no cipher with that name is found.</returns>
 		public int GetCipherIndex(string strDisplayName)
 		{
-			for(int i = 0; i < m_vCiphers.Count; ++i)
-				if(m_vCiphers[i].DisplayName == strDisplayName)
+			for(int i = 0; i < m_lCiphers.Count; ++i)
+			{
+				if(m_lCiphers[i].DisplayName == strDisplayName)
 					return i;
+			}
 
 			Debug.Assert(false);
 			return -1;
@@ -139,7 +139,7 @@ namespace KeePassLib.Cryptography.Cipher
 		/// </summary>
 		public int EngineCount
 		{
-			get { return m_vCiphers.Count; }
+			get { return m_lCiphers.Count; }
 		}
 
 		/// <summary>
@@ -155,10 +155,10 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			get
 			{
-				if((nIndex < 0) || (nIndex >= m_vCiphers.Count))
+				if((nIndex < 0) || (nIndex >= m_lCiphers.Count))
 					throw new ArgumentOutOfRangeException("nIndex");
 
-				return m_vCiphers[nIndex];
+				return m_lCiphers[nIndex];
 			}
 		}
 	}

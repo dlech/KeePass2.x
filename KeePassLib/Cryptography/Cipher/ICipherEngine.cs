@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,6 @@ using System.IO;
 
 namespace KeePassLib.Cryptography.Cipher
 {
-	/// <summary>
-	/// Interface of an encryption/decryption class.
-	/// </summary>
 	public interface ICipherEngine
 	{
 		/// <summary>
@@ -37,7 +34,7 @@ namespace KeePassLib.Cryptography.Cipher
 		}
 
 		/// <summary>
-		/// String displayed in the list of available encryption/decryption
+		/// Name displayed in the list of available encryption/decryption
 		/// engines in the GUI.
 		/// </summary>
 		string DisplayName
@@ -45,23 +42,8 @@ namespace KeePassLib.Cryptography.Cipher
 			get;
 		}
 
-		/// <summary>
-		/// Encrypt a stream.
-		/// </summary>
-		/// <param name="sPlainText">Stream to read the plain-text from.</param>
-		/// <param name="pbKey">Key to use.</param>
-		/// <param name="pbIV">Initialization vector.</param>
-		/// <returns>Stream, from which the encrypted data can be read.</returns>
-		Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV);
-
-		/// <summary>
-		/// Decrypt a stream.
-		/// </summary>
-		/// <param name="sEncrypted">Stream to read the encrypted data from.</param>
-		/// <param name="pbKey">Key to use.</param>
-		/// <param name="pbIV">Initialization vector.</param>
-		/// <returns>Stream, from which the decrypted data can be read.</returns>
-		Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV);
+		Stream EncryptStream(Stream s, byte[] pbKey, byte[] pbIV);
+		Stream DecryptStream(Stream s, byte[] pbKey, byte[] pbIV);
 	}
 
 	public interface ICipherEngine2 : ICipherEngine

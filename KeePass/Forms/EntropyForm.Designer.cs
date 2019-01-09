@@ -164,8 +164,8 @@
 			this.m_lblKeysIntro.Location = new System.Drawing.Point(6, 16);
 			this.m_lblKeysIntro.Name = "m_lblKeysIntro";
 			this.m_lblKeysIntro.Size = new System.Drawing.Size(229, 13);
-			this.m_lblKeysIntro.TabIndex = 1;
-			this.m_lblKeysIntro.Text = "Type random characters into the following field:";
+			this.m_lblKeysIntro.TabIndex = 0;
+			this.m_lblKeysIntro.Text = "&Type random characters into the following field:";
 			// 
 			// m_tbEdit
 			// 
@@ -175,7 +175,7 @@
 			this.m_tbEdit.Name = "m_tbEdit";
 			this.m_tbEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.m_tbEdit.Size = new System.Drawing.Size(279, 204);
-			this.m_tbEdit.TabIndex = 0;
+			this.m_tbEdit.TabIndex = 1;
 			// 
 			// EntropyForm
 			// 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using KeePass.UI.ToolStripRendering;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
@@ -172,12 +173,19 @@ namespace KeePass.Forms
 				m_cmbMenuStyle.Enabled = false;
 			}
 
+			GAction<BannerStyle, string> fAddBannerStyle = delegate(
+				BannerStyle bs, string strDisplay)
+			{
+				Debug.Assert(m_cmbBannerStyle.Items.Count == (long)bs);
+				m_cmbBannerStyle.Items.Add(strDisplay);
+			};
+
 			Debug.Assert(!m_cmbBannerStyle.Sorted);
-			m_cmbBannerStyle.Items.Add("(" + KPRes.CurrentStyle + ")");
-			m_cmbBannerStyle.Items.Add("Windows XP Login");
-			m_cmbBannerStyle.Items.Add("Windows Vista Black");
-			m_cmbBannerStyle.Items.Add("KeePass Win32");
-			m_cmbBannerStyle.Items.Add("Blue Carbon");
+			fAddBannerStyle(BannerStyle.Default, KPRes.CurrentStyle);
+			fAddBannerStyle(BannerStyle.WinXPLogin, "Windows XP Login");
+			fAddBannerStyle(BannerStyle.WinVistaBlack, "Windows Vista Black");
+			fAddBannerStyle(BannerStyle.KeePassWin32, "KeePass Win32");
+			fAddBannerStyle(BannerStyle.BlueCarbon, "Blue Carbon");
 
 			CreateDialogBanner(BannerStyle.Default); // Default forces generation
 			m_cmbBannerStyle.SelectedIndex = (int)BannerStyle.Default;
@@ -187,6 +195,25 @@ namespace KeePass.Forms
 				m_lblBannerStyle.Enabled = false;
 				m_cmbBannerStyle.Enabled = false;
 			}
+
+			AceEscAction aEscCur = Program.Config.MainWindow.EscAction;
+			int iEscSel = (int)AceEscAction.Lock;
+			GAction<AceEscAction, string> fAddEscAction = delegate(
+				AceEscAction aEsc, string strDisplay)
+			{
+				if(aEsc == aEscCur) iEscSel = m_cmbEscAction.Items.Count;
+				Debug.Assert(m_cmbEscAction.Items.Count == (long)aEsc);
+				m_cmbEscAction.Items.Add(strDisplay);
+			};
+
+			Debug.Assert(!m_cmbEscAction.Sorted);
+			fAddEscAction(AceEscAction.None, KPRes.Ignore);
+			fAddEscAction(AceEscAction.Lock, KPRes.LockWorkspace);
+			fAddEscAction(AceEscAction.Minimize, KPRes.Minimize);
+			fAddEscAction(AceEscAction.MinimizeToTray, KPRes.MinimizeToTrayStc);
+			fAddEscAction(AceEscAction.Exit, KPRes.Exit);
+
+			m_cmbEscAction.SelectedIndex = iEscSel;
 
 			int nWidth = m_lvPolicy.ClientSize.Width - UIUtil.GetVScrollBarWidth();
 			m_lvPolicy.Columns.Add(KPRes.Feature, (nWidth * 10) / 29);
@@ -198,6 +225,10 @@ namespace KeePass.Forms
 				m_tbSelAutoTypeHotKey, false);
 			m_hkShowWindow = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys,
 				m_tbShowWindowHotKey, false);
+
+			UIUtil.ConfigureToolTip(m_ttRect);
+			m_ttRect.SetToolTip(m_cbClipClearTime, KPRes.ClipboardClearDesc +
+				MessageService.NewParagraph + KPRes.ClipboardOptionME);
 
 			if(!NativeLib.IsUnix())
 			{
@@ -288,7 +319,7 @@ namespace KeePass.Forms
 
 			m_lvSecurityOptions.Columns.Add(string.Empty); // Resize below
 
-			ListViewGroup lvg = new ListViewGroup(KPRes.Options);
+			ListViewGroup lvg = new ListViewGroup(KPRes.General);
 			m_lvSecurityOptions.Groups.Add(lvg);
 			Debug.Assert(lvg.ListView == m_lvSecurityOptions);
 
@@ -301,6 +332,9 @@ namespace KeePass.Forms
 				obNoSEv = true;
 				strSEvSuffix = " (" + KPRes.UnsupportedByMono + ")";
 			}
+
+			bool? obNoWin = null; // Allow read-only by enforced config
+			if(NativeLib.IsUnix()) obNoWin = true;
 
 			m_cdxSecurityOptions.CreateItem(aceWL, "LockOnWindowMinimize",
 				lvg, KPRes.LockOnMinimizeTaskbar);
@@ -316,18 +350,33 @@ namespace KeePass.Forms
 				lvg, KPRes.ExitInsteadOfLockingAfterTime);
 			m_cdxSecurityOptions.CreateItem(aceWL, "AlwaysExitInsteadOfLocking",
 				lvg, KPRes.ExitInsteadOfLockingAlways);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "ClipboardClearOnExit",
-				lvg, KPRes.ClipboardClearOnExit);
-			m_cdxSecurityOptions.CreateItem(Program.Config.Security,
+
+			lvg = new ListViewGroup(KPRes.ClipboardMain);
+			m_lvSecurityOptions.Groups.Add(lvg);
+
+			Action<ListViewItem> fClipME = delegate(ListViewItem lvi)
+			{
+				if(lvi == null) { Debug.Assert(false); return; }
+				string str = lvi.Text;
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
+				lvi.ToolTipText = str + "." + MessageService.NewParagraph +
+					KPRes.ClipboardOptionME;
+			};
+
+			fClipME(m_cdxSecurityOptions.CreateItem(Program.Config.Security,
+				"ClipboardClearOnExit", lvg, KPRes.ClipboardClearOnExit));
+			fClipME(m_cdxSecurityOptions.CreateItem(Program.Config.Security,
+				"ClipboardNoPersist", lvg, KPRes.ClipboardNoPersist));
+			fClipME(m_cdxSecurityOptions.CreateItem(Program.Config.Security,
 				"UseClipboardViewerIgnoreFormat", lvg,
-				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended);
+				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended));
+
+			lvg = new ListViewGroup(KPRes.Advanced);
+			m_lvSecurityOptions.Groups.Add(lvg);
 
 			if(NativeLib.IsLibraryInstalled())
 				m_cdxSecurityOptions.CreateItem(Program.Config.Native, "NativeKeyTransformations",
 					lvg, KPRes.NativeLibUse);
-
-			bool? obNoWin = null; // Allow read-only by enforced config
-			if(NativeLib.IsUnix()) obNoWin = true;
 
 			m_cdxSecurityOptions.CreateItem(Program.Config.Security, "MasterKeyOnSecureDesktop",
 				lvg, KPRes.MasterKeyOnSecureDesktop, obNoWin);
@@ -406,8 +455,8 @@ namespace KeePass.Forms
 				lvg, KPRes.MinimizeAfterOpeningDatabase, obNoMin);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CloseButtonMinimizesWindow",
 				lvg, KPRes.CloseButtonMinimizes);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EscMinimizesToTray",
-				lvg, KPRes.EscMinimizesToTray);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EscMinimizesToTray",
+			//	lvg, KPRes.EscMinimizesToTray);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathInTitle",
 				lvg, KPRes.ShowFullPathInTitleBar);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DisableSaveIfNotModified",
@@ -729,6 +778,9 @@ namespace KeePass.Forms
 			if(m_cmbBannerStyle.SelectedIndex != (int)BannerStyle.Default)
 				Program.Config.UI.BannerStyle = (BannerStyle)
 					m_cmbBannerStyle.SelectedIndex;
+
+			Program.Config.MainWindow.EscAction =
+				(AceEscAction)m_cmbEscAction.SelectedIndex;
 
 			Program.Config.Application.MostRecentlyUsed.MaxItemCount =
 				(uint)m_numMruCount.Value;

@@ -63,6 +63,7 @@
     <Compile Include="Cryptography\CryptoRandom.cs" />
     <Compile Include="Cryptography\CryptoRandomStream.cs" />
     <Compile Include="Cryptography\Cipher\ICipherEngine.cs" />
+    <Compile Include="Cryptography\CryptoStreamEx.cs" />
     <Compile Include="Cryptography\CryptoUtil.cs" />
     <Compile Include="Cryptography\HashingStreamEx.cs" />
     <Compile Include="Cryptography\Hash\Blake2b.cs" />

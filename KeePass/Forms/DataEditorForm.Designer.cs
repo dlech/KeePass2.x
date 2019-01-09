@@ -96,20 +96,20 @@
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(103, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(100, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(103, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileExit.Text = "&Close";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
@@ -126,20 +126,20 @@
 			// m_menuViewFont
 			// 
 			this.m_menuViewFont.Name = "m_menuViewFont";
-			this.m_menuViewFont.Size = new System.Drawing.Size(134, 22);
+			this.m_menuViewFont.Size = new System.Drawing.Size(152, 22);
 			this.m_menuViewFont.Text = "&Font...";
 			this.m_menuViewFont.Click += new System.EventHandler(this.OnViewFont);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(131, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuViewWordWrap
 			// 
 			this.m_menuViewWordWrap.Name = "m_menuViewWordWrap";
-			this.m_menuViewWordWrap.Size = new System.Drawing.Size(134, 22);
-			this.m_menuViewWordWrap.Text = "Word &Wrap";
+			this.m_menuViewWordWrap.Size = new System.Drawing.Size(152, 22);
+			this.m_menuViewWordWrap.Text = "&Word Wrap";
 			this.m_menuViewWordWrap.Click += new System.EventHandler(this.OnViewWordWrap);
 			// 
 			// m_toolFile

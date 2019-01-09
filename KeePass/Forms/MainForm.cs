@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Media;
 using System.Security;
 using System.Text;
 using System.Threading;
@@ -102,10 +101,13 @@ namespace KeePass.Forms
 				try
 				{
 					CultureInfo ci = CultureInfo.CreateSpecificCulture(strIso6391);
-					Application.CurrentCulture = ci;
-					Thread.CurrentThread.CurrentCulture = ci;
-					Thread.CurrentThread.CurrentUICulture = ci;
-					Properties.Resources.Culture = ci;
+					if(ci != null)
+					{
+						Application.CurrentCulture = ci;
+						Thread.CurrentThread.CurrentCulture = ci;
+						Thread.CurrentThread.CurrentUICulture = ci;
+						Properties.Resources.Culture = ci;
+					}
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -410,7 +412,30 @@ namespace KeePass.Forms
 			m_pluginManager.Initialize(m_pluginDefaultHost);
 
 			m_pluginManager.UnloadAllPlugins();
-			if(AppPolicy.Current.Plugins) m_pluginManager.LoadAllPlugins();
+			if(AppPolicy.Current.Plugins)
+			{
+				ToolStripItemCollection tsicM = m_menuTools.DropDownItems;
+				int ciM = tsicM.Count;
+				ToolStripItem tsiPrevM = ((ciM >= 1) ? tsicM[ciM - 1] : null);
+
+				ToolStripItemCollection tsicG = m_ctxGroupList.Items;
+				int ciG = tsicG.Count;
+				ToolStripItem tsiPrevG = ((ciG >= 1) ? tsicG[ciG - 1] : null);
+
+				ToolStripItemCollection tsicE = m_ctxPwList.Items;
+				int ciE = tsicE.Count;
+				ToolStripItem tsiPrevE = ((ciE >= 1) ? tsicE[ciE - 1] : null);
+
+				ToolStripItemCollection tsicT = m_ctxTray.Items;
+				ToolStripItem tsiPrevT = m_ctxTrayOptions;
+
+				m_pluginManager.LoadAllPlugins();
+
+				m_pluginManager.AddMenuItems(PluginMenuType.Main, tsicM, tsiPrevM);
+				m_pluginManager.AddMenuItems(PluginMenuType.Group, tsicG, tsiPrevG);
+				m_pluginManager.AddMenuItems(PluginMenuType.Entry, tsicE, tsiPrevE);
+				m_pluginManager.AddMenuItems(PluginMenuType.Tray, tsicT, tsiPrevT);
+			}
 
 			// Delete old files *after* loading plugins (when timestamps
 			// of loaded plugins have been updated already)
@@ -959,9 +984,9 @@ namespace KeePass.Forms
 				UpdateUI(false, null, pwDb.UINeedsIconUpdate, null, true,
 					null, true, m_lvEntries);
 
-				PwObjectList<PwEntry> vSelect = new PwObjectList<PwEntry>();
-				vSelect.Add(pwe);
-				SelectEntries(vSelect, true, true);
+				PwObjectList<PwEntry> lSelect = new PwObjectList<PwEntry>();
+				lSelect.Add(pwe);
+				SelectEntries(lSelect, true, true);
 
 				EnsureVisibleEntry(pwe.Uuid);
 				UpdateUIState(false);
@@ -989,7 +1014,7 @@ namespace KeePass.Forms
 			DuplicationForm dlg = new DuplicationForm();
 			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
 
-			PwObjectList<PwEntry> vNewEntries = new PwObjectList<PwEntry>();
+			PwObjectList<PwEntry> lNewEntries = new PwObjectList<PwEntry>();
 			foreach(PwEntry pe in vSelected)
 			{
 				PwEntry peNew = pe.Duplicate();
@@ -1002,11 +1027,11 @@ namespace KeePass.Forms
 				if(pg == null) continue;
 
 				pg.AddEntry(peNew, true, true);
-				vNewEntries.Add(peNew);
+				lNewEntries.Add(peNew);
 			}
 
-			AddEntriesToList(vNewEntries);
-			SelectEntries(vNewEntries, true, true);
+			AddEntriesToList(lNewEntries);
+			SelectEntries(lNewEntries, true, true);
 
 			EnsureVisibleSelected(true); // Show all copies if possible
 			EnsureVisibleSelected(false); // Ensure showing the first
@@ -1123,7 +1148,7 @@ namespace KeePass.Forms
 		private void OnPwListFind(object sender, EventArgs e)
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
-			if(!pd.IsOpen) return;
+			if((pd == null) || !pd.IsOpen) return;
 			PwGroup pgRoot = pd.RootGroup;
 			if(pgRoot == null) { Debug.Assert(false); return; }
 
@@ -1132,13 +1157,15 @@ namespace KeePass.Forms
 
 			if(sf.ShowDialog() == DialogResult.OK)
 			{
-				PwGroup pg = sf.SearchResultsGroup;
+				PwGroup pgResults = sf.SearchResultsGroup;
+				SearchParameters sp = sf.SearchResultParameters;
 
-				UpdateEntryList(pg, false);
+				UpdateEntryList(pgResults, false);
 				SelectFirstEntryIfNoneSelected();
 
 				UpdateUIState(false);
-				ShowSearchResultsStatusMessage(pgRoot);
+				ShowSearchResultsStatusMessage(sp.RespectEntrySearchingDisabled ?
+					pgRoot : null);
 
 				ResetDefaultFocus(m_lvEntries);
 			}
@@ -1647,7 +1674,8 @@ namespace KeePass.Forms
 						if(str == m_strStatusReady) str = string.Empty;
 						if(str.Length != 0) str += MessageService.NewLine;
 						str += KPRes.WaitPlease + "...";
-						str = StrUtil.CompactString3Dots(str, 255);
+						str = StrUtil.CompactString3Dots(str,
+							NativeMethods.NOTIFYICONDATA_INFO_SIZE - 1);
 
 						ni.ShowBalloonTip(15000, PwDefs.ShortProductName,
 							str, ToolTipIcon.Warning);
@@ -1768,10 +1796,12 @@ namespace KeePass.Forms
 
 		private void OnEntryMassSetIcon(object sender, EventArgs e)
 		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
 			PwEntry[] vEntries = GetSelectedEntries();
 			if((vEntries == null) || (vEntries.Length == 0)) return;
 
-			PwDatabase pd = m_docMgr.ActiveDatabase;
 			IconPickerForm ipf = new IconPickerForm();
 			ipf.InitEx(m_ilCurrentIcons, (uint)PwIcon.Count, pd,
 				(uint)vEntries[0].IconId, vEntries[0].CustomIconUuid);
@@ -1779,25 +1809,37 @@ namespace KeePass.Forms
 			bool bSetIcons = (ipf.ShowDialog() == DialogResult.OK);
 			if(bSetIcons)
 			{
+				PwIcon pi = (PwIcon)ipf.ChosenIconId;
+				PwUuid pu = ipf.ChosenCustomIconUuid;
+				bool bCustom = !pu.Equals(PwUuid.Zero);
+
 				foreach(PwEntry pe in vEntries)
 				{
-					if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero))
-						pe.CustomIconUuid = ipf.ChosenCustomIconUuid;
+					if(bCustom)
+					{
+						if(pe.CustomIconUuid.Equals(pu)) continue;
+
+						pe.CreateBackup(pd);
+						pe.CustomIconUuid = pu;
+					}
 					else
 					{
-						pe.IconId = (PwIcon)ipf.ChosenIconId;
+						if((pe.IconId == pi) && pe.CustomIconUuid.Equals(pu)) continue;
+
+						pe.CreateBackup(pd);
+						pe.IconId = pi;
 						pe.CustomIconUuid = PwUuid.Zero;
 					}
 
 					pe.Touch(true, false);
 				}
 			}
+			UIUtil.DestroyForm(ipf);
 
 			bool bUpdImg = pd.UINeedsIconUpdate;
 			bool bModified = (bSetIcons || bUpdImg);
 			if(bModified) RefreshEntriesList();
 			UpdateUI(false, null, bUpdImg, null, false, null, bModified);
-			UIUtil.DestroyForm(ipf);
 		}
 
 		private void OnEntryMoveToTop(object sender, EventArgs e)
@@ -1909,7 +1951,7 @@ namespace KeePass.Forms
 		private void OnGroupsFind(object sender, EventArgs e)
 		{
 			PwGroup pg = GetSelectedGroup();
-			Debug.Assert(pg != null); if(pg == null) return;
+			if(pg == null) { Debug.Assert(false); return; }
 
 			SearchForm sf = new SearchForm();
 			sf.InitEx(m_docMgr.ActiveDatabase, pg);
@@ -1917,9 +1959,12 @@ namespace KeePass.Forms
 			if(sf.ShowDialog() == DialogResult.OK)
 			{
 				PwGroup pgResults = sf.SearchResultsGroup;
+				SearchParameters sp = sf.SearchResultParameters;
+
 				UpdateEntryList(pgResults, false);
 				UpdateUIState(false);
-				ShowSearchResultsStatusMessage(pg);
+				ShowSearchResultsStatusMessage(sp.RespectEntrySearchingDisabled ?
+					pg : null);
 			}
 			UIUtil.DestroyForm(sf);
 		}
@@ -2062,7 +2107,9 @@ namespace KeePass.Forms
 
 		private void OnEntryClipCopy(object sender, EventArgs e)
 		{
-			if(!m_docMgr.ActiveDatabase.IsOpen) return;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
 			PwEntry[] vSelected = GetSelectedEntries();
 			if((vSelected == null) || (vSelected.Length == 0)) return;
 
@@ -2070,8 +2117,7 @@ namespace KeePass.Forms
 
 			try
 			{
-				EntryUtil.CopyEntriesToClipboard(m_docMgr.ActiveDatabase, vSelected,
-					this.Handle);
+				EntryUtil.CopyEntriesToClipboard(pd, vSelected, this.Handle);
 				StartClipboardCountdown();
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
@@ -2079,11 +2125,13 @@ namespace KeePass.Forms
 
 		private void OnEntryClipPaste(object sender, EventArgs e)
 		{
-			if(!m_docMgr.ActiveDatabase.IsOpen) return;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
 			PwGroup pg = GetSelectedGroup();
 			if(pg == null) return;
 
-			try { EntryUtil.PasteEntriesFromClipboard(m_docMgr.ActiveDatabase, pg); }
+			try { EntryUtil.PasteEntriesFromClipboard(pd, pg); }
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUI(false, null, false, null, true, null, true);
@@ -2475,30 +2523,48 @@ namespace KeePass.Forms
 			m_mbLastTrayMouseButtons = e.Button;
 		}
 
-		private bool m_bInActRedir = false;
+		private bool m_bInFormActivated = false;
 		private void OnFormActivated(object sender, EventArgs e)
 		{
-			NotifyUserActivity();
+			if(m_bInFormActivated) { Debug.Assert(false); return; }
 
-			// if(m_vRedirectActivation.Count > 0)
-			// {
-			//	Form f = m_vRedirectActivation.Peek();
-			//	if(f != null) f.Activate();
-			//	// SystemSounds.Beep.Play(); // Do not beep!
-			// }
-			// // else EnsureAlwaysOnTopOpt();
-
+			m_bInFormActivated = true;
 			try
 			{
+				NotifyUserActivity();
+
+				// if(m_vRedirectActivation.Count > 0)
+				// {
+				//	Form f = m_vRedirectActivation.Peek();
+				//	if(f != null) f.Activate();
+				//	// SystemSounds.Beep.Play(); // Do not beep!
+				// }
+				// // else EnsureAlwaysOnTopOpt();
+
 				Form fTop = GlobalWindowManager.TopWindow;
-				if((fTop != null) && (fTop != this) && !m_bInActRedir)
+				if((fTop != null) && (fTop != this))
+					fTop.Activate();
+				else
 				{
-					m_bInActRedir = true;
-					try { fTop.Activate(); }
-					finally { m_bInActRedir = false; }
+					if(MonoWorkarounds.IsRequired(1760))
+					{
+						Control c = UIUtil.GetActiveControl(this);
+						if(((c == null) || (c == this)) && (m_cLastActive != null))
+							UIUtil.SetFocus(m_cLastActive, this, false);
+					}
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally { m_bInFormActivated = false; }
+		}
+
+		private void OnFormDeactivate(object sender, EventArgs e)
+		{
+			if(MonoWorkarounds.IsRequired(1760))
+			{
+				Control c = UIUtil.GetActiveControl(this);
+				if((c != null) && (c != this)) m_cLastActive = c;
+			}
 		}
 
 		private void OnToolsTriggers(object sender, EventArgs e)
@@ -2836,7 +2902,7 @@ namespace KeePass.Forms
 		{
 			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsP,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
-				KPRes.SimilarPasswords, KPRes.SimilarPasswordsList,
+				KPRes.SimilarPasswords, KPRes.SimilarPasswordsList2,
 				KPRes.SimilarPasswordsNoDup, true, false);
 		}
 
@@ -2844,7 +2910,7 @@ namespace KeePass.Forms
 		{
 			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsC,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
-				KPRes.SimilarPasswords, KPRes.ClusterCenters,
+				KPRes.SimilarPasswords, KPRes.ClusterCenters2,
 				KPRes.ClusterCentersDesc, true, true);
 		}
 
@@ -2852,7 +2918,7 @@ namespace KeePass.Forms
 		{
 			CreateAndShowEntryList(EntryUtil.CreatePwQualityList,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KOrganizer,
-				KPRes.PasswordQuality, KPRes.PasswordQualityReport, null, true, false);
+				KPRes.PasswordQuality, KPRes.PasswordQualityReport2, null, true, false);
 		}
 
 		private void OnToolsPrintEmSheet(object sender, EventArgs e)

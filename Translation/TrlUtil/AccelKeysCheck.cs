@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
+using KeePassLib.Delegates;
 using KeePassLib.Translation;
 using KeePassLib.Utility;
 
@@ -30,90 +31,64 @@ namespace TrlUtil
 {
 	public static class AccelKeysCheck
 	{
-		private static char GetAccelKey(string strText)
+		public static void Validate(KPTranslation trl, List<string> lErrors)
 		{
-			if(strText == null) { Debug.Assert(false); return char.MinValue; }
-			if(strText.Length == 0) return char.MinValue;
-
-			strText = strText.Replace(@"&&", string.Empty);
-
-			Debug.Assert(strText.IndexOf('&') == strText.LastIndexOf('&'));
-
-			int nIndex = strText.IndexOf('&');
-			Debug.Assert(nIndex != (strText.Length - 1));
-
-			if((nIndex >= 0) && (nIndex < (strText.Length - 1)))
-				return char.ToUpper(strText[nIndex + 1]);
-
-			return char.MinValue;
-		}
-
-		public static string Validate(KPTranslation trl)
-		{
-			if(trl == null) { Debug.Assert(false); return null; }
+			if(trl == null) { Debug.Assert(false); return; }
 
 			foreach(KPFormCustomization kpfc in trl.Forms)
 			{
-				string str = Validate(kpfc);
-				if(str != null) return str;
+				if(kpfc == null) { Debug.Assert(false); continue; }
+
+				Validate(kpfc, kpfc.FormEnglish, new Dictionary<char, string>(), lErrors);
 			}
-
-			return null;
 		}
 
-		private static string Validate(KPFormCustomization kpfc)
+		private static void Validate(KPFormCustomization kpfc, Control cParent,
+			Dictionary<char, string> d, List<string> lErrors)
 		{
-			if(kpfc == null) { Debug.Assert(false); return null; }
-			if(kpfc.FormEnglish == null) { Debug.Assert(false); return null; }
+			if(kpfc == null) { Debug.Assert(false); return; }
+			if(cParent == null) { Debug.Assert(false); return; }
 
-			string str = Validate(kpfc, kpfc.FormEnglish, null);
-			if(str != null) return str;
+			List<Control> lToRecInto = new List<Control>();
 
-			return null;
-		}
-
-		private static string Validate(KPFormCustomization kpfc, Control c,
-			Dictionary<char, string> dictParent)
-		{
-			if(kpfc == null) { Debug.Assert(false); return null; }
-			if(kpfc.FormEnglish == null) { Debug.Assert(false); return null; }
-			if(c == null) { Debug.Assert(false); return null; }
-
-			Dictionary<char, string> dictAccel = new Dictionary<char, string>();
-
-			foreach(Control cSub in c.Controls)
+			foreach(Control c in cParent.Controls)
 			{
-				string strText = Translate(kpfc, cSub);
-				char chKey = GetAccelKey(strText);
+				if(c == null) { Debug.Assert(false); continue; }
+				if(c == cParent) { Debug.Assert(false); continue; }
+
+				Debug.Assert((cParent is TabControl) == (c is TabPage));
+
+				if(c is TabPage) lToRecInto.Add(c);
+				else Validate(kpfc, c, d, lErrors); // Same context as parent
+
+				string strText = Translate(kpfc, c);
+				if(string.IsNullOrEmpty(strText)) continue;
+
+				string strName = (string.IsNullOrEmpty(c.Name) ? "<Unknown>" : c.Name);
+				string strID = "'" + kpfc.FullName + "." + strName + "'," +
+					MessageService.NewLine + "text: \"" + strText + "\".";
+
+				string strError;
+				char chKey = GetAccelKey(strText, out strError);
+				if(strError != null)
+					lErrors.Add("Control: " + strID + MessageService.NewParagraph +
+						strError);
 				if(chKey == char.MinValue) continue;
 
-				string strId = kpfc.FullName + "." + cSub.Name + " - \"" +
-					strText + "\"";
-
-				bool bCollides = dictAccel.ContainsKey(chKey);
-				bool bCollidesParent = ((dictParent != null) ?
-					dictParent.ContainsKey(chKey) : false);
-
-				if(bCollides || bCollidesParent)
-				{
-					string strMsg = "Key " + chKey.ToString() + ":";
-					strMsg += MessageService.NewLine;
-					strMsg += (bCollides ? dictAccel[chKey] : dictParent[chKey]);
-					strMsg += MessageService.NewLine + strId;
-					return strMsg;
-				}
-
-				dictAccel.Add(chKey, strId);
+				string strExist;
+				if(d.TryGetValue(chKey, out strExist))
+					lErrors.Add("Accelerator key '" + chKey.ToString() +
+						"' collision:" + MessageService.NewParagraph +
+						"Control 1: " + strExist + MessageService.NewParagraph +
+						"Control 2: " + strID);
+				else d.Add(chKey, strID);
 			}
 
-			Dictionary<char, string> dictSub = MergeDictionaries(dictParent, dictAccel);
-			foreach(Control cSub in c.Controls)
+			foreach(Control cSub in lToRecInto)
 			{
-				string str = Validate(kpfc, cSub, dictSub);
-				if(str != null) return str;
+				Dictionary<char, string> dSub = new Dictionary<char, string>(d);
+				Validate(kpfc, cSub, dSub, lErrors); // New context
 			}
-
-			return null;
 		}
 
 		private static string Translate(KPFormCustomization kpfc, Control c)
@@ -130,31 +105,37 @@ namespace TrlUtil
 						Debug.Assert(c.Text == cc.TextEnglish);
 					}
 
-					return cc.Text;
+					return (!string.IsNullOrEmpty(cc.Text) ? cc.Text : c.Text);
 				}
 			}
 
 			return c.Text;
 		}
 
-		private static Dictionary<char, string> MergeDictionaries(
-			Dictionary<char, string> x, Dictionary<char, string> y)
+		private static char GetAccelKey(string strText, out string strError)
 		{
-			Dictionary<char, string> d = new Dictionary<char, string>();
+			strError = null;
+			if(string.IsNullOrEmpty(strText)) return char.MinValue;
 
-			if(x != null)
+			strText = strText.Replace(@"&&", string.Empty);
+
+			int iL = strText.IndexOf('&');
+			if(iL < 0) return char.MinValue;
+
+			int iR = strText.LastIndexOf('&');
+			if(iR != iL)
 			{
-				foreach(KeyValuePair<char, string> kvp in x)
-					d[kvp.Key] = kvp.Value;
+				strError = "The text must not contain multiple accelerator key definitions!";
+				return char.MinValue;
 			}
 
-			if(y != null)
+			if(iL == (strText.Length - 1))
 			{
-				foreach(KeyValuePair<char, string> kvp in y)
-					d[kvp.Key] = kvp.Value;
+				strError = "Invalid accelerator key definition at the end of the text!";
+				return char.MinValue;
 			}
 
-			return d;
+			return char.ToUpper(strText[iL + 1]);
 		}
 	}
 }

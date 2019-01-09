@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Security;
-using System.Diagnostics;
+using System.Text;
 
 #if !KeePassUAP
 using System.Security.Cryptography;
@@ -32,22 +32,14 @@ using KeePassLib.Resources;
 
 namespace KeePassLib.Cryptography.Cipher
 {
-	/// <summary>
-	/// Standard AES cipher implementation.
-	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
 #if !KeePassUAP
-		private const CipherMode m_rCipherMode = CipherMode.CBC;
-		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
+		private const CipherMode SaeCipherMode = CipherMode.CBC;
+		private const PaddingMode SaePaddingMode = PaddingMode.PKCS7;
 #endif
 
 		private static PwUuid g_uuidAes = null;
-
-		/// <summary>
-		/// UUID of the cipher engine. This ID uniquely identifies the
-		/// AES engine. Must not be used by other ciphers.
-		/// </summary>
 		public static PwUuid AesUuid
 		{
 			get
@@ -65,17 +57,11 @@ namespace KeePassLib.Cryptography.Cipher
 			}
 		}
 
-		/// <summary>
-		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
-		/// </summary>
 		public PwUuid CipherUuid
 		{
 			get { return StandardAesEngine.AesUuid; }
 		}
 
-		/// <summary>
-		/// Get a displayable name describing this cipher engine.
-		/// </summary>
 		public string DisplayName
 		{
 			get
@@ -85,27 +71,25 @@ namespace KeePassLib.Cryptography.Cipher
 			}
 		}
 
-		private static void ValidateArguments(Stream stream, bool bEncrypt, byte[] pbKey, byte[] pbIV)
+		private static void ValidateArguments(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
-			Debug.Assert(stream != null); if(stream == null) throw new ArgumentNullException("stream");
+			if(s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
 
-			Debug.Assert(pbKey != null); if(pbKey == null) throw new ArgumentNullException("pbKey");
-			Debug.Assert(pbKey.Length == 32);
-			if(pbKey.Length != 32) throw new ArgumentException("Key must be 256 bits wide!");
+			if(pbKey == null) { Debug.Assert(false); throw new ArgumentNullException("pbKey"); }
+			if(pbKey.Length != 32) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pbKey"); }
 
-			Debug.Assert(pbIV != null); if(pbIV == null) throw new ArgumentNullException("pbIV");
-			Debug.Assert(pbIV.Length == 16);
-			if(pbIV.Length != 16) throw new ArgumentException("Initialization vector must be 128 bits wide!");
+			if(pbIV == null) { Debug.Assert(false); throw new ArgumentNullException("pbIV"); }
+			if(pbIV.Length != 16) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pbIV"); }
 
 			if(bEncrypt)
 			{
-				Debug.Assert(stream.CanWrite);
-				if(!stream.CanWrite) throw new ArgumentException("Stream must be writable!");
+				Debug.Assert(s.CanWrite);
+				if(!s.CanWrite) throw new ArgumentException("Stream must be writable!");
 			}
 			else // Decrypt
 			{
-				Debug.Assert(stream.CanRead);
-				if(!stream.CanRead) throw new ArgumentException("Encrypted stream must be readable!");
+				Debug.Assert(s.CanRead);
+				if(!s.CanRead) throw new ArgumentException("Stream must be readable!");
 			}
 		}
 
@@ -113,14 +97,8 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
 
-			byte[] pbLocalIV = new byte[16];
-			Array.Copy(pbIV, pbLocalIV, 16);
-
-			byte[] pbLocalKey = new byte[32];
-			Array.Copy(pbKey, pbLocalKey, 32);
-
 #if KeePassUAP
-			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbLocalKey, pbLocalIV);
+			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbKey, pbIV);
 #else
 			SymmetricAlgorithm a = CryptoUtil.CreateAes();
 			if(a.BlockSize != 128) // AES block size
@@ -128,30 +106,28 @@ namespace KeePassLib.Cryptography.Cipher
 				Debug.Assert(false);
 				a.BlockSize = 128;
 			}
-
-			a.IV = pbLocalIV;
 			a.KeySize = 256;
-			a.Key = pbLocalKey;
-			a.Mode = m_rCipherMode;
-			a.Padding = m_rCipherPadding;
+			a.Mode = SaeCipherMode;
+			a.Padding = SaePaddingMode;
 
-			ICryptoTransform iTransform = (bEncrypt ? a.CreateEncryptor() : a.CreateDecryptor());
-			Debug.Assert(iTransform != null);
-			if(iTransform == null) throw new SecurityException("Unable to create AES transform!");
+			ICryptoTransform t;
+			if(bEncrypt) t = a.CreateEncryptor(pbKey, pbIV);
+			else t = a.CreateDecryptor(pbKey, pbIV);
+			if(t == null) { Debug.Assert(false); throw new SecurityException("Unable to create AES transform!"); }
 
-			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
-				CryptoStreamMode.Read);
+			return new CryptoStreamEx(s, t, bEncrypt ? CryptoStreamMode.Write :
+				CryptoStreamMode.Read, a);
 #endif
 		}
 
-		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
+		public Stream EncryptStream(Stream s, byte[] pbKey, byte[] pbIV)
 		{
-			return StandardAesEngine.CreateStream(sPlainText, true, pbKey, pbIV);
+			return StandardAesEngine.CreateStream(s, true, pbKey, pbIV);
 		}
 
-		public Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV)
+		public Stream DecryptStream(Stream s, byte[] pbKey, byte[] pbIV)
 		{
-			return StandardAesEngine.CreateStream(sEncrypted, false, pbKey, pbIV);
+			return StandardAesEngine.CreateStream(s, false, pbKey, pbIV);
 		}
 	}
 }

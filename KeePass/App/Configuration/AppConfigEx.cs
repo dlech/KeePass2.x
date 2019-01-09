@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -261,7 +261,7 @@ namespace KeePass.App.Configuration
 
 		internal void OnLoad()
 		{
-			AceMainWindow aceMainWindow = this.MainWindow; // m_uiMainWindow might be null
+			AceMainWindow aceMW = this.MainWindow; // m_uiMainWindow might be null
 			AceDefaults aceDef = this.Defaults; // m_def might be null
 
 			// aceInt.UrlSchemeOverrides.SetDefaultsIfEmpty();
@@ -270,7 +270,7 @@ namespace KeePass.App.Configuration
 			ChangePathsRelAbs(true);
 
 			// Remove invalid columns
-			List<AceColumn> vColumns = aceMainWindow.EntryListColumns;
+			List<AceColumn> vColumns = aceMW.EntryListColumns;
 			int i = 0;
 			while(i < vColumns.Count)
 			{
@@ -282,6 +282,12 @@ namespace KeePass.App.Configuration
 
 			SearchUtil.FinishDeserialize(aceDef.SearchParameters);
 			DpiScale();
+
+			if(aceMW.EscMinimizesToTray) // For backward compatibility
+			{
+				aceMW.EscMinimizesToTray = false; // Default value
+				aceMW.EscAction = AceEscAction.MinimizeToTray;
+			}
 
 			if(NativeLib.IsUnix())
 			{
@@ -303,7 +309,7 @@ namespace KeePass.App.Configuration
 
 			if(MonoWorkarounds.IsRequired(1418))
 			{
-				aceMainWindow.MinimizeAfterOpeningDatabase = false;
+				aceMW.MinimizeAfterOpeningDatabase = false;
 				this.Application.Start.MinimizedAndLocked = false;
 			}
 		}

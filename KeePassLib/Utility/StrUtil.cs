@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -300,6 +300,15 @@ namespace KeePassLib.Utility
 			return ("\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?");
 		}
 
+		internal static bool RtfIsURtf(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			const string p = "{\\urtf"; // Typically "{\\urtf1\\ansi\\ansicpg65001"
+			return (str.StartsWith(p) && (str.Length > p.Length) &&
+				char.IsDigit(str[p.Length]));
+		}
+
 		public static string RtfFix(string strRtf)
 		{
 			if(strRtf == null) { Debug.Assert(false); return string.Empty; }
@@ -314,12 +323,21 @@ namespace KeePassLib.Utility
 			// https://www.microsoft.com/en-us/download/details.aspx?id=10725
 			// https://msdn.microsoft.com/en-us/library/windows/desktop/bb774284.aspx
 			// https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/RichTextBox.cs
-			const string p = "{\\urtf"; // Typically "{\\urtf1\\ansi\\ansicpg65001"
-			if(str.StartsWith(p) && (str.Length > p.Length) &&
-				char.IsDigit(str[p.Length]))
-				str = str.Remove(2, 1); // Remove the 'u'
+			if(RtfIsURtf(str)) str = str.Remove(2, 1); // Remove the 'u'
 
 			return str;
+		}
+
+		internal static bool ContainsHighChar(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			for(int i = 0; i < str.Length; ++i)
+			{
+				if(str[i] > '\u00FF') return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -716,7 +734,7 @@ namespace KeePassLib.Utility
 			if(cchMax == 0) return string.Empty;
 			if(cchMax <= 3) return new string('.', cchMax);
 
-			return strText.Substring(0, cchMax - 3) + "...";
+			return (strText.Substring(0, cchMax - 3) + "...");
 		}
 
 		public static string GetStringBetween(string strText, int nStartIndex,
@@ -1595,10 +1613,10 @@ namespace KeePassLib.Utility
 			return IsDataUri(strUri, null);
 		}
 
-		public static bool IsDataUri(string strUri, string strReqMimeType)
+		public static bool IsDataUri(string strUri, string strReqMediaType)
 		{
 			if(strUri == null) { Debug.Assert(false); return false; }
-			// strReqMimeType may be null
+			// strReqMediaType may be null
 
 			const string strPrefix = "data:";
 			if(!strUri.StartsWith(strPrefix, StrUtil.CaseIgnoreCmp))
@@ -1607,14 +1625,14 @@ namespace KeePassLib.Utility
 			int iC = strUri.IndexOf(',');
 			if(iC < 0) return false;
 
-			if(!string.IsNullOrEmpty(strReqMimeType))
+			if(!string.IsNullOrEmpty(strReqMediaType))
 			{
 				int iS = strUri.IndexOf(';', 0, iC);
 				int iTerm = ((iS >= 0) ? iS : iC);
 
-				string strMime = strUri.Substring(strPrefix.Length,
+				string strMedia = strUri.Substring(strPrefix.Length,
 					iTerm - strPrefix.Length);
-				if(!strMime.Equals(strReqMimeType, StrUtil.CaseIgnoreCmp))
+				if(!strMedia.Equals(strReqMediaType, StrUtil.CaseIgnoreCmp))
 					return false;
 			}
 
@@ -1625,20 +1643,20 @@ namespace KeePassLib.Utility
 		/// Create a data URI (according to RFC 2397).
 		/// </summary>
 		/// <param name="pbData">Data to encode.</param>
-		/// <param name="strMimeType">Optional MIME type. If <c>null</c>,
+		/// <param name="strMediaType">Optional MIME type. If <c>null</c>,
 		/// an appropriate type is used.</param>
 		/// <returns>Data URI.</returns>
-		public static string DataToDataUri(byte[] pbData, string strMimeType)
+		public static string DataToDataUri(byte[] pbData, string strMediaType)
 		{
 			if(pbData == null) throw new ArgumentNullException("pbData");
 
-			if(strMimeType == null) strMimeType = "application/octet-stream";
+			if(strMediaType == null) strMediaType = "application/octet-stream";
 
 #if (!KeePassLibSD && !KeePassUAP)
-			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
+			return ("data:" + strMediaType + ";base64," + Convert.ToBase64String(
 				pbData, Base64FormattingOptions.None));
 #else
-			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
+			return ("data:" + strMediaType + ";base64," + Convert.ToBase64String(
 				pbData));
 #endif
 		}
@@ -1679,6 +1697,54 @@ namespace KeePassLib.Utility
 			pb = ms.ToArray();
 			ms.Close();
 			return pb;
+		}
+
+		// https://www.iana.org/assignments/media-types/media-types.xhtml
+		private static readonly string[] g_vMediaTypePfx = new string[] {
+			"application/", "audio/", "example/", "font/", "image/",
+			"message/", "model/", "multipart/", "text/", "video/"
+		};
+		internal static bool IsMediaType(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+			if(str.Length == 0) return false;
+
+			foreach(string strPfx in g_vMediaTypePfx)
+			{
+				if(str.StartsWith(strPfx, StrUtil.CaseIgnoreCmp))
+					return true;
+			}
+
+			return false;
+		}
+
+		internal static string GetCustomMediaType(string strFormat)
+		{
+			if(strFormat == null)
+			{
+				Debug.Assert(false);
+				return "application/octet-stream";
+			}
+
+			if(IsMediaType(strFormat)) return strFormat;
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < strFormat.Length; ++i)
+			{
+				char ch = strFormat[i];
+
+				if(((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z')) ||
+					((ch >= '0') && (ch <= '9')))
+					sb.Append(ch);
+				else if((sb.Length != 0) && ((ch == '-') || (ch == '_')))
+					sb.Append(ch);
+				else { Debug.Assert(false); }
+			}
+
+			if(sb.Length == 0) return "application/octet-stream";
+
+			return ("application/vnd." + PwDefs.ShortProductName +
+				"." + sb.ToString());
 		}
 
 		/// <summary>

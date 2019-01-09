@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -55,6 +55,8 @@ namespace TrlUtil
 			@"<DYN>", @"<>" };
 
 		private KPControlCustomization m_kpccLast = null;
+		private Dictionary<string, ListViewItem> m_dStrings = new Dictionary<string, ListViewItem>();
+		private Dictionary<string, TreeNode> m_dControls = new Dictionary<string, TreeNode>();
 
 		private const int m_inxWindow = 6;
 		private const int m_inxMissing = 1;
@@ -62,6 +64,7 @@ namespace TrlUtil
 		private const int m_inxWarning = 5;
 
 		private bool m_bModified = false;
+		private uint m_uBlockTabAuto = 0;
 
 		private PreviewForm m_prev = new PreviewForm();
 
@@ -74,7 +77,7 @@ namespace TrlUtil
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			this.Text += " " + PwDefs.VersionString;
+			this.Icon = Properties.Resources.KeePass;
 
 			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
 			m_rtbUnusedText.SimpleTextOnly = true;
@@ -83,13 +86,12 @@ namespace TrlUtil
 				string.Empty : " ") + "Search in active tab...");
 			UIUtil.SetCueBanner(m_tbFind, strSearchTr);
 
-			this.CreateStringTableUI();
-			this.UpdateControlTree();
+			CreateStringTableUI();
+			UpdateControlTree();
 
-			if(m_tvControls.SelectedNode == null)
-				m_tvControls.SelectedNode = m_tvControls.Nodes[0];
 			UpdatePreviewForm();
-			m_prev.Show();
+			if(m_prev != null) m_prev.Show();
+			else { Debug.Assert(false); }
 
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }
@@ -201,7 +203,9 @@ namespace TrlUtil
 				lvi.SubItems.Add(string.Empty);
 				lvi.Tag = kpstItem;
 				lvi.ImageIndex = 0;
+
 				m_lvStrings.Items.Add(lvi);
+				m_dStrings[kpstP.Name + "." + strKey] = lvi;
 			}
 
 			Type tKL = typeof(KLRes);
@@ -240,7 +244,9 @@ namespace TrlUtil
 				lvi.SubItems.Add(string.Empty);
 				lvi.Tag = kpstItem;
 				lvi.ImageIndex = 0;
+
 				m_lvStrings.Items.Add(lvi);
+				m_dStrings[kpstL.Name + "." + strLibKey] = lvi;
 			}
 
 			lvg = new ListViewGroup("Main Menu Commands");
@@ -331,7 +337,9 @@ namespace TrlUtil
 				lvi.SubItems.Add(string.Empty);
 				lvi.Tag = kpstItem;
 				lvi.ImageIndex = 0;
+
 				m_lvStrings.Items.Add(lvi);
+				m_dStrings[kpstL.Name + "." + strLibSDKey] = lvi;
 			}
 		}
 
@@ -355,7 +363,9 @@ namespace TrlUtil
 				lvi.SubItems.Add(string.Empty);
 				lvi.Tag = kpstItem;
 				lvi.ImageIndex = 0;
+
 				m_lvStrings.Items.Add(lvi);
+				m_dStrings[kpst.Name + "." + kpstItem.Name] = lvi;
 
 				ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
 				if(tsmi != null) TrlAddMenuCommands(kpst, grp, tsmi.DropDownItems);
@@ -376,8 +386,10 @@ namespace TrlUtil
 
 		private void UpdateControlTree()
 		{
-			FormTrlMgr.RenderToTreeControl(m_trl.Forms, m_tvControls);
+			FormTrlMgr.RenderToTreeControl(m_trl.Forms, m_tvControls, m_dControls);
 			UpdateStatusImages(null);
+
+			m_tvControls.SelectedNode = m_tvControls.Nodes[0];
 		}
 
 		private void UpdateUIState()
@@ -387,6 +399,15 @@ namespace TrlUtil
 			m_menuEditNextUntrl.Enabled = bTrlTab;
 			m_tbNextUntrl.Enabled = bTrlTab;
 			m_tbFind.Enabled = bTrlTab;
+
+			string str = TuDefs.ProductName + " " + PwDefs.VersionString;
+			if(!string.IsNullOrEmpty(m_strFile))
+			{
+				string strFile = UrlUtil.GetFileName(m_strFile);
+				if(!string.IsNullOrEmpty(strFile))
+					str = strFile + " - " + str;
+			}
+			this.Text = str;
 		}
 
 		private void OnLinkLangCodeClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -400,6 +421,8 @@ namespace TrlUtil
 
 			m_strFile = strFilePath;
 			Program.Config.Application.LastUsedFile = IOConnectionInfo.FromPath(strFilePath);
+
+			UpdateUIState(); // Update title bar
 		}
 
 		private static void InitFileDialog(FileDialogEx dlg)
@@ -466,9 +489,11 @@ namespace TrlUtil
 
 			m_rtbUnusedText.Text = sbUnusedText.ToString();
 
-			this.UpdateStringTableUI();
-			this.UpdateStatusImages(null);
-			this.UpdatePreviewForm();
+			UpdateStringTableUI();
+			UpdateStatusImages(null);
+			UpdatePreviewForm();
+			if(m_tabMain.SelectedTab == m_tabValidation)
+				PerformValidation(null);
 		}
 
 		private void MergeInStringTable(KPStringTable tbInto, KPStringTable tbSource,
@@ -497,14 +522,25 @@ namespace TrlUtil
 			}
 		}
 
-		private void UpdateInternalTranslation()
+		private void UpdateTranslationObject()
 		{
+			m_trl.Properties.Application = PwDefs.ProductName;
+			m_trl.Properties.ApplicationVersion = PwDefs.VersionString;
+			m_trl.Properties.Generator = TuDefs.ProductName;
+
+			PwUuid pwUuid = new PwUuid(true);
+			m_trl.Properties.FileUuid = pwUuid.ToHexString();
+
+			m_trl.Properties.LastModified = DateTime.UtcNow.ToString("u");
+
 			m_trl.Properties.NameEnglish = StrUtil.SafeXmlString(m_tbNameEng.Text);
 			m_trl.Properties.NameNative = StrUtil.SafeXmlString(m_tbNameLcl.Text);
 			m_trl.Properties.Iso6391Code = StrUtil.SafeXmlString(m_tbLangID.Text);
 			m_trl.Properties.AuthorName = StrUtil.SafeXmlString(m_tbAuthorName.Text);
 			m_trl.Properties.AuthorContact = StrUtil.SafeXmlString(m_tbAuthorContact.Text);
 			m_trl.Properties.RightToLeft = m_cbRtl.Checked;
+
+			m_trl.UnusedText = m_rtbUnusedText.Text;
 		}
 
 		private void UpdateStatusImages(TreeNodeCollection vtn)
@@ -552,21 +588,21 @@ namespace TrlUtil
 
 		private void OnFileSave(object sender, EventArgs e)
 		{
-			UpdateInternalTranslation();
-
-			if(m_strFile.Length == 0)
+			if(string.IsNullOrEmpty(m_strFile))
 			{
 				OnFileSaveAs(sender, e);
 				return;
 			}
 
-			PrepareSave();
-
 			try
 			{
+				UpdateTranslationObject();
+
 				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
 				KPTranslation.Save(m_trl, m_strFile, xs);
+
 				m_bModified = false;
+				PerformValidation(m_strFile);
 			}
 			catch(Exception ex)
 			{
@@ -575,95 +611,40 @@ namespace TrlUtil
 			}
 		}
 
-		private void PrepareSave()
-		{
-			m_trl.Properties.Application = PwDefs.ProductName;
-			m_trl.Properties.ApplicationVersion = PwDefs.VersionString;
-			m_trl.Properties.Generator = TuDefs.ProductName;
-
-			PwUuid pwUuid = new PwUuid(true);
-			m_trl.Properties.FileUuid = pwUuid.ToHexString();
-
-			m_trl.Properties.LastModified = DateTime.UtcNow.ToString("u");
-
-			m_trl.UnusedText = m_rtbUnusedText.Text;
-			if(!string.IsNullOrEmpty(m_trl.UnusedText))
-				ShowValidationWarning(@"It is recommended to clear the 'Unused Text' tab.");
-
-			try { ValidateTranslation(); }
-			catch(Exception) { Debug.Assert(false); }
-
-			try
-			{
-				string strAccel = AccelKeysCheck.Validate(m_trl);
-				if(strAccel != null)
-					ShowValidationWarning("The following accelerator keys collide:" +
-						MessageService.NewParagraph + strAccel);
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
-
-		private void ShowValidationWarning(string strText)
+		/* private void ShowValidationWarning(string strText)
 		{
 			if(string.IsNullOrEmpty(strText)) { Debug.Assert(false); return; }
 
-			const string strContinue = @"Click [OK] to continue saving.";
-			string str = strText + MessageService.NewParagraph + strContinue;
-
-			if(!VistaTaskDialog.ShowMessageBox(str, "Validation Warning",
-				TuDefs.ProductName, VtdIcon.Warning, this))
-				MessageBox.Show(this, "Validation Warning!" + MessageService.NewParagraph +
-					str, TuDefs.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-		}
-
-		private void ValidateTranslation()
-		{
-			string[] vCaseSensWords = new string[] { PwDefs.ShortProductName };
-
-			bool bRtl = m_trl.Properties.RightToLeft;
-
-			foreach(KPStringTable kpst in m_trl.StringTables)
+			int r = VistaTaskDialog.ShowMessageBoxEx(strText, "Validation Warning",
+				TuDefs.ProductName, VtdIcon.Warning, this, "Continue saving",
+				(int)DialogResult.OK, "Cancel", (int)DialogResult.Cancel);
+			if(r < 0)
 			{
-				foreach(KPStringTableItem kpi in kpst.Strings)
-				{
-					string strEn = kpi.ValueEnglish;
-					string strTrl = kpi.Value;
-					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
-
-					// Check case-sensitive words
-					foreach(string strWord in vCaseSensWords)
-					{
-						bool bWordEn = (strEn.IndexOf(strWord) >= 0);
-						if(!bWordEn)
-						{
-							Debug.Assert(strEn.IndexOf(strWord, StrUtil.CaseIgnoreCmp) < 0);
-						}
-						if(bWordEn && (strTrl.IndexOf(strWord) < 0) &&
-							(strTrl.IndexOf(strWord, StrUtil.CaseIgnoreCmp) >= 0))
-							ShowValidationWarning("The English string" +
-								MessageService.NewParagraph + strEn + MessageService.NewParagraph +
-								@"contains the case-sensitive word '" + strWord +
-								@"', but the translated string does not:" +
-								MessageService.NewParagraph + strTrl);
-					}
-
-					// Check 3 dots
-					bool bEllEn = (strEn.EndsWith("...") || strEn.EndsWith(@"…"));
-					bool bEllTrl = (strTrl.EndsWith("...") || strTrl.EndsWith(@"…"));
-					if(bEllEn && !bEllTrl && !bRtl) // Check doesn't support RTL
-						ShowValidationWarning("The English string" +
-							MessageService.NewParagraph + strEn + MessageService.NewParagraph +
-							"ends with 3 dots, but the translated string does not:" +
-							MessageService.NewParagraph + strTrl);
-				}
+				string str = strText + MessageService.NewParagraph +
+					"Click [OK] to continue saving.";
+				r = (int)MessageBox.Show(this, "Validation Warning!" +
+					MessageService.NewParagraph + str, TuDefs.ProductName,
+					MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 			}
+
+			if(r == (int)DialogResult.Cancel) throw new OperationCanceledException();
+		} */
+
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(m_bModified)
+			{
+				if(MessageService.AskYesNo("Save changes before closing the file?",
+					TuDefs.ProductName))
+					OnFileSave(sender, e);
+				else m_bModified = false;
+			}
+			if(m_bModified) e.Cancel = true;
 		}
 
 		private void OnFileExit(object sender, EventArgs e)
 		{
-			if(m_bModified) OnFileSaveAs(sender, e);
-
-			this.Close();
+			Close();
 		}
 
 		private void OnStringsSelectedIndexChanged(object sender, EventArgs e)
@@ -749,25 +730,38 @@ namespace TrlUtil
 
 		private void ShowCustomControlProps(KPControlCustomization kpcc)
 		{
-			if(kpcc == null) return; // No assert
-
 			m_kpccLast = kpcc;
 
-			UIUtil.SetMultilineText(m_tbCtrlEngText, m_kpccLast.TextEnglish);
-			m_tbCtrlTrlText.Text = m_kpccLast.Text;
+			m_grpControl.Enabled = (kpcc != null);
 
-			m_tbLayoutX.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.X);
-			m_tbLayoutY.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Y);
-			m_tbLayoutW.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Width);
-			m_tbLayoutH.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Height);
+			if(kpcc == null)
+			{
+				m_tbCtrlEngText.Text = string.Empty;
+				m_tbCtrlTrlText.Text = string.Empty;
+
+				m_tbLayoutX.Text = string.Empty;
+				m_tbLayoutY.Text = string.Empty;
+				m_tbLayoutW.Text = string.Empty;
+				m_tbLayoutH.Text = string.Empty;
+			}
+			else
+			{
+				UIUtil.SetMultilineText(m_tbCtrlEngText, m_kpccLast.TextEnglish);
+				m_tbCtrlTrlText.Text = m_kpccLast.Text;
+
+				m_tbLayoutX.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.X);
+				m_tbLayoutY.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Y);
+				m_tbLayoutW.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Width);
+				m_tbLayoutH.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Height);
+			}
 		}
 
 		private void OnCtrlTrlTextChanged(object sender, EventArgs e)
 		{
-			string strText = m_tbCtrlTrlText.Text;
+			string strText = StrUtil.SafeXmlString(m_tbCtrlTrlText.Text);
 			if((m_kpccLast != null) && (m_kpccLast.Text != strText))
 			{
-				m_kpccLast.Text = StrUtil.SafeXmlString(m_tbCtrlTrlText.Text);
+				m_kpccLast.Text = strText;
 				m_bModified = true;
 			}
 
@@ -781,7 +775,6 @@ namespace TrlUtil
 			{
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.X, m_tbLayoutX.Text);
-				m_bModified = true;
 
 				UpdatePreviewForm();
 			}
@@ -793,7 +786,6 @@ namespace TrlUtil
 			{
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Y, m_tbLayoutY.Text);
-				m_bModified = true;
 
 				UpdatePreviewForm();
 			}
@@ -805,7 +797,6 @@ namespace TrlUtil
 			{
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Width, m_tbLayoutW.Text);
-				m_bModified = true;
 
 				UpdatePreviewForm();
 			}
@@ -817,7 +808,6 @@ namespace TrlUtil
 			{
 				m_kpccLast.Layout.SetControlRelativeValue(
 					KpccLayout.LayoutParameterEx.Height, m_tbLayoutH.Text);
-				m_bModified = true;
 
 				UpdatePreviewForm();
 			}
@@ -862,15 +852,38 @@ namespace TrlUtil
 					break;
 				}
 			}
+
+			Activate(); // The preview form sometimes steals the focus
 		}
 
 		private void UpdatePreviewForm(KPFormCustomization kpfc)
 		{
-			// bool bResizeEng = (string.IsNullOrEmpty(kpfc.Window.Layout.Width) &&
-			//	string.IsNullOrEmpty(kpfc.Window.Layout.Height));
+			if(m_prev == null) { Debug.Assert(false); return; }
 
-			m_prev.CopyForm(kpfc.FormEnglish);
+			List<TabControl> lTabControls = new List<TabControl>();
+
+			m_prev.SuspendLayout();
+
+			m_prev.CopyForm(kpfc.FormEnglish, delegate(Control c)
+			{
+				TabControl tc = (c as TabControl);
+				if(tc != null) lTabControls.Add(tc);
+			});
 			kpfc.ApplyTo(m_prev);
+
+			string strName = ((m_kpccLast != null) ? m_kpccLast.Name : null);
+			m_prev.EnsureControlPageVisible(strName);
+
+			m_prev.ResumeLayout();
+
+			foreach(TabControl tc in lTabControls)
+			{
+				tc.SelectedIndexChanged += delegate(object sender, EventArgs e)
+				{
+					m_prev.ShowAccelerators();
+				};
+			}
+			m_prev.ShowAccelerators();
 		}
 
 		private void OnBtnClearUnusedText(object sender, EventArgs e)
@@ -906,7 +919,6 @@ namespace TrlUtil
 
 			UpdateStringTableUI();
 			UpdateControlTree();
-			m_tvControls.SelectedNode = m_tvControls.Nodes[0];
 			UpdatePreviewForm();
 		}
 
@@ -1019,6 +1031,11 @@ namespace TrlUtil
 		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
+
+			if(m_uBlockTabAuto != 0) return;
+
+			if(m_tabMain.SelectedTab == m_tabValidation)
+				PerformValidation(null);
 		}
 
 		private void OnImport2xNoChecks(object sender, EventArgs e)
@@ -1103,6 +1120,252 @@ namespace TrlUtil
 			// MessageService.ShowInfo("No untranslated strings found on the current tab page.");
 			MessageBox.Show(this, "No untranslated strings found on the current tab page.",
 				TuDefs.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		private void ValidateTranslation(List<string> lErrors)
+		{
+			/* string strCode = m_trl.Properties.Iso6391Code;
+			if(!string.IsNullOrEmpty(strCode))
+			{
+				try
+				{
+					CultureInfo ci = CultureInfo.CreateSpecificCulture(strCode);
+					if(ci == null) throw new Exception("Culture is unknown.");
+				}
+				catch(Exception ex)
+				{
+					string strInfo = string.Empty;
+					try
+					{
+						StringBuilder sb = new StringBuilder();
+						sb.AppendLine("On the current system, the following cultures are known:");
+
+						List<CultureInfo> l = new List<CultureInfo>(
+							CultureInfo.GetCultures(CultureTypes.AllCultures));
+						l.Sort(delegate(CultureInfo x, CultureInfo y)
+						{
+							return string.Compare(x.EnglishName, y.EnglishName, StrUtil.CaseIgnoreCmp);
+						});
+
+						foreach(CultureInfo ci in l)
+							sb.AppendLine(ci.Name + "\t- " + ci.EnglishName);
+
+						strInfo = MessageService.NewParagraph + sb.ToString();
+					}
+					catch(Exception) { Debug.Assert(false); }
+
+					lErrors.Add("Error when trying to parse \"" + strCode +
+						"\" as ISO 639-1 language code:" + MessageService.NewLine +
+						ex.Message.Trim() + strInfo);
+				}
+			} */
+
+			string[] vCaseSensWords = new string[] { PwDefs.ShortProductName };
+
+			bool bRtl = m_trl.Properties.RightToLeft;
+			string np = MessageService.NewParagraph;
+
+			foreach(KPStringTable kpst in m_trl.StringTables)
+			{
+				foreach(KPStringTableItem kpi in kpst.Strings)
+				{
+					string strEn = kpi.ValueEnglish;
+					string strTrl = kpi.Value;
+					if(string.IsNullOrEmpty(strEn) || string.IsNullOrEmpty(strTrl)) continue;
+
+					string strLoc = np + "(string table item '" + kpst.Name +
+						"." + kpi.Name + "').";
+
+					// Check case-sensitive words
+					foreach(string strWord in vCaseSensWords)
+					{
+						bool bWordEn = (strEn.IndexOf(strWord) >= 0);
+						if(!bWordEn)
+						{
+							Debug.Assert(strEn.IndexOf(strWord, StrUtil.CaseIgnoreCmp) < 0);
+						}
+						if(bWordEn && (strTrl.IndexOf(strWord) < 0))
+							lErrors.Add("The English string" + np + "\"" + strEn + "\"" + np +
+								"contains the case-sensitive word '" + strWord +
+								"', but the translated string does not:" + np +
+								"\"" + strTrl + "\"" + strLoc);
+					}
+
+					// Check 3 dots
+					bool bEllEn = (strEn.EndsWith("...") || strEn.EndsWith(@"…"));
+					bool bEllTrl = (strTrl.EndsWith("...") || strTrl.EndsWith(@"…"));
+					if(bEllEn && !bEllTrl && !bRtl) // Check doesn't support RTL
+						lErrors.Add("The English string" + np + "\"" + strEn + "\"" + np +
+							"ends with 3 dots, but the translated string does not:" +
+							np + "\"" + strTrl + "\"" + strLoc);
+				}
+			}
+		}
+
+		private void PerformValidation(string strFileSaved)
+		{
+			List<string> lErrors = new List<string>();
+			try
+			{
+				UpdateTranslationObject();
+
+				ValidateTranslation(lErrors);
+				AccelKeysCheck.Validate(m_trl, lErrors);
+
+				uint uUntrlStr = 0;
+				foreach(KPStringTable kpst in m_trl.StringTables)
+				{
+					foreach(KPStringTableItem kpi in kpst.Strings)
+					{
+						if(string.IsNullOrEmpty(kpi.Value) &&
+							!string.IsNullOrEmpty(kpi.ValueEnglish))
+							++uUntrlStr;
+					}
+				}
+				if(uUntrlStr != 0)
+					lErrors.Add("There are " + uUntrlStr.ToString() +
+						" untranslated strings on the 'String Tables' tab.");
+
+				uint uUntrlCtrl = 0;
+				Action<KPControlCustomization> fCheckCtrl = delegate(
+					KPControlCustomization kpcc)
+				{
+					if(string.IsNullOrEmpty(kpcc.TextEnglish) ||
+						(Array.IndexOf<string>(m_vEmpty, kpcc.TextEnglish) >= 0))
+						return;
+					if(string.IsNullOrEmpty(kpcc.Text)) ++uUntrlCtrl;
+				};
+				foreach(KPFormCustomization kpfc in m_trl.Forms)
+				{
+					fCheckCtrl(kpfc.Window);
+					foreach(KPControlCustomization kpcc in kpfc.Controls)
+						fCheckCtrl(kpcc);
+				}
+				if(uUntrlCtrl != 0)
+					lErrors.Add("There are " + uUntrlCtrl.ToString() +
+						" untranslated texts on the 'Dialogs' tab.");
+
+				if(!string.IsNullOrEmpty(m_trl.UnusedText))
+					lErrors.Add("It is recommended to clear the 'Unused Text' tab.");
+			}
+			catch(Exception ex) { Debug.Assert(false); lErrors.Add(ex.Message); }
+
+			RichTextBuilder rb = new RichTextBuilder();
+
+			if(!string.IsNullOrEmpty(strFileSaved))
+			{
+				rb.AppendLine("File has been saved to:", FontStyle.Bold);
+				rb.AppendLine(strFileSaved);
+				rb.AppendLine();
+			}
+
+			rb.AppendLine("TrlUtil has detected " + lErrors.Count.ToString() +
+				" problem(s).", FontStyle.Bold);
+
+			string strSep = new string('=', 72);
+
+			foreach(string strError in lErrors)
+			{
+				string str = (strError ?? string.Empty).Trim();
+				if(str.Length == 0) { Debug.Assert(false); str = "<Unknown>."; }
+
+				rb.AppendLine();
+				rb.AppendLine(strSep);
+				rb.AppendLine();
+				rb.AppendLine(str);
+			}
+
+			rb.Build(m_rtbValidation);
+
+			Debug.Assert(m_rtbValidation.HideSelection); // Flicker otherwise
+
+			if(!string.IsNullOrEmpty(m_strFile))
+				UIUtil.RtfLinkifyText(m_rtbValidation, m_strFile, false);
+
+			foreach(KPStringTable kpst in m_trl.StringTables)
+			{
+				foreach(KPStringTableItem kpi in kpst.Strings)
+					UIUtil.RtfLinkifyText(m_rtbValidation, kpst.Name + "." +
+						kpi.Name, false, true);
+			}
+
+			foreach(string str in m_dControls.Keys)
+				UIUtil.RtfLinkifyText(m_rtbValidation, str, false, true);
+
+			UIUtil.RtfLinkifyText(m_rtbValidation, m_tabUnusedText.Text, false, true);
+
+			m_rtbValidation.Select(0, 0);
+
+			if(m_tabMain.SelectedTab != m_tabValidation)
+			{
+				++m_uBlockTabAuto;
+				m_tabMain.SelectedTab = m_tabValidation;
+				--m_uBlockTabAuto;
+			}
+		}
+
+		private void OnValidationLinkClicked(object sender, LinkClickedEventArgs e)
+		{
+			try
+			{
+				string str = e.LinkText;
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
+
+				if(str == m_strFile)
+				{
+					ProcessStartInfo psi = new ProcessStartInfo();
+					psi.FileName = UrlUtil.GetFileDirectory(str, true, true);
+					psi.UseShellExecute = true;
+
+					Process p = Process.Start(psi);
+					if(p != null) p.Dispose();
+					return;
+				}
+
+				ListViewItem lvi;
+				if(m_dStrings.TryGetValue(str, out lvi))
+				{
+					UIUtil.SetFocusedItem(m_lvStrings, lvi, true);
+					lvi.EnsureVisible();
+					m_tabMain.SelectedTab = m_tabStrings;
+					UIUtil.SetFocus(m_lvStrings, this);
+					return;
+				}
+
+				TreeNode tn;
+				if(m_dControls.TryGetValue(str, out tn))
+				{
+					m_tvControls.SelectedNode = tn;
+
+					if(tn.Parent != null) tn.Parent.EnsureVisible();
+					tn.EnsureVisible();
+
+					m_tabMain.SelectedTab = m_tabDialogs;
+					UIUtil.SetFocus(m_tvControls, this);
+					return;
+				}
+
+				if(str == m_tabUnusedText.Text)
+				{
+					m_tabMain.SelectedTab = m_tabUnusedText;
+					UIUtil.SetFocus(m_rtbUnusedText, this);
+					return;
+				}
+
+				Debug.Assert(false);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			if(m_prev != null)
+			{
+				m_prev.Close();
+				m_prev.Dispose();
+				m_prev = null;
+			}
+			else { Debug.Assert(false); }
 		}
 	}
 }

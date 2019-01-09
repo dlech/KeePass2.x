@@ -52,7 +52,7 @@
 			this.m_btnClose.Name = "m_btnClose";
 			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
 			this.m_btnClose.TabIndex = 0;
-			this.m_btnClose.Text = "&Close";
+			this.m_btnClose.Text = "Close";
 			this.m_btnClose.UseVisualStyleBackColor = true;
 			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
 			// 
@@ -123,7 +123,7 @@
 			this.m_cbCacheDeleteOld.Name = "m_cbCacheDeleteOld";
 			this.m_cbCacheDeleteOld.Size = new System.Drawing.Size(215, 17);
 			this.m_cbCacheDeleteOld.TabIndex = 2;
-			this.m_cbCacheDeleteOld.Text = "Delete old files from cache automatically";
+			this.m_cbCacheDeleteOld.Text = "&Delete old files from cache automatically";
 			this.m_cbCacheDeleteOld.UseVisualStyleBackColor = true;
 			// 
 			// m_btnClearCache
@@ -132,7 +132,7 @@
 			this.m_btnClearCache.Name = "m_btnClearCache";
 			this.m_btnClearCache.Size = new System.Drawing.Size(75, 23);
 			this.m_btnClearCache.TabIndex = 1;
-			this.m_btnClearCache.Text = "C&lear";
+			this.m_btnClearCache.Text = "&Clear";
 			this.m_btnClearCache.UseVisualStyleBackColor = true;
 			this.m_btnClearCache.Click += new System.EventHandler(this.OnBtnClearCache);
 			// 
@@ -150,7 +150,7 @@
 			this.m_btnMore.Name = "m_btnMore";
 			this.m_btnMore.Size = new System.Drawing.Size(115, 23);
 			this.m_btnMore.TabIndex = 5;
-			this.m_btnMore.Text = "Get More &Plugins...";
+			this.m_btnMore.Text = "&Get More Plugins...";
 			this.m_btnMore.UseVisualStyleBackColor = true;
 			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
 			// 

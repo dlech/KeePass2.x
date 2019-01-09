@@ -177,7 +177,7 @@
 			this.m_cbTurnOffAfterAction.Name = "m_cbTurnOffAfterAction";
 			this.m_cbTurnOffAfterAction.Size = new System.Drawing.Size(224, 17);
 			this.m_cbTurnOffAfterAction.TabIndex = 8;
-			this.m_cbTurnOffAfterAction.Text = "Turn off after executing actions (run once)";
+			this.m_cbTurnOffAfterAction.Text = "&Turn off after executing actions (run once)";
 			this.m_cbTurnOffAfterAction.UseVisualStyleBackColor = true;
 			// 
 			// m_tbComments
@@ -197,7 +197,7 @@
 			this.m_lblTriggerComments.Name = "m_lblTriggerComments";
 			this.m_lblTriggerComments.Size = new System.Drawing.Size(59, 13);
 			this.m_lblTriggerComments.TabIndex = 6;
-			this.m_lblTriggerComments.Text = "Comments:";
+			this.m_lblTriggerComments.Text = "&Comments:";
 			// 
 			// m_lblInitiallyOnDesc
 			// 
@@ -215,7 +215,7 @@
 			this.m_cbInitiallyOn.Name = "m_cbInitiallyOn";
 			this.m_cbInitiallyOn.Size = new System.Drawing.Size(72, 17);
 			this.m_cbInitiallyOn.TabIndex = 4;
-			this.m_cbInitiallyOn.Text = "Initially on";
+			this.m_cbInitiallyOn.Text = "Initially &on";
 			this.m_cbInitiallyOn.UseVisualStyleBackColor = true;
 			// 
 			// m_cbEnabled
@@ -225,7 +225,7 @@
 			this.m_cbEnabled.Name = "m_cbEnabled";
 			this.m_cbEnabled.Size = new System.Drawing.Size(65, 17);
 			this.m_cbEnabled.TabIndex = 2;
-			this.m_cbEnabled.Text = "Enabled";
+			this.m_cbEnabled.Text = "&Enabled";
 			this.m_cbEnabled.UseVisualStyleBackColor = true;
 			// 
 			// m_tbName
@@ -242,7 +242,7 @@
 			this.m_lblTriggerName.Name = "m_lblTriggerName";
 			this.m_lblTriggerName.Size = new System.Drawing.Size(38, 13);
 			this.m_lblTriggerName.TabIndex = 0;
-			this.m_lblTriggerName.Text = "Name:";
+			this.m_lblTriggerName.Text = "N&ame:";
 			// 
 			// m_tabEvents
 			// 
@@ -318,7 +318,7 @@
 			this.m_lblEventsIntro.Name = "m_lblEventsIntro";
 			this.m_lblEventsIntro.Size = new System.Drawing.Size(297, 13);
 			this.m_lblEventsIntro.TabIndex = 0;
-			this.m_lblEventsIntro.Text = "The trigger will fire when any of the events listed below occur.";
+			this.m_lblEventsIntro.Text = "&The trigger will fire when any of the events listed below occur.";
 			// 
 			// m_lvEvents
 			// 
@@ -418,7 +418,7 @@
 			this.m_lblConditionsIntro.Name = "m_lblConditionsIntro";
 			this.m_lblConditionsIntro.Size = new System.Drawing.Size(329, 13);
 			this.m_lblConditionsIntro.TabIndex = 0;
-			this.m_lblConditionsIntro.Text = "The trigger actions are only performed if all conditions below are met.";
+			this.m_lblConditionsIntro.Text = "&The trigger actions are only performed if all conditions below are met.";
 			// 
 			// m_lvConditions
 			// 
@@ -523,7 +523,7 @@
 			this.m_lblActionsIntro.Name = "m_lblActionsIntro";
 			this.m_lblActionsIntro.Size = new System.Drawing.Size(224, 13);
 			this.m_lblActionsIntro.TabIndex = 0;
-			this.m_lblActionsIntro.Text = "The trigger will perform all actions listed below.";
+			this.m_lblActionsIntro.Text = "&The trigger will perform all actions listed below.";
 			// 
 			// m_btnHelp
 			// 

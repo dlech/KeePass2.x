@@ -122,7 +122,7 @@
 			this.m_lblEncPreview.Name = "m_lblEncPreview";
 			this.m_lblEncPreview.Size = new System.Drawing.Size(71, 13);
 			this.m_lblEncPreview.TabIndex = 2;
-			this.m_lblEncPreview.Text = "Text preview:";
+			this.m_lblEncPreview.Text = "&Text preview:";
 			// 
 			// m_cmbEnc
 			// 
@@ -141,7 +141,7 @@
 			this.m_lblEnc.Name = "m_lblEnc";
 			this.m_lblEnc.Size = new System.Drawing.Size(78, 13);
 			this.m_lblEnc.TabIndex = 0;
-			this.m_lblEnc.Text = "Text encoding:";
+			this.m_lblEnc.Text = "Text &encoding:";
 			// 
 			// m_tabStructure
 			// 
@@ -239,7 +239,7 @@
 			this.m_lblFieldName.Name = "m_lblFieldName";
 			this.m_lblFieldName.Size = new System.Drawing.Size(38, 13);
 			this.m_lblFieldName.TabIndex = 2;
-			this.m_lblFieldName.Text = "Name:";
+			this.m_lblFieldName.Text = "Na&me:";
 			// 
 			// m_cmbFieldType
 			// 
@@ -258,7 +258,7 @@
 			this.m_lblFieldType.Name = "m_lblFieldType";
 			this.m_lblFieldType.Size = new System.Drawing.Size(34, 13);
 			this.m_lblFieldType.TabIndex = 0;
-			this.m_lblFieldType.Text = "Type:";
+			this.m_lblFieldType.Text = "Typ&e:";
 			// 
 			// m_btnFieldMoveDown
 			// 
@@ -297,7 +297,7 @@
 			this.m_lblFields.Name = "m_lblFields";
 			this.m_lblFields.Size = new System.Drawing.Size(268, 13);
 			this.m_lblFields.TabIndex = 0;
-			this.m_lblFields.Text = "Specify the layout (fields and their order) of the CSV file:";
+			this.m_lblFields.Text = "Spe&cify the layout (fields and their order) of the CSV file:";
 			// 
 			// m_lvFields
 			// 
@@ -338,7 +338,7 @@
 			this.m_cbIgnoreFirst.Name = "m_cbIgnoreFirst";
 			this.m_cbIgnoreFirst.Size = new System.Drawing.Size(95, 17);
 			this.m_cbIgnoreFirst.TabIndex = 7;
-			this.m_cbIgnoreFirst.Text = "Ignore first row";
+			this.m_cbIgnoreFirst.Text = "&Ignore first row";
 			this.m_cbIgnoreFirst.UseVisualStyleBackColor = true;
 			// 
 			// m_cbTrim
@@ -350,7 +350,7 @@
 			this.m_cbTrim.Name = "m_cbTrim";
 			this.m_cbTrim.Size = new System.Drawing.Size(331, 17);
 			this.m_cbTrim.TabIndex = 8;
-			this.m_cbTrim.Text = "Remove white space characters from the beginning/end of fields";
+			this.m_cbTrim.Text = "Remove &white space characters from the beginning/end of fields";
 			this.m_cbTrim.UseVisualStyleBackColor = true;
 			// 
 			// m_cmbTextQual
@@ -370,7 +370,7 @@
 			this.m_lblTextQual.Name = "m_lblTextQual";
 			this.m_lblTextQual.Size = new System.Drawing.Size(70, 13);
 			this.m_lblTextQual.TabIndex = 4;
-			this.m_lblTextQual.Text = "Text qualifier:";
+			this.m_lblTextQual.Text = "&Text qualifier:";
 			// 
 			// m_cbBackEscape
 			// 
@@ -381,7 +381,7 @@
 			this.m_cbBackEscape.Name = "m_cbBackEscape";
 			this.m_cbBackEscape.Size = new System.Drawing.Size(192, 17);
 			this.m_cbBackEscape.TabIndex = 6;
-			this.m_cbBackEscape.Text = "Interpret \'\\\' as an escape character";
+			this.m_cbBackEscape.Text = "Inter&pret \'\\\' as an escape character";
 			this.m_cbBackEscape.UseVisualStyleBackColor = true;
 			// 
 			// m_lblFieldSep
@@ -391,7 +391,7 @@
 			this.m_lblFieldSep.Name = "m_lblFieldSep";
 			this.m_lblFieldSep.Size = new System.Drawing.Size(79, 13);
 			this.m_lblFieldSep.TabIndex = 0;
-			this.m_lblFieldSep.Text = "Field separator:";
+			this.m_lblFieldSep.Text = "Field &separator:";
 			// 
 			// m_cmbFieldSep
 			// 
@@ -420,7 +420,7 @@
 			this.m_lblRecSep.Name = "m_lblRecSep";
 			this.m_lblRecSep.Size = new System.Drawing.Size(92, 13);
 			this.m_lblRecSep.TabIndex = 2;
-			this.m_lblRecSep.Text = "Record separator:";
+			this.m_lblRecSep.Text = "&Record separator:";
 			// 
 			// m_tabPreview
 			// 

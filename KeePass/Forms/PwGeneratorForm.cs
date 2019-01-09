@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -186,7 +186,8 @@ namespace KeePass.Forms
 			{
 				m_cmbProfiles.Items.Add(ppw.Name);
 
-				if(ppw.GeneratorType == PasswordGeneratorType.Custom)
+				if((ppw.GeneratorType == PasswordGeneratorType.Custom) &&
+					!string.IsNullOrEmpty(ppw.CustomAlgorithmUuid))
 				{
 					CustomPwGenerator pwg = Program.PwGeneratorPool.Find(new
 						PwUuid(Convert.FromBase64String(ppw.CustomAlgorithmUuid)));
@@ -201,7 +202,7 @@ namespace KeePass.Forms
 				SetGenerationOptions(Program.Config.PasswordGenerator.LastUsedProfile);
 			}
 
-			if(m_bCanAccept == false)
+			if(!m_bCanAccept)
 			{
 				m_btnOK.Visible = false;
 				m_btnCancel.Text = KPRes.CloseButton;
@@ -576,32 +577,29 @@ namespace KeePass.Forms
 
 		private void SelectCustomGenerator(string strUuid, string strCustomOptions)
 		{
+			int iSel = 0;
 			try
 			{
-				if(string.IsNullOrEmpty(strUuid)) throw new ArgumentException();
+				if(string.IsNullOrEmpty(strUuid)) return;
 
 				PwUuid uuid = new PwUuid(Convert.FromBase64String(strUuid));
 				CustomPwGenerator pwg = Program.PwGeneratorPool.Find(uuid);
-				if(pwg == null) throw new ArgumentException();
+				if(pwg == null) return;
 
-				bool bSet = false;
 				for(int i = 0; i < m_cmbCustomAlgo.Items.Count; ++i)
 				{
 					if((m_cmbCustomAlgo.Items[i] as string) == pwg.Name)
 					{
-						m_cmbCustomAlgo.SelectedIndex = i;
+						iSel = i;
 
 						if(strCustomOptions != null)
 							m_dictCustomOptions[pwg] = strCustomOptions;
 
-						bSet = true;
 						break;
 					}
 				}
-
-				if(!bSet) throw new ArgumentException();
 			}
-			catch(Exception) { m_cmbCustomAlgo.SelectedIndex = 0; }
+			finally { m_cmbCustomAlgo.SelectedIndex = iSel; }
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

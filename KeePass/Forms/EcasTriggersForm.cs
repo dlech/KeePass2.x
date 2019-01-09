@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -215,8 +215,8 @@ namespace KeePass.Forms
 				{
 					XmlUtilEx.Serialize<EcasTriggerContainer>(ms, v);
 
-					ClipboardUtil.Copy(StrUtil.Utf8.GetString(ms.ToArray()), false,
-						false, null, null, this.Handle);
+					ClipboardUtil.Copy(StrUtil.Utf8.GetString(ms.ToArray()),
+						false, false, null, null, this.Handle);
 				}
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
@@ -240,19 +240,20 @@ namespace KeePass.Forms
 		{
 			try
 			{
-				string strData = ClipboardUtil.GetText();
-
+				string strData = (ClipboardUtil.GetText() ?? string.Empty);
 				byte[] pbData = StrUtil.Utf8.GetBytes(strData);
-				MemoryStream ms = new MemoryStream(pbData, false);
-				EcasTriggerContainer c = XmlUtilEx.Deserialize<EcasTriggerContainer>(ms);
-				ms.Close();
 
-				foreach(EcasTrigger t in c.Triggers)
+				using(MemoryStream ms = new MemoryStream(pbData, false))
 				{
-					if(m_triggers.FindObjectByUuid(t.Uuid) != null)
-						t.Uuid = new PwUuid(true);
-					
-					m_triggers.TriggerCollection.Add(t);
+					EcasTriggerContainer c = XmlUtilEx.Deserialize<EcasTriggerContainer>(ms);
+
+					foreach(EcasTrigger t in c.Triggers)
+					{
+						if(m_triggers.FindObjectByUuid(t.Uuid) != null)
+							t.Uuid = new PwUuid(true);
+
+						m_triggers.TriggerCollection.Add(t);
+					}
 				}
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }

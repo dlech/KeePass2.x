@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -133,8 +133,8 @@ void RegisterPreLoad(bool bRegister)
 
 	if(bRegister)
 		RegSetValueEx(hKey, strItemName.c_str(), 0, REG_SZ,
-			(const BYTE*)strItemValue.c_str(), static_cast<DWORD>((strItemValue.size() +
-			1) * sizeof(TCHAR)));
+			(const BYTE*)strItemValue.c_str(), static_cast<DWORD>(
+			(strItemValue.size() + 1) * sizeof(TCHAR)));
 	else
 		RegDeleteValue(hKey, strItemName.c_str());
 
@@ -147,7 +147,7 @@ std_string GetNetInstallRoot()
 
 	HKEY hNet = NULL;
 	LONG lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Microsoft\\.NETFramework"),
-		0, KEY_READ, &hNet);
+		0, KEY_READ | KEY_WOW64_64KEY, &hNet);
 	if((lRes != ERROR_SUCCESS) || (hNet == NULL)) return str;
 
 	const DWORD cbData = 2050;
@@ -179,7 +179,7 @@ std_string GetKeePassExePath()
 	boost::trim_if(strPath, boost::is_any_of(g_lpPathTrimChars));
 	if(strPath.size() == 0) return strPath;
 
-	return strPath + _T("KeePass.exe");
+	return (strPath + _T("KeePass.exe"));
 }
 
 void EnsureTerminatingSeparator(std_string& strPath)
@@ -204,8 +204,6 @@ std_string FindNGen()
 	return strNGen;
 }
 
-#pragma warning(push)
-#pragma warning(disable: 4127) // Conditional expression is constant
 void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 	ULONGLONG& ullVersion)
 {
@@ -217,7 +215,7 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 	HANDLE hFind = FindFirstFile(strSearch.c_str(), &wfd);
 	if(hFind == INVALID_HANDLE_VALUE) return;
 
-	while(true)
+	do
 	{
 		if((wfd.cFileName[0] == 0) || (_tcsicmp(wfd.cFileName, _T(".")) == 0) ||
 			(_tcsicmp(wfd.cFileName, _T("..")) == 0)) { }
@@ -233,13 +231,11 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 				ullVersion = ullThisVer;
 			}
 		}
-
-		if(FindNextFile(hFind, &wfd) == FALSE) break;
 	}
+	while(FindNextFile(hFind, &wfd) != FALSE);
 
 	FindClose(hFind);
 }
-#pragma warning(pop)
 
 ULONGLONG SiuGetFileVersion(const std_string& strFilePath)
 {

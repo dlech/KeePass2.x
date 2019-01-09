@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -181,6 +181,7 @@ namespace KeePassLib.Cryptography
 			return pbRet;
 		}
 
+#if !KeePassUAP
 		private static bool? g_obAesCsp = null;
 		internal static SymmetricAlgorithm CreateAes()
 		{
@@ -215,6 +216,7 @@ namespace KeePassLib.Cryptography
 
 			return null;
 		}
+#endif
 
 		public static byte[] ProtectData(byte[] pb, byte[] pbOptEntropy,
 			DataProtectionScope s)

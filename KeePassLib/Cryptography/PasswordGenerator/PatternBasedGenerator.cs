@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -33,7 +33,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			PwProfile pwProfile, CryptoRandomStream crsRandomSource)
 		{
 			psOut = ProtectedString.Empty;
-			LinkedList<char> vGenerated = new LinkedList<char>();
+
+			LinkedList<char> llGenerated = new LinkedList<char>();
 			PwCharSet pcsCurrent = new PwCharSet();
 			PwCharSet pcsCustom = new PwCharSet();
 			PwCharSet pcsUsed = new PwCharSet();
@@ -56,14 +57,14 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 					ch = csStream.ReadChar();
 					if(ch == char.MinValue) // Backslash at the end
 					{
-						vGenerated.AddLast('\\');
+						llGenerated.AddLast('\\');
 						break;
 					}
 
 					if(bInCharSetDef) pcsCustom.Add(ch);
 					else
 					{
-						vGenerated.AddLast(ch);
+						llGenerated.AddLast(ch);
 						pcsUsed.Add(ch);
 					}
 				}
@@ -72,7 +73,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 					ch = csStream.ReadChar();
 					if(ch == char.MinValue) // ^ at the end
 					{
-						vGenerated.AddLast('^');
+						llGenerated.AddLast('^');
 						break;
 					}
 
@@ -97,7 +98,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				}
 				else if(pcsCurrent.AddCharSet(ch) == false)
 				{
-					vGenerated.AddLast(ch);
+					llGenerated.AddLast(ch);
 					pcsUsed.Add(ch);
 				}
 				else bGenerateChar = true;
@@ -114,33 +115,35 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 					if(chGen == char.MinValue) return PwgError.TooFewCharacters;
 
-					vGenerated.AddLast(chGen);
+					llGenerated.AddLast(chGen);
 					pcsUsed.Add(chGen);
 				}
 
 				ch = csStream.ReadChar();
 			}
 
-			if(vGenerated.Count == 0) return PwgError.Success;
+			if(llGenerated.Count == 0) return PwgError.Success;
 
-			char[] vArray = new char[vGenerated.Count];
-			vGenerated.CopyTo(vArray, 0);
+			char[] v = new char[llGenerated.Count];
+			llGenerated.CopyTo(v, 0);
 
 			if(pwProfile.PatternPermutePassword)
-				PwGenerator.ShufflePassword(vArray, crsRandomSource);
+				PwGenerator.Shuffle(v, crsRandomSource);
 
-			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(vArray);
+			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(v);
 			psOut = new ProtectedString(true, pbUtf8);
 			MemUtil.ZeroByteArray(pbUtf8);
-			MemUtil.ZeroArray<char>(vArray);
-			vGenerated.Clear();
+
+			MemUtil.ZeroArray<char>(v);
+			llGenerated.Clear();
 
 			return PwgError.Success;
 		}
 
 		private static string ExpandPattern(string strPattern)
 		{
-			Debug.Assert(strPattern != null); if(strPattern == null) return string.Empty;
+			if(strPattern == null) { Debug.Assert(false); return string.Empty; }
+
 			string str = strPattern;
 
 			while(true)

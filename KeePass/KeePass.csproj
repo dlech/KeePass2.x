@@ -100,6 +100,9 @@
     <Compile Include="..\KeePassLib\Cryptography\CryptoRandomStream.cs">
       <Link>KeePassLib\Cryptography\CryptoRandomStream.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Cryptography\CryptoStreamEx.cs">
+      <Link>KeePassLib\Cryptography\CryptoStreamEx.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\Cryptography\CryptoUtil.cs">
       <Link>KeePassLib\Cryptography\CryptoUtil.cs</Link>
     </Compile>
@@ -1082,6 +1085,7 @@
     <Compile Include="Util\ClipboardEventChainBlocker.cs" />
     <Compile Include="Util\ClipboardUtil.cs" />
     <Compile Include="Util\ClipboardUtil.Unix.cs" />
+    <Compile Include="Util\ClipboardUtil.Uwp.cs" />
     <Compile Include="Util\ClipboardUtil.Windows.cs" />
     <Compile Include="Util\CommandLineArgs.cs" />
     <Compile Include="Ecas\EcasActionType.cs" />

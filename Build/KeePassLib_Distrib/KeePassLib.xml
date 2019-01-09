@@ -327,10 +327,8 @@
         </member>
         <member name="M:KeePassLib.PwDefs.IsTanEntry(KeePassLib.PwEntry)">
             <summary>
-            Check if an entry is a TAN.
+            Check whether an entry is a TAN entry.
             </summary>
-            <param name="pe">Password entry.</param>
-            <returns>Returns <c>true</c> if the entry is a TAN.</returns>
         </member>
         <member name="T:KeePassLib.SearchParameters">
             <summary>
@@ -620,7 +618,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FrameworkNotImplExcp">
             <summary>
             Look up a localized string similar to
-            'The .NET framework/runtime under which KeePass is currently running does not support this operation.'.
+            'The .NET Framework/runtime under which KeePass is currently running does not support this operation.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.General">
@@ -764,8 +762,8 @@
             Construct a new cryptographically secure random stream object.
             </summary>
             <param name="a">Algorithm to use.</param>
-            <param name="pbKey">Initialization key. Must not be <c>null</c> and
-            must contain at least 1 byte.</param>
+            <param name="pbKey">Initialization key. Must not be <c>null</c>
+            and must contain at least 1 byte.</param>
         </member>
         <member name="M:KeePassLib.Cryptography.CryptoRandomStream.GetRandomBytes(System.UInt32)">
             <summary>
@@ -862,7 +860,7 @@
             Create a data URI (according to RFC 2397).
             </summary>
             <param name="pbData">Data to encode.</param>
-            <param name="strMimeType">Optional MIME type. If <c>null</c>,
+            <param name="strMediaType">Optional MIME type. If <c>null</c>,
             an appropriate type is used.</param>
             <returns>Data URI.</returns>
         </member>
@@ -909,39 +907,28 @@
         </member>
         <member name="T:KeePassLib.Security.XorredBuffer">
             <summary>
-            Represents an object that is encrypted using a XOR pad until
-            it is read. <c>XorredBuffer</c> objects are immutable and
-            thread-safe.
+            A <c>XorredBuffer</c> object stores data that is encrypted
+            using a XOR pad.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.XorredBuffer.#ctor(System.Byte[],System.Byte[])">
             <summary>
-            Construct a new XOR-protected object using a protected byte array
-            and a XOR pad that decrypts the protected data. The
-            <paramref name="pbProtectedData"/> byte array must have the same size
-            as the <paramref name="pbXorPad"/> byte array.
+            Construct a new <c>XorredBuffer</c> object.
+            The <paramref name="pbCT" /> byte array must have the same
+            length as the <paramref name="pbXorPad" /> byte array.
             The <c>XorredBuffer</c> object takes ownership of the two byte
-            arrays, i.e. the caller must not use or modify them afterwards.
+            arrays, i.e. the caller must not use them afterwards.
             </summary>
-            <param name="pbProtectedData">Protected data (XOR pad applied).</param>
+            <param name="pbCT">Data with XOR pad applied.</param>
             <param name="pbXorPad">XOR pad that can be used to decrypt the
-            <paramref name="pbProtectedData"/> parameter.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
-            parameters is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown if the byte arrays are
-            of different size.</exception>
+            <paramref name="pbCT" /> byte array.</param>
         </member>
         <member name="M:KeePassLib.Security.XorredBuffer.ReadPlainText">
             <summary>
             Get a copy of the plain-text. The caller is responsible
             for clearing the byte array safely after using it.
             </summary>
-            <returns>Unprotected plain-text byte array.</returns>
-        </member>
-        <member name="P:KeePassLib.Security.XorredBuffer.Length">
-            <summary>
-            Length of the protected data in bytes.
-            </summary>
+            <returns>Plain-text byte array.</returns>
         </member>
         <member name="M:KeePassLib.Collections.StringDictionaryEx.Set(System.String,System.String)">
             <summary>
@@ -1157,34 +1144,6 @@
             The date/time when the location of the object was last changed.
             </summary>
         </member>
-        <member name="T:KeePassLib.Cryptography.Cipher.StandardAesEngine">
-            <summary>
-            Standard AES cipher implementation.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.Cryptography.Cipher.ICipherEngine">
-            <summary>
-            Interface of an encryption/decryption class.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Cryptography.Cipher.ICipherEngine.EncryptStream(System.IO.Stream,System.Byte[],System.Byte[])">
-            <summary>
-            Encrypt a stream.
-            </summary>
-            <param name="sPlainText">Stream to read the plain-text from.</param>
-            <param name="pbKey">Key to use.</param>
-            <param name="pbIV">Initialization vector.</param>
-            <returns>Stream, from which the encrypted data can be read.</returns>
-        </member>
-        <member name="M:KeePassLib.Cryptography.Cipher.ICipherEngine.DecryptStream(System.IO.Stream,System.Byte[],System.Byte[])">
-            <summary>
-            Decrypt a stream.
-            </summary>
-            <param name="sEncrypted">Stream to read the encrypted data from.</param>
-            <param name="pbKey">Key to use.</param>
-            <param name="pbIV">Initialization vector.</param>
-            <returns>Stream, from which the decrypted data can be read.</returns>
-        </member>
         <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine.CipherUuid">
             <summary>
             UUID of the engine. If you want to write an engine/plugin,
@@ -1193,24 +1152,8 @@
         </member>
         <member name="P:KeePassLib.Cryptography.Cipher.ICipherEngine.DisplayName">
             <summary>
-            String displayed in the list of available encryption/decryption
+            Name displayed in the list of available encryption/decryption
             engines in the GUI.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.AesUuid">
-            <summary>
-            UUID of the cipher engine. This ID uniquely identifies the
-            AES engine. Must not be used by other ciphers.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.CipherUuid">
-            <summary>
-            Get the UUID of this cipher engine as <c>PwUuid</c> object.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Cryptography.Cipher.StandardAesEngine.DisplayName">
-            <summary>
-            Get a displayable name describing this cipher engine.
             </summary>
         </member>
         <member name="T:KeePassLib.Keys.IUserKey">
@@ -1616,7 +1559,7 @@
         </member>
         <member name="T:KeePassLib.Utility.MemUtil">
             <summary>
-            Contains static buffer manipulation and string conversion routines.
+            Buffer manipulation and conversion routines.
             </summary>
         </member>
         <member name="M:KeePassLib.Utility.MemUtil.HexStringToByteArray(System.String)">
@@ -1773,7 +1716,7 @@
             <summary>
             Add a cipher engine to the pool.
             </summary>
-            <param name="csEngine">Cipher engine to add. Must not be <c>null</c>.</param>
+            <param name="c">Cipher engine to add. Must not be <c>null</c>.</param>
         </member>
         <member name="M:KeePassLib.Cryptography.Cipher.CipherPool.GetCipher(KeePassLib.PwUuid)">
             <summary>
@@ -1802,11 +1745,6 @@
             first matching cipher is returned.</param>
             <returns>Cipher with the specified name or <c>-1</c> if
             no cipher with that name is found.</returns>
-        </member>
-        <member name="P:KeePassLib.Cryptography.Cipher.CipherPool.GlobalPool">
-            <summary>
-            Reference to the global cipher pool.
-            </summary>
         </member>
         <member name="P:KeePassLib.Cryptography.Cipher.CipherPool.EngineCount">
             <summary>
@@ -3012,7 +2950,7 @@
             to the value passed in the <c>XorredBuffer</c> object.
             </summary>
             <param name="bEnableProtection">Enable protection or not.</param>
-            <param name="xbProtected"><c>XorredBuffer</c> object containing the
+            <param name="xb"><c>XorredBuffer</c> object containing the
             string in UTF-8 representation. The UTF-8 string must not
             be <c>null</c>-terminated.</param>
         </member>
@@ -3044,11 +2982,9 @@
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.ReadXorredString(KeePassLib.Cryptography.CryptoRandomStream)">
             <summary>
-            Read the protected string and return it protected with a sequence
-            of bytes generated by a random stream.
+            Get the string as an UTF-8 sequence xorred with bytes
+            from a <c>CryptoRandomStream</c>.
             </summary>
-            <param name="crsRandomSource">Random number source.</param>
-            <returns>Protected string.</returns>
         </member>
         <member name="P:KeePassLib.Security.ProtectedString.Empty">
             <summary>
@@ -3111,12 +3047,11 @@
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>
-            Construct a new protected binary data object. Copy the data from
-            a <c>XorredBuffer</c> object.
+            Construct a new protected binary data object.
+            Copy the data from a <c>XorredBuffer</c> object.
             </summary>
             <param name="bEnableProtection">Enable protection or not.</param>
-            <param name="xbProtected"><c>XorredBuffer</c> object used to
-            initialize the <c>ProtectedBinary</c> object.</param>
+            <param name="xb"><c>XorredBuffer</c> object containing the data.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.ReadData">
             <summary>
@@ -3130,10 +3065,8 @@
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.ReadXorredData(KeePassLib.Cryptography.CryptoRandomStream)">
             <summary>
-            Read the protected data and return it protected with a sequence
-            of bytes generated by a random stream.
+            Get the data xorred with bytes from a <c>CryptoRandomStream</c>.
             </summary>
-            <param name="crsRandomSource">Random number source.</param>
         </member>
         <member name="P:KeePassLib.Security.ProtectedBinary.ExtCrypt">
             <summary>

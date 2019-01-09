@@ -66,7 +66,7 @@
 			this.m_lblSelEnc.Name = "m_lblSelEnc";
 			this.m_lblSelEnc.Size = new System.Drawing.Size(155, 13);
 			this.m_lblSelEnc.TabIndex = 3;
-			this.m_lblSelEnc.Text = "Select the encoding of the text:";
+			this.m_lblSelEnc.Text = "&Select the encoding of the text:";
 			// 
 			// m_cmbEnc
 			// 
@@ -86,7 +86,7 @@
 			this.m_lblPreview.Name = "m_lblPreview";
 			this.m_lblPreview.Size = new System.Drawing.Size(71, 13);
 			this.m_lblPreview.TabIndex = 5;
-			this.m_lblPreview.Text = "Text preview:";
+			this.m_lblPreview.Text = "&Text preview:";
 			// 
 			// m_rtbPreview
 			// 

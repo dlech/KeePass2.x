@@ -44,7 +44,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(518, 87);
+			this.m_btnOK.Location = new System.Drawing.Point(518, 88);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 0;
@@ -55,7 +55,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(518, 116);
+			this.m_btnCancel.Location = new System.Drawing.Point(518, 117);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 1;
@@ -70,12 +70,12 @@
 			this.m_lblChoose.Name = "m_lblChoose";
 			this.m_lblChoose.Size = new System.Drawing.Size(239, 13);
 			this.m_lblChoose.TabIndex = 2;
-			this.m_lblChoose.Text = "Choose the columns to show in the main window:";
+			this.m_lblChoose.Text = "&Choose the columns to show in the main window:";
 			// 
 			// m_lblReorderHint
 			// 
 			this.m_lblReorderHint.AutoSize = true;
-			this.m_lblReorderHint.Location = new System.Drawing.Point(9, 447);
+			this.m_lblReorderHint.Location = new System.Drawing.Point(9, 448);
 			this.m_lblReorderHint.Name = "m_lblReorderHint";
 			this.m_lblReorderHint.Size = new System.Drawing.Size(344, 13);
 			this.m_lblReorderHint.TabIndex = 5;
@@ -86,7 +86,7 @@
 			this.m_lvColumns.CheckBoxes = true;
 			this.m_lvColumns.FullRowSelect = true;
 			this.m_lvColumns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvColumns.Location = new System.Drawing.Point(12, 88);
+			this.m_lvColumns.Location = new System.Drawing.Point(12, 89);
 			this.m_lvColumns.MultiSelect = false;
 			this.m_lvColumns.Name = "m_lvColumns";
 			this.m_lvColumns.Size = new System.Drawing.Size(500, 300);
@@ -107,7 +107,7 @@
 			// m_lblSortHint
 			// 
 			this.m_lblSortHint.AutoSize = true;
-			this.m_lblSortHint.Location = new System.Drawing.Point(9, 465);
+			this.m_lblSortHint.Location = new System.Drawing.Point(9, 466);
 			this.m_lblSortHint.Name = "m_lblSortHint";
 			this.m_lblSortHint.Size = new System.Drawing.Size(419, 13);
 			this.m_lblSortHint.TabIndex = 6;
@@ -117,7 +117,7 @@
 			// m_grpColumn
 			// 
 			this.m_grpColumn.Controls.Add(this.m_cbHide);
-			this.m_grpColumn.Location = new System.Drawing.Point(12, 394);
+			this.m_grpColumn.Location = new System.Drawing.Point(12, 395);
 			this.m_grpColumn.Name = "m_grpColumn";
 			this.m_grpColumn.Size = new System.Drawing.Size(500, 45);
 			this.m_grpColumn.TabIndex = 4;
@@ -141,7 +141,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(605, 487);
+			this.ClientSize = new System.Drawing.Size(605, 488);
 			this.Controls.Add(this.m_grpColumn);
 			this.Controls.Add(this.m_lblSortHint);
 			this.Controls.Add(this.m_bannerImage);

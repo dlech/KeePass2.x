@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 using KeePass.Forms;
 using KeePass.UI;
+
 using KeePassLib.Translation;
 
 namespace TrlUtil
@@ -166,10 +167,11 @@ namespace TrlUtil
 		}
 
 		public static void RenderToTreeControl(List<KPFormCustomization> listCustoms,
-			TreeView tv)
+			TreeView tv, Dictionary<string, TreeNode> dControls)
 		{
 			tv.BeginUpdate();
 			tv.Nodes.Clear();
+			dControls.Clear();
 
 			foreach(KPFormCustomization kpfc in listCustoms)
 			{
@@ -179,6 +181,7 @@ namespace TrlUtil
 
 				TreeNode tnForm = tv.Nodes.Add(strName);
 				tnForm.Tag = kpfc;
+				// Bold font results in clipping bug in release mode
 
 				TreeNode tnWindow = tnForm.Nodes.Add("Window");
 				tnWindow.Tag = kpfc.Window;
@@ -187,9 +190,11 @@ namespace TrlUtil
 				{
 					TreeNode tnControl = tnForm.Nodes.Add(kpcc.Name);
 					tnControl.Tag = kpcc;
+
+					dControls[kpfc.FullName + "." + kpcc.Name] = tnControl;
 				}
 
-				tnForm.ExpandAll();
+				tnForm.Expand();
 			}
 
 			tv.EndUpdate();

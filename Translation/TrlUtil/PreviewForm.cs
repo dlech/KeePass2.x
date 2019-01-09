@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,17 +23,24 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib.Cryptography;
+using KeePassLib.Delegates;
+
+using TrlUtil.Native;
+
+using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace TrlUtil
 {
 	public sealed class PreviewForm : Form
 	{
-		private static Random m_rand = CryptoRandom.NewWeakRandom();
+		private static readonly Random g_rand = CryptoRandom.NewWeakRandom();
 
 		public PreviewForm()
 		{
@@ -53,83 +60,89 @@ namespace TrlUtil
 			else base.OnKeyUp(e);
 		}
 
-		public void CopyForm(Form f)
+		public void CopyForm(Form f, Action<Control> fCustomizeCopy)
 		{
-			this.SuspendLayout();
+			SuspendLayout();
 
-			this.MinimizeBox = false;
-			this.MaximizeBox = false;
-			this.ControlBox = false;
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
+			try
+			{
+				this.MinimizeBox = false;
+				this.MaximizeBox = false;
+				this.ControlBox = false;
+				this.FormBorderStyle = FormBorderStyle.FixedDialog;
 
-			this.Controls.Clear();
+				this.Controls.Clear();
 
-			this.ClientSize = f.ClientSize;
-			this.Text = f.Text;
+				this.ClientSize = f.ClientSize;
+				this.Text = f.Text;
 
-			CopyChildControls(this, f);
+				CopyChildControls(this, f, fCustomizeCopy);
+			}
+			catch(Exception) { Debug.Assert(false); }
 
-			this.ResumeLayout(true);
+			ResumeLayout();
 		}
 
-		private void CopyChildControls(Control cDest, Control cSource)
+		private void CopyChildControls(Control cDest, Control cSource,
+			Action<Control> fCustomizeCopy)
 		{
 			if((cDest == null) || (cSource == null)) return;
 
 			foreach(Control c in cSource.Controls)
 			{
-				Type t = c.GetType();
-				Control cCopy;
-				bool bCopyChilds = true;
+				if(c == null) { Debug.Assert(false); continue; }
 
-				if(t == typeof(Button)) cCopy = new Button();
-				else if(t == typeof(Label))
+				bool bSetText = true;
+
+				Control cCopy;
+				if(c is Button) cCopy = new Button();
+				else if(c is CheckBox)
 				{
-					cCopy = new Label();
-					// (cCopy as Label).AutoSize = (c as Label).AutoSize;
+					cCopy = new CheckBox();
+					(cCopy as CheckBox).Appearance = (c as CheckBox).Appearance;
 				}
-				else if(t == typeof(CheckBox)) cCopy = new CheckBox();
-				else if(t == typeof(RadioButton)) cCopy = new RadioButton();
-				else if(t == typeof(GroupBox)) cCopy = new GroupBox();
-				// NumericUpDown leads to GDI objects leak
-				// else if(t == typeof(NumericUpDown)) cCopy = new NumericUpDown();
-				else if(t == typeof(Panel)) cCopy = new Panel();
-				else if(t == typeof(TabControl)) cCopy = new TabControl();
-				else if(t == typeof(TabPage)) cCopy = new TabPage();
-				else if(t == typeof(ComboBox))
+				else if(c is ComboBox)
 				{
 					cCopy = new ComboBox();
 					(cCopy as ComboBox).DropDownStyle = (c as ComboBox).DropDownStyle;
 				}
-				else if(t == typeof(PromptedTextBox))
+				else if(c is GroupBox) cCopy = new GroupBox();
+				else if(c is Label) cCopy = new Label();
+				else if(c is NumericUpDown)
 				{
-					cCopy = new PromptedTextBox();
-					(cCopy as PromptedTextBox).Multiline = (c as PromptedTextBox).Multiline;
+					cCopy = new TextBox(); // NumericUpDown leads to GDI objects leak
+					bSetText = false;
 				}
-				else if(t == typeof(TextBox))
+				else if(c is RadioButton) cCopy = new RadioButton();
+				else if(c is RichTextBox)
+				{
+					cCopy = new TextBox(); // RTB leads to GDI objects leak
+					(cCopy as TextBox).Multiline = true;
+				}
+				else if(c is TabControl) cCopy = new TabControl();
+				else if(c is TabPage) cCopy = new TabPage();
+				else if(c is TextBox)
 				{
 					cCopy = new TextBox();
 					(cCopy as TextBox).Multiline = (c as TextBox).Multiline;
 				}
-				else if((t == typeof(RichTextBox)) || // RTB leads to GDI objects leak
-					(t == typeof(CustomRichTextBoxEx)))
-				{
-					cCopy = new TextBox();
-					(cCopy as TextBox).Multiline = true;
-				}
-				else
-				{
-					cCopy = new Label();
-					bCopyChilds = false;
-				}
+				// TabPage is a Panel, so TabPage must be first
+				else if(c is Panel) cCopy = new Panel();
+				else cCopy = new Label();
 
-				Color clr = Color.FromArgb(128 + m_rand.Next(0, 128),
-					128 + m_rand.Next(0, 128), 128 + m_rand.Next(0, 128));
+				Color clr = Color.FromArgb(128 + g_rand.Next(0, 128),
+					128 + g_rand.Next(0, 128), 128 + g_rand.Next(0, 128));
 
 				cCopy.Name = c.Name;
 				cCopy.Font = c.Font;
 				cCopy.BackColor = clr;
-				cCopy.Text = c.Text;
+				if(bSetText) cCopy.Text = c.Text;
+
+				cCopy.Location = c.Location;
+				cCopy.Size = c.Size;
+				// Debug.Assert(cCopy.ClientSize == c.ClientSize);
+				cCopy.Dock = c.Dock;
+				cCopy.Padding = c.Padding;
 
 				// Type tCopy = cCopy.GetType();
 				// PropertyInfo piAutoSizeSrc = t.GetProperty("AutoSize", typeof(bool));
@@ -142,19 +155,91 @@ namespace TrlUtil
 				// }
 				cCopy.AutoSize = c.AutoSize;
 
-				cCopy.Location = c.Location;
-				cCopy.Size = c.Size;
-				// Debug.Assert(cCopy.ClientSize == c.ClientSize);
-				if(c.Dock != DockStyle.None) cCopy.Dock = c.Dock;
+				cCopy.TabIndex = c.TabIndex;
+				cCopy.TabStop = c.TabStop;
+
+				ButtonBase bbCopy = (cCopy as ButtonBase);
+				if((bbCopy != null) && (c is ButtonBase))
+					bbCopy.TextAlign = (c as ButtonBase).TextAlign;
+
+				Label lCopy = (cCopy as Label);
+				if((lCopy != null) && (c is Label))
+					lCopy.TextAlign = (c as Label).TextAlign;
 
 				try
 				{
+					if(fCustomizeCopy != null) fCustomizeCopy(cCopy);
+
 					cDest.Controls.Add(cCopy);
 
-					if(bCopyChilds) CopyChildControls(cCopy, c);
+					if((c is GroupBox) || (c is Panel) ||
+						(c is SplitContainer) || (c is TabControl))
+						CopyChildControls(cCopy, c, fCustomizeCopy);
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
+		}
+
+		internal void EnsureControlPageVisible(string strName)
+		{
+			if(string.IsNullOrEmpty(strName)) return; // No assert
+
+			Control[] v = this.Controls.Find(strName, true);
+			if((v == null) || (v.Length == 0)) return; // No assert
+
+			Control c = v[0];
+			while((c != null) && !(c is Form))
+			{
+				TabPage tp = (c as TabPage);
+				if(tp != null)
+				{
+					TabControl tc = (tp.Parent as TabControl);
+					if(tc != null) tc.SelectedTab = tp;
+					else { Debug.Assert(false); }
+				}
+
+				c = c.Parent;
+			}
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+
+			// Timing-dependent, 100 ms is insufficient
+			ShowAcceleratorsAsync(200);
+			ShowAcceleratorsAsync(600);
+		}
+
+		public void ShowAccelerators()
+		{
+			try
+			{
+				IntPtr hWnd = this.Handle;
+				if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+
+				NativeMethods.SendMessage(hWnd, NativeMethods.WM_UPDATEUISTATE,
+					new IntPtr(NativeMethods.MakeLong(NativeMethods.UIS_CLEAR,
+					NativeMethods.UISF_HIDEACCEL)), IntPtr.Zero);
+			}
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+		}
+
+		private void ShowAcceleratorsAsync(int msDelay)
+		{
+			try
+			{
+				ThreadPool.QueueUserWorkItem(delegate(object state)
+				{
+					try
+					{
+						Thread.Sleep(msDelay);
+						Invoke(new VoidDelegate(this.ShowAccelerators));
+					}
+					catch(Exception) { Debug.Assert(false); }
+				});
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }
