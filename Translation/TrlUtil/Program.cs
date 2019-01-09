@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,12 +48,18 @@ namespace TrlUtil
 		[STAThread]
 		public static void Main(string[] args)
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			try
+			{
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
 
-			m_cfg = (TceConfig.Load() ?? new TceConfig());
+				KeePass.Program.EnableTranslation = false; // We need English
+				if(!KeePass.Program.CommonInit()) return;
 
-			try { MainPriv(args); }
+				m_cfg = (TceConfig.Load() ?? new TceConfig());
+
+				MainPriv(args);
+			}
 			catch(Exception ex)
 			{
 				MessageBox.Show(ex.Message, TuDefs.ProductName,
@@ -61,6 +67,9 @@ namespace TrlUtil
 			}
 
 			TceConfig.Save(m_cfg);
+
+			try { KeePass.Program.CommonTerminate(); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private static void MainPriv(string[] args)

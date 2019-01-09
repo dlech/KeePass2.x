@@ -167,7 +167,7 @@
 			this.m_lblEncAlgoDesc.Name = "m_lblEncAlgoDesc";
 			this.m_lblEncAlgoDesc.Size = new System.Drawing.Size(169, 13);
 			this.m_lblEncAlgoDesc.TabIndex = 0;
-			this.m_lblEncAlgoDesc.Text = "Database file encryption algorithm:";
+			this.m_lblEncAlgoDesc.Text = "&Database file encryption algorithm:";
 			// 
 			// m_cmbEncAlgo
 			// 
@@ -194,7 +194,7 @@
 			this.m_lblKdfIt.Name = "m_lblKdfIt";
 			this.m_lblKdfIt.Size = new System.Drawing.Size(53, 13);
 			this.m_lblKdfIt.TabIndex = 3;
-			this.m_lblKdfIt.Text = "Iterations:";
+			this.m_lblKdfIt.Text = "&Iterations:";
 			// 
 			// m_lblKdfInfo
 			// 
@@ -235,7 +235,7 @@
 			this.m_lblKdfPar.Name = "m_lblKdfPar";
 			this.m_lblKdfPar.Size = new System.Drawing.Size(59, 13);
 			this.m_lblKdfPar.TabIndex = 8;
-			this.m_lblKdfPar.Text = "Parallelism:";
+			this.m_lblKdfPar.Text = "&Parallelism:";
 			// 
 			// m_numKdfPar
 			// 
@@ -278,7 +278,7 @@
 			this.m_btnKdf1Sec.Name = "m_btnKdf1Sec";
 			this.m_btnKdf1Sec.Size = new System.Drawing.Size(140, 23);
 			this.m_btnKdf1Sec.TabIndex = 12;
-			this.m_btnKdf1Sec.Text = "1 Second &Delay";
+			this.m_btnKdf1Sec.Text = "1 &Second Delay";
 			this.m_btnKdf1Sec.UseVisualStyleBackColor = true;
 			this.m_btnKdf1Sec.Click += new System.EventHandler(this.OnBtnKdf1Sec);
 			// 
@@ -289,7 +289,7 @@
 			this.m_lblKdfMem.Name = "m_lblKdfMem";
 			this.m_lblKdfMem.Size = new System.Drawing.Size(47, 13);
 			this.m_lblKdfMem.TabIndex = 5;
-			this.m_lblKdfMem.Text = "Memory:";
+			this.m_lblKdfMem.Text = "&Memory:";
 			// 
 			// m_cmbKdfMem
 			// 
@@ -319,7 +319,7 @@
 			this.m_lblKdf.Name = "m_lblKdf";
 			this.m_lblKdf.Size = new System.Drawing.Size(118, 13);
 			this.m_lblKdf.TabIndex = 1;
-			this.m_lblKdf.Text = "Key derivation function:";
+			this.m_lblKdf.Text = "&Key derivation function:";
 			// 
 			// m_numKdfIt
 			// 
@@ -385,7 +385,7 @@
 			this.m_cbColor.Name = "m_cbColor";
 			this.m_cbColor.Size = new System.Drawing.Size(137, 17);
 			this.m_cbColor.TabIndex = 6;
-			this.m_cbColor.Text = "Custom database color:";
+			this.m_cbColor.Text = "Cu&stom database color:";
 			this.m_cbColor.UseVisualStyleBackColor = true;
 			this.m_cbColor.CheckedChanged += new System.EventHandler(this.OnColorCheckedChanged);
 			// 
@@ -412,7 +412,7 @@
 			this.m_lblDefaultUser.Name = "m_lblDefaultUser";
 			this.m_lblDefaultUser.Size = new System.Drawing.Size(168, 13);
 			this.m_lblDefaultUser.TabIndex = 4;
-			this.m_lblDefaultUser.Text = "Default user name for new entries:";
+			this.m_lblDefaultUser.Text = "Default &user name for new entries:";
 			// 
 			// m_tbDbDesc
 			// 
@@ -431,14 +431,14 @@
 			this.m_lblDbDesc.Name = "m_lblDbDesc";
 			this.m_lblDbDesc.Size = new System.Drawing.Size(110, 13);
 			this.m_lblDbDesc.TabIndex = 2;
-			this.m_lblDbDesc.Text = "Database description:";
+			this.m_lblDbDesc.Text = "&Database description:";
 			// 
 			// m_tbDbName
 			// 
 			this.m_tbDbName.Location = new System.Drawing.Point(94, 9);
 			this.m_tbDbName.Name = "m_tbDbName";
 			this.m_tbDbName.Size = new System.Drawing.Size(352, 20);
-			this.m_tbDbName.TabIndex = 0;
+			this.m_tbDbName.TabIndex = 1;
 			// 
 			// m_lblDbName
 			// 
@@ -446,8 +446,8 @@
 			this.m_lblDbName.Location = new System.Drawing.Point(3, 12);
 			this.m_lblDbName.Name = "m_lblDbName";
 			this.m_lblDbName.Size = new System.Drawing.Size(85, 13);
-			this.m_lblDbName.TabIndex = 1;
-			this.m_lblDbName.Text = "Database name:";
+			this.m_lblDbName.TabIndex = 0;
+			this.m_lblDbName.Text = "Database &name:";
 			// 
 			// m_tabSecurity
 			// 
@@ -561,7 +561,7 @@
 			this.m_rbGZip.Size = new System.Drawing.Size(48, 17);
 			this.m_rbGZip.TabIndex = 7;
 			this.m_rbGZip.TabStop = true;
-			this.m_rbGZip.Text = "GZip";
+			this.m_rbGZip.Text = "&GZip";
 			this.m_rbGZip.UseVisualStyleBackColor = true;
 			// 
 			// m_rbNone
@@ -572,7 +572,7 @@
 			this.m_rbNone.Size = new System.Drawing.Size(51, 17);
 			this.m_rbNone.TabIndex = 4;
 			this.m_rbNone.TabStop = true;
-			this.m_rbNone.Text = "None";
+			this.m_rbNone.Text = "&None";
 			this.m_rbNone.UseVisualStyleBackColor = true;
 			// 
 			// m_tabRecycleBin
@@ -605,7 +605,7 @@
 			this.m_lblRecycleBinGroup.Name = "m_lblRecycleBinGroup";
 			this.m_lblRecycleBinGroup.Size = new System.Drawing.Size(96, 13);
 			this.m_lblRecycleBinGroup.TabIndex = 2;
-			this.m_lblRecycleBinGroup.Text = "Recycle bin group:";
+			this.m_lblRecycleBinGroup.Text = "&Recycle bin group:";
 			// 
 			// m_lblRecycleBinInfo
 			// 
@@ -675,7 +675,7 @@
 			this.m_cbHistoryMaxSize.Name = "m_cbHistoryMaxSize";
 			this.m_cbHistoryMaxSize.Size = new System.Drawing.Size(173, 17);
 			this.m_cbHistoryMaxSize.TabIndex = 2;
-			this.m_cbHistoryMaxSize.Text = "Limit history size per entry (MB):";
+			this.m_cbHistoryMaxSize.Text = "Li&mit history size per entry (MB):";
 			this.m_cbHistoryMaxSize.UseVisualStyleBackColor = true;
 			this.m_cbHistoryMaxSize.CheckedChanged += new System.EventHandler(this.OnHistoryMaxSizeCheckedChanged);
 			// 
@@ -686,7 +686,7 @@
 			this.m_cbHistoryMaxItems.Name = "m_cbHistoryMaxItems";
 			this.m_cbHistoryMaxItems.Size = new System.Drawing.Size(204, 17);
 			this.m_cbHistoryMaxItems.TabIndex = 0;
-			this.m_cbHistoryMaxItems.Text = "Limit number of history items per entry:";
+			this.m_cbHistoryMaxItems.Text = "&Limit number of history items per entry:";
 			this.m_cbHistoryMaxItems.UseVisualStyleBackColor = true;
 			this.m_cbHistoryMaxItems.CheckedChanged += new System.EventHandler(this.OnHistoryMaxItemsCheckedChanged);
 			// 
@@ -711,7 +711,7 @@
 			this.m_cbKeyForceOnce.Name = "m_cbKeyForceOnce";
 			this.m_cbKeyForceOnce.Size = new System.Drawing.Size(268, 17);
 			this.m_cbKeyForceOnce.TabIndex = 4;
-			this.m_cbKeyForceOnce.Text = "Force changing the master key the next time (once)";
+			this.m_cbKeyForceOnce.Text = "F&orce changing the master key the next time (once)";
 			this.m_cbKeyForceOnce.UseVisualStyleBackColor = true;
 			// 
 			// m_cbKeyForce
@@ -721,7 +721,7 @@
 			this.m_cbKeyForce.Name = "m_cbKeyForce";
 			this.m_cbKeyForce.Size = new System.Drawing.Size(206, 17);
 			this.m_cbKeyForce.TabIndex = 2;
-			this.m_cbKeyForce.Text = "Force changing the master key (days):";
+			this.m_cbKeyForce.Text = "&Force changing the master key (days):";
 			this.m_cbKeyForce.UseVisualStyleBackColor = true;
 			this.m_cbKeyForce.CheckedChanged += new System.EventHandler(this.OnKeyForceCheckedChanged);
 			// 
@@ -732,7 +732,7 @@
 			this.m_cbKeyRec.Name = "m_cbKeyRec";
 			this.m_cbKeyRec.Size = new System.Drawing.Size(239, 17);
 			this.m_cbKeyRec.TabIndex = 0;
-			this.m_cbKeyRec.Text = "Recommend changing the master key (days):";
+			this.m_cbKeyRec.Text = "&Recommend changing the master key (days):";
 			this.m_cbKeyRec.UseVisualStyleBackColor = true;
 			this.m_cbKeyRec.CheckedChanged += new System.EventHandler(this.OnKeyRecCheckedChanged);
 			// 
@@ -789,7 +789,7 @@
 			this.m_lblEntryTemplatesGroup.Name = "m_lblEntryTemplatesGroup";
 			this.m_lblEntryTemplatesGroup.Size = new System.Drawing.Size(112, 13);
 			this.m_lblEntryTemplatesGroup.TabIndex = 0;
-			this.m_lblEntryTemplatesGroup.Text = "Entry templates group:";
+			this.m_lblEntryTemplatesGroup.Text = "&Entry templates group:";
 			// 
 			// m_btnCancelOp
 			// 

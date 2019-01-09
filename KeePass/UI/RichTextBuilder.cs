@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,15 @@ namespace KeePass.UI
 	{
 		private StringBuilder m_sb = new StringBuilder();
 
-		private static List<RtfbTag> m_vTags = null;
+		private static List<RtfbTag> g_vTags = null;
+		private static bool? g_obURtf = null;
+
+		private Font m_fDefault = null;
+		public Font DefaultFont
+		{
+			get { return m_fDefault; }
+			set { m_fDefault = value; }
+		}
 
 		private sealed class RtfbTag
 		{
@@ -82,13 +90,6 @@ namespace KeePass.UI
 #endif
 		}
 
-		private Font m_fDefault = null;
-		public Font DefaultFont
-		{
-			get { return m_fDefault; }
-			set { m_fDefault = value; }
-		}
-
 		public RichTextBuilder()
 		{
 			EnsureInitializedStatic();
@@ -96,7 +97,7 @@ namespace KeePass.UI
 
 		private static void EnsureInitializedStatic()
 		{
-			if(m_vTags != null) return;
+			if(g_vTags != null) return;
 
 			// When running under Mono, replace bold and italic text
 			// by underlined text, which is rendered correctly (in
@@ -117,14 +118,14 @@ namespace KeePass.UI
 			l.Add(new RtfbTag(null, "\\ul0 ", false, FontStyle.Underline));
 			l.Add(new RtfbTag(null, "\\strike ", true, FontStyle.Strikeout));
 			l.Add(new RtfbTag(null, "\\strike0 ", false, FontStyle.Strikeout));
-			m_vTags = l;
+			g_vTags = l;
 		}
 
 		public static KeyValuePair<string, string> GetStyleIdCodes(FontStyle fs)
 		{
 			string strL = null, strR = null;
 
-			foreach(RtfbTag rTag in m_vTags)
+			foreach(RtfbTag rTag in g_vTags)
 			{
 				if(rTag.Style == fs)
 				{
@@ -207,6 +208,23 @@ namespace KeePass.UI
 			return rtbOp;
 		}
 
+		private static bool MayGetURtf(RichTextBox rtbUI)
+		{
+			if(!g_obURtf.HasValue)
+			{
+				using(RichTextBox rtb = CreateOpRtb(rtbUI))
+				{
+					// Ensure Rtf != null and encourage Unicode
+					rtb.Text = "\u0413\u043E\u0434\r\n\u0397\u03C4\u03B1\r\n" +
+						"\u30CE\u30FC\u30C8\r\n\u2211\u2026\u20AC";
+
+					g_obURtf = StrUtil.RtfIsURtf(rtb.Rtf);
+				}
+			}
+
+			return g_obURtf.Value;
+		}
+
 		public void Build(RichTextBox rtb)
 		{
 			Build(rtb, false);
@@ -214,19 +232,31 @@ namespace KeePass.UI
 
 		internal void Build(RichTextBox rtb, bool bBracesBalanced)
 		{
+			string strRtf = null;
+			Build(rtb, bBracesBalanced, ref strRtf);
+		}
+
+		internal bool Build(RichTextBox rtb, bool bBracesBalanced,
+			ref string strLastRtf)
+		{
 			if(rtb == null) throw new ArgumentNullException("rtb");
 
-			RichTextBox rtbOp = CreateOpRtb(rtb);
 			string strText = m_sb.ToString();
+			bool bURtf = MayGetURtf(rtb);
 
+			// Workaround for encoding bugs in Windows and Mono;
+			// Windows: https://sourceforge.net/p/keepass/bugs/1780/
+			// Mono: https://bugzilla.novell.com/show_bug.cgi?id=586901
 			Dictionary<char, string> dEnc = new Dictionary<char, string>();
-			if(MonoWorkarounds.IsRequired(586901))
+			if(bURtf || MonoWorkarounds.IsRequired(586901))
 			{
 				StringBuilder sbEnc = new StringBuilder();
+
 				for(int i = 0; i < strText.Length; ++i)
 				{
 					char ch = strText[i];
-					if((int)ch <= 255) sbEnc.Append(ch);
+
+					if(ch <= '\u00FF') sbEnc.Append(ch);
 					else
 					{
 						string strCharEnc;
@@ -235,30 +265,35 @@ namespace KeePass.UI
 							strCharEnc = RtfbTag.GenerateRandomIdCode();
 							dEnc[ch] = strCharEnc;
 						}
+
 						sbEnc.Append(strCharEnc);
 					}
 				}
+
 				strText = sbEnc.ToString();
 			}
 
-			rtbOp.Text = strText;
-			Debug.Assert(rtbOp.Text == strText); // Test committed
-
-			if(m_fDefault != null)
+			string strRtf;
+			using(RichTextBox rtbOp = CreateOpRtb(rtb))
 			{
-				rtbOp.SelectAll();
-				rtbOp.SelectionFont = m_fDefault;
-			}
+				rtbOp.Text = strText;
+				Debug.Assert(rtbOp.Text == strText); // Test committed
 
-			string strRtf = rtbOp.Rtf;
-			rtbOp.Dispose();
+				if(m_fDefault != null)
+				{
+					rtbOp.SelectAll();
+					rtbOp.SelectionFont = m_fDefault;
+				}
+
+				strRtf = rtbOp.Rtf;
+			}
 
 			foreach(KeyValuePair<char, string> kvpEnc in dEnc)
 			{
 				strRtf = strRtf.Replace(kvpEnc.Value,
 					StrUtil.RtfEncodeChar(kvpEnc.Key));
 			}
-			foreach(RtfbTag rTag in m_vTags)
+			foreach(RtfbTag rTag in g_vTags)
 			{
 				strRtf = strRtf.Replace(rTag.IdCode, rTag.RtfCode);
 			}
@@ -267,7 +302,12 @@ namespace KeePass.UI
 				strRtf = Regex.Replace(strRtf,
 					@"(\\)(\{[\u0020-\u005B\u005D-z\w\s]*?)(\})", "$1$2$1$3");
 
-			rtb.Rtf = StrUtil.RtfFix(strRtf);
+			strRtf = StrUtil.RtfFix(strRtf);
+
+			if(strRtf == strLastRtf) return false;
+			rtb.Rtf = strRtf;
+			strLastRtf = strRtf;
+			return true;
 		}
 	}
 }

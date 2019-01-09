@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -120,22 +120,19 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 				pwCharSet.Remove(pwProfile.ExcludeCharacters);
 		}
 
-		internal static void ShufflePassword(char[] pPassword,
-			CryptoRandomStream crsRandomSource)
+		internal static void Shuffle(char[] v, CryptoRandomStream crsRandomSource)
 		{
-			Debug.Assert(pPassword != null); if(pPassword == null) return;
-			Debug.Assert(crsRandomSource != null); if(crsRandomSource == null) return;
+			if(v == null) { Debug.Assert(false); return; }
+			if(crsRandomSource == null) { Debug.Assert(false); return; }
 
-			if(pPassword.Length <= 1) return; // Nothing to shuffle
-
-			for(int nSelect = 0; nSelect < pPassword.Length; ++nSelect)
+			for(int i = v.Length - 1; i >= 1; --i)
 			{
-				ulong uRandomIndex = crsRandomSource.GetRandomUInt64();
-				uRandomIndex %= (ulong)(pPassword.Length - nSelect);
+				ulong r = crsRandomSource.GetRandomUInt64();
+				int j = (int)(r % (ulong)(i + 1));
 
-				char chTemp = pPassword[nSelect];
-				pPassword[nSelect] = pPassword[nSelect + (int)uRandomIndex];
-				pPassword[nSelect + (int)uRandomIndex] = chTemp;
+				char t = v[i];
+				v[i] = v[j];
+				v[j] = t;
 			}
 		}
 
@@ -149,7 +146,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			if(pwAlgorithmPool == null) return PwgError.UnknownAlgorithm;
 
 			string strID = pwProfile.CustomAlgorithmUuid;
-			if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); return PwgError.UnknownAlgorithm; }
+			if(string.IsNullOrEmpty(strID)) return PwgError.UnknownAlgorithm;
 
 			byte[] pbUuid = Convert.FromBase64String(strID);
 			PwUuid uuid = new PwUuid(pbUuid);

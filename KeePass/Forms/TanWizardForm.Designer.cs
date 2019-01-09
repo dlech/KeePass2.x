@@ -50,7 +50,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(403, 423);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 3;
+			this.m_btnOK.TabIndex = 7;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -61,7 +61,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(484, 423);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 4;
+			this.m_btnCancel.TabIndex = 8;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -80,7 +80,7 @@
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 91);
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(550, 29);
-			this.m_lblIntro.TabIndex = 5;
+			this.m_lblIntro.TabIndex = 1;
 			this.m_lblIntro.Text = resources.GetString("m_lblIntro.Text");
 			// 
 			// m_tbTANs
@@ -91,7 +91,7 @@
 			this.m_tbTANs.Name = "m_tbTANs";
 			this.m_tbTANs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.m_tbTANs.Size = new System.Drawing.Size(547, 208);
-			this.m_tbTANs.TabIndex = 0;
+			this.m_tbTANs.TabIndex = 2;
 			// 
 			// m_cbNumberTans
 			// 
@@ -99,8 +99,8 @@
 			this.m_cbNumberTans.Location = new System.Drawing.Point(12, 344);
 			this.m_cbNumberTans.Name = "m_cbNumberTans";
 			this.m_cbNumberTans.Size = new System.Drawing.Size(275, 17);
-			this.m_cbNumberTans.TabIndex = 1;
-			this.m_cbNumberTans.Text = "Number TANs consecutively, starting from this value:";
+			this.m_cbNumberTans.TabIndex = 3;
+			this.m_cbNumberTans.Text = "&Number TANs consecutively, starting from this value:";
 			this.m_cbNumberTans.UseVisualStyleBackColor = true;
 			this.m_cbNumberTans.CheckedChanged += new System.EventHandler(this.OnNumberTANsCheckedChanged);
 			// 
@@ -110,7 +110,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 416);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(571, 2);
-			this.m_lblSeparator.TabIndex = 6;
+			this.m_lblSeparator.TabIndex = 9;
 			// 
 			// m_numTANsIndex
 			// 
@@ -122,7 +122,7 @@
             0});
 			this.m_numTANsIndex.Name = "m_numTANsIndex";
 			this.m_numTANsIndex.Size = new System.Drawing.Size(72, 20);
-			this.m_numTANsIndex.TabIndex = 2;
+			this.m_numTANsIndex.TabIndex = 4;
 			this.m_numTANsIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// m_lblTanChars
@@ -131,22 +131,22 @@
 			this.m_lblTanChars.Location = new System.Drawing.Point(9, 368);
 			this.m_lblTanChars.Name = "m_lblTanChars";
 			this.m_lblTanChars.Size = new System.Drawing.Size(200, 13);
-			this.m_lblTanChars.TabIndex = 7;
-			this.m_lblTanChars.Text = "TANs consist of the following characters:";
+			this.m_lblTanChars.TabIndex = 5;
+			this.m_lblTanChars.Text = "TANs &consist of the following characters:";
 			// 
 			// m_tbTanChars
 			// 
 			this.m_tbTanChars.Location = new System.Drawing.Point(12, 384);
 			this.m_tbTanChars.Name = "m_tbTanChars";
 			this.m_tbTanChars.Size = new System.Drawing.Size(547, 20);
-			this.m_tbTanChars.TabIndex = 8;
+			this.m_tbTanChars.TabIndex = 6;
 			// 
 			// m_lblToGroup
 			// 
 			this.m_lblToGroup.Location = new System.Drawing.Point(9, 71);
 			this.m_lblToGroup.Name = "m_lblToGroup";
 			this.m_lblToGroup.Size = new System.Drawing.Size(550, 15);
-			this.m_lblToGroup.TabIndex = 9;
+			this.m_lblToGroup.TabIndex = 0;
 			this.m_lblToGroup.Text = "TANs are imported into the currently selected group";
 			// 
 			// TanWizardForm

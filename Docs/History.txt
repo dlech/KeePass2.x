@@ -1,3 +1,88 @@
+2019-01-09: 2.41
+- Added option 'Do not store data in the Windows clipboard
+  history and the cloud clipboard' (the option is turned on by
+  default; for entry clipboard commands in the main window)
+- Added option 'Esc keypress in main window' (in 'Tools' ->
+  'Options' -> tab 'Interface'), which allows to specify the
+  action of the Esc key (ignore, lock workspace, minimize,
+  minimize to tray, exit)
+- Added option 'Ignore search settings of groups' in the 'Find'
+  dialog
+- Internal data viewer: added support for zooming images using
+  the OEM + and - keys with Ctrl
+- Added accelerator keys (especially for labels) in various
+  dialogs
+- Added UIFlags bit for disabling the 'Database Settings' menu
+  item
+- Added workarounds for Windows RTF character encoding bug
+- Added workaround for Mono input focus restoration problem
+  that occurs when a form gets activated
+- Plugins: added method to provide menu items
+- Plugins: added property to get the edit mode of an entry
+  dialog
+- TrlUtil: added tab 'Validation', which shows the results of
+  all checks that TrlUtil performs
+- TrlUtil: the tab in the preview form that contains the
+  currently selected control is now selected automatically
+- TrlUtil: the preview form now shows accelerator keys
+  permanently
+- TrlUtil: enhanced support for derived control classes
+- TrlUtil: the current file name is now displayed in the title
+  bar
+- Enhanced installer (added user directory checks, added option
+  to open the plugins web page, component/option names can be
+  translated now, updated NGen size estimation, improved file
+  associations update, ...)
+
+- In order to avoid selection/Ctrl+A problems, the user name
+  auto-completion now does not append suggestions anymore; it
+  only shows a list of suggestions (in which a suggestion can
+  be selected manually)
+- Improved accelerator keys in the 'Find' dialog
+- The history list in the entry dialog now supports showing
+  custom icons
+- Mass entry modifications (colors/icons) now create history
+  entries, if necessary
+- Improved text rendering in dialog banners
+- In the database settings dialog, the path of the database
+  file is now shown in the dialog banner
+- Improved selection/view preservation of the entry view
+- While importing/synchronizing, a status dialog is displayed
+  now if and only if the main window is not constructed
+  completely yet (otherwise the status is displayed in the main
+  window)
+- Improved reliability of clipboard operations
+- Improved error reporting for the 'Paste Entries' command
+- Renamed the automatic clipboard clearing option and added a
+  tooltip in order to clarify the behavior of the option
+- The commands 'Find Similar Passwords (Pairs)', 'Find Similar
+  Passwords (Clusters)' and 'Password Quality Report' now
+  ignore TAN entries
+- The report of clusters of similar passwords now shows more
+  clusters in certain cases
+- In the 'Plugins' dialog, the plugins are now sorted
+  alphabetically
+- KeePass does not try to load satellite assemblies as plugins
+  anymore
+- Improved configuration saving when an enforced configuration
+  file exists, but no global one
+- Improved reading of KDBX XML documents with unknown elements
+- The export module 'Customizable HTML File' now works fine on
+  Unix-like systems, too
+- On Unix-like systems: improved support for executing KeePass
+  while no X server is running
+- ShInstUtil: improved NGen detection on 64-bit systems
+- TrlUtil: the preview form does not steal the input focus
+  anymore
+- TrlUtil: improved accelerator key check
+- Various code optimizations
+- Minor other improvements
+
+- Fixed a bug that caused KeePass to crash when trying to view
+  certain password generator profiles
+- The option 'Use monospace font for passwords' in the 'Print'
+  / HTML export dialog now works for all translations
+
 2018-09-10: 2.40
 - Added automatic completion support for the user name box in
   the entry editing dialog and the auto-type sequence boxes in

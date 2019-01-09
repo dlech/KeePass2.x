@@ -42,7 +42,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(160, 100);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 3;
+			this.m_btnOK.TabIndex = 4;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -53,7 +53,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(241, 100);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 4;
+			this.m_btnCancel.TabIndex = 5;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -63,15 +63,15 @@
 			this.m_lblScheme.Location = new System.Drawing.Point(9, 15);
 			this.m_lblScheme.Name = "m_lblScheme";
 			this.m_lblScheme.Size = new System.Drawing.Size(49, 13);
-			this.m_lblScheme.TabIndex = 5;
-			this.m_lblScheme.Text = "Scheme:";
+			this.m_lblScheme.TabIndex = 0;
+			this.m_lblScheme.Text = "&Scheme:";
 			// 
 			// m_tbScheme
 			// 
 			this.m_tbScheme.Location = new System.Drawing.Point(64, 12);
 			this.m_tbScheme.Name = "m_tbScheme";
 			this.m_tbScheme.Size = new System.Drawing.Size(252, 20);
-			this.m_tbScheme.TabIndex = 0;
+			this.m_tbScheme.TabIndex = 1;
 			// 
 			// m_lblUrlOverride
 			// 
@@ -79,15 +79,15 @@
 			this.m_lblUrlOverride.Location = new System.Drawing.Point(9, 45);
 			this.m_lblUrlOverride.Name = "m_lblUrlOverride";
 			this.m_lblUrlOverride.Size = new System.Drawing.Size(73, 13);
-			this.m_lblUrlOverride.TabIndex = 1;
-			this.m_lblUrlOverride.Text = "URL override:";
+			this.m_lblUrlOverride.TabIndex = 2;
+			this.m_lblUrlOverride.Text = "&URL override:";
 			// 
 			// m_tbOverride
 			// 
 			this.m_tbOverride.Location = new System.Drawing.Point(12, 63);
 			this.m_tbOverride.Name = "m_tbOverride";
 			this.m_tbOverride.Size = new System.Drawing.Size(304, 20);
-			this.m_tbOverride.TabIndex = 2;
+			this.m_tbOverride.TabIndex = 3;
 			// 
 			// UrlOverrideForm
 			// 

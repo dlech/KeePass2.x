@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -94,11 +94,13 @@ namespace KeePass.DataExchange
 
 			bool bUseTempDb = (fmtImp.SupportsUuids || fmtImp.RequiresKey);
 			bool bAllSuccess = true;
+			MainForm mf = Program.MainForm; // Null for KPScript
 
 			// if(bSynchronize) { Debug.Assert(vFiles.Length == 1); }
 
 			IStatusLogger dlgStatus;
-			if(Program.Config.UI.ShowImportStatusDialog)
+			if(Program.Config.UI.ShowImportStatusDialog ||
+				((mf != null) && !mf.HasFormLoaded))
 				dlgStatus = new OnDemandStatusDialog(false, fParent);
 			else dlgStatus = new UIBlockerStatusLogger(fParent);
 
@@ -209,7 +211,6 @@ namespace KeePass.DataExchange
 				dlgStatus.SetText(KPRes.Synchronizing + " (" +
 					KPRes.SavingDatabase + ")", LogStatusType.Info);
 
-				MainForm mf = Program.MainForm; // Null for KPScript
 				if(mf != null)
 				{
 					try { mf.DocumentManager.ActiveDatabase = pwDatabase; }
@@ -630,7 +631,8 @@ namespace KeePass.DataExchange
 
 			try
 			{
-				if(ClipboardUtil.ContainsText()) return ClipboardUtil.GetText();
+				if(ClipboardUtil.ContainsText())
+					return (ClipboardUtil.GetText() ?? string.Empty);
 			}
 			catch(Exception) { Debug.Assert(false); } // Opened by other process
 

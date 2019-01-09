@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,23 +19,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Native;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
 	public static partial class ClipboardUtil
 	{
-		private const int CntUnmanagedRetries = 10;
+		// https://referencesource.microsoft.com/#system.windows.forms/winforms/managed/system/winforms/Clipboard.cs
+		private const int CntUnmanagedRetries = 15; // Default is 10
 		private const int CntUnmanagedDelay = 100;
 
 		private static bool OpenW(IntPtr hOwner, bool bEmpty)
@@ -53,7 +55,7 @@ namespace KeePass.Util
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			for(int i = 0; i < CntUnmanagedRetries; ++i)
+			return InvokeAndRetry(delegate()
 			{
 				if(NativeMethods.OpenClipboard(h))
 				{
@@ -65,13 +67,11 @@ namespace KeePass.Util
 					return true;
 				}
 
-				Thread.Sleep(CntUnmanagedDelay);
-			}
-
-			return false;
+				return false;
+			});
 		}
 
-		private static byte[] GetDataW(uint uFormat)
+		/* private static byte[] GetDataW(uint uFormat)
 		{
 			IntPtr h = NativeMethods.GetClipboardData(uFormat);
 			if(h == IntPtr.Zero) return null;
@@ -79,11 +79,11 @@ namespace KeePass.Util
 			UIntPtr pSize = NativeMethods.GlobalSize(h);
 			if(pSize == UIntPtr.Zero) return MemUtil.EmptyByteArray;
 
-			IntPtr hMem = NativeMethods.GlobalLock(h);
-			if(hMem == IntPtr.Zero) { Debug.Assert(false); return null; }
+			IntPtr pMem = NativeMethods.GlobalLock(h);
+			if(pMem == IntPtr.Zero) { Debug.Assert(false); return null; }
 
 			byte[] pbMem = new byte[pSize.ToUInt64()];
-			Marshal.Copy(hMem, pbMem, 0, pbMem.Length);
+			Marshal.Copy(pMem, pbMem, 0, pbMem.Length);
 
 			NativeMethods.GlobalUnlock(h); // May return false on success
 
@@ -119,7 +119,7 @@ namespace KeePass.Util
 
 			Encoding enc = (bUni ? new UnicodeEncoding(false, false) : Encoding.Default);
 			return enc.GetString(pbCharsOnly);
-		}
+		} */
 
 		private static bool SetDataW(uint uFormat, byte[] pbData)
 		{
@@ -130,15 +130,15 @@ namespace KeePass.Util
 			Debug.Assert(NativeMethods.GlobalSize(h).ToUInt64() >=
 				(ulong)pbData.Length); // Might be larger
 
-			IntPtr hMem = NativeMethods.GlobalLock(h);
-			if(hMem == IntPtr.Zero)
+			IntPtr pMem = NativeMethods.GlobalLock(h);
+			if(pMem == IntPtr.Zero)
 			{
 				Debug.Assert(false);
 				NativeMethods.GlobalFree(h);
 				return false;
 			}
 
-			Marshal.Copy(pbData, 0, hMem, pbData.Length);
+			Marshal.Copy(pbData, 0, pMem, pbData.Length);
 			NativeMethods.GlobalUnlock(h); // May return false on success
 
 			if(NativeMethods.SetClipboardData(uFormat, h) == IntPtr.Zero)
@@ -151,39 +151,24 @@ namespace KeePass.Util
 			return true;
 		}
 
-		private static bool SetDataW(uint? uFormat, string strData, bool? bForceUni)
+		private static bool SetDataW(uint? ouFormat, string strData, bool? obForceUni)
 		{
 			if(strData == null) { Debug.Assert(false); return false; }
 
-			bool bUni = (bForceUni.HasValue ? bForceUni.Value :
+			bool bUni = (obForceUni.HasValue ? obForceUni.Value :
 				(Marshal.SystemDefaultCharSize >= 2));
 
-			uint uFmt = (uFormat.HasValue ? uFormat.Value : (bUni ?
+			uint uFmt = (ouFormat.HasValue ? ouFormat.Value : (bUni ?
 				NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT));
-			Encoding enc = (bUni ? new UnicodeEncoding(false, false) : Encoding.Default);
+			Encoding enc = (bUni ? (new UnicodeEncoding(false, false)) : Encoding.Default);
 
 			byte[] pb = enc.GetBytes(strData);
 			byte[] pbWithZero = new byte[pb.Length + (bUni ? 2 : 1)];
 			Array.Copy(pb, pbWithZero, pb.Length);
-			pbWithZero[pb.Length] = 0;
-			if(bUni) pbWithZero[pb.Length + 1] = 0;
+			Debug.Assert(pbWithZero[pb.Length] == 0);
 
 			return SetDataW(uFmt, pbWithZero);
 		}
-
-		/* private static bool SetDataWithLengthW(string strFormat, byte[] pbData)
-		{
-			uint uFormat = NativeMethods.RegisterClipboardFormat(strFormat);
-			uint uLenFormat = NativeMethods.RegisterClipboardFormat(strFormat +
-				"_Length");
-
-			byte[] pbLen = MemUtil.UInt64ToBytes((ulong)pbData.LongLength);
-
-			bool bResult = true;
-			if(!SetDataW(uLenFormat, pbLen)) bResult = false;
-			if(!SetDataW(uFormat, pbData)) bResult = false;
-			return bResult;
-		} */
 
 		private static void CloseW()
 		{
@@ -198,7 +183,23 @@ namespace KeePass.Util
 				ClipboardIgnoreFormatName);
 			if(uIgnoreFmt == 0) { Debug.Assert(false); return false; }
 
-			return SetDataW(uIgnoreFmt, PwDefs.ProductName, null);
+			return SetDataW(uIgnoreFmt, PwDefs.ShortProductName, null);
+		}
+
+		private static bool InvokeAndRetry(GFunc<bool> f)
+		{
+			if(f == null) { Debug.Assert(false); return false; }
+
+			for(int i = 0; i < CntUnmanagedRetries; ++i)
+			{
+				try { if(f()) return true; }
+				catch(Exception) { }
+
+				Thread.Sleep(CntUnmanagedDelay);
+			}
+
+			Debug.Assert(false);
+			return false;
 		}
 	}
 }

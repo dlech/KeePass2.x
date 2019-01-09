@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 #endif
 
+using KeePassLib.Delegates;
 using KeePassLib.Native;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
@@ -42,9 +44,10 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public sealed class CryptoRandom
 	{
-		private byte[] m_pbEntropyPool = new byte[64];
-		private ulong m_uCounter;
+		private ProtectedBinary m_pbEntropyPool = new ProtectedBinary(
+			true, new byte[64]);
 		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+		private ulong m_uCounter;
 		private ulong m_uGeneratedBytesCount = 0;
 
 		private static readonly object g_oSyncRoot = new object();
@@ -93,14 +96,11 @@ namespace KeePassLib.Cryptography
 
 		private CryptoRandom()
 		{
-			// Random rWeak = new Random(); // Based on tick count
-			// byte[] pb = new byte[8];
-			// rWeak.NextBytes(pb);
-			// m_uCounter = MemUtil.BytesToUInt64(pb);
 			m_uCounter = (ulong)DateTime.UtcNow.ToBinary();
 
-			AddEntropy(GetSystemData());
-			AddEntropy(GetCspData());
+			byte[] pb = GetSystemEntropy();
+			AddEntropy(pb);
+			MemUtil.ZeroByteArray(pb);
 		}
 
 		/// <summary>
@@ -129,14 +129,13 @@ namespace KeePassLib.Cryptography
 
 			lock(m_oSyncRoot)
 			{
-				int cbPool = m_pbEntropyPool.Length;
+				byte[] pbPool = m_pbEntropyPool.ReadData();
+				int cbPool = pbPool.Length;
 				int cbNew = pbNewData.Length;
 
 				byte[] pbCmp = new byte[cbPool + cbNew];
-				Array.Copy(m_pbEntropyPool, pbCmp, cbPool);
+				Array.Copy(pbPool, pbCmp, cbPool);
 				Array.Copy(pbNewData, 0, pbCmp, cbPool, cbNew);
-
-				MemUtil.ZeroByteArray(m_pbEntropyPool);
 
 #if KeePassLibSD
 				using(SHA256Managed shaPool = new SHA256Managed())
@@ -144,23 +143,50 @@ namespace KeePassLib.Cryptography
 				using(SHA512Managed shaPool = new SHA512Managed())
 #endif
 				{
-					m_pbEntropyPool = shaPool.ComputeHash(pbCmp);
+					byte[] pbNewPool = shaPool.ComputeHash(pbCmp);
+					m_pbEntropyPool = new ProtectedBinary(true, pbNewPool);
+					MemUtil.ZeroByteArray(pbNewPool);
 				}
 
 				MemUtil.ZeroByteArray(pbCmp);
+				MemUtil.ZeroByteArray(pbPool);
 			}
+
+			if(pbNewData != pbEntropy) MemUtil.ZeroByteArray(pbNewData);
 		}
 
-		private static byte[] GetSystemData()
+		private byte[] GetSystemEntropy()
 		{
-			MemoryStream ms = new MemoryStream();
-			byte[] pb;
+			SHA512Managed h = new SHA512Managed();
+			byte[] pb4 = new byte[4];
+			byte[] pb8 = new byte[8];
 
-			pb = MemUtil.Int32ToBytes(Environment.TickCount);
-			MemUtil.Write(ms, pb);
+			GAction<byte[], bool> f = delegate(byte[] pbValue, bool bClearValue)
+			{
+				if(pbValue == null) { Debug.Assert(false); return; }
+				if(pbValue.Length == 0) return;
+				h.TransformBlock(pbValue, 0, pbValue.Length, pbValue, 0);
+				if(bClearValue) MemUtil.ZeroByteArray(pbValue);
+			};
+			Action<int> fI32 = delegate(int iValue)
+			{
+				MemUtil.Int32ToBytesEx(iValue, pb4, 0);
+				f(pb4, false);
+			};
+			Action<long> fI64 = delegate(long lValue)
+			{
+				MemUtil.Int64ToBytesEx(lValue, pb8, 0);
+				f(pb8, false);
+			};
+			Action<string> fStr = delegate(string strValue)
+			{
+				if(strValue == null) { Debug.Assert(false); return; }
+				if(strValue.Length == 0) return;
+				f(StrUtil.Utf8.GetBytes(strValue), false);
+			};
 
-			pb = MemUtil.Int64ToBytes(DateTime.UtcNow.ToBinary());
-			MemUtil.Write(ms, pb);
+			fI32(Environment.TickCount);
+			fI64(DateTime.UtcNow.ToBinary());
 
 #if !KeePassLibSD
 			// In try-catch for systems without GUI;
@@ -168,34 +194,26 @@ namespace KeePassLib.Cryptography
 			try
 			{
 				Point pt = Cursor.Position;
-				pb = MemUtil.Int32ToBytes(pt.X);
-				MemUtil.Write(ms, pb);
-				pb = MemUtil.Int32ToBytes(pt.Y);
-				MemUtil.Write(ms, pb);
+				fI32(pt.X);
+				fI32(pt.Y);
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 #endif
-
-			pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
-			MemUtil.Write(ms, pb);
 
 			try
 			{
+				fI32((int)NativeLib.GetPlatformID());
 #if KeePassUAP
-				string strOS = EnvironmentExt.OSVersion.VersionString;
+				fStr(EnvironmentExt.OSVersion.VersionString);
 #else
-				string strOS = Environment.OSVersion.VersionString;
+				fStr(Environment.OSVersion.VersionString);
 #endif
-				AddStrHash(ms, strOS);
 
-				pb = MemUtil.Int32ToBytes(Environment.ProcessorCount);
-				MemUtil.Write(ms, pb);
+				fI32(Environment.ProcessorCount);
 
 #if !KeePassUAP
-				AddStrHash(ms, Environment.CommandLine);
-
-				pb = MemUtil.Int64ToBytes(Environment.WorkingSet);
-				MemUtil.Write(ms, pb);
+				fStr(Environment.CommandLine);
+				fI64(Environment.WorkingSet);
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -204,90 +222,71 @@ namespace KeePassLib.Cryptography
 			{
 				foreach(DictionaryEntry de in Environment.GetEnvironmentVariables())
 				{
-					AddStrHash(ms, (de.Key as string));
-					AddStrHash(ms, (de.Value as string));
+					fStr(de.Key as string);
+					fStr(de.Value as string);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-#if KeePassUAP
-			pb = DiagnosticsExt.GetProcessEntropy();
-			MemUtil.Write(ms, pb);
-#elif !KeePassLibSD
 			try
 			{
+#if KeePassUAP
+				f(DiagnosticsExt.GetProcessEntropy(), true);
+#elif !KeePassLibSD
 				using(Process p = Process.GetCurrentProcess())
 				{
-					pb = MemUtil.Int64ToBytes(p.Handle.ToInt64());
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int32ToBytes(p.HandleCount);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int32ToBytes(p.Id);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.NonpagedSystemMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PagedMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PagedSystemMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PeakPagedMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PeakVirtualMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PeakWorkingSet64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.PrivateMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.StartTime.ToBinary());
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.VirtualMemorySize64);
-					MemUtil.Write(ms, pb);
-					pb = MemUtil.Int64ToBytes(p.WorkingSet64);
-					MemUtil.Write(ms, pb);
+					fI64(p.Handle.ToInt64());
+					fI32(p.HandleCount);
+					fI32(p.Id);
+					fI64(p.NonpagedSystemMemorySize64);
+					fI64(p.PagedMemorySize64);
+					fI64(p.PagedSystemMemorySize64);
+					fI64(p.PeakPagedMemorySize64);
+					fI64(p.PeakVirtualMemorySize64);
+					fI64(p.PeakWorkingSet64);
+					fI64(p.PrivateMemorySize64);
+					fI64(p.StartTime.ToBinary());
+					fI64(p.VirtualMemorySize64);
+					fI64(p.WorkingSet64);
 
 					// Not supported in Mono 1.2.6:
-					// pb = MemUtil.UInt32ToBytes((uint)p.SessionId);
-					// MemUtil.Write(ms, pb);
+					// fI32(p.SessionId);
 				}
+#endif
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-#endif
 
 			try
 			{
 				CultureInfo ci = CultureInfo.CurrentCulture;
-				if(ci != null)
-				{
-					pb = MemUtil.Int32ToBytes(ci.GetHashCode());
-					MemUtil.Write(ms, pb);
-				}
+				if(ci != null) fI32(ci.GetHashCode());
 				else { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			pb = Guid.NewGuid().ToByteArray();
-			MemUtil.Write(ms, pb);
+			f(Guid.NewGuid().ToByteArray(), false);
+			f(GetCspRandom(), true);
 
-			byte[] pbAll = ms.ToArray();
-			ms.Close();
-			return pbAll;
+			h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+			byte[] pbHash = h.Hash;
+			h.Clear();
+			MemUtil.ZeroByteArray(pb4);
+			MemUtil.ZeroByteArray(pb8);
+			return pbHash;
 		}
 
-		private static void AddStrHash(Stream s, string str)
+		private byte[] GetCspRandom()
 		{
-			if(s == null) { Debug.Assert(false); return; }
-			if(string.IsNullOrEmpty(str)) return;
+			byte[] pb = new byte[32];
 
-			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(str);
-			byte[] pbHash = CryptoUtil.HashSha256(pbUtf8);
-			MemUtil.Write(s, pbHash);
-		}
+			try { m_rng.GetBytes(pb); }
+			catch(Exception)
+			{
+				Debug.Assert(false);
+				MemUtil.Int64ToBytesEx(DateTime.UtcNow.ToBinary(), pb, 0);
+			}
 
-		private byte[] GetCspData()
-		{
-			byte[] pbCspRandom = new byte[32];
-			m_rng.GetBytes(pbCspRandom);
-			return pbCspRandom;
+			return pb;
 		}
 
 		private byte[] GenerateRandom256()
@@ -301,18 +300,20 @@ namespace KeePassLib.Cryptography
 				m_uCounter += 0x74D8B29E4D38E161UL; // Prime number
 				byte[] pbCounter = MemUtil.UInt64ToBytes(m_uCounter);
 
-				byte[] pbCspRandom = GetCspData();
+				byte[] pbCsp = GetCspRandom();
 
-				int cbPool = m_pbEntropyPool.Length;
+				byte[] pbPool = m_pbEntropyPool.ReadData();
+				int cbPool = pbPool.Length;
 				int cbCtr = pbCounter.Length;
-				int cbCsp = pbCspRandom.Length;
+				int cbCsp = pbCsp.Length;
 
 				pbCmp = new byte[cbPool + cbCtr + cbCsp];
-				Array.Copy(m_pbEntropyPool, pbCmp, cbPool);
+				Array.Copy(pbPool, pbCmp, cbPool);
 				Array.Copy(pbCounter, 0, pbCmp, cbPool, cbCtr);
-				Array.Copy(pbCspRandom, 0, pbCmp, cbPool + cbCtr, cbCsp);
+				Array.Copy(pbCsp, 0, pbCmp, cbPool + cbCtr, cbCsp);
 
-				MemUtil.ZeroByteArray(pbCspRandom);
+				MemUtil.ZeroByteArray(pbCsp);
+				MemUtil.ZeroByteArray(pbPool);
 
 				m_uGeneratedBytesCount += 32;
 			}

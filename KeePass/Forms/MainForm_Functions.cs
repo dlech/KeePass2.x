@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,7 @@ namespace KeePass.Forms
 		private bool m_bEntryGrouping = false;
 		private DateTime m_dtCachedNow = DateTime.UtcNow;
 		private bool m_bOnlyTans = false;
+		private string m_strLastEntryViewRtf = null;
 		private Font m_fontExpired = null;
 		private Font m_fontBoldUI = null;
 		private Font m_fontBoldTree = null;
@@ -153,6 +154,7 @@ namespace KeePass.Forms
 			new List<KeyValuePair<ToolStripItem, ToolStripItem>>();
 
 		private FormWindowState m_fwsLast = FormWindowState.Normal;
+		private Control m_cLastActive = null;
 		private PwGroup m_pgActiveAtDragStart = null;
 		private Keys m_kLastUnhandledGroupsKey = Keys.None;
 
@@ -193,6 +195,7 @@ namespace KeePass.Forms
 		public MruList FileMruList { get { return m_mruList; } }
 
 		internal PluginManager PluginManager { get { return m_pluginManager; } }
+		internal bool HasFormLoaded { get { return m_bFormLoaded; } }
 
 		internal struct MainAppState
 		{
@@ -418,6 +421,8 @@ namespace KeePass.Forms
 			string strNtfText = PwDefs.ShortProductName;
 			// int qSmall = UIUtil.GetSmallIconSize().Width;
 
+			const int cchNtf = NativeMethods.NOTIFYICONDATA_TIP_SIZE - 1;
+
 			if(s.FileLocked)
 			{
 				IOConnectionInfo iocLck = m_docMgr.ActiveDocument.LockedIoc;
@@ -427,7 +432,7 @@ namespace KeePass.Forms
 				string strFileDesc = iocLck.Path;
 				if(!Program.Config.MainWindow.ShowFullPathInTitle)
 					strFileDesc = UrlUtil.GetFileName(strFileDesc);
-				int iMaxChars = 63 - strWindowEnd.Length;
+				int iMaxChars = cchNtf - strWindowEnd.Length;
 				if(iMaxChars >= 0)
 					strFileDesc = WinUtil.CompactPath(strFileDesc, iMaxChars);
 				else { Debug.Assert(false); }
@@ -436,7 +441,7 @@ namespace KeePass.Forms
 				string strNtfPre = PwDefs.ShortProductName + " - " +
 					KPRes.WorkspaceLocked + MessageService.NewLine;
 				strFileDesc = iocLck.Path;
-				iMaxChars = 63 - strNtfPre.Length;
+				iMaxChars = cchNtf - strNtfPre.Length;
 				if(iMaxChars >= 0)
 					strFileDesc = WinUtil.CompactPath(strFileDesc, iMaxChars);
 				else { Debug.Assert(false); }
@@ -470,13 +475,13 @@ namespace KeePass.Forms
 				string strFileDesc = m_docMgr.ActiveDatabase.IOConnectionInfo.Path;
 				if(!Program.Config.MainWindow.ShowFullPathInTitle)
 					strFileDesc = UrlUtil.GetFileName(strFileDesc);
-				strFileDesc = WinUtil.CompactPath(strFileDesc, 63 -
+				strFileDesc = WinUtil.CompactPath(strFileDesc, cchNtf -
 					strWindowEnd.Length);
 				strWindowText = strFileDesc + strWindowEnd;
 
 				string strNtfPre = PwDefs.ShortProductName + MessageService.NewLine;
 				strNtfText = strNtfPre + WinUtil.CompactPath(
-					m_docMgr.ActiveDatabase.IOConnectionInfo.Path, 63 - strNtfPre.Length);
+					m_docMgr.ActiveDatabase.IOConnectionInfo.Path, cchNtf - strNtfPre.Length);
 
 				// Icon icoDisposable, icoAssignable;
 				// CreateColorizedIcon(Properties.Resources.QuadNormal, qSmall,
@@ -496,13 +501,13 @@ namespace KeePass.Forms
 
 			// Clip the strings again (it could be that a translator used
 			// a string in KPRes that is too long to be displayed)
-			this.Text = StrUtil.CompactString3Dots(strWindowText, 63);
+			this.Text = StrUtil.CompactString3Dots(strWindowText, cchNtf);
 
 			if(MonoWorkarounds.IsRequired(801414))
 				MonoWorkarounds.ExchangeFormShownRaised(this, bFormShownRaised);
 
 			strNtfText = StrUtil.EncodeToolTipText(strNtfText);
-			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, 63);
+			m_ntfTray.Text = StrUtil.CompactString3Dots(strNtfText, cchNtf);
 
 			// Icon icoToDispose, icoToAssign;
 			// if(CreateColorizedIcon(Properties.Resources.KeePass, 0,
@@ -514,7 +519,9 @@ namespace KeePass.Forms
 			// Main menu
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFileSaveAs,
 				m_menuFileSaveAsLocal, m_menuFileSaveAsUrl, m_menuFileSaveAsCopy,
-				m_menuFileDbSettings, m_menuFileChangeMasterKey, m_menuFilePrint);
+				m_menuFileChangeMasterKey, m_menuFilePrint);
+			UIUtil.SetEnabledFast(s.DatabaseOpened && ((uif &
+				(ulong)AceUIFlags.DisableDbSettings) == 0), m_menuFileDbSettings);
 
 			m_menuFileClose.Enabled = (s.DatabaseOpened || s.FileLocked);
 
@@ -1506,6 +1513,7 @@ namespace KeePass.Forms
 			if(pe == null)
 			{
 				m_richEntryView.Text = string.Empty;
+				m_strLastEntryViewRtf = null;
 				return;
 			}
 
@@ -1600,7 +1608,15 @@ namespace KeePass.Forms
 
 			// sb.Append("\\pard }");
 			// m_richEntryView.Rtf = sb.ToString();
-			rb.Build(m_richEntryView);
+
+			// If the RTF is the same, do not change the selection/view;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/509843717a/
+			if(!rb.Build(m_richEntryView, false, ref m_strLastEntryViewRtf))
+				return;
+#if DEBUG
+			string strRtf = m_richEntryView.Rtf;
+			// The code that follows should not change the RTF
+#endif
 
 			UIUtil.RtfLinkifyReferences(m_richEntryView, false);
 
@@ -1622,6 +1638,10 @@ namespace KeePass.Forms
 				UIUtil.RtfLinkifyText(m_richEntryView, kvpBin.Key, false);
 
 			m_richEntryView.Select(0, 0);
+
+#if DEBUG
+			Debug.Assert(m_richEntryView.Rtf == strRtf);
+#endif
 		}
 
 		private void EvAppendEntryField(RichTextBuilder rb,
@@ -1969,7 +1989,7 @@ namespace KeePass.Forms
 			{
 				UpdateEntryList(pg, false);
 				UpdateUIState(false);
-				ShowSearchResultsStatusMessage(null);
+				ShowSearchResultsStatusMessage(pd.RootGroup);
 			}
 		}
 
@@ -2980,18 +3000,26 @@ namespace KeePass.Forms
 
 		private void SetSelectedEntryColor(Color clrBack)
 		{
-			if(m_docMgr.ActiveDatabase.IsOpen == false) return;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
 			PwEntry[] vSelected = GetSelectedEntries();
 			if((vSelected == null) || (vSelected.Length == 0)) return;
 
+			bool bMod = false;
 			foreach(PwEntry pe in vSelected)
 			{
+				if(UIUtil.ColorsEqual(pe.BackgroundColor, clrBack)) continue;
+
+				pe.CreateBackup(pd);
 				pe.BackgroundColor = clrBack;
 				pe.Touch(true, false);
+
+				bMod = true;
 			}
 
 			RefreshEntriesList();
-			UpdateUIState(true);
+			UpdateUIState(bMod);
 		}
 
 		private void OnCopyCustomString(object sender, DynamicMenuEventArgs e)
@@ -3970,41 +3998,40 @@ namespace KeePass.Forms
 				UIUtil.SetFocusedItem(m_lvEntries, m_lvEntries.Items[0], true);
 		}
 
-		internal void SelectEntries(PwObjectList<PwEntry> lEntries,
+		public void SelectEntries(PwObjectList<PwEntry> lEntries,
 			bool bDeselectOthers, bool bFocusFirst)
 		{
+			if(lEntries == null) { Debug.Assert(false); return; }
+
 			++m_uBlockEntrySelectionEvent;
-
-			bool bFirst = true;
-			for(int i = 0; i < m_lvEntries.Items.Count; ++i)
+			try
 			{
-				PwEntry pe = ((PwListItem)m_lvEntries.Items[i].Tag).Entry;
-				if(pe == null) { Debug.Assert(false); continue; }
-
-				bool bFound = false;
-				foreach(PwEntry peFocus in lEntries)
+				bool bDoFocus = bFocusFirst;
+				foreach(ListViewItem lvi in m_lvEntries.Items)
 				{
-					if(pe == peFocus)
+					if(lvi == null) { Debug.Assert(false); continue; }
+
+					PwListItem pli = (lvi.Tag as PwListItem);
+					if(pli == null) { Debug.Assert(false); continue; }
+
+					PwEntry pe = pli.Entry;
+					if(pe == null) { Debug.Assert(false); continue; }
+
+					if(lEntries.IndexOf(pe) >= 0)
 					{
-						m_lvEntries.Items[i].Selected = true;
+						lvi.Selected = true;
 
-						if(bFirst && bFocusFirst)
+						if(bDoFocus)
 						{
-							UIUtil.SetFocusedItem(m_lvEntries,
-								m_lvEntries.Items[i], false);
-							bFirst = false;
+							UIUtil.SetFocusedItem(m_lvEntries, lvi, false);
+							bDoFocus = false;
 						}
-
-						bFound = true;
-						break;
 					}
+					else if(bDeselectOthers) lvi.Selected = false;
 				}
-
-				if(bDeselectOthers && !bFound)
-					m_lvEntries.Items[i].Selected = false;
 			}
-
-			--m_uBlockEntrySelectionEvent;
+			catch(Exception) { Debug.Assert(false); }
+			finally { --m_uBlockEntrySelectionEvent; }
 		}
 
 		internal PwGroup GetCurrentEntries()
@@ -4165,14 +4192,22 @@ namespace KeePass.Forms
 				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
 				if(obKeyDown.HasValue)
 				{
-					if(obKeyDown.Value)
+					bool bWnd = IsCommandTypeInvokable(null, AppCommandType.Window);
+					if(obKeyDown.Value && bWnd)
 					{
-						if(Program.Config.MainWindow.EscMinimizesToTray)
+						AceEscAction a = Program.Config.MainWindow.EscAction;
+
+						if(a == AceEscAction.Lock)
+							LockAllDocuments();
+						else if(a == AceEscAction.Minimize)
+							this.WindowState = FormWindowState.Minimized;
+						else if(a == AceEscAction.MinimizeToTray)
 						{
-							if(IsCommandTypeInvokable(null, AppCommandType.Window))
-								MinimizeToTray(true);
+							if(!IsTrayed()) MinimizeToTray(true);
 						}
-						else LockAllDocuments();
+						else if(a == AceEscAction.Exit)
+							OnFileExit(null, EventArgs.Empty);
+						else { Debug.Assert(a == AceEscAction.None); }
 					}
 
 					return true;
@@ -5715,8 +5750,8 @@ namespace KeePass.Forms
 				{
 					PwObjectList<PwEntry> lSel = new PwObjectList<PwEntry>();
 					lSel.Add(pe);
-
 					SelectEntries(lSel, true, true);
+
 					EnsureVisibleSelected(false);
 				}
 				else SelectFirstEntryIfNoneSelected();

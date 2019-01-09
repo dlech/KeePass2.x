@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -80,8 +80,8 @@ namespace KeePassLib.Cryptography
 		/// Construct a new cryptographically secure random stream object.
 		/// </summary>
 		/// <param name="a">Algorithm to use.</param>
-		/// <param name="pbKey">Initialization key. Must not be <c>null</c> and
-		/// must contain at least 1 byte.</param>
+		/// <param name="pbKey">Initialization key. Must not be <c>null</c>
+		/// and must contain at least 1 byte.</param>
 		public CryptoRandomStream(CrsAlgorithm a, byte[] pbKey)
 		{
 			if(pbKey == null) { Debug.Assert(false); throw new ArgumentNullException("pbKey"); }

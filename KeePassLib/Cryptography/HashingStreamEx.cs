@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -106,8 +106,8 @@ namespace KeePassLib.Cryptography
 					try
 					{
 						m_hash.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
-
 						m_pbFinalHash = m_hash.Hash;
+						m_hash.Clear();
 					}
 					catch(Exception) { Debug.Assert(false); }
 
@@ -127,17 +127,19 @@ namespace KeePassLib.Cryptography
 
 		public override long Seek(long lOffset, SeekOrigin soOrigin)
 		{
+			Debug.Assert(false);
 			throw new NotSupportedException();
 		}
 
 		public override void SetLength(long lValue)
 		{
+			Debug.Assert(false);
 			throw new NotSupportedException();
 		}
 
 		public override int Read(byte[] pbBuffer, int nOffset, int nCount)
 		{
-			if(m_bWriting) throw new InvalidOperationException();
+			if(m_bWriting) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
 			int nPartialRead = nRead;
@@ -165,7 +167,7 @@ namespace KeePassLib.Cryptography
 
 		public override void Write(byte[] pbBuffer, int nOffset, int nCount)
 		{
-			if(!m_bWriting) throw new InvalidOperationException();
+			if(!m_bWriting) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 #if DEBUG
 			byte[] pbOrg = new byte[pbBuffer.Length];

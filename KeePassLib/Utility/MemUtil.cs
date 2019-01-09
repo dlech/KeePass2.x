@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ using System.IO.Compression;
 namespace KeePassLib.Utility
 {
 	/// <summary>
-	/// Contains static buffer manipulation and string conversion routines.
+	/// Buffer manipulation and conversion routines.
 	/// </summary>
 	public static class MemUtil
 	{
@@ -41,6 +41,13 @@ namespace KeePassLib.Utility
 
 		internal static readonly ArrayHelperEx<char> ArrayHelperExOfChar =
 			new ArrayHelperEx<char>();
+
+		private const MethodImplOptions MioNoOptimize =
+#if KeePassLibSD
+			MethodImplOptions.NoInlining;
+#else
+			(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining);
+#endif
 
 		private static readonly uint[] m_vSBox = new uint[256] {
 			0xCD2FACB3, 0xE78A7F5C, 0x6F0803FC, 0xBCF6E230,
@@ -254,11 +261,7 @@ namespace KeePassLib.Utility
 		/// </summary>
 		/// <param name="pbArray">Input array. All bytes of this array
 		/// will be set to zero.</param>
-#if KeePassLibSD
-		[MethodImpl(MethodImplOptions.NoInlining)]
-#else
-		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-#endif
+		[MethodImpl(MioNoOptimize)]
 		public static void ZeroByteArray(byte[] pbArray)
 		{
 			Debug.Assert(pbArray != null);
@@ -271,11 +274,7 @@ namespace KeePassLib.Utility
 		/// Set all elements of an array to the default value.
 		/// </summary>
 		/// <param name="v">Input array.</param>
-#if KeePassLibSD
-		[MethodImpl(MethodImplOptions.NoInlining)]
-#else
-		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-#endif
+		[MethodImpl(MioNoOptimize)]
 		public static void ZeroArray<T>(T[] v)
 		{
 			if(v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
@@ -798,6 +797,15 @@ namespace KeePassLib.Utility
 			}
 
 			yield break;
+		}
+
+		[MethodImpl(MioNoOptimize)]
+		internal static void DisposeIfPossible(object o)
+		{
+			if(o == null) { Debug.Assert(false); return; }
+
+			IDisposable d = (o as IDisposable);
+			if(d != null) d.Dispose();
 		}
 	}
 

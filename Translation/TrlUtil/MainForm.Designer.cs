@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabProps = new System.Windows.Forms.TabPage();
 			this.m_cbRtl = new System.Windows.Forms.CheckBox();
@@ -71,10 +70,12 @@
 			this.m_tbCtrlEngText = new System.Windows.Forms.TextBox();
 			this.m_lblCtrlTrlText = new System.Windows.Forms.Label();
 			this.m_lblCtrlEngText = new System.Windows.Forms.Label();
-			this.m_tvControls = new System.Windows.Forms.TreeView();
+			this.m_tvControls = new KeePass.UI.CustomTreeViewEx();
 			this.m_tabUnusedText = new System.Windows.Forms.TabPage();
 			this.m_btnClearUnusedText = new System.Windows.Forms.Button();
 			this.m_rtbUnusedText = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_tabValidation = new System.Windows.Forms.TabPage();
+			this.m_rtbValidation = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,6 +105,7 @@
 			this.m_grpControl.SuspendLayout();
 			this.m_grpControlLayout.SuspendLayout();
 			this.m_tabUnusedText.SuspendLayout();
+			this.m_tabValidation.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
 			this.m_tsMain.SuspendLayout();
 			this.SuspendLayout();
@@ -114,6 +116,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabStrings);
 			this.m_tabMain.Controls.Add(this.m_tabDialogs);
 			this.m_tabMain.Controls.Add(this.m_tabUnusedText);
+			this.m_tabMain.Controls.Add(this.m_tabValidation);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 53);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
@@ -153,7 +156,7 @@
 			this.m_cbRtl.Name = "m_cbRtl";
 			this.m_cbRtl.Size = new System.Drawing.Size(149, 17);
 			this.m_cbRtl.TabIndex = 14;
-			this.m_cbRtl.Text = "Script is written right-to-left";
+			this.m_cbRtl.Text = "&Script is written right-to-left";
 			this.m_cbRtl.UseVisualStyleBackColor = true;
 			// 
 			// m_lblAuthorContact
@@ -163,13 +166,13 @@
 			this.m_lblAuthorContact.Name = "m_lblAuthorContact";
 			this.m_lblAuthorContact.Size = new System.Drawing.Size(80, 13);
 			this.m_lblAuthorContact.TabIndex = 12;
-			this.m_lblAuthorContact.Text = "Author contact:";
+			this.m_lblAuthorContact.Text = "Author &contact:";
 			// 
 			// m_tbAuthorContact
 			// 
 			this.m_tbAuthorContact.Location = new System.Drawing.Point(147, 203);
 			this.m_tbAuthorContact.Name = "m_tbAuthorContact";
-			this.m_tbAuthorContact.Size = new System.Drawing.Size(435, 20);
+			this.m_tbAuthorContact.Size = new System.Drawing.Size(436, 20);
 			this.m_tbAuthorContact.TabIndex = 13;
 			// 
 			// m_linkLangCode
@@ -196,7 +199,7 @@
 			// 
 			this.m_tbLangID.Location = new System.Drawing.Point(147, 112);
 			this.m_tbLangID.Name = "m_tbLangID";
-			this.m_tbLangID.Size = new System.Drawing.Size(435, 20);
+			this.m_tbLangID.Size = new System.Drawing.Size(436, 20);
 			this.m_tbLangID.TabIndex = 7;
 			// 
 			// m_lblLangID
@@ -206,7 +209,7 @@
 			this.m_lblLangID.Name = "m_lblLangID";
 			this.m_lblLangID.Size = new System.Drawing.Size(132, 13);
 			this.m_lblLangID.TabIndex = 6;
-			this.m_lblLangID.Text = "ISO 639-1 language code:";
+			this.m_lblLangID.Text = "&ISO 639-1 language code:";
 			// 
 			// m_lblAuthorName
 			// 
@@ -215,13 +218,13 @@
 			this.m_lblAuthorName.Name = "m_lblAuthorName";
 			this.m_lblAuthorName.Size = new System.Drawing.Size(70, 13);
 			this.m_lblAuthorName.TabIndex = 10;
-			this.m_lblAuthorName.Text = "Author name:";
+			this.m_lblAuthorName.Text = "&Author name:";
 			// 
 			// m_tbAuthorName
 			// 
 			this.m_tbAuthorName.Location = new System.Drawing.Point(147, 177);
 			this.m_tbAuthorName.Name = "m_tbAuthorName";
-			this.m_tbAuthorName.Size = new System.Drawing.Size(435, 20);
+			this.m_tbAuthorName.Size = new System.Drawing.Size(436, 20);
 			this.m_tbAuthorName.TabIndex = 11;
 			// 
 			// m_lblNameLclSample
@@ -237,7 +240,7 @@
 			// 
 			this.m_tbNameLcl.Location = new System.Drawing.Point(147, 63);
 			this.m_tbNameLcl.Name = "m_tbNameLcl";
-			this.m_tbNameLcl.Size = new System.Drawing.Size(435, 20);
+			this.m_tbNameLcl.Size = new System.Drawing.Size(436, 20);
 			this.m_tbNameLcl.TabIndex = 4;
 			// 
 			// m_lblNameLcl
@@ -247,7 +250,7 @@
 			this.m_lblNameLcl.Name = "m_lblNameLcl";
 			this.m_lblNameLcl.Size = new System.Drawing.Size(117, 13);
 			this.m_lblNameLcl.TabIndex = 3;
-			this.m_lblNameLcl.Text = "Native language name:";
+			this.m_lblNameLcl.Text = "&Native language name:";
 			// 
 			// m_lblNameEngSample
 			// 
@@ -265,13 +268,13 @@
 			this.m_lblNameEng.Name = "m_lblNameEng";
 			this.m_lblNameEng.Size = new System.Drawing.Size(120, 13);
 			this.m_lblNameEng.TabIndex = 0;
-			this.m_lblNameEng.Text = "English language name:";
+			this.m_lblNameEng.Text = "English &language name:";
 			// 
 			// m_tbNameEng
 			// 
 			this.m_tbNameEng.Location = new System.Drawing.Point(147, 15);
 			this.m_tbNameEng.Name = "m_tbNameEng";
-			this.m_tbNameEng.Size = new System.Drawing.Size(435, 20);
+			this.m_tbNameEng.Size = new System.Drawing.Size(436, 20);
 			this.m_tbNameEng.TabIndex = 1;
 			// 
 			// m_tabStrings
@@ -325,7 +328,7 @@
 			this.m_lblStrTrl.Name = "m_lblStrTrl";
 			this.m_lblStrTrl.Size = new System.Drawing.Size(60, 13);
 			this.m_lblStrTrl.TabIndex = 3;
-			this.m_lblStrTrl.Text = "Translated:";
+			this.m_lblStrTrl.Text = "&Translated:";
 			// 
 			// m_lblStrEng
 			// 
@@ -367,11 +370,11 @@
 			// m_lblIconColorHint
 			// 
 			this.m_lblIconColorHint.AutoSize = true;
-			this.m_lblIconColorHint.Location = new System.Drawing.Point(221, 407);
+			this.m_lblIconColorHint.Location = new System.Drawing.Point(220, 411);
 			this.m_lblIconColorHint.Name = "m_lblIconColorHint";
-			this.m_lblIconColorHint.Size = new System.Drawing.Size(307, 13);
-			this.m_lblIconColorHint.TabIndex = 5;
-			this.m_lblIconColorHint.Text = "In a correct translation, all icons in the tree on the left are green.";
+			this.m_lblIconColorHint.Size = new System.Drawing.Size(317, 13);
+			this.m_lblIconColorHint.TabIndex = 2;
+			this.m_lblIconColorHint.Text = "In a complete translation, all icons in the tree on the left are green.";
 			// 
 			// m_grpControl
 			// 
@@ -380,7 +383,7 @@
 			this.m_grpControl.Controls.Add(this.m_tbCtrlEngText);
 			this.m_grpControl.Controls.Add(this.m_lblCtrlTrlText);
 			this.m_grpControl.Controls.Add(this.m_lblCtrlEngText);
-			this.m_grpControl.Location = new System.Drawing.Point(224, 6);
+			this.m_grpControl.Location = new System.Drawing.Point(223, 6);
 			this.m_grpControl.Name = "m_grpControl";
 			this.m_grpControl.Size = new System.Drawing.Size(367, 357);
 			this.m_grpControl.TabIndex = 1;
@@ -464,7 +467,7 @@
 			this.m_lblLayoutH.Name = "m_lblLayoutH";
 			this.m_lblLayoutH.Size = new System.Drawing.Size(41, 13);
 			this.m_lblLayoutH.TabIndex = 6;
-			this.m_lblLayoutH.Text = "Height:";
+			this.m_lblLayoutH.Text = "&Height:";
 			// 
 			// m_lblLayoutW
 			// 
@@ -473,7 +476,7 @@
 			this.m_lblLayoutW.Name = "m_lblLayoutW";
 			this.m_lblLayoutW.Size = new System.Drawing.Size(38, 13);
 			this.m_lblLayoutW.TabIndex = 4;
-			this.m_lblLayoutW.Text = "Width:";
+			this.m_lblLayoutW.Text = "&Width:";
 			// 
 			// m_lblLayoutY
 			// 
@@ -482,7 +485,7 @@
 			this.m_lblLayoutY.Name = "m_lblLayoutY";
 			this.m_lblLayoutY.Size = new System.Drawing.Size(17, 13);
 			this.m_lblLayoutY.TabIndex = 2;
-			this.m_lblLayoutY.Text = "Y:";
+			this.m_lblLayoutY.Text = "&Y:";
 			// 
 			// m_lblLayoutX
 			// 
@@ -491,7 +494,7 @@
 			this.m_lblLayoutX.Name = "m_lblLayoutX";
 			this.m_lblLayoutX.Size = new System.Drawing.Size(17, 13);
 			this.m_lblLayoutX.TabIndex = 0;
-			this.m_lblLayoutX.Text = "X:";
+			this.m_lblLayoutX.Text = "&X:";
 			// 
 			// m_tbCtrlTrlText
 			// 
@@ -520,7 +523,7 @@
 			this.m_lblCtrlTrlText.Name = "m_lblCtrlTrlText";
 			this.m_lblCtrlTrlText.Size = new System.Drawing.Size(60, 13);
 			this.m_lblCtrlTrlText.TabIndex = 2;
-			this.m_lblCtrlTrlText.Text = "Translated:";
+			this.m_lblCtrlTrlText.Text = "&Translated:";
 			// 
 			// m_lblCtrlEngText
 			// 
@@ -538,7 +541,7 @@
 			this.m_tvControls.Name = "m_tvControls";
 			this.m_tvControls.ShowNodeToolTips = true;
 			this.m_tvControls.ShowRootLines = false;
-			this.m_tvControls.Size = new System.Drawing.Size(200, 423);
+			this.m_tvControls.Size = new System.Drawing.Size(208, 423);
 			this.m_tvControls.TabIndex = 0;
 			this.m_tvControls.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnCustomControlsAfterSelect);
 			// 
@@ -567,11 +570,34 @@
 			// m_rtbUnusedText
 			// 
 			this.m_rtbUnusedText.DetectUrls = false;
+			this.m_rtbUnusedText.HideSelection = false;
 			this.m_rtbUnusedText.Location = new System.Drawing.Point(6, 6);
 			this.m_rtbUnusedText.Name = "m_rtbUnusedText";
 			this.m_rtbUnusedText.Size = new System.Drawing.Size(585, 394);
 			this.m_rtbUnusedText.TabIndex = 0;
 			this.m_rtbUnusedText.Text = "";
+			this.m_rtbUnusedText.WordWrap = false;
+			// 
+			// m_tabValidation
+			// 
+			this.m_tabValidation.Controls.Add(this.m_rtbValidation);
+			this.m_tabValidation.Location = new System.Drawing.Point(4, 22);
+			this.m_tabValidation.Name = "m_tabValidation";
+			this.m_tabValidation.Size = new System.Drawing.Size(597, 435);
+			this.m_tabValidation.TabIndex = 4;
+			this.m_tabValidation.Text = "Validation";
+			this.m_tabValidation.UseVisualStyleBackColor = true;
+			// 
+			// m_rtbValidation
+			// 
+			this.m_rtbValidation.DetectUrls = false;
+			this.m_rtbValidation.Location = new System.Drawing.Point(6, 6);
+			this.m_rtbValidation.Name = "m_rtbValidation";
+			this.m_rtbValidation.ReadOnly = true;
+			this.m_rtbValidation.Size = new System.Drawing.Size(585, 423);
+			this.m_rtbValidation.TabIndex = 0;
+			this.m_rtbValidation.Text = "";
+			this.m_rtbValidation.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnValidationLinkClicked);
 			// 
 			// m_menuMain
 			// 
@@ -768,12 +794,13 @@
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_menuMain);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.m_menuMain;
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
-			this.Text = "KeePass Translation Utility";
+			this.Text = "TrlUtil";
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.m_tabMain.ResumeLayout(false);
 			this.m_tabProps.ResumeLayout(false);
 			this.m_tabProps.PerformLayout();
@@ -786,6 +813,7 @@
 			this.m_grpControlLayout.ResumeLayout(false);
 			this.m_grpControlLayout.PerformLayout();
 			this.m_tabUnusedText.ResumeLayout(false);
+			this.m_tabValidation.ResumeLayout(false);
 			this.m_menuMain.ResumeLayout(false);
 			this.m_menuMain.PerformLayout();
 			this.m_tsMain.ResumeLayout(false);
@@ -828,7 +856,7 @@
 		private System.Windows.Forms.Label m_lblStrEng;
 		private System.Windows.Forms.Label m_lblStrSaveHint;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAs;
-		private System.Windows.Forms.TreeView m_tvControls;
+		private KeePass.UI.CustomTreeViewEx m_tvControls;
 		private System.Windows.Forms.GroupBox m_grpControl;
 		private System.Windows.Forms.Label m_lblCtrlEngText;
 		private System.Windows.Forms.TextBox m_tbCtrlTrlText;
@@ -865,6 +893,8 @@
 		private System.Windows.Forms.ToolStripButton m_tbNextUntrl;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEdit;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEditNextUntrl;
+		private System.Windows.Forms.TabPage m_tabValidation;
+		private KeePass.UI.CustomRichTextBoxEx m_rtbValidation;
 	}
 }
 

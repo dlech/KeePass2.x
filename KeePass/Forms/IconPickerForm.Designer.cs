@@ -84,7 +84,7 @@
 			this.m_radioStandard.Size = new System.Drawing.Size(114, 17);
 			this.m_radioStandard.TabIndex = 2;
 			this.m_radioStandard.TabStop = true;
-			this.m_radioStandard.Text = "Use standard icon:";
+			this.m_radioStandard.Text = "Use &standard icon:";
 			this.m_radioStandard.UseVisualStyleBackColor = true;
 			this.m_radioStandard.CheckedChanged += new System.EventHandler(this.OnStandardRadioCheckedChanged);
 			// 
@@ -96,7 +96,7 @@
 			this.m_radioCustom.Size = new System.Drawing.Size(278, 17);
 			this.m_radioCustom.TabIndex = 4;
 			this.m_radioCustom.TabStop = true;
-			this.m_radioCustom.Text = "Use custom icon (embedded in the current database):";
+			this.m_radioCustom.Text = "Use &custom icon (embedded in the current database):";
 			this.m_radioCustom.UseVisualStyleBackColor = true;
 			// 
 			// m_lblSeparator
@@ -133,7 +133,7 @@
 			this.m_btnCustomExport.Name = "m_btnCustomExport";
 			this.m_btnCustomExport.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCustomExport.TabIndex = 8;
-			this.m_btnCustomExport.Text = "E&xport...";
+			this.m_btnCustomExport.Text = "&Export...";
 			this.m_btnCustomExport.UseVisualStyleBackColor = true;
 			this.m_btnCustomExport.Click += new System.EventHandler(this.OnBtnCustomSave);
 			// 

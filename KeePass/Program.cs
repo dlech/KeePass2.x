@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -88,6 +88,7 @@ namespace KeePass
 #if DEBUG
 		private static bool m_bDesignModeQueried = false;
 #endif
+		private static bool m_bEnableTranslation = true;
 
 #if KP_DEVSNAP
 		private static bool m_bAsmResReg = false;
@@ -109,11 +110,8 @@ namespace KeePass
 		{
 			get
 			{
-				if(m_cmdLineArgs == null)
-				{
-					Debug.Assert(false);
+				if(m_cmdLineArgs == null) // No assert (KeePass as library)
 					m_cmdLineArgs = new CommandLineArgs(null);
-				}
 
 				return m_cmdLineArgs;
 			}
@@ -236,6 +234,12 @@ namespace KeePass
 			}
 		}
 
+		public static bool EnableTranslation
+		{
+			get { return m_bEnableTranslation; }
+			set { m_bEnableTranslation = value; }
+		}
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -268,10 +272,14 @@ namespace KeePass
 			if(!string.IsNullOrEmpty(strWaDisable))
 				MonoWorkarounds.SetEnabled(strWaDisable, false);
 
-			DpiUtil.ConfigureProcess();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.DoEvents(); // Required
+			try
+			{
+				DpiUtil.ConfigureProcess();
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.DoEvents(); // Required
+			}
+			catch(Exception) { Debug.Assert(MonoWorkarounds.IsRequired(106)); }
 
 #if DEBUG
 			string strInitialWorkDir = WinUtil.GetWorkingDirectory();
@@ -781,6 +789,8 @@ namespace KeePass
 
 		private static void LoadTranslation()
 		{
+			if(!m_bEnableTranslation) return;
+
 			string strPath = m_appConfig.Application.GetLanguageFilePath();
 			if(string.IsNullOrEmpty(strPath)) return;
 
@@ -813,7 +823,7 @@ namespace KeePass
 				Assembly asm = typeof(Program).Assembly;
 				byte[] pk = asm.GetName().GetPublicKeyToken();
 				string strPk = MemUtil.ByteArrayToHexString(pk);
-				Debug.Assert(strPk.Length == 16);
+				Debug.Assert(string.IsNullOrEmpty(strPk) || (strPk.Length == 16));
 				return string.Equals(strPk, "fed2ed7716aecf5c", StrUtil.CaseIgnoreCmp);
 			}
 			catch(Exception) { Debug.Assert(false); }

@@ -120,7 +120,7 @@
 			this.m_cbOverrideAll.Name = "m_cbOverrideAll";
 			this.m_cbOverrideAll.Size = new System.Drawing.Size(138, 17);
 			this.m_cbOverrideAll.TabIndex = 6;
-			this.m_cbOverrideAll.Text = "Override all entry URLs:";
+			this.m_cbOverrideAll.Text = "&Override all entry URLs:";
 			this.m_cbOverrideAll.UseVisualStyleBackColor = true;
 			this.m_cbOverrideAll.CheckedChanged += new System.EventHandler(this.OnOverrideAllCheckedChanged);
 			// 

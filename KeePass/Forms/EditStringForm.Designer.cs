@@ -59,8 +59,8 @@
 			this.m_lblStringValueDesc.Location = new System.Drawing.Point(12, 156);
 			this.m_lblStringValueDesc.Name = "m_lblStringValueDesc";
 			this.m_lblStringValueDesc.Size = new System.Drawing.Size(37, 13);
-			this.m_lblStringValueDesc.TabIndex = 2;
-			this.m_lblStringValueDesc.Text = "Value:";
+			this.m_lblStringValueDesc.TabIndex = 3;
+			this.m_lblStringValueDesc.Text = "&Value:";
 			// 
 			// m_lblStringIdDesc
 			// 
@@ -68,15 +68,15 @@
 			this.m_lblStringIdDesc.Location = new System.Drawing.Point(12, 116);
 			this.m_lblStringIdDesc.Name = "m_lblStringIdDesc";
 			this.m_lblStringIdDesc.Size = new System.Drawing.Size(38, 13);
-			this.m_lblStringIdDesc.TabIndex = 10;
-			this.m_lblStringIdDesc.Text = "Name:";
+			this.m_lblStringIdDesc.TabIndex = 0;
+			this.m_lblStringIdDesc.Text = "&Name:";
 			// 
 			// m_lblIDIntro
 			// 
 			this.m_lblIDIntro.Location = new System.Drawing.Point(12, 67);
 			this.m_lblIDIntro.Name = "m_lblIDIntro";
 			this.m_lblIDIntro.Size = new System.Drawing.Size(385, 40);
-			this.m_lblIDIntro.TabIndex = 9;
+			this.m_lblIDIntro.TabIndex = 10;
 			this.m_lblIDIntro.Text = resources.GetString("m_lblIDIntro.Text");
 			// 
 			// m_richStringValue
@@ -85,7 +85,7 @@
 			this.m_richStringValue.Name = "m_richStringValue";
 			this.m_richStringValue.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.m_richStringValue.Size = new System.Drawing.Size(341, 78);
-			this.m_richStringValue.TabIndex = 3;
+			this.m_richStringValue.TabIndex = 4;
 			this.m_richStringValue.Text = "";
 			// 
 			// m_lblSeparator
@@ -94,7 +94,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 271);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(409, 2);
-			this.m_lblSeparator.TabIndex = 5;
+			this.m_lblSeparator.TabIndex = 8;
 			// 
 			// m_btnOK
 			// 
@@ -123,7 +123,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 282);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 8;
+			this.m_btnHelp.TabIndex = 9;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -134,8 +134,8 @@
 			this.m_cbProtect.Location = new System.Drawing.Point(56, 238);
 			this.m_cbProtect.Name = "m_cbProtect";
 			this.m_cbProtect.Size = new System.Drawing.Size(159, 17);
-			this.m_cbProtect.TabIndex = 4;
-			this.m_cbProtect.Text = "Enable in-memory &protection";
+			this.m_cbProtect.TabIndex = 5;
+			this.m_cbProtect.Text = "&Enable in-memory protection";
 			this.m_cbProtect.UseVisualStyleBackColor = true;
 			// 
 			// m_lblValidationInfo
@@ -144,7 +144,7 @@
 			this.m_lblValidationInfo.Location = new System.Drawing.Point(53, 137);
 			this.m_lblValidationInfo.Name = "m_lblValidationInfo";
 			this.m_lblValidationInfo.Size = new System.Drawing.Size(344, 14);
-			this.m_lblValidationInfo.TabIndex = 1;
+			this.m_lblValidationInfo.TabIndex = 2;
 			this.m_lblValidationInfo.Text = "<>";
 			// 
 			// m_cmbStringName
@@ -153,7 +153,7 @@
 			this.m_cmbStringName.Location = new System.Drawing.Point(56, 113);
 			this.m_cmbStringName.Name = "m_cmbStringName";
 			this.m_cmbStringName.Size = new System.Drawing.Size(341, 21);
-			this.m_cmbStringName.TabIndex = 0;
+			this.m_cmbStringName.TabIndex = 1;
 			this.m_cmbStringName.TextChanged += new System.EventHandler(this.OnNameTextChanged);
 			// 
 			// EditStringForm

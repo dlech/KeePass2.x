@@ -163,7 +163,7 @@
 			this.m_lblSpr.Name = "m_lblSpr";
 			this.m_lblSpr.Size = new System.Drawing.Size(71, 13);
 			this.m_lblSpr.TabIndex = 0;
-			this.m_lblSpr.Text = "Placeholders:";
+			this.m_lblSpr.Text = "Place&holders:";
 			// 
 			// m_cmbSpr
 			// 
@@ -212,7 +212,7 @@
 			this.m_lblSortEntries.Name = "m_lblSortEntries";
 			this.m_lblSortEntries.Size = new System.Drawing.Size(99, 13);
 			this.m_lblSortEntries.TabIndex = 0;
-			this.m_lblSortEntries.Text = "Sort entries by field:";
+			this.m_lblSortEntries.Text = "S&ort entries by field:";
 			// 
 			// m_grpFont
 			// 
@@ -282,7 +282,7 @@
 			this.m_rbSerif.Name = "m_rbSerif";
 			this.m_rbSerif.Size = new System.Drawing.Size(46, 18);
 			this.m_rbSerif.TabIndex = 0;
-			this.m_rbSerif.Text = "Serif";
+			this.m_rbSerif.Text = "Se&rif";
 			this.m_rbSerif.UseVisualStyleBackColor = true;
 			// 
 			// m_grpFields
@@ -317,7 +317,7 @@
 			this.m_cbIcon.Name = "m_cbIcon";
 			this.m_cbIcon.Size = new System.Drawing.Size(47, 17);
 			this.m_cbIcon.TabIndex = 10;
-			this.m_cbIcon.Text = "Icon";
+			this.m_cbIcon.Text = "&Icon";
 			this.m_cbIcon.UseVisualStyleBackColor = true;
 			this.m_cbIcon.CheckedChanged += new System.EventHandler(this.OnIconCheckedChanged);
 			// 
@@ -338,7 +338,7 @@
 			this.m_cbTags.Name = "m_cbTags";
 			this.m_cbTags.Size = new System.Drawing.Size(50, 17);
 			this.m_cbTags.TabIndex = 9;
-			this.m_cbTags.Text = "Tags";
+			this.m_cbTags.Text = "T&ags";
 			this.m_cbTags.UseVisualStyleBackColor = true;
 			// 
 			// m_cbCustomStrings
@@ -348,7 +348,7 @@
 			this.m_cbCustomStrings.Name = "m_cbCustomStrings";
 			this.m_cbCustomStrings.Size = new System.Drawing.Size(116, 17);
 			this.m_cbCustomStrings.TabIndex = 11;
-			this.m_cbCustomStrings.Text = "Custom string fields";
+			this.m_cbCustomStrings.Text = "Custom string &fields";
 			this.m_cbCustomStrings.UseVisualStyleBackColor = true;
 			// 
 			// m_cbGroups
@@ -358,7 +358,7 @@
 			this.m_cbGroups.Name = "m_cbGroups";
 			this.m_cbGroups.Size = new System.Drawing.Size(84, 17);
 			this.m_cbGroups.TabIndex = 12;
-			this.m_cbGroups.Text = "Group name";
+			this.m_cbGroups.Text = "&Group name";
 			this.m_cbGroups.UseVisualStyleBackColor = true;
 			// 
 			// m_linkDeselectAllFields
@@ -390,7 +390,7 @@
 			this.m_cbAutoType.Name = "m_cbAutoType";
 			this.m_cbAutoType.Size = new System.Drawing.Size(75, 17);
 			this.m_cbAutoType.TabIndex = 8;
-			this.m_cbAutoType.Text = "Auto-Type";
+			this.m_cbAutoType.Text = "Auto-Typ&e";
 			this.m_cbAutoType.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLastMod
@@ -400,7 +400,7 @@
 			this.m_cbLastMod.Name = "m_cbLastMod";
 			this.m_cbLastMod.Size = new System.Drawing.Size(127, 17);
 			this.m_cbLastMod.TabIndex = 6;
-			this.m_cbLastMod.Text = "Last modification time";
+			this.m_cbLastMod.Text = "Last &modification time";
 			this.m_cbLastMod.UseVisualStyleBackColor = true;
 			// 
 			// m_cbCreation
@@ -410,7 +410,7 @@
 			this.m_cbCreation.Name = "m_cbCreation";
 			this.m_cbCreation.Size = new System.Drawing.Size(87, 17);
 			this.m_cbCreation.TabIndex = 5;
-			this.m_cbCreation.Text = "Creation time";
+			this.m_cbCreation.Text = "&Creation time";
 			this.m_cbCreation.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExpire
@@ -420,7 +420,7 @@
 			this.m_cbExpire.Name = "m_cbExpire";
 			this.m_cbExpire.Size = new System.Drawing.Size(76, 17);
 			this.m_cbExpire.TabIndex = 7;
-			this.m_cbExpire.Text = "Expiry time";
+			this.m_cbExpire.Text = "E&xpiry time";
 			this.m_cbExpire.UseVisualStyleBackColor = true;
 			// 
 			// m_cbNotes
@@ -432,7 +432,7 @@
 			this.m_cbNotes.Name = "m_cbNotes";
 			this.m_cbNotes.Size = new System.Drawing.Size(54, 17);
 			this.m_cbNotes.TabIndex = 4;
-			this.m_cbNotes.Text = "Notes";
+			this.m_cbNotes.Text = "&Notes";
 			this.m_cbNotes.UseVisualStyleBackColor = true;
 			// 
 			// m_cbPassword
@@ -444,7 +444,7 @@
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(72, 17);
 			this.m_cbPassword.TabIndex = 2;
-			this.m_cbPassword.Text = "Password";
+			this.m_cbPassword.Text = "Pass&word";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUrl
@@ -454,7 +454,7 @@
 			this.m_cbUrl.Name = "m_cbUrl";
 			this.m_cbUrl.Size = new System.Drawing.Size(48, 17);
 			this.m_cbUrl.TabIndex = 3;
-			this.m_cbUrl.Text = "URL";
+			this.m_cbUrl.Text = "UR&L";
 			this.m_cbUrl.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUser
@@ -466,7 +466,7 @@
 			this.m_cbUser.Name = "m_cbUser";
 			this.m_cbUser.Size = new System.Drawing.Size(77, 17);
 			this.m_cbUser.TabIndex = 1;
-			this.m_cbUser.Text = "User name";
+			this.m_cbUser.Text = "&User name";
 			this.m_cbUser.UseVisualStyleBackColor = true;
 			// 
 			// m_cbTitle
@@ -478,7 +478,7 @@
 			this.m_cbTitle.Name = "m_cbTitle";
 			this.m_cbTitle.Size = new System.Drawing.Size(46, 17);
 			this.m_cbTitle.TabIndex = 0;
-			this.m_cbTitle.Text = "Title";
+			this.m_cbTitle.Text = "&Title";
 			this.m_cbTitle.UseVisualStyleBackColor = true;
 			// 
 			// m_grpLayout
@@ -532,7 +532,7 @@
 			this.m_rbTabular.Size = new System.Drawing.Size(61, 17);
 			this.m_rbTabular.TabIndex = 0;
 			this.m_rbTabular.TabStop = true;
-			this.m_rbTabular.Text = "&Tabular";
+			this.m_rbTabular.Text = "Ta&bular";
 			this.m_rbTabular.UseVisualStyleBackColor = true;
 			this.m_rbTabular.CheckedChanged += new System.EventHandler(this.OnTabularCheckedChanged);
 			// 

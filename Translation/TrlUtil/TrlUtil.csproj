@@ -50,6 +50,7 @@
     <Compile Include="App\Configuration\TceConfig.cs" />
     <Compile Include="App\TuDefs.cs" />
     <Compile Include="FormTrlMgr.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="TrlImport.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

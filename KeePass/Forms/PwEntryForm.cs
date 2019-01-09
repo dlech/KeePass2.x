@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ namespace KeePass.Forms
 		private PwIcon m_pwEntryIcon = PwIcon.Key;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 		private ImageList m_ilIcons = null;
+		private List<PwUuid> m_lOrgCustomIconIDs = new List<PwUuid>();
 
 		private bool m_bLockEnabledState = false;
 		private bool m_bTouchedOnce = false;
@@ -115,6 +116,11 @@ namespace KeePass.Forms
 			None = 0,
 			ByIndex,
 			ByRef
+		}
+
+		public PwEditMode EditModeEx
+		{
+			get { return m_pwEditMode; }
 		}
 
 		public bool HasModifiedEntry
@@ -209,6 +215,13 @@ namespace KeePass.Forms
 			m_vBinaries = m_pwEntry.Binaries.CloneDeep();
 			m_atConfig = m_pwEntry.AutoType.CloneDeep();
 			m_vHistory = m_pwEntry.History.CloneDeep();
+
+			m_lOrgCustomIconIDs.Clear();
+			if(m_pwDatabase != null)
+			{
+				foreach(PwCustomIcon ci in m_pwDatabase.CustomIcons)
+					m_lOrgCustomIconIDs.Add(ci.Uuid);
+			}
 		}
 
 		private void InitEntryTab()
@@ -216,7 +229,11 @@ namespace KeePass.Forms
 			m_pwEntryIcon = m_pwEntry.IconId;
 			m_pwCustomIconID = m_pwEntry.CustomIconUuid;
 
-			if(!m_pwCustomIconID.Equals(PwUuid.Zero))
+			// The user may have deleted the custom icon (using the
+			// icon dialog accessible through the entry dialog and
+			// then opening a history entry)
+			if(!m_pwCustomIconID.Equals(PwUuid.Zero) &&
+				(m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID) >= 0))
 			{
 				// int nInx = (int)PwIcon.Count + m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID);
 				// if((nInx > -1) && (nInx < m_ilIcons.Images.Count))
@@ -586,13 +603,35 @@ namespace KeePass.Forms
 		{
 			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvHistory, true);
 
+			ImageList ilIcons = m_lvHistory.SmallImageList;
+			int ci = ((ilIcons != null) ? ilIcons.Images.Count : 0);
+
 			m_lvHistory.BeginUpdate();
 			m_lvHistory.Items.Clear();
 
 			foreach(PwEntry pe in m_vHistory)
 			{
 				ListViewItem lvi = m_lvHistory.Items.Add(TimeUtil.ToDisplayString(
-					pe.LastModificationTime), (int)pe.IconId);
+					pe.LastModificationTime));
+
+				int idxIcon = (int)pe.IconId;
+				PwUuid pu = pe.CustomIconUuid;
+				if(!pu.Equals(PwUuid.Zero))
+				{
+					// The user may have deleted the custom icon (using
+					// the icon dialog accessible through this entry
+					// dialog); continuing to show the deleted custom
+					// icon would be confusing
+					int idxNew = m_pwDatabase.GetCustomIconIndex(pu);
+					if(idxNew >= 0) // Icon not deleted
+					{
+						int idxOrg = m_lOrgCustomIconIDs.IndexOf(pu);
+						if(idxOrg >= 0) idxIcon = (int)PwIcon.Count + idxOrg;
+						else { Debug.Assert(false); }
+					}
+				}
+				if(idxIcon < ci) lvi.ImageIndex = idxIcon;
+				else { Debug.Assert(false); }
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.TitleField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
@@ -621,6 +660,13 @@ namespace KeePass.Forms
 			Debug.Assert(m_ilIcons != null); if(m_ilIcons == null) throw new InvalidOperationException();
 
 			m_bInitializing = true;
+
+			// If there is an intermediate form, the custom icons
+			// in the image list may be outdated
+			Form fTop = GlobalWindowManager.TopWindow;
+			Debug.Assert(fTop != this); // Before adding ourself
+			if((fTop != null) && (fTop != Program.MainForm))
+				m_lOrgCustomIconIDs.Clear();
 
 			GlobalWindowManager.AddWindow(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTools);
@@ -671,6 +717,9 @@ namespace KeePass.Forms
 				KeePass.Properties.Resources.B48x48_KGPG_Sign, strTitle, strDesc);
 			this.Icon = AppIcons.Default;
 			this.Text = strTitle;
+
+			// m_btnTools.Text += " \u23F7 \u25BC \u25BE \u2BC6 \uD83D\uDF83";
+			// m_btnTools.Width += DpiUtil.ScaleIntX(60);
 
 			m_imgGenPw = UIUtil.CreateDropDownImage(Properties.Resources.B16x16_Key_New);
 			m_imgStdExpire = UIUtil.CreateDropDownImage(Properties.Resources.B16x16_History);
@@ -1324,8 +1373,8 @@ namespace KeePass.Forms
 			{
 				lvsc = m_lvAutoType.SelectedItems;
 				if((lvsc != null) && (lvsc.Count > 0))
-					ClipboardUtil.Copy(lvsc[0].SubItems[1].Text, true, true, null,
-						m_pwDatabase, this.Handle);
+					ClipboardUtil.Copy(lvsc[0].SubItems[1].Text, false, true,
+						null, null, this.Handle);
 			}
 			else { Debug.Assert(false); }
 		}
@@ -1356,6 +1405,8 @@ namespace KeePass.Forms
 			}
 
 			UIUtil.DestroyForm(ipf);
+
+			UpdateHistoryList(true); // User may have deleted a custom icon
 		}
 
 		private void OnAutoTypeSeqInheritCheckedChanged(object sender, EventArgs e)
@@ -2176,7 +2227,10 @@ namespace KeePass.Forms
 				};
 
 				string[] v = m_pwDatabase.RootGroup.CollectEntryStrings(f, true);
-				UIUtil.EnableAutoCompletion(m_tbUserName, true, v); // Invokes
+
+				// Do not append, because it breaks Ctrl+A;
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/4f626b91/
+				UIUtil.EnableAutoCompletion(m_tbUserName, false, v); // Invokes
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_mgr != null); if(m_mgr == null) throw new ArgumentException();
+			if(m_mgr == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this, this);
 
@@ -123,29 +123,38 @@ namespace KeePass.Forms
 
 			m_ilIcons.Images.Add(Properties.Resources.B16x16_BlockDevice);
 
-			foreach(PluginInfo plugin in m_mgr)
-			{
-				ListViewItem lvi = new ListViewItem(plugin.Name);
-				ListViewItem lviNew = m_lvPlugins.Items.Add(lvi);
+			List<PluginInfo> lInfos = new List<PluginInfo>(m_mgr);
+			lInfos.Sort(PluginsForm.ComparePluginInfos);
 
-				lviNew.SubItems.Add(plugin.FileVersion);
-				lviNew.SubItems.Add(plugin.Author);
-				lviNew.SubItems.Add(plugin.Description);
-				lviNew.SubItems.Add(plugin.DisplayFilePath);
+			foreach(PluginInfo pi in lInfos)
+			{
+				ListViewItem lvi = m_lvPlugins.Items.Add(pi.Name);
+
+				lvi.SubItems.Add(pi.FileVersion);
+				lvi.SubItems.Add(pi.Author);
+				lvi.SubItems.Add(pi.Description);
+				lvi.SubItems.Add(pi.DisplayFilePath);
+
+				Plugin p = pi.Interface;
+				Debug.Assert(p != null);
 
 				int nImageIndex = 0;
-				Debug.Assert(plugin.Interface != null);
-				if((plugin.Interface != null) && (plugin.Interface.SmallIcon != null))
+				Image img = ((p != null) ? p.SmallIcon : null);
+				if(img != null)
 				{
 					nImageIndex = m_ilIcons.Images.Count;
-					m_ilIcons.Images.Add(plugin.Interface.SmallIcon);
+					m_ilIcons.Images.Add(img);
 				}
-
-				lviNew.ImageIndex = nImageIndex;
+				lvi.ImageIndex = nImageIndex;
 			}
 
 			m_bBlockListUpdate = false;
 			UpdatePluginDescription();
+		}
+
+		private static int ComparePluginInfos(PluginInfo x, PluginInfo y)
+		{
+			return string.Compare(x.Name, y.Name, StrUtil.CaseIgnoreCmp);
 		}
 
 		private void UpdatePluginDescription()

@@ -17,7 +17,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -35,7 +35,7 @@
 <table class="sectionsummary"><tr><td width="68">
 <img src="../images/b64x64_blockdevice.png" width="64" height="64"
 class="singleimg" align="left" alt="Settings" />
-</td><td valign="middle"><h1>Plugin Development</h1><br />
+</td><td valign="middle"><h1>Plugin Development (2.x)</h1><br />
 How to develop plugins for KeePass 2.x.
 </td></tr></table>
 
@@ -45,10 +45,13 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 <ul>
 <li><a href="#req">Requirements</a></li>
 <li><a href="#tutorial">Step-by-Step Tutorial</a></li>
-<li><a href="#commonops">Common Operations</a></li>
+<li>Common Operations:
+<ul>
+<li><a href="#co_menuitem">Providing Menu Items</a></li>
+</ul></li>
 <li><a href="#conventions">Plugin Conventions</a></li>
 <li><a href="#upd">Update Checking</a></li>
-<li><a href="#unmanagedcpp">Can KeePass 2.x Plugins be written in Unmanaged C++?</a></li>
+<li><a href="#unmanagedcpp">Can KeePass 2.x Plugins be Written in Unmanaged C++?</a></li>
 <li><a href="#plgx">PLGX Files</a></li>
 </ul>
 
@@ -56,8 +59,7 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 
 <a name="req"></a>
 <h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Requirements
-</h2>
+<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Requirements</h2>
 
 <p>Before you can start developing a KeePass plugin, you need the following
 prerequisites:</p>
@@ -80,16 +82,21 @@ Tutorial</h2>
 
 <p>Start your favorite IDE and create a new <em>C# Class Library</em> project
 (for the .NET Framework, not .NET Standard/Core).
-In this tutorial, the example plugin we're developing is called <code>SamplePlugin</code>.
+In this tutorial, the example plugin we're developing is called <code>SimplePlugin</code>.
 The first thing you need to do now is to add a <em>reference</em> to KeePass:
 go to the references dialog and select the <code>KeePass.exe</code> file
 (from the portable ZIP package).
 After you added the reference, the namespaces <code>KeePass</code> and
 <code>KeePassLib</code> should be available.</p>
 
-<p>KeePass plugins all need to derive from a base KeePass plugin class
+<p>It is important that you reference an official <code>KeePass.exe</code>,
+not a development snapshot or own build, because otherwise your
+plugin will be incompatible with official KeePass builds.</p>
+
+<p>All KeePass plugins need to derive from a base KeePass plugin class
 (<code>Plugin</code> in the <code>KeePass.Plugins</code> namespace).
-By overriding methods of this class, you can customize the behavior of your plugin.</p>
+By overriding methods and properties of this class, you can customize
+the behavior of your plugin.</p>
 
 <p>A minimal plugin looks like this:</p>
 
@@ -98,14 +105,15 @@ By overriding methods of this class, you can customize the behavior of your plug
 
 <span class="codekw">using</span> KeePass.Plugins;
 
-<span class="codekw">namespace</span> SamplePlugin
+<span class="codekw">namespace</span> SimplePlugin
 {
-	<span class="codekw">public sealed class</span> <span class="codetp">SamplePluginExt</span> : <span class="codetp">Plugin</span>
+	<span class="codekw">public sealed class</span> <span class="codetp">SimplePluginExt</span> : <span class="codetp">Plugin</span>
 	{
 		<span class="codekw">private</span> <span class="codetp">IPluginHost</span> m_host = <span class="codekw">null</span>;
 
 		<span class="codekw">public override bool</span> Initialize(<span class="codetp">IPluginHost</span> host)
 		{
+			<span class="codekw">if</span>(host == <span class="codekw">null</span>) <span class="codekw">return false</span>;
 			m_host = host;
 			<span class="codekw">return true</span>;
 		}
@@ -120,11 +128,11 @@ already, which must be followed by all plugins:</p>
 
 <ul>
 <li>The namespace must be named like the DLL file without extension. Our DLL
-file is named <code>SamplePlugin.dll</code>, therefore the namespace must
-be called <code>SamplePlugin</code>.</li>
+file is named <code>SimplePlugin.dll</code>, therefore the namespace must
+be called <code>SimplePlugin</code>.</li>
 <li>The main plugin class (which KeePass will instantiate when it loads your
 plugin) must be called exactly the same as the namespace plus &quot;Ext&quot;.
-In this case: &quot;SamplePlugin&quot; + &quot;Ext&quot; = &quot;SamplePluginExt&quot;.</li>
+In this case: &quot;SimplePlugin&quot; + &quot;Ext&quot; = &quot;SimplePluginExt&quot;.</li>
 <li>The main plugin class must be derived from the <code>KeePass.Plugins.Plugin</code>
 base class.</li>
 </ul>
@@ -132,15 +140,15 @@ base class.</li>
 <p>The <code>Initialize</code> function is the most important one and you
 probably will always override it. In this function, you get an interface
 to the KeePass internals: an <code>IPluginHost</code> interface reference.
-By using this interface, you can access the KeePass main menu, the currently
+Through this interface you can access the KeePass main menu, the currently
 opened database, etc. The <code>Initialize</code> function is called immediately
 after KeePass loads your plugin. All initialization should be done in this
-function (<b>not</b> in the constructor of your plugin class!). If you
+method (<b>not</b> in the constructor of your plugin class!). If you
 successfully initialized everything, you must return <code>true</code>. If
 you return <code>false</code>, KeePass will immediately unload your plugin.</p>
 
 <p>A second function that you will need very often is the <code>Terminate</code>
-function:</p>
+method:</p>
 
 <pre><span class="codekw">public override void</span> Terminate()
 {
@@ -148,17 +156,17 @@ function:</p>
 
 <p>This function is called shortly before KeePass unloads your plugin. You cannot
 abort this process (it's just a notification and your last chance to clean up
-all used resources, etc.). Immediately after you return from this function, KeePass
-can unload your plugin. It is highly recommended to free all resources in this function
-(<b>not</b> in the destructor of your plugin class!).</p>
+all used resources, etc.). Immediately after you return from this method, KeePass
+can unload your plugin. It is highly recommended to free all resources in this
+method (<b>not</b> in the destructor of your plugin class!).</p>
 
 <p>We're almost done! We now need to tell KeePass that
 our file is a KeePass plugin. This is done by editing the <i>Version Information Block</i>
 of the file. Open the file version editing dialog (in Visual Studio 2005: right-click
-onto the project name - <i>'Properties'</i> - button <i>'Assembly Information'</i>).
+onto the project name &rarr; <i>'Properties'</i> &rarr; button <i>'Assembly Information'</i>).
 All fields can be assigned freely except the <i>Product Name</i> field (for more information
 see <a href="#conventions">Plugin Conventions</a>). This field must be set to
-<code>&quot;KeePass Plugin&quot;</code> (without the quotes).</p>
+&quot;<code>KeePass Plugin</code>&quot; (without the quotes).</p>
 
 <!-- <p>Now the last step: signing your assembly. Because KeePass is a strong-named assembly,
 your plugin must have a strong name, too. Go to the project options of your plugin
@@ -166,62 +174,78 @@ and open the <i>Signing</i> tab. Enable assembly signing and generate a new key 
 
 <p>That's it! Now try to compile your plugin and copy the resulting DLL
 file into the KeePass directory. If you start KeePass and go to the plugins
-dialog, you should see your plugin in the list of loaded plugins!</p>
+dialog, you should see your plugin in the list of loaded plugins.</p>
 
 <br />
 
-<a name="commonops"></a>
+<a name="co_menuitem"></a>
 <h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Common
-Operations</h2>
+<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Providing
+Menu Items</h2>
 
-<p><b>Adding Menu Items:</b></p>
+<p>Many plugins provide menu items (with subitems, if necessary)
+in prominent locations like the 'Tools' menu, the entry context menu, etc.
+Such a menu item can be supplied to KeePass by overriding the
+<code>GetMenuItem</code> method of your plugin class
+(which derives from the <code>Plugin</code> base class).
+In this method, the plugin can construct and return a <code>ToolStripMenuItem</code>,
+which KeePass will then show in the appropriate location.</p>
 
-<p>Very often you want to add some menu items for your plugin. When clicked by the
-user, your plugin should get some notification. This can be done like follows.
-First of all you need to get a reference to the KeePass main menu or one of
-the special submenus (like <i>Import</i>, <i>Tools</i>, etc.). For this you can
-use the <code>IPluginHost</code> interface, which you received in the <code>Initialize</code>
-function. Then you can use standard tool strip operations to add a new menu item for your
-plugin. A very simple example, which adds a menu item to the <i>Tools</i> menu:</p>
+<p>Users should be able to associate the menu item with your plugin.
+Typically, plugins set the text of the menu item to the name of the plugin or
+a string that starts with the name of the plugin. For example, a plugin 'Abcd'
+that wants to provide one menu item only (for accessing the plugin options)
+could set the text of the menu item to 'Abcd Options'.
+If the plugin supports multiple commands, set the menu item's text to
+the plugin name (e.g. 'Abcd') and add a subitem for each command.</p>
 
-<pre><span class="codekw">private</span> <span class="codetp">ToolStripSeparator</span> m_tsSeparator = <span class="codekw">null</span>;
-<span class="codekw">private</span> <span class="codetp">ToolStripMenuItem</span> m_tsmiMenuItem = <span class="codekw">null</span>;
+<p>The <code>GetMenuItem</code> method should always construct and return
+a new <code>ToolStripMenuItem</code>. Do not cache the menu item
+or any of its subitems for
+later purposes (KeePass may invoke the <code>GetMenuItem</code> method
+multiple times and show the menu items in multiple places; if your plugin
+would cache a menu item, trying to show it in multiple places would
+result in problems, because a <code>ToolStripMenuItem</code> can have
+only one parent item).
+If you want to update the state of subitems (like disabling certain items
+or showing checkmarks), you can do this for instance
+in an anonymous method that handles the <code>DropDownOpening</code>
+event of the returned menu item (this way you do not need to remember
+menu item references manually); see
+<a href="https://keepass.info/plugins.html#testplugin" target="_blank">SamplePlugin</a>
+for an example.</p>
 
-<span class="codekw">public override bool</span> Initialize(<span class="codetp">IPluginHost</span> host)
+<p>KeePass takes ownership of the returned menu item (and its subitems).
+The plugin should not add or remove the item to/from any menu itself;
+KeePass will do this.</p>
+
+<p>If your plugin does not provide a menu item in the location specified
+by the <code>PluginMenuType</code> parameter <code>t</code>,
+return <code>null</code>.</p>
+
+<p>Example:</p>
+
+<pre><span class="codekw">public override</span> <span class="codetp">ToolStripMenuItem</span> GetMenuItem(<span class="codetp">PluginMenuType</span> t)
 {
-	m_host = host;
+	<span class="codecm">// Provide a menu item for the main location(s)</span>
+	<span class="codekw">if</span>(t == <span class="codetp">PluginMenuType</span>.Main)
+	{
+		<span class="codetp">ToolStripMenuItem</span> tsmi = <span class="codekw">new</span> <span class="codetp">ToolStripMenuItem</span>();
+		tsmi.Text = <span class="codest">&quot;Abcd Options&quot;</span>;
+		tsmi.Click += <span class="codekw">this</span>.OnOptionsClicked;
+		<span class="codekw">return</span> tsmi;
+	}
 
-	<span class="codecm">// Get a reference to the 'Tools' menu item container</span>
-	<span class="codetp">ToolStripItemCollection</span> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
-
-	<span class="codecm">// Add a separator at the bottom</span>
-	m_tsSeparator = <span class="codekw">new</span> <span class="codetp">ToolStripSeparator</span>();
-	tsMenu.Add(m_tsSeparator);
-
-	<span class="codecm">// Add menu item 'Do Something'</span>
-	m_tsmiMenuItem = <span class="codekw">new</span> <span class="codetp">ToolStripMenuItem</span>();
-	m_tsmiMenuItem.Text = <span class="codest">"Do Something"</span>;
-	m_tsmiMenuItem.Click += <span class="codekw">this</span>.OnMenuDoSomething;
-	tsMenu.Add(m_tsmiMenuItem);
+	<span class="codekw">return null</span>; <span class="codecm">// No menu items in other locations</span>
 }
 
-<span class="codekw">public override void</span> Terminate()
-{
-	<span class="codecm">// Remove all of our menu items</span>
-	<span class="codetp">ToolStripItemCollection</span> tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
-	m_tsmiMenuItem.Click -= <span class="codekw">this</span>.OnMenuDoSomething;
-	tsMenu.Remove(m_tsmiMenuItem);
-	tsMenu.Remove(m_tsSeparator);
-}
-
-<span class="codekw">private void</span> OnMenuDoSomething(<span class="codekw">object</span> sender, <span class="codetp">EventArgs</span> e)
+<span class="codekw">private void</span> OnOptionsClicked(<span class="codekw">object</span> sender, <span class="codetp">EventArgs</span> e)
 {
 	<span class="codecm">// Called when the menu item is clicked</span>
 }</pre>
 
-<p>If you are working with tool strips, you of course have to add a reference
-to <code>System.Windows.Forms</code> of the .NET framework.</p>
+<!-- <p>If you are working with tool strips, you of course have to add a reference
+to <code>System.Windows.Forms</code> of the .NET Framework.</p>
 
 <p>It is highly recommended that you unlink all event handlers and remove all menu items
 created by your plugin in the <code>Terminate</code> function (as shown in the example above).
@@ -230,16 +254,16 @@ look like before loading your plugin.</p>
 
 <p>In the example, we created a separator and one menu item. To this menu
 item an event handler for the <code>Click</code> event is attached. There's nothing
-special, this is all standard <i>Windows.Forms</i> code.</p>
+special, this is all standard <i>Windows.Forms</i> code.</p> -->
 
-<p>For examples of adding popup menus, see the <i>SamplePlugin</i> sample
-plugin (obtainable from the KeePass plugins page).</p>
+<p>For an example how to create a menu item with subitems (and
+update their states dynamically), see the
+<a href="https://keepass.info/plugins.html#testplugin" target="_blank">SamplePlugin</a>
+example plugin.</p>
 
-<br />
-
+<!-- <br />
 <p><b>Adding Groups and Entries:</b></p>
-
-<p>For this, see the sample plugin and the <i>KeePassLib</i> documentation.</p>
+<p>For this, see the sample plugin and the <i>KeePassLib</i> documentation.</p> -->
 
 <br />
 
@@ -248,7 +272,7 @@ plugin (obtainable from the KeePass plugins page).</p>
 <img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Plugin
 Conventions</h2>
 
-<p><b>File Version Information Block:</b></p>
+<p><b>File version information block:</b></p>
 
 <p>KeePass uses the file version information block to detect if a DLL file is a
 KeePass plugin and retrieves information from it to show in the plugins dialog.
@@ -259,21 +283,19 @@ The fields are used as follows:</p>
 <li><b>Description:</b> Should contain a short description (not more than 5 lines)
 of your plugin.</li>
 <li><b>Company:</b> Should contain the author name of the plugin.</li>
-<li><b>Product Name:</b> Must be set to <code>&quot;KeePass Plugin&quot;</code> (without
+<li><b>Product name:</b> Must be set to <code>&quot;KeePass Plugin&quot;</code> (without
 the quotes).</li>
 <li><b>Copyright:</b> Not used by KeePass; freely assignable by the plugin.</li>
 <li><b>Trademarks:</b> Not used by KeePass; freely assignable by the plugin.</li>
-<li><b>Assembly Version:</b> Should be set to the version of your plugin.</li>
-<li><b>File Version:</b> Should be set to the version of your plugin. It is up
+<li><b>Assembly version:</b> Should be set to the version of your plugin.</li>
+<li><b>File version:</b> Should be set to the version of your plugin. It is up
 to you how you are versioning your plugin builds, but it should be a scheme that
 allows version comparisons (by comparing the version components).
 Do <i>not</i> use asterisks for creating a version number at build time.</li>
 <li><b>GUID:</b> Not used by KeePass; freely assignable by the plugin.</li>
 </ul>
 
-<br />
-
-<p><b>Namespace and Class Naming:</b></p>
+<p><b>Namespace and class naming:</b></p>
 
 <p>The namespace must be named like the DLL file without
 extension. For example, if the DLL file is named <code>SecretImporter.dll</code>,
@@ -320,7 +342,7 @@ they release new versions of their plugins.</p>
 <ul>
 <li>The file is a simple text file. It must be encoded using UTF-8 without
 a byte order mark (KeePass &ge; 2.21 supports UTF-8 BOMs in version information
-files, however for compatibility with KeePass &lt; 2.21 it is recommended
+files, but for compatibility with KeePass &lt; 2.21 it is recommended
 not to use a BOM).
 All line endings are supported.</li>
 <li>The first line of the file must start with a separator character of
@@ -401,19 +423,24 @@ version information file.</li>
 <a name="unmanagedcpp"></a>
 <h2 class="sectiontitle">
 <img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Can
-KeePass 2.x Plugins be written in Unmanaged C++?</h2>
+KeePass 2.x Plugins be Written in Unmanaged C++?</h2>
 
-<p>Yes and no. You can write the complete logic of your plugin in unmanaged C++ (native
-Win32 APIs can be used). Anyway you must provide a managed interface to your plugin,
+<p>Yes and no. You can write the logic of your plugin in unmanaged C++ (native
+Win32 APIs can be used). However, you must provide a managed interface to your plugin,
 i.e. you must export a managed class derived from the <code>Plugin</code> base class
-as described in the step-by-step tutorial.</p>
-
-<p>Also, managed C++ will be required to modify the KeePass internals (i.e. entries,
+as described in the tutorial.
+Also, managed C++ is required to modify the KeePass internals (entries,
 groups, main window, ...).</p>
 
-<p>For an example how to use unmanaged APIs in a managed C++ plugin assembly, see
-the <i>SamplePluginCpp</i> sample plugin (obtainable from the KeePass plugins
-page).</p>
+<p>For an example how to use unmanaged APIs in a managed C++ plugin assembly,
+see the
+<a href="https://keepass.info/plugins.html#testplugin" target="_blank">SamplePluginCpp</a>
+example plugin.</p>
+
+<p>It is highly recommended to develop plugins in C#, not in C++, due to
+compatibility reasons (in the case of native plugins, separate 32- and
+64-bit builds are necessary; native plugins do not run on Unix-like
+systems; etc.).</p>
 
 <br />
 
@@ -422,37 +449,56 @@ page).</p>
 <img src="../images/b16x16_tar.png" class="singleimg" alt="Info" />&nbsp;&nbsp;PLGX
 Files</h2>
 
-<p>PLGX is an <i>optional</i> plugin file format for KeePass &ge; 2.09. Instead of compiling your plugin
-to a DLL assembly, the plugin source code files can be packed into a PLGX
-file and KeePass will compile the plugin itself when loading it.
-The advantage of this approach is that plugins don't need to be recompiled
-by the plugin developers
-for each KeePass release anymore (as KeePass compiles the plugin itself, the generated plugin assembly
-references the current, correct KeePass assembly). Instead of shipping a plugin
-DLL assembly, you ship the PLGX.</p>
+<p>PLGX is an <em>optional</em> plugin file format for KeePass &ge; 2.09.
+Instead of compiling your plugin to a DLL file, the plugin source code
+files can be packed into a PLGX file and KeePass will compile the plugin
+itself when loading it.</p>
 
-<p>For users, nothing changes. Instead of putting the plugin DLL assembly into
-the KeePass application directory, the PLGX file needs to be put there.</p>
+<p>One advantage of the PLGX approach is a strong compatibility detection.
+In the case of a DLL plugin, an incompatibility (caused by an API
+change within KeePass) is detected by the runtime when the plugin tries
+to call/access the method/class, not at loading time.
+So, an incompatibility is detected late and might crash KeePass.
+In contrast, when using the PLGX format, an incompatibility is
+detected immediately at loading time: if there is a problem, the
+compile process fails and KeePass can show an informative
+plugin incompatibility message to the user.
+For DLL plugins, KeePass performs an own compatibility check,
+which does not detect all incompatibilities though;
+PLGX is far superior here.</p>
 
-<center><table width="75%" border="1" cellspacing="1" bgcolor="#808080">
-<tr><td width="100%" bgcolor="#FFFFC8">
-KeePass &ge; 2.14 also loads older plugin DLLs.
-However, an API within KeePass might have changed and .NET detects this
-when the plugin tries to call/access the method/class, not at loading time.
-This means that an incompatibility is detected relatively late and might
-crash KeePass. In contrast, when using the PLGX format, an incompatibility
-is detected immediately at loading time: if there is a problem, the compile
-process will just fail and KeePass can present an informative plugin
-incompatibility message to the user. Therefore, it is recommended that
-plugin developers create/ship PLGX files, not DLLs.
-</td></tr></table></center>
+<p>Another advantage of the PLGX approach is compatibility with
+custom KeePass builds.
+A DLL plugin references an official KeePass build, and unless there
+is a change within KeePass that breaks the plugin, the plugin is
+also compatible with all future KeePass builds that are compiled
+with the same assembly signing key (strong name).
+This applies to all operating systems.
+Especially, a DLL plugin that does not use any Windows-specific
+function works fine on Linux with a KeePass build from the
+official portable ZIP package.
+However, some Linux packages compile KeePass from the source code;
+such builds are not signed at all or are signed with a different
+assembly signing key and are thus incompatible with DLL plugins.
+In contrast, PLGX plugins are compatible with custom KeePass builds,
+because KeePass can adjust the KeePass reference of the plugin
+before compiling it.</p>
 
-<!-- <p><b>Comparison.</b></p>
+<p>For users, the procedure to install a DLL plugin is exactly the
+same as for a PLGX plugin; both need to be copied into the 'Plugins'
+folder.</p>
+
+<p><b>Comparison.</b></p>
 <table class="tablebox75" align="center">
 <tr><th>&nbsp;</th><th>DLL</th><th>PLGX</th></tr>
 <tr><td>Compatibility check</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> (Weak)</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> (Strong)</td></tr>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /> Weak only.</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> Strong.</td></tr>
+
+<tr><td>Compatibility with custom builds (Linux)</td>
+<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" />
+Partial, see above.</td>
+<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
 
 <tr><td>Authenticode signing support</td>
 <td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
@@ -465,11 +511,29 @@ plugin developers create/ship PLGX files, not DLLs.
 <tr><td>No plugin cache</td>
 <td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
 <td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+</table>
 
-<tr><td>Linux compatibility</td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
-</table> -->
+<p>So, both formats have unique advantages and disadvantages;
+there is no &quot;best&quot; format.</p>
+
+<p><b>Dual package.</b>
+You can ship a plugin both as a DLL and as a PLGX in one package
+(e.g. 'SecretImporter.dll' and 'SecretImporter.plgx' within one folder).
+KeePass will load the most appropriate file
+(if KeePass has been signed with the official assembly signing key,
+it will load the DLL, otherwise the PLGX).
+If KeePass loads the DLL, the PLGX is ignored, which especially means
+that only a weak compatibility check is performed (i.e. the strong
+compatibility detection ensured by the PLGX is lost).
+So, a dual package inherits the DLL disadvantages and is not
+the &quot;best&quot; solution either.</p>
+
+<p><b>Recommendation.</b>
+In any case, create a PLGX file (in order to ensure
+compatibility with all KeePass builds).
+If you think that the advantages of a DLL outweigh the risk
+of an undetected compatibility problem, additionally provide
+the plugin in DLL form.</p>
 
 <p><b>Creating PLGX files.</b>
 PLGX files can be created from plugin sources by calling <code>KeePass.exe</code>

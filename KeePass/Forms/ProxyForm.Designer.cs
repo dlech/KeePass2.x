@@ -101,7 +101,7 @@
 			this.m_lblPort.Name = "m_lblPort";
 			this.m_lblPort.Size = new System.Drawing.Size(29, 13);
 			this.m_lblPort.TabIndex = 5;
-			this.m_lblPort.Text = "Port:";
+			this.m_lblPort.Text = "Po&rt:";
 			// 
 			// m_tbAddress
 			// 
@@ -118,7 +118,7 @@
 			this.m_lblAddress.Name = "m_lblAddress";
 			this.m_lblAddress.Size = new System.Drawing.Size(48, 13);
 			this.m_lblAddress.TabIndex = 3;
-			this.m_lblAddress.Text = "Address:";
+			this.m_lblAddress.Text = "&Address:";
 			// 
 			// m_rbManualProxy
 			// 
@@ -223,7 +223,7 @@
 			this.m_lblPassword.Name = "m_lblPassword";
 			this.m_lblPassword.Size = new System.Drawing.Size(56, 13);
 			this.m_lblPassword.TabIndex = 5;
-			this.m_lblPassword.Text = "Password:";
+			this.m_lblPassword.Text = "&Password:";
 			// 
 			// m_tbUser
 			// 
@@ -239,7 +239,7 @@
 			this.m_lblUser.Name = "m_lblUser";
 			this.m_lblUser.Size = new System.Drawing.Size(61, 13);
 			this.m_lblUser.TabIndex = 3;
-			this.m_lblUser.Text = "User name:";
+			this.m_lblUser.Text = "&User name:";
 			// 
 			// ProxyForm
 			// 

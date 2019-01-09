@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ namespace KeePass.UI
 			IntPtr pCF = IntPtr.Zero;
 			try
 			{
-				pCF = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+				pCF = Marshal.AllocCoTaskMem((int)cf.cbSize);
 				Marshal.StructureToPtr(cf, pCF, false);
 
 				IntPtr wParam = (IntPtr)NativeMethods.SCF_SELECTION;
@@ -134,7 +134,7 @@ namespace KeePass.UI
 				cf = (NativeMethods.CHARFORMAT2)Marshal.PtrToStructure(pCF,
 					typeof(NativeMethods.CHARFORMAT2));
 			}
-			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+			catch(Exception) { Debug.Assert(false); }
 			finally { if(pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
 
 			return cf;
@@ -181,75 +181,101 @@ namespace KeePass.UI
 			return ((cf.dwEffects & NativeMethods.CFE_LINK) != 0);
 		}
 
-		public static void RtfLinkifyExtUrls(RichTextBox richTextBox, bool bResetSelection)
+		public static void RtfLinkifyExtUrls(RichTextBox rtb, bool bResetSelection)
 		{
+			if(rtb == null) { Debug.Assert(false); return; }
+
 			const string strProto = "cmd://";
 
 			try
 			{
-				string strText = richTextBox.Text;
+				string strText = (rtb.Text ?? string.Empty);
+				int iOffset = 0;
 
-				int nOffset = 0;
-				while(nOffset < strText.Length)
+				while(iOffset < strText.Length)
 				{
-					int nStart = strText.IndexOf(strProto, nOffset, StrUtil.CaseIgnoreCmp);
-					if(nStart < 0) break;
+					int i = strText.IndexOf(strProto, iOffset, StrUtil.CaseIgnoreCmp);
+					if(i < iOffset) break;
 
-					richTextBox.Select(nStart, UrlUtil.GetUrlLength(strText, nStart));
-					RtfSetSelectionLink(richTextBox);
+					int n = UrlUtil.GetUrlLength(strText, i);
+					if(n <= 0) { Debug.Assert(false); break; }
 
-					nOffset = nStart + 1;
+					rtb.Select(i, n);
+					RtfSetSelectionLink(rtb);
+
+					iOffset = i + n;
 				}
 
-				if(bResetSelection) richTextBox.Select(0, 0);
+				if(bResetSelection) rtb.Select(0, 0);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void RtfLinkifyText(RichTextBox rtb, string strLinkText,
-			bool bResetTempSelection)
+			bool bResetSelection)
 		{
-			if(rtb == null) throw new ArgumentNullException("rtb");
-			if(string.IsNullOrEmpty(strLinkText)) return; // No assert
+			RtfLinkifyText(rtb, strLinkText, bResetSelection, false);
+		}
+
+		public static void RtfLinkifyText(RichTextBox rtb, string strLinkText,
+			bool bResetSelection, bool bAll)
+		{
+			if(rtb == null) { Debug.Assert(false); return; }
 
 			try
 			{
-				string strText = rtb.Text;
-				int nStart = strText.IndexOf(strLinkText);
+				if(string.IsNullOrEmpty(strLinkText)) return; // No assert
 
-				if(nStart >= 0)
+				string strText = (rtb.Text ?? string.Empty);
+				int iOffset = 0;
+
+				while(iOffset < strText.Length)
 				{
-					rtb.Select(nStart, strLinkText.Length);
+					int i = strText.IndexOf(strLinkText, iOffset);
+					if(i < iOffset) break;
+
+					rtb.Select(i, strLinkText.Length);
 					RtfSetSelectionLink(rtb);
 
-					if(bResetTempSelection) rtb.Select(0, 0);
+					if(!bAll) break;
+					iOffset = i + strLinkText.Length;
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				try { if(bResetSelection) rtb.Select(0, 0); }
+				catch(Exception) { Debug.Assert(false); }
+			}
 		}
 
-		public static void RtfLinkifyReferences(RichTextBox rtb,
-			bool bResetTempSelection)
+		public static void RtfLinkifyReferences(RichTextBox rtb, bool bResetSelection)
 		{
+			if(rtb == null) { Debug.Assert(false); return; }
+
 			try
 			{
-				string str = rtb.Text;
-
+				string str = (rtb.Text ?? string.Empty);
 				int iOffset = 0;
-				while(true)
+
+				while(iOffset < str.Length)
 				{
 					int iStart = str.IndexOf(SprEngine.StrRefStart, iOffset,
 						StrUtil.CaseIgnoreCmp);
-					if(iStart < 0) break;
+					if(iStart < iOffset) break;
 					int iEnd = str.IndexOf(SprEngine.StrRefEnd, iStart + 1,
 						StrUtil.CaseIgnoreCmp);
 					if(iEnd <= iStart) break;
 
-					string strRef = str.Substring(iStart, iEnd - iStart + 1);
-					RtfLinkifyText(rtb, strRef, bResetTempSelection);
+					string strRef = str.Substring(iStart, iEnd - iStart +
+						SprEngine.StrRefEnd.Length);
+					rtb.Select(iStart, strRef.Length);
+					RtfSetSelectionLink(rtb);
 
-					iOffset = iStart + 1;
+					iOffset = iStart + strRef.Length;
 				}
+
+				if(bResetSelection) rtb.Select(0, 0);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

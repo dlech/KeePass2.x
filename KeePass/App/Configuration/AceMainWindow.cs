@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -51,6 +51,15 @@ namespace KeePass.App.Configuration
 		// Additional flags: use value > Primary
 
 		Primary = 0x0F // Auto/On/Off are primary states
+	}
+
+	public enum AceEscAction
+	{
+		None = 0,
+		Lock = 1,
+		Minimize = 2,
+		MinimizeToTray = 3,
+		Exit = 4
 	}
 
 	public sealed class AceMainWindow
@@ -110,6 +119,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private AceMainWindowLayout m_layout = AceMainWindowLayout.Default;
+		[DefaultValue(AceMainWindowLayout.Default)]
 		public AceMainWindowLayout Layout
 		{
 			get { return m_layout; }
@@ -132,12 +142,21 @@ namespace KeePass.App.Configuration
 			set { m_bCloseMin = value; }
 		}
 
+		// For backward compatibility only; use EscAction instead
 		private bool m_bEscMin = false;
 		[DefaultValue(false)]
 		public bool EscMinimizesToTray
 		{
 			get { return m_bEscMin; }
 			set { m_bEscMin = value; }
+		}
+
+		private AceEscAction m_aEsc = AceEscAction.Lock;
+		[DefaultValue(AceEscAction.Lock)]
+		public AceEscAction EscAction
+		{
+			get { return m_aEsc; }
+			set { m_aEsc = value; }
 		}
 
 		private bool m_bMinToTray = false;
@@ -413,7 +432,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private int m_iLgMain = (int)AceListGrouping.Auto;
-		[DefaultValue(0)]
+		[DefaultValue((int)AceListGrouping.Auto)]
 		public int ListGrouping // AceListGrouping
 		{
 			get { return m_iLgMain; }

@@ -89,51 +89,51 @@
 			this.m_radioIdUuid.Size = new System.Drawing.Size(52, 17);
 			this.m_radioIdUuid.TabIndex = 5;
 			this.m_radioIdUuid.TabStop = true;
-			this.m_radioIdUuid.Text = "UUID";
+			this.m_radioIdUuid.Text = "UU&ID";
 			this.m_radioIdUuid.UseVisualStyleBackColor = true;
 			// 
 			// m_radioIdNotes
 			// 
 			this.m_radioIdNotes.AutoSize = true;
-			this.m_radioIdNotes.Location = new System.Drawing.Point(202, 19);
+			this.m_radioIdNotes.Location = new System.Drawing.Point(106, 42);
 			this.m_radioIdNotes.Name = "m_radioIdNotes";
 			this.m_radioIdNotes.Size = new System.Drawing.Size(53, 17);
 			this.m_radioIdNotes.TabIndex = 4;
 			this.m_radioIdNotes.TabStop = true;
-			this.m_radioIdNotes.Text = "Notes";
+			this.m_radioIdNotes.Text = "&Notes";
 			this.m_radioIdNotes.UseVisualStyleBackColor = true;
 			// 
 			// m_radioIdUrl
 			// 
 			this.m_radioIdUrl.AutoSize = true;
-			this.m_radioIdUrl.Location = new System.Drawing.Point(106, 42);
+			this.m_radioIdUrl.Location = new System.Drawing.Point(10, 42);
 			this.m_radioIdUrl.Name = "m_radioIdUrl";
 			this.m_radioIdUrl.Size = new System.Drawing.Size(47, 17);
 			this.m_radioIdUrl.TabIndex = 3;
 			this.m_radioIdUrl.TabStop = true;
-			this.m_radioIdUrl.Text = "URL";
+			this.m_radioIdUrl.Text = "UR&L";
 			this.m_radioIdUrl.UseVisualStyleBackColor = true;
 			// 
 			// m_radioIdPassword
 			// 
 			this.m_radioIdPassword.AutoSize = true;
-			this.m_radioIdPassword.Location = new System.Drawing.Point(106, 19);
+			this.m_radioIdPassword.Location = new System.Drawing.Point(202, 19);
 			this.m_radioIdPassword.Name = "m_radioIdPassword";
 			this.m_radioIdPassword.Size = new System.Drawing.Size(71, 17);
 			this.m_radioIdPassword.TabIndex = 2;
 			this.m_radioIdPassword.TabStop = true;
-			this.m_radioIdPassword.Text = "Password";
+			this.m_radioIdPassword.Text = "&Password";
 			this.m_radioIdPassword.UseVisualStyleBackColor = true;
 			// 
 			// m_radioIdUserName
 			// 
 			this.m_radioIdUserName.AutoSize = true;
-			this.m_radioIdUserName.Location = new System.Drawing.Point(10, 42);
+			this.m_radioIdUserName.Location = new System.Drawing.Point(106, 19);
 			this.m_radioIdUserName.Name = "m_radioIdUserName";
 			this.m_radioIdUserName.Size = new System.Drawing.Size(76, 17);
 			this.m_radioIdUserName.TabIndex = 1;
 			this.m_radioIdUserName.TabStop = true;
-			this.m_radioIdUserName.Text = "User name";
+			this.m_radioIdUserName.Text = "&User name";
 			this.m_radioIdUserName.UseVisualStyleBackColor = true;
 			// 
 			// m_radioIdTitle
@@ -144,7 +144,7 @@
 			this.m_radioIdTitle.Size = new System.Drawing.Size(45, 17);
 			this.m_radioIdTitle.TabIndex = 0;
 			this.m_radioIdTitle.TabStop = true;
-			this.m_radioIdTitle.Text = "Title";
+			this.m_radioIdTitle.Text = "&Title";
 			this.m_radioIdTitle.UseVisualStyleBackColor = true;
 			// 
 			// m_grpRefField
@@ -164,45 +164,45 @@
 			// m_radioRefNotes
 			// 
 			this.m_radioRefNotes.AutoSize = true;
-			this.m_radioRefNotes.Location = new System.Drawing.Point(203, 19);
+			this.m_radioRefNotes.Location = new System.Drawing.Point(107, 42);
 			this.m_radioRefNotes.Name = "m_radioRefNotes";
 			this.m_radioRefNotes.Size = new System.Drawing.Size(53, 17);
 			this.m_radioRefNotes.TabIndex = 4;
 			this.m_radioRefNotes.TabStop = true;
-			this.m_radioRefNotes.Text = "Notes";
+			this.m_radioRefNotes.Text = "N&otes";
 			this.m_radioRefNotes.UseVisualStyleBackColor = true;
 			// 
 			// m_radioRefUrl
 			// 
 			this.m_radioRefUrl.AutoSize = true;
-			this.m_radioRefUrl.Location = new System.Drawing.Point(107, 42);
+			this.m_radioRefUrl.Location = new System.Drawing.Point(11, 42);
 			this.m_radioRefUrl.Name = "m_radioRefUrl";
 			this.m_radioRefUrl.Size = new System.Drawing.Size(47, 17);
 			this.m_radioRefUrl.TabIndex = 3;
 			this.m_radioRefUrl.TabStop = true;
-			this.m_radioRefUrl.Text = "URL";
+			this.m_radioRefUrl.Text = "U&RL";
 			this.m_radioRefUrl.UseVisualStyleBackColor = true;
 			// 
 			// m_radioRefPassword
 			// 
 			this.m_radioRefPassword.AutoSize = true;
-			this.m_radioRefPassword.Location = new System.Drawing.Point(107, 19);
+			this.m_radioRefPassword.Location = new System.Drawing.Point(203, 19);
 			this.m_radioRefPassword.Name = "m_radioRefPassword";
 			this.m_radioRefPassword.Size = new System.Drawing.Size(71, 17);
 			this.m_radioRefPassword.TabIndex = 2;
 			this.m_radioRefPassword.TabStop = true;
-			this.m_radioRefPassword.Text = "Password";
+			this.m_radioRefPassword.Text = "P&assword";
 			this.m_radioRefPassword.UseVisualStyleBackColor = true;
 			// 
 			// m_radioRefUserName
 			// 
 			this.m_radioRefUserName.AutoSize = true;
-			this.m_radioRefUserName.Location = new System.Drawing.Point(11, 42);
+			this.m_radioRefUserName.Location = new System.Drawing.Point(107, 19);
 			this.m_radioRefUserName.Name = "m_radioRefUserName";
 			this.m_radioRefUserName.Size = new System.Drawing.Size(76, 17);
 			this.m_radioRefUserName.TabIndex = 1;
 			this.m_radioRefUserName.TabStop = true;
-			this.m_radioRefUserName.Text = "User name";
+			this.m_radioRefUserName.Text = "U&ser name";
 			this.m_radioRefUserName.UseVisualStyleBackColor = true;
 			// 
 			// m_radioRefTitle
@@ -213,7 +213,7 @@
 			this.m_radioRefTitle.Size = new System.Drawing.Size(45, 17);
 			this.m_radioRefTitle.TabIndex = 0;
 			this.m_radioRefTitle.TabStop = true;
-			this.m_radioRefTitle.Text = "Title";
+			this.m_radioRefTitle.Text = "Titl&e";
 			this.m_radioRefTitle.UseVisualStyleBackColor = true;
 			// 
 			// m_btnOK
@@ -255,7 +255,7 @@
 			this.m_lblFilter.Name = "m_lblFilter";
 			this.m_lblFilter.Size = new System.Drawing.Size(32, 13);
 			this.m_lblFilter.TabIndex = 6;
-			this.m_lblFilter.Text = "Filter:";
+			this.m_lblFilter.Text = "&Filter:";
 			// 
 			// m_tbFilter
 			// 

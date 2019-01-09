@@ -17,7 +17,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -262,19 +262,10 @@ using a cryptographically secure pseudo-random number generator
 <img src="../images/b16x16_file_locked.png" class="singleimg"
 alt="Application Protection" />&nbsp;&nbsp;Process Memory Protection</h2>
 
-<p>While KeePass is running, sensitive data (like the hash of the master key and
-entry passwords) is stored encryptedly in process memory.
+<p>While KeePass is running, sensitive data (like the hash of the master key
+and entry passwords) is stored encryptedly in process memory.
 This means that even if you would dump the KeePass process memory to disk,
 you could not find any sensitive data.</p>
-
-<!-- By default, entry passwords are encrypted in memory, the other fields not
-(like in 1.x). However, you can turn on memory protection for other fields
-in the database settings dialog (not recommended though, because of
-performance reasons). -->
-
-<!-- <p>For example, when you are copying a password to the clipboard, KeePass
-first decrypts the password field, copies it to the clipboard
-and immediately re-encrypts it using the random key.</p> -->
 
 <p>Furthermore, KeePass erases all security-critical memory when it is not
 needed anymore, i.e. it overwrites these memory areas before releasing them.</p>
@@ -306,7 +297,9 @@ the cell content (the password) as unencrypted string
 Operations that result in unencrypted data in process memory include,
 but are not limited to: displaying data (not asterisks) in standard controls,
 searching data, and replacing placeholders (during auto-type, drag&amp;drop,
-copying to clipboard, ...).</p>
+copying to clipboard, ...).
+Windows may make an internal copy of the data (in process memory)
+that cannot be erased by KeePass.</p>
 
 <br />
 

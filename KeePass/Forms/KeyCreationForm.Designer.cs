@@ -70,7 +70,7 @@
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(498, 13);
-			this.m_lblIntro.TabIndex = 22;
+			this.m_lblIntro.TabIndex = 23;
 			this.m_lblIntro.Text = "Specify the composite master key, which will be used to encrypt the database.";
 			// 
 			// m_lblMultiInfo
@@ -78,7 +78,7 @@
 			this.m_lblMultiInfo.Location = new System.Drawing.Point(9, 93);
 			this.m_lblMultiInfo.Name = "m_lblMultiInfo";
 			this.m_lblMultiInfo.Size = new System.Drawing.Size(498, 42);
-			this.m_lblMultiInfo.TabIndex = 23;
+			this.m_lblMultiInfo.TabIndex = 24;
 			this.m_lblMultiInfo.Text = resources.GetString("m_lblMultiInfo.Text");
 			// 
 			// m_cbPassword
@@ -87,8 +87,8 @@
 			this.m_cbPassword.Location = new System.Drawing.Point(12, 147);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(109, 17);
-			this.m_cbPassword.TabIndex = 24;
-			this.m_cbPassword.Text = "Master &password:";
+			this.m_cbPassword.TabIndex = 25;
+			this.m_cbPassword.Text = "&Master password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
 			// 
@@ -107,7 +107,7 @@
 			this.m_lblRepeatPassword.Name = "m_lblRepeatPassword";
 			this.m_lblRepeatPassword.Size = new System.Drawing.Size(93, 13);
 			this.m_lblRepeatPassword.TabIndex = 2;
-			this.m_lblRepeatPassword.Text = "Repeat password:";
+			this.m_lblRepeatPassword.Text = "&Repeat password:";
 			// 
 			// m_tbRepeatPassword
 			// 
@@ -134,7 +134,7 @@
 			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 391);
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
 			this.m_cbUserAccount.Size = new System.Drawing.Size(135, 17);
-			this.m_cbUserAccount.TabIndex = 14;
+			this.m_cbUserAccount.TabIndex = 15;
 			this.m_cbUserAccount.Text = "Windows &user account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
 			this.m_cbUserAccount.CheckedChanged += new System.EventHandler(this.OnWinUserCheckedChanged);
@@ -144,7 +144,7 @@
 			this.m_lblWindowsAccDesc.Location = new System.Drawing.Point(28, 411);
 			this.m_lblWindowsAccDesc.Name = "m_lblWindowsAccDesc";
 			this.m_lblWindowsAccDesc.Size = new System.Drawing.Size(479, 27);
-			this.m_lblWindowsAccDesc.TabIndex = 15;
+			this.m_lblWindowsAccDesc.TabIndex = 16;
 			this.m_lblWindowsAccDesc.Text = "This source uses data of the current Windows user account. This data does not cha" +
 				"nge when the account password changes.";
 			// 
@@ -154,7 +154,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(432, 542);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 20;
+			this.m_btnCancel.TabIndex = 21;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCancel.UseVisualStyleBackColor = true;
@@ -166,7 +166,7 @@
 			this.m_btnCreate.Location = new System.Drawing.Point(351, 542);
 			this.m_btnCreate.Name = "m_btnCreate";
 			this.m_btnCreate.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCreate.TabIndex = 19;
+			this.m_btnCreate.TabIndex = 20;
 			this.m_btnCreate.Text = "OK";
 			this.m_btnCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnCreate.UseVisualStyleBackColor = true;
@@ -212,7 +212,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 542);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 21;
+			this.m_btnHelp.TabIndex = 22;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -223,7 +223,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 531);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(519, 2);
-			this.m_lblSeparator.TabIndex = 18;
+			this.m_lblSeparator.TabIndex = 19;
 			// 
 			// m_lblEstimatedQuality
 			// 
@@ -268,7 +268,7 @@
 			this.m_lblWindowsAccDesc2.Location = new System.Drawing.Point(53, 446);
 			this.m_lblWindowsAccDesc2.Name = "m_lblWindowsAccDesc2";
 			this.m_lblWindowsAccDesc2.Size = new System.Drawing.Size(454, 54);
-			this.m_lblWindowsAccDesc2.TabIndex = 16;
+			this.m_lblWindowsAccDesc2.TabIndex = 17;
 			this.m_lblWindowsAccDesc2.Text = resources.GetString("m_lblWindowsAccDesc2.Text");
 			// 
 			// m_picAccWarning
@@ -305,7 +305,7 @@
 			this.m_lblKeyFileWarning.Location = new System.Drawing.Point(53, 334);
 			this.m_lblKeyFileWarning.Name = "m_lblKeyFileWarning";
 			this.m_lblKeyFileWarning.Size = new System.Drawing.Size(454, 28);
-			this.m_lblKeyFileWarning.TabIndex = 12;
+			this.m_lblKeyFileWarning.TabIndex = 13;
 			this.m_lblKeyFileWarning.Text = "If the key file is lost or its contents are changed, the database cannot be opene" +
 				"d anymore. You should create a backup of the key file.";
 			// 
@@ -315,7 +315,7 @@
 			this.m_lnkKeyFile.Location = new System.Drawing.Point(53, 366);
 			this.m_lnkKeyFile.Name = "m_lnkKeyFile";
 			this.m_lnkKeyFile.Size = new System.Drawing.Size(159, 13);
-			this.m_lnkKeyFile.TabIndex = 13;
+			this.m_lnkKeyFile.TabIndex = 14;
 			this.m_lnkKeyFile.TabStop = true;
 			this.m_lnkKeyFile.Text = "More information about key files.";
 			this.m_lnkKeyFile.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnKeyFileLinkClicked);
@@ -326,7 +326,7 @@
 			this.m_lnkUserAccount.Location = new System.Drawing.Point(53, 504);
 			this.m_lnkUserAccount.Name = "m_lnkUserAccount";
 			this.m_lnkUserAccount.Size = new System.Drawing.Size(235, 13);
-			this.m_lnkUserAccount.TabIndex = 17;
+			this.m_lnkUserAccount.TabIndex = 18;
 			this.m_lnkUserAccount.TabStop = true;
 			this.m_lnkUserAccount.Text = "More information about Windows user accounts.";
 			this.m_lnkUserAccount.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnUserAccountLinkClicked);
@@ -344,7 +344,7 @@
 			this.m_lblKeyFileInfo.Location = new System.Drawing.Point(28, 299);
 			this.m_lblKeyFileInfo.Name = "m_lblKeyFileInfo";
 			this.m_lblKeyFileInfo.Size = new System.Drawing.Size(479, 27);
-			this.m_lblKeyFileInfo.TabIndex = 25;
+			this.m_lblKeyFileInfo.TabIndex = 12;
 			this.m_lblKeyFileInfo.Text = "A key file can be used as part of the master key; it does not store any database " +
 				"data. If an attacker has access to the key file, it does not provide any protect" +
 				"ion.";

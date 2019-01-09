@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ namespace KeePass.Forms
 		private bool m_bPrintMode = true;
 		private int m_nDefaultSortColumn = -1;
 
-		private bool m_bBlockPreviewRefresh = false;
+		private int m_iBlockPreviewRefresh = 0;
 		private Control m_cPreBlock = null;
 
 		private ImageList m_ilTabIcons = null;
@@ -134,7 +134,9 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pgDataSource != null); if(m_pgDataSource == null) throw new ArgumentException();
+			if(m_pgDataSource == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+
+			++m_iBlockPreviewRefresh;
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -168,7 +170,6 @@ namespace KeePass.Forms
 
 			if(!m_bPrintMode) m_btnOK.Text = KPRes.Export;
 
-			m_bBlockPreviewRefresh = true;
 			m_rbTabular.Checked = true;
 
 			m_cmbSortEntries.Items.Add("(" + KPRes.None + ")");
@@ -190,7 +191,6 @@ namespace KeePass.Forms
 			else if(colType == AceColumnType.Url) nSortSel = 4;
 			else if(colType == AceColumnType.Notes) nSortSel = 5;
 			m_cmbSortEntries.SelectedIndex = nSortSel;
-			m_bBlockPreviewRefresh = false;
 
 			if(!m_bPrintMode) // Export to HTML
 			{
@@ -200,16 +200,17 @@ namespace KeePass.Forms
 
 			Program.TempFilesPool.AddWebBrowserPrintContent();
 
-			UpdateHtmlDocument(true);
+			--m_iBlockPreviewRefresh;
+			UpdateWebBrowser(true);
 			UpdateUIState();
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			UpdateHtmlDocument(false);
-
 			if(m_bPrintMode)
 			{
+				UpdateWebBrowser(false);
+
 				try { m_wbMain.ShowPrintDialog(); } // Throws in Mono 1.2.6+
 				catch(NotImplementedException)
 				{
@@ -217,9 +218,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception ex) { MessageService.ShowWarning(ex); }
 			}
-			else m_strGeneratedHtml = UIUtil.GetWebBrowserDocument(m_wbMain);
-
-			if(m_strGeneratedHtml == null) m_strGeneratedHtml = string.Empty;
+			else m_strGeneratedHtml = (GenerateHtmlDocument() ?? string.Empty);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -264,7 +263,8 @@ namespace KeePass.Forms
 			m_btnOK.Enabled = !bBlock;
 			m_btnCancel.Enabled = !bBlock;
 
-			m_wbMain.Visible = !bBlock;
+			try { m_wbMain.Visible = !bBlock; }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
 			if(!bBlock && (m_cPreBlock != null)) UIUtil.SetFocus(m_cPreBlock, this);
 		}
@@ -286,14 +286,28 @@ namespace KeePass.Forms
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
 		} */
 
-		private void UpdateHtmlDocument(bool bInitial)
+		private void UpdateWebBrowser(bool bInitial)
 		{
-			if(m_bBlockPreviewRefresh) return;
-			m_bBlockPreviewRefresh = true;
+			if(m_iBlockPreviewRefresh > 0) return;
+
+			++m_iBlockPreviewRefresh;
 			if(!bInitial) UIBlockInteraction(true);
 			// ShowWaitDocument();
 
-			PwGroup pgDataSource = m_pgDataSource.CloneDeep();
+			string strHtml = GenerateHtmlDocument();
+
+			try { UIUtil.SetWebBrowserDocument(m_wbMain, strHtml); }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
+			try { m_wbMain.AllowNavigation = false; }
+			catch(Exception) { Debug.Assert(false); }
+
+			if(!bInitial) UIBlockInteraction(false);
+			--m_iBlockPreviewRefresh;
+		}
+
+		private string GenerateHtmlDocument()
+		{
+			PwGroup pgDataSource = m_pgDataSource.CloneDeep(); // Sorting, ...
 
 			int nSortEntries = m_cmbSortEntries.SelectedIndex;
 			string strSortFieldName = null;
@@ -682,14 +696,7 @@ namespace KeePass.Forms
 				sb.AppendLine("</table><br />");
 
 			sb.AppendLine("</body></html>");
-
-			try { UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString()); }
-			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
-			try { m_wbMain.AllowNavigation = false; }
-			catch(Exception) { Debug.Assert(false); }
-
-			if(!bInitial) UIBlockInteraction(false);
-			m_bBlockPreviewRefresh = false;
+			return sb.ToString();
 		}
 
 		private static string CompileText(string strText, PfOptions p, bool bToHtml,
@@ -757,13 +764,14 @@ namespace KeePass.Forms
 
 			sb.Append("<td class=\"field_data\" style=\"width: 80%;\">");
 
-			bool bPassword = (kvp.Key == PwDefs.PasswordField);
+			bool bUrl = (kvp.Key == KPRes.Url);
+			bool bPassword = (kvp.Key == KPRes.Password);
 			bool bCode = (p.MonoPasswords && bPassword);
 
 			if(bCode) sb.Append(p.SmallMono ? "<code><small>" : "<code>");
 			else sb.Append(p.FontInit);
 
-			if((kvp.Key == PwDefs.UrlField) && !kvp.Value.IsEmpty)
+			if(bUrl && !kvp.Value.IsEmpty)
 				sb.Append(MakeUrlLink(kvp.Value.ReadString(), p));
 			else
 			{
@@ -874,7 +882,7 @@ namespace KeePass.Forms
 
 		private void OnBtnConfigPage(object sender, EventArgs e)
 		{
-			UpdateHtmlDocument(false);
+			UpdateWebBrowser(false);
 
 			try { m_wbMain.ShowPageSetupDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
@@ -886,7 +894,7 @@ namespace KeePass.Forms
 
 		private void OnBtnPrintPreview(object sender, EventArgs e)
 		{
-			UpdateHtmlDocument(false);
+			UpdateWebBrowser(false);
 
 			try { m_wbMain.ShowPrintPreviewDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
@@ -898,7 +906,7 @@ namespace KeePass.Forms
 
 		private void OnTabSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_tabMain.SelectedIndex == 0) UpdateHtmlDocument(false);
+			if(m_tabMain.SelectedIndex == 0) UpdateWebBrowser(false);
 		}
 
 		private void OnTabularCheckedChanged(object sender, EventArgs e)
@@ -943,7 +951,7 @@ namespace KeePass.Forms
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
-			if(m_bBlockPreviewRefresh) e.Cancel = true;
+			if(m_iBlockPreviewRefresh > 0) e.Cancel = true;
 		}
 
 		private void OnIconCheckedChanged(object sender, EventArgs e)

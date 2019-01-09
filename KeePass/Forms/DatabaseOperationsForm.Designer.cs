@@ -136,7 +136,7 @@
 			this.m_lblHistoryEntriesDays.Name = "m_lblHistoryEntriesDays";
 			this.m_lblHistoryEntriesDays.Size = new System.Drawing.Size(189, 13);
 			this.m_lblHistoryEntriesDays.TabIndex = 2;
-			this.m_lblHistoryEntriesDays.Text = "Delete history entries older than (days):";
+			this.m_lblHistoryEntriesDays.Text = "Delete &history entries older than (days):";
 			// 
 			// m_lblDeleteHistoryEntries
 			// 

@@ -17,7 +17,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2018 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -65,7 +65,7 @@ follow special rules or fulfill certain conditions.</p>
 which characters can be used (e.g. upper-case letters, digits, ...) and KeePass will
 randomly pick characters out of the set.</p>
 
-<p><b>Defining a Character Set:</b><br />
+<p><b>Defining a character set:</b><br />
 The character set can be defined directly in the password generator window. For convenience,
 KeePass offers adding commonly used ranges of characters to the set. This is done by
 ticking the appropriate check box. Additionally to these predefined character ranges, you
@@ -80,7 +80,7 @@ generated passwords, but they are not <em>forced</em> to.
 If you want to force that some characters appear in the generated passwords,
 you have to use the pattern-based generation.</p>
 
-<p><b>Character Sets are Sets:</b><br />
+<p><b>Character sets are sets:</b><br />
 In mathematical terms, character sets are sets, not vectors. This means that characters
 cannot be added twice to the set. Either a character is in the set or it is not.</p>
 
@@ -234,7 +234,7 @@ Generates for example: 41922, 12733, 43960, 07660, 12390, 74680, ...</p>
 <p><code>&#92;H&#92;e&#92;x&#92;:&#92; HHHHHH</code><br />
 Generates for example: 'Hex: 13567A', 'Hex: A6B99D', 'Hex: 02243C', ...</p>
 
-<p><b>Common Password Patterns:</b></p>
+<p><b>Common password patterns:</b></p>
 
 <table class="tablebox">
 <tr><th>Name</th>
@@ -332,7 +332,7 @@ and Using Password Generator Profiles</h2>
 <p>Password generator options (character set, length, pattern, ...) can be saved
 as password generator profiles.</p>
 
-<p><b>Creating/Modifying a Profile:</b></p>
+<p><b>Creating/modifying a profile:</b></p>
 
 <ol>
 <li>Open the <i>Password Generator</i> window.</li>
@@ -346,11 +346,25 @@ click <i>OK/Accept</i>. Otherwise click <i>Cancel/Close</i> (the profile is not 
 profile management is independent of password generation).</li>
 </ol>
 
-<p><b>Using a Profile:</b></p>
-
-<p>To use a profile, simply select it from the drop-down profiles list
+<p><b>Using a profile:</b><br />
+To use a profile, simply select it from the drop-down profiles list
 in the password generator window. All settings of this profile will be
 restored accordingly.</p>
+
+<p><b>Meta-profile 'Derive from previous password':</b><br />
+When this meta-profile is selected, a password is generated based on
+a character set derived from the previous password. The new password
+has the same length as the old one, and every character of the old
+password turns on the character subset that contains this character.
+For example, if the old password contains the letter 'R', then the character
+set used for generating the new password contains the range 'A' to 'Z'.<br />
+<i>Warning! This meta-profile should not be used blindly
+(i.e. without reviewing the used character set).
+The new password does not necessarily contain at least one character
+from each character subset (see '</i><a href="#charset"><i>Generation
+Based on Character Sets</i></a><i>'), thus blindly generating new passwords
+with this meta-profile can result in a quality degradation of the
+effectively used profile.</i></p>
 
 <br />
 
@@ -367,7 +381,7 @@ in the password generator dialog.</p>
 <i>'(Automatically generated passwords for new entries)'</i> profile (see
 section above).</p>
 
-<p><b>Disabling Automatically Generated Passwords:</b><br />
+<p><b>Disabling automatically generated passwords:</b><br />
 To disable automatically generated passwords for new entries, select
 <i>'Generate using character set'</i> and specify <i>0</i> as password length.
 Overwrite the appropriate profile (see above).</p>

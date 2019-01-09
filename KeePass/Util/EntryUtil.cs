@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -112,8 +112,9 @@ namespace KeePass.Util
 		}
 
 		// Old format name (<= 2.14): "KeePassEntriesCF",
-		// old format name (<= 2.22): "KeePassEntriesCX"
-		public static readonly string ClipFormatEntries = "KeePassEntries";
+		// old format name (<= 2.22): "KeePassEntriesCX",
+		// old format name (<= 2.40): "KeePassEntries"
+		public static readonly string ClipFormatEntries = "Entries-E"; // E = encrypted
 		private static readonly byte[] AdditionalEntropy = new byte[] {
 			0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
@@ -135,24 +136,16 @@ namespace KeePass.Util
 
 				byte[] pbFinal = CryptoUtil.ProtectData(ms.ToArray(),
 					AdditionalEntropy, DataProtectionScope.CurrentUser);
-				ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, true, hOwner);
+				ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, hOwner);
 			}
 		}
 
 		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
 			PwGroup pgStorage)
 		{
-			try { PasteEntriesFromClipboardPriv(pwDatabase, pgStorage); }
-			catch(Exception) { Debug.Assert(false); }
-		}
-
-		private static void PasteEntriesFromClipboardPriv(PwDatabase pwDatabase,
-			PwGroup pgStorage)
-		{
-			if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
-
-			byte[] pbEnc = ClipboardUtil.GetEncodedData(ClipFormatEntries, IntPtr.Zero);
-			if(pbEnc == null) { Debug.Assert(false); return; }
+			// if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
+			byte[] pbEnc = ClipboardUtil.GetData(ClipFormatEntries);
+			if(pbEnc == null) return;
 
 			byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc,
 				AdditionalEntropy, DataProtectionScope.CurrentUser);
@@ -806,7 +799,7 @@ namespace KeePass.Util
 
 		private static bool GetEntryPasswords(PwGroup pg, PwDatabase pd,
 			IStatusLogger sl, uint uPrePct, List<PwEntry> lEntries,
-			List<string> lPasswords)
+			List<string> lPasswords, bool bExclTans)
 		{
 			uint uEntries = pg.GetEntriesCount(true);
 			uint uEntriesDone = 0;
@@ -822,6 +815,7 @@ namespace KeePass.Util
 				}
 
 				if(!pe.GetSearchingEnabled()) return true;
+				if(bExclTans && PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
 				string str = SprEngine.Compile(pe.Strings.ReadSafe(
@@ -850,7 +844,7 @@ namespace KeePass.Util
 
 			List<PwEntry> lEntries = new List<PwEntry>();
 			List<string> lPasswords = new List<string>();
-			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords))
+			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
 				return null;
 
 			Debug.Assert(TextSimilarity.LevenshteinDistance("Columns", "Comments") == 4);
@@ -1045,7 +1039,7 @@ namespace KeePass.Util
 
 			List<PwEntry> lEntries = new List<PwEntry>();
 			List<string> lPasswords = new List<string>();
-			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords))
+			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
 				return null;
 
 			int n = lEntries.Count;
@@ -1116,7 +1110,7 @@ namespace KeePass.Util
 			// int cgMax = Math.Min(Math.Max(n / FspcShowItemsPerCluster, 20), n);
 			int cgMax = Math.Min(Math.Max(n / 2, 20), n);
 
-			for(int i = 0; i < cgMax; ++i)
+			for(int i = 0; i < lXSums.Count; ++i)
 			{
 				int p = lXSums[i].Key;
 				PwEntry pe = lEntries[p];
@@ -1137,6 +1131,8 @@ namespace KeePass.Util
 				{
 					lSim.Sort(fCmpE);
 					l.Add(lSim);
+
+					if(l.Count >= cgMax) break;
 				}
 			}
 
@@ -1234,6 +1230,7 @@ namespace KeePass.Util
 				++uEntriesDone; // Also used for sorting, see below
 
 				if(!pe.GetSearchingEnabled()) return true;
+				if(PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
 				string str = SprEngine.Compile(pe.Strings.ReadSafe(

@@ -316,6 +316,9 @@
 		<Data Name="Clipboard">
 			<Value>Clipboard</Value>
 		</Data>
+		<Data Name="ClipboardClearDesc">
+			<Value>Copying sensitive data to the clipboard starts a countdown. After the specified time, the clipboard is cleared.</Value>
+		</Data>
 		<Data Name="ClipboardClearInSeconds">
 			<Value>Clipboard will be cleared in [PARAM] seconds</Value>
 		</Data>
@@ -324,6 +327,15 @@
 		</Data>
 		<Data Name="ClipboardDataCopied">
 			<Value>Data copied to clipboard.</Value>
+		</Data>
+		<Data Name="ClipboardMain">
+			<Value>Clipboard (Main Entry List)</Value>
+		</Data>
+		<Data Name="ClipboardNoPersist">
+			<Value>Do not store data in the Windows clipboard history and the cloud clipboard</Value>
+		</Data>
+		<Data Name="ClipboardOptionME">
+			<Value>This option applies to entry clipboard commands in the main window (like 'Copy User Name' and 'Copy Password').</Value>
 		</Data>
 		<Data Name="ClipboardViewerIgnoreFormat">
 			<Value>Use 'Clipboard Viewer Ignore' clipboard format</Value>
@@ -340,8 +352,8 @@
 		<Data Name="ClosingDatabaseFile">
 			<Value>Closing database file</Value>
 		</Data>
-		<Data Name="ClusterCenters">
-			<Value>Clusters of similar passwords.</Value>
+		<Data Name="ClusterCenters2">
+			<Value>Clusters of similar passwords (excluding TANs).</Value>
 		</Data>
 		<Data Name="ClusterCentersDesc">
 			<Value>Each entry in the list below is the center of a cluster of entries that have similar, but not identical passwords. Click on an entry to see the cluster (list of entries with descending similarity).</Value>
@@ -488,7 +500,7 @@
 			<Value>You can change the global auto-type hot key to a different key combination in 'Tools' -&gt; 'Options' -&gt; tab 'Integration'.</Value>
 		</Data>
 		<Data Name="CurrentStyle">
-			<Value>Current Style</Value>
+			<Value>Current style</Value>
 		</Data>
 		<Data Name="Custom">
 			<Value>Custom</Value>
@@ -757,14 +769,14 @@
 		<Data Name="Errors">
 			<Value>Errors</Value>
 		</Data>
-		<Data Name="EscMinimizesToTray">
-			<Value>Esc minimizes to tray instead of locking the workspace</Value>
-		</Data>
 		<Data Name="Event">
 			<Value>Event</Value>
 		</Data>
 		<Data Name="ExecuteCmdLineUrl">
 			<Value>Execute command line / URL</Value>
+		</Data>
+		<Data Name="Exit">
+			<Value>Exit</Value>
 		</Data>
 		<Data Name="ExitInsteadOfLockingAfterTime">
 			<Value>Exit instead of locking the workspace after the specified time</Value>
@@ -1348,6 +1360,9 @@
 		<Data Name="LockOnSuspend">
 			<Value>Lock workspace when the computer is about to be suspended</Value>
 		</Data>
+		<Data Name="LockWorkspace">
+			<Value>Lock workspace</Value>
+		</Data>
 		<Data Name="MainInstruction">
 			<Value>Main instruction</Value>
 		</Data>
@@ -1411,6 +1426,9 @@
 		<Data Name="Method">
 			<Value>Method</Value>
 		</Data>
+		<Data Name="Minimize">
+			<Value>Minimize</Value>
+		</Data>
 		<Data Name="MinimizeAfterAutoType">
 			<Value>Minimize main window after performing auto-type</Value>
 		</Data>
@@ -1428,6 +1446,9 @@
 		</Data>
 		<Data Name="MinimizeToTray">
 			<Value>Minimize to tray instead of taskbar</Value>
+		</Data>
+		<Data Name="MinimizeToTrayStc">
+			<Value>Minimize to tray</Value>
 		</Data>
 		<Data Name="More">
 			<Value>More</Value>
@@ -1639,8 +1660,8 @@
 		<Data Name="PasswordQuality">
 			<Value>Password Quality</Value>
 		</Data>
-		<Data Name="PasswordQualityReport">
-			<Value>Estimated quality of the entry passwords.</Value>
+		<Data Name="PasswordQualityReport2">
+			<Value>Estimated quality of the entry passwords (excluding TANs).</Value>
 		</Data>
 		<Data Name="PasswordRepeatFailed">
 			<Value>Password and repeated password aren't identical!</Value>
@@ -2047,8 +2068,8 @@
 		<Data Name="SimilarPasswordsGroup">
 			<Value>Entries using similar passwords (similarity: {PARAM}):</Value>
 		</Data>
-		<Data Name="SimilarPasswordsList">
-			<Value>List of entries that are using similar passwords.</Value>
+		<Data Name="SimilarPasswordsList2">
+			<Value>List of entries that are using similar passwords (excluding TANs).</Value>
 		</Data>
 		<Data Name="SimilarPasswordsNoDup">
 			<Value>The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the 'Find Duplicate Passwords' command (in the main menu).</Value>
@@ -2329,6 +2350,15 @@
 		<Data Name="UrlSaveTitle">
 			<Value>Save To URL</Value>
 		</Data>
+		<Data Name="URtfCheck">
+			<Value>It is recommended to reopen the text and check it carefully.</Value>
+		</Data>
+		<Data Name="URtfProblem">
+			<Value>KeePass has detected that certain characters in your text may have been corrupted (due to a bug in Windows).</Value>
+		</Data>
+		<Data Name="URtfSuggestion">
+			<Value>In order to avoid text corruptions, turn off the Windows option 'Use Unicode UTF-8 for worldwide language support'.</Value>
+		</Data>
 		<Data Name="UseFileLocks">
 			<Value>Use database lock files</Value>
 		</Data>
@@ -2522,7 +2552,7 @@
 			<Value>Failed to create the final encryption/decryption key!</Value>
 		</Data>
 		<Data Name="FrameworkNotImplExcp">
-			<Value>The .NET framework/runtime under which KeePass is currently running does not support this operation.</Value>
+			<Value>The .NET Framework/runtime under which KeePass is currently running does not support this operation.</Value>
 		</Data>
 		<Data Name="General">
 			<Value>General</Value>

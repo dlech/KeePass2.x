@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -353,6 +353,8 @@ namespace KeePass.App.Configuration
 
 			if(bRemoveConfigPref) tConfig.Meta.PreferUserConfiguration = bConfigPref;
 
+			AssertConfigPref(tConfig);
+
 			tConfig.OnSavePost();
 			return bResult;
 		}
@@ -364,11 +366,14 @@ namespace KeePass.App.Configuration
 
 			AppConfigSerializer.GetConfigPaths();
 
-			bool bPreferUser = false;
 			XmlDocument xdEnforced = LoadEnforcedConfigFile();
 			AppConfigEx cfgGlobal = LoadConfigFileEx(m_strGlobalConfigFile, xdEnforced);
-			if((cfgGlobal != null) && cfgGlobal.Meta.PreferUserConfiguration)
-				bPreferUser = true;
+
+			bool bPreferUser = (xdEnforced != null);
+			if(cfgGlobal != null)
+				bPreferUser = cfgGlobal.Meta.PreferUserConfiguration;
+			else if(xdEnforced != null)
+				GetConfigPref(xdEnforced, ref bPreferUser, null);
 
 			if(bPreferUser)
 			{
@@ -391,6 +396,51 @@ namespace KeePass.App.Configuration
 #endif
 
 			return false;
+		}
+
+		private static void GetConfigPref(XmlDocument d, ref bool bPrefUser,
+			bool? obExpectedPref)
+		{
+			if(d == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				XmlElement eRoot = d.DocumentElement;
+				if(eRoot == null) { Debug.Assert(false); return; }
+
+				// obExpectedPref is for debugging only; an assertion
+				// will be displayed if the XPath is incorrect
+
+				XmlNode n = eRoot.SelectSingleNode("Meta/PreferUserConfiguration");
+				if(n == null) { Debug.Assert(!obExpectedPref.HasValue); return; }
+
+				bPrefUser = XmlConvert.ToBoolean(XmlUtil.SafeInnerText(n));
+				if(obExpectedPref.HasValue) { Debug.Assert(bPrefUser == obExpectedPref.Value); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		[Conditional("DEBUG")]
+		private static void AssertConfigPref(AppConfigEx t)
+		{
+#if DEBUG
+			if(t == null) { Debug.Assert(false); return; }
+
+			using(MemoryStream ms = new MemoryStream())
+			{
+				XmlUtilEx.Serialize<AppConfigEx>(ms, t);
+
+				using(MemoryStream msRead = new MemoryStream(ms.ToArray(), false))
+				{
+					XmlDocument d = XmlUtilEx.CreateXmlDocument();
+					d.Load(msRead);
+
+					// Assert that the meta node XPath is correct
+					bool bDummy = false;
+					GetConfigPref(d, ref bDummy, t.Meta.PreferUserConfiguration);
+				}
+			}
+#endif
 		}
 	}
 }

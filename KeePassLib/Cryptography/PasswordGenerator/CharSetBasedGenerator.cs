@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -36,28 +36,27 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			if(pwProfile.Length == 0) return PwgError.Success;
 
 			PwCharSet pcs = new PwCharSet(pwProfile.CharSet.ToString());
-			char[] vGenerated = new char[pwProfile.Length];
-
 			PwGenerator.PrepareCharSet(pcs, pwProfile);
 
-			for(int nIndex = 0; nIndex < (int)pwProfile.Length; ++nIndex)
+			char[] v = new char[pwProfile.Length];
+			try
 			{
-				char ch = PwGenerator.GenerateCharacter(pwProfile, pcs,
-					crsRandomSource);
-
-				if(ch == char.MinValue)
+				for(int i = 0; i < v.Length; ++i)
 				{
-					MemUtil.ZeroArray<char>(vGenerated);
-					return PwgError.TooFewCharacters;
+					char ch = PwGenerator.GenerateCharacter(pwProfile,
+						pcs, crsRandomSource);
+
+					if(ch == char.MinValue)
+						return PwgError.TooFewCharacters;
+
+					v[i] = ch;
 				}
 
-				vGenerated[nIndex] = ch;
+				byte[] pbUtf8 = StrUtil.Utf8.GetBytes(v);
+				psOut = new ProtectedString(true, pbUtf8);
+				MemUtil.ZeroByteArray(pbUtf8);
 			}
-
-			byte[] pbUtf8 = StrUtil.Utf8.GetBytes(vGenerated);
-			psOut = new ProtectedString(true, pbUtf8);
-			MemUtil.ZeroByteArray(pbUtf8);
-			MemUtil.ZeroArray<char>(vGenerated);
+			finally { MemUtil.ZeroArray<char>(v); }
 
 			return PwgError.Success;
 		}

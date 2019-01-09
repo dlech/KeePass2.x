@@ -112,7 +112,7 @@
 			this.m_rbStandardCharSet.Size = new System.Drawing.Size(165, 17);
 			this.m_rbStandardCharSet.TabIndex = 0;
 			this.m_rbStandardCharSet.TabStop = true;
-			this.m_rbStandardCharSet.Text = "Generate using character set:";
+			this.m_rbStandardCharSet.Text = "&Generate using character set:";
 			this.m_rbStandardCharSet.UseVisualStyleBackColor = true;
 			// 
 			// m_lblNumGenChars
@@ -122,7 +122,7 @@
 			this.m_lblNumGenChars.Name = "m_lblNumGenChars";
 			this.m_lblNumGenChars.Size = new System.Drawing.Size(154, 13);
 			this.m_lblNumGenChars.TabIndex = 1;
-			this.m_lblNumGenChars.Text = "Length of generated password:";
+			this.m_lblNumGenChars.Text = "&Length of generated password:";
 			// 
 			// m_numGenChars
 			// 
@@ -153,7 +153,7 @@
 			this.m_lblProfile.Name = "m_lblProfile";
 			this.m_lblProfile.Size = new System.Drawing.Size(39, 13);
 			this.m_lblProfile.TabIndex = 0;
-			this.m_lblProfile.Text = "Profile:";
+			this.m_lblProfile.Text = "&Profile:";
 			// 
 			// m_cmbProfiles
 			// 
@@ -241,7 +241,7 @@
 			this.m_rbCustom.Size = new System.Drawing.Size(182, 17);
 			this.m_rbCustom.TabIndex = 17;
 			this.m_rbCustom.TabStop = true;
-			this.m_rbCustom.Text = "Generate using custom algorithm:";
+			this.m_rbCustom.Text = "Generate using cust&om algorithm:";
 			this.m_rbCustom.UseVisualStyleBackColor = true;
 			// 
 			// m_cbPatternPermute
@@ -251,7 +251,7 @@
 			this.m_cbPatternPermute.Name = "m_cbPatternPermute";
 			this.m_cbPatternPermute.Size = new System.Drawing.Size(227, 17);
 			this.m_cbPatternPermute.TabIndex = 16;
-			this.m_cbPatternPermute.Text = "Randomly permute characters of password";
+			this.m_cbPatternPermute.Text = "&Randomly permute characters of password";
 			this.m_cbPatternPermute.UseVisualStyleBackColor = true;
 			// 
 			// m_lblCustomChars
@@ -261,7 +261,7 @@
 			this.m_lblCustomChars.Name = "m_lblCustomChars";
 			this.m_lblCustomChars.Size = new System.Drawing.Size(182, 13);
 			this.m_lblCustomChars.TabIndex = 12;
-			this.m_lblCustomChars.Text = "Also include the following characters:";
+			this.m_lblCustomChars.Text = "Also &include the following characters:";
 			// 
 			// m_tbCustomChars
 			// 
@@ -277,7 +277,7 @@
 			this.m_cbHighAnsi.Name = "m_cbHighAnsi";
 			this.m_cbHighAnsi.Size = new System.Drawing.Size(129, 17);
 			this.m_cbHighAnsi.TabIndex = 10;
-			this.m_cbHighAnsi.Text = "High ANSI characters";
+			this.m_cbHighAnsi.Text = "High &ANSI characters";
 			this.m_cbHighAnsi.UseVisualStyleBackColor = true;
 			// 
 			// m_cbBrackets
@@ -287,7 +287,7 @@
 			this.m_cbBrackets.Name = "m_cbBrackets";
 			this.m_cbBrackets.Size = new System.Drawing.Size(68, 17);
 			this.m_cbBrackets.TabIndex = 8;
-			this.m_cbBrackets.Text = "Brackets";
+			this.m_cbBrackets.Text = "&Brackets";
 			this.m_cbBrackets.UseVisualStyleBackColor = true;
 			// 
 			// m_cbSpecial
@@ -297,7 +297,7 @@
 			this.m_cbSpecial.Name = "m_cbSpecial";
 			this.m_cbSpecial.Size = new System.Drawing.Size(61, 17);
 			this.m_cbSpecial.TabIndex = 6;
-			this.m_cbSpecial.Text = "Special";
+			this.m_cbSpecial.Text = "Sp&ecial";
 			this.m_cbSpecial.UseVisualStyleBackColor = true;
 			// 
 			// m_cbSpace
@@ -307,7 +307,7 @@
 			this.m_cbSpace.Name = "m_cbSpace";
 			this.m_cbSpace.Size = new System.Drawing.Size(57, 17);
 			this.m_cbSpace.TabIndex = 4;
-			this.m_cbSpace.Text = "Space";
+			this.m_cbSpace.Text = "&Space";
 			this.m_cbSpace.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUnderline
@@ -317,7 +317,7 @@
 			this.m_cbUnderline.Name = "m_cbUnderline";
 			this.m_cbUnderline.Size = new System.Drawing.Size(71, 17);
 			this.m_cbUnderline.TabIndex = 11;
-			this.m_cbUnderline.Text = "Underline";
+			this.m_cbUnderline.Text = "U&nderline";
 			this.m_cbUnderline.UseVisualStyleBackColor = true;
 			// 
 			// m_cbMinus
@@ -327,7 +327,7 @@
 			this.m_cbMinus.Name = "m_cbMinus";
 			this.m_cbMinus.Size = new System.Drawing.Size(54, 17);
 			this.m_cbMinus.TabIndex = 9;
-			this.m_cbMinus.Text = "Minus";
+			this.m_cbMinus.Text = "&Minus";
 			this.m_cbMinus.UseVisualStyleBackColor = true;
 			// 
 			// m_cbDigits
@@ -337,7 +337,7 @@
 			this.m_cbDigits.Name = "m_cbDigits";
 			this.m_cbDigits.Size = new System.Drawing.Size(52, 17);
 			this.m_cbDigits.TabIndex = 7;
-			this.m_cbDigits.Text = "Digits";
+			this.m_cbDigits.Text = "&Digits";
 			this.m_cbDigits.UseVisualStyleBackColor = true;
 			// 
 			// m_cbLowerCase
@@ -347,7 +347,7 @@
 			this.m_cbLowerCase.Name = "m_cbLowerCase";
 			this.m_cbLowerCase.Size = new System.Drawing.Size(81, 17);
 			this.m_cbLowerCase.TabIndex = 5;
-			this.m_cbLowerCase.Text = "Lower-case";
+			this.m_cbLowerCase.Text = "Lo&wer-case";
 			this.m_cbLowerCase.UseVisualStyleBackColor = true;
 			// 
 			// m_cbUpperCase
@@ -357,7 +357,7 @@
 			this.m_cbUpperCase.Name = "m_cbUpperCase";
 			this.m_cbUpperCase.Size = new System.Drawing.Size(81, 17);
 			this.m_cbUpperCase.TabIndex = 3;
-			this.m_cbUpperCase.Text = "Upper-case";
+			this.m_cbUpperCase.Text = "&Upper-case";
 			this.m_cbUpperCase.UseVisualStyleBackColor = true;
 			// 
 			// m_cbEntropy
@@ -365,9 +365,9 @@
 			this.m_cbEntropy.AutoSize = true;
 			this.m_cbEntropy.Location = new System.Drawing.Point(9, 352);
 			this.m_cbEntropy.Name = "m_cbEntropy";
-			this.m_cbEntropy.Size = new System.Drawing.Size(144, 17);
+			this.m_cbEntropy.Size = new System.Drawing.Size(296, 17);
 			this.m_cbEntropy.TabIndex = 20;
-			this.m_cbEntropy.Text = "Collect additional entropy";
+			this.m_cbEntropy.Text = "Show dialog for &collecting user input as additional entropy";
 			this.m_cbEntropy.UseVisualStyleBackColor = true;
 			// 
 			// m_tbPattern
@@ -385,7 +385,7 @@
 			this.m_rbPattern.Size = new System.Drawing.Size(136, 17);
 			this.m_rbPattern.TabIndex = 14;
 			this.m_rbPattern.TabStop = true;
-			this.m_rbPattern.Text = "Generate using pattern:";
+			this.m_rbPattern.Text = "Genera&te using pattern:";
 			this.m_rbPattern.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExcludeLookAlike
@@ -395,7 +395,7 @@
 			this.m_cbExcludeLookAlike.Name = "m_cbExcludeLookAlike";
 			this.m_cbExcludeLookAlike.Size = new System.Drawing.Size(165, 17);
 			this.m_cbExcludeLookAlike.TabIndex = 1;
-			this.m_cbExcludeLookAlike.Text = "Exclude look-alike characters";
+			this.m_cbExcludeLookAlike.Text = "E&xclude look-alike characters";
 			this.m_cbExcludeLookAlike.UseVisualStyleBackColor = true;
 			// 
 			// m_btnHelp
@@ -463,7 +463,7 @@
 			this.m_lblExcludeChars.Name = "m_lblExcludeChars";
 			this.m_lblExcludeChars.Size = new System.Drawing.Size(163, 13);
 			this.m_lblExcludeChars.TabIndex = 2;
-			this.m_lblExcludeChars.Text = "Exclude the following characters:";
+			this.m_lblExcludeChars.Text = "Ex&clude the following characters:";
 			// 
 			// m_cbNoRepeat
 			// 
@@ -472,7 +472,7 @@
 			this.m_cbNoRepeat.Name = "m_cbNoRepeat";
 			this.m_cbNoRepeat.Size = new System.Drawing.Size(218, 17);
 			this.m_cbNoRepeat.TabIndex = 0;
-			this.m_cbNoRepeat.Text = "Each character must occur at most once";
+			this.m_cbNoRepeat.Text = "&Each character must occur at most once";
 			this.m_cbNoRepeat.UseVisualStyleBackColor = true;
 			// 
 			// m_lblSecRedInfo

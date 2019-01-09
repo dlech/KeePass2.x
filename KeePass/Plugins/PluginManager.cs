@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -323,12 +323,25 @@ namespace KeePass.Plugins
 			for(int i = l.Count - 1; i >= 0; --i)
 			{
 				string strName = UrlUtil.GetFileName(l[i]);
+				if(string.IsNullOrEmpty(strName))
+				{
+					Debug.Assert(false);
+					l.RemoveAt(i);
+					continue;
+				}
+
+				// Ignore satellite assemblies
+				if(strName.EndsWith(".resources.dll", StrUtil.CaseIgnoreCmp))
+				{
+					l.RemoveAt(i);
+					continue;
+				}
 
 				foreach(string strExcl in vExclNames)
 				{
 					if(string.IsNullOrEmpty(strExcl)) { Debug.Assert(false); continue; }
 
-					if(string.Equals(strName, strExcl, StrUtil.CaseIgnoreCmp))
+					if(strName.Equals(strExcl, StrUtil.CaseIgnoreCmp))
 					{
 						l.RemoveAt(i);
 						break;
@@ -505,5 +518,57 @@ namespace KeePass.Plugins
 			}
 			finally { d.ReflectionOnlyAssemblyResolve -= eh; }
 		} */
+
+		internal void AddMenuItems(PluginMenuType t, ToolStripItemCollection c,
+			ToolStripItem tsiPrev)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			List<ToolStripItem> l = new List<ToolStripItem>();
+			foreach(PluginInfo pi in m_vPlugins)
+			{
+				if(pi == null) { Debug.Assert(false); continue; }
+
+				Plugin p = pi.Interface;
+				if(p == null) { Debug.Assert(false); continue; }
+
+				ToolStripMenuItem tsmi = p.GetMenuItem(t);
+				if(tsmi != null)
+				{
+					// string strTip = tsmi.ToolTipText;
+					// if((strTip == null) || (strTip == tsmi.Text))
+					//	strTip = string.Empty;
+					// if(strTip.Length != 0) strTip += MessageService.NewParagraph;
+					// strTip += KPRes.Plugin + ": " + pi.Name;
+					// tsmi.ToolTipText = strTip;
+
+					l.Add(tsmi);
+				}
+			}
+			if(l.Count == 0) return;
+
+			int iPrev = ((tsiPrev != null) ? c.IndexOf(tsiPrev) : -1);
+			if(iPrev < 0) { Debug.Assert(false); iPrev = c.Count - 1; }
+			int iIns = iPrev + 1;
+
+			l.Sort(PluginManager.CompareToolStripItems);
+			if((iPrev >= 0) && (iPrev < c.Count) && !(c[iPrev] is ToolStripSeparator))
+				l.Insert(0, new ToolStripSeparator());
+			if((iIns < c.Count) && !(c[iIns] is ToolStripSeparator))
+				l.Add(new ToolStripSeparator());
+
+			if(iIns == c.Count) c.AddRange(l.ToArray());
+			else
+			{
+				for(int i = 0; i < l.Count; ++i)
+					c.Insert(iIns + i, l[i]);
+			}
+		}
+
+		private static int CompareToolStripItems(ToolStripItem x,
+			ToolStripItem y)
+		{
+			return string.Compare(x.Text, y.Text, StrUtil.CaseIgnoreCmp);
+		}
 	}
 }

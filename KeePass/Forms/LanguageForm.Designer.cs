@@ -62,7 +62,7 @@
 			this.m_btnMore.Name = "m_btnMore";
 			this.m_btnMore.Size = new System.Drawing.Size(134, 23);
 			this.m_btnMore.TabIndex = 2;
-			this.m_btnMore.Text = "Get More &Languages...";
+			this.m_btnMore.Text = "&Get More Languages...";
 			this.m_btnMore.UseVisualStyleBackColor = true;
 			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
 			// 
