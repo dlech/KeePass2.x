@@ -29,3 +29,6 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 Translation/TrlUtil.vshost.exe.manifest
 .vs/
+.vscode/
+*.nupkg
+*.snupkg

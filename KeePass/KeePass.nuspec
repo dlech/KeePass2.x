@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>dlech</owners>
+    <license type="expression">GPL-2.0-or-later</license>
+    <projectUrl>https://keepass.info</projectUrl>
+    <iconUrl>https://keepass.info/images/icons/keepass_64x64.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Unofficial debug build of KeePass for extension development.</description>
+    <copyright>Copyright (C) 2003-2019 Dominik Reichl</copyright>
+    <tags>KeePass</tags>
+    <repository type="git" url="https://github.com/dlech/KeePass2.x" />
+  </metadata>
+</package>

@@ -8,3 +8,10 @@ in Visual Studio 2017 with no changes.
 
 The `official` branch contains exactly the official source code that is distributed on
 SourceForge. Some manual changes are required to get this branch to build.
+
+## NuGet
+
+A pre-compiled debug build with debug symbols and embedded source code is
+available on NuGet.
+
+https://www.nuget.org/packages/KeePass/
