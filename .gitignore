@@ -27,6 +27,7 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+Translation/KeePass.xml
 Translation/TrlUtil.vshost.exe.manifest
 .vs/
 .vscode/
