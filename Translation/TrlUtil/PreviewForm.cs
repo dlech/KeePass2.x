@@ -155,5 +155,18 @@ namespace TrlUtil
 				if(c.Dock != DockStyle.None) cCopy.Dock = c.Dock;
 			}
 		}
-	}
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // PreviewForm
+            // 
+            this.ClientSize = new System.Drawing.Size(282, 253);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Name = "PreviewForm";
+            this.ResumeLayout(false);
+
+        }
+    }
 }

@@ -45,5 +45,18 @@ namespace KeePass.UI
 
 			if(bmpBackground != null) this.BackgroundImage = bmpBackground;
 		}
-	}
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // BackgroundForm
+            // 
+            this.ClientSize = new System.Drawing.Size(282, 253);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Name = "BackgroundForm";
+            this.ResumeLayout(false);
+
+        }
+    }
 }
