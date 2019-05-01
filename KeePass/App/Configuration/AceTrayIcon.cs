@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace KeePass.App.Configuration
 {
@@ -28,6 +29,16 @@ namespace KeePass.App.Configuration
 	{
 		public AceTrayIcon()
 		{
+		}
+
+		[Obsolete] // For backward compatibility with plugins only
+		[XmlIgnore]
+		public bool ShowOnlyIfTrayed
+		{
+			get { return this.ShowOnlyIfTrayedEx; }
+			// Old setting should not affect 'ShowOnlyIfTrayedEx';
+			// a reset of this option is intended
+			set { }
 		}
 
 		// Not available through the options dialog, see documentation;

@@ -546,6 +546,10 @@ namespace KeePass.Forms
 				m_menuFileSyncFile, m_menuFileSyncUrl, m_menuFileSyncRecent);
 			UIUtil.SetEnabledFast(s.EnableLockCmd, m_menuFileLock, m_tbLockWorkspace);
 
+			// Enable/disable menu items for correct shortcut keys handling
+			UpdateUIGroupMenuState(s, false);
+			UpdateUIEntryMenuState(s, false);
+
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFindInDatabase,
 				m_menuFindInGroup, m_menuFindTag, m_menuFindAll);
 			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuFindParentGroup);
@@ -622,7 +626,8 @@ namespace KeePass.Forms
 			// Program.TriggerSystem.RaiseEvent(EcasEventIDs.UpdatedUIState);
 		}
 
-		private void UpdateUIGroupState(ToolStripMenuItem tsmiAdd,
+		private void UpdateUIGroupState(MainAppState sMain, bool bMenuVisible,
+			bool bContextMenu, ToolStripMenuItem tsmiAdd,
 			ToolStripMenuItem tsmiEdit, ToolStripMenuItem tsmiDup,
 			ToolStripMenuItem tsmiDelete, ToolStripMenuItem tsmiRearrange,
 			ToolStripMenuItem tsmiMoveToTop, ToolStripMenuItem tsmiMoveOneUp,
@@ -630,10 +635,9 @@ namespace KeePass.Forms
 			ToolStripMenuItem tsmiSort, ToolStripMenuItem tsmiSortRec,
 			ToolStripMenuItem tsmiExpand, ToolStripMenuItem tsmiCollapse,
 			ToolStripMenuItem tsmiEmptyRB, ToolStripMenuItem tsmiFind,
-			ToolStripMenuItem tsmiPrint, ToolStripMenuItem tsmiExport,
-			bool bContextMenu)
+			ToolStripMenuItem tsmiPrint, ToolStripMenuItem tsmiExport)
 		{
-			MainAppState s = GetMainAppState();
+			MainAppState s = (sMain ?? GetMainAppState());
 
 			PwGroup pg = GetSelectedGroup();
 			PwGroup pgParent = ((pg != null) ? pg.ParentGroup : null);
@@ -663,7 +667,8 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast((uSubGroups > 0), tsmiExpand, tsmiCollapse);
 
 			bool bShowEmpty = false, bEnableEmpty = false;
-			if(s.DatabaseOpened && pd.RecycleBinEnabled)
+			Debug.Assert(tsmiEmptyRB.ShortcutKeys == Keys.None); // For bMenuVisible
+			if(bMenuVisible && s.DatabaseOpened && pd.RecycleBinEnabled)
 			{
 				PwGroup pgRB = pd.RootGroup.FindGroup(pd.RecycleBinUuid, true);
 
@@ -681,31 +686,34 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiPrint, tsmiExport);
 		}
 
-		private void UpdateUIGroupMenuState()
+		private void UpdateUIGroupMenuState(MainAppState sMain, bool bMenuVisible)
 		{
-			UpdateUIGroupState(m_menuGroupAdd, m_menuGroupEdit, m_menuGroupDuplicate,
+			UpdateUIGroupState(sMain, bMenuVisible, false,
+				m_menuGroupAdd, m_menuGroupEdit, m_menuGroupDuplicate,
 				m_menuGroupDelete, m_menuGroupRearrange,
 				m_menuGroupMoveToTop, m_menuGroupMoveOneUp,
 				m_menuGroupMoveOneDown, m_menuGroupMoveToBottom,
 				m_menuGroupSort, m_menuGroupSortRec,
 				m_menuGroupExpand, m_menuGroupCollapse,
 				m_menuGroupEmptyRB, null,
-				m_menuGroupPrint, m_menuGroupExport, false);
+				m_menuGroupPrint, m_menuGroupExport);
 		}
 
 		private void UpdateUIGroupCtxState()
 		{
-			UpdateUIGroupState(m_ctxGroupAdd, m_ctxGroupEdit, m_ctxGroupDuplicate,
+			UpdateUIGroupState(null, true, true,
+				m_ctxGroupAdd, m_ctxGroupEdit, m_ctxGroupDuplicate,
 				m_ctxGroupDelete, m_ctxGroupRearrange,
 				m_ctxGroupMoveToTop, m_ctxGroupMoveOneUp,
 				m_ctxGroupMoveOneDown, m_ctxGroupMoveToBottom,
 				m_ctxGroupSort, m_ctxGroupSortRec,
 				m_ctxGroupExpand, m_ctxGroupCollapse,
 				m_ctxGroupEmptyRB, m_ctxGroupFind,
-				m_ctxGroupPrint, m_ctxGroupExport, true);
+				m_ctxGroupPrint, m_ctxGroupExport);
 		}
 
-		private void UpdateUIEntryState(ToolStripMenuItem tsmiCopyUserName,
+		private void UpdateUIEntryState(MainAppState sMain, bool bMenuVisible,
+			bool bContextMenu, ToolStripMenuItem tsmiCopyUserName,
 			ToolStripMenuItem tsmiCopyPassword, ToolStripMenuItem tsmiUrl,
 			ToolStripMenuItem tsmiOpenUrl, ToolStripMenuItem tsmiCopyUrl,
 			ToolStripMenuItem tsmiStrings, DynamicMenu dynStrings,
@@ -727,9 +735,9 @@ namespace KeePass.Forms
 			ToolStripMenuItem tsmiMoveToGroup,
 			ToolStripMenuItem tsmiDX, ToolStripMenuItem tsmiClipCopy,
 			ToolStripMenuItem tsmiClipCopyPlain, ToolStripMenuItem tsmiPrint,
-			ToolStripMenuItem tsmiExport, bool bContextMenu)
+			ToolStripMenuItem tsmiExport)
 		{
-			MainAppState s = GetMainAppState();
+			MainAppState s = (sMain ?? GetMainAppState());
 			PwEntry pe = s.SelectedEntry;
 
 			tsmiCopyUserName.Enabled = s.CanCopyUserName;
@@ -741,59 +749,62 @@ namespace KeePass.Forms
 
 			UIUtil.SetEnabledFast(s.CanOpenUrl, tsmiUrl, tsmiOpenUrl, tsmiCopyUrl);
 
-			dynStrings.Clear();
-			dynBinaries.Clear();
-
-			uint uStrItems = 0, uBinItems = 0;
-			if((s.EntriesSelected == 1) && (pe != null))
+			if(bMenuVisible)
 			{
-				List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
-				foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
+				dynStrings.Clear();
+				dynBinaries.Clear();
+
+				uint uStrItems = 0, uBinItems = 0;
+				if((s.EntriesSelected == 1) && (pe != null))
 				{
-					string strKey = kvp.Key;
-					if(PwDefs.IsStandardField(strKey)) continue;
+					List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
+					{
+						string strKey = kvp.Key;
+						if(PwDefs.IsStandardField(strKey)) continue;
 
-					strKey = StrUtil.EncodeMenuText(strKey);
-					strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
+						strKey = StrUtil.EncodeMenuText(strKey);
+						strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
 
-					dynStrings.AddItem(strKey, Properties.Resources.B16x16_KGPG_Info,
-						kvp.Key);
-					++uStrItems;
+						dynStrings.AddItem(strKey, Properties.Resources.B16x16_KGPG_Info,
+							kvp.Key);
+						++uStrItems;
+					}
+
+					lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+					foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
+					{
+						Image imgIcon;
+						// Try a fast classification
+						BinaryDataClass bdc = BinaryDataClassifier.ClassifyUrl(kvp.Key);
+						if((bdc == BinaryDataClass.Text) || (bdc == BinaryDataClass.RichText))
+							imgIcon = Properties.Resources.B16x16_ASCII;
+						else if(bdc == BinaryDataClass.Image)
+							imgIcon = Properties.Resources.B16x16_Spreadsheet;
+						else if(bdc == BinaryDataClass.WebDocument)
+							imgIcon = Properties.Resources.B16x16_HTML;
+						else imgIcon = Properties.Resources.B16x16_Binary;
+
+						EntryBinaryDataContext ctxBin = new EntryBinaryDataContext();
+						ctxBin.Entry = pe;
+						ctxBin.Name = kvp.Key;
+
+						string strKey = StrUtil.EncodeMenuText(kvp.Key);
+						strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
+
+						dynBinaries.AddItem(strKey, imgIcon, ctxBin);
+						++uBinItems;
+					}
 				}
 
-				lAvailKeys = new List<char>(PwCharSet.MenuAccels);
-				foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
-				{
-					Image imgIcon;
-					// Try a fast classification
-					BinaryDataClass bdc = BinaryDataClassifier.ClassifyUrl(kvp.Key);
-					if((bdc == BinaryDataClass.Text) || (bdc == BinaryDataClass.RichText))
-						imgIcon = Properties.Resources.B16x16_ASCII;
-					else if(bdc == BinaryDataClass.Image)
-						imgIcon = Properties.Resources.B16x16_Spreadsheet;
-					else if(bdc == BinaryDataClass.WebDocument)
-						imgIcon = Properties.Resources.B16x16_HTML;
-					else imgIcon = Properties.Resources.B16x16_Binary;
+				if(uStrItems == 0) dynStrings.AddItem(m_strNoneP, null).Enabled = false;
+				if(uBinItems == 0) dynBinaries.AddItem(m_strNoneP, null).Enabled = false;
 
-					EntryBinaryDataContext ctxBin = new EntryBinaryDataContext();
-					ctxBin.Entry = pe;
-					ctxBin.Name = kvp.Key;
-
-					string strKey = StrUtil.EncodeMenuText(kvp.Key);
-					strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
-
-					dynBinaries.AddItem(strKey, imgIcon, ctxBin);
-					++uBinItems;
-				}
+				tsmiStrings.Enabled = (uStrItems != 0);
+				if(bContextMenu) tsmiStrings.Visible = (uStrItems != 0);
+				tsmiBinaries.Enabled = (uBinItems != 0);
+				if(bContextMenu) tsmiBinaries.Visible = (uBinItems != 0);
 			}
-
-			if(uStrItems == 0) dynStrings.AddItem(m_strNoneP, null).Enabled = false;
-			if(uBinItems == 0) dynBinaries.AddItem(m_strNoneP, null).Enabled = false;
-
-			tsmiStrings.Enabled = (uStrItems != 0);
-			if(bContextMenu) tsmiStrings.Visible = (uStrItems != 0);
-			tsmiBinaries.Enabled = (uBinItems != 0);
-			if(bContextMenu) tsmiBinaries.Visible = (uBinItems != 0);
 
 			bool bAttach = ((s.EntriesSelected >= 2) || ((pe != null) &&
 				(pe.Binaries.UCount > 0)));
@@ -826,7 +837,9 @@ namespace KeePass.Forms
 			if(tsmiDX != null)
 			{
 				UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiDX);
-				// 'Paste Entries' is updated in the menu opening handler
+				// 'Paste Entry' is updated in the menu opening handler
+				// and its keyboard shortcut is handled manually (i.e.
+				// it's independent of the menu item state)
 				UIUtil.SetEnabledFast((s.EntriesSelected != 0), tsmiClipCopy,
 					tsmiClipCopyPlain, tsmiPrint, tsmiExport);
 			}
@@ -837,9 +850,10 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void UpdateUIEntryMenuState()
+		private void UpdateUIEntryMenuState(MainAppState sMain, bool bMenuVisible)
 		{
-			UpdateUIEntryState(m_menuEntryCopyUserName, m_menuEntryCopyPassword,
+			UpdateUIEntryState(sMain, bMenuVisible, false,
+				m_menuEntryCopyUserName, m_menuEntryCopyPassword,
 				m_menuEntryUrl, m_menuEntryOpenUrl, m_menuEntryCopyUrl,
 				m_menuEntryCopyString, m_dynStringsMenu,
 				m_menuEntryAttachments, m_dynBinariesMenu,
@@ -856,12 +870,13 @@ namespace KeePass.Forms
 				m_menuEntryRearrange, m_menuEntryMoveToTop, m_menuEntryMoveOneUp,
 				m_menuEntryMoveOneDown, m_menuEntryMoveToBottom, m_menuEntryMoveToGroup,
 				m_menuEntryDX, m_menuEntryClipCopy, m_menuEntryClipCopyPlain,
-				m_menuEntryPrint, m_menuEntryExport, false);
+				m_menuEntryPrint, m_menuEntryExport);
 		}
 
 		private void UpdateUIEntryCtxState()
 		{
-			UpdateUIEntryState(m_ctxEntryCopyUserName, m_ctxEntryCopyPassword,
+			UpdateUIEntryState(null, true, true,
+				m_ctxEntryCopyUserName, m_ctxEntryCopyPassword,
 				m_ctxEntryUrl, m_ctxEntryOpenUrl, m_ctxEntryCopyUrl,
 				m_ctxEntryCopyString, m_dynStringsCtx,
 				m_ctxEntryAttachments, m_dynBinariesCtx,
@@ -877,7 +892,7 @@ namespace KeePass.Forms
 				m_ctxEntryDuplicate, m_ctxEntryDelete, m_ctxEntrySelectAll,
 				m_ctxEntryRearrange, m_ctxEntryMoveToTop, m_ctxEntryMoveOneUp,
 				m_ctxEntryMoveOneDown, m_ctxEntryMoveToBottom, m_ctxEntryMoveToGroup,
-				null, null, null, null, null, true);
+				null, null, null, null, null);
 		}
 
 		private MainAppState GetMainAppState()
@@ -3255,13 +3270,13 @@ namespace KeePass.Forms
 				m_ctxEntrySelectAll, true);
 
 			UIUtil.AssignShortcut(m_menuEntryMoveToTop, (bMoveMono ?
-				Keys.F5 : Keys.Home) | kMoveMod, m_ctxEntryMoveToTop);
+				Keys.F5 : Keys.Home) | kMoveMod, m_ctxEntryMoveToTop, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveOneUp, (bMoveMono ?
-				Keys.F6 : Keys.Up) | kMoveMod, m_ctxEntryMoveOneUp);
+				Keys.F6 : Keys.Up) | kMoveMod, m_ctxEntryMoveOneUp, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveOneDown, (bMoveMono ?
-				Keys.F7 : Keys.Down) | kMoveMod, m_ctxEntryMoveOneDown);
+				Keys.F7 : Keys.Down) | kMoveMod, m_ctxEntryMoveOneDown, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveToBottom, (bMoveMono ?
-				Keys.F8 : Keys.End) | kMoveMod, m_ctxEntryMoveToBottom);
+				Keys.F8 : Keys.End) | kMoveMod, m_ctxEntryMoveToBottom, true);
 
 			UIUtil.AssignShortcut(m_menuEntryClipCopy, Keys.Control | Keys.Shift | Keys.C,
 				null, true);

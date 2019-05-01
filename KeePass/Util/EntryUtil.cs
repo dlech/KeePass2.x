@@ -157,6 +157,15 @@ namespace KeePass.Util
 		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
 			PwGroup pgStorage)
 		{
+			PwObjectList<PwEntry> l;
+			PasteEntriesFromClipboard(pwDatabase, pgStorage, out l);
+		}
+
+		internal static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
+			PwGroup pgStorage, out PwObjectList<PwEntry> lAdded)
+		{
+			lAdded = new PwObjectList<PwEntry>();
+
 			// if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
 			byte[] pbC = ClipboardUtil.GetData(ClipFormatEntries);
 			if(pbC == null) return;
@@ -172,10 +181,10 @@ namespace KeePass.Util
 			{
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
 				{
-					List<PwEntry> vEntries = KdbxFile.ReadEntries(gz, pwDatabase, true);
+					List<PwEntry> lEntries = KdbxFile.ReadEntries(gz, pwDatabase, true);
 
 					// Adjust protection settings and add entries
-					foreach(PwEntry pe in vEntries)
+					foreach(PwEntry pe in lEntries)
 					{
 						pe.Strings.EnableProtection(PwDefs.TitleField,
 							pwDatabase.MemoryProtection.ProtectTitle);
@@ -191,6 +200,7 @@ namespace KeePass.Util
 						pe.SetCreatedNow();
 
 						pgStorage.AddEntry(pe, true, true);
+						lAdded.Add(pe);
 					}
 				}
 			}

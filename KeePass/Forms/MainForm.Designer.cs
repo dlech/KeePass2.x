@@ -1886,7 +1886,7 @@
 			// 
 			this.m_menuFindExp1.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp1.Name = "m_menuFindExp1";
-			this.m_menuFindExp1.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp1.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp1.Text = "&1 Day";
 			this.m_menuFindExp1.Click += new System.EventHandler(this.OnFindExp1);
 			// 
@@ -1894,7 +1894,7 @@
 			// 
 			this.m_menuFindExp2.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp2.Name = "m_menuFindExp2";
-			this.m_menuFindExp2.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp2.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp2.Text = "&2 Days";
 			this.m_menuFindExp2.Click += new System.EventHandler(this.OnFindExp2);
 			// 
@@ -1902,7 +1902,7 @@
 			// 
 			this.m_menuFindExp3.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp3.Name = "m_menuFindExp3";
-			this.m_menuFindExp3.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp3.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp3.Text = "&3 Days";
 			this.m_menuFindExp3.Click += new System.EventHandler(this.OnFindExp3);
 			// 
@@ -1910,7 +1910,7 @@
 			// 
 			this.m_menuFindExp7.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp7.Name = "m_menuFindExp7";
-			this.m_menuFindExp7.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp7.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp7.Text = "1 &Week";
 			this.m_menuFindExp7.Click += new System.EventHandler(this.OnFindExp7);
 			// 
@@ -1918,7 +1918,7 @@
 			// 
 			this.m_menuFindExp14.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp14.Name = "m_menuFindExp14";
-			this.m_menuFindExp14.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp14.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp14.Text = "2 W&eeks";
 			this.m_menuFindExp14.Click += new System.EventHandler(this.OnFindExp14);
 			// 
@@ -1926,7 +1926,7 @@
 			// 
 			this.m_menuFindExp30.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp30.Name = "m_menuFindExp30";
-			this.m_menuFindExp30.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp30.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp30.Text = "1 &Month";
 			this.m_menuFindExp30.Click += new System.EventHandler(this.OnFindExp30);
 			// 
@@ -1934,20 +1934,20 @@
 			// 
 			this.m_menuFindExp60.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExp60.Name = "m_menuFindExp60";
-			this.m_menuFindExp60.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExp60.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExp60.Text = "2 M&onths";
 			this.m_menuFindExp60.Click += new System.EventHandler(this.OnFindExp60);
 			// 
 			// m_menuFindExpInSep0
 			// 
 			this.m_menuFindExpInSep0.Name = "m_menuFindExpInSep0";
-			this.m_menuFindExpInSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFindExpInSep0.Size = new System.Drawing.Size(121, 6);
 			// 
 			// m_menuFindExpInF
 			// 
 			this.m_menuFindExpInF.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuFindExpInF.Name = "m_menuFindExpInF";
-			this.m_menuFindExpInF.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFindExpInF.Size = new System.Drawing.Size(124, 22);
 			this.m_menuFindExpInF.Text = "&Future";
 			this.m_menuFindExpInF.Click += new System.EventHandler(this.OnFindExpInF);
 			// 

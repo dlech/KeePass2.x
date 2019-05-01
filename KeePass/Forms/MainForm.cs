@@ -2115,10 +2115,18 @@ namespace KeePass.Forms
 			PwGroup pg = GetSelectedGroup();
 			if(pg == null) return;
 
-			try { EntryUtil.PasteEntriesFromClipboard(pd, pg); }
+			PwObjectList<PwEntry> l = null;
+			try { EntryUtil.PasteEntriesFromClipboard(pd, pg, out l); }
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 
 			UpdateUI(false, null, false, null, true, null, true);
+
+			if((l != null) && (l.UCount != 0))
+			{
+				SelectEntries(l, true, true);
+				EnsureVisibleSelected(true);
+				EnsureVisibleSelected(false);
+			}
 		}
 
 		private void OnEntryColorStandard(object sender, EventArgs e)
@@ -2827,12 +2835,12 @@ namespace KeePass.Forms
 
 		private void OnGroupDropDownOpening(object sender, EventArgs e)
 		{
-			UpdateUIGroupMenuState();
+			UpdateUIGroupMenuState(null, true);
 		}
 
 		private void OnEntryDropDownOpening(object sender, EventArgs e)
 		{
-			UpdateUIEntryMenuState();
+			UpdateUIEntryMenuState(null, true);
 		}
 
 		private void OnEntryTagAddOpening(object sender, EventArgs e)

@@ -1,3 +1,8 @@
+2019-05-04: 2.42.1
+- Improved menu item state updating
+- Improved backward compatibility with certain plugins
+- Minor other improvements
+
 2019-05-01: 2.42
 - Added main menu items 'Group', 'Entry' and 'Find', which
   contain all commands related to groups and entries (supersets
