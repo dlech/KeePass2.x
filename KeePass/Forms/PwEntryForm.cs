@@ -34,6 +34,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -583,6 +584,9 @@ namespace KeePass.Forms
 
 		private void InitHistoryTab()
 		{
+			m_lblCreatedData.Text = TimeUtil.ToDisplayString(m_pwEntry.CreationTime);
+			m_lblModifiedData.Text = TimeUtil.ToDisplayString(m_pwEntry.LastModificationTime);
+
 			m_lvHistory.SmallImageList = m_ilIcons;
 
 			m_lvHistory.Columns.Add(KPRes.Version);
@@ -1120,8 +1124,8 @@ namespace KeePass.Forms
 			if(nSelCount == 1)
 			{
 				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.AttachmentSave,
-					lvsc[0].Text, UIUtil.CreateFileTypeFilter(null, null, true), 1, null,
-					AppDefs.FileDialogContext.Attachments);
+					UrlUtil.GetSafeFileName(lvsc[0].Text), UIUtil.CreateFileTypeFilter(
+					null, null, true), 1, null, AppDefs.FileDialogContext.Attachments);
 
 				if(sfd.ShowDialog() == DialogResult.OK)
 					SaveAttachmentTo(lvsc[0], sfd.FileName, false);
@@ -1132,39 +1136,40 @@ namespace KeePass.Forms
 
 				if(fbd.ShowDialog() == DialogResult.OK)
 				{
-					string strRootPath = UrlUtil.EnsureTerminatingSeparator(fbd.SelectedPath, false);
+					string strRootPath = UrlUtil.EnsureTerminatingSeparator(
+						fbd.SelectedPath, false);
 
 					foreach(ListViewItem lvi in lvsc)
-						SaveAttachmentTo(lvi, strRootPath + lvi.Text, true);
+						SaveAttachmentTo(lvi, strRootPath + UrlUtil.GetSafeFileName(
+							lvi.Text), true);
 				}
 				fbd.Dispose();
 			}
 		}
 
-		private void SaveAttachmentTo(ListViewItem lvi, string strFileName,
+		private void SaveAttachmentTo(ListViewItem lvi, string strFile,
 			bool bConfirmOverwrite)
 		{
-			Debug.Assert(lvi != null); if(lvi == null) throw new ArgumentNullException("lvi");
-			Debug.Assert(strFileName != null); if(strFileName == null) throw new ArgumentNullException("strFileName");
+			if(lvi == null) { Debug.Assert(false); return; }
+			if(string.IsNullOrEmpty(strFile)) { Debug.Assert(false); return; }
 
-			if(bConfirmOverwrite && File.Exists(strFileName))
+			if(bConfirmOverwrite && File.Exists(strFile))
 			{
 				string strMsg = KPRes.FileExistsAlready + MessageService.NewLine +
-					strFileName + MessageService.NewParagraph +
+					strFile + MessageService.NewParagraph +
 					KPRes.OverwriteExistingFileQuestion;
 
-				if(MessageService.AskYesNo(strMsg) == false)
-					return;
+				if(!MessageService.AskYesNo(strMsg)) return;
 			}
 
 			ProtectedBinary pb = m_vBinaries.Get(lvi.Text);
-			Debug.Assert(pb != null); if(pb == null) throw new ArgumentException();
+			if(pb == null) { Debug.Assert(false); return; }
 
 			byte[] pbData = pb.ReadData();
-			try { File.WriteAllBytes(strFileName, pbData); }
+			try { File.WriteAllBytes(strFile, pbData); }
 			catch(Exception exWrite)
 			{
-				MessageService.ShowWarning(strFileName, exWrite);
+				MessageService.ShowWarning(strFile, exWrite);
 			}
 			if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
 		}
@@ -1779,7 +1784,8 @@ namespace KeePass.Forms
 				null, false, AppDefs.FileDialogContext.Attachments);
 
 			if(dlg.ShowDialog() == DialogResult.OK)
-				m_tbUrl.Text = "cmd://\"" + dlg.FileName + "\"";
+				m_tbUrl.Text = "cmd://\"" + SprEncoding.EncodeForCommandLine(
+					dlg.FileName) + "\"";
 		}
 
 		private void OnCtxUrlSelApp(object sender, EventArgs e)

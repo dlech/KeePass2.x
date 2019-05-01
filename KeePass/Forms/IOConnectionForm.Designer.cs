@@ -44,9 +44,9 @@
 			this.m_lblUrlHints = new System.Windows.Forms.Label();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabConn = new System.Windows.Forms.TabPage();
+			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			this.m_tabAdv = new System.Windows.Forms.TabPage();
 			this.m_pnlAdv = new System.Windows.Forms.Panel();
-			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabConn.SuspendLayout();
@@ -211,6 +211,14 @@
 			this.m_tabConn.Text = "Connection";
 			this.m_tabConn.UseVisualStyleBackColor = true;
 			// 
+			// m_tbPassword
+			// 
+			this.m_tbPassword.Location = new System.Drawing.Point(282, 91);
+			this.m_tbPassword.Name = "m_tbPassword";
+			this.m_tbPassword.Size = new System.Drawing.Size(121, 20);
+			this.m_tbPassword.TabIndex = 7;
+			this.m_tbPassword.UseSystemPasswordChar = true;
+			// 
 			// m_tabAdv
 			// 
 			this.m_tabAdv.Controls.Add(this.m_pnlAdv);
@@ -230,14 +238,6 @@
 			this.m_pnlAdv.Name = "m_pnlAdv";
 			this.m_pnlAdv.Size = new System.Drawing.Size(405, 198);
 			this.m_pnlAdv.TabIndex = 0;
-			// 
-			// m_tbPassword
-			// 
-			this.m_tbPassword.Location = new System.Drawing.Point(282, 91);
-			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(121, 20);
-			this.m_tbPassword.TabIndex = 7;
-			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
 			// IOConnectionForm
 			// 
@@ -260,6 +260,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "<DYN>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.Shown += new System.EventHandler(this.OnFormShown);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_tabMain.ResumeLayout(false);

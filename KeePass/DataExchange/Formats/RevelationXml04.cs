@@ -85,6 +85,7 @@ namespace KeePass.DataExchange.Formats
 		private static void ImportGroup(PwDatabase pd, PwGroup pgParent, XmlNode xmlNode)
 		{
 			PwGroup pg = new PwGroup(true, true);
+			pgParent.AddGroup(pg, true);
 
 			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
 			{
@@ -97,8 +98,6 @@ namespace KeePass.DataExchange.Formats
 					pg.LastModificationTime = ImportTime(xmlChild);
 				else { Debug.Assert(false); }
 			}
-
-			pgParent.AddGroup(pg, true);
 
 			ProcessEntries(pd, pg, xmlNode.ChildNodes);
 		}

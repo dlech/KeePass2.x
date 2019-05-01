@@ -118,6 +118,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new OnePwProCsv599());
 			m_vFormats.Add(new AmpXml250());
 			m_vFormats.Add(new AnyPwCsv144());
+			m_vFormats.Add(new BitwardenJson112());
 			m_vFormats.Add(new CodeWalletTxt605());
 			m_vFormats.Add(new DashlaneCsv2());
 			m_vFormats.Add(new DataVaultCsv47());
@@ -151,7 +152,8 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new SafeWalletXml3());
 			m_vFormats.Add(new SecurityTxt12());
 			m_vFormats.Add(new SplashIdCsv402());
-			m_vFormats.Add(new SteganosPwManager2007());
+			m_vFormats.Add(new SteganosCsv20());
+			m_vFormats.Add(new SteganosUI2007());
 			m_vFormats.Add(new StickyPwXml50());
 			m_vFormats.Add(new TurboPwsCsv5());
 			m_vFormats.Add(new VisKeeperTxt3());

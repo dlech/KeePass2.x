@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Text;
 
 using KeePassLib.Native;
-using KeePassLib.Utility;
 
 namespace KeePass.Util.Spr
 {
@@ -69,30 +68,7 @@ namespace KeePass.Util.Spr
 
 		internal static string EncodeForCommandLine(string strRaw)
 		{
-			if(strRaw == null) { Debug.Assert(false); return string.Empty; }
-
-			if(MonoWorkarounds.IsRequired(3471228285U) && NativeLib.IsUnix())
-			{
-				string str = strRaw;
-
-				str = str.Replace("\\", "\\\\");
-				str = str.Replace("\"", "\\\"");
-				str = str.Replace("\'", "\\\'");
-				str = str.Replace("\u0060", "\\\u0060"); // Grave accent
-				str = str.Replace("$", "\\$");
-				str = str.Replace("&", "\\&");
-				str = str.Replace("<", "\\<");
-				str = str.Replace(">", "\\>");
-				str = str.Replace("|", "\\|");
-				str = str.Replace(";", "\\;");
-				str = str.Replace("(", "\\(");
-				str = str.Replace(")", "\\)");
-
-				return str;
-			}
-
-			// See SHELLEXECUTEINFO structure documentation
-			return strRaw.Replace("\"", "\"\"\"");
+			return NativeLib.EncodeDataToArgs(strRaw);
 		}
 	}
 }

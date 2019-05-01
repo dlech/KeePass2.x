@@ -295,6 +295,7 @@ namespace KeePass.App.Configuration
 
 				AceIntegration aceInt = this.Integration;
 				aceInt.HotKeyGlobalAutoType = (ulong)Keys.None;
+				aceInt.HotKeyGlobalAutoTypePassword = (ulong)Keys.None;
 				aceInt.HotKeySelectedAutoType = (ulong)Keys.None;
 				aceInt.HotKeyShowWindow = (ulong)Keys.None;
 			}
@@ -357,8 +358,7 @@ namespace KeePass.App.Configuration
 			if(!ioc.IsLocalFile()) return;
 
 			// Update path separators for current system
-			if(!UrlUtil.IsUncPath(ioc.Path))
-				ioc.Path = UrlUtil.ConvertSeparators(ioc.Path);
+			ioc.Path = UrlUtil.ConvertSeparators(ioc.Path);
 
 			string strBase = WinUtil.GetExecutable();
 			bool bIsAbs = UrlUtil.IsAbsolutePath(ioc.Path);

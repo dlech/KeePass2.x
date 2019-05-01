@@ -60,8 +60,8 @@ namespace KeePass.Util
 		/// <param name="strBasePath">Directory in which the attachments are stored.</param>
 		public static void SaveEntryAttachments(PwEntry[] vEntries, string strBasePath)
 		{
-			Debug.Assert(vEntries != null); if(vEntries == null) return;
-			Debug.Assert(strBasePath != null); if(strBasePath == null) return;
+			if(vEntries == null) { Debug.Assert(false); return; }
+			if(string.IsNullOrEmpty(strBasePath)) { Debug.Assert(false); return; }
 
 			string strPath = UrlUtil.EnsureTerminatingSeparator(strBasePath, false);
 			bool bCancel = false;
@@ -70,7 +70,7 @@ namespace KeePass.Util
 			{
 				foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 				{
-					string strFile = strPath + kvp.Key;
+					string strFile = strPath + UrlUtil.GetSafeFileName(kvp.Key);
 
 					if(File.Exists(strFile))
 					{
@@ -113,19 +113,26 @@ namespace KeePass.Util
 
 		// Old format name (<= 2.14): "KeePassEntriesCF",
 		// old format name (<= 2.22): "KeePassEntriesCX",
-		// old format name (<= 2.40): "KeePassEntries"
-		public static readonly string ClipFormatEntries = "Entries-E"; // E = encrypted
+		// old format name (<= 2.40): "KeePassEntries",
+		// old format name (<= 2.41): media type "vnd" + "Entries-E" // E = encrypted
+		public static readonly string ClipFormatEntries = "Entries-F"; // F = flags
 		private static readonly byte[] AdditionalEntropy = new byte[] {
 			0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
 		[Obsolete]
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries)
 		{
-			CopyEntriesToClipboard(pwDatabase, vEntries, IntPtr.Zero);
+			CopyEntriesToClipboard(pwDatabase, vEntries, IntPtr.Zero, true);
 		}
 
 		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
 			IntPtr hOwner)
+		{
+			CopyEntriesToClipboard(pwDatabase, vEntries, hOwner, true);
+		}
+
+		internal static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
+			IntPtr hOwner, bool bEncrypt)
 		{
 			using(MemoryStream ms = new MemoryStream())
 			{
@@ -134,9 +141,16 @@ namespace KeePass.Util
 					KdbxFile.WriteEntries(gz, pwDatabase, vEntries);
 				}
 
-				byte[] pbFinal = CryptoUtil.ProtectData(ms.ToArray(),
-					AdditionalEntropy, DataProtectionScope.CurrentUser);
-				ClipboardUtil.Copy(pbFinal, ClipFormatEntries, true, hOwner);
+				byte[] pbData = ms.ToArray();
+				if(bEncrypt)
+					pbData = CryptoUtil.ProtectData(pbData, AdditionalEntropy,
+						DataProtectionScope.CurrentUser);
+
+				byte[] pbC = new byte[4 + pbData.Length];
+				MemUtil.Int32ToBytesEx(bEncrypt ? 1 : 0, pbC, 0); // Flags
+				Array.Copy(pbData, 0, pbC, 4, pbData.Length);
+
+				ClipboardUtil.Copy(pbC, ClipFormatEntries, true, hOwner);
 			}
 		}
 
@@ -144,13 +158,17 @@ namespace KeePass.Util
 			PwGroup pgStorage)
 		{
 			// if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
-			byte[] pbEnc = ClipboardUtil.GetData(ClipFormatEntries);
-			if(pbEnc == null) return;
+			byte[] pbC = ClipboardUtil.GetData(ClipFormatEntries);
+			if(pbC == null) return;
 
-			byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc,
-				AdditionalEntropy, DataProtectionScope.CurrentUser);
+			uint uFlags = MemUtil.BytesToUInt32(pbC, 0);
+			byte[] pbData = MemUtil.Mid(pbC, 4, pbC.Length - 4);
 
-			using(MemoryStream ms = new MemoryStream(pbPlain, false))
+			if((uFlags & 1) != 0)
+				pbData = CryptoUtil.UnprotectData(pbData, AdditionalEntropy,
+					DataProtectionScope.CurrentUser);
+
+			using(MemoryStream ms = new MemoryStream(pbData, false))
 			{
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
 				{
@@ -610,6 +628,14 @@ namespace KeePass.Util
 			return y.Count.CompareTo(x.Count); // Descending
 		}
 
+		private static string GetPasswordForDisplay(PwEntry pe)
+		{
+			if(pe == null) { Debug.Assert(false); return string.Empty; }
+			if(!AppPolicy.Current.UnhidePasswords) return PwDefs.HiddenPassword;
+
+			return pe.Strings.ReadSafe(PwDefs.PasswordField);
+		}
+
 		internal static List<object> FindDuplicatePasswords(PwDatabase pd,
 			IStatusLogger sl, out Action<ListView> fInit)
 		{
@@ -653,7 +679,7 @@ namespace KeePass.Util
 					ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 						PwDefs.TitleField));
 					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+					lvi.SubItems.Add(GetPasswordForDisplay(pe));
 					lvi.SubItems.Add(strGroup);
 
 					lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
@@ -785,7 +811,7 @@ namespace KeePass.Util
 					ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 						PwDefs.TitleField));
 					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+					lvi.SubItems.Add(GetPasswordForDisplay(pe));
 					lvi.SubItems.Add(strGroup);
 
 					lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
@@ -1002,7 +1028,7 @@ namespace KeePass.Util
 				ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 					PwDefs.TitleField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+				lvi.SubItems.Add(GetPasswordForDisplay(pe));
 
 				Array.Clear(vSimCounts, 0, vSimCounts.Length);
 				for(int i = 1; i < lSp.Count; ++i)
@@ -1186,7 +1212,7 @@ namespace KeePass.Util
 				lvi.UseItemStyleForSubItems = false;
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+				lvi.SubItems.Add(GetPasswordForDisplay(pe));
 				lvi.SubItems.Add(strGroup);
 
 				ulong q = (kvp.Value >> 32);

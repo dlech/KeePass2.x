@@ -290,7 +290,7 @@
 			<Value>Change Master Key</Value>
 		</Data>
 		<Data Name="ChangeMasterKeyIntroShort">
-			<Value>You are changing the composite master key for the currently opened database.</Value>
+			<Value>You are changing the composite master key for the currently open database.</Value>
 		</Data>
 		<Data Name="CharsAbbr">
 			<Value>ch.</Value>
@@ -340,11 +340,11 @@
 		<Data Name="ClipboardViewerIgnoreFormat">
 			<Value>Use 'Clipboard Viewer Ignore' clipboard format</Value>
 		</Data>
+		<Data Name="Close">
+			<Value>Close</Value>
+		</Data>
 		<Data Name="CloseActiveDatabase">
 			<Value>Close active database</Value>
-		</Data>
-		<Data Name="CloseButton">
-			<Value>&amp;Close</Value>
 		</Data>
 		<Data Name="CloseButtonMinimizes">
 			<Value>Close button [X] minimizes main window instead of terminating the application</Value>
@@ -436,23 +436,20 @@
 		<Data Name="CopyOfItem">
 			<Value>Copy</Value>
 		</Data>
-		<Data Name="CopyPasswordFull">
-			<Value>Copy Password to Clipboard</Value>
-		</Data>
 		<Data Name="CopyPasswordMenu">
 			<Value>Copy &amp;Password</Value>
 		</Data>
 		<Data Name="CopyTanMenu">
-			<Value>Copy &amp;TAN</Value>
+			<Value>Co&amp;py TAN</Value>
+		</Data>
+		<Data Name="CopyUrls">
+			<Value>&amp;Copy URL(s)</Value>
 		</Data>
 		<Data Name="CopyUrlsInsteadOfOpening">
 			<Value>Copy URLs to clipboard instead of opening them</Value>
 		</Data>
-		<Data Name="CopyUrlToClipboard">
-			<Value>&amp;Copy URL(s) to Clipboard</Value>
-		</Data>
-		<Data Name="CopyUserFull">
-			<Value>Copy User Name to Clipboard</Value>
+		<Data Name="CopyUserName">
+			<Value>Copy User Name</Value>
 		</Data>
 		<Data Name="CopyWholeEntries">
 			<Value>Copy Whole Entries</Value>
@@ -466,8 +463,8 @@
 		<Data Name="CreateMasterKey">
 			<Value>Create Composite Master Key</Value>
 		</Data>
-		<Data Name="CreateNewDatabase">
-			<Value>Create New Password Database</Value>
+		<Data Name="CreateNewDatabase2">
+			<Value>Create New Database</Value>
 		</Data>
 		<Data Name="CreateNewIDs">
 			<Value>Create new &amp;IDs</Value>
@@ -548,7 +545,7 @@
 			<Value>Database Maintenance</Value>
 		</Data>
 		<Data Name="DatabaseMaintenanceDesc">
-			<Value>Here you can maintain the currently opened database.</Value>
+			<Value>Here you can maintain the currently open database.</Value>
 		</Data>
 		<Data Name="DatabaseModifiedNoDot">
 			<Value>The current database file has been modified</Value>
@@ -883,17 +880,14 @@
 		<Data Name="FileExtInstallSuccess">
 			<Value>Successfully associated KDBX files with KeePass! KDBX files will now be opened by KeePass when you double-click on them.</Value>
 		</Data>
-		<Data Name="FileExtName">
-			<Value>KeePass Password Database</Value>
+		<Data Name="FileExtName2">
+			<Value>KeePass Database</Value>
 		</Data>
 		<Data Name="FileFormatStc">
 			<Value>File format</Value>
 		</Data>
-		<Data Name="FileLockedBy">
-			<Value>The specified file is currently locked by the following user:</Value>
-		</Data>
-		<Data Name="FileLockedWarning">
-			<Value>KeePass will open the file, but note that you might overwrite changes each other when saving.</Value>
+		<Data Name="FileImportFailed">
+			<Value>Failed to import the specified file!</Value>
 		</Data>
 		<Data Name="FileNameContainsSemicolonError">
 			<Value>This file path contains a semicolon (;) and therefore cannot be processed. Replace the semicolon and repeat the procedure.</Value>
@@ -967,6 +961,9 @@
 		<Data Name="Find">
 			<Value>Find</Value>
 		</Data>
+		<Data Name="FindEntries">
+			<Value>Find Entries</Value>
+		</Data>
 		<Data Name="FocusQuickFindOnRestore">
 			<Value>Focus quick search box when restoring from taskbar</Value>
 		</Data>
@@ -986,7 +983,7 @@
 			<Value>Default &amp;Font</Value>
 		</Data>
 		<Data Name="ForceSystemFontUnix">
-			<Value>Force using system font (Unix only)</Value>
+			<Value>Force usage of system font (Unix only)</Value>
 		</Data>
 		<Data Name="Format">
 			<Value>Format</Value>
@@ -1088,7 +1085,7 @@
 			<Value>Hidden</Value>
 		</Data>
 		<Data Name="HideCloseDatabaseTb">
-			<Value>Hide 'Close Database' toolbar button when at most one database is opened</Value>
+			<Value>Hide 'Close Database' toolbar button when at most one database is open</Value>
 		</Data>
 		<Data Name="HideUsingAsterisks">
 			<Value>Hide field using asterisks</Value>
@@ -1103,10 +1100,10 @@
 			<Value>Host</Value>
 		</Data>
 		<Data Name="HotKeyAltOnly">
-			<Value>It is highly recommended not to use global hot keys with only Alt or Alt-Shift as modifier.</Value>
+			<Value>It is recommended not to use global hot keys with only Alt or Alt+Shift as modifier.</Value>
 		</Data>
 		<Data Name="HotKeyAltOnlyHint">
-			<Value>Recommended modifiers are Ctrl-Alt, Ctrl-Shift and Ctrl-Alt-Shift.</Value>
+			<Value>Recommended modifiers are Ctrl+Alt, Ctrl+Shift and Ctrl+Alt+Shift.</Value>
 		</Data>
 		<Data Name="HotKeyAltOnlyQuestion">
 			<Value>Are you sure you want to use the specified hot keys?</Value>
@@ -1162,6 +1159,9 @@
 		<Data Name="ImportStc">
 			<Value>Import into active database</Value>
 		</Data>
+		<Data Name="Incompatible">
+			<Value>Incompatible</Value>
+		</Data>
 		<Data Name="IncompatibleEnv">
 			<Value>incompatible with current environment</Value>
 		</Data>
@@ -1194,6 +1194,9 @@
 		</Data>
 		<Data Name="Interval">
 			<Value>Interval</Value>
+		</Data>
+		<Data Name="Invalid">
+			<Value>Invalid</Value>
 		</Data>
 		<Data Name="InvalidUrl">
 			<Value>The specified URL is invalid.</Value>
@@ -1249,26 +1252,17 @@
 		<Data Name="KeyboardKeyCtrl">
 			<Value>Ctrl</Value>
 		</Data>
-		<Data Name="KeyboardKeyCtrlLeft">
-			<Value>LCtrl</Value>
-		</Data>
 		<Data Name="KeyboardKeyEsc">
 			<Value>Esc</Value>
-		</Data>
-		<Data Name="KeyboardKeyInvalid">
-			<Value>Invalid Key</Value>
 		</Data>
 		<Data Name="KeyboardKeyModifiers">
 			<Value>Key Modifiers</Value>
 		</Data>
 		<Data Name="KeyboardKeyReturn">
-			<Value>Return</Value>
+			<Value>Enter</Value>
 		</Data>
 		<Data Name="KeyboardKeyShift">
 			<Value>Shift</Value>
-		</Data>
-		<Data Name="KeyboardKeyShiftLeft">
-			<Value>LShift</Value>
 		</Data>
 		<Data Name="KeyFile">
 			<Value>Key file</Value>
@@ -1326,6 +1320,12 @@
 		</Data>
 		<Data Name="LimitSingleInstance">
 			<Value>Limit to single instance</Value>
+		</Data>
+		<Data Name="Lng1xSel">
+			<Value>The selected LNG language file is compatible with KeePass 1.x only. KeePass 2.x uses LNGX language files.</Value>
+		</Data>
+		<Data Name="Lng2xWeb">
+			<Value>LNGX language files for KeePass 2.x are available on the KeePass website.</Value>
 		</Data>
 		<Data Name="LngInAppDir">
 			<Value>One or more language files have been found in the KeePass application directory.</Value>
@@ -1582,8 +1582,8 @@
 		<Data Name="OpenedDatabaseFile">
 			<Value>Opened database file</Value>
 		</Data>
-		<Data Name="OpeningDatabase">
-			<Value>Opening password database...</Value>
+		<Data Name="OpeningDatabase2">
+			<Value>Opening database...</Value>
 		</Data>
 		<Data Name="OpenUrl">
 			<Value>&amp;Open URL(s)</Value>
@@ -1951,8 +1951,8 @@
 		<Data Name="Search">
 			<Value>Search...</Value>
 		</Data>
-		<Data Name="SearchDesc">
-			<Value>Search the password database for entries.</Value>
+		<Data Name="SearchDesc2">
+			<Value>Search the database for entries.</Value>
 		</Data>
 		<Data Name="SearchEntriesFound">
 			<Value>{PARAM} entries found</Value>
@@ -2044,9 +2044,6 @@
 		<Data Name="ShowDerefDataAsync">
 			<Value>Show dereferenced data asynchronously</Value>
 		</Data>
-		<Data Name="ShowEntries">
-			<Value>Show Entries</Value>
-		</Data>
 		<Data Name="ShowEntriesByTag">
 			<Value>Show entries by tag</Value>
 		</Data>
@@ -2059,9 +2056,6 @@
 		<Data Name="ShowMessageBox">
 			<Value>Show message box</Value>
 		</Data>
-		<Data Name="ShowTrayOnlyIfTrayed">
-			<Value>Show tray icon only if main window has been sent to tray</Value>
-		</Data>
 		<Data Name="SimilarPasswords">
 			<Value>Similar Passwords</Value>
 		</Data>
@@ -2072,7 +2066,7 @@
 			<Value>List of entries that are using similar passwords (excluding TANs).</Value>
 		</Data>
 		<Data Name="SimilarPasswordsNoDup">
-			<Value>The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the 'Find Duplicate Passwords' command (in the main menu).</Value>
+			<Value>The list shows entries that are using similar, but not identical passwords. For finding entries that are using the same passwords, use the 'Duplicate Passwords' command (in the main menu).</Value>
 		</Data>
 		<Data Name="Size">
 			<Value>Size</Value>
@@ -2093,7 +2087,7 @@
 			<Value>Accept invalid SSL certificates (self-signed, expired, ...)</Value>
 		</Data>
 		<Data Name="StandardExpireSelect">
-			<Value>Select one of the standard expire times</Value>
+			<Value>Select one of the standard expiry times</Value>
 		</Data>
 		<Data Name="StandardFields">
 			<Value>Standard Fields</Value>
@@ -2586,6 +2580,9 @@
 		</Data>
 		<Data Name="PreAuth">
 			<Value>Pre-authenticate</Value>
+		</Data>
+		<Data Name="StructsTooDeep">
+			<Value>Structures are nested too deeply.</Value>
 		</Data>
 		<Data Name="Timeout">
 			<Value>Timeout</Value>

@@ -37,6 +37,8 @@ using KeePassLib.Interfaces;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Util
 {
 	public enum BinaryDataHandler
@@ -201,6 +203,8 @@ namespace KeePass.Util
 					}
 				}
 
+				strName = UrlUtil.GetSafeFileName(strName);
+
 				string strFile = strTempDir + strName;
 				File.WriteAllBytes(strFile, pbData);
 
@@ -209,7 +213,7 @@ namespace KeePass.Util
 				catch(Exception) { Debug.Assert(false); }
 
 				ProcessStartInfo psi = new ProcessStartInfo();
-				psi.FileName = strFile;
+				psi.FileName = NativeLib.EncodePath(strFile);
 				psi.UseShellExecute = true;
 				psi.WorkingDirectory = strTempDir;
 

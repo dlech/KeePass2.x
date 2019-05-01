@@ -117,9 +117,9 @@
 			this.m_lblOpenHint.AutoSize = true;
 			this.m_lblOpenHint.Location = new System.Drawing.Point(92, 99);
 			this.m_lblOpenHint.Name = "m_lblOpenHint";
-			this.m_lblOpenHint.Size = new System.Drawing.Size(351, 13);
+			this.m_lblOpenHint.Size = new System.Drawing.Size(339, 13);
 			this.m_lblOpenHint.TabIndex = 2;
-			this.m_lblOpenHint.Text = "Click the drop-down button on the right to see currently opened windows.";
+			this.m_lblOpenHint.Text = "Click the drop-down button on the right to see currently open windows.";
 			// 
 			// m_lnkWildcardRegexHint
 			// 

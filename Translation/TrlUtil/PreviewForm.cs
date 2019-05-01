@@ -107,6 +107,11 @@ namespace TrlUtil
 					(cCopy as ComboBox).DropDownStyle = (c as ComboBox).DropDownStyle;
 				}
 				else if(c is GroupBox) cCopy = new GroupBox();
+				else if(c is HotKeyControlEx)
+				{
+					cCopy = new TextBox();
+					bSetText = false;
+				}
 				else if(c is Label) cCopy = new Label();
 				else if(c is NumericUpDown)
 				{
@@ -121,6 +126,7 @@ namespace TrlUtil
 				}
 				else if(c is TabControl) cCopy = new TabControl();
 				else if(c is TabPage) cCopy = new TabPage();
+				// HotKeyControlEx is a TextBox, so HotKeyControlEx must be first
 				else if(c is TextBox)
 				{
 					cCopy = new TextBox();

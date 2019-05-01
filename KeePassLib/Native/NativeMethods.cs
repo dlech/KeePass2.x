@@ -39,6 +39,9 @@ namespace KeePassLib.Native
 		internal const uint FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
 		internal const int MAX_TRANSACTION_DESCRIPTION_LENGTH = 64;
 
+		internal static readonly Guid FOLDERID_SkyDrive = new Guid(
+			"A52BBA46-E9E1-435F-B3D9-28DAA648C0F6");
+
 		// internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
 		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
@@ -179,6 +182,10 @@ namespace KeePassLib.Native
 			string lpNewFileName, IntPtr lpProgressRoutine, IntPtr lpData,
 			UInt32 dwFlags, IntPtr hTransaction);
 
+		[DllImport("Shell32.dll")]
+		private static extern int SHGetKnownFolderPath(ref Guid rfid, uint dwFlags,
+			IntPtr hToken, out IntPtr ppszPath);
+
 #if (!KeePassLibSD && !KeePassUAP)
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -255,6 +262,30 @@ namespace KeePassLib.Native
 
 			return strRtDir;
 #endif
+		}
+
+		internal static string GetKnownFolderPath(Guid g)
+		{
+			if(Marshal.SystemDefaultCharSize != 2) { Debug.Assert(false); return string.Empty; }
+
+			IntPtr pszPath = IntPtr.Zero;
+			try
+			{
+				if(SHGetKnownFolderPath(ref g, 0, IntPtr.Zero, out pszPath) == 0)
+				{
+					if(pszPath != IntPtr.Zero)
+						return Marshal.PtrToStringUni(pszPath);
+					else { Debug.Assert(false); }
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				try { if(pszPath != IntPtr.Zero) Marshal.FreeCoTaskMem(pszPath); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			return string.Empty;
 		}
 	}
 }

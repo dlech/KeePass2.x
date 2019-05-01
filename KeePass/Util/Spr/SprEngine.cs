@@ -467,7 +467,9 @@ namespace KeePass.Util.Spr
 
 				string strRep = null;
 				if(i == 0) strRep = strDataCmp;
+				// UrlUtil supports prefixes like cmd://
 				else if(i == 1) strRep = UrlUtil.RemoveScheme(strDataCmp);
+				else if(i == 2) strRep = UrlUtil.GetScheme(strDataCmp);
 				else
 				{
 					try
@@ -477,7 +479,7 @@ namespace KeePass.Util.Spr
 						int t;
 						switch(i)
 						{
-							case 2: strRep = uri.Scheme; break;
+							// case 2: strRep = uri.Scheme; break; // No cmd:// support
 							case 3: strRep = uri.Host; break;
 							case 4:
 								strRep = uri.Port.ToString(
@@ -850,10 +852,14 @@ namespace KeePass.Util.Spr
 			List<string> lParams;
 
 			while(ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
-				@"{CMD:", out iStart, out lParams, true))
+				@"{CMD:", out iStart, out lParams, false))
 			{
 				if(lParams.Count == 0) continue;
-				string strCmd = lParams[0];
+
+				string strCmd = WinUtil.CompileUrl((lParams[0] ?? string.Empty),
+					((ctx != null) ? ctx.Entry : null), true, null, true);
+				if(WinUtil.IsCommandLineUrl(strCmd))
+					strCmd = WinUtil.GetCommandLineFromUrl(strCmd);
 				if(string.IsNullOrEmpty(strCmd)) continue;
 
 				Process p = null;
@@ -868,13 +874,10 @@ namespace KeePass.Util.Spr
 					ProcessStartInfo psi = new ProcessStartInfo();
 
 					string strApp, strArgs;
-					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs);
-					strApp = WinUtil.CompileUrl((strApp ?? string.Empty),
-						((ctx != null) ? ctx.Entry : null), true, null);
+					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs, true);
 					if(string.IsNullOrEmpty(strApp)) continue;
 					psi.FileName = strApp;
-					if(!string.IsNullOrEmpty(strArgs))
-						psi.Arguments = strArgs;
+					if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
 
 					string strMethod = GetParam(d, "m", "s");
 					bool bShellExec = !strMethod.Equals("c", sc);
@@ -907,7 +910,13 @@ namespace KeePass.Util.Spr
 
 					if(bStdOut)
 					{
-						string strOut = p.StandardOutput.ReadToEnd();
+						string strOut = (p.StandardOutput.ReadToEnd() ?? string.Empty);
+
+						// Remove trailing new-line characters, like $(...);
+						// https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
+						// https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html#Command-Substitution
+						strOut = strOut.TrimEnd('\r', '\n');
+
 						strOut = TransformContent(strOut, ctx);
 						str = str.Insert(iStart, strOut);
 					}

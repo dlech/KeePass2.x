@@ -67,7 +67,7 @@ namespace KeePass.Forms
 
 		public void EndLogging()
 		{
-			m_btnCancel.Text = KPRes.CloseButton;
+			m_btnCancel.Text = KPRes.Close;
 			m_bCloseMode = true;
 
 			SetText(string.Empty, LogStatusType.AdditionalInfo);

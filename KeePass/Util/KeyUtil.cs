@@ -96,8 +96,7 @@ namespace KeePass.Util
 							MessageService.ShowWarning(exCKP);
 							return null;
 						}
-
-						MemUtil.ZeroByteArray(pbProvKey);
+						finally { MemUtil.ZeroByteArray(pbProvKey); }
 					}
 					else return null; // Provider has shown error message
 				}

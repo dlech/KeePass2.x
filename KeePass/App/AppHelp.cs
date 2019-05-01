@@ -20,9 +20,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Native;
@@ -147,14 +147,15 @@ namespace KeePass.App
 			{
 				if(NativeLib.IsUnix())
 				{
-					Process p = Process.Start(strCmd.Trim('\"'));
+					Process p = Process.Start(NativeLib.EncodePath(strCmd.Trim('\"')));
 					if(p != null) p.Dispose();
 				}
 				else // Windows
 				{
 					strDisp = "HH.exe " + strDisp;
 
-					Process p = Process.Start(WinUtil.LocateSystemApp("hh.exe"), strCmd);
+					Process p = Process.Start(NativeLib.EncodePath(
+						WinUtil.LocateSystemApp("hh.exe")), strCmd);
 					if(p != null) p.Dispose();
 				}
 			}
@@ -185,11 +186,12 @@ namespace KeePass.App
 				string strUrl = StrUtil.GetStringBetween(strQuotedMsIts, 0, "::", "\"");
 
 				// https://www.ulduzsoft.com/linux/kchmviewer/kchmviewer-integration-reference/
-				string strArgs = "\"" + strFile + "\"";
+				string strArgs = "\"" + SprEncoding.EncodeForCommandLine(strFile) + "\"";
 				if(!string.IsNullOrEmpty(strUrl))
-					strArgs = "-showPage \"" + strUrl + "\" " + strArgs;
+					strArgs = "-showPage \"" + SprEncoding.EncodeForCommandLine(
+						strUrl) + "\" " + strArgs;
 
-				Process p = Process.Start(strApp, strArgs);
+				Process p = Process.Start(NativeLib.EncodePath(strApp), strArgs);
 				if(p != null) p.Dispose();
 
 				return true;

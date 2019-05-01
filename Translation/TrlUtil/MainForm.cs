@@ -41,6 +41,8 @@ using KeePassLib.Utility;
 
 using TrlUtil.App;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace TrlUtil
 {
 	public partial class MainForm : Form
@@ -1313,12 +1315,13 @@ namespace TrlUtil
 
 				if(str == m_strFile)
 				{
-					ProcessStartInfo psi = new ProcessStartInfo();
-					psi.FileName = UrlUtil.GetFileDirectory(str, true, true);
-					psi.UseShellExecute = true;
-
-					Process p = Process.Start(psi);
-					if(p != null) p.Dispose();
+					string strDir = UrlUtil.GetFileDirectory(str, true, true);
+					if(!NativeLib.IsUnix() || (strDir.IndexOfAny(new char[] {
+						'\\', '\"', '\'' }) < 0)) // Open safe paths only
+					{
+						Process p = Process.Start(strDir);
+						if(p != null) p.Dispose();
+					}
 					return;
 				}
 

@@ -809,6 +809,9 @@ namespace KeePass.Util.XmlSerialization
 					case "HotKeyGlobalAutoType":
 						o.HotKeyGlobalAutoType = ReadUInt64(xr);
 						break;
+					case "HotKeyGlobalAutoTypePassword":
+						o.HotKeyGlobalAutoTypePassword = ReadUInt64(xr);
+						break;
 					case "HotKeySelectedAutoType":
 						o.HotKeySelectedAutoType = ReadUInt64(xr);
 						break;
@@ -1616,8 +1619,8 @@ namespace KeePass.Util.XmlSerialization
 
 				switch(xr.LocalName)
 				{
-					case "ShowOnlyIfTrayed":
-						o.ShowOnlyIfTrayed = ReadBoolean(xr);
+					case "ShowOnlyIfTrayedEx":
+						o.ShowOnlyIfTrayedEx = ReadBoolean(xr);
 						break;
 					case "GrayIcon":
 						o.GrayIcon = ReadBoolean(xr);

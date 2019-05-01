@@ -66,7 +66,7 @@ namespace KeePassLib.Interfaces
 		}
 
 		/// <summary>
-		/// Flag that determines if the object does expire.
+		/// Flag that determines whether the object expires.
 		/// </summary>
 		bool Expires
 		{

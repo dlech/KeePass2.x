@@ -119,10 +119,9 @@ namespace KeePass.DataExchange.Formats
 				{
 					if(str.Length == 0)
 						ImportUtil.AppendToField(pe, PwDefs.NotesField,
-							Environment.NewLine, pd, string.Empty, false);
+							MessageService.NewLine, pd, string.Empty, false);
 					else
-						ImportUtil.AppendToField(pe, PwDefs.NotesField,
-							str, pd, Environment.NewLine, false);
+						ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
 				}
 				else
 				{
@@ -132,10 +131,7 @@ namespace KeePass.DataExchange.Formats
 					string strKey = ImportUtil.MapNameToStandardField(strRawKey, false);
 					if(string.IsNullOrEmpty(strKey)) strKey = strRawKey;
 
-					bool bMultiLine = ((strKey == PwDefs.NotesField) ||
-						!PwDefs.IsStandardField(strKey));
-					ImportUtil.AppendToField(pe, strKey, strValue, pd,
-						(bMultiLine ? Environment.NewLine : ", "), false);
+					ImportUtil.AppendToField(pe, strKey, strValue, pd);
 				}
 			}
 		}

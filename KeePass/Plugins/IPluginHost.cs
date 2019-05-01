@@ -46,7 +46,7 @@ namespace KeePass.Plugins
 		MainForm MainWindow { get; }
 
 		/// <summary>
-		/// Reference to the currently opened database.
+		/// Reference to the currently open database.
 		/// </summary>
 		PwDatabase Database { get; }
 

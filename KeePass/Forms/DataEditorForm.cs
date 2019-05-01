@@ -118,7 +118,7 @@ namespace KeePass.Forms
 			++m_uBlockEvents;
 
 			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
-			m_menuFileExit.ShortcutKeyDisplayString = KPRes.KeyboardKeyEsc;
+			UIUtil.AssignShortcut(m_menuFileExit, Keys.Escape, null, true);
 
 			UIUtil.ConfigureTbButton(m_tbFileSave, KPRes.Save, null, m_menuFileSave);
 			UIUtil.ConfigureTbButton(m_tbEditCut, KPRes.Cut, null);

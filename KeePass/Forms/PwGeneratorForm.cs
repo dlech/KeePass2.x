@@ -205,7 +205,7 @@ namespace KeePass.Forms
 			if(!m_bCanAccept)
 			{
 				m_btnOK.Visible = false;
-				m_btnCancel.Text = KPRes.CloseButton;
+				m_btnCancel.Text = KPRes.Close;
 
 				m_tabPreview.Text = KPRes.Generate;
 				m_lblPreview.Visible = false;

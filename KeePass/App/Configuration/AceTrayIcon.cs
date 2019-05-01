@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 
 namespace KeePass.App.Configuration
 {
@@ -30,12 +30,14 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bOnlyIfTrayed = false;
+		// Not available through the options dialog, see documentation;
+		// 'ShowOnlyIfTrayed' was used by KeePass <= 2.41
+		private bool m_bOnlyIfTrayedEx = false;
 		[DefaultValue(false)]
-		public bool ShowOnlyIfTrayed
+		public bool ShowOnlyIfTrayedEx
 		{
-			get { return m_bOnlyIfTrayed; }
-			set { m_bOnlyIfTrayed = value; }
+			get { return m_bOnlyIfTrayedEx; }
+			set { m_bOnlyIfTrayedEx = value; }
 		}
 
 		private bool m_bGrayIcon = false;

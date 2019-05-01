@@ -210,6 +210,12 @@
             Should not contain spaces, tabs or other whitespace.
             </summary>
         </member>
+        <member name="F:KeePassLib.PwDefs.UIUpdateDelay">
+            <summary>
+            Maximum time (in milliseconds) after which the user interface
+            should be updated.
+            </summary>
+        </member>
         <member name="F:KeePassLib.PwDefs.ProductName">
             <summary>
             The product name.
@@ -687,6 +693,12 @@
             'Pre-authenticate'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.StructsTooDeep">
+            <summary>
+            Look up a localized string similar to
+            'Structures are nested too deeply.'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.Timeout">
             <summary>
             Look up a localized string similar to
@@ -799,14 +811,6 @@
             </summary>
             <param name="str">String to convert.</param>
             <returns>String, HTML-encoded.</returns>
-        </member>
-        <member name="M:KeePassLib.Utility.StrUtil.SplitCommandLine(System.String,System.String@,System.String@)">
-            <summary>
-            Split up a command line into application and argument.
-            </summary>
-            <param name="strCmdLine">Command line to split.</param>
-            <param name="strApp">Application path.</param>
-            <param name="strArgs">Arguments.</param>
         </member>
         <member name="M:KeePassLib.Utility.StrUtil.ColorToUnnamedHtml(System.Drawing.Color,System.Boolean)">
             <summary>
@@ -1086,7 +1090,7 @@
         </member>
         <member name="M:KeePassLib.Interfaces.IStatusLogger.ContinueWork">
             <summary>
-            Check if the user cancelled the current work.
+            Check whether the user cancelled the current work.
             </summary>
             <returns>Returns <c>true</c> if the caller should continue
             the current work.</returns>
@@ -1130,7 +1134,7 @@
         </member>
         <member name="P:KeePassLib.Interfaces.ITimeLogger.Expires">
             <summary>
-            Flag that determines if the object does expire.
+            Flag that determines whether the object expires.
             </summary>
         </member>
         <member name="P:KeePassLib.Interfaces.ITimeLogger.UsageCount">
@@ -1539,6 +1543,16 @@
             <param name="puRounds">Number of transformations done.</param>
             <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
         </member>
+        <member name="M:KeePassLib.Native.NativeLib.EncodePath(System.String)">
+            <summary>
+            Encode a path for <c>Process.Start</c>.
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Native.NativeLib.DecodeArgsToPath(System.String)">
+            <summary>
+            Decode command line arguments to a path for <c>Process.Start</c>.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Native.NativeLib.AllowNative">
             <summary>
             If this property is set to <c>true</c>, the native library is used.
@@ -1791,30 +1805,30 @@
         </member>
         <member name="M:KeePassLib.PwDatabase.Save(KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Save the currently opened database. The file is written to the location
-            it has been opened from.
+            Save the currently open database. The file is written to the
+            location it has been opened from.
             </summary>
             <param name="slLogger">Logger that recieves status information.</param>
         </member>
         <member name="M:KeePassLib.PwDatabase.SaveAs(KeePassLib.Serialization.IOConnectionInfo,System.Boolean,KeePassLib.Interfaces.IStatusLogger)">
             <summary>
-            Save the currently opened database to a different location. If
+            Save the currently open database to a different location. If
             <paramref name="bIsPrimaryNow" /> is <c>true</c>, the specified
             location is made the default location for future saves
             using <c>SaveDatabase</c>.
             </summary>
             <param name="ioConnection">New location to serialize the database to.</param>
-            <param name="bIsPrimaryNow">If <c>true</c>, the new location is made the
-            standard location for the database. If <c>false</c>, a copy of the currently
-            opened database is saved to the specified location, but it isn't
-            made the default location (i.e. no lock files will be moved for
+            <param name="bIsPrimaryNow">If <c>true</c>, the new location is made
+            the standard location for the database. If <c>false</c>, a copy of the
+            currently open database is saved to the specified location, but it
+            isn't made the default location (i.e. no lock files will be moved for
             example).</param>
             <param name="slLogger">Logger that recieves status information.</param>
         </member>
         <member name="M:KeePassLib.PwDatabase.Close">
             <summary>
-            Closes the currently opened database. No confirmation message is shown
-            before closing. Unsaved changes will be lost.
+            Closes the currently open database. No confirmation message
+            is shown before closing. Unsaved changes will be lost.
             </summary>
         </member>
         <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">
@@ -1845,7 +1859,7 @@
         </member>
         <member name="P:KeePassLib.PwDatabase.IOConnectionInfo">
             <summary>
-            <c>IOConnection</c> of the currently opened database file.
+            <c>IOConnection</c> of the currently open database file.
             Is never <c>null</c>.
             </summary>
         </member>
@@ -2046,14 +2060,9 @@
             List of all user keys contained in the current composite key.
             </summary>
         </member>
-        <member name="M:KeePassLib.Keys.InvalidCompositeKeyException.#ctor">
-            <summary>
-            Construct a new invalid composite key exception.
-            </summary>
-        </member>
         <member name="T:KeePassLib.PwGroup">
             <summary>
-            A group containing several password entries.
+            A group containing subgroups and entries.
             </summary>
         </member>
         <member name="M:KeePassLib.PwGroup.#ctor">
@@ -2251,11 +2260,11 @@
             <param name="vSeparators">Separators that delimit groups in the
             <c>strTree</c> parameter.</param>
         </member>
-        <member name="M:KeePassLib.PwGroup.GetLevel">
+        <member name="M:KeePassLib.PwGroup.GetDepth">
             <summary>
-            Get the level of the group (i.e. the number of parent groups).
+            Get the depth of this group (i.e. the number of ancestors).
             </summary>
-            <returns>Number of parent groups.</returns>
+            <returns>Depth of this group.</returns>
         </member>
         <member name="M:KeePassLib.PwGroup.GetGroups(System.Boolean)">
             <summary>
@@ -2589,7 +2598,7 @@
         </member>
         <member name="T:KeePassLib.PwMergeMethod">
             <summary>
-            Methods for merging password databases/entries.
+            Methods for merging databases/entries.
             </summary>
         </member>
         <member name="T:KeePassLib.PwIcon">

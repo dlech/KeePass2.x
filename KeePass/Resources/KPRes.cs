@@ -36,5 +36,15 @@ namespace KeePass.Resources
 				return (KPRes.Database + "." + AppDefs.FileExtension.FileExt);
 			}
 		}
+
+		// For backward compatibility with plugins
+		[Obsolete]
+		public static string CreateNewDatabase
+		{
+			get
+			{
+				return KPRes.CreateNewDatabase2;
+			}
+		}
 	}
 }

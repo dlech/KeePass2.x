@@ -262,13 +262,20 @@ using a cryptographically secure pseudo-random number generator
 <img src="../images/b16x16_file_locked.png" class="singleimg"
 alt="Application Protection" />&nbsp;&nbsp;Process Memory Protection</h2>
 
-<p>While KeePass is running, sensitive data (like the hash of the master key
-and entry passwords) is stored encryptedly in process memory.
+<p>While KeePass is running, sensitive data is stored encryptedly
+in the process memory.
 This means that even if you would dump the KeePass process memory to disk,
-you could not find any sensitive data.</p>
+you could not find any sensitive data.
+For performance reasons, the process memory protection only applies
+to sensitive data; sensitive data here includes for instance the master key
+and entry passwords, but not user names, notes and file attachments.
+Note that this has nothing to do with the
+<a href="#secencrypt">encryption of database files</a>;
+in database files, all data (including user names, etc.) is encrypted.</p>
 
-<p>Furthermore, KeePass erases all security-critical memory when it is not
-needed anymore, i.e. it overwrites these memory areas before releasing them.</p>
+<p>Furthermore, KeePass erases all security-critical memory (if possible)
+when it is not needed anymore, i.e. it overwrites these memory areas
+before releasing them.</p>
 
 <p>KeePass uses the Windows DPAPI for encrypting sensitive data in memory
 (via <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa380262.aspx"
@@ -290,15 +297,15 @@ On Unix-like systems, KeePass 2.x uses ChaCha20, because Mono does not provide
 any effective memory protection method.</p>
 
 <p>For some operations, KeePass must make sensitive data available
-unencryptedly in process memory. For example, in order to show a password
+unencryptedly in the process memory. For example, in order to show a password
 in the standard list view control provided by Windows, KeePass must supply
 the cell content (the password) as unencrypted string
 (unless hiding using asterisks is enabled).
-Operations that result in unencrypted data in process memory include,
+Operations that result in unencrypted data in the process memory include,
 but are not limited to: displaying data (not asterisks) in standard controls,
-searching data, and replacing placeholders (during auto-type, drag&amp;drop,
-copying to clipboard, ...).
-Windows may make an internal copy of the data (in process memory)
+searching data, replacing placeholders (during auto-type, drag&amp;drop,
+copying to clipboard, ...), and importing/exporting (except KDBX).
+Windows and .NET may make copies of the data (in the process memory)
 that cannot be erased by KeePass.</p>
 
 <br />
@@ -335,12 +342,15 @@ entering the master key on a different/secure desktop!</i></p>
 alt="Application Protection" />&nbsp;&nbsp;Locking the Workspace</h2>
 
 <p>When locking the workspace, KeePass closes the database file and
-only remembers its path.</p>
+only remembers its path and certain view parameters.</p>
 
 <p>This provides maximum security: unlocking the
 workspace is as hard as opening the database file the normal way. Also, it prevents
 data loss (the computer can crash while KeePass is locked, without doing any damage
 to the database).</p>
+
+<p>When a sub-dialog is open, the workspace may not be locked;
+for details, see the <a href="faq_tech.html#noautolock">FAQ</a>.</p>
 
 <br />
 
@@ -423,8 +433,9 @@ program running on the system that is specialized on attacking KeePass.</p>
 <p>In this situation, the best security features will fail.
 This is law #1 of the
 <!-- https://technet.microsoft.com/en-us/library/cc722487.aspx -->
-<a href="https://technet.microsoft.com/en-us/library/hh278941.aspx"
-target="_blank">Ten Immutable Laws of Security</a>
+<!-- https://technet.microsoft.com/en-us/library/hh278941.aspx -->
+<a href="https://web.archive.org/web/20180529154650/https://technet.microsoft.com/en-us/library/hh278941.aspx"
+target="_blank" rel="nofollow">Ten Immutable Laws of Security</a>
 (Microsoft TechNet article; see also the
 Microsoft TechNet article
 <a href="https://technet.microsoft.com/en-us/library/2008.10.securitywatch.aspx"

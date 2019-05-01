@@ -389,6 +389,7 @@
     <Compile Include="DataExchange\FileFormatProvider.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
     <Compile Include="DataExchange\Formats\AnyPwCsv144.cs" />
+    <Compile Include="DataExchange\Formats\BitwardenJson112.cs" />
     <Compile Include="DataExchange\Formats\ChromeCsv66.cs" />
     <Compile Include="DataExchange\Formats\CodeWalletTxt605.cs" />
     <Compile Include="DataExchange\Formats\DashlaneCsv2.cs" />
@@ -436,7 +437,8 @@
     <Compile Include="DataExchange\Formats\SecurityTxt12.cs" />
     <Compile Include="DataExchange\Formats\Spamex20070328.cs" />
     <Compile Include="DataExchange\Formats\SplashIdCsv402.cs" />
-    <Compile Include="DataExchange\Formats\SteganosPwManager2007.cs" />
+    <Compile Include="DataExchange\Formats\SteganosCsv20.cs" />
+    <Compile Include="DataExchange\Formats\SteganosUI2007.cs" />
     <Compile Include="DataExchange\Formats\StickyPwXml50.cs" />
     <Compile Include="DataExchange\Formats\TurboPwsCsv5.cs" />
     <Compile Include="DataExchange\Formats\VisKeeperTxt3.cs" />
@@ -448,7 +450,7 @@
     <Compile Include="DataExchange\GxiImporter.cs" />
     <Compile Include="DataExchange\GxiProfile.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
-    <Compile Include="DataExchange\Json.cs" />
+    <Compile Include="DataExchange\JsonObject.cs" />
     <Compile Include="DataExchange\KdbFile.cs" />
     <Compile Include="DataExchange\KdbManager.cs" />
     <Compile Include="DataExchange\PwExportInfo.cs" />
@@ -1268,6 +1270,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Steganos20.png" />
+    <None Include="Resources\Images\B16x16_Imp_Bitwarden.png" />
     <None Include="Resources\Images\B16x16_Imp_Chrome.png" />
     <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />

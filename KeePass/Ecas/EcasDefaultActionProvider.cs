@@ -41,6 +41,8 @@ using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Ecas
 {
 	internal sealed class EcasDefaultActionProvider : EcasActionProvider
@@ -273,11 +275,11 @@ namespace KeePass.Ecas
 				try { pe = Program.MainForm.GetSelectedEntry(false); }
 				catch(Exception) { Debug.Assert(false); }
 
-				strCmd = WinUtil.CompileUrl(strCmd, pe, true, null);
+				strCmd = WinUtil.CompileUrl(strCmd, pe, true, null, false);
 
-				ProcessStartInfo psi = new ProcessStartInfo(strCmd);
-				if(!string.IsNullOrEmpty(strArgs))
-					psi.Arguments = strArgs;
+				ProcessStartInfo psi = new ProcessStartInfo();
+				psi.FileName = NativeLib.EncodePath(strCmd);
+				if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
 
 				bool bShEx = true;
 				if(!string.IsNullOrEmpty(strVerb)) { } // Need ShellExecute

@@ -151,7 +151,7 @@ namespace KeePassLib.Serialization
 				}
 
 				++uTagCounter;
-				if(((uTagCounter % 256) == 0) && bSupportsStatus)
+				if(((uTagCounter & 0xFFU) == 0) && bSupportsStatus)
 				{
 					Debug.Assert(lStreamLength == sParentStream.Length);
 					uint uPct = (uint)((sParentStream.Position * 100) /
@@ -161,7 +161,8 @@ namespace KeePassLib.Serialization
 					// position/length values (M120413)
 					if(uPct > 100) { Debug.Assert(false); uPct = 100; }
 
-					m_slLogger.SetProgress(uPct);
+					if(!m_slLogger.SetProgress(uPct))
+						throw new OperationCanceledException();
 				}
 			}
 
@@ -1000,28 +1001,31 @@ namespace KeePassLib.Serialization
 		private void ReadUnknown(XmlReader xr)
 		{
 			Debug.Assert(false); // Unknown node!
+			Debug.Assert(xr.NodeType == XmlNodeType.Element);
 
-			if(xr.IsEmptyElement) { m_bReadNextNode = true; return; }
+			bool bRead = false;
+			int cOpen = 0;
 
-			string strUnknownName = xr.Name;
-
-			XorredBuffer xb = ProcessNode(xr);
-			if(xb != null) { xb.Dispose(); return; } // ProcessNode sets m_bReadNextNode
-
-			bool bRead = true;
-			while(true)
+			do
 			{
 				if(bRead) xr.Read();
+				bRead = true;
 
-				if(xr.NodeType == XmlNodeType.EndElement) break;
-				if(xr.NodeType != XmlNodeType.Element) { bRead = true; continue; }
+				if(xr.NodeType == XmlNodeType.EndElement) --cOpen;
+				else if(xr.NodeType == XmlNodeType.Element)
+				{
+					if(!xr.IsEmptyElement)
+					{
+						XorredBuffer xb = ProcessNode(xr);
+						if(xb != null) { xb.Dispose(); bRead = m_bReadNextNode; continue; }
 
-				ReadUnknown(xr);
-				bRead = m_bReadNextNode;
+						++cOpen;
+					}
+				}
 			}
+			while(cOpen > 0);
 
-			Debug.Assert(xr.Name == strUnknownName); // On end tag
-			m_bReadNextNode = true;
+			m_bReadNextNode = bRead;
 		}
 
 		private XorredBuffer ProcessNode(XmlReader xr)

@@ -100,7 +100,7 @@ namespace KeePass.Forms
 				strTitle += " - " + m_pgRoot.Name;
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc);
+				Properties.Resources.B48x48_XMag, strTitle, KPRes.SearchDesc2);
 			this.Icon = AppIcons.Default;
 
 			m_bUpdating = true;

@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Ecas;
 using KeePass.Resources;
@@ -182,18 +182,26 @@ namespace KeePass.Ecas
 			dg.Rows.Clear();
 			dg.Columns.Clear();
 
-			Color clrBack = dg.DefaultCellStyle.BackColor;
-			Color clrValueBack = dg.DefaultCellStyle.BackColor;
-			if(clrValueBack.GetBrightness() >= 0.5)
-				clrValueBack = UIUtil.DarkenColor(clrValueBack, 0.075);
-			else clrValueBack = UIUtil.LightenColor(clrValueBack, 0.075);
+			Color clrFG = dg.DefaultCellStyle.ForeColor;
+			Color clrBG = dg.DefaultCellStyle.BackColor;
+
+			// https://sourceforge.net/p/keepass/bugs/1808/
+			if(UIUtil.IsDarkColor(clrFG) == UIUtil.IsDarkColor(clrBG))
+				clrFG = (UIUtil.IsDarkColor(clrBG) ? Color.White : Color.Black);
+
+			Color clrValueBG = clrBG;
+			if(UIUtil.IsDarkColor(clrBG))
+				clrValueBG = UIUtil.LightenColor(clrValueBG, 0.075);
+			else clrValueBG = UIUtil.DarkenColor(clrValueBG, 0.075);
 
 			dg.ColumnHeadersVisible = false;
 			dg.RowHeadersVisible = false;
-			dg.GridColor = clrBack;
-			dg.BackgroundColor = clrBack;
-			dg.DefaultCellStyle.SelectionBackColor = clrBack;
-			dg.DefaultCellStyle.SelectionForeColor = dg.DefaultCellStyle.ForeColor;
+			dg.GridColor = clrBG;
+			dg.BackgroundColor = clrBG;
+			dg.DefaultCellStyle.ForeColor = clrFG;
+			dg.DefaultCellStyle.BackColor = clrBG;
+			dg.DefaultCellStyle.SelectionForeColor = clrFG;
+			dg.DefaultCellStyle.SelectionBackColor = clrBG;
 			dg.AllowDrop = false;
 			dg.AllowUserToAddRows = false;
 			dg.AllowUserToDeleteRows = false;
@@ -239,8 +247,7 @@ namespace KeePass.Ecas
 
 					case EcasValueType.Bool:
 						c = new DataGridViewCheckBoxCell(false);
-						(c as DataGridViewCheckBoxCell).Value =
-							StrUtil.StringToBool(strParam);
+						c.Value = StrUtil.StringToBool(strParam);
 						break;
 
 					case EcasValueType.EnumStrings:
@@ -275,10 +282,17 @@ namespace KeePass.Ecas
 						break;
 				}
 
-				if(c != null) cc[1] = c;
-				cc[1].ReadOnly = false;
-				cc[1].Style.BackColor = clrValueBack;
-				cc[1].Style.SelectionBackColor = clrValueBack;
+				if(c != null)
+				{
+					cc[1] = c;
+					cc[1].ReadOnly = false;
+				}
+				else cc[1].ReadOnly = true;
+
+				cc[1].Style.ForeColor = clrFG;
+				cc[1].Style.BackColor = clrValueBG;
+				cc[1].Style.SelectionForeColor = clrFG;
+				cc[1].Style.SelectionBackColor = clrValueBG;
 			}
 
 			// Perform postponed setting of EditMode (cannot set it earlier

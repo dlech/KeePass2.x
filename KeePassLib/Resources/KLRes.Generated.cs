@@ -59,6 +59,7 @@ namespace KeePassLib.Resources
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strPassive = TryGetEx(dictNew, "Passive", m_strPassive);
 			m_strPreAuth = TryGetEx(dictNew, "PreAuth", m_strPreAuth);
+			m_strStructsTooDeep = TryGetEx(dictNew, "StructsTooDeep", m_strStructsTooDeep);
 			m_strTimeout = TryGetEx(dictNew, "Timeout", m_strTimeout);
 			m_strTryAgainSecs = TryGetEx(dictNew, "TryAgainSecs", m_strTryAgainSecs);
 			m_strUnknownHeaderId = TryGetEx(dictNew, "UnknownHeaderId", m_strUnknownHeaderId);
@@ -101,6 +102,7 @@ namespace KeePassLib.Resources
 			"OldFormat",
 			"Passive",
 			"PreAuth",
+			"StructsTooDeep",
 			"Timeout",
 			"TryAgainSecs",
 			"UnknownHeaderId",
@@ -475,6 +477,17 @@ namespace KeePassLib.Resources
 		public static string PreAuth
 		{
 			get { return m_strPreAuth; }
+		}
+
+		private static string m_strStructsTooDeep =
+			@"Structures are nested too deeply.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Structures are nested too deeply.'.
+		/// </summary>
+		public static string StructsTooDeep
+		{
+			get { return m_strStructsTooDeep; }
 		}
 
 		private static string m_strTimeout =

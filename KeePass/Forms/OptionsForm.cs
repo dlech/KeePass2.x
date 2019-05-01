@@ -60,12 +60,10 @@ namespace KeePass.Forms
 		private int m_argbAltItemBg = 0;
 		private Image m_imgAltItemBg = null;
 
-		private HotKeyControlEx m_hkGlobalAutoType = null;
-		private HotKeyControlEx m_hkSelectedAutoType = null;
-		private HotKeyControlEx m_hkShowWindow = null;
-		private Keys m_kPrevATHKKey = Keys.None;
-		private Keys m_kPrevATSHKKey = Keys.None;
-		private Keys m_kPrevSWHKKey = Keys.None;
+		private Keys m_kPrevAT = Keys.None;
+		private Keys m_kPrevATP = Keys.None;
+		private Keys m_kPrevATS = Keys.None;
+		private Keys m_kPrevSW = Keys.None;
 
 		private AceUrlSchemeOverrides m_aceUrlSchemeOverrides = null;
 		private string m_strUrlOverrideAll = string.Empty;
@@ -219,13 +217,6 @@ namespace KeePass.Forms
 			m_lvPolicy.Columns.Add(KPRes.Feature, (nWidth * 10) / 29);
 			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 19) / 29);
 
-			m_hkGlobalAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys,
-				m_tbGlobalAutoType, false);
-			m_hkSelectedAutoType = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys,
-				m_tbSelAutoTypeHotKey, false);
-			m_hkShowWindow = HotKeyControlEx.ReplaceTextBox(m_grpHotKeys,
-				m_tbShowWindowHotKey, false);
-
 			UIUtil.ConfigureToolTip(m_ttRect);
 			m_ttRect.SetToolTip(m_cbClipClearTime, KPRes.ClipboardClearDesc +
 				MessageService.NewParagraph + KPRes.ClipboardOptionME);
@@ -239,12 +230,13 @@ namespace KeePass.Forms
 			}
 			else // Unix
 			{
-				m_hkGlobalAutoType.TextNone = KPRes.External;
-				m_hkSelectedAutoType.TextNone = KPRes.External;
+				m_hkAutoType.TextNone = KPRes.External;
+				m_hkAutoTypePassword.TextNone = KPRes.External;
+				m_hkAutoTypeSelected.TextNone = KPRes.External;
 				m_hkShowWindow.TextNone = KPRes.External;
 
-				m_hkGlobalAutoType.Enabled = m_hkSelectedAutoType.Enabled =
-					m_hkShowWindow.Enabled = false;
+				m_hkAutoType.Enabled = m_hkAutoTypePassword.Enabled =
+					m_hkAutoTypeSelected.Enabled = m_hkShowWindow.Enabled = false;
 				m_btnFileExtCreate.Enabled = m_btnFileExtRemove.Enabled = false;
 				m_cbAutoRun.Enabled = false;
 			}
@@ -518,8 +510,8 @@ namespace KeePass.Forms
 
 			lvg = new ListViewGroup(KPRes.TrayIcon);
 			m_lvGuiOptions.Groups.Add(lvg);
-			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayed",
-				lvg, KPRes.ShowTrayOnlyIfTrayed);
+			// m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "ShowOnlyIfTrayedEx",
+			//	lvg, KPRes.ShowTrayOnlyIfTrayed);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "GrayIcon",
 				lvg, KPRes.TrayIconGray);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI.TrayIcon, "SingleClickDefault",
@@ -570,26 +562,26 @@ namespace KeePass.Forms
 		private void LoadIntegrationOptions()
 		{
 			Keys kAT = (Keys)Program.Config.Integration.HotKeyGlobalAutoType;
-			m_hkGlobalAutoType.HotKey = (kAT & Keys.KeyCode);
-			m_hkGlobalAutoType.HotKeyModifiers = (kAT & Keys.Modifiers);
-			m_hkGlobalAutoType.RenderHotKey();
-			m_kPrevATHKKey = (m_hkGlobalAutoType.HotKey | m_hkGlobalAutoType.HotKeyModifiers);
+			m_hkAutoType.HotKey = kAT;
+			m_kPrevAT = m_hkAutoType.HotKey; // Adjusted one
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeyGlobalAutoType"))
-				m_hkGlobalAutoType.Enabled = false;
+				m_hkAutoType.Enabled = false;
+
+			Keys kATP = (Keys)Program.Config.Integration.HotKeyGlobalAutoTypePassword;
+			m_hkAutoTypePassword.HotKey = kATP;
+			m_kPrevATP = m_hkAutoTypePassword.HotKey; // Adjusted one
+			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeyGlobalAutoTypePassword"))
+				m_hkAutoTypePassword.Enabled = false;
 
 			Keys kATS = (Keys)Program.Config.Integration.HotKeySelectedAutoType;
-			m_hkSelectedAutoType.HotKey = (kATS & Keys.KeyCode);
-			m_hkSelectedAutoType.HotKeyModifiers = (kATS & Keys.Modifiers);
-			m_hkSelectedAutoType.RenderHotKey();
-			m_kPrevATSHKKey = (m_hkSelectedAutoType.HotKey | m_hkSelectedAutoType.HotKeyModifiers);
+			m_hkAutoTypeSelected.HotKey = kATS;
+			m_kPrevATS = m_hkAutoTypeSelected.HotKey; // Adjusted one
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeySelectedAutoType"))
-				m_hkSelectedAutoType.Enabled = false;
+				m_hkAutoTypeSelected.Enabled = false;
 
 			Keys kSW = (Keys)Program.Config.Integration.HotKeyShowWindow;
-			m_hkShowWindow.HotKey = (kSW & Keys.KeyCode);
-			m_hkShowWindow.HotKeyModifiers = (kSW & Keys.Modifiers);
-			m_hkShowWindow.RenderHotKey();
-			m_kPrevSWHKKey = (m_hkShowWindow.HotKey | m_hkShowWindow.HotKeyModifiers);
+			m_hkShowWindow.HotKey = kSW;
+			m_kPrevSW = m_hkShowWindow.HotKey; // Adjusted one
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Integration, "HotKeyShowWindow"))
 				m_hkShowWindow.Enabled = false;
 
@@ -717,19 +709,14 @@ namespace KeePass.Forms
 
 		private bool ValidateOptions()
 		{
-			m_hkGlobalAutoType.ResetIfModifierOnly();
-			m_hkSelectedAutoType.ResetIfModifierOnly();
-			m_hkShowWindow.ResetIfModifierOnly();
+			GFunc<HotKeyControlEx, bool> fAltMod = delegate(HotKeyControlEx c)
+			{
+				Keys m = (c.HotKey & Keys.Modifiers);
+				return ((m == Keys.Alt) || (m == (Keys.Alt | Keys.Shift)));
+			};
 
-			bool bAltMod = false;
-			bAltMod |= ((m_hkGlobalAutoType.HotKeyModifiers == Keys.Alt) ||
-				(m_hkGlobalAutoType.HotKeyModifiers == (Keys.Alt | Keys.Shift)));
-			bAltMod |= ((m_hkSelectedAutoType.HotKeyModifiers == Keys.Alt) ||
-				(m_hkSelectedAutoType.HotKeyModifiers == (Keys.Alt | Keys.Shift)));
-			bAltMod |= ((m_hkShowWindow.HotKeyModifiers == Keys.Alt) ||
-				(m_hkShowWindow.HotKeyModifiers == (Keys.Alt | Keys.Shift)));
-
-			if(bAltMod)
+			if(fAltMod(m_hkAutoType) || fAltMod(m_hkAutoTypePassword) ||
+				fAltMod(m_hkAutoTypeSelected) || fAltMod(m_hkShowWindow))
 			{
 				if(!MessageService.AskYesNo(KPRes.HotKeyAltOnly + MessageService.NewParagraph +
 					KPRes.HotKeyAltOnlyHint + MessageService.NewParagraph +
@@ -788,11 +775,13 @@ namespace KeePass.Forms
 			Program.Config.MainWindow.EntryListAlternatingBgColor =
 				(m_cbCustomAltColor.Checked ? m_argbAltItemBg : 0);
 
-			ChangeHotKey(ref m_kPrevATHKKey, m_hkGlobalAutoType,
+			ChangeHotKey(ref m_kPrevAT, m_hkAutoType,
 				AppDefs.GlobalHotKeyId.AutoType);
-			ChangeHotKey(ref m_kPrevATSHKKey, m_hkSelectedAutoType,
+			ChangeHotKey(ref m_kPrevATP, m_hkAutoTypePassword,
+				AppDefs.GlobalHotKeyId.AutoTypePassword);
+			ChangeHotKey(ref m_kPrevATS, m_hkAutoTypeSelected,
 				AppDefs.GlobalHotKeyId.AutoTypeSelected);
-			ChangeHotKey(ref m_kPrevSWHKKey, m_hkShowWindow,
+			ChangeHotKey(ref m_kPrevSW, m_hkShowWindow,
 				AppDefs.GlobalHotKeyId.ShowWindow);
 
 			// Program.Config.UI.TrayIcon.SingleClickDefault = m_cbSingleClickTrayAction.Checked;
@@ -823,25 +812,27 @@ namespace KeePass.Forms
 			AppConfigEx.ClearXmlPathCache();
 		}
 
-		private static void ChangeHotKey(ref Keys kPrevHK, HotKeyControlEx hkControl,
+		private static void ChangeHotKey(ref Keys kPrev, HotKeyControlEx hkControl,
 			int nHotKeyID)
 		{
-			Keys kNew = (hkControl.HotKey | hkControl.HotKeyModifiers);
-			if(kPrevHK != kNew)
-			{
-				kPrevHK = kNew;
+			Keys kNew = hkControl.HotKey;
+			if(kNew == kPrev) return;
 
-				if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoType)
-					Program.Config.Integration.HotKeyGlobalAutoType = (ulong)kNew;
-				else if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoTypeSelected)
-					Program.Config.Integration.HotKeySelectedAutoType = (ulong)kNew;
-				else if(nHotKeyID == AppDefs.GlobalHotKeyId.ShowWindow)
-					Program.Config.Integration.HotKeyShowWindow = (ulong)kNew;
+			kPrev = kNew;
 
-				HotKeyManager.UnregisterHotKey(nHotKeyID);
-				if(kPrevHK != Keys.None)
-					HotKeyManager.RegisterHotKey(nHotKeyID, kPrevHK);
-			}
+			if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoType)
+				Program.Config.Integration.HotKeyGlobalAutoType = (ulong)kNew;
+			else if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoTypePassword)
+				Program.Config.Integration.HotKeyGlobalAutoTypePassword = (ulong)kNew;
+			else if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoTypeSelected)
+				Program.Config.Integration.HotKeySelectedAutoType = (ulong)kNew;
+			else if(nHotKeyID == AppDefs.GlobalHotKeyId.ShowWindow)
+				Program.Config.Integration.HotKeyShowWindow = (ulong)kNew;
+			else { Debug.Assert(false); }
+
+			HotKeyManager.UnregisterHotKey(nHotKeyID);
+			if(kNew != Keys.None)
+				HotKeyManager.RegisterHotKey(nHotKeyID, kNew);
 		}
 
 		private void UpdateUIState()
@@ -949,7 +940,7 @@ namespace KeePass.Forms
 		private void OnBtnFileExtCreate(object sender, EventArgs e)
 		{
 			// ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
-			//	KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
+			//	KPRes.FileExtName2, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
 			WinUtil.RunElevated(WinUtil.GetExecutable(), "-" +
 				AppDefs.CommandLineOptions.FileExtRegister, false);
 		}

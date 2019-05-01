@@ -510,7 +510,7 @@ namespace KeePass.Forms
 			try
 			{
 				DirectoryInfo di = new DirectoryInfo(strPath);
-				string[] vPath = di.FullName.Split(new char[]{ Path.DirectorySeparatorChar });
+				string[] vPath = di.FullName.Split(Path.DirectorySeparatorChar);
 				if((vPath == null) || (vPath.Length == 0)) { Debug.Assert(false); return; }
 
 				TreeNode tn = null;

@@ -1,3 +1,109 @@
+2019-05-01: 2.42
+- Added main menu items 'Group', 'Entry' and 'Find', which
+  contain all commands related to groups and entries (supersets
+  of context menus); removed 'Edit' main menu item, because all
+  of its commands are included in the three new main menu items
+- Added support for a system-wide hot key to auto-type only the
+  password of a matching entry; by default, the hot key is
+  Ctrl+Alt+Shift+A, changeable in the options dialog
+- When double-clicking the URL cell of an entry in the main
+  entry list while holding down the Shift key, KeePass now
+  copies the URL to the clipboard (a double-click without Shift
+  continues to open the URL; the option 'Copy URLs to clipboard
+  instead of opening them' reverses this behavior)
+- Added quick edit commands 'Expires: Now' and 'Expires: Never'
+- There now are two commands for copying a whole entry to the
+  clipboard: 'Copy Entry (Encrypted)' and 'Copy Entry
+  (Unencrypted)'; the first one encrypts the data for the
+  current user using the Windows DPAPI
+- Added Ctrl+Shift+P shortcut for printing the currently
+  selected group
+- The creation time and the last modification time of an entry
+  are now displayed on the 'History' tab of the entry editing
+  dialog
+- Added support for importing Steganos Password Manager 20 CSV
+  files
+- Added support for importing Bitwarden 1.12 JSON files
+- Mozilla Bookmarks JSON import: added support for importing
+  tags (new format, in addition to the old format) and keywords
+- Enhanced the Enpass import module to support TXT files
+  created by version 6.0.4
+- The language selection dialog now also lists KeePass 1.x LNG
+  files; when trying to select such a file, an informative
+  error message is displayed
+- Added 'Cancel' command in the context menu of KeePass' system
+  tray icon, which can be used to abort opening and saving a
+  database file
+- Added '-cancel' command line option, which causes all other
+  KeePass instances to cancel opening/saving a database file
+- Added '-auto-type-password' command line option (other
+  running KeePass instances auto-type only the password of a
+  matching entry)
+- Added '-e1:' command line parameter, which works like '-e:',
+  but is handled by only one other instance; '-e:' is handled
+  by all other instances
+- When compiling a PLGX plugin, KeePass now defines a
+  'KP_V_*_*_*' symbol, where the asterisks specify the KeePass
+  version (for example, 'KP_V_2_42_0' for version 2.42)
+- Added workarounds for .NET Caps Lock warning tooltip bug
+- Added workaround for Mono grid view default color bug
+- Added workaround for OneDrive bug on Windows 1809
+
+- Auto-Type: improved sending of characters that are realized
+  with the AltGr key
+- Auto-Type: improved compatibility with VirtualBox 6 and
+  VMware Player
+- Improved user interface behavior while opening a database
+  file
+- Accelerator key improvements
+- Replaced 4 and 8 weeks expiry date search commands by 1 and 2
+  months (taking the number of days in the months into account)
+- Improved hot key controls (better key combination handling
+  and display)
+- The hot key controls in the options dialog now support
+  entering hot keys that are already registered by KeePass
+- Improved field to standard field mapping function
+- Improved new-line handling of several import modules
+- When a file import fails, KeePass now shows a more detailed
+  error message
+- After changing the color of an entry using a quick edit
+  command, the entries are deselected now, such that the new
+  color is visible immediately
+- Moved 'Print Emergency Sheet' command into 'File' -> 'Print'
+- The pattern-based password generator now supports repeating
+  escaped characters using '{...}'
+- The pattern-based password generator now refuses to generate
+  a password if the pattern is (partially) invalid
+- Turning off the 'Unhide Passwords' policy now enforces hiding
+  passwords in a few more places/situations
+- New-line characters at the end of the output of a {CMD:...}
+  placeholder are now removed (analogous to $(...) and `...`
+  shell command substitutions)
+- The {URL:SCM} and {BASE:SCM} placeholders now work with
+  arbitrary data having a ':'-terminated prefix
+- Improved {URL:RMVSCM} and {BASE:RMVSCM} placeholders ('//'
+  authority prefix is removed, but not '/')
+- The '-entry-url-open' command line option is now handled by
+  all other KeePass instances (instead of only one)
+- Path traversal with attachment names is not possible anymore
+- Removed the option 'Show tray icon only if main window has
+  been sent to tray' from the options dialog (due to possible
+  denial-of-service problems); if you want to hide the icon, it
+  is recommended to configure this in the system settings
+  instead
+- Improved reading of KDBX XML documents with unknown elements
+- Improved JSON parser
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- Fixed a crash that could occur when trying to import certain
+  Mozilla Bookmarks JSON files
+- Fixed a crash that could occur when trying to import certain
+  files with very deeply nested groups
+- Fixed handling of paths with folder/file names containing
+  quotes (which can occur on Unix-like systems only)
+
 2019-01-09: 2.41
 - Added option 'Do not store data in the Windows clipboard
   history and the cloud clipboard' (the option is turned on by

@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 5.3.0.1+
+	// 5.3.0.1-6.0.4+
 	internal sealed class EnpassTxt5 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -57,75 +57,89 @@ namespace KeePass.DataExchange.Formats
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
-			const string strKvpSep = " : ";
 			PwGroup pg = pwStorage.RootGroup;
+			const string strSep = ": "; // Both ": " and " : " are used
 
 			strData = StrUtil.NormalizeNewLines(strData, false);
-			strData += ("\n\nTitle" + strKvpSep);
+
+			int iSep = strData.IndexOf(strSep);
+			if(iSep < 0) throw new FormatException();
+			string strTitleKey = strData.Substring(0, iSep).Trim();
+			if(strTitleKey.Length == 0) throw new FormatException();
+			if(strTitleKey.IndexOf('\n') >= 0) throw new FormatException();
+
+			PwEntry pe = null;
+			string strName = PwDefs.TitleField;
 
 			string[] vLines = strData.Split('\n');
-			bool bLastWasEmpty = true;
-			string strName = PwDefs.TitleField;
-			PwEntry pe = null;
-			string strNotes = string.Empty;
-
-			// Do not trim spaces, because these are part of the
-			// key-value separator
-			char[] vTrimLine = new char[] { '\t', '\r', '\n' };
-
 			foreach(string strLine in vLines)
 			{
 				if(strLine == null) { Debug.Assert(false); continue; }
+				// Do not trim strLine, otherwise strSep might not be detected
 
-				string str = strLine.Trim(vTrimLine);
-				string strValue = str;
+				string strValue = strLine;
 
-				int iKvpSep = str.IndexOf(strKvpSep);
-				if(iKvpSep >= 0)
+				iSep = strLine.IndexOf(strSep);
+				if(iSep >= 0)
 				{
-					string strOrgName = str.Substring(0, iKvpSep).Trim();
-					strValue = str.Substring(iKvpSep + strKvpSep.Length).Trim();
+					string strCurName = strLine.Substring(0, iSep).Trim();
+					strValue = strLine.Substring(iSep + strSep.Length);
 
-					// If an entry doesn't have any notes, the next entry
-					// may start without an empty line; in this case we
-					// detect the new entry by the field name "Title"
-					// (which apparently is not translated by Enpass)
-					if(bLastWasEmpty || (strOrgName == "Title"))
+					if(strCurName == strTitleKey)
 					{
-						if(pe != null)
-						{
-							strNotes = strNotes.Trim();
-							pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-								pwStorage.MemoryProtection.ProtectNotes, strNotes));
-							strNotes = string.Empty;
-
-							pg.AddEntry(pe, true);
-						}
+						FinishEntry(pe);
 
 						pe = new PwEntry(true, true);
+						pg.AddEntry(pe, true);
+
+						strName = PwDefs.TitleField;
 					}
-
-					strName = ImportUtil.MapNameToStandardField(strOrgName, true);
-					if(string.IsNullOrEmpty(strName))
+					else if(strName == PwDefs.NotesField)
+						strValue = strLine; // Restore
+					else
 					{
-						strName = strOrgName;
-
+						strName = ImportUtil.MapNameToStandardField(strCurName, true);
 						if(string.IsNullOrEmpty(strName))
 						{
-							Debug.Assert(false);
-							strName = PwDefs.NotesField;
+							strName = strCurName;
+							if(string.IsNullOrEmpty(strName))
+							{
+								Debug.Assert(false);
+								strName = PwDefs.NotesField;
+								strValue = strLine; // Restore
+							}
 						}
 					}
 				}
 
-				if(strName == PwDefs.NotesField)
+				if(pe != null)
 				{
-					if(strNotes.Length > 0) strNotes += MessageService.NewLine;
-					strNotes += strValue;
-				}
-				else ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+					strValue = strValue.Trim();
 
-				bLastWasEmpty = (str.Length == 0);
+					if(strValue.Length != 0)
+						ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+					else if(strName == PwDefs.NotesField)
+					{
+						ProtectedString ps = pe.Strings.GetSafe(strName);
+						pe.Strings.Set(strName, ps + MessageService.NewLine);
+					}
+				}
+				else { Debug.Assert(false); }
+			}
+
+			FinishEntry(pe);
+		}
+
+		private static void FinishEntry(PwEntry pe)
+		{
+			if(pe == null) return;
+
+			List<string> lKeys = pe.Strings.GetKeys();
+			foreach(string strKey in lKeys)
+			{
+				ProtectedString ps = pe.Strings.GetSafe(strKey);
+				pe.Strings.Set(strKey, new ProtectedString(
+					ps.IsProtected, ps.ReadString().Trim()));
 			}
 		}
 	}

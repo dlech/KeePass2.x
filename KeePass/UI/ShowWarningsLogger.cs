@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Forms;
 
@@ -41,8 +41,10 @@ namespace KeePass.UI
 		private StatusBarLogger m_sbDefault = null;
 		private StatusLoggerForm m_slForm = null;
 		private Form m_fTaskbarWindow = null;
-		private bool m_bStartedLogging = false;
-		private bool m_bEndedLogging = false;
+
+		private bool m_bActive = false;
+		private bool m_bCancelled = false;
+		private TbpFlag m_tbpfLast = TbpFlag.NoProgress;
 
 		private List<KeyValuePair<LogStatusType, string>> m_vCachedMessages =
 			new List<KeyValuePair<LogStatusType, string>>();
@@ -59,17 +61,28 @@ namespace KeePass.UI
 			m_fTaskbarWindow = fTaskbarWindow;
 		}
 
+#if DEBUG
 		~ShowWarningsLogger()
 		{
-			Debug.Assert(m_bEndedLogging);
+			Debug.Assert(!m_bActive);
+			Debug.Assert(m_tbpfLast == TbpFlag.NoProgress);
+		}
+#endif
 
-			try { if(!m_bEndedLogging) EndLogging(); }
-			catch(Exception) { Debug.Assert(false); }
+		private void SetStyle(TbpFlag f)
+		{
+			if(m_fTaskbarWindow == null) return;
+
+			if(f != m_tbpfLast)
+			{
+				TaskbarList.SetProgressState(m_fTaskbarWindow, f);
+				m_tbpfLast = f;
+			}
 		}
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
-			Debug.Assert(!m_bStartedLogging && !m_bEndedLogging);
+			Debug.Assert(!m_bActive);
 
 			if(m_sbDefault != null)
 				m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
@@ -78,10 +91,10 @@ namespace KeePass.UI
 			if(m_fTaskbarWindow != null)
 			{
 				TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
-				TaskbarList.SetProgressState(m_fTaskbarWindow, TbpFlag.Normal);
+				SetStyle(TbpFlag.Indeterminate);
 			}
 
-			m_bStartedLogging = true;
+			m_bActive = true;
 			
 			if(bWriteOperationToLog)
 				m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
@@ -90,27 +103,20 @@ namespace KeePass.UI
 
 		public void EndLogging()
 		{
-			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
+			Debug.Assert(m_bActive);
 
 			if(m_sbDefault != null) m_sbDefault.EndLogging();
 			if(m_slForm != null) m_slForm.EndLogging();
-			if(m_fTaskbarWindow != null)
-				TaskbarList.SetProgressState(m_fTaskbarWindow, TbpFlag.NoProgress);
+			SetStyle(TbpFlag.NoProgress);
 
-			m_bEndedLogging = true;
+			m_bActive = false;
 		}
 
-		/// <summary>
-		/// Set the current progress in percent.
-		/// </summary>
-		/// <param name="uPercent">Percent of work finished.</param>
-		/// <returns>Returns <c>true</c> if the caller should continue
-		/// the current work.</returns>
 		public bool SetProgress(uint uPercent)
 		{
-			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
+			Debug.Assert(m_bActive);
 
-			bool b = true;
+			bool b = !m_bCancelled;
 			if(m_sbDefault != null)
 			{
 				if(!m_sbDefault.SetProgress(uPercent)) b = false;
@@ -120,21 +126,17 @@ namespace KeePass.UI
 				if(!m_slForm.SetProgress(uPercent)) b = false;
 			}
 			if(m_fTaskbarWindow != null)
+			{
 				TaskbarList.SetProgressValue(m_fTaskbarWindow, uPercent, 100);
+				SetStyle((uPercent != 0) ? TbpFlag.Normal : TbpFlag.Indeterminate);
+			}
 
 			return b;
 		}
 
-		/// <summary>
-		/// Set the current status text.
-		/// </summary>
-		/// <param name="strNewText">Status text.</param>
-		/// <param name="lsType">Type of the message.</param>
-		/// <returns>Returns <c>true</c> if the caller should continue
-		/// the current work.</returns>
 		public bool SetText(string strNewText, LogStatusType lsType)
 		{
-			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
+			Debug.Assert(m_bActive);
 
 			if((m_slForm == null) && ((lsType == LogStatusType.Warning) ||
 				(lsType == LogStatusType.Error)))
@@ -160,7 +162,7 @@ namespace KeePass.UI
 				m_vCachedMessages.Clear();
 			}
 
-			bool b = true;
+			bool b = !m_bCancelled;
 			if(m_sbDefault != null)
 			{
 				if(!m_sbDefault.SetText(strNewText, lsType)) b = false;
@@ -177,16 +179,11 @@ namespace KeePass.UI
 			return b;
 		}
 
-		/// <summary>
-		/// Check if the user cancelled the current work.
-		/// </summary>
-		/// <returns>Returns <c>true</c> if the caller should continue
-		/// the current work.</returns>
 		public bool ContinueWork()
 		{
-			Debug.Assert(m_bStartedLogging && !m_bEndedLogging);
+			Debug.Assert(m_bActive);
 
-			bool b = true;
+			bool b = !m_bCancelled;
 			if(m_slForm != null)
 			{
 				if(!m_slForm.ContinueWork()) b = false;
@@ -197,6 +194,11 @@ namespace KeePass.UI
 			}
 
 			return b;
+		}
+
+		internal void SetCancelled(bool bCancelled)
+		{
+			m_bCancelled = bCancelled;
 		}
 	}
 }

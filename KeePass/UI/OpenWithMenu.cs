@@ -19,18 +19,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 using Microsoft.Win32;
 
 using KeePass.Resources;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Native;
@@ -55,24 +56,28 @@ namespace KeePass.UI
 
 	internal sealed class OpenWithItem
 	{
-		private string m_strPath;
+		private readonly string m_strPath;
 		public string FilePath { get { return m_strPath; } }
 
-		private OwFilePathType m_tPath;
+		private readonly OwFilePathType m_tPath;
 		public OwFilePathType FilePathType { get { return m_tPath; } }
 
-		private string m_strMenuText;
+		private readonly string m_strMenuText;
 		// public string MenuText { get { return m_strMenuText; } }
 
-		private Image m_imgIcon;
+		private readonly Image m_imgIcon;
 		public Image Image { get { return m_imgIcon; } }
 
-		private ToolStripMenuItem m_tsmi;
+		private readonly ToolStripMenuItem m_tsmi;
 		public ToolStripMenuItem MenuItem { get { return m_tsmi; } }
 
 		public OpenWithItem(string strFilePath, OwFilePathType tPath,
 			string strMenuText, Image imgIcon, DynamicMenu dynMenu)
 		{
+			if(strFilePath == null) { Debug.Assert(false); throw new ArgumentNullException("strFilePath"); }
+			if(strMenuText == null) { Debug.Assert(false); throw new ArgumentNullException("strMenuText"); }
+			if(dynMenu == null) { Debug.Assert(false); throw new ArgumentNullException("dynMenu"); }
+
 			m_strPath = strFilePath;
 			m_tPath = tPath;
 			m_strMenuText = strMenuText;
@@ -80,8 +85,15 @@ namespace KeePass.UI
 
 			m_tsmi = dynMenu.AddItem(m_strMenuText, m_imgIcon, this);
 
-			try { m_tsmi.ToolTipText = m_strPath; }
-			catch(Exception) { } // Too long?
+			try
+			{
+				string strTip = strFilePath;
+				if(strTip.StartsWith("cmd://", StrUtil.CaseIgnoreCmp))
+					strTip = strTip.Substring(6);
+
+				if(strTip.Length != 0) m_tsmi.ToolTipText = strTip;
+			}
+			catch(Exception) { Debug.Assert(false); } // Too long?
 		}
 	}
 
@@ -107,7 +119,7 @@ namespace KeePass.UI
 
 		~OpenWithMenu()
 		{
-			try { Destroy(); }
+			try { Debug.Assert(m_dynMenu == null); Destroy(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
 
@@ -192,6 +204,7 @@ namespace KeePass.UI
 
 			foreach(PwEntry pe in v)
 			{
+				// Get the entry's URL, avoid URL override
 				string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
 				if(string.IsNullOrEmpty(strUrl)) continue;
 
@@ -199,7 +212,8 @@ namespace KeePass.UI
 					WinUtil.OpenUrlWithApp(strUrl, pe, strApp);
 				else if(it.FilePathType == OwFilePathType.ShellExpand)
 				{
-					string str = strApp.Replace(PlhTargetUri, strUrl);
+					string str = strApp.Replace(PlhTargetUri,
+						SprEncoding.EncodeForCommandLine(strUrl));
 					WinUtil.OpenUrl(str, pe, false);
 				}
 				else { Debug.Assert(false); }
@@ -262,8 +276,9 @@ namespace KeePass.UI
 			if(AddAppByFile(strIE, @"&Internet Explorer"))
 			{
 				// https://msdn.microsoft.com/en-us/library/hh826025.aspx
-				AddAppByShellExpand("cmd://\"" + strIE + "\" -private \"" +
-					PlhTargetUri + "\"", "Internet Explorer (" + KPRes.Private + ")", strIE);
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					strIE) + "\" -private \"" + PlhTargetUri + "\"",
+					"Internet Explorer (" + KPRes.Private + ")", strIE);
 			}
 
 			if(AppLocator.EdgeProtocolSupported)
@@ -278,8 +293,9 @@ namespace KeePass.UI
 				// https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=856839
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=829180
-				AddAppByShellExpand("cmd://\"" + strFF + "\" -private-window \"" +
-					PlhTargetUri + "\"", "Firefox (" + KPRes.Private + ")", strFF);
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					strFF) + "\" -private-window \"" + PlhTargetUri + "\"",
+					"Firefox (" + KPRes.Private + ")", strFF);
 			}
 
 			string strCh = AppLocator.ChromePath;
@@ -287,24 +303,28 @@ namespace KeePass.UI
 			{
 				// https://www.chromium.org/developers/how-tos/run-chromium-with-flags
 				// https://peter.sh/experiments/chromium-command-line-switches/
-				AddAppByShellExpand("cmd://\"" + strCh + "\" --incognito \"" +
-					PlhTargetUri + "\"", "Google Chrome (" + KPRes.Private + ")", strCh);
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					strCh) + "\" --incognito \"" + PlhTargetUri + "\"",
+					"Google Chrome (" + KPRes.Private + ")", strCh);
 			}
 
 			string strOp = AppLocator.OperaPath;
 			if(AddAppByFile(strOp, @"O&pera"))
 			{
 				// Doesn't work with Opera 34.0.2036.25:
-				// AddAppByShellExpand("cmd://\"" + strOp + "\" -newprivatetab \"" +
-				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+				// AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+				//	strOp) + "\" -newprivatetab \"" + PlhTargetUri + "\"",
+				//	"Opera (" + KPRes.Private + ")", strOp);
 
 				// Doesn't work with Opera 36.0.2130.65:
-				// AddAppByShellExpand("cmd://\"" + strOp + "\" --incognito \"" +
-				//	PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+				// AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+				//	strOp) + "\" --incognito \"" + PlhTargetUri + "\"",
+				//	"Opera (" + KPRes.Private + ")", strOp);
 
 				// Works with Opera 40.0.2308.81:
-				AddAppByShellExpand("cmd://\"" + strOp + "\" --private \"" +
-					PlhTargetUri + "\"", "Opera (" + KPRes.Private + ")", strOp);
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					strOp) + "\" --private \"" + PlhTargetUri + "\"",
+					"Opera (" + KPRes.Private + ")", strOp);
 			}
 
 			AddAppByFile(AppLocator.SafariPath, @"&Safari");

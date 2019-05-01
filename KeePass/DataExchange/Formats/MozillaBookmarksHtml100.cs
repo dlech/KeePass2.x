@@ -195,8 +195,7 @@ namespace KeePass.DataExchange.Formats
 				{
 					if(pe != null)
 						ImportUtil.AppendToField(pe, PwDefs.NotesField,
-							XmlUtil.SafeInnerText(xmlChild).Trim(), pwStorage,
-							"\r\n", false);
+							XmlUtil.SafeInnerText(xmlChild).Trim(), pwStorage);
 					else { Debug.Assert(false); }
 				}
 				else if(xmlChild.Name == "H3")

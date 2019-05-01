@@ -37,7 +37,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class SteganosPwManager2007 : FileFormatProvider
+	internal sealed class SteganosUI2007 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }

@@ -52,7 +52,7 @@
 			this.m_btnClose.Name = "m_btnClose";
 			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
 			this.m_btnClose.TabIndex = 1;
-			this.m_btnClose.Text = "&Close";
+			this.m_btnClose.Text = "Close";
 			this.m_btnClose.UseVisualStyleBackColor = true;
 			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
 			// 
