@@ -79,6 +79,11 @@ namespace KeePass.Forms
 			// Must work without a parent window
 			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
 
+			// The password text box should not be focused by default
+			// in order to avoid a Caps Lock warning tooltip bug;
+			// https://sourceforge.net/p/keepass/bugs/1807/
+			Debug.Assert((m_tbPassword.TabIndex >= 2) && !m_tbPassword.Focused);
+
 			InitAdvancedTab(); // After translation, before resize
 
 			GlobalWindowManager.AddWindow(this);
@@ -122,9 +127,12 @@ namespace KeePass.Forms
 				try { InitAutoCompletions(); }
 				catch(Exception) { Debug.Assert(false); }
 			});
+		}
 
+		private void OnFormShown(object sender, EventArgs e)
+		{
 			if((m_tbUrl.TextLength > 0) && (m_tbUserName.TextLength > 0))
-				UIUtil.SetFocus(m_tbPassword, this);
+				UIUtil.ResetFocus(m_tbPassword, this);
 			else if(m_tbUrl.TextLength > 0)
 				UIUtil.SetFocus(m_tbUserName, this);
 			else UIUtil.SetFocus(m_tbUrl, this);

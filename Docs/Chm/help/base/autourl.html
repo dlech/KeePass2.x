@@ -106,6 +106,13 @@ For example <code>%TEMP%</code> is replaced by the user's temporary path.</p>
 Windows-style UNC paths (starting with <code>\\</code>) are directly
 supported, i.e. do not need to be prefixed with <code>cmd://</code>.</p>
 
+<p><b>Single Quotes (<code>'</code>):</b><br />
+On Unix-like systems, KeePass assumes that single quotes (<code>'</code>)
+only occur in contexts where they must not be escaped (e.g. within
+double quotes). So, if any of your arguments may contain a single quote,
+you have to ensure that it occurs within such a context.
+On Windows, this is irrelevant, as single quotes do not have a special meaning here.</p>
+
 <br />
 
 <a name="subst"></a>

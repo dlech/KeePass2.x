@@ -105,8 +105,8 @@
 			this.m_lblCreateNewHint.Size = new System.Drawing.Size(469, 28);
 			this.m_lblCreateNewHint.TabIndex = 2;
 			this.m_lblCreateNewHint.Text = "If you select this option, KeePass will create new IDs for all groups and entries" +
-				". Consequently no existing groups and entries of the currently opened database w" +
-				"ill be modified or overwritten.";
+				". Consequently, no existing groups and entries of the currently open database wi" +
+				"ll be modified or overwritten.";
 			// 
 			// m_radioKeepExisting
 			// 
@@ -125,8 +125,8 @@
 			this.m_lblExistingHint.Name = "m_lblExistingHint";
 			this.m_lblExistingHint.Size = new System.Drawing.Size(469, 27);
 			this.m_lblExistingHint.TabIndex = 4;
-			this.m_lblExistingHint.Text = "Existing entries of the currently opened database will not be modified. Only new " +
-				"entries will be added.";
+			this.m_lblExistingHint.Text = "Existing entries of the currently open database will not be modified. Only new en" +
+				"tries will be added.";
 			// 
 			// m_radioOverwrite
 			// 

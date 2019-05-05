@@ -225,6 +225,25 @@ namespace KeePassLib.Cryptography
 			return MemUtil.BytesToUInt64(pb);
 		}
 
+		internal ulong GetRandomUInt64(ulong uMaxExcl)
+		{
+			if(uMaxExcl == 0) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uMaxExcl"); }
+
+			ulong uGen, uRem;
+			do
+			{
+				uGen = GetRandomUInt64();
+				uRem = uGen % uMaxExcl;
+			}
+			while((uGen - uRem) > (ulong.MaxValue - (uMaxExcl - 1UL)));
+			// This ensures that the last number of the block (i.e.
+			// (uGen - uRem) + (uMaxExcl - 1)) is generatable;
+			// for signed longs, overflow to negative number:
+			// while((uGen - uRem) + (uMaxExcl - 1) < 0);
+
+			return uRem;
+		}
+
 #if CRSBENCHMARK
 		public static string Benchmark()
 		{

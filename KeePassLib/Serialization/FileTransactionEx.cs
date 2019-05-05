@@ -28,7 +28,10 @@ using System.Text;
 using System.Security.AccessControl;
 #endif
 
+using Microsoft.Win32;
+
 using KeePassLib.Cryptography;
+using KeePassLib.Delegates;
 using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Utility;
@@ -322,6 +325,7 @@ namespace KeePassLib.Serialization
 			{
 				if(NativeLib.IsUnix()) return;
 				if(!m_iocBase.IsLocalFile()) return;
+				if(IsOneDriveWorkaroundRequired()) return;
 
 				string strID = StrUtil.AlphaNumericOnly(Convert.ToBase64String(
 					CryptoRandom.Instance.GetRandomBytes(16)));
@@ -434,6 +438,89 @@ namespace KeePassLib.Serialization
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		// https://sourceforge.net/p/keepass/discussion/329220/thread/672ffecc65/
+		// https://sourceforge.net/p/keepass/discussion/329221/thread/514786c23a/
+		private bool IsOneDriveWorkaroundRequired()
+		{
+			if(NativeLib.IsUnix()) return false;
+
+			try
+			{
+				string strReleaseId = (Registry.GetValue(
+					"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+					"ReleaseId", string.Empty) as string);
+				if(strReleaseId != "1809") return false;
+
+				string strFile = m_iocBase.Path;
+
+				GFunc<string, string, bool> fMatch = delegate(string strRoot, string strSfx)
+				{
+					if(string.IsNullOrEmpty(strRoot)) return false;
+					string strPfx = UrlUtil.EnsureTerminatingSeparator(
+						strRoot, false) + strSfx;
+					return strFile.StartsWith(strPfx, StrUtil.CaseIgnoreCmp);
+				};
+				GFunc<string, string, bool> fMatchEnv = delegate(string strEnv, string strSfx)
+				{
+					return fMatch(Environment.GetEnvironmentVariable(strEnv), strSfx);
+				};
+
+				string strKnown = NativeMethods.GetKnownFolderPath(
+					NativeMethods.FOLDERID_SkyDrive);
+				if(fMatch(strKnown, string.Empty)) return true;
+
+				if(fMatchEnv("USERPROFILE", "OneDrive\\")) return true;
+				if(fMatchEnv("OneDrive", string.Empty)) return true;
+				if(fMatchEnv("OneDriveCommercial", string.Empty)) return true;
+				if(fMatchEnv("OneDriveConsumer", string.Empty)) return true;
+
+				using(RegistryKey kAccs = Registry.CurrentUser.OpenSubKey(
+					"Software\\Microsoft\\OneDrive\\Accounts", false))
+				{
+					string[] vAccs = (((kAccs != null) ? kAccs.GetSubKeyNames() :
+						null) ?? new string[0]);
+
+					foreach(string strAcc in vAccs)
+					{
+						if(string.IsNullOrEmpty(strAcc)) { Debug.Assert(false); continue; }
+
+						using(RegistryKey kTenants = kAccs.OpenSubKey(
+							strAcc + "\\Tenants", false))
+						{
+							string[] vTenants = (((kTenants != null) ?
+								kTenants.GetSubKeyNames() : null) ?? new string[0]);
+
+							foreach(string strT in vTenants)
+							{
+								if(string.IsNullOrEmpty(strT)) { Debug.Assert(false); continue; }
+
+								using(RegistryKey kT = kTenants.OpenSubKey(strT, false))
+								{
+									string[] vPaths = (((kT != null) ?
+										kT.GetValueNames() : null) ?? new string[0]);
+
+									foreach(string strPath in vPaths)
+									{
+										if((strPath == null) || (strPath.Length < 4) ||
+											(strPath[1] != ':'))
+										{
+											Debug.Assert(false);
+											continue;
+										}
+
+										if(fMatch(strPath, string.Empty)) return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 	}
 }

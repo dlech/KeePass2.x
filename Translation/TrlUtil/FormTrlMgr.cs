@@ -122,43 +122,46 @@ namespace TrlUtil
 			bool bAdd = true;
 			Type t = c.GetType();
 
-			if(c.Text.Length == 0) bAdd = false;
-			else if(c.Name.Length == 0) bAdd = false;
+			if(string.IsNullOrEmpty(c.Name)) bAdd = false;
+			else if(string.IsNullOrEmpty(c.Text)) bAdd = false;
+			else if(c.Text.StartsWith("<") && c.Text.EndsWith(">")) bAdd = false;
 			else if(t == typeof(MenuStrip)) bAdd = false;
-			else if(t == typeof(PictureBox)) bAdd = false;
-			else if(t == typeof(TreeView)) bAdd = false;
-			else if(t == typeof(ToolStrip)) bAdd = false;
-			else if(t == typeof(WebBrowser)) bAdd = false;
 			else if(t == typeof(Panel)) bAdd = false;
+			else if(t == typeof(PictureBox)) bAdd = false;
 			else if(t == typeof(StatusStrip)) bAdd = false;
-			else if(c.Text.StartsWith(@"<") && c.Text.EndsWith(@">")) bAdd = false;
+			else if(t == typeof(ToolStrip)) bAdd = false;
+			else if(t == typeof(TreeView)) bAdd = false;
+			else if(t == typeof(WebBrowser)) bAdd = false;
 
-			if(t == typeof(TabControl)) bAdd = true;
-			else if(t == typeof(ProgressBar)) bAdd = true;
-			else if(t == typeof(QualityProgressBar)) bAdd = true;
-			else if(t == typeof(TextBox)) bAdd = true;
-			else if(t == typeof(PromptedTextBox)) bAdd = true;
-			else if(t == typeof(SecureTextBoxEx)) bAdd = true;
-			else if(t == typeof(RichTextBox)) bAdd = true;
-			else if(t == typeof(CustomRichTextBoxEx)) bAdd = true;
+			// For layout adjustments
+			if(t == typeof(Button)) bAdd = true;
+			else if(t == typeof(CheckedListBox)) bAdd = true;
 			else if(t == typeof(ComboBox)) bAdd = true;
+			else if(t == typeof(CustomListViewEx)) bAdd = true;
+			else if(t == typeof(CustomRichTextBoxEx)) bAdd = true;
+			else if(t == typeof(DateTimePicker)) bAdd = true;
+			else if(t == typeof(HotKeyControlEx)) bAdd = true;
 			else if(t == typeof(ImageComboBoxEx)) bAdd = true;
 			else if(t == typeof(Label)) bAdd = true;
 			else if(t == typeof(ListView)) bAdd = true;
-			else if(t == typeof(CustomListViewEx)) bAdd = true;
-			else if(t == typeof(CheckedListBox)) bAdd = true;
-			else if(t == typeof(Button)) bAdd = true;
-			else if(t == typeof(DateTimePicker)) bAdd = true;
+			else if(t == typeof(ProgressBar)) bAdd = true;
+			else if(t == typeof(PromptedTextBox)) bAdd = true;
+			else if(t == typeof(QualityProgressBar)) bAdd = true;
+			else if(t == typeof(RichTextBox)) bAdd = true;
+			else if(t == typeof(SecureTextBoxEx)) bAdd = true;
+			else if(t == typeof(TabControl)) bAdd = true;
+			else if(t == typeof(TextBox)) bAdd = true;
 
-			if(bAdd && (c.Name.Length > 0))
+			if(bAdd && !string.IsNullOrEmpty(c.Name))
 			{
 				KPControlCustomization kpcc = new KPControlCustomization();
 				kpcc.Name = c.Name;
 				kpcc.BaseHash = KPControlCustomization.HashControl(c);
 
-				if((t != typeof(TabControl)) && (t != typeof(NumericUpDown)))
-					kpcc.TextEnglish = c.Text;
-				else kpcc.TextEnglish = string.Empty;
+				if((t == typeof(HotKeyControlEx)) || (t == typeof(NumericUpDown)) ||
+					(t == typeof(TabControl)))
+					kpcc.TextEnglish = string.Empty;
+				else kpcc.TextEnglish = (c.Text ?? string.Empty);
 
 				kpfc.Controls.Add(kpcc);
 			}

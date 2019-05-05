@@ -1132,6 +1132,21 @@ namespace KeePassLib.Cryptography
 			Debug.Assert(Uri.UriSchemeHttps.Equals("https", StrUtil.CaseIgnoreCmp));
 #endif
 
+			string str = UrlUtil.FilterFileName(" A \"*:?/\\|<>B.txt . ");
+			if(!str.StartsWith(" A ")) throw new Exception("UrlUtil-FFN1");
+			if(!str.EndsWith("B.txt")) throw new Exception("UrlUtil-FFN2");
+			if(str.IndexOfAny(new char[] { '\"', '*', ':', '?', '/', '\\', '|', '<', '>' }) >= 0)
+				throw new Exception("UrlUtil-FFN3");
+
+			if(UrlUtil.GetScheme("cmdG://\"Test.txt\"") != "cmdG")
+				throw new Exception("UrlUtil-GS");
+			if(UrlUtil.RemoveScheme("cmdX://\"T\":A") != "\"T\":A")
+				throw new Exception("UrlUtil-RS1");
+			if(UrlUtil.RemoveScheme("cmdY:/\"T\":A") != "/\"T\":A")
+				throw new Exception("UrlUtil-RS2");
+			if(UrlUtil.RemoveScheme("cmdZ:\"T\":A") != "\"T\":A")
+				throw new Exception("UrlUtil-RS3");
+
 			if(UrlUtil.GetHost(@"scheme://domain:port/path?query_string#fragment_id") !=
 				"domain")
 				throw new InvalidOperationException("UrlUtil-H1");
@@ -1155,7 +1170,7 @@ namespace KeePassLib.Cryptography
 			string strDoc = "\\\\HOMESERVER\\Documents\\KeePass\\NewDatabase.kdbx";
 			string strRel = "..\\..\\Documents\\KeePass\\NewDatabase.kdbx";
 
-			string str = UrlUtil.MakeRelativePath(strBase, strDoc);
+			str = UrlUtil.MakeRelativePath(strBase, strDoc);
 			if(!str.Equals(strRel)) throw new InvalidOperationException("UrlUtil-R1");
 
 			str = UrlUtil.MakeAbsolutePath(strBase, strRel);

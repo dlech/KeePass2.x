@@ -23,6 +23,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Resources;
@@ -338,10 +339,12 @@ namespace KeePass.Plugins
 
 				if(plgx.LogStream != null)
 				{
-					MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-					byte[] pbMD5 = md5.ComputeHash(pbDecompressed);
-					plgx.LogStream.Write(MemUtil.ByteArrayToHexString(pbMD5));
-					plgx.LogStream.WriteLine(" " + strPath);
+					using(MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+					{
+						byte[] pbMD5 = md5.ComputeHash(pbDecompressed);
+						plgx.LogStream.Write(MemUtil.ByteArrayToHexString(pbMD5));
+						plgx.LogStream.WriteLine(" " + strPath);
+					}
 				}
 			}
 			else { Debug.Assert(false); }
@@ -517,6 +520,8 @@ namespace KeePass.Plugins
 			foreach(string strCustomRef in vCustomRefs)
 				cp.ReferencedAssemblies.Add(strCustomRef);
 
+			cp.CompilerOptions = "-define:" + GetDefines();
+
 			CompileEmbeddedRes(plgx);
 			PrepareSourceFiles(plgx);
 
@@ -682,9 +687,31 @@ namespace KeePass.Plugins
 			string strFile = Path.GetTempFileName();
 			File.WriteAllText(strFile, sb.ToString(), StrUtil.Utf8);
 
-			MessageService.ShowWarning(plgx.BaseFileName,
+			string strMsg = plgx.BaseFileName + MessageService.NewParagraph +
 				"Compilation failed. Compiler results have been saved to:" +
-				Environment.NewLine + strFile);
+				MessageService.NewLine;
+
+			VistaTaskDialog dlg = new VistaTaskDialog();
+			dlg.Content = strMsg + VistaTaskDialog.CreateLink("F", strFile);
+			dlg.DefaultButtonID = (int)DialogResult.Cancel;
+			dlg.EnableHyperlinks = true;
+			dlg.SetIcon(VtdIcon.Warning);
+			dlg.WindowTitle = PwDefs.ShortProductName;
+
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				if((e != null) && (e.LinkText == "F") && !NativeLib.IsUnix())
+				{
+					Process p = Process.Start(NativeLib.EncodePath(
+						WinUtil.LocateSystemApp("Notepad.exe")),
+						"\"" + SprEncoding.EncodeForCommandLine(strFile) + "\"");
+					if(p != null) p.Dispose();
+				}
+			};
+
+			if(!dlg.ShowDialog())
+				MessageService.ShowWarning(strMsg + strFile);
 		}
 
 		// Windows 98 only supports the parameterless constructor, therefore
@@ -694,6 +721,22 @@ namespace KeePass.Plugins
 			string> iOpts)
 		{
 			return new CSharpCodeProvider(iOpts);
+		}
+
+		private static string GetDefines()
+		{
+			StringBuilder sb = new StringBuilder();
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+
+			sb.Append("KP_V_");
+			sb.Append((PwDefs.FileVersion64 >> 48).ToString(nfi));
+			sb.Append('_');
+			sb.Append(((PwDefs.FileVersion64 >> 32) & 0xFFFFU).ToString(nfi));
+			sb.Append('_');
+			sb.Append(((PwDefs.FileVersion64 >> 16) & 0xFFFFU).ToString(nfi));
+			// sb.Append(';');
+
+			return sb.ToString();
 		}
 
 		private static void CompileEmbeddedRes(PlgxPluginInfo plgx)
@@ -782,15 +825,18 @@ namespace KeePass.Plugins
 
 			string str = strCmd;
 			if(strTmpDir != null)
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_TEMP_DIR}", strTmpDir);
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_TEMP_DIR}",
+					SprEncoding.EncodeForCommandLine(strTmpDir));
 			if(strCacheDir != null)
-				str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_CACHE_DIR}", strCacheDir);
+				str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_CACHE_DIR}",
+					SprEncoding.EncodeForCommandLine(strCacheDir));
 
-			// str = UrlUtil.ConvertSeparators(str);
-			str = SprEngine.Compile(str, null);
+			// str = UrlUtil.ConvertSeparators(str); // Would convert args
+			str = SprEngine.Compile(str, new SprContext(null, null,
+				SprCompileFlags.NonActive, false, true));
 
 			string strApp, strArgs;
-			StrUtil.SplitCommandLine(str, out strApp, out strArgs);
+			StrUtil.SplitCommandLine(str, out strApp, out strArgs, true);
 
 			Process p = null;
 			try

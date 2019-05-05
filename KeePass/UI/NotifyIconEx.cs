@@ -33,11 +33,6 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
-	/// <summary>
-	/// Exception-safe <c>NotifyIcon</c> wrapper class (workaround
-	/// for exceptions thrown when running KeePass under Mono on
-	/// Mac OS X).
-	/// </summary>
 	public sealed class NotifyIconEx
 	{
 		private NotifyIcon m_ntf = null;

@@ -1285,27 +1285,31 @@ namespace KeePass.UI
 
 		private static char[] m_vTbTrim = null;
 		public static void ConfigureTbButton(ToolStripItem tb, string strText,
-			string strTooltip, ToolStripMenuItem tsmiEquiv)
+			string strToolTip, ToolStripMenuItem tsmiEquiv)
 		{
-			if(strText != null) tb.Text = strText;
+			if(tb == null) { Debug.Assert(false); return; }
 
 			if(m_vTbTrim == null)
 				m_vTbTrim = new char[] { ' ', '\t', '\r', '\n', '.', '\u2026' };
 
-			string strTip = (strTooltip ?? strText);
-			if(strTip == null) return;
+			string strT = (strText ?? string.Empty);
+			string strTT = (strToolTip ?? strT);
 
-			strTip = StrUtil.RemoveAccelerator(strTip);
-			strTip = strTip.Trim(m_vTbTrim);
+			strT = StrUtil.RemoveAccelerator(strT).Trim(m_vTbTrim);
+			strTT = StrUtil.RemoveAccelerator(strTT).Trim(m_vTbTrim);
 
-			if((tsmiEquiv != null) && (strTip.Length > 0))
+			Debug.Assert((strT.Length >= 1) || (tb.Text.Length == 0));
+			tb.Text = strT;
+
+			if((tsmiEquiv != null) && (strTT.Length != 0))
 			{
 				string strShortcut = tsmiEquiv.ShortcutKeyDisplayString;
 				if(!string.IsNullOrEmpty(strShortcut))
-					strTip += " (" + strShortcut + ")";
+					strTT += " (" + strShortcut + ")";
 			}
 
-			tb.ToolTipText = strTip;
+			Debug.Assert((strTT.Length >= 1) || (tb.ToolTipText.Length == 0));
+			tb.ToolTipText = strTT;
 		}
 
 		public static void ConfigureToolTip(ToolTip tt)
@@ -1336,7 +1340,7 @@ namespace KeePass.UI
 			int iSelectInner = -1;
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				string str = new string(' ', Math.Abs(8 * ((int)pg.GetLevel() - 1)));
+				string str = new string(' ', Math.Abs(8 * ((int)pg.GetDepth() - 1)));
 				str += pg.Name;
 
 				if((uuidToSelect != null) && pg.Uuid.Equals(uuidToSelect))
@@ -2976,33 +2980,95 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 		}
 
-		private static KeysConverter m_convKeys = null;
+		private static KeysConverter g_convKeys = null;
 		public static string GetKeysName(Keys k)
 		{
-			if(m_convKeys == null) m_convKeys = new KeysConverter();
-			return m_convKeys.ConvertToString(k);
+			StringBuilder sb = new StringBuilder();
+
+			if((k & Keys.Control) != Keys.None)
+			{
+				sb.Append(KPRes.KeyboardKeyCtrl);
+				sb.Append('+');
+			}
+			if((k & Keys.Alt) != Keys.None)
+			{
+				sb.Append(KPRes.KeyboardKeyAlt);
+				sb.Append('+');
+			}
+			if((k & Keys.Shift) != Keys.None)
+			{
+				sb.Append(KPRes.KeyboardKeyShift);
+				sb.Append('+');
+			}
+
+			Keys kCode = (k & Keys.KeyCode);
+			switch(kCode)
+			{
+				case Keys.None:
+					if((sb.Length != 0) && (sb[sb.Length - 1] == '+'))
+						sb.Remove(sb.Length - 1, 1);
+					break;
+
+				// .NET's German translation is "Eingabetaste",
+				// but the shorter "Eingabe" is more common
+				case Keys.Return: sb.Append(KPRes.KeyboardKeyReturn); break;
+
+				// "Esc" is more common than "Escape"
+				case Keys.Escape: sb.Append(KPRes.KeyboardKeyEsc); break;
+
+				case Keys.Up: sb.Append('\u2191'); break;
+				case Keys.Right: sb.Append('\u2192'); break;
+				case Keys.Down: sb.Append('\u2193'); break;
+				case Keys.Left: sb.Append('\u2190'); break;
+
+				default:
+					if(g_convKeys == null) g_convKeys = new KeysConverter();
+					sb.Append(g_convKeys.ConvertToString(kCode));
+					break;
+			}
+
+			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Assign shortcut keys to a menu item. This method uses
-		/// custom-translated display strings.
-		/// </summary>
 		public static void AssignShortcut(ToolStripMenuItem tsmi, Keys k)
+		{
+			AssignShortcut(tsmi, k, null, false);
+		}
+
+		internal static void AssignShortcut(ToolStripMenuItem tsmi, Keys k,
+			ToolStripMenuItem tsmiSecondary)
+		{
+			AssignShortcut(tsmi, k, tsmiSecondary, false);
+		}
+
+		internal static void AssignShortcut(ToolStripMenuItem tsmi, Keys k,
+			ToolStripMenuItem tsmiSecondary, bool bTextOnly)
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			tsmi.ShortcutKeys = k;
+			if(!bTextOnly)
+			{
+				// Control-dependent shortcuts shouldn't be registered as global ones
+				Debug.Assert(((k & Keys.Modifiers) != Keys.None) || (k == Keys.F1));
+				Debug.Assert((k & Keys.KeyCode) != Keys.C);
+				Debug.Assert((k & Keys.KeyCode) != Keys.V);
+				Debug.Assert((k & Keys.KeyCode) != Keys.X);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Y);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Z);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Escape);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Return);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Insert);
+				Debug.Assert((k & Keys.KeyCode) != Keys.Delete);
+				Debug.Assert((k & Keys.KeyCode) != Keys.F10);
 
-			string str = string.Empty;
-			if((k & Keys.Control) != Keys.None)
-				str += KPRes.KeyboardKeyCtrl + "+";
-			if((k & Keys.Alt) != Keys.None)
-				str += KPRes.KeyboardKeyAlt + "+";
-			if((k & Keys.Shift) != Keys.None)
-				str += KPRes.KeyboardKeyShift + "+";
-			str += GetKeysName(k & Keys.KeyCode);
+				tsmi.ShortcutKeys = k;
+			}
 
+			string str = GetKeysName(k);
 			tsmi.ShortcutKeyDisplayString = str;
+
+			if(tsmiSecondary != null)
+				tsmiSecondary.ShortcutKeyDisplayString = str;
 		}
 
 		public static void SetFocusedItem(ListView lv, ListViewItem lvi,
@@ -3474,7 +3540,7 @@ namespace KeePass.UI
 			int t = Environment.TickCount, tLast = g_tLastDoEvents;
 			int d = t - tLast;
 
-			if((d >= 50) || bForce || (tLast == 0))
+			if((d >= PwDefs.UIUpdateDelay) || bForce || (tLast == 0))
 			{
 				g_tLastDoEvents = t;
 				Application.DoEvents();

@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Xml;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -263,7 +263,7 @@ namespace KeePass.DataExchange.Formats
 			PwGroup pgContainer = pwStorage.RootGroup;
 			if(strGroupName.Length != 0)
 				pgContainer = pwStorage.RootGroup.FindCreateSubTree(strGroupName,
-					new string[1]{ "." }, true);
+					new string[1] { "." }, true);
 			pgContainer.AddEntry(pe, true);
 			pgContainer.IsExpanded = true;
 		}

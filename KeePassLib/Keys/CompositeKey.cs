@@ -21,9 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.KeyDerivation;
+using KeePassLib.Interfaces;
 using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Security;
@@ -167,7 +169,6 @@ namespace KeePassLib.Keys
 		{
 			ValidateUserKeys();
 
-			// Concatenate user key data
 			List<byte[]> lData = new List<byte[]>();
 			int cbData = 0;
 			foreach(IUserKey pKey in m_vUserKeys)
@@ -200,13 +201,17 @@ namespace KeePassLib.Keys
 		{
 			if(ckOther == null) throw new ArgumentNullException("ckOther");
 
+			bool bEqual;
 			byte[] pbThis = CreateRawCompositeKey32();
-			byte[] pbOther = ckOther.CreateRawCompositeKey32();
-			bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
-			MemUtil.ZeroByteArray(pbOther);
-			MemUtil.ZeroByteArray(pbThis);
+			try
+			{
+				byte[] pbOther = ckOther.CreateRawCompositeKey32();
+				bEqual = MemUtil.ArraysEqual(pbThis, pbOther);
+				MemUtil.ZeroByteArray(pbOther);
+			}
+			finally { MemUtil.ZeroByteArray(pbThis); }
 
-			return bResult;
+			return bEqual;
 		}
 
 		[Obsolete]
@@ -232,29 +237,88 @@ namespace KeePassLib.Keys
 		{
 			if(p == null) { Debug.Assert(false); throw new ArgumentNullException("p"); }
 
-			byte[] pbRaw32 = CreateRawCompositeKey32();
-			if((pbRaw32 == null) || (pbRaw32.Length != 32))
-				{ Debug.Assert(false); return null; }
+			byte[] pbRaw32 = null, pbTrf32 = null;
+			ProtectedBinary pbRet = null;
 
-			KdfEngine kdf = KdfPool.Get(p.KdfUuid);
-			if(kdf == null) // CryptographicExceptions are translated to "file corrupted"
-				throw new Exception(KLRes.UnknownKdf + MessageService.NewParagraph +
-					KLRes.FileNewVerOrPlgReq + MessageService.NewParagraph +
-					"UUID: " + p.KdfUuid.ToHexString() + ".");
-
-			byte[] pbTrf32 = kdf.Transform(pbRaw32, p);
-			if(pbTrf32 == null) { Debug.Assert(false); return null; }
-
-			if(pbTrf32.Length != 32)
+			try
 			{
-				Debug.Assert(false);
-				pbTrf32 = CryptoUtil.HashSha256(pbTrf32);
+				pbRaw32 = CreateRawCompositeKey32();
+				if((pbRaw32 == null) || (pbRaw32.Length != 32))
+					{ Debug.Assert(false); return null; }
+
+				KdfEngine kdf = KdfPool.Get(p.KdfUuid);
+				if(kdf == null) // CryptographicExceptions are translated to "file corrupted"
+					throw new Exception(KLRes.UnknownKdf + MessageService.NewParagraph +
+						KLRes.FileNewVerOrPlgReq + MessageService.NewParagraph +
+						"UUID: " + p.KdfUuid.ToHexString() + ".");
+
+				pbTrf32 = kdf.Transform(pbRaw32, p);
+				if(pbTrf32 == null) { Debug.Assert(false); return null; }
+				if(pbTrf32.Length != 32)
+				{
+					Debug.Assert(false);
+					pbTrf32 = CryptoUtil.HashSha256(pbTrf32);
+				}
+
+				pbRet = new ProtectedBinary(true, pbTrf32);
+			}
+			finally
+			{
+				if(pbRaw32 != null) MemUtil.ZeroByteArray(pbRaw32);
+				if(pbTrf32 != null) MemUtil.ZeroByteArray(pbTrf32);
 			}
 
-			ProtectedBinary pbRet = new ProtectedBinary(true, pbTrf32);
-			MemUtil.ZeroByteArray(pbTrf32);
-			MemUtil.ZeroByteArray(pbRaw32);
 			return pbRet;
+		}
+
+		private sealed class CkGkTaskInfo
+		{
+			public volatile ProtectedBinary Key = null;
+			public volatile string Error = null;
+		}
+
+		internal ProtectedBinary GenerateKey32Ex(KdfParameters p, IStatusLogger sl)
+		{
+			if(sl == null) return GenerateKey32(p);
+
+			CkGkTaskInfo ti = new CkGkTaskInfo();
+
+			ThreadStart f = delegate()
+			{
+				if(ti == null) { Debug.Assert(false); return; }
+
+				try { ti.Key = GenerateKey32(p); }
+				catch(ThreadAbortException exAbort)
+				{
+					ti.Error = ((exAbort != null) ? exAbort.Message : null);
+					Thread.ResetAbort();
+				}
+				catch(Exception ex)
+				{
+					Debug.Assert(false);
+					ti.Error = ((ex != null) ? ex.Message : null);
+				}
+			};
+
+			Thread th = new Thread(f);
+			th.Start();
+
+			Debug.Assert(PwDefs.UIUpdateDelay >= 2);
+			while(!th.Join(PwDefs.UIUpdateDelay / 2))
+			{
+				if(!sl.ContinueWork())
+				{
+					try { th.Abort(); }
+					catch(Exception) { Debug.Assert(false); }
+
+					throw new OperationCanceledException();
+				}
+			}
+
+			if(!string.IsNullOrEmpty(ti.Error)) throw new Exception(ti.Error);
+
+			Debug.Assert(ti.Key != null);
+			return ti.Key;
 		}
 
 		private void ValidateUserKeys()
@@ -281,14 +345,11 @@ namespace KeePassLib.Keys
 		{
 			get
 			{
-				return KLRes.InvalidCompositeKey + MessageService.NewParagraph +
-					KLRes.InvalidCompositeKeyHint;
+				return (KLRes.InvalidCompositeKey + MessageService.NewParagraph +
+					KLRes.InvalidCompositeKeyHint);
 			}
 		}
 
-		/// <summary>
-		/// Construct a new invalid composite key exception.
-		/// </summary>
 		public InvalidCompositeKeyException()
 		{
 		}

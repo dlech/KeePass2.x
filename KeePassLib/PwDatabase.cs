@@ -131,7 +131,7 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// <c>IOConnection</c> of the currently opened database file.
+		/// <c>IOConnection</c> of the currently open database file.
 		/// Is never <c>null</c>.
 		/// </summary>
 		public IOConnectionInfo IOConnectionInfo
@@ -659,8 +659,8 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Save the currently opened database. The file is written to the location
-		/// it has been opened from.
+		/// Save the currently open database. The file is written to the
+		/// location it has been opened from.
 		/// </summary>
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void Save(IStatusLogger slLogger)
@@ -694,16 +694,16 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Save the currently opened database to a different location. If
+		/// Save the currently open database to a different location. If
 		/// <paramref name="bIsPrimaryNow" /> is <c>true</c>, the specified
 		/// location is made the default location for future saves
 		/// using <c>SaveDatabase</c>.
 		/// </summary>
 		/// <param name="ioConnection">New location to serialize the database to.</param>
-		/// <param name="bIsPrimaryNow">If <c>true</c>, the new location is made the
-		/// standard location for the database. If <c>false</c>, a copy of the currently
-		/// opened database is saved to the specified location, but it isn't
-		/// made the default location (i.e. no lock files will be moved for
+		/// <param name="bIsPrimaryNow">If <c>true</c>, the new location is made
+		/// the standard location for the database. If <c>false</c>, a copy of the
+		/// currently open database is saved to the specified location, but it
+		/// isn't made the default location (i.e. no lock files will be moved for
 		/// example).</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void SaveAs(IOConnectionInfo ioConnection, bool bIsPrimaryNow,
@@ -735,8 +735,8 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Closes the currently opened database. No confirmation message is shown
-		/// before closing. Unsaved changes will be lost.
+		/// Closes the currently open database. No confirmation message
+		/// is shown before closing. Unsaved changes will be lost.
 		/// </summary>
 		public void Close()
 		{
@@ -800,6 +800,12 @@ namespace KeePassLib
 					pgNew.Uuid = pg.Uuid;
 					pgNew.AssignProperties(pg, false, true);
 
+					if(!pgLocalContainer.CanAddGroup(pgNew))
+					{
+						Debug.Assert(false);
+						pgLocalContainer = m_pgRootGroup;
+						pgLocalContainer.CheckCanAddGroup(pgNew);
+					}
 					// pgLocalContainer.AddGroup(pgNew, true);
 					InsertObjectAtBestPos<PwGroup>(pgLocalContainer.Groups, pgNew, ppSrc);
 					pgNew.ParentGroup = pgLocalContainer;
@@ -1086,8 +1092,8 @@ namespace KeePassLib
 
 					if(pgLocal.IsContainedIn(pg)) continue;
 
+					if(!pgLocal.CanAddGroup(pg)) { Debug.Assert(false); continue; }
 					pg.ParentGroup.Groups.Remove(pg);
-
 					// pgLocal.AddGroup(pg, true);
 					InsertObjectAtBestPos<PwGroup>(pgLocal.Groups, pg, ppSrc);
 					pg.ParentGroup = pgLocal;

@@ -46,6 +46,7 @@ namespace KeePassLib.Translation
 	public sealed class KPTranslation
 	{
 		public static readonly string FileExtension = "lngx";
+		internal const string FileExtension1x = "lng";
 
 		private KPTranslationProperties m_props = new KPTranslationProperties();
 		public KPTranslationProperties Properties

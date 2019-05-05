@@ -114,6 +114,11 @@ namespace KeePass.Forms
 		{
 			m_bInitializing = true;
 
+			// The password text box should not be focused by default
+			// in order to avoid a Caps Lock warning tooltip bug;
+			// https://sourceforge.net/p/keepass/bugs/1807/
+			Debug.Assert((m_tbPassword.TabIndex >= 2) && !m_tbPassword.Focused);
+
 			GlobalWindowManager.AddWindow(this);
 			// if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
 
@@ -147,6 +152,10 @@ namespace KeePass.Forms
 
 			// m_cmbKeyFile.OrderedImageList = m_lKeyFileImages;
 			AddKeyFileSuggPriv(KPRes.NoKeyFileSpecifiedMeta, true);
+
+			// Enable protection before possibly setting a text
+			m_cbHidePassword.Checked = true;
+			OnCheckedHidePassword(sender, e); // 'Checked' may have been true already
 
 			// Do not directly compare with Program.CommandLineArgs.FileName,
 			// because this may be a relative path instead of an absolute one
@@ -197,9 +206,6 @@ namespace KeePass.Forms
 					AddKeyFileSuggPriv(str, true);
 				}
 			}
-
-			m_cbHidePassword.Checked = true;
-			OnCheckedHidePassword(sender, e);
 
 			Debug.Assert(m_cmbKeyFile.Text.Length != 0);
 

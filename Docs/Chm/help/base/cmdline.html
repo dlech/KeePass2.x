@@ -59,12 +59,17 @@ pass 'abc' as password, you would add the following argument to the command line
 password. If your password contains a space, you must enclose it in quotes. For
 example: <code>-pw:&quot;my secret password&quot;</code>.</p>
 
-<p>Using the <code>-pw:</code> option is not recommended, because of
+<p>Using the <code>-pw:</code> option is not recommended, due to
 security reasons (the operating system allows reading the command line
 options of other applications).</p>
 
 <p>When passing the <code>-pw-stdin</code> option, KeePass
-reads the password from the StdIn stream.</p>
+reads the password from the StdIn stream.
+This option is intended for programmatically passing the password to KeePass.
+For entering the password by hand, it is recommended to use the
+normal master key dialog instead (because in this dialog the password
+is hidden by bullets/asterisks and it is encrypted by the process memory
+protection).</p>
 
 <p><b>Key file.</b>
 For supplying the key file location, the <code>-keyfile:</code> switch
@@ -121,8 +126,12 @@ The <code>-entry-url-open</code> option makes other already opened KeePass insta
 search for an entry and open its URL. The entry is identified by its UUID,
 which you can pass as <code>-uuid:</code> command line parameter.<br />
 <br />
-Analogously to the <code>-auto-type</code> option, <code>-auto-type-selected</code>
-performs auto-type for the currently selected entry.<br />
+The <code>-auto-type-password</code> option is similar to <code>-auto-type</code>,
+but auto-types only the password of a matching entry.
+<code>-auto-type-selected</code> performs auto-type for the currently selected entry.<br />
+<br />
+The <code>-cancel</code> option causes all other KeePass instances to
+cancel opening/saving a database file.<br />
 <br />
 The path of the local <a href="configuration.html">configuration</a> file can be changed
 using the <code>-cfg-local:</code> command line parameter.

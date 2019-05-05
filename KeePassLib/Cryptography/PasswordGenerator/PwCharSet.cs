@@ -43,7 +43,6 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public static readonly string UpperHex = "0123456789ABCDEF";
 		public static readonly string LowerHex = "0123456789abcdef";
 
-		public static readonly string Invalid = "\t\r\n";
 		public static readonly string LookAlike = @"O0l1I|";
 
 		internal static readonly string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;

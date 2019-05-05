@@ -99,11 +99,14 @@ namespace KeePass
 			Null = 0,
 			RestoreWindow = 1,
 			Exit = 2,
-			IpcByFile = 3,
+			IpcByFile = 3, // Handled by all other instances
 			AutoType = 4,
 			Lock = 5,
 			Unlock = 6,
-			AutoTypeSelected = 7
+			AutoTypeSelected = 7,
+			Cancel = 8,
+			AutoTypePassword = 9,
+			IpcByFile1 = 10 // Handled by 1 other instance
 		}
 
 		public static CommandLineArgs CommandLineArgs
@@ -297,7 +300,7 @@ namespace KeePass
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
 			{
 				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
-					KPRes.FileExtName, WinUtil.GetExecutable(), PwDefs.ShortProductName, false);
+					KPRes.FileExtName2, WinUtil.GetExecutable(), PwDefs.ShortProductName, false);
 				MainCleanUp();
 				return;
 			}
@@ -451,6 +454,11 @@ namespace KeePass
 				BroadcastAppMessageAndCleanUp(AppMessage.AutoType);
 				return;
 			}
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoTypePassword] != null)
+			{
+				BroadcastAppMessageAndCleanUp(AppMessage.AutoTypePassword);
+				return;
+			}
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.AutoTypeSelected] != null)
 			{
 				BroadcastAppMessageAndCleanUp(AppMessage.AutoTypeSelected);
@@ -463,7 +471,7 @@ namespace KeePass
 				{
 					IpcParamEx ipUrl = new IpcParamEx(IpcUtilEx.CmdOpenEntryUrl,
 						strEntryUuid, null, null, null, null);
-					IpcUtilEx.SendGlobalMessage(ipUrl);
+					IpcUtilEx.SendGlobalMessage(ipUrl, false);
 				}
 
 				MainCleanUp();
@@ -479,16 +487,25 @@ namespace KeePass
 				BroadcastAppMessageAndCleanUp(AppMessage.Unlock);
 				return;
 			}
-			if(m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent] != null)
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.Cancel] != null)
 			{
-				string strName = m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent];
-				if(!string.IsNullOrEmpty(strName))
+				BroadcastAppMessageAndCleanUp(AppMessage.Cancel);
+				return;
+			}
+
+			string strIpc = m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent];
+			string strIpc1 = m_cmdLineArgs[AppDefs.CommandLineOptions.IpcEvent1];
+			if((strIpc != null) || (strIpc1 != null))
+			{
+				bool bIpc1 = (strIpc1 != null);
+				string strName = (bIpc1 ? strIpc1 : strIpc);
+				if(strName.Length != 0)
 				{
 					string[] vFlt = KeyUtil.MakeCtxIndependent(args);
 
-					IpcParamEx ipEvent = new IpcParamEx(IpcUtilEx.CmdIpcEvent, strName,
+					IpcParamEx ipcP = new IpcParamEx(IpcUtilEx.CmdIpcEvent, strName,
 						CommandLineArgs.SafeSerialize(vFlt), null, null, null);
-					IpcUtilEx.SendGlobalMessage(ipEvent);
+					IpcUtilEx.SendGlobalMessage(ipcP, bIpc1);
 				}
 
 				MainCleanUp();
@@ -585,6 +602,7 @@ namespace KeePass
 				AppLogEx.Open(PwDefs.ShortProductName);
 
 			AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
+			AppPolicy.ApplyToConfig();
 
 			if(m_appConfig.Security.ProtectProcessWithDacl)
 				KeePassLib.Native.NativeMethods.ProtectProcessWithDacl();
@@ -748,8 +766,7 @@ namespace KeePass
 
 					IpcParamEx ipcMsg = new IpcParamEx(IpcUtilEx.CmdOpenDatabase,
 						CommandLineArgs.SafeSerialize(vFlt), null, null, null, null);
-
-					IpcUtilEx.SendGlobalMessage(ipcMsg);
+					IpcUtilEx.SendGlobalMessage(ipcMsg, true);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }

@@ -394,8 +394,8 @@ namespace KeePassLib.Security
 			if(a == null) throw new ArgumentNullException("a");
 			if(b == null) throw new ArgumentNullException("b");
 
-			if(b.IsEmpty) return a;
-			if(a.IsEmpty) return b;
+			if(b.IsEmpty) return a.WithProtection(a.IsProtected || b.IsProtected);
+			if(a.IsEmpty) return b.WithProtection(a.IsProtected || b.IsProtected);
 			if(!a.IsProtected && !b.IsProtected)
 				return new ProtectedString(false, a.ReadString() + b.ReadString());
 

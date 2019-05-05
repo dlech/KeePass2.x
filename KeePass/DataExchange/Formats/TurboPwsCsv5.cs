@@ -110,8 +110,7 @@ namespace KeePass.DataExchange.Formats
 						if(!string.IsNullOrEmpty(strMapped)) strKey = strMapped;
 					}
 
-					ImportUtil.AppendToField(pe, strKey, strValue, pwStorage,
-						((strKey == PwDefs.NotesField) ? "\r\n" : ", "), false);
+					ImportUtil.AppendToField(pe, strKey, strValue, pwStorage);
 				}
 
 				ImportUtil.AppendToField(pe, PwDefs.NotesField, v[20], pwStorage,

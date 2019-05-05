@@ -147,7 +147,7 @@
 			this.m_pnlBottom.Location = new System.Drawing.Point(0, 175);
 			this.m_pnlBottom.Name = "m_pnlBottom";
 			this.m_pnlBottom.Size = new System.Drawing.Size(628, 40);
-			this.m_pnlBottom.TabIndex = 2;
+			this.m_pnlBottom.TabIndex = 0;
 			// 
 			// m_pnlBottomRight
 			// 
@@ -168,7 +168,7 @@
 			this.m_pnlTop.Name = "m_pnlTop";
 			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
 			this.m_pnlTop.Size = new System.Drawing.Size(628, 68);
-			this.m_pnlTop.TabIndex = 3;
+			this.m_pnlTop.TabIndex = 1;
 			// 
 			// m_pnlTopLeft
 			// 
@@ -187,7 +187,7 @@
 			this.m_pnlLeft.Location = new System.Drawing.Point(0, 128);
 			this.m_pnlLeft.Name = "m_pnlLeft";
 			this.m_pnlLeft.Size = new System.Drawing.Size(71, 47);
-			this.m_pnlLeft.TabIndex = 4;
+			this.m_pnlLeft.TabIndex = 2;
 			// 
 			// m_pnlRight
 			// 
@@ -196,7 +196,7 @@
 			this.m_pnlRight.Location = new System.Drawing.Point(579, 128);
 			this.m_pnlRight.Name = "m_pnlRight";
 			this.m_pnlRight.Size = new System.Drawing.Size(49, 47);
-			this.m_pnlRight.TabIndex = 1;
+			this.m_pnlRight.TabIndex = 4;
 			// 
 			// m_pnlMiddleTopSpacer
 			// 
@@ -206,7 +206,7 @@
 			this.m_pnlMiddleTopSpacer.Name = "m_pnlMiddleTopSpacer";
 			this.m_pnlMiddleTopSpacer.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
 			this.m_pnlMiddleTopSpacer.Size = new System.Drawing.Size(508, 41);
-			this.m_pnlMiddleTopSpacer.TabIndex = 0;
+			this.m_pnlMiddleTopSpacer.TabIndex = 3;
 			// 
 			// CharPickerForm
 			// 
@@ -229,6 +229,7 @@
 			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
+			this.Shown += new System.EventHandler(this.OnFormShown);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.Resize += new System.EventHandler(this.OnFormResize);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();

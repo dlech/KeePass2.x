@@ -237,12 +237,11 @@ namespace KeePass.DataExchange.Formats
 					null);
 				string strField = (strLookup ?? ("Field " + (iField + 1).ToString()));
 
-				string strSep = ((strField != PwDefs.NotesField) ? ", " : "\r\n");
-				ImportUtil.AppendToField(pe, strField, strData, pwStorage, strSep, false);
+				ImportUtil.AppendToField(pe, strField, strData, pwStorage);
 			}
 
 			ImportUtil.AppendToField(pe, PwDefs.NotesField, ParseCsvWord(vLine[11]),
-				pwStorage, "\r\n", false);
+				pwStorage);
 
 			DateTime? odt = TimeUtil.ParseUSTextDate(ParseCsvWord(vLine[10]),
 				DateTimeKind.Local);

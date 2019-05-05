@@ -47,6 +47,8 @@ namespace KeePassLib.Cryptography
 			// RijndaelManagedTransform when a stream hasn't been
 			// read completely (e.g. incorrect master key)
 			catch(CryptographicException) { }
+			// Similar to above, at the beginning of the stream
+			catch(IndexOutOfRangeException) { }
 			catch(Exception) { Debug.Assert(false); }
 
 			if(disposing)

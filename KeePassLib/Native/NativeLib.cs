@@ -232,15 +232,15 @@ namespace KeePassLib.Native
 				{
 					ProcessStartInfo psi = new ProcessStartInfo();
 
+					psi.FileName = EncodePath(strAppPath);
+					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+
 					psi.CreateNoWindow = true;
-					psi.FileName = strAppPath;
 					psi.WindowStyle = ProcessWindowStyle.Hidden;
 					psi.UseShellExecute = false;
+
 					psi.RedirectStandardOutput = bStdOut;
-
 					if(strStdInput != null) psi.RedirectStandardInput = true;
-
-					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
 
 					Process p = Process.Start(psi);
 					pToDispose = p;
@@ -452,6 +452,77 @@ namespace KeePassLib.Native
 
 			// https://referencesource.microsoft.com/#mscorlib/system/runtime/interopservices/windowsruntime/winrtclassactivator.cs
 			return Type.GetType(strType + ", Windows, ContentType=WindowsRuntime", false);
+		}
+
+		internal static string EncodeDataToArgs(string strData)
+		{
+			if(strData == null) { Debug.Assert(false); return string.Empty; }
+
+			// Cf. EncodePath and DecodeArgsToPath
+			if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
+			{
+				string str = strData;
+
+				str = str.Replace("\\", "\\\\");
+				str = str.Replace("\"", "\\\"");
+
+				// Whether '\'' needs to be encoded depends on the context
+				// (e.g. surrounding quotes); as we do not know what the
+				// caller does with the returned string, we assume that
+				// it will be used in a context where '\'' must not be
+				// encoded; this behavior is documented
+				// str = str.Replace("\'", "\\\'");
+
+				return str;
+			}
+
+			// See SHELLEXECUTEINFO structure documentation
+			return strData.Replace("\"", "\"\"\"");
+		}
+
+		/// <summary>
+		/// Encode a path for <c>Process.Start</c>.
+		/// </summary>
+		internal static string EncodePath(string strPath)
+		{
+			if(strPath == null) { Debug.Assert(false); return string.Empty; }
+
+			// Cf. EncodeDataToArgs and DecodeArgsToPath
+			if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
+			{
+				string str = strPath;
+
+				str = str.Replace("\\", "\\\\");
+				str = str.Replace("\"", "\\\"");
+
+				// '\'' must not be encoded in paths (only in args)
+				// str = str.Replace("\'", "\\\'");
+
+				return str;
+			}
+
+			return strPath; // '\"' is not allowed in paths on Windows
+		}
+
+		/// <summary>
+		/// Decode command line arguments to a path for <c>Process.Start</c>.
+		/// </summary>
+		internal static string DecodeArgsToPath(string strArgs)
+		{
+			if(strArgs == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strArgs;
+
+			// Cf. EncodeDataToArgs and EncodePath
+			// if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
+			// {
+			//	string strPlh = Guid.NewGuid().ToString();
+			//	str = str.Replace("\\\\", strPlh);
+			//	str = str.Replace("\\\'", "\'");
+			//	str = str.Replace(strPlh, "\\\\"); // Restore
+			// }
+
+			return str; // '\"' is not allowed in paths on Windows
 		}
 	}
 }

@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 
 #if !KeePassUAP
 using System.Drawing;
@@ -44,45 +43,41 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public sealed class CharStream
 	{
-		private string m_strString = string.Empty;
-		private int m_nPos = 0;
+		private readonly string m_str;
+		private int m_iPos = 0;
+
+		public long Position
+		{
+			get { return m_iPos; }
+			set
+			{
+				if((value < 0) || (value > int.MaxValue))
+					throw new ArgumentOutOfRangeException("value");
+				m_iPos = (int)value;
+			}
+		}
 
 		public CharStream(string str)
 		{
-			Debug.Assert(str != null);
-			if(str == null) throw new ArgumentNullException("str");
+			if(str == null) { Debug.Assert(false); throw new ArgumentNullException("str"); }
 
-			m_strString = str;
-		}
-
-		public void Seek(SeekOrigin org, int nSeek)
-		{
-			if(org == SeekOrigin.Begin)
-				m_nPos = nSeek;
-			else if(org == SeekOrigin.Current)
-				m_nPos += nSeek;
-			else if(org == SeekOrigin.End)
-				m_nPos = m_strString.Length + nSeek;
+			m_str = str;
 		}
 
 		public char ReadChar()
 		{
-			if(m_nPos < 0) return char.MinValue;
-			if(m_nPos >= m_strString.Length) return char.MinValue;
+			if(m_iPos >= m_str.Length) return char.MinValue;
 
-			char chRet = m_strString[m_nPos];
-			++m_nPos;
-			return chRet;
+			return m_str[m_iPos++];
 		}
 
 		public char ReadChar(bool bSkipWhiteSpace)
 		{
-			if(bSkipWhiteSpace == false) return ReadChar();
+			if(!bSkipWhiteSpace) return ReadChar();
 
 			while(true)
 			{
 				char ch = ReadChar();
-
 				if((ch != ' ') && (ch != '\t') && (ch != '\r') && (ch != '\n'))
 					return ch;
 			}
@@ -90,29 +85,25 @@ namespace KeePassLib.Utility
 
 		public char PeekChar()
 		{
-			if(m_nPos < 0) return char.MinValue;
-			if(m_nPos >= m_strString.Length) return char.MinValue;
+			if(m_iPos >= m_str.Length) return char.MinValue;
 
-			return m_strString[m_nPos];
+			return m_str[m_iPos];
 		}
 
 		public char PeekChar(bool bSkipWhiteSpace)
 		{
-			if(bSkipWhiteSpace == false) return PeekChar();
+			if(!bSkipWhiteSpace) return PeekChar();
 
-			int iIndex = m_nPos;
-			while(true)
+			int i = m_iPos;
+			while(i < m_str.Length)
 			{
-				if(iIndex < 0) return char.MinValue;
-				if(iIndex >= m_strString.Length) return char.MinValue;
-
-				char ch = m_strString[iIndex];
-
+				char ch = m_str[i];
 				if((ch != ' ') && (ch != '\t') && (ch != '\r') && (ch != '\n'))
 					return ch;
-
-				++iIndex;
+				++i;
 			}
+
+			return char.MinValue;
 		}
 	}
 
@@ -405,44 +396,46 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
-		/// <summary>
-		/// Split up a command line into application and argument.
-		/// </summary>
-		/// <param name="strCmdLine">Command line to split.</param>
-		/// <param name="strApp">Application path.</param>
-		/// <param name="strArgs">Arguments.</param>
-		public static void SplitCommandLine(string strCmdLine, out string strApp, out string strArgs)
+		public static void SplitCommandLine(string strCmdLine, out string strApp,
+			out string strArgs)
 		{
-			Debug.Assert(strCmdLine != null); if(strCmdLine == null) throw new ArgumentNullException("strCmdLine");
+			SplitCommandLine(strCmdLine, out strApp, out strArgs, true);
+		}
+
+		internal static void SplitCommandLine(string strCmdLine, out string strApp,
+			out string strArgs, bool bDecodeAppToPath)
+		{
+			if(strCmdLine == null) { Debug.Assert(false); throw new ArgumentNullException("strCmdLine"); }
 
 			string str = strCmdLine.Trim();
-
-			strApp = null; strArgs = null;
+			strApp = null;
+			strArgs = null;
 
 			if(str.StartsWith("\""))
 			{
-				int nSecond = str.IndexOf('\"', 1);
-				if(nSecond >= 1)
+				int iSecond = UrlUtil.IndexOfSecondEnclQuote(str);
+				if(iSecond >= 1)
 				{
-					strApp = str.Substring(1, nSecond - 1).Trim();
-					strArgs = str.Remove(0, nSecond + 1).Trim();
+					strApp = str.Substring(1, iSecond - 1).Trim();
+					strArgs = str.Remove(0, iSecond + 1).Trim();
 				}
 			}
 
 			if(strApp == null)
 			{
-				int nSpace = str.IndexOf(' ');
-
-				if(nSpace >= 0)
+				int iSpace = str.IndexOf(' ');
+				if(iSpace >= 0)
 				{
-					strApp = str.Substring(0, nSpace);
-					strArgs = str.Remove(0, nSpace).Trim();
+					strApp = str.Substring(0, iSpace).Trim();
+					strArgs = str.Remove(0, iSpace + 1).Trim();
 				}
-				else strApp = strCmdLine;
+				else strApp = str;
 			}
 
-			if(strApp == null) strApp = string.Empty;
+			if(strApp == null) { Debug.Assert(false); strApp = string.Empty; }
 			if(strArgs == null) strArgs = string.Empty;
+
+			if(bDecodeAppToPath) strApp = NativeLib.DecodeArgsToPath(strApp);
 		}
 
 		// /// <summary>
@@ -963,10 +956,10 @@ namespace KeePassLib.Utility
 
 			for(char ch = 'A'; ch <= 'Z'; ++ch)
 			{
-				string strEnhAcc = @"(&" + ch.ToString() + @")";
+				string strEnhAcc = @"(&" + ch.ToString() + ")";
 				if(str.IndexOf(strEnhAcc) >= 0)
 				{
-					str = str.Replace(@" " + strEnhAcc, string.Empty);
+					str = str.Replace(" " + strEnhAcc, string.Empty);
 					str = str.Replace(strEnhAcc, string.Empty);
 				}
 			}
@@ -1279,7 +1272,7 @@ namespace KeePassLib.Utility
 			if(uBytes <= uGB) return (((uBytes - 1UL) / uMB) + 1UL).ToString() + " MB";
 			if(uBytes <= uTB) return (((uBytes - 1UL) / uGB) + 1UL).ToString() + " GB";
 
-			return (((uBytes - 1UL)/ uTB) + 1UL).ToString() + " TB";
+			return (((uBytes - 1UL) / uTB) + 1UL).ToString() + " TB";
 		}
 
 		public static string FormatDataSizeKB(ulong uBytes)

@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.Native;
 
@@ -175,18 +175,24 @@ namespace KeePass.Util.SendInputExt
 			SetKeyModifierImplEx(kMod, bDown, false);
 		}
 
-		private void SetKeyModifierImplEx(Keys kMod, bool bDown, bool bRAlt)
+		private void SetKeyModifierImplEx(Keys kMod, bool bDown, bool bRAltForCtrlAlt)
 		{
 			PrepareSend();
 
-			if((kMod & Keys.Shift) != Keys.None)
+			bool bShift = ((kMod & Keys.Shift) != Keys.None);
+			bool bCtrl = ((kMod & Keys.Control) != Keys.None);
+			bool bAlt = ((kMod & Keys.Alt) != Keys.None);
+
+			if(bShift)
 				SendVKeyNative((int)Keys.ShiftKey, null, bDown);
-			if((kMod & Keys.Control) != Keys.None)
-				SendVKeyNative((int)Keys.ControlKey, null, bDown);
-			if((kMod & Keys.Alt) != Keys.None)
+			if(bCtrl && bAlt && bRAltForCtrlAlt)
+				SendVKeyNative((int)Keys.RMenu, null, bDown);
+			else
 			{
-				int vk = (int)(bRAlt ? Keys.RMenu : Keys.Menu);
-				SendVKeyNative(vk, null, bDown);
+				if(bCtrl)
+					SendVKeyNative((int)Keys.ControlKey, null, bDown);
+				if(bAlt)
+					SendVKeyNative((int)Keys.Menu, null, bDown);
 			}
 
 			if(bDown) m_kModCur |= kMod;
@@ -237,11 +243,13 @@ namespace KeePass.Util.SendInputExt
 
 			string[] vEnfKey = new string[] {
 				"MSTSC", // Remote Desktop Connection client
-				"VirtualBox", // VirtualBox does not support VK_PACKET
-				"VpxClient" // VMware vSphere client
+				"VirtualBox", // Oracle VirtualBox <= 5
+				"VirtualBoxVM", // Oracle VirtualBox >= 6
+				"VpxClient", // VMware vSphere client
 
-				// https://sourceforge.net/p/keepass/discussion/329220/thread/b77448e4/
-				// "vmware-vmx" // VMware Workstation 14 (?)
+				// VMware Player;
+				// https://sourceforge.net/p/keepass/discussion/329221/thread/c94e0f096e/
+				"VMware-VMX", "VMware-AuthD", "VMPlayer", "VMware-Unity-Helper"
 			};
 			foreach(string strEnfKey in vEnfKey)
 			{
@@ -641,28 +649,40 @@ namespace KeePass.Util.SendInputExt
 					return false;
 			}
 
+			bool bShift = ((kMod & Keys.Shift) != Keys.None);
+			bool bCtrl = ((kMod & Keys.Control) != Keys.None);
+			bool bAlt = ((kMod & Keys.Alt) != Keys.None);
+			bool bCapsLock = false;
+
 			// Windows' GetKeyboardState function does not return the
 			// current virtual key array (especially not after changing
 			// them below), thus we build the array on our own
 			byte[] pbState = new byte[256];
-			if((kMod & Keys.Shift) != Keys.None)
+			if(bShift)
 			{
 				pbState[NativeMethods.VK_SHIFT] = 0x80;
 				pbState[NativeMethods.VK_LSHIFT] = 0x80;
 			}
-			if((kMod & Keys.Control) != Keys.None)
+			if(bCtrl && bAlt) // Use RAlt as Ctrl+Alt
 			{
 				pbState[NativeMethods.VK_CONTROL] = 0x80;
-				pbState[NativeMethods.VK_LCONTROL] = 0x80;
-			}
-			if((kMod & Keys.Alt) != Keys.None)
-			{
 				pbState[NativeMethods.VK_MENU] = 0x80;
-				pbState[NativeMethods.VK_RMENU] = 0x80; // See below
+				pbState[NativeMethods.VK_RMENU] = 0x80;
+			}
+			else
+			{
+				if(bCtrl)
+				{
+					pbState[NativeMethods.VK_CONTROL] = 0x80;
+					pbState[NativeMethods.VK_LCONTROL] = 0x80;
+				}
+				if(bAlt)
+				{
+					pbState[NativeMethods.VK_MENU] = 0x80;
+					pbState[NativeMethods.VK_LMENU] = 0x80;
+				}
 			}
 			pbState[NativeMethods.VK_NUMLOCK] = 0x01; // Toggled
-
-			bool bCapsLock = false;
 
 			// The keypress that VkKeyScan returns may require a specific
 			// state of toggle keys, on which it provides no information;

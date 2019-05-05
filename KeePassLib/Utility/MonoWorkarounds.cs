@@ -116,9 +116,6 @@ namespace KeePassLib.Utility
 		// 1760:
 		//   Input focus is not restored when activating a form.
 		//   https://sourceforge.net/p/keepass/bugs/1760/
-		// 2139:
-		//   Shortcut keys are ignored.
-		//   https://sourceforge.net/p/keepass/feature-requests/2139/
 		// 2140:
 		//   Explicit control focusing is ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2140/

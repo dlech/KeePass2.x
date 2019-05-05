@@ -358,7 +358,7 @@ namespace KeePass.DataExchange
 				grp.ExpirationTime.Set(pg.ExpiryTime);
 			else grp.ExpirationTime.Set(dtNeverExpire);
 
-			grp.Level = (bForceLevel0 ? (ushort)0 : (ushort)(pg.GetLevel() - 1));
+			grp.Level = (bForceLevel0 ? (ushort)0 : (ushort)(pg.GetDepth() - 1));
 
 			if(pg.IsExpanded) grp.Flags |= (uint)KdbGroupFlags.Expanded;
 

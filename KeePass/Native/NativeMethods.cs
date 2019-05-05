@@ -422,10 +422,10 @@ namespace KeePass.Native
 		internal static extern bool PlaySound(string pszSound, IntPtr hmod,
 			uint fdwSound);
 
-		[DllImport("Shell32.dll", CharSet = CharSet.Auto)]
-		internal static extern IntPtr ShellExecute(IntPtr hwnd,
-			string lpOperation, string lpFile, string lpParameters,
-			string lpDirectory, int nShowCmd);
+		// [DllImport("Shell32.dll", CharSet = CharSet.Auto)]
+		// internal static extern IntPtr ShellExecute(IntPtr hwnd,
+		//	string lpOperation, string lpFile, string lpParameters,
+		//	string lpDirectory, int nShowCmd);
 
 		[DllImport("User32.dll", CharSet = CharSet.Auto)]
 		internal static extern int MessageBox(IntPtr hWnd, string lpText,

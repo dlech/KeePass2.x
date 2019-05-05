@@ -653,6 +653,13 @@ namespace KeePass.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Imp_Bitwarden {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Bitwarden", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_Chrome {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_Chrome", resourceCulture);
@@ -993,6 +1000,13 @@ namespace KeePass.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Imp_Steganos20 {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Imp_Steganos20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap B16x16_Imp_StickyPw {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Imp_StickyPw", resourceCulture);

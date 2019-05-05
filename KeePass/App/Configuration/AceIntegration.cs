@@ -34,13 +34,23 @@ namespace KeePass.App.Configuration
 	public sealed class AceIntegration
 	{
 		private ulong m_hkAutoType = (ulong)(Keys.Control | Keys.Alt | Keys.A);
+		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.A))]
 		public ulong HotKeyGlobalAutoType
 		{
 			get { return m_hkAutoType; }
 			set { m_hkAutoType = value; }
 		}
 
+		private ulong m_hkAutoTypePw = (ulong)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A);
+		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A))]
+		public ulong HotKeyGlobalAutoTypePassword
+		{
+			get { return m_hkAutoTypePw; }
+			set { m_hkAutoTypePw = value; }
+		}
+
 		private ulong m_hkAutoTypeSel = (ulong)Keys.None;
+		[DefaultValue((ulong)Keys.None)]
 		public ulong HotKeySelectedAutoType
 		{
 			get { return m_hkAutoTypeSel; }
@@ -48,6 +58,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private ulong m_hkShowWindow = (ulong)(Keys.Control | Keys.Alt | Keys.K);
+		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.K))]
 		public ulong HotKeyShowWindow
 		{
 			get { return m_hkShowWindow; }
@@ -55,6 +66,7 @@ namespace KeePass.App.Configuration
 		}
 
 		private ulong m_hkEntryMenu = (ulong)Keys.None;
+		[DefaultValue((ulong)Keys.None)]
 		public ulong HotKeyEntryMenu
 		{
 			get { return m_hkEntryMenu; }
@@ -345,7 +357,7 @@ namespace KeePass.App.Configuration
 			m_lBuiltInOverrides.Clear();
 
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(true, "ssh",
-				@"cmd://PuTTY.exe -ssh {USERNAME}@{BASE:RMVSCM}", 0x1));
+				"cmd://PuTTY.exe -ssh {USERNAME}@{BASE:RMVSCM}", 0x1));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
 				"cmd://{INTERNETEXPLORER} \"{BASE}\"", 0x2));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "https",

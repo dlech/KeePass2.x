@@ -152,14 +152,8 @@ namespace KeePass.DataExchange.Formats
 					}
 				}
 
-				bool bSingle = ((strFieldName == PwDefs.TitleField) ||
-					(strFieldName == PwDefs.UserNameField) ||
-					(strFieldName == PwDefs.PasswordField) ||
-					(strFieldName == PwDefs.UrlField));
-				string strSep = (bSingle ? ", " : "\r\n");
-
 				ImportUtil.AppendToField(pe, strFieldName, strLine.Substring(
-					iDataOffset), pd, strSep, bSingle);
+					iDataOffset), pd, null, true);
 			}
 		}
 	}

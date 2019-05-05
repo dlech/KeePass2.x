@@ -192,19 +192,17 @@ namespace KeePassLib.Serialization
 				}
 
 #if KeePassDebug_WriteXml
-				// FileStream fsOut = new FileStream("Raw.xml", FileMode.Create,
-				//	FileAccess.Write, FileShare.None);
-				// try
-				// {
-				//	while(true)
-				//	{
-				//		int b = sXml.ReadByte();
-				//		if(b == -1) break;
-				//		fsOut.WriteByte((byte)b);
-				//	}
-				// }
-				// catch(Exception) { }
-				// fsOut.Close();
+#warning XML output is enabled!
+				/* using(FileStream fsOut = new FileStream("Raw.xml", FileMode.Create,
+					FileAccess.Write, FileShare.None))
+				{
+					while(true)
+					{
+						int b = sXml.ReadByte();
+						if(b == -1) throw new EndOfStreamException();
+						fsOut.WriteByte((byte)b);
+					}
+				} */
 #endif
 
 				ReadXmlStreamed(sXml, sHashing);
@@ -401,7 +399,7 @@ namespace KeePassLib.Serialization
 				default:
 					Debug.Assert(false);
 					if(m_slLogger != null)
-						m_slLogger.SetText(KLRes.UnknownHeaderId + @": " +
+						m_slLogger.SetText(KLRes.UnknownHeaderId + ": " +
 							kdbID.ToString() + "!", LogStatusType.Warning);
 					break;
 			}

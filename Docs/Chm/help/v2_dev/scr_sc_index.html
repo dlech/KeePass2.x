@@ -63,8 +63,9 @@ Key</h2>
 
 <p>The composite master key for the database can be given to KPScript
 using one of the following ways:</p>
-<ul>
-<li><i>Command Line Parameters.</i>
+
+<ul class="withspc">
+<li><i>Command line parameters.</i>
 Using the <code>-pw:</code>, <code>-pw-enc:</code>,
 <code>-keyfile:</code> and <code>-useraccount</code> parameters.
 For example, to pass &quot;Secret&quot; as password, you'd give
@@ -75,15 +76,20 @@ For <code>-pw-enc:</code>, see the
 <a href="../base/placeholders.html#passwordenc"><code>{PASSWORD_ENC}</code></a> placeholder.
 The <code>-keyfile:</code> parameter can
 specify the key file location. If <code>-useraccount</code> is passed to KPScript, the
-user account credentials of the currently logged on user are used, otherwise not.<br />
-<br /></li>
-<li><i>Entering interactively using the command line.</i>
-If you pass <code>-keyprompt</code> to KPScript, it will prompt you for the key. You
-can enter the password, key file location and user account directly in the console window.<br />
-<br /></li>
+user account credentials of the currently logged on user are used, otherwise not.</li>
+
+<li><i>Reading from StdIn.</i>
+If you pass <code>-keyprompt</code> to KPScript, it will read the
+password, the key file path and the user account flag from the StdIn stream.
+This option is intended for programmatically passing the key to KPScript.
+For entering the password by hand, it is recommended to use the
+normal master key dialog instead (because in this dialog the password
+is hidden by bullets/asterisks and it is encrypted by the process memory
+protection), see <code>-guikeyprompt</code>.</li>
+
 <li><i>Entering interactively using graphical user interface.</i>
-If you pass <code>-guikeyprompt</code> to KPScript, it will prompt you for the key using
-the standard key dialog of KeePass.</li>
+If you pass <code>-guikeyprompt</code> to KPScript, it will prompt you for the
+key using the normal master key dialog of KeePass.</li>
 </ul>
 
 <br />

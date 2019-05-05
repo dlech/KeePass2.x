@@ -34,92 +34,61 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		{
 			psOut = ProtectedString.Empty;
 
+			string strPattern = pwProfile.Pattern;
+			if(string.IsNullOrEmpty(strPattern)) return PwgError.Success;
+
+			CharStream cs = new CharStream(strPattern);
 			LinkedList<char> llGenerated = new LinkedList<char>();
-			PwCharSet pcsCurrent = new PwCharSet();
-			PwCharSet pcsCustom = new PwCharSet();
-			PwCharSet pcsUsed = new PwCharSet();
-			bool bInCharSetDef = false;
+			PwCharSet pcs = new PwCharSet();
 
-			string strPattern = ExpandPattern(pwProfile.Pattern);
-			if(strPattern.Length == 0) return PwgError.Success;
-
-			CharStream csStream = new CharStream(strPattern);
-			char ch = csStream.ReadChar();
-
-			while(ch != char.MinValue)
+			while(true)
 			{
-				pcsCurrent.Clear();
+				char ch = cs.ReadChar();
+				if(ch == char.MinValue) break;
 
-				bool bGenerateChar = false;
+				pcs.Clear();
 
 				if(ch == '\\')
 				{
-					ch = csStream.ReadChar();
-					if(ch == char.MinValue) // Backslash at the end
-					{
-						llGenerated.AddLast('\\');
-						break;
-					}
+					ch = cs.ReadChar();
+					if(ch == char.MinValue) return PwgError.InvalidPattern;
 
-					if(bInCharSetDef) pcsCustom.Add(ch);
-					else
-					{
-						llGenerated.AddLast(ch);
-						pcsUsed.Add(ch);
-					}
-				}
-				else if(ch == '^')
-				{
-					ch = csStream.ReadChar();
-					if(ch == char.MinValue) // ^ at the end
-					{
-						llGenerated.AddLast('^');
-						break;
-					}
-
-					if(bInCharSetDef) pcsCustom.Remove(ch);
+					pcs.Add(ch); // Allow "{...}" support and char check
 				}
 				else if(ch == '[')
 				{
-					pcsCustom.Clear();
-					bInCharSetDef = true;
+					if(!ReadCustomCharSet(cs, pcs))
+						return PwgError.InvalidPattern;
 				}
-				else if(ch == ']')
+				else
 				{
-					pcsCurrent.Add(pcsCustom.ToString());
+					if(!pcs.AddCharSet(ch))
+						return PwgError.InvalidPattern;
+				}
 
-					bInCharSetDef = false;
-					bGenerateChar = true;
-				}
-				else if(bInCharSetDef)
+				int nCount = 1;
+				if(cs.PeekChar() == '{')
 				{
-					if(pcsCustom.AddCharSet(ch) == false)
-						pcsCustom.Add(ch);
+					nCount = ReadCount(cs);
+					if(nCount < 0) return PwgError.InvalidPattern;
 				}
-				else if(pcsCurrent.AddCharSet(ch) == false)
-				{
-					llGenerated.AddLast(ch);
-					pcsUsed.Add(ch);
-				}
-				else bGenerateChar = true;
 
-				if(bGenerateChar)
+				for(int i = 0; i < nCount; ++i)
 				{
-					PwGenerator.PrepareCharSet(pcsCurrent, pwProfile);
-
+					if(!PwGenerator.PrepareCharSet(pcs, pwProfile))
+						return PwgError.InvalidCharSet;
 					if(pwProfile.NoRepeatingCharacters)
-						pcsCurrent.Remove(pcsUsed.ToString());
+					{
+						foreach(char chUsed in llGenerated)
+							pcs.Remove(chUsed);
+					}
 
-					char chGen = PwGenerator.GenerateCharacter(pwProfile,
-						pcsCurrent, crsRandomSource);
-
+					char chGen = PwGenerator.GenerateCharacter(pcs,
+						crsRandomSource);
 					if(chGen == char.MinValue) return PwgError.TooFewCharacters;
 
 					llGenerated.AddLast(chGen);
-					pcsUsed.Add(chGen);
 				}
-
-				ch = csStream.ReadChar();
 			}
 
 			if(llGenerated.Count == 0) return PwgError.Success;
@@ -135,53 +104,70 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			MemUtil.ZeroByteArray(pbUtf8);
 
 			MemUtil.ZeroArray<char>(v);
-			llGenerated.Clear();
-
 			return PwgError.Success;
 		}
 
-		private static string ExpandPattern(string strPattern)
+		private static bool ReadCustomCharSet(CharStream cs, PwCharSet pcsOut)
 		{
-			if(strPattern == null) { Debug.Assert(false); return string.Empty; }
+			Debug.Assert(cs.PeekChar() != '['); // Consumed already
+			Debug.Assert(pcsOut.Size == 0);
 
-			string str = strPattern;
-
+			bool bAdd = true;
 			while(true)
 			{
-				int nOpen = FindFirstUnescapedChar(str, '{');
-				int nClose = FindFirstUnescapedChar(str, '}');
+				char ch = cs.ReadChar();
+				if(ch == char.MinValue) return false;
+				if(ch == ']') break;
 
-				if((nOpen >= 0) && (nOpen < nClose))
+				if(ch == '\\')
 				{
-					string strCount = str.Substring(nOpen + 1, nClose - nOpen - 1);
-					str = str.Remove(nOpen, nClose - nOpen + 1);
+					ch = cs.ReadChar();
+					if(ch == char.MinValue) return false;
 
-					uint uRepeat;
-					if(StrUtil.TryParseUInt(strCount, out uRepeat) && (nOpen >= 1))
-					{
-						if(uRepeat == 0)
-							str = str.Remove(nOpen - 1, 1);
-						else
-							str = str.Insert(nOpen, new string(str[nOpen - 1], (int)uRepeat - 1));
-					}
+					if(bAdd) pcsOut.Add(ch);
+					else pcsOut.Remove(ch);
 				}
-				else break;
+				else if(ch == '^')
+				{
+					if(bAdd) bAdd = false;
+					else return false; // '^' toggles the mode only once
+				}
+				else
+				{
+					PwCharSet pcs = new PwCharSet();
+					if(!pcs.AddCharSet(ch)) return false;
+
+					if(bAdd) pcsOut.Add(pcs.ToString());
+					else pcsOut.Remove(pcs.ToString());
+				}
 			}
 
-			return str;
+			return true;
 		}
 
-		private static int FindFirstUnescapedChar(string str, char ch)
+		private static int ReadCount(CharStream cs)
 		{
-			for(int i = 0; i < str.Length; ++i)
-			{
-				char chCur = str[i];
+			if(cs.ReadChar() != '{') { Debug.Assert(false); return -1; }
 
-				if(chCur == '\\') ++i; // Next is escaped, skip it
-				else if(chCur == ch) return i;
+			// Ensure not empty
+			char chFirst = cs.PeekChar();
+			if((chFirst < '0') || (chFirst > '9')) return -1;
+
+			long n = 0;
+			while(true)
+			{
+				char ch = cs.ReadChar();
+				if(ch == '}') break;
+
+				if((ch >= '0') && (ch <= '9'))
+				{
+					n = (n * 10L) + (long)(ch - '0');
+					if(n > int.MaxValue) return -1;
+				}
+				else return -1;
 			}
 
-			return -1;
+			return (int)n;
 		}
 	}
 }

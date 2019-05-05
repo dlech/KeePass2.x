@@ -52,7 +52,7 @@
 			this.m_cbUserAccount.Location = new System.Drawing.Point(12, 125);
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
 			this.m_cbUserAccount.Size = new System.Drawing.Size(138, 17);
-			this.m_cbUserAccount.TabIndex = 5;
+			this.m_cbUserAccount.TabIndex = 8;
 			this.m_cbUserAccount.Text = "Windows &User Account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
 			// 
@@ -62,7 +62,7 @@
 			this.m_btnOpenKeyFile.Location = new System.Drawing.Point(373, 97);
 			this.m_btnOpenKeyFile.Name = "m_btnOpenKeyFile";
 			this.m_btnOpenKeyFile.Size = new System.Drawing.Size(32, 23);
-			this.m_btnOpenKeyFile.TabIndex = 4;
+			this.m_btnOpenKeyFile.TabIndex = 7;
 			this.m_btnOpenKeyFile.UseVisualStyleBackColor = true;
 			this.m_btnOpenKeyFile.Click += new System.EventHandler(this.OnClickKeyFileBrowse);
 			// 
@@ -72,7 +72,7 @@
 			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 100);
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
 			this.m_cbKeyFile.Size = new System.Drawing.Size(66, 17);
-			this.m_cbKeyFile.TabIndex = 2;
+			this.m_cbKeyFile.TabIndex = 5;
 			this.m_cbKeyFile.Text = "&Key File:";
 			this.m_cbKeyFile.UseVisualStyleBackColor = true;
 			this.m_cbKeyFile.CheckedChanged += new System.EventHandler(this.OnCheckedKeyFile);
@@ -82,7 +82,7 @@
 			this.m_tbPassword.Location = new System.Drawing.Point(144, 74);
 			this.m_tbPassword.Name = "m_tbPassword";
 			this.m_tbPassword.Size = new System.Drawing.Size(223, 20);
-			this.m_tbPassword.TabIndex = 0;
+			this.m_tbPassword.TabIndex = 3;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
 			// m_cbPassword
@@ -91,7 +91,7 @@
 			this.m_cbPassword.Location = new System.Drawing.Point(12, 75);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(110, 17);
-			this.m_cbPassword.TabIndex = 11;
+			this.m_cbPassword.TabIndex = 2;
 			this.m_cbPassword.Text = "Master &Password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
 			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
@@ -102,7 +102,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(249, 177);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 7;
+			this.m_btnOK.TabIndex = 0;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -113,7 +113,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(330, 177);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 8;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -133,7 +133,7 @@
 			this.m_cbHidePassword.Location = new System.Drawing.Point(373, 72);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
-			this.m_cbHidePassword.TabIndex = 1;
+			this.m_cbHidePassword.TabIndex = 4;
 			this.m_cbHidePassword.Text = "***";
 			this.m_cbHidePassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.m_cbHidePassword.UseVisualStyleBackColor = true;
@@ -148,7 +148,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 177);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 9;
+			this.m_btnHelp.TabIndex = 10;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -159,7 +159,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 164);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(417, 2);
-			this.m_lblSeparator.TabIndex = 6;
+			this.m_lblSeparator.TabIndex = 9;
 			// 
 			// m_cmbKeyFile
 			// 
@@ -168,7 +168,7 @@
 			this.m_cmbKeyFile.Location = new System.Drawing.Point(144, 98);
 			this.m_cmbKeyFile.Name = "m_cmbKeyFile";
 			this.m_cmbKeyFile.Size = new System.Drawing.Size(223, 21);
-			this.m_cmbKeyFile.TabIndex = 3;
+			this.m_cmbKeyFile.TabIndex = 6;
 			this.m_cmbKeyFile.SelectedIndexChanged += new System.EventHandler(this.OnKeyFileSelectedIndexChanged);
 			// 
 			// m_btnExit
@@ -177,7 +177,7 @@
 			this.m_btnExit.Location = new System.Drawing.Point(93, 177);
 			this.m_btnExit.Name = "m_btnExit";
 			this.m_btnExit.Size = new System.Drawing.Size(75, 23);
-			this.m_btnExit.TabIndex = 10;
+			this.m_btnExit.TabIndex = 11;
 			this.m_btnExit.Text = "E&xit";
 			this.m_btnExit.UseVisualStyleBackColor = true;
 			this.m_btnExit.Click += new System.EventHandler(this.OnBtnExit);

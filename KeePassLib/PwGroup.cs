@@ -25,18 +25,23 @@ using System.Text.RegularExpressions;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePassLib
 {
 	/// <summary>
-	/// A group containing several password entries.
+	/// A group containing subgroups and entries.
 	/// </summary>
 	public sealed class PwGroup : ITimeLogger, IStructureItem, IDeepCloneable<PwGroup>
 	{
 		public const bool DefaultAutoTypeEnabled = true;
 		public const bool DefaultSearchingEnabled = true;
+
+		// In the tree view of Windows 10, the X coordinate is reset
+		// to 0 after 256 nested nodes
+		private const uint MaxDepth = 126; // Depth 126 = level 127 < 256/2
 
 		private PwObjectList<PwGroup> m_listGroups = new PwObjectList<PwGroup>();
 		private PwObjectList<PwEntry> m_listEntries = new PwObjectList<PwEntry>();
@@ -139,7 +144,8 @@ namespace KeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			// Plugins: use <c>PwGroup.AddGroup</c> instead.
+			// Plugins: use the PwGroup.AddGroup method instead.
+			// Internal: check depth using CanAddGroup/CheckCanAddGroup.
 			internal set { Debug.Assert(value != this); m_pParentGroup = value; }
 		}
 
@@ -1244,7 +1250,7 @@ namespace KeePassLib
 			PwGroup pg = m_pParentGroup;
 			while(pg != null)
 			{
-				if((!bIncludeTopMostGroup) && (pg.m_pParentGroup == null))
+				if(!bIncludeTopMostGroup && (pg.m_pParentGroup == null))
 					break;
 
 				strPath = pg.Name + strSeparator + strPath;
@@ -1367,21 +1373,34 @@ namespace KeePassLib
 #endif
 
 		/// <summary>
-		/// Get the level of the group (i.e. the number of parent groups).
+		/// Get the depth of this group (i.e. the number of ancestors).
 		/// </summary>
-		/// <returns>Number of parent groups.</returns>
-		public uint GetLevel()
+		/// <returns>Depth of this group.</returns>
+		public uint GetDepth()
 		{
 			PwGroup pg = m_pParentGroup;
-			uint uLevel = 0;
+			uint d = 0;
 
 			while(pg != null)
 			{
-				pg = pg.ParentGroup;
-				++uLevel;
+				pg = pg.m_pParentGroup;
+				++d;
 			}
 
-			return uLevel;
+			return d;
+		}
+
+		private uint GetHeight()
+		{
+			if(m_listGroups.UCount == 0) return 0;
+
+			uint h = 0;
+			foreach(PwGroup pgSub in m_listGroups)
+			{
+				h = Math.Max(h, pgSub.GetHeight());
+			}
+
+			return (h + 1);
 		}
 
 		public string GetAutoTypeSequenceInherited()
@@ -1520,11 +1539,29 @@ namespace KeePassLib
 		{
 			if(subGroup == null) throw new ArgumentNullException("subGroup");
 
+			CheckCanAddGroup(subGroup);
 			m_listGroups.Add(subGroup);
 
-			if(bTakeOwnership) subGroup.m_pParentGroup = this;
+			if(bTakeOwnership) subGroup.ParentGroup = this;
 
 			if(bUpdateLocationChangedOfSub) subGroup.LocationChanged = DateTime.UtcNow;
+		}
+
+		internal bool CanAddGroup(PwGroup pgSub)
+		{
+			if(pgSub == null) { Debug.Assert(false); return false; }
+
+			uint dCur = GetDepth(), hSub = pgSub.GetHeight();
+			return ((dCur + hSub + 1) <= MaxDepth);
+		}
+
+		internal void CheckCanAddGroup(PwGroup pgSub)
+		{
+			if(!CanAddGroup(pgSub))
+			{
+				Debug.Assert(false);
+				throw new InvalidOperationException(KLRes.StructsTooDeep);
+			}
 		}
 
 		/// <summary>

@@ -134,7 +134,7 @@ namespace KeePass.Util
 			File.WriteAllText(strPath, strHtml, StrUtil.Utf8);
 
 			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.FileName = strPath;
+			psi.FileName = NativeLib.EncodePath(strPath);
 			psi.UseShellExecute = true;
 
 			// Try to use the 'Print' verb; if it's not available, the

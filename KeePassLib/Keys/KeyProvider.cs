@@ -145,7 +145,7 @@ namespace KeePassLib.Keys
 
 		public override byte[] GetKey(KeyProviderQueryContext ctx)
 		{
-			return new byte[]{ 2, 3, 5, 7, 11, 13 };
+			return new byte[] { 2, 3, 5, 7, 11, 13 };
 		}
 	}
 #endif

@@ -264,8 +264,7 @@ namespace KeePassLib.Utility
 		[MethodImpl(MioNoOptimize)]
 		public static void ZeroByteArray(byte[] pbArray)
 		{
-			Debug.Assert(pbArray != null);
-			if(pbArray == null) throw new ArgumentNullException("pbArray");
+			if(pbArray == null) { Debug.Assert(false); return; }
 
 			Array.Clear(pbArray, 0, pbArray.Length);
 		}
@@ -277,7 +276,7 @@ namespace KeePassLib.Utility
 		[MethodImpl(MioNoOptimize)]
 		public static void ZeroArray<T>(T[] v)
 		{
-			if(v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
+			if(v == null) { Debug.Assert(false); return; }
 
 			Array.Clear(v, 0, v.Length);
 		}

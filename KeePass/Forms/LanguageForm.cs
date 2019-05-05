@@ -78,7 +78,7 @@ namespace KeePass.Forms
 					if(MessageService.AskYesNo(str, PwDefs.ShortProductName, true,
 						MessageBoxIcon.Warning))
 					{
-						WinUtil.OpenUrl("cmd://\"" + strDir + "\"", null, false);
+						WinUtil.OpenUrlDirectly(strDir);
 						return false;
 					}
 				}
@@ -184,6 +184,24 @@ namespace KeePass.Forms
 					}
 					catch(Exception ex) { MessageService.ShowWarning(ex); }
 				}
+
+				Debug.Assert(KPTranslation.FileExtension != KPTranslation.FileExtension1x);
+
+				lFiles = UrlUtil.GetFilePaths(strDir, "*." +
+					KPTranslation.FileExtension1x, SearchOption.TopDirectoryOnly);
+				foreach(string strFilePath in lFiles)
+				{
+					KPTranslation t = new KPTranslation();
+					t.Properties.NameEnglish = UrlUtil.StripExtension(
+						UrlUtil.GetFileName(strFilePath));
+					t.Properties.NameNative = KPRes.Incompatible;
+					t.Properties.ApplicationVersion = "1.x";
+					t.Properties.AuthorName = "?";
+					t.Properties.AuthorContact = "?";
+
+					lTrls.Add(new KeyValuePair<string, KPTranslation>(
+						strFilePath, t));
+				}
 			}
 			catch(Exception) { } // Directory might not exist or cause access violation
 		}
@@ -216,6 +234,26 @@ namespace KeePass.Forms
 			if((lvic == null) || (lvic.Count != 1)) return;
 
 			string strSel = ((lvic[0].Tag as string) ?? string.Empty);
+
+			if(strSel.EndsWith("." + KPTranslation.FileExtension1x, StrUtil.CaseIgnoreCmp))
+			{
+				string strMsg = strSel + MessageService.NewParagraph + KPRes.Lng1xSel +
+					MessageService.NewParagraph + KPRes.Lng2xWeb + MessageService.NewLine;
+				string strUrl = PwDefs.TranslationsUrl;
+				string strVtd = strMsg + VistaTaskDialog.CreateLink(strUrl, strUrl);
+
+				VistaTaskDialog vtd = new VistaTaskDialog();
+				vtd.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+				vtd.Content = strVtd;
+				vtd.DefaultButtonID = (int)DialogResult.Cancel;
+				vtd.EnableHyperlinks = true;
+				vtd.SetIcon(VtdIcon.Warning);
+				vtd.WindowTitle = PwDefs.ShortProductName;
+
+				if(!vtd.ShowDialog())
+					MessageService.ShowWarning(strMsg + strUrl);
+				return;
+			}
 
 			// The following creates confusion when the configured language
 			// is different from the loaded language (which can occur when
@@ -265,7 +303,7 @@ namespace KeePass.Forms
 				string str = AceApplication.GetLanguagesDir(d, false);
 				if(!Directory.Exists(str)) Directory.CreateDirectory(str);
 
-				WinUtil.OpenUrl("cmd://\"" + str + "\"", null, false);
+				WinUtil.OpenUrlDirectly(str);
 				this.DialogResult = DialogResult.Cancel;
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }

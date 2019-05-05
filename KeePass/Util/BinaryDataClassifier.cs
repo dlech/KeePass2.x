@@ -136,6 +136,7 @@ namespace KeePass.Util
 			byte[] pbData = pb.ReadData();
 			try { bdc = ClassifyData(pbData); }
 			finally { if(pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
+
 			return bdc;
 		}
 

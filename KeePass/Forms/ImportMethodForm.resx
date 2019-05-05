@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="m_lblSynchronizeHint.Text" xml:space="preserve">
-    <value>Behaves like 'Overwrite if newer', but also applies deletions of the database to be imported. When an entry has been deleted in the database to be imported, it will also be deleted in the currently opened database.</value>
+    <value>Behaves like 'Overwrite if newer', but also applies deletions of the database to be imported. When an entry has been deleted in the database to be imported, it will also be deleted in the currently open database.</value>
   </data>
 </root>

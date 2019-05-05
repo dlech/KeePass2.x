@@ -166,14 +166,13 @@ namespace KeePass.DataExchange.Formats
 
 		private static void AddGroup(XmlNode xnGrp, PwGroup pgParent, PwDatabase pd)
 		{
+			PwGroup pg = new PwGroup(true, true);
+			pgParent.AddGroup(pg, true);
+
 			XmlNode xnName = xnGrp.Attributes.GetNamedItem(AttribCaption);
 			string strName = ((xnName != null) ? xnName.Value : null);
 			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); strName = KPRes.Group; }
-
-			PwGroup pg = new PwGroup(true, true);
 			pg.Name = strName;
-
-			pgParent.AddGroup(pg, true);
 
 			foreach(XmlNode xn in xnGrp)
 			{

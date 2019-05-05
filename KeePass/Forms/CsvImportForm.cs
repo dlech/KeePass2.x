@@ -279,7 +279,8 @@ namespace KeePass.Forms
 		{
 			if(m_bInitializing) return;
 
-			PerformImport(new PwGroup(true, true), true);
+			try { PerformImport(new PwGroup(true, true), true); }
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private void ProcessResize()
@@ -773,7 +774,8 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			PerformImport(m_pwDatabase.RootGroup, false);
+			try { PerformImport(m_pwDatabase.RootGroup, false); }
+			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
 		private void OnFieldSepSelectedIndexChanged(object sender, EventArgs e)

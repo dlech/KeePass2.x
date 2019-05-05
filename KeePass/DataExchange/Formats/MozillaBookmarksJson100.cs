@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Text;
 
 using KeePass.Resources;
 
@@ -43,8 +43,6 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return "json"; } }
 		public override string ApplicationGroup { get { return KPRes.Browser; } }
 
-		private const string m_strGroup = "children";
-
 		public override Image SmallIcon
 		{
 			get { return KeePass.Properties.Resources.B16x16_ASCII; }
@@ -53,24 +51,23 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
-			string strContent = sr.ReadToEnd();
-			sr.Close();
+			JsonObject jo;
+			using(StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true))
+			{
+				string strJson = sr.ReadToEnd();
+				if(string.IsNullOrEmpty(strJson)) return;
 
-			if(string.IsNullOrEmpty(strContent)) return;
-
-			CharStream cs = new CharStream(strContent);
+				jo = new JsonObject(new CharStream(strJson));
+			}
 
 			Dictionary<string, List<string>> dTags =
 				new Dictionary<string, List<string>>();
 			List<PwEntry> lCreatedEntries = new List<PwEntry>();
 
-			JsonObject jRoot = new JsonObject(cs);
-			AddObject(pwStorage.RootGroup, jRoot, pwStorage, false, dTags,
+			AddObject(pwStorage.RootGroup, jo, pwStorage, false, dTags,
 				lCreatedEntries);
-			Debug.Assert(cs.PeekChar(true) == char.MinValue);
 
-			// Assign tags
+			// Tags support (old versions)
 			foreach(PwEntry pe in lCreatedEntries)
 			{
 				string strUri = pe.Strings.ReadSafe(PwDefs.UrlField);
@@ -87,42 +84,35 @@ namespace KeePass.DataExchange.Formats
 			}
 		}
 
-		private static void AddObject(PwGroup pgStorage, JsonObject jObject,
+		private static void AddObject(PwGroup pgStorage, JsonObject jo,
 			PwDatabase pwContext, bool bCreateSubGroups,
 			Dictionary<string, List<string>> dTags, List<PwEntry> lCreatedEntries)
 		{
-			JsonValue jvRoot;
-			jObject.Items.TryGetValue("root", out jvRoot);
-			string strRoot = (((jvRoot != null) ? jvRoot.ToString() : null) ?? string.Empty);
-			if(strRoot.Equals("tagsFolder", StrUtil.CaseIgnoreCmp))
+			string strRoot = jo.GetValue<string>("root");
+			if(string.Equals(strRoot, "tagsFolder", StrUtil.CaseIgnoreCmp))
 			{
-				ImportTags(jObject, dTags);
+				ImportTags(jo, dTags);
 				return;
 			}
 
-			if(jObject.Items.ContainsKey(m_strGroup))
+			JsonObject[] v = jo.GetValueArray<JsonObject>("children");
+			if(v != null)
 			{
-				JsonArray jArray = (jObject.Items[m_strGroup].Value as JsonArray);
-				if(jArray == null) { Debug.Assert(false); return; }
-
 				PwGroup pgNew;
 				if(bCreateSubGroups)
 				{
 					pgNew = new PwGroup(true, true);
-					pgStorage.AddGroup(pgNew, true);
+					pgNew.Name = (jo.GetValue<string>("title") ?? string.Empty);
 
-					if(jObject.Items.ContainsKey("title"))
-						pgNew.Name = ((jObject.Items["title"].Value != null) ?
-							jObject.Items["title"].Value.ToString() : string.Empty);
+					pgStorage.AddGroup(pgNew, true);
 				}
 				else pgNew = pgStorage;
 
-				foreach(JsonValue jValue in jArray.Values)
+				foreach(JsonObject joSub in v)
 				{
-					JsonObject objSub = (jValue.Value as JsonObject);
-					if(objSub != null)
-						AddObject(pgNew, objSub, pwContext, true, dTags, lCreatedEntries);
-					else { Debug.Assert(false); }
+					if(joSub == null) { Debug.Assert(false); continue; }
+
+					AddObject(pgNew, joSub, pwContext, true, dTags, lCreatedEntries);
 				}
 
 				return;
@@ -130,43 +120,49 @@ namespace KeePass.DataExchange.Formats
 
 			PwEntry pe = new PwEntry(true, true);
 
-			SetString(pe, "Index", false, jObject, "index");
+			// SetString(pe, "Index", false, jo, "index");
 			SetString(pe, PwDefs.TitleField, pwContext.MemoryProtection.ProtectTitle,
-				jObject, "title");
-			SetString(pe, "ID", false, jObject, "id");
+				jo, "title");
+			// SetString(pe, "ID", false, jo, "id");
 			SetString(pe, PwDefs.UrlField, pwContext.MemoryProtection.ProtectUrl,
-				jObject, "uri");
-			SetString(pe, "CharSet", false, jObject, "charset");
+				jo, "uri");
+			// SetString(pe, "CharSet", false, jo, "charset");
 
-			if(jObject.Items.ContainsKey("annos"))
+			v = jo.GetValueArray<JsonObject>("annos");
+			if(v != null)
 			{
-				JsonArray vAnnos = (jObject.Items["annos"].Value as JsonArray);
-				if(vAnnos != null)
+				foreach(JsonObject joAnno in v)
 				{
-					foreach(JsonValue jv in vAnnos.Values)
-					{
-						if(jv == null) { Debug.Assert(false); continue; }
-						JsonObject jo = (jv.Value as JsonObject);
-						if(jo == null) { Debug.Assert(false); continue; }
+					if(joAnno == null) { Debug.Assert(false); continue; }
 
-						JsonValue jvAnnoName, jvAnnoValue;
-						jo.Items.TryGetValue("name", out jvAnnoName);
-						jo.Items.TryGetValue("value", out jvAnnoValue);
-						if((jvAnnoName == null) || (jvAnnoValue == null)) continue;
+					string strName = joAnno.GetValue<string>("name");
+					string strValue = joAnno.GetValue<string>("value");
 
-						string strAnnoName = jvAnnoName.ToString();
-						string strAnnoValue = jvAnnoValue.ToString();
-						if((strAnnoName == null) || (strAnnoValue == null)) continue;
-
-						if(strAnnoName == "bookmarkProperties/description")
-							pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-								pwContext.MemoryProtection.ProtectNotes, strAnnoValue));
-					}
+					if((strName == "bookmarkProperties/description") &&
+						!string.IsNullOrEmpty(strValue))
+						pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+							pwContext.MemoryProtection.ProtectNotes, strValue));
 				}
 			}
 
-			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length > 0) ||
-				(pe.Strings.ReadSafe(PwDefs.UrlField).Length > 0))
+			// Tags support (new versions)
+			string strTags = jo.GetValue<string>("tags");
+			if(!string.IsNullOrEmpty(strTags))
+			{
+				string[] vTags = strTags.Split(',');
+				foreach(string strTag in vTags)
+				{
+					string str = strTag.Trim();
+					if(str.Length != 0) pe.AddTag(str);
+				}
+			}
+
+			string strKeyword = jo.GetValue<string>("keyword");
+			if(!string.IsNullOrEmpty(strKeyword))
+				ImportUtil.AppendToField(pe, "Keyword", strKeyword, pwContext);
+
+			if((pe.Strings.ReadSafe(PwDefs.TitleField).Length != 0) ||
+				(pe.Strings.ReadSafe(PwDefs.UrlField).Length != 0))
 			{
 				pgStorage.AddEntry(pe, true);
 				lCreatedEntries.Add(pe);
@@ -174,64 +170,47 @@ namespace KeePass.DataExchange.Formats
 		}
 
 		private static void SetString(PwEntry pe, string strEntryKey, bool bProtect,
-			JsonObject jObject, string strObjectKey)
+			JsonObject jo, string strObjectKey)
 		{
-			if(!jObject.Items.ContainsKey(strObjectKey)) return;
+			string str = jo.GetValue<string>(strObjectKey);
+			if(string.IsNullOrEmpty(str)) return;
 
-			object obj = jObject.Items[strObjectKey].Value;
-			if(obj == null) return;
-
-			pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, obj.ToString()));
+			pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, str));
 		}
 
-		private static void ImportTags(JsonObject jTagsRoot,
+		// Tags support (old versions)
+		private static void ImportTags(JsonObject joTagsRoot,
 			Dictionary<string, List<string>> dTags)
 		{
-			try
+			JsonObject[] v = joTagsRoot.GetValueArray<JsonObject>("children");
+			if(v == null) { Debug.Assert(false); return; }
+
+			foreach(JsonObject joTag in v)
 			{
-				JsonValue jTags = jTagsRoot.Items["children"];
-				if(jTags == null) { Debug.Assert(false); return; }
-				JsonArray arTags = (jTags.Value as JsonArray);
-				if(arTags == null) { Debug.Assert(false); return; }
+				if(joTag == null) { Debug.Assert(false); continue; }
 
-				foreach(JsonValue jvTag in arTags.Values)
+				string strName = joTag.GetValue<string>("title");
+				if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); continue; }
+
+				List<string> lUris;
+				dTags.TryGetValue(strName, out lUris);
+				if(lUris == null)
 				{
-					JsonObject jTag = (jvTag.Value as JsonObject);
-					if(jTag == null) { Debug.Assert(false); continue; }
+					lUris = new List<string>();
+					dTags[strName] = lUris;
+				}
 
-					JsonValue jvName = jTag.Items["title"];
-					if(jvName == null) { Debug.Assert(false); continue; }
-					string strName = jvName.ToString();
-					if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); continue; }
+				JsonObject[] vUris = joTag.GetValueArray<JsonObject>("children");
+				if(vUris == null) { Debug.Assert(false); continue; }
 
-					List<string> lUris;
-					dTags.TryGetValue(strName, out lUris);
-					if(lUris == null)
-					{
-						lUris = new List<string>();
-						dTags[strName] = lUris;
-					}
+				foreach(JsonObject joUri in vUris)
+				{
+					if(joUri == null) { Debug.Assert(false); continue; }
 
-					JsonValue jvUrls = jTag.Items["children"];
-					if(jvUrls == null) { Debug.Assert(false); continue; }
-					JsonArray arUrls = (jvUrls.Value as JsonArray);
-					if(arUrls == null) { Debug.Assert(false); continue; }
-
-					foreach(JsonValue jvPlace in arUrls.Values)
-					{
-						JsonObject jUrl = (jvPlace.Value as JsonObject);
-						if(jUrl == null) { Debug.Assert(false); continue; }
-
-						JsonValue jvUri = jUrl.Items["uri"];
-						if(jvUri == null) { Debug.Assert(false); continue; }
-
-						string strUri = jvUri.ToString();
-						if(!string.IsNullOrEmpty(strUri))
-							lUris.Add(strUri);
-					}
+					string strUri = joUri.GetValue<string>("uri");
+					if(!string.IsNullOrEmpty(strUri)) lUris.Add(strUri);
 				}
 			}
-			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

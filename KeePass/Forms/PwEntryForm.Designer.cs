@@ -114,6 +114,11 @@
 			this.m_btnAutoTypeDelete = new System.Windows.Forms.Button();
 			this.m_lvAutoType = new KeePass.UI.CustomListViewEx();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
+			this.m_lblPrev = new System.Windows.Forms.Label();
+			this.m_lblModifiedData = new System.Windows.Forms.Label();
+			this.m_lblModified = new System.Windows.Forms.Label();
+			this.m_lblCreatedData = new System.Windows.Forms.Label();
+			this.m_lblCreated = new System.Windows.Forms.Label();
 			this.m_btnHistoryDelete = new System.Windows.Forms.Button();
 			this.m_btnHistoryView = new System.Windows.Forms.Button();
 			this.m_btnHistoryRestore = new System.Windows.Forms.Button();
@@ -1002,6 +1007,11 @@
 			// 
 			// m_tabHistory
 			// 
+			this.m_tabHistory.Controls.Add(this.m_lblPrev);
+			this.m_tabHistory.Controls.Add(this.m_lblModifiedData);
+			this.m_tabHistory.Controls.Add(this.m_lblModified);
+			this.m_tabHistory.Controls.Add(this.m_lblCreatedData);
+			this.m_tabHistory.Controls.Add(this.m_lblCreated);
 			this.m_tabHistory.Controls.Add(this.m_btnHistoryDelete);
 			this.m_tabHistory.Controls.Add(this.m_btnHistoryView);
 			this.m_tabHistory.Controls.Add(this.m_btnHistoryRestore);
@@ -1013,12 +1023,57 @@
 			this.m_tabHistory.Text = "History";
 			this.m_tabHistory.UseVisualStyleBackColor = true;
 			// 
+			// m_lblPrev
+			// 
+			this.m_lblPrev.AutoSize = true;
+			this.m_lblPrev.Location = new System.Drawing.Point(6, 57);
+			this.m_lblPrev.Name = "m_lblPrev";
+			this.m_lblPrev.Size = new System.Drawing.Size(93, 13);
+			this.m_lblPrev.TabIndex = 4;
+			this.m_lblPrev.Text = "&Previous versions:";
+			// 
+			// m_lblModifiedData
+			// 
+			this.m_lblModifiedData.AutoSize = true;
+			this.m_lblModifiedData.Location = new System.Drawing.Point(62, 35);
+			this.m_lblModifiedData.Name = "m_lblModifiedData";
+			this.m_lblModifiedData.Size = new System.Drawing.Size(19, 13);
+			this.m_lblModifiedData.TabIndex = 3;
+			this.m_lblModifiedData.Text = "<>";
+			// 
+			// m_lblModified
+			// 
+			this.m_lblModified.AutoSize = true;
+			this.m_lblModified.Location = new System.Drawing.Point(6, 35);
+			this.m_lblModified.Name = "m_lblModified";
+			this.m_lblModified.Size = new System.Drawing.Size(50, 13);
+			this.m_lblModified.TabIndex = 2;
+			this.m_lblModified.Text = "Modified:";
+			// 
+			// m_lblCreatedData
+			// 
+			this.m_lblCreatedData.AutoSize = true;
+			this.m_lblCreatedData.Location = new System.Drawing.Point(62, 13);
+			this.m_lblCreatedData.Name = "m_lblCreatedData";
+			this.m_lblCreatedData.Size = new System.Drawing.Size(19, 13);
+			this.m_lblCreatedData.TabIndex = 1;
+			this.m_lblCreatedData.Text = "<>";
+			// 
+			// m_lblCreated
+			// 
+			this.m_lblCreated.AutoSize = true;
+			this.m_lblCreated.Location = new System.Drawing.Point(6, 13);
+			this.m_lblCreated.Name = "m_lblCreated";
+			this.m_lblCreated.Size = new System.Drawing.Size(47, 13);
+			this.m_lblCreated.TabIndex = 0;
+			this.m_lblCreated.Text = "Created:";
+			// 
 			// m_btnHistoryDelete
 			// 
 			this.m_btnHistoryDelete.Location = new System.Drawing.Point(89, 307);
 			this.m_btnHistoryDelete.Name = "m_btnHistoryDelete";
 			this.m_btnHistoryDelete.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryDelete.TabIndex = 2;
+			this.m_btnHistoryDelete.TabIndex = 7;
 			this.m_btnHistoryDelete.Text = "&Delete";
 			this.m_btnHistoryDelete.UseVisualStyleBackColor = true;
 			this.m_btnHistoryDelete.Click += new System.EventHandler(this.OnBtnHistoryDelete);
@@ -1028,7 +1083,7 @@
 			this.m_btnHistoryView.Location = new System.Drawing.Point(8, 307);
 			this.m_btnHistoryView.Name = "m_btnHistoryView";
 			this.m_btnHistoryView.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryView.TabIndex = 1;
+			this.m_btnHistoryView.TabIndex = 6;
 			this.m_btnHistoryView.Text = "&View";
 			this.m_btnHistoryView.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnHistoryView.UseVisualStyleBackColor = true;
@@ -1039,7 +1094,7 @@
 			this.m_btnHistoryRestore.Location = new System.Drawing.Point(382, 307);
 			this.m_btnHistoryRestore.Name = "m_btnHistoryRestore";
 			this.m_btnHistoryRestore.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryRestore.TabIndex = 3;
+			this.m_btnHistoryRestore.TabIndex = 8;
 			this.m_btnHistoryRestore.Text = "&Restore";
 			this.m_btnHistoryRestore.UseVisualStyleBackColor = true;
 			this.m_btnHistoryRestore.Click += new System.EventHandler(this.OnBtnHistoryRestore);
@@ -1049,11 +1104,11 @@
 			this.m_lvHistory.FullRowSelect = true;
 			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvHistory.HideSelection = false;
-			this.m_lvHistory.Location = new System.Drawing.Point(9, 13);
+			this.m_lvHistory.Location = new System.Drawing.Point(9, 73);
 			this.m_lvHistory.Name = "m_lvHistory";
 			this.m_lvHistory.ShowItemToolTips = true;
-			this.m_lvHistory.Size = new System.Drawing.Size(447, 288);
-			this.m_lvHistory.TabIndex = 0;
+			this.m_lvHistory.Size = new System.Drawing.Size(447, 228);
+			this.m_lvHistory.TabIndex = 5;
 			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
 			this.m_lvHistory.View = System.Windows.Forms.View.Details;
 			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
@@ -1308,6 +1363,7 @@
 			this.m_tabAutoType.ResumeLayout(false);
 			this.m_tabAutoType.PerformLayout();
 			this.m_tabHistory.ResumeLayout(false);
+			this.m_tabHistory.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_ctxStrMoveToStandard.ResumeLayout(false);
 			this.m_ctxPwGen.ResumeLayout(false);
@@ -1435,5 +1491,10 @@
 		private System.Windows.Forms.Label m_lblCustomData;
 		private System.Windows.Forms.Button m_btnCDDel;
 		private KeePass.UI.CustomListViewEx m_lvCustomData;
+		private System.Windows.Forms.Label m_lblModifiedData;
+		private System.Windows.Forms.Label m_lblModified;
+		private System.Windows.Forms.Label m_lblCreatedData;
+		private System.Windows.Forms.Label m_lblCreated;
+		private System.Windows.Forms.Label m_lblPrev;
 	}
 }

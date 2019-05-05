@@ -121,8 +121,12 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_psWord != null);
-			if(m_psWord == null) throw new InvalidOperationException();
+			if(m_psWord == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+
+			// The password text box should not be focused by default
+			// in order to avoid a Caps Lock warning tooltip bug;
+			// https://sourceforge.net/p/keepass/bugs/1807/
+			Debug.Assert((m_pnlBottom.TabIndex == 0) && !m_tbSelected.Focused);
 
 			m_bFormLoaded = false;
 
@@ -163,8 +167,12 @@ namespace KeePass.Forms
 				this.Activate();
 			}
 
-			UIUtil.SetFocus(m_tbSelected, this, m_bSetForeground);
 			m_bFormLoaded = true;
+		}
+
+		private void OnFormShown(object sender, EventArgs e)
+		{
+			UIUtil.ResetFocus(m_tbSelected, this, m_bSetForeground);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

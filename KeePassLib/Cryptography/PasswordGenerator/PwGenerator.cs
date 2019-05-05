@@ -36,7 +36,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		Success = 0,
 		Unknown = 1,
 		TooFewCharacters = 2,
-		UnknownAlgorithm = 3
+		UnknownAlgorithm = 3,
+		InvalidCharSet = 4,
+		InvalidPattern = 5
 	}
 
 	/// <summary>
@@ -94,30 +96,33 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			return new CryptoRandomStream(CrsAlgorithm.ChaCha20, pbKey);
 		}
 
-		internal static char GenerateCharacter(PwProfile pwProfile,
-			PwCharSet pwCharSet, CryptoRandomStream crsRandomSource)
+		internal static char GenerateCharacter(PwCharSet pwCharSet,
+			CryptoRandomStream crsRandomSource)
 		{
-			if(pwCharSet.Size == 0) return char.MinValue;
+			uint cc = pwCharSet.Size;
+			if(cc == 0) return char.MinValue;
 
-			ulong uIndex = crsRandomSource.GetRandomUInt64();
-			uIndex %= (ulong)pwCharSet.Size;
-
-			char ch = pwCharSet[(uint)uIndex];
-
-			if(pwProfile.NoRepeatingCharacters)
-				pwCharSet.Remove(ch);
-
-			return ch;
+			uint i = (uint)crsRandomSource.GetRandomUInt64(cc);
+			return pwCharSet[i];
 		}
 
-		internal static void PrepareCharSet(PwCharSet pwCharSet, PwProfile pwProfile)
+		internal static bool PrepareCharSet(PwCharSet pwCharSet, PwProfile pwProfile)
 		{
-			pwCharSet.Remove(PwCharSet.Invalid);
+			uint cc = pwCharSet.Size;
+			for(uint i = 0; i < cc; ++i)
+			{
+				char ch = pwCharSet[i];
+				if((ch == char.MinValue) || (ch == '\t') || (ch == '\r') ||
+					(ch == '\n') || char.IsSurrogate(ch))
+					return false;
+			}
 
 			if(pwProfile.ExcludeLookAlike) pwCharSet.Remove(PwCharSet.LookAlike);
 
-			if(pwProfile.ExcludeCharacters.Length > 0)
+			if(!string.IsNullOrEmpty(pwProfile.ExcludeCharacters))
 				pwCharSet.Remove(pwProfile.ExcludeCharacters);
+
+			return true;
 		}
 
 		internal static void Shuffle(char[] v, CryptoRandomStream crsRandomSource)
@@ -127,8 +132,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			for(int i = v.Length - 1; i >= 1; --i)
 			{
-				ulong r = crsRandomSource.GetRandomUInt64();
-				int j = (int)(r % (ulong)(i + 1));
+				int j = (int)crsRandomSource.GetRandomUInt64((ulong)(i + 1));
 
 				char t = v[i];
 				v[i] = v[j];

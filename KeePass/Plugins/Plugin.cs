@@ -37,7 +37,7 @@ namespace KeePass.Plugins
 		/// </summary>
 		/// <param name="host">Plugin host interface. Through this
 		/// interface you can access the KeePass main window, the
-		/// currently opened database, etc.</param>
+		/// currently open database, etc.</param>
 		/// <returns>You must return <c>true</c> in order to signal
 		/// successful initialization. If you return <c>false</c>,
 		/// KeePass unloads your plugin (without calling the

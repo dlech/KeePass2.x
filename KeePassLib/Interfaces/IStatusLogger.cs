@@ -87,7 +87,7 @@ namespace KeePassLib.Interfaces
 		bool SetText(string strNewText, LogStatusType lsType);
 
 		/// <summary>
-		/// Check if the user cancelled the current work.
+		/// Check whether the user cancelled the current work.
 		/// </summary>
 		/// <returns>Returns <c>true</c> if the caller should continue
 		/// the current work.</returns>

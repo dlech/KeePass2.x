@@ -216,7 +216,7 @@ namespace KeePass.Forms
 
 				if(!Directory.Exists(str)) Directory.CreateDirectory(str);
 
-				WinUtil.OpenUrl("cmd://\"" + str + "\"", null, false);
+				WinUtil.OpenUrlDirectly(str);
 			}
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}

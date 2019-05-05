@@ -164,8 +164,7 @@ namespace KeePass.DataExchange.Formats
 				if((strField == PwDefs.UrlField) && (str.IndexOf('.') >= 0))
 					str = ImportUtil.FixUrl(str);
 
-				ImportUtil.AppendToField(pe, strField, str, pd, ((strField ==
-					PwDefs.NotesField) ? MessageService.NewLine : ", "), false);
+				ImportUtil.AppendToField(pe, strField, str, pd);
 			}
 		}
 	}
