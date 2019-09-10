@@ -83,6 +83,7 @@ namespace KeePass.Forms
 
 		private bool m_bInitializing = true;
 		private bool m_bForceClosing = false;
+		private bool m_bUrlOverrideWarning = false;
 
 		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
 		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
@@ -106,9 +107,6 @@ namespace KeePass.Forms
 		private const PwIcon m_pwObjectProtected = PwIcon.PaperLocked;
 		private const PwIcon m_pwObjectPlainText = PwIcon.PaperNew;
 
-		public event EventHandler<CancellableOperationEventArgs> EntrySaving;
-		public event EventHandler EntrySaved;
-
 		private const PwCompareOptions m_cmpOpt = (PwCompareOptions.NullEmptyEquivStd |
 			PwCompareOptions.IgnoreTimes);
 
@@ -118,6 +116,9 @@ namespace KeePass.Forms
 			ByIndex,
 			ByRef
 		}
+
+		public event EventHandler<CancellableOperationEventArgs> EntrySaving;
+		public event EventHandler EntrySaved;
 
 		public PwEditMode EditModeEx
 		{
@@ -839,6 +840,24 @@ namespace KeePass.Forms
 			m_btnBinOpen.Enabled = (nBinSel == 1);
 			m_btnBinSave.Enabled = (nBinSel >= 1);
 
+			bool bUrlEmpty = (m_tbUrl.TextLength == 0);
+			bool bUrlOverrideEmpty = (m_cmbOverrideUrl.Text.Length == 0);
+			bool bWarn = (bUrlEmpty && !bUrlOverrideEmpty);
+			if(bWarn != m_bUrlOverrideWarning)
+			{
+				if(bWarn) m_cmbOverrideUrl.BackColor = AppDefs.ColorEditError;
+				else m_cmbOverrideUrl.ResetBackColor();
+
+				try
+				{
+					m_ttBalloon.SetToolTip(m_cmbOverrideUrl, (bWarn ?
+						KPRes.UrlFieldEmptyFirstTab : string.Empty));
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				m_bUrlOverrideWarning = bWarn;
+			}
+
 			if(m_bLockEnabledState) return;
 
 			m_btnStrDelete.Enabled = (nStringsSel >= 1);
@@ -1197,11 +1216,11 @@ namespace KeePass.Forms
 		{
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry) return;
 
-			ListView.SelectedIndexCollection lvSel = m_lvAutoType.SelectedIndices;
-			Debug.Assert(lvSel.Count == 1); if(lvSel.Count != 1) return;
+			ListView.SelectedIndexCollection lvsic = m_lvAutoType.SelectedIndices;
+			if(lvsic.Count != 1) { Debug.Assert(false); return; }
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
-			dlg.InitEx(m_atConfig, lvSel[0], false, m_tbDefaultAutoTypeSeq.Text,
+			dlg.InitEx(m_atConfig, lvsic[0], false, m_tbDefaultAutoTypeSeq.Text,
 				m_vStrings);
 
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
@@ -1230,10 +1249,10 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
 
-			ListView.SelectedIndexCollection lvsi = m_lvHistory.SelectedIndices;
-			if(lvsi.Count != 1) { Debug.Assert(false); return; }
+			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
+			if(lvsic.Count != 1) { Debug.Assert(false); return; }
 
-			PwEntry pe = m_vHistory.GetAt((uint)lvsi[0]);
+			PwEntry pe = m_vHistory.GetAt((uint)lvsic[0]);
 			if(pe == null) { Debug.Assert(false); return; }
 
 			PwEntryForm pwf = new PwEntryForm();
@@ -1249,14 +1268,14 @@ namespace KeePass.Forms
 
 			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
 
-			ListView.SelectedIndexCollection lvsc = m_lvHistory.SelectedIndices;
-			int n = lvsc.Count; // Getting Count sends a message
+			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
+			int n = lvsic.Count; // Getting Count sends a message
 			if(n == 0) return;
 
 			// LVSIC: one access by index requires O(n) time, thus copy
 			// all to an array (which requires O(1) for each element)
 			int[] v = new int[n];
-			lvsc.CopyTo(v, 0);
+			lvsic.CopyTo(v, 0);
 
 			for(int i = 0; i < n; ++i)
 				m_vHistory.RemoveAt((uint)v[n - i - 1]);
@@ -1271,10 +1290,10 @@ namespace KeePass.Forms
 
 			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
 
-			ListView.SelectedIndexCollection lvsi = m_lvHistory.SelectedIndices;
-			if(lvsi.Count != 1) { Debug.Assert(false); return; }
+			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
+			if(lvsic.Count != 1) { Debug.Assert(false); return; }
 
-			m_pwEntry.RestoreFromBackup((uint)lvsi[0], m_pwDatabase);
+			m_pwEntry.RestoreFromBackup((uint)lvsic[0], m_pwDatabase);
 			m_pwEntry.Touch(true, false);
 			m_bTouchedOnce = true;
 			this.DialogResult = DialogResult.OK; // Doesn't invoke OnBtnOK
@@ -1548,7 +1567,7 @@ namespace KeePass.Forms
 			{
 				byte[] pbEntropy = EntropyForm.CollectEntropyIfEnabled(pgf.SelectedProfile);
 				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
-					pgf.SelectedProfile, pbEntropy, m_pwEntry, m_pwDatabase);
+					pgf.SelectedProfile, pbEntropy, m_pwEntry, m_pwDatabase, true);
 				m_icgPassword.SetPassword(psNew, true);
 			}
 			UIUtil.DestroyForm(pgf);
@@ -1584,7 +1603,7 @@ namespace KeePass.Forms
 			if(pwp != null)
 			{
 				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
-					pwp, null, m_pwEntry, m_pwDatabase);
+					pwp, null, m_pwEntry, m_pwDatabase, true);
 				m_icgPassword.SetPassword(psNew, true);
 			}
 			else { Debug.Assert(false); }
@@ -2226,6 +2245,10 @@ namespace KeePass.Forms
 		{
 			try
 			{
+				AceColumn c = Program.Config.MainWindow.FindColumn(
+					AceColumnType.UserName);
+				if((c == null) || c.HideWithAsterisks) return;
+
 				GFunc<PwEntry, string> f = delegate(PwEntry pe)
 				{
 					string str = pe.Strings.ReadSafe(PwDefs.UserNameField);
@@ -2239,6 +2262,16 @@ namespace KeePass.Forms
 				UIUtil.EnableAutoCompletion(m_tbUserName, false, v); // Invokes
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void OnUrlTextChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnUrlOverrideTextChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
 		}
 	}
 }

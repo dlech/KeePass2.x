@@ -30,72 +30,19 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.m_ctxGroupList = new KeePass.UI.CustomContextMenuStripEx(this.components);
-			this.m_ctxGroupAdd = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupEdit = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupDuplicate = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupDelete = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxGroupRearrange = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupMoveToTop = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupMoveOneUp = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupMoveOneDown = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupRearrSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxGroupSort = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupRearrSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxGroupExpand = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupCollapse = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxGroupEmptyRB = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupFind = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupSep2 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxGroupPrint = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxGroupExport = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxPwList = new KeePass.UI.CustomContextMenuStripEx(this.components);
-			this.m_ctxEntryCopyUserName = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryCopyPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryUrl = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryOpenUrl = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryCopyUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryCopyString = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryAttachments = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntrySaveAttachedFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntryPerformAutoType = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryAutoTypeAdv = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntryAdd = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryEditQuick = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryIcon = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColor = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorStandard = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorSep0 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntryColorLightRed = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorLightGreen = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorLightBlue = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorLightYellow = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryColorSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntryColorCustom = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryEditQuickSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryTagAdd = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryTagNew = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntryTagRemove = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryEditQuickSep1 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntryExpiresNow = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryExpiresNever = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryDuplicate = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryDelete = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxEntrySep2 = new System.Windows.Forms.ToolStripSeparator();
-			this.m_ctxEntrySelectAll = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntrySep3 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryRearrange = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryMoveToTop = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryMoveOneUp = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryMoveOneDown = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_ctxEntryRearrangeSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxEntryMoveToGroup = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuMain = new KeePass.UI.CustomMenuStripEx();
 			this.m_menuFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -345,164 +292,10 @@
 			// m_ctxGroupList
 			// 
 			this.m_ctxGroupList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxGroupAdd,
-            this.m_ctxGroupEdit,
-            this.m_ctxGroupDuplicate,
-            this.m_ctxGroupDelete,
-            this.m_ctxGroupSep0,
-            this.m_ctxGroupRearrange,
-            this.m_ctxGroupSep1,
-            this.m_ctxGroupEmptyRB,
-            this.m_ctxGroupFind,
-            this.m_ctxGroupSep2,
-            this.m_ctxGroupPrint,
-            this.m_ctxGroupExport});
+            this.m_ctxGroupFind});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(181, 220);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(181, 26);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
-			// 
-			// m_ctxGroupAdd
-			// 
-			this.m_ctxGroupAdd.Image = global::KeePass.Properties.Resources.B16x16_Folder_New_Ex;
-			this.m_ctxGroupAdd.Name = "m_ctxGroupAdd";
-			this.m_ctxGroupAdd.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupAdd.Text = "&Add Group...";
-			this.m_ctxGroupAdd.Click += new System.EventHandler(this.OnGroupsAdd);
-			// 
-			// m_ctxGroupEdit
-			// 
-			this.m_ctxGroupEdit.Image = global::KeePass.Properties.Resources.B16x16_Folder_Txt;
-			this.m_ctxGroupEdit.Name = "m_ctxGroupEdit";
-			this.m_ctxGroupEdit.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupEdit.Text = "&Edit Group...";
-			this.m_ctxGroupEdit.Click += new System.EventHandler(this.OnGroupsEdit);
-			// 
-			// m_ctxGroupDuplicate
-			// 
-			this.m_ctxGroupDuplicate.Image = global::KeePass.Properties.Resources.B16x16_Folder_2;
-			this.m_ctxGroupDuplicate.Name = "m_ctxGroupDuplicate";
-			this.m_ctxGroupDuplicate.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupDuplicate.Text = "D&uplicate Group...";
-			this.m_ctxGroupDuplicate.Click += new System.EventHandler(this.OnGroupsDuplicate);
-			// 
-			// m_ctxGroupDelete
-			// 
-			this.m_ctxGroupDelete.Image = global::KeePass.Properties.Resources.B16x16_Folder_Locked;
-			this.m_ctxGroupDelete.Name = "m_ctxGroupDelete";
-			this.m_ctxGroupDelete.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupDelete.Text = "&Delete Group";
-			this.m_ctxGroupDelete.Click += new System.EventHandler(this.OnGroupsDelete);
-			// 
-			// m_ctxGroupSep0
-			// 
-			this.m_ctxGroupSep0.Name = "m_ctxGroupSep0";
-			this.m_ctxGroupSep0.Size = new System.Drawing.Size(177, 6);
-			// 
-			// m_ctxGroupRearrange
-			// 
-			this.m_ctxGroupRearrange.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxGroupMoveToTop,
-            this.m_ctxGroupMoveOneUp,
-            this.m_ctxGroupMoveOneDown,
-            this.m_ctxGroupMoveToBottom,
-            this.m_ctxGroupRearrSep0,
-            this.m_ctxGroupSort,
-            this.m_ctxGroupSortRec,
-            this.m_ctxGroupRearrSep1,
-            this.m_ctxGroupExpand,
-            this.m_ctxGroupCollapse});
-			this.m_ctxGroupRearrange.Name = "m_ctxGroupRearrange";
-			this.m_ctxGroupRearrange.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupRearrange.Text = "&Rearrange";
-			// 
-			// m_ctxGroupMoveToTop
-			// 
-			this.m_ctxGroupMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
-			this.m_ctxGroupMoveToTop.Name = "m_ctxGroupMoveToTop";
-			this.m_ctxGroupMoveToTop.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveToTop.Text = "Move Group to &Top";
-			this.m_ctxGroupMoveToTop.Click += new System.EventHandler(this.OnGroupsMoveToTop);
-			// 
-			// m_ctxGroupMoveOneUp
-			// 
-			this.m_ctxGroupMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
-			this.m_ctxGroupMoveOneUp.Name = "m_ctxGroupMoveOneUp";
-			this.m_ctxGroupMoveOneUp.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveOneUp.Text = "Move Group One &Up";
-			this.m_ctxGroupMoveOneUp.Click += new System.EventHandler(this.OnGroupsMoveOneUp);
-			// 
-			// m_ctxGroupMoveOneDown
-			// 
-			this.m_ctxGroupMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
-			this.m_ctxGroupMoveOneDown.Name = "m_ctxGroupMoveOneDown";
-			this.m_ctxGroupMoveOneDown.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveOneDown.Text = "Move Group One &Down";
-			this.m_ctxGroupMoveOneDown.Click += new System.EventHandler(this.OnGroupsMoveOneDown);
-			// 
-			// m_ctxGroupMoveToBottom
-			// 
-			this.m_ctxGroupMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
-			this.m_ctxGroupMoveToBottom.Name = "m_ctxGroupMoveToBottom";
-			this.m_ctxGroupMoveToBottom.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupMoveToBottom.Text = "Move Group to &Bottom";
-			this.m_ctxGroupMoveToBottom.Click += new System.EventHandler(this.OnGroupsMoveToBottom);
-			// 
-			// m_ctxGroupRearrSep0
-			// 
-			this.m_ctxGroupRearrSep0.Name = "m_ctxGroupRearrSep0";
-			this.m_ctxGroupRearrSep0.Size = new System.Drawing.Size(196, 6);
-			// 
-			// m_ctxGroupSort
-			// 
-			this.m_ctxGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
-			this.m_ctxGroupSort.Name = "m_ctxGroupSort";
-			this.m_ctxGroupSort.RightToLeftAutoMirrorImage = true;
-			this.m_ctxGroupSort.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupSort.Text = "&Sort Direct Subgroups";
-			this.m_ctxGroupSort.Click += new System.EventHandler(this.OnGroupsSort);
-			// 
-			// m_ctxGroupSortRec
-			// 
-			this.m_ctxGroupSortRec.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
-			this.m_ctxGroupSortRec.Name = "m_ctxGroupSortRec";
-			this.m_ctxGroupSortRec.RightToLeftAutoMirrorImage = true;
-			this.m_ctxGroupSortRec.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupSortRec.Text = "Sort &Recursively";
-			this.m_ctxGroupSortRec.Click += new System.EventHandler(this.OnGroupsSortRec);
-			// 
-			// m_ctxGroupRearrSep1
-			// 
-			this.m_ctxGroupRearrSep1.Name = "m_ctxGroupRearrSep1";
-			this.m_ctxGroupRearrSep1.Size = new System.Drawing.Size(196, 6);
-			// 
-			// m_ctxGroupExpand
-			// 
-			this.m_ctxGroupExpand.Image = global::KeePass.Properties.Resources.B16x16_Folder_Blue_Open;
-			this.m_ctxGroupExpand.Name = "m_ctxGroupExpand";
-			this.m_ctxGroupExpand.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupExpand.Text = "&Expand Recursively";
-			this.m_ctxGroupExpand.Click += new System.EventHandler(this.OnGroupsExpand);
-			// 
-			// m_ctxGroupCollapse
-			// 
-			this.m_ctxGroupCollapse.Image = global::KeePass.Properties.Resources.B16x16_Folder;
-			this.m_ctxGroupCollapse.Name = "m_ctxGroupCollapse";
-			this.m_ctxGroupCollapse.Size = new System.Drawing.Size(199, 22);
-			this.m_ctxGroupCollapse.Text = "&Collapse Recursively";
-			this.m_ctxGroupCollapse.Click += new System.EventHandler(this.OnGroupsCollapse);
-			// 
-			// m_ctxGroupSep1
-			// 
-			this.m_ctxGroupSep1.Name = "m_ctxGroupSep1";
-			this.m_ctxGroupSep1.Size = new System.Drawing.Size(177, 6);
-			// 
-			// m_ctxGroupEmptyRB
-			// 
-			this.m_ctxGroupEmptyRB.Image = global::KeePass.Properties.Resources.B16x16_Trashcan_Full;
-			this.m_ctxGroupEmptyRB.Name = "m_ctxGroupEmptyRB";
-			this.m_ctxGroupEmptyRB.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupEmptyRB.Text = "E&mpty Recycle Bin";
-			this.m_ctxGroupEmptyRB.Click += new System.EventHandler(this.OnGroupsEmptyRB);
 			// 
 			// m_ctxGroupFind
 			// 
@@ -512,382 +305,97 @@
 			this.m_ctxGroupFind.Text = "&Find in This Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnFindInGroup);
 			// 
-			// m_ctxGroupSep2
-			// 
-			this.m_ctxGroupSep2.Name = "m_ctxGroupSep2";
-			this.m_ctxGroupSep2.Size = new System.Drawing.Size(177, 6);
-			// 
-			// m_ctxGroupPrint
-			// 
-			this.m_ctxGroupPrint.Image = global::KeePass.Properties.Resources.B16x16_FilePrint;
-			this.m_ctxGroupPrint.Name = "m_ctxGroupPrint";
-			this.m_ctxGroupPrint.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupPrint.Text = "&Print Group...";
-			this.m_ctxGroupPrint.Click += new System.EventHandler(this.OnGroupsPrint);
-			// 
-			// m_ctxGroupExport
-			// 
-			this.m_ctxGroupExport.Image = global::KeePass.Properties.Resources.B16x16_Folder_Outbox;
-			this.m_ctxGroupExport.Name = "m_ctxGroupExport";
-			this.m_ctxGroupExport.Size = new System.Drawing.Size(180, 22);
-			this.m_ctxGroupExport.Text = "E&xport Group...";
-			this.m_ctxGroupExport.Click += new System.EventHandler(this.OnGroupsExport);
-			// 
 			// m_ctxPwList
 			// 
 			this.m_ctxPwList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryCopyUserName,
-            this.m_ctxEntryCopyPassword,
             this.m_ctxEntryUrl,
             this.m_ctxEntryCopyString,
             this.m_ctxEntryAttachments,
-            this.m_ctxEntrySaveAttachedFiles,
             this.m_ctxEntrySep0,
-            this.m_ctxEntryPerformAutoType,
             this.m_ctxEntryAutoTypeAdv,
             this.m_ctxEntrySep1,
-            this.m_ctxEntryAdd,
-            this.m_ctxEntryEdit,
             this.m_ctxEntryEditQuick,
-            this.m_ctxEntryDuplicate,
-            this.m_ctxEntryDelete,
             this.m_ctxEntrySep2,
-            this.m_ctxEntrySelectAll,
-            this.m_ctxEntrySep3,
             this.m_ctxEntryRearrange});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(209, 358);
+			this.m_ctxPwList.Size = new System.Drawing.Size(163, 176);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
-			// 
-			// m_ctxEntryCopyUserName
-			// 
-			this.m_ctxEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
-			this.m_ctxEntryCopyUserName.Name = "m_ctxEntryCopyUserName";
-			this.m_ctxEntryCopyUserName.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryCopyUserName.Text = "Copy &User Name";
-			this.m_ctxEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
-			// 
-			// m_ctxEntryCopyPassword
-			// 
-			this.m_ctxEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
-			this.m_ctxEntryCopyPassword.Name = "m_ctxEntryCopyPassword";
-			this.m_ctxEntryCopyPassword.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryCopyPassword.Text = "<>";
-			this.m_ctxEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
 			// m_ctxEntryUrl
 			// 
-			this.m_ctxEntryUrl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryOpenUrl,
-            this.m_ctxEntryCopyUrl});
 			this.m_ctxEntryUrl.Name = "m_ctxEntryUrl";
-			this.m_ctxEntryUrl.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryUrl.Text = "UR&L(s)";
-			// 
-			// m_ctxEntryOpenUrl
-			// 
-			this.m_ctxEntryOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_FTP;
-			this.m_ctxEntryOpenUrl.Name = "m_ctxEntryOpenUrl";
-			this.m_ctxEntryOpenUrl.Size = new System.Drawing.Size(103, 22);
-			this.m_ctxEntryOpenUrl.Text = "&Open";
-			this.m_ctxEntryOpenUrl.Click += new System.EventHandler(this.OnEntryOpenUrl);
-			// 
-			// m_ctxEntryCopyUrl
-			// 
-			this.m_ctxEntryCopyUrl.Image = global::KeePass.Properties.Resources.B16x16_EditCopyUrl;
-			this.m_ctxEntryCopyUrl.Name = "m_ctxEntryCopyUrl";
-			this.m_ctxEntryCopyUrl.Size = new System.Drawing.Size(103, 22);
-			this.m_ctxEntryCopyUrl.Text = "&Copy";
-			this.m_ctxEntryCopyUrl.Click += new System.EventHandler(this.OnEntryCopyURL);
+			this.m_ctxEntryUrl.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryUrl.Text = "<URL(s)>";
 			// 
 			// m_ctxEntryCopyString
 			// 
 			this.m_ctxEntryCopyString.Name = "m_ctxEntryCopyString";
-			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryCopyString.Text = "&Copy Field";
+			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryCopyString.Text = "<CopyField>";
 			// 
 			// m_ctxEntryAttachments
 			// 
 			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
-			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryAttachments.Text = "Attach&ments";
-			// 
-			// m_ctxEntrySaveAttachedFiles
-			// 
-			this.m_ctxEntrySaveAttachedFiles.Image = global::KeePass.Properties.Resources.B16x16_Attach;
-			this.m_ctxEntrySaveAttachedFiles.Name = "m_ctxEntrySaveAttachedFiles";
-			this.m_ctxEntrySaveAttachedFiles.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntrySaveAttachedFiles.Text = "Save Attached &File(s) To...";
-			this.m_ctxEntrySaveAttachedFiles.Click += new System.EventHandler(this.OnEntrySaveAttachments);
+			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryAttachments.Text = "<Attachments>";
 			// 
 			// m_ctxEntrySep0
 			// 
 			this.m_ctxEntrySep0.Name = "m_ctxEntrySep0";
-			this.m_ctxEntrySep0.Size = new System.Drawing.Size(205, 6);
-			// 
-			// m_ctxEntryPerformAutoType
-			// 
-			this.m_ctxEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
-			this.m_ctxEntryPerformAutoType.Name = "m_ctxEntryPerformAutoType";
-			this.m_ctxEntryPerformAutoType.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryPerformAutoType.Text = "Perform Auto-&Type";
-			this.m_ctxEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
+			this.m_ctxEntrySep0.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntryAutoTypeAdv
 			// 
 			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
-			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryAutoTypeAdv.Text = "Perform Aut&o-Type";
+			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(166, 22);
+			this.m_ctxEntryAutoTypeAdv.Text = "<AutoTypeAdv>";
 			// 
 			// m_ctxEntrySep1
 			// 
 			this.m_ctxEntrySep1.Name = "m_ctxEntrySep1";
-			this.m_ctxEntrySep1.Size = new System.Drawing.Size(205, 6);
-			// 
-			// m_ctxEntryAdd
-			// 
-			this.m_ctxEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
-			this.m_ctxEntryAdd.Name = "m_ctxEntryAdd";
-			this.m_ctxEntryAdd.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryAdd.Text = "&Add Entry...";
-			this.m_ctxEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
-			// 
-			// m_ctxEntryEdit
-			// 
-			this.m_ctxEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
-			this.m_ctxEntryEdit.Name = "m_ctxEntryEdit";
-			this.m_ctxEntryEdit.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryEdit.Text = "&Edit Entry...";
-			this.m_ctxEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
+			this.m_ctxEntrySep1.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntryEditQuick
 			// 
 			this.m_ctxEntryEditQuick.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryIcon,
-            this.m_ctxEntryColor,
-            this.m_ctxEntryEditQuickSep0,
             this.m_ctxEntryTagAdd,
-            this.m_ctxEntryTagRemove,
-            this.m_ctxEntryEditQuickSep1,
-            this.m_ctxEntryExpiresNow,
-            this.m_ctxEntryExpiresNever});
+            this.m_ctxEntryTagRemove});
 			this.m_ctxEntryEditQuick.Name = "m_ctxEntryEditQuick";
-			this.m_ctxEntryEditQuick.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryEditQuick.Text = "Edit Entry (&Quick)";
-			// 
-			// m_ctxEntryIcon
-			// 
-			this.m_ctxEntryIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
-			this.m_ctxEntryIcon.Name = "m_ctxEntryIcon";
-			this.m_ctxEntryIcon.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryIcon.Text = "&Icon...";
-			this.m_ctxEntryIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
-			// 
-			// m_ctxEntryColor
-			// 
-			this.m_ctxEntryColor.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryColorStandard,
-            this.m_ctxEntryColorSep0,
-            this.m_ctxEntryColorLightRed,
-            this.m_ctxEntryColorLightGreen,
-            this.m_ctxEntryColorLightBlue,
-            this.m_ctxEntryColorLightYellow,
-            this.m_ctxEntryColorSep1,
-            this.m_ctxEntryColorCustom});
-			this.m_ctxEntryColor.Name = "m_ctxEntryColor";
-			this.m_ctxEntryColor.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryColor.Text = "&Color";
-			// 
-			// m_ctxEntryColorStandard
-			// 
-			this.m_ctxEntryColorStandard.Name = "m_ctxEntryColorStandard";
-			this.m_ctxEntryColorStandard.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorStandard.Text = "&Standard";
-			this.m_ctxEntryColorStandard.Click += new System.EventHandler(this.OnEntryColorStandard);
-			// 
-			// m_ctxEntryColorSep0
-			// 
-			this.m_ctxEntryColorSep0.Name = "m_ctxEntryColorSep0";
-			this.m_ctxEntryColorSep0.Size = new System.Drawing.Size(154, 6);
-			// 
-			// m_ctxEntryColorLightRed
-			// 
-			this.m_ctxEntryColorLightRed.Name = "m_ctxEntryColorLightRed";
-			this.m_ctxEntryColorLightRed.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorLightRed.Text = "Light &Red";
-			this.m_ctxEntryColorLightRed.Click += new System.EventHandler(this.OnEntryColorLightRed);
-			// 
-			// m_ctxEntryColorLightGreen
-			// 
-			this.m_ctxEntryColorLightGreen.Name = "m_ctxEntryColorLightGreen";
-			this.m_ctxEntryColorLightGreen.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorLightGreen.Text = "Light &Green";
-			this.m_ctxEntryColorLightGreen.Click += new System.EventHandler(this.OnEntryColorLightGreen);
-			// 
-			// m_ctxEntryColorLightBlue
-			// 
-			this.m_ctxEntryColorLightBlue.Name = "m_ctxEntryColorLightBlue";
-			this.m_ctxEntryColorLightBlue.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorLightBlue.Text = "Light &Blue";
-			this.m_ctxEntryColorLightBlue.Click += new System.EventHandler(this.OnEntryColorLightBlue);
-			// 
-			// m_ctxEntryColorLightYellow
-			// 
-			this.m_ctxEntryColorLightYellow.Name = "m_ctxEntryColorLightYellow";
-			this.m_ctxEntryColorLightYellow.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorLightYellow.Text = "Light &Yellow";
-			this.m_ctxEntryColorLightYellow.Click += new System.EventHandler(this.OnEntryColorLightYellow);
-			// 
-			// m_ctxEntryColorSep1
-			// 
-			this.m_ctxEntryColorSep1.Name = "m_ctxEntryColorSep1";
-			this.m_ctxEntryColorSep1.Size = new System.Drawing.Size(154, 6);
-			// 
-			// m_ctxEntryColorCustom
-			// 
-			this.m_ctxEntryColorCustom.Name = "m_ctxEntryColorCustom";
-			this.m_ctxEntryColorCustom.Size = new System.Drawing.Size(157, 22);
-			this.m_ctxEntryColorCustom.Text = "&Custom Color...";
-			this.m_ctxEntryColorCustom.Click += new System.EventHandler(this.OnEntryColorCustom);
-			// 
-			// m_ctxEntryEditQuickSep0
-			// 
-			this.m_ctxEntryEditQuickSep0.Name = "m_ctxEntryEditQuickSep0";
-			this.m_ctxEntryEditQuickSep0.Size = new System.Drawing.Size(144, 6);
+			this.m_ctxEntryEditQuick.Size = new System.Drawing.Size(162, 22);
+			this.m_ctxEntryEditQuick.Text = "<EditQuick>";
 			// 
 			// m_ctxEntryTagAdd
 			// 
-			this.m_ctxEntryTagAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryTagNew});
 			this.m_ctxEntryTagAdd.Name = "m_ctxEntryTagAdd";
-			this.m_ctxEntryTagAdd.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryTagAdd.Text = "Add &Tag";
+			this.m_ctxEntryTagAdd.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntryTagAdd.Text = "<AddTag>";
 			this.m_ctxEntryTagAdd.DropDownOpening += new System.EventHandler(this.OnEntryTagAddOpening);
-			// 
-			// m_ctxEntryTagNew
-			// 
-			this.m_ctxEntryTagNew.Image = global::KeePass.Properties.Resources.B16x16_KNotes;
-			this.m_ctxEntryTagNew.Name = "m_ctxEntryTagNew";
-			this.m_ctxEntryTagNew.Size = new System.Drawing.Size(129, 22);
-			this.m_ctxEntryTagNew.Text = "&New Tag...";
-			this.m_ctxEntryTagNew.Click += new System.EventHandler(this.OnEntrySelectedNewTag);
 			// 
 			// m_ctxEntryTagRemove
 			// 
 			this.m_ctxEntryTagRemove.Name = "m_ctxEntryTagRemove";
-			this.m_ctxEntryTagRemove.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryTagRemove.Text = "&Remove Tag";
+			this.m_ctxEntryTagRemove.Size = new System.Drawing.Size(152, 22);
+			this.m_ctxEntryTagRemove.Text = "<RemoveTag>";
 			this.m_ctxEntryTagRemove.DropDownOpening += new System.EventHandler(this.OnEntryTagRemoveOpening);
-			// 
-			// m_ctxEntryEditQuickSep1
-			// 
-			this.m_ctxEntryEditQuickSep1.Name = "m_ctxEntryEditQuickSep1";
-			this.m_ctxEntryEditQuickSep1.Size = new System.Drawing.Size(144, 6);
-			// 
-			// m_ctxEntryExpiresNow
-			// 
-			this.m_ctxEntryExpiresNow.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
-			this.m_ctxEntryExpiresNow.Name = "m_ctxEntryExpiresNow";
-			this.m_ctxEntryExpiresNow.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryExpiresNow.Text = "&Expires: Now";
-			this.m_ctxEntryExpiresNow.Click += new System.EventHandler(this.OnEntryExpiresNow);
-			// 
-			// m_ctxEntryExpiresNever
-			// 
-			this.m_ctxEntryExpiresNever.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
-			this.m_ctxEntryExpiresNever.Name = "m_ctxEntryExpiresNever";
-			this.m_ctxEntryExpiresNever.Size = new System.Drawing.Size(147, 22);
-			this.m_ctxEntryExpiresNever.Text = "Expires: &Never";
-			this.m_ctxEntryExpiresNever.Click += new System.EventHandler(this.OnEntryExpiresNever);
-			// 
-			// m_ctxEntryDuplicate
-			// 
-			this.m_ctxEntryDuplicate.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
-			this.m_ctxEntryDuplicate.Name = "m_ctxEntryDuplicate";
-			this.m_ctxEntryDuplicate.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryDuplicate.Text = "Dupl&icate Entry...";
-			this.m_ctxEntryDuplicate.Click += new System.EventHandler(this.OnEntryDuplicate);
-			// 
-			// m_ctxEntryDelete
-			// 
-			this.m_ctxEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
-			this.m_ctxEntryDelete.Name = "m_ctxEntryDelete";
-			this.m_ctxEntryDelete.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryDelete.Text = "&Delete Entry";
-			this.m_ctxEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
 			// 
 			// m_ctxEntrySep2
 			// 
 			this.m_ctxEntrySep2.Name = "m_ctxEntrySep2";
-			this.m_ctxEntrySep2.Size = new System.Drawing.Size(205, 6);
-			// 
-			// m_ctxEntrySelectAll
-			// 
-			this.m_ctxEntrySelectAll.Name = "m_ctxEntrySelectAll";
-			this.m_ctxEntrySelectAll.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntrySelectAll.Text = "&Select All";
-			this.m_ctxEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
-			// 
-			// m_ctxEntrySep3
-			// 
-			this.m_ctxEntrySep3.Name = "m_ctxEntrySep3";
-			this.m_ctxEntrySep3.Size = new System.Drawing.Size(205, 6);
+			this.m_ctxEntrySep2.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_ctxEntryRearrange
 			// 
 			this.m_ctxEntryRearrange.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxEntryMoveToTop,
-            this.m_ctxEntryMoveOneUp,
-            this.m_ctxEntryMoveOneDown,
-            this.m_ctxEntryMoveToBottom,
-            this.m_ctxEntryRearrangeSep0,
             this.m_ctxEntryMoveToGroup});
 			this.m_ctxEntryRearrange.Name = "m_ctxEntryRearrange";
-			this.m_ctxEntryRearrange.Size = new System.Drawing.Size(208, 22);
-			this.m_ctxEntryRearrange.Text = "&Rearrange";
-			// 
-			// m_ctxEntryMoveToTop
-			// 
-			this.m_ctxEntryMoveToTop.Image = global::KeePass.Properties.Resources.B16x16_2UpArrow;
-			this.m_ctxEntryMoveToTop.Name = "m_ctxEntryMoveToTop";
-			this.m_ctxEntryMoveToTop.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveToTop.Text = "Move Entry to &Top";
-			this.m_ctxEntryMoveToTop.Click += new System.EventHandler(this.OnEntryMoveToTop);
-			// 
-			// m_ctxEntryMoveOneUp
-			// 
-			this.m_ctxEntryMoveOneUp.Image = global::KeePass.Properties.Resources.B16x16_1UpArrow;
-			this.m_ctxEntryMoveOneUp.Name = "m_ctxEntryMoveOneUp";
-			this.m_ctxEntryMoveOneUp.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveOneUp.Text = "Move Entry One &Up";
-			this.m_ctxEntryMoveOneUp.Click += new System.EventHandler(this.OnEntryMoveOneUp);
-			// 
-			// m_ctxEntryMoveOneDown
-			// 
-			this.m_ctxEntryMoveOneDown.Image = global::KeePass.Properties.Resources.B16x16_1DownArrow;
-			this.m_ctxEntryMoveOneDown.Name = "m_ctxEntryMoveOneDown";
-			this.m_ctxEntryMoveOneDown.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveOneDown.Text = "Move Entry One &Down";
-			this.m_ctxEntryMoveOneDown.Click += new System.EventHandler(this.OnEntryMoveOneDown);
-			// 
-			// m_ctxEntryMoveToBottom
-			// 
-			this.m_ctxEntryMoveToBottom.Image = global::KeePass.Properties.Resources.B16x16_2DownArrow;
-			this.m_ctxEntryMoveToBottom.Name = "m_ctxEntryMoveToBottom";
-			this.m_ctxEntryMoveToBottom.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveToBottom.Text = "Move Entry to &Bottom";
-			this.m_ctxEntryMoveToBottom.Click += new System.EventHandler(this.OnEntryMoveToBottom);
-			// 
-			// m_ctxEntryRearrangeSep0
-			// 
-			this.m_ctxEntryRearrangeSep0.Name = "m_ctxEntryRearrangeSep0";
-			this.m_ctxEntryRearrangeSep0.Size = new System.Drawing.Size(190, 6);
+			this.m_ctxEntryRearrange.Size = new System.Drawing.Size(162, 22);
+			this.m_ctxEntryRearrange.Text = "<Rearrange>";
 			// 
 			// m_ctxEntryMoveToGroup
 			// 
 			this.m_ctxEntryMoveToGroup.Name = "m_ctxEntryMoveToGroup";
-			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(193, 22);
-			this.m_ctxEntryMoveToGroup.Text = "Move to &Group";
+			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(166, 22);
+			this.m_ctxEntryMoveToGroup.Text = "<MoveToGroup>";
 			this.m_ctxEntryMoveToGroup.DropDownOpening += new System.EventHandler(this.OnEntryMoveToGroupOpening);
 			// 
 			// m_menuMain
@@ -2929,24 +2437,11 @@
 		private KeePass.UI.CustomListViewEx m_lvEntries;
 		private System.Windows.Forms.ToolStripButton m_tbSaveDatabase;
 		private KeePass.UI.CustomContextMenuStripEx m_ctxPwList;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyUserName;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyPassword;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySaveAttachedFiles;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySep0;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryPerformAutoType;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySep1;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAdd;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryEdit;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryDuplicate;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryDelete;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryEditQuick;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntrySelectAll;
 		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySep2;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryRearrange;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveToTop;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveOneUp;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveOneDown;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveToBottom;
 		private System.Windows.Forms.ToolStripMenuItem m_menuChangeLanguage;
 		private System.Windows.Forms.ToolStripSeparator m_tbSep0;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep0;
@@ -2961,14 +2456,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsOptions;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep1;
 		private KeePass.UI.CustomContextMenuStripEx m_ctxGroupList;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupAdd;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupEdit;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupDelete;
 		private System.Windows.Forms.ToolStripProgressBar m_statusPartProgress;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewAlwaysOnTop;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep2;
-		private System.Windows.Forms.ToolStripSeparator m_ctxGroupSep0;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupPrint;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewConfigColumns;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep3;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileRecent;
@@ -2977,11 +2467,7 @@
 		private System.Windows.Forms.Timer m_timerMain;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsPlugins;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryUrl;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryOpenUrl;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryCopyUrl;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryIcon;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupFind;
-		private System.Windows.Forms.ToolStripSeparator m_ctxGroupSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewTanOptions;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewTanSimpleList;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewTanIndices;
@@ -2989,15 +2475,6 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsTanWizard;
 		private System.Windows.Forms.ToolStripProgressBar m_statusClipboard;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColor;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorStandard;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntryColorSep0;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorLightRed;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorLightGreen;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorLightBlue;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorLightYellow;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntryColorSep1;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryColorCustom;
 		private System.Windows.Forms.ToolStripDropDownButton m_tbEntryViewsDropDown;
 		private System.Windows.Forms.ToolStripMenuItem m_tbViewsShowAll;
 		private System.Windows.Forms.ToolStripMenuItem m_tbViewsShowExpired;
@@ -3020,12 +2497,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsLocal;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileImport;
-		private System.Windows.Forms.ToolStripSeparator m_ctxGroupSep2;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupRearrange;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveToTop;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneUp;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveOneDown;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupMoveToBottom;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAttachments;
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayFileExit;
@@ -3034,26 +2505,19 @@
 		private System.Windows.Forms.ToolStripButton m_tbCloseTab;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSaveAsSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSaveAsCopy;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntryEditQuickSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewShowEntriesOfSubGroups;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSync;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayLock;
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep1;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupExport;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSyncSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncRecent;
 		private System.Windows.Forms.ToolStripSeparator m_menuToolsSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsTriggers;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryTagAdd;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryTagNew;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryTagRemove;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewSortBy;
-		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep0;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSort;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupSortRec;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupEmptyRB;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDb;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbMaintenance;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbDelDupEntries;
@@ -3064,7 +2528,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewEntryListGrouping;
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep2;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayGenPw;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupDuplicate;
 		private System.Windows.Forms.ToolStripSplitButton m_tbOpenUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_tbOpenUrlDefault;
 		private System.Windows.Forms.ToolStripButton m_tbCopyUrl;
@@ -3073,9 +2536,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsDbXmlRep;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileRecentDummy;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFileSyncRecentDummy;
-		private System.Windows.Forms.ToolStripSeparator m_ctxGroupRearrSep1;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupExpand;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxGroupCollapse;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAutoTypeAdv;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayCancel;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFind;
@@ -3110,16 +2570,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuGroupExport;
 		private System.Windows.Forms.ToolStripSeparator m_menuGroupSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuGroupRearrange;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToTop;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveOneUp;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveOneDown;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToBottom;
-		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep0;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupSort;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupSortRec;
-		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep1;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupExpand;
-		private System.Windows.Forms.ToolStripMenuItem m_menuGroupCollapse;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryAdd;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryEdit;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryDuplicate;
@@ -3147,7 +2597,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryColorLightYellow;
 		private System.Windows.Forms.ToolStripSeparator m_menuEntryColorSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryColorCustom;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntrySep3;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryDX;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryIcon;
 		private System.Windows.Forms.ToolStripSeparator m_menuEntryEditQuickSep0;
@@ -3158,7 +2607,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryExport;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryRearrange;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryMoveToGroup;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntryRearrangeSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryMoveToGroup;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryClipCopy;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryClipPaste;
@@ -3185,9 +2633,16 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuEntryEditQuickSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryExpiresNow;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryExpiresNever;
-		private System.Windows.Forms.ToolStripSeparator m_ctxEntryEditQuickSep1;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryExpiresNow;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryExpiresNever;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToTop;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveOneUp;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveOneDown;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToBottom;
+		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupSort;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupSortRec;
+		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupExpand;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupCollapse;
 	}
 }
 

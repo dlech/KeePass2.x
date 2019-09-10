@@ -184,11 +184,7 @@ namespace KeePass.Forms
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			try
-			{
-				Process p = Process.Start(strUrl);
-				if(p != null) p.Dispose();
-			}
+			try { NativeLib.StartProcess(strUrl); }
 			catch(Exception) { Debug.Assert(false); } */
 
 			WinUtil.OpenUrl(strUrl, null); // Thread-safe

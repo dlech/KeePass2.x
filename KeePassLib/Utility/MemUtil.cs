@@ -597,18 +597,32 @@ namespace KeePassLib.Utility
 			if(sSource == null) throw new ArgumentNullException("sSource");
 			if(sTarget == null) throw new ArgumentNullException("sTarget");
 
-			const int nBufSize = 4096;
-			byte[] pbBuf = new byte[nBufSize];
+			const int cbBuf = 4096;
+			byte[] pbBuf = new byte[cbBuf];
 
 			while(true)
 			{
-				int nRead = sSource.Read(pbBuf, 0, nBufSize);
-				if(nRead == 0) break;
+				int cbRead = sSource.Read(pbBuf, 0, cbBuf);
+				if(cbRead == 0) break;
 
-				sTarget.Write(pbBuf, 0, nRead);
+				sTarget.Write(pbBuf, 0, cbRead);
 			}
 
 			// Do not close any of the streams
+		}
+
+		public static byte[] Read(Stream s)
+		{
+			if(s == null) throw new ArgumentNullException("s");
+
+			byte[] pb;
+			using(MemoryStream ms = new MemoryStream())
+			{
+				MemUtil.CopyStream(s, ms);
+				pb = ms.ToArray();
+			}
+
+			return pb;
 		}
 
 		public static byte[] Read(Stream s, int nCount)

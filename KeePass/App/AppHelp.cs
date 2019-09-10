@@ -146,17 +146,12 @@ namespace KeePass.App
 			try
 			{
 				if(NativeLib.IsUnix())
-				{
-					Process p = Process.Start(NativeLib.EncodePath(strCmd.Trim('\"')));
-					if(p != null) p.Dispose();
-				}
+					NativeLib.StartProcess(strCmd.Trim('\"'));
 				else // Windows
 				{
 					strDisp = "HH.exe " + strDisp;
-
-					Process p = Process.Start(NativeLib.EncodePath(
-						WinUtil.LocateSystemApp("hh.exe")), strCmd);
-					if(p != null) p.Dispose();
+					NativeLib.StartProcess(WinUtil.LocateSystemApp(
+						"hh.exe"), strCmd);
 				}
 			}
 			catch(Exception ex)
@@ -191,9 +186,7 @@ namespace KeePass.App
 					strArgs = "-showPage \"" + SprEncoding.EncodeForCommandLine(
 						strUrl) + "\" " + strArgs;
 
-				Process p = Process.Start(NativeLib.EncodePath(strApp), strArgs);
-				if(p != null) p.Dispose();
-
+				NativeLib.StartProcess(strApp, strArgs);
 				return true;
 			}
 			catch(Exception) { Debug.Assert(false); }

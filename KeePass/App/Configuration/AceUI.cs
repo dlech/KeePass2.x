@@ -365,6 +365,14 @@ namespace KeePass.App.Configuration
 		{
 		}
 
+		private bool m_bRememberHidePwsMain = true;
+		[DefaultValue(true)]
+		public bool RememberHidingPasswordsMain
+		{
+			get { return m_bRememberHidePwsMain; }
+			set { m_bRememberHidePwsMain = value; }
+		}
+
 		private bool m_bSepHiding = false;
 		[DefaultValue(false)]
 		public bool SeparateHidingSettings

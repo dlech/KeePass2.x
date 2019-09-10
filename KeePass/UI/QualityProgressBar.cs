@@ -139,10 +139,12 @@ namespace KeePass.UI
 
 			Color clrStart = AppDefs.ColorQualityLow;
 			Color clrEnd = AppDefs.ColorQualityHigh;
+			Color clrMid = AppDefs.ColorQualityMid;
 			if(!this.Enabled)
 			{
 				clrStart = UIUtil.ColorToGrayscale(SystemColors.ControlDark);
 				clrEnd = UIUtil.ColorToGrayscale(SystemColors.ControlLight);
+				clrMid = UIUtil.ColorMiddle(clrStart, clrEnd);
 			}
 
 			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
@@ -162,6 +164,11 @@ namespace KeePass.UI
 			using(LinearGradientBrush brush = new LinearGradientBrush(rectGrad,
 				clrStart, clrEnd, LinearGradientMode.Horizontal))
 			{
+				ColorBlend cb = new ColorBlend();
+				cb.Colors = new Color[3] { clrStart, clrMid, clrEnd };
+				cb.Positions = new float[3] { 0.0f, 0.5f, 1.0f };
+				brush.InterpolationColors = cb;
+
 				g.FillRectangle(brush, (bRtl ? (rectDraw.Width - nDrawWidth + 1) :
 					rectDraw.Left), rectDraw.Top, nDrawWidth, rectDraw.Height);
 			}
@@ -177,18 +184,23 @@ namespace KeePass.UI
 			Color clrFG = UIUtil.ColorToGrayscale(this.ForeColor);
 			Color clrBG = Color.FromArgb(clrFG.ToArgb() ^ 0x20FFFFFF);
 
-			// Instead of an ellipse, Mono draws a circle, which looks ugly
-			if(!NativeLib.IsUnix())
-			{
-				int dx = rectDraw.X;
-				int dy = rectDraw.Y;
-				int dw = rectDraw.Width;
-				int dh = rectDraw.Height;
+			int dx = rectDraw.X;
+			int dy = rectDraw.Y;
+			int dw = rectDraw.Width;
+			int dh = rectDraw.Height;
 
+			if(!NativeLib.IsUnix() || !UIUtil.IsDarkColor(clrFG))
+			{
 				Rectangle rectGlow = rectDraw;
 				rectGlow.Width = TextRenderer.MeasureText(g, m_strText, f).Width;
 				rectGlow.X = ((dw - rectGlow.Width) / 2) + dx;
-				rectGlow.Inflate(rectGlow.Width / 2, rectGlow.Height / 2);
+
+				// Instead of an ellipse, Mono draws a circle
+				if(NativeLib.IsUnix())
+					rectGlow.Inflate(rectGlow.Width * 2, rectGlow.Height * 2);
+				else
+					rectGlow.Inflate(rectGlow.Width / 2, rectGlow.Height / 2);
+
 				using(GraphicsPath gpGlow = new GraphicsPath())
 				{
 					gpGlow.AddEllipse(rectGlow);
@@ -211,7 +223,6 @@ namespace KeePass.UI
 			// With ClearType on, text drawn using Graphics.DrawString
 			// looks better than TextRenderer.DrawText;
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/06ef4466/
-
 			// TextFormatFlags tff = (TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine |
 			//	TextFormatFlags.VerticalCenter);
 			// TextRenderer.DrawText(g, m_strText, f, rectDraw, clrFG, tff);
@@ -227,14 +238,13 @@ namespace KeePass.UI
 					sf.Alignment = StringAlignment.Center;
 					sf.LineAlignment = StringAlignment.Center;
 
-					RectangleF rf = new RectangleF(rectDraw.X, rectDraw.Y,
-						rectDraw.Width, rectDraw.Height);
+					RectangleF rf = new RectangleF(dx, dy, dw, dh);
 					g.DrawString(m_strText, f, br, rf, sf);
 				}
 			}
 		}
 
-		protected override void OnPaintBackground(PaintEventArgs pEvent)
+		protected override void OnPaintBackground(PaintEventArgs pevent)
 		{
 			// base.OnPaintBackground(pevent);
 		}

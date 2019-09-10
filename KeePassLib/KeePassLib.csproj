@@ -96,6 +96,7 @@
     <Compile Include="Native\ClipboardU.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\NativeMethods.Unix.cs" />
+    <Compile Include="Native\SimpleStat.cs" />
     <Compile Include="PwCustomIcon.cs" />
     <Compile Include="Resources\KLRes.Generated.cs" />
     <Compile Include="Resources\KSRes.Generated.cs" />

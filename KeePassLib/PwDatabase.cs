@@ -905,18 +905,17 @@ namespace KeePassLib
 				MergeInLocationChanged(m_pgRootGroup, ppOrg, ppSrc);
 				ppOrg = null; // Pools are now invalid, because the location
 				ppSrc = null; // changed times have been merged in
-
-				// Delete *after* relocating, because relocating might
-				// empty some groups that are marked for deletion (and
-				// objects that weren't relocated yet might prevent the
-				// deletion)
-				Dictionary<PwUuid, PwDeletedObject> dOrgDel = CreateDeletedObjectsPool();
-				MergeInDeletionInfo(pdSource.m_vDeletedObjects, dOrgDel);
-				ApplyDeletions(m_pgRootGroup, dOrgDel);
-
-				// The list and the dictionary should be kept in sync
-				Debug.Assert(m_vDeletedObjects.UCount == (uint)dOrgDel.Count);
 			}
+
+			// Delete *after* relocating, because relocating might empty
+			// some groups that are marked for deletion (and objects
+			// that weren't relocated yet might prevent the deletion)
+			Dictionary<PwUuid, PwDeletedObject> dOrgDel = CreateDeletedObjectsPool();
+			if(mm == PwMergeMethod.Synchronize)
+				MergeInDeletionInfo(pdSource.m_vDeletedObjects, dOrgDel);
+			ApplyDeletions(m_pgRootGroup, dOrgDel);
+			// The list and the dictionary should be kept in sync
+			Debug.Assert(m_vDeletedObjects.UCount == (uint)dOrgDel.Count);
 
 			// Must be called *after* merging groups, because group UUIDs
 			// are required for recycle bin and entry template UUIDs
@@ -1954,16 +1953,22 @@ namespace KeePassLib
 			return uDeleted;
 		}
 
-		private static List<string> m_lStdFields = null;
+		private static List<string> g_lDupStdFields = null;
 		private static bool DupEntriesEqual(PwEntry a, PwEntry b)
 		{
-			if(m_lStdFields == null) m_lStdFields = PwDefs.GetStandardFields();
-
-			foreach(string strStdKey in m_lStdFields)
+			if(g_lDupStdFields == null)
 			{
-				string strA = a.Strings.ReadSafe(strStdKey);
-				string strB = b.Strings.ReadSafe(strStdKey);
-				if(!strA.Equals(strB)) return false;
+				g_lDupStdFields = PwDefs.GetStandardFields();
+				if(g_lDupStdFields.Remove(PwDefs.PasswordField))
+					g_lDupStdFields.Add(PwDefs.PasswordField); // Move to end (perf. opt.)
+				else { Debug.Assert(false); }
+			}
+
+			foreach(string strStdKey in g_lDupStdFields)
+			{
+				ProtectedString psA = a.Strings.GetSafe(strStdKey);
+				ProtectedString psB = b.Strings.GetSafe(strStdKey);
+				if(!psA.Equals(psB, false)) return false;
 			}
 
 			foreach(KeyValuePair<string, ProtectedString> kvpA in a.Strings)

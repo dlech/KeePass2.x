@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 using KeePass.UI;
+using KeePass.Util.Spr;
 
 using KeePassLib.Native;
 using KeePassLib.Utility;
@@ -68,7 +69,8 @@ namespace KeePass.Util
 				string strPath = Program.TempFilesPool.GetTempFileName("html");
 
 				string strOrg = str;
-				str = UrlUtil.ExpandShellVariables(str, new string[] { strPath });
+				str = UrlUtil.ExpandShellVariables(str, new string[] {
+					strPath }, true);
 				if(str == strOrg) { Debug.Assert(false); return false; }
 
 				File.WriteAllText(strPath, strHtml, StrUtil.Utf8);
@@ -92,8 +94,9 @@ namespace KeePass.Util
 			{
 				string strSys = UrlUtil.EnsureTerminatingSeparator(
 					Environment.SystemDirectory, false);
-				str = "\"" + strSys + "rundll32.exe\" \"" + strSys +
-					"mshtml.dll\",PrintHTML \"%1\"";
+				str = "\"" + SprEncoding.EncodeForCommandLine(strSys +
+					"rundll32.exe") + "\" \"" + SprEncoding.EncodeForCommandLine(
+					strSys + "mshtml.dll") + "\",PrintHTML \"%1\"";
 			}
 
 			return str;
@@ -134,7 +137,7 @@ namespace KeePass.Util
 			File.WriteAllText(strPath, strHtml, StrUtil.Utf8);
 
 			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.FileName = NativeLib.EncodePath(strPath);
+			psi.FileName = strPath;
 			psi.UseShellExecute = true;
 
 			// Try to use the 'Print' verb; if it's not available, the
@@ -151,8 +154,7 @@ namespace KeePass.Util
 				}
 			}
 
-			Process p = Process.Start(psi);
-			if(p != null) p.Dispose();
+			NativeLib.StartProcess(psi);
 		}
 	}
 }

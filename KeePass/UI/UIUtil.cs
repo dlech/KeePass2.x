@@ -1138,14 +1138,14 @@ namespace KeePass.UI
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(vInternalList == null) throw new ArgumentNullException("vInternalList");
 
-			ListView.SelectedIndexCollection lvsc = lv.SelectedIndices;
-			int n = lvsc.Count; // Getting Count sends a message
+			ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
+			int n = lvsic.Count; // Getting Count sends a message
 			if(n == 0) return;
 
 			// LVSIC: one access by index requires O(n) time, thus copy
 			// all to an array (which requires O(1) for each element)
 			int[] v = new int[n];
-			lvsc.CopyTo(v, 0);
+			lvsic.CopyTo(v, 0);
 
 			for(int i = 0; i < n; ++i)
 			{
@@ -2449,6 +2449,7 @@ namespace KeePass.UI
 
 			try
 			{
+				Debug.Assert(c.Visible && c.Enabled);
 				if(fParent != null) fParent.ActiveControl = c;
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -3036,12 +3037,6 @@ namespace KeePass.UI
 		}
 
 		internal static void AssignShortcut(ToolStripMenuItem tsmi, Keys k,
-			ToolStripMenuItem tsmiSecondary)
-		{
-			AssignShortcut(tsmi, k, tsmiSecondary, false);
-		}
-
-		internal static void AssignShortcut(ToolStripMenuItem tsmi, Keys k,
 			ToolStripMenuItem tsmiSecondary, bool bTextOnly)
 		{
 			if(tsmi == null) { Debug.Assert(false); return; }
@@ -3069,6 +3064,19 @@ namespace KeePass.UI
 
 			if(tsmiSecondary != null)
 				tsmiSecondary.ShortcutKeyDisplayString = str;
+		}
+
+		internal static ToolStripItem GetSelectedItem(ToolStripItemCollection tsic)
+		{
+			if(tsic == null) { Debug.Assert(false); return null; }
+
+			foreach(ToolStripItem tsi in tsic)
+			{
+				if(tsi == null) { Debug.Assert(false); continue; }
+				if(tsi.Selected) return tsi;
+			}
+
+			return null;
 		}
 
 		public static void SetFocusedItem(ListView lv, ListViewItem lvi,

@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.Diagnostics;
+using System.Xml;
 
 using KeePassLib.Interfaces;
 
@@ -1660,6 +1660,9 @@ namespace KeePass.Util.XmlSerialization
 
 				switch(xr.LocalName)
 				{
+					case "RememberHidingPasswordsMain":
+						o.RememberHidingPasswordsMain = ReadBoolean(xr);
+						break;
 					case "SeparateHidingSettings":
 						o.SeparateHidingSettings = ReadBoolean(xr);
 						break;

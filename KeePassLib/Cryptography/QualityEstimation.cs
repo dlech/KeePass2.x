@@ -39,7 +39,7 @@ namespace KeePassLib.Cryptography
 			internal const char UpperAlpha = 'U';
 			internal const char Digit = 'D';
 			internal const char Special = 'S';
-			internal const char High = 'H';
+			internal const char Latin1S = 'H';
 			internal const char Other = 'X';
 
 			internal const char Dictionary = 'W';
@@ -295,7 +295,7 @@ namespace KeePassLib.Cryptography
 					else strSpecial = strSpecial + " ";
 
 					int nSp = strSpecial.Length;
-					int nHi = PwCharSet.HighAnsiChars.Length;
+					int nL1S = PwCharSet.Latin1S.Length;
 
 					m_lCharTypes = new List<QeCharType>();
 
@@ -307,10 +307,10 @@ namespace KeePassLib.Cryptography
 						PwCharSet.Digits, true));
 					m_lCharTypes.Add(new QeCharType(PatternID.Special,
 						strSpecial, false));
-					m_lCharTypes.Add(new QeCharType(PatternID.High,
-						PwCharSet.HighAnsiChars, false));
+					m_lCharTypes.Add(new QeCharType(PatternID.Latin1S,
+						PwCharSet.Latin1S, false));
 					m_lCharTypes.Add(new QeCharType(PatternID.Other,
-						0x10000 - (2 * 26) - 10 - nSp - nHi));
+						0x10000 - (2 * 26) - 10 - nSp - nL1S));
 				}
 			}
 		}

@@ -278,7 +278,7 @@ namespace KeePass.Ecas
 				strCmd = WinUtil.CompileUrl(strCmd, pe, true, null, false);
 
 				ProcessStartInfo psi = new ProcessStartInfo();
-				psi.FileName = NativeLib.EncodePath(strCmd);
+				psi.FileName = strCmd;
 				if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
 
 				bool bShEx = true;
@@ -308,7 +308,7 @@ namespace KeePass.Ecas
 				if(!string.IsNullOrEmpty(strVerb))
 					psi.Verb = strVerb;
 
-				p = Process.Start(psi);
+				p = NativeLib.StartProcessEx(psi);
 
 				if((p != null) && bWait)
 				{
@@ -615,7 +615,7 @@ namespace KeePass.Ecas
 				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 
 				IntPtr hFg = NativeMethods.GetForegroundWindowHandle();
-				if(AutoType.IsOwnWindow(hFg))
+				if(GlobalWindowManager.HasWindowMW(hFg))
 					AutoType.PerformIntoPreviousWindow(Program.MainForm, pe,
 						pd, strSeq);
 				else AutoType.PerformIntoCurrentWindow(pe, pd, strSeq);

@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Drawing;
+using System.IO;
+using System.Text;
 
 using KeePass.Forms;
 using KeePass.Resources;
@@ -40,10 +40,8 @@ namespace KeePass.DataExchange.Formats
 
 		public override string FormatName { get { return KPRes.CsvTextFile; } }
 		public override string DisplayName { get { return KPRes.GenericCsvImporter; } }
-		public override string DefaultExtension { get { return @"*"; } }
+		public override string DefaultExtension { get { return "*"; } }
 		public override string ApplicationGroup { get { return KPRes.General; } }
-
-		public override bool ImportAppendsToRootGroupOnly { get { return false; } }
 
 		public override Image SmallIcon
 		{
@@ -53,14 +51,10 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			MemoryStream ms = new MemoryStream();
-			MemUtil.CopyStream(sInput, ms);
-			byte[] pbData = ms.ToArray();
-			ms.Close();
-			sInput.Close();
+			byte[] pb = MemUtil.Read(sInput);
 
 			CsvImportForm dlg = new CsvImportForm();
-			dlg.InitEx(pwStorage, pbData);
+			dlg.InitEx(pwStorage, pb);
 			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 	}

@@ -166,7 +166,7 @@ namespace KeePass.Forms
 			m_tbDefaultAutoTypeSeq.Enabled = m_btnAutoTypeEdit.Enabled =
 				!m_rbAutoTypeInherit.Checked;
 
-			m_btnCDDel.Enabled = (m_lvCustomData.SelectedItems.Count > 0);
+			m_btnCDDel.Enabled = (m_lvCustomData.SelectedIndices.Count > 0);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

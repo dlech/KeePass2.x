@@ -606,7 +606,7 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Get the host component of an URL.
+		/// Get the host component of a URL.
 		/// This method is faster and more fault-tolerant than creating
 		/// an <code>Uri</code> object and querying its <code>Host</code>
 		/// property.
@@ -776,21 +776,32 @@ namespace KeePassLib.Utility
 		/// Expand shell variables in a string.
 		/// <paramref name="vParams" />[0] is the value of <c>%1</c>, etc.
 		/// </summary>
-		public static string ExpandShellVariables(string strText, string[] vParams)
+		internal static string ExpandShellVariables(string strText, string[] vParams,
+			bool bEncParamsToArgs)
 		{
 			if(strText == null) { Debug.Assert(false); return string.Empty; }
-			if(vParams == null) { Debug.Assert(false); vParams = new string[0]; }
+
+			string[] v = vParams;
+			if(v == null) { Debug.Assert(false); v = new string[0]; }
+			if(bEncParamsToArgs)
+			{
+				for(int i = 0; i < v.Length; ++i)
+					v[i] = NativeLib.EncodeDataToArgs(v[i] ?? string.Empty);
+			}
 
 			string str = strText;
 			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+
+			string strPctPlh = Guid.NewGuid().ToString();
+			str = str.Replace("%%", strPctPlh);
 
 			for(int i = 0; i <= 9; ++i)
 			{
 				string strPlh = "%" + i.ToString(nfi);
 
 				string strValue = string.Empty;
-				if((i > 0) && ((i - 1) < vParams.Length))
-					strValue = (vParams[i - 1] ?? string.Empty);
+				if((i > 0) && ((i - 1) < v.Length))
+					strValue = (v[i - 1] ?? string.Empty);
 
 				str = str.Replace(strPlh, strValue);
 
@@ -806,7 +817,7 @@ namespace KeePassLib.Utility
 			if(str.IndexOf("%*") >= 0)
 			{
 				StringBuilder sb = new StringBuilder();
-				foreach(string strValue in vParams)
+				foreach(string strValue in v)
 				{
 					if(!string.IsNullOrEmpty(strValue))
 					{
@@ -818,6 +829,7 @@ namespace KeePassLib.Utility
 				str = str.Replace("%*", sb.ToString());
 			}
 
+			str = str.Replace(strPctPlh, "%");
 			return str;
 		}
 
@@ -845,6 +857,22 @@ namespace KeePassLib.Utility
 				return "File.dat";
 			}
 			return str;
+		}
+
+		internal static string GetCanonicalUri(string strUri)
+		{
+			if(string.IsNullOrEmpty(strUri)) { Debug.Assert(false); return strUri; }
+
+			try
+			{
+				Uri uri = new Uri(strUri);
+
+				if(uri.IsAbsoluteUri) return uri.AbsoluteUri;
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return strUri;
 		}
 	}
 }

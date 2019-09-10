@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading;
 using System.Drawing;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.Native;
 using KeePass.Resources;

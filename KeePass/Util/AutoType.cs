@@ -430,15 +430,9 @@ namespace KeePass.Util
 			return strSeq;
 		}
 
-		internal static bool IsOwnWindow(IntPtr hWindow)
+		public static bool IsValidAutoTypeWindow(IntPtr hWnd, bool bBeepIfNot)
 		{
-			return ((hWindow == Program.GetSafeMainWindowHandle()) ||
-				GlobalWindowManager.HasWindow(hWindow));
-		}
-
-		public static bool IsValidAutoTypeWindow(IntPtr hWindow, bool bBeepIfNot)
-		{
-			bool bValid = !IsOwnWindow(hWindow);
+			bool bValid = !GlobalWindowManager.HasWindowMW(hWnd);
 
 			if(!bValid && bBeepIfNot) SystemSounds.Beep.Play();
 
@@ -587,7 +581,7 @@ namespace KeePass.Util
 
 			try
 			{
-				if(!NativeMethods.LoseFocus(fCurrent)) { Debug.Assert(false); }
+				if(!NativeMethods.LoseFocus(fCurrent, true)) { Debug.Assert(false); }
 
 				return PerformIntoCurrentWindow(pe, pdContext, strSeq);
 			}

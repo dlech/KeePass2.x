@@ -132,50 +132,74 @@ namespace KeePass.Util
 
 #if !KeePassUAP
 		internal static ProtectedString GenerateAcceptable(PwProfile prf,
-			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx)
+			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
+			bool bShowErrorUI)
 		{
-			bool b = false;
-			return GenerateAcceptable(prf, pbUserEntropy, peOptCtx, pdOptCtx, ref b);
+			bool bAcceptAlways = false;
+			string strError;
+			return GenerateAcceptable(prf, pbUserEntropy, peOptCtx, pdOptCtx,
+				bShowErrorUI, ref bAcceptAlways, out strError);
 		}
 
 		internal static ProtectedString GenerateAcceptable(PwProfile prf,
 			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
-			ref bool bAcceptAlways)
+			bool bShowErrorUI, ref bool bAcceptAlways, out string strError)
 		{
+			strError = null;
+
 			ProtectedString ps = ProtectedString.Empty;
 			SprContext ctx = new SprContext(peOptCtx, pdOptCtx,
 				SprCompileFlags.NonActive, false, false);
 
-			bool bAcceptable = false;
-			while(!bAcceptable)
+			while(true)
 			{
-				bAcceptable = true;
-
-				PwGenerator.Generate(out ps, prf, pbUserEntropy, Program.PwGeneratorPool);
-				if(ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
-
-				if(bAcceptAlways) { }
-				else
+				try
 				{
-					string str = ps.ReadString();
-					string strCmp = SprEngine.Compile(str, ctx);
+					PwgError e = PwGenerator.Generate(out ps, prf, pbUserEntropy,
+						Program.PwGeneratorPool);
 
-					if(str != strCmp)
+					if(e != PwgError.Success)
 					{
-						if(prf.GeneratorType == PasswordGeneratorType.CharSet)
-							bAcceptable = false; // Silently try again
-						else
-						{
-							string strText = str + MessageService.NewParagraph +
-								KPRes.GenPwSprVariant + MessageService.NewParagraph +
-								KPRes.GenPwAccept;
-
-							if(!MessageService.AskYesNo(strText, null, false))
-								bAcceptable = false;
-							else bAcceptAlways = true;
-						}
+						strError = PwGenerator.ErrorToString(e, true);
+						break;
 					}
 				}
+				catch(Exception ex)
+				{
+					strError = PwGenerator.ErrorToString(ex, true);
+					break;
+				}
+				finally
+				{
+					if(ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
+				}
+
+				if(bAcceptAlways) break;
+
+				string str = ps.ReadString();
+				string strCmp = SprEngine.Compile(str, ctx);
+
+				if(str != strCmp)
+				{
+					if(prf.GeneratorType == PasswordGeneratorType.CharSet)
+						continue; // Silently try again
+
+					string strText = str + MessageService.NewParagraph +
+						KPRes.GenPwSprVariant + MessageService.NewParagraph +
+						KPRes.GenPwAccept;
+
+					if(!MessageService.AskYesNo(strText, null, false))
+						continue;
+					bAcceptAlways = true;
+				}
+
+				break;
+			}
+
+			if(!string.IsNullOrEmpty(strError))
+			{
+				ps = ProtectedString.Empty;
+				if(bShowErrorUI) MessageService.ShowWarning(strError);
 			}
 
 			return ps;

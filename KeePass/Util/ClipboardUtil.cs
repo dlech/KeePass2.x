@@ -157,28 +157,21 @@ namespace KeePass.Util
 		}
 
 		public static bool CopyAndMinimize(string strToCopy, bool bIsEntryInfo,
-			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
+			Form formContext, PwEntry peContext, PwDatabase pdContext)
 		{
-			return CopyAndMinimize(new ProtectedString(false, strToCopy),
-				bIsEntryInfo, formContext, peEntryInfo, pwReferenceSource);
-		}
-
-		public static bool CopyAndMinimize(ProtectedString psToCopy, bool bIsEntryInfo,
-			Form formContext, PwEntry peEntryInfo, PwDatabase pwReferenceSource)
-		{
-			if(psToCopy == null) throw new ArgumentNullException("psToCopy");
+			if(strToCopy == null) { Debug.Assert(false); return false; }
 
 			IntPtr hOwner = ((formContext != null) ? formContext.Handle : IntPtr.Zero);
 
-			if(Copy(psToCopy.ReadString(), true, bIsEntryInfo, peEntryInfo,
-				pwReferenceSource, hOwner))
+			if(Copy(strToCopy, true, bIsEntryInfo, peContext, pdContext, hOwner))
 			{
 				if(formContext != null)
 				{
 					if(Program.Config.MainWindow.DropToBackAfterClipboardCopy)
-						NativeMethods.LoseFocus(formContext);
+						NativeMethods.LoseFocus(formContext, true);
 
-					if(Program.Config.MainWindow.MinimizeAfterClipboardCopy)
+					if(Program.Config.MainWindow.MinimizeAfterClipboardCopy &&
+						formContext.MinimizeBox && formContext.Enabled)
 						UIUtil.SetWindowState(formContext, FormWindowState.Minimized);
 				}
 
@@ -186,6 +179,15 @@ namespace KeePass.Util
 			}
 
 			return false;
+		}
+
+		public static bool CopyAndMinimize(ProtectedString psToCopy, bool bIsEntryInfo,
+			Form formContext, PwEntry peContext, PwDatabase pdContext)
+		{
+			if(psToCopy == null) { Debug.Assert(false); return false; }
+
+			return CopyAndMinimize(psToCopy.ReadString(), bIsEntryInfo,
+				formContext, peContext, pdContext);
 		}
 
 		/// <summary>
@@ -253,13 +255,7 @@ namespace KeePass.Util
 				if(!NativeLib.IsUnix())
 				{
 					IntPtr h = NativeMethods.GetClipboardOwner();
-					if(h != IntPtr.Zero)
-					{
-						MainForm mf = Program.MainForm;
-						if(((mf != null) && (h == mf.Handle)) ||
-							GlobalWindowManager.HasWindow(h))
-							bOwnHandle = true;
-					}
+					bOwnHandle = GlobalWindowManager.HasWindowMW(h);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); } */

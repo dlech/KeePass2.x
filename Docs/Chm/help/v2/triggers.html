@@ -155,6 +155,20 @@ This event occurs right after a database file has been saved successfully.
 <li><i>Parameters:</i> See 'Opened database file' event.</li>
 </ul></li>
 
+<li><b>Synchronizing database file:</b><br />
+This event occurs right before a database file is synchronized
+with another database file.
+<ul>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
+</ul></li>
+
+<li><b>Synchronized database file:</b><br />
+This event occurs right after a database file has been synchronized
+with another database file.
+<ul>
+<li><i>Parameters:</i> See 'Opened database file' event.</li>
+</ul></li>
+
 <li><b>Closing database file (before saving):</b><br />
 This event occurs right before a database file is closed.
 It occurs before KeePass saves the database automatically or asks the
@@ -294,7 +308,7 @@ the current one.</li>
 Open a KDBX database file (in a new tab). If the given database file is opened
 already, KeePass brings it to the foreground.
 <ul>
-<li><i>File/URL:</i> Path of the database file to open. If it is an URL,
+<li><i>File/URL:</i> Path of the database file to open. If it is a URL,
 the protocol (prefix) must be specified.</li>
 <li><i>IO Connection - User Name / Password:</i> Optional credentials that are used
 for connecting to the target file system (for example FTP account user name /
@@ -315,7 +329,7 @@ use the 'Active database has unsaved changes' trigger condition.
 Synchronize the currently opened and active database with a file.
 <ul>
 <li><i>File/URL:</i> Path of the database file to synchronize with.
-If it is an URL, the protocol (prefix) must be specified.</li>
+If it is a URL, the protocol (prefix) must be specified.</li>
 <li><i>IO Connection - User Name / Password:</i> Optional credentials that are used
 for connecting to the target file system (for example FTP account user name /
 password). These credentials are not used to decrypt the database.</li>
@@ -325,7 +339,7 @@ password). These credentials are not used to decrypt the database.</li>
 Import a file into the currently opened and active database.
 <ul>
 <li><i>File/URL:</i> Path of the source file to import.
-If it is an URL, the protocol (prefix) must be specified.</li>
+If it is a URL, the protocol (prefix) must be specified.</li>
 <li><i>File format:</i> Specifies the import format (see the import
 dialog for possible values).</li>
 <li><i>Method:</i> Specifies the behavior for groups/entries that exist
@@ -340,7 +354,7 @@ shows a key prompt dialog.</li>
 Export the currently opened and active database to a file.
 <ul>
 <li><i>File/URL:</i> Path of the target file to export to.
-If it is an URL, the protocol (prefix) must be specified.</li>
+If it is a URL, the protocol (prefix) must be specified.</li>
 <li><i>File format:</i> Specifies the export format (see the export
 dialog for possible values).</li>
 <li><i>Filter - Group:</i> Specifies the path of the group to export

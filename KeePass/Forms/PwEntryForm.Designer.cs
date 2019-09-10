@@ -282,6 +282,7 @@
 			this.m_tbUrl.Name = "m_tbUrl";
 			this.m_tbUrl.Size = new System.Drawing.Size(373, 20);
 			this.m_tbUrl.TabIndex = 16;
+			this.m_tbUrl.TextChanged += new System.EventHandler(this.OnUrlTextChanged);
 			// 
 			// m_cbExpires
 			// 
@@ -751,6 +752,7 @@
 			this.m_cmbOverrideUrl.Name = "m_cmbOverrideUrl";
 			this.m_cmbOverrideUrl.Size = new System.Drawing.Size(447, 21);
 			this.m_cmbOverrideUrl.TabIndex = 7;
+			this.m_cmbOverrideUrl.TextChanged += new System.EventHandler(this.OnUrlOverrideTextChanged);
 			// 
 			// m_tbTags
 			// 

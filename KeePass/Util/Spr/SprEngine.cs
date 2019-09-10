@@ -31,6 +31,7 @@ using KeePass.Forms;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Native;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -376,6 +377,23 @@ namespace KeePass.Util.Spr
 
 				if(ctx.EncodeAsAutoTypeSequence)
 					str = SprEncoding.EncodeAsAutoTypeSequence(str);
+			}
+
+			return str;
+		}
+
+		private static string UntransformContent(string strContent, SprContext ctx)
+		{
+			if(strContent == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strContent;
+
+			if(ctx != null)
+			{
+				if(ctx.EncodeAsAutoTypeSequence) { Debug.Assert(false); }
+
+				if(ctx.EncodeForCommandLine)
+					str = SprEncoding.DecodeCommandLine(str);
 			}
 
 			return str;
@@ -856,8 +874,16 @@ namespace KeePass.Util.Spr
 			{
 				if(lParams.Count == 0) continue;
 
+				string strBaseRaw = null;
+				if((ctx != null) && (ctx.Base != null))
+				{
+					if(ctx.BaseIsEncoded)
+						strBaseRaw = UntransformContent(ctx.Base, ctx);
+					else strBaseRaw = ctx.Base;
+				}
+
 				string strCmd = WinUtil.CompileUrl((lParams[0] ?? string.Empty),
-					((ctx != null) ? ctx.Entry : null), true, null, true);
+					((ctx != null) ? ctx.Entry : null), true, strBaseRaw, true);
 				if(WinUtil.IsCommandLineUrl(strCmd))
 					strCmd = WinUtil.GetCommandLineFromUrl(strCmd);
 				if(string.IsNullOrEmpty(strCmd)) continue;
@@ -874,7 +900,7 @@ namespace KeePass.Util.Spr
 					ProcessStartInfo psi = new ProcessStartInfo();
 
 					string strApp, strArgs;
-					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs, true);
+					StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs);
 					if(string.IsNullOrEmpty(strApp)) continue;
 					psi.FileName = strApp;
 					if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
@@ -905,7 +931,7 @@ namespace KeePass.Util.Spr
 
 					bool bWait = GetParam(d, "w", "1").Equals("1", sc);
 
-					p = Process.Start(psi);
+					p = NativeLib.StartProcessEx(psi);
 					if(p == null) { Debug.Assert(false); continue; }
 
 					if(bStdOut)
