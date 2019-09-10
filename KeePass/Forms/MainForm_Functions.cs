@@ -89,6 +89,7 @@ namespace KeePass.Forms
 		private OpenWithMenu m_dynOpenUrlMenu;
 		private OpenWithMenu m_dynOpenUrlCtx;
 		private OpenWithMenu m_dynOpenUrlToolBar;
+		private MenuItemLinks m_milMain = new MenuItemLinks();
 
 		private AsyncPwListUpdate m_asyncListUpdate = null;
 
@@ -627,15 +628,7 @@ namespace KeePass.Forms
 		}
 
 		private void UpdateUIGroupState(MainAppState sMain, bool bMenuVisible,
-			bool bContextMenu, ToolStripMenuItem tsmiAdd,
-			ToolStripMenuItem tsmiEdit, ToolStripMenuItem tsmiDup,
-			ToolStripMenuItem tsmiDelete, ToolStripMenuItem tsmiRearrange,
-			ToolStripMenuItem tsmiMoveToTop, ToolStripMenuItem tsmiMoveOneUp,
-			ToolStripMenuItem tsmiMoveOneDown, ToolStripMenuItem tsmiMoveToBottom,
-			ToolStripMenuItem tsmiSort, ToolStripMenuItem tsmiSortRec,
-			ToolStripMenuItem tsmiExpand, ToolStripMenuItem tsmiCollapse,
-			ToolStripMenuItem tsmiEmptyRB, ToolStripMenuItem tsmiFind,
-			ToolStripMenuItem tsmiPrint, ToolStripMenuItem tsmiExport)
+			bool bContextMenu, ToolStripMenuItem tsmiFind)
 		{
 			MainAppState s = (sMain ?? GetMainAppState());
 
@@ -651,23 +644,26 @@ namespace KeePass.Forms
 			uint uSubGroups = 0, uSubEntries = 0;
 			if(pg != null) pg.GetCounts(true, out uSubGroups, out uSubEntries);
 
-			UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiAdd, tsmiEdit);
-			UIUtil.SetEnabledFast(bChildOps, tsmiDup, tsmiDelete);
+			m_menuMain.SuspendLayout();
+			m_ctxGroupList.SuspendLayout();
 
-			UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiRearrange);
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuGroupAdd, m_menuGroupEdit);
+			UIUtil.SetEnabledFast(bChildOps, m_menuGroupDuplicate, m_menuGroupDelete);
+
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuGroupRearrange);
 			UIUtil.SetEnabledFast((bMoveOps && (pgParent.Groups.IndexOf(pg) >= 1)),
-				tsmiMoveToTop, tsmiMoveOneUp);
+				m_menuGroupMoveToTop, m_menuGroupMoveOneUp);
 			UIUtil.SetEnabledFast((bMoveOps && (pgParent.Groups.IndexOf(pg) <
-				((int)pgParent.Groups.UCount - 1))), tsmiMoveOneDown,
-				tsmiMoveToBottom);
+				((int)pgParent.Groups.UCount - 1))), m_menuGroupMoveOneDown,
+				m_menuGroupMoveToBottom);
 
-			UIUtil.SetEnabledFast(((pg != null) && (pg.Groups.UCount > 1)), tsmiSort);
-			UIUtil.SetEnabledFast((uSubGroups > 1), tsmiSortRec);
+			UIUtil.SetEnabledFast(((pg != null) && (pg.Groups.UCount > 1)), m_menuGroupSort);
+			UIUtil.SetEnabledFast((uSubGroups > 1), m_menuGroupSortRec);
 
-			UIUtil.SetEnabledFast((uSubGroups > 0), tsmiExpand, tsmiCollapse);
+			UIUtil.SetEnabledFast((uSubGroups > 0), m_menuGroupExpand, m_menuGroupCollapse);
 
 			bool bShowEmpty = false, bEnableEmpty = false;
-			Debug.Assert(tsmiEmptyRB.ShortcutKeys == Keys.None); // For bMenuVisible
+			Debug.Assert(m_menuGroupEmptyRB.ShortcutKeys == Keys.None); // For bMenuVisible
 			if(bMenuVisible && s.DatabaseOpened && pd.RecycleBinEnabled)
 			{
 				PwGroup pgRB = pd.RootGroup.FindGroup(pd.RecycleBinUuid, true);
@@ -678,76 +674,45 @@ namespace KeePass.Forms
 				if(bShowEmpty)
 					bEnableEmpty = ((pgRB.Groups.UCount > 0) || (pgRB.Entries.UCount > 0));
 			}
-			tsmiEmptyRB.Enabled = bEnableEmpty;
-			tsmiEmptyRB.Visible = (bShowEmpty || !bContextMenu);
+			m_menuGroupEmptyRB.Enabled = bEnableEmpty;
+			m_milMain.SetCopyAvailable(m_menuGroupEmptyRB, bShowEmpty);
 
 			if(tsmiFind != null) UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiFind);
 
-			UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiPrint, tsmiExport);
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuGroupPrint, m_menuGroupExport);
+
+			m_ctxGroupList.ResumeLayout(true);
+			m_menuMain.ResumeLayout(true);
 		}
 
 		private void UpdateUIGroupMenuState(MainAppState sMain, bool bMenuVisible)
 		{
-			UpdateUIGroupState(sMain, bMenuVisible, false,
-				m_menuGroupAdd, m_menuGroupEdit, m_menuGroupDuplicate,
-				m_menuGroupDelete, m_menuGroupRearrange,
-				m_menuGroupMoveToTop, m_menuGroupMoveOneUp,
-				m_menuGroupMoveOneDown, m_menuGroupMoveToBottom,
-				m_menuGroupSort, m_menuGroupSortRec,
-				m_menuGroupExpand, m_menuGroupCollapse,
-				m_menuGroupEmptyRB, null,
-				m_menuGroupPrint, m_menuGroupExport);
+			UpdateUIGroupState(sMain, bMenuVisible, false, null);
 		}
 
 		private void UpdateUIGroupCtxState()
 		{
-			UpdateUIGroupState(null, true, true,
-				m_ctxGroupAdd, m_ctxGroupEdit, m_ctxGroupDuplicate,
-				m_ctxGroupDelete, m_ctxGroupRearrange,
-				m_ctxGroupMoveToTop, m_ctxGroupMoveOneUp,
-				m_ctxGroupMoveOneDown, m_ctxGroupMoveToBottom,
-				m_ctxGroupSort, m_ctxGroupSortRec,
-				m_ctxGroupExpand, m_ctxGroupCollapse,
-				m_ctxGroupEmptyRB, m_ctxGroupFind,
-				m_ctxGroupPrint, m_ctxGroupExport);
+			UpdateUIGroupState(null, true, true, m_ctxGroupFind);
 		}
 
 		private void UpdateUIEntryState(MainAppState sMain, bool bMenuVisible,
-			bool bContextMenu, ToolStripMenuItem tsmiCopyUserName,
-			ToolStripMenuItem tsmiCopyPassword, ToolStripMenuItem tsmiUrl,
-			ToolStripMenuItem tsmiOpenUrl, ToolStripMenuItem tsmiCopyUrl,
-			ToolStripMenuItem tsmiStrings, DynamicMenu dynStrings,
-			ToolStripMenuItem tsmiBinaries, DynamicMenu dynBinaries,
-			ToolStripMenuItem tsmiSaveAttachedFiles,
-			ToolStripMenuItem tsmiAutoType, ToolStripMenuItem tsmiAutoTypeAdv,
-			ToolStripMenuItem tsmiAdd, ToolStripMenuItem tsmiEdit,
-			ToolStripMenuItem tsmiEditQuick, ToolStripMenuItem tsmiIcon,
-			ToolStripMenuItem tsmiColor, ToolStripMenuItem tsmiColorStd,
-			ToolStripMenuItem tsmiColorRed, ToolStripMenuItem tsmiColorGreen,
-			ToolStripMenuItem tsmiColorBlue, ToolStripMenuItem tsmiColorYellow,
-			ToolStripMenuItem tsmiColorCustom, ToolStripMenuItem tsmiTagAdd,
-			ToolStripMenuItem tsmiTagRemove, ToolStripMenuItem tsmiTagNew,
-			ToolStripMenuItem tsmiExpiresNow, ToolStripMenuItem tsmiExpiresNever,
-			ToolStripMenuItem tsmiDup, ToolStripMenuItem tsmiDelete,
-			ToolStripMenuItem tsmiSelectAll, ToolStripMenuItem tsmiRearrange,
-			ToolStripMenuItem tsmiMoveToTop, ToolStripMenuItem tsmiMoveOneUp,
-			ToolStripMenuItem tsmiMoveOneDown, ToolStripMenuItem tsmiMoveToBottom,
-			ToolStripMenuItem tsmiMoveToGroup,
-			ToolStripMenuItem tsmiDX, ToolStripMenuItem tsmiClipCopy,
-			ToolStripMenuItem tsmiClipCopyPlain, ToolStripMenuItem tsmiPrint,
-			ToolStripMenuItem tsmiExport)
+			bool bContextMenu, DynamicMenu dynStrings, DynamicMenu dynBinaries)
 		{
 			MainAppState s = (sMain ?? GetMainAppState());
 			PwEntry pe = s.SelectedEntry;
 
-			tsmiCopyUserName.Enabled = s.CanCopyUserName;
-			tsmiCopyUserName.Visible = (!s.IsOneTan || !bContextMenu);
+			m_menuMain.SuspendLayout();
+			m_ctxPwList.SuspendLayout();
 
-			tsmiCopyPassword.Enabled = s.CanCopyPassword;
-			tsmiCopyPassword.Text = (s.IsOneTan ? KPRes.CopyTanMenu :
+			m_menuEntryCopyUserName.Enabled = s.CanCopyUserName;
+			m_milMain.SetCopyAvailable(m_menuEntryCopyUserName, !s.IsOneTan);
+
+			m_menuEntryCopyPassword.Enabled = s.CanCopyPassword;
+			m_menuEntryCopyPassword.Text = (s.IsOneTan ? KPRes.CopyTanMenu :
 				KPRes.CopyPasswordMenu);
 
-			UIUtil.SetEnabledFast(s.CanOpenUrl, tsmiUrl, tsmiOpenUrl, tsmiCopyUrl);
+			UIUtil.SetEnabledFast(s.CanOpenUrl, m_menuEntryUrl, m_menuEntryOpenUrl,
+				m_menuEntryCopyUrl);
 
 			if(bMenuVisible)
 			{
@@ -800,99 +765,70 @@ namespace KeePass.Forms
 				if(uStrItems == 0) dynStrings.AddItem(m_strNoneP, null).Enabled = false;
 				if(uBinItems == 0) dynBinaries.AddItem(m_strNoneP, null).Enabled = false;
 
-				tsmiStrings.Enabled = (uStrItems != 0);
-				if(bContextMenu) tsmiStrings.Visible = (uStrItems != 0);
-				tsmiBinaries.Enabled = (uBinItems != 0);
-				if(bContextMenu) tsmiBinaries.Visible = (uBinItems != 0);
+				m_menuEntryCopyString.Enabled = (uStrItems != 0);
+				m_milMain.SetCopyAvailable(m_menuEntryCopyString, (uStrItems != 0));
+				m_menuEntryAttachments.Enabled = (uBinItems != 0);
+				m_milMain.SetCopyAvailable(m_menuEntryAttachments, (uBinItems != 0));
 			}
 
 			bool bAttach = ((s.EntriesSelected >= 2) || ((pe != null) &&
 				(pe.Binaries.UCount > 0)));
-			tsmiSaveAttachedFiles.Enabled = bAttach;
-			tsmiSaveAttachedFiles.Visible = (bAttach || !bContextMenu);
+			m_menuEntrySaveAttachedFiles.Enabled = bAttach;
+			m_milMain.SetCopyAvailable(m_menuEntrySaveAttachedFiles, bAttach);
 
-			tsmiAutoType.Enabled = s.CanPerformAutoType;
+			m_menuEntryPerformAutoType.Enabled = s.CanPerformAutoType;
 
-			tsmiAutoTypeAdv.Enabled = s.CanPerformAutoType;
-			tsmiAutoTypeAdv.Visible = Program.Config.UI.ShowAdvAutoTypeCommands;
-			foreach(ToolStripItem tsiAdv in tsmiAutoTypeAdv.DropDownItems)
+			m_menuEntryAutoTypeAdv.Enabled = s.CanPerformAutoType;
+			m_menuEntryAutoTypeAdv.Available = Program.Config.UI.ShowAdvAutoTypeCommands;
+			foreach(ToolStripItem tsiAdv in m_menuEntryAutoTypeAdv.DropDownItems)
+			{
+				tsiAdv.Enabled = s.CanPerformAutoType;
+			}
+			foreach(ToolStripItem tsiAdv in m_ctxEntryAutoTypeAdv.DropDownItems)
 			{
 				tsiAdv.Enabled = s.CanPerformAutoType;
 			}
 
-			UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiAdd);
-			UIUtil.SetEnabledFast((s.EntriesSelected == 1), tsmiEdit);
-			UIUtil.SetEnabledFast((s.EntriesSelected != 0), tsmiEditQuick,
-				tsmiIcon, tsmiColor, tsmiColorStd, tsmiColorRed, tsmiColorGreen,
-				tsmiColorBlue, tsmiColorYellow, tsmiColorCustom,
-				tsmiTagAdd, tsmiTagRemove, tsmiTagNew,
-				tsmiExpiresNow, tsmiExpiresNever, tsmiDup, tsmiDelete);
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryAdd);
+			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuEntryEdit);
+			UIUtil.SetEnabledFast((s.EntriesSelected != 0), m_menuEntryEditQuick,
+				m_menuEntryIcon, m_menuEntryColor, m_menuEntryColorStandard,
+				m_menuEntryColorLightRed, m_menuEntryColorLightGreen,
+				m_menuEntryColorLightBlue, m_menuEntryColorLightYellow,
+				m_menuEntryColorCustom, m_menuEntryTagAdd, m_menuEntryTagRemove,
+				m_menuEntryTagNew, m_menuEntryExpiresNow, m_menuEntryExpiresNever,
+				m_menuEntryDuplicate, m_menuEntryDelete);
 
-			UIUtil.SetEnabledFast((s.DatabaseOpened && (s.EntriesCount > 0)), tsmiSelectAll);
+			UIUtil.SetEnabledFast((s.DatabaseOpened && (s.EntriesCount > 0)),
+				m_menuEntrySelectAll);
 
-			UIUtil.SetEnabledFast((s.EntriesSelected != 0), tsmiRearrange, tsmiMoveToGroup);
+			UIUtil.SetEnabledFast((s.EntriesSelected != 0), m_menuEntryRearrange,
+				m_menuEntryMoveToGroup);
 			UIUtil.SetEnabledFast(((m_pListSorter.Column < 0) && (s.EntriesSelected > 0)),
-				tsmiMoveToTop, tsmiMoveOneUp, tsmiMoveOneDown, tsmiMoveToBottom);
+				m_menuEntryMoveToTop, m_menuEntryMoveOneUp, m_menuEntryMoveOneDown,
+				m_menuEntryMoveToBottom);
 
-			if(tsmiDX != null)
-			{
-				UIUtil.SetEnabledFast(s.DatabaseOpened, tsmiDX);
-				// 'Paste Entry' is updated in the menu opening handler
-				// and its keyboard shortcut is handled manually (i.e.
-				// it's independent of the menu item state)
-				UIUtil.SetEnabledFast((s.EntriesSelected != 0), tsmiClipCopy,
-					tsmiClipCopyPlain, tsmiPrint, tsmiExport);
-			}
-			else
-			{
-				Debug.Assert((tsmiClipCopy == null) && (tsmiClipCopyPlain == null) &&
-					(tsmiPrint == null) && (tsmiExport == null));
-			}
+			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryDX);
+			// 'Paste Entry' is updated in the menu opening handler
+			// and its keyboard shortcut is handled manually (i.e.
+			// it's independent of the menu item state)
+			UIUtil.SetEnabledFast((s.EntriesSelected != 0), m_menuEntryClipCopy,
+				m_menuEntryClipCopyPlain, m_menuEntryPrint, m_menuEntryExport);
+
+			m_ctxPwList.ResumeLayout(true);
+			m_menuMain.ResumeLayout(true);
 		}
 
 		private void UpdateUIEntryMenuState(MainAppState sMain, bool bMenuVisible)
 		{
-			UpdateUIEntryState(sMain, bMenuVisible, false,
-				m_menuEntryCopyUserName, m_menuEntryCopyPassword,
-				m_menuEntryUrl, m_menuEntryOpenUrl, m_menuEntryCopyUrl,
-				m_menuEntryCopyString, m_dynStringsMenu,
-				m_menuEntryAttachments, m_dynBinariesMenu,
-				m_menuEntrySaveAttachedFiles,
-				m_menuEntryPerformAutoType, m_menuEntryAutoTypeAdv,
-				m_menuEntryAdd, m_menuEntryEdit, m_menuEntryEditQuick,
-				m_menuEntryIcon, m_menuEntryColor, m_menuEntryColorStandard,
-				m_menuEntryColorLightRed, m_menuEntryColorLightGreen,
-				m_menuEntryColorLightBlue, m_menuEntryColorLightYellow,
-				m_menuEntryColorCustom, m_menuEntryTagAdd,
-				m_menuEntryTagRemove, m_menuEntryTagNew,
-				m_menuEntryExpiresNow, m_menuEntryExpiresNever,
-				m_menuEntryDuplicate, m_menuEntryDelete, m_menuEntrySelectAll,
-				m_menuEntryRearrange, m_menuEntryMoveToTop, m_menuEntryMoveOneUp,
-				m_menuEntryMoveOneDown, m_menuEntryMoveToBottom, m_menuEntryMoveToGroup,
-				m_menuEntryDX, m_menuEntryClipCopy, m_menuEntryClipCopyPlain,
-				m_menuEntryPrint, m_menuEntryExport);
+			UpdateUIEntryState(sMain, bMenuVisible, false, m_dynStringsMenu,
+				m_dynBinariesMenu);
 		}
 
 		private void UpdateUIEntryCtxState()
 		{
-			UpdateUIEntryState(null, true, true,
-				m_ctxEntryCopyUserName, m_ctxEntryCopyPassword,
-				m_ctxEntryUrl, m_ctxEntryOpenUrl, m_ctxEntryCopyUrl,
-				m_ctxEntryCopyString, m_dynStringsCtx,
-				m_ctxEntryAttachments, m_dynBinariesCtx,
-				m_ctxEntrySaveAttachedFiles,
-				m_ctxEntryPerformAutoType, m_ctxEntryAutoTypeAdv,
-				m_ctxEntryAdd, m_ctxEntryEdit, m_ctxEntryEditQuick,
-				m_ctxEntryIcon, m_ctxEntryColor, m_ctxEntryColorStandard,
-				m_ctxEntryColorLightRed, m_ctxEntryColorLightGreen,
-				m_ctxEntryColorLightBlue, m_ctxEntryColorLightYellow,
-				m_ctxEntryColorCustom, m_ctxEntryTagAdd,
-				m_ctxEntryTagRemove, m_ctxEntryTagNew,
-				m_ctxEntryExpiresNow, m_ctxEntryExpiresNever,
-				m_ctxEntryDuplicate, m_ctxEntryDelete, m_ctxEntrySelectAll,
-				m_ctxEntryRearrange, m_ctxEntryMoveToTop, m_ctxEntryMoveOneUp,
-				m_ctxEntryMoveOneDown, m_ctxEntryMoveToBottom, m_ctxEntryMoveToGroup,
-				null, null, null, null, null);
+			UpdateUIEntryState(null, true, true, m_dynStringsCtx,
+				m_dynBinariesCtx);
 		}
 
 		private MainAppState GetMainAppState()
@@ -1267,25 +1203,17 @@ namespace KeePass.Forms
 				Program.Config.MainWindow.EntryListAlternatingBgColors);
 		}
 
-		/// <summary>
-		/// Update the group list. This function completely rebuilds the groups
-		/// view. You must call this function after you made any changes to the
-		/// groups structure of the currently open database.
-		/// </summary>
-		/// <param name="pgNewSelected">If this parameter is <c>null</c>, the
-		/// previously selected group is selected again (after the list was
-		/// rebuilt). If this parameter is non-<c>null</c>, the specified
-		/// <c>PwGroup</c> is selected after the function returns.</param>
-		private void UpdateGroupList(PwGroup pgNewSelected)
+		private void UpdateGroupList(PwGroup pgToSelect)
 		{
 			NotifyUserActivity();
 
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			PwGroup pg = (pgNewSelected ?? GetSelectedGroup());
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			PwGroup pgSel = (pgToSelect ?? GetSelectedGroup());
 
 			PwGroup pgTop = null;
 			TreeNode tnTop = m_tvGroups.TopNode;
 			if(tnTop != null) pgTop = (tnTop.Tag as PwGroup);
+			tnTop = null;
 
 			m_tvGroups.BeginUpdate();
 			m_tvGroups.Nodes.Clear();
@@ -1294,53 +1222,79 @@ namespace KeePass.Forms
 
 			m_dtCachedNow = DateTime.UtcNow;
 
-			TreeNode tnRoot = null;
-			if(pwDb.RootGroup != null)
-			{
-				int nIconID = ((!pwDb.RootGroup.CustomIconUuid.Equals(PwUuid.Zero)) ?
-					((int)PwIcon.Count + pwDb.GetCustomIconIndex(
-					pwDb.RootGroup.CustomIconUuid)) : (int)pwDb.RootGroup.IconId);
-				if(pwDb.RootGroup.Expires && (pwDb.RootGroup.ExpiryTime <= m_dtCachedNow))
-					nIconID = (int)PwIcon.Expired;
-
-				tnRoot = new TreeNode(pwDb.RootGroup.Name, // + GetGroupSuffixText(pwDb.RootGroup),
-					nIconID, nIconID);
-
-				tnRoot.Tag = pwDb.RootGroup;
-				if(m_fontBoldTree != null) tnRoot.NodeFont = m_fontBoldTree;
-				UIUtil.SetGroupNodeToolTip(tnRoot, pwDb.RootGroup);
-
-				m_tvGroups.Nodes.Add(tnRoot);
-			}
-
-			TreeNode tnSelected = null;
-			RecursiveAddGroup(tnRoot, pwDb.RootGroup, pg, ref tnSelected);
+			TreeNode tnSel = null;
+			TreeNode tnRoot = (pd.IsOpen ? GuiAddGroupRec(m_tvGroups.Nodes,
+				pd.RootGroup, pgSel, ref tnSel, pgTop, ref tnTop) : null);
 
 			if(tnRoot != null) tnRoot.Expand();
 
-			if(tnSelected != null)
+			if(tnSel != null)
 			{
 				// Ensure all parent tree nodes are expanded
 				List<TreeNode> lParents = new List<TreeNode>();
-				TreeNode tnUp = tnSelected;
-				while(true)
+				TreeNode tnUp = tnSel.Parent;
+				while(tnUp != null)
 				{
-					tnUp = tnUp.Parent;
-					if(tnUp == null) break;
 					lParents.Add(tnUp);
+					tnUp = tnUp.Parent;
 				}
 				for(int i = (lParents.Count - 1); i >= 0; --i)
 					lParents[i].Expand();
 
-				m_tvGroups.SelectedNode = tnSelected;
+				m_tvGroups.SelectedNode = tnSel;
 			}
-			else if(m_tvGroups.Nodes.Count > 0)
-				m_tvGroups.SelectedNode = m_tvGroups.Nodes[0];
+			else if(tnRoot != null) m_tvGroups.SelectedNode = tnRoot;
 
 			// Restore view *after* changing the selection
-			if(pgTop != null) SetTopVisibleGroup(pgTop.Uuid);
+			if(tnTop != null) m_tvGroups.TopNode = tnTop;
 
 			m_tvGroups.EndUpdate();
+		}
+
+		private TreeNode GuiAddGroupRec(TreeNodeCollection tncContainer,
+			PwGroup pg, PwGroup pgFind1, ref TreeNode tnFound1,
+			PwGroup pgFind2, ref TreeNode tnFound2)
+		{
+			if(tncContainer == null) { Debug.Assert(false); return null; }
+			if(pg == null) { Debug.Assert(false); return null; }
+
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			bool bExpired = (pg.Expires && (pg.ExpiryTime <= m_dtCachedNow));
+			string strName = pg.Name; // + GetGroupSuffixText(pg);
+
+			int nIconID = ((!pg.CustomIconUuid.Equals(PwUuid.Zero)) ?
+				((int)PwIcon.Count + pd.GetCustomIconIndex(pg.CustomIconUuid)) :
+				(int)pg.IconId);
+			if(bExpired) nIconID = (int)PwIcon.Expired;
+
+			TreeNode tn = new TreeNode(strName, nIconID, nIconID);
+			tn.Tag = pg;
+			UIUtil.SetGroupNodeToolTip(tn, pg);
+
+			if((pg == pd.RootGroup) && (m_fontBoldTree != null))
+				tn.NodeFont = m_fontBoldTree;
+			else if(pd.RecycleBinEnabled && pg.Uuid.Equals(pd.RecycleBinUuid) &&
+				(m_fontItalicTree != null))
+				tn.NodeFont = m_fontItalicTree;
+			else if(bExpired && (m_fontExpired != null))
+				tn.NodeFont = m_fontExpired;
+
+			tncContainer.Add(tn);
+
+			foreach(PwGroup pgSub in pg.Groups)
+				GuiAddGroupRec(tn.Nodes, pgSub, pgFind1, ref tnFound1,
+					pgFind2, ref tnFound2);
+
+			if(tn.Nodes.Count != 0)
+			{
+				bool bExpanded = tn.IsExpanded;
+				if(bExpanded && !pg.IsExpanded) tn.Collapse();
+				else if(!bExpanded && pg.IsExpanded) tn.Expand();
+			}
+
+			if(pg == pgFind1) tnFound1 = tn;
+			if(pg == pgFind2) tnFound2 = tn;
+			return tn;
 		}
 
 		/// <summary>
@@ -1512,50 +1466,6 @@ namespace KeePass.Forms
 			catch(Exception) { Debug.Assert(false); }
 
 			return peTop;
-		}
-
-		private void RecursiveAddGroup(TreeNode tnParent, PwGroup pgContainer,
-			PwGroup pgFind, ref TreeNode tnFound)
-		{
-			if(pgContainer == null) return;
-
-			TreeNodeCollection tnc;
-			if(tnParent == null) tnc = m_tvGroups.Nodes;
-			else tnc = tnParent.Nodes;
-
-			PwDatabase pd = m_docMgr.ActiveDatabase;
-			foreach(PwGroup pg in pgContainer.Groups)
-			{
-				bool bExpired = (pg.Expires && (pg.ExpiryTime <= m_dtCachedNow));
-				string strName = pg.Name; // + GetGroupSuffixText(pg);
-
-				int nIconID = ((!pg.CustomIconUuid.Equals(PwUuid.Zero)) ?
-					((int)PwIcon.Count + pd.GetCustomIconIndex(pg.CustomIconUuid)) :
-					(int)pg.IconId);
-				if(bExpired) nIconID = (int)PwIcon.Expired;
-
-				TreeNode tn = new TreeNode(strName, nIconID, nIconID);
-				tn.Tag = pg;
-				UIUtil.SetGroupNodeToolTip(tn, pg);
-
-				if(pd.RecycleBinEnabled && pg.Uuid.Equals(pd.RecycleBinUuid) &&
-					(m_fontItalicTree != null))
-					tn.NodeFont = m_fontItalicTree;
-				else if(bExpired && (m_fontExpired != null))
-					tn.NodeFont = m_fontExpired;
-
-				tnc.Add(tn);
-
-				RecursiveAddGroup(tn, pg, pgFind, ref tnFound);
-
-				if(tn.Nodes.Count > 0)
-				{
-					if(tn.IsExpanded && !pg.IsExpanded) tn.Collapse();
-					else if(!tn.IsExpanded && pg.IsExpanded) tn.Expand();
-				}
-
-				if(pg == pgFind) tnFound = tn;
-			}
 		}
 
 		private void SortPasswordList(bool bEnableSorting, int nColumn,
@@ -2401,7 +2311,7 @@ namespace KeePass.Forms
 			bool bCorrectDbActive = (m_docMgr.ActiveDocument.Database == pwOpenedDb);
 			Debug.Assert(bCorrectDbActive);
 
-			// AutoEnableVisualHiding();
+			AutoEnableVisualHiding(true);
 
 			// SetLastUsedFile(pwOpenedDb.IOConnectionInfo);
 			RememberKeySources(pwOpenedDb);
@@ -2431,19 +2341,30 @@ namespace KeePass.Forms
 
 			bool bMkChangeRec = ((pwOpenedDb.MasterKeyChangeRec >= 0) &&
 				(lMkDays >= pwOpenedDb.MasterKeyChangeRec));
-			string strMkExpiry = Program.Config.Security.MasterKeyExpiryRec;
-			if(!string.IsNullOrEmpty(strMkExpiry))
+			string strMkExpiry = (Program.Config.Security.MasterKeyExpiryRec ??
+				string.Empty).Trim();
+			if(strMkExpiry.Length != 0)
 			{
 				try
 				{
-					DateTime dtExpiry = XmlConvert.ToDateTime(strMkExpiry,
-						XmlDateTimeSerializationMode.Utc);
-					bMkChangeRec |= (pwOpenedDb.MasterKeyChanged < dtExpiry);
+					if(strMkExpiry.StartsWith("P", StrUtil.CaseIgnoreCmp) ||
+						strMkExpiry.StartsWith("-P", StrUtil.CaseIgnoreCmp))
+					{
+						TimeSpan tsExpiry = XmlConvert.ToTimeSpan(strMkExpiry);
+						bMkChangeRec |= ((pwOpenedDb.MasterKeyChanged +
+							tsExpiry) < DateTime.UtcNow);
+					}
+					else
+					{
+						DateTime dtExpiry = XmlConvert.ToDateTime(strMkExpiry,
+							XmlDateTimeSerializationMode.Utc);
+						bMkChangeRec |= (pwOpenedDb.MasterKeyChanged < dtExpiry);
+					}
 				}
-				catch(Exception exDate)
+				catch(Exception exMkExp)
 				{
 					MessageService.ShowWarning("Configuration/Security/MasterKeyExpiryRec:",
-						exDate);
+						exMkExp);
 				}
 			}
 
@@ -2616,24 +2537,31 @@ namespace KeePass.Forms
 			return false;
 		}
 
-		// private void AutoEnableVisualHiding()
-		// {
-		//	// KPF 1802197
-		//	// Turn on visual hiding if option is selected
-		//	if(m_docMgr.ActiveDatabase.MemoryProtection.AutoEnableVisualHiding)
-		//	{
-		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectTitle && !m_viewHideFields.ProtectTitle)
-		//			m_menuViewHideTitles.Checked = m_viewHideFields.ProtectTitle = true;
-		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUserName && !m_viewHideFields.ProtectUserName)
-		//			m_menuViewHideUserNames.Checked = m_viewHideFields.ProtectUserName = true;
-		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectPassword && !m_viewHideFields.ProtectPassword)
-		//			m_menuViewHidePasswords.Checked = m_viewHideFields.ProtectPassword = true;
-		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUrl && !m_viewHideFields.ProtectUrl)
-		//			m_menuViewHideURLs.Checked = m_viewHideFields.ProtectUrl = true;
-		//		if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectNotes && !m_viewHideFields.ProtectNotes)
-		//			m_menuViewHideNotes.Checked = m_viewHideFields.ProtectNotes = true;
-		//	}
-		// }
+		private static void AutoEnableVisualHiding(bool bNewOpenDatabase)
+		{
+			// // KPF 1802197
+			// // Turn on visual hiding if option is selected
+			// if(m_docMgr.ActiveDatabase.MemoryProtection.AutoEnableVisualHiding)
+			// {
+			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectTitle && !m_viewHideFields.ProtectTitle)
+			//		m_menuViewHideTitles.Checked = m_viewHideFields.ProtectTitle = true;
+			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUserName && !m_viewHideFields.ProtectUserName)
+			//		m_menuViewHideUserNames.Checked = m_viewHideFields.ProtectUserName = true;
+			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectPassword && !m_viewHideFields.ProtectPassword)
+			//		m_menuViewHidePasswords.Checked = m_viewHideFields.ProtectPassword = true;
+			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectUrl && !m_viewHideFields.ProtectUrl)
+			//		m_menuViewHideURLs.Checked = m_viewHideFields.ProtectUrl = true;
+			//	if(m_docMgr.ActiveDatabase.MemoryProtection.ProtectNotes && !m_viewHideFields.ProtectNotes)
+			//		m_menuViewHideNotes.Checked = m_viewHideFields.ProtectNotes = true;
+			// }
+
+			if(bNewOpenDatabase && !Program.Config.UI.Hiding.RememberHidingPasswordsMain)
+			{
+				List<AceColumn> l = Program.Config.MainWindow.FindColumns(
+					AceColumnType.Password);
+				foreach(AceColumn c in l) c.HideWithAsterisks = true; // Reset
+			}
+		}
 
 		private TreeNode GuiFindGroup(PwUuid puSearch, TreeNode tnContainer)
 		{
@@ -3235,48 +3163,43 @@ namespace KeePass.Forms
 			UIUtil.AssignShortcut(m_menuFileLock, Keys.Control | Keys.L);
 			UIUtil.AssignShortcut(m_menuFileExit, Keys.Control | Keys.Q);
 
-			UIUtil.AssignShortcut(m_menuGroupDelete, Keys.Delete, m_ctxGroupDelete, true);
+			UIUtil.AssignShortcut(m_menuGroupDelete, Keys.Delete, null, true);
 
 			UIUtil.AssignShortcut(m_menuGroupMoveToTop, (bMoveMono ?
-				Keys.F5 : Keys.Home) | kMoveMod, m_ctxGroupMoveToTop, true);
+				Keys.F5 : Keys.Home) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuGroupMoveOneUp, (bMoveMono ?
-				Keys.F6 : Keys.Up) | kMoveMod, m_ctxGroupMoveOneUp, true);
+				Keys.F6 : Keys.Up) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuGroupMoveOneDown, (bMoveMono ?
-				Keys.F7 : Keys.Down) | kMoveMod, m_ctxGroupMoveOneDown, true);
+				Keys.F7 : Keys.Down) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuGroupMoveToBottom, (bMoveMono ?
-				Keys.F8 : Keys.End) | kMoveMod, m_ctxGroupMoveToBottom, true);
+				Keys.F8 : Keys.End) | kMoveMod, null, true);
 
-			UIUtil.AssignShortcut(m_menuGroupPrint, Keys.Control | Keys.Shift | Keys.P,
-				m_ctxGroupPrint);
+			UIUtil.AssignShortcut(m_menuGroupPrint, Keys.Control | Keys.Shift | Keys.P);
 
-			UIUtil.AssignShortcut(m_menuEntryCopyUserName, Keys.Control | Keys.B,
-				m_ctxEntryCopyUserName);
+			UIUtil.AssignShortcut(m_menuEntryCopyUserName, Keys.Control | Keys.B);
 			UIUtil.AssignShortcut(m_menuEntryCopyPassword, Keys.Control | Keys.C,
-				m_ctxEntryCopyPassword, true);
-			UIUtil.AssignShortcut(m_menuEntryOpenUrl, Keys.Control | Keys.U,
-				m_ctxEntryOpenUrl);
-			UIUtil.AssignShortcut(m_menuEntryCopyUrl, Keys.Control | Keys.Shift | Keys.U,
-				m_ctxEntryCopyUrl);
+				null, true);
+			UIUtil.AssignShortcut(m_menuEntryOpenUrl, Keys.Control | Keys.U);
+			UIUtil.AssignShortcut(m_menuEntryCopyUrl, Keys.Control | Keys.Shift | Keys.U);
 			UIUtil.AssignShortcut(m_menuEntryPerformAutoType, Keys.Control | Keys.V,
-				m_ctxEntryPerformAutoType, true);
+				null, true);
 
-			UIUtil.AssignShortcut(m_menuEntryAdd, Keys.Control | Keys.I, m_ctxEntryAdd);
-			UIUtil.AssignShortcut(m_menuEntryEdit, Keys.Return, m_ctxEntryEdit, true);
-			UIUtil.AssignShortcut(m_menuEntryDuplicate, Keys.Control | Keys.K,
-				m_ctxEntryDuplicate);
-			UIUtil.AssignShortcut(m_menuEntryDelete, Keys.Delete, m_ctxEntryDelete, true);
+			UIUtil.AssignShortcut(m_menuEntryAdd, Keys.Control | Keys.I);
+			UIUtil.AssignShortcut(m_menuEntryEdit, Keys.Return, null, true);
+			UIUtil.AssignShortcut(m_menuEntryDuplicate, Keys.Control | Keys.K);
+			UIUtil.AssignShortcut(m_menuEntryDelete, Keys.Delete, null, true);
 
 			UIUtil.AssignShortcut(m_menuEntrySelectAll, Keys.Control | Keys.A,
-				m_ctxEntrySelectAll, true);
+				null, true);
 
 			UIUtil.AssignShortcut(m_menuEntryMoveToTop, (bMoveMono ?
-				Keys.F5 : Keys.Home) | kMoveMod, m_ctxEntryMoveToTop, true);
+				Keys.F5 : Keys.Home) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveOneUp, (bMoveMono ?
-				Keys.F6 : Keys.Up) | kMoveMod, m_ctxEntryMoveOneUp, true);
+				Keys.F6 : Keys.Up) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveOneDown, (bMoveMono ?
-				Keys.F7 : Keys.Down) | kMoveMod, m_ctxEntryMoveOneDown, true);
+				Keys.F7 : Keys.Down) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuEntryMoveToBottom, (bMoveMono ?
-				Keys.F8 : Keys.End) | kMoveMod, m_ctxEntryMoveToBottom, true);
+				Keys.F8 : Keys.End) | kMoveMod, null, true);
 
 			UIUtil.AssignShortcut(m_menuEntryClipCopy, Keys.Control | Keys.Shift | Keys.C,
 				null, true);
@@ -3285,7 +3208,7 @@ namespace KeePass.Forms
 
 			UIUtil.AssignShortcut(m_menuFindInDatabase, Keys.Control | Keys.F);
 			UIUtil.AssignShortcut(m_menuFindInGroup, Keys.Control | Keys.Shift | Keys.F,
-				m_ctxGroupFind);
+				m_ctxGroupFind, false);
 
 			UIUtil.AssignShortcut(m_menuFindParentGroup, Keys.Control | Keys.G);
 
@@ -3293,6 +3216,80 @@ namespace KeePass.Forms
 			// UIUtil.AssignShortcut(m_menuViewHideUserNames, Keys.Control | Keys.J);
 
 			UIUtil.AssignShortcut(m_menuHelpContents, Keys.F1);
+		}
+
+		private void ConstructContextMenus()
+		{
+			m_ctxGroupList.SuspendLayout();
+			m_ctxPwList.SuspendLayout();
+
+			ToolStripItemCollection tsicGC = m_ctxGroupList.Items;
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupEmptyRB);
+			tsicGC.Insert(0, new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupRearrange);
+			tsicGC.Insert(0, new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupDelete);
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupDuplicate);
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupEdit);
+			m_milMain.CreateCopy(tsicGC, null, false, m_menuGroupAdd);
+			tsicGC.Add(new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicGC, null, true, m_menuGroupPrint);
+			m_milMain.CreateCopy(tsicGC, null, true, m_menuGroupExport);
+
+			ToolStripItemCollection tsicEC = m_ctxPwList.Items;
+			m_milMain.CreateCopy(tsicEC, null, false, m_menuEntryCopyPassword);
+			m_milMain.CreateCopy(tsicEC, null, false, m_menuEntryCopyUserName);
+			m_milMain.CreateLink(m_ctxEntryUrl, m_menuEntryUrl, false);
+
+			ToolStripItemCollection tsicECUrl = m_ctxEntryUrl.DropDownItems;
+			m_milMain.CreateCopy(tsicECUrl, null, true, m_menuEntryOpenUrl);
+			m_milMain.CreateCopy(tsicECUrl, null, true, m_menuEntryCopyUrl);
+
+			m_milMain.CreateLink(m_ctxEntryCopyString, m_menuEntryCopyString, false);
+			m_milMain.CreateLink(m_ctxEntryAttachments, m_menuEntryAttachments, false);
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryAttachments, true, m_menuEntrySaveAttachedFiles);
+
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryAutoTypeAdv, false, m_menuEntryPerformAutoType);
+			m_milMain.CreateLink(m_ctxEntryAutoTypeAdv, m_menuEntryAutoTypeAdv, false);
+
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryEditQuick, false, m_menuEntryAdd);
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryEditQuick, false, m_menuEntryEdit);
+			m_milMain.CreateLink(m_ctxEntryEditQuick, m_menuEntryEditQuick, false);
+
+			ToolStripItemCollection tsicECQuick = m_ctxEntryEditQuick.DropDownItems;
+			tsicECQuick.Insert(0, new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicECQuick, null, false, m_menuEntryColor);
+			m_milMain.CreateCopy(tsicECQuick, null, false, m_menuEntryIcon);
+
+			m_milMain.CreateLink(m_ctxEntryTagAdd, m_menuEntryTagAdd, false);
+			m_milMain.CreateLink(m_ctxEntryTagRemove, m_menuEntryTagRemove, false);
+
+			ToolStripItemCollection tsicECTagAdd = m_ctxEntryTagAdd.DropDownItems;
+			m_milMain.CreateCopy(tsicECTagAdd, null, false, m_menuEntryTagNew);
+
+			tsicECQuick.Add(new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicECQuick, null, true, m_menuEntryExpiresNow);
+			m_milMain.CreateCopy(tsicECQuick, null, true, m_menuEntryExpiresNever);
+
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryEditQuick, true, m_menuEntryDelete);
+			m_milMain.CreateCopy(tsicEC, m_ctxEntryEditQuick, true, m_menuEntryDuplicate);
+
+			ToolStripSeparator ts = new ToolStripSeparator();
+			tsicEC.Insert(tsicEC.IndexOf(m_ctxEntryRearrange), ts);
+			m_milMain.CreateCopy(tsicEC, ts, false, m_menuEntrySelectAll);
+
+			m_milMain.CreateLink(m_ctxEntryRearrange, m_menuEntryRearrange, false);
+			m_milMain.CreateLink(m_ctxEntryMoveToGroup, m_menuEntryMoveToGroup, false);
+
+			ToolStripItemCollection tsicECMove = m_ctxEntryRearrange.DropDownItems;
+			tsicECMove.Insert(0, new ToolStripSeparator());
+			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveToBottom);
+			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveOneDown);
+			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveOneUp);
+			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveToTop);
+
+			m_ctxPwList.ResumeLayout(true);
+			m_ctxGroupList.ResumeLayout(true);
 		}
 
 		private static void CopyMenuItemText(ToolStripMenuItem tsmiTarget,
@@ -4161,7 +4158,7 @@ namespace KeePass.Forms
 
 			// Remove taskbar item
 			if(Program.Config.MainWindow.MinimizeAfterOpeningDatabase &&
-				Program.Config.MainWindow.MinimizeToTray && (bFormLoading == false) &&
+				Program.Config.MainWindow.MinimizeToTray && !bFormLoading &&
 				IsAtLeastOneFileOpen())
 			{
 				MinimizeToTray(true);
@@ -4242,12 +4239,26 @@ namespace KeePass.Forms
 			m_lvEntries.EnsureVisible(lvi.Index);
 		}
 
-		private void EnsureVisibleSelected(bool bLastMatchingEntry)
+		internal void EnsureVisibleSelected(bool? obLast)
 		{
-			PwEntry pe = GetSelectedEntry(true, bLastMatchingEntry);
-			if(pe == null) return;
+			// PwEntry pe = GetSelectedEntry(true, bLast);
+			// if(pe == null) return;
+			// EnsureVisibleEntry(pe.Uuid);
 
-			EnsureVisibleEntry(pe.Uuid);
+			ListView.SelectedIndexCollection lvsic = m_lvEntries.SelectedIndices;
+			if(lvsic == null) { Debug.Assert(false); return; }
+			int n = lvsic.Count;
+			if(n == 0) return;
+
+			// Getting lvsic[n - 1] sends n messages
+			if(obLast.HasValue)
+				m_lvEntries.EnsureVisible(obLast.Value ? lvsic[n - 1] : lvsic[0]);
+			else
+			{
+				int iFirst = lvsic[0];
+				if(n != 1) m_lvEntries.EnsureVisible(lvsic[n - 1]);
+				m_lvEntries.EnsureVisible(iFirst);
+			}
 		}
 
 		private void RemoveEntriesFromList(List<PwEntry> lEntries, bool bLockUIUpdate)
@@ -4366,8 +4377,13 @@ namespace KeePass.Forms
 		{
 			if(keyData == Keys.Escape)
 			{
+				// Control c = UIUtil.GetActiveControl(this); // Returns wrong control
+				// bool bMainMenu = (c == m_menuMain);
+				bool bMainMenu = ((msg.HWnd == m_menuMain.Handle) &&
+					(UIUtil.GetSelectedItem(m_menuMain.Items) != null));
+
 				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
-				if(obKeyDown.HasValue)
+				if(obKeyDown.HasValue && !bMainMenu)
 				{
 					bool bWnd = IsCommandTypeInvokable(null, AppCommandType.Window);
 					if(obKeyDown.Value && bWnd)
@@ -4486,7 +4502,7 @@ namespace KeePass.Forms
 
 			if(bNotBlocked)
 			{
-				try { if(!IsPrimaryControlFocused()) ResetDefaultFocus(null); }
+				try { if(!IsPrimaryControlActive()) ResetDefaultFocus(null); }
 				catch(Exception) { Debug.Assert(false); }
 			}
 			else // Blocked
@@ -5651,7 +5667,7 @@ namespace KeePass.Forms
 			if(bWish) this.TopMost = true;
 		}
 
-		private bool IsPrimaryControlFocused()
+		private bool IsPrimaryControlActive()
 		{
 			try
 			{

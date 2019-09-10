@@ -136,7 +136,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new NPasswordNpw102());
 			m_vFormats.Add(new PassKeeper12());
 			m_vFormats.Add(new PpKeeperHtml270());
-			m_vFormats.Add(new PwAgentXml234());
+			m_vFormats.Add(new PwAgentXml3());
 			m_vFormats.Add(new PwDepotXml26());
 			m_vFormats.Add(new PwKeeperCsv70());
 			m_vFormats.Add(new PwMemory2008Xml104());

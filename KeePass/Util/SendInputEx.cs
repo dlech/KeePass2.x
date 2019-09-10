@@ -398,9 +398,7 @@ namespace KeePass.Util
 					MessageService.NewLine + @"{" + strName + @"}");
 			}
 
-			uint uRepeat = 1;
-			if(ouParam.HasValue) uRepeat = ouParam.Value;
-
+			uint uRepeat = ouParam.GetValueOrDefault(1);
 			for(uint u = 0; u < uRepeat; ++u)
 			{
 				SiEvent si = new SiEvent();

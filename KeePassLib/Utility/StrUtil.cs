@@ -399,12 +399,6 @@ namespace KeePassLib.Utility
 		public static void SplitCommandLine(string strCmdLine, out string strApp,
 			out string strArgs)
 		{
-			SplitCommandLine(strCmdLine, out strApp, out strArgs, true);
-		}
-
-		internal static void SplitCommandLine(string strCmdLine, out string strApp,
-			out string strArgs, bool bDecodeAppToPath)
-		{
 			if(strCmdLine == null) { Debug.Assert(false); throw new ArgumentNullException("strCmdLine"); }
 
 			string str = strCmdLine.Trim();
@@ -435,7 +429,7 @@ namespace KeePassLib.Utility
 			if(strApp == null) { Debug.Assert(false); strApp = string.Empty; }
 			if(strArgs == null) strArgs = string.Empty;
 
-			if(bDecodeAppToPath) strApp = NativeLib.DecodeArgsToPath(strApp);
+			strApp = NativeLib.DecodeArgsToData(strApp);
 		}
 
 		// /// <summary>

@@ -686,7 +686,17 @@ namespace KeePass
 				// Do not load libraries from the current working directory
 				if(!NativeMethods.SetDllDirectory(string.Empty)) { Debug.Assert(false); }
 			}
-			catch(Exception) { } // Throws on Unix and Windows < XP SP1
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
+
+			try
+			{
+				if(NativeMethods.WerAddExcludedApplication(
+					AppDefs.FileNames.Program, false) < 0)
+				{
+					Debug.Assert(false);
+				}
+			}
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindowsVista); }
 		}
 
 		// internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)

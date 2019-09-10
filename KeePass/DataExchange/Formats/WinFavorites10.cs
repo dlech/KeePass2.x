@@ -173,7 +173,7 @@ namespace KeePass.DataExchange.Formats
 				if(!NativeLib.IsUnix()) // LNKs only supported on Windows
 				{
 					string strApp, strArgs;
-					StrUtil.SplitCommandLine(strUrl, out strApp, out strArgs, true);
+					StrUtil.SplitCommandLine(strUrl, out strApp, out strArgs);
 
 					if(!string.IsNullOrEmpty(strApp))
 						okvpCmd = new KeyValuePair<string, string>(strApp, strArgs);

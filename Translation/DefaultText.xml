@@ -1852,8 +1852,11 @@
 		<Data Name="Redo">
 			<Value>Redo</Value>
 		</Data>
-		<Data Name="RememberHidingSettings">
-			<Value>Remember password hiding setting in 'Edit Entry' window</Value>
+		<Data Name="RememberHidingPasswordsEntry">
+			<Value>Remember password hiding setting in the entry editing dialog</Value>
+		</Data>
+		<Data Name="RememberHidingPasswordsMain">
+			<Value>Remember password hiding setting in the main window</Value>
 		</Data>
 		<Data Name="RememberKeySources">
 			<Value>Remember key sources (key file paths, provider names, ...)</Value>
@@ -2119,11 +2122,17 @@
 		<Data Name="Synchronize">
 			<Value>Synchronize</Value>
 		</Data>
+		<Data Name="SynchronizedDatabaseFile">
+			<Value>Synchronized database file</Value>
+		</Data>
 		<Data Name="SynchronizeStc">
 			<Value>Synchronize active database with a file/URL</Value>
 		</Data>
 		<Data Name="Synchronizing">
 			<Value>Synchronizing...</Value>
+		</Data>
+		<Data Name="SynchronizingDatabaseFile">
+			<Value>Synchronizing database file</Value>
 		</Data>
 		<Data Name="SynchronizingHint">
 			<Value>Make sure that the two databases use the same composite master key. This is required for synchronization.</Value>
@@ -2290,9 +2299,6 @@
 		<Data Name="Unknown">
 			<Value>Unknown</Value>
 		</Data>
-		<Data Name="UnknownError">
-			<Value>An unknown error occurred.</Value>
-		</Data>
 		<Data Name="UnsupportedByMono">
 			<Value>unsupported by Mono</Value>
 		</Data>
@@ -2325,6 +2331,9 @@
 		</Data>
 		<Data Name="Url">
 			<Value>URL</Value>
+		</Data>
+		<Data Name="UrlFieldEmptyFirstTab">
+			<Value>The URL field (on the first tab page) is empty.</Value>
 		</Data>
 		<Data Name="UrlOpenDesc">
 			<Value>Open a database stored on a server.</Value>
@@ -2482,6 +2491,15 @@
 	</StringTable>
 
 	<StringTable Name="KLRes" Namespace="KeePassLib.Resources">
+		<Data Name="AlgorithmUnknown">
+			<Value>The algorithm is unknown.</Value>
+		</Data>
+		<Data Name="CharSetInvalid">
+			<Value>The character set is invalid.</Value>
+		</Data>
+		<Data Name="CharSetTooFewChars">
+			<Value>There are too few characters in the character set.</Value>
+		</Data>
 		<Data Name="CryptoStreamFailed">
 			<Value>Failed to initialize encryption/decryption stream!</Value>
 		</Data>
@@ -2578,8 +2596,17 @@
 		<Data Name="Passive">
 			<Value>Passive</Value>
 		</Data>
+		<Data Name="PathBackslash">
+			<Value>The path contains a backslash. Such paths are not supported (for security reasons).</Value>
+		</Data>
+		<Data Name="PatternInvalid">
+			<Value>The pattern is invalid.</Value>
+		</Data>
 		<Data Name="PreAuth">
 			<Value>Pre-authenticate</Value>
+		</Data>
+		<Data Name="PwGenFailed">
+			<Value>Failed to generate a password.</Value>
 		</Data>
 		<Data Name="StructsTooDeep">
 			<Value>Structures are nested too deeply.</Value>
@@ -2589,6 +2616,9 @@
 		</Data>
 		<Data Name="TryAgainSecs">
 			<Value>Please try it again in a few seconds.</Value>
+		</Data>
+		<Data Name="UnknownError">
+			<Value>An unknown error occurred.</Value>
 		</Data>
 		<Data Name="UnknownHeaderId">
 			<Value>Unknown header ID!</Value>

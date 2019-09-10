@@ -97,10 +97,7 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			MemoryStream ms = new MemoryStream();
-			MemUtil.CopyStream(sInput, ms);
-			byte[] pbData = ms.ToArray();
-			ms.Close();
+			byte[] pbData = MemUtil.Read(sInput);
 
 			try
 			{
@@ -121,9 +118,11 @@ namespace KeePass.DataExchange.Formats
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			ms = new MemoryStream(pbData, false);
 			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
-			xmlDoc.Load(ms);
+			using(MemoryStream ms = new MemoryStream(pbData, false))
+			{
+				xmlDoc.Load(ms);
+			}
 
 			XmlNode xmlRoot = xmlDoc.DocumentElement;
 
@@ -161,8 +160,6 @@ namespace KeePass.DataExchange.Formats
 					}
 				}
 			}
-
-			ms.Close();
 		}
 
 		private static void ImportEntry(XmlNode xmlNode, PwDatabase pwStorage,

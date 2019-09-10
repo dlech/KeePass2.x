@@ -411,10 +411,7 @@ namespace KeePass.Forms
 		private static bool ShowColorDialog(Color clrCurrent, out Color clrSelected)
 		{
 			Color? clrNew = UIUtil.ShowColorDialog(clrCurrent);
-
-			if(clrNew.HasValue) clrSelected = clrNew.Value;
-			else clrSelected = clrCurrent;
-
+			clrSelected = clrNew.GetValueOrDefault(clrCurrent);
 			return clrNew.HasValue;
 		}
 

@@ -60,7 +60,7 @@ namespace KeePass.DataExchange
 		private static void ThrowImplException()
 		{
 			Debug.Assert(false);
-			throw new InvalidOperationException(KPRes.UnknownError);
+			throw new InvalidOperationException(KLRes.UnknownError);
 		}
 
 		private void Load(CharStream cs)

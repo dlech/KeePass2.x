@@ -308,7 +308,7 @@ namespace KeePass.Util
 			PwEntry peCtx = ((ctx != null) ? ctx.Entry : null);
 			PwDatabase pdCtx = ((ctx != null) ? ctx.Database : null);
 			ProtectedString ps = PwGeneratorUtil.GenerateAcceptable(
-				prf, null, peCtx, pdCtx);
+				prf, null, peCtx, pdCtx, false);
 			return ps.ReadString();
 		}
 
@@ -1200,15 +1200,6 @@ namespace KeePass.Util
 			List<object> lResults = new List<object>();
 			DateTime dtNow = DateTime.UtcNow;
 
-			Color clrL = UIUtil.ColorTowards(AppDefs.ColorQualityLow,
-				AppDefs.ColorControlNormal, 0.5);
-			Color clrH = UIUtil.ColorTowards(AppDefs.ColorQualityHigh,
-				AppDefs.ColorControlNormal, 0.5);
-			int rL = clrL.R, gL = clrL.G, bL = clrL.B;
-			float rSp = (int)clrH.R - rL;
-			float gSp = (int)clrH.G - gL;
-			float bSp = (int)clrH.B - bL;
-
 			foreach(KeyValuePair<PwEntry, ulong> kvp in l)
 			{
 				PwEntry pe = kvp.Key;
@@ -1232,8 +1223,7 @@ namespace KeePass.Util
 				try
 				{
 					float fQ = (float)Math.Min(q, 128UL) / 128.0f;
-					lvsi.BackColor = Color.FromArgb(rL + (int)(fQ * rSp),
-						gL + (int)(fQ * gSp), bL + (int)(fQ * bSp));
+					lvsi.BackColor = AppDefs.GetQualityColor(fQ, true);
 				}
 				catch(Exception) { Debug.Assert(false); }
 

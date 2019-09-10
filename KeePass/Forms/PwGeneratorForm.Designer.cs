@@ -47,7 +47,7 @@
 			this.m_cbPatternPermute = new System.Windows.Forms.CheckBox();
 			this.m_lblCustomChars = new System.Windows.Forms.Label();
 			this.m_tbCustomChars = new System.Windows.Forms.TextBox();
-			this.m_cbHighAnsi = new System.Windows.Forms.CheckBox();
+			this.m_cbLatin1S = new System.Windows.Forms.CheckBox();
 			this.m_cbBrackets = new System.Windows.Forms.CheckBox();
 			this.m_cbSpecial = new System.Windows.Forms.CheckBox();
 			this.m_cbSpace = new System.Windows.Forms.CheckBox();
@@ -192,7 +192,7 @@
 			this.m_grpCurOpt.Controls.Add(this.m_cbPatternPermute);
 			this.m_grpCurOpt.Controls.Add(this.m_lblCustomChars);
 			this.m_grpCurOpt.Controls.Add(this.m_tbCustomChars);
-			this.m_grpCurOpt.Controls.Add(this.m_cbHighAnsi);
+			this.m_grpCurOpt.Controls.Add(this.m_cbLatin1S);
 			this.m_grpCurOpt.Controls.Add(this.m_cbBrackets);
 			this.m_grpCurOpt.Controls.Add(this.m_cbSpecial);
 			this.m_grpCurOpt.Controls.Add(this.m_cbSpace);
@@ -270,15 +270,15 @@
 			this.m_tbCustomChars.Size = new System.Drawing.Size(410, 20);
 			this.m_tbCustomChars.TabIndex = 13;
 			// 
-			// m_cbHighAnsi
+			// m_cbLatin1S
 			// 
-			this.m_cbHighAnsi.AutoSize = true;
-			this.m_cbHighAnsi.Location = new System.Drawing.Point(228, 137);
-			this.m_cbHighAnsi.Name = "m_cbHighAnsi";
-			this.m_cbHighAnsi.Size = new System.Drawing.Size(129, 17);
-			this.m_cbHighAnsi.TabIndex = 10;
-			this.m_cbHighAnsi.Text = "High &ANSI characters";
-			this.m_cbHighAnsi.UseVisualStyleBackColor = true;
+			this.m_cbLatin1S.AutoSize = true;
+			this.m_cbLatin1S.Location = new System.Drawing.Point(228, 137);
+			this.m_cbLatin1S.Name = "m_cbLatin1S";
+			this.m_cbLatin1S.Size = new System.Drawing.Size(117, 17);
+			this.m_cbLatin1S.TabIndex = 10;
+			this.m_cbLatin1S.Text = "L&atin-1 Supplement";
+			this.m_cbLatin1S.UseVisualStyleBackColor = true;
 			// 
 			// m_cbBrackets
 			// 
@@ -587,7 +587,7 @@
 		private System.Windows.Forms.Label m_lblPreview;
 		private System.Windows.Forms.TextBox m_tbPreview;
 		private System.Windows.Forms.ProgressBar m_pbPreview;
-		private System.Windows.Forms.CheckBox m_cbHighAnsi;
+		private System.Windows.Forms.CheckBox m_cbLatin1S;
 		private System.Windows.Forms.CheckBox m_cbBrackets;
 		private System.Windows.Forms.CheckBox m_cbSpecial;
 		private System.Windows.Forms.CheckBox m_cbSpace;

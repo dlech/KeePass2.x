@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App.Configuration;
@@ -72,8 +73,8 @@ namespace KeePass.App
 		[DefaultValue(true)]
 		public bool Export
 		{
-			get { return m_bExport;}
-			set { m_bExport = value;}
+			get { return m_bExport; }
+			set { m_bExport = value; }
 		}
 
 		private bool m_bExportNoKey = true;
@@ -230,178 +231,178 @@ namespace KeePass.App
 			}
 		} */
 
-		private static string PolicyToString(AppPolicyId flag, bool bPrefix)
+		internal static string GetName(AppPolicyId p)
 		{
-			string str = (bPrefix ? "* " : string.Empty);
-			str += KPRes.Feature + ": ";
+			string str;
 
-			switch(flag)
+			switch(p)
 			{
 				case AppPolicyId.Plugins:
-					str += KPRes.Plugins;
+					str = KPRes.Plugins;
 					break;
 				case AppPolicyId.Export:
-					str += KPRes.Export;
+					str = KPRes.Export;
 					break;
 				case AppPolicyId.ExportNoKey:
-					str += KPRes.Export + " - " + KPRes.NoKeyRepeat;
+					str = KPRes.Export + " - " + KPRes.NoKeyRepeat;
 					break;
 				case AppPolicyId.Import:
-					str += KPRes.Import;
+					str = KPRes.Import;
 					break;
 				case AppPolicyId.Print:
-					str += KPRes.Print;
+					str = KPRes.Print;
 					break;
 				case AppPolicyId.PrintNoKey:
-					str += KPRes.Print + " - " + KPRes.NoKeyRepeat;
+					str = KPRes.Print + " - " + KPRes.NoKeyRepeat;
 					break;
 				case AppPolicyId.NewFile:
-					str += KPRes.NewDatabase;
+					str = KPRes.NewDatabase;
 					break;
 				case AppPolicyId.SaveFile:
-					str += KPRes.SaveDatabase;
+					str = KPRes.SaveDatabase;
 					break;
 				case AppPolicyId.AutoType:
-					str += KPRes.AutoType;
+					str = KPRes.AutoType;
 					break;
 				case AppPolicyId.AutoTypeWithoutContext:
-					str += KPRes.AutoType + " - " + KPRes.WithoutContext;
+					str = KPRes.AutoType + " - " + KPRes.WithoutContext;
 					break;
 				case AppPolicyId.CopyToClipboard:
-					str += KPRes.Clipboard;
+					str = KPRes.Copy;
 					break;
 				case AppPolicyId.CopyWholeEntries:
-					str += KPRes.CopyWholeEntries;
+					str = KPRes.CopyWholeEntries;
 					break;
 				case AppPolicyId.DragDrop:
-					str += KPRes.DragDrop;
+					str = KPRes.DragDrop;
 					break;
 				case AppPolicyId.UnhidePasswords:
-					str += KPRes.UnhidePasswords;
+					str = KPRes.UnhidePasswords;
 					break;
 				case AppPolicyId.ChangeMasterKey:
-					str += KPRes.ChangeMasterKey;
+					str = KPRes.ChangeMasterKey;
 					break;
 				case AppPolicyId.ChangeMasterKeyNoKey:
-					str += KPRes.ChangeMasterKey + " - " + KPRes.NoKeyRepeat;
+					str = KPRes.ChangeMasterKey + " - " + KPRes.NoKeyRepeat;
 					break;
 				case AppPolicyId.EditTriggers:
-					str += KPRes.TriggersEdit;
+					str = KPRes.TriggersEdit;
 					break;
 				default:
 					Debug.Assert(false);
-					str += KPRes.Unknown + ".";
-					break;
-			}
-
-			str += MessageService.NewLine;
-			if(bPrefix) str += "* ";
-			str += KPRes.Description + ": ";
-
-			switch(flag)
-			{
-				case AppPolicyId.Plugins:
-					str += KPRes.PolicyPluginsDesc;
-					break;
-				case AppPolicyId.Export:
-					str += KPRes.PolicyExportDesc2;
-					break;
-				case AppPolicyId.ExportNoKey:
-					str += KPRes.PolicyExportNoKeyDesc;
-					break;
-				case AppPolicyId.Import:
-					str += KPRes.PolicyImportDesc;
-					break;
-				case AppPolicyId.Print:
-					str += KPRes.PolicyPrintDesc;
-					break;
-				case AppPolicyId.PrintNoKey:
-					str += KPRes.PolicyPrintNoKeyDesc;
-					break;
-				case AppPolicyId.NewFile:
-					str += KPRes.PolicyNewDatabaseDesc;
-					break;
-				case AppPolicyId.SaveFile:
-					str += KPRes.PolicySaveDatabaseDesc;
-					break;
-				case AppPolicyId.AutoType:
-					str += KPRes.PolicyAutoTypeDesc;
-					break;
-				case AppPolicyId.AutoTypeWithoutContext:
-					str += KPRes.PolicyAutoTypeWithoutContextDesc;
-					break;
-				case AppPolicyId.CopyToClipboard:
-					str += KPRes.PolicyClipboardDesc;
-					break;
-				case AppPolicyId.CopyWholeEntries:
-					str += KPRes.PolicyCopyWholeEntriesDesc;
-					break;
-				case AppPolicyId.DragDrop:
-					str += KPRes.PolicyDragDropDesc;
-					break;
-				case AppPolicyId.UnhidePasswords:
-					str += KPRes.UnhidePasswordsDesc;
-					break;
-				case AppPolicyId.ChangeMasterKey:
-					str += KPRes.PolicyChangeMasterKey;
-					break;
-				case AppPolicyId.ChangeMasterKeyNoKey:
-					str += KPRes.PolicyChangeMasterKeyNoKeyDesc;
-					break;
-				case AppPolicyId.EditTriggers:
-					str += KPRes.PolicyTriggersEditDesc;
-					break;
-				default:
-					Debug.Assert(false);
-					str += KPRes.Unknown + ".";
+					str = KPRes.Unknown;
 					break;
 			}
 
 			return str;
 		}
 
-		public static string RequiredPolicyMessage(AppPolicyId flag)
+		internal static string GetDesc(AppPolicyId p)
 		{
-			string str = KPRes.PolicyDisallowed + MessageService.NewParagraph;
-			str += KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine;
-			str += PolicyToString(flag, true);
+			string str;
+
+			switch(p)
+			{
+				case AppPolicyId.Plugins:
+					str = KPRes.PolicyPluginsDesc;
+					break;
+				case AppPolicyId.Export:
+					str = KPRes.PolicyExportDesc2;
+					break;
+				case AppPolicyId.ExportNoKey:
+					str = KPRes.PolicyExportNoKeyDesc;
+					break;
+				case AppPolicyId.Import:
+					str = KPRes.PolicyImportDesc;
+					break;
+				case AppPolicyId.Print:
+					str = KPRes.PolicyPrintDesc;
+					break;
+				case AppPolicyId.PrintNoKey:
+					str = KPRes.PolicyPrintNoKeyDesc;
+					break;
+				case AppPolicyId.NewFile:
+					str = KPRes.PolicyNewDatabaseDesc;
+					break;
+				case AppPolicyId.SaveFile:
+					str = KPRes.PolicySaveDatabaseDesc;
+					break;
+				case AppPolicyId.AutoType:
+					str = KPRes.PolicyAutoTypeDesc;
+					break;
+				case AppPolicyId.AutoTypeWithoutContext:
+					str = KPRes.PolicyAutoTypeWithoutContextDesc;
+					break;
+				case AppPolicyId.CopyToClipboard:
+					str = KPRes.PolicyClipboardDesc;
+					break;
+				case AppPolicyId.CopyWholeEntries:
+					str = KPRes.PolicyCopyWholeEntriesDesc;
+					break;
+				case AppPolicyId.DragDrop:
+					str = KPRes.PolicyDragDropDesc;
+					break;
+				case AppPolicyId.UnhidePasswords:
+					str = KPRes.UnhidePasswordsDesc;
+					break;
+				case AppPolicyId.ChangeMasterKey:
+					str = KPRes.PolicyChangeMasterKey;
+					break;
+				case AppPolicyId.ChangeMasterKeyNoKey:
+					str = KPRes.PolicyChangeMasterKeyNoKeyDesc;
+					break;
+				case AppPolicyId.EditTriggers:
+					str = KPRes.PolicyTriggersEditDesc;
+					break;
+				default:
+					Debug.Assert(false);
+					str = KPRes.Unknown + ".";
+					break;
+			}
 
 			return str;
 		}
 
-		public static bool Try(AppPolicyId flag)
+		public static string RequiredPolicyMessage(AppPolicyId p)
 		{
-			bool bAllowed = true;
+			return (KPRes.PolicyDisallowed + MessageService.NewParagraph +
+				KPRes.PolicyRequiredFlag + ":" + MessageService.NewLine +
+				AppPolicy.GetName(p) + ".");
+		}
 
-			switch(flag)
+		public static bool Try(AppPolicyId p)
+		{
+			bool b = true;
+
+			switch(p)
 			{
-				case AppPolicyId.Plugins: bAllowed = m_apfCurrent.Plugins; break;
-				case AppPolicyId.Export: bAllowed = m_apfCurrent.Export; break;
-				case AppPolicyId.ExportNoKey: bAllowed = m_apfCurrent.ExportNoKey; break;
-				case AppPolicyId.Import: bAllowed = m_apfCurrent.Import; break;
-				case AppPolicyId.Print: bAllowed = m_apfCurrent.Print; break;
-				case AppPolicyId.PrintNoKey: bAllowed = m_apfCurrent.PrintNoKey; break;
-				case AppPolicyId.NewFile: bAllowed = m_apfCurrent.NewFile; break;
-				case AppPolicyId.SaveFile: bAllowed = m_apfCurrent.SaveFile; break;
-				case AppPolicyId.AutoType: bAllowed = m_apfCurrent.AutoType; break;
-				case AppPolicyId.AutoTypeWithoutContext: bAllowed = m_apfCurrent.AutoTypeWithoutContext; break;
-				case AppPolicyId.CopyToClipboard: bAllowed = m_apfCurrent.CopyToClipboard; break;
-				case AppPolicyId.CopyWholeEntries: bAllowed = m_apfCurrent.CopyWholeEntries; break;
-				case AppPolicyId.DragDrop: bAllowed = m_apfCurrent.DragDrop; break;
-				case AppPolicyId.UnhidePasswords: bAllowed = m_apfCurrent.UnhidePasswords; break;
-				case AppPolicyId.ChangeMasterKey: bAllowed = m_apfCurrent.ChangeMasterKey; break;
-				case AppPolicyId.ChangeMasterKeyNoKey: bAllowed = m_apfCurrent.ChangeMasterKeyNoKey; break;
-				case AppPolicyId.EditTriggers: bAllowed = m_apfCurrent.EditTriggers; break;
+				case AppPolicyId.Plugins: b = m_apfCurrent.Plugins; break;
+				case AppPolicyId.Export: b = m_apfCurrent.Export; break;
+				case AppPolicyId.ExportNoKey: b = m_apfCurrent.ExportNoKey; break;
+				case AppPolicyId.Import: b = m_apfCurrent.Import; break;
+				case AppPolicyId.Print: b = m_apfCurrent.Print; break;
+				case AppPolicyId.PrintNoKey: b = m_apfCurrent.PrintNoKey; break;
+				case AppPolicyId.NewFile: b = m_apfCurrent.NewFile; break;
+				case AppPolicyId.SaveFile: b = m_apfCurrent.SaveFile; break;
+				case AppPolicyId.AutoType: b = m_apfCurrent.AutoType; break;
+				case AppPolicyId.AutoTypeWithoutContext: b = m_apfCurrent.AutoTypeWithoutContext; break;
+				case AppPolicyId.CopyToClipboard: b = m_apfCurrent.CopyToClipboard; break;
+				case AppPolicyId.CopyWholeEntries: b = m_apfCurrent.CopyWholeEntries; break;
+				case AppPolicyId.DragDrop: b = m_apfCurrent.DragDrop; break;
+				case AppPolicyId.UnhidePasswords: b = m_apfCurrent.UnhidePasswords; break;
+				case AppPolicyId.ChangeMasterKey: b = m_apfCurrent.ChangeMasterKey; break;
+				case AppPolicyId.ChangeMasterKeyNoKey: b = m_apfCurrent.ChangeMasterKeyNoKey; break;
+				case AppPolicyId.EditTriggers: b = m_apfCurrent.EditTriggers; break;
 				default: Debug.Assert(false); break;
 			}
 
-			if(!bAllowed)
+			if(!b)
 			{
-				string strMsg = RequiredPolicyMessage(flag);
+				string strMsg = RequiredPolicyMessage(p);
 				MessageService.ShowWarning(strMsg);
 			}
 
-			return bAllowed;
+			return b;
 		}
 
 		internal static void ApplyToConfig()

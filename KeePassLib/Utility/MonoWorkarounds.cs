@@ -141,6 +141,9 @@ namespace KeePassLib.Utility
 		// 100001:
 		//   Control locations/sizes are invalid/unexpected.
 		//   [NoRef]
+		// 190417:
+		//   Mono's Process.Start method replaces '\\' by '/'.
+		//   https://github.com/mono/mono/blob/master/mono/metadata/w32process-unix.c
 		// 373134:
 		//   Control.InvokeRequired doesn't always return the correct value.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=373134

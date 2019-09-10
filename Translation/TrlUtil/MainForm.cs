@@ -351,7 +351,7 @@ namespace TrlUtil
 			foreach(ToolStripItem tsi in tsic)
 			{
 				if(tsi.Text.Length == 0) continue;
-				if(tsi.Text.StartsWith(@"<") && tsi.Text.EndsWith(@">")) continue;
+				if(tsi.Text.StartsWith("<") && tsi.Text.EndsWith(">")) continue;
 
 				KPStringTableItem kpstItem = new KPStringTableItem();
 				kpstItem.Name = tsi.Name;

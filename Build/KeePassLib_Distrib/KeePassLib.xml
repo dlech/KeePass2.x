@@ -64,7 +64,7 @@
         </member>
         <member name="M:KeePassLib.Utility.UrlUtil.GetHost(System.String)">
             <summary>
-            Get the host component of an URL.
+            Get the host component of a URL.
             This method is faster and more fault-tolerant than creating
             an <code>Uri</code> object and querying its <code>Host</code>
             property.
@@ -74,7 +74,7 @@
             value is <code>d.tld</code>.
             </example>
         </member>
-        <member name="M:KeePassLib.Utility.UrlUtil.ExpandShellVariables(System.String,System.String[])">
+        <member name="M:KeePassLib.Utility.UrlUtil.ExpandShellVariables(System.String,System.String[],System.Boolean)">
             <summary>
             Expand shell variables in a string.
             <paramref name="vParams" />[0] is the value of <c>%1</c>, etc.
@@ -495,6 +495,24 @@
             A strongly-typed resource class, for looking up localized strings, etc.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.AlgorithmUnknown">
+            <summary>
+            Look up a localized string similar to
+            'The algorithm is unknown.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.CharSetInvalid">
+            <summary>
+            Look up a localized string similar to
+            'The character set is invalid.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.CharSetTooFewChars">
+            <summary>
+            Look up a localized string similar to
+            'There are too few characters in the character set.'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.CryptoStreamFailed">
             <summary>
             Look up a localized string similar to
@@ -687,10 +705,28 @@
             'Passive'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.PathBackslash">
+            <summary>
+            Look up a localized string similar to
+            'The path contains a backslash. Such paths are not supported (for security reasons).'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.PatternInvalid">
+            <summary>
+            Look up a localized string similar to
+            'The pattern is invalid.'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.PreAuth">
             <summary>
             Look up a localized string similar to
             'Pre-authenticate'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.PwGenFailed">
+            <summary>
+            Look up a localized string similar to
+            'Failed to generate a password.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.StructsTooDeep">
@@ -709,6 +745,12 @@
             <summary>
             Look up a localized string similar to
             'Please try it again in a few seconds.'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.UnknownError">
+            <summary>
+            Look up a localized string similar to
+            'An unknown error occurred.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.UnknownHeaderId">
@@ -1181,9 +1223,14 @@
             file.</param>
             <returns>Returns <c>true</c> if the file has been saved.</returns>
         </member>
+        <member name="F:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Latin1S">
+            <summary>
+            Latin-1 Supplement except U+00A0 (NBSP) and U+00AD (SHY).
+            </summary>
+        </member>
         <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.#ctor">
             <summary>
-            Create a new, empty character set collection object.
+            Create a new, empty character set.
             </summary>
         </member>
         <member name="M:KeePassLib.Cryptography.PasswordGenerator.PwCharSet.Clear">
@@ -1230,7 +1277,7 @@
         </member>
         <member name="T:KeePassLib.Cryptography.PasswordGenerator.PwGenerator">
             <summary>
-            Utility functions for generating random passwords.
+            Password generator.
             </summary>
         </member>
         <member name="M:KeePassLib.Serialization.IOConnection.RenameFile(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Serialization.IOConnectionInfo)">
@@ -1542,16 +1589,6 @@
             <param name="uTimeMs">Number of milliseconds to perform the benchmark.</param>
             <param name="puRounds">Number of transformations done.</param>
             <returns>Returns <c>true</c>, if the benchmark was successful.</returns>
-        </member>
-        <member name="M:KeePassLib.Native.NativeLib.EncodePath(System.String)">
-            <summary>
-            Encode a path for <c>Process.Start</c>.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Native.NativeLib.DecodeArgsToPath(System.String)">
-            <summary>
-            Decode command line arguments to a path for <c>Process.Start</c>.
-            </summary>
         </member>
         <member name="P:KeePassLib.Native.NativeLib.AllowNative">
             <summary>

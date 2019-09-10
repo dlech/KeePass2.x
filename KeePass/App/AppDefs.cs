@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -38,6 +39,7 @@ namespace KeePass.App
 
 		public static readonly Color ColorQualityLow = Color.FromArgb(255, 128, 0);
 		public static readonly Color ColorQualityHigh = Color.FromArgb(0, 255, 0);
+		public static readonly Color ColorQualityMid = Color.FromArgb(255, 255, 0);
 
 		public static readonly string LanguagesDir = "Languages";
 
@@ -301,6 +303,44 @@ namespace KeePass.App
 				return pe.Binaries.UCount.ToString();
 
 			return pe.Strings.ReadSafe(strFieldId);
+		}
+
+		internal static Color GetQualityColor(float fQ, bool bToControlBack)
+		{
+			if(fQ < 0.0f) { Debug.Assert(false); fQ = 0.0f; }
+			if(fQ > 1.0f) { Debug.Assert(false); fQ = 1.0f; }
+
+			Color clrL = AppDefs.ColorQualityLow;
+			Color clrH = AppDefs.ColorQualityHigh;
+			Color clrM = AppDefs.ColorQualityMid;
+
+			int iR, iG, iB;
+			if(fQ <= 0.5f)
+			{
+				fQ *= 2.0f;
+				iR = clrL.R + (int)(fQ * ((int)clrM.R - (int)clrL.R));
+				iG = clrL.G + (int)(fQ * ((int)clrM.G - (int)clrL.G));
+				iB = clrL.B + (int)(fQ * ((int)clrM.B - (int)clrL.B));
+			}
+			else
+			{
+				fQ = (fQ - 0.5f) * 2.0f;
+				iR = clrM.R + (int)(fQ * ((int)clrH.R - (int)clrM.R));
+				iG = clrM.G + (int)(fQ * ((int)clrH.G - (int)clrM.G));
+				iB = clrM.B + (int)(fQ * ((int)clrH.B - (int)clrM.B));
+			}
+
+			if(iR < 0) { Debug.Assert(false); iR = 0; }
+			if(iR > 255) { Debug.Assert(false); iR = 255; }
+			if(iG < 0) { Debug.Assert(false); iG = 0; }
+			if(iG > 255) { Debug.Assert(false); iG = 255; }
+			if(iB < 0) { Debug.Assert(false); iB = 0; }
+			if(iB > 255) { Debug.Assert(false); iB = 255; }
+
+			Color clrQ = Color.FromArgb(iR, iG, iB);
+			if(bToControlBack)
+				return UIUtil.ColorTowards(clrQ, AppDefs.ColorControlNormal, 0.5);
+			return clrQ;
 		}
 	}
 }

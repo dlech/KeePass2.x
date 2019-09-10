@@ -232,6 +232,9 @@
     <Compile Include="..\KeePassLib\Native\NativeMethods.Unix.cs">
       <Link>KeePassLib\Native\NativeMethods.Unix.cs</Link>
     </Compile>
+    <Compile Include="..\KeePassLib\Native\SimpleStat.cs">
+      <Link>KeePassLib\Native\SimpleStat.cs</Link>
+    </Compile>
     <Compile Include="..\KeePassLib\PwCustomIcon.cs">
       <Link>KeePassLib\PwCustomIcon.cs</Link>
     </Compile>
@@ -421,7 +424,8 @@
     <Compile Include="DataExchange\Formats\PinsTxt450.cs" />
     <Compile Include="DataExchange\Formats\PpKeeperHtml270.cs" />
     <Compile Include="DataExchange\Formats\PVaultTxt14.cs" />
-    <Compile Include="DataExchange\Formats\PwAgentXml234.cs" />
+    <Compile Include="DataExchange\Formats\PwAgentXml2.cs" />
+    <Compile Include="DataExchange\Formats\PwAgentXml3.cs" />
     <Compile Include="DataExchange\Formats\PwDepotXml26.cs" />
     <Compile Include="DataExchange\Formats\PwExporterXml105.cs" />
     <Compile Include="DataExchange\Formats\PwKeeperCsv70.cs" />
@@ -828,6 +832,7 @@
     <Compile Include="UI\ListViewGroupingMenu.cs" />
     <Compile Include="UI\ListViewSortMenu.cs" />
     <Compile Include="UI\ListViewStateEx.cs" />
+    <Compile Include="UI\MenuItemLinks.cs" />
     <Compile Include="UI\NotifyIconEx.cs" />
     <Compile Include="UI\OnDemandStatusDialog.cs" />
     <Compile Include="UI\OpenWithMenu.cs" />

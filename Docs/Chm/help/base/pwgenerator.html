@@ -96,6 +96,16 @@ Similarly, if you tick the <i>Digits</i> check box and enter <i>'3'</i> into the
 additional box, the <i>'3'</i> will be ignored because it is already included in the
 <i>Digits</i> character range.</p>
 
+<p><b>Supported characters:</b><br />
+All <a href="https://www.unicode.org/" target="_blank">Unicode</a>
+characters in the ranges [U+0001, U+D7FF] and [U+E000, U+FFFF]
+except { U+0009 / '\t', U+000A / '\n', U+000D / '\r' } are supported.
+Characters in the range [U+010000, U+10FFFF] (which need to be encoded
+in UTF-16 using surrogate pairs from [0xD800, 0xDFFF]) are not supported.
+Subsequent processing of passwords may have further limitations
+(for example, the character U+FFFF is forbidden in XML/KDBX files
+and will be replaced or removed).</p>
+
 <br />
 
 <a name="pattern"></a>
@@ -189,8 +199,15 @@ are supported:</p>
 <td>A-Z, a-z, 0-9, !&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_&#96;{|}~</td></tr>
 
 <tr><td><code>x</code></td>
-<td>High ANSI</td>
-<td>Range [U+0080, U+00FF] except control and non-printable characters.</td></tr>
+<td><a href="https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)"
+target="_blank">Latin-1 Supplement</a></td>
+<td>Range [U+00A1, U+00FF] except U+00AD:<br />
+&#xA1;&#xA2;&#xA3;&#xA4;&#xA5;&#xA6;&#xA7;&#xA8;&#xA9;&#xAA;&#xAB;&#xAC;&#xAE;&#xAF;
+&#xB0;&#xB1;&#xB2;&#xB3;&#xB4;&#xB5;&#xB6;&#xB7;&#xB8;&#xB9;&#xBA;&#xBB;&#xBC;&#xBD;&#xBE;&#xBF;
+&#xC0;&#xC1;&#xC2;&#xC3;&#xC4;&#xC5;&#xC6;&#xC7;&#xC8;&#xC9;&#xCA;&#xCB;&#xCC;&#xCD;&#xCE;&#xCF;
+&#xD0;&#xD1;&#xD2;&#xD3;&#xD4;&#xD5;&#xD6;&#xD7;&#xD8;&#xD9;&#xDA;&#xDB;&#xDC;&#xDD;&#xDE;&#xDF;
+&#xE0;&#xE1;&#xE2;&#xE3;&#xE4;&#xE5;&#xE6;&#xE7;&#xE8;&#xE9;&#xEA;&#xEB;&#xEC;&#xED;&#xEE;&#xEF;
+&#xF0;&#xF1;&#xF2;&#xF3;&#xF4;&#xF5;&#xF6;&#xF7;&#xF8;&#xF9;&#xFA;&#xFB;&#xFC;&#xFD;&#xFE;&#xFF;</td></tr>
 
 <tr><td><code>&#92;</code></td>
 <td>Escape (Fixed Char)</td>

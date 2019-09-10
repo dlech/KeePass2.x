@@ -213,7 +213,7 @@ namespace KeePass.Util
 				catch(Exception) { Debug.Assert(false); }
 
 				ProcessStartInfo psi = new ProcessStartInfo();
-				psi.FileName = NativeLib.EncodePath(strFile);
+				psi.FileName = strFile;
 				psi.UseShellExecute = true;
 				psi.WorkingDirectory = strTempDir;
 
@@ -347,8 +347,7 @@ namespace KeePass.Util
 				// Let the main thread finish showing the message box
 				Thread.Sleep(200);
 
-				Process p = Process.Start(psi);
-				if(p != null) p.Dispose();
+				NativeLib.StartProcess(psi);
 			}
 			catch(Exception ex)
 			{

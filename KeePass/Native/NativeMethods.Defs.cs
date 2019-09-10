@@ -100,6 +100,8 @@ namespace KeePass.Native
 		internal const uint KEYEVENTF_KEYUP = 2;
 		internal const uint KEYEVENTF_UNICODE = 4;
 
+		// private const int KL_NAMELENGTH = 9;
+
 		internal const ushort LANG_CZECH = 0x05;
 		internal const ushort LANG_POLISH = 0x15;
 
@@ -157,6 +159,9 @@ namespace KeePass.Native
 
 		internal const uint FSCTL_LOCK_VOLUME = 589848;
 		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
+
+		// private const uint NM_FIRST = 0;
+		// internal const uint NM_RCLICK = unchecked(NM_FIRST - 5);
 
 		internal const int LVM_FIRST = 0x1000;
 		// internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;

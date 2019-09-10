@@ -96,6 +96,8 @@ namespace KeePassLib.Cryptography
 			TestHmacOtp();
 
 			TestProtectedObjects(r);
+			TestNativeLib();
+
 			TestMemUtil(r);
 			TestStrUtil();
 			TestUrlUtil();
@@ -800,94 +802,6 @@ namespace KeePassLib.Cryptography
 #endif
 		}
 
-		private static void TestMemUtil(Random r)
-		{
-#if DEBUG
-			byte[] pb = CryptoRandom.Instance.GetRandomBytes((uint)r.Next(
-				0, 0x2FFFF));
-
-			byte[] pbCompressed = MemUtil.Compress(pb);
-			if(!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pb))
-				throw new InvalidOperationException("GZip");
-
-			Encoding enc = StrUtil.Utf8;
-			pb = enc.GetBytes("012345678901234567890a");
-			byte[] pbN = enc.GetBytes("9012");
-			if(MemUtil.IndexOf<byte>(pb, pbN) != 9)
-				throw new InvalidOperationException("MemUtil-1");
-			pbN = enc.GetBytes("01234567890123");
-			if(MemUtil.IndexOf<byte>(pb, pbN) != 0)
-				throw new InvalidOperationException("MemUtil-2");
-			pbN = enc.GetBytes("a");
-			if(MemUtil.IndexOf<byte>(pb, pbN) != 21)
-				throw new InvalidOperationException("MemUtil-3");
-			pbN = enc.GetBytes("0a");
-			if(MemUtil.IndexOf<byte>(pb, pbN) != 20)
-				throw new InvalidOperationException("MemUtil-4");
-			pbN = enc.GetBytes("1");
-			if(MemUtil.IndexOf<byte>(pb, pbN) != 1)
-				throw new InvalidOperationException("MemUtil-5");
-			pbN = enc.GetBytes("b");
-			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
-				throw new InvalidOperationException("MemUtil-6");
-			pbN = enc.GetBytes("012b");
-			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
-				throw new InvalidOperationException("MemUtil-7");
-
-			byte[] pbRes = MemUtil.ParseBase32("MY======");
-			byte[] pbExp = Encoding.ASCII.GetBytes("f");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-1");
-
-			pbRes = MemUtil.ParseBase32("MZXQ====");
-			pbExp = Encoding.ASCII.GetBytes("fo");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-2");
-
-			pbRes = MemUtil.ParseBase32("MZXW6===");
-			pbExp = Encoding.ASCII.GetBytes("foo");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-3");
-
-			pbRes = MemUtil.ParseBase32("MZXW6YQ=");
-			pbExp = Encoding.ASCII.GetBytes("foob");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-4");
-
-			pbRes = MemUtil.ParseBase32("MZXW6YTB");
-			pbExp = Encoding.ASCII.GetBytes("fooba");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-5");
-
-			pbRes = MemUtil.ParseBase32("MZXW6YTBOI======");
-			pbExp = Encoding.ASCII.GetBytes("foobar");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-6");
-
-			pbRes = MemUtil.ParseBase32("JNSXSIDQOJXXM2LEMVZCAYTBONSWIIDPNYQG63TFFV2GS3LFEBYGC43TO5XXEZDTFY======");
-			pbExp = Encoding.ASCII.GetBytes("Key provider based on one-time passwords.");
-			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-7");
-
-			int i = 0 - 0x10203040;
-			pbRes = MemUtil.Int32ToBytes(i);
-			if(MemUtil.ByteArrayToHexString(pbRes) != "C0CFDFEF")
-				throw new Exception("MemUtil-8"); // Must be little-endian
-			if(MemUtil.BytesToUInt32(pbRes) != (uint)i)
-				throw new Exception("MemUtil-9");
-			if(MemUtil.BytesToInt32(pbRes) != i)
-				throw new Exception("MemUtil-10");
-
-			ArrayHelperEx<char> ah = MemUtil.ArrayHelperExOfChar;
-			for(int j = 0; j < 30; ++j)
-			{
-				string strA = r.Next(30).ToString();
-				string strB = r.Next(30).ToString();
-				char[] vA = strA.ToCharArray();
-				char[] vB = strB.ToCharArray();
-
-				if(ah.Equals(vA, vB) != string.Equals(strA, strB))
-					throw new Exception("MemUtil-11");
-				if((vA.Length == vB.Length) && (Math.Sign(ah.Compare(vA, vB)) !=
-					Math.Sign(string.CompareOrdinal(strA, strB))))
-					throw new Exception("MemUtil-12");
-			}
-#endif
-		}
-
 		private static void TestHmacOtp()
 		{
 #if (DEBUG && !KeePassLibSD)
@@ -1000,6 +914,119 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("ProtectedString-15");
 			if(!ps.Equals(new ProtectedString(false, "ABCDEFGHI"), false))
 				throw new SecurityException("ProtectedString-16");
+#endif
+		}
+
+		private static void TestNativeLib()
+		{
+#if DEBUG
+			if(NativeLib.IsUnix())
+			{
+				if(NativeLib.EncodeDataToArgs("A\"B C\\D") !=
+					"A\\\"B C\\\\D")
+					throw new Exception("NativeLib-Args-U");
+			}
+			else // Windows
+			{
+				if(NativeLib.EncodeDataToArgs("A\"B C\\D \\\\ \\\" \\\\\" \\\\\\\" \\\\\\") !=
+					"A\\\"B C\\D \\\\ \\\\\\\" \\\\\\\\\\\" \\\\\\\\\\\\\\\" \\\\\\")
+					throw new Exception("NativeLib-Args-W");
+			}
+
+			string strOrg = "A\\B\\\\C\\\\\\D E\"F\"\"G\"\"\"H I\'J\'\'K\'\'\'L " +
+				"M\\\"N\\\\\"O\\\\\\\"P\\\\\\\\\\\"Q R\\\'S T\\\\\'U \\\\\\";
+			string strArgs = NativeLib.EncodeDataToArgs(strOrg);
+			string strDec = NativeLib.DecodeArgsToData(strArgs);
+			if(strDec != strOrg)
+				throw new Exception("NativeLib-Args-EncDec");
+#endif
+		}
+
+		private static void TestMemUtil(Random r)
+		{
+#if DEBUG
+			byte[] pb = CryptoRandom.Instance.GetRandomBytes((uint)r.Next(
+				0, 0x2FFFF));
+
+			byte[] pbCompressed = MemUtil.Compress(pb);
+			if(!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pb))
+				throw new InvalidOperationException("GZip");
+
+			Encoding enc = StrUtil.Utf8;
+			pb = enc.GetBytes("012345678901234567890a");
+			byte[] pbN = enc.GetBytes("9012");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 9)
+				throw new InvalidOperationException("MemUtil-1");
+			pbN = enc.GetBytes("01234567890123");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 0)
+				throw new InvalidOperationException("MemUtil-2");
+			pbN = enc.GetBytes("a");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 21)
+				throw new InvalidOperationException("MemUtil-3");
+			pbN = enc.GetBytes("0a");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 20)
+				throw new InvalidOperationException("MemUtil-4");
+			pbN = enc.GetBytes("1");
+			if(MemUtil.IndexOf<byte>(pb, pbN) != 1)
+				throw new InvalidOperationException("MemUtil-5");
+			pbN = enc.GetBytes("b");
+			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
+				throw new InvalidOperationException("MemUtil-6");
+			pbN = enc.GetBytes("012b");
+			if(MemUtil.IndexOf<byte>(pb, pbN) >= 0)
+				throw new InvalidOperationException("MemUtil-7");
+
+			byte[] pbRes = MemUtil.ParseBase32("MY======");
+			byte[] pbExp = Encoding.ASCII.GetBytes("f");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-1");
+
+			pbRes = MemUtil.ParseBase32("MZXQ====");
+			pbExp = Encoding.ASCII.GetBytes("fo");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-2");
+
+			pbRes = MemUtil.ParseBase32("MZXW6===");
+			pbExp = Encoding.ASCII.GetBytes("foo");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-3");
+
+			pbRes = MemUtil.ParseBase32("MZXW6YQ=");
+			pbExp = Encoding.ASCII.GetBytes("foob");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-4");
+
+			pbRes = MemUtil.ParseBase32("MZXW6YTB");
+			pbExp = Encoding.ASCII.GetBytes("fooba");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-5");
+
+			pbRes = MemUtil.ParseBase32("MZXW6YTBOI======");
+			pbExp = Encoding.ASCII.GetBytes("foobar");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-6");
+
+			pbRes = MemUtil.ParseBase32("JNSXSIDQOJXXM2LEMVZCAYTBONSWIIDPNYQG63TFFV2GS3LFEBYGC43TO5XXEZDTFY======");
+			pbExp = Encoding.ASCII.GetBytes("Key provider based on one-time passwords.");
+			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-7");
+
+			int i = 0 - 0x10203040;
+			pbRes = MemUtil.Int32ToBytes(i);
+			if(MemUtil.ByteArrayToHexString(pbRes) != "C0CFDFEF")
+				throw new Exception("MemUtil-8"); // Must be little-endian
+			if(MemUtil.BytesToUInt32(pbRes) != (uint)i)
+				throw new Exception("MemUtil-9");
+			if(MemUtil.BytesToInt32(pbRes) != i)
+				throw new Exception("MemUtil-10");
+
+			ArrayHelperEx<char> ah = MemUtil.ArrayHelperExOfChar;
+			for(int j = 0; j < 30; ++j)
+			{
+				string strA = r.Next(30).ToString();
+				string strB = r.Next(30).ToString();
+				char[] vA = strA.ToCharArray();
+				char[] vB = strB.ToCharArray();
+
+				if(ah.Equals(vA, vB) != string.Equals(strA, strB))
+					throw new Exception("MemUtil-11");
+				if((vA.Length == vB.Length) && (Math.Sign(ah.Compare(vA, vB)) !=
+					Math.Sign(string.CompareOrdinal(strA, strB))))
+					throw new Exception("MemUtil-12");
+			}
 #endif
 		}
 

@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.Util.XmlSerialization;
 
@@ -36,7 +36,7 @@ namespace KeePass.Util
 	{
 		public static string SafeInnerText(XmlNode xmlNode)
 		{
-			Debug.Assert(xmlNode != null); if(xmlNode == null) return string.Empty;
+			if(xmlNode == null) { Debug.Assert(false); return string.Empty; }
 
 			return (xmlNode.InnerText ?? string.Empty);
 		}

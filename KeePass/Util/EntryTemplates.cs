@@ -218,7 +218,7 @@ namespace KeePass.Util
 					lSelect.Add(pe);
 					mf.SelectEntries(lSelect, true, true);
 
-					mf.EnsureVisibleEntry(pe.Uuid);
+					mf.EnsureVisibleSelected(false);
 					mf.UpdateUI(false, null, false, null, false, null, false);
 
 					if(Program.Config.Application.AutoSaveAfterEntryEdit)
