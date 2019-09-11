@@ -1,9 +1,9 @@
 # KeePass2.x
-This is a hand-maintained mirror of the offical KeePass2.x source code.
+This is an unofficial mirror of the official KeePass2.x source code.
 
 ## Branches
 
-The default branch is `VS2017`. You should be able to clone this branch and build it
+The default branch is `VS2019`. You should be able to clone this branch and build it
 in Visual Studio 2017 with no changes.
 
 The `official` branch contains exactly the official source code that is distributed on
