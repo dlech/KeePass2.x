@@ -70,5 +70,10 @@ namespace KeePass.Util.Spr
 		{
 			return NativeLib.EncodeDataToArgs(strRaw);
 		}
+
+		internal static string DecodeCommandLine(string strArgs)
+		{
+			return NativeLib.DecodeArgsToData(strArgs);
+		}
 	}
 }

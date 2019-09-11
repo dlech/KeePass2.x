@@ -26,6 +26,7 @@ using System.Text;
 using System.Security.Cryptography;
 #endif
 
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -42,7 +43,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 	}
 
 	/// <summary>
-	/// Utility functions for generating random passwords.
+	/// Password generator.
 	/// </summary>
 	public static class PwGenerator
 	{
@@ -162,6 +163,59 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			psOut = pwd;
 			return PwgError.Success;
+		}
+
+		internal static string ErrorToString(PwgError e, bool bHeader)
+		{
+			if(e == PwgError.Success) { Debug.Assert(false); return string.Empty; }
+			if((e == PwgError.Unknown) && bHeader) return KLRes.PwGenFailed;
+
+			string str = KLRes.UnknownError;
+			switch(e)
+			{
+				// case PwgError.Success:
+				//	break;
+
+				case PwgError.Unknown:
+					break;
+
+				case PwgError.TooFewCharacters:
+					str = KLRes.CharSetTooFewChars;
+					break;
+
+				case PwgError.UnknownAlgorithm:
+					str = KLRes.AlgorithmUnknown;
+					break;
+
+				case PwgError.InvalidCharSet:
+					str = KLRes.CharSetInvalid;
+					break;
+
+				case PwgError.InvalidPattern:
+					str = KLRes.PatternInvalid;
+					break;
+
+				default:
+					Debug.Assert(false);
+					break;
+			}
+
+			if(bHeader)
+				str = KLRes.PwGenFailed + MessageService.NewParagraph + str;
+
+			return str;
+		}
+
+		internal static string ErrorToString(Exception ex, bool bHeader)
+		{
+			string str = KLRes.UnknownError;
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+				str = ex.Message;
+
+			if(bHeader)
+				str = KLRes.PwGenFailed + MessageService.NewParagraph + str;
+
+			return str;
 		}
 	}
 }

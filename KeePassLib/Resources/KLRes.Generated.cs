@@ -26,6 +26,9 @@ namespace KeePassLib.Resources
 		{
 			if(dictNew == null) throw new ArgumentNullException("dictNew");
 
+			m_strAlgorithmUnknown = TryGetEx(dictNew, "AlgorithmUnknown", m_strAlgorithmUnknown);
+			m_strCharSetInvalid = TryGetEx(dictNew, "CharSetInvalid", m_strCharSetInvalid);
+			m_strCharSetTooFewChars = TryGetEx(dictNew, "CharSetTooFewChars", m_strCharSetTooFewChars);
 			m_strCryptoStreamFailed = TryGetEx(dictNew, "CryptoStreamFailed", m_strCryptoStreamFailed);
 			m_strEncDataTooLarge = TryGetEx(dictNew, "EncDataTooLarge", m_strEncDataTooLarge);
 			m_strErrorInClipboard = TryGetEx(dictNew, "ErrorInClipboard", m_strErrorInClipboard);
@@ -58,10 +61,14 @@ namespace KeePassLib.Resources
 			m_strMasterSeedLengthInvalid = TryGetEx(dictNew, "MasterSeedLengthInvalid", m_strMasterSeedLengthInvalid);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strPassive = TryGetEx(dictNew, "Passive", m_strPassive);
+			m_strPathBackslash = TryGetEx(dictNew, "PathBackslash", m_strPathBackslash);
+			m_strPatternInvalid = TryGetEx(dictNew, "PatternInvalid", m_strPatternInvalid);
 			m_strPreAuth = TryGetEx(dictNew, "PreAuth", m_strPreAuth);
+			m_strPwGenFailed = TryGetEx(dictNew, "PwGenFailed", m_strPwGenFailed);
 			m_strStructsTooDeep = TryGetEx(dictNew, "StructsTooDeep", m_strStructsTooDeep);
 			m_strTimeout = TryGetEx(dictNew, "Timeout", m_strTimeout);
 			m_strTryAgainSecs = TryGetEx(dictNew, "TryAgainSecs", m_strTryAgainSecs);
+			m_strUnknownError = TryGetEx(dictNew, "UnknownError", m_strUnknownError);
 			m_strUnknownHeaderId = TryGetEx(dictNew, "UnknownHeaderId", m_strUnknownHeaderId);
 			m_strUnknownKdf = TryGetEx(dictNew, "UnknownKdf", m_strUnknownKdf);
 			m_strUserAccountKeyError = TryGetEx(dictNew, "UserAccountKeyError", m_strUserAccountKeyError);
@@ -69,6 +76,9 @@ namespace KeePassLib.Resources
 		}
 
 		private static readonly string[] m_vKeyNames = {
+			"AlgorithmUnknown",
+			"CharSetInvalid",
+			"CharSetTooFewChars",
 			"CryptoStreamFailed",
 			"EncDataTooLarge",
 			"ErrorInClipboard",
@@ -101,10 +111,14 @@ namespace KeePassLib.Resources
 			"MasterSeedLengthInvalid",
 			"OldFormat",
 			"Passive",
+			"PathBackslash",
+			"PatternInvalid",
 			"PreAuth",
+			"PwGenFailed",
 			"StructsTooDeep",
 			"Timeout",
 			"TryAgainSecs",
+			"UnknownError",
 			"UnknownHeaderId",
 			"UnknownKdf",
 			"UserAccountKeyError",
@@ -114,6 +128,39 @@ namespace KeePassLib.Resources
 		public static string[] GetKeyNames()
 		{
 			return m_vKeyNames;
+		}
+
+		private static string m_strAlgorithmUnknown =
+			@"The algorithm is unknown.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The algorithm is unknown.'.
+		/// </summary>
+		public static string AlgorithmUnknown
+		{
+			get { return m_strAlgorithmUnknown; }
+		}
+
+		private static string m_strCharSetInvalid =
+			@"The character set is invalid.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The character set is invalid.'.
+		/// </summary>
+		public static string CharSetInvalid
+		{
+			get { return m_strCharSetInvalid; }
+		}
+
+		private static string m_strCharSetTooFewChars =
+			@"There are too few characters in the character set.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'There are too few characters in the character set.'.
+		/// </summary>
+		public static string CharSetTooFewChars
+		{
+			get { return m_strCharSetTooFewChars; }
 		}
 
 		private static string m_strCryptoStreamFailed =
@@ -468,6 +515,28 @@ namespace KeePassLib.Resources
 			get { return m_strPassive; }
 		}
 
+		private static string m_strPathBackslash =
+			@"The path contains a backslash. Such paths are not supported (for security reasons).";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The path contains a backslash. Such paths are not supported (for security reasons).'.
+		/// </summary>
+		public static string PathBackslash
+		{
+			get { return m_strPathBackslash; }
+		}
+
+		private static string m_strPatternInvalid =
+			@"The pattern is invalid.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The pattern is invalid.'.
+		/// </summary>
+		public static string PatternInvalid
+		{
+			get { return m_strPatternInvalid; }
+		}
+
 		private static string m_strPreAuth =
 			@"Pre-authenticate";
 		/// <summary>
@@ -477,6 +546,17 @@ namespace KeePassLib.Resources
 		public static string PreAuth
 		{
 			get { return m_strPreAuth; }
+		}
+
+		private static string m_strPwGenFailed =
+			@"Failed to generate a password.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Failed to generate a password.'.
+		/// </summary>
+		public static string PwGenFailed
+		{
+			get { return m_strPwGenFailed; }
 		}
 
 		private static string m_strStructsTooDeep =
@@ -510,6 +590,17 @@ namespace KeePassLib.Resources
 		public static string TryAgainSecs
 		{
 			get { return m_strTryAgainSecs; }
+		}
+
+		private static string m_strUnknownError =
+			@"An unknown error occurred.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'An unknown error occurred.'.
+		/// </summary>
+		public static string UnknownError
+		{
+			get { return m_strUnknownError; }
 		}
 
 		private static string m_strUnknownHeaderId =

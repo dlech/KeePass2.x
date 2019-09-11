@@ -228,5 +228,25 @@ namespace KeePass.UI
 
 			base.OnKeyUp(e);
 		}
+
+		protected override void OnBeforeCollapse(TreeViewCancelEventArgs e)
+		{
+			TreeNode tn = ((e != null) ? e.Node : null);
+			if(tn != null)
+			{
+				if((tn.Parent == null) && !this.ShowRootLines)
+				{
+					// This should only occur due to a user action (e.g.
+					// double-click on the node), not programmatically
+					Debug.Assert(false);
+
+					e.Cancel = true;
+					return;
+				}
+			}
+			else { Debug.Assert(false); }
+
+			base.OnBeforeCollapse(e);
+		}
 	}
 }

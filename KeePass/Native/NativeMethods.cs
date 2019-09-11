@@ -34,6 +34,10 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SetDllDirectory(string lpPathName);
 
+		[DllImport("Wer.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+		internal static extern int WerAddExcludedApplication(string pwzExeName,
+			[MarshalAs(UnmanagedType.Bool)] bool bAllUsers);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool IsWindow(IntPtr hWnd);
@@ -182,6 +186,11 @@ namespace KeePass.Native
 		// [DllImport("User32.dll")]
 		// [return: MarshalAs(UnmanagedType.Bool)]
 		// private static extern bool GetKeyboardState(IntPtr lpKeyState);
+
+		// [DllImport("User32.dll", CharSet = CharSet.Auto)]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// private static extern bool GetKeyboardLayoutName([MarshalAs(UnmanagedType.LPTStr)]
+		//	StringBuilder pwszKLID);
 
 		[DllImport("User32.dll")]
 		internal static extern ushort GetKeyState(int vKey);

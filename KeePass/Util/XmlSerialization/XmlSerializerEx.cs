@@ -175,8 +175,8 @@ namespace KeePass.Util.XmlSerialization
 			AppendLine(sb);
 			AppendLine(sb, "using System;", ref t);
 			AppendLine(sb, "using System.Collections.Generic;", ref t);
-			AppendLine(sb, "using System.Xml;", ref t);
 			AppendLine(sb, "using System.Diagnostics;", ref t);
+			AppendLine(sb, "using System.Xml;", ref t);
 			AppendLine(sb);
 			AppendLine(sb, "using KeePassLib.Interfaces;", ref t);
 			AppendLine(sb);

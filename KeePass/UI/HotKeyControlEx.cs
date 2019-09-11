@@ -121,8 +121,7 @@ namespace KeePass.UI
 			};
 			if(Array.IndexOf<Keys>(vInv, k) >= 0) return Keys.None;
 
-			if(kMod == Keys.None) return Keys.None;
-			if(kMod == Keys.Shift)
+			if((kMod == Keys.None) || (kMod == Keys.Shift))
 			{
 				if((k < Keys.F1) || (k > Keys.F24)) return Keys.None;
 			}

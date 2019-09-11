@@ -77,18 +77,20 @@ namespace KeePass.Native
 
 			try
 			{
+				if(!fCurrent.MinimizeBox || !fCurrent.Enabled) return false;
+
 				string strCurrent = RunXDoTool("getwindowfocus -f");
 				long lCurrent;
 				long.TryParse(strCurrent.Trim(), out lCurrent);
 
 				MainForm mf = Program.MainForm;
 				Debug.Assert(mf == fCurrent);
-				if(mf != null) mf.UIBlockWindowStateAuto(true);
+				if(mf != null) mf.UIBlockWindowStateAuto(true); // Lose focus only
 
 				UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
 
-				int nStart = Environment.TickCount;
-				while((Environment.TickCount - nStart) < 1000)
+				int tStart = Environment.TickCount;
+				while((Environment.TickCount - tStart) < 1000)
 				{
 					Application.DoEvents();
 

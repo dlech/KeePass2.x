@@ -190,5 +190,21 @@ namespace KeePass.UI
 
 			return null;
 		}
+
+		/* protected override void WndProc(ref Message m)
+		{
+			if(m.Msg == NativeMethods.WM_NOTIFY)
+			{
+				NativeMethods.NMHDR nm = (NativeMethods.NMHDR)m.GetLParam(
+					typeof(NativeMethods.NMHDR));
+				if(nm.code == NativeMethods.NM_RCLICK)
+				{
+					m.Result = (IntPtr)1;
+					return;
+				}
+			}
+
+			base.WndProc(ref m);
+		} */
 	}
 }

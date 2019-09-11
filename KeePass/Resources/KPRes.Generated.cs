@@ -643,7 +643,8 @@ namespace KeePass.Resources
 			m_strRecycleGroupConfirm = TryGetEx(dictNew, "RecycleGroupConfirm", m_strRecycleGroupConfirm);
 			m_strRecycleShowConfirm = TryGetEx(dictNew, "RecycleShowConfirm", m_strRecycleShowConfirm);
 			m_strRedo = TryGetEx(dictNew, "Redo", m_strRedo);
-			m_strRememberHidingSettings = TryGetEx(dictNew, "RememberHidingSettings", m_strRememberHidingSettings);
+			m_strRememberHidingPasswordsEntry = TryGetEx(dictNew, "RememberHidingPasswordsEntry", m_strRememberHidingPasswordsEntry);
+			m_strRememberHidingPasswordsMain = TryGetEx(dictNew, "RememberHidingPasswordsMain", m_strRememberHidingPasswordsMain);
 			m_strRememberKeySources = TryGetEx(dictNew, "RememberKeySources", m_strRememberKeySources);
 			m_strRememberWorkingDirectories = TryGetEx(dictNew, "RememberWorkingDirectories", m_strRememberWorkingDirectories);
 			m_strRemoteHostReachable = TryGetEx(dictNew, "RemoteHostReachable", m_strRemoteHostReachable);
@@ -732,8 +733,10 @@ namespace KeePass.Resources
 			m_strSuccess = TryGetEx(dictNew, "Success", m_strSuccess);
 			m_strSyncFailed = TryGetEx(dictNew, "SyncFailed", m_strSyncFailed);
 			m_strSynchronize = TryGetEx(dictNew, "Synchronize", m_strSynchronize);
+			m_strSynchronizedDatabaseFile = TryGetEx(dictNew, "SynchronizedDatabaseFile", m_strSynchronizedDatabaseFile);
 			m_strSynchronizeStc = TryGetEx(dictNew, "SynchronizeStc", m_strSynchronizeStc);
 			m_strSynchronizing = TryGetEx(dictNew, "Synchronizing", m_strSynchronizing);
+			m_strSynchronizingDatabaseFile = TryGetEx(dictNew, "SynchronizingDatabaseFile", m_strSynchronizingDatabaseFile);
 			m_strSynchronizingHint = TryGetEx(dictNew, "SynchronizingHint", m_strSynchronizingHint);
 			m_strSyncSuccess = TryGetEx(dictNew, "SyncSuccess", m_strSyncSuccess);
 			m_strSystem = TryGetEx(dictNew, "System", m_strSystem);
@@ -789,7 +792,6 @@ namespace KeePass.Resources
 			m_strUnhidePasswordsDesc = TryGetEx(dictNew, "UnhidePasswordsDesc", m_strUnhidePasswordsDesc);
 			m_strUnhideSourceCharactersToo = TryGetEx(dictNew, "UnhideSourceCharactersToo", m_strUnhideSourceCharactersToo);
 			m_strUnknown = TryGetEx(dictNew, "Unknown", m_strUnknown);
-			m_strUnknownError = TryGetEx(dictNew, "UnknownError", m_strUnknownError);
 			m_strUnsupportedByMono = TryGetEx(dictNew, "UnsupportedByMono", m_strUnsupportedByMono);
 			m_strUpdateCheck = TryGetEx(dictNew, "UpdateCheck", m_strUpdateCheck);
 			m_strUpdateCheckEnableQ = TryGetEx(dictNew, "UpdateCheckEnableQ", m_strUpdateCheckEnableQ);
@@ -801,6 +803,7 @@ namespace KeePass.Resources
 			m_strUpdatedUIState = TryGetEx(dictNew, "UpdatedUIState", m_strUpdatedUIState);
 			m_strUpToDate = TryGetEx(dictNew, "UpToDate", m_strUpToDate);
 			m_strUrl = TryGetEx(dictNew, "Url", m_strUrl);
+			m_strUrlFieldEmptyFirstTab = TryGetEx(dictNew, "UrlFieldEmptyFirstTab", m_strUrlFieldEmptyFirstTab);
 			m_strUrlOpenDesc = TryGetEx(dictNew, "UrlOpenDesc", m_strUrlOpenDesc);
 			m_strUrlOpenTitle = TryGetEx(dictNew, "UrlOpenTitle", m_strUrlOpenTitle);
 			m_strUrlOverride = TryGetEx(dictNew, "UrlOverride", m_strUrlOverride);
@@ -1472,7 +1475,8 @@ namespace KeePass.Resources
 			"RecycleGroupConfirm",
 			"RecycleShowConfirm",
 			"Redo",
-			"RememberHidingSettings",
+			"RememberHidingPasswordsEntry",
+			"RememberHidingPasswordsMain",
 			"RememberKeySources",
 			"RememberWorkingDirectories",
 			"RemoteHostReachable",
@@ -1561,8 +1565,10 @@ namespace KeePass.Resources
 			"Success",
 			"SyncFailed",
 			"Synchronize",
+			"SynchronizedDatabaseFile",
 			"SynchronizeStc",
 			"Synchronizing",
+			"SynchronizingDatabaseFile",
 			"SynchronizingHint",
 			"SyncSuccess",
 			"System",
@@ -1618,7 +1624,6 @@ namespace KeePass.Resources
 			"UnhidePasswordsDesc",
 			"UnhideSourceCharactersToo",
 			"Unknown",
-			"UnknownError",
 			"UnsupportedByMono",
 			"UpdateCheck",
 			"UpdateCheckEnableQ",
@@ -1630,6 +1635,7 @@ namespace KeePass.Resources
 			"UpdatedUIState",
 			"UpToDate",
 			"Url",
+			"UrlFieldEmptyFirstTab",
 			"UrlOpenDesc",
 			"UrlOpenTitle",
 			"UrlOverride",
@@ -8475,15 +8481,26 @@ namespace KeePass.Resources
 			get { return m_strRedo; }
 		}
 
-		private static string m_strRememberHidingSettings =
-			@"Remember password hiding setting in 'Edit Entry' window";
+		private static string m_strRememberHidingPasswordsEntry =
+			@"Remember password hiding setting in the entry editing dialog";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Remember password hiding setting in &#39;Edit Entry&#39; window'.
+		/// 'Remember password hiding setting in the entry editing dialog'.
 		/// </summary>
-		public static string RememberHidingSettings
+		public static string RememberHidingPasswordsEntry
 		{
-			get { return m_strRememberHidingSettings; }
+			get { return m_strRememberHidingPasswordsEntry; }
+		}
+
+		private static string m_strRememberHidingPasswordsMain =
+			@"Remember password hiding setting in the main window";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Remember password hiding setting in the main window'.
+		/// </summary>
+		public static string RememberHidingPasswordsMain
+		{
+			get { return m_strRememberHidingPasswordsMain; }
 		}
 
 		private static string m_strRememberKeySources =
@@ -9454,6 +9471,17 @@ namespace KeePass.Resources
 			get { return m_strSynchronize; }
 		}
 
+		private static string m_strSynchronizedDatabaseFile =
+			@"Synchronized database file";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Synchronized database file'.
+		/// </summary>
+		public static string SynchronizedDatabaseFile
+		{
+			get { return m_strSynchronizedDatabaseFile; }
+		}
+
 		private static string m_strSynchronizeStc =
 			@"Synchronize active database with a file/URL";
 		/// <summary>
@@ -9474,6 +9502,17 @@ namespace KeePass.Resources
 		public static string Synchronizing
 		{
 			get { return m_strSynchronizing; }
+		}
+
+		private static string m_strSynchronizingDatabaseFile =
+			@"Synchronizing database file";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Synchronizing database file'.
+		/// </summary>
+		public static string SynchronizingDatabaseFile
+		{
+			get { return m_strSynchronizingDatabaseFile; }
 		}
 
 		private static string m_strSynchronizingHint =
@@ -10081,17 +10120,6 @@ namespace KeePass.Resources
 			get { return m_strUnknown; }
 		}
 
-		private static string m_strUnknownError =
-			@"An unknown error occurred.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'An unknown error occurred.'.
-		/// </summary>
-		public static string UnknownError
-		{
-			get { return m_strUnknownError; }
-		}
-
 		private static string m_strUnsupportedByMono =
 			@"unsupported by Mono";
 		/// <summary>
@@ -10211,6 +10239,17 @@ namespace KeePass.Resources
 		public static string Url
 		{
 			get { return m_strUrl; }
+		}
+
+		private static string m_strUrlFieldEmptyFirstTab =
+			@"The URL field (on the first tab page) is empty.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The URL field (on the first tab page) is empty.'.
+		/// </summary>
+		public static string UrlFieldEmptyFirstTab
+		{
+			get { return m_strUrlFieldEmptyFirstTab; }
 		}
 
 		private static string m_strUrlOpenDesc =

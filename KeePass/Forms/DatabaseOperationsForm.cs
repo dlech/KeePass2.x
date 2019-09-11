@@ -92,7 +92,7 @@ namespace KeePass.Forms
 
 		private void EnableControlsEx()
 		{
-			m_btnCDDel.Enabled = (m_lvCustomData.SelectedItems.Count > 0);
+			m_btnCDDel.Enabled = (m_lvCustomData.SelectedIndices.Count > 0);
 		}
 
 		private void EnableStatusMsgEx(bool bEnable)

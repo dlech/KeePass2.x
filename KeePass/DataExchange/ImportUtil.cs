@@ -28,6 +28,7 @@ using System.Xml;
 
 using KeePass.App;
 using KeePass.DataExchange.Formats;
+using KeePass.Ecas;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Resources;
@@ -349,11 +350,21 @@ namespace KeePass.DataExchange
 			if(iocSyncWith == null) throw new ArgumentNullException("iocSyncWith");
 			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
 
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.SynchronizingDatabaseFile,
+				EcasProperty.Database, pwStorage);
+
 			List<IOConnectionInfo> vConnections = new List<IOConnectionInfo>();
 			vConnections.Add(iocSyncWith);
 
-			return Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
+			bool? ob = Import(pwStorage, new KeePassKdb2x(), vConnections.ToArray(),
 				true, uiOps, bForceSave, fParent);
+
+			// Always raise the post event, such that the event pair can
+			// for instance be used to turn off/on other triggers
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.SynchronizedDatabaseFile,
+				EcasProperty.Database, pwStorage);
+
+			return ob;
 		}
 
 		public static int CountQuotes(string str, int posMax)
@@ -599,41 +610,11 @@ namespace KeePass.DataExchange
 		{
 			if(pe1.ParentGroup == null) return false;
 			if(pe2.ParentGroup == null) return false;
-
 			if(pe1.ParentGroup.Name != pe2.ParentGroup.Name)
 				return false;
 
-			if(pe1.Strings.ReadSafe(PwDefs.TitleField) !=
-				pe2.Strings.ReadSafe(PwDefs.TitleField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.UserNameField) !=
-				pe2.Strings.ReadSafe(PwDefs.UserNameField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.PasswordField) !=
-				pe2.Strings.ReadSafe(PwDefs.PasswordField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.UrlField) !=
-				pe2.Strings.ReadSafe(PwDefs.UrlField))
-			{
-				return false;
-			}
-
-			if(pe1.Strings.ReadSafe(PwDefs.NotesField) !=
-				pe2.Strings.ReadSafe(PwDefs.NotesField))
-			{
-				return false;
-			}
-
-			return true;
+			return pe1.Strings.EqualsDictionary(pe2.Strings,
+				PwCompareOptions.NullEmptyEquivStd, MemProtCmpMode.None);
 		}
 
 		internal static string GuiSendRetrieve(string strSendPrefix)

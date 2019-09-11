@@ -53,11 +53,25 @@ namespace KeePass.UI
 		//	base.OnItemClicked(e);
 		// }
 
+		// protected override void OnMouseDown(MouseEventArgs mea)
+		// {
+		//	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
+		//	if(s != null) return;
+		//	base.OnMouseDown(mea);
+		// }
+
 		// protected override void OnMouseUp(MouseEventArgs mea)
 		// {
 		//	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
 		//	if(s != null) return;
 		//	base.OnMouseUp(mea);
+		// }
+
+		// protected override void OnMouseClick(MouseEventArgs e)
+		// {
+		//	ToolStripSeparator s = (GetItemAt(e.X, e.Y) as ToolStripSeparator);
+		//	if(s != null) return;
+		//	base.OnMouseClick(e);
 		// }
 	}
 }

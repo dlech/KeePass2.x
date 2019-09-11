@@ -31,6 +31,7 @@ using System.Threading;
 using System.Windows.Forms;
 #endif
 
+using KeePassLib.Resources;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Native
@@ -232,7 +233,7 @@ namespace KeePassLib.Native
 				{
 					ProcessStartInfo psi = new ProcessStartInfo();
 
-					psi.FileName = EncodePath(strAppPath);
+					psi.FileName = strAppPath;
 					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
 
 					psi.CreateNoWindow = true;
@@ -242,7 +243,7 @@ namespace KeePassLib.Native
 					psi.RedirectStandardOutput = bStdOut;
 					if(strStdInput != null) psi.RedirectStandardInput = true;
 
-					Process p = Process.Start(psi);
+					Process p = StartProcessEx(psi);
 					pToDispose = p;
 
 					if(strStdInput != null)
@@ -454,11 +455,11 @@ namespace KeePassLib.Native
 			return Type.GetType(strType + ", Windows, ContentType=WindowsRuntime", false);
 		}
 
+		// Cf. DecodeArgsToData
 		internal static string EncodeDataToArgs(string strData)
 		{
 			if(strData == null) { Debug.Assert(false); return string.Empty; }
 
-			// Cf. EncodePath and DecodeArgsToPath
 			if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
 			{
 				string str = strData;
@@ -476,53 +477,165 @@ namespace KeePassLib.Native
 				return str;
 			}
 
-			// See SHELLEXECUTEINFO structure documentation
-			return strData.Replace("\"", "\"\"\"");
+			// SHELLEXECUTEINFOW structure documentation:
+			// https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/ns-shellapi-shellexecuteinfow
+			// return strData.Replace("\"", "\"\"\"");
+
+			// Microsoft C/C++ startup code:
+			// https://docs.microsoft.com/en-us/cpp/cpp/parsing-cpp-command-line-arguments
+			// CommandLineToArgvW function:
+			// https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-commandlinetoargvw
+
+			StringBuilder sb = new StringBuilder();
+			int i = 0;
+			while(i < strData.Length)
+			{
+				char ch = strData[i++];
+
+				if(ch == '\\')
+				{
+					int cBackslashes = 1;
+					while((i < strData.Length) && (strData[i] == '\\'))
+					{
+						++cBackslashes;
+						++i;
+					}
+
+					if(i == strData.Length)
+						sb.Append('\\', cBackslashes); // Assume no quote follows
+					else if(strData[i] == '\"')
+					{
+						sb.Append('\\', (cBackslashes * 2) + 1);
+						sb.Append('\"');
+						++i;
+					}
+					else sb.Append('\\', cBackslashes);
+				}
+				else if(ch == '\"') sb.Append("\\\"");
+				else sb.Append(ch);
+			}
+
+			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Encode a path for <c>Process.Start</c>.
-		/// </summary>
-		internal static string EncodePath(string strPath)
+		// Cf. EncodeDataToArgs
+		internal static string DecodeArgsToData(string strArgs)
 		{
-			if(strPath == null) { Debug.Assert(false); return string.Empty; }
+			if(strArgs == null) { Debug.Assert(false); return string.Empty; }
 
-			// Cf. EncodeDataToArgs and DecodeArgsToPath
+			Debug.Assert(StrUtil.Count(strArgs, "\"") == StrUtil.Count(strArgs, "\\\""));
+
 			if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
 			{
-				string str = strPath;
+				string str = strArgs;
 
-				str = str.Replace("\\", "\\\\");
-				str = str.Replace("\"", "\\\"");
-
-				// '\'' must not be encoded in paths (only in args)
-				// str = str.Replace("\'", "\\\'");
+				str = str.Replace("\\\"", "\"");
+				str = str.Replace("\\\\", "\\");
 
 				return str;
 			}
 
-			return strPath; // '\"' is not allowed in paths on Windows
+			StringBuilder sb = new StringBuilder();
+			int i = 0;
+			while(i < strArgs.Length)
+			{
+				char ch = strArgs[i++];
+
+				if(ch == '\\')
+				{
+					int cBackslashes = 1;
+					while((i < strArgs.Length) && (strArgs[i] == '\\'))
+					{
+						++cBackslashes;
+						++i;
+					}
+
+					if(i == strArgs.Length)
+						sb.Append('\\', cBackslashes); // Assume no quote follows
+					else if(strArgs[i] == '\"')
+					{
+						Debug.Assert((cBackslashes & 1) == 1);
+						sb.Append('\\', (cBackslashes - 1) / 2);
+						sb.Append('\"');
+						++i;
+					}
+					else sb.Append('\\', cBackslashes);
+				}
+				else sb.Append(ch);
+			}
+
+			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Decode command line arguments to a path for <c>Process.Start</c>.
-		/// </summary>
-		internal static string DecodeArgsToPath(string strArgs)
+		internal static void StartProcess(string strFile)
 		{
-			if(strArgs == null) { Debug.Assert(false); return string.Empty; }
+			StartProcess(strFile, null);
+		}
 
-			string str = strArgs;
+		internal static void StartProcess(string strFile, string strArgs)
+		{
+			ProcessStartInfo psi = new ProcessStartInfo();
+			if(!string.IsNullOrEmpty(strFile)) psi.FileName = strFile;
+			if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
 
-			// Cf. EncodeDataToArgs and EncodePath
-			// if(MonoWorkarounds.IsRequired(3471228285U) && IsUnix())
-			// {
-			//	string strPlh = Guid.NewGuid().ToString();
-			//	str = str.Replace("\\\\", strPlh);
-			//	str = str.Replace("\\\'", "\'");
-			//	str = str.Replace(strPlh, "\\\\"); // Restore
-			// }
+			StartProcess(psi);
+		}
 
-			return str; // '\"' is not allowed in paths on Windows
+		internal static void StartProcess(ProcessStartInfo psi)
+		{
+			Process p = StartProcessEx(psi);
+
+			try { if(p != null) p.Dispose(); }
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		internal static Process StartProcessEx(ProcessStartInfo psi)
+		{
+			if(psi == null) { Debug.Assert(false); return null; }
+
+			string strFileOrg = psi.FileName;
+			if(string.IsNullOrEmpty(strFileOrg)) { Debug.Assert(false); return null; }
+
+			Process p;
+			try
+			{
+				string strFile = strFileOrg;
+
+				string[] vUrlEncSchemes = new string[] {
+					"file:", "ftp:", "ftps:", "http:", "https:",
+					"mailto:", "scp:", "sftp:"
+				};
+				foreach(string strPfx in vUrlEncSchemes)
+				{
+					if(strFile.StartsWith(strPfx, StrUtil.CaseIgnoreCmp))
+					{
+						Debug.Assert(string.IsNullOrEmpty(psi.Arguments));
+
+						strFile = strFile.Replace("\"", "%22");
+						strFile = strFile.Replace("\'", "%27");
+						strFile = strFile.Replace("\\", "%5C");
+						break;
+					}
+				}
+
+				if(IsUnix())
+				{
+					// Mono's Process.Start method replaces '\\' by '/',
+					// which may cause a different file to be executed;
+					// therefore, we refuse to start such files
+					if(strFile.Contains("\\") && MonoWorkarounds.IsRequired(190417))
+						throw new ArgumentException(KLRes.PathBackslash);
+
+					strFile = strFile.Replace("\\", "\\\\"); // If WA not required
+					strFile = strFile.Replace("\"", "\\\"");
+				}
+
+				psi.FileName = strFile;
+				p = Process.Start(psi);
+			}
+			finally { psi.FileName = strFileOrg; }
+
+			return p;
 		}
 	}
 }

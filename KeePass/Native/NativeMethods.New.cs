@@ -211,36 +211,37 @@ namespace KeePass.Native
 			return IntPtr.Zero;
 		}
 
-		internal static bool LoseFocus(Form fCurrent)
+		internal static bool LoseFocus(Form fCurrent, bool bSkipOwnWindows)
 		{
-			if(NativeLib.IsUnix())
-				return LoseFocusUnix(fCurrent);
+			if(NativeLib.IsUnix()) return LoseFocusUnix(fCurrent);
 
 			try
 			{
-				IntPtr hCurrentWnd = ((fCurrent != null) ? fCurrent.Handle : IntPtr.Zero);
-				IntPtr hWnd = GetWindow(hCurrentWnd, GW_HWNDNEXT);
+				IntPtr hWnd = ((fCurrent != null) ? fCurrent.Handle : IntPtr.Zero);
 
 				while(true)
 				{
-					if(hWnd != hCurrentWnd)
-					{
-						int nStyle = GetWindowStyle(hWnd);
-						if(((nStyle & WS_VISIBLE) != 0) &&
-							(GetWindowTextLength(hWnd) > 0))
-						{
-							// Skip the taskbar window (required for Windows 7,
-							// when the target window is the only other window
-							// in the taskbar)
-							if(!IsTaskBar(hWnd)) break;
-						}
-					}
-
+					IntPtr hWndPrev = hWnd;
 					hWnd = GetWindow(hWnd, GW_HWNDNEXT);
-					if(hWnd == IntPtr.Zero) break;
-				}
 
-				if(hWnd == IntPtr.Zero) return false;
+					if(hWnd == IntPtr.Zero) return false;
+					if(hWnd == hWndPrev) { Debug.Assert(false); return false; }
+
+					int nStyle = GetWindowStyle(hWnd);
+					if((nStyle & WS_VISIBLE) == 0) continue;
+
+					if(GetWindowTextLength(hWnd) == 0) continue;
+
+					if(bSkipOwnWindows && GlobalWindowManager.HasWindowMW(hWnd))
+						continue;
+
+					// Skip the taskbar window (required for Windows 7,
+					// when the target window is the only other window
+					// in the taskbar)
+					if(IsTaskBar(hWnd)) continue;
+
+					break;
+				}
 
 				Debug.Assert(GetWindowText(hWnd, true) != "Start");
 				return EnsureForegroundWindow(hWnd);
@@ -743,6 +744,19 @@ namespace KeePass.Native
 			if(m.Msg == NativeMethods.WM_SYSKEYUP) return false;
 			return null;
 		}
+
+		/* internal static string GetKeyboardLayoutNameEx()
+		{
+			StringBuilder sb = new StringBuilder(KL_NAMELENGTH + 1);
+			if(GetKeyboardLayoutName(sb))
+			{
+				Debug.Assert(sb.Length == (KL_NAMELENGTH - 1));
+				return sb.ToString();
+			}
+			else { Debug.Assert(false); }
+
+			return null;
+		} */
 
 		/// <summary>
 		/// PRIMARYLANGID macro.

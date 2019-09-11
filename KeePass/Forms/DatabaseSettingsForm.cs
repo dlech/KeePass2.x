@@ -36,6 +36,7 @@ using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.KeyDerivation;
 using KeePassLib.Delegates;
 using KeePassLib.Keys;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -855,7 +856,7 @@ namespace KeePass.Forms
 
 		private void KdfTestTh(object o)
 		{
-			string strMsg = KPRes.UnknownError;
+			string strMsg = KLRes.UnknownError;
 
 			try
 			{

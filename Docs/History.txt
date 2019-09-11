@@ -1,3 +1,63 @@
+2019-09-10: 2.43
+- Added tooltips for certain character set options in the
+  password generator dialog
+- Added option 'Remember password hiding setting in the main
+  window' (in 'Tools' -> 'Options' -> tab 'Advanced'; the
+  option is turned on by default)
+- Added yellow intermediate step in password quality progress
+  bars
+- When the URL override field in the entry editing dialog is
+  not empty, but the URL field is empty, a warning is displayed
+  now
+- When an explicit request to generate a password fails (for
+  instance due to an invalid pattern), an error message is
+  displayed now
+- Added trigger events 'Synchronizing database file' and
+  'Synchronized database file'
+- Enhanced the Password Agent import module to support XML
+  files created by version 3
+- The 'MasterKeyExpiryRec' configuration setting can now also
+  be set to an XSD duration instead of an XSD date (for
+  periodic master key change recommendations)
+- KeePass now excludes itself from Windows Error Reporting
+- On Unix-like systems, file transactions now preserve the Unix
+  file access permissions, the user ID and the group ID
+- Added workaround for .NET initial focus bug
+
+- Auto-Type: improved sending of modifier keys
+- Auto-Type: improved sending of characters that are realized
+  with Ctrl+Alt/AltGr
+- Auto-Type: improved compatibility with VMware Remote Console
+  and Dameware Mini Remote Control
+- Improved main window state handling
+- Improved construction and updates of the main menu and the
+  group/entry context menus
+- Main menu items can now be deselected by pressing the Esc key
+- Top-level nodes in tree views cannot be collapsed anymore if
+  no root lines are displayed
+- New entries in a group with the e-mail folder icon now have
+  the e-mail icon by default
+- Improved performance of automatic scrolling in the main entry
+  list
+- If user names are hidden in the main window, no user name
+  suggestions are displayed in the entry editing dialog anymore
+- Function keys without modifiers can be registered as system-
+  wide hot keys now
+- For file rename/move web requests, a canonical representation
+  of the destination name/path is used now
+- URL override base placeholders can now be used within
+  {CMD:...} placeholders
+- Directly after an import, the deleted object information is
+  now applied/removed (depending on the last modification time
+  and the deletion time)
+- Improved compatibility of the 'Delete Duplicate Entries'
+  command with the process memory protection
+- Improved handling of command lines containing quotes or
+  backslashes
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
 2019-05-04: 2.42.1
 - Improved menu item state updating
 - Improved backward compatibility with certain plugins
@@ -897,7 +957,7 @@
   do not work properly due to a Mono bug)
 
 2015-08-09: 2.30
-- When opening a database via an URL fails, the error message
+- When opening a database via a URL fails, the error message
   dialog now has a button 'Specify different server
   credentials' (on Windows Vista and higher)
 - Added support for opening entry URLs with Microsoft Edge via
@@ -1132,7 +1192,7 @@
   {URL:PASSWORD}
 - Added placeholders: {BASE}, {BASE:RMVSCM}, {BASE:SCM},
   {BASE:HOST}, {BASE:PORT}, {BASE:PATH}, {BASE:QUERY},
-  {BASE:USERINFO}, {BASE:USERNAME}, {BASE:PASSWORD} (within an
+  {BASE:USERINFO}, {BASE:USERNAME}, {BASE:PASSWORD} (within a
   URL override, each of these placeholders is replaced by the
   specified part of the string that is being overridden)
 - Added {NEWPASSWORD:/Profile/} placeholder, which generates a
@@ -1529,7 +1589,7 @@
   clicking an entry reference link in the entry view
 - The '-entry-url-open' command line option now searches for
   matching entries in all open databases
-- Improved database context determination when opening an URL
+- Improved database context determination when opening a URL
 - Added support for special values in date/time fields imported
   from KeePass 1.x
 - Improved HTML entity decoding (support for more entities and
@@ -3273,8 +3333,8 @@
   user-specified characters in generated passwords
 - Added clearification paragraph in master key creation dialog
   about using the Windows user account as source (backup, ...)
-- Added menu command to synchronize with an URL (database
-  stored on a server)
+- Added menu command to synchronize with a URL (database stored
+  on a server)
 - KeePass is now checking the network connection immediately
   when trying to close the URL dialog
 - Added file closed event arguments (IO connection info)

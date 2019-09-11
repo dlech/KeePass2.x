@@ -457,6 +457,18 @@ namespace KeePass.App.Configuration
 			return null;
 		}
 
+		internal List<AceColumn> FindColumns(AceColumnType t)
+		{
+			List<AceColumn> l = new List<AceColumn>();
+
+			foreach(AceColumn c in m_aceColumns)
+			{
+				if(c.Type == t) l.Add(c);
+			}
+
+			return l;
+		}
+
 		public bool IsColumnHidden(AceColumnType t)
 		{
 			return IsColumnHidden(t, (t == AceColumnType.Password));

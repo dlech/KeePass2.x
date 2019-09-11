@@ -120,31 +120,31 @@ namespace KeePass.Forms
 		private void OnLinkHomepage(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			WinUtil.OpenUrl(PwDefs.HomepageUrl, null);
-			this.Close();
+			Close();
 		}
 
 		private void OnLinkHelpFile(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(null, null);
-			this.Close();
+			Close();
 		}
 
 		private void OnLinkLicenseFile(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.License, null, true);
-			this.Close();
+			Close();
 		}
 
 		private void OnLinkAcknowledgements(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.Acknowledgements, null, true);
-			this.Close();
+			Close();
 		}
 
 		private void OnLinkDonate(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			WinUtil.OpenUrl(PwDefs.DonationsUrl, null);
-			this.Close();
+			Close();
 		}
 	}
 }

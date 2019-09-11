@@ -381,39 +381,36 @@ namespace KeePass.Forms
 			UIUtil.ResizeColumns(m_lvSecurityOptions, true);
 		}
 
-		private void LoadPolicyOption(string strPropertyName, string strDisplayName,
-			string strDisplayDesc)
+		private void LoadPolicyOption(string strPropertyName, AppPolicyId p)
 		{
+			Debug.Assert(p.ToString() == strPropertyName);
+
 			ListViewItem lvi = m_cdxPolicy.CreateItem(Program.Config.Security.Policy,
-				strPropertyName, null, strDisplayName + "*");
-			lvi.SubItems.Add(strDisplayDesc);
+				strPropertyName, null, AppPolicy.GetName(p) + "*");
+			lvi.SubItems.Add(AppPolicy.GetDesc(p));
 		}
 
 		private void LoadPolicyOptions()
 		{
 			m_cdxPolicy = new CheckedLVItemDXList(m_lvPolicy, true);
 
-			LoadPolicyOption("Plugins", KPRes.Plugins, KPRes.PolicyPluginsDesc);
-			LoadPolicyOption("Export", KPRes.Export, KPRes.PolicyExportDesc2);
-			LoadPolicyOption("ExportNoKey", KPRes.Export + " - " + KPRes.NoKeyRepeat,
-				KPRes.PolicyExportNoKeyDesc);
-			LoadPolicyOption("Import", KPRes.Import, KPRes.PolicyImportDesc);
-			LoadPolicyOption("Print", KPRes.Print, KPRes.PolicyPrintDesc);
-			LoadPolicyOption("PrintNoKey", KPRes.Print + " - " + KPRes.NoKeyRepeat,
-				KPRes.PolicyPrintNoKeyDesc);
-			LoadPolicyOption("NewFile", KPRes.NewDatabase, KPRes.PolicyNewDatabaseDesc);
-			LoadPolicyOption("SaveFile", KPRes.SaveDatabase, KPRes.PolicySaveDatabaseDesc);
-			LoadPolicyOption("AutoType", KPRes.AutoType, KPRes.PolicyAutoTypeDesc);
-			LoadPolicyOption("AutoTypeWithoutContext", KPRes.AutoType + " - " +
-				KPRes.WithoutContext, KPRes.PolicyAutoTypeWithoutContextDesc);
-			LoadPolicyOption("CopyToClipboard", KPRes.Copy, KPRes.PolicyClipboardDesc);
-			LoadPolicyOption("CopyWholeEntries", KPRes.CopyWholeEntries, KPRes.PolicyCopyWholeEntriesDesc);
-			LoadPolicyOption("DragDrop", KPRes.DragDrop, KPRes.PolicyDragDropDesc);
-			LoadPolicyOption("UnhidePasswords", KPRes.UnhidePasswords, KPRes.UnhidePasswordsDesc);
-			LoadPolicyOption("ChangeMasterKey", KPRes.ChangeMasterKey, KPRes.PolicyChangeMasterKey);
-			LoadPolicyOption("ChangeMasterKeyNoKey", KPRes.ChangeMasterKey + " - " +
-				KPRes.NoKeyRepeat, KPRes.PolicyChangeMasterKeyNoKeyDesc);
-			LoadPolicyOption("EditTriggers", KPRes.TriggersEdit, KPRes.PolicyTriggersEditDesc);
+			LoadPolicyOption("Plugins", AppPolicyId.Plugins);
+			LoadPolicyOption("Export", AppPolicyId.Export);
+			LoadPolicyOption("ExportNoKey", AppPolicyId.ExportNoKey);
+			LoadPolicyOption("Import", AppPolicyId.Import);
+			LoadPolicyOption("Print", AppPolicyId.Print);
+			LoadPolicyOption("PrintNoKey", AppPolicyId.PrintNoKey);
+			LoadPolicyOption("NewFile", AppPolicyId.NewFile);
+			LoadPolicyOption("SaveFile", AppPolicyId.SaveFile);
+			LoadPolicyOption("AutoType", AppPolicyId.AutoType);
+			LoadPolicyOption("AutoTypeWithoutContext", AppPolicyId.AutoTypeWithoutContext);
+			LoadPolicyOption("CopyToClipboard", AppPolicyId.CopyToClipboard);
+			LoadPolicyOption("CopyWholeEntries", AppPolicyId.CopyWholeEntries);
+			LoadPolicyOption("DragDrop", AppPolicyId.DragDrop);
+			LoadPolicyOption("UnhidePasswords", AppPolicyId.UnhidePasswords);
+			LoadPolicyOption("ChangeMasterKey", AppPolicyId.ChangeMasterKey);
+			LoadPolicyOption("ChangeMasterKeyNoKey", AppPolicyId.ChangeMasterKeyNoKey);
+			LoadPolicyOption("EditTriggers", AppPolicyId.EditTriggers);
 
 			m_cdxPolicy.UpdateData(false);
 		}
@@ -686,8 +683,10 @@ namespace KeePass.Forms
 				lvg, KPRes.RememberKeySources);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "RememberWorkingDirectories",
 				lvg, KPRes.RememberWorkingDirectories);
+			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "RememberHidingPasswordsMain",
+				lvg, KPRes.RememberHidingPasswordsMain);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "SeparateHidingSettings",
-				lvg, KPRes.RememberHidingSettings);
+				lvg, KPRes.RememberHidingPasswordsEntry);
 			m_cdxAdvanced.CreateItem(Program.Config.UI.Hiding, "UnhideButtonAlsoUnhidesSource",
 				lvg, KPRes.UnhideSourceCharactersToo);
 			m_cdxAdvanced.CreateItem(Program.Config.Defaults, "TanExpiresOnUse",

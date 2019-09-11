@@ -23,6 +23,8 @@ using System.Text;
 
 using KeePass.App;
 
+using KeePassLib.Resources;
+
 namespace KeePass.Resources
 {
 	public static partial class KPRes
@@ -41,10 +43,13 @@ namespace KeePass.Resources
 		[Obsolete]
 		public static string CreateNewDatabase
 		{
-			get
-			{
-				return KPRes.CreateNewDatabase2;
-			}
+			get { return KPRes.CreateNewDatabase2; }
+		}
+
+		[Obsolete]
+		public static string UnknownError
+		{
+			get { return KLRes.UnknownError; }
 		}
 	}
 }

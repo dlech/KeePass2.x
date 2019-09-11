@@ -213,6 +213,7 @@ namespace KeePassLib.Serialization
 			byte[] pbSec = null;
 #endif
 			DateTime? otCreation = null;
+			SimpleStat sStat = null;
 
 			bool bBaseExists = IOConnection.FileExists(m_iocBase);
 			if(bBaseExists && m_iocBase.IsLocalFile())
@@ -227,6 +228,7 @@ namespace KeePassLib.Serialization
 					catch(Exception) { Debug.Assert(false); }
 #endif
 					otCreation = File.GetCreationTimeUtc(m_iocBase.Path);
+					sStat = SimpleStat.Get(m_iocBase.Path);
 #if !KeePassUAP
 					// May throw with Mono
 					FileSecurity sec = File.GetAccessControl(m_iocBase.Path, acs);
@@ -254,6 +256,8 @@ namespace KeePassLib.Serialization
 				// https://msdn.microsoft.com/en-us/library/system.io.file.getcreationtimeutc.aspx
 				if(otCreation.HasValue && (otCreation.Value.Year >= 1971))
 					File.SetCreationTimeUtc(m_iocBase.Path, otCreation.Value);
+
+				if(sStat != null) SimpleStat.Set(m_iocBase.Path, sStat);
 
 #if !KeePassUAP
 				if(bEfsEncrypted)

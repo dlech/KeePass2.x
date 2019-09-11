@@ -177,7 +177,7 @@ namespace KeePass.Plugins
 
 			string strPluginPath = null;
 			string strTmpRoot = null;
-			bool? bContent = null;
+			bool? obContent = null;
 			string strBuildPre = null, strBuildPost = null;
 
 			while(true)
@@ -224,7 +224,7 @@ namespace KeePass.Plugins
 					strBuildPost = StrUtil.Utf8.GetString(kvp.Value);
 				else if(kvp.Key == PlgxBeginContent)
 				{
-					if(bContent.HasValue)
+					if(obContent.HasValue)
 						throw new PlgxException(KLRes.FileCorrupted);
 
 					string strCached = PlgxCache.GetCacheFile(plgx, true, false);
@@ -238,12 +238,12 @@ namespace KeePass.Plugins
 						slStatus.SetText(KPRes.PluginsCompilingAndLoading,
 							LogStatusType.Info);
 
-					bContent = true;
+					obContent = true;
 					if(plgx.LogStream != null) plgx.LogStream.WriteLine("Content:");
 				}
 				else if(kvp.Key == PlgxFile)
 				{
-					if(!bContent.HasValue || !bContent.Value)
+					if(!obContent.HasValue || !obContent.Value)
 						throw new PlgxException(KLRes.FileCorrupted);
 
 					if(strTmpRoot == null) strTmpRoot = CreateTempDirectory();
@@ -251,10 +251,10 @@ namespace KeePass.Plugins
 				}
 				else if(kvp.Key == PlgxEndContent)
 				{
-					if(!bContent.HasValue || !bContent.Value)
+					if(!obContent.HasValue || !obContent.Value)
 						throw new PlgxException(KLRes.FileCorrupted);
 
-					bContent = false;
+					obContent = false;
 				}
 				else { Debug.Assert(false); }
 			}
@@ -702,12 +702,8 @@ namespace KeePass.Plugins
 			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
 			{
 				if((e != null) && (e.LinkText == "F") && !NativeLib.IsUnix())
-				{
-					Process p = Process.Start(NativeLib.EncodePath(
-						WinUtil.LocateSystemApp("Notepad.exe")),
+					NativeLib.StartProcess(WinUtil.LocateSystemApp("Notepad.exe"),
 						"\"" + SprEncoding.EncodeForCommandLine(strFile) + "\"");
-					if(p != null) p.Dispose();
-				}
 			};
 
 			if(!dlg.ShowDialog())
@@ -836,25 +832,14 @@ namespace KeePass.Plugins
 				SprCompileFlags.NonActive, false, true));
 
 			string strApp, strArgs;
-			StrUtil.SplitCommandLine(str, out strApp, out strArgs, true);
+			StrUtil.SplitCommandLine(str, out strApp, out strArgs);
 
-			Process p = null;
-			try
-			{
-				if(!string.IsNullOrEmpty(strArgs))
-					p = Process.Start(strApp, strArgs);
-				else p = Process.Start(strApp);
-			}
+			try { NativeLib.StartProcess(strApp, strArgs); }
 			catch(Exception ex)
 			{
 				if(Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
 					throw new PlgxException(ex.Message);
 				throw;
-			}
-			finally
-			{
-				try { if(p != null) p.Dispose(); }
-				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 	}

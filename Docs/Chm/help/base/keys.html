@@ -235,10 +235,16 @@ For example, by setting it to <code>80</code>, only master passwords
 with an estimated quality of at least 80 bits will be accepted.<br />
 <br />
 The <code>Security/MasterKeyExpiryRec</code> node can be set to an
+XSD date or an XSD duration (see
 <a href="https://www.w3schools.com/xml/schema_dtypes_date.asp"
-target="_blank">XSD date</a>.
-If the master key has not been changed since the specified date,
-KeePass recommends to change it.<br />
+target="_blank">XSD Date and Time Data Types</a>).
+If the master key has not been changed since the specified date or
+if the time span between now and the last master key change exceeds
+the specified duration, KeePass recommends to change it.
+This setting applies to all databases that are opened with this
+KeePass instance; a master key expiry can also be configured for
+each database individually (in 'File' &rarr; 'Database Settings' &rarr;
+tab 'Advanced').<br />
 <br />
 By specifying <code>KeyCreationFlags</code> and/or <code>KeyPromptFlags</code>
 (in the <code>UI</code> node), you can force states (enabled, disabled,
