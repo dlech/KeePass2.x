@@ -1891,8 +1891,8 @@
             Get the root group that contains all groups and entries stored in the
             database.
             </summary>
-            <returns>Root group. The return value is <c>null</c>, if no database
-            has been opened.</returns>
+            <returns>Root group. The return value is <c>null</c>, if the database
+            is not open.</returns>
         </member>
         <member name="P:KeePassLib.PwDatabase.IOConnectionInfo">
             <summary>

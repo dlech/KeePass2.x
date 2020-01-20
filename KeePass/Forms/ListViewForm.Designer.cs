@@ -47,7 +47,7 @@
 			this.m_lvMain.MultiSelect = false;
 			this.m_lvMain.Name = "m_lvMain";
 			this.m_lvMain.ShowItemToolTips = true;
-			this.m_lvMain.Size = new System.Drawing.Size(601, 418);
+			this.m_lvMain.Size = new System.Drawing.Size(670, 418);
 			this.m_lvMain.TabIndex = 0;
 			this.m_lvMain.UseCompatibleStateImageBehavior = false;
 			this.m_lvMain.View = System.Windows.Forms.View.Details;
@@ -59,7 +59,7 @@
 			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
-			this.m_bannerImage.Size = new System.Drawing.Size(625, 60);
+			this.m_bannerImage.Size = new System.Drawing.Size(694, 60);
 			this.m_bannerImage.TabIndex = 3;
 			this.m_bannerImage.TabStop = false;
 			// 
@@ -67,7 +67,7 @@
 			// 
 			this.m_lblInfo.Location = new System.Drawing.Point(9, 72);
 			this.m_lblInfo.Name = "m_lblInfo";
-			this.m_lblInfo.Size = new System.Drawing.Size(604, 29);
+			this.m_lblInfo.Size = new System.Drawing.Size(673, 29);
 			this.m_lblInfo.TabIndex = 1;
 			this.m_lblInfo.Text = "<>";
 			// 
@@ -75,7 +75,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(625, 534);
+			this.ClientSize = new System.Drawing.Size(694, 534);
 			this.Controls.Add(this.m_lblInfo);
 			this.Controls.Add(this.m_bannerImage);
 			this.Controls.Add(this.m_lvMain);

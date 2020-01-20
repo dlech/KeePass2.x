@@ -444,6 +444,7 @@
     <Compile Include="DataExchange\Formats\SteganosCsv20.cs" />
     <Compile Include="DataExchange\Formats\SteganosUI2007.cs" />
     <Compile Include="DataExchange\Formats\StickyPwXml50.cs" />
+    <Compile Include="DataExchange\Formats\TrueKeyCsv4.cs" />
     <Compile Include="DataExchange\Formats\TurboPwsCsv5.cs" />
     <Compile Include="DataExchange\Formats\VisKeeperTxt3.cs" />
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
@@ -1118,6 +1119,7 @@
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
     <Compile Include="Util\EntryUtil.cs" />
+    <Compile Include="Util\FileSearchEx.cs" />
     <Compile Include="Util\GlobalMutexPool.cs" />
     <Compile Include="Util\IniFile.cs" />
     <Compile Include="Util\IpcBroadcast.cs" />
@@ -1275,6 +1277,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_TrueKey.png" />
     <None Include="Resources\Images\B16x16_Imp_Steganos20.png" />
     <None Include="Resources\Images\B16x16_Imp_Bitwarden.png" />
     <None Include="Resources\Images\B16x16_Imp_Chrome.png" />

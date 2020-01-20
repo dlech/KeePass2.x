@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -140,6 +140,9 @@ namespace KeePassLib.Utility
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/54f61e9a/
 		// 100001:
 		//   Control locations/sizes are invalid/unexpected.
+		//   [NoRef]
+		// 100002:
+		//   TextChanged event isn't raised when the formatting changes.
 		//   [NoRef]
 		// 190417:
 		//   Mono's Process.Start method replaces '\\' by '/'.

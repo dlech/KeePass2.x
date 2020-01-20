@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ namespace KeePassLib.Serialization
 		private bool m_bMadeUnhidden = false;
 		private List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
 
-		private const string StrTempSuffix = ".tmp";
+		internal const string StrTempSuffix = ".tmp";
 		private static readonly string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
-		private const string StrTxfTempSuffix = ".tmp";
+		internal const string StrTxfTempSuffix = ".tmp";
 
 		private static Dictionary<string, bool> g_dEnabled =
 			new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
@@ -329,7 +329,7 @@ namespace KeePassLib.Serialization
 			{
 				if(NativeLib.IsUnix()) return;
 				if(!m_iocBase.IsLocalFile()) return;
-				if(IsOneDriveWorkaroundRequired()) return;
+				if(TxfIsUnusable()) return;
 
 				string strID = StrUtil.AlphaNumericOnly(Convert.ToBase64String(
 					CryptoRandom.Instance.GetRandomBytes(16)));
@@ -421,41 +421,29 @@ namespace KeePassLib.Serialization
 			return false;
 		}
 
-		internal static void ClearOld()
+		private bool TxfIsUnusable()
 		{
-			try
-			{
-				// See also TxfPrepare method
-				DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
-				List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
-					"*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
-
-				foreach(FileInfo fi in l)
-				{
-					if(fi == null) { Debug.Assert(false); continue; }
-					if(!fi.Name.StartsWith(StrTxfTempPrefix, StrUtil.CaseIgnoreCmp) ||
-						!fi.Name.EndsWith(StrTxfTempSuffix, StrUtil.CaseIgnoreCmp))
-						continue;
-
-					if((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalDays > 1.0)
-						fi.Delete();
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
-
-		// https://sourceforge.net/p/keepass/discussion/329220/thread/672ffecc65/
-		// https://sourceforge.net/p/keepass/discussion/329221/thread/514786c23a/
-		private bool IsOneDriveWorkaroundRequired()
-		{
-			if(NativeLib.IsUnix()) return false;
-
 			try
 			{
 				string strReleaseId = (Registry.GetValue(
 					"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
 					"ReleaseId", string.Empty) as string);
+
+				// Due to a bug in Microsoft's 'cldflt.sys' driver, a TxF transaction
+				// results in a Blue Screen of Death on Windows 10 1903/1909;
+				// https://www.windowslatest.com/2019/10/20/windows-10-update-issues-bsod-broken-apps-and-defender-atp/
+				// https://sourceforge.net/p/keepass/discussion/329221/thread/924b94ea48/
+				// This bug is fixed by the Windows update 4530684;
+				// https://support.microsoft.com/en-us/help/4530684/windows-10-update-kb4530684
+				// if(strReleaseId == "1903") return true;
+				// if(strReleaseId == "1909") return true;
+
 				if(strReleaseId != "1809") return false;
+
+				// On Windows 10 1809, OneDrive crashes if the file is
+				// in a OneDrive folder;
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/672ffecc65/
+				// https://sourceforge.net/p/keepass/discussion/329221/thread/514786c23a/
 
 				string strFile = m_iocBase.Path;
 
@@ -525,6 +513,29 @@ namespace KeePassLib.Serialization
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
+		}
+
+		internal static void ClearOld()
+		{
+			try
+			{
+				// See also TxfPrepare method
+				DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
+				List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
+					"*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
+
+				foreach(FileInfo fi in l)
+				{
+					if(fi == null) { Debug.Assert(false); continue; }
+					if(!fi.Name.StartsWith(StrTxfTempPrefix, StrUtil.CaseIgnoreCmp) ||
+						!fi.Name.EndsWith(StrTxfTempSuffix, StrUtil.CaseIgnoreCmp))
+						continue;
+
+					if((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalDays > 1.0)
+						fi.Delete();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

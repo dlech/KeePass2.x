@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -88,8 +88,7 @@ namespace KeePass.Util.SendInputExt
 						// hot key, as a workaround for applications
 						// with broken time-dependent message processing;
 						// https://sourceforge.net/p/keepass/bugs/1213/
-						Thread.Sleep(1);
-						Application.DoEvents();
+						SleepAndDoEvents(1);
 					}
 				}
 
@@ -100,8 +99,7 @@ namespace KeePass.Util.SendInputExt
 					// the actual sequence, as a workaround for applications
 					// with broken time-dependent message processing;
 					// https://sourceforge.net/p/keepass/bugs/1213/
-					Thread.Sleep(1);
-					Application.DoEvents();
+					SleepAndDoEvents(1);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -674,36 +672,29 @@ namespace KeePass.Util.SendInputExt
 				bCapsLock = true;
 			}
 
-			if(bCapsLock)
-			{
-				SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
-				Thread.Sleep(1);
-				Application.DoEvents();
-			}
-
 			Keys kModDiff = (kMod & ~m_kModCur);
+			bool bSleep = (bCapsLock || (kModDiff != Keys.None));
+			int msSleep = m_swiCurrent.SleepAroundKeyMod;
+
+			if(bCapsLock)
+				SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
+
 			if(kModDiff != Keys.None)
-			{
 				SetKeyModifierImplEx(kModDiff, true, true);
-				Thread.Sleep(1);
-				Application.DoEvents();
-			}
+
+			if(bSleep) SleepAndDoEvents(msSleep);
 
 			SendKeyImpl(vKey, null, bDown);
 
+			if(bSleep) SleepAndDoEvents(msSleep);
+
 			if(kModDiff != Keys.None)
-			{
-				Thread.Sleep(1);
-				Application.DoEvents();
 				SetKeyModifierImplEx(kModDiff, false, true);
-			}
 
 			if(bCapsLock)
-			{
-				Thread.Sleep(1);
-				Application.DoEvents();
 				SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
-			}
+
+			if(bSleep) SleepAndDoEvents(msSleep);
 
 			return true;
 		}
@@ -749,9 +740,14 @@ namespace KeePass.Util.SendInputExt
 				}
 				m_hklCurrent = hklTarget;
 
-				Thread.Sleep(1);
-				Application.DoEvents();
+				SleepAndDoEvents(1);
 			}
+		}
+
+		private static void SleepAndDoEvents(int msSleep)
+		{
+			if(msSleep >= 0) Thread.Sleep(msSleep);
+			Application.DoEvents();
 		}
 	}
 

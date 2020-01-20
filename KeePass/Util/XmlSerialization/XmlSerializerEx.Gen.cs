@@ -220,6 +220,9 @@ namespace KeePass.Util.XmlSerialization
 					case "UseTransactedFileWrites":
 						o.UseTransactedFileWrites = ReadBoolean(xr);
 						break;
+					case "UseTransactedConfigWrites":
+						o.UseTransactedConfigWrites = ReadBoolean(xr);
+						break;
 					case "FileTxExtra":
 						o.FileTxExtra = ReadBoolean(xr);
 						break;

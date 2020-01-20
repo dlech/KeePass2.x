@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -12,17 +13,17 @@
 	
 	
 
-	<meta name="DC.title" content="Plugins - KeePass" />
+	<meta name="DC.title" content="Plugins (2.x) - KeePass" />
 	<meta name="DC.creator" content="Dominik Reichl" />
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
 
-	<title>Plugins - KeePass</title>
+	<title>Plugins (2.x) - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	
@@ -31,17 +32,16 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_blockdevice.png" width="64" height="64"
-class="singleimg" align="left" alt="Plugin" />
-</td><td valign="middle"><h1>KeePass Plugins</h1><br />
-Installation, uninstallation and security of KeePass plugins.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_blockdevice.png" alt="Plugins" /></td>
+<td><h1>Plugins (2.x)</h1>
+<p>Installation, uninstallation and security of KeePass 2.x plugins.</p></td>
+</tr></table>
 
 <br />
 
-<h2 class="sectiontitle">
-<img src="../images/b16x16_blockdevice.png" class="singleimg" alt="Plugin" />&nbsp;&nbsp;Introduction</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_blockdevice.png" alt="Plugins" />
+Introduction</h2>
 
 <p>KeePass features a plugin framework. Plugins can provide additional
 functionality, like support of more file formats for import/export,
@@ -49,18 +49,16 @@ network functionalities, backup features, etc.</p>
 
 <br />
 
-<h2 class="sectiontitle">
-<img src="../images/b16x16_message.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Online
-Resources</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_message.png" alt="Info" />
+Online Resources</h2>
 
 <p>Plugins can be found on the
 <a href="https://keepass.info/plugins.html" target="_blank">Plugins</a> page.</p>
 
 <br />
 
-<h2 class="sectiontitle">
-<img src="../images/b16x16_package_system.png" class="singleimg" alt="Computer" />&nbsp;&nbsp;Plugin
-Installation and Uninstallation</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
+Plugin Installation and Uninstallation</h2>
 
 <p>If there are no explicit instructions how to install the plugin,
 follow these steps:</p>
@@ -93,8 +91,8 @@ because they are generated on each system and do not contain any user data.</p>
 
 <br />
 
-<h2 class="sectiontitle">
-<img src="../images/b16x16_file_locked.png" class="singleimg" alt="Locked" />&nbsp;&nbsp;Security</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Security</h2>
 
 <p><i>What about the security of plugins? Can't malicious plugins
 'inject' themselves into KeePass?</i></p>
@@ -120,9 +118,8 @@ directory, you need to adjust the directory permissions yourself.</p>
 <br />
 
 <a name="cache"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_package_system.png" class="singleimg" alt="Computer" />&nbsp;&nbsp;Plugin
-Cache</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
+Plugin Cache</h2>
 
 <p>PLGX plugins are compiled and stored in a plugin cache directory on the
 user's system. This cache highly improves the startup performance of KeePass.
@@ -137,8 +134,7 @@ directory. However, this can be overridden using the
 So, if you're for example using KeePass on a portable device and don't want
 the cache to be on the system, you could set the path to <code>{APPDIR}\PluginCache</code>.</p>
 
-<p><img src="../images/b16x16_warning.png" alt="Warning"
-style="vertical-align: middle; height: 1em;" />
+<p><img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 Do not relocate the plugin cache into the 'Plugins' folder of the
 KeePass application directory, because this can result in a severe
 performance degradation.</p>

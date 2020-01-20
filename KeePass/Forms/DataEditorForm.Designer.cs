@@ -33,6 +33,17 @@
 			this.m_menuFileSave = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEdit = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditUndo = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditRedo = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditCut = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditCopy = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditPaste = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditFind = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuView = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewFont = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -66,6 +77,7 @@
 			this.m_statusMain = new System.Windows.Forms.StatusStrip();
 			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
 			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_menuEditDelete = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuMain.SuspendLayout();
 			this.m_toolFile.SuspendLayout();
 			this.m_toolFormat.SuspendLayout();
@@ -76,6 +88,7 @@
 			// 
 			this.m_menuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFile,
+            this.m_menuEdit,
             this.m_menuView});
 			this.m_menuMain.Location = new System.Drawing.Point(0, 0);
 			this.m_menuMain.Name = "m_menuMain";
@@ -96,22 +109,110 @@
 			// 
 			this.m_menuFileSave.Image = global::KeePass.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(103, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(100, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Image = global::KeePass.Properties.Resources.B16x16_Exit;
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(103, 22);
 			this.m_menuFileExit.Text = "&Close";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
+			// 
+			// m_menuEdit
+			// 
+			this.m_menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuEditUndo,
+            this.m_menuEditRedo,
+            this.m_menuEditSep0,
+            this.m_menuEditCut,
+            this.m_menuEditCopy,
+            this.m_menuEditPaste,
+            this.m_menuEditDelete,
+            this.m_menuEditSep1,
+            this.m_menuEditSelectAll,
+            this.m_menuEditSep2,
+            this.m_menuEditFind});
+			this.m_menuEdit.Name = "m_menuEdit";
+			this.m_menuEdit.Size = new System.Drawing.Size(39, 20);
+			this.m_menuEdit.Text = "&Edit";
+			// 
+			// m_menuEditUndo
+			// 
+			this.m_menuEditUndo.Image = global::KeePass.Properties.Resources.B16x16_Undo;
+			this.m_menuEditUndo.Name = "m_menuEditUndo";
+			this.m_menuEditUndo.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditUndo.Text = "&Undo";
+			this.m_menuEditUndo.Click += new System.EventHandler(this.OnEditUndo);
+			// 
+			// m_menuEditRedo
+			// 
+			this.m_menuEditRedo.Image = global::KeePass.Properties.Resources.B16x16_Redo;
+			this.m_menuEditRedo.Name = "m_menuEditRedo";
+			this.m_menuEditRedo.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditRedo.Text = "&Redo";
+			this.m_menuEditRedo.Click += new System.EventHandler(this.OnEditRedo);
+			// 
+			// m_menuEditSep0
+			// 
+			this.m_menuEditSep0.Name = "m_menuEditSep0";
+			this.m_menuEditSep0.Size = new System.Drawing.Size(149, 6);
+			// 
+			// m_menuEditCut
+			// 
+			this.m_menuEditCut.Image = global::KeePass.Properties.Resources.B16x16_Cut;
+			this.m_menuEditCut.Name = "m_menuEditCut";
+			this.m_menuEditCut.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditCut.Text = "Cu&t";
+			this.m_menuEditCut.Click += new System.EventHandler(this.OnEditCut);
+			// 
+			// m_menuEditCopy
+			// 
+			this.m_menuEditCopy.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
+			this.m_menuEditCopy.Name = "m_menuEditCopy";
+			this.m_menuEditCopy.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditCopy.Text = "&Copy";
+			this.m_menuEditCopy.Click += new System.EventHandler(this.OnEditCopy);
+			// 
+			// m_menuEditPaste
+			// 
+			this.m_menuEditPaste.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
+			this.m_menuEditPaste.Name = "m_menuEditPaste";
+			this.m_menuEditPaste.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditPaste.Text = "&Paste";
+			this.m_menuEditPaste.Click += new System.EventHandler(this.OnEditPaste);
+			// 
+			// m_menuEditSep1
+			// 
+			this.m_menuEditSep1.Name = "m_menuEditSep1";
+			this.m_menuEditSep1.Size = new System.Drawing.Size(149, 6);
+			// 
+			// m_menuEditSelectAll
+			// 
+			this.m_menuEditSelectAll.Name = "m_menuEditSelectAll";
+			this.m_menuEditSelectAll.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditSelectAll.Text = "Select &All";
+			this.m_menuEditSelectAll.Click += new System.EventHandler(this.OnEditSelectAll);
+			// 
+			// m_menuEditSep2
+			// 
+			this.m_menuEditSep2.Name = "m_menuEditSep2";
+			this.m_menuEditSep2.Size = new System.Drawing.Size(149, 6);
+			// 
+			// m_menuEditFind
+			// 
+			this.m_menuEditFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
+			this.m_menuEditFind.Name = "m_menuEditFind";
+			this.m_menuEditFind.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditFind.Text = "&Find...";
+			this.m_menuEditFind.Click += new System.EventHandler(this.OnEditFind);
 			// 
 			// m_menuView
 			// 
@@ -126,19 +227,19 @@
 			// m_menuViewFont
 			// 
 			this.m_menuViewFont.Name = "m_menuViewFont";
-			this.m_menuViewFont.Size = new System.Drawing.Size(152, 22);
+			this.m_menuViewFont.Size = new System.Drawing.Size(134, 22);
 			this.m_menuViewFont.Text = "&Font...";
 			this.m_menuViewFont.Click += new System.EventHandler(this.OnViewFont);
 			// 
 			// m_menuViewSep0
 			// 
 			this.m_menuViewSep0.Name = "m_menuViewSep0";
-			this.m_menuViewSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuViewSep0.Size = new System.Drawing.Size(131, 6);
 			// 
 			// m_menuViewWordWrap
 			// 
 			this.m_menuViewWordWrap.Name = "m_menuViewWordWrap";
-			this.m_menuViewWordWrap.Size = new System.Drawing.Size(152, 22);
+			this.m_menuViewWordWrap.Size = new System.Drawing.Size(134, 22);
 			this.m_menuViewWordWrap.Text = "&Word Wrap";
 			this.m_menuViewWordWrap.Click += new System.EventHandler(this.OnViewWordWrap);
 			// 
@@ -399,6 +500,14 @@
 			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
 			this.m_rtbText.TextChanged += new System.EventHandler(this.OnTextTextChanged);
 			// 
+			// m_menuEditDelete
+			// 
+			this.m_menuEditDelete.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
+			this.m_menuEditDelete.Name = "m_menuEditDelete";
+			this.m_menuEditDelete.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditDelete.Text = "&Delete";
+			this.m_menuEditDelete.Click += new System.EventHandler(this.OnEditDelete);
+			// 
 			// DataEditorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -470,5 +579,17 @@
 		private System.Windows.Forms.ToolStripStatusLabel m_tssStatusMain;
 		private System.Windows.Forms.ToolStripSeparator m_tbFileSep2;
 		private System.Windows.Forms.ToolStripTextBox m_tbFind;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEdit;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditUndo;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditRedo;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditCut;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditCopy;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditPaste;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditSep1;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditSelectAll;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditSep2;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditFind;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditDelete;
 	}
 }

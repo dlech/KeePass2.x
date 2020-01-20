@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -31,26 +32,25 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_vcard.png" width="64" height="64"
-class="singleimg" align="left" alt="VCard Document" />
-</td><td valign="middle"><h1>Entry Dialog</h1><br />
-Explains options in the entry dialog.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_vcard.png" alt="VCard" /></td>
+<td><h1>Entry Dialog</h1>
+<p>Explains options in the entry dialog.</p></td>
+</tr></table>
 
 <p>In this dialog you can edit properties of new and existing entries.</p>
 
 <br />
 
 <a name="general"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;General</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+General</h2>
 
 <p>On this tab page you can specify the main information about the account. Apart
 from filling in standard information (user name, password, etc.), you can
 also assign an <i>Expiry Time</i>. When this date is reached, the entry
 is automatically marked as expired (using a red
-<font color="#880000"><b>X</b></font> icon in the main window and showing
+<span style="color: #FF0000;"><b>X</b></span> icon in the main window and showing
 the entry information using a striked-out font).
 The entry is not deleted when it expires.</p>
 
@@ -68,8 +68,8 @@ generated passwords), see
 <br />
 
 <a name="advanced"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Advanced</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Advanced</h2>
 
 <p>On this tab page you can assign custom strings and file attachments to the entry.</p>
 
@@ -92,8 +92,8 @@ File attachments are stored encrypted in the database (like all other database c
 <br />
 
 <a name="autotype"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_ktouch.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Auto-Type</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Touch" />
+Auto-Type</h2>
 
 <p>On this page you can configure the auto-type behaviour for this entry. For more
 information, see the
@@ -102,8 +102,8 @@ information, see the
 <br />
 
 <a name="history"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_dataexchange.png" class="singleimg" alt="Reload Document" />&nbsp;&nbsp;History</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_dataexchange.png" alt="Reload" />
+History</h2>
 
 <p>Each entry has its own history. Each time you change an entry, KeePass automatically
 creates a backup copy of the current, non-modified entry before saving the new

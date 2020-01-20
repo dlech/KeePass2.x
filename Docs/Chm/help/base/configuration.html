@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_kmultiple.png" width="64" height="64"
-class="singleimg" align="left" alt="Configuration" />
-</td><td valign="middle"><h1>Configuration</h1><br />
-Details about how and where KeePass stores its configuration.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_kmultiple.png" alt="Configuration" /></td>
+<td><h1>Configuration</h1>
+<p>Details about how and where KeePass stores its configuration.</p></td>
+</tr></table>
 
 <p>KeePass supports multiple locations for storing configuration information:
 the <i>global</i> configuration file in the KeePass application directory,
@@ -86,9 +86,8 @@ instead of 'Program Files (x86)'.</p>
 <br />
 
 <a name="local"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_package_system.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Installation
-by Administrator, Usage by User</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
+Installation by Administrator, Usage by User</h2>
 
 <p>If you use the KeePass installer and install the program with administrator rights,
 the program directory will be write-protected when working
@@ -101,9 +100,8 @@ will not be shared and can be configured individually by each user.</p>
 <br />
 
 <a name="portable"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_usbpendrive_unmount.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Portable
-Version</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_usbpendrive_unmount.png" alt="USB Stick" />
+Portable Version</h2>
 
 <p>If you downloaded the portable version of KeePass (ZIP package), KeePass will
 try to store its configuration in the application directory. No configuration
@@ -113,9 +111,8 @@ writable).</p>
 <br />
 
 <a name="itp"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_usbpendrive_unmount.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Create
-Portable Version of Installed KeePass</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_usbpendrive_unmount.png" alt="USB Stick" />
+Create Portable Version of Installed KeePass</h2>
 
 <p>If you are currently using a locally installed version of KeePass
 (installed by the KeePass installer) and want to create a portable version of it,
@@ -126,9 +123,8 @@ over the configuration file on the portable device.</p>
 <br />
 
 <a name="network"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_server.png" class="singleimg" alt="Text" />&nbsp;&nbsp;For
-Network Administrators: Enforced Configuration</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_server.png" alt="Server" />
+For Network Administrators: Enforced Configuration</h2>
 
 <p>KeePass can be forced to load specific configuration settings. Enforced configuration
 settings are loaded from
@@ -140,7 +136,7 @@ stored).</p>
 loaded normally from global/local configuration files.</p>
 
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 <b>Example (2.x).</b>
 The following <code>KeePass.config.enforced.xml</code> file enforces the
 values/states of the settings 'Clipboard auto-clear time (seconds)',
@@ -159,9 +155,9 @@ All other settings can be configured by the user.
 		&lt;ClipboardClearAfterSeconds&gt;20&lt;/ClipboardClearAfterSeconds&gt;
 	&lt;/Security&gt;
 &lt;/Configuration&gt;</pre></td>
-<td width="210" align="right" valign="top">
+<td style="width: 210px; text-align: right;">
 <a href="../images/options_enf_big.png"><img
-src="../images/options_enf.png" align="right" alt="Enforced Options" /></a>
+src="../images/options_enf.png" alt="Enforced Options" /></a>
 </td></tr></table>
 
 <p><b>UI disabled.</b>
@@ -217,9 +213,8 @@ and therefore is required.
 <br /><br />
 
 <a name="tech"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kmultiple.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Technical
-Details</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+Technical Details</h2>
 
 <p>This section explains in detail how loading and saving the configuration works.</p>
 

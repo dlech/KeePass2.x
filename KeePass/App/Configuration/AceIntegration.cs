@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -462,7 +462,7 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		public ulong GetEnabledBuiltInOverrides()
+		private ulong GetEnabledBuiltInOverrides()
 		{
 			ulong u = 0;
 			for(int i = 0; i < m_lBuiltInOverrides.Count; ++i)
@@ -474,11 +474,51 @@ namespace KeePass.App.Configuration
 			return u;
 		}
 
-		public void SetEnabledBuiltInOverrides(ulong uFlags)
+		private void SetEnabledBuiltInOverrides(ulong uFlags)
 		{
 			for(int i = 0; i < m_lBuiltInOverrides.Count; ++i)
 				m_lBuiltInOverrides[i].Enabled = ((uFlags &
 					m_lBuiltInOverrides[i].BuiltInFlagID) != 0UL);
+		}
+
+		internal void AddCustomOverride(string strScheme, string strOverride,
+			bool bEnable, bool bDisableOthers)
+		{
+			if(string.IsNullOrEmpty(strScheme)) return; // No assert
+			if(strOverride == null) return; // No assert
+
+			if(bDisableOthers)
+			{
+				List<AceUrlSchemeOverride> l = new List<AceUrlSchemeOverride>();
+				l.AddRange(m_lBuiltInOverrides);
+				l.AddRange(m_lCustomOverrides);
+
+				foreach(AceUrlSchemeOverride o in l)
+				{
+					if(o.Scheme.Equals(strScheme, StrUtil.CaseIgnoreCmp))
+						o.Enabled = false;
+				}
+			}
+
+			m_lCustomOverrides.Add(new AceUrlSchemeOverride(bEnable,
+				strScheme, strOverride));
+		}
+
+		internal void RemoveCustomOverride(string strScheme, string strOverride)
+		{
+			if(string.IsNullOrEmpty(strScheme)) return; // No assert
+			if(strOverride == null) return; // No assert
+
+			for(int i = m_lCustomOverrides.Count - 1; i >= 0; --i)
+			{
+				AceUrlSchemeOverride o = m_lCustomOverrides[i];
+				if(o.Scheme.Equals(strScheme, StrUtil.CaseIgnoreCmp) &&
+					(o.UrlOverride == strOverride))
+				{
+					m_lCustomOverrides.RemoveAt(i);
+					return; // Remove one item only
+				}
+			}
 		}
 	}
 

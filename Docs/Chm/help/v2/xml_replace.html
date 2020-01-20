@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -33,12 +34,11 @@
 
 <!-- Org Pub: 2013-12-06 -->
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_binary.png" width="64" height="64"
-class="singleimg" align="left" alt="People" />
-</td><td valign="middle"><h1>XML Replace</h1><br />
-About the XML replacement functionality.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_binary.png" alt="Binary" /></td>
+<td><h1>XML Replace</h1>
+<p>About the XML replacement functionality.</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#info">General Information</a></li>
@@ -69,9 +69,8 @@ About the XML replacement functionality.
 <br />
 
 <a name="info"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;General
-Information</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+General Information</h2>
 
 <p>XML Replace is a powerful feature that modifies a database by manipulating
 its XML representation.</p>
@@ -81,8 +80,7 @@ in memory, performs the operation specified by the user
 (e.g. remove nodes or replace text), tries to load the modified XML,
 and merges the current database with the modified database.</p>
 
-<p><img src="../images/b16x16_warning.png" alt="Warning"
-style="vertical-align: middle; height: 1em;" />
+<p><img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 This is a feature for experts. Use with caution!</p>
 
 <p>XML Replace can be invoked via 'Tools' &rarr; 'Database Tools' &rarr;
@@ -95,14 +93,17 @@ regular expressions:</p>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/XPath"
 target="_blank">Wikipedia: XPath</a></li>
-<li><a href="https://msdn.microsoft.com/en-us/library/ms256115.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/ms256115.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256115(v=vs.100)"
 target="_blank">MSDN: XPath Reference</a></li>
-<li><a href="https://msdn.microsoft.com/en-us/library/ms256086.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/ms256086.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256086(v=vs.100)"
 target="_blank">MSDN: XPath Examples</a></li>
 </ul></li>
 <li>Regular expressions:
 <ul>
-<li><a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
 target="_blank">MSDN: Regular Expression Language - Quick Reference</a></li>
 </ul></li>
 </ul>
@@ -114,15 +115,14 @@ these. Furthermore, any changes to database properties
 <br />
 
 <a name="ex"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Usage
-Examples</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Usage Examples</h2>
 
 <br />
 
 <a name="repstr"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace text in all entry titles and notes</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String[Key='Title' or Key='Notes']/Value</code></td></tr>
@@ -139,7 +139,7 @@ replaces all occurences of <code><i>TheTextToFind</i></code> by
 
 <a name="tohttps"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace all HTTP URLs by HTTPS URLs</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String[Key='URL']/Value</code></td></tr>
@@ -156,7 +156,7 @@ HTTP URLs by HTTPS URLs.</td></tr>
 
 <a name="repgrpicon"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace group icons</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Group/IconID</code></td></tr>
@@ -176,7 +176,7 @@ All icon IDs can be found in the icon picker dialog.</td></tr>
 <!-- https://sourceforge.net/p/keepass/discussion/329221/thread/56a33495/ -->
 <a name="delstr"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Delete entry strings by name</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String[Key='<i>TheName</i>']</code></td></tr>
@@ -189,7 +189,7 @@ All icon IDs can be found in the icon picker dialog.</td></tr>
 
 <a name="delbinext"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Delete entry attachments by name extension</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/Binary[substring(Key, string-length(Key) - 3) = '.jpg']</code></td></tr>
@@ -208,7 +208,7 @@ in '<code>.abcde</code>', you'd need to replace the '<code>3</code>' by
 
 <a name="resetbgcolor"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Reset background colors</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/BackgroundColor</code></td></tr>
@@ -221,7 +221,7 @@ default (transparent/alternating).</td></tr>
 
 <a name="atdisable"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Disable auto-type for entries with empty fields</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String[(Key='UserName' or Key='Password') and Value='']/../AutoType/Enabled</code></td></tr>
@@ -237,7 +237,7 @@ user name field or an empty password field.</td></tr>
 
 <a name="atdelayupper"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Convert <code>{DELAY=</code> to upper-case</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
@@ -259,7 +259,7 @@ may be useful as preparation for the following example (which matches
 
 <a name="ataddstddelay"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></th></tr>
 <tr><td>Select nodes:</td>
 <td><code>(//DefaultSequence | //KeystrokeSequence)[not(contains(., '{DELAY='))
@@ -284,7 +284,7 @@ This can e.g. be done using the XML Replace operation mentioned
 
 <a name="atmodstddelay"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Change <code>{DELAY=</code> values</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
@@ -301,7 +301,7 @@ within auto-type sequence overrides and associations to 50.</td></tr>
 
 <a name="atrmvstddelay"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Remove <code>{DELAY=<em>x</em>}</code> from all sequences</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//DefaultSequence | //KeystrokeSequence</code></td></tr>
@@ -318,7 +318,7 @@ all auto-type sequences.</td></tr>
 
 <a name="atresetifstddelay"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Reset default sequences that contain <code>{DELAY=</code></th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//DefaultSequence[contains(., '{DELAY=')]</code></td></tr>
@@ -333,7 +333,7 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 
 <a name="ataddassoc"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Add an auto-type association to all entries</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/AutoType</code></td></tr>
@@ -350,7 +350,7 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 
 <a name="copyurls"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Copy entry URLs into title fields</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry</code></td></tr>
@@ -368,7 +368,7 @@ entry (overwriting any existing data in the title field).</td></tr>
 
 <a name="copytitles"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Copy entry titles into empty user name fields</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String[Key='UserName' and Value='']/..</code></td></tr>
@@ -386,7 +386,7 @@ entry, if this field is empty.</td></tr>
 
 <a name="firstnotempty"></a>
 <table class="tablebox">
-<colgroup><col width="20%" /><col width="80%" /></colgroup>
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Ensure first line is not empty</th></tr>
 <tr><td>Select nodes:</td>
 <td><code>//Entry/String/Value</code></td></tr>
@@ -398,15 +398,15 @@ entry, if this field is empty.</td></tr>
 <tr><td colspan="2">For all multi-line fields,
 this inserts '<code>--</code>' into the first line of the field value,
 if this line is empty and the value has at least two lines.
-For example,<br />
+Example:<br />
 <br />
-<div style="font-family: monospace; background-color: #C6C6C6; display: block;"><br />
+<div style="font-family: monospace; background-color: #C6C6C6;"><br />
 <br />
 Sample data</div>
 <br />
 is replaced by<br />
 <br />
-<div style="font-family: monospace; background-color: #C6C6C6; display: block;">--<br />
+<div style="font-family: monospace; background-color: #C6C6C6;">--<br />
 <br />
 Sample data</div></td></tr>
 </table>

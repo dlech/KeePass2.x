@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -12,17 +13,17 @@
 	
 	
 
-	<meta name="DC.title" content="Plugin Development - KeePass" />
+	<meta name="DC.title" content="Plugin Development (2.x) - KeePass" />
 	<meta name="DC.creator" content="Dominik Reichl" />
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
 
-	<title>Plugin Development - KeePass</title>
+	<title>Plugin Development (2.x) - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_blockdevice.png" width="64" height="64"
-class="singleimg" align="left" alt="Settings" />
-</td><td valign="middle"><h1>Plugin Development (2.x)</h1><br />
-How to develop plugins for KeePass 2.x.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_blockdevice.png" alt="Plugins" /></td>
+<td><h1>Plugin Development (2.x)</h1>
+<p>How to develop plugins for KeePass 2.x.</p></td>
+</tr></table>
 
 <p>This documentation applies to KeePass 2.x plugins. 2.x plugins are fundamentally
 different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
@@ -58,8 +58,8 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 <br />
 
 <a name="req"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Requirements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Requirements</h2>
 
 <p>Before you can start developing a KeePass plugin, you need the following
 prerequisites:</p>
@@ -68,17 +68,17 @@ prerequisites:</p>
 <li>Latest portable KeePass ZIP package. You can get it from the
 <a href="https://keepass.info/download.html" target="_blank">KeePass website</a>.</li>
 <li>A C# (&ge; 2.0) development IDE
-(e.g. <a href="https://www.visualstudio.com/" target="_blank">Microsoft
+(e.g. <a href="https://visualstudio.microsoft.com/" target="_blank">Microsoft
 Visual Studio</a> or
-<a href="http://www.icsharpcode.net/" target="_blank">SharpDevelop</a>).</li>
+<!-- http://www.icsharpcode.net/ -->
+<a href="https://github.com/icsharpcode/SharpDevelop" target="_blank">SharpDevelop</a>).</li>
 </ul>
 
 <br />
 
 <a name="tutorial"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Step-by-Step
-Tutorial</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Step-by-Step Tutorial</h2>
 
 <p>Start your favorite IDE and create a new <em>C# Class Library</em> project
 (for the .NET Framework, not .NET Standard/Core).
@@ -179,9 +179,8 @@ dialog, you should see your plugin in the list of loaded plugins.</p>
 <br />
 
 <a name="co_menuitem"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Providing
-Menu Items</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Providing Menu Items</h2>
 
 <p>Many plugins provide menu items (with subitems, if necessary)
 in prominent locations like the 'Tools' menu, the entry context menu, etc.
@@ -268,9 +267,8 @@ example plugin.</p>
 <br />
 
 <a name="conventions"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Plugin
-Conventions</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Plugin Conventions</h2>
 
 <p><b>File version information block:</b></p>
 
@@ -311,9 +309,8 @@ For the SecretImporter plugin, this would be <code>SecretImporterExt</code>.</p>
 <br />
 
 <a name="upd"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_dataexchange.png" class="singleimg" alt="Exchange" />&nbsp;&nbsp;Update
-Checking</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_dataexchange.png" alt="Exchange" />
+Update Checking</h2>
 
 <p>The update check of KeePass &ge; 2.18 can also check for plugin updates.
 Update check support is optional; plugins don't have to support update
@@ -425,9 +422,8 @@ version information file.</li>
 <br />
 
 <a name="unmanagedcpp"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Can
-KeePass 2.x Plugins be Written in Unmanaged C++?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Can KeePass 2.x Plugins be Written in Unmanaged C++?</h2>
 
 <p>Yes and no. You can write the logic of your plugin in unmanaged C++ (native
 Win32 APIs can be used). However, you must provide a managed interface to your plugin,
@@ -449,9 +445,8 @@ systems; etc.).</p>
 <br />
 
 <a name="plgx"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_tar.png" class="singleimg" alt="Info" />&nbsp;&nbsp;PLGX
-Files</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_tar.png" alt="Package" />
+PLGX Files</h2>
 
 <p>PLGX is an <em>optional</em> plugin file format for KeePass &ge; 2.09.
 Instead of compiling your plugin to a DLL file, the plugin source code
@@ -493,28 +488,28 @@ same as for a PLGX plugin; both need to be copied into the 'Plugins'
 folder.</p>
 
 <p><b>Comparison.</b></p>
-<table class="tablebox75" align="center">
+<table class="tablebox75">
 <tr><th>&nbsp;</th><th>DLL</th><th>PLGX</th></tr>
 <tr><td>Compatibility check</td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /> Weak only.</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /> Strong.</td></tr>
+<td><img src="../images/b16x16_cancel.png" alt="No" /> Weak only.</td>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /> Strong.</td></tr>
 
 <tr><td>Compatibility with custom builds (Linux)</td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" />
+<td><img src="../images/b16x16_cancel.png" alt="No" />
 Partial, see above.</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
 
 <tr><td>Authenticode signing support</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img src="../images/b16x16_cancel.png" alt="No" /></td></tr>
 
 <tr><td>No compilation on the user's system</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img src="../images/b16x16_cancel.png" alt="No" /></td></tr>
 
 <tr><td>No plugin cache</td>
-<td><img class="singleimg" src="../images/b16x16_ok.png" alt="Yes" /></td>
-<td><img class="singleimg" src="../images/b16x16_cancel.png" alt="No" /></td></tr>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /></td>
+<td><img src="../images/b16x16_cancel.png" alt="No" /></td></tr>
 </table>
 
 <p>So, both formats have unique advantages and disadvantages;
@@ -546,7 +541,7 @@ pass a path to the plugin sources directory (without terminating separator),
 KeePass will use this one; otherwise
 it'll show a folder browser dialog to allow you selecting the directory. If
 you want to pass the directory location using the command line, make sure that
-you're specifying a full, absolute path -- relative paths will not work.</p>
+you're specifying a full, absolute path; relative paths will not work.</p>
 
 <p>In order to keep the size of the PLGX file small, it is recommended
 that you clean up the plugin sources directory before compiling the PLGX.
@@ -624,8 +619,9 @@ the cache directory. Example:<br />
 
 <p>In order to specify a quote character on the command line, it has
 to be encoded using three quotes (this is Windows standard, see
-<a href="https://msdn.microsoft.com/en-us/library/bb759784.aspx"
-target="_blank">MSDN: <code>SHELLEXECUTEINFO</code></a>). So, the command
+<!-- https://msdn.microsoft.com/en-us/library/bb759784.aspx -->
+<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
+target="_blank">MSDN: <code>SHELLEXECUTEINFOW</code></a>). So, the command
 line above will actually embed the post-build command
 <code>cmd /c COPY &quot;{PLGX_TEMP_DIR}MyFile.txt&quot;
 &quot;{PLGX_CACHE_DIR}MyFile.txt&quot;</code>

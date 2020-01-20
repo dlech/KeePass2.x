@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace KeePass.Util.SendInputExt
 	internal sealed class SiWindowInfo
 	{
 		private static string[] g_vProcessNamesUni = null;
-		private static string[] g_vProcessNamesKeyRAlt = null;
+		private static string[] g_vProcessNamesVMs = null;
 
 		private readonly IntPtr m_hWnd;
 		public IntPtr HWnd
@@ -73,6 +73,12 @@ namespace KeePass.Util.SendInputExt
 		public bool CharsRAltAsCtrlAlt
 		{
 			get { return m_bCharsRAltAsCtrlAlt; }
+		}
+
+		private int m_msSleepAroundKeyMod = 1;
+		public int SleepAroundKeyMod
+		{
+			get { return m_msSleepAroundKeyMod; }
 		}
 
 		public SiWindowInfo(IntPtr hWnd)
@@ -155,8 +161,8 @@ namespace KeePass.Util.SendInputExt
 				}
 			}
 
-			if(g_vProcessNamesKeyRAlt == null)
-				g_vProcessNamesKeyRAlt = new string[] {
+			if(g_vProcessNamesVMs == null)
+				g_vProcessNamesVMs = new string[] {
 					"MSTSC", // Remote Desktop Connection client
 					"VirtualBox", // Oracle VirtualBox <= 5
 					"VirtualBoxVM", // Oracle VirtualBox >= 6
@@ -166,6 +172,10 @@ namespace KeePass.Util.SendInputExt
 					// https://sourceforge.net/p/keepass/discussion/329221/thread/c94e0f096e/
 					"VMware-VMX", "VMware-AuthD", "VMPlayer", "VMware-Unity-Helper",
 
+					// VMware Workstation;
+					// https://sourceforge.net/p/keepass/bugs/1588/
+					"VMware",
+
 					// VMware Remote Console;
 					// https://sourceforge.net/p/keepass/bugs/1588/
 					"VMRC",
@@ -174,12 +184,17 @@ namespace KeePass.Util.SendInputExt
 					// https://sourceforge.net/p/keepass/bugs/1874/
 					"DWRCC"
 				};
-			foreach(string str in g_vProcessNamesKeyRAlt)
+			foreach(string str in g_vProcessNamesVMs)
 			{
 				if(ProcessNameMatches(strName, str))
 				{
 					m_sm = SiSendMethod.KeyEvent;
 					m_bCharsRAltAsCtrlAlt = true;
+
+					// Determined with Fedora 31 in VirtualBox 6.1
+					// (running 'stress', {DELAY=1})
+					m_msSleepAroundKeyMod = 50;
+
 					return;
 				}
 			}

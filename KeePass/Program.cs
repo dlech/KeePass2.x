@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -371,6 +371,25 @@ namespace KeePass
 				MainCleanUp();
 				return;
 			}
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigAddUrlOverride] != null)
+			{
+				bool bAct = (m_cmdLineArgs[AppDefs.CommandLineOptions.Activate] != null);
+				Program.Config.Integration.UrlSchemeOverrides.AddCustomOverride(
+					m_cmdLineArgs[AppDefs.CommandLineOptions.Scheme],
+					m_cmdLineArgs[AppDefs.CommandLineOptions.Value], bAct, bAct);
+				AppConfigSerializer.Save(Program.Config);
+				MainCleanUp();
+				return;
+			}
+			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigRemoveUrlOverride] != null)
+			{
+				Program.Config.Integration.UrlSchemeOverrides.RemoveCustomOverride(
+					m_cmdLineArgs[AppDefs.CommandLineOptions.Scheme],
+					m_cmdLineArgs[AppDefs.CommandLineOptions.Value]);
+				AppConfigSerializer.Save(Program.Config);
+				MainCleanUp();
+				return;
+			}
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigSetLanguageFile] != null)
 			{
 				Program.Config.Application.LanguageFile = m_cmdLineArgs[
@@ -577,14 +596,8 @@ namespace KeePass
 			InitEnvSecurity();
 			MonoWorkarounds.Initialize();
 
-			// try { NativeMethods.SetProcessDPIAware(); }
-			// catch(Exception) { }
-
 			// Do not run as AppX, because of compatibility problems
-			// (unless we're a special compatibility build)
-			if(WinUtil.IsAppX && !IsBuildType(
-				"CDE75CF0D4CA04D577A5A2E6BF5D19BFD5DDBBCF89D340FBBB0E4592C04496F1"))
-				return false;
+			if(WinUtil.IsAppX) return false;
 
 			try { SelfTest.TestFipsComplianceProblems(); }
 			catch(Exception exFips)
@@ -865,27 +878,6 @@ namespace KeePass
 #else
 			return !IsStableAssembly();
 #endif
-		}
-
-		private static bool IsBuildType(string str)
-		{
-			try
-			{
-				string strFile = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(),
-					true, false) + "Application.ini";
-				if(!File.Exists(strFile)) return false;
-
-				IniFile f = IniFile.Read(strFile, StrUtil.Utf8);
-				string strType = f.Get("Application", "Type");
-				if(string.IsNullOrEmpty(strType)) return false;
-
-				byte[] pb = CryptoUtil.HashSha256(StrUtil.Utf8.GetBytes(strType.Trim()));
-				return string.Equals(MemUtil.ByteArrayToHexString(pb),
-					str, StrUtil.CaseIgnoreCmp);
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return false;
 		}
 
 		/* private static void InitEnvWorkarounds()

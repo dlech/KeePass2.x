@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,11 +115,16 @@ namespace KeePass.App.Configuration
 			set { m_bClipNoPersist = value; }
 		}
 
-		// Disabled by default, because Office's clipboard tools
-		// crash with the Clipboard Viewer Ignore format
-		// (when it is set using OleSetClipboard)
-		private bool m_bUseClipboardViewerIgnoreFmt = false;
-		[DefaultValue(false)]
+		// The clipboard tools of old Office versions crash when
+		// storing the 'Clipboard Viewer Ignore' format using the
+		// OleSetClipboard function.
+		// Therefore, the default value of the option to use this
+		// format should be true if and only if KeePass uses the
+		// SetClipboardData function only (i.e. no OLE).
+		// Note that the .NET Framework and the UWP seem to use
+		// OLE internally.
+		private bool m_bUseClipboardViewerIgnoreFmt = true;
+		[DefaultValue(true)]
 		public bool UseClipboardViewerIgnoreFormat
 		{
 			get { return m_bUseClipboardViewerIgnoreFmt; }

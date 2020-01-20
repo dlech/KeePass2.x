@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -12,17 +13,17 @@
 	
 	
 
-	<meta name="DC.title" content="File Formats - KeePass" />
+	<meta name="DC.title" content="Import / Export - KeePass" />
 	<meta name="DC.creator" content="Dominik Reichl" />
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
 
-	<title>File Formats - KeePass</title>
+	<title>Import / Export - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_dataexchange.png" width="64" height="64"
-class="singleimg" align="left" alt="Help" />
-</td><td valign="middle"><h1>Import / Export</h1><br />
-KeePass supports importing/exporting data from/to various file formats.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_dataexchange.png" alt="Data Exchange" /></td>
+<td><h1>Import / Export</h1>
+<p>KeePass supports importing/exporting data from/to various file formats.</p></td>
+</tr></table>
 
 <p>KeePass 1.x supports importing data from <b>CSV files</b> (special form),
 <b>CodeWallet</b>, <b>Password Safe</b>, and <b>Personal Vault</b>.</p>
@@ -58,7 +58,7 @@ KeePass supports importing/exporting data from/to various file formats.
 <b>Passwort.Tresor</b>, <b>Personal Vault</b>,
 <b>PINs</b>, <b>Revelation</b>, <b>RoboForm</b>, <b>SafeWallet</b>,
 <b>Security TXT</b>, <b>SplashID</b>, <b>Steganos Password Manager 2007</b>,
-<b>Sticky Password</b>, <b>TurboPasswords</b>, <b>VisKeeper</b>,
+<b>Sticky Password</b>, <b>True Key</b>, <b>TurboPasswords</b>, <b>VisKeeper</b>,
 <b>Whisper 32</b>, <b>ZDNet's Password Pro</b>, and <b>Spamex.com</b>.</p>
 
 <p>For both KeePass 1.x and 2.x, there are plugins available that
@@ -133,16 +133,15 @@ Discussion</a> forum.</p>
 <br />
 
 <a name="csv"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;File
-Format: CSV (KeePass 1.x)</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+File Format: CSV (KeePass 1.x)</h2>
 
 <p>KeePass imports and exports data from/to CSV files in the following format:</p>
 
 <p><code>&quot;Account&quot;,&quot;Login Name&quot;,&quot;Password&quot;,&quot;Web Site&quot;,&quot;Comments&quot;</code></p>
 
 <p>For a detailed example, download this file:
-<img src="../images/b16x16_tar.png" class="singleimg" alt="ZIP Package" />
+<img src="../images/b16x16_tar.png" alt="ZIP Package" />
 <a href="https://keepass.info/help/download/FileSample_CSV.zip"
 target="_blank">FileSample_CSV.zip</a>.
 This file is zipped only in order to ensure correct encoding (if not zipped, browsers or
@@ -197,16 +196,15 @@ option is not checked. Click [OK].</li>
 <br />
 
 <a name="xml"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;File
-Format: XML (KeePass 1.x)</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+File Format: XML (KeePass 1.x)</h2>
 
 <p>This section describes the KeePass 1.x XML format. Note that this format
 is different from the XML format used by KeePass 2.x (anyway, KeePass 2.x
 can import KeePass 1.x XML files).</p>
 
 <p>You can download a detailed XML sample file here:
-<img src="../images/b16x16_tar.png" class="singleimg" alt="ZIP Package" />
+<img src="../images/b16x16_tar.png" alt="ZIP Package" />
 <a href="https://keepass.info/help/download/FileSample_XML.zip"
 target="_blank">FileSample_XML.zip</a>.
 This file is zipped only in order to ensure correct encoding (if not zipped, browsers or
@@ -230,9 +228,8 @@ time in form HH:mm:ss.</li>
 <br />
 
 <a name="genericcsv"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_dataexchange.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Generic
-CSV Importer</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_dataexchange.png" alt="Import" />
+Generic CSV Importer</h2>
 
 <p>KeePass 2.x features a generic CSV importer.
 This tool can import almost all CSV formats. The CSV
@@ -242,11 +239,11 @@ to data fields, and specify how the low-level structure looks like (usage of quo
 <p>To start the generic CSV file importer, click <i>'File' &rarr; 'Import'</i> and
 choose <i>'Generic CSV Importer'</i>.</p>
 
-<center>
+<div style="text-align: center;">
 <a href="https://keepass.info/screenshots/keepass_2x/gencsvimp_big.png"
 target="_blank"><img src="../../screenshots/keepass_2x/gencsvimp.png"
 alt="Generic CSV Importer" /></a>
-</center>
+</div>
 
 <p>Details about the generic CSV importer (with descriptions of the
 options, examples, etc.) can be found on the
@@ -256,9 +253,8 @@ target="_blank">Generic CSV Importer</a> help page.</p>
 <br />
 
 <a name="imp_cwallet"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-CodeWallet TXT</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import CodeWallet TXT</h2>
 
 <p>CodeWallet is a password manager that supports different card types (fields).
 KeePass cannot know which of the CodeWallet fields correspond to the KeePass
@@ -272,9 +268,8 @@ of the entries dialog.</p>
 <br />
 
 <!-- <a name="imp_pwgorilla"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-Password Gorilla CSV</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import Password Gorilla CSV</h2>
 
 <p>In order to successfully import a Password Gorilla CSV file, you need
 to configure the following settings in <i>'File - Preferences - Export'</i> in
@@ -294,9 +289,8 @@ it into KeePass using <i>'File &rarr; Import'</i> in KeePass 2.x.</p>
 <br /> -->
 
 <a name="imp_pins"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-PINs TXT</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import PINs TXT</h2>
 
 <p>In order to successfully import a PINs TXT file, you need to do the following:</p>
 
@@ -313,9 +307,8 @@ PINs TXT</h2>
 <br />
 
 <a name="imp_roboform"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-Data from RoboForm</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import Data from RoboForm</h2>
 
 <ol>
 <!-- <li>In RoboForm go <i>'Options'</i> &rarr; tab <i>'User Data'</i> and
@@ -339,9 +332,8 @@ then click <i>'OK'</i>.</li>
 <br />
 
 <a name="imp_steganos"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-Data from Steganos Password Manager 2007</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import Data from Steganos Password Manager 2007</h2>
 
 <p><b>Warning!</b> It is possible that the transfer fails and that KeePass accidently
 overwrites your existing passwords in Steganos Password Manager. Therefore backup your
@@ -387,9 +379,8 @@ the entries.</p>
 <br />
 
 <a name="imp_passkeeper"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-Data from PassKeeper 1.2</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import Data from PassKeeper 1.2</h2>
 
 <p>The import process works visually, exactly like the import method for
 Steganos Password Manager data. Please read all instructions in
@@ -398,9 +389,8 @@ Steganos Password Manager data. Please read all instructions in
 <br /> 
 
 <a name="imp_1pwpro"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;How to Import
-1PW and 1Password Pro CSV</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+How to Import 1PW and 1Password Pro CSV</h2>
 
 <p>KeePass can import CSV files exported by 1PW and 1Password Pro.
 When exporting the data, make sure:</p>

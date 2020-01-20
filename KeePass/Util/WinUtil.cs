@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -387,18 +387,20 @@ namespace KeePass.Util
 
 		public static string GetExecutable()
 		{
-			if(m_strExePath != null) return m_strExePath;
+			string str = m_strExePath;
+			if(str != null) return str;
 
-			try { m_strExePath = Assembly.GetExecutingAssembly().Location; }
+			try { str = Assembly.GetExecutingAssembly().Location; }
 			catch(Exception) { }
 
-			if(string.IsNullOrEmpty(m_strExePath))
+			if(string.IsNullOrEmpty(str))
 			{
-				m_strExePath = Assembly.GetExecutingAssembly().GetName().CodeBase;
-				m_strExePath = UrlUtil.FileUrlToPath(m_strExePath);
+				str = Assembly.GetExecutingAssembly().GetName().CodeBase;
+				str = UrlUtil.FileUrlToPath(str);
 			}
 
-			return m_strExePath;
+			m_strExePath = str;
+			return str;
 		}
 
 		private static string g_strAsmVersion = null;

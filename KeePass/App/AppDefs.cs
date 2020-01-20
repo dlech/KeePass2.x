@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -172,6 +172,9 @@ namespace KeePass.App
 			public static readonly string IpcEvent1 = "e1";
 
 			public static readonly string Uuid = "uuid";
+			public static readonly string Scheme = "scheme";
+			public static readonly string Value = "value";
+			public static readonly string Activate = "activate";
 
 			public static readonly string Help = "?";
 			public static readonly string HelpLong = "help";
@@ -183,6 +186,8 @@ namespace KeePass.App
 			public static readonly string ConfigSetUrlOverride = "set-urloverride";
 			public static readonly string ConfigClearUrlOverride = "clear-urloverride";
 			public static readonly string ConfigGetUrlOverride = "get-urloverride";
+			public static readonly string ConfigAddUrlOverride = "add-urloverride";
+			public static readonly string ConfigRemoveUrlOverride = "remove-urloverride";
 
 			public static readonly string ConfigSetLanguageFile = "set-languagefile";
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -313,9 +313,9 @@ namespace KeePass.Native
 		[DllImport("Kernel32.dll")]
 		internal static extern uint GetCurrentThreadId();
 
-		// [DllImport("Imm32.dll")]
-		// [return: MarshalAs(UnmanagedType.Bool)]
-		// internal static extern bool ImmDisableIME(uint idThread);
+		[DllImport("Imm32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool ImmDisableIME(uint idThread);
 
 		// [DllImport("Imm32.dll")]
 		// internal static extern IntPtr ImmAssociateContext(IntPtr hWnd, IntPtr hIMC);

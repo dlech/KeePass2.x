@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -119,22 +119,39 @@ namespace KeePass.Forms
 
 			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
 			UIUtil.AssignShortcut(m_menuFileExit, Keys.Escape, null, true);
+			UIUtil.AssignShortcut(m_menuEditUndo, Keys.Control | Keys.Z, null, true);
+			UIUtil.AssignShortcut(m_menuEditRedo, Keys.Control | Keys.Y, null, true);
+			UIUtil.AssignShortcut(m_menuEditCut, Keys.Control | Keys.X, null, true);
+			UIUtil.AssignShortcut(m_menuEditCopy, Keys.Control | Keys.C, null, true);
+			UIUtil.AssignShortcut(m_menuEditPaste, Keys.Control | Keys.V, null, true);
+			UIUtil.AssignShortcut(m_menuEditDelete, Keys.Delete, null, true);
+			UIUtil.AssignShortcut(m_menuEditSelectAll, Keys.Control | Keys.A, null, true);
+			UIUtil.AssignShortcut(m_menuEditFind, Keys.Control | Keys.F);
 
 			UIUtil.ConfigureTbButton(m_tbFileSave, KPRes.Save, null, m_menuFileSave);
-			UIUtil.ConfigureTbButton(m_tbEditCut, KPRes.Cut, null);
-			UIUtil.ConfigureTbButton(m_tbEditCopy, KPRes.Copy, null);
-			UIUtil.ConfigureTbButton(m_tbEditPaste, KPRes.Paste, null);
-			UIUtil.ConfigureTbButton(m_tbEditUndo, KPRes.Undo, null);
-			UIUtil.ConfigureTbButton(m_tbEditRedo, KPRes.Redo, null);
-			UIUtil.ConfigureTbButton(m_tbFormatBold, KPRes.Bold, null);
-			UIUtil.ConfigureTbButton(m_tbFormatItalic, KPRes.Italic, null);
-			UIUtil.ConfigureTbButton(m_tbFormatUnderline, KPRes.Underline, null);
+			UIUtil.ConfigureTbButton(m_tbEditCut, KPRes.Cut, null, m_menuEditCut);
+			UIUtil.ConfigureTbButton(m_tbEditCopy, KPRes.Copy, null, m_menuEditCopy);
+			UIUtil.ConfigureTbButton(m_tbEditPaste, KPRes.Paste, null, m_menuEditPaste);
+			UIUtil.ConfigureTbButton(m_tbEditUndo, KPRes.Undo, null, m_menuEditUndo);
+			UIUtil.ConfigureTbButton(m_tbEditRedo, KPRes.Redo, null, m_menuEditRedo);
+			UIUtil.ConfigureTbButton(m_tbFind, null, KPRes.Find, m_menuEditFind);
+
+			// Formatting keyboard shortcuts are implemented by CustomRichTextBoxEx
+			UIUtil.ConfigureTbButton(m_tbFormatBold, KPRes.Bold, KPRes.Bold +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.B) + ")", null);
+			UIUtil.ConfigureTbButton(m_tbFormatItalic, KPRes.Italic, KPRes.Italic +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.I) + ")", null);
+			UIUtil.ConfigureTbButton(m_tbFormatUnderline, KPRes.Underline, KPRes.Underline +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.U) + ")", null);
 			UIUtil.ConfigureTbButton(m_tbFormatStrikeout, KPRes.Strikeout, null);
 			UIUtil.ConfigureTbButton(m_tbColorForeground, KPRes.TextColor, null);
 			UIUtil.ConfigureTbButton(m_tbColorBackground, KPRes.BackgroundColor, null);
-			UIUtil.ConfigureTbButton(m_tbAlignCenter, KPRes.AlignCenter, null);
-			UIUtil.ConfigureTbButton(m_tbAlignLeft, KPRes.AlignLeft, null);
-			UIUtil.ConfigureTbButton(m_tbAlignRight, KPRes.AlignRight, null);
+			UIUtil.ConfigureTbButton(m_tbAlignLeft, KPRes.AlignLeft, KPRes.AlignLeft +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.L) + ")", null);
+			UIUtil.ConfigureTbButton(m_tbAlignCenter, KPRes.AlignCenter, KPRes.AlignCenter +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.E) + ")", null);
+			UIUtil.ConfigureTbButton(m_tbAlignRight, KPRes.AlignRight, KPRes.AlignRight +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.R) + ")", null);
 
 			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
 				string.Empty : " ") + KPRes.Search);
@@ -227,8 +244,12 @@ namespace KeePass.Forms
 			m_tbFileSave.Image = (m_bModified ? Properties.Resources.B16x16_FileSave :
 				Properties.Resources.B16x16_FileSave_Disabled);
 
-			m_tbEditUndo.Enabled = m_rtbText.CanUndo;
-			m_tbEditRedo.Enabled = m_rtbText.CanRedo;
+			UIUtil.SetEnabledFast(m_rtbText.CanUndo, m_menuEditUndo, m_tbEditUndo);
+			UIUtil.SetEnabledFast(m_rtbText.CanRedo, m_menuEditRedo, m_tbEditRedo);
+
+			bool bSel = (m_rtbText.SelectionLength != 0);
+			UIUtil.SetEnabledFast(bSel, m_menuEditCut, m_tbEditCut,
+				m_menuEditCopy, m_tbEditCopy, m_menuEditDelete);
 
 			Font fSel = m_rtbText.SelectionFont;
 			if(fSel != null)
@@ -300,8 +321,17 @@ namespace KeePass.Forms
 		{
 			if(m_bModified)
 			{
-				if(MessageService.AskYesNo(KPRes.SaveBeforeCloseQuestion))
+				DialogResult dr = MessageService.Ask(KPRes.SaveBeforeCloseQuestion,
+					PwDefs.ShortProductName, MessageBoxButtons.YesNoCancel);
+
+				if(dr == DialogResult.Yes)
 					OnFileSave(sender, EventArgs.Empty);
+				else if(dr == DialogResult.No) { }
+				else
+				{
+					e.Cancel = true;
+					return;
+				}
 			}
 
 			if(m_bURtfWithHighChar && (m_pbEditedData != null) &&
@@ -342,42 +372,7 @@ namespace KeePass.Forms
 		{
 			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
-			try
-			{
-				Font f = m_rtbText.SelectionFont;
-				if(f != null)
-					m_rtbText.SelectionFont = new Font(f, f.Style ^ fs);
-				else
-				{
-					NativeMethods.CHARFORMAT2 cf = UIUtil.RtfGetCharFormat(m_rtbText);
-					cf.dwMask = 0;
-
-					if((fs & FontStyle.Bold) != FontStyle.Regular)
-					{
-						cf.dwMask |= NativeMethods.CFM_BOLD;
-						cf.dwEffects ^= NativeMethods.CFE_BOLD;
-					}
-					if((fs & FontStyle.Italic) != FontStyle.Regular)
-					{
-						cf.dwMask |= NativeMethods.CFM_ITALIC;
-						cf.dwEffects ^= NativeMethods.CFE_ITALIC;
-					}
-					if((fs & FontStyle.Underline) != FontStyle.Regular)
-					{
-						cf.dwMask |= NativeMethods.CFM_UNDERLINE;
-						cf.dwEffects ^= NativeMethods.CFE_UNDERLINE;
-					}
-					if((fs & FontStyle.Strikeout) != FontStyle.Regular)
-					{
-						cf.dwMask |= NativeMethods.CFM_STRIKEOUT;
-						cf.dwEffects ^= NativeMethods.CFE_STRIKEOUT;
-					}
-
-					UIUtil.RtfSetCharFormat(m_rtbText, cf);
-				}
-			}
-			catch(Exception ex) { MessageService.ShowWarning(ex); }
-
+			UIUtil.RtfToggleSelectionFormat(m_rtbText, fs);
 			UpdateUIState(true, true);
 		}
 
@@ -403,7 +398,7 @@ namespace KeePass.Forms
 
 		private void OnTextSelectionChanged(object sender, EventArgs e)
 		{
-			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
+			if(m_uBlockEvents > 0) return;
 
 			UpdateUIState(false, false);
 		}
@@ -664,7 +659,7 @@ namespace KeePass.Forms
 			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
-				OnTextFind();
+				PerformQuickFind();
 			}
 		}
 
@@ -674,7 +669,7 @@ namespace KeePass.Forms
 				UIUtil.SetHandled(e, true);
 		}
 
-		private void OnTextFind()
+		private void PerformQuickFind()
 		{
 			string strNeedle = m_tbFind.Text;
 			if(string.IsNullOrEmpty(strNeedle)) return;
@@ -687,24 +682,20 @@ namespace KeePass.Forms
 			if(p < 0) m_rtbText.Find(strNeedle, 0, -1, RichTextBoxFinds.None);
 		}
 
-		/* protected override void WndProc(ref Message m)
+		private void OnEditSelectAll(object sender, EventArgs e)
 		{
-			if((m.Msg == NativeMethods.WM_KEYDOWN) || (m.Msg == NativeMethods.WM_KEYUP))
-			{
-				long w = m.WParam.ToInt64();
-				ushort usCtrl = NativeMethods.GetKeyState(NativeMethods.VK_CONTROL);
-				bool bCtrl = ((usCtrl & 0x8000U) != 0);
+			m_rtbText.SelectAll();
+		}
 
-				if(bCtrl && (w == (long)Keys.F))
-				{
-					if(m.Msg == NativeMethods.WM_KEYDOWN)
-						UIUtil.SetFocus(m_tbFind.Control, this);
+		private void OnEditFind(object sender, EventArgs e)
+		{
+			m_tbFind.SelectAll();
+			UIUtil.SetFocus(m_tbFind.Control, this, true);
+		}
 
-					return;
-				}
-			}
-
-			base.WndProc(ref m);
-		} */
+		private void OnEditDelete(object sender, EventArgs e)
+		{
+			m_rtbText.SelectedText = string.Empty;
+		}
 	}
 }

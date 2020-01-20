@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace KeePassLib.Serialization
 		private Stream m_sBase;
 		private readonly bool m_bWriting;
 		private readonly bool m_bVerify;
-		private byte[] m_pbKey;
+		private readonly byte[] m_pbKey;
 
 		private bool m_bEos = false;
 		private byte[] m_pbBuffer;
@@ -119,7 +119,16 @@ namespace KeePassLib.Serialization
 				m_sBase = null;
 			}
 
+			SetBuffer(MemUtil.EmptyByteArray);
+
 			base.Dispose(disposing);
+		}
+
+		private void SetBuffer(byte[] pb)
+		{
+			MemUtil.ZeroByteArray(m_pbBuffer); // Erase previous buffer
+
+			m_pbBuffer = pb;
 		}
 
 		public override void Flush()
@@ -225,7 +234,7 @@ namespace KeePassLib.Serialization
 
 			m_iBufferPos = 0;
 
-			m_pbBuffer = MemUtil.Read(m_sBase, nBlockSize);
+			SetBuffer(MemUtil.Read(m_sBase, nBlockSize));
 			if((m_pbBuffer == null) || ((m_pbBuffer.Length != nBlockSize) && m_bVerify))
 				throw new EndOfStreamException(KLRes.FileCorrupted + " " +
 					KLRes.FileIncompleteExpc);
@@ -241,7 +250,7 @@ namespace KeePassLib.Serialization
 					h.TransformBlock(pbBlockSize, 0, pbBlockSize.Length,
 						pbBlockSize, 0);
 
-					if(m_pbBuffer.Length > 0)
+					if(m_pbBuffer.Length != 0)
 						h.TransformBlock(m_pbBuffer, 0, m_pbBuffer.Length,
 							m_pbBuffer, 0);
 
@@ -302,7 +311,7 @@ namespace KeePassLib.Serialization
 				h.TransformBlock(pbBlockSize, 0, pbBlockSize.Length,
 					pbBlockSize, 0);
 
-				if(cbBlockSize > 0)
+				if(cbBlockSize != 0)
 					h.TransformBlock(m_pbBuffer, 0, cbBlockSize, m_pbBuffer, 0);
 
 				h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
@@ -314,7 +323,7 @@ namespace KeePassLib.Serialization
 			MemUtil.Write(m_sBase, pbBlockHmac);
 			// MemUtil.Write(m_sBase, pbBlockIndex); // Implicit
 			MemUtil.Write(m_sBase, pbBlockSize);
-			if(cbBlockSize > 0)
+			if(cbBlockSize != 0)
 				m_sBase.Write(m_pbBuffer, 0, cbBlockSize);
 
 			++m_uBlockIndex;

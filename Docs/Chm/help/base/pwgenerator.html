@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_kgpg.png" width="64" height="64"
-class="singleimg" align="left" alt="Security" />
-</td><td valign="middle"><h1>Password Generator</h1><br />
-Details about the built-in password generator of KeePass.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_kgpg.png" alt="Key" /></td>
+<td><h1>Password Generator</h1>
+<p>Details about the built-in password generator of KeePass.</p></td>
+</tr></table>
 
 <br />
 
@@ -53,9 +53,8 @@ Details about the built-in password generator of KeePass.
 <br />
 
 <a name="charset"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Generation
-Based on Character Sets</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Generation Based on Character Sets</h2>
 
 <p>This password generation method is the recommended way to generate random passwords.
 Other methods (pattern-based generation, ...) should only be used if passwords must
@@ -109,9 +108,8 @@ and will be replaced or removed).</p>
 <br />
 
 <a name="pattern"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Generation
-Based on Patterns</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Generation Based on Patterns</h2>
 
 <p>The password generator can create passwords using patterns. A pattern is a
 string defining the layout of the new password. The following placeholders
@@ -241,7 +239,7 @@ Examples:<br />
 &raquo; <code>[dp]</code> generates exactly 1 random character out of the set
 digits + punctuation,<br />
 &raquo; <code>[d&#92;m&#92;@^&#92;3]{5}</code> generates 5 characters out of the set &quot;012456789m@&quot;,<br />
-&raquo; <code>[u&#92;_][u&#92;_]</code> generates 2 characters out of the set upper case + '_'.</p>
+&raquo; <code>[u&#92;_][u&#92;_]</code> generates 2 characters out of the set upper-case + '_'.</p>
 
 <p><b>More examples:</b></p>
 
@@ -255,32 +253,30 @@ Generates for example: 'Hex: 13567A', 'Hex: A6B99D', 'Hex: 02243C', ...</p>
 
 <table class="tablebox">
 <tr><th>Name</th>
-<th>Pattern</th>
-</tr>
+<th>Pattern</th></tr>
 
 <tr><td>Hex Key - 40-Bit</td>
-<td>h{10}</td></tr>
+<td><code>h{10}</code></td></tr>
 
 <tr><td>Hex Key - 128-Bit</td>
-<td>h{32}</td></tr>
+<td><code>h{32}</code></td></tr>
 
 <tr><td>Hex Key - 256-Bit</td>
-<td>h{64}</td></tr>
+<td><code>h{64}</code></td></tr>
 
 <tr><td>Random MAC Address</td>
-<td>HH\-HH\-HH\-HH\-HH\-HH</td></tr>
+<td><code>HH\-HH\-HH\-HH\-HH\-HH</code></td></tr>
 
 <!-- <tr><td>Random E-Mail Address</td>
-<td>LA{11}\@LA{5}\.\c\o\m</td></tr> -->
+<td><code>LA{11}\@LA{5}\.\c\o\m</code></td></tr> -->
 
 </table>
 
 <br /><br />
 
 <a name="rules"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Generating
-Passwords that Follow Rules</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Generating Passwords that Follow Rules</h2>
 
 <p>Below are a few examples how the pattern generation feature can be used to generate
 passwords that follow certain rules.</p>
@@ -289,35 +285,35 @@ passwords that follow certain rules.</p>
 characters of password' option!</i></p>
 
 <table class="tablebox">
+<colgroup><col style="width: 75%;" /><col style="width: 25%;" /></colgroup>
 <tr><th>Rule</th>
-<th>Pattern</th>
-</tr>
+<th>Pattern</th></tr>
 
-<tr><td>Must consist of 2 upper case, 2 lower case characters and 2 digits</td>
-<td nowrap="nowrap">uulldd</td></tr>
+<tr><td>Must consist of 2 upper-case letters, 2 lower-case letters and 2 digits.</td>
+<td><code>uulldd</code></td></tr>
 
-<tr><td>Must consist of 9 digits and 1 letter</td>
-<td nowrap="nowrap">d{9}L</td></tr>
+<tr><td>Must consist of 9 digits and 1 letter.</td>
+<td><code>d{9}L</code></td></tr>
 
-<tr><td>Must consist of 10 alphanumeric characters, where at least 1 is a letter and
-at least 1 is a digit</td>
-<td nowrap="nowrap">LdA{8}</td></tr>
+<tr><td>Must consist of 10 alphanumeric characters, where at least 1 is
+a letter and at least 1 is a digit.</td>
+<td><code>LdA{8}</code></td></tr>
 
-<tr><td>Must consist of 10 alphanumeric characters, where at least 2 are upper case
-and at least are 2 lower case characters</td>
-<td nowrap="nowrap">uullA{6}</td></tr>
+<tr><td>Must consist of 10 alphanumeric characters, where at least 2 are
+upper-case letters and at least 2 are lower-case letters.</td>
+<td><code>uullA{6}</code></td></tr>
 
-<tr><td>Must consist of 9 characters out of the set &quot;ABCDEF&quot; and an '@' symbol somewhere in it</td>
-<td nowrap="nowrap">\@[\A\B\C\D\E\F]{9}</td></tr>
+<tr><td>Must consist of 9 characters of the set &quot;ABCDEF&quot; and
+an '@' symbol.</td>
+<td><code>\@[\A\B\C\D\E\F]{9}</code></td></tr>
 
 </table>
 
 <br /><br />
 
 <a name="secreduc"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Security-Reducing
-Options</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Security-Reducing Options</h2>
 
 <p>The password generator supports several options like <i>'Each character must occur at most once'</i>,
 <i>'Exclude look-alike characters'</i>, and a field to explicitly specify
@@ -342,9 +338,8 @@ is appended to the <i>'Advanced'</i> tab.
 <br /><br />
 
 <a name="profiles"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Creating
-and Using Password Generator Profiles</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Creating and Using Password Generator Profiles</h2>
 
 <p>Password generator options (character set, length, pattern, ...) can be saved
 as password generator profiles.</p>
@@ -354,8 +349,8 @@ as password generator profiles.</p>
 <ol>
 <li>Open the <i>Password Generator</i> window.</li>
 <li>Specify all options of the new profile.</li>
-<li>Click the <img src="../images/b16x16_filesaveas.png" class="singleimg"
-alt="Save As" /> <i>Save as Profile</i> button.</li>
+<li>Click the <img src="../images/b16x16_filesaveas.png" alt="Save As" />
+'<i>Save as Profile</i>' button.</li>
 <li>Enter the name of the new profile, or select an existing profile name from
 the drop-down list to overwrite it. Close the dialog with <i>OK</i>.</li>
 <li>If you want to immediately create a password using the new profile,
@@ -386,9 +381,8 @@ effectively used profile.</i></p>
 <br />
 
 <a name="configauto"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Configuring Settings
-of Automatically Generated Passwords for New Entries</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Configuring Settings of Automatically Generated Passwords for New Entries</h2>
 
 <p>When you create a new entry, KeePass will automatically generate a random
 password for it. The properties of these generated passwords can be configured

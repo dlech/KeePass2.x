@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -31,12 +32,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_kdmconfig.png" width="64" height="64"
-class="singleimg" align="left" alt="Help" />
-</td><td valign="middle"><h1>Multi-User</h1><br />
-Details about multi-user features of KeePass.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_kdmconfig.png" alt="Help" /></td>
+<td><h1>Multi-User</h1>
+<p>Details about multi-user features of KeePass.</p></td>
+</tr></table>
 
 <ul>
 <li><b>Shared Database Editing:</b>
@@ -51,9 +51,8 @@ Details about multi-user features of KeePass.
 <br />
 
 <a name="shareddb"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="People" />&nbsp;&nbsp;General
-Information about Shared Databases</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="People" />
+General Information about Shared Databases</h2>
 
 <p>Both KeePass 1.x and 2.x allow multiple users working with one database,
 which is typically stored on a shared network drive or a file server.</p>
@@ -67,14 +66,13 @@ set of users may change the stored data), use file system access rights.</p>
 <br />
 
 <a name="locking1x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="People" />&nbsp;&nbsp;KeePass
-1.x: Office-Style Locking</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="People" />
+KeePass 1.x: Office-Style Locking</h2>
 
 <br />
 
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 With KeePass 1.x, a database can be stored on a shared network drive and used by multiple
 users. When a user tries to open a database that is already opened by
 someone else, a prompt asks whether to open the database in read-only
@@ -88,10 +86,10 @@ KeePass 1.x does not provide synchronization, i.e. by saving the database you
 are saving your current data to disk. If another user has changed an entry
 in the meanwhile (i.e. since you loaded the database), these changes are overwritten.
 </td>
-<td width="306" align="right" valign="top">
+<td style="width: 306px; text-align: right;">
 <a href="https://keepass.info/screenshots/windows_vista/readonlymode_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/readonlymode.png"
-align="right" alt="KeePass 1.x Read-Only Prompt" /></a>
+alt="KeePass 1.x Read-Only Prompt" /></a>
 </td></tr></table>
 
 <p>If you want to use KeePass 1.x with a database on a shared network drive, it
@@ -109,14 +107,13 @@ be careful to not overwrite each others changes.</p>
 <br />
 
 <a name="syncorsave2x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="People" />&nbsp;&nbsp;KeePass
-2.x: Synchronize or Overwrite</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="People" />
+KeePass 2.x: Synchronize or Overwrite</h2>
 
 <br />
 
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 With KeePass 2.x, a database can be stored on a shared network drive and used by multiple
 users. When attempting to save, KeePass first checks whether the file on disk has been
 modified since it was loaded. If yes, KeePass asks whether to synchronize or
@@ -132,10 +129,10 @@ If there is a conflict (multiple users edited the same
 entry), KeePass uses the latest version of the entry based on the last
 modification time.
 </td>
-<td width="306" align="right" valign="top">
+<td style="width: 306px; text-align: right;">
 <a href="https://keepass.info/screenshots/windows_vista/syncorsave_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/syncorsave.png"
-align="right" alt="KeePass 2.x Synchronize Prompt" /></a>
+alt="KeePass 2.x Synchronize Prompt" /></a>
 </td></tr></table>
 
 <p>Note: the synchronize prompt is only triggered by the 'Save' command,
