@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -221,14 +221,15 @@ namespace KeePass.UI
 
 		private void OnDeleteCommand(object sender, EventArgs e)
 		{
-			int nStart = m_rtb.SelectionStart, nLength = m_rtb.SelectionLength;
+			// The following resets formattings
+			/* int nStart = m_rtb.SelectionStart, nLength = m_rtb.SelectionLength;
 			if((nStart < 0) || (nLength <= 0)) return;
-			
 			string strText = m_rtb.Text;
 			strText = strText.Remove(nStart, nLength);
 			m_rtb.Text = strText;
+			m_rtb.Select(nStart, 0); */
 
-			m_rtb.Select(nStart, 0);
+			m_rtb.SelectedText = string.Empty;
 		}
 
 		private void OnCopyLinkCommand(object sender, EventArgs e)

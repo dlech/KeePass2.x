@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -439,7 +439,7 @@ namespace KeePass.Util
 				{
 					strGroup = KPRes.Database;
 
-					if(pd.Name.Length > 0)
+					if(pd.Name.Length != 0)
 						l.Add(new FpField(KPRes.Name, new ProtectedString(
 							false, pd.Name), strGroup));
 					l.Add(new FpField(KPRes.FileOrUrl, new ProtectedString(
@@ -596,12 +596,14 @@ namespace KeePass.Util
 			return strSummary;
 		}
 
-		private static int CompareLastMod(PwEntry x, PwEntry y)
+		private static int CompareLastMod(PwEntry a, PwEntry b)
 		{
-			if(x == null) { Debug.Assert(false); return ((y == null) ? 0 : -1); }
-			if(y == null) { Debug.Assert(false); return 1; }
+			return TimeUtil.CompareLastMod(a, b, true);
+		}
 
-			return x.LastModificationTime.CompareTo(y.LastModificationTime);
+		private static int CompareLastModReverse(PwEntry a, PwEntry b)
+		{
+			return TimeUtil.CompareLastMod(b, a, true); // Descending
 		}
 
 		public static DateTime GetLastPasswordModTime(PwEntry pe)
@@ -611,8 +613,9 @@ namespace KeePass.Util
 			List<PwEntry> l = new List<PwEntry>(pe.History);
 			l.Sort(EntryUtil.CompareLastMod);
 
-			DateTime dt = pe.LastModificationTime;
+			// Decrypt the current password only once
 			byte[] pbC = pe.Strings.GetSafe(PwDefs.PasswordField).ReadUtf8();
+			DateTime dt = pe.LastModificationTime;
 
 			for(int i = l.Count - 1; i >= 0; --i)
 			{
@@ -1181,7 +1184,7 @@ namespace KeePass.Util
 			fInit = delegate(ListView lv)
 			{
 				int w = lv.ClientSize.Width - UIUtil.GetVScrollBarWidth();
-				int wf = (int)(((long)w * 5L) / 23L);
+				int wf = (int)(((long)w * 2L) / 9L);
 				int wq = w - (wf * 4);
 				int di = Math.Min(UIUtil.GetSmallIconSize().Width, wf);
 
@@ -1358,7 +1361,7 @@ namespace KeePass.Util
 			};
 
 			PwObjectList<PwEntry> lEntries = pd.RootGroup.GetEntries(true);
-			lEntries.Sort(EntryUtil.CompareByLastModTime);
+			lEntries.Sort(EntryUtil.CompareLastModReverse);
 
 			List<object> lResults = new List<object>();
 			DateTime dtNow = DateTime.UtcNow;
@@ -1382,11 +1385,6 @@ namespace KeePass.Util
 			}
 
 			return lResults;
-		}
-
-		private static int CompareByLastModTime(PwEntry a, PwEntry b)
-		{
-			return TimeUtil.CompareLastMod(b, a, true); // Descending
 		}
 	}
 }

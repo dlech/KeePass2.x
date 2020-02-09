@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ namespace KeePass.Forms
 				}
 				catch(Exception ex) { MessageService.ShowWarning(ex); }
 			}
-			else m_strGeneratedHtml = (GenerateHtmlDocument() ?? string.Empty);
+			else m_strGeneratedHtml = (GenerateHtmlDocument(false) ?? string.Empty);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -271,18 +271,18 @@ namespace KeePass.Forms
 
 		/* private void ShowWaitDocument()
 		{
-			StringBuilder sbW = new StringBuilder();
-			sbW.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
-			sbW.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-			sbW.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-			sbW.AppendLine("<head>");
-			sbW.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-			sbW.AppendLine("<title>...</title>");
-			sbW.AppendLine("</head><body><br /><br />");
-			sbW.AppendLine("<h1 style=\"text-align: center;\">&#8987;</h1>");
-			sbW.AppendLine("</body></html>");
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("<!DOCTYPE html>");
+			sb.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+			sb.AppendLine("<head>");
+			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+			sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
+			sb.AppendLine("<title>...</title>");
+			sb.AppendLine("</head><body><br /><br />");
+			sb.AppendLine("<h1 style=\"text-align: center;\">&#8987;</h1>");
+			sb.AppendLine("</body></html>");
 
-			try { UIUtil.SetWebBrowserDocument(m_wbMain, sbW.ToString()); }
+			try { UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString()); }
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
 		} */
 
@@ -294,7 +294,7 @@ namespace KeePass.Forms
 			if(!bInitial) UIBlockInteraction(true);
 			// ShowWaitDocument();
 
-			string strHtml = GenerateHtmlDocument();
+			string strHtml = GenerateHtmlDocument(true);
 
 			try { UIUtil.SetWebBrowserDocument(m_wbMain, strHtml); }
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
@@ -305,7 +305,7 @@ namespace KeePass.Forms
 			--m_iBlockPreviewRefresh;
 		}
 
-		private string GenerateHtmlDocument()
+		private string GenerateHtmlDocument(bool bTemporary)
 		{
 			PwGroup pgDataSource = m_pgDataSource.CloneDeep(); // Sorting, ...
 
@@ -370,89 +370,77 @@ namespace KeePass.Forms
 			};
 
 			StringBuilder sb = new StringBuilder();
-
-			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
-			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			sb.AppendLine("<!DOCTYPE html>");
 
 			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
 			string strLang = Program.Translation.Properties.Iso6391Code;
 			if(string.IsNullOrEmpty(strLang)) strLang = "en";
 			strLang = h(strLang);
-			sb.Append(" lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\"");
+			sb.Append(" xml:lang=\"" + strLang + "\" lang=\"" + strLang + "\"");
 			if(p.Rtl) sb.Append(" dir=\"rtl\"");
 			sb.AppendLine(">");
 
 			sb.AppendLine("<head>");
-			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-			sb.Append("<title>");
-			sb.Append(h(pgDataSource.Name));
-			sb.AppendLine("</title>");
+			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+			sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
 			sb.AppendLine("<meta http-equiv=\"expires\" content=\"0\" />");
 			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
 			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
 
+			sb.Append("<title>");
+			sb.Append(h(pgDataSource.Name));
+			sb.AppendLine("</title>");
+
 			sb.AppendLine("<style type=\"text/css\">");
 			sb.AppendLine("/* <![CDATA[ */");
 
-			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
+			sb.AppendLine("body {");
+			sb.AppendLine("\tcolor: #000000;");
+			sb.AppendLine("\tbackground-color: #FFFFFF;");
 			sb.AppendLine("\tfont-family: \"Tahoma\", \"MS Sans Serif\", \"Sans Serif\", \"Verdana\", sans-serif;");
 			sb.AppendLine("\tfont-size: 10pt;");
 			sb.AppendLine("}");
 
-			sb.AppendLine("span.fserif {");
-			sb.AppendLine("\tfont-family: \"Times New Roman\", serif;");
-			sb.AppendLine("}");
-
-			sb.AppendLine("h1 { font-size: 2em; }");
 			sb.AppendLine("h2 {");
-			sb.AppendLine("\tfont-size: 1.5em;");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
 			sb.AppendLine("\tpadding-left: 2pt;");
 			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
 			sb.AppendLine("}");
 			sb.AppendLine("h3 {");
-			sb.AppendLine("\tfont-size: 1.2em;");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
 			sb.AppendLine("\tpadding-left: 2pt;");
 			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
 			sb.AppendLine("}");
-			sb.AppendLine("h4 { font-size: 1em; }");
-			sb.AppendLine("h5 { font-size: 0.89em; }");
-			sb.AppendLine("h6 { font-size: 0.6em; }");
+
+			sb.AppendLine("table, th, td {");
+			sb.AppendLine("\tborder: 0px none;");
+			sb.AppendLine("\tborder-collapse: collapse;");
+			sb.AppendLine("}");
 
 			sb.AppendLine("table {");
 			sb.AppendLine("\twidth: 100%;");
 			sb.AppendLine("\ttable-layout: fixed;");
+			sb.AppendLine("\tempty-cells: show;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("th, td {");
+			sb.AppendLine("\ttext-align: " + (p.Rtl ? "right;" : "left;"));
+			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("}");
 
 			sb.AppendLine("th {");
-			sb.AppendLine("\ttext-align: " + (p.Rtl ? "right;" : "left;"));
-			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("\tfont-weight: bold;");
 			sb.AppendLine("}");
 
-			sb.AppendLine("td {");
-			sb.AppendLine("\ttext-align: " + (p.Rtl ? "right;" : "left;"));
-			sb.AppendLine("\tvertical-align: top;");
-			sb.AppendLine("}");
-
-			sb.AppendLine("a:visited {");
-			sb.AppendLine("\ttext-decoration: none;");
+			sb.AppendLine("a {");
 			sb.AppendLine("\tcolor: #0000DD;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:active {");
 			sb.AppendLine("\ttext-decoration: none;");
+			sb.AppendLine("}");
+			sb.AppendLine("a:hover, a:active {");
 			sb.AppendLine("\tcolor: #6699FF;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:link {");
-			sb.AppendLine("\ttext-decoration: none;");
-			sb.AppendLine("\tcolor: #0000DD;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:hover {");
 			sb.AppendLine("\ttext-decoration: underline;");
-			sb.AppendLine("\tcolor: #6699FF;");
 			sb.AppendLine("}");
 
 			sb.AppendLine(".field_name {");
@@ -467,6 +455,10 @@ namespace KeePass.Forms
 			sb.AppendLine("\tword-wrap: break-word;");
 			sb.AppendLine("}");
 
+			sb.AppendLine(".fserif {");
+			sb.AppendLine("\tfont-family: \"Times New Roman\", serif;");
+			sb.AppendLine("}");
+
 			sb.AppendLine(".icon_cli {");
 			sb.AppendLine("\tdisplay: inline-block;");
 			sb.AppendLine("\tmargin: 0px 0px 0px 0px;");
@@ -477,10 +469,13 @@ namespace KeePass.Forms
 			sb.AppendLine("\tvertical-align: top;");
 			sb.AppendLine("}");
 
-			// Add the temporary content identifier
-			sb.AppendLine("." + Program.TempFilesPool.TempContentTag + " {");
-			sb.AppendLine("\tfont-size: 10pt;");
-			sb.AppendLine("}");
+			if(bTemporary)
+			{
+				// Add the temporary content identifier
+				sb.AppendLine("." + Program.TempFilesPool.TempContentTag + " {");
+				sb.AppendLine("\tfont-size: 10pt;");
+				sb.AppendLine("}");
+			}
 
 			sb.AppendLine("/* ]]> */");
 			sb.AppendLine("</style>");
@@ -696,7 +691,12 @@ namespace KeePass.Forms
 				sb.AppendLine("</table><br />");
 
 			sb.AppendLine("</body></html>");
-			return sb.ToString();
+
+			string strDoc = sb.ToString();
+#if DEBUG
+			XmlUtilEx.ValidateXml(strDoc, true);
+#endif
+			return strDoc;
 		}
 
 		private static string CompileText(string strText, PfOptions p, bool bToHtml,

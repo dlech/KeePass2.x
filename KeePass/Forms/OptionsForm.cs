@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -361,7 +361,8 @@ namespace KeePass.Forms
 				"ClipboardNoPersist", lvg, KPRes.ClipboardNoPersist));
 			fClipME(m_cdxSecurityOptions.CreateItem(Program.Config.Security,
 				"UseClipboardViewerIgnoreFormat", lvg,
-				KPRes.ClipboardViewerIgnoreFormat + " " + KPRes.NotRecommended));
+				KPRes.ClipboardViewerIgnoreFormat // + " " + KPRes.NotRecommended
+				));
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvSecurityOptions.Groups.Add(lvg);
@@ -656,6 +657,8 @@ namespace KeePass.Forms
 				lvg, KPRes.VerifyWrittenFileAfterSave);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedFileWrites",
 				lvg, KPRes.UseTransactedDatabaseWrites);
+			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseTransactedConfigWrites",
+				lvg, KPRes.UseTransactedConfigWrites);
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "FileTxExtra",
 				lvg, KPRes.FileTxExtra + " (" + KPRes.Slow + ")");
 			m_cdxAdvanced.CreateItem(Program.Config.Application, "UseFileLocks",

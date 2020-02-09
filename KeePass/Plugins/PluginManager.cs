@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -242,11 +242,13 @@ namespace KeePass.Plugins
 			if(slStatus != null)
 				slStatus.SetText(KPRes.PluginLoadFailed, LogStatusType.Info);
 
-			bool bShowExcp = (Program.CommandLineArgs[
-				AppDefs.CommandLineOptions.Debug] != null);
-
 			string strMsg = KPRes.PluginIncompatible + MessageService.NewLine +
 				strPath + MessageService.NewParagraph + KPRes.PluginUpdateHint;
+			if(NativeLib.IsUnix())
+				strMsg += MessageService.NewParagraph + KPRes.PluginMonoComplete;
+
+			bool bShowExcp = (Program.CommandLineArgs[
+				AppDefs.CommandLineOptions.Debug] != null);
 			string strExcp = ((ex != null) ? StrUtil.FormatException(ex).Trim() : null);
 
 			VistaTaskDialog vtd = new VistaTaskDialog();

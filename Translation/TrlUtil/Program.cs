@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -157,6 +157,9 @@ namespace TrlUtil
 					swOut.WriteLine("\t\t\tif(dictNew == null) throw new ArgumentNullException(\"dictNew\");");
 					swOut.WriteLine();
 
+#if DEBUG
+					string strLastName = string.Empty;
+#endif
 					foreach(XmlNode xmlData in xmlTable.SelectNodes("Data"))
 					{
 						string strName = xmlData.Attributes["Name"].Value;
@@ -164,6 +167,12 @@ namespace TrlUtil
 						swOut.WriteLine("\t\t\tm_str" + strName +
 							" = TryGetEx(dictNew, \"" + strName +
 							"\", m_str" + strName + ");");
+
+#if DEBUG
+						Debug.Assert((string.Compare(strLastName, strName, true) < 0),
+							"Data names not sorted: " + strLastName + " - " + strName + ".");
+						strLastName = strName;
+#endif
 					}
 
 					swOut.WriteLine("\t\t}");

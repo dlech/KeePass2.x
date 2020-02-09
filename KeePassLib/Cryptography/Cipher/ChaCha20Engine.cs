@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,13 +29,27 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	public sealed class ChaCha20Engine : ICipherEngine2
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
-			0xD6, 0x03, 0x8A, 0x2B, 0x8B, 0x6F, 0x4C, 0xB5,
-			0xA5, 0x24, 0x33, 0x9A, 0x31, 0xDB, 0xB5, 0x9A
-		});
+		private static PwUuid g_uuid = null;
+		internal static PwUuid ChaCha20Uuid
+		{
+			get
+			{
+				PwUuid pu = g_uuid;
+				if(pu == null)
+				{
+					pu = new PwUuid(new byte[] {
+						0xD6, 0x03, 0x8A, 0x2B, 0x8B, 0x6F, 0x4C, 0xB5,
+						0xA5, 0x24, 0x33, 0x9A, 0x31, 0xDB, 0xB5, 0x9A });
+					g_uuid = pu;
+				}
+
+				return pu;
+			}
+		}
+
 		public PwUuid CipherUuid
 		{
-			get { return m_uuid; }
+			get { return ChaCha20Engine.ChaCha20Uuid; }
 		}
 
 		public string DisplayName

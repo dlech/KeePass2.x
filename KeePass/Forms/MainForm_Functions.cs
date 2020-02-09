@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -3980,7 +3980,7 @@ namespace KeePass.Forms
 				strTip = StrUtil.EncodeToolTipText(strPath);
 				if(dsInfo.Database.IsOpen)
 				{
-					if(dsInfo.Database.Name.Length > 0)
+					if(dsInfo.Database.Name.Length != 0)
 						strTip += "\r\n" + StrUtil.EncodeToolTipText(
 							dsInfo.Database.Name);
 				}
@@ -5926,7 +5926,7 @@ namespace KeePass.Forms
 			ListViewForm dlg = new ListViewForm();
 			dlg.InitEx(strTitle, strSubTitle, strNote, imgIcon, l,
 				m_ilCurrentIcons, fInit);
-			UIUtil.ShowDialogAndDestroy(dlg);
+			UIUtil.ShowDialogAndDestroy(dlg, this);
 
 			PwGroup pg = (dlg.ResultGroup as PwGroup);
 			PwEntry pe = (dlg.ResultItem as PwEntry);

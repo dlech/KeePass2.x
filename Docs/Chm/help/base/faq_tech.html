@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_help.png" width="64" height="64"
-class="singleimg" align="left" alt="Help" />
-</td><td valign="middle"><h1>Technical FAQ</h1><br />
-Frequently Asked Questions about the usage of KeePass.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_help.png" alt="Help" /></td>
+<td><h1>Technical FAQ</h1>
+<p>Frequently Asked Questions about the usage of KeePass.</p></td>
+</tr></table>
 
 <br />
 Configuration:
@@ -89,9 +89,8 @@ Usage:
 <br />
 
 <a name="nooptsave"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;I've
-saved my options, but when I reopen KeePass I get the old options. What's wrong?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+I've saved my options, but when I reopen KeePass I get the old options. What's wrong?</h2>
 
 <p>KeePass supports two different locations for storing configuration information:
 the global configuration file in the KeePass directory and a local, user-dependent
@@ -99,7 +98,7 @@ one in the user's private configuration folder. Most likely you do not have writ
 access to your global configuration file.</p>
 
 <p>For more details, see
-<img src="../images/b16x16_kmultiple.png" class="singleimg" alt="Cascading" />
+<img src="../images/b16x16_kmultiple.png" alt="Multiple" />
 <a href="configuration.html">Configuration</a>.</p>
 
 <br />
@@ -107,9 +106,8 @@ access to your global configuration file.</p>
 
 
 <a name="sysreq2x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't KeePass 2.x run on my computer?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't KeePass 2.x run on my computer?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x on Windows &le; XP,
 an error message like the following is displayed:<br />
@@ -120,9 +118,9 @@ an error message like the following is displayed:<br />
 
 <p><b>Resolution:</b> Install Microsoft .NET Framework 2.0 or higher.
 It is available as a free download from the Microsoft website:
-<a href="https://msdn.microsoft.com/en-us/netframework/aa569263.aspx"
-target="_blank">Microsoft .NET Framework download</a>. Alternatively,
-you can install it through
+<!-- https://msdn.microsoft.com/en-us/netframework/aa569263.aspx -->
+<a href="https://dotnet.microsoft.com/" target="_blank">Microsoft .NET Framework</a>.
+Alternatively, you can install it through
 Windows Update (the framework is an optional component).</p>
 
 <p>KeePass 1.x does not require this framework.</p>
@@ -130,9 +128,8 @@ Windows Update (the framework is an optional component).</p>
 <br /> 
 
 <a name="netshare2x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-does KeePass 2.x crash when starting it from a network drive/share?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why does KeePass 2.x crash when starting it from a network drive/share?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x from a network drive/share,
 you get an error message like the following:<br />
@@ -151,20 +148,22 @@ Configure the security policy to allow running .NET applications from
 network drives/shares. Ask your administrator to do this (administrative
 rights are required). If you have administrative rights and want to do
 it yourself, you can use the
-<a href="https://msdn.microsoft.com/en-us/library/cb6t8dtz.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/cb6t8dtz.aspx -->
+<a href="https://docs.microsoft.com/en-us/dotnet/framework/tools/caspol-exe-code-access-security-policy-tool"
 target="_blank">Code Access Security Policy Tool (Caspol.exe)</a>
 that ships with the .NET framework (helpful instructions can be found
-<a href="https://blogs.msdn.com/shawnfa/archive/2004/12/30/344554.aspx"
+<!-- https://blogs.msdn.com/shawnfa/archive/2004/12/30/344554.aspx -->
+<a href="https://blogs.msdn.microsoft.com/shawnfa/2004/12/30/using-caspol-to-fully-trust-a-share/"
 target="_blank">here</a> and
-<a href="https://blogs.msdn.com/shawnfa/archive/2005/07/27/443975.aspx"
+<!-- https://blogs.msdn.com/shawnfa/archive/2005/07/27/443975.aspx -->
+<a href="https://blogs.msdn.microsoft.com/shawnfa/2005/07/27/why-is-caspol-prompting-me-for-confirmation/"
 target="_blank">here</a>).</p>
 
 <br />
 
 <a name="fips2x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-does KeePass 2.x show a FIPS compliance error at startup?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why does KeePass 2.x show a FIPS compliance error at startup?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x,
 you get an error message like the following:<br />
@@ -204,28 +203,27 @@ the algorithms that KeePass requires.</p>
 
 
 <a name="remotechm"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't the CHM help file work?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't the CHM help file work?</h2>
 
 <p><b>Symptoms:</b> When trying to open the KeePass CHM help file from
 a remote computer or shared network drive, it's not displayed correctly
 (navigation aborted, ...).</p>
 
 <p><b>Solution:</b> See
-<a href="https://support.microsoft.com/en-us/kb/896358" target="_blank">Microsoft
+<!-- https://support.microsoft.com/en-us/kb/896358 -->
+<a href="https://support.microsoft.com/en-us/help/896358" target="_blank">Microsoft
 Security Bulletin MS05-026</a>.</p>
 
 <br />
 
 <a name="moreappicons"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Where
-can I find more <i>application icons</i> for Windows shortcuts?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Where can I find more <i>application icons</i> for Windows shortcuts?</h2>
 
 <br />
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 Application icons are icons in Windows ICO format. They can be used in
 Windows shortcuts and/or as file association icons. The KeePass executable
 contains various application icons which can be used for these purposes.<br />
@@ -245,20 +243,19 @@ application icons in order to distinguish them.<br />
 These icons are not included in the binary distribution because this would make
 the application file too large.<br /><br />
 </td>
-<td width="154" align="right" valign="top">
+<td style="width: 154px; text-align: right;">
 <img src="../images/appicons.png" alt="Application Icons" />
 </td></tr></table>
 
 <br />
 
 <a name="moreclienticons"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;How
-can I add more <i>client icons</i> for password entries?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+How can I add more <i>client icons</i> for password entries?</h2>
 
 <br />
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 Client icons are the icons used for password entries and groups within KeePass.
 Each entry can be assigned its own icon.<br />
 <br />
@@ -272,16 +269,15 @@ Supported formats are BMP, EMF, GIF, ICO, JPEG, PNG, TIFF and WMF.
 
 <br />
 </td>
-<td width="154" align="right" valign="top">
+<td style="width: 154px; text-align: right;">
 <img src="../images/clienticons.gif" alt="Application Icons" />
 </td></tr></table>
 
 <br />
 
 <a name="minimode"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Does
-KeePass support a <i>mini mode</i>?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Does KeePass support a <i>mini mode</i>?</h2>
 
 <br />
 
@@ -296,9 +292,8 @@ A mini mode is not supported yet.
 <br /><br />
 
 <a name="nolockafterat"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't KeePass lock after Auto-Type?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't KeePass lock after Auto-Type?</h2>
 
 <br />
 
@@ -313,9 +308,8 @@ This does not apply to KeePass 2.x.
 <br /><br />
 
 <a name="athotkey"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't Auto-Type work correctly on Polish systems?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't Auto-Type work correctly on Polish systems?</h2>
 
 <p>On Polish systems, the default auto-type hot key
 <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>
@@ -330,9 +324,8 @@ in the KeePass options (see
 
 
 <a name="print1x"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't printing work in KeePass 1.x?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't printing work in KeePass 1.x?</h2>
 
 <p><b>Symptoms:</b> When trying to print a password list in KeePass 1.x,
 nothing happens after clicking OK in the 'Print Options' dialog.</p>
@@ -352,9 +345,8 @@ manually print the document in the application that just opened the file.</p>
 
 
 <a name="internet"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-does KeePass try to connect to the Internet?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why does KeePass try to connect to the Internet?</h2>
 
 <p>KeePass has an option to automatically check for updates on each program start.
 In order to check for updates, KeePass downloads a small version information
@@ -371,9 +363,8 @@ downloaded or installed automatically.</p>
 <br />
 
 <a name="autotypelog"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_ktouch.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Is
-<i>Auto-Type</i> keylogger-safe?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Is <i>Auto-Type</i> keylogger-safe?</h2>
 
 <p><i>Is the Auto-Type feature resistant to keyloggers?</i></p>
 
@@ -395,9 +386,8 @@ See the TCATO documentation for details.<br />
 <br /><br />
 
 <a name="autotypetarget"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_ktouch.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Can
-<i>Auto-Type</i> locate child controls?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Can <i>Auto-Type</i> locate child controls?</h2>
 
 <p>No. Auto-Type only checks whether the title of the currently active top level
 window matches.</p>
@@ -416,9 +406,8 @@ is placed in the correct control before starting auto-type.</p>
 <br />
 
 <a name="encryptionalgo"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Could
-you add the ... encryption algorithm to KeePass?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Could you add the ... encryption algorithm to KeePass?</h2>
 
 <br />
 
@@ -439,9 +428,8 @@ If you'd like to implement an algorithm, have a look at the <em>ArcFourCipher</e
 <br /><br />
 
 <a name="noautolock"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-doesn't KeePass lock while a sub-dialog is open?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why doesn't KeePass lock while a sub-dialog is open?</h2>
 
 <p>KeePass has various options to lock its workspace automatically
 (after some time of inactivity, when the computer gets locked or the user
@@ -519,9 +507,8 @@ operating systems.</p>
 <br />
 
 <a name="printtempfile"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Printing
-creates a temporary file. Will it be erased securely?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Printing creates a temporary file. Will it be erased securely?</h2>
 
 <p>KeePass creates a temporary HTML file when printing password lists and showing
 print previews. This file is securely deleted when closing the database.</p>
@@ -539,9 +526,8 @@ target="_blank">KeePass 2.x Plugin Development</a>.</p>
 <br />
 
 <!-- <a name="memprot"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-KeePass 2.x resets process memory protection options?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why KeePass 2.x resets process memory protection options?</h2>
 
 <p><i>Important: the following describes a behavior related to process memory protection,
 which has nothing to do with database encryption. All database fields are
@@ -559,9 +545,8 @@ matter whether the process memory protection is on or off.</p>
 <br /> -->
 
 <a name="qualest"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Why
-the estimated quality of a password suddenly drops?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Why the estimated quality of a password suddenly drops?</h2>
 
 <p>For estimating the quality/strength of a password, KeePass not only uses
 statistical methods (like checking which character ranges are used,
@@ -576,9 +561,8 @@ target="_blank">Password Quality Estimation</a> help page.</p>
 <br />
 
 <a name="rtftext"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;How
-to store and work with large amounts of (formatted) text?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+How to store and work with large amounts of (formatted) text?</h2>
 
 <br />
 
@@ -588,7 +572,7 @@ to store and work with large amounts of (formatted) text?</h2>
 
 
 <table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td align="left" valign="top">
+<tr><td>
 KeePass has a built-in editor that allows working conveniently with
 large amounts of (formatted) texts.<br />
 <br />
@@ -607,9 +591,9 @@ the attachment in the entry details view in the main window.<br />
 For TXT files, the built-in editor supports standard operations like cut,
 copy, paste, undo, word wrap, etc. For RTF files, additionally standard formatting
 commands are available: choosing the font, font size, bold, italic, underline,
-strikeout, text and background colors, align left / center / right, etc.
+strikeout, text and background colors, align left/center/right, etc.
 </td>
-<td width="154" align="right" valign="top">
+<td style="width: 154px; text-align: right;">
 <a href="../images/rtfeditor.png"><img src="../images/rtfeditor_small.png"
 alt="Editor screenshot" /></a>
 </td></tr></table>
@@ -618,9 +602,8 @@ alt="Editor screenshot" /></a>
 <br /><br />
 
 <a name="email"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Can
-an e-mail address field be added?</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Can an e-mail address field be added?</h2>
 
 <p>A few times it has been requested that a standard entry field for e-mail addresses
 is added (on the main tab page in the entry editing dialog).

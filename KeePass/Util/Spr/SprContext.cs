@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,19 +49,21 @@ namespace KeePass.Util.Spr
 		TextTransforms = 0x10000,
 		Env = 0x20000, // {BASE}, ...
 		Run = 0x40000, // Running other (console) applications
+		DataActive = 0x80000, // {CLIPBOARD-SET:/.../}, ...
+		DataNonActive = 0x100000, // {CLIPBOARD}, ...
 
 		ExtActive = 0x4000, // Active transformations provided by plugins
 		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
-		// Next free: 0x80000
-		All = 0x7FFFF,
+		// Next free: 0x200000
+		All = 0x1FFFFF,
 
 		// Internal:
 		UIInteractive = (SprCompileFlags.PickChars | SprCompileFlags.Run),
 		StateChanging = (SprCompileFlags.NewPassword | SprCompileFlags.HmacOtp),
 
 		Active = (SprCompileFlags.UIInteractive | SprCompileFlags.StateChanging |
-			SprCompileFlags.ExtActive),
+			SprCompileFlags.DataActive | SprCompileFlags.ExtActive),
 		NonActive = (SprCompileFlags.All & ~SprCompileFlags.Active),
 
 		Deref = (SprCompileFlags.EntryStrings | SprCompileFlags.EntryStringsSpecial |
@@ -141,16 +143,6 @@ namespace KeePass.Util.Spr
 		{
 			get { return m_refCache; }
 		}
-
-		// private bool m_bNoUrlSchemeOnce = false;
-		// /// <summary>
-		// /// Used internally by <c>SprEngine</c>; don't modify it.
-		// /// </summary>
-		// internal bool UrlRemoveSchemeOnce
-		// {
-		//	get { return m_bNoUrlSchemeOnce; }
-		//	set { m_bNoUrlSchemeOnce = value; }
-		// }
 
 		public SprContext() { }
 

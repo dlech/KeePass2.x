@@ -220,13 +220,13 @@ namespace KeePass.Resources
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
 			m_strDelete = TryGetEx(dictNew, "Delete", m_strDelete);
 			m_strDeleteCmd = TryGetEx(dictNew, "DeleteCmd", m_strDeleteCmd);
-			m_strDeleteEntriesTitle = TryGetEx(dictNew, "DeleteEntriesTitle", m_strDeleteEntriesTitle);
-			m_strDeleteEntriesTitleSingle = TryGetEx(dictNew, "DeleteEntriesTitleSingle", m_strDeleteEntriesTitleSingle);
 			m_strDeleteEntriesQuestion = TryGetEx(dictNew, "DeleteEntriesQuestion", m_strDeleteEntriesQuestion);
 			m_strDeleteEntriesQuestionSingle = TryGetEx(dictNew, "DeleteEntriesQuestionSingle", m_strDeleteEntriesQuestionSingle);
-			m_strDeleteGroupTitle = TryGetEx(dictNew, "DeleteGroupTitle", m_strDeleteGroupTitle);
+			m_strDeleteEntriesTitle = TryGetEx(dictNew, "DeleteEntriesTitle", m_strDeleteEntriesTitle);
+			m_strDeleteEntriesTitleSingle = TryGetEx(dictNew, "DeleteEntriesTitleSingle", m_strDeleteEntriesTitleSingle);
 			m_strDeleteGroupInfo = TryGetEx(dictNew, "DeleteGroupInfo", m_strDeleteGroupInfo);
 			m_strDeleteGroupQuestion = TryGetEx(dictNew, "DeleteGroupQuestion", m_strDeleteGroupQuestion);
+			m_strDeleteGroupTitle = TryGetEx(dictNew, "DeleteGroupTitle", m_strDeleteGroupTitle);
 			m_strDescending = TryGetEx(dictNew, "Descending", m_strDescending);
 			m_strDescription = TryGetEx(dictNew, "Description", m_strDescription);
 			m_strDetails = TryGetEx(dictNew, "Details", m_strDetails);
@@ -340,6 +340,9 @@ namespace KeePass.Resources
 			m_strFileSaveQOpYesClosing = TryGetEx(dictNew, "FileSaveQOpYesClosing", m_strFileSaveQOpYesClosing);
 			m_strFileSaveQOpYesExiting = TryGetEx(dictNew, "FileSaveQOpYesExiting", m_strFileSaveQOpYesExiting);
 			m_strFileSaveQOpYesLocking = TryGetEx(dictNew, "FileSaveQOpYesLocking", m_strFileSaveQOpYesLocking);
+			m_strFileSearchModes = TryGetEx(dictNew, "FileSearchModes", m_strFileSearchModes);
+			m_strFileSearchNormalDesc = TryGetEx(dictNew, "FileSearchNormalDesc", m_strFileSearchNormalDesc);
+			m_strFileSearchQuickDesc = TryGetEx(dictNew, "FileSearchQuickDesc", m_strFileSearchQuickDesc);
 			m_strFileTooLarge = TryGetEx(dictNew, "FileTooLarge", m_strFileTooLarge);
 			m_strFileTxExtra = TryGetEx(dictNew, "FileTxExtra", m_strFileTxExtra);
 			m_strFileVerifyHashFail = TryGetEx(dictNew, "FileVerifyHashFail", m_strFileVerifyHashFail);
@@ -534,13 +537,14 @@ namespace KeePass.Resources
 			m_strNormal = TryGetEx(dictNew, "Normal", m_strNormal);
 			m_strNoSort = TryGetEx(dictNew, "NoSort", m_strNoSort);
 			m_strNot = TryGetEx(dictNew, "Not", m_strNot);
-			m_strNotNow = TryGetEx(dictNew, "NotNow", m_strNotNow);
-			m_strNotRecommended = TryGetEx(dictNew, "NotRecommended", m_strNotRecommended);
 			m_strNotes = TryGetEx(dictNew, "Notes", m_strNotes);
 			m_strNotInstalled = TryGetEx(dictNew, "NotInstalled", m_strNotInstalled);
+			m_strNotNow = TryGetEx(dictNew, "NotNow", m_strNotNow);
+			m_strNotRecommended = TryGetEx(dictNew, "NotRecommended", m_strNotRecommended);
 			m_strNoXslFile = TryGetEx(dictNew, "NoXslFile", m_strNoXslFile);
 			m_strObjectNotFound = TryGetEx(dictNew, "ObjectNotFound", m_strObjectNotFound);
 			m_strObjectsDeleted = TryGetEx(dictNew, "ObjectsDeleted", m_strObjectsDeleted);
+			m_strObjectsFound = TryGetEx(dictNew, "ObjectsFound", m_strObjectsFound);
 			m_strOff = TryGetEx(dictNew, "Off", m_strOff);
 			m_strOfLower = TryGetEx(dictNew, "OfLower", m_strOfLower);
 			m_strOk = TryGetEx(dictNew, "Ok", m_strOk);
@@ -598,6 +602,7 @@ namespace KeePass.Resources
 			m_strPluginCacheClearInfo = TryGetEx(dictNew, "PluginCacheClearInfo", m_strPluginCacheClearInfo);
 			m_strPluginIncompatible = TryGetEx(dictNew, "PluginIncompatible", m_strPluginIncompatible);
 			m_strPluginLoadFailed = TryGetEx(dictNew, "PluginLoadFailed", m_strPluginLoadFailed);
+			m_strPluginMonoComplete = TryGetEx(dictNew, "PluginMonoComplete", m_strPluginMonoComplete);
 			m_strPluginOperatingSystemUnsupported = TryGetEx(dictNew, "PluginOperatingSystemUnsupported", m_strPluginOperatingSystemUnsupported);
 			m_strPluginProvided = TryGetEx(dictNew, "PluginProvided", m_strPluginProvided);
 			m_strPlugins = TryGetEx(dictNew, "Plugins", m_strPlugins);
@@ -628,9 +633,11 @@ namespace KeePass.Resources
 			m_strPrivate = TryGetEx(dictNew, "Private", m_strPrivate);
 			m_strProfessional = TryGetEx(dictNew, "Professional", m_strProfessional);
 			m_strQuality = TryGetEx(dictNew, "Quality", m_strQuality);
+			m_strQuick = TryGetEx(dictNew, "Quick", m_strQuick);
+			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
 			m_strQuickSearchExclExpired = TryGetEx(dictNew, "QuickSearchExclExpired", m_strQuickSearchExclExpired);
 			m_strQuickSearchInPwFields = TryGetEx(dictNew, "QuickSearchInPwFields", m_strQuickSearchInPwFields);
-			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
+			m_strQuickSearchQ = TryGetEx(dictNew, "QuickSearchQ", m_strQuickSearchQ);
 			m_strQuickSearchTb = TryGetEx(dictNew, "QuickSearchTb", m_strQuickSearchTb);
 			m_strRandomMacAddress = TryGetEx(dictNew, "RandomMacAddress", m_strRandomMacAddress);
 			m_strReady = TryGetEx(dictNew, "Ready", m_strReady);
@@ -785,6 +792,7 @@ namespace KeePass.Resources
 			m_strTriggersDesc = TryGetEx(dictNew, "TriggersDesc", m_strTriggersDesc);
 			m_strTriggersEdit = TryGetEx(dictNew, "TriggersEdit", m_strTriggersEdit);
 			m_strTriggerStateChange = TryGetEx(dictNew, "TriggerStateChange", m_strTriggerStateChange);
+			m_strType = TryGetEx(dictNew, "Type", m_strType);
 			m_strTypeUnknownHint = TryGetEx(dictNew, "TypeUnknownHint", m_strTypeUnknownHint);
 			m_strUnderline = TryGetEx(dictNew, "Underline", m_strUnderline);
 			m_strUndo = TryGetEx(dictNew, "Undo", m_strUndo);
@@ -814,10 +822,11 @@ namespace KeePass.Resources
 			m_strURtfProblem = TryGetEx(dictNew, "URtfProblem", m_strURtfProblem);
 			m_strURtfSuggestion = TryGetEx(dictNew, "URtfSuggestion", m_strURtfSuggestion);
 			m_strUseFileLocks = TryGetEx(dictNew, "UseFileLocks", m_strUseFileLocks);
-			m_strUseTransactedDatabaseWrites = TryGetEx(dictNew, "UseTransactedDatabaseWrites", m_strUseTransactedDatabaseWrites);
 			m_strUserName = TryGetEx(dictNew, "UserName", m_strUserName);
 			m_strUserNamePrompt = TryGetEx(dictNew, "UserNamePrompt", m_strUserNamePrompt);
 			m_strUserNameStc = TryGetEx(dictNew, "UserNameStc", m_strUserNameStc);
+			m_strUseTransactedConfigWrites = TryGetEx(dictNew, "UseTransactedConfigWrites", m_strUseTransactedConfigWrites);
+			m_strUseTransactedDatabaseWrites = TryGetEx(dictNew, "UseTransactedDatabaseWrites", m_strUseTransactedDatabaseWrites);
 			m_strUuid = TryGetEx(dictNew, "Uuid", m_strUuid);
 			m_strUuidDupInDb = TryGetEx(dictNew, "UuidDupInDb", m_strUuidDupInDb);
 			m_strUuidFix = TryGetEx(dictNew, "UuidFix", m_strUuidFix);
@@ -1052,13 +1061,13 @@ namespace KeePass.Resources
 			"Default",
 			"Delete",
 			"DeleteCmd",
-			"DeleteEntriesTitle",
-			"DeleteEntriesTitleSingle",
 			"DeleteEntriesQuestion",
 			"DeleteEntriesQuestionSingle",
-			"DeleteGroupTitle",
+			"DeleteEntriesTitle",
+			"DeleteEntriesTitleSingle",
 			"DeleteGroupInfo",
 			"DeleteGroupQuestion",
+			"DeleteGroupTitle",
 			"Descending",
 			"Description",
 			"Details",
@@ -1172,6 +1181,9 @@ namespace KeePass.Resources
 			"FileSaveQOpYesClosing",
 			"FileSaveQOpYesExiting",
 			"FileSaveQOpYesLocking",
+			"FileSearchModes",
+			"FileSearchNormalDesc",
+			"FileSearchQuickDesc",
 			"FileTooLarge",
 			"FileTxExtra",
 			"FileVerifyHashFail",
@@ -1366,13 +1378,14 @@ namespace KeePass.Resources
 			"Normal",
 			"NoSort",
 			"Not",
-			"NotNow",
-			"NotRecommended",
 			"Notes",
 			"NotInstalled",
+			"NotNow",
+			"NotRecommended",
 			"NoXslFile",
 			"ObjectNotFound",
 			"ObjectsDeleted",
+			"ObjectsFound",
 			"Off",
 			"OfLower",
 			"Ok",
@@ -1430,6 +1443,7 @@ namespace KeePass.Resources
 			"PluginCacheClearInfo",
 			"PluginIncompatible",
 			"PluginLoadFailed",
+			"PluginMonoComplete",
 			"PluginOperatingSystemUnsupported",
 			"PluginProvided",
 			"Plugins",
@@ -1460,9 +1474,11 @@ namespace KeePass.Resources
 			"Private",
 			"Professional",
 			"Quality",
+			"Quick",
+			"QuickSearchDerefData",
 			"QuickSearchExclExpired",
 			"QuickSearchInPwFields",
-			"QuickSearchDerefData",
+			"QuickSearchQ",
 			"QuickSearchTb",
 			"RandomMacAddress",
 			"Ready",
@@ -1617,6 +1633,7 @@ namespace KeePass.Resources
 			"TriggersDesc",
 			"TriggersEdit",
 			"TriggerStateChange",
+			"Type",
 			"TypeUnknownHint",
 			"Underline",
 			"Undo",
@@ -1646,10 +1663,11 @@ namespace KeePass.Resources
 			"URtfProblem",
 			"URtfSuggestion",
 			"UseFileLocks",
-			"UseTransactedDatabaseWrites",
 			"UserName",
 			"UserNamePrompt",
 			"UserNameStc",
+			"UseTransactedConfigWrites",
+			"UseTransactedDatabaseWrites",
 			"Uuid",
 			"UuidDupInDb",
 			"UuidFix",
@@ -3828,28 +3846,6 @@ namespace KeePass.Resources
 			get { return m_strDeleteCmd; }
 		}
 
-		private static string m_strDeleteEntriesTitle =
-			@"Delete Entries";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Delete Entries'.
-		/// </summary>
-		public static string DeleteEntriesTitle
-		{
-			get { return m_strDeleteEntriesTitle; }
-		}
-
-		private static string m_strDeleteEntriesTitleSingle =
-			@"Delete Entry";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Delete Entry'.
-		/// </summary>
-		public static string DeleteEntriesTitleSingle
-		{
-			get { return m_strDeleteEntriesTitleSingle; }
-		}
-
 		private static string m_strDeleteEntriesQuestion =
 			@"Are you sure you want to permanently delete the selected entries?";
 		/// <summary>
@@ -3872,15 +3868,26 @@ namespace KeePass.Resources
 			get { return m_strDeleteEntriesQuestionSingle; }
 		}
 
-		private static string m_strDeleteGroupTitle =
-			@"Delete Group";
+		private static string m_strDeleteEntriesTitle =
+			@"Delete Entries";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Delete Group'.
+		/// 'Delete Entries'.
 		/// </summary>
-		public static string DeleteGroupTitle
+		public static string DeleteEntriesTitle
 		{
-			get { return m_strDeleteGroupTitle; }
+			get { return m_strDeleteEntriesTitle; }
+		}
+
+		private static string m_strDeleteEntriesTitleSingle =
+			@"Delete Entry";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Delete Entry'.
+		/// </summary>
+		public static string DeleteEntriesTitleSingle
+		{
+			get { return m_strDeleteEntriesTitleSingle; }
 		}
 
 		private static string m_strDeleteGroupInfo =
@@ -3903,6 +3910,17 @@ namespace KeePass.Resources
 		public static string DeleteGroupQuestion
 		{
 			get { return m_strDeleteGroupQuestion; }
+		}
+
+		private static string m_strDeleteGroupTitle =
+			@"Delete Group";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Delete Group'.
+		/// </summary>
+		public static string DeleteGroupTitle
+		{
+			get { return m_strDeleteGroupTitle; }
 		}
 
 		private static string m_strDescending =
@@ -5146,6 +5164,39 @@ namespace KeePass.Resources
 		public static string FileSaveQOpYesLocking
 		{
 			get { return m_strFileSaveQOpYesLocking; }
+		}
+
+		private static string m_strFileSearchModes =
+			@"There are two search modes: quick and normal.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'There are two search modes: quick and normal.'.
+		/// </summary>
+		public static string FileSearchModes
+		{
+			get { return m_strFileSearchModes; }
+		}
+
+		private static string m_strFileSearchNormalDesc =
+			@"A normal search finds all files (by looking at file contents), but requires a lot more time than a quick search.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'A normal search finds all files (by looking at file contents), but requires a lot more time than a quick search.'.
+		/// </summary>
+		public static string FileSearchNormalDesc
+		{
+			get { return m_strFileSearchNormalDesc; }
+		}
+
+		private static string m_strFileSearchQuickDesc =
+			@"In a quick search, KeePass only considers files that have one of the usual file name extensions. This is fast, but may not find all files.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'In a quick search, KeePass only considers files that have one of the usual file name extensions. This is fast, but may not find all files.'.
+		/// </summary>
+		public static string FileSearchQuickDesc
+		{
+			get { return m_strFileSearchQuickDesc; }
 		}
 
 		private static string m_strFileTooLarge =
@@ -7282,28 +7333,6 @@ namespace KeePass.Resources
 			get { return m_strNot; }
 		}
 
-		private static string m_strNotNow =
-			@"Not now";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Not now'.
-		/// </summary>
-		public static string NotNow
-		{
-			get { return m_strNotNow; }
-		}
-
-		private static string m_strNotRecommended =
-			@"(not recommended)";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// '(not recommended)'.
-		/// </summary>
-		public static string NotRecommended
-		{
-			get { return m_strNotRecommended; }
-		}
-
 		private static string m_strNotes =
 			@"Notes";
 		/// <summary>
@@ -7324,6 +7353,28 @@ namespace KeePass.Resources
 		public static string NotInstalled
 		{
 			get { return m_strNotInstalled; }
+		}
+
+		private static string m_strNotNow =
+			@"Not now";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Not now'.
+		/// </summary>
+		public static string NotNow
+		{
+			get { return m_strNotNow; }
+		}
+
+		private static string m_strNotRecommended =
+			@"(not recommended)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '(not recommended)'.
+		/// </summary>
+		public static string NotRecommended
+		{
+			get { return m_strNotRecommended; }
 		}
 
 		private static string m_strNoXslFile =
@@ -7357,6 +7408,17 @@ namespace KeePass.Resources
 		public static string ObjectsDeleted
 		{
 			get { return m_strObjectsDeleted; }
+		}
+
+		private static string m_strObjectsFound =
+			@"{PARAM} object(s) found";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '{PARAM} object(s) found'.
+		/// </summary>
+		public static string ObjectsFound
+		{
+			get { return m_strObjectsFound; }
 		}
 
 		private static string m_strOff =
@@ -7986,6 +8048,17 @@ namespace KeePass.Resources
 			get { return m_strPluginLoadFailed; }
 		}
 
+		private static string m_strPluginMonoComplete =
+			@"On some systems, the 'mono-complete' package may be required for plugins to work properly.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'On some systems, the &#39;mono-complete&#39; package may be required for plugins to work properly.'.
+		/// </summary>
+		public static string PluginMonoComplete
+		{
+			get { return m_strPluginMonoComplete; }
+		}
+
 		private static string m_strPluginOperatingSystemUnsupported =
 			@"The current operating system is unsupported by the plugin.";
 		/// <summary>
@@ -8316,6 +8389,28 @@ namespace KeePass.Resources
 			get { return m_strQuality; }
 		}
 
+		private static string m_strQuick =
+			@"Quick";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Quick'.
+		/// </summary>
+		public static string Quick
+		{
+			get { return m_strQuick; }
+		}
+
+		private static string m_strQuickSearchDerefData =
+			@"Resolve field references in quick searches";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Resolve field references in quick searches'.
+		/// </summary>
+		public static string QuickSearchDerefData
+		{
+			get { return m_strQuickSearchDerefData; }
+		}
+
 		private static string m_strQuickSearchExclExpired =
 			@"Exclude expired entries in quick searches";
 		/// <summary>
@@ -8338,15 +8433,15 @@ namespace KeePass.Resources
 			get { return m_strQuickSearchInPwFields; }
 		}
 
-		private static string m_strQuickSearchDerefData =
-			@"Resolve field references in quick searches";
+		private static string m_strQuickSearchQ =
+			@"Would you like to perform a quick search?";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Resolve field references in quick searches'.
+		/// 'Would you like to perform a quick search?'.
 		/// </summary>
-		public static string QuickSearchDerefData
+		public static string QuickSearchQ
 		{
-			get { return m_strQuickSearchDerefData; }
+			get { return m_strQuickSearchQ; }
 		}
 
 		private static string m_strQuickSearchTb =
@@ -10043,6 +10138,17 @@ namespace KeePass.Resources
 			get { return m_strTriggerStateChange; }
 		}
 
+		private static string m_strType =
+			@"Type";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Type'.
+		/// </summary>
+		public static string Type
+		{
+			get { return m_strType; }
+		}
+
 		private static string m_strTypeUnknownHint =
 			@"A newer KeePass version or a plugin might be required for this type.";
 		/// <summary>
@@ -10362,17 +10468,6 @@ namespace KeePass.Resources
 			get { return m_strUseFileLocks; }
 		}
 
-		private static string m_strUseTransactedDatabaseWrites =
-			@"Use file transactions for writing databases";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Use file transactions for writing databases'.
-		/// </summary>
-		public static string UseTransactedDatabaseWrites
-		{
-			get { return m_strUseTransactedDatabaseWrites; }
-		}
-
 		private static string m_strUserName =
 			@"User Name";
 		/// <summary>
@@ -10404,6 +10499,28 @@ namespace KeePass.Resources
 		public static string UserNameStc
 		{
 			get { return m_strUserNameStc; }
+		}
+
+		private static string m_strUseTransactedConfigWrites =
+			@"Use file transactions for writing configuration settings";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Use file transactions for writing configuration settings'.
+		/// </summary>
+		public static string UseTransactedConfigWrites
+		{
+			get { return m_strUseTransactedConfigWrites; }
+		}
+
+		private static string m_strUseTransactedDatabaseWrites =
+			@"Use file transactions for writing databases";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Use file transactions for writing databases'.
+		/// </summary>
+		public static string UseTransactedDatabaseWrites
+		{
+			get { return m_strUseTransactedDatabaseWrites; }
 		}
 
 		private static string m_strUuid =

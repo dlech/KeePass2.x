@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -201,7 +201,8 @@ namespace KeePass.Forms
 				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
 				// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
 				"APPACTIVATE " + (bRtl ? "Title" : KPRes.Title),
-				"BEEP 800 200", "CMD:/C/O/", VkcBreak,
+				"BEEP 800 200", "CLIPBOARD", "CLIPBOARD-SET:/T/",
+				"CMD:/C/O/", VkcBreak,
 
 				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 				"ENV_DIRSEP", "ENV_PROGRAMFILES_X86", VkcBreak,

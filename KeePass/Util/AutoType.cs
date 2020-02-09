@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -81,6 +81,8 @@ namespace KeePass.Util
 		public static event EventHandler<AutoTypeEventArgs> FilterCompilePre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSendPre;
 		public static event EventHandler<AutoTypeEventArgs> FilterSend;
+
+		public static event EventHandler<AutoTypeEventArgs> SendPost;
 
 		public static event EventHandler<SequenceQueryEventArgs> SequenceQueryPre;
 		public static event EventHandler<SequenceQueryEventArgs> SequenceQuery;
@@ -201,6 +203,8 @@ namespace KeePass.Util
 					strError = args.Sequence + MessageService.NewParagraph +
 						ex.Message;
 				}
+
+				if(AutoType.SendPost != null) AutoType.SendPost(null, args);
 
 				if(!string.IsNullOrEmpty(strError))
 				{

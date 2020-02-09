@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -31,12 +32,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_vcard.png" width="64" height="64"
-class="singleimg" align="left" alt="Help" />
-</td><td valign="middle"><h1>TAN Support</h1><br />
-KeePass supports Transaction Authentication Numbers (TANs).
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_vcard.png" alt="VCard" /></td>
+<td><h1>TAN Support</h1>
+<p>KeePass supports Transaction Authentication Numbers (TANs).</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#wizard">Using the <i>TAN Wizard</i> to add TANs</a></li>
@@ -53,9 +53,8 @@ your banking account.</p>
 <br />
 
 <a name="wizard"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_vcard.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Using the <i>TAN
-Wizard</i> to add TANs</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_vcard.png" alt="VCard" />
+Using the <i>TAN Wizard</i> to add TANs</h2>
 
 <p>You can use the KeePass <b>TAN Wizard</b> to add several TANs at once to your
 database. Just open the TAN wizard dialog (menu <i>Tools</i> - <i>TAN Wizard</i>) and enter
@@ -71,22 +70,21 @@ name and URL of a TAN. But you can freely add notes to a TAN entry, if you wish.
 <br />
 
 <a name="usage"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_vcard.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Using
-TANs</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_vcard.png" alt="VCard" />
+Using TANs</h2>
 
 <p>When you use the TAN (e.g. execute the &quot;Copy Password&quot; command on
 it), its expiration date will be set
-to the current time, which expires the entry. It will get a red <font color="#ff0000"><b>X</b></font>
-as icon. If you later
-want to know when you used a specific
-TAN, you can just have a look at its expiration date.</p>
+to the current time, which expires the entry. It will get a red
+<span style="color: #FF0000;"><b>X</b></span> as icon.
+If you later want to know when you used a specific TAN,
+you can just have a look at its expiration date.</p>
 
 <p>When copying a TAN to the clipboard, the database is marked as modified. You must save
 the file in order to remember the usage of a TAN.</p>
 
 <p>If you accidently used a TAN without needing it, you can reset it (i.e. remove the red
-<font color="#ff0000"><b>X</b></font> and show it as valid TAN again). To do this, open the
+<span style="color: #FF0000;"><b>X</b></span> and show it as valid TAN again). To do this, open the
 TAN entry (right-click it and choose <i>'Edit/View Entry...'</i>). Here, uncheck the
 <i>'Expires'</i> checkbox. Click [OK] to close the dialog.</p>
 

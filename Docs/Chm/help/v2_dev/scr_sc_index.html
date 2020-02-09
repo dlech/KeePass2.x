@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,13 +33,12 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_konsole.png" width="64" height="64"
-class="singleimg" align="left" alt="Console" />
-</td><td valign="middle"><h1>Single Command Operations</h1><br />
-How to use KPScript with single command operations to perform simple
-database operations.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_konsole.png" alt="Console" /></td>
+<td><h1>Single Command Operations</h1>
+<p>How to use KPScript with single command operations to perform simple
+database operations.</p></td>
+</tr></table>
 
 <p>KPScript can be invoked using single commands. By passing the database location,
 its key, a command and eventually some parameters, simple operations like adding
@@ -57,9 +57,8 @@ without any option prefix.</p>
 <br />
 
 <a name="masterkey"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kgpg.png" class="singleimg" alt="User Key" />&nbsp;&nbsp;Master
-Key</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kgpg.png" alt="User Key" />
+Master Key</h2>
 
 <p>The composite master key for the database can be given to KPScript
 using one of the following ways:</p>
@@ -95,9 +94,8 @@ key using the normal master key dialog of KeePass.</li>
 <br />
 
 <a name="cmd"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_konsole.png" class="singleimg" alt="Console" />&nbsp;&nbsp;Available
-Commands</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="Console" />
+Available Commands</h2>
 
 <p>Please note that commands are added incrementally based on user requests. If you are
 missing a command, please let the KeePass team know and it will be added to the
@@ -241,7 +239,8 @@ to be edited; all of the specified conditions must match:</p>
 <li><code>-ref-<i>FIELDNAME</i>:<i>FIELDVALUE</i></code><br />
 The string field <i>FIELDNAME</i> must have the value <i>FIELDVALUE</i>.<br />
 If the value is enclosed in '<code>//</code>', it is treated as a
-<a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
+<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
 target="_blank">regular expression</a>,
 which must occur in the entry field for the entry to match.
 For example, <code>-ref-Title:&quot;//Test\d\d//&quot;</code> matches every entry
@@ -482,9 +481,8 @@ Usage example:</p>
 <br />
 
 <a name="enc"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_help.png" class="singleimg" alt="Help" />&nbsp;&nbsp;Console
-Character Encoding</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Help" />
+Console Character Encoding</h2>
 
 <p>If you observe garbled special characters in the output, please read the page
 <a href="https://keepass.info/help/kb/console_encoding.html" target="_blank">Console

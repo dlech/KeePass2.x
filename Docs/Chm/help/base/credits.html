@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -12,17 +13,17 @@
 	
 	
 
-	<meta name="DC.title" content="Acknowledgements - KeePass" />
+	<meta name="DC.title" content="Acknowledgements / Credits - KeePass" />
 	<meta name="DC.creator" content="Dominik Reichl" />
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
 
-	<title>Acknowledgements - KeePass</title>
+	<title>Acknowledgements / Credits - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_kdmconfig.png" width="64" height="64"
-class="singleimg" align="left" alt="Help" />
-</td><td valign="middle"><h1>Acknowledgements / Credits</h1><br />
-Thanks to various people for contributions and/or work.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_kdmconfig.png" alt="Help" /></td>
+<td><h1>Acknowledgements / Credits</h1>
+<p>Thanks to various people for contributions and/or work.</p></td>
+</tr></table>
 
 <p>At this place I want to thank a lot of people very much for their help,
 source code, suggestions and other contributions (in no particular order).</p>
@@ -61,16 +61,14 @@ source code, suggestions and other contributions (in no particular order).</p>
 <li><a href="#lic_sendkeys">CSendKeys</a></li>
 <li><a href="#lic_cmdline">Command Line Classes</a></li>
 <li><a href="#lic_bouncycastle">Bouncy Castle Cryptographic C# API</a></li>
-<li><a href="#lic_cookieconsent">Cookie Consent</a></li>
 </ul></li>
 </ul>
 
 <br />
 
 <a name="donations"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Donation
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_donate.png" alt="Donate" />
+Donation Acknowledgements</h2>
 
 <p>Developing high-quality applications takes much time and resources.
 Donations make it possible to keep up the current development standard.
@@ -84,17 +82,16 @@ Donations</a>.</p>
 <br />
 
 <a name="sourcecode"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Source
-Code Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Source Code Acknowledgements</h2>
 
 <p>KeePass uses some classes and libraries written by different
 people and given away for free. Here I want to thank them for writing
 these classes and libraries.</p>
 
 <table class="tablebox">
-<tr><th width="30%">Author</th>
-<th width="70%">Class / Library</th></tr>
+<colgroup><col style="width: 30%;" /><col style="width: 70%;" /></colgroup>
+<tr><th>Author</th><th>Class / Library</th></tr>
 
 <tr><td>Szymon Stefanek</td>
 <td>C++ <a href="http://www.pragmaware.net/" target="_blank">implementation</a>
@@ -119,11 +116,11 @@ target="_blank">BCMenu</a>).</td></tr>
 
 <tr><td>Davide Calabro</td>
 <!-- https://www.codeproject.com/KB/buttons/cbuttonst.aspx -->
-<td>MFC class for buttons with icons (<a href="https://www.codeproject.com/Articles/57/CButtonST-v-MFC-Flat-buttons"
+<td>MFC class for buttons with icons (<a href="https://www.codeproject.com/Articles/57/CButtonST-v3-9-MFC-Flat-buttons"
 target="_blank">CButtonST</a>).</td></tr>
 
 <tr><td>Zorglab, Chris Maunder, Alexander Bischofberger, James White, Descartes Systems Sciences Inc.</td>
-<td>MFC class for color pickers (<a href="https://www.codeproject.com/Articles/3608/CColourPickerXP-a-Theme-aware-Colour-Picker-with"
+<td>MFC class for color pickers (<a href="https://www.codeproject.com/Articles/3608/CColourPickerXP-a-Theme-aware-Colour-Picker-with-2"
 target="_blank">CColourPickerXP</a>).</td></tr>
 
 <!-- <tr><td>Matt Weagle</td>
@@ -131,7 +128,8 @@ target="_blank">CColourPickerXP</a>).</td></tr>
 target="_blank">CGradientProgressCtrl</a>).</td></tr> -->
 
 <tr><td>Peter Mares</td>
-<td>MFC class for window side banners (<a href="https://www.codeproject.com/KB/miscctrl/kcsidebannerwnd.aspx"
+<!-- https://www.codeproject.com/KB/miscctrl/kcsidebannerwnd.aspx -->
+<td>MFC class for window side banners (<a href="https://www.codeproject.com/Articles/5269/CKCSideBannerWnd-An-MFC-Banner-Control-that-Can-Ad"
 target="_blank">CKCSideBannerWnd</a>).</td></tr>
 
 <tr><td>Chris Maunder</td>
@@ -140,12 +138,14 @@ target="_blank">CKCSideBannerWnd</a>).</td></tr>
 target="_blank">CSystemTray</a>).</td></tr>
 
 <tr><td>Hans Dietrich, Chris Maunder</td>
-<td>MFC class for hyperlinks in dialogs (<a href="https://www.codeproject.com/KB/miscctrl/XHyperLink.aspx"
+<!-- https://www.codeproject.com/KB/miscctrl/XHyperLink.aspx -->
+<td>MFC class for hyperlinks in dialogs (<a href="https://www.codeproject.com/Articles/5241/XHyperLink-yet-another-hyperlink-control"
 target="_blank">XHyperLink</a>).</td></tr>
 
 <tr><td>Lallous</td>
 <td>Class for sending simulated keystrokes to other applications
-(<a href="https://www.codeproject.com/KB/cpp/sendkeys_cpp_Article.aspx"
+<!-- https://www.codeproject.com/KB/cpp/sendkeys_cpp_Article.aspx -->
+(<a href="https://www.codeproject.com/Articles/6819/SendKeys-in-C"
 target="_blank">CSendKeys</a>).</td></tr>
 
 <tr><td>PJ Naughter</td>
@@ -172,16 +172,13 @@ target="_blank">Bouncy Castle</a>).</td></tr> -->
 <!-- <tr><td>Mike Krueger, John Reilly</td>
 <td>Library to handle GZip files (<a href="http://www.icsharpcode.net/OpenSource/SharpZipLib/"
 target="_blank">SharpZipLib</a>).</td></tr> -->
-
-<tr><td>Silktide</td>
-<td><a href="http://silktide.com/cookieconsent" target="_blank">Cookie Consent</a> JavaScript plugin.</td></tr>
 </table>
 
 <br />
 
 <table class="tablebox">
-<tr><th width="30%">Author</th>
-<th width="70%">Resource</th></tr>
+<colgroup><col style="width: 30%;" /><col style="width: 70%;" /></colgroup>
+<tr><th>Author</th><th>Resource</th></tr>
 
 <tr><td>Mark Burnett</td>
 <td>List of
@@ -194,9 +191,8 @@ target="_blank">password quality estimation</a> algorithm.</td></tr>
 <br /><br />
 
 <a name="icons"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Icon
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="Info" />
+Icon Acknowledgements</h2>
 
 <p>Thanks a lot to <b>Christopher Bolin</b> for creating the main KeePass icon
 (see top left on this page) and its
@@ -238,9 +234,8 @@ target="_blank" rel="nofollow">Hand Symbol</a> by <b>Bobek Ltd</b>.</li>
 <br />
 
 <a name="translations"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Translation
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_keyboard_layout.png" alt="Translations" />
+Translation Acknowledgements</h2>
 
 <p>Thanks a lot to all people who created <a href="https://keepass.info/translations.html"
 target="_blank">translations</a> for KeePass.</p>
@@ -248,9 +243,8 @@ target="_blank">translations</a> for KeePass.</p>
 <br />
 
 <a name="plugins"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Plugin
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_blockdevice.png" alt="Plugins" />
+Plugin Acknowledgements</h2>
 
 <p>Many thanks to all people who wrote <a href="https://keepass.info/plugins.html"
 target="_blank">plugins</a> for KeePass. Without you, KeePass
@@ -259,9 +253,8 @@ would be a lot less powerful and useful!</p>
 <br />
 
 <a name="tools"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Tools
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+Tools Acknowledgements</h2>
 
 <!-- <p>Thanks to the <b>UPX Team</b> for the writing the Ultimate Packer for
 eXecutables (<a href="http://upx.sourceforge.net/"
@@ -273,23 +266,27 @@ faster.</p> -->
 target="_blank">Inno Setup</a>. This
 tool is used to create the KeePass installation program.</p>
 
-<p>Thanks to <b>Dimitri van Heesch</b> for the <a href="https://www.stack.nl/~dimitri/doxygen/"
+<!-- https://www.stack.nl/~dimitri/doxygen/ -->
+<p>Thanks to <b>Dimitri van Heesch</b> for the <a href="http://www.doxygen.nl/"
 target="_blank">Doxygen</a> utility, which is used to compile the source
 code documentation.</p>
 
 <br />
 
 <a name="distribution"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Hosting/Distribution
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_server.png" alt="Server" />
+Hosting/Distribution Acknowledgements</h2>
 
 <br />
 
 <table class="laytable" cellspacing="0" cellpadding="0">
+<colgroup>
+
+	<col />
+</colgroup>
 <tr>
 
-<td valign="middle">
+<td style="vertical-align: middle;">
 Thanks to <b>SourceForge.net</b>
 for hosting the KeePass downloads / translations / plugins and for providing the
 project support platform (forums, feature requests / bug trackers, ...) for free.
@@ -297,14 +294,14 @@ project support platform (forums, feature requests / bug trackers, ...) for free
 
 <tr>
 
-<td valign="middle">
+<td style="vertical-align: middle;">
 Thanks to <b>domain)FACTORY</b>
 for hosting the KeePass website.
 </td></tr>
 
 <tr>
 
-<td valign="middle">
+<td style="vertical-align: middle;">
 Thanks to <b>datensysteme-lenk</b>
 for hosting the German KeePass support forum in the past.
 </td></tr>
@@ -313,9 +310,8 @@ for hosting the German KeePass support forum in the past.
 <br /><br />
 
 <a name="help"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Suggestions
-and Forum Support Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="Info" />
+Suggestions and Forum Support Acknowledgements</h2>
 
 <p>Thanks to all the people answering questions of others in the KeePass
 forums! A product is only as good as its support is, and I alone could
@@ -328,9 +324,8 @@ of suggestions (features, bug reports, ...) and helping others in the forums:
 <br />
 
 <a name="special"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kdmconfig.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Special
-Acknowledgements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="Info" />
+Special Acknowledgements</h2>
 
 <p>Thanks to <b>Daniel Turini</b> for suggesting <i>&quot;KeePass&quot;</i>
 as the name of the project.</p>
@@ -346,9 +341,8 @@ of KeePass, Bill also told me a lot about C++ and other stuff. Thanks!</p>
 <br />
 
 <a name="lic"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kmultiple.png" class="singleimg" alt="Info" />&nbsp;&nbsp;Licenses
-of Components/Resources/etc.</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+Licenses of Components/Resources/etc.</h2>
 
 <a name="lic_nuvola"></a>
 <h3>Nuvola Icon Theme</h3>
@@ -587,31 +581,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.</pre>
-
-<br />
-
-<a name="lic_cookieconsent"></a>
-<h3>Cookie Consent</h3>
-
-<pre>Copyright (c) 2015 Silktide Ltd
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the &quot;Software&quot;), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.</pre>
 
 <br />
 

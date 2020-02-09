@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -275,16 +275,25 @@ namespace KeePassLib.Utility
 
 		public static string FileUrlToPath(string strUrl)
 		{
-			Debug.Assert(strUrl != null);
-			if(strUrl == null) throw new ArgumentNullException("strUrl");
+			if(strUrl == null) { Debug.Assert(false); throw new ArgumentNullException("strUrl"); }
+			if(strUrl.Length == 0) { Debug.Assert(false); return string.Empty; }
 
-			string str = strUrl;
-			if(str.StartsWith("file:///", StrUtil.CaseIgnoreCmp))
-				str = str.Substring(8, str.Length - 8);
+			if(!strUrl.StartsWith(Uri.UriSchemeFile + ":", StrUtil.CaseIgnoreCmp))
+			{
+				Debug.Assert(false);
+				return strUrl;
+			}
 
-			str = str.Replace('/', UrlUtil.LocalDirSepChar);
+			try
+			{
+				Uri uri = new Uri(strUrl);
+				string str = uri.LocalPath;
+				if(!string.IsNullOrEmpty(str)) return str;
+			}
+			catch(Exception) { Debug.Assert(false); }
 
-			return str;
+			Debug.Assert(false);
+			return strUrl;
 		}
 
 		public static bool UnhideFile(string strFile)

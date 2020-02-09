@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -26,19 +27,28 @@
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	
+	<style type="text/css">
+	/* <![CDATA[ */
+	table.flagstbl tr th:nth-of-type(1), table.flagstbl tr th:nth-of-type(2),
+	table.flagstbl tr td:nth-of-type(1), table.flagstbl tr td:nth-of-type(2) {
+		text-align: right;
+	}
+	/* ]]> */
+	</style>
+
 </head>
 <body>
 
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_package_system.png" width="64" height="64"
-class="singleimg" align="left" alt="Computer" />
-</td><td valign="middle"><h1>Customization (2.x)</h1><br />
-KeePass 2.x features various options for network administrators to
-customize the program's appearance and behavior.
-</td></tr></table>
+
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_package_system.png" alt="System" /></td>
+<td><h1>Customization (2.x)</h1>
+<p>KeePass 2.x features various options for network administrators to
+customize the program's appearance and behavior.</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#start">Preliminaries</a></li>
@@ -50,8 +60,8 @@ customize the program's appearance and behavior.
 <br />
 
 <a name="start"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_package_system.png" class="singleimg" alt="System" />&nbsp;&nbsp;Preliminaries</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
+Preliminaries</h2>
 
 <p>Most options below are configured by directly editing the
 <code>KeePass.config.xml</code> configuration file. If you're planning to
@@ -66,9 +76,8 @@ want to write a plugin.</p>
 <br />
 
 <a name="masterpwreq"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kgpg.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Minimum
-Master Password Requirements</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kgpg.png" alt="Key" />
+Minimum Master Password Requirements</h2>
 
 <p>You can specify several properties that master passwords must have
 in order to be accepted (length, estimated quality, ...).
@@ -78,9 +87,8 @@ Properties</a>.</p>
 <br />
 
 <a name="uiflags"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_file_locked.png" class="singleimg" alt="Locked" />&nbsp;&nbsp;Specifying
-UI Element States</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Specifying UI Element States</h2>
 
 <p>The state (enabled, disabled, visible, hidden) of several user interface
 (UI) elements can be specified using the <code>UIFlags</code> value
@@ -88,40 +96,40 @@ of the <code>UI</code> node in the configuration file.
 This can be a bitwise combination of one or more of
 the following flags:</p>
 
-<table class="tablebox75">
-<tr><th style="text-align: right">Flag (Hex)</th><th style="text-align: right">Flag (Dec)</th>
+<table class="tablebox75 flagstbl">
+<tr><th>Flag (Hex)</th><th>Flag (Dec)</th>
 <th>Description</th></tr>
-<tr><td style="text-align: right">0x0</td><td style="text-align: right">0</td>
+<tr><td>0x0</td><td>0</td>
 <td>Don't force any states (default).</td></tr>
-<tr><td style="text-align: right">0x1</td><td style="text-align: right">1</td>
+<tr><td>0x1</td><td>1</td>
 <td>Disable 'Tools' &rarr; 'Options' menu item.</td></tr>
-<tr><td style="text-align: right">0x2</td><td style="text-align: right">2</td>
+<tr><td>0x2</td><td>2</td>
 <td>Disable 'Tools' &rarr; 'Plugins' menu item.</td></tr>
-<tr><td style="text-align: right">0x4</td><td style="text-align: right">4</td>
+<tr><td>0x4</td><td>4</td>
 <td>Disable 'Tools' &rarr; 'Triggers' menu item.</td></tr>
-<tr><td style="text-align: right">0x8</td><td style="text-align: right">8</td>
+<tr><td>0x8</td><td>8</td>
 <td>Disable controls to specify after how many
 days the master key should/must be changed.</td></tr>
-<tr><td style="text-align: right">0x10</td><td style="text-align: right">16</td>
+<tr><td>0x10</td><td>16</td>
 <td>Hide password quality progress bars and information labels.</td></tr>
-<tr><td style="text-align: right">0x20</td><td style="text-align: right">32</td>
+<tr><td>0x20</td><td>32</td>
 <td>Disable 'Help' &rarr; 'Check for Updates' menu item.</td></tr>
-<tr><td style="text-align: right">0x40</td><td style="text-align: right">64</td>
+<tr><td>0x40</td><td>64</td>
 <td>Disable 'Tools' &rarr; 'Database Tools' &rarr; 'XML Replace' menu item.</td></tr>
-<tr><td style="text-align: right">0x80</td><td style="text-align: right">128</td>
+<tr><td>0x80</td><td>128</td>
 <td>Disable 'File' &rarr; 'Database Settings' menu item.</td></tr>
-<tr><td style="text-align: right">0x10000</td><td style="text-align: right">65536</td>
+<tr><td>0x10000</td><td>65536</td>
 <td>Hide built-in profiles in the
 password generator context menu of the entry editing dialog.</td></tr>
-<tr><td style="text-align: right">0x20000</td><td style="text-align: right">131072</td>
+<tr><td>0x20000</td><td>131072</td>
 <td>Show UI elements related to last access times.<br />
 <em>Note:</em> Databases are not marked as modified when a last access time
 changes. Thus, when only last access times are changed and the user closes the
 database (without saving manually first and without a save forced e.g. by a trigger or plugin),
 the changes to the last access times are lost.</td></tr>
-<tr><td style="text-align: right">0x40000</td><td style="text-align: right">262144</td>
+<tr><td>0x40000</td><td>262144</td>
 <td>Do not display information dialogs when creating a new database.</td></tr>
-<tr><td style="text-align: right">0x80000</td><td style="text-align: right">524288</td>
+<tr><td>0x80000</td><td>524288</td>
 <td>Do not display auto-type obfuscation compatibility information dialogs.</td></tr>
 </table>
 
@@ -134,9 +142,8 @@ menu items, you'd specify 33 as value for the <code>UIFlags</code> node
 <br />
 
 <a name="opt"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kcmsystem.png" class="singleimg" alt="Key" />&nbsp;&nbsp;More
-Options</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kcmsystem.png" alt="Settings" />
+More Options</h2>
 
 <ul class="withspc">
 <li><b>Configuration/Application/ExpirySoonDays</b>:<br />

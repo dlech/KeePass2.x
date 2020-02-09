@@ -583,26 +583,26 @@
 		<Data Name="DeleteCmd">
 			<Value>&amp;Delete</Value>
 		</Data>
-		<Data Name="DeleteEntriesTitle">
-			<Value>Delete Entries</Value>
-		</Data>
-		<Data Name="DeleteEntriesTitleSingle">
-			<Value>Delete Entry</Value>
-		</Data>
 		<Data Name="DeleteEntriesQuestion">
 			<Value>Are you sure you want to permanently delete the selected entries?</Value>
 		</Data>
 		<Data Name="DeleteEntriesQuestionSingle">
 			<Value>Are you sure you want to permanently delete the selected entry?</Value>
 		</Data>
-		<Data Name="DeleteGroupTitle">
-			<Value>Delete Group</Value>
+		<Data Name="DeleteEntriesTitle">
+			<Value>Delete Entries</Value>
+		</Data>
+		<Data Name="DeleteEntriesTitleSingle">
+			<Value>Delete Entry</Value>
 		</Data>
 		<Data Name="DeleteGroupInfo">
 			<Value>Deleting a group will also delete all entries and subgroups in that group.</Value>
 		</Data>
 		<Data Name="DeleteGroupQuestion">
 			<Value>Are you sure you want to permanently delete the selected group?</Value>
+		</Data>
+		<Data Name="DeleteGroupTitle">
+			<Value>Delete Group</Value>
 		</Data>
 		<Data Name="Descending">
 			<Value>&amp;Descending</Value>
@@ -942,6 +942,15 @@
 		</Data>
 		<Data Name="FileSaveQOpYesLocking">
 			<Value>Save all changes made to the database and lock the KeePass workspace.</Value>
+		</Data>
+		<Data Name="FileSearchModes">
+			<Value>There are two search modes: quick and normal.</Value>
+		</Data>
+		<Data Name="FileSearchNormalDesc">
+			<Value>A normal search finds all files (by looking at file contents), but requires a lot more time than a quick search.</Value>
+		</Data>
+		<Data Name="FileSearchQuickDesc">
+			<Value>In a quick search, KeePass only considers files that have one of the usual file name extensions. This is fast, but may not find all files.</Value>
 		</Data>
 		<Data Name="FileTooLarge">
 			<Value>The file is too large.</Value>
@@ -1525,17 +1534,17 @@
 		<Data Name="Not">
 			<Value>Not</Value>
 		</Data>
-		<Data Name="NotNow">
-			<Value>Not now</Value>
-		</Data>
-		<Data Name="NotRecommended">
-			<Value>(not recommended)</Value>
-		</Data>
 		<Data Name="Notes">
 			<Value>Notes</Value>
 		</Data>
 		<Data Name="NotInstalled">
 			<Value>Not installed</Value>
+		</Data>
+		<Data Name="NotNow">
+			<Value>Not now</Value>
+		</Data>
+		<Data Name="NotRecommended">
+			<Value>(not recommended)</Value>
 		</Data>
 		<Data Name="NoXslFile">
 			<Value>The selected file isn't a valid XSL stylesheet.</Value>
@@ -1545,6 +1554,9 @@
 		</Data>
 		<Data Name="ObjectsDeleted">
 			<Value>{PARAM} object(s) deleted</Value>
+		</Data>
+		<Data Name="ObjectsFound">
+			<Value>{PARAM} object(s) found</Value>
 		</Data>
 		<Data Name="Off">
 			<Value>Off</Value>
@@ -1717,6 +1729,9 @@
 		<Data Name="PluginLoadFailed">
 			<Value>The plugin cannot be loaded.</Value>
 		</Data>
+		<Data Name="PluginMonoComplete">
+			<Value>On some systems, the 'mono-complete' package may be required for plugins to work properly.</Value>
+		</Data>
 		<Data Name="PluginOperatingSystemUnsupported">
 			<Value>The current operating system is unsupported by the plugin.</Value>
 		</Data>
@@ -1807,14 +1822,20 @@
 		<Data Name="Quality">
 			<Value>Quality</Value>
 		</Data>
+		<Data Name="Quick">
+			<Value>Quick</Value>
+		</Data>
+		<Data Name="QuickSearchDerefData">
+			<Value>Resolve field references in quick searches</Value>
+		</Data>
 		<Data Name="QuickSearchExclExpired">
 			<Value>Exclude expired entries in quick searches</Value>
 		</Data>
 		<Data Name="QuickSearchInPwFields">
 			<Value>Search for passwords in quick searches</Value>
 		</Data>
-		<Data Name="QuickSearchDerefData">
-			<Value>Resolve field references in quick searches</Value>
+		<Data Name="QuickSearchQ">
+			<Value>Would you like to perform a quick search?</Value>
 		</Data>
 		<Data Name="QuickSearchTb">
 			<Value>Quick Search (Toolbar)</Value>
@@ -2278,6 +2299,9 @@
 		<Data Name="TriggerStateChange">
 			<Value>Change trigger on/off state</Value>
 		</Data>
+		<Data Name="Type">
+			<Value>Type</Value>
+		</Data>
 		<Data Name="TypeUnknownHint">
 			<Value>A newer KeePass version or a plugin might be required for this type.</Value>
 		</Data>
@@ -2365,9 +2389,6 @@
 		<Data Name="UseFileLocks">
 			<Value>Use database lock files</Value>
 		</Data>
-		<Data Name="UseTransactedDatabaseWrites">
-			<Value>Use file transactions for writing databases</Value>
-		</Data>
 		<Data Name="UserName">
 			<Value>User Name</Value>
 		</Data>
@@ -2376,6 +2397,12 @@
 		</Data>
 		<Data Name="UserNameStc">
 			<Value>User name</Value>
+		</Data>
+		<Data Name="UseTransactedConfigWrites">
+			<Value>Use file transactions for writing configuration settings</Value>
+		</Data>
+		<Data Name="UseTransactedDatabaseWrites">
+			<Value>Use file transactions for writing databases</Value>
 		</Data>
 		<Data Name="Uuid">
 			<Value>UUID</Value>

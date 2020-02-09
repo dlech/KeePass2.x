@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -289,6 +289,47 @@ namespace KeePass.UI
 			cf.yHeight = (int)(fSizeInPt * 20.0f);
 
 			RtfSetCharFormat(rtb, cf);
+		}
+
+		internal static void RtfToggleSelectionFormat(RichTextBox rtb, FontStyle fs)
+		{
+			if(rtb == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Font f = rtb.SelectionFont;
+				if(f != null)
+					rtb.SelectionFont = new Font(f, f.Style ^ fs);
+				else
+				{
+					NativeMethods.CHARFORMAT2 cf = RtfGetCharFormat(rtb);
+					cf.dwMask = 0;
+
+					if((fs & FontStyle.Bold) == FontStyle.Bold)
+					{
+						cf.dwMask |= NativeMethods.CFM_BOLD;
+						cf.dwEffects ^= NativeMethods.CFE_BOLD;
+					}
+					if((fs & FontStyle.Italic) == FontStyle.Italic)
+					{
+						cf.dwMask |= NativeMethods.CFM_ITALIC;
+						cf.dwEffects ^= NativeMethods.CFE_ITALIC;
+					}
+					if((fs & FontStyle.Underline) == FontStyle.Underline)
+					{
+						cf.dwMask |= NativeMethods.CFM_UNDERLINE;
+						cf.dwEffects ^= NativeMethods.CFE_UNDERLINE;
+					}
+					if((fs & FontStyle.Strikeout) == FontStyle.Strikeout)
+					{
+						cf.dwMask |= NativeMethods.CFM_STRIKEOUT;
+						cf.dwEffects ^= NativeMethods.CFE_STRIKEOUT;
+					}
+
+					RtfSetCharFormat(rtb, cf);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		[Obsolete("Use GfxUtil.LoadImage instead.")]
@@ -966,7 +1007,7 @@ namespace KeePass.UI
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-			if((strDescription != null) && (strDescription.Length > 0))
+			if(!string.IsNullOrEmpty(strDescription))
 				fbd.Description = strDescription;
 
 			fbd.ShowNewFolderButton = true;
@@ -2525,10 +2566,20 @@ namespace KeePass.UI
 			return dr;
 		}
 
+		internal static DialogResult ShowDialogAndDestroy(Form f, Form fParent)
+		{
+			if(f == null) { Debug.Assert(false); return DialogResult.None; }
+			if(fParent == null) return ShowDialogAndDestroy(f);
+
+			DialogResult dr = f.ShowDialog(fParent);
+			UIUtil.DestroyForm(f);
+			return dr;
+		}
+
 		/// <summary>
 		/// Show a modal dialog. If the result isn't the specified value, the
 		/// dialog is disposed and <c>true</c> is returned. Otherwise, <c>false</c>
-		/// is returned (without disposing the dialog!).
+		/// is returned (without disposing the dialog).
 		/// </summary>
 		/// <param name="f">Dialog to show.</param>
 		/// <param name="drNotValue">Comparison value.</param>
@@ -3230,19 +3281,19 @@ namespace KeePass.UI
 			Image img = null;
 			try
 			{
-				Icon ico = Icon.ExtractAssociatedIcon(strFilePath);
-				if(ico == null) return null;
-
-				img = new Bitmap(w, h, PixelFormat.Format32bppArgb);
-				using(Graphics g = Graphics.FromImage(img))
+				using(Icon ico = Icon.ExtractAssociatedIcon(strFilePath))
 				{
-					g.Clear(Color.Transparent);
-					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					g.SmoothingMode = SmoothingMode.HighQuality;
-					g.DrawIcon(ico, new Rectangle(0, 0, img.Width, img.Height));
-				}
+					if(ico == null) return null;
 
-				ico.Dispose();
+					img = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+					using(Graphics g = Graphics.FromImage(img))
+					{
+						g.Clear(Color.Transparent);
+						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+						g.SmoothingMode = SmoothingMode.HighQuality;
+						g.DrawIcon(ico, new Rectangle(0, 0, img.Width, img.Height));
+					}
+				}
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 

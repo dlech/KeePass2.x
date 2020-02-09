@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.KeyDerivation;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
@@ -89,9 +90,13 @@ namespace KeePass.DataExchange.Formats
 			// Remove everything that requires KDBX 4 or higher;
 			// see also KdbxFile.GetMinKdbxVersion
 
+			PwUuid puCipher = pd.DataCipherUuid;
+			if(puCipher.Equals(ChaCha20Engine.ChaCha20Uuid))
+				pd.DataCipherUuid = StandardAesEngine.AesUuid;
+
 			KdfParameters pKdf = pd.KdfParameters;
 			AesKdf kdfAes = new AesKdf();
-			if(!kdfAes.Uuid.Equals(pKdf.KdfUuid))
+			if(!pKdf.KdfUuid.Equals(kdfAes.Uuid))
 				pd.KdfParameters = kdfAes.GetDefaultParameters();
 
 			VariantDictionary vdPublic = pd.PublicCustomData;
@@ -138,6 +143,7 @@ namespace KeePass.DataExchange.Formats
 			{
 				// Restore
 
+				pd.DataCipherUuid = puCipher;
 				pd.KdfParameters = pKdf;
 				pd.PublicCustomData = vdPublic;
 

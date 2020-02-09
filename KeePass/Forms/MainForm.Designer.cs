@@ -50,6 +50,9 @@
 			this.m_menuFileOpen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpenLocal = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileOpenUrl = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileOpenSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuFileFind = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFileFindInFolder = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileRecent = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileRecentDummy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFileClose = new System.Windows.Forms.ToolStripMenuItem();
@@ -318,42 +321,42 @@
             this.m_ctxEntrySep2,
             this.m_ctxEntryRearrange});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(163, 176);
+			this.m_ctxPwList.Size = new System.Drawing.Size(163, 154);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryUrl
 			// 
 			this.m_ctxEntryUrl.Name = "m_ctxEntryUrl";
-			this.m_ctxEntryUrl.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryUrl.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryUrl.Text = "<URL(s)>";
 			// 
 			// m_ctxEntryCopyString
 			// 
 			this.m_ctxEntryCopyString.Name = "m_ctxEntryCopyString";
-			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryCopyString.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryCopyString.Text = "<CopyField>";
 			// 
 			// m_ctxEntryAttachments
 			// 
 			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
-			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(176, 22);
+			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryAttachments.Text = "<Attachments>";
 			// 
 			// m_ctxEntrySep0
 			// 
 			this.m_ctxEntrySep0.Name = "m_ctxEntrySep0";
-			this.m_ctxEntrySep0.Size = new System.Drawing.Size(173, 6);
+			this.m_ctxEntrySep0.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryAutoTypeAdv
 			// 
 			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
-			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(166, 22);
+			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryAutoTypeAdv.Text = "<AutoTypeAdv>";
 			// 
 			// m_ctxEntrySep1
 			// 
 			this.m_ctxEntrySep1.Name = "m_ctxEntrySep1";
-			this.m_ctxEntrySep1.Size = new System.Drawing.Size(173, 6);
+			this.m_ctxEntrySep1.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryEditQuick
 			// 
@@ -381,7 +384,7 @@
 			// m_ctxEntrySep2
 			// 
 			this.m_ctxEntrySep2.Name = "m_ctxEntrySep2";
-			this.m_ctxEntrySep2.Size = new System.Drawing.Size(173, 6);
+			this.m_ctxEntrySep2.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryRearrange
 			// 
@@ -451,7 +454,10 @@
 			// 
 			this.m_menuFileOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuFileOpenLocal,
-            this.m_menuFileOpenUrl});
+            this.m_menuFileOpenUrl,
+            this.m_menuFileOpenSep0,
+            this.m_menuFileFind,
+            this.m_menuFileFindInFolder});
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
 			this.m_menuFileOpen.Size = new System.Drawing.Size(185, 22);
 			this.m_menuFileOpen.Text = "&Open";
@@ -460,7 +466,7 @@
 			// 
 			this.m_menuFileOpenLocal.Image = global::KeePass.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpenLocal.Name = "m_menuFileOpenLocal";
-			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(136, 22);
+			this.m_menuFileOpenLocal.Size = new System.Drawing.Size(189, 22);
 			this.m_menuFileOpenLocal.Text = "Open &File...";
 			this.m_menuFileOpenLocal.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -468,9 +474,30 @@
 			// 
 			this.m_menuFileOpenUrl.Image = global::KeePass.Properties.Resources.B16x16_Browser;
 			this.m_menuFileOpenUrl.Name = "m_menuFileOpenUrl";
-			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(136, 22);
+			this.m_menuFileOpenUrl.Size = new System.Drawing.Size(189, 22);
 			this.m_menuFileOpenUrl.Text = "Open &URL...";
 			this.m_menuFileOpenUrl.Click += new System.EventHandler(this.OnFileOpenUrl);
+			// 
+			// m_menuFileOpenSep0
+			// 
+			this.m_menuFileOpenSep0.Name = "m_menuFileOpenSep0";
+			this.m_menuFileOpenSep0.Size = new System.Drawing.Size(186, 6);
+			// 
+			// m_menuFileFind
+			// 
+			this.m_menuFileFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
+			this.m_menuFileFind.Name = "m_menuFileFind";
+			this.m_menuFileFind.Size = new System.Drawing.Size(189, 22);
+			this.m_menuFileFind.Text = "F&ind Files...";
+			this.m_menuFileFind.Click += new System.EventHandler(this.OnFileFind);
+			// 
+			// m_menuFileFindInFolder
+			// 
+			this.m_menuFileFindInFolder.Image = global::KeePass.Properties.Resources.B16x16_XMag;
+			this.m_menuFileFindInFolder.Name = "m_menuFileFindInFolder";
+			this.m_menuFileFindInFolder.Size = new System.Drawing.Size(189, 22);
+			this.m_menuFileFindInFolder.Text = "Fi&nd Files (In Folder)...";
+			this.m_menuFileFindInFolder.Click += new System.EventHandler(this.OnFileFindInFolder);
 			// 
 			// m_menuFileRecent
 			// 
@@ -2643,6 +2670,9 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_menuGroupExpand;
 		private System.Windows.Forms.ToolStripMenuItem m_menuGroupCollapse;
+		private System.Windows.Forms.ToolStripSeparator m_menuFileOpenSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFileFind;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFileFindInFolder;
 	}
 }
 

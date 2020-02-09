@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ namespace KeePassLib.Serialization
 		private const uint NeutralLanguageOffset = 0x100000; // 2^20, see 32-bit Unicode specs
 		private const uint NeutralLanguageIDSec = 0x7DC5C; // See 32-bit Unicode specs
 		private const uint NeutralLanguageID = NeutralLanguageOffset + NeutralLanguageIDSec;
-		private static bool m_bLocalizedNames = false;
+		private static bool g_bLocalizedNames = false;
 
 		private enum KdbxHeaderFieldID : byte
 		{
@@ -312,8 +312,8 @@ namespace KeePassLib.Serialization
 		public static void DetermineLanguageId()
 		{
 			// Test if localized names should be used. If localized names are used,
-			// the m_bLocalizedNames value must be set to true. By default, localized
-			// names should be used! (Otherwise characters could be corrupted
+			// the g_bLocalizedNames value must be set to true. By default, localized
+			// names should be used (otherwise characters could be corrupted
 			// because of different code pages).
 			unchecked
 			{
@@ -321,7 +321,7 @@ namespace KeePassLib.Serialization
 				foreach(char ch in PwDatabase.LocalizedAppName)
 					uTest = uTest * 5 + ch;
 
-				m_bLocalizedNames = (uTest != NeutralLanguageID);
+				g_bLocalizedNames = (uTest != NeutralLanguageID);
 			}
 		}
 
@@ -331,8 +331,11 @@ namespace KeePassLib.Serialization
 
 			// See also KeePassKdb2x3.Export (KDBX 3.1 export module)
 
+			if(m_pwDatabase.DataCipherUuid.Equals(ChaCha20Engine.ChaCha20Uuid))
+				return FileVersion32;
+
 			AesKdf kdfAes = new AesKdf();
-			if(!kdfAes.Uuid.Equals(m_pwDatabase.KdfParameters.KdfUuid))
+			if(!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfAes.Uuid))
 				return FileVersion32;
 
 			if(m_pwDatabase.PublicCustomData.Count > 0)

@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_file_locked.png" width="64" height="64"
-class="singleimg" align="left" alt="Locked" />
-</td><td valign="middle"><h1>Security</h1><br />
-Detailed information on the security of KeePass.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_file_locked.png" alt="Locked" /></td>
+<td><h1>Security</h1>
+<p>Detailed information on the security of KeePass.</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#secencrypt">Database Encryption</a></li>
@@ -58,9 +58,8 @@ Detailed information on the security of KeePass.
 <br />
 
 <a name="secencrypt"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_password.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Database
-Encryption</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_password.png" alt="Key" />
+Database Encryption</h2>
 
 <p>KeePass database files are encrypted. KeePass encrypts the whole
 database, i.e. not only your passwords, but also your user names, URLs,
@@ -69,43 +68,43 @@ notes, etc.</p>
 <p>The following encryption algorithms are supported:</p>
 
 <p>KeePass 1.x:</p>
-<center><table class="tablebox75">
-<tr><th align="left" style="width: 64.5%;">Algorithm</th>
-<th align="left" style="width: 14%;">Key Size</th>
-<th align="left" style="width: 21.5%;">Std. / Ref.</th></tr>
+<table class="tablebox75">
+<tr><th style="width: 64.5%;">Algorithm</th>
+<th style="width: 14%;">Key Size</th>
+<th style="width: 21.5%;">Std. / Ref.</th></tr>
 
-<tr><td align="left">Advanced Encryption Standard (AES / Rijndael)</td>
-<td align="left">256 bits</td>
-<td align="left"><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
+<tr><td>Advanced Encryption Standard (AES / Rijndael)</td>
+<td>256 bits</td>
+<td><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
 target="_blank">NIST FIPS 197</a></td></tr>
 
-<tr><td align="left">Twofish</td>
-<td align="left">256 bits</td>
-<td align="left"><a href="https://www.schneier.com/academic/twofish/"
+<tr><td>Twofish</td>
+<td>256 bits</td>
+<td><a href="https://www.schneier.com/academic/twofish/"
 target="_blank">Info</a></td></tr>
-</table></center>
+</table>
 
 <p>KeePass 2.x:</p>
-<center><table class="tablebox75">
-<tr><th align="left" style="width: 64.5%;">Algorithm</th>
-<th align="left" style="width: 14%;">Key Size</th>
-<th align="left" style="width: 21.5%;">Std. / Ref.</th></tr>
+<table class="tablebox75">
+<tr><th style="width: 64.5%;">Algorithm</th>
+<th style="width: 14%;">Key Size</th>
+<th style="width: 21.5%;">Std. / Ref.</th></tr>
 
-<tr><td align="left">Advanced Encryption Standard (AES / Rijndael)</td>
-<td align="left">256 bits</td>
-<td align="left"><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
+<tr><td>Advanced Encryption Standard (AES / Rijndael)</td>
+<td>256 bits</td>
+<td><a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf"
 target="_blank">NIST FIPS 197</a></td></tr>
 
-<tr><td align="left">ChaCha20</td>
-<td align="left">256 bits</td>
-<td align="left"><a href="https://tools.ietf.org/html/rfc7539"
+<tr><td>ChaCha20</td>
+<td>256 bits</td>
+<td><a href="https://tools.ietf.org/html/rfc7539"
 target="_blank">RFC 7539</a></td></tr>
 
-<tr><td align="left" colspan="3">There exist various
+<tr><td colspan="3">There exist various
 <a href="https://keepass.info/plugins.html" target="_blank">plugins</a>
 that provide support for additional encryption algorithms,
 including but not limited to Twofish, Serpent and GOST.</td></tr>
-</table></center>
+</table>
 
 <p>These well-known and thoroughly analyzed algorithms are
 considered to be very secure.
@@ -114,7 +113,7 @@ and is approved by the National Security Agency (NSA)
 for top secret information.
 Twofish was one of the other four AES finalists.
 ChaCha20 is the successor of the Salsa20 algorithm (which is included in the
-<a href="http://www.ecrypt.eu.org/stream/"
+<a href="https://www.ecrypt.eu.org/stream/"
 target="_blank">eSTREAM portfolio</a>).</p>
 
 <p>The block ciphers are used in the Cipher Block Chaining (CBC)
@@ -144,9 +143,8 @@ a HMAC-SHA-256 hash of the ciphertext (Encrypt-then-MAC scheme).
 <br /><br />
 
 <a name="seckeyhash"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_password.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Key
-Hashing and Key Derivation</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_password.png" alt="Key" />
+Key Hashing and Key Derivation</h2>
 
 <p>SHA-256 is used for compressing the components
 of the <a href="keys.html">composite master key</a>
@@ -171,9 +169,8 @@ and guessing attacks harder. For details, see the section
 <br />
 
 <a name="secdictprotect"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_password.png" class="singleimg" alt="Key" />&nbsp;&nbsp;Protection
-against Dictionary Attacks</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_password.png" alt="Key" />
+Protection against Dictionary Attacks</h2>
 
 <p>KeePass features a protection against dictionary and guessing attacks.</p>
 
@@ -242,9 +239,8 @@ only partially supports protection against dictionary and guessing attacks.</p>
 <br />
 
 <a name="secrandom"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_binary.png" class="singleimg" alt="Binary" />&nbsp;&nbsp;Random
-Number Generation</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_binary.png" alt="Binary" />
+Random Number Generation</h2>
 
 <p>KeePass first creates an entropy pool using various entropy sources
 (including random numbers generated by the system cryptographic provider,
@@ -259,9 +255,8 @@ using a cryptographically secure pseudo-random number generator
 <br />
 
 <a name="secmemprot"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_file_locked.png" class="singleimg"
-alt="Application Protection" />&nbsp;&nbsp;Process Memory Protection</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Process Memory Protection</h2>
 
 <p>While KeePass is running, sensitive data is stored encryptedly
 in the process memory.
@@ -279,9 +274,11 @@ when it is not needed anymore, i.e. it overwrites these memory areas
 before releasing them.</p>
 
 <p>KeePass uses the Windows DPAPI for encrypting sensitive data in memory
-(via <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa380262.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/windows/desktop/aa380262.aspx -->
+(via <a href="https://docs.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectmemory"
 target="_blank">CryptProtectMemory</a> /
-<a href="https://msdn.microsoft.com/en-us/library/system.security.cryptography.protectedmemory.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/system.security.cryptography.protectedmemory.aspx -->
+<a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.protectedmemory"
 target="_blank">ProtectedMemory</a>).
 With DPAPI, the key for the memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
@@ -313,9 +310,8 @@ that cannot be erased by KeePass.</p>
 <br />
 
 <a name="secdesktop"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kgpg.png" class="singleimg" alt="User Key" />&nbsp;&nbsp;Enter
-Master Key on Secure Desktop (Protection against Keyloggers)</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kgpg.png" alt="User Key" />
+Enter Master Key on Secure Desktop (Protection against Keyloggers)</h2>
 
 <p>KeePass 2.x has an option (in 'Tools' &rarr; 'Options' &rarr; tab 'Security')
 to show the master key dialog on a different/secure desktop
@@ -339,9 +335,8 @@ entering the master key on a different/secure desktop!</i></p>
 <br />
 
 <a name="seclocking"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_file_locked.png" class="singleimg"
-alt="Application Protection" />&nbsp;&nbsp;Locking the Workspace</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Locking the Workspace</h2>
 
 <p>When locking the workspace, KeePass closes the database file and
 only remembers its path and certain view parameters.</p>
@@ -357,9 +352,8 @@ for details, see the <a href="faq_tech.html#noautolock">FAQ</a>.</p>
 <br />
 
 <a name="secattach"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_desktop.png" class="singleimg" alt="Desktop" />&nbsp;&nbsp;Viewing/Editing
-Attachments</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_desktop.png" alt="Desktop" />
+Viewing/Editing Attachments</h2>
 
 <p>KeePass 2.x has an internal viewer/editor for attachments.
 For details how to use it for working with texts, see
@@ -380,8 +374,8 @@ In any case, KeePass afterwards securely deletes the temporary file
 <br />
 
 <a name="secplugins"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_blockdevice.png" class="singleimg" alt="Plugins" />&nbsp;&nbsp;Plugins</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_blockdevice.png" alt="Plugins" />
+Plugins</h2>
 
 
 
@@ -393,8 +387,8 @@ In any case, KeePass afterwards securely deletes the temporary file
 <br />
 
 <a name="secselftests"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kblackbox.png" class="singleimg" alt="Black Box" />&nbsp;&nbsp;Self-Tests</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kblackbox.png" alt="Black Box" />
+Self-Tests</h2>
 
 <p>Each time you start KeePass, the program performs a quick self-test to see
 whether the encryption and hash algorithms work correctly and pass
@@ -404,9 +398,8 @@ KeePass shows a security exception dialog.</p>
 <br />
 
 <a name="secspecattacks"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_openterm.png" class="singleimg" alt="Terminal" />&nbsp;&nbsp;Specialized
-Spyware</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+Specialized Spyware</h2>
 
 <p>This section gives answers to questions like the following:</p>
 
@@ -440,7 +433,8 @@ This is law #1 of the
 target="_blank" rel="nofollow">Ten Immutable Laws of Security</a>
 (Microsoft TechNet article; see also the
 Microsoft TechNet article
-<a href="https://technet.microsoft.com/en-us/library/2008.10.securitywatch.aspx"
+<!-- https://technet.microsoft.com/en-us/library/2008.10.securitywatch.aspx -->
+<a href="https://docs.microsoft.com/en-us/previous-versions/technet-magazine/cc895640(v=msdn.10)"
 target="_blank">Revisiting the 10 Immutable Laws of Security, Part 1</a>):<br />
 <i>&quot;If a bad guy can persuade you to run his program on your
 computer, it's not your computer anymore&quot;</i>.</p>
@@ -461,9 +455,8 @@ do not open unknown e-mail attachments, etc.</p>
 <br />
 
 <a name="secmaldata"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_enhanced_browsing.png" class="singleimg" alt="URL" />&nbsp;&nbsp;Malicious
-Data</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_enhanced_browsing.png" alt="URL" />
+Malicious Data</h2>
 
 <p>The user should check all data that he enters and/or runs.</p>
 
@@ -543,9 +536,8 @@ open any files attached to entries.</p>
 <br />
 
 <a name="secissues"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_message.png" class="singleimg" alt="Message" />&nbsp;&nbsp;Security
-Issues</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_message.png" alt="Message" />
+Security Issues</h2>
 
 <p>For a list of security issues, their status and clarifications, please see the page
 <a href="https://keepass.info/help/kb/sec_issues.html"

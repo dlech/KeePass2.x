@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -105,25 +105,26 @@ namespace KeePass.Util
 			};
 
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
-			sb.AppendLine("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			sb.AppendLine("<!DOCTYPE html>");
 
 			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
 			string strLang = Program.Translation.Properties.Iso6391Code;
 			if(string.IsNullOrEmpty(strLang)) strLang = "en";
 			strLang = h(strLang);
-			sb.Append(" lang=\"" + strLang + "\" xml:lang=\"" + strLang + "\"");
+			sb.Append(" xml:lang=\"" + strLang + "\" lang=\"" + strLang + "\"");
 			if(bRtl) sb.Append(" dir=\"rtl\"");
 			sb.AppendLine(">");
 
 			sb.AppendLine("<head>");
-			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-			sb.Append("<title>");
-			sb.Append(h(strName + " - " + KPRes.EmergencySheet));
-			sb.AppendLine("</title>");
+			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+			sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
 			sb.AppendLine("<meta http-equiv=\"expires\" content=\"0\" />");
 			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
 			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
+
+			sb.Append("<title>");
+			sb.Append(h(strName + " - " + KPRes.EmergencySheet));
+			sb.AppendLine("</title>");
 
 			sb.AppendLine("<style type=\"text/css\">");
 			sb.AppendLine("/* <![CDATA[ */");
@@ -133,17 +134,14 @@ namespace KeePass.Util
 			if(Program.Translation.IsFor("fa"))
 				strFont = "\"Tahoma\", \"Arial\", \"Verdana\", sans-serif;";
 
-			sb.AppendLine("body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {");
+			sb.AppendLine("body {");
+			sb.AppendLine("\tcolor: #000000;");
+			sb.AppendLine("\tbackground-color: #FFFFFF;");
 			sb.AppendLine("\tfont-family: " + strFont);
 			sb.AppendLine("\tfont-size: 12pt;");
 			sb.AppendLine("}");
 
-			sb.AppendLine("body, p, div, table {");
-			sb.AppendLine("\tcolor: #000000;");
-			sb.AppendLine("\tbackground-color: #FFFFFF;");
-			sb.AppendLine("}");
-
-			sb.AppendLine("p, h3 {");
+			sb.AppendLine("h3, p {");
 			sb.AppendLine("\tmargin: 0.5em 0em 0.5em 0em;");
 			sb.AppendLine("}");
 
@@ -155,19 +153,16 @@ namespace KeePass.Util
 			sb.AppendLine("\tfont-family: \"Verdana\", \"Arial\", \"Tahoma\", sans-serif;");
 			sb.AppendLine("}");
 			sb.AppendLine("h1, h2 {");
-			sb.AppendLine("\ttext-align: center;");
 			sb.AppendLine("\tmargin: 0pt 0pt 0pt 0pt;");
+			sb.AppendLine("\ttext-align: center;");
 			sb.AppendLine("}");
 			sb.AppendLine("h1 {");
-			sb.AppendLine("\tfont-size: 2em;");
 			sb.AppendLine("\tpadding: 3pt 0pt 0pt 0pt;");
 			sb.AppendLine("}");
 			sb.AppendLine("h2 {");
-			sb.AppendLine("\tfont-size: 1.5em;");
 			sb.AppendLine("\tpadding: 1pt 0pt 3pt 0pt;");
 			sb.AppendLine("}");
-			sb.AppendLine("h3 {");
-			sb.AppendLine("\tfont-size: 1.2em;");
+			// sb.AppendLine("h3 {");
 			// sb.AppendLine("\tpadding: 3pt 3pt 3pt 3pt;");
 			// sb.AppendLine("\tcolor: #000000;");
 			// sb.AppendLine("\tbackground-color: #EEEEEE;");
@@ -175,26 +170,15 @@ namespace KeePass.Util
 			// sb.AppendLine("\tbackground-image: -moz-linear-gradient(top, #E2E2E2, #FAFAFA);");
 			// sb.AppendLine("\tbackground-image: -ms-linear-gradient(top, #E2E2E2, #FAFAFA);");
 			// sb.AppendLine("\tbackground-image: linear-gradient(to bottom, #E2E2E2, #FAFAFA);");
-			sb.AppendLine("}");
-			sb.AppendLine("h4 { font-size: 1em; }");
-			sb.AppendLine("h5 { font-size: 0.89em; }");
-			sb.AppendLine("h6 { font-size: 0.6em; }");
+			// sb.AppendLine("}");
 
-			sb.AppendLine("a:visited {");
-			sb.AppendLine("\ttext-decoration: none;");
+			sb.AppendLine("a {");
 			sb.AppendLine("\tcolor: #0000DD;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:active {");
 			sb.AppendLine("\ttext-decoration: none;");
+			sb.AppendLine("}");
+			sb.AppendLine("a:hover, a:active {");
 			sb.AppendLine("\tcolor: #6699FF;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:link {");
-			sb.AppendLine("\ttext-decoration: none;");
-			sb.AppendLine("\tcolor: #0000DD;");
-			sb.AppendLine("}");
-			sb.AppendLine("a:hover {");
 			sb.AppendLine("\ttext-decoration: underline;");
-			sb.AppendLine("\tcolor: #6699FF;");
 			sb.AppendLine("}");
 
 			sb.AppendLine("img {");
@@ -219,8 +203,10 @@ namespace KeePass.Util
 			sb.AppendLine("}");
 
 			sb.AppendLine("table.docheader tr td {");
-			sb.AppendLine("\tvertical-align: middle;");
+			sb.AppendLine("\tborder: 0px none;");
+			sb.AppendLine("\tborder-collapse: collapse;");
 			sb.AppendLine("\tpadding: 0px 15px 0px 15px;");
+			sb.AppendLine("\tvertical-align: middle;");
 			sb.AppendLine("}");
 
 			sb.AppendLine("table.fillinline {");
@@ -229,6 +215,7 @@ namespace KeePass.Util
 			sb.AppendLine("\tpadding: 0px 0px 0px 0px;");
 			sb.AppendLine("\tborder: thin solid #808080;");
 			sb.AppendLine("\tborder-collapse: collapse;");
+			sb.AppendLine("\ttable-layout: fixed;");
 			sb.AppendLine("\tempty-cells: show;");
 			sb.AppendLine("}");
 			sb.AppendLine("table.fillinline tr td {");
@@ -237,6 +224,10 @@ namespace KeePass.Util
 			sb.AppendLine("\tword-break: break-all;");
 			sb.AppendLine("\toverflow-wrap: break-word;");
 			sb.AppendLine("\tword-wrap: break-word;");
+			sb.AppendLine("}");
+			sb.AppendLine("table.fillinline tr td img {");
+			sb.AppendLine("\tdisplay: block;"); // Inline results in additional space at the bottom
+			sb.AppendLine("\tmargin: 0px " + (bRtl ? "auto 0px 0px;" : "0px 0px auto;"));
 			sb.AppendLine("}");
 			// sb.AppendLine("span.fillinlinesym {");
 			// sb.AppendLine("\tdisplay: inline-block;");
@@ -250,6 +241,7 @@ namespace KeePass.Util
 			// sb.AppendLine("}");
 
 			// Add the temporary content identifier
+			// (always, as the sheet should be printed, not saved)
 			sb.AppendLine("." + Program.TempFilesPool.TempContentTag + " {");
 			sb.AppendLine("\tfont-size: 12pt;");
 			sb.AppendLine("}");
@@ -261,7 +253,7 @@ namespace KeePass.Util
 			ImageArchive ia = new ImageArchive();
 			ia.Load(Properties.Resources.Images_App_HighRes);
 
-			sb.AppendLine("<table class=\"docheader\" cellspacing=\"0\" cellpadding=\"0\"><tr>");
+			sb.AppendLine("<table class=\"docheader\"><tr>");
 			sb.AppendLine("<td style=\"text-align: " + strLogLeft + ";\">");
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
 				"KeePass")) + "\" width=\"48\" height=\"48\" alt=\"" +
@@ -289,7 +281,8 @@ namespace KeePass.Util
 				"\" alt=\"&#x270D;\" />";
 			string strFill = strFillInit + ne(string.Empty) +
 				// "</td><td style=\"text-align: right;\"><span class=\"fillinlinesym\">&#x270D;</span>" +
-				"</td><td style=\"text-align: " + strLogRight + ";\">" +
+				// "</td><td style=\"text-align: " + strLogRight + ";\">" +
+				"</td><td>" +
 				strFillSym + strFillEnd;
 
 			string strFillInitEx = (bRtl ? strFillInitLtr : strFillInit);
@@ -395,7 +388,12 @@ namespace KeePass.Util
 			sb.AppendLine("</ul>");
 
 			sb.AppendLine("</body></html>");
-			return sb.ToString();
+
+			string strDoc = sb.ToString();
+#if DEBUG
+			XmlUtilEx.ValidateXml(strDoc, true);
+#endif
+			return strDoc;
 		}
 	}
 }

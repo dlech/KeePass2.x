@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_chardevice.png" width="64" height="64"
-class="singleimg" align="left" alt="Placeholder Icon" />
-</td><td valign="middle"><h1>Placeholders</h1><br />
-KeePass supports various placeholders.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_chardevice.png" alt="Placeholder" /></td>
+<td><h1>Placeholders</h1>
+<p>KeePass supports various placeholders.</p></td>
+</tr></table>
 
 <p>In many places in KeePass (auto-type, URL field, triggers, ...),
 placeholders can be used.</p>
@@ -77,18 +77,19 @@ cannot be used in the URL field (but it can be used in the
 <br />
 
 <a name="entryfields"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
-class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field Placeholders</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="Placeholder" />
+Entry Field Placeholders</h2>
 
 <br />
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Field</th></tr>
-<tr><td width="50%"><code>{TITLE}</code></td><td width="50%">Title</td></tr>
-<tr><td width="50%"><code>{USERNAME}</code></td><td width="50%">User name</td></tr>
-<tr><td width="50%"><code>{URL}</code></td><td width="50%">URL</td></tr>
-<tr><td width="50%"><code>{PASSWORD}</code></td><td width="50%">Password</td></tr>
-<tr><td width="50%"><code>{NOTES}</code></td><td width="50%">Notes</td></tr>
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Field</th></tr>
+<tr><td><code>{TITLE}</code></td><td>Title</td></tr>
+<tr><td><code>{USERNAME}</code></td><td>User name</td></tr>
+<tr><td><code>{URL}</code></td><td>URL</td></tr>
+<tr><td><code>{PASSWORD}</code></td><td>Password</td></tr>
+<tr><td><code>{NOTES}</code></td><td>Notes</td></tr>
 </table>
 
 <br />
@@ -105,16 +106,17 @@ you can use the placeholder <code>{S:eMail}</code>.
 
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%"><code>{URL:RMVSCM}</code></td><td width="50%">Entry URL without scheme name.</td></tr>
-<tr><td width="50%"><code>{URL:SCM}</code></td><td width="50%">Scheme name of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:HOST}</code></td><td width="50%">Host component of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:PORT}</code></td><td width="50%">Port number of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:PATH}</code></td><td width="50%">Path component of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:QUERY}</code></td><td width="50%">Query information of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:USERINFO}</code></td><td width="50%">User information of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:USERNAME}</code></td><td width="50%">User name of the entry URL.</td></tr>
-<tr><td width="50%"><code>{URL:PASSWORD}</code></td><td width="50%">Password of the entry URL.</td></tr>
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><td><code>{URL:RMVSCM}</code></td><td>Entry URL without scheme name.</td></tr>
+<tr><td><code>{URL:SCM}</code></td><td>Scheme name of the entry URL.</td></tr>
+<tr><td><code>{URL:HOST}</code></td><td>Host component of the entry URL.</td></tr>
+<tr><td><code>{URL:PORT}</code></td><td>Port number of the entry URL.</td></tr>
+<tr><td><code>{URL:PATH}</code></td><td>Path component of the entry URL.</td></tr>
+<tr><td><code>{URL:QUERY}</code></td><td>Query information of the entry URL.</td></tr>
+<tr><td><code>{URL:USERINFO}</code></td><td>User information of the entry URL.</td></tr>
+<tr><td><code>{URL:USERNAME}</code></td><td>User name of the entry URL.</td></tr>
+<tr><td><code>{URL:PASSWORD}</code></td><td>Password of the entry URL.</td></tr>
 </table>
 <br />
 An example can be found <a href="#url">below</a>.
@@ -123,8 +125,8 @@ An example can be found <a href="#url">below</a>.
 <br /><br />
 
 <a name="fieldrefs"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
-class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field References</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="Placeholder" />
+Entry Field References</h2>
 
 <p>Fields of <i>other</i> entries can be inserted using
 <a href="fieldrefs.html">Field References</a>.</p>
@@ -132,19 +134,20 @@ class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Entry Field References</h2>
 <br />
 
 <a name="envctx"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
-class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Paths and Date/Time Placeholders</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="Placeholder" />
+Paths and Date/Time Placeholders</h2>
 
 <br />
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%"><code>{INTERNETEXPLORER}</code></td><td width="50%">Path of Internet Explorer, if installed.</td></tr>
-<tr><td width="50%"><code>{FIREFOX}</code></td><td width="50%">Path of Mozilla Firefox, if installed.</td></tr>
-<tr><td width="50%"><code>{OPERA}</code></td><td width="50%">Path of Opera, if installed.</td></tr>
-<tr><td width="50%"><code>{GOOGLECHROME}</code></td><td width="50%">Path of Google Chrome (or Chromium
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><td><code>{INTERNETEXPLORER}</code></td><td>Path of Internet Explorer, if installed.</td></tr>
+<tr><td><code>{FIREFOX}</code></td><td>Path of Mozilla Firefox, if installed.</td></tr>
+<tr><td><code>{OPERA}</code></td><td>Path of Opera, if installed.</td></tr>
+<tr><td><code>{GOOGLECHROME}</code></td><td>Path of Google Chrome (or Chromium
 on Unix-like systems), if installed.</td></tr>
-<tr><td width="50%"><code>{SAFARI}</code></td><td width="50%">Path of Safari, if installed.</td></tr>
+<tr><td><code>{SAFARI}</code></td><td>Path of Safari, if installed.</td></tr>
 </table>
 
 <p><b>Microsoft Edge.</b>
@@ -160,28 +163,30 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p>
 <br />
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%"><code>{APPDIR}</code></td><td width="50%">KeePass application directory path.</td></tr>
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><td><code>{APPDIR}</code></td><td>KeePass application directory path.</td></tr>
 </table>
 
 <br />
 
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%"><code>{GROUP}</code></td><td width="50%">Name of the entry's parent group.</td></tr>
-<tr><td width="50%"><code>{GROUP_PATH}</code></td><td width="50%">Full group path of the entry.</td></tr>
-<tr><td width="50%"><code>{GROUP_NOTES}</code></td><td width="50%">Notes of the entry's parent group.</td></tr>
-<tr><td width="50%"><code>{GROUP_SEL}</code></td><td width="50%">Name of the group that is currently selected in the main window.</td></tr>
-<tr><td width="50%"><code>{GROUP_SEL_PATH}</code></td><td width="50%">Full path of the group that is currently selected in the main window.</td></tr>
-<tr><td width="50%"><code>{GROUP_SEL_NOTES}</code></td><td width="50%">Notes of the group that is currently selected in the main window.</td></tr>
-<tr><td width="50%"><code>{DB_PATH}</code></td><td width="50%">Full path of the current database.</td></tr>
-<tr><td width="50%"><code>{DB_DIR}</code></td><td width="50%">Directory of the current database.</td></tr>
-<tr><td width="50%"><code>{DB_NAME}</code></td><td width="50%">File name (including extension) of the current database.</td></tr>
-<tr><td width="50%"><code>{DB_BASENAME}</code></td><td width="50%">File name (excluding extension) of the current database.</td></tr>
-<tr><td width="50%"><code>{DB_EXT}</code></td><td width="50%">File name extension of the current database.</td></tr>
-<tr><td width="50%"><code>{ENV_DIRSEP}</code></td><td width="50%">Directory separator ('\' on Windows, '/' on Unix).</td></tr>
-<tr><td width="50%"><code>{ENV_PROGRAMFILES_X86}</code></td><td width="50%">This is
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><td><code>{GROUP}</code></td><td>Name of the entry's parent group.</td></tr>
+<tr><td><code>{GROUP_PATH}</code></td><td>Full group path of the entry.</td></tr>
+<tr><td><code>{GROUP_NOTES}</code></td><td>Notes of the entry's parent group.</td></tr>
+<tr><td><code>{GROUP_SEL}</code></td><td>Name of the group that is currently selected in the main window.</td></tr>
+<tr><td><code>{GROUP_SEL_PATH}</code></td><td>Full path of the group that is currently selected in the main window.</td></tr>
+<tr><td><code>{GROUP_SEL_NOTES}</code></td><td>Notes of the group that is currently selected in the main window.</td></tr>
+<tr><td><code>{DB_PATH}</code></td><td>Full path of the current database.</td></tr>
+<tr><td><code>{DB_DIR}</code></td><td>Directory of the current database.</td></tr>
+<tr><td><code>{DB_NAME}</code></td><td>File name (including extension) of the current database.</td></tr>
+<tr><td><code>{DB_BASENAME}</code></td><td>File name (excluding extension) of the current database.</td></tr>
+<tr><td><code>{DB_EXT}</code></td><td>File name extension of the current database.</td></tr>
+<tr><td><code>{ENV_DIRSEP}</code></td><td>Directory separator ('\' on Windows, '/' on Unix).</td></tr>
+<tr><td><code>{ENV_PROGRAMFILES_X86}</code></td><td>This is
 <code>%ProgramFiles(x86)%</code>, if it exists, otherwise <code>%ProgramFiles%</code>.</td></tr>
 </table>
 
@@ -189,29 +194,30 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p>
 <br />
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Is Replaced By</th></tr>
-<tr><td width="50%"><code>{DT_SIMPLE}</code></td><td width="50%">Current local date/time as a simple,
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><td><code>{DT_SIMPLE}</code></td><td>Current local date/time as a simple,
 sortable string. For example, for 2012-07-25 17:05:34 the value is 20120725170534.</td></tr>
-<tr><td width="50%"><code>{DT_YEAR}</code></td><td width="50%">Year component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_MONTH}</code></td><td width="50%">Month component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_DAY}</code></td><td width="50%">Day component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_HOUR}</code></td><td width="50%">Hour component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_MINUTE}</code></td><td width="50%">Minute component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_SECOND}</code></td><td width="50%">Seconds component of the current local date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_SIMPLE}</code></td><td width="50%">Current UTC date/time as a simple, sortable string.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_YEAR}</code></td><td width="50%">Year component of the current UTC date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_MONTH}</code></td><td width="50%">Month component of the current UTC date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_DAY}</code></td><td width="50%">Day component of the current UTC date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_HOUR}</code></td><td width="50%">Hour component of the current UTC date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_MINUTE}</code></td><td width="50%">Minute component of the current UTC date/time.</td></tr>
-<tr><td width="50%"><code>{DT_UTC_SECOND}</code></td><td width="50%">Seconds component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_YEAR}</code></td><td>Year component of the current local date/time.</td></tr>
+<tr><td><code>{DT_MONTH}</code></td><td>Month component of the current local date/time.</td></tr>
+<tr><td><code>{DT_DAY}</code></td><td>Day component of the current local date/time.</td></tr>
+<tr><td><code>{DT_HOUR}</code></td><td>Hour component of the current local date/time.</td></tr>
+<tr><td><code>{DT_MINUTE}</code></td><td>Minute component of the current local date/time.</td></tr>
+<tr><td><code>{DT_SECOND}</code></td><td>Seconds component of the current local date/time.</td></tr>
+<tr><td><code>{DT_UTC_SIMPLE}</code></td><td>Current UTC date/time as a simple, sortable string.</td></tr>
+<tr><td><code>{DT_UTC_YEAR}</code></td><td>Year component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_MONTH}</code></td><td>Month component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_DAY}</code></td><td>Day component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_HOUR}</code></td><td>Hour component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_MINUTE}</code></td><td>Minute component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_SECOND}</code></td><td>Seconds component of the current UTC date/time.</td></tr>
 </table>
 
 <br /><br />
 
 <a name="envvars"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png"
-class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Environment Variables</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="Terminal" />
+Environment Variables</h2>
 
 <p>System environment variables are supported.
 The name of the variable must be enclosed in '<code>%</code>' characters.
@@ -220,20 +226,21 @@ For example <code>%TEMP%</code> is replaced by the user's temporary path.</p>
 <br />
 
 <a name="texttrf"></a>
-<h2 class="sectiontitle"><img src="../images/ascii.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Text Transformations</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Text Transformations</h2>
 
 <br />
 
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Action</th></tr>
-<tr><td width="50%"><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code></td>
-<td width="50%">Searches the regular expression <em>Search</em> in <em>Text</em>
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Action</th></tr>
+<tr><td><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code></td>
+<td>Searches the regular expression <em>Search</em> in <em>Text</em>
 and replaces all matches by <em>Replace</em>.
 See <a href="#replacerx">below</a>.</td></tr>
-<tr><td width="50%"><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code></td>
-<td width="50%">Convert <em>Text</em> to <em>Type</em>.
+<tr><td><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code></td>
+<td>Convert <em>Text</em> to <em>Type</em>.
 See <a href="#conv">below</a>.</td></tr>
 </table>
 
@@ -244,8 +251,9 @@ See <a href="#conv">below</a>.</td></tr>
 
 <b><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code> &#8211; Replace
 Using Regular Expression:</b><br />
-This placeholder
-searches the <a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+This placeholder searches the
+<!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
+<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
 target="_blank">regular expression</a> <em>Search</em> in <em>Text</em>
 and replaces all matches by <em>Replace</em>.<br />
 <br />
@@ -313,28 +321,29 @@ which results in the text '<code>A</code>').</li>
 <br /><br />
 
 <a name="plh"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png"
-class="singleimg" alt="Placeholder" />&nbsp;&nbsp;Other Placeholders</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="Placeholder" />
+Other Placeholders</h2>
 
 <br />
 
 
 <table class="tablebox75">
-<tr><th width="50%">Placeholder</th><th width="50%">Action</th></tr>
-<tr><td width="50%"><code>{PICKCHARS}</code><br />
-<code>{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</code></td><td width="50%">Shows a dialog to pick certain characters from an entry string.
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Action</th></tr>
+<tr><td><code>{PICKCHARS}</code><br />
+<code>{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</code></td><td>Shows a dialog to pick certain characters from an entry string.
 See <a href="#pickchars">below</a>.</td></tr>
-<tr><td width="50%"><code>{PICKFIELD}</code></td><td width="50%">Shows a dialog to pick a field
+<tr><td><code>{PICKFIELD}</code></td><td>Shows a dialog to pick a field
 whose value will be inserted.</td></tr>
-<tr><td width="50%"><code>{NEWPASSWORD}</code><br />
-<code>{NEWPASSWORD:/<em>Profile</em>/}</code></td><td width="50%">Generates a new password.
+<tr><td><code>{NEWPASSWORD}</code><br />
+<code>{NEWPASSWORD:/<em>Profile</em>/}</code></td><td>Generates a new password.
 See <a href="#newpassword">below</a>.</td></tr>
-<tr><td width="50%"><code>{PASSWORD_ENC}</code></td><td width="50%">Password in encrypted form.
+<tr><td><code>{PASSWORD_ENC}</code></td><td>Password in encrypted form.
 See <a href="#passwordenc">below</a>.</td></tr>
-<tr><td width="50%"><code>{HMACOTP}</code></td><td width="50%">Generates a one-time password.
+<tr><td><code>{HMACOTP}</code></td><td>Generates a one-time password.
 See <a href="#hmacotp">below</a>.</td></tr>
-<tr><td width="50%"><code>{C:<i>Comment</i>}</code></td><td width="50%">Comment; is removed.</td></tr>
-<tr><td width="50%"><code>{BASE}</code><br />
+<tr><td><code>{C:<i>Comment</i>}</code></td><td>Comment; is removed.</td></tr>
+<tr><td><code>{BASE}</code><br />
 <code>{BASE:RMVSCM}</code><br />
 <code>{BASE:SCM}</code><br />
 <code>{BASE:HOST}</code><br />
@@ -343,12 +352,16 @@ See <a href="#hmacotp">below</a>.</td></tr>
 <code>{BASE:QUERY}</code><br />
 <code>{BASE:USERINFO}</code><br />
 <code>{BASE:USERNAME}</code><br />
-<code>{BASE:PASSWORD}</code></td><td width="50%">Within a URL override,
+<code>{BASE:PASSWORD}</code></td><td>Within a URL override,
 each of these placeholders is replaced by the specified part of the string that is
 being overridden.
 See <a href="#url">below</a>.</td></tr>
-<tr><td width="50%"><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code></td>
-<td width="50%">Runs a command line. See <a href="#cmd">below</a>.</td></tr>
+<tr><td><code>{CLIPBOARD}</code></td>
+<td>Gets the clipboard content (text).</td></tr>
+<tr><td><code>{CLIPBOARD-SET:/<i>Text</i>/}</code></td>
+<td>Copies <i>Text</i> into the clipboard.</td></tr>
+<tr><td><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code></td>
+<td>Runs a command line. See <a href="#cmd">below</a>.</td></tr>
 </table>
 
 
@@ -565,27 +578,28 @@ button 'URL Overrides'), because there no entry context may be available.<br />
 the placeholders return the following values:<br />
 <br />
 <table class="tablebox75">
-<tr><th width="25%">Placeholder</th><th width="75%">Value</th></tr>
-<tr><td width="25%"><code>{URL}</code></td>
-<td width="75%"><code>https://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
-<tr><td width="25%"><code>{URL:RMVSCM}</code></td>
-<td width="75%"><code>user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
-<tr><td width="25%"><code>{URL:SCM}</code></td>
-<td width="75%"><code>https</code></td></tr>
-<tr><td width="25%"><code>{URL:HOST}</code></td>
-<td width="75%"><code>keepass.info</code></td></tr>
-<tr><td width="25%"><code>{URL:PORT}</code></td>
-<td width="75%"><code>80</code></td></tr>
-<tr><td width="25%"><code>{URL:PATH}</code></td>
-<td width="75%"><code>/path/example.php</code></td></tr>
-<tr><td width="25%"><code>{URL:QUERY}</code></td>
-<td width="75%"><code>?q=e&amp;s=t</code></td></tr>
-<tr><td width="25%"><code>{URL:USERINFO}</code></td>
-<td width="75%"><code>user:pw</code></td></tr>
-<tr><td width="25%"><code>{URL:USERNAME}</code></td>
-<td width="75%"><code>user</code></td></tr>
-<tr><td width="25%"><code>{URL:PASSWORD}</code></td>
-<td width="75%"><code>pw</code></td></tr>
+<colgroup><col style="width: 25%;" /><col style="width: 75%;" /></colgroup>
+<tr><th>Placeholder</th><th>Value</th></tr>
+<tr><td><code>{URL}</code></td>
+<td><code>https://user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
+<tr><td><code>{URL:RMVSCM}</code></td>
+<td><code>user:pw@keepass.info:80/path/example.php?q=e&amp;s=t</code></td></tr>
+<tr><td><code>{URL:SCM}</code></td>
+<td><code>https</code></td></tr>
+<tr><td><code>{URL:HOST}</code></td>
+<td><code>keepass.info</code></td></tr>
+<tr><td><code>{URL:PORT}</code></td>
+<td><code>80</code></td></tr>
+<tr><td><code>{URL:PATH}</code></td>
+<td><code>/path/example.php</code></td></tr>
+<tr><td><code>{URL:QUERY}</code></td>
+<td><code>?q=e&amp;s=t</code></td></tr>
+<tr><td><code>{URL:USERINFO}</code></td>
+<td><code>user:pw</code></td></tr>
+<tr><td><code>{URL:USERNAME}</code></td>
+<td><code>user</code></td></tr>
+<tr><td><code>{URL:PASSWORD}</code></td>
+<td><code>pw</code></td></tr>
 </table>
 <br />
 <code>{BASE}</code> supports exactly the same parts as <code>{URL}</code>.

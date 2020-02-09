@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1190,6 +1190,18 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("UrlUtil-H6");
 			if(UrlUtil.GetHost(@"s://u:p@d.tld:p/p?q#f") != "d.tld")
 				throw new InvalidOperationException("UrlUtil-H7");
+
+			if(!NativeLib.IsUnix()) // Windows
+			{
+				if(UrlUtil.FileUrlToPath("file:///C:/Windows/Win.ini") !=
+					"C:\\Windows\\Win.ini")
+					throw new Exception("UrlUtil-FUTP-W");
+			}
+			else // Unix
+			{
+				if(UrlUtil.FileUrlToPath("file:///etc/fstab") != "/etc/fstab")
+					throw new Exception("UrlUtil-FUTP-U");
+			}
 
 			if(NativeLib.IsUnix()) return;
 

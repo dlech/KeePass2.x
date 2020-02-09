@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_ktouch.png" width="64" height="64"
-class="singleimg" align="left" alt="Auto-Type Icon" />
-</td><td valign="middle"><h1>Auto-Type</h1><br />
-Powerful feature that sends simulated keypresses to other applications.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_ktouch.png" alt="Keyboard" /></td>
+<td><h1>Auto-Type</h1>
+<p>Powerful feature that sends simulated keypresses to other applications.</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#autobasic">Basic Auto-Type Information</a></li>
@@ -60,9 +60,8 @@ Powerful feature that sends simulated keypresses to other applications.
 <br />
 
 <a name="autobasic"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Basic
-Auto-Type Information</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Basic Auto-Type Information</h2>
 
 <p>KeePass features an &quot;Auto-Type&quot; functionality. This feature allows you to define
 a sequence of keypresses, which KeePass can automatically perform for you. The
@@ -94,8 +93,8 @@ Auto-Type resistant against keyloggers).
 default sequence. You can specify different keystroke sequences for different windows for each entry.
 For example, imagine a webpage, to which you want to login, that has multiple
 pages where one can login. These pages could all look a bit different (on one
-you could additionally need to check some checkbox -- like often seen in forums). Here
-creating customized window/sequence associations solves the problems: you simply
+you could additionally need to check some checkbox &#8211; like often seen in forums).
+Here creating customized window/sequence associations solves the problems: you simply
 specify different auto-type sequences for each windows (identified by their window
 titles).</p>
 
@@ -124,8 +123,9 @@ the above methods.</p>
 For auto-type to work, KeePass must be running with the same or higher
 rights as the target application. Especially, if the target application
 is running with administrative rights, KeePass must be running with
-administrative rights, too.
-For details, see <a href="https://msdn.microsoft.com/en-us/library/bb625963.aspx"
+administrative rights, too. For details, see
+<!-- https://msdn.microsoft.com/en-us/library/bb625963.aspx -->
+<a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)"
 target="_blank">Windows Integrity Mechanism Design</a>.</p>
 
 <p><b>Remote Desktops and Virtual Machines:</b><br />
@@ -138,9 +138,8 @@ keyboard layout.</p>
 <br />
 
 <a name="autoctx"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Context
-Menu: '<i>Perform Auto-Type</i>' Command</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Context Menu: '<i>Perform Auto-Type</i>' Command</h2>
 
 <p>This method is the one that requires the least amount of configuration and is
 the simpler one, but it has the disadvantage that you need to select the entry
@@ -161,9 +160,8 @@ association. If none of the associations match, the default sequence is used.</p
 <br />
 
 <a name="autoglobal"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Global
-Auto-Type Hot Key</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Global Auto-Type Hot Key</h2>
 
 <p>This is the more powerful method, but it also requires a little bit more
 work/knowledge, before it can be used.</p>
@@ -243,9 +241,8 @@ title to determine a match.
 <br />
 
 <a name="autoseq"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Auto-Type
-Keystroke Sequences</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Auto-Type Keystroke Sequences</h2>
 
 <p>An auto-type keystroke sequence is a one-line string that can contain
 placeholders and special key codes.</p>
@@ -278,41 +275,42 @@ Special key codes are case-insensitive.
 The following codes for special keys are supported:</p>
 
 <table class="tablebox75">
-<tr><th width="50%">Special Key</th><th width="50%">Code</th></tr>
-<tr><td width="50%">Tab</td><td width="50%"><code>{TAB}</code></td></tr>
-<tr><td width="50%">Enter</td><td width="50%"><code>{ENTER}</code> or <code>~</code></td></tr>
-<tr><td width="50%">Arrow Up</td><td width="50%"><code>{UP}</code></td></tr>
-<tr><td width="50%">Arrow Down</td><td width="50%"><code>{DOWN}</code></td></tr>
-<tr><td width="50%">Arrow Left</td><td width="50%"><code>{LEFT}</code></td></tr>
-<tr><td width="50%">Arrow Right</td><td width="50%"><code>{RIGHT}</code></td></tr>
-<tr><td width="50%">Insert</td><td width="50%"><code>{INSERT}</code> or <code>{INS}</code></td></tr>
-<tr><td width="50%">Delete</td><td width="50%"><code>{DELETE}</code> or <code>{DEL}</code></td></tr>
-<tr><td width="50%">Home</td><td width="50%"><code>{HOME}</code></td></tr>
-<tr><td width="50%">End</td><td width="50%"><code>{END}</code></td></tr>
-<tr><td width="50%">Page Up</td><td width="50%"><code>{PGUP}</code></td></tr>
-<tr><td width="50%">Page Down</td><td width="50%"><code>{PGDN}</code></td></tr>
-<tr><td width="50%">Space</td><td width="50%"><code>{SPACE}</code></td></tr>
-<tr><td width="50%">Backspace</td><td width="50%"><code>{BACKSPACE}</code>,
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Special Key</th><th>Code</th></tr>
+<tr><td>Tab</td><td><code>{TAB}</code></td></tr>
+<tr><td>Enter</td><td><code>{ENTER}</code> or <code>~</code></td></tr>
+<tr><td>Arrow Up</td><td><code>{UP}</code></td></tr>
+<tr><td>Arrow Down</td><td><code>{DOWN}</code></td></tr>
+<tr><td>Arrow Left</td><td><code>{LEFT}</code></td></tr>
+<tr><td>Arrow Right</td><td><code>{RIGHT}</code></td></tr>
+<tr><td>Insert</td><td><code>{INSERT}</code> or <code>{INS}</code></td></tr>
+<tr><td>Delete</td><td><code>{DELETE}</code> or <code>{DEL}</code></td></tr>
+<tr><td>Home</td><td><code>{HOME}</code></td></tr>
+<tr><td>End</td><td><code>{END}</code></td></tr>
+<tr><td>Page Up</td><td><code>{PGUP}</code></td></tr>
+<tr><td>Page Down</td><td><code>{PGDN}</code></td></tr>
+<tr><td>Space</td><td><code>{SPACE}</code></td></tr>
+<tr><td>Backspace</td><td><code>{BACKSPACE}</code>,
 <code>{BS}</code> or <code>{BKSP}</code></td></tr>
-<tr><td width="50%">Break</td><td width="50%"><code>{BREAK}</code></td></tr>
-<tr><td width="50%">Caps-Lock</td><td width="50%"><code>{CAPSLOCK}</code></td></tr>
-<tr><td width="50%">Escape</td><td width="50%"><code>{ESC}</code></td></tr>
-<tr><td width="50%">Windows Key</td><td width="50%"><code>{WIN}</code> (equ. to <code>{LWIN}</code>)</td></tr>
-<tr><td width="50%">Windows Key: left, right</td><td width="50%"><code>{LWIN}</code>, <code>{RWIN}</code></td></tr>
-<tr><td width="50%">Apps / Menu</td><td width="50%"><code>{APPS}</code></td></tr>
-<tr><td width="50%">Help</td><td width="50%"><code>{HELP}</code></td></tr>
-<tr><td width="50%">Numlock</td><td width="50%"><code>{NUMLOCK}</code></td></tr>
-<tr><td width="50%">Print Screen</td><td width="50%"><code>{PRTSC}</code></td></tr>
-<tr><td width="50%">Scroll Lock</td><td width="50%"><code>{SCROLLLOCK}</code></td></tr>
-<tr><td width="50%">F1 - F16</td><td width="50%"><code>{F1}</code> - <code>{F16}</code></td></tr>
-<tr><td width="50%">Numeric Keypad +</td><td width="50%"><code>{ADD}</code></td></tr>
-<tr><td width="50%">Numeric Keypad -</td><td width="50%"><code>{SUBTRACT}</code></td></tr>
-<tr><td width="50%">Numeric Keypad *</td><td width="50%"><code>{MULTIPLY}</code></td></tr>
-<tr><td width="50%">Numeric Keypad /</td><td width="50%"><code>{DIVIDE}</code></td></tr>
-<tr><td width="50%">Numeric Keypad 0 to 9</td><td width="50%"><code>{NUMPAD0}</code> to <code>{NUMPAD9}</code></td></tr>
-<tr><td width="50%">Shift</td><td width="50%"><code>+</code></td></tr>
-<tr><td width="50%">Ctrl</td><td width="50%"><code>^</code></td></tr>
-<tr><td width="50%">Alt</td><td width="50%"><code>%</code></td></tr>
+<tr><td>Break</td><td><code>{BREAK}</code></td></tr>
+<tr><td>Caps-Lock</td><td><code>{CAPSLOCK}</code></td></tr>
+<tr><td>Escape</td><td><code>{ESC}</code></td></tr>
+<tr><td>Windows Key</td><td><code>{WIN}</code> (equ. to <code>{LWIN}</code>)</td></tr>
+<tr><td>Windows Key: left, right</td><td><code>{LWIN}</code>, <code>{RWIN}</code></td></tr>
+<tr><td>Apps / Menu</td><td><code>{APPS}</code></td></tr>
+<tr><td>Help</td><td><code>{HELP}</code></td></tr>
+<tr><td>Numlock</td><td><code>{NUMLOCK}</code></td></tr>
+<tr><td>Print Screen</td><td><code>{PRTSC}</code></td></tr>
+<tr><td>Scroll Lock</td><td><code>{SCROLLLOCK}</code></td></tr>
+<tr><td>F1 - F16</td><td><code>{F1}</code> - <code>{F16}</code></td></tr>
+<tr><td>Numeric Keypad +</td><td><code>{ADD}</code></td></tr>
+<tr><td>Numeric Keypad -</td><td><code>{SUBTRACT}</code></td></tr>
+<tr><td>Numeric Keypad *</td><td><code>{MULTIPLY}</code></td></tr>
+<tr><td>Numeric Keypad /</td><td><code>{DIVIDE}</code></td></tr>
+<tr><td>Numeric Keypad 0 to 9</td><td><code>{NUMPAD0}</code> to <code>{NUMPAD9}</code></td></tr>
+<tr><td>Shift</td><td><code>+</code></td></tr>
+<tr><td>Ctrl</td><td><code>^</code></td></tr>
+<tr><td>Alt</td><td><code>%</code></td></tr>
 </table>
 
 <br />
@@ -323,32 +321,35 @@ The following codes for special keys are supported:</p>
 
 
 <table class="tablebox75">
-<tr><th width="50%">Special Key</th><th width="50%">Code</th></tr>
-<tr><td width="50%">+</td><td width="50%"><code>{+}</code></td></tr>
-<tr><td width="50%">%</td><td width="50%"><code>{%}</code></td></tr>
-<tr><td width="50%">^</td><td width="50%"><code>{^}</code></td></tr>
-<tr><td width="50%">~</td><td width="50%"><code>{~}</code></td></tr>
-<tr><td width="50%">(, )</td><td width="50%"><code>{(}</code>, <code>{)}</code></td></tr>
-<tr><td width="50%">[, ]</td><td width="50%"><code>{[}</code>, <code>{]}</code></td></tr>
-<tr><td width="50%">{, }</td><td width="50%"><code>{{}</code>, <code>{}}</code></td></tr>
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Special Key</th><th>Code</th></tr>
+<tr><td>+</td><td><code>{+}</code></td></tr>
+<tr><td>%</td><td><code>{%}</code></td></tr>
+<tr><td>^</td><td><code>{^}</code></td></tr>
+<tr><td>~</td><td><code>{~}</code></td></tr>
+<tr><td>(, )</td><td><code>{(}</code>, <code>{)}</code></td></tr>
+<tr><td>[, ]</td><td><code>{[}</code>, <code>{]}</code></td></tr>
+<tr><td>{, }</td><td><code>{{}</code>, <code>{}}</code></td></tr>
 </table>
 
 
 <p>Additionally, some special commands are supported:</p>
 
 <table class="tablebox75">
-<tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
-<tr><td width="50%"><code>{DELAY <i>X</i>}</code></td><td width="50%">Delays <i>X</i> milliseconds.</td></tr>
-<tr><td width="50%"><code>{DELAY=<i>X</i>}</code></td><td width="50%">Sets the default
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Command Syntax</th><th>Action</th></tr>
+<tr><td><code>{DELAY <i>X</i>}</code></td><td>Delays <i>X</i> milliseconds.</td></tr>
+<tr><td><code>{DELAY=<i>X</i>}</code></td><td>Sets the default
 delay to <i>X</i> milliseconds for all following keypresses.</td></tr>
-<tr><td width="50%"><code>{CLEARFIELD}</code></td><td width="50%">Clears the contents of the
+<tr><td><code>{CLEARFIELD}</code></td><td>Clears the contents of the
 edit control that currently has the focus (only single-line edit controls).</td></tr>
-<tr><td width="50%"><code>{VKEY <i>X</i>}</code></td><td width="50%">Sends the
-<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx"
+<tr><td><code>{VKEY <i>X</i>}</code></td><td>Sends the
+<!-- https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx -->
+<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
-<tr><td width="50%"><code>{APPACTIVATE <i>WindowTitle</i>}</code></td><td width="50%">Activates
+<tr><td><code>{APPACTIVATE <i>WindowTitle</i>}</code></td><td>Activates
 the window &quot;<i>WindowTitle</i>&quot;.</td></tr>
-<tr><td width="50%"><code>{BEEP <i>X</i> <i>Y</i>}</code></td><td width="50%">Beeps with
+<tr><td><code>{BEEP <i>X</i> <i>Y</i>}</code></td><td>Beeps with
 a frequency of <i>X</i> hertz and a duration of <i>Y</i> milliseconds.</td></tr>
 </table>
 
@@ -356,11 +357,12 @@ a frequency of <i>X</i> hertz and a duration of <i>Y</i> milliseconds.</td></tr>
 
 
 <table class="tablebox75">
-<tr><th width="50%">Command Syntax</th><th width="50%">Action</th></tr>
-<tr><td width="50%"><code>{VKEY-NX <i>X</i>}</code></td><td width="50%">Sends the
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Command Syntax</th><th>Action</th></tr>
+<tr><td><code>{VKEY-NX <i>X</i>}</code></td><td>Sends the
 non-extended virtual key of value <i>X</i>.
 If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
-<tr><td width="50%"><code>{VKEY-EX <i>X</i>}</code></td><td width="50%">Sends the
+<tr><td><code>{VKEY-EX <i>X</i>}</code></td><td>Sends the
 extended virtual key of value <i>X</i>.
 If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 </table>
@@ -422,20 +424,20 @@ you can write them directly into the keystroke sequence definition.</p>
 <br />
 
 <a name="autowindows"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_window_list.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Target
-Window Filters</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_window_list.png" alt="Windows" />
+Target Window Filters</h2>
 
 <p>When creating a custom window/sequence association, you need to tell
 KeePass how the matching window titles look like. Here, KeePass supports
 simple wildcards:</p>
 
 <table class="tablebox75">
-<tr><th width="25%">String with Wildcard</th><th width="75%">Meaning</th></tr>
-<tr><td width="25%">STRING</td><td width="75%">Matches all window titles that are named exactly &quot;STRING&quot;.</td></tr>
-<tr><td width="25%">STRING*</td><td width="75%">Matches all window titles that start with &quot;STRING&quot;.</td></tr>
-<tr><td width="25%">*STRING</td><td width="75%">Matches all window titles that end with &quot;STRING&quot;.</td></tr>
-<tr><td width="25%">*STRING*</td><td width="75%">Matches all window titles that have &quot;STRING&quot; somewhere in the window title. This includes the string being directly at the start or at the end of the window title.</td></tr>
+<colgroup><col style="width: 25%;" /><col style="width: 75%;" /></colgroup>
+<tr><th>String with Wildcard</th><th>Meaning</th></tr>
+<tr><td>STRING</td><td>Matches all window titles that are named exactly &quot;STRING&quot;.</td></tr>
+<tr><td>STRING*</td><td>Matches all window titles that start with &quot;STRING&quot;.</td></tr>
+<tr><td>*STRING</td><td>Matches all window titles that end with &quot;STRING&quot;.</td></tr>
+<tr><td>*STRING*</td><td>Matches all window titles that have &quot;STRING&quot; somewhere in the window title. This includes the string being directly at the start or at the end of the window title.</td></tr>
 </table>
 
 <br />
@@ -450,7 +452,8 @@ For example, <code>*Windows*Explorer*</code> would match
 <code>Windows Internet Explorer</code>.<br />
 <br />
 Additionally, matching using
-<a href="https://msdn.microsoft.com/en-us/library/az24scfc.aspx"
+<!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
+<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
 target="_blank">regular expressions</a> is supported. In order to
 tell KeePass that the pattern is a regular expression, enclose it in
 <code>//</code>. For example, <code>//B.?g Window//</code> would
@@ -463,8 +466,8 @@ See the usage examples for more information.</p>
 <br />
 
 <a name="changedefaultseq"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Change Default Auto-Type Sequence</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+Change Default Auto-Type Sequence</h2>
 
 <p>The default auto-type sequence (i.e. the one which is used when you don't specify
 a custom one) is <code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>. KeePass allows you
@@ -491,9 +494,8 @@ to the <i>'Auto-Type'</i> tab.
 <br /><br />
 
 <a name="autoexample"></a>
-<h2 class="sectiontitle"><img src="../images/movepaper.gif"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Usage
-Example</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Usage Example</h2>
 
 <p>Now let's have a look at a real-world example: logging into a website. In this example,
 will we use the global auto-type hot key to fill out the login webpage.
@@ -519,7 +521,7 @@ entry title is contained in the window title, therefore KeePass uses this entry.
 
 <p>Here you see the huge advantages of auto-type: it not only doesn't require
 any additional browser software
-(the browser knows nothing of KeePass -- there are no helper browser plugins required),
+(the browser knows nothing of KeePass &#8211; there are no helper browser plugins required),
 it is also browser-independent: the one entry that you created within KeePass works
 for Internet Explorer <i>and</i> Mozilla Firefox (and other browsers) without
 requiring any modifications or definitions.</p>

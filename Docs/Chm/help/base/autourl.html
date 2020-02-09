@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -32,12 +33,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_enhanced_browsing.png" width="64" height="64"
-class="singleimg" align="left" alt="URL Field" />
-</td><td valign="middle"><h1>URL Field Capabilities</h1><br />
-The URL field supports various special protocols and placeholders.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_enhanced_browsing.png" alt="URL" /></td>
+<td><h1>URL Field Capabilities</h1>
+<p>The URL field supports various special protocols and placeholders.</p></td>
+</tr></table>
 
 <br />
 URL Field Capabibilities:
@@ -57,9 +57,8 @@ Usage Tips &amp; Tricks:
 <br />
 
 <a name="stdcp"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Standard
-Capabilities</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Standard Capabilities</h2>
 
 <p>The URL field can execute any valid URL for which a protocol handler is defined.
 On most systems at least the <code>http://</code>, <code>https://</code>,
@@ -72,9 +71,8 @@ KeePass will automatically use PuTTY for <code>ssh://</code> URLs, too.</p>
 <br />
 
 <a name="cmdln"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_openterm.png" class="singleimg" alt="Terminal" />&nbsp;&nbsp;Executing
-Command Lines</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+Executing Command Lines</h2>
 
 <p>Instead of a URL, you can also execute command lines using the URL field.
 To tell KeePass that the line you entered
@@ -108,11 +106,12 @@ supported, i.e. do not need to be prefixed with <code>cmd://</code>.</p>
 
 <p><b>Double Quotes (<code>&quot;</code>) and Backslashes (<code>\</code>):</b><br />
 There are multiple rule sets for parsing command lines
-(<a href="https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/ns-shellapi-shellexecuteinfow"
+(<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
 target="_blank"><code>SHELLEXECUTEINFOW</code> structure</a>,
-<a href="https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-commandlinetoargvw"
+<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw"
 target="_blank"><code>CommandLineToArgvW</code> function</a>,
-<a href="https://docs.microsoft.com/en-us/cpp/cpp/parsing-cpp-command-line-arguments"
+<!-- https://docs.microsoft.com/en-us/cpp/cpp/parsing-cpp-command-line-arguments -->
+<a href="https://docs.microsoft.com/en-us/cpp/cpp/main-function-command-line-args"
 target="_blank">Microsoft C/C++ startup code</a>, etc.).
 These rule sets are contradictory; command lines are interpreted differently.
 For example, in the <code>SHELLEXECUTEINFOW</code> structure documentation,
@@ -155,8 +154,8 @@ On Windows, this is irrelevant, as single quotes do not have a special meaning h
 <br />
 
 <a name="subst"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Placeholders</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Placeholders</h2>
 
 <p>In the URL field, you can use several placeholders that will get automatically replaced
 when the URL is executed. For example:</p>
@@ -189,9 +188,8 @@ browser is installed).</p>
 <br />
 
 <a name="override"></a>
-<h2 class="sectiontitle">
-<img src="../images/ascii.png" class="singleimg" alt="Text" />&nbsp;&nbsp;Changing
-the URL Handler (URL Override)</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />
+Changing the URL Handler (URL Override)</h2>
 
 <br />
 
@@ -244,9 +242,8 @@ i.e. process monitors and similar utilities aren't be able to read the master pa
 <br /><br />
 
 <a name="rdpts"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_openterm.png" class="singleimg" alt="Terminal" />&nbsp;&nbsp;Starting
-RDP/TS Sessions</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+Starting RDP/TS Sessions</h2>
 
 <p>You can use the URL field of entries and the virtual <code>cmd://</code>
 protocol to start remote desktop connections.</p>
@@ -279,9 +276,8 @@ the following URL opens the specified RDP file:</p>
 <br />
 
 <a name="builtin"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_openterm.png" class="singleimg" alt="Terminal" />&nbsp;&nbsp;Executing
-Built-In Shell Commands</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+Executing Built-In Shell Commands</h2>
 
 <p>The URL field can be used to start applications/documents and URLs.
 If you want to execute a built-in shell command, like <code>COPY</code> for

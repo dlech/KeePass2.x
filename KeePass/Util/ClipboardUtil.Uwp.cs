@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@ using KeePassLib.Native;
 
 namespace KeePass.Util
 {
-	public static partial class ClipboardUtil
+	// Instead of the following, additional clipboard formats are used;
+	// https://sourceforge.net/p/keepass/patches/120/
+	/* public static partial class ClipboardUtil
 	{
 		private static bool SetStringUwp(string str)
 		{
@@ -56,30 +58,26 @@ namespace KeePass.Util
 			return false;
 		}
 
-		/* private static bool SetDataUwp(byte[] pbToCopy, string strFormat)
-		{
-			if(pbToCopy == null) { Debug.Assert(false); return false; }
-			if(pbToCopy.Length == 0) return false; // Use Windows API
-			if(string.IsNullOrEmpty(strFormat)) { Debug.Assert(false); return false; }
-
-			try
-			{
-				GFunc<Type, object, bool> f = delegate(Type tDP, object oDP)
-				{
-					MethodInfo mi = tDP.GetMethod("SetData", BindingFlags.Public |
-						BindingFlags.Instance);
-					if(mi == null) { Debug.Assert(false); return false; }
-					mi.Invoke(oDP, new object[] { strFormat, pbToCopy });
-
-					return true;
-				};
-
-				return SetDataUwp(f);
-			}
-			catch(Exception) { Debug.Assert(false); }
-
-			return false;
-		} */
+		// private static bool SetDataUwp(byte[] pbToCopy, string strFormat)
+		// {
+		//	if(pbToCopy == null) { Debug.Assert(false); return false; }
+		//	if(pbToCopy.Length == 0) return false; // Use Windows API
+		//	if(string.IsNullOrEmpty(strFormat)) { Debug.Assert(false); return false; }
+		//	try
+		//	{
+		//		GFunc<Type, object, bool> f = delegate(Type tDP, object oDP)
+		//		{
+		//			MethodInfo mi = tDP.GetMethod("SetData", BindingFlags.Public |
+		//				BindingFlags.Instance);
+		//			if(mi == null) { Debug.Assert(false); return false; }
+		//			mi.Invoke(oDP, new object[] { strFormat, pbToCopy });
+		//			return true;
+		//		};
+		//		return SetDataUwp(f);
+		//	}
+		//	catch(Exception) { Debug.Assert(false); }
+		//	return false;
+		// }
 
 		private static bool SetDataUwp(GFunc<Type, object, bool> fSetData)
 		{
@@ -154,6 +152,8 @@ namespace KeePass.Util
 
 		private static void AttachIgnoreFormatUwp(Type tDP, object oDP)
 		{
+#warning Make sure that the option's default value is false;
+#warning see the documentation/comment of the option.
 			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return;
 
 			MethodInfo mi = tDP.GetMethod("SetData", BindingFlags.Public |
@@ -165,10 +165,10 @@ namespace KeePass.Util
 			// in the clipboard will differ from the source data;
 			// strings seem to be an exception
 			// byte[] pb = new byte[2];
-			// mi.Invoke(oDP, new object[] { ClipboardIgnoreFormatName, pb });
+			// mi.Invoke(oDP, new object[] { CfnViewerIgnore, pb });
 
 			// The following results in two zero bytes in the clipboard
-			mi.Invoke(oDP, new object[] { ClipboardIgnoreFormatName, string.Empty });
+			mi.Invoke(oDP, new object[] { CfnViewerIgnore, string.Empty });
 		}
-	}
+	} */
 }

@@ -42,16 +42,11 @@
 
 	<table class="tablebox"><xsl:copy-of select="$nl" />
 	<tr><xsl:copy-of select="$nl" />
-	<th style="width: 20%;">Title</th>
-		<xsl:copy-of select="$nl" />
-	<th style="width: 20%;">User Name</th>
-		<xsl:copy-of select="$nl" />
-	<th style="width: 20%;">Password</th>
-		<xsl:copy-of select="$nl" />
-	<th style="width: 20%;">URL</th>
-		<xsl:copy-of select="$nl" />
-	<th style="width: 20%;">Notes</th>
-		<xsl:copy-of select="$nl" />
+		<th>Title</th><xsl:copy-of select="$nl" />
+		<th>User Name</th><xsl:copy-of select="$nl" />
+		<th>Password</th><xsl:copy-of select="$nl" />
+		<th>URL</th><xsl:copy-of select="$nl" />
+		<th>Notes</th><xsl:copy-of select="$nl" />
 	</tr><xsl:copy-of select="$nl" />
 
 	<xsl:apply-templates select="Entry" />

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2939,6 +2939,26 @@ namespace KeePass.Forms
 		private void OnEntryExpiresNever(object sender, EventArgs e)
 		{
 			SetSelectedEntryExpiry(false);
+		}
+
+		private void OnFileFind(object sender, EventArgs e)
+		{
+			FileSearchEx.FindDatabaseFiles(this, null);
+		}
+
+		private void OnFileFindInFolder(object sender, EventArgs e)
+		{
+			using(FolderBrowserDialog dlg = UIUtil.CreateFolderBrowserDialog(null))
+			{
+				dlg.ShowNewFolderButton = false;
+
+				GlobalWindowManager.AddDialog(dlg);
+				DialogResult dr = dlg.ShowDialog();
+				GlobalWindowManager.RemoveDialog(dlg);
+
+				if(dr == DialogResult.OK)
+					FileSearchEx.FindDatabaseFiles(this, dlg.SelectedPath);
+			}
 		}
 	}
 }

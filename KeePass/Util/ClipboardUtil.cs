@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,8 +46,6 @@ namespace KeePass.Util
 		private static byte[] g_pbDataHash = null;
 		private static readonly CriticalSectionEx g_csClearing = new CriticalSectionEx();
 
-		private const string ClipboardIgnoreFormatName = "Clipboard Viewer Ignore";
-
 		[Obsolete]
 		public static bool Copy(string strToCopy, bool bIsEntryInfo,
 			PwEntry peEntryInfo, PwDatabase pwReferenceSource)
@@ -81,14 +79,14 @@ namespace KeePass.Util
 
 			try
 			{
-				if(SetStringUwp(strData)) { }
-				else if(!NativeLib.IsUnix()) // Windows
+				// if(SetStringUwp(strData)) { } else
+				if(!NativeLib.IsUnix()) // Windows
 				{
 					if(!OpenW(hOwner, true))
 						throw new InvalidOperationException();
 
 					bool bFailed = false;
-					if(!AttachIgnoreFormatW()) bFailed = true;
+					if(!AttachIgnoreFormatsW()) bFailed = true;
 					if(!SetDataW(null, strData, null)) bFailed = true;
 					CloseW();
 

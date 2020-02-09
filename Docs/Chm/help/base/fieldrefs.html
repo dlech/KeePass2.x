@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -31,12 +32,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_usb.png" width="64" height="64"
-class="singleimg" align="left" alt="Split" />
-</td><td valign="middle"><h1>Field References</h1><br />
-How to put references to data in fields of other entries.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_usb.png" alt="Split" /></td>
+<td><h1>Field References</h1>
+<p>How to put references to data in fields of other entries.</p></td>
+</tr></table>
 
 <ul>
 <li><a href="#intro">Introduction</a></li>
@@ -47,8 +47,8 @@ How to put references to data in fields of other entries.
 <br />
 
 <a name="intro"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Introduction</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Introduction</h2>
 
 <p>KeePass can insert data stored in different
 entries into fields of an entry.
@@ -71,8 +71,8 @@ see <a href="placeholders.html">Placeholders</a>.</p>
 <br />
 
 <a name="syntax"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_rotate_cw.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Placeholder Syntax</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_rotate_cw.png" alt="Link" />
+Placeholder Syntax</h2>
 
 <p>The placeholder syntax for field references is the following:</p>
 
@@ -82,14 +82,15 @@ class="singleimg" alt="Text" />&nbsp;&nbsp;Placeholder Syntax</h2>
 1-letter codes identifying the field:</p>
 
 <table class="tablebox75">
-<tr><th width="25%">Code</th><th width="75%">Field</th></tr>
-<tr><td width="25%">T</td><td width="75%">Title</td></tr>
-<tr><td width="25%">U</td><td width="75%">User name</td></tr>
-<tr><td width="25%">P</td><td width="75%">Password</td></tr>
-<tr><td width="25%">A</td><td width="75%">URL</td></tr>
-<tr><td width="25%">N</td><td width="75%">Notes</td></tr>
-<tr><td width="25%">I</td><td width="75%">UUID</td></tr>
-<tr><td width="25%">O</td><td width="75%">Other custom strings <i>(KeePass 2.x only)</i></td></tr>
+<colgroup><col style="width: 25%;" /><col style="width: 75%;" /></colgroup>
+<tr><th>Code</th><th>Field</th></tr>
+<tr><td><code>T</code></td><td>Title</td></tr>
+<tr><td><code>U</code></td><td>User name</td></tr>
+<tr><td><code>P</code></td><td>Password</td></tr>
+<tr><td><code>A</code></td><td>URL</td></tr>
+<tr><td><code>N</code></td><td>Notes</td></tr>
+<tr><td><code>I</code></td><td>UUID</td></tr>
+<tr><td><code>O</code></td><td>Other custom strings <i>(KeePass 2.x only)</i></td></tr>
 </table>
 
 <p>The <i>Text</i> part is the <a href="https://keepass.info/help/kb/faq.html#search"
@@ -126,8 +127,8 @@ code can't be used as <i>WantedField</i>).
 <br />
 
 <a name="example"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png"
-class="singleimg" alt="Text" />&nbsp;&nbsp;Example</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Example</h2>
 
 <p>Let's assume you have two entries: one with title &quot;Example Website&quot;
 and one with &quot;Example Forum&quot;, and you want to insert the user name

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -236,10 +236,13 @@ namespace KeePass.UI
 					return;
 				}
 
-				// Disabling IME is not required anymore; we terminate
-				// CtfMon.exe child processes manually
-				// try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
-				// catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
+				// Disabling the IME was not required, because we terminate
+				// CtfMon.exe child processes manually. However, since Sept. 2019,
+				// there is an IME bug resulting in a black screen and/or an
+				// IME/CTF process with high CPU load;
+				// https://sourceforge.net/p/keepass/bugs/1881/
+				try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
+				catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
 
 				ProcessMessagesEx();
 

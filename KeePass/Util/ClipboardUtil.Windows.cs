@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,8 +37,15 @@ namespace KeePass.Util
 	public static partial class ClipboardUtil
 	{
 		// https://referencesource.microsoft.com/#system.windows.forms/winforms/managed/system/winforms/Clipboard.cs
-		private const int CntUnmanagedRetries = 15; // Default is 10
+		private const int CntUnmanagedRetries = 15; // Default in .NET is 10
 		private const int CntUnmanagedDelay = 100;
+
+		private const string CfnViewerIgnore = "Clipboard Viewer Ignore";
+
+		// https://docs.microsoft.com/en-us/windows/win32/dataxchg/clipboard-formats
+		private const string CfnNoMonitorProc = "ExcludeClipboardContentFromMonitorProcessing";
+		private const string CfnHistory = "CanIncludeInClipboardHistory";
+		private const string CfnCloud = "CanUploadToCloudClipboard";
 
 		private static bool OpenW(IntPtr hOwner, bool bEmpty)
 		{
@@ -48,7 +55,7 @@ namespace KeePass.Util
 				try
 				{
 					Form f = GlobalWindowManager.TopWindow;
-					h = ((f != null) ? f.Handle : IntPtr.Zero);
+					if(f != null) h = f.Handle;
 
 					if(h == IntPtr.Zero) h = Program.GetSafeMainWindowHandle();
 				}
@@ -175,15 +182,37 @@ namespace KeePass.Util
 			if(!NativeMethods.CloseClipboard()) { Debug.Assert(false); }
 		}
 
-		private static bool AttachIgnoreFormatW()
+		private static bool AttachIgnoreFormatsW()
 		{
-			if(!Program.Config.Security.UseClipboardViewerIgnoreFormat) return true;
+			bool r = true;
 
-			uint uIgnoreFmt = NativeMethods.RegisterClipboardFormat(
-				ClipboardIgnoreFormatName);
-			if(uIgnoreFmt == 0) { Debug.Assert(false); return false; }
+			if(Program.Config.Security.UseClipboardViewerIgnoreFormat)
+			{
+				uint cf = NativeMethods.RegisterClipboardFormat(CfnViewerIgnore);
+				if(cf == 0) { Debug.Assert(false); r = false; }
+				else if(!SetDataW(cf, PwDefs.ShortProductName, null)) r = false;
+			}
 
-			return SetDataW(uIgnoreFmt, PwDefs.ShortProductName, null);
+			if(Program.Config.Security.ClipboardNoPersist)
+			{
+				byte[] pbFalse = new byte[4];
+				byte[] pbTrue = new byte[] { 1, 0, 0, 0 };
+
+				uint cf = NativeMethods.RegisterClipboardFormat(CfnNoMonitorProc);
+				if(cf == 0) { Debug.Assert(false); r = false; }
+				// The value type is not defined/documented; we store a BOOL/DWORD
+				else if(!SetDataW(cf, pbTrue)) r = false;
+
+				cf = NativeMethods.RegisterClipboardFormat(CfnCloud);
+				if(cf == 0) { Debug.Assert(false); r = false; }
+				else if(!SetDataW(cf, pbFalse)) r = false;
+
+				cf = NativeMethods.RegisterClipboardFormat(CfnHistory);
+				if(cf == 0) { Debug.Assert(false); r = false; }
+				else if(!SetDataW(cf, pbFalse)) r = false;
+			}
+
+			return r;
 		}
 
 		private static bool InvokeAndRetry(GFunc<bool> f)

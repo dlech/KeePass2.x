@@ -10,9 +10,7 @@
 </xsl:variable>
 
 <xsl:variable name="HtmlHeader">
-	<xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"]]></xsl:text>
-		<xsl:copy-of select="$nl" />
-	<xsl:text disable-output-escaping="yes"><![CDATA[	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">]]></xsl:text>
+	<xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html>]]></xsl:text>
 		<xsl:copy-of select="$nl" />
 	<xsl:text disable-output-escaping="yes"><![CDATA[<html xmlns="http://www.w3.org/1999/xhtml">]]></xsl:text>
 		<xsl:copy-of select="$nl" />
@@ -23,17 +21,17 @@
 		<xsl:copy-of select="$nl" />
 </xsl:variable>
 
-<!-- Design Copyright (c) 2003-2019 Dominik Reichl -->
+<!-- Design Copyright (c) 2003-2020 Dominik Reichl -->
 <xsl:variable name="DocStyle">
-<xsl:text disable-output-escaping="yes"><![CDATA[<style type="text/css"><!--
-body, p, div, h1, h2, h3, h4, h5, h6, ol, ul, li, td, th, dd, dt, a {
+<xsl:text disable-output-escaping="yes"><![CDATA[<style type="text/css">
+/* <]]><![CDATA[![CDATA[ */
+body, kbd kbd {
 	font-family: Verdana, Arial, sans-serif;
 	font-size: 13px;
-	font-weight: normal;
-	color: #000000;
 }
 
 body {
+	color: #000000;
 	background-color: #FFFFFF;
 }
 
@@ -46,74 +44,55 @@ h2 {
 	font-weight: bold;
 }
 
+th, td {
+	text-align: left;
+	vertical-align: top;
+}
+
+a {
+	color: #0000DD;
+	text-decoration: none;
+}
+
+a:hover, a:active {
+	color: #6699FF;
+	text-decoration: underline;
+}
+
 table.tablebox {
 	background-color: #EEEEEE;
-	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
-	border-left: 1px solid #AFB5CF;
-	border-right: 0px none;
-	border-top-width: 0px;
-	border-bottom-width: 0px;
-	border-collapse: collapse;
-
+	empty-cells: show;
 	width: 100%;
+	margin: 0px 0px 0px 0px;
+
 	table-layout: fixed;
 }
 
+table.tablebox, table.tablebox tr th, table.tablebox tr td {
+	border: 1px solid #AFB5CF;
+	border-collapse: collapse;
+}
+
 table.tablebox tr th {
+	padding: 2px 5px 2px 5px;
 	background-color: #EEEEEE;
-	background-image: -webkit-linear-gradient(top, #C0C0C0, #EEEEEE);
-	background-image: -moz-linear-gradient(top, #C0C0C0, #EEEEEE);
-	background-image: -ms-linear-gradient(top, #C0C0C0, #EEEEEE);
-	background-image: linear-gradient(to bottom, #C0C0C0, #EEEEEE);
+	background-image: -webkit-linear-gradient(top, #C1C1C1, #EEEEEE);
+	background-image: -moz-linear-gradient(top, #C1C1C1, #EEEEEE);
+	background-image: -ms-linear-gradient(top, #C1C1C1, #EEEEEE);
+	background-image: linear-gradient(to bottom, #C1C1C1, #EEEEEE);
 	font-weight: bold;
-	border-bottom: 1px solid #AFB5CF;
-	border-left: 0px none;
-	border-right: 1px solid #AFB5CF;
-	border-top: 1px solid #AFB5CF;
-	padding: 2px 2px 2px 5px;
-	empty-cells: show;
-	white-space: nowrap;
-	text-align: left;
-	vertical-align: top;
 }
 
 table.tablebox tr td {
-	background-color: #F0F0F0;
-	font-weight: normal;
-	border-bottom: 1px solid #AFB5CF;
-	border-left: 0px none;
-	border-right: 1px solid #AFB5CF;
-	border-top: 0px none;
 	padding: 5px 5px 5px 5px;
-	empty-cells: show;
-	text-align: left;
-	vertical-align: top;
+	background-color: #F0F0F0;
 
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 }
-
-a:visited {
-	text-decoration: none;
-	color: #0000DD;
-}
-
-a:active {
-	text-decoration: none;
-	color: #6699FF;
-}
-
-a:link {
-	text-decoration: none;
-	color: #0000DD;
-}
-
-a:hover {
-	text-decoration: underline;
-	color: #6699FF;
-}
---></style>
+/* ]]]]><![CDATA[> */
+</style>
 ]]></xsl:text>
 </xsl:variable>
 

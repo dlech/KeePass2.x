@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -17,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2019 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -31,12 +32,11 @@
 
 
 
-<table class="sectionsummary"><tr><td width="68">
-<img src="../images/b64x64_kcmdrkonqi.png" width="64" height="64"
-class="singleimg" align="left" alt="Repair" />
-</td><td valign="middle"><h1>Repairing Databases</h1><br />
-KeePass can repair corrupted databases in some cases.
-</td></tr></table>
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_kcmdrkonqi.png" alt="Repair" /></td>
+<td><h1>Repairing Databases</h1>
+<p>KeePass can repair corrupted databases in some cases.</p></td>
+</tr></table>
 
 <br />
 
@@ -51,8 +51,7 @@ when the data becomes corrupted/unreadable at a later point of time).</p>
 <p>In these cases, the database repair functionality might help you.
 Here, KeePass tries to read as much data as possible from the corrupted file.</p>
 
-<p><img src="../images/b16x16_warning.png" alt="Warning"
-style="vertical-align: middle; height: 1em;" />
+<p><img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 In repair mode, the integrity of the data is not checked
 (in order to rescue as much data as possible).
 When no integrity checks are performed, corrupted/malicious data might
@@ -74,7 +73,7 @@ as format.
 
 <p>Anyway, if you've lost the master key for the database, the repair functionality
 cannot help you. Also, if the header of the database (first few bytes) is
-corrupted, you're out of luck too: the repair functionality won't be able
+corrupted, you're out of luck, too: the repair functionality won't be able
 to restore any entries (because the header contains information required
 to decrypt the database).</p>
 
@@ -87,9 +86,8 @@ KeePass plugins page.</p>
 <br />
 
 <a name="hdr"></a>
-<h2 class="sectiontitle">
-<img src="../images/b16x16_kcmdrkonqi.png" class="singleimg" alt="Repair" />&nbsp;&nbsp;File
-Header/Signature</h2>
+<h2 class="sectiontitle"><img src="../images/b16x16_kcmdrkonqi.png" alt="Repair" />
+File Header/Signature</h2>
 
 <p>If your database file has been deleted and you want to try recovering
 it using a tool that supports a file header/signature detection:

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -353,6 +353,56 @@ namespace KeePass.UI
 				return false; // New line in rich text box
 
 			return base.ProcessDialogKey(keyData);
+		}
+
+		protected override bool ProcessCmdKey(ref Message m, Keys keyData)
+		{
+			try
+			{
+				if(!m_bSimpleTextOnly && this.ShortcutsEnabled &&
+					this.RichTextShortcutsEnabled && !this.ReadOnly)
+				{
+					bool bHandled = true;
+
+					switch(keyData)
+					{
+						case (Keys.Control | Keys.B):
+							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
+							break;
+						case (Keys.Control | Keys.I):
+							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
+							break;
+						case (Keys.Control | Keys.U):
+							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
+							break;
+
+						// The following keyboard shortcuts are implemented
+						// by the rich text box on Windows, but not by Mono;
+						// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.textboxbase.shortcutsenabled
+						case (Keys.Control | Keys.L):
+							this.SelectionAlignment = HorizontalAlignment.Left;
+							break;
+						case (Keys.Control | Keys.E):
+							this.SelectionAlignment = HorizontalAlignment.Center;
+							break;
+						case (Keys.Control | Keys.R):
+							this.SelectionAlignment = HorizontalAlignment.Right;
+							break;
+
+						default: bHandled = false; break;
+					}
+
+					if(bHandled)
+					{
+						if(MonoWorkarounds.IsRequired(100002))
+							OnTextChanged(EventArgs.Empty);
+						return true;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return base.ProcessCmdKey(ref m, keyData);
 		}
 
 		// //////////////////////////////////////////////////////////////////

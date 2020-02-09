@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -113,14 +113,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			GlobalWindowManager.AddWindow(this);
-
-			this.Text = m_strTitle;
-			this.Icon = AppIcons.Default;
-
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				m_imgIcon, m_strTitle, m_strSubTitle);
-
+			// Adjust controls before GlobalWindowManager.AddWindow
+			// for better compatibility with plugins
 			Debug.Assert(!m_lblInfo.AutoSize); // For RTL support
 			m_lblInfo.Text = m_strInfo;
 			if(m_strInfo.Length == 0)
@@ -134,6 +128,14 @@ namespace KeePass.Forms
 				m_lvMain.Size = new Size(szList.Width, szList.Height +
 					ptList.Y - yLabel);
 			}
+
+			GlobalWindowManager.AddWindow(this);
+
+			this.Text = m_strTitle;
+			this.Icon = AppIcons.Default;
+
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				m_imgIcon, m_strTitle, m_strSubTitle);
 
 			UIUtil.SetExplorerTheme(m_lvMain, true);
 

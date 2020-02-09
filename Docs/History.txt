@@ -1,3 +1,70 @@
+2020-01-20: 2.44
+- Added option 'Use file transactions for writing configuration
+  settings' (turned on by default)
+- If the option 'Do not store data in the Windows clipboard
+  history and the cloud clipboard' is turned on (which it is by
+  default), KeePass now additionally excludes its clipboard
+  contents from processing by Windows' internal
+  ClipboardMonitor component
+- Added commands to find database files ('File' -> 'Open' ->
+  'Find Files' and 'Find Files (In Folder)')
+- Added 'Edit' menu in the internal text editor (including new
+  'Select All' and 'Find' commands with keyboard shortcuts)
+- Added keyboard shortcuts for formatting commands in the
+  internal text editor
+- Added 'Cancel' button in the save confirmation dialog of the
+  internal text editor
+- Added {CLIPBOARD} and {CLIPBOARD-SET:/T/} placeholders, which
+  get/set the clipboard content
+- Added support for importing True Key 4 CSV files
+- Added command line options for adding/removing scheme-
+  specific URL overrides
+- Added an auto-type event for plugins
+- When loading a plugin on a Unix-like system fails, the error
+  message now includes a hint that the 'mono-complete' package
+  may be required
+- In order to avoid a Windows Input Method Editor (IME) bug
+  (resulting in a black screen and/or an IME/CTF process with
+  high CPU usage), KeePass now disables the IME on secure
+  desktops
+
+- Auto-Type: improved compatibility with VMware Workstation
+- Auto-Type into virtual machines: improved compatibility with
+  certain guest systems
+- The option to use the 'Clipboard Viewer Ignore' clipboard
+  format is now turned on by default
+- Improved menu/toolbar item state updating in the internal
+  text editor
+- Improved performance of Spr compilations
+- Before writing a local configuration file whose path has been
+  specified using the '-cfg-local:' command line parameter,
+  KeePass now tries to create the parent directory, if it does
+  not exist yet
+- Improved conversion of file URIs to local file paths
+- Improved compatibility of the list view dialog with plugins
+- If ChaCha20 is selected as file encryption algorithm, the
+  database is now saved in the KDBX 4 format (thanks to
+  AMOSSYS)
+- Minor process memory protection improvements
+- HTML export/printing: KeePass now generates HTML 5 documents
+  (instead of XHTML 1.0 documents)
+- HTML export/printing: improved internal CSS
+- HTML exports do not contain temporary content identifiers
+  anymore
+- XSL files: HTML output now conforms to HTML 5 instead of
+  XHTML 1.0
+- XSL files: improved internal CSS
+- CHM pages are now rendered in the highest standards mode
+  supported by Internet Explorer (EdgeHTML mode)
+- Migrated most of the documentation from XHTML 1.0 to HTML 5
+- Various code optimizations
+- Minor other improvements
+
+- In the internal text editor, the 'Delete' command does not
+  reset RTF text formattings anymore
+- The KeyCreationFlags bit 2^19 (for hiding the passwords) now
+  works as intended
+
 2019-09-10: 2.43
 - Added tooltips for certain character set options in the
   password generator dialog

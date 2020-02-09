@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,29 +37,35 @@ namespace KeePass.App.Configuration
 {
 	public static class AppConfigSerializer
 	{
-		private static string m_strBaseName = null; // Null prop allowed
+		private static string g_strBaseName = null; // Null allowed
 
-		private static string m_strCreateDir = null;
-		private static string m_strCreateDirLocal = null;
-		private static string m_strEnforcedConfigFile = null;
-		private static string m_strGlobalConfigFile = null;
-		private static string m_strUserConfigFile = null;
+		private static string g_strAppDataDir = null;
+		private static string g_strAppDataLocalDir = null;
+		private static string g_strEnforcedConfigFile = null;
+		private static string g_strGlobalConfigFile = null;
+		private static string g_strUserConfigFile = null;
 
+		/// <summary>
+		/// Get our folder in the application data directory.
+		/// </summary>
 		public static string AppDataDirectory
 		{
 			get
 			{
 				AppConfigSerializer.GetConfigPaths();
-				return m_strCreateDir;
+				return g_strAppDataDir;
 			}
 		}
 
+		/// <summary>
+		/// Get our folder in the local application data directory.
+		/// </summary>
 		public static string LocalAppDataDirectory
 		{
 			get
 			{
 				AppConfigSerializer.GetConfigPaths();
-				return m_strCreateDirLocal;
+				return g_strAppDataLocalDir;
 			}
 		}
 
@@ -70,17 +76,18 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		public static string BaseName
 		{
-			get { return m_strBaseName; }
+			get { return g_strBaseName; }
 
 			set
 			{
-				m_strBaseName = value;
+				g_strBaseName = value;
 
-				m_strCreateDir = null; // Invalidate paths
-				m_strCreateDirLocal = null;
-				m_strEnforcedConfigFile = null;
-				m_strGlobalConfigFile = null;
-				m_strUserConfigFile = null;
+				// Invalidate paths
+				g_strAppDataDir = null;
+				g_strAppDataLocalDir = null;
+				g_strEnforcedConfigFile = null;
+				g_strGlobalConfigFile = null;
+				g_strUserConfigFile = null;
 			}
 		}
 
@@ -92,10 +99,10 @@ namespace KeePass.App.Configuration
 
 		private static void GetConfigPaths()
 		{
-			if(m_strGlobalConfigFile == null)
+			if(g_strGlobalConfigFile == null)
 			{
 				Assembly asm = Assembly.GetExecutingAssembly();
-				Debug.Assert(asm != null); if(asm == null) return;
+				if(asm == null) { Debug.Assert(false); return; }
 
 #if !KeePassLibSD
 				string strFile = null;
@@ -108,9 +115,9 @@ namespace KeePass.App.Configuration
 #else
 				string strFile = UrlUtil.FileUrlToPath(asm.GetName().CodeBase);
 #endif
-				Debug.Assert(strFile != null); if(strFile == null) return;
+				if(strFile == null) { Debug.Assert(false); return; }
 
-				if(string.IsNullOrEmpty(m_strBaseName))
+				if(string.IsNullOrEmpty(g_strBaseName))
 				{
 					// Remove assembly extension
 					if(strFile.EndsWith(".exe", StrUtil.CaseIgnoreCmp))
@@ -119,17 +126,17 @@ namespace KeePass.App.Configuration
 						strFile = strFile.Substring(0, strFile.Length - 4);
 				}
 				else // Base name != null
-					strFile = UrlUtil.GetFileDirectory(strFile, true, false) + m_strBaseName;
+					strFile = UrlUtil.GetFileDirectory(strFile, true, false) + g_strBaseName;
 
-				m_strGlobalConfigFile = strFile + ".config.xml";
-				m_strEnforcedConfigFile = strFile + ".config.enforced.xml";
+				g_strGlobalConfigFile = strFile + ".config.xml";
+				g_strEnforcedConfigFile = strFile + ".config.enforced.xml";
 			}
 
-			if(m_strUserConfigFile == null)
+			if(g_strUserConfigFile == null)
 			{
 				string strBaseDirName = PwDefs.ShortProductName;
-				if((m_strBaseName != null) && (m_strBaseName.Length > 0))
-					strBaseDirName = m_strBaseName;
+				if(!string.IsNullOrEmpty(g_strBaseName))
+					strBaseDirName = g_strBaseName;
 
 				string strUserDir;
 				try
@@ -153,10 +160,10 @@ namespace KeePass.App.Configuration
 				catch(Exception) { strUserDirLocal = strUserDir; }
 				strUserDirLocal = UrlUtil.EnsureTerminatingSeparator(strUserDirLocal, false);
 
-				m_strCreateDir = strUserDir + strBaseDirName;
-				m_strCreateDirLocal = strUserDirLocal + strBaseDirName;
-				m_strUserConfigFile = UrlUtil.EnsureTerminatingSeparator(
-					m_strCreateDir, false) + strBaseDirName + ".config.xml";
+				g_strAppDataDir = strUserDir + strBaseDirName;
+				g_strAppDataLocalDir = strUserDirLocal + strBaseDirName;
+				g_strUserConfigFile = UrlUtil.EnsureTerminatingSeparator(
+					g_strAppDataDir, false) + strBaseDirName + ".config.xml";
 			}
 
 			string strLocalOvr = Program.CommandLineArgs[
@@ -165,27 +172,24 @@ namespace KeePass.App.Configuration
 			{
 				string strWD = UrlUtil.EnsureTerminatingSeparator(
 					WinUtil.GetWorkingDirectory(), false);
-				m_strUserConfigFile = UrlUtil.MakeAbsolutePath(strWD +
+				g_strUserConfigFile = UrlUtil.MakeAbsolutePath(strWD +
 					"Sentinel.txt", strLocalOvr);
-				// Do not change m_strCreateDir, as it's returned from
+				// Do not change g_strAppDataDir, as it's returned from
 				// the AppDataDirectory property
 			}
 
-			Debug.Assert(!string.IsNullOrEmpty(m_strCreateDir));
+			Debug.Assert(!string.IsNullOrEmpty(g_strAppDataDir));
 		}
 
-		private static void EnsureAppDataDirAvailable(string strForFile)
+		private static void EnsureDirOfFileExists(string strFile)
 		{
-			if(string.IsNullOrEmpty(strForFile)) { Debug.Assert(false); return; }
-			if(string.IsNullOrEmpty(m_strCreateDir)) { Debug.Assert(false); return; }
-
-			string strPre = UrlUtil.EnsureTerminatingSeparator(m_strCreateDir, false);
-			if(!strForFile.StartsWith(strPre, StrUtil.CaseIgnoreCmp)) return;
+			if(string.IsNullOrEmpty(strFile)) { Debug.Assert(false); return; }
 
 			try
 			{
-				if(!Directory.Exists(m_strCreateDir))
-					Directory.CreateDirectory(m_strCreateDir);
+				string strDir = UrlUtil.GetFileDirectory(strFile, false, true);
+				if(!Directory.Exists(strDir))
+					Directory.CreateDirectory(strDir);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -200,10 +204,10 @@ namespace KeePass.App.Configuration
 			try
 			{
 				// Performance optimization
-				if(!File.Exists(m_strEnforcedConfigFile)) return null;
+				if(!File.Exists(g_strEnforcedConfigFile)) return null;
 
 				XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
-				xmlDoc.Load(m_strEnforcedConfigFile);
+				xmlDoc.Load(g_strEnforcedConfigFile);
 
 				m_xdEnforced = xmlDoc;
 				return xmlDoc;
@@ -272,7 +276,7 @@ namespace KeePass.App.Configuration
 		{
 			AppConfigSerializer.GetConfigPaths();
 
-			// AppConfigEx cfgEnf = LoadConfigFileEx(m_strEnforcedConfigFile);
+			// AppConfigEx cfgEnf = LoadConfigFileEx(g_strEnforcedConfigFile);
 			// if(cfgEnf != null)
 			// {
 			//	cfgEnf.Meta.IsEnforcedConfiguration = true;
@@ -280,8 +284,8 @@ namespace KeePass.App.Configuration
 			// }
 			XmlDocument xdEnforced = LoadEnforcedConfigFile();
 
-			AppConfigEx cfgGlobal = LoadConfigFileEx(m_strGlobalConfigFile, xdEnforced);
-			AppConfigEx cfgUser = LoadConfigFileEx(m_strUserConfigFile, xdEnforced);
+			AppConfigEx cfgGlobal = LoadConfigFileEx(g_strGlobalConfigFile, xdEnforced);
+			AppConfigEx cfgUser = LoadConfigFileEx(g_strUserConfigFile, xdEnforced);
 
 			if((cfgGlobal == null) && (cfgUser == null))
 			{
@@ -335,7 +339,8 @@ namespace KeePass.App.Configuration
 				Debug.Assert(!string.IsNullOrEmpty(strFilePath));
 				IOConnectionInfo iocPath = IOConnectionInfo.FromPath(strFilePath);
 
-				using(FileTransactionEx ft = new FileTransactionEx(iocPath, true))
+				using(FileTransactionEx ft = new FileTransactionEx(iocPath,
+					Program.Config.Application.UseTransactedConfigWrites))
 				{
 					using(Stream s = ft.OpenWrite())
 					{
@@ -367,7 +372,7 @@ namespace KeePass.App.Configuration
 			AppConfigSerializer.GetConfigPaths();
 
 			XmlDocument xdEnforced = LoadEnforcedConfigFile();
-			AppConfigEx cfgGlobal = LoadConfigFileEx(m_strGlobalConfigFile, xdEnforced);
+			AppConfigEx cfgGlobal = LoadConfigFileEx(g_strGlobalConfigFile, xdEnforced);
 
 			bool bPreferUser = (xdEnforced != null);
 			if(cfgGlobal != null)
@@ -377,17 +382,17 @@ namespace KeePass.App.Configuration
 
 			if(bPreferUser)
 			{
-				EnsureAppDataDirAvailable(m_strUserConfigFile);
-				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
+				EnsureDirOfFileExists(g_strUserConfigFile);
+				if(SaveConfigFileEx(tConfig, g_strUserConfigFile, true)) return true;
 
-				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
+				if(SaveConfigFileEx(tConfig, g_strGlobalConfigFile, false)) return true;
 			}
 			else // Don't prefer user -- use global first
 			{
-				if(SaveConfigFileEx(tConfig, m_strGlobalConfigFile, false)) return true;
+				if(SaveConfigFileEx(tConfig, g_strGlobalConfigFile, false)) return true;
 
-				EnsureAppDataDirAvailable(m_strUserConfigFile);
-				if(SaveConfigFileEx(tConfig, m_strUserConfigFile, true)) return true;
+				EnsureDirOfFileExists(g_strUserConfigFile);
+				if(SaveConfigFileEx(tConfig, g_strUserConfigFile, true)) return true;
 			}
 
 #if !KeePassLibSD
