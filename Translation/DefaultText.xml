@@ -1411,6 +1411,9 @@
 		<Data Name="MasterPassword">
 			<Value>Master password</Value>
 		</Data>
+		<Data Name="MasterPasswordConfirm">
+			<Value>Are you sure that you want to use this master password?</Value>
+		</Data>
 		<Data Name="MasterPasswordMinLengthFailed">
 			<Value>The master password must be at least {PARAM} characters long!</Value>
 		</Data>
@@ -1419,6 +1422,12 @@
 		</Data>
 		<Data Name="MasterPasswordRmbWhileOpen">
 			<Value>Remember master password (in encrypted form) of a database while it is open</Value>
+		</Data>
+		<Data Name="MasterPasswordWeak">
+			<Value>The specified master password is weak.</Value>
+		</Data>
+		<Data Name="MatchesRegEx">
+			<Value>Matches regular expression</Value>
 		</Data>
 		<Data Name="MaxAttachmentSize">
 			<Value>The maximum supported attachment size is {PARAM}.</Value>

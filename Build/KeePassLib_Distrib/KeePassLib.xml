@@ -2692,28 +2692,28 @@
         </member>
         <member name="F:KeePassLib.IOAccessType.Read">
             <summary>
-            The IO connection is being opened for reading.
+            The I/O connection is being opened for reading.
             </summary>
         </member>
         <member name="F:KeePassLib.IOAccessType.Write">
             <summary>
-            The IO connection is being opened for writing.
+            The I/O connection is being opened for writing.
             </summary>
         </member>
         <member name="F:KeePassLib.IOAccessType.Exists">
             <summary>
-            The IO connection is being opened for testing
+            The I/O connection is being opened for testing
             whether a file/object exists.
             </summary>
         </member>
         <member name="F:KeePassLib.IOAccessType.Delete">
             <summary>
-            The IO connection is being opened for deleting a file/object.
+            The I/O connection is being opened for deleting a file/object.
             </summary>
         </member>
         <member name="F:KeePassLib.IOAccessType.Move">
             <summary>
-            The IO connection is being opened for renaming/moving a file/object.
+            The I/O connection is being opened for renaming/moving a file/object.
             </summary>
         </member>
         <member name="F:KeePassLib.AppRunFlags.GCKeepAlive">

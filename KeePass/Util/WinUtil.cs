@@ -269,7 +269,8 @@ namespace KeePass.Util
 			string strUrl = CompileUrl(strUrlToOpen, peDataSource, bAllowOverride,
 				strBaseRaw, null);
 
-			if(WinUtil.IsCommandLineUrl(strUrl))
+			if(string.IsNullOrEmpty(strUrl)) { } // Might be placeholder only
+			else if(WinUtil.IsCommandLineUrl(strUrl))
 			{
 				string strApp, strArgs;
 				StrUtil.SplitCommandLine(WinUtil.GetCommandLineFromUrl(strUrl),
@@ -312,7 +313,11 @@ namespace KeePass.Util
 
 			// SprEngine.Compile might have modified the database
 			MainForm mf = Program.MainForm;
-			if(mf != null) mf.UpdateUI(false, null, false, null, false, null, false);
+			if(mf != null)
+			{
+				mf.RefreshEntriesList();
+				mf.UpdateUI(false, null, false, null, false, null, false);
+			}
 		}
 
 		internal static string CompileUrl(string strUrlToOpen, PwEntry pe,

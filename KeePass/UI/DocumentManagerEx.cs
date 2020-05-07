@@ -299,7 +299,7 @@ namespace KeePass.UI
 			get { return m_ioLockedIoc; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_ioLockedIoc = value;
 			}
 		}

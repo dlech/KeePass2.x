@@ -193,6 +193,7 @@ namespace KeePass.Forms
 				"URL:RMVSCM", "URL:SCM", "URL:HOST", "URL:PORT", "URL:PATH",
 				"URL:QUERY", "URL:USERINFO", "URL:USERNAME", "URL:PASSWORD",
 				// "BASE",
+				"UUID",
 				"T-REPLACE-RX:/T/S/R/", "T-CONV:/T/C/",
 				"C:Comment", VkcBreak,
 

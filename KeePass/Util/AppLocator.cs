@@ -72,7 +72,8 @@ namespace KeePass.Util
 		}
 
 		/// <summary>
-		/// Edge executable cannot be run normally.
+		/// Path to the executable of the legacy Microsoft Edge (EdgeHTML).
+		/// The executable cannot be run normally.
 		/// </summary>
 		public static string EdgePath
 		{
@@ -88,15 +89,16 @@ namespace KeePass.Util
 					return m_obEdgeProtocol.Value;
 
 				bool b = false;
-				RegistryKey rk = null;
 				try
 				{
-					rk = Registry.ClassesRoot.OpenSubKey("microsoft-edge", false);
-					if(rk != null)
-						b = (rk.GetValue("URL Protocol") != null);
+					using(RegistryKey rk = Registry.ClassesRoot.OpenSubKey(
+						"microsoft-edge", false))
+					{
+						if(rk != null)
+							b = (rk.GetValue("URL Protocol") != null);
+					}
 				}
 				catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-				finally { if(rk != null) rk.Close(); }
 
 				m_obEdgeProtocol = b;
 				return b;

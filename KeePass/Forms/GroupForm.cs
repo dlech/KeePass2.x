@@ -113,6 +113,9 @@ namespace KeePass.Forms
 			}
 			m_cgExpiry.Attach(m_cbExpires, m_dtExpires);
 
+			m_tbUuid.Text = m_pwGroup.Uuid.ToHexString() + ", " +
+				Convert.ToBase64String(m_pwGroup.Uuid.UuidBytes);
+
 			PwGroup pgParent = m_pwGroup.ParentGroup;
 			bool bParentAutoType = ((pgParent != null) ?
 				pgParent.GetAutoTypeEnabledInherited() :

@@ -120,13 +120,14 @@ namespace KeePass.Forms
 			m_tbDefaultUser.Text = m_pwDatabase.DefaultUserName;
 
 			m_clr = m_pwDatabase.Color;
-			if(m_clr != Color.Empty)
+			bool bClr = !UIUtil.ColorsEqual(m_clr, Color.Empty);
+			if(bClr)
 			{
 				m_clr = AppIcons.RoundColor(m_clr);
 				UIUtil.OverwriteButtonImage(m_btnColor, ref m_imgColor,
 					UIUtil.CreateColorBitmap24(m_btnColor, m_clr));
 			}
-			m_cbColor.Checked = (m_clr != Color.Empty);
+			m_cbColor.Checked = bClr;
 
 			for(int inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
 				m_cmbEncAlgo.Items.Add(CipherPool.GlobalPool[inx].DisplayName);

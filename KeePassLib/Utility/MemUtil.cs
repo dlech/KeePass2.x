@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 #if KeePassLibSD
@@ -819,6 +820,52 @@ namespace KeePassLib.Utility
 
 			IDisposable d = (o as IDisposable);
 			if(d != null) d.Dispose();
+		}
+
+		internal static T BytesToStruct<T>(byte[] pb, int iOffset)
+			where T : struct
+		{
+			if(pb == null) throw new ArgumentNullException("pb");
+			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+
+			int cb = Marshal.SizeOf(typeof(T));
+			if(cb <= 0) { Debug.Assert(false); return default(T); }
+
+			if(iOffset > (pb.Length - cb)) throw new ArgumentOutOfRangeException("iOffset");
+
+			IntPtr p = Marshal.AllocCoTaskMem(cb);
+			if(p == IntPtr.Zero) throw new OutOfMemoryException();
+
+			object o;
+			try
+			{
+				Marshal.Copy(pb, iOffset, p, cb);
+				o = Marshal.PtrToStructure(p, typeof(T));
+			}
+			finally { Marshal.FreeCoTaskMem(p); }
+
+			return (T)o;
+		}
+
+		internal static byte[] StructToBytes<T>(ref T t)
+			where T : struct
+		{
+			int cb = Marshal.SizeOf(typeof(T));
+			if(cb <= 0) { Debug.Assert(false); return MemUtil.EmptyByteArray; }
+
+			byte[] pb = new byte[cb];
+
+			IntPtr p = Marshal.AllocCoTaskMem(cb);
+			if(p == IntPtr.Zero) throw new OutOfMemoryException();
+
+			try
+			{
+				Marshal.StructureToPtr(t, p, false);
+				Marshal.Copy(p, pb, 0, cb);
+			}
+			finally { Marshal.FreeCoTaskMem(p); }
+
+			return pb;
 		}
 	}
 

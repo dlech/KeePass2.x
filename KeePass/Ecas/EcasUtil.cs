@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using KeePass.Ecas;
@@ -72,6 +73,7 @@ namespace KeePass.Ecas
 		public static readonly uint StdStringCompareContains = 1;
 		public static readonly uint StdStringCompareStartsWith = 2;
 		public static readonly uint StdStringCompareEndsWith = 3;
+		public static readonly uint StdStringCompareRegEx = 4;
 
 		private static EcasEnum m_enumStringCompare = null;
 		public static EcasEnum StdStringCompare
@@ -83,7 +85,8 @@ namespace KeePass.Ecas
 						new EcasEnumItem(StdStringCompareEquals, KPRes.EqualsOp),
 						new EcasEnumItem(StdStringCompareContains, KPRes.ContainsOp),
 						new EcasEnumItem(StdStringCompareStartsWith, KPRes.StartsWith),
-						new EcasEnumItem(StdStringCompareEndsWith, KPRes.EndsWith) });
+						new EcasEnumItem(StdStringCompareEndsWith, KPRes.EndsWith),
+						new EcasEnumItem(StdStringCompareRegEx, KPRes.MatchesRegEx) });
 
 				return m_enumStringCompare;
 			}
@@ -484,13 +487,21 @@ namespace KeePass.Ecas
 
 			if(uCompareType == EcasUtil.StdStringCompareEquals)
 				return x.Equals(y, StrUtil.CaseIgnoreCmp);
+			if(uCompareType == EcasUtil.StdStringCompareContains)
+				return (x.IndexOf(y, StrUtil.CaseIgnoreCmp) >= 0);
 			if(uCompareType == EcasUtil.StdStringCompareStartsWith)
 				return x.StartsWith(y, StrUtil.CaseIgnoreCmp);
 			if(uCompareType == EcasUtil.StdStringCompareEndsWith)
 				return x.EndsWith(y, StrUtil.CaseIgnoreCmp);
+			if(uCompareType == EcasUtil.StdStringCompareRegEx)
+			{
+				try { return Regex.IsMatch(x, y, RegexOptions.IgnoreCase); }
+				catch(Exception) { Debug.Assert(false); }
+				return false;
+			}
 
-			Debug.Assert(uCompareType == EcasUtil.StdStringCompareContains);
-			return (x.IndexOf(y, StrUtil.CaseIgnoreCmp) >= 0);
+			Debug.Assert(false); // Unknown compare type
+			return false;
 		}
 
 		private static string FilterTypeI64(string str)

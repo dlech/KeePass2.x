@@ -26,6 +26,7 @@
 	<title>Help Center - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
 	
 </head>
 <body>
@@ -38,7 +39,7 @@
 
 
 
-<table class="laytable" cellspacing="0" cellpadding="0">
+<table class="laytable">
 <tr><td style="width: 82px; vertical-align: middle;">
 <img src="../images/plockb_64.png" alt="KeePass" />
 </td><td style="vertical-align: middle;">
@@ -53,72 +54,74 @@ alt="OSI Certified" /></a>
 </tr></table>
 
 
-<p>KeePass: Copyright &copy; 2003-2020 Dominik Reichl. The program is OSI Certified
-Open Source Software. OSI Certified is a certification mark of the Open Source Initiative.
-For more information see the
-
-
-
+<p>KeePass: Copyright &copy; 2003-2020 Dominik Reichl.
+The program is OSI Certified Open Source Software.
+OSI Certified is a certification mark of the Open Source Initiative.
+For more information, see the
 
 
 
 <a href="../v2/license.html" target="_self">License</a> page.
 
-
 </p>
-
-<img src="../../screenshots/main.jpg" align="right" alt="Screenshot" />
 
 <h2>Introduction</h2>
 
-<p>Today you need to remember many passwords. You need a password for the Windows
-network logon, your e-mail account, your website's FTP password, online
-passwords (like website member account), etc. etc. etc. The list is
-endless. Also, you should use different passwords for each
-account. Because if you use only one password everywhere and someone gets this
-password you have a problem... A serious problem. He would have access to your
-e-mail account, website, etc. Unimaginable.</p>
+<a href="https://keepass.info/screenshots/keepass_2x/main_big.png"
+target="_blank"><img src="../../screenshots/keepass_2x/main.jpg"
+class="floatrightws" alt="Screenshot" /></a>
 
-<p>But who can remember all those passwords? Nobody, but KeePass can.
-KeePass is a free, open source, light-weight and easy-to-use password manager
-for Windows.</p>
+<!-- Cf. home page of the website -->
+<p>Today, you have to remember many passwords. You need a password for a lot of
+websites, your e-mail account, your webserver, network logins, etc.
+The list is endless.
+Also, you should use a different password for each account, because
+if you would use only one password everywhere and someone gets this password,
+you would have a problem: the thief would have access to <em>all</em> of your
+accounts.</p>
 
-<p>The program stores your passwords in a highly encrypted database.
-This database consists of only one file, so it can be easily transferred from one computer
-to another.</p>
+<p>KeePass is a free open source password manager, which helps you to manage
+your passwords in a secure way. You can store all your passwords in one
+database, which is locked with a
+<a href="keys.html">master key</a>. So you only have to remember one
+single master key to unlock the whole database. Database files are
+<a href="security.html#secencrypt">encrypted</a>
+using the best and most secure encryption algorithms currently known
+(AES-256, ChaCha20 and Twofish).</p>
 
-<p>KeePass supports password groups, you can sort your passwords (for example into
-Windows, Internet, My Website, etc.).
-You can drag&amp;drop passwords into other windows. The powerful auto-type
-feature will type user names and passwords for you into other windows.
-The program can export the database to various formats.
-It can also import data from various other formats (more than 35 different
-formats of other password managers, a generic CSV importer, ...).</p>
+<p>The database consists of only one file, so it can be transferred
+easily from one computer to another.
+Data can also be <a href="importexport.html">imported/exported</a>
+from/to various other formats
+(import from more than 40 different formats of other password managers,
 
-<p>Of course, you can also print the password list or current view.
-Using the context menu of the password list you can quickly copy password or user name
-to the Windows clipboard.
-Searching in password database is possible.</p>
+<a href="importexport.html#genericcsv">generic CSV importer</a>,
 
-<p>The program ships with a strong random password generator (you can define the possible
-output characters, length, generation rules, etc.).</p>
+...). Of course, printing entries is supported, too.</p>
 
-<p>The program features a plugin architecture. Other people can write plugins
-for KeePass, extending its functionality: support for even more data import/export
-formats, backup features, network features, etc. See the plugins page on
-the KeePass website for downloadable plugins and an introduction on how
-to write your own plugins.</p>
+<p>KeePass supports groups, which allow you to organize your entries
+conveniently. For quickly locating specific entries, there are search
+functions.</p>
 
-<p>And the best: it's free and you have full access to its source code!</p>
+<p>There are various methods for transferring entry data (like user names
+and passwords) from KeePass to other applications
+(<a href="usingpws.html#mainlist">clipboard</a>,
+<a href="usingpws.html#dragdrop">drag&amp;drop</a>, etc.). The powerful
+<a href="autotype.html">auto-type</a> feature can simulate keypresses.</p>
 
+<p>KeePass has a strong <a href="pwgenerator.html">password generator</a>
+(you can define allowed characters, length, generation rules, ...).</p>
 
+<p>The program features a <a href="https://keepass.info/plugins.html"
+target="_blank">plugin</a> architecture. Plugins can add features
+in many areas (integration, transfer, backup, network, even more
+import/export formats, and much more).</p>
 
-<p>KeePass is distributed under the GPL license. See the file <i>'License.txt'</i>
-in the downloadable KeePass package for details.</p>
+<p>As KeePass is open source,
+you can have a look at its full source code and check whether the security
+features are implemented correctly.</p>
 
 <p><i>This documentation applies to
-
-
 
 
 

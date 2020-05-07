@@ -321,7 +321,8 @@ namespace KeePassLib.Serialization
 
 		public bool CanProbablyAccess()
 		{
-			if(IsLocalFile()) return File.Exists(m_strUrl);
+			if(IsLocalFile())
+				return IOConnection.FileExists(this, false); // Raises event
 
 			return true;
 		}

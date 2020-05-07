@@ -26,6 +26,7 @@
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
 	
 </head>
 <body>
@@ -117,9 +118,10 @@ you can use the placeholder <code>{S:eMail}</code>.
 <tr><td><code>{URL:USERINFO}</code></td><td>User information of the entry URL.</td></tr>
 <tr><td><code>{URL:USERNAME}</code></td><td>User name of the entry URL.</td></tr>
 <tr><td><code>{URL:PASSWORD}</code></td><td>Password of the entry URL.</td></tr>
+<tr><td><code>{UUID}</code></td><td>UUID of the entry (32 hexadecimal characters).</td></tr>
 </table>
 <br />
-An example can be found <a href="#url">below</a>.
+An example for the <code>{URL:...}</code> placeholders can be found <a href="#url">below</a>.
 
 
 <br /><br />
@@ -387,7 +389,7 @@ i.e. you don't need to click [OK] anymore. -->
 <b><code>{PICKCHARS}</code> &#8211; Picking Characters:</b><br />
 <a href="https://keepass.info/screenshots/windows_vista/pickchars_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/pickchars.png"
-align="right" alt="Character Picking Dialog" /></a>
+class="floatrightws" alt="Character Picking Dialog" /></a>
 The <code>{PICKCHARS}</code> placeholder shows a dialog, in which you can
 pick characters of an entry string (like the password) at certain positions.<br />
 <br />
@@ -457,7 +459,7 @@ types the 5 picked characters and presses Enter.<br />
 <br />
 <a href="https://keepass.info/screenshots/windows_vista/comboboxform_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/comboboxform.png"
-align="right" alt="ComboBox Form" /></a>
+class="floatrightws" alt="ComboBox Form" /></a>
 <code>{S:Memorable}{TAB}{PICKCHARS:Password:ID=1, C=1, Conv=D,
 Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=2, C=1, Conv=D,
 Conv-Offset=1}{TAB}{PICKCHARS:Password:ID=3, C=1, Conv=D,

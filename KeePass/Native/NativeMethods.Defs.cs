@@ -353,7 +353,7 @@ namespace KeePass.Native
 			SIF_POS = 0x4,
 			SIF_DISABLENOSCROLL = 0x8,
 			SIF_TRACKPOS = 0x10,
-			SIF_ALL = SIF_RANGE + SIF_PAGE + SIF_POS + SIF_TRACKPOS
+			SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS)
 		}
 
 		[Flags]

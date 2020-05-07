@@ -250,7 +250,10 @@ namespace KeePass.App.Configuration
 					XmlDocument xd = XmlUtilEx.CreateXmlDocument();
 					xd.Load(strFilePath);
 
-					XmlUtil.MergeNodes(xd, xd.DocumentElement, xdEnforced.DocumentElement);
+					XmContext ctx = new XmContext(xd, AppConfigEx.GetNodeOptions,
+						AppConfigEx.GetNodeKey);
+					XmlUtil.MergeElements(xd.DocumentElement, xdEnforced.DocumentElement,
+						"/" + xd.DocumentElement.Name, null, ctx);
 
 					using(MemoryStream msAsm = new MemoryStream())
 					{
@@ -291,22 +294,18 @@ namespace KeePass.App.Configuration
 			{
 				if(xdEnforced != null)
 				{
-					XmlSerializerEx xmlSerial = new XmlSerializerEx(typeof(AppConfigEx));
+					// Create an empty configuration file and merge it with
+					// the enforced configuration; this ensures that merge
+					// behaviors (like the node mode 'Remove') work as intended
 					try
 					{
-						using(MemoryStream msEnf = new MemoryStream())
-						{
-							xdEnforced.Save(msEnf);
+						string strFile = Program.TempFilesPool.GetTempFileName("xml");
+						File.WriteAllText(strFile, AppConfigEx.GetEmptyConfigXml(),
+							StrUtil.Utf8);
 
-							using(MemoryStream msRead = new MemoryStream(
-								msEnf.ToArray(), false))
-							{
-								AppConfigEx cfgEnf = (AppConfigEx)xmlSerial.Deserialize(msRead);
-								cfgEnf.OnLoad();
-
-								return cfgEnf;
-							}
-						}
+						AppConfigEx cfg = LoadConfigFileEx(strFile, xdEnforced);
+						if(cfg != null) return cfg;
+						Debug.Assert(false);
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}

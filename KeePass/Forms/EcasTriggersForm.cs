@@ -29,6 +29,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Ecas;
 using KeePass.Resources;
 using KeePass.UI;
@@ -73,7 +74,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_triggers != null); if(m_triggers == null) return;
+			if(m_triggers == null) { Debug.Assert(false); return; }
 
 			GlobalWindowManager.AddWindow(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTools);
@@ -91,6 +92,12 @@ namespace KeePass.Forms
 
 			m_cbEnableTriggers.Checked = m_triggers.Enabled;
 			UpdateTriggerListEx(false);
+
+			EcasTriggerSystem ts = Program.TriggerSystem;
+			EcasTriggerSystem tsCfg = Program.Config.Application.TriggerSystem;
+			if(object.ReferenceEquals(m_triggersInOut, ts) &&
+				AppConfigEx.IsOptionEnforced(tsCfg, "Enabled"))
+				m_cbEnableTriggers.Enabled = false;
 		}
 
 		private void CleanUpEx()
@@ -116,13 +123,23 @@ namespace KeePass.Forms
 
 		private void EnableControlsEx()
 		{
+			bool bEnabled = m_cbEnableTriggers.Checked;
 			int nSelCount = m_lvTriggers.SelectedIndices.Count;
 
-			bool bCanMove = ((m_lvTriggers.Items.Count >= 2) && (nSelCount >= 1));
-			m_btnMoveUp.Enabled = m_btnMoveDown.Enabled = bCanMove;
+			m_lvTriggers.Enabled = bEnabled;
 
-			m_btnEdit.Enabled = (nSelCount == 1);
-			m_btnDelete.Enabled = (nSelCount >= 1);
+			m_btnAdd.Enabled = bEnabled;
+			m_btnEdit.Enabled = (bEnabled && (nSelCount == 1));
+			m_btnDelete.Enabled = (bEnabled && (nSelCount >= 1));
+
+			bool bMove = (bEnabled && (m_lvTriggers.Items.Count >= 2) &&
+				(nSelCount >= 1));
+			m_btnMoveUp.Enabled = bMove;
+			m_btnMoveDown.Enabled = bMove;
+
+			m_ctxToolsCopyTriggers.Enabled = bEnabled;
+			m_ctxToolsCopySelectedTriggers.Enabled = bEnabled;
+			m_ctxToolsPasteTriggers.Enabled = bEnabled;
 		}
 
 		private void UpdateTriggerListEx(bool bRestoreSelected)
@@ -267,6 +284,11 @@ namespace KeePass.Forms
 		}
 
 		private void OnTriggersSelectedIndexChanged(object sender, EventArgs e)
+		{
+			EnableControlsEx();
+		}
+
+		private void OnEnableTriggersCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
 		}

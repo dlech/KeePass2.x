@@ -59,7 +59,7 @@ namespace KeePass.Forms
 		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
 		/// <summary>
-		/// Get the edited, new data. This property is non-<c>null</c> only,
+		/// Get the edited, new data. This property is non-<c>null</c> only
 		/// if the user has really edited the data (i.e. if the user makes no
 		/// changes, <c>null</c> is returned).
 		/// </summary>

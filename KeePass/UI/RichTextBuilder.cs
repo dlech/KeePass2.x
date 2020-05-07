@@ -276,8 +276,9 @@ namespace KeePass.UI
 			string strRtf;
 			using(RichTextBox rtbOp = CreateOpRtb(rtb))
 			{
-				rtbOp.Text = strText;
-				Debug.Assert(rtbOp.Text == strText); // Test committed
+				string strFlt = StrUtil.RtfFilterText(strText);
+				rtbOp.Text = strFlt;
+				Debug.Assert(rtbOp.Text == strFlt); // Test committed
 
 				if(m_fDefault != null)
 				{

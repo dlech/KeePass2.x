@@ -328,5 +328,50 @@ namespace KeePass.Native
 			public string lpApplicationName;
 			public IntPtr hModule;
 		}
+
+		internal const int ICONDIRSize = 6;
+
+		// https://msdn.microsoft.com/en-us/library/ms997538.aspx
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct ICONDIR
+		{
+			public ushort idReserved;
+			public ushort idType;
+			public ushort idCount;
+		}
+
+		internal const int ICONDIRENTRYSize = 16;
+
+		// https://msdn.microsoft.com/en-us/library/ms997538.aspx
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct ICONDIRENTRY
+		{
+			public byte bWidth;
+			public byte bHeight;
+			public byte bColorCount;
+			public byte bReserved;
+			public ushort wPlanes;
+			public ushort wBitCount;
+			public uint dwBytesInRes;
+			public uint dwImageOffset;
+		}
+
+		internal const int BITMAPINFOHEADERSize = 40;
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		internal struct BITMAPINFOHEADER
+		{
+			public uint biSize;
+			public int biWidth;
+			public int biHeight;
+			public ushort biPlanes;
+			public ushort biBitCount;
+			public uint biCompression;
+			public uint biSizeImage;
+			public int biXPelsPerMeter;
+			public int biYPelsPerMeter;
+			public uint biClrUsed;
+			public uint biClrImportant;
+		}
 	}
 }

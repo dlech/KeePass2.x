@@ -33,41 +33,41 @@ namespace KeePass.App.Configuration
 {
 	public sealed class AceIntegration
 	{
-		private ulong m_hkAutoType = (ulong)(Keys.Control | Keys.Alt | Keys.A);
-		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.A))]
-		public ulong HotKeyGlobalAutoType
+		private long m_hkAutoType = (long)(Keys.Control | Keys.Alt | Keys.A);
+		[DefaultValue((long)(Keys.Control | Keys.Alt | Keys.A))]
+		public long HotKeyGlobalAutoType
 		{
 			get { return m_hkAutoType; }
 			set { m_hkAutoType = value; }
 		}
 
-		private ulong m_hkAutoTypePw = (ulong)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A);
-		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A))]
-		public ulong HotKeyGlobalAutoTypePassword
+		private long m_hkAutoTypePw = (long)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A);
+		[DefaultValue((long)(Keys.Control | Keys.Alt | Keys.Shift | Keys.A))]
+		public long HotKeyGlobalAutoTypePassword
 		{
 			get { return m_hkAutoTypePw; }
 			set { m_hkAutoTypePw = value; }
 		}
 
-		private ulong m_hkAutoTypeSel = (ulong)Keys.None;
-		[DefaultValue((ulong)Keys.None)]
-		public ulong HotKeySelectedAutoType
+		private long m_hkAutoTypeSel = (long)Keys.None;
+		[DefaultValue((long)Keys.None)]
+		public long HotKeySelectedAutoType
 		{
 			get { return m_hkAutoTypeSel; }
 			set { m_hkAutoTypeSel = value; }
 		}
 
-		private ulong m_hkShowWindow = (ulong)(Keys.Control | Keys.Alt | Keys.K);
-		[DefaultValue((ulong)(Keys.Control | Keys.Alt | Keys.K))]
-		public ulong HotKeyShowWindow
+		private long m_hkShowWindow = (long)(Keys.Control | Keys.Alt | Keys.K);
+		[DefaultValue((long)(Keys.Control | Keys.Alt | Keys.K))]
+		public long HotKeyShowWindow
 		{
 			get { return m_hkShowWindow; }
 			set { m_hkShowWindow = value; }
 		}
 
-		private ulong m_hkEntryMenu = (ulong)Keys.None;
-		[DefaultValue((ulong)Keys.None)]
-		public ulong HotKeyEntryMenu
+		private long m_hkEntryMenu = (long)Keys.None;
+		[DefaultValue((long)Keys.None)]
+		public long HotKeyEntryMenu
 		{
 			get { return m_hkEntryMenu; }
 			set { m_hkEntryMenu = value; }

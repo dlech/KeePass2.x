@@ -496,9 +496,12 @@ namespace KeePass.Resources
 			m_strMasterKeyComponents = TryGetEx(dictNew, "MasterKeyComponents", m_strMasterKeyComponents);
 			m_strMasterKeyOnSecureDesktop = TryGetEx(dictNew, "MasterKeyOnSecureDesktop", m_strMasterKeyOnSecureDesktop);
 			m_strMasterPassword = TryGetEx(dictNew, "MasterPassword", m_strMasterPassword);
+			m_strMasterPasswordConfirm = TryGetEx(dictNew, "MasterPasswordConfirm", m_strMasterPasswordConfirm);
 			m_strMasterPasswordMinLengthFailed = TryGetEx(dictNew, "MasterPasswordMinLengthFailed", m_strMasterPasswordMinLengthFailed);
 			m_strMasterPasswordMinQualityFailed = TryGetEx(dictNew, "MasterPasswordMinQualityFailed", m_strMasterPasswordMinQualityFailed);
 			m_strMasterPasswordRmbWhileOpen = TryGetEx(dictNew, "MasterPasswordRmbWhileOpen", m_strMasterPasswordRmbWhileOpen);
+			m_strMasterPasswordWeak = TryGetEx(dictNew, "MasterPasswordWeak", m_strMasterPasswordWeak);
+			m_strMatchesRegEx = TryGetEx(dictNew, "MatchesRegEx", m_strMatchesRegEx);
 			m_strMaxAttachmentSize = TryGetEx(dictNew, "MaxAttachmentSize", m_strMaxAttachmentSize);
 			m_strMaximized = TryGetEx(dictNew, "Maximized", m_strMaximized);
 			m_strMemory = TryGetEx(dictNew, "Memory", m_strMemory);
@@ -1337,9 +1340,12 @@ namespace KeePass.Resources
 			"MasterKeyComponents",
 			"MasterKeyOnSecureDesktop",
 			"MasterPassword",
+			"MasterPasswordConfirm",
 			"MasterPasswordMinLengthFailed",
 			"MasterPasswordMinQualityFailed",
 			"MasterPasswordRmbWhileOpen",
+			"MasterPasswordWeak",
+			"MatchesRegEx",
 			"MaxAttachmentSize",
 			"Maximized",
 			"Memory",
@@ -6882,6 +6888,17 @@ namespace KeePass.Resources
 			get { return m_strMasterPassword; }
 		}
 
+		private static string m_strMasterPasswordConfirm =
+			@"Are you sure that you want to use this master password?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Are you sure that you want to use this master password?'.
+		/// </summary>
+		public static string MasterPasswordConfirm
+		{
+			get { return m_strMasterPasswordConfirm; }
+		}
+
 		private static string m_strMasterPasswordMinLengthFailed =
 			@"The master password must be at least {PARAM} characters long!";
 		/// <summary>
@@ -6913,6 +6930,28 @@ namespace KeePass.Resources
 		public static string MasterPasswordRmbWhileOpen
 		{
 			get { return m_strMasterPasswordRmbWhileOpen; }
+		}
+
+		private static string m_strMasterPasswordWeak =
+			@"The specified master password is weak.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The specified master password is weak.'.
+		/// </summary>
+		public static string MasterPasswordWeak
+		{
+			get { return m_strMasterPasswordWeak; }
+		}
+
+		private static string m_strMatchesRegEx =
+			@"Matches regular expression";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Matches regular expression'.
+		/// </summary>
+		public static string MatchesRegEx
+		{
+			get { return m_strMatchesRegEx; }
 		}
 
 		private static string m_strMaxAttachmentSize =

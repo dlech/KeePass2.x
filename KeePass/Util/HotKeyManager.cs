@@ -224,7 +224,7 @@ namespace KeePass.Util
 				// is aware of a possible conflict and intentionally wants
 				// to override any system key combination
 				if(Program.Config.Integration.HotKeyGlobalAutoType !=
-					(ulong)(Keys.Control | Keys.Alt | Keys.A)) return;
+					(long)(Keys.Control | Keys.Alt | Keys.A)) return;
 
 				// Check for a conflict only on Polish systems; other
 				// languages typically don't use Ctrl+Alt+A frequently

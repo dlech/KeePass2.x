@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -274,7 +275,13 @@ namespace KeePassLib.Native
 					return strOutput;
 				}
 #if DEBUG
-				catch(Exception ex) { Debug.Assert(ex is ThreadAbortException); }
+				catch(ThreadAbortException) { }
+				catch(Win32Exception exW)
+				{
+					Debug.Assert((strAppPath == ClipboardU.XSel) &&
+						(exW.NativeErrorCode == 2)); // XSel not found
+				}
+				catch(Exception) { Debug.Assert(false); }
 #else
 				catch(Exception) { }
 #endif

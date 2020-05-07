@@ -449,6 +449,10 @@ namespace KeePass.Forms
 			//	lvg, KPRes.EscMinimizesToTray);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathInTitle",
 				lvg, KPRes.ShowFullPathInTitleBar);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowFullPathOnTab",
+			//	lvg, KPRes.ShowFullPathOnFileTab);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "ShowDatabaseNameOnTab",
+			//	lvg, KPRes.ShowDatabaseNameOnFileTab);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "DisableSaveIfNotModified",
 				lvg, KPRes.DisableSaveIfNotModified);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "HideCloseDatabaseButton",
@@ -823,13 +827,13 @@ namespace KeePass.Forms
 			kPrev = kNew;
 
 			if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoType)
-				Program.Config.Integration.HotKeyGlobalAutoType = (ulong)kNew;
+				Program.Config.Integration.HotKeyGlobalAutoType = (long)kNew;
 			else if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoTypePassword)
-				Program.Config.Integration.HotKeyGlobalAutoTypePassword = (ulong)kNew;
+				Program.Config.Integration.HotKeyGlobalAutoTypePassword = (long)kNew;
 			else if(nHotKeyID == AppDefs.GlobalHotKeyId.AutoTypeSelected)
-				Program.Config.Integration.HotKeySelectedAutoType = (ulong)kNew;
+				Program.Config.Integration.HotKeySelectedAutoType = (long)kNew;
 			else if(nHotKeyID == AppDefs.GlobalHotKeyId.ShowWindow)
-				Program.Config.Integration.HotKeyShowWindow = (ulong)kNew;
+				Program.Config.Integration.HotKeyShowWindow = (long)kNew;
 			else { Debug.Assert(false); }
 
 			HotKeyManager.UnregisterHotKey(nHotKeyID);

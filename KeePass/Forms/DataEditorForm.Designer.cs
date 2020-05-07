@@ -40,6 +40,7 @@
 			this.m_menuEditCut = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditCopy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditPaste = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditDelete = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEditSelectAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditSep2 = new System.Windows.Forms.ToolStripSeparator();
@@ -77,7 +78,6 @@
 			this.m_statusMain = new System.Windows.Forms.StatusStrip();
 			this.m_tssStatusMain = new System.Windows.Forms.ToolStripStatusLabel();
 			this.m_rtbText = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_menuEditDelete = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuMain.SuspendLayout();
 			this.m_toolFile.SuspendLayout();
 			this.m_toolFormat.SuspendLayout();
@@ -148,7 +148,7 @@
 			// 
 			this.m_menuEditUndo.Image = global::KeePass.Properties.Resources.B16x16_Undo;
 			this.m_menuEditUndo.Name = "m_menuEditUndo";
-			this.m_menuEditUndo.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditUndo.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditUndo.Text = "&Undo";
 			this.m_menuEditUndo.Click += new System.EventHandler(this.OnEditUndo);
 			// 
@@ -156,20 +156,20 @@
 			// 
 			this.m_menuEditRedo.Image = global::KeePass.Properties.Resources.B16x16_Redo;
 			this.m_menuEditRedo.Name = "m_menuEditRedo";
-			this.m_menuEditRedo.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditRedo.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditRedo.Text = "&Redo";
 			this.m_menuEditRedo.Click += new System.EventHandler(this.OnEditRedo);
 			// 
 			// m_menuEditSep0
 			// 
 			this.m_menuEditSep0.Name = "m_menuEditSep0";
-			this.m_menuEditSep0.Size = new System.Drawing.Size(149, 6);
+			this.m_menuEditSep0.Size = new System.Drawing.Size(119, 6);
 			// 
 			// m_menuEditCut
 			// 
 			this.m_menuEditCut.Image = global::KeePass.Properties.Resources.B16x16_Cut;
 			this.m_menuEditCut.Name = "m_menuEditCut";
-			this.m_menuEditCut.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditCut.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditCut.Text = "Cu&t";
 			this.m_menuEditCut.Click += new System.EventHandler(this.OnEditCut);
 			// 
@@ -177,7 +177,7 @@
 			// 
 			this.m_menuEditCopy.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_menuEditCopy.Name = "m_menuEditCopy";
-			this.m_menuEditCopy.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditCopy.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditCopy.Text = "&Copy";
 			this.m_menuEditCopy.Click += new System.EventHandler(this.OnEditCopy);
 			// 
@@ -185,32 +185,40 @@
 			// 
 			this.m_menuEditPaste.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_menuEditPaste.Name = "m_menuEditPaste";
-			this.m_menuEditPaste.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditPaste.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditPaste.Text = "&Paste";
 			this.m_menuEditPaste.Click += new System.EventHandler(this.OnEditPaste);
+			// 
+			// m_menuEditDelete
+			// 
+			this.m_menuEditDelete.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
+			this.m_menuEditDelete.Name = "m_menuEditDelete";
+			this.m_menuEditDelete.Size = new System.Drawing.Size(122, 22);
+			this.m_menuEditDelete.Text = "&Delete";
+			this.m_menuEditDelete.Click += new System.EventHandler(this.OnEditDelete);
 			// 
 			// m_menuEditSep1
 			// 
 			this.m_menuEditSep1.Name = "m_menuEditSep1";
-			this.m_menuEditSep1.Size = new System.Drawing.Size(149, 6);
+			this.m_menuEditSep1.Size = new System.Drawing.Size(119, 6);
 			// 
 			// m_menuEditSelectAll
 			// 
 			this.m_menuEditSelectAll.Name = "m_menuEditSelectAll";
-			this.m_menuEditSelectAll.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditSelectAll.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditSelectAll.Text = "Select &All";
 			this.m_menuEditSelectAll.Click += new System.EventHandler(this.OnEditSelectAll);
 			// 
 			// m_menuEditSep2
 			// 
 			this.m_menuEditSep2.Name = "m_menuEditSep2";
-			this.m_menuEditSep2.Size = new System.Drawing.Size(149, 6);
+			this.m_menuEditSep2.Size = new System.Drawing.Size(119, 6);
 			// 
 			// m_menuEditFind
 			// 
 			this.m_menuEditFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_menuEditFind.Name = "m_menuEditFind";
-			this.m_menuEditFind.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEditFind.Size = new System.Drawing.Size(122, 22);
 			this.m_menuEditFind.Text = "&Find...";
 			this.m_menuEditFind.Click += new System.EventHandler(this.OnEditFind);
 			// 
@@ -484,7 +492,7 @@
 			// m_tssStatusMain
 			// 
 			this.m_tssStatusMain.Name = "m_tssStatusMain";
-			this.m_tssStatusMain.Size = new System.Drawing.Size(593, 17);
+			this.m_tssStatusMain.Size = new System.Drawing.Size(562, 17);
 			this.m_tssStatusMain.Spring = true;
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -492,21 +500,13 @@
 			// 
 			this.m_rtbText.AcceptsTab = true;
 			this.m_rtbText.HideSelection = false;
-			this.m_rtbText.Location = new System.Drawing.Point(25, 102);
+			this.m_rtbText.Location = new System.Drawing.Point(12, 86);
 			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.Size = new System.Drawing.Size(331, 177);
+			this.m_rtbText.Size = new System.Drawing.Size(584, 296);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";
 			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
 			this.m_rtbText.TextChanged += new System.EventHandler(this.OnTextTextChanged);
-			// 
-			// m_menuEditDelete
-			// 
-			this.m_menuEditDelete.Image = global::KeePass.Properties.Resources.B16x16_EditDelete;
-			this.m_menuEditDelete.Name = "m_menuEditDelete";
-			this.m_menuEditDelete.Size = new System.Drawing.Size(152, 22);
-			this.m_menuEditDelete.Text = "&Delete";
-			this.m_menuEditDelete.Click += new System.EventHandler(this.OnEditDelete);
 			// 
 			// DataEditorForm
 			// 

@@ -129,7 +129,7 @@
 			// m_lblSep
 			// 
 			this.m_lblSep.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSep.Location = new System.Drawing.Point(0, 377);
+			this.m_lblSep.Location = new System.Drawing.Point(0, 378);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(626, 2);
 			this.m_lblSep.TabIndex = 9;
@@ -143,6 +143,7 @@
 			this.m_cbEnableTriggers.TabIndex = 2;
 			this.m_cbEnableTriggers.Text = "E&nable trigger system";
 			this.m_cbEnableTriggers.UseVisualStyleBackColor = true;
+			this.m_cbEnableTriggers.CheckedChanged += new System.EventHandler(this.OnEnableTriggersCheckedChanged);
 			// 
 			// m_btnMoveUp
 			// 
@@ -183,26 +184,26 @@
             this.m_ctxToolsCopySelectedTriggers,
             this.m_ctxToolsPasteTriggers});
 			this.m_ctxTools.Name = "m_ctxTools";
-			this.m_ctxTools.Size = new System.Drawing.Size(264, 98);
+			this.m_ctxTools.Size = new System.Drawing.Size(263, 98);
 			// 
 			// m_ctxToolsHelp
 			// 
 			this.m_ctxToolsHelp.Image = global::KeePass.Properties.Resources.B16x16_Help;
 			this.m_ctxToolsHelp.Name = "m_ctxToolsHelp";
-			this.m_ctxToolsHelp.Size = new System.Drawing.Size(263, 22);
+			this.m_ctxToolsHelp.Size = new System.Drawing.Size(262, 22);
 			this.m_ctxToolsHelp.Text = "&Help";
 			this.m_ctxToolsHelp.Click += new System.EventHandler(this.OnCtxToolsHelp);
 			// 
 			// m_ctxToolsSep0
 			// 
 			this.m_ctxToolsSep0.Name = "m_ctxToolsSep0";
-			this.m_ctxToolsSep0.Size = new System.Drawing.Size(260, 6);
+			this.m_ctxToolsSep0.Size = new System.Drawing.Size(259, 6);
 			// 
 			// m_ctxToolsCopyTriggers
 			// 
 			this.m_ctxToolsCopyTriggers.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxToolsCopyTriggers.Name = "m_ctxToolsCopyTriggers";
-			this.m_ctxToolsCopyTriggers.Size = new System.Drawing.Size(263, 22);
+			this.m_ctxToolsCopyTriggers.Size = new System.Drawing.Size(262, 22);
 			this.m_ctxToolsCopyTriggers.Text = "&Copy Triggers to Clipboard";
 			this.m_ctxToolsCopyTriggers.Click += new System.EventHandler(this.OnCtxToolsCopyTriggers);
 			// 
@@ -210,7 +211,7 @@
 			// 
 			this.m_ctxToolsCopySelectedTriggers.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxToolsCopySelectedTriggers.Name = "m_ctxToolsCopySelectedTriggers";
-			this.m_ctxToolsCopySelectedTriggers.Size = new System.Drawing.Size(263, 22);
+			this.m_ctxToolsCopySelectedTriggers.Size = new System.Drawing.Size(262, 22);
 			this.m_ctxToolsCopySelectedTriggers.Text = "Copy &Selected Triggers to Clipboard";
 			this.m_ctxToolsCopySelectedTriggers.Click += new System.EventHandler(this.OnCtxToolsCopySelectedTriggers);
 			// 
@@ -218,7 +219,7 @@
 			// 
 			this.m_ctxToolsPasteTriggers.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_ctxToolsPasteTriggers.Name = "m_ctxToolsPasteTriggers";
-			this.m_ctxToolsPasteTriggers.Size = new System.Drawing.Size(263, 22);
+			this.m_ctxToolsPasteTriggers.Size = new System.Drawing.Size(262, 22);
 			this.m_ctxToolsPasteTriggers.Text = "&Paste Triggers from Clipboard";
 			this.m_ctxToolsPasteTriggers.Click += new System.EventHandler(this.OnCtxToolsPasteTriggers);
 			// 

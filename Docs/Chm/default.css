@@ -71,9 +71,14 @@ th, td {
 
 pre {
 	display: block;
-	background-color: #E6E6E6;
-	font-size: 8.25pt;
+	background-color: #EEEEEE; /* #E6E6E6 */
+	white-space: pre-wrap;
 	overflow: auto;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-all;
+	-moz-tab-size: 4;
+	tab-size: 4;
 }
 
 kbd kbd {
@@ -152,10 +157,41 @@ a:hover, a:active {
 
 /* --------------------------------------------------------------------- */
 
-table.laytable {
+table.laytable, table.laytablews {
 	width: 100%;
 	border: 0px none;
 }
+
+table.laytable {
+	border-collapse: collapse;
+}
+
+table.laytable > tr > th, table.laytable > tbody > tr > th,
+table.laytable > tr > td, table.laytable > tbody > tr > td {
+	padding: 2px 2px 2px 2px;
+}
+
+table.laytable > tr:first-of-type > th, table.laytable > tbody > tr:first-of-type > th,
+table.laytable > tr:first-of-type > td, table.laytable > tbody > tr:first-of-type > td {
+	padding-top: 0px;
+}
+
+table.laytable > tr > th:first-of-type, table.laytable > tbody > tr > th:first-of-type,
+table.laytable > tr > td:first-of-type, table.laytable > tbody > tr > td:first-of-type {
+	padding-left: 0px;
+}
+
+table.laytable > tr:last-of-type > th, table.laytable > tbody > tr:last-of-type > th,
+table.laytable > tr:last-of-type > td, table.laytable > tbody > tr:last-of-type > td {
+	padding-bottom: 0px;
+}
+
+table.laytable > tr > th:last-of-type, table.laytable > tbody > tr > th:last-of-type,
+table.laytable > tr > td:last-of-type, table.laytable > tbody > tr > td:last-of-type {
+	padding-right: 0px;
+}
+
+/* --------------------------------------------------------------------- */
 
 table.tablebox, table.tablebox75 {
 	background-color: #EEEEEE;
@@ -334,6 +370,11 @@ div.tipdiv {
 	margin-top: 0.75em;
 }
 
+.floatrightws {
+	float: right;
+	margin: 0px 0px 0.5em 0.5em;
+}
+
 .big {
 	font-size: larger;
 }
@@ -350,6 +391,10 @@ div.tipdiv {
 .codetp { color: #008888; }
 .codecm { color: #008800; }
 .codest { color: #880000; }
+
+.codexml { } /* For automatic syntax highlighting */
+.codexmldecl { color: #008888; }
+.codexmltag { color: #880088; }
 
 /* --------------------------------------------------------------------- */
 
@@ -409,6 +454,11 @@ div.tipdiv {
 	margin: 96px auto 0px auto;
 	padding: 16px 16px 16px 16px;
 	background-color: #EEEEEE;
+}
+@media (max-height: 430px) {
+	#consent_dlg {
+		margin-top: 4px;
+	}
 }
 
 .consent_btn {

@@ -36,6 +36,7 @@ namespace KeePass.Util.Spr
 		PickChars = 0x2, // {PICKCHARS}, {PICKFIELD}
 		EntryStrings = 0x4,
 		EntryStringsSpecial = 0x8, // {URL:RMVSCM}, ...
+		EntryProperties = 0x200000, // {UUID}, ...
 		PasswordEnc = 0x10,
 		Group = 0x20,
 		Paths = 0x40, // App-dir, doc-dir, path sep, ...
@@ -55,8 +56,8 @@ namespace KeePass.Util.Spr
 		ExtActive = 0x4000, // Active transformations provided by plugins
 		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
-		// Next free: 0x200000
-		All = 0x1FFFFF,
+		// Next free: 0x400000
+		All = 0x3FFFFF,
 
 		// Internal:
 		UIInteractive = (SprCompileFlags.PickChars | SprCompileFlags.Run),

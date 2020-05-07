@@ -276,6 +276,7 @@ namespace KeePass.Ecas
 				catch(Exception) { Debug.Assert(false); }
 
 				strCmd = WinUtil.CompileUrl(strCmd, pe, true, null, false);
+				if(string.IsNullOrEmpty(strCmd)) return; // Might be placeholder only
 
 				ProcessStartInfo psi = new ProcessStartInfo();
 				psi.FileName = strCmd;

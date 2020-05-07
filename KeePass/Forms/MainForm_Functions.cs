@@ -143,7 +143,7 @@ namespace KeePass.Forms
 		private ImageList m_ilTabImages = null;
 
 		private bool m_bIsAutoTyping = false;
-		private bool m_bBlockTabChanged = false;
+		private uint m_uTabChangeBlocked = 0;
 		private uint m_uForceSave = 0;
 		private uint m_uUIBlocked = 0;
 		private uint m_uUnlockAutoBlocked = 0;
@@ -1090,12 +1090,12 @@ namespace KeePass.Forms
 				}
 			}
 
-			if(!pe.ForegroundColor.IsEmpty)
+			if(!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
 				lvi.ForeColor = pe.ForegroundColor;
 			else if(lviTarget != null) lvi.ForeColor = m_lvEntries.ForeColor;
 			else { Debug.Assert(UIUtil.ColorsEqual(lvi.ForeColor, m_lvEntries.ForeColor)); }
 
-			if(!pe.BackgroundColor.IsEmpty)
+			if(!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
 				lvi.BackColor = pe.BackgroundColor;
 			// else if(Program.Config.MainWindow.EntryListAlternatingBgColors &&
 			//	((m_lvEntries.Items.Count & 1) == 1))
@@ -1607,7 +1607,6 @@ namespace KeePass.Forms
 			// StrUtil.InitRtf(sb, strFontFace, fFontSize);
 
 			rb.Append(KPRes.Group, FontStyle.Bold, null, null, ":", " ");
-			int nGroupUrlStart = KPRes.Group.Length + 2;
 			PwGroup pg = pe.ParentGroup;
 			if(pg != null) rb.Append(pg.Name);
 
@@ -1692,14 +1691,10 @@ namespace KeePass.Forms
 			// The code that follows should not change the RTF
 #endif
 
-			UIUtil.RtfLinkifyReferences(m_richEntryView, false);
-
 			Debug.Assert(m_richEntryView.HideSelection); // Flicker otherwise
+
 			if(pg != null)
-			{
-				m_richEntryView.Select(nGroupUrlStart, pg.Name.Length);
-				UIUtil.RtfSetSelectionLink(m_richEntryView);
-			}
+				UIUtil.RtfLinkifyText(m_richEntryView, pg.Name, false);
 
 			// Linkify the URL
 			string strUrl = SprEngine.Compile(pe.Strings.ReadSafe(PwDefs.UrlField),
@@ -1710,6 +1705,8 @@ namespace KeePass.Forms
 			// Linkify the attachments
 			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in pe.Binaries)
 				UIUtil.RtfLinkifyText(m_richEntryView, kvpBin.Key, false);
+
+			UIUtil.RtfLinkifyReferences(m_richEntryView, false);
 
 			m_richEntryView.Select(0, 0);
 
@@ -3660,6 +3657,10 @@ namespace KeePass.Forms
 			ProtectedBinary pbMod = BinaryDataUtil.Open(ctx.Name, pb, ctx.Options);
 			if(pbMod != null)
 			{
+				PwDatabase pd = m_docMgr.FindContainerOf(pe);
+				Debug.Assert(object.ReferenceEquals(pd, this.ActiveDatabase));
+				pe.CreateBackup(pd);
+
 				pe.Binaries.Set(ctx.Name, pbMod);
 				pe.Touch(true, false);
 
@@ -3880,7 +3881,8 @@ namespace KeePass.Forms
 
 		private void RecreateUITabs()
 		{
-			m_bBlockTabChanged = true;
+			++m_uTabChangeBlocked;
+			m_tabMain.SuspendLayout();
 
 			m_tabMain.TabPages.Clear();
 
@@ -3899,6 +3901,7 @@ namespace KeePass.Forms
 			for(int i = 0; i < m_docMgr.Documents.Count; ++i)
 			{
 				PwDocument ds = m_docMgr.Documents[i];
+				if(ds == null) { Debug.Assert(false); continue; }
 
 				TabPage tb = new TabPage();
 				tb.Tag = ds;
@@ -3908,11 +3911,11 @@ namespace KeePass.Forms
 				tb.Text = strName;
 				tb.ToolTipText = strTip;
 
-				if((ds == null) || (ds.Database == null) || !ds.Database.IsOpen ||
-					UIUtil.ColorsEqual(ds.Database.Color, Color.Empty)) { }
-				else if(bImgs)
+				if(bImgs && (ds.Database != null) && ds.Database.IsOpen &&
+					!UIUtil.ColorsEqual(ds.Database.Color, Color.Empty))
 				{
-					Image img = UIUtil.CreateTabColorImage(ds.Database.Color, m_tabMain);
+					Image img = UIUtil.CreateTabColorImage(AppIcons.RoundColor(
+						ds.Database.Color), m_tabMain);
 					if(img != null)
 					{
 						m_lTabImages.Add(img);
@@ -3935,12 +3938,13 @@ namespace KeePass.Forms
 
 			// m_tabMain.SelectedTab.Font = m_fontBoldUI;
 
-			m_bBlockTabChanged = false;
+			m_tabMain.ResumeLayout();
+			--m_uTabChangeBlocked;
 		}
 
 		private void SelectUITab()
 		{
-			m_bBlockTabChanged = true;
+			++m_uTabChangeBlocked;
 
 			PwDocument dsSelect = m_docMgr.ActiveDocument;
 			foreach(TabPage tb in m_tabMain.TabPages)
@@ -3952,7 +3956,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			m_bBlockTabChanged = false;
+			--m_uTabChangeBlocked;
 		}
 
 		public void MakeDocumentActive(PwDocument ds)
@@ -3967,42 +3971,47 @@ namespace KeePass.Forms
 			UpdateUIState(false);
 		}
 
-		private void GetTabText(PwDocument dsInfo, out string strName,
-			out string strTip)
+		private void GetTabText(PwDocument ds, out string strName, out string strTip)
 		{
-			if(!IsFileLocked(dsInfo))
-			{
-				string strPath = dsInfo.Database.IOConnectionInfo.Path;
-				strName = UrlUtil.GetFileName(strPath);
+			if(ds == null) { Debug.Assert(false); strName = string.Empty; strTip = string.Empty; return; }
 
-				if(dsInfo.Database.Modified) strName += "*";
+			bool bLocked = IsFileLocked(ds);
+			PwDatabase pd = (bLocked ? null : ds.Database);
+			if((pd == null) || !pd.IsOpen) bLocked = true;
+			string strPath = (bLocked ? ds.LockedIoc.Path : pd.IOConnectionInfo.Path);
 
-				strTip = StrUtil.EncodeToolTipText(strPath);
-				if(dsInfo.Database.IsOpen)
-				{
-					if(dsInfo.Database.Name.Length != 0)
-						strTip += "\r\n" + StrUtil.EncodeToolTipText(
-							dsInfo.Database.Name);
-				}
-			}
-			else // Locked
+			strName = strPath;
+			// if(!Program.Config.MainWindow.ShowFullPathOnTab)
+			strName = UrlUtil.GetFileName(strName);
+
+			strTip = strPath;
+
+			if(bLocked) strName += " [" + KPRes.Locked + "]";
+			else
 			{
-				string strPath = dsInfo.LockedIoc.Path;
-				strName = UrlUtil.GetFileName(strPath);
-				strName += " [" + KPRes.Locked + "]";
-				strTip = StrUtil.EncodeToolTipText(strPath);
+				// if(Program.Config.MainWindow.ShowDatabaseNameOnTab && (pd.Name.Length != 0))
+				//	strName += " (" + pd.Name + ")";
+
+				if(pd.Modified) strName += "*";
+
+				if(pd.Name.Length != 0)
+					strTip += "\r\n\r\n" + pd.Name;
+				if(pd.Description.Length != 0)
+					strTip += "\r\n\r\n" + pd.Description;
 			}
+
+			strTip = StrUtil.EncodeToolTipText(strTip);
 		}
 
 		private void UpdateUITabs()
 		{
 			foreach(TabPage tp in m_tabMain.TabPages)
 			{
-				PwDocument ds = (PwDocument)tp.Tag;
+				PwDocument ds = (tp.Tag as PwDocument);
+				if(ds == null) { Debug.Assert(false); continue; }
 
 				string strName, strTip;
 				GetTabText(ds, out strName, out strTip);
-
 				tp.Text = strName;
 				tp.ToolTipText = strTip;
 			}
@@ -5518,9 +5527,10 @@ namespace KeePass.Forms
 			out Icon icoDisposable)
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
+
 			Color clrNew = Color.Empty;
-			if((pd == null) || !pd.IsOpen || pd.Color.IsEmpty || (pd.Color.A < 255)) { }
-			else clrNew = pd.Color;
+			if((pd != null) && pd.IsOpen && !UIUtil.ColorsEqual(pd.Color, Color.Empty))
+				clrNew = pd.Color;
 
 			if(UIUtil.ColorsEqual(clrNew, kvpStore.Key))
 			{
@@ -5548,9 +5558,9 @@ namespace KeePass.Forms
 		private Icon CreateColorizedIcon(AppIconType t, bool bSmall)
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
+
 			Color clr = Color.Empty;
-			if((pd == null) || !pd.IsOpen || pd.Color.IsEmpty || (pd.Color.A < 255)) { }
-			else clr = pd.Color;
+			if((pd != null) && pd.IsOpen) clr = pd.Color;
 
 			Size sz = (bSmall ? UIUtil.GetSmallIconSize() : UIUtil.GetIconSize());
 
@@ -6003,6 +6013,88 @@ namespace KeePass.Forms
 
 			RefreshEntriesList();
 			UpdateUIState(bMod);
+		}
+
+		internal void AddEntryEx(object sender, GFunc<PwEntry> fNewEntry,
+			Action<PwEntry> fAddPre, Action<PwEntry> fAddPost)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			PwGroup pg = GetSelectedGroup();
+			if((pg == null) || pg.IsVirtual)
+			{
+				MessageService.ShowWarning(KPRes.GroupCannotStoreEntries,
+					KPRes.SelectDifferentGroup);
+				return;
+			}
+
+			PwEntry pe;
+			if(fNewEntry != null)
+			{
+				pe = fNewEntry();
+				if(pe == null) { Debug.Assert(false); return; }
+			}
+			else
+			{
+				pe = new PwEntry(true, true);
+
+				pe.IconId = PwDefs.GroupIconToEntryIcon(pg.IconId);
+				pe.CustomIconUuid = pg.CustomIconUuid;
+			}
+
+			// Temporarily assume that the entry is in pg; required for retrieving
+			// the default auto-type sequence and other things
+			pe.ParentGroup = pg;
+
+			PwGroup pgT = EntryTemplates.GetTemplatesGroup(pd);
+			Debug.Assert(pe.ParentGroup != null);
+			if((pgT == null) || !pe.IsContainedIn(pgT)) // No auto. for new template
+			{
+				if(pe.Strings.GetSafe(PwDefs.UserNameField).IsEmpty)
+					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+						pd.MemoryProtection.ProtectUserName, pd.DefaultUserName));
+
+				if(pe.Strings.GetSafe(PwDefs.PasswordField).IsEmpty)
+					PwGeneratorUtil.GenerateAuto(pe, pd);
+
+				if(!pe.Expires)
+				{
+					int nExpireDays = Program.Config.Defaults.NewEntryExpiresInDays;
+					if(nExpireDays >= 0)
+					{
+						pe.Expires = true;
+						pe.ExpiryTime = DateTime.UtcNow.AddDays(nExpireDays);
+					}
+				}
+			}
+
+			if(fAddPre != null) fAddPre(pe);
+
+			bool bSelectFullTitle = !pe.Strings.GetSafe(PwDefs.TitleField).IsEmpty;
+
+			PwEntryForm pForm = new PwEntryForm();
+			pForm.InitEx(pe, PwEditMode.AddNewEntry, pd, m_ilCurrentIcons,
+				false, bSelectFullTitle);
+			if(UIUtil.ShowDialogAndDestroy(pForm) == DialogResult.OK)
+			{
+				pg.AddEntry(pe, true);
+				UpdateUI(false, null, pd.UINeedsIconUpdate, null, true,
+					null, true, m_lvEntries);
+
+				PwObjectList<PwEntry> lSelect = new PwObjectList<PwEntry>();
+				lSelect.Add(pe);
+				SelectEntries(lSelect, true, true);
+				EnsureVisibleSelected(false);
+				UpdateUIState(false);
+
+				if(Program.Config.Application.AutoSaveAfterEntryEdit)
+					SaveDatabase(pd, sender);
+
+				if(fAddPost != null) fAddPost(pe);
+			}
+			else UpdateUI(false, null, pd.UINeedsIconUpdate, null,
+				pd.UINeedsIconUpdate, null, false);
 		}
 	}
 }
