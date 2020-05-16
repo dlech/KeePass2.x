@@ -224,21 +224,23 @@ namespace KeePass.UI
 
 			try
 			{
-				if(string.IsNullOrEmpty(strLinkText)) return; // No assert
+				string strFind = StrUtil.RtfFilterText(strLinkText);
+				if(string.IsNullOrEmpty(strFind)) return;
+				if(strFind.Trim().Length == 0) return;
 
 				string strText = (rtb.Text ?? string.Empty);
 				int iOffset = 0;
 
 				while(iOffset < strText.Length)
 				{
-					int i = strText.IndexOf(strLinkText, iOffset);
+					int i = strText.IndexOf(strFind, iOffset);
 					if(i < iOffset) break;
 
-					rtb.Select(i, strLinkText.Length);
+					rtb.Select(i, strFind.Length);
 					RtfSetSelectionLink(rtb);
 
 					if(!bAll) break;
-					iOffset = i + strLinkText.Length;
+					iOffset = i + strFind.Length;
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -676,9 +678,9 @@ namespace KeePass.UI
 				for(int iCol = 1; iCol < vColumns.Count; ++iCol)
 					lvi.SubItems.Add(AppDefs.GetEntryField(pe, vColumns[iCol].Key));
 
-				if(!pe.ForegroundColor.IsEmpty)
+				if(!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
 					lvi.ForeColor = pe.ForegroundColor;
-				if(!pe.BackgroundColor.IsEmpty)
+				if(!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
 					lvi.BackColor = pe.BackgroundColor;
 
 				lvi.Tag = pe;
@@ -829,9 +831,9 @@ namespace KeePass.UI
 					lvi.SubItems.Add(ctx.Sequence);
 				Debug.Assert(lvi.SubItems.Count == lv.Columns.Count);
 
-				if(!pe.ForegroundColor.IsEmpty)
+				if(!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
 					lvi.ForeColor = pe.ForegroundColor;
-				if(!pe.BackgroundColor.IsEmpty)
+				if(!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
 					lvi.BackColor = pe.BackgroundColor;
 
 				lvi.Tag = ctx;
@@ -1021,7 +1023,7 @@ namespace KeePass.UI
 
 			dlg.AllowFullOpen = true;
 			dlg.AnyColor = true;
-			if(!clrDefault.IsEmpty) dlg.Color = clrDefault;
+			if(!UIUtil.ColorsEqual(clrDefault, Color.Empty)) dlg.Color = clrDefault;
 			dlg.FullOpen = true;
 			dlg.ShowHelp = false;
 			// dlg.SolidColorOnly = false;
@@ -1508,7 +1510,8 @@ namespace KeePass.UI
 					img = g_bmpCheck;
 
 					Color clrFG = tsmi.ForeColor;
-					if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+					if(!UIUtil.ColorsEqual(clrFG, Color.Empty) &&
+						(ColorToGrayscale(clrFG).R >= 128))
 					{
 						if(g_bmpCheckLight == null)
 						{
@@ -1557,7 +1560,8 @@ namespace KeePass.UI
 				Image imgCheck = Properties.Resources.B16x16_MenuRadio;
 
 				Color clrFG = tsmi.ForeColor;
-				if(!clrFG.IsEmpty && (ColorToGrayscale(clrFG).R >= 128))
+				if(!UIUtil.ColorsEqual(clrFG, Color.Empty) &&
+					(ColorToGrayscale(clrFG).R >= 128))
 				{
 					if(g_bmpRadioLight == null)
 						g_bmpRadioLight = GetGlyphBitmap(MenuGlyph.Bullet,
@@ -2640,7 +2644,7 @@ namespace KeePass.UI
 
 		public static Color ColorFromHsv(float fHue, float fSaturation, float fValue)
 		{
-			float d = fHue / 60;
+			float d = fHue / 60.0f;
 			float fl = (float)Math.Floor(d);
 			float f = d - fl;
 
@@ -2663,7 +2667,7 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return Color.Transparent;
+			return Color.Empty;
 		}
 
 		public static Bitmap IconToBitmap(Icon ico, int w, int h)

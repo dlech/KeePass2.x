@@ -19,17 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.Forms;
 using KeePass.Resources;
-using KeePass.UI;
 
 using KeePassLib;
-using KeePassLib.Collections;
+using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
 namespace KeePass.Util
@@ -51,122 +50,198 @@ namespace KeePass.Util
 
 	public static class EntryTemplates
 	{
-		private static ToolStripSplitButton m_btnItemsHost = null;
-		private static List<ToolStripItem> m_vToolStripItems = new List<ToolStripItem>();
+		private static ToolStripDropDownItem g_tsiHost = null;
+		private static List<ToolStripItem> g_lTopLevelItems = new List<ToolStripItem>();
 
 		public static event EventHandler<TemplateEntryEventArgs> EntryCreating;
 		public static event EventHandler<TemplateEntryEventArgs> EntryCreated;
 
 		public static void Init(ToolStripSplitButton btnHost)
 		{
+			Release();
 			if(btnHost == null) throw new ArgumentNullException("btnHost");
-			m_btnItemsHost = btnHost;
 
-			m_btnItemsHost.DropDownOpening += OnMenuOpening;
+			g_tsiHost = btnHost;
+			g_tsiHost.DropDownOpening += OnMenuOpening;
 		}
 
 		public static void Release()
 		{
-			if(m_btnItemsHost != null)
-			{
-				Clear();
-				m_btnItemsHost.DropDownOpening -= OnMenuOpening;
+			if(g_tsiHost == null) return;
 
-				m_btnItemsHost = null;
-			}
-		}
-
-		private static void AddSeparator()
-		{
-			ToolStripSeparator tsSep = new ToolStripSeparator();
-			m_btnItemsHost.DropDownItems.Add(tsSep);
-			m_vToolStripItems.Add(tsSep);
-		}
-
-		private static void AddItem(PwEntry pe)
-		{
-			if(pe == null) { Debug.Assert(false); return; }
-
-			string strText = StrUtil.EncodeMenuText(pe.Strings.ReadSafe(
-				PwDefs.TitleField));
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
-			tsmi.Tag = pe;
-			tsmi.Click += OnMenuExecute;
-
-			Image img = null;
-			PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
-			if(pd != null)
-			{
-				if(!pe.CustomIconUuid.Equals(PwUuid.Zero))
-					img = DpiUtil.GetIcon(pd, pe.CustomIconUuid);
-				if(img == null)
-				{
-					try { img = Program.MainForm.ClientIcons.Images[(int)pe.IconId]; }
-					catch(Exception) { Debug.Assert(false); }
-				}
-			}
-			if(img == null) img = Properties.Resources.B16x16_KGPG_Key1;
-			tsmi.Image = img;
-
-			m_btnItemsHost.DropDownItems.Add(tsmi);
-			m_vToolStripItems.Add(tsmi);
-		}
-
-		private static void AddEmpty()
-		{
-			AddSeparator();
-
-			ToolStripMenuItem tsmi = new ToolStripMenuItem("(" +
-				KPRes.TemplatesNotFound + ")");
-			tsmi.Click += OnMenuExecute; // Required for clean releasing
-			tsmi.Enabled = false;
-
-			m_btnItemsHost.DropDownItems.Add(tsmi);
-			m_vToolStripItems.Add(tsmi);
-		}
-
-		private static void Update()
-		{
 			Clear();
-			if(!UpdateEx()) AddEmpty();
-		}
 
-		private static bool UpdateEx()
-		{
-			PwDatabase pd = Program.MainForm.ActiveDatabase;
-			if(pd == null) { Debug.Assert(false); return false; }
-			if(pd.IsOpen == false) { Debug.Assert(false); return false; }
-			if(pd.EntryTemplatesGroup.Equals(PwUuid.Zero)) return false;
-
-			PwGroup pg = pd.RootGroup.FindGroup(pd.EntryTemplatesGroup, true);
-			if(pg == null) { Debug.Assert(false); return false; }
-			if(pg.Entries.UCount == 0) return false;
-
-			AddSeparator();
-			for(uint u = 0; u < Math.Min(pg.Entries.UCount, 30); ++u)
-			{
-				try { AddItem(pg.Entries.GetAt(u)); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-
-			return true;
+			g_tsiHost.DropDownOpening -= OnMenuOpening;
+			g_tsiHost = null;
 		}
 
 		private static void Clear()
 		{
-			int nCount = m_vToolStripItems.Count;
-			for(int i = 0; i < nCount; ++i)
+			int n = g_lTopLevelItems.Count;
+			if(n == 0) return;
+
+			BlockLayout(true);
+
+			ToolStripItemCollection tsic = g_tsiHost.DropDownItems;
+
+			// The following is very slow
+			// int iKnown = n - 1;
+			// for(int iMenu = tsic.Count - 1; iMenu >= 0; --iMenu)
+			// {
+			//	if(tsic[iMenu] == g_lTopLevelItems[iKnown])
+			//	{
+			//		tsic.RemoveAt(iMenu);
+			//		if(--iKnown < 0) break;
+			//	}
+			// }
+			// Debug.Assert(iKnown == -1);
+
+			List<ToolStripItem> lOthers = new List<ToolStripItem>();
+			int iKnown = 0;
+			for(int iMenu = 0; iMenu < tsic.Count; ++iMenu)
 			{
-				int j = nCount - i - 1;
-				ToolStripItem tsmi = m_vToolStripItems[j];
+				ToolStripItem tsi = tsic[iMenu];
+				if((iKnown < n) && (tsi == g_lTopLevelItems[iKnown])) ++iKnown;
+				else lOthers.Add(tsi);
+			}
+			Debug.Assert((iKnown == n) && ((lOthers.Count + n) == tsic.Count));
+			tsic.Clear();
+			tsic.AddRange(lOthers.ToArray()); // Restore others
 
-				if(tsmi is ToolStripMenuItem)
-					tsmi.Click -= OnMenuExecute;
+			g_lTopLevelItems.Clear();
 
-				m_btnItemsHost.DropDownItems.Remove(tsmi);
+			BlockLayout(false);
+		}
+
+		private static void BlockLayout(bool bBlock)
+		{
+			ToolStrip ts = ((g_tsiHost != null) ? g_tsiHost.Owner : null);
+			if(ts == null) { Debug.Assert(false); return; }
+
+			if(bBlock) ts.SuspendLayout();
+			else ts.ResumeLayout();
+		}
+
+		private static void OnMenuOpening(object sender, EventArgs e)
+		{
+			if(g_tsiHost == null) { Debug.Assert(false); return; }
+
+			PwGroup pg = GetTemplatesGroup(null);
+			if(pg == null) pg = new PwGroup();
+
+			BlockLayout(true);
+
+			Clear();
+
+			ToolStripSeparator s = new ToolStripSeparator();
+			g_tsiHost.DropDownItems.Add(s);
+			g_lTopLevelItems.Add(s);
+
+			List<ToolStripItem> l = CreateGroupItems(pg);
+			g_tsiHost.DropDownItems.AddRange(l.ToArray());
+			g_lTopLevelItems.AddRange(l);
+
+			BlockLayout(false);
+		}
+
+		internal static PwGroup GetTemplatesGroup(PwDatabase pdIn)
+		{
+			PwDatabase pd = (pdIn ?? Program.MainForm.ActiveDatabase);
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return null; }
+
+			PwUuid pu = pd.EntryTemplatesGroup;
+			if(pu.Equals(PwUuid.Zero)) return null;
+
+			return pd.RootGroup.FindGroup(pu, true);
+		}
+
+		private static Image GetImage(PwIcon ic, PwUuid puCustom)
+		{
+			MainForm mf = Program.MainForm;
+			PwDatabase pd = mf.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return null; }
+
+			ImageList il = mf.ClientIcons;
+			if(il == null) { Debug.Assert(false); return null; }
+
+			int i;
+			if(puCustom.Equals(PwUuid.Zero)) i = (int)ic;
+			else i = (int)PwIcon.Count + pd.GetCustomIconIndex(puCustom);
+
+			if((i < 0) || (i >= il.Images.Count)) { Debug.Assert(false); return null; }
+			return il.Images[i];
+		}
+
+		private static ToolStripMenuItem CreateEmptyItem()
+		{
+			ToolStripMenuItem tsmi = new ToolStripMenuItem("(" +
+				KPRes.TemplatesNotFound + ")");
+			tsmi.Enabled = false;
+			return tsmi;
+		}
+
+		private static List<ToolStripItem> CreateGroupItems(PwGroup pg)
+		{
+			List<ToolStripItem> l = new List<ToolStripItem>();
+
+			if(pg == null) { Debug.Assert(false); return l; }
+			if(g_tsiHost == null) { Debug.Assert(false); return l; }
+
+			bool bGroups = (pg.Groups.UCount != 0);
+			bool bEntries = (pg.Entries.UCount != 0);
+			if(!bGroups && !bEntries)
+			{
+				l.Add(CreateEmptyItem());
+				return l;
 			}
 
-			m_vToolStripItems.Clear();
+			foreach(PwGroup pgSub in pg.Groups)
+			{
+				string strText = StrUtil.EncodeMenuText(pgSub.Name);
+				ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
+				tsmi.Image = GetImage(pgSub.IconId, pgSub.CustomIconUuid);
+				tsmi.Tag = pgSub;
+
+				ToolStripMenuItem tsmiDynPlh = new ToolStripMenuItem("<>");
+				tsmi.DropDownItems.Add(tsmiDynPlh); // Ensure popup arrow
+
+				PwGroup pgSubCur = pgSub; // Copy the ref., as pgSub changes
+
+				tsmi.DropDownOpening += delegate(object sender, EventArgs e)
+				{
+					Debug.Assert(object.ReferenceEquals(sender, tsmi));
+					Debug.Assert(object.ReferenceEquals(tsmi.Tag, pgSubCur));
+
+					ToolStripItemCollection tsic = tsmi.DropDownItems;
+					if((tsic.Count == 1) && (tsic[0] == tsmiDynPlh))
+					{
+						BlockLayout(true);
+
+						tsic.Clear();
+						tsic.AddRange(CreateGroupItems(pgSubCur).ToArray());
+
+						BlockLayout(false);
+					}
+				};
+
+				l.Add(tsmi);
+			}
+
+			if(bGroups && bEntries) l.Add(new ToolStripSeparator());
+
+			foreach(PwEntry pe in pg.Entries)
+			{
+				string strText = StrUtil.EncodeMenuText(pe.Strings.ReadSafe(
+					PwDefs.TitleField));
+				ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
+				tsmi.Image = GetImage(pe.IconId, pe.CustomIconUuid);
+				tsmi.Tag = pe;
+				tsmi.Click += OnMenuExecute;
+
+				l.Add(tsmi);
+			}
+
+			return l;
 		}
 
 		private static void OnMenuExecute(object sender, EventArgs e)
@@ -174,64 +249,40 @@ namespace KeePass.Util
 			ToolStripMenuItem tsmi = (sender as ToolStripMenuItem);
 			if(tsmi == null) { Debug.Assert(false); return; }
 
-			CreateEntry(tsmi.Tag as PwEntry);
-		}
-
-		private static void OnMenuOpening(object sender, EventArgs e)
-		{
-			Update();
-		}
-
-		private static void CreateEntry(PwEntry peTemplate)
-		{
+			PwEntry peTemplate = (tsmi.Tag as PwEntry);
 			if(peTemplate == null) { Debug.Assert(false); return; }
 
-			PwDatabase pd = Program.MainForm.ActiveDatabase;
-			if(pd == null) { Debug.Assert(false); return; }
-			if(pd.IsOpen == false) { Debug.Assert(false); return; }
+			MainForm mf = Program.MainForm;
+			if(mf == null) { Debug.Assert(false); return; }
 
-			PwGroup pgContainer = Program.MainForm.GetSelectedGroup();
-			if(pgContainer == null) pgContainer = pd.RootGroup;
+			PwDatabase pd = mf.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
-			PwEntry pe = peTemplate.Duplicate();
-			pe.History.Clear();
+			// Ensure that the correct database is still active
+			if(pd != mf.DocumentManager.FindContainerOf(peTemplate)) return;
 
-			if(EntryTemplates.EntryCreating != null)
-				EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(
-					peTemplate.CloneDeep(), pe));
-
-			PwEntryForm pef = new PwEntryForm();
-			pef.InitEx(pe, PwEditMode.AddNewEntry, pd, Program.MainForm.ClientIcons,
-				false, true);
-
-			if(UIUtil.ShowDialogAndDestroy(pef) == DialogResult.OK)
+			GFunc<PwEntry> fNewEntry = delegate()
 			{
-				pgContainer.AddEntry(pe, true, true);
+				PwEntry pe = peTemplate.Duplicate();
+				pe.History.Clear();
+				return pe;
+			};
 
-				MainForm mf = Program.MainForm;
-				if(mf != null)
-				{
-					mf.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
-						true, null, true);
+			Action<PwEntry> fAddPre = delegate(PwEntry pe)
+			{
+				if(EntryTemplates.EntryCreating != null)
+					EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(
+						peTemplate.CloneDeep(), pe));
+			};
 
-					PwObjectList<PwEntry> lSelect = new PwObjectList<PwEntry>();
-					lSelect.Add(pe);
-					mf.SelectEntries(lSelect, true, true);
-
-					mf.EnsureVisibleSelected(false);
-					mf.UpdateUI(false, null, false, null, false, null, false);
-
-					if(Program.Config.Application.AutoSaveAfterEntryEdit)
-						mf.SaveDatabase(pd, null);
-				}
-				else { Debug.Assert(false); }
-
+			Action<PwEntry> fAddPost = delegate(PwEntry pe)
+			{
 				if(EntryTemplates.EntryCreated != null)
 					EntryTemplates.EntryCreated(null, new TemplateEntryEventArgs(
 						peTemplate.CloneDeep(), pe));
-			}
-			else Program.MainForm.UpdateUI(false, null, pd.UINeedsIconUpdate, null,
-				pd.UINeedsIconUpdate, null, false);
+			};
+
+			mf.AddEntryEx(null, fNewEntry, fAddPre, fAddPost);
 		}
 	}
 }

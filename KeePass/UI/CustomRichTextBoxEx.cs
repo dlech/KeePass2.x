@@ -82,6 +82,19 @@ namespace KeePass.UI
 			}
 		}
 
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.All)]
+		public override string Text
+		{
+			get { return base.Text; }
+			set
+			{
+				// TextBoxBase.Clear() sets Text to null
+				base.Text = (Program.DesignMode ? value :
+					StrUtil.RtfFilterText(value ?? string.Empty));
+			}
+		}
+
 		public CustomRichTextBoxEx() : base()
 		{
 			if(Program.DesignMode) return;
@@ -687,5 +700,26 @@ namespace KeePass.UI
 
 			base.OnLinkClicked(e);
 		}
+
+		/* protected override void OnSelectionChanged(EventArgs e)
+		{
+			base.OnSelectionChanged(e);
+
+			try
+			{
+				if((this.SelectionLength == 0) && Control.IsKeyLocked(Keys.Insert))
+				{
+					string str = (this.Text ?? string.Empty);
+					int i = this.SelectionStart;
+					if((i >= 0) && (i < str.Length))
+					{
+						char ch = str[i];
+						if((ch != '\r') && (ch != '\n') && !char.IsSurrogate(ch))
+							this.SelectionLength = 1;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 	}
 }

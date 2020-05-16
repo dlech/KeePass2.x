@@ -640,24 +640,6 @@
   <data name="B16x16_Imp_Enpass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\B16x16_Imp_Enpass.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="KeePass_G" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\KeePass_G.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="KeePass_R" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\KeePass_R.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="KeePass_Y" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\KeePass_Y.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="QuadNormal_G" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\QuadNormal_G.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="QuadNormal_R" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\QuadNormal_R.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="QuadNormal_Y" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\QuadNormal_Y.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="KeePass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\KeePass.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

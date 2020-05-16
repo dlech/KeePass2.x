@@ -119,10 +119,12 @@ namespace KeePassLib.Utility
 		// 2140:
 		//   Explicit control focusing is ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2140/
-		// 5795:
+		// 5795: [Fixed]
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d23dc88b/
+		//   https://github.com/mono/mono/commit/1a79065f8cd9f128e6e527e5d573111f794ce288
+		//   https://github.com/mono/mono/pull/5947
 		// 9604:
 		//   Trying to resolve a non-existing metadata token crashes Mono.
 		//   https://github.com/mono/mono/issues/9604
@@ -162,6 +164,10 @@ namespace KeePassLib.Utility
 		// 686017:
 		//   Minimum sizes must be enforced.
 		//   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
+		// 688007: [Fixed]
+		//   Credentials are required for anonymous web requests.
+		//   https://bugzilla.novell.com/show_bug.cgi?id=688007
+		//   https://sourceforge.net/p/keepass/bugs/1950/
 		// 801414:
 		//   Mono recreates the main window incorrectly.
 		//   https://bugs.launchpad.net/ubuntu/+source/keepass2/+bug/801414
@@ -192,13 +198,21 @@ namespace KeePassLib.Utility
 			if(g_dForceReq.TryGetValue(uBugID, out bForce)) return bForce;
 
 			ulong v = NativeLib.MonoVersion;
-			if(v != 0)
+			if(v == 0) return true;
+
+			bool b = true;
+			switch(uBugID)
 			{
-				if(uBugID == 10163)
-					return (v >= 0x0002000B00000000UL); // >= 2.11
+				case 5795:
+					b = (v < 0x0005000A00000000UL); break;
+				case 10163:
+					b = (v >= 0x0002000B00000000UL); break;
+				case 688007:
+					b = (v < 0x0006000000000000UL); break;
+				default: break;
 			}
 
-			return true;
+			return b;
 		}
 
 		internal static void SetEnabled(string strIDs, bool bEnabled)

@@ -175,6 +175,22 @@ namespace KeePass.App.Configuration
 			set { m_bFullPath = value; }
 		}
 
+		// private bool m_bFullPathOnTab = false;
+		// [DefaultValue(false)]
+		// public bool ShowFullPathOnTab
+		// {
+		//	get { return m_bFullPathOnTab; }
+		//	set { m_bFullPathOnTab = value; }
+		// }
+
+		// private bool m_bDbNameOnTab = false;
+		// [DefaultValue(false)]
+		// public bool ShowDatabaseNameOnTab
+		// {
+		//	get { return m_bDbNameOnTab; }
+		//	set { m_bDbNameOnTab = value; }
+		// }
+
 		private bool m_bDropToBackAfterCopy = false;
 		[DefaultValue(false)]
 		public bool DropToBackAfterClipboardCopy

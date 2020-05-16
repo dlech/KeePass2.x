@@ -21,8 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -34,6 +32,7 @@ using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Native;
 using KeePassLib.Utility;
 
@@ -62,38 +61,67 @@ namespace KeePass.UI
 		private readonly OwFilePathType m_tPath;
 		public OwFilePathType FilePathType { get { return m_tPath; } }
 
-		private readonly string m_strMenuText;
-		// public string MenuText { get { return m_strMenuText; } }
+		private readonly string m_strName;
+		public string Name { get { return m_strName; } }
 
 		private readonly Image m_imgIcon;
 		public Image Image { get { return m_imgIcon; } }
 
-		private readonly ToolStripMenuItem m_tsmi;
+		private readonly DynamicMenu m_dynMenu;
+
+		private ToolStripMenuItem m_tsmi = null;
 		public ToolStripMenuItem MenuItem { get { return m_tsmi; } }
 
 		public OpenWithItem(string strFilePath, OwFilePathType tPath,
-			string strMenuText, Image imgIcon, DynamicMenu dynMenu)
+			string strName, Image imgIcon, DynamicMenu dynMenu)
 		{
 			if(strFilePath == null) { Debug.Assert(false); throw new ArgumentNullException("strFilePath"); }
-			if(strMenuText == null) { Debug.Assert(false); throw new ArgumentNullException("strMenuText"); }
+			if(strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 			if(dynMenu == null) { Debug.Assert(false); throw new ArgumentNullException("dynMenu"); }
 
 			m_strPath = strFilePath;
 			m_tPath = tPath;
-			m_strMenuText = strMenuText;
+			m_strName = strName.Trim();
 			m_imgIcon = imgIcon;
+			m_dynMenu = dynMenu;
 
-			m_tsmi = dynMenu.AddItem(m_strMenuText, m_imgIcon, this);
+			if(m_strName.Length == 0)
+			{
+				Debug.Assert(false);
+				m_strName = m_strPath;
+				if(m_strName.Length == 0) m_strName = KPRes.Unknown;
+			}
+		}
+
+		public void AddMenuItem(List<char> lAvailKeys)
+		{
+			if(m_tsmi != null) { Debug.Assert(false); return; }
+
+			string strNameAccel = StrUtil.AddAccelerator(
+				StrUtil.EncodeMenuText(m_strName), lAvailKeys);
+
+			Debug.Assert(StrUtil.EncodeMenuText(KPRes.OpenWith) == KPRes.OpenWith);
+			string strText = KPRes.OpenWith.Replace(@"{PARAM}", strNameAccel);
+
+			m_tsmi = m_dynMenu.AddItem(strText, m_imgIcon, this);
 
 			try
 			{
-				string strTip = strFilePath;
+				string strTip = m_strPath;
 				if(strTip.StartsWith("cmd://", StrUtil.CaseIgnoreCmp))
 					strTip = strTip.Substring(6);
 
 				if(strTip.Length != 0) m_tsmi.ToolTipText = strTip;
 			}
 			catch(Exception) { Debug.Assert(false); } // Too long?
+		}
+
+		public static int CompareByName(OpenWithItem itA, OpenWithItem itB)
+		{
+			if(itA == null) { Debug.Assert(false); return ((itB == null) ? 0 : -1); }
+			if(itB == null) { Debug.Assert(false); return 1; }
+
+			return string.Compare(itA.Name, itB.Name, StrUtil.CaseIgnoreCmp);
 		}
 	}
 
@@ -174,8 +202,33 @@ namespace KeePass.UI
 			m_lOpenWith = new List<OpenWithItem>();
 			FindAppsByKnown();
 			FindAppsByRegistry();
+			FinishOpenWithList();
 
 			if(m_lOpenWith.Count == 0) m_dynMenu.Clear(); // Remove separator
+			else
+			{
+				List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+
+				// Remove keys that are used by non-dynamic menu items
+				foreach(ToolStripItem tsi in m_tsmiHost.DropDownItems)
+				{
+					string str = ((tsi != null) ? tsi.Text : null);
+					if(!string.IsNullOrEmpty(str))
+					{
+						str = str.Replace(@"&&", string.Empty);
+						int i = str.IndexOf('&');
+						Debug.Assert(i == str.LastIndexOf('&'));
+						if((i >= 0) && (i < (str.Length - 1)))
+						{
+							lAvailKeys.Remove(char.ToLowerInvariant(str[i + 1]));
+							lAvailKeys.Remove(char.ToUpperInvariant(str[i + 1]));
+						}
+					}
+				}
+
+				foreach(OpenWithItem it in m_lOpenWith)
+					it.AddMenuItem(lAvailKeys);
+			}
 		}
 
 		private void ReleaseOpenWithList()
@@ -244,9 +297,8 @@ namespace KeePass.UI
 			Image img = UIUtil.GetFileIcon(strPath, DpiUtil.ScaleIntX(16),
 				DpiUtil.ScaleIntY(16));
 
-			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
 			OpenWithItem owi = new OpenWithItem(strPath, OwFilePathType.Executable,
-				strMenuText, img, m_dynMenu);
+				strName, img, m_dynMenu);
 			m_lOpenWith.Add(owi);
 			return true;
 		}
@@ -256,24 +308,22 @@ namespace KeePass.UI
 		{
 			if(string.IsNullOrEmpty(strShell)) return;
 
-			if(string.IsNullOrEmpty(strName))
-				strName = strShell;
+			if(string.IsNullOrEmpty(strName)) strName = strShell;
 
 			Image img = null;
 			if(!string.IsNullOrEmpty(strIconExe))
 				img = UIUtil.GetFileIcon(strIconExe, DpiUtil.ScaleIntX(16),
 					DpiUtil.ScaleIntY(16));
 
-			string strMenuText = KPRes.OpenWith.Replace(@"{PARAM}", strName);
 			OpenWithItem owi = new OpenWithItem(strShell, OwFilePathType.ShellExpand,
-				strMenuText, img, m_dynMenu);
+				strName, img, m_dynMenu);
 			m_lOpenWith.Add(owi);
 		}
 
 		private void FindAppsByKnown()
 		{
 			string strIE = AppLocator.InternetExplorerPath;
-			if(AddAppByFile(strIE, @"&Internet Explorer"))
+			if(AddAppByFile(strIE, "Internet Explorer"))
 			{
 				// https://msdn.microsoft.com/en-us/library/hh826025.aspx
 				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
@@ -281,12 +331,8 @@ namespace KeePass.UI
 					"Internet Explorer (" + KPRes.Private + ")", strIE);
 			}
 
-			if(AppLocator.EdgeProtocolSupported)
-				AddAppByShellExpand("microsoft-edge:" + PlhTargetUri, @"&Edge",
-					AppLocator.EdgePath);
-
 			string strFF = AppLocator.FirefoxPath;
-			if(AddAppByFile(strFF, @"&Firefox"))
+			if(AddAppByFile(strFF, "Firefox"))
 			{
 				// The command line options -private and -private-window work
 				// correctly with Firefox 49.0.1 (before, they did not);
@@ -299,7 +345,7 @@ namespace KeePass.UI
 			}
 
 			string strCh = AppLocator.ChromePath;
-			if(AddAppByFile(strCh, @"&Google Chrome"))
+			if(AddAppByFile(strCh, "Google Chrome"))
 			{
 				// https://www.chromium.org/developers/how-tos/run-chromium-with-flags
 				// https://peter.sh/experiments/chromium-command-line-switches/
@@ -309,7 +355,7 @@ namespace KeePass.UI
 			}
 
 			string strOp = AppLocator.OperaPath;
-			if(AddAppByFile(strOp, @"O&pera"))
+			if(AddAppByFile(strOp, "Opera"))
 			{
 				// Doesn't work with Opera 34.0.2036.25:
 				// AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
@@ -327,17 +373,17 @@ namespace KeePass.UI
 					"Opera (" + KPRes.Private + ")", strOp);
 			}
 
-			AddAppByFile(AppLocator.SafariPath, @"&Safari");
+			AddAppByFile(AppLocator.SafariPath, "Safari");
 
 			if(NativeLib.IsUnix())
 			{
-				AddAppByFile(AppLocator.FindAppUnix("epiphany-browser"), @"&Epiphany");
-				AddAppByFile(AppLocator.FindAppUnix("galeon"), @"Ga&leon");
-				AddAppByFile(AppLocator.FindAppUnix("konqueror"), @"&Konqueror");
-				AddAppByFile(AppLocator.FindAppUnix("rekonq"), @"&Rekonq");
-				AddAppByFile(AppLocator.FindAppUnix("arora"), @"&Arora");
-				AddAppByFile(AppLocator.FindAppUnix("midori"), @"&Midori");
-				AddAppByFile(AppLocator.FindAppUnix("Dooble"), @"&Dooble"); // Upper-case
+				AddAppByFile(AppLocator.FindAppUnix("epiphany-browser"), "Epiphany");
+				AddAppByFile(AppLocator.FindAppUnix("galeon"), "Galeon");
+				AddAppByFile(AppLocator.FindAppUnix("konqueror"), "Konqueror");
+				AddAppByFile(AppLocator.FindAppUnix("rekonq"), "Rekonq");
+				AddAppByFile(AppLocator.FindAppUnix("arora"), "Arora");
+				AddAppByFile(AppLocator.FindAppUnix("midori"), "Midori");
+				AddAppByFile(AppLocator.FindAppUnix("Dooble"), "Dooble"); // Upper-case
 			}
 		}
 
@@ -392,6 +438,56 @@ namespace KeePass.UI
 			}
 
 			kRoot.Close();
+		}
+
+		private void FinishOpenWithList()
+		{
+			OpenWithItem itEdge = null; // New (Chromium-based) Edge
+			OpenWithItem itVivaldi = null;
+			foreach(OpenWithItem it in m_lOpenWith)
+			{
+				if(it.FilePathType != OwFilePathType.Executable) continue;
+
+				string strFile = it.FilePath;
+				if((strFile.IndexOf("\\Microsoft", StrUtil.CaseIgnoreCmp) >= 0) &&
+					strFile.EndsWith("\\msedge.exe", StrUtil.CaseIgnoreCmp))
+				{
+					if((itEdge == null) || it.Name.Equals("Microsoft Edge", StrUtil.CaseIgnoreCmp))
+						itEdge = it;
+					else { Debug.Assert(false); } // Duplicate?
+				}
+				else if(strFile.EndsWith("\\vivaldi.exe", StrUtil.CaseIgnoreCmp))
+				{
+					if((itVivaldi == null) || it.Name.Equals("Vivaldi", StrUtil.CaseIgnoreCmp))
+						itVivaldi = it;
+					else { Debug.Assert(false); } // Duplicate?
+				}
+			}
+
+			if(itEdge != null)
+			{
+				// The legacy Edge (EdgeHTML) doesn't register itself in the
+				// 'StartMenuInternet' registry key, whereas the new one
+				// (Chromium) does; so, the one that we found must be the
+				// new Edge, which supports a command line option for the
+				// private mode
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					itEdge.FilePath) + "\" --inprivate \"" + PlhTargetUri + "\"",
+					itEdge.Name + " (" + KPRes.Private + ")", itEdge.FilePath);
+			}
+			else // Add the legacy Edge (EdgeHTML), if available
+			{
+				if(AppLocator.EdgeProtocolSupported)
+					AddAppByShellExpand("microsoft-edge:" + PlhTargetUri,
+						"Microsoft Edge", AppLocator.EdgePath);
+			}
+
+			if(itVivaldi != null)
+				AddAppByShellExpand("cmd://\"" + SprEncoding.EncodeForCommandLine(
+					itVivaldi.FilePath) + "\" --incognito \"" + PlhTargetUri + "\"",
+					itVivaldi.Name + " (" + KPRes.Private + ")", itVivaldi.FilePath);
+
+			m_lOpenWith.Sort(OpenWithItem.CompareByName);
 		}
 	}
 }

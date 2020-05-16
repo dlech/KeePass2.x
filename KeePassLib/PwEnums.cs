@@ -235,28 +235,28 @@ namespace KeePassLib
 		None = 0,
 
 		/// <summary>
-		/// The IO connection is being opened for reading.
+		/// The I/O connection is being opened for reading.
 		/// </summary>
 		Read = 1,
 
 		/// <summary>
-		/// The IO connection is being opened for writing.
+		/// The I/O connection is being opened for writing.
 		/// </summary>
 		Write = 2,
 
 		/// <summary>
-		/// The IO connection is being opened for testing
+		/// The I/O connection is being opened for testing
 		/// whether a file/object exists.
 		/// </summary>
 		Exists = 3,
 
 		/// <summary>
-		/// The IO connection is being opened for deleting a file/object.
+		/// The I/O connection is being opened for deleting a file/object.
 		/// </summary>
 		Delete = 4,
 
 		/// <summary>
-		/// The IO connection is being opened for renaming/moving a file/object.
+		/// The I/O connection is being opened for renaming/moving a file/object.
 		/// </summary>
 		Move = 5
 	}

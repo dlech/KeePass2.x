@@ -810,19 +810,19 @@ namespace KeePass.Util.XmlSerialization
 				switch(xr.LocalName)
 				{
 					case "HotKeyGlobalAutoType":
-						o.HotKeyGlobalAutoType = ReadUInt64(xr);
+						o.HotKeyGlobalAutoType = ReadInt64(xr);
 						break;
 					case "HotKeyGlobalAutoTypePassword":
-						o.HotKeyGlobalAutoTypePassword = ReadUInt64(xr);
+						o.HotKeyGlobalAutoTypePassword = ReadInt64(xr);
 						break;
 					case "HotKeySelectedAutoType":
-						o.HotKeySelectedAutoType = ReadUInt64(xr);
+						o.HotKeySelectedAutoType = ReadInt64(xr);
 						break;
 					case "HotKeyShowWindow":
-						o.HotKeyShowWindow = ReadUInt64(xr);
+						o.HotKeyShowWindow = ReadInt64(xr);
 						break;
 					case "HotKeyEntryMenu":
-						o.HotKeyEntryMenu = ReadUInt64(xr);
+						o.HotKeyEntryMenu = ReadInt64(xr);
 						break;
 					case "CheckHotKeys":
 						o.CheckHotKeys = ReadBoolean(xr);

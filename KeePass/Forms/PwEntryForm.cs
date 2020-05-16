@@ -446,15 +446,15 @@ namespace KeePass.Forms
 			m_clrForeground = m_pwEntry.ForegroundColor;
 			m_clrBackground = m_pwEntry.BackgroundColor;
 
-			if(m_clrForeground != Color.Empty)
+			if(!UIUtil.ColorsEqual(m_clrForeground, Color.Empty))
 				UIUtil.OverwriteButtonImage(m_btnPickFgColor, ref m_imgColorFg,
 					UIUtil.CreateColorBitmap24(m_btnPickFgColor, m_clrForeground));
-			if(m_clrBackground != Color.Empty)
+			if(!UIUtil.ColorsEqual(m_clrBackground, Color.Empty))
 				UIUtil.OverwriteButtonImage(m_btnPickBgColor, ref m_imgColorBg,
 					UIUtil.CreateColorBitmap24(m_btnPickBgColor, m_clrBackground));
 
-			m_cbCustomForegroundColor.Checked = (m_clrForeground != Color.Empty);
-			m_cbCustomBackgroundColor.Checked = (m_clrBackground != Color.Empty);
+			m_cbCustomForegroundColor.Checked = !UIUtil.ColorsEqual(m_clrForeground, Color.Empty);
+			m_cbCustomBackgroundColor.Checked = !UIUtil.ColorsEqual(m_clrBackground, Color.Empty);
 
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
 			if(Program.Translation.Properties.RightToLeft)
@@ -467,7 +467,8 @@ namespace KeePass.Forms
 			UIUtil.StrDictListInit(m_lvCustomData);
 			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData);
 
-			m_tbUuid.Text = m_pwEntry.Uuid.ToHexString();
+			m_tbUuid.Text = m_pwEntry.Uuid.ToHexString() + ", " +
+				Convert.ToBase64String(m_pwEntry.Uuid.UuidBytes);
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{

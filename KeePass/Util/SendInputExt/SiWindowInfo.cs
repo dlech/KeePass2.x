@@ -180,9 +180,17 @@ namespace KeePass.Util.SendInputExt
 					// https://sourceforge.net/p/keepass/bugs/1588/
 					"VMRC",
 
+					// VMware Horizon Client;
+					// https://sourceforge.net/p/keepass/discussion/329221/thread/f9c025af4b/
+					"VMware-View",
+
 					// Dameware Mini Remote Control;
 					// https://sourceforge.net/p/keepass/bugs/1874/
-					"DWRCC"
+					"DWRCC",
+
+					// Kaseya Live Connect;
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/85c109edb6/
+					"KaseyaLiveConnect"
 				};
 			foreach(string str in g_vProcessNamesVMs)
 			{

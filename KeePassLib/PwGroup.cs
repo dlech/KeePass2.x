@@ -1725,7 +1725,7 @@ namespace KeePassLib
 			{
 				Dictionary<string, bool> d = new Dictionary<string, bool>();
 
-				GAction<string> fAdd = delegate(string str)
+				Action<string> fAdd = delegate(string str)
 				{
 					if(!string.IsNullOrEmpty(str)) d[str] = true;
 				};

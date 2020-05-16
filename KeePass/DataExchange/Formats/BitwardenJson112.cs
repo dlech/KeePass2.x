@@ -67,6 +67,7 @@ namespace KeePass.DataExchange.Formats
 			Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
 			JsonObject[] vGroups = jo.GetValueArray<JsonObject>("folders");
 			if(vGroups != null) ImportGroups(vGroups, dGroups, pd);
+			dGroups[string.Empty] = pd.RootGroup; // Also when vGroups is null
 
 			JsonObject[] vEntries = jo.GetValueArray<JsonObject>("items");
 			if(vEntries != null) ImportEntries(vEntries, dGroups, pd);
@@ -88,8 +89,6 @@ namespace KeePass.DataExchange.Formats
 				pd.RootGroup.AddGroup(pg, true);
 				dGroups[strID] = pg;
 			}
-
-			dGroups[string.Empty] = pd.RootGroup;
 		}
 
 		private static void ImportEntries(JsonObject[] vEntries,

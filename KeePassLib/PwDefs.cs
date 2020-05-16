@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net;
 using System.Xml.Serialization;
 
 using KeePassLib.Delegates;
@@ -55,18 +56,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x022C0000;
+		public static readonly uint Version32 = 0x022D0000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002002C00000000UL;
+		public static readonly ulong FileVersion64 = 0x0002002D00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.44";
+		public static readonly string VersionString = "2.45";
 
 		public static readonly string Copyright = @"Copyright © 2003-2020 Dominik Reichl";
 
@@ -186,6 +187,8 @@ namespace KeePassLib
 		/// should be updated.
 		/// </summary>
 		internal const int UIUpdateDelay = 50;
+
+		internal const uint QualityBitsWeak = 79;
 
 		/// <summary>
 		/// Check if a name is a standard field name.
@@ -507,13 +510,13 @@ namespace KeePassLib
 
 	public sealed class ObjectTouchedEventArgs : EventArgs
 	{
-		private object m_o;
+		private readonly object m_o;
 		public object Object { get { return m_o; } }
 
-		private bool m_bModified;
+		private readonly bool m_bModified;
 		public bool Modified { get { return m_bModified; } }
 
-		private bool m_bParentsTouched;
+		private readonly bool m_bParentsTouched;
 		public bool ParentsTouched { get { return m_bParentsTouched; } }
 
 		public ObjectTouchedEventArgs(object o, bool bModified,
@@ -527,13 +530,13 @@ namespace KeePassLib
 
 	public sealed class IOAccessEventArgs : EventArgs
 	{
-		private IOConnectionInfo m_ioc;
+		private readonly IOConnectionInfo m_ioc;
 		public IOConnectionInfo IOConnectionInfo { get { return m_ioc; } }
 
-		private IOConnectionInfo m_ioc2;
+		private readonly IOConnectionInfo m_ioc2;
 		public IOConnectionInfo IOConnectionInfo2 { get { return m_ioc2; } }
 
-		private IOAccessType m_t;
+		private readonly IOAccessType m_t;
 		public IOAccessType Type { get { return m_t; } }
 
 		public IOAccessEventArgs(IOConnectionInfo ioc, IOConnectionInfo ioc2,
@@ -542,6 +545,21 @@ namespace KeePassLib
 			m_ioc = ioc;
 			m_ioc2 = ioc2;
 			m_t = t;
+		}
+	}
+
+	public sealed class IOWebRequestEventArgs : EventArgs
+	{
+		private readonly WebRequest m_wr;
+		public WebRequest Request { get { return m_wr; } }
+
+		private readonly IOConnectionInfo m_ioc;
+		public IOConnectionInfo IOConnectionInfo { get { return m_ioc; } }
+
+		public IOWebRequestEventArgs(WebRequest r, IOConnectionInfo ioc)
+		{
+			m_wr = r;
+			m_ioc = ioc;
 		}
 	}
 }

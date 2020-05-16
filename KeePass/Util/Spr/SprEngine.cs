@@ -158,6 +158,10 @@ namespace KeePass.Util.Spr
 				if((ctx.Flags & SprCompileFlags.EntryStringsSpecial) != SprCompileFlags.None)
 					str = FillEntryStringsSpecial(str, ctx, uRecursionLevel);
 
+				if(((ctx.Flags & SprCompileFlags.EntryProperties) != SprCompileFlags.None) &&
+					(str.IndexOf(@"{UUID}", SprEngine.ScMethod) >= 0))
+					str = Fill(str, @"{UUID}", ctx.Entry.Uuid.ToHexString(), ctx, null);
+
 				if(((ctx.Flags & SprCompileFlags.PasswordEnc) != SprCompileFlags.None) &&
 					(str.IndexOf(@"{PASSWORD_ENC}", SprEngine.ScMethod) >= 0))
 				{

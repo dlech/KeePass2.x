@@ -841,6 +841,7 @@
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
+    <Compile Include="UI\IconColorizer.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
     <Compile Include="UI\ImageComboBoxEx.cs">
       <SubType>Component</SubType>
@@ -1173,7 +1174,8 @@
     <Compile Include="Util\XmlSerialization\XmlSerializerEx.Gen.cs" />
     <Compile Include="Util\XmlUtil.cs" />
     <Compile Include="Util\XmlSerialization\XmlSerializerEx.cs" />
-    <Compile Include="Util\XmlUtil.XmlReplace.cs" />
+    <Compile Include="Util\XmlUtil.Merge.cs" />
+    <Compile Include="Util\XmlUtil.Replace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -1303,12 +1305,6 @@
     <None Include="Resources\Images\B16x16_Imp_Chrome.png" />
     <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />
-    <None Include="Resources\Icons\QuadNormal_Y.ico" />
-    <None Include="Resources\Icons\QuadNormal_R.ico" />
-    <None Include="Resources\Icons\QuadNormal_G.ico" />
-    <None Include="Resources\Icons\KeePass_Y.ico" />
-    <None Include="Resources\Icons\KeePass_R.ico" />
-    <None Include="Resources\Icons\KeePass_G.ico" />
     <None Include="Resources\Images\B16x16_Imp_Enpass.png" />
     <None Include="Resources\Images\B16x16_Imp_MSecure.png" />
     <None Include="Resources\Images\B16x16_Imp_PwSaver.png" />

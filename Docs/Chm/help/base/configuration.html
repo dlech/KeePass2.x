@@ -26,6 +26,7 @@
 	<title>Configuration - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
 	
 </head>
 <body>
@@ -126,91 +127,19 @@ over the configuration file on the portable device.</p>
 <h2 class="sectiontitle"><img src="../images/b16x16_server.png" alt="Server" />
 For Network Administrators: Enforced Configuration</h2>
 
-<p>KeePass can be forced to load specific configuration settings. Enforced configuration
-settings are loaded from
-<code>KeePass.enforced.ini</code> (KeePass 1.x) and <code>KeePass.config.enforced.xml</code>
-(KeePass 2.x) files in the application directory (where <code>KeePass.exe</code> is
-stored).</p>
+<p>Settings in an <dfn>enforced configuration file</dfn>
+take precedence over settings in global and local
+configuration files.</p>
 
-<p>Configuration items that are not present in the enforced configuration file are
-loaded normally from global/local configuration files.</p>
+<p>This feature is intended primarily for network administrators
+who want to enforce certain settings for users of a shared
+KeePass installation.</p>
 
-<table class="laytable" cellpadding="0" cellspacing="0">
-<tr><td>
-<b>Example (2.x).</b>
-The following <code>KeePass.config.enforced.xml</code> file enforces the
-values/states of the settings 'Clipboard auto-clear time (seconds)',
-'Lock workspace when minimizing main window' and
-'Lock workspace when locking the computer or switching the user'.
-All other settings can be configured by the user.
+<p>For details, please see the
+<a href="https://keepass.info/help/kb/config_enf.html" target="_blank">Enforced Configuration</a>
+help page.</p>
 
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;Configuration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-	&lt;Security&gt;
-		&lt;WorkspaceLocking&gt;
-			&lt;LockOnWindowMinimize&gt;true&lt;/LockOnWindowMinimize&gt;
-			&lt;LockOnSessionSwitch&gt;true&lt;/LockOnSessionSwitch&gt;
-		&lt;/WorkspaceLocking&gt;
-		&lt;ClipboardClearAfterSeconds&gt;20&lt;/ClipboardClearAfterSeconds&gt;
-	&lt;/Security&gt;
-&lt;/Configuration&gt;</pre></td>
-<td style="width: 210px; text-align: right;">
-<a href="../images/options_enf_big.png"><img
-src="../images/options_enf.png" alt="Enforced Options" /></a>
-</td></tr></table>
-
-<p><b>UI disabled.</b>
-KeePass 2.x disables most user interface items that are enforced.
-This can be seen in the screenshot for the example above:
-the enforced settings are drawn using
-gray text and clicking on them has no effect.</p>
-
-<p><b>Security.</b>
-Users must not have write access to the enforced configuration file
-(otherwise they could modify it, e.g. using a text editor).</p>
-
-<p>Furthermore, this method only is effective as long as your users run the KeePass
-installation on the network drive. If they copy KeePass to their hard drives and
-run it from there, the options you set are not enforced (the local KeePass
-installation doesn't know anything of the enforced configuration file on the network drive
-in this case).</p>
-
-<!-- Configuration items that are not present in the enforced configuration file are
-set to their default values. -->
-
-
-All data nodes (leaf nodes) are optional, however preceding non-leaf nodes <i>with
-the same tag name</i> in parent
-nodes of data leafs that you want to enforce are mandatory. For example, to
-enforce hiding user names and passwords using asterisks by default,
-the enforced configuration file would look like the following:
-
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;Configuration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-	&lt;MainWindow&gt;
-		&lt;EntryListColumnCollection&gt;
-			<b>&lt;Column /&gt;</b>
-			&lt;Column&gt;
-				&lt;Type&gt;UserName&lt;/Type&gt;
-				&lt;HideWithAsterisks&gt;true&lt;/HideWithAsterisks&gt;
-			&lt;/Column&gt;
-			&lt;Column&gt;
-				&lt;Type&gt;Password&lt;/Type&gt;
-				&lt;HideWithAsterisks&gt;true&lt;/HideWithAsterisks&gt;
-			&lt;/Column&gt;
-		&lt;/EntryListColumnCollection&gt;
-	&lt;/MainWindow&gt;
-&lt;/Configuration&gt;</pre>
-
-In this example, the empty <code>&lt;Column /&gt;</code> non-leaf node
-(representing the title field)
-has the same tag name as the following sibling nodes (&quot;Column&quot;),
-and therefore is required.
-
-
-<br /><br />
+<br />
 
 <a name="tech"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />

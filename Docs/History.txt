@@ -1,3 +1,79 @@
+2020-05-07: 2.45
+- Added support for opening URLs with the new (Chromium-based)
+  Microsoft Edge in private mode
+- Added support for opening URLs with Vivaldi in private mode
+- Added automatic assignment of mnemonics for 'Open with ...'
+  commands in the 'URL(s)' menu
+- The entry templates menu now supports showing templates that
+  are stored in subgroups of the templates group; each subgroup
+  is displayed as a submenu
+- When adding a new entry based on a template that has an empty
+  user name, the user name is now set to the default user name
+  of the database, unless the new entry is stored in the
+  templates group
+- When adding a new entry based on a template that has an empty
+  password, a random password is generated now (based on the
+  password generator profile 'Automatically generated passwords
+  for new entries'), unless the new entry is stored in the
+  templates group
+- When adding a new entry based on a template that does not
+  expire, the expiry date is now set based on the option 'By
+  default, new entries expire in the following number of days'
+  (in 'Tools' -> 'Options' -> tab 'Security'), unless the new
+  entry is stored in the templates group
+- New icon recoloring (with high DPI support, by deconstructing
+  an ICO, modifying BMP palettes and data, and assembling a new
+  ICO); there are 24 database colors now
+- Added {UUID} placeholder, which is replaced by the UUID of
+  the current entry
+- The UUID of a group is now displayed in the group editing
+  dialog (tab 'General')
+- When specifying a weak master password in the master key
+  creation dialog, KeePass now shows a warning
+- Triggers: added string comparison mode 'Matches regular
+  expression'
+- Enforced configuration: added support for attributes that
+  allow to specify the desired merge behavior
+- Enforced configuration: for most lists, node keys are now
+  used to find corresponding list items
+- Plugins: added I/O connection event for customizing web
+  requests
+- Added workaround for Mono pre-authenticated anonymous web
+  request bug
+
+- Auto-Type: improved compatibility with VMware Horizon Client
+  and Kaseya Live Connect
+- Enhanced detection of Microsoft Edge
+- The 'Open with ...' commands in the 'URL(s)' menu are sorted
+  now
+- Improved performance of the entry templates menu; removed
+  limitation to 30 templates
+- Database descriptions are now displayed in file tab tooltips
+- When editing an attachment directly from the main window, a
+  history entry is created now
+- UUIDs in the group and entry editing dialogs are now
+  displayed both in hexadecimal and base 64 form
+- Improved Bitwarden import module to support JSON files
+  without groups
+- If the trigger system is disabled using an enforced
+  configuration file, most controls in the triggers dialog are
+  disabled now, too
+- Plugins: an I/O access event is now raised when checking the
+  existence of a local database file
+- In texts that are about to be displayed in a rich text box,
+  U+FFFC characters are now replaced by question marks (in
+  order to avoid the text being cut off at this point)
+- When running on Mono 5.10 or higher, a monospaced font is
+  used in password text boxes by default again, as the Mono bug
+  5795 has been fixed
+- Various code optimizations
+- Minor other improvements
+
+- Fixed a default value type problem in the hot key
+  configuration settings
+- Database file tab colors are now rounded to the nearest
+  supported colors
+
 2020-01-20: 2.44
 - Added option 'Use file transactions for writing configuration
   settings' (turned on by default)

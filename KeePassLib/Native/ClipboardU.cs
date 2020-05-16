@@ -27,7 +27,7 @@ namespace KeePassLib.Native
 {
 	internal static class ClipboardU
 	{
-		private const string XSel = "xsel";
+		internal const string XSel = "xsel";
 		private const string XSelV = "--version";
 		private const string XSelR = "--output --clipboard";
 		private const string XSelC = "--clear --clipboard";

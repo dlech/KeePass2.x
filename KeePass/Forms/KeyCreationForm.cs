@@ -22,14 +22,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -190,32 +187,23 @@ namespace KeePass.Forms
 			{
 				if(!m_icgPassword.ValidateData(true)) return false;
 
-				uint uPwLen = (uint)m_tbPassword.TextLength;
-				if(uPwLen == 0)
-				{
-					if(!MessageService.AskYesNo(KPRes.EmptyMasterPw +
-						MessageService.NewParagraph + KPRes.EmptyMasterPwHint +
-						MessageService.NewParagraph + KPRes.EmptyMasterPwQuestion,
-						null, false))
-					{
-						return false;
-					}
-				}
-
-				uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;
-				if(uPwLen < uMinLen)
-				{
-					string strML = KPRes.MasterPasswordMinLengthFailed;
-					strML = strML.Replace(@"{PARAM}", uMinLen.ToString());
-					MessageService.ShowWarning(strML);
-					return false;
-				}
-
 				byte[] pb = m_icgPassword.GetPasswordUtf8();
 				try
 				{
+					uint uPwLen = (uint)m_tbPassword.TextLength;
+					uint uPwBits = QualityEstimation.EstimatePasswordBits(pb);
+
+					uint uMinLen = Program.Config.Security.MasterPassword.MinimumLength;
+					if(uPwLen < uMinLen)
+					{
+						string strML = KPRes.MasterPasswordMinLengthFailed;
+						strML = strML.Replace(@"{PARAM}", uMinLen.ToString());
+						MessageService.ShowWarning(strML);
+						return false;
+					}
+
 					uint uMinQual = Program.Config.Security.MasterPassword.MinimumQuality;
-					if(QualityEstimation.EstimatePasswordBits(pb) < uMinQual)
+					if(uPwBits < uMinQual)
 					{
 						string strMQ = KPRes.MasterPasswordMinQualityFailed;
 						strMQ = strMQ.Replace(@"{PARAM}", uMinQual.ToString());
@@ -229,6 +217,24 @@ namespace KeePass.Forms
 					{
 						MessageService.ShowWarning(strValRes);
 						return false;
+					}
+
+					if(uPwLen == 0)
+					{
+						if(!MessageService.AskYesNo(KPRes.EmptyMasterPw +
+							MessageService.NewParagraph + KPRes.EmptyMasterPwHint +
+							MessageService.NewParagraph + KPRes.EmptyMasterPwQuestion,
+							null, false))
+							return false;
+					}
+
+					if(uPwBits <= PwDefs.QualityBitsWeak)
+					{
+						string strMQ = KPRes.MasterPasswordWeak + MessageService.NewParagraph +
+							KPRes.MasterPasswordConfirm;
+						if(!MessageService.AskYesNo(strMQ, null, false,
+							MessageBoxIcon.Warning))
+							return false;
 					}
 
 					m_pKey.AddUserKey(new KcpPassword(pb,

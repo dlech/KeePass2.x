@@ -319,6 +319,18 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
+		internal static string RtfFilterText(string strText)
+		{
+			if(strText == null) { Debug.Assert(false); return string.Empty; }
+
+			// A U+FFFC character causes the rest of the text to be lost.
+			// With '?', the string length, substring indices and
+			// character visibility remain the same.
+			// More special characters (unproblematic) in rich text boxes:
+			// https://docs.microsoft.com/en-us/windows/win32/api/richedit/ns-richedit-gettextex
+			return strText.Replace('\uFFFC', '?');
+		}
+
 		internal static bool ContainsHighChar(string str)
 		{
 			if(str == null) { Debug.Assert(false); return false; }
@@ -966,35 +978,24 @@ namespace KeePassLib.Utility
 		public static string AddAccelerator(string strMenuText,
 			List<char> lAvailKeys)
 		{
-			if(strMenuText == null) { Debug.Assert(false); return null; }
+			if(strMenuText == null) { Debug.Assert(false); return string.Empty; }
 			if(lAvailKeys == null) { Debug.Assert(false); return strMenuText; }
 
-			int xa = -1, xs = 0;
 			for(int i = 0; i < strMenuText.Length; ++i)
 			{
-				char ch = strMenuText[i];
+				char ch = char.ToLowerInvariant(strMenuText[i]);
 
-#if KeePassLibSD
-				char chUpper = char.ToUpper(ch);
-#else
-				char chUpper = char.ToUpperInvariant(ch);
-#endif
-				xa = lAvailKeys.IndexOf(chUpper);
-				if(xa >= 0) { xs = i; break; }
-
-#if KeePassLibSD
-				char chLower = char.ToLower(ch);
-#else
-				char chLower = char.ToLowerInvariant(ch);
-#endif
-				xa = lAvailKeys.IndexOf(chLower);
-				if(xa >= 0) { xs = i; break; }
+				for(int j = 0; j < lAvailKeys.Count; ++j)
+				{
+					if(char.ToLowerInvariant(lAvailKeys[j]) == ch)
+					{
+						lAvailKeys.RemoveAt(j);
+						return strMenuText.Insert(i, @"&");
+					}
+				}
 			}
 
-			if(xa < 0) return strMenuText;
-
-			lAvailKeys.RemoveAt(xa);
-			return strMenuText.Insert(xs, @"&");
+			return strMenuText;
 		}
 
 		public static string EncodeMenuText(string strText)

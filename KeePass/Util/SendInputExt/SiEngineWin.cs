@@ -546,6 +546,7 @@ namespace KeePass.Util.SendInputExt
 			SiSendMethod sm = GetSendMethod(m_swiCurrent);
 			if(sm == SiSendMethod.UnicodePacket) return false;
 
+			// Sync. with documentation
 			if(m_vForcedUniChars == null)
 				m_vForcedUniChars = new char[] {
 					// All of the following diacritics are spacing / non-combining

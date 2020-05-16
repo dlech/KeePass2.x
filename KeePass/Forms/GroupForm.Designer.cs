@@ -37,6 +37,8 @@
 			this.m_btnIcon = new System.Windows.Forms.Button();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabGeneral = new System.Windows.Forms.TabPage();
+			this.m_tbUuid = new System.Windows.Forms.TextBox();
+			this.m_lblUuid = new System.Windows.Forms.Label();
 			this.m_dtExpires = new System.Windows.Forms.DateTimePicker();
 			this.m_cbExpires = new System.Windows.Forms.CheckBox();
 			this.m_tabNotes = new System.Windows.Forms.TabPage();
@@ -68,7 +70,7 @@
 			// m_lblName
 			// 
 			this.m_lblName.AutoSize = true;
-			this.m_lblName.Location = new System.Drawing.Point(3, 11);
+			this.m_lblName.Location = new System.Drawing.Point(3, 13);
 			this.m_lblName.Name = "m_lblName";
 			this.m_lblName.Size = new System.Drawing.Size(38, 13);
 			this.m_lblName.TabIndex = 0;
@@ -107,15 +109,15 @@
 			// 
 			// m_tbName
 			// 
-			this.m_tbName.Location = new System.Drawing.Point(60, 11);
+			this.m_tbName.Location = new System.Drawing.Point(84, 10);
 			this.m_tbName.Name = "m_tbName";
-			this.m_tbName.Size = new System.Drawing.Size(286, 20);
+			this.m_tbName.Size = new System.Drawing.Size(262, 20);
 			this.m_tbName.TabIndex = 1;
 			// 
 			// m_lblIcon
 			// 
 			this.m_lblIcon.AutoSize = true;
-			this.m_lblIcon.Location = new System.Drawing.Point(3, 39);
+			this.m_lblIcon.Location = new System.Drawing.Point(3, 41);
 			this.m_lblIcon.Name = "m_lblIcon";
 			this.m_lblIcon.Size = new System.Drawing.Size(31, 13);
 			this.m_lblIcon.TabIndex = 2;
@@ -123,9 +125,9 @@
 			// 
 			// m_btnIcon
 			// 
-			this.m_btnIcon.Location = new System.Drawing.Point(60, 37);
+			this.m_btnIcon.Location = new System.Drawing.Point(83, 36);
 			this.m_btnIcon.Name = "m_btnIcon";
-			this.m_btnIcon.Size = new System.Drawing.Size(33, 23);
+			this.m_btnIcon.Size = new System.Drawing.Size(32, 23);
 			this.m_btnIcon.TabIndex = 3;
 			this.m_btnIcon.UseVisualStyleBackColor = true;
 			this.m_btnIcon.Click += new System.EventHandler(this.OnBtnIcon);
@@ -145,6 +147,8 @@
 			// 
 			// m_tabGeneral
 			// 
+			this.m_tabGeneral.Controls.Add(this.m_tbUuid);
+			this.m_tabGeneral.Controls.Add(this.m_lblUuid);
 			this.m_tabGeneral.Controls.Add(this.m_dtExpires);
 			this.m_tabGeneral.Controls.Add(this.m_cbExpires);
 			this.m_tabGeneral.Controls.Add(this.m_lblName);
@@ -158,18 +162,35 @@
 			this.m_tabGeneral.Text = "General";
 			this.m_tabGeneral.UseVisualStyleBackColor = true;
 			// 
+			// m_tbUuid
+			// 
+			this.m_tbUuid.Location = new System.Drawing.Point(84, 111);
+			this.m_tbUuid.Name = "m_tbUuid";
+			this.m_tbUuid.ReadOnly = true;
+			this.m_tbUuid.Size = new System.Drawing.Size(262, 20);
+			this.m_tbUuid.TabIndex = 7;
+			// 
+			// m_lblUuid
+			// 
+			this.m_lblUuid.AutoSize = true;
+			this.m_lblUuid.Location = new System.Drawing.Point(3, 114);
+			this.m_lblUuid.Name = "m_lblUuid";
+			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
+			this.m_lblUuid.TabIndex = 6;
+			this.m_lblUuid.Text = "&UUID:";
+			// 
 			// m_dtExpires
 			// 
 			this.m_dtExpires.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			this.m_dtExpires.Location = new System.Drawing.Point(87, 105);
+			this.m_dtExpires.Location = new System.Drawing.Point(84, 85);
 			this.m_dtExpires.Name = "m_dtExpires";
-			this.m_dtExpires.Size = new System.Drawing.Size(259, 20);
+			this.m_dtExpires.Size = new System.Drawing.Size(262, 20);
 			this.m_dtExpires.TabIndex = 5;
 			// 
 			// m_cbExpires
 			// 
 			this.m_cbExpires.AutoSize = true;
-			this.m_cbExpires.Location = new System.Drawing.Point(6, 105);
+			this.m_cbExpires.Location = new System.Drawing.Point(6, 87);
 			this.m_cbExpires.Name = "m_cbExpires";
 			this.m_cbExpires.Size = new System.Drawing.Size(63, 17);
 			this.m_cbExpires.TabIndex = 4;
@@ -199,11 +220,11 @@
 			// m_tbNotes
 			// 
 			this.m_tbNotes.AcceptsReturn = true;
-			this.m_tbNotes.Location = new System.Drawing.Point(6, 10);
+			this.m_tbNotes.Location = new System.Drawing.Point(7, 10);
 			this.m_tbNotes.Multiline = true;
 			this.m_tbNotes.Name = "m_tbNotes";
 			this.m_tbNotes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbNotes.Size = new System.Drawing.Size(341, 107);
+			this.m_tbNotes.Size = new System.Drawing.Size(339, 108);
 			this.m_tbNotes.TabIndex = 0;
 			// 
 			// m_tabBehavior
@@ -330,7 +351,7 @@
 			// 
 			// m_btnCDDel
 			// 
-			this.m_btnCDDel.Location = new System.Drawing.Point(273, 109);
+			this.m_btnCDDel.Location = new System.Drawing.Point(272, 109);
 			this.m_btnCDDel.Name = "m_btnCDDel";
 			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCDDel.TabIndex = 1;
@@ -343,10 +364,10 @@
 			this.m_lvCustomData.FullRowSelect = true;
 			this.m_lvCustomData.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.m_lvCustomData.HideSelection = false;
-			this.m_lvCustomData.Location = new System.Drawing.Point(6, 10);
+			this.m_lvCustomData.Location = new System.Drawing.Point(7, 10);
 			this.m_lvCustomData.Name = "m_lvCustomData";
 			this.m_lvCustomData.ShowItemToolTips = true;
-			this.m_lvCustomData.Size = new System.Drawing.Size(341, 93);
+			this.m_lvCustomData.Size = new System.Drawing.Size(339, 93);
 			this.m_lvCustomData.TabIndex = 0;
 			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
 			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
@@ -417,5 +438,7 @@
 		private System.Windows.Forms.TabPage m_tabCustomData;
 		private System.Windows.Forms.Button m_btnCDDel;
 		private KeePass.UI.CustomListViewEx m_lvCustomData;
+		private System.Windows.Forms.TextBox m_tbUuid;
+		private System.Windows.Forms.Label m_lblUuid;
 	}
 }

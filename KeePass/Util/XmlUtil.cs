@@ -52,14 +52,23 @@ namespace KeePass.Util
 
 		public static string SafeInnerXml(XmlNode xmlNode)
 		{
-			Debug.Assert(xmlNode != null); if(xmlNode == null) return string.Empty;
+			if(xmlNode == null) { Debug.Assert(false); return string.Empty; }
 
 			return (xmlNode.InnerXml ?? string.Empty);
 		}
 
+		internal static string SafeInnerXml(XmlNode xmlNode, string strXPath)
+		{
+			if(xmlNode == null) { Debug.Assert(false); return string.Empty; }
+			if(string.IsNullOrEmpty(strXPath)) return SafeInnerXml(xmlNode);
+
+			XmlNode xnSub = xmlNode.SelectSingleNode(strXPath);
+			return ((xnSub != null) ? SafeInnerXml(xnSub) : string.Empty);
+		}
+
 		public static string SafeInnerText(HtmlElement htmlNode)
 		{
-			Debug.Assert(htmlNode != null); if(htmlNode == null) return string.Empty;
+			if(htmlNode == null) { Debug.Assert(false); return string.Empty; }
 
 			return (htmlNode.InnerText ?? string.Empty);
 		}
@@ -255,70 +264,33 @@ namespace KeePass.Util
 			if(xnFind == null) throw new ArgumentNullException("xnFind");
 
 			string strChildName = xnFind.Name;
-			int nChildIndex = 0;
+			int iChild = 0;
 			for(int i = 0; i < xlList.Count; ++i)
 			{
-				if(xlList[i] == xnFind) return nChildIndex;
-				else if(xlList[i].Name == strChildName) ++nChildIndex;
+				if(xlList[i] == xnFind) return iChild;
+				if(xlList[i].Name == strChildName) ++iChild;
 			}
 
 			return -1;
 		}
 
 		public static XmlNode FindMultiChild(XmlNodeList xlList, string strChildName,
-			int nMultiChildIndex)
+			int iMultiChild)
 		{
 			if(xlList == null) throw new ArgumentNullException("xlList");
 			if(strChildName == null) throw new ArgumentNullException("strChildName");
 
-			int nChildIndex = 0;
+			int iChild = 0;
 			for(int i = 0; i < xlList.Count; ++i)
 			{
 				if(xlList[i].Name == strChildName)
 				{
-					if(nChildIndex == nMultiChildIndex) return xlList[i];
-					else ++nChildIndex;
+					if(iChild == iMultiChild) return xlList[i];
+					++iChild;
 				}
 			}
 
 			return null;
-		}
-
-		public static void MergeNodes(XmlDocument xd, XmlNode xn, XmlNode xnOverride)
-		{
-			if(xd == null) throw new ArgumentNullException("xd");
-			if(xn == null) throw new ArgumentNullException("xn");
-			if(xnOverride == null) throw new ArgumentNullException("xnOverride");
-			Debug.Assert(xn.Name == xnOverride.Name);
-
-			foreach(XmlNode xnOvrChild in xnOverride.ChildNodes)
-			{
-				if(xnOvrChild.NodeType == XmlNodeType.Comment) continue;
-				Debug.Assert(xnOvrChild.NodeType == XmlNodeType.Element);
-
-				int nOvrIndex = GetMultiChildIndex(xnOverride.ChildNodes, xnOvrChild);
-				if(nOvrIndex < 0) { Debug.Assert(false); continue; }
-
-				XmlNode xnRep = FindMultiChild(xn.ChildNodes, xnOvrChild.Name, nOvrIndex);
-				bool bHasSub = (XmlUtil.SafeInnerXml(xnOvrChild).IndexOf('>') >= 0);
-
-				if(xnRep == null)
-				{
-					if(xnOvrChild.NodeType != XmlNodeType.Element)
-					{
-						Debug.Assert(false);
-						continue;
-					}
-
-					XmlNode xnNew = xd.CreateElement(xnOvrChild.Name);
-					xn.AppendChild(xnNew);
-
-					if(!bHasSub) xnNew.InnerText = XmlUtil.SafeInnerText(xnOvrChild);
-					else MergeNodes(xd, xnNew, xnOvrChild);
-				}
-				else if(bHasSub) MergeNodes(xd, xnRep, xnOvrChild);
-				else xnRep.InnerText = XmlUtil.SafeInnerText(xnOvrChild);
-			}
 		}
 
 		private sealed class XuopContainer

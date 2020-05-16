@@ -26,9 +26,22 @@
 	<title>Auto-Type - KeePass</title>
 	<base target="_self" />
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
 	
+	<style type="text/css">
+	/* <![CDATA[ */
+	.at_char {
+		color: #000000;
+		background-color: #EEEEEE;
+		padding-left: 2px;
+		padding-right: 2px;
+	}
+	/* ]]> */
+	</style>
+
 </head>
 <body>
+
 
 
 
@@ -41,6 +54,7 @@
 
 <ul>
 <li><a href="#autobasic">Basic Auto-Type Information</a></li>
+<li><a href="#req">Requirements and Limitations</a></li>
 <li>Invoking Auto-Type
 <ul>
 <li><a href="#autoctx">Context Menu: '<i>Perform Auto-Type</i>' Command</a></li>
@@ -119,6 +133,12 @@ sequence you have to ensure that the input focus is set to the
 user name control of the target window before invoking auto-type using any of
 the above methods.</p>
 
+<br />
+
+<a name="req"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+Requirements and Limitations</h2>
+
 <p><b>Rights:</b><br />
 For auto-type to work, KeePass must be running with the same or higher
 rights as the target application. Especially, if the target application
@@ -134,6 +154,23 @@ a remote desktop or virtual machine window.
 If you want to auto-type into such a window, you must ensure
 that the local and the remote/virtual system are using the same
 keyboard layout.</p>
+
+<p>When performing auto-type into a remote desktop or virtual machine
+window, the following characters may be problematic (depending on the
+exact circumstances) and should therefore be avoided, if possible:
+<code class="at_char">&#x22;</code> (U+0022),
+<code class="at_char">&#x27;</code> (U+0027),
+<code class="at_char">&#x5E;</code> (U+005E),
+<code class="at_char">&#x60;</code> (U+0060),
+<code class="at_char">&#x7E;</code> (U+007E),
+<code class="at_char">&#xA8;</code> (U+00A8),
+<code class="at_char">&#xAF;</code> (U+00AF),
+<code class="at_char">&#xB0;</code> (U+00B0),
+<code class="at_char">&#xB4;</code> (U+00B4),
+<code class="at_char">&#xB8;</code> (U+00B8),
+<a href="https://en.wikipedia.org/wiki/Spacing_Modifier_Letters"
+target="_blank">spacing modifier letters</a> (U+02B0 to U+02FF),
+and characters that cannot be realized with a direct key combination.</p>
 
 <br />
 
