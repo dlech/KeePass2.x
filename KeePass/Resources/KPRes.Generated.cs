@@ -188,6 +188,7 @@ namespace KeePass.Resources
 			m_strCredSaveUserOnly = TryGetEx(dictNew, "CredSaveUserOnly", m_strCredSaveUserOnly);
 			m_strCredSpecifyDifferent = TryGetEx(dictNew, "CredSpecifyDifferent", m_strCredSpecifyDifferent);
 			m_strCsprojCountError = TryGetEx(dictNew, "CsprojCountError", m_strCsprojCountError);
+			m_strCsvImportDesc = TryGetEx(dictNew, "CsvImportDesc", m_strCsvImportDesc);
 			m_strCsvTextFile = TryGetEx(dictNew, "CsvTextFile", m_strCsvTextFile);
 			m_strCtrlAltAConflict = TryGetEx(dictNew, "CtrlAltAConflict", m_strCtrlAltAConflict);
 			m_strCtrlAltAConflictHint = TryGetEx(dictNew, "CtrlAltAConflictHint", m_strCtrlAltAConflictHint);
@@ -245,6 +246,8 @@ namespace KeePass.Resources
 			m_strDuplicatePasswordsNone = TryGetEx(dictNew, "DuplicatePasswordsNone", m_strDuplicatePasswordsNone);
 			m_strDuplicateStringFieldName = TryGetEx(dictNew, "DuplicateStringFieldName", m_strDuplicateStringFieldName);
 			m_strEditCmd = TryGetEx(dictNew, "EditCmd", m_strEditCmd);
+			m_strEditEntries = TryGetEx(dictNew, "EditEntries", m_strEditEntries);
+			m_strEditEntriesDesc = TryGetEx(dictNew, "EditEntriesDesc", m_strEditEntriesDesc);
 			m_strEditEntry = TryGetEx(dictNew, "EditEntry", m_strEditEntry);
 			m_strEditEntryDesc = TryGetEx(dictNew, "EditEntryDesc", m_strEditEntryDesc);
 			m_strEditGroup = TryGetEx(dictNew, "EditGroup", m_strEditGroup);
@@ -518,6 +521,7 @@ namespace KeePass.Resources
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
 			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strMoreInfo = TryGetEx(dictNew, "MoreInfo", m_strMoreInfo);
+			m_strMultipleValues = TryGetEx(dictNew, "MultipleValues", m_strMultipleValues);
 			m_strName = TryGetEx(dictNew, "Name", m_strName);
 			m_strNativeLibUse = TryGetEx(dictNew, "NativeLibUse", m_strNativeLibUse);
 			m_strNavigation = TryGetEx(dictNew, "Navigation", m_strNavigation);
@@ -722,6 +726,7 @@ namespace KeePass.Resources
 			m_strShowFullPathInTitleBar = TryGetEx(dictNew, "ShowFullPathInTitleBar", m_strShowFullPathInTitleBar);
 			m_strShowIn = TryGetEx(dictNew, "ShowIn", m_strShowIn);
 			m_strShowMessageBox = TryGetEx(dictNew, "ShowMessageBox", m_strShowMessageBox);
+			m_strShowMore = TryGetEx(dictNew, "ShowMore", m_strShowMore);
 			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
 			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
 			m_strSimilarPasswordsList2 = TryGetEx(dictNew, "SimilarPasswordsList2", m_strSimilarPasswordsList2);
@@ -766,6 +771,7 @@ namespace KeePass.Resources
 			m_strTextColor = TryGetEx(dictNew, "TextColor", m_strTextColor);
 			m_strTextViewer = TryGetEx(dictNew, "TextViewer", m_strTextViewer);
 			m_strTime = TryGetEx(dictNew, "Time", m_strTime);
+			m_strTimeReq = TryGetEx(dictNew, "TimeReq", m_strTimeReq);
 			m_strTimerRestartOnActivity = TryGetEx(dictNew, "TimerRestartOnActivity", m_strTimerRestartOnActivity);
 			m_strTimeSpan = TryGetEx(dictNew, "TimeSpan", m_strTimeSpan);
 			m_strTitle = TryGetEx(dictNew, "Title", m_strTitle);
@@ -1032,6 +1038,7 @@ namespace KeePass.Resources
 			"CredSaveUserOnly",
 			"CredSpecifyDifferent",
 			"CsprojCountError",
+			"CsvImportDesc",
 			"CsvTextFile",
 			"CtrlAltAConflict",
 			"CtrlAltAConflictHint",
@@ -1089,6 +1096,8 @@ namespace KeePass.Resources
 			"DuplicatePasswordsNone",
 			"DuplicateStringFieldName",
 			"EditCmd",
+			"EditEntries",
+			"EditEntriesDesc",
 			"EditEntry",
 			"EditEntryDesc",
 			"EditGroup",
@@ -1362,6 +1371,7 @@ namespace KeePass.Resources
 			"More",
 			"MoreEntries",
 			"MoreInfo",
+			"MultipleValues",
 			"Name",
 			"NativeLibUse",
 			"Navigation",
@@ -1566,6 +1576,7 @@ namespace KeePass.Resources
 			"ShowFullPathInTitleBar",
 			"ShowIn",
 			"ShowMessageBox",
+			"ShowMore",
 			"SimilarPasswords",
 			"SimilarPasswordsGroup",
 			"SimilarPasswordsList2",
@@ -1610,6 +1621,7 @@ namespace KeePass.Resources
 			"TextColor",
 			"TextViewer",
 			"Time",
+			"TimeReq",
 			"TimerRestartOnActivity",
 			"TimeSpan",
 			"Title",
@@ -3500,11 +3512,22 @@ namespace KeePass.Resources
 			get { return m_strCsprojCountError; }
 		}
 
-		private static string m_strCsvTextFile =
-			@"CSV / Text File";
+		private static string m_strCsvImportDesc =
+			@"Import data from a file containing comma-separated values (CSV).";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'CSV / Text File'.
+		/// 'Import data from a file containing comma-separated values (CSV).'.
+		/// </summary>
+		public static string CsvImportDesc
+		{
+			get { return m_strCsvImportDesc; }
+		}
+
+		private static string m_strCsvTextFile =
+			@"CSV/Text File";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'CSV/Text File'.
 		/// </summary>
 		public static string CsvTextFile
 		{
@@ -4125,6 +4148,28 @@ namespace KeePass.Resources
 		public static string EditCmd
 		{
 			get { return m_strEditCmd; }
+		}
+
+		private static string m_strEditEntries =
+			@"Edit Entries";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Edit Entries'.
+		/// </summary>
+		public static string EditEntries
+		{
+			get { return m_strEditEntries; }
+		}
+
+		private static string m_strEditEntriesDesc =
+			@"Edit all currently selected entries.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Edit all currently selected entries.'.
+		/// </summary>
+		public static string EditEntriesDesc
+		{
+			get { return m_strEditEntriesDesc; }
 		}
 
 		private static string m_strEditEntry =
@@ -7130,6 +7175,17 @@ namespace KeePass.Resources
 			get { return m_strMoreInfo; }
 		}
 
+		private static string m_strMultipleValues =
+			@"Multiple values";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Multiple values'.
+		/// </summary>
+		public static string MultipleValues
+		{
+			get { return m_strMultipleValues; }
+		}
+
 		private static string m_strName =
 			@"Name";
 		/// <summary>
@@ -9374,6 +9430,17 @@ namespace KeePass.Resources
 			get { return m_strShowMessageBox; }
 		}
 
+		private static string m_strShowMore =
+			@"Show more";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show more'.
+		/// </summary>
+		public static string ShowMore
+		{
+			get { return m_strShowMore; }
+		}
+
 		private static string m_strSimilarPasswords =
 			@"Similar Passwords";
 		/// <summary>
@@ -9856,6 +9923,17 @@ namespace KeePass.Resources
 		public static string Time
 		{
 			get { return m_strTime; }
+		}
+
+		private static string m_strTimeReq =
+			@"may take some time";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'may take some time'.
+		/// </summary>
+		public static string TimeReq
+		{
+			get { return m_strTimeReq; }
 		}
 
 		private static string m_strTimerRestartOnActivity =

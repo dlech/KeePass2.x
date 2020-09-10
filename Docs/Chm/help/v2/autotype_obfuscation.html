@@ -137,7 +137,7 @@ entry. You have to enable it explicitly on the <i>'Auto-Type'</i> tab page in th
 How to enable / configure Two-Channel Auto-Type Obfuscation?</h2>
 
 <p>All you need to do is to tick the checkbox <i>&quot;Two-channel auto-type obfuscation&quot;</i>
-of an entry ('Auto-Type' tab of the entry editing window); KeePass will do the rest.</p>
+of an entry ('Auto-Type' tab page of the entry editing window); KeePass will do the rest.</p>
 
 <br />
 
@@ -196,8 +196,10 @@ string:</p>
 <pre>mymail@myprovider.com{TAB}MyTopSecretPassword{TAB} {TAB}{ENTER}</pre>
 
 <p>This is an example of a typical string sent by KeePass to another application. First
-it types the user's email address, then a tab, then the password, a tab, toggles a checkbox,
-another tab and finally presses the enter key. This sequence can be split into the following parts:</p>
+it types the user's email address, then a <kbd><kbd>Tab</kbd></kbd>,
+then the password, a <kbd><kbd>Tab</kbd></kbd>, toggles a checkbox,
+another <kbd><kbd>Tab</kbd></kbd> and finally presses the <kbd><kbd>Enter</kbd></kbd> key.
+This sequence can be split into the following parts:</p>
 
 <pre>mymail@myprovider.com
 {TAB}
@@ -209,8 +211,9 @@ MyTopSecretPassword
 
 <p>For each line, it is checked if the clipboard can be used. If the line contains a '{', '}', '(', ')',
 '+', '^', '%' or whitespace (space), it can only be sent by the <code>SendInput</code> function
-directly. '+' for example presses the Shift key, it should not be copy/pasted as '+' character.
-Spaces can't be copy/pasted either, because they are usually used to toggle checkboxes.</p>
+directly. For example, '+' presses the <kbd><kbd>Shift</kbd></kbd> key,
+it should not be copy/pasted as '+' character.
+Spaces cannot be copy/pasted either, because they are usually used to toggle checkboxes.</p>
 
 <p>In the example above, &quot;mymail@myprovider.com&quot; and &quot;MyTopSecretPassword&quot; can
 be sent using the clipboard.</p>
@@ -242,9 +245,10 @@ sent by the <code>SendInput</code> function is now assembled as follows:</p>
 
 <ul>
 <li>Begin with pasting from the clipboard: <code>^v</code>.</li>
-<li>Press the left arrow key <i>n</i> times, with <i>n = length of the clipboard string</i>.</li>
-<li>Send the remaining characters and press the right arrow key to skip the ones that were
-already pasted from the clipboard.</li>
+<li>Press the <kbd><kbd>&larr;</kbd></kbd> key <i>n</i> times,
+with <i>n = length of the clipboard string</i>.</li>
+<li>Send the remaining characters and press the <kbd><kbd>&rarr;</kbd></kbd>
+key to skip the ones that were already pasted from the clipboard.</li>
 </ul>
 
 <p>In our example above, the key sequence would be assembled to:</p>

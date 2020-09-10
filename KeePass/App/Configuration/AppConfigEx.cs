@@ -316,6 +316,12 @@ namespace KeePass.App.Configuration
 				aceMW.MinimizeAfterOpeningDatabase = false;
 				this.Application.Start.MinimizedAndLocked = false;
 			}
+
+			if(MonoWorkarounds.IsRequired(1976))
+			{
+				aceMW.FocusQuickFindOnRestore = false;
+				aceMW.FocusQuickFindOnUntray = false;
+			}
 		}
 
 		internal void OnSavePre()

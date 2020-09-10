@@ -203,6 +203,7 @@
 			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_picBox)).EndInit();
 			this.m_pnlImageViewer.ResumeLayout(false);

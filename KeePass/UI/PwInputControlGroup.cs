@@ -29,6 +29,7 @@ using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Forms;
 using KeePass.Resources;
+using KeePass.Util.MultipleValues;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -217,6 +218,10 @@ namespace KeePass.UI
 			m_tbRepeat.Enabled = bRepeatEnable;
 
 			bool bQuality = m_bEnabled;
+
+			byte[] pbMultiple = StrUtil.Utf8.GetBytes(MultipleValuesEx.CueString);
+			if(MemUtil.ArraysEqual(pbUtf8, pbMultiple)) bQuality = false;
+
 			if(m_bSprVar && bQuality)
 			{
 				if(SprEngine.MightChange(v)) // Perf. opt.

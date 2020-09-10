@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -28,10 +29,22 @@ using KeePass.Native;
 
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.UI
 {
 	public sealed class CustomListViewEx : ListView
 	{
+		private ContextMenuStrip m_ctxHeader = null;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)null)]
+		internal ContextMenuStrip HeaderContextMenuStrip
+		{
+			get { return m_ctxHeader; }
+			set { m_ctxHeader = value; }
+		}
+
 		public CustomListViewEx() : base()
 		{
 			if(Program.DesignMode) return;
@@ -206,5 +219,46 @@ namespace KeePass.UI
 
 			base.WndProc(ref m);
 		} */
+
+		protected override void WndProc(ref Message m)
+		{
+			try
+			{
+				if((m.Msg == NativeMethods.WM_CONTEXTMENU) && (m_ctxHeader != null) &&
+					(this.HeaderStyle != ColumnHeaderStyle.None) && !NativeLib.IsUnix())
+				{
+					IntPtr hList = this.Handle;
+					if(hList != IntPtr.Zero)
+					{
+						IntPtr hHeader = NativeMethods.SendMessage(hList,
+							NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+						if(hHeader != IntPtr.Zero)
+						{
+							NativeMethods.RECT rc = new NativeMethods.RECT();
+							if(NativeMethods.GetWindowRect(hHeader, ref rc))
+							{
+								long l = m.LParam.ToInt64();
+								short x = (short)(l & 0xFFFF);
+								short y = (short)((l >> 16) & 0xFFFF);
+
+								if((x >= rc.Left) && (x < rc.Right) &&
+									(y >= rc.Top) && (y < rc.Bottom) &&
+									((x != -1) || (y != -1)))
+								{
+									m_ctxHeader.Show(x, y);
+									return;
+								}
+							}
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+					else { Debug.Assert(false); }
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			base.WndProc(ref m);
+		}
 	}
 }

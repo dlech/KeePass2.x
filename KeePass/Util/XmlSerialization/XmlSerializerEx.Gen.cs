@@ -627,6 +627,9 @@ namespace KeePass.Util.XmlSerialization
 					case "SslCertsAcceptInvalid":
 						o.SslCertsAcceptInvalid = ReadBoolean(xr);
 						break;
+					case "PreventScreenCapture":
+						o.PreventScreenCapture = ReadBoolean(xr);
+						break;
 					case "ProtectProcessWithDacl":
 						o.ProtectProcessWithDacl = ReadBoolean(xr);
 						break;

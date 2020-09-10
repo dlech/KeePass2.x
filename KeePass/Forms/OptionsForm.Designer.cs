@@ -84,6 +84,7 @@
 			this.m_btnProxy = new System.Windows.Forms.Button();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
+			this.m_btnHelpSource = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -487,6 +488,7 @@
 			// 
 			// m_tabIntegration
 			// 
+			this.m_tabIntegration.Controls.Add(this.m_btnHelpSource);
 			this.m_tabIntegration.Controls.Add(this.m_btnSchemeOverrides);
 			this.m_tabIntegration.Controls.Add(this.m_cbAutoRun);
 			this.m_tabIntegration.Controls.Add(this.m_grpFileExt);
@@ -500,7 +502,7 @@
 			// 
 			// m_btnSchemeOverrides
 			// 
-			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(435, 307);
+			this.m_btnSchemeOverrides.Location = new System.Drawing.Point(317, 307);
 			this.m_btnSchemeOverrides.Name = "m_btnSchemeOverrides";
 			this.m_btnSchemeOverrides.Size = new System.Drawing.Size(112, 23);
 			this.m_btnSchemeOverrides.TabIndex = 3;
@@ -690,6 +692,16 @@
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
+			// m_btnHelpSource
+			// 
+			this.m_btnHelpSource.Location = new System.Drawing.Point(435, 307);
+			this.m_btnHelpSource.Name = "m_btnHelpSource";
+			this.m_btnHelpSource.Size = new System.Drawing.Size(112, 23);
+			this.m_btnHelpSource.TabIndex = 4;
+			this.m_btnHelpSource.Text = "&Help Source...";
+			this.m_btnHelpSource.UseVisualStyleBackColor = true;
+			this.m_btnHelpSource.Click += new System.EventHandler(this.OnBtnHelpSource);
+			// 
 			// OptionsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -790,5 +802,6 @@
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Label m_lblAutoTypePassword;
 		private KeePass.UI.HotKeyControlEx m_hkAutoTypePassword;
+		private System.Windows.Forms.Button m_btnHelpSource;
 	}
 }

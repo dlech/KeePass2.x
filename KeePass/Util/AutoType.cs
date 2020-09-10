@@ -160,7 +160,7 @@ namespace KeePass.Util
 
 			if(NativeLib.IsUnix())
 			{
-				if(!NativeMethods.TryXDoTool())
+				if(!NativeMethods.TryXDoTool() && !NativeLib.IsWayland())
 				{
 					MessageService.ShowWarning(KPRes.AutoTypeXDoToolRequired,
 						KPRes.PackageInstallHint);
@@ -456,7 +456,7 @@ namespace KeePass.Util
 
 			if(NativeLib.IsUnix())
 			{
-				if(!NativeMethods.TryXDoTool(true))
+				if(!NativeMethods.TryXDoTool(true) && !NativeLib.IsWayland())
 				{
 					MessageService.ShowWarning(KPRes.AutoTypeXDoToolRequiredGlobalVer);
 					return false;

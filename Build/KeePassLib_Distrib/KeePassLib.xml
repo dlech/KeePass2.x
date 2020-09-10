@@ -2939,7 +2939,7 @@
         </member>
         <member name="P:KeePassLib.PwEntry.OverrideUrl">
             <summary>
-            Entry-specific override URL. If this string is non-empty,
+            Entry-specific override URL.
             </summary>
         </member>
         <member name="P:KeePassLib.PwEntry.Tags">

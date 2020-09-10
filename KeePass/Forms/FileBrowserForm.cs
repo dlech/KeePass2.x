@@ -212,8 +212,8 @@ namespace KeePass.Forms
 			try
 			{
 				string strName;
-				NativeMethods.SHGetFileInfo(strPath, m_nIconDim, out img,
-					out strName);
+				NativeMethods.SHGetFileInfo(strPath, m_nIconDim, m_nIconDim,
+					out img, out strName);
 
 				if(!string.IsNullOrEmpty(strName) && (strName.IndexOf(
 					Path.DirectorySeparatorChar) < 0))

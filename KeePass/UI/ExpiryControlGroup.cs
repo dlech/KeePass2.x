@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using System.Globalization;
-using System.Diagnostics;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -108,12 +108,12 @@ namespace KeePass.UI
 			m_dtp = null;
 		}
 
-		private void UpdateUI(bool? pbSetCheck)
+		private void UpdateUI(bool? obSetCheck)
 		{
-			if(pbSetCheck.HasValue)
-				UIUtil.SetChecked(m_cb, pbSetCheck.Value);
+			if(obSetCheck.HasValue)
+				UIUtil.SetChecked(m_cb, obSetCheck.Value);
 
-			UIUtil.SetEnabled(m_dtp, m_cb.Enabled);
+			// UIUtil.SetEnabled(m_dtp, m_cb.Enabled);
 		}
 
 		private void OnExpiryValueChanged(object sender, EventArgs e)

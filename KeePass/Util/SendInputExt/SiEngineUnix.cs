@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Globalization;
-using System.Diagnostics;
 
 using KeePass.Native;
 
@@ -42,13 +41,13 @@ namespace KeePass.Util.SendInputExt
 		//	base.Release();
 		// }
 
-		public override void SendKeyImpl(int iVKey, bool? bExtKey, bool? bDown)
+		public override void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown)
 		{
-			SiCode si = SiCodes.Get(iVKey, bExtKey);
+			SiCode si = SiCodes.Get(iVKey, obExtKey);
 			if(si == null)
 			{
 				char ch = SiCodes.VKeyToChar(iVKey);
-				if(ch != char.MinValue) SendCharImpl(ch, bDown);
+				if(ch != char.MinValue) SendCharImpl(ch, obDown);
 				return;
 			}
 
@@ -56,7 +55,7 @@ namespace KeePass.Util.SendInputExt
 			if(string.IsNullOrEmpty(strXKeySym)) { Debug.Assert(false); return; }
 
 			string strVerb = "key";
-			if(bDown.HasValue) strVerb = (bDown.Value ? "keydown" : "keyup");
+			if(obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
 
 			RunXDoTool(strVerb, strXKeySym);
 		}
@@ -73,10 +72,10 @@ namespace KeePass.Util.SendInputExt
 				RunXDoTool(strVerb, "alt");
 		}
 
-		public override void SendCharImpl(char ch, bool? bDown)
+		public override void SendCharImpl(char ch, bool? obDown)
 		{
 			string strVerb = "key";
-			if(bDown.HasValue) strVerb = (bDown.Value ? "keydown" : "keyup");
+			if(obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
 
 			RunXDoTool(strVerb, SiCodes.CharToXKeySym(ch));
 		}

@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using KeePass.App;
 using KeePass.Forms;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -93,7 +94,15 @@ namespace KeePass.DataExchange
 			if(fileFormat.RequiresFile && (iocOutput == null))
 				throw new ArgumentNullException("iocOutput");
 
+			PwDatabase pd = pwExportInfo.ContextDatabase;
+			Debug.Assert(pd != null);
+
 			if(!AppPolicy.Try(AppPolicyId.Export)) return false;
+			if(!AppPolicy.Current.ExportNoKey && (pd != null))
+			{
+				if(!KeyUtil.ReAskKey(pd, true)) return false;
+			}
+
 			if(!fileFormat.SupportsExport) return false;
 			if(!fileFormat.TryBeginExport()) return false;
 

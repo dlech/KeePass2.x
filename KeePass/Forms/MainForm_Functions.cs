@@ -39,6 +39,7 @@ using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.Archive;
+using KeePass.Util.MultipleValues;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -259,6 +260,7 @@ namespace KeePass.Forms
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppExit);
 
 			MonoWorkarounds.Release(this);
+			GlobalWindowManager.CustomizeFormHandleCreated(this, false, false);
 
 			m_nClipClearCur = -1;
 			if(Program.Config.Security.ClipboardClearOnExit)
@@ -725,13 +727,13 @@ namespace KeePass.Forms
 					List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
-						string strKey = kvp.Key;
-						if(PwDefs.IsStandardField(strKey)) continue;
+						string strText = kvp.Key;
+						if(PwDefs.IsStandardField(strText)) continue;
 
-						strKey = StrUtil.EncodeMenuText(strKey);
-						strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
+						strText = StrUtil.EncodeMenuText(strText);
+						strText = StrUtil.AddAccelerator(strText, lAvailKeys);
 
-						dynStrings.AddItem(strKey, Properties.Resources.B16x16_KGPG_Info,
+						dynStrings.AddItem(strText, Properties.Resources.B16x16_KGPG_Info,
 							kvp.Key);
 						++uStrItems;
 					}
@@ -739,25 +741,16 @@ namespace KeePass.Forms
 					lAvailKeys = new List<char>(PwCharSet.MenuAccels);
 					foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 					{
-						Image imgIcon;
-						// Try a fast classification
-						BinaryDataClass bdc = BinaryDataClassifier.ClassifyUrl(kvp.Key);
-						if((bdc == BinaryDataClass.Text) || (bdc == BinaryDataClass.RichText))
-							imgIcon = Properties.Resources.B16x16_ASCII;
-						else if(bdc == BinaryDataClass.Image)
-							imgIcon = Properties.Resources.B16x16_Spreadsheet;
-						else if(bdc == BinaryDataClass.WebDocument)
-							imgIcon = Properties.Resources.B16x16_HTML;
-						else imgIcon = Properties.Resources.B16x16_Binary;
+						string strText = StrUtil.EncodeMenuText(kvp.Key);
+						strText = StrUtil.AddAccelerator(strText, lAvailKeys);
+
+						Image imgIcon = FileIcons.GetImageForName(kvp.Key, null);
 
 						EntryBinaryDataContext ctxBin = new EntryBinaryDataContext();
 						ctxBin.Entry = pe;
 						ctxBin.Name = kvp.Key;
 
-						string strKey = StrUtil.EncodeMenuText(kvp.Key);
-						strKey = StrUtil.AddAccelerator(strKey, lAvailKeys);
-
-						dynBinaries.AddItem(strKey, imgIcon, ctxBin);
+						dynBinaries.AddItem(strText, imgIcon, ctxBin);
 						++uBinItems;
 					}
 				}
@@ -790,9 +783,9 @@ namespace KeePass.Forms
 			}
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryAdd);
-			UIUtil.SetEnabledFast((s.EntriesSelected == 1), m_menuEntryEdit);
-			UIUtil.SetEnabledFast((s.EntriesSelected != 0), m_menuEntryEditQuick,
-				m_menuEntryIcon, m_menuEntryColor, m_menuEntryColorStandard,
+			UIUtil.SetEnabledFast((s.EntriesSelected != 0), m_menuEntryEdit,
+				m_menuEntryEditQuick, m_menuEntryIcon,
+				m_menuEntryColor, m_menuEntryColorStandard,
 				m_menuEntryColorLightRed, m_menuEntryColorLightGreen,
 				m_menuEntryColorLightBlue, m_menuEntryColorLightYellow,
 				m_menuEntryColorCustom, m_menuEntryTagAdd, m_menuEntryTagRemove,
@@ -2066,16 +2059,10 @@ namespace KeePass.Forms
 
 		public void PerformExport(PwGroup pgDataSource, bool bExportDeleted)
 		{
-			if(!m_docMgr.ActiveDatabase.IsOpen) { Debug.Assert(false); return; }
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
 			if(!AppPolicy.Try(AppPolicyId.Export)) return;
-
-			PwDatabase pd = m_docMgr.ActiveDatabase;
-			if((pd == null) || !pd.IsOpen) return;
-			if(!AppPolicy.Current.ExportNoKey)
-			{
-				if(!KeyUtil.ReAskKey(pd, true)) return;
-			}
 
 			PwGroup pg = (pgDataSource ?? pd.RootGroup);
 			PwExportInfo pwInfo = new PwExportInfo(pg, pd, bExportDeleted);
@@ -2606,11 +2593,12 @@ namespace KeePass.Forms
 
 		private void PrintGroup(PwGroup pg)
 		{
-			Debug.Assert(pg != null); if(pg == null) return;
-			if(!AppPolicy.Try(AppPolicyId.Print)) return;
+			if(pg == null) { Debug.Assert(false); return; }
 
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
+
+			if(!AppPolicy.Try(AppPolicyId.Print)) return;
 			if(!AppPolicy.Current.PrintNoKey)
 			{
 				if(!KeyUtil.ReAskKey(pd, true)) return;
@@ -3170,6 +3158,10 @@ namespace KeePass.Forms
 				Keys.F7 : Keys.Down) | kMoveMod, null, true);
 			UIUtil.AssignShortcut(m_menuGroupMoveToBottom, (bMoveMono ?
 				Keys.F8 : Keys.End) | kMoveMod, null, true);
+			// UIUtil.AssignShortcut(m_menuGroupSort, Keys.Control | Keys.Decimal);
+			// UIUtil.AssignShortcut(m_menuGroupSortRec, Keys.Control | Keys.Shift | Keys.Decimal); // (Control+)Shift+Decimal = Delete
+			UIUtil.AssignShortcut(m_menuGroupExpand, Keys.Control | Keys.Multiply);
+			UIUtil.AssignShortcut(m_menuGroupCollapse, Keys.Control | Keys.Divide);
 
 			UIUtil.AssignShortcut(m_menuGroupPrint, Keys.Control | Keys.Shift | Keys.P);
 
@@ -5000,11 +4992,10 @@ namespace KeePass.Forms
 
 		private bool ChangeMasterKey(PwDatabase pdOf)
 		{
-			if(!AppPolicy.Try(AppPolicyId.ChangeMasterKey)) return false;
-
 			PwDatabase pd = (pdOf ?? m_docMgr.ActiveDatabase);
 			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return false; }
 
+			if(!AppPolicy.Try(AppPolicyId.ChangeMasterKey)) return false;
 			if(!AppPolicy.Current.ChangeMasterKeyNoKey)
 			{
 				if(!KeyUtil.ReAskKey(pd, true)) return false;
@@ -5263,26 +5254,57 @@ namespace KeePass.Forms
 
 		private void EditSelectedEntry(bool bSwitchToHistoryTab)
 		{
-			PwEntry pe = GetSelectedEntry(false);
-			if(pe == null) return; // Do not assert
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			PwEntryForm pForm = new PwEntryForm();
-			pForm.InitEx(pe, PwEditMode.EditExistingEntry, pwDb, m_ilCurrentIcons,
-				false, false);
+			MultipleValuesEntryContext mvec = null;
+			bool bMod;
+			try
+			{
+				PwEntry pe;
+				PwEntry[] v = GetSelectedEntries();
+				if((v == null) || (v.Length <= 1))
+				{
+					pe = GetSelectedEntry(false);
+					if(pe == null) return; // Do not assert
+				}
+				else
+				{
+					mvec = new MultipleValuesEntryContext(v, pd, out pe);
 
-			pForm.InitSwitchToHistoryTab = bSwitchToHistoryTab;
+					// if(pd.UINeedsIconUpdate)
+					// {
+					//	RefreshEntriesList();
+					//	UpdateUI(false, null, true, null, false, null, false);
+					// }
+					UpdateImageLists(false); // Image indices remain the same
+				}
 
-			DialogResult dr = pForm.ShowDialog();
-			bool bMod = ((dr == DialogResult.OK) && pForm.HasModifiedEntry);
-			UIUtil.DestroyForm(pForm);
+				PwEntryForm dlg = new PwEntryForm();
+				dlg.InitEx(pe, PwEditMode.EditExistingEntry, pd, m_ilCurrentIcons,
+					false, false);
 
-			bool bUpdImg = pwDb.UINeedsIconUpdate;
-			RefreshEntriesList(); // Update entry / last access time
+				dlg.InitSwitchToHistoryTab = bSwitchToHistoryTab;
+				dlg.MultipleValuesEntryContext = mvec;
+
+				bool bOK = (dlg.ShowDialog() == DialogResult.OK);
+				bMod = (bOK && dlg.HasModifiedEntry);
+				UIUtil.DestroyForm(dlg);
+
+				// Check bOK instead of bMod (dialog mod. check ignores multi states)
+				if(bOK && (mvec != null))
+				{
+					if(mvec.ApplyChanges()) bMod = true;
+				}
+			}
+			finally { if(mvec != null) mvec.Dispose(); }
+
+			bool bUpdImg = pd.UINeedsIconUpdate; // Refreshing entries resets it
+			RefreshEntriesList(); // Last access time
 			UpdateUI(false, null, bUpdImg, null, false, null, bMod);
 
 			if(Program.Config.Application.AutoSaveAfterEntryEdit && bMod)
-				SaveDatabase(pwDb, null);
+				SaveDatabase(pd, null);
 		}
 
 		private static bool ListContainsOnlyTans(PwObjectList<PwEntry> vEntries)

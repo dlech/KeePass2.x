@@ -116,6 +116,9 @@ namespace KeePassLib.Utility
 		// 1760:
 		//   Input focus is not restored when activating a form.
 		//   https://sourceforge.net/p/keepass/bugs/1760/
+		// 1976:
+		//   Input focus cannot be set after unlocking.
+		//   https://sourceforge.net/p/keepass/bugs/1976/
 		// 2140:
 		//   Explicit control focusing is ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2140/
@@ -145,6 +148,9 @@ namespace KeePassLib.Utility
 		//   [NoRef]
 		// 100002:
 		//   TextChanged event isn't raised when the formatting changes.
+		//   [NoRef]
+		// 100003:
+		//   Icon.ExtractAssociatedIcon always returns the same icon.
 		//   [NoRef]
 		// 190417:
 		//   Mono's Process.Start method replaces '\\' by '/'.

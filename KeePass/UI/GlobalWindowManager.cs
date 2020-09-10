@@ -19,15 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.Forms;
+using KeePass.Native;
+using KeePass.Util;
 
-using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -120,8 +121,7 @@ namespace KeePass.UI
 
 		public static void AddWindow(Form form, IGwmWindow wnd)
 		{
-			Debug.Assert(form != null);
-			if(form == null) throw new ArgumentNullException("form");
+			if(form == null) { Debug.Assert(false); throw new ArgumentNullException("form"); }
 
 			KeyValuePair<Form, IGwmWindow> kvp = new KeyValuePair<Form, IGwmWindow>(
 				form, wnd);
@@ -149,6 +149,9 @@ namespace KeePass.UI
 
 			MonoWorkarounds.ApplyTo(form);
 
+			Debug.Assert(!(form is MainForm)); // MainForm calls the following itself
+			CustomizeFormHandleCreated(form, true, true);
+
 			if(GlobalWindowManager.WindowAdded != null)
 				GlobalWindowManager.WindowAdded(null, new GwmWindowEventArgs(
 					form, wnd));
@@ -164,8 +167,7 @@ namespace KeePass.UI
 
 		public static void RemoveWindow(Form form)
 		{
-			Debug.Assert(form != null);
-			if(form == null) throw new ArgumentNullException("form");
+			if(form == null) { Debug.Assert(false); throw new ArgumentNullException("form"); }
 
 			lock(g_oSyncRoot)
 			{
@@ -178,6 +180,9 @@ namespace KeePass.UI
 								form, g_vWindows[i].Value));
 
 						MonoWorkarounds.Release(form);
+
+						Debug.Assert(!(form is MainForm)); // MainForm calls the following itself
+						CustomizeFormHandleCreated(form, false, false);
 
 #if DEBUG
 						DebugClose(form);
@@ -312,6 +317,46 @@ namespace KeePass.UI
 
 			if(c.ContextMenuStrip != null)
 				CustomizeFont(c.ContextMenuStrip, font);
+		}
+
+		internal static void CustomizeFormHandleCreated(Form f,
+			bool? obSubscribe, bool bNow)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			if(obSubscribe.HasValue)
+			{
+				if(obSubscribe.Value)
+					f.HandleCreated += GlobalWindowManager.OnFormHandleCreated;
+				else f.HandleCreated -= GlobalWindowManager.OnFormHandleCreated;
+			}
+
+			if(bNow) OnFormHandleCreated(f, EventArgs.Empty);
+		}
+
+		private static bool g_bDisplayAffChanged = false;
+		private static void OnFormHandleCreated(object sender, EventArgs e)
+		{
+			try
+			{
+				Form f = (sender as Form);
+				if(f == null) { Debug.Assert(false); return; }
+
+				IntPtr hWnd = f.Handle;
+				if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+
+				if(WinUtil.IsAtLeastWindows7)
+				{
+					bool bPrvSC = Program.Config.Security.PreventScreenCapture;
+					if(bPrvSC || g_bDisplayAffChanged)
+					{
+						NativeMethods.SetWindowDisplayAffinity(hWnd, (bPrvSC ?
+							NativeMethods.WDA_MONITOR : NativeMethods.WDA_NONE));
+						g_bDisplayAffChanged = true; // Set WDA_NONE in future calls
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 #if DEBUG

@@ -185,6 +185,17 @@ WordPad and LibreOffice Writer:</p>
 Specifies how often the master key dialog appears when entering incorrect
 master keys. The default value is 3.</li>
 
+<li><b>Configuration/Security/PreventScreenCapture</b>:<br />
+If this option is set to <code>true</code>, KeePass protects its windows
+against certain screen capture operations (on Windows 7 and higher;
+for details, see the
+<a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity"
+target="_blank"><code>SetWindowDisplayAffinity</code></a> function).<br />
+<em>Warning!</em>
+This may also prevent legitimate other software
+(accessibility-related tools like Windows Magnifier, remote desktop
+solutions, etc.) from seeing KeePass windows.</li>
+
 <li><b>Configuration/Security/ProtectProcessWithDacl</b>:<br />
 If this option is set to <code>true</code>, KeePass protects its process
 with a DACL.<br />

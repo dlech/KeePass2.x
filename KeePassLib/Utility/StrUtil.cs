@@ -1869,5 +1869,34 @@ namespace KeePassLib.Utility
 
 			return str;
 		}
+
+		internal static bool IsValid(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			int cc = str.Length;
+			for(int i = 0; i < cc; ++i)
+			{
+				char ch = str[i];
+				if(ch == '\0') return false;
+
+				if(char.IsLowSurrogate(ch)) return false;
+				if(char.IsHighSurrogate(ch))
+				{
+					if(++i >= cc) return false; // High surrogate at end
+					if(!char.IsLowSurrogate(str[i])) return false;
+
+					UnicodeCategory uc2 = char.GetUnicodeCategory(str, i - 1);
+					if(uc2 == UnicodeCategory.OtherNotAssigned) return false;
+
+					continue;
+				}
+
+				UnicodeCategory uc = char.GetUnicodeCategory(ch);
+				if(uc == UnicodeCategory.OtherNotAssigned) return false;
+			}
+
+			return true;
+		}
 	}
 }

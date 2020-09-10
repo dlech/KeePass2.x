@@ -72,7 +72,7 @@ namespace KeePass.Forms
 
 			m_sdCustomData = m_pwDatabase.CustomData.CloneDeep();
 			UIUtil.StrDictListInit(m_lvCustomData);
-			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData);
+			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData, false);
 
 			m_pbStatus.Visible = false;
 			EnableControlsEx();
@@ -175,7 +175,7 @@ namespace KeePass.Forms
 
 		private void OnBtnCDDel(object sender, EventArgs e)
 		{
-			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData);
+			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData, false);
 			UIUtil.SetFocus(m_lvCustomData, this);
 			EnableControlsEx();
 		}

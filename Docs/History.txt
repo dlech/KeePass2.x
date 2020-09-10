@@ -1,3 +1,60 @@
+2020-09-10: 2.46
+- The entry editing dialog can now edit all currently selected
+  entries at once
+- As entry attachment icons, the icons associated with the
+  respective file types (in the system settings) are used now
+- When running on .NET 4.8 or higher, secure connections (e.g.
+  for WebDAV) now support TLS 1.3
+- Added keyboard shortcut Ctrl+* (numeric keypad) for the
+  'Expand Recursively' group command
+- Added keyboard shortcut Ctrl+/ (numeric keypad) for the
+  'Collapse Recursively' group command
+- Right-clicking on the header of the main entry list now shows
+  the 'Configure Columns' command
+- The {VKEY ...} command now supports some flags (for
+  specifying whether to send a key down or up event only and/or
+  whether to send an extended key)
+- Added configuration option for protecting KeePass windows
+  against certain screen capture operations
+- Added command line parameter '-wa-enable:' for enabling
+  specific Mono workarounds
+- On Unix-like systems with a Wayland compositor, KeePass (with
+  the KPUInput plugin) can now auto-type the default sequence
+  and manually selected sequences of the currently selected
+  entry
+
+- Improved quality of the icons in the entry 'URL(s)' menu
+- Improved quality of the icons in the drop-down list of the
+  'Override URL' field in the entry editing dialog
+- Improved control state updating in the entry editing dialog
+- The file selection dialog for the Generic CSV Importer now
+  shows only CSV, TSV, TAB, TXT and ASC files by default
+- Improved user interface of the Generic CSV Importer
+- For large texts containing probably invalid characters, the
+  internal data viewer now shortens the text and provides a
+  'Show more' link for expanding the text; this ensures a
+  responsive user interface in this case
+- Improved caching of dialog banners
+- Moved the help source selection from the 'Help' main menu to
+  the options dialog (tab 'Integration')
+- If the application policy option 'Export - No Key Repeat' is
+  turned off, the master key must now be entered directly
+  before the export is performed, i.e. after choosing the
+  format and the target
+- The application policy option 'Export - No Key Repeat' now
+  also applies to the trigger action 'Export active database'
+- When running on Mono, the options 'Focus quick search box
+  when restoring from taskbar' and 'Focus quick search box when
+  restoring from tray' are disabled now (because they do not
+  work reliably due to a bug in Mono)
+- Various code optimizations
+- Minor other improvements
+
+- The attachment button drop-down menus in the entry editing
+  dialog now use the correct font
+- The 'Tools' button in the entry editing dialog is not
+  disabled for TAN entries anymore
+
 2020-05-07: 2.45
 - Added support for opening URLs with the new (Chromium-based)
   Microsoft Edge in private mode

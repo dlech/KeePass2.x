@@ -144,36 +144,36 @@ namespace KeePassLib.Cryptography.Cipher
 					x[ 8] += x[12];
 					x[ 4] = MemUtil.RotateLeft32(x[ 4] ^ x[ 8], 12);
 					x[ 0] += x[ 4];
-					x[12] = MemUtil.RotateLeft32(x[12] ^ x[ 0], 8);
+					x[12] = MemUtil.RotateLeft32(x[12] ^ x[ 0],  8);
 					x[ 8] += x[12];
-					x[ 4] = MemUtil.RotateLeft32(x[ 4] ^ x[ 8], 7);
+					x[ 4] = MemUtil.RotateLeft32(x[ 4] ^ x[ 8],  7);
 
 					x[ 1] += x[ 5];
 					x[13] = MemUtil.RotateLeft32(x[13] ^ x[ 1], 16);
 					x[ 9] += x[13];
 					x[ 5] = MemUtil.RotateLeft32(x[ 5] ^ x[ 9], 12);
 					x[ 1] += x[ 5];
-					x[13] = MemUtil.RotateLeft32(x[13] ^ x[ 1], 8);
+					x[13] = MemUtil.RotateLeft32(x[13] ^ x[ 1],  8);
 					x[ 9] += x[13];
-					x[ 5] = MemUtil.RotateLeft32(x[ 5] ^ x[ 9], 7);
+					x[ 5] = MemUtil.RotateLeft32(x[ 5] ^ x[ 9],  7);
 
 					x[ 2] += x[ 6];
 					x[14] = MemUtil.RotateLeft32(x[14] ^ x[ 2], 16);
 					x[10] += x[14];
 					x[ 6] = MemUtil.RotateLeft32(x[ 6] ^ x[10], 12);
 					x[ 2] += x[ 6];
-					x[14] = MemUtil.RotateLeft32(x[14] ^ x[ 2], 8);
+					x[14] = MemUtil.RotateLeft32(x[14] ^ x[ 2],  8);
 					x[10] += x[14];
-					x[ 6] = MemUtil.RotateLeft32(x[ 6] ^ x[10], 7);
+					x[ 6] = MemUtil.RotateLeft32(x[ 6] ^ x[10],  7);
 
 					x[ 3] += x[ 7];
 					x[15] = MemUtil.RotateLeft32(x[15] ^ x[ 3], 16);
 					x[11] += x[15];
 					x[ 7] = MemUtil.RotateLeft32(x[ 7] ^ x[11], 12);
 					x[ 3] += x[ 7];
-					x[15] = MemUtil.RotateLeft32(x[15] ^ x[ 3], 8);
+					x[15] = MemUtil.RotateLeft32(x[15] ^ x[ 3],  8);
 					x[11] += x[15];
-					x[ 7] = MemUtil.RotateLeft32(x[ 7] ^ x[11], 7);
+					x[ 7] = MemUtil.RotateLeft32(x[ 7] ^ x[11],  7);
 
 					// Diagonal quarter rounds
 					x[ 0] += x[ 5];

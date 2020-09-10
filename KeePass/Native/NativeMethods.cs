@@ -359,6 +359,14 @@ namespace KeePass.Native
 		internal static extern void SHChangeNotify(int wEventId, uint uFlags,
 			IntPtr dwItem1, IntPtr dwItem2);
 
+		// [DllImport("Shell32.dll")]
+		// internal static extern uint SHChangeNotifyRegister(IntPtr hwnd, int fSources,
+		//	int fEvents, uint wMsg, int cEntries, ref SHCHANGENOTIFYENTRY pshcne);
+
+		// [DllImport("Shell32.dll")]
+		// [return: MarshalAs(UnmanagedType.Bool)]
+		// internal static extern bool SHChangeNotifyDeregister(uint ulID);
+
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool GetScrollInfo(IntPtr hwnd, int fnBar,
@@ -497,5 +505,10 @@ namespace KeePass.Native
 
 		// [DllImport("User32.dll")]
 		// internal static extern int GetSystemMetrics(int nIndex);
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SetWindowDisplayAffinity(IntPtr hWnd,
+			uint dwAffinity);
 	}
 }

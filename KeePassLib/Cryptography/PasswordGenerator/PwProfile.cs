@@ -237,7 +237,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public static PwProfile DeriveFromPassword(ProtectedString psPassword)
 		{
 			PwProfile pp = new PwProfile();
-			Debug.Assert(psPassword != null); if(psPassword == null) return pp;
+			if(psPassword == null) { Debug.Assert(false); return pp; }
 
 			char[] vChars = psPassword.ReadChars();
 

@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using System.Globalization;
-using System.Diagnostics;
 
 namespace KeePass.Util.SendInputExt
 {
@@ -86,7 +86,7 @@ namespace KeePass.Util.SendInputExt
 				l.Add(new SiCode("BACKSPACE", Keys.Back, "BackSpace"));
 				l.Add(new SiCode("BKSP", Keys.Back, "BackSpace"));
 				l.Add(new SiCode("BS", Keys.Back, "BackSpace"));
-				l.Add(new SiCode("BREAK", Keys.Cancel, "Cancel"));
+				l.Add(new SiCode("BREAK", Keys.Cancel, "Cancel")); // See SendKeys class
 				l.Add(new SiCode("CAPSLOCK", Keys.CapsLock, "Caps_Lock"));
 				l.Add(new SiCode("CLEAR", Keys.Clear, "Clear"));
 				l.Add(new SiCode("DEL", Keys.Delete, "Delete"));
@@ -176,14 +176,14 @@ namespace KeePass.Util.SendInputExt
 			return null;
 		}
 
-		public static SiCode Get(int iVKey, bool? bExtKey)
+		public static SiCode Get(int iVKey, bool? obExtKey)
 		{
 			foreach(SiCode si in SiCodes.KeyCodes)
 			{
 				if(si.VKey == iVKey)
 				{
-					if(!si.ExtKey.HasValue || !bExtKey.HasValue) return si;
-					if(si.ExtKey.Value == bExtKey.Value) return si;
+					if(!si.ExtKey.HasValue || !obExtKey.HasValue) return si;
+					if(si.ExtKey.Value == obExtKey.Value) return si;
 				}
 			}
 

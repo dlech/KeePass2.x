@@ -822,6 +822,7 @@
     <Compile Include="UI\EnableThemingInScope.cs" />
     <Compile Include="UI\ExpiryControlGroup.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
+    <Compile Include="UI\FileIcons.cs" />
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IconColorizer.cs" />
@@ -1128,6 +1129,9 @@
     <Compile Include="Util\IpcBroadcast.Tcp.cs" />
     <Compile Include="Util\IpcUtilEx.cs" />
     <Compile Include="Util\KeyUtil.cs" />
+    <Compile Include="Util\MultipleValues\MultipleValuesContext.cs" />
+    <Compile Include="Util\MultipleValues\MultipleValuesEntryContext.cs" />
+    <Compile Include="Util\MultipleValues\MultipleValuesEx.cs" />
     <Compile Include="Util\NetUtil.cs" />
     <Compile Include="Util\PrintUtil.cs" />
     <Compile Include="Util\PwGeneratorUtil.cs" />
@@ -1138,6 +1142,7 @@
     <Compile Include="Util\SendInputExt\SiEngineStd.cs" />
     <Compile Include="Util\SendInputExt\SiEngineUnix.cs" />
     <Compile Include="Util\SendInputExt\SiEngineWin.cs" />
+    <Compile Include="Util\SendInputExt\SiEventArgs.cs" />
     <Compile Include="Util\SendInputExt\SiObf.cs" />
     <Compile Include="Util\SendInputExt\SiWindowInfo.cs" />
     <Compile Include="Util\SessionLockNotifier.cs" />
