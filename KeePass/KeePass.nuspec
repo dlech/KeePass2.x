@@ -11,7 +11,7 @@
     <iconUrl>https://keepass.info/images/icons/keepass_64x64.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Unofficial debug build of KeePass for extension development.</description>
-    <copyright>Copyright (C) 2003-2019 Dominik Reichl</copyright>
+    <copyright>Copyright (C) 2003-2020 Dominik Reichl</copyright>
     <tags>KeePass</tags>
     <repository type="git" url="https://github.com/dlech/KeePass2.x" />
   </metadata>
