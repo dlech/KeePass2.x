@@ -37,6 +37,8 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Forms
 {
 	public partial class DataViewerForm : Form
@@ -55,7 +57,11 @@ namespace KeePass.Forms
 		private readonly string m_strViewerWeb = KPRes.WebBrowser;
 
 		private readonly string m_strZoomAuto = KPRes.Auto;
-		private readonly string m_strDataExpand = "--- " + KPRes.More + " ---";
+
+		// Link on Windows, hint on Linux (linkifying only works on Windows)
+		private readonly string m_strDataExpand = (NativeLib.IsUnix() ?
+			("--- " + KPRes.More + " ---") :
+			("--- " + KPRes.ShowMore + " (" + KPRes.TimeReq + ") ---"));
 		private bool m_bDataExpanded = false;
 
 		private string m_strInitialFormRect = string.Empty;
@@ -140,10 +146,10 @@ namespace KeePass.Forms
 				m_tscZoom.Items.Add(iZoom.ToString() + "%");
 			m_tscZoom.SelectedIndex = 0;
 
-			m_tsbZoomOut.ToolTipText = KPRes.Zoom + " - (" + KPRes.KeyboardKeyCtrl +
-				"+-)";
-			m_tsbZoomIn.ToolTipText = KPRes.Zoom + " + (" + KPRes.KeyboardKeyCtrl +
-				"++)";
+			m_tsbZoomOut.ToolTipText = KPRes.Zoom + " - (" + UIUtil.GetKeysName(
+				Keys.Control | Keys.Subtract) + ")";
+			m_tsbZoomIn.ToolTipText = KPRes.Zoom + " + (" + UIUtil.GetKeysName(
+				Keys.Control | Keys.Add) + ")";
 
 			m_tslViewer.Text = KPRes.ShowIn + ":";
 
@@ -177,10 +183,16 @@ namespace KeePass.Forms
 				string strLink = e.LinkText;
 				if(string.IsNullOrEmpty(strLink)) { Debug.Assert(false); return; }
 
-				if((strLink == m_strDataExpand) && (m_tscViewers.Text == m_strViewerHex))
+				string strViewer = m_tscViewers.Text;
+				bool bTextViewer = ((strViewer == m_strViewerHex) ||
+					(strViewer == m_strViewerText));
+
+				if((strLink == m_strDataExpand) && bTextViewer)
 				{
 					m_bDataExpanded = true;
-					UpdateHexView();
+
+					UpdateDataView();
+
 					m_rtbText.Select(m_rtbText.TextLength, 0);
 					m_rtbText.ScrollToCaret();
 				}
@@ -189,7 +201,7 @@ namespace KeePass.Forms
 			catch(Exception) { } // ScrollToCaret might throw (but still works)
 		}
 
-		private string BinaryDataToString(bool bReplaceNulls)
+		private string BinaryDataToString(bool bReplaceNulls, out bool bDecodedStringValid)
 		{
 			string strEnc = m_tscEncoding.Text;
 			StrEncodingInfo sei = StrUtil.GetEncoding(strEnc);
@@ -198,10 +210,13 @@ namespace KeePass.Forms
 			{
 				string str = (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
 					m_pbData.Length - (int)m_uStartOffset) ?? string.Empty);
+
+				bDecodedStringValid = StrUtil.IsValid(str);
+
 				if(bReplaceNulls) str = StrUtil.ReplaceNulls(str);
 				return str;
 			}
-			catch(Exception) { }
+			catch(Exception) { bDecodedStringValid = false; }
 
 			return string.Empty;
 		}
@@ -282,22 +297,41 @@ namespace KeePass.Forms
 				}
 			}
 
-			if(cbData < m_pbData.Length)
-				sb.AppendLine(m_strDataExpand);
+			if(cbData < m_pbData.Length) sb.AppendLine(m_strDataExpand);
 
 			SetRtbData(sb.ToString(), false, true);
 
-			if(cbData < m_pbData.Length)
-			{
-				int iLinkStart = m_rtbText.Text.LastIndexOf(m_strDataExpand);
-				if(iLinkStart >= 0)
-				{
-					m_rtbText.Select(iLinkStart, m_strDataExpand.Length);
-					UIUtil.RtfSetSelectionLink(m_rtbText);
-					m_rtbText.Select(0, 0);
-				}
-				else { Debug.Assert(false); }
-			}
+			if(cbData < m_pbData.Length) LinkifyExpandLink();
+		}
+
+		private void UpdateTextView()
+		{
+			bool bValid;
+			string strData = BinaryDataToString(true, out bValid);
+
+			bool bRtf = (m_bdc == BinaryDataClass.RichText);
+
+			const int ccInvMax = 1024;
+			bool bShorten = (!bValid && !bRtf && !m_bDataExpanded &&
+				(strData.Length > ccInvMax));
+
+			if(bShorten)
+				strData = strData.Substring(0, ccInvMax) + MessageService.NewLine +
+					m_strDataExpand + MessageService.NewLine;
+
+			SetRtbData(strData, bRtf, false);
+
+			if(bShorten) LinkifyExpandLink();
+		}
+
+		private void LinkifyExpandLink()
+		{
+			int i = m_rtbText.Text.LastIndexOf(m_strDataExpand);
+			if(i < 0) { Debug.Assert(false); return; }
+
+			m_rtbText.Select(i, m_strDataExpand.Length);
+			UIUtil.RtfSetSelectionLink(m_rtbText);
+			m_rtbText.Select(0, 0);
 		}
 
 		private void UpdateVisibility(string strViewer, bool bMakeVisible)
@@ -358,10 +392,7 @@ namespace KeePass.Forms
 				if(strViewer == m_strViewerHex)
 					UpdateHexView();
 				else if(strViewer == m_strViewerText)
-				{
-					string strData = BinaryDataToString(true);
-					SetRtbData(strData, (m_bdc == BinaryDataClass.RichText), false);
-				}
+					UpdateTextView();
 				else if(strViewer == m_strViewerImage)
 				{
 					if(m_img == null) m_img = GfxUtil.LoadImage(m_pbData);
@@ -369,7 +400,8 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == m_strViewerWeb)
 				{
-					string strData = BinaryDataToString(false);
+					bool bValid;
+					string strData = BinaryDataToString(false, out bValid);
 					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
 				}
 			}
@@ -501,7 +533,10 @@ namespace KeePass.Forms
 			string strRect = UIUtil.GetWindowScreenRect(this);
 			if(strRect != m_strInitialFormRect) // Don't overwrite ""
 				Program.Config.UI.DataViewerRect = strRect;
+		}
 
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
 			m_picBox.MouseWheel -= this.OnPicBoxMouseWheel;
 
 			m_picBox.Image = null;

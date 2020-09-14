@@ -17,26 +17,34 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
-// General assembly properties
-[assembly: AssemblyTitle("KeePass")]
-[assembly: AssemblyDescription("KeePass Password Safe")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Dominik Reichl")]
-[assembly: AssemblyProduct("KeePass")]
-[assembly: AssemblyCopyright("Copyright © 2003-2020 Dominik Reichl")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace KeePass.Util.MultipleValues
+{
+	public abstract class MultipleValuesContext : IDisposable
+	{
+		~MultipleValuesContext()
+		{
+			Dispose(false);
+		}
 
-// COM settings
-[assembly: ComVisible(false)]
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-// Assembly GUID
-[assembly: Guid("02020c52-c0da-47c0-9f3f-a6fe76cee400")]
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.Assert(disposing);
+		}
 
-// Assembly version information
-[assembly: AssemblyVersion("2.46.0.*")]
-[assembly: AssemblyFileVersion("2.46.0.0")]
+		internal virtual bool ApplyChanges()
+		{
+			return false;
+		}
+	}
+}

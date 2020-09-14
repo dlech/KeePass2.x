@@ -40,7 +40,8 @@ namespace KeePass.DataExchange.Formats
 
 		public override string FormatName { get { return KPRes.CsvTextFile; } }
 		public override string DisplayName { get { return KPRes.GenericCsvImporter; } }
-		public override string DefaultExtension { get { return "*"; } }
+		// public override string DefaultExtension { get { return "*"; } }
+		public override string DefaultExtension { get { return "csv|tsv|tab|txt|asc"; } }
 		public override string ApplicationGroup { get { return KPRes.General; } }
 
 		public override Image SmallIcon

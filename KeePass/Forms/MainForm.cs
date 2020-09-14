@@ -149,6 +149,7 @@ namespace KeePass.Forms
 			m_bFormLoaded = false;
 			GlobalWindowManager.CustomizeControl(this);
 			GlobalWindowManager.CustomizeControl(m_ctxTray);
+			GlobalWindowManager.CustomizeFormHandleCreated(this, true, true);
 
 			this.Text = PwDefs.ShortProductName;
 			this.Icon = AppIcons.Default;
@@ -314,6 +315,12 @@ namespace KeePass.Forms
 
 			UIUtil.SetChecked(m_menuViewShowEntriesOfSubGroups,
 				Program.Config.MainWindow.ShowEntriesOfSubGroups);
+
+			CustomContextMenuStripEx ctxHeader = new CustomContextMenuStripEx();
+			ToolStripMenuItem tsmiCfgCol = new ToolStripMenuItem(m_menuViewConfigColumns.Text,
+				m_menuViewConfigColumns.Image, new EventHandler(this.OnViewConfigColumns));
+			ctxHeader.Items.Add(tsmiCfgCol);
+			m_lvEntries.HeaderContextMenuStrip = ctxHeader;
 
 			m_pListSorter = Program.Config.MainWindow.ListSorting;
 			if((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
@@ -1348,6 +1355,8 @@ namespace KeePass.Forms
 					}
 				}
 
+				GlobalWindowManager.CustomizeFormHandleCreated(this, null, true);
+
 				AppConfigSerializer.Save(Program.Config);
 				UpdateTrayIcon(true);
 			}
@@ -2227,12 +2236,6 @@ namespace KeePass.Forms
 		private void OnViewWindowsStacked(object sender, EventArgs e)
 		{
 			SetMainWindowLayout(false);
-		}
-
-		private void OnHelpSelectSource(object sender, EventArgs e)
-		{
-			HelpSourceForm hsf = new HelpSourceForm();
-			UIUtil.ShowDialogAndDestroy(hsf);
 		}
 
 		private void OnFileOpenUrl(object sender, EventArgs e)

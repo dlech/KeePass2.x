@@ -518,10 +518,10 @@ namespace KeePassLib.Serialization
 				string[] vSpt = Enum.GetNames(tSpt);
 				foreach(string strSpt in vSpt)
 				{
-					if(strSpt.Equals("Tls11", StrUtil.CaseIgnoreCmp))
-						spt |= (SecurityProtocolType)Enum.Parse(tSpt, "Tls11", true);
-					else if(strSpt.Equals("Tls12", StrUtil.CaseIgnoreCmp))
-						spt |= (SecurityProtocolType)Enum.Parse(tSpt, "Tls12", true);
+					if(strSpt.Equals("Tls11", StrUtil.CaseIgnoreCmp) ||
+						strSpt.Equals("Tls12", StrUtil.CaseIgnoreCmp) ||
+						strSpt.Equals("Tls13", StrUtil.CaseIgnoreCmp))
+						spt |= (SecurityProtocolType)Enum.Parse(tSpt, strSpt, true);
 				}
 
 				ServicePointManager.SecurityProtocol = spt;

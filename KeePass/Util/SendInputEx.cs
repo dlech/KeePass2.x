@@ -31,6 +31,8 @@ using KeePass.Util.SendInputExt;
 
 using KeePassLib.Utility;
 
+using NativeLib = KeePassLib.Native.NativeLib;
+
 namespace KeePass.Util
 {
 	internal enum SiEventType
@@ -104,11 +106,13 @@ namespace KeePass.Util
 	{
 		private static CriticalSectionEx g_csSending = new CriticalSectionEx();
 
-		private static int m_nCurSending = 0;
+		private static int g_cCurSending = 0;
 		public static bool IsSending
 		{
-			get { return (m_nCurSending != 0); }
+			get { return (g_cCurSending != 0); }
 		}
+
+		public static event EventHandler<SiEventArgs> CreateEngine;
 
 		public static void SendKeysWait(string strKeys, bool bObfuscate)
 		{
@@ -121,10 +125,18 @@ namespace KeePass.Util
 
 			FixEventSeq(l);
 
-			bool bUnix = KeePassLib.Native.NativeLib.IsUnix();
-			ISiEngine si;
-			if(bUnix) si = new SiEngineUnix();
-			else si = new SiEngineWin();
+			ISiEngine si = null;
+			if(SendInputEx.CreateEngine != null)
+			{
+				SiEventArgs ea = new SiEventArgs();
+				SendInputEx.CreateEngine(null, ea);
+				si = ea.Engine;
+			}
+			if(si == null)
+			{
+				if(NativeLib.IsUnix()) si = new SiEngineUnix();
+				else si = new SiEngineWin();
+			}
 
 			bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
 			if(!bInter)
@@ -132,7 +144,7 @@ namespace KeePass.Util
 				if(!g_csSending.TryEnter()) return;
 			}
 
-			Interlocked.Increment(ref m_nCurSending);
+			Interlocked.Increment(ref g_cCurSending);
 			try
 			{
 				si.Init();
@@ -143,7 +155,7 @@ namespace KeePass.Util
 				try { si.Release(); }
 				catch(Exception) { Debug.Assert(false); }
 
-				Interlocked.Decrement(ref m_nCurSending);
+				Interlocked.Decrement(ref g_cCurSending);
 
 				if(!bInter) g_csSending.Exit();
 			}
@@ -345,12 +357,11 @@ namespace KeePass.Util
 				strName.Equals("VKEY-NX", StrUtil.CaseIgnoreCmp) ||
 				strName.Equals("VKEY-EX", StrUtil.CaseIgnoreCmp))
 			{
-				if(!ouParam.HasValue) { Debug.Assert(false); return null; }
+				SiEvent si = CreateVKeyEvent(strParams);
+				if(si == null) { Debug.Assert(false); return null; }
 
-				SiEvent si = new SiEvent();
-				si.Type = SiEventType.Key;
-				si.VKey = (int)ouParam.Value;
-
+				// VKEY-NX and VKEY-EX are supported for backward compatibility;
+				// new syntax: {VKEY K N} and {VKEY K E}
 				if(strName.EndsWith("-NX", StrUtil.CaseIgnoreCmp))
 					si.ExtendedKey = false;
 				else if(strName.EndsWith("-EX", StrUtil.CaseIgnoreCmp))
@@ -612,6 +623,48 @@ namespace KeePass.Util
 				Console.Beep(f, d); // Throws on a server
 			}
 			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static SiEvent CreateVKeyEvent(string strParams)
+		{
+			string[] v = (strParams ?? string.Empty).Trim().Split(
+				new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			if((v == null) || (v.Length < 1)) { Debug.Assert(false); return null; }
+
+			SiEvent si = new SiEvent();
+			si.Type = SiEventType.Key;
+
+			int k;
+			if(!StrUtil.TryParseInt(v[0], out k)) { Debug.Assert(false); return null; }
+			if(k < 0) { Debug.Assert(false); return null; }
+			si.VKey = k;
+
+			for(int i = 1; i < v.Length; ++i)
+			{
+				string strParam = v[i];
+				if(string.IsNullOrEmpty(strParam)) { Debug.Assert(false); continue; }
+
+				if(strParam.IndexOf('=') < 0)
+				{
+					bool bExt = (strParam.IndexOf('E') >= 0);
+					bool bNonExt = (strParam.IndexOf('N') >= 0);
+					if(bExt && !bNonExt) si.ExtendedKey = true;
+					if(!bExt && bNonExt) si.ExtendedKey = false;
+					// The default is null => automatic decision
+
+					bool bDown = (strParam.IndexOf('D') >= 0);
+					bool bUp = (strParam.IndexOf('U') >= 0);
+					if(bDown && !bUp) si.Down = true;
+					if(!bDown && bUp) si.Down = false;
+					// The default is null => down and up
+				}
+
+				// Named parameters with values could be implemented like
+				// {VKEY X ED R=5 DA=100}, and parameters without a '='
+				// could be treated as flags (so {VKEY X ED} = {VKEY X E D})
+			}
+
+			return si;
 		}
 	}
 }

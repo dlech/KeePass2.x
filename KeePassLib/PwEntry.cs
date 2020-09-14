@@ -251,7 +251,7 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Entry-specific override URL. If this string is non-empty,
+		/// Entry-specific override URL.
 		/// </summary>
 		public string OverrideUrl
 		{

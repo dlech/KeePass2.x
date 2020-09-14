@@ -65,9 +65,9 @@ namespace KeePass.Util.SendInputExt
 			m_swLastEvent.Stop();
 		}
 
-		public abstract void SendKeyImpl(int iVKey, bool? bExtKey, bool? bDown);
+		public abstract void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown);
 		public abstract void SetKeyModifierImpl(Keys kMod, bool bDown);
-		public abstract void SendCharImpl(char ch, bool? bDown);
+		public abstract void SendCharImpl(char ch, bool? obDown);
 
 		private bool PreSendEvent()
 		{
@@ -78,11 +78,11 @@ namespace KeePass.Util.SendInputExt
 			return ValidateState();
 		}
 
-		public void SendKey(int iVKey, bool? bExtKey, bool? bDown)
+		public void SendKey(int iVKey, bool? obExtKey, bool? obDown)
 		{
 			if(!PreSendEvent()) return;
 
-			SendKeyImpl(iVKey, bExtKey, bDown);
+			SendKeyImpl(iVKey, obExtKey, obDown);
 
 			Application.DoEvents();
 		}
@@ -96,11 +96,11 @@ namespace KeePass.Util.SendInputExt
 			Application.DoEvents();
 		}
 
-		public void SendChar(char ch, bool? bDown)
+		public void SendChar(char ch, bool? obDown)
 		{
 			if(!PreSendEvent()) return;
 
-			SendCharImpl(ch, bDown);
+			SendCharImpl(ch, obDown);
 
 			Application.DoEvents();
 		}

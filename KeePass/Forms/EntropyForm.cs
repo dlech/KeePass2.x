@@ -112,27 +112,27 @@ namespace KeePass.Forms
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
-			MemoryStream ms = new MemoryStream();
-
-			// Prevent empty / low entropy buffer
-			byte[] pbGuid = Guid.NewGuid().ToByteArray();
-			ms.Write(pbGuid, 0, pbGuid.Length);
-
-			foreach(uint ln in m_llPool)
-				ms.Write(MemUtil.UInt32ToBytes(ln), 0, 4);
-
-			if(m_tbEdit.Text.Length > 0)
+			using(MemoryStream ms = new MemoryStream())
 			{
-				byte[] pbUTF8 = StrUtil.Utf8.GetBytes(m_tbEdit.Text);
-				ms.Write(pbUTF8, 0, pbUTF8.Length);
+				// Prevent empty / low entropy buffer
+				byte[] pbGuid = Guid.NewGuid().ToByteArray();
+				ms.Write(pbGuid, 0, pbGuid.Length);
+
+				foreach(uint ln in m_llPool)
+					ms.Write(MemUtil.UInt32ToBytes(ln), 0, 4);
+
+				if(m_tbEdit.Text.Length > 0)
+				{
+					byte[] pbUTF8 = StrUtil.Utf8.GetBytes(m_tbEdit.Text);
+					ms.Write(pbUTF8, 0, pbUTF8.Length);
+				}
+
+				byte[] pbColl = ms.ToArray();
+
+				m_pbEntropy = CryptoUtil.HashSha256(pbColl);
+
+				CryptoRandom.Instance.AddEntropy(pbColl);
 			}
-
-			byte[] pbColl = ms.ToArray();
-
-			m_pbEntropy = CryptoUtil.HashSha256(pbColl);
-
-			CryptoRandom.Instance.AddEntropy(pbColl);
-			ms.Close();
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)
@@ -155,45 +155,11 @@ namespace KeePass.Forms
 
 		private static Bitmap CreateRandomBitmap(Size sz)
 		{
-			int w = sz.Width;
-			int h = sz.Height;
+			int w = sz.Width, h = sz.Height;
 			if((w <= 0) || (h <= 0)) { Debug.Assert(false); return null; }
 
-			byte[] pbEndianTest = BitConverter.GetBytes((int)519);
-			bool bLittleEndian = (pbEndianTest[0] == 7);
-			Debug.Assert(bLittleEndian == BitConverter.IsLittleEndian);
-
-			byte[] pbBmpData = new byte[w * h * 4];
-			byte[] pbRandomValues = new byte[w * h];
-			Program.GlobalRandom.NextBytes(pbRandomValues);
-			int p = 0;
-			if(bLittleEndian)
-			{
-				for(int i = 0; i < pbBmpData.Length; i += 4)
-				{
-					byte bt = pbRandomValues[p];
-					++p;
-
-					pbBmpData[i] = bt;
-					pbBmpData[i + 1] = bt;
-					pbBmpData[i + 2] = bt;
-					pbBmpData[i + 3] = 255;
-				}
-			}
-			else // Big-endian
-			{
-				for(int i = 0; i < pbBmpData.Length; i += 4)
-				{
-					byte bt = pbRandomValues[p];
-					++p;
-
-					pbBmpData[i] = 255;
-					pbBmpData[i + 1] = bt;
-					pbBmpData[i + 2] = bt;
-					pbBmpData[i + 3] = bt;
-				}
-			}
-			Debug.Assert(p == (w * h));
+			byte[] pbRandom = new byte[w * h];
+			Program.GlobalRandom.NextBytes(pbRandom);
 
 			Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
 
@@ -201,19 +167,57 @@ namespace KeePass.Forms
 			BitmapData bd = bmp.LockBits(rect, ImageLockMode.WriteOnly,
 				PixelFormat.Format32bppArgb);
 
-			if(bd.Stride == (w * 4))
-				Marshal.Copy(pbBmpData, 0, bd.Scan0, pbBmpData.Length);
-			else
+			bool bFastCopy = (bd.Stride == (w * 4));
+			Debug.Assert(bFastCopy); // 32 bits per pixel => no excess in line
+
+			if(bFastCopy)
 			{
-				Debug.Assert(false);
+				byte[] pbBmpData = new byte[w * h * 4];
+				int p = 0;
+				if(BitConverter.IsLittleEndian)
+				{
+					for(int i = 0; i < pbBmpData.Length; i += 4)
+					{
+						byte bt = pbRandom[p++];
 
-				byte[] pbBlank = new byte[bd.Stride * h];
-				for(int i = 0; i < pbBlank.Length; ++i) pbBlank[i] = 255;
+						pbBmpData[i] = bt;
+						pbBmpData[i + 1] = bt;
+						pbBmpData[i + 2] = bt;
+						pbBmpData[i + 3] = 255;
+					}
+				}
+				else // Big-endian
+				{
+					for(int i = 0; i < pbBmpData.Length; i += 4)
+					{
+						byte bt = pbRandom[p++];
 
-				Marshal.Copy(pbBlank, 0, bd.Scan0, pbBlank.Length);
+						pbBmpData[i] = 255;
+						pbBmpData[i + 1] = bt;
+						pbBmpData[i + 2] = bt;
+						pbBmpData[i + 3] = bt;
+					}
+				}
+				Debug.Assert(p == (w * h));
+
+				Marshal.Copy(pbBmpData, 0, bd.Scan0, pbBmpData.Length);
 			}
 
 			bmp.UnlockBits(bd);
+
+			if(!bFastCopy)
+			{
+				int p = 0;
+				for(int y = 0; y < h; ++y)
+				{
+					for(int x = 0; x < w; ++x)
+					{
+						int c = pbRandom[p++];
+						bmp.SetPixel(x, y, Color.FromArgb(255, c, c, c));
+					}
+				}
+			}
+
 			return bmp;
 		}
 	}

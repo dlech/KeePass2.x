@@ -197,7 +197,8 @@ namespace KeePass.Forms
 				"T-REPLACE-RX:/T/S/R/", "T-CONV:/T/C/",
 				"C:Comment", VkcBreak,
 
-				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY-NX 13", "VKEY-EX 13",
+				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY 13 E",
+				// "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3", "PICKFIELD",
 				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
 				// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/

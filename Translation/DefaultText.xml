@@ -487,8 +487,11 @@
 		<Data Name="CsprojCountError">
 			<Value>There must be exactly one .csproj or .vbproj file.</Value>
 		</Data>
+		<Data Name="CsvImportDesc">
+			<Value>Import data from a file containing comma-separated values (CSV).</Value>
+		</Data>
 		<Data Name="CsvTextFile">
-			<Value>CSV / Text File</Value>
+			<Value>CSV/Text File</Value>
 		</Data>
 		<Data Name="CtrlAltAConflict">
 			<Value>KeePass' global auto-type hot key Ctrl+Alt+A is in conflict with a system key combination that is producing '{PARAM}'.</Value>
@@ -657,6 +660,12 @@
 		</Data>
 		<Data Name="EditCmd">
 			<Value>&amp;Edit</Value>
+		</Data>
+		<Data Name="EditEntries">
+			<Value>Edit Entries</Value>
+		</Data>
+		<Data Name="EditEntriesDesc">
+			<Value>Edit all currently selected entries.</Value>
 		</Data>
 		<Data Name="EditEntry">
 			<Value>Edit Entry</Value>
@@ -1477,6 +1486,9 @@
 		<Data Name="MoreInfo">
 			<Value>More information</Value>
 		</Data>
+		<Data Name="MultipleValues">
+			<Value>Multiple values</Value>
+		</Data>
 		<Data Name="Name">
 			<Value>Name</Value>
 		</Data>
@@ -2089,6 +2101,9 @@
 		<Data Name="ShowMessageBox">
 			<Value>Show message box</Value>
 		</Data>
+		<Data Name="ShowMore">
+			<Value>Show more</Value>
+		</Data>
 		<Data Name="SimilarPasswords">
 			<Value>Similar Passwords</Value>
 		</Data>
@@ -2220,6 +2235,9 @@
 		</Data>
 		<Data Name="Time">
 			<Value>Time</Value>
+		</Data>
+		<Data Name="TimeReq">
+			<Value>may take some time</Value>
 		</Data>
 		<Data Name="TimerRestartOnActivity">
 			<Value>Restart timer on KeePass activity</Value>

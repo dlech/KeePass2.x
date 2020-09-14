@@ -113,7 +113,11 @@ namespace KeePass.Forms
 			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
 
 			this.Icon = AppIcons.Default;
-			this.Text = KPRes.GenericCsvImporter + " - " + PwDefs.ShortProductName;
+			this.Text = KPRes.GenericCsvImporter;
+
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
+				Properties.Resources.B48x48_Binary, KPRes.GenericCsvImporter,
+				KPRes.CsvImportDesc);
 
 			// FontUtil.AssignDefaultBold(m_grpSyntax);
 			// FontUtil.AssignDefaultBold(m_grpSem);

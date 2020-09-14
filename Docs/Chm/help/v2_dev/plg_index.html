@@ -579,7 +579,20 @@ cache is supported and enabled by default.</li>
 
 <p><b>PLGX limitations.</b></p>
 <ul>
-<li>Currently only C# is supported (not Visual Basic or any other .NET language).</li>
+<li>Only C# is supported (not Visual Basic or any other .NET language).</li>
+<li>The compiler that is included in the .NET Framework supports at most
+C# 5. In order to avoid using features of a newer C# version, it is therefore
+recommended to set the C# version of your plugin project to 5:
+<ul>
+<li>In Visual Studio 2017 and earlier, open the project properties &rarr;
+tab 'Build' &rarr; button 'Advanced' &rarr; set the option 'Language version'
+to 'C# 5'.</li>
+<li>In Visual Studio 2019 and later, the project XML file must be edited:
+the element '<code>LangVersion</code>' must contain '<code>5</code>'.
+For details, see
+<a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version"
+target="_blank">C# Language Versioning</a>.</li> 
+</ul></li>
 <li>Linked resources (in different assemblies) are unsupported.</li>
 <li>Dependencies on other projects are unsupported (reorganize your project to
 use custom assembly references instead).</li>

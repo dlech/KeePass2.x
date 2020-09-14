@@ -17,26 +17,23 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-// General assembly properties
-[assembly: AssemblyTitle("KeePass")]
-[assembly: AssemblyDescription("KeePass Password Safe")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Dominik Reichl")]
-[assembly: AssemblyProduct("KeePass")]
-[assembly: AssemblyCopyright("Copyright © 2003-2020 Dominik Reichl")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace KeePass.Util.SendInputExt
+{
+	public sealed class SiEventArgs : EventArgs
+	{
+		private ISiEngine m_e = null;
+		public ISiEngine Engine
+		{
+			get { return m_e; }
+			set { m_e = value; }
+		}
 
-// COM settings
-[assembly: ComVisible(false)]
-
-// Assembly GUID
-[assembly: Guid("02020c52-c0da-47c0-9f3f-a6fe76cee400")]
-
-// Assembly version information
-[assembly: AssemblyVersion("2.46.0.*")]
-[assembly: AssemblyFileVersion("2.46.0.0")]
+		public SiEventArgs()
+		{
+		}
+	}
+}

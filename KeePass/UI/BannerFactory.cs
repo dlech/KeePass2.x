@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Windows.Forms;
 
 using KeePass.App;
@@ -70,15 +71,15 @@ namespace KeePass.UI
 		private const int StdHeight = 60; // Standard height for 96 DPI
 		private const int StdIconDim = 48;
 
-		private static Dictionary<string, Image> m_vImageCache =
+		private static Dictionary<string, Image> g_dImageCache =
 			new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
 
-		private static BfBannerGenerator m_pCustomGen = null;
+		private static BfBannerGenerator g_pCustomGen = null;
 		public static BfBannerGenerator CustomGenerator
 		{
-			get { return m_pCustomGen; }
-			set { m_pCustomGen = value; }
+			get { return g_pCustomGen; }
+			set { g_pCustomGen = value; }
 		}
 
 		public static Image CreateBanner(int nWidth, int nHeight, BannerStyle bs,
@@ -91,19 +92,13 @@ namespace KeePass.UI
 			Image imgIcon, string strTitle, string strLine, bool bNoCache)
 		{
 			// imgIcon may be null
-			Debug.Assert(strTitle != null); if(strTitle == null) throw new ArgumentNullException("strTitle");
-			Debug.Assert(strLine != null); if(strLine == null) throw new ArgumentNullException("strLine");
+			if(strTitle == null) { Debug.Assert(false); strTitle = string.Empty; }
+			if(strLine == null) { Debug.Assert(false); strLine = string.Empty; }
 
 			Debug.Assert((nHeight == StdHeight) || DpiUtil.ScalingRequired ||
 				UISystemFonts.OverrideUIFont);
-
 			if(MonoWorkarounds.IsRequired(12525) && (nHeight > 0))
 				--nHeight;
-
-			string strImageID = nWidth.ToString() + "x" + nHeight.ToString() + ":";
-			if(strTitle != null) strImageID += strTitle;
-			strImageID += ":";
-			if(strLine != null) strImageID += strLine;
 
 			if(bs == BannerStyle.Default) bs = Program.Config.UI.BannerStyle;
 			if(bs == BannerStyle.Default)
@@ -112,15 +107,16 @@ namespace KeePass.UI
 				bs = BannerStyle.WinVistaBlack;
 			}
 
-			strImageID += ":" + ((uint)bs).ToString();
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+			string strImageID = nWidth.ToString(nfi) + "x" + nHeight.ToString(nfi) +
+				":" + ((uint)bs).ToString(nfi) + ":" + strTitle + ":/:" + strLine;
 
-			// Try getting the banner from the banner cache
 			Image img = null;
-			if(!bNoCache && m_vImageCache.TryGetValue(strImageID, out img))
+			if(!bNoCache && g_dImageCache.TryGetValue(strImageID, out img))
 				return img;
 
-			if(m_pCustomGen != null)
-				img = m_pCustomGen(new BfBannerInfo(nWidth, nHeight, bs, imgIcon,
+			if(g_pCustomGen != null)
+				img = g_pCustomGen(new BfBannerInfo(nWidth, nHeight, bs, imgIcon,
 					strTitle, strLine));
 
 			const float fHorz = 0.90f;
@@ -331,17 +327,13 @@ namespace KeePass.UI
 
 			if(!bNoCache)
 			{
-				while(m_vImageCache.Count >= MaxCachedImages)
+				if(g_dImageCache.Count >= MaxCachedImages)
 				{
-					foreach(string strKey in m_vImageCache.Keys)
-					{
-						m_vImageCache.Remove(strKey);
-						break; // Remove first item only
-					}
+					List<string> lK = new List<string>(g_dImageCache.Keys);
+					g_dImageCache.Remove(lK[Program.GlobalRandom.Next(lK.Count)]);
 				}
 
-				// Save in cache
-				m_vImageCache[strImageID] = img;
+				g_dImageCache[strImageID] = img;
 			}
 
 			return img;

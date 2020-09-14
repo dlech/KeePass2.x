@@ -177,7 +177,7 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p>
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
 <tr><th>Placeholder</th><th>Is Replaced By</th></tr>
 <tr><td><code>{GROUP}</code></td><td>Name of the entry's parent group.</td></tr>
-<tr><td><code>{GROUP_PATH}</code></td><td>Full group path of the entry.</td></tr>
+<tr><td><code>{GROUP_PATH}</code></td><td>Full path of the entry's parent group.</td></tr>
 <tr><td><code>{GROUP_NOTES}</code></td><td>Notes of the entry's parent group.</td></tr>
 <tr><td><code>{GROUP_SEL}</code></td><td>Name of the group that is currently selected in the main window.</td></tr>
 <tr><td><code>{GROUP_SEL_PATH}</code></td><td>Full path of the group that is currently selected in the main window.</td></tr>
@@ -205,14 +205,14 @@ sortable string. For example, for 2012-07-25 17:05:34 the value is 2012072517053
 <tr><td><code>{DT_DAY}</code></td><td>Day component of the current local date/time.</td></tr>
 <tr><td><code>{DT_HOUR}</code></td><td>Hour component of the current local date/time.</td></tr>
 <tr><td><code>{DT_MINUTE}</code></td><td>Minute component of the current local date/time.</td></tr>
-<tr><td><code>{DT_SECOND}</code></td><td>Seconds component of the current local date/time.</td></tr>
+<tr><td><code>{DT_SECOND}</code></td><td>Second component of the current local date/time.</td></tr>
 <tr><td><code>{DT_UTC_SIMPLE}</code></td><td>Current UTC date/time as a simple, sortable string.</td></tr>
 <tr><td><code>{DT_UTC_YEAR}</code></td><td>Year component of the current UTC date/time.</td></tr>
 <tr><td><code>{DT_UTC_MONTH}</code></td><td>Month component of the current UTC date/time.</td></tr>
 <tr><td><code>{DT_UTC_DAY}</code></td><td>Day component of the current UTC date/time.</td></tr>
 <tr><td><code>{DT_UTC_HOUR}</code></td><td>Hour component of the current UTC date/time.</td></tr>
 <tr><td><code>{DT_UTC_MINUTE}</code></td><td>Minute component of the current UTC date/time.</td></tr>
-<tr><td><code>{DT_UTC_SECOND}</code></td><td>Seconds component of the current UTC date/time.</td></tr>
+<tr><td><code>{DT_UTC_SECOND}</code></td><td>Second component of the current UTC date/time.</td></tr>
 </table>
 
 <br /><br />
@@ -454,8 +454,9 @@ in all following placeholders with the same ID.<br />
 <code>{USERNAME}{TAB}{PICKCHARS:Password:C=5}{ENTER}</code><br />
 First a dialog is shown in which the user can pick exactly 5 characters
 from the entry password.
-Afterwards KeePass types the user name into the target window, presses Tab,
-types the 5 picked characters and presses Enter.<br />
+Afterwards KeePass types the user name into the target window, presses
+<kbd><kbd>Tab</kbd></kbd>, types the 5 picked characters and presses
+<kbd><kbd>Enter</kbd></kbd>.<br />
 <br />
 <a href="https://keepass.info/screenshots/windows_vista/comboboxform_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/comboboxform.png"
@@ -469,12 +470,12 @@ can pick exactly one character from the entry password.
 Afterwards the auto-type process starts:
 KeePass types the contents of a custom entry string named &quot;Memorable&quot;
 into the target window.
-The focus is switched to the next control by pressing Tab,
+The focus is switched to the next control by pressing <kbd><kbd>Tab</kbd></kbd>,
 and the first previously picked character is converted to
 down arrow keypresses (with one additional keypress; e.g. a '1' is converted
 to two down arrow keypresses).
 This is repeated two more times with the other picked characters,
-and finally Enter is pressed.<br />
+and finally <kbd><kbd>Enter</kbd></kbd> is pressed.<br />
 <br />
 Note this is not equivalent to picking three characters at once.
 If you'd use <code>{S:Memorable}{TAB}{PICKCHARS:Password:C=3, Conv=D, Conv-Offset=1}</code>,

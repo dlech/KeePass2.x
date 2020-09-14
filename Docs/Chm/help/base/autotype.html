@@ -146,7 +146,9 @@ is running with administrative rights, KeePass must be running with
 administrative rights, too. For details, see
 <!-- https://msdn.microsoft.com/en-us/library/bb625963.aspx -->
 <a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)"
-target="_blank">Windows Integrity Mechanism Design</a>.</p>
+target="_blank">Windows Integrity Mechanism Design</a>.
+An example are certain instances of VMware Workstation that run on
+a higher integrity level.</p>
 
 <p><b>Remote Desktops and Virtual Machines:</b><br />
 KeePass does not know the keyboard layout that has been selected in
@@ -171,6 +173,11 @@ exact circumstances) and should therefore be avoided, if possible:
 <a href="https://en.wikipedia.org/wiki/Spacing_Modifier_Letters"
 target="_blank">spacing modifier letters</a> (U+02B0 to U+02FF),
 and characters that cannot be realized with a direct key combination.</p>
+
+<p><b>Wayland:</b><br />
+On a Unix-like system with a Wayland compositor, there may be further
+limitations; see the <a href="https://keepass.info/help/kb/autotype_wayland.html"
+target="_blank">Auto-Type on Wayland</a> page.</p>
 
 <br />
 
@@ -396,13 +403,80 @@ a frequency of <i>X</i> hertz and a duration of <i>Y</i> milliseconds.</td></tr>
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
 <tr><th>Command Syntax</th><th>Action</th></tr>
-<tr><td><code>{VKEY-NX <i>X</i>}</code></td><td>Sends the
+<!-- <tr><td><code>{VKEY-NX <i>X</i>}</code></td><td>Sends the
 non-extended virtual key of value <i>X</i>.
 If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 <tr><td><code>{VKEY-EX <i>X</i>}</code></td><td>Sends the
 extended virtual key of value <i>X</i>.
-If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
+If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr> -->
+<tr><td><code>{VKEY <i>X</i> <i>F</i>}</code></td><td>Sends the
+<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
+target="_blank">virtual key</a> of value <i>X</i>; see <a href="#vkey">below</a>.</td></tr>
 </table>
+
+
+<br />
+
+<a name="vkey"></a>
+
+<b><code>{VKEY <i>X</i> <i>F</i>}</code>:</b><br />
+This command sends the
+<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
+target="_blank">virtual key</a> of value <i>X</i>.
+The parameter <i>F</i> is optional and may be a combination of the following
+values:
+<ul>
+<li><b><code>E</code></b>:
+Send an <a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#extended-key-flag"
+target="_blank">extended key</a>; see below.</li>
+<li><b><code>N</code></b>:
+Send a non-extended key; see below.</li>
+<li><b><code>D</code></b>:
+Press and hold down the key (without releasing it).</li>
+<li><b><code>U</code></b>:
+Release the key (without pressing it).</li>
+</ul>
+
+<p>The values <code>E</code> and <code>N</code> are mutually exclusive.
+It is recommended to specify neither <code>E</code> nor <code>N</code>,
+if possible; KeePass then determines automatically whether the virtual key
+is typically realized using an extended key.</p>
+
+<p>The values <code>D</code> and <code>U</code> are mutually exclusive.
+If neither <code>D</code> nor <code>U</code> is specified, KeePass
+sends a keypress (i.e. down and up).</p>
+
+<p>On Linux systems, KeePass automatically converts most Windows virtual key codes
+to Linux key codes (i.e. the <code>{VKEY ...}</code> command works on both
+systems).</p>
+
+Examples:
+<ul>
+<li><code>{VKEY 13}</code><br />
+Presses and releases the primary <kbd><kbd>Enter</kbd></kbd> key.
+This is equivalent to <code>{ENTER}</code>.</li>
+<li><code>{VKEY 13 E}</code><br />
+Presses and releases the <kbd><kbd>Enter</kbd></kbd> key of the
+numeric keypad.</li>
+<li><code>{VKEY 91 D}e{VKEY 91 U}</code><br />
+Sends <kbd><kbd>Win</kbd>+<kbd>E</kbd></kbd>
+(i.e. it presses and holds down the left <kbd><kbd>Win</kbd></kbd>
+key, presses and releases the <kbd><kbd>E</kbd></kbd> key, and
+releases the <kbd><kbd>Win</kbd></kbd> key),
+which starts Windows Explorer (on Windows).
+This is not equivalent to <code>{LWIN}e</code>
+(which first presses and releases the left <kbd><kbd>Win</kbd></kbd> key
+and then presses and releases the <kbd><kbd>E</kbd></kbd> key).<br />
+Note that Windows Explorer can also be started using
+<code>{CMD:/Explorer.exe/W=0/}</code>
+(the <a href="placeholders.html#cmd"><code>{CMD:/.../}</code></a>
+placeholder can run arbitrary command lines).</li>
+</ul>
+
+Do not use the <code>{VKEY ...}</code> command to change the state of the
+<kbd><kbd>Shift</kbd></kbd>, <kbd><kbd>Ctrl</kbd></kbd> and
+<kbd><kbd>Alt</kbd></kbd> modifiers. For this, use <code>+</code>,
+<code>^</code> and <code>%</code> instead (see above).
 
 
 <br />
@@ -413,12 +487,7 @@ appending a number within the code. For example, <code>{TAB 5}</code>
 presses the <kbd><kbd>Tab</kbd></kbd> key 5 times.
 
 
-<p>For details on how to send special keys for which no explicit special
-key codes exist, please see:
-<a href="https://keepass.info/help/kb/faq.html#vkeys"
-target="_blank">How can auto-type send other special keys?</a>.</p>
-
-<p>Finally, some examples:</p>
+<p>Examples:</p>
 
 <p><code>{TITLE}{TAB}{USERNAME}{TAB}{PASSWORD}{ENTER}</code><br />
 Types the entry's title, a <kbd><kbd>Tab</kbd></kbd>, the user name,

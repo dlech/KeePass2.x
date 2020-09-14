@@ -77,10 +77,10 @@ namespace KeePass.Util.SendInputExt
 
 				m_bInputBlocked = NativeMethods.BlockInput(true);
 
-				uint? tLastInput = NativeMethods.GetLastInputTime();
-				if(tLastInput.HasValue)
+				uint? otLastInput = NativeMethods.GetLastInputTime();
+				if(otLastInput.HasValue)
 				{
-					int iDiff = Environment.TickCount - (int)tLastInput.Value;
+					int iDiff = Environment.TickCount - (int)otLastInput.Value;
 					Debug.Assert(iDiff >= 0);
 					if(iDiff == 0)
 					{
@@ -146,7 +146,7 @@ namespace KeePass.Util.SendInputExt
 			base.Release();
 		}
 
-		public override void SendKeyImpl(int iVKey, bool? bExtKey, bool? bDown)
+		public override void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown)
 		{
 			PrepareSend();
 
@@ -154,14 +154,14 @@ namespace KeePass.Util.SendInputExt
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/5da4bd14/
 			// using(SiImeBlocker sib = new SiImeBlocker(hWnd))
 
-			if(bDown.HasValue)
+			if(obDown.HasValue)
 			{
-				SendVKeyNative(iVKey, bExtKey, bDown.Value);
+				SendVKeyNative(iVKey, obExtKey, obDown.Value);
 				return;
 			}
 
-			SendVKeyNative(iVKey, bExtKey, true);
-			SendVKeyNative(iVKey, bExtKey, false);
+			SendVKeyNative(iVKey, obExtKey, true);
+			SendVKeyNative(iVKey, obExtKey, false);
 		}
 
 		public override void SetKeyModifierImpl(Keys kMod, bool bDown)
@@ -200,15 +200,15 @@ namespace KeePass.Util.SendInputExt
 			else m_kModCur &= ~kMod;
 		}
 
-		public override void SendCharImpl(char ch, bool? bDown)
+		public override void SendCharImpl(char ch, bool? obDown)
 		{
 			PrepareSend();
 
-			if(TrySendCharByKeypresses(ch, bDown)) return;
+			if(TrySendCharByKeypresses(ch, obDown)) return;
 
-			if(bDown.HasValue)
+			if(obDown.HasValue)
 			{
-				SendCharNative(ch, bDown.Value);
+				SendCharNative(ch, obDown.Value);
 				return;
 			}
 
@@ -265,14 +265,14 @@ namespace KeePass.Util.SendInputExt
 #endif
 		}
 
-		private bool SendVKeyNative(int vKey, bool? bExtKey, bool bDown)
+		private bool SendVKeyNative(int vKey, bool? obExtKey, bool bDown)
 		{
 			bool bRes = false;
 
 			if(IntPtr.Size == 4)
-				bRes = SendVKeyNative32(vKey, bExtKey, null, bDown);
+				bRes = SendVKeyNative32(vKey, obExtKey, null, bDown);
 			else if(IntPtr.Size == 8)
-				bRes = SendVKeyNative64(vKey, bExtKey, null, bDown);
+				bRes = SendVKeyNative64(vKey, obExtKey, null, bDown);
 			else { Debug.Assert(false); }
 
 			// The following does not hold when sending keypresses to
@@ -296,7 +296,7 @@ namespace KeePass.Util.SendInputExt
 			return false;
 		}
 
-		private bool SendVKeyNative32(int vKey, bool? bExtKey, char? optUnicodeChar,
+		private bool SendVKeyNative32(int vKey, bool? obExtKey, char? optUnicodeChar,
 			bool bDown)
 		{
 			NativeMethods.INPUT32[] pInput = new NativeMethods.INPUT32[1];
@@ -322,7 +322,7 @@ namespace KeePass.Util.SendInputExt
 				pInput[0].KeyboardInput.ScanCode =
 					(ushort)(NativeMethods.MapVirtualKey3((uint)vKey,
 					NativeMethods.MAPVK_VK_TO_VSC, hKL) & 0xFFU);
-				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
+				pInput[0].KeyboardInput.Flags = GetKeyEventFlags(vKey, obExtKey, bDown);
 			}
 
 			pInput[0].KeyboardInput.Time = 0;
@@ -336,7 +336,7 @@ namespace KeePass.Util.SendInputExt
 			return true;
 		}
 
-		private bool SendVKeyNative64(int vKey, bool? bExtKey, char? optUnicodeChar,
+		private bool SendVKeyNative64(int vKey, bool? obExtKey, char? optUnicodeChar,
 			bool bDown)
 		{
 			NativeMethods.SpecializedKeyboardINPUT64[] pInput = new
@@ -362,7 +362,7 @@ namespace KeePass.Util.SendInputExt
 				pInput[0].VirtualKeyCode = (ushort)vKey;
 				pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey3(
 					(uint)vKey, NativeMethods.MAPVK_VK_TO_VSC, hKL) & 0xFFU);
-				pInput[0].Flags = GetKeyEventFlags(vKey, bExtKey, bDown);
+				pInput[0].Flags = GetKeyEventFlags(vKey, obExtKey, bDown);
 			}
 
 			pInput[0].Time = 0;
@@ -376,15 +376,15 @@ namespace KeePass.Util.SendInputExt
 			return true;
 		}
 
-		private static uint GetKeyEventFlags(int vKey, bool? bExtKey, bool bDown)
+		private static uint GetKeyEventFlags(int vKey, bool? obExtKey, bool bDown)
 		{
 			uint u = 0;
 
 			if(!bDown) u |= NativeMethods.KEYEVENTF_KEYUP;
 
-			if(bExtKey.HasValue)
+			if(obExtKey.HasValue)
 			{
-				if(bExtKey.Value) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+				if(obExtKey.Value) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
 			}
 			else if(IsExtendedKeyEx(vKey))
 				u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
@@ -539,7 +539,7 @@ namespace KeePass.Util.SendInputExt
 		}
 
 		private static char[] m_vForcedUniChars = null;
-		private bool TrySendCharByKeypresses(char ch, bool? bDown)
+		private bool TrySendCharByKeypresses(char ch, bool? obDown)
 		{
 			if(ch == char.MinValue) { Debug.Assert(false); return false; }
 
@@ -685,7 +685,7 @@ namespace KeePass.Util.SendInputExt
 
 			if(bSleep) SleepAndDoEvents(msSleep);
 
-			SendKeyImpl(vKey, null, bDown);
+			SendKeyImpl(vKey, null, obDown);
 
 			if(bSleep) SleepAndDoEvents(msSleep);
 

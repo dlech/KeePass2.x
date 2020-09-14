@@ -294,8 +294,9 @@ namespace KeePass.UI
 			if(string.IsNullOrEmpty(strName))
 				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(strPath));
 
-			Image img = UIUtil.GetFileIcon(strPath, DpiUtil.ScaleIntX(16),
-				DpiUtil.ScaleIntY(16));
+			// Image img = UIUtil.GetFileIcon(strPath, DpiUtil.ScaleIntX(16),
+			//	DpiUtil.ScaleIntY(16));
+			Image img = FileIcons.GetImageForPath(strPath, null, true, true);
 
 			OpenWithItem owi = new OpenWithItem(strPath, OwFilePathType.Executable,
 				strName, img, m_dynMenu);
@@ -312,8 +313,11 @@ namespace KeePass.UI
 
 			Image img = null;
 			if(!string.IsNullOrEmpty(strIconExe))
-				img = UIUtil.GetFileIcon(strIconExe, DpiUtil.ScaleIntX(16),
-					DpiUtil.ScaleIntY(16));
+			{
+				// img = UIUtil.GetFileIcon(strIconExe, DpiUtil.ScaleIntX(16),
+				//	DpiUtil.ScaleIntY(16));
+				img = FileIcons.GetImageForPath(strIconExe, null, true, true);
+			}
 
 			OpenWithItem owi = new OpenWithItem(strShell, OwFilePathType.ShellExpand,
 				strName, img, m_dynMenu);

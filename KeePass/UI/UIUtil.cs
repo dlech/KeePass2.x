@@ -40,6 +40,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI.ToolStripRendering;
 using KeePass.Util;
+using KeePass.Util.MultipleValues;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -880,7 +881,7 @@ namespace KeePass.UI
 				// str += strDescription + @" (*." + strExtension +
 				//	@")|*." + strExtension;
 
-				string[] vExts = strExtension.Split(new char[]{ '|' },
+				string[] vExts = strExtension.Split(new char[] { '|' },
 					StringSplitOptions.RemoveEmptyEntries);
 				if(vExts.Length > 0)
 				{
@@ -1431,11 +1432,11 @@ namespace KeePass.UI
 			if(c.Enabled != bEnabled) c.Enabled = bEnabled;
 		}
 
-		internal static void SetEnabledFast(bool bEnabled, params ToolStripItem[] v)
+		internal static void SetEnabledFast(bool bEnabled, params Control[] v)
 		{
 			if(v == null) { Debug.Assert(false); return; }
 
-			foreach(ToolStripItem c in v)
+			foreach(Control c in v)
 			{
 				if(c == null) { Debug.Assert(false); continue; }
 
@@ -1443,11 +1444,26 @@ namespace KeePass.UI
 			}
 		}
 
+		internal static void SetEnabledFast(bool bEnabled, params ToolStripItem[] v)
+		{
+			if(v == null) { Debug.Assert(false); return; }
+
+			foreach(ToolStripItem tsi in v)
+			{
+				if(tsi == null) { Debug.Assert(false); continue; }
+
+				tsi.Enabled = bEnabled;
+			}
+		}
+
 		public static void SetChecked(CheckBox cb, bool bChecked)
 		{
 			if(cb == null) { Debug.Assert(false); return; }
 
-			if(cb.Checked != bChecked) cb.Checked = bChecked;
+			// If the state is indeterminate, setting the Checked
+			// property to true does not change the state to checked,
+			// thus we use the CheckState property instead of Checked
+			cb.CheckState = (bChecked ? CheckState.Checked : CheckState.Unchecked);
 		}
 
 		private static Bitmap GetGlyphBitmap(MenuGlyph mg, Color clrFG)
@@ -3077,6 +3093,11 @@ namespace KeePass.UI
 				case Keys.Down: sb.Append('\u2193'); break;
 				case Keys.Left: sb.Append('\u2190'); break;
 
+				case Keys.Add: sb.Append('+'); break;
+				case Keys.Subtract: sb.Append('-'); break;
+				case Keys.Multiply: sb.Append('*'); break;
+				case Keys.Divide: sb.Append('/'); break;
+
 				default:
 					if(g_convKeys == null) g_convKeys = new KeysConverter();
 					sb.Append(g_convKeys.ConvertToString(kCode));
@@ -3282,26 +3303,16 @@ namespace KeePass.UI
 
 		public static Image GetFileIcon(string strFilePath, int w, int h)
 		{
-			Image img = null;
 			try
 			{
 				using(Icon ico = Icon.ExtractAssociatedIcon(strFilePath))
 				{
-					if(ico == null) return null;
-
-					img = new Bitmap(w, h, PixelFormat.Format32bppArgb);
-					using(Graphics g = Graphics.FromImage(img))
-					{
-						g.Clear(Color.Transparent);
-						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						g.SmoothingMode = SmoothingMode.HighQuality;
-						g.DrawIcon(ico, new Rectangle(0, 0, img.Width, img.Height));
-					}
+					return IconToBitmap(ico, w, h);
 				}
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
 
-			return img;
+			return null;
 		}
 
 		public static void SetHandled(KeyEventArgs e, bool bHandled)
@@ -3477,9 +3488,12 @@ namespace KeePass.UI
 			lv.Columns.Add(KPRes.Value, w);
 		}
 
-		internal static void StrDictListUpdate(ListView lv, StringDictionaryEx sd)
+		internal static void StrDictListUpdate(ListView lv, StringDictionaryEx sd,
+			bool bMultipleValues)
 		{
 			if((lv == null) || (sd == null)) { Debug.Assert(false); return; }
+
+			string strCue = MultipleValuesEx.CueString;
 
 			UIScrollInfo si = GetScrollInfo(lv, true);
 			lv.BeginUpdate();
@@ -3490,17 +3504,21 @@ namespace KeePass.UI
 				if(kvp.Key == null) { Debug.Assert(false); continue; }
 
 				string strValue = StrUtil.MultiToSingleLine(StrUtil.CompactString3Dots(
-					kvp.Value ?? string.Empty, 1024));
+					(kvp.Value ?? string.Empty), 1024));
 
 				ListViewItem lvi = lv.Items.Add(kvp.Key);
 				lvi.SubItems.Add(strValue);
+
+				if(bMultipleValues && (strValue == strCue))
+					MultipleValuesEx.ConfigureText(lvi, 1);
 			}
 
 			Scroll(lv, si, true);
 			lv.EndUpdate();
 		}
 
-		internal static void StrDictListDeleteSel(ListView lv, StringDictionaryEx sd)
+		internal static void StrDictListDeleteSel(ListView lv, StringDictionaryEx sd,
+			bool bMultipleValues)
 		{
 			if((lv == null) || (sd == null)) { Debug.Assert(false); return; }
 
@@ -3517,7 +3535,7 @@ namespace KeePass.UI
 				if(!sd.Remove(strName)) { Debug.Assert(false); }
 			}
 
-			StrDictListUpdate(lv, sd);
+			StrDictListUpdate(lv, sd, bMultipleValues);
 		}
 
 		public static void SetText(Control c, string strText)

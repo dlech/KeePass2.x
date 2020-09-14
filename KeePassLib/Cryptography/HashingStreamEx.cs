@@ -90,7 +90,7 @@ namespace KeePassLib.Cryptography
 			if(m_hash == null) { Debug.Assert(false); return; }
 
 			// Validate hash algorithm
-			if(!m_hash.CanReuseTransform || !m_hash.CanTransformMultipleBlocks)
+			if(!m_hash.CanTransformMultipleBlocks)
 			{
 				Debug.Assert(false);
 				m_hash = null;

@@ -180,6 +180,7 @@ namespace KeePass.App
 			public static readonly string HelpLong = "help";
 
 			public static readonly string WorkaroundDisable = "wa-disable";
+			public static readonly string WorkaroundEnable = "wa-enable";
 
 			public static readonly string ConfigPathLocal = "cfg-local";
 

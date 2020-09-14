@@ -18,12 +18,12 @@
 */
 
 using System;
-using System.Text;
-using System.Security;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
+using System.Windows.Forms;
 
 namespace KeePass.Native
 {
@@ -203,6 +203,14 @@ namespace KeePass.Native
 			public uint cbSize;
 			public uint dwTime;
 		}
+
+		/* [StructLayout(LayoutKind.Sequential)]
+		internal struct SHCHANGENOTIFYENTRY
+		{
+			public IntPtr pidl;
+			[MarshalAs(UnmanagedType.Bool)]
+			public bool fRecursive;
+		} */
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		private struct SHFILEINFO

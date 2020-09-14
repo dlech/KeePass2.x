@@ -270,10 +270,12 @@ namespace KeePass
 			m_cmdLineArgs = new CommandLineArgs(args);
 
 			// Before loading the configuration
-			string strWaDisable = m_cmdLineArgs[
-				AppDefs.CommandLineOptions.WorkaroundDisable];
-			if(!string.IsNullOrEmpty(strWaDisable))
-				MonoWorkarounds.SetEnabled(strWaDisable, false);
+			string strWa = m_cmdLineArgs[AppDefs.CommandLineOptions.WorkaroundDisable];
+			if(!string.IsNullOrEmpty(strWa))
+				MonoWorkarounds.SetEnabled(strWa, false);
+			strWa = m_cmdLineArgs[AppDefs.CommandLineOptions.WorkaroundEnable];
+			if(!string.IsNullOrEmpty(strWa))
+				MonoWorkarounds.SetEnabled(strWa, true);
 
 			try
 			{

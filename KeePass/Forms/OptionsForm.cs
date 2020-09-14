@@ -422,6 +422,8 @@ namespace KeePass.Forms
 
 			bool? obNoMin = null;
 			if(MonoWorkarounds.IsRequired(1418)) obNoMin = true;
+			bool? obNoFocus = null;
+			if(MonoWorkarounds.IsRequired(1976)) obNoFocus = true;
 
 			m_lvGuiOptions.Columns.Add(KPRes.Options); // Resize below
 
@@ -506,9 +508,9 @@ namespace KeePass.Forms
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusResultsAfterQuickFind",
 				lvg, KPRes.FocusResultsAfterQuickSearch);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnRestore",
-				lvg, KPRes.FocusQuickFindOnRestore);
+				lvg, KPRes.FocusQuickFindOnRestore, obNoFocus);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "FocusQuickFindOnUntray",
-				lvg, KPRes.FocusQuickFindOnUntray);
+				lvg, KPRes.FocusQuickFindOnUntray, obNoFocus);
 
 			lvg = new ListViewGroup(KPRes.TrayIcon);
 			m_lvGuiOptions.Groups.Add(lvg);
@@ -1051,6 +1053,12 @@ namespace KeePass.Forms
 				m_argbAltItemBg = clr.Value.ToArgb();
 				UpdateButtonImages();
 			}
+		}
+
+		private void OnBtnHelpSource(object sender, EventArgs e)
+		{
+			HelpSourceForm hsf = new HelpSourceForm();
+			UIUtil.ShowDialogAndDestroy(hsf);
 		}
 	}
 }

@@ -30,6 +30,7 @@ namespace KeePass.Native
 	{
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
+		internal const int WM_CONTEXTMENU = 0x007B;
 		internal const int WM_KEYDOWN = 0x0100;
 		internal const int WM_KEYUP = 0x0101;
 		internal const int WM_SYSKEYDOWN = 0x0104;
@@ -188,6 +189,8 @@ namespace KeePass.Native
 		internal const int SHCNE_ASSOCCHANGED = 0x08000000;
 		internal const uint SHCNF_IDLIST = 0x0000;
 
+		// internal const int SHCNRF_SHELLLEVEL = 0x0002;
+
 		// internal const uint SW_INVALIDATE = 0x0002;
 
 		internal const uint TVS_FULLROWSELECT = 0x1000;
@@ -205,12 +208,12 @@ namespace KeePass.Native
 		internal const int HDM_SETITEMA = HDM_FIRST + 4;
 		internal const int HDM_SETITEMW = HDM_FIRST + 12;
 
-		internal const int OFN_DONTADDTORECENT = 0x02000000;
+		// internal const int OFN_DONTADDTORECENT = 0x02000000;
 
 		internal const uint SHGFI_DISPLAYNAME = 0x000000200;
 		internal const uint SHGFI_ICON = 0x000000100;
-		internal const uint SHGFI_TYPENAME = 0x000000400;
 		internal const uint SHGFI_SMALLICON = 0x000000001;
+		// internal const uint SHGFI_TYPENAME = 0x000000400;
 
 		internal const uint MOD_ALT = 1;
 		internal const uint MOD_CONTROL = 2;
@@ -286,6 +289,9 @@ namespace KeePass.Native
 		// private const int TTN_FIRST = -520;
 		// internal const int TTN_NEEDTEXTA = TTN_FIRST;
 		// internal const int TTN_NEEDTEXTW = TTN_FIRST - 10;
+
+		internal const uint WDA_NONE = 0x00000000;
+		internal const uint WDA_MONITOR = 0x00000001;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

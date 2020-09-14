@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -29,6 +28,7 @@ using System.Windows.Forms;
 using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util.MultipleValues;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -59,6 +59,19 @@ namespace KeePass.Forms
 		{
 			get { return m_bReadOnly; }
 			set { m_bReadOnly = value; }
+		}
+
+		// The following is used when editing multiple strings with the
+		// same name in different entries (not when editing multiple
+		// strings within the same entry)
+		private MultipleValuesEntryContext m_mvec = null;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)null)]
+		internal MultipleValuesEntryContext MultipleValuesEntryContext
+		{
+			get { return m_mvec; }
+			set { m_mvec = value; }
 		}
 
 		public EditStringForm()
@@ -117,11 +130,22 @@ namespace KeePass.Forms
 			{
 				m_richStringValue.Text = StrUtil.NormalizeNewLines(
 					m_psStringInitialValue.ReadString(), true);
-				m_cbProtect.Checked = m_psStringInitialValue.IsProtected;
+				UIUtil.SetChecked(m_cbProtect, m_psStringInitialValue.IsProtected);
 			}
 
 			ValidateStringNameUI();
 			PopulateNamesComboBox();
+
+			if(m_mvec != null)
+			{
+				m_cmbStringName.Enabled = false;
+				MultipleValuesEx.ConfigureText(m_richStringValue, true);
+
+				bool bMultiProt;
+				m_mvec.MultiStringProt.TryGetValue(m_cmbStringName.Text, out bMultiProt);
+				if(bMultiProt)
+					MultipleValuesEx.ConfigureState(m_cbProtect, true);
+			}
 
 			if(m_bReadOnly)
 			{
@@ -242,8 +266,13 @@ namespace KeePass.Forms
 					strValue = strValueIn;
 			}
 
-			ProtectedString ps = new ProtectedString(m_cbProtect.Checked, strValue);
+			CheckState cs = m_cbProtect.CheckState;
+
+			ProtectedString ps = new ProtectedString((cs == CheckState.Checked), strValue);
 			m_vStringDict.Set(strName, ps);
+
+			if(m_mvec != null)
+				m_mvec.MultiStringProt[strName] = (cs == CheckState.Indeterminate);
 		}
 
 		private void OnBtnCancel(object sender, EventArgs e)

@@ -117,10 +117,10 @@ match the KeePass formats. CSV files can be reformatted using e.g. <i>LibreOffic
 XML files can be reformatted using an XML editor.</p>
 
 <p>KeePass can import many password database formats directly (see top of this page).
-Additionally, there are specialized
-<a href="https://keepass.info/plugins.html" target="_blank">KeePass Plugins</a> available
-for importing more formats (like AnyPassword CSV, Oubliette files, PINs TXT, ZSafe files, and
-many more...). Using these plugins, you don't need to manually reformat the output of
+Additionally, there are specialized KeePass
+<a href="https://keepass.info/plugins.html" target="_blank">plugins</a> available
+for importing more formats (like AnyPassword CSV, Oubliette files, PINs TXT, ZSafe files,
+and many more). Using these plugins, you don't need to manually reformat the output of
 other password managers; you can directly import the exported files.</p>
 
 <p>If no import plugin exists for importing data from your previous password manager,
@@ -140,6 +140,12 @@ File Format: CSV (KeePass 1.x)</h2>
 <p>KeePass imports and exports data from/to CSV files in the following format:</p>
 
 <p><code>&quot;Account&quot;,&quot;Login Name&quot;,&quot;Password&quot;,&quot;Web Site&quot;,&quot;Comments&quot;</code></p>
+
+<p>The 'Account' field in a CSV file corresponds to the title field of
+a KeePass entry, 'Login Name' corresponds to the user name,
+'Web Site' corresponds to the URL, and 'Comments' correspond to the notes.
+The CSV field names differ from the KeePass entry field names
+in order to ensure the compatibility with certain other applications.</p>
 
 <p>For a detailed example, download this file:
 <img src="../images/b16x16_tar.png" alt="ZIP Package" />
@@ -385,9 +391,9 @@ How to Import Data from PassKeeper 1.2</h2>
 
 <p>The import process works visually, exactly like the import method for
 Steganos Password Manager data. Please read all instructions in
-<a href="#imp_steganos">How to Import Data from Steganos Password Manager</a>.</p>
+<a href="#imp_steganos">How to Import Data from Steganos Password Manager 2007</a>.</p>
 
-<br /> 
+<br />
 
 <a name="imp_1pwpro"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="Text" />

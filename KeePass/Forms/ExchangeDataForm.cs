@@ -217,7 +217,7 @@ namespace KeePass.Forms
 
 			string strFilter = UIUtil.CreateFileTypeFilter(strExts, strFormat, true);
 
-			if(m_bExport == false) // Import
+			if(!m_bExport) // Import
 			{
 				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.Import +
 					": " + strFormat, strFilter, 1, strPriExt, true,

@@ -204,6 +204,26 @@ namespace KeePassLib.Native
 			return m_tDesktop.Value;
 		}
 
+		private static bool? g_obWayland = null;
+		internal static bool IsWayland()
+		{
+			if(!g_obWayland.HasValue)
+			{
+				bool b = false;
+				try
+				{
+					// https://www.freedesktop.org/software/systemd/man/pam_systemd.html
+					b = ((Environment.GetEnvironmentVariable("XDG_SESSION_TYPE") ??
+						string.Empty).Trim().Equals("wayland", StrUtil.CaseIgnoreCmp));
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				g_obWayland = b;
+			}
+
+			return g_obWayland.Value;
+		}
+
 #if (!KeePassLibSD && !KeePassUAP)
 		public static string RunConsoleApp(string strAppPath, string strParams)
 		{

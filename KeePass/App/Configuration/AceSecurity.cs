@@ -148,6 +148,15 @@ namespace KeePass.App.Configuration
 		}
 
 		// https://keepass.info/help/v2_dev/customize.html#opt
+		private bool m_bPreventScreenCapture = false;
+		[DefaultValue(false)]
+		public bool PreventScreenCapture
+		{
+			get { return m_bPreventScreenCapture; }
+			set { m_bPreventScreenCapture = value; }
+		}
+
+		// https://keepass.info/help/v2_dev/customize.html#opt
 		private bool m_bProtectProcessWithDacl = false;
 		[DefaultValue(false)]
 		public bool ProtectProcessWithDacl

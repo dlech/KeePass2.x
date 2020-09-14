@@ -20,8 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -439,7 +437,7 @@ namespace KeePass.Native
 			return null;
 		}
 
-		internal static bool SHGetFileInfo(string strPath, int nPrefImgDim,
+		internal static bool SHGetFileInfo(string strPath, int dxImg, int dyImg,
 			out Image img, out string strDisplayName)
 		{
 			img = null;
@@ -457,14 +455,7 @@ namespace KeePass.Native
 				{
 					using(Icon ico = Icon.FromHandle(fi.hIcon)) // Doesn't take ownership
 					{
-						img = new Bitmap(nPrefImgDim, nPrefImgDim);
-						using(Graphics g = Graphics.FromImage(img))
-						{
-							g.Clear(Color.Transparent);
-							g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-							g.SmoothingMode = SmoothingMode.HighQuality;
-							g.DrawIcon(ico, new Rectangle(0, 0, nPrefImgDim, nPrefImgDim));
-						}
+						img = UIUtil.IconToBitmap(ico, dxImg, dyImg);
 					}
 
 					if(!DestroyIcon(fi.hIcon)) { Debug.Assert(false); }
