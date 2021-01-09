@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace KeePass.DataExchange
 		public PwGroup DataGroup
 		{
 			get { return m_pg; }
+			internal set { m_pg = value; }
 		}
 
 		private PwDatabase m_pd;
@@ -54,6 +55,34 @@ namespace KeePass.DataExchange
 		public bool ExportDeletedObjects
 		{
 			get { return m_bExpDel; }
+		}
+
+		private bool m_bExportMasterKeySpec = false;
+		internal bool ExportMasterKeySpec
+		{
+			get { return m_bExportMasterKeySpec; }
+			set { m_bExportMasterKeySpec = value; }
+		}
+
+		private bool m_bExportParentGroups = false;
+		internal bool ExportParentGroups
+		{
+			get { return m_bExportParentGroups; }
+			set { m_bExportParentGroups = value; }
+		}
+
+		private bool m_bExportPostOpen = false;
+		internal bool ExportPostOpen
+		{
+			get { return m_bExportPostOpen; }
+			set { m_bExportPostOpen = value; }
+		}
+
+		private bool m_bExportPostShow = false;
+		internal bool ExportPostShow
+		{
+			get { return m_bExportPostShow; }
+			set { m_bExportPostShow = value; }
 		}
 
 		private Dictionary<string, string> m_dictParams =

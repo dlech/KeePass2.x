@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Xml.Serialization;
-using System.ComponentModel;
 
 using KeePass.Util;
 
@@ -130,17 +130,6 @@ namespace KeePass.App.Configuration
 			set { m_bExpireTansOnUse = value; }
 		}
 
-		private SearchParameters m_searchParams = new SearchParameters();
-		public SearchParameters SearchParameters
-		{
-			get { return m_searchParams; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_searchParams = value;
-			}
-		}
-
 		private string m_strDbSaveAsPath = string.Empty;
 		[DefaultValue("")]
 		public string FileSaveAsDirectory
@@ -183,6 +172,38 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strCustomColors = value;
 			}
+		}
+
+		private bool m_bExportMasterKeySpec = false;
+		[DefaultValue(false)]
+		public bool ExportMasterKeySpec
+		{
+			get { return m_bExportMasterKeySpec; }
+			set { m_bExportMasterKeySpec = value; }
+		}
+
+		private bool m_bExportParentGroups = false;
+		[DefaultValue(false)]
+		public bool ExportParentGroups
+		{
+			get { return m_bExportParentGroups; }
+			set { m_bExportParentGroups = value; }
+		}
+
+		private bool m_bExportPostOpen = false;
+		[DefaultValue(false)]
+		public bool ExportPostOpen
+		{
+			get { return m_bExportPostOpen; }
+			set { m_bExportPostOpen = value; }
+		}
+
+		private bool m_bExportPostShow = false;
+		[DefaultValue(false)]
+		public bool ExportPostShow
+		{
+			get { return m_bExportPostShow; }
+			set { m_bExportPostShow = value; }
 		}
 
 		private string m_strWinFavsBaseName = string.Empty;

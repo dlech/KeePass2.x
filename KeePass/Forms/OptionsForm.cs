@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -387,7 +387,7 @@ namespace KeePass.Forms
 			Debug.Assert(p.ToString() == strPropertyName);
 
 			ListViewItem lvi = m_cdxPolicy.CreateItem(Program.Config.Security.Policy,
-				strPropertyName, null, AppPolicy.GetName(p) + "*");
+				strPropertyName, null, AppPolicy.GetName(p) + " *");
 			lvi.SubItems.Add(AppPolicy.GetDesc(p));
 		}
 
@@ -637,6 +637,8 @@ namespace KeePass.Forms
 				lvg, KPRes.AutoTypeMatchByUrlHostInTitle);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchByTagInTitle",
 				lvg, KPRes.AutoTypeMatchByTagInTitle);
+			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeMatchNormDashes",
+				lvg, KPRes.ConsiderDashesEq + " (-, \u2010, \u2011, \u2012, \u2013, \u2014, \u2015, \u2212)");
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeExpiredCanMatch",
 				lvg, KPRes.ExpiredEntriesCanMatch);
 			m_cdxAdvanced.CreateItem(Program.Config.Integration, "AutoTypeAlwaysShowSelDialog",
@@ -947,7 +949,7 @@ namespace KeePass.Forms
 
 		private void OnBtnFileExtCreate(object sender, EventArgs e)
 		{
-			// ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
+			// ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.FileExtId,
 			//	KPRes.FileExtName2, WinUtil.GetExecutable(), PwDefs.ShortProductName, true);
 			WinUtil.RunElevated(WinUtil.GetExecutable(), "-" +
 				AppDefs.CommandLineOptions.FileExtRegister, false);
@@ -956,7 +958,7 @@ namespace KeePass.Forms
 		private void OnBtnFileExtRemove(object sender, EventArgs e)
 		{
 			// ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt,
-			//	AppDefs.FileExtension.ExtId);
+			//	AppDefs.FileExtension.FileExtId);
 			WinUtil.RunElevated(WinUtil.GetExecutable(), "-" +
 				AppDefs.CommandLineOptions.FileExtUnregister, false);
 		}
@@ -1059,6 +1061,16 @@ namespace KeePass.Forms
 		{
 			HelpSourceForm hsf = new HelpSourceForm();
 			UIUtil.ShowDialogAndDestroy(hsf);
+		}
+
+		private void OnSecOptExLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.Security, AppDefs.HelpTopics.SecurityOptEx);
+		}
+
+		private void OnSecOptAdmLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.Security, AppDefs.HelpTopics.SecurityOptAdm);
 		}
 	}
 }

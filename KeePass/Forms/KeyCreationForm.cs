@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Keys;
 using KeePassLib.Native;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -250,14 +251,9 @@ namespace KeePass.Forms
 				!bIsKeyProv)
 			{
 				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile, true)); }
-				catch(InvalidDataException exID) // Selected database file
-				{
-					MessageService.ShowWarning(strKeyFile, exID);
-					return false;
-				}
 				catch(Exception exKF)
 				{
-					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKF);
+					MessageService.ShowWarning(strKeyFile, KLRes.FileLoadFailed, exKF);
 					return false;
 				}
 			}
@@ -376,63 +372,54 @@ namespace KeePass.Forms
 
 		private void OnClickKeyFileCreate(object sender, EventArgs e)
 		{
-			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreate,
-				UrlUtil.StripExtension(UrlUtil.GetFileName(m_ioInfo.Path)) + "." +
-				AppDefs.FileExtension.KeyFile, UIUtil.CreateFileTypeFilter("key",
-				KPRes.KeyFiles, true), 1, "key", AppDefs.FileDialogContext.KeyFile);
+			KeyFileCreationForm dlg = new KeyFileCreationForm();
+			dlg.InitEx(m_ioInfo);
 
-			if(sfd.ShowDialog() == DialogResult.OK)
+			if(dlg.ShowDialog() == DialogResult.OK)
 			{
-				EntropyForm dlg = new EntropyForm();
-				if(dlg.ShowDialog() == DialogResult.OK)
+				string strFile = dlg.ResultFile;
+				if(!string.IsNullOrEmpty(strFile))
 				{
-					byte[] pbAdditionalEntropy = dlg.GeneratedEntropy;
-
-					try
-					{
-						KcpKeyFile.Create(sfd.FileName, pbAdditionalEntropy);
-						
-						string str = sfd.FileName;
-						m_cmbKeyFile.Items.Add(str);
-						m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
-					}
-					catch(Exception exKC)
-					{
-						MessageService.ShowWarning(exKC);
-					}
+					m_cmbKeyFile.Items.Add(strFile);
+					m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 				}
-				UIUtil.DestroyForm(dlg);
+				else { Debug.Assert(false); }
 			}
 
+			UIUtil.DestroyForm(dlg);
 			EnableUserControls();
 		}
 
 		private void OnClickKeyFileBrowse(object sender, EventArgs e)
 		{
+			string strFilter = AppDefs.GetKeyFileFilter();
 			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileUseExisting,
-				UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true), 2, null,
-				false, AppDefs.FileDialogContext.KeyFile);
+				strFilter, 1, null, false, AppDefs.FileDialogContext.KeyFile);
 
-			if(ofd.ShowDialog() == DialogResult.OK)
+			if(ofd.ShowDialog() != DialogResult.OK) return;
+
+			string strFile = ofd.FileName;
+
+			try
 			{
-				string strFile = ofd.FileName;
+				// Test whether we can read the file
+				IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+				IOConnection.OpenRead(ioc).Close();
 
-				// try
-				// {
-				//	IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-				//	if(ioc.IsLocalFile())
-				//	{
-				//		FileInfo fi = new FileInfo(strFile);
-				//		if(fi.Length >= (100 * 1024 * 1024))
-				//		{
-				//		}
-				//	}
-				// }
-				// catch(Exception) { Debug.Assert(false); }
-
-				m_cmbKeyFile.Items.Add(strFile);
-				m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
+				// Check the file size?
 			}
+			catch(Exception ex) { MessageService.ShowWarning(ex); return; }
+
+			if(!KfxFile.CanLoad(strFile))
+			{
+				if(!MessageService.AskYesNo(strFile + MessageService.NewParagraph +
+					KPRes.KeyFileNoXml + MessageService.NewParagraph +
+					KPRes.KeyFileUseAnywayQ, null, false))
+					return;
+			}
+
+			m_cmbKeyFile.Items.Add(strFile);
+			m_cmbKeyFile.SelectedIndex = m_cmbKeyFile.Items.Count - 1;
 
 			EnableUserControls();
 		}

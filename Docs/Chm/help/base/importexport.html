@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -28,8 +28,23 @@
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 
 	
+	<style type="text/css">
+	/* <![CDATA[ */
+	.impexp_uiex_line {
+		text-align: center;
+	}
+
+	.impexp_uiex_inline {
+		display: inline-block;
+		text-align: left;
+		vertical-align: top;
+	}
+	/* ]]> */
+	</style>
+
 </head>
 <body>
+
 
 
 
@@ -81,7 +96,6 @@ add more import/export capabilities.</p>
 <li><a href="#genericcsv">Generic CSV Importer</a></li>
 
 <li>Formats that require custom options/steps in order to be imported:
-
 <ul>
 <li><a href="#imp_cwallet">How to Import CodeWallet TXT</a></li>
 <!-- <li><a href="#imp_pwgorilla">How to Import Password Gorilla CSV</a></li> -->
@@ -91,8 +105,9 @@ add more import/export capabilities.</p>
 <li><a href="#imp_passkeeper">How to Import Data from PassKeeper 1.2</a></li>
 <li><a href="#imp_1pwpro">How to Import 1PW and 1Password Pro CSV</a></li>
 </ul>
-
 </li>
+
+<li><a href="#exp_parents">Export: Option 'Additionally Export Parent Groups'</a></li>
 </ul>
 
 </li>
@@ -407,6 +422,99 @@ When exporting the data, make sure:</p>
 <li>The option for enclosing fields in quotes must be enabled.</li>
 <li>All fields must be exported, in the original order.</li>
 </ul>
+
+<br />
+
+<a name="exp_parents"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+Export: Option 'Additionally Export Parent Groups'</h2>
+
+<p>In KeePass 2.x, there is an option 'Additionally export parent groups'
+in the export dialog.
+If this option is turned on, the parent groups of the selected groups/entries
+are exported, too (all up to the root group of the database).
+Unselected groups/entries in parent groups are not exported.</p>
+
+<p>If the selected file format does not support groups, the option
+has no effect.
+When exporting the whole database (via 'File' &rarr; 'Export') or the
+root group, the option is disabled, because the root group has no parent
+group.</p>
+
+<p>Properties of the parent groups (icons, notes, behavior and auto-type
+settings, etc.) are exported, if the selected file format supports them.
+When importing a file, the properties of the groups in the current database
+may be overwritten by the properties of the groups in the file
+(depending on the import mode and the last modification times).</p>
+
+<p><b>Example.</b>
+Assume that the user selects the entry 'Entry B' that is stored in
+the groups 'Group 1' &rarr; 'Group 1.2' of a database.</p>
+
+<div class="impexp_uiex_line">
+<table class="impexp_uiex_inline uiex_w">
+<tr><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td colspan="3"><b>Root Group</b></td></tr>
+<tr><td></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td colspan="2">Group 1</td></tr>
+<tr><td colspan="2"></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td>Group 1.1</td></tr>
+<tr><td colspan="2"></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td class="uiex_t_sel">Group 1.2</td></tr>
+<tr><td></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td colspan="2">Group 2</td></tr>
+</table>
+&nbsp;
+<table class="impexp_uiex_inline uiex_w">
+<tr><th colspan="2">Title</th><th>User Name</th><th>Password</th><th>URL</th><th>Notes</th></tr>
+<tr><td><img src="../images/b16x16_password.png" alt="" /></td>
+<td>Entry A</td><td>Michael42</td><td>********</td><td>https://example.net/</td><td>None.</td></tr>
+<tr><td><img src="../images/b16x16_password.png" alt="" /></td>
+<td class="uiex_t_sel">Entry B</td>
+<td class="uiex_t_sel">Michael42</td>
+<td class="uiex_t_sel">********</td>
+<td class="uiex_t_sel">https://example.com/</td>
+<td class="uiex_t_sel">None.</td></tr>
+<tr><td><img src="../images/b16x16_password.png" alt="" /></td>
+<td>Entry C</td><td>Michael42</td><td>********</td><td>https://example.org/</td><td>None.</td></tr>
+</table>
+</div>
+
+<p>Exporting the selected entry (via 'Entry' &rarr; 'Data Exchange' &rarr;
+'Export Entry') to a KDBX database file without turning on the option results in:</p>
+
+<div class="impexp_uiex_line">
+<table class="impexp_uiex_inline uiex_w">
+<tr><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td class="uiex_t_sel"><b>Root Group</b></td></tr>
+</table>
+&nbsp;
+<table class="impexp_uiex_inline uiex_w">
+<tr><th colspan="2">Title</th><th>User Name</th><th>Password</th><th>URL</th><th>Notes</th></tr>
+<tr><td><img src="../images/b16x16_password.png" alt="" /></td>
+<td>Entry B</td><td>Michael42</td><td>********</td><td>https://example.com/</td><td>None.</td></tr>
+</table>
+</div>
+
+<p>In contrast, exporting the selected entry to a KDBX database file with
+the option turned on results in:</p>
+
+<div class="impexp_uiex_line">
+<table class="impexp_uiex_inline uiex_w">
+<tr><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td colspan="3"><b>Root Group</b></td></tr>
+<tr><td></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td colspan="2">Group 1</td></tr>
+<tr><td colspan="2"></td><td><img src="../images/folder_closed.png" alt="Folder" /></td>
+<td class="uiex_t_sel">Group 1.2</td></tr>
+</table>
+&nbsp;
+<table class="impexp_uiex_inline uiex_w">
+<tr><th colspan="2">Title</th><th>User Name</th><th>Password</th><th>URL</th><th>Notes</th></tr>
+<tr><td><img src="../images/b16x16_password.png" alt="" /></td>
+<td>Entry B</td><td>Michael42</td><td>********</td><td>https://example.com/</td><td>None.</td></tr>
+</table>
+</div>
 
 </body></html>
 

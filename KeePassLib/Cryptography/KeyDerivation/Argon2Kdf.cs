@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,11 +24,21 @@ using System.Text;
 
 namespace KeePassLib.Cryptography.KeyDerivation
 {
+	public enum Argon2Type
+	{
+		// The values must be the same as in the Argon2 specification
+		D = 0,
+		ID = 2
+	}
+
 	public sealed partial class Argon2Kdf : KdfEngine
 	{
-		private static readonly PwUuid g_uuid = new PwUuid(new byte[] {
+		private static readonly PwUuid g_uuidD = new PwUuid(new byte[] {
 			0xEF, 0x63, 0x6D, 0xDF, 0x8C, 0x29, 0x44, 0x4B,
 			0x91, 0xF7, 0xA9, 0xA4, 0x03, 0xE3, 0x0A, 0x0C });
+		private static readonly PwUuid g_uuidID = new PwUuid(new byte[] {
+			0x9E, 0x29, 0x8B, 0x19, 0x56, 0xDB, 0x47, 0x73,
+			0xB2, 0x3D, 0xFC, 0x3E, 0xC6, 0xF0, 0xA1, 0xE6 });
 
 		public static readonly string ParamSalt = "S"; // Byte[]
 		public static readonly string ParamParallelism = "P"; // UInt32
@@ -55,21 +65,31 @@ namespace KeePassLib.Cryptography.KeyDerivation
 		internal const uint MaxParallelism = (1 << 24) - 1;
 
 		internal const ulong DefaultIterations = 2;
-		internal const ulong DefaultMemory = 1024 * 1024; // 1 MB
+		internal const ulong DefaultMemory = 64 * 1024 * 1024; // 64 MB
 		internal const uint DefaultParallelism = 2;
+
+		private readonly Argon2Type m_t;
 
 		public override PwUuid Uuid
 		{
-			get { return g_uuid; }
+			get { return ((m_t == Argon2Type.D) ? g_uuidD : g_uuidID); }
 		}
 
 		public override string Name
 		{
-			get { return "Argon2"; }
+			get { return ((m_t == Argon2Type.D) ? "Argon2d" : "Argon2id"); }
 		}
 
-		public Argon2Kdf()
+		public Argon2Kdf() : this(Argon2Type.D)
 		{
+		}
+
+		public Argon2Kdf(Argon2Type t)
+		{
+			if((t != Argon2Type.D) && (t != Argon2Type.ID))
+				throw new NotSupportedException();
+
+			m_t = t;
 		}
 
 		public override KdfParameters GetDefaultParameters()
@@ -88,7 +108,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 		public override void Randomize(KdfParameters p)
 		{
 			if(p == null) { Debug.Assert(false); return; }
-			Debug.Assert(g_uuid.Equals(p.KdfUuid));
+			Debug.Assert(p.KdfUuid.Equals(this.Uuid));
 
 			byte[] pb = CryptoRandom.Instance.GetRandomBytes(32);
 			p.SetByteArray(ParamSalt, pb);
@@ -124,8 +144,8 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			byte[] pbSecretKey = p.GetByteArray(ParamSecretKey);
 			byte[] pbAssocData = p.GetByteArray(ParamAssocData);
 
-			byte[] pbRet = Argon2d(pbMsg, pbSalt, uPar, uMem, uIt,
-				32, v, pbSecretKey, pbAssocData);
+			byte[] pbRet = Argon2Transform(pbMsg, pbSalt, uPar, uMem,
+				uIt, 32, v, pbSecretKey, pbAssocData);
 
 			if(uMem > (100UL * 1024UL * 1024UL)) GC.Collect();
 			return pbRet;

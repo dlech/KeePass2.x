@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -515,10 +515,7 @@ namespace KeePass.Ecas
 
 			if(!string.IsNullOrEmpty(strTag))
 			{
-				// Do not use pg.Duplicate, because this method
-				// creates new UUIDs
 				pg = pg.CloneDeep();
-				pg.TakeOwnership(true, true, true);
 
 				GroupHandler gh = delegate(PwGroup pgSub)
 				{
@@ -627,7 +624,7 @@ namespace KeePass.Ecas
 		private static void ShowEntriesByTag(EcasAction a, EcasContext ctx)
 		{
 			string strTag = EcasUtil.GetParamString(a.Parameters, 0, true);
-			Program.MainForm.ShowEntriesByTag(strTag);
+			Program.MainForm.ShowEntriesByTag(strTag, false);
 		}
 
 		private static void AddToolBarButton(EcasAction a, EcasContext ctx)

@@ -34,6 +34,9 @@
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabSecurity = new System.Windows.Forms.TabPage();
+			this.m_linkSecOptAdm = new System.Windows.Forms.LinkLabel();
+			this.m_linkSecOptEx = new System.Windows.Forms.LinkLabel();
+			this.m_lblSecOpt = new System.Windows.Forms.Label();
 			this.m_numLockAfterGlobalTime = new System.Windows.Forms.NumericUpDown();
 			this.m_cbLockAfterGlobalTime = new System.Windows.Forms.CheckBox();
 			this.m_lvSecurityOptions = new KeePass.UI.CustomListViewEx();
@@ -64,6 +67,7 @@
 			this.m_lblBannerStyle = new System.Windows.Forms.Label();
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
+			this.m_btnHelpSource = new System.Windows.Forms.Button();
 			this.m_btnSchemeOverrides = new System.Windows.Forms.Button();
 			this.m_cbAutoRun = new System.Windows.Forms.CheckBox();
 			this.m_grpFileExt = new System.Windows.Forms.GroupBox();
@@ -84,7 +88,6 @@
 			this.m_btnProxy = new System.Windows.Forms.Button();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
-			this.m_btnHelpSource = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -147,6 +150,9 @@
 			// 
 			// m_tabSecurity
 			// 
+			this.m_tabSecurity.Controls.Add(this.m_linkSecOptAdm);
+			this.m_tabSecurity.Controls.Add(this.m_linkSecOptEx);
+			this.m_tabSecurity.Controls.Add(this.m_lblSecOpt);
 			this.m_tabSecurity.Controls.Add(this.m_numLockAfterGlobalTime);
 			this.m_tabSecurity.Controls.Add(this.m_cbLockAfterGlobalTime);
 			this.m_tabSecurity.Controls.Add(this.m_lvSecurityOptions);
@@ -163,6 +169,37 @@
 			this.m_tabSecurity.TabIndex = 0;
 			this.m_tabSecurity.Text = "Security";
 			this.m_tabSecurity.UseVisualStyleBackColor = true;
+			// 
+			// m_linkSecOptAdm
+			// 
+			this.m_linkSecOptAdm.AutoSize = true;
+			this.m_linkSecOptAdm.Location = new System.Drawing.Point(184, 316);
+			this.m_linkSecOptAdm.Name = "m_linkSecOptAdm";
+			this.m_linkSecOptAdm.Size = new System.Drawing.Size(89, 13);
+			this.m_linkSecOptAdm.TabIndex = 11;
+			this.m_linkSecOptAdm.TabStop = true;
+			this.m_linkSecOptAdm.Text = "For administrators";
+			this.m_linkSecOptAdm.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnSecOptAdmLinkClicked);
+			// 
+			// m_linkSecOptEx
+			// 
+			this.m_linkSecOptEx.AutoSize = true;
+			this.m_linkSecOptEx.Location = new System.Drawing.Point(119, 316);
+			this.m_linkSecOptEx.Name = "m_linkSecOptEx";
+			this.m_linkSecOptEx.Size = new System.Drawing.Size(59, 13);
+			this.m_linkSecOptEx.TabIndex = 10;
+			this.m_linkSecOptEx.TabStop = true;
+			this.m_linkSecOptEx.Text = "For experts";
+			this.m_linkSecOptEx.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnSecOptExLinkClicked);
+			// 
+			// m_lblSecOpt
+			// 
+			this.m_lblSecOpt.AutoSize = true;
+			this.m_lblSecOpt.Location = new System.Drawing.Point(3, 316);
+			this.m_lblSecOpt.Name = "m_lblSecOpt";
+			this.m_lblSecOpt.Size = new System.Drawing.Size(110, 13);
+			this.m_lblSecOpt.TabIndex = 9;
+			this.m_lblSecOpt.Text = "More security options:";
 			// 
 			// m_numLockAfterGlobalTime
 			// 
@@ -195,7 +232,7 @@
 			this.m_lvSecurityOptions.Location = new System.Drawing.Point(6, 115);
 			this.m_lvSecurityOptions.Name = "m_lvSecurityOptions";
 			this.m_lvSecurityOptions.ShowItemToolTips = true;
-			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 214);
+			this.m_lvSecurityOptions.Size = new System.Drawing.Size(540, 194);
 			this.m_lvSecurityOptions.TabIndex = 8;
 			this.m_lvSecurityOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvSecurityOptions.View = System.Windows.Forms.View.Details;
@@ -291,7 +328,7 @@
 			this.m_lvPolicy.Location = new System.Drawing.Point(6, 46);
 			this.m_lvPolicy.Name = "m_lvPolicy";
 			this.m_lvPolicy.ShowItemToolTips = true;
-			this.m_lvPolicy.Size = new System.Drawing.Size(540, 267);
+			this.m_lvPolicy.Size = new System.Drawing.Size(540, 263);
 			this.m_lvPolicy.TabIndex = 3;
 			this.m_lvPolicy.UseCompatibleStateImageBehavior = false;
 			this.m_lvPolicy.View = System.Windows.Forms.View.Details;
@@ -299,7 +336,7 @@
 			// m_linkPolicyInfo
 			// 
 			this.m_linkPolicyInfo.AutoSize = true;
-			this.m_linkPolicyInfo.Location = new System.Drawing.Point(134, 26);
+			this.m_linkPolicyInfo.Location = new System.Drawing.Point(97, 26);
 			this.m_linkPolicyInfo.Name = "m_linkPolicyInfo";
 			this.m_linkPolicyInfo.Size = new System.Drawing.Size(115, 13);
 			this.m_linkPolicyInfo.TabIndex = 2;
@@ -312,18 +349,18 @@
 			this.m_lblPolicyMore.AutoSize = true;
 			this.m_lblPolicyMore.Location = new System.Drawing.Point(3, 26);
 			this.m_lblPolicyMore.Name = "m_lblPolicyMore";
-			this.m_lblPolicyMore.Size = new System.Drawing.Size(125, 13);
+			this.m_lblPolicyMore.Size = new System.Drawing.Size(88, 13);
 			this.m_lblPolicyMore.TabIndex = 1;
-			this.m_lblPolicyMore.Text = "For more information see:";
+			this.m_lblPolicyMore.Text = "More information:";
 			// 
 			// m_lblPolicyRestart
 			// 
 			this.m_lblPolicyRestart.AutoSize = true;
 			this.m_lblPolicyRestart.Location = new System.Drawing.Point(3, 316);
 			this.m_lblPolicyRestart.Name = "m_lblPolicyRestart";
-			this.m_lblPolicyRestart.Size = new System.Drawing.Size(238, 13);
+			this.m_lblPolicyRestart.Size = new System.Drawing.Size(241, 13);
 			this.m_lblPolicyRestart.TabIndex = 4;
-			this.m_lblPolicyRestart.Text = "*Changing the policy requires restarting KeePass.";
+			this.m_lblPolicyRestart.Text = "* Changing the policy requires restarting KeePass.";
 			// 
 			// m_lblPolicyIntro
 			// 
@@ -332,7 +369,7 @@
 			this.m_lblPolicyIntro.Size = new System.Drawing.Size(548, 14);
 			this.m_lblPolicyIntro.TabIndex = 0;
 			this.m_lblPolicyIntro.Text = "The application policy defines which security-critical operations are allowed and" +
-				" which aren\'t.";
+				" which are not.";
 			// 
 			// m_tabGui
 			// 
@@ -499,6 +536,16 @@
 			this.m_tabIntegration.TabIndex = 4;
 			this.m_tabIntegration.Text = "Integration";
 			this.m_tabIntegration.UseVisualStyleBackColor = true;
+			// 
+			// m_btnHelpSource
+			// 
+			this.m_btnHelpSource.Location = new System.Drawing.Point(435, 307);
+			this.m_btnHelpSource.Name = "m_btnHelpSource";
+			this.m_btnHelpSource.Size = new System.Drawing.Size(112, 23);
+			this.m_btnHelpSource.TabIndex = 4;
+			this.m_btnHelpSource.Text = "&Help Source...";
+			this.m_btnHelpSource.UseVisualStyleBackColor = true;
+			this.m_btnHelpSource.Click += new System.EventHandler(this.OnBtnHelpSource);
 			// 
 			// m_btnSchemeOverrides
 			// 
@@ -692,16 +739,6 @@
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
-			// m_btnHelpSource
-			// 
-			this.m_btnHelpSource.Location = new System.Drawing.Point(435, 307);
-			this.m_btnHelpSource.Name = "m_btnHelpSource";
-			this.m_btnHelpSource.Size = new System.Drawing.Size(112, 23);
-			this.m_btnHelpSource.TabIndex = 4;
-			this.m_btnHelpSource.Text = "&Help Source...";
-			this.m_btnHelpSource.UseVisualStyleBackColor = true;
-			this.m_btnHelpSource.Click += new System.EventHandler(this.OnBtnHelpSource);
-			// 
 			// OptionsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -803,5 +840,8 @@
 		private System.Windows.Forms.Label m_lblAutoTypePassword;
 		private KeePass.UI.HotKeyControlEx m_hkAutoTypePassword;
 		private System.Windows.Forms.Button m_btnHelpSource;
+		private System.Windows.Forms.Label m_lblSecOpt;
+		private System.Windows.Forms.LinkLabel m_linkSecOptAdm;
+		private System.Windows.Forms.LinkLabel m_linkSecOptEx;
 	}
 }

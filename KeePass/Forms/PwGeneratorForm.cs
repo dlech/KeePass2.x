@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,8 +111,8 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultMono(m_tbPreview, true);
 
 			UIUtil.ConfigureToolTip(m_ttMain);
-			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.GenProfileSaveDesc);
-			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.GenProfileRemoveDesc);
+			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.ProfileSaveDesc);
+			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.ProfileDeleteDesc);
 
 			m_bBlockUIUpdate = true;
 
@@ -249,8 +249,8 @@ namespace KeePass.Forms
 		{
 			if(!Program.Config.UI.OptimizeForScreenReader) return;
 
-			m_btnProfileAdd.Text = KPRes.GenProfileSave;
-			m_btnProfileRemove.Text = KPRes.GenProfileRemove;
+			m_btnProfileAdd.Text = KPRes.ProfileSave;
+			m_btnProfileRemove.Text = KPRes.ProfileDelete;
 			m_btnCustomOpt.Text = KPRes.Options;
 		}
 
@@ -432,8 +432,8 @@ namespace KeePass.Forms
 				lNames.Add(pwExisting.Name);
 
 			SingleLineEditForm slef = new SingleLineEditForm();
-			slef.InitEx(KPRes.GenProfileSave, KPRes.GenProfileSaveDesc,
-				KPRes.GenProfileSaveDescLong, Properties.Resources.B48x48_KGPG_Gen,
+			slef.InitEx(KPRes.ProfileSave, KPRes.ProfileSaveDesc,
+				KPRes.ProfileSavePrompt, Properties.Resources.B48x48_KGPG_Gen,
 				string.Empty, lNames.ToArray());
 
 			if(slef.ShowDialog() == DialogResult.OK)

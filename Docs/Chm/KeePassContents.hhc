@@ -49,10 +49,6 @@
 			<param name="Name" value="Compatibility / SxS">
 			<param name="Local" value="help\v2\version.html">
 			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Security">
-			<param name="Local" value="help\base\security.html">
-			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Features">
@@ -75,10 +71,6 @@
 			<param name="Local" value="help\base\cmdline.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Composite Master Key">
-			<param name="Local" value="help\base\keys.html">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Configuration">
 			<param name="Local" value="help\base\configuration.html">
 			</OBJECT>
@@ -95,7 +87,11 @@
 			<param name="Local" value="help\base\integration.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Multi-User">
+			<param name="Name" value="Master Key">
+			<param name="Local" value="help\base\keys.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Multiple Users">
 			<param name="Local" value="help\base\multiuser.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -111,8 +107,16 @@
 			<param name="Local" value="help\base\repair.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Search">
+			<param name="Local" value="help\base\search.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Secure Edit Controls">
 			<param name="Local" value="help\base\secedits.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Security">
+			<param name="Local" value="help\base\security.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Synchronization">

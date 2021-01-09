@@ -448,7 +448,7 @@
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 447);
 			this.m_lblSeparator.Name = "m_lblSeparator";
-			this.m_lblSeparator.Size = new System.Drawing.Size(486, 2);
+			this.m_lblSeparator.Size = new System.Drawing.Size(487, 2);
 			this.m_lblSeparator.TabIndex = 3;
 			// 
 			// m_ttBalloon
@@ -1145,40 +1145,40 @@
             this.m_menuListCtxMoveStandardURL,
             this.m_menuListCtxMoveStandardNotes});
 			this.m_ctxStrMoveToStandard.Name = "m_ctxStrMoveToStandard";
-			this.m_ctxStrMoveToStandard.Size = new System.Drawing.Size(149, 114);
+			this.m_ctxStrMoveToStandard.Size = new System.Drawing.Size(148, 114);
 			// 
 			// m_menuListCtxMoveStandardTitle
 			// 
 			this.m_menuListCtxMoveStandardTitle.Name = "m_menuListCtxMoveStandardTitle";
-			this.m_menuListCtxMoveStandardTitle.Size = new System.Drawing.Size(148, 22);
+			this.m_menuListCtxMoveStandardTitle.Size = new System.Drawing.Size(147, 22);
 			this.m_menuListCtxMoveStandardTitle.Text = "To &Title";
 			this.m_menuListCtxMoveStandardTitle.Click += new System.EventHandler(this.OnCtxMoveToTitle);
 			// 
 			// m_menuListCtxMoveStandardUser
 			// 
 			this.m_menuListCtxMoveStandardUser.Name = "m_menuListCtxMoveStandardUser";
-			this.m_menuListCtxMoveStandardUser.Size = new System.Drawing.Size(148, 22);
+			this.m_menuListCtxMoveStandardUser.Size = new System.Drawing.Size(147, 22);
 			this.m_menuListCtxMoveStandardUser.Text = "To User &Name";
 			this.m_menuListCtxMoveStandardUser.Click += new System.EventHandler(this.OnCtxMoveToUserName);
 			// 
 			// m_menuListCtxMoveStandardPassword
 			// 
 			this.m_menuListCtxMoveStandardPassword.Name = "m_menuListCtxMoveStandardPassword";
-			this.m_menuListCtxMoveStandardPassword.Size = new System.Drawing.Size(148, 22);
+			this.m_menuListCtxMoveStandardPassword.Size = new System.Drawing.Size(147, 22);
 			this.m_menuListCtxMoveStandardPassword.Text = "To &Password";
 			this.m_menuListCtxMoveStandardPassword.Click += new System.EventHandler(this.OnCtxMoveToPassword);
 			// 
 			// m_menuListCtxMoveStandardURL
 			// 
 			this.m_menuListCtxMoveStandardURL.Name = "m_menuListCtxMoveStandardURL";
-			this.m_menuListCtxMoveStandardURL.Size = new System.Drawing.Size(148, 22);
+			this.m_menuListCtxMoveStandardURL.Size = new System.Drawing.Size(147, 22);
 			this.m_menuListCtxMoveStandardURL.Text = "To &URL";
 			this.m_menuListCtxMoveStandardURL.Click += new System.EventHandler(this.OnCtxMoveToURL);
 			// 
 			// m_menuListCtxMoveStandardNotes
 			// 
 			this.m_menuListCtxMoveStandardNotes.Name = "m_menuListCtxMoveStandardNotes";
-			this.m_menuListCtxMoveStandardNotes.Size = new System.Drawing.Size(148, 22);
+			this.m_menuListCtxMoveStandardNotes.Size = new System.Drawing.Size(147, 22);
 			this.m_menuListCtxMoveStandardNotes.Text = "To No&tes";
 			this.m_menuListCtxMoveStandardNotes.Click += new System.EventHandler(this.OnCtxMoveToNotes);
 			// 

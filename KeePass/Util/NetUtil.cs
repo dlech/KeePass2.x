@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -90,10 +90,10 @@ namespace KeePass.Util
 				if(strHeader == "Set-Cookie")
 				{
 					string strCookie = wr.Headers.Get(strHeader);
-					string[] vParts = strCookie.Split(new char[]{ ';' });
+					string[] vParts = strCookie.Split(new char[] { ';' });
 					if(vParts.Length < 1) continue;
 
-					string[] vInfo = vParts[0].Split(new char[]{ '=' });
+					string[] vInfo = vParts[0].Split(new char[] { '=' });
 					if(vInfo.Length != 2) continue;
 
 					vCookies.Add(new KeyValuePair<string, string>(

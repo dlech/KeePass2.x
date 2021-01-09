@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ namespace KeePass.Util.Spr
 		References = 0x200,
 		EnvVars = 0x400,
 		NewPassword = 0x800,
-		HmacOtp = 0x1000,
+		HmacOtp = 0x1000, // {HMACOTP}, {TIMEOTP}, ...
 		Comments = 0x2000,
 		TextTransforms = 0x10000,
 		Env = 0x20000, // {BASE}, ...

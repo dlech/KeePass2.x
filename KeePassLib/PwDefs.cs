@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -56,20 +56,20 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x022E0000;
+		public static readonly uint Version32 = 0x022F0000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002002E00000000UL;
+		public static readonly ulong FileVersion64 = 0x0002002F00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.46";
+		public static readonly string VersionString = "2.47";
 
-		public static readonly string Copyright = @"Copyright © 2003-2020 Dominik Reichl";
+		public static readonly string Copyright = @"Copyright © 2003-2021 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.
@@ -272,6 +272,18 @@ namespace KeePassLib
 	/// </summary>
 	public sealed class SearchParameters
 	{
+		private string m_strName = string.Empty;
+		[DefaultValue("")]
+		public string Name
+		{
+			get { return m_strName; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strName = value;
+			}
+		}
+
 		private string m_strText = string.Empty;
 		[DefaultValue("")]
 		public string SearchString
@@ -284,12 +296,20 @@ namespace KeePassLib
 			}
 		}
 
-		private bool m_bRegex = false;
+		private PwSearchMode m_sm = PwSearchMode.Simple;
+		public PwSearchMode SearchMode
+		{
+			get { return m_sm; }
+			set { m_sm = value; }
+		}
+
 		[DefaultValue(false)]
+		[Obsolete]
+		[XmlIgnore]
 		public bool RegularExpression
 		{
-			get { return m_bRegex; }
-			set { m_bRegex = value; }
+			get { return (m_sm == PwSearchMode.Regular); }
+			set { m_sm = (value ? PwSearchMode.Regular : PwSearchMode.Simple); }
 		}
 
 		private bool m_bSearchInTitles = true;
@@ -380,6 +400,14 @@ namespace KeePassLib
 			set { m_bSearchInGroupNames = value; }
 		}
 
+		private bool m_bSearchInHistory = false;
+		[DefaultValue(false)]
+		public bool SearchInHistory
+		{
+			get { return m_bSearchInHistory; }
+			set { m_bSearchInHistory = value; }
+		}
+
 #if KeePassUAP
 		private StringComparison m_scType = StringComparison.OrdinalIgnoreCase;
 #else
@@ -441,8 +469,9 @@ namespace KeePassLib
 			{
 				SearchParameters sp = new SearchParameters();
 
+				Debug.Assert(sp.m_strName.Length == 0);
 				Debug.Assert(sp.m_strText.Length == 0);
-				Debug.Assert(!sp.m_bRegex);
+				Debug.Assert(sp.m_sm == PwSearchMode.Simple);
 				sp.m_bSearchInTitles = false;
 				sp.m_bSearchInUserNames = false;
 				Debug.Assert(!sp.m_bSearchInPasswords);
@@ -454,6 +483,7 @@ namespace KeePassLib
 				Debug.Assert(!sp.m_bSearchInUuids);
 				Debug.Assert(!sp.m_bSearchInGroupPaths);
 				Debug.Assert(!sp.m_bSearchInGroupNames);
+				Debug.Assert(!sp.m_bSearchInHistory);
 				// Debug.Assert(sp.m_scType == StringComparison.InvariantCultureIgnoreCase);
 				Debug.Assert(!sp.m_bExcludeExpired);
 				Debug.Assert(sp.m_bRespectEntrySearchingDisabled);

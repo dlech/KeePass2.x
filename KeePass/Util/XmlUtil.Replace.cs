@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -172,18 +172,9 @@ namespace KeePass.Util
 
 			EnsureStandardFieldsExist(pd);
 
-			KdbxFile kdbxOrg = new KdbxFile(pd);
-			MemoryStream msOrg = new MemoryStream();
-			kdbxOrg.Save(msOrg, null, KdbxFormat.PlainXml, sl);
-			byte[] pbXml = msOrg.ToArray();
-			msOrg.Close();
-			string strXml = StrUtil.Utf8.GetString(pbXml);
-
-			XmlDocument xd = XmlUtilEx.CreateXmlDocument();
-			xd.LoadXml(strXml);
-
-			XPathNavigator xpNavRoot = xd.CreateNavigator();
-			XPathNodeIterator xpIt = xpNavRoot.Select(opt.SelectNodesXPath);
+			XmlDocument xd;
+			XPathNodeIterator xpIt = XmlUtilEx.FindNodes(pd, opt.SelectNodesXPath,
+				sl, out xd);
 
 			// XPathNavigators must be cloned to make them independent
 			List<XPathNavigator> lNodes = new List<XPathNavigator>();

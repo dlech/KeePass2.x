@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,239 +27,175 @@ using KeePassLib.Interfaces;
 namespace KeePassLib.Collections
 {
 	/// <summary>
-	/// List of objects that implement <c>IDeepCloneable</c>,
+	/// List of objects that implement <c>IDeepCloneable</c>
 	/// and cannot be <c>null</c>.
 	/// </summary>
-	/// <typeparam name="T">Type specifier.</typeparam>
+	/// <typeparam name="T">Object type.</typeparam>
 	public sealed class PwObjectList<T> : IEnumerable<T>
 		where T : class, IDeepCloneable<T>
 	{
-		private List<T> m_vObjects = new List<T>();
+		private List<T> m_l = new List<T>();
 
-		/// <summary>
-		/// Get number of objects in this list.
-		/// </summary>
 		public uint UCount
 		{
-			get { return (uint)m_vObjects.Count; }
+			get { return (uint)m_l.Count; }
 		}
 
-		/// <summary>
-		/// Construct a new list of objects.
-		/// </summary>
 		public PwObjectList()
 		{
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vObjects.GetEnumerator();
+			return m_l.GetEnumerator();
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return m_vObjects.GetEnumerator();
+			return m_l.GetEnumerator();
 		}
 
 		public void Clear()
 		{
-			// Do not destroy contained objects!
-			m_vObjects.Clear();
+			m_l.Clear();
 		}
 
-		/// <summary>
-		/// Clone the current <c>PwObjectList</c>, including all
-		/// stored objects (deep copy).
-		/// </summary>
-		/// <returns>New <c>PwObjectList</c>.</returns>
 		public PwObjectList<T> CloneDeep()
 		{
-			PwObjectList<T> pl = new PwObjectList<T>();
-
-			foreach(T po in m_vObjects)
-				pl.Add(po.CloneDeep());
-
-			return pl;
+			PwObjectList<T> l = new PwObjectList<T>();
+			foreach(T o in m_l) l.Add(o.CloneDeep());
+			return l;
 		}
 
 		public PwObjectList<T> CloneShallow()
 		{
-			PwObjectList<T> tNew = new PwObjectList<T>();
-
-			foreach(T po in m_vObjects) tNew.Add(po);
-
-			return tNew;
+			PwObjectList<T> l = new PwObjectList<T>();
+			l.Add(this);
+			return l;
 		}
 
 		public List<T> CloneShallowToList()
 		{
-			PwObjectList<T> tNew = CloneShallow();
-			return tNew.m_vObjects;
+			return new List<T>(m_l);
 		}
 
-		/// <summary>
-		/// Add an object to this list.
-		/// </summary>
-		/// <param name="pwObject">Object to be added.</param>
-		/// <exception cref="System.ArgumentNullException">Thrown if the input
-		/// parameter is <c>null</c>.</exception>
-		public void Add(T pwObject)
+		public void Add(T o)
 		{
-			Debug.Assert(pwObject != null);
-			if(pwObject == null) throw new ArgumentNullException("pwObject");
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			m_vObjects.Add(pwObject);
+			m_l.Add(o);
 		}
 
-		public void Add(PwObjectList<T> vObjects)
+		public void Add(PwObjectList<T> l)
 		{
-			Debug.Assert(vObjects != null);
-			if(vObjects == null) throw new ArgumentNullException("vObjects");
+			if(l == null) { Debug.Assert(false); throw new ArgumentNullException("l"); }
 
-			foreach(T po in vObjects)
+			m_l.AddRange(l.m_l);
+		}
+
+		public void Add(List<T> l)
+		{
+			if(l == null) { Debug.Assert(false); throw new ArgumentNullException("l"); }
+
+			foreach(T o in l)
 			{
-				m_vObjects.Add(po);
+				if(o == null) { Debug.Assert(false); throw new ArgumentOutOfRangeException("l"); }
 			}
+
+			m_l.AddRange(l);
 		}
 
-		public void Add(List<T> vObjects)
+		public void Insert(uint uIndex, T o)
 		{
-			Debug.Assert(vObjects != null);
-			if(vObjects == null) throw new ArgumentNullException("vObjects");
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			foreach(T po in vObjects)
-			{
-				m_vObjects.Add(po);
-			}
+			m_l.Insert((int)uIndex, o);
 		}
 
-		public void Insert(uint uIndex, T pwObject)
-		{
-			Debug.Assert(pwObject != null);
-			if(pwObject == null) throw new ArgumentNullException("pwObject");
-
-			m_vObjects.Insert((int)uIndex, pwObject);
-		}
-
-		/// <summary>
-		/// Get an object of the list.
-		/// </summary>
-		/// <param name="uIndex">Index of the object to get. Must be valid, otherwise an
-		/// exception is thrown.</param>
-		/// <returns>Reference to an existing <c>T</c> object. Is never <c>null</c>.</returns>
 		public T GetAt(uint uIndex)
 		{
-			Debug.Assert(uIndex < m_vObjects.Count);
-			if(uIndex >= m_vObjects.Count) throw new ArgumentOutOfRangeException("uIndex");
+			if(uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uIndex"); }
 
-			return m_vObjects[(int)uIndex];
+			return m_l[(int)uIndex];
 		}
 
-		public void SetAt(uint uIndex, T pwObject)
+		public void SetAt(uint uIndex, T o)
 		{
-			Debug.Assert(pwObject != null);
-			if(pwObject == null) throw new ArgumentNullException("pwObject");
-			if(uIndex >= (uint)m_vObjects.Count)
-				throw new ArgumentOutOfRangeException("uIndex");
+			if(uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uIndex"); }
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			m_vObjects[(int)uIndex] = pwObject;
+			m_l[(int)uIndex] = o;
 		}
 
-		/// <summary>
-		/// Get a range of objects.
-		/// </summary>
-		/// <param name="uStartIndexIncl">Index of the first object to be
-		/// returned (inclusive).</param>
-		/// <param name="uEndIndexIncl">Index of the last object to be
-		/// returned (inclusive).</param>
-		/// <returns></returns>
 		public List<T> GetRange(uint uStartIndexIncl, uint uEndIndexIncl)
 		{
-			if(uStartIndexIncl >= (uint)m_vObjects.Count)
+			if(uStartIndexIncl >= (uint)m_l.Count)
 				throw new ArgumentOutOfRangeException("uStartIndexIncl");
-			if(uEndIndexIncl >= (uint)m_vObjects.Count)
+			if(uEndIndexIncl >= (uint)m_l.Count)
 				throw new ArgumentOutOfRangeException("uEndIndexIncl");
 			if(uStartIndexIncl > uEndIndexIncl)
 				throw new ArgumentException();
 
-			List<T> list = new List<T>((int)(uEndIndexIncl - uStartIndexIncl) + 1);
+			List<T> l = new List<T>((int)(uEndIndexIncl - uStartIndexIncl) + 1);
 			for(uint u = uStartIndexIncl; u <= uEndIndexIncl; ++u)
-			{
-				list.Add(m_vObjects[(int)u]);
-			}
+				l.Add(m_l[(int)u]);
 
-			return list;
+			return l;
 		}
 
-		public int IndexOf(T pwReference)
+		public int IndexOf(T o)
 		{
-			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException("pwReference");
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			return m_vObjects.IndexOf(pwReference);
+			return m_l.IndexOf(o);
 		}
 
-		/// <summary>
-		/// Delete an object of this list. The object to be deleted is identified
-		/// by a reference handle.
-		/// </summary>
-		/// <param name="pwReference">Reference of the object to be deleted.</param>
-		/// <returns>Returns <c>true</c> if the object was deleted, <c>false</c> if
-		/// the object wasn't found in this list.</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if the input
-		/// parameter is <c>null</c>.</exception>
-		public bool Remove(T pwReference)
+		public bool Remove(T o)
 		{
-			Debug.Assert(pwReference != null); if(pwReference == null) throw new ArgumentNullException("pwReference");
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			return m_vObjects.Remove(pwReference);
+			return m_l.Remove(o);
 		}
 
 		public void RemoveAt(uint uIndex)
 		{
-			m_vObjects.RemoveAt((int)uIndex);
+			m_l.RemoveAt((int)uIndex);
 		}
 
-		/// <summary>
-		/// Move an object up or down.
-		/// </summary>
-		/// <param name="tObject">The object to be moved.</param>
-		/// <param name="bUp">Move one up. If <c>false</c>, move one down.</param>
-		public void MoveOne(T tObject, bool bUp)
+		public void MoveOne(T o, bool bUp)
 		{
-			Debug.Assert(tObject != null);
-			if(tObject == null) throw new ArgumentNullException("tObject");
+			if(o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
 
-			int nCount = m_vObjects.Count;
-			if(nCount <= 1) return;
+			int c = m_l.Count;
+			if(c <= 1) return;
 
-			int nIndex = m_vObjects.IndexOf(tObject);
-			if(nIndex < 0) { Debug.Assert(false); return; }
+			int i = m_l.IndexOf(o);
+			if(i < 0) { Debug.Assert(false); return; }
 
-			if(bUp && (nIndex > 0)) // No assert for top item
+			if(bUp && (i != 0)) // No assert for top item
 			{
-				T tTemp = m_vObjects[nIndex - 1];
-				m_vObjects[nIndex - 1] = m_vObjects[nIndex];
-				m_vObjects[nIndex] = tTemp;
+				T oTemp = m_l[i - 1];
+				m_l[i - 1] = m_l[i];
+				m_l[i] = oTemp;
 			}
-			else if(!bUp && (nIndex != (nCount - 1))) // No assert for bottom item
+			else if(!bUp && (i != (c - 1))) // No assert for bottom item
 			{
-				T tTemp = m_vObjects[nIndex + 1];
-				m_vObjects[nIndex + 1] = m_vObjects[nIndex];
-				m_vObjects[nIndex] = tTemp;
+				T oTemp = m_l[i + 1];
+				m_l[i + 1] = m_l[i];
+				m_l[i] = oTemp;
 			}
 		}
 
-		public void MoveOne(T[] vObjects, bool bUp)
+		public void MoveOne(T[] v, bool bUp)
 		{
-			Debug.Assert(vObjects != null);
-			if(vObjects == null) throw new ArgumentNullException("vObjects");
+			if(v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
 
 			List<int> lIndices = new List<int>();
-			foreach(T t in vObjects)
+			foreach(T o in v)
 			{
-				if(t == null) { Debug.Assert(false); continue; }
+				if(o == null) { Debug.Assert(false); continue; }
 
-				int p = IndexOf(t);
+				int p = m_l.IndexOf(o);
 				if(p >= 0) lIndices.Add(p);
 				else { Debug.Assert(false); }
 			}
@@ -269,10 +205,9 @@ namespace KeePassLib.Collections
 
 		public void MoveOne(int[] vIndices, bool bUp)
 		{
-			Debug.Assert(vIndices != null);
-			if(vIndices == null) throw new ArgumentNullException("vIndices");
+			if(vIndices == null) { Debug.Assert(false); throw new ArgumentNullException("vIndices"); }
 
-			int n = m_vObjects.Count;
+			int n = m_l.Count;
 			if(n <= 1) return; // No moving possible
 
 			int m = vIndices.Length;
@@ -282,7 +217,8 @@ namespace KeePassLib.Collections
 			Array.Copy(vIndices, v, m);
 			Array.Sort<int>(v);
 
-			if((bUp && (v[0] <= 0)) || (!bUp && (v[m - 1] >= (n - 1))))
+			if((v[0] < 0) || (v[m - 1] >= n)) { Debug.Assert(false); return; }
+			if((bUp && (v[0] == 0)) || (!bUp && (v[m - 1] == (n - 1))))
 				return; // Moving as a block is not possible
 
 			int iStart = (bUp ? 0 : (m - 1));
@@ -292,89 +228,71 @@ namespace KeePassLib.Collections
 			for(int i = iStart; i != iExcl; i += iStep)
 			{
 				int p = v[i];
-				if((p < 0) || (p >= n)) { Debug.Assert(false); continue; }
-
-				T t = m_vObjects[p];
+				T o = m_l[p];
 
 				if(bUp)
 				{
-					Debug.Assert(p > 0);
-					m_vObjects.RemoveAt(p);
-					m_vObjects.Insert(p - 1, t);
+					m_l[p] = m_l[p - 1];
+					m_l[p - 1] = o;
 				}
-				else // Down
+				else
 				{
-					Debug.Assert(p < (n - 1));
-					m_vObjects.RemoveAt(p);
-					m_vObjects.Insert(p + 1, t);
+					m_l[p] = m_l[p + 1];
+					m_l[p + 1] = o;
 				}
 			}
 		}
 
-		/// <summary>
-		/// Move some of the objects in this list to the top/bottom.
-		/// </summary>
-		/// <param name="vObjects">List of objects to be moved.</param>
-		/// <param name="bTop">Move to top. If <c>false</c>, move to bottom.</param>
-		public void MoveTopBottom(T[] vObjects, bool bTop)
+		public void MoveTopBottom(T[] v, bool bTop)
 		{
-			Debug.Assert(vObjects != null);
-			if(vObjects == null) throw new ArgumentNullException("vObjects");
+			if(v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
+			if(v.Length == 0) return;
+			if(v.Length > m_l.Count) { Debug.Assert(false); return; }
 
-			if(vObjects.Length == 0) return;
-
-			int nCount = m_vObjects.Count;
-			foreach(T t in vObjects) m_vObjects.Remove(t);
-
-			if(bTop)
+			List<T> lMoved = new List<T>(v.Length);
+			List<T> lOthers = new List<T>(m_l.Count - v.Length);
+			foreach(T o in m_l)
 			{
-				int nPos = 0;
-				foreach(T t in vObjects)
-				{
-					m_vObjects.Insert(nPos, t);
-					++nPos;
-				}
+				if(Array.IndexOf(v, o) >= 0) lMoved.Add(o);
+				else lOthers.Add(o);
 			}
-			else // Move to bottom
-			{
-				foreach(T t in vObjects) m_vObjects.Add(t);
-			}
+			if(lMoved.Count != v.Length) { Debug.Assert(false); return; }
 
-			Debug.Assert(nCount == m_vObjects.Count);
-			if(nCount != m_vObjects.Count)
-				throw new ArgumentException("At least one of the T objects in the vObjects list doesn't exist!");
+			m_l = new List<T>(m_l.Count);
+			m_l.AddRange(bTop ? lMoved : lOthers);
+			m_l.AddRange(bTop ? lOthers : lMoved);
 		}
 
 		public void Sort(IComparer<T> tComparer)
 		{
 			if(tComparer == null) throw new ArgumentNullException("tComparer");
 
-			m_vObjects.Sort(tComparer);
+			m_l.Sort(tComparer);
 		}
 
 		public void Sort(Comparison<T> tComparison)
 		{
 			if(tComparison == null) throw new ArgumentNullException("tComparison");
 
-			m_vObjects.Sort(tComparison);
+			m_l.Sort(tComparison);
 		}
 
-		public static PwObjectList<T> FromArray(T[] tArray)
+		public static PwObjectList<T> FromArray(T[] v)
 		{
-			if(tArray == null) throw new ArgumentNullException("tArray");
+			if(v == null) throw new ArgumentNullException("v");
 
 			PwObjectList<T> l = new PwObjectList<T>();
-			foreach(T t in tArray) { l.Add(t); }
+			foreach(T o in v) l.Add(o);
 			return l;
 		}
 
-		public static PwObjectList<T> FromList(List<T> tList)
+		public static PwObjectList<T> FromList(List<T> l)
 		{
-			if(tList == null) throw new ArgumentNullException("tList");
+			if(l == null) throw new ArgumentNullException("l");
 
-			PwObjectList<T> l = new PwObjectList<T>();
-			l.Add(tList);
-			return l;
+			PwObjectList<T> lNew = new PwObjectList<T>();
+			lNew.Add(l);
+			return lNew;
 		}
 	}
 }

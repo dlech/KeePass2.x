@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ namespace KeePass.DataExchange.Formats
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
-			string[] vLines = strData.Split(new char[]{ '\r', '\n' });
+			string[] vLines = strData.Split(new char[] { '\r', '\n' });
 
 			bool bDoImport = false;
 			PwEntry pe = new PwEntry(true, true);

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,14 @@ namespace KeePass.App.Configuration
 	{
 		public AceApplication()
 		{
+		}
+
+		private bool m_bConfigSave = true;
+		[DefaultValue(true)]
+		public bool ConfigSave
+		{
+			get { return m_bConfigSave; }
+			set { m_bConfigSave = value; }
 		}
 
 		private string m_strLanguageFile = string.Empty; // = English
@@ -529,12 +537,16 @@ namespace KeePass.App.Configuration
 			set { m_uMaxItems = value; }
 		}
 
-		private List<IOConnectionInfo> m_vItems = new List<IOConnectionInfo>();
+		private List<IOConnectionInfo> m_lItems = new List<IOConnectionInfo>();
 		[XmlArrayItem("ConnectionInfo")]
 		public List<IOConnectionInfo> Items
 		{
-			get { return m_vItems; }
-			set { m_vItems = value; }
+			get { return m_lItems; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_lItems = value;
+			}
 		}
 	}
 }

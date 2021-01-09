@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ namespace KeePass.Forms
 			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
 			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;
 
-			if(m_bCreatingNew) this.Text = KPRes.ConfigureOnNewDatabase2;
+			if(m_bCreatingNew) this.Text = KPRes.ConfigureOnNewDatabase3;
 			else this.Text = KPRes.DatabaseSettings;
 
 			m_tbDbName.Text = m_pwDatabase.Name;
@@ -909,11 +909,11 @@ namespace KeePass.Forms
 			{
 				Debug.Assert(!m_btnOK.InvokeRequired);
 
+				EnableControlsEx();
+
 				if(!string.IsNullOrEmpty(strMsg))
 					MessageService.ShowInfo(strMsg);
 				else { Debug.Assert(false); }
-
-				EnableControlsEx();
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

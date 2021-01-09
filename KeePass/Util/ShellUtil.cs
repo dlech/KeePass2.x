@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ namespace KeePass.Util
 				try { kExtInfo.CreateSubKey("DefaultIcon"); }
 				catch(Exception) { }
 				RegistryKey kIcon = kExtInfo.OpenSubKey("DefaultIcon", true);
-				if(strAppPath.IndexOfAny(new char[]{ ' ', '\t' }) < 0)
+				if(strAppPath.IndexOfAny(new char[] { ' ', '\t' }) < 0)
 					kIcon.SetValue(string.Empty, strAppPath + ",0", RegistryValueKind.String);
 				else
 					kIcon.SetValue(string.Empty, "\"" + strAppPath + "\",0", RegistryValueKind.String);

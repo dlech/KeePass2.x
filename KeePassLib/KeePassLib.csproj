@@ -88,6 +88,7 @@
     <Compile Include="Interfaces\IUIOperations.cs" />
     <Compile Include="Interfaces\IXmlSerializerEx.cs" />
     <Compile Include="Keys\KcpCustomKey.cs" />
+    <Compile Include="Keys\KcpKeyFile.Xml.cs" />
     <Compile Include="Keys\KeyProvider.cs" />
     <Compile Include="Keys\KeyProviderPool.cs" />
     <Compile Include="Keys\KeyValidator.cs" />
@@ -98,6 +99,8 @@
     <Compile Include="Native\NativeMethods.Unix.cs" />
     <Compile Include="Native\SimpleStat.cs" />
     <Compile Include="PwCustomIcon.cs" />
+    <Compile Include="PwGroup.Search.cs" />
+    <Compile Include="Resources\KLRes.cs" />
     <Compile Include="Resources\KLRes.Generated.cs" />
     <Compile Include="Resources\KSRes.Generated.cs" />
     <Compile Include="Security\XorredBuffer.cs" />

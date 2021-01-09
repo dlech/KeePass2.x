@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,11 @@ namespace KeePass.UI
 	{
 		public bool PreFilterMessage(ref Message m)
 		{
-			if((m.Msg == NativeMethods.WM_KEYDOWN) || (m.Msg == NativeMethods.WM_LBUTTONDOWN) ||
-				(m.Msg == NativeMethods.WM_RBUTTONDOWN) || (m.Msg == NativeMethods.WM_MBUTTONDOWN))
+			int msg = m.Msg;
+
+			if((msg == NativeMethods.WM_KEYDOWN) || (msg == NativeMethods.WM_SYSKEYDOWN) ||
+				(msg == NativeMethods.WM_LBUTTONDOWN) || (msg == NativeMethods.WM_RBUTTONDOWN) ||
+				(msg == NativeMethods.WM_MBUTTONDOWN))
 			{
 				Program.NotifyUserActivity();
 			}
@@ -42,7 +45,7 @@ namespace KeePass.UI
 			// https://sourceforge.net/p/keepass/bugs/1598/
 			// https://stackoverflow.com/questions/25619831/arithmetic-operation-resulted-in-an-overflow-in-inputlanguagechangingeventargs
 			// https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/InputLanguage.cs
-			if(m.Msg == NativeMethods.WM_INPUTLANGCHANGEREQUEST)
+			if(msg == NativeMethods.WM_INPUTLANGCHANGEREQUEST)
 			{
 				long l = m.LParam.ToInt64();
 				if((l < (long)int.MinValue) || (l > (long)int.MaxValue))

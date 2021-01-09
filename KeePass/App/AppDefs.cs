@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,6 +104,7 @@ namespace KeePass.App
 			public static readonly string KeySourcesUserAccount = "winuser";
 
 			public static readonly string PwGenerator = "base/pwgenerator";
+			public static readonly string Search = "base/search";
 			public static readonly string IOConnections = "v2/ioconnect";
 			public static readonly string UrlField = "base/autourl";
 			public static readonly string CommandLine = "base/cmdline";
@@ -113,6 +114,11 @@ namespace KeePass.App
 			public static readonly string ImportExportGenericCsv = "genericcsv";
 			public static readonly string ImportExportSteganos = "imp_steganos";
 			public static readonly string ImportExportPassKeeper = "imp_passkeeper";
+			internal static readonly string ImportExportParents = "exp_parents";
+
+			public static readonly string Security = "base/security";
+			internal static readonly string SecurityOptEx = "secoptex";
+			internal static readonly string SecurityOptAdm = "secoptadm";
 
 			public static readonly string AppPolicy = "v2/policy";
 
@@ -222,9 +228,10 @@ namespace KeePass.App
 		public static class FileExtension
 		{
 			public static readonly string FileExt = "kdbx";
-			public static readonly string ExtId = "kdbxfile";
+			public static readonly string FileExtId = "kdbxfile";
 
-			public static readonly string KeyFile = "key";
+			public static readonly string KeyFile = "keyx";
+			internal const string KeyFileAlt = "key";
 		}
 
 		public static readonly string AutoRunName = "KeePass Password Safe 2";
@@ -347,6 +354,12 @@ namespace KeePass.App
 			if(bToControlBack)
 				return UIUtil.ColorTowards(clrQ, AppDefs.ColorControlNormal, 0.5);
 			return clrQ;
+		}
+
+		internal static string GetKeyFileFilter()
+		{
+			return UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.KeyFile +
+				"|" + AppDefs.FileExtension.KeyFileAlt, KPRes.KeyFiles, true);
 		}
 	}
 }

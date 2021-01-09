@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -158,6 +158,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bMatchByTagInTitle; }
 			set { m_bMatchByTagInTitle = value; }
+		}
+
+		private bool m_bMatchNormDashes = true;
+		[DefaultValue(true)]
+		public bool AutoTypeMatchNormDashes
+		{
+			get { return m_bMatchNormDashes; }
+			set { m_bMatchNormDashes = value; }
 		}
 
 		private bool m_bExpiredCanMatch = false;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ namespace KeePass.Native
 			return IntPtr.Zero;
 		}
 
-		private static readonly char[] m_vWindowTrim = { '\r', '\n' };
+		private static readonly char[] g_vWindowNL = new char[] { '\r', '\n' };
 		internal static void GetForegroundWindowInfo(out IntPtr hWnd,
 			out string strWindowText, bool bTrimWindow)
 		{
@@ -129,7 +129,7 @@ namespace KeePass.Native
 				if(!string.IsNullOrEmpty(strWindowText))
 				{
 					if(bTrimWindow) strWindowText = strWindowText.Trim();
-					else strWindowText = strWindowText.Trim(m_vWindowTrim);
+					else strWindowText = strWindowText.Trim(g_vWindowNL);
 				}
 			}
 		}
@@ -727,13 +727,27 @@ namespace KeePass.Native
 			return false;
 		}
 
-		internal static bool? IsKeyDownMessage(ref Message m)
+		private static bool? IsKeyDownMessage(ref Message m)
 		{
 			if(m.Msg == NativeMethods.WM_KEYDOWN) return true;
 			if(m.Msg == NativeMethods.WM_KEYUP) return false;
 			if(m.Msg == NativeMethods.WM_SYSKEYDOWN) return true;
 			if(m.Msg == NativeMethods.WM_SYSKEYUP) return false;
 			return null;
+		}
+
+		internal static bool GetKeyMessageState(ref Message m, out bool bDown)
+		{
+			bool? obKeyDown = IsKeyDownMessage(ref m);
+			if(!obKeyDown.HasValue)
+			{
+				Debug.Assert(false);
+				bDown = false;
+				return false;
+			}
+
+			bDown = obKeyDown.Value;
+			return true;
 		}
 
 		/* internal static string GetKeyboardLayoutNameEx()

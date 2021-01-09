@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Security;
 using System.Text;
-using System.Xml;
-
-#if !KeePassUAP
-using System.Security.Cryptography;
-#endif
 
 using KeePassLib.Cryptography;
 using KeePassLib.Resources;
@@ -36,56 +31,46 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Keys
 {
-	/// <summary>
-	/// Key files as provided by the user.
-	/// </summary>
 	public sealed class KcpKeyFile : IUserKey
 	{
-		private string m_strPath;
-		private ProtectedBinary m_pbKeyData;
+		private readonly string m_strPath;
+		private readonly ProtectedBinary m_pbKeyData;
 
-		/// <summary>
-		/// Path to the key file.
-		/// </summary>
 		public string Path
 		{
 			get { return m_strPath; }
 		}
 
-		/// <summary>
-		/// Get key data. Querying this property is fast (it returns a
-		/// reference to a cached <c>ProtectedBinary</c> object).
-		/// If no key data is available, <c>null</c> is returned.
-		/// </summary>
 		public ProtectedBinary KeyData
 		{
 			get { return m_pbKeyData; }
 		}
 
-		public KcpKeyFile(string strKeyFile)
+		public KcpKeyFile(string strKeyFile) :
+			this(IOConnectionInfo.FromPath(strKeyFile), false)
 		{
-			Construct(IOConnectionInfo.FromPath(strKeyFile), false);
 		}
 
-		public KcpKeyFile(string strKeyFile, bool bThrowIfDbFile)
+		public KcpKeyFile(string strKeyFile, bool bThrowIfDbFile) :
+			this(IOConnectionInfo.FromPath(strKeyFile), bThrowIfDbFile)
 		{
-			Construct(IOConnectionInfo.FromPath(strKeyFile), bThrowIfDbFile);
 		}
 
-		public KcpKeyFile(IOConnectionInfo iocKeyFile)
+		public KcpKeyFile(IOConnectionInfo iocKeyFile) :
+			this(iocKeyFile, false)
 		{
-			Construct(iocKeyFile, false);
 		}
 
 		public KcpKeyFile(IOConnectionInfo iocKeyFile, bool bThrowIfDbFile)
 		{
-			Construct(iocKeyFile, bThrowIfDbFile);
-		}
+			if(iocKeyFile == null) throw new ArgumentNullException("iocKeyFile");
 
-		private void Construct(IOConnectionInfo iocFile, bool bThrowIfDbFile)
-		{
-			byte[] pbFileData = IOConnection.ReadFile(iocFile);
-			if(pbFileData == null) throw new FileNotFoundException();
+			byte[] pbFileData;
+			using(Stream s = IOConnection.OpenRead(iocKeyFile))
+			{
+				pbFileData = MemUtil.Read(s);
+			}
+			if(pbFileData == null) throw new IOException();
 
 			if(bThrowIfDbFile && (pbFileData.Length >= 8))
 			{
@@ -105,194 +90,109 @@ namespace KeePassLib.Keys
 #endif
 			}
 
-			byte[] pbKey = LoadXmlKeyFile(pbFileData);
-			if(pbKey == null) pbKey = LoadKeyFile(pbFileData);
+			byte[] pbKey = LoadKeyFile(pbFileData);
 
-			if(pbKey == null) throw new InvalidOperationException();
-
-			m_strPath = iocFile.Path;
+			m_strPath = iocKeyFile.Path;
 			m_pbKeyData = new ProtectedBinary(true, pbKey);
 
 			MemUtil.ZeroByteArray(pbKey);
+			MemUtil.ZeroByteArray(pbFileData);
 		}
-
-		// public void Clear()
-		// {
-		//	m_strPath = string.Empty;
-		//	m_pbKeyData = null;
-		// }
 
 		private static byte[] LoadKeyFile(byte[] pbFileData)
 		{
-			if(pbFileData == null) { Debug.Assert(false); return null; }
+			if(pbFileData == null) throw new ArgumentNullException("pbFileData");
 
-			int iLength = pbFileData.Length;
+			byte[] pbKey = LoadKeyFileXml(pbFileData);
+			if(pbKey != null) return pbKey;
 
-			byte[] pbKey = null;
-			if(iLength == 32) pbKey = LoadBinaryKey32(pbFileData);
-			else if(iLength == 64) pbKey = LoadHexKey32(pbFileData);
+			int cb = pbFileData.Length;
+			if(cb == 32) return pbFileData;
 
-			if(pbKey == null)
-				pbKey = CryptoUtil.HashSha256(pbFileData);
+			if(cb == 64)
+			{
+				pbKey = LoadKeyFileHex(pbFileData);
+				if(pbKey != null) return pbKey;
+			}
 
-			return pbKey;
+			return CryptoUtil.HashSha256(pbFileData);
 		}
 
-		private static byte[] LoadBinaryKey32(byte[] pbFileData)
+		private static byte[] LoadKeyFileXml(byte[] pbFileData)
 		{
-			if(pbFileData == null) { Debug.Assert(false); return null; }
-			if(pbFileData.Length != 32) { Debug.Assert(false); return null; }
+			KfxFile kf;
+			try
+			{
+				using(MemoryStream ms = new MemoryStream(pbFileData, false))
+				{
+					kf = KfxFile.Load(ms);
+				}
+			}
+			catch(Exception) { return null; }
 
-			return pbFileData;
+			// We have a syntactically valid XML key file;
+			// failing to verify the key should throw an exception
+			return ((kf != null) ? kf.GetKey() : null);
 		}
 
-		private static byte[] LoadHexKey32(byte[] pbFileData)
+		private static byte[] LoadKeyFileHex(byte[] pbFileData)
 		{
 			if(pbFileData == null) { Debug.Assert(false); return null; }
-			if(pbFileData.Length != 64) { Debug.Assert(false); return null; }
 
 			try
 			{
+				int cc = pbFileData.Length;
+				if((cc & 1) != 0) { Debug.Assert(false); return null; }
+
 				if(!StrUtil.IsHexString(pbFileData, true)) return null;
 
 				string strHex = StrUtil.Utf8.GetString(pbFileData);
-				byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
-				if((pbKey == null) || (pbKey.Length != 32))
-				{
-					Debug.Assert(false);
-					return null;
-				}
-
-				return pbKey;
+				return MemUtil.HexStringToByteArray(strHex);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
 		}
 
-		/// <summary>
-		/// Create a new, random key-file.
-		/// </summary>
-		/// <param name="strFilePath">Path where the key-file should be saved to.
-		/// If the file exists already, it will be overwritten.</param>
-		/// <param name="pbAdditionalEntropy">Additional entropy used to generate
-		/// the random key. May be <c>null</c> (in this case only the KeePass-internal
-		/// random number generator is used).</param>
-		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
 		public static void Create(string strFilePath, byte[] pbAdditionalEntropy)
 		{
-			byte[] pbKey32 = CryptoRandom.Instance.GetRandomBytes(32);
-			if(pbKey32 == null) throw new SecurityException();
+			Create(strFilePath, pbAdditionalEntropy, 0);
+		}
 
-			byte[] pbFinalKey32;
+		internal static void Create(string strFilePath, byte[] pbAdditionalEntropy,
+			ulong uVersion)
+		{
+			byte[] pbRandom = CryptoRandom.Instance.GetRandomBytes(32);
+			if((pbRandom == null) || (pbRandom.Length != 32))
+				throw new SecurityException();
+
+			byte[] pbKey;
 			if((pbAdditionalEntropy == null) || (pbAdditionalEntropy.Length == 0))
-				pbFinalKey32 = pbKey32;
+				pbKey = pbRandom;
 			else
 			{
-				using(MemoryStream ms = new MemoryStream())
-				{
-					MemUtil.Write(ms, pbAdditionalEntropy);
-					MemUtil.Write(ms, pbKey32);
+				int cbAdd = pbAdditionalEntropy.Length;
+				int cbRnd = pbRandom.Length;
 
-					pbFinalKey32 = CryptoUtil.HashSha256(ms.ToArray());
-				}
+				byte[] pbCmp = new byte[cbAdd + cbRnd];
+				Array.Copy(pbAdditionalEntropy, 0, pbCmp, 0, cbAdd);
+				Array.Copy(pbRandom, 0, pbCmp, cbAdd, cbRnd);
+
+				pbKey = CryptoUtil.HashSha256(pbCmp);
+
+				MemUtil.ZeroByteArray(pbCmp);
 			}
 
-			CreateXmlKeyFile(strFilePath, pbFinalKey32);
-		}
+			KfxFile kf = KfxFile.Create(uVersion, pbKey, null);
 
-		// ================================================================
-		// XML Key Files
-		// ================================================================
-
-		// Sample XML file:
-		// <?xml version="1.0" encoding="utf-8"?>
-		// <KeyFile>
-		//     <Meta>
-		//         <Version>1.00</Version>
-		//     </Meta>
-		//     <Key>
-		//         <Data>ySFoKuCcJblw8ie6RkMBdVCnAf4EedSch7ItujK6bmI=</Data>
-		//     </Key>
-		// </KeyFile>
-
-		private const string RootElementName = "KeyFile";
-		private const string MetaElementName = "Meta";
-		private const string VersionElementName = "Version";
-		private const string KeyElementName = "Key";
-		private const string KeyDataElementName = "Data";
-
-		private static byte[] LoadXmlKeyFile(byte[] pbFileData)
-		{
-			if(pbFileData == null) { Debug.Assert(false); return null; }
-
-			MemoryStream ms = new MemoryStream(pbFileData, false);
-			byte[] pbKeyData = null;
-
-			try
-			{
-				XmlDocument doc = XmlUtilEx.CreateXmlDocument();
-				doc.Load(ms);
-
-				XmlElement el = doc.DocumentElement;
-				if((el == null) || !el.Name.Equals(RootElementName)) return null;
-				if(el.ChildNodes.Count < 2) return null;
-
-				foreach(XmlNode xmlChild in el.ChildNodes)
-				{
-					if(xmlChild.Name.Equals(MetaElementName)) { } // Ignore Meta
-					else if(xmlChild.Name == KeyElementName)
-					{
-						foreach(XmlNode xmlKeyChild in xmlChild.ChildNodes)
-						{
-							if(xmlKeyChild.Name == KeyDataElementName)
-							{
-								if(pbKeyData == null)
-									pbKeyData = Convert.FromBase64String(xmlKeyChild.InnerText);
-							}
-						}
-					}
-				}
-			}
-			catch(Exception) { pbKeyData = null; }
-			finally { ms.Close(); }
-
-			return pbKeyData;
-		}
-
-		private static void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
-		{
-			Debug.Assert(strFile != null);
-			if(strFile == null) throw new ArgumentNullException("strFile");
-			Debug.Assert(pbKeyData != null);
-			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
-
-			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
 			using(Stream s = IOConnection.OpenWrite(ioc))
 			{
-				using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(s))
-				{
-					xw.WriteStartDocument();
-					xw.WriteStartElement(RootElementName); // <KeyFile>
-
-					xw.WriteStartElement(MetaElementName); // <Meta>
-					xw.WriteStartElement(VersionElementName); // <Version>
-					xw.WriteString("1.00");
-					xw.WriteEndElement(); // </Version>
-					xw.WriteEndElement(); // </Meta>
-
-					xw.WriteStartElement(KeyElementName); // <Key>
-
-					xw.WriteStartElement(KeyDataElementName); // <Data>
-					xw.WriteString(Convert.ToBase64String(pbKeyData));
-					xw.WriteEndElement(); // </Data>
-
-					xw.WriteEndElement(); // </Key>
-
-					xw.WriteEndElement(); // </KeyFile>
-					xw.WriteEndDocument();
-				}
+				kf.Save(s);
 			}
+
+			MemUtil.ZeroByteArray(pbKey);
+			MemUtil.ZeroByteArray(pbRandom);
 		}
 	}
 }

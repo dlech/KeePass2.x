@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -502,7 +502,7 @@ namespace KeePass.DataExchange
 		/* private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
 		{
 			string str = strNotes;
-			char[] vTrim = new char[]{ '\r', '\n', '\t', ' ' };
+			char[] vTrim = new char[] { '\r', '\n', '\t', ' ' };
 
 			int nFirstAutoType = str.IndexOf(AutoTypePrefix, StringComparison.OrdinalIgnoreCase);
 			if(nFirstAutoType < 0) nFirstAutoType = int.MaxValue;
@@ -763,7 +763,7 @@ namespace KeePass.DataExchange
 				++uIndex;
 			}
 
-			strNotes = strNotes.TrimEnd(new char[]{ '\r', '\n', '\t', ' ' });
+			strNotes = strNotes.TrimEnd(new char[] { '\r', '\n', '\t', ' ' });
 			strNotes += sbAppend.ToString();
 		}
 

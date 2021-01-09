@@ -13,13 +13,13 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.46"
-#define KeeVersionStrWithMinor "2.46"
-#define KeeVersionStrWithMinorPath "2.46"
-#define KeeVersionWin "2.46.0.0"
-#define KeeVersionWinShort "2.46"
+#define KeeVersionStr "2.47"
+#define KeeVersionStrWithMinor "2.47"
+#define KeeVersionStrWithMinorPath "2.47"
+#define KeeVersionWin "2.47.0.0"
+#define KeeVersionWinShort "2.47"
 
-#define KeeDevPeriod "2003-2020"
+#define KeeDevPeriod "2003-2021"
 
 [Setup]
 AppName={#MyAppName}
@@ -30,9 +30,16 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-AppCopyright=Copyright (c) {#KeeDevPeriod} {#MyAppPublisher}
-MinVersion=5.0
-DefaultDirName={pf}\{#MyAppNameEx}
+AppCopyright=Copyright © {#KeeDevPeriod} {#MyAppPublisher}
+MinVersion=6.1sp1
+
+; When specifying ArchitecturesInstallIn64BitMode=x64, Inno Setup performs
+; a side-by-side installation instead of updating a previous installation
+; (32-bit installation on a 64-bit system).
+; In order to avoid this, we only change DefaultDirName.
+; ArchitecturesInstallIn64BitMode=x64
+DefaultDirName={code:MyGetProgramFiles}\{#MyAppNameEx}
+
 DefaultGroupName={#MyAppNameEx}
 AllowNoIcons=yes
 LicenseFile=..\Docs\License.txt
@@ -48,9 +55,10 @@ ChangesAssociations=yes
 VersionInfoVersion={#KeeVersionWin}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} {#KeeVersionStr} Setup
-VersionInfoCopyright=Copyright (c) {#KeeDevPeriod} {#MyAppPublisher}
+VersionInfoCopyright=Copyright © {#KeeDevPeriod} {#MyAppPublisher}
 WizardImageFile=compiler:WizModernImage-IS.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
+WizardStyle=classic
 DisableDirPage=auto
 AlwaysShowDirOnReadyPage=yes
 DisableProgramGroupPage=yes
@@ -65,7 +73,7 @@ Name: de; MessagesFile: "compiler:Languages\German.isl"
 Name: es; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: fi; MessagesFile: "compiler:Languages\Finnish.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl"
-Name: hu; MessagesFile: "compiler:Languages\Hungarian.isl"
+; Name: hu; MessagesFile: "compiler:Languages\Hungarian.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl"
 Name: ja; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: nb; MessagesFile: "compiler:Languages\Norwegian.isl"
@@ -150,15 +158,15 @@ fr.MyStatusNGen=En cours d'optimisation des performances de KeePass...
 fr.MyStatusPreLoad=En cours d'optimisation des performances de démarrage de KeePass...
 fr.MyOptPlgPage=Ouvre la page des greffons (plugins) sur la toile
 
-hu.MyCompCore=KeePass nélkülözhetetlen fájlok
-hu.MyCompHelp=Használati utasítás
-hu.MyCompNtvLib=Natív támogatási könyvtár
-hu.MyCompXSL=XSL stíluslapok a KDBX XML fájlokhoz
-hu.MyCompNGen=Optimalizálja a KeePass teljesítményét
-hu.MyCompPreLoad=Optimalizálja a KeePass indítási teljesítményét
-hu.MyStatusNGen=A KeePass teljesítményének optimalizálása...
-hu.MyStatusPreLoad=A KeePass indítási teljesítményének optimalizálása...
-hu.MyOptPlgPage=Nyissa meg a bővítmények weboldalát
+; hu.MyCompCore=KeePass nélkülözhetetlen fájlok
+; hu.MyCompHelp=Használati utasítás
+; hu.MyCompNtvLib=Natív támogatási könyvtár
+; hu.MyCompXSL=XSL stíluslapok a KDBX XML fájlokhoz
+; hu.MyCompNGen=Optimalizálja a KeePass teljesítményét
+; hu.MyCompPreLoad=Optimalizálja a KeePass indítási teljesítményét
+; hu.MyStatusNGen=A KeePass teljesítményének optimalizálása...
+; hu.MyStatusPreLoad=A KeePass indítási teljesítményének optimalizálása...
+; hu.MyOptPlgPage=Nyissa meg a bővítmények weboldalát
 
 it.MyCompCore=File core di KeePass
 it.MyCompHelp=Manuale utente
@@ -287,7 +295,7 @@ Root: HKCR; Subkey: kdbxfile\shell\open\command; ValueType: string; ValueData: "
 ; Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}; Filename: {app}\{#MyAppUrlName}
 ; Name: {group}\Help; Filename: {app}\{#MyAppHelpName}; Components: UserDoc
 ; Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
-Name: {commonprograms}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}
+Name: {autoprograms}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}
 Name: {userdesktop}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: DesktopIcon; Check: MyDesktopCheck
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: QuickLaunchIcon; Check: MyAppDataCheck
 
@@ -343,4 +351,12 @@ begin
   except
     Result := False;
   end;
+end;
+
+function MyGetProgramFiles(Param: String): String;
+begin
+  if IsWin64() then
+    Result := ExpandConstant('{autopf64}')
+  else
+    Result := ExpandConstant('{autopf}');
 end;

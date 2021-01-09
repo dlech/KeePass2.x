@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2003-2020 Dominik Reichl.
+	Copyright (C) 2003-2021 Dominik Reichl.
 */
 
 body, kbd kbd {
@@ -62,6 +62,10 @@ hr {
 	border-bottom-color: #7F7F7F;
 	margin: 0px auto 0px auto;
 	padding: 0px 0px 0px 0px;
+}
+
+table {
+	empty-cells: show;
 }
 
 th, td {
@@ -196,7 +200,6 @@ table.laytable > tr > td:last-of-type, table.laytable > tbody > tr > td:last-of-
 table.tablebox, table.tablebox75 {
 	background-color: #EEEEEE;
 	padding: 0px 0px 0px 0px;
-	empty-cells: show;
 }
 
 table.tablebox {
@@ -347,12 +350,6 @@ td.helptopheader {
 
 /* --------------------------------------------------------------------- */
 
-p.pagebreak {
-	page-break-after: always;
-}
-
-/* --------------------------------------------------------------------- */
-
 div.tipdiv {
 	background-color: #FFFFE0;
 	padding: 1px 1px 1px 1px;
@@ -395,6 +392,17 @@ div.tipdiv {
 .codexml { } /* For automatic syntax highlighting */
 .codexmldecl { color: #008888; }
 .codexmltag { color: #880088; }
+
+.uiex_w {
+	border: 1px solid #808080;
+	background-color: #FFFFFF;
+	color: #000000;
+}
+
+.uiex_t_sel {
+	background-color: #99D1FF;
+	color: #000000;
+}
 
 /* --------------------------------------------------------------------- */
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -428,16 +428,25 @@ namespace KeePass.DataExchange
 			"seite"
 		};
 
+		private static readonly string[] m_vTitlesSubstr = {
+			"title", "system", "account", "entry",
+			"item", "subject", "service", "head"
+		};
+
 		private static readonly string[] m_vUserNames = {
-			"user", "name", "user name", "username", "login name",
-			"email", "e-mail", "id", "userid", "user id",
+			"user", "name", "username", "user name", "login name",
 			"login", "form_loginname", "wpname", "mail",
+			"email", "e-mail", "id", "userid", "user id",
 			"loginid", "login id", "log", "uin",
 			"first name", "last name", "card#", "account #",
-			"member", "member #",
+			"member", "member #", "owner",
 
 			// Non-English names
 			"nom", "benutzername"
+		};
+
+		private static readonly string[] m_vUserNamesSubstr = {
+			"user", "name", "login", "mail", "owner"
 		};
 
 		private static readonly string[] m_vPasswords = {
@@ -452,6 +461,10 @@ namespace KeePass.DataExchange
 			"passwort", "kennwort"
 		};
 
+		private static readonly string[] m_vPasswordsSubstr = {
+			"pass", "code",	"secret", "key", "pw", "pin"
+		};
+
 		private static readonly string[] m_vUrls = {
 			"url", "hyper link", "hyperlink", "link",
 			"host", "hostname", "host name", "server", "address",
@@ -460,6 +473,11 @@ namespace KeePass.DataExchange
 
 			// Non-English names
 			"ort", "adresse", "webseite"
+		};
+
+		private static readonly string[] m_vUrlsSubstr = {
+			"url", "link", "host", "address", "hyper ref", "href",
+			"web", "site"
 		};
 
 		private static readonly string[] m_vNotes = {
@@ -471,34 +489,15 @@ namespace KeePass.DataExchange
 			"kommentar", "hinweis"
 		};
 
-		private static readonly string[] m_vSubstrTitles = {
-			"title", "system", "account", "entry",
-			"item", "subject", "service", "head"
-		};
-
-		private static readonly string[] m_vSubstrUserNames = {
-			"user", "name", "id", "login", "mail"
-		};
-
-		private static readonly string[] m_vSubstrPasswords = {
-			"pass", "code",	"secret", "key", "pw", "pin"
-		};
-
-		private static readonly string[] m_vSubstrUrls = {
-			"url", "link", "host", "address", "hyper ref", "href",
-			"web", "site"
-		};
-
-		private static readonly string[] m_vSubstrNotes = { 
+		private static readonly string[] m_vNotesSubstr = { 
 			"note", "comment", "memo", "description", "free"
 		};
 
 		public static string MapNameToStandardField(string strName, bool bAllowFuzzy)
 		{
-			Debug.Assert(strName != null);
-			if(strName == null) throw new ArgumentNullException("strName");
+			if(strName == null) { Debug.Assert(false); return string.Empty; }
 
-			string strFind = strName.ToLower();
+			string strFind = strName.Trim().ToLower();
 
 			if(Array.IndexOf<string>(m_vTitles, strFind) >= 0)
 				return PwDefs.TitleField;
@@ -511,52 +510,39 @@ namespace KeePass.DataExchange
 			if(Array.IndexOf<string>(m_vNotes, strFind) >= 0)
 				return PwDefs.NotesField;
 
-			if(strName.Equals(KPRes.Title, StrUtil.CaseIgnoreCmp))
+			if(strFind.Equals(KPRes.Title, StrUtil.CaseIgnoreCmp))
 				return PwDefs.TitleField;
-			if(strName.Equals(KPRes.UserName, StrUtil.CaseIgnoreCmp))
+			if(strFind.Equals(KPRes.UserName, StrUtil.CaseIgnoreCmp))
 				return PwDefs.UserNameField;
-			if(strName.Equals(KPRes.Password, StrUtil.CaseIgnoreCmp))
+			if(strFind.Equals(KPRes.Password, StrUtil.CaseIgnoreCmp))
 				return PwDefs.PasswordField;
-			if(strName.Equals(KPRes.Url, StrUtil.CaseIgnoreCmp))
+			if(strFind.Equals(KPRes.Url, StrUtil.CaseIgnoreCmp))
 				return PwDefs.UrlField;
-			if(strName.Equals(KPRes.Notes, StrUtil.CaseIgnoreCmp))
+			if(strFind.Equals(KPRes.Notes, StrUtil.CaseIgnoreCmp))
 				return PwDefs.NotesField;
 
-			return (bAllowFuzzy ? MapNameSubstringToStandardField(strName) : string.Empty);
-		}
+			if(!bAllowFuzzy) return string.Empty;
 
-		private static string MapNameSubstringToStandardField(string strName)
-		{
-			Debug.Assert(strName != null);
-			if(strName == null) throw new ArgumentNullException("strName");
-
-			string strFind = strName.ToLower();
-
-			// Check for passwords first, then user names ('vb_login_password')
-			foreach(string strPassword in m_vSubstrPasswords)
+			// Check for passwords first, then user names ("vb_login_password")
+			foreach(string strSub in m_vPasswordsSubstr)
 			{
-				if(strFind.Contains(strPassword))
-					return PwDefs.PasswordField;
+				if(strFind.Contains(strSub)) return PwDefs.PasswordField;
 			}
-			foreach(string strUserName in m_vSubstrUserNames)
+			foreach(string strSub in m_vUserNamesSubstr)
 			{
-				if(strFind.Contains(strUserName))
-					return PwDefs.UserNameField;
+				if(strFind.Contains(strSub)) return PwDefs.UserNameField;
 			}
-			foreach(string strTitle in m_vSubstrTitles)
+			foreach(string strSub in m_vUrlsSubstr)
 			{
-				if(strFind.Contains(strTitle))
-					return PwDefs.TitleField;
+				if(strFind.Contains(strSub)) return PwDefs.UrlField;
 			}
-			foreach(string strUrl in m_vSubstrUrls)
+			foreach(string strSub in m_vNotesSubstr)
 			{
-				if(strFind.Contains(strUrl))
-					return PwDefs.UrlField;
+				if(strFind.Contains(strSub)) return PwDefs.NotesField;
 			}
-			foreach(string strNotes in m_vSubstrNotes)
+			foreach(string strSub in m_vTitlesSubstr)
 			{
-				if(strFind.Contains(strNotes))
-					return PwDefs.NotesField;
+				if(strFind.Contains(strSub)) return PwDefs.TitleField;
 			}
 
 			return string.Empty;
@@ -679,12 +665,12 @@ namespace KeePass.DataExchange
 
 		internal static string FixUrl(string strUrl)
 		{
-			strUrl = strUrl.Trim();
+			strUrl = (strUrl ?? string.Empty).Trim();
 
-			if((strUrl.Length > 0) && (strUrl.IndexOf(':') < 0) &&
-				(strUrl.IndexOf('@') < 0))
+			if((strUrl.Length > 0) && (strUrl.IndexOf('.') >= 0) &&
+				(strUrl.IndexOf(':') < 0) && (strUrl.IndexOf('@') < 0))
 			{
-				string strNew = ("http://" + strUrl.ToLower());
+				string strNew = ("https://" + strUrl.ToLower());
 				if(strUrl.IndexOf('/') < 0) strNew += "/";
 				return strNew;
 			}

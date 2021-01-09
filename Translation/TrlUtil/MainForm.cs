@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1015,7 +1015,6 @@ namespace TrlUtil
 			{
 				UIUtil.SetHandled(e, true);
 				PerformQuickFind();
-				return;
 			}
 		}
 
@@ -1319,7 +1318,11 @@ namespace TrlUtil
 					if(!NativeLib.IsUnix() || (strDir.IndexOfAny(new char[] {
 						'\\', '\"', '\'' }) < 0)) // Open safe paths only
 					{
-						Process p = Process.Start(strDir);
+						ProcessStartInfo psi = new ProcessStartInfo();
+						psi.FileName = strDir;
+						psi.UseShellExecute = true;
+
+						Process p = Process.Start(psi);
 						if(p != null) p.Dispose();
 					}
 					return;

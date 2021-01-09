@@ -184,8 +184,8 @@
 			this.m_lblKdfIntro.Name = "m_lblKdfIntro";
 			this.m_lblKdfIntro.Size = new System.Drawing.Size(428, 28);
 			this.m_lblKdfIntro.TabIndex = 0;
-			this.m_lblKdfIntro.Text = "The composite master key is transformed using a key derivation function. This add" +
-				"s a work factor and makes dictionary and guessing attacks harder.";
+			this.m_lblKdfIntro.Text = "The master key is transformed using a key derivation function. This adds a work f" +
+				"actor and makes dictionary and guessing attacks harder.";
 			// 
 			// m_lblKdfIt
 			// 

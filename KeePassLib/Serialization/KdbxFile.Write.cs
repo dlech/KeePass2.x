@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -106,6 +106,10 @@ namespace KeePassLib.Serialization
 
 			try
 			{
+				// Fix history entries (should not be necessary; just for safety,
+				// as e.g. XPath searches depend on correct history entry UUIDs)
+				if(m_pwDatabase.MaintainBackups()) { Debug.Assert(false); }
+
 				m_uFileVersion = GetMinKdbxVersion();
 
 				int cbEncKey, cbEncIV;
@@ -979,6 +983,25 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 		}
 
+		internal static void WriteGroup(Stream msOutput, PwDatabase pdContext,
+			PwGroup pg)
+		{
+			if(msOutput == null) throw new ArgumentNullException("msOutput");
+			// pdContext may be null
+			if(pg == null) throw new ArgumentNullException("pg");
+
+			PwDatabase pd = new PwDatabase();
+			pd.New(new IOConnectionInfo(), new CompositeKey());
+
+			pd.RootGroup = pg.CloneDeep();
+			pd.RootGroup.ParentGroup = null;
+
+			PwDatabase.CopyCustomIcons(pdContext, pd, pd.RootGroup, true);
+
+			KdbxFile f = new KdbxFile(pd);
+			f.Save(msOutput, null, KdbxFormat.PlainXml, null);
+		}
+
 		[Obsolete]
 		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
@@ -992,60 +1015,15 @@ namespace KeePassLib.Serialization
 			// pdContext may be null
 			if(vEntries == null) { Debug.Assert(false); return false; }
 
-			/* KdbxFile f = new KdbxFile(pwDatabase);
-			f.m_format = KdbxFormat.PlainXml;
-
-			XmlTextWriter xtw = null;
-			try { xtw = new XmlTextWriter(msOutput, StrUtil.Utf8); }
-			catch(Exception) { Debug.Assert(false); return false; }
-			if(xtw == null) { Debug.Assert(false); return false; }
-
-			f.m_xmlWriter = xtw;
-
-			xtw.Formatting = Formatting.Indented;
-			xtw.IndentChar = '\t';
-			xtw.Indentation = 1;
-
-			xtw.WriteStartDocument(true);
-			xtw.WriteStartElement(ElemRoot);
-
-			foreach(PwEntry pe in vEntries)
-				f.WriteEntry(pe, false);
-
-			xtw.WriteEndElement();
-			xtw.WriteEndDocument();
-
-			xtw.Flush();
-			xtw.Close();
-			return true; */
-
-			PwDatabase pd = new PwDatabase();
-			pd.New(new IOConnectionInfo(), new CompositeKey());
-
-			PwGroup pg = pd.RootGroup;
-			if(pg == null) { Debug.Assert(false); return false; }
+			PwGroup pg = new PwGroup(true, true);
 
 			foreach(PwEntry pe in vEntries)
 			{
-				PwUuid pu = pe.CustomIconUuid;
-				if(!pu.Equals(PwUuid.Zero) && (pd.GetCustomIconIndex(pu) < 0))
-				{
-					int i = -1;
-					if(pdContext != null) i = pdContext.GetCustomIconIndex(pu);
-					if(i >= 0)
-					{
-						PwCustomIcon ci = pdContext.CustomIcons[i];
-						pd.CustomIcons.Add(ci);
-					}
-					else { Debug.Assert(pdContext == null); }
-				}
-
 				PwEntry peCopy = pe.CloneDeep();
 				pg.AddEntry(peCopy, true);
 			}
 
-			KdbxFile f = new KdbxFile(pd);
-			f.Save(msOutput, null, KdbxFormat.PlainXml, null);
+			WriteGroup(msOutput, pdContext, pg);
 			return true;
 		}
 	}

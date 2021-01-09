@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
+using KeePass.Resources;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Interfaces;
 
 namespace KeePass.Util
 {
@@ -63,6 +65,23 @@ namespace KeePass.Util
 			if(strTrf == StrTrfDeref)
 				spOut.DataTransformationFn = SprEngine.DerefFn;
 			else spOut.DataTransformationFn = null;
+		}
+
+		internal static PwGroup Find(SearchParameters sp, PwGroup pgRoot,
+			IStatusLogger sl)
+		{
+			if(sp == null) { Debug.Assert(false); throw new ArgumentNullException("sp"); }
+			if(pgRoot == null) { Debug.Assert(false); throw new ArgumentNullException("pgRoot"); }
+
+			string strName = KPRes.SearchGroupName + " (\"" + sp.SearchString +
+				"\" " + KPRes.SearchResultsInSeparator + " \"" + pgRoot.Name + "\")";
+
+			PwGroup pgResults = new PwGroup(true, true, strName, PwIcon.EMailSearch);
+			pgResults.IsVirtual = true;
+
+			pgRoot.SearchEntries(sp, pgResults.Entries, sl);
+
+			return pgResults;
 		}
 	}
 }

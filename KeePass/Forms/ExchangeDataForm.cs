@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Serialization;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -39,8 +40,8 @@ namespace KeePass.Forms
 	public partial class ExchangeDataForm : Form
 	{
 		private bool m_bExport = false;
-		private PwDatabase m_pwDatabaseInfo = null;
-		private PwGroup m_pgRootInfo = null;
+		private PwDatabase m_pd = null;
+		private PwGroup m_pg = null;
 
 		private ImageList m_ilFormats = null;
 
@@ -49,13 +50,13 @@ namespace KeePass.Forms
 		private FileFormatProvider m_fmtFinal = null; // Returned as result
 		private string[] m_vFiles = null;
 
-		internal sealed class FormatGroupEx
+		private sealed class FormatGroupEx
 		{
 			private ListViewGroup m_lvg;
 			public ListViewGroup Group { get { return m_lvg; } }
 
-			private List<ListViewItem> m_vItems = new List<ListViewItem>();
-			public List<ListViewItem> Items { get { return m_vItems; } }
+			private List<ListViewItem> m_lItems = new List<ListViewItem>();
+			public List<ListViewItem> Items { get { return m_lItems; } }
 
 			public FormatGroupEx(string strGroupName)
 			{
@@ -73,11 +74,18 @@ namespace KeePass.Forms
 			get { return m_vFiles; }
 		}
 
-		public void InitEx(bool bExport, PwDatabase pwDatabaseInfo, PwGroup pgRootInfo)
+		private PwExportInfo m_piExport = null;
+		internal PwExportInfo ExportInfo
+		{
+			get { return m_piExport; }
+			set { m_piExport = value; }
+		}
+
+		public void InitEx(bool bExport, PwDatabase pd, PwGroup pg)
 		{
 			m_bExport = bExport;
-			m_pwDatabaseInfo = pwDatabaseInfo;
-			m_pgRootInfo = pgRootInfo;
+			m_pd = pd;
+			m_pg = pg;
 		}
 
 		public ExchangeDataForm()
@@ -88,69 +96,48 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert((m_pwDatabaseInfo != null) || (m_pgRootInfo != null));
-			if((m_pwDatabaseInfo == null) && (m_pgRootInfo == null))
+			if((m_pd == null) && (m_pg == null))
+			{
+				Debug.Assert(false);
 				throw new InvalidOperationException();
+			}
 
 			GlobalWindowManager.AddWindow(this);
 
-			string strWndTitle = (m_bExport ? KPRes.ExportFileTitle : KPRes.ImportFileTitle);
-			string strWndDesc = (m_bExport ? KPRes.ExportFileDesc : KPRes.ImportFileDesc);
-			Bitmap bmpBanner = (m_bExport ? Properties.Resources.B48x48_Folder_Txt :
+			string strTitle = (m_bExport ? KPRes.ExportFileTitle : KPRes.ImportFileTitle);
+			string strDesc = (m_bExport ? KPRes.ExportFileDesc : KPRes.ImportFileDesc);
+			Image img = (m_bExport ? Properties.Resources.B48x48_Folder_Txt :
 				Properties.Resources.B48x48_Folder_Download);
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				bmpBanner, strWndTitle, strWndDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage, img, strTitle, strDesc);
 
 			this.Icon = AppIcons.Default;
-			this.Text = strWndTitle;
-
-			if(m_bExport)
-			{
-				UIUtil.SetText(m_lblFile, KPRes.ExportToPrompt);
-				UIUtil.SetButtonImage(m_btnSelFile,
-					Properties.Resources.B16x16_FileSaveAs, false);
-
-				m_lnkFileFormats.Enabled = false;
-				m_lnkFileFormats.Visible = false;
-			}
-			else // Import mode
-			{
-				UIUtil.SetText(m_lblFile, KPRes.ImportFilesPrompt);
-				UIUtil.SetButtonImage(m_btnSelFile,
-					Properties.Resources.B16x16_Folder_Yellow_Open, false);
-			}
+			this.Text = strTitle;
 
 			m_lvFormats.ShowGroups = true;
 
 			int w = m_lvFormats.ClientSize.Width - UIUtil.GetVScrollBarWidth();
 			m_lvFormats.Columns.Add(string.Empty, w - 1);
 
-			m_ilFormats = new ImageList();
-			m_ilFormats.ColorDepth = ColorDepth.Depth32Bit;
-			m_ilFormats.ImageSize = new Size(DpiUtil.ScaleIntX(16),
-				DpiUtil.ScaleIntY(16));
-
+			List<Image> lImages = new List<Image>();
 			Dictionary<string, FormatGroupEx> dictGroups =
 				new Dictionary<string, FormatGroupEx>();
 
 			foreach(FileFormatProvider f in Program.FileFormatPool)
 			{
-				if(m_bExport && (f.SupportsExport == false)) continue;
-				if((m_bExport == false) && (f.SupportsImport == false)) continue;
+				if(m_bExport && !f.SupportsExport) continue;
+				if(!m_bExport && !f.SupportsImport) continue;
 
 				string strDisplayName = f.DisplayName;
-				if((strDisplayName == null) || (strDisplayName.Length == 0))
-					continue;
+				if(string.IsNullOrEmpty(strDisplayName)) { Debug.Assert(false); continue; }
 
 				string strAppGroup = f.ApplicationGroup;
-				if((strAppGroup == null) || (strAppGroup.Length == 0))
-					strAppGroup = KPRes.General;
+				if(string.IsNullOrEmpty(strAppGroup)) strAppGroup = KPRes.General;
 
 				FormatGroupEx grp;
 				if(!dictGroups.TryGetValue(strAppGroup, out grp))
 				{
 					grp = new FormatGroupEx(strAppGroup);
-					dictGroups.Add(strAppGroup, grp);
+					dictGroups[strAppGroup] = grp;
 				}
 
 				ListViewItem lvi = new ListViewItem(strDisplayName);
@@ -161,8 +148,8 @@ namespace KeePass.Forms
 				if(imgSmallIcon == null)
 					imgSmallIcon = Properties.Resources.B16x16_Folder_Inbox;
 
-				m_ilFormats.Images.Add(imgSmallIcon);
-				lvi.ImageIndex = m_ilFormats.Images.Count - 1;
+				lvi.ImageIndex = lImages.Count;
+				lImages.Add(imgSmallIcon);
 
 				grp.Items.Add(lvi);
 			}
@@ -174,7 +161,34 @@ namespace KeePass.Forms
 					m_lvFormats.Items.Add(lvi);
 			}
 
+			m_ilFormats = UIUtil.BuildImageListUnscaled(lImages,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_lvFormats.SmallImageList = m_ilFormats;
+
+			if(m_bExport)
+			{
+				m_grpFiles.Text = KPRes.Destination;
+				UIUtil.SetText(m_lblFiles, KPRes.File + ":");
+				UIUtil.SetButtonImage(m_btnSelFile,
+					Properties.Resources.B16x16_FileSaveAs, false);
+
+				m_lnkFileFormats.Enabled = false;
+				m_lnkFileFormats.Visible = false;
+			}
+			else // Import
+			{
+				m_grpFiles.Text = KPRes.Source;
+				UIUtil.SetButtonImage(m_btnSelFile,
+					Properties.Resources.B16x16_Folder_Yellow_Open, false);
+
+				m_grpExport.Enabled = false;
+				m_grpExportPost.Enabled = false;
+			}
+
+			m_cbExportMasterKeySpec.Checked = Program.Config.Defaults.ExportMasterKeySpec;
+			m_cbExportParentGroups.Checked = Program.Config.Defaults.ExportParentGroups;
+			m_cbExportPostOpen.Checked = Program.Config.Defaults.ExportPostOpen;
+			m_cbExportPostShow.Checked = Program.Config.Defaults.ExportPostShow;
 
 			CustomizeForScreenReader();
 			UpdateUIState();
@@ -182,6 +196,11 @@ namespace KeePass.Forms
 
 		private void CleanUpEx()
 		{
+			Program.Config.Defaults.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
+			Program.Config.Defaults.ExportParentGroups = m_cbExportParentGroups.Checked;
+			Program.Config.Defaults.ExportPostOpen = m_cbExportPostOpen.Checked;
+			Program.Config.Defaults.ExportPostShow = m_cbExportPostShow.Checked;
+
 			if(m_ilFormats != null)
 			{
 				m_lvFormats.SmallImageList = null; // Detach event handlers
@@ -202,8 +221,22 @@ namespace KeePass.Forms
 			AppHelp.ShowHelp(AppDefs.HelpTopics.ImportExport, null);
 		}
 
+		private static bool CheckFilePath(string strPath)
+		{
+			if(string.IsNullOrEmpty(strPath)) { Debug.Assert(false); return false; }
+
+			if(strPath.IndexOf(';') >= 0)
+			{
+				MessageService.ShowWarning(strPath, KPRes.FileNameContainsSemicolonError);
+				return false;
+			}
+
+			return true;
+		}
+
 		private void OnBtnSelFile(object sender, EventArgs e)
 		{
+			UpdateUIState();
 			if(m_fmtCur == null) { Debug.Assert(false); return; }
 			if(!m_fmtCur.RequiresFile) return; // Break on double-click
 
@@ -228,18 +261,20 @@ namespace KeePass.Forms
 				StringBuilder sb = new StringBuilder();
 				foreach(string str in ofd.FileNames)
 				{
-					if(sb.Length > 0) sb.Append(';');
+					if(!CheckFilePath(str)) continue;
 
-					if(str.IndexOf(';') >= 0)
-						MessageService.ShowWarning(str, KPRes.FileNameContainsSemicolonError);
-					else sb.Append(str);
+					if(sb.Length != 0) sb.Append(';');
+					sb.Append(str);
 				}
 
 				string strFiles = sb.ToString();
-				if(strFiles.Length < m_tbFile.MaxLength)
-					m_tbFile.Text = strFiles;
-				else
+				if(strFiles.Length >= m_tbFile.MaxLength)
+				{
 					MessageService.ShowWarning(KPRes.TooManyFilesError);
+					return;
+				}
+
+				m_tbFile.Text = strFiles;
 			}
 			else // Export
 			{
@@ -247,24 +282,86 @@ namespace KeePass.Forms
 					": " + strFormat, null, strFilter, 1, strPriExt,
 					AppDefs.FileDialogContext.Export);
 
-				string strSuggestion;
-				if((m_pwDatabaseInfo != null) &&
-					(m_pwDatabaseInfo.IOConnectionInfo.Path.Length > 0))
-				{
+				string strSuggestion = KPRes.Database;
+				if((m_pd != null) && (m_pd.IOConnectionInfo.Path.Length > 0))
 					strSuggestion = UrlUtil.StripExtension(UrlUtil.GetFileName(
-						m_pwDatabaseInfo.IOConnectionInfo.Path));
-				}
-				else strSuggestion = KPRes.Database;
+						m_pd.IOConnectionInfo.Path));
+				sfd.FileName = strSuggestion + "." + strPriExt;
 
-				strSuggestion += "." + strPriExt;
-
-				sfd.FileName = strSuggestion;
 				if(sfd.ShowDialog() != DialogResult.OK) return;
 
-				m_tbFile.Text = sfd.FileName;
+				string strFile = sfd.FileName;
+				if(!CheckFilePath(strFile)) return;
+				m_tbFile.Text = strFile;
 			}
 
 			UpdateUIState();
+		}
+
+		private void UpdateUIState()
+		{
+			ListView.SelectedListViewItemCollection lvsc = m_lvFormats.SelectedItems;
+			m_fmtCur = (((lvsc != null) && (lvsc.Count == 1)) ?
+				(lvsc[0].Tag as FileFormatProvider) : null);
+			bool bFormat = (m_fmtCur != null);
+
+			bool bFileReq = (bFormat && m_fmtCur.RequiresFile);
+			UIUtil.SetEnabledFast(bFileReq, m_lblFiles, m_tbFile, m_btnSelFile);
+
+			bool bExportExt = (m_bExport && (m_piExport != null));
+			UIUtil.SetEnabledFast((bExportExt && bFormat && m_fmtCur.RequiresKey),
+				m_cbExportMasterKeySpec, m_lblExportMasterKeySpec);
+
+			UIUtil.SetEnabledFast((bExportExt && bFormat && (m_pd != null) &&
+				(m_pg != m_pd.RootGroup)),
+				m_cbExportParentGroups, m_lnkExportParentGroups);
+
+			UIUtil.SetEnabledFast((bExportExt && bFileReq), m_cbExportPostOpen,
+				m_cbExportPostShow);
+
+			m_btnOK.Enabled = (bFormat && ((m_tbFile.Text.Length != 0) ||
+				!m_fmtCur.RequiresFile));
+		}
+
+		private bool PrepareExchangeEx()
+		{
+			UpdateUIState();
+			if(m_fmtCur == null) return false;
+
+			string strFiles = m_tbFile.Text;
+			string[] vFiles = strFiles.Split(new char[] { ';' },
+				StringSplitOptions.RemoveEmptyEntries);
+
+			if(m_fmtCur.RequiresFile)
+			{
+				if(vFiles.Length == 0) return false;
+
+				foreach(string strFile in vFiles)
+				{
+					IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+					if(ioc.IsLocalFile() && !UrlUtil.IsAbsolutePath(strFile))
+					{
+						MessageService.ShowWarning(strFile, KPRes.FilePathFullReq);
+						return false;
+					}
+				}
+
+				// Allow only one file when exporting
+				if(m_bExport && !CheckFilePath(strFiles)) return false;
+			}
+			else vFiles = new string[0];
+
+			if(m_piExport != null)
+			{
+				m_piExport.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
+				m_piExport.ExportParentGroups = m_cbExportParentGroups.Checked;
+				m_piExport.ExportPostOpen = m_cbExportPostOpen.Checked;
+				m_piExport.ExportPostShow = m_cbExportPostShow.Checked;
+			}
+
+			m_fmtFinal = m_fmtCur;
+			m_vFiles = vFiles;
+			return true;
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -274,39 +371,6 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-		}
-
-		private void UpdateUIState()
-		{
-			bool bFormatSelected = true;
-			ListView.SelectedListViewItemCollection lvsc = m_lvFormats.SelectedItems;
-
-			if((lvsc == null) || (lvsc.Count != 1)) bFormatSelected = false;
-
-			if(bFormatSelected) m_fmtCur = (lvsc[0].Tag as FileFormatProvider);
-			else m_fmtCur = null;
-
-			if(m_fmtCur != null)
-				m_tbFile.Enabled = m_btnSelFile.Enabled = m_fmtCur.RequiresFile;
-			else
-				m_tbFile.Enabled = m_btnSelFile.Enabled = false;
-
-			m_btnOK.Enabled = (bFormatSelected && ((m_tbFile.Text.Length != 0) ||
-				!m_fmtCur.RequiresFile));
-		}
-
-		private bool PrepareExchangeEx()
-		{
-			UpdateUIState();
-			if(m_fmtCur == null) return false;
-
-			m_fmtFinal = m_fmtCur;
-			m_vFiles = m_tbFile.Text.Split(new char[]{ ';' },
-				StringSplitOptions.RemoveEmptyEntries);
-
-			if(m_bExport) { Debug.Assert(m_vFiles.Length <= 1); }
-
-			return true;
 		}
 
 		private void OnFormatsSelectedIndexChanged(object sender, EventArgs e)
@@ -328,6 +392,12 @@ namespace KeePass.Forms
 		private void OnFormatsItemActivate(object sender, EventArgs e)
 		{
 			OnBtnSelFile(sender, e);
+		}
+
+		private void OnLinkExportParentGroups(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			AppHelp.ShowHelp(AppDefs.HelpTopics.ImportExport,
+				AppDefs.HelpTopics.ImportExportParents);
 		}
 	}
 }
