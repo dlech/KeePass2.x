@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ namespace KeePassLib.Cryptography.KeyDerivation
 		private const ulong NbBlockSizeInQW = NbBlockSize / 8UL;
 		private const ulong NbSyncPoints = 4;
 
+		private const ulong NbAddressesInBlock = 128;
+
 		private const int NbPreHashDigestLength = 64;
 		private const int NbPreHashSeedLength = NbPreHashDigestLength + 8;
 
@@ -56,6 +58,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 		private sealed class Argon2Ctx
 		{
+			public Argon2Type Type = Argon2Type.D;
 			public uint Version = 0;
 
 			public ulong Lanes = 0;
@@ -89,7 +92,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			}
 		}
 
-		private static byte[] Argon2d(byte[] pbMsg, byte[] pbSalt, uint uParallel,
+		private byte[] Argon2Transform(byte[] pbMsg, byte[] pbSalt, uint uParallel,
 			ulong uMem, ulong uIt, int cbOut, uint uVersion, byte[] pbSecretKey,
 			byte[] pbAssocData)
 		{
@@ -101,6 +104,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 #endif
 
 			Argon2Ctx ctx = new Argon2Ctx();
+			ctx.Type = m_t;
 			ctx.Version = uVersion;
 
 			ctx.Lanes = uParallel;
@@ -137,7 +141,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			h.TransformBlock(pbBuf, 0, pbBuf.Length, pbBuf, 0);
 			MemUtil.UInt32ToBytesEx(uVersion, pbBuf, 0);
 			h.TransformBlock(pbBuf, 0, pbBuf.Length, pbBuf, 0);
-			MemUtil.UInt32ToBytesEx(0, pbBuf, 0); // Argon2d type = 0
+			MemUtil.UInt32ToBytesEx((uint)m_t, pbBuf, 0);
 			h.TransformBlock(pbBuf, 0, pbBuf.Length, pbBuf, 0);
 			MemUtil.UInt32ToBytesEx((uint)pbMsg.Length, pbBuf, 0);
 			h.TransformBlock(pbBuf, 0, pbBuf.Length, pbBuf, 0);
@@ -497,8 +501,33 @@ namespace KeePassLib.Cryptography.KeyDerivation
 				Debug.Assert(ctx.Version >= MinVersion);
 				bool bCanXor = (ctx.Version >= 0x13U);
 
+				ulong[] pbR = new ulong[NbBlockSizeInQW];
+				ulong[] pbTmp = new ulong[NbBlockSizeInQW];
+				ulong[] pbAddrInputZero = null;
+
+				bool bDataIndependentAddr = ((ctx.Type == Argon2Type.ID) &&
+					(ti.Pass == 0) && (ti.Slice < (NbSyncPoints / 2)));
+				if(bDataIndependentAddr)
+				{
+					pbAddrInputZero = new ulong[NbBlockSizeInQW * 3];
+
+					const int iInput = (int)NbBlockSizeInQW;
+					pbAddrInputZero[iInput] = ti.Pass;
+					pbAddrInputZero[iInput + 1] = ti.Lane;
+					pbAddrInputZero[iInput + 2] = ti.Slice;
+					pbAddrInputZero[iInput + 3] = ctx.MemoryBlocks;
+					pbAddrInputZero[iInput + 4] = ctx.TCost;
+					pbAddrInputZero[iInput + 5] = (ulong)ctx.Type;
+				}
+
 				ulong uStart = 0;
-				if((ti.Pass == 0) && (ti.Slice == 0)) uStart = 2;
+				if((ti.Pass == 0) && (ti.Slice == 0))
+				{
+					uStart = 2;
+
+					if(bDataIndependentAddr)
+						NextAddresses(pbAddrInputZero, pbR, pbTmp);
+				}
 
 				ulong uCur = (ti.Lane * ctx.LaneLength) + (ti.Slice *
 					ctx.SegmentLength) + uStart;
@@ -506,15 +535,21 @@ namespace KeePassLib.Cryptography.KeyDerivation
 				ulong uPrev = (((uCur % ctx.LaneLength) == 0) ?
 					(uCur + ctx.LaneLength - 1UL) : (uCur - 1UL));
 
-				ulong[] pbR = new ulong[NbBlockSizeInQW];
-				ulong[] pbTmp = new ulong[NbBlockSizeInQW];
-
 				for(ulong i = uStart; i < ctx.SegmentLength; ++i)
 				{
 					if((uCur % ctx.LaneLength) == 1)
 						uPrev = uCur - 1UL;
 
-					ulong uPseudoRand = ctx.Mem[uPrev * NbBlockSizeInQW];
+					ulong uPseudoRand;
+					if(bDataIndependentAddr)
+					{
+						ulong iMod = i % NbAddressesInBlock;
+						if(iMod == 0)
+							NextAddresses(pbAddrInputZero, pbR, pbTmp);
+						uPseudoRand = pbAddrInputZero[iMod];
+					}
+					else uPseudoRand = ctx.Mem[uPrev * NbBlockSizeInQW];
+
 					ulong uRefLane = (uPseudoRand >> 32) % ctx.Lanes;
 					if((ti.Pass == 0) && (ti.Slice == 0))
 						uRefLane = ti.Lane;
@@ -536,6 +571,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 				MemUtil.ZeroArray<ulong>(pbR);
 				MemUtil.ZeroArray<ulong>(pbTmp);
+				if(pbAddrInputZero != null) MemUtil.ZeroArray<ulong>(pbAddrInputZero);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -608,6 +644,19 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 			CopyBlock(pMem, uNext, pbTmp, 0);
 			XorBlock(pMem, uNext, pbR, 0);
+		}
+
+		private static void NextAddresses(ulong[] pbAddrInputZero, ulong[] pbR,
+			ulong[] pbTmp)
+		{
+			// pbAddrInputZero contains an address block, an input block and a zero block
+			const ulong uAddr = 0;
+			const ulong uInput = NbBlockSizeInQW;
+			const ulong uZero = NbBlockSizeInQW * 2;
+
+			++pbAddrInputZero[uInput + 6];
+			FillBlock(pbAddrInputZero, uZero, uInput, uAddr, false, pbR, pbTmp);
+			FillBlock(pbAddrInputZero, uZero, uAddr, uAddr, false, pbR, pbTmp);
 		}
 
 		private static byte[] FinalHash(Argon2Ctx ctx, int cbOut, Blake2b h)

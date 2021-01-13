@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -495,6 +495,29 @@ namespace KeePassLib.Serialization
 			m_craInnerRandomStream = (CrsAlgorithm)uID;
 		}
 
+		internal static PwGroup ReadGroup(Stream msData, PwDatabase pdContext,
+			bool bCopyIcons, bool bNewUuids, bool bSetCreatedNow)
+		{
+			PwDatabase pd = new PwDatabase();
+			pd.New(new IOConnectionInfo(), new CompositeKey());
+
+			KdbxFile f = new KdbxFile(pd);
+			f.Load(msData, KdbxFormat.PlainXml, null);
+
+			if(bCopyIcons)
+				PwDatabase.CopyCustomIcons(pd, pdContext, pd.RootGroup, true);
+
+			if(bNewUuids)
+			{
+				pd.RootGroup.Uuid = new PwUuid(true);
+				pd.RootGroup.CreateNewItemUuids(true, true, true);
+			}
+
+			if(bSetCreatedNow) pd.RootGroup.SetCreatedNow(true);
+
+			return pd.RootGroup;
+		}
+
 		[Obsolete]
 		public static List<PwEntry> ReadEntries(Stream msData)
 		{
@@ -507,82 +530,13 @@ namespace KeePassLib.Serialization
 			return ReadEntries(msData, pdContext, true);
 		}
 
-		/// <summary>
-		/// Read entries from a stream.
-		/// </summary>
-		/// <param name="msData">Input stream to read the entries from.</param>
-		/// <param name="pdContext">Context database (e.g. for storing icons).</param>
-		/// <param name="bCopyIcons">If <c>true</c>, custom icons required by
-		/// the loaded entries are copied to the context database.</param>
-		/// <returns>Loaded entries.</returns>
 		public static List<PwEntry> ReadEntries(Stream msData, PwDatabase pdContext,
 			bool bCopyIcons)
 		{
-			List<PwEntry> lEntries = new List<PwEntry>();
+			if(msData == null) { Debug.Assert(false); return new List<PwEntry>(); }
 
-			if(msData == null) { Debug.Assert(false); return lEntries; }
-			// pdContext may be null
-
-			/* KdbxFile f = new KdbxFile(pwDatabase);
-			f.m_format = KdbxFormat.PlainXml;
-
-			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
-			doc.Load(msData);
-
-			XmlElement el = doc.DocumentElement;
-			if(el.Name != ElemRoot) throw new FormatException();
-
-			List<PwEntry> vEntries = new List<PwEntry>();
-
-			foreach(XmlNode xmlChild in el.ChildNodes)
-			{
-				if(xmlChild.Name == ElemEntry)
-				{
-					PwEntry pe = f.ReadEntry(xmlChild);
-					pe.Uuid = new PwUuid(true);
-
-					foreach(PwEntry peHistory in pe.History)
-						peHistory.Uuid = pe.Uuid;
-
-					vEntries.Add(pe);
-				}
-				else { Debug.Assert(false); }
-			}
-
-			return vEntries; */
-
-			PwDatabase pd = new PwDatabase();
-			pd.New(new IOConnectionInfo(), new CompositeKey());
-
-			KdbxFile f = new KdbxFile(pd);
-			f.Load(msData, KdbxFormat.PlainXml, null);
-
-			foreach(PwEntry pe in pd.RootGroup.Entries)
-			{
-				pe.SetUuid(new PwUuid(true), true);
-				lEntries.Add(pe);
-
-				if(bCopyIcons && (pdContext != null))
-				{
-					PwUuid pu = pe.CustomIconUuid;
-					if(!pu.Equals(PwUuid.Zero))
-					{
-						int iSrc = pd.GetCustomIconIndex(pu);
-						int iDst = pdContext.GetCustomIconIndex(pu);
-
-						if(iSrc < 0) { Debug.Assert(false); }
-						else if(iDst < 0)
-						{
-							pdContext.CustomIcons.Add(pd.CustomIcons[iSrc]);
-
-							pdContext.Modified = true;
-							pdContext.UINeedsIconUpdate = true;
-						}
-					}
-				}
-			}
-
-			return lEntries;
+			PwGroup pg = ReadGroup(msData, pdContext, bCopyIcons, true, true);
+			return pg.GetEntries(true).CloneShallowToList();
 		}
 	}
 }

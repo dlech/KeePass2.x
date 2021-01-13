@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -53,6 +53,8 @@
 <li><a href="#secselftests">Self-Tests</a></li>
 <li><a href="#secspecattacks">Specialized Spyware</a></li>
 <li><a href="#secmaldata">Malicious Data</a></li>
+<li><a href="#secoptex">Options for Experts</a></li>
+<li><a href="#secoptadm">Options for Administrators</a></li>
 <li><a href="#secissues">Security Issues</a></li>
 </ul>
 
@@ -148,8 +150,8 @@ a HMAC-SHA-256 hash of the ciphertext (Encrypt-then-MAC scheme).
 Key Hashing and Key Derivation</h2>
 
 <p>SHA-256 is used for compressing the components
-of the <a href="keys.html">composite master key</a>
-(consisting of a password, a key file, a Windows user account key
+of the <a href="keys.html">master key</a>
+(consisting of a master password, a key file, a Windows user account key
 and/or a key provided by a plugin) to a 256-bit key <em>K</em>.</p>
 
 <p>SHA-256 is a cryptographic hash function that is considered to be
@@ -176,15 +178,30 @@ Protection against Dictionary Attacks</h2>
 <p>KeePass features a protection against dictionary and guessing attacks.</p>
 
 <p>Such attacks cannot be prevented, but they can be made harder.
-For this, the key <em>K</em> derived from the user's composite master key
+For this, the key <em>K</em> derived from the user's master key
 (see <a href="#seckeyhash">above</a>) is transformed using a
 key derivation function with a random salt.
 This prevents a precomputation of keys and adds a work factor
 that the user can make as large as desired
 to increase the computational effort of a dictionary or guessing attack.</p>
 
-<p>The following key derivation functions are supported
-(they can be chosen and configured in the database settings dialog):</p>
+<p>Multiple key derivation functions are supported. In the database
+settings dialog, you can select one and specify certain parameters
+for it.</p>
+
+<p>By clicking the '1 Second Delay' button in the database settings
+dialog, KeePass computes the number of iterations that results in a
+1 second delay when loading/saving a database.
+Furthermore, KeePass 2.x has a button 'Test' that performs a key
+transformation with the specified parameters (which can be cancelled)
+and reports the required time.</p>
+
+<p>The key transformation may require more or less time on other
+devices. If you are using KeePass or a port of it on other devices,
+make sure that all devices are fast enough (and have sufficient memory)
+to load the database with your parameters within an acceptable time.</p>
+
+<p>Supported key derivation functions:</p>
 
 <ul class="withspc">
 <li><strong>AES-KDF</strong> (KeePass 1.x and 2.x):<br />
@@ -193,12 +210,12 @@ AES.<!-- This key derivation function splits <em>K</em> into two 128-bit halves
 (the block size of AES is 128 bits) and iteratively encrypts them
 using AES with a random 256-bit key (transformation salt).
 The key derivation is finalized using one SHA-256 computation
-that combines the two halves. --><br />
-<small><br /></small>
-In the database settings dialog, users can change the number of
+that combines the two halves. -->
+
+<p>In the database settings dialog, you can change the number of
 iterations. The more iterations, the harder are dictionary and guessing
-attacks, but also database loading/saving takes more time (linearly).<br />
-<small><br /></small>
+attacks, but also database loading/saving takes more time (linearly).</p>
+
 On Windows Vista and higher, KeePass can use Windows' CNG/BCrypt API
 for the key transformation, which is about 50% faster than the
 key transformation code built-in to KeePass.</li>
@@ -208,33 +225,119 @@ key transformation code built-in to KeePass.</li>
 is the winner of the <a href="https://password-hashing.net/"
 target="_blank">Password Hashing Competition</a>.
 The main advantage of Argon2 over AES-KDF is that it provides a better
-resistance against GPU/ASIC attacks
-(due to being a memory-hard function).<br />
-<small><br /></small>
-The number of iterations scales linearly with the required time.
+resistance against GPU/ASIC attacks (due to being a memory-hard function).
+
+<p>The official specification of the Argon2 algorithm defines three
+variants: Argon2d, Argon2id and Argon2i.
+Argon2i is the least suitable variant in our case (KeePass database file);
+therefore, KeePass only offers Argon2d and Argon2id.</p>
+
+<p>Argon2d provides the best resistance against GPU/ASIC attacks.
+The resistance of Argon2id against GPU/ASIC attacks is somewhat weaker,
+but Argon2id additionally makes certain side-channel attacks slightly harder.</p>
+
+<p>Side-channel attacks try to gain information from a system by
+observing its behavior (e.g. the duration and the power consumption of
+certain operations). On servers, side-channel attacks are a real threat.
+On client devices (PCs), side-channel attacks are more difficult (more
+noise, etc.); there are ideas how some might work in theory, but we are
+not aware of any real attack in practice.
+For example, the attack described in the article
+'<a href="https://www.cs.columbia.edu/2015/spy-in-the-sandbox/"
+target="_blank">The Spy in the Sandbox / Side-Channel Attacks in Web Browsers</a>'
+was interesting (JavaScript code was able to detect certain user interactions),
+but not a real threat (no extraction of sensitive data, as mentioned
+explicitly in the article). This may or may not change in the future.
+Note that this has nothing to do with cloud storage; KeePass encrypts/decrypts
+a database file on a client device, and thus it is irrelevant where the
+database file is stored (for side-channel attacks).
+Furthermore, there are side-channel attacks that neither Argon2d nor Argon2id
+(nor Argon2i, nor any other key derivation function) protects against (e.g.
+<a href="https://en.wikipedia.org/wiki/Spectre_(security_vulnerability)"
+target="_blank">Spectre</a>/<a href="https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)"
+target="_blank">Meltdown</a> side-channel attacks, which allow
+spyware to read all memory).</p>
+
+<p>In the case of KeePass, we currently recommend Argon2d instead
+of Argon2id, because we believe that a better protection against a
+really existing threat (password cracking using GPUs/ASICs is state
+of the art) is more important than a protection against certain
+side-channel attacks that may or may not become a problem on client
+devices in the future.
+If you worry about side-channel attacks (and are willing to sacrifice
+some GPU/ASIC resistance) or if you are developing a software where
+side-channel attacks could be a problem (e.g. a server service that
+operates with KeePass database files), use Argon2id.</p>
+
+<p>Side note: the IRTF CFRG Argon2 Internet standard recommends
+Argon2id by default. For server applications, Argon2id is in general
+indeed more suitable than Argon2d, but our situation (client device)
+is different, as mentioned above.</p>
+
+<p>The number of iterations scales linearly with the required time.
 By increasing the memory parameter, GPU/ASIC attacks become
 harder (and the required time increases).
-The parallelism parameter can be used to specify how many threads
-should be used.</li>
+The parallelism parameter specifies how many threads should be used.</p>
+
+<p>We recommend the following procedure for determining the
+Argon2 parameters:</p>
+<ol class="withspc">
+<li>Set the number of iterations to 2.</li>
+
+<li>Find out the RAM size of each of your devices on which you want to
+open your database file. Let <i>M</i> be the minimum of these sizes.
+Set the memory parameter to min(<i>M</i>/2, 1 GB)
+(i.e. use the half of <i>M</i>, if it is less than 1 GB, otherwise use 1 GB).
+<ul>
+<li>Example 1: if you have a PC with 32 GB RAM and a mobile phone
+with 1 GB RAM (on which you want to open your database file),
+set the memory parameter to 500 MB.</li>
+<li>Example 2: if you have a PC with 32 GB RAM and a PC with 8 GB RAM,
+set the memory parameter to 1 GB.</li>
+</ul>
+On Windows 10, the RAM size can be found in the system settings
+&rarr; 'System' &rarr; 'About'.</li>
+
+<li>Find out the number of logical processors of each of your devices.
+Set the parallelism parameter to the minimum of these numbers.
+On Windows 10, the number of logical processors can be found in the
+Task Manager (right-click onto the taskbar &rarr; 'Task Manager')
+on the 'Performance' tab page.</li>
+
+<li>Click the 'Test' button.
+<ul>
+<li>If the key transformation takes too much time (longer than you are
+willing to wait when opening/saving the database file, e.g. more than
+1 second), cancel it, decrease the memory parameter and click
+the 'Test' button again.
+Repeat this until the required time is acceptable.</li>
+
+<li>If the key transformation takes too few time (in the case of 1 GB memory),
+increase the number of iterations and click the 'Test' button again.
+Repeat this until you like the required time.</li>
+</ul></li>
+
+<li>Save the database file and try to open it on each of your other
+devices. If this takes too long on one of the devices,
+decrease the number of iterations (recommendation: not less than 2)
+and/or decrease the memory parameter, and try it again.</li>
+</ol>
+
+<p>When clicking the '1 Second Delay' button, KeePass uses a different
+strategy for determining the parameters (relatively low values for the
+memory and parallelism parameters, relatively high number of iterations),
+because KeePass does not know the RAM and processor details of your other
+devices (the default values should be compatible with most devices).
+If you know these details, it is recommended to follow the
+procedure above instead.</p>
+</li>
 
 <!-- <li><strong>Plugins</strong> (KeePass 2.x only):<br />
 <a href="https://keepass.info/plugins.html" target="_blank">Plugins</a>
 can provide additional key derivation functions.</li> -->
 </ul>
 
-<p>By clicking the '1 Second Delay' button in the database settings
-dialog, KeePass computes the number of iterations that results in a
-1 second delay when loading/saving a database.
-Furthermore, KeePass 2.x has a button 'Test' that performs a key
-derivation with the specified parameters (which can be cancelled)
-and reports the required time.</p>
-
-<p>The key derivation may require more or less time on other
-devices. If you are using KeePass or a port of it on other devices,
-make sure that all devices are fast enough (and have sufficient memory)
-to load the database with your parameters within an acceptable time.</p>
-
-<p><strong>KeePassX.</strong> In contrast to KeePass, the Linux port KeePassX
+<p><b>KeePassX.</b> In contrast to KeePass, the Linux port KeePassX
 only partially supports protection against dictionary and guessing attacks.</p>
 
 <br />
@@ -506,7 +609,7 @@ This sequence typically only works on a Windows system, but similar
 sequences can be constructed for other operating systems
 (like Linux and Mac OS X).</li>
 
-<li>If you specify weak <a href="#secdictprotect">key derivation</a>
+<li>If you specify weak <a href="#secdictprotect">key transformation</a>
 settings suggested by an attacker, this might make it easier for the
 attacker to decrypt/open your database.</li>
 
@@ -533,6 +636,53 @@ Showing warning/confirmation dialogs all the time would not be reasonable.</p>
 someone else, you should carefully check all data that you want to use.
 If you do not fully trust the creator of the database, do not
 open any files attached to entries.</p>
+
+<br />
+
+<a name="secoptex"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Options for Experts</h2>
+
+<p>Most security options can be configured in the options dialog of
+KeePass (menu 'Tools' &rarr; 'Options') and in the database settings
+dialog (menu 'File' &rarr; 'Database Settings').</p>
+
+<p>However, in KeePass 2.x, there additionally are a few security options
+for experts that cannot be configured in the user interface.
+For example, KeePass can protect its process with a
+discretionary access control list (DACL), and
+its windows can be protected against certain screen capture operations.</p>
+
+<p><img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
+Activating these options for experts may result in compatibility problems and
+may make KeePass unusable. Therefore, these options can only be activated by
+editing the configuration file manually (using an XML or text editor).
+This ensures that users know how they can deactivate the problematic options
+(by editing the configuration file once more)
+in order to make KeePass usable again.</p>
+
+<p>If you know how the <a href="configuration.html">configuration</a>
+system of KeePass works, then see the
+<a href="https://keepass.info/help/v2_dev/customize.html#opt" target="_blank">customization</a>
+help page, on which these options are documented.</p>
+
+<br />
+
+<a name="secoptadm"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="Locked" />
+Options for Administrators</h2>
+
+<p>Administrators can enforce certain settings, disallow certain functions,
+specify requirements for master passwords, and much more.
+Details can be found on the following help pages:</p>
+
+<ul>
+<li><a href="configuration.html">Configuration</a>.</li>
+<li><a href="https://keepass.info/help/kb/config_enf.html" target="_blank">Enforced Configuration</a>.</li>
+<li><a href="https://keepass.info/help/v2_dev/customize.html" target="_blank">Customization (KeePass 2.x)</a>,
+<a href="https://keepass.info/help/v1_dev/customize.html" target="_blank">Customization (KeePass 1.x)</a>.</li>
+<li><a href="https://keepass.info/help/v2/policy.html" target="_blank">Application Policy (KeePass 2.x)</a>.</li>
+</ul>
 
 <br />
 

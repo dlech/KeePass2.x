@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -61,34 +61,73 @@ namespace KeePass.Util
 			dlg.AddButton((int)DialogResult.Cancel, KPRes.Skip, null);
 			dlg.SetIcon(VtdCustomIcon.Question);
 
+			bool bKeyFile = pd.MasterKey.ContainsType(typeof(KcpKeyFile));
+			if(bKeyFile)
+			{
+				dlg.VerificationText = KPRes.KeyFilePrintAlso;
+				dlg.FooterText = KPRes.KeyFilePrintLocal;
+				dlg.SetFooterIcon(VtdIcon.Information);
+			}
+
 			bool b;
 			if(dlg.ShowDialog()) b = (dlg.Result == (int)DialogResult.OK);
 			else b = MessageService.AskYesNo(str);
 
-			if(b) Print(pd);
+			if(b)
+			{
+				bool bPrintKF = (bKeyFile ? dlg.ResultVerificationChecked : false);
+				Print(pd, true, bPrintKF);
+			}
 		}
 
 		public static void Print(PwDatabase pd)
 		{
+			Print(pd, true, false);
+		}
+
+		internal static void Print(PwDatabase pd, bool bEmSheet, bool bKeyFile)
+		{
 			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+			if(!bEmSheet && !bKeyFile) { Debug.Assert(false); return; }
 
-			try
+			if(!bEmSheet && bKeyFile)
 			{
-				string strName = UrlUtil.StripExtension(UrlUtil.GetFileName(
-					pd.IOConnectionInfo.Path));
-				if(strName.Length == 0) strName = KPRes.Database;
-
-				string strHtml = GenerateHtml(pd, strName);
-				PrintUtil.PrintHtml(strHtml);
+				string strText = KPRes.KeyFilePrintLocal + MessageService.NewParagraph +
+					KPRes.AskContinue;
+				if(!MessageService.AskYesNo(strText)) return;
 			}
+
+			try { PrintUtil.PrintHtml(GenerateDoc(pd, bEmSheet, bKeyFile)); }
 			catch(Exception ex)
 			{
 				MessageService.ShowWarning(ex);
 			}
 		}
 
-		private static string GenerateHtml(PwDatabase pd, string strName)
+		private static string GenerateDoc(PwDatabase pd, bool bEmSheet, bool bKeyFile)
 		{
+			string strDbFile = pd.IOConnectionInfo.Path;
+
+			KcpKeyFile kf = (pd.MasterKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile);
+			string strKeyFile = ((kf != null) ? kf.Path : string.Empty);
+			if(bKeyFile)
+			{
+				if(strKeyFile.Length == 0) { Debug.Assert(false); return string.Empty; }
+
+				if(!KfxFile.CanLoad(strKeyFile))
+					throw new FormatException(strKeyFile + MessageService.NewParagraph +
+						KPRes.KeyFileNoXml + MessageService.NewParagraph +
+						KPRes.KeyFilePrintReqXml + MessageService.NewParagraph +
+						KPRes.KeyFileGenHint);
+			}
+
+			string strName = UrlUtil.StripExtension(UrlUtil.GetFileName(bEmSheet ?
+				strDbFile : strKeyFile));
+			if(strName.Length == 0)
+				strName = (bEmSheet ? KPRes.Database : KPRes.KeyFile);
+
+			string strDocKind = (bEmSheet ? KPRes.EmergencySheet : KPRes.KeyFileBackup);
+
 			bool bRtl = Program.Translation.Properties.RightToLeft;
 			string strLogLeft = (bRtl ? "right" : "left");
 			string strLogRight = (bRtl ? "left" : "right");
@@ -123,7 +162,7 @@ namespace KeePass.Util
 			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
 
 			sb.Append("<title>");
-			sb.Append(h(strName + " - " + KPRes.EmergencySheet));
+			sb.Append(h(strName + " - " + strDocKind));
 			sb.AppendLine("</title>");
 
 			sb.AppendLine("<style type=\"text/css\">");
@@ -234,11 +273,30 @@ namespace KeePass.Util
 			// sb.AppendLine("\ttransform: scale(1.75, 1.75) translate(-0.5pt, -0.5pt);");
 			// sb.AppendLine("}");
 
+			sb.AppendLine("table.fillinline tr td pre {");
+			sb.AppendLine("\tmargin: 0px 0px 0px 0px;");
+			sb.AppendLine("\tpadding: 0px 0px 0px 0px;");
+			sb.AppendLine("\tborder: 0px none;");
+			sb.AppendLine("\tborder-collapse: collapse;");
+			sb.AppendLine("\twhite-space: pre-wrap;");
+			sb.AppendLine("\toverflow: auto;");
+			sb.AppendLine("\toverflow-wrap: break-word;");
+			sb.AppendLine("\tword-wrap: break-word;");
+			sb.AppendLine("\tword-break: break-all;");
+			sb.AppendLine("}");
+
 			// sb.AppendLine("@media print {");
 			// sb.AppendLine(".scronly {");
 			// sb.AppendLine("\tdisplay: none;");
 			// sb.AppendLine("}");
 			// sb.AppendLine("}");
+
+			sb.AppendLine("@media print {");
+			sb.AppendLine(".ems_break_before {");
+			sb.AppendLine("\tpage-break-before: always;"); // CSS 2
+			sb.AppendLine("\tbreak-before: page;"); // CSS 3
+			sb.AppendLine("}");
+			sb.AppendLine("}");
 
 			// Add the temporary content identifier
 			// (always, as the sheet should be printed, not saved)
@@ -255,17 +313,19 @@ namespace KeePass.Util
 
 			sb.AppendLine("<table class=\"docheader\"><tr>");
 			sb.AppendLine("<td style=\"text-align: " + strLogLeft + ";\">");
+			Debug.Assert(Properties.Resources.B16x16_KeePass != null); // Name ref.
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
 				"KeePass")) + "\" width=\"48\" height=\"48\" alt=\"" +
 				h(PwDefs.ShortProductName) + "\" /></td>");
 			sb.AppendLine("<td style=\"text-align: center;\">");
 			sb.AppendLine("<h1>" + h(PwDefs.ShortProductName) + "</h1>");
-			sb.AppendLine("<h2>" + h(KPRes.EmergencySheet) + "</h2>");
+			sb.AppendLine("<h2>" + h(strDocKind) + "</h2>");
 			sb.AppendLine("</td>");
 			sb.AppendLine("<td style=\"text-align: " + strLogRight + ";\">");
+			Debug.Assert(Properties.Resources.B16x16_KOrganizer != null); // Name ref.
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
 				"KOrganizer")) + "\" width=\"48\" height=\"48\" alt=\"" +
-				h(KPRes.EmergencySheet) + "\" /></td>");
+				h(strDocKind) + "\" /></td>");
 			sb.AppendLine("</tr></table>");
 
 			sb.AppendLine("<p style=\"text-align: " + strLogRight + ";\">" +
@@ -287,9 +347,35 @@ namespace KeePass.Util
 
 			string strFillInitEx = (bRtl ? strFillInitLtr : strFillInit);
 
-			IOConnectionInfo ioc = pd.IOConnectionInfo;
+			if(bEmSheet)
+				GenerateEms(sb, pd, strDbFile,
+					h, ne, ltrPath, strFillInit, strFillInitEx, strFillEnd, strFill);
+			if(bEmSheet && bKeyFile)
+			{
+				sb.AppendLine("<table class=\"docheader ems_break_before\"><tr>");
+				sb.AppendLine("<td style=\"text-align: center;\">");
+				sb.AppendLine("<h2>" + h(KPRes.KeyFileBackup) + "</h2>");
+				sb.AppendLine("</td></tr></table><br />");
+			}
+			if(bKeyFile)
+				GenerateKfb(sb, pd, strDbFile, strKeyFile,
+					h, ne, ltrPath, strFillInit, strFillInitEx, strFillEnd, strFill);
+
+			sb.AppendLine("</body></html>");
+
+			string strDoc = sb.ToString();
+#if DEBUG
+			XmlUtilEx.ValidateXml(strDoc, true);
+#endif
+			return strDoc;
+		}
+
+		private static void GenerateEms(StringBuilder sb, PwDatabase pd, string strDbFile,
+			GFunc<string, string> h, GFunc<string, string> ne, GFunc<string, string> ltrPath,
+			string strFillInit, string strFillInitEx, string strFillEnd, string strFill)
+		{
 			sb.AppendLine("<p><strong>" + h(KPRes.DatabaseFile) + ":</strong></p>");
-			sb.AppendLine(strFillInitEx + ne(h(ltrPath(ioc.Path))) + strFillEnd);
+			sb.AppendLine(strFillInitEx + ne(h(ltrPath(strDbFile))) + strFillEnd);
 
 			// if(pd.Name.Length > 0)
 			//	sb.AppendLine("<p><strong>" + h(KPRes.Name) + ":</strong> " +
@@ -386,14 +472,67 @@ namespace KeePass.Util
 				h(PwDefs.HomepageUrl) + "\" target=\"_blank\">" +
 				h(PwDefs.HomepageUrl) + "</a>.</li>");
 			sb.AppendLine("</ul>");
+		}
 
-			sb.AppendLine("</body></html>");
+		private static void GenerateKfb(StringBuilder sb, PwDatabase pd,
+			string strDbFile, string strKeyFile,
+			GFunc<string, string> h, GFunc<string, string> ne, GFunc<string, string> ltrPath,
+			string strFillInit, string strFillInitEx, string strFillEnd, string strFill)
+		{
+			string strContent;
+			using(Stream s = IOConnection.OpenRead(IOConnectionInfo.FromPath(
+				strKeyFile)))
+			{
+				using(StreamReader sr = new StreamReader(s, StrUtil.Utf8, true))
+				{
+					strContent = sr.ReadToEnd();
+				}
+			}
 
-			string strDoc = sb.ToString();
-#if DEBUG
-			XmlUtilEx.ValidateXml(strDoc, true);
-#endif
-			return strDoc;
+			// Internet Explorer 11 does not support the 'tab-size' CSS property
+			strContent = strContent.Replace("\t", "    ");
+
+			string strNlCode = (new PwUuid(true)).ToHexString();
+			strContent = StrUtil.NormalizeNewLines(strContent, false);
+			strContent = strContent.Replace("\n", strNlCode); // Prevent <br />
+
+			strContent = StrUtil.StringToHtml(strContent, false);
+
+			strContent = strContent.Replace(strNlCode, MessageService.NewLine);
+
+			sb.AppendLine("<p><strong>" + h(KPRes.KeyFile) + ":</strong></p>");
+			sb.AppendLine(strFillInitEx + ne(h(ltrPath(strKeyFile))) + strFillEnd);
+
+			sb.AppendLine("<br />");
+			sb.AppendLine("<p><strong>" + h(KPRes.DatabaseFile) + ":</strong></p>");
+			sb.AppendLine(strFillInitEx + ne(h(ltrPath(strDbFile))) + strFillEnd);
+
+			sb.AppendLine("<br />");
+			sb.AppendLine("<p><strong>" + h(KPRes.KeyFileContent) + ":</strong></p>");
+			sb.AppendLine(strFillInit);
+			sb.Append("<pre>");
+			sb.Append(strContent);
+			sb.AppendLine("</pre>");
+			sb.AppendLine(strFillEnd);
+
+			sb.AppendLine("<br />");
+			sb.AppendLine("<h3>" + h(KPRes.InstrAndGenInfo) + "</h3>");
+
+			sb.AppendLine("<ul class=\"withspc\">");
+			sb.AppendLine("<li>" + h(KPRes.KeyFileFromBackup) + ":");
+			sb.AppendLine("<ul class=\"withspc\">");
+			sb.AppendLine("<li><p>" + Beautify(h(KPRes.KeyFileFromBackupF)) + "</p></li>");
+			sb.AppendLine("<li><p>" + h(KPRes.KeyFileFromBackupT) + "</p></li>");
+			sb.AppendLine("</ul></li>");
+			sb.AppendLine("<li>" + h(KPRes.LatestVersionWeb) + ": <a href=\"" +
+				h(PwDefs.HomepageUrl) + "\" target=\"_blank\">" +
+				h(PwDefs.HomepageUrl) + "</a>.</li>");
+			sb.AppendLine("</ul>");
+		}
+
+		private static string Beautify(string str)
+		{
+			return str.Replace(@"-&gt;", @"&#8594;");
 		}
 	}
 }

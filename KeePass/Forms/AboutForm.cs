@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using KeePass.App;
@@ -51,23 +52,29 @@ namespace KeePass.Forms
 		{
 			GlobalWindowManager.AddWindow(this, this);
 
-			Debug.Assert(!m_lblCopyright.AutoSize); // For RTL support
-			m_lblCopyright.Text = PwDefs.Copyright + ".";
+			string strVersion = PwDefs.VersionString;
 
-			string strTitle = PwDefs.ProductName;
-			string strDesc = KPRes.Version + " " + PwDefs.VersionString;
 			if(Program.IsDevelopmentSnapshot())
 			{
-				strDesc += " (Dev.";
+				strVersion += " - Dev.";
 				try
 				{
 					string strExe = WinUtil.GetExecutable();
 					FileInfo fi = new FileInfo(strExe);
-					strDesc += " " + fi.LastWriteTimeUtc.ToString("yyMMdd");
+					strVersion += " " + fi.LastWriteTimeUtc.ToString("yyMMdd");
 				}
 				catch(Exception) { Debug.Assert(false); }
-				strDesc += ")";
 			}
+
+			const string strParamPlh = @"{PARAM}";
+			string strBits = KPRes.BitsA;
+			if(strBits.IndexOf(strParamPlh) >= 0)
+				strVersion += (" (" + strBits.Replace(strParamPlh,
+					(IntPtr.Size * 8).ToString()) + ")");
+			else { Debug.Assert(false); }
+
+			string strTitle = PwDefs.ProductName;
+			string strDesc = KPRes.Version + " " + strVersion;
 
 			Icon icoSc = AppIcons.Get(AppIconType.Main, new Size(
 				DpiUtil.ScaleIntX(48), DpiUtil.ScaleIntY(48)), Color.Empty);
@@ -75,11 +82,17 @@ namespace KeePass.Forms
 				strTitle, strDesc);
 			this.Icon = AppIcons.Default;
 
-			m_lvComponents.Columns.Add(KPRes.Component, 100, HorizontalAlignment.Left);
-			m_lvComponents.Columns.Add(KPRes.Status + " / " + KPRes.Version, 100,
-				HorizontalAlignment.Left);
+			Debug.Assert(!m_lblCopyright.AutoSize); // For RTL support
+			m_lblCopyright.Text = PwDefs.Copyright + ".";
 
-			try { GetAppComponents(); }
+			string strCompValueHdr = KPRes.Version + "/" + KPRes.Status;
+			if(Regex.IsMatch(strCompValueHdr, "\\s"))
+				strCompValueHdr = KPRes.Version + " / " + KPRes.Status;
+
+			m_lvComponents.Columns.Add(KPRes.Component, 100);
+			m_lvComponents.Columns.Add(strCompValueHdr, 100);
+
+			try { GetAppComponents(strVersion); }
 			catch(Exception) { Debug.Assert(false); }
 
 			UIUtil.SetExplorerTheme(m_lvComponents, false);
@@ -91,10 +104,10 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private void GetAppComponents()
+		private void GetAppComponents(string strMainVersion)
 		{
 			ListViewItem lvi = new ListViewItem(PwDefs.ShortProductName);
-			lvi.SubItems.Add(PwDefs.VersionString);
+			lvi.SubItems.Add(strMainVersion);
 			m_lvComponents.Items.Add(lvi);
 
 			lvi = new ListViewItem(KPRes.XslStylesheetsKdbx);

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -200,7 +200,8 @@ namespace KeePass.Forms
 				"DELAY 1000", "DELAY=200", "VKEY 13", "VKEY 13 E",
 				// "VKEY-NX 13", "VKEY-EX 13",
 				"PICKCHARS", "PICKCHARS:Password:C=3", "PICKFIELD",
-				"NEWPASSWORD", "NEWPASSWORD:/Profile/", "HMACOTP", "CLEARFIELD",
+				"NEWPASSWORD", "NEWPASSWORD:/Profile/",
+				"HMACOTP", "TIMEOTP", "CLEARFIELD",
 				// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
 				"APPACTIVATE " + (bRtl ? "Title" : KPRes.Title),
 				"BEEP 800 200", "CLIPBOARD", "CLIPBOARD-SET:/T/",
@@ -680,7 +681,7 @@ namespace KeePass.Forms
 			if(string.IsNullOrEmpty(strWindows)) return;
 
 			strWindows = StrUtil.NormalizeNewLines(strWindows, false);
-			string[] vWindows = strWindows.Split(new char[]{ '\n' });
+			string[] vWindows = strWindows.Split(new char[] { '\n' });
 
 			List<string> vListed = new List<string>();
 			for(int i = 0; i < vWindows.Length; ++i)

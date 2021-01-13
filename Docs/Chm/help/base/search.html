@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<meta name="author" content="Dominik Reichl" />
+
+	
+	
+
+	<meta name="DC.title" content="Search - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
+
+	<meta name="robots" content="index, follow" />
+	<meta name="flattr:id" content="42rykv" />
+
+	<title>Search - KeePass</title>
+	<base target="_self" />
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
+	
+	<style type="text/css">
+	/* <![CDATA[ */
+	table.searchextbl tr td:nth-of-type(2) {
+		overflow-wrap: break-word;
+		word-wrap: break-word;
+		word-break: break-all;
+	}
+	/* ]]> */
+	</style>
+
+</head>
+<body>
+
+
+
+
+<!-- Org Pub: 2020-10-28 -->
+
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_xmag.png" alt="Search" /></td>
+<td><h1>Search</h1>
+<p>Details about the search functions of KeePass.</p></td>
+</tr></table>
+
+<ul>
+<li><a href="#mode_se">Search Mode 'Simple Expression'</a>
+<ul>
+<li>Example: <a href="#ex_se_multi">Multiple terms</a></li>
+<li>Example: <a href="#ex_se_spc">Terms with spaces</a></li>
+<li>Example: <a href="#ex_se_excl">Exclusions (2.x)</a></li>
+</ul></li>
+
+<li><a href="#mode_re">Search Mode 'Regular Expression'</a>
+<ul>
+<li>Example: <a href="#ex_re_exact">Exact term</a></li>
+<li>Example: <a href="#ex_re_pw_short">Short passwords</a></li>
+<li>Example: <a href="#ex_re_tags_or">Multiple tags (OR, exact)</a></li>
+</ul></li>
+
+<li><a href="#mode_xpe">Search Mode 'XPath Expression' (2.x)</a>
+<ul>
+<li>Example: <a href="#ex_xpe_icon">Icon</a></li>
+<li>Example: <a href="#ex_xpe_exp_year">Expired in specific year</a></li>
+<li>Example: <a href="#ex_xpe_str_c">Custom string field</a></li>
+<li>Example: <a href="#ex_xpe_bin_ext">Attached PDF files</a></li>
+<li>Example: <a href="#ex_xpe_clr_bg">Background color</a></li>
+<li>Example: <a href="#ex_xpe_tags_and">Multiple tags (AND, exact)</a></li>
+<li>Example: <a href="#ex_xpe_hist_cnt">History entry count</a></li>
+<li>Example: <a href="#ex_xpe_grp_notes">Group notes</a></li>
+</ul></li>
+
+<li><a href="#prf">Search Profiles (2.x)</a></li>
+<li><a href="#quick">Quick Search Box</a></li>
+</ul>
+
+<br />
+
+<a name="mode_se"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="Search" />
+Search Mode 'Simple Expression'</h2>
+
+<p>In this mode, KeePass searches the specified terms in the selected fields.
+For an entry to match, <em>all</em> terms must match.</p>
+
+<ul class="withspc">
+<li><b>Multiple terms.</b><br />
+In order to search for multiple terms, separate the terms using spaces.
+If you want to search for a term containing spaces, enclose the term
+in double quotes (<code>&quot;...&quot;</code>).</li>
+
+<li><b>Exclusions (2.x).</b><br />
+In order to find entries that do <em>not</em> contain a certain term,
+prepend a minus sign to the term.</li>
+</ul>
+
+<p>An entry matches if the specified terms can be found as substrings.
+If you want to find exact matches instead, use a
+<a href="#mode_re">regular expression</a>
+(see the example '<a href="#ex_re_exact">Exact term</a>').</p>
+
+<p><b>Examples.</b></p>
+
+<a name="ex_se_multi"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Multiple terms</th></tr>
+<tr><td>Find what:</td><td><code>Michael Home</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Title</td></tr>
+<tr><td colspan="2">Finds every entry whose title contains both the term
+'Michael' and the term 'Home' (in any order).</td></tr>
+</table>
+
+<br />
+
+<a name="ex_se_spc"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Terms with spaces</th></tr>
+<tr><td>Find what:</td><td><code>Michael &quot;Web Server&quot;</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Title</td></tr>
+<tr><td colspan="2">Finds every entry whose title contains both the term
+'Michael' and the term 'Web Server'.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_se_excl"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Exclusions (2.x)</th></tr>
+<tr><td>Find what:</td><td><code>Michael -Home</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Title</td></tr>
+<tr><td colspan="2">Finds every entry whose title contains the term
+'Michael', but not the term 'Home'.</td></tr>
+</table>
+
+<br /><br />
+
+<a name="mode_re"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="Search" />
+Search Mode 'Regular Expression'</h2>
+
+<p>In this mode, KeePass searches for matches of a regular expression
+in the selected fields.</p>
+
+<p>Information about regular expressions and tools can be found here:</p>
+<ul>
+<!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
+target="_blank">Microsoft Docs: Regular Expression Language - Quick Reference</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Regular_expression"
+target="_blank">Wikipedia: Regular expression</a></li>
+<li><a href="http://regexstorm.net/tester"
+target="_blank">Regex Storm Tester</a></li>
+</ul>
+
+<p><b>Examples.</b></p>
+
+<a name="ex_re_exact"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Exact term</th></tr>
+<tr><td>Find what:</td><td><code>^Michael$</code></td></tr>
+<tr><td>Options:</td><td>&#9745; User name</td></tr>
+<tr><td colspan="2">Finds every entry whose user name is 'Michael' (exactly,
+i.e. 'Michael' is not only a substring of the entry's user name).</td></tr>
+</table>
+
+<br />
+
+<a name="ex_re_pw_short"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Short passwords</th></tr>
+<tr><td>Find what:</td><td><code>^.{1,10}$</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Password</td></tr>
+<tr><td colspan="2">Finds every entry whose password has a length
+between 1 and 10 (inclusive).</td></tr>
+<tr><td colspan="2">If you want to find weak passwords instead,
+use the 'Password Quality' command in the 'Find' menu.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_re_tags_or"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Multiple tags (OR, exact)</th></tr>
+<tr><td>Find what:</td><td><code>^(Home|Private)$</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Tags</td></tr>
+<tr><td colspan="2">Finds every entry that has the tag 'Home' or the tag 'Private'
+(or both).</td></tr>
+</table>
+
+<br /><br />
+
+<a name="mode_xpe"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="Search" />
+Search Mode 'XPath Expression' (2.x)</h2>
+
+<p>In this mode, a KeePass 2.x XML DOM of the current database is
+created in memory and the specified XPath expression is used to
+find entries.</p>
+
+<p>Information about XPath expressions can be found here:</p>
+<ul>
+<li><a href="https://www.w3.org/TR/xpath20/"
+target="_blank">W3C: XML Path Language (XPath) 2.0</a></li>
+<!-- <li><a href="https://www.w3.org/TR/xquery-operators/"
+target="_blank">W3C: XQuery 1.0 and XPath 2.0 Functions and Operators</a></li> -->
+<!-- https://msdn.microsoft.com/en-us/library/ms256115.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256115(v=vs.100)"
+target="_blank">Microsoft Docs: XPath Reference</a></li>
+<!-- https://msdn.microsoft.com/en-us/library/ms256086.aspx -->
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256086(v=vs.100)"
+target="_blank">Microsoft Docs: XPath Examples</a></li>
+<li><a href="https://en.wikipedia.org/wiki/XPath"
+target="_blank">Wikipedia: XPath</a></li>
+</ul>
+
+<p>In order to see your database in the KeePass 2.x XML format, you can
+export it (via 'File' &rarr; 'Export') to a 'KeePass XML (2.x)' file.</p>
+
+<p>If you want to find and <em>replace</em> data using XPath and regular
+expressions, see the <a href="https://keepass.info/help/v2/xml_replace.html"
+target="_blank">XML Replace</a> feature.</p>
+
+<p><b>Examples.</b></p>
+
+<a name="ex_xpe_icon"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Icon</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry[(IconID = '3') and not(CustomIconUUID)]</code></td></tr>
+<tr><td colspan="2">Finds every entry that has a
+<img src="../images/b16x16_server.png" alt="Server" /> icon.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_exp_year"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Expired in specific year</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry/Times[(Expires = 'True') and starts-with(ExpiryTime, '2021-')]/..</code></td></tr>
+<tr><td colspan="2">Finds every entry that has expired in 2021.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_str_c"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Custom string field</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry/String[(Key = 'Telephone') and contains(Value, '12345')]/..</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Other strings</td></tr>
+<tr><td colspan="2">Finds every entry that has a custom string field
+named 'Telephone' whose value contains '12345'.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_bin_ext"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Attached PDF files</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry/Binary/Key[(string-length(.) >= 4) and (substring(., string-length(.) - 3) = '.pdf')]/../..</code></td></tr>
+<tr><td colspan="2">Finds every entry that has a file attachment whose
+name ends with '.pdf'.</td></tr>
+<tr><td colspan="2">If you want to find large entries instead, use the
+'Large Entries' command in the 'Find' menu.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_clr_bg"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Background color</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry[BackgroundColor = '#CCFFCC']</code></td></tr>
+<tr><td colspan="2">Finds every entry that has a
+<span style="color: #000000; background-color: #CCFFCC;">light green</span>
+background color.</td></tr>
+<tr><td colspan="2">The standard background colors are
+<span style="color: #000000; background-color: #FFCCCC;">light red (<code>#FFCCCC</code>)</span>,
+<span style="color: #000000; background-color: #CCFFCC;">light green (<code>#CCFFCC</code>)</span>,
+<span style="color: #000000; background-color: #99CCFF;">light blue (<code>#99CCFF</code>)</span> and
+<span style="color: #000000; background-color: #FFFF99;">light yellow (<code>#FFFF99</code>)</span>.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_tags_and"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Multiple tags (AND, exact)</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry[contains(concat(';', Tags, ';'), ';Home;') and
+contains(concat(';', Tags, ';'), ';Private;')]</code></td></tr>
+<tr><td>Options:</td><td>&#9745; Tags</td></tr>
+<tr><td colspan="2">Finds every entry that has both the tag 'Home'
+and the tag 'Private'.</td></tr>
+<tr><td colspan="2">In contrast to this, searching with the
+<a href="#mode_se">simple expression</a> '<code>Home Private</code>'
+also finds entries that have 'Home' and 'Private' as substrings in
+the tags.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_hist_cnt"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">History entry count</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Entry[count(History/Entry) >= 4]</code></td></tr>
+<tr><td>Options:</td><td>&#9745; History</td></tr>
+<tr><td colspan="2">Finds every entry that has at least 4 history entries.</td></tr>
+</table>
+
+<br />
+
+<a name="ex_xpe_grp_notes"></a>
+<table class="tablebox searchextbl">
+<colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
+<tr><th colspan="2">Group notes</th></tr>
+<tr><td>Find what:</td>
+<td><code>//Group[contains(Notes, 'Private')]/Entry</code></td></tr>
+<tr><td colspan="2">Finds every entry whose (direct) parent group
+contains the word 'Private' in the notes (of the group, not of the entry).
+If there are multiple such groups, the entries of all these groups are found.</td></tr>
+</table>
+
+<br /><br />
+
+<a name="prf"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+Search Profiles (2.x)</h2>
+
+<p>KeePass can save search parameters as a search profile.
+This can be useful when you are regularly performing similar searches.</p>
+
+<p><b>Creating a profile.</b><br />
+In order to save the current search parameters specified in the 'Find' dialog,
+click the <img src="../images/b16x16_filesaveas.png" alt="Save As" />
+profile creation button. KeePass then shows a dialog where you can enter
+a name for the new profile.</p>
+
+<p><b>Overwriting a profile.</b><br />
+Overwriting an existing profile works the same as creating a profile,
+except that you select an existing profile name in the name dialog.</p>
+
+<p><b>Using a profile.</b><br />
+There are two ways to load a profile and perform a search with it:</p>
+<ul class="withspc">
+<li>Open the 'Find' dialog (via the menu 'Find' or
+<kbd><kbd>Ctrl</kbd>+<kbd>F</kbd></kbd>), click on the 'Profile'
+combo box and select the desired profile; this causes KeePass to load
+the profile. If necessary, adjust the search parameters.
+Finally, click the 'Find' button.</li>
+
+<li>In the menu of the main window, click 'Find' &rarr; 'Search Profiles'.
+In this menu, all profiles are listed. For each profile,
+there are commands to directly perform a search with the profile
+(commands 'Find ...') and commands to show the profile in the
+'Find' dialog (commands 'Open ...').</li>
+</ul>
+
+<p><b>Deleting a profile.</b><br />
+In order to delete a profile, select it in the 'Find' dialog and
+click the profile deletion button.</p>
+
+<br />
+
+<a name="quick"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="Search" />
+Quick Search Box</h2>
+
+<p>The quick search box in the toolbar of the main window supports
+<a href="#mode_se">simple expression</a> and
+<a href="#mode_re">regular expression</a> searches.</p>
+
+<p>In order to indicate that the search string is a regular expression,
+enclose it in '<code>//</code>'.
+For example, '<code>//A{6}//</code>' finds all entries containing
+the string 'AAAAAA'.
+Note that this special syntax does not work in the 'Find' dialog;
+in this dialog, you need to select the regular expression mode
+and specify the regular expression as-is, i.e. without enclosing it
+in '<code>//</code>'.</p>
+
+<p><b>Options.</b><br />
+The 'Find' dialog and the quick search box are independent;
+options/parameters in the 'Find' dialog do not affect quick searches.
+Options for quick searches can be found in the options dialog
+(menu 'Tools' &rarr; 'Options' &rarr; tab 'Interface').</p>
+
+</body></html>
+

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -585,7 +585,7 @@ namespace KeePassLib
 		/// Initialize the class for managing a new database. Previously loaded
 		/// data is deleted.
 		/// </summary>
-		/// <param name="ioConnection">IO connection of the new database.</param>
+		/// <param name="ioConnection">I/O connection of the new database.</param>
 		/// <param name="pwKey">Key to open the database.</param>
 		public void New(IOConnectionInfo ioConnection, CompositeKey pwKey)
 		{
@@ -610,7 +610,7 @@ namespace KeePassLib
 		/// <summary>
 		/// Open a database. The URL may point to any supported data source.
 		/// </summary>
-		/// <param name="ioSource">IO connection to load the database from.</param>
+		/// <param name="ioSource">I/O connection to load the database from.</param>
 		/// <param name="pwKey">Key used to open the specified database.</param>
 		/// <param name="slLogger">Logger, which gets all status messages.</param>
 		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
@@ -2078,6 +2078,54 @@ namespace KeePassLib
 
 			if(uDeleted > 0) m_bUINeedsIconUpdate = true;
 			return uDeleted;
+		}
+
+		internal static void CopyCustomIcons(PwDatabase pdFrom, PwDatabase pdTo,
+			PwGroup pgSelect, bool bResetIfUnknown)
+		{
+			if(pgSelect == null) { Debug.Assert(false); return; }
+
+			Dictionary<PwUuid, bool> dIconsTo = new Dictionary<PwUuid, bool>();
+			dIconsTo[PwUuid.Zero] = true;
+			if(pdTo != null)
+			{
+				foreach(PwCustomIcon ci in pdTo.CustomIcons)
+					dIconsTo[ci.Uuid] = true;
+			}
+
+			GFunc<PwUuid, bool> fEnsureIcon = delegate(PwUuid puIcon)
+			{
+				if(dIconsTo.ContainsKey(puIcon)) return true;
+				if(pdFrom == null) { Debug.Assert(false); return false; }
+				if(pdTo == null) { Debug.Assert(false); return false; }
+
+				int i = pdFrom.GetCustomIconIndex(puIcon);
+				if(i < 0) { Debug.Assert(false); return false; }
+
+				pdTo.CustomIcons.Add(pdFrom.CustomIcons[i]);
+				dIconsTo[puIcon] = true;
+
+				pdTo.Modified = true;
+				pdTo.UINeedsIconUpdate = true;
+				return true;
+			};
+
+			GroupHandler gh = delegate(PwGroup pgCur)
+			{
+				bool bTo = fEnsureIcon(pgCur.CustomIconUuid);
+				if(!bTo && bResetIfUnknown) pgCur.CustomIconUuid = PwUuid.Zero;
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry peCur)
+			{
+				bool bTo = fEnsureIcon(peCur.CustomIconUuid);
+				if(!bTo && bResetIfUnknown) peCur.CustomIconUuid = PwUuid.Zero;
+				return true;
+			};
+
+			gh(pgSelect);
+			pgSelect.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 		}
 	}
 }

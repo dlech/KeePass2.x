@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ namespace KeePass.UI
 		private const int StdHeight = 60; // Standard height for 96 DPI
 		private const int StdIconDim = 48;
 
-		private static Dictionary<string, Image> g_dImageCache =
+		private static Dictionary<string, Image> g_dCache =
 			new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
 
@@ -108,11 +108,13 @@ namespace KeePass.UI
 			}
 
 			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
-			string strImageID = nWidth.ToString(nfi) + "x" + nHeight.ToString(nfi) +
-				":" + ((uint)bs).ToString(nfi) + ":" + strTitle + ":/:" + strLine;
+			ulong uIconHash = ((imgIcon != null) ? GfxUtil.HashImage64(imgIcon) : 0);
+			string strID = nWidth.ToString(nfi) + "x" + nHeight.ToString(nfi) +
+				":" + ((uint)bs).ToString(nfi) + ":" + strTitle + ":/:" + strLine +
+				":" + uIconHash.ToString(nfi);
 
 			Image img = null;
-			if(!bNoCache && g_dImageCache.TryGetValue(strImageID, out img))
+			if(!bNoCache && g_dCache.TryGetValue(strID, out img))
 				return img;
 
 			if(g_pCustomGen != null)
@@ -327,13 +329,13 @@ namespace KeePass.UI
 
 			if(!bNoCache)
 			{
-				if(g_dImageCache.Count >= MaxCachedImages)
+				if(g_dCache.Count >= MaxCachedImages)
 				{
-					List<string> lK = new List<string>(g_dImageCache.Keys);
-					g_dImageCache.Remove(lK[Program.GlobalRandom.Next(lK.Count)]);
+					List<string> lK = new List<string>(g_dCache.Keys);
+					g_dCache.Remove(lK[Program.GlobalRandom.Next(lK.Count)]);
 				}
 
-				g_dImageCache[strImageID] = img;
+				g_dCache[strID] = img;
 			}
 
 			return img;

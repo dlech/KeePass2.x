@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ namespace KeePass.DataExchange.Formats
 				str = str.Substring(1, str.Length - 2);
 			else { Debug.Assert(false); }
 
-			string[] list = str.Split(new string[]{ "\"\t\"" }, StringSplitOptions.None);
+			string[] list = str.Split(new string[] { "\"\t\"" }, StringSplitOptions.None);
 
 			int iOffset;
 			if(list.Length == 11) iOffset = 0; // 1Password Pro 5.99

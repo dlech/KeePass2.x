@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -363,5 +363,37 @@ namespace KeePass.Util
 
 			return null;
 		}
+
+		/* internal static XmlElement FindOrCreateChildElement(XmlNode xn,
+			string strChildPath, XmlDocument xd)
+		{
+			if(xn == null) { Debug.Assert(false); return null; }
+			if(string.IsNullOrEmpty(strChildPath)) { Debug.Assert(false); return null; }
+			if(xd == null) { Debug.Assert(false); return null; }
+
+			string[] v = strChildPath.Split('/');
+			if((v != null) && (v.Length >= 2))
+			{
+				XmlElement xeCur = FindOrCreateChildElement(xn, v[0], xd);
+				for(int i = 1; i < v.Length; ++i)
+					xeCur = FindOrCreateChildElement(xeCur, v[i], xd);
+				return xeCur;
+			}
+
+			foreach(XmlNode xnChild in xn.ChildNodes)
+			{
+				if((xnChild.NodeType == XmlNodeType.Element) &&
+					(xnChild.Name == strChildPath))
+				{
+					XmlElement xeChild = (xnChild as XmlElement);
+					Debug.Assert(xeChild != null);
+					return xeChild;
+				}
+			}
+
+			XmlElement xeNew = xd.CreateElement(strChildPath);
+			xn.AppendChild(xeNew);
+			return xeNew;
+		} */
 	}
 }

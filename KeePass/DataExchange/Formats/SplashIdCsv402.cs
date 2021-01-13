@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 3.4-5.3+, types from web 2016-12 (version 8.1.1.925)
+	// 3.4-5.3+, 8.3.1 confirmed by user, types from web 2020-09 (version 8.3)
 	internal sealed class SplashIdCsv402 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }

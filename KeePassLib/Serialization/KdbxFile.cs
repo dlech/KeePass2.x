@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ namespace KeePassLib.Serialization
 		private const string ElemMeta = "Meta";
 		private const string ElemRoot = "Root";
 		private const string ElemGroup = "Group";
-		private const string ElemEntry = "Entry";
+		internal const string ElemEntry = "Entry";
 
 		private const string ElemGenerator = "Generator";
 		private const string ElemHeaderHash = "HeaderHash";
@@ -144,7 +144,7 @@ namespace KeePassLib.Serialization
 
 		private const string ElemName = "Name";
 		private const string ElemNotes = "Notes";
-		private const string ElemUuid = "UUID";
+		internal const string ElemUuid = "UUID";
 		private const string ElemIcon = "IconID";
 		private const string ElemCustomIconID = "CustomIconUUID";
 		private const string ElemFgColor = "ForegroundColor";

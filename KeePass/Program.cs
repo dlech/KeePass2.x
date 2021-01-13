@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -301,14 +301,16 @@ namespace KeePass
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
 			{
-				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId,
-					KPRes.FileExtName2, WinUtil.GetExecutable(), PwDefs.ShortProductName, false);
+				ShellUtil.RegisterExtension(AppDefs.FileExtension.FileExt,
+					AppDefs.FileExtension.FileExtId, KPRes.FileExtName2,
+					WinUtil.GetExecutable(), PwDefs.ShortProductName, false);
 				MainCleanUp();
 				return;
 			}
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtUnregister] != null)
 			{
-				ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt, AppDefs.FileExtension.ExtId);
+				ShellUtil.UnregisterExtension(AppDefs.FileExtension.FileExt,
+					AppDefs.FileExtension.FileExtId);
 				MainCleanUp();
 				return;
 			}

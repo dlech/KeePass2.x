@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ namespace KeePass.DataExchange.Formats
 		private const string ElemEntryAutoType = "TEMPLATE";
 		private const string ElemEntryCustom = "CUSTOMFIELDS";
 
-		private static readonly string[] ElemEntryUnsupportedItems = new string[]{
+		private static readonly string[] ElemEntryUnsupportedItems = new string[] {
 			"TYPE", "IMPORTANCE", "IMAGECUSTOM", "PARAMSTR",
 			"CATEGORY", "CUSTOMBROWSER", "AUTOCOMPLETEMETHOD",
 			"WEBFORMDATA", "TANS", "FINGERPRINT"

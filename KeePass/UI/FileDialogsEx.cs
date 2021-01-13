@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,10 +24,12 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Resources;
 using KeePassLib.Utility;
 
 namespace KeePass.UI
@@ -146,6 +148,66 @@ namespace KeePass.UI
 		{
 			FileInfo fi = new FileInfo(strPath);
 			return CheckAttachmentSize(fi.Length, strOp);
+		}
+
+		internal static void ShowConfigError(string strPath, string strError,
+			bool bSaving, bool bCreateBackup)
+		{
+			if(string.IsNullOrEmpty(strError)) { Debug.Assert(false); return; }
+
+			StringBuilder sb = new StringBuilder();
+
+			if(!string.IsNullOrEmpty(strPath))
+			{
+				sb.AppendLine(VistaTaskDialog.CreateLink("c", strPath));
+				sb.AppendLine();
+			}
+
+			sb.AppendLine(bSaving ? KLRes.FileSaveFailed : KLRes.FileLoadFailed);
+			sb.AppendLine();
+			sb.Append(strError);
+
+			string strText = sb.ToString();
+
+			VistaTaskDialog dlg = new VistaTaskDialog();
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+			dlg.CommandLinks = false;
+			dlg.Content = strText;
+			dlg.DefaultButtonID = (int)DialogResult.Cancel;
+			dlg.EnableHyperlinks = true;
+			dlg.MainInstruction = KPRes.ConfigError;
+			dlg.SetIcon(VtdIcon.Warning);
+			dlg.WindowTitle = PwDefs.ShortProductName;
+
+			string strBackupText = null;
+			string strBackupPath = (bCreateBackup ? AppConfigSerializer.TryCreateBackup(
+				strPath) : null);
+			if(!string.IsNullOrEmpty(strBackupPath))
+			{
+				strBackupText = KPRes.ConfigOverwriteBackup + MessageService.NewLine +
+					VistaTaskDialog.CreateLink("b", strBackupPath);
+				dlg.FooterText = strBackupText;
+				dlg.SetFooterIcon(VtdIcon.Information);
+			}
+
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				string str = (e.LinkText ?? string.Empty);
+				if(str.Equals("c", StrUtil.CaseIgnoreCmp))
+					WinUtil.ShowFileInFileManager(strPath, false);
+				else if(str.Equals("b", StrUtil.CaseIgnoreCmp))
+					WinUtil.ShowFileInFileManager(strBackupPath, false);
+				else { Debug.Assert(false); }
+			};
+
+			if(!dlg.ShowDialog())
+			{
+				if(!string.IsNullOrEmpty(strBackupText))
+					strText += MessageService.NewParagraph + strBackupText;
+				strText = VistaTaskDialog.Unlink(strText);
+
+				MessageService.ShowWarning(KPRes.ConfigError + "!", strText);
+			}
 		}
 	}
 

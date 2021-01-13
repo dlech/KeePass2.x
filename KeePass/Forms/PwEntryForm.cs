@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -997,9 +997,9 @@ namespace KeePass.Forms
 
 			peTarget.OverrideUrl = m_cmbOverrideUrl.Text;
 
-			List<string> vNewTags = StrUtil.StringToTags(m_tbTags.Text);
+			List<string> lNewTags = StrUtil.StringToTags(m_tbTags.Text);
 			peTarget.Tags.Clear();
-			foreach(string strTag in vNewTags) peTarget.AddTag(strTag);
+			foreach(string strTag in lNewTags) peTarget.AddTag(strTag);
 
 			peTarget.Expires = m_cgExpiry.Checked;
 			if(peTarget.Expires) peTarget.ExpiryTime = m_cgExpiry.Value;

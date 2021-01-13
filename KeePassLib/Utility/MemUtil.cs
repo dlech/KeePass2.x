@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -154,11 +154,11 @@ namespace KeePassLib.Utility
 
 				ch = strHex[i + 1];
 				if((ch >= '0') && (ch <= '9'))
-					bt += (byte)(ch - '0');
+					bt |= (byte)(ch - '0');
 				else if((ch >= 'a') && (ch <= 'f'))
-					bt += (byte)(ch - 'a' + 10);
+					bt |= (byte)(ch - 'a' + 10);
 				else if((ch >= 'A') && (ch <= 'F'))
-					bt += (byte)(ch - 'A' + 10);
+					bt |= (byte)(ch - 'A' + 10);
 				else { Debug.Assert(false); }
 
 				pb[i >> 1] = bt;

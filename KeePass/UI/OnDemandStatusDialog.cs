@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using KeePass.Forms;
 
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -177,8 +178,6 @@ namespace KeePass.UI
 		private int m_tLastAnim = Environment.TickCount;
 		private int m_cDots = 1;
 
-		private readonly char[] m_vDots = new char[] { '.', '\u2026' };
-
 		public UIBlockerStatusLogger(Form fParent)
 		{
 			m_mf = (fParent as MainForm);
@@ -240,7 +239,7 @@ namespace KeePass.UI
 				if(m_mf != null)
 				{
 					string strDots = new string('.', m_cDots);
-					m_mf.SetStatusEx(m_strText.TrimEnd(m_vDots) + strDots);
+					m_mf.SetStatusEx(StrUtil.TrimDots(m_strText, false) + strDots);
 					m_cDots = (m_cDots % 5) + 1; // At least one dot
 
 					UIUtil.DoEventsByTime(true);

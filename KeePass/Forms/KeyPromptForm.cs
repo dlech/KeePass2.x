@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ using KeePassLib;
 using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Native;
+using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -319,9 +320,9 @@ namespace KeePass.Forms
 				if(!ValidateKeyFile()) return false;
 
 				try { m_pKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
-				catch(Exception)
+				catch(Exception ex)
 				{
-					MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError);
+					MessageService.ShowWarning(strKeyFile, KLRes.FileLoadFailed, ex);
 					return false;
 				}
 			}
@@ -506,7 +507,7 @@ namespace KeePass.Forms
 			}
 			else
 			{
-				string strFilter = UIUtil.CreateFileTypeFilter("key", KPRes.KeyFiles, true);
+				string strFilter = AppDefs.GetKeyFileFilter();
 				OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.KeyFileSelect,
 					strFilter, 2, null, false, AppDefs.FileDialogContext.KeyFile);
 
@@ -585,12 +586,19 @@ namespace KeePass.Forms
 
 				if(!di.IsReady) return;
 
-				List<FileInfo> lFiles = UrlUtil.GetFileInfos(di.RootDirectory,
-					"*." + AppDefs.FileExtension.KeyFile,
-					SearchOption.TopDirectoryOnly);
+				string[] vExts = new string[] {
+					AppDefs.FileExtension.KeyFile,
+					AppDefs.FileExtension.KeyFileAlt
+				};
 
-				foreach(FileInfo fi in lFiles)
-					AddKeyFileSuggAsync(fi.FullName, null);
+				foreach(string strExt in vExts)
+				{
+					List<FileInfo> lFiles = UrlUtil.GetFileInfos(di.RootDirectory,
+						"*." + strExt, SearchOption.TopDirectoryOnly);
+
+					foreach(FileInfo fi in lFiles)
+						AddKeyFileSuggAsync(fi.FullName, null);
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

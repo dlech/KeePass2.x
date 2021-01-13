@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2020 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -147,6 +147,11 @@ menu items, you'd specify 33 as value for the <code>UIFlags</code> node
 More Options</h2>
 
 <ul class="withspc">
+<li><b>Configuration/Application/ConfigSave</b>:<br />
+If this option is set to <code>false</code>, KeePass does not save
+any configuration settings (i.e. the configuration is loaded normally,
+but changes to it are discarded when exiting KeePass).</li>
+
 <li><b>Configuration/Application/ExpirySoonDays</b>:<br />
 Specifies the number of days within which entries are considered
 to expire &quot;soon&quot;. The default value is 7.</li>
@@ -191,15 +196,16 @@ against certain screen capture operations (on Windows 7 and higher;
 for details, see the
 <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity"
 target="_blank"><code>SetWindowDisplayAffinity</code></a> function).<br />
-<em>Warning!</em>
+<img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 This may also prevent legitimate other software
 (accessibility-related tools like Windows Magnifier, remote desktop
 solutions, etc.) from seeing KeePass windows.</li>
 
 <li><b>Configuration/Security/ProtectProcessWithDacl</b>:<br />
 If this option is set to <code>true</code>, KeePass protects its process
-with a DACL.<br />
-<em>Warning!</em>
+with a <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/dacls-and-aces"
+target="_blank">discretionary access control list</a> (DACL).<br />
+<img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 Please note that this also blocks legitimate other software
 (accessibility-related tools like Windows Narrator, other security
 products like anti-virus programs or firewalls, tools providing user interface

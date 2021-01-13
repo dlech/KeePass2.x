@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -370,6 +370,10 @@ namespace KeePass.UI
 
 		protected override bool ProcessCmdKey(ref Message m, Keys keyData)
 		{
+			bool bDown;
+			if(!NativeMethods.GetKeyMessageState(ref m, out bDown))
+				return base.ProcessCmdKey(ref m, keyData);
+
 			try
 			{
 				if(!m_bSimpleTextOnly && this.ShortcutsEnabled &&
@@ -379,27 +383,27 @@ namespace KeePass.UI
 
 					switch(keyData)
 					{
-						case (Keys.Control | Keys.B):
-							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
+						case (Keys.Control | Keys.B): // Without Shift
+							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
 							break;
-						case (Keys.Control | Keys.I):
-							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
+						case (Keys.Control | Keys.I): // Without Shift
+							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
 							break;
-						case (Keys.Control | Keys.U):
-							UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
+						case (Keys.Control | Keys.U): // Without Shift
+							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
 							break;
 
 						// The following keyboard shortcuts are implemented
 						// by the rich text box on Windows, but not by Mono;
 						// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.textboxbase.shortcutsenabled
-						case (Keys.Control | Keys.L):
-							this.SelectionAlignment = HorizontalAlignment.Left;
+						case (Keys.Control | Keys.L): // Without Shift
+							if(bDown) this.SelectionAlignment = HorizontalAlignment.Left;
 							break;
-						case (Keys.Control | Keys.E):
-							this.SelectionAlignment = HorizontalAlignment.Center;
+						case (Keys.Control | Keys.E): // Without Shift
+							if(bDown) this.SelectionAlignment = HorizontalAlignment.Center;
 							break;
-						case (Keys.Control | Keys.R):
-							this.SelectionAlignment = HorizontalAlignment.Right;
+						case (Keys.Control | Keys.R): // Without Shift
+							if(bDown) this.SelectionAlignment = HorizontalAlignment.Right;
 							break;
 
 						default: bHandled = false; break;

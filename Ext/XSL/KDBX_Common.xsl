@@ -21,7 +21,7 @@
 		<xsl:copy-of select="$nl" />
 </xsl:variable>
 
-<!-- Design Copyright (c) 2003-2020 Dominik Reichl -->
+<!-- Design Copyright (C) 2003-2021 Dominik Reichl -->
 <xsl:variable name="DocStyle">
 <xsl:text disable-output-escaping="yes"><![CDATA[<style type="text/css">
 /* <]]><![CDATA[![CDATA[ */

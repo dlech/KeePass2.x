@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -42,13 +43,43 @@ namespace KeePassLib.Cryptography
 		public static string Generate(byte[] pbSecret, ulong uFactor,
 			uint uCodeDigits, bool bAddChecksum, int iTruncationOffset)
 		{
+			return Generate(pbSecret, uFactor, uCodeDigits, bAddChecksum,
+				iTruncationOffset, string.Empty);
+		}
+
+		internal static string Generate(byte[] pbSecret, ulong uFactor,
+			uint uCodeDigits, bool bAddChecksum, int iTruncationOffset,
+			string strAlg)
+		{
+			if(pbSecret == null) { Debug.Assert(false); pbSecret = MemUtil.EmptyByteArray; }
+			if(uCodeDigits == 0) { Debug.Assert(false); return string.Empty; }
+			if(uCodeDigits > 8) { Debug.Assert(false); uCodeDigits = 8; }
+
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
 			Array.Reverse(pbText); // To big-endian
 
 			byte[] pbHash;
-			using(HMACSHA1 h = new HMACSHA1(pbSecret))
+			if(strAlg == "HMAC-SHA-256")
 			{
-				pbHash = h.ComputeHash(pbText);
+				using(HMACSHA256 h = new HMACSHA256(pbSecret))
+				{
+					pbHash = h.ComputeHash(pbText);
+				}
+			}
+			else if(strAlg == "HMAC-SHA-512")
+			{
+				using(HMACSHA512 h = new HMACSHA512(pbSecret))
+				{
+					pbHash = h.ComputeHash(pbText);
+				}
+			}
+			else
+			{
+				Debug.Assert(string.IsNullOrEmpty(strAlg) || (strAlg == "HMAC-SHA-1"));
+				using(HMACSHA1 h = new HMACSHA1(pbSecret))
+				{
+					pbHash = h.ComputeHash(pbText);
+				}
 			}
 
 			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
@@ -92,6 +123,18 @@ namespace KeePassLib.Cryptography
 			if(uResult != 0) uResult = 10 - uResult;
 
 			return uResult;
+		}
+
+		// RFC 6238
+		internal static string GenerateTimeOtp(byte[] pbSecret, DateTime? odt,
+			uint uTimeStep, uint uCodeDigits, string strAlg)
+		{
+			DateTime dt = (odt.HasValue ? TimeUtil.ToUtc(odt.Value, true) :
+				DateTime.UtcNow);
+			ulong uStep = ((uTimeStep != 0) ? uTimeStep : 30U);
+			ulong uTime = (ulong)TimeUtil.SerializeUnix(dt) / uStep;
+
+			return Generate(pbSecret, uTime, uCodeDigits, false, -1, strAlg);
 		}
 	}
 }

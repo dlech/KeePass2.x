@@ -71,7 +71,7 @@
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(498, 13);
 			this.m_lblIntro.TabIndex = 2;
-			this.m_lblIntro.Text = "Specify the composite master key, which will be used to encrypt the database.";
+			this.m_lblIntro.Text = "Specify the master key that will be used to encrypt the database.";
 			// 
 			// m_lblMultiInfo
 			// 
@@ -355,7 +355,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(519, 576);
+			this.ClientSize = new System.Drawing.Size(519, 577);
 			this.Controls.Add(this.m_lblKeyFileInfo);
 			this.Controls.Add(this.m_lnkUserAccount);
 			this.Controls.Add(this.m_lnkKeyFile);

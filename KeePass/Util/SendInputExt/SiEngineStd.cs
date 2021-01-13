@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -169,11 +169,11 @@ namespace KeePass.Util.SendInputExt
 
 					if(bChkTitleFx)
 					{
-						foreach(string strWnd in lAbortWindows)
-						{
-							if(string.IsNullOrEmpty(strWnd)) continue;
+						string strT = AutoType.NormalizeWindowText(strTitle);
 
-							if(AutoType.MatchWindows(strWnd, strTitle))
+						foreach(string strF in lAbortWindows)
+						{
+							if(AutoType.IsMatchWindow(strT, strF))
 							{
 								this.Cancelled = true;
 								throw new SecurityException(KPRes.AutoTypeAbortedOnWindow +

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.3.2-5.0.1+
+	// 2.3.2-5.0.1+, incompatible with 6.2039.0
 	internal sealed class DashlaneCsv2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Dashlane CSV"; } }
+		public override string FormatName { get { return "Dashlane CSV (< 6)"; } }
 		public override string DefaultExtension { get { return "csv"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
@@ -161,7 +161,7 @@ namespace KeePass.DataExchange.Formats
 					else strField = PwDefs.NotesField;
 				}
 
-				if((strField == PwDefs.UrlField) && (str.IndexOf('.') >= 0))
+				if(strField == PwDefs.UrlField)
 					str = ImportUtil.FixUrl(str);
 
 				ImportUtil.AppendToField(pe, strField, str, pd);

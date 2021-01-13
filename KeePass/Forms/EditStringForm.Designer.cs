@@ -133,9 +133,9 @@
 			this.m_cbProtect.AutoSize = true;
 			this.m_cbProtect.Location = new System.Drawing.Point(56, 238);
 			this.m_cbProtect.Name = "m_cbProtect";
-			this.m_cbProtect.Size = new System.Drawing.Size(159, 17);
+			this.m_cbProtect.Size = new System.Drawing.Size(179, 17);
 			this.m_cbProtect.TabIndex = 5;
-			this.m_cbProtect.Text = "&Enable in-memory protection";
+			this.m_cbProtect.Text = "&Protect value in process memory";
 			this.m_cbProtect.UseVisualStyleBackColor = true;
 			// 
 			// m_lblValidationInfo

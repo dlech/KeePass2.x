@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -365,36 +365,36 @@ namespace KeePass.UI
 		public static ImageList BuildImageListUnscaled(List<Image> lImages,
 			int nWidth, int nHeight)
 		{
-			ImageList imgList = new ImageList();
-			imgList.ImageSize = new Size(nWidth, nHeight);
-			imgList.ColorDepth = ColorDepth.Depth32Bit;
+			ImageList il = new ImageList();
+			il.ImageSize = new Size(nWidth, nHeight);
+			il.ColorDepth = ColorDepth.Depth32Bit;
 
 			if((lImages != null) && (lImages.Count > 0))
-				imgList.Images.AddRange(lImages.ToArray());
+				il.Images.AddRange(lImages.ToArray());
 
-			return imgList;
+			return il;
 		}
 
-		public static ImageList BuildImageList(List<PwCustomIcon> vImages,
+		public static ImageList BuildImageList(List<PwCustomIcon> lIcons,
 			int nWidth, int nHeight)
 		{
-			ImageList imgList = new ImageList();
-			imgList.ImageSize = new Size(nWidth, nHeight);
-			imgList.ColorDepth = ColorDepth.Depth32Bit;
+			ImageList il = new ImageList();
+			il.ImageSize = new Size(nWidth, nHeight);
+			il.ColorDepth = ColorDepth.Depth32Bit;
 
-			List<Image> lImages = BuildImageListEx(vImages, nWidth, nHeight);
+			List<Image> lImages = BuildImageListEx(lIcons, nWidth, nHeight);
 			if((lImages != null) && (lImages.Count > 0))
-				imgList.Images.AddRange(lImages.ToArray());
+				il.Images.AddRange(lImages.ToArray());
 
-			return imgList;
+			return il;
 		}
 
-		public static List<Image> BuildImageListEx(List<PwCustomIcon> vImages,
+		public static List<Image> BuildImageListEx(List<PwCustomIcon> lIcons,
 			int nWidth, int nHeight)
 		{
 			List<Image> lImages = new List<Image>();
 
-			foreach(PwCustomIcon pwci in vImages)
+			foreach(PwCustomIcon pwci in lIcons)
 			{
 				Image img = pwci.GetImage(nWidth, nHeight);
 				if(img == null)
@@ -415,15 +415,15 @@ namespace KeePass.UI
 			return lImages;
 		}
 
-		public static ImageList ConvertImageList24(List<Image> vImages,
+		public static ImageList ConvertImageList24(List<Image> lImages,
 			int nWidth, int nHeight, Color clrBack)
 		{
-			ImageList ilNew = new ImageList();
-			ilNew.ImageSize = new Size(nWidth, nHeight);
-			ilNew.ColorDepth = ColorDepth.Depth24Bit;
+			ImageList il = new ImageList();
+			il.ImageSize = new Size(nWidth, nHeight);
+			il.ColorDepth = ColorDepth.Depth24Bit;
 
-			List<Image> vNewImages = new List<Image>();
-			foreach(Image img in vImages)
+			List<Image> lNew = new List<Image>();
+			foreach(Image img in lImages)
 			{
 				Bitmap bmpNew = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 
@@ -440,11 +440,11 @@ namespace KeePass.UI
 					}
 				}
 
-				vNewImages.Add(bmpNew);
+				lNew.Add(bmpNew);
 			}
-			ilNew.Images.AddRange(vNewImages.ToArray());
+			il.Images.AddRange(lNew.ToArray());
 
-			return ilNew;
+			return il;
 		}
 
 		public static ImageList CloneImageList(ImageList ilSource, bool bCloneImages)
@@ -1327,20 +1327,16 @@ namespace KeePass.UI
 			ConfigureTbButton(tb, strText, strTooltip, null);
 		}
 
-		private static char[] m_vTbTrim = null;
 		public static void ConfigureTbButton(ToolStripItem tb, string strText,
 			string strToolTip, ToolStripMenuItem tsmiEquiv)
 		{
 			if(tb == null) { Debug.Assert(false); return; }
 
-			if(m_vTbTrim == null)
-				m_vTbTrim = new char[] { ' ', '\t', '\r', '\n', '.', '\u2026' };
-
 			string strT = (strText ?? string.Empty);
 			string strTT = (strToolTip ?? strT);
 
-			strT = StrUtil.RemoveAccelerator(strT).Trim(m_vTbTrim);
-			strTT = StrUtil.RemoveAccelerator(strTT).Trim(m_vTbTrim);
+			strT = StrUtil.TrimDots(StrUtil.RemoveAccelerator(strT), true);
+			strTT = StrUtil.TrimDots(StrUtil.RemoveAccelerator(strTT), true);
 
 			Debug.Assert((strT.Length >= 1) || (tb.Text.Length == 0));
 			tb.Text = strT;
@@ -3332,10 +3328,8 @@ namespace KeePass.UI
 			// On Windows, all of the following is already supported by .NET
 			if(!NativeLib.IsUnix()) return false;
 
-			bool bS = e.Shift;
-			bool bC = e.Control;
-			bool bA = e.Alt;
 			Keys k = e.KeyCode;
+			bool bC = e.Control, bA = e.Alt, bS = e.Shift;
 			bool bMac = (NativeLib.GetPlatformID() == PlatformID.MacOSX);
 
 			if(((k == Keys.Apps) && !bA) || // Shift and Control irrelevant

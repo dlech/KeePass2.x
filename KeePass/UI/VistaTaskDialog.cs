@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -392,6 +392,7 @@ namespace KeePass.UI
 			Form f = fParent;
 			if(f == null) f = MessageService.GetTopForm();
 			if(f == null) f = GlobalWindowManager.TopWindow;
+			if(f == null) f = Program.MainForm;
 
 #if DEBUG
 			if(GlobalWindowManager.TopWindow != null)
@@ -400,7 +401,7 @@ namespace KeePass.UI
 			}
 			if(Program.MainForm != null) // Skip check for TrlUtil
 			{
-				Debug.Assert(f == MessageService.GetTopForm());
+				Debug.Assert((f == MessageService.GetTopForm()) || (f == Program.MainForm));
 			}
 #endif
 
@@ -522,6 +523,31 @@ namespace KeePass.UI
 			string strH = (strHRef ?? string.Empty);
 			string strT = (strText ?? string.Empty);
 			return ("<A HREF=\"" + strH + "\">" + strT + "</A>");
+		}
+
+		internal static string Unlink(string strText)
+		{
+			if(string.IsNullOrEmpty(strText)) return string.Empty;
+
+			string str = strText;
+			while(true)
+			{
+				int iS = str.IndexOf("<A HREF=\"", StrUtil.CaseIgnoreCmp);
+				if(iS < 0) break;
+
+				const string strE = "\">";
+				int iE = str.IndexOf(strE, iS, StrUtil.CaseIgnoreCmp);
+				if(iE < 0) { Debug.Assert(false); break; }
+
+				const string strC = "</A>";
+				int iC = str.IndexOf(strC, iE, StrUtil.CaseIgnoreCmp);
+				if(iC < 0) { Debug.Assert(false); break; }
+
+				str = str.Remove(iC, strC.Length);
+				str = str.Remove(iS, iE - iS + strE.Length);
+			}
+
+			return str;
 		}
 
 		public static bool ShowMessageBox(string strContent, string strMainInstruction,

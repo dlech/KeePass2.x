@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -353,15 +353,16 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private List<AceColumn> m_aceColumns = new List<AceColumn>();
+		private List<AceColumn> m_lColumns = new List<AceColumn>();
 		[XmlArray("EntryListColumnCollection")]
+		[XmlArrayItem("Column")]
 		public List<AceColumn> EntryListColumns
 		{
-			get { return m_aceColumns; }
+			get { return m_lColumns; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_aceColumns = value;
+				m_lColumns = value;
 			}
 		}
 
@@ -465,7 +466,7 @@ namespace KeePass.App.Configuration
 
 		public AceColumn FindColumn(AceColumnType t)
 		{
-			foreach(AceColumn c in m_aceColumns)
+			foreach(AceColumn c in m_lColumns)
 			{
 				if(c.Type == t) return c;
 			}
@@ -477,7 +478,7 @@ namespace KeePass.App.Configuration
 		{
 			List<AceColumn> l = new List<AceColumn>();
 
-			foreach(AceColumn c in m_aceColumns)
+			foreach(AceColumn c in m_lColumns)
 			{
 				if(c.Type == t) l.Add(c);
 			}
@@ -492,7 +493,7 @@ namespace KeePass.App.Configuration
 
 		public bool IsColumnHidden(AceColumnType t, bool bDefault)
 		{
-			foreach(AceColumn c in m_aceColumns)
+			foreach(AceColumn c in m_lColumns)
 			{
 				if(c.Type == t) return c.HideWithAsterisks;
 			}
@@ -503,7 +504,7 @@ namespace KeePass.App.Configuration
 		public bool ShouldHideCustomString(string strCustomName,
 			ProtectedString psValue)
 		{
-			foreach(AceColumn c in m_aceColumns)
+			foreach(AceColumn c in m_lColumns)
 			{
 				if((c.Type == AceColumnType.CustomString) &&
 					(c.CustomName == strCustomName))
@@ -589,7 +590,6 @@ namespace KeePass.App.Configuration
 		Count // Virtual identifier representing the number of types
 	}
 
-	[XmlType(TypeName = "Column")]
 	public sealed class AceColumn
 	{
 		private AceColumnType m_type = AceColumnType.Count;

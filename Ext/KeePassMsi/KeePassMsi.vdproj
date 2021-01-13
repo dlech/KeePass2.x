@@ -118,13 +118,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
+        "OwnerKey" = "8:_442863E39B69D2D0EE0DFF0823AF5611"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_442863E39B69D2D0EE0DFF0823AF5611"
+        "OwnerKey" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -296,7 +296,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.46.0.18879, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.47.0.21109, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                 }
@@ -382,7 +382,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.46.0.18879, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.47.0.21109, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -533,7 +533,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.46.0.18879, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.47.0.21109, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -682,16 +682,16 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.46"
-        "ProductCode" = "8:{CDEE8B95-B329-437D-9631-67E665568F96}"
-        "PackageCode" = "8:{4CFE0B91-FE9B-4C31-B225-D2BA115F434A}"
+        "ProductName" = "8:KeePass 2.47"
+        "ProductCode" = "8:{75A8D962-E9F3-45DA-9FC2-168F4E262860}"
+        "PackageCode" = "8:{65304C71-478F-4259-A425-356992E362DA}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.46.0"
+        "ProductVersion" = "8:2.47.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://keepass.info/"
@@ -926,7 +926,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright (C) 2003-2020 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2021 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1049,7 +1049,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright (C) 2003-2020 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2021 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

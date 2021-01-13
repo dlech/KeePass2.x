@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -736,6 +736,16 @@ namespace KeePassLib.Utility
 			return (strText.Substring(0, cchMax - 3) + "...");
 		}
 
+		private static readonly char[] g_vDots = new char[] { '.', '\u2026' };
+		private static readonly char[] g_vDotsWS = new char[] { '.', '\u2026',
+			' ', '\t', '\r', '\n' };
+		internal static string TrimDots(string strText, bool bTrimWhiteSpace)
+		{
+			if(strText == null) { Debug.Assert(false); return string.Empty; }
+
+			return strText.Trim(bTrimWhiteSpace ? g_vDotsWS : g_vDots);
+		}
+
 		public static string GetStringBetween(string strText, int nStartIndex,
 			string strStart, string strEnd)
 		{
@@ -1057,7 +1067,7 @@ namespace KeePassLib.Utility
 		}
 
 #if !KeePassLibSD
-		private static readonly char[] m_vPatternPartsSep = new char[] { '*' };
+		private static readonly char[] g_vPatternPartsSep = new char[] { '*' };
 		public static bool SimplePatternMatch(string strPattern, string strText,
 			StringComparison sc)
 		{
@@ -1066,23 +1076,18 @@ namespace KeePassLib.Utility
 
 			if(strPattern.IndexOf('*') < 0) return strText.Equals(strPattern, sc);
 
-			string[] vPatternParts = strPattern.Split(m_vPatternPartsSep,
+			string[] vPatternParts = strPattern.Split(g_vPatternPartsSep,
 				StringSplitOptions.RemoveEmptyEntries);
 			if(vPatternParts == null) { Debug.Assert(false); return true; }
 			if(vPatternParts.Length == 0) return true;
 
 			if(strText.Length == 0) return false;
 
-			if(!strPattern.StartsWith(@"*") && !strText.StartsWith(vPatternParts[0], sc))
-			{
+			if((strPattern[0] != '*') && !strText.StartsWith(vPatternParts[0], sc))
 				return false;
-			}
-
-			if(!strPattern.EndsWith(@"*") && !strText.EndsWith(vPatternParts[
-				vPatternParts.Length - 1], sc))
-			{
+			if((strPattern[strPattern.Length - 1] != '*') && !strText.EndsWith(
+				vPatternParts[vPatternParts.Length - 1], sc))
 				return false;
-			}
 
 			int iOffset = 0;
 			for(int i = 0; i < vPatternParts.Length; ++i)
@@ -1280,7 +1285,7 @@ namespace KeePassLib.Utility
 			return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
 		}
 
-		private static readonly char[] m_vVersionSep = new char[]{ '.', ',' };
+		private static readonly char[] m_vVersionSep = new char[] { '.', ',' };
 		public static ulong ParseVersion(string strVersion)
 		{
 			if(strVersion == null) { Debug.Assert(false); return 0; }
@@ -1427,27 +1432,32 @@ namespace KeePassLib.Utility
 			return v;
 		}
 
-		private static readonly char[] m_vTagSep = new char[] { ',', ';', ':' };
-		public static string TagsToString(List<string> vTags, bool bForDisplay)
+		private static readonly char[] g_vTagSep = new char[] { ',', ';', ':' };
+		public static string TagsToString(List<string> lTags, bool bForDisplay)
 		{
-			if(vTags == null) throw new ArgumentNullException("vTags");
+			if(lTags == null) throw new ArgumentNullException("lTags");
 
 			StringBuilder sb = new StringBuilder();
 			bool bFirst = true;
 
-			foreach(string strTag in vTags)
+			foreach(string strTag in lTags)
 			{
-				if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); continue; }
-				Debug.Assert(strTag.IndexOfAny(m_vTagSep) < 0);
+				if(strTag == null) { Debug.Assert(false); continue; }
 
-				if(!bFirst)
+				string str = strTag.Trim();
+				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); continue; }
+
+				Debug.Assert(str == strTag);
+				Debug.Assert(str.IndexOfAny(g_vTagSep) < 0);
+
+				if(bFirst) bFirst = false;
+				else
 				{
 					if(bForDisplay) sb.Append(", ");
 					else sb.Append(';');
 				}
-				sb.Append(strTag);
 
-				bFirst = false;
+				sb.Append(str);
 			}
 
 			return sb.ToString();
@@ -1460,11 +1470,11 @@ namespace KeePassLib.Utility
 			List<string> lTags = new List<string>();
 			if(strTags.Length == 0) return lTags;
 
-			string[] vTags = strTags.Split(m_vTagSep);
+			string[] vTags = strTags.Split(g_vTagSep);
 			foreach(string strTag in vTags)
 			{
-				string strFlt = strTag.Trim();
-				if(strFlt.Length > 0) lTags.Add(strFlt);
+				string str = strTag.Trim();
+				if(str.Length > 0) lTags.Add(str);
 			}
 
 			return lTags;
@@ -1578,14 +1588,16 @@ namespace KeePassLib.Utility
 				if(((ch == ' ') || (ch == '\t') || (ch == '\r') ||
 					(ch == '\n')) && !bQuoted)
 				{
-					if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
-
-					sbTerm.Remove(0, sbTerm.Length);
+					if(sbTerm.Length != 0)
+					{
+						l.Add(sbTerm.ToString());
+						sbTerm.Remove(0, sbTerm.Length);
+					}
 				}
 				else if(ch == '\"') bQuoted = !bQuoted;
 				else sbTerm.Append(ch);
 			}
-			if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
+			if(sbTerm.Length != 0) l.Add(sbTerm.ToString());
 
 			return l;
 		}
@@ -1897,6 +1909,25 @@ namespace KeePassLib.Utility
 			}
 
 			return true;
+		}
+
+		internal static string RemoveWhiteSpace(string str)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+
+			int cc = str.Length;
+			if(cc == 0) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = 0; i < cc; ++i)
+			{
+				char ch = str[i];
+				if(char.IsWhiteSpace(ch)) continue;
+				sb.Append(ch);
+			}
+
+			return sb.ToString();
 		}
 	}
 }

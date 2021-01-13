@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,94 +111,125 @@ namespace KeePass.Util
 			}
 		}
 
+		internal const string ClipFormatGroup = "Group-F"; // F = flags
 		// Old format name (<= 2.14): "KeePassEntriesCF",
 		// old format name (<= 2.22): "KeePassEntriesCX",
 		// old format name (<= 2.40): "KeePassEntries",
 		// old format name (<= 2.41): media type "vnd" + "Entries-E" // E = encrypted
 		public static readonly string ClipFormatEntries = "Entries-F"; // F = flags
-		private static readonly byte[] AdditionalEntropy = new byte[] {
+		private static readonly byte[] ClipDomainSep = new byte[] {
 			0xF8, 0x03, 0xFA, 0x51, 0x87, 0x18, 0x49, 0x5D };
 
-		[Obsolete]
-		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries)
+		private static void CopyDataToClipboard(byte[] pbData, string strFormat,
+			IntPtr hOwner, bool bEncrypt)
 		{
-			CopyEntriesToClipboard(pwDatabase, vEntries, IntPtr.Zero, true);
+			if(bEncrypt)
+				pbData = CryptoUtil.ProtectData(pbData, ClipDomainSep,
+					DataProtectionScope.CurrentUser);
+
+			byte[] pbC = new byte[4 + pbData.Length];
+			MemUtil.UInt32ToBytesEx((bEncrypt ? 1U : 0U), pbC, 0); // Flags
+			Array.Copy(pbData, 0, pbC, 4, pbData.Length);
+
+			ClipboardUtil.Copy(pbC, strFormat, true, hOwner);
 		}
 
-		public static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
-			IntPtr hOwner)
-		{
-			CopyEntriesToClipboard(pwDatabase, vEntries, hOwner, true);
-		}
-
-		internal static void CopyEntriesToClipboard(PwDatabase pwDatabase, PwEntry[] vEntries,
+		internal static void CopyGroupToClipboard(PwDatabase pd, PwGroup pg,
 			IntPtr hOwner, bool bEncrypt)
 		{
 			using(MemoryStream ms = new MemoryStream())
 			{
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
 				{
-					KdbxFile.WriteEntries(gz, pwDatabase, vEntries);
+					KdbxFile.WriteGroup(gz, pd, pg);
 				}
 
-				byte[] pbData = ms.ToArray();
-				if(bEncrypt)
-					pbData = CryptoUtil.ProtectData(pbData, AdditionalEntropy,
-						DataProtectionScope.CurrentUser);
-
-				byte[] pbC = new byte[4 + pbData.Length];
-				MemUtil.Int32ToBytesEx(bEncrypt ? 1 : 0, pbC, 0); // Flags
-				Array.Copy(pbData, 0, pbC, 4, pbData.Length);
-
-				ClipboardUtil.Copy(pbC, ClipFormatEntries, true, hOwner);
+				CopyDataToClipboard(ms.ToArray(), ClipFormatGroup, hOwner, bEncrypt);
 			}
 		}
 
-		public static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
-			PwGroup pgStorage)
+		[Obsolete]
+		public static void CopyEntriesToClipboard(PwDatabase pd, PwEntry[] vEntries)
 		{
-			PwObjectList<PwEntry> l;
-			PasteEntriesFromClipboard(pwDatabase, pgStorage, out l);
+			CopyEntriesToClipboard(pd, vEntries, IntPtr.Zero, true);
 		}
 
-		internal static void PasteEntriesFromClipboard(PwDatabase pwDatabase,
-			PwGroup pgStorage, out PwObjectList<PwEntry> lAdded)
+		public static void CopyEntriesToClipboard(PwDatabase pd, PwEntry[] vEntries,
+			IntPtr hOwner)
 		{
-			lAdded = new PwObjectList<PwEntry>();
+			CopyEntriesToClipboard(pd, vEntries, hOwner, true);
+		}
 
-			// if(!ClipboardUtil.ContainsData(ClipFormatEntries)) return;
-			byte[] pbC = ClipboardUtil.GetData(ClipFormatEntries);
-			if(pbC == null) return;
+		internal static void CopyEntriesToClipboard(PwDatabase pd, PwEntry[] vEntries,
+			IntPtr hOwner, bool bEncrypt)
+		{
+			using(MemoryStream ms = new MemoryStream())
+			{
+				using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+				{
+					KdbxFile.WriteEntries(gz, pd, vEntries);
+				}
+
+				CopyDataToClipboard(ms.ToArray(), ClipFormatEntries, hOwner, bEncrypt);
+			}
+		}
+
+		private static byte[] GetClipboardData(string strFormat)
+		{
+			byte[] pbC = ClipboardUtil.GetData(strFormat);
+			if(pbC == null) return null;
+			if(pbC.Length < 4) { Debug.Assert(false); return null; }
 
 			uint uFlags = MemUtil.BytesToUInt32(pbC, 0);
 			byte[] pbData = MemUtil.Mid(pbC, 4, pbC.Length - 4);
 
 			if((uFlags & 1) != 0)
-				pbData = CryptoUtil.UnprotectData(pbData, AdditionalEntropy,
+				pbData = CryptoUtil.UnprotectData(pbData, ClipDomainSep,
 					DataProtectionScope.CurrentUser);
+
+			return pbData;
+		}
+
+		internal static PwGroup PasteGroupFromClipboard(PwDatabase pd,
+			PwGroup pgStorage)
+		{
+			byte[] pbData = GetClipboardData(ClipFormatGroup);
+			if(pbData == null) return null;
+
+			PwGroup pg;
+			using(MemoryStream ms = new MemoryStream(pbData, false))
+			{
+				using(GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
+				{
+					pg = KdbxFile.ReadGroup(gz, pd, true, true, true);
+					pgStorage.AddGroup(pg, true, true);
+				}
+			}
+
+			return pg;
+		}
+
+		public static void PasteEntriesFromClipboard(PwDatabase pd, PwGroup pgStorage)
+		{
+			PwObjectList<PwEntry> l;
+			PasteEntriesFromClipboard(pd, pgStorage, out l);
+		}
+
+		internal static void PasteEntriesFromClipboard(PwDatabase pd,
+			PwGroup pgStorage, out PwObjectList<PwEntry> lAdded)
+		{
+			lAdded = new PwObjectList<PwEntry>();
+
+			byte[] pbData = GetClipboardData(ClipFormatEntries);
+			if(pbData == null) return;
 
 			using(MemoryStream ms = new MemoryStream(pbData, false))
 			{
 				using(GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
 				{
-					List<PwEntry> lEntries = KdbxFile.ReadEntries(gz, pwDatabase, true);
-
-					// Adjust protection settings and add entries
+					List<PwEntry> lEntries = KdbxFile.ReadEntries(gz, pd, true);
 					foreach(PwEntry pe in lEntries)
 					{
-						pe.Strings.EnableProtection(PwDefs.TitleField,
-							pwDatabase.MemoryProtection.ProtectTitle);
-						pe.Strings.EnableProtection(PwDefs.UserNameField,
-							pwDatabase.MemoryProtection.ProtectUserName);
-						pe.Strings.EnableProtection(PwDefs.PasswordField,
-							pwDatabase.MemoryProtection.ProtectPassword);
-						pe.Strings.EnableProtection(PwDefs.UrlField,
-							pwDatabase.MemoryProtection.ProtectUrl);
-						pe.Strings.EnableProtection(PwDefs.NotesField,
-							pwDatabase.MemoryProtection.ProtectNotes);
-
-						pe.SetCreatedNow();
-
 						pgStorage.AddEntry(pe, true, true);
 						lAdded.Add(pe);
 					}
@@ -223,7 +254,10 @@ namespace KeePass.Util
 				str = ReplaceNewPasswordPlaceholder(str, ctx, uRecursionLevel);
 
 			if((ctx.Flags & SprCompileFlags.HmacOtp) != SprCompileFlags.None)
+			{
 				str = ReplaceHmacOtpPlaceholder(str, ctx);
+				str = ReplaceTimeOtpPlaceholder(str, ctx);
+			}
 
 			if((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
 				str = ReplacePickField(str, ctx);
@@ -312,72 +346,82 @@ namespace KeePass.Util
 			return ps.ReadString();
 		}
 
-		private static string ReplaceHmacOtpPlaceholder(string strText,
-			SprContext ctx)
+		private static byte[] GetOtpSecret(PwEntry pe, string strPrefix)
 		{
+			try
+			{
+				string str = pe.Strings.ReadSafe(strPrefix + "Secret");
+				if(!string.IsNullOrEmpty(str))
+					return StrUtil.Utf8.GetBytes(str);
+
+				str = pe.Strings.ReadSafe(strPrefix + "Secret-Hex");
+				if(!string.IsNullOrEmpty(str))
+					return MemUtil.HexStringToByteArray(str);
+
+				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base32");
+				if(!string.IsNullOrEmpty(str))
+					return MemUtil.ParseBase32(str);
+
+				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base64");
+				if(!string.IsNullOrEmpty(str))
+					return Convert.FromBase64String(str);
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return null;
+		}
+
+		private static string ReplaceHmacOtpPlaceholder(string strText, SprContext ctx)
+		{
+			const string strPlh = @"{HMACOTP}";
+			if(strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0) return strText;
+
 			PwEntry pe = ctx.Entry;
 			PwDatabase pd = ctx.Database;
 			if((pe == null) || (pd == null)) return strText;
 
-			string str = strText;
+			byte[] pbSecret = (GetOtpSecret(pe, "HmacOtp-") ?? MemUtil.EmptyByteArray);
 
-			const string strHmacOtpPlh = @"{HMACOTP}";
-			if(str.IndexOf(strHmacOtpPlh, StrUtil.CaseIgnoreCmp) >= 0)
-			{
-				const string strKeyFieldUtf8 = "HmacOtp-Secret";
-				const string strKeyFieldHex = "HmacOtp-Secret-Hex";
-				const string strKeyFieldBase32 = "HmacOtp-Secret-Base32";
-				const string strKeyFieldBase64 = "HmacOtp-Secret-Base64";
-				const string strCounterField = "HmacOtp-Counter";
+			const string strCounterField = "HmacOtp-Counter";
+			string strCounter = pe.Strings.ReadSafe(strCounterField);
+			ulong uCounter;
+			ulong.TryParse(strCounter, out uCounter);
 
-				byte[] pbSecret = null;
-				try
-				{
-					string strKey = pe.Strings.ReadSafe(strKeyFieldUtf8);
-					if(strKey.Length > 0)
-						pbSecret = StrUtil.Utf8.GetBytes(strKey);
+			string strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
 
-					if(pbSecret == null)
-					{
-						strKey = pe.Strings.ReadSafe(strKeyFieldHex);
-						if(strKey.Length > 0)
-							pbSecret = MemUtil.HexStringToByteArray(strKey);
-					}
+			pe.Strings.Set(strCounterField, new ProtectedString(false,
+				(uCounter + 1).ToString()));
+			pe.Touch(true, false);
+			pd.Modified = true;
 
-					if(pbSecret == null)
-					{
-						strKey = pe.Strings.ReadSafe(strKeyFieldBase32);
-						if(strKey.Length > 0)
-							pbSecret = MemUtil.ParseBase32(strKey);
-					}
+			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
+		}
 
-					if(pbSecret == null)
-					{
-						strKey = pe.Strings.ReadSafe(strKeyFieldBase64);
-						if(strKey.Length > 0)
-							pbSecret = Convert.FromBase64String(strKey);
-					}
-				}
-				catch(Exception) { Debug.Assert(false); }
-				if(pbSecret == null) pbSecret = MemUtil.EmptyByteArray;
+		private static string ReplaceTimeOtpPlaceholder(string strText, SprContext ctx)
+		{
+			const string strPlh = @"{TIMEOTP}";
+			if(strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0) return strText;
 
-				string strCounter = pe.Strings.ReadSafe(strCounterField);
-				ulong uCounter;
-				ulong.TryParse(strCounter, out uCounter);
+			PwEntry pe = ctx.Entry;
+			if(pe == null) return strText;
 
-				string strValue = HmacOtp.Generate(pbSecret, uCounter, 6,
-					false, -1);
+			byte[] pbSecret = (GetOtpSecret(pe, "TimeOtp-") ?? MemUtil.EmptyByteArray);
 
-				pe.Strings.Set(strCounterField, new ProtectedString(false,
-					(uCounter + 1).ToString()));
+			string strPeriod = pe.Strings.ReadSafe("TimeOtp-Period");
+			uint uPeriod;
+			uint.TryParse(strPeriod, out uPeriod);
 
-				pe.Touch(true, false);
-				pd.Modified = true;
+			string strLength = pe.Strings.ReadSafe("TimeOtp-Length");
+			uint uLength;
+			uint.TryParse(strLength, out uLength);
+			if(uLength == 0) uLength = 6;
 
-				str = StrUtil.ReplaceCaseInsensitive(str, strHmacOtpPlh, strValue);
-			}
+			string strAlg = pe.Strings.ReadSafe("TimeOtp-Algorithm");
 
-			return str;
+			string strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
+				uLength, strAlg);
+
+			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
 
 		private static string ReplacePickField(string strText, SprContext ctx)

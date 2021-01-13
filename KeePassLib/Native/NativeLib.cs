@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -603,6 +603,7 @@ namespace KeePassLib.Native
 			ProcessStartInfo psi = new ProcessStartInfo();
 			if(!string.IsNullOrEmpty(strFile)) psi.FileName = strFile;
 			if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
+			psi.UseShellExecute = true;
 
 			StartProcess(psi);
 		}
@@ -621,47 +622,71 @@ namespace KeePassLib.Native
 
 			string strFileOrg = psi.FileName;
 			if(string.IsNullOrEmpty(strFileOrg)) { Debug.Assert(false); return null; }
+			string strArgsOrg = psi.Arguments;
 
 			Process p;
 			try
 			{
-				string strFile = strFileOrg;
+				CustomizeProcessStartInfo(psi);
+				p = Process.Start(psi);
+			}
+			finally
+			{
+				psi.FileName = strFileOrg; // Restore
+				psi.Arguments = strArgsOrg;
+			}
 
-				string[] vUrlEncSchemes = new string[] {
-					"file:", "ftp:", "ftps:", "http:", "https:",
-					"mailto:", "scp:", "sftp:"
-				};
-				foreach(string strPfx in vUrlEncSchemes)
+			return p;
+		}
+
+		private static void CustomizeProcessStartInfo(ProcessStartInfo psi)
+		{
+			string strFile = psi.FileName, strArgs = psi.Arguments;
+
+			string[] vUrlEncSchemes = new string[] {
+				"file:", "ftp:", "ftps:", "http:", "https:",
+				"mailto:", "scp:", "sftp:"
+			};
+			foreach(string strPfx in vUrlEncSchemes)
+			{
+				if(strFile.StartsWith(strPfx, StrUtil.CaseIgnoreCmp))
 				{
-					if(strFile.StartsWith(strPfx, StrUtil.CaseIgnoreCmp))
-					{
-						Debug.Assert(string.IsNullOrEmpty(psi.Arguments));
+					Debug.Assert(string.IsNullOrEmpty(strArgs));
 
-						strFile = strFile.Replace("\"", "%22");
-						strFile = strFile.Replace("\'", "%27");
-						strFile = strFile.Replace("\\", "%5C");
-						break;
+					strFile = strFile.Replace("\"", "%22");
+					strFile = strFile.Replace("\'", "%27");
+					strFile = strFile.Replace("\\", "%5C");
+					break;
+				}
+			}
+
+			if(IsUnix())
+			{
+				if(MonoWorkarounds.IsRequired(19836) && string.IsNullOrEmpty(strArgs))
+				{
+					if(Regex.IsMatch(strFile, "^[a-zA-Z][a-zA-Z0-9\\+\\-\\.]*:",
+						RegexOptions.Singleline) ||
+						strFile.EndsWith(".html", StrUtil.CaseIgnoreCmp))
+					{
+						bool bMacOSX = (GetPlatformID() == PlatformID.MacOSX);
+
+						strArgs = "\"" + EncodeDataToArgs(strFile) + "\"";
+						strFile = (bMacOSX ? "open" : "xdg-open");
 					}
 				}
 
-				if(IsUnix())
-				{
-					// Mono's Process.Start method replaces '\\' by '/',
-					// which may cause a different file to be executed;
-					// therefore, we refuse to start such files
-					if(strFile.Contains("\\") && MonoWorkarounds.IsRequired(190417))
-						throw new ArgumentException(KLRes.PathBackslash);
+				// Mono's Process.Start method replaces '\\' by '/',
+				// which may cause a different file to be executed;
+				// therefore, we refuse to start such files
+				if(strFile.Contains("\\") && MonoWorkarounds.IsRequired(190417))
+					throw new ArgumentException(KLRes.PathBackslash);
 
-					strFile = strFile.Replace("\\", "\\\\"); // If WA not required
-					strFile = strFile.Replace("\"", "\\\"");
-				}
-
-				psi.FileName = strFile;
-				p = Process.Start(psi);
+				strFile = strFile.Replace("\\", "\\\\"); // If WA not required
+				strFile = strFile.Replace("\"", "\\\"");
 			}
-			finally { psi.FileName = strFileOrg; }
 
-			return p;
+			psi.FileName = strFile;
+			psi.Arguments = strArgs;
 		}
 	}
 }

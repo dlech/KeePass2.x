@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ namespace KeePass.Util
 						try { cmpKey.AddUserKey(new KcpCustomKey(strKeyFile, pbProvKey, bPerformHash)); }
 						catch(Exception exCKP)
 						{
-							MessageService.ShowWarning(exCKP);
+							MessageService.ShowWarning(strKeyFile, exCKP);
 							return null;
 						}
 						finally { MemUtil.ZeroByteArray(pbProvKey); }
@@ -103,9 +103,9 @@ namespace KeePass.Util
 				else // Key file
 				{
 					try { cmpKey.AddUserKey(new KcpKeyFile(strKeyFile)); }
-					catch(Exception exKey)
+					catch(Exception exFile)
 					{
-						MessageService.ShowWarning(strKeyFile, KPRes.KeyFileError, exKey);
+						MessageService.ShowWarning(strKeyFile, KLRes.FileLoadFailed, exFile);
 						return null;
 					}
 				}

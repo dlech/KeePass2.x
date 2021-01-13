@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2020 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -434,7 +434,7 @@ namespace KeePass.Util.XmlSerialization
 				AppendLine(sbr, "{", ref ir, 0, 1);
 				AppendLine(sbr, "XmlNodeType nt = xr.NodeType;", ref ir);
 				AppendLine(sbr, "if((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;", ref ir);
-				AppendLine(sbr, "if(nt != XmlNodeType.Element) { Debug.Assert(false); continue; }", ref ir);
+				AppendLine(sbr, "if(nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }", ref ir);
 				AppendLine(sbr);
 
 				if(bIsList || bIsArray)
