@@ -111,7 +111,7 @@
         </member>
         <member name="F:KeePassLib.Serialization.KdbxFile.FileVersion32">
             <summary>
-            File version of files saved by the current <c>KdbxFile</c> class.
+            Maximum supported version of database files.
             KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
             2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00, 2.20 has 3.01.
             The first 2 bytes are critical (i.e. loading will fail, if the
@@ -972,25 +972,6 @@
             </summary>
             <returns>Plain-text byte array.</returns>
         </member>
-        <member name="M:KeePassLib.Collections.StringDictionaryEx.Set(System.String,System.String)">
-            <summary>
-            Set a string.
-            </summary>
-            <param name="strField">Identifier of the string field to modify.</param>
-            <param name="strNewValue">New value. This parameter must not be <c>null</c>.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
-            parameters is <c>null</c>.</exception>
-        </member>
-        <member name="M:KeePassLib.Collections.StringDictionaryEx.Remove(System.String)">
-            <summary>
-            Delete a string.
-            </summary>
-            <param name="strField">Name of the string field to delete.</param>
-            <returns>Returns <c>true</c>, if the field has been successfully
-            removed. Otherwise, the return value is <c>false</c>.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input
-            parameter is <c>null</c>.</exception>
-        </member>
         <member name="T:KeePassLib.Utility.TimeUtil">
             <summary>
             Contains various static time structure manipulation and conversion
@@ -1558,6 +1539,16 @@
             UUID of this group.
             </summary>
         </member>
+        <member name="P:KeePassLib.PwGroup.ParentGroup">
+            <summary>
+            Reference to the group to which this group belongs. May be <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.PwGroup.LocationChanged">
+            <summary>
+            The date/time when the location of the object was last changed.
+            </summary>
+        </member>
         <member name="P:KeePassLib.PwGroup.Name">
             <summary>
             The name of this group. Cannot be <c>null</c>.
@@ -1578,16 +1569,6 @@
             Get the custom icon ID. This value is 0, if no custom icon is
             being used (i.e. the icon specified by the <c>IconID</c> property
             should be displayed).
-            </summary>
-        </member>
-        <member name="P:KeePassLib.PwGroup.ParentGroup">
-            <summary>
-            Reference to the group to which this group belongs. May be <c>null</c>.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.PwGroup.LocationChanged">
-            <summary>
-            The date/time when the location of the object was last changed.
             </summary>
         </member>
         <member name="P:KeePassLib.PwGroup.IsExpanded">
@@ -2409,11 +2390,6 @@
             <summary>
             Look up a localized string similar to
             'Test'.
-            </summary>
-        </member>
-        <member name="T:KeePassLib.PwCustomIcon">
-            <summary>
-            Custom icon. <c>PwCustomIcon</c> objects are immutable.
             </summary>
         </member>
         <member name="M:KeePassLib.PwCustomIcon.GetImage">

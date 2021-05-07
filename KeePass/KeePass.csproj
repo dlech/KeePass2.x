@@ -398,6 +398,8 @@
     <Compile Include="App\Configuration\AppConfigSerializer.cs" />
     <Compile Include="DataExchange\CsvStreamReader.cs" />
     <Compile Include="DataExchange\CsvStreamReaderEx.cs" />
+    <Compile Include="DataExchange\CsvTableEntryReader.cs" />
+    <Compile Include="DataExchange\CsvTableObjectReader.cs" />
     <Compile Include="DataExchange\ExportUtil.cs" />
     <Compile Include="DataExchange\FileFormatProvider.cs" />
     <Compile Include="DataExchange\Formats\AmpXml250.cs" />
@@ -1175,6 +1177,7 @@
     <Compile Include="Util\Spr\SprEngine.PickChars.cs" />
     <Compile Include="Util\Spr\SprRefCache.cs" />
     <Compile Include="Util\Spr\SprSyntax.cs" />
+    <Compile Include="Util\TagUtil.cs" />
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
     <Compile Include="Util\UpdateCheckEx.cs" />

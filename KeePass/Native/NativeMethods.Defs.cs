@@ -115,6 +115,7 @@ namespace KeePass.Native
 		internal const int WS_VISIBLE = 0x10000000;
 
 		// internal const int WS_EX_COMPOSITED = 0x02000000;
+		internal const int WS_EX_TOPMOST = 0x00000008;
 
 		internal const int SW_SHOW = 5;
 

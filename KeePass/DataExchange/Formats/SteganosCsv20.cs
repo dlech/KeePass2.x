@@ -167,10 +167,7 @@ namespace KeePass.DataExchange.Formats
 						}
 					}
 					else if(strName == strMapTags)
-					{
-						List<string> lTags = StrUtil.StringToTags(strValue);
-						foreach(string strTag in lTags) pe.AddTag(strTag);
-					}
+						StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strValue));
 					else if(strName == strMapLastMod)
 					{
 						double dUnix;

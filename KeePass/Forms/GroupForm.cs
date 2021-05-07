@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using KeePass.App;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -85,14 +86,13 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.Text = strTitle;
 
-			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
-				Properties.Resources.B16x16_Wizard, true);
+			UIUtil.ConfigureToolTip(m_ttRect);
+			m_ttRect.SetToolTip(m_btnIcon, KPRes.SelectIcon);
+
+			m_tbName.Text = m_pwGroup.Name;
 
 			m_pwIconIndex = m_pwGroup.IconId;
 			m_pwCustomIconID = m_pwGroup.CustomIconUuid;
-			
-			m_tbName.Text = m_pwGroup.Name;
-			UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
 			if(!m_pwCustomIconID.Equals(PwUuid.Zero))
 				UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
@@ -100,6 +100,8 @@ namespace KeePass.Forms
 			else
 				UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
 					(int)m_pwIconIndex], true);
+
+			UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
 			if(m_pwGroup.Expires)
 			{
@@ -113,26 +115,36 @@ namespace KeePass.Forms
 			}
 			m_cgExpiry.Attach(m_cbExpires, m_dtExpires);
 
+			TagUtil.MakeInheritedTagsLink(m_linkTagsInh, m_pwGroup.ParentGroup, this);
+			m_tbTags.Text = StrUtil.TagsToString(m_pwGroup.Tags, true);
+			TagUtil.MakeTagsButton(m_btnTags, m_tbTags, m_ttRect, m_pwGroup.ParentGroup,
+				((m_pwDatabase != null) ? m_pwDatabase.RootGroup : null));
+
 			m_tbUuid.Text = m_pwGroup.Uuid.ToHexString() + ", " +
 				Convert.ToBase64String(m_pwGroup.Uuid.UuidBytes);
 
 			PwGroup pgParent = m_pwGroup.ParentGroup;
-			bool bParentAutoType = ((pgParent != null) ?
-				pgParent.GetAutoTypeEnabledInherited() :
-				PwGroup.DefaultAutoTypeEnabled);
-			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableAutoType,
-				m_pwGroup.EnableAutoType, bParentAutoType);
+
 			bool bParentSearching = ((pgParent != null) ?
 				pgParent.GetSearchingEnabledInherited() :
 				PwGroup.DefaultSearchingEnabled);
 			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableSearching,
 				m_pwGroup.EnableSearching, bParentSearching);
 
+			bool bParentAutoType = ((pgParent != null) ?
+				pgParent.GetAutoTypeEnabledInherited() :
+				PwGroup.DefaultAutoTypeEnabled);
+			UIUtil.MakeInheritableBoolComboBox(m_cmbEnableAutoType,
+				m_pwGroup.EnableAutoType, bParentAutoType);
+
 			m_tbDefaultAutoTypeSeq.Text = m_pwGroup.GetAutoTypeSequenceInherited();
 
 			if(m_pwGroup.DefaultAutoTypeSequence.Length == 0)
 				m_rbAutoTypeInherit.Checked = true;
 			else m_rbAutoTypeOverride.Checked = true;
+
+			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
+				Properties.Resources.B16x16_Wizard, true);
 
 			m_sdCustomData = m_pwGroup.CustomData.CloneDeep();
 			UIUtil.StrDictListInit(m_lvCustomData);
@@ -177,15 +189,17 @@ namespace KeePass.Forms
 			m_pwGroup.Touch(true, false);
 
 			m_pwGroup.Name = m_tbName.Text;
-			m_pwGroup.Notes = m_tbNotes.Text;
 			m_pwGroup.IconId = m_pwIconIndex;
 			m_pwGroup.CustomIconUuid = m_pwCustomIconID;
+			m_pwGroup.Notes = m_tbNotes.Text;
 
 			m_pwGroup.Expires = m_cgExpiry.Checked;
 			m_pwGroup.ExpiryTime = m_cgExpiry.Value;
 
-			m_pwGroup.EnableAutoType = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableAutoType);
+			m_pwGroup.Tags = StrUtil.StringToTags(m_tbTags.Text);
+
 			m_pwGroup.EnableSearching = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableSearching);
+			m_pwGroup.EnableAutoType = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableAutoType);
 
 			if(m_rbAutoTypeInherit.Checked)
 				m_pwGroup.DefaultAutoTypeSequence = string.Empty;
@@ -211,19 +225,15 @@ namespace KeePass.Forms
 
 			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) // Custom icon
-				{
-					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
+				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+
+				if(!m_pwCustomIconID.Equals(PwUuid.Zero))
 					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
 						m_pwDatabase, m_pwCustomIconID), true);
-				}
-				else // Standard icon
-				{
-					m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
-					m_pwCustomIconID = PwUuid.Zero;
+				else
 					UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
 						(int)m_pwIconIndex], true);
-				}
 			}
 
 			UIUtil.DestroyForm(ipf);

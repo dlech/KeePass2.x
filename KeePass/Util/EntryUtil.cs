@@ -360,7 +360,12 @@ namespace KeePass.Util
 
 				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base32");
 				if(!string.IsNullOrEmpty(str))
+				{
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/59b61fddea/
+					if((str.Length % 8) != 0)
+						str = str.PadRight((str.Length & ~7) + 8, '=');
 					return MemUtil.ParseBase32(str);
+				}
 
 				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base64");
 				if(!string.IsNullOrEmpty(str))
@@ -380,19 +385,23 @@ namespace KeePass.Util
 			PwDatabase pd = ctx.Database;
 			if((pe == null) || (pd == null)) return strText;
 
-			byte[] pbSecret = (GetOtpSecret(pe, "HmacOtp-") ?? MemUtil.EmptyByteArray);
+			byte[] pbSecret = GetOtpSecret(pe, "HmacOtp-");
 
 			const string strCounterField = "HmacOtp-Counter";
 			string strCounter = pe.Strings.ReadSafe(strCounterField);
 			ulong uCounter;
 			ulong.TryParse(strCounter, out uCounter);
 
-			string strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
+			string strValue = string.Empty;
+			if((pbSecret != null) && (pbSecret.Length != 0))
+			{
+				strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
 
-			pe.Strings.Set(strCounterField, new ProtectedString(false,
-				(uCounter + 1).ToString()));
-			pe.Touch(true, false);
-			pd.Modified = true;
+				pe.Strings.Set(strCounterField, new ProtectedString(false,
+					(uCounter + 1).ToString()));
+				pe.Touch(true, false);
+				pd.Modified = true;
+			}
 
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
@@ -405,7 +414,7 @@ namespace KeePass.Util
 			PwEntry pe = ctx.Entry;
 			if(pe == null) return strText;
 
-			byte[] pbSecret = (GetOtpSecret(pe, "TimeOtp-") ?? MemUtil.EmptyByteArray);
+			byte[] pbSecret = GetOtpSecret(pe, "TimeOtp-");
 
 			string strPeriod = pe.Strings.ReadSafe("TimeOtp-Period");
 			uint uPeriod;
@@ -418,8 +427,10 @@ namespace KeePass.Util
 
 			string strAlg = pe.Strings.ReadSafe("TimeOtp-Algorithm");
 
-			string strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
-				uLength, strAlg);
+			string strValue = string.Empty;
+			if((pbSecret != null) && (pbSecret.Length != 0))
+				strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
+					uLength, strAlg);
 
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
@@ -1303,6 +1314,7 @@ namespace KeePass.Util
 				++uEntriesDone; // Also used for sorting, see below
 
 				if(!pe.GetSearchingEnabled()) return true;
+				if(!pe.QualityCheck) return true;
 				if(PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);

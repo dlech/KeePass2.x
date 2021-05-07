@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.47"
-#define KeeVersionStrWithMinor "2.47"
-#define KeeVersionStrWithMinorPath "2.47"
-#define KeeVersionWin "2.47.0.0"
-#define KeeVersionWinShort "2.47"
+#define KeeVersionStr "2.48"
+#define KeeVersionStrWithMinor "2.48"
+#define KeeVersionStrWithMinorPath "2.48"
+#define KeeVersionWin "2.48.0.0"
+#define KeeVersionWinShort "2.48"
 
 #define KeeDevPeriod "2003-2021"
 
@@ -261,7 +261,7 @@ Name: "{app}\Plugins"; Flags: uninsalwaysuninstall
 Source: ..\Build\KeePass_Distrib\KeePass.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.XmlSerializers.dll; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.exe.config; DestDir: {app}; Flags: ignoreversion; Components: Core
-Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: onlyifdoesntexist; Components: Core
+Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\License.txt; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Flags: ignoreversion; Components: UserDoc
@@ -269,11 +269,11 @@ Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Flags: ignor
 Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
 ; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_Common.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull_HTML.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLight_HTML.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly_TXT.xsl; DestDir: {app}\XSL; Components: XSL
-Source: ..\Build\KeePass_Distrib\XSL\KDBX_Tabular_HTML.xsl; DestDir: {app}\XSL; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Common.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull_HTML.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLight_HTML.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_PasswordsOnly_TXT.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
+Source: ..\Build\KeePass_Distrib\XSL\KDBX_Tabular_HTML.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
 
 [Registry]
 ; Always unregister .kdbx association at uninstall

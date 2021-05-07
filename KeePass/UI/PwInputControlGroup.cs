@@ -68,6 +68,20 @@ namespace KeePass.UI
 			}
 		}
 
+		private bool m_bQualityEnabled = true;
+		public bool QualityEnabled
+		{
+			get { return m_bQualityEnabled; }
+			set
+			{
+				if(value != m_bQualityEnabled)
+				{
+					m_bQualityEnabled = value;
+					UpdateUI();
+				}
+			}
+		}
+
 		private bool m_bSprVar = false;
 		public bool IsSprVariant
 		{
@@ -217,7 +231,7 @@ namespace KeePass.UI
 			m_lblRepeat.Enabled = bRepeatEnable;
 			m_tbRepeat.Enabled = bRepeatEnable;
 
-			bool bQuality = m_bEnabled;
+			bool bQuality = (m_bEnabled && m_bQualityEnabled);
 
 			byte[] pbMultiple = StrUtil.Utf8.GetBytes(MultipleValuesEx.CueString);
 			if(MemUtil.ArraysEqual(pbUtf8, pbMultiple)) bQuality = false;

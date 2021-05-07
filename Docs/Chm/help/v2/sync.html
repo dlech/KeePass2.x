@@ -63,7 +63,7 @@ a synchronization).</p>
 <ul>
 <li>If the files to be synchronized are accessible via a protocol that
 KeePass supports by default (e.g. files on a local hard disk or a network
-share, FTP, HTTP/WebDAV, ..., see the page
+share, FTP, HTTP, HTTPS, WebDAV, ..., see the page
 <a href="ioconnect.html">Loading/Saving From/To URL</a> for details),
 then no plugins/extensions are required.</li>
 <li>If one of the files to be synchronized should be accessed via
@@ -72,19 +72,9 @@ SCP, SFTP or FTPS, you need the
 target="_blank">IOProtocolExt</a>
 plugin, which adds support for these protocols to KeePass.</li>
 <li>If one of the files to be synchronized is stored in an online
-storage (like e.g. Amazon's S3, DigitalBucket, ...), you need
-an online storage provider
-<a href="https://keepass.info/plugins.html" target="_blank">plugin</a>
-(e.g.
-<a href="https://keepass.info/plugins.html#keeanywhere"
-target="_blank">KeeAnywhere</a>,
-<a href="https://keepass.info/plugins.html#keecloud"
-target="_blank">KeeCloud</a> or
-<a href="https://keepass.info/plugins.html#keepasssync"
-target="_blank">KeePassSync</a>).
-Note that you do <i>not</i> need a plugin
-in the other cases above (files on a local hard disk or network share,
-FTP, HTTP/WebDAV, SCP, SFTP, FTPS, ...).</li>
+storage that is not accessible via a standard protocol, you need
+a specialized online storage provider
+<a href="https://keepass.info/plugins.html" target="_blank">plugin</a>.</li>
 </ul>
 
 <br />
@@ -139,7 +129,7 @@ for details.</li>
 Technical Details</h2>
 
 <p>The synchronization algorithm is rather complex and it would take
-many pages to describe in detail how it's working.
+many pages to describe in detail how it is working.
 Developers interested in this can have a look into the KeePass source code.
 Here are the most important properties of the synchronization algorithm:</p>
 
@@ -155,8 +145,8 @@ combinations could become inconsistent with this).</li>
 all information in an appropriate place. For example, when you have an
 entry E in a database A, make a copy B of A, change E in B, change E in A,
 and synchronize A and B, then E in A is treated as current and the changes
-made to E in B are stored as a history version of E (see tab 'History' in
-the entry dialog), i.e. the changes made in B aren't lost.</li>
+made to E in B are stored as a history entry of E (see the tab page 'History'
+in the entry dialog), i.e. the changes made in B are not lost.</li>
 </ul>
 
 <br />

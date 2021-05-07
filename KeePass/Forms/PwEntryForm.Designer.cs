@@ -67,6 +67,7 @@
 			this.m_ttBalloon = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabEntry = new System.Windows.Forms.TabPage();
+			this.m_cbQualityCheck = new System.Windows.Forms.CheckBox();
 			this.m_rtNotes = new KeePass.UI.CustomRichTextBoxEx();
 			this.m_pbQuality = new KeePass.UI.QualityProgressBar();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
@@ -85,6 +86,8 @@
 			this.m_ctxListOperations = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_menuListCtxCopyFieldValue = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
+			this.m_btnTags = new System.Windows.Forms.Button();
+			this.m_linkTagsInh = new System.Windows.Forms.LinkLabel();
 			this.m_lblCustomData = new System.Windows.Forms.Label();
 			this.m_btnCDDel = new System.Windows.Forms.Button();
 			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
@@ -209,7 +212,7 @@
 			this.m_lblUrl.Location = new System.Drawing.Point(6, 144);
 			this.m_lblUrl.Name = "m_lblUrl";
 			this.m_lblUrl.Size = new System.Drawing.Size(32, 13);
-			this.m_lblUrl.TabIndex = 15;
+			this.m_lblUrl.TabIndex = 16;
 			this.m_lblUrl.Text = "UR&L:";
 			// 
 			// m_lblNotes
@@ -218,13 +221,13 @@
 			this.m_lblNotes.Location = new System.Drawing.Point(6, 171);
 			this.m_lblNotes.Name = "m_lblNotes";
 			this.m_lblNotes.Size = new System.Drawing.Size(38, 13);
-			this.m_lblNotes.TabIndex = 17;
+			this.m_lblNotes.TabIndex = 18;
 			this.m_lblNotes.Text = "&Notes:";
 			// 
 			// m_lblQuality
 			// 
 			this.m_lblQuality.AutoSize = true;
-			this.m_lblQuality.Location = new System.Drawing.Point(6, 118);
+			this.m_lblQuality.Location = new System.Drawing.Point(6, 119);
 			this.m_lblQuality.Name = "m_lblQuality";
 			this.m_lblQuality.Size = new System.Drawing.Size(42, 13);
 			this.m_lblQuality.TabIndex = 12;
@@ -234,12 +237,12 @@
 			// 
 			this.m_tbTitle.Location = new System.Drawing.Point(81, 10);
 			this.m_tbTitle.Name = "m_tbTitle";
-			this.m_tbTitle.Size = new System.Drawing.Size(293, 20);
+			this.m_tbTitle.Size = new System.Drawing.Size(294, 20);
 			this.m_tbTitle.TabIndex = 1;
 			// 
 			// m_btnIcon
 			// 
-			this.m_btnIcon.Location = new System.Drawing.Point(423, 8);
+			this.m_btnIcon.Location = new System.Drawing.Point(424, 8);
 			this.m_btnIcon.Name = "m_btnIcon";
 			this.m_btnIcon.Size = new System.Drawing.Size(32, 23);
 			this.m_btnIcon.TabIndex = 3;
@@ -249,7 +252,7 @@
 			// m_lblIcon
 			// 
 			this.m_lblIcon.AutoSize = true;
-			this.m_lblIcon.Location = new System.Drawing.Point(386, 13);
+			this.m_lblIcon.Location = new System.Drawing.Point(387, 13);
 			this.m_lblIcon.Name = "m_lblIcon";
 			this.m_lblIcon.Size = new System.Drawing.Size(31, 13);
 			this.m_lblIcon.TabIndex = 2;
@@ -259,38 +262,38 @@
 			// 
 			this.m_tbUserName.Location = new System.Drawing.Point(81, 37);
 			this.m_tbUserName.Name = "m_tbUserName";
-			this.m_tbUserName.Size = new System.Drawing.Size(373, 20);
+			this.m_tbUserName.Size = new System.Drawing.Size(374, 20);
 			this.m_tbUserName.TabIndex = 5;
 			// 
 			// m_tbPassword
 			// 
 			this.m_tbPassword.Location = new System.Drawing.Point(81, 64);
 			this.m_tbPassword.Name = "m_tbPassword";
-			this.m_tbPassword.Size = new System.Drawing.Size(336, 20);
+			this.m_tbPassword.Size = new System.Drawing.Size(337, 20);
 			this.m_tbPassword.TabIndex = 7;
 			// 
 			// m_tbRepeatPassword
 			// 
 			this.m_tbRepeatPassword.Location = new System.Drawing.Point(81, 91);
 			this.m_tbRepeatPassword.Name = "m_tbRepeatPassword";
-			this.m_tbRepeatPassword.Size = new System.Drawing.Size(336, 20);
+			this.m_tbRepeatPassword.Size = new System.Drawing.Size(337, 20);
 			this.m_tbRepeatPassword.TabIndex = 10;
 			// 
 			// m_tbUrl
 			// 
 			this.m_tbUrl.Location = new System.Drawing.Point(81, 141);
 			this.m_tbUrl.Name = "m_tbUrl";
-			this.m_tbUrl.Size = new System.Drawing.Size(373, 20);
-			this.m_tbUrl.TabIndex = 16;
+			this.m_tbUrl.Size = new System.Drawing.Size(374, 20);
+			this.m_tbUrl.TabIndex = 17;
 			this.m_tbUrl.TextChanged += new System.EventHandler(this.OnUrlTextChanged);
 			// 
 			// m_cbExpires
 			// 
 			this.m_cbExpires.AutoSize = true;
-			this.m_cbExpires.Location = new System.Drawing.Point(9, 316);
+			this.m_cbExpires.Location = new System.Drawing.Point(9, 315);
 			this.m_cbExpires.Name = "m_cbExpires";
 			this.m_cbExpires.Size = new System.Drawing.Size(63, 17);
-			this.m_cbExpires.TabIndex = 19;
+			this.m_cbExpires.TabIndex = 20;
 			this.m_cbExpires.Text = "&Expires:";
 			this.m_cbExpires.UseVisualStyleBackColor = true;
 			// 
@@ -299,8 +302,8 @@
 			this.m_dtExpireDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
 			this.m_dtExpireDateTime.Location = new System.Drawing.Point(81, 313);
 			this.m_dtExpireDateTime.Name = "m_dtExpireDateTime";
-			this.m_dtExpireDateTime.Size = new System.Drawing.Size(335, 20);
-			this.m_dtExpireDateTime.TabIndex = 20;
+			this.m_dtExpireDateTime.Size = new System.Drawing.Size(336, 20);
+			this.m_dtExpireDateTime.TabIndex = 21;
 			// 
 			// m_ctxDefaultTimes
 			// 
@@ -385,7 +388,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(311, 453);
+			this.m_btnOK.Location = new System.Drawing.Point(313, 453);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(80, 23);
 			this.m_btnOK.TabIndex = 1;
@@ -396,7 +399,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(397, 453);
+			this.m_btnCancel.Location = new System.Drawing.Point(399, 453);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(80, 23);
 			this.m_btnCancel.TabIndex = 2;
@@ -406,7 +409,7 @@
 			// 
 			// m_lblQualityInfo
 			// 
-			this.m_lblQualityInfo.Location = new System.Drawing.Point(370, 119);
+			this.m_lblQualityInfo.Location = new System.Drawing.Point(371, 119);
 			this.m_lblQualityInfo.Name = "m_lblQualityInfo";
 			this.m_lblQualityInfo.Size = new System.Drawing.Size(50, 13);
 			this.m_lblQualityInfo.TabIndex = 14;
@@ -415,7 +418,7 @@
 			// 
 			// m_btnGenPw
 			// 
-			this.m_btnGenPw.Location = new System.Drawing.Point(423, 90);
+			this.m_btnGenPw.Location = new System.Drawing.Point(424, 89);
 			this.m_btnGenPw.Name = "m_btnGenPw";
 			this.m_btnGenPw.Size = new System.Drawing.Size(32, 23);
 			this.m_btnGenPw.TabIndex = 11;
@@ -425,7 +428,7 @@
 			// m_cbHidePassword
 			// 
 			this.m_cbHidePassword.Appearance = System.Windows.Forms.Appearance.Button;
-			this.m_cbHidePassword.Location = new System.Drawing.Point(423, 63);
+			this.m_cbHidePassword.Location = new System.Drawing.Point(424, 62);
 			this.m_cbHidePassword.Name = "m_cbHidePassword";
 			this.m_cbHidePassword.Size = new System.Drawing.Size(32, 23);
 			this.m_cbHidePassword.TabIndex = 8;
@@ -436,19 +439,19 @@
 			// m_btnStandardExpires
 			// 
 			this.m_btnStandardExpires.ContextMenuStrip = this.m_ctxDefaultTimes;
-			this.m_btnStandardExpires.Location = new System.Drawing.Point(423, 311);
+			this.m_btnStandardExpires.Location = new System.Drawing.Point(424, 311);
 			this.m_btnStandardExpires.Name = "m_btnStandardExpires";
 			this.m_btnStandardExpires.Size = new System.Drawing.Size(32, 23);
-			this.m_btnStandardExpires.TabIndex = 21;
+			this.m_btnStandardExpires.TabIndex = 22;
 			this.m_btnStandardExpires.UseVisualStyleBackColor = true;
 			this.m_btnStandardExpires.Click += new System.EventHandler(this.OnBtnStandardExpiresClick);
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 447);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 445);
 			this.m_lblSeparator.Name = "m_lblSeparator";
-			this.m_lblSeparator.Size = new System.Drawing.Size(487, 2);
+			this.m_lblSeparator.Size = new System.Drawing.Size(489, 2);
 			this.m_lblSeparator.TabIndex = 3;
 			// 
 			// m_ttBalloon
@@ -462,7 +465,7 @@
 			this.m_tabMain.Controls.Add(this.m_tabProperties);
 			this.m_tabMain.Controls.Add(this.m_tabAutoType);
 			this.m_tabMain.Controls.Add(this.m_tabHistory);
-			this.m_tabMain.Location = new System.Drawing.Point(6, 66);
+			this.m_tabMain.Location = new System.Drawing.Point(8, 66);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(475, 368);
@@ -470,6 +473,7 @@
 			// 
 			// m_tabEntry
 			// 
+			this.m_tabEntry.Controls.Add(this.m_cbQualityCheck);
 			this.m_tabEntry.Controls.Add(this.m_lblTitle);
 			this.m_tabEntry.Controls.Add(this.m_rtNotes);
 			this.m_tabEntry.Controls.Add(this.m_cbExpires);
@@ -497,23 +501,34 @@
 			this.m_tabEntry.Padding = new System.Windows.Forms.Padding(3);
 			this.m_tabEntry.Size = new System.Drawing.Size(467, 342);
 			this.m_tabEntry.TabIndex = 0;
-			this.m_tabEntry.Text = "Entry";
+			this.m_tabEntry.Text = "General";
 			this.m_tabEntry.UseVisualStyleBackColor = true;
+			// 
+			// m_cbQualityCheck
+			// 
+			this.m_cbQualityCheck.Appearance = System.Windows.Forms.Appearance.Button;
+			this.m_cbQualityCheck.Location = new System.Drawing.Point(424, 116);
+			this.m_cbQualityCheck.Name = "m_cbQualityCheck";
+			this.m_cbQualityCheck.Size = new System.Drawing.Size(32, 20);
+			this.m_cbQualityCheck.TabIndex = 15;
+			this.m_cbQualityCheck.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.m_cbQualityCheck.UseVisualStyleBackColor = true;
+			this.m_cbQualityCheck.CheckedChanged += new System.EventHandler(this.OnQualityCheckCheckedChanged);
 			// 
 			// m_rtNotes
 			// 
 			this.m_rtNotes.Location = new System.Drawing.Point(81, 168);
 			this.m_rtNotes.Name = "m_rtNotes";
 			this.m_rtNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.m_rtNotes.Size = new System.Drawing.Size(374, 139);
-			this.m_rtNotes.TabIndex = 18;
+			this.m_rtNotes.Size = new System.Drawing.Size(375, 139);
+			this.m_rtNotes.TabIndex = 19;
 			this.m_rtNotes.Text = "";
 			// 
 			// m_pbQuality
 			// 
 			this.m_pbQuality.Location = new System.Drawing.Point(81, 118);
 			this.m_pbQuality.Name = "m_pbQuality";
-			this.m_pbQuality.Size = new System.Drawing.Size(286, 16);
+			this.m_pbQuality.Size = new System.Drawing.Size(287, 16);
 			this.m_pbQuality.TabIndex = 13;
 			this.m_pbQuality.TabStop = false;
 			// 
@@ -691,6 +706,8 @@
 			// 
 			// m_tabProperties
 			// 
+			this.m_tabProperties.Controls.Add(this.m_btnTags);
+			this.m_tabProperties.Controls.Add(this.m_linkTagsInh);
 			this.m_tabProperties.Controls.Add(this.m_lblCustomData);
 			this.m_tabProperties.Controls.Add(this.m_btnCDDel);
 			this.m_tabProperties.Controls.Add(this.m_lvCustomData);
@@ -711,13 +728,31 @@
 			this.m_tabProperties.Text = "Properties";
 			this.m_tabProperties.UseVisualStyleBackColor = true;
 			// 
+			// m_btnTags
+			// 
+			this.m_btnTags.Location = new System.Drawing.Point(424, 90);
+			this.m_btnTags.Name = "m_btnTags";
+			this.m_btnTags.Size = new System.Drawing.Size(32, 23);
+			this.m_btnTags.TabIndex = 7;
+			this.m_btnTags.UseVisualStyleBackColor = true;
+			// 
+			// m_linkTagsInh
+			// 
+			this.m_linkTagsInh.Location = new System.Drawing.Point(199, 74);
+			this.m_linkTagsInh.Name = "m_linkTagsInh";
+			this.m_linkTagsInh.Size = new System.Drawing.Size(260, 14);
+			this.m_linkTagsInh.TabIndex = 5;
+			this.m_linkTagsInh.TabStop = true;
+			this.m_linkTagsInh.Text = "<DYN>";
+			this.m_linkTagsInh.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
 			// m_lblCustomData
 			// 
 			this.m_lblCustomData.AutoSize = true;
 			this.m_lblCustomData.Location = new System.Drawing.Point(6, 175);
 			this.m_lblCustomData.Name = "m_lblCustomData";
 			this.m_lblCustomData.Size = new System.Drawing.Size(63, 13);
-			this.m_lblCustomData.TabIndex = 8;
+			this.m_lblCustomData.TabIndex = 10;
 			this.m_lblCustomData.Text = "&Plugin data:";
 			// 
 			// m_btnCDDel
@@ -725,7 +760,7 @@
 			this.m_btnCDDel.Location = new System.Drawing.Point(381, 192);
 			this.m_btnCDDel.Name = "m_btnCDDel";
 			this.m_btnCDDel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCDDel.TabIndex = 10;
+			this.m_btnCDDel.TabIndex = 12;
 			this.m_btnCDDel.Text = "&Delete";
 			this.m_btnCDDel.UseVisualStyleBackColor = true;
 			this.m_btnCDDel.Click += new System.EventHandler(this.OnBtnCDDel);
@@ -739,7 +774,7 @@
 			this.m_lvCustomData.Name = "m_lvCustomData";
 			this.m_lvCustomData.ShowItemToolTips = true;
 			this.m_lvCustomData.Size = new System.Drawing.Size(366, 101);
-			this.m_lvCustomData.TabIndex = 9;
+			this.m_lvCustomData.TabIndex = 11;
 			this.m_lvCustomData.UseCompatibleStateImageBehavior = false;
 			this.m_lvCustomData.View = System.Windows.Forms.View.Details;
 			this.m_lvCustomData.SelectedIndexChanged += new System.EventHandler(this.OnCustomDataSelectedIndexChanged);
@@ -751,15 +786,15 @@
 			this.m_cmbOverrideUrl.MaxDropDownItems = 16;
 			this.m_cmbOverrideUrl.Name = "m_cmbOverrideUrl";
 			this.m_cmbOverrideUrl.Size = new System.Drawing.Size(447, 21);
-			this.m_cmbOverrideUrl.TabIndex = 7;
+			this.m_cmbOverrideUrl.TabIndex = 9;
 			this.m_cmbOverrideUrl.TextChanged += new System.EventHandler(this.OnUrlOverrideTextChanged);
 			// 
 			// m_tbTags
 			// 
 			this.m_tbTags.Location = new System.Drawing.Point(9, 92);
 			this.m_tbTags.Name = "m_tbTags";
-			this.m_tbTags.Size = new System.Drawing.Size(447, 20);
-			this.m_tbTags.TabIndex = 5;
+			this.m_tbTags.Size = new System.Drawing.Size(409, 20);
+			this.m_tbTags.TabIndex = 6;
 			// 
 			// m_lblTags
 			// 
@@ -796,7 +831,7 @@
 			this.m_tbUuid.Name = "m_tbUuid";
 			this.m_tbUuid.ReadOnly = true;
 			this.m_tbUuid.Size = new System.Drawing.Size(407, 20);
-			this.m_tbUuid.TabIndex = 12;
+			this.m_tbUuid.TabIndex = 14;
 			// 
 			// m_lblUuid
 			// 
@@ -804,7 +839,7 @@
 			this.m_lblUuid.Location = new System.Drawing.Point(6, 312);
 			this.m_lblUuid.Name = "m_lblUuid";
 			this.m_lblUuid.Size = new System.Drawing.Size(37, 13);
-			this.m_lblUuid.TabIndex = 11;
+			this.m_lblUuid.TabIndex = 13;
 			this.m_lblUuid.Text = "&UUID:";
 			// 
 			// m_lblOverrideUrl
@@ -813,7 +848,7 @@
 			this.m_lblOverrideUrl.Location = new System.Drawing.Point(6, 124);
 			this.m_lblOverrideUrl.Name = "m_lblOverrideUrl";
 			this.m_lblOverrideUrl.Size = new System.Drawing.Size(222, 13);
-			this.m_lblOverrideUrl.TabIndex = 6;
+			this.m_lblOverrideUrl.TabIndex = 8;
 			this.m_lblOverrideUrl.Text = "O&verride URL (e.g. to use a specific browser):";
 			// 
 			// m_cbCustomBackgroundColor
@@ -903,7 +938,7 @@
 			// 
 			// m_btnAutoTypeEditDefault
 			// 
-			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(382, 84);
+			this.m_btnAutoTypeEditDefault.Location = new System.Drawing.Point(382, 82);
 			this.m_btnAutoTypeEditDefault.Name = "m_btnAutoTypeEditDefault";
 			this.m_btnAutoTypeEditDefault.Size = new System.Drawing.Size(75, 23);
 			this.m_btnAutoTypeEditDefault.TabIndex = 4;
@@ -914,7 +949,7 @@
 			// m_rbAutoTypeOverride
 			// 
 			this.m_rbAutoTypeOverride.AutoSize = true;
-			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(9, 65);
+			this.m_rbAutoTypeOverride.Location = new System.Drawing.Point(9, 63);
 			this.m_rbAutoTypeOverride.Name = "m_rbAutoTypeOverride";
 			this.m_rbAutoTypeOverride.Size = new System.Drawing.Size(153, 17);
 			this.m_rbAutoTypeOverride.TabIndex = 2;
@@ -925,7 +960,7 @@
 			// m_rbAutoTypeSeqInherit
 			// 
 			this.m_rbAutoTypeSeqInherit.AutoSize = true;
-			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(9, 44);
+			this.m_rbAutoTypeSeqInherit.Location = new System.Drawing.Point(9, 42);
 			this.m_rbAutoTypeSeqInherit.Name = "m_rbAutoTypeSeqInherit";
 			this.m_rbAutoTypeSeqInherit.Size = new System.Drawing.Size(239, 17);
 			this.m_rbAutoTypeSeqInherit.TabIndex = 1;
@@ -956,7 +991,7 @@
 			// 
 			// m_tbDefaultAutoTypeSeq
 			// 
-			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(28, 86);
+			this.m_tbDefaultAutoTypeSeq.Location = new System.Drawing.Point(28, 84);
 			this.m_tbDefaultAutoTypeSeq.Name = "m_tbDefaultAutoTypeSeq";
 			this.m_tbDefaultAutoTypeSeq.Size = new System.Drawing.Size(348, 20);
 			this.m_tbDefaultAutoTypeSeq.TabIndex = 3;
@@ -1118,7 +1153,7 @@
 			// 
 			// m_btnTools
 			// 
-			this.m_btnTools.Location = new System.Drawing.Point(6, 453);
+			this.m_btnTools.Location = new System.Drawing.Point(10, 453);
 			this.m_btnTools.Name = "m_btnTools";
 			this.m_btnTools.Size = new System.Drawing.Size(80, 23);
 			this.m_btnTools.TabIndex = 4;
@@ -1132,7 +1167,7 @@
 			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_bannerImage.Location = new System.Drawing.Point(0, 0);
 			this.m_bannerImage.Name = "m_bannerImage";
-			this.m_bannerImage.Size = new System.Drawing.Size(487, 60);
+			this.m_bannerImage.Size = new System.Drawing.Size(489, 60);
 			this.m_bannerImage.TabIndex = 16;
 			this.m_bannerImage.TabStop = false;
 			// 
@@ -1335,7 +1370,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(487, 486);
+			this.ClientSize = new System.Drawing.Size(489, 486);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_bannerImage);
@@ -1498,5 +1533,8 @@
 		private System.Windows.Forms.Label m_lblCreatedData;
 		private System.Windows.Forms.Label m_lblCreated;
 		private System.Windows.Forms.Label m_lblPrev;
+		private System.Windows.Forms.LinkLabel m_linkTagsInh;
+		private System.Windows.Forms.Button m_btnTags;
+		private System.Windows.Forms.CheckBox m_cbQualityCheck;
 	}
 }

@@ -611,11 +611,7 @@ namespace KeePass.Forms
 						pe.Expires = (bParseSuccess && (pe.ExpiryTime != dtNoExpire));
 					}
 					else if(cfi.Type == CsvFieldType.Tags)
-					{
-						List<string> lTags = StrUtil.StringToTags(strField);
-						foreach(string strTag in lTags)
-							pe.AddTag(strTag);
-					}
+						StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strField));
 					else { Debug.Assert(false); }
 
 					if(bCreatePreview)

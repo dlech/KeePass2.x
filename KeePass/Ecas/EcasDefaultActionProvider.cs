@@ -513,6 +513,7 @@ namespace KeePass.Ecas
 				pg = (pgSub ?? (new PwGroup(true, true, KPRes.Group, PwIcon.Folder)));
 			}
 
+			strTag = StrUtil.NormalizeTag(strTag);
 			if(!string.IsNullOrEmpty(strTag))
 			{
 				pg = pg.CloneDeep();
@@ -523,7 +524,8 @@ namespace KeePass.Ecas
 					long n = (long)l.UCount;
 					for(long i = n - 1; i >= 0; --i)
 					{
-						if(!l.GetAt((uint)i).HasTag(strTag))
+						List<string> lTags = l.GetAt((uint)i).GetTagsInherited();
+						if(!lTags.Contains(strTag))
 							l.RemoveAt((uint)i);
 					}
 

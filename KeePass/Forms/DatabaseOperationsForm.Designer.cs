@@ -99,7 +99,7 @@
 			this.m_lblEntryHistoryWarning.Size = new System.Drawing.Size(367, 29);
 			this.m_lblEntryHistoryWarning.TabIndex = 5;
 			this.m_lblEntryHistoryWarning.Text = "Clicking the \'Delete\' button will remove all history entries older than the speci" +
-				"fied number of days. There\'s no way to get them back.";
+				"fied number of days. There is no way to get them back.";
 			// 
 			// m_btnHistoryEntriesDelete
 			// 
@@ -142,10 +142,10 @@
 			// 
 			this.m_lblDeleteHistoryEntries.Location = new System.Drawing.Point(44, 17);
 			this.m_lblDeleteHistoryEntries.Name = "m_lblDeleteHistoryEntries";
-			this.m_lblDeleteHistoryEntries.Size = new System.Drawing.Size(367, 32);
+			this.m_lblDeleteHistoryEntries.Size = new System.Drawing.Size(367, 31);
 			this.m_lblDeleteHistoryEntries.TabIndex = 1;
-			this.m_lblDeleteHistoryEntries.Text = "Old history entries (items shown on the \'History\' tab page in the entries dialog)" +
-				" can be deleted. This will decrease the database size a bit.";
+			this.m_lblDeleteHistoryEntries.Text = "History entries (shown on the \'History\' tab page of the entry dialog) can be dele" +
+				"ted. This will decrease the database size a bit.";
 			// 
 			// m_lblTrashIcon
 			// 

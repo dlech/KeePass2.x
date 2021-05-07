@@ -98,9 +98,11 @@
 			this.m_menuGroupMoveOneDown = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuGroupMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuGroupMoveSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuGroupMoveToPreviousParent = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuGroupMoveSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuGroupSort = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuGroupSortRec = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuGroupMoveSep1 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuGroupMoveSep2 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuGroupExpand = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuGroupCollapse = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuGroupDX = new System.Windows.Forms.ToolStripMenuItem();
@@ -155,6 +157,7 @@
 			this.m_menuEntryMoveToBottom = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryRearrangeSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEntryMoveToGroup = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEntryMoveToPreviousParent = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryDX = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryClipCopy = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryClipCopyPlain = new System.Windows.Forms.ToolStripMenuItem();
@@ -223,6 +226,8 @@
 			this.m_menuToolsDbDelUnusedIcons = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsDbSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsDbXmlRep = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsAdv = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsCreateKeyFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsTriggers = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
@@ -284,8 +289,6 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_menuToolsAdv = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuToolsCreateKeyFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -815,9 +818,11 @@
             this.m_menuGroupMoveOneDown,
             this.m_menuGroupMoveToBottom,
             this.m_menuGroupMoveSep0,
+            this.m_menuGroupMoveToPreviousParent,
+            this.m_menuGroupMoveSep1,
             this.m_menuGroupSort,
             this.m_menuGroupSortRec,
-            this.m_menuGroupMoveSep1,
+            this.m_menuGroupMoveSep2,
             this.m_menuGroupExpand,
             this.m_menuGroupCollapse});
 			this.m_menuGroupRearrange.Name = "m_menuGroupRearrange";
@@ -861,6 +866,19 @@
 			this.m_menuGroupMoveSep0.Name = "m_menuGroupMoveSep0";
 			this.m_menuGroupMoveSep0.Size = new System.Drawing.Size(196, 6);
 			// 
+			// m_menuGroupMoveToPreviousParent
+			// 
+			this.m_menuGroupMoveToPreviousParent.Image = global::KeePass.Properties.Resources.B16x16_Undo;
+			this.m_menuGroupMoveToPreviousParent.Name = "m_menuGroupMoveToPreviousParent";
+			this.m_menuGroupMoveToPreviousParent.Size = new System.Drawing.Size(199, 22);
+			this.m_menuGroupMoveToPreviousParent.Text = "<>";
+			this.m_menuGroupMoveToPreviousParent.Click += new System.EventHandler(this.OnGroupMoveToPreviousParent);
+			// 
+			// m_menuGroupMoveSep1
+			// 
+			this.m_menuGroupMoveSep1.Name = "m_menuGroupMoveSep1";
+			this.m_menuGroupMoveSep1.Size = new System.Drawing.Size(196, 6);
+			// 
 			// m_menuGroupSort
 			// 
 			this.m_menuGroupSort.Image = global::KeePass.Properties.Resources.B16x16_KaboodleLoop;
@@ -877,10 +895,10 @@
 			this.m_menuGroupSortRec.Text = "Sort &Recursively";
 			this.m_menuGroupSortRec.Click += new System.EventHandler(this.OnGroupSortRec);
 			// 
-			// m_menuGroupMoveSep1
+			// m_menuGroupMoveSep2
 			// 
-			this.m_menuGroupMoveSep1.Name = "m_menuGroupMoveSep1";
-			this.m_menuGroupMoveSep1.Size = new System.Drawing.Size(196, 6);
+			this.m_menuGroupMoveSep2.Name = "m_menuGroupMoveSep2";
+			this.m_menuGroupMoveSep2.Size = new System.Drawing.Size(196, 6);
 			// 
 			// m_menuGroupExpand
 			// 
@@ -1267,7 +1285,8 @@
             this.m_menuEntryMoveOneDown,
             this.m_menuEntryMoveToBottom,
             this.m_menuEntryRearrangeSep0,
-            this.m_menuEntryMoveToGroup});
+            this.m_menuEntryMoveToGroup,
+            this.m_menuEntryMoveToPreviousParent});
 			this.m_menuEntryRearrange.Name = "m_menuEntryRearrange";
 			this.m_menuEntryRearrange.Size = new System.Drawing.Size(207, 22);
 			this.m_menuEntryRearrange.Text = "&Rearrange";
@@ -1315,6 +1334,14 @@
 			this.m_menuEntryMoveToGroup.Size = new System.Drawing.Size(193, 22);
 			this.m_menuEntryMoveToGroup.Text = "Move to &Group";
 			this.m_menuEntryMoveToGroup.DropDownOpening += new System.EventHandler(this.OnEntryMoveToGroupOpening);
+			// 
+			// m_menuEntryMoveToPreviousParent
+			// 
+			this.m_menuEntryMoveToPreviousParent.Image = global::KeePass.Properties.Resources.B16x16_Undo;
+			this.m_menuEntryMoveToPreviousParent.Name = "m_menuEntryMoveToPreviousParent";
+			this.m_menuEntryMoveToPreviousParent.Size = new System.Drawing.Size(193, 22);
+			this.m_menuEntryMoveToPreviousParent.Text = "<>";
+			this.m_menuEntryMoveToPreviousParent.Click += new System.EventHandler(this.OnEntryMoveToPreviousParent);
 			// 
 			// m_menuEntryDX
 			// 
@@ -1868,6 +1895,22 @@
 			this.m_menuToolsDbXmlRep.Size = new System.Drawing.Size(226, 22);
 			this.m_menuToolsDbXmlRep.Text = "&XML Replace...";
 			this.m_menuToolsDbXmlRep.Click += new System.EventHandler(this.OnToolsXmlRep);
+			// 
+			// m_menuToolsAdv
+			// 
+			this.m_menuToolsAdv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_menuToolsCreateKeyFile});
+			this.m_menuToolsAdv.Name = "m_menuToolsAdv";
+			this.m_menuToolsAdv.Size = new System.Drawing.Size(204, 22);
+			this.m_menuToolsAdv.Text = "&Advanced Tools";
+			// 
+			// m_menuToolsCreateKeyFile
+			// 
+			this.m_menuToolsCreateKeyFile.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
+			this.m_menuToolsCreateKeyFile.Name = "m_menuToolsCreateKeyFile";
+			this.m_menuToolsCreateKeyFile.Size = new System.Drawing.Size(160, 22);
+			this.m_menuToolsCreateKeyFile.Text = "&Create Key File...";
+			this.m_menuToolsCreateKeyFile.Click += new System.EventHandler(this.OnToolsCreateKeyFile);
 			// 
 			// m_menuToolsSep1
 			// 
@@ -2440,22 +2483,6 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
-			// m_menuToolsAdv
-			// 
-			this.m_menuToolsAdv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuToolsCreateKeyFile});
-			this.m_menuToolsAdv.Name = "m_menuToolsAdv";
-			this.m_menuToolsAdv.Size = new System.Drawing.Size(204, 22);
-			this.m_menuToolsAdv.Text = "&Advanced Tools";
-			// 
-			// m_menuToolsCreateKeyFile
-			// 
-			this.m_menuToolsCreateKeyFile.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
-			this.m_menuToolsCreateKeyFile.Name = "m_menuToolsCreateKeyFile";
-			this.m_menuToolsCreateKeyFile.Size = new System.Drawing.Size(160, 22);
-			this.m_menuToolsCreateKeyFile.Text = "&Create Key File...";
-			this.m_menuToolsCreateKeyFile.Click += new System.EventHandler(this.OnToolsCreateKeyFile);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2756,6 +2783,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuFilePrintKeyFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsAdv;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsCreateKeyFile;
+		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep2;
+		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToPreviousParent;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEntryMoveToPreviousParent;
 	}
 }
 

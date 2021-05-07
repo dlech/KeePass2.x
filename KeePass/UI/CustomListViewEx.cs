@@ -27,6 +27,7 @@ using System.Windows.Forms;
 
 using KeePass.Native;
 
+using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
@@ -111,6 +112,7 @@ namespace KeePass.UI
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+			if(HandleRenameKeyEvent(e, true)) return;
 
 			try { if(SkipGroupHeaderIfRequired(e)) return; }
 			catch(Exception) { Debug.Assert(false); }
@@ -121,6 +123,7 @@ namespace KeePass.UI
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+			if(HandleRenameKeyEvent(e, false)) return;
 
 			base.OnKeyUp(e);
 		}
@@ -202,6 +205,26 @@ namespace KeePass.UI
 			}
 
 			return null;
+		}
+
+		private bool HandleRenameKeyEvent(KeyEventArgs e, bool bDown)
+		{
+			try
+			{
+				if((e.KeyData == Keys.F2) && this.LabelEdit)
+				{
+					ListView.SelectedListViewItemCollection lvsic = this.SelectedItems;
+					if(lvsic.Count >= 1)
+					{
+						UIUtil.SetHandled(e, true);
+						if(bDown) lvsic[0].BeginEdit();
+						return true;
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 
 		/* protected override void WndProc(ref Message m)

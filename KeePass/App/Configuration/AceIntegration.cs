@@ -365,6 +365,8 @@ namespace KeePass.App.Configuration
 			m_lBuiltInOverrides.Clear();
 
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(true, "ssh",
+				"cmd://SSH.exe -l \"{USERNAME}\" {BASE:RMVSCM}", 0x1000000));
+			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "ssh",
 				"cmd://PuTTY.exe -ssh {USERNAME}@{BASE:RMVSCM}", 0x1));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "http",
 				"cmd://{INTERNETEXPLORER} \"{BASE}\"", 0x2));
@@ -412,7 +414,7 @@ namespace KeePass.App.Configuration
 				"cmd://\"{APPDIR}\\KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x1000));
 			m_lBuiltInOverrides.Add(new AceUrlSchemeOverride(false, "kdbx",
 				"cmd://mono \"{APPDIR}/KeePass.exe\" \"{BASE:RMVSCM}\" -pw-enc:\"{PASSWORD_ENC}\"", 0x2000));
-			// Free: 0x1000000
+			// Free: 0x2000000
 
 #if DEBUG
 			ulong u = 0;

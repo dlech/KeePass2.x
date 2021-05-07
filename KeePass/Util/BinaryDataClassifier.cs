@@ -42,66 +42,65 @@ namespace KeePass.Util
 
 	public static class BinaryDataClassifier
 	{
-		private static readonly string[] m_vTextExtensions = new string[] {
-			"txt", "csv", "c", "cpp", "h", "hpp", "css", "js", "bat",
-			"ps1"
+		private static readonly string[] g_vTextExts = new string[] {
+			".asc", ".bat", ".c", ".cpp", ".css", ".csv", ".h", ".hpp",
+			".js", ".ps1", ".tab", ".tsv", ".txt"
 		};
 
-		private static readonly string[] m_vRichTextExtensions = new string[] {
-			"rtf"
+		private static readonly string[] g_vRichTextExts = new string[] {
+			".rtf"
 		};
 
-		private static readonly string[] m_vImageExtensions = new string[] {
-			"bmp", "emf", "exif", "gif", "ico", "jpeg", "jpe", "jpg",
-			"png", "tiff", "tif", "wmf"
+		private static readonly string[] g_vImageExts = new string[] {
+			".bmp", ".emf", ".exif", ".gif", ".ico", ".jpe", ".jpeg",
+			".jpg", ".png", ".tif", ".tiff", ".wmf"
 		};
 
-		private static readonly string[] m_vWebExtensions = new string[] {
-			"htm", "html"
+		private static readonly string[] g_vWebExts = new string[] {
+			".htm", ".html"
 
 			// The following types can be displayed by Internet Explorer,
 			// but not by the WebBrowser control
-			// "mht", "xml", "xslt"
+			// ".mht", ".xml", ".xsl", ".xslt"
 		};
+
+		private static bool UrlHasExt(string strUrl, string[] vExts)
+		{
+			Debug.Assert(strUrl.Trim().ToLowerInvariant() == strUrl);
+
+			foreach(string strExt in vExts)
+			{
+				Debug.Assert(strExt.StartsWith("."));
+				Debug.Assert(strExt.Trim().ToLower() == strExt);
+
+				if(strUrl.EndsWith(strExt, StringComparison.Ordinal))
+					return true;
+			}
+
+			return false;
+		}
 
 		public static BinaryDataClass ClassifyUrl(string strUrl)
 		{
-			Debug.Assert(strUrl != null);
-			if(strUrl == null) throw new ArgumentNullException("strUrl");
+			if(strUrl == null) { Debug.Assert(false); throw new ArgumentNullException("strUrl"); }
 
-			string str = strUrl.Trim().ToLower();
+			string str = strUrl.Trim().ToLowerInvariant();
 
-			foreach(string strTextExt in m_vTextExtensions)
-			{
-				if(str.EndsWith("." + strTextExt))
-					return BinaryDataClass.Text;
-			}
-
-			foreach(string strRichTextExt in m_vRichTextExtensions)
-			{
-				if(str.EndsWith("." + strRichTextExt))
-					return BinaryDataClass.RichText;
-			}
-
-			foreach(string strImageExt in m_vImageExtensions)
-			{
-				if(str.EndsWith("." + strImageExt))
-					return BinaryDataClass.Image;
-			}
-
-			foreach(string strWebExt in m_vWebExtensions)
-			{
-				if(str.EndsWith("." + strWebExt))
-					return BinaryDataClass.WebDocument;
-			}
+			if(UrlHasExt(str, g_vTextExts))
+				return BinaryDataClass.Text;
+			if(UrlHasExt(str, g_vRichTextExts))
+				return BinaryDataClass.RichText;
+			if(UrlHasExt(str, g_vImageExts))
+				return BinaryDataClass.Image;
+			if(UrlHasExt(str, g_vWebExts))
+				return BinaryDataClass.WebDocument;
 
 			return BinaryDataClass.Unknown;
 		}
 
 		public static BinaryDataClass ClassifyData(byte[] pbData)
 		{
-			Debug.Assert(pbData != null);
-			if(pbData == null) throw new ArgumentNullException("pbData");
+			if(pbData == null) { Debug.Assert(false); throw new ArgumentNullException("pbData"); }
 
 			try
 			{
@@ -143,8 +142,7 @@ namespace KeePass.Util
 		public static StrEncodingInfo GetStringEncoding(byte[] pbData,
 			out uint uStartOffset)
 		{
-			Debug.Assert(pbData != null);
-			if(pbData == null) throw new ArgumentNullException("pbData");
+			if(pbData == null) { Debug.Assert(false); throw new ArgumentNullException("pbData"); }
 
 			uStartOffset = 0;
 

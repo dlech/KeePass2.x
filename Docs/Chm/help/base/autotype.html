@@ -234,15 +234,14 @@ open (i.e. the window which will receive the simulated keypresses).</p>
 (i.e. hold the <kbd><kbd>Ctrl</kbd></kbd> and <kbd><kbd>Alt</kbd></kbd> keys,
 press <kbd><kbd>A</kbd></kbd> and release all keys).
 You can change this hot key in the options dialog
-(main menu - 'Tools' - 'Options', tab
+(main menu 'Tools' &rarr; 'Options' &rarr; tab
 
 
 
 'Integration'):
 
-here, click into the
-textbox below &quot;Global Auto-Type Hot Key Combination&quot; and press the
-hot key that you wish to use. If the hot key is usable, it will appear in the textbox.</p>
+here, click into the global auto-type hot key textbox and press the hot key
+that you wish to use. If the hot key is usable, it will appear in the textbox.</p>
 
 <p>When you press the hot key, KeePass looks at the title of the currently opened window and
 searches the currently opened database for usable entries. If KeePass finds multiple
@@ -487,7 +486,7 @@ appending a number within the code. For example, <code>{TAB 5}</code>
 presses the <kbd><kbd>Tab</kbd></kbd> key 5 times.
 
 
-<p>Examples:</p>
+<p><b>Examples:</b></p>
 
 <p><code>{TITLE}{TAB}{USERNAME}{TAB}{PASSWORD}{ENTER}</code><br />
 Types the entry's title, a <kbd><kbd>Tab</kbd></kbd>, the user name,
@@ -501,26 +500,22 @@ presses <kbd><kbd>Enter</kbd></kbd>.</p>
 <p><code>{USERNAME}{TAB}^v{ENTER}</code><br />
 Types the user name, presses <kbd><kbd>Tab</kbd></kbd>, presses
 <kbd><kbd>Ctrl</kbd>+<kbd>V</kbd></kbd> (which pastes data from the Windows
-clipboard in most applications), and presses <kbd><kbd>Enter</kbd></kbd>.
-<br /><br />
-</p>
+clipboard in most applications), and presses <kbd><kbd>Enter</kbd></kbd>.</p>
 
 <p><b>Toggling Checkboxes:</b><br />
-Sometimes you find checkboxes on websites (<i>&quot;Stay logged in on this computer&quot;</i> for example).
-You can toggle these checkboxes by sending a space character (<code>' '</code>)
-when auto-typing. For example:<br />
+A checkbox (e.g. &quot;Stay logged in on this computer&quot;) can
+usually be toggled by sending a space character (<code>' '</code>).
+Example:<br />
 <code>{USERNAME}{TAB}{PASSWORD}{TAB} {TAB}{ENTER}</code><br />
-If there is a webform with a user name field, password field and a checkbox, this sequence would
-enter the user name, the password and toggle the checkbox that follows the password
-control.<br /><br />
-</p>
+If there is a form with a user name field, a password field and a checkbox,
+this sequence would enter the user name, the password and toggle the checkbox
+that follows the password control.</p>
 
 <p><b>Pressing Non-Default Buttons:</b><br />
 Pressing non-default buttons works the same as toggling checkboxes: send
 a space character (<code>' '</code>).
 Note that this should only be used for non-default buttons; for
-default buttons, <code>{ENTER}</code> should be sent instead.<br /><br />
-</p>
+default buttons, <code>{ENTER}</code> should be sent instead.</p>
 
 <p><b>Higher ANSI Characters:</b><br />
 The auto-type function supports sending of higher ANSI characters in range 126-255. This

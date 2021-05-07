@@ -95,7 +95,7 @@ namespace KeePassLib.Serialization
 			byte[] pbCipherKey = null;
 			byte[] pbHmacKey64 = null;
 
-			m_pbsBinaries.Clear();
+			m_pbsBinaries = new ProtectedBinarySet(true);
 			m_pbsBinaries.AddFrom(pgRoot);
 
 			List<Stream> lStreams = new List<Stream>();
@@ -518,6 +518,16 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemEnableSearching, StrUtil.BoolToStringEx(pg.EnableSearching), false);
 			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
 
+			if(m_uFileVersion >= FileVersion32_4_1)
+			{
+				if(!pg.PreviousParentGroup.Equals(PwUuid.Zero))
+					WriteObject(ElemPreviousParentGroup, pg.PreviousParentGroup);
+
+				List<string> lTags = pg.Tags;
+				if(lTags.Count != 0)
+					WriteObject(ElemTags, StrUtil.TagsToString(lTags, false), true);
+			}
+
 			if(pg.CustomData.Count > 0)
 				WriteList(ElemCustomData, pg.CustomData);
 		}
@@ -542,7 +552,15 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
 			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true), false);
 			WriteObject(ElemOverrideUrl, pe.OverrideUrl, true);
+
+			if((m_uFileVersion >= FileVersion32_4_1) && !pe.QualityCheck)
+				WriteObject(ElemQualityCheck, false);
+
 			WriteObject(ElemTags, StrUtil.TagsToString(pe.Tags, false), true);
+
+			if((m_uFileVersion >= FileVersion32_4_1) &&
+				!pe.PreviousParentGroup.Equals(PwUuid.Zero))
+				WriteObject(ElemPreviousParentGroup, pe.PreviousParentGroup);
 
 			WriteList(ElemTimes, pe);
 
@@ -593,7 +611,7 @@ namespace KeePassLib.Serialization
 
 			foreach(AutoTypeAssociation a in cfgAutoType.Associations)
 				WriteObject(ElemAutoTypeItem, ElemWindow, ElemKeystrokeSequence,
-					new KeyValuePair<string, string>(a.WindowName, a.Sequence));
+					new KeyValuePair<string, string>(a.WindowName, a.Sequence), null);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -613,7 +631,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUsageCount, times.UsageCount);
 			WriteObject(ElemLocationChanged, times.LocationChanged);
 
-			m_xmlWriter.WriteEndElement(); // Name
+			m_xmlWriter.WriteEndElement();
 		}
 
 		private void WriteList(string name, PwObjectList<PwEntry> value, bool bIsHistory)
@@ -667,7 +685,13 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(name);
 
 			foreach(KeyValuePair<string, string> kvp in value)
-				WriteObject(ElemStringDictExItem, ElemKey, ElemValue, kvp);
+			{
+				DateTime? odtLastMod = null;
+				if(m_uFileVersion >= FileVersion32_4_1)
+					odtLastMod = value.GetLastModificationTime(kvp.Key);
+
+				WriteObject(ElemStringDictExItem, ElemKey, ElemValue, kvp, odtLastMod);
+			}
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -678,14 +702,22 @@ namespace KeePassLib.Serialization
 
 			m_xmlWriter.WriteStartElement(ElemCustomIcons);
 
-			foreach(PwCustomIcon pwci in m_pwDatabase.CustomIcons)
+			foreach(PwCustomIcon ci in m_pwDatabase.CustomIcons)
 			{
 				m_xmlWriter.WriteStartElement(ElemCustomIconItem);
 
-				WriteObject(ElemCustomIconItemID, pwci.Uuid);
+				WriteObject(ElemCustomIconItemID, ci.Uuid);
 
-				string strData = Convert.ToBase64String(pwci.ImageDataPng);
+				string strData = Convert.ToBase64String(ci.ImageDataPng);
 				WriteObject(ElemCustomIconItemData, strData, false);
+
+				if(m_uFileVersion >= FileVersion32_4_1)
+				{
+					if(ci.Name.Length != 0)
+						WriteObject(ElemName, ci.Name, true);
+					if(ci.LastModificationTime.HasValue)
+						WriteObject(ElemLastModTime, ci.LastModificationTime.Value);
+				}
 
 				m_xmlWriter.WriteEndElement();
 			}
@@ -786,17 +818,21 @@ namespace KeePassLib.Serialization
 			else WriteObject(name, TimeUtil.SerializeUtc(value), false);
 		}
 
-		private void WriteObject(string name, string strKeyName,
-			string strValueName, KeyValuePair<string, string> kvp)
+		private void WriteObject(string name, string strKeyName, string strValueName,
+			KeyValuePair<string, string> kvp, DateTime? odtLastMod)
 		{
 			m_xmlWriter.WriteStartElement(name);
 
 			m_xmlWriter.WriteStartElement(strKeyName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Key));
 			m_xmlWriter.WriteEndElement();
+
 			m_xmlWriter.WriteStartElement(strValueName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Value));
 			m_xmlWriter.WriteEndElement();
+
+			if(odtLastMod.HasValue)
+				WriteObject(ElemLastModTime, odtLastMod.Value);
 
 			m_xmlWriter.WriteEndElement();
 		}

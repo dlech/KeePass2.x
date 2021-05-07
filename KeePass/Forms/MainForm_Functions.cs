@@ -657,6 +657,9 @@ namespace KeePass.Forms
 				((int)pgParent.Groups.UCount - 1))), m_menuGroupMoveOneDown,
 				m_menuGroupMoveToBottom);
 
+			if(bMenuVisible)
+				UpdateMoveToPreviousParentGroupUI(pg, null, m_menuGroupMoveToPreviousParent);
+
 			UIUtil.SetEnabledFast(((pg != null) && (pg.Groups.UCount > 1)), m_menuGroupSort);
 			UIUtil.SetEnabledFast((uSubGroups > 1), m_menuGroupSortRec);
 
@@ -801,6 +804,12 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast(((m_pListSorter.Column < 0) && (s.EntriesSelected > 0)),
 				m_menuEntryMoveToTop, m_menuEntryMoveOneUp, m_menuEntryMoveOneDown,
 				m_menuEntryMoveToBottom);
+
+			if(bMenuVisible)
+			{
+				PwEntry[] v = GetSelectedEntries();
+				UpdateMoveToPreviousParentGroupUI(null, v, m_menuEntryMoveToPreviousParent);
+			}
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryDX);
 			// 'Paste Entry' is updated in the menu opening handler
@@ -1653,7 +1662,7 @@ namespace KeePass.Forms
 			EvAppendEntryField(rb, strItemSeparator, KPRes.UrlOverride,
 				pe.OverrideUrl, pe);
 			EvAppendEntryField(rb, strItemSeparator, KPRes.Tags,
-				StrUtil.TagsToString(pe.Tags, true), null);
+				TagUtil.TagsInheritedToString(pe.Tags, pe.ParentGroup), null);
 
 			string strNotes = (mw.IsColumnHidden(AceColumnType.Notes) ?
 				PwDefs.HiddenPassword : pe.Strings.ReadSafe(PwDefs.NotesField));
@@ -1745,7 +1754,7 @@ namespace KeePass.Forms
 		private void PerformDefaultAction(object sender, EventArgs e, PwEntry pe,
 			int colID)
 		{
-			Debug.Assert(pe != null); if(pe == null) return;
+			if(pe == null) { Debug.Assert(false); return; }
 
 			if(this.DefaultEntryAction != null)
 			{
@@ -1822,8 +1831,8 @@ namespace KeePass.Forms
 						true, this, pe, null);
 					break;
 				case AceColumnType.Tags:
-					bCnt = ClipboardUtil.CopyAndMinimize(StrUtil.TagsToString(pe.Tags, true),
-						true, this, pe, null);
+					bCnt = ClipboardUtil.CopyAndMinimize(TagUtil.TagsInheritedToString(
+						pe.Tags, pe.ParentGroup), true, this, pe, null);
 					break;
 				case AceColumnType.ExpiryTimeDateOnly:
 					if(pe.Expires)
@@ -3230,6 +3239,7 @@ namespace KeePass.Forms
 			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveOneDown);
 			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveOneUp);
 			m_milMain.CreateCopy(tsicECMove, null, false, m_menuEntryMoveToTop);
+			m_milMain.CreateCopy(tsicECMove, null, true, m_menuEntryMoveToPreviousParent);
 
 			m_ctxPwList.ResumeLayout(true);
 			m_ctxGroupList.ResumeLayout(true);
@@ -4550,7 +4560,7 @@ namespace KeePass.Forms
 			bool bShiftPressed = ((Control.ModifierKeys & Keys.Shift) != Keys.None);
 
 			bool bAtLeastOnePermanent = false;
-			if(pd.RecycleBinEnabled == false) bAtLeastOnePermanent = true;
+			if(!pd.RecycleBinEnabled) bAtLeastOnePermanent = true;
 			else if(bShiftPressed) bAtLeastOnePermanent = true;
 			else if(pgRecycleBin == null) { } // Not permanent
 			else
@@ -4637,10 +4647,10 @@ namespace KeePass.Forms
 				PwGroup pgParent = pe.ParentGroup;
 				if(pgParent == null) continue; // Can't remove
 
-				pgParent.Entries.Remove(pe);
+				if(!pgParent.Entries.Remove(pe)) { Debug.Assert(false); continue; }
 
 				bool bPermanent = false;
-				if(pd.RecycleBinEnabled == false) bPermanent = true;
+				if(!pd.RecycleBinEnabled) bPermanent = true;
 				else if(bShiftPressed) bPermanent = true;
 				else if(pgRecycleBin == null) { } // Recycle
 				else if(pgParent == pgRecycleBin) bPermanent = true;
@@ -4656,6 +4666,7 @@ namespace KeePass.Forms
 					EnsureRecycleBin(ref pgRecycleBin, pd, ref bUpdateGroupList);
 
 					pgRecycleBin.AddEntry(pe, true, true);
+					pe.PreviousParentGroup = pgParent.Uuid;
 					pe.Touch(false);
 				}
 			}
@@ -4677,7 +4688,7 @@ namespace KeePass.Forms
 			bool bShiftPressed = ((Control.ModifierKeys & Keys.Shift) != Keys.None);
 
 			bool bPermanent = false;
-			if(pd.RecycleBinEnabled == false) bPermanent = true;
+			if(!pd.RecycleBinEnabled) bPermanent = true;
 			else if(bShiftPressed) bPermanent = true;
 			else if(pgRecycleBin == null) { }
 			else if(pg == pgRecycleBin) bPermanent = true;
@@ -4744,7 +4755,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			pgParent.Groups.Remove(pg);
+			if(!pgParent.Groups.Remove(pg)) { Debug.Assert(false); return; }
 
 			if(bPermanent)
 			{
@@ -4758,7 +4769,11 @@ namespace KeePass.Forms
 				bool bDummy = false;
 				EnsureRecycleBin(ref pgRecycleBin, pd, ref bDummy);
 
-				try { pgRecycleBin.AddGroup(pg, true, true); }
+				try
+				{
+					pgRecycleBin.AddGroup(pg, true, true);
+					pg.PreviousParentGroup = pgParent.Uuid;
+				}
 				catch(Exception ex)
 				{
 					if(pgRecycleBin.Groups.IndexOf(pg) < 0)
@@ -4814,7 +4829,7 @@ namespace KeePass.Forms
 		// {
 		// if(pg == null) { Debug.Assert(false); return string.Empty; }
 		// if(pg.Entries.UCount == 0) return string.Empty;
-		// if(GroupOnlyContainsTans(pg, true) == false) return string.Empty;
+		// if(!GroupOnlyContainsTans(pg, true)) return string.Empty;
 		// DateTime dtNow = DateTime.UtcNow;
 		// uint uValid = 0;
 		// foreach(PwEntry pe in pg.Entries)
@@ -5149,7 +5164,7 @@ namespace KeePass.Forms
 					break;
 				case AceColumnType.OverrideUrl: str = pe.OverrideUrl; break;
 				case AceColumnType.Tags:
-					str = StrUtil.TagsToString(pe.Tags, true);
+					str = TagUtil.TagsInheritedToString(pe.Tags, pe.ParentGroup);
 					break;
 				case AceColumnType.ExpiryTimeDateOnly:
 					if(pe.Expires) str = TimeUtil.ToDisplayStringDateOnly(pe.ExpiryTime);
@@ -5478,12 +5493,12 @@ namespace KeePass.Forms
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return; // No assert (call from trigger)
 
-			PwObjectList<PwEntry> vEntries = new PwObjectList<PwEntry>();
-			pd.RootGroup.FindEntriesByTag(strTag, vEntries, true);
+			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+			pd.RootGroup.FindEntriesByTag(strTag, l, true);
 
 			PwGroup pgResults = new PwGroup(true, true);
 			pgResults.IsVirtual = true;
-			foreach(PwEntry pe in vEntries) pgResults.AddEntry(pe, false, false);
+			foreach(PwEntry pe in l) pgResults.AddEntry(pe, false, false);
 
 			ShowSearchResults(pgResults, null, pd.RootGroup, bFocusEntryList);
 		}
@@ -5515,27 +5530,29 @@ namespace KeePass.Forms
 			}
 
 			bool bReqEntrySel = ((tmm == TagsMenuMode.Add) || (tmm == TagsMenuMode.Remove));
-			IDictionary<string, uint> dAllTags = pd.RootGroup.BuildEntryTagsDict(true);
 			PwGroup pgSel = GetSelectedEntriesAsGroup();
 			uint uSelCount = pgSel.Entries.UCount;
 			bool bForceDisabled = (bReqEntrySel && (uSelCount == 0));
 
+			IDictionary<string, uint> dAllTags = pd.RootGroup.BuildEntryTagsDict(false);
+			List<string> lAllTags = new List<string>(dAllTags.Keys);
+			lAllTags.Sort(StrUtil.CompareNaturally);
+
 			Dictionary<string, bool> dEnabledTags = null;
 			if((tmm == TagsMenuMode.Add) && (uSelCount > 0))
 			{
-				dEnabledTags = new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
+				dEnabledTags = new Dictionary<string, bool>();
 				List<string> lIntersect = pgSel.Entries.GetAt(0).Tags;
 				for(uint u = 1; u < uSelCount; ++u)
 					lIntersect = new List<string>(MemUtil.Intersect(lIntersect,
-						pgSel.Entries.GetAt(u).Tags, StrUtil.CaseIgnoreComparer));
-				foreach(string strTag in MemUtil.Except(dAllTags.Keys, lIntersect,
-					StrUtil.CaseIgnoreComparer))
+						pgSel.Entries.GetAt(u).Tags, null));
+				foreach(string strTag in MemUtil.Except(lAllTags, lIntersect, null))
 					dEnabledTags[strTag] = true;
 			}
 			else if(tmm == TagsMenuMode.Remove)
 			{
-				dEnabledTags = new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
-				List<string> lSelectedTags = pgSel.BuildEntryTagsList(false);
+				dEnabledTags = new Dictionary<string, bool>();
+				List<string> lSelectedTags = pgSel.BuildEntryTagsList(false, false);
 				foreach(string strTag in lSelectedTags)
 					dEnabledTags[strTag] = true;
 			}
@@ -5544,17 +5561,19 @@ namespace KeePass.Forms
 			Image imgIcon = Properties.Resources.B16x16_KNotes;
 
 			List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
-			foreach(KeyValuePair<string, uint> kvp in dAllTags)
+			foreach(string strTag in lAllTags)
 			{
-				string strTag = kvp.Key;
-
 				string strText = StrUtil.EncodeMenuText(strTag);
 				strText = StrUtil.AddAccelerator(strText, lAvailKeys);
 				if(bPrefixTag) strText = strPrefix + strText;
 
 				ToolStripMenuItem tsmi = dm.AddItem(strText, imgIcon, strTag);
 				if(tmm == TagsMenuMode.All)
-					tsmi.ShortcutKeyDisplayString = "(" + kvp.Value.ToString() + ")";
+				{
+					uint uCount;
+					dAllTags.TryGetValue(strTag, out uCount);
+					tsmi.ShortcutKeyDisplayString = "(" + uCount.ToString() + ")";
+				}
 
 				if(bForceDisabled) tsmi.Enabled = false;
 				else if(dEnabledTags != null)
@@ -5563,7 +5582,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			if(dAllTags.Count == 0)
+			if(lAllTags.Count == 0)
 			{
 				ToolStripMenuItem tsmi = dm.AddItem(strNoTags, null, string.Empty);
 				tsmi.Enabled = false;
@@ -5586,17 +5605,12 @@ namespace KeePass.Forms
 				UIUtil.DestroyForm(dlg);
 			}
 
-			if(!string.IsNullOrEmpty(strTag))
-				AddOrRemoveTagsToFromSelectedEntries(strTag, true);
+			AddOrRemoveTagsToFromSelectedEntries(strTag, true);
 		}
 
 		private void OnRemoveEntryTag(object sender, DynamicMenuEventArgs e)
 		{
-			string strTag = (e.Tag as string);
-			if(strTag == null) { Debug.Assert(false); return; }
-			if(strTag.Length == 0) return;
-
-			AddOrRemoveTagsToFromSelectedEntries(strTag, false);
+			AddOrRemoveTagsToFromSelectedEntries((e.Tag as string), false);
 		}
 
 		private void AddOrRemoveTagsToFromSelectedEntries(string strTags, bool bAdd)
@@ -5608,40 +5622,32 @@ namespace KeePass.Forms
 			PwEntry[] vEntries = GetSelectedEntries();
 			if((vEntries == null) || (vEntries.Length == 0)) return;
 
-			List<string> vToProcess = StrUtil.StringToTags(strTags);
-			List<PwEntry> vModified = new List<PwEntry>();
+			List<string> lToProcess = StrUtil.StringToTags(strTags);
+			bool bModified = false;
 
-			foreach(string strTag in vToProcess)
+			foreach(PwEntry pe in vEntries)
 			{
-				foreach(PwEntry pe in vEntries)
+				List<string> l = pe.Tags;
+				int cBefore = l.Count;
+
+				if(bAdd)
+					l = new List<string>(MemUtil.Union<string>(l, lToProcess, null));
+				else
+					l = new List<string>(MemUtil.Except<string>(l, lToProcess, null));
+
+				if(l.Count != cBefore)
 				{
-					if(bAdd && !pe.HasTag(strTag)) // Add tag
-					{
-						if(vModified.IndexOf(pe) < 0) // Backup entries only once
-						{
-							pe.CreateBackup(pd);
-							vModified.Add(pe);
-						}
+					pe.CreateBackup(pd);
 
-						if(!pe.AddTag(strTag)) { Debug.Assert(false); }
-					}
-					else if(!bAdd && pe.HasTag(strTag)) // Remove tag
-					{
-						if(vModified.IndexOf(pe) < 0) // Backup entries only once
-						{
-							pe.CreateBackup(pd);
-							vModified.Add(pe);
-						}
+					pe.Tags = l;
+					pe.Touch(true, false);
 
-						if(!pe.RemoveTag(strTag)) { Debug.Assert(false); }
-					}
+					bModified = true;
 				}
 			}
 
-			foreach(PwEntry pe in vModified) { pe.Touch(true, false); }
-
-			RefreshEntriesList();
-			UpdateUIState(vModified.Count > 0);
+			if(bModified) RefreshEntriesList();
+			UpdateUIState(bModified);
 		}
 
 		private static bool? m_bCachedSelfTestResult = null;
@@ -5881,14 +5887,16 @@ namespace KeePass.Forms
 				foreach(PwEntry pe in vSelected)
 				{
 					PwGroup pgParent = pe.ParentGroup;
+					if(pgParent == null) { Debug.Assert(false); continue; }
 					if(pgParent == pgTo) continue;
 
-					if(pgParent != null) // Remove from parent
-					{
-						if(!pgParent.Entries.Remove(pe)) { Debug.Assert(false); }
-					}
+					if(!pgParent.Entries.Remove(pe)) { Debug.Assert(false); continue; }
 
 					pgTo.AddEntry(pe, true, true);
+
+					// pe.CreateBackup(m_docMgr.ActiveDatabase);
+					pe.PreviousParentGroup = pgParent.Uuid;
+					// pe.Touch(true, false);
 
 					if(pe.IsContainedIn(pgSafeView)) bFullUpdateView = true;
 					else vNowInvisible.Add(pe);
@@ -6259,6 +6267,206 @@ namespace KeePass.Forms
 			}
 			else UpdateUI(false, null, pd.UINeedsIconUpdate, null,
 				pd.UINeedsIconUpdate, null, false);
+		}
+
+#if DEBUG
+		private void ConstructDebugMenu()
+		{
+			ToolStripMenuItem tsmiDebug = new ToolStripMenuItem("Debug");
+			m_menuTools.DropDownItems.Insert(m_menuTools.DropDownItems.IndexOf(
+				m_menuToolsAdv) + 1, tsmiDebug);
+
+			ToolStripMenuItem tsmi = new ToolStripMenuItem("Set Database Custom Data Items (KDBX 4.1)");
+			tsmiDebug.DropDownItems.Add(tsmi);
+			tsmi.Click += delegate(object sender, EventArgs e)
+			{
+				PwDatabase pd = m_docMgr.ActiveDatabase;
+				if((pd == null) || !pd.IsOpen) return;
+
+				Random r = Program.GlobalRandom;
+				byte[] pb = new byte[12];
+				Action<string> f = delegate(string str)
+				{
+					r.NextBytes(pb);
+					pd.CustomData.Set("Test_" + str, Convert.ToBase64String(pb),
+						DateTime.UtcNow.AddSeconds(-(r.Next() % (60 * 60 * 24 * 7))));
+				};
+
+				for(char ch = 'A'; ch < 'E'; ++ch) f(ch.ToString());
+
+				UpdateUIState(true);
+			};
+		}
+#endif
+
+		private static PwGroup GetPreviousParentGroupSafeI(IStructureItem it,
+			PwGroup pgRoot)
+		{
+			if(it == null) { Debug.Assert(false); return null; }
+
+			PwGroup pgParent = it.ParentGroup;
+			if(pgParent == null) return null; // Cannot move root group
+
+			PwUuid puPrev = it.PreviousParentGroup;
+			if(puPrev.Equals(PwUuid.Zero)) return null;
+
+			PwGroup pgPrev = pgRoot.FindGroup(puPrev, true);
+			if(pgPrev == null) return null;
+			if(pgPrev == pgParent) return null;
+
+			return pgPrev;
+		}
+
+		private static PwGroup GetPreviousParentGroupSafe(PwGroup pg, PwGroup pgRoot)
+		{
+			PwGroup pgPrev = GetPreviousParentGroupSafeI(pg, pgRoot);
+			if(pgPrev == null) return null;
+			if(pgPrev == pg) { Debug.Assert(false); return null; } // Cannot move into itself
+			if(pgPrev.IsContainedIn(pg)) return null;
+			if(!pgPrev.CanAddGroup(pg)) return null;
+
+			return pgPrev;
+		}
+
+		private static PwGroup GetPreviousParentGroupSafe(PwEntry pe, PwGroup pgRoot)
+		{
+			return GetPreviousParentGroupSafeI(pe, pgRoot);
+		}
+
+		private void GetPreviousParentGroupCmdInfo(PwGroup pg, PwEntry[] v,
+			out string strCommand, out bool bEnabled, out bool bRecycleAtLeast1)
+		{
+			strCommand = KPRes.MoveToPreviousParentGroup;
+			bEnabled = false;
+			bRecycleAtLeast1 = false;
+
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) return;
+
+			PwGroup pgRoot = pd.RootGroup;
+
+			bool bRestore = true, bRecycle = false;
+			PwGroup pgRecBin = null;
+			if(pd.RecycleBinEnabled)
+				pgRecBin = pgRoot.FindGroup(pd.RecycleBinUuid, true);
+
+			GFunc<IStructureItem, PwGroup, bool> fCheck = delegate(
+				IStructureItem it, PwGroup pgPrev)
+			{
+				if(it == null) { Debug.Assert(false); return false; }
+				if(pgPrev == null) return false;
+				Debug.Assert(pgPrev.Uuid.Equals(it.PreviousParentGroup));
+
+				PwGroup pgParent = it.ParentGroup;
+				if(pgParent == null) { Debug.Assert(false); return false; }
+
+				bool bInRecNow = ((pgRecBin != null) ? ((pgParent == pgRecBin) ||
+					pgParent.IsContainedIn(pgRecBin)) : false);
+				bool bInRecThen = ((pgRecBin != null) ? ((pgPrev == pgRecBin) ||
+					pgPrev.IsContainedIn(pgRecBin)) : false);
+
+				bRestore &= (bInRecNow && !bInRecThen);
+				bRecycle |= bInRecThen; // Move into/within
+
+				return true;
+			};
+
+			if(pg != null)
+			{
+				PwGroup pgPrev = GetPreviousParentGroupSafe(pg, pgRoot);
+				if(!fCheck(pg, pgPrev)) return;
+			}
+			else if((v != null) && (v.Length != 0)) // Empty => disable
+			{
+				foreach(PwEntry pe in v)
+				{
+					PwGroup pgPrev = GetPreviousParentGroupSafe(pe, pgRoot);
+					if(!fCheck(pe, pgPrev)) return;
+				}
+			}
+			else return;
+
+			if(bRestore) strCommand += " (" + KPRes.Restore + ")";
+			bEnabled = true;
+			bRecycleAtLeast1 = bRecycle;
+		}
+
+		private void UpdateMoveToPreviousParentGroupUI(PwGroup pg, PwEntry[] v,
+			ToolStripMenuItem tsmi)
+		{
+			if(tsmi == null) { Debug.Assert(false); return; }
+
+			string strCommand;
+			bool bEnabled, bRecycle;
+			GetPreviousParentGroupCmdInfo(pg, v, out strCommand, out bEnabled,
+				out bRecycle);
+
+			tsmi.Text = strCommand;
+			tsmi.Enabled = bEnabled;
+		}
+
+		private bool ConfirmMoveToPreviousParentGroup(PwGroup pg, PwEntry[] v)
+		{
+			string strCommand;
+			bool bEnabled, bRecycle;
+			GetPreviousParentGroupCmdInfo(pg, v, out strCommand, out bEnabled,
+				out bRecycle);
+
+			if(!bEnabled) { Debug.Assert(false); return false; }
+			if(bRecycle)
+			{
+				string strMsg = KPRes.RecycleMoveInfo + MessageService.NewParagraph +
+					KPRes.AskContinue;
+				if(!MessageService.AskYesNo(strMsg, PwDefs.ShortProductName, false))
+					return false;
+			}
+
+			return true;
+		}
+
+		private void MoveToPreviousParentGroup(bool bEntry)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			PwGroup pgRoot = pd.RootGroup;
+
+			if(bEntry)
+			{
+				PwEntry[] v = GetSelectedEntries();
+				if((v == null) || (v.Length == 0)) { Debug.Assert(false); return; }
+
+				if(!ConfirmMoveToPreviousParentGroup(null, v)) return;
+
+				foreach(PwEntry pe in v)
+				{
+					PwGroup pgPrev = GetPreviousParentGroupSafe(pe, pgRoot);
+					if(pgPrev == null) { Debug.Assert(false); continue; }
+
+					PwGroup pgParent = pe.ParentGroup;
+					if(!pgParent.Entries.Remove(pe)) { Debug.Assert(false); continue; }
+
+					pgPrev.AddEntry(pe, true, true);
+					pe.PreviousParentGroup = pgParent.Uuid;
+				}
+			}
+			else // Group
+			{
+				PwGroup pg = GetSelectedGroup();
+
+				if(!ConfirmMoveToPreviousParentGroup(pg, null)) return;
+
+				PwGroup pgPrev = GetPreviousParentGroupSafe(pg, pgRoot);
+				if(pgPrev == null) { Debug.Assert(false); return; }
+
+				PwGroup pgParent = pg.ParentGroup;
+				if(!pgParent.Groups.Remove(pg)) { Debug.Assert(false); return; }
+
+				pgPrev.AddGroup(pg, true, true);
+				pg.PreviousParentGroup = pgParent.Uuid;
+			}
+
+			UpdateUI(false, null, !bEntry, null, true, null, true);
 		}
 	}
 }
