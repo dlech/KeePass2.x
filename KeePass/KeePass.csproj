@@ -425,6 +425,7 @@
     <Compile Include="DataExchange\Formats\KeePassXml1x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXXml041.cs" />
+    <Compile Include="DataExchange\Formats\KeeperJson16.cs" />
     <Compile Include="DataExchange\Formats\LastPassCsv2.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
@@ -1307,6 +1308,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Images\B16x16_Imp_Keeper.png" />
     <None Include="Resources\Images\B16x16_Imp_TrueKey.png" />
     <None Include="Resources\Images\B16x16_Imp_Steganos20.png" />
     <None Include="Resources\Images\B16x16_Imp_Bitwarden.png" />

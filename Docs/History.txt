@@ -1,3 +1,9 @@
+2021-05-10: 2.48.1
+- Improved compatibility with certain plugins/ports
+- In the main entry list, new-line characters in text inserted
+  by a placeholder are now filtered
+- Minor other improvements
+
 2021-05-07: 2.48
 - New KDBX 4.1 file format, which supports various new features
   (listed below)

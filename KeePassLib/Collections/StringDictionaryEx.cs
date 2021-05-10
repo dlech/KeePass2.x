@@ -120,6 +120,8 @@ namespace KeePassLib.Collections
 		{
 			if(strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 
+			if(m_dLastMod == null) return null;
+
 			DateTime dt;
 			if(m_dLastMod.TryGetValue(strName, out dt)) return dt;
 			return null;

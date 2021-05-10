@@ -1124,7 +1124,7 @@ namespace KeePass.Forms
 					SprEngine.MightDeref(strIndex))
 					strIndex = AsyncPwListUpdate.SprCompileFn(strIndex, pli);
 
-				if(strIndex.Length > 0) lvi.Text = strIndex;
+				if(strIndex.Length != 0) lvi.Text = strIndex;
 				else lvi.Text = PwDefs.TanTitle;
 			}
 			else
@@ -5136,8 +5136,8 @@ namespace KeePass.Forms
 				case AceColumnType.Password: str = pe.Strings.ReadSafe(PwDefs.PasswordField); break;
 				case AceColumnType.Url: str = pe.Strings.ReadSafe(PwDefs.UrlField); break;
 				case AceColumnType.Notes:
-					if(!bFormatForDisplay) str = pe.Strings.ReadSafe(PwDefs.NotesField);
-					else str = StrUtil.MultiToSingleLine(pe.Strings.ReadSafe(PwDefs.NotesField));
+					str = pe.Strings.ReadSafe(PwDefs.NotesField);
+					if(bFormatForDisplay) str = StrUtil.MultiToSingleLine(str);
 					break;
 				case AceColumnType.CreationTime:
 					str = TimeUtil.ToDisplayString(pe.CreationTime);
@@ -5155,12 +5155,12 @@ namespace KeePass.Forms
 				case AceColumnType.Uuid: str = pe.Uuid.ToHexString(); break;
 				case AceColumnType.Attachment: str = pe.Binaries.KeysToString(); break;
 				case AceColumnType.CustomString:
-					if(!bFormatForDisplay) str = pe.Strings.ReadSafe(col.CustomName);
-					else str = StrUtil.MultiToSingleLine(pe.Strings.ReadSafe(col.CustomName));
+					str = pe.Strings.ReadSafe(col.CustomName);
+					if(bFormatForDisplay) str = StrUtil.MultiToSingleLine(str);
 					break;
 				case AceColumnType.PluginExt:
-					if(!bFormatForDisplay) str = Program.ColumnProviderPool.GetCellData(col.CustomName, pe);
-					else str = StrUtil.MultiToSingleLine(Program.ColumnProviderPool.GetCellData(col.CustomName, pe));
+					str = Program.ColumnProviderPool.GetCellData(col.CustomName, pe);
+					if(bFormatForDisplay) str = StrUtil.MultiToSingleLine(str);
 					break;
 				case AceColumnType.OverrideUrl: str = pe.OverrideUrl; break;
 				case AceColumnType.Tags:

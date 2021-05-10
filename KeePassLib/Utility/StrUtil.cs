@@ -1629,8 +1629,8 @@ namespace KeePassLib.Utility
 
 			string str = strMulti;
 			str = str.Replace("\r\n", " ");
-			str = str.Replace("\r", " ");
-			str = str.Replace("\n", " ");
+			str = str.Replace('\r', ' ');
+			str = str.Replace('\n', ' ');
 
 			return str;
 		}

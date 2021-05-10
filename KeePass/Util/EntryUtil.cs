@@ -346,6 +346,7 @@ namespace KeePass.Util
 			return ps.ReadString();
 		}
 
+		// Cf. ImportOtpAuth
 		private static byte[] GetOtpSecret(PwEntry pe, string strPrefix)
 		{
 			try
@@ -376,6 +377,7 @@ namespace KeePass.Util
 			return null;
 		}
 
+		// Cf. ImportOtpAuth
 		private static string ReplaceHmacOtpPlaceholder(string strText, SprContext ctx)
 		{
 			const string strPlh = @"{HMACOTP}";
@@ -406,6 +408,7 @@ namespace KeePass.Util
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
 
+		// Cf. ImportOtpAuth
 		private static string ReplaceTimeOtpPlaceholder(string strText, SprContext ctx)
 		{
 			const string strPlh = @"{TIMEOTP}";
@@ -434,6 +437,67 @@ namespace KeePass.Util
 
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
+
+		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+		/* internal static void ImportOtpAuth(PwEntry pe, string strOtpAuthUri)
+		{
+			if(pe == null) { Debug.Assert(false); return; }
+			if(string.IsNullOrEmpty(strOtpAuthUri)) return;
+
+			try
+			{
+				Uri uri = new Uri(strOtpAuthUri);
+				if(!uri.Scheme.Equals("otpauth", StrUtil.CaseIgnoreCmp))
+				{
+					Debug.Assert(false);
+					return;
+				}
+
+				Dictionary<string, string> d = UrlUtil.ParseQuery(uri.Query);
+
+				GAction<string, string, Dictionary<string, string>, bool> f =
+					delegate(string strQueryKey, string strEntryField,
+					Dictionary<string, string> dValueMap, bool bProtect)
+				{
+					string strValue;
+					d.TryGetValue(strQueryKey, out strValue);
+					if(string.IsNullOrEmpty(strValue)) return;
+
+					if(dValueMap != null)
+					{
+						string strValueM;
+						if(dValueMap.TryGetValue(strValue, out strValueM))
+							strValue = strValueM;
+					}
+
+					pe.Strings.Set(strEntryField, new ProtectedString(
+						bProtect, strValue));
+				};
+
+				Dictionary<string, string> dAlgMap = new Dictionary<string, string>(
+					StrUtil.CaseIgnoreComparer);
+				dAlgMap["SHA1"] = "HMAC-SHA-1";
+				dAlgMap["SHA256"] = "HMAC-SHA-256";
+				dAlgMap["SHA512"] = "HMAC-SHA-512";
+
+				string strType = uri.Host.ToLowerInvariant();
+				if(strType == "hotp")
+				{
+					f("secret", "HmacOtp-Secret-Base32", null, true);
+					f("counter", "HmacOtp-Counter", null, false);
+
+				}
+				else if(strType == "totp")
+				{
+					f("secret", "TimeOtp-Secret-Base32", null, true);
+					f("digits", "TimeOtp-Length", null, false);
+					f("period", "TimeOtp-Period", null, false);
+					f("algorithm", "TimeOtp-Algorithm", dAlgMap, false);
+				}
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 
 		private static string ReplacePickField(string strText, SprContext ctx)
 		{

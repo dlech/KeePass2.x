@@ -883,5 +883,39 @@ namespace KeePassLib.Utility
 
 			return strUri;
 		}
+
+		/* internal static Dictionary<string, string> ParseQuery(string strQuery)
+		{
+			Dictionary<string, string> d = new Dictionary<string, string>();
+			if(string.IsNullOrEmpty(strQuery)) return d;
+
+			string[] vKvp = strQuery.Split(new char[] { '?', '&' });
+			if(vKvp == null) { Debug.Assert(false); return d; }
+
+			foreach(string strKvp in vKvp)
+			{
+				if(string.IsNullOrEmpty(strKvp)) continue;
+
+				string strKey, strValue;
+				int iSep = strKvp.IndexOf('=');
+				if(iSep < 0)
+				{
+					strKey = strKvp;
+					strValue = string.Empty;
+				}
+				else
+				{
+					strKey = strKvp.Substring(0, iSep);
+					strValue = strKvp.Substring(iSep + 1);
+				}
+
+				strKey = Uri.UnescapeDataString(strKey);
+				strValue = Uri.UnescapeDataString(strValue);
+
+				d[strKey] = strValue;
+			}
+
+			return d;
+		} */
 	}
 }
