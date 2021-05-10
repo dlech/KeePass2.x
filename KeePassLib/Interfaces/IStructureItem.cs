@@ -33,5 +33,10 @@ namespace KeePassLib.Interfaces
 		{
 			get;
 		}
+
+		PwUuid PreviousParentGroup
+		{
+			get;
+		}
 	}
 }

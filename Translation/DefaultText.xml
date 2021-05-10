@@ -1183,6 +1183,9 @@
 		<Data Name="IncompatibleWithSorting">
 			<Value>incompatible with sorting</Value>
 		</Data>
+		<Data Name="Inherited">
+			<Value>Inherited</Value>
+		</Data>
 		<Data Name="InheritSettingFromParent">
 			<Value>Inherit setting from parent</Value>
 		</Data>
@@ -1521,6 +1524,9 @@
 		</Data>
 		<Data Name="MoreInfo">
 			<Value>More information</Value>
+		</Data>
+		<Data Name="MoveToPreviousParentGroup">
+			<Value>Move to &amp;Previous Parent Group</Value>
 		</Data>
 		<Data Name="MultipleValues">
 			<Value>Multiple values</Value>
@@ -1894,6 +1900,9 @@
 		<Data Name="Quality">
 			<Value>Quality</Value>
 		</Data>
+		<Data Name="QualityCheckToggle">
+			<Value>Enable/disable quality estimation for this entry (here, in password quality reports, ...)</Value>
+		</Data>
 		<Data Name="Quick">
 			<Value>Quick</Value>
 		</Data>
@@ -1938,6 +1947,9 @@
 		</Data>
 		<Data Name="RecycleGroupConfirm">
 			<Value>Are you sure you want to move the selected group to the recycle bin?</Value>
+		</Data>
+		<Data Name="RecycleMoveInfo">
+			<Value>At least one of the selected entries/groups will be moved into/within the recycle bin.</Value>
 		</Data>
 		<Data Name="RecycleShowConfirm">
 			<Value>Show confirmation dialog when moving entries/groups to the recycle bin</Value>
@@ -1986,6 +1998,9 @@
 		</Data>
 		<Data Name="RestartKeePassQuestion">
 			<Value>Do you wish to restart KeePass now?</Value>
+		</Data>
+		<Data Name="Restore">
+			<Value>Restore</Value>
 		</Data>
 		<Data Name="Retry">
 			<Value>Retry</Value>
@@ -2259,6 +2274,12 @@
 		</Data>
 		<Data Name="Tags">
 			<Value>Tags</Value>
+		</Data>
+		<Data Name="TagsAddRemove">
+			<Value>Add/remove tags</Value>
+		</Data>
+		<Data Name="TagsInheritedCount">
+			<Value>{PARAM} inherited tag(s)</Value>
 		</Data>
 		<Data Name="TagsNotFound">
 			<Value>No tags found</Value>

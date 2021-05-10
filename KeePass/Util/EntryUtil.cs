@@ -346,6 +346,7 @@ namespace KeePass.Util
 			return ps.ReadString();
 		}
 
+		// Cf. ImportOtpAuth
 		private static byte[] GetOtpSecret(PwEntry pe, string strPrefix)
 		{
 			try
@@ -360,7 +361,12 @@ namespace KeePass.Util
 
 				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base32");
 				if(!string.IsNullOrEmpty(str))
+				{
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/59b61fddea/
+					if((str.Length % 8) != 0)
+						str = str.PadRight((str.Length & ~7) + 8, '=');
 					return MemUtil.ParseBase32(str);
+				}
 
 				str = pe.Strings.ReadSafe(strPrefix + "Secret-Base64");
 				if(!string.IsNullOrEmpty(str))
@@ -371,6 +377,7 @@ namespace KeePass.Util
 			return null;
 		}
 
+		// Cf. ImportOtpAuth
 		private static string ReplaceHmacOtpPlaceholder(string strText, SprContext ctx)
 		{
 			const string strPlh = @"{HMACOTP}";
@@ -380,23 +387,28 @@ namespace KeePass.Util
 			PwDatabase pd = ctx.Database;
 			if((pe == null) || (pd == null)) return strText;
 
-			byte[] pbSecret = (GetOtpSecret(pe, "HmacOtp-") ?? MemUtil.EmptyByteArray);
+			byte[] pbSecret = GetOtpSecret(pe, "HmacOtp-");
 
 			const string strCounterField = "HmacOtp-Counter";
 			string strCounter = pe.Strings.ReadSafe(strCounterField);
 			ulong uCounter;
 			ulong.TryParse(strCounter, out uCounter);
 
-			string strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
+			string strValue = string.Empty;
+			if((pbSecret != null) && (pbSecret.Length != 0))
+			{
+				strValue = HmacOtp.Generate(pbSecret, uCounter, 6, false, -1);
 
-			pe.Strings.Set(strCounterField, new ProtectedString(false,
-				(uCounter + 1).ToString()));
-			pe.Touch(true, false);
-			pd.Modified = true;
+				pe.Strings.Set(strCounterField, new ProtectedString(false,
+					(uCounter + 1).ToString()));
+				pe.Touch(true, false);
+				pd.Modified = true;
+			}
 
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
 
+		// Cf. ImportOtpAuth
 		private static string ReplaceTimeOtpPlaceholder(string strText, SprContext ctx)
 		{
 			const string strPlh = @"{TIMEOTP}";
@@ -405,7 +417,7 @@ namespace KeePass.Util
 			PwEntry pe = ctx.Entry;
 			if(pe == null) return strText;
 
-			byte[] pbSecret = (GetOtpSecret(pe, "TimeOtp-") ?? MemUtil.EmptyByteArray);
+			byte[] pbSecret = GetOtpSecret(pe, "TimeOtp-");
 
 			string strPeriod = pe.Strings.ReadSafe("TimeOtp-Period");
 			uint uPeriod;
@@ -418,11 +430,74 @@ namespace KeePass.Util
 
 			string strAlg = pe.Strings.ReadSafe("TimeOtp-Algorithm");
 
-			string strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
-				uLength, strAlg);
+			string strValue = string.Empty;
+			if((pbSecret != null) && (pbSecret.Length != 0))
+				strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
+					uLength, strAlg);
 
 			return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
 		}
+
+		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+		/* internal static void ImportOtpAuth(PwEntry pe, string strOtpAuthUri)
+		{
+			if(pe == null) { Debug.Assert(false); return; }
+			if(string.IsNullOrEmpty(strOtpAuthUri)) return;
+
+			try
+			{
+				Uri uri = new Uri(strOtpAuthUri);
+				if(!uri.Scheme.Equals("otpauth", StrUtil.CaseIgnoreCmp))
+				{
+					Debug.Assert(false);
+					return;
+				}
+
+				Dictionary<string, string> d = UrlUtil.ParseQuery(uri.Query);
+
+				GAction<string, string, Dictionary<string, string>, bool> f =
+					delegate(string strQueryKey, string strEntryField,
+					Dictionary<string, string> dValueMap, bool bProtect)
+				{
+					string strValue;
+					d.TryGetValue(strQueryKey, out strValue);
+					if(string.IsNullOrEmpty(strValue)) return;
+
+					if(dValueMap != null)
+					{
+						string strValueM;
+						if(dValueMap.TryGetValue(strValue, out strValueM))
+							strValue = strValueM;
+					}
+
+					pe.Strings.Set(strEntryField, new ProtectedString(
+						bProtect, strValue));
+				};
+
+				Dictionary<string, string> dAlgMap = new Dictionary<string, string>(
+					StrUtil.CaseIgnoreComparer);
+				dAlgMap["SHA1"] = "HMAC-SHA-1";
+				dAlgMap["SHA256"] = "HMAC-SHA-256";
+				dAlgMap["SHA512"] = "HMAC-SHA-512";
+
+				string strType = uri.Host.ToLowerInvariant();
+				if(strType == "hotp")
+				{
+					f("secret", "HmacOtp-Secret-Base32", null, true);
+					f("counter", "HmacOtp-Counter", null, false);
+
+				}
+				else if(strType == "totp")
+				{
+					f("secret", "TimeOtp-Secret-Base32", null, true);
+					f("digits", "TimeOtp-Length", null, false);
+					f("period", "TimeOtp-Period", null, false);
+					f("algorithm", "TimeOtp-Algorithm", dAlgMap, false);
+				}
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
 
 		private static string ReplacePickField(string strText, SprContext ctx)
 		{
@@ -1303,6 +1378,7 @@ namespace KeePass.Util
 				++uEntriesDone; // Also used for sorting, see below
 
 				if(!pe.GetSearchingEnabled()) return true;
+				if(!pe.QualityCheck) return true;
 				if(PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);

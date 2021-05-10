@@ -19,13 +19,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.IO;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
-using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Xml;
 
 using KeePass.Resources;
 using KeePass.UI;
@@ -182,14 +182,7 @@ namespace KeePass.DataExchange.Formats
 
 					XmlNode xnTags = xmlChild.Attributes.GetNamedItem("TAGS");
 					if((xnTags != null) && (xnTags.Value != null))
-					{
-						string[] vTags = xnTags.Value.Split(',');
-						foreach(string strTag in vTags)
-						{
-							if(string.IsNullOrEmpty(strTag)) continue;
-							pe.AddTag(strTag);
-						}
-					}
+						StrUtil.AddTags(pe.Tags, xnTags.Value.Split(','));
 				}
 				else if(xmlChild.Name == "DD")
 				{

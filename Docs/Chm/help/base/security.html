@@ -222,7 +222,7 @@ key transformation code built-in to KeePass.</li>
 
 <li><strong>Argon2</strong> (KeePass 2.x only):<br />
 <a href="https://github.com/p-h-c/phc-winner-argon2#argon2" target="_blank">Argon2</a>
-is the winner of the <a href="https://password-hashing.net/"
+is the winner of the <a href="https://www.password-hashing.net/"
 target="_blank">Password Hashing Competition</a>.
 The main advantage of Argon2 over AES-KDF is that it provides a better
 resistance against GPU/ASIC attacks (due to being a memory-hard function).
@@ -336,6 +336,14 @@ procedure above instead.</p>
 <a href="https://keepass.info/plugins.html" target="_blank">Plugins</a>
 can provide additional key derivation functions.</li> -->
 </ul>
+
+<p><b>Argon2 on iOS.</b> If you are using a KeePass-compatible app
+on iOS, please note the following limitation of iOS.
+If the app uses a lot of RAM (e.g. due to using Argon2 with a
+large memory parameter), then AutoFill may not work.
+In this case, we recommend to use a relatively low value for the
+Argon2 memory parameter (64 MB or less, depending on the app and the
+database size) and a relatively high number of iterations.</p>
 
 <p><b>KeePassX.</b> In contrast to KeePass, the Linux port KeePassX
 only partially supports protection against dictionary and guessing attacks.</p>

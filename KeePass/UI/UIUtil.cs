@@ -665,7 +665,7 @@ namespace KeePass.UI
 						foreach(PwDocument ds in dm.Documents)
 						{
 							int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
-							if(nInx > -1)
+							if(nInx >= 0)
 							{
 								ilIcons.Images.Add(new Bitmap(DpiUtil.GetIcon(
 									ds.Database, pe.CustomIconUuid)));
@@ -1102,16 +1102,27 @@ namespace KeePass.UI
 		{
 			if(pg == null) { Debug.Assert(false); return null; }
 
+			string strNotes = pg.Notes.Trim();
+			// string strTags = StrUtil.TagsToString(pg.Tags, true);
+
+			if(strNotes.Length == 0) // && (strTags.Length == 0))
+				return null;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append(pg.Name);
 
-			string strNotes = pg.Notes.Trim();
-			if(strNotes.Length > 0)
-			{
-				sb.Append(MessageService.NewParagraph);
-				sb.Append(strNotes);
-			}
-			else return null;
+			// if(strNotes.Length != 0)
+			// {
+			sb.Append(MessageService.NewParagraph);
+			sb.Append(strNotes);
+			// }
+
+			// if(strTags.Length != 0)
+			// {
+			//	sb.Append(MessageService.NewParagraph);
+			//	sb.Append(strTags);
+			//	sb.Append('.');
+			// }
 
 			// uint uSubGroups, uEntries;
 			// pg.GetCounts(true, out uSubGroups, out uEntries);
@@ -1234,6 +1245,21 @@ namespace KeePass.UI
 				if(Array.IndexOf<object>(vItemTags, lv.Items[i].Tag) >= 0)
 					lv.Items[i].Selected = true;
 			}
+		}
+
+		internal static void DeselectAllItems(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
+			int n = lvsic.Count;
+			if(n == 0) return;
+
+			int[] v = new int[n];
+			lvsic.CopyTo(v, 0);
+
+			for(int i = n - 1; i >= 0; --i)
+				lv.Items[v[i]].Selected = false;
 		}
 
 		public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)

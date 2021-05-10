@@ -30,6 +30,7 @@ using KeePass.UI;
 using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 
 namespace KeePass.Util.MultipleValues
 {
@@ -88,6 +89,8 @@ namespace KeePass.Util.MultipleValues
 						img.Save(ms, ImageFormat.Png);
 
 						PwCustomIcon ico = new PwCustomIcon(m_puCueIcon, ms.ToArray());
+						ico.Name = MultipleValuesEx.CueString;
+
 						pd.CustomIcons.Add(ico);
 						pd.UINeedsIconUpdate = true;
 					}
@@ -312,18 +315,6 @@ namespace KeePass.Util.MultipleValues
 			}
 		}
 
-		private static bool ListsEqual(List<string> lA, List<string> lB)
-		{
-			if(lA.Count != lB.Count) return false;
-
-			for(int i = 0; i < lA.Count; ++i)
-			{
-				if(lA[i] != lB[i]) return false;
-			}
-
-			return true;
-		}
-
 		private void MultiInitProperties()
 		{
 			string strCue = MultipleValuesEx.CueString;
@@ -367,7 +358,7 @@ namespace KeePass.Util.MultipleValues
 					m_peM.BackgroundColor = Color.Empty;
 				}
 
-				if(bTagsEq && !ListsEqual(pe.Tags, m_peM.Tags))
+				if(bTagsEq && !MemUtil.ListsEqual<string>(pe.Tags, m_peM.Tags))
 				{
 					m_peM.Tags.Clear(); // We own it, see above
 					m_peM.Tags.Add(strCue);
@@ -431,7 +422,7 @@ namespace KeePass.Util.MultipleValues
 					pe.BackgroundColor = m_peM.BackgroundColor;
 				}
 
-				if(bSetTags && !ListsEqual(pe.Tags, m_peM.Tags))
+				if(bSetTags && !MemUtil.ListsEqual<string>(pe.Tags, m_peM.Tags))
 				{
 					PrepareMod(i);
 					pe.Tags = new List<string>(m_peM.Tags);

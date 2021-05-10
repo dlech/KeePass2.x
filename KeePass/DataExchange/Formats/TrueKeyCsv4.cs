@@ -188,7 +188,7 @@ namespace KeePass.DataExchange.Formats
 
 						case "favorite":
 							if(StrUtil.StringToBoolEx(strValue).GetValueOrDefault(false))
-								pe.AddTag("Favorite");
+								pe.AddTag(PwDefs.FavoriteTag);
 							break;
 
 						case "gender":

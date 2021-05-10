@@ -33,85 +33,211 @@
 
 
 
+
 <table class="sectionheader"><tr>
 <td><img src="../images/b64x64_vcard.png" alt="VCard" /></td>
 <td><h1>Entry Dialog</h1>
-<p>Explains options in the entry dialog.</p></td>
+<p>Edit new/existing entries.</p></td>
 </tr></table>
 
-<p>In this dialog you can edit properties of new and existing entries.</p>
+<ul>
+<li><a href="#gen">General</a></li>
+<li><a href="#adv">Advanced</a></li>
+<li><a href="#prp">Properties</a></li>
+<li><a href="#at">Auto-Type</a></li>
+<li><a href="#hst">History</a></li>
+</ul>
 
 <br />
 
-<a name="general"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<a name="gen"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_vcard.png" alt="VCard" />
 General</h2>
 
-<p>On this tab page you can specify the main information about the account. Apart
-from filling in standard information (user name, password, etc.), you can
-also assign an <i>Expiry Time</i>. When this date is reached, the entry
-is automatically marked as expired (using a red
-<span style="color: #FF0000;"><b>X</b></span> icon in the main window and showing
-the entry information using a striked-out font).
-The entry is not deleted when it expires.</p>
+<p>On the tab page 'General', you can specify the main information
+of an account.</p>
 
-<p>By default, KeePass generates a secure, random password for new entries.
-You can freely replace this generated password with an own one or
-invoke the password generator again (using the button on the right of the
-'Repeat Password' field) to generate a password having different
-properties. For details (including information how to disable automatically
-generated passwords), see
-<a href="../base/pwgenerator.html">Password Generator</a>.</p>
+<p><b>Title.</b><br />
+In the title field, the name of the system/service should be entered.</p>
 
-<p>A standard user name for new entries can be specified in the
-<a href="dbsettings.html">database settings</a> dialog.</p>
+<p>For certain systems/services, it can make sense to ensure that the
+entry title occurs within the target window title, because this allows
+<a href="../base/autotype.html">auto-type</a> to associate the entry
+with the target window.
+For details, see <a href="../base/autotype.html#autoglobal">global auto-type</a>.
+However, if the target window title does not contain the system/service name
+(e.g. '<code>Login - Browser Name</code>'), it is recommended to create a
+custom window/sequence association instead.</p>
+
+<p><b>User name.</b><br />
+In the user name field, you should specify the data that you are entering
+during a login in order to identify yourself. This typically is a user name,
+an e-mail address or a number.</p>
+
+<p>There is no separate e-mail address field by default, because this
+would decrease the usability. For details, see the section
+'<a href="../base/faq_tech.html#email">Can an e-mail address field be added?</a>'
+in the FAQ.</p>
+
+<p>When typing into the user name field, KeePass may display a list of
+suggestions for the user name.
+This list is generated dynamically: when opening the entry dialog,
+KeePass collects the user names of all entries stored in the currently
+active database.
+If you see an incorrect user name in the list, you need to search this
+user name in your entries (using the search function) and fix it there.</p>
+
+<p>In the <a href="dbsettings.html">database settings</a> (menu 'File' &rarr;
+'Database Settings'), you can define a default user name for new entries.</p>
+
+<p><b>Password.</b><br />
+By default, KeePass generates a password for a new entry (this can be
+<a href="../base/pwgenerator.html#configauto">customized/disabled</a>).
+You can use this password or replace it.</p>
+
+<p>There is a button (right of the password repetition field) that opens
+the <a href="../base/pwgenerator.html">password generator</a>.</p>
+
+<p>Furthermore, there is a button for disabling/enabling the
+<a href="https://keepass.info/help/kb/pw_quality_est.html"
+target="_blank">password quality estimation</a> for the current entry.
+Disabling the password quality estimation for an entry also
+excludes the entry from password quality reports (menu 'Find' &rarr;
+'Password Quality').</p>
+
+<p><b>URL.</b><br />
+See the help page '<a href="../base/autourl.html">URL Field</a>'.</p>
+
+<p><b>Expires.</b><br />
+In the entry list of the main window, an expired entry is displayed
+with a red <span style="color: #FF0000;"><b>X</b></span> icon and a
+strikeout font.
+Expired entries are not deleted/moved automatically.</p>
+
+<p>You can search for expired entries using the menu 'Find' &rarr;
+'Expired'.
+Expired entries can also be displayed automatically when opening
+the database (menu 'Tools' &rarr; 'Options' &rarr; tab 'Advanced' &rarr;
+option 'Show expired entries (if any)').</p>
 
 <br />
 
-<a name="advanced"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<a name="adv"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
 Advanced</h2>
 
-<p>On this tab page you can assign custom strings and file attachments to the entry.</p>
+<p><b>Custom string fields.</b><br />
+Each entry may have an arbitrary number of custom string fields.
+Such a field consists of a name and a value.
+The name must be unique (within the entry).</p>
 
-<p><b>Custom Strings:</b><br />
-Each entry can have an arbitrary amount of custom strings. These strings can hold
-any information of your choice (for example additional e-mail addresses,
-passwords, more URLs, etc.). The strings will be stored encrypted in the
-database (like all other database content).</p>
+<p>In the main window, the value of a custom string field can be
+copied into the clipboard by right-clicking on the entry, pointing
+on 'Copy Field' and clicking on the name of the custom string field
+(this is also possible via the menu 'Entry').</p>
 
-<p>To use the value of a custom field, you can right-click on the entry
-in the entry list of the main window
-and select 'Copy Field', which is much easier than highlighting
-the data in the entry view and copying.</p>
+<p>The value of a custom string field can also be used in an
+<a href="../base/autotype.html">auto-type</a> sequence;
+see the <a href="../base/placeholders.html">placeholders</a> help page.
+For example, the value of a custom string field named 'BIC'
+(acronym for Business Identifier Code) can be inserted using the
+'<code>{S:BIC}</code>' placeholder.</p>
 
-<p><b>File Attachments / Binaries:</b><br />
-You can attach files to entries. The files will be imported into the KeePass
-database and associated with the entry. When importing files, KeePass does <i>not</i>
-delete the original source file! You need to delete them yourself, if you wish.
-File attachments are stored encrypted in the database (like all other database content).</p>
+<p>In database files, custom string fields are stored in encrypted form
+(see '<a href="../base/security.html#secencrypt">Database Encryption</a>').
+The option 'Protect value in process memory' (in the custom string field dialog)
+allows to activate/deactivate the
+<a href="../base/security.html#secmemprot">process memory protection</a>
+for the value of the custom string field.
+Activating this protection induces certain limitations (e.g. the value must
+be hidden using asterisks for the protection to be effective) and increases
+the time required by various operations. Therefore, it should be activated
+only for really sensitive data (e.g. a second password).</p>
+
+<p><b>File attachments.</b><br />
+You can attach arbitrary files to an entry.</p>
+
+<p>Attached files are stored within the database file in encrypted form
+(see '<a href="../base/security.html#secencrypt">Database Encryption</a>').
+When importing a file as attachment, KeePass does not delete the
+source file; you need to delete it yourself, if desired.</p>
+
+<p>This feature is intended to store few/small files (e.g. registration files,
+public/private key pair files, etc.).
+Encrypting many/large files is considered to be out of the scope of a
+password manager and it is recommended to use a specialized file encryption
+software (e.g. VeraCrypt) for this task instead (KeePass can be used
+to store the password for the encrypted file container).</p>
 
 <br />
 
-<a name="autotype"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Touch" />
+<a name="prp"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_kcmsystem.png" alt="Settings" />
+Properties</h2>
+
+<p><b>Tags.</b><br />
+You can assign arbitrary tags to an entry.
+Multiple tags have to be separated by commas (or semicolons).
+When clicking the button right of the tags input field, a menu is
+displayed that allows to add tags found in other entries.</p>
+
+<p>Tags can also be added/removed in the main window: right-click onto
+one or more entries &rarr; 'Edit Entry (Quick)' &rarr; 'Add Tag' or
+'Remove Tag'.</p>
+
+<p>A common use case is to mark frequently used entries (tag 'Favorite').</p>
+
+<p>In order to show all entries that have a specific tag, click the
+three-keys button in the toolbar of the main window (to the right of
+the 'Find' toolbar button) and choose the tag.
+Alternatively, this command is also accessible via the main menu:
+'Find' &rarr; 'Tag' &rarr; choose the tag.</p>
+
+<p>If you want to see all entries with a specific tag (e.g. 'Favorite')
+when opening a database, you can create a <a href="triggers.html">trigger</a>
+for this: click 'Tools' &rarr; 'Triggers', add a new trigger,
+enter a name (e.g. 'Show favorites when opening a database'),
+add an event 'Opened database file', and add an action
+'Show entries by tag' with the parameter 'Tag' set to the tag name
+(e.g. 'Favorite').</p>
+
+<p><b>Override URL.</b><br />
+See '<a href="../base/autourl.html#override">Changing the URL Handler</a>'.</p>
+
+<br />
+
+<a name="at"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keypress" />
 Auto-Type</h2>
 
-<p>On this page you can configure the auto-type behaviour for this entry. For more
-information, see the
-<a href="../base/autotype.html">Auto-Type</a> help page.</p>
+<p>On this tab page, you can configure the auto-type behavior for
+the current entry.
+See the <a href="../base/autotype.html">auto-type</a> help page.</p>
 
 <br />
 
-<a name="history"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_dataexchange.png" alt="Reload" />
+<a name="hst"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_history.png" alt="Clock" />
 History</h2>
 
-<p>Each entry has its own history. Each time you change an entry, KeePass automatically
-creates a backup copy of the current, non-modified entry before saving the new
-values. These backup copies are listed on the <i>History</i> tab page. You can
-delete backup copies if you are sure that you won't need them anymore, or you
-can restore any of the backup copies.</p>
+<p>Each entry has an own history. When modifying an entry, KeePass
+automatically creates a history entry, which contains the previous data.
+The history entries are listed on the 'History' tab page of the entry dialog.</p>
+
+<p>By default, the number of history entries per entry and the
+history size per entry are limited to reasonable values.
+You can change these limitations in the database settings dialog
+(menu 'File' &rarr; 'Database Settings').</p>
+
+<p>If you want to delete certain history entries manually,
+there are two possibilities:</p>
+<ul>
+<li>On the 'History' tab page of the entry dialog, you can delete
+specific history entries.</li>
+<li>In 'Tools' &rarr; 'Database Tools' &rarr; 'Database Maintenance',
+you can delete all history entries that are older than a specific
+number of days.</li>
+</ul>
 
 </body></html>
 

@@ -420,6 +420,7 @@ namespace KeePass.Resources
 			m_strIncompatible = TryGetEx(dictNew, "Incompatible", m_strIncompatible);
 			m_strIncompatibleEnv = TryGetEx(dictNew, "IncompatibleEnv", m_strIncompatibleEnv);
 			m_strIncompatibleWithSorting = TryGetEx(dictNew, "IncompatibleWithSorting", m_strIncompatibleWithSorting);
+			m_strInherited = TryGetEx(dictNew, "Inherited", m_strInherited);
 			m_strInheritSettingFromParent = TryGetEx(dictNew, "InheritSettingFromParent", m_strInheritSettingFromParent);
 			m_strInstalled = TryGetEx(dictNew, "Installed", m_strInstalled);
 			m_strInstalledLanguages = TryGetEx(dictNew, "InstalledLanguages", m_strInstalledLanguages);
@@ -533,6 +534,7 @@ namespace KeePass.Resources
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
 			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strMoreInfo = TryGetEx(dictNew, "MoreInfo", m_strMoreInfo);
+			m_strMoveToPreviousParentGroup = TryGetEx(dictNew, "MoveToPreviousParentGroup", m_strMoveToPreviousParentGroup);
 			m_strMultipleValues = TryGetEx(dictNew, "MultipleValues", m_strMultipleValues);
 			m_strName = TryGetEx(dictNew, "Name", m_strName);
 			m_strNativeLibUse = TryGetEx(dictNew, "NativeLibUse", m_strNativeLibUse);
@@ -657,6 +659,7 @@ namespace KeePass.Resources
 			m_strProfileSaveDesc = TryGetEx(dictNew, "ProfileSaveDesc", m_strProfileSaveDesc);
 			m_strProfileSavePrompt = TryGetEx(dictNew, "ProfileSavePrompt", m_strProfileSavePrompt);
 			m_strQuality = TryGetEx(dictNew, "Quality", m_strQuality);
+			m_strQualityCheckToggle = TryGetEx(dictNew, "QualityCheckToggle", m_strQualityCheckToggle);
 			m_strQuick = TryGetEx(dictNew, "Quick", m_strQuick);
 			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
 			m_strQuickSearchExclExpired = TryGetEx(dictNew, "QuickSearchExclExpired", m_strQuickSearchExclExpired);
@@ -672,6 +675,7 @@ namespace KeePass.Resources
 			m_strRecycleEntryConfirm = TryGetEx(dictNew, "RecycleEntryConfirm", m_strRecycleEntryConfirm);
 			m_strRecycleEntryConfirmSingle = TryGetEx(dictNew, "RecycleEntryConfirmSingle", m_strRecycleEntryConfirmSingle);
 			m_strRecycleGroupConfirm = TryGetEx(dictNew, "RecycleGroupConfirm", m_strRecycleGroupConfirm);
+			m_strRecycleMoveInfo = TryGetEx(dictNew, "RecycleMoveInfo", m_strRecycleMoveInfo);
 			m_strRecycleShowConfirm = TryGetEx(dictNew, "RecycleShowConfirm", m_strRecycleShowConfirm);
 			m_strRedo = TryGetEx(dictNew, "Redo", m_strRedo);
 			m_strRememberHidingPasswordsEntry = TryGetEx(dictNew, "RememberHidingPasswordsEntry", m_strRememberHidingPasswordsEntry);
@@ -688,6 +692,7 @@ namespace KeePass.Resources
 			m_strReplace = TryGetEx(dictNew, "Replace", m_strReplace);
 			m_strReplaceNo = TryGetEx(dictNew, "ReplaceNo", m_strReplaceNo);
 			m_strRestartKeePassQuestion = TryGetEx(dictNew, "RestartKeePassQuestion", m_strRestartKeePassQuestion);
+			m_strRestore = TryGetEx(dictNew, "Restore", m_strRestore);
 			m_strRetry = TryGetEx(dictNew, "Retry", m_strRetry);
 			m_strRetryCmd = TryGetEx(dictNew, "RetryCmd", m_strRetryCmd);
 			m_strRootDirectory = TryGetEx(dictNew, "RootDirectory", m_strRootDirectory);
@@ -779,6 +784,8 @@ namespace KeePass.Resources
 			m_strTagAddNew = TryGetEx(dictNew, "TagAddNew", m_strTagAddNew);
 			m_strTagNew = TryGetEx(dictNew, "TagNew", m_strTagNew);
 			m_strTags = TryGetEx(dictNew, "Tags", m_strTags);
+			m_strTagsAddRemove = TryGetEx(dictNew, "TagsAddRemove", m_strTagsAddRemove);
+			m_strTagsInheritedCount = TryGetEx(dictNew, "TagsInheritedCount", m_strTagsInheritedCount);
 			m_strTagsNotFound = TryGetEx(dictNew, "TagsNotFound", m_strTagsNotFound);
 			m_strTanExpiresOnUse = TryGetEx(dictNew, "TanExpiresOnUse", m_strTanExpiresOnUse);
 			m_strTanWizard = TryGetEx(dictNew, "TanWizard", m_strTanWizard);
@@ -1289,6 +1296,7 @@ namespace KeePass.Resources
 			"Incompatible",
 			"IncompatibleEnv",
 			"IncompatibleWithSorting",
+			"Inherited",
 			"InheritSettingFromParent",
 			"Installed",
 			"InstalledLanguages",
@@ -1402,6 +1410,7 @@ namespace KeePass.Resources
 			"More",
 			"MoreEntries",
 			"MoreInfo",
+			"MoveToPreviousParentGroup",
 			"MultipleValues",
 			"Name",
 			"NativeLibUse",
@@ -1526,6 +1535,7 @@ namespace KeePass.Resources
 			"ProfileSaveDesc",
 			"ProfileSavePrompt",
 			"Quality",
+			"QualityCheckToggle",
 			"Quick",
 			"QuickSearchDerefData",
 			"QuickSearchExclExpired",
@@ -1541,6 +1551,7 @@ namespace KeePass.Resources
 			"RecycleEntryConfirm",
 			"RecycleEntryConfirmSingle",
 			"RecycleGroupConfirm",
+			"RecycleMoveInfo",
 			"RecycleShowConfirm",
 			"Redo",
 			"RememberHidingPasswordsEntry",
@@ -1557,6 +1568,7 @@ namespace KeePass.Resources
 			"Replace",
 			"ReplaceNo",
 			"RestartKeePassQuestion",
+			"Restore",
 			"Retry",
 			"RetryCmd",
 			"RootDirectory",
@@ -1648,6 +1660,8 @@ namespace KeePass.Resources
 			"TagAddNew",
 			"TagNew",
 			"Tags",
+			"TagsAddRemove",
+			"TagsInheritedCount",
 			"TagsNotFound",
 			"TanExpiresOnUse",
 			"TanWizard",
@@ -6102,6 +6116,17 @@ namespace KeePass.Resources
 			get { return m_strIncompatibleWithSorting; }
 		}
 
+		private static string m_strInherited =
+			@"Inherited";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Inherited'.
+		/// </summary>
+		public static string Inherited
+		{
+			get { return m_strInherited; }
+		}
+
 		private static string m_strInheritSettingFromParent =
 			@"Inherit setting from parent";
 		/// <summary>
@@ -7343,6 +7368,17 @@ namespace KeePass.Resources
 		public static string MoreInfo
 		{
 			get { return m_strMoreInfo; }
+		}
+
+		private static string m_strMoveToPreviousParentGroup =
+			@"Move to &Previous Parent Group";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Move to &amp;Previous Parent Group'.
+		/// </summary>
+		public static string MoveToPreviousParentGroup
+		{
+			get { return m_strMoveToPreviousParentGroup; }
 		}
 
 		private static string m_strMultipleValues =
@@ -8709,6 +8745,17 @@ namespace KeePass.Resources
 			get { return m_strQuality; }
 		}
 
+		private static string m_strQualityCheckToggle =
+			@"Enable/disable quality estimation for this entry (here, in password quality reports, ...)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Enable/disable quality estimation for this entry (here, in password quality reports, ...)'.
+		/// </summary>
+		public static string QualityCheckToggle
+		{
+			get { return m_strQualityCheckToggle; }
+		}
+
 		private static string m_strQuick =
 			@"Quick";
 		/// <summary>
@@ -8872,6 +8919,17 @@ namespace KeePass.Resources
 		public static string RecycleGroupConfirm
 		{
 			get { return m_strRecycleGroupConfirm; }
+		}
+
+		private static string m_strRecycleMoveInfo =
+			@"At least one of the selected entries/groups will be moved into/within the recycle bin.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'At least one of the selected entries/groups will be moved into/within the recycle bin.'.
+		/// </summary>
+		public static string RecycleMoveInfo
+		{
+			get { return m_strRecycleMoveInfo; }
 		}
 
 		private static string m_strRecycleShowConfirm =
@@ -9048,6 +9106,17 @@ namespace KeePass.Resources
 		public static string RestartKeePassQuestion
 		{
 			get { return m_strRestartKeePassQuestion; }
+		}
+
+		private static string m_strRestore =
+			@"Restore";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Restore'.
+		/// </summary>
+		public static string Restore
+		{
+			get { return m_strRestore; }
 		}
 
 		private static string m_strRetry =
@@ -10049,6 +10118,28 @@ namespace KeePass.Resources
 		public static string Tags
 		{
 			get { return m_strTags; }
+		}
+
+		private static string m_strTagsAddRemove =
+			@"Add/remove tags";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Add/remove tags'.
+		/// </summary>
+		public static string TagsAddRemove
+		{
+			get { return m_strTagsAddRemove; }
+		}
+
+		private static string m_strTagsInheritedCount =
+			@"{PARAM} inherited tag(s)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '{PARAM} inherited tag(s)'.
+		/// </summary>
+		public static string TagsInheritedCount
+		{
+			get { return m_strTagsInheritedCount; }
 		}
 
 		private static string m_strTagsNotFound =

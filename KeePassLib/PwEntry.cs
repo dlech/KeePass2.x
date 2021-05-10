@@ -42,6 +42,7 @@ namespace KeePassLib
 		private PwUuid m_uuid = PwUuid.Zero;
 		private PwGroup m_pParentGroup = null;
 		private DateTime m_tParentGroupLastMod = PwDefs.DtDefaultNow;
+		private PwUuid m_puPrevParentGroup = PwUuid.Zero;
 
 		private ProtectedStringDictionary m_dStrings = new ProtectedStringDictionary();
 		private ProtectedBinaryDictionary m_dBinaries = new ProtectedBinaryDictionary();
@@ -62,6 +63,7 @@ namespace KeePassLib
 		private ulong m_uUsageCount = 0;
 
 		private string m_strOverrideUrl = string.Empty;
+		private bool m_bQualityCheck = true;
 
 		private List<string> m_lTags = new List<string>();
 
@@ -98,6 +100,16 @@ namespace KeePassLib
 		{
 			get { return m_tParentGroupLastMod; }
 			set { m_tParentGroupLastMod = value; }
+		}
+
+		public PwUuid PreviousParentGroup
+		{
+			get { return m_puPrevParentGroup; }
+			set
+			{
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_puPrevParentGroup = value;
+			}
 		}
 
 		/// <summary>
@@ -263,12 +275,18 @@ namespace KeePassLib
 			}
 		}
 
+		public bool QualityCheck
+		{
+			get { return m_bQualityCheck; }
+			set { m_bQualityCheck = value; }
+		}
+
 		/// <summary>
 		/// List of tags associated with this entry.
 		/// </summary>
 		public List<string> Tags
 		{
-			get { return m_lTags; }
+			get { StrUtil.NormalizeTags(m_lTags); return m_lTags; }
 			set
 			{
 				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
@@ -368,6 +386,7 @@ namespace KeePassLib
 			peNew.m_uuid = m_uuid; // PwUuid is immutable
 			peNew.m_pParentGroup = m_pParentGroup;
 			peNew.m_tParentGroupLastMod = m_tParentGroupLastMod;
+			peNew.m_puPrevParentGroup = m_puPrevParentGroup;
 
 			peNew.m_dStrings = m_dStrings.CloneDeep();
 			peNew.m_dBinaries = m_dBinaries.CloneDeep();
@@ -388,8 +407,9 @@ namespace KeePassLib
 			peNew.m_uUsageCount = m_uUsageCount;
 
 			peNew.m_strOverrideUrl = m_strOverrideUrl;
+			peNew.m_bQualityCheck = m_bQualityCheck;
 
-			peNew.m_lTags = new List<string>(m_lTags);
+			peNew.m_lTags.AddRange(m_lTags);
 
 			peNew.m_dCustomData = m_dCustomData.CloneDeep();
 
@@ -456,6 +476,8 @@ namespace KeePassLib
 				if(m_pParentGroup != pe.m_pParentGroup) return false;
 				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pe.m_tParentGroupLastMod))
 					return false;
+				if(!m_puPrevParentGroup.Equals(pe.m_puPrevParentGroup))
+					return false;
 			}
 
 			if(!m_dStrings.EqualsDictionary(pe.m_dStrings, pwOpt, mpCmpStr))
@@ -506,12 +528,10 @@ namespace KeePassLib
 			if(!bIgnoreLastAccess && (m_uUsageCount != pe.m_uUsageCount)) return false;
 
 			if(m_strOverrideUrl != pe.m_strOverrideUrl) return false;
+			if(m_bQualityCheck != pe.m_bQualityCheck) return false;
 
-			if(m_lTags.Count != pe.m_lTags.Count) return false;
-			for(int iTag = 0; iTag < m_lTags.Count; ++iTag)
-			{
-				if(m_lTags[iTag] != pe.m_lTags[iTag]) return false;
-			}
+			// The Tags property normalizes
+			if(!MemUtil.ListsEqual<string>(this.Tags, pe.Tags)) return false;
 
 			if(!m_dCustomData.Equals(pe.m_dCustomData)) return false;
 
@@ -542,7 +562,10 @@ namespace KeePassLib
 			m_uuid = peTemplate.m_uuid;
 
 			if(bAssignLocationChanged)
+			{
 				m_tParentGroupLastMod = peTemplate.m_tParentGroupLastMod;
+				m_puPrevParentGroup = peTemplate.m_puPrevParentGroup;
+			}
 
 			m_dStrings = peTemplate.m_dStrings.CloneDeep();
 			m_dBinaries = peTemplate.m_dBinaries.CloneDeep();
@@ -564,6 +587,7 @@ namespace KeePassLib
 			m_uUsageCount = peTemplate.m_uUsageCount;
 
 			m_strOverrideUrl = peTemplate.m_strOverrideUrl;
+			m_bQualityCheck = peTemplate.m_bQualityCheck;
 
 			m_lTags = new List<string>(peTemplate.m_lTags);
 
@@ -802,7 +826,7 @@ namespace KeePassLib
 			// This method assumes 64-bit pointers/references and Unicode
 			// strings (i.e. 2 bytes per character)
 
-			ulong cb = 248; // Number of bytes; approx. fixed length data
+			ulong cb = 276; // Number of bytes; approx. fixed length data
 			ulong cc = 0; // Number of characters
 
 			cb += (ulong)m_dStrings.UCount * 40;
@@ -842,18 +866,16 @@ namespace KeePassLib
 		{
 			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
 
-			for(int i = 0; i < m_lTags.Count; ++i)
-			{
-				if(strTag.Equals(m_lTags[i], StrUtil.CaseIgnoreCmp)) return true;
-			}
-
-			return false;
+			// this.Tags normalizes
+			return this.Tags.Contains(StrUtil.NormalizeTag(strTag));
 		}
 
 		public bool AddTag(string strTag)
 		{
 			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
-			if(HasTag(strTag)) return false;
+
+			strTag = StrUtil.NormalizeTag(strTag);
+			if(this.Tags.Contains(strTag)) return false; // this.Tags normalizes
 
 			m_lTags.Add(strTag);
 			return true;
@@ -863,16 +885,17 @@ namespace KeePassLib
 		{
 			if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); return false; }
 
-			for(int i = 0; i < m_lTags.Count; ++i)
-			{
-				if(strTag.Equals(m_lTags[i], StrUtil.CaseIgnoreCmp))
-				{
-					m_lTags.RemoveAt(i);
-					return true;
-				}
-			}
+			// this.Tags normalizes
+			return this.Tags.Remove(StrUtil.NormalizeTag(strTag));
+		}
 
-			return false;
+		internal List<string> GetTagsInherited()
+		{
+			List<string> l = ((m_pParentGroup != null) ?
+				m_pParentGroup.GetTagsInherited(false) : new List<string>());
+			l.AddRange(this.Tags);
+			StrUtil.NormalizeTags(l);
+			return l;
 		}
 
 		public bool IsContainedIn(PwGroup pgContainer)

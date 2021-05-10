@@ -159,6 +159,9 @@ namespace KeePass.Forms
 			// m_imgFileSaveAllEnabled = Properties.Resources.B16x16_File_SaveAll;
 			// m_imgFileSaveAllDisabled = Properties.Resources.B16x16_File_SaveAll_Disabled;
 
+#if DEBUG
+			ConstructDebugMenu();
+#endif
 			ConstructContextMenus();
 
 			// m_ilCurrentIcons = m_ilClientIcons;
@@ -723,8 +726,8 @@ namespace KeePass.Forms
 				pg.AddEntry(pe, true);
 			}
 
-			pd.CustomData.Set("Sample Custom Data 1", "0123456789");
-			pd.CustomData.Set("Sample Custom Data 2", "\u00B5y data");
+			pd.CustomData.Set("Sample Custom Data 1", "0123456789", null);
+			pd.CustomData.Set("Sample Custom Data 2", "\u00B5y data", null);
 
 			// pd.PublicCustomData.SetString("Sample Custom Data", "Sample Value");
 #endif
@@ -1098,11 +1101,11 @@ namespace KeePass.Forms
 			if(e.Button != MouseButtons.Left) return;
 
 			TreeNode tn = e.Node;
-			if((tn != null) && (tn.Tag != null))
+			if(tn != null)
 			{
 				PwGroup pg = (tn.Tag as PwGroup);
-				Debug.Assert(pg != null); if(pg == null) return;
-				if(pg != m_docMgr.ActiveDatabase.RootGroup) { Debug.Assert(pg.ParentGroup != null); }
+				if(pg == null) { Debug.Assert(false); return; }
+				Debug.Assert((pg.ParentGroup != null) || (pg == m_docMgr.ActiveDatabase.RootGroup));
 
 				m_tvGroups.SelectedNode = tn; // KPB 1757850
 
@@ -1390,10 +1393,10 @@ namespace KeePass.Forms
 		{
 			TreeViewHitTestInfo tvhi = m_tvGroups.HitTest(m_tvGroups.PointToClient(
 				new Point(e.X, e.Y)));
-
 			if(tvhi.Node == null) return;
+
 			PwGroup pgSelected = (tvhi.Node.Tag as PwGroup);
-			Debug.Assert(pgSelected != null); if(pgSelected == null) return;
+			if(pgSelected == null) { Debug.Assert(false); return; }
 
 			if(m_bDraggingEntries)
 				MoveOrCopySelectedEntries(pgSelected, e.Effect);
@@ -1416,7 +1419,10 @@ namespace KeePass.Forms
 					Debug.Assert(pgParent != null);
 					if(pgParent != null)
 					{
-						if(!pgParent.Groups.Remove(pgDragged)) { Debug.Assert(false); }
+						if(!pgParent.Groups.Remove(pgDragged)) { Debug.Assert(false); return; }
+
+						pgDragged.PreviousParentGroup = pgParent.Uuid;
+						// pgDragged.Touch(true, false);
 					}
 				}
 				else if(e.Effect == DragDropEffects.Copy)
@@ -1575,6 +1581,8 @@ namespace KeePass.Forms
 			}
 			else if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
 			{
+				NativeMethods.SyncTopMost(this);
+
 				if(Program.Config.MainWindow.EntryListAutoResizeColumns &&
 					(m_lvEntries.View == View.Details))
 					UIUtil.ResizeColumns(m_lvEntries, true);
@@ -2890,6 +2898,16 @@ namespace KeePass.Forms
 			dlg.InitEx(((pd != null) && pd.IsOpen) ? pd.IOConnectionInfo : null);
 
 			UIUtil.ShowDialogAndDestroy(dlg);
+		}
+
+		private void OnGroupMoveToPreviousParent(object sender, EventArgs e)
+		{
+			MoveToPreviousParentGroup(false);
+		}
+
+		private void OnEntryMoveToPreviousParent(object sender, EventArgs e)
+		{
+			MoveToPreviousParentGroup(true);
 		}
 	}
 }

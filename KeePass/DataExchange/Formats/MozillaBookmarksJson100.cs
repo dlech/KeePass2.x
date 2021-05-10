@@ -148,14 +148,7 @@ namespace KeePass.DataExchange.Formats
 			// Tags support (new versions)
 			string strTags = jo.GetValue<string>("tags");
 			if(!string.IsNullOrEmpty(strTags))
-			{
-				string[] vTags = strTags.Split(',');
-				foreach(string strTag in vTags)
-				{
-					string str = strTag.Trim();
-					if(str.Length != 0) pe.AddTag(str);
-				}
-			}
+				StrUtil.AddTags(pe.Tags, strTags.Split(','));
 
 			string strKeyword = jo.GetValue<string>("keyword");
 			if(!string.IsNullOrEmpty(strKeyword))

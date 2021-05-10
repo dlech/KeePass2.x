@@ -193,6 +193,32 @@ namespace KeePass.Native
 			return false;
 		}
 
+		// Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
+		// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+		internal static void SyncTopMost(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+			if(NativeLib.IsUnix()) return;
+
+			try
+			{
+				if(!f.TopMost) return; // Managed state
+
+				IntPtr h = f.Handle;
+				if(h == IntPtr.Zero) return;
+
+				int s = GetWindowLong(h, GWL_EXSTYLE); // Unmanaged state
+				if((s & WS_EX_TOPMOST) == 0)
+				{
+					f.TopMost = true; // Calls SetWindowPos (if TopLevel)
+#if DEBUG
+					Trace.WriteLine("Synchronized TopMost/WS_EX_TOPMOST.");
+#endif
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
 		internal static IntPtr FindWindow(string strTitle)
 		{
 			if(strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }

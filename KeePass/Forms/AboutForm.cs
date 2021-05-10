@@ -125,8 +125,8 @@ namespace KeePass.Forms
 			lvi = new ListViewItem(KPRes.KeePassLibCLong);
 			if(!KdbFile.IsLibraryInstalled())
 				lvi.SubItems.Add(KPRes.NotInstalled);
-			else lvi.SubItems.Add(KdbManager.KeePassVersionString + " (0x" +
-				KdbManager.LibraryBuild.ToString("X4") + ")");
+			else lvi.SubItems.Add(KdbManager.KeePassVersionString + " - 0x" +
+				KdbManager.LibraryBuild.ToString("X4"));
 			m_lvComponents.Items.Add(lvi);
 		}
 

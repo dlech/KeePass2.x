@@ -49,42 +49,46 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	std_string strCmdLine = GetCommandLine();
 	boost::trim_if(strCmdLine, boost::is_any_of(g_lpPathTrimChars));
+	std::transform(strCmdLine.begin(), strCmdLine.end(), strCmdLine.begin(), _totlower);
 
-	std::transform(strCmdLine.begin(), strCmdLine.end(), strCmdLine.begin(), tolower);
-
-	if((strCmdLine.size() >= g_strNGenInstall.size()) && (strCmdLine.substr(
-		strCmdLine.size() - g_strNGenInstall.size()) == g_strNGenInstall))
+	if(StrEndsWith(strCmdLine, g_strNGenInstall))
 	{
 		UpdateNativeImage(false);
 		Sleep(200);
 		UpdateNativeImage(true);
 	}
 
-	if((strCmdLine.size() >= g_strNGenUninstall.size()) && (strCmdLine.substr(
-		strCmdLine.size() - g_strNGenUninstall.size()) == g_strNGenUninstall))
-	{
+	if(StrEndsWith(strCmdLine, g_strNGenUninstall))
 		UpdateNativeImage(false);
-	}
 
-	if((strCmdLine.size() >= g_strPreLoadRegister.size()) && (strCmdLine.substr(
-		strCmdLine.size() - g_strPreLoadRegister.size()) == g_strPreLoadRegister))
+	if(StrEndsWith(strCmdLine, g_strPreLoadRegister))
 	{
+		RegisterPreLoad(false); // Remove old value in 32-bit reg. view on 64-bit systems
 		RegisterPreLoad(true);
 	}
 
-	if((strCmdLine.size() >= g_strPreLoadUnregister.size()) && (strCmdLine.substr(
-		strCmdLine.size() - g_strPreLoadUnregister.size()) == g_strPreLoadUnregister))
-	{
+	if(StrEndsWith(strCmdLine, g_strPreLoadUnregister))
 		RegisterPreLoad(false);
-	}
 
-	if((strCmdLine.size() >= g_strNetCheck.size()) && (strCmdLine.substr(
-		strCmdLine.size() - g_strNetCheck.size()) == g_strNetCheck))
-	{
+	if(StrEndsWith(strCmdLine, g_strNetCheck))
 		CheckDotNetInstalled();
-	}
 
 	return 0;
+}
+
+bool StrEndsWith(const std_string& strText, const std_string& strEnd)
+{
+	if(strEnd.size() == 0) return true;
+	if(strEnd.size() > strText.size()) return false;
+	return (strText.substr(strText.size() - strEnd.size()) == strEnd);
+}
+
+void EnsureTerminatingSeparator(std_string& strPath)
+{
+	if(strPath.size() == 0) return;
+	if(strPath[strPath.size() - 1] == _T('\\')) return;
+
+	strPath += _T("\\");
 }
 
 void UpdateNativeImage(bool bInstall)
@@ -96,8 +100,7 @@ void UpdateNativeImage(bool bInstall)
 	if(strKeePassExe.size() == 0) return;
 
 	std_string strParam = (bInstall ? _T("") : _T("un"));
-	strParam += _T("install \"");
-	strParam += strKeePassExe + _T("\"");
+	strParam += (_T("install \"") + strKeePassExe) + _T("\"");
 
 	SHELLEXECUTEINFO sei;
 	ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
@@ -118,27 +121,44 @@ void UpdateNativeImage(bool bInstall)
 
 void RegisterPreLoad(bool bRegister)
 {
-	const std_string strPath = GetKeePassExePath();
-	if(strPath.size() == 0) return;
+	LPCTSTR lpKey = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+	LPCTSTR lpName = _T("KeePass 2 PreLoad");
 
-	HKEY hKey = NULL;
-	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-		0, KEY_WRITE, &hKey) != ERROR_SUCCESS) return;
-	if(hKey == NULL) return;
+	const std_string strExe = GetKeePassExePath();
+	if(strExe.size() == 0) return;
+	const std_string strValue = (_T("\"") + strExe) + _T("\" --preload");
 
-	const std_string strItemName = _T("KeePass 2 PreLoad");
-	std_string strItemValue = _T("\"");
-	strItemValue += strPath;
-	strItemValue += _T("\" --preload");
+	HKEY hRoot = HKEY_LOCAL_MACHINE;
+	HKEY h = NULL;
+	LSTATUS l;
 
 	if(bRegister)
-		RegSetValueEx(hKey, strItemName.c_str(), 0, REG_SZ,
-			(const BYTE*)strItemValue.c_str(), static_cast<DWORD>(
-			(strItemValue.size() + 1) * sizeof(TCHAR)));
-	else
-		RegDeleteValue(hKey, strItemName.c_str());
-
-	RegCloseKey(hKey);
+	{
+		l = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE | KEY_WOW64_64KEY, &h);
+		if((l != ERROR_SUCCESS) || (h == NULL))
+			l = RegCreateKeyEx(hRoot, lpKey, 0, NULL, 0, KEY_WRITE |
+				KEY_WOW64_64KEY, NULL, &h, NULL);
+		if((l == ERROR_SUCCESS) && (h != NULL))
+		{
+			RegSetValueEx(h, lpName, 0, REG_SZ, (const BYTE*)strValue.c_str(),
+				static_cast<DWORD>((strValue.size() + 1) * sizeof(TCHAR)));
+			RegCloseKey(h);
+		}
+	}
+	else // Unregister
+	{
+		for(size_t i = 0; i < 2; ++i)
+		{
+			l = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE |
+				((i == 0) ? KEY_WOW64_64KEY : KEY_WOW64_32KEY), &h);
+			if((l == ERROR_SUCCESS) && (h != NULL))
+			{
+				RegDeleteValue(h, lpName);
+				RegCloseKey(h);
+				h = NULL;
+			}
+		}
+	}
 }
 
 std_string GetNetInstallRoot()
@@ -182,14 +202,6 @@ std_string GetKeePassExePath()
 	return (strPath + _T("KeePass.exe"));
 }
 
-void EnsureTerminatingSeparator(std_string& strPath)
-{
-	if(strPath.size() == 0) return;
-	if(strPath.c_str()[strPath.size() - 1] == _T('\\')) return;
-
-	strPath += _T("\\");
-}
-
 std_string FindNGen()
 {
 	std_string strNGen;
@@ -217,7 +229,7 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 
 	do
 	{
-		if((wfd.cFileName[0] == 0) || (_tcsicmp(wfd.cFileName, _T(".")) == 0) ||
+		if((wfd.cFileName[0] == _T('\0')) || (_tcsicmp(wfd.cFileName, _T(".")) == 0) ||
 			(_tcsicmp(wfd.cFileName, _T("..")) == 0)) { }
 		else if((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
 			FindNGenRec((strPath + wfd.cFileName) + _T("\\"), strNGenPath, ullVersion);
@@ -271,8 +283,8 @@ void CheckDotNetInstalled()
 	const std_string strNGen = FindNGen();
 	if(strNGen.size() == 0)
 	{
-		std_string strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework >= 2.0, ");
-		strMsg += _T("however this framework currently doesn't seem to be installed ");
+		std_string strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 2.0 or higher. ");
+		strMsg += _T("This framework currently does not seem to be installed ");
 		strMsg += _T("on your computer. Without this framework, KeePass will not run.\r\n\r\n");
 		strMsg += _T("The Microsoft .NET Framework is available as free download from the ");
 		strMsg += _T("Microsoft website.\r\n\r\n");

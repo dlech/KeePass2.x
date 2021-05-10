@@ -275,6 +275,13 @@ namespace KeePass.Forms
 			m_icgPassword.ContextEntry = m_pwEntry;
 			m_icgPassword.IsSprVariant = true;
 
+			m_cbQualityCheck.Image = GfxUtil.ScaleImage(Properties.Resources.B16x16_MessageBox_Info,
+				DpiUtil.ScaleIntX(12), DpiUtil.ScaleIntY(12), ScaleTransformFlags.UIIcon);
+			m_cbQualityCheck.Checked = m_pwEntry.QualityCheck;
+			OnQualityCheckCheckedChanged(null, EventArgs.Empty);
+			if((Program.Config.UI.UIFlags & (ulong)AceUIFlags.HidePwQuality) != 0)
+				m_cbQualityCheck.Visible = false;
+
 			if(m_pwEntry.Expires)
 			{
 				m_dtExpireDateTime.Value = TimeUtil.ToLocal(m_pwEntry.ExpiryTime, true);
@@ -293,8 +300,8 @@ namespace KeePass.Forms
 					m_tbRepeatPassword.ReadOnly = m_tbUrl.ReadOnly =
 					m_rtNotes.ReadOnly = true;
 
-				UIUtil.SetEnabledFast(false, m_btnIcon, m_btnGenPw, m_cbExpires,
-					m_dtExpireDateTime, m_btnStandardExpires);
+				UIUtil.SetEnabledFast(false, m_btnIcon, m_btnGenPw, m_cbQualityCheck,
+					m_cbExpires, m_dtExpireDateTime, m_btnStandardExpires);
 
 				// m_rtNotes.SelectAll();
 				// m_rtNotes.BackColor = m_rtNotes.SelectionBackColor =
@@ -469,7 +476,10 @@ namespace KeePass.Forms
 			UIUtil.SetChecked(m_cbCustomBackgroundColor, !UIUtil.ColorsEqual(
 				m_clrBackground, Color.Empty));
 
+			TagUtil.MakeInheritedTagsLink(m_linkTagsInh, m_pwEntry.ParentGroup, this);
 			m_tbTags.Text = StrUtil.TagsToString(m_pwEntry.Tags, true);
+			TagUtil.MakeTagsButton(m_btnTags, m_tbTags, m_ttRect, m_pwEntry.ParentGroup,
+				((m_pwDatabase != null) ? m_pwDatabase.RootGroup : null));
 
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
 			if(Program.Translation.Properties.RightToLeft)
@@ -506,6 +516,7 @@ namespace KeePass.Forms
 				m_cbCustomForegroundColor.Enabled = false;
 				m_cbCustomBackgroundColor.Enabled = false;
 				m_tbTags.ReadOnly = true;
+				m_btnTags.Enabled = false;
 				m_cmbOverrideUrl.Enabled = false;
 			}
 		}
@@ -707,6 +718,7 @@ namespace KeePass.Forms
 			m_ttRect.SetToolTip(m_btnIcon, KPRes.SelectIcon);
 			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
 			m_ttRect.SetToolTip(m_btnGenPw, KPRes.GeneratePassword);
+			m_ttRect.SetToolTip(m_cbQualityCheck, KPRes.QualityCheckToggle);
 			m_ttRect.SetToolTip(m_btnStandardExpires, KPRes.StandardExpireSelect);
 
 			UIUtil.ConfigureToolTip(m_ttBalloon);
@@ -810,6 +822,7 @@ namespace KeePass.Forms
 				MultipleValuesEx.ConfigureText(m_tbUserName, true);
 				MultipleValuesEx.ConfigureText(m_tbPassword, true);
 				MultipleValuesEx.ConfigureText(m_tbRepeatPassword, true);
+				m_cbQualityCheck.Enabled = false;
 				MultipleValuesEx.ConfigureText(m_tbUrl, true);
 				MultipleValuesEx.ConfigureText(m_rtNotes, true);
 				if(m_mvec.MultiExpiry)
@@ -883,6 +896,7 @@ namespace KeePass.Forms
 			m_btnIcon.Text = KPRes.PickIcon;
 			m_cbHidePassword.Text = KPRes.HideUsingAsterisks;
 			m_btnGenPw.Text = m_ttRect.GetToolTip(m_btnGenPw);
+			m_cbQualityCheck.Text = m_ttRect.GetToolTip(m_cbQualityCheck);
 			m_btnStandardExpires.Text = m_ttRect.GetToolTip(m_btnStandardExpires);
 
 			m_btnPickFgColor.Text = KPRes.SelectColor;
@@ -996,10 +1010,9 @@ namespace KeePass.Forms
 			else peTarget.BackgroundColor = Color.Empty;
 
 			peTarget.OverrideUrl = m_cmbOverrideUrl.Text;
+			peTarget.QualityCheck = m_cbQualityCheck.Checked;
 
-			List<string> lNewTags = StrUtil.StringToTags(m_tbTags.Text);
-			peTarget.Tags.Clear();
-			foreach(string strTag in lNewTags) peTarget.AddTag(strTag);
+			peTarget.Tags = StrUtil.StringToTags(m_tbTags.Text);
 
 			peTarget.Expires = m_cgExpiry.Checked;
 			if(peTarget.Expires) peTarget.ExpiryTime = m_cgExpiry.Value;
@@ -1462,19 +1475,15 @@ namespace KeePass.Forms
 
 			if(ipf.ShowDialog() == DialogResult.OK)
 			{
-				if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) // Custom icon
-				{
-					m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+				m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
+				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
+
+				if(!m_pwCustomIconID.Equals(PwUuid.Zero))
 					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
 						m_pwDatabase, m_pwCustomIconID), true);
-				}
-				else // Standard icon
-				{
-					m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
-					m_pwCustomIconID = PwUuid.Zero;
+				else
 					UIUtil.SetButtonImage(m_btnIcon, m_ilIcons.Images[
 						(int)m_pwEntryIcon], true);
-				}
 			}
 
 			UIUtil.DestroyForm(ipf);
@@ -2361,6 +2370,11 @@ namespace KeePass.Forms
 		private void OnUrlOverrideTextChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx(); // URL override warning
+		}
+
+		private void OnQualityCheckCheckedChanged(object sender, EventArgs e)
+		{
+			m_icgPassword.QualityEnabled = m_cbQualityCheck.Checked;
 		}
 	}
 }

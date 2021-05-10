@@ -89,7 +89,8 @@ namespace KeePassLib.Serialization
 			m_format = fmt;
 			m_slLogger = slLogger;
 
-			m_pbsBinaries.Clear();
+			// Other applications might not perform a deduplication
+			m_pbsBinaries = new ProtectedBinarySet(false);
 
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			byte[] pbCipherKey = null;
@@ -456,6 +457,7 @@ namespace KeePassLib.Serialization
 
 					ProtectedBinary pb = new ProtectedBinary(bProt, pbData,
 						1, pbData.Length - 1);
+					Debug.Assert(m_pbsBinaries.Find(pb) < 0); // No deduplication?
 					m_pbsBinaries.Add(pb);
 
 					if(bProt) MemUtil.ZeroByteArray(pbData);

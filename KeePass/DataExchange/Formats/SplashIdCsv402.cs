@@ -225,8 +225,7 @@ namespace KeePass.DataExchange.Formats
 
 			pe.IconId = pwIcon;
 
-			List<string> vTags = StrUtil.StringToTags(strType);
-			foreach(string strTag in vTags) { pe.AddTag(strTag); }
+			StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strType));
 
 			for(int iField = 0; iField < 9; ++iField)
 			{

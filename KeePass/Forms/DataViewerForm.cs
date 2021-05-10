@@ -400,12 +400,16 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == m_strViewerWeb)
 				{
-					bool bValid;
-					string strData = BinaryDataToString(false, out bValid);
+					string strData = string.Empty;
+					if(m_bdc == BinaryDataClass.WebDocument)
+					{
+						bool bValid;
+						strData = BinaryDataToString(false, out bValid);
+					}
 					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
 				}
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(strViewer == m_strViewerImage); }
 
 			UpdateVisibility(strViewer, true);
 		}

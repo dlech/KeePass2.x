@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
 
 using KeePass.Resources;
 
@@ -32,7 +32,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.0.2-4.1.35+
+	// 2.0.2-4.65.0.5+
 	internal sealed class LastPassCsv2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -67,62 +67,62 @@ namespace KeePass.DataExchange.Formats
 			opt.BackslashIsEscape = false;
 
 			CsvStreamReaderEx csr = new CsvStreamReaderEx(strData, opt);
-
-			while(true)
-			{
-				string[] vLine = csr.ReadLine();
-				if(vLine == null) break;
-
-				AddEntry(vLine, pwStorage);
-			}
+			ImportCsv(csr, pwStorage);
 		}
 
-		private static void AddEntry(string[] vLine, PwDatabase pd)
+		private static void ImportCsv(CsvStreamReaderEx csr, PwDatabase pd)
 		{
-			Debug.Assert((vLine.Length == 0) || (vLine.Length == 7));
-			if(vLine.Length < 5) return;
+			CsvTableEntryReader ctr = new CsvTableEntryReader(pd);
 
-			// Skip header line
-			if((vLine[1] == "username") && (vLine[2] == "password") &&
-				(vLine[3] == "extra") && (vLine[4] == "name"))
-				return;
+			const string strColUrl = "url";
 
-			PwEntry pe = new PwEntry(true, true);
-
-			PwGroup pg = pd.RootGroup;
-			if(vLine.Length >= 6)
+			Predicate<string[]> fIsSecNote = delegate(string[] vRow)
 			{
-				string strGroup = vLine[5];
-				if(strGroup.Length > 0)
-					pg = pg.FindCreateSubTree(strGroup, new string[1]{ "\\" }, true);
-			}
-			pg.AddEntry(pe, true);
+				string str = ctr.GetData(vRow, strColUrl, string.Empty);
+				return str.Equals("http://sn", StrUtil.CaseIgnoreCmp);
+			};
 
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, vLine[4], pd);
-			ImportUtil.AppendToField(pe, PwDefs.UserNameField, vLine[1], pd);
-			ImportUtil.AppendToField(pe, PwDefs.PasswordField, vLine[2], pd);
+			ctr.SetDataAppend("name", PwDefs.TitleField);
+			ctr.SetDataAppend("username", PwDefs.UserNameField);
+			ctr.SetDataAppend("password", PwDefs.PasswordField);
 
-			string strNotes = vLine[3];
-			bool bIsSecNote = vLine[0].Equals("http://sn", StrUtil.CaseIgnoreCmp);
-			if(bIsSecNote)
+			ctr.SetDataHandler(strColUrl, delegate(string str, PwEntry pe,
+				string[] vContextRow)
 			{
-				if(strNotes.StartsWith("NoteType:", StrUtil.CaseIgnoreCmp))
-					AddNoteFields(pe, strNotes, pd);
-				else ImportUtil.AppendToField(pe, PwDefs.NotesField, strNotes, pd);
-			}
-			else // Standard entry, no secure note
-			{
-				ImportUtil.AppendToField(pe, PwDefs.UrlField, vLine[0], pd);
+				if(!fIsSecNote(vContextRow))
+					ImportUtil.AppendToField(pe, PwDefs.UrlField, str, pd);
+			});
 
-				Debug.Assert(!strNotes.StartsWith("NoteType:"));
-				ImportUtil.AppendToField(pe, PwDefs.NotesField, strNotes, pd);
-			}
-
-			if(vLine.Length >= 7)
+			ctr.SetDataHandler("extra", delegate(string str, PwEntry pe,
+				string[] vContextRow)
 			{
-				if(StrUtil.StringToBool(vLine[6]))
-					pe.AddTag("Favorite");
-			}
+				if(fIsSecNote(vContextRow) && str.StartsWith("NoteType:",
+					StrUtil.CaseIgnoreCmp))
+				{
+					AddNoteFields(pe, str, pd);
+					return;
+				}
+
+				ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
+			});
+
+			ctr.SetDataHandler("grouping", delegate(string str, PwEntry pe,
+				string[] vContextRow)
+			{
+				if(str.Length == 0) return;
+
+				PwGroup pg = pd.RootGroup.FindCreateSubTree(str,
+					new string[1] { "\\" }, true);
+				pg.AddEntry(pe, true);
+			});
+
+			ctr.SetDataHandler("fav", delegate(string str, PwEntry pe,
+				string[] vContextRow)
+			{
+				if(StrUtil.StringToBool(str)) pe.AddTag(PwDefs.FavoriteTag);
+			});
+
+			ctr.Read(csr);
 		}
 
 		private static void AddNoteFields(PwEntry pe, string strNotes,
@@ -143,7 +143,7 @@ namespace KeePass.DataExchange.Formats
 					string strField = ImportUtil.MapNameToStandardField(strRaw, false);
 					if(string.IsNullOrEmpty(strField)) strField = strRaw;
 
-					if(strField.Length > 0)
+					if(strField.Length != 0)
 					{
 						strFieldName = strField;
 						iDataOffset = iFieldLen + 1;
@@ -153,7 +153,7 @@ namespace KeePass.DataExchange.Formats
 				}
 
 				ImportUtil.AppendToField(pe, strFieldName, strLine.Substring(
-					iDataOffset), pd, null, true);
+					iDataOffset), pd);
 			}
 		}
 	}

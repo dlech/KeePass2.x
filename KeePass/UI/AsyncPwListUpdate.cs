@@ -19,15 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 using KeePass.Forms;
 using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -243,24 +244,27 @@ namespace KeePass.UI
 
 		internal static string SprCompileFn(string strText, PwListItem li)
 		{
-			string strCmp = null;
-			while(strCmp == null)
+			if(string.IsNullOrEmpty(strText)) return string.Empty;
+
+			string str = null;
+			while(str == null)
 			{
 				try
 				{
-					strCmp = SprEngine.Compile(strText, MainForm.GetEntryListSprContext(
-						li.Entry, Program.MainForm.DocumentManager.SafeFindContainerOf(
-						li.Entry)));
+					SprContext ctx = MainForm.GetEntryListSprContext(li.Entry,
+						Program.MainForm.DocumentManager.SafeFindContainerOf(
+						li.Entry));
+					str = SprEngine.Compile(strText, ctx);
 				}
 				catch(InvalidOperationException) { } // Probably collection changed
 				catch(NullReferenceException) { } // Objects disposed already
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			if(strCmp == strText) return strText;
+			if(Program.Config.MainWindow.EntryListShowDerefDataAndRefs && (str != strText))
+				str += " - " + strText;
 
-			return (Program.Config.MainWindow.EntryListShowDerefDataAndRefs ?
-				(strCmp + " - " + strText) : strCmp);
+			return StrUtil.MultiToSingleLine(str);
 		}
 	}
 }

@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.12+
+	// 1.12-1.49.1+
 	internal sealed class BitwardenJson112 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -64,6 +64,9 @@ namespace KeePass.DataExchange.Formats
 
 		private static void ImportRoot(JsonObject jo, PwDatabase pd)
 		{
+			if(jo.GetValue<bool>("encrypted", false))
+				throw new FormatException(KPRes.NoEncNoCompress);
+
 			Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
 			JsonObject[] vGroups = jo.GetValueArray<JsonObject>("folders");
 			if(vGroups != null) ImportGroups(vGroups, dGroups, pd);
@@ -117,7 +120,7 @@ namespace KeePass.DataExchange.Formats
 			ImportString(jo, "notes", pe, PwDefs.NotesField, pd);
 
 			bool bFav = jo.GetValue<bool>("favorite", false);
-			if(bFav) pe.AddTag("Favorite");
+			if(bFav) pe.AddTag(PwDefs.FavoriteTag);
 
 			JsonObject joSub = jo.GetValue<JsonObject>("login");
 			if(joSub != null) ImportLogin(joSub, pe, pd);
