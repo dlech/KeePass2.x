@@ -48,7 +48,7 @@ namespace KeePass.Forms
 		public LanguageForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public bool InitEx()
@@ -160,7 +160,6 @@ namespace KeePass.Forms
 			}
 
 			UIUtil.ResizeColumns(m_lvLanguages, new int[] { 5, 2, 5, 5, 3 }, true);
-			UIUtil.SetFocus(m_lvLanguages, this);
 		}
 
 		private static void AddTranslations(string strDir,

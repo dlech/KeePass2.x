@@ -27,6 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePassLib.Native;
+using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
@@ -98,9 +99,7 @@ namespace KeePass.UI
 			if((m_vImages != null) && (nIdx >= 0) && (nIdx < m_vImages.Count) &&
 				(m_vImages[nIdx] != null))
 			{
-				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				g.SmoothingMode = SmoothingMode.HighQuality;
-
+				GfxUtil.SetHighQuality(g);
 				g.DrawImage(m_vImages[nIdx], rectImg);
 			}
 

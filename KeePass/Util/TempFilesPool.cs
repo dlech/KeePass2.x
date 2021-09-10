@@ -44,8 +44,8 @@ namespace KeePass.Util
 
 	public sealed class TempFilesPool
 	{
-		private List<string> m_vFiles = new List<string>();
-		private List<KeyValuePair<string, bool>> m_vDirs =
+		private List<string> m_lFiles = new List<string>();
+		private List<KeyValuePair<string, bool>> m_lDirs =
 			new List<KeyValuePair<string, bool>>();
 
 		private Dictionary<string, bool> m_dContentLoc = new Dictionary<string, bool>();
@@ -97,32 +97,45 @@ namespace KeePass.Util
 		{
 			if((f & TempClearFlags.RegisteredFiles) != TempClearFlags.None)
 			{
-				for(int i = m_vFiles.Count - 1; i >= 0; --i)
+				List<string> lFailed = new List<string>();
+
+				foreach(string strFile in m_lFiles)
 				{
 					try
 					{
-						if(File.Exists(m_vFiles[i]))
-							File.Delete(m_vFiles[i]);
-
-						m_vFiles.RemoveAt(i);
+						if(File.Exists(strFile))
+							File.Delete(strFile);
 					}
-					catch(Exception) { Debug.Assert(false); }
+					catch(Exception)
+					{
+						Debug.Assert(false);
+						lFailed.Add(strFile);
+					}
 				}
+
+				m_lFiles = lFailed;
 			}
 
 			if((f & TempClearFlags.RegisteredDirectories) != TempClearFlags.None)
 			{
-				for(int i = m_vDirs.Count - 1; i >= 0; --i)
+				List<KeyValuePair<string, bool>> lFailed =
+					new List<KeyValuePair<string, bool>>();
+
+				foreach(KeyValuePair<string, bool> kvp in m_lDirs)
 				{
 					try
 					{
-						if(Directory.Exists(m_vDirs[i].Key))
-							Directory.Delete(m_vDirs[i].Key, m_vDirs[i].Value);
-
-						m_vDirs.RemoveAt(i);
+						if(Directory.Exists(kvp.Key))
+							Directory.Delete(kvp.Key, kvp.Value);
 					}
-					catch(Exception) { Debug.Assert(false); }
+					catch(Exception)
+					{
+						Debug.Assert(false);
+						lFailed.Add(kvp);
+					}
 				}
+
+				m_lDirs = lFailed;
 			}
 
 			if((f & TempClearFlags.ContentTaggedFiles) != TempClearFlags.None)
@@ -143,18 +156,16 @@ namespace KeePass.Util
 
 		public void Add(string strTempFile)
 		{
-			Debug.Assert(strTempFile != null);
-			if(string.IsNullOrEmpty(strTempFile)) return;
+			if(string.IsNullOrEmpty(strTempFile)) { Debug.Assert(false); return; }
 
-			m_vFiles.Add(strTempFile);
+			m_lFiles.Add(strTempFile);
 		}
 
 		public void AddDirectory(string strTempDir, bool bRecursive)
 		{
-			Debug.Assert(strTempDir != null);
-			if(string.IsNullOrEmpty(strTempDir)) return;
+			if(string.IsNullOrEmpty(strTempDir)) { Debug.Assert(false); return; }
 
-			m_vDirs.Add(new KeyValuePair<string, bool>(strTempDir, bRecursive));
+			m_lDirs.Add(new KeyValuePair<string, bool>(strTempDir, bRecursive));
 		}
 
 		public void AddContent(string strFilePattern, bool bRecursive)
@@ -189,7 +200,7 @@ namespace KeePass.Util
 		public string GetTempFileName(bool bCreateEmptyFile)
 		{
 			string strFile = Path.GetTempFileName();
-			m_vFiles.Add(strFile);
+			m_lFiles.Add(strFile);
 
 			if(!bCreateEmptyFile)
 			{
@@ -222,7 +233,7 @@ namespace KeePass.Util
 
 					if(!File.Exists(str))
 					{
-						m_vFiles.Add(str);
+						m_lFiles.Add(str);
 						return str;
 					}
 				}
@@ -234,18 +245,17 @@ namespace KeePass.Util
 
 		public bool Delete(string strTempFile)
 		{
-			Debug.Assert(strTempFile != null);
-			if(string.IsNullOrEmpty(strTempFile)) return false;
+			if(string.IsNullOrEmpty(strTempFile)) { Debug.Assert(false); return false; }
 
-			int nFile = m_vFiles.IndexOf(strTempFile);
-			if(nFile < 0) { Debug.Assert(false); return false; }
+			int i = m_lFiles.IndexOf(strTempFile);
+			if(i < 0) { Debug.Assert(false); return false; }
 
 			bool bResult = false;
 			try
 			{
 				File.Delete(strTempFile);
 
-				m_vFiles.RemoveAt(nFile);
+				m_lFiles.RemoveAt(i);
 				bResult = true;
 			}
 			catch(Exception) { Debug.Assert(false); }

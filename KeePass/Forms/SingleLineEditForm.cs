@@ -49,7 +49,7 @@ namespace KeePass.Forms
 		public SingleLineEditForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(string strTitle, string strDesc, string strLongDesc,
@@ -105,7 +105,7 @@ namespace KeePass.Forms
 
 			cFocus.Text = m_strDefaultText;
 
-			this.Invalidate();
+			Invalidate();
 			UIUtil.SetFocus(cFocus, this);
 		}
 

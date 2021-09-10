@@ -515,5 +515,11 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SetWindowDisplayAffinity(IntPtr hWnd,
 			uint dwAffinity);
+
+		[DllImport("User32.dll", EntryPoint = "SystemParametersInfo",
+			CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SystemParametersInfoI32(uint uiAction,
+			uint uiParam, ref int pvParam, uint fWinIni);
 	}
 }

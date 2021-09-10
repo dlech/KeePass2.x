@@ -334,7 +334,7 @@ namespace KeePass.UI
 		public void SetIcon(VtdCustomIcon vtdIcon)
 		{
 			if(vtdIcon == VtdCustomIcon.Question)
-				this.SetIcon(SystemIcons.Question.Handle);
+				SetIcon(SystemIcons.Question.Handle);
 		}
 
 		public void SetIcon(IntPtr hIcon)

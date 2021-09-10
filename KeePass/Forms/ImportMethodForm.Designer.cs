@@ -53,7 +53,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(345, 431);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 11;
+			this.m_btnOK.TabIndex = 12;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -64,7 +64,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(426, 431);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 12;
+			this.m_btnCancel.TabIndex = 13;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -74,7 +74,7 @@
 			this.m_lblIntro.Location = new System.Drawing.Point(12, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(489, 28);
-			this.m_lblIntro.TabIndex = 1;
+			this.m_lblIntro.TabIndex = 0;
 			this.m_lblIntro.Text = "The file format that you have selected to import supports group and/or entry IDs." +
 				" Please choose an import behavior.";
 			// 
@@ -93,7 +93,7 @@
 			this.m_radioCreateNew.Location = new System.Drawing.Point(15, 114);
 			this.m_radioCreateNew.Name = "m_radioCreateNew";
 			this.m_radioCreateNew.Size = new System.Drawing.Size(60, 17);
-			this.m_radioCreateNew.TabIndex = 0;
+			this.m_radioCreateNew.TabIndex = 1;
 			this.m_radioCreateNew.TabStop = true;
 			this.m_radioCreateNew.Text = "<DYN>";
 			this.m_radioCreateNew.UseVisualStyleBackColor = true;
@@ -193,7 +193,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 425);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(513, 2);
-			this.m_lblSeparator.TabIndex = 13;
+			this.m_lblSeparator.TabIndex = 11;
 			// 
 			// ImportMethodForm
 			// 

@@ -72,7 +72,7 @@ namespace KeePass.Forms
 		public KeyFileCreationForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(IOConnectionInfo ioInfo)

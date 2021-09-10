@@ -56,7 +56,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(183, 297);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 2;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -67,7 +67,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(264, 297);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 3;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -83,7 +83,7 @@
 			this.m_grpServer.Location = new System.Drawing.Point(12, 12);
 			this.m_grpServer.Name = "m_grpServer";
 			this.m_grpServer.Size = new System.Drawing.Size(327, 120);
-			this.m_grpServer.TabIndex = 2;
+			this.m_grpServer.TabIndex = 0;
 			this.m_grpServer.TabStop = false;
 			this.m_grpServer.Text = "Server";
 			// 
@@ -168,7 +168,7 @@
 			this.m_grpAuth.Location = new System.Drawing.Point(12, 138);
 			this.m_grpAuth.Name = "m_grpAuth";
 			this.m_grpAuth.Size = new System.Drawing.Size(327, 146);
-			this.m_grpAuth.TabIndex = 3;
+			this.m_grpAuth.TabIndex = 1;
 			this.m_grpAuth.TabStop = false;
 			this.m_grpAuth.Text = "Authentication";
 			// 

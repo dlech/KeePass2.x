@@ -34,6 +34,7 @@ using KeePass.Util;
 using KeePass.Util.XmlSerialization;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Resources;
 using KeePassLib.Serialization;
 using KeePassLib.Translation;
@@ -123,58 +124,72 @@ namespace TrlUtil
 			m_lvStrings.Columns.Add("Translated", (nWidth * 2) / 5);
 
 			m_trl.StringTables.Clear();
-			KPStringTable kpstP = new KPStringTable();
-			kpstP.Name = "KeePass.Resources.KPRes";
-			m_trl.StringTables.Add(kpstP);
-			KPStringTable kpstL = new KPStringTable();
-			kpstL.Name = "KeePassLib.Resources.KLRes";
-			m_trl.StringTables.Add(kpstL);
-			KPStringTable kpstM = new KPStringTable();
-			kpstM.Name = "KeePass.Forms.MainForm.m_menuMain";
-			m_trl.StringTables.Add(kpstM);
-			KPStringTable kpstE = new KPStringTable();
-			kpstE.Name = "KeePass.Forms.MainForm.m_ctxPwList";
-			m_trl.StringTables.Add(kpstE);
-			KPStringTable kpstG = new KPStringTable();
-			kpstG.Name = "KeePass.Forms.MainForm.m_ctxGroupList";
-			m_trl.StringTables.Add(kpstG);
-			KPStringTable kpstT = new KPStringTable();
-			kpstT.Name = "KeePass.Forms.MainForm.m_ctxTray";
-			m_trl.StringTables.Add(kpstT);
-			KPStringTable kpstET = new KPStringTable();
-			kpstET.Name = "KeePass.Forms.PwEntryForm.m_ctxTools";
-			m_trl.StringTables.Add(kpstET);
-			KPStringTable kpstDT = new KPStringTable();
-			kpstDT.Name = "KeePass.Forms.PwEntryForm.m_ctxDefaultTimes";
-			m_trl.StringTables.Add(kpstDT);
-			KPStringTable kpstLO = new KPStringTable();
-			kpstLO.Name = "KeePass.Forms.PwEntryForm.m_ctxListOperations";
-			m_trl.StringTables.Add(kpstLO);
-			KPStringTable kpstPG = new KPStringTable();
-			kpstPG.Name = "KeePass.Forms.PwEntryForm.m_ctxPwGen";
-			m_trl.StringTables.Add(kpstPG);
-			KPStringTable kpstSM = new KPStringTable();
-			kpstSM.Name = "KeePass.Forms.PwEntryForm.m_ctxStrMoveToStandard";
-			m_trl.StringTables.Add(kpstSM);
-			KPStringTable kpstBA = new KPStringTable();
-			kpstBA.Name = "KeePass.Forms.PwEntryForm.m_ctxBinAttach";
-			m_trl.StringTables.Add(kpstBA);
-			KPStringTable kpstTT = new KPStringTable();
-			kpstTT.Name = "KeePass.Forms.EcasTriggersForm.m_ctxTools";
-			m_trl.StringTables.Add(kpstTT);
-			KPStringTable kpstDE = new KPStringTable();
-			kpstDE.Name = "KeePass.Forms.DataEditorForm.m_menuMain";
-			m_trl.StringTables.Add(kpstDE);
-			KPStringTable kpstSD = new KPStringTable();
-			kpstSD.Name = "KeePassLib.Resources.KSRes";
-			m_trl.StringTables.Add(kpstSD);
 
-			Type tKP = typeof(KPRes);
-			ListViewGroup lvg = new ListViewGroup("KeePass Strings");
-			m_lvStrings.Groups.Add(lvg);
-			foreach(string strKey in KPRes.GetKeyNames())
+			GFunc<string, KPStringTable> fAddST = delegate(string strName)
 			{
-				PropertyInfo pi = tKP.GetProperty(strKey);
+				KPStringTable kpst = new KPStringTable();
+				kpst.Name = strName;
+				m_trl.StringTables.Add(kpst);
+				return kpst;
+			};
+
+			GAction<KPStringTable, ToolStrip, string> fAddMI = delegate(
+				KPStringTable kpst, ToolStrip ts, string strGroupName)
+			{
+				ListViewGroup g = new ListViewGroup(strGroupName);
+				m_lvStrings.Groups.Add(g);
+				TrlAddMenuItems(kpst, g, ts.Items);
+			};
+
+			KeePass.Forms.MainForm mf = new KeePass.Forms.MainForm();
+			KeePass.Forms.PwEntryForm ef = new KeePass.Forms.PwEntryForm();
+			KeePass.Forms.DataEditorForm df = new KeePass.Forms.DataEditorForm();
+			KeePass.Forms.EcasTriggersForm tf = new KeePass.Forms.EcasTriggersForm();
+
+			KPStringTable kpstP = fAddST("KeePass.Resources.KPRes");
+			KPStringTable kpstL = fAddST("KeePassLib.Resources.KLRes");
+			KPStringTable kpstMM = fAddST("KeePass.Forms.MainForm.m_menuMain");
+			KPStringTable kpstMG = fAddST("KeePass.Forms.MainForm.m_ctxGroupList");
+			KPStringTable kpstME = fAddST("KeePass.Forms.MainForm.m_ctxPwList");
+			KPStringTable kpstMT = fAddST("KeePass.Forms.MainForm.m_ctxTray");
+			KPStringTable kpstET = fAddST("KeePass.Forms.PwEntryForm.m_ctxTools");
+			KPStringTable kpstEP = fAddST("KeePass.Forms.PwEntryForm.m_ctxPwGen");
+			KPStringTable kpstED = fAddST("KeePass.Forms.PwEntryForm.m_ctxDefaultTimes");
+			KPStringTable kpstES = fAddST("KeePass.Forms.PwEntryForm.m_ctxStr");
+			KPStringTable kpstEB = fAddST("KeePass.Forms.PwEntryForm.m_ctxBinAttach");
+			KPStringTable kpstEA = fAddST("KeePass.Forms.PwEntryForm.m_ctxAutoType");
+			KPStringTable kpstDM = fAddST("KeePass.Forms.DataEditorForm.m_menuMain");
+			KPStringTable kpstTT = fAddST("KeePass.Forms.EcasTriggersForm.m_ctxTools");
+			KPStringTable kpstS = fAddST("KeePassLib.Resources.KSRes");
+
+			TrlAddResClass(kpstP, typeof(KPRes), KPRes.GetKeyNames(), "KeePass Strings");
+			TrlAddResClass(kpstL, typeof(KLRes), KLRes.GetKeyNames(), "KeePassLib Strings");
+
+			fAddMI(kpstMM, mf.MainMenu, "Main Menu Commands");
+			fAddMI(kpstMG, mf.GroupContextMenu, "Group Context Menu Commands");
+			fAddMI(kpstME, mf.EntryContextMenu, "Entry Context Menu Commands");
+			fAddMI(kpstMT, mf.TrayContextMenu, "System Tray Context Menu Commands");
+			fAddMI(kpstET, ef.ToolsContextMenu, "Entry Tools Context Menu Commands");
+			fAddMI(kpstEP, ef.PasswordGeneratorContextMenu, "Password Generator Context Menu Commands");
+			fAddMI(kpstED, ef.DefaultTimesContextMenu, "Default Times Context Menu Commands");
+			fAddMI(kpstES, ef.StringsContextMenu, "Strings Context Menu Commands");
+			fAddMI(kpstEB, ef.AttachmentsContextMenu, "Entry Attachments Context Menu Commands");
+			fAddMI(kpstEA, ef.AutoTypeContextMenu, "Auto-Type Context Menu Commands");
+			fAddMI(kpstDM, df.MainMenuEx, "Data Editor Menu Commands");
+			fAddMI(kpstTT, tf.ToolsContextMenu, "Ecas Trigger Tools Context Menu Commands");
+
+			TrlAddResClass(kpstS, typeof(KSRes), KSRes.GetKeyNames(), "KeePassLibSD Strings");
+		}
+
+		private void TrlAddResClass(KPStringTable kpst, Type tRes,
+			string[] vKeyNames, string strGroupName)
+		{
+			ListViewGroup lvg = new ListViewGroup(strGroupName);
+			m_lvStrings.Groups.Add(lvg);
+
+			foreach(string strKey in vKeyNames)
+			{
+				PropertyInfo pi = tRes.GetProperty(strKey);
 				MethodInfo mi = pi.GetGetMethod();
 				if(mi.ReturnType != typeof(string))
 				{
@@ -193,159 +208,25 @@ namespace TrlUtil
 					return;
 				}
 
-				KPStringTableItem kpstItem = new KPStringTableItem();
-				kpstItem.Name = strKey;
-				kpstItem.ValueEnglish = strEng;
-				kpstP.Strings.Add(kpstItem);
+				KPStringTableItem it = new KPStringTableItem();
+				it.Name = strKey;
+				it.ValueEnglish = strEng;
+				kpst.Strings.Add(it);
 
 				ListViewItem lvi = new ListViewItem();
 				lvi.Group = lvg;
 				lvi.Text = strKey;
 				lvi.SubItems.Add(strEng);
 				lvi.SubItems.Add(string.Empty);
-				lvi.Tag = kpstItem;
+				lvi.Tag = it;
 				lvi.ImageIndex = 0;
 
 				m_lvStrings.Items.Add(lvi);
-				m_dStrings[kpstP.Name + "." + strKey] = lvi;
-			}
-
-			Type tKL = typeof(KLRes);
-			lvg = new ListViewGroup("KeePass Library Strings");
-			m_lvStrings.Groups.Add(lvg);
-			foreach(string strLibKey in KLRes.GetKeyNames())
-			{
-				PropertyInfo pi = tKL.GetProperty(strLibKey);
-				MethodInfo mi = pi.GetGetMethod();
-				if(mi.ReturnType != typeof(string))
-				{
-					MessageBox.Show(this, "Return type is not string:\r\n" +
-						strLibKey, TuDefs.ProductName + ": Fatal Error!",
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-
-				string strEng = (mi.Invoke(null, null) as string);
-				if(strEng == null)
-				{
-					MessageBox.Show(this, "English string is null:\r\n" +
-						strLibKey, TuDefs.ProductName + ": Fatal Error!",
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-
-				KPStringTableItem kpstItem = new KPStringTableItem();
-				kpstItem.Name = strLibKey;
-				kpstItem.ValueEnglish = strEng;
-				kpstL.Strings.Add(kpstItem);
-
-				ListViewItem lvi = new ListViewItem();
-				lvi.Group = lvg;
-				lvi.Text = strLibKey;
-				lvi.SubItems.Add(strEng);
-				lvi.SubItems.Add(string.Empty);
-				lvi.Tag = kpstItem;
-				lvi.ImageIndex = 0;
-
-				m_lvStrings.Items.Add(lvi);
-				m_dStrings[kpstL.Name + "." + strLibKey] = lvi;
-			}
-
-			lvg = new ListViewGroup("Main Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			KeePass.Forms.MainForm mf = new KeePass.Forms.MainForm();
-			TrlAddMenuCommands(kpstM, lvg, mf.MainMenu.Items);
-
-			lvg = new ListViewGroup("Entry Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstE, lvg, mf.EntryContextMenu.Items);
-
-			lvg = new ListViewGroup("Group Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstG, lvg, mf.GroupContextMenu.Items);
-
-			lvg = new ListViewGroup("System Tray Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstT, lvg, mf.TrayContextMenu.Items);
-
-			KeePass.Forms.PwEntryForm ef = new KeePass.Forms.PwEntryForm();
-			lvg = new ListViewGroup("Entry Tools Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstET, lvg, ef.ToolsContextMenu.Items);
-
-			lvg = new ListViewGroup("Default Times Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstDT, lvg, ef.DefaultTimesContextMenu.Items);
-
-			lvg = new ListViewGroup("List Operations Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstLO, lvg, ef.ListOperationsContextMenu.Items);
-
-			lvg = new ListViewGroup("Password Generator Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstPG, lvg, ef.PasswordGeneratorContextMenu.Items);
-
-			KeePass.Forms.EcasTriggersForm tf = new KeePass.Forms.EcasTriggersForm();
-			lvg = new ListViewGroup("Ecas Trigger Tools Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstTT, lvg, tf.ToolsContextMenu.Items);
-
-			KeePass.Forms.DataEditorForm df = new KeePass.Forms.DataEditorForm();
-			lvg = new ListViewGroup("Data Editor Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstDE, lvg, df.MainMenuEx.Items);
-
-			lvg = new ListViewGroup("Standard String Movement Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstSM, lvg, ef.StandardStringMovementContextMenu.Items);
-
-			lvg = new ListViewGroup("Entry Attachments Context Menu Commands");
-			m_lvStrings.Groups.Add(lvg);
-			TrlAddMenuCommands(kpstBA, lvg, ef.AttachmentsContextMenu.Items);
-
-			Type tSD = typeof(KSRes);
-			lvg = new ListViewGroup("KeePassLibSD Strings");
-			m_lvStrings.Groups.Add(lvg);
-			foreach(string strLibSDKey in KSRes.GetKeyNames())
-			{
-				PropertyInfo pi = tSD.GetProperty(strLibSDKey);
-				MethodInfo mi = pi.GetGetMethod();
-				if(mi.ReturnType != typeof(string))
-				{
-					MessageBox.Show(this, "Return type is not string:\r\n" +
-						strLibSDKey, TuDefs.ProductName + ": Fatal Error!",
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-
-				string strEng = (mi.Invoke(null, null) as string);
-				if(strEng == null)
-				{
-					MessageBox.Show(this, "English string is null:\r\n" +
-						strLibSDKey, TuDefs.ProductName + ": Fatal Error!",
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-
-				KPStringTableItem kpstItem = new KPStringTableItem();
-				kpstItem.Name = strLibSDKey;
-				kpstItem.ValueEnglish = strEng;
-				kpstL.Strings.Add(kpstItem);
-
-				ListViewItem lvi = new ListViewItem();
-				lvi.Group = lvg;
-				lvi.Text = strLibSDKey;
-				lvi.SubItems.Add(strEng);
-				lvi.SubItems.Add(string.Empty);
-				lvi.Tag = kpstItem;
-				lvi.ImageIndex = 0;
-
-				m_lvStrings.Items.Add(lvi);
-				m_dStrings[kpstL.Name + "." + strLibSDKey] = lvi;
+				m_dStrings[kpst.Name + "." + strKey] = lvi;
 			}
 		}
 
-		private void TrlAddMenuCommands(KPStringTable kpst, ListViewGroup grp,
+		private void TrlAddMenuItems(KPStringTable kpst, ListViewGroup grp,
 			ToolStripItemCollection tsic)
 		{
 			foreach(ToolStripItem tsi in tsic)
@@ -370,7 +251,7 @@ namespace TrlUtil
 				m_dStrings[kpst.Name + "." + kpstItem.Name] = lvi;
 
 				ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
-				if(tsmi != null) TrlAddMenuCommands(kpst, grp, tsmi.DropDownItems);
+				if(tsmi != null) TrlAddMenuItems(kpst, grp, tsmi.DropDownItems);
 			}
 		}
 
@@ -1278,10 +1159,8 @@ namespace TrlUtil
 
 			rb.Build(m_rtbValidation);
 
-			Debug.Assert(m_rtbValidation.HideSelection); // Flicker otherwise
-
-			if(!string.IsNullOrEmpty(m_strFile))
-				UIUtil.RtfLinkifyText(m_rtbValidation, m_strFile, false);
+			if(!string.IsNullOrEmpty(strFileSaved))
+				UIUtil.RtfLinkifyText(m_rtbValidation, strFileSaved, false);
 
 			foreach(KPStringTable kpst in m_trl.StringTables)
 			{

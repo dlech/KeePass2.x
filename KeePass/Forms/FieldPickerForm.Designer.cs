@@ -47,7 +47,7 @@
 			this.m_lvFields.Name = "m_lvFields";
 			this.m_lvFields.ShowItemToolTips = true;
 			this.m_lvFields.Size = new System.Drawing.Size(422, 358);
-			this.m_lvFields.TabIndex = 1;
+			this.m_lvFields.TabIndex = 0;
 			this.m_lvFields.UseCompatibleStateImageBehavior = false;
 			this.m_lvFields.View = System.Windows.Forms.View.Details;
 			this.m_lvFields.ItemActivate += new System.EventHandler(this.OnFieldItemActivate);
@@ -59,7 +59,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(359, 436);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 

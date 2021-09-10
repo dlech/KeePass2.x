@@ -336,8 +336,7 @@ namespace KeePassLib.Translation
 			byte[] pbSha = CryptoUtil.HashSha256(pb);
 
 			// See also MatchHash
-			return "v1:" + Convert.ToBase64String(pbSha, 0, 3,
-				Base64FormattingOptions.None);
+			return ("v1:" + Convert.ToBase64String(pbSha, 0, 3));
 		}
 
 		private static void WriteControlDependentParams(StringBuilder sb, Control c)

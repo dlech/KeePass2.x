@@ -55,7 +55,7 @@ namespace KeePass.Forms
 		public EcasTriggerForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -88,6 +88,13 @@ namespace KeePass.Forms
 			m_cbEnabled.Checked = m_trigger.Enabled;
 			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
 			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;
+
+			UIUtil.AccSetName(m_btnEventMoveUp, KPRes.MoveUp);
+			UIUtil.AccSetName(m_btnEventMoveDown, KPRes.MoveDown);
+			UIUtil.AccSetName(m_btnConditionMoveUp, KPRes.MoveUp);
+			UIUtil.AccSetName(m_btnConditionMoveDown, KPRes.MoveDown);
+			UIUtil.AccSetName(m_btnActionMoveUp, KPRes.MoveUp);
+			UIUtil.AccSetName(m_btnActionMoveDown, KPRes.MoveDown);
 
 			UpdateListsEx(false);
 			EnableControlsEx();

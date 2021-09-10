@@ -1,3 +1,95 @@
+2021-09-10: 2.49
+- Added dedicated context menu for custom string fields in the
+  entry dialog, which provides the following new commands:
+  'Copy Name(s)', 'Copy Value(s)', 'Copy Item(s)', 'Paste
+  Item(s)', 'Select All' and 'Move To'
+- Added button 'More' to the right of the custom string fields
+  list in the entry dialog, which shows the context menu
+- Added dedicated context menu for auto-type associations in
+  the entry dialog, which provides the following new commands:
+  'Copy Target Window(s)', 'Copy Sequence(s)', 'Copy Item(s)',
+  'Paste Item(s)', 'Duplicate Item(s)' and 'Select All'
+- Added button 'More' to the right of the auto-type
+  associations list in the entry dialog, which shows the
+  context menu
+- Added optional 'Auto-Type - Enabled' main entry list column
+  (turned off by default, can be turned on in 'View' ->
+  'Configure Columns')
+- Added optional 'Auto-Type - Sequences' main entry list column
+  (turned off by default, can be turned on in 'View' ->
+  'Configure Columns')
+- Added support for importing Keeper 16.0.0 JSON files
+- Added option 'Show confirmation dialog when opening a
+  database file whose minor format version is unknown' (in
+  'Tools' -> 'Options' -> tab 'Interface', turned on by
+  default)
+- Added tooltips for some controls
+- Dialog banners can now be read by screen readers (if the
+  option 'Optimize for screen reader' is turned on)
+- Added accessibility names for some controls (text boxes after
+  check boxes, image/color buttons, warning icons, ...; if the
+  option 'Optimize for screen reader' is turned on)
+- Controls in the accessibility/automation control tree are now
+  ordered by their visual locations (if the option 'Optimize
+  for screen reader' is turned on)
+- Added automatic screen reader detection based on the
+  operating system's screen reader parameter (this does not
+  make the option 'Optimize for screen reader' obsolete though,
+  because not all screen readers set the parameter)
+- Various accessibility enhancements (when running on .NET
+  4.7.1 or higher)
+- Added UIFlags bit for not clearing the quick search terms
+  list when closing/locking a database
+- Added UIFlags bit for enabling the Input Method Editor (IME)
+  on secure desktops
+- Added customization option to override the URL that is opened
+  for a help page
+
+- In most list views, tooltips are now displayed for a longer
+  time
+- The entry string move commands can now move multiple strings
+  at once
+- Removed the entry string button 'Move' in the entry dialog
+  (the move commands are available in the context menu)
+- Reordered fields/columns in the entry details view and in the
+  'Configure Columns' dialog for improved consistency with the
+  entry dialog
+- When running on .NET 4.7 or higher, rich text boxes now
+  instantiate Rich Edit 4.1 (or higher) controls, which support
+  various new features (e.g. Tamil characters are now displayed
+  correctly even when the 'Latha' font is not installed)
+- Improved linkification in the entry details view of the main
+  window (URLs, attachments, ...) and in the internal data
+  viewer (URLs)
+- URLs in the hex view of the internal data viewer are not
+  linkified anymore
+- Improved tab order in various dialogs
+- Improved accessibility control name provision
+- Improved temporary file/directory deletion performance
+- Improved hashing of protected binaries, UUIDs, popular
+  passwords, images, ...
+- Improved quality of some icons
+- In the HTML export/printing dialog, the option 'Group name'
+  is now disabled when group names are unavailable
+- Reduced space between tables and group headings in HTML
+  exports/printouts
+- In the help source selection dialog, controls are now
+  disabled if a help source is enforced (by an enforced
+  configuration file) or if a help URL override is specified
+- Improved keyboard shortcut check
+- TrlUtil: improved string table handling
+- Various CHM file improvements
+- Upgraded installer
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- The save confirmation dialog of the entry dialog does not
+  create unnecessary history entries anymore
+- The tags button drop-down menu in the entry/group dialogs now
+  uses the correct font
+- TrlUtil: fixed a string table association bug
+
 2021-05-10: 2.48.1
 - Improved compatibility with certain plugins/ports
 - In the main entry list, new-line characters in text inserted

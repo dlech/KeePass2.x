@@ -70,7 +70,7 @@ namespace KeePass.Forms
 		public DatabaseSettingsForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(bool bCreatingNew, PwDatabase pwDatabase)
@@ -107,7 +107,13 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_rbGZip);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			m_ttRect.SetToolTip(m_btnKdf1Sec, KPRes.KdfParams1Sec);
+			UIUtil.SetToolTip(m_ttRect, m_btnKdf1Sec, KPRes.KdfParams1Sec, false);
+
+			UIUtil.AccSetName(m_btnColor, KPRes.SelectColor);
+			UIUtil.AccSetName(m_numHistoryMaxItems, m_cbHistoryMaxItems);
+			UIUtil.AccSetName(m_numHistoryMaxSize, m_cbHistoryMaxSize);
+			UIUtil.AccSetName(m_numKeyRecDays, m_cbKeyRec);
+			UIUtil.AccSetName(m_numKeyForceDays, m_cbKeyForce);
 
 			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
 			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;

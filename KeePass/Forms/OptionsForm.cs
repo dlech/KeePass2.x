@@ -47,7 +47,7 @@ namespace KeePass.Forms
 	public partial class OptionsForm : Form
 	{
 		private ImageList m_ilIcons;
-		private BannerStyle m_curBannerStyle = BannerStyle.KeePassWin32;
+		private BannerStyle m_bsCurrent = BannerStyle.KeePassWin32;
 		private bool m_bBlockUIUpdate = false;
 		private bool m_bLoadingSettings = false;
 
@@ -77,7 +77,7 @@ namespace KeePass.Forms
 		public OptionsForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(ImageList ilIcons)
@@ -96,16 +96,19 @@ namespace KeePass.Forms
 			if(bForceInTaskbar) this.ShowInTaskbar = true;
 		}
 
-		private void CreateDialogBanner(BannerStyle bsStyle)
+		private void CreateDialogBanner(BannerStyle bs)
 		{
-			if(bsStyle == m_curBannerStyle) return;
+			if(bs == m_bsCurrent) return;
+			m_bsCurrent = bs;
 
-			m_curBannerStyle = bsStyle;
+			BannerStyle bsPrev = Program.Config.UI.BannerStyle;
+			if(bs != BannerStyle.Default) Program.Config.UI.BannerStyle = bs;
 
-			m_bannerImage.Image = BannerFactory.CreateBanner(m_bannerImage.Width,
-				m_bannerImage.Height, bsStyle,
+			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_KCMSystem, KPRes.Options,
 				KPRes.OptionsDesc);
+
+			if(bs != BannerStyle.Default) Program.Config.UI.BannerStyle = bsPrev;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -218,8 +221,14 @@ namespace KeePass.Forms
 			m_lvPolicy.Columns.Add(KPRes.Description, (nWidth * 19) / 29);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			m_ttRect.SetToolTip(m_cbClipClearTime, KPRes.ClipboardClearDesc +
-				MessageService.NewParagraph + KPRes.ClipboardOptionME);
+			UIUtil.SetToolTip(m_ttRect, m_cbClipClearTime, KPRes.ClipboardClearDesc +
+				MessageService.NewParagraph + KPRes.ClipboardOptionME, false);
+
+			UIUtil.AccSetName(m_numLockAfterTime, m_cbLockAfterTime);
+			UIUtil.AccSetName(m_numLockAfterGlobalTime, m_cbLockAfterGlobalTime);
+			UIUtil.AccSetName(m_numClipClearTime, m_cbClipClearTime);
+			UIUtil.AccSetName(m_numDefaultExpireDays, m_cbDefaultExpireDays);
+			UIUtil.AccSetName(m_btnCustomAltColor, KPRes.SelectColor);
 
 			if(!NativeLib.IsUnix())
 			{
@@ -529,6 +538,8 @@ namespace KeePass.Forms
 				lvg, KPRes.DbMntncResults);
 			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowEmSheetDialog",
 				lvg, KPRes.EmergencySheetAsk);
+			m_cdxGuiOptions.CreateItem(Program.Config.UI, "ShowDbOpenUnkVerDialog",
+				lvg, KPRes.DatabaseOpenUnknownVersionAsk);
 
 			lvg = new ListViewGroup(KPRes.Advanced);
 			m_lvGuiOptions.Groups.Add(lvg);
@@ -886,10 +897,7 @@ namespace KeePass.Forms
 
 		private void OnBannerStyleSelectedChanged(object sender, EventArgs e)
 		{
-			int nIndex = m_cmbBannerStyle.SelectedIndex;
-			
-			BannerStyle bs = (BannerStyle)nIndex;
-			CreateDialogBanner(bs);
+			CreateDialogBanner((BannerStyle)m_cmbBannerStyle.SelectedIndex);
 		}
 
 		private void OnLockAfterTimeCheckedChanged(object sender, EventArgs e)

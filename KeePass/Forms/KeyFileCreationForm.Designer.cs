@@ -61,7 +61,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(288, 371);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 12;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -72,7 +72,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(369, 371);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 13;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -82,7 +82,7 @@
 			this.m_rbCreate.Location = new System.Drawing.Point(13, 71);
 			this.m_rbCreate.Name = "m_rbCreate";
 			this.m_rbCreate.Size = new System.Drawing.Size(188, 17);
-			this.m_rbCreate.TabIndex = 2;
+			this.m_rbCreate.TabIndex = 0;
 			this.m_rbCreate.TabStop = true;
 			this.m_rbCreate.Text = "&Create a new key file (random key)";
 			this.m_rbCreate.UseVisualStyleBackColor = true;
@@ -93,7 +93,7 @@
 			this.m_lblNewFormat.Location = new System.Drawing.Point(29, 95);
 			this.m_lblNewFormat.Name = "m_lblNewFormat";
 			this.m_lblNewFormat.Size = new System.Drawing.Size(79, 13);
-			this.m_lblNewFormat.TabIndex = 3;
+			this.m_lblNewFormat.TabIndex = 1;
 			this.m_lblNewFormat.Text = "&Format version:";
 			// 
 			// m_cmbNewFormat
@@ -103,7 +103,7 @@
 			this.m_cmbNewFormat.Location = new System.Drawing.Point(32, 113);
 			this.m_cmbNewFormat.Name = "m_cmbNewFormat";
 			this.m_cmbNewFormat.Size = new System.Drawing.Size(411, 21);
-			this.m_cmbNewFormat.TabIndex = 4;
+			this.m_cmbNewFormat.TabIndex = 2;
 			// 
 			// m_cbNewEntropy
 			// 
@@ -111,7 +111,7 @@
 			this.m_cbNewEntropy.Location = new System.Drawing.Point(32, 144);
 			this.m_cbNewEntropy.Name = "m_cbNewEntropy";
 			this.m_cbNewEntropy.Size = new System.Drawing.Size(296, 17);
-			this.m_cbNewEntropy.TabIndex = 5;
+			this.m_cbNewEntropy.TabIndex = 3;
 			this.m_cbNewEntropy.Text = "&Show dialog for collecting user input as additional entropy";
 			this.m_cbNewEntropy.UseVisualStyleBackColor = true;
 			// 
@@ -121,7 +121,7 @@
 			this.m_rbRecreate.Location = new System.Drawing.Point(13, 169);
 			this.m_rbRecreate.Name = "m_rbRecreate";
 			this.m_rbRecreate.Size = new System.Drawing.Size(220, 17);
-			this.m_rbRecreate.TabIndex = 6;
+			this.m_rbRecreate.TabIndex = 4;
 			this.m_rbRecreate.TabStop = true;
 			this.m_rbRecreate.Text = "&Recreate a key file from a printed backup";
 			this.m_rbRecreate.UseVisualStyleBackColor = true;
@@ -132,7 +132,7 @@
 			this.m_lblRecFormat.Location = new System.Drawing.Point(29, 193);
 			this.m_lblRecFormat.Name = "m_lblRecFormat";
 			this.m_lblRecFormat.Size = new System.Drawing.Size(172, 13);
-			this.m_lblRecFormat.TabIndex = 7;
+			this.m_lblRecFormat.TabIndex = 5;
 			this.m_lblRecFormat.Text = "F&ormat version (in the \'Meta\' node):";
 			// 
 			// m_cmbRecFormat
@@ -142,7 +142,7 @@
 			this.m_cmbRecFormat.Location = new System.Drawing.Point(32, 211);
 			this.m_cmbRecFormat.Name = "m_cmbRecFormat";
 			this.m_cmbRecFormat.Size = new System.Drawing.Size(411, 21);
-			this.m_cmbRecFormat.TabIndex = 8;
+			this.m_cmbRecFormat.TabIndex = 6;
 			// 
 			// m_lblRecKeyHash
 			// 
@@ -150,7 +150,7 @@
 			this.m_lblRecKeyHash.Location = new System.Drawing.Point(29, 243);
 			this.m_lblRecKeyHash.Name = "m_lblRecKeyHash";
 			this.m_lblRecKeyHash.Size = new System.Drawing.Size(229, 13);
-			this.m_lblRecKeyHash.TabIndex = 9;
+			this.m_lblRecKeyHash.TabIndex = 7;
 			this.m_lblRecKeyHash.Text = "Key data &hash (in the \'Hash\' attribute, optional):";
 			// 
 			// m_tbRecKeyHash
@@ -158,7 +158,7 @@
 			this.m_tbRecKeyHash.Location = new System.Drawing.Point(32, 261);
 			this.m_tbRecKeyHash.Name = "m_tbRecKeyHash";
 			this.m_tbRecKeyHash.Size = new System.Drawing.Size(411, 20);
-			this.m_tbRecKeyHash.TabIndex = 10;
+			this.m_tbRecKeyHash.TabIndex = 8;
 			// 
 			// m_lblRecKey
 			// 
@@ -166,7 +166,7 @@
 			this.m_lblRecKey.Location = new System.Drawing.Point(29, 292);
 			this.m_lblRecKey.Name = "m_lblRecKey";
 			this.m_lblRecKey.Size = new System.Drawing.Size(144, 13);
-			this.m_lblRecKey.TabIndex = 11;
+			this.m_lblRecKey.TabIndex = 9;
 			this.m_lblRecKey.Text = "&Key data (in the \'Data\' node):";
 			// 
 			// m_tbRecKey
@@ -177,7 +177,7 @@
 			this.m_tbRecKey.Name = "m_tbRecKey";
 			this.m_tbRecKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.m_tbRecKey.Size = new System.Drawing.Size(411, 37);
-			this.m_tbRecKey.TabIndex = 12;
+			this.m_tbRecKey.TabIndex = 10;
 			// 
 			// m_lblSeparator
 			// 
@@ -185,7 +185,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 360);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(456, 2);
-			this.m_lblSeparator.TabIndex = 13;
+			this.m_lblSeparator.TabIndex = 11;
 			// 
 			// KeyFileCreationForm
 			// 

@@ -35,9 +35,10 @@ using KeePass.UI;
 using KeePass.Util.Spr;
 
 using KeePassLib;
-using KeePassLib.Security;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
+using KeePassLib.Resources;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
@@ -712,6 +713,67 @@ namespace KeePass.Util
 			}
 
 			strWindow = NormalizeWindowText(strWindow);
+		}
+
+		// Cf. PwEntry.GetAutoTypeEnabled
+		internal static string GetEnabledText(PwEntry pe, out object oBlocker)
+		{
+			oBlocker = null;
+			if(pe == null) { Debug.Assert(false); return string.Empty; }
+
+			if(!pe.AutoType.Enabled)
+			{
+				oBlocker = pe;
+				return (KPRes.No + " (" + KLRes.EntryLower + ")");
+			}
+
+			PwGroup pg = pe.ParentGroup;
+			while(pg != null)
+			{
+				if(pg.EnableAutoType.HasValue)
+				{
+					if(pg.EnableAutoType.Value) break;
+
+					oBlocker = pg;
+					return (KPRes.No + " (" + KLRes.GroupLower + " '" + pg.Name + "')");
+				}
+
+				pg = pg.ParentGroup;
+			}
+
+			// Options like 'Expired entries can match' influence the global
+			// auto-type matching only, not commands like 'Perform Auto-Type'
+
+			return KPRes.Yes;
+		}
+
+		internal static string GetSequencesText(PwEntry pe)
+		{
+			if(pe == null) { Debug.Assert(false); return string.Empty; }
+
+			string strSeq = pe.GetAutoTypeSequence();
+			Debug.Assert(strSeq.Length != 0);
+			string str = ((strSeq.Length != 0) ? strSeq : ("(" + KPRes.Empty + ")"));
+
+			int cAssoc = pe.AutoType.AssociationsCount;
+			if(cAssoc != 0)
+			{
+				Dictionary<string, bool> d = new Dictionary<string, bool>();
+				d[strSeq] = true;
+
+				foreach(AutoTypeAssociation a in pe.AutoType.Associations)
+				{
+					string strAssocSeq = a.Sequence;
+					if(strAssocSeq.Length != 0) d[strAssocSeq] = true;
+				}
+
+				int c = d.Count;
+				str += ((c >= 2) ? (" " + KPRes.MoreAnd.Replace(@"{PARAM}",
+					(c - 1).ToString())) : string.Empty) + " (" +
+					cAssoc.ToString() + " " + KPRes.AssociationsLower + ")";
+			}
+
+			return str;
 		}
 	}
 }

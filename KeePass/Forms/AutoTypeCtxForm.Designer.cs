@@ -67,7 +67,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(492, 6);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 0;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -99,7 +99,7 @@
 			this.m_pnlTop.Name = "m_pnlTop";
 			this.m_pnlTop.Padding = new System.Windows.Forms.Padding(9, 11, 9, 3);
 			this.m_pnlTop.Size = new System.Drawing.Size(579, 44);
-			this.m_pnlTop.TabIndex = 1;
+			this.m_pnlTop.TabIndex = 2;
 			// 
 			// m_pnlBottom
 			// 
@@ -110,7 +110,7 @@
 			this.m_pnlBottom.Name = "m_pnlBottom";
 			this.m_pnlBottom.Padding = new System.Windows.Forms.Padding(12, 6, 12, 12);
 			this.m_pnlBottom.Size = new System.Drawing.Size(579, 41);
-			this.m_pnlBottom.TabIndex = 2;
+			this.m_pnlBottom.TabIndex = 1;
 			// 
 			// m_btnTools
 			// 
@@ -118,7 +118,7 @@
 			this.m_btnTools.Location = new System.Drawing.Point(12, 6);
 			this.m_btnTools.Name = "m_btnTools";
 			this.m_btnTools.Size = new System.Drawing.Size(75, 23);
-			this.m_btnTools.TabIndex = 1;
+			this.m_btnTools.TabIndex = 0;
 			this.m_btnTools.Text = "&Options";
 			this.m_btnTools.UseVisualStyleBackColor = true;
 			this.m_btnTools.Click += new System.EventHandler(this.OnBtnTools);

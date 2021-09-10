@@ -515,6 +515,12 @@
             'The data is too large to be encrypted/decrypted securely using {PARAM}.'.
             </summary>
         </member>
+        <member name="P:KeePassLib.Resources.KLRes.EntryLower">
+            <summary>
+            Look up a localized string similar to
+            'entry'.
+            </summary>
+        </member>
         <member name="P:KeePassLib.Resources.KLRes.ErrorInClipboard">
             <summary>
             Look up a localized string similar to
@@ -620,7 +626,7 @@
         <member name="P:KeePassLib.Resources.KLRes.FileVersionUnsupported">
             <summary>
             Look up a localized string similar to
-            'The file version is unsupported.'.
+            'The file format version is unsupported.'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.FinalKeyCreationFailed">
@@ -639,6 +645,12 @@
             <summary>
             Look up a localized string similar to
             'General'.
+            </summary>
+        </member>
+        <member name="P:KeePassLib.Resources.KLRes.GroupLower">
+            <summary>
+            Look up a localized string similar to
+            'group'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.InvalidCompositeKey">
@@ -1993,7 +2005,7 @@
         </member>
         <member name="M:KeePassLib.Utility.MemUtil.Hash32(System.Byte[],System.Int32,System.Int32)">
             <summary>
-            Fast hash that can be used e.g. for hash tables.
+            Fast 32-bit hash (e.g. for hash tables).
             The algorithm might change in the future; do not store
             the hashes for later use.
             </summary>

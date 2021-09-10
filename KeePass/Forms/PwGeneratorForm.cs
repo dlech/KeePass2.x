@@ -50,7 +50,7 @@ namespace KeePass.Forms
 
 		private readonly string NoCustomAlgo = "(" + KPRes.None + ")";
 
-		private bool m_bBlockUIUpdate = false;
+		private uint m_uBlockUIUpdate = 0;
 		private bool m_bCanAccept = true;
 		// private bool m_bForceInTaskbar = false;
 
@@ -83,13 +83,15 @@ namespace KeePass.Forms
 		public PwGeneratorForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			// Can be invoked by tray command; don't use CenterParent
 			Debug.Assert(this.StartPosition == FormStartPosition.CenterScreen);
+
+			++m_uBlockUIUpdate;
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -111,10 +113,12 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultMono(m_tbPreview, true);
 
 			UIUtil.ConfigureToolTip(m_ttMain);
-			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.ProfileSaveDesc);
-			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.ProfileDeleteDesc);
+			UIUtil.SetToolTip(m_ttMain, m_btnProfileAdd, KPRes.ProfileSaveDesc, false);
+			UIUtil.SetToolTip(m_ttMain, m_btnProfileRemove, KPRes.ProfileDeleteDesc, false);
+			UIUtil.SetToolTip(m_ttMain, m_btnCustomOpt, KPRes.Options, true);
 
-			m_bBlockUIUpdate = true;
+			UIUtil.AccSetName(m_btnProfileAdd, KPRes.ProfileSave);
+			UIUtil.AccSetName(m_btnProfileRemove, KPRes.ProfileDelete);
 
 			using(RtlAwareResizeScope r = new RtlAwareResizeScope(
 				m_cbUpperCase, m_cbLowerCase, m_cbDigits, m_cbMinus,
@@ -223,9 +227,7 @@ namespace KeePass.Forms
 			// Debug.Assert(this.ShowInTaskbar == false);
 			// if(m_bForceInTaskbar) this.ShowInTaskbar = true;
 
-			CustomizeForScreenReader();
-
-			m_bBlockUIUpdate = false;
+			--m_uBlockUIUpdate;
 			EnableControlsEx(false);
 		}
 
@@ -242,23 +244,13 @@ namespace KeePass.Forms
 				sb.Append(strCharSet[i]);
 			}
 
-			m_ttMain.SetToolTip(cb, sb.ToString());
-		}
-
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_btnProfileAdd.Text = KPRes.ProfileSave;
-			m_btnProfileRemove.Text = KPRes.ProfileDelete;
-			m_btnCustomOpt.Text = KPRes.Options;
+			UIUtil.SetToolTip(m_ttMain, cb, sb.ToString(), false);
 		}
 
 		private void EnableControlsEx(bool bSwitchToCustomProfile)
 		{
-			if(m_bBlockUIUpdate) return;
-
-			m_bBlockUIUpdate = true;
+			if(m_uBlockUIUpdate != 0) return;
+			++m_uBlockUIUpdate;
 
 			if(bSwitchToCustomProfile)
 				m_cmbProfiles.SelectedIndex = 0;
@@ -289,11 +281,13 @@ namespace KeePass.Forms
 				else m_btnCustomOpt.Enabled = false;
 			}
 
-			m_bBlockUIUpdate = false;
+			--m_uBlockUIUpdate;
 		}
 
 		private void CleanUpEx()
 		{
+			Debug.Assert(m_uBlockUIUpdate == 0);
+
 			Program.Config.PasswordGenerator.LastUsedProfile = GetGenerationOptions();
 
 			// if(m_bForceInTaskbar) this.ShowInTaskbar = false;
@@ -357,8 +351,7 @@ namespace KeePass.Forms
 
 		private void SetGenerationOptions(PwProfile opt)
 		{
-			bool bPrevInit = m_bBlockUIUpdate;
-			m_bBlockUIUpdate = true;
+			++m_uBlockUIUpdate;
 
 			m_rbStandardCharSet.Checked = (opt.GeneratorType == PasswordGeneratorType.CharSet);
 			m_rbPattern.Checked = (opt.GeneratorType == PasswordGeneratorType.Pattern);
@@ -390,7 +383,7 @@ namespace KeePass.Forms
 
 			SelectCustomGenerator(opt.CustomAlgorithmUuid, opt.CustomAlgorithmOptions);
 
-			m_bBlockUIUpdate = bPrevInit;
+			--m_uBlockUIUpdate;
 		}
 
 		private void UpdateUIProc(object sender, EventArgs e)
@@ -400,7 +393,7 @@ namespace KeePass.Forms
 
 		private void OnProfilesSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockUIUpdate) return;
+			if(m_uBlockUIUpdate != 0) return;
 
 			string strProfile = m_cmbProfiles.Text;
 
@@ -470,9 +463,9 @@ namespace KeePass.Forms
 								if(m_cmbProfiles.Items[j].ToString().Equals(strProfile,
 									StrUtil.CaseIgnoreCmp))
 								{
-									m_bBlockUIUpdate = true;
+									++m_uBlockUIUpdate;
 									m_cmbProfiles.Items[j] = strProfile; // Fix case
-									m_bBlockUIUpdate = false;
+									--m_uBlockUIUpdate;
 									m_cmbProfiles.SelectedIndex = j;
 									bExists = true;
 									break;
@@ -485,7 +478,7 @@ namespace KeePass.Forms
 
 					if(!bExists)
 					{
-						m_bBlockUIUpdate = true;
+						++m_uBlockUIUpdate;
 
 						List<PwProfile> lAll = PwGeneratorUtil.GetAllProfiles(false);
 						for(int c = 0; c < lAll.Count; ++c)
@@ -501,7 +494,7 @@ namespace KeePass.Forms
 								iNewSel = m_cmbProfiles.Items.Count - 1;
 						}
 
-						m_bBlockUIUpdate = false;
+						--m_uBlockUIUpdate;
 						m_cmbProfiles.SelectedIndex = iNewSel;
 					}
 				}
@@ -548,7 +541,7 @@ namespace KeePass.Forms
 
 		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockUIUpdate) return;
+			if(m_uBlockUIUpdate != 0) return;
 
 			if(m_tabMain.SelectedTab == m_tabPreview)
 				GeneratePreviewPasswords();

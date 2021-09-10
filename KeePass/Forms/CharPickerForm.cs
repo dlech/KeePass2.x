@@ -94,7 +94,7 @@ namespace KeePass.Forms
 			InitializeComponent();
 
 			SecureTextBoxEx.InitEx(ref m_tbSelected);
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		/// <summary>

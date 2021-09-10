@@ -57,7 +57,7 @@ namespace KeePass.Forms
 		public UrlOverridesForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -83,6 +83,9 @@ namespace KeePass.Forms
 
 			m_cbOverrideAll.Checked = (m_strUrlOverrideAll.Length > 0);
 			m_tbOverrideAll.Text = m_strUrlOverrideAll;
+
+			UIUtil.AccSetName(m_tbOverrideAll, m_cbOverrideAll);
+
 			EnableControlsEx();
 		}
 

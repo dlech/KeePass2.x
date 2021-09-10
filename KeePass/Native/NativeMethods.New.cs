@@ -387,7 +387,7 @@ namespace KeePass.Native
 			try
 			{
 				SCROLLINFO si = new SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf(si);
+				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
 				si.fMask = (uint)ScrollInfoMask.SIF_POS;
 
 				if(GetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si))
@@ -414,7 +414,7 @@ namespace KeePass.Native
 			try
 			{
 				SCROLLINFO si = new SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf(si);
+				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
 				si.fMask = (uint)ScrollInfoMask.SIF_POS;
 				si.nPos = y;
 
@@ -561,7 +561,7 @@ namespace KeePass.Native
 				throw new ArgumentOutOfRangeException("uIndex");
 
 			LVGROUP g = new LVGROUP();
-			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
 
 			g.mask = (LVGF_STATE | LVGF_GROUPID);
 			g.stateMask = uStateMask;
@@ -579,7 +579,7 @@ namespace KeePass.Native
 			if(lv == null) throw new ArgumentNullException("lv");
 
 			LVGROUP g = new LVGROUP();
-			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
 
 			g.mask = LVGF_STATE;
 			g.stateMask = uStateMask;
@@ -594,7 +594,7 @@ namespace KeePass.Native
 			if(lv == null) { Debug.Assert(false); return 0; }
 
 			LVGROUP g = new LVGROUP();
-			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
 			g.AssertSize();
 
 			g.mask = NativeMethods.LVGF_GROUPID;
@@ -614,7 +614,7 @@ namespace KeePass.Native
 			if(lv == null) { Debug.Assert(false); return; }
 
 			LVGROUP g = new LVGROUP();
-			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
 			g.AssertSize();
 
 			g.mask = LVGF_TASK;
@@ -636,7 +636,7 @@ namespace KeePass.Native
 			if(!WinUtil.IsAtLeastWindowsVista) return;
 
 			LVGROUP g = new LVGROUP();
-			g.cbSize = (uint)Marshal.SizeOf(g);
+			g.cbSize = (uint)Marshal.SizeOf(typeof(LVGROUP));
 			g.AssertSize();
 
 			if(strTask != null)

@@ -114,7 +114,9 @@ namespace KeePass.UI
 
 			VoidDelegate fCopyEnabled = delegate()
 			{
-				if((tsmiBase.Owner != null) && !tsmiBase.Owner.Enabled)
+				// Check (direct) owner state; see ToolStripItem.Enabled
+				ToolStrip tsOwner = tsmiBase.Owner;
+				if((tsOwner != null) && !tsOwner.Enabled)
 				{
 					Debug.Assert(false); // tsmiBase.Enabled unusable
 					return;

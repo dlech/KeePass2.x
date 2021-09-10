@@ -497,25 +497,107 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
-		public static int GetUrlLength(string strText, int nOffset)
+		internal static bool IsUriChar(char ch)
 		{
-			if(strText == null) throw new ArgumentNullException("strText");
-			if(nOffset > strText.Length) throw new ArgumentException(); // Not >= (0 len)
+			Debug.Assert(((ulong)'!' == 0x21) && ((ulong)'~' == 0x7E) &&
+				((ulong)'`' == 0x60));
+			if((ch < '!') || (ch > '~')) return false;
 
-			int iPosition = nOffset, nLength = 0, nStrLen = strText.Length;
-
-			while(iPosition < nStrLen)
+			bool b = true;
+			switch(ch)
 			{
-				char ch = strText[iPosition];
-				++iPosition;
-
-				if((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n'))
+				case '\"':
+				case '<':
+				case '>':
+				case '\\':
+				case '^':
+				case '`':
+				case '{':
+				case '|':
+				case '}':
+					b = false;
 					break;
 
-				++nLength;
+				default: break;
 			}
 
-			return nLength;
+			return b;
+		}
+
+		internal static bool IsUriSchemeChar(char ch)
+		{
+			return (((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z')) ||
+				((ch >= '0') && (ch <= '9')) || (ch == '+') || (ch == '-') ||
+				(ch == '.'));
+		}
+
+		public static int GetUrlLength(string strText, int iOffset)
+		{
+			return GetUrlLength(strText, iOffset, false);
+		}
+
+		internal static int GetUrlLength(string strText, int iOffset, bool bExclStdTerm)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+
+			int i = iOffset, n = strText.Length;
+			if(iOffset > n) throw new ArgumentOutOfRangeException("iOffset");
+
+			while(i < n)
+			{
+				char ch = strText[i];
+				if(!IsUriChar(ch))
+				{
+					if((ch == '\"') || (ch == '>') || (ch == '}'))
+						bExclStdTerm = false;
+					break;
+				}
+
+				++i;
+			}
+
+			if(bExclStdTerm)
+			{
+				while(i != iOffset)
+				{
+					char ch = strText[i - 1];
+
+					bool bIsStdTerm = false;
+					switch(ch)
+					{
+						case '!':
+						case ',':
+						case '.':
+						case ':':
+						case ';':
+						case '?':
+							bIsStdTerm = true;
+							break;
+
+						default: break;
+					}
+
+					if(bIsStdTerm) --i;
+					else break;
+				}
+			}
+
+			return (i - iOffset);
+		}
+
+		private static readonly string[] g_vKnownSchemes = new string[] {
+			"callto", "file", "ftp", "http", "https", "ldap", "ldaps",
+			"mailto", "news", "nntp", "sftp", "tel", "telnet"
+		};
+		// This method only knows some popular schemes; subset of
+		// https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+		internal static bool IsKnownScheme(string strScheme)
+		{
+			if(strScheme == null) { Debug.Assert(false); return false; }
+
+			string str = strScheme.ToLowerInvariant();
+			return (Array.IndexOf(g_vKnownSchemes, str) >= 0);
 		}
 
 		internal static string GetScheme(string strUrl)
@@ -884,26 +966,21 @@ namespace KeePassLib.Utility
 			return strUri;
 		}
 
-		/* internal static Dictionary<string, string> ParseQuery(string strQuery)
+		internal static Dictionary<string, string> ParseQuery(string strQuery)
 		{
 			Dictionary<string, string> d = new Dictionary<string, string>();
 			if(string.IsNullOrEmpty(strQuery)) return d;
 
-			string[] vKvp = strQuery.Split(new char[] { '?', '&' });
-			if(vKvp == null) { Debug.Assert(false); return d; }
+			string[] vKvps = strQuery.Split(new char[] { '?', '&' });
+			if(vKvps == null) { Debug.Assert(false); return d; }
 
-			foreach(string strKvp in vKvp)
+			foreach(string strKvp in vKvps)
 			{
 				if(string.IsNullOrEmpty(strKvp)) continue;
 
-				string strKey, strValue;
+				string strKey = strKvp, strValue = string.Empty;
 				int iSep = strKvp.IndexOf('=');
-				if(iSep < 0)
-				{
-					strKey = strKvp;
-					strValue = string.Empty;
-				}
-				else
+				if(iSep >= 0)
 				{
 					strKey = strKvp.Substring(0, iSep);
 					strValue = strKvp.Substring(iSep + 1);
@@ -916,6 +993,6 @@ namespace KeePassLib.Utility
 			}
 
 			return d;
-		} */
+		}
 	}
 }

@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.48.1"
-#define KeeVersionStrWithMinor "2.48.1"
-#define KeeVersionStrWithMinorPath "2.48.1"
-#define KeeVersionWin "2.48.1.0"
-#define KeeVersionWinShort "2.48.1"
+#define KeeVersionStr "2.49"
+#define KeeVersionStrWithMinor "2.49"
+#define KeeVersionStrWithMinorPath "2.49"
+#define KeeVersionWin "2.49.0.0"
+#define KeeVersionWinShort "2.49"
 
 #define KeeDevPeriod "2003-2021"
 
@@ -56,8 +56,9 @@ VersionInfoVersion={#KeeVersionWin}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} {#KeeVersionStr} Setup
 VersionInfoCopyright=Copyright © {#KeeDevPeriod} {#MyAppPublisher}
-WizardImageFile=compiler:WizModernImage-IS.bmp
-WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
+SetupIconFile=compiler:SetupClassicIcon.ico
+; WizardImageFile=compiler:WizClassicImage-IS.bmp
+; WizardSmallImageFile=compiler:WizClassicSmallImage-IS.bmp
 WizardStyle=classic
 DisableDirPage=auto
 AlwaysShowDirOnReadyPage=yes

@@ -91,7 +91,7 @@ namespace KeePass.Forms
 		public ExchangeDataForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -112,6 +112,10 @@ namespace KeePass.Forms
 
 			this.Icon = AppIcons.Default;
 			this.Text = strTitle;
+
+			UIUtil.ConfigureToolTip(m_ttRect);
+			UIUtil.SetToolTip(m_ttRect, m_btnSelFile, StrUtil.TrimDots(
+				KPRes.SelectFile, true), true);
 
 			m_lvFormats.ShowGroups = true;
 
@@ -190,7 +194,6 @@ namespace KeePass.Forms
 			m_cbExportPostOpen.Checked = Program.Config.Defaults.ExportPostOpen;
 			m_cbExportPostShow.Checked = Program.Config.Defaults.ExportPostShow;
 
-			CustomizeForScreenReader();
 			UpdateUIState();
 		}
 
@@ -207,13 +210,6 @@ namespace KeePass.Forms
 				m_ilFormats.Dispose();
 				m_ilFormats = null;
 			}
-		}
-
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_btnSelFile.Text = KPRes.SelectFile;
 		}
 
 		private void OnLinkFileFormats(object sender, LinkLabelLinkClickedEventArgs e)

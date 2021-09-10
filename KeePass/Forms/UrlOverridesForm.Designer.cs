@@ -45,7 +45,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(320, 324);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 7;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -56,7 +56,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(401, 324);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 8;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -69,7 +69,7 @@
 			this.m_lvOverrides.Name = "m_lvOverrides";
 			this.m_lvOverrides.ShowItemToolTips = true;
 			this.m_lvOverrides.Size = new System.Drawing.Size(383, 256);
-			this.m_lvOverrides.TabIndex = 2;
+			this.m_lvOverrides.TabIndex = 0;
 			this.m_lvOverrides.UseCompatibleStateImageBehavior = false;
 			this.m_lvOverrides.View = System.Windows.Forms.View.Details;
 			this.m_lvOverrides.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnOverridesItemChecked);
@@ -80,7 +80,7 @@
 			this.m_btnAdd.Location = new System.Drawing.Point(401, 12);
 			this.m_btnAdd.Name = "m_btnAdd";
 			this.m_btnAdd.Size = new System.Drawing.Size(75, 23);
-			this.m_btnAdd.TabIndex = 3;
+			this.m_btnAdd.TabIndex = 1;
 			this.m_btnAdd.Text = "&Add...";
 			this.m_btnAdd.UseVisualStyleBackColor = true;
 			this.m_btnAdd.Click += new System.EventHandler(this.OnBtnAdd);
@@ -90,7 +90,7 @@
 			this.m_btnEdit.Location = new System.Drawing.Point(401, 41);
 			this.m_btnEdit.Name = "m_btnEdit";
 			this.m_btnEdit.Size = new System.Drawing.Size(75, 23);
-			this.m_btnEdit.TabIndex = 4;
+			this.m_btnEdit.TabIndex = 2;
 			this.m_btnEdit.Text = "&Edit...";
 			this.m_btnEdit.UseVisualStyleBackColor = true;
 			this.m_btnEdit.Click += new System.EventHandler(this.OnBtnEdit);
@@ -100,7 +100,7 @@
 			this.m_btnDelete.Location = new System.Drawing.Point(401, 70);
 			this.m_btnDelete.Name = "m_btnDelete";
 			this.m_btnDelete.Size = new System.Drawing.Size(75, 23);
-			this.m_btnDelete.TabIndex = 5;
+			this.m_btnDelete.TabIndex = 3;
 			this.m_btnDelete.Text = "&Delete";
 			this.m_btnDelete.UseVisualStyleBackColor = true;
 			this.m_btnDelete.Click += new System.EventHandler(this.OnBtnDelete);
@@ -111,7 +111,7 @@
 			this.m_lblSep.Location = new System.Drawing.Point(0, 315);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(489, 2);
-			this.m_lblSep.TabIndex = 8;
+			this.m_lblSep.TabIndex = 6;
 			// 
 			// m_cbOverrideAll
 			// 
@@ -119,7 +119,7 @@
 			this.m_cbOverrideAll.Location = new System.Drawing.Point(12, 283);
 			this.m_cbOverrideAll.Name = "m_cbOverrideAll";
 			this.m_cbOverrideAll.Size = new System.Drawing.Size(138, 17);
-			this.m_cbOverrideAll.TabIndex = 6;
+			this.m_cbOverrideAll.TabIndex = 4;
 			this.m_cbOverrideAll.Text = "&Override all entry URLs:";
 			this.m_cbOverrideAll.UseVisualStyleBackColor = true;
 			this.m_cbOverrideAll.CheckedChanged += new System.EventHandler(this.OnOverrideAllCheckedChanged);
@@ -129,7 +129,7 @@
 			this.m_tbOverrideAll.Location = new System.Drawing.Point(156, 281);
 			this.m_tbOverrideAll.Name = "m_tbOverrideAll";
 			this.m_tbOverrideAll.Size = new System.Drawing.Size(239, 20);
-			this.m_tbOverrideAll.TabIndex = 7;
+			this.m_tbOverrideAll.TabIndex = 5;
 			// 
 			// UrlOverridesForm
 			// 

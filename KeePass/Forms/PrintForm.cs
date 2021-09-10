@@ -52,7 +52,8 @@ namespace KeePass.Forms
 		private bool m_bPrintMode = true;
 		private int m_nDefaultSortColumn = -1;
 
-		private int m_iBlockPreviewRefresh = 0;
+		private uint m_uBlockUpdateUIState = 0;
+		private uint m_uBlockPreviewRefresh = 0;
 		private Control m_cPreBlock = null;
 
 		private ImageList m_ilTabIcons = null;
@@ -110,7 +111,7 @@ namespace KeePass.Forms
 		public PrintForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void CreateDialogBanner()
@@ -136,7 +137,8 @@ namespace KeePass.Forms
 		{
 			if(m_pgDataSource == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
-			++m_iBlockPreviewRefresh;
+			++m_uBlockUpdateUIState;
+			++m_uBlockPreviewRefresh;
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -200,9 +202,10 @@ namespace KeePass.Forms
 
 			Program.TempFilesPool.AddWebBrowserPrintContent();
 
-			--m_iBlockPreviewRefresh;
+			--m_uBlockUpdateUIState;
+			UpdateUIState(); // May adjust some states
+			--m_uBlockPreviewRefresh;
 			UpdateWebBrowser(true);
-			UpdateUIState();
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -227,27 +230,38 @@ namespace KeePass.Forms
 
 		private void UpdateUIState()
 		{
-			bool bTabular = m_rbTabular.Checked;
+			if(m_uBlockUpdateUIState != 0) return;
+			++m_uBlockUpdateUIState;
+
 			bool bDetails = m_rbDetails.Checked;
 
-			UIUtil.SetEnabled(m_cbAutoType, bDetails);
-			UIUtil.SetEnabled(m_cbCustomStrings, bDetails);
-			if(bTabular)
-			{
-				UIUtil.SetChecked(m_cbAutoType, false);
-				UIUtil.SetChecked(m_cbCustomStrings, false);
-			}
-
 			bool bIcon = m_cbIcon.Checked;
+			// Here (not in OnFormLoad), due to 'Select All' impl.
 			if(m_ilClientIcons == null)
 			{
-				UIUtil.SetChecked(m_cbIcon, false);
 				UIUtil.SetEnabled(m_cbIcon, false);
+				UIUtil.SetChecked(m_cbIcon, false);
 				bIcon = false;
 			}
 
 			UIUtil.SetEnabled(m_cbTitle, !bIcon);
 			if(bIcon) UIUtil.SetChecked(m_cbTitle, true);
+
+			UIUtil.SetEnabled(m_cbAutoType, bDetails);
+			UIUtil.SetEnabled(m_cbCustomStrings, bDetails);
+			if(!bDetails)
+			{
+				UIUtil.SetChecked(m_cbAutoType, false);
+				UIUtil.SetChecked(m_cbCustomStrings, false);
+			}
+
+			if((m_pgDataSource != null) && m_pgDataSource.IsVirtual)
+			{
+				UIUtil.SetEnabled(m_cbGroups, false);
+				UIUtil.SetChecked(m_cbGroups, false);
+			}
+
+			--m_uBlockUpdateUIState;
 		}
 
 		private void UIBlockInteraction(bool bBlock)
@@ -288,9 +302,9 @@ namespace KeePass.Forms
 
 		private void UpdateWebBrowser(bool bInitial)
 		{
-			if(m_iBlockPreviewRefresh > 0) return;
+			if(m_uBlockPreviewRefresh != 0) return;
 
-			++m_iBlockPreviewRefresh;
+			++m_uBlockPreviewRefresh;
 			if(!bInitial) UIBlockInteraction(true);
 			// ShowWaitDocument();
 
@@ -302,7 +316,7 @@ namespace KeePass.Forms
 			catch(Exception) { Debug.Assert(false); }
 
 			if(!bInitial) UIBlockInteraction(false);
-			--m_iBlockPreviewRefresh;
+			--m_uBlockPreviewRefresh;
 		}
 
 		private string GenerateHtmlDocument(bool bTemporary)
@@ -673,7 +687,7 @@ namespace KeePass.Forms
 			{
 				if(pg.Entries.UCount == 0) return true;
 
-				sb.Append("</table><br /><br /><h3>"); // "</table><br /><hr /><h3>"
+				sb.Append("</table><br /><h3>"); // "</table><br /><hr /><h3>"
 				// sb.Append(MakeIconImg(pg.IconId, pg.CustomIconUuid, pg, p));
 				sb.Append(h(pg.GetFullPath(" - ", false)));
 				sb.AppendLine("</h3>");
@@ -938,6 +952,9 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
+			Debug.Assert(m_uBlockUpdateUIState == 0);
+			Debug.Assert(m_uBlockPreviewRefresh == 0);
+
 			if(m_ilTabIcons != null)
 			{
 				m_tabMain.ImageList = null;
@@ -951,7 +968,7 @@ namespace KeePass.Forms
 
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
-			if(m_iBlockPreviewRefresh > 0) e.Cancel = true;
+			if(m_uBlockPreviewRefresh != 0) e.Cancel = true;
 		}
 
 		private void OnIconCheckedChanged(object sender, EventArgs e)

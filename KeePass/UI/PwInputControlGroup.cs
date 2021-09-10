@@ -140,7 +140,7 @@ namespace KeePass.UI
 			if(lblQualityPrompt == null) throw new ArgumentNullException("lblQualityPrompt");
 			if(pbQuality == null) throw new ArgumentNullException("pbQuality");
 			if(lblQualityInfo == null) throw new ArgumentNullException("lblQualityInfo");
-			// ttHint may be null
+			Debug.Assert(ttHint != null);
 			if(fParent == null) throw new ArgumentNullException("fParent");
 
 			Release();
@@ -505,24 +505,18 @@ namespace KeePass.UI
 			{
 				bool bUnknown = (m_bSprVar && !m_pbQuality.Enabled);
 
-				string strBits = KPRes.BitsEx.Replace(@"{PARAM}",
-					(bUnknown ? "?" : uBits.ToString()));
-				m_pbQuality.ProgressText = (bUnknown ? string.Empty : strBits);
+				m_pbQuality.ProgressText = (bUnknown ? string.Empty :
+					KPRes.BitsEx.Replace(@"{PARAM}", uBits.ToString()));
 
-				int iPos = (int)((100 * uBits) / (256 / 2));
-				if(iPos < 0) iPos = 0;
-				else if(iPos > 100) iPos = 100;
-				m_pbQuality.Value = iPos;
+				int iPct = (int)((100 * uBits) / 128);
+				iPct = Math.Min(Math.Max(iPct, 0), 100);
+				m_pbQuality.Value = iPct;
 
 				string strLength = (bUnknown ? "?" : uLength.ToString());
-
 				string strInfo = strLength + " " + KPRes.CharsAbbr;
-				if(Program.Config.UI.OptimizeForScreenReader)
-					strInfo = strBits + ", " + strInfo;
 				UIUtil.SetText(m_lblQualityInfo, strInfo);
-				if(m_ttHint != null)
-					m_ttHint.SetToolTip(m_lblQualityInfo, KPRes.PasswordLength +
-						": " + strLength + " " + KPRes.CharsStc);
+				UIUtil.SetToolTip(m_ttHint, m_lblQualityInfo, KPRes.PasswordLength +
+					": " + strLength + " " + KPRes.CharsStc, true);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -563,7 +557,8 @@ namespace KeePass.UI
 			Debug.Assert(cb.ImageAlign == ContentAlignment.MiddleCenter);
 
 			if(tt != null)
-				tt.SetToolTip(cb, KPRes.TogglePasswordAsterisks);
+				UIUtil.SetToolTip(tt, cb, KPRes.TogglePasswordAsterisks, false);
+			UIUtil.AccSetName(cb, KPRes.TogglePasswordAsterisks); // Even if tt is null
 		}
 	}
 }

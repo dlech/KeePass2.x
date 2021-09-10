@@ -68,7 +68,7 @@ namespace KeePass.Forms
 		{
 			InitializeComponent();
 
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 			Program.Translation.ApplyTo("KeePass.Forms.EcasTriggersForm.m_ctxTools", m_ctxTools.Items);
 		}
 
@@ -77,7 +77,6 @@ namespace KeePass.Forms
 			if(m_triggers == null) { Debug.Assert(false); return; }
 
 			GlobalWindowManager.AddWindow(this);
-			GlobalWindowManager.CustomizeControl(m_ctxTools);
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Make_KDevelop, KPRes.Triggers,
@@ -98,6 +97,9 @@ namespace KeePass.Forms
 			if(object.ReferenceEquals(m_triggersInOut, ts) &&
 				AppConfigEx.IsOptionEnforced(tsCfg, "Enabled"))
 				m_cbEnableTriggers.Enabled = false;
+
+			UIUtil.AccSetName(m_btnMoveUp, KPRes.MoveUp);
+			UIUtil.AccSetName(m_btnMoveDown, KPRes.MoveDown);
 		}
 
 		private void CleanUpEx()

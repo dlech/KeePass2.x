@@ -70,7 +70,7 @@ namespace KeePass.Forms
 		public EditAutoTypeItemForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(AutoTypeConfig atConfig, int iAssocIndex, bool bEditSequenceOnly,
@@ -470,21 +470,21 @@ namespace KeePass.Forms
 
 		private static void LinkifyRtf(RichTextBox rtb)
 		{
-			Debug.Assert(rtb.HideSelection); // Flicker otherwise
+			string str = (rtb.Text ?? string.Empty);
+			int iOffset = 0;
 
-			string str = rtb.Text;
-
-			int iPos = str.IndexOf('{');
-			while(iPos >= 0)
+			while(iOffset < str.Length)
 			{
-				int iEnd = str.IndexOf('}', iPos);
-				if(iEnd >= 1)
-				{
-					rtb.Select(iPos, iEnd - iPos + 1);
-					UIUtil.RtfSetSelectionLink(rtb);
-				}
+				int iStart = str.IndexOf('{', iOffset);
+				if(iStart < iOffset) break;
 
-				iPos = str.IndexOf('{', iPos + 1);
+				int iEnd = str.IndexOf('}', iStart);
+				if(iEnd <= iStart) { Debug.Assert(false); break; }
+
+				rtb.Select(iStart, iEnd - iStart + 1);
+				UIUtil.RtfSetSelectionLink(rtb);
+
+				iOffset = iEnd + 1;
 			}
 
 			rtb.Select(0, 0);

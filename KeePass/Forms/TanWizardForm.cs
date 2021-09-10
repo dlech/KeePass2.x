@@ -48,13 +48,13 @@ namespace KeePass.Forms
 		public TanWizardForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
-			Debug.Assert(m_pgStorage != null); if(m_pgStorage == null) throw new InvalidOperationException();
+			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+			if(m_pgStorage == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -73,8 +73,9 @@ namespace KeePass.Forms
 
 			m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
+			UIUtil.AccSetName(m_numTANsIndex, m_cbNumberTans);
+
 			EnableControlsEx();
-			UIUtil.SetFocus(m_tbTANs, this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

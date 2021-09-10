@@ -76,9 +76,6 @@ namespace KeePass.Forms
 
 		private bool m_bForceExitOnce = false;
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
 		public MainForm()
 		{
 			try
@@ -89,6 +86,7 @@ namespace KeePass.Forms
 			}
 			catch(Exception)
 			{
+				Debug.Assert(NativeLib.IsUnix());
 				m_nTaskbarButtonMessage = 0x1E8F46A7; // Unlikely to occur
 				m_bTaskbarButtonMessage = false;
 			}
@@ -114,31 +112,34 @@ namespace KeePass.Forms
 
 			InitializeComponent();
 
-			m_menuMain.SuspendLayout();
-			m_ctxGroupList.SuspendLayout();
-			m_ctxPwList.SuspendLayout();
-			m_ctxTray.SuspendLayout();
-
-			Program.Translation.ApplyTo(this);
-			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_menuMain", m_menuMain.Items);
-			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxPwList", m_ctxPwList.Items);
-			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxGroupList", m_ctxGroupList.Items);
-			Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxTray", m_ctxTray.Items);
-
-			AssignMenuShortcuts();
-			// Do not construct context menus here, otherwise TrlUtil sees them
-
-			m_ctxTray.ResumeLayout(true);
-			m_ctxPwList.ResumeLayout(true);
-			m_ctxGroupList.ResumeLayout(true);
-			m_menuMain.ResumeLayout(true);
-
 			m_asyncListUpdate = new AsyncPwListUpdate(m_lvEntries);
 
 			m_splitHorizontal.InitEx(this.Controls, m_menuMain);
 			m_splitVertical.InitEx(this.Controls, m_menuMain);
 
-			if(MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
+			if(!Program.DesignMode)
+			{
+				if(MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
+
+				m_menuMain.SuspendLayout();
+				m_ctxGroupList.SuspendLayout();
+				m_ctxPwList.SuspendLayout();
+				m_ctxTray.SuspendLayout();
+
+				GlobalWindowManager.InitializeForm(this);
+				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_menuMain", m_menuMain.Items);
+				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxPwList", m_ctxPwList.Items);
+				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxGroupList", m_ctxGroupList.Items);
+				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxTray", m_ctxTray.Items);
+
+				AssignMenuShortcuts();
+				// Do not construct context menus here, otherwise TrlUtil sees them
+
+				m_ctxTray.ResumeLayout(true);
+				m_ctxPwList.ResumeLayout(true);
+				m_ctxGroupList.ResumeLayout(true);
+				m_menuMain.ResumeLayout(true);
+			}
 		}
 
 		private bool m_bFormLoadCalled = false;
@@ -149,7 +150,6 @@ namespace KeePass.Forms
 
 			m_bFormLoaded = false;
 			GlobalWindowManager.CustomizeControl(this);
-			GlobalWindowManager.CustomizeControl(m_ctxTray);
 			GlobalWindowManager.CustomizeFormHandleCreated(this, true, true);
 
 			this.Text = PwDefs.ShortProductName;
@@ -249,7 +249,7 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbCopyUrl, KPRes.CopyUrls, null, m_menuEntryCopyUrl);
 			UIUtil.ConfigureTbButton(m_tbAutoType, KPRes.PerformAutoType, null, m_menuEntryPerformAutoType);
 			UIUtil.ConfigureTbButton(m_tbFind, KPRes.Find, null, m_menuFindInDatabase);
-			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, null, KPRes.FindEntries, null);
+			UIUtil.ConfigureTbButton(m_tbEntryViewsDropDown, KPRes.FindEntries, null, null);
 			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null, m_menuFileLock);
 			UIUtil.ConfigureTbButton(m_tbQuickFind, null, KPRes.SearchQuickPrompt +
 				" (" + KPRes.KeyboardKeyCtrl + "+E)", null);
@@ -989,7 +989,7 @@ namespace KeePass.Forms
 
 		private void OnEntryEdit(object sender, EventArgs e)
 		{
-			EditSelectedEntry(false);
+			EditSelectedEntry(PwEntryFormTab.None);
 		}
 
 		private void OnEntryDuplicate(object sender, EventArgs e)
@@ -1214,8 +1214,8 @@ namespace KeePass.Forms
 
 		private void OnQuickFindSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_bBlockQuickFind) return;
-			m_bBlockQuickFind = true;
+			if(m_uBlockQuickFind != 0) return;
+			++m_uBlockQuickFind;
 
 			string strSearch = m_tbQuickFind.Text; // Text, not selected index!
 
@@ -1225,7 +1225,7 @@ namespace KeePass.Forms
 				if(((iNow - m_iLastQuickFindTicks) <= 1000) &&
 					(strSearch == m_strLastQuickSearch))
 				{
-					m_bBlockQuickFind = false;
+					--m_uBlockQuickFind;
 					return;
 				}
 
@@ -1262,7 +1262,7 @@ namespace KeePass.Forms
 			BeginInvoke(new PerformSearchQuickDelegate(this.PerformSearchQuick),
 				strSearch, false, true);
 
-			m_bBlockQuickFind = false;
+			--m_uBlockQuickFind;
 		}
 
 		private void OnQuickFindKeyDown(object sender, KeyEventArgs e)
@@ -1717,17 +1717,7 @@ namespace KeePass.Forms
 
 		private void OnGroupEdit(object sender, EventArgs e)
 		{
-			PwGroup pg = GetSelectedGroup();
-			Debug.Assert(pg != null); if(pg == null) return;
-
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			GroupForm gf = new GroupForm();
-			gf.InitEx(pg, false, m_ilCurrentIcons, pwDb);
-
-			if(UIUtil.ShowDialogAndDestroy(gf) == DialogResult.OK)
-				UpdateUI(false, null, true, null, true, null, true);
-			else UpdateUI(false, null, pwDb.UINeedsIconUpdate, null,
-				pwDb.UINeedsIconUpdate, null, false);
+			EditSelectedGroup(GroupFormTab.None);
 		}
 
 		private void OnEntryCopyURL(object sender, EventArgs e)
@@ -2237,16 +2227,12 @@ namespace KeePass.Forms
 			if(HandleMoveKeyMessage(e, true, false)) return;
 
 			bool bHandled = true;
-			TreeNode tn = m_tvGroups.SelectedNode;
 
 			if(e.Alt) bHandled = false;
 			else if(e.KeyCode == Keys.Delete)
 				OnGroupDelete(sender, e);
 			else if(e.KeyCode == Keys.F2)
-			{
-				if(tn != null) // tn.BeginEdit();
-					OnGroupEdit(sender, e);
-			}
+				OnGroupEdit(sender, e);
 			else bHandled = false;
 
 			if(bHandled) UIUtil.SetHandled(e, true);

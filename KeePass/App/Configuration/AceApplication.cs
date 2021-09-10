@@ -66,6 +66,18 @@ namespace KeePass.App.Configuration
 			set { m_bHelpUseLocal = value; }
 		}
 
+		private string m_strHelpUrl = string.Empty;
+		[DefaultValue("")]
+		public string HelpUrl
+		{
+			get { return m_strHelpUrl; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strHelpUrl = value;
+			}
+		}
+
 		// Serialize DateTime with TimeUtil
 		private string m_strLastUpdChk = string.Empty;
 		[DefaultValue("")]

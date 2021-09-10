@@ -2472,6 +2472,7 @@
 			// 
 			// m_richEntryView
 			// 
+			this.m_richEntryView.DetectUrls = false;
 			this.m_richEntryView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_richEntryView.Location = new System.Drawing.Point(0, 0);
 			this.m_richEntryView.Name = "m_richEntryView";

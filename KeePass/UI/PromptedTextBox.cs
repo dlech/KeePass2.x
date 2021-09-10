@@ -40,7 +40,7 @@ namespace KeePass.UI
 				if(value == null) throw new ArgumentNullException("value");
 
 				m_strPrompt = value;
-				this.Invalidate();
+				Invalidate();
 			}
 		}
 

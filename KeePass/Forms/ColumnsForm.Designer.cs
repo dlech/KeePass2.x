@@ -47,7 +47,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(518, 88);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 2;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -58,7 +58,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(518, 117);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 3;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -69,7 +69,7 @@
 			this.m_lblChoose.Location = new System.Drawing.Point(9, 72);
 			this.m_lblChoose.Name = "m_lblChoose";
 			this.m_lblChoose.Size = new System.Drawing.Size(239, 13);
-			this.m_lblChoose.TabIndex = 2;
+			this.m_lblChoose.TabIndex = 0;
 			this.m_lblChoose.Text = "&Choose the columns to show in the main window:";
 			// 
 			// m_lblReorderHint
@@ -90,7 +90,7 @@
 			this.m_lvColumns.MultiSelect = false;
 			this.m_lvColumns.Name = "m_lvColumns";
 			this.m_lvColumns.Size = new System.Drawing.Size(500, 300);
-			this.m_lvColumns.TabIndex = 3;
+			this.m_lvColumns.TabIndex = 1;
 			this.m_lvColumns.UseCompatibleStateImageBehavior = false;
 			this.m_lvColumns.View = System.Windows.Forms.View.Details;
 			this.m_lvColumns.SelectedIndexChanged += new System.EventHandler(this.OnColumnsSelectedIndexChanged);

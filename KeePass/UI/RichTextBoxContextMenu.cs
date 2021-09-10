@@ -75,8 +75,6 @@ namespace KeePass.UI
 			m_ctx = CreateContextMenu();
 			m_ctx.Opening += this.OnMenuOpening;
 
-			GlobalWindowManager.CustomizeControl(m_ctx);
-
 			m_rtb.ContextMenuStrip = m_ctx;
 		}
 

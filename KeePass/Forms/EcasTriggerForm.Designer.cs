@@ -93,7 +93,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(426, 389);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 4;
+			this.m_btnOK.TabIndex = 0;
 			this.m_btnOK.Text = "&Finish";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -104,7 +104,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(507, 389);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 5;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -114,7 +114,7 @@
 			this.m_btnPrev.Location = new System.Drawing.Point(258, 389);
 			this.m_btnPrev.Name = "m_btnPrev";
 			this.m_btnPrev.Size = new System.Drawing.Size(75, 23);
-			this.m_btnPrev.TabIndex = 2;
+			this.m_btnPrev.TabIndex = 4;
 			this.m_btnPrev.Text = "< &Back";
 			this.m_btnPrev.UseVisualStyleBackColor = true;
 			this.m_btnPrev.Click += new System.EventHandler(this.OnBtnPrev);
@@ -124,7 +124,7 @@
 			this.m_btnNext.Location = new System.Drawing.Point(333, 389);
 			this.m_btnNext.Name = "m_btnNext";
 			this.m_btnNext.Size = new System.Drawing.Size(75, 23);
-			this.m_btnNext.TabIndex = 3;
+			this.m_btnNext.TabIndex = 5;
 			this.m_btnNext.Text = "&Next >";
 			this.m_btnNext.UseVisualStyleBackColor = true;
 			this.m_btnNext.Click += new System.EventHandler(this.OnBtnNext);
@@ -139,7 +139,7 @@
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(570, 314);
-			this.m_tabMain.TabIndex = 0;
+			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.SelectedIndexChanged += new System.EventHandler(this.OnTabMainSelectedIndexChanged);
 			// 
 			// m_tabProps
@@ -530,7 +530,7 @@
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 389);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 1;
+			this.m_btnHelp.TabIndex = 3;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);

@@ -68,7 +68,8 @@ namespace KeePass.Forms
 
 			SecureTextBoxEx.InitEx(ref m_tbPassword);
 			SecureTextBoxEx.InitEx(ref m_tbRepeatPassword);
-			Program.Translation.ApplyTo(this);
+
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(IOConnectionInfo ioInfo, bool bCreatingNew)
@@ -98,20 +99,21 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbKeyFile);
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
-			using(Bitmap bmp = SystemIcons.Warning.ToBitmap())
-			{
-				m_imgAccWarning = GfxUtil.ScaleImage(bmp, DpiUtil.ScaleIntX(16),
-					DpiUtil.ScaleIntY(16), ScaleTransformFlags.UIIcon);
-				m_imgKeyFileWarning = (Image)m_imgAccWarning.Clone();
-			}
+			m_imgKeyFileWarning = UIUtil.IconToBitmap(SystemIcons.Warning,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+			m_imgAccWarning = (Image)m_imgKeyFileWarning.Clone();
 			m_picKeyFileWarning.Image = m_imgKeyFileWarning;
 			m_picAccWarning.Image = m_imgAccWarning;
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
-			m_ttRect.SetToolTip(m_btnSaveKeyFile, KPRes.KeyFileCreate);
-			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileUseExisting);
-			m_ttRect.SetToolTip(m_tbRepeatPassword, KPRes.PasswordRepeatHint);
+			UIUtil.SetToolTip(m_ttRect, m_tbRepeatPassword, KPRes.PasswordRepeatHint, false);
+			UIUtil.SetToolTip(m_ttRect, m_btnSaveKeyFile, KPRes.KeyFileCreate, false);
+			UIUtil.SetToolTip(m_ttRect, m_btnOpenKeyFile, KPRes.KeyFileUseExisting, false);
+
+			UIUtil.AccSetName(m_tbPassword, m_cbPassword);
+			UIUtil.AccSetName(m_cmbKeyFile, m_cbKeyFile);
+			UIUtil.AccSetName(m_picKeyFileWarning, KPRes.Warning);
+			UIUtil.AccSetName(m_picAccWarning, KPRes.Warning);
 
 			Debug.Assert(!m_lblIntro.AutoSize); // For RTL support
 			if(!m_bCreatingNew)
@@ -139,7 +141,6 @@ namespace KeePass.Forms
 				UIUtil.SetEnabled(m_lblWindowsAccDesc2, false);
 			}
 
-			CustomizeForScreenReader();
 			EnableUserControls();
 			// UIUtil.SetFocus(m_tbPassword, this); // See OnFormShown
 		}
@@ -152,13 +153,6 @@ namespace KeePass.Forms
 			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
 			else if(m_btnCreate.CanFocus) UIUtil.SetFocus(m_btnCreate, this, true);
 			else { Debug.Assert(false); }
-		}
-
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_cbHidePassword.Text = KPRes.HideUsingAsterisks;
 		}
 
 		private void CleanUpEx()
@@ -317,7 +311,7 @@ namespace KeePass.Forms
 				m_btnCreate.Enabled = false;
 			else m_btnCreate.Enabled = true;
 
-			m_ttRect.SetToolTip(m_cmbKeyFile, strKeyFile);
+			UIUtil.SetToolTip(m_ttRect, m_cmbKeyFile, strKeyFile, false);
 
 			bool bExpert = m_cbExpert.Checked;
 			bool bShowKF = (bExpert || bKeyFile);

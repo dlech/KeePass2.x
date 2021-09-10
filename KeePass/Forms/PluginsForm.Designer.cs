@@ -51,7 +51,7 @@
 			this.m_btnClose.Location = new System.Drawing.Point(532, 431);
 			this.m_btnClose.Name = "m_btnClose";
 			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
-			this.m_btnClose.TabIndex = 0;
+			this.m_btnClose.TabIndex = 6;
 			this.m_btnClose.Text = "Close";
 			this.m_btnClose.UseVisualStyleBackColor = true;
 			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
@@ -65,7 +65,7 @@
 			this.m_lvPlugins.Name = "m_lvPlugins";
 			this.m_lvPlugins.ShowItemToolTips = true;
 			this.m_lvPlugins.Size = new System.Drawing.Size(595, 165);
-			this.m_lvPlugins.TabIndex = 1;
+			this.m_lvPlugins.TabIndex = 0;
 			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
 			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
 			this.m_lvPlugins.SelectedIndexChanged += new System.EventHandler(this.OnPluginListSelectedIndexChanged);
@@ -76,7 +76,7 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 422);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(619, 2);
-			this.m_lblSeparator.TabIndex = 4;
+			this.m_lblSeparator.TabIndex = 3;
 			// 
 			// m_bannerImage
 			// 
@@ -93,7 +93,7 @@
 			this.m_grpPluginDesc.Location = new System.Drawing.Point(12, 237);
 			this.m_grpPluginDesc.Name = "m_grpPluginDesc";
 			this.m_grpPluginDesc.Size = new System.Drawing.Size(595, 102);
-			this.m_grpPluginDesc.TabIndex = 2;
+			this.m_grpPluginDesc.TabIndex = 1;
 			this.m_grpPluginDesc.TabStop = false;
 			// 
 			// m_lblSelectedPluginDesc
@@ -112,7 +112,7 @@
 			this.m_grpCache.Location = new System.Drawing.Point(12, 345);
 			this.m_grpCache.Name = "m_grpCache";
 			this.m_grpCache.Size = new System.Drawing.Size(595, 65);
-			this.m_grpCache.TabIndex = 3;
+			this.m_grpCache.TabIndex = 2;
 			this.m_grpCache.TabStop = false;
 			this.m_grpCache.Text = "Plugin Cache";
 			// 
@@ -149,7 +149,7 @@
 			this.m_btnMore.Location = new System.Drawing.Point(12, 431);
 			this.m_btnMore.Name = "m_btnMore";
 			this.m_btnMore.Size = new System.Drawing.Size(115, 23);
-			this.m_btnMore.TabIndex = 5;
+			this.m_btnMore.TabIndex = 4;
 			this.m_btnMore.Text = "&Get More Plugins...";
 			this.m_btnMore.UseVisualStyleBackColor = true;
 			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
@@ -159,7 +159,7 @@
 			this.m_btnOpenFolder.Location = new System.Drawing.Point(133, 431);
 			this.m_btnOpenFolder.Name = "m_btnOpenFolder";
 			this.m_btnOpenFolder.Size = new System.Drawing.Size(83, 23);
-			this.m_btnOpenFolder.TabIndex = 6;
+			this.m_btnOpenFolder.TabIndex = 5;
 			this.m_btnOpenFolder.Text = "Open &Folder";
 			this.m_btnOpenFolder.UseVisualStyleBackColor = true;
 			this.m_btnOpenFolder.Click += new System.EventHandler(this.OnBtnOpenFolder);

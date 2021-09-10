@@ -43,7 +43,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(263, 139);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.TabIndex = 3;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -54,7 +54,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(344, 139);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 4;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -73,14 +73,14 @@
 			this.m_tbEdit.Location = new System.Drawing.Point(12, 106);
 			this.m_tbEdit.Name = "m_tbEdit";
 			this.m_tbEdit.Size = new System.Drawing.Size(407, 20);
-			this.m_tbEdit.TabIndex = 0;
+			this.m_tbEdit.TabIndex = 1;
 			// 
 			// m_lblLongDesc
 			// 
 			this.m_lblLongDesc.Location = new System.Drawing.Point(9, 72);
 			this.m_lblLongDesc.Name = "m_lblLongDesc";
 			this.m_lblLongDesc.Size = new System.Drawing.Size(410, 28);
-			this.m_lblLongDesc.TabIndex = 3;
+			this.m_lblLongDesc.TabIndex = 0;
 			this.m_lblLongDesc.Text = "<>";
 			// 
 			// m_cmbEdit
@@ -91,7 +91,7 @@
 			this.m_cmbEdit.Location = new System.Drawing.Point(12, 106);
 			this.m_cmbEdit.Name = "m_cmbEdit";
 			this.m_cmbEdit.Size = new System.Drawing.Size(407, 21);
-			this.m_cmbEdit.TabIndex = 4;
+			this.m_cmbEdit.TabIndex = 2;
 			// 
 			// SingleLineEditForm
 			// 

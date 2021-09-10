@@ -349,8 +349,8 @@ namespace KeePassLib.Utility
 			{
 				g.Clear(Color.Transparent);
 
-				g.SmoothingMode = SmoothingMode.HighQuality;
 				g.CompositingQuality = CompositingQuality.HighQuality;
+				g.SmoothingMode = SmoothingMode.HighQuality;
 
 				int wSrc = img.Width;
 				int hSrc = img.Height;
@@ -439,6 +439,16 @@ namespace KeePassLib.Utility
 #endif // !KeePassLibSD
 #endif // KeePassUAP
 
+		internal static void SetHighQuality(Graphics g)
+		{
+			if(g == null) { Debug.Assert(false); return; }
+
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			// g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			g.SmoothingMode = SmoothingMode.HighQuality;
+		}
+
 		internal static string ImageToDataUri(Image img)
 		{
 			if(img == null) { Debug.Assert(false); return string.Empty; }
@@ -471,13 +481,12 @@ namespace KeePassLib.Utility
 
 				Debug.Assert(Marshal.SizeOf(typeof(int)) == 4);
 				int cp = w * h;
-				int[] v = new int[cp];
+				int[] v = new int[cp + 2];
 				Marshal.Copy(bd.Scan0, v, 0, cp);
+				v[cp] = w;
+				v[cp + 1] = h;
 
-				ulong u = (ulong)w * 0x50EF39EB5BE34CA9UL;
-				for(int i = 0; i < cp; ++i)
-					u = (u ^ (uint)v[i]) * 0x6E18585D2D174BD5UL;
-				return ((u ^ (u >> 32)) * 0x636DA7436CB982B5UL);
+				return MemUtil.Hash64(v, 0, v.Length);
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally

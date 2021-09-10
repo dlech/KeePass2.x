@@ -199,6 +199,9 @@ namespace KeePass.Util.XmlSerialization
 					case "HelpUseLocal":
 						o.HelpUseLocal = ReadBoolean(xr);
 						break;
+					case "HelpUrl":
+						o.HelpUrl = ReadString(xr);
+						break;
 					case "LastUpdateCheck":
 						o.LastUpdateCheck = ReadString(xr);
 						break;
@@ -508,14 +511,17 @@ namespace KeePass.Util.XmlSerialization
 					case "ShowImportStatusDialog":
 						o.ShowImportStatusDialog = ReadBoolean(xr);
 						break;
-					case "ShowDbMntncResultsDialog":
-						o.ShowDbMntncResultsDialog = ReadBoolean(xr);
-						break;
 					case "ShowRecycleConfirmDialog":
 						o.ShowRecycleConfirmDialog = ReadBoolean(xr);
 						break;
+					case "ShowDbMntncResultsDialog":
+						o.ShowDbMntncResultsDialog = ReadBoolean(xr);
+						break;
 					case "ShowEmSheetDialog":
 						o.ShowEmSheetDialog = ReadBoolean(xr);
+						break;
+					case "ShowDbOpenUnkVerDialog":
+						o.ShowDbOpenUnkVerDialog = ReadBoolean(xr);
 						break;
 					case "ToolStripRenderer":
 						o.ToolStripRenderer = ReadString(xr);
@@ -2999,6 +3005,8 @@ namespace KeePass.Util.XmlSerialization
 				m_dictAceColumnType["HistoryCount"] = KeePass.App.Configuration.AceColumnType.HistoryCount;
 				m_dictAceColumnType["AttachmentCount"] = KeePass.App.Configuration.AceColumnType.AttachmentCount;
 				m_dictAceColumnType["LastPasswordModTime"] = KeePass.App.Configuration.AceColumnType.LastPasswordModTime;
+				m_dictAceColumnType["AutoTypeEnabled"] = KeePass.App.Configuration.AceColumnType.AutoTypeEnabled;
+				m_dictAceColumnType["AutoTypeSequences"] = KeePass.App.Configuration.AceColumnType.AutoTypeSequences;
 				m_dictAceColumnType["Count"] = KeePass.App.Configuration.AceColumnType.Count;
 			}
 

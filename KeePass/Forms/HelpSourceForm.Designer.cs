@@ -52,10 +52,10 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(250, 240);
+			this.m_btnOK.Location = new System.Drawing.Point(250, 242);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 6;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -63,10 +63,10 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(331, 240);
+			this.m_btnCancel.Location = new System.Drawing.Point(331, 242);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 7;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -77,7 +77,7 @@
 			this.m_radioLocal.Location = new System.Drawing.Point(12, 101);
 			this.m_radioLocal.Name = "m_radioLocal";
 			this.m_radioLocal.Size = new System.Drawing.Size(90, 17);
-			this.m_radioLocal.TabIndex = 3;
+			this.m_radioLocal.TabIndex = 1;
 			this.m_radioLocal.TabStop = true;
 			this.m_radioLocal.Text = "&Local help file";
 			this.m_radioLocal.UseVisualStyleBackColor = true;
@@ -85,10 +85,10 @@
 			// m_radioOnline
 			// 
 			this.m_radioOnline.AutoSize = true;
-			this.m_radioOnline.Location = new System.Drawing.Point(12, 162);
+			this.m_radioOnline.Location = new System.Drawing.Point(12, 163);
 			this.m_radioOnline.Name = "m_radioOnline";
 			this.m_radioOnline.Size = new System.Drawing.Size(111, 17);
-			this.m_radioOnline.TabIndex = 5;
+			this.m_radioOnline.TabIndex = 3;
 			this.m_radioOnline.TabStop = true;
 			this.m_radioOnline.Text = "&Online help center";
 			this.m_radioOnline.UseVisualStyleBackColor = true;
@@ -97,36 +97,36 @@
 			// 
 			this.m_lblLocal.Location = new System.Drawing.Point(28, 121);
 			this.m_lblLocal.Name = "m_lblLocal";
-			this.m_lblLocal.Size = new System.Drawing.Size(378, 28);
-			this.m_lblLocal.TabIndex = 4;
+			this.m_lblLocal.Size = new System.Drawing.Size(378, 29);
+			this.m_lblLocal.TabIndex = 2;
 			this.m_lblLocal.Text = "The local help file is a snapshot of the product documentation at the point when " +
 				"this product version was published. It is not updated automatically.";
 			// 
 			// m_lblOnline
 			// 
-			this.m_lblOnline.Location = new System.Drawing.Point(28, 182);
+			this.m_lblOnline.Location = new System.Drawing.Point(28, 183);
 			this.m_lblOnline.Name = "m_lblOnline";
 			this.m_lblOnline.Size = new System.Drawing.Size(378, 29);
-			this.m_lblOnline.TabIndex = 6;
+			this.m_lblOnline.TabIndex = 4;
 			this.m_lblOnline.Text = "The online help center always contains the latest version of the product document" +
-				"ation. Internet connection is required.";
+				"ation. An Internet connection is required.";
 			// 
 			// m_lblIntro
 			// 
 			this.m_lblIntro.AutoSize = true;
 			this.m_lblIntro.Location = new System.Drawing.Point(9, 72);
 			this.m_lblIntro.Name = "m_lblIntro";
-			this.m_lblIntro.Size = new System.Drawing.Size(377, 13);
-			this.m_lblIntro.TabIndex = 2;
-			this.m_lblIntro.Text = "Use the following help source when a \"Help\" button within KeePass is clicked:";
+			this.m_lblIntro.Size = new System.Drawing.Size(346, 13);
+			this.m_lblIntro.TabIndex = 0;
+			this.m_lblIntro.Text = "Use the following help source when a help button in KeePass is clicked:";
 			// 
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 230);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 232);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(418, 2);
-			this.m_lblSeparator.TabIndex = 7;
+			this.m_lblSeparator.TabIndex = 5;
 			// 
 			// HelpSourceForm
 			// 
@@ -134,7 +134,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(418, 275);
+			this.ClientSize = new System.Drawing.Size(418, 277);
 			this.Controls.Add(this.m_lblSeparator);
 			this.Controls.Add(this.m_lblIntro);
 			this.Controls.Add(this.m_lblOnline);

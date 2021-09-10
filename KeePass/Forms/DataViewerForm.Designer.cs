@@ -85,7 +85,7 @@
 			this.m_statusMain.Location = new System.Drawing.Point(0, 394);
 			this.m_statusMain.Name = "m_statusMain";
 			this.m_statusMain.Size = new System.Drawing.Size(608, 22);
-			this.m_statusMain.TabIndex = 4;
+			this.m_statusMain.TabIndex = 3;
 			// 
 			// m_tssStatusMain
 			// 
@@ -97,6 +97,7 @@
 			// 
 			// m_rtbText
 			// 
+			this.m_rtbText.DetectUrls = false;
 			this.m_rtbText.Location = new System.Drawing.Point(23, 40);
 			this.m_rtbText.Name = "m_rtbText";
 			this.m_rtbText.ReadOnly = true;
@@ -121,7 +122,7 @@
 			this.m_toolMain.Location = new System.Drawing.Point(0, 0);
 			this.m_toolMain.Name = "m_toolMain";
 			this.m_toolMain.Size = new System.Drawing.Size(608, 25);
-			this.m_toolMain.TabIndex = 3;
+			this.m_toolMain.TabIndex = 4;
 			this.m_toolMain.TabStop = true;
 			// 
 			// m_tslViewer

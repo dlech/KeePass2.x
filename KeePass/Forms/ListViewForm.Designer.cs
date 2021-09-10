@@ -48,7 +48,7 @@
 			this.m_lvMain.Name = "m_lvMain";
 			this.m_lvMain.ShowItemToolTips = true;
 			this.m_lvMain.Size = new System.Drawing.Size(670, 418);
-			this.m_lvMain.TabIndex = 0;
+			this.m_lvMain.TabIndex = 1;
 			this.m_lvMain.UseCompatibleStateImageBehavior = false;
 			this.m_lvMain.View = System.Windows.Forms.View.Details;
 			this.m_lvMain.ItemActivate += new System.EventHandler(this.OnListItemActivate);
@@ -68,7 +68,7 @@
 			this.m_lblInfo.Location = new System.Drawing.Point(9, 72);
 			this.m_lblInfo.Name = "m_lblInfo";
 			this.m_lblInfo.Size = new System.Drawing.Size(673, 29);
-			this.m_lblInfo.TabIndex = 1;
+			this.m_lblInfo.TabIndex = 0;
 			this.m_lblInfo.Text = "<>";
 			// 
 			// ListViewForm

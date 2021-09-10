@@ -49,7 +49,7 @@ namespace KeePass.Forms
 		public XmlReplaceForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -65,11 +65,11 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.Text = KPRes.XmlReplace;
 
-			Bitmap bmpBig = SystemIcons.Warning.ToBitmap();
-			m_imgWarning = GfxUtil.ScaleImage(bmpBig, DpiUtil.ScaleIntX(16),
-				DpiUtil.ScaleIntY(16), ScaleTransformFlags.UIIcon);
-			bmpBig.Dispose();
+			m_imgWarning = UIUtil.IconToBitmap(SystemIcons.Warning,
+				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_picWarning.Image = m_imgWarning;
+
+			UIUtil.AccSetName(m_picWarning, KPRes.Warning);
 
 			FontUtil.AssignDefaultBold(m_rbRemove);
 			FontUtil.AssignDefaultBold(m_rbReplace);
@@ -78,7 +78,6 @@ namespace KeePass.Forms
 			m_rbInnerText.Checked = true;
 
 			EnableControlsEx();
-			UIUtil.SetFocus(m_tbSelNodes, this);
 		}
 
 		private void CleanUpEx()

@@ -49,7 +49,7 @@ namespace KeePass.Forms
 		public WebDocForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(string strTitle, string strDocHtml)

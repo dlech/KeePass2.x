@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 
@@ -38,7 +39,7 @@ namespace KeePass.Forms
 		public HelpSourceForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -57,16 +58,30 @@ namespace KeePass.Forms
 			Debug.Assert(!m_lblLocal.AutoSize); // For RTL support
 			if(!AppHelp.LocalHelpAvailable)
 			{
-				m_radioLocal.Enabled = false;
+				UIUtil.SetEnabledFast(false, m_radioLocal, m_lblLocal);
 				m_lblLocal.Text = KPRes.HelpSourceNoLocalOption;
 
 				AppHelp.PreferredHelpSource = AppHelpSource.Online;
 			}
 
-			if(AppHelp.PreferredHelpSource == AppHelpSource.Local)
-				m_radioLocal.Checked = true;
-			else
-				m_radioOnline.Checked = true;
+			bool bOverride = !string.IsNullOrEmpty(Program.Config.Application.HelpUrl);
+			bool bEnforced = AppConfigEx.IsOptionEnforced(Program.Config.Application,
+				"HelpUseLocal");
+
+			if(!bOverride)
+			{
+				if(AppHelp.PreferredHelpSource == AppHelpSource.Local)
+					m_radioLocal.Checked = true;
+				else
+					m_radioOnline.Checked = true;
+			}
+
+			if(bOverride || bEnforced)
+			{
+				UIUtil.SetEnabledFast(false, m_radioLocal, m_lblLocal,
+					m_radioOnline, m_lblOnline, m_btnOK);
+				UIUtil.SetFocus(m_btnCancel, this);
+			}
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)

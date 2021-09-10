@@ -54,6 +54,14 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		}
 
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if(Program.DesignMode) return;
+
+			UIUtil.ConfigureToolTip(this);
+		}
+
 		/* private Color m_clrPrev = Color.Black;
 		private Point m_ptLast = new Point(-1, -1);
 		protected override void OnMouseHover(EventArgs e)

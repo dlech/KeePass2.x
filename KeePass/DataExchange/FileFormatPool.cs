@@ -130,7 +130,7 @@ namespace KeePass.DataExchange
 			m_vFormats.Add(new HandySafeProXml12());
 			m_vFormats.Add(new KasperskyPwMgrXml50());
 			m_vFormats.Add(new KeePassXXml041());
-			// m_vFormats.Add(new KeeperJson16());
+			m_vFormats.Add(new KeeperJson16());
 			m_vFormats.Add(new LastPassCsv2());
 			m_vFormats.Add(new MSecureCsv355());
 			m_vFormats.Add(new NetworkPwMgrCsv4());

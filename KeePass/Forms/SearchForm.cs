@@ -72,7 +72,7 @@ namespace KeePass.Forms
 		public SearchForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		/// <summary>
@@ -110,11 +110,12 @@ namespace KeePass.Forms
 
 			UIUtil.SetText(m_cbDerefData, m_cbDerefData.Text + " (" + KPRes.Slow + ")");
 
-			CustomizeForScreenReader();
-
 			UIUtil.ConfigureToolTip(m_ttMain);
-			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.ProfileSaveDesc);
-			m_ttMain.SetToolTip(m_btnProfileDelete, KPRes.ProfileDeleteDesc);
+			UIUtil.SetToolTip(m_ttMain, m_btnProfileAdd, KPRes.ProfileSaveDesc, false);
+			UIUtil.SetToolTip(m_ttMain, m_btnProfileDelete, KPRes.ProfileDeleteDesc, false);
+
+			UIUtil.AccSetName(m_btnProfileAdd, KPRes.ProfileSave);
+			UIUtil.AccSetName(m_btnProfileDelete, KPRes.ProfileDelete);
 
 			SearchParameters sp = (!string.IsNullOrEmpty(m_strInitProfile) ?
 				Program.Config.Search.FindProfile(m_strInitProfile) : null);
@@ -138,15 +139,6 @@ namespace KeePass.Forms
 
 			UpdateUIState();
 			m_tbSearch.SelectAll();
-			UIUtil.SetFocus(m_tbSearch, this);
-		}
-
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_btnProfileAdd.Text = KPRes.ProfileSave;
-			m_btnProfileDelete.Text = KPRes.ProfileDelete;
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
