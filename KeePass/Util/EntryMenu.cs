@@ -85,7 +85,6 @@ namespace KeePass.Util
 				}
 			}
 
-			GlobalWindowManager.CustomizeControl(ctx);
 			return ctx;
 		}
 

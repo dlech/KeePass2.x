@@ -32,6 +32,7 @@ namespace KeePass.UI
 		public CustomContextMenuStripEx() : base()
 		{
 			UIUtil.Configure(this);
+			GlobalWindowManager.CustomizeControl(this);
 		}
 
 		// Used e.g. by the designer
@@ -39,6 +40,7 @@ namespace KeePass.UI
 			base(container)
 		{
 			UIUtil.Configure(this);
+			GlobalWindowManager.CustomizeControl(this);
 		}
 
 		public void ShowEx(Control cParent)

@@ -43,7 +43,7 @@ namespace KeePass.Forms
 		public UrlOverrideForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -57,8 +57,6 @@ namespace KeePass.Forms
 
 			m_tbScheme.Text = m_ovr.Scheme;
 			m_tbOverride.Text = m_ovr.UrlOverride;
-
-			UIUtil.SetFocus(m_tbScheme, this);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

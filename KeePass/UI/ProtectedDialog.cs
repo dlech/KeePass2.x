@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
+using KeePass.App.Configuration;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util;
@@ -241,7 +242,13 @@ namespace KeePass.UI
 				// there is an IME bug resulting in a black screen and/or an
 				// IME/CTF process with high CPU load;
 				// https://sourceforge.net/p/keepass/bugs/1881/
-				try { NativeMethods.ImmDisableIME(0); } // Always false on 2000/XP
+				// https://keepass.info/help/kb/sec_desk.html#ime
+				try
+				{
+					ulong uif = Program.Config.UI.UIFlags;
+					if((uif & (ulong)AceUIFlags.SecureDesktopIme) == 0)
+						NativeMethods.ImmDisableIME(0); // Always false on 2000/XP
+				}
 				catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
 
 				ProcessMessagesEx();

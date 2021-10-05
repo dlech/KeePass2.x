@@ -42,7 +42,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(428, 340);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 2;
 			this.m_btnOK.Text = "<>";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -53,7 +53,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(509, 340);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 3;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -63,14 +63,14 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 374);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(595, 2);
-			this.m_lblSeparator.TabIndex = 2;
+			this.m_lblSeparator.TabIndex = 4;
 			// 
 			// m_lblHint
 			// 
 			this.m_lblHint.Location = new System.Drawing.Point(9, 383);
 			this.m_lblHint.Name = "m_lblHint";
 			this.m_lblHint.Size = new System.Drawing.Size(574, 28);
-			this.m_lblHint.TabIndex = 3;
+			this.m_lblHint.TabIndex = 5;
 			this.m_lblHint.Text = "<>";
 			// 
 			// m_tvFolders
@@ -81,7 +81,7 @@
 			this.m_tvFolders.Name = "m_tvFolders";
 			this.m_tvFolders.ShowNodeToolTips = true;
 			this.m_tvFolders.Size = new System.Drawing.Size(186, 321);
-			this.m_tvFolders.TabIndex = 4;
+			this.m_tvFolders.TabIndex = 0;
 			this.m_tvFolders.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.OnFoldersBeforeExpand);
 			this.m_tvFolders.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnFoldersAfterSelect);
 			// 
@@ -96,7 +96,7 @@
 			this.m_lvFiles.ShowGroups = false;
 			this.m_lvFiles.ShowItemToolTips = true;
 			this.m_lvFiles.Size = new System.Drawing.Size(381, 321);
-			this.m_lvFiles.TabIndex = 5;
+			this.m_lvFiles.TabIndex = 1;
 			this.m_lvFiles.UseCompatibleStateImageBehavior = false;
 			this.m_lvFiles.View = System.Windows.Forms.View.Details;
 			this.m_lvFiles.ItemActivate += new System.EventHandler(this.OnFilesItemActivate);

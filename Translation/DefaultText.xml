@@ -82,6 +82,9 @@
 		<Data Name="AskContinue">
 			<Value>Do you want to continue?</Value>
 		</Data>
+		<Data Name="AssociationsLower">
+			<Value>association(s)</Value>
+		</Data>
 		<Data Name="Asterisks">
 			<Value>Asterisks</Value>
 		</Data>
@@ -284,7 +287,7 @@
 			<Value>Cancel</Value>
 		</Data>
 		<Data Name="CannotMoveEntriesBcsGroup">
-			<Value>Cannot move entries because they aren't stored in the same group.</Value>
+			<Value>Cannot move entries because they are not stored in the same group.</Value>
 		</Data>
 		<Data Name="ChangeMasterKey">
 			<Value>Change Master Key</Value>
@@ -564,6 +567,18 @@
 		</Data>
 		<Data Name="DatabaseNamePrompt">
 			<Value>Enter a name for the database or leave it empty.</Value>
+		</Data>
+		<Data Name="DatabaseOpenUnknownVersionAsk">
+			<Value>Show confirmation dialog when opening a database file whose minor format version is unknown</Value>
+		</Data>
+		<Data Name="DatabaseOpenUnknownVersionInfo">
+			<Value>The format version of the selected database file is higher than the one supported by the currently running KeePass instance. Most likely, the database file has been created by a newer KeePass version. KeePass can try to open the database file, but certain data may be lost.</Value>
+		</Data>
+		<Data Name="DatabaseOpenUnknownVersionQ">
+			<Value>Do you want to try opening the database file, possibly losing certain data?</Value>
+		</Data>
+		<Data Name="DatabaseOpenUnknownVersionRec">
+			<Value>In order to avoid data loss, it is recommended to install/use the latest version of KeePass.</Value>
 		</Data>
 		<Data Name="DatabaseSettings">
 			<Value>Database Settings</Value>
@@ -1519,14 +1534,23 @@
 		<Data Name="More">
 			<Value>More</Value>
 		</Data>
+		<Data Name="MoreAnd">
+			<Value>and {PARAM} more</Value>
+		</Data>
 		<Data Name="MoreEntries">
 			<Value>{PARAM} more entries</Value>
 		</Data>
 		<Data Name="MoreInfo">
 			<Value>More information</Value>
 		</Data>
+		<Data Name="MoveDown">
+			<Value>Move down</Value>
+		</Data>
 		<Data Name="MoveToPreviousParentGroup">
 			<Value>Move to &amp;Previous Parent Group</Value>
+		</Data>
+		<Data Name="MoveUp">
+			<Value>Move up</Value>
 		</Data>
 		<Data Name="MultipleValues">
 			<Value>Multiple values</Value>
@@ -1667,7 +1691,7 @@
 			<Value>Open with {PARAM}</Value>
 		</Data>
 		<Data Name="OptimizeForScreenReader">
-			<Value>Optimize for screen reader (only enable if you're using a screen reader)</Value>
+			<Value>Optimize for screen reader (activate only if you are using a screen reader)</Value>
 		</Data>
 		<Data Name="OptionReqOn">
 			<Value>For this operation, the following option must be turned on:</Value>
@@ -2145,6 +2169,9 @@
 		</Data>
 		<Data Name="Sequence">
 			<Value>Sequence</Value>
+		</Data>
+		<Data Name="Sequences">
+			<Value>Sequences</Value>
 		</Data>
 		<Data Name="ShowAdvAutoTypeCommands">
 			<Value>Show additional auto-type menu commands</Value>
@@ -2638,6 +2665,9 @@
 		<Data Name="EncDataTooLarge">
 			<Value>The data is too large to be encrypted/decrypted securely using {PARAM}.</Value>
 		</Data>
+		<Data Name="EntryLower">
+			<Value>entry</Value>
+		</Data>
 		<Data Name="ErrorInClipboard">
 			<Value>An extended error report has been copied to the clipboard.</Value>
 		</Data>
@@ -2690,7 +2720,7 @@
 			<Value>The file is compressed using an unknown compression algorithm!</Value>
 		</Data>
 		<Data Name="FileVersionUnsupported">
-			<Value>The file version is unsupported.</Value>
+			<Value>The file format version is unsupported.</Value>
 		</Data>
 		<Data Name="FinalKeyCreationFailed">
 			<Value>Failed to create the final encryption/decryption key!</Value>
@@ -2700,6 +2730,9 @@
 		</Data>
 		<Data Name="General">
 			<Value>General</Value>
+		</Data>
+		<Data Name="GroupLower">
+			<Value>group</Value>
 		</Data>
 		<Data Name="InvalidCompositeKey">
 			<Value>The master key is invalid!</Value>

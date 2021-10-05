@@ -167,29 +167,7 @@ namespace KeePass.UI
 
 			// Display tooltips for a longer time;
 			// https://sourceforge.net/p/keepass/feature-requests/2038/
-			try
-			{
-				if(this.ShowNodeToolTips && !NativeLib.IsUnix())
-				{
-					IntPtr hTip = NativeMethods.SendMessage(this.Handle,
-						NativeMethods.TVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
-					if(hTip != IntPtr.Zero)
-					{
-						// Apparently the maximum value is 2^15 - 1 = 32767
-						// (signed short maximum); any larger values result
-						// in truncated values or are ignored
-						IntPtr pTime = new IntPtr((int)short.MaxValue - 3);
-						NativeMethods.SendMessage(hTip, NativeMethods.TTM_SETDELAYTIME,
-							new IntPtr(NativeMethods.TTDT_AUTOPOP), pTime);
-
-						Debug.Assert(NativeMethods.SendMessage(hTip,
-							NativeMethods.TTM_GETDELAYTIME, new IntPtr(
-							NativeMethods.TTDT_AUTOPOP), IntPtr.Zero) == pTime);
-					}
-					else { Debug.Assert(false); }
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+			UIUtil.ConfigureToolTip(this);
 		}
 
 		/* [Browsable(false)]

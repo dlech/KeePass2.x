@@ -62,7 +62,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(316, 388);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 7;
+			this.m_btnOK.TabIndex = 9;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -73,7 +73,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(397, 388);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 8;
+			this.m_btnCancel.TabIndex = 10;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -84,7 +84,7 @@
 			this.m_lblSelNodes.Location = new System.Drawing.Point(9, 98);
 			this.m_lblSelNodes.Name = "m_lblSelNodes";
 			this.m_lblSelNodes.Size = new System.Drawing.Size(110, 13);
-			this.m_lblSelNodes.TabIndex = 0;
+			this.m_lblSelNodes.TabIndex = 1;
 			this.m_lblSelNodes.Text = "&Select nodes (XPath):";
 			// 
 			// m_tbSelNodes
@@ -92,7 +92,7 @@
 			this.m_tbSelNodes.Location = new System.Drawing.Point(12, 114);
 			this.m_tbSelNodes.Name = "m_tbSelNodes";
 			this.m_tbSelNodes.Size = new System.Drawing.Size(460, 20);
-			this.m_tbSelNodes.TabIndex = 1;
+			this.m_tbSelNodes.TabIndex = 2;
 			// 
 			// m_lblData
 			// 
@@ -109,7 +109,7 @@
 			this.m_rbRemove.Location = new System.Drawing.Point(12, 164);
 			this.m_rbRemove.Name = "m_rbRemove";
 			this.m_rbRemove.Size = new System.Drawing.Size(97, 17);
-			this.m_rbRemove.TabIndex = 3;
+			this.m_rbRemove.TabIndex = 4;
 			this.m_rbRemove.TabStop = true;
 			this.m_rbRemove.Text = "&Remove nodes";
 			this.m_rbRemove.UseVisualStyleBackColor = true;
@@ -121,7 +121,7 @@
 			this.m_rbReplace.Location = new System.Drawing.Point(12, 187);
 			this.m_rbReplace.Name = "m_rbReplace";
 			this.m_rbReplace.Size = new System.Drawing.Size(89, 17);
-			this.m_rbReplace.TabIndex = 4;
+			this.m_rbReplace.TabIndex = 5;
 			this.m_rbReplace.TabStop = true;
 			this.m_rbReplace.Text = "Replace &data";
 			this.m_rbReplace.UseVisualStyleBackColor = true;
@@ -141,7 +141,7 @@
 			this.m_pnlReplace.Location = new System.Drawing.Point(25, 207);
 			this.m_pnlReplace.Name = "m_pnlReplace";
 			this.m_pnlReplace.Size = new System.Drawing.Size(459, 168);
-			this.m_pnlReplace.TabIndex = 5;
+			this.m_pnlReplace.TabIndex = 6;
 			// 
 			// m_rbOuterXml
 			// 
@@ -243,7 +243,7 @@
 			this.m_lblAction.Location = new System.Drawing.Point(9, 146);
 			this.m_lblAction.Name = "m_lblAction";
 			this.m_lblAction.Size = new System.Drawing.Size(40, 13);
-			this.m_lblAction.TabIndex = 2;
+			this.m_lblAction.TabIndex = 3;
 			this.m_lblAction.Text = "Action:";
 			// 
 			// m_picWarning
@@ -261,7 +261,7 @@
 			this.m_lblWarning.Location = new System.Drawing.Point(28, 72);
 			this.m_lblWarning.Name = "m_lblWarning";
 			this.m_lblWarning.Size = new System.Drawing.Size(267, 13);
-			this.m_lblWarning.TabIndex = 10;
+			this.m_lblWarning.TabIndex = 0;
 			this.m_lblWarning.Text = "XML Replace is a feature for experts. Use with caution!";
 			// 
 			// m_lblSeparator
@@ -270,14 +270,14 @@
 			this.m_lblSeparator.Location = new System.Drawing.Point(0, 380);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(484, 2);
-			this.m_lblSeparator.TabIndex = 6;
+			this.m_lblSeparator.TabIndex = 7;
 			// 
 			// m_btnHelp
 			// 
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 388);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 9;
+			this.m_btnHelp.TabIndex = 8;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);

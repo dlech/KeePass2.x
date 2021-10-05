@@ -95,7 +95,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(220, 271);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.TabIndex = 0;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -106,7 +106,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(301, 271);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 1;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -146,7 +146,7 @@
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
 			this.m_tabMain.Size = new System.Drawing.Size(364, 198);
-			this.m_tabMain.TabIndex = 0;
+			this.m_tabMain.TabIndex = 2;
 			// 
 			// m_tabGeneral
 			// 
@@ -232,7 +232,7 @@
 			this.m_linkTagsInh.Location = new System.Drawing.Point(151, 13);
 			this.m_linkTagsInh.Name = "m_linkTagsInh";
 			this.m_linkTagsInh.Size = new System.Drawing.Size(196, 14);
-			this.m_linkTagsInh.TabIndex = 1;
+			this.m_linkTagsInh.TabIndex = 0;
 			this.m_linkTagsInh.TabStop = true;
 			this.m_linkTagsInh.Text = "<DYN>";
 			this.m_linkTagsInh.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -250,7 +250,7 @@
 			this.m_lblTags.Location = new System.Drawing.Point(6, 13);
 			this.m_lblTags.Name = "m_lblTags";
 			this.m_lblTags.Size = new System.Drawing.Size(34, 13);
-			this.m_lblTags.TabIndex = 0;
+			this.m_lblTags.TabIndex = 1;
 			this.m_lblTags.Text = "&Tags:";
 			// 
 			// m_tbUuid

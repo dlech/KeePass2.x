@@ -61,7 +61,7 @@ namespace KeePass.Forms
 		public FieldRefForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

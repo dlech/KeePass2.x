@@ -47,7 +47,7 @@ namespace KeePass.Forms
 		public InternalBrowserForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -63,7 +63,7 @@ namespace KeePass.Forms
 			UpdateUIState();
 		}
 
-		private void OnFormClosing(object sender, FormClosingEventArgs e)
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
 		}

@@ -77,7 +77,7 @@ namespace KeePass.Forms
 		public EditStringForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		/// <summary>

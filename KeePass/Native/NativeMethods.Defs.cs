@@ -30,6 +30,7 @@ namespace KeePass.Native
 	{
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
+		internal const int WM_SETTINGCHANGE = 0x001A;
 		internal const int WM_CONTEXTMENU = 0x007B;
 		internal const int WM_KEYDOWN = 0x0100;
 		internal const int WM_KEYUP = 0x0101;
@@ -168,6 +169,7 @@ namespace KeePass.Native
 		internal const int LVM_FIRST = 0x1000;
 		// internal const int LVM_ENSUREVISIBLE = LVM_FIRST + 19;
 		internal const int LVM_SCROLL = LVM_FIRST + 20;
+		internal const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
 		// internal const int LVM_SETGROUPINFO = LVM_FIRST + 147; // >= Vista
 		// internal const int LVM_GETGROUPINFOBYINDEX = LVM_FIRST + 153; // >= Vista
 
@@ -177,7 +179,9 @@ namespace KeePass.Native
 
 		internal const int TTM_SETDELAYTIME = WM_USER + 3;
 		internal const int TTM_GETDELAYTIME = WM_USER + 21;
+		internal const int TTDT_RESHOW = 1;
 		internal const int TTDT_AUTOPOP = 2;
+		internal const int TTDT_INITIAL = 3;
 
 		internal const int WM_MOUSEACTIVATE = 0x21;
 		internal const int MA_ACTIVATE = 1;
@@ -293,6 +297,8 @@ namespace KeePass.Native
 
 		internal const uint WDA_NONE = 0x00000000;
 		internal const uint WDA_MONITOR = 0x00000001;
+
+		internal const uint SPI_GETSCREENREADER = 0x0046;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

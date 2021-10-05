@@ -118,14 +118,12 @@ namespace KeePass.Util
 			PwGroup pgParent, PwGroup pgTagsSource)
 		{
 			if((btn == null) || (tb == null)) { Debug.Assert(false); return; }
+			Debug.Assert(tt != null);
 
 			Image img = UIUtil.CreateDropDownImage(Properties.Resources.B16x16_KNotes);
 			UIUtil.SetButtonImage(btn, img, true);
 
-			if(tt != null) tt.SetToolTip(btn, KPRes.TagsAddRemove);
-
-			if(Program.Config.UI.OptimizeForScreenReader)
-				btn.Text = KPRes.TagsAddRemove;
+			UIUtil.SetToolTip(tt, btn, KPRes.TagsAddRemove, true);
 
 			CustomContextMenuStripEx ctx = null;
 			Font fItalic = null;

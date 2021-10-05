@@ -81,7 +81,7 @@ namespace KeePassLib.Serialization
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00040001;
+		internal const uint FileVersion32 = 0x00040001;
 
 		private const uint FileVersion32_4_1 = 0x00040001; // 4.1
 		private const uint FileVersion32_4 = 0x00040000; // 4.0
@@ -264,6 +264,13 @@ namespace KeePassLib.Serialization
 		{
 			None = 0,
 			Protected = 1
+		}
+
+		private static GFunc<bool> g_fConfirmOpenUnkVer = null;
+		internal static GFunc<bool> ConfirmOpenUnknownVersion
+		{
+			get { return g_fConfirmOpenUnkVer; }
+			set { g_fConfirmOpenUnkVer = value; }
 		}
 
 		public byte[] HashOfFileOnDisk

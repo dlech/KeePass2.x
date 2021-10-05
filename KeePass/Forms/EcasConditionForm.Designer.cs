@@ -46,7 +46,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(447, 309);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 6;
+			this.m_btnCancel.TabIndex = 7;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -57,7 +57,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(366, 309);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 5;
+			this.m_btnOK.TabIndex = 6;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -68,8 +68,8 @@
 			this.m_lblCondition.Location = new System.Drawing.Point(9, 46);
 			this.m_lblCondition.Name = "m_lblCondition";
 			this.m_lblCondition.Size = new System.Drawing.Size(54, 13);
-			this.m_lblCondition.TabIndex = 8;
-			this.m_lblCondition.Text = "Condition:";
+			this.m_lblCondition.TabIndex = 0;
+			this.m_lblCondition.Text = "&Condition:";
 			// 
 			// m_cmbConditions
 			// 
@@ -78,7 +78,7 @@
 			this.m_cmbConditions.Location = new System.Drawing.Point(12, 62);
 			this.m_cmbConditions.Name = "m_cmbConditions";
 			this.m_cmbConditions.Size = new System.Drawing.Size(510, 21);
-			this.m_cmbConditions.TabIndex = 0;
+			this.m_cmbConditions.TabIndex = 1;
 			this.m_cmbConditions.SelectedIndexChanged += new System.EventHandler(this.OnConditionsSelectedIndexChanged);
 			// 
 			// m_cbNegate
@@ -87,7 +87,7 @@
 			this.m_cbNegate.Location = new System.Drawing.Point(12, 15);
 			this.m_cbNegate.Name = "m_cbNegate";
 			this.m_cbNegate.Size = new System.Drawing.Size(202, 17);
-			this.m_cbNegate.TabIndex = 7;
+			this.m_cbNegate.TabIndex = 8;
 			this.m_cbNegate.Text = "&Not (negate result of condition below)";
 			this.m_cbNegate.UseVisualStyleBackColor = true;
 			// 
@@ -100,14 +100,14 @@
 			this.m_dgvParams.Location = new System.Drawing.Point(12, 89);
 			this.m_dgvParams.Name = "m_dgvParams";
 			this.m_dgvParams.Size = new System.Drawing.Size(510, 168);
-			this.m_dgvParams.TabIndex = 1;
+			this.m_dgvParams.TabIndex = 2;
 			// 
 			// m_lblParamHint
 			// 
 			this.m_lblParamHint.Location = new System.Drawing.Point(9, 269);
 			this.m_lblParamHint.Name = "m_lblParamHint";
 			this.m_lblParamHint.Size = new System.Drawing.Size(513, 15);
-			this.m_lblParamHint.TabIndex = 2;
+			this.m_lblParamHint.TabIndex = 3;
 			this.m_lblParamHint.Text = "<>";
 			// 
 			// m_lblSep
@@ -116,14 +116,14 @@
 			this.m_lblSep.Location = new System.Drawing.Point(0, 300);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(535, 2);
-			this.m_lblSep.TabIndex = 3;
+			this.m_lblSep.TabIndex = 4;
 			// 
 			// m_btnHelp
 			// 
 			this.m_btnHelp.Location = new System.Drawing.Point(12, 309);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 4;
+			this.m_btnHelp.TabIndex = 5;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);

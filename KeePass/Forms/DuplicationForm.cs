@@ -93,7 +93,7 @@ namespace KeePass.Forms
 		public DuplicationForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

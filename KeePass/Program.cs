@@ -54,6 +54,7 @@ using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.PasswordGenerator;
+using KeePassLib.Delegates;
 using KeePassLib.Keys;
 using KeePassLib.Resources;
 using KeePassLib.Security;
@@ -291,6 +292,19 @@ namespace KeePass
 #endif
 
 			if(!CommonInit()) { CommonTerminate(); return; }
+
+			KdbxFile.ConfirmOpenUnknownVersion = delegate()
+			{
+				if(!Program.Config.UI.ShowDbOpenUnkVerDialog) return true;
+
+				string strMsg = KPRes.DatabaseOpenUnknownVersionInfo +
+					MessageService.NewParagraph + KPRes.DatabaseOpenUnknownVersionRec +
+					MessageService.NewParagraph + KPRes.DatabaseOpenUnknownVersionQ;
+				// No 'Do not show this dialog again' option;
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/096c122154/
+				return MessageService.AskYesNo(strMsg, PwDefs.ShortProductName,
+					false, MessageBoxIcon.Warning);
+			};
 
 			if(m_appConfig.Application.Start.PluginCacheClearOnce)
 			{
@@ -598,6 +612,7 @@ namespace KeePass
 			m_rndGlobal = CryptoRandom.NewWeakRandom();
 
 			InitEnvSecurity();
+			InitAppContext();
 			MonoWorkarounds.Initialize();
 
 			// Do not run as AppX, because of compatibility problems
@@ -714,6 +729,79 @@ namespace KeePass
 				}
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindowsVista); }
+		}
+
+		private static void InitAppContext()
+		{
+			try
+			{
+				Type t = typeof(string).Assembly.GetType("System.AppContext", false);
+				if(t == null) return; // Available in .NET >= 4.6
+
+				MethodInfo mi = t.GetMethod("SetSwitch", BindingFlags.Public |
+					BindingFlags.Static);
+				if(mi == null) { Debug.Assert(false); return; }
+
+				GAction<string, bool> f = delegate(string strSwitch, bool bValue)
+				{
+					mi.Invoke(null, new object[] { strSwitch, bValue });
+				};
+
+				f("Switch.System.Drawing.DontSupportPngFramesInIcons", false); // 4.6
+				f("Switch.System.Drawing.Printing.OptimizePrintPreview", true); // 4.6, optional
+				f("Switch.System.IO.Compression.ZipFile.UseBackslash", false); // 4.6.1
+				f("Switch.System.Security.Cryptography.AesCryptoServiceProvider.DontCorrectlyResetDecryptor", false); // 4.6.2
+				f("Switch.System.Windows.Forms.DoNotLoadLatestRichEditControl", false); // 4.7
+				f("Switch.System.Windows.Forms.DoNotSupportSelectAllShortcutInMultilineTextBox", false); // 4.6.1
+				f("Switch.System.Windows.Forms.DontSupportReentrantFilterMessage", false); // 4.6.1
+				f("Switch.System.Windows.Forms.EnableVisualStyleValidation", false); // 4.8
+				// f("Switch.System.Windows.Forms.UseLegacyToolTipDisplay", false); // 4.8, optional
+				f("Switch.UseLegacyAccessibilityFeatures", false); // 4.7.1
+				f("Switch.UseLegacyAccessibilityFeatures.2", false); // 4.7.2
+				f("Switch.UseLegacyAccessibilityFeatures.3", false); // 4.8
+				f("Switch.UseLegacyAccessibilityFeatures.4", false); // 4.8 upd.
+
+#if DEBUG
+				// Check that the internal classes do not cache other values already
+
+				const BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
+					BindingFlags.Static;
+
+				Type tD = typeof(Image).Assembly.GetType(
+					"System.Drawing.LocalAppContextSwitches", false);
+				if(tD == null) { Debug.Assert(false); return; }
+
+				PropertyInfo pi = tD.GetProperty("DontSupportPngFramesInIcons", bf);
+				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
+
+				pi = tD.GetProperty("OptimizePrintPreview", bf);
+				Debug.Assert((pi != null) && (bool)pi.GetValue(null, null));
+
+				Type tWF = typeof(ListViewItem).Assembly.GetType(
+					"System.Windows.Forms.LocalAppContextSwitches", false);
+				if(tWF == null) { Debug.Assert(false); return; }
+
+				pi = tWF.GetProperty("DoNotLoadLatestRichEditControl", bf);
+				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
+
+				pi = tWF.GetProperty("DoNotSupportSelectAllShortcutInMultilineTextBox", bf);
+				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
+
+				pi = tWF.GetProperty("DontSupportReentrantFilterMessage", bf);
+				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
+
+				pi = tWF.GetProperty("EnableVisualStyleValidation", bf);
+				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
+
+				Type tAI = typeof(ListViewItem).Assembly.GetType(
+					"System.AccessibilityImprovements", false);
+				if(tAI == null) { Debug.Assert(false); return; }
+
+				pi = tAI.GetProperty("Level4", bf);
+				Debug.Assert((pi != null) && (bool)pi.GetValue(null, null));
+#endif
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		// internal static Mutex TrySingleInstanceLock(string strName, bool bInitiallyOwned)

@@ -93,7 +93,7 @@
 			this.m_menuMain.Location = new System.Drawing.Point(0, 0);
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(608, 24);
-			this.m_menuMain.TabIndex = 1;
+			this.m_menuMain.TabIndex = 2;
 			// 
 			// m_menuFile
 			// 
@@ -267,7 +267,7 @@
 			this.m_toolFile.Location = new System.Drawing.Point(0, 24);
 			this.m_toolFile.Name = "m_toolFile";
 			this.m_toolFile.Size = new System.Drawing.Size(608, 25);
-			this.m_toolFile.TabIndex = 2;
+			this.m_toolFile.TabIndex = 3;
 			// 
 			// m_tbFileSave
 			// 
@@ -368,7 +368,7 @@
 			this.m_toolFormat.Location = new System.Drawing.Point(0, 49);
 			this.m_toolFormat.Name = "m_toolFormat";
 			this.m_toolFormat.Size = new System.Drawing.Size(608, 25);
-			this.m_toolFormat.TabIndex = 3;
+			this.m_toolFormat.TabIndex = 4;
 			// 
 			// m_tbFontCombo
 			// 
@@ -487,22 +487,23 @@
 			this.m_statusMain.Location = new System.Drawing.Point(0, 394);
 			this.m_statusMain.Name = "m_statusMain";
 			this.m_statusMain.Size = new System.Drawing.Size(608, 22);
-			this.m_statusMain.TabIndex = 4;
+			this.m_statusMain.TabIndex = 1;
 			// 
 			// m_tssStatusMain
 			// 
 			this.m_tssStatusMain.Name = "m_tssStatusMain";
-			this.m_tssStatusMain.Size = new System.Drawing.Size(562, 17);
+			this.m_tssStatusMain.Size = new System.Drawing.Size(593, 17);
 			this.m_tssStatusMain.Spring = true;
 			this.m_tssStatusMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_rtbText
 			// 
 			this.m_rtbText.AcceptsTab = true;
+			this.m_rtbText.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_rtbText.HideSelection = false;
-			this.m_rtbText.Location = new System.Drawing.Point(12, 86);
+			this.m_rtbText.Location = new System.Drawing.Point(0, 74);
 			this.m_rtbText.Name = "m_rtbText";
-			this.m_rtbText.Size = new System.Drawing.Size(584, 296);
+			this.m_rtbText.Size = new System.Drawing.Size(608, 320);
 			this.m_rtbText.TabIndex = 0;
 			this.m_rtbText.Text = "";
 			this.m_rtbText.SelectionChanged += new System.EventHandler(this.OnTextSelectionChanged);
@@ -525,6 +526,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "<>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.m_menuMain.ResumeLayout(false);
 			this.m_menuMain.PerformLayout();

@@ -282,7 +282,7 @@ namespace KeePass.UI
 			return false;
 		}
 
-		public static void CustomizeForm(Form f)
+		private static void CustomizeForm(Form f)
 		{
 			CustomizeControl(f);
 
@@ -300,6 +300,8 @@ namespace KeePass.UI
 
 		public static void CustomizeControl(Control c)
 		{
+			if(Program.DesignMode) return;
+
 			if(UISystemFonts.OverrideUIFont)
 			{
 				Font font = UISystemFonts.DefaultFont;
@@ -406,5 +408,105 @@ namespace KeePass.UI
 				DebugClose(cc);
 		}
 #endif
+
+		internal static void InitializeForm(Form f)
+		{
+			if(Program.DesignMode) return;
+			if(f == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Program.Translation.ApplyTo(f);
+
+				if(UIUtil.AccIsEnabled()) ReorderChildControlsByLoc(f);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void ReorderChildControlsByLoc(Control c)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			Control.ControlCollection cc = c.Controls;
+			if((cc == null) || (cc.Count == 0)) return;
+
+			c.SuspendLayout();
+			try
+			{
+				List<KeyValuePair<Rectangle, Control>> l =
+					new List<KeyValuePair<Rectangle, Control>>();
+				int cDockT = 0, cDockB = 0, cDockL = 0, cDockR = 0, cDockF = 0;
+
+				foreach(Control cSub in cc)
+				{
+					if((cSub == null) || (cSub == c)) { Debug.Assert(false); continue; }
+
+					Rectangle rect = cSub.Bounds;
+					if((rect.Width < 0) || (rect.Height < 0)) { Debug.Assert(false); continue; }
+
+					switch(cSub.Dock)
+					{
+						case DockStyle.Top:
+							++cDockT; break;
+						case DockStyle.Bottom:
+							++cDockB; break;
+						case DockStyle.Left:
+							++cDockL; break;
+						case DockStyle.Right:
+							++cDockR; break;
+						case DockStyle.Fill:
+							++cDockF; break;
+						default: break;
+					}
+
+					l.Add(new KeyValuePair<Rectangle, Control>(rect, cSub));
+				}
+
+				// Reordering docked controls can move them visually
+				bool bDockMovePossible = (
+					((cDockT + cDockL + cDockF) >= 2) || // Top left
+					((cDockT + cDockR + cDockF) >= 2) || // Top right
+					((cDockB + cDockL + cDockF) >= 2) || // Bottom left
+					((cDockB + cDockR + cDockF) >= 2)); // Bottom right
+
+				bool bIgnoreType = ((c is DataGridView) || (c is NumericUpDown) ||
+					(c is SplitContainer) || (c is TabControl) || (c is ToolStrip));
+
+				Debug.Assert(bIgnoreType || !cc.IsReadOnly);
+				if((l.Count >= 2) && !bDockMovePossible && !bIgnoreType &&
+					!cc.IsReadOnly)
+				{
+					l.Sort(GlobalWindowManager.CompareByLoc);
+
+					for(int i = 0; i < l.Count; ++i)
+						cc.SetChildIndex(l[i].Value, i);
+
+#if DEBUG
+					for(int i = 0; i < l.Count; ++i)
+						Debug.Assert(cc[i] == l[i].Value);
+#endif
+				}
+
+				foreach(KeyValuePair<Rectangle, Control> kvp in l)
+					ReorderChildControlsByLoc(kvp.Value);
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally { c.ResumeLayout(); }
+		}
+
+		private static int CompareByLoc(KeyValuePair<Rectangle, Control> kvpA,
+			KeyValuePair<Rectangle, Control> kvpB)
+		{
+			Rectangle rectA = kvpA.Key, rectB = kvpB.Key;
+			bool bAB = (rectB.Y > (rectA.Y + (rectA.Height >> 1)));
+			bool bBA = (rectA.Y > (rectB.Y + (rectB.Height >> 1)));
+
+			if(bAB && bBA) { Debug.Assert(false); } // Compare by X
+			else if(bAB) return -1;
+			else if(bBA) return 1;
+			// else: they are on the same line, compare by X
+
+			return rectA.X.CompareTo(rectB.X);
+		}
 	}
 }

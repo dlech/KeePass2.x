@@ -360,22 +360,21 @@ namespace KeePassLib.Security
 			return pbData;
 		}
 
-		private int? m_hash = null;
+		private int? m_oiHash = null;
 		public override int GetHashCode()
 		{
-			if(m_hash.HasValue) return m_hash.Value;
-
-			int h = (m_bProtected ? 0x7B11D289 : 0);
+			lock(m_objSync) { if(m_oiHash.HasValue) return m_oiHash.Value; }
 
 			byte[] pb = ReadData();
-			unchecked
-			{
-				for(int i = 0; i < pb.Length; ++i)
-					h = (h << 3) + h + (int)pb[i];
-			}
-			if(m_bProtected) MemUtil.ZeroByteArray(pb);
+			int h = (int)MemUtil.Hash32(pb, 0, pb.Length);
 
-			m_hash = h;
+			if(m_bProtected)
+			{
+				h ^= 0x57851B93;
+				MemUtil.ZeroByteArray(pb);
+			}
+
+			lock(m_objSync) { m_oiHash = h; }
 			return h;
 		}
 

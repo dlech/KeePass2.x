@@ -90,7 +90,14 @@ namespace KeePass.Forms
 		public DataViewerForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+
+			// GlobalWindowManager.InitializeForm checks docked controls
+			m_rtbText.Dock = DockStyle.Fill;
+			m_pnlImageViewer.Dock = DockStyle.Fill;
+			m_picBox.Dock = DockStyle.Fill;
+			m_webBrowser.Dock = DockStyle.Fill;
+
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -115,10 +122,6 @@ namespace KeePass.Forms
 
 			m_tssStatusMain.Text = KPRes.Ready;
 			m_ctxText.Attach(m_rtbText, this);
-			m_rtbText.Dock = DockStyle.Fill;
-			m_webBrowser.Dock = DockStyle.Fill;
-			m_pnlImageViewer.Dock = DockStyle.Fill;
-			m_picBox.Dock = DockStyle.Fill;
 
 			m_tslEncoding.Text = KPRes.Encoding + ":";
 
@@ -221,7 +224,8 @@ namespace KeePass.Forms
 			return string.Empty;
 		}
 
-		private void SetRtbData(string strData, bool bRtf, bool bFixedFont)
+		private void SetRtbData(string strData, bool bRtf, bool bFixedFont,
+			bool bLinkify)
 		{
 			if(strData == null) { Debug.Assert(false); strData = string.Empty; }
 
@@ -231,19 +235,22 @@ namespace KeePass.Forms
 			else FontUtil.AssignDefault(m_rtbText);
 
 			if(bRtf) m_rtbText.Rtf = StrUtil.RtfFix(strData);
-			else
-			{
-				m_rtbText.Text = strData;
+			else m_rtbText.Text = strData;
 
+			if(bLinkify) UIUtil.RtfLinkifyUrls(m_rtbText);
+
+			if(!bRtf)
+			{
 				Font f = (bFixedFont ? FontUtil.MonoFont : FontUtil.DefaultFont);
 				if(f != null)
 				{
 					m_rtbText.SelectAll();
 					m_rtbText.SelectionFont = f;
-					m_rtbText.Select(0, 0);
 				}
 				else { Debug.Assert(false); }
 			}
+
+			m_rtbText.Select(0, 0);
 		}
 
 		private void UpdateHexView()
@@ -299,7 +306,7 @@ namespace KeePass.Forms
 
 			if(cbData < m_pbData.Length) sb.AppendLine(m_strDataExpand);
 
-			SetRtbData(sb.ToString(), false, true);
+			SetRtbData(sb.ToString(), false, true, false);
 
 			if(cbData < m_pbData.Length) LinkifyExpandLink();
 		}
@@ -319,7 +326,7 @@ namespace KeePass.Forms
 				strData = strData.Substring(0, ccInvMax) + MessageService.NewLine +
 					m_strDataExpand + MessageService.NewLine;
 
-			SetRtbData(strData, bRtf, false);
+			SetRtbData(strData, bRtf, false, true);
 
 			if(bShorten) LinkifyExpandLink();
 		}

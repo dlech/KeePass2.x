@@ -97,7 +97,7 @@ namespace KeePass.Forms
 		public CsvImportForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -164,6 +164,9 @@ namespace KeePass.Forms
 
 			m_cmbFieldFormat.Text = string.Empty;
 
+			UIUtil.AccSetName(m_btnFieldMoveUp, KPRes.MoveUp);
+			UIUtil.AccSetName(m_btnFieldMoveDown, KPRes.MoveDown);
+
 			m_bInitializing = false;
 
 			UpdateTextPreview();
@@ -172,8 +175,6 @@ namespace KeePass.Forms
 
 			ProcessResize();
 			EnableControlsEx();
-
-			UIUtil.SetFocus(m_btnTabNext, this);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

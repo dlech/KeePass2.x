@@ -38,6 +38,15 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
+	internal enum GroupFormTab
+	{
+		None = 0,
+		General,
+		Properties,
+		AutoType,
+		CustomData
+	}
+
 	public partial class GroupForm : Form
 	{
 		private PwGroup m_pwGroup = null;
@@ -50,6 +59,16 @@ namespace KeePass.Forms
 		private StringDictionaryEx m_sdCustomData = null;
 
 		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
+
+		private GroupFormTab m_gftInit = GroupFormTab.None;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)GroupFormTab.None)]
+		internal GroupFormTab InitialTab
+		{
+			// get { return m_gftInit; } // Internal, uncalled
+			set { m_gftInit = value; }
+		}
 
 		[Obsolete]
 		public void InitEx(PwGroup pg, ImageList ilClientIcons, PwDatabase pwDatabase)
@@ -69,13 +88,13 @@ namespace KeePass.Forms
 		public GroupForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwGroup != null); if(m_pwGroup == null) throw new InvalidOperationException();
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			if(m_pwGroup == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -87,7 +106,11 @@ namespace KeePass.Forms
 			this.Text = strTitle;
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			m_ttRect.SetToolTip(m_btnIcon, KPRes.SelectIcon);
+			UIUtil.SetToolTip(m_ttRect, m_btnIcon, KPRes.SelectIcon, true);
+			UIUtil.SetToolTip(m_ttRect, m_btnAutoTypeEdit, KPRes.ConfigureKeystrokeSeq, true);
+
+			UIUtil.AccSetName(m_dtExpires, m_cbExpires);
+			UIUtil.AccSetName(m_tbDefaultAutoTypeSeq, m_rbAutoTypeOverride);
 
 			m_tbName.Text = m_pwGroup.Name;
 
@@ -150,7 +173,6 @@ namespace KeePass.Forms
 			UIUtil.StrDictListInit(m_lvCustomData);
 			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData, false);
 
-			CustomizeForScreenReader();
 			EnableControlsEx();
 
 			ThreadPool.QueueUserWorkItem(delegate(object state)
@@ -166,14 +188,17 @@ namespace KeePass.Forms
 			});
 
 			UIUtil.SetFocus(m_tbName, this);
-		}
 
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_btnIcon.Text = KPRes.PickIcon;
-			m_btnAutoTypeEdit.Text = KPRes.ConfigureAutoType;
+			switch(m_gftInit)
+			{
+				case GroupFormTab.Properties:
+					m_tabMain.SelectedTab = m_tabProperties; break;
+				case GroupFormTab.AutoType:
+					m_tabMain.SelectedTab = m_tabAutoType; break;
+				case GroupFormTab.CustomData:
+					m_tabMain.SelectedTab = m_tabCustomData; break;
+				default: break;
+			}
 		}
 
 		private void EnableControlsEx()

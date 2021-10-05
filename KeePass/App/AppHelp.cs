@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 using KeePass.Util;
 using KeePass.Util.Spr;
@@ -112,14 +113,16 @@ namespace KeePass.App
 		/// system will be used, independent of the <c>bPreferLocal</c> flag.</param>
 		public static void ShowHelp(string strTopic, string strSection, bool bPreferLocal)
 		{
+			if(ShowHelpOverride(strTopic, strSection)) return;
+
 			if(AppHelp.LocalHelpAvailable)
 			{
 				if(bPreferLocal || (AppHelp.PreferredHelpSource == AppHelpSource.Local))
-					AppHelp.ShowHelpLocal(strTopic, strSection);
+					ShowHelpLocal(strTopic, strSection);
 				else
-					AppHelp.ShowHelpOnline(strTopic, strSection);
+					ShowHelpOnline(strTopic, strSection);
 			}
-			else AppHelp.ShowHelpOnline(strTopic, strSection);
+			else ShowHelpOnline(strTopic, strSection);
 		}
 
 		private static void ShowHelpLocal(string strTopic, string strSection)
@@ -200,19 +203,37 @@ namespace KeePass.App
 			WinUtil.OpenUrl(strUrl, null);
 		}
 
-		internal static string GetOnlineUrl(string strTopic, string strSection)
+		private static bool ShowHelpOverride(string strTopic, string strSection)
 		{
-			string str = PwDefs.HelpUrl;
+			string strUrl = Program.Config.Application.HelpUrl;
+			if(string.IsNullOrEmpty(strUrl)) return false;
 
-			if(!string.IsNullOrEmpty(strTopic))
+			string strRel = GetRelativeUrl(strTopic, strSection);
+
+			WinUtil.OpenUrl(strUrl, null, true, strRel);
+			return true;
+		}
+
+		private static string GetRelativeUrl(string strTopic, string strSection)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			const string strDefault = AppDefs.HelpTopics.Default;
+			sb.Append(string.IsNullOrEmpty(strTopic) ? strDefault : strTopic);
+			sb.Append(".html");
+
+			if(!string.IsNullOrEmpty(strSection))
 			{
-				str += strTopic + ".html";
-
-				if(!string.IsNullOrEmpty(strSection))
-					str += "#" + strSection;
+				sb.Append('#');
+				sb.Append(strSection);
 			}
 
-			return str;
+			return sb.ToString();
+		}
+
+		internal static string GetOnlineUrl(string strTopic, string strSection)
+		{
+			return (PwDefs.HelpUrl + GetRelativeUrl(strTopic, strSection));
 		}
 	}
 }

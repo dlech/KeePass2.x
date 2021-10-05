@@ -54,8 +54,7 @@
 			this.m_menuMain.Location = new System.Drawing.Point(0, 0);
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(779, 24);
-			this.m_menuMain.TabIndex = 0;
-			this.m_menuMain.TabStop = true;
+			this.m_menuMain.TabIndex = 2;
 			// 
 			// m_menuFile
 			// 
@@ -68,7 +67,7 @@
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(92, 22);
+			this.m_menuFileExit.Size = new System.Drawing.Size(93, 22);
 			this.m_menuFileExit.Text = "E&xit";
 			// 
 			// m_statusMain
@@ -95,7 +94,7 @@
 			this.m_webBrowser.Name = "m_webBrowser";
 			this.m_webBrowser.ScriptErrorsSuppressed = true;
 			this.m_webBrowser.Size = new System.Drawing.Size(779, 457);
-			this.m_webBrowser.TabIndex = 2;
+			this.m_webBrowser.TabIndex = 0;
 			this.m_webBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.OnWbDocumentCompleted);
 			this.m_webBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWbNavigated);
 			// 
@@ -200,7 +199,7 @@
 			this.Text = "<DYN>";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.SizeChanged += new System.EventHandler(this.OnFormSizeChanged);
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
 			this.m_menuMain.ResumeLayout(false);
 			this.m_menuMain.PerformLayout();
 			this.m_statusMain.ResumeLayout(false);

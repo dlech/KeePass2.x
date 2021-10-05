@@ -80,6 +80,8 @@ namespace KeePass.App
 
 		public static class HelpTopics
 		{
+			internal const string Default = "index";
+
 			public static readonly string Acknowledgements = "base/credits";
 			public static readonly string License = "v2/license";
 
@@ -114,11 +116,11 @@ namespace KeePass.App
 			public static readonly string ImportExportGenericCsv = "genericcsv";
 			public static readonly string ImportExportSteganos = "imp_steganos";
 			public static readonly string ImportExportPassKeeper = "imp_passkeeper";
-			internal static readonly string ImportExportParents = "exp_parents";
+			internal const string ImportExportParents = "exp_parents";
 
 			public static readonly string Security = "base/security";
-			internal static readonly string SecurityOptEx = "secoptex";
-			internal static readonly string SecurityOptAdm = "secoptadm";
+			internal const string SecurityOptEx = "secoptex";
+			internal const string SecurityOptAdm = "secoptadm";
 
 			public static readonly string AppPolicy = "v2/policy";
 

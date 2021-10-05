@@ -66,7 +66,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(458, 389);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 8;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -77,7 +77,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(539, 389);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 9;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -90,7 +90,7 @@
 			this.m_lvTriggers.Location = new System.Drawing.Point(12, 96);
 			this.m_lvTriggers.Name = "m_lvTriggers";
 			this.m_lvTriggers.Size = new System.Drawing.Size(521, 268);
-			this.m_lvTriggers.TabIndex = 3;
+			this.m_lvTriggers.TabIndex = 0;
 			this.m_lvTriggers.UseCompatibleStateImageBehavior = false;
 			this.m_lvTriggers.View = System.Windows.Forms.View.Details;
 			this.m_lvTriggers.ItemActivate += new System.EventHandler(this.OnTriggersItemActivate);
@@ -101,7 +101,7 @@
 			this.m_btnAdd.Location = new System.Drawing.Point(539, 95);
 			this.m_btnAdd.Name = "m_btnAdd";
 			this.m_btnAdd.Size = new System.Drawing.Size(75, 23);
-			this.m_btnAdd.TabIndex = 4;
+			this.m_btnAdd.TabIndex = 1;
 			this.m_btnAdd.Text = "&Add...";
 			this.m_btnAdd.UseVisualStyleBackColor = true;
 			this.m_btnAdd.Click += new System.EventHandler(this.OnBtnAdd);
@@ -111,7 +111,7 @@
 			this.m_btnEdit.Location = new System.Drawing.Point(539, 124);
 			this.m_btnEdit.Name = "m_btnEdit";
 			this.m_btnEdit.Size = new System.Drawing.Size(75, 23);
-			this.m_btnEdit.TabIndex = 5;
+			this.m_btnEdit.TabIndex = 2;
 			this.m_btnEdit.Text = "&Edit...";
 			this.m_btnEdit.UseVisualStyleBackColor = true;
 			this.m_btnEdit.Click += new System.EventHandler(this.OnBtnEdit);
@@ -121,7 +121,7 @@
 			this.m_btnDelete.Location = new System.Drawing.Point(539, 153);
 			this.m_btnDelete.Name = "m_btnDelete";
 			this.m_btnDelete.Size = new System.Drawing.Size(75, 23);
-			this.m_btnDelete.TabIndex = 6;
+			this.m_btnDelete.TabIndex = 3;
 			this.m_btnDelete.Text = "&Delete";
 			this.m_btnDelete.UseVisualStyleBackColor = true;
 			this.m_btnDelete.Click += new System.EventHandler(this.OnBtnDelete);
@@ -132,7 +132,7 @@
 			this.m_lblSep.Location = new System.Drawing.Point(0, 378);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(626, 2);
-			this.m_lblSep.TabIndex = 9;
+			this.m_lblSep.TabIndex = 6;
 			// 
 			// m_cbEnableTriggers
 			// 
@@ -140,7 +140,7 @@
 			this.m_cbEnableTriggers.Location = new System.Drawing.Point(12, 73);
 			this.m_cbEnableTriggers.Name = "m_cbEnableTriggers";
 			this.m_cbEnableTriggers.Size = new System.Drawing.Size(126, 17);
-			this.m_cbEnableTriggers.TabIndex = 2;
+			this.m_cbEnableTriggers.TabIndex = 10;
 			this.m_cbEnableTriggers.Text = "E&nable trigger system";
 			this.m_cbEnableTriggers.UseVisualStyleBackColor = true;
 			this.m_cbEnableTriggers.CheckedChanged += new System.EventHandler(this.OnEnableTriggersCheckedChanged);
@@ -151,7 +151,7 @@
 			this.m_btnMoveUp.Location = new System.Drawing.Point(539, 199);
 			this.m_btnMoveUp.Name = "m_btnMoveUp";
 			this.m_btnMoveUp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnMoveUp.TabIndex = 7;
+			this.m_btnMoveUp.TabIndex = 4;
 			this.m_btnMoveUp.UseVisualStyleBackColor = true;
 			this.m_btnMoveUp.Click += new System.EventHandler(this.OnBtnMoveUp);
 			// 
@@ -161,7 +161,7 @@
 			this.m_btnMoveDown.Location = new System.Drawing.Point(539, 228);
 			this.m_btnMoveDown.Name = "m_btnMoveDown";
 			this.m_btnMoveDown.Size = new System.Drawing.Size(75, 23);
-			this.m_btnMoveDown.TabIndex = 8;
+			this.m_btnMoveDown.TabIndex = 5;
 			this.m_btnMoveDown.UseVisualStyleBackColor = true;
 			this.m_btnMoveDown.Click += new System.EventHandler(this.OnBtnMoveDown);
 			// 
@@ -170,7 +170,7 @@
 			this.m_btnTools.Location = new System.Drawing.Point(12, 389);
 			this.m_btnTools.Name = "m_btnTools";
 			this.m_btnTools.Size = new System.Drawing.Size(75, 23);
-			this.m_btnTools.TabIndex = 10;
+			this.m_btnTools.TabIndex = 7;
 			this.m_btnTools.Text = "&Tools";
 			this.m_btnTools.UseVisualStyleBackColor = true;
 			this.m_btnTools.Click += new System.EventHandler(this.OnBtnTools);

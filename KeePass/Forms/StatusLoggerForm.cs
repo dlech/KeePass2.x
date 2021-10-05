@@ -121,7 +121,7 @@ namespace KeePass.Forms
 		public StatusLoggerForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

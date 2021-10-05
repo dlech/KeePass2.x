@@ -67,7 +67,9 @@ namespace KeePass.App.Configuration
 		HideBuiltInPwGenPrfInEntryDlg = 0x10000,
 		ShowLastAccessTime = 0x20000,
 		HideNewDbInfoDialogs = 0x40000,
-		HideAutoTypeObfInfo = 0x80000
+		HideAutoTypeObfInfo = 0x80000,
+		NoQuickSearchClear = 0x100000,
+		SecureDesktopIme = 0x200000
 	}
 
 	[Flags]
@@ -167,14 +169,6 @@ namespace KeePass.App.Configuration
 			set { m_bShowImportStatusDlg = value; }
 		}
 
-		private bool m_bShowDbMntncResDlg = true;
-		[DefaultValue(true)]
-		public bool ShowDbMntncResultsDialog
-		{
-			get { return m_bShowDbMntncResDlg; }
-			set { m_bShowDbMntncResDlg = value; }
-		}
-
 		private bool m_bShowRecycleDlg = true;
 		[DefaultValue(true)]
 		public bool ShowRecycleConfirmDialog
@@ -183,12 +177,28 @@ namespace KeePass.App.Configuration
 			set { m_bShowRecycleDlg = value; }
 		}
 
+		private bool m_bShowDbMntncResDlg = true;
+		[DefaultValue(true)]
+		public bool ShowDbMntncResultsDialog
+		{
+			get { return m_bShowDbMntncResDlg; }
+			set { m_bShowDbMntncResDlg = value; }
+		}
+
 		private bool m_bShowEmSheetDlg = true;
 		[DefaultValue(true)]
 		public bool ShowEmSheetDialog
 		{
 			get { return m_bShowEmSheetDlg; }
 			set { m_bShowEmSheetDlg = value; }
+		}
+
+		private bool m_bShowDbOpenUnkVerDlg = true;
+		[DefaultValue(true)]
+		public bool ShowDbOpenUnkVerDialog
+		{
+			get { return m_bShowDbOpenUnkVerDlg; }
+			set { m_bShowDbOpenUnkVerDlg = value; }
 		}
 
 		// private bool m_bUseCustomTsRenderer = true;

@@ -192,8 +192,7 @@ namespace KeePass.UI
 					}
 
 					// *After* drawing the gradient (otherwise border bug)
-					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					g.SmoothingMode = SmoothingMode.HighQuality;
+					GfxUtil.SetHighQuality(g);
 
 					RectangleF rSource = new RectangleF(0.0f, 0.0f,
 						img.Width, img.Height);

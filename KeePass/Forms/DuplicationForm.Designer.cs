@@ -45,7 +45,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(205, 174);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 6;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -56,7 +56,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(286, 174);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 7;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -66,7 +66,7 @@
 			this.m_cbAppendCopy.Location = new System.Drawing.Point(12, 12);
 			this.m_cbAppendCopy.Name = "m_cbAppendCopy";
 			this.m_cbAppendCopy.Size = new System.Drawing.Size(168, 17);
-			this.m_cbAppendCopy.TabIndex = 2;
+			this.m_cbAppendCopy.TabIndex = 0;
 			this.m_cbAppendCopy.Text = "&Append \"- Copy\" to entry titles";
 			this.m_cbAppendCopy.UseVisualStyleBackColor = true;
 			// 
@@ -76,7 +76,7 @@
 			this.m_cbFieldRefs.Location = new System.Drawing.Point(12, 35);
 			this.m_cbFieldRefs.Name = "m_cbFieldRefs";
 			this.m_cbFieldRefs.Size = new System.Drawing.Size(264, 17);
-			this.m_cbFieldRefs.TabIndex = 3;
+			this.m_cbFieldRefs.TabIndex = 1;
 			this.m_cbFieldRefs.Text = "&Replace user names and passwords by references";
 			this.m_cbFieldRefs.UseVisualStyleBackColor = true;
 			// 
@@ -85,7 +85,7 @@
 			this.m_lblFieldRefs.Location = new System.Drawing.Point(28, 55);
 			this.m_lblFieldRefs.Name = "m_lblFieldRefs";
 			this.m_lblFieldRefs.Size = new System.Drawing.Size(333, 54);
-			this.m_lblFieldRefs.TabIndex = 4;
+			this.m_lblFieldRefs.TabIndex = 2;
 			this.m_lblFieldRefs.Text = resources.GetString("m_lblFieldRefs.Text");
 			// 
 			// m_lblSep
@@ -94,7 +94,7 @@
 			this.m_lblSep.Location = new System.Drawing.Point(1, 163);
 			this.m_lblSep.Name = "m_lblSep";
 			this.m_lblSep.Size = new System.Drawing.Size(372, 2);
-			this.m_lblSep.TabIndex = 7;
+			this.m_lblSep.TabIndex = 5;
 			// 
 			// m_lnkFieldRefs
 			// 
@@ -102,7 +102,7 @@
 			this.m_lnkFieldRefs.Location = new System.Drawing.Point(28, 112);
 			this.m_lnkFieldRefs.Name = "m_lnkFieldRefs";
 			this.m_lnkFieldRefs.Size = new System.Drawing.Size(115, 13);
-			this.m_lnkFieldRefs.TabIndex = 5;
+			this.m_lnkFieldRefs.TabIndex = 3;
 			this.m_lnkFieldRefs.TabStop = true;
 			this.m_lnkFieldRefs.Text = "Help: Field References";
 			this.m_lnkFieldRefs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnFieldRefsLinkClicked);
@@ -113,7 +113,7 @@
 			this.m_cbCopyHistory.Location = new System.Drawing.Point(12, 134);
 			this.m_cbCopyHistory.Name = "m_cbCopyHistory";
 			this.m_cbCopyHistory.Size = new System.Drawing.Size(83, 17);
-			this.m_cbCopyHistory.TabIndex = 6;
+			this.m_cbCopyHistory.TabIndex = 4;
 			this.m_cbCopyHistory.Text = "Copy &history";
 			this.m_cbCopyHistory.UseVisualStyleBackColor = true;
 			// 

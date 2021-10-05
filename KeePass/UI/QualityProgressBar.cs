@@ -48,7 +48,7 @@ namespace KeePass.UI
 		public int Minimum
 		{
 			get { return m_nMinimum; }
-			set { m_nMinimum = value; this.Invalidate(); }
+			set { m_nMinimum = value; Invalidate(); }
 		}
 
 		private int m_nMaximum = 100;
@@ -56,7 +56,7 @@ namespace KeePass.UI
 		public int Maximum
 		{
 			get { return m_nMaximum; }
-			set { m_nMaximum = value; this.Invalidate(); }
+			set { m_nMaximum = value; Invalidate(); }
 		}
 
 		private int m_nPosition = 0;
@@ -64,7 +64,7 @@ namespace KeePass.UI
 		public int Value
 		{
 			get { return m_nPosition; }
-			set { m_nPosition = value; this.Invalidate(); }
+			set { m_nPosition = value; Invalidate(); }
 		}
 
 		private ProgressBarStyle m_pbsStyle = ProgressBarStyle.Continuous;
@@ -73,7 +73,7 @@ namespace KeePass.UI
 		public ProgressBarStyle Style
 		{
 			get { return m_pbsStyle; }
-			set { m_pbsStyle = value; this.Invalidate(); }
+			set { m_pbsStyle = value; Invalidate(); }
 		}
 		public bool ShouldSerializeStyle() { return false; }
 
@@ -82,7 +82,12 @@ namespace KeePass.UI
 		public string ProgressText
 		{
 			get { return m_strText; }
-			set { m_strText = value; this.Invalidate(); }
+			set
+			{
+				m_strText = value;
+				UIUtil.AccSetName(this, value ?? string.Empty);
+				Invalidate();
+			}
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

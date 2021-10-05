@@ -43,7 +43,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(459, 12);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 1;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -54,7 +54,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(459, 41);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 2;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -106,7 +106,7 @@
 			this.m_lblContext.Location = new System.Drawing.Point(9, 13);
 			this.m_lblContext.Name = "m_lblContext";
 			this.m_lblContext.Size = new System.Drawing.Size(444, 17);
-			this.m_lblContext.TabIndex = 2;
+			this.m_lblContext.TabIndex = 0;
 			this.m_lblContext.Text = "<>";
 			// 
 			// TextEncodingForm

@@ -50,73 +50,6 @@ namespace KeePassLib.Utility
 			(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining);
 #endif
 
-		private static readonly uint[] m_vSBox = new uint[256] {
-			0xCD2FACB3, 0xE78A7F5C, 0x6F0803FC, 0xBCF6E230,
-			0x3A321712, 0x06403DB1, 0xD2F84B95, 0xDF22A6E4,
-			0x07CE9E5B, 0x31788A0C, 0xF683F6F4, 0xEA061F49,
-			0xFA5C2ACA, 0x4B9E494E, 0xB0AB25BA, 0x767731FC,
-			0x261893A7, 0x2B09F2CE, 0x046261E4, 0x41367B4B,
-			0x18A7F225, 0x8F923C0E, 0x5EF3A325, 0x28D0435E,
-			0x84C22919, 0xED66873C, 0x8CEDE444, 0x7FC47C24,
-			0xFCFC6BA3, 0x676F928D, 0xB4147187, 0xD8FB126E,
-			0x7D798D17, 0xFF82E424, 0x1712FA5B, 0xABB09DD5,
-			0x8156BA63, 0x84E4D969, 0xC937FB9A, 0x2F1E5BFC,
-			0x178ECA11, 0x0E71CD5F, 0x52AAC6F4, 0x71EEFC8F,
-			0x7090D749, 0x21CACA31, 0x92996378, 0x0939A8A8,
-			0xE9EE1934, 0xD2718616, 0xF2500543, 0xB911873C,
-			0xD3CB3EEC, 0x2BA0DBEB, 0xB42D0A27, 0xECE67C0F,
-			0x302925F0, 0x6114F839, 0xD39E6307, 0xE28970D6,
-			0xEB982F99, 0x941B4CDF, 0xC540E550, 0x8124FC45,
-			0x98B025C7, 0xE2BF90EA, 0x4F57C976, 0xCF546FE4,
-			0x59566DC8, 0xE3F4360D, 0xF5F9D231, 0xD6180B22,
-			0xB54E088A, 0xB5DFE6A6, 0x3637A36F, 0x056E9284,
-			0xAFF8FBC5, 0x19E01648, 0x8611F043, 0xDAE44337,
-			0xF61B6A1C, 0x257ACD9E, 0xDD35F507, 0xEF05CAFA,
-			0x05EB4A83, 0xFC25CA92, 0x0A4728E6, 0x9CF150EF,
-			0xAEEF67DE, 0xA9472337, 0x57C81EFE, 0x3E5E009F,
-			0x02CB03BB, 0x2BA85674, 0xF21DC251, 0x78C34A34,
-			0xABB1F5BF, 0xB95A2FBD, 0x1FB47777, 0x9A96E8AC,
-			0x5D2D2838, 0x55AAC92A, 0x99EE324E, 0x10F6214B,
-			0x58ABDFB1, 0x2008794D, 0xBEC880F0, 0xE75E5341,
-			0x88015C34, 0x352D8FBF, 0x622B7F6C, 0xF5C59EA2,
-			0x1F759D8E, 0xADE56159, 0xCC7B4C25, 0x5B8BC48C,
-			0xB6BD15AF, 0x3C5B5110, 0xE74A7C3D, 0xEE613161,
-			0x156A1C67, 0x72C06817, 0xEA0A6F69, 0x4CECF993,
-			0xCA9D554C, 0x8E20361F, 0x42D396B9, 0x595DE578,
-			0x749D7955, 0xFD1BA5FD, 0x81FC160E, 0xDB97E28C,
-			0x7CF148F7, 0x0B0B3CF5, 0x534DE605, 0x46421066,
-			0xD4B68DD1, 0x9E479CE6, 0xAE667A9D, 0xBC082082,
-			0xB06DD6EF, 0x20F0F23F, 0xB99E1551, 0xF47A2E3A,
-			0x71DA50C6, 0x67B65779, 0x2A8CB376, 0x1EA71EEE,
-			0x29ABCD50, 0xB6EB0C6B, 0x23C10511, 0x6F3F2144,
-			0x6AF23012, 0xF696BD9E, 0xB94099D8, 0xAD5A9C81,
-			0x7A0794FA, 0x7EDF59D6, 0x1E72E574, 0x8561913C,
-			0x4E4D568F, 0xEECB9928, 0x9C124D2E, 0x0848B82C,
-			0xF1CA395F, 0x9DAF43DC, 0xF77EC323, 0x394E9B59,
-			0x7E200946, 0x8B811D68, 0x16DA3305, 0xAB8DE2C3,
-			0xE6C53B64, 0x98C2D321, 0x88A97D81, 0xA7106419,
-			0x8E52F7BF, 0x8ED262AF, 0x7CCA974E, 0xF0933241,
-			0x040DD437, 0xE143B3D4, 0x3019F56F, 0xB741521D,
-			0xF1745362, 0x4C435F9F, 0xB4214D0D, 0x0B0C348B,
-			0x5051D189, 0x4C30447E, 0x7393D722, 0x95CEDD0B,
-			0xDD994E80, 0xC3D22ED9, 0x739CD900, 0x131EB9C4,
-			0xEF1062B2, 0x4F0DE436, 0x52920073, 0x9A7F3D80,
-			0x896E7B1B, 0x2C8BBE5A, 0xBD304F8A, 0xA993E22C,
-			0x134C41A0, 0xFA989E00, 0x39CE9726, 0xFB89FCCF,
-			0xE8FBAC97, 0xD4063FFC, 0x935A2B5A, 0x44C8EE83,
-			0xCB2BC7B6, 0x02989E92, 0x75478BEA, 0x144378D0,
-			0xD853C087, 0x8897A34E, 0xDD23629D, 0xBDE2A2A2,
-			0x581D8ECC, 0x5DA8AEE8, 0xFF8AAFD0, 0xBA2BCF6E,
-			0x4BD98DAC, 0xF2EDB9E4, 0xFA2DC868, 0x47E84661,
-			0xECEB1C7D, 0x41705CA4, 0x5982E4D4, 0xEB5204A1,
-			0xD196CAFB, 0x6414804D, 0x3ABD4B46, 0x8B494C26,
-			0xB432D52B, 0x39C5356B, 0x6EC80BF7, 0x71BE5483,
-			0xCEC4A509, 0xE9411D61, 0x52F341E5, 0xD2E6197B,
-			0x4F02826C, 0xA9E48838, 0xD1F8F247, 0xE4957FB3,
-			0x586CCA99, 0x9A8B6A5B, 0x4998FBEA, 0xF762BE4C,
-			0x90DFE33C, 0x9731511E, 0x88C6A82F, 0xDD65A4D4
-		};
-
 		/// <summary>
 		/// Convert a hexadecimal string to a byte array. The input string must be
 		/// even (i.e. its length is a multiple of 2).
@@ -568,28 +501,91 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Fast hash that can be used e.g. for hash tables.
+		/// Fast 32-bit hash (e.g. for hash tables).
 		/// The algorithm might change in the future; do not store
 		/// the hashes for later use.
 		/// </summary>
-		public static uint Hash32(byte[] v, int iStart, int iLength)
+		public static uint Hash32(byte[] pb, int iOffset, int cb)
 		{
-			uint u = 0x326F637B;
+			const ulong hI = 0x4295DC458269ED9DUL;
+			const uint hI32 = (uint)(hI >> 32);
 
-			if(v == null) { Debug.Assert(false); return u; }
-			if(iStart < 0) { Debug.Assert(false); return u; }
-			if(iLength < 0) { Debug.Assert(false); return u; }
+			if(pb == null) { Debug.Assert(false); return hI32; }
+			if(iOffset < 0) { Debug.Assert(false); return hI32; }
+			if(cb < 0) { Debug.Assert(false); return hI32; }
 
-			int m = iStart + iLength;
-			if(m > v.Length) { Debug.Assert(false); return u; }
+			int m = iOffset + cb;
+			if((m < 0) || (m > pb.Length)) { Debug.Assert(false); return hI32; }
 
-			for(int i = iStart; i < m; ++i)
+			int m4 = iOffset + (cb & ~3), cbR = cb & 3;
+			ulong h = hI;
+
+			for(int i = iOffset; i < m4; i += 4)
+				h = (h ^ pb[i] ^ ((ulong)pb[i + 1] << 8) ^
+					((ulong)pb[i + 2] << 16) ^ ((ulong)pb[i + 3] << 24)) *
+					0x5EA4A1E35C8ACDA3UL;
+
+			switch(cbR)
 			{
-				u ^= m_vSBox[v[i]];
-				u *= 3;
+				case 1:
+					Debug.Assert(m4 == (m - 1));
+					h = (h ^ pb[m4]) * 0x54A1CC5970AF27BBUL;
+					break;
+				case 2:
+					Debug.Assert(m4 == (m - 2));
+					h = (h ^ pb[m4] ^ ((ulong)pb[m4 + 1] << 8)) *
+						0x6C45CB2537A4271DUL;
+					break;
+				case 3:
+					Debug.Assert(m4 == (m - 3));
+					h = (h ^ pb[m4] ^ ((ulong)pb[m4 + 1] << 8) ^
+						((ulong)pb[m4 + 2] << 16)) * 0x59B8E8939E19695DUL;
+					break;
+				default:
+					Debug.Assert(m4 == m);
+					break;
 			}
 
-			return u;
+			Debug.Assert((cb != 0) || ((uint)(h >> 32) == hI32));
+			return (uint)(h >> 32);
+		}
+
+		internal static uint Hash32Ex<T>(T[] v, int iOffset, int c)
+		{
+			const ulong hI = 0x4295DC458269ED9DUL;
+			const uint hI32 = (uint)(hI >> 32);
+
+			if(v == null) { Debug.Assert(false); return hI32; }
+			if(iOffset < 0) { Debug.Assert(false); return hI32; }
+			if(c < 0) { Debug.Assert(false); return hI32; }
+
+			int m = iOffset + c;
+			if((m < 0) || (m > v.Length)) { Debug.Assert(false); return hI32; }
+
+			ulong h = hI;
+
+			for(int i = iOffset; i < m; ++i)
+				h = (h ^ (uint)v[i].GetHashCode()) * 0x5EA4A1E35C8ACDA3UL;
+
+			Debug.Assert((c != 0) || ((uint)(h >> 32) == hI32));
+			return (uint)(h >> 32);
+		}
+
+		internal static ulong Hash64(int[] v, int iOffset, int ci)
+		{
+			ulong h = 0x4295DC458269ED9DUL;
+
+			if(v == null) { Debug.Assert(false); return h; }
+			if(iOffset < 0) { Debug.Assert(false); return h; }
+			if(ci < 0) { Debug.Assert(false); return h; }
+
+			int m = iOffset + ci;
+			if((m < 0) || (m > v.Length)) { Debug.Assert(false); return h; }
+
+			for(int i = iOffset; i < m; ++i)
+				h = (h ^ (uint)v[i]) * 0x5EA4A1E35C8ACDA3UL;
+
+			return ((h ^ (h >> 32)) * 0x59B8E8939E19695DUL);
 		}
 
 		public static void CopyStream(Stream sSource, Stream sTarget)
@@ -898,39 +894,10 @@ namespace KeePassLib.Utility
 	{
 		public int GetHashCode(T[] obj)
 		{
-			if(obj == null) throw new ArgumentNullException("obj");
+			if(obj == null) { Debug.Assert(false); throw new ArgumentNullException("obj"); }
 
-			uint h = 0xC17962B7U;
-			unchecked
-			{
-				int n = obj.Length;
-				for(int i = 0; i < n; ++i)
-				{
-					h += (uint)obj[i].GetHashCode();
-					h = MemUtil.RotateLeft32(h * 0x5FC34C67U, 13);
-				}
-			}
-
-			return (int)h;
+			return (int)MemUtil.Hash32Ex<T>(obj, 0, obj.Length);
 		}
-
-		/* internal ulong GetHashCodeEx(T[] obj)
-		{
-			if(obj == null) throw new ArgumentNullException("obj");
-
-			ulong h = 0x207CAC8E509A3FC9UL;
-			unchecked
-			{
-				int n = obj.Length;
-				for(int i = 0; i < n; ++i)
-				{
-					h += (uint)obj[i].GetHashCode();
-					h = MemUtil.RotateLeft64(h * 0x54724D3EA2860CBBUL, 29);
-				}
-			}
-
-			return h;
-		} */
 
 		public bool Equals(T[] x, T[] y)
 		{

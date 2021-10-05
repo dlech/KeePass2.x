@@ -72,7 +72,7 @@ namespace KeePass.Forms
 		public FieldPickerForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(string strTitle, string strText, List<FpField> lFields)

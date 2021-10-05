@@ -283,11 +283,21 @@ namespace KeePassLib.Serialization
 			else throw new FormatException(KLRes.FileSigInvalid);
 
 			byte[] pb = br.ReadBytes(4);
-			uint uVersion = MemUtil.BytesToUInt32(pb);
-			if((uVersion & FileVersionCriticalMask) > (FileVersion32 & FileVersionCriticalMask))
+			uint uVer = MemUtil.BytesToUInt32(pb);
+			uint uVerMajor = uVer & FileVersionCriticalMask;
+			uint uVerMinor = uVer & ~FileVersionCriticalMask;
+			const uint uVerMaxMajor = FileVersion32 & FileVersionCriticalMask;
+			const uint uVerMaxMinor = FileVersion32 & ~FileVersionCriticalMask;
+			if(uVerMajor > uVerMaxMajor)
 				throw new FormatException(KLRes.FileVersionUnsupported +
 					MessageService.NewParagraph + KLRes.FileNewVerReq);
-			m_uFileVersion = uVersion;
+			if((uVerMajor == uVerMaxMajor) && (uVerMinor > uVerMaxMinor) &&
+				(g_fConfirmOpenUnkVer != null))
+			{
+				if(!g_fConfirmOpenUnkVer())
+					throw new OperationCanceledException();
+			}
+			m_uFileVersion = uVer;
 
 			while(true)
 			{

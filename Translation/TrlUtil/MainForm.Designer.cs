@@ -608,7 +608,6 @@
 			this.m_menuMain.Name = "m_menuMain";
 			this.m_menuMain.Size = new System.Drawing.Size(629, 24);
 			this.m_menuMain.TabIndex = 1;
-			this.m_menuMain.TabStop = true;
 			// 
 			// m_menuFile
 			// 
@@ -669,26 +668,26 @@
 			// m_menuFileImportLng
 			// 
 			this.m_menuFileImportLng.Name = "m_menuFileImportLng";
-			this.m_menuFileImportLng.Size = new System.Drawing.Size(291, 22);
+			this.m_menuFileImportLng.Size = new System.Drawing.Size(292, 22);
 			this.m_menuFileImportLng.Text = "KeePass &1.x LNG File...";
 			this.m_menuFileImportLng.Click += new System.EventHandler(this.OnImport1xLng);
 			// 
 			// m_menuFileImportPo
 			// 
 			this.m_menuFileImportPo.Name = "m_menuFileImportPo";
-			this.m_menuFileImportPo.Size = new System.Drawing.Size(291, 22);
+			this.m_menuFileImportPo.Size = new System.Drawing.Size(292, 22);
 			this.m_menuFileImportPo.Text = "&PO File...";
 			this.m_menuFileImportPo.Click += new System.EventHandler(this.OnImportPo);
 			// 
 			// m_menuFileImportSep0
 			// 
 			this.m_menuFileImportSep0.Name = "m_menuFileImportSep0";
-			this.m_menuFileImportSep0.Size = new System.Drawing.Size(288, 6);
+			this.m_menuFileImportSep0.Size = new System.Drawing.Size(289, 6);
 			// 
 			// m_menuFileImport2xNoChecks
 			// 
 			this.m_menuFileImport2xNoChecks.Name = "m_menuFileImport2xNoChecks";
-			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(291, 22);
+			this.m_menuFileImport2xNoChecks.Size = new System.Drawing.Size(292, 22);
 			this.m_menuFileImport2xNoChecks.Text = "KeePass &2.x LNGX File (No Base Checks)...";
 			this.m_menuFileImport2xNoChecks.Click += new System.EventHandler(this.OnImport2xNoChecks);
 			// 
@@ -717,7 +716,7 @@
 			this.m_menuEditNextUntrl.Image = global::TrlUtil.Properties.Resources.B16x16_Down;
 			this.m_menuEditNextUntrl.Name = "m_menuEditNextUntrl";
 			this.m_menuEditNextUntrl.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(242, 22);
+			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(243, 22);
 			this.m_menuEditNextUntrl.Text = "Go to Next &Untranslated";
 			this.m_menuEditNextUntrl.Click += new System.EventHandler(this.OnEditNextUntrl);
 			// 

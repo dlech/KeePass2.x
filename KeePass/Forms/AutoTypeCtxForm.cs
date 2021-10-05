@@ -63,7 +63,7 @@ namespace KeePass.Forms
 		public AutoTypeCtxForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -97,8 +97,8 @@ namespace KeePass.Forms
 			m_strInitialColWidths = UIUtil.GetColumnWidths(m_lvItems);
 
 			ProcessResize();
-			this.BringToFront();
-			this.Activate();
+			BringToFront();
+			Activate();
 			UIUtil.SetFocus(m_lvItems, this, true);
 		}
 

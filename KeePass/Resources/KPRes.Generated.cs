@@ -53,6 +53,7 @@ namespace KeePass.Resources
 			m_strArguments = TryGetEx(dictNew, "Arguments", m_strArguments);
 			m_strAscending = TryGetEx(dictNew, "Ascending", m_strAscending);
 			m_strAskContinue = TryGetEx(dictNew, "AskContinue", m_strAskContinue);
+			m_strAssociationsLower = TryGetEx(dictNew, "AssociationsLower", m_strAssociationsLower);
 			m_strAsterisks = TryGetEx(dictNew, "Asterisks", m_strAsterisks);
 			m_strAttachedExistsAlready = TryGetEx(dictNew, "AttachedExistsAlready", m_strAttachedExistsAlready);
 			m_strAttachExtDiscardDesc = TryGetEx(dictNew, "AttachExtDiscardDesc", m_strAttachExtDiscardDesc);
@@ -214,6 +215,10 @@ namespace KeePass.Resources
 			m_strDatabaseMaintenanceDesc = TryGetEx(dictNew, "DatabaseMaintenanceDesc", m_strDatabaseMaintenanceDesc);
 			m_strDatabaseModifiedNoDot = TryGetEx(dictNew, "DatabaseModifiedNoDot", m_strDatabaseModifiedNoDot);
 			m_strDatabaseNamePrompt = TryGetEx(dictNew, "DatabaseNamePrompt", m_strDatabaseNamePrompt);
+			m_strDatabaseOpenUnknownVersionAsk = TryGetEx(dictNew, "DatabaseOpenUnknownVersionAsk", m_strDatabaseOpenUnknownVersionAsk);
+			m_strDatabaseOpenUnknownVersionInfo = TryGetEx(dictNew, "DatabaseOpenUnknownVersionInfo", m_strDatabaseOpenUnknownVersionInfo);
+			m_strDatabaseOpenUnknownVersionQ = TryGetEx(dictNew, "DatabaseOpenUnknownVersionQ", m_strDatabaseOpenUnknownVersionQ);
+			m_strDatabaseOpenUnknownVersionRec = TryGetEx(dictNew, "DatabaseOpenUnknownVersionRec", m_strDatabaseOpenUnknownVersionRec);
 			m_strDatabaseSettings = TryGetEx(dictNew, "DatabaseSettings", m_strDatabaseSettings);
 			m_strDatabaseSettingsDesc = TryGetEx(dictNew, "DatabaseSettingsDesc", m_strDatabaseSettingsDesc);
 			m_strDataEditorKP = TryGetEx(dictNew, "DataEditorKP", m_strDataEditorKP);
@@ -532,9 +537,12 @@ namespace KeePass.Resources
 			m_strMinimizeToTray = TryGetEx(dictNew, "MinimizeToTray", m_strMinimizeToTray);
 			m_strMinimizeToTrayStc = TryGetEx(dictNew, "MinimizeToTrayStc", m_strMinimizeToTrayStc);
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
+			m_strMoreAnd = TryGetEx(dictNew, "MoreAnd", m_strMoreAnd);
 			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strMoreInfo = TryGetEx(dictNew, "MoreInfo", m_strMoreInfo);
+			m_strMoveDown = TryGetEx(dictNew, "MoveDown", m_strMoveDown);
 			m_strMoveToPreviousParentGroup = TryGetEx(dictNew, "MoveToPreviousParentGroup", m_strMoveToPreviousParentGroup);
+			m_strMoveUp = TryGetEx(dictNew, "MoveUp", m_strMoveUp);
 			m_strMultipleValues = TryGetEx(dictNew, "MultipleValues", m_strMultipleValues);
 			m_strName = TryGetEx(dictNew, "Name", m_strName);
 			m_strNativeLibUse = TryGetEx(dictNew, "NativeLibUse", m_strNativeLibUse);
@@ -741,6 +749,7 @@ namespace KeePass.Resources
 			m_strSendingNoun = TryGetEx(dictNew, "SendingNoun", m_strSendingNoun);
 			m_strSeparator = TryGetEx(dictNew, "Separator", m_strSeparator);
 			m_strSequence = TryGetEx(dictNew, "Sequence", m_strSequence);
+			m_strSequences = TryGetEx(dictNew, "Sequences", m_strSequences);
 			m_strShowAdvAutoTypeCommands = TryGetEx(dictNew, "ShowAdvAutoTypeCommands", m_strShowAdvAutoTypeCommands);
 			m_strShowDerefData = TryGetEx(dictNew, "ShowDerefData", m_strShowDerefData);
 			m_strShowDerefDataAndRefs = TryGetEx(dictNew, "ShowDerefDataAndRefs", m_strShowDerefDataAndRefs);
@@ -929,6 +938,7 @@ namespace KeePass.Resources
 			"Arguments",
 			"Ascending",
 			"AskContinue",
+			"AssociationsLower",
 			"Asterisks",
 			"AttachedExistsAlready",
 			"AttachExtDiscardDesc",
@@ -1090,6 +1100,10 @@ namespace KeePass.Resources
 			"DatabaseMaintenanceDesc",
 			"DatabaseModifiedNoDot",
 			"DatabaseNamePrompt",
+			"DatabaseOpenUnknownVersionAsk",
+			"DatabaseOpenUnknownVersionInfo",
+			"DatabaseOpenUnknownVersionQ",
+			"DatabaseOpenUnknownVersionRec",
 			"DatabaseSettings",
 			"DatabaseSettingsDesc",
 			"DataEditorKP",
@@ -1408,9 +1422,12 @@ namespace KeePass.Resources
 			"MinimizeToTray",
 			"MinimizeToTrayStc",
 			"More",
+			"MoreAnd",
 			"MoreEntries",
 			"MoreInfo",
+			"MoveDown",
 			"MoveToPreviousParentGroup",
+			"MoveUp",
 			"MultipleValues",
 			"Name",
 			"NativeLibUse",
@@ -1617,6 +1634,7 @@ namespace KeePass.Resources
 			"SendingNoun",
 			"Separator",
 			"Sequence",
+			"Sequences",
 			"ShowAdvAutoTypeCommands",
 			"ShowDerefData",
 			"ShowDerefDataAndRefs",
@@ -2077,6 +2095,17 @@ namespace KeePass.Resources
 		public static string AskContinue
 		{
 			get { return m_strAskContinue; }
+		}
+
+		private static string m_strAssociationsLower =
+			@"association(s)";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'association(s)'.
+		/// </summary>
+		public static string AssociationsLower
+		{
+			get { return m_strAssociationsLower; }
 		}
 
 		private static string m_strAsterisks =
@@ -2817,10 +2846,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strCannotMoveEntriesBcsGroup =
-			@"Cannot move entries because they aren't stored in the same group.";
+			@"Cannot move entries because they are not stored in the same group.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Cannot move entries because they aren&#39;t stored in the same group.'.
+		/// 'Cannot move entries because they are not stored in the same group.'.
 		/// </summary>
 		public static string CannotMoveEntriesBcsGroup
 		{
@@ -3848,6 +3877,50 @@ namespace KeePass.Resources
 		public static string DatabaseNamePrompt
 		{
 			get { return m_strDatabaseNamePrompt; }
+		}
+
+		private static string m_strDatabaseOpenUnknownVersionAsk =
+			@"Show confirmation dialog when opening a database file whose minor format version is unknown";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show confirmation dialog when opening a database file whose minor format version is unknown'.
+		/// </summary>
+		public static string DatabaseOpenUnknownVersionAsk
+		{
+			get { return m_strDatabaseOpenUnknownVersionAsk; }
+		}
+
+		private static string m_strDatabaseOpenUnknownVersionInfo =
+			@"The format version of the selected database file is higher than the one supported by the currently running KeePass instance. Most likely, the database file has been created by a newer KeePass version. KeePass can try to open the database file, but certain data may be lost.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The format version of the selected database file is higher than the one supported by the currently running KeePass instance. Most likely, the database file has been created by a newer KeePass version. KeePass can try to open the database file, but certain data may be lost.'.
+		/// </summary>
+		public static string DatabaseOpenUnknownVersionInfo
+		{
+			get { return m_strDatabaseOpenUnknownVersionInfo; }
+		}
+
+		private static string m_strDatabaseOpenUnknownVersionQ =
+			@"Do you want to try opening the database file, possibly losing certain data?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do you want to try opening the database file, possibly losing certain data?'.
+		/// </summary>
+		public static string DatabaseOpenUnknownVersionQ
+		{
+			get { return m_strDatabaseOpenUnknownVersionQ; }
+		}
+
+		private static string m_strDatabaseOpenUnknownVersionRec =
+			@"In order to avoid data loss, it is recommended to install/use the latest version of KeePass.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'In order to avoid data loss, it is recommended to install/use the latest version of KeePass.'.
+		/// </summary>
+		public static string DatabaseOpenUnknownVersionRec
+		{
+			get { return m_strDatabaseOpenUnknownVersionRec; }
 		}
 
 		private static string m_strDatabaseSettings =
@@ -7348,6 +7421,17 @@ namespace KeePass.Resources
 			get { return m_strMore; }
 		}
 
+		private static string m_strMoreAnd =
+			@"and {PARAM} more";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'and {PARAM} more'.
+		/// </summary>
+		public static string MoreAnd
+		{
+			get { return m_strMoreAnd; }
+		}
+
 		private static string m_strMoreEntries =
 			@"{PARAM} more entries";
 		/// <summary>
@@ -7370,6 +7454,17 @@ namespace KeePass.Resources
 			get { return m_strMoreInfo; }
 		}
 
+		private static string m_strMoveDown =
+			@"Move down";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Move down'.
+		/// </summary>
+		public static string MoveDown
+		{
+			get { return m_strMoveDown; }
+		}
+
 		private static string m_strMoveToPreviousParentGroup =
 			@"Move to &Previous Parent Group";
 		/// <summary>
@@ -7379,6 +7474,17 @@ namespace KeePass.Resources
 		public static string MoveToPreviousParentGroup
 		{
 			get { return m_strMoveToPreviousParentGroup; }
+		}
+
+		private static string m_strMoveUp =
+			@"Move up";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Move up'.
+		/// </summary>
+		public static string MoveUp
+		{
+			get { return m_strMoveUp; }
 		}
 
 		private static string m_strMultipleValues =
@@ -7888,10 +7994,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strOptimizeForScreenReader =
-			@"Optimize for screen reader (only enable if you're using a screen reader)";
+			@"Optimize for screen reader (activate only if you are using a screen reader)";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Optimize for screen reader (only enable if you&#39;re using a screen reader)'.
+		/// 'Optimize for screen reader (activate only if you are using a screen reader)'.
 		/// </summary>
 		public static string OptimizeForScreenReader
 		{
@@ -9645,6 +9751,17 @@ namespace KeePass.Resources
 		public static string Sequence
 		{
 			get { return m_strSequence; }
+		}
+
+		private static string m_strSequences =
+			@"Sequences";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Sequences'.
+		/// </summary>
+		public static string Sequences
+		{
+			get { return m_strSequences; }
 		}
 
 		private static string m_strShowAdvAutoTypeCommands =

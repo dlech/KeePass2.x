@@ -969,20 +969,30 @@ namespace KeePassLib.Utility
 			if(strMenuText == null) throw new ArgumentNullException("strMenuText");
 
 			string str = strMenuText;
+			int iOffset = 0;
+			bool bHasAmp = false;
 
-			for(char ch = 'A'; ch <= 'Z'; ++ch)
+			// Remove keys of the form "(&X)"
+			while(iOffset < str.Length)
 			{
-				string strEnhAcc = @"(&" + ch.ToString() + ")";
-				if(str.IndexOf(strEnhAcc) >= 0)
+				int i = str.IndexOf('&', iOffset);
+				if(i < iOffset) break;
+
+				if((i >= 1) && (str[i - 1] == '(') && ((i + 2) < str.Length) &&
+					(str[i + 2] == ')'))
 				{
-					str = str.Replace(" " + strEnhAcc, string.Empty);
-					str = str.Replace(strEnhAcc, string.Empty);
+					if((i >= 2) && char.IsWhiteSpace(str[i - 2]))
+						str = str.Remove(i - 2, 5);
+					else str = str.Remove(i - 1, 4);
+
+					continue;
 				}
+
+				iOffset = i + 1;
+				bHasAmp = true;
 			}
 
-			str = str.Replace(@"&", string.Empty);
-
-			return str;
+			return (bHasAmp ? str.Replace(@"&", string.Empty) : str);
 		}
 
 		public static string AddAccelerator(string strMenuText,

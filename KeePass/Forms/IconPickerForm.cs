@@ -62,7 +62,7 @@ namespace KeePass.Forms
 		public IconPickerForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(ImageList ilIcons, uint uNumberOfStandardIcons,

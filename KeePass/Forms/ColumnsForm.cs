@@ -48,7 +48,7 @@ namespace KeePass.Forms
 		public ColumnsForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -77,9 +77,11 @@ namespace KeePass.Forms
 		private void AddAceColumnTh(AceColumn c)
 		{
 			string strLvgName = KPRes.StandardFields;
-			if(c.Type == AceColumnType.CustomString) strLvgName = KPRes.CustomFields;
-			else if(c.Type == AceColumnType.PluginExt) strLvgName = KPRes.PluginProvided;
-			else if((int)c.Type > (int)AceColumnType.PluginExt)
+			if(c.Type == AceColumnType.CustomString)
+				strLvgName = KPRes.CustomFields;
+			else if(c.Type == AceColumnType.PluginExt)
+				strLvgName = KPRes.PluginProvided;
+			else if((c.Type == AceColumnType.Size) || (c.Type == AceColumnType.LastPasswordModTime))
 				strLvgName = KPRes.More;
 
 			ListViewGroup lvgContainer = null;
@@ -99,9 +101,9 @@ namespace KeePass.Forms
 			lvi.SubItems.Add(c.HideWithAsterisks ? KPRes.Yes : KPRes.No);
 
 			if(c.Type == AceColumnType.Password)
-				lvi.SubItems.Add(KPRes.KeyboardKeyCtrl + "+H");
+				lvi.SubItems.Add(UIUtil.GetKeysName(Keys.Control | Keys.H));
 			else if(c.Type == AceColumnType.UserName)
-				lvi.SubItems.Add(KPRes.KeyboardKeyCtrl + "+J");
+				lvi.SubItems.Add(UIUtil.GetKeysName(Keys.Control | Keys.J));
 			else lvi.SubItems.Add(string.Empty);
 
 			bool bChecked = false;
@@ -168,15 +170,27 @@ namespace KeePass.Forms
 			AddStdAceColumn(l, AceColumnType.Password);
 			AddStdAceColumn(l, AceColumnType.Url);
 			AddStdAceColumn(l, AceColumnType.Notes);
+			AddStdAceColumn(l, AceColumnType.ExpiryTime);
+			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
+
+			AddStdAceColumn(l, AceColumnType.Attachment);
+			AddStdAceColumn(l, AceColumnType.AttachmentCount);
+
+			AddStdAceColumn(l, AceColumnType.Tags);
+			AddStdAceColumn(l, AceColumnType.OverrideUrl);
+			AddStdAceColumn(l, AceColumnType.Uuid);
+
+			AddStdAceColumn(l, AceColumnType.AutoTypeEnabled);
+			AddStdAceColumn(l, AceColumnType.AutoTypeSequences);
+
 			AddStdAceColumn(l, AceColumnType.CreationTime);
-			
+			AddStdAceColumn(l, AceColumnType.LastModificationTime);
 			if((Program.Config.UI.UIFlags & (ulong)AceUIFlags.ShowLastAccessTime) != 0)
 				AddStdAceColumn(l, AceColumnType.LastAccessTime);
+			AddStdAceColumn(l, AceColumnType.HistoryCount);
 
-			AddStdAceColumn(l, AceColumnType.LastModificationTime);
-			AddStdAceColumn(l, AceColumnType.ExpiryTime);
-			AddStdAceColumn(l, AceColumnType.Uuid);
-			AddStdAceColumn(l, AceColumnType.Attachment);
+			AddStdAceColumn(l, AceColumnType.Size);
+			AddStdAceColumn(l, AceColumnType.LastPasswordModTime);
 
 			SortedDictionary<string, AceColumn> d =
 				new SortedDictionary<string, AceColumn>(StrUtil.CaseIgnoreComparer);
@@ -217,14 +231,6 @@ namespace KeePass.Forms
 			{
 				AddAceColumn(l, kvpCustom.Value);
 			}
-
-			AddStdAceColumn(l, AceColumnType.Size);
-			AddStdAceColumn(l, AceColumnType.AttachmentCount);
-			AddStdAceColumn(l, AceColumnType.HistoryCount);
-			AddStdAceColumn(l, AceColumnType.OverrideUrl);
-			AddStdAceColumn(l, AceColumnType.Tags);
-			AddStdAceColumn(l, AceColumnType.ExpiryTimeDateOnly);
-			AddStdAceColumn(l, AceColumnType.LastPasswordModTime);
 
 			d.Clear();
 			// Add active plugin columns (including those of uninstalled plugins)

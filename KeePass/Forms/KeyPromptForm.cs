@@ -92,7 +92,7 @@ namespace KeePass.Forms
 			InitializeComponent();
 
 			SecureTextBoxEx.InitEx(ref m_tbPassword);
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		public void InitEx(IOConnectionInfo ioInfo, bool bCanExit,
@@ -136,8 +136,10 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			// m_ttRect.SetToolTip(m_cbHidePassword, KPRes.TogglePasswordAsterisks);
-			m_ttRect.SetToolTip(m_btnOpenKeyFile, KPRes.KeyFileSelect);
+			UIUtil.SetToolTip(m_ttRect, m_btnOpenKeyFile, KPRes.KeyFileSelect, true);
+
+			UIUtil.AccSetName(m_tbPassword, m_cbPassword);
+			UIUtil.AccSetName(m_cmbKeyFile, m_cbKeyFile);
 
 			PwInputControlGroup.ConfigureHideButton(m_cbHidePassword, m_ttRect);
 
@@ -230,7 +232,6 @@ namespace KeePass.Forms
 				((uKpf & (ulong)AceKeyUIFlags.UncheckUserAccount) != 0))
 				m_bUaStatePreset = true;
 
-			CustomizeForScreenReader();
 			EnableUserControls();
 
 			m_bInitializing = false;
@@ -272,14 +273,6 @@ namespace KeePass.Forms
 			else if(m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
 			else if(m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this, true);
 			else { Debug.Assert(false); }
-		}
-
-		private void CustomizeForScreenReader()
-		{
-			if(!Program.Config.UI.OptimizeForScreenReader) return;
-
-			m_cbHidePassword.Text = KPRes.HideUsingAsterisks;
-			m_btnOpenKeyFile.Text = KPRes.SelectFile;
 		}
 
 		private void CleanUpEx()

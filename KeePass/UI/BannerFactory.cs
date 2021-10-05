@@ -436,6 +436,8 @@ namespace KeePass.UI
 			{
 				picBox.Image = CreateBanner(picBox.Width, picBox.Height,
 					BannerStyle.Default, imgIcon, strTitle, strLine, bNoCache);
+
+				UIUtil.AccSetName(picBox, strTitle, strLine);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

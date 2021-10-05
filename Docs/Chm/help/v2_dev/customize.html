@@ -132,6 +132,20 @@ the changes to the last access times are lost.</td></tr>
 <td>Do not display information dialogs when creating a new database.</td></tr>
 <tr><td>0x80000</td><td>524288</td>
 <td>Do not display auto-type obfuscation compatibility information dialogs.</td></tr>
+<tr><td>0x100000</td><td>1048576</td>
+<td>Do not clear the quick search terms list when closing/locking a database.<br />
+<em>Note:</em> Even if this flag is set, the list is cleared when exiting
+KeePass. If you frequently perform the same searches, consider using
+<a href="../v2/entry.html#prp">tags</a> or
+<a href="../base/search.html#prf">search profiles</a>.</td></tr>
+<tr><td>0x200000</td><td>2097152</td>
+<td>Enable the Input Method Editor (IME) on
+<a href="https://keepass.info/help/kb/sec_desk.html" target="_blank">secure desktops</a>.<br />
+<img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
+This can result in problems (black screen, IME/CTF process with
+high CPU usage, ...). See
+'<a href="https://keepass.info/help/kb/sec_desk.html#ime" target="_blank">Why
+does the Input Method Editor (IME) not work on a secure desktop?</a>'.</td></tr>
 </table>
 
 <p>The value of <code>UIFlags</code> must be specified in decimal notation.</p>
@@ -155,6 +169,12 @@ but changes to it are discarded when exiting KeePass).</li>
 <li><b>Configuration/Application/ExpirySoonDays</b>:<br />
 Specifies the number of days within which entries are considered
 to expire &quot;soon&quot;. The default value is 7.</li>
+
+<li><b>Configuration/Application/HelpUrl</b>:<br />
+Specifies the URL that is opened for a help page.
+This overrides all other help sources (local and online).
+<a href="../base/placeholders.html">Spr</a>-compiled;
+the relative help page path is inserted by <code>{BASE}</code>.</li>
 
 <li><b>Configuration/Defaults/WinFavsBaseFolderName</b>:<br />
 For the 'Windows Favorites' export:
@@ -222,7 +242,7 @@ This option works on Windows only and requires the KeePassLibC DLL
 If this option is set to <code>true</code>, the KeePass icon in the
 system tray is displayed only if the main window has been minimized
 to the tray.<br />
-<em>Warning!</em>
+<img src="../images/b16x16_warning.png" alt="Warning" class="textimg" />
 Turning on this option can result in denial-of-service problems.
 If you want to hide the KeePass icon, it is recommended to configure
 this in the system settings instead (in Windows: 'Personalization' &rarr;

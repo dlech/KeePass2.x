@@ -71,7 +71,7 @@ namespace KeePass.Forms
 			InitializeComponent();
 
 			SecureTextBoxEx.InitEx(ref m_tbPassword);
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)

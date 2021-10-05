@@ -51,7 +51,7 @@
 			this.m_btnClose.Location = new System.Drawing.Point(621, 321);
 			this.m_btnClose.Name = "m_btnClose";
 			this.m_btnClose.Size = new System.Drawing.Size(75, 23);
-			this.m_btnClose.TabIndex = 1;
+			this.m_btnClose.TabIndex = 3;
 			this.m_btnClose.Text = "Close";
 			this.m_btnClose.UseVisualStyleBackColor = true;
 			this.m_btnClose.Click += new System.EventHandler(this.OnBtnClose);
@@ -61,7 +61,7 @@
 			this.m_btnMore.Location = new System.Drawing.Point(13, 321);
 			this.m_btnMore.Name = "m_btnMore";
 			this.m_btnMore.Size = new System.Drawing.Size(134, 23);
-			this.m_btnMore.TabIndex = 2;
+			this.m_btnMore.TabIndex = 1;
 			this.m_btnMore.Text = "&Get More Languages...";
 			this.m_btnMore.UseVisualStyleBackColor = true;
 			this.m_btnMore.Click += new System.EventHandler(this.OnBtnGetMore);
@@ -71,7 +71,7 @@
 			this.m_btnOpenFolder.Location = new System.Drawing.Point(153, 321);
 			this.m_btnOpenFolder.Name = "m_btnOpenFolder";
 			this.m_btnOpenFolder.Size = new System.Drawing.Size(83, 23);
-			this.m_btnOpenFolder.TabIndex = 3;
+			this.m_btnOpenFolder.TabIndex = 2;
 			this.m_btnOpenFolder.Text = "Open &Folder";
 			this.m_btnOpenFolder.UseVisualStyleBackColor = true;
 			this.m_btnOpenFolder.Click += new System.EventHandler(this.OnBtnOpenFolder);

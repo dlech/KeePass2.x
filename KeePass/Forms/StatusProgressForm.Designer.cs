@@ -39,7 +39,7 @@
 			this.m_pbTotal.Name = "m_pbTotal";
 			this.m_pbTotal.Size = new System.Drawing.Size(378, 16);
 			this.m_pbTotal.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.m_pbTotal.TabIndex = 0;
+			this.m_pbTotal.TabIndex = 2;
 			// 
 			// m_btnCancel
 			// 
@@ -47,7 +47,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(316, 59);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 1;
+			this.m_btnCancel.TabIndex = 0;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -57,7 +57,7 @@
 			this.m_lblTotal.Location = new System.Drawing.Point(9, 9);
 			this.m_lblTotal.Name = "m_lblTotal";
 			this.m_lblTotal.Size = new System.Drawing.Size(382, 17);
-			this.m_lblTotal.TabIndex = 2;
+			this.m_lblTotal.TabIndex = 1;
 			// 
 			// StatusProgressForm
 			// 

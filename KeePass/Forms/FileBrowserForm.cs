@@ -91,7 +91,7 @@ namespace KeePass.Forms
 		public FileBrowserForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -256,18 +256,14 @@ namespace KeePass.Forms
 			if(img != null) return;
 
 			if(Directory.Exists(strPath))
-			{
 				img = new Bitmap(icons[(int)PwIcon.Folder]);
-				return;
-			}
-			if(File.Exists(strPath))
-			{
+			else if(File.Exists(strPath))
 				img = new Bitmap(icons[(int)PwIcon.PaperNew]);
-				return;
+			else
+			{
+				Debug.Assert(false);
+				img = new Bitmap(icons[(int)PwIcon.Star]);
 			}
-
-			Debug.Assert(false);
-			img = new Bitmap(icons[(int)PwIcon.Star]);
 		}
 
 		private TreeNode CreateFolderNode(string strDir, bool bForcePlusMinus,

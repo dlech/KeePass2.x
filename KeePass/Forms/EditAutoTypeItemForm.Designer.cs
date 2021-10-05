@@ -57,10 +57,10 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(343, 388);
+			this.m_btnOK.Location = new System.Drawing.Point(343, 425);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 9;
+			this.m_btnOK.TabIndex = 11;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -68,20 +68,20 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(424, 388);
+			this.m_btnCancel.Location = new System.Drawing.Point(424, 425);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 10;
+			this.m_btnCancel.TabIndex = 12;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 388);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 425);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHelp.TabIndex = 12;
+			this.m_btnHelp.TabIndex = 10;
 			this.m_btnHelp.Text = "&Help";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
@@ -107,10 +107,10 @@
 			// m_lblSeparator
 			// 
 			this.m_lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.m_lblSeparator.Location = new System.Drawing.Point(0, 379);
+			this.m_lblSeparator.Location = new System.Drawing.Point(0, 416);
 			this.m_lblSeparator.Name = "m_lblSeparator";
 			this.m_lblSeparator.Size = new System.Drawing.Size(511, 2);
-			this.m_lblSeparator.TabIndex = 11;
+			this.m_lblSeparator.TabIndex = 9;
 			// 
 			// m_lblOpenHint
 			// 
@@ -169,11 +169,12 @@
 			// m_rtbPlaceholders
 			// 
 			this.m_rtbPlaceholders.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.m_rtbPlaceholders.DetectUrls = false;
 			this.m_rtbPlaceholders.Location = new System.Drawing.Point(32, 230);
 			this.m_rtbPlaceholders.Name = "m_rtbPlaceholders";
 			this.m_rtbPlaceholders.ReadOnly = true;
 			this.m_rtbPlaceholders.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-			this.m_rtbPlaceholders.Size = new System.Drawing.Size(467, 136);
+			this.m_rtbPlaceholders.Size = new System.Drawing.Size(467, 171);
 			this.m_rtbPlaceholders.TabIndex = 8;
 			this.m_rtbPlaceholders.Text = "";
 			this.m_rtbPlaceholders.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnPlaceholdersLinkClicked);
@@ -197,7 +198,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(511, 423);
+			this.ClientSize = new System.Drawing.Size(511, 460);
 			this.Controls.Add(this.m_rbSeqCustom);
 			this.Controls.Add(this.m_rbSeqDefault);
 			this.Controls.Add(this.m_lnkWildcardRegexHint);

@@ -1107,17 +1107,17 @@ namespace KeePassLib.Cryptography
 			pbExp = Encoding.ASCII.GetBytes("Key provider based on one-time passwords.");
 			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-7");
 
-			int i = 0 - 0x10203040;
-			pbRes = MemUtil.Int32ToBytes(i);
+			const int iE = 0 - 0x10203040;
+			pbRes = MemUtil.Int32ToBytes(iE);
 			if(MemUtil.ByteArrayToHexString(pbRes) != "C0CFDFEF")
 				throw new Exception("MemUtil-8"); // Must be little-endian
-			if(MemUtil.BytesToUInt32(pbRes) != (uint)i)
+			if(MemUtil.BytesToUInt32(pbRes) != unchecked((uint)iE))
 				throw new Exception("MemUtil-9");
-			if(MemUtil.BytesToInt32(pbRes) != i)
+			if(MemUtil.BytesToInt32(pbRes) != iE)
 				throw new Exception("MemUtil-10");
 
 			ArrayHelperEx<char> ah = MemUtil.ArrayHelperExOfChar;
-			for(int j = 0; j < 30; ++j)
+			for(int i = 0; i < 30; ++i)
 			{
 				string strA = r.Next(30).ToString();
 				string strB = r.Next(30).ToString();
@@ -1130,6 +1130,33 @@ namespace KeePassLib.Cryptography
 					Math.Sign(string.CompareOrdinal(strA, strB))))
 					throw new Exception("MemUtil-12");
 			}
+
+			try
+			{
+				Dictionary<uint, bool> d = new Dictionary<uint, bool>();
+
+				pb = new byte[24];
+				for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(i + 1);
+				for(int i = 0; i < pb.Length; ++i)
+				{
+					for(int cb = 1; (i + cb) <= pb.Length; ++cb)
+						d.Add(MemUtil.Hash32(pb, i, cb), true); // Throws on dup.
+				}
+
+				for(int cb = 0; cb < 32; ++cb)
+				{
+					pb = new byte[cb];
+					d.Add(MemUtil.Hash32(pb, 0, cb), true);
+
+					for(int i = 0; i < cb; ++i)
+					{
+						pb[i] = 0x80;
+						d.Add(MemUtil.Hash32(pb, 0, cb), true);
+						pb[i] = 0;
+					}
+				}
+			}
+			catch(Exception) { throw new Exception("Hash32"); }
 #endif
 		}
 
@@ -1251,6 +1278,13 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-NewLine9");
 			if(!StrUtil.IsNewLineNormalized(string.Empty.ToCharArray(), false))
 				throw new InvalidOperationException("StrUtil-NewLine10");
+
+			if(StrUtil.RemoveAccelerator(@"&Test") != "Test")
+				throw new InvalidOperationException("StrUtil-Accel1");
+			if(StrUtil.RemoveAccelerator(@"Test(&T)") != "Test")
+				throw new InvalidOperationException("StrUtil-Accel2");
+			if(StrUtil.RemoveAccelerator(@"Test (TA) (&T) (TB)") != "Test (TA) (TB)")
+				throw new InvalidOperationException("StrUtil-Accel3");
 #endif
 		}
 

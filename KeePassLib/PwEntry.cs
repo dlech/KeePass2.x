@@ -779,6 +779,7 @@ namespace KeePassLib
 			if(idxRemove != uint.MaxValue) m_lHistory.RemoveAt(idxRemove);
 		}
 
+		// Cf. AutoType.GetEnabledText
 		public bool GetAutoTypeEnabled()
 		{
 			if(!m_cfgAutoType.Enabled) return false;

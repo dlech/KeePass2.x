@@ -54,7 +54,7 @@ namespace KeePass.Forms
 		public PluginsForm()
 		{
 			InitializeComponent();
-			Program.Translation.ApplyTo(this);
+			GlobalWindowManager.InitializeForm(this);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -95,10 +95,7 @@ namespace KeePass.Forms
 
 			UpdatePluginsList();
 			if(m_lvPlugins.Items.Count > 0)
-			{
 				m_lvPlugins.Items[0].Selected = true;
-				UIUtil.SetFocus(m_lvPlugins, this);
-			}
 
 			UpdatePluginDescription();
 		}

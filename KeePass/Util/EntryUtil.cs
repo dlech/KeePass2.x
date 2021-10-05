@@ -28,6 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.DataExchange;
 using KeePass.Forms;
 using KeePass.Resources;
 using KeePass.UI;
@@ -439,7 +440,8 @@ namespace KeePass.Util
 		}
 
 		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format
-		/* internal static void ImportOtpAuth(PwEntry pe, string strOtpAuthUri)
+		internal static void ImportOtpAuth(PwEntry pe, string strOtpAuthUri,
+			PwDatabase pd)
 		{
 			if(pe == null) { Debug.Assert(false); return; }
 			if(string.IsNullOrEmpty(strOtpAuthUri)) return;
@@ -447,13 +449,48 @@ namespace KeePass.Util
 			try
 			{
 				Uri uri = new Uri(strOtpAuthUri);
-				if(!uri.Scheme.Equals("otpauth", StrUtil.CaseIgnoreCmp))
+				string strScheme = (uri.Scheme ?? string.Empty);
+				if(!strScheme.Equals("otpauth", StrUtil.CaseIgnoreCmp))
 				{
 					Debug.Assert(false);
 					return;
 				}
 
+				string[] vSeg = (uri.Segments ?? new string[0]);
+
+				string strLabel = string.Empty;
+				if(vSeg.Length >= 2)
+				{
+					strLabel = (vSeg[1] ?? string.Empty);
+					if(strLabel.EndsWith("/"))
+						strLabel = strLabel.Substring(0, strLabel.Length - 1);
+					strLabel = Uri.UnescapeDataString(strLabel).Trim();
+
+					if(!string.IsNullOrEmpty(strLabel))
+					{
+						string strAccount = strLabel, strIssuer = string.Empty;
+						int iSep = strLabel.IndexOf(':');
+						if(iSep >= 0)
+						{
+							strIssuer = strLabel.Substring(0, iSep).Trim();
+							strAccount = strLabel.Substring(iSep + 1).Trim();
+						}
+
+						ImportUtil.AppendToField(pe, PwDefs.TitleField, strIssuer,
+							pd, null, true);
+						ImportUtil.AppendToField(pe, PwDefs.UserNameField, strAccount,
+							pd, null, true);
+					}
+				}
+
 				Dictionary<string, string> d = UrlUtil.ParseQuery(uri.Query);
+
+				string strIssuerP;
+				d.TryGetValue("issuer", out strIssuerP);
+				if(!string.IsNullOrEmpty(strIssuerP) &&
+					!strLabel.StartsWith(strIssuerP + ":", StrUtil.CaseIgnoreCmp))
+					ImportUtil.AppendToField(pe, PwDefs.TitleField, strIssuerP,
+						pd, null, true);
 
 				GAction<string, string, Dictionary<string, string>, bool> f =
 					delegate(string strQueryKey, string strEntryField,
@@ -480,14 +517,13 @@ namespace KeePass.Util
 				dAlgMap["SHA256"] = "HMAC-SHA-256";
 				dAlgMap["SHA512"] = "HMAC-SHA-512";
 
-				string strType = uri.Host.ToLowerInvariant();
-				if(strType == "hotp")
+				string strType = (uri.Host ?? string.Empty);
+				if(strType.Equals("hotp", StrUtil.CaseIgnoreCmp))
 				{
 					f("secret", "HmacOtp-Secret-Base32", null, true);
 					f("counter", "HmacOtp-Counter", null, false);
-
 				}
-				else if(strType == "totp")
+				else if(strType.Equals("totp", StrUtil.CaseIgnoreCmp))
 				{
 					f("secret", "TimeOtp-Secret-Base32", null, true);
 					f("digits", "TimeOtp-Length", null, false);
@@ -497,7 +533,7 @@ namespace KeePass.Util
 				else { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
-		} */
+		}
 
 		private static string ReplacePickField(string strText, SprContext ctx)
 		{
